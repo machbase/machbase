@@ -6,6 +6,7 @@ _site
 
 vendor
 Gemfile.lock
+public/
 
 .DS_Store
 vhs/*.gif
