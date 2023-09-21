@@ -1,0 +1,29 @@
+baseURL: https://docs.machbase.com/
+title: Machbase
+languageCode: en-us
+defaultContentLanguage: en
+languages:
+  en:
+    languageName: English
+    weight: 1
+  kr:
+    languageName: 한국어
+    weight: 2
+module:
+  imports:
+    - path: github.com/imfing/hextra
+menu:
+  main:
+    - identifier: home
+      name: Home
+      pageRef: /home
+      weight: 1
+    - identifier: docs.neo
+      name: Neo Documents
+      pageRef: /neo
+      weight: 2
+    - identifier: docs.dbms
+      name: DBMS Documents
+      pageRef: /dbms
+      weight: 3
+  

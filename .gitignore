@@ -1,0 +1,16 @@
+_site
+.sass-cache
+.jekyll-cache
+.jekyll-metadata
+.hugo_build.lock
+
+vendor
+Gemfile.lock
+
+.DS_Store
+vhs/*.gif
+vhs/*.zip
+vhs/machbase_home/
+vhs/machbase-neo
+
+examples/**/target/
