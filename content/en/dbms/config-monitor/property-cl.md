@@ -4,6 +4,9 @@ title : Property (Cluster)
 type : docs
 ---
 
+
+Separate from [Property](../property), Property (Cluster) organizes the Property only available in Cluster Edition.
+
 # Index
 
 * [CLUSTER_LINK_ACCEPT_TIMEOUT](#cluster_link_accept_timeout)
@@ -57,9 +60,6 @@ type : docs
 * [LOOKUPNODE_COMMAND_RETRY_MAX_COUNT](#lookupnode_command_retry_max_count)
 * [STAGE_RESULT_BLOCK_SIZE](#stage_result_block_size)
 
-
-
-Separate from [Property](./property.md), Property (Cluster) organizes the Property only available in Cluster Edition.
 
 
 # CLUSTER_LINK_ACCEPT_TIMEOUT

@@ -4,7 +4,7 @@ title : 'Property (Cluster)'
 type: docs
 ---
 
-[Property](./property.md)와 별개로, Cluster Edition 에서만 사용 가능한 Property 를 정리한다.
+[Property](../property)와 별개로, Cluster Edition 에서만 사용 가능한 Property 를 정리한다.
 
 # 목차
 * [CLUSTER_LINK_ACCEPT_TIMEOUT](#cluster_link_accept_timeout)
