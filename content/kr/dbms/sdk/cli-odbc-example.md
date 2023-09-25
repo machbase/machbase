@@ -181,7 +181,7 @@ connected ...
 샘플 파일명은 sample2_insert.c 라고 한다.
 
 <details>
-<summary>sampe2_insert.c</summary>
+<summary>sample2_insert.c</summary>
 <div markdown="1">
 
 ```cpp

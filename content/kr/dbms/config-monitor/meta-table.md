@@ -1,6 +1,7 @@
 ---
 layout : post
 title : 'Meta Table'
+type: docs
 ---
 
 메타 테이블은 마크베이스의 스키마 정보를 제시해 주는 테이블들로 테이블 명이 M$로 시작된다.

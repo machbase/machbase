@@ -16,7 +16,7 @@ First, the Offline Backup function is called Cold Backup as it shuts down the DB
 
 Second, Online Backup is called Hot Backup as a function to backup the database when DBMS is running. This function can be performed without interrupting the service, increasing the user's service availability. Most DBMS Backup refers to Online Backup. Unlike other database backups, Machbase, a time-series database, provides Duration Backup. This allows you to specify the time of the database to be backed up at the time of backup so that only the data at the desired time will be backed up.
 
-![overview1](./overview1.png)
+![overview1](../overview1.png)
 
 ```sql
 backup database into disk = 'backup';

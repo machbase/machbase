@@ -9,7 +9,7 @@ ANSI 표준 SQL로 데이터를 검색할 수 있다.
 
 아래 예제 모두는 인덱스를 생성하지 않고 검색한 예이다. 즉, 마지막으로 입력된 데이터가 제일 먼저 출력된다.
 
-보다 자세한 내용은 SQL 레퍼런스의 [SELECT](../../../sql-ref/select.md) 부분을 참조하면 된다.
+보다 자세한 내용은 SQL 레퍼런스의 [SELECT](/kr/dbms/sql-ref/select) 부분을 참조하면 된다.
 
 ## 기본 조회
 
@@ -148,5 +148,5 @@ Elapsed time: 0.001
 
 ### 기본 스캔 방향 프로퍼티로 설정
 
-[TABLE_SCAN_DIRECTION](/kr/setting-monitoring/property.md) 프로퍼티로 SELECT 문에 힌트가 없을 때 로그 테이블의 스캔 방향을 설정할 수 있다. 
+[TABLE_SCAN_DIRECTION](/kr/dbms/config-monitor/property/#table_scan_direction) 프로퍼티로 SELECT 문에 힌트가 없을 때 로그 테이블의 스캔 방향을 설정할 수 있다. 
 

@@ -56,7 +56,7 @@ In other words, an arbitrary tag ID is designated, and the trend chart for the p
 
 In addition, it provides not only simple tag data but also a statistical chart during that period, so statistical analysis is possible beyond simple visualization.
 
-![TagAnalyzer](./TagAnalyzer.png)
+![TagAnalyzer](../TagAnalyzer.png)
 
 
 ## Write Once, Read Many

@@ -4,7 +4,7 @@ title : 'Timezone'
 type : docs
 ---
 
-# Index
+## Index
 
 * [Timezone of Machbase](#timezone-of-machbase)
 * [Timezone Format in Machbase](#timezone-format-in-machbase)
@@ -13,7 +13,7 @@ type : docs
     * [SDK](#sdk)
     * [Rest API](#rest-api)
 
-# Timezone of Machbase
+## Timezone of Machbase
 
 Machbase assumes that each client's Timezone is valid only in each session.
 
@@ -43,7 +43,7 @@ The following is a step-by-step explanation of the time zone operation provided 
 * If the time zone is explicitly set in the client program, the corresponding session of the server operates in the time zone designated by the client.<br>
     That is, even if the TIMEZONE set in the server is KST, if the client sets the time zone as EDT when connecting, the session operates as EDT.
 
-# Timezone Format in Machbase
+## Timezone Format in Machbase
 
 Machbase provides only one format consisting of 5 characters to increase ease of use and remove complexity.
 
@@ -57,7 +57,8 @@ TIMEZONE=+0900
 TIMEZONE=-0900
 ```
 
-## machsql
+### machsql
+---
 
 When machsql is started, you can set the time zone to operate through the following options.
 
@@ -74,7 +75,8 @@ Mach> show timezone;
 Timezone : +0900
 ```
 
-## machloader
+### machloader
+---
 
 When running machloader, you can set the time zone to operate through the following options.
 
@@ -84,7 +86,8 @@ When running machloader, you can set the time zone to operate through the follow
 
 It connects to the designated time zone and time calculation operates based on the corresponding time zone.
 
-## SDK
+### SDK
+---
 
 TIMEZONE has been added to the connection string, and the time zone for the session can be specified.
 
@@ -98,7 +101,8 @@ Connection String Example
 SERVER=127.0.0.1;UID=SYS;PWD=MANAGER;CONNTYPE=1;NLS_USE=UTF8;PORT_NO=5656;TIMEZONE=+0300
 ```
 
-## Rest API
+### Rest API
+---
 
 Rest API operates based on the time zone specified in the HTTP protocol HEADER when requesting an operation.
 

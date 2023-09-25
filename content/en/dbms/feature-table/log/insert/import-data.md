@@ -12,7 +12,7 @@ weight: 30
 
 With the machloader tool, you can enter a text file that is separated by a CSV or other delimiter.
 
-See the machloader documentation for a detailed description of the machloader tool.
+See the [machloader](/dbms/tools/machloader) documentation for a detailed description of the machloader tool.
 
 
 ## Create Table

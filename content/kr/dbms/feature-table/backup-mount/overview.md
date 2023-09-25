@@ -22,7 +22,7 @@ weight: 10
 이 기능은 서비스를 중단하지 않고 수행될 수 있어 사용자의 Service Availability를 증가시켜 대부분의 DBMS Backup은 Online Backup을 의미한다. <br/>
 다른 데이터베이스의 Backup과 달리 시계열 데이터베이스인 Machbase 는 Duration Backup을 제공한다. 이는 Backup시 백업될 Database의 시간을 지정하여 원하는 시간대의 데이터만 Backup할 수 있다.
 
-![Backup](./backup.png)
+![Backup](../overview.png)
 
 ```sql
 backup database into disk = 'backup';

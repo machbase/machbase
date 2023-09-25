@@ -8,7 +8,7 @@ weight: 20
 
 한가지 차이점이 있다면 참조 테이블에 Append를 통해 데이터를 입력할 경우 'LOOKUP_APPEND_UPDATE_ON_DUPKEY ' Property 를 설정해 Primary Key가 중복일 경우에 해당 Row를 Update 하도록 설정 가능하다.
 
-'LOOKUP_APPEND_UPDATE_ON_DUPKEY'에 대한 세부 내용은 [Property](/kr/setting-monitoring/property.md) 가이드를 참고한다.
+'LOOKUP_APPEND_UPDATE_ON_DUPKEY'에 대한 세부 내용은 [Property](/kr/dbms/config-monitor/property) 가이드를 참고한다.
 
 ## 참조 테이블 재로딩
 

@@ -1,6 +1,7 @@
 ---
 layout : post
 title : '7.0 변경 및 추가 기능'
+type: docs
 ---
 
 # 목차

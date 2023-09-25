@@ -6,9 +6,9 @@ weight: 30
 
 ## 개요
 
-* [마크베이스 소개](./intro/introduction)
-* [마크베이스 특징](./intro/features)
-* [마크베이스 제품군 소개](./intro/editions)
+* [마크베이스 소개](./intro/)
+* [마크베이스 특징](./intro/features/)
+* [마크베이스 제품군 소개](./intro/edition/)
 
 ## 설치
 
@@ -50,8 +50,8 @@ weight: 30
 
 ## SDK
 
-* [CLI/ODBC](./sdk/cli_odbc)
-* [CLI/ODBC 예제](./sdk/cli_odbc_example)
+* [CLI/ODBC](./sdk/cli-odbc)
+* [CLI/ODBC 예제](./sdk/cli-odbc-example)
 * [JDBC](./sdk/jdbc)
 * [Python](./sdk/python)
 * [RESTful API](./sdk/restful_api)
