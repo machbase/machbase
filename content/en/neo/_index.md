@@ -15,7 +15,7 @@ weight: 10
     {{<card link="./releases/" title="Download" icon="download">}}
 {{</cards>}}
 
-> The latest version is {{< neo_latestver >}}
+> 📢 The latest version is {{< neo_latestver >}}
 
 Machbase is the world's fastest timeseries database[^1] with a minimal footprint. It's an ideal solution for environments that require scalability, from small servers with limited resources like the Raspberry Pi to horizontally scaled clusters. Machbase Neo, built on Machbase, adds crucial features required for the IoT industry. It ingests and handles query data through various protocols, such as MQTT for direct data transfer from IoT sensors, and SQL via HTTP for data retrieval by applications.
 
@@ -48,7 +48,7 @@ Integration with external systems
     {{< tab >}}
     Paste the script below into the shell prompt for the latest version of the platform.
 
-    ```sh
+    ```bash
     sh -c "$(curl -fsSL https://neo.machbase.com/install.sh)"
     ```
     {{< /tab >}}
@@ -56,7 +56,7 @@ Integration with external systems
     {{< tab >}}
     If GUI is preferred rather than command line, then execute `neow` included in the Windows release.
 
-    Download the latest release for [Windows]({{ site.releases_url }}/download/{{ .site.Params.latestNeoVer }}/machbase-neo-{{ site.latest_version }}-windows-amd64.zip)
+    Download the latest release for [Windows]({{< neo_releases_url >}}/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-windows-amd64.zip)
 
     ![interfaces](/images/neow-win.png)
     {{< /tab >}}

@@ -66,21 +66,21 @@ menu:
       name: Home
       pageRef: /home
       weight: 1
-    - identifier: neo
-      name: Neo Documents
-      pageRef: /neo
-      weight: 2
+    - name: Search
+      weight: 10
+      params:
+        type: search
     - identifier: dbms
       name: DBMS Documents
       pageRef: /dbms
-      weight: 3
-    - name: Search
-      weight: 4
-      params:
-        type: search
+      weight: 20
+    - identifier: neo
+      name: Neo Documents
+      pageRef: /neo
+      weight: 30
     - name: Github
       url: "https://github.com/machbase/neo-server"
       params:
         icon: github
-      weight: 5
+      weight: 50
   
