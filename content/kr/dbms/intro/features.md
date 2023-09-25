@@ -60,7 +60,7 @@ weight: 10
 
 또한, 단순한 태그 데이터 뿐만 아니라 그 기간동안의 통계 챠트도 함께 볼 수 있도록 제공하기 때문에 단순 시각화를 넘어 일정 수준의 통계 분석도 가능하다.
 
-![TagAnalyzer](./TagAnalyzer.png)
+![TagAnalyzer](../TagAnalyzer.png)
 
 
 ## Write Once, Read Many
