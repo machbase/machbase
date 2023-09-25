@@ -1,6 +1,7 @@
 ---
-title: 'machbase-neo'
+title: machbase-neo
 weight: 10
+toc: false
 ---
 
 - ✓ Performant timeseries database
@@ -15,7 +16,9 @@ weight: 10
     {{<card link="./releases/" title="Download" icon="download">}}
 {{</cards>}}
 
-> 📢 The latest version is {{< neo_latestver >}}
+> 📢 The latest version is {{< label color="green" >}} {{< neo_latestver >}} {{< /label>}}
+
+
 
 Machbase is the world's fastest timeseries database[^1] with a minimal footprint. It's an ideal solution for environments that require scalability, from small servers with limited resources like the Raspberry Pi to horizontally scaled clusters. Machbase Neo, built on Machbase, adds crucial features required for the IoT industry. It ingests and handles query data through various protocols, such as MQTT for direct data transfer from IoT sensors, and SQL via HTTP for data retrieval by applications.
 

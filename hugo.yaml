@@ -76,7 +76,7 @@ menu:
       weight: 20
     - identifier: neo
       name: Neo Documents
-      pageRef: /neo
+      pageRef: /neo/
       weight: 30
     - name: Github
       url: "https://github.com/machbase/neo-server"

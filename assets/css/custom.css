@@ -1,0 +1,14 @@
+.label {
+    display: inline-block;
+    line-height: 1.0;
+    background-color: red;
+    color: white;
+    padding: 2px 8px;
+    text-align: center;
+    vertical-align: middle;
+    border-radius: 12px;
+  }
+
+.label-green {
+    background-color: #009c7b;
+}

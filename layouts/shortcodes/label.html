@@ -1,0 +1,9 @@
+{{ if .IsNamedParams }}
+<span class='label label-{{ .Get "color" }}'>
+    {{.Inner}}
+</span>
+{{ else }}
+<span class="label">
+    {{.Inner}}
+</span>
+{{ end }}
