@@ -28,11 +28,8 @@ Below procedure is about how to get machNetConnector5.0 from NuGet.
 
 ## Class
 
-{% include alert.html content=
-"Features not listed below may not be implemented yet or may not work correctly.<br>
-If you call a method or field that is not a named instance, it generates NotImplementedException or a NotSupportedException."
-type="warning"
-%}
+> Features not listed below may not be implemented yet or may not work correctly.<br>
+If you call a method or field that is not a named instance, it generates NotImplementedException or a NotSupportedException.
 
 ### MachConnection : DbConnection
 This class is responsible for linking with Machbase. 

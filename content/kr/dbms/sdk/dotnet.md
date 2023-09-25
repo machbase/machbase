@@ -29,11 +29,8 @@ NuGet에서 machNetConnector5.0을 가져오는 방법은 다음과 같다.
 
 ## 클래스
 
-{% include alert.html content=
-"아래 소개된 기능 외의 것은 아직 구현되어 있지 않거나, 올바르게 작동되지 않을 수 있다.<br>
-미구현으로 명시된 메서드나 필드를 부르는 경우, NotImplementedException 또는 NotSupportedException 을 발생시킨다."
-type="warning"
-%}
+> 아래 소개된 기능 외의 것은 아직 구현되어 있지 않거나, 올바르게 작동되지 않을 수 있다.<br>
+미구현으로 명시된 메서드나 필드를 부르는 경우, NotImplementedException 또는 NotSupportedException 을 발생시킨다.
 
 ### MachConnection : DbConnection
 마크베이스와의 연결을 담당하는 클래스이다. 
