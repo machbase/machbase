@@ -10,7 +10,7 @@ The following example shows a search without creating an index.
 
 In other words, the last input data is outputed first.
 
-For more information, see the [SELECT](/en/sql-ref/select.md) section of the SQL Reference.
+For more information, see the [SELECT](/dbms/sql-ref/select) section of the SQL Reference.
 
 
 ## Basic access
