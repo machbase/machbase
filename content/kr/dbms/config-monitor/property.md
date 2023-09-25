@@ -8,7 +8,7 @@ type: docs
 
 이 값들은 마크베이스 서버가 시작할 때 설정되고 실행시 지속적으로 이용된다. 성능 튜닝을 위해서 이 값을 변경하려면 이 값들에 대한 의미를 이해하고, 주의 깊게 설정하여야 한다.
 
-# 목차
+## 목차
 
 * [CPU_AFFINITY_BEGIN_ID](#cpu_affinity_begin_id)
 * [CPU_AFFINITY_COUNT](#cpu_affinity_count)
@@ -78,7 +78,7 @@ type: docs
 * [UNIX_PATH](#unix_path)
 * [VOLATILE_TABLESPACE_MEMORY_MAX_SIZE](#volatile_tablespace_memory_max_size)
 
-# CPU_AFFINITY_BEGIN_ID
+## CPU_AFFINITY_BEGIN_ID
 
 마크베이스 서버가 사용할 CPU의 시작 번호이다. 마크베이스 서버의 CPU사용량을 조절하기 위해서 사용한다.
 
@@ -88,7 +88,7 @@ type: docs
 |최대값|	2 ^ 32 - 1|
 |기본값|    0|
 
-# CPU_AFFINITY_COUNT
+## CPU_AFFINITY_COUNT
 
 마크베이스 서버가 사용할 CPU의 수이다. 0으로 설정하면 마크베이스 서버가 모든 CPU를 사용한다.
 
@@ -98,7 +98,7 @@ type: docs
 |최대값|	2 ^ 32 - 1|
 |기본값|	0|
 
-# CPU_COUNT
+## CPU_COUNT
 
 시스템에 설정된 CPU의 수를 지정한다. 이 값을 기반으로 마크베이스의 스레드 수를 결정한다. 0으로 지정한 경우에는 시스템의 모든 CPU를 사용한다.
 
@@ -108,7 +108,7 @@ type: docs
 |최대값|	2^32 -1|
 |기본값|	0|
 
-# CPU_PARALLEL
+## CPU_PARALLEL
 
 CPU당 생성할 스레드의 수를 지정한다. 만약 이 값이 2이고 cpu의 수가 2인 경우, 두개의 CPU마다 병렬 스레드가 2개씩 생성되므로 병렬처리 스레드의 수가 4가 된다. 이 값이 너무 큰 경우, 메모리가 빨리 소모될 수 있다.
 
@@ -118,7 +118,7 @@ CPU당 생성할 스레드의 수를 지정한다. 만약 이 값이 2이고 cpu
 |최대값|	2^32 -1|
 |기본값|	1|
 
-# DBS_PATH
+## DBS_PATH
 
 마크베이스 서버의 기본 데이터가 저장될 경로를 지정한다. 기본값은 "?/dbs"로, $MACHBASE_HOME/dbs 를 의미한다.
 
@@ -126,7 +126,7 @@ CPU당 생성할 스레드의 수를 지정한다. 만약 이 값이 2이고 cpu
 |-|----|
 |기본값|	?/dbs|
 
-# DEFAULT_LSM_MAX_LEVEL
+## DEFAULT_LSM_MAX_LEVEL
 
 LSM인덱스의 기본 레벨을 설정한다. 인덱스를 생성할 때 MAX_LEVEL값을 입력하지 않으면 이 값이 적용된다.
 
@@ -136,7 +136,7 @@ LSM인덱스의 기본 레벨을 설정한다. 인덱스를 생성할 때 MAX_LE
 |최대값|	3|
 |기본값|	2|
 
-# DISK_BUFFER_COUNT
+## DISK_BUFFER_COUNT
 
 디스크 입출력을 위한 버퍼의 수를 지정한다.
 
@@ -146,7 +146,7 @@ LSM인덱스의 기본 레벨을 설정한다. 인덱스를 생성할 때 MAX_LE
 |최대값|	2^32 - 1|
 |기본값|	16|
 
-# DISK_COLUMNAR_INDEX_CHECKPOINT_INTERVAL_SEC
+## DISK_COLUMNAR_INDEX_CHECKPOINT_INTERVAL_SEC
 
 인덱스에 대한 체크포인트 주기를 설정한다. 너무 길게 설정할 경우, 인덱스 빌드에 오류가 발생할 수 있다.
 
@@ -156,7 +156,7 @@ LSM인덱스의 기본 레벨을 설정한다. 인덱스를 생성할 때 MAX_LE
 |최대값|    2^32 -1 (sec)|
 |기본값|	120 (sec)|
 
-# DISK_COLUMNAR_INDEX_FDCACHE_COUNT
+## DISK_COLUMNAR_INDEX_FDCACHE_COUNT
 
 오픈한 인덱스 파티션 파일 디스크립터의 수를 지정한다.
 
@@ -166,7 +166,7 @@ LSM인덱스의 기본 레벨을 설정한다. 인덱스를 생성할 때 MAX_LE
 |최대값|	2^32 -1|
 |기본값|	0|
 
-# DISK_COLUMNAR_INDEX_SHUTDOWN_BUILD_FINISH
+## DISK_COLUMNAR_INDEX_SHUTDOWN_BUILD_FINISH
 
 마크베이스 서버를 종료할 때, 인덱스 정보를 디스크에 모두 반영할 것인지를 설정한다. 이 값을 '1'로 설정하면 모든 인덱스 정보를 디스크에 반영하고 종료하므로 종료시 대기 시간이 길어질 수 있다.
 
@@ -176,7 +176,7 @@ LSM인덱스의 기본 레벨을 설정한다. 인덱스를 생성할 때 MAX_LE
 |최대값|	1 (True)|
 |기본값|	0 (False)|
 
-# DISK_COLUMNAR_PAGE_CACHE_MAX_SIZE
+## DISK_COLUMNAR_PAGE_CACHE_MAX_SIZE
 
 페이지 캐쉬의 최대 크기를 설정한다.
 
@@ -186,7 +186,7 @@ LSM인덱스의 기본 레벨을 설정한다. 인덱스를 생성할 때 MAX_LE
 |최대값|	2^64 - 1|
 |기본값|	2 * 1024 * 1024 * 1024|
 
-# DISK_COLUMNAR_TABLE_CHECKPOINT_INTERVAL_SEC
+## DISK_COLUMNAR_TABLE_CHECKPOINT_INTERVAL_SEC
 
 테이블 데이터의 체크포인트 주기를 설정한다. 이 값이 너무 크면 재시작시 복구 시간이 매우 길어지고, 이 값이 너무 작으면 I/O가 자주 발생하여 전체 성능이 저하될 수 있다.
 
@@ -196,7 +196,7 @@ LSM인덱스의 기본 레벨을 설정한다. 인덱스를 생성할 때 MAX_LE
 |최대값|	2^32 -1 (sec)|
 |기본값|	120 (sec)|
 
-# DISK_COLUMNAR_TABLE_COLUMN_FDCACHE_COUNT
+## DISK_COLUMNAR_TABLE_COLUMN_FDCACHE_COUNT
 
 테이블의 컬럼 데이터에 대한 오픈된 파일 설명자의 최대 수를 지정한다.
 
@@ -206,7 +206,7 @@ LSM인덱스의 기본 레벨을 설정한다. 인덱스를 생성할 때 MAX_LE
 |최대값|	2^32 - 1|
 |기본값|	0|
 
-# DISK_COLUMNAR_TABLE_COLUMN_MINMAX_CACHE_SIZE
+## DISK_COLUMNAR_TABLE_COLUMN_MINMAX_CACHE_SIZE
 
 _ARRIVAL_TIME 컬럼에 설정되는 기본 MINMAX 캐쉬의 크기를 설정한다.
 
@@ -216,7 +216,7 @@ _ARRIVAL_TIME 컬럼에 설정되는 기본 MINMAX 캐쉬의 크기를 설정한
 |최대값|	2^64 - 1|
 |기본값|	100 *1024 * 1024|
 
-# DISK_COLUMNAR_TABLE_COLUMN_PART_FLUSH_MODE
+## DISK_COLUMNAR_TABLE_COLUMN_PART_FLUSH_MODE
 
 컬럼 파티션 파일의 자동 플러쉬 주기를 설정한다.
 
@@ -226,7 +226,7 @@ _ARRIVAL_TIME 컬럼에 설정되는 기본 MINMAX 캐쉬의 크기를 설정한
 |최대값|	2^32-1 (sec)|
 |기본값|	60 (sec)|
 
-# DISK_COLUMNAR_TABLE_COLUMN_PART_IO_INTERVAL_MIN_SEC
+## DISK_COLUMNAR_TABLE_COLUMN_PART_IO_INTERVAL_MIN_SEC
 
 파티션 파일을 디스크에 반영하는 주기를 설정한다. 파티션이 설정된 갯수보다 더 많은 데이터를 입력받으면 이 주기와 관계없이 디스크에 반영된다.
 
@@ -236,7 +236,7 @@ _ARRIVAL_TIME 컬럼에 설정되는 기본 MINMAX 캐쉬의 크기를 설정한
 |최대값|	2^32-1 (sec)|
 |기본값|	3 (sec)|
 
-# DISK_COLUMNAR_TABLE_COLUMN_PARTITION_PRECREATE_COUNT
+## DISK_COLUMNAR_TABLE_COLUMN_PARTITION_PRECREATE_COUNT
 
 테이블에 대해서 사용할 예정인 컬럼 파티션 객체의 사전 생성 수를 정의한다.
 
@@ -246,7 +246,7 @@ _ARRIVAL_TIME 컬럼에 설정되는 기본 MINMAX 캐쉬의 크기를 설정한
 |최대값|	2^32-1|
 |기본값|	3|
 
-# DISK_COLUMNAR_TABLE_TIME_INVERSION_MODE
+## DISK_COLUMNAR_TABLE_TIME_INVERSION_MODE
 
 설정된 값 만큼 _ARRIVAL_TIME컬럼의 값이 감소하더라도 입력을 허용한다. 만약 0인 경우 _ARRIVAL_TIME컬럼 값의 최대값보다 작은 값이 입력되면 이는 오류로 처리된다.
 
@@ -257,7 +257,7 @@ _ARRIVAL_TIME 컬럼에 설정되는 기본 MINMAX 캐쉬의 크기를 설정한
 |기본값|	1 (True)|
 
 
-# DISK_COLUMNAR_TABLESPACE_DWFILE_EXT_SIZE
+## DISK_COLUMNAR_TABLESPACE_DWFILE_EXT_SIZE
 
 시작시 복구를 위해서 사용되는 더블 라이트 파일이 한번에 증가하는 크기를 지정한다.
 
@@ -267,7 +267,7 @@ _ARRIVAL_TIME 컬럼에 설정되는 기본 MINMAX 캐쉬의 크기를 설정한
 |최대값|	2^32 - 1|
 |기본값|	1024 * 1024|
 
-# DISK_COLUMNAR_TABLESPACE_DWFILE_INT_SIZE
+## DISK_COLUMNAR_TABLESPACE_DWFILE_INT_SIZE
 
 파일 생성시에 더블라이트 파일이 확보하는 용량을 지정한다.
 
@@ -277,7 +277,7 @@ _ARRIVAL_TIME 컬럼에 설정되는 기본 MINMAX 캐쉬의 크기를 설정한
 |최대값|	2^32 - 1|
 |기본값|	2* 1024 * 1024|
 
-# DISK_COLUMNAR_TABLESPACE_MEMORY_EXT_SIZE
+## DISK_COLUMNAR_TABLESPACE_MEMORY_EXT_SIZE
 
 컬럼 파티션을 위해서 확보하는 메모리의 블록 크기를 지정한다.
 
@@ -287,7 +287,7 @@ _ARRIVAL_TIME 컬럼에 설정되는 기본 MINMAX 캐쉬의 크기를 설정한
 |최대값|	2^64 - 1|
 |기본값|	2* 1024 * 1024|
 
-# DISK_COLUMNAR_TABLESPACE_MEMORY_MAX_SIZE
+## DISK_COLUMNAR_TABLESPACE_MEMORY_MAX_SIZE
 
 로그 테이블에 의하여 할당된 최대 메모리 크기를 지정한다. 만약 서버가 이 값 이상의 메모리를 할당하게 되면, 메모리 사용량이 이 값 이하로 줄어들 때 까지 메모리 할당이 대기하므로 성능이 저하된다. 이 값은 물리적 메모리의 50~80% 정도로 설정할 것을 추천한다.
 
@@ -297,7 +297,7 @@ _ARRIVAL_TIME 컬럼에 설정되는 기본 MINMAX 캐쉬의 크기를 설정한
 |최대값|	2^64 - 1|
 |기본값|	8 * 1024 * 1024 * 1024|
 
-# DISK_COLUMNAR_TABLESPACE_MEMORY_MIN_SIZE
+## DISK_COLUMNAR_TABLESPACE_MEMORY_MIN_SIZE
 
 마크베이스 서버가 시작할 때, 메모리 할당에 의한 성능 저하를 막기 위해서 이 값 만큼 메모리를 사전 확보한다. 데이터 입력 버퍼로만 이 메모리를 사용하므로, 메모리가 충분할 경우에만 사용할 것을 추천한다.
 
@@ -308,7 +308,7 @@ Table 24. Range of values
 |최대값|	2^64 - 1|
 |기본값|	100 * 1024 * 1024|
 
-# DISK_COLUMNAR_TABLESPACE_MEMORY_SLOWDOWN_HIGH_LIMIT_PCT
+## DISK_COLUMNAR_TABLESPACE_MEMORY_SLOWDOWN_HIGH_LIMIT_PCT
 
 컬럼 데이터 파일을 위한 메모리 사용량이 제한 값을 이 값을 다음과 같이 이용하여 계산하고, 초과한 경우 입력 성능을 저하시킨다.
 
@@ -322,7 +322,7 @@ DISK_COLUMNAR_TABLESPACE_MEMORY_MAX_SIZE * (DISK_COLUMNAR_TABLESPACE_MEMORY_SLOW
 |최대값|	100|
 |기본값|	80|
 
-# DISK_COLUMNAR_TABLESPACE_MEMORY_SLOWDOWN_MSEC
+## DISK_COLUMNAR_TABLESPACE_MEMORY_SLOWDOWN_MSEC
 
 컬럼 데이터 파일을 위한 메모리 사용량이 기준을 초과한 경우, 매 레코드 입력시에 다음의 대기 시간을 설정한다.
 
@@ -333,7 +333,7 @@ DISK_COLUMNAR_TABLESPACE_MEMORY_MAX_SIZE * (DISK_COLUMNAR_TABLESPACE_MEMORY_SLOW
 |기본값|	1 (msec)|
 
 
-# DISK_IO_THREAD_COUNT
+## DISK_IO_THREAD_COUNT
 
 데이터를 디스크에 기록하는 입출력 스레드의 수를 설정한다.
 
@@ -343,7 +343,7 @@ DISK_COLUMNAR_TABLESPACE_MEMORY_MAX_SIZE * (DISK_COLUMNAR_TABLESPACE_MEMORY_SLOW
 |최대값|	2^32 -1|
 |기본값|	3|
 
-# DISK_TABLESPACE_DIRECT_IO_FSYNC
+## DISK_TABLESPACE_DIRECT_IO_FSYNC
 
 Direct I/O를 실행할 경우, 데이터 파일에 대해서 fsync는 불필요하다. Direct I/O 를 사용할 경우 fsync를 사용하지 않도록 하면 데이터 I/O 성능을 향상시킬 수 있다 (0으로 설정).
 Fsync를 수행하지 않아도 일반적 상황에서는 데이터 유실이 없으나 전원이 꺼지는 등의 장애 상황이 발생할 수 있는 경우에는 fsync를 수행하도록 설정해야 한다.
@@ -354,7 +354,7 @@ Fsync를 수행하지 않아도 일반적 상황에서는 데이터 유실이 �
 |최대값|	1|
 |기본값|	0|
 
-# DISK_TABLESPACE_DIRECT_IO_READ
+## DISK_TABLESPACE_DIRECT_IO_READ
 
 데이터 읽기 연산에 DIRECT I/O 를 사용할 것인지를 설정한다.
 
@@ -364,7 +364,7 @@ Fsync를 수행하지 않아도 일반적 상황에서는 데이터 유실이 �
 |최대값|	1|
 |기본값|	0|
 
-# DISK_TABLESPACE_DIRECT_IO_WRITE
+## DISK_TABLESPACE_DIRECT_IO_WRITE
 
 데이터 쓰기 연산에 DIRECT I/O 를 사용할 것인지 설정한다. 파일 시스템에 따라서 DIRECT I/O 지원하지 않는 경우(ex: ZFS), 0으로 설정한다.
 
@@ -376,7 +376,7 @@ Fsync를 수행하지 않아도 일반적 상황에서는 데이터 유실이 �
 |최대값|	1|
 |기본값|	1|
 
-# DISK_TAG_AUTO_RECLAIM
+## DISK_TAG_AUTO_RECLAIM
 
 TAG 데이터에 대해서 사용되지 않는 공간을 자동 확보할 것인지의 여부를 결정한다. 기본값인 1인 경우, 자동 공간 확보 기능이 동작하고 0 인 경우에는 동작하지 않으며 사용자가 ALTER TABLE문을 이용하여 해당 기능을 직접 수행해야 한다.
 
@@ -386,7 +386,7 @@ TAG 데이터에 대해서 사용되지 않는 공간을 자동 확보할 것인
 |최대값|	1|
 |기본값|	1|
 
-# DUMP_APPEND_ERROR
+## DUMP_APPEND_ERROR
 
 이 값을 1로 설정하면 Append API 가 실패한 경우 $MACHBASE_HOME/trc/machbase.trc 파일에 에러 내용을 기록한다.
 이 상황에서 append 성능이 매우 저하될 수 있으므로 테스트용으로만 사용할 것을 권장한다.
