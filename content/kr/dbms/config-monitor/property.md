@@ -400,7 +400,7 @@ TAG 데이터에 대해서 사용되지 않는 공간을 자동 확보할 것인
 |최대값|	1|
 |기본값|	0|
 
-# DUMP_TRACE_INFO
+## DUMP_TRACE_INFO
 
 서버는 일정한 주기로 DBMS 시스템 상태 정보를 machbase.trc 파일에 주기적으로 기록하는데, 이 주기를 설정한다.
 0으로 설정하면 기록하지 않는다.
@@ -411,7 +411,7 @@ TAG 데이터에 대해서 사용되지 않는 공간을 자동 확보할 것인
 |최대값|	2^32 - 1 (sec)|
 |기본값|	60 (sec)|
 
-# DURATION_BEGIN
+## DURATION_BEGIN
 
 DURATION 절을 지정하지 않은 SELECT 문에 대해서 기본을 설정하는 duration 값 중 시작시점을 설정한다.
 만약 60을 설정해 두었다면, 현재 시각에서 60초 이전의 데이터를 검색하게 된다.
@@ -424,7 +424,7 @@ DURATION 절을 지정하지 않은 SELECT 문에 대해서 기본을 설정하�
 |최대값|	2^32 - 1|
 |기본값|	0|
 
-# DURATION_GAP
+## DURATION_GAP
 DURATION 절을 지정하지 않은 SELECT 문에 대해서 기본을 설정하는 duration 값 중 기간을 설정한다.
 
 만약 60을 설정해 두었다면, 현재 시각에서 60초 동안의 데이터를 검색하게 된다.
@@ -437,7 +437,7 @@ DURATION_BEGIN 값도 60이라면, 현재 시각에서 60초 이전부터 60초 
 |최대값|	Non-zero|
 |기본값|	0|
 
-# FEEDBACK_APPEND_ERROR
+## FEEDBACK_APPEND_ERROR
 
 Append API 실행시 오류가 발생하였을 경우, 오류 데이터를 클라이언트에 전송할지를 설정한다. 0이면 클라이언트에 오류 데이터를 전송하지 않으며 1이면 클라이언트에 오류 정보를 전송한다.
 
@@ -447,7 +447,7 @@ Append API 실행시 오류가 발생하였을 경우, 오류 데이터를 클�
 |최대값|	1|
 |기본값|	1|
 
-# GRANT_REMOTE_ACCESS
+## GRANT_REMOTE_ACCESS
 
 원격지에서 데이터베이스에 접근할 수 있는지를 결정한다. 0이면 원격지 접속이 차단된다.
 
@@ -457,7 +457,7 @@ Append API 실행시 오류가 발생하였을 경우, 오류 데이터를 클�
 |최대값|	1 (True)|
 |기본값|    1 (True)|
 
-# HTTP_THREAD_COUNT
+## HTTP_THREAD_COUNT
 
 마크베이스의 웹 서버가 사용할 스레드의 개수를 설정 가능하다.
 
@@ -467,7 +467,7 @@ Append API 실행시 오류가 발생하였을 경우, 오류 데이터를 클�
 |최대값|	1024|
 |기본값|    32|
 
-# INDEX_BUILD_MAX_ROW_COUNT_PER_THREAD
+## INDEX_BUILD_MAX_ROW_COUNT_PER_THREAD
 
 인덱스 빌드 스레드가 인덱싱 되지 않은 레코드의 수가 이 값 이상이 되면 인덱스를 추가하기 시작한다.
 
@@ -477,7 +477,7 @@ Append API 실행시 오류가 발생하였을 경우, 오류 데이터를 클�
 |최대값|	2^32 - 1|
 |기본값|	100000|
 
-# INDEX_BUILD_THREAD_COUNT
+## INDEX_BUILD_THREAD_COUNT
 
 인덱스 생성 스레드의 수를 지정한다. 0으로 설정되면 인덱스를 생성하지 않는다.
 
@@ -487,7 +487,7 @@ Append API 실행시 오류가 발생하였을 경우, 오류 데이터를 클�
 |최대값|	2 ^ 32 - 1|
 |기본값|	3|
 
-# INDEX_FLUSH_MAX_REQUEST_COUNT_PER_INDEX
+## INDEX_FLUSH_MAX_REQUEST_COUNT_PER_INDEX
 
 인덱스당 최대 flush 요청 수를 지정한다.
 
@@ -497,7 +497,7 @@ Append API 실행시 오류가 발생하였을 경우, 오류 데이터를 클�
 |최대값|	2 ^ 32 - 1|
 |기본값|	3|
 
-# INDEX_LEVEL_PARTITION_AGER_THREAD_COUNT
+## INDEX_LEVEL_PARTITION_AGER_THREAD_COUNT
 
 LSM 인덱스 생성시에 필요없는 인덱스 파일의 삭제를 위한 스레드의 갯수를 지정한다.
 
@@ -507,7 +507,7 @@ LSM 인덱스 생성시에 필요없는 인덱스 파일의 삭제를 위한 스
 |최대값|	1024|
 |기본값|	1|
 
-# INDEX_LEVEL_PARTITION_BUILD_MEMORY_HIGH_LIMIT_PCT
+## INDEX_LEVEL_PARTITION_BUILD_MEMORY_HIGH_LIMIT_PCT
 
 LSM 인덱스 생성을 위한 최대 메모리 사용량의 퍼센트로 설정한다. 이 퍼센트는 마크베이스가 사용하는 최대 메모리사용량 대비하여 설정된다. 메모리 사용량이 한도를 초과하면, LSM 파티션 병합은 중지된다.
 
@@ -517,7 +517,7 @@ LSM 인덱스 생성을 위한 최대 메모리 사용량의 퍼센트로 설정
 |최대값|	100|
 |기본값|	70|
 
-# INDEX_LEVEL_PARTITION_BUILD_THREAD_COUNT
+## INDEX_LEVEL_PARTITION_BUILD_THREAD_COUNT
 
 LSM 인덱스의 생성을 위한 병합 연산을 수행하는 스레드의 수를 결정한다.
 
@@ -527,7 +527,7 @@ LSM 인덱스의 생성을 위한 병합 연산을 수행하는 스레드의 수
 |최대값|    1024|
 |기본값|	3|
 
-# LOOKUP_APPEND_UPDATE_ON_DUPKEY
+## LOOKUP_APPEND_UPDATE_ON_DUPKEY
 
 Lookup 테이블에 Append 할 때 Primary Key가 중복일 경우 어떻게 처리할지 지정한다.
 
@@ -540,7 +540,7 @@ Lookup 테이블에 Append 할 때 Primary Key가 중복일 경우 어떻게 처
 |최대값|	1|
 |기본값|	0|
 
-# MAX_QPX_MEM
+## MAX_QPX_MEM
 
 GROUP BY, DISTINCT, ORDER BY 절을 수행하기 위해서 질의처리기가  이용하는 메모리의 최대 양을 설정한다.
 하나의 질의문이 이보다 큰 값으로 메모리를 사용하게 되면 질의는 취소된다. 이때, 에러메시지를 클라이언트에 전송하고, machbase.trc 파일에 관련 내용이 기록된다.
@@ -551,7 +551,7 @@ GROUP BY, DISTINCT, ORDER BY 절을 수행하기 위해서 질의처리기가  �
 |최대값|	2^64 - 1|
 |기본값|	500 * 1024 * 1024|
 
-# MEMORY_ROW_TEMP_TABLE_PAGESIZE
+## MEMORY_ROW_TEMP_TABLE_PAGESIZE
 
 Volatile table및 lookup 테이블을 위한 임시 테이블 스페이스의 페이지 크기를 설정한다. Volatile 테이블 및 lookup 테이블의 레코드들은 페이지에 저장되므로 volatile을 위한 최대 레코드 크기보다 커야 한다.
 페이지에 N개의 레코드를 입력하고 싶으면 이 값을 최대 레코드 크기 * N으로 설정해야 한다.
@@ -562,7 +562,7 @@ Volatile table및 lookup 테이블을 위한 임시 테이블 스페이스의 �
 |최대값|	2^32 - 1|
 |기본값|	32 * 1024|
 
-# PID_PATH
+## PID_PATH
 
 마크베이스 서버 프로세스의 PID파일이 기록되는 위치를 지정한다. 기본값은 "?/conf"이며 이는 $MACHBASE_HOME/conf 를 의미한다.
 
@@ -576,7 +576,7 @@ Volatile table및 lookup 테이블을 위한 임시 테이블 스페이스의 �
 |?/test|	$MACHBASE_HOME/test/machbase.pid|
 |/tmp|	/tmp/machbase.pid|
 
-# PORT_NO
+## PORT_NO
 
 마크베이스 서버 프로세스가 클라이언트와 통신하기 위한 TCP/IP 포트를 지정한다. 기본값은 5656이다.
 
@@ -586,7 +586,7 @@ Volatile table및 lookup 테이블을 위한 임시 테이블 스페이스의 �
 |최대값|	65535|
 |기본값|	5656|
 
-# PROCESS_MAX_SIZE
+## PROCESS_MAX_SIZE
 
 마크베이스 서버 프로세스인 machbased 프로그램이 사용하는 최대 메모리 사이즈를 지정한다. 이 제한값 이상의 메모리를 사용하려고 하면 서버는 다음과 같이 동작하여 메모리의 사용량을 줄이려고 시도한다. 메모리 제한을 초과한 경우, 다음의 방법으로 메모리 사용량을 줄인다.
 
@@ -600,7 +600,7 @@ Volatile table및 lookup 테이블을 위한 임시 테이블 스페이스의 �
 |최대값|	2^64 - 1|
 |기본값|	8 * 1024 * 1024 * 1024|
 
-# QUERY_PARALLEL_FACTOR
+## QUERY_PARALLEL_FACTOR
 
 병렬 질의 실행기의 실행 스레드의 수를 지정한다.
 
@@ -610,7 +610,7 @@ Volatile table및 lookup 테이블을 위한 임시 테이블 스페이스의 �
 |최대값|	100|
 |기본값|	8|
 
-# ROLLUP_FETCH_COUNT_LIMIT
+## ROLLUP_FETCH_COUNT_LIMIT
 
 롤업 스레드가 한번에 패치해올 데이터양을 제한한다.
 
@@ -622,7 +622,7 @@ Volatile table및 lookup 테이블을 위한 임시 테이블 스페이스의 �
 |최대값|	2^32 - 1|
 |기본값|	3000000|
 
-# RS_CACHE_APPROXIMATE_RESULT_ENABLE
+## RS_CACHE_APPROXIMATE_RESULT_ENABLE
 
 결과값 캐쉬의 추측 모드(approximate result mode)를 사용할지의 여부를 결정한다. 이 값이 1이면 결과값 캐쉬를 사용할 때, 추측 값을 얻고(매우 빠르지만 데이터가 부정확할 수 있다.) 0 이면 정확한 값을 얻는다.
 
@@ -632,7 +632,7 @@ Volatile table및 lookup 테이블을 위한 임시 테이블 스페이스의 �
 |최대값|	1 (True)|
 |기본값|	0 (False)|
 
-# RS_CACHE_ENABLE
+## RS_CACHE_ENABLE
 
 결과값 캐쉬를 사용할 지의 여부를 결정한다.
 
@@ -642,7 +642,7 @@ Volatile table및 lookup 테이블을 위한 임시 테이블 스페이스의 �
 |최대값|	1 (True)|
 |기본값|	1 (True)|
 
-# RS_CACHE_MAX_MEMORY_PER_QUERY
+## RS_CACHE_MAX_MEMORY_PER_QUERY
 
 결과값 캐쉬가 사용할 메모리의 양을 설정한다. 특정 질의 결과의 메모리 사용량이 이 값을 초과하면, 해당 질의의 결과는 결과값 캐쉬에 저장되지 않는다.
 
@@ -652,7 +652,7 @@ Volatile table및 lookup 테이블을 위한 임시 테이블 스페이스의 �
 |최대값|	2^64 - 1|
 |기본값|	16 * 1024 * 1024|
 
-# RS_CACHE_MAX_MEMORY_SIZE
+## RS_CACHE_MAX_MEMORY_SIZE
 
 결과값 캐쉬의 최대 메모리 사용량을 지정한다.
 
@@ -662,7 +662,7 @@ Volatile table및 lookup 테이블을 위한 임시 테이블 스페이스의 �
 |최대값|	2^64 - 1|
 |기본값|	512 * 1024 * 1024|
 
-# RS_CACHE_MAX_RECORD_PER_QUERY
+## RS_CACHE_MAX_RECORD_PER_QUERY
 
 결과값 캐쉬에 저장되는 최대 레코드 갯수이다. 만약 질의의 결과 레코드의 수가 이 값 이상이면 해당 질의 결과값은 캐쉬에 저장하지 않는다.
 
@@ -672,7 +672,7 @@ Volatile table및 lookup 테이블을 위한 임시 테이블 스페이스의 �
 |최대값|	2^64 - 1|
 |기본값|	10000|
 
-# RS_CACHE_TIME_BOUND_MSEC
+## RS_CACHE_TIME_BOUND_MSEC
 
 특정 질의가 매우 빠르게 실행된 경우에는 그 결과값을 결과값 캐쉬에 저장하지 않는 것이 메모리 사용량을 줄일 수 있으므로 캐쉬에 저장하지 않는것이 좋다.
 
@@ -684,7 +684,7 @@ Volatile table및 lookup 테이블을 위한 임시 테이블 스페이스의 �
 |최대값|	2^64 - 1 (msec)|
 |기본값|	1000 (msec)|
 
-# SHOW_HIDDEN_COLS
+## SHOW_HIDDEN_COLS
 
 _ARRIVAL_TIME 컬럼은 기본 설정으로는 SELECT * FROM 질의에 의해서 표시되지 않는다. 그러나 이 값이 1로 설정된 경우에는 해당 컬럼을 표시한다.
 
@@ -694,7 +694,7 @@ _ARRIVAL_TIME 컬럼은 기본 설정으로는 SELECT * FROM 질의에 의해서
 |최대값|	1|
 |기본값|	0|
 
-# TABLE_SCAN_DIRECTION
+## TABLE_SCAN_DIRECTION
 
 태그 테이블의 스캔 방향을 설정할 수 있다. 프로퍼티 값은 -1,0, 1중 택일이며 기본값은 0이다.
 
@@ -709,7 +709,7 @@ _ARRIVAL_TIME 컬럼은 기본 설정으로는 SELECT * FROM 질의에 의해서
 |최대값|	1|
 |기본값|	0|
 
-# TAGDATA_AUTO_META_INSERT
+## TAGDATA_AUTO_META_INSERT
 
 5.5 에서는 TAGDATA_AUTO_NAME_INSERT 이다. 값의 범위도 0/1 이다.
 5.7 이하에서는 기본값이 1 이다.
@@ -728,7 +728,7 @@ APPEND 에서만 유효한 설정이며, INSERT 는 추가 메타데이터 컬�
 |최대값|	2|
 |기본값|	2|
 
-# TAG_TABLE_META_MAX_SIZE
+## TAG_TABLE_META_MAX_SIZE
 
 TAGDATA Table 생성 시 Metadata 영역을 보관할 메모리의 최대 크기를 설정한다.
 
@@ -738,7 +738,7 @@ TAGDATA Table 생성 시 Metadata 영역을 보관할 메모리의 최대 크기
 |최대값|	2^32-1|
 |기본값|	100*1024*1024|
 
-# TAG_PARTITION_COUNT
+## TAG_PARTITION_COUNT
 
 Tag 테이블을 구성하는 Key Value 테이블의 개수를 지정한다.
 
@@ -748,7 +748,7 @@ Tag 테이블을 구성하는 Key Value 테이블의 개수를 지정한다.
 |최대값| 4|
 |기본값| 1024 |
 
-# TAG_DATA_PART_SIZE
+## TAG_DATA_PART_SIZE
 
 Tag 데이터 저장공간의 파티션 크기를 결정한다.
 
@@ -758,7 +758,7 @@ Tag 데이터 저장공간의 파티션 크기를 결정한다.
 |최대값| 1073741824 (1GB)|
 |기본값| 16777216 (16MB) |
 
-# TRACE_LOGFILE_COUNT
+## TRACE_LOGFILE_COUNT
 
 TRACE_LOGFILE_PATH에 생성되는 로그 트레이스 파일의 최대 수를 지정한다. 디스크 공간을 절약하기 위해서, 최대 개수 이상의 로그파일이 생성되면 가장 오래된 로그파일을 삭제한다.
 
@@ -770,7 +770,7 @@ TRACE_LOGFILE_PATH에 생성되는 로그 트레이스 파일의 최대 수를 �
 |최대값|	2^32 - 1|
 |기본값|	1000|
 
-# TRACE_LOGFILE_PATH
+## TRACE_LOGFILE_PATH
 
 로그 트레이스 파일들(machbase.trc, machadmin.trc, machsql.trc)의 경로를 설정한다.
 이 파일들은 마크베이스의 시작, 종료, 실행시 내부 정보를 지속적으로 기록한다. 기본값인 ?/trc의 의미는 $MACHBASE_HOME/trc 를 의미한다.
@@ -785,7 +785,7 @@ TRACE_LOGFILE_PATH에 생성되는 로그 트레이스 파일의 최대 수를 �
 |?/test|	$MACHBASE_HOME/test/|
 |/tmp|	/tmp/|
 
-# TRACE_LOGFILE_SIZE
+## TRACE_LOGFILE_SIZE
 
 로그 트레이스 파일의 최대 크기를 설정한다. 만약 크기 이상의 데이터를 기록하여야 한다면, 신규로 log 파일을 생성할 것이다.
 
@@ -796,7 +796,7 @@ TRACE_LOGFILE_PATH에 생성되는 로그 트레이스 파일의 최대 수를 �
 |최대값|	2^32 - 1|
 |기본값|	10 * 1024 * 1024|
 
-# UNIX_PATH
+## UNIX_PATH
 
 Unix domain socket 파일의 경로를 설정한다. 사용자가 설정하지 않았을 경우의 기본 값은 ?/conf/machbase-unix 이다.
 
@@ -804,7 +804,7 @@ Unix domain socket 파일의 경로를 설정한다. 사용자가 설정하지 �
 |-|----|
 |기본값|	?/conf/machbase-unix|
 
-# VOLATILE_TABLESPACE_MEMORY_MAX_SIZE
+## VOLATILE_TABLESPACE_MEMORY_MAX_SIZE
 
 시스템의 모든 volatile, lookup 테이블의 메모리 사용량 총계의 한도를 설정한다.
 
