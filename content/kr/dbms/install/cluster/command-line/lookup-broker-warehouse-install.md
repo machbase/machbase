@@ -1,5 +1,4 @@
 ---
-layout : post
 title : "Lookup / Broker / Warehouse 설치"
 type: docs
 weight: 30
