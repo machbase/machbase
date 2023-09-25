@@ -122,10 +122,10 @@ finally
 }
 ```
 
-{:.warning-title}
->Close rows
->
-> Do not forget to close rows by calling `RowsClose()`.
+{{< callout type="warning" >}}
+**Close rows**<br/>
+Do not forget to close rows by calling `RowsClose()`.
+{{< /callout >}}
 
 
 ### Convert Google.Protobuf.WellKnownTypes.Any to string

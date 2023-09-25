@@ -2,6 +2,7 @@
 title: Releases
 type: docs
 weight: 10
+toc: false
 ---
 
 
@@ -39,11 +40,10 @@ The (_experimental_) GUI releases for macOS users.
 Find previously released versions in [here](https://github.com/machbase/neo-server/releases).
 
 
-{{< callout >}}
-- The edge and fog editions of the previsous **v1.5.0**
-
-Since v1.5.0, the editions are integrated into the single "standard" edition.
-If you plan to run old version of machbase-neo on a small device such as Raspberry Pi, select the Edge edition.
+{{< callout type="warning" emoji="⚠️">}}
+**The edge and fog editions** of the previsous **v1.5.0** -
+Since v1.5.0, the editions are integrated into the single "standard" edition.<br/>
+If you plan to run old version of machbase-neo on a small device such as Raspberry Pi, select the Edge edition.<br/>
 For machines with larger memory and more CPU cores, such as a personal workstation or server, choose the Fog edition.
 {{< /callout >}}
 

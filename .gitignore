@@ -15,3 +15,5 @@ vhs/machbase_home/
 vhs/machbase-neo
 
 examples/**/target/
+
+*.swp

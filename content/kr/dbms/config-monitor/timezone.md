@@ -4,7 +4,16 @@ title : 'Timezone'
 type: docs
 ---
 
-# 마크베이스의 Timezone
+## 목차
+
+* [마크베이스의 Timezone](#마크베이스의-timezone)
+* [마크베이스의 Timezone 지원 형식](#마크베이스의-timezone-지원-형식)
+    * [machsql](#machsql)
+    * [machloader](#machloader)
+    * [SDK](#sdk)
+    * [Rest API](#rest-api)
+
+## 마크베이스의 Timezone
 마크베이스는 각 클라이언트의 타임존을 세션 단위에서 유효한 것으로 가정한다.
 
 일반적으로는 특정한 시간을 나타내는 스트링으로 타임존을 지정하는 방식을 사용한다.
@@ -31,7 +40,7 @@ type: docs
 - 클라이언트 프로그램에서 타임존을 명시적으로 설정한 경우에는 해당 서버의 해당 세션은 클라이언트에서 지정한 타임존으로 동작한다.
 즉, 서버에서  설정된 TIMEZONE이 KST이라 하더라도, 만일 클라이언트가 접속시 EDT로 타임존을 설정한 경우에는 해당 세션은 EDT로 동작한다.
 
-# 마크베이스의 Timezone 지원 형식
+## 마크베이스의 Timezone 지원 형식
 마크베이스는 사용상의 편의성 증진과 복잡성을 제거하기  위해 5자리의 문자로 구성된 단 한가지 포맷만을 제공한다.
 
 즉, 첫번째 문자는 + 혹은 -의 기호로 시간의 부호를 나타내고, 이어지는 두개의 문자는 00에서 23 사이의 값을 가진다. 그리고, 마지막 두개의 문자는 00에서 59까지의 시간을 가지는 것으로 한다.
@@ -43,7 +52,7 @@ TIMEZONE=+0900
 TIMEZONE=-0900
 ```
 
-# machsql
+## machsql
 machsql은 구동시 아래와 같은 옵션을 통해 동작할 타임존을 설정할 수 있다.
 ```
 -z, --timezone=+-HHMM
@@ -55,14 +64,14 @@ SHOW TIMEZONE;
 Mach> show timezone;
 Timezone : +0900
 ```
-# machloader
+## machloader
 machloader는  구동시 아래와 같은 옵션을 통해 동작할 타임존을 설정할 수 있다.
 ```
 -z, --timezone=+-HHMM
 ```
 지정된 타임존으로 접속하고, 시간 연산도 해당 타임존을 기준으로 동작한다.
 
-# SDK
+## SDK
 연결 스트링에 TIMEZONE이 추가되었으며, 해당 세션에 대한 타임존을 지정할 수 있다.
 
 만일 연결 스트링에 TIMEZONE을 지정하지 않을 경우에는 서버의 타임존을 기준으로 동작한다.
@@ -73,7 +82,7 @@ machloader는  구동시 아래와 같은 옵션을 통해 동작할 타임존�
 ```
 SERVER=127.0.0.1;UID=SYS;PWD=MANAGER;CONNTYPE=1;NLS_USE=UTF8;PORT_NO=5656;TIMEZONE=+0300
 ```
-# Rest API
+## Rest API
 Rest API는 동작 요청시 HTTP 프로토콜의 HEADER에서 지정된 타임존을 기준으로 동작한다.
 
 그 헤더의 이름은 `The-Timezone-Machbase으로 명명되었으며,  사용법은 아래와 같다.`
