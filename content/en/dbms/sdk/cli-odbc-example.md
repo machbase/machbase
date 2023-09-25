@@ -81,7 +81,7 @@ We will create an example program to connect using the CLI.
 The sample file name is sample1_connect.c.
 MACHBASE_PORT_NO must be the same as the PORT_NO value in the $MACHBASE_HOME/conf/machbase.conf file.
 
-[sample1_connect.c](./files/sample1_connect.c)
+[sample1_connect.c](../files/sample1_connect.c)
 
 If you register sample1_connect.c in Makefile, compile and run it, it will appear as follows. 
 
@@ -97,7 +97,7 @@ connected ...
 In the example source below, we created a table using the CREATE TABLE statement, arbitrarily create simple data values, input data using the INSERT statement, and output the data using the SELECT statement. You will be able to see how to configure each type when entering and checking values ​​directly.
 The sample file name is sample2_insert.c.
 
-[sample2_insert.c](./files/sample2_insert.c)
+[sample2_insert.c](../files/sample2_insert.c)
 
 If you register sample2_insert.c in the Makefile, compile and run it, it will appear as follows. 
 
@@ -143,7 +143,7 @@ You can enter a value by binding data in Machbase. When you use this, you need t
 The following example shows how to bind data for each type.
 The file name is sample3_prepare.c.
 
-[sample3_prepare.c](./files/sample3_prepare.c)
+[sample3_prepare.c](../files/sample3_prepare.c)
 
 If you register sample3_prepare.c in the Makefile, compile and run it, it will appear as follows. 
 
@@ -188,7 +188,7 @@ In Machbase, the append protocol is provided by reading a large amount of data f
 First, let's look at an example of how to append to the various types provided by Machbase. The Append method has its own settings for each type. Therefore, if you know how to use every method, you will be able to write programs more efficiently. All the methods are listed in the example code at the bottom.
 The file name is sample4_append1.c.
 
-[sample4_append.c](./files/sample4_append.c)
+[sample4_append.c](../files/sample4_append.c)
 
 If you register sample4_append1.c in the Makefile, compile and run it, it will appear as follows. 
 
@@ -280,7 +280,7 @@ You have to save the data to be entered in advance in data.txt.
 
 Modifying the given make_data.c gives you the opportunity to create a data.txt file for your situation.
 
-[make_data.c](./files/make_data.c)
+[make_data.c](../files/make_data.c)
 
 If you register sample4_append2.c in the Makefile, compile and run it, it will appear as follows. 
 
@@ -309,7 +309,7 @@ There are a number of ways to obtain table column information, but we will look 
 
 The sample file name is sample5_describe.c.
 
-[sample5_describe.c](./files/sample5_describe.c)
+[sample5_describe.c](../files/sample5_describe.c)
 
 If you add the above file and run make, you can see the contents of the column as shown below.
 
@@ -342,7 +342,7 @@ SQLColumns is a function that can find the information of the columns existing i
 
 The file name is sample6_columns.c.
 
-[sample6_columns.c](./files/sample6_columns.c)
+[sample6_columns.c](../files/sample6_columns.c)
 
 Add the above file and run make. The results are as follows.
 
@@ -376,7 +376,7 @@ An example of using multiple threads in one program to append to multiple tables
 
 The file name is sample8_multi_session_multi_table.c.
 
-[sample8_multi_session_multi_table.c](./files/sample8_multi_session_multi_table.c)
+[sample8_multi_session_multi_table.c](../files/sample8_multi_session_multi_table.c)
 
 Add the make code and run the executable file. Because the threads are used, the output order may be different. The results are as follows.
 
