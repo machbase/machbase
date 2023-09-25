@@ -42,7 +42,7 @@ for(int i=0; i<10000; i++)
 
 Cluster Edition의 경우 Append 입력은 Leader Broker에서 수행해야 한다.
 
-세부 내용은 [SDK](../../sdk/sdk.md) 가이드를 참고한다.
+세부 내용은 [SDK](/kr/dbms/sdk) 가이드를 참고한다.
 
 ## 데이터 갱신
 
