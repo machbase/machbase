@@ -1,6 +1,7 @@
 ---
 layout : post
 title : 'Property'
+type: docs
 ---
 
 프로퍼티란 __$MACHBASE_HOME/conf/machbase.conf__ 파일에 정의되어 있는 키-값 의 쌍을 의미한다.

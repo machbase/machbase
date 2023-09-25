@@ -1,6 +1,7 @@
 ---
 layout : post
 title : 'Property (Cluster)'
+type: docs
 ---
 
 [Property](./property.md)와 별개로, Cluster Edition 에서만 사용 가능한 Property 를 정리한다.

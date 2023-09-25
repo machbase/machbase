@@ -1,6 +1,7 @@
 ---
 layout : post
 title : 'Virtual Table'
+type: docs
 ---
 
 Virtual Table은 마크베이스 서버의 다양한 운영 정보들을 테이블 형태로 표현하는 가상 테이블이다. 이 테이블들의 이름은 V$문자로 시작한다.

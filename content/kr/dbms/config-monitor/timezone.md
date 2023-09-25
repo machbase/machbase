@@ -1,6 +1,7 @@
 ---
 layout : post
 title : 'Timezone'
+type: docs
 ---
 
 # 마크베이스의 Timezone
