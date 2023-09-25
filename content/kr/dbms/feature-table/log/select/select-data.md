@@ -148,5 +148,5 @@ Elapsed time: 0.001
 
 ### 기본 스캔 방향 프로퍼티로 설정
 
-[TABLE_SCAN_DIRECTION](/kr/setting-monitoring/property.md) 프로퍼티로 SELECT 문에 힌트가 없을 때 로그 테이블의 스캔 방향을 설정할 수 있다. 
+[TABLE_SCAN_DIRECTION](/kr/dbms/config-monitor/property/#table_scan_direction) 프로퍼티로 SELECT 문에 힌트가 없을 때 로그 테이블의 스캔 방향을 설정할 수 있다. 
 
