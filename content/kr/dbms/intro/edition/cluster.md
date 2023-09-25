@@ -37,7 +37,7 @@ Process 타입은 아래의 Node Type 과 동일하다.
 
 Machbase Cluster Edition 은, Host 에 상주하는 여러 Node 가 하나의 클러스터를 구성한다.
 
-![clusteredition](./clusteredition.png)
+![clusteredition](../clusteredition.png)
 
 고가용성
 
@@ -73,9 +73,9 @@ Coordinator에 의해 관리되지만, 단순히 Broker/Warehouse/Lookup Node의
 
 보통은 Node 를 설치할 Host 에 1대씩 추가하지만, 설치 성능을 위해 여러 Deployer를 추가할 수도 있다.
 
-![deployer](./deployer.png)
+![deployer](../deployer.png)
 
-![deployer2](./deployer2.png)
+![deployer2](../deployer2.png)
 
 
 서버에서 설치 예제
@@ -83,7 +83,7 @@ Coordinator에 의해 관리되지만, 단순히 Broker/Warehouse/Lookup Node의
 아래 그림(a)는, 범용 서버 4대에 2개의 Coordinator, 2개의 Broker, 4개의 Warehouse Active, 4개의 Warehouse Standby Node를 설치한 것을 나타낸 것이다.
 그림 처럼, 범용 서버의 호스트 이름과 할당된 포트 번호가 이어진 **'hostname:port'** 로 각 Node를 구분할 수 있다.
 
-![deploynode](./deploynode.png)
+![deploynode](../deploynode.png)
 
 #### Lookup
 
@@ -132,7 +132,7 @@ Readonly 상태로 변하는 조건은 다음과 같다.
 
 #### Node의 Port 관리
 
-![nodeport](./node_port.png)
+![nodeport](../node_port.png)
 
 |Port 구분| 설명 | 필요한 Node |
 |--|--|--|
