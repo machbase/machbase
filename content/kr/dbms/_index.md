@@ -7,8 +7,8 @@ weight: 30
 ## 개요
 
 * [마크베이스 소개](./intro/)
-* [마크베이스 특징](./intro/features)
-* [마크베이스 제품군 소개](./intro/editions)
+* [마크베이스 특징](./intro/features/)
+* [마크베이스 제품군 소개](./intro/edition/)
 
 ## 설치
 
