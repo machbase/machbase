@@ -14,7 +14,7 @@ CLI는 데이터베이스에 어떻게 SQL을 전달하고, 결과 값을 어떻
 ## 표준 CLI 함수
 표준 함수의 사용법에 대해서는 다음과 같은 링크를 참조한다.
 
-* [위키피디아]((http://en.wikipedia.org/wiki/Call_Level_Interface))
+* [위키피디아](https://en.wikipedia.org/wiki/Call_Level_Interface)
 * [오픈그룹 문서](https://www2.opengroup.org/ogsys/catalog/c451)
 
 다음의 함수를 참고하면 된다.
