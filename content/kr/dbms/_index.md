@@ -51,7 +51,7 @@ weight: 30
 ## SDK
 
 * [CLI/ODBC](./sdk/cli_odbc)
-* [CLI/ODBC 예제](./sdk/cli_odbc_example)
+* [CLI/ODBC 예제](./sdk/cli-odbc-example)
 * [JDBC](./sdk/jdbc)
 * [Python](./sdk/python)
 * [RESTful API](./sdk/restful_api)
