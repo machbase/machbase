@@ -4,25 +4,20 @@ weight: 10
 toc: false
 ---
 
-- ✓ Performant timeseries database
-- ✓ Scalable from Raspberry Pi to high-end servers
-- ✓ Easy to install - instant download and run
-- ✓ Easy to learn - familiar SQL with Tables and Columns
-- ✓ Easy to write and query via **HTTP**, **MQTT** and **gRPC**
-- ✓ Bridge to SQLite, PostgreSQL, MySQL, MSSQL, MQTT Broker
+✓ Performant timeseries database<br/>
+✓ Scalable from Raspberry Pi to high-end servers<br/>
+✓ Easy to install - instant download and run<br/>
+✓ Easy to learn - familiar SQL with Tables and Columns<br/>
+✓ Easy to write and query via **HTTP**, **MQTT** and **gRPC**<br/>
+✓ Bridge to SQLite, PostgreSQL, MySQL, MSSQL, MQTT Broker<br/>
 
-{{<cards>}}
-    {{<card link="./getting-started/" title="Get Started" icon="academic-cap">}}
-    {{<card link="./releases/" title="Download" icon="download">}}
-{{</cards>}}
-
-> 📢 The latest version is {{< label color="green" >}} {{< neo_latestver >}} {{< /label>}}
-
-
+{{< button color="purple" href="./getting-started/">}} Get Started {{< /button >}}
+{{< button color="green" href="./releases/">}} Download  {{< /button >}}
+{{< label color="green" >}} LATEST <i>{{< neo_latestver >}}</i> {{< /label>}}
 
 Machbase is the world's fastest timeseries database[^1] with a minimal footprint. It's an ideal solution for environments that require scalability, from small servers with limited resources like the Raspberry Pi to horizontally scaled clusters. Machbase Neo, built on Machbase, adds crucial features required for the IoT industry. It ingests and handles query data through various protocols, such as MQTT for direct data transfer from IoT sensors, and SQL via HTTP for data retrieval by applications.
 
-{{< overview_interfaces >}}
+![interfaces](/images/interfaces.jpg)
 
 ### API and Interfaces
 

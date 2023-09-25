@@ -39,10 +39,11 @@ The default value of `PrefDir` is `prefDir("machbase")` which is `$HOME/.config/
 | Machbase native           | Machbase.PORT_NO          | `5656`                  |
 |                           | Machbase.BIND_IP_ADDRESS  | `127.0.0.1`             |
 
-{: .note}
 
-> Machbase native port `5656` is used for native clients such as JDBC and ODBC.
-> JDBC, ODBC drivers can be found from Machbase home page.
+{{< callout type="info" >}}
+Machbase native port `5656` is used for native clients such as JDBC and ODBC.
+JDBC, ODBC drivers can be found from Machbase home page.
+{{< /callout >}}
 
 ## Config References
 
@@ -57,14 +58,13 @@ Serveral functions are supproted for the value of config item.
 - `execDir()` : Get directory path where executable file is.
 - `userDir()` : Get user's home directory, On Linux and macOS, it returns the $HOME environment variable.
 - `prefDir(subdir)` : Ger user's preference directory, On Linux and macOS, it returns the real path of $HOME/.config/{subdir}
-- More functions are available from [https://github.com/machbase/booter](https://github.com/machbase/booter){:target="_blank" rel="noopener"} framework.
 
-{:.note-title}
-> Combine env() and flag()
->
-> It is general practice for seeking user's setting 
-> that check command line flag first then find Environment variable and finally apply default value if both are not sepcified.
-> We can write value `flag("--my-var", env("MY_VAR", "myvalue"))` for this use case
+{{< callout type="info">}}
+**Combine env() and flag()**<br/>
+It is general practice for seeking user's setting 
+that check command line flag first then find Environment variable and finally apply default value if both are not sepcified.
+We can write value `flag("--my-var", env("MY_VAR", "myvalue"))` for this use case
+{{< /callout >}}
 
 ### define DEF
 
@@ -153,17 +153,17 @@ This section is for the database server consists of multiple parts those will be
 #### Machbase
 
 Machbase core properties are here,
-please refer [Property section of Machbase Manual](https://machbase.atlassian.net/wiki/spaces/M7ME/pages/417762908/Property){:target="_blank" rel="noopener"} for details. And full manual for [Machbase is here](https://machbase.atlassian.net/wiki/spaces/M7ME/){:target="_blank" rel="noopener"}.
+please refer [Property section of Machbase Manual](/dbms/config-monitor/property/) for details. And full manual for [Machbase is here](/dbms)
 
 
 #### Shell
 
 This allows remote access machbase-neo shell via ssh. Since default `LISTEN_HOST` is `"127.0.0.1"` the ssh access only available from same host machine. Set `"0.0.0.0"` or exact IP adress of host machine to allow remote access.
 
-{:.warning-title}
-> Security
->
-> Before allow remote access, it is strongly recommended to change `SYS`'s default password from `manager` to your own.
+{{< callout type="warning" >}}
+**Security**<br/>
+Before allow remote access, it is strongly recommended to change `SYS`'s default password from `manager` to your own.
+{{< /callout >}}
 
 | Key                         | Type               | Desc                                                     |
 |:----------------------------|:-------------------|----------------------------------------------------------|

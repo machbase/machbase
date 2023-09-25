@@ -45,7 +45,8 @@ for rows.Next() {
 }
 ```
 
-{: .warning }
-> Since rows handle is consuming server-side resources, it is very import to release handle resource immediately after use. We uses `defer rows.close()` to release it in this example.
+{{< callout type="warning" >}}
+Since rows handle is consuming server-side resources, it is very import to release handle resource immediately after use. We uses `defer rows.close()` to release it in this example.
+{{< /callout >}}
 
-- [grpc_query.go]({{site.examples_url}}/go/grpc_query/grpc_query.go)
+- [grpc_query.go]({{< neo_examples_url >}}/go/grpc_query/grpc_query.go)

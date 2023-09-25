@@ -141,10 +141,10 @@ while True:
 _ = mach_stub.RowsClose(rsp.rowsHandle)
 ```
  
-{:.warning-title}
->Rows must be Closed
->
-> It is important to close rows by calling `RowsClose(handle)`.
+{{< callout type="warning" >}}
+**Rows must be Closed**<br/>
+It is important to close rows by calling `RowsClose(handle)`.
+{{< /callout >}}
 
 ## Append
 
