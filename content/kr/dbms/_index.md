@@ -50,7 +50,7 @@ weight: 30
 
 ## SDK
 
-* [CLI/ODBC](./sdk/cli_odbc)
+* [CLI/ODBC](./sdk/cli-odbc)
 * [CLI/ODBC 예제](./sdk/cli-odbc-example)
 * [JDBC](./sdk/jdbc)
 * [Python](./sdk/python)
