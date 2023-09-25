@@ -43,7 +43,7 @@ for(int i=0; i<10000; i++)
 
 For the Cluster Edition Append, must be done by Leader Broker.
 
-Details are in SDK guide.
+Details are in [SDK](/dbms/sdk) guide.
 
 
 ##  Data Update
