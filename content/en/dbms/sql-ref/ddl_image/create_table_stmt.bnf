@@ -1,0 +1,1 @@
+create_table_stmt ::= 'CREATE' ( 'LOG' | 'VOLATILE' | 'LOOKUP' | 'TAG' )? 'TABLE' ('IF' 'NOT' 'EXISTS')?  table_name '('column_list')' ('METADATA' '(' column_list ')')?  with_rollup? table_property_list?

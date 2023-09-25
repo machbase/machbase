@@ -6,15 +6,20 @@ hasCJKLanguage: true
 googleAnalytics: G-5VYQQQFHCH
 baseURL: https://docs.machbase.com/
 
-languageCode: en-us
-defaultContentLanguage: en
-# languages:
-#   en:
-#     languageName: English
-#     weight: 1
-#   kr:
-#     languageName: 한국어
-#     weight: 2
+DefaultContentLanguage: en
+languages:
+  en:
+    languageName: English
+    languageCode: en-US
+    contentDir: content/en
+    title: MACHBASE
+    weight: 1
+  kr:
+    languageName: 한국어
+    languageCode: ko-KR
+    contentDir: content/kr
+    title: 마크베이스
+    weight: 2
 
 module:
   imports:
@@ -39,12 +44,12 @@ params:
   dateFormat: "Jan 2, 2006"
 
   navbar:
-    displayTitle: false
-    displayLogo: true
+    displayTitle: true
+    displayLogo: false
     logo:
       path: images/logo_machbase_neo.png
       dark: images/logo_machbase_neo.png
-      link: /neo
+      link: /
       width: 200
 
   footer:
