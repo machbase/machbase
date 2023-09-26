@@ -72,11 +72,9 @@ Timeout 이후까지 수신에 실패하면, 해당 연결은 실패한다.
 
 ## CLUSTER_LINK_BUFFER_SIZE
 
-* 5.6 부터 사용 가능합니다.
+송신/수신 버퍼의 크기를 의미한다.
 
-이 크기가 모자라면 송신시 버퍼가 비워질 때 까지 재시도하게 된다.송신/수신 버퍼의 크기.
-
-기본값은 32M.
+이 크기가 모자라면 송신시 버퍼가 비워질 때 까지 재시도하게 된다.
 
 |(byte)|	Value|
 |------|---------|
@@ -161,6 +159,7 @@ Accept한 Node가 Handshake 메시지를 먼저 보내는데, 그 응답을 기�
 특정 Node와 Cluster Socket 을 연결하기 위한, 현재 Node의 호스트 이름
 
 |(string)|	Value|
+|--|--|
 |기본값|	localhost|
 
 ## CLUSTER_LINK_LONG_TERM_CALLBACK_INTERVAL
@@ -344,7 +343,9 @@ Warehouse 에 직접 DML 을 수행할 경우 Broker 를 통한 것보다 성능
 
 기본값은 0이다.
 
-* 해당 Property 를 켠 채로 Group 내 Warehouse 간의 데이터 차이가 발생하더라도, Coordinator 는 데이터 불일치 여부를 별도로 검사하지 않는다.
+{{<callout type="info">}}
+해당 Property 를 켠 채로 Group 내 Warehouse 간의 데이터 차이가 발생하더라도, Coordinator 는 데이터 불일치 여부를 별도로 검사하지 않는다.
+{{</callout>}}
 
 |(boolean)|	Value|
 |------|---------|

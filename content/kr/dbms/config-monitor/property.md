@@ -19,6 +19,7 @@ type: docs
 * [DISK_BUFFER_COUNT](#disk_buffer_count)
 * [DISK_COLUMNAR_INDEX_CHECKPOINT_INTERVAL_SEC](#disk_columnar_index_checkpoint_interval_sec)
 * [DISK_COLUMNAR_INDEX_FDCACHE_COUNT](#disk_columnar_index_fdcache_count)
+* [DISK_COLUMNAR_INDEX_SHUTDOWN_BUILD_FINISH](#disk_columnar_index_shutdown_build_finish)
 * [DISK_COLUMNAR_PAGE_CACHE_MAX_SIZE](#disk_columnar_page_cache_max_size)
 * [DISK_COLUMNAR_TABLE_CHECKPOINT_INTERVAL_SEC](#disk_columnar_table_checkpoint_interval_sec)
 * [DISK_COLUMNAR_TABLE_COLUMN_FDCACHE_COUNT](#disk_columnar_table_column_fdcache_count)
@@ -368,8 +369,6 @@ Fsync를 수행하지 않아도 일반적 상황에서는 데이터 유실이 �
 
 데이터 쓰기 연산에 DIRECT I/O 를 사용할 것인지 설정한다. 파일 시스템에 따라서 DIRECT I/O 지원하지 않는 경우(ex: ZFS), 0으로 설정한다.
 
-참고 : ZFS DIRECT I/O https://github.com/openzfs/zfs/issues/224
-
 ||Value|
 |-|----|
 |최소값|	0|
@@ -546,7 +545,7 @@ GROUP BY, DISTINCT, ORDER BY 절을 수행하기 위해서 질의처리기가  �
 하나의 질의문이 이보다 큰 값으로 메모리를 사용하게 되면 질의는 취소된다. 이때, 에러메시지를 클라이언트에 전송하고, machbase.trc 파일에 관련 내용이 기록된다.
 
 ||Value|
-||-|----|
+|--|----|
 |최소값|	1024 * 1024|
 |최대값|	2^64 - 1|
 |기본값|	500 * 1024 * 1024|
@@ -737,7 +736,7 @@ TAGDATA Table 생성 시 Metadata 영역을 보관할 메모리의 최대 크기
 |-|----|
 |최소값|	1024*1024|
 |최대값|	2^32-1|
-|기본값|	100*1024*1024|
+|기본값|	100\*1024\*1024|
 
 ## TAG_PARTITION_COUNT
 

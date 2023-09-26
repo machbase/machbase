@@ -16,7 +16,6 @@ Separate from [Property](../property), Property (Cluster) organizes the Property
 * [CLUSTER_LINK_CONNECT_TIMEOUT](#cluster_link_connect_timeout)
 * [CLUSTER_LINK_ERROR_ADD_ORIGIN_HOST](#cluster_link_error_add_origin_host)
 * [CLUSTER_LINK_HANDSHAKE_TIMEOUT](#cluster_link_handshake_timeout)
-* [CLUSTER_LINK_BUFFER_SIZE](#cluster_link_buffer_size)
 * [CLUSTER_LINK_SEND_RETRY_COUNT](#cluster_link_send_retry_count)
 * [CLUSTER_LINK_HOST](#cluster_link_host)
 * [CLUSTER_LINK_LONG_TERM_CALLBACK_INTERVAL](#cluster_link_long_term_callback_interval)
@@ -92,33 +91,16 @@ The default value is 5 seconds.
 
 
 ## CLUSTER_LINK_BUFFER_SIZE
-If this size is insufficient, it will try again until the buffer is empty during transmission.
 
 The size of the request/receive buffer.
 
-Default is 32M.
+If this size is insufficient, it will try again until the buffer is empty during transmission.
 
-
-<table>
-  <thead>
-    <th style="background-color: lightyellow;">(byte)</th>
-    <th>Value</th>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Minimum</td>
-      <td>1024768</td>
-    </tr>
-    <tr>
-      <td>Maximum</td>
-      <td>2^32-1</td>
-    </tr>
-    <tr>
-      <td style="background-color: #F0FFFF;">Default</td>
-      <td>33554432 (32M)</td>
-    </tr>
-  </tbody>
-</table>
+|(byte)|    Value|
+|------|---------|
+|Min|    1024768|
+|Max|    2^32 - 1|
+|Default|    33554432 (32M)|
 
 
 ## CLUSTER_LINK_CHECK_INTERVAL
@@ -276,36 +258,6 @@ The default value is 5 seconds.
 </table>
 
 
-## CLUSTER_LINK_BUFFER_SIZE
-The size of the send / receive buffer.
-
-If this size is insufficient, the transmission will retry until the buffer is empty.
-
-The default value is 32M.
-
-
-<table>
-  <thead>
-    <th style="background-color: lightyellow;">(byte)</th>
-    <th>Value</th>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Minimum</td>
-      <td>1024768</td>
-    </tr>
-    <tr>
-      <td>Maximum</td>
-      <td>2^32-1</td>
-    </tr>
-    <tr>
-      <td style="background-color: #F0FFFF;">Default</td>
-      <td>33554432 (32M)</td>
-    </tr>
-  </tbody>
-</table>
-
-
 ## CLUSTER_LINK_SEND_RETRY_COUNT
 Number of times to retry sending until the send buffer is empty.
 
@@ -337,22 +289,12 @@ The default value is 5000 (msec).
 
 
 ## CLUSTER_LINK_HOST
+
 Host name of the current Node to connect to a specific Node and Cluster Socket
 
-
-
-<table>
-  <thead>
-    <th style="background-color: lightyellow;">(string)</th>
-    <th>Value</th>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="background-color: #F0FFFF;">Default</td>
-      <td>localhost</td>
-    </tr>
-  </tbody>
-</table>
+|(string)|  Value|
+|--|--|
+|Default|    localhost|
 
 
 ## CLUSTER_LINK_LONG_TERM_CALLBACK_INTERVAL
@@ -746,7 +688,9 @@ You must apply Properties directly to the specific Warehouse you want.
 
 The default value is 0.
 
-> ![tips](/icons/tips.png) &nbsp;The Coordinator does not check for data discrepancies, even if there is a data difference between the Warehouses in the Group with the corresponding Property turned on.
+{{<callout type="info">}}
+The Coordinator does not check for data discrepancies, even if there is a data difference between the Warehouses in the Group with the corresponding Property turned on.
+{{</callout>}}
 
 <table>
   <thead>
