@@ -138,7 +138,7 @@ mach@localhost:~$ machcoordinatoradmin --configuration=decision
             Format : text/plain
 ```
 
-## luster Status 변경
+## Cluster Status 변경
 
 **Example:**
 
