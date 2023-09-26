@@ -507,6 +507,7 @@ void *mData;
 When inputting a variable data type, set the length of the data to mLength and set the primitive data pointer to mData. If mLength is greater than the defined schema, it is automatically truncated. At this time, SQLAppendDataV2 () returns SQL_SUCCESS_WITH_INFO and also fills the internal structure with a related warning message. To see this warning message, use SQLError () function.
 
 |Database Type|NULL Macro|SQL_APPEND_PARAM Member<br>(mVar is acceptable)|
+|--|--|--|
 |VARCHAR|SQL_APPEND_VARCHAR_NULL|mVarchar|
 |TEXT|SQL_APPEND_TEXT_NULL|mText|
 |BINARY|SQL_APPEND_BINARY_NULL|mBinary|
