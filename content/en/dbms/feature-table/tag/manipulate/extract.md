@@ -100,7 +100,7 @@ TAG_0002              2018-02-10 10:00:00 000:000:000 20
 
 The following is a query of a time range for TAG_0002 and receives data.
 
-> ![tips](/icons/tips.png)&nbsp;It is common to give time range by using between clause. Of course, using '<' or '>' to get time range will get same result.
+> It is common to give time range by using between clause. Of course, using '<' or '>' to get time range will get same result.
 
 ```bash
 Mach> select * from tag where name = 'TAG_0002' and time between to_date('2018-02-01') and to_date('2018-02-05');
