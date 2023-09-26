@@ -1,6 +1,7 @@
 ---
 title : 'Archive'
 weight: 900
+type: docs
 ---
 
 * [6.7 Manual](./M67-Eng.pdf)

@@ -1,5 +1,5 @@
 ---
-title : '데이터 불러오기 : import'
+title : 'import'
 type: docs
 weight: 30
 ---
@@ -7,6 +7,13 @@ weight: 30
 machloader 도구를 이용하여, CSV 또는 다른 구분자로 구별된 텍스트 파일을 입력할 수 있다.
 
 machloader 도구에 대한 자세한 설명은 [machloader](/kr/dbms/tools/machloader) 문서를 참조한다.
+
+## Index
+
+* [테이블 생성](#테이블-생성)
+* [데이터 불러오기](#데이터-불러오기)
+* [샘플 예제](#샘플-예제)
+
 
 
 ## 테이블 생성

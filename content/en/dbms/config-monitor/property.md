@@ -4,7 +4,10 @@ title : Property
 type : docs
 ---
 
-# Index
+The properties are the settings used by the Machbase server and stored as key-value pairs in the $MACHBASE_HOME/conf/machbase.conf file. 
+These values are set when the Machbase server starts and are used continuously during runtime. To change this value for performance tuning, you must understand the meaning of these values and set them carefully.
+
+## Index
 
 * [CPU_AFFINITY_BEGIN_ID](#cpu_affinity_begin_id)
 * [CPU_AFFINITY_COUNT](#cpu_affinity_count)
@@ -74,10 +77,6 @@ type : docs
 * [TRACE_LOGFILE_SIZE](#trace_logfile_size)
 * [UNIX_PATH](#unix_path)
 * [VOLATILE_TABLESPACE_MEMORY_MAX_SIZE](#volatile_tablespace_memory_max_size)
-
-
-The properties are the settings used by the Machbase server and stored as key-value pairs in the $MACHBASE_HOME/conf/machbase.conf file. 
-These values ​​are set when the Machbase server starts and are used continuously during runtime. To change this value for performance tuning, you must understand the meaning of these values ​​and set them carefully.
 
 
 ## CPU_AFFINITY_BEGIN_ID
