@@ -49,9 +49,7 @@ The options for machloader can be seen with the following command:
 |-H, --header|Sets whether header information is present upon import/export. The default value is unset.|
 |-S, --slash|Specifies the backslash delimiter.|
 
-## Basic Usage
-
-The table must be created first before running the usage below.
+The detailed usages are as follows.
 
 ## CSV File Import
 
@@ -325,11 +323,11 @@ ID MSG
 Elapsed time: 0.000
 ```
 
-If Number of Columns Is More Than Number of Fields
+## If Number of Columns Is More Than Number of Fields
 
 If the number of columns in the table is greater than the number of fields in the data file, only the columns specified in the schema file are entered, and the other columns are entered as NULL.
 
-If Number of Columns Is Less Than Number of Fields
+## If Number of Columns Is Less Than Number of Fields
 
 If the number of columns in the table is less than the number of fields in the data file, fields not in the table must be excluded with the IGNORE option
 

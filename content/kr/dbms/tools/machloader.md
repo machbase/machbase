@@ -49,11 +49,9 @@ machloader의 특징은 다음과 같다.
 |-H, --header|	import/export시에 헤더 정보의 유무를 설정한다. 기본값은 미설정이다.|
 |-S, --slash|	backslash 구분자를 지정한다.|
 
-## 기본 사용법
+자세한 사용법은 아래와 같다.
 
-아래 사용법을 실행하기 전에 테이블을 먼저 생성해야 한다.
-
-### CSV 파일 Import
+## CSV 파일 Import
 
 마크베이스 서버에 CSV 파일을 import한다.
 
@@ -69,7 +67,8 @@ Example:
 machloader -i -d data.csv -t table_name
 ```
 
-### CSV 파일 Export
+## CSV 파일 Export
+
 데이터를 CSV 파일에 기록한다.
 
 Option:
@@ -83,7 +82,7 @@ Example:
 machloader -o -d data.csv -t table_name
 ```
 
-### CSV 파일 헤더 사용
+## CSV 파일 헤더 사용
 
 CSV 파일의 헤더 관련 설정이다.
 
@@ -99,7 +98,7 @@ machloader -i -d data.csv -t table_name -H
 machloader -o -d data.csv -t table_name -H
 ```
 
-### 테이블 자동 생성
+## 테이블 자동 생성
 
 테이블 자동 생성에 관련한 내용이다.
 
@@ -115,7 +114,7 @@ machloader -i -d data.csv -t table_name -C
 machloader -i -d data.csv -t table_name -C -H
 ```
 
-### CSV 포맷 이외 파일
+## CSV 포맷 이외 파일
 
 CSV 포맷이 아닌 파일에 대해서 구분자를 설정하여 사용한다.
 
@@ -132,7 +131,7 @@ machloader -i -d data.txt -t table_name -D '^' -n '\n' -e '"'
 machloader -o -d data.txt -t table_name -D '^' -n '\n' -e '"'
 ```
 
-### 입력 모드 지정
+## 입력 모드 지정
 
 import 시 (-i 옵션 설정 시) REPLACE와 APPEND의 두 가지 모드가 있다. APPEND가 기본값이다. REPLACE 모드인 경우, 기존 데이터를 삭제하므로 주의해야 한다.
 
@@ -146,7 +145,7 @@ Example:
 machloader -i -d data.csv -t table_name -m replace
 ```
 
-### 접속 정보 지정
+## 접속 정보 지정
 
 서버 IP, 사용자, 패스워드를 별도로 지정한다.
 
@@ -163,7 +162,7 @@ Example:
 machloader -i -s 192.168.0.10 -P 5656 -u mach -p machbase -d data.csv -t table_name
 ```
 
-### 로그 파일 생성
+## 로그 파일 생성
 
 machloader의 실행 로그 파일을 생성한다.
 
@@ -178,7 +177,7 @@ Example:
 machloader -i -d data.csv -t table_name -b table_name.bad -l table_name.log
 ```
 
-### 스키마 파일 생성
+## 스키마 파일 생성
 
 machloader의 스키마 파일을 생성할 수 있다. 스키마 파일을 이용하여  데이터 타입 형식을 바꾸거나 테이블과 데이터 파일의 컬럼 수가 다른 경우에도 import/export가 가능하다.
 
@@ -195,17 +194,17 @@ machloader -c -t table_name -f table_name.fmt
 machloader -c -t table_name -f table_name.fmt -a
 ```
 
-#### 스키마 파일에서 datetime 형식 설정
+## 스키마 파일에서 datetime 형식 설정
 
 DATEFORMAT 옵션으로 dateformat을 원하는 대로 설정할 수 있다.
 
 Syntax:
 
 ```bash
-## 모든 datetime 컬럼에 대해서 설정한다.
+# 모든 datetime 컬럼에 대해서 설정한다.
 DATEFORMAT <dateformat>
 
-## 개별 datetime 컬럼에 대해서 설정한다.
+# 개별 datetime 컬럼에 대해서 설정한다.
 DATEFORMAT <column_name> <format>
 ```
 
@@ -246,7 +245,7 @@ INS_DT UPT_DT
 Elapsed time: 0.000
 ```
 
-### IGNORE
+## IGNORE
 
 CSV 파일의 특정 필드를 입력하려 하지 않을 때, IGNORE 옵션을 fmt 파일에 설정할 수 있다.
 
@@ -299,11 +298,11 @@ ID MSG
 Elapsed time: 0.000
 ```
 
-### 컬럼 개수가 필드 개수보다 많은 경우
+## 컬럼 개수가 필드 개수보다 많은 경우
 
 테이블의 컬럼 개수가 데이터 파일의 필드 개수보다 많은 경우에는 스키마 파일에 지정된 컬럼만 입력되고 다른 컬럼은 NULL로 입력된다.
 
-### 컬럼 개수가 필드 개수보다 적은 경우
+## 컬럼 개수가 필드 개수보다 적은 경우
 
 테이블의 컬럼 개수가 데이터 파일의 필드 개수보다 적은 경우에는 테이블에 없는 필드는 IGNORE 옵션을 제외하고 입력하여야 한다.
 
