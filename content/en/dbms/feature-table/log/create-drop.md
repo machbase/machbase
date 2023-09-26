@@ -14,11 +14,11 @@ Data types compatible with Machbase can be found in the SQL Reference Types.
 Create a log table with the 'CREATE TABLE' syntax.
 
 ```sql
-Mach> CREATE TABLE sensor_data
-      (
-          id VARCHAR(32),
-          val DOUBLE
-       );
+Mach> CREATE TABLE sensor_data 
+(
+    id VARCHAR(32),
+    val DOUBLE
+);
 Created successfully.
  
 Mach> DROP TABLE sensor_data;
@@ -31,6 +31,7 @@ Dropped successfully.
 Delete log table with 'DROP TABLE' statement.
 
 ```sql
+-- DROP deletes both data and table.
 Mach> DROP TABLE sensor_data;
 Dropped successfully.
  

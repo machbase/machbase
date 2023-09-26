@@ -14,11 +14,11 @@ sensor_data 라는 테이블을 생성하고 삭제해 보도록 하자.
 
 'CREATE TABLE' 구문으로 로그 테이블을 생성한다.
 ```sql
-Mach> CREATE TABLE sensor_data
-      (
-          id VARCHAR(32),
-          val DOUBLE
-       );
+Mach> CREATE TABLE sensor_data 
+(
+    id VARCHAR(32),
+    val DOUBLE
+);
 Created successfully.
  
 Mach> DROP TABLE sensor_data;
@@ -33,8 +33,7 @@ Dropped successfully.
 -- DROP은 데이터와 테이블 모두 삭제한다.
 Mach> DROP TABLE sensor_data;
 Dropped successfully.
- 
- 
+
 -- TRUNCATE는 데이터만 삭제하고 테이블은 유지한다.
 Mach> TRUNCATE TABLE sensor_data;
 Truncated successfully.
