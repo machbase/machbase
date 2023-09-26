@@ -506,7 +506,8 @@ LIMIT [offset,] row_count
 select id1, avg(id2) from exptab where id2 group by id1 order by id1 LIMIT 10;
 ```
 
-DURATION
+## DURATION
+
 DURATION은 _arrival_time을 기준으로 데이터 검색 범위를 손쉽게 결정하도록 해 주는 키워드이다. BEFORE 구문과 함께 사용되어 특정 시점의 특정 데이터 범위를 설정하게 해 준다. 이 DURATION을 잘 활용하면 검색 성능을 현격하게 올림과 동시에 시스템 부하를 획기적으로 낮출 수 있다. 더 자세한 활용 용도는 다음을 참조한다.
 
 ```sql
