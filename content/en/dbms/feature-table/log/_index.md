@@ -74,7 +74,7 @@ It is also an easy structure for high-speed data access for statistical analysis
 
 ## Operations
 
-* [Creating and Managing Log Table](./create-manage)
+* [Creating and Managing Log Table](./create-drop)
 * [Log Data Input](./insert)
 * [Log Data Extraction](./extract)
 * [Deletion of Log Data](./delete)

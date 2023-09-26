@@ -537,7 +537,7 @@ Log Table 에 생성된 인덱스 정보를 표시한다.
 | DISK_FILE_SIZE       | 해당 인덱스에 대한 인덱스 파티션 파일의 전체 크기 |
 | LAST_CHECKPOINT_TIME | 마지막으로 Checkpoint 를 지난 시점     |
 
-## LSM Index
+## LSM(Log Structured Merge) Index
 ### V$STORAGE_DC_LSMINDEX_LEVEL_PARTS
 ---
 

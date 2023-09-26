@@ -108,3 +108,52 @@ error code = 10, critical bug
 error code = 10                                                                  
 [4] row(s) selected.
 ```
+
+## Specifying search direction using hints
+
+### Backward direction
+
+This is the default value, and can be searched by adding the /*+ SCAN_BACKWARD(table_name) */ hint.
+
+```sql
+Mach> SELECT * FROM LOG;
+TIME    
+----------------------------------
+2021-01-04 00:00:00 000:000:000
+2021-01-03 00:00:00 000:000:000
+2021-01-02 00:00:00 000:000:000
+2021-01-01 00:00:00 000:000:000
+[4] row(s) selected.
+Elapsed time: 0.001
+ 
+Mach> SELECT /*+ SCAN_BACKWARD(LOG) */ * FROM LOG;
+TIME    
+----------------------------------
+2021-01-04 00:00:00 000:000:000
+2021-01-03 00:00:00 000:000:000
+2021-01-02 00:00:00 000:000:000
+2021-01-01 00:00:00 000:000:000
+[4] row(s) selected.
+Elapsed time: 0.001
+```
+
+### Forward direction
+
+/*+ SCAN_FORWARD(table_name) */ hint is used to search forward direction.
+
+```sql
+Mach> SELECT /*+ SCAN_FORWARD(LOG) */ * FROM LOG;
+TIME
+----------------------------------
+2021-01-01 00:00:00 000:000:000
+2021-01-02 00:00:00 000:000:000
+2021-01-03 00:00:00 000:000:000
+2021-01-04 00:00:00 000:000:000
+[4] row(s) selected.
+Elapsed time: 0.001
+```
+
+### Property to set default scan direction
+
+With the [TABLE_SCAN_DIRECTION](/dbms/config-monitor/property/#table_scan_direction) property, you can set the scan direction of the log table when there is no hint in the SELECT statement.
+

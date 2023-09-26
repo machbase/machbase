@@ -1628,8 +1628,10 @@ You can set the scan direction of the tag table. The property value is one of -1
 
 
 ## TAGDATA_AUTO_META_INSERT
-> ![tips](/icons/tips.png)&nbsp; In 5.5 version, this property name was TAGDATA_AUTO_NAME_INSERT and supports only 0 or 1. <br>
->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Below 5.7 version, default value is 1.
+{{<callout type="info">}}
+In 5.5 version, this property name was TAGDATA_AUTO_NAME_INSERT and supports only 0 or 1.
+Below 5.7 version, default value is 1.
+{{</callout>}}
 
 When entering data through APPEND / INSERT into the TAGDATA table, specify how to handle it if there is no matching TAG_NAME.
 
