@@ -4,9 +4,9 @@ title : 'Meta Table'
 type: docs
 ---
 
-## Index
+## 목차
 
-- [Index](#index)
+- [목차](#목차)
 - [User Object](#user-object)
   - [M$SYS\_TABLES](#msys_tables)
   - [M$SYS\_TABLE\_PROPERTY](#msys_table_property)
