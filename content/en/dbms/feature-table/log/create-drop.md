@@ -4,7 +4,9 @@ title : Creating and Managing Log Table
 weight: 10
 ---
 
-The log table can be simply generated as follows. Let's create a table called sensor_data and delete it.
+The log table can be simply generated as follows.
+
+Let's create a table called sensor_data and delete it.
 
 Data types compatible with Machbase can be found in the SQL Reference Types.
 
