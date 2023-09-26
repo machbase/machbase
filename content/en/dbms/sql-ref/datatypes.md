@@ -16,7 +16,7 @@ weight: 10
 |ulong|64-bit unsigned integer data type|0~18446744073709551614|18446744073709551615|
 |float|32-bit floating point data type|-|-|
 |double|64-bit floating point data type|-|-|
-|datetime|Time and date|1970-01-01 00:00:00 000:000:000 ~|-|
+|datetime|Time and date|1970-01-01 00:00:00 000:000:000 ~ 2262-04-11 23:47:16.854:775:807|-|
 |varchar|Variable-length character strings (UTF-8)|Length : 1 ~ 32768 (32K)|-|
 |ipv4|Version 4 Internet address type (4 bytes)|"0.0.0.0" ~ "255.255.255.255"|-|
 |ipv6|Version 6 Internet address type (16 bytes)|"0000:0000:0000:0000:0000:0000:0000:0000" ~ "FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF"|-|
