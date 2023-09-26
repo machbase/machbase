@@ -190,6 +190,7 @@ Displays memory information of the system.
 Displays statistical information of the system.
 
 |Column Name|Description|
+|--|--|
 |ID|Statistical information identifier|
 |NAME|Statistical information name|
 |VALUE|Statistical information value|
