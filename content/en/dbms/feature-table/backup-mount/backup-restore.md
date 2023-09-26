@@ -4,13 +4,14 @@ type : docs
 weight: 20
 ---
 
-# Database Backup
+## Database Backup
+
 Machbase's database backup is classified as follows, and either backup of the entire database or backup of the specific table is possible.
   - Full backup: Backup of entire data
   - Incremental backup: Backup of the data added after the full or previous incremental backup
   - Duration backup: Backup of data for a specific period
 
-## Syntax:
+Syntax:
 
 ```sql
 # Full backup
@@ -26,7 +27,7 @@ BACKUP [ DATABASE | TABLE table_name ]  [ time_duration ] INTO [ DISK ] = 'path/
 Absolute and relative path can be used for path.
 set start time and end time of backup data for time_duration.
 
-## Example:
+Example:
 
 ```sql
 # Full backup backup
@@ -48,7 +49,8 @@ You can specify the backup destination using the DURATION conditional statement.
 Specify "IBFILE" to create a backup file as a single file, or "DISK" as a backup option to create multiple files and directories. Note that when specifying a backup path, backup files are created under "$ MACHBASE_HOME / dbs" when a relative path is specified. To specify an absolute path, you must always set a path that starts with "/". 
 
 
-# Database Restore
+## Database Restore
+
 Data can be restored from the backup files with the following constraints.
 * Cannot be executed via query commands(can only be performed using the 'machadmin' command.)
 * The database must be in a stopped state.
@@ -56,13 +58,13 @@ Data can be restored from the backup files with the following constraints.
 * For incremental backup, previous full and incremental backup files are required.
 * In case of tag table, restoration of duration backup is not supported.
 
-## Syntax:
+Syntax:
 
 ```bash
 machadmin -r backup_database_path
 ```
 
-## Example:
+Example:
 
 ```bash
 backup database into disk = '/home/machbase/backup';
