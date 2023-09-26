@@ -289,22 +289,12 @@ The default value is 5000 (msec).
 
 
 ## CLUSTER_LINK_HOST
+
 Host name of the current Node to connect to a specific Node and Cluster Socket
 
-
-
-<table>
-  <thead>
-    <th style="background-color: lightyellow;">(string)</th>
-    <th>Value</th>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="background-color: #F0FFFF;">Default</td>
-      <td>localhost</td>
-    </tr>
-  </tbody>
-</table>
+|(string)|  Value|
+|--|--|
+|Default|    localhost|
 
 
 ## CLUSTER_LINK_LONG_TERM_CALLBACK_INTERVAL

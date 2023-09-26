@@ -159,6 +159,7 @@ Accept한 Node가 Handshake 메시지를 먼저 보내는데, 그 응답을 기�
 특정 Node와 Cluster Socket 을 연결하기 위한, 현재 Node의 호스트 이름
 
 |(string)|	Value|
+|--|--|
 |기본값|	localhost|
 
 ## CLUSTER_LINK_LONG_TERM_CALLBACK_INTERVAL
