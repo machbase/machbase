@@ -94,6 +94,49 @@ It is adopted to return the result in a form that is easy to use in various envi
 
 The functions described above do not represent the execution results as the return value of the function, but only return success or failure. The result of a function can be obtained only by the return value of this function.
 
+## SELECT Results Check
+
+Reading function SELECT results with machbase.execute() requires a lot of memory to display all results at once, and in some cases, memory may not be available.
+
+Therefore, in case of SELECT insertion, you must include a function that can obtain a single record result.
+
+### machbase.select(aSql)
+
+This is a command that sends a SELECT query to the server when connected to the server. It returns 1 when executed normally, and 0 when it fails or an error occurs.
+
+Only the SELECT statement can be used, and unlike the machbase.execute() function, which retrieves all results at once, results can be obtained one record at a time using the machbase.fetch() function.
+
+### machbase.fetch()
+
+The result of the machbase.select(aSql) function is read one record at a time.
+
+The return value is success or not and the result value. Success or failure is displayed as 1 and 0, and the result value is the result of one record returned in json format.
+
+### machbase.selectClose()
+
+Once selected, the result of machbase.select() remains open until another machbase.select() or machbase.execute() function is called.
+
+The machbase.selectClose() function explicitly closes this.
+
+### machbase.select() example
+
+```python
+db = machbase()
+if db.open('127.0.0.1','SYS','MANAGER', 5656) is 0 :
+    return db.result()
+
+query = 'SELECT * from sample_table'
+while True:
+    is_success, result = db.fetch()
+    if is_success is 0:
+        break;
+
+    res = json.loads(result)
+
+db.selectClose()
+if db.close() is 0 :
+    return db.result()
+```
 
 ## Examples
 

@@ -30,7 +30,7 @@ mach@localhost:~$ machadmin -h
 
 ## 복구 모드
 
-**Syntax:**
+Syntax:
 
 ```bash
 machadmin -u --recovery=[simple | complex | reset]
@@ -44,7 +44,24 @@ machadmin -u --recovery=[simple | complex | reset]
 
 ## 서버 정상 종료
 
-**Example:**
+Example:
+
+```bash
+mach@localhost:~$ machadmin -s
+ 
+-----------------------------------------------------------------
+     Machbase Administration Tool
+     Release Version - 5.1.9.community
+     Copyright 2014, MACHBASE Corp. or its subsidiaries
+     All Rights Reserved
+-----------------------------------------------------------------
+Waiting for the server shut down...
+Server shut down successfully.
+```
+
+## 데이터베이스 생성
+
+Example:
 
 ```bash
 mach@localhost:~$ machadmin -c
@@ -59,7 +76,7 @@ Database created successfully.
 
 ## 데이터베이스 삭제
 
-**Example:**
+Example:
 
 ```bash
 mach@localhost:~$ machadmin -d
@@ -75,13 +92,13 @@ Database destroyed successfully.
 
 ## 서버 강제 종료
 
-**Syntax:**
+Syntax:
 
 ```bash
 machadmin -k
 ```
 
-**Example:**
+Example:
 
 ```bash
 mach@localhost:~$ machadmin -k
@@ -99,7 +116,7 @@ Server terminated successfully.
 
 machadmin 실행시 출력되는 메시지를 없앤다.
 
-**Syntax:**
+Syntax:
 
 ```bash
 machadmin -i
@@ -107,13 +124,13 @@ machadmin -i
 
 ## 데이터베이스 복구
 
-**Syntax:**
+Syntax:
 
 ```bash
 machadmin -r backup_database_path
 ```
 
-**Example:**
+Example:
 
 ```bash
 mach@localhost:~$ machadmin -r 'backup'
@@ -128,7 +145,7 @@ Backed up database restored successfully.
 
 ## 서버 실행 유무 확인
 
-**Syntax:**
+Syntax:
 
 ```bash
 machadmin -e
@@ -162,13 +179,13 @@ Machbase server is already running with PID (14098).
 
 ## 라이선스 파일 설치
 
-**Syntax:**
+Syntax:
 
 ```bash
 machadmin -t license_file
 ```
 
-**Example:**
+Example:
 
 ```bash
 mach@localhost:~$ machadmin -t license.dat
@@ -183,7 +200,7 @@ License installed successfully.
 
 ## 라이선스 확인
 
-**Example:**
+Example:
 
 ```bash
 mach@localhost:~$ machadmin -f

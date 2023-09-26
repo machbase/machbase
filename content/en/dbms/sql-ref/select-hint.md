@@ -214,7 +214,7 @@ _RID                 I1
 
 It specifies the direction of scanning for LOG table. With SCAN_FORWARD, the oldest record input is retrived first, whereas with SCAN_BACKWARD, the newest record input is retrieved first.
 
-It affects LOG tables in Fog edition only.
+It affects LOG tables in standard edition only.
 
 ```sql
 SELECT /*+ SCAN_FORWARD(table_name) */ ...
