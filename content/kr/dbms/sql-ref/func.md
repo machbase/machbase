@@ -600,7 +600,9 @@ sysdate                         from_timestamp(sysdate-1000000)
 
 이 함수는 집계 함수로써, 그룹 안에 존재하는 해당 컬럼의 값을 문자열로 이어 붙여서 출력한다.
 
-* Cluster Edition 에서는 사용할 수 없는 함수이다.
+{{<callout type="warning">}}
+Cluster Edition 에서는 사용할 수 없는 함수이다.
+{{</callout>}}
 
 ```sql
 GROUP_CONCAT(

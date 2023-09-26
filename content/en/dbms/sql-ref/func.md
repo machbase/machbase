@@ -617,7 +617,9 @@ sysdate                         from_timestamp(sysdate-1000000)
 
 This function is an aggregate function that outputs the value of the corresponding column in the group in a string.
 
-> ![warnings](/icons/warnings.png)　This function cannot be used in Cluster Edition.
+{{<callout type="warning">}}
+This function cannot be used in Cluster Edition.
+{{</callout>}}
 
 ```sql
 GROUP_CONCAT(
