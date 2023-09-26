@@ -84,6 +84,10 @@ machdeployeradmin --startup
 
 To upgrade Broker / Warehouse, register the Package in Coordinator and proceed with the upgrade.
 
+{{<callout type="info">}}
+It is recommended to register the lightweight package.
+{{</callout>}}
+
 First, move the package to the Host where $MACH_COORDINATOR_HOME is located.
 
 Next, add the package using the following command.
@@ -135,19 +139,19 @@ From Machbase 6.5 Cluster Edition, the Snapshot Failover function has been added
 
 Snapshot failover is a function that provides quick recovery by recording snapshots when the DBMS is in a normal condition and performing failover only for the part where the problem occurs, excluding the normal snapshot when a specific warehouse fails.
 
-### Snapshot basic concept
+#### Snapshot basic concept
 
 It is a concept to record the location of normal data between warehouses in the group for each group of Cluster Edition.
 
 All data before the snapshot created in the warehouse in the group are data in a normal state, and each snapshot is recorded for each group.
 
-### How Snapshot Failover Works
+#### How Snapshot Failover Works
 
 When a problem occurs in a specific warehouse, the warehouse enters scrapped state and data recovery is required.
 
 When performing Snapshot Recovery, data after the snapshot is cleared based on the normal snapshot in the warehouse where the problem occurred, and the data after the baseline snapshot of the warehouse in the normal state in the same group is replicated to the warehouse where the problem occurred to complete the recovery.
 
-### Automatic Snapshot Execution
+#### Automatic Snapshot Execution
 
 By default, automatic snapshot execution is enabled, and the snapshot execution interval is set to 60 seconds. If there are multiple warehouse groups in a cluster, only one group performs snapshots sequentially every snapshot interval.
 
@@ -163,7 +167,7 @@ machcoordinatoradmin --snapshot-interval=[sec]
 machcoordinatoradmin --configuration
 ```
 
-### Take Snapshot manually
+#### Take Snapshot manually
 
 Specify **group_name** using the machcoordinatoradmin tool and manually perform Snapshot.
 
@@ -176,7 +180,7 @@ If there are multiple groups in a cluster, snapshots must be performed for each 
 machcoordinatoradmin --exec-snapshot --group='group_name'
 ```
 
-### Recover scrapped node based on Snapshot
+#### Recover scrapped node based on Snapshot
 
 If a scrapped node occurs, it is restored as follows.
 
@@ -196,7 +200,7 @@ machcoordinatoradmin --exec-sync=[nodename]
 machcoordinatoradmin --set-group-state=normal --group=[groupname]
 ```
 
-### Snapshot-based recovery process of scrapped nodes
+#### Snapshot-based recovery process of scrapped nodes
 
 When recovering a scrapped node with a snapshot, the following process is performed.
 
@@ -376,7 +380,7 @@ Flag      : 0
 +-------------+-----------------+-----------------+-----------------+-------------------------------+-------------+
 ```
 
-### Snapshot related properties
+#### Snapshot related properties
 
 |Property|Description|Applies to|
 |--|--|--|

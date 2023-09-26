@@ -4,11 +4,11 @@ type: docs
 weight: 20
 ---
 
+Cluster Edition은, 빠른 입력 속도와 표준 SQL로 조회가 가능한 Machbase Standard Edition 으로도 처리할 수 없는 초대용량의 데이터 입력/조회를 분산 환경에서 처리할 수 있는 제품이다.
+
 ## 왜 Cluster Edition을 써야 하는가?
 
-Cluster Edition은, 빠른 입력 속도와 표준 SQL로 조회가 가능한 Machbase Fog Edition 으로도 처리할 수 없는 초대용량의 데이터 입력/조회를 분산 환경에서 처리할 수 있는 제품이다.
-
-Machbase 초고속으로 시계열 데이터를 입력받을 수 있는 Fog Edition 을 서비스하고 있다. 그러나, 다음의 단점이 존재한다.
+Machbase 초고속으로 시계열 데이터를 입력받을 수 있는 Standard Edition 을 서비스하고 있다. 그러나, 다음의 단점이 존재한다.
 
 * 하나의 프로세스로 구성되어 있기 때문에, 가용성이 떨어진다.
 * 데이터를 분석할 때 하나의 프로세스가 전담하므로, 대용량 데이터 분석 성능을 늘리는 데 한계가 있다.

@@ -12,15 +12,9 @@ weight: 10
 
 1. 방화벽에 해당 포트를 등록하기 위해서는 제어판 – Windows 방화벽 또는 Windows Defender 방화벽 을 선택하여 실행한다.  
    실행화면에서 "고급 설정" 메뉴를 클릭한다.
-   * Windows 7  
-   ![winenv1](../winenv1.jpeg)
-   * Windows 10  
    ![winenv2](../winenv2.jpeg)
 
 3. 고급설정에서 **인바운드 규칙 - 새 규칙** 을 선택하여 클릭한다.
-   * Windows 7  
-   ![winenv3](../winenv3.jpeg)
-   * Windows 10  
    ![winenv4](../winenv4.jpeg)
 
 5. 새 규칙 설정 마법사 창이 표시되면 아래와 같이 포트 옵션을 선택하고 **다음**을 클릭한다.  
