@@ -52,4 +52,6 @@ EXEC STREAM_DROP(stream_name);
 A running stream can not be deleted.  The stream must first be shut down before deleting the stream. For more information, refer to Stream Startup and Shutdown.
 
 
+## V$STREAMS
 
+This is a meta table to check the current status of streams registered in the DB server. Detailed explanations are provided in the virtual table section of the manual.
