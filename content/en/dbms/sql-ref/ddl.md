@@ -617,38 +617,6 @@ ALTER TABLE table_name MODIFY COLUMN column_name NULL;
 alter table t1 modify column c1 null;
 ```
 
-### ALTER TABLE FLUSH
-
-**alter_table_flush_stmt:**
-
-![alter_table_flush_stmt](../ddl_image/alter_table_flush_stmt.png)
-
-```sql
-alter_table_flush_stmt ::= 'ALTER TABLE' table_name 'FLUSH'
-```
-
-Waits until the input data for the specified table is fully reflected in the data file.
-
-### ALTER TABLE FLUSH INDEX
-
-**alter_table_flush_index_stmt:**
-
-![alter_table_flush_index_stmt](../ddl_image/alter_table_flush_index_stmt.png)
-
-```sql
-alter_table_flush_index_stmt ::= 'ALTER TABLE' table_name 'FLUSH' 'INDEX' ( index_name | 'ALL' )
-```
-
-Waits until the index data of the specified table is completely reflected in the index file.
-
-```sql
--- Wait until data for all indexes of bulktable is reflected in index files.
-alter table bulktable flush index all;
- 
--- Wait until data of c1_idx index of bulktable is reflected in index file.
-alter table bulktable flush index c1_idx;
-```
-
 ### ALTER TABLE RECLAIM STORAGE
 
 **alter_table_reclaim_storage_stmt:**
