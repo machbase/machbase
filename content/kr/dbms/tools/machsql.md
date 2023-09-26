@@ -102,7 +102,7 @@ LSM          ENABLE   COMPRESSED    2           100000      EQUAL
 [1] row(s) selected.
 ```
 
-### SHOW INDEX
+### SHOW INDEXES
 
 인덱스 전체 리스트를 출력한다.
 
