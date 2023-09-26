@@ -11,9 +11,9 @@ Virtual Table은 마크베이스 서버의 다양한 운영 정보들을 테이�
 
 Virtual Table 은 읽기 전용으로 사용자가 추가/삭제/갱신할 수 없다.
 
-## Index
+## 목차
 
-* [Index](#index)
+* [목차](#목차)
 * [Session/System](#sessionsystem)
   * [V$PROPERTY](#vproperty)
   * [V$SESSION](#vsession)
