@@ -543,6 +543,30 @@ void testAppendVarcharFunc()
 }
 ```
 
+The following is an example of inserting text type data.
+
+```sql
+CREATE TABLE ttt (doc TEXT);
+```
+
+```cpp
+void testAppendFunc()
+{
+    SQL_mach_PARAM sParam[1];
+ 
+    /*  VARCHAR : NULL */
+    sParam[0].mText.mLength = SQL_APPEND_TEXT_NULL
+    SQLAppendDataV2(Stmt, sParam); /* OK */
+ 
+    /*  VARCHAR : string */
+    strcpy(sText, "This is the sample document for tutorial.");
+    sParam[0].mVar.mLength = strlen(sText);
+    sParam[0].mVar.mData   = sText;
+    SQLAppendDataV2(Stmt, sParam); /* OK */
+}
+```
+
+
 ### SQLAppendDataByTimeV2
 
 ```sql
