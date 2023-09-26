@@ -4,7 +4,7 @@ type : docs
 weight: 10
 ---
 
-CLI란 ISO/IEC 9075-3:2003에 정의된 소프트웨어 개발 표준이다.
+CLI란 [ISO](https://en.wikipedia.org/wiki/International_Organization_for_Standardization)/[IEC](https://en.wikipedia.org/wiki/International_Electrotechnical_Commission) 9075-3:2003에 정의된 소프트웨어 개발 표준이다.
 
 CLI는 데이터베이스에 어떻게 SQL을 전달하고, 결과 값을 어떻게 받고 분석해야 하는지에 대한 함수 및 명세를 정의하고 있다. 이 CLI는 1990년 초창기에 개발되었고, C 와 COBOL 언어 만을 위해 개발되었고, 현재까지 그 스펙이 유지되고 있다.
 
