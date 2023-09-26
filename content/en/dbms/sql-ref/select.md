@@ -235,19 +235,7 @@ select * from realdual where id3 search 'series' ;
 select * from realdual where id2 search 'time' and id3 search 'series';
 ```
 
--- drop table realdual;
-create table realdual (id1 integer, id2 varchar(20), id3 varchar(20));
- 
-create keyword index idx1 on realdual (id2);
-create keyword index idx2 on realdual (id3);
- 
-insert into realdual values(1, 'time time2', 'series series2');
- 
-select * from realdual;
- 
-select * from realdual where id2 search 'time';
-select * from realdual where id3 search 'series' ;
-select * from realdual where id2 search 'time' and id3 search 'series';
+The results are as follows.
 
 ```sql
 Mach> create table realdual (id1 integer, id2 varchar(20), id3 varchar(20));
