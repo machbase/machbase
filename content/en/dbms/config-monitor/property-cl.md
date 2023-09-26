@@ -819,6 +819,32 @@ This value refers to the time the Coordinator waits after requesting each Node t
   </tbody>
 </table>
 
+## COORDINATOR_DDL_TIMEOUT
+
+Timeout until the Broker waits after requesting the Coordinator via CC to execute DDL.
+
+This value refers to the time the Broker waits after requesting the Coordinator to perform DDL to entire Cluster.
+
+<table>
+  <thead>
+    <th style="background-color: lightyellow;">(usec)</th>
+    <th>Value</th>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Minimum</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>Maximum</td>
+      <td>2^64 - 1</td>
+    </tr>
+    <tr>
+      <td style="background-color: #F0FFFF;">Default</td>
+      <td>3600000000</td>
+    </tr>
+  </tbody>
+</table>
 
 ## COORDINATOR_DECISION_DELAY
 Timeout until the Coordinator requests the status change and effectively reflects it.
