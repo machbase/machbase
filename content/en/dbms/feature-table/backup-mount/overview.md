@@ -4,7 +4,7 @@ type : docs
 weight: 10
 ---
 
-# BACKUP/MOUNT
+## BACKUP/MOUNT
 
 To ensure the permanence of the database, the data stored in memory is stored on the disk as soon as possible. In case of a general failure such as Process Failure, Restart Recovery makes the database consistent. However, in case of power failure or hardware damage caused by fire, database recovery is impossible. In order to solve this problem, the database backup and recovery function saves data to another disk or hardware periodically in another area and recovers the data using the corresponding data in case of an emergency.
 
@@ -37,7 +37,7 @@ mount database 'backup' to mountName;
 umount database mountName;
 ```
 
-# Database Backup
+## Database Backup
 
 Machbase offers two options for backing up your data. It provides DATABASE backup function which backs up information of running DB and TABLE backup function which can select only necessary tables to back up.
 The backup command provided by DB is as follows.
@@ -61,7 +61,7 @@ When performing a DB backup, the backup type, time duration, and path must be en
 Finally, a storage medium to store needs to be configured to store the results of the backup. If you want to create a backup in a single file, set the creation type to IBFILE, or enter DISK to create it in directory units. Note that you can specify the PATH information to store the product. If you enter a relative path, it will be created in the path specified in the DB_PATH item of the current DB configuration. If you want to store it somewhere other than DB_PATH, you must enter an absolute path starting with '/'.
 
 
-# Incremental Backup
+### Incremental Backup
 
 Incremental backup is a function that backs up only data entered after the previous backup. The target for incremental backup is only data in the log and tag tables, and the lookup table always backs up all data. 
 In order to perform an incremental backup, the previously performed incremental backup directory or the entire backup directory is required. 
@@ -81,7 +81,7 @@ Incremental backup is available for the entire database (at this time, the looku
 If you do not want to delete the current data and return to the previous state, you can use the MOUNT function described below.
 
 
-# Warning of Incremental Backup
+### Precautions for Incremental Backup
 
 As above, if backup2 is created as an incremental backup based on backup1, if backup1 is lost (due to disk failure, etc.), it cannot be restored using backup2.
 
@@ -106,7 +106,7 @@ Mach> ...
 ```
 
 
-# Database Restore
+## Database Restore
 
 The Database Restore feature is not provided as a syntax, and can be recovered offline using machadmin -r. You must check the following before restoration.
 
@@ -128,7 +128,7 @@ machadmin -r /home/machbase/backup;
 ```
 
 
-# Database Mount
+## Database Mount
 
 The following problems arise when periodically backing up a large number of databases and adding data continuously in preparation for a system failure.
 
@@ -149,7 +149,7 @@ The current Database Mount function restrictions are as follows.
 * When incremental backup data is mounted, only the incremental data recorded in the backup data is searched, and it does not mount by following the previously performed incremental data.
 
 
-# Mount
+### Mount
 
 To execute the mount command, Backup_database_path information and DatabaseName are required. Backup_database_path is the location information of the DB created by Backup command. DatabaseName is the name that can be distinguished when mounting to Database. Backup_database_path is searched based on the directory specified in the DB_PATH set in the environment variable of the DB when the relative path is entered in the same way as when performing the backup.
 
@@ -159,7 +159,7 @@ MOUNT DATABASE '/home/machbase/backup' TO mountdb;
 ```
 
 
-# Unmount
+### Unmount
 
 If the mounted database will no longer be used, it can be removed using the unmount command.
 
@@ -168,7 +168,7 @@ UNMOUNT DATABASE mount_name;
 UNMOUNT DATABASE mountdb;
 ```
 
-# MOUNT DB Data Retrieval
+### MOUNT DB Data Retrieval
 
 When querying DATA of Backup DB, it can be retrieved by using the same SQL statement when querying the DATA of the DB in operation.
 

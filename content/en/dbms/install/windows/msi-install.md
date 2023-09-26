@@ -6,14 +6,14 @@ weight: 20
 
 ## Installation
 
-1. When the installation start screen is displayed, click the Next button.
+1. Download the installation file from the Markbase download site and run it.  
+   When the installation start screen is displayed, click the Next button.
 
 ![msi1](../msi1.png)
 
 2. On the screen to select the directory folder, the default is usually "C:\Machbase-5.1\". 
    If you want to install to a different directory, you can change the path. 
-
-After choosing the directory, click the Next button.
+   After choosing the directory, click the Next button.
     
 ![msi2](../msi2.png)
 

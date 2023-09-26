@@ -445,7 +445,7 @@ For example, if you type in DATE_TRUNC('second', time, 120), the value returned 
 
 This function returns a natural number representing the day of the week for a given datetime value.
 
-Returns a semantically equivalent value for [TO_CHAR (time, 'DAY')](#TO_CHAR), but returns an integer here.
+Returns a semantically equivalent value for [TO_CHAR (time, 'DAY')](#to_char), but returns an integer here.
 
 ```sql
 DAYOFWEEK(date_val)
@@ -617,7 +617,9 @@ sysdate                         from_timestamp(sysdate-1000000)
 
 This function is an aggregate function that outputs the value of the corresponding column in the group in a string.
 
-> ![warnings](/icons/warnings.png)　This function cannot be used in Cluster Edition.
+{{<callout type="warning">}}
+This function cannot be used in Cluster Edition.
+{{</callout>}}
 
 ```sql
 GROUP_CONCAT(

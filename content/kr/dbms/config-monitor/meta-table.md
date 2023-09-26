@@ -4,13 +4,32 @@ title : 'Meta Table'
 type: docs
 ---
 
+## 목차
+
+- [목차](#목차)
+- [User Object](#user-object)
+  - [M$SYS\_TABLES](#msys_tables)
+  - [M$SYS\_TABLE\_PROPERTY](#msys_table_property)
+  - [M$SYS\_COLUMNS](#msys_columns)
+  - [M$SYS\_INDEXES](#msys_indexes)
+  - [M$SYS\_INDEX\_COLUMNS](#msys_index_columns)
+  - [M$SYS\_TABLESPACES](#msys_tablespaces)
+  - [M$SYS\_TABLESPACE\_DISKS](#msys_tablespace_disks)
+  - [M$SYS\_USERS](#msys_users)
+  - [M$RETENTION](#mretention)
+- [Others](#others)
+  - [M$TABLES](#mtables)
+  - [M$COLUMNS](#mcolumns)
+
+
 메타 테이블은 마크베이스의 스키마 정보를 제시해 주는 테이블들로 테이블 명이 M$로 시작된다.
 
 이 테이블들은 테이블의 이름과, 컬럼 정보, 인덱스 정보들을 유지하고 있고, DDL문에 의해서 생성, 변경, 삭제된 상황을 반영한다.
 이 메타 테이블은 사용자에 의해서 추가, 삭제, 변경될 수 없다.
 
-# User Object
-## M$SYS_TABLES
+## User Object
+### M$SYS_TABLES
+---
 
 사용자가 생성한 테이블을 표시한다.
 
@@ -24,7 +43,8 @@ type: docs
 | COLCOUNT    | 컬럼의 개수                                                                                          |
 | FLAG        | 테이블 타입 구분<br>1 : Tag Data Table<br>2 : Rollup Table<br>4 : Tag Meta Table<br>8 : Tag Stat Table |
 
-## M$SYS_TABLE_PROPERTY
+### M$SYS_TABLE_PROPERTY
+---
 
 각 테이블에 적용된 테이블 프로퍼티 정보를 표시한다.
 
@@ -34,7 +54,8 @@ type: docs
 | NAME  | 프로퍼티 이름   |
 | VALUE | 프로퍼티 값    |
 
-## M$SYS_COLUMNS
+### M$SYS_COLUMNS
+---
 
 M$SYS_TABLES 에 표시된 사용자 테이블의 컬럼 정보를 표시한다.
 
@@ -52,7 +73,8 @@ M$SYS_TABLES 에 표시된 사용자 테이블의 컬럼 정보를 표시한다.
 | MINMAX_CACHE_SIZE    | MIN-MAX 캐쉬의 크기    |
 | MAX_CACHE_PART_COUNT | 파티션 캐쉬의 최대 개수     |
 
-## M$SYS_INDEXES
+### M$SYS_INDEXES
+---
 
 사용자가 생성한 인덱스 정보를 표시한다.
 
@@ -72,7 +94,8 @@ M$SYS_TABLES 에 표시된 사용자 테이블의 컬럼 정보를 표시한다.
 | MAX_KEYWORD_SIZE | 최대 키워드 길이 (Keyword 만 가능)      |
 | BITMAP_ENCODE    | Bitmap 인코딩 유형 (RANGE / EQUAL) |
 
-## M$SYS_INDEX_COLUMNS
+### M$SYS_INDEX_COLUMNS
+---
 
 M$SYS_INDEXES 에 표시된 사용자 인덱스의 컬럼 정보를 표시한다.
 
@@ -86,7 +109,8 @@ M$SYS_INDEXES 에 표시된 사용자 인덱스의 컬럼 정보를 표시한다
 | TABLE_ID    | 테이블 식별자    |
 | TYPE        | 컬럼의 데이터타입  |
 
-## M$SYS_TABLESPACES
+### M$SYS_TABLESPACES
+---
 
 사용자가 생성한 테이블스페이스 정보를 표시한다.
 
@@ -96,7 +120,8 @@ M$SYS_INDEXES 에 표시된 사용자 인덱스의 컬럼 정보를 표시한다
 | ID         | 테이블스페이스 식별자        |
 | DISK_COUNT | 테이블스페이스에 속한 디스크의 수 |
 
-## M$SYS_TABLESPACE_DISKS
+### M$SYS_TABLESPACE_DISKS
+---
 
 테이블스페이스가 사용하는 디스크 정보를 표시한다.
 
@@ -109,7 +134,8 @@ M$SYS_INDEXES 에 표시된 사용자 인덱스의 컬럼 정보를 표시한다
 | IO_THREAD_COUNT    | 이 디스크에 할당된 IO 스레드의 수          |
 | VIRTUAL_DISK_COUNT | 이 디스크에 할당된 Virtual Disk 단위 개수 |
 
-## M$SYS_USERS
+### M$SYS_USERS
+---
 
 마크베이스에 등록된 사용자 정보를 표시한다.
 
@@ -118,7 +144,8 @@ M$SYS_INDEXES 에 표시된 사용자 인덱스의 컬럼 정보를 표시한다
 | USER_ID | 사용자의 식별자 |
 | NAME    | 사용자의 이름  |
 
-## M$RETENTION
+### M$RETENTION
+---
 
 RETENTION POLICY 정보를 표시한다.
 
@@ -129,8 +156,9 @@ RETENTION POLICY 정보를 표시한다.
 | DURATION    | 만료 기간(sec) |
 | INTERVAL    | 갱신 주기(sec) |
 
-# Others
-## M$TABLES
+## Others
+### M$TABLES
+---
 
 M$로 시작하는 모든 메타테이블을 표시한다.
 
@@ -143,7 +171,8 @@ M$로 시작하는 모든 메타테이블을 표시한다.
 | USER ID     | 테이블을 생성한 사용자 (여기서는 SYS) |
 | COLCOUNT    | 컬럼의 개수                  |
 
-## M$COLUMNS
+### M$COLUMNS
+---
 
 M$TABLES 에 표시된 메타테이블의 컬럼 정보를 표시한다.
 

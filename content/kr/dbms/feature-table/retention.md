@@ -8,7 +8,7 @@ weight: 70
 
 보존 기간 및 삭제 주기를 지정한 Retention Policy를 생성하고, ALTER 구문을 통해 테이블에 적용/해제할 수 있다.
 
-# Retention Policy 생성
+## Retention Policy 생성
 
 보존 기간 및 삭제 주기를 지정하여 RETENTION POLICY를 생성한다.
 
@@ -17,6 +17,7 @@ weight: 70
 POLICY 정보는 **M$RETENTION** 테이블 조회하여 확인할 수 있다.
 
 **Syntax:**
+
 ```sql
 CREATE RETENTION policy_name DURATION duration {MONTH|DAY} INTERVAL interval {DAY|HOUR}
 ```
@@ -26,6 +27,7 @@ CREATE RETENTION policy_name DURATION duration {MONTH|DAY} INTERVAL interval {DA
 * interval : 보존 기간 확인 주기
 
 **Example:**
+
 ```sql
 -- 1일 이상 지난 데이터를 삭제하고, 갱신 주기를 1시간으로 한다.
 Mach> CREATE RETENTION policy_1d_1h DURATION 1 DAY INTERVAL 1 HOUR;
@@ -43,7 +45,7 @@ USER_ID     POLICY_NAME                               DURATION             INTER
 [2] row(s) selected.
 ```
 
-# Retention Policy 적용
+## Retention Policy 적용
 
 사전에 생성된 RETENTION POLICY를 테이블에 적용한다.
 
@@ -60,6 +62,7 @@ ALTER TABLE table_name ADD RETENTION policy_name
 * policy_name : 적용할 policy 이름
 
 **Example:**
+
 ```sql
 Mach> CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED);
 Executed successfully.
@@ -78,13 +81,14 @@ POLICY_1D_1H                                                                    
 
 ```
 
-# Retention Policy 해제
+## Retention Policy 해제
 
 테이블에 적용된 RETENTION POLICY를 해제한다.
 
 해제 이후에는 데이터가 삭제되지 않고 영구 보존된다.
 
 **Syntax:**
+
 ```sql
 ALTER TABLE table_name DROP RETENTION;
 ```
@@ -92,18 +96,20 @@ ALTER TABLE table_name DROP RETENTION;
 * table_name : 해제할 table 이름
 
 **Example:**
+
 ```sql
 Mach> ALTER TABLE tag DROP RETENTION;
 Altered successfully.
 ```
 
-# Retention Policy 삭제
+## Retention Policy 삭제
 
 해당 RETENTION POLICY가 적용 중인 테이블이 존재하면 삭제할 수 없다.
 
 적용 중인 테이블의 RETENTION을 해제하고 삭제해야 한다.
 
 **Syntax:**
+
 ```sql
 DROP RETENTION policy_name
 ```
@@ -111,6 +117,7 @@ DROP RETENTION policy_name
 * policy_name : 삭제할 policy 이름
 
 **Example:**
+
 ```sql
 Mach> ALTER TABLE tag ADD RETENTION policy_1d_1h;
 Altered successfully.

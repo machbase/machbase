@@ -31,44 +31,57 @@ MOUNT 명령을 실행하기 위해서는 다음의 제약조건을 만족시켜
 
 마운트된 데이터베이스들에 대한 정보는 V$STORAGE_MOUNT_DATABASES 메타 테이블에서 얻을 수 있다.
 
-# MOUNT
+## Mount 
+
 마운트 명령을 실행하기 위해서는 백업 데이터베이스 경로명과 마운트할 데이터베이스 이름을 입력해야 한다.
 
 백업 데이터베이스 경로는 백업 명령으로 실행한 디렉토리의 위치를 설정한다. 마운트할 데이터베이스 이름은 운영중인 데이터베이스와 구별하기 위해서 별도의 이름을 부여해야 한다.
 
 백업 데이터베이스 경로명은 절대 경로명 ("/"문자로 시작되는 경로명)을 입력하거나, 백업 명령과 동일한 규칙으로 $MACHBASE_HOME/dbs를 기준으로 한 상대 경로명을 이용할 수 있다.
 
-## Syntax:
+Syntax:
+
 ```sql
 MOUNT DATABASE 'backup_database_path' TO mount_name;
 ```
-## Example:
+
+Example:
+
 ```sql
 MOUNT DATABASE '/home/machbase/backup' TO mountdb;
 ```
 
-# UNMOUNT
+## Unmount 
+
 마운드된 데이터베이스 데이터가 더 이상 읽을 필요가 없다면, 마운트 상태를 해제하기 위해 UNMOUNT 명령을 사용한다.
-## Syntax:
+
+Syntax:
+
 ```sql
 UNMOUNT DATABASE mount_name;
 ```
-## Example:
+
+Example:
+
 ```sql
 UNMOUNT DATABASE mountdb;
 ```
 
-# 마운트된 데이터베이스에서 데이터 읽기
+## 마운트된 데이터베이스에서 데이터 읽기
+
 마운트된 데이터베이스에서 데이터를 검색할 때는 기존과 동일한 SQL문을 이용한다.
 
 SYS유저만 마운트된 데이터를 읽을 수 있다. <br/>
 SQL문에서 마운트된 데이터베이스의 테이블을 지정하기 위해서는 mount_name과 user_name을 "." 문자로 연결하여 지정해야 한다.
 
-## Syntax:
+Syntax:
+
 ```sql
 SELECT column_name FROM mount_name.user_name.table_name;
 ```
-## Example:
+
+Example:
+
 ```sql
 SELECT * FROM mountdb.sys.backuptable;
 ```

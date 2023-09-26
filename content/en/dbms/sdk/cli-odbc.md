@@ -4,7 +4,7 @@ type : docs
 weight: 10
 ---
 
-CLI is  a software development standard defined in [ISO](http://en.wikipedia.org/wiki/International_Organization_for_Standardization)/[IEC](http://en.wikipedia.org/wiki/International_Electrotechnical_Commission) 9075-3: 2003.
+CLI is  a software development standard defined in [ISO](https://en.wikipedia.org/wiki/International_Organization_for_Standardization)/[IEC](https://en.wikipedia.org/wiki/International_Electrotechnical_Commission) 9075-3: 2003.
 
 The CLI defines functions and specifications for how to pass SQL to the database and how to receive and analyze the results. This CLI was developed in the early 1990s and was developed exclusively for C and COBOL languages, and its specifications have been maintained to date.
 
@@ -507,6 +507,7 @@ void *mData;
 When inputting a variable data type, set the length of the data to mLength and set the primitive data pointer to mData. If mLength is greater than the defined schema, it is automatically truncated. At this time, SQLAppendDataV2 () returns SQL_SUCCESS_WITH_INFO and also fills the internal structure with a related warning message. To see this warning message, use SQLError () function.
 
 |Database Type|NULL Macro|SQL_APPEND_PARAM Member<br>(mVar is acceptable)|
+|--|--|--|
 |VARCHAR|SQL_APPEND_VARCHAR_NULL|mVarchar|
 |TEXT|SQL_APPEND_TEXT_NULL|mText|
 |BINARY|SQL_APPEND_BINARY_NULL|mBinary|
@@ -541,6 +542,30 @@ void testAppendVarcharFunc()
     SQLAppendDataV2(Stmt, sParam);  /* SQL_SUCCESS_WITH_INFO */
 }
 ```
+
+The following is an example of inserting text type data.
+
+```sql
+CREATE TABLE ttt (doc TEXT);
+```
+
+```cpp
+void testAppendFunc()
+{
+    SQL_mach_PARAM sParam[1];
+ 
+    /*  VARCHAR : NULL */
+    sParam[0].mText.mLength = SQL_APPEND_TEXT_NULL
+    SQLAppendDataV2(Stmt, sParam); /* OK */
+ 
+    /*  VARCHAR : string */
+    strcpy(sText, "This is the sample document for tutorial.");
+    sParam[0].mVar.mLength = strlen(sText);
+    sParam[0].mVar.mData   = sText;
+    SQLAppendDataV2(Stmt, sParam); /* OK */
+}
+```
+
 
 ### SQLAppendDataByTimeV2
 
@@ -680,7 +705,7 @@ The parameters are:
 
 Execution of this function will succeed even if time-based flush is not running.
 
-### Error Check and Description
+**Error Check and Description**
 
 This is a description of the code and how to check for errors when using the Append related functions. If the return value in the CLI function is not SQL_SUCCESS, you can check the error message using the following code.
 

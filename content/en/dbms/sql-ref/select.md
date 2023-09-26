@@ -151,9 +151,10 @@ The above query is converted to an INNER JOIN by the condition t2.i2 = 1 in the 
 
 * The PIVOT syntax is supported from Machbase version 5.6.
 
-![pivot_clause](./select_image/pivot_clause.png)
+**pivot_clause:**
 
-pivot_clause:
+![pivot_clause](../select_image/pivot_clause.png)
+
 
 The PIVOT statement shows the aggregated results of GROUP BY output as ROW, rearranged into columns.
 
@@ -234,19 +235,7 @@ select * from realdual where id3 search 'series' ;
 select * from realdual where id2 search 'time' and id3 search 'series';
 ```
 
--- drop table realdual;
-create table realdual (id1 integer, id2 varchar(20), id3 varchar(20));
- 
-create keyword index idx1 on realdual (id2);
-create keyword index idx2 on realdual (id3);
- 
-insert into realdual values(1, 'time time2', 'series series2');
- 
-select * from realdual;
- 
-select * from realdual where id2 search 'time';
-select * from realdual where id3 search 'series' ;
-select * from realdual where id2 search 'time' and id3 search 'series';
+The results are as follows.
 
 ```sql
 Mach> create table realdual (id1 integer, id2 varchar(20), id3 varchar(20));

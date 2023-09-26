@@ -8,12 +8,12 @@ weight: 60
 
 Coordinator / Deployer 는 부득이하게 수동으로 업그레이드 해야 한다.
 
-### 주의사항
+#### 주의사항
 
 * DDL 또는 DELETE 수행 중이 아니어야 한다. (INSERT, APPEND, SELECT 는 상관없다.)
 * 업그레이드 중 Node 추가/구동/종료/삭제 등의 명령을 내릴 수 없다.
 
-### Coordinator Shutdown
+#### Coordinator Shutdown
 
 Coordinator / Deployer 는 종료되어도 Broker / Warehouse 의 INSERT, APPEND, SELECT 에 영향을 주지 않는다.
 다만, 종료된 동안에는 Broker / Warehouse 가 도중에 죽는 것을 감지하지 못한다. (재시작 후에는 정상 감지된다.)
@@ -22,11 +22,11 @@ Coordinator / Deployer 는 종료되어도 Broker / Warehouse 의 INSERT, APPEND
 machcoordinatoradmin --shutdown
 ```
 
-### Coordinator 백업 (Optional)
+#### Coordinator 백업 (Optional)
 
 $MACH_COORDINATOR_HOME 에 있는 dbs/, conf/ 디렉토리를 백업한다.
 
-### Coordinator 업그레이드
+#### Coordinator 업그레이드
 
 **lightweight package 가 아닌 full package 로 진행한다.**
 
@@ -36,7 +36,7 @@ Package 를 $MACH_COORDINATOR_HOME 에 압축을 풀어 덮어쓴다.
 tar -zxvf machbase-ent-new.official-LINUX-X86-64-release.tgz -C $MACHBASE_COORDINATOR_HOME
 ```
 
-### Coordinator 시작
+#### Coordinator 시작
 
 ```bash
 machcoordinatoradmin --startup
@@ -47,21 +47,21 @@ machcoordinatoradmin --startup
 
 Coordinator 와 동일하다.
 
-### 주의사항
+#### 주의사항
  
 업그레이드 중 Node 추가/구동/종료/삭제 등의 명령을 내릴 수 없다.
 
-### Deployer 종료
+#### Deployer 종료
 
 ```bash
 machdeployeradmin --shutdown
 ```
 
-### Deployer 백업 (Optional)
+#### Deployer 백업 (Optional)
 
 $MACH_DEPLOYER_HOME 에 있는 dbs/, conf/ 디렉토리를 백업한다.
 
-### Deployer 업그레이드
+#### Deployer 업그레이드
 
 Deployer 가 설치된 Host 에서 MWA 를 수행하거나 Collector 를 수행하지 않는다면, lightweight package 로 진행해도 무방하다.
 
@@ -71,7 +71,7 @@ Package 를 $MACH_DEPLOYER_HOME 에 압축을 풀어 덮어쓴다.
 tar -zxvf machbase-ent-new.official-LINUX-X86-64-release.tgz -C $MACH_DEPLOYER_HOME
 ```
 
-### Deployer 시작
+#### Deployer 시작
 
 ```bash
 machdeployeradmin --startup
@@ -82,7 +82,9 @@ machdeployeradmin --startup
 
 Broker/Warehouse 업그레이드를 위한 작업으로, Package 를 Coordinator 에 등록해서 업그레이드를 진행한다.
 
-> lightweight package 로 등록하는 것이 좋다.
+{{<callout type="info">}}
+lightweight package 로 등록하는 것이 좋다.
+{{</callout>}}
 
 먼저, Package 를 $MACH_COORDINATOR_HOME 이 위치한 host 에 옮긴다.
 
@@ -98,7 +100,7 @@ machcoordinatoradmin --add-package=new_package --file-name=./machbase-ent-new.of
 |--file-name|추가할 패키지 파일의 경로를 지정한다.<br>**이미 같은 파일 이름의 package 가 추가되어 있다면 에러가 발생하므로, 파일 이름을 확인해야 한다.**|
 
 
-### Broker/Warehouse 업그레이드
+#### Broker/Warehouse 업그레이드
 
 Coordinator 에서 다음 명령을 수행한다.
 
@@ -135,19 +137,19 @@ Machbase 6.5 Cluster Edition에 Snapshot Failover 기능이 추가되었다.
 
 Snapshot Failover는 DBMS가 정상적인 상황일 때 Snapshot 을 기록해두고 특정 Warehouse의 장애 발생 시 정상인 Snapshot은 제외하고 문제가 발생한 부분에 대해서만 Failover를 수행함으로써 빠른 복구를 제공하는 기능이다.
 
-### Snapshot 기본 개념
+#### Snapshot 기본 개념
 
 Cluster Edition의 각 Group별로 Group 내 존재하는 Warehouse들 사이의 정상 데이터의 위치를 기록하는 개념이다.
 
 Group 내의 Warehouse 에 생성된 Snapshot 이전의 데이터는 모두 정상 상태의 Data임을 보장하며 각 Group 별로 각각의 Snapshot을 기록한다.
 
-### Snapshot Failover 동작 방식
+#### Snapshot Failover 동작 방식
 
 특정 Warehouse에 문제가 발생했을 경우 이 Warehouse는 Scrapped 상태로 데이터 복구가 필요한 상황이 된다.
 
 Snapshot Recovery를 수행하게 되면 문제가 발생한 Warehouse에서의 정상 Snapshot을 기준으로 Snapshot 이후의 Data는 Clear하고 같은 Group 내 정상 상태의 Warehouse의 기준 Snapshot 이후 Data를 문제가 발생한 Warehouse로 Replication해서 복구를 완료한다.
 
-### Snapshot 자동 수행
+#### Snapshot 자동 수행
 
 Default로 Snapshot 자동 수행이 Enable 되어 있으며 Snapshot을 수행하는 주기는 60초로 설정 되어 있으며 Clustser에 Warehouse Group이 여러 개일 경우 Snapshot 주기마다 하나의 Group만 순서대로 Snapshot을 수행한다.
 
@@ -163,7 +165,7 @@ machcoordinatoradmin --snapshot-interval=[sec]
 machcoordinatoradmin --configuration
 ```
 
-### Snapshot 수동 수행
+#### Snapshot 수동 수행
 
 machcoordinatoradmin tool을 이용해 group_name을 지정하고 수동으로 Snapshot을  수행한다.
 
@@ -176,7 +178,7 @@ Cluster에 Group이 여러 개일 경우 전체 Snapshot을 찍기 위해서는 
 machcoordinatoradmin --exec-snapshot --group='group_name'
 ```
 
-### Scrapped node 를 Snapshot 기반으로 복구
+#### Scrapped node 를 Snapshot 기반으로 복구
 
 Scrapped node 가 발생한 경우 아래와 같이 복구한다.
 
@@ -196,7 +198,7 @@ machcoordinatoradmin --exec-sync=[nodename]
 machcoordinatoradmin --set-group-state=normal --group=[groupname]
 ```
 
-### Scrapped node의 Snapshot 기반 복구 과정
+#### Scrapped node의 Snapshot 기반 복구 과정
 
 Snapshot으로 Scrapped node를 복구시 아래와 같은 과정이 수행된다.
 
@@ -376,7 +378,7 @@ Flag      : 0
 +-------------+-----------------+-----------------+-----------------+-------------------------------+-------------+
 ```
 
-### Snapshot 관련 Property
+#### Snapshot 관련 Property
 
 |Property|설명|설정위치|
 |--|--|--|

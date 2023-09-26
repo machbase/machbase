@@ -4,7 +4,10 @@ title : Property
 type : docs
 ---
 
-# Index
+The properties are the settings used by the Machbase server and stored as key-value pairs in the $MACHBASE_HOME/conf/machbase.conf file. 
+These values are set when the Machbase server starts and are used continuously during runtime. To change this value for performance tuning, you must understand the meaning of these values and set them carefully.
+
+## Index
 
 * [CPU_AFFINITY_BEGIN_ID](#cpu_affinity_begin_id)
 * [CPU_AFFINITY_COUNT](#cpu_affinity_count)
@@ -74,10 +77,6 @@ type : docs
 * [TRACE_LOGFILE_SIZE](#trace_logfile_size)
 * [UNIX_PATH](#unix_path)
 * [VOLATILE_TABLESPACE_MEMORY_MAX_SIZE](#volatile_tablespace_memory_max_size)
-
-
-The properties are the settings used by the Machbase server and stored as key-value pairs in the $MACHBASE_HOME/conf/machbase.conf file. 
-These values ​​are set when the Machbase server starts and are used continuously during runtime. To change this value for performance tuning, you must understand the meaning of these values ​​and set them carefully.
 
 
 ## CPU_AFFINITY_BEGIN_ID
@@ -809,31 +808,13 @@ Sets whether to use DIRECT I/O for data read operation.
 
 ## DISK_TABLESPACE_DIRECT_IO_WRITE
 
-Sets whether to use DIRECT I/O for data write operation.
+Sets whether to use DIRECT I/O for data write operation. If DIRECT I/O is not supported on the file system (ex: ZFS), it must be set to 0.
 
-
-<table>
-  <thead>
-    <th> </th>
-    <th>Value</th>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Minimum</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <td>Maximum</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <td style="background-color: #F0FFFF;">Default</td>
-      <td>1</td>
-    </tr>
-  </tbody>
-</table>
-
-
+||Value|
+|-|----|
+|Min|    0|  
+|Max|    1|  
+|Default|    1|
 
 ## DISK_TAG_AUTO_RECLAIM
 
@@ -1218,30 +1199,15 @@ When appending to the lookup table, it specifies how to handle duplicate primary
 
 
 ## MAX_QPX_MEM
+
 Sets the maximum amount of memory used by the query processor to perform the GROUP BY, DISTINCT, and ORDER BY clauses. 
 If one query uses memory with a larger value, the query is canceled. At this time, an error message is sent to the client, and the relevant content is recorded in the machbase.trc file.
 
-
-<table>
-  <thead>
-    <th> </th>
-    <th>Value</th>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Minimum</td>
-      <td>1024 * 1024</td>
-    </tr>
-    <tr>
-      <td>Maximum</td>
-      <td>2^64 - 1</td>
-    </tr>
-    <tr>
-      <td style="background-color: #F0FFFF;">Default</td>
-      <td>500 * 1024 * 1024</td>
-    </tr>
-  </tbody>
-</table>
+||Value|
+|--|----|
+|Min|    1024 * 1024|
+|Max|    2^64 - 1|
+|Default|    500 * 1024 * 1024|
 
 
 ## MEMORY_ROW_TEMP_TABLE_PAGESIZE
@@ -1628,8 +1594,10 @@ You can set the scan direction of the tag table. The property value is one of -1
 
 
 ## TAGDATA_AUTO_META_INSERT
-> ![tips](/icons/tips.png)&nbsp; In 5.5 version, this property name was TAGDATA_AUTO_NAME_INSERT and supports only 0 or 1. <br>
->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Below 5.7 version, default value is 1.
+{{<callout type="info">}}
+In 5.5 version, this property name was TAGDATA_AUTO_NAME_INSERT and supports only 0 or 1.
+Below 5.7 version, default value is 1.
+{{</callout>}}
 
 When entering data through APPEND / INSERT into the TAGDATA table, specify how to handle it if there is no matching TAG_NAME.
 
@@ -1662,28 +1630,15 @@ When entering data through APPEND / INSERT into the TAGDATA table, specify how t
 
 
 ## TAG_TABLE_META_MAX_SIZE
+
 When creating the TAGDATA table, set the maximum size of memory to store the metadata area.
 
-<table>
-  <thead>
-    <th> </th>
-    <th>Value</th>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Minimum</td>
-      <td>1024*1024</td>
-    </tr>
-    <tr>
-      <td>Maximum</td>
-      <td>2^32-1</td>
-    </tr>
-    <tr>
-      <td style="background-color: #F0FFFF;">Default</td>
-      <td>100*1024*1024</td>
-    </tr>
-  </tbody>
-</table>
+||Value|
+|-|----|
+|Min|    1024*1024|
+|Max|    2^32-1|
+|Default|    100\*1024\*1024|
+
 
 ## TAG_PARTITION_COUNT
 

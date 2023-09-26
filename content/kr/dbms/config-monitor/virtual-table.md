@@ -11,7 +11,7 @@ Virtual Table은 마크베이스 서버의 다양한 운영 정보들을 테이�
 
 Virtual Table 은 읽기 전용으로 사용자가 추가/삭제/갱신할 수 없다.
 
-# Index
+## 목차
 
 * [Session/System](#sessionsystem)
   * [V$PROPERTY](#vproperty)
@@ -86,8 +86,9 @@ Virtual Table 은 읽기 전용으로 사용자가 추가/삭제/갱신할 수 �
   * [V$COLUMNS](#vcolumns)
   * [V$RETENTION\_JOB](#vretention_job)
 
-# Session/System
-## V$PROPERTY
+## Session/System
+### V$PROPERTY
+---
 
 서버에 설정된 프로퍼티 정보를 표시한다.
 
@@ -100,7 +101,8 @@ Virtual Table 은 읽기 전용으로 사용자가 추가/삭제/갱신할 수 �
 | MIN   | 설정할 수 있는 최소값 |
 | MAX   | 설정할 수 있는 최대값 |
 
-## V$SESSION
+### V$SESSION
+---
 
 MACHBASE 서버에 접속된 세션 정보를 표시한다.
 
@@ -128,7 +130,8 @@ MACHBASE 서버에 접속된 세션 정보를 표시한다.
 | IDLE_TIMEOUT                       | 세션 연결 후 해당 시간 동안 Client 가 아무일도 하지 않을 시 세션 종료                                                                                     |
 | QUERY_TIMEOUT                      | 쿼리 수행 시 응답 대기 시간                                                                                                                 |
 
-## V$SESMEM
+### V$SESMEM
+---
 
 세션 메모리 정보를 표시한다.
 
@@ -138,7 +141,8 @@ MACHBASE 서버에 접속된 세션 정보를 표시한다.
 | ID    | 메모리 매니저 식별자 |
 | USAGE | 사용 크기       |
 
-## V$SESSTAT
+### V$SESSTAT
+---
 
 세션의 통계 정보를 표시한다.
 
@@ -148,7 +152,8 @@ MACHBASE 서버에 접속된 세션 정보를 표시한다.
 | ID    | 통계 정보 식별자 |
 | VALUE | 통계 정보 값   |
 
-## V$SESTIME
+### V$SESTIME
+---
 
 세션의 시간 정보를 표시한다.
 
@@ -159,7 +164,8 @@ MACHBASE 서버에 접속된 세션 정보를 표시한다.
 | ACCUM_TICK | 누적 시간          |
 | MAX_TICK   | (각 수행 중) 최대 시간 |
 
-## V$SYSMEM
+### V$SYSMEM
+---
 
 시스템의 메모리 정보를 표시한다.
 
@@ -170,7 +176,8 @@ MACHBASE 서버에 접속된 세션 정보를 표시한다.
 | USAGE     | 현재 사용량       |
 | MAX_USAGE | (기록된) 최대 사용량 |
 
-## V$SYSSTAT
+### V$SYSSTAT
+---
 
 시스템의 통계 정보를 표시한다.
 
@@ -180,7 +187,8 @@ MACHBASE 서버에 접속된 세션 정보를 표시한다.
 | NAME  | 통계 정보 이름  |
 | VALUE | 통계 정보 값   |
 
-## V$SYSTIME
+### V$SYSTIME
+---
 
 시스템의 시간 정보를 표시한다.
 
@@ -194,7 +202,8 @@ MACHBASE 서버에 접속된 세션 정보를 표시한다.
 | MAX_TICK   | (각 수행 중) 최대 시간 |
 | COUNT      | 수행 횟수          |
 
-## V$STMT
+### V$STMT
+---
 
 사용자가 현재 실행중인 쿼리문에 대한 정보를 표시한다.
 
@@ -206,7 +215,8 @@ MACHBASE 서버에 접속된 세션 정보를 표시한다.
 | RECORD_SIZE | SELECT 구문 수행 중인 경우, 결과 레코드 크기 |
 | QUERY       | 쿼리 구문                         |
 
-## V$VERSION
+### V$VERSION
+---
 
 MACHBASE 의 버전에 대한 정보를 표시한다.
 
@@ -228,25 +238,27 @@ MACHBASE 의 버전에 대한 정보를 표시한다.
 | FILE_CREATE_TIME          | 파일 생성 시각                                 |
 | EDITION                   | MACHBASE 유형                              |
 
-# Result Cache
-## V$RS_CACHE_LIST
+## Result Cache
+### V$RS_CACHE_LIST
+---
 
 결과 캐시 목록을 표시한다.
 
 | 컬럼 이름           | 설명                          |
 | --------------- | --------------------------- |
-| AGGR_HIT_COUNT  | 집계 결과인 경우, 캐시 히트 횟수         |
-| AGGR_TOUCH_TIME | 집계 결과인 경우, 캐시를 사용하거나 생성한 시각 |
-| HIT_COUNT       | 캐시 히트 횟수                    |
-| QUERY           | 캐시를 만든 쿼리문                  |
-| RECORD_COUNT    | 결과 레코드 개수                   |
-| REFERENCE_COUNT | 현재 참조중인 세션의 개수              |
-| TABLE_COUNT     | 쿼리문과 연관된 테이블 개수             |
-| TIME_SPENT      | 결과를 생성하기까지 경과 시간            |
 | TOUCH_TIME      | 캐시를 사용하거나 생성한 시각            |
 | USER_ID         | 캐시를 생성한 사용자 식별자             |
+| QUERY           | 캐시를 만든 쿼리문                  |
+| TIME_SPENT      | 결과를 생성하기까지 경과 시간            |
+| TABLE_COUNT     | 쿼리문과 연관된 테이블 개수             |
+| RECORD_COUNT    | 결과 레코드 개수                   |
+| REFERENCE_COUNT | 현재 참조중인 세션의 개수              |
+| HIT_COUNT       | 캐시 히트 횟수                    |
+| AGGR_TOUCH_TIME | 집계 결과인 경우, 캐시를 사용하거나 생성한 시각 |
+| AGGR_HIT_COUNT  | 집계 결과인 경우, 캐시 히트 횟수         |
 
-## V$RS_CACHE_STAT
+### V$RS_CACHE_STAT
+---
 
 하나의 세션에서의 결과 캐시의 통계 정보를 표시한다.
 
@@ -258,8 +270,9 @@ MACHBASE 의 버전에 대한 정보를 표시한다.
 | CACHE_REPLACED     | 캐시 교체 횟수          |
 | CACHE_MEMORY_USAGE | 캐시로 사용된 메모리 크기    |
 
-# Storage
-## V$STORAGE
+## Storage
+### V$STORAGE
+---
 
 저장 시스템의 내부 정보를 표시한다.
 
@@ -270,7 +283,8 @@ MACHBASE 의 버전에 대한 정보를 표시한다.
 | DC_TABLESPACE_DWFILE_SIZE | 모든 컬럼데이터를 위한 DWFILE의 총 용량            |
 | DC_KV_TABLE_FILE_SIZE     | TAGDATA 테이블의 파티션 테이블이 가지는 데이터파일 총 용량 |
 
-## V$STORAGE_MOUNT_DATABASES
+### V$STORAGE_MOUNT_DATABASES
+---
 
 마운트 기능을 이용하여 마운트한 백업 데이터베이스의 정보를 표시한다.
 
@@ -287,7 +301,8 @@ MACHBASE 의 버전에 대한 정보를 표시한다.
 | BACKUP_END_TIME   | 백업 실행시 종료 시간           |
 | FLAG              | 프로퍼티 플래그               |
 
-## V$CACHE
+### V$CACHE
+---
 
 Storage Manager 에서 읽은 결과를 캐싱한, 캐시 객체에 대한 종합 정보를 표시한다.
 
@@ -295,7 +310,8 @@ Storage Manager 에서 읽은 결과를 캐싱한, 캐시 객체에 대한 종�
 | --------- | ---------------- |
 | OBJ_COUNT | 결과집합 캐시 객체의 현재 수 |
 
-## V$CACHE_OBJECTS
+### V$CACHE_OBJECTS
+---
 
 저장 시스템에서 읽은 결과를 캐싱한, 각 캐시 객체에 대한 정보를 표시한다.
 
@@ -305,7 +321,8 @@ Storage Manager 에서 읽은 결과를 캐싱한, 캐시 객체에 대한 종�
 | REF_COUNT | 참조 카운트         |
 | FLAG      | (서버 내부 사용 플래그) |
 
-## V$STORAGE_DC_TABLESPACES
+### V$STORAGE_DC_TABLESPACES
+---
 
 저장 시스템의 테이블스페이스 정보를 표시한다.
 
@@ -317,7 +334,8 @@ Storage Manager 에서 읽은 결과를 캐싱한, 캐시 객체에 대한 종�
 | REF_COUNT  | 테이블스페이스 참조 횟수                |
 | DISK_COUNT | 테이블스페이스에 속한 디스크 개수           |
 
-## V$STORAGE_DC_TABLESPACE_DISKS
+### V$STORAGE_DC_TABLESPACE_DISKS
+---
 
 저장 시스템의 테이블스페이스 정보를 표시한다.
 
@@ -331,7 +349,8 @@ Storage Manager 에서 읽은 결과를 캐싱한, 캐시 객체에 대한 종�
 | IO_JOB_COUNT       | I/O Job 개수          |
 | VIRTUAL_DISK_COUNT | 가상 디스크 개수           |
 
-## V$STORAGE_DC_DWFILES
+### V$STORAGE_DC_DWFILES
+---
 
 저장 시스템에서 운용하는 Double-write 파일 (DW File) 의 정보를 표시한다.
 
@@ -352,7 +371,8 @@ Storage Manager 에서 읽은 결과를 캐싱한, 캐시 객체에 대한 종�
 | HEAD_TIMESTAMP_PAGE  | Timestamp 의 Head Page   |
 | TAIL_TIMESTAMP_PAGE  | Timestamp 의 TailPage    |
 
-## V$STORAGE_DC_PAGECACHE
+### V$STORAGE_DC_PAGECACHE
+---
 
 저장 시스템에서 운용하는 Page Cache 에 대한 정보를 표시한다.
 
@@ -363,7 +383,8 @@ Storage Manager 에서 읽은 결과를 캐싱한, 캐시 객체에 대한 종�
 | PAGE_CNT     | 캐싱된 페이지 개수             |
 | CHECK_TIME   | 검사 시간                  |
 
-## V$STORAGE_DC_PAGECACHE_LRU_LST
+### V$STORAGE_DC_PAGECACHE_LRU_LST
+---
 
 저장 시스템에서 운용하는 Page Cache 의 LRU List 에 대한 정보를 표시한다.
 
@@ -376,7 +397,8 @@ Storage Manager 에서 읽은 결과를 캐싱한, 캐시 객체에 대한 종�
 | OBJECT_ID    | 객체 식별자              |
 | LEVEL        | 파티션 레벨              |
 
-## V$STORAGE_USAGE
+### V$STORAGE_USAGE
+---
 
 저장 시스템에서 사용 중인 스토리지의 사용량을 표시한다.
 
@@ -387,7 +409,8 @@ Storage Manager 에서 읽은 결과를 캐싱한, 캐시 객체에 대한 종�
 | USED_RATIO  | 사용량 비율(%)                                              |
 | RATIO_CAP   | 스토리지 사용량 한계. USED_RATIO이 이 한계에 도달하면 데이터 입력/인덱스 구축이 멈춤. |
 
-## V$STORAGE_TABLES
+### V$STORAGE_TABLES
+---
 
 테이블의 상세 정보를 표시한다.
 
@@ -398,8 +421,9 @@ Storage Manager 에서 읽은 결과를 캐싱한, 캐시 객체에 대한 종�
 | STATUS        | 현재 상태<br>Creating...: CREATE TABLE로 테이블 생성 진행중<br>Normal: 정상<br>Predrop: DROP TABLE 명령 접수 상태<br>Dropping...: DROP TABLE 명령 수행 상태<br>Dropped: DROP TABLE 명령 완료 상태<br>Mounted: 백업된 데이터베이스를 mount 명령으로 불러온 상태 |
 | STORAGE_USAGE | 해당 테이블이 스토리지에서 점유한 용량                                                                                                                                                                                      |
 
-# Log Table
-## V$STORAGE_DC_TABLES
+## Log Table
+### V$STORAGE_DC_TABLES
+---
 
 Log Table 에 대한 내부 정보를 표시한다.
 
@@ -423,7 +447,8 @@ Log Table 에 대한 내부 정보를 표시한다.
 | LAST_CHECKPOINT_TIME | 마지막으로 Checkpoint 를 지난 시점                   |
 | TYPE                 | 테이블 유형                                     |
 
-## V$STORAGE_DC_TABLES_STAT
+### V$STORAGE_DC_TABLES_STAT
+---
 
 Log Table 에 대한 내부 정보를 표시한다.
 
@@ -434,7 +459,8 @@ Log Table 에 대한 내부 정보를 표시한다.
 | COUNT         | 레코드 개수      |
 | COLUMN_ID     | 컬럼 식별자      |
 
-## V$STORAGE_DC_TABLE_COLUMNS
+### V$STORAGE_DC_TABLE_COLUMNS
+---
 
 Log Table 의 컬럼에 대한 정보를 표시한다.
 
@@ -457,7 +483,8 @@ Log Table 의 컬럼에 대한 정보를 표시한다.
 | MEMORY_TOTAL_SIZE         | 테이블이 사용 중인 메모리 크기               |
 | MEMORY_ALLOC_SIZE         | 테이블이 할당받은 메모리 크기                |
 
-## V$STORAGE_DC_TABLE_COLUMN_PARTS
+### V$STORAGE_DC_TABLE_COLUMN_PARTS
+---
 
 Log Table 의 컬럼 파티션 정보를 표시한다.
 
@@ -484,7 +511,8 @@ Log Table 의 컬럼 파티션 정보를 표시한다.
 | MIN_VALUE                     | 컬럼 파티션의 최소값                                                                        |
 | MAX_VALUE                     | 컬럼 파티션의 최대값                                                                        |
 
-## V$STORAGE_DC_TABLE_INDEXES
+### V$STORAGE_DC_TABLE_INDEXES
+---
 
 Log Table 에 생성된 인덱스 정보를 표시한다.
 
@@ -508,8 +536,9 @@ Log Table 에 생성된 인덱스 정보를 표시한다.
 | DISK_FILE_SIZE       | 해당 인덱스에 대한 인덱스 파티션 파일의 전체 크기 |
 | LAST_CHECKPOINT_TIME | 마지막으로 Checkpoint 를 지난 시점     |
 
-# LSM Index
-## V$STORAGE_DC_LSMINDEX_LEVEL_PARTS
+## LSM(Log Structured Merge) Index
+### V$STORAGE_DC_LSMINDEX_LEVEL_PARTS
+---
 
 LSM Index 파티션에 대한 정보를 표시한다.
 
@@ -535,7 +564,8 @@ LSM Index 파티션에 대한 정보를 표시한다.
 | KEYVAL_BUILD_MSEC          | KeyValue Mode 에서, 해당 파티션을 완성하기 까지의 총 시간 |
 | BITMAP_BUILD_MSEC          | Bitmap Mode 에서, 해당 파티션을 완성하기 까지의 총 시간   |
 
-## V$STORAGE_DC_LSMINDEX_LEVEL_PARTS_CACHE
+### V$STORAGE_DC_LSMINDEX_LEVEL_PARTS_CACHE
+---
 
 LSM Index 파티션 캐시에 대한 정보를 표시한다.
 
@@ -558,7 +588,8 @@ LSM Index 파티션 캐시에 대한 정보를 표시한다.
 | TABLE_ID                   | 인덱스가 생성된 테이블의 식별자           |
 | TABLESPACE_ID              | 테이블스페이스 식별자                 |
 
-## V$STORAGE_DC_LSMINDEX_LEVELS
+### V$STORAGE_DC_LSMINDEX_LEVELS
+---
 
 LSM 인덱스의 레벨에 관한 정보를 표시한다.
 
@@ -574,7 +605,8 @@ LSM 인덱스의 레벨에 관한 정보를 표시한다.
 | META_END_RID   | 메타정보의 기록이 끝난 시점의 RID   |
 | DELETE_END_RID | 삭제된 RID 최대값 +1         |
 
-## V$STORAGE_DC_LSMINDEX_FILES
+### V$STORAGE_DC_LSMINDEX_FILES
+---
 
 LSM Index 를 구성하는 파일에 대한 정보를 표시한다.
 
@@ -589,7 +621,8 @@ LSM Index 를 구성하는 파일에 대한 정보를 표시한다.
 | END_RID      | 파티션의 마지막 RID+1  |
 | PATH         | 인덱스 파일의 위치      |
 
-## V$STORAGE_DC_LSMINDEX_AGER_JOBS
+### V$STORAGE_DC_LSMINDEX_AGER_JOBS
+---
 
 LSM Index 의 삭제를 담당하는 Ager 의 작업 상태를 표시한다.
 
@@ -602,8 +635,9 @@ LSM Index 의 삭제를 담당하는 Ager 의 작업 상태를 표시한다.
 | END_RID   | 파티션의 마지막 RID+1     |
 | STATE     | Index Ager 의 작업 상태 |
 
-# Volatile Table
-## V$STORAGE_DC_VOLATILE_TABLE
+## Volatile Table
+### V$STORAGE_DC_VOLATILE_TABLE
+---
 
 Volatile Table 에 대한 정보를 표시한다.
 
@@ -612,8 +646,9 @@ Volatile Table 에 대한 정보를 표시한다.
 | MAX_MEM_SIZE | Volatile Tablespace 의 최대 크기 |
 | CUR_MEM_SIZE | Volatile Tablespace 의 현재 크기 |
 
-# Tag Table
-## V$STORAGE_TAG_TABLES
+## Tag Table
+### V$STORAGE_TAG_TABLES
+---
 
 Tagdata Table 의 파티션 테이블에 대한 정보를 표시한다.
 
@@ -633,7 +668,8 @@ Tagdata Table 의 파티션 테이블에 대한 정보를 표시한다.
 | DELETE_STATE         | 현재 DELETE 연산의 상태. DELETE 명령이 들어올 때에만 수행되므로 IDLE이 없다.<br>PROGRESS: 삭제 진행중<br>IOWAIT: 스토리지에 입출력 연산 대기.<br>PENDING: 테이블에 읽기/쓰기 잠금 대기중<br>SHUTDOWN: 정지됨. DELETE 연산이 진행되지 않음.<br>ABNORMAL: 비정상 종료 |
 | SAVE_STATE           | 현재 테이블 저장 연산의 상태.<br>IDLE: 저장 완료, 대기중.<br>PROGRESS: 저장 진행중<br>IOWAIT: 스토리지에 입출력 연산 대기.<br>PENDING: 테이블에 읽기 잠금 대기중<br>SHUTDOWN: 정지됨. DELETE 연산, 혹은 DROP 연산 진행중.<br>ABNORMAL: 비정상 종료           |
 
-## V$STORAGE_TAG_CACHE
+### V$STORAGE_TAG_CACHE
+---
 
 Tagdata Table 의 파티션 테이블에서 사용하는 캐시 정보를 표시한다.
 
@@ -649,7 +685,8 @@ Tagdata Table 의 파티션 테이블에서 사용하는 캐시 정보를 표시
 | MEMORY_WAIT | 데이터 메모리가 캐시 충돌로 대기한 횟수   |
 | IO_WAIT     | 데이터 읽기 연산 대기 횟수          |
 
-## V$STORAGE_TAG_CACHE_OBJECTS
+### V$STORAGE_TAG_CACHE_OBJECTS
+---
 
 Tagdata Table의 파티션 테이블에서 사용하는 각각의 캐시 블럭에 대한 상세정보를 표시한다.
 
@@ -670,7 +707,8 @@ Tagdata Table의 파티션 테이블에서 사용하는 각각의 캐시 블럭�
 | OFFSET     | 데이터파일 오프셋                                                                                                            |
 | DATA_SIZE  | 압축 이전 데이터 크기, 혹은 0                                                                                                   |
 
-## V$STORAGE_TAG_TABLE_FILES
+### V$STORAGE_TAG_TABLE_FILES
+---
 
 Tagdata Table 의 파티션 테이블의 파일 정보를 표시한다.
 
@@ -685,7 +723,8 @@ Tagdata Table 의 파티션 테이블의 파일 정보를 표시한다.
 | MIN_DATE  | 해당 파일에 기록된 데이터의 최소 일자                                                                                                              |
 | MAX_DATE  | 해당 파일에 기록된 데이터의 최대 일자                                                                                                              |
 
-## V$STORAGE_TAG_INDEX
+### V$STORAGE_TAG_INDEX
+---
 
 Tagdata Table 에 생성된 인덱스 정보를 표시한다.
 
@@ -698,8 +737,9 @@ Tagdata Table 에 생성된 인덱스 정보를 표시한다.
 | MEMORY_INDEX_END_RID | 마지막으로 memory에 반영된 인덱스의 EndRID                                                                         |
 | TABLE_END_RID        | 테이블에 마지막으로 반영된 데이터의 EndRID                                                                            |
 
-# Tag Rollup
-## V$ROLLUP
+## Tag Rollup
+### V$ROLLUP
+---
 
 Tagdata 테이블의 Rollup 정보를 표시한다.
 
@@ -715,8 +755,9 @@ Tagdata 테이블의 Rollup 정보를 표시한다.
 | END_RID           | Source Table의 마지막 RID               |
 | LAST_ELAPSED_MSEC | 최근에 진행했던 Rollup의 경과 시간              |
 
-# Stream
-## V$STREAMS
+## Stream
+### V$STREAMS
+---
 
 Stream 정보를 표시한다.
 
@@ -731,8 +772,9 @@ Stream 정보를 표시한다.
 | ERROR_MSG    | 마지막으로 실행했을 때의 에러 메시지                                                        |
 | FREQUENCY    | 질의 수행의 최소 대기 시간. 0이면 매 레코드마다 실행되며 0이 아니면 해당 시간이 지날 때 마다 수행된다.<br>단위는 나노초이다. |
 
-# License
-## V$LICENSE_INFO
+## License
+### V$LICENSE_INFO
+---
 
 라이선스 정보를 표시한다.
 
@@ -752,7 +794,8 @@ Stream 정보를 표시한다.
 | STOP_ACTION      | 중단 행동                  |
 | RESET_FLAG       | (서버 내부 사용)             |
 
-## V$LICENSE_STATUS
+### V$LICENSE_STATUS
+---
 
 라이선스 상태를 표시한다.
 
@@ -763,8 +806,9 @@ Stream 정보를 표시한다.
 | VIOLATION_COUNT     | 라이선스 위반 횟수           |
 | STOP_ENABLED        | (제거됨)                |
 
-# Mutex
-## V$MUTEX
+## Mutex
+### V$MUTEX
+---
 
 현재 뮤텍스 상태를 보여준다.
 
@@ -783,7 +827,8 @@ Stream 정보를 표시한다.
 | HELD_TICK      | 뮤텍스를 획득한 이후 해제할 때까지의 시간 총합 | TRACE_MUTEX_WAIT_STATUS=1일 때에만 수집<br>RW Mutex에는 기록하지 않음                                                    |
 | HELD_TICK_AVG  | 뮤텍스 획득 이후 해제까지의 시간 평균      | TRACE_MUTEX_WAIT_STATUS=1일 때에만 수집<br>RW Mutex에는 기록하지 않음                                                    |
 
-## V$MUTEX_WAIT_STAT
+### V$MUTEX_WAIT_STAT
+---
 
 현재 대기중인 뮤텍스의 콜스택을 보여준다.
 
@@ -794,9 +839,10 @@ Stream 정보를 표시한다.
 | DEPTH     | 호출 깊이               | TRACE_MUTEX_WAIT_STACK=1일 때에만 수집 |
 | SYMBOL    | 뮤텍스 획득을 호출한 함수의 심볼  | TRACE_MUTEX_WAIT_STACK=1일 때에만 수집 |
 
-# Cluster
+## Cluster
 
-## V$NODE_STATUS
+### V$NODE_STATUS
+---
 
 Cluster 각 Node 의 상태를 표시한다. 1건만 표시된다.
 
@@ -805,7 +851,8 @@ Cluster 각 Node 의 상태를 표시한다. 1건만 표시된다.
 | NODETYPE | Node 의 유형. 쿼리로 조회 가능한 Type 은 두 가지 뿐이다.<br>Broker<br>Warehouse |
 | STATE    | Node 의 상태                                                     |
 
-## V$DDL_INFO
+### V$DDL_INFO
+---
 
 Cluster 에서 수행한 DDL 정보를 표시한다.
 
@@ -819,7 +866,8 @@ Cluster 에서 수행한 DDL 정보를 표시한다.
 | USER           | 사용자 이름                  |
 | SQL            | DDL 쿼리 값                |
 
-## V$REPLICATION
+### V$REPLICATION
+---
 
 Replication 작동에 대한 정보를 표시한다.
 
@@ -833,7 +881,8 @@ Replication 작동에 대한 정보를 표시한다.
 | MAX_SENDER_COUNT | 생성 가능한 Sender 최대 개수                |
 | RUN_SENDER_COUNT | 작동중인 Sender 최대 개수                  |
 
-## V$REPL_SENDER
+### V$REPL_SENDER
+---
 
 Replication 작동 시, Sender 의 정보를 표시한다.
 
@@ -850,7 +899,8 @@ Replication 작동 시, Sender 의 정보를 표시한다.
 | NET_RECV_COUNT     | 전체 수신 횟수                           |
 | NET_RECV_SIZE      | 전체 수신 크기 총합                        |
 
-## V$REPL_SENDER_META
+### V$REPL_SENDER_META
+---
 
 Replication 작동 시, Sender 의 메타데이터를 표시한다.
 
@@ -863,7 +913,8 @@ Replication 작동 시, Sender 의 메타데이터를 표시한다.
 | BEGIN_RID  | 대상 레코드의 시작 RID                     |
 | END_RID    | 대상 레코드의 끝 RID                      |
 
-## V$REPL_RECEIVER
+### V$REPL_RECEIVER
+---
 
 Replication 작동 시, Receiver 의 정보를 표시한다.
 
@@ -879,7 +930,8 @@ Replication 작동 시, Receiver 의 정보를 표시한다.
 | NET_RECV_COUNT     | 전체 수신 횟수                           |
 | NET_RECV_SIZE      | 전체 수신 크기 총합                        |
 
-## V$REPL_RECEIVER_META
+### V$REPL_RECEIVER_META
+---
 
 Replication 작동 시, Receiver 의 메타데이터를 표시한다.
 
@@ -891,7 +943,8 @@ Replication 작동 시, Receiver 의 메타데이터를 표시한다.
 | BEGIN_RID  | 대상 레코드의 시작 RID                     |
 | END_RID    | 대상 레코드의 끝 RID                      |
 
-## V$REPL_READER
+### V$REPL_READER
+---
 
 Replication 작동 시, Reader 의 정보를 표시한다.
 
@@ -903,7 +956,8 @@ Replication 작동 시, Reader 의 정보를 표시한다.
 | STATUS      | Reader Thread의 작동상태                |
 | FETCH_COUNT | FETCH 수행 횟수                        |
 
-## V$REPL_READER_META
+### V$REPL_READER_META
+---
 
 Replication 작동 시, Reader 의 메타데이터를 표시한다.
 
@@ -917,7 +971,8 @@ Replication 작동 시, Reader 의 메타데이터를 표시한다.
 | BEGIN_RID  | 대상 레코드의 시작 RID                     |
 | END_RID    | 대상 레코드의 끝 RID                      |
 
-## V$REPL_WRITER
+### V$REPL_WRITER
+---
 
 Replication 작동 시, Writer 의 정보를 표시한다.
 
@@ -928,7 +983,8 @@ Replication 작동 시, Writer 의 정보를 표시한다.
 | STATUS       | Writer Thread 의 작동상태               |
 | APPEND_COUNT | APPEND 수행 횟수                       |
 
-## V$REPL_WRITER_META
+### V$REPL_WRITER_META
+---
 
 Replication 작동 시, Writer 의 메타데이터를 표시한다.
 
@@ -941,8 +997,9 @@ Replication 작동 시, Writer 의 메타데이터를 표시한다.
 | BEGIN_RID  | 대상 레코드의 시작 RID                     |
 | END_RID    | 대상 레코드의 끝 RID                      |
 
-# Others
-## V$TABLES
+## Others
+### V$TABLES
+---
 
 V$로 시작하는 모든 Virtual Table 을 표시한다.
 
@@ -955,7 +1012,8 @@ V$로 시작하는 모든 Virtual Table 을 표시한다.
 | USER ID     | 테이블을 생성한 사용자 |
 | COLCOUNT    | 컬럼의 갯수       |
 
-## V$COLUMNS
+### V$COLUMNS
+---
 
 Virtual Table 의 컬럼 정보를 표시한다.
 
@@ -973,7 +1031,8 @@ Virtual Table 의 컬럼 정보를 표시한다.
 | MINMAX_CACHE_SIZE    | (사용되지 않음)  |
 | MAX_CACHE_PART_COUNT | (사용되지 않음)  |
 
-## V$RETENTION_JOB
+### V$RETENTION_JOB
+---
 
 RETENTION POLICY가 적용된 테이블 정보를 표시한다.
 

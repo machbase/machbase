@@ -8,7 +8,7 @@ This function automatically deletes the data after the designated data retention
 
 You can create a retention policy that specifies the retention period and deletion cycle, and apply/release it to the table through the ALTER statement.
 
-# Create Retention Policy
+## Create Retention Policy
 
 Create a RETENTION POLICY by specifying the retention period and deletion cycle.
 
@@ -17,6 +17,7 @@ The retention period can be specified in units of months and days, and the delet
 POLICY information can be checked by querying the **M$RETENTION** table.
 
 **Syntax:**
+
 ```sql
 CREATE RETENTION policy_name DURATION duration {MONTH|DAY} INTERVAL interval {DAY|HOUR}
 ```
@@ -26,6 +27,7 @@ CREATE RETENTION policy_name DURATION duration {MONTH|DAY} INTERVAL interval {DA
 * interval : Retention period checking cycle
 
 **Example:**
+
 ```sql
 -- Data older than one day is deleted, and the update cycle is set to one hour.
 Mach> CREATE RETENTION policy_1d_1h DURATION 1 DAY INTERVAL 1 HOUR;
@@ -43,7 +45,7 @@ USER_ID     POLICY_NAME                               DURATION             INTER
 [2] row(s) selected.
 ```
 
-# Apply Retention Policy
+## Apply Retention Policy
 
 Apply the previously created RETENTION POLICY to the table.
 
@@ -52,6 +54,7 @@ After application, the retention period is checked and deleted every deletion cy
 Table information to which the RETENTION POLICY is applied can be checked by querying the **V$RETENTION_JOB** table.
 
 **Syntax:**
+
 ```sql
 ALTER TABLE table_name ADD RETENTION policy_name
 ```
@@ -60,6 +63,7 @@ ALTER TABLE table_name ADD RETENTION policy_name
 * policy_name : policy name to apply
 
 **Example:**
+
 ```sql
 Mach> CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED);
 Executed successfully.
@@ -78,13 +82,14 @@ POLICY_1D_1H                                                                    
 
 ```
 
-# Release Retention Policy
+## Release Retention Policy
 
 Release the RETENTION POLICY applied to the table.
 
 After release, the data is not deleted and is permanently preserved.
 
 **Syntax:**
+
 ```sql
 ALTER TABLE table_name DROP RETENTION;
 ```
@@ -92,18 +97,20 @@ ALTER TABLE table_name DROP RETENTION;
 * table_name : table name to release
 
 **Example:**
+
 ```sql
 Mach> ALTER TABLE tag DROP RETENTION;
 Altered successfully.
 ```
 
-# Drop Retention Policy
+## Drop Retention Policy
 
 If a table to which the RETENTION POLICY is being applied exists, it cannot be dropped.
 
 You must release the RETENTION of the table being applied and delete it.
 
 **Syntax:**
+
 ```sql
 DROP RETENTION policy_name
 ```
@@ -111,6 +118,7 @@ DROP RETENTION policy_name
 * policy_name : policy name to remove
 
 **Example:**
+
 ```sql
 Mach> ALTER TABLE tag ADD RETENTION policy_1d_1h;
 Altered successfully.

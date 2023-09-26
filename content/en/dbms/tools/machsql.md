@@ -103,6 +103,48 @@ LSM          ENABLE   COMPRESSED    2           100000      EQUAL
 [1] row(s) selected.
 ```
 
+### SHOW INDEXES
+
+Displays entire index list.
+
+**Syntax:**
+
+```
+SHOW INDEXES
+```
+
+**Example:**
+
+```sql
+Mach> CREATE TABLE t1 (c1 INTEGER, c2 VARCHAR(10));
+Created successfully.
+Mach> CREATE VOLATILE TABLE t2 (c1 INTEGER, c2 VARCHAR(10));
+Created successfully.
+Mach> CREATE INDEX t1_idx1 ON t1(c1) INDEX_TYPE LSM;
+Created successfully.
+Mach> CREATE INDEX t1_idx2 ON t1(c1) INDEX_TYPE BITMAP;
+Created successfully.
+Mach> CREATE INDEX t2_idx1 ON t2(c1) INDEX_TYPE REDBLACK;
+Created successfully.
+Mach> CREATE INDEX t2_idx2 ON t2(c2) INDEX_TYPE REDBLACK;
+Created successfully.
+ 
+Mach> SHOW INDEXES;
+TABLE_NAME                                COLUMN_NAME                               INDEX_NAME                      
+----------------------------------------------------------------------------------------------------------------------------------
+INDEX_TYPE
+---------------
+T1                                        C1                                        T1_IDX1                         
+LSM
+T1                                        C1                                        T1_IDX2                         
+LSM
+T2                                        C2                                        T2_IDX2                         
+REDBLACK
+T2                                        C1                                        T2_IDX1                         
+REDBLACK
+[4] row(s) selected.
+```
+
 ### SHOW INDEXGAP
 
 Displays index building GAP information.

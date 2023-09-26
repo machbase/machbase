@@ -4,7 +4,7 @@ type : docs
 weight: 10
 ---
 
-CLI란 ISO/IEC 9075-3:2003에 정의된 소프트웨어 개발 표준이다.
+CLI란 [ISO](https://en.wikipedia.org/wiki/International_Organization_for_Standardization)/[IEC](https://en.wikipedia.org/wiki/International_Electrotechnical_Commission) 9075-3:2003에 정의된 소프트웨어 개발 표준이다.
 
 CLI는 데이터베이스에 어떻게 SQL을 전달하고, 결과 값을 어떻게 받고 분석해야 하는지에 대한 함수 및 명세를 정의하고 있다. 이 CLI는 1990년 초창기에 개발되었고, C 와 COBOL 언어 만을 위해 개발되었고, 현재까지 그 스펙이 유지되고 있다.
 
@@ -713,24 +713,131 @@ if (SQL_SUCCESS == SQLError ( env, con, stmt, (SQLCHAR *)sqlState, &errNo,
 
 Append관련 함수에서 리턴되는 에러 메시지는 아래와 같다.
 
-| 함수                | message                                   | 설명                                                                           |
-|---------------------|-------------------------------------------|--------------------------------------------------------------------------------|
-| SQLAppendOpen       | statement is already opened.              | 중복으로 SQLAppendOpen을 하는 경우 발생함.                                     |
-|                     | Failed to close stream protocol.          | 스트림 프로토콜 종료에 실패함.                                                 |
-|                     | Failed to read protocol.                  | 네트워크 읽기 오류가 발생함.                                                   |
-|                     | cannot read column meta.                  | column meta 정보 구조가 잘못됨                                                 |
-|                     | cannot allocate memory.                   | 내부 버퍼 메모리 할당 오류가 발생함.                                           |
-|                     | cannot allocate compress memory.          | 압축 버퍼 메모리 할당 오류가 발생함.                                           |
-|                     | invalid return after reading column meta. | return값에 오류가 있음.                                                        |
-| SQLAppendData       | statement is not opened.                  | AppendOpen을 하지 않고 AppendData를 call함.                                    |
-|                     | column() truncated :                      | varchar 타입 컬럼에 지정된 사이즈 보다 큰 데이터를 입력하는 경우 발생함.       |
-|                     | Failed to add binary.                     | 통신버퍼에 쓰기 오류가 발생함.                                                 |
-| SQLAppendClose      | statement is not opened.                  | AppendOpen상태가 아님.                                                         |
-|                     | Failed to close stream protocol.          | 스트림 프로토콜 종료에 실패함.                                                 |
-|                     | Failed to close buffer protocol.          | 버퍼 프로토콜 종료에 실패함.                                                   |
-|                     | cannot read column meta.                  | column meta정보 구조가 잘못됨.                                                 |
-|                     | invalid return after reading column meta. | return값에 오류가 있음.                                                        |
-| SQLAppendFlush      | statement is not opened.                  | AppendOpen상태가 아님                                                          |
+<table>
+  <thead>
+    <tr>
+      <th>function</th>
+      <th>message</th>
+      <th>description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td rowspan="7">SQLAppendOpen</td>
+      <td>statement is already opened.</td>
+      <td>중복으로 SQLAppendOpen을 하는 경우 발생함.</td>
+    </tr>
+    <tr>
+      <td>Failed to close stream protocol.</td>
+      <td>스트림 프로토콜 종료에 실패함.</td>
+    </tr>
+    <tr>
+      <td>Failed to read protocol.</td>
+      <td>네트워크 읽기 오류가 발생함.</td>
+    </tr>
+    <tr>
+      <td>cannot read column meta.</td>
+      <td>column meta 정보 구조가 잘못됨</td>
+    </tr>
+    <tr>
+      <td>cannot allocate memory.</td>
+      <td>내부 버퍼 메모리 할당 오류가 발생함.</td>
+    </tr>
+    <tr>
+      <td>cannot allocate compress memory.</td>
+      <td>압축 버퍼 메모리 할당 오류가 발생함.</td>
+    </tr>
+    <tr>
+      <td>invalid return after reading column meta.</td>
+      <td>return값에 오류가 있음.</td>
+    </tr>
+    <tr>
+      <td rowspan="3">SQLAppendData</td>
+      <td>statement is not opened.</td>
+      <td>AppendOpen을 하지 않고 AppendData를 call함.</td>
+    </tr>
+    <tr>
+      <td>column() truncated :</td>
+      <td>varchar 타입 컬럼에 지정된 사이즈 보다 큰 데이터를 입력하는 경우 발생함.</td>
+    </tr>
+    <tr>
+      <td>Failed to add binary.</td>
+      <td>통신버퍼에 쓰기 오류가 발생함.</td>
+    </tr>
+    <tr>
+      <td rowspan="5">SQLAppendClose</td>
+      <td>statement is not opened.</td>
+      <td>AppendOpen상태가 아님.</td>
+    </tr>
+    <tr>
+      <td>Failed to close stream protocol.</td>
+      <td>스트림 프로토콜 종료에 실패함.</td>
+    </tr>
+    <tr>
+      <td>Failed to close buffer protocol.</td>
+      <td>버퍼 프로토콜 종료에 실패함.</td>
+    </tr>
+    <tr>
+      <td>cannot read column meta.</td>
+      <td>column meta정보 구조가 잘못됨.</td>
+    </tr>
+    <tr>
+      <td>invalid return after reading column meta.</td>
+      <td>return값에 오류가 있음.</td>
+    </tr>
+    <tr>
+      <td rowspan="2">SQLAppendFlush</td>
+      <td>statement is not opened.</td>
+      <td>AppendOpen상태가 아님</td>
+    </tr>
+    <tr>
+      <td>Failed to close stream protocol.</td>
+      <td>네트워크 쓰기 오류가 발생함.</td>
+    </tr>
+    <tr>
+      <td rowspan="2">SQLSetErrorCallback</td>
+      <td>statement is not opened.</td>
+      <td>AppendOpen상태가 아님.</td>
+    </tr>
+    <tr>
+      <td>Protocol Error (not APPEND_DATA_PROTOCOL)</td>
+      <td>통신 버퍼 읽기 결과가 APPEND_DATA_PROTOCOL 값이 아님.</td>
+    </tr>
+    <tr>
+      <td rowspan="8">SQLAppendDataV2</td>
+      <td>Invalid date format or date string.</td>
+      <td>날짜/시간 유형이 잘못된 경우 발생.</td>
+    </tr>
+    <tr>
+      <td>statement is not opened.</td>
+      <td>AppendOpen상태가 아님.</td>
+    </tr>
+    <tr>
+      <td>column() truncated :</td>
+      <td>바이너리 유형 열에 지정된 크기보다 큰 데이터를 입력하는 경우 발생</td>
+    </tr>
+    <tr>
+      <td>column() truncated :</td>
+      <td>varchar 타입 컬럼에 지정된 사이즈 보다 큰 데이터를 입력하는 경우 발생함.</td>
+    </tr>
+    <tr>
+      <td>Failed to add stream.</td>
+      <td>통신버퍼에 쓰기 오류가 발생함.</td>
+    </tr>
+    <tr>
+      <td>IP address length is invalid.</td>
+      <td>IPv4, IPv6 유형 구조의 mLength 값이 잘못 지정됨.</td>
+    </tr>
+    <tr>
+      <td>IP string is invalid.</td>
+      <td>IPv4 또는 IPv6 형식이 아님.</td>
+    </tr>
+    <tr>
+      <td>Unknown data type has been specified.</td>
+      <td>Machbase에서 사용하는 데이터 유형이 아님.</td>
+    </tr>
+  </tbody>
+</table>
 
 ## 열 형식 매개변수 바인딩
 

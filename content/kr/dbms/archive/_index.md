@@ -1,9 +1,8 @@
 ---
 title : 'Archive'
 weight: 900
+type: docs
 ---
-
-# Archive
 
 * [7.5 Manual](./M75-Kor.pdf)
 * [7.0 Manual](./M7-Kor.pdf)
