@@ -13,11 +13,11 @@ Machbase supports Python modules. By installing the module, it provides a class 
 
 Linux Platform
 
-Simple configuration and library files are required to use this. First, make sure that $MAC_LIBRARY_PATH is registered in the $MACHBASE_HOME/lib directory. The [libmachbasecli_dll.so](http://libmachbasecli_dll.so/) file must exist in the library folder because you are accessing Machbase using the CLI. Then unzip machbaseAPI-1.0.tar.gz in the $MACHBASE_HOME/3rd-party/python3-module folder and install the module into the Python you want to use via the python setup.py install command.
+Simple configuration and library files are required to use this. First, make sure that $MAC_LIBRARY_PATH is registered in the $MACHBASE_HOME/lib directory. The `libmachbasecli_dll.so` file must exist in the library folder because you are accessing Machbase using the CLI. Then unzip machbaseAPI-1.0.tar.gz in the $MACHBASE_HOME/3rd-party/python3-module folder and install the module into the Python you want to use via the `python setup.py install` command.
 
 Windows Platform
 
-First, unzip machbaseAPI-1.0.zip in the %MACHBASE_HOME%/3rd-party/python3-module directory, and execute "python setup.py install" command to install the module into the Python.
+First, unzip machbaseAPI-1.0.zip in the %MACHBASE_HOME%/3rd-party/python3-module directory, and execute `python setup.py install` command to install the module into the Python.
 
 ## Creating Class
 To use the Machbase Python module, you need to declare the class.

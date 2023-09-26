@@ -12,11 +12,11 @@ weight: 30
 
 **리눅스**
 
-이를 사용하기 위해서는 간단한 환경 설정과 라이브러리 파일들이 필요하다. 먼저 $LD_LIBRARY_PATH에 $MACHBASE_HOME/lib 디렉터리가 등록되어있는지 확인한다. CLI를 이용해서 마크베이스에 접속하기 때문에 libmachbasecli_dll.so 파일이 라이브러리 폴더에 존재해야 한다. 그리고 $MACHBASE_HOME/3rd-party/python3-module 폴더에 있는 machbaseAPI-1.0.tar.gz를 압축 해제후 python setup.py install 명령을 통해 사용하려는 Python에 모듈을 설치한다.
+이를 사용하기 위해서는 간단한 환경 설정과 라이브러리 파일들이 필요하다. 먼저 $LD_LIBRARY_PATH에 $MACHBASE_HOME/lib 디렉터리가 등록되어있는지 확인한다. CLI를 이용해서 마크베이스에 접속하기 때문에 `libmachbasecli_dll.so` 파일이 라이브러리 폴더에 존재해야 한다. 그리고 $MACHBASE_HOME/3rd-party/python3-module 폴더에 있는 machbaseAPI-1.0.tar.gz를 압축 해제후 `python setup.py install` 명령을 통해 사용하려는 Python에 모듈을 설치한다.
 
 **윈도우**
 
-먼저 %MACHBASE_HOME%/3rd-party/python3-module 폴더에 있는 machbaseAPI-1.0.zip을 압축 해제 후 python setup.py install 명령을 통해 사용하려는 Python에 모듈을 설치한다.
+먼저 %MACHBASE_HOME%/3rd-party/python3-module 폴더에 있는 machbaseAPI-1.0.zip을 압축 해제 후 `python setup.py install` 명령을 통해 사용하려는 Python에 모듈을 설치한다.
 
 ## Class 생성
 
