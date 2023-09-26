@@ -1,7 +1,7 @@
 ---
 title : Backup and Restore
 type : docs
-weight: 30
+weight: 20
 ---
 
 # Database Backup
