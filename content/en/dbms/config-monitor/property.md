@@ -1199,30 +1199,15 @@ When appending to the lookup table, it specifies how to handle duplicate primary
 
 
 ## MAX_QPX_MEM
+
 Sets the maximum amount of memory used by the query processor to perform the GROUP BY, DISTINCT, and ORDER BY clauses. 
 If one query uses memory with a larger value, the query is canceled. At this time, an error message is sent to the client, and the relevant content is recorded in the machbase.trc file.
 
-
-<table>
-  <thead>
-    <th> </th>
-    <th>Value</th>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Minimum</td>
-      <td>1024 * 1024</td>
-    </tr>
-    <tr>
-      <td>Maximum</td>
-      <td>2^64 - 1</td>
-    </tr>
-    <tr>
-      <td style="background-color: #F0FFFF;">Default</td>
-      <td>500 * 1024 * 1024</td>
-    </tr>
-  </tbody>
-</table>
+||Value|
+|--|----|
+|Min|    1024 * 1024|
+|Max|    2^64 - 1|
+|Default|    500 * 1024 * 1024|
 
 
 ## MEMORY_ROW_TEMP_TABLE_PAGESIZE
