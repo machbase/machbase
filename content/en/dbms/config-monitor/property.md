@@ -808,31 +808,13 @@ Sets whether to use DIRECT I/O for data read operation.
 
 ## DISK_TABLESPACE_DIRECT_IO_WRITE
 
-Sets whether to use DIRECT I/O for data write operation.
+Sets whether to use DIRECT I/O for data write operation. If DIRECT I/O is not supported on the file system (ex: ZFS), it must be set to 0.
 
-
-<table>
-  <thead>
-    <th> </th>
-    <th>Value</th>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Minimum</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <td>Maximum</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <td style="background-color: #F0FFFF;">Default</td>
-      <td>1</td>
-    </tr>
-  </tbody>
-</table>
-
-
+||Value|
+|-|----|
+|Min|    0|  
+|Max|    1|  
+|Default|    1|
 
 ## DISK_TAG_AUTO_RECLAIM
 

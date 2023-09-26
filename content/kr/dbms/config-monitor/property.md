@@ -368,8 +368,6 @@ Fsync를 수행하지 않아도 일반적 상황에서는 데이터 유실이 �
 
 데이터 쓰기 연산에 DIRECT I/O 를 사용할 것인지 설정한다. 파일 시스템에 따라서 DIRECT I/O 지원하지 않는 경우(ex: ZFS), 0으로 설정한다.
 
-참고 : ZFS DIRECT I/O https://github.com/openzfs/zfs/issues/224
-
 ||Value|
 |-|----|
 |최소값|	0|
