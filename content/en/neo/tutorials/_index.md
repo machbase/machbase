@@ -7,66 +7,54 @@ weight: 30
 
 ### SHELL
 
-- [Glance Shell](./010.shell/10.shell.md)
-- [Write waves by shell](./010.shell/11.shell-write-waves.md)
-- [Read waves by shell](./010.shell/12.shell-read-waves.md)
-- [Chart on terminal](./010.shell/13.shell-chart-on-terminal.md)
+- [Glance Shell](./010.shell)
+- [Write waves by shell](./010.shell/11.shell-write-waves)
+- [Read waves by shell](./010.shell/12.shell-read-waves)
+- [Chart on terminal](./010.shell/13.shell-chart-on-terminal)
 
 ### HTTP
 
-- [Create and drop table](./020.http/20.create-drop.md)
-- [Insert table](./020.http/21.insert.md)
-- [Select table](./020.http/22.select.md)
-
-### TQL
-
-- [Glance TQL](./030.tql/30.tql-glance.md)
-- [FFT in TQL](./030.tql/31.tql-fft.md)
-- [User script in TQL](./030.tql/32.tql-user-script.md)
-- [User data formats in TQL](./030.tql/33.tql-user-data-formats.md)
-- [Query Parameters in TQL](./030.tql/34.tql-query-parameters.md)
-- [Time manipulation in TQL](./030.tql/35.tql-time-manipulation.md)
+- [Create and drop table](./020.http/20.create-drop)
+- [Insert table](./020.http/21.insert)
+- [Select table](./020.http/22.select)
+- [How to insert data from Line Protocol](./020.http/50.connectivity-line-protocol)
 
 ### Import
 
-- [Import data](./040.import/40.import.md)
-- [Import data via TQL](./040.import/41.import-tql.md)
-- [Import data from Bridge](./040.import/42.import-bridge.md)
+- [Import data](./040.import)
+- [Import data via TQL](./040.import/41.import-tql)
+- [Import data from Bridge](./040.import/42.import-bridge)
 
 ### Export
 
-- [Export data](./050.export/50.export.md)
-- [Export data via TQL](./050.export/51.export-tql.md)
-- [Export data to Bridge](./050.export/52.export-bridge.md)
+- [Export data](./050.export)
+- [Export data via TQL](./050.export/51.export-tql)
+- [Export data to Bridge](./050.export/52.export-bridge)
 
 ### Timer
 
-- [Timer](./060.timer/60.timer.md)
+- [Timer](./060.timer)
 
 ### Bridge
 
-- [What is a Bridge and How to call SQLite in Neo](./070.bridge/70.bridge.md)
-- [How to call PostgreSQL in Neo](./070.bridge/71.bridge-postgresql.md)
+- [What is a Bridge and How to call SQLite in Neo](./070.bridge)
+- [How to call PostgreSQL in Neo](./070.bridge/71.bridge-postgresql)
 
-### ![golang](/images/golang_logo_16.png)
+### Go
 
-- [HTTP API in Go](./100.go/100.go-http-writing.md)
-- [gRPC API in Go](./100.go/101.go-grpc-writing.md)
-- [How to use Go driver](./100.go/102.go-driver.md)
+- [HTTP API in Go](./100.go/100.go-http-writing)
+- [gRPC API in Go](./100.go/101.go-grpc-writing)
+- [How to use Go driver](./100.go/102.go-driver)
 
-### ![java](/images/java_logo_32.png)
+### Java
 
-- [How to use JDBC driver](./110.java/110.java-driver.md)
+- [How to use JDBC driver](./110.java)
 
-### ![python](/images/python_logo_32.png)
+### Python
 
-- [Chart Python](./120.python/120.python-chart.md)
-- [Reads CSV with Pandas](./120.python/121.python-read-csv-pandas.md)
+- [Chart Python](./120.python/120.python-chart)
+- [Reads CSV with Pandas](./120.python/121.python-read-csv-pandas)
 
-### ![raspi](/images/raspi_logo_32.png)
+### Raspberry PI
 
-- [Raspberry PI as IoT server](./200.project/200.project-ras-pi-iot-server.md) shows how to install machbase-neo on Raspyberry PI.
-
-### Connectivity
-
-- [How to insert data from Line Protocol](./210.connectivity/210.connectivity-line-protocol.md)
+- [Raspberry PI as IoT server](./200.project/200.project-ras-pi-iot-server) shows how to install machbase-neo on Raspyberry PI.

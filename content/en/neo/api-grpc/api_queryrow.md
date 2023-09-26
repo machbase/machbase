@@ -40,5 +40,5 @@ row.Scan(&count)
 fmt.Println("count=", count)
 ```
 
-- [grpc_queryrow.go]({{site.examples_url}}/go/grpc_queryrow/grpc_queryrow.go)
+- [grpc_queryrow.go]({{< neo_examples_url >}}/go/grpc_queryrow/grpc_queryrow.go)
 

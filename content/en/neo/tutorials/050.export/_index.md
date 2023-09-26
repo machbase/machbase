@@ -4,16 +4,21 @@ type: docs
 weight: 50
 ---
 
-{: .important }
-> For smooth practice, the following query should be run to prepare tables and data.
-> ```sql
-> CREATE TAG TABLE IF NOT EXISTS EXAMPLE (NAME VARCHAR(20) PRIMARY KEY, TIME DATETIME BASETIME, VALUE DOUBLE SUMMARIZED);
-> INSERT INTO EXAMPLE VALUES('TAG0', TO_DATE('2021-08-12'), 100);
-> INSERT INTO EXAMPLE VALUES('TAG0', TO_DATE('2021-08-13'), 110);
-> ```
->
-
 Table data can be extracted into a data file using the Export function.
+
+{{< callout emoji="📌" >}}
+For smooth practice, the following query should be run to prepare tables and data.
+{{< /callout >}}
+
+```sql
+CREATE TAG TABLE IF NOT EXISTS EXAMPLE (
+    NAME VARCHAR(20) PRIMARY KEY,
+    TIME DATETIME BASETIME,
+    VALUE DOUBLE SUMMARIZED
+);
+INSERT INTO EXAMPLE VALUES('TAG0', TO_DATE('2021-08-12'), 100);
+INSERT INTO EXAMPLE VALUES('TAG0', TO_DATE('2021-08-13'), 110);
+```
 
 ## Export csv
 

@@ -40,7 +40,7 @@ sqlText := `
 cli.Exec(sqlText)
 ```
 
-- [grpc_cretable.go]({{site.examples_url}}/go/grpc_cretable/grpc_cretable.go)
+- [grpc_cretable.go]({{< neo_examples_url >}}/go/grpc_cretable/grpc_cretable.go)
 
 #### Drop table
 
@@ -49,7 +49,7 @@ sqlText := `drop table example`
 cli.Exec(sqlText)
 ```
 
-- [grpc_droptable.go]({{site.examples_url}}/go/grpc_droptable/grpc_droptable.go)
+- [grpc_droptable.go]({{< neo_examples_url >}}/go/grpc_droptable/grpc_droptable.go)
 
 #### Insert
 
@@ -58,4 +58,4 @@ sqlText := `insert into example (name, time, value) values (?, ?, ?)`
 cli.Exec(sqlText, "tag-name-1", time.Now(), 1.234)
 ```
 
-- [grpc_insert.go]({{site.examples_url}}/go/grpc_insert/grpc_insert.go)
+- [grpc_insert.go]({{< neo_examples_url >}}/go/grpc_insert/grpc_insert.go)

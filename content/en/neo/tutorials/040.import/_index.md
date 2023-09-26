@@ -4,18 +4,21 @@ type: docs
 weight: 40
 ---
 
-{: .important }
-> For smooth practice, the following query should be run to prepare tables and data.
->
-> ```sql
-> CREATE TAG TABLE IF NOT EXISTS EXAMPLE (NAME VARCHAR(20) PRIMARY KEY, TIME DATETIME BASETIME, VALUE DOUBLE SUMMARIZED);
-> ```
->
+Data files can be written into the table using the import function.
 
-Data files can be entered into the table using the import function.
+{{< callout emoji="📌" >}}
+For smooth practice, the following query should be run to prepare tables and data.
+{{< /callout >}}
 
-## Import csv
-{: .no_toc}
+```sql
+CREATE TAG TABLE IF NOT EXISTS EXAMPLE (
+    NAME VARCHAR(20) PRIMARY KEY,
+    TIME DATETIME BASETIME,
+    VALUE DOUBLE SUMMARIZED
+);
+```
+
+## Import CSV
 
 Make test data in `data.csv`.
 
