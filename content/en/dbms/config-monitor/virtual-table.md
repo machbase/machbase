@@ -493,6 +493,7 @@ Displays internal information about Log Table.
 Displays information about the columns in the Log Table.
 
 |Column Name|Description|
+|--|--|
 |TABLE_ID|Table identifier|
 |DATABASE_ID|Database identifier|
 |ID|Column identifier|
