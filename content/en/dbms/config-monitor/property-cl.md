@@ -688,7 +688,9 @@ You must apply Properties directly to the specific Warehouse you want.
 
 The default value is 0.
 
-> ![tips](/icons/tips.png) &nbsp;The Coordinator does not check for data discrepancies, even if there is a data difference between the Warehouses in the Group with the corresponding Property turned on.
+{{<callout type="info">}}
+The Coordinator does not check for data discrepancies, even if there is a data difference between the Warehouses in the Group with the corresponding Property turned on.
+{{</callout>}}
 
 <table>
   <thead>

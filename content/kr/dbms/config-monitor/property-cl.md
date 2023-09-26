@@ -343,7 +343,9 @@ Warehouse 에 직접 DML 을 수행할 경우 Broker 를 통한 것보다 성능
 
 기본값은 0이다.
 
-* 해당 Property 를 켠 채로 Group 내 Warehouse 간의 데이터 차이가 발생하더라도, Coordinator 는 데이터 불일치 여부를 별도로 검사하지 않는다.
+{{<callout type="info">}}
+해당 Property 를 켠 채로 Group 내 Warehouse 간의 데이터 차이가 발생하더라도, Coordinator 는 데이터 불일치 여부를 별도로 검사하지 않는다.
+{{</callout>}}
 
 |(boolean)|	Value|
 |------|---------|
