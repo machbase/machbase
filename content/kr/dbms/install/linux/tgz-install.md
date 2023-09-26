@@ -62,6 +62,7 @@ drwxrwxr-x  3 machbase machbase        19 Oct 30 16:10 webadmin
 |package|추가된 패키지를 저장할 경로 (Cluster Edition)|
 |sample|각종 예제 파일들|
 |trc|Machbase 서버 로그 및 추적 내용들|
+|webadmin|MWA 웹서버 파일들|
 |3rd-party| grafana 연동 파일들|
 
 
