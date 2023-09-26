@@ -14,11 +14,7 @@ sensor_data 라는 테이블을 생성하고 삭제해 보도록 하자.
 
 'CREATE TABLE' 구문으로 로그 테이블을 생성한다.
 ```sql
-Mach> CREATE TABLE sensor_data 
-(
-    id VARCHAR(32),
-    val DOUBLE
-);
+Mach> CREATE TABLE sensor_data (id VARCHAR(32), val DOUBLE);
 Created successfully.
  
 Mach> DROP TABLE sensor_data;
