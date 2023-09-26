@@ -14,7 +14,6 @@ Virtual Tables are read-only and can not be added / deleted / updated by the use
 
 ## Index
 
-- [Index](#index)
 - [Session/System](#sessionsystem)
   - [V$PROPERTY](#vproperty)
   - [V$SESSION](#vsession)

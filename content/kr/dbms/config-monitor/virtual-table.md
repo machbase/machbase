@@ -13,7 +13,6 @@ Virtual Table 은 읽기 전용으로 사용자가 추가/삭제/갱신할 수 �
 
 ## 목차
 
-* [목차](#목차)
 * [Session/System](#sessionsystem)
   * [V$PROPERTY](#vproperty)
   * [V$SESSION](#vsession)
