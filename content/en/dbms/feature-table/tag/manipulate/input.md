@@ -99,7 +99,7 @@ Machbase provides standard development tools for a variety of languages, includi
 * [C/C++ library](/dbms/sdk/cli-odbc)
 * [Java library](/dbms/sdk/jdbc)
 * [Python library](/dbms/sdk/python)
-* [C## library](/dbms/sdk/dotnet)
+* [C# library](/dbms/sdk/dotnet)
 
 Through these libraries, users can create various application programs according to their environment and input data to Machbase.
 
