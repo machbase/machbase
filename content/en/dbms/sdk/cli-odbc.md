@@ -680,7 +680,7 @@ The parameters are:
 
 Execution of this function will succeed even if time-based flush is not running.
 
-### Error Check and Description
+**Error Check and Description**
 
 This is a description of the code and how to check for errors when using the Append related functions. If the return value in the CLI function is not SQL_SUCCESS, you can check the error message using the following code.
 
