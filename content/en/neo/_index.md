@@ -67,11 +67,11 @@ Integration with external systems
 
 ### Tutorials
 
-[Tutorial Waves](./docs/tutorial-waves/00.index.md) tutorial is a good starting point.
+[Tutorial Waves](./tutorials/010.shell/) tutorial is a good starting point.
 
-[Raspberry PI as IoT server](./docs/tutorials/raspi-server.md) shows how to install machbase-neo on Raspberry PI and utilize it as an IoT server.
+[Raspberry PI as IoT server](./tutorials/200.project/200.project-ras-pi-iot-server/) shows how to install machbase-neo on Raspberry PI and utilize it as an IoT server.
 
-[Tutorials](./docs/tutorials/) section has more materials.
+[Tutorials](./tutorials/) section has more materials.
 
 ### Contributing
 
