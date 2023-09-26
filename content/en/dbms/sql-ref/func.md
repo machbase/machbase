@@ -445,7 +445,7 @@ For example, if you type in DATE_TRUNC('second', time, 120), the value returned 
 
 This function returns a natural number representing the day of the week for a given datetime value.
 
-Returns a semantically equivalent value for [TO_CHAR (time, 'DAY')](#TO_CHAR), but returns an integer here.
+Returns a semantically equivalent value for [TO_CHAR (time, 'DAY')](#to_char), but returns an integer here.
 
 ```sql
 DAYOFWEEK(date_val)

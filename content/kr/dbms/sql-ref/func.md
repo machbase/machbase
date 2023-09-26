@@ -440,7 +440,7 @@ COUNT(*)             tm
 
 이 함수는 주어진 datetime 값의 요일을 나타내는 자연수를 반환한다.
 
-TO_CHAR(time, 'DAY') 와 의미상 비슷한 값을 반환하지만, 여기서는 정수를 반환한다.
+[TO_CHAR(time, 'DAY')](#to_char) 와 의미상 비슷한 값을 반환하지만, 여기서는 정수를 반환한다.
 
 ```sql
 DAYOFWEEK(date_val)
