@@ -710,9 +710,10 @@ _ARRIVAL_TIME 컬럼은 기본 설정으로는 SELECT * FROM 질의에 의해서
 |기본값|	0|
 
 ## TAGDATA_AUTO_META_INSERT
-
+{{<callout type="info">}}
 5.5 에서는 TAGDATA_AUTO_NAME_INSERT 이다. 값의 범위도 0/1 이다.
 5.7 이하에서는 기본값이 1 이다.
+{{</callout>}}
 
 TAGDATA 테이블에 APPEND/INSERT 를 통해 데이터를 입력할 때, 일치하는 TAG_NAME 이 없을 경우 어떻게 처리할 것인지를 정한다.
 
