@@ -125,7 +125,7 @@ Displays session information connected to the Machbase server.
 |FEEDBACK_APPEND_ERROR|Whether there is feedback to client on APPEND error|
 |DEFAULT_DATE_FORMAT|Default input format upon Datetime input |
 |HASH_BUCKET_SIZE|Number of Buckets in Temp Hashtable created when performing query|
-|AX_QPX_MEM|Maximum memory size available when performing query|
+|MAX_QPX_MEM|Maximum memory size available when performing query|
 |RS_CACHE_ENABLE|Whether Result Cache in in use|
 |RS_CACHE_TIME_BOUND_MSEC|Maximum elapsed time to store results when using Result Cache|
 |RS_CACHE_MAX_MEMORY_PER_QUERY|Maximum size of memory used per query when using Result Cache|
