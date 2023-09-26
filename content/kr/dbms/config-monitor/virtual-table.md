@@ -246,16 +246,16 @@ MACHBASE 의 버전에 대한 정보를 표시한다.
 
 | 컬럼 이름           | 설명                          |
 | --------------- | --------------------------- |
-| AGGR_HIT_COUNT  | 집계 결과인 경우, 캐시 히트 횟수         |
-| AGGR_TOUCH_TIME | 집계 결과인 경우, 캐시를 사용하거나 생성한 시각 |
-| HIT_COUNT       | 캐시 히트 횟수                    |
-| QUERY           | 캐시를 만든 쿼리문                  |
-| RECORD_COUNT    | 결과 레코드 개수                   |
-| REFERENCE_COUNT | 현재 참조중인 세션의 개수              |
-| TABLE_COUNT     | 쿼리문과 연관된 테이블 개수             |
-| TIME_SPENT      | 결과를 생성하기까지 경과 시간            |
 | TOUCH_TIME      | 캐시를 사용하거나 생성한 시각            |
 | USER_ID         | 캐시를 생성한 사용자 식별자             |
+| QUERY           | 캐시를 만든 쿼리문                  |
+| TIME_SPENT      | 결과를 생성하기까지 경과 시간            |
+| TABLE_COUNT     | 쿼리문과 연관된 테이블 개수             |
+| RECORD_COUNT    | 결과 레코드 개수                   |
+| REFERENCE_COUNT | 현재 참조중인 세션의 개수              |
+| HIT_COUNT       | 캐시 히트 횟수                    |
+| AGGR_TOUCH_TIME | 집계 결과인 경우, 캐시를 사용하거나 생성한 시각 |
+| AGGR_HIT_COUNT  | 집계 결과인 경우, 캐시 히트 횟수         |
 
 ### V$RS_CACHE_STAT
 ---
