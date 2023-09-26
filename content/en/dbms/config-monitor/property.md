@@ -1645,28 +1645,15 @@ When entering data through APPEND / INSERT into the TAGDATA table, specify how t
 
 
 ## TAG_TABLE_META_MAX_SIZE
+
 When creating the TAGDATA table, set the maximum size of memory to store the metadata area.
 
-<table>
-  <thead>
-    <th> </th>
-    <th>Value</th>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Minimum</td>
-      <td>1024*1024</td>
-    </tr>
-    <tr>
-      <td>Maximum</td>
-      <td>2^32-1</td>
-    </tr>
-    <tr>
-      <td style="background-color: #F0FFFF;">Default</td>
-      <td>100*1024*1024</td>
-    </tr>
-  </tbody>
-</table>
+||Value|
+|-|----|
+|Min|    1024*1024|
+|Max|    2^32-1|
+|Default|    100\*1024\*1024|
+
 
 ## TAG_PARTITION_COUNT
 
