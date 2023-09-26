@@ -6,7 +6,7 @@ weight: 50
 
 ## RESTful API 개요
 
-Representational State Transfer (REST) 는 소프트웨어 구조 스타일 의 일종으로, 확장 가능한 웹 서비스에서 제공하는 인터페이스의 가이드라인과 모범적인 규범들로 구성되어 있다.
+Representational State Transfer (REST) 는 [소프트웨어 구조 스타일](https://en.wikipedia.org/wiki/Architectural_pattern) 의 일종으로, 확장 가능한 웹 서비스에서 제공하는 인터페이스의 가이드라인과 모범적인 규범들로 구성되어 있다.
 
 HTTP protocol에 정의된 4개의 Method 들이 Resource에 대한 CRUD를 정의한다.
 
