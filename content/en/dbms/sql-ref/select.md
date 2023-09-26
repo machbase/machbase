@@ -151,9 +151,10 @@ The above query is converted to an INNER JOIN by the condition t2.i2 = 1 in the 
 
 * The PIVOT syntax is supported from Machbase version 5.6.
 
-![pivot_clause](./select_image/pivot_clause.png)
+**pivot_clause:**
 
-pivot_clause:
+![pivot_clause](../select_image/pivot_clause.png)
+
 
 The PIVOT statement shows the aggregated results of GROUP BY output as ROW, rearranged into columns.
 
