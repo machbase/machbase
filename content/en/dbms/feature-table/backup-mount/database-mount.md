@@ -25,7 +25,7 @@ To execute the MOUNT instruction, the following conditions must be met.
 
 Information about mounted databases can be obtained from the V$STORAGE_MOUNT_DATABASES meta table.
 
-# MOUNT
+## Mount 
 
 To run the mount command, the backup database pathname and the name of the database to be mounted must be entered.
 The backup database path sets the location of the directory executed by the backup command. The name of the database to be mounted must be given a separate name to distinguish it from the active database.
@@ -43,7 +43,7 @@ Example:
 MOUNT DATABASE '/home/machbase/backup' TO mountdb;
 ```
 
-# UNMOUNT
+## Unmount 
 
 If the mounded database data no longer needs to be read, use the UNMOUNT command to release the mounted state.
 
@@ -60,7 +60,7 @@ UNMOUNT DATABASE mountdb;
 ```
 
 
-# Reading Data from Mounted Database
+## Reading Data from Mounted Database
 
 When retrieving data from a mounted database, use the same SQL statement as before.
 Only the SYS user can read the mounted data. To specify the mounted database table in an SQL statement, the mount_name and user_name must be set connected to a "." character.
