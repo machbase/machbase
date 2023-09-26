@@ -822,6 +822,7 @@ This value refers to the time the Coordinator waits after requesting each Node t
 ## COORDINATOR_DDL_TIMEOUT
 
 Timeout until the broker waits after requesting the coordinator to perform DDL.  
+
 This value means the time it takes to wait after the broker requests the coordinator to perform DDL for the entire cluster nodes.
 
 |(usec)|Value|
