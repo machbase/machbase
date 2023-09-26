@@ -5,14 +5,15 @@ type : docs
 weight: 20
 ---
 
-# 데이터베이스 백업
+## 데이터베이스 백업
+
 마크베이스의 데이터베이스 백업 종류는 다음과 같이 3가지로 분류할 수 있으며
 백업시 모든 dbs를 백업하거나 특정 table을 선택하여 백업할 수 있다.
  - 전체백업: 입력된 전체 데이터를 백업
  - 증분백업: 전체백업에 이어 추가된 데이터를 백업
  - 기간백업: 특정 기간의 데이터를 백업
 
-## Syntax:
+Syntax:
 
 ```sql
 # Full backup
@@ -28,7 +29,7 @@ BACKUP [ DATABASE | TABLE table_name ]  [ time_duration ] INTO [ DISK ] = 'path/
 path는 절대경로 또는 상대경로를 사용할 수 있다.
 time_duration은 백업할 데이터의 시작시간과 마지막시간을 설정한다.
 
-## Example:
+Example:
 
 ```sql
 # Full backup backup
@@ -52,7 +53,8 @@ duration 시간 조건절을 지정하지 않으면 "1970-01-01 00:00:00" 이 FR
 
 백업 경로를 지정할 때, 상대 경로를 지정하면 "$MACHBASE_HOME/dbs" 아래에 백업 파일들이 생성되므로 주의하여야 한다. 절대 경로를 지정하려면 항상 "/"로 시작하는 경로를 설정하여야 한다.
 
-# 데이터베이스 복구
+## 데이터베이스 복구
+
 백업 파일에서 데이터를 복원할 수 있으며 다음과 같은 제약사항이 있다.
  - 질의 명령으로 수행할 수 없음(machadmin 명령 으로만 수행 가능)
  - 데이터베이스가 정지 상태이어야함
@@ -60,13 +62,13 @@ duration 시간 조건절을 지정하지 않으면 "1970-01-01 00:00:00" 이 FR
  - 증분백업인 경우 Full백업부터 마지막증분 백업까지 모든 백업 dbs가 필요함
  - TAG Table의 경우 기간백업은 복구할 수 없음
 
-## Syntax:
+Syntax:
 
 ```bash
 machadmin -r backup_database_path
 ```
 
-## Example:
+Example:
 
 ```bash
 backup database into disk = '/home/machbase/backup';
