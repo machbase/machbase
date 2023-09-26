@@ -6,12 +6,12 @@ weight: 20
 ---
 
 
-The Cluster Edition is a product with high input speed and standard SQL  that can process large data input / inquiries in a distributed environment that not even the Machbase Fog Edition can process, such as on multiple servers either on premise or in the cloud.
+The Cluster Edition is a product with high input speed and standard SQL  that can process large data input / inquiries in a distributed environment that not even the Machbase Standard Edition can process, such as on multiple servers either on premise or in the cloud.
 
 
 ## Why Should We Use the Cluster Edition?
 
-Machbase offers Fog Edition which inputs time series data at extremely high speed. However, the following disadvantages exist:
+Machbase offers Standard Edition which inputs time series data at extremely high speed. However, the following disadvantages exist:
 
 * Because it consists of a single process, it lacks in high availability (HA).
 * Because one process is dedicated to analyzing data, there is a limit to increasing the performance of large data analysis.
