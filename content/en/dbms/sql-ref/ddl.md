@@ -388,7 +388,7 @@ DROP TABLESPACE TablespaceName;
 create_index_stmt ::= 'CREATE' 'INDEX' index_name 'ON' table_name '(' column_name ')' index_type? table_space? index_property_list?
 index_type ::= 'INDEX_TYPE' ( 'KEYWORD' | 'BITMAP' | 'REDBLACK' )
 table_space ::= 'TABLESPACE' table_space_name
-index_property_list ::= ( 'MAX_LEVEL' | 'PAGE_SIZE' | 'BLOOM_FILTER' | 'BITMAP_ENCODE' | 'PART_VALUE_COUNT' ) '=' value
+index_property_list ::= ( 'MAX_LEVEL' | 'PAGE_SIZE' | 'BITMAP_ENCODE' | 'PART_VALUE_COUNT' ) '=' value
 ```
 
 ### Index Type
@@ -421,7 +421,6 @@ This Index Level Partition Building is performed by Background Thread. The upper
 |--|--|
 |MAX_LEVEL<br>(DEFAULT = 3, MIN = 0, MAX = 3 )|The maximum level of the LSM Index, and the current value of 3 is the maximum value. And the maximum number of records of one partition can not exceed 200 million. The partition size of each level is the number of values ​​of the previous partition * 10. For example, if MAX_LEVEL = 3 and PART_VALUE_COUNT is 100,000, then Level 0 = 100,000, Level 1 = 1,000,0000, Level 2 = 10,000,000, and Level 3 = 100,000,000. If the Partition Size of the last level exceeds 200 million, index creation will fail.|
 |PAGE_SIZE<br>(DEFAULT = 512 * 1024, MIN = 32 * 1024,MAX = 1 * 1024 * 1024)|Specifies the size of the page in which the index key value and bitmap value are stored. Default is 512K.|
-|BLOOM_FILTER<br>(DEFAULT = 1, DISABLE = 0, ENABLE(DEFAULT) = non_zero_integer)|Sets whether to set Bloom filter on index. Setting the Bloom filter allows you to quickly search for values ​​that do not exist in the index, but it will increase the time it takes to create the index.<br>If you use only Range conditions, Bloom filters are not available and need not be created.<br>If you do not want to create a Bloom filter, you should set BLOOM_FILTER = 0.|
 |BITMAP_ENCODE<br>(DEFAULT = EQUAL, RANGE)|Sets the bitmap type of the index.<br>If BITMAP_ENCODE = EQUAL (default), generates a bitmap for the same value as the key value. If BITMAP = RANGE, generates a bitmap according to the range of the key value.<br>It is better to set as BITMAP_ENCODE = EQUAL when using = as the query condition, and BITMAP_ENCODE = RANGE when using the specific range value as the query condition.<br>In the case of BITMAP = RANGE, the cost of creation increases slightly compared to EQUAL.|
 
 ### BITMAP Index
