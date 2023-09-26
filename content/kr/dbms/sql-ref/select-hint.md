@@ -12,9 +12,6 @@ SELECT 쿼리에 함께 사용할 수 있는 Hint를 설명한다.
 
 Parallel query 수행을 위한 parallel factor를 지정한다.
 
-- Cluster : 지원함
-- Standard : 미지원
-
 ```sql
 SELECT /*+ PARALLEL(table_name, parallel_factor) */ ...
 ```
@@ -43,9 +40,6 @@ PLAN
 ## NOPARALLEL
 
 병렬로 수행되지 않도록 한다.
-
-- Cluster : 지원함
-- Standard : 미지원
 
 ```sql
 SELECT /*+ NOPARALLEL(table_name) */ ...
@@ -216,7 +210,7 @@ _RID                 I1
 
 테이블의 스캔 방향을 지정한다. SCAN_FORWARD를 힌트로 사용하면 가장 먼저 입력한 레코드 우선으로, SCAN_BACKWARD를 힌트로 사용하면 가장 나중에 입력한 레코드 우선으로 조회한다.
 
-* Standard edition의 LOG 테이블에 대해서만 지원된다.
+Standard edition의 LOG 테이블에 대해서만 지원된다.
 
 ```sql
 SELECT /*+ SCAN_FORWARD(table_name) */ ...
