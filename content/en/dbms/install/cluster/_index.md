@@ -5,4 +5,4 @@ weight: 50
 ---
 
 * [Preparing for Cluster Edition Installation](./cluster-env)
-* [Cluster Edition Installation(Command-line)](./cluster-command-install)
+* [Cluster Edition Installation(Command-line)](./command-line)
