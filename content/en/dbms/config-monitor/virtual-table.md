@@ -4,6 +4,14 @@ title : Virtual Table
 type : docs
 ---
 
+The Virtual Tables are virtual tables that represent various operational information of the Machbase server in the form of a table. The names of these tables begin with "V$".
+
+This data is used to know what state the Machbase server is operating in.
+In addition, various information can be obtained through JOIN operation with other tables in this virtual table.
+
+Virtual Tables are read-only and can not be added / deleted / updated by the user.
+
+
 ## Index
 
 - [Index](#index)
@@ -21,7 +29,7 @@ type : docs
 - [Result Cache](#result-cache)
   - [V$RS\_CACHE\_LIST](#vrs_cache_list)
   - [V$RS\_CACHE\_STAT](#vrs_cache_stat)
-- [Storage](#storage)
+- [Storage](#storage)  
   - [V$STORAGE](#vstorage)
   - [V$STORAGE\_MOUNT\_DATABASES](#vstorage_mount_databases)
   - [V$CACHE](#vcache)
@@ -80,13 +88,6 @@ type : docs
   - [V$COLUMNS](#vcolumns)
   - [V$RETENTION\_JOB](#vretention_job)
 
-
-The Virtual Tables are virtual tables that represent various operational information of the Machbase server in the form of a table. The names of these tables begin with "V$".
-
-This data is used to know what state the Machbase server is operating in.
-In addition, various information can be obtained through JOIN operation with other tables in this virtual table.
-
-Virtual Tables are read-only and can not be added / deleted / updated by the user.
 
 
 ## Session/System
