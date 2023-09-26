@@ -687,23 +687,6 @@ Metatables can not be renamed, and you can not use the $ character in the name t
 ALTER TABLE worker RENAME TO employee;
 ```
 
-### ALTER TABLE AUTO DELETE
-
-**alter_table_auto_del_stmt:**
-
-```sql
-alter_table_auto_del_stmt ::=  'ALTER TABLE' table_name ('KEEP' 'DISABLE' || 'KEEP' value ('DAY' | 'HOUR' | 'MINUTE' | 'SECOND' | 'RECORD') 'AFTER APPEND' 'INTERVAL' value ('DAY' | 'HOUR' | 'MINUTE' | 'SECOND' | 'RECORD') )
-```
-
-![alter_table_auto_del_stmt](../ddl_image/alter_table_auto_del_stmt.png)
-
-Set the automatic deletion period of the table or determine whether to use it.
-Auto deleting is only possible for log tables.
-
-```sql
--- The automatic deletion of the logtbl table keeps only 30 days of data and changes it to check every 5 seconds after the append.
-ALTER TABLE logtbl keep 30 day after append interval 5 second;
-```
 ### ALTER TABLE ADD RETENTION
 
 **alter_table_add_retention_stmt:**
