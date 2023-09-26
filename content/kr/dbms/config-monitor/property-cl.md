@@ -380,9 +380,9 @@ Coordinator가 Node에게 DDL 수행을 요청한 후 대기할 때 까지의 Ti
 
 ## COORDINATOR_DDL_TIMEOUT
 
-Broker가 CC를 통해 Coordinator에게 DDL 수행을 요청한 후 대기할 때 까지의 Timeout
+Broker가 Coordinator에게 DDL 수행을 요청한 후 대기할 때 까지의 Timeout
 
-이 값은 Broker가 Cluster 전체에 대한 DDL 수행을 Coordinator에게 요청한 후 대기할 때 까지를 말한다.
+이 값은 Broker가 Cluster 전체에 대한 DDL 수행을 Coordinator에게 요청한 후 대기할 때 까지를 의미한다.
 
 |(usec)|	Value|
 |------|---------|
