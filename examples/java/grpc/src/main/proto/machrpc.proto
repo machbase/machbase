@@ -1,0 +1,159 @@
+syntax = "proto3";
+
+package machrpc;
+
+option java_package = "com.machbase.neo.rpc";
+
+import "google/protobuf/any.proto";
+
+service Machbase {
+    rpc Exec(ExecRequest) returns(ExecResponse) {}
+    rpc QueryRow(QueryRowRequest) returns(QueryRowResponse) {}
+    rpc Query(QueryRequest) returns(QueryResponse) {}
+    rpc Columns(RowsHandle) returns (ColumnsResponse) {}
+    rpc RowsFetch(RowsHandle) returns(RowsFetchResponse) {}
+    rpc RowsClose(RowsHandle) returns (RowsCloseResponse) {}
+    rpc Appender(AppenderRequest) returns (AppenderResponse){}
+    rpc Append(stream AppendData) returns(AppendDone) {}
+    rpc Explain(ExplainRequest) returns(ExplainResponse) {}
+    rpc GetServerInfo(ServerInfoRequest) returns (ServerInfo) {}
+}
+
+message AppenderRequest {
+    string tableName = 1;
+}
+
+message AppenderResponse {
+    bool success = 1;
+    string reason = 2;
+    string elapse = 3;
+    string handle = 4;
+}
+
+message AppendData {
+    string handle = 1;
+    repeated google.protobuf.Any params = 2;
+}
+
+message AppendDone {
+    bool success = 1;
+    string reason = 2;
+    string elapse = 3;
+}
+
+message ExplainRequest {
+    string sql = 1;
+}
+
+message ExplainResponse {
+    bool success = 1;
+    string reason = 2;
+    string elapse = 3;
+    string plan = 4;
+}
+
+message ExecRequest {
+    string sql = 1;
+    repeated google.protobuf.Any params = 2;
+}
+
+message ExecResponse {
+    bool success = 1;
+    string reason = 2;
+    string elapse = 3;
+    int64 affectedRows = 4;
+}
+
+message QueryRowRequest {
+    string sql = 1;
+    repeated google.protobuf.Any params = 2;
+}
+
+message QueryRowResponse {
+    bool success = 1;
+    string reason = 2;
+    string elapse = 3;
+    repeated google.protobuf.Any values = 4;
+    int64 affectedRows = 5;
+    string message = 6;
+}
+
+message QueryRequest {
+    string sql = 1;
+    repeated google.protobuf.Any params = 2;
+}
+
+message QueryResponse {
+    bool success = 1;
+    string reason = 2;
+    string elapse = 3;
+    RowsHandle rowsHandle = 4; // only available if stmt is fetchable
+}
+
+message ColumnsResponse {
+    bool success = 1;
+    string reason = 2;
+    string elapse = 3;
+    repeated Column columns = 4;
+}
+
+message Column {
+    string name = 1;
+    string type = 2;
+    int32 size = 3;
+    int32 length = 4;
+}
+
+message RowsHandle {
+    string handle = 1;
+}
+
+message RowsFetchResponse {
+    bool success = 1;
+    string reason = 2;
+    string elapse = 3;
+    bool hasNoRows = 4;
+    repeated google.protobuf.Any values = 5;
+}
+
+message RowsCloseResponse {
+    bool success = 1;
+    string reason = 2;
+    string elapse = 3;
+}
+
+message ServerInfoRequest {
+}
+
+message ServerInfo {
+    bool success = 1;
+    string reason = 2;
+    string elapse = 3;
+    Version version = 4;
+    Runtime runtime = 5;
+}
+
+message Version {
+    int32 major = 1;
+    int32 minor = 2;
+    int32 patch = 3;
+    string gitSHA = 4;
+    string buildTimestamp = 5;
+    string buildCompiler = 6;
+    string engine = 7;
+}
+
+message Runtime {
+    string OS             = 1;
+    string arch           = 2;
+    int32  pid            = 3;
+    int64  uptimeInSecond = 4;
+    int32  processes      = 5;
+    int32  goroutines     = 6;
+    uint64  memSys        = 7;
+    uint64  memHeapSys    = 8;
+    uint64  memHeapAlloc  = 9;
+    uint64  memHeapInUse  = 10;
+    uint64  memStackSys   = 11;
+    uint64  memStackInUse = 12;
+}

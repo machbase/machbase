@@ -1,0 +1,44 @@
+package main
+
+import (
+	"fmt"
+	"os"
+	"path/filepath"
+
+	"github.com/machbase/neo-grpc/machrpc"
+)
+
+func main() {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		panic(err)
+	}
+	serverAddr := "127.0.0.1:5655"
+	serverCert := filepath.Join(homeDir, ".config", "machbase", "cert", "machbase_cert.pem")
+
+	// This example substitute server's key & cert for the client's key, cert.
+	// It is just for the briefness of sample code
+	// Client applicates **SHOULD** issue a certificate for each one.
+	// Please refer to the "API Authentication" section of the documents.
+	clientKey := filepath.Join(homeDir, ".config", "machbase", "cert", "machbase_key.pem")
+	clientCert := filepath.Join(homeDir, ".config", "machbase", "cert", "machbase_cert.pem")
+
+	cli := machrpc.NewClient(
+		machrpc.WithServer(serverAddr),
+		machrpc.WithCertificate(clientKey, clientCert, serverCert))
+	if err := cli.Connect(); err != nil {
+		panic(err)
+	}
+	defer cli.Disconnect()
+
+	sqlText := `create tag table example (
+		name varchar(100) primary key, 
+		time datetime basetime, 
+		value double
+	)`
+	if result := cli.Exec(sqlText); result.Err() != nil {
+		panic(result.Err())
+	} else {
+		fmt.Println(result.Message())
+	}
+}
