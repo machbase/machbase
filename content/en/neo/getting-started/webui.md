@@ -8,7 +8,7 @@ It provides a built-in web UI for easy handling of Machbase Neo.
 
 Open http://127.0.0.1:5654/ with web browser. Enter ID/Password as 'sys' and 'manager' which is the default.
 
-> If the machbase-neo process is running in a remote machine, please refer [Start and Stop](./30.start-stop.md), it shows how to make machbase-neo remote-accessible.
+> If the machbase-neo process is running in a remote machine, please refer [Start and Stop](../start-stop), it shows how to make machbase-neo remote-accessible.
 
 ![web-login](/images/web-login.png)
 
