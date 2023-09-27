@@ -1,7 +1,7 @@
 ---
 title: gRPC API
 type: docs
-weight: 60
+weight: 130
 ---
 
 gRPC is the first-class-api of machbase, any program language that support gRPC can utilize it's full functionalities.

@@ -1,7 +1,7 @@
 ---
-title: TQL API
+title: TQL
 type: docs
-weight: 70
+weight: 40
 ---
 
 It is required to properly read (translate) data that is sent from sensors.
