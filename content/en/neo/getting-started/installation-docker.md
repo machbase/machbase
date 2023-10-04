@@ -204,7 +204,7 @@ $ docker compose -f docker-compose.yml up -d
 If you want to shut down docker compose, use this.
 
 ```sh
-$ docekr compose down
+$ docker compose down
 ```
 
 Then all of the services shut down gracefully.
