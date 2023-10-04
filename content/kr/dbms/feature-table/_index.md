@@ -4,8 +4,6 @@ type: docs
 weight: 30
 ---
 
-# 주요기능 / 테이블
-
 * [태그 테이블 (Tag Table)](./tag)
 * [로그 테이블 (Log Table)](./log)
 * [휘발성 테이블 (Volatile Table)](./volatile)

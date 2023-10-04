@@ -4,8 +4,6 @@ type: docs
 weight: 30
 ---
 
-# Feature and Tables
-
 * [Tag Table](./tag)
 * [Log Table](./log)
 * [Volatile Table](./volatile)
