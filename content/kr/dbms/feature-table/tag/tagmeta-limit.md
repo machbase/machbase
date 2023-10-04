@@ -14,14 +14,14 @@ LSL/USL 기능은 특정 TAG ID에 대해 규격 상한과 하한을 가지도�
 
 현재 LSL/USL 설정 기능은 몇 가지 제약 조건이 존재한다. 
 
-* `CLUSTER EDITION` 에서는 LSL/USL 기능을 지원하지 않습니다.
+* `CLUSTER EDITION` 에서는 LSL/USL 기능을 지원하지 않는다.
 * LSL/USL 를 설정하려면 태그 테이블 생성 시 세 번째 컬럼인 __Value__ 컬럼에 __SUMMARIZED__ 설정이 되어있어야 한다.
 * __Value__ 컬럼과 형식(Type)이 같아야 하며 __SUMMARIZED__ 속성처럼 숫자형 타입만을 받을 수 있다.
-* LSL은 USL보다 작거나 같아야 하고 __Value__ 컬럼의 입력 값은 LSL의 이상과 USL의 미만이다. __(LSL <= Value <= USL)__
+* LSL은 USL보다 작거나 같아야 하고 __Value__ 컬럼의 입력 값은 LSL 이상 USL 이하다. __(LSL <= Value <= USL)__
 * LSL/USL 설정 부여 이전에 입력된 데이터는 검증하지 않는다.
 * LSL/USL 컬럼을 __NULL__ 로 입력할 경우 입력 데이터를 검증하지 않는다.
-* LSL/USL 기능은 하나씩 사용 가능하다. 즉 규격 상한만을 맞춰주고 싶을 때에는 USL만 설정하면 된다.
-* USL 기능 하나만을 사용할 경우 USL보다 낮은 데이터에 대해서는 검증하지 않는다.
+* LSL/USL 기능은 하나씩 사용 가능하다. 즉 규격 상한만 적용하고 싶을 때는 USL만 설정할 수 있다.
+* USL 기능만 사용할 경우 USL보다 작은 값은 검증하지 않는다.
 
 ## LSL/USL 기능 설정 및 활용
 
@@ -36,7 +36,7 @@ LSL/USL 기능을 사용하려면 태그 메타 테이블의 컬럼에 특정 �
 
 ```sql
 CREATE TAG TABLE example (
-    tad_id  VARCHAR(50) PRIMARY KEY,
+    tag_id  VARCHAR(50) PRIMARY KEY,
     time    DATETIME    BASETIME,
     value   INTEGER     SUMMARIZED)
 METADATA (
@@ -50,7 +50,7 @@ LSL 하나만을 설정할 경우 LSL보다 높은 데이터에 대해서는 검
 
 ```sql
 CREATE TAG TABLE example (
-    tad_id VARCHAR(50) PRIMARY KEY,
+    tag_id VARCHAR(50) PRIMARY KEY,
     time   DATETIME    BASETIME,
     value  INTEGER     SUMMARIZED)
 METADATA (
@@ -65,7 +65,7 @@ METADATA (
 
 ```sql
 CREATE TAG TABLE example (
-    tad_id  VARCHAR(50) PRIMARY KEY,
+    tag_id  VARCHAR(50) PRIMARY KEY,
     time    DATETIME    BASETIME,
     value   INTEGER     SUMMARIZED
 );
@@ -78,7 +78,7 @@ ALTER TABLE _example_meta ADD COLUMN (usl INTEGER DEFAULT 200 UPPER LIMIT)  -- U
 
 ```sql
 CREATE TAG TABLE example (
-    tad_id  VARCHAR(50) PRIMARY KEY,
+    tag_id  VARCHAR(50) PRIMARY KEY,
     time    DATETIME    BASETIME,
     value   INTEGER     SUMMARIZED
 );
