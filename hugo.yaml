@@ -67,11 +67,11 @@ menu:
     #   pageRef: /home
     #   weight: 10
     - identifier: neo
-      name: MCHBASE NEO
+      name: MACHBASE NEO
       pageRef: /neo
       weight: 20
     - identifier: dbms
-      name: DBMS Documents
+      name: MACHBASE CLASSIC
       pageRef: /dbms
       weight: 30
     - name: Search
