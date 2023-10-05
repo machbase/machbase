@@ -97,7 +97,7 @@ RESTful API의 더 자세한 사용법은 다음의 활용 예제를 참고하�
 
 마크베이스는 아래와 같은 다양한 언어의 표준 개발 툴을 제공하고 있다.
 
-* [C/C++ library](/kr/dbms/sdk/cli_odbc)
+* [C/C++ library](/kr/dbms/sdk/cli-odbc)
 * [Java library](/kr/dbms/sdk/jdbc)
 * [Python library](/kr/dbms/sdk/python)
 * [C# library](/kr/dbms/sdk/dotnet)
