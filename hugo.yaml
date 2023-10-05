@@ -3,7 +3,7 @@ title: Machbase
 enableRobotsTXT: true
 enableGitInfo: true
 hasCJKLanguage: true
-GoogleAnalytics: G-5VYQQQFHCH
+googleAnalytics: G-5VYQQQFHCH
 baseURL: https://neo.machbase.com/
 
 DefaultContentLanguage: en
