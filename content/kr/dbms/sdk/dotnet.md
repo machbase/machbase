@@ -35,7 +35,7 @@ NuGet에서 machNetConnector5.0을 가져오는 방법은 다음과 같다.
 
 ### MachConnection
 
-```
+```cs
 public sealed class MachConnection : DbConnection
 ```
 
@@ -51,19 +51,17 @@ MachConnection(string aConnectionString)
 
 Connection String 을 입력으로, MachConnection 을 생성한다.
 
-#### 메서드
+#### Open
 
-##### Open
-
-```
+```cs
 void Open()
 ```
 
 입력받은 Connection String 으로 실제 연결을 시도한다. 
 
-##### Close
+#### Close
 
-```
+```cs
 void Close()
 ```
 
@@ -97,7 +95,7 @@ String sConnString = String.Format("SERVER={0};PORT_NO={1};UID=;PWD=MANAGER;CONN
 
 ### MachCommand
 
-```
+```cs
 public sealed class MachCommand : DbCommand
 ```
 
@@ -107,24 +105,22 @@ DbCommand 와 같이 IDisposable 을 상속받기 때문에, Dispose() 를 통�
 
 #### 생성자
 
-```
+```cs
 MachCommand(string aQueryString, MachConnection aConn)
 ```
 
 연결할 MachConnection 객체와 함께, 수행할 쿼리를 입력해서 생성한다. 
 
-```
+```cs
 MachCommand(MachConnection aConn)
 ```
 
 연결할 MachConnection 객체를 입력해서 생성한다. 수행할 쿼리가 없는 경우 (e.g. APPEND) 에만 사용한다.
 
 
-#### 메서드
+#### CreateParameter
 
-##### CreateParameter
-
-```
+```cs
 void CreateParameter()
 ```
 
@@ -132,7 +128,7 @@ void CreateParameter()
 
 #### AppendOpen
 
-```
+```cs
 MachAppendWriter AppendOpen(aTableName, aErrorCheckCount = 0, MachAppendOption = None)
 ```
 
@@ -145,52 +141,176 @@ APPEND 를 시작한다. MachAppendWriter 객체를 반환한다.
 * MachAppendOption.MicroSecTruncated: DateTime 객체의 값 입력 시, microsecond 까지만 표현된 값을 입력한다.
 (DateTime 객체의 Ticks 값은 100 nanosecond 까지 표현된다.)
 
+#### AppendData
 
-| 메서드                                                                                                  | 설명                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| void<br>AppendData(MachAppendWriter aWriter, List<object> aDataList)                                 | MachAppendWriter 객체를 통해, 데이터가 들어있는 리스트를 받아 데이터베이스에 입력한다.<br>List 에 들어간 데이터 순서대로, 각각의 자료형은 테이블에 표현된 컬럼의 자료형과 일치해야 한다.<br>List 에 들어있는 데이터가 모자라거나 넘치면, 에러를 발생시킨다.                                                                                                                                                                                                                                                            |
-| void<br>AppendDataWithTime(MachAppendWriter aWriter, List<object> aDataList, DateTime aArrivalTime)  | AppendData() 에서, \_arrival_time 값을 DateTime 객체로 명시적으로 넣을 수 있는 메서드이다.                                                                                                                                                                                                                                                                                                                                                      |
-| void<br>AppendDataWithTime(MachAppendWriter aWriter, List<object> aDataList, ulong aArrivalTimeLong) | AppendData() 에서, \_arrival_time 값을 ulong 객체로 명시적으로 넣을 수 있는 메서드이다.<br>ulong 값을 \_arrival_time 값으로 입력할 때 발생할 수 있는 문제는 위의 AppendData() 를 참고한다.                                                                                                                                                                                                                                                                               |
-| void AppendFlush(MachAppendWriter aWriter)                                                           | AppendData() 로 입력한 데이터들을 즉시 서버로 보내, 데이터 입력을 강제한다.<br>호출 빈도가 잦을 수록, 성능은 떨어지지만 시스템 오류로 인한 데이터 유실율을 낮출 수 있고 에러 검사를 빠르게 할 수 있다.<br>호출 빈도가 뜸할 수록, 데이터 유실이 발생할 가능성이 크고 에러 검사가 지연되지만 성능은 크게 올라간다.                                                                                                                                                                                                                                |
-| void AppendClose(MachAppendWriter aWriter)                                                           | APPEND 를 마친다. 내부적으로 AppendFlush() 를 호출한 뒤에 실제 프로토콜을 마친다.                                                                                                                                                                                                                                                                                                                                                                  |
-| int ExecuteNonQuery()                                                                                | 입력받았던 쿼리를 수행한다. 쿼리가 영향을 미친 레코드 개수를 반환한다.<br>보통 SELECT 를 제외한 쿼리를 수행할 때 사용한다.                                                                                                                                                                                                                                                                                                                                               |
-| object ExecuteScalar()                                                                               | 입력받았던 쿼리를 수행한다. 쿼리 Targetlist 의 첫 번째 값을 객체로 반환한다.<br>보통 SELECT 쿼리, 그 중에서도 결과가 1건만 나오는 SELECT (Scalar Query) 를 수행해 DbDataReader 없이 결과를 받고자 하는 경우 사용한다.                                                                                                                                                                                                                                                                     |
-| DbDataReader ExecuteDbDataReader(CommandBehavior aBehavior)                                          | 입력받았던 쿼리를 수행해, 해당 쿼리의 결과를 읽어 올 수 있는 DbDataReader 를 생성해 반환한다.                                                                                                                                                                                                                                                                                                                                                              |
+```cs
+void AppendData(MachAppendWriter aWriter, List<object> aDataList)
+```
+
+MachAppendWriter 객체를 통해, 데이터가 들어있는 리스트를 받아 데이터베이스에 입력한다.  List 에 들어간 데이터 순서대로, 각각의 자료형은 테이블에 표현된 컬럼의 자료형과 일치해야 한다.  List 에 들어있는 데이터가 모자라거나 넘치면, 에러를 발생시킨다.
 
 
-| 필드                                             | 설명                                                                                   |
-| ---------------------------------------------- | ------------------------------------------------------------------------------------ |
+```cs
+void AppendDataWithTime(MachAppendWriter aWriter, List<object> aDataList, DateTime aArrivalTime)
+```
+
+AppendData() 에서, \_arrival_time 값을 DateTime 객체로 명시적으로 넣을 수 있는 메서드이다.
+
+
+```cs
+void AppendDataWithTime(MachAppendWriter aWriter, List<object> aDataList, ulong aArrivalTimeLong) 
+```
+
+AppendData() 에서, \_arrival_time 값을 ulong 객체로 명시적으로 넣을 수 있는 메서드이다. ulong 값을 \_arrival_time 값으로 입력할 때 발생할 수 있는 문제는 위의 AppendData() 를 참고한다.
+
+#### AppendFlush
+
+```cs
+void AppendFlush(MachAppendWriter aWriter)
+```
+
+AppendData() 로 입력한 데이터들을 즉시 서버로 보내, 데이터 입력을 강제한다. 호출 빈도가 높을수록, 성능은 떨어지지만 시스템 오류로 인한 데이터 유실율을 낮출 수 있고 에러 검사를 빠르게 할 수 있다.
+
+#### AppendClose
+
+```cs
+void AppendClose(MachAppendWriter aWriter)
+```
+
+APPEND 를 마친다. 내부적으로 AppendFlush() 를 호출한 뒤에 실제 프로토콜을 마친다.
+
+#### ExecuteNonQuery
+
+```cs
+int ExecuteNonQuery()
+```
+
+입력받았던 쿼리를 수행한다. 쿼리가 영향을 미친 레코드 개수를 반환한다. 보통 SELECT 를 제외한 쿼리를 수행할 때 사용한다.
+
+#### ExecuteScalar
+
+```cs
+object ExecuteScalar()
+```
+
+입력받았던 쿼리를 수행한다. 쿼리 Targetlist 의 첫 번째 값을 객체로 반환한다. 보통 SELECT 쿼리, 그 중에서도 결과가 1건만 나오는 SELECT (Scalar Query) 를 수행해 DbDataReader 없이 결과를 받고자 하는 경우 사용한다. 
+
+#### ExecuteDbDataReader
+
+```cs
+DbDataReader ExecuteDbDataReader(CommandBehavior aBehavior)
+```
+
+입력받았던 쿼리를 수행해, 해당 쿼리의 결과를 읽어 올 수 있는 DbDataReader 를 생성해 반환한다.
+
+#### 필드
+
+| 이름 | 설명|
+|--|--|
 | Connection /<br>DbConnection                   | 연결된 MachConnection.                                                                  |
 | ParameterCollection /<br>DbParameterCollection | Binding 목적으로 사용할 MachParameterCollection.                                            |
 | CommandText                                    | 쿼리 문자열.                                                                              |
 | CommandTimeout                                 | 특정 작업 수행 중, 서버로부터 응답을 기다리기까지의 시간.<br>MachConnection 에 설정된 값을 따르며, 여기서는 값 참조만 할 수 있다. |
 | FetchSize                                      | 한번에 서버로부터 Fetch 할 레코드 개수. 기본값은 3000 이다.                                              |
 | IsAppendOpened                                 | APPEND 작업 중인 경우, Append 가 이미 열려있는지 아닌지를 판단한다.                                        |
-| CommandType                                    | (미구현)                                                                                |
-| DesignTimeVisible                              | (미구현)                                                                                |
-| UpdatedRowSource                               | (미구현)                                                                                |
 
 
-### MachDataReader : DbDataReader
+### MachDataReader
+
+```cs
+public sealed class MachDataReader : DbDataReader
+```
+
 Fetch 한 결과를 읽어들이는 클래스이다. 명시적으로 생성이 불가능하고 MachCommand.ExecuteDbDataReader() 로 생성된 객체만 사용이 가능하다.
 
-| 메서드                                 | 설명                                                                                                                                    |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| string GetName(int ordinal)         | ordinal 번째 컬럼 이름을 반환한다.                                                                                                               |
-| string GetDataTypeName(int ordinal) | ordinal 번째 컬럼의 자료형 이름을 반환한다.                                                                                                          |
-| Type GetFieldType(int ordinal)      | ordinal 번째 컬럼의 자료형을 반환한다.                                                                                                             |
-| int GetOrdinal(string name)         | 컬럼 이름이 위치한 인덱스를 반환한다.                                                                                                                 |
-| object GetValue(int ordinal)        | 현재 위치한 레코드의 ordinal 번째 값을 반환한다.                                                                                                       |
-| bool IsDBNull(int ordinal)          | 현재 위치한 레코드의 ordinal 번째 값이 NULL 인지 여부를 반환한다.                                                                                           |
-| int GetValues(object[] values)      | 현재 위치한 레코드의 모든 값들을 전부 설정하고, 그 개수를 반환한다.                                                                                               |
-| xxxx GetXXXX(int ordinal)           | ordinal 번째 컬럼 값을, 자료형 (XXXX) 에 맞춰 반환한다.<br>Boolean<br>Byte<br>Char<br>Int16/32/64<br>DateTime<br>String<br>Decimal<br>Double<br>Float |
-| bool Read()                         | 다음 레코드를 읽는다. 결과가 존재하지 않으면 False 를 반환한다.                                                                                               |
-| DataTable GetSchemaTable()          | (미지원)                                                                                                                                 |
-| bool NextResult()                   | (미지원)                                                                                                                                 |
+#### GetName
+
+```cs
+string GetName(int ordinal)
+```
+
+ordinal 번째 컬럼 이름을 반환한다.
+
+#### GetDataTypeName
+
+```cs
+string GetDataTypeName(int ordinal)
+```
+
+ordinal 번째 컬럼의 자료형 이름을 반환한다.
+
+#### GetFieldType
+
+```cs
+Type GetFieldType(int ordinal)
+```
+
+ordinal 번째 컬럼의 자료형을 반환한다.
 
 
-| 필드                | 설명                                                    |
-| ----------------- | ----------------------------------------------------- |
+#### GetOrdinal
+
+```cs
+int GetOrdinal(string name)
+```
+
+컬럼 이름이 위치한 인덱스를 반환한다.
+
+
+#### GetValue
+
+```cs
+object GetValue(int ordinal)
+```
+
+현재 위치한 레코드의 ordinal 번째 값을 반환한다.
+
+#### IsDBNull
+
+```cs
+bool IsDBNull(int ordinal)
+```
+
+현재 위치한 레코드의 ordinal 번째 값이 NULL 인지 여부를 반환한다.
+
+#### GetValues
+
+```cs
+int GetValues(object[] values)
+```
+
+현재 위치한 레코드의 모든 값들을 전부 설정하고, 그 개수를 반환한다.
+
+#### Get*xxxx*
+
+```cs
+bool GetBoolean(int ordinal)
+byte GetByte(int ordinal)
+char GetChar(int ordinal)
+short GetInt16(int ordinal)
+int GetInt32(int ordinal)
+long GetInt64(int ordinal)
+DateTime GetDateTime(int ordinal)
+string GetString(int ordinal)
+decimal GetDecimal(int ordinal)
+double GetDouble(int ordinal)
+float GetFloat(int ordinal)
+```
+
+ordinal 번째 컬럼 값을, 자료형에 맞춰 반환한다.
+
+#### Read
+
+```cs
+bool Read()
+```
+
+다음 레코드를 읽는다. 결과가 존재하지 않으면 False 를 반환한다.
+
+#### 필드
+
+| 이름 | 설명|
+| --| --|
 | FetchSize         | 한번에 서버로부터 Fetch 할 레코드 개수. 기본값은 3000 이며 여기서는 수정할 수 없다. |
 | FieldCount        | 결과 컬럼 개수.                                             |
 | this[int ordinal] | object GetValue(int ordinal) 와 동일하다.                  |
@@ -198,13 +318,18 @@ Fetch 한 결과를 읽어들이는 클래스이다. 명시적으로 생성이 �
 | HasRows           | 결과가 존재하는지 여부를 나타낸다.                                   |
 | RecordsAffected   | MachCommand 의 것과 달리, 여기서는 Fetch Count 를 나타낸다.         |
 
-### MachParameterCollection : DbParameterCollection
+### MachParameterCollection
+
+```cs
+public sealed class MachParameterCollection : DbParameterCollection, IEnumerable<MachParameter>
+```
+
 MachCommand 에 필요한 파라메터를 바인딩하는 클래스이다.
 
 바인딩한 이후에 수행하게 되면, 해당 값이 같이 수행된다. 
-```
-Prepared Statement 개념이 구현되어 있지 않아, Binding 이후 Execute 를 해도 수행 성능은 최초 수행한 것과 같다.
-```
+
+> Prepared Statement 개념이 구현되어 있지 않아, Binding 이후 Execute 를 해도 수행 성능은 최초 수행한 것과 같다.
+
 
 | 메서드                                                               | 설명                                                                     |
 | ----------------------------------------------------------------- | ---------------------------------------------------------------------- |
