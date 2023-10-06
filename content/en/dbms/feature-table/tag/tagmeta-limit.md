@@ -34,8 +34,8 @@ It should match the __Value__ column type, and like the __SUMMARIZED__ attribute
 |uinteger|32-bit unsigned integer data type|0 ~ 4294967294|-|
 |long|64-bit signed integer data type|-9223372036854775807 ~ 9223372036854775807|-|
 |ulong|64-bit unsigned integer data type|0~18446744073709551614|-|
-|float|32-bit floating point data|-|7[^1]|
-|double|64-bit floating point data|-|16[^1]|
+|float|32-bit floating point data|-|6[^1]|
+|double|64-bit floating point data|-|15[^1]|
 
 ## Setting and Using LSL/USL
 
