@@ -95,22 +95,59 @@ void Close()
 String sConnString = String.Format("SERVER={0};PORT_NO={1};UID=;PWD=MANAGER;CONNECT_TIMEOUT=10000;COMMAND_TIMEOUT=50000", SERVER_HOST, SERVER_PORT);
 ```
 
-### MachCommand : DbCommand
-MachConnection 을 이용해 SQL 명령 또는 APPEND 를 수행하는 클래스이다.
+### MachCommand
+
+```
+public sealed class MachCommand : DbCommand
+```
+
+MachConnection 을 이용해 SQL 명령 또는 APPEND 를 수행하는 클래스이다.  
+
 DbCommand 와 같이 IDisposable 을 상속받기 때문에, Dispose() 를 통한 객체 해제나 using() 문을 이용한 객체의 자동 Dispose를 지원한다.
 
-| 생성자                                              | 설명                                                                     |
-| ------------------------------------------------ | ---------------------------------------------------------------------- |
-| MachCommand(string aQueryString, MachConnection) | 연결할 MachConnection 객체와 함께, 수행할 쿼리를 입력해서 생성한다.                          |
-| MachCommand(MachConnection)                      | 연결할 MachConnection 객체를 입력해서 생성한다. 수행할 쿼리가 없는 경우 (e.g. APPEND) 에만 사용한다. |
+#### 생성자
+
+```
+MachCommand(string aQueryString, MachConnection aConn)
+```
+
+연결할 MachConnection 객체와 함께, 수행할 쿼리를 입력해서 생성한다. 
+
+```
+MachCommand(MachConnection aConn)
+```
+
+연결할 MachConnection 객체를 입력해서 생성한다. 수행할 쿼리가 없는 경우 (e.g. APPEND) 에만 사용한다.
+
+
+#### 메서드
+
+##### CreateParameter
+
+```
+void CreateParameter()
+```
+
+새로운 MachParameter 를 생성한다.
+
+#### AppendOpen
+
+```
+MachAppendWriter AppendOpen(aTableName, aErrorCheckCount = 0, MachAppendOption = None)
+```
+
+APPEND 를 시작한다. MachAppendWriter 객체를 반환한다.
+
+* aTableName: 대상 테이블 이름
+* ErrorCheckCount: APPEND-DATA 로 입력한 레코드 누적 개수가 일치할 때 마다, 서버로 보내 실패 여부를 확인한다.
+말하자면, 자동 APPEND-FLUSH 지점을 정하는 셈이다.
+* MachAppendOption: 현재는 하나의 옵션만 제공하고 있다.MachAppendOption.None : 아무런 옵션도 붙지 않는다.
+* MachAppendOption.MicroSecTruncated: DateTime 객체의 값 입력 시, microsecond 까지만 표현된 값을 입력한다.
+(DateTime 객체의 Ticks 값은 100 nanosecond 까지 표현된다.)
 
 
 | 메서드                                                                                                  | 설명                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| void CreateParameter() /<br>void CreateDbParameter()                                                 | 새로운 MachParameter 를 생성한다.                                                                                                                                                                                                                                                                                                                                                                                                 |
-| void Cancel()                                                                                        | (미구현)                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| void Prepare()                                                                                       | (미구현)                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| MachAppendWriter<br>AppendOpen(aTableName, aErrorCheckCount = 0, MachAppendOption = None)            | APPEND 를 시작한다. MachAppendWriter 객체를 반환한다.<br>aTableName : 대상 테이블 이름<br>aErrorCheckCount : APPEND-DATA 로 입력한 레코드 누적 개수가 일치할 때 마다, 서버로 보내 실패 여부를 확인한다.<br>말하자면, 자동 APPEND-FLUSH 지점을 정하는 셈이다.<br>MachAppendOption : 현재는 하나의 옵션만 제공하고 있다.MachAppendOption.None : 아무런 옵션도 붙지 않는다.<br>MachAppendOption.MicroSecTruncated : DateTime 객체의 값 입력 시, microsecond 까지만 표현된 값을 입력한다.<br>(DateTime 객체의 Ticks 값은 100 nanosecond 까지 표현된다.) |
 | void<br>AppendData(MachAppendWriter aWriter, List<object> aDataList)                                 | MachAppendWriter 객체를 통해, 데이터가 들어있는 리스트를 받아 데이터베이스에 입력한다.<br>List 에 들어간 데이터 순서대로, 각각의 자료형은 테이블에 표현된 컬럼의 자료형과 일치해야 한다.<br>List 에 들어있는 데이터가 모자라거나 넘치면, 에러를 발생시킨다.                                                                                                                                                                                                                                                            |
 | void<br>AppendDataWithTime(MachAppendWriter aWriter, List<object> aDataList, DateTime aArrivalTime)  | AppendData() 에서, \_arrival_time 값을 DateTime 객체로 명시적으로 넣을 수 있는 메서드이다.                                                                                                                                                                                                                                                                                                                                                      |
 | void<br>AppendDataWithTime(MachAppendWriter aWriter, List<object> aDataList, ulong aArrivalTimeLong) | AppendData() 에서, \_arrival_time 값을 ulong 객체로 명시적으로 넣을 수 있는 메서드이다.<br>ulong 값을 \_arrival_time 값으로 입력할 때 발생할 수 있는 문제는 위의 AppendData() 를 참고한다.                                                                                                                                                                                                                                                                               |
