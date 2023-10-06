@@ -62,10 +62,10 @@ params:
 
 menu:
   main:
-    # - identifier: home
-    #   name: Home
-    #   pageRef: /home
-    #   weight: 10
+    - identifier: home
+      name: Home
+      pageRef: /home
+      weight: 10
     - identifier: neo
       name: MACHBASE NEO
       pageRef: /neo
@@ -83,4 +83,3 @@ menu:
       params:
         icon: github
       weight: 50
-  
