@@ -16,12 +16,26 @@ LSL/USL 기능은 특정 TAG ID에 대해 규격 상한과 하한을 가지도�
 
 * `CLUSTER EDITION` 에서는 LSL/USL 기능을 지원하지 않는다.
 * LSL/USL 를 설정하려면 태그 테이블 생성 시 세 번째 컬럼인 __Value__ 컬럼에 __SUMMARIZED__ 설정이 되어있어야 한다.
-* __Value__ 컬럼과 형식(Type)이 같아야 하며 __SUMMARIZED__ 속성처럼 숫자형 타입만을 받을 수 있다.
 * LSL은 USL보다 작거나 같아야 하고 __Value__ 컬럼의 입력 값은 LSL 이상 USL 이하다. __(LSL <= Value <= USL)__
 * LSL/USL 설정 부여 이전에 입력된 데이터는 검증하지 않는다.
 * LSL/USL 컬럼을 __NULL__ 로 입력할 경우 입력 데이터를 검증하지 않는다.
 * LSL/USL 기능은 하나씩 사용 가능하다. 즉 규격 상한만 적용하고 싶을 때는 USL만 설정할 수 있다.
 * USL 기능만 사용할 경우 USL보다 작은 값은 검증하지 않는다.
+
+### 지원하는 형식
+
+태그 테이블의 __Value__ 컬럼과 형식이 같아야 하며 __SUMMARIZED__ 속성처럼 숫자 형식에 대해서만 설정 가능하다.
+
+|형식|설명|범위|유효 자릿수|
+|----|------|-----|----|
+|short|16비트 부호 있는 정수형|-32767 ~ 32767|-|
+|ushort|16비트 부호 없는 정수형|0 ~ 65534|-|
+|integer|32비트 부호 있는 정수형|-2147483647 ~ 2147483647|-|
+|uinteger|32비트 부호 없는 정수형|0 ~ 4294967294|-|
+|long|64비트 부호 있는 정수형|-9223372036854775807 ~ 9223372036854775807|-|
+|ulong|64비트 부호 없는 정수형|0~18446744073709551614|-|
+|float|32비트 실수형|-|7[^1]|
+|double|64비트 실수형|-|16[^1]|
 
 ## LSL/USL 기능 설정 및 활용
 
@@ -40,13 +54,13 @@ CREATE TAG TABLE example (
     time    DATETIME    BASETIME,
     value   INTEGER     SUMMARIZED)
 METADATA (
-    lsl     INTEGER LOWER LIMIT,  -- LSL 설정
-    usl     INTEGER UPPER LIMIT   -- USL 설정
+    lsl     INTEGER LOWER LIMIT, 
+    usl     INTEGER UPPER LIMIT  
 );
 ```
 
-두 개의 컬럼 같이 사용할 수도 있지만 원한다면 LSL/USL 둘 중 하나만을 사용할 수도 있다.  
-LSL 하나만을 설정할 경우 LSL보다 높은 데이터에 대해서는 검증하지 않는다. 즉 `USL == NULL` 과 같다.
+두 개의 컬럼을 같이 사용할 수도 있지만 원한다면 LSL/USL 둘 중 하나만을 사용할 수도 있다.  
+LSL 하나만 설정할 경우 LSL보다 큰 데이터에 대해서는 검증하지 않는다. 즉 `USL == NULL` 과 같다.
 
 ```sql
 CREATE TAG TABLE example (
@@ -54,14 +68,13 @@ CREATE TAG TABLE example (
     time   DATETIME    BASETIME,
     value  INTEGER     SUMMARIZED)
 METADATA (
-    lsl    INTEGER LOWER LIMIT         -- LSL 하나만 설정
+    lsl    INTEGER LOWER LIMIT   
 );
 ```
 
 ### ADD COLUMN
 
-태그 데이터가 이미 입력된 상태로 `ADD COLUMN` 을 이용하여 추가할 경우 기본 값은 __NULL__ 값이다.  
-필요하다면 `DEFAULT` 속성으로 기본 값을 설정할 수 있다. 하지만 이전에 입력된 데이터에 대해서는 검증하지 않는다.
+`ADD COLUMN` 을 이용하여 추가할 경우 기본 값은 __NULL__ 값이다.  
 
 ```sql
 CREATE TAG TABLE example (
@@ -70,11 +83,11 @@ CREATE TAG TABLE example (
     value   INTEGER     SUMMARIZED
 );
  
-ALTER TABLE _example_meta ADD COLUMN (lsl INTEGER LOWER LIMIT)              -- LSL 설정
-ALTER TABLE _example_meta ADD COLUMN (usl INTEGER DEFAULT 200 UPPER LIMIT)  -- USL 설정 및 기본값 부여
+ALTER TABLE _example_meta ADD COLUMN (lsl INTEGER LOWER LIMIT);
+ALTER TABLE _example_meta ADD COLUMN (usl INTEGER UPPER LIMIT);
 ```
 
-[CREATE](#craete)와 같이 하나의 속성만을 추가해줄 수도 있다.
+[CREATE](#craete)에서 처럼 하나의 속성만 추가하는 것도 가능하다.  
 
 ```sql
 CREATE TAG TABLE example (
@@ -83,7 +96,7 @@ CREATE TAG TABLE example (
     value   INTEGER     SUMMARIZED
 );
 
-ALTER TABLE _example_meta ADD COLUMN (usl INTEGER DEFAULT 200 UPPER LIMIT)  -- USL 하나만 설정
+ALTER TABLE _example_meta ADD COLUMN (usl INTEGER UPPER LIMIT);
 ```
 
 ### INSERT
@@ -164,3 +177,5 @@ _ID                  TAG_ID                                              LSL    
 [1] row(s) selected.
 Elapsed time: 0.001
 ```
+
+[^1]: [IEEE 754](https://en.wikipedia.org/wiki/IEEE_754)
