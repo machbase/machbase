@@ -10,11 +10,12 @@ ADO.NET 드라이버 일부 기능을 지원하는 .NET (C#) Connector 라이브
 
 라이브러리 위치는 $MACHBASE_HOME/lib/ 에서 DLL 형태로 제공하고 있으며, .NET 버전에 따라 다른 DLL 을 제공한다.
 
-* .NET Framework 4.0 : machNetConnector.dll
-* .NET 5.0 : machNetConnector5.0.dll
+* .NET Framework 4.0: machNetConnector40.dll
+* .NET Framework 5.0: machNetConnector50.dll
 
 ## NuGet 패키지 관리자를 이용한 설치
-<u>Machbase의 .NET Connector 5.0는 NuGet package에 등록되어 있다!</u>  
+
+Machbase의 .NET Connector 5.0는 NuGet package에 등록되어 있다!
 Visual Studio를 이용하면 .NET Connector을 쉽게 원격에서 가져와 사용할 수 있다.   
 NuGet에서 machNetConnector5.0을 가져오는 방법은 다음과 같다.   
 
@@ -27,37 +28,53 @@ NuGet에서 machNetConnector5.0을 가져오는 방법은 다음과 같다.
 7. Program.cs에서 using Mach.Data.MachClient 구문을 입력하여 machNetConnector을 사용하면 된다.
 
 
-## 클래스
+## API Reference
 
 > 아래 소개된 기능 외의 것은 아직 구현되어 있지 않거나, 올바르게 작동되지 않을 수 있다.<br>
 미구현으로 명시된 메서드나 필드를 부르는 경우, NotImplementedException 또는 NotSupportedException 을 발생시킨다.
 
-### MachConnection : DbConnection
+### MachConnection
+
+```
+public sealed class MachConnection : DbConnection
+```
+
 마크베이스와의 연결을 담당하는 클래스이다. 
 
 DbConnection 과 같이 IDisposable 을 상속받기 때문에, Dispose() 를 통한 객체 해제나 using() 문을 이용한 객체의 자동 Dispose를 지원한다.MachConnection : DbConnection
 
-| 생성자                                      | 설명                                               |
-| ---------------------------------------- | ------------------------------------------------ |
-| MachConnection(string aConnectionString) | Connection String 을 입력으로, MachConnection 을 생성한다. |
+#### 생성자
 
+```
+MachConnection(string aConnectionString)
+```
 
-| 메서드                                               | 설명                                                         |
-| ------------------------------------------------- | ---------------------------------------------------------- |
-| Open()                                            | 입력받은 Connection String 으로 실제 연결을 시도한다.                     |
-| Close()                                           | 연결 중이라면, 해당 연결을 종료한다.                                      |
-| BeginDbTransaction(IsolationLevel isolationLevel) | (미구현) MACHBASE 는 특별한 Transaction 이 없으므로 해당 객체 역시 지원하지 않는다. |
-| CreateDbCommand()                                 | (미구현) 아직은, 명시적으로 MachCommand 를 만들도록 유도한다.                  |
-| ChangeDatabase(string databaseName)               | (미구현) MACHBASE 는 DATABASE 구분이 없다.                          |
+Connection String 을 입력으로, MachConnection 을 생성한다.
 
+#### 메서드
 
-| 필드            | 설명                                                                                                                        |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------- |
+##### Open
+
+```
+void Open()
+```
+
+입력받은 Connection String 으로 실제 연결을 시도한다. 
+
+##### Close
+
+```
+void Close()
+```
+
+연결중인 경우, 해당 연결을 종료한다.
+
+#### 필드
+
+| 이름 | 설명                                                                                                                        |
+|--|--|
 | State         | System.Data.ConnectionState 값을 나타낸다.                                                                                      |
 | StatusString  | 연결된 MachCommand 로 수행하는 상태를 나타낸다.<br>Error Message 를 꾸미는 용도로 내부에서 사용되며, 작업이 시작된 상태를 나타내기 때문에 이 값으로 쿼리 상태를 체크하는 것은 적절하지 않다. |
-| Database      | (미구현)                                                                                                                     |
-| DataSource    | (미구현)                                                                                                                     |
-| ServerVersion | (미구현)                                                                                                                     |
 
 
 #### Connection String
