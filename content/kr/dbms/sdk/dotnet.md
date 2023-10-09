@@ -330,23 +330,99 @@ MachCommand 에 필요한 파라메터를 바인딩하는 클래스이다.
 
 > Prepared Statement 개념이 구현되어 있지 않아, Binding 이후 Execute 를 해도 수행 성능은 최초 수행한 것과 같다.
 
+#### Add
 
-| 메서드                                                               | 설명                                                                     |
-| ----------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| MachParameter<br>Add(string parameterName, DbType dbType)         | 파라메터 이름과 타입을 지정해, MachParameter 를 추가한다.<br>추가된 MachParameter 객체를 반환한다. |
-| int Add(object value)                                             | 값을 추가한다. 추가된 인덱스를 반환한다.                                                |
-| void AddRange(Array values)                                       | 단순 값의 배열을 모두 추가한다.                                                     |
-| MachParameter<br>AddWithValue(string parameterName, object value) | 파라메터 이름과 그 값을 추가한다.<br>추가된 MachParameter 객체를 반환한다.                     |
-| bool Contains(object value)                                       | 해당 값이 추가되었는지 여부를 판단한다.                                                 |
-| bool Contains(string value)                                       | 해당 파라메터 이름이 추가되었는지 여부를 판단한다.                                           |
-| void Clear()                                                      | 파라메터들을 모두 삭제한다.                                                        |
-| int IndexOf(object value)                                         | 해당 값의 인덱스를 반환한다.                                                       |
-| int IndexOf(string parameterName)                                 | 해당 파라메터 이름의 인덱스를 반환한다.                                                 |
-| void Insert(int index, object value)                              | 특정 인덱스에, 해당 값을 추가한다.                                                   |
-| void Remove(object value)                                         | 해당 값을 포함한 파라메터를 삭제한다.                                                  |
-| void RemoveAt(int index)                                          | 인덱스에 위치한 파라메터를 삭제한다.                                                   |
-| void RemoveAt(string parameterName)                               | 해당 이름을 가진 파라메터를 삭제한다.                                                  |
+```cs
+MachParameter Add(string parameterName, DbType dbType)
+```
 
+파라메터 이름과 타입을 지정해, MachParameter 를 추가한다. 추가된 MachParameter 객체를 반환한다. 
+
+```cs
+int Add(object value)
+```
+
+값을 추가한다. 추가된 인덱스를 반환한다.
+
+
+```cs
+void AddRange(Array values)
+```
+
+단순 값의 배열을 모두 추가한다.
+
+```cs
+MachParameter<br>AddWithValue(string parameterName, object value)
+```
+
+파라메터 이름과 그 값을 추가한다. 추가된 MachParameter 객체를 반환한다.
+
+#### Contains
+
+```cs
+bool Contains(object value)
+```
+
+해당 값이 추가되었는지 여부를 판단한다.
+
+```cs
+bool Contains(string value)
+```
+
+해당 파라메터 이름이 추가되었는지 여부를 판단한다.
+
+#### Clear
+
+```cs
+void Clear()
+```
+
+파라메터들을 모두 삭제한다.
+
+#### IndexOf
+
+```cs
+int IndexOf(object value)
+```
+
+해당 값의 인덱스를 반환한다.
+
+```cs
+int IndexOf(string parameterName)
+```
+
+해당 파라메터 이름의 인덱스를 반환한다.
+
+#### Insert
+
+```cs
+void Insert(int index, object value)
+```
+
+특정 인덱스에, 해당 값을 추가한다.
+
+#### Remove
+
+```cs
+void Remove(object value)
+```
+
+해당 값을 포함한 파라메터를 삭제한다.
+
+```cs
+void RemoveAt(int index)
+```
+
+인덱스에 위치한 파라메터를 삭제한다.
+
+```cs
+void RemoveAt(string parameterName)
+```
+
+해당 이름을 가진 파라메터를 삭제한다.
+
+
+### 필드
 
 | 필드                | 설명                                      |
 | ----------------- | --------------------------------------- |
