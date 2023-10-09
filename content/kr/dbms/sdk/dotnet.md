@@ -422,21 +422,28 @@ void RemoveAt(string parameterName)
 해당 이름을 가진 파라메터를 삭제한다.
 
 
-### 필드
+#### 필드
 
-| 필드                | 설명                                      |
+| 이름| 설명                                      |
 | ----------------- | --------------------------------------- |
 | Count             | 파라메터 개수                                 |
 | this[int index]   | index 번째의 MachParameter 를 나타낸다.         |
 | this[string name] | 파라메터 이름과 일치하는 순서의 MachParameter 를 나타낸다. |
 
 
-### MachParameter : DbParameter
+### MachParameter
+
+```cs
+public sealed class MachParameter : DbParameter
+```
+
 MachCommand 에 필요한 파라메터를 각각 바인딩한 정보를 담는 클래스이다.
 
 특별히 메서드는 지원하지 않는다.
 
-| 필드            | 설명                                                                                |
+#### 필드
+
+| 이름| 설명                                                                                |
 | ------------- | --------------------------------------------------------------------------------- |
 | ParameterName | 파라메터 이름                                                                           |
 | Value         | 값                                                                                 |
@@ -448,28 +455,46 @@ MachCommand 에 필요한 파라메터를 각각 바인딩한 정보를 담는 �
 | HasSetDbType  | DB Type 이 지정되었는지 여부                                                               |
 
 
-### MachException : DbException
+### MachException
+
+```cs
+public class MachException : DbException
+```
+
 마크베이스에서 나타나는 에러를 표시하는 클래스이다.
 
 에러 메시지가 설정되어 있는데, 모든 에러 메시지는 MachErrorMsg 에서 확인할 수 있다.
 
-| 필드                | 설명                     |
+#### 필드
+
+| 이름| 설명                     |
 | ----------------- | ---------------------- |
 | int MachErrorCode | MACHBASE 에서 제공하는 에러 코드 |
 
 
 ### MachAppendWriter
-MachCommand 를 사용하는 별도의 클래스로 APPEND 를 지원한다.
-ADO.NET 표준이 아닌, MACHBASE 의 Append Protocol 을 지원하기 위한 클래스이다.
+
+```cs
+public sealed class MachAppendWriter
+```
+
+MachCommand 를 사용하는 별도의 클래스로 APPEND 를 지원한다. ADO.NET 표준이 아닌, MACHBASE 의 Append Protocol 을 지원하기 위한 클래스이다.
 
 별도의 생성자 없이 MachCommand 의 AppendOpen() 으로 생성된다.
 
-| 메서드                                                 | 설명                                       |
-| --------------------------------------------------- | ---------------------------------------- |
-| void SetErrorDelegator(ErrorDelegateFuncType aFunc) | 에러가 발생했을 때 호출할 ErrorDelegateFunc 을 지정한다. |
+#### SetErrorDelegator
 
+```cs
+void SetErrorDelegator(ErrorDelegateFuncType aFunc)
 
-| 필드           | 설명                                    |
+void ErrorDelegateFuncType(MachAppendException e);
+```
+
+에러가 발생했을 때 호출할 ErrorDelegateFunc 을 지정한다.
+
+#### 필드
+
+| 이름 | 설명                                    |
 | ------------ | ------------------------------------- |
 | SuccessCount | 입력 성공한 레코드 개수. AppendClose() 이후 설정된다. |
 | FailureCount | 입력 실패한 레코드 개수. AppendClose() 이후 설정된다. |
@@ -477,8 +502,8 @@ ADO.NET 표준이 아닌, MACHBASE 의 Append Protocol 을 지원하기 위한 �
 
 
 #### ErrorDelegateFuncType
+
 ```c#
-public delegate void ErrorDelegateFuncType(MachAppendException e);
 ```
 MachAppendWriter 에서, APPEND 도중 MACHBASE 서버 측에서 발생하는 Error 를 감지하기 위한 함수를 지정할 수 있다.
 
@@ -502,7 +527,12 @@ public static void DoAppend()
 }
 ```
 
-### MachAppendException : MachException
+### MachAppendException
+
+```cs
+public sealed class MachAppendException : MachException
+```
+
 MachException 과 동일하지만, 다음 점이 다르다.
 
 * 에러 메시지가 서버 측으로부터 수신된다.
@@ -510,15 +540,16 @@ MachException 과 동일하지만, 다음 점이 다르다.
 
 해당 예외는 ErrorDelegateFunc 내부에서만 획득이 가능하다.
 
-| 메서드            | 설명                        |
-| -------------- | ------------------------- |
-| GetRowBuffer() | 에러가 발생한 데이터 버퍼를 획득할 수 있다. |
+#### GetRowBuffer
 
+```cs
+string GetRowBuffer()
+```
 
-### MachTransaction
-지원하지 않는다.
+에러가 발생한 데이터 버퍼를 가져온다.
 
-## 샘플 코드
+## 사용 및 예제
+
 ### 연결
 MachConnection 을 만들어 Open() - Close() 하면 된다.
 ```c#
