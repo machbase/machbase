@@ -320,21 +320,98 @@ If you do this after binding, the values ​​are done together.
 
 > Since the concept of Prepared Statement is not implemented, execution performance after Binding is the same as the performance performed first.
 
-| Method                                                               | Description                                                              |
-| ----------------------------------------------------------------- | ---------------------------------------------------------------------- |
-|MachParameter<br>Add(string parameterName, DbType dbType)          | Adds the MachParameter, specifying the parameter name and type. <br><br>Returns the added MachParameter object.|
-|int Add(object value)                                              | Adds a value. Returns the index added.|
-|void AddRange(Array values)                                        | Adds an array of simple values.|
-|MachParameter<br>AddWithValue(string parameterName, object value)  | Adds the parameter name and its value. <br><br>Returns the added MachParameter object.|
-|bool Contains(object value)                                        | Determines whether or not the corresponding value is added.|
-|bool Contains(string value)                                        | Determines whether or not the corresponding parameter name is added.|
-|void Clear()                                                       | Deletes all parameters.|
-|int IndexOf(object value)                                          | Returns the index of the corresponding value.|
-|int IndexOf(string parameterName)                                  | Returns the index of the corresponding parameter name.|
-|void Insert(int index, object value)                               | Adds the value to a specific index.|
-|void Remove(object value)                                          | Deletes the parameter including the value.|
-|void RemoveAt(int index)                                           | Deletes the parameter located at the index.|
-|void RemoveAt(string parameterName)                                | Deletes the parameter with that name.|
+#### Add
+
+```cs
+MachParameter<br>Add(string parameterName, DbType dbType)
+```
+
+Adds the MachParameter, specifying the parameter name and type. Returns the added MachParameter object.
+
+```cs
+int Add(object value)
+```
+
+Adds a value. Returns the index added.
+
+
+```cs
+void AddRange(Array values)
+```
+
+Adds an array of simple values.
+
+```cs
+MachParameter<br>AddWithValue(string parameterName, object value)
+```
+
+Adds the parameter name and its value. Returns the added MachParameter object.|
+
+#### Contains
+
+```cs
+bool Contains(object value)                                        
+```
+
+Determines whether or not the corresponding value is added.
+
+```cs
+bool Contains(string value)
+```
+
+Determines whether or not the corresponding parameter name is added.
+
+#### Clear
+
+```cs
+void Clear()
+```
+
+Deletes all parameters.
+
+#### IndexOf
+
+```cs
+int IndexOf(object value)
+```
+
+Returns the index of the corresponding value.
+
+```cs
+int IndexOf(string parameterName)
+```
+
+Returns the index of the corresponding parameter name.
+
+#### Insert
+
+```cs
+void Insert(int index, object value)
+```
+
+Adds the value to a specific index.
+
+#### Remove
+
+```cs
+void Remove(object value)
+```
+
+Deletes the parameter including the value.
+
+```cs
+void RemoveAt(int index)
+```
+
+Deletes the parameter located at the index.
+
+```cs
+void RemoveAt(string parameterName)
+```
+
+Deletes the parameter with that name.
+
+#### Field
 
 | Field                 | Description                 |
 | ----------------- | --------------------------------------- |
