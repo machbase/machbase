@@ -419,10 +419,17 @@ Deletes the parameter with that name.
 |this[int index]    | Indicates the MachParameter at index.|
 |this[string name]  | Indicates the MachParameter of the order in which the parameter names match.|
 
-### MachParameter : DbParameter
+### MachParameter
+
+```cs
+public sealed class MachParameter : DbParameter
+```
+
 This is a class that contains the information that binds the necessary parameters to each MachCommand.
 
 No special methods are supported.
+
+#### Field
 
 |Field            | Description                                                                          |
 | ------------- | --------------------------------------------------------------------------------- |
@@ -435,56 +442,50 @@ No special methods are supported.
 |IsNullable|Whether nullable|
 |HasSetDbType|Whether DB Type is specified|
 
-### MachException : DbException
+### MachException
+
+```cs
+public class MachException : DbException
+```
+
 This is a class that displays errors that appear in Machbase.
 
 An error message is set, and all error messages  can be found in  MachErrorMsg .
+
+#### Field
 
 |Field|Description|
 |--|--|
 |int MachErrorCode|Error code provided by MACHBASE|
 
 ### MachAppendWriter
+
+```cs
+public sealed class MachAppendWriter
+```
+
 APPEND is supported as a separate class using MachCommand.
 This is a class to support MACHBASE Append Protocol, not ADO.NET standard.
 
 It is created with MachCommand's AppendOpen () without a separate constructor.
 
-|Method|Description|
-|--|--|
-|void SetErrorDelegator(ErrorDelegateFuncType aFunc)|Specifies the ErrorDelegateFunc to call when an error occurs.|
+#### SetErrorDelegator
 
-|Field|Description|
+```cs
+void SetErrorDelegator(ErrorDelegateFuncType aFunc)
+
+void ErrorDelegateFuncType(MachAppendException e);
+```
+Specifies the ErrorDelegateFunc to call when an error occurs.
+
+#### Field
+
+|Name|Description|
 |--|--|
 |SuccessCount|Number of successful records. Is set after AppendClose().|
 |FailureCount|The number of records that failed input. Set after AppendClose ().|
 |Option|MachAppendOption received input during AppendOpen()|
 
-### ErrorDelegateFuncType
-```c#
-public delegate void ErrorDelegateFuncType(MachAppendException e);
-```
-In MachAppendWriter, you can specify a function to detect errors occurring on the MACHBASE server side during APPEND.
-
-In .NET, this function type is specified as a Delegator Function.
-```c#
-public static void ErrorCallbackFunc(MachAppendException e) 
-{
-    Console.WriteLine("====================");
-    Console.WriteLine("Error occured");
-    Console.WriteLine(e.Message);
-    Console.WriteLine(e.StackTrace);
-    Console.WriteLine("====================");
-}
-
-public static void DoAppend() 
-{
-    MachCommand com = new MachCommand(conn);
-    MachAppendWriter writer = com.AppendOpen("tag", errorCheckCount);
-    writer.SetErrorDelegator(ErrorCallbackFunc);
-    //... do append 
-}
-```
 
 ### MachAppendException : MachException
 Same as MachException, except that:
@@ -695,4 +696,27 @@ Many of the keywords in the same section have the same meaning.<br>
 As an example, we can prepare the following string.
 ```
 String sConnString = String.Format("DSN={0};PORT_NO={1};UID=;PWD=MANAGER;CONNECT_TIMEOUT=10000;COMMAND_TIMEOUT=50000", SERVER_HOST, SERVER_PORT);
+```
+### Set Error Delegator
+
+In MachAppendWriter, you can specify a function to detect errors occurring on the MACHBASE server side during APPEND.
+
+In .NET, this function type is specified as a Delegator Function.
+```c#
+public static void ErrorCallbackFunc(MachAppendException e) 
+{
+    Console.WriteLine("====================");
+    Console.WriteLine("Error occured");
+    Console.WriteLine(e.Message);
+    Console.WriteLine(e.StackTrace);
+    Console.WriteLine("====================");
+}
+
+public static void DoAppend() 
+{
+    MachCommand com = new MachCommand(conn);
+    MachAppendWriter writer = com.AppendOpen("tag", errorCheckCount);
+    writer.SetErrorDelegator(ErrorCallbackFunc);
+    //... do append 
+}
 ```
