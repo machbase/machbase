@@ -487,7 +487,12 @@ Specifies the ErrorDelegateFunc to call when an error occurs.
 |Option|MachAppendOption received input during AppendOpen()|
 
 
-### MachAppendException : MachException
+### MachAppendException
+
+```cs
+public sealed class MachAppendException : MachException
+```
+
 Same as MachException, except that:
 
 * An error message is received from the server side.
@@ -495,13 +500,13 @@ Same as MachException, except that:
 
 The exception is only available within the ErrorDelegateFunc.
 
-|Method|Description|
-|--|--|
-|GetRowBuffer()|A data buffer in which an error has occurred can be obtained.|
+#### GetRowBuffer
 
+```cs
+string GetRowBuffer()
+```
 
-### MachTransaction
-Not supported.
+A data buffer in which an error has occurred can be obtained.
 
 ## Sample Code
 ### Connection
