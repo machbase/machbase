@@ -51,7 +51,7 @@ public sealed class MachConnection : DbConnection
 
 마크베이스와의 연결을 담당하는 클래스이다. 
 
-DbConnection 과 같이 IDisposable 을 상속받기 때문에, Dispose() 를 통한 객체 해제나 using() 문을 이용한 객체의 자동 Dispose를 지원한다.MachConnection : DbConnection
+DbConnection 과 같이 IDisposable 을 상속받기 때문에, Dispose() 를 통한 객체 해제나 using() 문을 이용한 객체의 자동 Dispose를 지원한다.
 
 #### 생성자
 
@@ -129,9 +129,10 @@ APPEND 를 시작한다. MachAppendWriter 객체를 반환한다.
 * aTableName: 대상 테이블 이름
 * ErrorCheckCount: APPEND-DATA 로 입력한 레코드 누적 개수가 일치할 때 마다, 서버로 보내 실패 여부를 확인한다.
 말하자면, 자동 APPEND-FLUSH 지점을 정하는 셈이다.
-* MachAppendOption: 현재는 하나의 옵션만 제공하고 있다.MachAppendOption.None : 아무런 옵션도 붙지 않는다.
-* MachAppendOption.MicroSecTruncated: DateTime 객체의 값 입력 시, microsecond 까지만 표현된 값을 입력한다.
-(DateTime 객체의 Ticks 값은 100 nanosecond 까지 표현된다.)
+* MachAppendOption: 현재는 하나의 옵션만 제공하고 있다.
+    * MachAppendOption.None : 아무런 옵션도 붙지 않는다.
+    * MachAppendOption.MicroSecTruncated: DateTime 객체의 값 입력 시, microsecond 까지만 표현된 값을 입력한다.
+    (DateTime 객체의 Ticks 값은 100 nanosecond 까지 표현된다.)
 
 #### AppendData
 
@@ -139,7 +140,9 @@ APPEND 를 시작한다. MachAppendWriter 객체를 반환한다.
 void AppendData(MachAppendWriter aWriter, List<object> aDataList)
 ```
 
-MachAppendWriter 객체를 통해, 데이터가 들어있는 리스트를 받아 데이터베이스에 입력한다.  List 에 들어간 데이터 순서대로, 각각의 자료형은 테이블에 표현된 컬럼의 자료형과 일치해야 한다.  List 에 들어있는 데이터가 모자라거나 넘치면, 에러를 발생시킨다.
+MachAppendWriter 객체를 통해, 데이터가 들어있는 리스트를 받아 데이터베이스에 입력한다.  
+- List 에 들어간 데이터 순서대로, 각각의 자료형은 테이블에 표현된 컬럼의 자료형과 일치해야 한다.  
+- List 에 들어있는 데이터가 모자라거나 넘치면, 에러를 발생시킨다.
 
 
 ```cs

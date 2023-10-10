@@ -79,7 +79,7 @@ Closes the connection when connecting.
 
 #### Field
 
-| name | description |
+| Name | Description |
 |--|--|
 |State|Represents a System.Data.ConnectionState value.|
 |StatusString|Indicates the state to be performed by the connected MachCommand.<br>This is used internally to decorate the Error Message and it is not appropriate to check the status of the query with this value because it indicates the state in which the operation started.|
@@ -130,8 +130,8 @@ Starts APPEND. Returns a MachAppendWriter object.
 * aErrorCheckCount: Each time the cumulative number of records entered by APPEND-DATA matches, it is checked whether it is sent to the server or not.<br>
   In other words, you are setting the automatic APPEND-FLUSH point.<br>
 * MachAppendOption: Currently only one option is provided.
-  * MachAppendOption.None: No options are attached.<br>
-  * MachAppendOption.MicroSecTruncated: When inputting the value of a DateTime object, enter the value expressed only up to microsecond.<br>
+  * MachAppendOption.None: No options are attached.
+  * MachAppendOption.MicroSecTruncated: When inputting the value of a DateTime object, enter the value expressed only up to microsecond.
   (The Ticks value of a DateTime object is expressed up to 100 nanoseconds.)
 
 #### AppendData
@@ -140,8 +140,8 @@ Starts APPEND. Returns a MachAppendWriter object.
 void AppendData(MachAppendWriter aWriter, List<object> aDataList)
 ```
 
-Through the MachAppendWriter object, it takes a list containing the data and enters it into the database.<br>
-- In the order of the data in the List, each datatype must match the datatype of the column represented in the table.<br>
+Through the MachAppendWriter object, it takes a list containing the data and enters it into the database.
+- In the order of the data in the List, each datatype must match the datatype of the column represented in the table.
 - If the data in the List is insufficient or overflows, an error occurs.
 <blockquote> 
   <p>When representing a time value with a ulong object, simply do not enter the Tick value of the DateTime object. <br><br>In that value, you must enter a <u>value that excludes the DateTime Tick value that represents 1970-01-01</u>.</p>
@@ -161,17 +161,17 @@ void AppendDataWithTime(MachAppendWriter aWriter, List<object> aDataList, ulong 
 Method that can explicitly put _arrival_time value into a ulong object in AppendData(). Refer to AppendData() above for problems that may occur when typing a ulong value as an _arrival_time value.
 
 #### AppendFlush
+
 ```cs
 void AppendFlush(MachAppendWriter aWriter)
 ```
-<td>
-  The data entered by AppendData() is immediately sent to the server to force data insert.<br><br>
-  The more frequently the call is made, the lower the data loss rate due to the system error and the faster the error check, although the performance is lowered.<br>
-  The less frequently the call is made, the more likely the data loss will occur and the error checking will be delayed, but the performance will increase significantly.
-</td>
-</tr>
+
+The data entered by AppendData() is immediately sent to the server to force data insert.<br>
+The more frequently the call is made, the lower the data loss rate due to the system error and the faster the error check, although the performance is lowered.<br>
+The less frequently the call is made, the more likely the data loss will occur and the error checking will be delayed, but the performance will increase significantly.
 
 #### AppendClose
+
 ```cs
 void AppendClose(MachAppendWriter aWriter)
 ```
@@ -187,6 +187,7 @@ int ExecuteNonQuery()
 Performs the input query. Returns the number of records affected by the query. It is usually used when performing queries except SELECT.
 
 #### ExecuteScalar
+
 ```cs
 object ExecuteScalar()
 ```
@@ -194,6 +195,7 @@ object ExecuteScalar()
 Performs the input query. Returns the first value of the query targetlist as an object. It is usually used when you want to perform a SELECT query, especially a SELECT (Scalar Query) with only one result, and get the result without a DbDataReader.
 
 #### ExecuteDbDataReader
+
 ```cs
 DbDataReader ExecuteDbDataReader(CommandBehavior aBehavior)
 ```
@@ -201,6 +203,7 @@ DbDataReader ExecuteDbDataReader(CommandBehavior aBehavior)
 Executes the input query, generates a DbDataReader that can read the result of the query, and returns it.
 
 #### Field
+
 | Name | Description|
 |--|--|
 | Connection / DbConnection                   | Connected MachConnection.|
@@ -209,6 +212,7 @@ Executes the input query, generates a DbDataReader that can read the result of t
 | CommandTimeout                              | The amount of time it takes to perform a particular task, waiting for a response from the server.<br>It follows the values ​​set in MachConnection, where you can only reference values.|
 | FetchSize                                   | The number of records to fetch from the server at one time . The default value is 3000.|
 | IsAppendOpened                              | Determines if Append is already open when APPEND is at work|
+
 
 ### MachDataReader
 
@@ -227,6 +231,7 @@ string GetName(int ordinal)
 Returns the ordinal column name.
 
 #### GetDataTypeName
+
 ```cs
 string GetDataTypeName(int ordinal)
 ```
@@ -243,6 +248,7 @@ Returns the datatype of the ordinal column.
 
 
 #### GetOrdinal
+
 ```cs
 int GetOrdinal(string name)
 ```
@@ -251,6 +257,7 @@ Returns the index at which the column name is located.
 
 
 #### GetValue
+
 ```cs
 object GetValue(int ordinal)
 ```
@@ -258,6 +265,7 @@ object GetValue(int ordinal)
 Returns the ordinal value of the current record.
 
 #### IsDBNull
+
 ```cs
 bool IsDBNull(int ordinal)
 ```
@@ -299,6 +307,7 @@ bool Read()
 Reads the next record. Returns False if the result does not exist.
 
 #### Field
+
 | Name | Description|
 |--|--|
 | FetchSize         |The number of records to fetch from the server at one time. The default is 3000, which can not be modified here.|
@@ -442,6 +451,7 @@ No special methods are supported.
 |IsNullable|Whether nullable|
 |HasSetDbType|Whether DB Type is specified|
 
+
 ### MachException
 
 ```cs
@@ -476,11 +486,12 @@ void SetErrorDelegator(ErrorDelegateFuncType aFunc)
 
 void ErrorDelegateFuncType(MachAppendException e);
 ```
+
 Specifies the ErrorDelegateFunc to call when an error occurs.
 
 #### Field
 
-|Name|Description|
+| Name | Description |
 |--|--|
 |SuccessCount|Number of successful records. Is set after AppendClose().|
 |FailureCount|The number of records that failed input. Set after AppendClose ().|
@@ -509,7 +520,9 @@ string GetRowBuffer()
 A data buffer in which an error has occurred can be obtained.
 
 ## Sample Code
+
 ### Connection
+
 You can create a MachConnection and use Open () - Close ().
 ```c#
 String sConnString = String.Format("DSN={0};PORT_NO={1};UID=;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
@@ -530,7 +543,9 @@ using (MachConnection sConn = new MachConnection(sConnString))
 ```
 
 ### Executing Queries
+
 Create a MachCommand and perform the query.
+
 ```c#
 String sConnString = String.Format("DSN={0};PORT_NO={1};UID=;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
 using (MachConnection sConn = new MachConnection(sConnString))
@@ -686,8 +701,9 @@ private static void AppendErrorDelegator(MachAppendException e)
 ```
 
 #### Connection String
-Each item is separated by a semicolon (;). <br>
-Many of the keywords in the same section have the same meaning.<br>
+
+Each item is separated by a semicolon (;).
+Many of the keywords in the same section have the same meaning.
 
 | Keyword                                                | Description   | Example            | Default value |
 | ------------------------------------------------------ | ------------- | ------------------ | ---- |
@@ -702,6 +718,7 @@ As an example, we can prepare the following string.
 ```
 String sConnString = String.Format("DSN={0};PORT_NO={1};UID=;PWD=MANAGER;CONNECT_TIMEOUT=10000;COMMAND_TIMEOUT=50000", SERVER_HOST, SERVER_PORT);
 ```
+
 ### Set Error Delegator
 
 In MachAppendWriter, you can specify a function to detect errors occurring on the MACHBASE server side during APPEND.
