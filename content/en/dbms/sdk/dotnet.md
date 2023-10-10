@@ -149,7 +149,7 @@ Through the MachAppendWriter object, it takes a list containing the data and ent
 
 
 ```cs
-void<br>AppendDataWithTime(MachAppendWriter aWriter, List<object> aDataList, DateTime aArrivalTime)
+void AppendDataWithTime(MachAppendWriter aWriter, List<object> aDataList, DateTime aArrivalTime)
 ```
 
 Method that explicitly puts an _arrival_time value into a DateTime object in AppendData().
