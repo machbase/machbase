@@ -323,7 +323,7 @@ If you do this after binding, the values ​​are done together.
 #### Add
 
 ```cs
-MachParameter<br>Add(string parameterName, DbType dbType)
+MachParameter Add(string parameterName, DbType dbType)
 ```
 
 Adds the MachParameter, specifying the parameter name and type. Returns the added MachParameter object.
@@ -342,7 +342,7 @@ void AddRange(Array values)
 Adds an array of simple values.
 
 ```cs
-MachParameter<br>AddWithValue(string parameterName, object value)
+MachParameter AddWithValue(string parameterName, object value)
 ```
 
 Adds the parameter name and its value. Returns the added MachParameter object.|
