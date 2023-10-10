@@ -111,7 +111,7 @@ MachCommand(MachConnection aConn)
 #### CreateParameter
 
 ```cs
-void CreateParameter()
+MachParameter CreateParameter()
 ```
 
 새로운 MachParameter 를 생성한다.

@@ -113,7 +113,7 @@ Creates a MachConnection object to connect to. Use only if there is no query to 
 #### CreateParameter
 
 ```cs
-void CreateParameter()
+MachParameter CreateParameter()
 ```
 
 Creates a new MachParameter.
