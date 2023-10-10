@@ -85,24 +85,6 @@ Closes the connection when connecting.
 |StatusString|Indicates the state to be performed by the connected MachCommand.<br>This is used internally to decorate the Error Message and it is not appropriate to check the status of the query with this value because it indicates the state in which the operation started.|
 
 
-#### Connection String
-Each item is separated by a semicolon (;). <br>
-Many of the keywords in the same section have the same meaning.<br>
-
-| Keyword                                                | Description   | Example            | Default value |
-| ------------------------------------------------------ | ------------- | ------------------ | ---- |
-| DSN<br>SERVER<br>HOST                                  | Hostname      | DSN=localhost<br>SERVER=192.168.0.1 |      |
-| PORT<br>PORT_NO                                        | Port No.      | PORT=5656          | 5656 |
-| USERID<br>USERNAME<br>USER<br>UID                      | User ID        | USER=SYS           | SYS  |
-| PASSWORD<br>PWD                                        | User password      | PWD=manager        |      |
-| CONNECT_TIMEOUT<br>ConnectionTimeout<br>connectTimeout | Maximum connection time     | CONNECT_TIMEOUT    | 60 second  |
-| COMMAND_TIMEOUT<br>commandTimeout                      | Maximum time to perform each command | COMMAND_TIMEOUT    | 60 second  |
-
-As an example, we can prepare the following string.
-```
-String sConnString = String.Format("DSN={0};PORT_NO={1};UID=;PWD=MANAGER;CONNECT_TIMEOUT=10000;COMMAND_TIMEOUT=50000", SERVER_HOST, SERVER_PORT);
-```
-
 ### MachCommand
 
 ```cs
@@ -612,11 +594,28 @@ using (MachConnection sConn = new MachConnection(sConnString))
     }
 }
 ```
-
 ```c#
 private static void AppendErrorDelegator(MachAppendException e)
 {
     Console.WriteLine("{0}", e.Message);
     Console.WriteLine("{0}", e.GetRowBuffer());
 }
+```
+
+#### Connection String
+Each item is separated by a semicolon (;). <br>
+Many of the keywords in the same section have the same meaning.<br>
+
+| Keyword                                                | Description   | Example            | Default value |
+| ------------------------------------------------------ | ------------- | ------------------ | ---- |
+| DSN<br>SERVER<br>HOST                                  | Hostname      | DSN=localhost<br>SERVER=192.168.0.1 |      |
+| PORT<br>PORT_NO                                        | Port No.      | PORT=5656          | 5656 |
+| USERID<br>USERNAME<br>USER<br>UID                      | User ID        | USER=SYS           | SYS  |
+| PASSWORD<br>PWD                                        | User password      | PWD=manager        |      |
+| CONNECT_TIMEOUT<br>ConnectionTimeout<br>connectTimeout | Maximum connection time     | CONNECT_TIMEOUT    | 60 second  |
+| COMMAND_TIMEOUT<br>commandTimeout                      | Maximum time to perform each command | COMMAND_TIMEOUT    | 60 second  |
+
+As an example, we can prepare the following string.
+```
+String sConnString = String.Format("DSN={0};PORT_NO={1};UID=;PWD=MANAGER;CONNECT_TIMEOUT=10000;COMMAND_TIMEOUT=50000", SERVER_HOST, SERVER_PORT);
 ```
