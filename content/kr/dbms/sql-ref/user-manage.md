@@ -108,9 +108,9 @@ REVOKE ALL ON mytable FROM user1;
 위의 쿼리를 수행한 예제와 그 결과를 나타냈다.
 
 ```sql
-############################################
-## Connect SYS : SYS 계정으로 접속함.
-############################################
+--------------------------------------------
+-- Connect SYS : SYS 계정으로 접속함.
+--------------------------------------------
 Mach> create user demo identified by 'demo';
 Created successfully.
  
@@ -149,31 +149,28 @@ ID
 99991
 [3] row(s) selected.
  
-#Error: 자기 자신을 Drop 할 수 없음.
+-- Error: 자기 자신을 Drop 할 수 없음.
 Mach> drop user SYS;
 [ERR-02083 : Drop user error. You cannot drop yourself(SYS).]
  
-############################################
-## Connect DEMO1
-############################################
+--------------------------------------------
+-- Connect DEMO1
+--------------------------------------------
 Mach> connect demo1/demo1;
 Connected successfully.
  
-#Error: 일반 유저는 다른 사용자의 비밀번호를 바꿀 수 없다.
+-- Error: 일반 유저는 다른 사용자의 비밀번호를 바꿀 수 없다.
 Mach> alter user demo2 identified by 'demo22';
 [ERR-02085 : ALTER user error. The user(DEMO2) does not have ALTER privileges.]
  
 Mach> alter user demo1 identified by demo11;
 Altered successfully.
  
-Mach> connect demo2/demo22;
-Connected successfully.
- 
-#Error: wrong password
+-- Error: wrong password
 Mach> connect demo1/demo11234;
- [ERR-02081 : User authentication error. Invalid password (DEMO11234).]
+[ERR-02081 : User authentication error. Invalid password (DEMO11234).]
  
-## Correct password
+-- Correct password
 Mach> connect demo1/demo11;
 Connected successfully.
  
@@ -207,10 +204,12 @@ ID
 2
 1
 [3] row(s) selected.
- 
-############################################
-## Connect SYS again
-############################################
+```
+
+```bash
+--------------------------------------------
+-- Connect SYS again
+--------------------------------------------
 Mach> connect SYS/MANAGER;
 Connected successfully.
  
