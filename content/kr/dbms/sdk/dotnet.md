@@ -38,8 +38,10 @@ NuGet에서 machNetConnector5.0을 가져오는 방법은 다음과 같다.
 
 ## API Reference
 
-> 아래 소개된 기능 외의 것은 아직 구현되어 있지 않거나, 올바르게 작동되지 않을 수 있다.<br>
+{{<callout type="warning">}}
+아래 소개된 기능 외의 것은 아직 구현되어 있지 않거나, 올바르게 작동되지 않을 수 있다.<br>
 미구현으로 명시된 메서드나 필드를 부르는 경우, NotImplementedException 또는 NotSupportedException 을 발생시킨다.
+{{</callout>}}
 
 ### MachConnection
 
@@ -700,7 +702,7 @@ private static void AppendErrorDelegator(MachAppendException e)
 
 | Keyword                                                | 설명            | 예제                 | 기본값  |
 | ------------------------------------------------------ | ------------- | ------------------ | ---- |
-| SERVER                                                 | Hostname      | SERVER=192.168.0.1 |      |
+| DSN<br>SERVER<br>HOST                                  | Hostname      | DSN=localhost<br>SERVER=192.168.0.1 |      |
 | PORT<br>PORT_NO                                        | Port No.      | PORT=5656          | 5656 |
 | USERID<br>USERNAME<br>USER<br>UID                      | 사용자 ID        | USER=SYS           | SYS  |
 | PASSWORD<br>PWD                                        | 사용자 패스워드      | PWD=manager        |      |
