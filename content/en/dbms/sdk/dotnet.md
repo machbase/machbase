@@ -413,7 +413,7 @@ Deletes the parameter with that name.
 
 #### Field
 
-| Field                 | Description                 |
+| Name                 | Description                 |
 | ----------------- | --------------------------------------- |
 |Count              | Number of parameters|
 |this[int index]    | Indicates the MachParameter at index.|
@@ -431,14 +431,14 @@ No special methods are supported.
 
 #### Field
 
-|Field            | Description                                                                          |
+| Name            | Description                                                                          |
 | ------------- | --------------------------------------------------------------------------------- |
 |ParameterName|Parameter name|
 |Value|Value|
 |Size|Value size|
-|Direction|ParameterDirection (Input / Output / InputOutput / ReturnValue)<br><br>The default value is Input.|
+|Direction|ParameterDirection (Input / Output / InputOutput / ReturnValue)<br>The default value is Input.|
 |DbType|DB Type|
-|MachDbType|MACHBASE DB Type<br><br>May differ from DB Type.|
+|MachDbType|MACHBASE DB Type<br>May differ from DB Type.|
 |IsNullable|Whether nullable|
 |HasSetDbType|Whether DB Type is specified|
 
@@ -454,7 +454,7 @@ An error message is set, and all error messages  can be found in  MachErrorMsg .
 
 #### Field
 
-|Field|Description|
+| Name| Description|
 |--|--|
 |int MachErrorCode|Error code provided by MACHBASE|
 
