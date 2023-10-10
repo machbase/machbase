@@ -107,7 +107,7 @@ REVOKE ALL ON mytable FROM user1;
 
 위의 쿼리를 수행한 예제와 그 결과를 나타냈다.
 
-```sql
+```
 ############################################
 ## Connect SYS : SYS 계정으로 접속함.
 ############################################
@@ -165,9 +165,6 @@ Mach> alter user demo2 identified by 'demo22';
  
 Mach> alter user demo1 identified by demo11;
 Altered successfully.
- 
-Mach> connect demo2/demo22;
-Connected successfully.
  
 #Error: wrong password
 Mach> connect demo1/demo11234;

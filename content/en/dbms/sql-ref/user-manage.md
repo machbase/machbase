@@ -109,7 +109,7 @@ REVOKE ALL ON mytable FROM user1;
 
 Here is an example of the above query and its results.
 
-```sql
+```
 ############################################
 ## Connect with SYS account
 ############################################
@@ -167,9 +167,6 @@ Mach> alter user demo2 identified by 'demo22';
  
 Mach> alter user demo1 identified by demo11;
 Altered successfully.
- 
-Mach> connect demo2/demo22;
-Connected successfully.
  
 #Error: wrong password
 Mach> connect demo1/demo11234;
