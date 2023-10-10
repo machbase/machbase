@@ -5,6 +5,14 @@ type : docs
 weight: 40
 ---
 
+## Index
+
+* [Install](#install)
+* [Install Connector via NuGet Package Manager](#install-connector-via-nuget-package-manager)
+* [API Reference](#api-reference)
+* [Sample Code](#sample-code)
+
+## Install
 
 The .NET (C #) Connector library that supports some features of the ADO.NET driver is provided.
 
