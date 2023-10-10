@@ -168,7 +168,7 @@ Altered successfully.
  
 #Error: wrong password
 Mach> connect demo1/demo11234;
- [ERR-02081 : User authentication error. Invalid password (DEMO11234).]
+[ERR-02081 : User authentication error. Invalid password (DEMO11234).]
  
 ## Correct password
 Mach> connect demo1/demo11;
