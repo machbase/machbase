@@ -741,3 +741,18 @@ public static void DoAppend()
 }
 ```
 
+### Auto AppendFlush 설정
+
+MachConnection에서 AppendFlush를 자동으로 설정하면, AppendData를 할 때마다 AppendFlush를 할 필요가 없다.
+
+```c#
+private static string connString = $"SERVER={HOST};PORT_NO={port};USER={USER};PWD={PWD}";
+
+public static void Main(string[] args) 
+{
+    MachConnection conn = new MachConnection(connString);
+    conn.Open();
+    conn.SetConnectAppendFlush(true);
+}
+```
+
