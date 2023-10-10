@@ -1,10 +1,18 @@
 ---
 layout : post
-title : '.NET CONNECTOR'
+title : '.Net Connector'
 type : docs
 weight: 40
 ---
 
+## 목차
+
+* [설치](#설치)
+* [NuGet 패키지 관리자를 이용한 설치](#nuget-패키지-관리자를-이용한-설치)
+* [API Reference](#api-reference)
+* [사용 및 예제](#사용-및-예제)
+
+## 설치
 
 ADO.NET 드라이버 일부 기능을 지원하는 .NET (C#) Connector 라이브러리를 제공하고 있다. 
 
@@ -74,24 +82,6 @@ void Close()
 | State         | System.Data.ConnectionState 값을 나타낸다.                                                                                      |
 | StatusString  | 연결된 MachCommand 로 수행하는 상태를 나타낸다.<br>Error Message 를 꾸미는 용도로 내부에서 사용되며, 작업이 시작된 상태를 나타내기 때문에 이 값으로 쿼리 상태를 체크하는 것은 적절하지 않다. |
 
-
-#### Connection String
-각 항목은 semicolon (;) 으로 구분되며, 다음을 사용할 수 있다.
-동일 항목에 있는 여러 Keyword 는, 모두 같은 의미이다.
-
-| Keyword                                                | 설명            | 예제                 | 기본값  |
-| ------------------------------------------------------ | ------------- | ------------------ | ---- |
-| SERVER                                                 | Hostname      | SERVER=192.168.0.1 |      |
-| PORT<br>PORT_NO                                        | Port No.      | PORT=5656          | 5656 |
-| USERID<br>USERNAME<br>USER<br>UID                      | 사용자 ID        | USER=SYS           | SYS  |
-| PASSWORD<br>PWD                                        | 사용자 패스워드      | PWD=manager        |      |
-| CONNECT_TIMEOUT<br>ConnectionTimeout<br>connectTimeout | 연결 최대 시간      | CONNECT_TIMEOUT    | 60초  |
-| COMMAND_TIMEOUT<br>commandTimeout                      | 각 명령 수행 최대 시간 | COMMAND_TIMEOUT    | 60초  |
-
-예제로, 아래와 같은 문자열을 준비해 둘 수 있다.
-```
-String sConnString = String.Format("SERVER={0};PORT_NO={1};UID=;PWD=MANAGER;CONNECT_TIMEOUT=10000;COMMAND_TIMEOUT=50000", SERVER_HOST, SERVER_PORT);
-```
 
 ### MachCommand
 
@@ -501,32 +491,6 @@ void ErrorDelegateFuncType(MachAppendException e);
 | Option       | AppendOpen() 때 입력받은 MachAppendOption  |
 
 
-#### ErrorDelegateFuncType
-
-```c#
-```
-MachAppendWriter 에서, APPEND 도중 MACHBASE 서버 측에서 발생하는 Error 를 감지하기 위한 함수를 지정할 수 있다.
-
-.NET 에서는 이 함수형을 Delegator Function 으로 지정한다.
-```c#
-public static void ErrorCallbackFunc(MachAppendException e) 
-{
-    Console.WriteLine("====================");
-    Console.WriteLine("Error occured");
-    Console.WriteLine(e.Message);
-    Console.WriteLine(e.StackTrace);
-    Console.WriteLine("====================");
-}
-
-public static void DoAppend() 
-{
-    MachCommand com = new MachCommand(conn);
-    MachAppendWriter writer = com.AppendOpen("tag", errorCheckCount);
-    writer.SetErrorDelegator(ErrorCallbackFunc);
-    //... do append 
-}
-```
-
 ### MachAppendException
 
 ```cs
@@ -551,6 +515,7 @@ string GetRowBuffer()
 ## 사용 및 예제
 
 ### 연결
+
 MachConnection 을 만들어 Open() - Close() 하면 된다.
 ```c#
 String sConnString = String.Format("SERVER={0};PORT_NO={1};UID=;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
@@ -570,8 +535,10 @@ using (MachConnection sConn = new MachConnection(sConnString))
 } // you don't need to call sConn.Close();
 ```
 
-### 쿼리 수행
+### Non-Query 수행
+
 MachCommand 를 만들어 쿼리를 수행하면 된다.
+
 ```c#
 String sConnString = String.Format("SERVER={0};PORT_NO={1};UID=;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
 using (MachConnection sConn = new MachConnection(sConnString))
@@ -725,3 +692,47 @@ private static void AppendErrorDelegator(MachAppendException e)
     Console.WriteLine("{0}", e.GetRowBuffer());
 }
 ```
+
+### Connection String
+
+각 항목은 semicolon (;) 으로 구분되며, 다음을 사용할 수 있다.
+동일 항목에 있는 여러 Keyword 는, 모두 같은 의미이다.
+
+| Keyword                                                | 설명            | 예제                 | 기본값  |
+| ------------------------------------------------------ | ------------- | ------------------ | ---- |
+| SERVER                                                 | Hostname      | SERVER=192.168.0.1 |      |
+| PORT<br>PORT_NO                                        | Port No.      | PORT=5656          | 5656 |
+| USERID<br>USERNAME<br>USER<br>UID                      | 사용자 ID        | USER=SYS           | SYS  |
+| PASSWORD<br>PWD                                        | 사용자 패스워드      | PWD=manager        |      |
+| CONNECT_TIMEOUT<br>ConnectionTimeout<br>connectTimeout | 연결 최대 시간      | CONNECT_TIMEOUT    | 60초  |
+| COMMAND_TIMEOUT<br>commandTimeout                      | 각 명령 수행 최대 시간 | COMMAND_TIMEOUT    | 60초  |
+
+예제로, 아래와 같은 문자열을 준비해 둘 수 있다.
+```
+String sConnString = String.Format("SERVER={0};PORT_NO={1};UID=;PWD=MANAGER;CONNECT_TIMEOUT=10000;COMMAND_TIMEOUT=50000", SERVER_HOST, SERVER_PORT);
+```
+
+### Error Delegator 설정
+
+MachAppendWriter 에서, APPEND 도중 MACHBASE 서버 측에서 발생하는 Error 를 감지하기 위한 함수를 지정할 수 있다.
+
+.NET 에서는 이 함수형을 Delegator Function 으로 지정한다.
+```c#
+public static void ErrorCallbackFunc(MachAppendException e) 
+{
+    Console.WriteLine("====================");
+    Console.WriteLine("Error occured");
+    Console.WriteLine(e.Message);
+    Console.WriteLine(e.StackTrace);
+    Console.WriteLine("====================");
+}
+
+public static void DoAppend() 
+{
+    MachCommand com = new MachCommand(conn);
+    MachAppendWriter writer = com.AppendOpen("tag", errorCheckCount);
+    writer.SetErrorDelegator(ErrorCallbackFunc);
+    //... do append 
+}
+```
+
