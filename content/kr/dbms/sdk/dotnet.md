@@ -83,7 +83,7 @@ void Close()
 void SetConnectAppendFlush(bool activeFlush)
 ```
 
-AppendFlush를 자동으로 동작하게 설정한다.
+Append 도중 flush 를 자동으로 수행하도록 설정한다.
 
 #### 필드
 
@@ -749,9 +749,9 @@ public static void DoAppend()
 }
 ```
 
-### Auto AppendFlush 설정
+### AppendFlush 설정
 
-MachConnection에서 AppendFlush를 자동으로 설정하면, AppendData를 할 때마다 AppendFlush를 할 필요가 없다.
+connection 에 `SetConnectAppendFlush` 를 true 설정할 경우, append 도중 flush 가 자동으로 수행된다.
 
 ```c#
 private static string connString = $"SERVER={HOST};PORT_NO={port};USER={USER};PWD={PWD}";
@@ -764,7 +764,7 @@ public static void Main(string[] args)
 }
 ```
 
-SetConnectAppendFlush의 매개변수에 false를 전달하면 Auto AppendFlush가 종료된다.
+false 로 설정할 경우 해당 기능이 disable 된다.
 
 ```c#
 conn.SetConnectAppendFlush(false);

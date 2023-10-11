@@ -10,7 +10,7 @@ weight: 40
 * [Install](#install)
 * [Install Connector via NuGet Package Manager](#install-connector-via-nuget-package-manager)
 * [API Reference](#api-reference)
-* [Sample Code](#sample-code)
+* [Usage and examples](#usage-and-examples)
 
 ## Install
 
@@ -83,7 +83,7 @@ Closes the connection when connecting.
 void SetConnectAppendFlush(bool activeFlush)
 ```
 
-Set executing AppendFlush automatically.
+Set flush to be performed automatically during append.
 
 #### Field
 
@@ -527,7 +527,7 @@ string GetRowBuffer()
 
 A data buffer in which an error has occurred can be obtained.
 
-## Sample Code
+## Usage and examples
 
 ### Connection
 
@@ -753,9 +753,9 @@ public static void DoAppend()
 
 ### Set Auto AppendFlush
 
-By setting AppendFlush to auto in MachConnection, it is no need to AppendFlush per AppendData.
+If you set `Set Connect Append Flush` to true in the connection, flush is automatically performed during append.
 
-```c#
+```cs
 private static string connString = $"SERVER={HOST};PORT_NO={port};USER={USER};PWD={PWD}";
 
 public static void Main(string[] args) 
@@ -766,9 +766,9 @@ public static void Main(string[] args)
 }
 ```
 
-By sending false value to SetConnectAppendFlush parameter, Auto AppendFlush is end.
+If set to false, the function is disabled.
 
-```c#
+```cs
 conn.SetConnectAppendFlush(false);
 ```
 
