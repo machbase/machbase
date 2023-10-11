@@ -48,7 +48,7 @@ params:
     displayLogo: true
     logo:
       path: images/logo_machbase.png
-      dark: images/logo_machbase.png
+      dark: images/machbase-logo-w.png
       link: /neo
       width: 200
 

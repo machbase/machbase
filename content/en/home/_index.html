@@ -44,7 +44,9 @@
     <div class="menu-right">
       <ul class="menu-right-ul">
         <li class="menu-a"><a href="/home/download">Download</a></li>
-        <li class="menu-a"><a href="https://support.machbase.com/hc/en-us">Support</a></li>
+        <li class="menu-a">
+          <a href="https://support.machbase.com/hc/en-us">Support</a>
+        </li>
         <li class="menu-a"><a href="/home/contactus">Contact US</a></li>
       </ul>
     </div>
@@ -190,9 +192,7 @@
       </div>
       <div class="main_why_more_box">
         <span>
-          <a
-            class="main_why_more"
-            :to="{ path: '/Products', hash: '#scroll2' }"
+          <a class="main_why_more" :to="{ path: '/Products', hash: '#scroll2' }"
             >View More<ArrowSvg
           /></a>
         </span>
@@ -208,20 +208,68 @@
   </div>
   <div class="test-wp-wrap">
     <div class="test-wrap">
-      <button class="left-btn" data-target="download">Download</button>
-      <button class="left-btn" data-target="start">Start Up</button>
-      <button class="left-btn" data-target="create">Create Table</button>
-      <button class="left-btn" data-target="insert">Insert</button>
-      <button class="left-btn" data-target="select">Select</button>
+      <button
+        class="left-btn"
+        data-target="download"
+        onclick="clickLeftTab('download')"
+      >
+        Download
+      </button>
+      <button
+        class="left-btn"
+        data-target="start"
+        onclick="clickLeftTab('start')"
+      >
+        Start Up
+      </button>
+      <button
+        class="left-btn"
+        data-target="create"
+        onclick="clickLeftTab('create')"
+      >
+        Create Table
+      </button>
+      <button
+        class="left-btn"
+        data-target="insert"
+        onclick="clickLeftTab('insert')"
+      >
+        Insert
+      </button>
+      <button
+        class="left-btn"
+        data-target="select"
+        onclick="clickLeftTab('select')"
+      >
+        Select
+      </button>
     </div>
     <div class="home_table_wrap">
       <div class="terminal_wrap">
         <!-- [ Download & Install ] -->
         <div id="download">
           <div class="btn_wrap">
-            <button class="btn1" data-target="download1">Linux / Mac</button>
-            <button class="btn1" data-target="download2">Windows</button>
-            <button class="btn1" data-target="download4">All releases</button>
+            <button
+              class="btn1"
+              data-target="download1"
+              onclick="clickHeaderTab('linux')"
+            >
+              Linux / Mac
+            </button>
+            <button
+              class="btn1"
+              data-target="download2"
+              onclick="clickHeaderTab('window')"
+            >
+              Windows
+            </button>
+            <button
+              class="btn1"
+              data-target="download4"
+              onclick="clickHeaderTab('all')"
+            >
+              All releases
+            </button>
           </div>
           <div class="main_container">
             <div id="download1">
@@ -234,8 +282,9 @@
                   <p class="dol_p">
                     sh -c "$(curl -fsSL https://neo.machbase.com/install.sh)"
                   </p>
-                  <button class="text_copy_btn">
-                    <img class="copy_btn" src="./img/ic_copy.png" />
+
+                  <button data-code="download1" class="copy-btn3 btn_up">
+                    Copy
                   </button>
                 </div>
               </div>
@@ -246,13 +295,13 @@
                 <div class="dol_rel">
                   <span class="yellow dol">$</span>
                   <p class="dol_p">unzip machbase-neo-*.zip</p>
-                  <button class="text_copy_btn1">
-                    <img class="copy_btn" src="./img/ic_copy.png" />
+                  <button data-code="download2" class="copy-btn3 btn_up">
+                    Copy
                   </button>
                 </div>
               </div>
             </div>
-            <div id="download2" class="hidden">
+            <div id="download2" class="custom-hidden">
               <p class="ternal_margin_top">
                 <span class="green"
                   >&lt;Click on the link below to download&gt;</span
@@ -265,7 +314,7 @@
                 >
               </p>
             </div>
-            <div id="download4" class="hidden">
+            <div id="download4" class="custom-hidden">
               <p class="ternal_margin_top">
                 <span class="green">&lt;Download from releases&gt;</span><br />
                 <a
@@ -278,50 +327,48 @@
             </div>
           </div>
         </div>
-        <div id="start" class="hidden">
+        <div id="start" class="custom-hidden">
           <div class="btn_wrap">
-            <button class="btn5" data-target="start1">Start Up</button>
+            <button
+              class="btn1"
+              data-target="start1"
+              onclick="clickHeaderTab('start')"
+            >
+              Start Up
+            </button>
           </div>
           <div class="main_container">
-            <div id="start2">
+            <div id="start1">
               <div class="none_text">
                 <span class="green"># Start</span><br />
               </div>
               <div class="dol_rel">
                 <span class="yellow dol">$</span>
                 <p class="dol_p">machbase-neo serve</p>
-                <button
-                  @click="copyCode(`machbase-neo serve`)"
-                  class="copy-btn btn_up"
-                >
-                  Copy
-                </button>
-              </div>
-            </div>
-            <div id="start1" class="hidden">
-              <div class="none_text">
-                <span class="green"># Start</span><br />
-              </div>
-              <div class="dol_rel">
-                <span class="yellow dol">$</span>
-                <p class="dol_p">machbase-neo serve</p>
-                <button
-                  @click="copyCode(`machbase-neo serve`)"
-                  class="copy-btn btn_up"
-                >
-                  Copy
-                </button>
+                <button data-code="start" class="copy-btn3 btn_up">Copy</button>
               </div>
             </div>
           </div>
         </div>
-        <div id="create" class="hidden">
+        <div id="create" class="custom-hidden">
           <div class="btn_wrap">
-            <button class="btn6" data-target="create1">Neo Shell</button>
-            <button class="btn6" data-target="create2">Curl</button>
+            <button
+              class="btn1"
+              data-target="create1"
+              onclick="clickHeaderTab('neoShell')"
+            >
+              Neo Shell
+            </button>
+            <button
+              class="btn1"
+              data-target="create2"
+              onclick="clickHeaderTab('curl')"
+            >
+              Curl
+            </button>
           </div>
           <div class="main_container">
-            <div id="create3">
+            <div id="create1">
               <p class="ternal_margin_top">
                 <span
                   ><span class="yellow">machbase-neo</span> shell sql \<br />
@@ -334,34 +381,9 @@
                   ></span
                 >
               </p>
-              <button
-                @click="copyCode(this.codes['createShell'])"
-                class="copy-btn3"
-              >
-                Copy
-              </button>
+              <button class="copy-btn3" data-code="createShell">Copy</button>
             </div>
-            <div id="create1" class="hidden">
-              <p class="ternal_margin_top">
-                <span
-                  ><span class="yellow">machbase-neo</span> shell sql \<br />
-                  &nbsp;&nbsp;<span class="blue"
-                    >'create tag table EXAMPLE (\<br />
-                    &nbsp;&nbsp;&nbsp;&nbsp;name varchar(40) primary key, \<br />
-                    &nbsp;&nbsp;&nbsp;&nbsp;time datetime basetime, \<br />
-                    &nbsp;&nbsp;&nbsp;&nbsp;value double \<br />
-                    &nbsp;&nbsp;)'</span
-                  ></span
-                >
-              </p>
-              <button
-                @click="copyCode(this.codes['createShell'])"
-                class="copy-btn3"
-              >
-                Copy
-              </button>
-            </div>
-            <div id="create2" class="hidden">
+            <div id="create2" class="custom-hidden">
               <p class="ternal_margin_top">
                 <span
                   >curl
@@ -377,26 +399,57 @@
                   ></span
                 >
               </p>
-              <button
-                @click="copyCode(this.codes['createCurl'])"
-                class="copy-btn3"
-              >
-                Copy
-              </button>
+              <button data-code="createCurl" class="copy-btn3">Copy</button>
             </div>
           </div>
         </div>
-        <div id="insert" class="hidden">
+        <div id="insert" class="custom-hidden">
           <div class="btn_wrap">
-            <button class="btn3" data-target="read7">Neo Shell</button>
-            <button class="btn3" data-target="read1">Curl</button>
-            <button class="btn3" data-target="read2">Python</button>
-            <button class="btn3" data-target="read3">JavaScript</button>
-            <button class="btn3" data-target="read4">Go</button>
-            <button class="btn3" data-target="read5">C#</button>
+            <button
+              class="btn1"
+              data-target="insert1"
+              onclick="clickHeaderTab('insertNeoShell')"
+            >
+              Neo Shell
+            </button>
+            <button
+              class="btn1"
+              data-target="insert2"
+              onclick="clickHeaderTab('insertCurl')"
+            >
+              Curl
+            </button>
+            <button
+              class="btn1"
+              data-target="insert3"
+              onclick="clickHeaderTab('insertPython')"
+            >
+              Python
+            </button>
+            <button
+              class="btn1"
+              data-target="insert4"
+              onclick="clickHeaderTab('insertJavaScript')"
+            >
+              JavaScript
+            </button>
+            <button
+              class="btn1"
+              data-target="insert5"
+              onclick="clickHeaderTab('insertGo')"
+            >
+              Go
+            </button>
+            <button
+              class="btn1"
+              data-target="insert6"
+              onclick="clickHeaderTab('insertCSharp')"
+            >
+              C#
+            </button>
           </div>
           <div class="main_container">
-            <div id="read6">
+            <div id="insert1">
               <p class="ternal_margin_top">
                 <span class="yellow">machbase-neo</span> shell sql \<br />
                 &nbsp;<span class="blue"
@@ -404,29 +457,9 @@
                   1670380342000000000, 12.3456)"</span
                 >
               </p>
-              <button
-                @click="copyCode(this.codes['insertShell'])"
-                class="copy-btn"
-              >
-                Copy
-              </button>
+              <button data-code="insertShell" class="copy-btn3">Copy</button>
             </div>
-            <div id="read7" class="hidden">
-              <p class="ternal_margin_top">
-                <span class="yellow">machbase-neo</span> shell sql \<br />
-                &nbsp;<span class="blue"
-                  >"insert into EXAMPLE values('temperature',
-                  1670380342000000000, 12.3456)"</span
-                >
-              </p>
-              <button
-                @click="copyCode(this.codes['insertShell'])"
-                class="copy-btn"
-              >
-                Copy
-              </button>
-            </div>
-            <div id="read1" class="hidden">
+            <div id="insert2" class="custom-hidden">
               <p class="ternal_margin_top">
                 curl
                 <span class="orange">http://127.0.0.1:5654/db/query</span>
@@ -437,14 +470,9 @@
                   1670380342000000000, 12.3456)"</span
                 >
               </p>
-              <button
-                @click="copyCode(this.codes['insertCurl'])"
-                class="copy-btn"
-              >
-                Copy
-              </button>
+              <button data-code="insertCurl" class="copy-btn3">Copy</button>
             </div>
-            <div id="read2" class="hidden">
+            <div id="insert3" class="custom-hidden">
               <p class="ternal_margin_top">
                 <span class="red">import </span>
                 <span class="blue"
@@ -473,14 +501,9 @@
                   >'Content-Type': 'text/csv'</span
                 >})
               </p>
-              <button
-                @click="copyCode(this.codes['insertPy'])"
-                class="copy-btn"
-              >
-                Copy
-              </button>
+              <button data-code="insertPy" class="copy-btn3">Copy</button>
             </div>
-            <div id="read3" class="hidden">
+            <div id="insert4" class="custom-hidden">
               <p class="ternal_margin_top">
                 <span class="blue">q</span> =
                 <span class="orange">"select * from example"</span><br />
@@ -510,14 +533,9 @@
                 >(<span class="blue">data</span>)<br />
                 &nbsp;&nbsp;});
               </p>
-              <button
-                @click="copyCode(this.codes['insertJs'])"
-                class="copy-btn"
-              >
-                Copy
-              </button>
+              <button data-code="insertJs" class="copy-btn3">Copy</button>
             </div>
-            <div id="read4" class="hidden">
+            <div id="insert5" class="custom-hidden">
               <p class="ternal_margin_top">
                 <span class="blue">package</span> main<br />
                 <span class="blue">import</span> (<br />
@@ -550,14 +568,9 @@
                 >(strings.<span class="yellow">Join</span>(rows,
                 <span class="orange">"\n"</span>))) }
               </p>
-              <button
-                @click="copyCode(this.codes['insertGo'])"
-                class="copy-btn"
-              >
-                Copy
-              </button>
+              <button data-code="insertGo" class="copy-btn3">Copy</button>
             </div>
-            <div id="read5" class="hidden">
+            <div id="insert6" class="custom-hidden">
               <p class="ternal_margin_top">
                 <span class="red">using </span>
                 <span class="blue">HttpClient client</span> =
@@ -585,47 +598,64 @@
                 >, <span class="blue">payload</span><br />
                 );<br />
               </p>
-              <button @click="copyCode(this.codes['insertC'])" class="copy-btn">
-                Copy
-              </button>
+              <button data-code="insertC" class="copy-btn3">Copy</button>
             </div>
           </div>
         </div>
-        <div id="select" class="hidden">
+        <div id="select" class="custom-hidden">
           <div class="btn_wrap">
-            <button class="btn4" data-target="div7">Neo Shell</button>
-            <button class="btn4" data-target="div1">Curl</button>
-            <button class="btn4" data-target="div2">Python</button>
-            <button class="btn4" data-target="div3">JavaScript</button>
-            <button class="btn4" data-target="div4">Go</button>
-            <button class="btn4" data-target="div5">C#</button>
+            <button
+              class="btn1"
+              data-target="select1"
+              onclick="clickHeaderTab('selectNeoShell')"
+            >
+              Neo Shell
+            </button>
+            <button
+              class="btn1"
+              data-target="select2"
+              onclick="clickHeaderTab('selectCurl')"
+            >
+              Curl
+            </button>
+            <button
+              class="btn1"
+              data-target="select3"
+              onclick="clickHeaderTab('selectPython')"
+            >
+              Python
+            </button>
+            <button
+              class="btn1"
+              data-target="select4"
+              onclick="clickHeaderTab('selectJavaScript')"
+            >
+              JavaScript
+            </button>
+            <button
+              class="btn1"
+              data-target="select5"
+              onclick="clickHeaderTab('selectGo')"
+            >
+              Go
+            </button>
+            <button
+              class="btn1"
+              data-target="select6"
+              onclick="clickHeaderTab('selectCSharp')"
+            >
+              C#
+            </button>
           </div>
           <div class="main_container">
-            <div id="div6">
+            <div id="select1">
               <p class="ternal_margin_top">
                 <span class="yellow">machbase-neo</span> shell sql
                 <span class="blue">'select * from EXAMPLE'</span>
               </p>
-              <button
-                @click="copyCode(`machbase-neo shell sql 'select * from EXAMPLE'`)"
-                class="copy-btn"
-              >
-                Copy
-              </button>
+              <button data-code="selectNeo" class="copy-btn3">Copy</button>
             </div>
-            <div id="div7" class="hidden">
-              <p class="ternal_margin_top">
-                <span class="yellow">machbase-neo</span> shell sql
-                <span class="blue">'select * from EXAMPLE'</span>
-              </p>
-              <button
-                @click="copyCode(`machbase-neo shell sql 'select * from EXAMPLE'`)"
-                class="copy-btn"
-              >
-                Copy
-              </button>
-            </div>
-            <div id="div1" class="hidden">
+            <div id="select2" class="custom-hidden">
               <p class="ternal_margin_top">
                 curl
                 <span class="orange">http://127.0.0.1:5654/db/query</span>
@@ -634,14 +664,9 @@
                   >--data-urlencode "q=select * from EXAMPLE"</span
                 >
               </p>
-              <button
-                @click="copyCode(this.codes['selectCurl'])"
-                class="copy-btn"
-              >
-                Copy
-              </button>
+              <button data-code="selectCurl" class="copy-btn">Copy</button>
             </div>
-            <div id="div2" class="hidden">
+            <div id="select3" class="custom-hidden">
               <p class="ternal_margin_top">
                 <span class="red">import </span>
                 <span class="blue">requests</span><br />
@@ -659,14 +684,9 @@
                   >text</span
                 >)<br />
               </p>
-              <button
-                @click="copyCode(this.codes['selectPy'])"
-                class="copy-btn"
-              >
-                Copy
-              </button>
+              <button data-code="selectPy" class="copy-btn">Copy</button>
             </div>
-            <div id="div3" class="hidden">
+            <div id="select4" class="custom-hidden">
               <p class="ternal_margin_top">
                 <span class="blue">q</span> =
                 <span class="orange">"select * from example"</span><br />
@@ -696,14 +716,9 @@
                 >(<span class="blue">data</span>)<br />
                 &nbsp;&nbsp;});
               </p>
-              <button
-                @click="copyCode(this.codes['selectJs'])"
-                class="copy-btn"
-              >
-                Copy
-              </button>
+              <button data-code="selectJs" class="copy-btn">Copy</button>
             </div>
-            <div id="div4" class="hidden">
+            <div id="select5" class="custom-hidden">
               <p class="ternal_margin_top">
                 <span class="blue">package</span> main<br />
                 <span class="blue">import</span> (<br />
@@ -730,14 +745,9 @@
                 &nbsp;&nbsp;&nbsp;&nbsp;fmt.<span class="yellow">Println</span
                 >(<span class="yellow">string</span>(data)) <br />}
               </p>
-              <button
-                @click="copyCode(this.codes['selectGo'])"
-                class="copy-btn"
-              >
-                Copy
-              </button>
+              <button data-code="selectGo" class="copy-btn">Copy</button>
             </div>
-            <div id="div5" class="hidden">
+            <div id="select6" class="custom-hidden">
               <p class="ternal_margin_top">
                 <span class="red">using </span>
                 <span class="blue">HttpClient client</span> =
@@ -759,9 +769,7 @@
                   >Write</span
                 >(<span class="blue">data</span>);<br />
               </p>
-              <button @click="copyCode(this.codes['selectC'])" class="copy-btn">
-                Copy
-              </button>
+              <button data-code="selectC" class="copy-btn">Copy</button>
             </div>
           </div>
         </div>
@@ -869,9 +877,7 @@
     <div class="footer-logo">
       <img src="./img/machbase_logo_w.png" />
       <a href="/home/contactus">
-      <button class="contactus">
-        Contact Us
-      </button>
+        <button class="contactus">Contact Us</button>
       </a>
     </div>
     <div>
@@ -964,9 +970,7 @@
         </div>
       </div>
       <a href="/home/contactus">
-      <button class="contactus">
-        Contact US
-      </button>
+        <button class="contactus">Contact US</button>
       </a>
     </div>
   </div>
@@ -974,3 +978,306 @@
     <p>@2023 MACHBASE All rights reserved.</p>
   </div>
 </footer>
+<script>
+  const clickLeftTab = (aType) => {
+    const sDownloadElement = document.getElementById("download");
+    const sStartupElement = document.getElementById("start");
+    const sCreateElement = document.getElementById("create");
+    const sInsertElement = document.getElementById("insert");
+    const sSelectElement = document.getElementById("select");
+
+    const sDE1 = document.getElementById("download1");
+    const sSE1 = document.getElementById("start1");
+    const sCE1 = document.getElementById("create1");
+    const sIE1 = document.getElementById("insert1");
+    const sSlE1 = document.getElementById("select1");
+
+    sDownloadElement.style.visibility = "hidden";
+    sStartupElement.style.visibility = "hidden";
+    sCreateElement.style.visibility = "hidden";
+    sInsertElement.style.visibility = "hidden";
+    sSelectElement.style.visibility = "hidden";
+
+    if (aType === "download") {
+      sDownloadElement.style.visibility = "visible";
+      clearHeaderTab();
+      sDE1.style.visibility = "visible";
+    } else if (aType === "start") {
+      sStartupElement.style.visibility = "visible";
+      clearHeaderTab();
+      sSE1.style.visibility = "visible";
+    } else if (aType === "create") {
+      sCreateElement.style.visibility = "visible";
+      clearHeaderTab();
+      sCE1.style.visibility = "visible";
+    } else if (aType === "insert") {
+      sInsertElement.style.visibility = "visible";
+      clearHeaderTab();
+      sIE1.style.visibility = "visible";
+    } else {
+      sSelectElement.style.visibility = "visible";
+      clearHeaderTab();
+      sSlE1.style.visibility = "visible";
+    }
+  };
+  const clickHeaderTab = (aType) => {
+    const sDE1 = document.getElementById("download1");
+    const sDE2 = document.getElementById("download2");
+    const sDE3 = document.getElementById("download4");
+    const sSE1 = document.getElementById("start1");
+    const sCE1 = document.getElementById("create1");
+    const sCE2 = document.getElementById("create2");
+    const sIE1 = document.getElementById("insert1");
+    const sIE2 = document.getElementById("insert2");
+    const sIE3 = document.getElementById("insert3");
+    const sIE4 = document.getElementById("insert4");
+    const sIE5 = document.getElementById("insert5");
+    const sIE6 = document.getElementById("insert6");
+    const sSlE1 = document.getElementById("select1");
+    const sSlE2 = document.getElementById("select2");
+    const sSlE3 = document.getElementById("select3");
+    const sSlE4 = document.getElementById("select4");
+    const sSlE5 = document.getElementById("select5");
+    const sSlE6 = document.getElementById("select6");
+
+    sDE1.style.visibility = "hidden";
+    sDE2.style.visibility = "hidden";
+    sDE3.style.visibility = "hidden";
+    sSE1.style.visibility = "hidden";
+    sCE1.style.visibility = "hidden";
+    sCE2.style.visibility = "hidden";
+    sIE1.style.visibility = "hidden";
+    sIE2.style.visibility = "hidden";
+    sIE3.style.visibility = "hidden";
+    sIE4.style.visibility = "hidden";
+    sIE5.style.visibility = "hidden";
+    sIE6.style.visibility = "hidden";
+    sSlE1.style.visibility = "hidden";
+    sSlE2.style.visibility = "hidden";
+    sSlE3.style.visibility = "hidden";
+    sSlE4.style.visibility = "hidden";
+    sSlE5.style.visibility = "hidden";
+    sSlE6.style.visibility = "hidden";
+
+    if (aType === "linux") {
+      sDE1.style.visibility = "visible";
+    } else if (aType === "window") {
+      sDE2.style.visibility = "visible";
+    } else if (aType === "all") {
+      sDE3.style.visibility = "visible";
+    } else if (aType === "start") {
+      sSE1.style.visibility = "visible";
+    } else if (aType === "neoShell") {
+      sCE1.style.visibility = "visible";
+    } else if (aType === "curl") {
+      sCE2.style.visibility = "visible";
+    } else if (aType === "insertNeoShell") {
+      sIE1.style.visibility = "visible";
+    } else if (aType === "insertCurl") {
+      sIE2.style.visibility = "visible";
+    } else if (aType === "insertPython") {
+      sIE3.style.visibility = "visible";
+    } else if (aType === "insertJavaScript") {
+      sIE4.style.visibility = "visible";
+    } else if (aType === "insertGo") {
+      sIE5.style.visibility = "visible";
+    } else if (aType === "insertCSharp") {
+      sIE6.style.visibility = "visible";
+    } else if (aType === "selectNeoShell") {
+      sSlE1.style.visibility = "visible";
+    } else if (aType === "selectCurl") {
+      sSlE2.style.visibility = "visible";
+    } else if (aType === "selectPython") {
+      sSlE3.style.visibility = "visible";
+    } else if (aType === "selectJavaScript") {
+      sSlE4.style.visibility = "visible";
+    } else if (aType === "selectGo") {
+      sSlE5.style.visibility = "visible";
+    } else {
+      sSlE6.style.visibility = "visible";
+    }
+  };
+  const clearHeaderTab = (aType) => {
+    const sDE1 = document.getElementById("download1");
+    const sDE2 = document.getElementById("download2");
+    const sDE3 = document.getElementById("download4");
+    const sSE1 = document.getElementById("start1");
+    const sCE1 = document.getElementById("create1");
+    const sCE2 = document.getElementById("create2");
+    const sIE1 = document.getElementById("insert1");
+    const sIE2 = document.getElementById("insert2");
+    const sIE3 = document.getElementById("insert3");
+    const sIE4 = document.getElementById("insert4");
+    const sIE5 = document.getElementById("insert5");
+    const sIE6 = document.getElementById("insert6");
+    const sSlE1 = document.getElementById("select1");
+    const sSlE2 = document.getElementById("select2");
+    const sSlE3 = document.getElementById("select3");
+    const sSlE4 = document.getElementById("select4");
+    const sSlE5 = document.getElementById("select5");
+    const sSlE6 = document.getElementById("select6");
+
+    sDE1.style.visibility = "hidden";
+    sDE2.style.visibility = "hidden";
+    sDE3.style.visibility = "hidden";
+    sSE1.style.visibility = "hidden";
+    sCE1.style.visibility = "hidden";
+    sCE2.style.visibility = "hidden";
+    sIE1.style.visibility = "hidden";
+    sIE2.style.visibility = "hidden";
+    sIE3.style.visibility = "hidden";
+    sIE4.style.visibility = "hidden";
+    sIE5.style.visibility = "hidden";
+    sIE6.style.visibility = "hidden";
+    sSlE1.style.visibility = "hidden";
+    sSlE2.style.visibility = "hidden";
+    sSlE3.style.visibility = "hidden";
+    sSlE4.style.visibility = "hidden";
+    sSlE5.style.visibility = "hidden";
+    sSlE6.style.visibility = "hidden";
+  };
+
+  const buttons = document.querySelectorAll(".btn1");
+
+  buttons.forEach((button) => {
+    button.addEventListener("click", () => {
+      button.style.backgroundColor = "#ffd800";
+
+      buttons.forEach((otherButton) => {
+        if (otherButton !== button) {
+          otherButton.style.backgroundColor = "#f2f2f2";
+        }
+      });
+    });
+  });
+
+  const leftBtn = document.querySelectorAll(".left-btn");
+
+  leftBtn.forEach((button) => {
+    button.addEventListener("click", () => {
+      button.style.backgroundColor = "#ffd800";
+
+      const sElements = document.getElementsByClassName("btn1");
+
+      for (const element of sElements) {
+        element.style.backgroundColor = "#f2f2f2";
+        if (element.dataset.target.includes(button.dataset.target + "1")) {
+          element.style.backgroundColor = "#ffd800";
+        }
+      }
+
+      leftBtn.forEach((otherButton) => {
+        if (otherButton !== button) {
+          otherButton.style.backgroundColor = "#f2f2f2";
+        }
+      });
+    });
+  });
+  const jsonData = {
+    codes: {
+      download1: 'sh -c "$(curl -fsSL https://neo.machbase.com/install.sh)"',
+      download2: "unzip machbase-neo-*.zip",
+      start: `machbase-neo serve`,
+      createShell: `machbase-neo shell sql "create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"`,
+      insertShell: `machbase-neo shell sql "insert into EXAMPLE values('temperature', 1670380342000000000, 12.3456)"`,
+      insertCurl: `curl http://127.0.0.1:5654/db/query --data-urlencode "q=select * from EXAMPLE"`,
+      insertPy: `import requests
+    csvdata = "temperature,1670380342000000000,12.3456"
+    response = requests.post(
+    "http://127.0.0.1:5654/db/write/EXAMPLE?heading=false",
+    data=csvdata,
+    headers={'Content-Type': 'text/csv'})`,
+      insertJs: `q = "select * from example"
+    fetch('http://127.0.0.1:5654/db/query?q=' + encodeURIComponent(q))
+    .then(res => {
+    return res.json();
+    })
+    .then(data => {
+    console.log(data);
+    });`,
+      insertGo: `package main
+    import (
+    "net/http"
+    "bytes"
+    "strings"
+    )
+    func main() {
+    rows := []string{"temperature,1670380342000000000,12.3456"}
+    http.Post(
+    "http://127.0.0.1:5654/db/write/EXAMPLE?heading=false",
+    "text/csv",
+    bytes.NewBufferString(strings.Join(rows, "\\n")))
+    }`,
+      insertC: `using HttpClient client = new();
+
+    var payload = new System.Net.Http.StringContent(
+    @"temperature,1677033057000000000,21.1
+    humidity,1677033057000000000,0.53",
+    new System.Net.Http.Headers.MediaTypeHeaderValue("text/csv"));
+
+    var rsp = await client.PostAsync(
+    "http://127.0.0.1:5654/db/write/example?heading=false", payload
+    );
+
+    Console.Write(rsp);`,
+      selectNeo: `machbase-neo shell sql 'select * from EXAMPLE'`,
+      selectPy: `import requests
+    params = {"q":"select * from example", "format":"csv", "heading":"false"}
+    response = requests.get("http://127.0.0.1:5654/db/query", params)
+    print(response.text)`,
+      selectJs: `const q = "select * from example";
+    fetch('http://127.0.0.1:5654/db/query?q=' + encodeURIComponent(q))
+    .then(res => {
+    return res.json();
+    })
+    .then(data => {
+    console.log(data);
+    });`,
+      selectGo: `package main
+    import (
+    "fmt",
+    "net/url"
+    "net/http"
+    "io"
+    )
+    func main() {
+    q := url.QueryEscape("select * from example")
+    rsp, _ := http.Get("http://127.0.0.1:5654/db/query?format=csv&q="+q)
+    data, _ := io.ReadAll(rsp.Body)
+    fmt.Println(string(data))
+    }`,
+      selectC: `using HttpClient client = new();
+
+    var q = System.Net.WebUtility.UrlEncode("select * from example");
+    var data = await client.GetStringAsync(
+    "http://127.0.0.1:5654/db/query?format=csv&q="+q
+    );
+    Console.Write(data);`,
+      createCurl:
+        'curl http://127.0.0.1:5654/db/query --data-urlencode "q=create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"',
+      selectCurl: `curl http://127.0.0.1:5654/db/query --data-urlencode "q=select * from EXAMPLE"`,
+    },
+  };
+  function copyToClipboard(text, button) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textArea);
+
+    button.textContent = "Copied";
+    setTimeout(function () {
+      button.textContent = "Copy";
+    }, 1000);
+  }
+
+  const copyButtons = document.querySelectorAll(".copy-btn3");
+  copyButtons.forEach((button) => {
+    button.addEventListener("click", function () {
+      const codeType = button.getAttribute("data-code");
+      const codeToCopy = jsonData.codes[codeType];
+      copyToClipboard(codeToCopy, button);
+    });
+  });
+</script>

@@ -309,12 +309,12 @@
 .btn_up {
   top: -12px;
 }
-.hidden {
+.custom-hidden {
   position: absolute;
   visibility: hidden;
-  top: -16px;
-  left: 8;
-  width: 100%;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
 }
 .main_box {
   display: flex;
@@ -406,22 +406,6 @@
   margin-left: 30px;
 }
 
-.btn3:nth-child(1) {
-  background: #ffd800;
-  margin-left: 30px;
-}
-.btn4:nth-child(1) {
-  background: #ffd800;
-  margin-left: 30px;
-}
-.btn5:nth-child(1) {
-  background: #ffd800;
-  margin-left: 30px;
-}
-.btn6:nth-child(1) {
-  background: #ffd800;
-  margin-left: 30px;
-}
 .main_section4 {
   position: relative;
 }
@@ -445,55 +429,15 @@
 
 .btn1 {
   border-radius: 23px;
-  width: 110px;
+  width: 100px;
   height: 46px;
   background: #f2f2f2;
-  margin: 15px 10px;
+  margin: 15px 11px;
   color: #253fd0;
   font-weight: 700;
   font-size: 16px;
 }
 
-.btn3 {
-  border-radius: 23px;
-  width: 100px;
-  height: 46px;
-  background: #f2f2f2;
-  margin: 15px 11px;
-  color: #253fd0;
-  font-weight: 700;
-  font-size: 16px;
-}
-.btn4 {
-  border-radius: 23px;
-  width: 100px;
-  height: 46px;
-  background: #f2f2f2;
-  margin: 15px 11px;
-  color: #253fd0;
-  font-weight: 700;
-  font-size: 16px;
-}
-.btn5 {
-  border-radius: 23px;
-  width: 100px;
-  height: 46px;
-  background: #f2f2f2;
-  margin: 15px 11px;
-  color: #253fd0;
-  font-weight: 700;
-  font-size: 16px;
-}
-.btn6 {
-  border-radius: 23px;
-  width: 100px;
-  height: 46px;
-  background: #f2f2f2;
-  margin: 15px 11px;
-  color: #253fd0;
-  font-weight: 700;
-  font-size: 16px;
-}
 .terminal_wrap p {
   color: #fff;
   font-family: "Anonymous Pro";
@@ -512,10 +456,13 @@
   left: 30px;
   top: 4px;
 }
+.dol-padding {
+  padding-left: 10px;
+}
 .dol_p {
   font-size: 14px;
   padding-top: 2px;
-  margin-left: 14px;
+  margin-left: 14px !important;
 }
 .none_text {
   font-family: "Anonymous Pro";
@@ -4252,11 +4199,12 @@ img {
 }
 .contact_input {
   display: flex;
-  justify-content: space-between;
   width: 100%;
-  height: 56px;
-  margin-top: 40px;
+  height: 300px;
   border: 1px solid #000;
+  border-radius: 4px;
+  padding: 4px 10px;
+  margin: 12px 0 20px 0;
 }
 
 .contact_text {
@@ -4272,21 +4220,64 @@ img {
   width: 530px;
   height: 55px;
 }
-
+.input-span {
+  color: #253fd0;
+  font-family: "aktiv-grotesk";
+  font-weight: 700;
+}
 .long-input {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
   border: 1px solid #000;
+  height: 56px;
+  border-radius: 4px;
+  margin: 12px 0 20px 0;
+}
+.long-input::placeholder {
+  padding-left: 10px;
+}
+.contact-short-div-wrap {
+  display: flex;
+}
+.contact-short-div {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+}
+.contact-short-div:first-child {
+  margin-right: 20px;
+}
+.radio-input-wrap {
+  margin: 12px 0 20px 0;
+}
+.radio-input {
+  margin-right: 10px;
 }
 .short-input {
   border: 1px solid #000;
+  height: 56px;
+  border-radius: 4px;
+  margin: 12px 0 20px 0;
+  padding: 0 10px;
 }
-
+.radio-div {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+}
 textarea::-webkit-scrollbar {
   display: none;
 }
 .policy {
   cursor: pointer;
 }
-.contact_button_wrap {
+.check_cont {
+  display: flex;
+  margin: 12px 0 20px 0;
+}
+
+.submit-wrap {
   display: flex;
   justify-content: center;
   margin-top: 55px;
@@ -4295,6 +4286,7 @@ textarea::-webkit-scrollbar {
   background-color: #253fd0;
   width: 260px;
   height: 80px;
+  margin: 0 auto;
   color: #fff;
   font-family: "aktiv-grotesk";
   font-size: 24px;
@@ -4305,16 +4297,13 @@ textarea::-webkit-scrollbar {
     inset 0 20px 40px 0 rgba(0, 23, 49, 0.2);
 }
 .modal {
-  display: flex;
+  display: none;
   position: fixed;
-  z-index: 1;
-  left: 0;
   top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  justify-content: center;
-  align-items: center;
-  z-index: 998;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 .modal_wrap {
   background-color: rgba(0, 0, 0, 0.5);
@@ -4329,14 +4318,35 @@ textarea::-webkit-scrollbar {
   align-items: center;
   z-index: 998;
 }
+.modal_title {
+  display: flex;
+  position: sticky;
+  top: 0px;
+  right: 0px;
+  left: 0;
+  background-color: #fff;
+  height: 100px;
+  justify-content: space-between;
+  align-items: center;
+}
+.close {
+  color: #aaaaaa;
+  font-size: 40px;
+  font-weight: bold;
+  padding-bottom: 40px;
+}
 .modal-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   background-color: white;
+  padding: 20px;
+  border-radius: 5px;
   padding: 0 80px 80px 80px;
   border: 1px solid #888;
   width: 1200px;
   height: 60%;
-  align-items: center;
-  position: relative;
   overflow: scroll;
   z-index: 999;
 }
@@ -4373,6 +4383,7 @@ textarea::-webkit-scrollbar {
   line-height: 1.75;
   /* margin-bottom: 20px; */
 }
+
 .policy_table {
   width: 100%;
   margin: 0 auto;
@@ -4431,6 +4442,9 @@ tr:first-child {
   text-decoration: underline #253fd0 !important;
   text-underline-position: under;
 }
+.checkbox {
+  margin-right: 10px;
+}
 .policy_box {
   border: 1px solid #000;
   padding: 20px;
@@ -4474,11 +4488,7 @@ tr:first-child {
     width: 408px;
     height: 57px;
   }
-  .check_cont {
-    margin: 0 auto;
-    width: 405px;
-    display: flex;
-  }
+
   .radio_wrap {
     margin: 0;
     padding: 0;
@@ -4562,10 +4572,13 @@ tr:first-child {
     box-shadow: 0 14px 30px 0 rgba(37, 63, 208, 0.25),
       inset 0 20px 40px 0 rgba(0, 23, 49, 0.2);
   }
+  .modal-content {
+    width: 80%;
+  }
 }
 
 /* //contact us-------------------------------------------------------------- */
-/* recipient--------------------------------------------------------------- */
+/* recipient---------------------------------------------------------------
 .recipient_section0 {
   background: url(../img/company_bg.png) no-repeat;
   background-size: cover;
@@ -5167,7 +5180,7 @@ input[type="checkbox"] + label {
   .store_small_white {
     left: 0px;
   }
-}
+} */
 /* //recipient--------------------------------------------------------------- */
 /* complete---------------------------------------------------------- */
 .complete_wrap {
