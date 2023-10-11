@@ -77,6 +77,14 @@ void Close()
 
 연결중인 경우, 해당 연결을 종료한다.
 
+#### SetConnectAppendFlush
+
+```cs
+void SetConnectAppendFlush(bool activeFlush)
+```
+
+Append 도중 flush 를 자동으로 수행하도록 설정한다.
+
 #### 필드
 
 | 이름 | 설명                                                                                                                        |
@@ -739,5 +747,26 @@ public static void DoAppend()
     writer.SetErrorDelegator(ErrorCallbackFunc);
     //... do append 
 }
+```
+
+### AppendFlush 설정
+
+connection 에 `SetConnectAppendFlush` 를 true 설정할 경우, append 도중 flush 가 자동으로 수행된다.
+
+```c#
+private static string connString = $"SERVER={HOST};PORT_NO={port};USER={USER};PWD={PWD}";
+
+public static void Main(string[] args) 
+{
+    MachConnection conn = new MachConnection(connString);
+    conn.Open();
+    conn.SetConnectAppendFlush(true);
+}
+```
+
+false 로 설정할 경우 해당 기능이 disable 된다.
+
+```c#
+conn.SetConnectAppendFlush(false);
 ```
 
