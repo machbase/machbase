@@ -764,3 +764,9 @@ public static void Main(string[] args)
 }
 ```
 
+SetConnectAppendFlush의 매개변수에 false를 전달하면 Auto AppendFlush가 종료된다.
+
+```c#
+conn.SetConnectAppendFlush(false);
+```
+

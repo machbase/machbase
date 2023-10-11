@@ -766,3 +766,9 @@ public static void Main(string[] args)
 }
 ```
 
+By sending false value to SetConnectAppendFlush parameter, Auto AppendFlush is end.
+
+```c#
+conn.SetConnectAppendFlush(false);
+```
+
