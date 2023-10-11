@@ -77,6 +77,14 @@ void Close()
 
 연결중인 경우, 해당 연결을 종료한다.
 
+#### SetConnectAppendFlush
+
+```cs
+void SetConnectAppendFlush(bool activeFlush)
+```
+
+AppendFlush를 자동으로 동작하게 설정한다.
+
 #### 필드
 
 | 이름 | 설명                                                                                                                        |

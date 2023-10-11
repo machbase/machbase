@@ -77,6 +77,14 @@ void Close()
 
 Closes the connection when connecting.
 
+#### SetConnectAppendFlush
+
+```cs
+void SetConnectAppendFlush(bool activeFlush)
+```
+
+Set executing AppendFlush automatically.
+
 #### Field
 
 | Name | Description |
