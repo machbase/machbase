@@ -16,12 +16,26 @@ There are several constraints for the LSL/USL setting.
 
 * The `CLUSTER EDITION` doesn't support LSL/USL feature.
 * To set LSL/USL, the third column named __Value__ in the tag table must be set to __SUMMARIZED__.
-* It should match the __Value__ column type, and like the __SUMMARIZED__ attribute, can only accept numerical types.
 * LSL should be less than or equal to USL, and the input value for the __Value__ column is between LSL and USL, inclusive. __(LSL <= Value <= USL)__
 * Data entered before granting the LSL/USL settings is not validated.
 * Setting the LSL/USL column to NULL does not validate the input data.
 * LSL/USL features can be used separately. you can just set the USL if you only want to match the upper specification.
 * If only the USL feature is used, data lower than the USL is not validated.
+
+### Supported data types
+
+It should match the __Value__ column type, and like the __SUMMARIZED__ attribute, can only accept numerical types.
+
+|Type|Description|Range|Significant digits|
+|----|------|-----|----|
+|short|16-bit signed integer data type|-32767 ~ 32767|-|
+|ushort|16-bit unsigned integer data type|0 ~ 65534|-|
+|integer|32-bit signed integer data type|-2147483647 ~ 2147483647|-|
+|uinteger|32-bit unsigned integer data type|0 ~ 4294967294|-|
+|long|64-bit signed integer data type|-9223372036854775807 ~ 9223372036854775807|-|
+|ulong|64-bit unsigned integer data type|0~18446744073709551614|-|
+|float|32-bit floating point data|-|6[^1]|
+|double|64-bit floating point data|-|15[^1]|
 
 ## Setting and Using LSL/USL
 
@@ -40,8 +54,8 @@ CREATE TAG TABLE example (
     time    DATETIME    BASETIME,
     value   INTEGER     SUMMARIZED)
 METADATA (
-    lsl     INTEGER LOWER LIMIT,  -- Set LSL
-    usl     INTEGER UPPER LIMIT   -- Set USL
+    lsl     INTEGER LOWER LIMIT,
+    usl     INTEGER UPPER LIMIT 
 );
 ```
 
@@ -54,14 +68,13 @@ CREATE TAG TABLE example (
     time    DATETIME    BASETIME,
     value   INTEGER     SUMMARIZED)
 METADATA (
-    lsl    INTEGER LOWER LIMIT         -- Set only LSL
+    lsl    INTEGER LOWER LIMIT  
 );
 ```
 
 ### ADD COLUMN
 
 If you add using `ADD COLUMN` after data is already entered, the default value is __NULL__.
-You can set a default value using the `DEFAULT` attribute, but previously entered data is not validated.
 
 ```sql
 CREATE TAG TABLE example (
@@ -70,8 +83,8 @@ CREATE TAG TABLE example (
     value   INTEGER     SUMMARIZED
 );
  
-ALTER TABLE _example_meta ADD COLUMN (lsl INTEGER LOWER LIMIT)              -- Set LSL
-ALTER TABLE _example_meta ADD COLUMN (usl INTEGER DEFAULT 200 UPPER LIMIT)  -- Set USL and provide default value
+ALTER TABLE _example_meta ADD COLUMN (lsl INTEGER LOWER LIMIT);
+ALTER TABLE _example_meta ADD COLUMN (usl INTEGER UPPER LIMIT);
 ```
 
 You can also add just one attribute as with [CREATE](#craete).
@@ -83,7 +96,7 @@ CREATE TAG TABLE example (
     value   INTEGER     SUMMARIZED
 );
 
-ALTER TABLE _example_meta ADD COLUMN (usl INTEGER DEFAULT 200 UPPER LIMIT)  -- Set only USL
+ALTER TABLE _example_meta ADD COLUMN (usl INTEGER UPPER LIMIT);
 ```
 
 ### INSERT
@@ -164,3 +177,5 @@ _ID                  TAG_ID                                              LSL    
 [1] row(s) selected.
 Elapsed time: 0.001
 ```
+
+[^1]: [IEEE 754](https://en.wikipedia.org/wiki/IEEE_754)
