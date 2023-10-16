@@ -12,7 +12,7 @@
     <div class="menu-left">
       <ul class="menu-left-ul">
         <li class="menu-logo">
-          <a href="/home"><img src="../../img/machbase_logo_b.png" alt="" /></a>
+          <a href="/home"><img src="../../img/logo_machbase.png" alt="" /></a>
         </li>
         <li class="menu-a products-menu-wrap" id="productsMenuWrap">
           <div>
@@ -102,7 +102,7 @@
                         of visual demands. <a class="tech-contents-link" href="https://www.cems.ai">(https://www.cems.ai)</a>
                     </p>
                     <div class="tech-img-wrap">
-                        <img class="tech-img" src="../img/neo-first-01.png" alt="" />
+                        <img class="tech-img" src="../../img/neo-first-01.png" alt="" />
                     </div>
                     <p class="tech-contents-link-text">&lt;CEMS screenshot developed by Vue.js&gt;</p>
                     <p class="tech-contents-text">
@@ -121,7 +121,7 @@
                     </p>
                     <p class="tech-contents-text"><a class="tech-contents-link" href="https://github.com/machbase/neo-server">(https://github.com/machbase/neo-server)</a></p>
                     <div class="tech-img-wrap">
-                        <img class="tech-img tech-margin-bottom" src="../img/neo-first-02.png" alt="" />
+                        <img class="tech-img tech-margin-bottom" src="../../img/neo-first-02.png" alt="" />
                     </div>
                     <p class="tech-contents-text">
                         In essence, to empower customers utilizing Neo, we employ the Vue.js front-end framework to enable them to create various charts and perform all tasks within a web-based
@@ -188,12 +188,12 @@
                     </p>
                     <div class="tech-contents-title">Machbase Neo 1.7 UI</div>
                     <div class="tech-img-wrap">
-                        <img class="tech-img" src="../img/neo-first-03.png" alt="" />
+                        <img class="tech-img" src="../../img/neo-first-03.png" alt="" />
                     </div>
                     <p class="tech-contents-link-text">Machbase Neo 1.7 UI</p>
                     <div class="tech-contents-title">Machbase Neo 8.0 UI</div>
                     <div class="tech-img-wrap">
-                        <img class="tech-img" src="../img/neo-first-04.png" alt="" />
+                        <img class="tech-img" src="../../img/neo-first-04.png" alt="" />
                     </div>
                     <p class="tech-contents-link-text">Machbase Neo 8.0 UI</p>
                     <div class="tech-contents-title">What improvements have been achieved in React?</div>
@@ -227,7 +227,7 @@
 <footer>
   <div class="footer_inner">
     <div class="footer-logo">
-      <img class="footer-logo-img" src="../../img/machbase_logo_w.png" />
+      <img class="footer-logo-img" src="../../img/machbase-logo-w.png" />
       <a href="/home/contactus">
       <button class="contactus">
         Contact Us
@@ -280,7 +280,7 @@
   </div>
   <div class="footer_tablet_inner">
     <div class="logo">
-      <img class="footer-logo-img" src="../../img/machbase_logo_w.png" />
+      <img class="footer-logo-img" src="../../img/machbase-logo-w.png" />
     </div>
     <div>
       <p class="footertext">
@@ -334,3 +334,15 @@
     <p>@2023 MACHBASE All rights reserved.</p>
   </div>
 </footer>
+<script>
+//drop down menu
+const productsMenuWrap = document.getElementById("productsMenuWrap");
+const dropdown = document.getElementById("dropdown");
+dropdown.style.display = "none";
+productsMenuWrap.addEventListener("mouseover", function() {
+  dropdown.style.display = "block";
+});
+productsMenuWrap.addEventListener("mouseout", function() {
+  dropdown.style.display = "none";
+});
+</script>

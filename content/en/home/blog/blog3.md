@@ -12,7 +12,7 @@
     <div class="menu-left">
       <ul class="menu-left-ul">
         <li class="menu-logo">
-          <a href="/home"><img src="../../img/machbase_logo_b.png" alt="" /></a>
+          <a href="/home"><img src="../../img/logo_machbase.png" alt="" /></a>
         </li>
         <li class="menu-a products-menu-wrap" id="productsMenuWrap">
           <div>
@@ -86,7 +86,7 @@
             <div class="tech-contents">
                 <div>
                     <div class="tech-img-wrap">
-                        <img class="tech-img" src="../img/manage_1.jpg" alt="" />
+                        <img class="tech-img" src="../../img/manage_1.jpg" alt="" />
                     </div>
                     <p class="tech-contents-link-text">
                         Photo by <a class="tech-contents-link" href="https://unsplash.com/ko/@jonassvidras?utm_source=medium&utm_medium=referral">Jonas Svidras</a> on
@@ -98,7 +98,7 @@
                         substantial, and depending on the frequency at which sensors transmit information, the production data for just one semiconductor wafer can reach several gigabytes.
                     </p>
                     <div class="tech-img-wrap">
-                        <img class="tech-img tech-margin-bottom" src="../img/manage_2.jpg" alt="" />
+                        <img class="tech-img tech-margin-bottom" src="../../img/manage_2.jpg" alt="" />
                     </div>
                     <p class="tech-contents-text">
                         Semiconductor production data is being recorded in the format described above. This data is transformed into XML files and stored in systems like Hadoop, which is a NoSQL big
@@ -134,7 +134,7 @@
                         as follows:
                     </p>
                     <div class="tech-img-wrap">
-                        <img class="tech-img tech-margin-bottom" src="../img/manage_3.jpg" alt="" />
+                        <img class="tech-img tech-margin-bottom" src="../../img/manage_3.jpg" alt="" />
                     </div>
                     <p class="tech-contents-text">
                         In this illustration, the customer wants to visualize sensor data or display statistical values for each sensor without specifying a particular sensor tag or time range. To do
@@ -147,7 +147,7 @@
                         Markbase, it’s beneficial to separate sensor data from process data. Therefore, data needs to transform into the following format.
                     </p>
                     <div class="tech-img-wrap">
-                        <img class="tech-img tech-margin-bottom" src="../img/manage_4.jpg" alt="" />
+                        <img class="tech-img tech-margin-bottom" src="../../img/manage_4.jpg" alt="" />
                     </div>
                     <p class="tech-contents-text">
                         In the figure above, for each production lot, the time it enters and exits each machine and the corresponding lot number is recorded. This information is stored in the table
@@ -158,7 +158,7 @@
                         tag is considered metadata. An E-R diagram representation of these relationships is shown below.
                     </p>
                     <div class="tech-img-wrap">
-                        <img class="tech-img tech-margin-bottom" src="../img/manage_5.jpg" alt="" />
+                        <img class="tech-img tech-margin-bottom" src="../../img/manage_5.jpg" alt="" />
                     </div>
                     <div class="tech-title" id="anchor5">Data Retrieval</div>
                     <p class="tech-contents-text">
@@ -166,7 +166,7 @@
                         tables together.
                     </p>
                     <div class="tech-img-wrap">
-                        <img class="tech-img tech-margin-bottom" src="../img/manage_6.jpg" alt="" />
+                        <img class="tech-img tech-margin-bottom" src="../../img/manage_6.jpg" alt="" />
                     </div>
                     <p class="tech-contents-text">
                         In Machbase, when conducting a search based on specific equipment and lot criteria for 1 million tags and a total of 10 billion records, we can retrieve a total of 900,000
@@ -192,7 +192,7 @@
 <footer>
   <div class="footer_inner">
     <div class="footer-logo">
-      <img class="footer-logo-img" src="../../img/machbase_logo_w.png" />
+      <img class="footer-logo-img" src="../../img/machbase-logo-w.png" />
       <a href="/home/contactus">
       <button class="contactus">
         Contact Us
@@ -245,7 +245,7 @@
   </div>
   <div class="footer_tablet_inner">
     <div class="logo">
-      <img class="footer-logo-img" src="../../img/machbase_logo_w.png" />
+      <img class="footer-logo-img" src="../../img/machbase-logo-w.png" />
     </div>
     <div>
       <p class="footertext">
@@ -299,3 +299,15 @@
     <p>@2023 MACHBASE All rights reserved.</p>
   </div>
 </footer>
+<script>
+//drop down menu
+const productsMenuWrap = document.getElementById("productsMenuWrap");
+const dropdown = document.getElementById("dropdown");
+dropdown.style.display = "none";
+productsMenuWrap.addEventListener("mouseover", function() {
+  dropdown.style.display = "block";
+});
+productsMenuWrap.addEventListener("mouseout", function() {
+  dropdown.style.display = "none";
+});
+</script>

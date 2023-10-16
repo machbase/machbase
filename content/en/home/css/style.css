@@ -82,7 +82,7 @@
   font-family: "aktiv-grotesk";
   font-weight: 700;
 }
-.main_margin_top {
+.company-margin-top {
   margin-top: 80px;
 }
 
@@ -177,12 +177,13 @@
 }
 .main_why_title {
   width: 74%;
-  margin-top: 30px;
+  margin-top: 30px !important;
   height: 60px;
   font-size: 24px;
   font-weight: 700;
   color: #253fd0;
 }
+
 .main_why_title_box img {
   width: 20%;
   height: 20%;
@@ -191,9 +192,12 @@
 .main_why_contents_box {
   margin-top: 40px;
 }
+.main_why_contents_box ul {
+  margin-left: 0px !important;
+}
 .main_why_contents {
   font-size: 18px;
-  margin-top: 30px;
+  padding-top: 12px !important;
   font-weight: 500;
   display: flex;
   align-items: center;
@@ -372,7 +376,7 @@
   position: relative;
   box-shadow: 0 14px 30px 0 rgba(37, 63, 208, 0.25),
     inset 0 20px 40px 0 rgba(0, 23, 49, 0.2);
-  margin-bottom: 100px;
+  margin-bottom: 0px !important;
 }
 .tpcx_warp {
   margin-top: 80px;
@@ -586,6 +590,9 @@
   width: 210px;
   margin: 0 auto;
   margin-top: 24px;
+}
+.main_usecase_contents_box {
+  padding-top: 10px;
 }
 .main_usecase_contents_box3 {
   margin-top: 28px;
@@ -1308,17 +1315,20 @@
   font-weight: 700;
 }
 .products-tpc-link {
-  color: #253fd0;
+  color: #253fd0 !important;
+  text-decoration: underline !important;
   font-weight: 700;
   position: relative;
 }
 .products-tpc-link:visited {
   color: #253fd0;
+  text-decoration: underline !important;
   font-weight: 700;
 }
 .products-link-img {
   width: 24px;
   margin-left: 5px;
+  display: flex;
 }
 @media screen and (max-width: 1280px) {
   .product-sub-titlebox {
@@ -2998,8 +3008,8 @@ template {
   color: #253fd0;
 }
 .map img {
-  border-bottom-left-radius: 30px;
-  border-bottom-right-radius: 30px;
+  border-bottom-left-radius: 30px !important;
+  border-bottom-right-radius: 30px !important;
 }
 .map_title p {
   color: #253fd0;
@@ -3075,7 +3085,10 @@ img {
   font-size: 20px !important;
 }
 .company-margin-top {
-  margin-top: 80px;
+  margin-top: 80px !important;
+}
+.company_table1 {
+  width: 1080px;
 }
 .company_table1 th {
   height: 80px;
@@ -3346,7 +3359,6 @@ img {
 }
 .download_th1_4 {
   width: 640px !important;
-  max-width: 640px !important;
   text-align: left;
   padding-left: 24px;
   padding-right: 24px;
@@ -4359,7 +4371,7 @@ textarea::-webkit-scrollbar {
   top: 65px;
   right: -20px;
   text-align: right;
-  margin: 15px 0 15px 15px;
+  margin: 15px 0 10px 15px;
 }
 
 .close:hover,
@@ -4376,7 +4388,6 @@ textarea::-webkit-scrollbar {
   font-size: 30px;
   font-weight: 700;
   color: #253fd0;
-  margin-bottom: 60px;
 }
 .policy_text {
   color: #253fd0;

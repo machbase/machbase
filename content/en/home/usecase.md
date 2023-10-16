@@ -12,7 +12,7 @@ toc: false
       <div class="menu-left">
         <ul class="menu-left-ul">
           <li class="menu-logo">
-            <a href="/home"><img src="../img/machbase_logo_b.png" alt="" /></a>
+            <a href="/home"><img src="../img/logo_machbase.png" alt="" /></a>
           </li>
           <li class="menu-a products-menu-wrap" id="productsMenuWrap">
             <div>
@@ -44,7 +44,9 @@ toc: false
       <div class="menu-right">
         <ul class="menu-right-ul">
           <li class="menu-a"><a href="/home/download">Download</a></li>
-          <li class="menu-a"><a href="https://support.machbase.com/hc/en-us">Support</a></li>
+          <li class="menu-a">
+            <a href="https://support.machbase.com/hc/en-us">Support</a>
+          </li>
           <li class="menu-a"><a href="/home/contactus">Contact US</a></li>
         </ul>
       </div>
@@ -65,7 +67,7 @@ toc: false
         <div class="blog-first-wraper">
           <div class="blog-text-wraper">
             <div class="tech-first-link-wrap">
-              <a class="blog-link" href="/usecase-h"
+              <a class="blog-link" href="/home/usecase/usecase1"
                 >[Machbase Use Case]Ship Management - Hyundai Global Services</a
               >
               <div class="blog-date">
@@ -83,7 +85,7 @@ toc: false
               <div class="blog_usecase_more_box">
                 <p class="blog_usecase_more_wrap">
                   <span>
-                    <a class="blog_usecase_more" href="/usecase-h"
+                    <a class="blog_usecase_more" href="/home/usecase/usecase1"
                       >View More <ArrowSvg
                     /></a>
                   </span>
@@ -92,7 +94,7 @@ toc: false
             </div>
           </div>
           <div class="blog-first-img-wrap">
-            <a href="/usecase-h"
+            <a href="/home/usecase/usecase1"
               ><img class="blog-img" src="../img/usecase_hyundai.png" alt=""
             /></a>
           </div>
@@ -100,14 +102,14 @@ toc: false
         <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
-              <a href="/usecase-l"
+              <a href="/home/usecase/usecase2"
                 ><img
                   class="blog-img blog-margin-bottom"
                   src="../img/uscase_lotte.png"
                   alt=""
               /></a>
             </div>
-            <a class="tech-link" href="/usecase-l"
+            <a class="tech-link" href="/home/usecase/usecase2"
               >[Machbase Use Case]Manufacturing - Lotte Chilsung</a
             >
             <div>
@@ -118,14 +120,14 @@ toc: false
           </div>
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
-              <a href="/usecase-m"
+              <a href="/home/usecase/usecase3"
                 ><img
                   class="blog-img blog-margin-bottom"
                   src="../img/usecase_mando.png"
                   alt=""
               /></a>
             </div>
-            <a class="tech-link" href="/usecase-m"
+            <a class="tech-link" href="/home/usecase/usecase3"
               >[Machbase Use Case]Manufacturing - Mando Brose</a
             >
             <div>
@@ -137,14 +139,14 @@ toc: false
           </div>
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
-              <a href="/usecase-e"
+              <a href="/home/usecase/usecase4"
                 ><img
                   class="blog-img blog-margin-bottom"
                   src="../img/usecase_etri2.png"
                   alt=""
               /></a>
             </div>
-            <a class="tech-link" href="/usecase-e"
+            <a class="tech-link" href="/home/usecase/usecase4"
               >[Machbase Use Case]Public - ETRI</a
             >
             <div>
@@ -157,14 +159,14 @@ toc: false
         <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
-              <a href="/usecase-hc"
+              <a href="/home/usecase/usecase5"
                 ><img
                   class="blog-img blog-margin-bottom"
                   src="../img/usecase_hankukcarborn.png"
                   alt=""
               /></a>
             </div>
-            <a class="tech-link" href="/usecase-hc"
+            <a class="tech-link" href="/home/usecase/usecase5"
               >[Machbase Use Case]Manufacturing - Hankuk Carbon</a
             >
             <div>
@@ -176,14 +178,14 @@ toc: false
           </div>
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
-              <a href="/usecase-c">
+              <a href="/home/usecase/usecase6">
                 <img
                   class="blog-img blog-margin-bottom"
                   src="../img/usecase_carrot.png"
                   alt=""
               /></a>
             </div>
-            <a class="tech-link" href="/usecase-c"
+            <a class="tech-link" href="/home/usecase/usecase6"
               >[Machbase Use Case] Insurance - Carrot Insurance</a
             >
             <div>
@@ -199,7 +201,7 @@ toc: false
         <div class="blog-first-wraper">
           <div class="blog-text-wraper">
             <div class="tech-first-link-wrap">
-              <a class="blog-link" href="/usecase-h"
+              <a class="blog-link" href="/home/usecase/usecase1"
                 >[Machbase Use Case]Ship Management - Hyundai Global Services</a
               >
               <div class="blog-date">
@@ -217,7 +219,7 @@ toc: false
               <div class="blog_usecase_more_box">
                 <p class="blog_usecase_more_wrap">
                   <span>
-                    <a class="blog_usecase_more" href="/usecase-h"
+                    <a class="blog_usecase_more" href="/home/usecase/usecase1"
                       >View More <ArrowSvg
                     /></a>
                   </span>
@@ -226,7 +228,7 @@ toc: false
             </div>
           </div>
           <div class="blog-first-img-wrap">
-            <a href="/usecase-h"
+            <a href="/home/usecase/usecase1"
               ><img class="blog-img" src="../img/usecase_hyundai.png" alt=""
             /></a>
           </div>
@@ -234,14 +236,14 @@ toc: false
         <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
-              <a href="/usecase-l"
+              <a href="/home/usecase/usecase2"
                 ><img
                   class="blog-img blog-margin-bottom"
                   src="../img/uscase_lotte.png"
                   alt=""
               /></a>
             </div>
-            <a class="tech-link" href="/usecase-l"
+            <a class="tech-link" href="/home/usecase/usecase2"
               >[Machbase Use Case]Manufacturing - Lotte Chilsung</a
             >
             <div>
@@ -252,14 +254,14 @@ toc: false
           </div>
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
-              <a href="/usecase-m"
+              <a href="/home/usecase/usecase3"
                 ><img
                   class="blog-img blog-margin-bottom"
                   src="../img/usecase_mando.png"
                   alt=""
               /></a>
             </div>
-            <a class="tech-link" href="/usecase-m"
+            <a class="tech-link" href="/home/usecase/usecase3"
               >[Machbase Use Case]Manufacturing - Mando Brose</a
             >
             <div>
@@ -273,14 +275,14 @@ toc: false
         <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
-              <a href="/usecase-e"
+              <a href="/home/usecase/usecase4"
                 ><img
                   class="blog-img blog-margin-bottom"
                   src="../img/usecase_etri2.png"
                   alt=""
               /></a>
             </div>
-            <a class="tech-link" href="/usecase-e"
+            <a class="tech-link" href="/home/usecase/usecase4"
               >[Machbase Use Case]Public - ETRI</a
             >
             <div>
@@ -291,14 +293,14 @@ toc: false
           </div>
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
-              <a href="/usecase-hc"
+              <a href="/home/usecase/usecase5"
                 ><img
                   class="blog-img blog-margin-bottom"
                   src="../img/usecase_hankukcarborn.png"
                   alt=""
               /></a>
             </div>
-            <a class="tech-link" href="/usecase-hc"
+            <a class="tech-link" href="/home/usecase/usecase5"
               >[Machbase Use Case]Manufacturing - Hankuk Carbon</a
             >
             <div>
@@ -312,14 +314,14 @@ toc: false
         <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
-              <a href="/usecase-c">
+              <a href="/home/usecase/usecase6">
                 <img
                   class="blog-img blog-margin-bottom"
                   src="../img/usecase_carrot.png"
                   alt=""
               /></a>
             </div>
-            <a class="tech-link" href="/usecase-c"
+            <a class="tech-link" href="/home/usecase/usecase6"
               >[Machbase Use Case] Insurance - Carrot Insurance</a
             >
             <div>
@@ -334,13 +336,13 @@ toc: false
       <div class="blog-mobile">
         <div class="blog-first-wraper">
           <div class="blog-first-img-wrap">
-            <a href="/usecase-h"
+            <a href="/home/usecase/usecase1"
               ><img class="blog-img" src="../img/usecase_hyundai.png" alt=""
             /></a>
           </div>
           <div class="blog-text-wraper">
             <div class="tech-first-link-wrap">
-              <a class="blog-link" href="/usecase-h"
+              <a class="blog-link" href="/home/usecase/usecase1"
                 >[Machbase Use Case]Ship Management - Hyundai Global Services</a
               >
               <div class="blog-date">
@@ -358,9 +360,8 @@ toc: false
               <div class="blog_usecase_more_box">
                 <p class="blog_usecase_more_wrap">
                   <span>
-                    <a class="blog_usecase_more" href="/usecase-h"
-                      >View More <ArrowSvg
-                    /></a>
+                    <a class="blog_usecase_more" href="/home/usecase/usecase1"
+                      >View More </a>
                   </span>
                 </p>
               </div>
@@ -370,14 +371,14 @@ toc: false
         <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
-              <a href="/usecase-l"
+              <a href="/home/usecase/usecase2"
                 ><img
                   class="blog-img blog-margin-bottom"
                   src="../img/uscase_lotte.png"
                   alt=""
               /></a>
             </div>
-            <a class="tech-link" href="/usecase-l"
+            <a class="tech-link" href="/home/usecase/usecase2"
               >[Machbase Use Case]Manufacturing - Lotte Chilsung</a
             >
             <div>
@@ -390,14 +391,14 @@ toc: false
         <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
-              <a href="/usecase-m"
+              <a href="/home/usecase/usecase3"
                 ><img
                   class="blog-img blog-margin-bottom"
                   src="../img/usecase_mando.png"
                   alt=""
               /></a>
             </div>
-            <a class="tech-link" href="/usecase-m"
+            <a class="tech-link" href="/home/usecase/usecase3"
               >[Machbase Use Case]Manufacturing - Mando Brose</a
             >
             <div>
@@ -411,14 +412,14 @@ toc: false
         <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
-              <a href="/usecase-e"
+              <a href="/home/usecase/usecase4"
                 ><img
                   class="blog-img blog-margin-bottom"
                   src="../img/usecase_etri2.png"
                   alt=""
               /></a>
             </div>
-            <a class="tech-link" href="/usecase-e"
+            <a class="tech-link" href="/home/usecase/usecase4"
               >[Machbase Use Case]Public - ETRI</a
             >
             <div>
@@ -431,14 +432,14 @@ toc: false
         <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
-              <a href="/usecase-hc"
+              <a href="/home/usecase/usecase5"
                 ><img
                   class="blog-img blog-margin-bottom"
                   src="../img/usecase_hankukcarborn.png"
                   alt=""
               /></a>
             </div>
-            <a class="tech-link" href="/usecase-hc"
+            <a class="tech-link" href="/home/usecase/usecase5"
               >[Machbase Use Case]Manufacturing - Hankuk Carbon</a
             >
             <div>
@@ -452,14 +453,14 @@ toc: false
         <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
-              <a href="/usecase-c"
+              <a href="/home/usecase/usecase6"
                 ><img
                   class="blog-img blog-margin-bottom"
                   src="../img/usecase_carrot.png"
                   alt=""
               /></a>
             </div>
-            <a class="tech-link" href="/usecase-c"
+            <a class="tech-link" href="/home/usecase/usecase6"
               >[Machbase Use Case] Insurance - Carrot Insurance</a
             >
             <div>
@@ -477,7 +478,7 @@ toc: false
 <footer>
   <div class="footer_inner">
     <div class="footer-logo">
-      <img src="../img/machbase_logo_w.png" />
+      <img src="../img/machbase-logo-w.png" />
       <a href="/home/contactus">
         <button class="contactus">Contact Us</button>
       </a>
@@ -528,7 +529,7 @@ toc: false
   </div>
   <div class="footer_tablet_inner">
     <div class="logo">
-      <img src="../img/machbase_logo_w.png" />
+      <img src="../img/machbase-logo-w.png" />
     </div>
     <div>
       <p class="footertext">
@@ -580,3 +581,15 @@ toc: false
     <p>@2023 MACHBASE All rights reserved.</p>
   </div>
 </footer>
+<script>
+  //drop down menu
+const productsMenuWrap = document.getElementById("productsMenuWrap");
+const dropdown = document.getElementById("dropdown");
+dropdown.style.display = "none";
+productsMenuWrap.addEventListener("mouseover", function() {
+  dropdown.style.display = "block";
+});
+productsMenuWrap.addEventListener("mouseout", function() {
+  dropdown.style.display = "none";
+});
+</script>

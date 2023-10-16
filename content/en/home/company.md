@@ -1,4 +1,6 @@
 ---
+title: "MACHBASE"
+page: docs
 toc: false
 ---
 
@@ -12,7 +14,7 @@ toc: false
       <div class="menu-left">
         <ul class="menu-left-ul">
           <li class="menu-logo">
-            <a href="/home"><img src="../img/machbase_logo_b.png" alt="" /></a>
+            <a href="/home"><img src="../img/logo_machbase.png" alt="" /></a>
           </li>
           <li class="menu-a products-menu-wrap" id="productsMenuWrap">
             <div>
@@ -44,7 +46,9 @@ toc: false
       <div class="menu-right">
         <ul class="menu-right-ul">
           <li class="menu-a"><a href="/home/download">Download</a></li>
-          <li class="menu-a"><a href="https://support.machbase.com/hc/en-us">Support</a></li>
+          <li class="menu-a">
+            <a href="https://support.machbase.com/hc/en-us">Support</a>
+          </li>
           <li class="menu-a"><a href="/home/contactus">Contact US</a></li>
         </ul>
       </div>
@@ -58,7 +62,7 @@ toc: false
   </section>
   <section class="section1 section" id="section1">
     <div>
-      <h4 class="sub_title main_margin_top">About Machbase</h4>
+      <h4 class="sub_title company-margin-top">About Machbase</h4>
       <div class="bar"><img src="../img/bar.png" /></div>
     </div>
     <div class="product-sub-titlebox">
@@ -155,7 +159,7 @@ toc: false
 <footer>
   <div class="footer_inner">
     <div class="footer-logo">
-      <img src="../img/machbase_logo_w.png" />
+      <img src="../img/machbase-logo-w.png" />
       <a href="/home/contactus">
         <button class="contactus">Contact Us</button>
       </a>
@@ -206,7 +210,7 @@ toc: false
   </div>
   <div class="footer_tablet_inner">
     <div class="logo">
-      <img src="../img/machbase_logo_w.png" />
+      <img src="../img/machbase-logo-w.png" />
     </div>
     <div>
       <p class="footertext">
@@ -258,3 +262,15 @@ toc: false
     <p>@2023 MACHBASE All rights reserved.</p>
   </div>
 </footer>
+<script>
+//drop down menu
+const productsMenuWrap = document.getElementById("productsMenuWrap");
+const dropdown = document.getElementById("dropdown");
+dropdown.style.display = "none";
+productsMenuWrap.addEventListener("mouseover", function() {
+  dropdown.style.display = "block";
+});
+productsMenuWrap.addEventListener("mouseout", function() {
+  dropdown.style.display = "none";
+});
+</script>

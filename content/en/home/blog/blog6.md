@@ -12,7 +12,7 @@
     <div class="menu-left">
       <ul class="menu-left-ul">
         <li class="menu-logo">
-          <a href="/home"><img src="../../img/machbase_logo_b.png" alt="" /></a>
+          <a href="/home"><img src="../../img/logo_machbase.png" alt="" /></a>
         </li>
         <li class="menu-a products-menu-wrap" id="productsMenuWrap">
           <div>
@@ -236,7 +236,7 @@
 <footer>
   <div class="footer_inner">
     <div class="footer-logo">
-      <img class="footer-logo-img" src="../../img/machbase_logo_w.png" />
+      <img class="footer-logo-img" src="../../img/machbase-logo-w.png" />
       <a href="/home/contactus">
       <button class="contactus">
         Contact Us
@@ -289,7 +289,7 @@
   </div>
   <div class="footer_tablet_inner">
     <div class="logo">
-      <img class="footer-logo-img" src="../../img/machbase_logo_w.png" />
+      <img class="footer-logo-img" src="../../img/machbase-logo-w.png" />
     </div>
     <div>
       <p class="footertext">
@@ -343,3 +343,15 @@
     <p>@2023 MACHBASE All rights reserved.</p>
   </div>
 </footer>
+<script>
+//drop down menu
+const productsMenuWrap = document.getElementById("productsMenuWrap");
+const dropdown = document.getElementById("dropdown");
+dropdown.style.display = "none";
+productsMenuWrap.addEventListener("mouseover", function() {
+  dropdown.style.display = "block";
+});
+productsMenuWrap.addEventListener("mouseout", function() {
+  dropdown.style.display = "none";
+});
+</script>

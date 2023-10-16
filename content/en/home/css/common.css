@@ -48,6 +48,7 @@ time,
 .theme-toggle {
   display: none;
 }
+
 @font-face {
   font-family: "aktiv-grotesk";
   src: url("../font/AktivGrotesk-Light.ttf") format("truetype");
@@ -181,9 +182,7 @@ li {
   -ms-overflow-style: none;
   resize: none;
 }
-p {
-  margin: 0 !important;
-}
+
 /* remove scrollbar at specified part */
 .box {
   -ms-overflow-style: none;
@@ -232,6 +231,12 @@ input[type="number"]::-ms-reveal {
 img,
 fieldset {
   border: 0;
+}
+p {
+  margin-top: 0 !important;
+}
+img {
+  border-radius: 0 !important;
 }
 form,
 fieldset,
@@ -307,7 +312,7 @@ template {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 100px;
+  height: 80px;
   padding: 0 120px;
 }
 .menu-left {
@@ -328,6 +333,30 @@ template {
   font-family: "OpenSans";
 }
 
+.dropdown {
+  display: none;
+  position: absolute;
+  background-color: #fff;
+  width: 70px;
+  padding: 10px;
+  z-index: 1;
+  text-align: center;
+}
+.dropdown-link {
+  display: block;
+  text-decoration: none;
+  color: #333;
+  padding-top: 20px;
+  margin-bottom: 5px;
+}
+
+.dropdown-link:hover {
+  color: #ffd800;
+}
+
+.products-menu-wrap:hover .dropdown {
+  display: block;
+}
 .menu-left-ul li {
   list-style: none;
 }
@@ -578,7 +607,6 @@ nav.tablemenu {
   font-family: "aktiv-grotesk";
 }
 table {
-  width: 1200px;
   margin: 0 auto;
   color: #253fd0;
   font-size: 24px;
@@ -589,7 +617,6 @@ table {
   margin-top: 50px;
 }
 th {
-  height: 100px;
   background-color: #fff;
   border-bottom: 1px solid #e3e6f5;
   color: #253fd0;
@@ -767,8 +794,8 @@ a:visited {
 /* tech templete */
 .blog-title {
   text-align: left;
-  color: #253fd0;
-  font-size: 44px;
+  /* color: #253fd0 !important; */
+  font-size: 44px !important;
   font-weight: 700;
   position: relative;
   font-family: "aktiv-grotesk";
@@ -806,7 +833,7 @@ a:visited {
   line-height: 38px;
 }
 .tech-contents-text {
-  margin-bottom: 24px;
+  margin-bottom: 24px !important;
 }
 .tech-contents-title {
   font-size: 24px;

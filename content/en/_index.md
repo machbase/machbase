@@ -1,5 +1,5 @@
 ---
-title: 'MACHBASE'
+title: "MACHBASE"
 page: docs
 toc: false
 ---
@@ -13,7 +13,7 @@ toc: false
 ✓ Easy to write and query via **HTTP**, **MQTT** and **gRPC**<br/>
 ✓ Bridge to SQLite, PostgreSQL, MySQL, MSSQL, MQTT Broker<br/>
 
-{{< button color="green" href="/neo/">}} DOCS  {{< /button >}}
+{{< button color="green" href="/neo/">}} DOCS {{< /button >}}
 {{< label color="green" >}} LATEST <i>{{< neo_latestver >}}</i> {{< /label>}}
 
 ## MACHBASE DBMS
