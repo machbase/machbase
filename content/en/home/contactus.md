@@ -92,19 +92,19 @@ toc: false
             <span class="input-span">Who are You Trying to reach?*</span>
             <div class="radio-input-wrap">
               <div class="radio-div">
-                <input class="radio-input" type="radio" checked name="contactRadio" value="Sales" />
+                <input class="radio-input" type="radio" checked name="title" value="Sales" />
                 <span>Sales</span>
               </div>
               <div class="radio-div">
-                <input class="radio-input" type="radio" name="contactRadio" value="Marketing" />
+                <input class="radio-input" type="radio" name="title" value="Marketing" />
                 <span>Marketing</span>
               </div>
               <div class="radio-div">
-                <input class="radio-input" type="radio" name="contactRadio" value="Partners" />
+                <input class="radio-input" type="radio" name="title" value="Partners" />
                 <span>Partners</span>
               </div>
               <div class="radio-div">
-                <input class="radio-input" type="radio" name="contactRadio" value="Media Contact" />
+                <input class="radio-input" type="radio" name="title" value="Media Contact" />
                 <span>Media Contact</span>
               </div>
             </div>
