@@ -3364,7 +3364,10 @@ img {
   padding-right: 24px;
   line-height: 30px;
 }
-
+td {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
 .download_th1_5 {
   display: flex;
   align-items: center;

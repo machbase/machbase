@@ -34,7 +34,6 @@ toc: false
               </div>
             </div>
           </li>
-          <li class="menu-a"><a href="/">Docs</a></li>
           <li class="menu-a"><a href="/kr/home/blog">Blog</a></li>
           <li class="menu-a"><a href="/kr/home/customers">Customers</a></li>
           <li class="menu-a"><a href="/kr/home/usecase">Use Case</a></li>
@@ -43,6 +42,19 @@ toc: false
       </div>
       <div class="menu-right">
         <ul class="menu-right-ul">
+          <li class="menu-a docs-menu-wrap" id="docsMenuWrap">
+            <a href=""
+              ><div>
+                <a class="menu_active_border" id="menuActiveBorder" href="/"
+                  >Document</a
+                >
+                <div class="dropdown-docs" id="dropdownDocs">
+                  <a class="dropdown-link" href="/neo">Neo</a>
+                  <a class="dropdown-link" href="/dbms">Classic</a>
+                </div>
+              </div></a
+            >
+          </li>
           <li class="menu-a"><a href="/kr/home/download">Download</a></li>
           <li class="menu-a">
             <a href="https://support.machbase.com/hc/en-us">Support</a>
@@ -50,6 +62,48 @@ toc: false
           <li class="menu-a"><a href="/kr/home/contactus">Contact US</a></li>
         </ul>
       </div>
+    </div>
+  </nav>
+  <nav class="tablet-menu-wrap">
+    <a href="/kr/home"><img src="../img/logo_machbase.png" alt="" /></a>
+    <div class="tablet-menu-icon">
+      <div class="tablet-bar"></div>
+      <div class="tablet-bar"></div>
+      <div class="tablet-bar"></div>
+    </div>
+    <div class="tablet-menu">
+      <ul>
+        <div class="tablet-menu-title">
+          <a class="tablet-logo" href="/kr/home"
+            ><img src="../img/logo_machbase.png" alt=""
+          /></a>
+        </div>
+        <li></li>
+        <li class="products-toggle">Products</li>
+        <li>
+          <div class="products-content">
+            <div class="products-sub"><a href="/kr/home/tsdb">TSDB</a></div>
+            <div class="products-num"><a href="/kr/home/mos">MOS</a></div>
+            <div class="products-cems">
+              <a href="https://www.cems.ai/">CEMS</a>
+            </div>
+          </div>
+        </li>
+        <li><a href="/kr/home/blog">Blog</a></li>
+        <li><a href="/kr/home/customers">Customers</a></li>
+        <li><a href="/kr/home/usecase">Use Cases</a></li>
+        <li><a href="/kr/home/company">Company</a></li>
+        <li class="docs-toggle">Document</li>
+        <li>
+          <div class="docs-content">
+            <div class="docs-sub"><a href="/neo">Neo</a></div>
+            <div class="docs-num"><a href="/dbms">Classic</a></div>
+          </div>
+        </li>
+        <li><a href="/kr/home/download">Download</a></li>
+        <li><a href="https://support.machbase.com/hc/en-us">Support</a></li>
+        <li><a href="/kr/home/download">Contact US</a></li>
+      </ul>
     </div>
   </nav>
   <div>
@@ -62,740 +116,796 @@ toc: false
     </section>
     <section class="section1">
       <div class="contact_inner">
-        <div class="sub_titlebox">
-          <h4 class="sub_page_sub_title">Contact Form</h4>
-          <div class="bar"><img src="../img/bar.png" /></div>
-        </div>
-        <div class="contact-long-div">
-          <span class="input-span">성함*</span>
-          <label>
-            <input
-              class="long-input"
-              type="text"
-              name="fullName"
-              placeholder="성함을 입력해주세요"
-          /></label>
-        </div>
-        <div class="contact-short-div-wrap">
-          <div class="contact-short-div">
-            <span class="input-span">이메일*</span>
-            <input class="short-input" type="text" name="emailAddress" />
+        <form
+          id="contactForm"
+          action="https://machbase.com/contact"
+          method="post"
+          enctype="utf-8"
+        >
+          <div class="sub_titlebox">
+            <h4 class="sub_page_sub_title">Contact Form</h4>
+            <div class="bar"><img src="../img/bar.png" /></div>
           </div>
-          <div class="contact-short-div">
-            <span class="input-span">국가*</span>
-            <select class="short-input" id="country-select"></select>
-          </div>
-        </div>
-        <div>
-          <span class="input-span">문의 유형*</span>
-          <div class="radio-input-wrap">
-            <div class="radio-div">
+          <div class="contact-long-div">
+            <span class="input-span">성함*</span>
+            <label>
               <input
-                class="radio-input"
-                type="radio"
-                checked
-                name="contactRadio"
+                class="long-input"
+                type="text"
+                name="name"
+                id="fullName"
+                placeholder="성함을 입력해주세요"
+            /></label>
+          </div>
+          <div class="contact-short-div-wrap">
+            <div class="contact-short-div">
+              <span class="input-span">이메일*</span>
+              <input
+                class="short-input"
+                type="text"
+                name="email"
+                id="emailAddress"
               />
-              <span>세일즈</span>
             </div>
-            <div class="radio-div">
-              <input class="radio-input" type="radio" name="contactRadio" />
-              <span>마케팅</span>
-            </div>
-            <div class="radio-div">
-              <input class="radio-input" type="radio" name="contactRadio" />
-              <span>파트너</span>
-            </div>
-            <div class="radio-div">
-              <input class="radio-input" type="radio" name="contactRadio" />
-              <span>언론홍보</span>
+            <div class="contact-short-div">
+              <span class="input-span">국가*</span>
+              <select
+                class="short-input"
+                id="countrySelect"
+                name="country"
+              ></select>
             </div>
           </div>
-        </div>
-        <div>
-          <span class="input-span">문의 내용*</span>
-          <textarea class="contact_input" type="text"> </textarea>
-        </div>
-        <div>
-          <div class="check_cont">
-            <input type="checkbox" class="checkbox" value="Send" />
-            <p>
-              <a id="openModalBtn" class="policy">개인정보처리방침</a>
-              에 동의합니다.
-            </p>
-            <div id="modalDiv" class="modal">
-              <div class="modal-content">
-                <div class="modal_title">
-                  <p class="policy_title">개인정보 처리방침</p>
-                  <p id="closeModalBtn" class="close">&times;</p>
-                </div>
-                <p class="policy_text">
-                  본 개인정보취급방침은 본 방침이 게시된 웹사이트에서 제공되거나
-                  수집되는 정보의 처리에 대해 설명합니다. 또한, 타사 웹사이트
-                  또는 플랫폼에 있는 회사의 애플리케이션을 사용함으로써
-                  제공되거나 수집되는 정보의 처리에 대해 설명합니다.
-                </p>
-                <p class="policy_text">
-                  회사는 이용자의 개인정보를 중요시하며, 개인정보취급방침을
-                  통하여 회사가 이용자로부터 제공받은 개인정보를 어떠한 용도와
-                  방식으로 이용하고 있으며, 개인정보 보호를 위해 어떠한 조치를
-                  취하고 있는지 알려드립니다.
-                </p>
-                <p class="policy_text">
-                  본 방침은 2015 년 월 일부터 시행되며, 이를 개정하는 경우
-                  웹사이트 공지사항(또는 서면, 팩스, 이메일 등의 개별공지)을
-                  통하여 공지하겠습니다.
-                </p>
-                <p class="policy_text">
-                  1. 수집하는 정보 및 수집방법<br />(1) 수집하는 개인정보의 항목
-                  회사가 수집하는 개인정보의 항목은 다음과 같습니다.
-                </p>
-                <p class="policy_text">
-                  • 이용자가 제공하는 정보<br />
-                  회사는 이용자가 직접 제공하는 정보를 수집할 수 있습니다.<br />
-                  [개인정보취급방침 부록 &lt;1-1&gt; '개인정보 항목' 취사선택]
-                </p>
-                <p class="policy_text">
-                  • 이용자가 서비스를 사용할 때 수집하는 정보<br />회사는
-                  이용자가 직접 제공하는 정보 이외에도, 이용자가 회사의 서비스를
-                  사용하는 과정에서 정보를 수집할 수 있습니다.
-                  <br />[개인정보취급방침 부록 &lt;1-2&gt; '개인정보 항목'
-                  취사선택]
-                </p>
-                <p class="policy_text">
-                  (2) 수집방법<br />
-                  회사는 이용자의 정보를 다음과 같은 방법으로 수집합니다.
-                  [개인정보취급방침 부록 &lt;2&gt; '수집 방법' 취사선택]
-                </p>
-                <p class="policy_text">
-                  2. 수집한 정보의 이용<br />
-                  회사는 수집한 이용자의 정보를 다음과 같은 목적으로
-                  이용합니다.<br />[개인정보취급방침 부록 &lt;3&gt; '수집 정보의
-                  이용' 취사선택]
-                </p>
-                <p class="policy_text">
-                  본 개인정보취급방침에 명시된 목적과 다른 용도로 정보를 이용할
-                  경우, 회사는 이용자의 동의를 구하도록 하겠습니다.
-                </p>
-                <p class="policy_text">
-                  3. 수집한 정보의 공유<br />
-                  회사는 다음의 경우를 제외하고 이용자의 개인정보를 제 3 자에게
-                  공유하지 않습니다.<br />
-                  • 회사의 계열사, 파트너, 서비스 제공업체에 대한 공유<br />
-                  [개인정보취급방침 부록 &lt;4-1&gt; '수집 정보의 이용'
-                  취사선택]
-                </p>
-                <p class="policy_text">
-                  •이용자가 사전에 동의하는 경우<br />
-                  [개인정보취급방침 부록 &lt;4-2&gt;'수집 정보의 공유' 취사선택]
-                </p>
-                <p class="policy_text">• 법률상 필요한 경우</p>
-                <p class="policy_text">- 법령상 공개하도록 요구되는 경우</p>
-                <p class="policy_text">
-                  - 수사 목적으로 법령에 정해진 절차와 방법에 따라 수사기관의
-                  요구가 있는 경우
-                </p>
-                <p class="policy_text">
-                  4. 쿠키, 비콘 및 기타(Cookies, Beacons and Similar
-                  Technologies)<br />
-                  회사는 '쿠키(cookies)' 또는 '웹 비콘(web beacons)' 등을 통하여
-                  비개인적인 집합정보를 수집할 수 있습니다. 쿠키란 회사의
-                  웹사이트를 운영하는데 이용되는 서버가 이용자의 브라우저에
-                  보내는 아주 작은 텍스트 파일로, 이용자의 컴퓨터 하드디스크에
-                  저장됩니다.
-                </p>
-                <p class="policy_text">
-                  웹 비콘은 웹사이트 또는 이메일 상에 있는 소량의 코드입니다. 웹
-                  비콘을 사용하여 이용자가 특정 웹이나 이메일 콘텐츠와 상호
-                  작용했는지 여부를 알 수 있습니다.
-                </p>
-                <p class="policy_text">
-                  이러한 기능은 서비스를 평가하고 개선하여 이용자 경험을 맞춤
-                  설정하는 데 유용하게 이용되어, 이용자에게 더 향상된 서비스를
-                  제공합니다.
-                </p>
-                <p class="policy_text">
-                  T회사가 수집하는 쿠키의 항목 및 수집 목적은 다음과
-                  같습니다.<br />
-                  [개인정보취급방침 부록 &lt;5&gt; '수집하는 쿠키' 취사선택]
-                </p>
-                <p class="policy_text">
-                  이용자는 쿠키 설치에 대한 선택권을 가지고 있습니다. 따라서
-                  웹브라우저에서 옵션을 설정함으로써 모든 쿠키를 허용하거나,
-                  쿠키가 저장될 때마다 확인을 거치거나, 아니면 모든 쿠키의
-                  저장을 거부할 수도 있습니다. 단, 이용자께서 쿠키 설치를
-                  거부하였을 경우 회사가 제공하는 일부 서비스에 어려움이 있을 수
-                  있습니다.
-                </p>
-                <p class="policy_text">
-                  5. 이용자의 접근권한과 선택권<br />
-                  이용자 또는 법정대리인은 정보의 주체로서 회사의 개인정보 수집,
-                  사용, 공유와 관련하여 다음과 같은 선택권을 행사할 수 있습니다.
-                </p>
-                <p class="policy_text">
-                  • 개인정보에 대한 접근권한<br />
-                  • 개인정보의 정정 또는 삭제<br />
-                  • 개인정보 처리의 일시 정지<br />
-                  • 기존에 제공한 동의의 철회의 요청<br />
-                </p>
-                <p class="policy_text">
-                  이를 위하여 웹페이지의 '회원정보 수정' 메뉴를 이용하시거나,
-                  대표전화 또는 회사 담당부서(또는 개인정보 관리책임자)에게
-                  서면, 전화 또는 이메일로 연락하시면 지체 없이 조치하겠습니다.
-                  다만 회사는 법률에 명시된 타당한 사유 또는 그에 상응하는
-                  사유가 있는 경우에만 그러한 요청을 거부할 수 있습니다.
-                </p>
-                <p class="policy_text">
-                  6. 보안<br />회사는 이용자의 개인정보에 대한 보안을 매우
-                  중요하게 생각합니다. 회사는 이용자 개인정보의 무단 접근, 공개,
-                  사용 및 수정을 막기 위해 다음과 같은 보안 조치를 구축하고
-                  있습니다. [개인정보취급방침 부록 &lt;6&gt; '보안조치'
-                  취사선택]
-                </p>
-                <p class="policy_text">
-                  7. 어린이 개인정보 보호<br />회사는 원칙적으로 13 세 미만 또는
-                  관할 법률상 이에 상응하는 최소 연령의 어린이로부터 정보를
-                  수집하지 않습니다. 회사의 웹사이트, 제품과 서비스 등은
-                  원칙적으로 일반인을 대상으로 한 웹 사이트입니다. 회사의
-                  웹사이트 또는 애플리케이션에는 연령 제한 기능이 있어서
-                  어린이가 이용할 수 없도록 하고 있으며, 그러한 기능을 통해
-                  어린이로부터 고의로 개인정보를 수집하지 않습니다.
-                </p>
-                <p class="policy_text">
-                  (어린이 개인정보를 수집하는 경우 추가) 다만 회사가 부득이
-                  서비스 이용을 위하여 13 세 미만 또는 관할 법률상 이에 상응하는
-                  최소 연령의 어린이의 개인정보를 수집할 때에는, 어린이 개인정보
-                  보호를 위해 다음과 같은 절차를 추가적으로 거치게 됩니다.
-                </p>
-                <p class="policy_text">
-                  • 어린이 개인정보 수집 또는 회사의 제품, 서비스 정보를
-                  어린이에게 직접 발송하기 위한 보호자 동의 획득<br />
-                  • 수집한 개인정보 항목, 목적, 공유 여부를 포함한 회사의 어린이
-                  개인정보보호 방침에 대하여 보호자에게 통보<br />
-                  • 법정대리인에게 해당 아동의 개인정보에 대한 액세스 /
-                  개인정보의 정정 또는 삭제 / 개인정보 처리의 일시 정지 / 기존에
-                  제공한 동의의 철회를 요청할 수 있는 권한의 부여<br />• 온라인
-                  활동의 참여에 필요한 것 이상의 개인정보 수집의 제한
-                </p>
-                <p class="policy_text">
-                  8. 개인정보취급방침의 변경<br />
-                  회사는 회사의 본 방침을 수시로 수정 내지 변경할 권리를
-                  보유합니다. 회사가 본 방침을 변경하는 경우 웹사이트
-                  공지사항(또는 서면, 팩스, 이메일 등의 개별공지)을 통하여
-                  공지하며, 관계법에서 요구하는 경우에는 이용자의 동의를 구하게
-                  됩니다.
-                </p>
-                <p class="policy_text">
-                  9. 기타<br />
-                  [개인정보취급방침 부록 &lt;7&gt; '데이터 전송' 취사선택]<br />
-                  [개인정보취급방침 부록 &lt;8&gt;'제 3 자 사이트 및 서비스'
-                  취사선택]<br />
-                  [개인정보취급방침 부록&lt;9&gt; '캘리포니아 거주자에 대한
-                  안내' 취사선택]<br />
-                  [개인정보취급방침 부록 &lt;10&gt; '한국인 거주자에 대한 안내'
-                  취사선택]
-                </p>
-                <p class="policy_text">
-                  10. 회사 담당부서<br />
-                  회사는 이용자의 개인정보를 보호하고 개인정보와 관련한 불만을
-                  처리하기 위하여 아래와 같이 관련 부서를 지정하고 있습니다. 본
-                  방침에 대하여 의문 사항 있거나 회사가 보유한 이용자의 정보를
-                  업데이트하고자 하는 경우, 아래 연락처로 회사에 연락하시기
-                  바랍니다.
-                </p>
-                <p class="policy_text">
-                  • 회사 담당부서 : <br />
-                  주소 : 9F, 3M Tower, 10 Teheran-ro 20-gil, Gangnam-gu,
-                  Seoul<br />
-                  전화번호: +82-02-2038-4606<br />
-                  E-mail: support@machbase.com <br />
-                  최종갱신일 : September, 2023
-                </p>
-                <p class="policy_title">개인정보취급방침 부록</p>
-                <p class="policy_text">&lt;1-1&gt; 개인정보 항목</p>
-                <table class="policy_table">
-                  <tr class="table_title">
-                    <th>서비스명</th>
-                    <th>수집 항목(예시)</th>
-                  </tr>
-                  <tr>
-                    <td>인터넷 회원제 서비스</td>
-                    <td>
-                      ∘ 이름, 이메일 주소, ID, 전화번호, 우편주소, 국가정보,
-                      암호화된 동일인 식별정보(CI), 중복가입확인정보(DI) 등
-                      <br />∘ 미성년자인 경우 법정대리인 정보(법정대리인의 이름,
-                      생년월일, CI, DI 등)
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>온라인 결제 서비스</td>
-                    <td>
-                      ∘ 이름, 주소, 전화 번호, 이메일 주소 등<br />
-                      ∘ 계좌번호, 카드번호 등의 결제정보<br />∘ 배송 주소지,
-                      수령인 이름, 수령인 연락처 등의 배송정보<br />∘ 입찰,
-                      구매, 판매 등 정보
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>소셜 네트워크 서비스</td>
-                    <td>
-                      ∘ 이름, 이메일 주소, ID, 전화 번호, 우편주소, 국가정보,
-                      주소록(지인) 등<br />∘ 사진 촬영 장소, 파일 생성 날짜 등
-                      정보<br />∘ 회원이 보거나 이용하는 콘텐츠의 유형, 회원의
-                      활동 빈도나 기간 등 회원의 서비스 이용에 관한 정보
-                    </td>
-                  </tr>
-                </table>
-                <p class="policy_text">&lt;1-2&gt; 개인정보 항목</p>
-                <table class="policy_table">
-                  <tr class="table_title">
-                    <th>목록</th>
-                    <th>수집 항목(예시)</th>
-                  </tr>
-                  <tr>
-                    <td>기기정보</td>
-                    <td>
-                      ∘ 기기 식별자, 운영 체제, 하드웨어 버전, 기기 설정,
-                      전화번호 등
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>로그정보</td>
-                    <td>
-                      ∘ 로그데이터, 이용시간, 이용자가 입력한 검색어, 인터넷
-                      프로토콜 주소, 쿠키 및 웹비콘 등
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>위치정보</td>
-                    <td>
-                      ∘ GPS, 블루투스 또는 와이파이 신호를 통한 구체적인 지리적
-                      위치를 포함한 기기 위치에 대한 정보 등(법으로 허용되는
-                      지역에 한함)
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>기타정보</td>
-                    <td>
-                      ∘ 이용자의 서비스 사용에 있어 선호도, 광고 환경, 방문하는
-                      페이지 등
-                    </td>
-                  </tr>
-                </table>
-                <p class="policy_text">&lt;2&gt; 수집 방법</p>
-                <p class="policy_text">
-                  • 웹페이지, 서면양식, 팩스, 전화, 이메일, 생성정보 수집 툴
-                  등<br />
-                  • 협력회사로부터의 제공
-                </p>
-                <p class="policy_text">&lt;3&gt; 수집 정보의 이용</p>
-                <p class="policy_text">
-                  • 회원관리, 본인확인 등 <br />
-                  • 허가받지 않은 서비스 이용과 부정 이용 등의 탐지 및 방지<br />
-                  • 이용자가 요구하는 서비스 제공에 관한 계약 이행, 요금 정산
-                  등<br />
-                  • 기존서비스 개선, 신규서비스 개발 등<br />
-                  • 회사 사이트 또는 애플리케이션의 기능 또는 정책 변경사항의
-                  알림<br />
-                  • 기타 이용자의 사전 동의에 의한 이용(예를 들어, 마케팅 광고에
-                  활용 등)<br />
-                  • 연락처에 등록된 지인 검색•알림•자동 등록, 지인일 가능성이
-                  있는 다른 이용자의 검색과 알림<br />
-                  • 회원의 서비스 이용에 대한 통계, 통계학적 특성에 따른 서비스
-                  제공 및 광고 게재<br />
-                  • 홍보성 이벤트 정보 제공 및 참여 기회 제공<br />
-                  • 준거법 또는 법적 의무의 준수<br />
-                </p>
-                <p class="policy_text">&lt;4-1&gt; 수집 정보의 공유</p>
-                <p class="policy_text">
-                  ∘ 회사를 대신하여 결제 처리, 주문 이행, 제품 배송, 분쟁
-                  해결(결제 및 배송 분쟁 포함) 등 서비스를 회사의 계열사,
-                  파트너, 서비스 제공업체가 수행하는 경우
-                </p>
-                <p class="policy_text">&lt;4-2&gt; 수집 정보의 공유</p>
-                <p class="policy_text">
-                  ∘ 이용자의 개인정보를 특정 업체와 공유하여 해당 업체의 제품 및
-                  서비스에 대한 정보를 제공받기로 이용자가 선택하는 경우<br />
-                  ∘ 이용자의 개인정보를 소셜 네트워킹 사이트와 같은 타사 사이트
-                  또는 플랫폼과 공유하도록 이용자가 선택하는 경우
-                  <br />
-                  ∘ 기타 이용자가 사전에 동의한 경우<br />
-                </p>
-                <p class="policy_text">&lt;5&gt; 수집하는 쿠키</p>
-                <table class="policy_table">
-                  <tr class="table_title">
-                    <th>카테고리</th>
-                    <th>쿠키를 사용하는 이유 및 추가 정보</th>
-                  </tr>
-                  <tr>
-                    <td>반드시 필요한 쿠키</td>
-                    <td>
-                      이 쿠키는 이용자가 회사의 웹사이트 기능을 이용하는 데
-                      필수적인 쿠키입니다. 이 쿠키를 허용하지 않으면 장바구니와
-                      전자청구서와 같은 서비스가 제공될 수 없습니다. 이 쿠키는
-                      마케팅에 사용하거나 사용자가 인터넷에서 방문한 사이트를
-                      기억하는 데 사용될 수 있는 정보를 수집하지 않습니다.<br />
-                      (반드시 필요한 쿠키의 예시)<br />∘ 웹 브라우저 세션 동안
-                      다른 페이지를 검색할 때 주문 양식에 입력한 정보를 기억<br />∘
-                      상품 및 체크아웃 페이지인 경우 주문한 서비스를 기억<br />∘
-                      웹사이트에 로그인 여부를 확인<br />∘ 회사가 웹사이트의
-                      작동 방식을 변경할 때 이용자가 회사 웹사이트의 올바른
-                      서비스에 연결되었는지 확인<br />∘ 서비스의 특정
-                      어플리케이션 또는 특정 서버로 사용자를 연결
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>수행 쿠키</td>
-                    <td>
-                      이 쿠키는 이용자가 가장 자주 방문하는 페이지 정보와 같이
-                      이용자가 회사 웹사이트를 어떻게 이용하고 있는지에 대한
-                      정보를 수집합니다. 이 데이터는 회사 웹사이트를
-                      최적화시키고 이용자가 좀 더 간편하게 웹사이트를 검색할 수
-                      있도록 도와줍니다. 이 쿠키는 이용자가 누구인지에 대한
-                      정보를 수집하지 않습니다. 이 쿠키가 수집하는 모든 정보는
-                      종합적으로 처리되므로 익명성이 보장됩니다.
-                      <br />
-                      (수행 쿠키의 예시) <br />
-                      ∘ 웹 분석 : 웹 사이트를 사용하는 방법에 대한 통계를
-                      제공<br />
-                      ∘ 광고 반응 요금 : 회사의 광고가 주는 효과를 확인<br />
-                      ∘ 제휴사 추적 : 회사 방문자 중 하나가 제휴사의 웹 사이트를
-                      방문한 것에 대해 제휴사에게 익명으로 피드백을 제공<br />
-                      ∘ 오류 관리 : 발생하는 오류를 측정하여 웹 사이트를
-                      개선하는 데 도움<br />
-                      ∘ 디자인 테스트 : 회사의 웹 사이트의 다른 디자인을
-                      테스트<br />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>기능 쿠키</td>
-                    <td>
-                      이 쿠키는 서비스를 제공하거나 방문을 개선하기 위해 설정을
-                      기억하는 데 사용됩니다. 이 쿠키로 수집된 정보는 이용자를
-                      개별적으로 파악하지 않습니다. <br />
-                      (기능 쿠키의 예시)<br />
-                      ∘ 레이아웃, 텍스트 크기, 기본 설정, 색상 등과 같이 적용한
-                      설정을 기억<br />
-                      ∘ 회사의 설문 조사에 고객이 응하는 경우 이를 기억<br />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>대상 쿠키</td>
-                    <td>
-                      이 쿠키는 '좋아요' 버튼 및 '공유' 버튼과 같은 제 3 자가
-                      제공하는 서비스와 연결됩니다. 제 3 자는 이용자가 회사의
-                      웹사이트를 방문한 것을 인지하여 이러한 서비스를
-                      제공합니다. <br />
-                      (대상 쿠키의 예시) <br />
-                      ∘ 소셜 네트워크로 연결하여, 해당 소셜 네트워크가 이용자의
-                      방문 정보를 사용하여 나중에 다른 웹사이트에서 이용자를
-                      대상으로 홍보<br />
-                      ∘ 이용자가 관심이 있을 수 있는 광고를 제시할 수 있도록
-                      이용자 방문정보를 광고 대행사에 제공<br />
-                    </td>
-                  </tr>
-                </table>
-                <p class="policy_text">&lt;6&gt; 보안조치</p>
-                <p class="policy_text">
-                  • 개인정보의 암호화 <br />
-                  - 이용자의 개인정보를 암호화된 통신구간을 이용하여 전송<br />
-                  - 비밀번호 등 중요정보는 암호화하여 보관<br />
-                  • 해킹 등에 대비한 대책 <br />
-                  - 해킹이나 컴퓨터 바이러스 등에 의해 이용자의 개인정보가
-                  유출되거나 훼손되는 것을 막기 위해 외부로부터 접근이 통제된
-                  구역에 시스템을 설치 <br />
-                  • 내부관리계획의 수립 및 시행<br />
-                  • 접근통제장치의 설치 및 운영 <br />
-                  • 접속기록의 위조, 변조 방지를 위한 조치<br />
-                </p>
-                <p class="policy_text">&lt;7&gt; 데이터 전송</p>
-                <p class="policy_text">
-                  회사는 전 세계를 무대로 영업함으로 본 개인정보취급방침에
-                  명시된 목적을 위해 타국에 위치한 회사나 타사에 이용자의
-                  개인정보를 제공할 수 있습니다. 개인정보가 전송, 보유 또는
-                  처리되는 곳에 대해서는 회사가 개인정보 보호를 위한 합당한
-                  조치를 취합니다.
-                </p>
-                <p class="policy_text">
-                  (US 사용인 경우 추가 가능) 또한, 유럽연합에서 얻은 개인정보를
-                  사용 또는 공개 시 회사는 미국 상무부에서 정한 세이프 하버
-                  원칙을 준수하거나 유럽연합 집행기관에서 승인한 표준 계약 조항
-                  사용, 또는 적절한 안전장치 보장을 위해 유럽연합 규정 내에서
-                  다른 방안을 강구하거나 이용자의 동의를 구합니다.
-                </p>
-                <p class="policy_text">&lt;8&gt; 제 3 자 사이트 및 서비스</p>
-                <p class="policy_text">
-                  회사의 웹 사이트, 제품, 서비스 등은 제 3 자의 웹사이트, 제품,
-                  서비스 등의 링크를 포함할 수 있습니다. 링크된 제 3 자 사이트의
-                  개인정보취급방침이 회사의 정책과 다룰 수 있습니다. 따라서
-                  이용자들은 링크된 제 3 자 사이트의 개인정보취급방침을
-                  추가적으로 검토하셔야 합니다.
-                </p>
-                <p class="policy_text">
-                  &lt;9&gt; 캘리포니아 거주자에 대한 안내
-                </p>
-                <p class="policy_text">
-                  캘리포니아에 거주하시는 분이라면 특정 권리사항이 추가될 수
-                  있습니다. 회사는 캘리포니아 온라인 프라이버시 보호법을
-                  준수하기 위해 회원의 개인정보를 보호하기 위해 필요한 예방책을
-                  마련합니다.
-                </p>
-                <p class="policy_text">
-                  이용자는 개인정보가 누출되었을 경우 정보유출 확인을 요청할 수
-                  있습니다. 또한 회사 웹사이트의 모든 이용자는 개인 계정에
-                  접속하여 정보 수정 메뉴를 이용하여 언제든지 정보를 변경할 수
-                  있습니다.
-                </p>
-                <p class="policy_text">
-                  또한 회사는 웹 사이트 방문자를 추적하지 않습니다. 또한 '추적
-                  방지' 신호도 사용하지 않습니다. 회사는 이용자의 동의 없이 광고
-                  서비스를 통해 개인 식별 정보를 수집하고 타사에 제공하지
-                  않습니다.
-                </p>
-                <p class="policy_text">&lt;10&gt; 한국인 거주자에 대한 안내</p>
-                <p class="policy_text">
-                  회사는 대한민국 정보통신망법 및 개인정보보호법이 요구하는 몇
-                  가지 추가 공개 사항을 다음과 같이 안내합니다.
-                </p>
-                <p class="policy_text">
-                  (1) 수집하는 정보 <br />
-                  회사가 수집하는 개인정보의 항목은 다음과 같습니다.
-                  <br />
-                  • 필수항목 예시
-                </p>
-                <table class="policy_table">
-                  <tr class="table_title">
-                    <th>서비스명</th>
-                    <th>수집 항목(예시)</th>
-                  </tr>
-                  <tr>
-                    <td>인터넷 회원제 서비스</td>
-                    <td>
-                      ∘ 이름, 이메일 주소, ID, 전화번호, 우편주소, 국가정보,
-                      암호화된 동일인 식별정보(CI), 중복가입확인정보(DI) 등
-                      <br />∘ 미성년자인 경우 법정대리인 정보(법정대리인의 이름,
-                      생년월일, CI, DI 등)
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>온라인 결제 서비스</td>
-                    <td>
-                      ∘ 이름, 주소, 전화 번호, 이메일 주소 등<br />
-                      ∘ 신용카드 결제시 : 카드사 명, 카드번호, 카드유효기간
-                      등<br />
-                      ∘ 이동전화 소액결제시 : 이동전화번호, 결제승인번호 등<br />
-                      ∘ 계좌이체 결제시 : 은행명, 계좌번호, 계좌비밀번호 등<br />
-                      ∘ 무통장 입금시 : 송금인명, 연락처등<br />
-                      ∘ 배송 주소지, 수령인 이름, 수령인 연락처 등의 배송정보<br />
-                      ∘ 입찰, 구매, 판매 등 정보<br />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>소셜 네트워크 서비스</td>
-                    <td>
-                      ∘ 이름, 이메일 주소, ID, 전화 번호, 우편주소, 국가정보,
-                      주소록(지인) 등<br />
-                      ∘ 사진 촬영 장소, 파일 생성 날짜 등 정보<br />
-                      ∘ 회원이 보거나 이용하는 콘텐츠의 유형, 회원의 활동 빈도나
-                      기간 등 회원의 서비스 이용에 관한 정보<br />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="policy_left" colspan="2">
-                      서비스 이용과정에서 아래와 같은 정보들이 자동으로 생성되어
-                      수집될 수 있습니다.<br />
-                      ∘ 기기정보(기기 식별자, 운영 체제, 하드웨어 버전, 기기
-                      설정, 전화번호 등)<br />
-                      ∘ 로그정보(로그데이터, 이용시간, 이용자가 입력한 검색어,
-                      인터넷 프로토콜 주소, 쿠키 및 웹비콘 등)<br />
-                      ∘ 위치정보(GPS, 블루투스 또는 와이파이 신호를 통한
-                      구체적인 지리적 위치를 포함한 기기 위치에 대한 정보 등)<br />
-                      ∘ 기타 생성정보<br />
-                    </td>
-                  </tr>
-                </table>
-                <p class="policy_text">
-                  • 선택항목 예시 <br />
-                  이용자는 선택항목 수집 및 이용에 동의를 거부하실 수 있으며,
-                  동의를 거부하시더라도 서비스 이용에 제한은 없습니다.
-                </p>
-                <table class="policy_table">
-                  <tr class="table_title">
-                    <th>수집 목적</th>
-                    <th>수집 항목(예시)</th>
-                  </tr>
-                  <tr>
-                    <td>이용자 분석</td>
-                    <td>
-                      ∘ 가입하신 사유, 직업, 결혼여부, 결혼기념일, 관심
-                      카테고리, SNS 계정정보 등
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>맞춤화된 광고의 제공</td>
-                    <td>
-                      ∘ 마케팅활동 내용 및 결과, 이벤트참여 내용 및 결과 등
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>급한 고지사항 전달</td>
-                    <td>
-                      ∘ 타 계약의 체결ᆞ유지ᆞ이행ᆞ관리ᆞ행사참여 등과 관련하여
-                      이용자가 제공한 정보
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>마케팅</td>
-                    <td>
-                      ∘ 이용자의 서비스 사용에 있어 선호도, 광고 환경, 방문하는
-                      페이지 등
-                    </td>
-                  </tr>
-                </table>
-                <p class="policy_text">
-                  • (민감정보 수집의 경우 추가) 민감정보 예시 <br />
-                  회사는 민감정보의 수집이 반드시 필요할 경우에는 관련 법령에
-                  따라 적법한 절차를 거쳐서 수집합니다. 회사가 수집하는
-                  민감정보는 다음과 같습니다.
-                </p>
-                <p class="policy_text">
-                  ∘ 사상·신념<br />
-                  ∘ 노동조합·정당의 가입·탈퇴<br />
-                  ∘ 정치적 견해 <br />
-                  ∘ 건강, 성생활 등에 관한 정보<br />
-                  ∘ 유전자검사 등의 결과로 얻어진 유전정보
-                  <br />
-                  ∘ 형의 선고·면제 및 선고유예, 보호감호, 치료감호, 보호관찰,
-                  선고유예의 실효, 집행유예의 취소 등 범죄경력에 관한 정보<br />
-                </p>
-                <p class="policy_text">
-                  (2) 수집한 개인정보의 위탁 <br />
-                  회사는 서비스 이행을 위해 아래와 같이 개인정보 처리 업무를
-                  외부 전문업체에 위탁하여 처리하고 있습니다. 개인정보
-                  처리위탁은 개별 서비스 별로 그 이행을 위해 필요한 경우에 한해
-                  각 위탁업체에 대해 이루어집니다.<br />
-                  회사가 개인정보의 처리를 위탁하는 경우에는 개인정보 보호의
-                  안전을 기하기 위하여 개인정보보호 관련 지시 엄수, 개인정보에
-                  대한 비밀유지, 제 3 자 제공의 금지 및 사고시의 책임부담,
-                  위탁기간, 처리 종료 후의 개인정보의 반환 또는 파기 등을 명확히
-                  규정하고, 위탁업체가 개인정보를 안전하게 처리하도록
-                  감독합니다.
-                </p>
-                <table class="policy_table">
-                  <tr class="table_title">
-                    <th>수탁업체의 명칭</th>
-                    <th>위탁하는 업무(서비스)의 내용</th>
-                  </tr>
-                  <tr>
-                    <td>AAA</td>
-                    <td>고객상담</td>
-                  </tr>
-                </table>
-                <p class="policy_text">
-                  (3) 개인정보의 제 3 자 제공에 대한 세부사항 <br />
-                  회사는 아래의 경우를 제외하고 이용자의 개인정보를 제 3 자에게
-                  공개하거나 제공하지 않습니다.
-                </p>
-                <table class="policy_table">
-                  <tr class="table_title">
-                    <th>제공 받는 자</th>
-                    <th>제공 받는 자의 이용목적</th>
-                    <th>제공 항목</th>
-                    <th>제공받는 자의 보유 및 이용기간</th>
-                  </tr>
-                  <tr>
-                    <td>BBB</td>
-                    <td>제휴 서비스 제공</td>
-                    <td>ID, 이름, 나이</td>
-                    <td>목적이 달성시까지 또는 법이 요구하는 기간까지</td>
-                  </tr>
-                </table>
-                <p class="policy_text">
-                  (4) 개인정보의 보유 및 이용기간<br />
-                  회사는 이용자의 개인정보의 수집 및 이용 목적이 달성되는 경우,
-                  개인정보에 대한 법적∙경영적 필요가 해소되는 경우, 또는
-                  이용자가 요청하는 경우, 이용자의 개인정보를 지체 없이
-                  파기합니다. 다만 관계법령의 규정에 의하여 보존할 필요가 있는
-                  경우 회사는 관계법령에서 정한 일정한 기간 동안 회원정보를
-                  보관합니다. 관계 법령에 따라 보관해야 하는 정보는 다음과
-                  같습니다.
-                </p>
-                <div class="policy_box">
-                  <p class="policy_box_text">
-                    ∘ 계약 또는 청약철회 등에 관련 기록: 5 년(전자상거래
-                    등에서의 소비자보호에 관한 법률)<br />
-                    ∘ 대금결제 및 재화 등의 공급에 관한 기록: 5 년 (전자상거래
-                    등에서의 소비자보호에 관한 법률) <br />
-                    ∘ 소비자의 불만 또는 분쟁처리에 관한 기록: 3 년 (전자상거래
-                    등에서의 소비자보호에 관한 법률)<br />
-                    ∘ 신용정보의 수집/처리 및 이용 등에 관한 기록: 3 년
-                    (신용정보의 이용 및 보호에 관한 법률)<br />
-                    ∘ 표시/광고에 관한 기록: 6 개월 (전자상거래 등에서의
-                    소비자보호에 관한 법률)<br />
-                    ∘ 이용자의 인터넷 등 로그기록/이용자의 접속지 추적자료: 3
-                    개월 (통신비밀보호법)<br />
-                    ∘ 그 외의 통신사실 확인자료: 12 개월 (통신비밀보호법)<br />
-                  </p>
-                </div>
-                <p class="policy_text">
-                  (5) 개인정보의 파기 절차 및 파기방법 <br />
-                  회사는 원칙적으로 개인정보 수집 및 이용목적이 달성된 후에는
-                  해당 정보를 지체 없이 파기합니다. 다만 관계법령에 의해
-                  보관해야 하는 정보는 법령이 정한 기간 동안 보관한 후
-                  파기합니다. 이때 별도로 저장 관리되는 개인정보는 법령에 정한
-                  경우가 아니고서는 절대 다른 용도로 이용되지 않습니다. 개인
-                  정보가 수록된 종이 기록은 파쇄 또는 소각하고, 전자 파일에
-                  저장된 개인 정보는 기술적으로 복원이 불가능한 방법을 이용하여
-                  삭제합니다.
-                </p>
-                <p class="policy_text">
-                  (6) 개인정보 보호를 위한 기술적, 관리적, 물리적 조치 <br />
-                  회사는 이용자의 개인정보를 취급함에 있어 개인정보가 분실,
-                  도난, 누출, 변조 또는 훼손되지 않도록 안전성 확보를 위하여
-                  다음과 같은 기술적, 관리적, 물리적 조치를 강구하고 있습니다.
-                </p>
-                <table class="policy_table">
-                  <tr class="table_title">
-                    <th>항목</th>
-                    <th>예시</th>
-                  </tr>
-                  <tr>
-                    <td>기술적 조치</td>
-                    <td>
-                      ∘ 개인정보 암호화 전송을 위한 보안서버 활용<br />∘
-                      비밀정보 암호화 조치<br />∘ 접근통제장치의 설치 및 운영<br />∘
-                      내부관리계획의 수립 및 시행
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>관리적 조치</td>
-                    <td>
-                      ∘ 개인정보 보호 책임자 지적<br />
-                      ∘ 개인정보취급자 교육<br />
-                      ∘ 내부관리계획의 수립 및 시행<br />
-                      ∘ 추측하기 어려운 비밀번호 작성 규칙 수립<br />
-                      ∘ 개인정보처리시스템에 대한 접근기록의 안전한 보관<br />
-                      ∘ 개인정보처리시스템에 대한 접근권한 차별화<br />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>물리적 조치</td>
-                    <td>
-                      ∘ 개인정보를 보관 시설에 대한 출입통제 절차 수립 및 운영
-                      <br />
-                      ∘ 개인정보가 포함된 서류나 보조기억매체 등은 잠금장치가
-                      부착되어 있는 안전한 장소에 보관
-                    </td>
-                  </tr>
-                </table>
+          <div>
+            <span class="input-span">문의 유형*</span>
+            <div class="radio-input-wrap">
+              <div class="radio-div">
+                <input
+                  class="radio-input"
+                  type="radio"
+                  checked
+                  name="title"
+                  value="Sales"
+                />
+                <span>세일즈</span>
               </div>
-              <div @click="closeModal" class="modal_wrap"></div>
+              <div class="radio-div">
+                <input
+                  class="radio-input"
+                  type="radio"
+                  name="title"
+                  value="Marketing"
+                />
+                <span>마케팅</span>
+              </div>
+              <div class="radio-div">
+                <input
+                  class="radio-input"
+                  type="radio"
+                  name="title"
+                  value="Partners"
+                />
+                <span>파트너</span>
+              </div>
+              <div class="radio-div">
+                <input
+                  class="radio-input"
+                  type="radio"
+                  name="title"
+                  value="Media Contact"
+                />
+                <span>언론홍보</span>
+              </div>
             </div>
           </div>
-          <div class="submit-wrap">
-            <button class="contact_button">제출</button>
+          <div>
+            <span class="input-span">문의 내용*</span>
+            <textarea
+              class="contact_input"
+              id="helpText"
+              type="text"
+              name="contents"
+            ></textarea>
           </div>
-        </div>
+          <div>
+            <div class="check_cont">
+              <input
+                type="checkbox"
+                id="privacyCheckbox"
+                class="checkbox"
+                value="Send"
+              />
+              <p>
+                <a id="openModalBtn" class="policy">개인정보처리방침</a>
+                에 동의합니다
+              </p>
+              <div id="modalDiv" class="modal">
+                <div class="modal-content">
+                  <div class="modal_title">
+                    <p class="policy_title">개인정보 처리방침</p>
+                    <p id="closeModalBtn" class="close">&times;</p>
+                  </div>
+                  <p class="policy_text">
+                    본 개인정보취급방침은 본 방침이 게시된 웹사이트에서
+                    제공되거나 수집되는 정보의 처리에 대해 설명합니다. 또한,
+                    타사 웹사이트 또는 플랫폼에 있는 회사의 애플리케이션을
+                    사용함으로써 제공되거나 수집되는 정보의 처리에 대해
+                    설명합니다.
+                  </p>
+                  <p class="policy_text">
+                    회사는 이용자의 개인정보를 중요시하며, 개인정보취급방침을
+                    통하여 회사가 이용자로부터 제공받은 개인정보를 어떠한 용도와
+                    방식으로 이용하고 있으며, 개인정보 보호를 위해 어떠한 조치를
+                    취하고 있는지 알려드립니다.
+                  </p>
+                  <p class="policy_text">
+                    본 방침은 2015 년 월 일부터 시행되며, 이를 개정하는 경우
+                    웹사이트 공지사항(또는 서면, 팩스, 이메일 등의 개별공지)을
+                    통하여 공지하겠습니다.
+                  </p>
+                  <p class="policy_text">
+                    1. 수집하는 정보 및 수집방법<br />(1) 수집하는 개인정보의
+                    항목 회사가 수집하는 개인정보의 항목은 다음과 같습니다.
+                  </p>
+                  <p class="policy_text">
+                    • 이용자가 제공하는 정보<br />
+                    회사는 이용자가 직접 제공하는 정보를 수집할 수 있습니다.<br />
+                    [개인정보취급방침 부록 &lt;1-1&gt; '개인정보 항목' 취사선택]
+                  </p>
+                  <p class="policy_text">
+                    • 이용자가 서비스를 사용할 때 수집하는 정보<br />회사는
+                    이용자가 직접 제공하는 정보 이외에도, 이용자가 회사의
+                    서비스를 사용하는 과정에서 정보를 수집할 수 있습니다.
+                    <br />[개인정보취급방침 부록 &lt;1-2&gt; '개인정보 항목'
+                    취사선택]
+                  </p>
+                  <p class="policy_text">
+                    (2) 수집방법<br />
+                    회사는 이용자의 정보를 다음과 같은 방법으로 수집합니다.
+                    [개인정보취급방침 부록 &lt;2&gt; '수집 방법' 취사선택]
+                  </p>
+                  <p class="policy_text">
+                    2. 수집한 정보의 이용<br />
+                    회사는 수집한 이용자의 정보를 다음과 같은 목적으로
+                    이용합니다.<br />[개인정보취급방침 부록 &lt;3&gt; '수집
+                    정보의 이용' 취사선택]
+                  </p>
+                  <p class="policy_text">
+                    본 개인정보취급방침에 명시된 목적과 다른 용도로 정보를
+                    이용할 경우, 회사는 이용자의 동의를 구하도록 하겠습니다.
+                  </p>
+                  <p class="policy_text">
+                    3. 수집한 정보의 공유<br />
+                    회사는 다음의 경우를 제외하고 이용자의 개인정보를 제 3
+                    자에게 공유하지 않습니다.<br />
+                    • 회사의 계열사, 파트너, 서비스 제공업체에 대한 공유<br />
+                    [개인정보취급방침 부록 &lt;4-1&gt; '수집 정보의 이용'
+                    취사선택]
+                  </p>
+                  <p class="policy_text">
+                    •이용자가 사전에 동의하는 경우<br />
+                    [개인정보취급방침 부록 &lt;4-2&gt;'수집 정보의 공유'
+                    취사선택]
+                  </p>
+                  <p class="policy_text">• 법률상 필요한 경우</p>
+                  <p class="policy_text">- 법령상 공개하도록 요구되는 경우</p>
+                  <p class="policy_text">
+                    - 수사 목적으로 법령에 정해진 절차와 방법에 따라 수사기관의
+                    요구가 있는 경우
+                  </p>
+                  <p class="policy_text">
+                    4. 쿠키, 비콘 및 기타(Cookies, Beacons and Similar
+                    Technologies)<br />
+                    회사는 '쿠키(cookies)' 또는 '웹 비콘(web beacons)' 등을
+                    통하여 비개인적인 집합정보를 수집할 수 있습니다. 쿠키란
+                    회사의 웹사이트를 운영하는데 이용되는 서버가 이용자의
+                    브라우저에 보내는 아주 작은 텍스트 파일로, 이용자의 컴퓨터
+                    하드디스크에 저장됩니다.
+                  </p>
+                  <p class="policy_text">
+                    웹 비콘은 웹사이트 또는 이메일 상에 있는 소량의 코드입니다.
+                    웹 비콘을 사용하여 이용자가 특정 웹이나 이메일 콘텐츠와 상호
+                    작용했는지 여부를 알 수 있습니다.
+                  </p>
+                  <p class="policy_text">
+                    이러한 기능은 서비스를 평가하고 개선하여 이용자 경험을 맞춤
+                    설정하는 데 유용하게 이용되어, 이용자에게 더 향상된 서비스를
+                    제공합니다.
+                  </p>
+                  <p class="policy_text">
+                    T회사가 수집하는 쿠키의 항목 및 수집 목적은 다음과
+                    같습니다.<br />
+                    [개인정보취급방침 부록 &lt;5&gt; '수집하는 쿠키' 취사선택]
+                  </p>
+                  <p class="policy_text">
+                    이용자는 쿠키 설치에 대한 선택권을 가지고 있습니다. 따라서
+                    웹브라우저에서 옵션을 설정함으로써 모든 쿠키를 허용하거나,
+                    쿠키가 저장될 때마다 확인을 거치거나, 아니면 모든 쿠키의
+                    저장을 거부할 수도 있습니다. 단, 이용자께서 쿠키 설치를
+                    거부하였을 경우 회사가 제공하는 일부 서비스에 어려움이 있을
+                    수 있습니다.
+                  </p>
+                  <p class="policy_text">
+                    5. 이용자의 접근권한과 선택권<br />
+                    이용자 또는 법정대리인은 정보의 주체로서 회사의 개인정보
+                    수집, 사용, 공유와 관련하여 다음과 같은 선택권을 행사할 수
+                    있습니다.
+                  </p>
+                  <p class="policy_text">
+                    • 개인정보에 대한 접근권한<br />
+                    • 개인정보의 정정 또는 삭제<br />
+                    • 개인정보 처리의 일시 정지<br />
+                    • 기존에 제공한 동의의 철회의 요청<br />
+                  </p>
+                  <p class="policy_text">
+                    이를 위하여 웹페이지의 '회원정보 수정' 메뉴를 이용하시거나,
+                    대표전화 또는 회사 담당부서(또는 개인정보 관리책임자)에게
+                    서면, 전화 또는 이메일로 연락하시면 지체 없이
+                    조치하겠습니다. 다만 회사는 법률에 명시된 타당한 사유 또는
+                    그에 상응하는 사유가 있는 경우에만 그러한 요청을 거부할 수
+                    있습니다.
+                  </p>
+                  <p class="policy_text">
+                    6. 보안<br />회사는 이용자의 개인정보에 대한 보안을 매우
+                    중요하게 생각합니다. 회사는 이용자 개인정보의 무단 접근,
+                    공개, 사용 및 수정을 막기 위해 다음과 같은 보안 조치를
+                    구축하고 있습니다. [개인정보취급방침 부록 &lt;6&gt;
+                    '보안조치' 취사선택]
+                  </p>
+                  <p class="policy_text">
+                    7. 어린이 개인정보 보호<br />회사는 원칙적으로 13 세 미만
+                    또는 관할 법률상 이에 상응하는 최소 연령의 어린이로부터
+                    정보를 수집하지 않습니다. 회사의 웹사이트, 제품과 서비스
+                    등은 원칙적으로 일반인을 대상으로 한 웹 사이트입니다. 회사의
+                    웹사이트 또는 애플리케이션에는 연령 제한 기능이 있어서
+                    어린이가 이용할 수 없도록 하고 있으며, 그러한 기능을 통해
+                    어린이로부터 고의로 개인정보를 수집하지 않습니다.
+                  </p>
+                  <p class="policy_text">
+                    (어린이 개인정보를 수집하는 경우 추가) 다만 회사가 부득이
+                    서비스 이용을 위하여 13 세 미만 또는 관할 법률상 이에
+                    상응하는 최소 연령의 어린이의 개인정보를 수집할 때에는,
+                    어린이 개인정보 보호를 위해 다음과 같은 절차를 추가적으로
+                    거치게 됩니다.
+                  </p>
+                  <p class="policy_text">
+                    • 어린이 개인정보 수집 또는 회사의 제품, 서비스 정보를
+                    어린이에게 직접 발송하기 위한 보호자 동의 획득<br />
+                    • 수집한 개인정보 항목, 목적, 공유 여부를 포함한 회사의
+                    어린이 개인정보보호 방침에 대하여 보호자에게 통보<br />
+                    • 법정대리인에게 해당 아동의 개인정보에 대한 액세스 /
+                    개인정보의 정정 또는 삭제 / 개인정보 처리의 일시 정지 /
+                    기존에 제공한 동의의 철회를 요청할 수 있는 권한의 부여<br />•
+                    온라인 활동의 참여에 필요한 것 이상의 개인정보 수집의 제한
+                  </p>
+                  <p class="policy_text">
+                    8. 개인정보취급방침의 변경<br />
+                    회사는 회사의 본 방침을 수시로 수정 내지 변경할 권리를
+                    보유합니다. 회사가 본 방침을 변경하는 경우 웹사이트
+                    공지사항(또는 서면, 팩스, 이메일 등의 개별공지)을 통하여
+                    공지하며, 관계법에서 요구하는 경우에는 이용자의 동의를
+                    구하게 됩니다.
+                  </p>
+                  <p class="policy_text">
+                    9. 기타<br />
+                    [개인정보취급방침 부록 &lt;7&gt; '데이터 전송' 취사선택]<br />
+                    [개인정보취급방침 부록 &lt;8&gt;'제 3 자 사이트 및 서비스'
+                    취사선택]<br />
+                    [개인정보취급방침 부록&lt;9&gt; '캘리포니아 거주자에 대한
+                    안내' 취사선택]<br />
+                    [개인정보취급방침 부록 &lt;10&gt; '한국인 거주자에 대한
+                    안내' 취사선택]
+                  </p>
+                  <p class="policy_text">
+                    10. 회사 담당부서<br />
+                    회사는 이용자의 개인정보를 보호하고 개인정보와 관련한 불만을
+                    처리하기 위하여 아래와 같이 관련 부서를 지정하고 있습니다.
+                    본 방침에 대하여 의문 사항 있거나 회사가 보유한 이용자의
+                    정보를 업데이트하고자 하는 경우, 아래 연락처로 회사에
+                    연락하시기 바랍니다.
+                  </p>
+                  <p class="policy_text">
+                    • 회사 담당부서 : <br />
+                    주소 : 9F, 3M Tower, 10 Teheran-ro 20-gil, Gangnam-gu,
+                    Seoul<br />
+                    전화번호: +82-02-2038-4606<br />
+                    E-mail: support@machbase.com <br />
+                    최종갱신일 : September, 2023
+                  </p>
+                  <p class="policy_title">개인정보취급방침 부록</p>
+                  <p class="policy_text">&lt;1-1&gt; 개인정보 항목</p>
+                  <table class="policy_table">
+                    <tr class="table_title">
+                      <th>서비스명</th>
+                      <th>수집 항목(예시)</th>
+                    </tr>
+                    <tr>
+                      <td>인터넷 회원제 서비스</td>
+                      <td>
+                        ∘ 이름, 이메일 주소, ID, 전화번호, 우편주소, 국가정보,
+                        암호화된 동일인 식별정보(CI), 중복가입확인정보(DI) 등
+                        <br />∘ 미성년자인 경우 법정대리인 정보(법정대리인의
+                        이름, 생년월일, CI, DI 등)
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>온라인 결제 서비스</td>
+                      <td>
+                        ∘ 이름, 주소, 전화 번호, 이메일 주소 등<br />
+                        ∘ 계좌번호, 카드번호 등의 결제정보<br />∘ 배송 주소지,
+                        수령인 이름, 수령인 연락처 등의 배송정보<br />∘ 입찰,
+                        구매, 판매 등 정보
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>소셜 네트워크 서비스</td>
+                      <td>
+                        ∘ 이름, 이메일 주소, ID, 전화 번호, 우편주소, 국가정보,
+                        주소록(지인) 등<br />∘ 사진 촬영 장소, 파일 생성 날짜 등
+                        정보<br />∘ 회원이 보거나 이용하는 콘텐츠의 유형, 회원의
+                        활동 빈도나 기간 등 회원의 서비스 이용에 관한 정보
+                      </td>
+                    </tr>
+                  </table>
+                  <p class="policy_text">&lt;1-2&gt; 개인정보 항목</p>
+                  <table class="policy_table">
+                    <tr class="table_title">
+                      <th>목록</th>
+                      <th>수집 항목(예시)</th>
+                    </tr>
+                    <tr>
+                      <td>기기정보</td>
+                      <td>
+                        ∘ 기기 식별자, 운영 체제, 하드웨어 버전, 기기 설정,
+                        전화번호 등
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>로그정보</td>
+                      <td>
+                        ∘ 로그데이터, 이용시간, 이용자가 입력한 검색어, 인터넷
+                        프로토콜 주소, 쿠키 및 웹비콘 등
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>위치정보</td>
+                      <td>
+                        ∘ GPS, 블루투스 또는 와이파이 신호를 통한 구체적인
+                        지리적 위치를 포함한 기기 위치에 대한 정보 등(법으로
+                        허용되는 지역에 한함)
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>기타정보</td>
+                      <td>
+                        ∘ 이용자의 서비스 사용에 있어 선호도, 광고 환경,
+                        방문하는 페이지 등
+                      </td>
+                    </tr>
+                  </table>
+                  <p class="policy_text">&lt;2&gt; 수집 방법</p>
+                  <p class="policy_text">
+                    • 웹페이지, 서면양식, 팩스, 전화, 이메일, 생성정보 수집 툴
+                    등<br />
+                    • 협력회사로부터의 제공
+                  </p>
+                  <p class="policy_text">&lt;3&gt; 수집 정보의 이용</p>
+                  <p class="policy_text">
+                    • 회원관리, 본인확인 등 <br />
+                    • 허가받지 않은 서비스 이용과 부정 이용 등의 탐지 및 방지<br />
+                    • 이용자가 요구하는 서비스 제공에 관한 계약 이행, 요금 정산
+                    등<br />
+                    • 기존서비스 개선, 신규서비스 개발 등<br />
+                    • 회사 사이트 또는 애플리케이션의 기능 또는 정책 변경사항의
+                    알림<br />
+                    • 기타 이용자의 사전 동의에 의한 이용(예를 들어, 마케팅
+                    광고에 활용 등)<br />
+                    • 연락처에 등록된 지인 검색•알림•자동 등록, 지인일 가능성이
+                    있는 다른 이용자의 검색과 알림<br />
+                    • 회원의 서비스 이용에 대한 통계, 통계학적 특성에 따른
+                    서비스 제공 및 광고 게재<br />
+                    • 홍보성 이벤트 정보 제공 및 참여 기회 제공<br />
+                    • 준거법 또는 법적 의무의 준수<br />
+                  </p>
+                  <p class="policy_text">&lt;4-1&gt; 수집 정보의 공유</p>
+                  <p class="policy_text">
+                    ∘ 회사를 대신하여 결제 처리, 주문 이행, 제품 배송, 분쟁
+                    해결(결제 및 배송 분쟁 포함) 등 서비스를 회사의 계열사,
+                    파트너, 서비스 제공업체가 수행하는 경우
+                  </p>
+                  <p class="policy_text">&lt;4-2&gt; 수집 정보의 공유</p>
+                  <p class="policy_text">
+                    ∘ 이용자의 개인정보를 특정 업체와 공유하여 해당 업체의 제품
+                    및 서비스에 대한 정보를 제공받기로 이용자가 선택하는 경우<br />
+                    ∘ 이용자의 개인정보를 소셜 네트워킹 사이트와 같은 타사
+                    사이트 또는 플랫폼과 공유하도록 이용자가 선택하는 경우
+                    <br />
+                    ∘ 기타 이용자가 사전에 동의한 경우<br />
+                  </p>
+                  <p class="policy_text">&lt;5&gt; 수집하는 쿠키</p>
+                  <table class="policy_table">
+                    <tr class="table_title">
+                      <th>카테고리</th>
+                      <th>쿠키를 사용하는 이유 및 추가 정보</th>
+                    </tr>
+                    <tr>
+                      <td>반드시 필요한 쿠키</td>
+                      <td>
+                        이 쿠키는 이용자가 회사의 웹사이트 기능을 이용하는 데
+                        필수적인 쿠키입니다. 이 쿠키를 허용하지 않으면
+                        장바구니와 전자청구서와 같은 서비스가 제공될 수
+                        없습니다. 이 쿠키는 마케팅에 사용하거나 사용자가
+                        인터넷에서 방문한 사이트를 기억하는 데 사용될 수 있는
+                        정보를 수집하지 않습니다.<br />
+                        (반드시 필요한 쿠키의 예시)<br />∘ 웹 브라우저 세션 동안
+                        다른 페이지를 검색할 때 주문 양식에 입력한 정보를
+                        기억<br />∘ 상품 및 체크아웃 페이지인 경우 주문한
+                        서비스를 기억<br />∘ 웹사이트에 로그인 여부를 확인<br />∘
+                        회사가 웹사이트의 작동 방식을 변경할 때 이용자가 회사
+                        웹사이트의 올바른 서비스에 연결되었는지 확인<br />∘
+                        서비스의 특정 어플리케이션 또는 특정 서버로 사용자를
+                        연결
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>수행 쿠키</td>
+                      <td>
+                        이 쿠키는 이용자가 가장 자주 방문하는 페이지 정보와 같이
+                        이용자가 회사 웹사이트를 어떻게 이용하고 있는지에 대한
+                        정보를 수집합니다. 이 데이터는 회사 웹사이트를
+                        최적화시키고 이용자가 좀 더 간편하게 웹사이트를 검색할
+                        수 있도록 도와줍니다. 이 쿠키는 이용자가 누구인지에 대한
+                        정보를 수집하지 않습니다. 이 쿠키가 수집하는 모든 정보는
+                        종합적으로 처리되므로 익명성이 보장됩니다.
+                        <br />
+                        (수행 쿠키의 예시) <br />
+                        ∘ 웹 분석 : 웹 사이트를 사용하는 방법에 대한 통계를
+                        제공<br />
+                        ∘ 광고 반응 요금 : 회사의 광고가 주는 효과를 확인<br />
+                        ∘ 제휴사 추적 : 회사 방문자 중 하나가 제휴사의 웹
+                        사이트를 방문한 것에 대해 제휴사에게 익명으로 피드백을
+                        제공<br />
+                        ∘ 오류 관리 : 발생하는 오류를 측정하여 웹 사이트를
+                        개선하는 데 도움<br />
+                        ∘ 디자인 테스트 : 회사의 웹 사이트의 다른 디자인을
+                        테스트<br />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>기능 쿠키</td>
+                      <td>
+                        이 쿠키는 서비스를 제공하거나 방문을 개선하기 위해
+                        설정을 기억하는 데 사용됩니다. 이 쿠키로 수집된 정보는
+                        이용자를 개별적으로 파악하지 않습니다. <br />
+                        (기능 쿠키의 예시)<br />
+                        ∘ 레이아웃, 텍스트 크기, 기본 설정, 색상 등과 같이
+                        적용한 설정을 기억<br />
+                        ∘ 회사의 설문 조사에 고객이 응하는 경우 이를 기억<br />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>대상 쿠키</td>
+                      <td>
+                        이 쿠키는 '좋아요' 버튼 및 '공유' 버튼과 같은 제 3 자가
+                        제공하는 서비스와 연결됩니다. 제 3 자는 이용자가 회사의
+                        웹사이트를 방문한 것을 인지하여 이러한 서비스를
+                        제공합니다. <br />
+                        (대상 쿠키의 예시) <br />
+                        ∘ 소셜 네트워크로 연결하여, 해당 소셜 네트워크가
+                        이용자의 방문 정보를 사용하여 나중에 다른 웹사이트에서
+                        이용자를 대상으로 홍보<br />
+                        ∘ 이용자가 관심이 있을 수 있는 광고를 제시할 수 있도록
+                        이용자 방문정보를 광고 대행사에 제공<br />
+                      </td>
+                    </tr>
+                  </table>
+                  <p class="policy_text">&lt;6&gt; 보안조치</p>
+                  <p class="policy_text">
+                    • 개인정보의 암호화 <br />
+                    - 이용자의 개인정보를 암호화된 통신구간을 이용하여 전송<br />
+                    - 비밀번호 등 중요정보는 암호화하여 보관<br />
+                    • 해킹 등에 대비한 대책 <br />
+                    - 해킹이나 컴퓨터 바이러스 등에 의해 이용자의 개인정보가
+                    유출되거나 훼손되는 것을 막기 위해 외부로부터 접근이 통제된
+                    구역에 시스템을 설치 <br />
+                    • 내부관리계획의 수립 및 시행<br />
+                    • 접근통제장치의 설치 및 운영 <br />
+                    • 접속기록의 위조, 변조 방지를 위한 조치<br />
+                  </p>
+                  <p class="policy_text">&lt;7&gt; 데이터 전송</p>
+                  <p class="policy_text">
+                    회사는 전 세계를 무대로 영업함으로 본 개인정보취급방침에
+                    명시된 목적을 위해 타국에 위치한 회사나 타사에 이용자의
+                    개인정보를 제공할 수 있습니다. 개인정보가 전송, 보유 또는
+                    처리되는 곳에 대해서는 회사가 개인정보 보호를 위한 합당한
+                    조치를 취합니다.
+                  </p>
+                  <p class="policy_text">
+                    (US 사용인 경우 추가 가능) 또한, 유럽연합에서 얻은
+                    개인정보를 사용 또는 공개 시 회사는 미국 상무부에서 정한
+                    세이프 하버 원칙을 준수하거나 유럽연합 집행기관에서 승인한
+                    표준 계약 조항 사용, 또는 적절한 안전장치 보장을 위해
+                    유럽연합 규정 내에서 다른 방안을 강구하거나 이용자의 동의를
+                    구합니다.
+                  </p>
+                  <p class="policy_text">&lt;8&gt; 제 3 자 사이트 및 서비스</p>
+                  <p class="policy_text">
+                    회사의 웹 사이트, 제품, 서비스 등은 제 3 자의 웹사이트,
+                    제품, 서비스 등의 링크를 포함할 수 있습니다. 링크된 제 3 자
+                    사이트의 개인정보취급방침이 회사의 정책과 다룰 수 있습니다.
+                    따라서 이용자들은 링크된 제 3 자 사이트의 개인정보취급방침을
+                    추가적으로 검토하셔야 합니다.
+                  </p>
+                  <p class="policy_text">
+                    &lt;9&gt; 캘리포니아 거주자에 대한 안내
+                  </p>
+                  <p class="policy_text">
+                    캘리포니아에 거주하시는 분이라면 특정 권리사항이 추가될 수
+                    있습니다. 회사는 캘리포니아 온라인 프라이버시 보호법을
+                    준수하기 위해 회원의 개인정보를 보호하기 위해 필요한
+                    예방책을 마련합니다.
+                  </p>
+                  <p class="policy_text">
+                    이용자는 개인정보가 누출되었을 경우 정보유출 확인을 요청할
+                    수 있습니다. 또한 회사 웹사이트의 모든 이용자는 개인 계정에
+                    접속하여 정보 수정 메뉴를 이용하여 언제든지 정보를 변경할 수
+                    있습니다.
+                  </p>
+                  <p class="policy_text">
+                    또한 회사는 웹 사이트 방문자를 추적하지 않습니다. 또한 '추적
+                    방지' 신호도 사용하지 않습니다. 회사는 이용자의 동의 없이
+                    광고 서비스를 통해 개인 식별 정보를 수집하고 타사에 제공하지
+                    않습니다.
+                  </p>
+                  <p class="policy_text">
+                    &lt;10&gt; 한국인 거주자에 대한 안내
+                  </p>
+                  <p class="policy_text">
+                    회사는 대한민국 정보통신망법 및 개인정보보호법이 요구하는 몇
+                    가지 추가 공개 사항을 다음과 같이 안내합니다.
+                  </p>
+                  <p class="policy_text">
+                    (1) 수집하는 정보 <br />
+                    회사가 수집하는 개인정보의 항목은 다음과 같습니다.
+                    <br />
+                    • 필수항목 예시
+                  </p>
+                  <table class="policy_table">
+                    <tr class="table_title">
+                      <th>서비스명</th>
+                      <th>수집 항목(예시)</th>
+                    </tr>
+                    <tr>
+                      <td>인터넷 회원제 서비스</td>
+                      <td>
+                        ∘ 이름, 이메일 주소, ID, 전화번호, 우편주소, 국가정보,
+                        암호화된 동일인 식별정보(CI), 중복가입확인정보(DI) 등
+                        <br />∘ 미성년자인 경우 법정대리인 정보(법정대리인의
+                        이름, 생년월일, CI, DI 등)
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>온라인 결제 서비스</td>
+                      <td>
+                        ∘ 이름, 주소, 전화 번호, 이메일 주소 등<br />
+                        ∘ 신용카드 결제시 : 카드사 명, 카드번호, 카드유효기간
+                        등<br />
+                        ∘ 이동전화 소액결제시 : 이동전화번호, 결제승인번호 등<br />
+                        ∘ 계좌이체 결제시 : 은행명, 계좌번호, 계좌비밀번호 등<br />
+                        ∘ 무통장 입금시 : 송금인명, 연락처등<br />
+                        ∘ 배송 주소지, 수령인 이름, 수령인 연락처 등의
+                        배송정보<br />
+                        ∘ 입찰, 구매, 판매 등 정보<br />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>소셜 네트워크 서비스</td>
+                      <td>
+                        ∘ 이름, 이메일 주소, ID, 전화 번호, 우편주소, 국가정보,
+                        주소록(지인) 등<br />
+                        ∘ 사진 촬영 장소, 파일 생성 날짜 등 정보<br />
+                        ∘ 회원이 보거나 이용하는 콘텐츠의 유형, 회원의 활동
+                        빈도나 기간 등 회원의 서비스 이용에 관한 정보<br />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="policy_left" colspan="2">
+                        서비스 이용과정에서 아래와 같은 정보들이 자동으로
+                        생성되어 수집될 수 있습니다.<br />
+                        ∘ 기기정보(기기 식별자, 운영 체제, 하드웨어 버전, 기기
+                        설정, 전화번호 등)<br />
+                        ∘ 로그정보(로그데이터, 이용시간, 이용자가 입력한 검색어,
+                        인터넷 프로토콜 주소, 쿠키 및 웹비콘 등)<br />
+                        ∘ 위치정보(GPS, 블루투스 또는 와이파이 신호를 통한
+                        구체적인 지리적 위치를 포함한 기기 위치에 대한 정보
+                        등)<br />
+                        ∘ 기타 생성정보<br />
+                      </td>
+                    </tr>
+                  </table>
+                  <p class="policy_text">
+                    • 선택항목 예시 <br />
+                    이용자는 선택항목 수집 및 이용에 동의를 거부하실 수 있으며,
+                    동의를 거부하시더라도 서비스 이용에 제한은 없습니다.
+                  </p>
+                  <table class="policy_table">
+                    <tr class="table_title">
+                      <th>수집 목적</th>
+                      <th>수집 항목(예시)</th>
+                    </tr>
+                    <tr>
+                      <td>이용자 분석</td>
+                      <td>
+                        ∘ 가입하신 사유, 직업, 결혼여부, 결혼기념일, 관심
+                        카테고리, SNS 계정정보 등
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>맞춤화된 광고의 제공</td>
+                      <td>
+                        ∘ 마케팅활동 내용 및 결과, 이벤트참여 내용 및 결과 등
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>급한 고지사항 전달</td>
+                      <td>
+                        ∘ 타 계약의 체결ᆞ유지ᆞ이행ᆞ관리ᆞ행사참여 등과 관련하여
+                        이용자가 제공한 정보
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>마케팅</td>
+                      <td>
+                        ∘ 이용자의 서비스 사용에 있어 선호도, 광고 환경,
+                        방문하는 페이지 등
+                      </td>
+                    </tr>
+                  </table>
+                  <p class="policy_text">
+                    • (민감정보 수집의 경우 추가) 민감정보 예시 <br />
+                    회사는 민감정보의 수집이 반드시 필요할 경우에는 관련 법령에
+                    따라 적법한 절차를 거쳐서 수집합니다. 회사가 수집하는
+                    민감정보는 다음과 같습니다.
+                  </p>
+                  <p class="policy_text">
+                    ∘ 사상·신념<br />
+                    ∘ 노동조합·정당의 가입·탈퇴<br />
+                    ∘ 정치적 견해 <br />
+                    ∘ 건강, 성생활 등에 관한 정보<br />
+                    ∘ 유전자검사 등의 결과로 얻어진 유전정보
+                    <br />
+                    ∘ 형의 선고·면제 및 선고유예, 보호감호, 치료감호, 보호관찰,
+                    선고유예의 실효, 집행유예의 취소 등 범죄경력에 관한 정보<br />
+                  </p>
+                  <p class="policy_text">
+                    (2) 수집한 개인정보의 위탁 <br />
+                    회사는 서비스 이행을 위해 아래와 같이 개인정보 처리 업무를
+                    외부 전문업체에 위탁하여 처리하고 있습니다. 개인정보
+                    처리위탁은 개별 서비스 별로 그 이행을 위해 필요한 경우에
+                    한해 각 위탁업체에 대해 이루어집니다.<br />
+                    회사가 개인정보의 처리를 위탁하는 경우에는 개인정보 보호의
+                    안전을 기하기 위하여 개인정보보호 관련 지시 엄수, 개인정보에
+                    대한 비밀유지, 제 3 자 제공의 금지 및 사고시의 책임부담,
+                    위탁기간, 처리 종료 후의 개인정보의 반환 또는 파기 등을
+                    명확히 규정하고, 위탁업체가 개인정보를 안전하게 처리하도록
+                    감독합니다.
+                  </p>
+                  <table class="policy_table">
+                    <tr class="table_title">
+                      <th>수탁업체의 명칭</th>
+                      <th>위탁하는 업무(서비스)의 내용</th>
+                    </tr>
+                    <tr>
+                      <td>AAA</td>
+                      <td>고객상담</td>
+                    </tr>
+                  </table>
+                  <p class="policy_text">
+                    (3) 개인정보의 제 3 자 제공에 대한 세부사항 <br />
+                    회사는 아래의 경우를 제외하고 이용자의 개인정보를 제 3
+                    자에게 공개하거나 제공하지 않습니다.
+                  </p>
+                  <table class="policy_table">
+                    <tr class="table_title">
+                      <th>제공 받는 자</th>
+                      <th>제공 받는 자의 이용목적</th>
+                      <th>제공 항목</th>
+                      <th>제공받는 자의 보유 및 이용기간</th>
+                    </tr>
+                    <tr>
+                      <td>BBB</td>
+                      <td>제휴 서비스 제공</td>
+                      <td>ID, 이름, 나이</td>
+                      <td>목적이 달성시까지 또는 법이 요구하는 기간까지</td>
+                    </tr>
+                  </table>
+                  <p class="policy_text">
+                    (4) 개인정보의 보유 및 이용기간<br />
+                    회사는 이용자의 개인정보의 수집 및 이용 목적이 달성되는
+                    경우, 개인정보에 대한 법적∙경영적 필요가 해소되는 경우, 또는
+                    이용자가 요청하는 경우, 이용자의 개인정보를 지체 없이
+                    파기합니다. 다만 관계법령의 규정에 의하여 보존할 필요가 있는
+                    경우 회사는 관계법령에서 정한 일정한 기간 동안 회원정보를
+                    보관합니다. 관계 법령에 따라 보관해야 하는 정보는 다음과
+                    같습니다.
+                  </p>
+                  <div class="policy_box">
+                    <p class="policy_box_text">
+                      ∘ 계약 또는 청약철회 등에 관련 기록: 5 년(전자상거래
+                      등에서의 소비자보호에 관한 법률)<br />
+                      ∘ 대금결제 및 재화 등의 공급에 관한 기록: 5 년 (전자상거래
+                      등에서의 소비자보호에 관한 법률) <br />
+                      ∘ 소비자의 불만 또는 분쟁처리에 관한 기록: 3 년
+                      (전자상거래 등에서의 소비자보호에 관한 법률)<br />
+                      ∘ 신용정보의 수집/처리 및 이용 등에 관한 기록: 3 년
+                      (신용정보의 이용 및 보호에 관한 법률)<br />
+                      ∘ 표시/광고에 관한 기록: 6 개월 (전자상거래 등에서의
+                      소비자보호에 관한 법률)<br />
+                      ∘ 이용자의 인터넷 등 로그기록/이용자의 접속지 추적자료: 3
+                      개월 (통신비밀보호법)<br />
+                      ∘ 그 외의 통신사실 확인자료: 12 개월 (통신비밀보호법)<br />
+                    </p>
+                  </div>
+                  <p class="policy_text">
+                    (5) 개인정보의 파기 절차 및 파기방법 <br />
+                    회사는 원칙적으로 개인정보 수집 및 이용목적이 달성된 후에는
+                    해당 정보를 지체 없이 파기합니다. 다만 관계법령에 의해
+                    보관해야 하는 정보는 법령이 정한 기간 동안 보관한 후
+                    파기합니다. 이때 별도로 저장 관리되는 개인정보는 법령에 정한
+                    경우가 아니고서는 절대 다른 용도로 이용되지 않습니다. 개인
+                    정보가 수록된 종이 기록은 파쇄 또는 소각하고, 전자 파일에
+                    저장된 개인 정보는 기술적으로 복원이 불가능한 방법을
+                    이용하여 삭제합니다.
+                  </p>
+                  <p class="policy_text">
+                    (6) 개인정보 보호를 위한 기술적, 관리적, 물리적 조치 <br />
+                    회사는 이용자의 개인정보를 취급함에 있어 개인정보가 분실,
+                    도난, 누출, 변조 또는 훼손되지 않도록 안전성 확보를 위하여
+                    다음과 같은 기술적, 관리적, 물리적 조치를 강구하고 있습니다.
+                  </p>
+                  <table class="policy_table">
+                    <tr class="table_title">
+                      <th>항목</th>
+                      <th>예시</th>
+                    </tr>
+                    <tr>
+                      <td>기술적 조치</td>
+                      <td>
+                        ∘ 개인정보 암호화 전송을 위한 보안서버 활용<br />∘
+                        비밀정보 암호화 조치<br />∘ 접근통제장치의 설치 및
+                        운영<br />∘ 내부관리계획의 수립 및 시행
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>관리적 조치</td>
+                      <td>
+                        ∘ 개인정보 보호 책임자 지적<br />
+                        ∘ 개인정보취급자 교육<br />
+                        ∘ 내부관리계획의 수립 및 시행<br />
+                        ∘ 추측하기 어려운 비밀번호 작성 규칙 수립<br />
+                        ∘ 개인정보처리시스템에 대한 접근기록의 안전한 보관<br />
+                        ∘ 개인정보처리시스템에 대한 접근권한 차별화<br />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>물리적 조치</td>
+                      <td>
+                        ∘ 개인정보를 보관 시설에 대한 출입통제 절차 수립 및 운영
+                        <br />
+                        ∘ 개인정보가 포함된 서류나 보조기억매체 등은 잠금장치가
+                        부착되어 있는 안전한 장소에 보관
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                <div @click="closeModal" class="modal_wrap"></div>
+              </div>
+            </div>
+            <div class="submit-wrap">
+              <button id="submitBtn" class="contact_button">제출</button>
+            </div>
+          </div>
+        </form>
       </div>
     </section>
   </div>
@@ -907,6 +1017,69 @@ toc: false
   </footer>
 </body>
 <script>
+  const fullNameInput = document.getElementById("fullName");
+  const emailAddressInput = document.getElementById("emailAddress");
+  const countrySelect = document.getElementById("countrySelect");
+  const helpText = document.getElementById("helpText");
+  const privacyCheckbox = document.getElementById("privacyCheckbox");
+  const submitButton = document.getElementById("submitBtn");
+  function validateEmail(email) {
+    const re =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+  }
+  function validateForm() {
+    const fullName = document.getElementById("fullName");
+    const email = document.getElementById("emailAddress");
+    const country = document.getElementById("countrySelect");
+    const message = document.getElementById("helpText");
+    const privacyPolicy = document.getElementById("privacyCheckbox");
+    const radios = document.getElementsByClassName("radio-input");
+    var why = "";
+    for (var i = 0; i < radios.length; i++) {
+      if (radios[i].checked) {
+        why = radios[i].value;
+        break;
+      }
+    }
+    if (!fullName.value) {
+      alert("성함을 입력해주세요.");
+      return false;
+    }
+    if (!email.value) {
+      alert("E-mail을 입력해주세요.");
+      return false;
+    }
+    if (!validateEmail(email.value)) {
+      alert("Email형식이 유효하지 않습니다.");
+      return false;
+    }
+    if (!country.value) {
+      alert("국가를 선택해주세요");
+      return false;
+    }
+    if (why === "" || why === undefined) {
+      alert("문의 유형을 선택해주세요");
+      return false;
+    }
+    if (!message.value) {
+      alert("문의 내용을 입력해주세요.");
+      return false;
+    }
+    if (!privacyPolicy.checked) {
+      alert("개인정보처리방침에 동의해주세요");
+      return false;
+    }
+    alert("감사합니다.");
+    return true;
+  }
+  submitButton.addEventListener("click", function (event) {
+    const contactForm = document.getElementById("contactForm");
+    event.preventDefault();
+    if (validateForm()) {
+      contactForm.submit();
+    }
+  });
   const openModalBtn = document.getElementById("openModalBtn");
   const modal = document.getElementById("modalDiv");
   const closeModalBtn = document.getElementById("closeModalBtn");
@@ -2883,7 +3056,7 @@ toc: false
       CountryNameOriginal: "Zambia",
     },
   };
-  const selectElement = document.getElementById("country-select");
+  const selectElement = document.getElementById("countrySelect");
   for (const code in countries) {
     const option = document.createElement("option");
     option.value = code;
@@ -2892,6 +3065,7 @@ toc: false
   }
   //drop down menu
   const productsMenuWrap = document.getElementById("productsMenuWrap");
+  const docsMenuWrap = document.getElementById("docsMenuWrap");
   const dropdown = document.getElementById("dropdown");
   dropdown.style.display = "none";
   productsMenuWrap.addEventListener("mouseover", function () {
@@ -2899,5 +3073,34 @@ toc: false
   });
   productsMenuWrap.addEventListener("mouseout", function () {
     dropdown.style.display = "none";
+  });
+  docsMenuWrap.addEventListener("mouseover", function () {
+    dropdownDocs.style.display = "block";
+  });
+  docsMenuWrap.addEventListener("mouseout", function () {
+    dropdownDocs.style.display = "none";
+  });
+  //tablet menu
+  const menuIcon = document.querySelector(".tablet-menu-icon");
+  const tabletMenu = document.querySelector(".tablet-menu");
+  const productsToggle = document.querySelector(".products-toggle");
+  const productsSub = document.querySelector(".products-sub");
+  const productsNum = document.querySelector(".products-num");
+  const productsCems = document.querySelector(".products-cems");
+  const docsToggle = document.querySelector(".docs-toggle");
+  const docsSub = document.querySelector(".docs-sub");
+  const docsNum = document.querySelector(".docs-num");
+  menuIcon.addEventListener("click", () => {
+    tabletMenu.classList.toggle("show");
+    menuIcon.classList.toggle("is-active");
+  });
+  productsToggle.addEventListener("click", () => {
+    productsSub.classList.toggle("show");
+    productsNum.classList.toggle("show");
+    productsCems.classList.toggle("show");
+  });
+  docsToggle.addEventListener("click", () => {
+    docsSub.classList.toggle("show");
+    docsNum.classList.toggle("show");
   });
 </script>

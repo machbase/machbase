@@ -13,7 +13,9 @@ title:
     <div class="menu-left">
       <ul class="menu-left-ul">
         <li class="menu-logo">
-          <a href="/kr/home"><img src="./img/logo_machbase.png" alt="" /></a>
+          <a href="/kr/home"
+            ><img src="./img/logo_machbase.png" alt=""
+          /></a>
         </li>
         <li class="menu-a products-menu-wrap" id="productsMenuWrap">
           <div>
@@ -35,7 +37,6 @@ title:
             </div>
           </div>
         </li>
-        <li class="menu-a"><a href="/">Docs</a></li>
         <li class="menu-a"><a href="/kr/home/blog">Blog</a></li>
         <li class="menu-a"><a href="/kr/home/customers">Customers</a></li>
         <li class="menu-a"><a href="/kr/home/usecase">Use Case</a></li>
@@ -44,6 +45,19 @@ title:
     </div>
     <div class="menu-right">
       <ul class="menu-right-ul">
+        <li class="menu-a docs-menu-wrap" id="docsMenuWrap">
+          <a href=""
+            ><div>
+              <a class="menu_active_border" id="menuActiveBorder" href="/"
+                >Document</a
+              >
+              <div class="dropdown-docs" id="dropdownDocs">
+                <a class="dropdown-link" href="/neo">Neo</a>
+                <a class="dropdown-link" href="/dbms">Classic</a>
+              </div>
+            </div></a
+          >
+        </li>
         <li class="menu-a"><a href="/kr/home/download">Download</a></li>
         <li class="menu-a">
           <a href="https://support.machbase.com/hc/en-us">Support</a>
@@ -51,6 +65,48 @@ title:
         <li class="menu-a"><a href="/kr/home/contactus">Contact US</a></li>
       </ul>
     </div>
+  </div>
+</nav>
+<nav class="tablet-menu-wrap">
+  <a href="/kr/home"><img src="./img/logo_machbase.png" alt="" /></a>
+  <div class="tablet-menu-icon">
+    <div class="tablet-bar"></div>
+    <div class="tablet-bar"></div>
+    <div class="tablet-bar"></div>
+  </div>
+  <div class="tablet-menu">
+    <ul>
+      <div class="tablet-menu-title">
+        <a class="tablet-logo" href="/kr/home"
+          ><img src="./img/logo_machbase.png" alt=""
+        /></a>
+      </div>
+      <li></li>
+      <li class="products-toggle">Products</li>
+      <li>
+        <div class="products-content">
+          <div class="products-sub"><a href="/kr/home/tsdb">TSDB</a></div>
+          <div class="products-num"><a href="/kr/home/mos">MOS</a></div>
+          <div class="products-cems">
+            <a href="https://www.cems.ai/">CEMS</a>
+          </div>
+        </div>
+      </li>
+      <li><a href="/kr/home/blog">Blog</a></li>
+      <li><a href="/kr/home/customers">Customers</a></li>
+      <li><a href="/kr/home/usecase">Use Cases</a></li>
+      <li><a href="/kr/home/company">Company</a></li>
+      <li class="docs-toggle">Document</li>
+      <li>
+        <div class="docs-content">
+          <div class="docs-sub"><a href="/neo">Neo</a></div>
+          <div class="docs-num"><a href="/dbms">Classic</a></div>
+        </div>
+      </li>
+      <li><a href="/kr/home/download">Download</a></li>
+      <li><a href="https://support.machbase.com/hc/en-us">Support</a></li>
+      <li><a href="/kr/home/download">Contact US</a></li>
+    </ul>
   </div>
 </nav>
 <section class="section1 main_section1 main_wrap">
@@ -1244,14 +1300,44 @@ const codeToCopy = jsonData.codes[codeType];
 copyToClipboard(codeToCopy, button);
 });
 });
-//drop down menu
-const productsMenuWrap = document.getElementById("productsMenuWrap");
-const dropdown = document.getElementById("dropdown");
-dropdown.style.display = "none";
-productsMenuWrap.addEventListener("mouseover", function() {
-  dropdown.style.display = "block";
-});
-productsMenuWrap.addEventListener("mouseout", function() {
+ //drop down menu
+  const productsMenuWrap = document.getElementById("productsMenuWrap");
+  const docsMenuWrap = document.getElementById("docsMenuWrap");
+  const dropdown = document.getElementById("dropdown");
   dropdown.style.display = "none";
-});
+  productsMenuWrap.addEventListener("mouseover", function () {
+    dropdown.style.display = "block";
+  });
+  productsMenuWrap.addEventListener("mouseout", function () {
+    dropdown.style.display = "none";
+  });
+  docsMenuWrap.addEventListener("mouseover", function () {
+    dropdownDocs.style.display = "block";
+  });
+  docsMenuWrap.addEventListener("mouseout", function () {
+    dropdownDocs.style.display = "none";
+  });
+//tablet menu
+  const menuIcon = document.querySelector(".tablet-menu-icon");
+  const tabletMenu = document.querySelector(".tablet-menu");
+  const productsToggle = document.querySelector(".products-toggle");
+  const productsSub = document.querySelector(".products-sub");
+  const productsNum = document.querySelector(".products-num");
+  const productsCems = document.querySelector(".products-cems");
+  const docsToggle = document.querySelector(".docs-toggle");
+  const docsSub = document.querySelector(".docs-sub");
+  const docsNum = document.querySelector(".docs-num");
+  menuIcon.addEventListener("click", () => {
+    tabletMenu.classList.toggle("show");
+    menuIcon.classList.toggle("is-active");
+  });
+  productsToggle.addEventListener("click", () => {
+    productsSub.classList.toggle("show");
+    productsNum.classList.toggle("show");
+    productsCems.classList.toggle("show");
+  });
+  docsToggle.addEventListener("click", () => {
+    docsSub.classList.toggle("show");
+    docsNum.classList.toggle("show");
+  });
 </script>

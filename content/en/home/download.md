@@ -34,7 +34,6 @@ toc: false
               </div>
             </div>
           </li>
-          <li class="menu-a"><a href="/">Docs</a></li>
           <li class="menu-a"><a href="/home/blog">Blog</a></li>
           <li class="menu-a"><a href="/home/customers">Customers</a></li>
           <li class="menu-a"><a href="/home/usecase">Use Case</a></li>
@@ -43,6 +42,19 @@ toc: false
       </div>
       <div class="menu-right">
         <ul class="menu-right-ul">
+          <li class="menu-a docs-menu-wrap" id="docsMenuWrap">
+            <a href=""
+              ><div>
+                <a class="menu_active_border" id="menuActiveBorder" href="/"
+                  >Document</a
+                >
+                <div class="dropdown-docs" id="dropdownDocs">
+                  <a class="dropdown-link" href="/neo">Neo</a>
+                  <a class="dropdown-link" href="/dbms">Classic</a>
+                </div>
+              </div></a
+            >
+          </li>
           <li class="menu-a"><a href="/home/download">Download</a></li>
           <li class="menu-a">
             <a href="https://support.machbase.com/hc/en-us">Support</a>
@@ -50,6 +62,48 @@ toc: false
           <li class="menu-a"><a href="/home/contactus">Contact US</a></li>
         </ul>
       </div>
+    </div>
+  </nav>
+  <nav class="tablet-menu-wrap">
+    <a href="/kr/home"><img src="../img/logo_machbase.png" alt="" /></a>
+    <div class="tablet-menu-icon">
+      <div class="tablet-bar"></div>
+      <div class="tablet-bar"></div>
+      <div class="tablet-bar"></div>
+    </div>
+    <div class="tablet-menu">
+      <ul>
+        <div class="tablet-menu-title">
+          <a class="tablet-logo" href="/home"
+            ><img src="../img/logo_machbase.png" alt=""
+          /></a>
+        </div>
+        <li></li>
+        <li class="products-toggle">Products</li>
+        <li>
+          <div class="products-content">
+            <div class="products-sub"><a href="/home/tsdb">TSDB</a></div>
+            <div class="products-num"><a href="/home/mos">MOS</a></div>
+            <div class="products-cems">
+              <a href="https://www.cems.ai/">CEMS</a>
+            </div>
+          </div>
+        </li>
+        <li><a href="/home/blog">Blog</a></li>
+        <li><a href="/home/customers">Customers</a></li>
+        <li><a href="/home/usecase">Use Cases</a></li>
+        <li><a href="/home/company">Company</a></li>
+        <li class="docs-toggle">Document</li>
+        <li>
+          <div class="docs-content">
+            <div class="docs-sub"><a href="/neo">Neo</a></div>
+            <div class="docs-num"><a href="/dbms">Classic</a></div>
+          </div>
+        </li>
+        <li><a href="/home/download">Download</a></li>
+        <li><a href="https://support.machbase.com/hc/en-us">Support</a></li>
+        <li><a href="/home/download">Contact US</a></li>
+      </ul>
     </div>
   </nav>
   <section class="download_section0">
@@ -106,39 +160,61 @@ toc: false
           </td>
           <td class="download_th1_2">arm32</td>
           <td class="download_th1_4">
-            <span>wget</span>
+            <span
+              >wget
+              https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-arm32.zip
+            </span>
           </td>
           <td class="puple download_th1_5">
-            <button class="download_copy_btn">
-              <img src="../img/btn_codecopy.png" /></button
+            <button data-code="neoLinuxArm32" class="download_copy_btn ">
+                <img src="../img/btn_codecopy.png"
+              /></button
             ><button class="download_link_btn">
+                 <a
+                href="https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-arm32.zip"
+              >
               <img src="../img/btn_newlink.png" />
+              </a>
             </button>
           </td>
         </tr>
         <tr class="top_line">
           <td class="download_th1_3">arm64</td>
           <td class="download_th1_4">
-            <span>wget </span>
+            <span
+              >wget
+              https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-arm64.zip
+            </span>
           </td>
           <td class="puple download_th1_5">
-            <button class="download_copy_btn">
+            <button data-code="neoLinuxArm64" class="download_copy_btn ">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
-              <img src="../img/btn_newlink.png" />
+              <a
+                href="https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-arm64.zip"
+              >
+                <img src="../img/btn_newlink.png" />
+              </a>
             </button>
           </td>
         </tr>
         <tr class="top_line">
           <td>x64</td>
           <td class="download_th1_4">
-            <span>wget </span>
+            <span
+              >wget
+              https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-amd64.zip
+            </span>
           </td>
           <td class="puple download_th1_5">
-            <button class="download_copy_btn">
+            <button data-code="neoLinuxX64" class="download_copy_btn ">
               <img src="../img/btn_codecopy.png" /></button
-            ><button class="download_link_btn">
-              <img src="../img/btn_newlink.png" />
+            ><button class="download_link_btn ">
+              <a
+                href="https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-amd64.zip"
+              >
+                <img src="../img/btn_newlink.png" />
+              </a>
             </button>
           </td>
         </tr>
@@ -146,26 +222,40 @@ toc: false
           <td rowspan="2">MacOS</td>
           <td>arm64(M1)</td>
           <td class="download_th1_4">
-            <span>wget </span>
+            <span
+              >wget
+              https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-darwin-arm64.zip
+            </span>
           </td>
           <td class="puple download_th1_5">
-            <button class="download_copy_btn">
+            <button data-code="neoMacArm64" class="download_copy_btn ">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
-              <img src="../img/btn_newlink.png" />
+              <a
+                href="https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-darwin-arm64.zip"
+              >
+                <img src="../img/btn_newlink.png" />
+              </a>
             </button>
           </td>
         </tr>
         <tr class="top_line">
           <td>x64</td>
           <td class="download_th1_4">
-            <span>wget </span>
+            <span
+              >wget
+              https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-darwin-amd64.zip
+            </span>
           </td>
           <td class="puple download_th1_5">
-            <button class="download_copy_btn">
+            <button data-code="neoMacX64" class="download_copy_btn ">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
-              <img src="../img/btn_newlink.png" />
+              <a
+                href="https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-darwin-amd64.zip"
+              >
+                <img src="../img/btn_newlink.png" />
+              </a>
             </button>
           </td>
         </tr>
@@ -173,13 +263,20 @@ toc: false
           <td>Windows</td>
           <td>x64</td>
           <td class="download_th1_4">
-            <span>wget </span>
+            <span
+              >wget
+              https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-windows-amd64.zip
+            </span>
           </td>
           <td class="puple border_bottom_right">
-            <button class="download_copy_btn">
+            <button data-code="neoWindowsX64" class="download_copy_btn ">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
-              <img src="../img/btn_newlink.png" />
+              <a
+                href="https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-windows-amd64.zip"
+              >
+                <img src="../img/btn_newlink.png" />
+              </a>
             </button>
           </td>
         </tr>
@@ -225,26 +322,40 @@ toc: false
           <td rowspan="2">Linux</td>
           <td>64bit/x64</td>
           <td class="download_th1_4">
-            <span>wget </span>
+            <span
+              >wget
+              https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-X86-64-release.tgz
+            </span>
           </td>
           <td class="puple download_th1_5">
-            <button class="download_copy_btn">
+            <button data-code="sdkLinuxX64" class="download_copy_btn ">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
-              <img src="../img/btn_newlink.png" />
+              <a
+                href="https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-X86-64-release.tgz"
+              >
+                <img src="../img/btn_newlink.png" />
+              </a>
             </button>
           </td>
         </tr>
         <tr class="top_line">
           <td>64bit/ARM</td>
           <td class="download_th1_4">
-            <span>wget </span>
+            <span
+              >wget
+              https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-ARM_CORTEX_A53-64-release.tgz
+            </span>
           </td>
           <td class="puple download_th1_5">
-            <button class="download_copy_btn">
+            <button data-code="sdkLinuxArm" class="download_copy_btn ">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
-              <img src="../img/btn_newlink.png" />
+              <a
+                href="https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-ARM_CORTEX_A53-64-release.tgz"
+              >
+                <img src="../img/btn_newlink.png" />
+              </a>
             </button>
           </td>
         </tr>
@@ -252,26 +363,40 @@ toc: false
           <td rowspan="2">Windows</td>
           <td>64bit/x64</td>
           <td class="download_th1_4">
-            <span>wget</span>
+            <span
+              >wget
+              https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-64-release.msi</span
+            >
           </td>
           <td class="puple download_th1_5">
-            <button class="download_copy_btn">
+            <button data-code="sdkWindowsX64" class="download_copy_btn ">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
-              <img src="../img/btn_newlink.png" />
+              <a
+                href="https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-64-release.msi"
+              >
+                <img src="../img/btn_newlink.png" />
+              </a>
             </button>
           </td>
         </tr>
         <tr class="top_line">
           <td>32bit SDK</td>
           <td class="download_th1_4">
-            <span>wget </span>
+            <span
+              >wget
+              https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-32-release.msi
+            </span>
           </td>
           <td class="puple download_th1_5">
-            <button class="download_copy_btn">
+            <button data-code="sdkWindows32" class="download_copy_btn ">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
-              <img src="../img/btn_newlink.png" />
+              <a
+                href="https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-32-release.msi"
+              >
+                <img src="../img/btn_newlink.png" />
+              </a>
             </button>
           </td>
         </tr>
@@ -279,26 +404,40 @@ toc: false
           <td rowspan="2">Mac OS</td>
           <td>64bit/ARM</td>
           <td class="download_th1_4">
-            <span>wget </span>
+            <span
+              >wget
+              https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-ARM_M1-64-release.tgz
+            </span>
           </td>
           <td class="puple download_th1_5">
-            <button class="download_copy_btn">
+            <button data-code="sdkMacArm" class="download_copy_btn ">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
-              <img src="../img/btn_newlink.png" />
+              <a
+                href="https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-ARM_M1-64-release.tgz"
+              >
+                <img src="../img/btn_newlink.png" />
+              </a>
             </button>
           </td>
         </tr>
         <tr class="top_line">
           <td>64bit/x64</td>
           <td class="download_th1_4">
-            <span>wget </span>
+            <span
+              >wget
+              https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-X86-64-release.tgz
+            </span>
           </td>
           <td class="puple download_th1_5">
-            <button class="download_copy_btn">
+            <button data-code="sdkMacX64" class="download_copy_btn ">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
-              <img src="../img/btn_newlink.png" />
+              <a
+                href="https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-X86-64-release.tgz"
+              >
+                <img src="../img/btn_newlink.png" />
+              </a>
             </button>
           </td>
         </tr>
@@ -413,14 +552,76 @@ toc: false
   </footer>
 </body>
 <script>
-  //drop down menu
-const productsMenuWrap = document.getElementById("productsMenuWrap");
-const dropdown = document.getElementById("dropdown");
-dropdown.style.display = "none";
-productsMenuWrap.addEventListener("mouseover", function() {
-  dropdown.style.display = "block";
+  const jsonData = {
+codes: {
+  neoLinuxArm32:"https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-arm32.zip",
+  neoLinuxArm64:"https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-arm64.zip",
+  neoLinuxX64:"https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-amd64.zip",
+  neoMacArm64:"https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-darwin-arm64.zip",
+  neoMacX64:"https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-darwin-amd64.zip",
+  neoWindowsX64:"https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-windows-amd64.zip",
+  sdkLinuxX64:"https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-X86-64-release.tgz",
+  sdkLinuxArm:"https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-ARM_CORTEX_A53-64-release.tgz",
+  sdkWindowsX64:"https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-64-release.msi",
+  sdkWindows32:"https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-32-release.msi",
+  sdkMacArm:"https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-ARM_M1-64-release.tgz",
+  sdkMacX64:"https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-X86-64-release.tgz"
+},};
+  function copyToClipboard(text, button) {
+const textArea = document.createElement("textarea");
+textArea.value = text;
+document.body.appendChild(textArea);
+textArea.select();
+document.execCommand("copy");
+document.body.removeChild(textArea);
+    alert("Copied");
+}
+const copyButtons = document.querySelectorAll(".download_copy_btn");
+copyButtons.forEach((button) => {
+button.addEventListener("click", function () {
+const codeType = button.getAttribute("data-code");
+const codeToCopy = jsonData.codes[codeType];
+copyToClipboard(codeToCopy, button);
 });
-productsMenuWrap.addEventListener("mouseout", function() {
+});
+ //drop down menu
+  const productsMenuWrap = document.getElementById("productsMenuWrap");
+  const docsMenuWrap = document.getElementById("docsMenuWrap");
+  const dropdown = document.getElementById("dropdown");
   dropdown.style.display = "none";
-});
+  productsMenuWrap.addEventListener("mouseover", function () {
+    dropdown.style.display = "block";
+  });
+  productsMenuWrap.addEventListener("mouseout", function () {
+    dropdown.style.display = "none";
+  });
+  docsMenuWrap.addEventListener("mouseover", function () {
+    dropdownDocs.style.display = "block";
+  });
+  docsMenuWrap.addEventListener("mouseout", function () {
+    dropdownDocs.style.display = "none";
+  });
+//tablet menu
+  const menuIcon = document.querySelector(".tablet-menu-icon");
+  const tabletMenu = document.querySelector(".tablet-menu");
+  const productsToggle = document.querySelector(".products-toggle");
+  const productsSub = document.querySelector(".products-sub");
+  const productsNum = document.querySelector(".products-num");
+  const productsCems = document.querySelector(".products-cems");
+  const docsToggle = document.querySelector(".docs-toggle");
+  const docsSub = document.querySelector(".docs-sub");
+  const docsNum = document.querySelector(".docs-num");
+  menuIcon.addEventListener("click", () => {
+    tabletMenu.classList.toggle("show");
+    menuIcon.classList.toggle("is-active");
+  });
+  productsToggle.addEventListener("click", () => {
+    productsSub.classList.toggle("show");
+    productsNum.classList.toggle("show");
+    productsCems.classList.toggle("show");
+  });
+  docsToggle.addEventListener("click", () => {
+    docsSub.classList.toggle("show");
+    docsNum.classList.toggle("show");
+  });
 </script>

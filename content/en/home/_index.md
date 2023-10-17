@@ -34,7 +34,6 @@
             </div>
           </div>
         </li>
-        <li class="menu-a"><a href="/">Docs</a></li>
         <li class="menu-a"><a href="/home/blog">Blog</a></li>
         <li class="menu-a"><a href="/home/customers">Customers</a></li>
         <li class="menu-a"><a href="/home/usecase">Use Case</a></li>
@@ -43,6 +42,19 @@
     </div>
     <div class="menu-right">
       <ul class="menu-right-ul">
+        <li class="menu-a docs-menu-wrap" id="docsMenuWrap">
+          <a href=""
+            ><div>
+              <a class="menu_active_border" id="menuActiveBorder" href="/"
+                >Document</a
+              >
+              <div class="dropdown-docs" id="dropdownDocs">
+                <a class="dropdown-link" href="/neo">Neo</a>
+                <a class="dropdown-link" href="/dbms">Classic</a>
+              </div>
+            </div></a
+          >
+        </li>
         <li class="menu-a"><a href="/home/download">Download</a></li>
         <li class="menu-a">
           <a href="https://support.machbase.com/hc/en-us">Support</a>
@@ -50,6 +62,48 @@
         <li class="menu-a"><a href="/home/contactus">Contact US</a></li>
       </ul>
     </div>
+  </div>
+</nav>
+<nav class="tablet-menu-wrap">
+  <a href="/kr/home"><img src="./img/logo_machbase.png" alt="" /></a>
+  <div class="tablet-menu-icon">
+    <div class="tablet-bar"></div>
+    <div class="tablet-bar"></div>
+    <div class="tablet-bar"></div>
+  </div>
+  <div class="tablet-menu">
+    <ul>
+      <div class="tablet-menu-title">
+        <a class="tablet-logo" href="/home"
+          ><img src="./img/logo_machbase.png" alt=""
+        /></a>
+      </div>
+      <li></li>
+      <li class="products-toggle">Products</li>
+      <li>
+        <div class="products-content">
+          <div class="products-sub"><a href="/home/tsdb">TSDB</a></div>
+          <div class="products-num"><a href="/home/mos">MOS</a></div>
+          <div class="products-cems">
+            <a href="https://www.cems.ai/">CEMS</a>
+          </div>
+        </div>
+      </li>
+      <li><a href="/home/blog">Blog</a></li>
+      <li><a href="/home/customers">Customers</a></li>
+      <li><a href="/home/usecase">Use Cases</a></li>
+      <li><a href="/home/company">Company</a></li>
+      <li class="docs-toggle">Document</li>
+      <li>
+        <div class="docs-content">
+          <div class="docs-sub"><a href="/neo">Neo</a></div>
+          <div class="docs-num"><a href="/dbms">Classic</a></div>
+        </div>
+      </li>
+      <li><a href="/home/download">Download</a></li>
+      <li><a href="https://support.machbase.com/hc/en-us">Support</a></li>
+      <li><a href="/home/download">Contact US</a></li>
+    </ul>
   </div>
 </nav>
 <section class="section1 main_section1 main_wrap">
@@ -103,7 +157,7 @@
 </section>
 <section class="section2 main_section2">
   <div>
-    <h4 class="sub_title company-margin-top">Why Machbase?</h4>
+    <h4 class="sub_title main_margin_top">Why Machbase?</h4>
     <div class="bar"><img src="./img/bar.png" /></div>
   </div>
   <div class="main_why_wrap">
@@ -133,9 +187,11 @@
       <div class="main_why_more_box">
         <p class="main_why_more">
           <span>
-            <a href="/home/company#performance" class="main_why_more">
-              View more
-            </a>
+            <router-link
+              class="main_why_more"
+              :to="{ path: '/Company', hash: '#performance' }"
+              >View More<ArrowSvg
+            /></router-link>
           </span>
         </p>
       </div>
@@ -148,7 +204,7 @@
       <div class="main_why_contents_box">
         <ul>
           <li class="main_why_contents">
-            Data insertion performance exceed ing 400,000/sec on Raspberry Pi 4
+            Data insertion performance exceeding 400,000/sec on Raspberry Pi 4
           </li>
           <li class="main_why_contents">
             Best performance on any device, from edge devices to clusters
@@ -165,7 +221,9 @@
       <div class="main_why_more_box">
         <p class="main_why_more">
           <span>
-            <a target="" class="main_why_more" href="/home/edge"> View More </a>
+            <a target="" class="main_why_more" href="/edge">
+              View More<ArrowSvg />
+            </a>
           </span>
         </p>
       </div>
@@ -188,7 +246,9 @@
       </div>
       <div class="main_why_more_box">
         <span>
-          <a class="main_why_more" href="/home/tsdb#scroll2">View More</a>
+          <a class="main_why_more" :to="{ path: '/Products', hash: '#scroll2' }"
+            >View More<ArrowSvg
+          /></a>
         </span>
       </div>
     </div>
@@ -276,6 +336,7 @@
                   <p class="dol_p">
                     sh -c "$(curl -fsSL https://neo.machbase.com/install.sh)"
                   </p>
+
                   <button data-code="download1" class="copy-btn3 btn_up">
                     Copy
                   </button>
@@ -768,11 +829,12 @@
         </div>
       </div>
     </div>
+
   </div>
 </section>
 <section class="section5 main_section5">
   <div>
-    <h4 class="sub_title company-margin-top">Use Case</h4>
+    <h4 class="sub_title main_margin_top">Use Case</h4>
     <div class="bar"><img src="./img/bar.png" /></div>
   </div>
   <div class="main_usecase_wrap">
@@ -794,7 +856,7 @@
       <div class="main_usecase_more_box">
         <p class="main_suecase_more">
           <span>
-            <a class="main_usecase_more" href="/home/usecase/usecase1">
+            <a class="main_usecase_more" href="/usecase-h">
               View More<ArrowSvg />
             </a>
           </span>
@@ -815,7 +877,7 @@
       <div class="main_usecase_more_box">
         <p class="main_usecase_more">
           <span>
-            <a class="main_usecase_more" href="/home/usecase/usecase4">
+            <a class="main_usecase_more" href="/usecase-e">
               View More<ArrowSvg />
             </a>
           </span>
@@ -840,7 +902,7 @@
       </div>
       <div class="main_usecase_more_box">
         <span>
-          <a class="main_usecase_more" href="/home/usecase/usecase6"
+          <a class="main_usecase_more" href="/usecase-c"
             >View More<ArrowSvg />
           </a>
         </span>
@@ -850,7 +912,7 @@
 </section>
 <section>
   <div>
-    <h4 class="sub_title company-margin-top">Meet the Machbase Neo</h4>
+    <h4 class="sub_title main_margin_top">Meet the Machbase Neo</h4>
     <div class="bar"><img src="./img/bar.png" /></div>
   </div>
   <div class="main_video">
@@ -868,7 +930,7 @@
 <footer>
   <div class="footer_inner">
     <div class="footer-logo">
-      <img src="./img/machbase-logo-w.png" />
+      <img src="./img/machbase_logo_w.png" />
       <a href="/home/contactus">
         <button class="contactus">Contact Us</button>
       </a>
@@ -919,7 +981,7 @@
   </div>
   <div class="footer_tablet_inner">
     <div class="logo">
-      <img src="./img/machbase-logo-w.png" />
+      <img src="./img/machbase_logo_w.png" />
     </div>
     <div>
       <p class="footertext">
@@ -1084,26 +1146,26 @@
     } else {
       sSlE6.style.visibility = "visible";
     }
-};
-const clearHeaderTab = (aType) => {
-const sDE1 = document.getElementById("download1");
-const sDE2 = document.getElementById("download2");
-const sDE3 = document.getElementById("download4");
-const sSE1 = document.getElementById("start1");
-const sCE1 = document.getElementById("create1");
-const sCE2 = document.getElementById("create2");
-const sIE1 = document.getElementById("insert1");
-const sIE2 = document.getElementById("insert2");
-const sIE3 = document.getElementById("insert3");
-const sIE4 = document.getElementById("insert4");
-const sIE5 = document.getElementById("insert5");
-const sIE6 = document.getElementById("insert6");
-const sSlE1 = document.getElementById("select1");
-const sSlE2 = document.getElementById("select2");
-const sSlE3 = document.getElementById("select3");
-const sSlE4 = document.getElementById("select4");
-const sSlE5 = document.getElementById("select5");
-const sSlE6 = document.getElementById("select6");
+  };
+  const clearHeaderTab = (aType) => {
+    const sDE1 = document.getElementById("download1");
+    const sDE2 = document.getElementById("download2");
+    const sDE3 = document.getElementById("download4");
+    const sSE1 = document.getElementById("start1");
+    const sCE1 = document.getElementById("create1");
+    const sCE2 = document.getElementById("create2");
+    const sIE1 = document.getElementById("insert1");
+    const sIE2 = document.getElementById("insert2");
+    const sIE3 = document.getElementById("insert3");
+    const sIE4 = document.getElementById("insert4");
+    const sIE5 = document.getElementById("insert5");
+    const sIE6 = document.getElementById("insert6");
+    const sSlE1 = document.getElementById("select1");
+    const sSlE2 = document.getElementById("select2");
+    const sSlE3 = document.getElementById("select3");
+    const sSlE4 = document.getElementById("select4");
+    const sSlE5 = document.getElementById("select5");
+    const sSlE6 = document.getElementById("select6");
     sDE1.style.visibility = "hidden";
     sDE2.style.visibility = "hidden";
     sDE3.style.visibility = "hidden";
@@ -1122,22 +1184,22 @@ const sSlE6 = document.getElementById("select6");
     sSlE4.style.visibility = "hidden";
     sSlE5.style.visibility = "hidden";
     sSlE6.style.visibility = "hidden";
-};
-const buttons = document.querySelectorAll(".btn1");
-buttons.forEach((button) => {
-button.addEventListener("click", () => {
-button.style.backgroundColor = "#ffd800";
+  };
+  const buttons = document.querySelectorAll(".btn1");
+  buttons.forEach((button) => {
+    button.addEventListener("click", () => {
+      button.style.backgroundColor = "#ffd800";
       buttons.forEach((otherButton) => {
         if (otherButton !== button) {
           otherButton.style.backgroundColor = "#f2f2f2";
         }
       });
     });
-});
-const leftBtn = document.querySelectorAll(".left-btn");
-leftBtn.forEach((button) => {
-button.addEventListener("click", () => {
-button.style.backgroundColor = "#ffd800";
+  });
+  const leftBtn = document.querySelectorAll(".left-btn");
+  leftBtn.forEach((button) => {
+    button.addEventListener("click", () => {
+      button.style.backgroundColor = "#ffd800";
       const sElements = document.getElementsByClassName("btn1");
       for (const element of sElements) {
         element.style.backgroundColor = "#f2f2f2";
@@ -1151,42 +1213,42 @@ button.style.backgroundColor = "#ffd800";
         }
       });
     });
-});
-const jsonData = {
-codes: {
-download1: 'sh -c "$(curl -fsSL https://neo.machbase.com/install.sh)"',
-download2: "unzip machbase-neo-_.zip",
-start: `machbase-neo serve`,
-createShell: `machbase-neo shell sql "create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"`,
-insertShell: `machbase-neo shell sql "insert into EXAMPLE values('temperature', 1670380342000000000, 12.3456)"`,
-insertCurl: `curl http://127.0.0.1:5654/db/query --data-urlencode "q=select _ from EXAMPLE"`,
+  });
+  const jsonData = {
+    codes: {
+      download1: 'sh -c "$(curl -fsSL https://neo.machbase.com/install.sh)"',
+      download2: "unzip machbase-neo-*.zip",
+      start: `machbase-neo serve`,
+      createShell: `machbase-neo shell sql "create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"`,
+      insertShell: `machbase-neo shell sql "insert into EXAMPLE values('temperature', 1670380342000000000, 12.3456)"`,
+      insertCurl: `curl http://127.0.0.1:5654/db/query --data-urlencode "q=select * from EXAMPLE"`,
       insertPy: `import requests
-csvdata = "temperature,1670380342000000000,12.3456"
-response = requests.post(
-"http://127.0.0.1:5654/db/write/EXAMPLE?heading=false",
-data=csvdata,
-headers={'Content-Type': 'text/csv'})`,
-      insertJs: `q = "select \* from example"
-fetch('http://127.0.0.1:5654/db/query?q=' + encodeURIComponent(q))
-.then(res => {
-return res.json();
-})
-.then(data => {
-console.log(data);
-});`,
+    csvdata = "temperature,1670380342000000000,12.3456"
+    response = requests.post(
+    "http://127.0.0.1:5654/db/write/EXAMPLE?heading=false",
+    data=csvdata,
+    headers={'Content-Type': 'text/csv'})`,
+      insertJs: `q = "select * from example"
+    fetch('http://127.0.0.1:5654/db/query?q=' + encodeURIComponent(q))
+    .then(res => {
+    return res.json();
+    })
+    .then(data => {
+    console.log(data);
+    });`,
       insertGo: `package main
-import (
-"net/http"
-"bytes"
-"strings"
-)
-func main() {
-rows := []string{"temperature,1670380342000000000,12.3456"}
-http.Post(
-"http://127.0.0.1:5654/db/write/EXAMPLE?heading=false",
-"text/csv",
-bytes.NewBufferString(strings.Join(rows, "\\n")))
-}`,
+    import (
+    "net/http"
+    "bytes"
+    "strings"
+    )
+    func main() {
+    rows := []string{"temperature,1670380342000000000,12.3456"}
+    http.Post(
+    "http://127.0.0.1:5654/db/write/EXAMPLE?heading=false",
+    "text/csv",
+    bytes.NewBufferString(strings.Join(rows, "\\n")))
+    }`,
       insertC: `using HttpClient client = new();
     var payload = new System.Net.Http.StringContent(
     @"temperature,1677033057000000000,21.1
@@ -1232,35 +1294,65 @@ bytes.NewBufferString(strings.Join(rows, "\\n")))
         'curl http://127.0.0.1:5654/db/query --data-urlencode "q=create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"',
       selectCurl: `curl http://127.0.0.1:5654/db/query --data-urlencode "q=select * from EXAMPLE"`,
     },
-};
-function copyToClipboard(text, button) {
-const textArea = document.createElement("textarea");
-textArea.value = text;
-document.body.appendChild(textArea);
-textArea.select();
-document.execCommand("copy");
-document.body.removeChild(textArea);
+  };
+  function copyToClipboard(text, button) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textArea);
     button.textContent = "Copied";
     setTimeout(function () {
       button.textContent = "Copy";
     }, 1000);
-}
-const copyButtons = document.querySelectorAll(".copy-btn3");
-copyButtons.forEach((button) => {
-button.addEventListener("click", function () {
-const codeType = button.getAttribute("data-code");
-const codeToCopy = jsonData.codes[codeType];
-copyToClipboard(codeToCopy, button);
-});
-});
-//drop down menu
-const productsMenuWrap = document.getElementById("productsMenuWrap");
-const dropdown = document.getElementById("dropdown");
-dropdown.style.display = "none";
-productsMenuWrap.addEventListener("mouseover", function() {
-  dropdown.style.display = "block";
-});
-productsMenuWrap.addEventListener("mouseout", function() {
+  }
+  const copyButtons = document.querySelectorAll(".copy-btn3");
+  copyButtons.forEach((button) => {
+    button.addEventListener("click", function () {
+      const codeType = button.getAttribute("data-code");
+      const codeToCopy = jsonData.codes[codeType];
+      copyToClipboard(codeToCopy, button);
+    });
+  });
+  //drop down menu
+  const productsMenuWrap = document.getElementById("productsMenuWrap");
+  const docsMenuWrap = document.getElementById("docsMenuWrap");
+  const dropdown = document.getElementById("dropdown");
   dropdown.style.display = "none";
-});
+  productsMenuWrap.addEventListener("mouseover", function () {
+    dropdown.style.display = "block";
+  });
+  productsMenuWrap.addEventListener("mouseout", function () {
+    dropdown.style.display = "none";
+  });
+  docsMenuWrap.addEventListener("mouseover", function () {
+    dropdownDocs.style.display = "block";
+  });
+  docsMenuWrap.addEventListener("mouseout", function () {
+    dropdownDocs.style.display = "none";
+  });
+  //tablet menu
+  const menuIcon = document.querySelector(".tablet-menu-icon");
+  const tabletMenu = document.querySelector(".tablet-menu");
+  const productsToggle = document.querySelector(".products-toggle");
+  const productsSub = document.querySelector(".products-sub");
+  const productsNum = document.querySelector(".products-num");
+  const productsCems = document.querySelector(".products-cems");
+  const docsToggle = document.querySelector(".docs-toggle");
+  const docsSub = document.querySelector(".docs-sub");
+  const docsNum = document.querySelector(".docs-num");
+  menuIcon.addEventListener("click", () => {
+    tabletMenu.classList.toggle("show");
+    menuIcon.classList.toggle("is-active");
+  });
+  productsToggle.addEventListener("click", () => {
+    productsSub.classList.toggle("show");
+    productsNum.classList.toggle("show");
+    productsCems.classList.toggle("show");
+  });
+  docsToggle.addEventListener("click", () => {
+    docsSub.classList.toggle("show");
+    docsNum.classList.toggle("show");
+  });
 </script>
