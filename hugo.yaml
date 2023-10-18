@@ -49,7 +49,7 @@ params:
     logo:
       path: images/logo_machbase.png
       dark: images/machbase-logo-w.png
-      link: /neo
+      link: /home
       width: 200
 
   footer:
