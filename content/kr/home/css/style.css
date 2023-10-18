@@ -233,7 +233,7 @@
   color: #98d5f5;
 }
 .orange {
-  color: #c68b73;
+  color: #c68b73 !important;
 }
 .yellow {
   color: #c7c79a;
@@ -868,7 +868,7 @@
 }
 @media screen and (max-width: 880px) {
   .main_video {
-    margin: 0 40px;
+    margin: 40px 40px;
   }
   .main_video iframe {
     width: 100% !important;
@@ -986,7 +986,7 @@
     width: 100%;
   }
   .main_video {
-    margin: 0 20px;
+    margin: 40px 20px;
   }
 }
 @media screen and (max-width: 425px) {

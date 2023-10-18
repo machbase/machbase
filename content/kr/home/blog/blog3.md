@@ -385,9 +385,13 @@
         </div>
       </div>
     </div>
+        <select id="languageSelector" onchange="changeLanguage()">
+      <option value="kr">한국어</option>
+      <option value="en">English</option>
+    </select>
   </div>
   <div class="footer_tablet_inner">
-    <div class="logo">
+    <div class="footer-logo">
       <img class="footer-logo-img" src="../../img/machbase-logo-w.png" />
     </div>
     <div>
@@ -435,6 +439,10 @@
         <button class="contactus">고객 문의</button>
       </a>
     </div>
+        <select id="languageSelector" onchange="changeLanguage()">
+      <option value="kr">한국어</option>
+      <option value="en">English</option>
+    </select>
   </div>
   <div class="machbase_right">
     <p>@2023 MACHBASE All rights reserved.</p>
@@ -443,6 +451,7 @@
 <script>
   //drop down menu
   const productsMenuWrap = document.getElementById("productsMenuWrap");
+  const docsMenuWrap = document.getElementById("docsMenuWrap");
   const dropdown = document.getElementById("dropdown");
   dropdown.style.display = "none";
   productsMenuWrap.addEventListener("mouseover", function () {
@@ -451,4 +460,60 @@
   productsMenuWrap.addEventListener("mouseout", function () {
     dropdown.style.display = "none";
   });
+  docsMenuWrap.addEventListener("mouseover", function () {
+    dropdownDocs.style.display = "block";
+  });
+  docsMenuWrap.addEventListener("mouseout", function () {
+    dropdownDocs.style.display = "none";
+  });
+  //tablet menu
+  const menuIcon = document.querySelector(".tablet-menu-icon");
+  const tabletMenu = document.querySelector(".tablet-menu");
+  const productsToggle = document.querySelector(".products-toggle");
+  const productsSub = document.querySelector(".products-sub");
+  const productsNum = document.querySelector(".products-num");
+  const productsCems = document.querySelector(".products-cems");
+  const docsToggle = document.querySelector(".docs-toggle");
+  const docsSub = document.querySelector(".docs-sub");
+  const docsNum = document.querySelector(".docs-num");
+  menuIcon.addEventListener("click", () => {
+    tabletMenu.classList.toggle("show");
+    menuIcon.classList.toggle("is-active");
+  });
+  productsToggle.addEventListener("click", () => {
+    productsSub.classList.toggle("show");
+    productsNum.classList.toggle("show");
+    productsCems.classList.toggle("show");
+  });
+  docsToggle.addEventListener("click", () => {
+    docsSub.classList.toggle("show");
+    docsNum.classList.toggle("show");
+  });
+  //change lang
+  let language;
+  let storageData = sessionStorage.getItem("lang");
+  if (storageData) {
+    language = storageData;
+  } else {
+    var userLang = navigator.language || navigator.userLanguage;
+    if (userLang === "ko") {
+      sessionStorage.setItem("lang", userLang);
+      language = "kr";
+    } else {
+      sessionStorage.setItem("lang", "en");
+      language = "en";
+      let locationPath = location.pathname.split("/");
+      locationPath.splice(1, 1);
+      location.href = location.origin + locationPath.join("/");
+    }
+  }
+  function changeLanguage() {
+    var languageSelector = document.getElementById("languageSelector");
+    var selectedLanguage = languageSelector.value;
+    if (selectedLanguage !== "kr") {
+      let locationPath = location.pathname.split("/");
+      locationPath.splice(1, 1);
+      location.href = location.origin + locationPath.join("/");
+    }
+  }
 </script>

@@ -7,107 +7,105 @@ toc: false
   <link rel="stylesheet" type="text/css" href="../css/style.css" />
 </head>
 <body>
- <nav>
-  <div class="homepage-menu-wrap">
-    <div class="menu-left">
-      <ul class="menu-left-ul">
-        <li class="menu-logo">
-          <a href="/kr/home"
+  <nav>
+    <div class="homepage-menu-wrap">
+      <div class="menu-left">
+        <ul class="menu-left-ul">
+          <li class="menu-logo">
+            <a href="/kr/home"><img src="../img/logo_machbase.png" alt="" /></a>
+          </li>
+          <li class="menu-a products-menu-wrap" id="productsMenuWrap">
+            <div>
+              <a
+                class="menu_active_border"
+                id="menuActiveBorder"
+                href="/kr/home/tsdb"
+                >Products</a
+              >
+              <div class="dropdown" id="dropdown">
+                <a class="dropdown-link" href="/kr/home/tsdb">TSDB</a>
+                <a class="dropdown-link" href="/kr/home/mos">MOS</a>
+                <a
+                  class="dropdown-link"
+                  href="https://www.cems.ai/"
+                  target="_blank"
+                  >CEMS</a
+                >
+              </div>
+            </div>
+          </li>
+          <li class="menu-a"><a href="/kr/home/blog">Blog</a></li>
+          <li class="menu-a"><a href="/kr/home/customers">Customers</a></li>
+          <li class="menu-a"><a href="/kr/home/usecase">Use Case</a></li>
+          <li class="menu-a"><a href="/kr/home/company">Company</a></li>
+        </ul>
+      </div>
+      <div class="menu-right">
+        <ul class="menu-right-ul">
+          <li class="menu-a docs-menu-wrap" id="docsMenuWrap">
+            <a href=""
+              ><div>
+                <a class="menu_active_border" id="menuActiveBorder" href="/"
+                  >Document</a
+                >
+                <div class="dropdown-docs" id="dropdownDocs">
+                  <a class="dropdown-link" href="/neo">Neo</a>
+                  <a class="dropdown-link" href="/dbms">Classic</a>
+                </div>
+              </div></a
+            >
+          </li>
+          <li class="menu-a"><a href="/kr/home/download">Download</a></li>
+          <li class="menu-a">
+            <a href="https://support.machbase.com/hc/en-us">Support</a>
+          </li>
+          <li class="menu-a"><a href="/kr/home/contactus">Contact US</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <nav class="tablet-menu-wrap">
+    <a href="/kr/home"><img src="../img/logo_machbase.png" alt="" /></a>
+    <div class="tablet-menu-icon">
+      <div class="tablet-bar"></div>
+      <div class="tablet-bar"></div>
+      <div class="tablet-bar"></div>
+    </div>
+    <div class="tablet-menu">
+      <ul>
+        <div class="tablet-menu-title">
+          <a class="tablet-logo" href="/kr/home"
             ><img src="../img/logo_machbase.png" alt=""
           /></a>
-        </li>
-        <li class="menu-a products-menu-wrap" id="productsMenuWrap">
-          <div>
-            <a
-              class="menu_active_border"
-              id="menuActiveBorder"
-              href="/kr/home/tsdb"
-              >Products</a
-            >
-            <div class="dropdown" id="dropdown">
-              <a class="dropdown-link" href="/kr/home/tsdb">TSDB</a>
-              <a class="dropdown-link" href="/kr/home/mos">MOS</a>
-              <a
-                class="dropdown-link"
-                href="https://www.cems.ai/"
-                target="_blank"
-                >CEMS</a
-              >
+        </div>
+        <li></li>
+        <li class="products-toggle">Products</li>
+        <li>
+          <div class="products-content">
+            <div class="products-sub"><a href="/kr/home/tsdb">TSDB</a></div>
+            <div class="products-num"><a href="/kr/home/mos">MOS</a></div>
+            <div class="products-cems">
+              <a href="https://www.cems.ai/">CEMS</a>
             </div>
           </div>
         </li>
-        <li class="menu-a"><a href="/kr/home/blog">Blog</a></li>
-        <li class="menu-a"><a href="/kr/home/customers">Customers</a></li>
-        <li class="menu-a"><a href="/kr/home/usecase">Use Case</a></li>
-        <li class="menu-a"><a href="/kr/home/company">Company</a></li>
-      </ul>
-    </div>
-    <div class="menu-right">
-      <ul class="menu-right-ul">
-        <li class="menu-a docs-menu-wrap" id="docsMenuWrap">
-          <a href=""
-            ><div>
-              <a class="menu_active_border" id="menuActiveBorder" href="/"
-                >Document</a
-              >
-              <div class="dropdown-docs" id="dropdownDocs">
-                <a class="dropdown-link" href="/neo">Neo</a>
-                <a class="dropdown-link" href="/dbms">Classic</a>
-              </div>
-            </div></a
-          >
-        </li>
-        <li class="menu-a"><a href="/kr/home/download">Download</a></li>
-        <li class="menu-a">
-          <a href="https://support.machbase.com/hc/en-us">Support</a>
-        </li>
-        <li class="menu-a"><a href="/kr/home/contactus">Contact US</a></li>
-      </ul>
-    </div>
-  </div>
-</nav>
-<nav class="tablet-menu-wrap">
-  <a href="/kr/home"><img src="../img/logo_machbase.png" alt="" /></a>
-  <div class="tablet-menu-icon">
-    <div class="tablet-bar"></div>
-    <div class="tablet-bar"></div>
-    <div class="tablet-bar"></div>
-  </div>
-  <div class="tablet-menu">
-    <ul>
-      <div class="tablet-menu-title">
-        <a class="tablet-logo" href="/kr/home"
-          ><img src="../img/logo_machbase.png" alt=""
-        /></a>
-      </div>
-      <li></li>
-      <li class="products-toggle">Products</li>
-      <li>
-        <div class="products-content">
-          <div class="products-sub"><a href="/kr/home/tsdb">TSDB</a></div>
-          <div class="products-num"><a href="/kr/home/mos">MOS</a></div>
-          <div class="products-cems">
-            <a href="https://www.cems.ai/">CEMS</a>
+        <li><a href="/kr/home/blog">Blog</a></li>
+        <li><a href="/kr/home/customers">Customers</a></li>
+        <li><a href="/kr/home/usecase">Use Cases</a></li>
+        <li><a href="/kr/home/company">Company</a></li>
+        <li class="docs-toggle">Document</li>
+        <li>
+          <div class="docs-content">
+            <div class="docs-sub"><a href="/neo">Neo</a></div>
+            <div class="docs-num"><a href="/dbms">Classic</a></div>
           </div>
-        </div>
-      </li>
-      <li><a href="/kr/home/blog">Blog</a></li>
-      <li><a href="/kr/home/customers">Customers</a></li>
-      <li><a href="/kr/home/usecase">Use Cases</a></li>
-      <li><a href="/kr/home/company">Company</a></li>
-      <li class="docs-toggle">Document</li>
-      <li>
-        <div class="docs-content">
-          <div class="docs-sub"><a href="/neo">Neo</a></div>
-          <div class="docs-num"><a href="/dbms">Classic</a></div>
-        </div>
-      </li>
-      <li><a href="/kr/home/download">Download</a></li>
-      <li><a href="https://support.machbase.com/hc/en-us">Support</a></li>
-      <li><a href="/kr/home/download">Contact US</a></li>
-    </ul>
-  </div>
-</nav>
+        </li>
+        <li><a href="/kr/home/download">Download</a></li>
+        <li><a href="https://support.machbase.com/hc/en-us">Support</a></li>
+        <li><a href="/kr/home/download">Contact US</a></li>
+      </ul>
+    </div>
+  </nav>
   <section class="download_section0">
     <div>
       <h1 class="sub_page_title">Download</h1>
@@ -168,14 +166,13 @@ toc: false
             </span>
           </td>
           <td class="puple download_th1_5">
-            <button data-code="neoLinuxArm32" class="download_copy_btn ">
-                <img src="../img/btn_codecopy.png"
-              /></button
+            <button data-code="neoLinuxArm32" class="download_copy_btn">
+              <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
-                 <a
+              <a
                 href="https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-arm32.zip"
               >
-              <img src="../img/btn_newlink.png" />
+                <img src="../img/btn_newlink.png" />
               </a>
             </button>
           </td>
@@ -189,7 +186,7 @@ toc: false
             </span>
           </td>
           <td class="puple download_th1_5">
-            <button data-code="neoLinuxArm64" class="download_copy_btn ">
+            <button data-code="neoLinuxArm64" class="download_copy_btn">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
@@ -209,9 +206,9 @@ toc: false
             </span>
           </td>
           <td class="puple download_th1_5">
-            <button data-code="neoLinuxX64" class="download_copy_btn ">
+            <button data-code="neoLinuxX64" class="download_copy_btn">
               <img src="../img/btn_codecopy.png" /></button
-            ><button class="download_link_btn ">
+            ><button class="download_link_btn">
               <a
                 href="https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-amd64.zip"
               >
@@ -230,7 +227,7 @@ toc: false
             </span>
           </td>
           <td class="puple download_th1_5">
-            <button data-code="neoMacArm64" class="download_copy_btn ">
+            <button data-code="neoMacArm64" class="download_copy_btn">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
@@ -250,7 +247,7 @@ toc: false
             </span>
           </td>
           <td class="puple download_th1_5">
-            <button data-code="neoMacX64" class="download_copy_btn ">
+            <button data-code="neoMacX64" class="download_copy_btn">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
@@ -271,7 +268,7 @@ toc: false
             </span>
           </td>
           <td class="puple border_bottom_right">
-            <button data-code="neoWindowsX64" class="download_copy_btn ">
+            <button data-code="neoWindowsX64" class="download_copy_btn">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
@@ -311,7 +308,7 @@ toc: false
         </div>
       </div>
     </div>
-   <div class="download_table_wrap2">
+    <div class="download_table_wrap2">
       <table class="download_table2">
         <tr class="tabel_title">
           <th class="download_th1_2">OS</th>
@@ -328,7 +325,7 @@ toc: false
             </span>
           </td>
           <td class="puple download_th1_5">
-            <button data-code="sdkLinuxX64" class="download_copy_btn ">
+            <button data-code="sdkLinuxX64" class="download_copy_btn">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
@@ -348,7 +345,7 @@ toc: false
             </span>
           </td>
           <td class="puple download_th1_5">
-            <button data-code="sdkLinuxArm" class="download_copy_btn ">
+            <button data-code="sdkLinuxArm" class="download_copy_btn">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
@@ -369,7 +366,7 @@ toc: false
             >
           </td>
           <td class="puple download_th1_5">
-            <button data-code="sdkWindowsX64" class="download_copy_btn ">
+            <button data-code="sdkWindowsX64" class="download_copy_btn">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
@@ -389,7 +386,7 @@ toc: false
             </span>
           </td>
           <td class="puple download_th1_5">
-            <button data-code="sdkWindows32" class="download_copy_btn ">
+            <button data-code="sdkWindows32" class="download_copy_btn">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
@@ -410,7 +407,7 @@ toc: false
             </span>
           </td>
           <td class="puple download_th1_5">
-            <button data-code="sdkMacArm" class="download_copy_btn ">
+            <button data-code="sdkMacArm" class="download_copy_btn">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
@@ -430,7 +427,7 @@ toc: false
             </span>
           </td>
           <td class="puple download_th1_5">
-            <button data-code="sdkMacX64" class="download_copy_btn ">
+            <button data-code="sdkMacX64" class="download_copy_btn">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
@@ -495,9 +492,13 @@ toc: false
           </div>
         </div>
       </div>
+          <select id="languageSelector" onchange="changeLanguage()">
+      <option value="kr">한국어</option>
+      <option value="en">English</option>
+    </select>
     </div>
     <div class="footer_tablet_inner">
-      <div class="logo">
+      <div class="footer-logo">
         <img src="../img/machbase-logo-w.png" />
       </div>
       <div>
@@ -545,6 +546,10 @@ toc: false
           <button class="contactus">고객 문의</button>
         </a>
       </div>
+          <select id="languageSelector" onchange="changeLanguage()">
+      <option value="kr">한국어</option>
+      <option value="en">English</option>
+    </select>
     </div>
     <div class="machbase_right">
       <p>@2023 MACHBASE All rights reserved.</p>
@@ -552,38 +557,51 @@ toc: false
   </footer>
 </body>
 <script>
-    const jsonData = {
-codes: {
-  neoLinuxArm32:"https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-arm32.zip",
-  neoLinuxArm64:"https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-arm64.zip",
-  neoLinuxX64:"https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-amd64.zip",
-  neoMacArm64:"https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-darwin-arm64.zip",
-  neoMacX64:"https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-darwin-amd64.zip",
-  neoWindowsX64:"https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-windows-amd64.zip",
-  sdkLinuxX64:"https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-X86-64-release.tgz",
-  sdkLinuxArm:"https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-ARM_CORTEX_A53-64-release.tgz",
-  sdkWindowsX64:"https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-64-release.msi",
-  sdkWindows32:"https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-32-release.msi",
-  sdkMacArm:"https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-ARM_M1-64-release.tgz",
-  sdkMacX64:"https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-X86-64-release.tgz"
-},};
+  const jsonData = {
+    codes: {
+      neoLinuxArm32:
+        "https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-arm32.zip",
+      neoLinuxArm64:
+        "https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-arm64.zip",
+      neoLinuxX64:
+        "https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-amd64.zip",
+      neoMacArm64:
+        "https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-darwin-arm64.zip",
+      neoMacX64:
+        "https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-darwin-amd64.zip",
+      neoWindowsX64:
+        "https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-windows-amd64.zip",
+      sdkLinuxX64:
+        "https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-X86-64-release.tgz",
+      sdkLinuxArm:
+        "https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-ARM_CORTEX_A53-64-release.tgz",
+      sdkWindowsX64:
+        "https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-64-release.msi",
+      sdkWindows32:
+        "https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-32-release.msi",
+      sdkMacArm:
+        "https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-ARM_M1-64-release.tgz",
+      sdkMacX64:
+        "https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-X86-64-release.tgz",
+    },
+  };
   function copyToClipboard(text, button) {
-const textArea = document.createElement("textarea");
-textArea.value = text;
-document.body.appendChild(textArea);
-textArea.select();
-document.execCommand("copy");
-document.body.removeChild(textArea);
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textArea);
     alert("Copied");
-}
-const copyButtons = document.querySelectorAll(".download_copy_btn");
-copyButtons.forEach((button) => {
-button.addEventListener("click", function () {
-const codeType = button.getAttribute("data-code");
-const codeToCopy = jsonData.codes[codeType];
-copyToClipboard(codeToCopy, button);
-});
-});
+  }
+  const copyButtons = document.querySelectorAll(".download_copy_btn");
+  copyButtons.forEach((button) => {
+    button.addEventListener("click", function () {
+      const codeType = button.getAttribute("data-code");
+      const codeToCopy = jsonData.codes[codeType];
+      copyToClipboard(codeToCopy, button);
+    });
+  });
   //drop down menu
   const productsMenuWrap = document.getElementById("productsMenuWrap");
   const docsMenuWrap = document.getElementById("docsMenuWrap");
@@ -601,7 +619,7 @@ copyToClipboard(codeToCopy, button);
   docsMenuWrap.addEventListener("mouseout", function () {
     dropdownDocs.style.display = "none";
   });
-//tablet menu
+  //tablet menu
   const menuIcon = document.querySelector(".tablet-menu-icon");
   const tabletMenu = document.querySelector(".tablet-menu");
   const productsToggle = document.querySelector(".products-toggle");
@@ -624,4 +642,31 @@ copyToClipboard(codeToCopy, button);
     docsSub.classList.toggle("show");
     docsNum.classList.toggle("show");
   });
+  //change lang
+  let language;
+  let storageData = sessionStorage.getItem("lang");
+  if (storageData) {
+    language = storageData;
+  } else {
+    var userLang = navigator.language || navigator.userLanguage;
+    if (userLang === "ko") {
+      sessionStorage.setItem("lang", userLang);
+      language = "kr";
+    } else {
+      sessionStorage.setItem("lang", "en");
+      language = "en";
+      let locationPath = location.pathname.split("/");
+      locationPath.splice(1, 1);
+      location.href = location.origin + locationPath.join("/");
+    }
+  }
+  function changeLanguage() {
+    var languageSelector = document.getElementById("languageSelector");
+    var selectedLanguage = languageSelector.value;
+    if (selectedLanguage !== "kr") {
+      let locationPath = location.pathname.split("/");
+      locationPath.splice(1, 1);
+      location.href = location.origin + locationPath.join("/");
+    }
+  }
 </script>

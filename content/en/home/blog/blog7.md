@@ -531,9 +531,13 @@
         </div>
       </div>
     </div>
+         <select id="languageSelector" onchange="changeLanguage()">
+        <option value="en">English</option>
+        <option value="kr">한국어</option>
+      </select>
   </div>
   <div class="footer_tablet_inner">
-    <div class="logo">
+    <div class="footer-logo">
       <img class="footer-logo-img" src="../../img/machbase-logo-w.png" />
     </div>
     <div>
@@ -581,13 +585,17 @@
         <button class="contactus">Contact US</button>
       </a>
     </div>
+      <select id="languageSelector" onchange="changeLanguage()">
+        <option value="en">English</option>
+        <option value="kr">한국어</option>
+      </select>
   </div>
   <div class="machbase_right">
     <p>@2023 MACHBASE All rights reserved.</p>
   </div>
 </footer>
 <script>
-//drop down menu
+  //drop down menu
   const productsMenuWrap = document.getElementById("productsMenuWrap");
   const docsMenuWrap = document.getElementById("docsMenuWrap");
   const dropdown = document.getElementById("dropdown");
@@ -627,4 +635,26 @@
     docsSub.classList.toggle("show");
     docsNum.classList.toggle("show");
   });
+  let language;
+  let storageData = sessionStorage.getItem("lang");
+  if (storageData) {
+    language = storageData;
+  } else {
+    var userLang = navigator.language || navigator.userLanguage;
+    if (userLang !== "ko") {
+      sessionStorage.setItem("lang", userLang);
+      language = "en";
+    } else {
+      sessionStorage.setItem("lang", "ko");
+      language = "kr";
+      location.href = location.origin + "/kr" + location.pathname;
+    }
+  }
+  function changeLanguage() {
+    var languageSelector = document.getElementById("languageSelector");
+    var selectedLanguage = languageSelector.value;
+    if (selectedLanguage === "kr") {
+      location.href = location.origin + "/kr" + location.pathname;
+    } 
+}
 </script>

@@ -1,5 +1,4 @@
 ---
-toc: false
 ---
 
 <head>
@@ -166,14 +165,13 @@ toc: false
             </span>
           </td>
           <td class="puple download_th1_5">
-            <button data-code="neoLinuxArm32" class="download_copy_btn ">
-                <img src="../img/btn_codecopy.png"
-              /></button
+            <button data-code="neoLinuxArm32" class="download_copy_btn">
+              <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
-                 <a
+              <a
                 href="https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-arm32.zip"
               >
-              <img src="../img/btn_newlink.png" />
+                <img src="../img/btn_newlink.png" />
               </a>
             </button>
           </td>
@@ -187,7 +185,7 @@ toc: false
             </span>
           </td>
           <td class="puple download_th1_5">
-            <button data-code="neoLinuxArm64" class="download_copy_btn ">
+            <button data-code="neoLinuxArm64" class="download_copy_btn">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
@@ -207,9 +205,9 @@ toc: false
             </span>
           </td>
           <td class="puple download_th1_5">
-            <button data-code="neoLinuxX64" class="download_copy_btn ">
+            <button data-code="neoLinuxX64" class="download_copy_btn">
               <img src="../img/btn_codecopy.png" /></button
-            ><button class="download_link_btn ">
+            ><button class="download_link_btn">
               <a
                 href="https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-amd64.zip"
               >
@@ -228,7 +226,7 @@ toc: false
             </span>
           </td>
           <td class="puple download_th1_5">
-            <button data-code="neoMacArm64" class="download_copy_btn ">
+            <button data-code="neoMacArm64" class="download_copy_btn">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
@@ -248,7 +246,7 @@ toc: false
             </span>
           </td>
           <td class="puple download_th1_5">
-            <button data-code="neoMacX64" class="download_copy_btn ">
+            <button data-code="neoMacX64" class="download_copy_btn">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
@@ -269,7 +267,7 @@ toc: false
             </span>
           </td>
           <td class="puple border_bottom_right">
-            <button data-code="neoWindowsX64" class="download_copy_btn ">
+            <button data-code="neoWindowsX64" class="download_copy_btn">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
@@ -328,7 +326,7 @@ toc: false
             </span>
           </td>
           <td class="puple download_th1_5">
-            <button data-code="sdkLinuxX64" class="download_copy_btn ">
+            <button data-code="sdkLinuxX64" class="download_copy_btn">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
@@ -348,7 +346,7 @@ toc: false
             </span>
           </td>
           <td class="puple download_th1_5">
-            <button data-code="sdkLinuxArm" class="download_copy_btn ">
+            <button data-code="sdkLinuxArm" class="download_copy_btn">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
@@ -369,7 +367,7 @@ toc: false
             >
           </td>
           <td class="puple download_th1_5">
-            <button data-code="sdkWindowsX64" class="download_copy_btn ">
+            <button data-code="sdkWindowsX64" class="download_copy_btn">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
@@ -389,7 +387,7 @@ toc: false
             </span>
           </td>
           <td class="puple download_th1_5">
-            <button data-code="sdkWindows32" class="download_copy_btn ">
+            <button data-code="sdkWindows32" class="download_copy_btn">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
@@ -410,7 +408,7 @@ toc: false
             </span>
           </td>
           <td class="puple download_th1_5">
-            <button data-code="sdkMacArm" class="download_copy_btn ">
+            <button data-code="sdkMacArm" class="download_copy_btn">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
@@ -430,7 +428,7 @@ toc: false
             </span>
           </td>
           <td class="puple download_th1_5">
-            <button data-code="sdkMacX64" class="download_copy_btn ">
+            <button data-code="sdkMacX64" class="download_copy_btn">
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
@@ -495,9 +493,13 @@ toc: false
           </div>
         </div>
       </div>
+       <select id="languageSelector" onchange="changeLanguage()">
+      <option value="en">English</option>
+      <option value="kr">한국어</option>
+    </select>
     </div>
     <div class="footer_tablet_inner">
-      <div class="logo">
+      <div class="footer-logo">
         <img src="../img/machbase-logo-w.png" />
       </div>
       <div>
@@ -545,6 +547,10 @@ toc: false
           <button class="contactus">Contact US</button>
         </a>
       </div>
+       <select id="languageSelector" onchange="changeLanguage()">
+      <option value="en">English</option>
+      <option value="kr">한국어</option>
+    </select>
     </div>
     <div class="machbase_right">
       <p>@2023 MACHBASE All rights reserved.</p>
@@ -553,38 +559,51 @@ toc: false
 </body>
 <script>
   const jsonData = {
-codes: {
-  neoLinuxArm32:"https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-arm32.zip",
-  neoLinuxArm64:"https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-arm64.zip",
-  neoLinuxX64:"https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-amd64.zip",
-  neoMacArm64:"https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-darwin-arm64.zip",
-  neoMacX64:"https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-darwin-amd64.zip",
-  neoWindowsX64:"https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-windows-amd64.zip",
-  sdkLinuxX64:"https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-X86-64-release.tgz",
-  sdkLinuxArm:"https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-ARM_CORTEX_A53-64-release.tgz",
-  sdkWindowsX64:"https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-64-release.msi",
-  sdkWindows32:"https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-32-release.msi",
-  sdkMacArm:"https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-ARM_M1-64-release.tgz",
-  sdkMacX64:"https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-X86-64-release.tgz"
-},};
+    codes: {
+      neoLinuxArm32:
+        "https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-arm32.zip",
+      neoLinuxArm64:
+        "https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-arm64.zip",
+      neoLinuxX64:
+        "https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-amd64.zip",
+      neoMacArm64:
+        "https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-darwin-arm64.zip",
+      neoMacX64:
+        "https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-darwin-amd64.zip",
+      neoWindowsX64:
+        "https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-windows-amd64.zip",
+      sdkLinuxX64:
+        "https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-X86-64-release.tgz",
+      sdkLinuxArm:
+        "https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-ARM_CORTEX_A53-64-release.tgz",
+      sdkWindowsX64:
+        "https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-64-release.msi",
+      sdkWindows32:
+        "https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-32-release.msi",
+      sdkMacArm:
+        "https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-ARM_M1-64-release.tgz",
+      sdkMacX64:
+        "https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-X86-64-release.tgz",
+    },
+  };
   function copyToClipboard(text, button) {
-const textArea = document.createElement("textarea");
-textArea.value = text;
-document.body.appendChild(textArea);
-textArea.select();
-document.execCommand("copy");
-document.body.removeChild(textArea);
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textArea);
     alert("Copied");
-}
-const copyButtons = document.querySelectorAll(".download_copy_btn");
-copyButtons.forEach((button) => {
-button.addEventListener("click", function () {
-const codeType = button.getAttribute("data-code");
-const codeToCopy = jsonData.codes[codeType];
-copyToClipboard(codeToCopy, button);
-});
-});
- //drop down menu
+  }
+  const copyButtons = document.querySelectorAll(".download_copy_btn");
+  copyButtons.forEach((button) => {
+    button.addEventListener("click", function () {
+      const codeType = button.getAttribute("data-code");
+      const codeToCopy = jsonData.codes[codeType];
+      copyToClipboard(codeToCopy, button);
+    });
+  });
+  //drop down menu
   const productsMenuWrap = document.getElementById("productsMenuWrap");
   const docsMenuWrap = document.getElementById("docsMenuWrap");
   const dropdown = document.getElementById("dropdown");
@@ -601,7 +620,7 @@ copyToClipboard(codeToCopy, button);
   docsMenuWrap.addEventListener("mouseout", function () {
     dropdownDocs.style.display = "none";
   });
-//tablet menu
+  //tablet menu
   const menuIcon = document.querySelector(".tablet-menu-icon");
   const tabletMenu = document.querySelector(".tablet-menu");
   const productsToggle = document.querySelector(".products-toggle");
@@ -624,4 +643,27 @@ copyToClipboard(codeToCopy, button);
     docsSub.classList.toggle("show");
     docsNum.classList.toggle("show");
   });
+    //change lang
+  let language;
+  let storageData = sessionStorage.getItem("lang");
+  if (storageData) {
+    language = storageData;
+  } else {
+    var userLang = navigator.language || navigator.userLanguage;
+    if (userLang !== "ko") {
+      sessionStorage.setItem("lang", userLang);
+      language = "en";
+    } else {
+      sessionStorage.setItem("lang", "ko");
+      language = "kr";
+      location.href = location.origin + "/kr" + location.pathname;
+    }
+  }
+  function changeLanguage() {
+    var languageSelector = document.getElementById("languageSelector");
+    var selectedLanguage = languageSelector.value;
+    if (selectedLanguage === "kr") {
+      location.href = location.origin + "/kr" + location.pathname;
+    } 
+}
 </script>

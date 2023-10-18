@@ -6,107 +6,105 @@
   <link rel="stylesheet" type="text/css" href="../css/style.css" />
 </head>
 <body>
- <nav>
-  <div class="homepage-menu-wrap">
-    <div class="menu-left">
-      <ul class="menu-left-ul">
-        <li class="menu-logo">
-          <a href="/kr/home"
+  <nav>
+    <div class="homepage-menu-wrap">
+      <div class="menu-left">
+        <ul class="menu-left-ul">
+          <li class="menu-logo">
+            <a href="/kr/home"><img src="../img/logo_machbase.png" alt="" /></a>
+          </li>
+          <li class="menu-a products-menu-wrap" id="productsMenuWrap">
+            <div>
+              <a
+                class="menu_active_border"
+                id="menuActiveBorder"
+                href="/kr/home/tsdb"
+                >Products</a
+              >
+              <div class="dropdown" id="dropdown">
+                <a class="dropdown-link" href="/kr/home/tsdb">TSDB</a>
+                <a class="dropdown-link" href="/kr/home/mos">MOS</a>
+                <a
+                  class="dropdown-link"
+                  href="https://www.cems.ai/"
+                  target="_blank"
+                  >CEMS</a
+                >
+              </div>
+            </div>
+          </li>
+          <li class="menu-a"><a href="/kr/home/blog">Blog</a></li>
+          <li class="menu-a"><a href="/kr/home/customers">Customers</a></li>
+          <li class="menu-a"><a href="/kr/home/usecase">Use Case</a></li>
+          <li class="menu-a"><a href="/kr/home/company">Company</a></li>
+        </ul>
+      </div>
+      <div class="menu-right">
+        <ul class="menu-right-ul">
+          <li class="menu-a docs-menu-wrap" id="docsMenuWrap">
+            <a href=""
+              ><div>
+                <a class="menu_active_border" id="menuActiveBorder" href="/"
+                  >Document</a
+                >
+                <div class="dropdown-docs" id="dropdownDocs">
+                  <a class="dropdown-link" href="/neo">Neo</a>
+                  <a class="dropdown-link" href="/dbms">Classic</a>
+                </div>
+              </div></a
+            >
+          </li>
+          <li class="menu-a"><a href="/kr/home/download">Download</a></li>
+          <li class="menu-a">
+            <a href="https://support.machbase.com/hc/en-us">Support</a>
+          </li>
+          <li class="menu-a"><a href="/kr/home/contactus">Contact US</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <nav class="tablet-menu-wrap">
+    <a href="/kr/home"><img src="../img/logo_machbase.png" alt="" /></a>
+    <div class="tablet-menu-icon">
+      <div class="tablet-bar"></div>
+      <div class="tablet-bar"></div>
+      <div class="tablet-bar"></div>
+    </div>
+    <div class="tablet-menu">
+      <ul>
+        <div class="tablet-menu-title">
+          <a class="tablet-logo" href="/kr/home"
             ><img src="../img/logo_machbase.png" alt=""
           /></a>
-        </li>
-        <li class="menu-a products-menu-wrap" id="productsMenuWrap">
-          <div>
-            <a
-              class="menu_active_border"
-              id="menuActiveBorder"
-              href="/kr/home/tsdb"
-              >Products</a
-            >
-            <div class="dropdown" id="dropdown">
-              <a class="dropdown-link" href="/kr/home/tsdb">TSDB</a>
-              <a class="dropdown-link" href="/kr/home/mos">MOS</a>
-              <a
-                class="dropdown-link"
-                href="https://www.cems.ai/"
-                target="_blank"
-                >CEMS</a
-              >
+        </div>
+        <li></li>
+        <li class="products-toggle">Products</li>
+        <li>
+          <div class="products-content">
+            <div class="products-sub"><a href="/kr/home/tsdb">TSDB</a></div>
+            <div class="products-num"><a href="/kr/home/mos">MOS</a></div>
+            <div class="products-cems">
+              <a href="https://www.cems.ai/">CEMS</a>
             </div>
           </div>
         </li>
-        <li class="menu-a"><a href="/kr/home/blog">Blog</a></li>
-        <li class="menu-a"><a href="/kr/home/customers">Customers</a></li>
-        <li class="menu-a"><a href="/kr/home/usecase">Use Case</a></li>
-        <li class="menu-a"><a href="/kr/home/company">Company</a></li>
-      </ul>
-    </div>
-    <div class="menu-right">
-      <ul class="menu-right-ul">
-        <li class="menu-a docs-menu-wrap" id="docsMenuWrap">
-          <a href=""
-            ><div>
-              <a class="menu_active_border" id="menuActiveBorder" href="/"
-                >Document</a
-              >
-              <div class="dropdown-docs" id="dropdownDocs">
-                <a class="dropdown-link" href="/neo">Neo</a>
-                <a class="dropdown-link" href="/dbms">Classic</a>
-              </div>
-            </div></a
-          >
-        </li>
-        <li class="menu-a"><a href="/kr/home/download">Download</a></li>
-        <li class="menu-a">
-          <a href="https://support.machbase.com/hc/en-us">Support</a>
-        </li>
-        <li class="menu-a"><a href="/kr/home/contactus">Contact US</a></li>
-      </ul>
-    </div>
-  </div>
-</nav>
-<nav class="tablet-menu-wrap">
-  <a href="/kr/home"><img src="../img/logo_machbase.png" alt="" /></a>
-  <div class="tablet-menu-icon">
-    <div class="tablet-bar"></div>
-    <div class="tablet-bar"></div>
-    <div class="tablet-bar"></div>
-  </div>
-  <div class="tablet-menu">
-    <ul>
-      <div class="tablet-menu-title">
-        <a class="tablet-logo" href="/kr/home"
-          ><img src="../img/logo_machbase.png" alt=""
-        /></a>
-      </div>
-      <li></li>
-      <li class="products-toggle">Products</li>
-      <li>
-        <div class="products-content">
-          <div class="products-sub"><a href="/kr/home/tsdb">TSDB</a></div>
-          <div class="products-num"><a href="/kr/home/mos">MOS</a></div>
-          <div class="products-cems">
-            <a href="https://www.cems.ai/">CEMS</a>
+        <li><a href="/kr/home/blog">Blog</a></li>
+        <li><a href="/kr/home/customers">Customers</a></li>
+        <li><a href="/kr/home/usecase">Use Cases</a></li>
+        <li><a href="/kr/home/company">Company</a></li>
+        <li class="docs-toggle">Document</li>
+        <li>
+          <div class="docs-content">
+            <div class="docs-sub"><a href="/neo">Neo</a></div>
+            <div class="docs-num"><a href="/dbms">Classic</a></div>
           </div>
-        </div>
-      </li>
-      <li><a href="/kr/home/blog">Blog</a></li>
-      <li><a href="/kr/home/customers">Customers</a></li>
-      <li><a href="/kr/home/usecase">Use Cases</a></li>
-      <li><a href="/kr/home/company">Company</a></li>
-      <li class="docs-toggle">Document</li>
-      <li>
-        <div class="docs-content">
-          <div class="docs-sub"><a href="/neo">Neo</a></div>
-          <div class="docs-num"><a href="/dbms">Classic</a></div>
-        </div>
-      </li>
-      <li><a href="/kr/home/download">Download</a></li>
-      <li><a href="https://support.machbase.com/hc/en-us">Support</a></li>
-      <li><a href="/kr/home/download">Contact US</a></li>
-    </ul>
-  </div>
-</nav>
+        </li>
+        <li><a href="/kr/home/download">Download</a></li>
+        <li><a href="https://support.machbase.com/hc/en-us">Support</a></li>
+        <li><a href="/kr/home/download">Contact US</a></li>
+      </ul>
+    </div>
+  </nav>
   <section class="product_sction0 section0">
     <div>
       <h1 class="sub_page_title">Products</h1>
@@ -143,7 +141,7 @@
   <section class="neo_scroll_map_wrap">
     <div class="neo_scroll_map">
       <div ref="scrollLeft" class="mos_scroll_left">
-        <div class="neo_scroll"><img src="../img/mos.png"></div>
+        <div class="neo_scroll"><img src="../img/mos.png" /></div>
       </div>
       <div class="neo_scroll_right">
         <div class="neo_scorll_box_wrap">
@@ -347,9 +345,13 @@
         </div>
       </div>
     </div>
+        <select id="languageSelector" onchange="changeLanguage()">
+      <option value="kr">한국어</option>
+      <option value="en">English</option>
+    </select>
   </div>
   <div class="footer_tablet_inner">
-    <div class="logo">
+    <div class="footer-logo">
       <img class="footer-logo-img" src="../img/machbase-logo-w.png" />
     </div>
     <div>
@@ -397,6 +399,10 @@
         <button class="contactus">고객 문의</button>
       </a>
     </div>
+        <select id="languageSelector" onchange="changeLanguage()">
+      <option value="kr">한국어</option>
+      <option value="en">English</option>
+    </select>
   </div>
   <div class="machbase_right">
     <p>@2023 MACHBASE All rights reserved.</p>
@@ -420,7 +426,7 @@
   docsMenuWrap.addEventListener("mouseout", function () {
     dropdownDocs.style.display = "none";
   });
-//tablet menu
+  //tablet menu
   const menuIcon = document.querySelector(".tablet-menu-icon");
   const tabletMenu = document.querySelector(".tablet-menu");
   const productsToggle = document.querySelector(".products-toggle");
@@ -443,4 +449,31 @@
     docsSub.classList.toggle("show");
     docsNum.classList.toggle("show");
   });
+  //change lang
+  let language;
+  let storageData = sessionStorage.getItem("lang");
+  if (storageData) {
+    language = storageData;
+  } else {
+    var userLang = navigator.language || navigator.userLanguage;
+    if (userLang === "ko") {
+      sessionStorage.setItem("lang", userLang);
+      language = "kr";
+    } else {
+      sessionStorage.setItem("lang", "en");
+      language = "en";
+      let locationPath = location.pathname.split("/");
+      locationPath.splice(1, 1);
+      location.href = location.origin + locationPath.join("/");
+    }
+  }
+  function changeLanguage() {
+    var languageSelector = document.getElementById("languageSelector");
+    var selectedLanguage = languageSelector.value;
+    if (selectedLanguage !== "kr") {
+      let locationPath = location.pathname.split("/");
+      locationPath.splice(1, 1);
+      location.href = location.origin + locationPath.join("/");
+    }
+  }
 </script>

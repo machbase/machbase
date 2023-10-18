@@ -1059,6 +1059,11 @@ footer {
     width: 100%;
     padding: 0 40px;
   }
+  .footer-logo-img,
+  .footer-logo img {
+    margin-bottom: 36px !important;
+    margin-top: 48px !important;
+  }
 }
 
 @media screen and (max-width: 1024px) {

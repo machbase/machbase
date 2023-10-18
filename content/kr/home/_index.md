@@ -1,5 +1,4 @@
 ---
-title:
 ---
 
 <head>
@@ -13,9 +12,7 @@ title:
     <div class="menu-left">
       <ul class="menu-left-ul">
         <li class="menu-logo">
-          <a href="/kr/home"
-            ><img src="./img/logo_machbase.png" alt=""
-          /></a>
+          <a href="/kr/home"><img src="./img/logo_machbase.png" alt="" /></a>
         </li>
         <li class="menu-a products-menu-wrap" id="productsMenuWrap">
           <div>
@@ -119,16 +116,15 @@ title:
       <h2 class="main_titletext">
         “ 글로벌 성능평가 1위 기업 마크베이스가 실시간으로 발생하는 대용량
       </h2>
-      <p class="main_titletext_under">
-        데이터로 인한 문제를 해결해드립니다.
-      </p>
+      <p class="main_titletext_under">데이터로 인한 문제를 해결해드립니다.</p>
       <p class="main_titletext_under">
         에지 디바이스에서 클러스터까지 어디에든 설치 가능하며 최고의<br />
         성능으로 고객을 만족시켜 드립니다."
       </p>
       <h2 class="main_tablet_subtitle">
-      “ 글로벌 성능평가 1위 기업 마크베이스가 실시간으로 발생하는 대용량 데이터로 인한 문제를 해결해드립니다. 에지 디바이스에서 클러스터까지 어디에든 설치 가능하며 최고의 성능으로 고객을
-                    만족시켜 드립니다. "
+        “ 글로벌 성능평가 1위 기업 마크베이스가 실시간으로 발생하는 대용량
+        데이터로 인한 문제를 해결해드립니다. 에지 디바이스에서 클러스터까지
+        어디에든 설치 가능하며 최고의 성능으로 고객을 만족시켜 드립니다. "
       </h2>
     </div>
     <div class="chart_wrap">
@@ -171,17 +167,16 @@ title:
       <div class="main_why_contents_box">
         <ul>
           <li class="main_why_contents">
-           TPCx-IoT 성능평가 부문 1위 (2009년 11월부터 현재까지) - 초당 570만건의 처리속도 -
+            TPCx-IoT 성능평가 부문 1위 (2009년 11월부터 현재까지) - 초당
+            570만건의 처리속도 -
           </li>
           <li class="main_why_contents">
-           Hadoop 대비 10배 낮은 CPU/메모리 투자 비용
+            Hadoop 대비 10배 낮은 CPU/메모리 투자 비용
           </li>
           <li class="main_why_contents">
-           기존 RDBMS 및 Hadoop 보다 수십 배 더 뛰어난 압축 효율
+            기존 RDBMS 및 Hadoop 보다 수십 배 더 뛰어난 압축 효율
           </li>
-          <li class="main_why_contents">
-            다양한 운영 체제 및 CPU 지원
-          </li>
+          <li class="main_why_contents">다양한 운영 체제 및 CPU 지원</li>
         </ul>
       </div>
       <div class="main_why_more_box">
@@ -211,14 +206,17 @@ title:
             심플한 아키텍처로 최고의 확장성 구현
           </li>
           <li class="main_why_contents">
-            DBMS와 AI 애플리케이션 간에 학습 및 추론 애플리케이션을 효율적으로 개발할 수 있는 방법 제공
+            DBMS와 AI 애플리케이션 간에 학습 및 추론 애플리케이션을 효율적으로
+            개발할 수 있는 방법 제공
           </li>
         </ul>
       </div>
       <div class="main_why_more_box">
         <p class="main_why_more">
           <span>
-            <a target="" class="main_why_more" href="/kr/home/edge"> View More </a>
+            <a target="" class="main_why_more" href="/kr/home/edge">
+              View More
+            </a>
           </span>
         </p>
       </div>
@@ -352,11 +350,10 @@ title:
                 <span class="green"
                   >&lt;Click on the link below to download&gt;</span
                 ><br />
-                <a
+                <a href="https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-windows-amd64.zip"
                   class="orange home_visited"
                   target="_blank"
-                  v-bind:href="latestNeoURI"
-                  >machbase-neo-{{ latestNeo }}-windows-amd64.zip</a
+                  >machbase-neo-v8.0.3-windows-amd64.zip</a
                 >
               </p>
             </div>
@@ -366,8 +363,8 @@ title:
                 <a
                   class="orange home_visited"
                   target="_blank"
-                  href="https://neo.machbase.com/releases/"
-                  >https://neo.machbase.com/releases/</a
+                  href="https://neo.machbase.com/neo/releases/"
+                  >https://neo.machbase.com/neo/releases/</a
                 >
               </p>
             </div>
@@ -839,7 +836,9 @@ title:
       </div>
       <div class="main_usecase_contents_box">
         <p class="main_usecase_contents">
-          마크베이스는 시계열 데이터에 맞는 스키마 구조를 통해 선박 엔진의 센서 데이터가 포함된 CSV 파일을 수집하고 저장하여 실시간 모니터링 서비스를 제공할 수 있었습니다.
+          마크베이스는 시계열 데이터에 맞는 스키마 구조를 통해 선박 엔진의 센서
+          데이터가 포함된 CSV 파일을 수집하고 저장하여 실시간 모니터링 서비스를
+          제공할 수 있었습니다.
         </p>
       </div>
       <div class="main_usecase_more_box">
@@ -858,7 +857,9 @@ title:
       </div>
       <div class="main_usecase_contents_box">
         <p class="main_usecase_contents">
-          마크베이스 시계열 DB를 활용해 실시간 전력 데이터를 수집하고 저장하여 딥러닝 알고리즘을 개발하는 에너지 빅데이터 플랫폼을 구축하는 프로젝트 기간을 단축했습니다.
+          마크베이스 시계열 DB를 활용해 실시간 전력 데이터를 수집하고 저장하여
+          딥러닝 알고리즘을 개발하는 에너지 빅데이터 플랫폼을 구축하는 프로젝트
+          기간을 단축했습니다.
         </p>
       </div>
       <div class="main_usecase_more_box">
@@ -881,8 +882,9 @@ title:
       </div>
       <div class="main_usecase_contents_box3">
         <p class="main_usecase_contents">
-          마크베이스의 안정적인 클러스터 운영 덕분에 IoT 디바이스를 사용하는 캐롯 보험의 마일리지 보험은 가입자의 차량 운행 정보를 실시간으로 수집하고 이를 기반으로 보험료를 부과할 수
-                        있습니다.
+          마크베이스의 안정적인 클러스터 운영 덕분에 IoT 디바이스를 사용하는
+          캐롯 보험의 마일리지 보험은 가입자의 차량 운행 정보를 실시간으로
+          수집하고 이를 기반으로 보험료를 부과할 수 있습니다.
         </p>
       </div>
       <div class="main_usecase_more_box">
@@ -901,15 +903,7 @@ title:
     <div class="bar"><img src="./img/bar.png" /></div>
   </div>
   <div class="main_video">
-    <iframe
-      width="800"
-      height="500"
-      src="https://www.youtube.com/embed/1DR1TohMOc4?si=kNqjVRGDrmVhSaU3"
-      title="YouTube video player"
-      frameborder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-      allowfullscreen
-    ></iframe>
+    <iframe width="800" height="500" src="https://www.youtube.com/embed/3Q0YAe9aamQ?si=vGarbGvk9_yihlus" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
   </div>
 </section>
 <footer>
@@ -963,9 +957,13 @@ title:
         </div>
       </div>
     </div>
+      <select id="languageSelector" onchange="changeLanguage()">
+        <option value="kr">한국어</option>
+        <option value="en">English</option>
+    </select>
   </div>
   <div class="footer_tablet_inner">
-    <div class="logo">
+    <div class="footer-logo">
       <img src="./img/machbase-logo-w.png" />
     </div>
     <div>
@@ -1013,6 +1011,10 @@ title:
         <button class="contactus">고객 문의</button>
       </a>
     </div>
+      <select id="languageSelector" onchange="changeLanguage()">
+        <option value="kr">한국어</option>
+        <option value="en">English</option>
+    </select>
   </div>
   <div class="machbase_right">
     <p>@2023 MACHBASE All rights reserved.</p>
@@ -1131,26 +1133,26 @@ title:
     } else {
       sSlE6.style.visibility = "visible";
     }
-};
-const clearHeaderTab = (aType) => {
-const sDE1 = document.getElementById("download1");
-const sDE2 = document.getElementById("download2");
-const sDE3 = document.getElementById("download4");
-const sSE1 = document.getElementById("start1");
-const sCE1 = document.getElementById("create1");
-const sCE2 = document.getElementById("create2");
-const sIE1 = document.getElementById("insert1");
-const sIE2 = document.getElementById("insert2");
-const sIE3 = document.getElementById("insert3");
-const sIE4 = document.getElementById("insert4");
-const sIE5 = document.getElementById("insert5");
-const sIE6 = document.getElementById("insert6");
-const sSlE1 = document.getElementById("select1");
-const sSlE2 = document.getElementById("select2");
-const sSlE3 = document.getElementById("select3");
-const sSlE4 = document.getElementById("select4");
-const sSlE5 = document.getElementById("select5");
-const sSlE6 = document.getElementById("select6");
+  };
+  const clearHeaderTab = (aType) => {
+    const sDE1 = document.getElementById("download1");
+    const sDE2 = document.getElementById("download2");
+    const sDE3 = document.getElementById("download4");
+    const sSE1 = document.getElementById("start1");
+    const sCE1 = document.getElementById("create1");
+    const sCE2 = document.getElementById("create2");
+    const sIE1 = document.getElementById("insert1");
+    const sIE2 = document.getElementById("insert2");
+    const sIE3 = document.getElementById("insert3");
+    const sIE4 = document.getElementById("insert4");
+    const sIE5 = document.getElementById("insert5");
+    const sIE6 = document.getElementById("insert6");
+    const sSlE1 = document.getElementById("select1");
+    const sSlE2 = document.getElementById("select2");
+    const sSlE3 = document.getElementById("select3");
+    const sSlE4 = document.getElementById("select4");
+    const sSlE5 = document.getElementById("select5");
+    const sSlE6 = document.getElementById("select6");
     sDE1.style.visibility = "hidden";
     sDE2.style.visibility = "hidden";
     sDE3.style.visibility = "hidden";
@@ -1169,22 +1171,22 @@ const sSlE6 = document.getElementById("select6");
     sSlE4.style.visibility = "hidden";
     sSlE5.style.visibility = "hidden";
     sSlE6.style.visibility = "hidden";
-};
-const buttons = document.querySelectorAll(".btn1");
-buttons.forEach((button) => {
-button.addEventListener("click", () => {
-button.style.backgroundColor = "#ffd800";
+  };
+  const buttons = document.querySelectorAll(".btn1");
+  buttons.forEach((button) => {
+    button.addEventListener("click", () => {
+      button.style.backgroundColor = "#ffd800";
       buttons.forEach((otherButton) => {
         if (otherButton !== button) {
           otherButton.style.backgroundColor = "#f2f2f2";
         }
       });
     });
-});
-const leftBtn = document.querySelectorAll(".left-btn");
-leftBtn.forEach((button) => {
-button.addEventListener("click", () => {
-button.style.backgroundColor = "#ffd800";
+  });
+  const leftBtn = document.querySelectorAll(".left-btn");
+  leftBtn.forEach((button) => {
+    button.addEventListener("click", () => {
+      button.style.backgroundColor = "#ffd800";
       const sElements = document.getElementsByClassName("btn1");
       for (const element of sElements) {
         element.style.backgroundColor = "#f2f2f2";
@@ -1198,15 +1200,15 @@ button.style.backgroundColor = "#ffd800";
         }
       });
     });
-});
-const jsonData = {
-codes: {
-download1: 'sh -c "$(curl -fsSL https://neo.machbase.com/install.sh)"',
-download2: "unzip machbase-neo-_.zip",
-start: `machbase-neo serve`,
-createShell: `machbase-neo shell sql "create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"`,
-insertShell: `machbase-neo shell sql "insert into EXAMPLE values('temperature', 1670380342000000000, 12.3456)"`,
-insertCurl: `curl http://127.0.0.1:5654/db/query --data-urlencode "q=select _ from EXAMPLE"`,
+  });
+  const jsonData = {
+    codes: {
+      download1: 'sh -c "$(curl -fsSL https://neo.machbase.com/install.sh)"',
+      download2: "unzip machbase-neo-_.zip",
+      start: `machbase-neo serve`,
+      createShell: `machbase-neo shell sql "create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"`,
+      insertShell: `machbase-neo shell sql "insert into EXAMPLE values('temperature', 1670380342000000000, 12.3456)"`,
+      insertCurl: `curl http://127.0.0.1:5654/db/query --data-urlencode "q=select _ from EXAMPLE"`,
       insertPy: `import requests
 csvdata = "temperature,1670380342000000000,12.3456"
 response = requests.post(
@@ -1279,28 +1281,28 @@ bytes.NewBufferString(strings.Join(rows, "\\n")))
         'curl http://127.0.0.1:5654/db/query --data-urlencode "q=create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"',
       selectCurl: `curl http://127.0.0.1:5654/db/query --data-urlencode "q=select * from EXAMPLE"`,
     },
-};
-function copyToClipboard(text, button) {
-const textArea = document.createElement("textarea");
-textArea.value = text;
-document.body.appendChild(textArea);
-textArea.select();
-document.execCommand("copy");
-document.body.removeChild(textArea);
+  };
+  function copyToClipboard(text, button) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textArea);
     button.textContent = "Copied";
     setTimeout(function () {
       button.textContent = "Copy";
     }, 1000);
-}
-const copyButtons = document.querySelectorAll(".copy-btn3");
-copyButtons.forEach((button) => {
-button.addEventListener("click", function () {
-const codeType = button.getAttribute("data-code");
-const codeToCopy = jsonData.codes[codeType];
-copyToClipboard(codeToCopy, button);
-});
-});
- //drop down menu
+  }
+  const copyButtons = document.querySelectorAll(".copy-btn3");
+  copyButtons.forEach((button) => {
+    button.addEventListener("click", function () {
+      const codeType = button.getAttribute("data-code");
+      const codeToCopy = jsonData.codes[codeType];
+      copyToClipboard(codeToCopy, button);
+    });
+  });
+  //drop down menu
   const productsMenuWrap = document.getElementById("productsMenuWrap");
   const docsMenuWrap = document.getElementById("docsMenuWrap");
   const dropdown = document.getElementById("dropdown");
@@ -1317,7 +1319,7 @@ copyToClipboard(codeToCopy, button);
   docsMenuWrap.addEventListener("mouseout", function () {
     dropdownDocs.style.display = "none";
   });
-//tablet menu
+  //tablet menu
   const menuIcon = document.querySelector(".tablet-menu-icon");
   const tabletMenu = document.querySelector(".tablet-menu");
   const productsToggle = document.querySelector(".products-toggle");
@@ -1340,4 +1342,31 @@ copyToClipboard(codeToCopy, button);
     docsSub.classList.toggle("show");
     docsNum.classList.toggle("show");
   });
+//change lang
+  let language;
+  let storageData = sessionStorage.getItem("lang");
+  if (storageData) {
+    language = storageData;
+  } else {
+    var userLang = navigator.language || navigator.userLanguage;
+    if (userLang === "ko") {
+      sessionStorage.setItem("lang", userLang);
+      language = "kr";
+    } else {
+      sessionStorage.setItem("lang", "en");
+      language = "en";
+      let locationPath = location.pathname.split("/");
+      locationPath.splice(1, 1);
+      location.href = location.origin + locationPath.join("/");
+    }
+  }
+  function changeLanguage() {
+    var languageSelector = document.getElementById("languageSelector");
+    var selectedLanguage = languageSelector.value;
+    if (selectedLanguage !== "kr") {
+      let locationPath = location.pathname.split("/");
+      locationPath.splice(1, 1);
+      location.href = location.origin + locationPath.join("/");
+    }
+  }
 </script>

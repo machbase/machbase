@@ -6,107 +6,105 @@
   <link rel="stylesheet" type="text/css" href="../css/style.css" />
 </head>
 <body>
- <nav>
-  <div class="homepage-menu-wrap">
-    <div class="menu-left">
-      <ul class="menu-left-ul">
-        <li class="menu-logo">
-          <a href="/kr/home"
+  <nav>
+    <div class="homepage-menu-wrap">
+      <div class="menu-left">
+        <ul class="menu-left-ul">
+          <li class="menu-logo">
+            <a href="/kr/home"><img src="../img/logo_machbase.png" alt="" /></a>
+          </li>
+          <li class="menu-a products-menu-wrap" id="productsMenuWrap">
+            <div>
+              <a
+                class="menu_active_border"
+                id="menuActiveBorder"
+                href="/kr/home/tsdb"
+                >Products</a
+              >
+              <div class="dropdown" id="dropdown">
+                <a class="dropdown-link" href="/kr/home/tsdb">TSDB</a>
+                <a class="dropdown-link" href="/kr/home/mos">MOS</a>
+                <a
+                  class="dropdown-link"
+                  href="https://www.cems.ai/"
+                  target="_blank"
+                  >CEMS</a
+                >
+              </div>
+            </div>
+          </li>
+          <li class="menu-a"><a href="/kr/home/blog">Blog</a></li>
+          <li class="menu-a"><a href="/kr/home/customers">Customers</a></li>
+          <li class="menu-a"><a href="/kr/home/usecase">Use Case</a></li>
+          <li class="menu-a"><a href="/kr/home/company">Company</a></li>
+        </ul>
+      </div>
+      <div class="menu-right">
+        <ul class="menu-right-ul">
+          <li class="menu-a docs-menu-wrap" id="docsMenuWrap">
+            <a href=""
+              ><div>
+                <a class="menu_active_border" id="menuActiveBorder" href="/"
+                  >Document</a
+                >
+                <div class="dropdown-docs" id="dropdownDocs">
+                  <a class="dropdown-link" href="/neo">Neo</a>
+                  <a class="dropdown-link" href="/dbms">Classic</a>
+                </div>
+              </div></a
+            >
+          </li>
+          <li class="menu-a"><a href="/kr/home/download">Download</a></li>
+          <li class="menu-a">
+            <a href="https://support.machbase.com/hc/en-us">Support</a>
+          </li>
+          <li class="menu-a"><a href="/kr/home/contactus">Contact US</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <nav class="tablet-menu-wrap">
+    <a href="/kr/home"><img src="../img/logo_machbase.png" alt="" /></a>
+    <div class="tablet-menu-icon">
+      <div class="tablet-bar"></div>
+      <div class="tablet-bar"></div>
+      <div class="tablet-bar"></div>
+    </div>
+    <div class="tablet-menu">
+      <ul>
+        <div class="tablet-menu-title">
+          <a class="tablet-logo" href="/kr/home"
             ><img src="../img/logo_machbase.png" alt=""
           /></a>
-        </li>
-        <li class="menu-a products-menu-wrap" id="productsMenuWrap">
-          <div>
-            <a
-              class="menu_active_border"
-              id="menuActiveBorder"
-              href="/kr/home/tsdb"
-              >Products</a
-            >
-            <div class="dropdown" id="dropdown">
-              <a class="dropdown-link" href="/kr/home/tsdb">TSDB</a>
-              <a class="dropdown-link" href="/kr/home/mos">MOS</a>
-              <a
-                class="dropdown-link"
-                href="https://www.cems.ai/"
-                target="_blank"
-                >CEMS</a
-              >
+        </div>
+        <li></li>
+        <li class="products-toggle">Products</li>
+        <li>
+          <div class="products-content">
+            <div class="products-sub"><a href="/kr/home/tsdb">TSDB</a></div>
+            <div class="products-num"><a href="/kr/home/mos">MOS</a></div>
+            <div class="products-cems">
+              <a href="https://www.cems.ai/">CEMS</a>
             </div>
           </div>
         </li>
-        <li class="menu-a"><a href="/kr/home/blog">Blog</a></li>
-        <li class="menu-a"><a href="/kr/home/customers">Customers</a></li>
-        <li class="menu-a"><a href="/kr/home/usecase">Use Case</a></li>
-        <li class="menu-a"><a href="/kr/home/company">Company</a></li>
-      </ul>
-    </div>
-    <div class="menu-right">
-      <ul class="menu-right-ul">
-        <li class="menu-a docs-menu-wrap" id="docsMenuWrap">
-          <a href=""
-            ><div>
-              <a class="menu_active_border" id="menuActiveBorder" href="/"
-                >Document</a
-              >
-              <div class="dropdown-docs" id="dropdownDocs">
-                <a class="dropdown-link" href="/neo">Neo</a>
-                <a class="dropdown-link" href="/dbms">Classic</a>
-              </div>
-            </div></a
-          >
-        </li>
-        <li class="menu-a"><a href="/kr/home/download">Download</a></li>
-        <li class="menu-a">
-          <a href="https://support.machbase.com/hc/en-us">Support</a>
-        </li>
-        <li class="menu-a"><a href="/kr/home/contactus">Contact US</a></li>
-      </ul>
-    </div>
-  </div>
-</nav>
-<nav class="tablet-menu-wrap">
-  <a href="/kr/home"><img src="../img/logo_machbase.png" alt="" /></a>
-  <div class="tablet-menu-icon">
-    <div class="tablet-bar"></div>
-    <div class="tablet-bar"></div>
-    <div class="tablet-bar"></div>
-  </div>
-  <div class="tablet-menu">
-    <ul>
-      <div class="tablet-menu-title">
-        <a class="tablet-logo" href="/kr/home"
-          ><img src="../img/logo_machbase.png" alt=""
-        /></a>
-      </div>
-      <li></li>
-      <li class="products-toggle">Products</li>
-      <li>
-        <div class="products-content">
-          <div class="products-sub"><a href="/kr/home/tsdb">TSDB</a></div>
-          <div class="products-num"><a href="/kr/home/mos">MOS</a></div>
-          <div class="products-cems">
-            <a href="https://www.cems.ai/">CEMS</a>
+        <li><a href="/kr/home/blog">Blog</a></li>
+        <li><a href="/kr/home/customers">Customers</a></li>
+        <li><a href="/kr/home/usecase">Use Cases</a></li>
+        <li><a href="/kr/home/company">Company</a></li>
+        <li class="docs-toggle">Document</li>
+        <li>
+          <div class="docs-content">
+            <div class="docs-sub"><a href="/neo">Neo</a></div>
+            <div class="docs-num"><a href="/dbms">Classic</a></div>
           </div>
-        </div>
-      </li>
-      <li><a href="/kr/home/blog">Blog</a></li>
-      <li><a href="/kr/home/customers">Customers</a></li>
-      <li><a href="/kr/home/usecase">Use Cases</a></li>
-      <li><a href="/kr/home/company">Company</a></li>
-      <li class="docs-toggle">Document</li>
-      <li>
-        <div class="docs-content">
-          <div class="docs-sub"><a href="/neo">Neo</a></div>
-          <div class="docs-num"><a href="/dbms">Classic</a></div>
-        </div>
-      </li>
-      <li><a href="/kr/home/download">Download</a></li>
-      <li><a href="https://support.machbase.com/hc/en-us">Support</a></li>
-      <li><a href="/kr/home/download">Contact US</a></li>
-    </ul>
-  </div>
-</nav>
+        </li>
+        <li><a href="/kr/home/download">Download</a></li>
+        <li><a href="https://support.machbase.com/hc/en-us">Support</a></li>
+        <li><a href="/kr/home/download">Contact US</a></li>
+      </ul>
+    </div>
+  </nav>
   <section class="pricing_section0 section0">
     <div>
       <h1 class="sub_page_title">Blog</h1>
@@ -463,8 +461,10 @@
               >A Database for Things</a
             >
             <div class="tech-link-wrap-sub">
-            사사물인터넷(IoT, Internet of Things)은 수많은 장치들이 인터넷 네트워크를 통해 데이터를 상호 전달 및 처리하는 것을 말합니다. IoT 장치들에는 일반적인 데스크탑과 랩탑 등을
-                            제외한 센서, 디지털 구동기(actuator) 및 이동 단말 등이 포함됩니다...
+              사사물인터넷(IoT, Internet of Things)은 수많은 장치들이 인터넷
+              네트워크를 통해 데이터를 상호 전달 및 처리하는 것을 말합니다. IoT
+              장치들에는 일반적인 데스크탑과 랩탑 등을 제외한 센서, 디지털
+              구동기(actuator) 및 이동 단말 등이 포함됩니다...
             </div>
           </div>
         </div>
@@ -487,7 +487,8 @@
                 </div>
               </div>
               <div class="blog-first-div">
-               Machbase Neo는 Machbase time series database를 기반으로 사용자 편의성을 극대화한 All-in-one package 솔루션입니다...
+                Machbase Neo는 Machbase time series database를 기반으로 사용자
+                편의성을 극대화한 All-in-one package 솔루션입니다...
               </div>
               <div class="blog_usecase_more_box">
                 <p class="blog_usecase_more_wrap">
@@ -512,7 +513,8 @@
               /></a>
             </div>
             <a class="tech-link" href="/kr/home/blog/blog2"
-              >마크베이스 네오(Machbase Neo)는 왜 프론트엔드 프레임워크를 vue.js에서 react로 바꾸었는가?</a
+              >마크베이스 네오(Machbase Neo)는 왜 프론트엔드 프레임워크를
+              vue.js에서 react로 바꾸었는가?</a
             >
             <div class="blog-date">
               <div>
@@ -520,7 +522,8 @@
               </div>
             </div>
             <div class="tech-link-wrap-sub">
-              오늘날의 소프트웨어 환경에서 웹 기반 프런트 엔드 부분을 디자인하고 개발하는 것은 의심할 여지 없이 어렵고 복잡합니다...
+              오늘날의 소프트웨어 환경에서 웹 기반 프런트 엔드 부분을 디자인하고
+              개발하는 것은 의심할 여지 없이 어렵고 복잡합니다...
             </div>
           </div>
         </div>
@@ -535,7 +538,8 @@
               /></a>
             </div>
             <a class="tech-link" href="/kr/home/blog/blog3"
-              >마크베이스(Machbase)를 이용한 반도체 생산 데이터 관리 및 검색 방법</a
+              >마크베이스(Machbase)를 이용한 반도체 생산 데이터 관리 및 검색
+              방법</a
             >
             <div class="blog-date">
               <div>
@@ -543,7 +547,8 @@
               </div>
             </div>
             <div class="tech-link-wrap-sub">
-              반도체 생산 데이터는 생산 장비에 설치된 대량의 센서들에서 발생하는 센서 데이터와 생산된 제품에 대한 정보가 혼합되어 있습니다...
+              반도체 생산 데이터는 생산 장비에 설치된 대량의 센서들에서 발생하는
+              센서 데이터와 생산된 제품에 대한 정보가 혼합되어 있습니다...
             </div>
           </div>
         </div>
@@ -558,7 +563,8 @@
               /></a>
             </div>
             <a class="tech-link" href="/kr/home/blog/blog4"
-              >시계열 DB(Time-Series Database) 아키텍처 비교_ 마크베이스Machbase vs 인플럭스 InfluxDB</a
+              >시계열 DB(Time-Series Database) 아키텍처 비교_ 마크베이스Machbase
+              vs 인플럭스 InfluxDB</a
             >
             <div class="blog-date">
               <div>
@@ -566,7 +572,8 @@
               </div>
             </div>
             <div class="tech-link-wrap-sub">
-              시계열 데이터를 위한 DBMS 간의 비교에 흥미 있으실 분들을 위해 InfluxDB와의 아키텍처 비교를 해 보겠습니다...
+              시계열 데이터를 위한 DBMS 간의 비교에 흥미 있으실 분들을 위해
+              InfluxDB와의 아키텍처 비교를 해 보겠습니다...
             </div>
           </div>
         </div>
@@ -590,7 +597,8 @@
               </div>
             </div>
             <div class="tech-link-wrap-sub">
-             이번 글에선 이상 감지가 어려운 이유와 여러 종류의 이상 감지 방법을 소개하고자 합니다...
+              이번 글에선 이상 감지가 어려운 이유와 여러 종류의 이상 감지 방법을
+              소개하고자 합니다...
             </div>
           </div>
         </div>
@@ -613,7 +621,8 @@
               </div>
             </div>
             <div class="tech-link-wrap-sub">
-              최근 4차 산업 혁명 기술은 제조 관리 시스템, 스마트공장, 예지보전 분야 등에서 활발한 연구와 응용을 시도하고 있습니다...
+              최근 4차 산업 혁명 기술은 제조 관리 시스템, 스마트공장, 예지보전
+              분야 등에서 활발한 연구와 응용을 시도하고 있습니다...
             </div>
           </div>
         </div>
@@ -636,8 +645,10 @@
               </div>
             </div>
             <div class="tech-link-wrap-sub">
-               사물인터넷(IoT, Internet of Things)은 수많은 장치들이 인터넷 네트워크를 통해 데이터를 상호 전달 및 처리하는 것을 말합니다. IoT 장치들에는 일반적인 데스크탑과 랩탑 등을
-                            제외한 센서, 디지털 구동기(actuator) 및 이동 단말 등이 포함됩니다...
+              사물인터넷(IoT, Internet of Things)은 수많은 장치들이 인터넷
+              네트워크를 통해 데이터를 상호 전달 및 처리하는 것을 말합니다. IoT
+              장치들에는 일반적인 데스크탑과 랩탑 등을 제외한 센서, 디지털
+              구동기(actuator) 및 이동 단말 등이 포함됩니다...
             </div>
           </div>
         </div>
@@ -696,9 +707,13 @@
         </div>
       </div>
     </div>
+        <select id="languageSelector" onchange="changeLanguage()">
+      <option value="kr">한국어</option>
+      <option value="en">English</option>
+    </select>
   </div>
   <div class="footer_tablet_inner">
-    <div class="logo">
+    <div class="footer-logo">
       <img src="../img/machbase-logo-w.png" />
     </div>
     <div>
@@ -746,6 +761,10 @@
         <button class="contactus">고객 문의</button>
       </a>
     </div>
+        <select id="languageSelector" onchange="changeLanguage()">
+      <option value="kr">한국어</option>
+      <option value="en">English</option>
+    </select>
   </div>
   <div class="machbase_right">
     <p>@2023 MACHBASE All rights reserved.</p>
@@ -769,7 +788,7 @@
   docsMenuWrap.addEventListener("mouseout", function () {
     dropdownDocs.style.display = "none";
   });
-//tablet menu
+  //tablet menu
   const menuIcon = document.querySelector(".tablet-menu-icon");
   const tabletMenu = document.querySelector(".tablet-menu");
   const productsToggle = document.querySelector(".products-toggle");
@@ -792,4 +811,31 @@
     docsSub.classList.toggle("show");
     docsNum.classList.toggle("show");
   });
+  //change lang
+  let language;
+  let storageData = sessionStorage.getItem("lang");
+  if (storageData) {
+    language = storageData;
+  } else {
+    var userLang = navigator.language || navigator.userLanguage;
+    if (userLang === "ko") {
+      sessionStorage.setItem("lang", userLang);
+      language = "kr";
+    } else {
+      sessionStorage.setItem("lang", "en");
+      language = "en";
+      let locationPath = location.pathname.split("/");
+      locationPath.splice(1, 1);
+      location.href = location.origin + locationPath.join("/");
+    }
+  }
+  function changeLanguage() {
+    var languageSelector = document.getElementById("languageSelector");
+    var selectedLanguage = languageSelector.value;
+    if (selectedLanguage !== "kr") {
+      let locationPath = location.pathname.split("/");
+      locationPath.splice(1, 1);
+      location.href = location.origin + locationPath.join("/");
+    }
+  }
 </script>

@@ -1,4 +1,5 @@
 ---
+toc: false
 ---
 
 <head>
@@ -187,11 +188,9 @@
       <div class="main_why_more_box">
         <p class="main_why_more">
           <span>
-            <router-link
-              class="main_why_more"
-              :to="{ path: '/Company', hash: '#performance' }"
-              >View More<ArrowSvg
-            /></router-link>
+            <a href="/home/company#performance" class="main_why_more"
+              >View More</a
+            >
           </span>
         </p>
       </div>
@@ -221,7 +220,7 @@
       <div class="main_why_more_box">
         <p class="main_why_more">
           <span>
-            <a target="" class="main_why_more" href="/edge">
+            <a target="" class="main_why_more" href="/home/edge">
               View More<ArrowSvg />
             </a>
           </span>
@@ -246,9 +245,7 @@
       </div>
       <div class="main_why_more_box">
         <span>
-          <a class="main_why_more" :to="{ path: '/Products', hash: '#scroll2' }"
-            >View More<ArrowSvg
-          /></a>
+          <a class="main_why_more" href="/home/tsdb#scroll2">View More</a>
         </span>
       </div>
     </div>
@@ -336,7 +333,6 @@
                   <p class="dol_p">
                     sh -c "$(curl -fsSL https://neo.machbase.com/install.sh)"
                   </p>
-
                   <button data-code="download1" class="copy-btn3 btn_up">
                     Copy
                   </button>
@@ -361,10 +357,10 @@
                   >&lt;Click on the link below to download&gt;</span
                 ><br />
                 <a
+                  href="https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-windows-amd64.zip"
                   class="orange home_visited"
                   target="_blank"
-                  v-bind:href="latestNeoURI"
-                  >machbase-neo-{{ latestNeo }}-windows-amd64.zip</a
+                  >machbase-neo-v8.0.3-windows-amd64.zip</a
                 >
               </p>
             </div>
@@ -374,8 +370,8 @@
                 <a
                   class="orange home_visited"
                   target="_blank"
-                  href="https://neo.machbase.com/releases/"
-                  >https://neo.machbase.com/releases/</a
+                  href="https://neo.machbase.com/neo/releases/"
+                  >https://neo.machbase.com/neo/releases/</a
                 >
               </p>
             </div>
@@ -829,7 +825,6 @@
         </div>
       </div>
     </div>
-
   </div>
 </section>
 <section class="section5 main_section5">
@@ -856,7 +851,7 @@
       <div class="main_usecase_more_box">
         <p class="main_suecase_more">
           <span>
-            <a class="main_usecase_more" href="/usecase-h">
+            <a class="main_usecase_more" href="/home/usecase/usecase1">
               View More<ArrowSvg />
             </a>
           </span>
@@ -877,7 +872,7 @@
       <div class="main_usecase_more_box">
         <p class="main_usecase_more">
           <span>
-            <a class="main_usecase_more" href="/usecase-e">
+            <a class="main_usecase_more" href="/home/usecase/usecase4">
               View More<ArrowSvg />
             </a>
           </span>
@@ -902,7 +897,7 @@
       </div>
       <div class="main_usecase_more_box">
         <span>
-          <a class="main_usecase_more" href="/usecase-c"
+          <a class="main_usecase_more" href="/home/usecase/usecase6"
             >View More<ArrowSvg />
           </a>
         </span>
@@ -930,7 +925,7 @@
 <footer>
   <div class="footer_inner">
     <div class="footer-logo">
-      <img src="./img/machbase_logo_w.png" />
+      <img src="./img/machbase-logo-w.png" />
       <a href="/home/contactus">
         <button class="contactus">Contact Us</button>
       </a>
@@ -978,10 +973,14 @@
         </div>
       </div>
     </div>
+    <select id="languageSelector" onchange="changeLanguage()">
+      <option value="en">English</option>
+      <option value="kr">한국어</option>
+    </select>
   </div>
   <div class="footer_tablet_inner">
-    <div class="logo">
-      <img src="./img/machbase_logo_w.png" />
+    <div class="footer-logo">
+      <img src="./img/machbase-logo-w.png" />
     </div>
     <div>
       <p class="footertext">
@@ -1028,12 +1027,17 @@
         <button class="contactus">Contact US</button>
       </a>
     </div>
+    <select id="languageSelector" onchange="changeLanguage()">
+      <option value="en">English</option>
+      <option value="kr">한국어</option>
+    </select>
   </div>
   <div class="machbase_right">
     <p>@2023 MACHBASE All rights reserved.</p>
   </div>
 </footer>
 <script>
+  var userLang = navigator.language || navigator.userLanguage;
   const clickLeftTab = (aType) => {
     const sDownloadElement = document.getElementById("download");
     const sStartupElement = document.getElementById("start");
@@ -1217,82 +1221,82 @@
   const jsonData = {
     codes: {
       download1: 'sh -c "$(curl -fsSL https://neo.machbase.com/install.sh)"',
-      download2: "unzip machbase-neo-*.zip",
+      download2: "unzip machbase-neo-_.zip",
       start: `machbase-neo serve`,
       createShell: `machbase-neo shell sql "create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"`,
       insertShell: `machbase-neo shell sql "insert into EXAMPLE values('temperature', 1670380342000000000, 12.3456)"`,
-      insertCurl: `curl http://127.0.0.1:5654/db/query --data-urlencode "q=select * from EXAMPLE"`,
+      insertCurl: `curl http://127.0.0.1:5654/db/query --data-urlencode "q=select _ from EXAMPLE"`,
       insertPy: `import requests
-    csvdata = "temperature,1670380342000000000,12.3456"
-    response = requests.post(
-    "http://127.0.0.1:5654/db/write/EXAMPLE?heading=false",
-    data=csvdata,
-    headers={'Content-Type': 'text/csv'})`,
-      insertJs: `q = "select * from example"
-    fetch('http://127.0.0.1:5654/db/query?q=' + encodeURIComponent(q))
-    .then(res => {
-    return res.json();
-    })
-    .then(data => {
-    console.log(data);
-    });`,
+csvdata = "temperature,1670380342000000000,12.3456"
+response = requests.post(
+"http://127.0.0.1:5654/db/write/EXAMPLE?heading=false",
+data=csvdata,
+headers={'Content-Type': 'text/csv'})`,
+      insertJs: `q = "select _ from example"
+fetch('http://127.0.0.1:5654/db/query?q=' + encodeURIComponent(q))
+.then(res => {
+return res.json();
+})
+.then(data => {
+console.log(data);
+});`,
       insertGo: `package main
-    import (
-    "net/http"
-    "bytes"
-    "strings"
-    )
-    func main() {
-    rows := []string{"temperature,1670380342000000000,12.3456"}
-    http.Post(
-    "http://127.0.0.1:5654/db/write/EXAMPLE?heading=false",
-    "text/csv",
-    bytes.NewBufferString(strings.Join(rows, "\\n")))
-    }`,
+import (
+"net/http"
+"bytes"
+"strings"
+)
+func main() {
+rows := []string{"temperature,1670380342000000000,12.3456"}
+http.Post(
+"http://127.0.0.1:5654/db/write/EXAMPLE?heading=false",
+"text/csv",
+bytes.NewBufferString(strings.Join(rows, "\\n")))
+}`,
       insertC: `using HttpClient client = new();
-    var payload = new System.Net.Http.StringContent(
-    @"temperature,1677033057000000000,21.1
-    humidity,1677033057000000000,0.53",
-    new System.Net.Http.Headers.MediaTypeHeaderValue("text/csv"));
-    var rsp = await client.PostAsync(
-    "http://127.0.0.1:5654/db/write/example?heading=false", payload
-    );
-    Console.Write(rsp);`,
-      selectNeo: `machbase-neo shell sql 'select * from EXAMPLE'`,
+var payload = new System.Net.Http.StringContent(
+@"temperature,1677033057000000000,21.1
+humidity,1677033057000000000,0.53",
+new System.Net.Http.Headers.MediaTypeHeaderValue("text/csv"));
+var rsp = await client.PostAsync(
+"http://127.0.0.1:5654/db/write/example?heading=false", payload
+);
+Console.Write(rsp);`,
+      selectNeo: `machbase-neo shell sql 'select _ from EXAMPLE'`,
       selectPy: `import requests
-    params = {"q":"select * from example", "format":"csv", "heading":"false"}
-    response = requests.get("http://127.0.0.1:5654/db/query", params)
-    print(response.text)`,
-      selectJs: `const q = "select * from example";
-    fetch('http://127.0.0.1:5654/db/query?q=' + encodeURIComponent(q))
-    .then(res => {
-    return res.json();
-    })
-    .then(data => {
-    console.log(data);
-    });`,
+params = {"q":"select _ from example", "format":"csv", "heading":"false"}
+response = requests.get("http://127.0.0.1:5654/db/query", params)
+print(response.text)`,
+      selectJs: `const q = "select _ from example";
+fetch('http://127.0.0.1:5654/db/query?q=' + encodeURIComponent(q))
+.then(res => {
+return res.json();
+})
+.then(data => {
+console.log(data);
+});`,
       selectGo: `package main
-    import (
-    "fmt",
-    "net/url"
-    "net/http"
-    "io"
-    )
-    func main() {
-    q := url.QueryEscape("select * from example")
-    rsp, _ := http.Get("http://127.0.0.1:5654/db/query?format=csv&q="+q)
-    data, _ := io.ReadAll(rsp.Body)
-    fmt.Println(string(data))
-    }`,
+import (
+"fmt",
+"net/url"
+"net/http"
+"io"
+)
+func main() {
+q := url.QueryEscape("select _ from example")
+rsp, * := http.Get("http://127.0.0.1:5654/db/query?format=csv&q="+q)
+data, * := io.ReadAll(rsp.Body)
+fmt.Println(string(data))
+}`,
       selectC: `using HttpClient client = new();
-    var q = System.Net.WebUtility.UrlEncode("select * from example");
-    var data = await client.GetStringAsync(
-    "http://127.0.0.1:5654/db/query?format=csv&q="+q
-    );
-    Console.Write(data);`,
+var q = System.Net.WebUtility.UrlEncode("select _ from example");
+var data = await client.GetStringAsync(
+"http://127.0.0.1:5654/db/query?format=csv&q="+q
+);
+Console.Write(data);`,
       createCurl:
         'curl http://127.0.0.1:5654/db/query --data-urlencode "q=create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"',
-      selectCurl: `curl http://127.0.0.1:5654/db/query --data-urlencode "q=select * from EXAMPLE"`,
+      selectCurl: `curl http://127.0.0.1:5654/db/query --data-urlencode "q=select \* from EXAMPLE"`,
     },
   };
   function copyToClipboard(text, button) {
@@ -1355,4 +1359,27 @@
     docsSub.classList.toggle("show");
     docsNum.classList.toggle("show");
   });
+  //change lang
+  let language;
+  let storageData = sessionStorage.getItem("lang");
+  if (storageData) {
+    language = storageData;
+  } else {
+    var userLang = navigator.language || navigator.userLanguage;
+    if (userLang !== "ko") {
+      sessionStorage.setItem("lang", userLang);
+      language = "en";
+    } else {
+      sessionStorage.setItem("lang", "ko");
+      language = "kr";
+      location.href = location.origin + "/kr" + location.pathname;
+    }
+  }
+  function changeLanguage() {
+    var languageSelector = document.getElementById("languageSelector");
+    var selectedLanguage = languageSelector.value;
+    if (selectedLanguage === "kr") {
+      location.href = location.origin + "/kr" + location.pathname;
+    }
+  }
 </script>
