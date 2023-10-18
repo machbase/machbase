@@ -331,7 +331,7 @@ toc: false
                 <div class="dol_rel">
                   <span class="yellow dol">$</span>
                   <p class="dol_p">
-                    sh -c "$(curl -fsSL https://neo.machbase.com/install.sh)"
+                    sh -c "$(curl -fsSL https://machbase.com/install.sh)"
                   </p>
                   <button data-code="download1" class="copy-btn3 btn_up">
                     Copy
@@ -1220,7 +1220,7 @@ toc: false
   });
   const jsonData = {
     codes: {
-      download1: 'sh -c "$(curl -fsSL https://neo.machbase.com/install.sh)"',
+      download1: 'sh -c "$(curl -fsSL https://machbase.com/install.sh)"',
       download2: "unzip machbase-neo-_.zip",
       start: `machbase-neo serve`,
       createShell: `machbase-neo shell sql "create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"`,

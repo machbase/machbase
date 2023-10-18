@@ -47,7 +47,7 @@ Integration with external systems
     Paste the script below into the shell prompt for the latest version of the platform.
 
     ```bash
-    sh -c "$(curl -fsSL https://neo.machbase.com/install.sh)"
+    sh -c "$(curl -fsSL https://machbase.com/install.sh)"
     ```
     {{< /tab >}}
 
