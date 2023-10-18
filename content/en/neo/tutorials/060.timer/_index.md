@@ -15,9 +15,8 @@ Open *tql* editor, copy the code below and save it as `helloworld.tql`.
 
 ```js
 SCRIPT({
-    fmt := import("fmt")
-    fmt.println("Hello World?")
     ctx := import("context")
+    ctx.println("Hello World?")
     ctx.yield("message", "Hello World?")
 })
 MARKDOWN()
