@@ -27,7 +27,7 @@
               <a class="dropdown-link" href="/home/mos">MOS</a>
               <a
                 class="dropdown-link"
-                href="https://www.cems.ai/"
+                href="https://www.cems.ai/home-eng/"
                 target="_blank"
                 >CEMS</a
               >
@@ -45,12 +45,12 @@
         <li class="menu-a docs-menu-wrap" id="docsMenuWrap">
           <a href=""
             ><div>
-              <a class="menu_active_border" id="menuActiveBorder" href="/"
+              <a class="menu_active_border" id="menuActiveBorder" href=""
                 >Document</a
               >
               <div class="dropdown-docs" id="dropdownDocs">
-                <a class="dropdown-link" href="/neo">Neo</a>
-                <a class="dropdown-link" href="/dbms">Classic</a>
+                <a class="dropdown-link" href="/neo" target="_blank">Neo</a>
+                <a class="dropdown-link" href="/dbms" target="_blank">Classic</a>
               </div>
             </div></a
           >
@@ -59,7 +59,11 @@
         <li class="menu-a">
           <a href="https://support.machbase.com/hc/en-us">Support</a>
         </li>
-        <li class="menu-a"><a href="/home/contactus">Contact US</a></li>
+         <li class="menu-a"><a href="/home/contactus">Contact US</a></li>
+        <li class="menu-a"><select id="languageSelector" onchange="changeLanguage()">
+        <option value="en">English</option>
+        <option value="kr">한국어</option>
+    </select></li>
       </ul>
     </div>
   </div>
@@ -85,7 +89,7 @@
           <div class="products-sub"><a href="/home/tsdb">TSDB</a></div>
           <div class="products-num"><a href="/home/mos">MOS</a></div>
           <div class="products-cems">
-            <a href="https://www.cems.ai/">CEMS</a>
+            <a href="https://www.cems.ai/home-eng/" target="_blank">CEMS</a>
           </div>
         </div>
       </li>
@@ -96,13 +100,18 @@
       <li class="docs-toggle">Document</li>
       <li>
         <div class="docs-content">
-          <div class="docs-sub"><a href="/neo">Neo</a></div>
-          <div class="docs-num"><a href="/dbms">Classic</a></div>
+          <div class="docs-sub"><a href="/neo" target="_blank">Neo</a></div>
+          <div class="docs-num"><a href="/dbms" target="_blank">Classic</a></div>
         </div>
       </li>
       <li><a href="/home/download">Download</a></li>
       <li><a href="https://support.machbase.com/hc/en-us">Support</a></li>
-      <li><a href="/home/download">Contact US</a></li>
+         <li><a href="/home/download">Contact US</a></li>
+<li><select id="languageSelector2" onchange="changeLanguage2()">
+        <option value="en">English</option>
+        <option value="kr">한국어</option>
+    </select>
+    </li>
     </ul>
   </div>
 </nav>
@@ -242,10 +251,6 @@
         </div>
       </div>
     </div>
-    <select id="languageSelector" onchange="changeLanguage()">
-      <option value="en">English</option>
-      <option value="kr">한국어</option>
-    </select>
   </div>
   <div class="footer_tablet_inner">
     <div class="footer-logo">
@@ -296,10 +301,6 @@
         <button class="contactus">Contact US</button>
       </a>
     </div>
-    <select id="languageSelector" onchange="changeLanguage()">
-      <option value="en">English</option>
-      <option value="kr">한국어</option>
-    </select>
   </div>
   <div class="machbase_right">
     <p>@2023 MACHBASE All rights reserved.</p>
@@ -369,4 +370,21 @@
       location.href = location.origin + "/kr" + location.pathname;
     } 
 }
+  function changeLanguage2() {
+    var languageSelector = document.getElementById("languageSelector2");
+    var selectedLanguage = languageSelector.value;
+    if (selectedLanguage === "kr") {
+      location.href = location.origin + "/kr" + location.pathname;
+    }
+  }
+  window.addEventListener("load", function() {
+    var elementsWithDarkClass = document.querySelectorAll(".dark");
+    for (var i = 0; i < elementsWithDarkClass.length; i++) {
+        elementsWithDarkClass[i].classList.remove("dark");
+    }
+     var elementsWithColorScheme = document.querySelectorAll("[style*='color-scheme: dark;']");
+    for (var i = 0; i < elementsWithColorScheme.length; i++) {
+        elementsWithColorScheme[i].removeAttribute("style");
+    }
+});
 </script>

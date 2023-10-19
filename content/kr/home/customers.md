@@ -37,7 +37,7 @@ toc: false
           <li class="menu-a"><a href="/kr/home/blog">Blog</a></li>
           <li class="menu-a"><a href="/kr/home/customers">Customers</a></li>
           <li class="menu-a"><a href="/kr/home/usecase">Use Case</a></li>
-          <li class="menu-a"><a href="/kr/home/company">Company</a></li>
+            <li class="menu-a"><a href="/kr/home/company">Company</a></li>
         </ul>
       </div>
       <div class="menu-right">
@@ -45,12 +45,12 @@ toc: false
           <li class="menu-a docs-menu-wrap" id="docsMenuWrap">
             <a href=""
               ><div>
-                <a class="menu_active_border" id="menuActiveBorder" href="/"
+                <a class="menu_active_border" id="menuActiveBorder" href=""
                   >Document</a
                 >
                 <div class="dropdown-docs" id="dropdownDocs">
-                  <a class="dropdown-link" href="/neo">Neo</a>
-                  <a class="dropdown-link" href="/dbms">Classic</a>
+                  <a class="dropdown-link" href="/neo" target="_blank">Neo</a>
+                  <a class="dropdown-link" href="/dbms" target="_blank">Classic</a>
                 </div>
               </div></a
             >
@@ -60,6 +60,12 @@ toc: false
             <a href="https://support.machbase.com/hc/en-us">Support</a>
           </li>
           <li class="menu-a"><a href="/kr/home/contactus">Contact US</a></li>
+          <li class="menu-a">
+          <select id="languageSelector" onchange="changeLanguage()">
+            <option value="kr">한국어</option>
+            <option value="en">English</option>
+          </select>
+        </li>
         </ul>
       </div>
     </div>
@@ -85,7 +91,7 @@ toc: false
             <div class="products-sub"><a href="/kr/home/tsdb">TSDB</a></div>
             <div class="products-num"><a href="/kr/home/mos">MOS</a></div>
             <div class="products-cems">
-              <a href="https://www.cems.ai/">CEMS</a>
+              <a href="https://www.cems.ai/" target="_blank">CEMS</a>
             </div>
           </div>
         </li>
@@ -96,13 +102,19 @@ toc: false
         <li class="docs-toggle">Document</li>
         <li>
           <div class="docs-content">
-            <div class="docs-sub"><a href="/neo">Neo</a></div>
-            <div class="docs-num"><a href="/dbms">Classic</a></div>
+            <div class="docs-sub"><a href="/neo" target="_blank">Neo</a></div>
+            <div class="docs-num"><a href="/dbms" target="_blank">Classic</a></div>
           </div>
         </li>
         <li><a href="/kr/home/download">Download</a></li>
         <li><a href="https://support.machbase.com/hc/en-us">Support</a></li>
-        <li><a href="/kr/home/download">Contact US</a></li>
+           <li><a href="/kr/home/download">Contact US</a></li>
+      <li>
+    <select id="languageSelector2" onchange="changeLanguage2()">
+      <option value="kr">한국어</option>
+      <option value="en">English</option>
+    </select>
+      </li>
       </ul>
     </div>
   </nav>
@@ -253,7 +265,7 @@ toc: false
     </div>
     <div>
       <p class="footertext">
-        3003 North First street #206 San Jose, CA 95134. USA
+        서울시 강남구 테헤란로 20길 10, 3M 타워, 9층
       </p>
     </div>
     <div class="footer_box">
@@ -294,10 +306,6 @@ toc: false
         </div>
       </div>
     </div>
-        <select id="languageSelector" onchange="changeLanguage()">
-      <option value="kr">한국어</option>
-      <option value="en">English</option>
-    </select>
   </div>
   <div class="footer_tablet_inner">
     <div class="footer-logo">
@@ -305,7 +313,7 @@ toc: false
     </div>
     <div>
       <p class="footertext">
-        3003 North First street #206 San Jose, CA 95134. USA
+        서울시 강남구 테헤란로 20길 10, 3M 타워, 9층
       </p>
     </div>
     <div class="footer_box">
@@ -348,10 +356,6 @@ toc: false
         <button class="contactus">고객 문의</button>
       </a>
     </div>
-        <select id="languageSelector" onchange="changeLanguage()">
-      <option value="kr">한국어</option>
-      <option value="en">English</option>
-    </select>
   </div>
   <div class="machbase_right">
     <p>@2023 MACHBASE All rights reserved.</p>
@@ -425,4 +429,23 @@ toc: false
       location.href = location.origin + locationPath.join("/");
     }
   }
+    function changeLanguage2() {
+    var languageSelector = document.getElementById("languageSelector2");
+    var selectedLanguage = languageSelector.value;
+    if (selectedLanguage !== "kr") {
+      let locationPath = location.pathname.split("/");
+      locationPath.splice(1, 1);
+      location.href = location.origin + locationPath.join("/");
+    }
+  }
+  window.addEventListener("load", function() {
+    var elementsWithDarkClass = document.querySelectorAll(".dark");
+    for (var i = 0; i < elementsWithDarkClass.length; i++) {
+        elementsWithDarkClass[i].classList.remove("dark");
+    }
+     var elementsWithColorScheme = document.querySelectorAll("[style*='color-scheme: dark;']");
+    for (var i = 0; i < elementsWithColorScheme.length; i++) {
+        elementsWithColorScheme[i].removeAttribute("style");
+    }
+});
 </script>

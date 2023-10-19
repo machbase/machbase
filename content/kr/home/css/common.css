@@ -1,6 +1,12 @@
 /* Begin: Font
 ------------------------------------------------------------------
 */
+.content ul li {
+  margin: 15px 0;
+}
+.content p {
+  line-height: 36px;
+}
 .content td {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
@@ -316,7 +322,7 @@ template {
   justify-content: space-between;
   align-items: center;
   height: 80px;
-  padding: 0 120px;
+  padding: 0 60px 0 120px;
 }
 .menu-left {
   width: 62%;
@@ -405,6 +411,20 @@ template {
 */
 .menu-logo {
   margin-right: 40px;
+}
+#languageSelector,
+#languageSelector2 {
+  background-color: #253fd0;
+  color: #fff;
+  border-radius: 6px;
+  width: 90px;
+  height: 35px;
+  padding: 0 3px;
+  font-size: 14px !important;
+}
+.menu-right ul {
+  display: flex;
+  align-items: center;
 }
 /* .tablmenu {
   display: none;
@@ -1140,7 +1160,7 @@ footer {
     right: 20px;
     z-index: 1;
     padding: 10px;
-    height: 100vh;
+    height: 100%;
   }
   .tablet-menu.show {
     display: flex;

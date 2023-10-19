@@ -35,9 +35,6 @@
   display: flex;
   align-items: center;
 }
-.main_chart {
-  width: 80%;
-}
 .chart_hover {
   display: none;
 }
@@ -923,11 +920,15 @@
   }
   .main_tablet_subtitle {
     padding-left: 20px;
+    font-size: 16px !important;
   }
   .tablet_chart {
     margin-left: 20px;
   }
-
+  .tablet_chart_hover,
+  .tablet_chart {
+    display: none;
+  }
   .neo_tablet_map {
     display: none;
   }
@@ -964,13 +965,16 @@
     display: none;
   }
   .main_title {
+    font-size: 36px !important;
     padding-left: 20px;
   }
   .main_titletext {
     padding-left: 20px;
+    font-size: 16px !important;
   }
   .main_titletext_under {
     padding-left: 20px;
+    font-size: 16px !important;
   }
   .text_centerwrap {
     width: 400px;
@@ -996,7 +1000,7 @@
 }
 @media screen and (max-width: 385px) {
   .main_title {
-    font-size: 30px;
+    font-size: 30px !important;
   }
   .main_titletext {
     font-size: 16px;

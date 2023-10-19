@@ -1,12 +1,21 @@
 /* Begin: Font
 ------------------------------------------------------------------
 */
+.content ul li {
+  margin: 15px 0;
+}
+.content p {
+  line-height: 36px;
+}
 .content td {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
 }
 html {
+  color-scheme: normal !important;
   font-family: "OpenSans";
+  margin: 0;
+  padding: 0;
 }
 .nav-container {
   display: none;
@@ -115,10 +124,7 @@ time,
 /* Begin: Initialize
 ------------------------------------------------------------------
 */
-html {
-  margin: 0;
-  padding: 0;
-}
+
 body,
 div,
 span,
@@ -316,13 +322,13 @@ template {
   justify-content: space-between;
   align-items: center;
   height: 80px;
-  padding: 0 120px;
+  padding: 0 60px 0 120px;
 }
 .menu-left {
-  width: 62%;
+  width: 56%;
 }
 .menu-right {
-  width: 38%;
+  width: 44%;
 }
 .menu-left-ul {
   display: flex;
@@ -335,7 +341,10 @@ template {
   font-weight: 500 !important;
   font-family: "OpenSans";
 }
-
+.menu-right ul {
+  display: flex;
+  align-items: center;
+}
 .dropdown {
   display: none;
   position: absolute;
@@ -1016,6 +1025,16 @@ footer {
   margin-left: 20px;
   border-radius: 4px;
 }
+#languageSelector,
+#languageSelector2 {
+  background-color: #253fd0;
+  color: #fff;
+  border-radius: 6px;
+  width: 90px;
+  height: 35px;
+  padding: 0 3px;
+  font-size: 14px !important;
+}
 /* End: Footer
 ------------------------------------------------------------------
 */
@@ -1060,8 +1079,7 @@ footer {
     padding: 0 40px;
   }
 }
-
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 1120px) {
   .homepage-menu-wrap {
     display: none;
   }
@@ -1135,7 +1153,7 @@ footer {
     right: 20px;
     z-index: 1;
     padding: 10px;
-    height: 100vh;
+    height: 100%;
   }
   .tablet-menu.show {
     display: flex;
@@ -1195,6 +1213,8 @@ footer {
     border: 1px solid #253fd0 !important;
     background-color: transparent;
   }
+}
+@media screen and (max-width: 1024px) {
   /* .menu {
     display: none;
   } */
