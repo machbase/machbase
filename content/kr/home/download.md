@@ -174,7 +174,7 @@ toc: false
           <td class="download_th1_4">
             <span
               >wget
-              https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-arm32.zip
+              https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-linux-arm32.zip
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -182,7 +182,7 @@ toc: false
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
-                href="https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-arm32.zip"
+                href="https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-linux-arm32.zip"
               >
                 <img src="../img/btn_newlink.png" />
               </a>
@@ -194,7 +194,7 @@ toc: false
           <td class="download_th1_4">
             <span
               >wget
-              https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-arm64.zip
+              https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-linux-arm64.zip
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -202,7 +202,7 @@ toc: false
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
-                href="https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-arm64.zip"
+                href="https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-linux-arm64.zip"
               >
                 <img src="../img/btn_newlink.png" />
               </a>
@@ -214,7 +214,7 @@ toc: false
           <td class="download_th1_4">
             <span
               >wget
-              https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-amd64.zip
+              https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-linux-amd64.zip
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -222,7 +222,7 @@ toc: false
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
-                href="https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-amd64.zip"
+                href="https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-linux-amd64.zip"
               >
                 <img src="../img/btn_newlink.png" />
               </a>
@@ -235,7 +235,7 @@ toc: false
           <td class="download_th1_4">
             <span
               >wget
-              https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-darwin-arm64.zip
+              https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-darwin-arm64.zip
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -243,7 +243,7 @@ toc: false
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
-                href="https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-darwin-arm64.zip"
+                href="https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-darwin-arm64.zip"
               >
                 <img src="../img/btn_newlink.png" />
               </a>
@@ -255,7 +255,7 @@ toc: false
           <td class="download_th1_4">
             <span
               >wget
-              https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-darwin-amd64.zip
+              https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-darwin-amd64.zip
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -263,7 +263,7 @@ toc: false
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
-                href="https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-darwin-amd64.zip"
+                href="https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-darwin-amd64.zip"
               >
                 <img src="../img/btn_newlink.png" />
               </a>
@@ -276,7 +276,7 @@ toc: false
           <td class="download_th1_4">
             <span
               >wget
-              https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-windows-amd64.zip
+              https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-windows-amd64.zip
             </span>
           </td>
           <td class="puple border_bottom_right">
@@ -284,7 +284,7 @@ toc: false
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
-                href="https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-windows-amd64.zip"
+                href="https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-windows-amd64.zip"
               >
                 <img src="../img/btn_newlink.png" />
               </a>
@@ -564,17 +564,17 @@ toc: false
   const jsonData = {
     codes: {
       neoLinuxArm32:
-        "https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-arm32.zip",
+        "https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-linux-arm32.zip",
       neoLinuxArm64:
-        "https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-arm64.zip",
+        "https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-linux-arm64.zip",
       neoLinuxX64:
-        "https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-linux-amd64.zip",
+        "https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-linux-amd64.zip",
       neoMacArm64:
-        "https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-darwin-arm64.zip",
+        "https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-darwin-arm64.zip",
       neoMacX64:
-        "https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-darwin-amd64.zip",
+        "https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-darwin-amd64.zip",
       neoWindowsX64:
-        "https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-windows-amd64.zip",
+        "https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-windows-amd64.zip",
       sdkLinuxX64:
         "https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-X86-64-release.tgz",
       sdkLinuxArm:
