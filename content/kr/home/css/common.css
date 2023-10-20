@@ -11,6 +11,9 @@
   padding-top: 0 !important;
   padding-bottom: 0 !important;
 }
+.mx-auto {
+  max-width: 100% !important;
+}
 html {
   font-family: "OpenSans";
 }
@@ -1085,8 +1088,7 @@ footer {
     margin-top: 48px !important;
   }
 }
-
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 1120px) {
   .homepage-menu-wrap {
     display: none;
   }
@@ -1220,6 +1222,8 @@ footer {
     border: 1px solid #253fd0 !important;
     background-color: transparent;
   }
+}
+@media screen and (max-width: 1024px) {
   /* .menu {
     display: none;
   } */

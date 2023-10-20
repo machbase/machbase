@@ -1,7 +1,9 @@
 .d-inline-block {
   display: inline-block !important;
 }
-
+.mx-auto {
+  max-width: 100%;
+}
 .label {
   display: inline-block;
   line-height: 1;

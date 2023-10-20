@@ -28,6 +28,9 @@ html {
   top: 0;
   right: 0;
 }
+.mx-auto {
+  max-width: 100% !important;
+}
 .md\:px-12 {
   margin: 0;
   padding: 0;
@@ -36,7 +39,7 @@ main {
   padding: 0;
   margin: 0;
 }
-.max-w-screen-xl {
+s .max-w-screen-xl {
   max-width: 100%;
 }
 .max-w-6xl {
