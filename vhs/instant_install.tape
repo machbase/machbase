@@ -4,7 +4,7 @@ Set FontSize 12
 Set Width 800
 Set Height 400
 
-Type 'sh -c "$(curl -fsSL https://neo.machbase.com/install.sh)"'
+Type 'sh -c "$(curl -fsSL https://machbase.com/install.sh)"'
 Sleep 500ms
 Enter
 

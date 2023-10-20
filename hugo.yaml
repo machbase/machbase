@@ -4,7 +4,7 @@ enableRobotsTXT: true
 enableGitInfo: true
 hasCJKLanguage: true
 googleAnalytics: G-5VYQQQFHCH
-baseURL: https://neo.machbase.com/
+baseURL: https://www.machbase.com/
 
 DefaultContentLanguage: en
 languages:
@@ -35,7 +35,7 @@ markup:
 enableInlineShortcodes: true
 
 params:
-  latestNeoVer: v8.0.2
+  latestNeoVer: v8.0.3
   examples_url: https://github.com/machbase/machbase/tree/main/examples
   releases_url: https://github.com/machbase/neo-server/releases
   jdbc_version: 8.0.2
@@ -48,8 +48,8 @@ params:
     displayLogo: true
     logo:
       path: images/logo_machbase.png
-      dark: images/logo_machbase.png
-      link: /neo
+      dark: images/machbase-logo-w.png
+      link: /home
       width: 200
 
   footer:
@@ -62,10 +62,10 @@ params:
 
 menu:
   main:
-    # - identifier: home
-    #   name: Home
-    #   pageRef: /home
-    #   weight: 10
+    - identifier: home
+      name: Home
+      pageRef: /home
+      weight: 10
     - identifier: neo
       name: MACHBASE NEO
       pageRef: /neo
@@ -83,4 +83,3 @@ menu:
       params:
         icon: github
       weight: 50
-  

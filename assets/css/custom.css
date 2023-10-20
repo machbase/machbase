@@ -1,86 +1,97 @@
 .d-inline-block {
-    display: inline-block !important;
+  display: inline-block !important;
 }
 
 .label {
-    display: inline-block;
-    line-height: 1.0;
-    background-color: red;
-    color: white;
-    padding: 2px 8px;
-    text-align: center;
-    vertical-align: top;
-    border-radius: 12px;
-    font-size: 0.8rem !important;
-  }
+  display: inline-block;
+  line-height: 1;
+  background-color: red;
+  color: white;
+  padding: 2px 8px;
+  text-align: center;
+  vertical-align: top;
+  border-radius: 12px;
+  font-size: 0.8rem !important;
+}
 
 .label-green {
-    background-color: #009c7b;
+  background-color: #009c7b;
 }
 
 .fs-6 {
-    font-size: 1.5rem !important;
-    line-height: 1.25;
+  font-size: 1.5rem !important;
+  line-height: 1.25;
 }
 
 .fs-6 a {
-    text-decoration: none;
-    color: #fff;
+  text-decoration: none;
+  color: #fff;
 }
 
 .btn {
-    width: 180px;
-    display: inline-block;
-    box-sizing: border-box;
-    padding: 0.3em 1em;
-    margin: 4px;
-    margin-right: 1rem !important;
-    font-family: inherit;
-    font-size: inherit;
-    font-weight: 500;
-    line-height: 1.5;
-    color: #7253ed;
-    text-decoration: none;
-    text-align: center;
-    vertical-align: baseline;
-    cursor: pointer;
-    background-color: #f7f7f7;
-    border-width: 0;
-    border-radius: 4px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.12),0 3px 10px rgba(0,0,0,0.08);
-    appearance: none;
+  width: 180px;
+  display: inline-block;
+  box-sizing: border-box;
+  padding: 0.3em 1em;
+  margin: 4px;
+  margin-right: 1rem !important;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #7253ed;
+  text-decoration: none;
+  text-align: center;
+  vertical-align: baseline;
+  cursor: pointer;
+  background-color: #f7f7f7;
+  border-width: 0;
+  border-radius: 4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12), 0 3px 10px rgba(0, 0, 0, 0.08);
+  appearance: none;
 }
 
 .btn:hover {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 .btn-purple {
-    color: #5739c3;
-    text-decoration: none;
-    background-color: #10ac7d;
-    background-image: linear-gradient(#6f55d5, #5739ce);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.25),0 4px 10px rgba(0,0,0,0.12);
+  color: #5739c3;
+  text-decoration: none;
+  background-color: #10ac7d;
+  background-image: linear-gradient(#6f55d5, #5739ce);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), 0 4px 10px rgba(0, 0, 0, 0.12);
 }
 
 .btn-purple:hover {
-    color: #fff;
-    text-decoration: none;
-    background-color: #5132cb;
-    background-image: linear-gradient(#6549d2,#5132cb);
+  color: #fff;
+  text-decoration: none;
+  background-color: #5132cb;
+  background-image: linear-gradient(#6549d2, #5132cb);
 }
 
 .btn-green {
-    color: #fff;
-    text-decoration: none;
-    background-color: #10ac7d;
-    background-image: linear-gradient(#13cc95, #10ac7d);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.25),0 4px 10px rgba(0,0,0,0.12);
+  color: #fff;
+  text-decoration: none;
+  background-color: #10ac7d;
+  background-image: linear-gradient(#13cc95, #10ac7d);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), 0 4px 10px rgba(0, 0, 0, 0.12);
 }
 
 .btn-green:hover {
-    color: #fff;
-    text-decoration: none;
-    background-color: #0fa276;
-    background-image: linear-gradient(#12be8b,#0fa276);
+  color: #fff;
+  text-decoration: none;
+  background-color: #0fa276;
+  background-image: linear-gradient(#12be8b, #0fa276);
+}
+.company-margin-top {
+  margin-top: 80px !important;
+}
+.terminal_wrap {
+  margin-bottom: 0;
+}
+
+.dropdown,
+.dropdown-docs {
+  display: none;
 }
