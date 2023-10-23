@@ -536,7 +536,7 @@
             <a href="https://www.facebook.com/MACHBASE/" target="_blank"
               ><img class="sns-img" src="../img/facebook.png"
             /></a>
-          </div>ㄷ
+          </div>
           <div>
             <a href="https://www.slideshare.net/machbase" target="_blank"
               ><img class="sns-img" src="../img/slideshare.png"
