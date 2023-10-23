@@ -50,8 +50,8 @@ toc: false
                 >Document</a
               >
               <div class="dropdown-docs" id="dropdownDocs">
-                <a class="dropdown-link" href="/neo" target="_blank">Neo</a>
-                <a class="dropdown-link" href="/dbms" target="_blank">Classic</a>
+                <a class="dropdown-link" href="/neo">Neo</a>
+                <a class="dropdown-link" href="/dbms">Classic</a>
               </div>
             </div></a
           >
@@ -1038,7 +1038,6 @@ toc: false
   </div>
 </footer>
 <script>
-  var userLang = navigator.language || navigator.userLanguage;
   const clickLeftTab = (aType) => {
     const sDownloadElement = document.getElementById("download");
     const sStartupElement = document.getElementById("start");
@@ -1374,6 +1373,13 @@ Console.Write(data);`,
       sessionStorage.setItem("lang", "ko");
       language = "kr";
       location.href = location.origin + "/kr" + location.pathname;
+    }
+  }
+  var referrer = document.referrer;
+  if (referrer.includes("neo") || referrer.includes("dbms")) {
+    var userLang = navigator.language || navigator.userLanguage;
+    if (userLang === "ko-KR" || userLang === "ko") {
+        window.location.href = window.location.origin + "/kr" + window.location.pathname;
     }
   }
   function changeLanguage() {

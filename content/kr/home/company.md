@@ -49,8 +49,8 @@ toc: false
                   >Document</a
                 >
                 <div class="dropdown-docs" id="dropdownDocs">
-                  <a class="dropdown-link" href="/neo" target="_blank">Neo</a>
-                  <a class="dropdown-link" href="/dbms" target="_blank">Classic</a>
+                  <a class="dropdown-link" href="/neo" >Neo</a>
+                  <a class="dropdown-link" href="/dbms" >Classic</a>
                 </div>
               </div></a
             >
