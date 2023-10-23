@@ -1374,13 +1374,13 @@ Console.Write(data);`,
       language = "kr";
       location.href = location.origin + "/kr" + location.pathname;
     }
-  }
-  var referrer = document.referrer;
-  if (referrer.includes("neo") || referrer.includes("dbms")) {
-    var userLang = navigator.language || navigator.userLanguage;
-    if (userLang === "ko-KR" || userLang === "ko") {
-        window.location.href = window.location.origin + "/kr" + window.location.pathname;
+      var referrer = document.referrer;
+    if (referrer.includes("neo") || referrer.includes("dbms")) {
+      var userLang = navigator.language || navigator.userLanguage;
+      if (userLang === "ko-KR" || userLang === "ko") {
+          window.location.href = window.location.origin + "/kr" + window.location.pathname;
     }
+  }
   }
   function changeLanguage() {
     var languageSelector = document.getElementById("languageSelector");
