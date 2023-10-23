@@ -333,7 +333,7 @@ toc: false
           <td class="download_th1_4">
             <span
               >wget
-              https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-X86-64-release.tgz
+             http://dl.machbase.com/dist/8.0.2/machbase-SDK-8.0.2.official-LINUX-X86-64-release.tgz
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -341,7 +341,7 @@ toc: false
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
-                href="https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-X86-64-release.tgz"
+                href="http://dl.machbase.com/dist/8.0.2/machbase-SDK-8.0.2.official-LINUX-X86-64-release.tgz"
               >
                 <img src="../img/btn_newlink.png" />
               </a>
@@ -353,7 +353,7 @@ toc: false
           <td class="download_th1_4">
             <span
               >wget
-              https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-ARM_CORTEX_A53-64-release.tgz
+              http://dl.machbase.com/dist/8.0.2/machbase-SDK-8.0.2.official-LINUX-ARM_CORTEX_A53-64-release.tgz
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -361,7 +361,7 @@ toc: false
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
-                href="https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-ARM_CORTEX_A53-64-release.tgz"
+                href="http://dl.machbase.com/dist/8.0.2/machbase-SDK-8.0.2.official-LINUX-ARM_CORTEX_A53-64-release.tgz"
               >
                 <img src="../img/btn_newlink.png" />
               </a>
@@ -374,7 +374,7 @@ toc: false
           <td class="download_th1_4">
             <span
               >wget
-              https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-64-release.msi</span
+              	http://dl.machbase.com/dist/8.0.7/machbase-SDK-8.0.7.official-WINDOWS-X86-64-release.msi</span
             >
           </td>
           <td class="puple download_th1_5">
@@ -382,7 +382,7 @@ toc: false
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
-                href="https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-64-release.msi"
+                href="	http://dl.machbase.com/dist/8.0.7/machbase-SDK-8.0.7.official-WINDOWS-X86-64-release.msi"
               >
                 <img src="../img/btn_newlink.png" />
               </a>
@@ -394,7 +394,7 @@ toc: false
           <td class="download_th1_4">
             <span
               >wget
-              https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-32-release.msi
+              http://dl.machbase.com/dist/8.0.2/machbase-SDK-8.0.2.official-WINDOWS-X86-32-release.msi
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -402,7 +402,7 @@ toc: false
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
-                href="https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-32-release.msi"
+                href="http://dl.machbase.com/dist/8.0.2/machbase-SDK-8.0.2.official-WINDOWS-X86-32-release.msi"
               >
                 <img src="../img/btn_newlink.png" />
               </a>
@@ -415,7 +415,7 @@ toc: false
           <td class="download_th1_4">
             <span
               >wget
-              https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-ARM_M1-64-release.tgz
+              http://dl.machbase.com/dist/8.0.2/machbase-SDK-8.0.2.official-DARWIN-ARM_M1-64-release.tgz
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -423,7 +423,7 @@ toc: false
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
-                href="https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-ARM_M1-64-release.tgz"
+                href="http://dl.machbase.com/dist/8.0.2/machbase-SDK-8.0.2.official-DARWIN-ARM_M1-64-release.tgz"
               >
                 <img src="../img/btn_newlink.png" />
               </a>
@@ -435,7 +435,7 @@ toc: false
           <td class="download_th1_4">
             <span
               >wget
-              https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-X86-64-release.tgz
+            http://dl.machbase.com/dist/8.0.2/machbase-SDK-8.0.2.official-DARWIN-X86-64-release.tgz
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -443,7 +443,7 @@ toc: false
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
-                href="https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-X86-64-release.tgz"
+                href="http://dl.machbase.com/dist/8.0.2/machbase-SDK-8.0.2.official-DARWIN-X86-64-release.tgz"
               >
                 <img src="../img/btn_newlink.png" />
               </a>
@@ -576,17 +576,17 @@ toc: false
       neoWindowsX64:
         "https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-windows-amd64.zip",
       sdkLinuxX64:
-        "https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-X86-64-release.tgz",
+        "http://dl.machbase.com/dist/8.0.2/machbase-SDK-8.0.2.official-LINUX-X86-64-release.tgz",
       sdkLinuxArm:
-        "https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-ARM_CORTEX_A53-64-release.tgz",
+        "http://dl.machbase.com/dist/8.0.2/machbase-SDK-8.0.2.official-LINUX-ARM_CORTEX_A53-64-release.tgz",
       sdkWindowsX64:
-        "https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-64-release.msi",
+        "http://dl.machbase.com/dist/8.0.7/machbase-SDK-8.0.7.official-WINDOWS-X86-64-release.msi",
       sdkWindows32:
-        "https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-32-release.msi",
+        "http://dl.machbase.com/dist/8.0.2/machbase-SDK-8.0.2.official-WINDOWS-X86-32-release.msi",
       sdkMacArm:
-        "https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-ARM_M1-64-release.tgz",
+        "http://dl.machbase.com/dist/8.0.2/machbase-SDK-8.0.2.official-DARWIN-ARM_M1-64-release.tgz",
       sdkMacX64:
-        "https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-X86-64-release.tgz",
+        "http://dl.machbase.com/dist/8.0.2/machbase-SDK-8.0.2.official-DARWIN-X86-64-release.tgz",
     },
   };
   function copyToClipboard(text, button) {
