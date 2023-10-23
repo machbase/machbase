@@ -20,7 +20,7 @@ sudo useradd machbase
 **machbase_home** 디렉터리를 생성하고, 마크베이스 다운로드 사이트에서 패키지를 다운르도 받아서 설치한다.
 
 ```bash
-[machbase@localhost ~]$ wget http://www.machbase.com/dist/machbase-fog-x.x.x.official-LINUX-X86-64-release.tgz
+[machbase@localhost ~]$ wget http://machbase.com/dist/machbase-fog-x.x.x.official-LINUX-X86-64-release.tgz
 [machbase@localhost ~]$ mkdir machbase_home
 [machbase@localhost ~]$ mv machbase-fog-x.x.x.official-LINUX-X86-64-release.tgz machbase_home/
 [machbase@localhost ~]$ cd machbase_home/
