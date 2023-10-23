@@ -20,7 +20,7 @@ After setting the password,  log in as 'machbase' account.
 Create a directory called 'macbase_home' and download and install the package from the Machbase download site.
 
 ```bash
-[machbase@localhost ~]$ wget http://www.machbase.com/dist/machbase-fog-x.x.x.official-LINUX-X86-64-release.tgz
+[machbase@localhost ~]$ wget http://machbase.com/dist/machbase-fog-x.x.x.official-LINUX-X86-64-release.tgz
 [machbase@localhost ~]$ mkdir machbase_home
 [machbase@localhost ~]$ mv machbase-fog-x.x.x.official-LINUX-X86-64-release.tgz machbase_home/
 [machbase@localhost ~]$ cd machbase_home/

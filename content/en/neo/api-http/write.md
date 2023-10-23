@@ -108,7 +108,7 @@ curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE?heading=true \
 {{< /tab >}}
 {{< /tabs >}}
 
-## Write method "insert" vs. "append"
+## INSERT vs. APPEND
 The `/db/write` API writes the posted data with “INSERT INTO…” statement by default. As long as the total number of records to write is small, there is not a big difference from “append” method.
 
 When you are writing a large amount of data (e.g. more than several hundreds thousands records), Use `method=append` parameter that specify machbase-neo to use “append” method instead of “INSERT INTO…” statement which is implicitly speicified as `method=insert`.
