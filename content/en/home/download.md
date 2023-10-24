@@ -1,4 +1,6 @@
 ---
+title: Download
+description: "Machbase`s TSDB product line consists of the newly launched NEO product, offering integrated functionality, and the existing CLASSIC product. Users can choose and utilize the product that best suits their environment."
 ---
 
 <head>
@@ -121,7 +123,7 @@
   </nav>
   <section class="download_section0">
     <div>
-      <h1 class="sub_page_title">Download</h1>
+      <h2 class="sub_page_title">Download</h2>
       <p class="sub_page_titletext download-sub">
         Machbase`s TSDB product line consists of the newly launched NEO product,
         offering integrated functionality,<br />

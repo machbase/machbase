@@ -1,4 +1,6 @@
 ---
+title: Contact US
+description: "If you fill out the form and submit it, we will contact you as soon as possible"
 ---
 
 <head>
@@ -121,7 +123,7 @@
   </nav>
   <div>
     <section class="contact_section0">
-      <h1 class="sub_page_title">Contact US</h1>
+      <h2 class="sub_page_title">Contact US</h2>
       <p class="sub_page_titletext">
         If you fill out the form and submit it, we will contact you as soon as
         possible

@@ -1,4 +1,6 @@
 ---
+title: Use Case
+description: "롯데칠성 음료는 탄산음료, 차, 과일주스 등 다양한 제품을 생산하는 비알코올 음료 제조업체입니다."
 ---
 
 <head>
@@ -125,7 +127,7 @@
 </nav>
 <section class="usecase_section0">
   <div>
-    <h1 class="sub_page_title">Use Case</h1>
+    <h2 class="sub_page_title">Use Case</h2>
     <p class="sub_page_titletext">
       Machbase products are the choice of the world's leading companies and are
       in use in countless locations.

@@ -1,4 +1,6 @@
 ---
+title: Use Case
+description: "ETRI is a research organization that conducts research and development on a wide range of digital transformation technologies, including information and communication."
 ---
 
 <head>
@@ -122,7 +124,7 @@
 </nav>
 <section class="usecase_section0">
   <div>
-    <h1 class="sub_page_title">Use Case</h1>
+    <h2 class="sub_page_title">Use Case</h2>
     <p class="sub_page_titletext">
       Machbase products are the choice of the world's leading companies and are
       in use in countless locations.

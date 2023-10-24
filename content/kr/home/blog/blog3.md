@@ -1,4 +1,6 @@
 ---
+title: Blog
+description: "마크베이스(Machbase)를 이용한 반도체 생산 데이터 관리 및 검색 방법"
 ---
 
 <head>
@@ -125,7 +127,7 @@
 </nav>
 <section class="pricing_section0 section0">
   <div>
-    <h1 class="sub_page_title">Blog</h1>
+    <h2 class="sub_page_title">Blog</h2>
     <p class="sub_page_titletext">
       “ Mach Speed Horizontally Scalable Time series database. ”
     </p>

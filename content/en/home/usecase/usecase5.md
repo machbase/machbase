@@ -1,4 +1,6 @@
 ---
+title: Use Case
+description: "Hankuk Carbon is a company that produces insulation panels, which are a key part of LNG carriers. Carbon prepregs are characterized by high strength and high elasticity, so their uses are endless, and they are currently used mainly in sports and leisure products such as fishing rods, golf, and skiing."
 ---
 
 <head>
@@ -122,7 +124,7 @@
 </nav>
 <section class="usecase_section0">
   <div>
-    <h1 class="sub_page_title">Use Case</h1>
+    <h2 class="sub_page_title">Use Case</h2>
     <p class="sub_page_titletext">
       Machbase products are the choice of the world's leading companies and are
       in use in countless locations.

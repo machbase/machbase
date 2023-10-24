@@ -1,4 +1,6 @@
 ---
+title: Customers
+description: "Growing Companies with Machbase"
 ---
 
 <head>
@@ -121,7 +123,7 @@
   </nav>
   <section class="customers_section0">
     <div>
-      <h1 class="sub_page_title">Customers</h1>
+      <h2 class="sub_page_title">Customers</h2>
       <p class="sub_page_titletext">Growing Companies with Machbase</p>
     </div>
   </section>

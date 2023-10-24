@@ -1,4 +1,6 @@
 ---
+title: Tech Paper
+description: "엣지 컴퓨팅과 시계열 데이터베이스"
 ---
 
 <head>
@@ -122,7 +124,7 @@
   </nav>
   <section class="product_sction0 section0">
     <div>
-      <h1 class="sub_page_title">Tech Paper</h1>
+      <h2 class="sub_page_title">Tech Paper</h2>
       <p class="sub_page_titletext">
         “ Discover the top DBMS suites for edge computing and take your data
         processing to the next level ”

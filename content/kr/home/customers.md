@@ -1,5 +1,7 @@
 ---
 toc: false
+title: Customers
+description: "마크베이스와 함께 성장하는 기업"
 ---
 
 <head>
@@ -123,7 +125,7 @@ toc: false
   </nav>
   <section class="customers_section0">
     <div>
-      <h1 class="sub_page_title">Customers</h1>
+      <h2 class="sub_page_title">Customers</h2>
       <p class="sub_page_titletext">Growing Companies with Machbase</p>
     </div>
   </section>

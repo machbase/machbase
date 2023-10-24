@@ -1,4 +1,6 @@
 ---
+title: Use Case
+description: "현대글로벌서비스는 선주에게 실시간 선박 운항 정보를 제공하고 현대중공업에서 건조하는 선박의 육상 관제 서비스를 수행하는 회사입니다."
 ---
 
 <head>
@@ -125,7 +127,7 @@
 </nav>
 <section class="usecase_section0">
   <div>
-    <h1 class="sub_page_title">Use Case</h1>
+    <h2 class="sub_page_title">Use Case</h2>
     <p class="sub_page_titletext">
       Machbase products are the choice of the world's leading companies and are
       in use in countless locations.

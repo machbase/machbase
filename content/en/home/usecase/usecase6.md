@@ -1,4 +1,6 @@
 ---
+title: Use Case
+description: "As Korea’s first digital non-life insurer, Carrot Insurance is redefining insurance by launching new products and services based on technology and data, and is experiencing rapid growth as an insurtech platform. In auto insurance, they are actively engaged in per-mile auto insurance."
 ---
 
 <head>
@@ -122,7 +124,7 @@
 </nav>
 <section class="usecase_section0">
   <div>
-    <h1 class="sub_page_title">Use Case</h1>
+    <h2 class="sub_page_title">Use Case</h2>
     <p class="sub_page_titletext">
       Machbase products are the choice of the world's leading companies and are
       in use in countless locations.

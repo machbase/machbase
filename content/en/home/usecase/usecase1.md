@@ -1,4 +1,6 @@
 ---
+title: Use Case
+description: "Hyundai Global Services is a company that provides real-time ship operation information to ship owners and performs onshore control services for ships manufactured by Hyundai Heavy Industries."
 ---
 
 <head>
@@ -122,7 +124,7 @@
 </nav>
 <section class="usecase_section0">
   <div>
-    <h1 class="sub_page_title">Use Case</h1>
+    <h2 class="sub_page_title">Use Case</h2>
     <p class="sub_page_titletext">
       Machbase products are the choice of the world's leading companies and are
       in use in countless locations.
@@ -133,7 +135,7 @@
   <div class="tech-inner">
     <section>
       <div class="tech-inner">
-        <h4 class="blog-title">[Machbase Use Case]Ship Management-company H</h4>
+        <h4 class="blog-title">[Machbase Use Case]Ship Management - Hyundai Global Services</h4>
         <ul class="tech-list-ul">
           <a href="#anchor1">
             <li class="tech-list-li" id="tech-list-li">Company Profile</li></a

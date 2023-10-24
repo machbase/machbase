@@ -1,4 +1,6 @@
 ---
+title: Use Case
+description: "한국전자통신연구원(ETRI)은 정보통신을 비롯한 다양한 디지털 트랜스포메이션 기술에 대한 연구 개발을 수행하는 연구 기관입니다."
 ---
 
 <head>
@@ -125,7 +127,7 @@
 </nav>
 <section class="usecase_section0">
   <div>
-    <h1 class="sub_page_title">Use Case</h1>
+    <h2 class="sub_page_title">Use Case</h2>
     <p class="sub_page_titletext">
       Machbase products are the choice of the world's leading companies and are
       in use in countless locations.

@@ -1,5 +1,7 @@
 ---
 toc: false
+title: Company
+description: "마크베이스의 ‘MACH’는 음속의 단위 ‘마하’를 의미합니다.마크베이스는 세계 최고의 데이터 처리 속도를 자랑하는 시계열데이터베이스 엔진을 기반으로 IoT(Internet of Things) 기반의 스마트시티, 스마트팩토리 등 다양한 디지털 트랜스포메이션 (Digital Transformation) 분야에서 실시간성이 중요한 모든 데이터를 초고속으로 수집하고 저장 및 분석할 수 있는 솔루션 서비스를 제공하고 있습니다."
 ---
 
 <head>
@@ -123,7 +125,7 @@ toc: false
   </nav>
   <section class="company_section0">
     <div>
-      <h1 class="sub_page_title">Company</h1>
+      <h2 class="sub_page_title">Company</h2>
       <p class="sub_page_titletext">Discover the future in industrial data</p>
     </div>
   </section>

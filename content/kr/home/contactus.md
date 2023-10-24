@@ -1,5 +1,7 @@
 ---
 toc: false
+title: Contact US
+description: "해당 양식을 작성하여 제출해 주시면 최대한 빨리 연락드리겠습니다."
 ---
 
 <head>
@@ -123,7 +125,7 @@ toc: false
   </nav>
   <div>
     <section class="contact_section0">
-      <h1 class="sub_page_title">Contact US</h1>
+      <h2 class="sub_page_title">Contact US</h2>
       <p class="sub_page_titletext">
         If you fill out the form and submit it, we will contact you as soon as
         possible

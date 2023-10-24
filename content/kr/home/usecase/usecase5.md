@@ -1,4 +1,6 @@
 ---
+title: Use Case
+description: "한국카본은 LNG 운반선의 핵심 부품인 단열 패널을 생산하는 기업입니다. 낚싯대, 골프, 스키용 고강도 고탄성 탄소 프리프레그와 LNG선용 단열 패널을 생산하고 있습니다."
 ---
 
 <head>
@@ -125,7 +127,7 @@
 </nav>
 <section class="usecase_section0">
   <div>
-    <h1 class="sub_page_title">Use Case</h1>
+    <h2 class="sub_page_title">Use Case</h2>
     <p class="sub_page_titletext">
       Machbase products are the choice of the world's leading companies and are
       in use in countless locations.
@@ -166,7 +168,6 @@
             <p class="tech-contents-link-text">
               Machbase solution Architecture
             </p>
-            <p class="tech-title" id="anchor1">Company Profile</p>
             <p class="tech-title" id="anchor1">회사소개</p>
             <p class="tech-contents-text">
               한국카본은 LNG 운반선의 핵심 부품인 단열 패널을 생산하는

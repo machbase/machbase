@@ -1,6 +1,12 @@
 /* Begin: Font
 ------------------------------------------------------------------
 */
+h1 {
+  display: none !important;
+}
+.content h2 {
+  margin-top: 0 !important;
+}
 .content ul li {
   margin: 15px 0;
 }

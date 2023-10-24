@@ -1,4 +1,6 @@
 ---
+title: Blog
+description: "마하 속도 수평 확장이 가능한 시계열 데이터베이스."
 ---
 
 <head>
@@ -122,7 +124,7 @@
   </nav>
   <section class="pricing_section0 section0">
     <div>
-      <h1 class="sub_page_title">Blog</h1>
+      <h2 class="sub_page_title">Blog</h2>
       <p class="sub_page_titletext">
         “ Mach Speed Horizontally Scalable Time series database. ”
       </p>

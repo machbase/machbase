@@ -1,4 +1,6 @@
 ---
+title: Use Case
+description: "캐롯손해보험은 국내 최초 디지털 손해보험사로서 기술과 데이터를 기반으로 새로운 상품과 서비스를 출시하며 보험을 재정의하고 있으며, 인슈어테크 플랫폼으로 빠르게 성장하고 있습니다. 자동차 보험에서는 주행거리별 보험에 적극적으로 참여하고 있습니다."
 ---
 
 <head>
@@ -125,7 +127,7 @@
 </nav>
 <section class="usecase_section0">
   <div>
-    <h1 class="sub_page_title">Use Case</h1>
+    <h2 class="sub_page_title">Use Case</h2>
     <p class="sub_page_titletext">
       Machbase products are the choice of the world's leading companies and are
       in use in countless locations.

@@ -1,4 +1,6 @@
 ---
+title: Customers
+description: "Growing Companies with Machbase"
 ---
 
 <head>
@@ -115,7 +117,7 @@
   </nav>
   <section class="pricing_section0 section0">
     <div>
-      <h1 class="sub_page_title">Blog</h1>
+      <h2 class="sub_page_title">Blog</h2>
       <p class="sub_page_titletext">
         “ Mach Speed Horizontally Scalable Time series database. ”
       </p>

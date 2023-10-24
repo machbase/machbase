@@ -1,9 +1,10 @@
 ---
 toc: false
+title: Machbase
+description: "Mach Speed Horizontally Scalable Time series database."
 ---
 
 <head>
-  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" type="text/css" href="./css/common.css" />
   <link rel="stylesheet" type="text/css" href="./css/style.css" />
@@ -124,10 +125,10 @@ toc: false
 <section class="section1 main_section1 main_wrap">
   <div class="main_wraper">
     <div class="main_titlebox">
-      <h1 class="main_title">
+      <h2 class="main_title">
         Mach Speed<br />
         Horizontally Scalable<br />Time series database.
-      </h1>
+      </h2>
       <h2 class="main_titletext">
         “ Machbase is the world’s fastest timeseries database.
       </h2>
@@ -1232,73 +1233,73 @@ toc: false
       insertShell: `machbase-neo shell sql "insert into EXAMPLE values('temperature', 1670380342000000000, 12.3456)"`,
       insertCurl: `curl http://127.0.0.1:5654/db/query --data-urlencode "q=select _ from EXAMPLE"`,
       insertPy: `import requests
-csvdata = "temperature,1670380342000000000,12.3456"
-response = requests.post(
-"http://127.0.0.1:5654/db/write/EXAMPLE?heading=false",
-data=csvdata,
-headers={'Content-Type': 'text/csv'})`,
+  csvdata = "temperature,1670380342000000000,12.3456"
+  response = requests.post(
+  "http://127.0.0.1:5654/db/write/EXAMPLE?heading=false",
+  data=csvdata,
+  headers={'Content-Type': 'text/csv'})`,
       insertJs: `q = "select _ from example"
-fetch('http://127.0.0.1:5654/db/query?q=' + encodeURIComponent(q))
-.then(res => {
-return res.json();
-})
-.then(data => {
-console.log(data);
-});`,
+  fetch('http://127.0.0.1:5654/db/query?q=' + encodeURIComponent(q))
+  .then(res => {
+  return res.json();
+  })
+  .then(data => {
+  console.log(data);
+  });`,
       insertGo: `package main
-import (
-"net/http"
-"bytes"
-"strings"
-)
-func main() {
-rows := []string{"temperature,1670380342000000000,12.3456"}
-http.Post(
-"http://127.0.0.1:5654/db/write/EXAMPLE?heading=false",
-"text/csv",
-bytes.NewBufferString(strings.Join(rows, "\\n")))
-}`,
+  import (
+  "net/http"
+  "bytes"
+  "strings"
+  )
+  func main() {
+  rows := []string{"temperature,1670380342000000000,12.3456"}
+  http.Post(
+  "http://127.0.0.1:5654/db/write/EXAMPLE?heading=false",
+  "text/csv",
+  bytes.NewBufferString(strings.Join(rows, "\\n")))
+  }`,
       insertC: `using HttpClient client = new();
-var payload = new System.Net.Http.StringContent(
-@"temperature,1677033057000000000,21.1
-humidity,1677033057000000000,0.53",
-new System.Net.Http.Headers.MediaTypeHeaderValue("text/csv"));
-var rsp = await client.PostAsync(
-"http://127.0.0.1:5654/db/write/example?heading=false", payload
-);
-Console.Write(rsp);`,
+  var payload = new System.Net.Http.StringContent(
+  @"temperature,1677033057000000000,21.1
+  humidity,1677033057000000000,0.53",
+  new System.Net.Http.Headers.MediaTypeHeaderValue("text/csv"));
+  var rsp = await client.PostAsync(
+  "http://127.0.0.1:5654/db/write/example?heading=false", payload
+  );
+  Console.Write(rsp);`,
       selectNeo: `machbase-neo shell sql 'select _ from EXAMPLE'`,
       selectPy: `import requests
-params = {"q":"select _ from example", "format":"csv", "heading":"false"}
-response = requests.get("http://127.0.0.1:5654/db/query", params)
-print(response.text)`,
+  params = {"q":"select _ from example", "format":"csv", "heading":"false"}
+  response = requests.get("http://127.0.0.1:5654/db/query", params)
+  print(response.text)`,
       selectJs: `const q = "select _ from example";
-fetch('http://127.0.0.1:5654/db/query?q=' + encodeURIComponent(q))
-.then(res => {
-return res.json();
-})
-.then(data => {
-console.log(data);
-});`,
+  fetch('http://127.0.0.1:5654/db/query?q=' + encodeURIComponent(q))
+  .then(res => {
+  return res.json();
+  })
+  .then(data => {
+  console.log(data);
+  });`,
       selectGo: `package main
-import (
-"fmt",
-"net/url"
-"net/http"
-"io"
-)
-func main() {
-q := url.QueryEscape("select _ from example")
-rsp, * := http.Get("http://127.0.0.1:5654/db/query?format=csv&q="+q)
-data, * := io.ReadAll(rsp.Body)
-fmt.Println(string(data))
-}`,
+  import (
+  "fmt",
+  "net/url"
+  "net/http"
+  "io"
+  )
+  func main() {
+  q := url.QueryEscape("select _ from example")
+  rsp, * := http.Get("http://127.0.0.1:5654/db/query?format=csv&q="+q)
+  data, * := io.ReadAll(rsp.Body)
+  fmt.Println(string(data))
+  }`,
       selectC: `using HttpClient client = new();
-var q = System.Net.WebUtility.UrlEncode("select _ from example");
-var data = await client.GetStringAsync(
-"http://127.0.0.1:5654/db/query?format=csv&q="+q
-);
-Console.Write(data);`,
+  var q = System.Net.WebUtility.UrlEncode("select _ from example");
+  var data = await client.GetStringAsync(
+  "http://127.0.0.1:5654/db/query?format=csv&q="+q
+  );
+  Console.Write(data);`,
       createCurl:
         'curl http://127.0.0.1:5654/db/query --data-urlencode "q=create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"',
       selectCurl: `curl http://127.0.0.1:5654/db/query --data-urlencode "q=select \* from EXAMPLE"`,
@@ -1365,30 +1366,31 @@ Console.Write(data);`,
     docsNum.classList.toggle("show");
   });
   //change lang
-  function getCookie(name) {
-    var value = "; " + document.cookie;
-    var parts = value.split("; " + name + "=");
-    if (parts.length === 2) return parts.pop().split(";").shift();
-    return null;
+  let language;
+  let storageData = sessionStorage.getItem("lang");
+  var referrer = document.referrer;
+  console.log(window.location.origin === referrer);
+  if (
+    !referrer.includes(window.location.origin) ||
+    window.location.origin + "/" === referrer
+  ) {
+    sessionStorage.clear();
+    window.location.reload();
   }
-  var language = getCookie("lang");
-  if (language === null) {
+  if (referrer.includes("neo") || referrer.includes("dbms")) {
+    sessionStorage.clear();
+  }
+  if (storageData) {
+    language = storageData;
+  } else {
     var userLang = navigator.language || navigator.userLanguage;
-    if (userLang !== "ko") {
-      document.cookie = "lang=en; path=/";
+    if (userLang !== "ko" && userLang !== "ko-KR") {
+      sessionStorage.setItem("lang", userLang);
       language = "en";
     } else {
-      document.cookie = "lang=ko; path=/";
-      language = "ko";
+      sessionStorage.setItem("lang", "ko");
+      language = "kr";
       location.href = location.origin + "/kr" + location.pathname;
-    }
-    var referrer = document.referrer;
-    if (referrer.includes("neo") || referrer.includes("dbms")) {
-      var userLang = navigator.language || navigator.userLanguage;
-      if (userLang === "ko-KR" || userLang === "ko") {
-        window.location.href =
-          window.location.origin + "/kr" + window.location.pathname;
-      }
     }
   }
   function changeLanguage() {

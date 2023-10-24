@@ -1,4 +1,6 @@
 ---
+title: Blog
+description: "시계열 DB(Time-Series Database) 아키텍처 비교_ 마크베이스Machbase vs 인플럭스 InfluxDB"
 ---
 
 <head>
@@ -124,7 +126,7 @@
 </nav>
 <section class="pricing_section0 section0">
   <div>
-    <h1 class="sub_page_title">Blog</h1>
+    <h2 class="sub_page_title">Blog</h2>
     <p class="sub_page_titletext">
       “ Mach Speed Horizontally Scalable Time series database. ”
     </p>

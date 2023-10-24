@@ -1,4 +1,6 @@
 ---
+title: Products
+description: "Machbase MOS (Manufacturing Optimization Suite)는 설비상태 데이터와 제품품질 정보 데이터의 동기화를 통해 실시간 공정 모니터링 및 설비 및 품질의 이상 파악이 가능하며, 향후 예지보전까지도 가능한 최고의 솔루션입니다."
 ---
 
 <head>
@@ -122,7 +124,7 @@
   </nav>
   <section class="product_sction0 section0">
     <div>
-      <h1 class="sub_page_title">Products</h1>
+      <h2 class="sub_page_title">Products</h2>
       <p class="sub_page_titletext">
         “ Discover the top DBMS suites for edge computing and take your data
         processing to the next level ”

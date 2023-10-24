@@ -1,4 +1,6 @@
 ---
+title: Edge Computing and Time series database
+description: "Edge Computing refers to the practice of processing data closer to its source, right at the edge of the network, rather than sending all data to centralized cloud servers for analysis."
 ---
 
 <head>
@@ -121,7 +123,7 @@
   </nav>
   <section class="product_sction0 section0">
     <div>
-      <h1 class="sub_page_title">Tech Paper</h1>
+      <h2 class="sub_page_title">Tech Paper</h2>
       <p class="sub_page_titletext">
         “ Discover the top DBMS suites for edge computing and take your data
         processing to the next level ”

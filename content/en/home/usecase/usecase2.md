@@ -1,4 +1,6 @@
 ---
+title: Use Case
+description: "Lotte Chilsung is a non-alcoholic beverage manufacturer that produces a variety of products including soda, tea, and fruit juice."
 ---
 
 <head>
@@ -122,7 +124,7 @@
 </nav>
 <section class="usecase_section0">
   <div>
-    <h1 class="sub_page_title">Use Case</h1>
+    <h2 class="sub_page_title">Use Case</h2>
     <p class="sub_page_titletext">
       Machbase products are the choice of the world's leading companies and are
       in use in countless locations.

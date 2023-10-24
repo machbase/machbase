@@ -1,5 +1,7 @@
 ---
 toc: false
+title: Use Case
+description: "Machbase 제품은 세계 최고의 기업들이 선택하며 수많은 곳에서 사용되고 있습니다."
 ---
 
 <head>
@@ -123,7 +125,7 @@ toc: false
   </nav>
   <section class="usecase_section0">
     <div>
-      <h1 class="sub_page_title">Use Case</h1>
+      <h2 class="sub_page_title">Use Case</h2>
       <p class="sub_page_titletext">
         Machbase products are the choice of the world's leading companies and
         are in use in countless locations.

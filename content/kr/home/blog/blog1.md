@@ -1,4 +1,6 @@
 ---
+title: Blog
+description: "당신의 개발 Know-how를 기록하는 새로운 방법"
 ---
 
 <head>
@@ -125,7 +127,7 @@
 </nav>
 <section class="pricing_section0 section0">
   <div>
-    <h1 class="sub_page_title">Blog</h1>
+    <h2 class="sub_page_title">Blog</h2>
     <p class="sub_page_titletext">
       “ Mach Speed Horizontally Scalable Time series database. ”
     </p>
