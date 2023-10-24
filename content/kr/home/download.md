@@ -37,7 +37,7 @@ toc: false
           <li class="menu-a"><a href="/kr/home/blog">Blog</a></li>
           <li class="menu-a"><a href="/kr/home/customers">Customers</a></li>
           <li class="menu-a"><a href="/kr/home/usecase">Use Case</a></li>
-            <li class="menu-a"><a href="/kr/home/company">Company</a></li>
+          <li class="menu-a"><a href="/kr/home/company">Company</a></li>
         </ul>
       </div>
       <div class="menu-right">
@@ -49,8 +49,8 @@ toc: false
                   >Document</a
                 >
                 <div class="dropdown-docs" id="dropdownDocs">
-                  <a class="dropdown-link" href="/neo" >Neo</a>
-                  <a class="dropdown-link" href="/dbms" >Classic</a>
+                  <a class="dropdown-link" href="/neo">Neo</a>
+                  <a class="dropdown-link" href="/dbms">Classic</a>
                 </div>
               </div></a
             >
@@ -61,21 +61,27 @@ toc: false
           </li>
           <li class="menu-a"><a href="/kr/home/contactus">Contact US</a></li>
           <li class="menu-a">
-          <select id="languageSelector" onchange="changeLanguage()">
-            <option value="kr">한국어</option>
-            <option value="en">English</option>
-          </select>
-        </li>
+            <select id="languageSelector" onchange="changeLanguage()">
+              <option value="kr">한국어</option>
+              <option value="en">English</option>
+            </select>
+          </li>
         </ul>
       </div>
     </div>
   </nav>
   <nav class="tablet-menu-wrap">
     <a href="/kr/home"><img src="../img/logo_machbase.png" alt="" /></a>
-    <div class="tablet-menu-icon">
-      <div class="tablet-bar"></div>
-      <div class="tablet-bar"></div>
-      <div class="tablet-bar"></div>
+    <div class="hamberger-right">
+      <select id="languageSelector2" onchange="changeLanguage2()">
+        <option value="kr">한국어</option>
+        <option value="en">English</option>
+      </select>
+      <div class="tablet-menu-icon">
+        <div class="tablet-bar"></div>
+        <div class="tablet-bar"></div>
+        <div class="tablet-bar"></div>
+      </div>
     </div>
     <div class="tablet-menu">
       <ul>
@@ -103,25 +109,22 @@ toc: false
         <li>
           <div class="docs-content">
             <div class="docs-sub"><a href="/neo" target="_blank">Neo</a></div>
-            <div class="docs-num"><a href="/dbms" target="_blank">Classic</a></div>
+            <div class="docs-num">
+              <a href="/dbms" target="_blank">Classic</a>
+            </div>
           </div>
         </li>
         <li><a href="/kr/home/download">Download</a></li>
         <li><a href="https://support.machbase.com/hc/en-us">Support</a></li>
-           <li><a href="/kr/home/download">Contact US</a></li>
-      <li>
-    <select id="languageSelector2" onchange="changeLanguage2()">
-      <option value="kr">한국어</option>
-      <option value="en">English</option>
-    </select>
-      </li>
+        <li><a href="/kr/home/download">Contact US</a></li>
+        <li></li>
       </ul>
     </div>
   </nav>
   <section class="download_section0">
     <div>
       <h1 class="sub_page_title">Download</h1>
-      <p class="sub_page_titletext">
+      <p class="sub_page_titletext download-sub">
         Machbase`s TSDB product line consists of the newly launched NEO product,
         offering integrated functionality,<br />
         and the existing CLASSIC product. Users can choose and utilize the
@@ -173,8 +176,9 @@ toc: false
           <td class="download_th1_2">arm32</td>
           <td class="download_th1_4">
             <span
-              >wget
-              https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-linux-arm32.zip
+              >wget https://github.com/machbase/neo-server/releases/download/{{<
+              neo_latestver >}}/machbase-neo-{{< neo_latestver
+              >}}-linux-arm32.zip
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -193,8 +197,9 @@ toc: false
           <td class="download_th1_3">arm64</td>
           <td class="download_th1_4">
             <span
-              >wget
-              https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-linux-arm64.zip
+              >wget https://github.com/machbase/neo-server/releases/download/{{<
+              neo_latestver >}}/machbase-neo-{{< neo_latestver
+              >}}-linux-arm64.zip
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -213,8 +218,9 @@ toc: false
           <td>x64</td>
           <td class="download_th1_4">
             <span
-              >wget
-              https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-linux-amd64.zip
+              >wget https://github.com/machbase/neo-server/releases/download/{{<
+              neo_latestver >}}/machbase-neo-{{< neo_latestver
+              >}}-linux-amd64.zip
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -234,8 +240,9 @@ toc: false
           <td>arm64(M1)</td>
           <td class="download_th1_4">
             <span
-              >wget
-              https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-darwin-arm64.zip
+              >wget https://github.com/machbase/neo-server/releases/download/{{<
+              neo_latestver >}}/machbase-neo-{{< neo_latestver
+              >}}-darwin-arm64.zip
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -254,8 +261,9 @@ toc: false
           <td>x64</td>
           <td class="download_th1_4">
             <span
-              >wget
-              https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-darwin-amd64.zip
+              >wget https://github.com/machbase/neo-server/releases/download/{{<
+              neo_latestver >}}/machbase-neo-{{< neo_latestver
+              >}}-darwin-amd64.zip
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -275,8 +283,9 @@ toc: false
           <td>x64</td>
           <td class="download_th1_4">
             <span
-              >wget
-              https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-windows-amd64.zip
+              >wget https://github.com/machbase/neo-server/releases/download/{{<
+              neo_latestver >}}/machbase-neo-{{< neo_latestver
+              >}}-windows-amd64.zip
             </span>
           </td>
           <td class="puple border_bottom_right">
@@ -462,9 +471,7 @@ toc: false
         </a>
       </div>
       <div>
-        <p class="footertext">
-          서울시 강남구 테헤란로 20길 10, 3M 타워, 9층
-        </p>
+        <p class="footertext">서울시 강남구 테헤란로 20길 10, 3M 타워, 9층</p>
       </div>
       <div class="footer_box">
         <div class="footer_text">
@@ -510,9 +517,7 @@ toc: false
         <img src="../img/machbase-logo-w.png" />
       </div>
       <div>
-        <p class="footertext">
-          서울시 강남구 테헤란로 20길 10, 3M 타워, 9층
-        </p>
+        <p class="footertext">서울시 강남구 테헤란로 20길 10, 3M 타워, 9층</p>
       </div>
       <div class="footer_box">
         <div class="footer_text">
@@ -673,7 +678,7 @@ toc: false
       location.href = location.origin + locationPath.join("/");
     }
   }
-    function changeLanguage2() {
+  function changeLanguage2() {
     var languageSelector = document.getElementById("languageSelector2");
     var selectedLanguage = languageSelector.value;
     if (selectedLanguage !== "kr") {
@@ -682,14 +687,16 @@ toc: false
       location.href = location.origin + locationPath.join("/");
     }
   }
-  window.addEventListener("load", function() {
+  window.addEventListener("load", function () {
     var elementsWithDarkClass = document.querySelectorAll(".dark");
     for (var i = 0; i < elementsWithDarkClass.length; i++) {
-        elementsWithDarkClass[i].classList.remove("dark");
+      elementsWithDarkClass[i].classList.remove("dark");
     }
-     var elementsWithColorScheme = document.querySelectorAll("[style*='color-scheme: dark;']");
+    var elementsWithColorScheme = document.querySelectorAll(
+      "[style*='color-scheme: dark;']"
+    );
     for (var i = 0; i < elementsWithColorScheme.length; i++) {
-        elementsWithColorScheme[i].removeAttribute("style");
+      elementsWithColorScheme[i].removeAttribute("style");
     }
-});
+  });
 </script>

@@ -74,10 +74,16 @@
 </nav>
 <nav class="tablet-menu-wrap">
   <a href="/kr/home"><img src="../../img/logo_machbase.png" alt="" /></a>
-  <div class="tablet-menu-icon">
-    <div class="tablet-bar"></div>
-    <div class="tablet-bar"></div>
-    <div class="tablet-bar"></div>
+  <div class="hamberger-right">
+      <select id="languageSelector2" onchange="changeLanguage2()">
+      <option value="kr">한국어</option>
+      <option value="en">English</option>
+    </select>
+    <div class="tablet-menu-icon">
+      <div class="tablet-bar"></div>
+      <div class="tablet-bar"></div>
+      <div class="tablet-bar"></div>
+    </div>
   </div>
   <div class="tablet-menu">
     <ul>
@@ -112,10 +118,6 @@
       <li><a href="https://support.machbase.com/hc/en-us">Support</a></li>
          <li><a href="/kr/home/download">Contact US</a></li>
       <li>
-    <select id="languageSelector2" onchange="changeLanguage2()">
-      <option value="kr">한국어</option>
-      <option value="en">English</option>
-    </select>
       </li>
     </ul>
   </div>

@@ -39,7 +39,7 @@
         <li class="menu-a"><a href="/kr/home/blog">Blog</a></li>
         <li class="menu-a"><a href="/kr/home/customers">Customers</a></li>
         <li class="menu-a"><a href="/kr/home/usecase">Use Case</a></li>
-          <li class="menu-a"><a href="/kr/home/company">Company</a></li>
+        <li class="menu-a"><a href="/kr/home/company">Company</a></li>
       </ul>
     </div>
     <div class="menu-right">
@@ -51,8 +51,8 @@
                 >Document</a
               >
               <div class="dropdown-docs" id="dropdownDocs">
-                <a class="dropdown-link" href="/neo" >Neo</a>
-                <a class="dropdown-link" href="/dbms" >Classic</a>
+                <a class="dropdown-link" href="/neo">Neo</a>
+                <a class="dropdown-link" href="/dbms">Classic</a>
               </div>
             </div></a
           >
@@ -74,10 +74,16 @@
 </nav>
 <nav class="tablet-menu-wrap">
   <a href="/kr/home"><img src="../../img/logo_machbase.png" alt="" /></a>
-  <div class="tablet-menu-icon">
-    <div class="tablet-bar"></div>
-    <div class="tablet-bar"></div>
-    <div class="tablet-bar"></div>
+  <div class="hamberger-right">
+    <select id="languageSelector2" onchange="changeLanguage2()">
+      <option value="kr">한국어</option>
+      <option value="en">English</option>
+    </select>
+    <div class="tablet-menu-icon">
+      <div class="tablet-bar"></div>
+      <div class="tablet-bar"></div>
+      <div class="tablet-bar"></div>
+    </div>
   </div>
   <div class="tablet-menu">
     <ul>
@@ -105,18 +111,15 @@
       <li>
         <div class="docs-content">
           <div class="docs-sub"><a href="/neo" target="_blank">Neo</a></div>
-          <div class="docs-num"><a href="/dbms" target="_blank">Classic</a></div>
+          <div class="docs-num">
+            <a href="/dbms" target="_blank">Classic</a>
+          </div>
         </div>
       </li>
       <li><a href="/kr/home/download">Download</a></li>
       <li><a href="https://support.machbase.com/hc/en-us">Support</a></li>
-         <li><a href="/kr/home/download">Contact US</a></li>
-      <li>
-    <select id="languageSelector2" onchange="changeLanguage2()">
-      <option value="kr">한국어</option>
-      <option value="en">English</option>
-    </select>
-      </li>
+      <li><a href="/kr/home/download">Contact US</a></li>
+      <li></li>
     </ul>
   </div>
 </nav>
@@ -479,9 +482,7 @@
       </a>
     </div>
     <div>
-      <p class="footertext">
-        서울시 강남구 테헤란로 20길 10, 3M 타워, 9층
-      </p>
+      <p class="footertext">서울시 강남구 테헤란로 20길 10, 3M 타워, 9층</p>
     </div>
     <div class="footer_box">
       <div class="footer_text">
@@ -527,9 +528,7 @@
       <img class="footer-logo-img" src="../../img/machbase-logo-w.png" />
     </div>
     <div>
-      <p class="footertext">
-        서울시 강남구 테헤란로 20길 10, 3M 타워, 9층
-      </p>
+      <p class="footertext">서울시 강남구 테헤란로 20길 10, 3M 타워, 9층</p>
     </div>
     <div class="footer_box">
       <div class="footer_text">
@@ -644,7 +643,7 @@
       location.href = location.origin + locationPath.join("/");
     }
   }
-    function changeLanguage2() {
+  function changeLanguage2() {
     var languageSelector = document.getElementById("languageSelector2");
     var selectedLanguage = languageSelector.value;
     if (selectedLanguage !== "kr") {
@@ -653,14 +652,16 @@
       location.href = location.origin + locationPath.join("/");
     }
   }
-  window.addEventListener("load", function() {
+  window.addEventListener("load", function () {
     var elementsWithDarkClass = document.querySelectorAll(".dark");
     for (var i = 0; i < elementsWithDarkClass.length; i++) {
-        elementsWithDarkClass[i].classList.remove("dark");
+      elementsWithDarkClass[i].classList.remove("dark");
     }
-     var elementsWithColorScheme = document.querySelectorAll("[style*='color-scheme: dark;']");
+    var elementsWithColorScheme = document.querySelectorAll(
+      "[style*='color-scheme: dark;']"
+    );
     for (var i = 0; i < elementsWithColorScheme.length; i++) {
-        elementsWithColorScheme[i].removeAttribute("style");
+      elementsWithColorScheme[i].removeAttribute("style");
     }
-});
+  });
 </script>

@@ -60,21 +60,29 @@ toc: false
         <li class="menu-a">
           <a href="https://support.machbase.com/hc/en-us">Support</a>
         </li>
-         <li class="menu-a"><a href="/home/contactus">Contact US</a></li>
-        <li class="menu-a"><select id="languageSelector" onchange="changeLanguage()">
-        <option value="en">English</option>
-        <option value="kr">한국어</option>
-    </select></li>
+        <li class="menu-a"><a href="/home/contactus">Contact US</a></li>
+        <li class="menu-a">
+          <select id="languageSelector" onchange="changeLanguage()">
+            <option value="en">English</option>
+            <option value="kr">한국어</option>
+          </select>
+        </li>
       </ul>
     </div>
   </div>
 </nav>
 <nav class="tablet-menu-wrap">
   <a href="/kr/home"><img src="./img/logo_machbase.png" alt="" /></a>
-  <div class="tablet-menu-icon">
-    <div class="tablet-bar"></div>
-    <div class="tablet-bar"></div>
-    <div class="tablet-bar"></div>
+  <div class="hamberger-right">
+    <select id="languageSelector2" onchange="changeLanguage2()">
+      <option value="en">English</option>
+      <option value="kr">한국어</option>
+    </select>
+    <div class="tablet-menu-icon">
+      <div class="tablet-bar"></div>
+      <div class="tablet-bar"></div>
+      <div class="tablet-bar"></div>
+    </div>
   </div>
   <div class="tablet-menu">
     <ul>
@@ -102,17 +110,14 @@ toc: false
       <li>
         <div class="docs-content">
           <div class="docs-sub"><a href="/neo" target="_blank">Neo</a></div>
-          <div class="docs-num"><a href="/dbms" target="_blank">Classic</a></div>
+          <div class="docs-num">
+            <a href="/dbms" target="_blank">Classic</a>
+          </div>
         </div>
       </li>
       <li><a href="/home/download">Download</a></li>
       <li><a href="https://support.machbase.com/hc/en-us">Support</a></li>
-         <li><a href="/home/download">Contact US</a></li>
-<li><select id="languageSelector2" onchange="changeLanguage2()">
-        <option value="en">English</option>
-        <option value="kr">한국어</option>
-    </select>
-    </li>
+      <li><a href="/home/download">Contact US</a></li>
     </ul>
   </div>
 </nav>
@@ -1360,27 +1365,31 @@ Console.Write(data);`,
     docsNum.classList.toggle("show");
   });
   //change lang
-  let language;
-  let storageData = sessionStorage.getItem("lang");
-  if (storageData) {
-    language = storageData;
-  } else {
+  function getCookie(name) {
+    var value = "; " + document.cookie;
+    var parts = value.split("; " + name + "=");
+    if (parts.length === 2) return parts.pop().split(";").shift();
+    return null;
+  }
+  var language = getCookie("lang");
+  if (language === null) {
     var userLang = navigator.language || navigator.userLanguage;
     if (userLang !== "ko") {
-      sessionStorage.setItem("lang", userLang);
+      document.cookie = "lang=en; path=/";
       language = "en";
     } else {
-      sessionStorage.setItem("lang", "ko");
-      language = "kr";
+      document.cookie = "lang=ko; path=/";
+      language = "ko";
       location.href = location.origin + "/kr" + location.pathname;
     }
-      var referrer = document.referrer;
+    var referrer = document.referrer;
     if (referrer.includes("neo") || referrer.includes("dbms")) {
       var userLang = navigator.language || navigator.userLanguage;
       if (userLang === "ko-KR" || userLang === "ko") {
-          window.location.href = window.location.origin + "/kr" + window.location.pathname;
+        window.location.href =
+          window.location.origin + "/kr" + window.location.pathname;
+      }
     }
-  }
   }
   function changeLanguage() {
     var languageSelector = document.getElementById("languageSelector");
@@ -1396,14 +1405,16 @@ Console.Write(data);`,
       location.href = location.origin + "/kr" + location.pathname;
     }
   }
-  window.addEventListener("load", function() {
+  window.addEventListener("load", function () {
     var elementsWithDarkClass = document.querySelectorAll(".dark");
     for (var i = 0; i < elementsWithDarkClass.length; i++) {
-        elementsWithDarkClass[i].classList.remove("dark");
+      elementsWithDarkClass[i].classList.remove("dark");
     }
-     var elementsWithColorScheme = document.querySelectorAll("[style*='color-scheme: dark;']");
+    var elementsWithColorScheme = document.querySelectorAll(
+      "[style*='color-scheme: dark;']"
+    );
     for (var i = 0; i < elementsWithColorScheme.length; i++) {
-        elementsWithColorScheme[i].removeAttribute("style");
+      elementsWithColorScheme[i].removeAttribute("style");
     }
-});
+  });
 </script>

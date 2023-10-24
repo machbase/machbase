@@ -1081,6 +1081,13 @@ footer {
     width: 100%;
     padding: 0 40px;
   }
+  .hamberger-right {
+    display: flex;
+    align-items: center;
+  }
+  #languageSelector2 {
+    margin-right: 10px;
+  }
 }
 @media screen and (max-width: 1120px) {
   .homepage-menu-wrap {
@@ -1728,6 +1735,9 @@ footer {
   .tablemenu.scrolled .sticky {
     left: 40px;
   } */
+  .tablet-menu-wrap {
+    padding: 0 20px;
+  }
   .sub_page_title {
     font-size: 38px;
   }
