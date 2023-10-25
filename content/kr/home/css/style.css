@@ -20,7 +20,7 @@
   justify-content: space-between;
   align-items: center;
   margin-right: 15%;
-  margin-top: 10%;
+  margin-top: 5%;
 }
 .main_wrap {
   position: relative;
@@ -604,7 +604,6 @@
     justify-content: space-between;
     align-items: center;
     margin-right: 10%;
-    margin-top: 10%;
   }
   .main_chart {
     width: 500px !important;
