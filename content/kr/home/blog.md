@@ -711,7 +711,7 @@ description: "마하 속도 수평 확장이 가능한 시계열 데이터베이
           /></a>
         </div>
         <div>
-          <a href="https://www.slideshare.net/machbase" target="_blank"
+          <a href="https://www.slideshare.net/machbasekr" target="_blank"
             ><img class="sns-img" src="../img/slideshare.png"
           /></a>
         </div>
@@ -756,7 +756,7 @@ description: "마하 속도 수평 확장이 가능한 시계열 데이터베이
           /></a>
         </div>
         <div>
-          <a href="https://www.slideshare.net/machbase" target="_blank"
+          <a href="https://www.slideshare.net/machbasekr" target="_blank"
             ><img class="sns-img" src="../img/slideshare.png"
           /></a>
         </div>

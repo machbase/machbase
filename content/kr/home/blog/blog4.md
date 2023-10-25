@@ -483,7 +483,7 @@ description: "시계열 DB(Time-Series Database) 아키텍처 비교_ 마크베�
           /></a>
         </div>
         <div>
-          <a href="https://www.slideshare.net/machbase" target="_blank"
+          <a href="https://www.slideshare.net/machbasekr" target="_blank"
             ><img class="sns-img" src="../../img/slideshare.png"
           /></a>
         </div>
@@ -530,7 +530,7 @@ description: "시계열 DB(Time-Series Database) 아키텍처 비교_ 마크베�
           /></a>
         </div>
         <div>
-          <a href="https://www.slideshare.net/machbase" target="_blank"
+          <a href="https://www.slideshare.net/machbasekr" target="_blank"
             ><img class="sns-img" src="../../img/slideshare.png"
           /></a>
         </div>

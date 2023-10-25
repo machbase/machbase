@@ -255,7 +255,7 @@ description: "현대글로벌서비스는 선주에게 실시간 선박 운항 �
           /></a>
         </div>
         <div>
-          <a href="https://www.slideshare.net/machbase" target="_blank"
+          <a href="https://www.slideshare.net/machbasekr" target="_blank"
             ><img class="sns-img" src="../../img/slideshare.png"
           /></a>
         </div>
@@ -300,7 +300,7 @@ description: "현대글로벌서비스는 선주에게 실시간 선박 운항 �
           /></a>
         </div>
         <div>
-          <a href="https://www.slideshare.net/machbase" target="_blank"
+          <a href="https://www.slideshare.net/machbasekr" target="_blank"
             ><img class="sns-img" src="../../img/slideshare.png"
           /></a>
         </div>

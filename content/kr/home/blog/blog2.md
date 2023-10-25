@@ -455,7 +455,7 @@ description: "마크베이스 네오(Machbase Neo)는 왜 프론트엔드 프레
           /></a>
         </div>
         <div>
-          <a href="https://www.slideshare.net/machbase" target="_blank"
+          <a href="https://www.slideshare.net/machbasekr" target="_blank"
             ><img class="sns-img" src="../../img/slideshare.png"
           /></a>
         </div>
@@ -500,7 +500,7 @@ description: "마크베이스 네오(Machbase Neo)는 왜 프론트엔드 프레
           /></a>
         </div>
         <div>
-          <a href="https://www.slideshare.net/machbase" target="_blank"
+          <a href="https://www.slideshare.net/machbasekr" target="_blank"
             ><img class="sns-img" src="../../img/slideshare.png"
           /></a>
         </div>

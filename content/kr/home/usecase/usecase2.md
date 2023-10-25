@@ -241,7 +241,7 @@ description: "롯데칠성 음료는 탄산음료, 차, 과일주스 등 다양�
           /></a>
         </div>
         <div>
-          <a href="https://www.slideshare.net/machbase" target="_blank"
+          <a href="https://www.slideshare.net/machbasekr" target="_blank"
             ><img class="sns-img" src="../../img/slideshare.png"
           /></a>
         </div>
@@ -286,7 +286,7 @@ description: "롯데칠성 음료는 탄산음료, 차, 과일주스 등 다양�
           /></a>
         </div>
         <div>
-          <a href="https://www.slideshare.net/machbase" target="_blank"
+          <a href="https://www.slideshare.net/machbasekr" target="_blank"
             ><img class="sns-img" src="../../img/slideshare.png"
           /></a>
         </div>

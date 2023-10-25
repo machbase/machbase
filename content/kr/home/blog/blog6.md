@@ -435,7 +435,7 @@ description: "Deep Anomaly Detection in Time Series (1) : Time Series Data"
           /></a>
         </div>
         <div>
-          <a href="https://www.slideshare.net/machbase" target="_blank"
+          <a href="https://www.slideshare.net/machbasekr" target="_blank"
             ><img class="sns-img" src="../../img/slideshare.png"
           /></a>
         </div>
@@ -480,7 +480,7 @@ description: "Deep Anomaly Detection in Time Series (1) : Time Series Data"
           /></a>
         </div>
         <div>
-          <a href="https://www.slideshare.net/machbase" target="_blank"
+          <a href="https://www.slideshare.net/machbasekr" target="_blank"
             ><img class="sns-img" src="../../img/slideshare.png"
           /></a>
         </div>

@@ -298,7 +298,7 @@ description: "마크베이스와 함께 성장하는 기업"
           /></a>
         </div>
         <div>
-          <a href="https://www.slideshare.net/machbase" target="_blank"
+          <a href="https://www.slideshare.net/machbasekr" target="_blank"
             ><img class="sns-img" src="../img/slideshare.png"
           /></a>
         </div>
@@ -343,7 +343,7 @@ description: "마크베이스와 함께 성장하는 기업"
           /></a>
         </div>
         <div>
-          <a href="https://www.slideshare.net/machbase" target="_blank"
+          <a href="https://www.slideshare.net/machbasekr" target="_blank"
             ><img class="sns-img" src="../img/slideshare.png"
           /></a>
         </div>

@@ -971,7 +971,7 @@ description: "글로벌 성능평가 1위 시계열 데이터베이스 엔진 �
           /></a>
         </div>
         <div>
-          <a href="https://www.slideshare.net/machbase" target="_blank"
+          <a href="https://www.slideshare.net/machbasekr" target="_blank"
             ><img src="./img/slideshare.png"
           /></a>
         </div>
@@ -1016,7 +1016,7 @@ description: "글로벌 성능평가 1위 시계열 데이터베이스 엔진 �
           /></a>
         </div>
         <div>
-          <a href="https://www.slideshare.net/machbase" target="_blank"
+          <a href="https://www.slideshare.net/machbasekr" target="_blank"
             ><img src="./img/slideshare.png"
           /></a>
         </div>

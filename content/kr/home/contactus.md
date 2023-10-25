@@ -964,7 +964,7 @@ description: "해당 양식을 작성하여 제출해 주시면 최대한 빨리
             /></a>
           </div>
           <div>
-            <a href="https://www.slideshare.net/machbase" target="_blank"
+            <a href="https://www.slideshare.net/machbasekr" target="_blank"
               ><img class="sns-img" src="../img/slideshare.png"
             /></a>
           </div>
@@ -1009,7 +1009,7 @@ description: "해당 양식을 작성하여 제출해 주시면 최대한 빨리
             /></a>
           </div>
           <div>
-            <a href="https://www.slideshare.net/machbase" target="_blank"
+            <a href="https://www.slideshare.net/machbasekr" target="_blank"
               ><img class="sns-img" src="../img/slideshare.png"
             /></a>
           </div>

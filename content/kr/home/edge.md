@@ -337,7 +337,7 @@ description: "엣지 컴퓨팅과 시계열 데이터베이스"
           /></a>
         </div>
         <div>
-          <a href="https://www.slideshare.net/machbase" target="_blank"
+          <a href="https://www.slideshare.net/machbasekr" target="_blank"
             ><img class="sns-img" src="../img/slideshare.png"
           /></a>
         </div>
@@ -382,7 +382,7 @@ description: "엣지 컴퓨팅과 시계열 데이터베이스"
           /></a>
         </div>
         <div>
-          <a href="https://www.slideshare.net/machbase" target="_blank"
+          <a href="https://www.slideshare.net/machbasekr" target="_blank"
             ><img class="sns-img" src="../img/slideshare.png"
           /></a>
         </div>

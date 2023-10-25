@@ -575,7 +575,7 @@ description: "Machbase 제품은 세계 최고의 기업들이 선택하며 수�
           /></a>
         </div>
         <div>
-          <a href="https://www.slideshare.net/machbase" target="_blank"
+          <a href="https://www.slideshare.net/machbasekr" target="_blank"
             ><img class="sns-img" src="../img/slideshare.png"
           /></a>
         </div>
@@ -624,7 +624,7 @@ description: "Machbase 제품은 세계 최고의 기업들이 선택하며 수�
           /></a>
         </div>
         <div>
-          <a href="https://www.slideshare.net/machbase" target="_blank"
+          <a href="https://www.slideshare.net/machbasekr" target="_blank"
             ><img class="sns-img" src="../img/slideshare.png"
           /></a>
         </div>
