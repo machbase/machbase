@@ -4,7 +4,7 @@ enableRobotsTXT: true
 enableGitInfo: true
 hasCJKLanguage: true
 googleAnalytics: G-5VYQQQFHCH
-baseURL: https://www.machbase.com/
+baseURL: https://machbase.com/
 
 DefaultContentLanguage: en
 languages:

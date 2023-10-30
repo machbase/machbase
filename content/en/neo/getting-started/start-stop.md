@@ -75,7 +75,8 @@ The commands below should be executed in Administrator mode.
 Register a service. The following arguments after `machbase-neo service install` are same as `machbase-neo serve`, but all paths should *abolute path*.
 
 ```
-C:\neo-server>.\machbase-neo service install --host 127.0.0.1 --log-file c:\neo-server\machbase-neo.log --log-level INFO
+C:\neo-server>.\machbase-neo service install --host 127.0.0.1 --data C:\neo-server\database --file C:\neo-server\files --log-filename C:\neo-server\machbase-neo.log --log-level INFO
+
 ```
 
 - Start and Stop

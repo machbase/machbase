@@ -1,6 +1,12 @@
 /* Begin: Font
 ------------------------------------------------------------------
 */
+h1 {
+  display: none !important;
+}
+.content h2 {
+  margin-top: 0 !important;
+}
 .content ul li {
   margin: 15px 0;
 }
@@ -10,6 +16,9 @@
 .content td {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
+}
+.mx-auto {
+  max-width: 100% !important;
 }
 html {
   font-family: "OpenSans";
@@ -1085,8 +1094,7 @@ footer {
     margin-top: 48px !important;
   }
 }
-
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 1120px) {
   .homepage-menu-wrap {
     display: none;
   }
@@ -1220,6 +1228,15 @@ footer {
     border: 1px solid #253fd0 !important;
     background-color: transparent;
   }
+  .hamberger-right {
+    display: flex;
+    align-items: center;
+  }
+  #languageSelector2 {
+    margin-right: 10px;
+  }
+}
+@media screen and (max-width: 1024px) {
   /* .menu {
     display: none;
   } */
@@ -1725,6 +1742,9 @@ footer {
   .tablemenu.scrolled .sticky {
     left: 40px;
   } */
+  .tablet-menu-wrap {
+    padding: 0 20px;
+  }
   .sub_page_title {
     font-size: 38px;
   }

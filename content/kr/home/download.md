@@ -1,5 +1,7 @@
 ---
-toc: false
+title: Download
+description: "마크베이스의 TSDB 제품 라인은 통합 기능을 제공하는 새로 출시된 NEO 제품으로 구성됩니다.
+그리고 기존 CLASSIC 제품. 사용자는 자신의 환경에 가장 적합한 제품을 선택하고 활용할 수 있습니다."
 ---
 
 <head>
@@ -7,121 +9,11 @@ toc: false
   <link rel="stylesheet" type="text/css" href="../css/style.css" />
 </head>
 <body>
-  <nav>
-    <div class="homepage-menu-wrap">
-      <div class="menu-left">
-        <ul class="menu-left-ul">
-          <li class="menu-logo">
-            <a href="/kr/home"><img src="../img/logo_machbase.png" alt="" /></a>
-          </li>
-          <li class="menu-a products-menu-wrap" id="productsMenuWrap">
-            <div>
-              <a
-                class="menu_active_border"
-                id="menuActiveBorder"
-                href="/kr/home/tsdb"
-                >Products</a
-              >
-              <div class="dropdown" id="dropdown">
-                <a class="dropdown-link" href="/kr/home/tsdb">TSDB</a>
-                <a class="dropdown-link" href="/kr/home/mos">MOS</a>
-                <a
-                  class="dropdown-link"
-                  href="https://www.cems.ai/"
-                  target="_blank"
-                  >CEMS</a
-                >
-              </div>
-            </div>
-          </li>
-          <li class="menu-a"><a href="/kr/home/blog">Blog</a></li>
-          <li class="menu-a"><a href="/kr/home/customers">Customers</a></li>
-          <li class="menu-a"><a href="/kr/home/usecase">Use Case</a></li>
-            <li class="menu-a"><a href="/kr/home/company">Company</a></li>
-        </ul>
-      </div>
-      <div class="menu-right">
-        <ul class="menu-right-ul">
-          <li class="menu-a docs-menu-wrap" id="docsMenuWrap">
-            <a href=""
-              ><div>
-                <a class="menu_active_border" id="menuActiveBorder" href=""
-                  >Document</a
-                >
-                <div class="dropdown-docs" id="dropdownDocs">
-                  <a class="dropdown-link" href="/neo" target="_blank">Neo</a>
-                  <a class="dropdown-link" href="/dbms" target="_blank">Classic</a>
-                </div>
-              </div></a
-            >
-          </li>
-          <li class="menu-a"><a href="/kr/home/download">Download</a></li>
-          <li class="menu-a">
-            <a href="https://support.machbase.com/hc/en-us">Support</a>
-          </li>
-          <li class="menu-a"><a href="/kr/home/contactus">Contact US</a></li>
-          <li class="menu-a">
-          <select id="languageSelector" onchange="changeLanguage()">
-            <option value="kr">한국어</option>
-            <option value="en">English</option>
-          </select>
-        </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-  <nav class="tablet-menu-wrap">
-    <a href="/kr/home"><img src="../img/logo_machbase.png" alt="" /></a>
-    <div class="tablet-menu-icon">
-      <div class="tablet-bar"></div>
-      <div class="tablet-bar"></div>
-      <div class="tablet-bar"></div>
-    </div>
-    <div class="tablet-menu">
-      <ul>
-        <div class="tablet-menu-title">
-          <a class="tablet-logo" href="/kr/home"
-            ><img src="../img/logo_machbase.png" alt=""
-          /></a>
-        </div>
-        <li></li>
-        <li class="products-toggle">Products</li>
-        <li>
-          <div class="products-content">
-            <div class="products-sub"><a href="/kr/home/tsdb">TSDB</a></div>
-            <div class="products-num"><a href="/kr/home/mos">MOS</a></div>
-            <div class="products-cems">
-              <a href="https://www.cems.ai/" target="_blank">CEMS</a>
-            </div>
-          </div>
-        </li>
-        <li><a href="/kr/home/blog">Blog</a></li>
-        <li><a href="/kr/home/customers">Customers</a></li>
-        <li><a href="/kr/home/usecase">Use Cases</a></li>
-        <li><a href="/kr/home/company">Company</a></li>
-        <li class="docs-toggle">Document</li>
-        <li>
-          <div class="docs-content">
-            <div class="docs-sub"><a href="/neo" target="_blank">Neo</a></div>
-            <div class="docs-num"><a href="/dbms" target="_blank">Classic</a></div>
-          </div>
-        </li>
-        <li><a href="/kr/home/download">Download</a></li>
-        <li><a href="https://support.machbase.com/hc/en-us">Support</a></li>
-           <li><a href="/kr/home/download">Contact US</a></li>
-      <li>
-    <select id="languageSelector2" onchange="changeLanguage2()">
-      <option value="kr">한국어</option>
-      <option value="en">English</option>
-    </select>
-      </li>
-      </ul>
-    </div>
-  </nav>
+   {{< home_menu_sub_kr >}}
   <section class="download_section0">
     <div>
-      <h1 class="sub_page_title">Download</h1>
-      <p class="sub_page_titletext">
+      <h2 class="sub_page_title">Download</h2>
+      <p class="sub_page_titletext download-sub">
         Machbase`s TSDB product line consists of the newly launched NEO product,
         offering integrated functionality,<br />
         and the existing CLASSIC product. Users can choose and utilize the
@@ -173,8 +65,9 @@ toc: false
           <td class="download_th1_2">arm32</td>
           <td class="download_th1_4">
             <span
-              >wget
-              https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-linux-arm32.zip
+              >wget https://github.com/machbase/neo-server/releases/download/{{<
+              neo_latestver >}}/machbase-neo-{{< neo_latestver
+              >}}-linux-arm32.zip
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -193,8 +86,9 @@ toc: false
           <td class="download_th1_3">arm64</td>
           <td class="download_th1_4">
             <span
-              >wget
-              https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-linux-arm64.zip
+              >wget https://github.com/machbase/neo-server/releases/download/{{<
+              neo_latestver >}}/machbase-neo-{{< neo_latestver
+              >}}-linux-arm64.zip
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -213,8 +107,9 @@ toc: false
           <td>x64</td>
           <td class="download_th1_4">
             <span
-              >wget
-              https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-linux-amd64.zip
+              >wget https://github.com/machbase/neo-server/releases/download/{{<
+              neo_latestver >}}/machbase-neo-{{< neo_latestver
+              >}}-linux-amd64.zip
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -234,8 +129,9 @@ toc: false
           <td>arm64(M1)</td>
           <td class="download_th1_4">
             <span
-              >wget
-              https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-darwin-arm64.zip
+              >wget https://github.com/machbase/neo-server/releases/download/{{<
+              neo_latestver >}}/machbase-neo-{{< neo_latestver
+              >}}-darwin-arm64.zip
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -254,8 +150,9 @@ toc: false
           <td>x64</td>
           <td class="download_th1_4">
             <span
-              >wget
-              https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-darwin-amd64.zip
+              >wget https://github.com/machbase/neo-server/releases/download/{{<
+              neo_latestver >}}/machbase-neo-{{< neo_latestver
+              >}}-darwin-amd64.zip
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -275,8 +172,9 @@ toc: false
           <td>x64</td>
           <td class="download_th1_4">
             <span
-              >wget
-              https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-windows-amd64.zip
+              >wget https://github.com/machbase/neo-server/releases/download/{{<
+              neo_latestver >}}/machbase-neo-{{< neo_latestver
+              >}}-windows-amd64.zip
             </span>
           </td>
           <td class="puple border_bottom_right">
@@ -333,7 +231,7 @@ toc: false
           <td class="download_th1_4">
             <span
               >wget
-              https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-X86-64-release.tgz
+              https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-X86-64-release.tgz
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -341,7 +239,7 @@ toc: false
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
-                href="https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-X86-64-release.tgz"
+                href="https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-X86-64-release.tgz"
               >
                 <img src="../img/btn_newlink.png" />
               </a>
@@ -353,7 +251,7 @@ toc: false
           <td class="download_th1_4">
             <span
               >wget
-              https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-ARM_CORTEX_A53-64-release.tgz
+              https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-ARM_CORTEX_A53-64-release.tgz
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -361,7 +259,7 @@ toc: false
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
-                href="https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-ARM_CORTEX_A53-64-release.tgz"
+                href="https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-ARM_CORTEX_A53-64-release.tgz"
               >
                 <img src="../img/btn_newlink.png" />
               </a>
@@ -374,7 +272,7 @@ toc: false
           <td class="download_th1_4">
             <span
               >wget
-              https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-64-release.msi</span
+              https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-64-release.msi</span
             >
           </td>
           <td class="puple download_th1_5">
@@ -382,7 +280,7 @@ toc: false
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
-                href="https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-64-release.msi"
+                href="https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-64-release.msi"
               >
                 <img src="../img/btn_newlink.png" />
               </a>
@@ -394,7 +292,7 @@ toc: false
           <td class="download_th1_4">
             <span
               >wget
-              https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-32-release.msi
+              https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-32-release.msi
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -402,7 +300,7 @@ toc: false
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
-                href="https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-32-release.msi"
+                href="https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-32-release.msi"
               >
                 <img src="../img/btn_newlink.png" />
               </a>
@@ -415,7 +313,7 @@ toc: false
           <td class="download_th1_4">
             <span
               >wget
-              https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-ARM_M1-64-release.tgz
+              https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-ARM_M1-64-release.tgz
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -423,7 +321,7 @@ toc: false
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
-                href="https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-ARM_M1-64-release.tgz"
+                href="https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-ARM_M1-64-release.tgz"
               >
                 <img src="../img/btn_newlink.png" />
               </a>
@@ -435,7 +333,7 @@ toc: false
           <td class="download_th1_4">
             <span
               >wget
-              https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-X86-64-release.tgz
+              https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-X86-64-release.tgz
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -443,7 +341,7 @@ toc: false
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
-                href="https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-X86-64-release.tgz"
+                href="https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-X86-64-release.tgz"
               >
                 <img src="../img/btn_newlink.png" />
               </a>
@@ -453,112 +351,7 @@ toc: false
       </table>
     </div>
   </section>
-  <footer>
-    <div class="footer_inner">
-      <div class="footer-logo">
-        <img src="../img/machbase-logo-w.png" />
-        <a href="/kr/home/contactus">
-          <button class="contactus">고객 문의</button>
-        </a>
-      </div>
-      <div>
-        <p class="footertext">
-          서울시 강남구 테헤란로 20길 10, 3M 타워, 9층
-        </p>
-      </div>
-      <div class="footer_box">
-        <div class="footer_text">
-          <p>MACHBASE.COM | sales@machbase.com | support@machbase.com</p>
-          <p class="footer_margin_top"></p>
-        </div>
-        <div class="sns">
-          <div>
-            <a href="https://twitter.com/machbase" target="_blank"
-              ><img class="sns-img" src="../img/twitter.png"
-            /></a>
-          </div>
-          <div>
-            <a href="https://github.com/machbase" target="_blank"
-              ><img class="sns-img" src="../img/github.png"
-            /></a>
-          </div>
-          <div>
-            <a href="https://www.linkedin.com/company/machbase" target="_blank"
-              ><img class="sns-img" src="../img/linkedin.png"
-            /></a>
-          </div>
-          <div>
-            <a href="https://www.facebook.com/MACHBASE/" target="_blank"
-              ><img class="sns-img" src="../img/facebook.png"
-            /></a>
-          </div>
-          <div>
-            <a href="https://www.slideshare.net/machbase" target="_blank"
-              ><img class="sns-img" src="../img/slideshare.png"
-            /></a>
-          </div>
-          <div>
-            <a href="https://blog.naver.com/machbasekr" target="_blank"
-              ><img class="sns-img" src="../img/naver.png"
-            /></a>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="footer_tablet_inner">
-      <div class="footer-logo">
-        <img src="../img/machbase-logo-w.png" />
-      </div>
-      <div>
-        <p class="footertext">
-          서울시 강남구 테헤란로 20길 10, 3M 타워, 9층
-        </p>
-      </div>
-      <div class="footer_box">
-        <div class="footer_text">
-          <p>MACHBASE.COM | sales@machbase.com | support@machbase.com</p>
-        </div>
-        <div class="sns">
-          <div>
-            <a href="https://twitter.com/machbase" target="_blank"
-              ><img class="sns-img" src="../img/twitter.png"
-            /></a>
-          </div>
-          <div>
-            <a href="https://github.com/machbase" target="_blank"
-              ><img class="sns-img" src="../img/github.png"
-            /></a>
-          </div>
-          <div>
-            <a href="https://www.linkedin.com/company/machbase" target="_blank"
-              ><img class="sns-img" src="../img/linkedin.png"
-            /></a>
-          </div>
-          <div>
-            <a href="https://www.facebook.com/MACHBASE/" target="_blank"
-              ><img class="sns-img" src="../img/facebook.png"
-            /></a>
-          </div>
-          <div>
-            <a href="https://www.slideshare.net/machbase" target="_blank"
-              ><img class="sns-img" src="../img/slideshare.png"
-            /></a>
-          </div>
-          <div>
-            <a href="https://blog.naver.com/machbasekr" target="_blank"
-              ><img class="sns-img" src="../img/naver.png"
-            /></a>
-          </div>
-        </div>
-        <a href="/kr/home/contactus">
-          <button class="contactus">고객 문의</button>
-        </a>
-      </div>
-    </div>
-    <div class="machbase_right">
-      <p>@2023 MACHBASE All rights reserved.</p>
-    </div>
-  </footer>
+  {{< home_footer_sub_kr >}}
 </body>
 <script>
   const jsonData = {
@@ -576,17 +369,17 @@ toc: false
       neoWindowsX64:
         "https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-windows-amd64.zip",
       sdkLinuxX64:
-        "https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-X86-64-release.tgz",
+        "https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-X86-64-release.tgz",
       sdkLinuxArm:
-        "https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-ARM_CORTEX_A53-64-release.tgz",
+        "https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-ARM_CORTEX_A53-64-release.tgz",
       sdkWindowsX64:
-        "https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-64-release.msi",
+        "https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-64-release.msi",
       sdkWindows32:
-        "https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-32-release.msi",
+        "https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-32-release.msi",
       sdkMacArm:
-        "https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-ARM_M1-64-release.tgz",
+        "https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-ARM_M1-64-release.tgz",
       sdkMacX64:
-        "https://www.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-X86-64-release.tgz",
+        "https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-X86-64-release.tgz",
     },
   };
   function copyToClipboard(text, button) {
@@ -606,46 +399,6 @@ toc: false
       copyToClipboard(codeToCopy, button);
     });
   });
-  //drop down menu
-  const productsMenuWrap = document.getElementById("productsMenuWrap");
-  const docsMenuWrap = document.getElementById("docsMenuWrap");
-  const dropdown = document.getElementById("dropdown");
-  dropdown.style.display = "none";
-  productsMenuWrap.addEventListener("mouseover", function () {
-    dropdown.style.display = "block";
-  });
-  productsMenuWrap.addEventListener("mouseout", function () {
-    dropdown.style.display = "none";
-  });
-  docsMenuWrap.addEventListener("mouseover", function () {
-    dropdownDocs.style.display = "block";
-  });
-  docsMenuWrap.addEventListener("mouseout", function () {
-    dropdownDocs.style.display = "none";
-  });
-  //tablet menu
-  const menuIcon = document.querySelector(".tablet-menu-icon");
-  const tabletMenu = document.querySelector(".tablet-menu");
-  const productsToggle = document.querySelector(".products-toggle");
-  const productsSub = document.querySelector(".products-sub");
-  const productsNum = document.querySelector(".products-num");
-  const productsCems = document.querySelector(".products-cems");
-  const docsToggle = document.querySelector(".docs-toggle");
-  const docsSub = document.querySelector(".docs-sub");
-  const docsNum = document.querySelector(".docs-num");
-  menuIcon.addEventListener("click", () => {
-    tabletMenu.classList.toggle("show");
-    menuIcon.classList.toggle("is-active");
-  });
-  productsToggle.addEventListener("click", () => {
-    productsSub.classList.toggle("show");
-    productsNum.classList.toggle("show");
-    productsCems.classList.toggle("show");
-  });
-  docsToggle.addEventListener("click", () => {
-    docsSub.classList.toggle("show");
-    docsNum.classList.toggle("show");
-  });
   //change lang
   let language;
   let storageData = sessionStorage.getItem("lang");
@@ -664,32 +417,4 @@ toc: false
       location.href = location.origin + locationPath.join("/");
     }
   }
-  function changeLanguage() {
-    var languageSelector = document.getElementById("languageSelector");
-    var selectedLanguage = languageSelector.value;
-    if (selectedLanguage !== "kr") {
-      let locationPath = location.pathname.split("/");
-      locationPath.splice(1, 1);
-      location.href = location.origin + locationPath.join("/");
-    }
-  }
-    function changeLanguage2() {
-    var languageSelector = document.getElementById("languageSelector2");
-    var selectedLanguage = languageSelector.value;
-    if (selectedLanguage !== "kr") {
-      let locationPath = location.pathname.split("/");
-      locationPath.splice(1, 1);
-      location.href = location.origin + locationPath.join("/");
-    }
-  }
-  window.addEventListener("load", function() {
-    var elementsWithDarkClass = document.querySelectorAll(".dark");
-    for (var i = 0; i < elementsWithDarkClass.length; i++) {
-        elementsWithDarkClass[i].classList.remove("dark");
-    }
-     var elementsWithColorScheme = document.querySelectorAll("[style*='color-scheme: dark;']");
-    for (var i = 0; i < elementsWithColorScheme.length; i++) {
-        elementsWithColorScheme[i].removeAttribute("style");
-    }
-});
 </script>
