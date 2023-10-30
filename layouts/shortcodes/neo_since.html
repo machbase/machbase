@@ -1,0 +1,10 @@
+
+{{ if .IsNamedParams }}
+<span class="badge-since">
+    <i>Since v{{ .Get "ver" }}</i>
+</span>
+{{ else }}
+<span class="badge-since">
+    {{.Inner}}
+</span>
+{{ end }}

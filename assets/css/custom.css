@@ -1,3 +1,19 @@
+.badge-since {
+  align-items:center;
+  border:none;
+  display:inline-flex;
+  flex-direction:row;
+  font-size:11px;
+  line-height: 14px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
+  border-radius:5px;
+  padding:2px 4px;
+  background-color:#059862!important;
+  color:#ffffff
+}
+
 .d-inline-block {
   display: inline-block !important;
 }
