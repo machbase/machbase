@@ -101,8 +101,8 @@ description: "마크베이스 네오(Machbase Neo)는 왜 프론트엔드 프레
         </div>
         <p class="tech-contents-text">
           우선 마크베이스 네오를 설명을 드려야겠네요.
-          <a class="tech-contents-link" href="https://neo.machbase.com"
-            >(https://neo.machbase.com)</a
+          <a class="tech-contents-link" href="https://machbase.com/neo"
+            >(https://machbase.com/neo)</a
           >. 이 제품은 시계열 데이터베이스 제품이지만, 미래의 기술 트렌드를
           추구하는 All-In-One 개념의 제품으로서 사용자가 이 제품만으로 데이터의
           저장과 추출뿐만 아니라, 데이터의 수집과 변환 그리고, 내장된 다양한

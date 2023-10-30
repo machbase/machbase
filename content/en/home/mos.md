@@ -197,7 +197,7 @@ description: "Machbase MOS (Manufacturing Optimization Suite) is the best soluti
             >
               Get Machbase
             </button>
-            <a target="_blank" href="https://neo.machbase.com/"
+            <a href="https://machbase.com/neo"
               ><button class="next-navi-btn">Document</button></a
             >
           </div>

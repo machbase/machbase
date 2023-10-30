@@ -54,8 +54,8 @@ description: "당신의 개발 Know-how를 기록하는 새로운 방법"
         </p>
         <p class="tech-contents-text">
           Machbase Neo에 대한 자세한 내용은 웹사이트
-          <a class="tech-contents-link" href="https://neo.machbase.com."
-            >https://neo.machbase.com.</a
+          <a class="tech-contents-link" href="https://machbase.com/neo"
+            >https://machbase.com/neo</a
           >을 참고하면 됩니다.
         </p>
         <p class="tech-contents-text">
@@ -94,9 +94,9 @@ description: "당신의 개발 Know-how를 기록하는 새로운 방법"
         <p class="tech-title" id="anchor3">Neo Markdown 문법</p>
         <p class="tech-contents-text">
           일반적인 Markdown 문법은 여기
-          <a class="tech-contents-link" href="https://neo.machbase.com."
-            >(https://www.markdownguide.org/basic-syntax/).</a
-          >
+          <a class="tech-contents-link" href="https://www.markdownguide.org/basic-syntax/"
+            >(https://www.markdownguide.org/basic-syntax/)</a
+          >.
         </p>
         <p class="tech-contents-text">
           Machbase Neo에서는 SQL 구문을 실행할 수 있는 버튼이 있어 SQL쿼리문을

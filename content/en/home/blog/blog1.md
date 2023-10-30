@@ -58,9 +58,9 @@ description: "A New Approach to Documenting Your Know-How"
         <p class="tech-contents-text">
           For detailed information about Machbase Neo, please refer to the
           website at
-          <a class="tech-contents-link" href="https://neo.machbase.com."
-            >https://neo.machbase.com.</a
-          >
+          <a class="tech-contents-link" href="https://machbase.com/neo"
+            >https://machbase.com/neo</a
+          >.
         </p>
         <p class="tech-contents-text">
           Machbase Neo features a worksheet function that allows you to create
@@ -103,9 +103,9 @@ description: "A New Approach to Documenting Your Know-How"
         <p class="tech-title" id="anchor3">Neo Markdown syntax</p>
         <p class="tech-contents-text">
           General Markdown syntax can be found here
-          <a class="tech-contents-link" href="https://neo.machbase.com."
-            >(https://www.markdownguide.org/basic-syntax/).</a
-          >
+          <a class="tech-contents-link" href="https://www.markdownguide.org/basic-syntax/"
+            >(https://www.markdownguide.org/basic-syntax/)</a
+          >.
         </p>
         <p class="tech-contents-text">
           Machbase Neo has a button that allows you to execute SQL statements,

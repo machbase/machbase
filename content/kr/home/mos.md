@@ -189,7 +189,7 @@ description: "Machbase MOS (Manufacturing Optimization Suite)는 설비상태 �
             >
               Get Machbase
             </button>
-            <a target="_blank" href="https://neo.machbase.com/"
+            <a href="https://machbase.com/neo"
               ><button class="next-navi-btn">Document</button></a
             >
           </div>

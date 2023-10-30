@@ -36,24 +36,24 @@ images:
     </div>
     <div class="chart_wrap">
       <div class="chart">
-        <a href="https://neo.machbase.com/" target="_blank"
+        <a href="https://machbase.com/neo"
           ><img class="main_chart" src="./img/neo_main2.png" alt=""
         /></a>
       </div>
       <div class="chart_hover">
-        <a href="https://neo.machbase.com/" target="_blank"
+        <a href="https://machbase.com/neo"
           ><img class="main_chart" src="./img/Neo_hover2.png" alt=""
         /></a>
       </div>
     </div>
     <div class="tablet_chart_wrap">
       <div class="tablet_chart">
-        <a href="https://neo.machbase.com/" target="_blank"
+        <a href="https://machbase.com/neo"
           ><img class="main_chart" src="./img/neo_main.png" alt=""
         /></a>
       </div>
       <div class="tablet_chart_hover">
-        <a href="https://neo.machbase.com/" target="_blank"
+        <a href="https://machbase.com/neo"
           ><img class="main_chart" src="./img/Neo_hover.png" alt=""
         /></a>
       </div>
@@ -261,7 +261,7 @@ images:
                   >&lt;Click on the link below to download&gt;</span
                 ><br />
                 <a
-                  href="https://github.com/machbase/neo-server/releases/download/v8.0.3/machbase-neo-v8.0.3-windows-amd64.zip"
+                  href="https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-windows-amd64.zip"
                   class="orange home_visited"
                   target="_blank"
                   >machbase-neo-v8.0.3-windows-amd64.zip</a
@@ -273,9 +273,8 @@ images:
                 <span class="green">&lt;Download from releases&gt;</span><br />
                 <a
                   class="orange home_visited"
-                  target="_blank"
-                  href="https://neo.machbase.com/neo/releases/"
-                  >https://neo.machbase.com/neo/releases/</a
+                  href="https://machbase.com/neo/releases/"
+                  >https://machbase.com/neo/releases/</a
                 >
               </p>
             </div>

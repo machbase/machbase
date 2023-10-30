@@ -91,8 +91,7 @@ description: "Machbase TSDB(시계열 데이터베이스)는 최소한의 설치
               <span>
                 <a
                   class="main_why_more product-margin-bottom"
-                  href="https://docs.machbase.com/en/"
-                  target="_blank"
+                  href="https://machbase.com/dbms"
                 >
                   View More
                 </a>
@@ -111,22 +110,19 @@ description: "Machbase TSDB(시계열 데이터베이스)는 최소한의 설치
                 <ul class="product-margin-bottom">
                   <a
                     class="product-link"
-                    href="https://neo.machbase.com/docs/api-mqtt/"
-                    target="_blank"
+                    href="https://machbase.com/neo/api-mqtt/"
                     ><li>IoT 데이터를 위한 MQTT 서버</li></a
                   >
                   <a
                     class="product-link"
-                    href="https://neo.machbase.com/docs/api-http/"
-                    target="_blank"
+                    href="https://machbase.com/neo/api-http/"
                     ><li>
                       Rest API를 위한 HTTP 프로토콜을 지원하는 웹 서버
                     </li></a
                   >
                   <a
                     class="product-link"
-                    href="https://neo.machbase.com/docs/api-grpc/"
-                    target="_blank"
+                    href="https://machbase.com/neo/api-grpc/"
                     ><li>
                       Google에서 개발한 고성능, 고화질, 언어 중립적인 원격
                       프로시저 호출 프레임워크인 gRPC 서버
@@ -134,8 +130,7 @@ description: "Machbase TSDB(시계열 데이터베이스)는 최소한의 설치
                   >
                   <a
                     class="product-link"
-                    href="https://neo.machbase.com/docs/operations/13.ssh-access/"
-                    target="_blank"
+                    href="https://machbase.com/neo/operations/13.ssh-access/"
                     ><li>
                       안전한 데이터 및 조작 보안을 위한 SSH 서버 - 네 가지 필수
                       기능이 모두 통합되어 있습니다.
@@ -154,8 +149,7 @@ description: "Machbase TSDB(시계열 데이터베이스)는 최소한의 설치
                   </p>
                   <a
                     class="main_why_more product-margin-bottom"
-                    href="https://neo.machbase.com/"
-                    target="_blank"
+                    href="https://machbase.com/neo"
                   >
                     View More<ArrowSvg />
                   </a>
@@ -262,7 +256,7 @@ description: "Machbase TSDB(시계열 데이터베이스)는 최소한의 설치
             >
               Get Machbase
             </button>
-            <a target="_blank" href="https://neo.machbase.com/"
+            <a href="https://machbase.com/neo"
               ><button class="next-navi-btn">Document</button></a
             >
           </div>
