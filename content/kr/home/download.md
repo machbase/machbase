@@ -231,7 +231,7 @@ description: "마크베이스의 TSDB 제품 라인은 통합 기능을 제공�
           <td class="download_th1_4">
             <span
               >wget
-              https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-X86-64-release.tgz
+              https://stage.machbase.com/package/download/machbase-SDK-{{< classic_version >}}.official-LINUX-X86-64-release.tgz
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -239,7 +239,7 @@ description: "마크베이스의 TSDB 제품 라인은 통합 기능을 제공�
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
-                href="https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-X86-64-release.tgz"
+                href="https://stage.machbase.com/package/download/machbase-SDK-{{< classic_version >}}.official-LINUX-X86-64-release.tgz"
               >
                 <img src="../img/btn_newlink.png" />
               </a>
@@ -251,7 +251,7 @@ description: "마크베이스의 TSDB 제품 라인은 통합 기능을 제공�
           <td class="download_th1_4">
             <span
               >wget
-              https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-ARM_CORTEX_A53-64-release.tgz
+              https://stage.machbase.com/package/download/machbase-SDK-{{< classic_version >}}.official-LINUX-ARM_CORTEX_A53-64-release.tgz
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -259,7 +259,7 @@ description: "마크베이스의 TSDB 제품 라인은 통합 기능을 제공�
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
-                href="https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-ARM_CORTEX_A53-64-release.tgz"
+                href="https://stage.machbase.com/package/download/machbase-SDK-{{< classic_version >}}.official-LINUX-ARM_CORTEX_A53-64-release.tgz"
               >
                 <img src="../img/btn_newlink.png" />
               </a>
@@ -272,7 +272,7 @@ description: "마크베이스의 TSDB 제품 라인은 통합 기능을 제공�
           <td class="download_th1_4">
             <span
               >wget
-              https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-64-release.msi</span
+              https://stage.machbase.com/package/download/machbase-SDK-{{< classic_version >}}.official-WINDOWS-X86-64-release.msi</span
             >
           </td>
           <td class="puple download_th1_5">
@@ -280,7 +280,7 @@ description: "마크베이스의 TSDB 제품 라인은 통합 기능을 제공�
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
-                href="https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-64-release.msi"
+                href="https://stage.machbase.com/package/download/machbase-SDK-{{< classic_version >}}.official-WINDOWS-X86-64-release.msi"
               >
                 <img src="../img/btn_newlink.png" />
               </a>
@@ -292,7 +292,7 @@ description: "마크베이스의 TSDB 제품 라인은 통합 기능을 제공�
           <td class="download_th1_4">
             <span
               >wget
-              https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-32-release.msi
+              https://stage.machbase.com/package/download/machbase-SDK-{{< classic_version >}}.official-WINDOWS-X86-32-release.msi
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -300,7 +300,7 @@ description: "마크베이스의 TSDB 제품 라인은 통합 기능을 제공�
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
-                href="https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-32-release.msi"
+                href="https://stage.machbase.com/package/download/machbase-SDK-{{< classic_version >}}.official-WINDOWS-X86-32-release.msi"
               >
                 <img src="../img/btn_newlink.png" />
               </a>
@@ -313,7 +313,7 @@ description: "마크베이스의 TSDB 제품 라인은 통합 기능을 제공�
           <td class="download_th1_4">
             <span
               >wget
-              https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-ARM_M1-64-release.tgz
+              https://stage.machbase.com/package/download/machbase-SDK-{{< classic_version >}}.official-DARWIN-ARM_M1-64-release.tgz
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -321,7 +321,7 @@ description: "마크베이스의 TSDB 제품 라인은 통합 기능을 제공�
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
-                href="https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-ARM_M1-64-release.tgz"
+                href="https://stage.machbase.com/package/download/machbase-SDK-{{< classic_version >}}.official-DARWIN-ARM_M1-64-release.tgz"
               >
                 <img src="../img/btn_newlink.png" />
               </a>
@@ -333,7 +333,7 @@ description: "마크베이스의 TSDB 제품 라인은 통합 기능을 제공�
           <td class="download_th1_4">
             <span
               >wget
-              https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-X86-64-release.tgz
+              https://stage.machbase.com/package/download/machbase-SDK-{{< classic_version >}}.official-DARWIN-X86-64-release.tgz
             </span>
           </td>
           <td class="puple download_th1_5">
@@ -341,7 +341,7 @@ description: "마크베이스의 TSDB 제품 라인은 통합 기능을 제공�
               <img src="../img/btn_codecopy.png" /></button
             ><button class="download_link_btn">
               <a
-                href="https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-X86-64-release.tgz"
+                href="https://stage.machbase.com/package/download/machbase-SDK-{{< classic_version >}}.official-DARWIN-X86-64-release.tgz"
               >
                 <img src="../img/btn_newlink.png" />
               </a>
@@ -369,17 +369,17 @@ description: "마크베이스의 TSDB 제품 라인은 통합 기능을 제공�
       neoWindowsX64:
         "https://github.com/machbase/neo-server/releases/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-windows-amd64.zip",
       sdkLinuxX64:
-        "https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-X86-64-release.tgz",
+        "https://stage.machbase.com/package/download/machbase-SDK-{{< classic_version >}}.official-LINUX-X86-64-release.tgz",
       sdkLinuxArm:
-        "https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-LINUX-ARM_CORTEX_A53-64-release.tgz",
+        "https://stage.machbase.com/package/download/machbase-SDK-{{< classic_version >}}.official-LINUX-ARM_CORTEX_A53-64-release.tgz",
       sdkWindowsX64:
-        "https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-64-release.msi",
+        "https://stage.machbase.com/package/download/machbase-SDK-{{< classic_version >}}.official-WINDOWS-X86-64-release.msi",
       sdkWindows32:
-        "https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-WINDOWS-X86-32-release.msi",
+        "https://stage.machbase.com/package/download/machbase-SDK-{{< classic_version >}}.official-WINDOWS-X86-32-release.msi",
       sdkMacArm:
-        "https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-ARM_M1-64-release.tgz",
+        "https://stage.machbase.com/package/download/machbase-SDK-{{< classic_version >}}.official-DARWIN-ARM_M1-64-release.tgz",
       sdkMacX64:
-        "https://stage.machbase.com/package/download/machbase-SDK-8.0.2.official-DARWIN-X86-64-release.tgz",
+        "https://stage.machbase.com/package/download/machbase-SDK-{{< classic_version >}}.official-DARWIN-X86-64-release.tgz",
     },
   };
   function copyToClipboard(text, button) {

@@ -177,10 +177,10 @@ To import machjdbc, open `pom.xml` and add this tag in `<dependencies>` tag.
 <dependency>
     <groupId>com.machbase</groupId>
     <artifactId>machjdbc</artifactId>
-    <version>8.0.0</version>
+    <version>{{< jdbc_version >}}</version>
 </dependency>
 ```
-> Version 8.0.0 can be replaced by the latest version in Maven Central.
+> Version {{< jdbc_version >}} can be replaced by the latest version in Maven Central.
 <br>
 
 machjdbc can be used in source code by using `import` statement, as below.

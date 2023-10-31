@@ -174,10 +174,10 @@ machjdbc를 프로젝트에 가져오려면, `pom.xml`를 열어서 아래의 �
 <dependency>
     <groupId>com.machbase</groupId>
     <artifactId>machjdbc</artifactId>
-    <version>8.0.0</version>
+    <version>{{< jdbc_version >}}</version>
 </dependency>
 ```
-> 버전 번호인 8.0.0은 Maven Central의 최신 버전으로 바꾸어도 된다.
+> 버전 번호인 {{< jdbc_version >}}은 Maven Central의 최신 버전으로 바꾸어도 된다.
 <br>
 
 그러면 아래처럼 `import` 구문을 이용해서 machjdbc를 소스 안에서 사용할 수 있다.

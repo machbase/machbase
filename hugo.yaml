@@ -39,6 +39,7 @@ params:
   examples_url: https://github.com/machbase/machbase/tree/main/examples
   releases_url: https://github.com/machbase/neo-server/releases
   jdbc_version: 8.0.2
+  classic_version: 8.0.2
 
   displayUpdatedDate: true
   dateFormat: "Jan 2, 2006"
