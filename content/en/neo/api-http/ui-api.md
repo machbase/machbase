@@ -130,11 +130,12 @@ The `/db/query` authorize the client applications by API Token, while `/web/mach
 
 ### List tables
 
-**GET `/web/api/tables?showall=false`**
+**GET `/web/api/tables?showall=false&name=pattern`**
 
 Return table list
 
 - `showall` returns includes all hidden tables if set `true`
+- `name` table name filtering pattern, the pattern can be a glob (includes `?` or `*`) or prefix (which has no `?` and `*`)
 
 ```json
 {
@@ -278,6 +279,7 @@ Web socket for the bi-directional messages
 |                | `ping.tick`      | any integer number, server will repond with the same number that client sends |
 | `log`          | `log.level`      | log level `TRACE`, `DEBUG`, `INFO`, `WARN`, `ERROR`|
 |                | `log.message`    | log message        |
+|                | `log.repeat`     | count, if the same message repeats more than two times in serial |
 
 
 ## TQL & Worksapce
