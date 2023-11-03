@@ -1,6 +1,8 @@
 ---
 title: Blog
 description: "사물을 위한 데이터베이스"
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

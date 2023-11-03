@@ -1,6 +1,8 @@
 ---
 title: Use Case
 description: "Hankuk Carbon is a company that produces insulation panels, which are a key part of LNG carriers. Carbon prepregs are characterized by high strength and high elasticity, so their uses are endless, and they are currently used mainly in sports and leisure products such as fishing rods, golf, and skiing."
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

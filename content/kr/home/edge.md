@@ -1,6 +1,8 @@
 ---
 title: Tech Paper
 description: "엣지 컴퓨팅과 시계열 데이터베이스"
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

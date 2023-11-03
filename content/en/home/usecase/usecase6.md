@@ -1,6 +1,8 @@
 ---
 title: Use Case
 description: "As Korea’s first digital non-life insurer, Carrot Insurance is redefining insurance by launching new products and services based on technology and data, and is experiencing rapid growth as an insurtech platform. In auto insurance, they are actively engaged in per-mile auto insurance."
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

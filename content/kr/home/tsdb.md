@@ -1,6 +1,8 @@
 ---
-title: Use Case
+title: Products
 description: "Machbase TSDB(시계열 데이터베이스)는 최소한의 설치 공간으로 최고의 성능을 구현하는 세계에서 가장 빠른 시계열 데이터베이스입니다. 글로벌 성능 평가 기관인 TPC(Transaction Processing Performance Council)가 주관하는 성능 평가에서 2019년부터 'TPCx-IoT' 분야 1위를 차지하며 이 분야 국제 표준으로 등재되어 있습니다."
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

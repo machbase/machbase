@@ -1,6 +1,8 @@
 ---
 title: Blog
 description: "Deep Anomaly Detection in Time Series (1): Anomaly Detection Model"
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

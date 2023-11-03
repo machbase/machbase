@@ -1,6 +1,8 @@
 ---
 title: Blog
 description: "당신의 개발 Know-how를 기록하는 새로운 방법"
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

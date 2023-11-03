@@ -1,6 +1,8 @@
 ---
 title: Use Case
 description: "만도 브로제는 2011년 한국의 만도 코퍼레이션과 글로벌 자동차 부품 회사인 독일의 브로제가 합작하여 설립한 자동차용 모터 전문 기업입니다."
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

@@ -1,6 +1,8 @@
 ---
 title: Use Case
 description: "ETRI is a research organization that conducts research and development on a wide range of digital transformation technologies, including information and communication."
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

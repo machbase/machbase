@@ -1,6 +1,8 @@
 ---
 title: Blog
 description: "마크베이스 네오(Machbase Neo)는 왜 프론트엔드 프레임워크를 vue.js에서 react로 바꾸었는가?"
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

@@ -331,13 +331,14 @@ template {
   justify-content: space-between;
   align-items: center;
   height: 80px;
-  padding: 0 60px 0 120px;
+  width: 1366px;
+  margin: 0 auto;
 }
 .menu-left {
-  width: 62%;
+  width: 56%;
 }
 .menu-right {
-  width: 38%;
+  width: 44%;
 }
 .menu-left-ul {
   display: flex;
@@ -349,6 +350,10 @@ template {
   font-size: 14px !important;
   font-weight: 500 !important;
   font-family: "OpenSans";
+}
+.menu-right ul {
+  display: flex;
+  align-items: center;
 }
 
 .dropdown {
@@ -1053,6 +1058,13 @@ footer {
     display: none;
   } */
 }
+@media screen and (max-width: 1380px) {
+  .homepage-menu-wrap {
+    width: 100%;
+    padding: 0 20px;
+  }
+}
+
 @media screen and (max-width: 1280px) {
   .homepage-menu-wrap {
     padding: 0 40px;

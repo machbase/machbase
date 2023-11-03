@@ -1,6 +1,8 @@
 ---
 title: Blog
 description: "Comparing Time-Series Database Architectures: Machbase vs. InfluxDB"
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

@@ -1,6 +1,8 @@
 ---
 title: Use Case
 description: "Lotte Chilsung is a non-alcoholic beverage manufacturer that produces a variety of products including soda, tea, and fruit juice."
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

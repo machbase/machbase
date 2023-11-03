@@ -1,6 +1,8 @@
 ---
 title: Blog
 description: "Semiconductor Production Data using MACHBASE(Time-Series Database)"
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

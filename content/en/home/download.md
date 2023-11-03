@@ -1,6 +1,8 @@
 ---
 title: Download
 description: "Machbase`s TSDB product line consists of the newly launched NEO product, offering integrated functionality, and the existing CLASSIC product. Users can choose and utilize the product that best suits their environment."
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

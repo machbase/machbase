@@ -1,6 +1,8 @@
 ---
 title: Blog
 description: "마크베이스(Machbase)를 이용한 반도체 생산 데이터 관리 및 검색 방법"
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

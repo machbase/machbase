@@ -1,6 +1,8 @@
 ---
 title: Use Case
 description: "롯데칠성 음료는 탄산음료, 차, 과일주스 등 다양한 제품을 생산하는 비알코올 음료 제조업체입니다."
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

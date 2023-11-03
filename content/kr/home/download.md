@@ -2,6 +2,8 @@
 title: Download
 description: "마크베이스의 TSDB 제품 라인은 통합 기능을 제공하는 새로 출시된 NEO 제품으로 구성됩니다.
 그리고 기존 CLASSIC 제품. 사용자는 자신의 환경에 가장 적합한 제품을 선택하고 활용할 수 있습니다."
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

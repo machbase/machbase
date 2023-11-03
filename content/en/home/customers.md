@@ -1,6 +1,8 @@
 ---
 title: Customers
 description: "Growing Companies with Machbase"
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

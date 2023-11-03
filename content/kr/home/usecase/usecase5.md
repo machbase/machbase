@@ -1,6 +1,8 @@
 ---
 title: Use Case
 description: "한국카본은 LNG 운반선의 핵심 부품인 단열 패널을 생산하는 기업입니다. 낚싯대, 골프, 스키용 고강도 고탄성 탄소 프리프레그와 LNG선용 단열 패널을 생산하고 있습니다."
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>
