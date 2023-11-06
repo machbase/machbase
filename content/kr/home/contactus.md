@@ -1,6 +1,8 @@
 ---
 title: Contact US
 description: "해당 양식을 작성하여 제출해 주시면 최대한 빨리 연락드리겠습니다."
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

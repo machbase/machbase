@@ -1,6 +1,8 @@
 ---
 title: Use Case
 description: "Hyundai Global Services is a company that provides real-time ship operation information to ship owners and performs onshore control services for ships manufactured by Hyundai Heavy Industries."
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

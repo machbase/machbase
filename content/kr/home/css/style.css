@@ -1,29 +1,24 @@
 /* main -------------------------------------------------------------------------------------------- */
 .main_section1 {
   width: 100%;
-  height: 100vh;
+  height: 800px;
   position: relative;
-  background-color: #253fd0;
+  background: linear-gradient(to bottom, #0f267d, #253fd0, #6080ff, #ffffff);
   z-index: 0;
   overflow: hidden;
-  position: relative;
-  background-image: url("../img/bg_main.png");
+  /* background-image: url("../img/bg_main.png");
   background-repeat: repeat-x;
-  background-size: auto 105%;
-  background-position: left;
+  background-size: auto 105%; */
 }
 .content h1 {
   margin-top: 0;
 }
 .main_wraper {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-right: 15%;
-  margin-top: 5%;
-}
-.main_wrap {
-  position: relative;
+  width: 1366px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 .what_is_neo_wrap {
   margin-bottom: 120px;
@@ -32,14 +27,17 @@
   display: none;
 }
 .chart {
-  display: flex;
-  align-items: center;
-}
-.main_chart {
-  width: 80%;
+  position: absolute;
+  top: 50%;
+  right: 0px;
+  transform: translate(0, -50%);
 }
 .chart_hover {
   display: none;
+  position: absolute;
+  top: 50%;
+  right: 0px;
+  transform: translate(0, -50%);
 }
 .chart_wrap:hover .chart {
   display: none;
@@ -50,7 +48,7 @@
   align-items: center;
 }
 .main_chart {
-  width: 600px;
+  width: 500px;
 }
 
 .main_title {
@@ -58,7 +56,6 @@
   font-weight: 700;
   font-size: 52px !important;
   color: #fff !important;
-  padding-left: 120px;
 }
 .main_tpc_visited:visited {
   color: #ffd800 !important;
@@ -70,7 +67,6 @@
   padding-top: 22px;
   color: #ffd800 !important;
   font-size: 22px !important;
-  padding-left: 107px;
   padding-bottom: 0 !important;
   font-family: "aktiv-grotesk";
 }
@@ -78,7 +74,6 @@
   color: #ffd800 !important;
   font-size: 22px !important;
   margin-top: 0px !important;
-  padding-left: 119px;
   font-family: "aktiv-grotesk";
   font-weight: 700;
 }
@@ -599,12 +594,6 @@
 }
 
 @media screen and (max-width: 1750px) {
-  .main_wraper {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-right: 10%;
-  }
   .main_chart {
     width: 500px !important;
   }
@@ -612,13 +601,6 @@
 @media screen and (max-width: 1500px) {
   .neo_map_warp {
     display: none;
-  }
-  .main_wraper {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-right: 10%;
-    margin-top: 10%;
   }
   .main_title {
     font-size: 40px !important;
@@ -643,7 +625,6 @@
   .main_tablet_subtitle {
     /* display: block; */
     padding-top: 10px;
-    padding-left: 120px;
     margin-right: 40px;
     font-size: 20px !important;
     font-family: "aktiv-grotesk";
@@ -659,11 +640,28 @@
     font-size: 20px !important;
   }
 }
+@media screen and (max-width: 1380px) {
+  .main_wraper {
+    width: 100%;
+    padding: 0 40px;
+  }
+  .chart {
+    position: absolute;
+    top: 50%;
+    right: 40px;
+    transform: translate(0px, -50%);
+  }
+  .chart_hover {
+    display: none;
+    position: absolute;
+    top: 50%;
+    right: 40px;
+    transform: translate(0, -50%);
+  }
+}
 @media screen and (max-width: 1280px) {
   .main_tablet_subtitle {
     padding-top: 10px;
-    padding-left: 40px;
-    margin-right: 40px;
     font-size: 20px !important;
     font-family: "aktiv-grotesk";
     text-align: left;
@@ -677,23 +675,18 @@
     font-family: "aktiv-grotesk";
     font-weight: 700;
     font-size: 42px !important;
-    padding-left: 40px;
-    margin-right: 40px;
+
     line-height: 52px;
     text-align: left;
   }
   .main_titletext {
     padding-top: 10px;
-    padding-left: 40px;
-    margin-right: 40px;
     font-size: 20px !important;
     font-family: "aktiv-grotesk";
     text-align: left;
   }
   .main_titletext_under {
     font-size: 20px !important;
-    padding-left: 40px;
-    margin-right: 40px;
     font-family: "aktiv-grotesk";
     text-align: left;
   }
@@ -752,13 +745,6 @@
   }
 }
 @media screen and (max-width: 1200px) {
-  .main_wraper {
-    display: flex;
-    align-items: flex-start;
-    flex-direction: column;
-    margin-right: 15%;
-    margin-top: 20%;
-  }
   .main_tablet_subtitle {
     display: none;
   }
@@ -776,9 +762,6 @@
     margin: 0 auto;
   }
   .tablet_chart {
-    display: flex;
-    justify-content: center;
-    margin-left: 40px;
     margin-top: 30px;
   }
   .main_chart {
@@ -903,9 +886,6 @@
     color: #253fd0;
     margin-top: 15px;
   }
-  .main_wraper {
-    margin-right: 40px;
-  }
   .main_tablet_subtitle {
     display: block;
   }
@@ -917,12 +897,12 @@
   }
 }
 @media screen and (max-width: 600px) {
-  .main_wraper {
-    margin-right: 20px;
-  }
   .main_tablet_subtitle {
     padding-left: 20px;
     font-size: 16px;
+  }
+  .main_section1 {
+    height: 500px;
   }
   .tablet_chart {
     margin-left: 20px;

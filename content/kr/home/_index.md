@@ -1,6 +1,8 @@
 ---
 title: 마크베이스
 description: "글로벌 성능평가 1위 시계열 데이터베이스 엔진 마크베이스"
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

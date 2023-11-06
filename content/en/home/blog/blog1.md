@@ -1,6 +1,8 @@
 ---
 title: Blog
 description: "A New Approach to Documenting Your Know-How"
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

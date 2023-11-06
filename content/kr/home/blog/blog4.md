@@ -1,6 +1,8 @@
 ---
 title: Blog
 description: "시계열 DB(Time-Series Database) 아키텍처 비교_ 마크베이스Machbase vs 인플럭스 InfluxDB"
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

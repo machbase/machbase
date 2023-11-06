@@ -1,6 +1,8 @@
 ---
 title: Blog
 description: "A Database for database-for-things"
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

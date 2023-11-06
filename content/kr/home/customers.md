@@ -1,6 +1,8 @@
 ---
 title: Customers
 description: "마크베이스와 함께 성장하는 기업"
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

@@ -1,6 +1,8 @@
 ---
 title: Use Case
 description: "Machbase 제품은 세계 최고의 기업들이 선택하며 수많은 곳에서 사용되고 있습니다."
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

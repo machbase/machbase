@@ -2,7 +2,7 @@
 title: Machbase
 description: "Machbase is time series data platform. It's an ideal solution for environments that require scalability"
 images:
-  - ./img/logo_machbase.png
+  - /namecard/og_img.jpg
 ---
 
 <head>

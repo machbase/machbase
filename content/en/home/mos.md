@@ -1,6 +1,8 @@
 ---
-title: TSDB
+title: Products
 description: "Machbase MOS (Manufacturing Optimization Suite) is the best solution for real-time process monitoring and identification of facility and quality abnormalities through synchronization of facility status data and product quality information data."
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

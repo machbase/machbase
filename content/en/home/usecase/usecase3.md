@@ -1,6 +1,8 @@
 ---
 title: Use Case
 description: "Mando Brose is a company specializing in automotive motors, founded in 2011 as a joint venture between Korea’s Mando Corporation and Germany’s Brose, a global auto parts company. It supplies ‘brushless electric motors’ for intelligent chassis systems in the global automotive industry and supplies motors for EPS (electric power steering) to major Korean automakers."
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

@@ -1,6 +1,8 @@
 ---
 title: Blog
 description: "Why did Machbase Neo switch its front-end framework from Vue.js to React?"
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

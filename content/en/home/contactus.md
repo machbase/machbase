@@ -1,6 +1,8 @@
 ---
 title: Contact US
 description: "If you fill out the form and submit it, we will contact you as soon as possible"
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

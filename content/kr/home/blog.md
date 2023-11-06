@@ -1,6 +1,8 @@
 ---
 title: Blog
 description: "마하 속도 수평 확장이 가능한 시계열 데이터베이스."
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>

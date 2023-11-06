@@ -1,6 +1,8 @@
 ---
 title: Company
 description: "The Database for Edge Computing, a time-series database that stores and analyzes a lot of sensor data from different devices in real time, is the only DBMS solution that can process and analyze big data at high speed. Experience the incredible speed of Machbase! It is the most innovative product that enables real-time processing, storage and analysis of sensor data."
+images:
+  - /namecard/og_img.jpg
 ---
 
 <head>
