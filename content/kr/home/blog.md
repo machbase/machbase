@@ -10,7 +10,7 @@ images:
   <link rel="stylesheet" type="text/css" href="../css/style.css" />
 </head>
 <body>
- {{< home_menu_sub_kr >}}
+  {{< home_menu_sub_kr >}}
   <section class="pricing_section0 section0">
     <div>
       <h2 class="sub_page_title">Blog</h2>
@@ -25,22 +25,25 @@ images:
         <div class="blog-first-wraper">
           <div class="blog-text-wraper">
             <div class="tech-first-link-wrap">
-              <a class="blog-link" href="/kr/home/blog/blog1"
-                >당신의 개발 Know-how를 기록하는 새로운 방법</a
+              <a class="blog-link" href="/kr/home/blog/blog10">
+                IoT 센서 데이터 플랫폼 구축과 MQTT</a
               >
               <div class="blog-date">
                 <div>
-                  <span>by James Lee / 7 Sep 2023</span>
+                  <span>by Eirny Kwon / 2 Nov 2023</span>
                 </div>
               </div>
               <div class="blog-first-div">
-                Machbase Neo는 Machbase time series database를 기반으로 사용자
-                편의성을 극대화한 All-in-one package 솔루션입니다...
+                1999년에 앤디 스탠포드-크라크(IBM)과 앨런 니퍼 (그 당시
+                유로테크사에서 근무)가 초기 버전의 프로토콜을 작성해서
+                SCADA(Supervisory Control and Data Acquisition) 제어 시스템으로
+                송유관을 모니터링하는데 사용하였다. 그 시절의 시스템들은 다양한
+                이기종들로 이루어졌고...
               </div>
               <div class="blog_usecase_more_box">
                 <p class="blog_usecase_more_wrap">
                   <span>
-                    <a class="blog_usecase_more" href="/kr/home/blog/blog1"
+                    <a class="blog_usecase_more" href="/kr/home/blog/blog10"
                       >View More
                     </a>
                   </span>
@@ -49,9 +52,80 @@ images:
             </div>
           </div>
           <div class="blog-first-img-wrap">
-            <a href="/kr/home/blog/blog1"
-              ><img class="blog-img" src="../img/neo-worksheet-1.png" alt=""
+            <a href="/kr/home/blog/blog10"
+              ><img class="blog-img" src="../img/blog10-1.jpg" alt=""
             /></a>
+          </div>
+        </div>
+        <div class="blog-wraper">
+          <div class="tech-link-wrap">
+            <div class="blog-img-wrap">
+              <a href="/home/blog/blog9"
+                ><img
+                  class="blog-img blog-margin-bottom"
+                  src="../img/blog9-1.webp"
+                  alt=""
+              /></a>
+            </div>
+            <a class="tech-link" href="/kr/home/blog/blog9"
+              >Machbase 6.1 vs InfluxDB 2.7</a
+            >
+            <div class="blog-date">
+              <div>
+                <span>by Grey Shim / 18 Oct 2023</span>
+              </div>
+            </div>
+            <div class="tech-link-wrap-sub">
+              지난 기사에서는 InfluxDB 1.8.1과 Mchbase를 비교했습니다. 1.8은
+              Linux 패키지 관리자를 사용하여 기본적으로 설치되지만 최신 오픈
+              소스 버전인 마크베이스 6.1이 InfluxDB의 2.7과 어떻게 비교되는지
+              보고 싶었습니다...
+            </div>
+          </div>
+          <div class="tech-link-wrap">
+            <div class="blog-img-wrap">
+              <a href="/kr/home/blog/blog8"
+                ><img
+                  class="blog-img blog-margin-bottom"
+                  src="../img/blog8-1.webp"
+                  alt=""
+              /></a>
+            </div>
+            <a class="tech-link" href="/kr/home/blog/blog8"
+              >시계열 DB(Time-Series Database) 아키텍처 및 성능 비교...</a
+            >
+            <div class="blog-date">
+              <div>
+                <span>by Grey Shim / 14 Sep 2023</span>
+              </div>
+            </div>
+            <div class="tech-link-wrap-sub">
+              이 포스트에서는 마크베이스와 MongoDB의 아키텍처 차이를 살펴 보고,
+              시계열 센서 데이터 처리의 성능을 비교해 보는 시간을
+              가져보겠습니다. 센서 데이터 처리 시스템의 개발을 시작할 때...
+            </div>
+          </div>
+          <div class="tech-link-wrap">
+            <div class="blog-img-wrap">
+              <a href="/kr/home/blog/blog1"
+                ><img
+                  class="blog-img blog-margin-bottom"
+                  src="../img/neo-worksheet-1.png"
+                  alt=""
+              /></a>
+            </div>
+            <a class="tech-link" href="/kr/home/blog/blog1"
+              >당신의 개발 Know-how를 기록하는 새로운 방법</a
+            >
+            <div class="blog-date">
+              <div>
+                <span>by James Lee / 7 Sep 2023</span>
+              </div>
+            </div>
+            <div class="tech-link-wrap-sub">
+              Machbase Neo는 Machbase time series database를 기반으로 사용자
+              편의성을 극대화한 All-in-one package 솔루션입니다...
+            </div>
           </div>
         </div>
         <div class="blog-wraper">
@@ -201,22 +275,25 @@ images:
         <div class="blog-first-wraper">
           <div class="blog-text-wraper">
             <div class="tech-first-link-wrap">
-              <a class="blog-link" href="/kr/home/blog/blog1"
-                >당신의 개발 Know-how를 기록하는 새로운 방법</a
+              <a class="blog-link" href="/kr/home/blog/blog10"
+                >IoT 센서 데이터 플랫폼 구축과 MQTT</a
               >
               <div class="blog-date">
                 <div>
-                  <span>by James Lee / 7 Sep 2023</span>
+                  <span>by Eirny Kwon / 2 Nov 2023</span>
                 </div>
               </div>
               <div class="blog-first-div">
-                Machbase Neo는 Machbase time series database를 기반으로 사용자
-                편의성을 극대화한 All-in-one package 솔루션입니다...
+                1999년에 앤디 스탠포드-크라크(IBM)과 앨런 니퍼 (그 당시
+                유로테크사에서 근무)가 초기 버전의 프로토콜을 작성해서
+                SCADA(Supervisory Control and Data Acquisition) 제어 시스템으로
+                송유관을 모니터링하는데 사용하였다. 그 시절의 시스템들은 다양한
+                이기종들로 이루어졌고...
               </div>
               <div class="blog_usecase_more_box">
                 <p class="blog_usecase_more_wrap">
                   <span>
-                    <a class="blog_usecase_more" href="/kr/home/blog/blog1"
+                    <a class="blog_usecase_more" href="/kr/home/blog/blog10"
                       >View More
                     </a>
                   </span>
@@ -225,12 +302,84 @@ images:
             </div>
           </div>
           <div class="blog-first-img-wrap">
-            <a href="/kr/home/blog/blog1"
-              ><img class="blog-img" src="../img/neo-worksheet-1.png" alt=""
+            <a href="/kr/home/blog/blog10"
+              ><img class="blog-img" src="../img/blog10-1.jpg" alt=""
             /></a>
           </div>
         </div>
         <div class="blog-wraper">
+          <div class="tech-link-wrap">
+            <div class="blog-img-wrap">
+              <a href="/kr/home/blog/blog9"
+                ><img
+                  class="blog-img blog-margin-bottom"
+                  src="../img/blog9-1.webp"
+                  alt=""
+              /></a>
+            </div>
+            <a class="tech-link" href="/kr/home/blog/blog9"
+              >Machbase 6.1 vs InfluxDB 2.7</a
+            >
+            <div class="blog-date">
+              <div>
+                <span>by Grey Shim / 18 Oct 2023</span>
+              </div>
+            </div>
+            <div class="tech-link-wrap-sub">
+              지난 기사에서는 InfluxDB 1.8.1과 Mchbase를 비교했습니다. 1.8은
+              Linux 패키지 관리자를 사용하여 기본적으로 설치되지만 최신 오픈
+              소스 버전인 마크베이스 6.1이 InfluxDB의 2.7과 어떻게 비교되는지
+              보고 싶었습니다...
+            </div>
+          </div>
+          <div class="tech-link-wrap">
+            <div class="blog-img-wrap">
+              <a href="/kr/home/blog/blog8"
+                ><img
+                  class="blog-img blog-margin-bottom"
+                  src="../img/blog8-1.webp"
+                  alt=""
+              /></a>
+            </div>
+            <a class="tech-link" href="/kr/home/blog/blog8"
+              >Time Series Database Architecture and Performance
+              Comparison_Machbase and...</a
+            >
+            <div class="blog-date">
+              <div>
+                <span>by Grey Shim / 14 Sep 2023</span>
+              </div>
+            </div>
+            <div class="tech-link-wrap-sub">
+              이 포스트에서는 마크베이스와 MongoDB의 아키텍처 차이를 살펴 보고,
+              시계열 센서 데이터 처리의 성능을 비교해 보는 시간을
+              가져보겠습니다. 센서 데이터 처리 시스템의 개발을 시작할 때...
+            </div>
+          </div>
+        </div>
+        <div class="blog-wraper">
+          <div class="tech-link-wrap">
+            <div class="blog-img-wrap">
+              <a href="/kr/home/blog/blog1"
+                ><img
+                  class="blog-img blog-margin-bottom"
+                  src="../img/neo-worksheet-1.png"
+                  alt=""
+              /></a>
+            </div>
+            <a class="tech-link" href="/kr/home/blog/blog1"
+              >당신의 개발 Know-how를 기록하는 새로운 방법</a
+            >
+            <div class="blog-date">
+              <div>
+                <span>by James Lee / 7 Sep 2023</span>
+              </div>
+            </div>
+            <div class="tech-link-wrap-sub">
+              Machbase Neo는 Machbase time series database를 기반으로 사용자
+              편의성을 극대화한 All-in-one package 솔루션입니다...
+            </div>
+          </div>
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/kr/home/blog/blog2"
@@ -254,6 +403,8 @@ images:
               개발하는 것은 의심할 여지 없이 어렵고 복잡합니다...
             </div>
           </div>
+        </div>
+        <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/kr/home/blog/blog3"
@@ -277,8 +428,6 @@ images:
               센서 데이터와 생산된 제품에 대한 정보가 혼합되어 있습니다...
             </div>
           </div>
-        </div>
-        <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/kr/home/blog/blog4"
@@ -302,6 +451,8 @@ images:
               InfluxDB와의 아키텍처 비교를 해 보겠습니다...
             </div>
           </div>
+        </div>
+        <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/kr/home/blog/blog5"
@@ -317,7 +468,7 @@ images:
             >
             <div class="blog-date">
               <div>
-                <span>by Machbase / 12 Jul 2023</span>
+                <span>by Machbase / 19 Jul 2023</span>
               </div>
             </div>
             <div class="tech-link-wrap-sub">
@@ -325,8 +476,6 @@ images:
               소개하고자 합니다...
             </div>
           </div>
-        </div>
-        <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/kr/home/blog/blog6"
@@ -341,7 +490,7 @@ images:
             >
             <div class="blog-date">
               <div>
-                <span>by Machbase / 19 Jul 2023</span>
+                <span>by Machbase / 12 Jul 2023</span>
               </div>
             </div>
             <div class="tech-link-wrap-sub">
@@ -349,6 +498,8 @@ images:
               분야 등에서 활발한 연구와 응용을 시도하고 있습니다...
             </div>
           </div>
+        </div>
+        <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/kr/home/blog/blog7"
@@ -357,15 +508,15 @@ images:
                   src="../img/database-1.jpg"
                   alt=""
               /></a>
-              <div class="blog-date">
-                <div>
-                  <span>by Grey Shim / 12 Jul 2023</span>
-                </div>
-              </div>
             </div>
             <a class="tech-link" href="/kr/home/blog/blog7"
               >A Database for Things</a
             >
+            <div class="blog-date">
+              <div>
+                <span>by Grey Shim / 12 Jul 2023</span>
+              </div>
+            </div>
             <div class="tech-link-wrap-sub">
               사사물인터넷(IoT, Internet of Things)은 수많은 장치들이 인터넷
               네트워크를 통해 데이터를 상호 전달 및 처리하는 것을 말합니다. IoT
@@ -378,33 +529,111 @@ images:
       <div class="blog-mobile">
         <div class="blog-first-wraper">
           <div class="blog-first-img-wrap">
-            <a href="/kr/home/blog/blog1"
-              ><img class="blog-img" src="../img/neo-worksheet-1.png" alt=""
+            <a href="/kr/home/blog/blog10"
+              ><img class="blog-img" src="../img/blog10-1.jpg" alt=""
             /></a>
           </div>
           <div class="blog-text-wraper">
             <div class="tech-first-link-wrap">
-              <a class="blog-link" href="/kr/home/blog/blog1"
-                >당신의 개발 Know-how를 기록하는 새로운 방법</a
+              <a class="blog-link" href="/kr/home/blog/blog10">
+                IoT 센서 데이터 플랫폼 구축과 MQTT</a
               >
               <div class="blog-date">
                 <div>
-                  <span>by James Lee / 7 Sep 2023</span>
+                  <span>by Eirny Kwon / 2 Nov 2023</span>
                 </div>
               </div>
               <div class="blog-first-div">
-                Machbase Neo는 Machbase time series database를 기반으로 사용자
-                편의성을 극대화한 All-in-one package 솔루션입니다...
+                1999년에 앤디 스탠포드-크라크(IBM)과 앨런 니퍼 (그 당시
+                유로테크사에서 근무)가 초기 버전의 프로토콜을 작성해서
+                SCADA(Supervisory Control and Data Acquisition) 제어 시스템으로
+                송유관을 모니터링하는데 사용하였다. 그 시절의 시스템들은 다양한
+                이기종들로 이루어졌고...
               </div>
               <div class="blog_usecase_more_box">
                 <p class="blog_usecase_more_wrap">
                   <span>
-                    <a class="blog_usecase_more" href="/kr/home/blog/blog1"
+                    <a class="blog_usecase_more" href="/kr/home/blog/blog10"
                       >View More <ArrowSvg
                     /></a>
                   </span>
                 </p>
               </div>
+            </div>
+          </div>
+        </div>
+        <div class="blog-wraper">
+          <div class="tech-link-wrap">
+            <div class="blog-img-wrap">
+              <a href="/kr/home/blog/blog9"
+                ><img
+                  class="blog-img blog-margin-bottom"
+                  src="../img/blog9-1.webp"
+                  alt=""
+              /></a>
+            </div>
+            <a class="tech-link" href="/kr/home/blog/blog9"
+              >Machbase 6.1 vs InfluxDB 2.7</a
+            >
+            <div class="blog-date">
+              <div>
+                <span>by Grey Shim / 18 Oct 2023</span>
+              </div>
+            </div>
+            <div class="tech-link-wrap-sub">
+              지난 기사에서는 InfluxDB 1.8.1과 Mchbase를 비교했습니다. 1.8은
+              Linux 패키지 관리자를 사용하여 기본적으로 설치되지만 최신 오픈
+              소스 버전인 마크베이스 6.1이 InfluxDB의 2.7과 어떻게 비교되는지
+              보고 싶었습니다...
+            </div>
+          </div>
+        </div>
+        <div class="blog-wraper">
+          <div class="tech-link-wrap">
+            <div class="blog-img-wrap">
+              <a href="/kr/home/blog/blog8"
+                ><img
+                  class="blog-img blog-margin-bottom"
+                  src="../img/blog8-1.webp"
+                  alt=""
+              /></a>
+            </div>
+            <a class="tech-link" href="/kr/home/blog/blog8"
+              >시계열 DB(Time-Series Database) 아키텍처 및 성능 비교...</a
+            >
+            <div class="blog-date">
+              <div>
+                <span>by Grey Shim / 14 Sep 2023</span>
+              </div>
+            </div>
+            <div class="tech-link-wrap-sub">
+              이 포스트에서는 마크베이스와 MongoDB의 아키텍처 차이를 살펴 보고,
+              시계열 센서 데이터 처리의 성능을 비교해 보는 시간을
+              가져보겠습니다. 센서 데이터 처리 시스템의 개발을 시작할 때...
+            </div>
+          </div>
+        </div>
+        <div class="blog-wraper">
+          <div class="tech-link-wrap">
+            <div class="blog-img-wrap">
+              <a href="/kr/home/blog/blog1"
+                ><img
+                  class="blog-img blog-margin-bottom"
+                  src="../img/neo-worksheet-1.png"
+                  alt=""
+              /></a>
+            </div>
+            <a class="tech-link" href="/kr/home/blog/blog1"
+              >당신의 개발 Know-how를 기록하는 새로운 방법</a
+            >
+            <div class="blog-date">
+              <div>
+                <span>by James Lee / 7 Sep 2023</span>
+              </div>
+            </div>
+            <div class="tech-link-wrap-sub">
+              Machbase Neo는 Machbase time series database를 기반으로 사용자
+              편의성을 극대화한 All-in-one package 솔루션입니다...
             </div>
           </div>
         </div>
@@ -562,5 +791,4 @@ images:
     </section>
   </div>
 </body>
-{{< home_footer_sub_kr >}}
-{{< home_lang_kr >}}
+{{< home_footer_sub_kr >}} {{< home_lang_kr >}}

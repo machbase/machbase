@@ -3,7 +3,14 @@
   width: 100%;
   height: 800px;
   position: relative;
-  background: linear-gradient(to bottom, #0f267d, #253fd0, #6080ff, #ffffff);
+  background: linear-gradient(
+    to bottom,
+    #0f267d,
+    #253fd0,
+    #253fd0,
+    #6080ff,
+    #ffffff
+  );
   z-index: 0;
   overflow: hidden;
   /* background-image: url("../img/bg_main.png");
