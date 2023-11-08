@@ -8,8 +8,1804 @@
 
 
 <url>
+  <loc>https://machbase.com/home/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>1.00</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/releases/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/releases/roadmap/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/getting-started/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/getting-started/installation/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/getting-started/installation-docker/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/getting-started/start-stop/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/getting-started/webui/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tutorials/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tutorials/010.shell/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tutorials/010.shell/11.shell-write-waves/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tutorials/010.shell/12.shell-read-waves/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tutorials/010.shell/13.shell-chart-on-terminal/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tutorials/020.http/</loc>
+  <lastmod>2023-11-06T00:06:03+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tutorials/020.http/20.create-drop/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tutorials/020.http/21.insert/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tutorials/020.http/22.select/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tutorials/020.http/50.connectivity-line-protocol/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tutorials/040.import/</loc>
+  <lastmod>2023-11-06T00:06:03+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tutorials/040.import/41.import-tql/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tutorials/040.import/42.import-bridge/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tutorials/050.export/</loc>
+  <lastmod>2023-11-06T00:06:03+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tutorials/050.export/51.export-tql/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tutorials/050.export/52.export-bridge/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tutorials/060.timer/</loc>
+  <lastmod>2023-11-06T00:06:03+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tutorials/070.bridge/</loc>
+  <lastmod>2023-11-06T00:06:03+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tutorials/070.bridge/71.bridge-postgresql/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tutorials/100.go/</loc>
+  <lastmod>2023-11-06T00:06:03+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tutorials/100.go/100.go-http-writing/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tutorials/100.go/101.go-grpc-writing/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tutorials/100.go/102.go-driver/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tutorials/110.java/</loc>
+  <lastmod>2023-11-06T00:06:03+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tutorials/120.python/</loc>
+  <lastmod>2023-11-06T00:06:03+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tutorials/120.python/120.python-chart/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tutorials/120.python/121.python-read-csv-pandas/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tutorials/200.project/</loc>
+  <lastmod>2023-11-06T00:06:03+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tutorials/200.project/200.project-ras-pi-iot-server/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tql/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tql/01.glance/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tql/02.basic/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tql/04.writing/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tql/05.reading/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tql/11.src/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tql/21.sink/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tql/31.functions/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tql/41.utilities/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tql/51.map-examples/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tql/55.script-examples/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tql/61.time-examples/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/tql/70.fft/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/bridges/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/bridges/01.grance/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/bridges/11.sqlite/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/bridges/12.postgresql/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/bridges/13.mysql/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/bridges/15.mssql/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/bridges/21.mqtt/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/timer/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/timer/10.timer/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/timer/90.timer-helloworld/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/api-http/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/api-http/query/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/api-http/write/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/api-http/lineprotocol/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/api-http/ui-api/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/api-http/http-js/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/api-http/http-python/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/api-http/http-go/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/api-http/http-csharp/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/api-mqtt/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/api-mqtt/query/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/api-mqtt/write/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/api-grpc/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/api-grpc/api_exec/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/api-grpc/api_queryrow/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/api-grpc/api_query/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/api-grpc/java-grpc/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/api-grpc/csharp-grpc/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/api-grpc/python-grpc/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/api-grpc/spec/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/security/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/configurations/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/operations/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/operations/10.command-line/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/operations/11.change-password/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/operations/12.address-ports/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/operations/13.ssh-access/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/operations/21.shell-run/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/operations/22.user-shell/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/operations/81.windows/</loc>
+  <lastmod>2023-11-06T00:06:01+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/neo/import-export/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/intro/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/intro/features/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/intro/edition/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/intro/edition/standard/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/intro/edition/cluster/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/install/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/install/package/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/install/linux/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/install/linux/linux-env/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/install/linux/tgz-install/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/install/linux/docker-install/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/install/windows/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/install/windows/windows-env/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/install/windows/msi-install/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/install/license/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/install/cluster/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/install/cluster/cluster-env/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/install/cluster/command-line/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/install/cluster/command-line/coordinator-deployer-install/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/install/cluster/command-line/lookup-broker-warehouse-install/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/install/upgrade/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/tag/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/tag/create-drop/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/tag/tagmeta/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/tag/manipulate/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/tag/manipulate/input/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/tag/manipulate/extract/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/tag/manipulate/delete/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/tag/rollup/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/tag/ex/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/tag/tag-index/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/tag/duplication-removal/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/tag/tagmeta-limit/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/log/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/log/create-drop/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/log/insert/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/log/insert/insert-data/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/log/insert/append-data/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/log/insert/import-data/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/log/insert/load-data/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/log/select/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/log/select/select-data/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/log/select/select-time-data/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/log/select/text-search/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/log/select/simple-join/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/log/select/network-type/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/log/delete/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/log/log-index/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/log/ex/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/volatile/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/volatile/create-manage/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/volatile/extract/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/volatile/insert-update/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/volatile/delete/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/volatile/volatile-index/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/volatile/ex/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/lookup/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/lookup/create-manage/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/lookup/insert/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/lookup/extract/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/lookup/delete/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/lookup/lookup-index/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/lookup/example/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/stream/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/stream/create-delete/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/stream/startup-shutdown/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/stream/sample/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/backup-mount/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/backup-mount/overview/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/backup-mount/backup-restore/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/backup-mount/database-mount/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/feature-table/retention/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/config-monitor/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/config-monitor/meta-table/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/config-monitor/property/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/config-monitor/property-cl/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/config-monitor/timezone/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/config-monitor/virtual-table/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/sql-ref/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/sql-ref/datatypes/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/sql-ref/ddl/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/sql-ref/dml/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/sql-ref/select/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/sql-ref/select-hint/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/sql-ref/user-manage/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/sql-ref/func/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/sql-ref/sys-session-manage/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/sdk/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/sdk/cli-odbc/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/sdk/cli-odbc-example/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/sdk/jdbc/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/sdk/python/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/sdk/dotnet/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/sdk/restful_api/</loc>
+  <lastmod>2023-11-06T00:05:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/tools/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/tools/csv/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/tools/machadmin/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/tools/machloader/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/tools/machsql/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/tools/machcoordinatoradmin/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/tools/machdeployeradmin/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/faq/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/faq/memory-error/</loc>
+  <lastmod>2023-11-06T00:05:58+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/archive/</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/home/blog/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/home/blog/blog1/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/home/blog/blog2/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/home/blog/blog3/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/home/blog/blog4/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/home/blog/blog5/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/home/blog/blog6/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/home/blog/blog7/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/home/company/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/home/contactus/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/home/customers/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/home/download/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/home/edge/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/home/mos/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/home/tsdb/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/home/usecase/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/home/usecase/usecase1/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/home/usecase/usecase2/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/home/usecase/usecase3/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/home/usecase/usecase4/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/home/usecase/usecase5/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/home/usecase/usecase6/</loc>
+  <lastmod>2023-11-06T00:06:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/home/</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/archive/M67-Eng.pdf</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/dbms/archive/M5-Eng.pdf</loc>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/intro/</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/intro/features/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/intro/edition/</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/intro/edition/standard/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/intro/edition/cluster/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/install/</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/install/package/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/install/linux/</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/install/linux/linux-env/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/install/linux/tgz-install/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/install/linux/docker-install/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/install/windows/</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/install/windows/windows-env/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/install/windows/msi-install/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/install/license/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/install/cluster/</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/install/cluster/cluster-env/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/install/cluster/command-line/</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/install/cluster/command-line/coordinator-deployer-install/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/install/cluster/command-line/lookup-broker-warehouse-install/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/install/upgrade/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/tag/</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/tag/create-drop/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/tag/tagmeta/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/tag/manipulate/</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/tag/manipulate/input/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/tag/manipulate/extract/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/tag/manipulate/delete/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/tag/rollup/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/tag/ex/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/tag/tag-index/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/tag/duplication-removal/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/tag/tagmeta-limit/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/log/</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/log/create-drop/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/log/insert/</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/log/insert/insert-data/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/log/insert/append-data/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/log/insert/import-data/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/log/insert/load-data/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/log/select/</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/log/select/select-data/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/log/select/select-time-data/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/log/select/text-search/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/log/select/simple-join/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/log/select/network-type/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/log/delete/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/log/log-index/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/log/ex/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/volatile/</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/volatile/insert-update/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/volatile/delete/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/volatile/volatile-index/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/lookup/</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/lookup/insert/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/lookup/delete/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/lookup/lookup-index/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/lookup/example/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/stream/</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/stream/create-delete/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/stream/startup-shutdown/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/stream/sample/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/backup-mount/</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/backup-mount/overview/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/backup-mount/backup-restore/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/backup-mount/database-mount/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/retention/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/config-monitor/</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/config-monitor/meta-table/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/config-monitor/property/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/config-monitor/property-cl/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/config-monitor/timezone/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/config-monitor/virtual-table/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/sql-ref/</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/sql-ref/datatypes/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/sql-ref/ddl/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/sql-ref/dml/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/sql-ref/select/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/sql-ref/select-hint/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/sql-ref/user-manage/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/sql-ref/func/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/sql-ref/sys-session-manage/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/sdk/</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/sdk/cli-odbc/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/sdk/cli-odbc-example/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/sdk/jdbc/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/sdk/python/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/sdk/dotnet/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/sdk/restful_api/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/tools/</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/tools/csv/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/tools/machadmin/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/tools/machloader/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/tools/machsql/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/tools/machcoordinatoradmin/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/tools/machdeployeradmin/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/faq/</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/faq/memory-error/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/archive/</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/home/blog/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/home/blog/blog1/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/home/blog/blog2/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/home/blog/blog3/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/home/blog/blog4/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/home/blog/blog5/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/home/blog/blog6/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/home/blog/blog7/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/home/company/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/home/contactus/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/home/customers/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/home/download/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/home/edge/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/home/mos/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/home/tsdb/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/home/usecase/</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/home/usecase/usecase1/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/home/usecase/usecase2/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/home/usecase/usecase3/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/home/usecase/usecase4/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/home/usecase/usecase5/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/home/usecase/usecase6/</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/neo/</loc>
+  <lastmod>2023-11-06T00:05:48+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/volatile/create-drop/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/volatile/select/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/volatile/volatile-ex/</loc>
+  <lastmod>2023-11-06T00:06:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/lookup/create-drop/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/feature-table/lookup/select/</loc>
+  <lastmod>2023-11-06T00:06:14+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/archive/M75-Kor.pdf</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/archive/M7-Kor.pdf</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/archive/MK67-Kor.pdf</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/archive/M65-Kor.pdf</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/archive/M6-Kor.pdf</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://machbase.com/kr/dbms/archive/M5-Kor.pdf</loc>
+  <lastmod>2023-11-06T00:06:16+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
   <loc>https://machbase.com/</loc>
-  <lastmod>2023-11-02T23:58:04+00:00</lastmod>
+  <lastmod>2023-11-06T00:06:02+00:00</lastmod>
+  <priority>0.51</priority>
 </url>
 
 
