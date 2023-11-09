@@ -1161,6 +1161,15 @@
   margin-bottom: 80px;
   max-width: 950px;
 }
+.cems_scroll_left {
+  position: sticky;
+  top: 100px;
+  height: 700px;
+  margin-left: 120px;
+  width: 50%;
+  margin-bottom: 180px;
+  max-width: 950px;
+}
 .data_sub_wrap {
   padding: 30px 20px 40px 20px;
   width: 100%;
@@ -1193,14 +1202,14 @@
   width: 80%;
 }
 .classic_sub_wrap {
-  padding: 0 20px;
+  padding: 20px 20px;
   width: 100%;
   background-color: #fff;
   border-radius: 30px;
   box-shadow: 0 6px 12px 0 rgba(37, 63, 208, 0.2);
 }
 .neo_sub_wrap {
-  padding: 0 20px;
+  padding: 20px 20px;
   width: 100%;
   background-color: #fff;
   border-radius: 30px;
@@ -1208,7 +1217,7 @@
   box-shadow: 0 6px 12px 0 rgba(37, 63, 208, 0.2);
 }
 .neo_use_sub_wrap {
-  padding: 0 20px;
+  padding: 20px 20px;
   width: 100%;
   background-color: #fff;
   border-radius: 30px;
@@ -1232,12 +1241,11 @@
   font-size: 18px;
   color: #253fd0;
   font-weight: 500;
-  margin-bottom: 12px;
   margin-left: 8px;
 }
 .scroll-sub-title-wrap ul li {
   margin-left: 32px;
-  margin-bottom: 8px;
+  margin-bottom: 20px;
 }
 .scroll-content {
   font-size: 18px;
@@ -1355,6 +1363,9 @@
     margin-bottom: 80px;
     display: none;
   }
+  .cems_scroll_left {
+    display: none;
+  }
   .neo_scroll_right {
     display: flex;
     justify-content: center;
@@ -1365,14 +1376,14 @@
     width: 80%;
   }
   .classic_sub_wrap {
-    padding: 0 20px;
+    padding: 20px 20px;
     width: 100%;
     background-color: #fff;
     border-radius: 30px;
     box-shadow: 0 6px 12px 0 rgba(37, 63, 208, 0.2);
   }
   .neo_sub_wrap {
-    padding: 0 20px;
+    padding: 20px 20px;
     width: 100%;
     background-color: #fff;
     border-radius: 30px;
@@ -1380,7 +1391,7 @@
     box-shadow: 0 6px 12px 0 rgba(37, 63, 208, 0.2);
   }
   .neo_use_sub_wrap {
-    padding: 0 20px;
+    padding: 20px 20px;
     width: 100%;
     background-color: #fff;
     border-radius: 30px;
@@ -1404,12 +1415,11 @@
     font-size: 18px;
     color: #253fd0;
     font-weight: 500;
-    margin-bottom: 12px;
     margin-left: 8px;
   }
   .scroll-sub-title-wrap ul li {
     margin-left: 32px;
-    margin-bottom: 8px;
+    margin-bottom: 20px;
   }
   .scroll-content {
     font-size: 18px;
@@ -1483,14 +1493,14 @@
     width: 100%;
   }
   .classic_sub_wrap {
-    padding: 0 20px;
+    padding: 20px 20px;
     width: 100%;
     background-color: #fff;
     border-radius: 30px;
     box-shadow: 0 6px 12px 0 rgba(37, 63, 208, 0.2);
   }
   .neo_sub_wrap {
-    padding: 0 20px;
+    padding: 20px 20px;
     width: 100%;
     background-color: #fff;
     border-radius: 30px;
@@ -1498,7 +1508,7 @@
     box-shadow: 0 6px 12px 0 rgba(37, 63, 208, 0.2);
   }
   .neo_use_sub_wrap {
-    padding: 0 20px;
+    padding: 20px 20px;
     width: 100%;
     background-color: #fff;
     border-radius: 30px;
