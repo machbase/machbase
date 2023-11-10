@@ -20,6 +20,7 @@ images:
       </p>
     </div>
   </section>
+  <div class="product-inner">
   <section class="section2 main_section2">
     <div>
       <h4 class="sub_title company-margin-top">Time Series Database</h4>
@@ -279,6 +280,7 @@ images:
       </div>
     </div>
   </section>
+  </div>
   <section>
     <h4 class="sub_title company-margin-top">Neo Interface</h4>
     <div class="bar"><img src="../img/bar.png" /></div>

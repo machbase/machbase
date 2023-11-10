@@ -1011,6 +1011,10 @@
   background-position: center;
   height: 450px;
 }
+.product-inner {
+  width: 1280px;
+  margin: 0 auto;
+}
 .visited,
 .visited:visited {
   color: #253fd0;
@@ -1145,34 +1149,28 @@
   position: relative;
   display: flex;
   justify-content: space-between;
-  padding-right: 120px;
+  /* padding-right: 120px; */
 }
 .neo_scroll_left {
   position: sticky;
   top: 300px;
-  height: 700px;
-  margin-left: 120px;
-  width: 50%;
+  height: 500px;
   margin-bottom: 80px;
-  max-width: 950px;
+  max-width: 600px;
 }
 .mos_scroll_left {
   position: sticky;
   top: 100px;
-  height: 700px;
-  margin-left: 120px;
-  width: 50%;
+  height: 500px;
   margin-bottom: 180px;
-  max-width: 950px;
+  max-width: 600px;
 }
 .cems_scroll_left {
   position: sticky;
   top: 100px;
-  height: 700px;
-  margin-left: 120px;
-  width: 50%;
+  height: 600px;
   margin-bottom: 180px;
-  max-width: 950px;
+  max-width: 600px;
 }
 .data_sub_wrap {
   padding: 30px 20px 40px 20px;
@@ -2587,6 +2585,9 @@
     width: 100%;
     margin: 0 auto;
     padding: 0 40px;
+  }
+  .product-inner {
+    width: 100%;
   }
 }
 @media screen and (max-width: 820px) {

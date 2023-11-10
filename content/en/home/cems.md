@@ -20,6 +20,7 @@ images:
       </p>
     </div>
   </section>
+ <div class="product-inner">
   <section class="section2 main_section2">
     <div>
       <h4 class="sub_title company-margin-top">CEMS</h4>
@@ -136,6 +137,7 @@ images:
       <img class="neo_interface" src="../img/cems_interface.JPG" alt="" />
     </div>
   </section>
+  </div>
   <section>
     <div class="next-navi_wrap">
       <div class="next-navi">
