@@ -424,4 +424,4 @@ images:
     </div>
   </div>
 </section>
-{{< home_footer_blog_kr >}} {{< home_lang_kr >}}
+{{< home_footer_blog_kr >}}

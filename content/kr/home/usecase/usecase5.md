@@ -93,4 +93,3 @@ images:
   </div>
 </section>
 {{< home_footer_blog_kr >}}
-{{< home_lang_kr >}}

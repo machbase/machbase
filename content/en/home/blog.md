@@ -805,4 +805,4 @@ images:
     </section>
   </div>
 </body>
-{{< home_footer_sub_en >}} {{< home_lang_en >}}
+{{< home_footer_sub_en >}}

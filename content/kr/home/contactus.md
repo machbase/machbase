@@ -2863,22 +2863,5 @@ images:
     option.textContent = countries[code].CountryNameEN;
     selectElement.appendChild(option);
   }
-  //change lang
-  let language;
-  let storageData = sessionStorage.getItem("lang");
-  if (storageData) {
-    language = storageData;
-  } else {
-    var userLang = navigator.language || navigator.userLanguage;
-    if (userLang === "ko") {
-      sessionStorage.setItem("lang", userLang);
-      language = "kr";
-    } else {
-      sessionStorage.setItem("lang", "en");
-      language = "en";
-      let locationPath = location.pathname.split("/");
-      locationPath.splice(1, 1);
-      location.href = location.origin + locationPath.join("/");
-    }
-  }
+
 </script>

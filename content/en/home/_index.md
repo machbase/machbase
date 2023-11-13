@@ -1108,32 +1108,4 @@ images:
       copyToClipboard(codeToCopy, button);
     });
   });
-  //change lang
-  let language;
-  let storageData = sessionStorage.getItem("lang");
-  var referrer = document.referrer;
-  console.log(window.location.origin === referrer);
-  if (
-    !referrer.includes(window.location.origin) ||
-    window.location.origin + "/" === referrer
-  ) {
-    sessionStorage.clear();
-    window.location.reload();
-  }
-  if (referrer.includes("neo") || referrer.includes("dbms")) {
-    sessionStorage.clear();
-  }
-  if (storageData) {
-    language = storageData;
-  } else {
-    var userLang = navigator.language || navigator.userLanguage;
-    if (userLang !== "ko" && userLang !== "ko-KR") {
-      sessionStorage.setItem("lang", userLang);
-      language = "en";
-    } else {
-      sessionStorage.setItem("lang", "ko");
-      language = "kr";
-      location.href = location.origin + "/kr" + location.pathname;
-    }
-  }
 </script>

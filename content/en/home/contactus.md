@@ -2989,20 +2989,5 @@ images:
     option.textContent = countries[code].CountryNameEN;
     selectElement.appendChild(option);
   }
-  //change lang
-  let language;
-  let storageData = sessionStorage.getItem("lang");
-  if (storageData) {
-    language = storageData;
-  } else {
-    var userLang = navigator.language || navigator.userLanguage;
-    if (userLang !== "ko") {
-      sessionStorage.setItem("lang", userLang);
-      language = "en";
-    } else {
-      sessionStorage.setItem("lang", "ko");
-      language = "kr";
-      location.href = location.origin + "/kr" + location.pathname;
-    }
-  }
+
 </script>

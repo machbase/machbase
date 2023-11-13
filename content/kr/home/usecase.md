@@ -426,4 +426,3 @@ images:
   </div>
 </body>
 {{< home_footer_sub_kr >}}
-{{< home_lang_kr >}}

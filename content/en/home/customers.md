@@ -149,4 +149,3 @@ images:
   </section>
 </body>
 {{< home_footer_sub_en >}}
-{{< home_lang_en >}}
