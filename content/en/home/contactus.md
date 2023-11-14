@@ -2989,5 +2989,4 @@ images:
     option.textContent = countries[code].CountryNameEN;
     selectElement.appendChild(option);
   }
-
 </script>

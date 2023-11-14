@@ -1102,5 +1102,4 @@ bytes.NewBufferString(strings.Join(rows, "\\n")))
       copyToClipboard(codeToCopy, button);
     });
   });
-
 </script>
