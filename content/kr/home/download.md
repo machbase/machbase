@@ -401,5 +401,4 @@ images:
       copyToClipboard(codeToCopy, button);
     });
   });
-
 </script>
