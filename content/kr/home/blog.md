@@ -25,25 +25,24 @@ images:
         <div class="blog-first-wraper">
           <div class="blog-text-wraper">
             <div class="tech-first-link-wrap">
-              <a class="blog-link" href="/kr/home/blog/blog10">
-                IoT 센서 데이터 플랫폼 구축과 MQTT</a
+              <a class="blog-link" href="/kr/home/blog/blog11">
+                ESG를 위한 선택: 시계열 데이터베이스 엔진</a
               >
               <div class="blog-date">
                 <div>
-                  <span>by Eirny Kwon / 2 Nov 2023</span>
+                  <span>by Timothy Cha / 11 Nov 2023</span>
                 </div>
               </div>
               <div class="blog-first-div">
-                1999년에 앤디 스탠포드-크라크(IBM)과 앨런 니퍼 (그 당시
-                유로테크사에서 근무)가 초기 버전의 프로토콜을 작성해서
-                SCADA(Supervisory Control and Data Acquisition) 제어 시스템으로
-                송유관을 모니터링하는데 사용하였다. 그 시절의 시스템들은 다양한
-                이기종들로 이루어졌고...
+                디지털 시대가 도래하면서 우리의 생활 영역 어느 것이나 데이터를
+                만들어 내고 데이터를 필요로 하고 있다. 이로 인해 데이터는
+                비즈니스에서 핵심 자산으로 간주되며, 데이터를 효과적으로 수집,
+                관리, 분석하고...
               </div>
               <div class="blog_usecase_more_box">
                 <p class="blog_usecase_more_wrap">
                   <span>
-                    <a class="blog_usecase_more" href="/kr/home/blog/blog10"
+                    <a class="blog_usecase_more" href="/kr/home/blog/blog11"
                       >View More
                     </a>
                   </span>
@@ -52,12 +51,37 @@ images:
             </div>
           </div>
           <div class="blog-first-img-wrap">
-            <a href="/kr/home/blog/blog10"
-              ><img class="blog-img" src="../img/blog10-1.jpg" alt=""
+            <a href="/kr/home/blog/blog11"
+              ><img class="blog-img" src="../img/blog11-1.png" alt=""
             /></a>
           </div>
         </div>
         <div class="blog-wraper">
+          <div class="tech-link-wrap">
+            <div class="blog-img-wrap">
+              <a href="/home/blog/blog10"
+                ><img
+                  class="blog-img blog-margin-bottom"
+                  src="../img/blog10-1.jpg"
+                  alt=""
+              /></a>
+            </div>
+            <a class="tech-link" href="/kr/home/blog/blog10"
+              >IoT 센서 데이터 플랫폼 구축과 MQTT</a
+            >
+            <div class="blog-date">
+              <div>
+                <span>by Eirny Kwon / 2 Nov 2023</span>
+              </div>
+            </div>
+            <div class="tech-link-wrap-sub">
+              1999년에 앤디 스탠포드-크라크(IBM)과 앨런 니퍼 (그 당시
+              유로테크사에서 근무)가 초기 버전의 프로토콜을 작성해서
+              SCADA(Supervisory Control and Data Acquisition) 제어 시스템으로
+              송유관을 모니터링하는데 사용하였다. 그 시절의 시스템들은 다양한
+              이기종들로 이루어졌고...
+            </div>
+          </div>
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/home/blog/blog9"
@@ -105,6 +129,8 @@ images:
               가져보겠습니다. 센서 데이터 처리 시스템의 개발을 시작할 때...
             </div>
           </div>
+        </div>
+        <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/kr/home/blog/blog1"
@@ -127,8 +153,6 @@ images:
               편의성을 극대화한 All-in-one package 솔루션입니다...
             </div>
           </div>
-        </div>
-        <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/kr/home/blog/blog2"
@@ -175,6 +199,8 @@ images:
               센서 데이터와 생산된 제품에 대한 정보가 혼합되어 있습니다...
             </div>
           </div>
+        </div>
+        <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/kr/home/blog/blog4"
@@ -198,8 +224,6 @@ images:
               InfluxDB와의 아키텍처 비교를 해 보겠습니다...
             </div>
           </div>
-        </div>
-        <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/kr/home/blog/blog5"
@@ -245,6 +269,8 @@ images:
               분야 등에서 활발한 연구와 응용을 시도하고 있습니다...
             </div>
           </div>
+        </div>
+        <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/kr/home/blog/blog7"
@@ -275,7 +301,7 @@ images:
         <div class="blog-first-wraper">
           <div class="blog-text-wraper">
             <div class="tech-first-link-wrap">
-              <a class="blog-link" href="/kr/home/blog/blog10"
+              <a class="blog-link" href="/kr/home/blog/blog11"
                 >IoT 센서 데이터 플랫폼 구축과 MQTT</a
               >
               <div class="blog-date">
@@ -293,7 +319,7 @@ images:
               <div class="blog_usecase_more_box">
                 <p class="blog_usecase_more_wrap">
                   <span>
-                    <a class="blog_usecase_more" href="/kr/home/blog/blog10"
+                    <a class="blog_usecase_more" href="/kr/home/blog/blog11"
                       >View More
                     </a>
                   </span>
@@ -302,12 +328,37 @@ images:
             </div>
           </div>
           <div class="blog-first-img-wrap">
-            <a href="/kr/home/blog/blog10"
-              ><img class="blog-img" src="../img/blog10-1.jpg" alt=""
+            <a href="/kr/home/blog/blog11"
+              ><img class="blog-img" src="../img/blog11-1.png" alt=""
             /></a>
           </div>
         </div>
         <div class="blog-wraper">
+          <div class="tech-link-wrap">
+            <div class="blog-img-wrap">
+              <a href="/kr/home/blog/blog10"
+                ><img
+                  class="blog-img blog-margin-bottom"
+                  src="../img/blog10-1.jpg"
+                  alt=""
+              /></a>
+            </div>
+            <a class="tech-link" href="/kr/home/blog/blog10"
+              >IoT 센서 데이터 플랫폼 구축과 MQTT</a
+            >
+            <div class="blog-date">
+              <div>
+                <span>by Eirny Kwon / 2 Nov 2023</span>
+              </div>
+            </div>
+            <div class="tech-link-wrap-sub">
+              1999년에 앤디 스탠포드-크라크(IBM)과 앨런 니퍼 (그 당시
+              유로테크사에서 근무)가 초기 버전의 프로토콜을 작성해서
+              SCADA(Supervisory Control and Data Acquisition) 제어 시스템으로
+              송유관을 모니터링하는데 사용하였다. 그 시절의 시스템들은 다양한
+              이기종들로 이루어졌고...
+            </div>
+          </div>
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/kr/home/blog/blog9"
@@ -332,6 +383,8 @@ images:
               보고 싶었습니다...
             </div>
           </div>
+        </div>
+        <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/kr/home/blog/blog8"
@@ -356,8 +409,6 @@ images:
               가져보겠습니다. 센서 데이터 처리 시스템의 개발을 시작할 때...
             </div>
           </div>
-        </div>
-        <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/kr/home/blog/blog1"
@@ -380,6 +431,8 @@ images:
               편의성을 극대화한 All-in-one package 솔루션입니다...
             </div>
           </div>
+        </div>
+        <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/kr/home/blog/blog2"
@@ -403,8 +456,6 @@ images:
               개발하는 것은 의심할 여지 없이 어렵고 복잡합니다...
             </div>
           </div>
-        </div>
-        <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/kr/home/blog/blog3"
@@ -428,6 +479,8 @@ images:
               센서 데이터와 생산된 제품에 대한 정보가 혼합되어 있습니다...
             </div>
           </div>
+        </div>
+        <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/kr/home/blog/blog4"
@@ -451,8 +504,6 @@ images:
               InfluxDB와의 아키텍처 비교를 해 보겠습니다...
             </div>
           </div>
-        </div>
-        <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/kr/home/blog/blog5"
@@ -476,6 +527,8 @@ images:
               소개하고자 합니다...
             </div>
           </div>
+        </div>
+        <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/kr/home/blog/blog6"
@@ -498,8 +551,6 @@ images:
               분야 등에서 활발한 연구와 응용을 시도하고 있습니다...
             </div>
           </div>
-        </div>
-        <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/kr/home/blog/blog7"
@@ -529,36 +580,62 @@ images:
       <div class="blog-mobile">
         <div class="blog-first-wraper">
           <div class="blog-first-img-wrap">
-            <a href="/kr/home/blog/blog10"
-              ><img class="blog-img" src="../img/blog10-1.jpg" alt=""
+            <a href="/kr/home/blog/blog11"
+              ><img class="blog-img" src="../img/blog11-1.png" alt=""
             /></a>
           </div>
           <div class="blog-text-wraper">
             <div class="tech-first-link-wrap">
-              <a class="blog-link" href="/kr/home/blog/blog10">
-                IoT 센서 데이터 플랫폼 구축과 MQTT</a
+              <a class="blog-link" href="/kr/home/blog/blog11">
+                ESG를 위한 선택: 시계열 데이터베이스 엔진</a
               >
               <div class="blog-date">
                 <div>
-                  <span>by Eirny Kwon / 2 Nov 2023</span>
+                  <span>by Timothy Cha / 11 Nov 2023</span>
                 </div>
               </div>
               <div class="blog-first-div">
-                1999년에 앤디 스탠포드-크라크(IBM)과 앨런 니퍼 (그 당시
-                유로테크사에서 근무)가 초기 버전의 프로토콜을 작성해서
-                SCADA(Supervisory Control and Data Acquisition) 제어 시스템으로
-                송유관을 모니터링하는데 사용하였다. 그 시절의 시스템들은 다양한
-                이기종들로 이루어졌고...
+                디지털 시대가 도래하면서 우리의 생활 영역 어느 것이나 데이터를
+                만들어 내고 데이터를 필요로 하고 있다. 이로 인해 데이터는
+                비즈니스에서 핵심 자산으로 간주되며, 데이터를 효과적으로 수집,
+                관리, 분석하고...
               </div>
               <div class="blog_usecase_more_box">
                 <p class="blog_usecase_more_wrap">
                   <span>
-                    <a class="blog_usecase_more" href="/kr/home/blog/blog10"
+                    <a class="blog_usecase_more" href="/kr/home/blog/blog11"
                       >View More <ArrowSvg
                     /></a>
                   </span>
                 </p>
               </div>
+            </div>
+          </div>
+        </div>
+        <div class="blog-wraper">
+          <div class="tech-link-wrap">
+            <div class="blog-img-wrap">
+              <a href="/kr/home/blog/blog10"
+                ><img
+                  class="blog-img blog-margin-bottom"
+                  src="../img/blog10-1.jpg"
+                  alt=""
+              /></a>
+            </div>
+            <a class="tech-link" href="/kr/home/blog/blog10"
+              >IoT 센서 데이터 플랫폼 구축과 MQTT</a
+            >
+            <div class="blog-date">
+              <div>
+                <span>by Eirny Kwon / 2 Nov 2023</span>
+              </div>
+            </div>
+            <div class="tech-link-wrap-sub">
+              1999년에 앤디 스탠포드-크라크(IBM)과 앨런 니퍼 (그 당시
+              유로테크사에서 근무)가 초기 버전의 프로토콜을 작성해서
+              SCADA(Supervisory Control and Data Acquisition) 제어 시스템으로
+              송유관을 모니터링하는데 사용하였다. 그 시절의 시스템들은 다양한
+              이기종들로 이루어졌고...
             </div>
           </div>
         </div>

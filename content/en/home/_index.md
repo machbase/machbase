@@ -617,7 +617,7 @@ images:
                   >--data-urlencode "q=select * from EXAMPLE"</span
                 >
               </p>
-              <button data-code="selectCurl" class="copy-btn">Copy</button>
+              <button data-code="insertCurl" class="copy-btn3">Copy</button>
             </div>
             <div id="select3" class="custom-hidden">
               <p class="ternal_margin_top">
@@ -637,7 +637,7 @@ images:
                   >text</span
                 >)<br />
               </p>
-              <button data-code="selectPy" class="copy-btn">Copy</button>
+              <button data-code="selectPy" class="copy-btn3">Copy</button>
             </div>
             <div id="select4" class="custom-hidden">
               <p class="ternal_margin_top">
@@ -669,7 +669,7 @@ images:
                 >(<span class="blue">data</span>)<br />
                 &nbsp;&nbsp;});
               </p>
-              <button data-code="selectJs" class="copy-btn">Copy</button>
+              <button data-code="selectJs" class="copy-btn3">Copy</button>
             </div>
             <div id="select5" class="custom-hidden">
               <p class="ternal_margin_top">
@@ -698,7 +698,7 @@ images:
                 &nbsp;&nbsp;&nbsp;&nbsp;fmt.<span class="yellow">Println</span
                 >(<span class="yellow">string</span>(data)) <br />}
               </p>
-              <button data-code="selectGo" class="copy-btn">Copy</button>
+              <button data-code="selectGo" class="copy-btn3">Copy</button>
             </div>
             <div id="select6" class="custom-hidden">
               <p class="ternal_margin_top">
@@ -722,7 +722,7 @@ images:
                   >Write</span
                 >(<span class="blue">data</span>);<br />
               </p>
-              <button data-code="selectC" class="copy-btn">Copy</button>
+              <button data-code="selectC" class="copy-btn3">Copy</button>
             </div>
           </div>
         </div>

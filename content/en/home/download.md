@@ -10,7 +10,7 @@ images:
   <link rel="stylesheet" type="text/css" href="../css/style.css" />
 </head>
 <body>
-{{< home_menu_sub_en >}}
+  {{< home_menu_sub_en >}}
   <section class="download_section0">
     <div>
       <h2 class="sub_page_title">Download</h2>
@@ -57,9 +57,6 @@ images:
           <th class="border_top_right" colspan="2">Download</th>
         </tr>
         <tr class="top_line">
-          <!-- <td class="pricing_table_subtitle download_th1_1" rowspan="5">
-            Edge
-          </td> -->
           <td class="download_th1_1 pricing_table_subtitle" rowspan="3">
             Linux
           </td>
@@ -354,7 +351,7 @@ images:
       </table>
     </div>
   </section>
- {{< home_footer_sub_en >}}
+  {{< home_footer_sub_en >}}
 </body>
 <script>
   const jsonData = {
@@ -402,5 +399,4 @@ images:
       copyToClipboard(codeToCopy, button);
     });
   });
-
 </script>
