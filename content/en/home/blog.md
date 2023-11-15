@@ -25,24 +25,24 @@ images:
         <div class="blog-first-wraper">
           <div class="blog-text-wraper">
             <div class="tech-first-link-wrap">
-              <a class="blog-link" href="/home/blog/blog10"
-                >How to make Sensor Data send directly to a Database via MQTT?
+              <a class="blog-link" href="/home/blog/blog11"
+                >A solution to ESG issues: Time Series Database
               </a>
               <div class="blog-date">
                 <div>
-                  <span>by Eirny Kwon / 2 Nov 2023</span>
+                  <span>by Timothy Cha / 11 Nov 2023</span>
                 </div>
               </div>
               <div class="blog-first-div">
-                In 1999, an early version of the protocol was written by Andy
-                Stanford-Crack (IBM) and Alan Nipper (then at Eurotech) and used
-                to monitor pipelines with Supervisory Control and Data
-                Acquisition (SCADA) control systems...
+                With the advent of the digital age, every aspect of our lives
+                generates and requires data. As a result, data is considered a
+                core business asset, and the ability to effectively collect,
+                manage, analyze and utilize data...
               </div>
               <div class="blog_usecase_more_box">
                 <p class="blog_usecase_more_wrap">
                   <span>
-                    <a class="blog_usecase_more" href="/home/blog/blog10"
+                    <a class="blog_usecase_more" href="/home/blog/blog11"
                       >View More
                     </a>
                   </span>
@@ -51,12 +51,36 @@ images:
             </div>
           </div>
           <div class="blog-first-img-wrap">
-            <a href="/home/blog/blog10"
-              ><img class="blog-img" src="../img/blog10-1.jpg" alt=""
+            <a href="/home/blog/blog11"
+              ><img class="blog-img" src="../img/blog11-1.png" alt=""
             /></a>
           </div>
         </div>
         <div class="blog-wraper">
+          <div class="tech-link-wrap">
+            <div class="blog-img-wrap">
+              <a href="/home/blog/blog10"
+                ><img
+                  class="blog-img blog-margin-bottom"
+                  src="../img/blog10-1.jpg"
+                  alt=""
+              /></a>
+            </div>
+            <a class="tech-link" href="/home/blog/blog10"
+              >How to make Sensor Data send directly to a Database via MQTT?</a
+            >
+            <div class="blog-date">
+              <div>
+                <span>by Eirny Kwon / 2 Nov 2023</span>
+              </div>
+            </div>
+            <div class="tech-link-wrap-sub">
+              In 1999, an early version of the protocol was written by Andy
+              Stanford-Crack (IBM) and Alan Nipper (then at Eurotech) and used
+              to monitor pipelines with Supervisory Control and Data Acquisition
+              (SCADA) control systems...
+            </div>
+          </div>
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/home/blog/blog9"
@@ -105,6 +129,8 @@ images:
               performance in processing time-series sensor data. When...
             </div>
           </div>
+        </div>
+        <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/home/blog/blog1"
@@ -128,8 +154,6 @@ images:
               maximize user convenience...
             </div>
           </div>
-        </div>
-        <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/home/blog/blog2"
@@ -178,6 +202,8 @@ images:
               equipment and details about the produce chip...
             </div>
           </div>
+        </div>
+        <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/home/blog/blog4"
@@ -202,8 +228,6 @@ images:
               comparison with InfluxDB...
             </div>
           </div>
-        </div>
-        <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/home/blog/blog5"
@@ -251,6 +275,8 @@ images:
               management systems, smart factories, and predictive maintenance...
             </div>
           </div>
+        </div>
+        <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/home/blog/blog7"
@@ -280,24 +306,24 @@ images:
         <div class="blog-first-wraper">
           <div class="blog-text-wraper">
             <div class="tech-first-link-wrap">
-              <a class="blog-link" href="/home/blog/blog10">
-                How to make Sensor Data send directly to a Database via MQTT?</a
+              <a class="blog-link" href="/home/blog/blog11">
+                A solution to ESG issues: Time Series Database</a
               >
               <div class="blog-date">
                 <div>
-                  <span>by Eirny Kwon / 2 Nov 2023</span>
+                  <span>by Timothy Cha / 11 Nov 2023</span>
                 </div>
               </div>
               <div class="blog-first-div">
-                In 1999, an early version of the protocol was written by Andy
-                Stanford-Crack (IBM) and Alan Nipper (then at Eurotech) and used
-                to monitor pipelines with Supervisory Control and Data
-                Acquisition (SCADA) control systems...
+                With the advent of the digital age, every aspect of our lives
+                generates and requires data. As a result, data is considered a
+                core business asset, and the ability to effectively collect,
+                manage, analyze and utilize data...
               </div>
               <div class="blog_usecase_more_box">
                 <p class="blog_usecase_more_wrap">
                   <span>
-                    <a class="blog_usecase_more" href="/home/blog/blog10"
+                    <a class="blog_usecase_more" href="/home/blog/blog11"
                       >View More
                     </a>
                   </span>
@@ -306,12 +332,36 @@ images:
             </div>
           </div>
           <div class="blog-first-img-wrap">
-            <a href="/home/blog/blog10"
-              ><img class="blog-img" src="../img/blog10-1.jpg" alt=""
+            <a href="/home/blog/blog11"
+              ><img class="blog-img" src="../img/blog11-1.png" alt=""
             /></a>
           </div>
         </div>
         <div class="blog-wraper">
+          <div class="tech-link-wrap">
+            <div class="blog-img-wrap">
+              <a href="/home/blog/blog10"
+                ><img
+                  class="blog-img blog-margin-bottom"
+                  src="../img/blog10-1.jpg"
+                  alt=""
+              /></a>
+            </div>
+            <a class="tech-link" href="/home/blog/blog10"
+              >How to make Sensor Data send directly to a Database via MQTT?</a
+            >
+            <div class="blog-date">
+              <div>
+                <span>by Eirny Kwon / 2 Nov 2023</span>
+              </div>
+            </div>
+            <div class="tech-link-wrap-sub">
+              In 1999, an early version of the protocol was written by Andy
+              Stanford-Crack (IBM) and Alan Nipper (then at Eurotech) and used
+              to monitor pipelines with Supervisory Control and Data Acquisition
+              (SCADA) control systems...
+            </div>
+          </div>
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/home/blog/blog9"
@@ -336,6 +386,8 @@ images:
               open-source version, 2.7...
             </div>
           </div>
+        </div>
+        <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/home/blog/blog8"
@@ -360,8 +412,6 @@ images:
               performance in processing time-series sensor data. When...
             </div>
           </div>
-        </div>
-        <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/home/blog/blog1"
@@ -385,7 +435,9 @@ images:
               maximize user convenience...
             </div>
           </div>
-          <div class="tech-link-wrap">
+        </div>
+        <div class="blog-wraper">
+           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/home/blog/blog2"
                 ><img
@@ -409,8 +461,6 @@ images:
               intricate...
             </div>
           </div>
-        </div>
-        <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/home/blog/blog3"
@@ -435,7 +485,9 @@ images:
               equipment and details about the produce chip...
             </div>
           </div>
-          <div class="tech-link-wrap">
+        </div>
+        <div class="blog-wraper">
+        <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/home/blog/blog4"
                 ><img
@@ -459,8 +511,6 @@ images:
               comparison with InfluxDB...
             </div>
           </div>
-        </div>
-        <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/home/blog/blog5"
@@ -485,7 +535,9 @@ images:
               anomalies...
             </div>
           </div>
-          <div class="tech-link-wrap">
+        </div>
+        <div class="blog-wraper">
+        <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/home/blog/blog6"
                 ><img
@@ -508,8 +560,6 @@ images:
               management systems, smart factories, and predictive maintenance...
             </div>
           </div>
-        </div>
-        <div class="blog-wraper">
           <div class="tech-link-wrap">
             <div class="blog-img-wrap">
               <a href="/home/blog/blog7"
@@ -538,25 +588,25 @@ images:
       <div class="blog-mobile">
         <div class="blog-first-wraper">
           <div class="blog-first-img-wrap">
-            <a href="/home/blog/blog10"
-              ><img class="blog-img" src="../img/blog10-1.jpg" alt=""
+            <a href="/home/blog/blog11"
+              ><img class="blog-img" src="../img/blog11-1.png" alt=""
             /></a>
           </div>
           <div class="blog-text-wraper">
             <div class="tech-first-link-wrap">
-              <a class="blog-link" href="/home/blog/blog10">
-                How to make Sensor Data send directly to a Database via MQTT?</a
+              <a class="blog-link" href="/home/blog/blog11">
+                A solution to ESG issues: Time Series Database</a
               >
               <div class="blog-date">
                 <div>
-                  <span>by Eirny Kwon / 2 Nov 2023</span>
+                  <span>by Timothy Cha / 11 Nov 2023</span>
                 </div>
               </div>
               <div class="blog-first-div">
-                In 1999, an early version of the protocol was written by Andy
-                Stanford-Crack (IBM) and Alan Nipper (then at Eurotech) and used
-                to monitor pipelines with Supervisory Control and Data
-                Acquisition (SCADA) control systems...
+                With the advent of the digital age, every aspect of our lives
+                generates and requires data. As a result, data is considered a
+                core business asset, and the ability to effectively collect,
+                manage, analyze and utilize data...
               </div>
               <div class="blog_usecase_more_box">
                 <p class="blog_usecase_more_wrap">
@@ -567,6 +617,32 @@ images:
                   </span>
                 </p>
               </div>
+            </div>
+          </div>
+        </div>
+          <div class="blog-wraper">
+          <div class="tech-link-wrap">
+            <div class="blog-img-wrap">
+              <a href="/home/blog/blog10"
+                ><img
+                  class="blog-img blog-margin-bottom"
+                  src="../img/blog10-1.jpg"
+                  alt=""
+              /></a>
+            </div>
+            <a class="tech-link" href="/home/blog/blog10"
+              >How to make Sensor Data send directly to a Database via MQTT?</a
+            >
+            <div class="blog-date">
+              <div>
+                <span>by Eirny Kwon / 2 Nov 2023</span>
+              </div>
+            </div>
+            <div class="tech-link-wrap-sub">
+               In 1999, an early version of the protocol was written by Andy
+                Stanford-Crack (IBM) and Alan Nipper (then at Eurotech) and used
+                to monitor pipelines with Supervisory Control and Data
+                Acquisition (SCADA) control systems...
             </div>
           </div>
         </div>

@@ -940,7 +940,7 @@ images:
       </div>
     </section>
   </div>
-{{< home_footer_sub_en >}}
+  {{< home_footer_sub_en >}}
 </body>
 <script>
   const fullNameInput = document.getElementById("fullName");
