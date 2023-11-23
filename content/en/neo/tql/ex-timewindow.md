@@ -67,7 +67,7 @@ TIMEWINDOW(
     period("1s"),
     "time",
     "last")
-CSV(timeformat('2006-01-02 15:04:05'), heading(true))
+CSV(sqlTimeformat('YYYY-MM-DD HH24:MI:SS'), heading(true))
 ```
 
 If you want to generate vibration data without query for briefness, Use the next example instead.
@@ -84,7 +84,7 @@ TIMEWINDOW(
     period("1s"),
     "time",
     "last")
-CSV(timeformat('2006-01-02 15:04:05'), heading(true))
+CSV(sqlTimeformat('YYYY-MM-DD HH24:MI:SS'), heading(true))
 ```
 
 ![ex-tw-1](../img/ex-tw-1.jpg)
@@ -93,7 +93,7 @@ CSV(timeformat('2006-01-02 15:04:05'), heading(true))
 
 Let's add `nullValue(100)` and execute again. The `NULL` values are replaced with the given value `100`.
 
-```
+```js
 TIMEWINDOW(
     time('now - 2s'),
     time('now + 13s'),
@@ -138,7 +138,7 @@ TIMEWINDOW(
     "time",
     "last",
     "last:LinearRegression")
-CSV(timeformat('2006-01-02 15:04:05'), heading(true))
+CSV(sqlTimeformat('YYYY-MM-DD HH24:MI:SS'), heading(true))
 ```
 
 ![ex-tw-4](../img/ex-tw-4.jpg)
