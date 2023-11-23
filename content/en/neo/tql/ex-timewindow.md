@@ -8,15 +8,15 @@ weight: 62
 
 Analyzing and visualizing data stored in a DATABASE, one of the most cumbersome tasks is the process of refining it when there is no data in the desired time range or when there are multiple data.
 
-For example, when you try to display an X-Y chart, the values stored at 1-second intervals on the X-axis, if you simply query the data with a SELECT query and input it into the chart library, the time interval between the retrieved records may be different (there could be no intermediate data or there are many dense data), making it impossible to process them in the desired format.
+For example, when you try to display an time-value chart in some fixed intervals, if you simply query the data with a SELECT query and input it into the chart library, the time interval between the retrieved records may be different from the chart's time-axis (there could be no intermediate data or there are many dense data in a timer-period), making it impossible to process them in the desired format.
 
-Usually, an application developer creates an array of fixed "time" intervals and iteratively fills the elements (slots) of the array by traversing the query result records. When there is already a value in the same slot, it is maintained as a single value through a specific operation (min, max, first, last), and at the last, slots without values are filled with arbitrary values (0 or NULL).
+Usually, application developers create an array of fixed "time" intervals and iteratively fills the elements (slots) of the array by traversing the query result records. When a slot has already a value, it is maintained as a single value through a specific operation (min, max, first, last, ...), and at the last, slots without values are filled with arbitrary values (0 or NULL).
 
-To alleviate the repetitive and cumbersome work in the application development process, a new TQL function called `TIMEWINDOW()` has been added in v8.0.5.
+To alleviate the repetitive and cumbersome work in the application development process, a new TQL function called `TIMEWINDOW()` has been introduced in v8.0.5.
 
 ### Syntax
 
-The syntax is as follows.
+The syntax is as follows. {{< neo_since ver="8.0.5" />}}
 
 ```js
 TIMEWINDOW(fromTime, untilTime, period, [nullValue], columns...)
