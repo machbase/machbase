@@ -44,7 +44,7 @@ In the last variadic arguments, specify the aggregation functions as string acco
 |:---------------- | :---------------------- |
 | `mean`           | mean                    |
 | `median`         | median (lower value)    |
-| `median-interpolated` | medial (lower interpolated value) |
+| `median-interpolated` | median (lower interpolated value) |
 | `stddev`         | standard deviation      |
 | `stderr`         | standard error          |
 | `entropy`        | entropy                 |
