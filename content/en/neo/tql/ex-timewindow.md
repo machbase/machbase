@@ -47,7 +47,7 @@ In the last variadic arguments, specify the aggregation functions as string acco
 | `median-interpolated` | median (lower interpolated value) |
 | `stddev`         | standard deviation      |
 | `stderr`         | standard error          |
-| `entropy`        | entropy                 |
+| `entropy`        | Shannon entropy of a distribution. The natural logarithm is used. |
 
 These statistic functions differ from the other aggregational functions above in that they hold all the values of the corresponding period in memory buffer and generate the value when the time window changed.
 
