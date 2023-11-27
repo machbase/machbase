@@ -19,12 +19,12 @@ CHART(
     theme("dark"),
     global({
         "legend":{ "show":true },
-        "grid": {
+        "grid": [{
             "left": "3%",
             "right": "4%",
             "bottom": "3%",
             "containLabel": true
-        }
+        }]
     }),
     series(
         {"type": "category"},

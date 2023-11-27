@@ -34,6 +34,8 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
             image="./img/basic_bar.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./examples/tangential_polar_bar" title="Tangential Polar Bar"
             image="./img/tangential_polar_bar.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./examples/bar_category" title="Category Bar"
+            image="./img/bar_category.jpg" method="Fill" options="600x q80 webp">}}
 {{< /cards >}}
 
 ### Scatter
@@ -43,11 +45,15 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
             image="./img/basic_scatter.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./examples/anscombe_quartet" title="Anscombe's quartet"
             image="./img/anscombe_quartet.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./examples/scatter_band" title="Scatter Band"
+            image="./img/scatter_band.jpg" method="Fill" options="600x q80 webp">}}
 {{< /cards >}}
 
-### Mix
+### Others
 
 {{< cards >}}
     {{< card link="./examples/basic_mix" title="Basic Mix" subtitle="Bar and Line Series"
             image="./img/basic_mix.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./examples/basic_pie" title="Basic Pie"
+            image="./img/basic_pie.jpg" method="Fill" options="600x q80 webp">}}
 {{< /cards >}}
