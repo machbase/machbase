@@ -4,6 +4,11 @@ type: docs
 weight: 43
 ---
 
+{{< callout type="error" >}}
+<b>WARNING</b><br/>
+The CHART() function is in **experimental** stage. The syntax of the function *will be changed* in the next releases without notices.
+{{< /callout >}}
+
 ## CHART
 {{< neo_since ver="8.0.7" />}}
 
