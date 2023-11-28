@@ -1,5 +1,5 @@
 ---
-title: Anscombe's quartet
+title: Tangential Polar Bar
 type: docs
 weight: 120
 ---
