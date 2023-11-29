@@ -1,5 +1,5 @@
 ---
-title: TIMEWINDOW
+title: TIMEWINDOW()
 type: docs
 weight: 62
 ---
@@ -55,7 +55,7 @@ These statistic functions differ from the other aggregational functions above in
 
 ### Basic
 
-Bringing the vibration data from [FFT example](../70.fft/). In the example, data is generated every 1ms, so there are 1,000 records within 1 second. Executing the following TQL produces data at 1-second intervals, and if there is no actual data (record) in the desired time period, it is filled with the default value NULL.
+Bringing the vibration data from the [Fast Fourier Transform](../fft/) example. In the example, data is generated every 1ms, so there are 1,000 records within 1 second. Executing the following TQL produces data at 1-second intervals, and if there is no actual data (record) in the desired time period, it is filled with the default value NULL.
 
 ```js
 SQL(`select time, value from example

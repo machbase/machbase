@@ -23,7 +23,7 @@ FAKE( json({
 MAPVALUE(0, time(value(0)))
 
 CHART(
-    global({
+    global({{
         "theme": "dark",
         "legend": {"show": false},
         "grid": [
@@ -32,7 +32,7 @@ CHART(
             { "left":  "7%", "bottom": "7%", "width": "38%", "height": "38%" },
             { "right": "7%", "bottom": "7%", "width": "38%", "height": "38%" }
         ]
-    }),
+    }}),
     xAxis(
         { "type":"time", "gridIndex": 0, "min": 1701059598000, "max": 1701059614000 },
         { "type":"time", "gridIndex": 1, "min": 1701059598000, "max": 1701059614000 },

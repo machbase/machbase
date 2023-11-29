@@ -1,7 +1,7 @@
 ---
-title: Charts
+title: CHART()
 type: docs
-weight: 43
+weight: 51
 ---
 
 {{< callout type="error" >}}

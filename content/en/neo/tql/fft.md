@@ -1,8 +1,10 @@
 ---
-title: Fast Fourier Transform
+title: FFT()
 type: docs
 weight: 70
 ---
+
+## Fast Fourier Transform
 
 {{< callout emoji="📌" >}}
 For smooth practice, the following query should be run to prepare tables and data.
