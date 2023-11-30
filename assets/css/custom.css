@@ -10,8 +10,8 @@
   white-space: nowrap;
   border-radius:5px;
   padding:2px 4px;
-  background-color:#059862!important;
-  color:#ffffff
+  background-color:rgb(122, 123, 122)!important;
+  color:#eaeaea
 }
 
 .d-inline-block {
