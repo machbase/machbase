@@ -24,7 +24,7 @@ Then unarchive the file into a preferred directory.
 Unarchive downloaded file.
 
 ```sh
-unzip machbase-neo-v${X.Y.Z}-${platform}-${arch}.zip
+unzip machbase-neo-{{< neo_latestver >}}-${platform}-${arch}.zip
 ```
 
 ### Confirm executable

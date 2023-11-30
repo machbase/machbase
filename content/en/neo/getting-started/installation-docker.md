@@ -19,7 +19,7 @@ $ docker pull machbase/machbase-neo
 If you want to get a specific version, add a tag to the command.
 
 ```sh
-$ docker pull machbase/machbase-neo:{{ site.latest_version }}
+$ docker pull machbase/machbase-neo:{{< neo_latestver >}}
 ```
 
 If you want to find a different version of the Docker image, look it up [here](https://hub.docker.com/r/machbase/machbase-neo/).
