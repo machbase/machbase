@@ -12,8 +12,12 @@ based the default packages from tengo.
 
 TQL can execute user defined script within `SCRIPT()` by passing codes inside `{`, `}`.
 
-If the script doesn't call `context.yield()` and `context.drop()` explicitly for the record,
+{{< callout type="info" >}}
+<b>IMPORTANT</b><br/>
+If the script doesn't call `context.yield()` and `context.drop()` explicitly for a record,
 it passes the record to the next function without any changes.
+{{< /callout >}}
+
 
 ![map_script](../img/map_script.jpg)
 
@@ -36,7 +40,7 @@ A context in the code of `SCRIPT()` provides serveral methods.
 
 Pass the incoming arguments to the next function.
 
-{{< tabs items="code,result">}}
+{{< tabs items="CODE,RESULT">}}
 {{< tab >}}
 ```js
 SCRIPT({
@@ -59,7 +63,7 @@ CSV()
 
 Returns the key of the current record.
 
-{{< tabs items="code,result">}}
+{{< tabs items="CODE,RESULT">}}
 {{< tab >}}
 ```js
 FAKE( linspace(1,2,2))
@@ -83,13 +87,13 @@ hello,2
 
 Returns the whole value of the current records in array. If the index is given, it returns the element of the values.
 
-For example, If the current value is `[0, true, "hello", "world"]`
+For example, If the current record is `[0, true, "hello", "world"]`
 
-- `context.value()` returns the whole value array `[0, true, "hello", "world"]`
-- `context.value(0)` returns the first element of the value `0`
-- `context.value(3)` returns the last element of the value `"world"`
+- `context.value()` returns the whole values of the record `[0, true, "hello", "world"]`
+- `context.value(0)` returns the first element of the record `0`
+- `context.value(3)` returns the last element of the record `"world"`
 
-{{< tabs items="code,result">}}
+{{< tabs items="CODE,RESULT">}}
 {{< tab >}}
 ```js
 FAKE( linspace(1,2,2))
@@ -114,7 +118,7 @@ CSV()
 
 Convert timestamp to a string.
 
-{{< tabs items="code,result">}}
+{{< tabs items="CODE,RESULT">}}
 {{< tab >}}
 ```js
 STRING(param("format_time") ?? "808210800000000000")
@@ -146,7 +150,7 @@ CSV()
 
 Convert a string to timestamp.
 
-{{< tabs items="code,result">}}
+{{< tabs items="CODE,RESULT">}}
 {{< tab >}}
 ```js
 STRING(param("timestamp") ?? "Sat Aug 12 00:00:00 -0700 MST 1995")
@@ -176,7 +180,7 @@ CSV()
 
 Parse JSON string.
 
-{{< tabs items="code,result">}}
+{{< tabs items="CODE,RESULT">}}
 {{< tab >}}
 ```js
 STRING(payload() ?? {{
@@ -225,7 +229,7 @@ Open a new *tql* editor on the web ui and copy the code below and run it.
 
 In this example, `linspace(-4,4,100)` generates an array contains 100 elements which are ranged from -4.0 to 4.0 in every `8/100` step. `meshgrid()` takes two array and produce meshed new array. As result of FAKE() in the example produces an array of 10000 elements (100 x 100 meshed) contains array of two float point numbers.
 `SCRIPT()` function takes a code block which enclosed by `{` and `}` and run it for each record.
-Users can takes the key and value of the records via `context.key()` and `context.value()` then yield transformed data via `context.yield()`.
+It takes the current record via `context.value()` then yield transformed data via `context.yield()`.
 
 {{< tabs items="CODE,RESULT">}}
 {{< tab >}}
