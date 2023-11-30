@@ -227,7 +227,7 @@ In this example, `linspace(-4,4,100)` generates an array contains 100 elements w
 `SCRIPT()` function takes a code block which enclosed by `{` and `}` and run it for each record.
 Users can takes the key and value of the records via `context.key()` and `context.value()` then yield transformed data via `context.yield()`.
 
-{{< tabs items="code,result">}}
+{{< tabs items="CODE,RESULT">}}
 {{< tab >}}
 ```js
 FAKE(meshgrid(linspace(-4,4,100), linspace(-4,4, 100)))
@@ -265,3 +265,28 @@ CHART_LINE3D(
 {{< /tab >}}
 {{< /tabs >}}
 
+The SCRIPT code above is actually equivalent with the TQL `MAPVALUE(2, ...)` function below.
+The math functions used in MAPVALUE became available {{< neo_since ver="8.0.6" />}}.
+
+{{< tabs items="CODE,RESULT">}}
+{{< tab >}}
+```js
+FAKE(meshgrid(linspace(-4,4,100), linspace(-4,4, 100)))
+MAPVALUE(2,
+    sin(pow(value(0), 2) + pow(value(1), 2)) / (pow(value(0), 2) + pow(value(1), 2))
+)
+CHART_LINE3D(
+  // chart size in HTML syntax
+  size('500px', '500px'),
+  // width, height, depth grids in percentage
+  gridSize(100,50,100),
+  lineWidth(5), visualMap(-0.1, 1),
+  // rotation speed in degree per sec.
+  autoRotate(20)
+)
+```
+{{< /tab >}}
+{{< tab >}}
+![web-tql-script-wave](/images/web-tql-script-wave.gif)
+{{< /tab >}}
+{{< /tabs >}}
