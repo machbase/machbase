@@ -48,6 +48,7 @@ In the last variadic arguments, specify the aggregation functions as string acco
 | `stddev`         | standard deviation      |
 | `stderr`         | standard error          |
 | `entropy`        | Shannon entropy of a distribution. The natural logarithm is used. |
+| `mode`  | {{< neo_since ver="8.0.7" />}} The most common value in the dataset. Strict float64 equality is used when comparing values, so users should take caution. If several values are the mode, any of them may be returned. |
 
 These statistic functions differ from the other aggregational functions above in that they hold all the values of the corresponding period in memory buffer and generate the value when the time window changed.
 
