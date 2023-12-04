@@ -19,32 +19,26 @@ The example tql code below gives a brief idea of what is TQL for.
 {{< tabs items="AVG,STDDEV">}}
 {{< tab >}}
 ```js
-CSV(file("https://machbase.com/assets/example/iris.csv"),
-    field(0, doubleType(), "sepal length"),
-    field(1, doubleType(), "sepal width"),
-    field(2, doubleType(), "petal length"),
-    field(3, doubleType(), "petal width"),
-    field(4, stringType(), "species")
+CSV(file("https://machbase.com/assets/example/iris.csv"))
+GROUP( by(value(4), "species"),
+    avg(value(0), "Avg. Sepal L."),
+    avg(value(1), "Avg. Sepal W."),
+    avg(value(2), "Avg. Petal L."),
+    avg(value(3), "Avg. Petal W.")
 )
-POPKEY(4)
-GROUPBYKEY("avg", "avg", "avg", "avg")
-PUSHKEY("result")
 CHART_BAR()
 ```
 ![groupbykey_stddev](./img/groupbykey_avg.jpg)
 {{</ tab >}}
 {{< tab >}}
 ```js
-CSV(file("https://machbase.com/assets/example/iris.csv"),
-    field(0, doubleType(), "sepal length"),
-    field(1, doubleType(), "sepal width"),
-    field(2, doubleType(), "petal length"),
-    field(3, doubleType(), "petal width"),
-    field(4, stringType(), "species")
+CSV(file("https://machbase.com/assets/example/iris.csv"))
+GROUP( by(value(4), "species"),
+    stddev(value(0), "Stddev Sepal L."),
+    stddev(value(1), "Stddev Sepal W."),
+    stddev(value(2), "Stddev Petal L."),
+    stddev(value(3), "Stddev Petal W.")
 )
-POPKEY(4)
-GROUPBYKEY("stddev", "stddev", "stddev", "stddev")
-PUSHKEY("result")
 CHART_BAR()
 ```
 ![groupbykey_stddev](./img/groupbykey_stddev.jpg)
