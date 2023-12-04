@@ -61,4 +61,6 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
             image="./img/basic_mix.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./examples/basic_pie" title="Basic Pie"
             image="./img/basic_pie.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./examples/line_airpassengers" title="Air Passengers"
+            image="./img/line_airpassengers.jpg" method="Fill" options="600x q80 webp">}}
 {{< /cards >}}
