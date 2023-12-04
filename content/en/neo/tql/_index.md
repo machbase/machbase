@@ -16,8 +16,9 @@ This chapter shows how to do this without developing additional applications.
 
 The example tql code below gives a brief idea of what is TQL for.
 
-{{< tabs items="AVG,STDDEV">}}
+{{< tabs items="AVG,STAT">}}
 {{< tab >}}
+- avg. values of each classes.
 ```js
 CSV(file("https://machbase.com/assets/example/iris.csv"))
 GROUP( by(value(4), "species"),
@@ -31,13 +32,16 @@ CHART_BAR()
 ![groupbykey_stddev](./img/groupbykey_avg.jpg)
 {{</ tab >}}
 {{< tab >}}
+- min, median, avg, max, stddev of sepal length of the setosa class.
 ```js
 CSV(file("https://machbase.com/assets/example/iris.csv"))
-GROUP( by(value(4), "species"),
-    stddev(value(0), "Stddev Sepal L."),
-    stddev(value(1), "Stddev Sepal W."),
-    stddev(value(2), "Stddev Petal L."),
-    stddev(value(3), "Stddev Petal W.")
+FILTER( strToUpper(value(4)) == "IRIS-SETOSA")
+GROUP( by(value(4)), 
+    min(value(0), "Min"),
+    median(value(0), "Median"),
+    avg(value(0), "Avg"),
+    max(value(0), "Max"),
+    stddev(value(0), "StdDev.")
 )
 CHART_BAR()
 ```
