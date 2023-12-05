@@ -5,7 +5,7 @@ weight: 420
 ---
 
 ```js
-CSV( file("https://machbase.com/assets/example/sotck-DJI.csv") )
+CSV( file("https://machbase.com/assets/example/stock-DJI.csv") )
 DROP(1) // drop header
 MAPVALUE(0, value(0), "date")
 MAPVALUE(1, parseFloat(value(1)), "open")
