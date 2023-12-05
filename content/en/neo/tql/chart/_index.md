@@ -61,6 +61,8 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
             image="./img/basic_candlestick.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./examples/candlestick_marketindex" title="Stock Index"
             image="./img/candlestick_marketindex.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./examples/stock_dji" title="Dow-Jones Index"
+            image="./img/stock_dji.jpg" method="Fill" options="600x q80 webp">}}
 {{< /cards >}}
 
 ### Others
