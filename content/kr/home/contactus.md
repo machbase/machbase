@@ -23,7 +23,7 @@ images:
       <div class="contact_inner">
         <form
           id="contactForm"
-          action="https://contact.machbase.com/contact"
+          action="https://stage.machbase.com/contact"
           method="post"
           enctype="utf-8"
         >
