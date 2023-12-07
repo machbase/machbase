@@ -5,7 +5,6 @@ weight: 310
 ---
 
 ```js
-
 FAKE( json({
     [1701059601000000000,  4.26, 3.1 ,  5.39, 12.5],
     [1701059602000000000,  5.68, 4.74,  5.73, 6.89],
@@ -21,82 +20,87 @@ FAKE( json({
 }) )
 
 MAPVALUE(0, time(value(0)))
-
+MAPVALUE(1, list(value(0), value(1)))
+MAPVALUE(2, list(value(0), value(2)))
+MAPVALUE(3, list(value(0), value(3)))
+MAPVALUE(4, list(value(0), value(4)))
 CHART(
-    global({{
-        "theme": "dark",
-        "legend": {"show": false},
+    theme("dark"),
+    chartOption({
+        "title": {
+            "text": "Anscombe's quartet",
+            "left": "center",
+            "top": 0
+        },
         "grid": [
             { "left":  "7%", "top": "7%", "width": "38%", "height": "38%" },
             { "right": "7%", "top": "7%", "width": "38%", "height": "38%" },
             { "left":  "7%", "bottom": "7%", "width": "38%", "height": "38%" },
             { "right": "7%", "bottom": "7%", "width": "38%", "height": "38%" }
-        ]
-    }}),
-    xAxis(
-        { "type":"time", "gridIndex": 0, "min": 1701059598000, "max": 1701059614000 },
-        { "type":"time", "gridIndex": 1, "min": 1701059598000, "max": 1701059614000 },
-        { "type":"time", "gridIndex": 2, "min": 1701059598000, "max": 1701059614000 },
-        { "type":"time", "gridIndex": 3, "min": 1701059598000, "max": 1701059614000 }
-    ),
-    yAxis(
-        { "gridIndex": 0, "min": 0, "max": 15 },
-        { "gridIndex": 1, "min": 0, "max": 15 },
-        { "gridIndex": 2, "min": 0, "max": 15 },
-        { "gridIndex": 3, "min": 0, "max": 15 }
-    ),
-    series(
-        {   "type": "time" },
-        {   "name": "I",
-            "type": "scatter",
-            "xAxisIndex": 0,
-            "yAxisIndex": 0,
-            "markLine": {
-                "symbol": ["none", "none"],
-                "data": [
-                    [ {"coord": [1701059598000, 3]}, {"coord": [1701059614000, 13]} ]
-                ]
-            }
-        },
-        {   "name": "II",
-            "type": "scatter",
-            "xAxisIndex": 1,
-            "yAxisIndex": 1,
-            "markLine": {
-                "symbol": ["none", "none"],
-                "data": [
-                    [ {"coord": [1701059598000, 3]}, {"coord": [1701059614000, 13]} ]
-                ]
-            }
-        },
-        {
-            "name": "III",
-            "type": "scatter",
-            "xAxisIndex": 2,
-            "yAxisIndex": 2,
-            "markLine": {
-                "symbol": ["none", "none"],
-                "data": [
-                    [ {"coord": [1701059598000, 3]}, {"coord": [1701059614000, 13]} ]
-                ]
-            }
-        },
-        {
-            "name": "IV",
-            "type": "scatter",
-            "xAxisIndex": 3,
-            "yAxisIndex": 3,
-            "markLine": {
-                "symbol": ["none", "none"],
-                "data": [
-                    [
-                        {"coord": [1701059598000, 3]},
-                        {"coord": [1701059614000, 13]}
+        ],
+        "xAxis": [
+            { "gridIndex": 0, "type":"time", "min": 1701059598000, "max": 1701059614000 },
+            { "gridIndex": 1, "type":"time", "min": 1701059598000, "max": 1701059614000 },
+            { "gridIndex": 2, "type":"time", "min": 1701059598000, "max": 1701059614000 },
+            { "gridIndex": 3, "type":"time", "min": 1701059598000, "max": 1701059614000 }
+        ],
+        "yAxis": [
+            { "gridIndex": 0, "min": 0, "max": 15 },
+            { "gridIndex": 1, "min": 0, "max": 15 },
+            { "gridIndex": 2, "min": 0, "max": 15 },
+            { "gridIndex": 3, "min": 0, "max": 15 }
+        ],
+        "series": [
+            {   "name": "I",
+                "type": "scatter",
+                "data": value(1),
+                "xAxisIndex": 0,
+                "yAxisIndex": 0,
+                "markLine": {
+                    "animation":false,
+                    "data": [
+                        [ {"coord": [1701059598000, 3], "symbol": "none"}, {"coord": [1701059614000, 13], "symbol": "none"} ]
                     ]
-                ]
+                }
+            },
+            {   "name": "II",
+                "type": "scatter",
+                "data": value(2),
+                "xAxisIndex": 1,
+                "yAxisIndex": 1,
+                "markLine": {
+                    "animation":false,
+                    "data": [
+                        [ {"coord": [1701059598000, 3], "symbol": "none"}, {"coord": [1701059614000, 13], "symbol": "none"} ]
+                    ]
+                }
+            },
+            {   "name": "III",
+                "type": "scatter",
+                "data": value(3),
+                "xAxisIndex": 2,
+                "yAxisIndex": 2,
+                "markLine": {
+                    "animation":false,
+                    "data": [
+                        [ {"coord": [1701059598000, 3], "symbol": "none"}, {"coord": [1701059614000, 13], "symbol": "none"} ]
+                    ]
+                }
+            },
+            {   "name": "IV",
+                "type": "scatter",
+                "data": value(4),
+                "xAxisIndex": 3,
+                "yAxisIndex": 3,
+                "markLine": {
+                    "animation": false,
+                    "data": [
+                        [ {"coord": [1701059598000, 3], "symbol": "none"}, {"coord": [1701059614000, 13], "symbol": "none"} ]
+                    ]
+                }
             }
-        }
-    )
+        ]
+    })
 )
 ```
 

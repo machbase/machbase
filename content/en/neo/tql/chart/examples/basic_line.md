@@ -5,14 +5,23 @@ weight: 10
 ---
 
 ```js
-FAKE( linspace(0, 360, 100) )
-MAPVALUE( 2, sin((value(0)/180)*PI) )
+FAKE( linspace(0, 360, 100))
+MAPVALUE(2, sin((value(0)/180)*PI))
 CHART(
     theme("dark"),
-    series(
-        {"type": "value"},
-        {"type": "line", "name": "value"}
-    )
+    chartOption({
+        "xAxis": {
+            "type": "category",
+            "data": value(0)
+        },
+        "yAxis": {},
+        "series": [
+            {
+                "type": "line",
+                "data": value(1)
+            }
+        ]
+    })
 )
 ```
 

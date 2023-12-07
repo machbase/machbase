@@ -16,13 +16,14 @@ FAKE( json({
 }) )
 CHART(
     theme("dark"),
-    global({
-        "legend":{"show":false}
-    }),
-    series(
-        {"type": "category"},
-        {"type": "line","smooth":false, "color":"#7585CE", "areaStyle":{}}
-    )
+    chartOption({
+        "legend":{"show":false},
+        "xAxis": {"type": "category", "data": value(0) },
+        "yAxis": {},
+        "series":[
+            {"type": "line","smooth":false, "color":"#7585CE", "areaStyle":{}, "data": value(1)}
+        ]
+    })
 )
 ```
 

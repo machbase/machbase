@@ -5,7 +5,7 @@ weight: 410
 ---
 
 ```js
-//   date       open     close    lowest  highest
+//            open     close    lowest  highest
 FAKE(json({
   ["2013/1/24", 2320.26, 2320.26, 2287.3, 2362.94],
   ["2013/1/25", 2300, 2291.3, 2288.26, 2308.38],
@@ -107,36 +107,55 @@ POPVALUE(2, 3, 4)
 
 CHART(
     theme("dark"),
-    yAxis({
-        "min": 2100,
-        "max": 2500
-    }),
-    dataZoom("slider", 0, 50),
-    series(
-        {
-            "type": "category"
-        },
-        {
-            "name": "日K",
-            "type": "candlestick"
-        },
-        {
-            "name": "MA5",
-            "type": "line"
-        },
-        {
-            "name": "MA10",
-            "type": "line"
-        },
-        {
-            "name": "MA20",
-            "type": "line"
-        },
-        {
-            "name": "MA30",
-            "type": "line"
-        }
-    )
+    chartOption({
+        "xAxis": { "type": "category", "data": value(0) },
+        "yAxis": { "min": 2100, "max": 2500 },
+        "dataZoom": [
+            { "type": "inside", "start": 50, "end": 100 },
+            { "show": true, "type": "slider", "top": "90%", "start": 50, "end": 100 }
+        ],
+        "series": [
+            {
+                "name": "日K",
+                "data": value(1),
+                "type": "candlestick",
+                "itemStyle": {
+                    "color": "#ec0000",
+                    "color0": "#00da3c",
+                    "borderColor": "#8A0000",
+                    "borderColor0": "#008F28"
+                }
+            },
+            {
+                "name": "MA5",
+                "data": value(2),
+                "type": "line",
+                "smooth": true,
+                "lineStyle": { "opacity": 0.5 }
+            },
+            {
+                "name": "MA10",
+                "data": value(3),
+                "type": "line",
+                "smooth": true,
+                "lineStyle": { "opacity": 0.5 }
+            },
+            {
+                "name": "MA20",
+                "data": value(4),
+                "type": "line",
+                "smooth": true,
+                "lineStyle": { "opacity": 0.5 }
+            },
+            {
+                "name": "MA30",
+                "data": value(5),
+                "type": "line",
+                "smooth": true,
+                "lineStyle": { "opacity": 0.5 }
+            }
+        ]
+    })
 )
 ```
 

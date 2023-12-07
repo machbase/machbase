@@ -15,23 +15,23 @@ FAKE( json({
     ["Sun", 210, 410, 510]
 }) )
 CHART(
-    toolboxSaveAsImage("step-line.jpg"),
     theme("dark"),
-    global({
+    chartOption({
         "legend":{ "show":true },
         "grid": [{
             "left": "3%",
             "right": "4%",
             "bottom": "3%",
             "containLabel": true
-        }]
-    }),
-    series(
-        {"type": "category"},
-        {"type": "line", "smooth":false, "step": "start", "name": "Step Start"},
-        {"type": "line", "smooth":false, "step": "middle", "name": "Step Middle"},
-        {"type": "line", "smooth":false, "step": "end", "name": "Step End"}
-    )
+        }],
+        "xAxis": { "type": "category", "data": value(0) },
+        "yAxis": {},
+        "series": [
+            {"type": "line", "data": value(1), "step": "start", "name": "Step Start"},
+            {"type": "line", "data": value(2), "step": "middle", "name": "Step Middle"},
+            {"type": "line", "data": value(3), "step": "end", "name": "Step End"}
+        ]
+    })
 )
 ```
 

@@ -24,10 +24,13 @@ MAPVALUE(1, parseFloat(value(1)))
 
 CHART(
     theme("dark"),
-    series(
-        {"type": "category"},
-        {"type": "line", "name": "passengers", "smooth": false}
-    )
+    chartOption({
+        "xAxis": { "data": value(0) },
+        "yAxis": {},
+        "series": [
+            {"type": "line", "name": "passengers", "smooth": false, "data": value(1)}
+        ]
+    })
 )
 ```
 

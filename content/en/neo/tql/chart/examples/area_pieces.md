@@ -19,50 +19,43 @@ FAKE(
     })
 )
 
+MAPVALUE(0, list(value(0), value(1)))
+
 CHART(
-    global({
-        "title": {"text": "Area Pieces"},
-        "theme": "dark",
-        "legend": {"show": false},
-        "visualmap":[{
+    theme("dark"),
+    chartOption({
+        "title": { "text": "Area Pieces" },
+        "xAxis": { "type": "category", "boundaryGap": false },
+        "yAxis": { "type": "value", "boundaryGap": [0, "30%"] },
+        "visualMap":{
             "type": "piecewise",
             "show": false,
-            "dimension": "0",
+            "dimension": 0,
             "seriesIndex": 0,
             "pieces": [
-                {
-                    "gt": 1,
-                    "lt": 3,
-                    "color": "#00F8"
-                },
-                {
-                    "gt": 5,
-                    "lt": 7,
-                    "color": "#00F8"
-                }
+                { "gt": 1, "lt": 3, "color": "rgba(0, 0, 180, 0.4)" },
+                { "gt": 5, "lt": 7, "color": "rgba(0, 0, 180, 0.4)" }
             ]
-        }]
-    }),
-    series(
-        {
-            "type": "category"
         },
-        {
-            "type": "line",
-            "smooth": true,
-            "symbol": "none",
-            "lineStyle": {
-                "color": "#5470C6",
-                "width": 5
-            },
-            "areaStyle":{},
-            "markLine": {
-                "symbol": ["none", "none"],
-                "label": { "show": false },
-                "data": [{ "xAxis": 1 }, { "xAxis": 3 }, { "xAxis": 5 }, { "xAxis": 7 }]
-            }
-        }
-    )
+        "series": [
+            {
+                "type": "line",
+                "smooth": 0.6,
+                "symbol": "none",
+                "data": value(0),
+                "lineStyle": {
+                    "color": "#5470C6",
+                    "width": 5
+                },
+                "areaStyle":{},
+                "markLine": {
+                    "symbol": ["none", "none"],
+                    "label": { "show": false },
+                    "data": [{ "xAxis": 1 }, { "xAxis": 3 }, { "xAxis": 5 }, { "xAxis": 7 }]
+                }
+            }   
+        ]
+    })
 )
 ```
 

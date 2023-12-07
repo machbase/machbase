@@ -12,34 +12,38 @@ FAKE( json({
     ["Union Ads"    ,  484 ],
     ["Video Ads"    ,  300 ]
 }) )
-
+MAPVALUE(0, list(value(0), value(1)))
 CHART(
-    global({
-        "theme": "dark",
+    theme("dark"),
+    chartOption({
         "tooltip": {
             "trigger": "item"
         },
         "legend": {
             "orient": "vertical",
             "left": "left"
-        }
-    }),
-    series(
-        {
-            "type": "category"
         },
-        {
-            "name": "Access From",
-            "type": "pie",
-            "radius": "70%",
-            "emphasis": {
-                "itemStyle": {
-                    "borderWidth": 10,
-                    "borderColor": "#0002"
+        "dataset": [
+            {
+                "source": value(0)
+            }
+        ],
+        "series": [
+            {
+                "name": "Access From",
+                "type": "pie",
+                "radius": "70%",
+                "datasetIndex": 0,
+                "emphasis": {
+                    "itemStyle": {
+                        "shadowBlur": 10,
+                        "shadowOffsetX": 0,
+                        "shadowColor": "rgba(0, 0, 0, 0.5)"
+                    }
                 }
             }
-        }
-    )
+        ]
+    })
 )
 ```
 

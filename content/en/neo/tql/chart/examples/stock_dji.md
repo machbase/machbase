@@ -26,8 +26,8 @@ POPVALUE(2,3,4)
 // chart
 CHART(
     theme("dark"),
-    global({
-        "legend":{"bottom": "8%", "left": "center"},
+    chartOption({
+        "legend":{"bottom": "1%", "left": "center"},
         "grid": [
             {
                 "left": "10%",
@@ -37,7 +37,7 @@ CHART(
             {
                 "left": "10%",
                 "right": "8%",
-                "top": "68%",
+                "top": "73%",
                 "height": "16%"
             }
         ],
@@ -59,96 +59,97 @@ CHART(
                 "show": true,
                 "type": "slider",
                 "xAxisIndex": [0, 1],
-                "top": "75%",
+                "top": "65%",
                 "start": 98,
                 "end": 100
             }
+        ],
+        "xAxis": [
+            {
+                "type": "category",
+                "name": "",
+                "data": value(0),
+                "boundaryGap": false,
+                "axisLine": {"onZero": false}
+            },
+            {
+                "type": "category",
+                "name": "",
+                "gridIndex": 1,
+                "data": value(0),
+                "axisLine": { "onZero": false },
+                "axisLabel": { "show": false}
+            }
+        ],
+        "yAxis": [
+            {
+                "name": "date",
+                "scale": true
+            },
+            {
+                "name": "",
+                "scale": true,
+                "gridIndex": 1,
+                "splitNumber": 2,
+                "axisLabel": { "show": false }
+            }
+        ],
+        "series": [
+            {
+                "name": "Dow-Jones Index",
+                "type": "candlestick",
+                "data": value(1),
+                "smooth": true,
+                "itemStyle": {
+                    "color": "#ec0000",
+                    "color0": "#00da3c",
+                    "borderColor": "#ec0000",
+                    "borderColor0": "#00da3c",
+                    "borderWidth": 0
+                }
+            },
+            {
+                "name": "Volume",
+                "type": "bar",
+                "data": value(2),
+                "xAxisIndex": 1,
+                "yAxisIndex": 1
+            },
+            {
+                "name": "MA5",
+                "type": "line",
+                "data": value(3),
+                "lineStyle": {
+                    "opacity": 0.5
+                }
+            },
+            {
+                "name": "MA10",
+                "type": "line",
+                "data": value(4),
+                "lineStyle": {
+                    "opacity": 0.5
+                }
+            },
+            {
+                "name": "MA20",
+                "type": "line",
+                "data": value(5),
+                "lineStyle": {
+                    "opacity": 0.5
+                }
+            },
+            {
+                "name": "MA30",
+                "type": "line",
+                "data": value(6),
+                "lineStyle": {
+                    "opacity": 0.5
+                }
+            }
+
         ]
-    }),
-    xAxis(
-        {
-            "type": "category",
-            "name": "",
-            "boundaryGap": false,
-            "axisLine": {"onZero": false}
-        },
-        {
-            "type": "category",
-            "name": "",
-            "gridIndex": 1,
-            "axisLine": { "onZero": false },
-            "axisLabel": { "show": false}
-        }
-    ),
-    yAxis(
-        {
-            "name": "",
-            "scale": true
-        },
-        {
-            "name": "",
-            "scale": true,
-            "gridIndex": 1,
-            "splitNumber": 2,
-            "axisLabel": { "show": false }
-        }
-    ),
-    series(
-        {
-            "name": "date",
-            "type": "category"
-        },
-        {
-            "name": "Dow-Jones Index",
-            "type": "candlestick",
-            "smooth": true,
-            "itemStyle": {
-                "color": "#ec0000",
-                "color0": "#00da3c",
-                "borderColor": "#ec0000",
-                "borderColor0": "#00da3c",
-                "borderWidth": 0
-            }
-        },
-        {
-            "name": "Volume",
-            "type": "bar",
-            "xAxisIndex": 1,
-            "yAxisIndex": 1,
-            "itemStyle": {
-                "color": "#8e8e8e",
-                "borderWidth": 0
-            }
-        },
-        {
-            "name": "MA5",
-            "type": "line",
-            "lineStyle": {
-                "opacity": 0.5
-            }
-        },
-        {
-            "name": "MA10",
-            "type": "line",
-            "lineStyle": {
-                "opacity": 0.5
-            }
-        },
-        {
-            "name": "MA20",
-            "type": "line",
-            "lineStyle": {
-                "opacity": 0.5
-            }
-        },
-        {
-            "name": "MA30",
-            "type": "line",
-            "lineStyle": {
-                "opacity": 0.5
-            }
-        }
-    )
+    })
 )
 ```
 

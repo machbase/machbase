@@ -15,26 +15,21 @@ FAKE( json({
 }) )
 CHART(
     theme("dark"),
-    global({
-        "legend": { "show":true },
+    chartOption({
+        "legend":{"show":true},
         "tooltip": {
             "trigger": "axis",
             "axisPointer": {
                 "type": "shadow"
             }
-        }
-    }),
-    xAxis({
-        "type": "category"
-    }),
-    yAxis({
-        "type": "value"
-    }),
-    series(
-        {"type": "category"},
-        {"type": "bar", "name": "2011"},
-        {"type": "bar", "name": "2012"}
-    )
+        },
+        "xAxis": { "type": "category" },
+        "yAxis": { },
+        "series": [
+            { "type": "bar", "name": "2011", "data": value(1) },
+            { "type": "bar", "name": "2022", "data": value(2) }
+        ]
+    })
 )
 ```
 
