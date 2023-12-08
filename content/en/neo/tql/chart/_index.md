@@ -65,6 +65,17 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
             image="./img/stock_dji.jpg" method="Fill" options="600x q80 webp">}}
 {{< /cards >}}
 
+### Liquidfill
+
+{{< cards >}}
+    {{< card link="./examples/liquidfill" title="Liquid Fill"
+            image="./img/liquidfill.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./examples/liquidfill_multiple" title="Multiple Waves"
+            image="./img/liquidfill_multiple.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./examples/liquidfill_still" title="Still Wave"
+            image="./img/liquidfill_still.jpg" method="Fill" options="600x q80 webp">}}
+{{< /cards >}}
+
 ### Others
 
 {{< cards >}}
