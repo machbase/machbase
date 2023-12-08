@@ -43,6 +43,17 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
             image="./img/bar_category.jpg" method="Fill" options="600x q80 webp">}}
 {{< /cards >}}
 
+### Pie
+
+{{< cards >}}
+    {{< card link="./examples/basic_pie" title="Basic Pie"
+            image="./img/basic_pie.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./examples/doughnut" title="Doughnut"
+            image="./img/doughnut.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./examples/nightingale" title="Nightingale"
+            image="./img/nightingale.jpg" method="Fill" options="600x q80 webp">}}
+{{< /cards >}}
+
 ### Scatter
 
 {{< cards >}}
@@ -81,8 +92,8 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
 {{< cards >}}
     {{< card link="./examples/basic_mix" title="Basic Mix" subtitle="Bar and Line Series"
             image="./img/basic_mix.jpg" method="Fill" options="600x q80 webp">}}
-    {{< card link="./examples/basic_pie" title="Basic Pie"
-            image="./img/basic_pie.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./examples/basic_radar" title="Radar"
+            image="./img/basic_radar.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./examples/line_airpassengers" title="Air Passengers"
             image="./img/line_airpassengers.jpg" method="Fill" options="600x q80 webp">}}
 {{< /cards >}}
