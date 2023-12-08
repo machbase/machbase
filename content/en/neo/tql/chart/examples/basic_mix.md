@@ -1,5 +1,5 @@
 ---
-title: Basic Scatter Chart
+title: Basic Mix
 type: docs
 weight: 900
 ---
@@ -10,11 +10,14 @@ MAPVALUE(1, sin((value(0)/180)*PI))
 MAPVALUE(2, cos((value(0)/180)*PI))
 CHART(
     theme("dark"),
-    series(
-        {"type": "value"},
-        {"type": "bar", "name": "SIN"},
-        {"type": "line", "name": "COS", "color":"#093"}
-    )
+    chartOption({
+        "xAxis": { "data": value(0) },
+        "yAxis": {},
+        "series": [
+            {"type": "bar", "name": "SIN", "data": value(1)},
+            {"type": "line", "name": "COS", "color":"#093", "data": value(2)}
+        ]
+    })
 )
 ```
 

@@ -17,16 +17,20 @@ FAKE( json({
 
 CHART(
     theme("dark"),
-    series(
-        {"type": "category", "smooth":false},
-        {"type": "line", "smooth":false, "name": "email", "stack": "total", "areaStyle":{} },
-        {"type": "line", "smooth":false, "name": "ads", "stack": "total", "areaStyle":{} },
-        {"type": "line", "smooth":false, "name": "video", "stack": "total", "areaStyle":{} },
-        {"type": "line", "smooth":false, "name": "direct", "stack": "total", "areaStyle":{} },
-        {"type": "line", "smooth":false, "name": "search", "stack": "total", "areaStyle":{},
-            "label": {"show": true, "position": "top"}
-        }
-    )
+    chartOption({
+        "xAxis": {"data": value(0)},
+        "yAxis": {},
+        "animation": false,
+        "series": [
+            {"type": "line", "data":value(1), "name": "email", "stack": "total", "areaStyle":{} },
+            {"type": "line", "data":value(2), "name": "ads", "stack": "total", "areaStyle":{} },
+            {"type": "line", "data":value(3), "name": "video", "stack": "total", "areaStyle":{} },
+            {"type": "line", "data":value(4), "name": "direct", "stack": "total", "areaStyle":{} },
+            {"type": "line", "data":value(5), "name": "search", "stack": "total", "areaStyle":{},
+                "label": {"show": true, "position": "top"}
+            }
+        ]
+    })
 )
 ```
 

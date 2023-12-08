@@ -10,7 +10,7 @@ The CHART() function is in **experimental** stage. The syntax of the function *w
 {{< /callout >}}
 
 ## CHART
-{{< neo_since ver="8.0.7" />}}
+{{< neo_since ver="8.0.8" />}}
 
 The new `CHART()` provides more fine-tuned options to create attractive charts.
 It is the new version of API that replaces for the previous `CHART_LINE()`, `CHART_BAR()` and `CHART_SCATTER` functions.
@@ -50,8 +50,8 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
             image="./img/basic_scatter.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./examples/anscombe_quartet" title="Anscombe's quartet"
             image="./img/anscombe_quartet.jpg" method="Fill" options="600x q80 webp">}}
-    {{< card link="./examples/scatter_band" title="Scatter Band"
-            image="./img/scatter_band.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./examples/million_points" title="1M Points"
+            image="./img/million_points.jpg" method="Fill" options="600x q80 webp">}}
 {{< /cards >}}
 
 ### Candlestick
@@ -63,6 +63,17 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
             image="./img/candlestick_marketindex.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./examples/stock_dji" title="Dow-Jones Index"
             image="./img/stock_dji.jpg" method="Fill" options="600x q80 webp">}}
+{{< /cards >}}
+
+### Liquidfill
+
+{{< cards >}}
+    {{< card link="./examples/liquidfill" title="Liquid Fill"
+            image="./img/liquidfill.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./examples/liquidfill_multiple" title="Multiple Waves"
+            image="./img/liquidfill_multiple.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./examples/liquidfill_still" title="Still Wave"
+            image="./img/liquidfill_still.jpg" method="Fill" options="600x q80 webp">}}
 {{< /cards >}}
 
 ### Others

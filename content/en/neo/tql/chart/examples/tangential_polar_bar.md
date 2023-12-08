@@ -13,27 +13,30 @@ FAKE( json({
 }) )
 
 CHART(
-    global({
-        "theme": "dark",
-        "polar": { "radius": ["30", "90%"] },
-        "angleAxis": { "max": 4, "startAngle": 90 },
-        "radiusAxis": {
-            "type": "category"
+    theme("dark"),
+    chartOption({
+        "title": {
+            "text": "Tangential Polar Bar Label Position (middle)"
         },
-        "legend":{"show":false},
-        "tooltip": {}
-    }),
-    series(
-        {   "type": "category"},
-        {   "type": "bar",
+        "polar": { "radius": [30, "80%"] },
+        "radiusAxis": {
+            "type": "category",
+            "data": value(0)
+        },
+        "angleAxis": { "max": 4, "startAngle": 90 },
+        "tooltip": {},
+        "series": {   
+            "type": "bar",
             "coordinateSystem": "polar",
+            "data": value(1),
             "label": {
                 "show": true,
-                "position": "middle"
+                "position": "middle",
+                "formatter": "{b}: {c}"
             }
         }
-    )
-)
+    })
+ )
 ```
 
 ![basic_line](../../img/tangential_polar_bar.jpg)
