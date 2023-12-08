@@ -1,5 +1,5 @@
 ---
-title: Liquidfill Still Wave
+title: Liquidfill Still Waves
 type: docs
 weight: 520
 ---

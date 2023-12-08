@@ -1,5 +1,5 @@
 ---
-title: Stacked Line Chart
+title: Step Line
 type: docs
 weight: 60
 ---

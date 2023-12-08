@@ -1,5 +1,5 @@
 ---
-title: Stacked Line Chart
+title: Stacked Area Chart
 type: docs
 weight: 40
 ---
