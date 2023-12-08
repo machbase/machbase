@@ -14,7 +14,12 @@ CHART(
     plugins("liquidfill"),
     chartOption({
         "series": [
-            { "type": "liquidFill", "data": value(0) }
+            {
+                "type": "liquidFill",
+                "data": value(0),
+                "amplitude": 0,
+                "waveAnimation": 0
+            }
         ]
     })
 )
