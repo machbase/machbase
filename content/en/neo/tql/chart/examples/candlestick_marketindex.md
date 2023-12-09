@@ -99,10 +99,10 @@ FAKE(json({
 
 //  date          open      close     lowest    highest
 MAPVALUE(1, list(value(1), value(2), value(3), value(4)), "data")
-MAPVALUE(5, movavg(value(2), 5), "MA5")
-MAPVALUE(6, movavg(value(2), 10), "MA10")
-MAPVALUE(7, movavg(value(2), 20), "MA20")
-MAPVALUE(8, movavg(value(2), 30), "MA30")
+MAP_MOVAVG(5, value(2), 5, "MA5")
+MAP_MOVAVG(6, value(2), 10, "MA10")
+MAP_MOVAVG(7, value(2), 20, "MA20")
+MAP_MOVAVG(8, value(2), 30, "MA30")
 POPVALUE(2, 3, 4)
 
 CHART(

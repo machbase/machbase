@@ -14,10 +14,10 @@ MAPVALUE(3, parseFloat(value(3)), "lowest")
 MAPVALUE(4, parseFloat(value(4)), "highest")
 MAPVALUE(5, parseFloat(value(5)), "volume")
 
-MAPVALUE(6, movavg(value(2), 5), "MA5")
-MAPVALUE(7, movavg(value(2), 10), "MA10")
-MAPVALUE(8, movavg(value(2), 20), "MA20")
-MAPVALUE(9, movavg(value(2), 30), "MA30")
+MAP_MOVAVG(6, value(2), 5, "MA5")
+MAP_MOVAVG(7, value(2), 10, "MA10")
+MAP_MOVAVG(8, value(2), 20, "MA20")
+MAP_MOVAVG(9, value(2), 30, "MA30")
 
 //make data shape 
 MAPVALUE(1, list(value(1), value(2), value(3), value(4)), "DJI")
@@ -25,7 +25,7 @@ POPVALUE(2,3,4)
 //  |    0    1                            2      3   4    5    6
 //  +-> date [open,close,lowest,highest]  volume MA5 MA10 MA20 MA30
 
-MAPVALUE(7, diff(value(2)))
+MAP_DIFF(7, value(2))
 //  |    0    1                            2      3   4    5    6     7
 //  +-> date [open,close,lowest,highest]  volume MA5 MA10 MA20 MA30  volumneDiff
 
@@ -40,7 +40,7 @@ POPVALUE(7)
 
 // chart
 CHART(
-    chartJSFunction({
+    chartJSCode({
         function tooltipPosition(pos, params, el, elRect, size) {
             const obj = {
                 top: 10
