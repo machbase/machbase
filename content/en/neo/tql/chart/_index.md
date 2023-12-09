@@ -4,12 +4,6 @@ type: docs
 weight: 51
 ---
 
-{{< callout type="info" >}}
-<b>WARNING</b><br/>
-The CHART() function is in **beta** stage.
-{{< /callout >}}
-
-## CHART
 {{< neo_since ver="8.0.8" />}}
 
 The new `CHART()` provides more fine-tuned options to create attractive charts.

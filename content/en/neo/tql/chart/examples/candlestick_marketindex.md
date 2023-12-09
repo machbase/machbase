@@ -113,6 +113,11 @@ CHART(
             { "type": "inside", "start": 50, "end": 100 },
             { "show": true, "type": "slider", "top": "90%", "start": 50, "end": 100 }
         ],
+        "toolbox": {
+            "feature": {
+                "saveAsImage": { "show": true, "title": "save as image", "name": "stock" }
+            }
+        },
         "series": [
             {
                 "name": "日K",

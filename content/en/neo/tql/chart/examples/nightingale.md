@@ -20,7 +20,7 @@ CHART(
         "toolbox": {
             "show": true,
             "feature": {
-                "saveAsImage": { "show": true, "title": "save as image" }
+                "saveAsImage": { "show": true, "title": "save as image", "name": "sample" }
             }
         },
         "series": [

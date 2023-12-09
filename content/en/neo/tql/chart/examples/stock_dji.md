@@ -78,6 +78,7 @@ CHART(
         },
         "toolbox": {
             "feature": {
+                "saveAsImage": { "show": true, "title": "save as image", "name": "dji" },
                 "dataZoom": {
                     "yAxisIndex": false,
                     "title": { "zoom": "zoom", "back": "restore"}
