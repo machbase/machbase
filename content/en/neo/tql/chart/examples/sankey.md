@@ -16,7 +16,6 @@ b1,c,2
 MAPVALUE(0, dict("source", value(0), "target", value(1), "value", value(2)))
 POPVALUE(1,2)
 CHART(
-    theme("dark"),
     chartOption({
         "series": {
             "type": "sankey",

@@ -23,7 +23,6 @@ MAPVALUE(0,
 MAPVALUE(1, parseFloat(value(1)))
 
 CHART(
-    theme("dark"),
     chartOption({
         "xAxis": { "data": value(0) },
         "yAxis": {},

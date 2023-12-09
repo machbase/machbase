@@ -9,7 +9,6 @@ FAKE( linspace(0, 360, 50))
 MAPVALUE(1, sin((value(0)/180)*PI))
 MAPVALUE(2, cos((value(0)/180)*PI))
 CHART(
-    theme("dark"),
     chartOption({
         "xAxis": { "data": value(0) },
         "yAxis": {},

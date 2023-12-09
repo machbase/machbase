@@ -102,4 +102,6 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
             image="./img/sankey.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./examples/gauge" title="Basic Gauge"
             image="./img/gauge.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./examples/wordcloud" title="Word Cloud"
+            image="./img/wordcloud.jpg" method="Fill" options="600x q80 webp">}}
 {{< /cards >}}

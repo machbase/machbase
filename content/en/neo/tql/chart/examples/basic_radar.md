@@ -15,7 +15,6 @@ MAPVALUE(1, list(value(1), value(2), value(3), value(4), value(5), value(6)))
 MAPVALUE(1, dict("name", value(0), "value", value(1)))
 POPVALUE(2,3,4,5,6)
 CHART(
-    theme("dark"),
     chartOption({
         "title": { "text": "Basic Radar Chart" },
         "legend": {
