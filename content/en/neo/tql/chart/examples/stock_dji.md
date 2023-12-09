@@ -19,15 +19,80 @@ MAPVALUE(7, movavg(value(2), 10), "MA10")
 MAPVALUE(8, movavg(value(2), 20), "MA20")
 MAPVALUE(9, movavg(value(2), 30), "MA30")
 //make data shape 
-// => date   [open,close,lowest,highest]       volume MA5 MA10 MA20 MA30
 MAPVALUE(1, list(value(1), value(2), value(3), value(4)), "DJI")
 POPVALUE(2,3,4)
+//  |    0    1                            2      3   4    5    6
+//  +-> date [open,close,lowest,highest]  volume MA5 MA10 MA20 MA30
+
+MAPVALUE(7, diff(value(2)))
+//  |    0    1                            2      3   4    5    6     7
+//  +-> date [open,close,lowest,highest]  volume MA5 MA10 MA20 MA30  volumneDiff
+
+MAPVALUE(7, value(7) == NULL || value(7) > 0 ? 1 : -1)
+//  |    0    1                            2      3   4    5    6     7
+//  +-> date [open,close,lowest,highest]  volume MA5 MA10 MA20 MA30  (1 or -1)
+
+MAPVALUE(2, list(value(0), value(2), value(7)))
+POPVALUE(7)
+//  |    0    1                            2                        3   4    5    6    
+//  +-> date [open,close,lowest,highest]  [date, volume, (1 or -1)] MA5 MA10 MA20 MA30
 
 // chart
 CHART(
     theme("dark"),
     chartOption({
-        "legend":{"bottom": "1%", "left": "center"},
+        "animation": false,
+        "legend":{
+            "bottom": 10,
+            "left": "center",
+            "data":["Dow-Jones Index", "MA5", "MA10", "MA20", "MA30"]
+        },
+        "tooltip": {
+            "trigger": "axis",
+            "axisPointer": { "type": "cross" },
+            "borderWidth": 1,
+            "borderColor": "#ccc",
+            "padding": 10,
+            "textStyle": {
+                "color": "#aaa"
+            }
+        },
+        "axisPointer": {
+            "link": [
+                { "xAxisIndex": "all"}
+            ],
+            "label": {
+                "backgroundColor": "#aaa"
+            }
+        },
+        "toolbox": {
+            "feature": {
+                "dataZoom": {
+                    "yAxisIndex": false,
+                    "title": { "zoom": "zoom", "back": "restore"}
+                },
+                "brush": {
+                    "type": ["lineX", "clear"],
+                    "title": { "lineX": "Horizontal selection", "clear": "Clear selection"}
+                }
+            }
+        },
+        "brush": {
+            "xAxisIndex": "all",
+            "brushLink": "all",
+            "outOfBrush": {
+                "colorAlpha": 0.1
+            }
+        },
+        "visualMap": {
+            "show": false,
+            "seriesIndex": 1,
+            "dimension": 2,
+            "pieces": [
+                { "value": 1, "color": "#ec0000" }, 
+                { "value": -1, "color": "#00da3c" }
+            ]
+        },
         "grid": [
             {
                 "left": "10%",
@@ -37,17 +102,10 @@ CHART(
             {
                 "left": "10%",
                 "right": "8%",
-                "top": "73%",
+                "top": "65%",
                 "height": "16%"
             }
         ],
-        "brush": {
-            "xAxisIndex": "all",
-            "brushLink": "all",
-            "outOfBrush": {
-                "colorAlpha": 0.1
-            }
-        },
         "dataZoom": [
             {
                 "type": "inside",
@@ -59,7 +117,7 @@ CHART(
                 "show": true,
                 "type": "slider",
                 "xAxisIndex": [0, 1],
-                "top": "65%",
+                "top": "85%",
                 "start": 98,
                 "end": 100
             }
@@ -67,31 +125,47 @@ CHART(
         "xAxis": [
             {
                 "type": "category",
-                "name": "",
                 "data": value(0),
                 "boundaryGap": false,
-                "axisLine": {"onZero": false}
+                "axisLine": {"onZero": false},
+                "splitLine": {"show": false},
+                "min": "dataMin",
+                "max": "dataMax",
+                "axisPointer": {
+                    "z": 100
+                }
             },
             {
                 "type": "category",
-                "name": "",
                 "gridIndex": 1,
                 "data": value(0),
+                "boundaryGap": false,
                 "axisLine": { "onZero": false },
-                "axisLabel": { "show": false}
+                "axisTick": { "show": false },
+                "splitLine": { "show": false },
+                "axisLabel": { "show": false},
+                "min": "dataMin",
+                "max": "dataMax",
+                "axisPointer": {
+                    "z": 100
+                }
             }
         ],
         "yAxis": [
             {
-                "name": "date",
-                "scale": true
+                "scale": true,
+                "splitArea": {
+                    "show": true
+                }
             },
             {
-                "name": "",
                 "scale": true,
                 "gridIndex": 1,
                 "splitNumber": 2,
-                "axisLabel": { "show": false }
+                "axisLabel": { "show": false },
+                "axisLine": { "show": false },
+                "axisTick": { "show": false },
+                "splitLine": { "show": false }
             }
         ],
         "series": [
@@ -101,11 +175,10 @@ CHART(
                 "data": value(1),
                 "smooth": true,
                 "itemStyle": {
-                    "color": "#ec0000",
-                    "color0": "#00da3c",
-                    "borderColor": "#ec0000",
-                    "borderColor0": "#00da3c",
-                    "borderWidth": 0
+                    "color": "#00da3c",
+                    "color0": "#ec0000",
+                    "borderColor": "#00da3c",
+                    "borderColor0": "#ec0000"
                 }
             },
             {
@@ -147,7 +220,6 @@ CHART(
                     "opacity": 0.5
                 }
             }
-
         ]
     })
 )
