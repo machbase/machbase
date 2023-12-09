@@ -22,7 +22,6 @@ FAKE(
 MAPVALUE(0, list(value(0), value(1)))
 
 CHART(
-    theme("dark"),
     chartOption({
         "title": { "text": "Area Pieces" },
         "xAxis": { "type": "category", "boundaryGap": false },

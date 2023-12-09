@@ -16,7 +16,6 @@ FAKE( json({
 }) )
 
 CHART(
-    theme("dark"),
     chartOption({
         "xAxis": {"data": value(0)},
         "yAxis": {},

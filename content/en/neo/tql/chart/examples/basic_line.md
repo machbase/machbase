@@ -8,7 +8,6 @@ weight: 10
 FAKE( linspace(0, 360, 100))
 MAPVALUE(2, sin((value(0)/180)*PI))
 CHART(
-    theme("dark"),
     chartOption({
         "xAxis": {
             "type": "category",

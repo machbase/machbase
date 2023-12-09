@@ -15,7 +15,6 @@ FAKE( json({
     ["Sun", 210, 410, 510]
 }) )
 CHART(
-    theme("dark"),
     chartOption({
         "legend":{ "show":true },
         "grid": [{

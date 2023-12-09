@@ -14,7 +14,6 @@ FAKE( json({
     ["World", 630230, 681807]
 }) )
 CHART(
-    theme("dark"),
     chartOption({
         "legend":{"show":true},
         "tooltip": {

@@ -13,7 +13,6 @@ TRANSPOSE(header(true))
 MAPVALUE(0, dict("name", value(0), "value", value(1)))
 
 CHART(
-    theme("dark"),
     chartOption({
         "legend": {
             "top": "bottom"

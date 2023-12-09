@@ -18,6 +18,7 @@ MAPVALUE(6, movavg(value(2), 5), "MA5")
 MAPVALUE(7, movavg(value(2), 10), "MA10")
 MAPVALUE(8, movavg(value(2), 20), "MA20")
 MAPVALUE(9, movavg(value(2), 30), "MA30")
+
 //make data shape 
 MAPVALUE(1, list(value(1), value(2), value(3), value(4)), "DJI")
 POPVALUE(2,3,4)
@@ -39,7 +40,15 @@ POPVALUE(7)
 
 // chart
 CHART(
-    theme("dark"),
+    chartJSFunction({
+        function tooltipPosition(pos, params, el, elRect, size) {
+            const obj = {
+                top: 10
+            };
+            obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 30;
+            return obj;
+        }
+    }),
     chartOption({
         "animation": false,
         "legend":{
@@ -54,8 +63,10 @@ CHART(
             "borderColor": "#ccc",
             "padding": 10,
             "textStyle": {
-                "color": "#aaa"
-            }
+                "color": "#000"
+            },
+            "backgroundColor": "#ffff"
+            // ,"position": tooltipPosition
         },
         "axisPointer": {
             "link": [
@@ -219,6 +230,16 @@ CHART(
                 "lineStyle": {
                     "opacity": 0.5
                 }
+            }
+        ]
+    }),
+    chartDispatchAction({
+        "type": "brush",
+        "areas":[
+            {
+                "brushType": "lineX",
+                "coordRange": ["2016-06-02", "2016-06-20"],
+                "xAxisIndex": 0
             }
         ]
     })

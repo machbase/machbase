@@ -14,7 +14,6 @@ FAKE( json({
 }) )
 MAPVALUE(0, list(value(0), value(1)))
 CHART(
-    theme("dark"),
     chartOption({
         "tooltip": {
             "trigger": "item"

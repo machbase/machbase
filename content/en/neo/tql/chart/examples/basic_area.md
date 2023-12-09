@@ -15,7 +15,6 @@ FAKE( json({
     ["Sun", 1320]
 }) )
 CHART(
-    theme("dark"),
     chartOption({
         "legend":{"show":false},
         "xAxis": {"type": "category", "data": value(0) },

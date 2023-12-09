@@ -25,7 +25,6 @@ MAPVALUE(2, list(value(0), value(2)))
 MAPVALUE(3, list(value(0), value(3)))
 MAPVALUE(4, list(value(0), value(4)))
 CHART(
-    theme("dark"),
     chartOption({
         "title": {
             "text": "Anscombe's quartet",

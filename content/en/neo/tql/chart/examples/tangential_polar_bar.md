@@ -13,7 +13,6 @@ FAKE( json({
 }) )
 
 CHART(
-    theme("dark"),
     chartOption({
         "title": {
             "text": "Tangential Polar Bar Label Position (middle)"

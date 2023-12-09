@@ -15,7 +15,6 @@ FAKE(json({
 MAPVALUE(1, list(value(1), value(2), value(3), value(4)))
 POPVALUE(2, 3, 4)
 CHART(
-    theme("dark"),
     chartOption({
         "legend":{"show": false},
         "xAxis": { "data": value(0) },

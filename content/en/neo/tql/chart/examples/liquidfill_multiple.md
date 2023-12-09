@@ -10,7 +10,6 @@ FAKE(json({
 }))
 TRANSPOSE()
 CHART(
-    theme("dark"),
     plugins("liquidfill"),
     chartOption({
         "series": [

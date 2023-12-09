@@ -106,7 +106,6 @@ MAPVALUE(8, movavg(value(2), 30), "MA30")
 POPVALUE(2, 3, 4)
 
 CHART(
-    theme("dark"),
     chartOption({
         "xAxis": { "type": "category", "data": value(0) },
         "yAxis": { "min": 2100, "max": 2500 },

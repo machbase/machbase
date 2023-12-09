@@ -13,7 +13,6 @@ MAPVALUE(3, cos(value(0)) - value(0)*(0.1*random()) - 1)
 POPVALUE(1)
 
 CHART(
-    theme("dark"),
     chartOption({
         "legend": { "show": false },
         "xAxis": { "data": value(0) },
