@@ -96,4 +96,10 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
             image="./img/basic_radar.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./examples/line_airpassengers" title="Air Passengers"
             image="./img/line_airpassengers.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./examples/heatmap" title="Basic Heatmap"
+            image="./img/heatmap.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./examples/sankey" title="Basic Sankey"
+            image="./img/sankey.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./examples/gauge" title="Basic Gauge"
+            image="./img/gauge.jpg" method="Fill" options="600x q80 webp">}}
 {{< /cards >}}
