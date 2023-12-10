@@ -20,14 +20,14 @@ CHART(
         "polar": { "radius": [30, "80%"] },
         "radiusAxis": {
             "type": "category",
-            "data": value(0)
+            "data": column(0)
         },
         "angleAxis": { "max": 4, "startAngle": 90 },
         "tooltip": {},
         "series": {   
             "type": "bar",
             "coordinateSystem": "polar",
-            "data": value(1),
+            "data": column(1),
             "label": {
                 "show": true,
                 "position": "middle",
@@ -35,7 +35,7 @@ CHART(
             }
         }
     })
- )
+)
 ```
 
 ![basic_line](../../img/tangential_polar_bar.jpg)

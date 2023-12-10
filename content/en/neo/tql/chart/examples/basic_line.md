@@ -11,13 +11,13 @@ CHART(
     chartOption({
         "xAxis": {
             "type": "category",
-            "data": value(0)
+            "data": column(0)
         },
         "yAxis": {},
         "series": [
             {
                 "type": "line",
-                "data": value(1)
+                "data": column(1)
             }
         ]
     })

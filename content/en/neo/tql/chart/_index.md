@@ -55,7 +55,7 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
             image="./img/basic_scatter.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./examples/anscombe_quartet" title="Anscombe's quartet"
             image="./img/anscombe_quartet.jpg" method="Fill" options="600x q80 webp">}}
-    {{< card link="./examples/million_points" title="1M Points"
+    {{< card link="./examples/million_points" title="1M Points" subtitle="1 million points"
             image="./img/million_points.jpg" method="Fill" options="600x q80 webp">}}
 {{< /cards >}}
 
@@ -90,7 +90,7 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
             image="./img/basic_radar.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./examples/line_airpassengers" title="Air Passengers"
             image="./img/line_airpassengers.jpg" method="Fill" options="600x q80 webp">}}
-    {{< card link="./examples/heatmap" title="Basic Heatmap"
+    {{< card link="./examples/heatmap" title="Basic Heatmap" subtitle="20K data"
             image="./img/heatmap.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./examples/sankey" title="Basic Sankey"
             image="./img/sankey.jpg" method="Fill" options="600x q80 webp">}}
@@ -98,4 +98,6 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
             image="./img/gauge.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./examples/wordcloud" title="Word Cloud"
             image="./img/wordcloud.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./examples/geo_svg_lines" title="GEO SVG Lines"
+            image="./img/geo_svg_lines.gif" method="Fill" options="600x q80 webp">}}
 {{< /cards >}}

@@ -18,7 +18,7 @@ CHART(
     chartOption({
         "title": { "text": "Basic Radar Chart" },
         "legend": {
-            "data": value(0),
+            "data": column(0),
             "top": "95%"
         },
         "radar": {
@@ -35,7 +35,7 @@ CHART(
             {
                 "name":"Budgrt vs spending",
                 "type": "radar",
-                "data": value(1)
+                "data": column(1)
             }
         ]
     })

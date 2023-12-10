@@ -41,7 +41,7 @@ CHART(
                 "type": "line",
                 "smooth": 0.6,
                 "symbol": "none",
-                "data": value(0),
+                "data": column(0),
                 "lineStyle": {
                     "color": "#5470C6",
                     "width": 5

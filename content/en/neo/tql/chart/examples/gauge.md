@@ -52,7 +52,7 @@ CHART(
             },
             "data": [
                 {
-                    "value": value(0)
+                    "value": column(0)
                 }
             ]
         }]

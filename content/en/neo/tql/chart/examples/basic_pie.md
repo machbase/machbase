@@ -24,7 +24,7 @@ CHART(
         },
         "dataset": [
             {
-                "source": value(0)
+                "source": column(0)
             }
         ],
         "series": [

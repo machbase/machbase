@@ -23,7 +23,7 @@ CHART(
             "emphasis": {
                 "focus": "adjacency"
             },
-            "links": value(0),
+            "links": column(0),
             "data": [
                 {"name": "a"}, {"name": "b"}, {"name": "a1"}, {"name": "a2"}, {"name": "b1"}, {"name": "c"}
             ]

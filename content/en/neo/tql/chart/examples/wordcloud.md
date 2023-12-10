@@ -72,7 +72,7 @@ CHART(
             "drawOutOfBound": false,
             "left": "center",
             "top": "center",
-            "data": value(0),
+            "data": column(0),
             "emphasis": {
                 "focus": "self",
                 "textStyle": {
@@ -89,7 +89,7 @@ CHART(
             }
         }
     }),
-    chartJSFunction({
+    chartJSCode({
         function wordColor() {
                 // Random color
                 return 'rgb(' + [

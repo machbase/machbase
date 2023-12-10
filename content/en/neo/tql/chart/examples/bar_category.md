@@ -25,8 +25,8 @@ CHART(
         "xAxis": { "type": "category" },
         "yAxis": { },
         "series": [
-            { "type": "bar", "name": "2011", "data": value(1) },
-            { "type": "bar", "name": "2022", "data": value(2) }
+            { "type": "bar", "name": "2011", "data": column(1) },
+            { "type": "bar", "name": "2022", "data": column(2) }
         ]
     })
 )

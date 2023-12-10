@@ -17,10 +17,10 @@ FAKE( json({
 CHART(
     chartOption({
         "legend":{"show":false},
-        "xAxis": {"type": "category", "data": value(0) },
+        "xAxis": {"type": "category", "data": column(0) },
         "yAxis": {},
         "series":[
-            {"type": "line","smooth":false, "color":"#7585CE", "areaStyle":{}, "data": value(1)}
+            {"type": "line","smooth":false, "color":"#7585CE", "areaStyle":{}, "data": column(1)}
         ]
     })
 )

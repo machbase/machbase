@@ -17,15 +17,15 @@ FAKE( json({
 
 CHART(
     chartOption({
-        "xAxis": {"data": value(0)},
+        "xAxis": {"data": column(0)},
         "yAxis": {},
         "animation": false,
         "series": [
-            {"type": "line", "data":value(1), "name": "email", "stack": "total", "areaStyle":{} },
-            {"type": "line", "data":value(2), "name": "ads", "stack": "total", "areaStyle":{} },
-            {"type": "line", "data":value(3), "name": "video", "stack": "total", "areaStyle":{} },
-            {"type": "line", "data":value(4), "name": "direct", "stack": "total", "areaStyle":{} },
-            {"type": "line", "data":value(5), "name": "search", "stack": "total", "areaStyle":{},
+            {"type": "line", "data":column(1), "name": "email", "stack": "total", "areaStyle":{} },
+            {"type": "line", "data":column(2), "name": "ads", "stack": "total", "areaStyle":{} },
+            {"type": "line", "data":column(3), "name": "video", "stack": "total", "areaStyle":{} },
+            {"type": "line", "data":column(4), "name": "direct", "stack": "total", "areaStyle":{} },
+            {"type": "line", "data":column(5), "name": "search", "stack": "total", "areaStyle":{},
                 "label": {"show": true, "position": "top"}
             }
         ]

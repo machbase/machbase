@@ -17,10 +17,10 @@ POPVALUE(2, 3, 4)
 CHART(
     chartOption({
         "legend":{"show": false},
-        "xAxis": { "data": value(0) },
+        "xAxis": { "data": column(0) },
         "yAxis": {},
         "series": [
-            { "type": "candlestick", "data": value(1) }
+            { "type": "candlestick", "data": column(1) }
         ]
     })
 )

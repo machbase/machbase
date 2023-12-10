@@ -23,12 +23,12 @@ CHART(
             "bottom": "3%",
             "containLabel": true
         }],
-        "xAxis": { "type": "category", "data": value(0) },
+        "xAxis": { "type": "category", "data": column(0) },
         "yAxis": {},
         "series": [
-            {"type": "line", "data": value(1), "step": "start", "name": "Step Start"},
-            {"type": "line", "data": value(2), "step": "middle", "name": "Step Middle"},
-            {"type": "line", "data": value(3), "step": "end", "name": "Step End"}
+            {"type": "line", "data": column(1), "step": "start", "name": "Step Start"},
+            {"type": "line", "data": column(2), "step": "middle", "name": "Step Middle"},
+            {"type": "line", "data": column(3), "step": "end", "name": "Step End"}
         ]
     })
 )

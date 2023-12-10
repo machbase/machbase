@@ -15,7 +15,7 @@ POPVALUE(1)
 CHART(
     chartOption({
         "legend": { "show": false },
-        "xAxis": { "data": value(0) },
+        "xAxis": { "data": column(0) },
         "yAxis": {},
         "dataZoom": [
             { "type": "inside" },
@@ -26,7 +26,7 @@ CHART(
             {
                 "name": "A",
                 "type": "scatter",
-                "data": value(1),
+                "data": column(1),
                 "symbolSize": 3,
                 "itemStyle": {
                     "color": "#9ECB7F",
@@ -37,7 +37,7 @@ CHART(
             {
                 "name": "B",
                 "type": "scatter",
-                "data": value(2),
+                "data": column(2),
                 "symbolSize": 3,
                 "itemStyle": {
                     "color": "#5872C0",

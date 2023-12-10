@@ -33,7 +33,7 @@ CHART(
                 "itemStyle": {
                     "borderRadius": 8
                 },
-                "data": value(0)
+                "data": column(0)
             }
         ]
     })

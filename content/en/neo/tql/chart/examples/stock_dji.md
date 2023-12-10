@@ -137,7 +137,7 @@ CHART(
         "xAxis": [
             {
                 "type": "category",
-                "data": value(0),
+                "data": column(0),
                 "boundaryGap": false,
                 "axisLine": {"onZero": false},
                 "splitLine": {"show": false},
@@ -150,7 +150,7 @@ CHART(
             {
                 "type": "category",
                 "gridIndex": 1,
-                "data": value(0),
+                "data": column(0),
                 "boundaryGap": false,
                 "axisLine": { "onZero": false },
                 "axisTick": { "show": false },
@@ -184,7 +184,7 @@ CHART(
             {
                 "name": "Dow-Jones Index",
                 "type": "candlestick",
-                "data": value(1),
+                "data": column(1),
                 "smooth": true,
                 "itemStyle": {
                     "color": "#00da3c",
@@ -196,14 +196,14 @@ CHART(
             {
                 "name": "Volume",
                 "type": "bar",
-                "data": value(2),
+                "data": column(2),
                 "xAxisIndex": 1,
                 "yAxisIndex": 1
             },
             {
                 "name": "MA5",
                 "type": "line",
-                "data": value(3),
+                "data": column(3),
                 "lineStyle": {
                     "opacity": 0.5
                 }
@@ -211,7 +211,7 @@ CHART(
             {
                 "name": "MA10",
                 "type": "line",
-                "data": value(4),
+                "data": column(4),
                 "lineStyle": {
                     "opacity": 0.5
                 }
@@ -219,7 +219,7 @@ CHART(
             {
                 "name": "MA20",
                 "type": "line",
-                "data": value(5),
+                "data": column(5),
                 "lineStyle": {
                     "opacity": 0.5
                 }
@@ -227,7 +227,7 @@ CHART(
             {
                 "name": "MA30",
                 "type": "line",
-                "data": value(6),
+                "data": column(6),
                 "lineStyle": {
                     "opacity": 0.5
                 }

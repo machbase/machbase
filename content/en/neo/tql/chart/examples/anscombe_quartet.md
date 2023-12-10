@@ -52,7 +52,7 @@ CHART(
         "series": [
             {   "name": "I",
                 "type": "scatter",
-                "data": value(1),
+                "data": column(1),
                 "xAxisIndex": 0,
                 "yAxisIndex": 0,
                 "markLine": {
@@ -64,7 +64,7 @@ CHART(
             },
             {   "name": "II",
                 "type": "scatter",
-                "data": value(2),
+                "data": column(2),
                 "xAxisIndex": 1,
                 "yAxisIndex": 1,
                 "markLine": {
@@ -76,7 +76,7 @@ CHART(
             },
             {   "name": "III",
                 "type": "scatter",
-                "data": value(3),
+                "data": column(3),
                 "xAxisIndex": 2,
                 "yAxisIndex": 2,
                 "markLine": {
@@ -88,7 +88,7 @@ CHART(
             },
             {   "name": "IV",
                 "type": "scatter",
-                "data": value(4),
+                "data": column(4),
                 "xAxisIndex": 3,
                 "yAxisIndex": 3,
                 "markLine": {

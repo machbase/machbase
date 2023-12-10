@@ -107,7 +107,7 @@ POPVALUE(2, 3, 4)
 
 CHART(
     chartOption({
-        "xAxis": { "type": "category", "data": value(0) },
+        "xAxis": { "type": "category", "data": column(0) },
         "yAxis": { "min": 2100, "max": 2500 },
         "dataZoom": [
             { "type": "inside", "start": 50, "end": 100 },
@@ -121,7 +121,7 @@ CHART(
         "series": [
             {
                 "name": "日K",
-                "data": value(1),
+                "data": column(1),
                 "type": "candlestick",
                 "itemStyle": {
                     "color": "#ec0000",
@@ -132,28 +132,28 @@ CHART(
             },
             {
                 "name": "MA5",
-                "data": value(2),
+                "data": column(2),
                 "type": "line",
                 "smooth": true,
                 "lineStyle": { "opacity": 0.5 }
             },
             {
                 "name": "MA10",
-                "data": value(3),
+                "data": column(3),
                 "type": "line",
                 "smooth": true,
                 "lineStyle": { "opacity": 0.5 }
             },
             {
                 "name": "MA20",
-                "data": value(4),
+                "data": column(4),
                 "type": "line",
                 "smooth": true,
                 "lineStyle": { "opacity": 0.5 }
             },
             {
                 "name": "MA30",
-                "data": value(5),
+                "data": column(5),
                 "type": "line",
                 "smooth": true,
                 "lineStyle": { "opacity": 0.5 }

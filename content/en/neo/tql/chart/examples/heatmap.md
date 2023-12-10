@@ -11,8 +11,8 @@ MAPVALUE(2, list(value(0), value(1), value(2)))
 CHART(
     chartOption({
         "tooltip": {},
-        "xAxis": { "type": "category", "value": value(0) },
-        "yAxis": { "type": "category", "value": value(1) },
+        "xAxis": { "type": "category", "value": column(0) },
+        "yAxis": { "type": "category", "value": column(1) },
         "visualMap": {
             "min": 0,
             "max": 1.6,
@@ -38,7 +38,7 @@ CHART(
             { 
                 "name": "SimpleX Noise",
                 "type": "heatmap",
-                "data": value(2),
+                "data": column(2),
                 "emphasis": {
                     "itemStyle": {
                         "borderColor": "#333",

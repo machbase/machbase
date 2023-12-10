@@ -13,7 +13,7 @@ CHART(
     plugins("liquidfill"),
     chartOption({
         "series": [
-            { "type": "liquidFill", "data": value(0) }
+            { "type": "liquidFill", "data": column(0) }
         ]
     })
 )

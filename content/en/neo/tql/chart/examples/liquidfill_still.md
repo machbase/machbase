@@ -15,7 +15,7 @@ CHART(
         "series": [
             {
                 "type": "liquidFill",
-                "data": value(0),
+                "data": column(0),
                 "amplitude": 0,
                 "waveAnimation": 0
             }
