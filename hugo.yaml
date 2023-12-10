@@ -35,7 +35,7 @@ markup:
 enableInlineShortcodes: true
 
 params:
-  latestNeoVer: v8.0.7
+  latestNeoVer: v8.0.8
   examples_url: https://github.com/machbase/machbase/tree/main/examples
   releases_url: https://github.com/machbase/neo-server/releases
   jdbc_version: 8.0.2
