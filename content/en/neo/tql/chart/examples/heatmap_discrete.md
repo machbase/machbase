@@ -1,7 +1,7 @@
 ---
-title: Heatmap
+title: Discrete Mapping of Colors
 type: docs
-weight: 600
+weight: 610
 ---
 
 ```js
@@ -11,13 +11,18 @@ MAPVALUE(2, list(value(0), value(1), value(2)))
 CHART(
     chartOption({
         "tooltip": {},
+        "grid": {"right": "120px", "left": "40px"},
         "xAxis": { "type": "category", "value": column(0) },
         "yAxis": { "type": "category", "value": column(1) },
         "visualMap": {
+            "type": "piecewise",
             "min": 0,
-            "max": 1.6,
+            "max": 1.8,
+            "left": "right",
+            "top": "center",
             "calculable": true,
             "realtime": false,
+            "splitNumber": 8,
             "inRange": {
                 "color": [
                     "#313695",
@@ -53,4 +58,4 @@ CHART(
 )
 ```
 
-![basic_line](../../img/heatmap.jpg)
+![basic_line](../../img/heatmap_discrete.jpg)
