@@ -46,4 +46,4 @@ CHART(
 )
 ```
 
-![basic_line](../../img/heatmap_discrete.jpg)
+![basic_line](../../img/heatmap_calendar.jpg)

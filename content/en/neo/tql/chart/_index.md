@@ -88,7 +88,7 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
             image="./img/liquidfill.gif" method="Fill" options="600x q80 webp">}}
     {{< card link="./examples/liquidfill_multiple" title="Multiple Waves"
             image="./img/liquidfill_multiple.gif" method="Fill" options="600x q80 webp">}}
-    {{< card link="./examples/liquidfill_still" title="Still Wave"
+    {{< card link="./examples/liquidfill_still" title="Still Waves"
             image="./img/liquidfill_still.jpg" method="Fill" options="600x q80 webp">}}
 {{< /cards >}}
 

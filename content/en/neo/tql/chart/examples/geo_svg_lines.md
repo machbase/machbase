@@ -1,5 +1,5 @@
 ---
-title: Word Cloud
+title: GEO SVG Lines
 type: docs
 weight: 950
 ---

@@ -1,5 +1,5 @@
 ---
-title: Heatmap
+title: Sankey
 type: docs
 weight: 930
 ---
