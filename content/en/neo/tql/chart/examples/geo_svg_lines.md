@@ -37,11 +37,7 @@ POPVALUE(1)  // remove y
 
 CHART(
     chartId("myGeoChart"),
-    // Limitation 1. geo chart is not working with echarts@4.min.js
-    //               it only works when the tql address is callebd from web browser.
-    chartCDN("/web/echarts/echarts.min.js"),
-    // Limitation 2. embed js code is not working on the TQL Editor view.
-    //               it only works when the tql address is callebd from web browser.
+    // Limitation. embed js code is required.
     chartJSCode({
         fetch("https://machbase.com/assets/example/MacOdrum-LV5-floorplan-web.svg"
         ).then( function(rsp) {
