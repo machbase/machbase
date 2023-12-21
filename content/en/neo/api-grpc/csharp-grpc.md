@@ -52,33 +52,98 @@ option csharp_namespace = "MachRpc";
   </ItemGroup>
 ```
 
-## Query
+## X.509 Certificates for TLS
 
-### Connect to server 
+gRPC connection requires TLS by default.
+Generate application key for the client.
+
+Execute the command below, it generates a new key and register it to the server automatically.
+
+```sh
+machbase-neo shell key gen "csharp-client" --output "csharp-client"
+```
+
+It generates `csharp-client_cert.pem`, `csharp-client_key.pem` and `csharp-client_token`. The client program requires the both of *.pem files.
+
+And the client requires machbase-neo's server certificate as a CA.
+
+```sh
+machbase-neo shell key server-cert --output "csharp-server.pem"
+```
+
+We needs those 3 .pem files.
+
+- `csharp-client_cert.pem` : A client X.509 certificate, signed by machbase-neo server.
+- `csharp-client_key.pem` : The client's private key.
+- `csharp-server.pem` : machbase-neo server's X.509 certificate, self-signed by machbase-neo server.
+
+The command below shows how to list the certificates that registered in the server.
+
+```sh
+$ machbase-neo shell key list
+
+╭────────┬───────────────┬───────────────────────────────┬───────────────────────────────╮
+│ ROWNUM │ ID            │ VALID FROM                    │ EXPIRE                        │
+├────────┼───────────────┼───────────────────────────────┼───────────────────────────────┤
+│      1 │ csharp-client │ 2023-12-21 07:32:30 +0000 UTC │ 2033-12-18 07:32:30 +0000 UTC │
+╰────────┴───────────────┴───────────────────────────────┴───────────────────────────────╯
+```
+
+## Connect to server 
+
+### TLS
 
 ```csharp
-var channel = GrpcChannel.ForAddress("http://127.0.0.1:5655");
+var handler = new HttpClientHandler();
+handler.SslProtocols = System.Security.Authentication.SslProtocols.Tls12;
+handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+handler.ClientCertificates.Add(x509);
+handler.UseProxy = false;
+handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+
+var channel = GrpcChannel.ForAddress("https://127.0.0.1:5655", new GrpcChannelOptions()
+{
+    HttpHandler = handler,
+    DisposeHttpClient = true
+});
+
 var client = new MachRpc.Machbase.MachbaseClient(channel);
 ```
+
+### DB Connect
+
+```c#
+connReq = new MachRpc.ConnRequest
+{
+    User = "sys",
+    Password = "manager",
+};
+connRsp = client.Conn(connReq);
+```
+
+## Query
 
 ### Execute query
 
 ```c#
-var req = new MachRpc.QueryRequest
+queryReq = new MachRpc.QueryRequest
 {
+    Conn = connRsp.Conn,
     Sql = "select * from example order by time limit ?",
     Params = { Any.Pack(new Int32Value { Value = 10 }) }
 };
-var rsp = client.Query(req);
+queryRsp = client.Query(queryReq);
 ```
 
 ### Get columns info of result set
 
 ```c#
-var cols = client.Columns(rsp.RowsHandle);
-var headers = new List<string>{"RowNum"};
-if (cols.Success) {
-    foreach (var c in cols.Columns) {
+var cols = client.Columns(queryRsp.RowsHandle);
+var headers = new List<string> { "RowNum" };
+if (cols.Success)
+{
+    foreach (var c in cols.Columns)
+    {
         headers.Add($"{c.Name}({c.Type})");
     }
 }
@@ -95,30 +160,20 @@ NAME(string)   TIME(datetime)   VALUE(double)
 
 ```c#
 int nrow = 0;
-try
+while (true)
 {
-    while (true)
+    var fetch = client.RowsFetch(queryRsp.RowsHandle);
+    if (fetch.HasNoRows)
     {
-        var fetch = client.RowsFetch(rsp.RowsHandle);
-        if (fetch.HasNoRows)
-        {
-            break;
-        }
-        nrow++;
-        var line = new List<string> { $"{nrow}   "};
-        foreach (Any v in fetch.Values)
-        {
-            line.Add(convpb(v));
-        };
-        Console.WriteLine(String.Join("    ", line));
+        break;
     }
-}
-finally
-{
-    if (rsp.Success && rsp.RowsHandle != null)
+    nrow++;
+    var line = new List<string> { $"{nrow}   " };
+    foreach (Any v in fetch.Values)
     {
-        client.RowsClose(rsp.RowsHandle);
-    }
+        line.Add(convpb(v));
+    };
+    Console.WriteLine(String.Join("    ", line));
 }
 ```
 
@@ -177,43 +232,76 @@ RowNum   NAME(string)   TIME(datetime)   VALUE(double)
 ```csharp
 using Grpc.Net.Client;
 using Google.Protobuf.WellKnownTypes;
+using System.Security.Cryptography.X509Certificates;
 
 internal class Program
 {
     private static void Main(string[] args)
     {
-        var channel = GrpcChannel.ForAddress("http://127.0.0.1:5655");
+        var keyPem = File.ReadAllText("csharp-client_key.pem");
+        var certPem = File.ReadAllText("csharp-client_cert.pem");
+        var x509 = X509Certificate2.CreateFromPem(certPem, keyPem);
+
+        var handler = new HttpClientHandler();
+        handler.SslProtocols = System.Security.Authentication.SslProtocols.Tls12;
+        handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+        handler.ClientCertificates.Add(x509);
+        handler.UseProxy = false;
+        handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+        
+        var channel = GrpcChannel.ForAddress("https://127.0.0.1:5655", new GrpcChannelOptions()
+        {
+            HttpHandler = handler,
+            DisposeHttpClient = true
+        });
+
         var client = new MachRpc.Machbase.MachbaseClient(channel);
-        var req = new MachRpc.QueryRequest
-        {
-            Sql = "select * from example order by time limit ?",
-            Params = { Any.Pack(new Int32Value { Value = 10 }) }
-        };
-        var rsp = client.Query(req);
 
-        var cols = client.Columns(rsp.RowsHandle);
-        var headers = new List<string>{"RowNum"};
-        if (cols.Success)
-        {
-            foreach (var c in cols.Columns)
-            {
-                headers.Add($"{c.Name}({c.Type})");
-            }
-        }
-        Console.WriteLine(String.Join("   ", headers));
-
-        int nrow = 0;
+        MachRpc.ConnRequest connReq;
+        MachRpc.ConnResponse? connRsp = null;
+        MachRpc.QueryRequest queryReq;
+        MachRpc.QueryResponse? queryRsp = null;
         try
         {
+
+            connReq = new MachRpc.ConnRequest
+            {
+                User = "sys",
+                Password = "manager",
+            };
+            connRsp = client.Conn(connReq);
+            Console.WriteLine(String.Join("    ", connRsp));
+
+            queryReq = new MachRpc.QueryRequest
+            {
+                Conn = connRsp.Conn,
+                Sql = "select * from example order by time limit ?",
+                Params = { Any.Pack(new Int32Value { Value = 10 }) }
+            };
+            queryRsp = client.Query(queryReq);
+            Console.WriteLine(String.Join("    ", queryRsp));
+
+            var cols = client.Columns(queryRsp.RowsHandle);
+            var headers = new List<string> { "RowNum" };
+            if (cols.Success)
+            {
+                foreach (var c in cols.Columns)
+                {
+                    headers.Add($"{c.Name}({c.Type})");
+                }
+            }
+            Console.WriteLine(String.Join("   ", headers));
+
+            int nrow = 0;
             while (true)
             {
-                var fetch = client.RowsFetch(rsp.RowsHandle);
+                var fetch = client.RowsFetch(queryRsp.RowsHandle);
                 if (fetch.HasNoRows)
                 {
                     break;
                 }
                 nrow++;
-                var line = new List<string> { $"{nrow}   "};
+                var line = new List<string> { $"{nrow}   " };
                 foreach (Any v in fetch.Values)
                 {
                     line.Add(convpb(v));
@@ -223,9 +311,13 @@ internal class Program
         }
         finally
         {
-            if (rsp.Success && rsp.RowsHandle != null)
+            if (queryRsp != null)
             {
-                client.RowsClose(rsp.RowsHandle);
+                client.RowsClose(queryRsp.RowsHandle);
+            }
+            if (connRsp != null)
+            {
+                client.ConnClose(new MachRpc.ConnCloseRequest { Conn = connRsp.Conn });
             }
         }
     }
@@ -257,19 +349,20 @@ internal class Program
 
 ## Append
 
-### Connect to server 
-
-```c#
-var channel = GrpcChannel.ForAddress("http://127.0.0.1:5655");
-var client = new MachRpc.Machbase.MachbaseClient(channel);
-```
-
 ### Prepare new appender
 
+Create appender from the connection.
+
 ```c#
-var appender = client.Appender(new MachRpc.AppenderRequest { TableName = "example" });
+var appender = client.Appender(new MachRpc.AppenderRequest
+{
+    Conn = connRsp.Conn,
+    TableName = "example",
+});
 var stream = client.Append();
 ```
+
+Do not forget to close the stream.
 
 ```c#
 try {
@@ -293,19 +386,17 @@ private static async Task Main(string[] args) {
 ```c#
 for (int i = 0; i < 100000; i++)
 {
-    var ts = new Timestamp();
-    var value = 0.1234;
+    var fieldName = new MachRpc.AppendDatum() { VString = "csharp.value" };
+    var fieldTime = new MachRpc.AppendDatum() { VTime = TimeUtils.GetNanoseconds() };
+    var fieldValue = new MachRpc.AppendDatum() { VDouble = 0.1234 };
 
-    long tick = TimeUtils.GetNanoseconds();
-    long secs = 1_000_000_000;
-    ts.Seconds = Convert.ToInt32(tick / secs);
-    ts.Nanos = Convert.ToInt32(tick % secs);
+    var record = new MachRpc.AppendRecord();
+    record.Tuple.Add(fieldName);
+    record.Tuple.Add(fieldTime);
+    record.Tuple.Add(fieldValue);
 
-    var data = new MachRpc.AppendData { Handle = appender.Handle};
-    data.Params.Add(Any.Pack(new StringValue { Value = "csharp.value" }));
-    data.Params.Add(Any.Pack(ts));
-    data.Params.Add(Any.Pack(new DoubleValue{ Value = value }));
-
+    var data = new MachRpc.AppendData { Handle = appender.Handle };
+    data.Records.Add(record);
     await stream.RequestStream.WriteAsync(data);
 }
 ```
@@ -329,47 +420,76 @@ machbase-neo shell "select count(*) from example where name = 'csharp.value'"
 ```csharp
 using Grpc.Net.Client;
 using Google.Protobuf.WellKnownTypes;
+using System.Security.Cryptography.X509Certificates;
 using System.Diagnostics;
 
 internal class Program
 {
     private static async Task Main(string[] args)
     {
-        var channel = GrpcChannel.ForAddress("http://127.0.0.1:5655");
+        var keyPem = File.ReadAllText("csharp-client_key.pem");
+        var certPem = File.ReadAllText("csharp-client_cert.pem");
+        var x509 = X509Certificate2.CreateFromPem(certPem, keyPem);
+
+        var handler = new HttpClientHandler();
+        handler.SslProtocols = System.Security.Authentication.SslProtocols.Tls12;
+        handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+        handler.ClientCertificates.Add(x509);
+        handler.UseProxy = false;
+        handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+
+        var channel = GrpcChannel.ForAddress("https://127.0.0.1:5655", new GrpcChannelOptions()
+        {
+            HttpHandler = handler,
+            DisposeHttpClient = true
+        });
+
         var client = new MachRpc.Machbase.MachbaseClient(channel);
 
-        // Appender example
-        var appender = client.Appender(new MachRpc.AppenderRequest { TableName = "example" });
+        var connReq = new MachRpc.ConnRequest
+        {
+            User = "sys",
+            Password = "manager",
+        };
+        var connRsp = client.Conn(connReq);
+        Console.WriteLine(String.Join("    ", connRsp));
+
         var stream = client.Append();
-        
+
+        var appender = client.Appender(new MachRpc.AppenderRequest { Conn= connRsp.Conn, TableName = "example" });
+        Console.WriteLine(String.Join("    ", appender));
+
         var stopwatch = new Stopwatch();
         stopwatch.Start();
         try
         {
-            for (int i = 0; i < 100000; i++)
+            for (int i = 0; i < 100 /*000*/; i++)
             {
-                var ts = new Timestamp();
-                var value = 0.1234;
+                var fieldName = new MachRpc.AppendDatum() { VString = "csharp.value" };
+                var fieldTime = new MachRpc.AppendDatum() { VTime = TimeUtils.GetNanoseconds() };
+                var fieldValue = new MachRpc.AppendDatum() { VDouble = 0.1234 };
 
-                long tick = TimeUtils.GetNanoseconds();
-                long secs = 1_000_000_000;
-                ts.Seconds = Convert.ToInt32(tick / secs);
-                ts.Nanos = Convert.ToInt32(tick % secs);
+                var record = new MachRpc.AppendRecord();
+                record.Tuple.Add(fieldName);
+                record.Tuple.Add(fieldTime);
+                record.Tuple.Add(fieldValue);
 
-                var data = new MachRpc.AppendData { Handle = appender.Handle};
-                data.Params.Add(Any.Pack(new StringValue { Value = "csharp.value" }));
-                data.Params.Add(Any.Pack(ts));
-                data.Params.Add(Any.Pack(new DoubleValue{ Value = value }));
+                var data = new MachRpc.AppendData { Handle = appender.Handle };
+                data.Records.Add(record);
                 await stream.RequestStream.WriteAsync(data);
             }
         }
         finally
         {
             await stream.RequestStream.CompleteAsync();
-
             stopwatch.Stop();
             var elapsed_time = stopwatch.ElapsedMilliseconds;
             Console.WriteLine($"Elapse {elapsed_time}ms.");
+
+            if (connRsp != null)
+            {
+                client.ConnClose(new MachRpc.ConnCloseRequest { Conn = connRsp.Conn });
+            }
         }
     }
 
