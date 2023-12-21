@@ -81,11 +81,10 @@ CHART(
                 }
             },
             "layoutAnimation": true,
-            "textStye": {
+            "textStyle": {
                 "fontFamily": "sans-serif",
-                "fontWeight": "bold"
-                // ,
-                // "color": wordColor
+                "fontWeight": "bold",
+                "color": wordColor
             }
         }
     }),
