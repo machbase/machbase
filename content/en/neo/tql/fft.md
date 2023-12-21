@@ -25,13 +25,14 @@ Open a new *tql* editor on the web ui and copy the code below and run it.
 In this example, `oscillator()` generates a composite wave of 15Hz 1.0 + 24Hz 1.5.
 And `CHART_SCATTER()` has `dataZoom()` option function that provides an slider under the x-Axis.
 
-```js
+```js {linenos=table,hl_lines=["2-5"],linenostart=1}
 FAKE( 
   oscillator(
     freq(15, 1.0), freq(24, 1.5),
-    range('now', '10s', '1ms')) 
+    range('now', '10s', '1ms')
+  )
 )
-CHART_SCATTER( dataZoom('slider', 95, 100))
+CHART_SCATTER( size("600px", "350px"), dataZoom('slider', 95, 100) )
 ```
 
 ![web-fft-tql-fake](/images/web-fft-tql-fake.png)
@@ -40,11 +41,16 @@ CHART_SCATTER( dataZoom('slider', 95, 100))
 
 Store the generated data into the database with the tag name 'signal'.
 
-```js
-FAKE( oscillator(
+```js {linenos=table,hl_lines=["10"],linenostart=1}
+FAKE(
+  oscillator(
     freq(15, 1.0), freq(24, 1.5),
-    range('now', '10s', '1ms')) 
+    range('now', '10s', '1ms')
+  )
 )
+// |    0      1
+// +--> time   magnitude
+// |
 INSERT( 'time', 'value', table('example'), tag('signal') )
 ```
 
@@ -52,12 +58,20 @@ It will show "10000 rows inserted." message in the "Result" pane.
 
 For a comment, it took about *270ms* in a test machine (Apple mac mini M1), but using `APPEND()` method in the example below, took *65ms* (x4 faster).
 
-```js
-FAKE( oscillator(
+```js {linenos=table,hl_lines=["14"],linenostart=1}
+FAKE(
+  oscillator(
     freq(15, 1.0), freq(24, 1.5),
-    range('now', '10s', '1ms')) 
+    range('now', '10s', '1ms')
+  )
 )
+// |    0      1
+// +--> time   magnitude
+// |
 MAPVALUE(-1,'signal')
+// |    0         1      2
+// +--> 'example' time   magnitude
+// |
 APPEND( table('example') )
 ```
 
@@ -71,7 +85,7 @@ The code below reads the stored data from the 'example' table.
 
 ```js
 QUERY('value', from('example', 'signal'), between('last-10s', 'last'))
-CHART_LINE( dataZoom('slider', 95, 100))
+CHART_LINE( size("600px", "350px"), dataZoom('slider', 95, 100))
 ```
 
 ![web-fft-tql-query](/images/web-fft-tql-query.png)
@@ -80,18 +94,17 @@ CHART_LINE( dataZoom('slider', 95, 100))
 
 Add few data manipulation function between `QUERY()` source and `CHART_LINE()` sink.
 
-```js
+```js {linenos=table,hl_lines=["2-4"],linenostart=1}
 QUERY('value', from('example', 'signal'), between('last-10s', 'last'))
-
 MAPKEY('sample')
 GROUPBYKEY()
 FFT()
-
 CHART_LINE(
-      xAxis(0, 'Hz'),
-      yAxis(1, 'Amplitude'),
-      dataZoom('slider', 0, 10) 
-  )
+  size("600px", "350px"), 
+  xAxis(0, 'Hz'),
+  yAxis(1, 'Amplitude'),
+  dataZoom('slider', 0, 10) 
+)
 ```
 
 ![web-fft-tql-2d](/images/web-fft-tql-2d.png)
@@ -117,7 +130,7 @@ As result all records have same *key* `'sample'` and `(time, value)` as *value*.
 
 ## Adding time axis
 
-```js
+```js {linenos=table,hl_lines=["3-7"],linenostart=1}
 QUERY( 'value', from('example', 'signal'), between('last-10s', 'last'))
 
 MAPKEY( roundTime(value(0), '500ms') )
