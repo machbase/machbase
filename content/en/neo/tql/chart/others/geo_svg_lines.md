@@ -34,17 +34,17 @@ MAPVALUE(0, list(value(0), value(1))) // make coord pair
 POPVALUE(1)  // remove y
 // | 
 // +--> [ (x, y) ]
-
 CHART(
-    chartId("myGeoChart"),
-    // Limitation. embed js code is required.
     chartJSCode({
         fetch("https://machbase.com/assets/example/MacOdrum-LV5-floorplan-web.svg"
         ).then( function(rsp) {
             return rsp.text();
         }).then( function(svg) {
+            // 'echarts' has been imported in TQL
             echarts.registerMap("MacOdrum-LV5-floorplan-web", {svg: svg});
-            option_myGeoChart.geo = {
+            // 'chart' is defined by CHART() in TQL
+            let opt = chart.getOption()
+            opt.geo = {
                 map: "MacOdrum-LV5-floorplan-web",
                 roam: true,
                 emphasis: {
@@ -56,7 +56,7 @@ CHART(
                     }
                 }
             };
-            tqlecharts_myGeoChart.setOption(option_myGeoChart);
+            chart.setOption(opt);
         }).catch(function(err){
             console.warn("geomap error, fetch resource", err)
         });
