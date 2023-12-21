@@ -463,7 +463,7 @@ internal class Program
         stopwatch.Start();
         try
         {
-            for (int i = 0; i < 100 /*000*/; i++)
+            for (int i = 0; i < 100000; i++)
             {
                 var fieldName = new MachRpc.AppendDatum() { VString = "csharp.value" };
                 var fieldTime = new MachRpc.AppendDatum() { VTime = TimeUtils.GetNanoseconds() };
