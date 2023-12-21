@@ -53,4 +53,4 @@ CHART(
 )
 ```
 
-![basic_line](../../img/heatmap.jpg)
+{{< figure src="../../img/heatmap.jpg" width="500" >}}

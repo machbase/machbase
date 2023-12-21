@@ -18,4 +18,4 @@ CHART(
 )
 ```
 
-![basic_line](../../img/basic_scatter.jpg)
+{{< figure src="../../img/basic_scatter.jpg" width="500" >}}

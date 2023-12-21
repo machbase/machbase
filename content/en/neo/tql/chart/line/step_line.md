@@ -34,4 +34,4 @@ CHART(
 )
 ```
 
-![step_line](../../img/step_line.jpg)
+{{< figure src="../../img/step_line.jpg" width="500" >}}

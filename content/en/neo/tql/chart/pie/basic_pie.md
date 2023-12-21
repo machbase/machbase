@@ -46,4 +46,4 @@ CHART(
 )
 ```
 
-![basic_mix](../../img/basic_pie.jpg)
+{{< figure src="../../img/basic_pie.jpg" width="500" >}}

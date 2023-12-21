@@ -50,4 +50,4 @@ CHART(
 )
 ```
 
-![1Mpoints](../../img/million_points.jpg)
+{{< figure src="../../img/million_points.jpg" width="500" >}}

@@ -101,4 +101,4 @@ CHART(
 )
 ```
 
-![basic_line](../../img/wordcloud.jpg)
+{{< figure src="../../img/wordcloud.jpg" width="500" >}}

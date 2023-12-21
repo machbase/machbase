@@ -103,4 +103,4 @@ CHART(
 )
 ```
 
-![anscombe_quartet](../../img/anscombe_quartet.jpg)
+{{< figure src="../../img/anscombe_quartet.jpg" width="500" >}}

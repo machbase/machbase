@@ -32,4 +32,4 @@ CHART(
 )
 ```
 
-![bar_category](../../img/bar_category.jpg)
+{{< figure src="../../img/bar_category.jpg" width="500" >}}

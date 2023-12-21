@@ -58,4 +58,4 @@ CHART(
 )
 ```
 
-![basic_line](../../img/heatmap_discrete.jpg)
+{{< figure src="../../img/heatmap_discrete.jpg" width="500" >}}

@@ -60,4 +60,4 @@ CHART(
 )
 ```
 
-![basic_line](../../img/gauge.jpg)
+{{< figure src="../../img/gauge.jpg" width="500" >}}

@@ -1,7 +1,7 @@
 ---
 title: Calendar Heatmap
 type: docs
-weight: 610
+weight: 620
 ---
 
 ```js
@@ -46,4 +46,4 @@ CHART(
 )
 ```
 
-![basic_line](../../img/heatmap_calendar.jpg)
+{{< figure src="../../img/heatmap_calendar.jpg" width="500" >}}

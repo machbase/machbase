@@ -46,4 +46,4 @@ CHART(
 )
 ```
 
-![basic_mix](../../img/doughnut.jpg)
+{{< figure src="../../img/doughnut.jpg" width="500" >}}

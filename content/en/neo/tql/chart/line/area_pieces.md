@@ -58,5 +58,4 @@ CHART(
 )
 ```
 
-
-![area_pieces](../../img/area_pieces.jpg)
+{{< figure src="../../img/area_pieces.jpg" width="500" >}}

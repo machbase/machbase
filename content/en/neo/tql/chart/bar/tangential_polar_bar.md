@@ -38,4 +38,4 @@ CHART(
 )
 ```
 
-![basic_line](../../img/tangential_polar_bar.jpg)
+{{< figure src="../../img/tangential_polar_bar.jpg" width="500" >}}

@@ -163,4 +163,4 @@ CHART(
 )
 ```
 
-![candlestick_marketindex](../../img/candlestick_marketindex.jpg)
+{{< figure src="../../img/candlestick_marketindex.jpg" width="500" >}}

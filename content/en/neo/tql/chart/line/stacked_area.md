@@ -32,5 +32,4 @@ CHART(
     })
 )
 ```
-
-![stacked_area](../../img/stacked_area.jpg)
+{{< figure src="../../img/stacked_area.jpg" width="500" >}}

@@ -33,4 +33,4 @@ CHART(
 )
 ```
 
-![basic_line](../../img/line_airpassengers.jpg)
+{{< figure src="../../img/line_airpassengers.jpg" width="500" >}}

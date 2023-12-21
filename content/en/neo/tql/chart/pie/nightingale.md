@@ -40,4 +40,4 @@ CHART(
 )
 ```
 
-![basic_mix](../../img/nightingale.jpg)
+{{< figure src="../../img/nightingale.jpg" width="500" >}}

@@ -90,4 +90,4 @@ CHART(
 )
 ```
 
-![geo_svg_lines](../../img/geo_svg_lines.gif)
+{{< figure src="../../img/geo_svg_lines.gif" width="500" >}}

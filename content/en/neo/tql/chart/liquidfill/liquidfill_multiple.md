@@ -19,4 +19,4 @@ CHART(
 )
 ```
 
-![basic_line](../../img/liquidfill_multiple.jpg)
+{{< figure src="../../img/liquidfill_multiple.jpg" width="500" >}}

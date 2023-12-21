@@ -247,4 +247,4 @@ CHART(
 )
 ```
 
-![candlestick_marketindex](../../img/stock_dji.jpg)
+{{< figure src="../../img/stock_dji.jpg" width="500" >}}
