@@ -24,6 +24,12 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
             image="./img/area_pieces.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./line/step_line" title="Step Line"
             image="./img/step_line.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./line/cartesian_coord" title="Cartesian Coordinate System"
+            image="./img/cartesian_coord.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./line/multiple_x_axes" title="Multiple X axes"
+            image="./img/multiple_x_axes.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./line/large_area" title="Large Area Chart" subtitle="lttb downsampling"
+            image="./img/large_area.jpg" method="Fill" options="600x q80 webp">}}
 {{< /cards >}}
 
 ### Bar
