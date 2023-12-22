@@ -41,6 +41,12 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
             image="./img/tangential_polar_bar.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./bar/bar_category" title="Category Bar"
             image="./img/bar_category.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./bar/bar_negative" title="Negative Values"
+            image="./img/bar_negative.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./bar/bar_largescale" title="Large Scale Bar Chart"
+            image="./img/bar_largescale.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./bar/bar_race" title="Bar race"
+            image="./img/bar_race.gif" method="Fill" options="600x q80 webp">}}
 {{< /cards >}}
 
 ### Pie
