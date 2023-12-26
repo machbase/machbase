@@ -43,7 +43,7 @@ CHART(
             // 'echarts' has been imported in TQL
             echarts.registerMap("MacOdrum-LV5-floorplan-web", {svg: svg});
             // 'chart' is defined by CHART() in TQL
-            let opt = chart.getOption()
+            let opt = _chart.getOption()
             opt.geo = {
                 map: "MacOdrum-LV5-floorplan-web",
                 roam: true,

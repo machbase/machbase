@@ -137,7 +137,7 @@ CHART(
             let startIndex = 10;
             let startYear = years[startIndex];
 
-            const option = chart.getOption();
+            const option =_ chart.getOption();
             option.dataset.source = data.slice(1).filter(function (d) {
                 return d[4] === startYear;
             });
