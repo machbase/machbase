@@ -99,7 +99,15 @@ handler.SslProtocols = System.Security.Authentication.SslProtocols.Tls12;
 handler.ClientCertificateOptions = ClientCertificateOption.Manual;
 handler.ClientCertificates.Add(x509);
 handler.UseProxy = false;
-handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+handler.ServerCertificateCustomValidationCallback = (HttpRequestMessage msg, X509Certificate2? cert, X509Chain? chain, SslPolicyErrors sslPolicyErrors) =>
+{
+    if (serverCert.Equals(cert)) {
+        return true;
+    } else {
+        System.Console.WriteLine("Server cert, got " + cert!.SubjectName.Name);
+        return false;
+    }
+};
 
 var channel = GrpcChannel.ForAddress("https://127.0.0.1:5655", new GrpcChannelOptions()
 {
@@ -241,13 +249,23 @@ internal class Program
         var keyPem = File.ReadAllText("csharp-client_key.pem");
         var certPem = File.ReadAllText("csharp-client_cert.pem");
         var x509 = X509Certificate2.CreateFromPem(certPem, keyPem);
+        var serverCert = X509Certificate2.CreateFromCertFile("csharp-server.pem");
 
         var handler = new HttpClientHandler();
         handler.SslProtocols = System.Security.Authentication.SslProtocols.Tls12;
         handler.ClientCertificateOptions = ClientCertificateOption.Manual;
         handler.ClientCertificates.Add(x509);
         handler.UseProxy = false;
-        handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+        handler.ServerCertificateCustomValidationCallback = (HttpRequestMessage msg, X509Certificate2? cert, X509Chain? chain, SslPolicyErrors sslPolicyErrors) =>
+        {
+            if (serverCert.Equals(cert)) {
+                return true;
+            } else {
+                System.Console.WriteLine("Server cert, got " + cert!.SubjectName.Name);
+                return false;
+            }
+        };
+
         
         var channel = GrpcChannel.ForAddress("https://127.0.0.1:5655", new GrpcChannelOptions()
         {
@@ -419,7 +437,7 @@ machbase-neo shell "select count(*) from example where name = 'csharp.value'"
 
 ```csharp
 using Grpc.Net.Client;
-using Google.Protobuf.WellKnownTypes;
+using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Diagnostics;
 
@@ -430,13 +448,22 @@ internal class Program
         var keyPem = File.ReadAllText("csharp-client_key.pem");
         var certPem = File.ReadAllText("csharp-client_cert.pem");
         var x509 = X509Certificate2.CreateFromPem(certPem, keyPem);
+        var serverCert = X509Certificate2.CreateFromCertFile("csharp-server.pem");
 
         var handler = new HttpClientHandler();
         handler.SslProtocols = System.Security.Authentication.SslProtocols.Tls12;
         handler.ClientCertificateOptions = ClientCertificateOption.Manual;
         handler.ClientCertificates.Add(x509);
         handler.UseProxy = false;
-        handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+        handler.ServerCertificateCustomValidationCallback = (HttpRequestMessage msg, X509Certificate2? cert, X509Chain? chain, SslPolicyErrors sslPolicyErrors) =>
+        {
+            if (serverCert.Equals(cert)) {
+                return true;
+            } else {
+                System.Console.WriteLine("Server cert, got " + cert!.SubjectName.Name);
+                return false;
+            }
+        };
 
         var channel = GrpcChannel.ForAddress("https://127.0.0.1:5655", new GrpcChannelOptions()
         {
@@ -454,10 +481,12 @@ internal class Program
         var connRsp = client.Conn(connReq);
         Console.WriteLine(String.Join("    ", connRsp));
 
+        var appender = client.Appender(new MachRpc.AppenderRequest
+        {
+            Conn = connRsp.Conn,
+            TableName = "example",
+        });
         var stream = client.Append();
-
-        var appender = client.Appender(new MachRpc.AppenderRequest { Conn= connRsp.Conn, TableName = "example" });
-        Console.WriteLine(String.Join("    ", appender));
 
         var stopwatch = new Stopwatch();
         stopwatch.Start();
