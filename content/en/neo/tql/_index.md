@@ -27,9 +27,21 @@ GROUP( by(value(4), "species"),
     avg(value(2), "Avg. Petal L."),
     avg(value(3), "Avg. Petal W.")
 )
-CHART_BAR()
+CHART(
+    chartOption({
+        "xAxis":{"type": "category", "data": column(0)},
+        "yAxis": {},
+        "legend": {"show": true},
+        "series": [
+            { "type": "bar", "name": "Avg. Sepal L.", "data": column(1)},
+            { "type": "bar", "name": "Avg. Sepal W.", "data": column(2)},
+            { "type": "bar", "name": "Avg. Petal L.", "data": column(3)},
+            { "type": "bar", "name": "Avg. Petal W.", "data": column(4)}
+        ]
+    })
+)
 ```
-![groupbykey_stddev](./img/groupbykey_avg.jpg)
+{{< figure src="./img/groupbykey_avg.jpg" width="500" >}}
 {{</ tab >}}
 {{< tab >}}
 - min, median, avg, max, stddev of sepal length of the setosa class.
@@ -43,8 +55,21 @@ GROUP( by(value(4)),
     max(value(0), "Max"),
     stddev(value(0), "StdDev.")
 )
-CHART_BAR()
+CHART(
+    chartOption({
+        "xAxis": { "type": "category", "data": ["iris-setosa"]},
+        "yAxis": {},
+        "legend": {"show": "true"},
+        "series": [
+            {"type":"bar", "name": "Min", "data": column(1)},
+            {"type":"bar", "name": "Median", "data": column(2)},
+            {"type":"bar", "name": "Avg", "data": column(3)},
+            {"type":"bar", "name": "Max", "data": column(4)},
+            {"type":"bar", "name": "StdDev.", "data": column(5)}
+        ]
+    })
+)
 ```
-![groupbykey_stddev](./img/groupbykey_stddev.jpg)
+{{< figure src="./img/groupbykey_stddev.jpg" width="500" >}}
 {{</ tab >}}
 {{</ tabs >}}
