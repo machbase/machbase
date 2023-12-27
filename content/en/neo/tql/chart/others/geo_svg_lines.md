@@ -56,7 +56,7 @@ CHART(
                     }
                 }
             };
-            chart.setOption(opt);
+            _chart.setOption(opt);
         }).catch(function(err){
             console.warn("geomap error, fetch resource", err)
         });
