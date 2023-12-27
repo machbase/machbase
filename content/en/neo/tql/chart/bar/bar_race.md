@@ -122,7 +122,6 @@ CHART(
                 "United Kingdom": "#00247d",
                 "United States": "#b22234"
             };
-
             function getFlag(countryName) {
                 if (!countryName) {
                     return '';
@@ -136,8 +135,7 @@ CHART(
             
             let startIndex = 10;
             let startYear = years[startIndex];
-
-            const option =_ chart.getOption();
+            let option = _chart.getOption()
             option.dataset.source = data.slice(1).filter(function (d) {
                 return d[4] === startYear;
             });
@@ -150,10 +148,8 @@ CHART(
             option.series[0].itemStyle.color = function (param) {
                 return countryColors[param.value[3]] || "#5470c6";
             };
-
             option.graphic[0].elements[0].style.text = startYear;
-            chart.setOption(option);
-
+            _chart.setOption(option);
             for (let i = startIndex; i < years.length - 1; ++i) {
                 (function (i) {
                     setTimeout(function () {
@@ -161,14 +157,13 @@ CHART(
                     }, (i - startIndex) * updateFrequency);
                 })(i);
             }
-
             function updateYear(year) {
                 let source = data.slice(1).filter(function (d) {
                     return d[4] === year;
                 });
                 option.series[0].data = source;
                 option.graphic[0].elements[0].style.text = year;
-                chart.setOption(option);
+                _chart.setOption(option);
             }
         }).catch(function(err){
             console.warn("data error, fetch resource", err)
