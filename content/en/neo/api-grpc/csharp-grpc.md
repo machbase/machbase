@@ -60,7 +60,7 @@ Generate application key for the client.
 Execute the command below, it generates a new key and register it to the server automatically.
 
 ```sh
-machbase-neo shell key gen "csharp-client" --output "csharp-client"
+machbase-neo shell --server 127.0.0.1:5655 key gen "csharp-client" --output "csharp-client"
 ```
 
 It generates `csharp-client_cert.pem`, `csharp-client_key.pem` and `csharp-client_token`. The client program requires the both of *.pem files.
@@ -68,7 +68,7 @@ It generates `csharp-client_cert.pem`, `csharp-client_key.pem` and `csharp-clien
 And the client requires machbase-neo's server certificate as a CA.
 
 ```sh
-machbase-neo shell key server-cert --output "csharp-server.pem"
+machbase-neo shell --server 127.0.0.1:5655 key server-cert --output "csharp-server.pem"
 ```
 
 We needs those 3 .pem files.
