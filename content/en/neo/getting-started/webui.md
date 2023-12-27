@@ -10,13 +10,13 @@ Open http://127.0.0.1:5654/ with web browser. Enter ID/Password as 'sys' and 'ma
 
 > If the machbase-neo process is running in a remote machine, please refer [Start and Stop](../start-stop), it shows how to make machbase-neo remote-accessible.
 
-![web-login](/images/web-login.png)
+{{< figure src="/images/web-login.png" width="600" >}}
 
 ## SQL
 
 Select "SQL" to open a new sql editor.
 
-![web-sql](/images/web-sql-pick.png)
+{{< figure src="/images/web-sql-pick.png" width="600" >}}
 
 ### Create table
 
@@ -34,7 +34,7 @@ CREATE TAG TABLE IF NOT EXISTS example (
 
 Execute the statement by hit "Ctrl+Enter" or click ▶︎ icon on the top-left of the panel. Don't forget the semi-colon of the end of the statement.
 
-![web-cretate](/images/web-cretable.png)
+{{< figure src="/images/web-cretable.png" >}}
 
 ### Insert Table
 
@@ -44,7 +44,7 @@ Execute the statement below to write a single record of data.
 INSERT INTO example VALUES('my-car', now, 1.2345);
 ```
 
-![web-insert](/images/web-insert.png)
+{{< figure src="/images/web-insert.png" >}}
 
 ### Select Table
 
@@ -54,7 +54,7 @@ Execute the select statement below, it will show the result on the right tabular
 SELECT time, value FROM example WHERE name = 'my-car';
 ```
 
-![webui-select](/images/web-select.png)
+{{< figure src="/images/web-select.png" >}}
 
 ### Chart Draw
 
@@ -71,11 +71,11 @@ Then review the stored 'my-car' records.
 ```sql
 SELECT time, value FROM example WHERE name = 'my-car';
 ```
-![webui-select-multi](/images/web-select-multi.png)
+{{< figure src="/images/web-select-multi.png" >}}
 
 Click *CHART* tab from the right side pane. It will show a line chart with the query result.
 
-![webui-select-chart](/images/web-select-chart.jpg)
+{{< figure src="/images/web-select-chart.jpg" >}}
 
 ### Delete Table
 
@@ -95,6 +95,6 @@ DROP TABLE example;
 
 Click the Shell tab to run the interactive shell on the web.
 
-![web-shell](/images/web-shell-pick.png)
+{{< figure src="/images/web-shell-pick.png" width="600" >}}
 
-![web-shell-ui](/images/web-shell-ui.png)
+{{< figure src="/images/web-shell-ui.png" width="600" >}}

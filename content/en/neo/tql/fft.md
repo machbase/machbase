@@ -35,7 +35,7 @@ FAKE(
 CHART_SCATTER( size("600px", "350px"), dataZoom('slider', 95, 100) )
 ```
 
-![web-fft-tql-fake](/images/web-fft-tql-fake.png)
+{{< figure src="/images/web-fft-tql-fake.png" width="500" >}}
 
 ## Store data into database
 
@@ -88,7 +88,7 @@ QUERY('value', from('example', 'signal'), between('last-10s', 'last'))
 CHART_LINE( size("600px", "350px"), dataZoom('slider', 95, 100))
 ```
 
-![web-fft-tql-query](/images/web-fft-tql-query.png)
+{{< figure src="/images/web-fft-tql-query.png" width="500" >}}
 
 ## Fast Fourier Transform
 
@@ -107,7 +107,7 @@ CHART_LINE(
 )
 ```
 
-![web-fft-tql-2d](/images/web-fft-tql-2d.png)
+{{< figure src="/images/web-fft-tql-2d.png" width="500" >}}
 
 ## How it works
 
@@ -146,8 +146,7 @@ CHART_BAR3D(
 )
 ```
 
-![web-fft-tql-3d](/images/web-fft-tql-3d.png)
-
+{{< figure src="/images/web-fft-tql-3d.png" width="500" >}}
 
 ## How it works
 

@@ -12,7 +12,7 @@ weith: 12
 machbase-neo serve
 ```
 
-![](../img/server-serve.gif)
+{{< figure src="../img/server-serve.gif" width="600" >}}
 
 ### background
 
@@ -63,7 +63,7 @@ machbase-neo shell shutdown
 
 On Windows, double click "neow.exe" and "machbase-neo serve" button of the top left on the window.
 
-![interfaces](/images/neow-win.png)
+{{< figure src="/images/neow-win.png" width="600" >}}
 
 ### Windows Service
 

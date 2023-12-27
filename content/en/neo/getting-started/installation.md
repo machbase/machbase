@@ -33,6 +33,6 @@ unzip machbase-neo-{{< neo_latestver >}}-${platform}-${arch}.zip
 machbase-neo version
 ```
 
-![server-version](../img/server-version.gif)
+{{< figure src="../img/server-version.gif" width="600" >}}
 
 {{% /steps %}}
