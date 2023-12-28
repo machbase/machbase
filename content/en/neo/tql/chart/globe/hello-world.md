@@ -1,5 +1,5 @@
 ---
-title: GL Hello World
+title: Hello World
 type: docs
 weight: 1000
 ---

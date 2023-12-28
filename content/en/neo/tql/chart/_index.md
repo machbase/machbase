@@ -106,6 +106,14 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
             image="./img/liquidfill_still.jpg" method="Fill" options="600x q80 webp">}}
 {{< /cards >}}
 
+### 3D Globe
+{{< cards >}}
+    {{< card link="./globe/hello-world" title="Hello World"
+            image="./img/gl-hello-world.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./globe/airline" title="Airline on Globe"
+            image="./img/airline.jpg" method="Fill" options="600x q80 webp">}}
+{{< /cards >}}
+
 ### 3D Bar
 
 {{< cards >}}
@@ -130,6 +138,4 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
             image="./img/wordcloud.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./others/geo_svg_lines" title="GEO SVG Lines"
             image="./img/geo_svg_lines.gif" method="Fill" options="600x q80 webp">}}
-    {{< card link="./others/gl-hello-world" title="GL Hello World"
-            image="./img/gl-hello-world.jpg" method="Fill" options="600x q80 webp">}}
 {{< /cards >}}
