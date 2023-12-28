@@ -1,0 +1,100 @@
+flights,airport1-name,airport1-lon,airport1-lat,airport2,airport2-lon,airport2-lat
+274,Sochi,39.956589,43.449928,Kazan,49.278728,55.606186
+274,Astrakhan,48.006278,46.283333,Kazan,49.278728,55.606186
+274,Astrakhan,48.006278,46.283333,Mineralnyye Vody,43.081889,44.225072
+274,Balandino,61.503333,55.305836,Kazan,49.278728,55.606186
+274,Balandino,61.503333,55.305836,Tolmachevo,82.650656,55.012622
+274,Domododevo,37.906111,55.408611,Kazan,49.278728,55.606186
+274,Domododevo,37.906111,55.408611,Begishevo,52.06,55.34
+274,Domododevo,37.906111,55.408611,Bugulma Airport,52.8017,54.64
+274,Belgorod International Airport,36.5901,50.6438,Khrabrovo,20.592633,54.89005
+274,Belgorod International Airport,36.5901,50.6438,Kazan,49.278728,55.606186
+274,Heydar Aliyev,50.046667,40.4675,Begishevo,52.06,55.34
+274,Khrabrovo,20.592633,54.89005,Belgorod International Airport,36.5901,50.6438
+274,Kazan,49.278728,55.606186,Sochi,39.956589,43.449928
+274,Kazan,49.278728,55.606186,Astrakhan,48.006278,46.283333
+274,Kazan,49.278728,55.606186,Balandino,61.503333,55.305836
+274,Kazan,49.278728,55.606186,Domododevo,37.906111,55.408611
+274,Kazan,49.278728,55.606186,Belgorod International Airport,36.5901,50.6438
+274,Kazan,49.278728,55.606186,Pulkovo,30.262503,59.800292
+274,Kazan,49.278728,55.606186,Koltsovo,60.802728,56.743108
+274,Pulkovo,30.262503,59.800292,Kazan,49.278728,55.606186
+274,Pulkovo,30.262503,59.800292,Begishevo,52.06,55.34
+274,Pulkovo,30.262503,59.800292,Bugulma Airport,52.8017,54.64
+274,Mineralnyye Vody,43.081889,44.225072,Astrakhan,48.006278,46.283333
+274,Begishevo,52.06,55.34,Domododevo,37.906111,55.408611
+274,Begishevo,52.06,55.34,Heydar Aliyev,50.046667,40.4675
+274,Begishevo,52.06,55.34,Pulkovo,30.262503,59.800292
+274,Begishevo,52.06,55.34,Koltsovo,60.802728,56.743108
+274,Nizhnevartovsk,76.483617,60.949272,Koltsovo,60.802728,56.743108
+274,Nizhnevartovsk,76.483617,60.949272,Bugulma Airport,52.8017,54.64
+274,Novyi Urengoy,76.313938,66.041811,Koltsovo,60.802728,56.743108
+274,Tolmachevo,82.650656,55.012622,Balandino,61.503333,55.305836
+274,Tolmachevo,82.650656,55.012622,Koltsovo,60.802728,56.743108
+274,Koltsovo,60.802728,56.743108,Kazan,49.278728,55.606186
+274,Koltsovo,60.802728,56.743108,Begishevo,52.06,55.34
+274,Koltsovo,60.802728,56.743108,Nizhnevartovsk,76.483617,60.949272
+274,Koltsovo,60.802728,56.743108,Novyi Urengoy,76.313938,66.041811
+274,Koltsovo,60.802728,56.743108,Tolmachevo,82.650656,55.012622
+274,Bugulma Airport,52.8017,54.64,Domododevo,37.906111,55.408611
+274,Bugulma Airport,52.8017,54.64,Pulkovo,30.262503,59.800292
+274,Bugulma Airport,52.8017,54.64,Nizhnevartovsk,76.483617,60.949272
+152,Coronel Fap Alfredo Mendivil Duarte,-74.204417,-13.154819,Jorge Chavez Intl,-77.114319,-12.021889
+152,Teniente Alejandro Velasco Astete Intl,-71.938781,-13.535722,Jorge Chavez Intl,-77.114319,-12.021889
+152,Teniente Alejandro Velasco Astete Intl,-71.938781,-13.535722,Padre Aldamiz,-69.228611,-12.613611
+152,Alferez Fap David Figueroa Fernandini Airport,-76.204797,-9.878811,Jorge Chavez Intl,-77.114319,-12.021889
+152,Coronel Francisco Secada Vignetta Intl,-73.308806,-3.784739,Cap Fap David Abenzur Rengifo Intl,-74.574297,-8.377939
+152,Coronel Francisco Secada Vignetta Intl,-73.308806,-3.784739,Cadete Guillermo Del Castillo Paredes,-76.373247,-6.508742
+152,Jorge Chavez Intl,-77.114319,-12.021889,Coronel Fap Alfredo Mendivil Duarte,-74.204417,-13.154819
+152,Jorge Chavez Intl,-77.114319,-12.021889,Teniente Alejandro Velasco Astete Intl,-71.938781,-13.535722
+152,Jorge Chavez Intl,-77.114319,-12.021889,Alferez Fap David Figueroa Fernandini Airport,-76.204797,-9.878811
+152,Jorge Chavez Intl,-77.114319,-12.021889,Cap Fap David Abenzur Rengifo Intl,-74.574297,-8.377939
+152,Jorge Chavez Intl,-77.114319,-12.021889,Cadete Guillermo Del Castillo Paredes,-76.373247,-6.508742
+152,Cap Fap David Abenzur Rengifo Intl,-74.574297,-8.377939,Coronel Francisco Secada Vignetta Intl,-73.308806,-3.784739
+152,Cap Fap David Abenzur Rengifo Intl,-74.574297,-8.377939,Jorge Chavez Intl,-77.114319,-12.021889
+152,Cap Fap David Abenzur Rengifo Intl,-74.574297,-8.377939,Cadete Guillermo Del Castillo Paredes,-76.373247,-6.508742
+152,Padre Aldamiz,-69.228611,-12.613611,Teniente Alejandro Velasco Astete Intl,-71.938781,-13.535722
+152,Cadete Guillermo Del Castillo Paredes,-76.373247,-6.508742,Coronel Francisco Secada Vignetta Intl,-73.308806,-3.784739
+152,Cadete Guillermo Del Castillo Paredes,-76.373247,-6.508742,Jorge Chavez Intl,-77.114319,-12.021889
+152,Cadete Guillermo Del Castillo Paredes,-76.373247,-6.508742,Cap Fap David Abenzur Rengifo Intl,-74.574297,-8.377939
+179,Abidjan Felix Houphouet Boigny Intl,-3.926294,5.261386,Bobo Dioulasso,-4.330969,11.160056
+179,Abidjan Felix Houphouet Boigny Intl,-3.926294,5.261386,Ouagadougou,-1.512417,12.353194
+179,Kotoka Intl,-0.166786,5.605186,Ouagadougou,-1.512417,12.353194
+179,Senou,-7.949944,12.533544,Abidjan Felix Houphouet Boigny Intl,-3.926294,5.261386
+179,Senou,-7.949944,12.533544,Leopold Sedar Senghor Intl,-17.490225,14.739708
+179,Senou,-7.949944,12.533544,Ouagadougou,-1.512417,12.353194
+179,Bobo Dioulasso,-4.330969,11.160056,Abidjan Felix Houphouet Boigny Intl,-3.926294,5.261386
+179,Bobo Dioulasso,-4.330969,11.160056,Ouagadougou,-1.512417,12.353194
+179,Cadjehoun,2.384353,6.357228,Gnassingbe Eyadema Intl,1.254511,6.165611
+179,Cadjehoun,2.384353,6.357228,Ouagadougou,-1.512417,12.353194
+179,Leopold Sedar Senghor Intl,-17.490225,14.739708,Senou,-7.949944,12.533544
+179,Leopold Sedar Senghor Intl,-17.490225,14.739708,Ouagadougou,-1.512417,12.353194
+179,Gnassingbe Eyadema Intl,1.254511,6.165611,Ouagadougou,-1.512417,12.353194
+179,Diori Hamani,2.183614,13.481547,Ouagadougou,-1.512417,12.353194
+179,Ouagadougou,-1.512417,12.353194,Abidjan Felix Houphouet Boigny Intl,-3.926294,5.261386
+179,Ouagadougou,-1.512417,12.353194,Kotoka Intl,-0.166786,5.605186
+179,Ouagadougou,-1.512417,12.353194,Senou,-7.949944,12.533544
+179,Ouagadougou,-1.512417,12.353194,Bobo Dioulasso,-4.330969,11.160056
+179,Ouagadougou,-1.512417,12.353194,Cadjehoun,2.384353,6.357228
+179,Ouagadougou,-1.512417,12.353194,Leopold Sedar Senghor Intl,-17.490225,14.739708
+179,Ouagadougou,-1.512417,12.353194,Gnassingbe Eyadema Intl,1.254511,6.165611
+179,Ouagadougou,-1.512417,12.353194,Diori Hamani,2.183614,13.481547
+112,Eldorado Intl,-74.146947,4.701594,Jose Joaquin De Olmedo Intl,-79.883558,-2.157419
+112,Eldorado Intl,-74.146947,4.701594,Mariscal Sucre Intl,-78.488214,-0.141144
+112,Alfonso Bonilla Aragon Intl,-76.381583,3.543222,Jose Joaquin De Olmedo Intl,-79.883558,-2.157419
+112,Jose Joaquin De Olmedo Intl,-79.883558,-2.157419,Eldorado Intl,-74.146947,4.701594
+112,Jose Joaquin De Olmedo Intl,-79.883558,-2.157419,Alfonso Bonilla Aragon Intl,-76.381583,3.543222
+112,Jose Joaquin De Olmedo Intl,-79.883558,-2.157419,San Cristóbal Airport,-89.61745,-0.910206
+112,Jose Joaquin De Olmedo Intl,-79.883558,-2.157419,Mariscal Sucre Intl,-78.488214,-0.141144
+112,Francisco De Orellana,-76.986842,-0.462886,Mariscal Sucre Intl,-78.488214,-0.141144
+112,San Cristóbal Airport,-89.61745,-0.910206,Jose Joaquin De Olmedo Intl,-79.883558,-2.157419
+112,Mariscal Sucre Intl,-78.488214,-0.141144,Eldorado Intl,-74.146947,4.701594
+112,Mariscal Sucre Intl,-78.488214,-0.141144,Jose Joaquin De Olmedo Intl,-79.883558,-2.157419
+112,Mariscal Sucre Intl,-78.488214,-0.141144,Francisco De Orellana,-76.986842,-0.462886
+119,Casale,17.947033,40.657633,Zurich,8.549167,47.464722
+119,Merignac,-0.715556,44.828335,Zurich,8.549167,47.464722
+119,Bristol,-2.719089,51.382669,Zurich,8.549167,47.464722
+119,Geneve Cointrin,6.10895,46.238064,Gran Canaria,-15.386586,27.931886
+119,Larnaca,33.62485,34.875117,Zurich,8.549167,47.464722
+119,Gran Canaria,-15.386586,27.931886,Zurich,8.549167,47.464722
+119,Marsa Alam Intl,34.583711,25.557111,Zurich,8.549167,47.464722
