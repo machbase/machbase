@@ -17,7 +17,7 @@ toc: false
 
 Machbase is the world's fastest timeseries database[^1] with a minimal footprint. It's an ideal solution for environments that require scalability, from small servers with limited resources like the Raspberry Pi to horizontally scaled clusters. Machbase Neo, built on Machbase, adds crucial features required for the IoT industry. It ingests and handles query data through various protocols, such as MQTT for direct data transfer from IoT sensors, and SQL via HTTP for data retrieval by applications.
 
-![interfaces](/images/interfaces.jpg)
+{{< figure src="/images/interfaces.jpg" width="700" >}}
 
 ### API and Interfaces
 
@@ -26,6 +26,13 @@ Machbase is the world's fastest timeseries database[^1] with a minimal footprint
 - [x] gRPC : The first class API for extensions
 - [x] SSH : Command line interface for human and batch process
 - [x] WEB : User interface
+
+### Data Transformation and Visualization
+
+Data transformation and visualization language *TQL* is supproted out of the box.
+
+- [TQL](/neo/tql) is the DSL for data transformation.
+- [CHART()](/neo/tql/chart/) for the data visualization examples.
 
 ### Bridges
 
@@ -72,6 +79,8 @@ Integration with external systems
 [Raspberry PI as IoT server](./tutorials/200.project/200.project-ras-pi-iot-server/) shows how to install machbase-neo on Raspberry PI and utilize it as an IoT server.
 
 [Tutorials](./tutorials/) section has more materials.
+
+[CHART()](/neo/tql/chart/) section has examples for the various types of charts.
 
 ### Contributing
 
