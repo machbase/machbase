@@ -73,6 +73,16 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
             image="./img/million_points.jpg" method="Fill" options="600x q80 webp">}}
 {{< /cards >}}
 
+### Gaguge
+{{< cards >}}
+    {{< card link="./gauge/basic_gauge" title="Basic Gauge"
+            image="./img/basic_gauge.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./gauge/gauge" title="Speed Gauge"
+            image="./img/gauge.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./gauge/gauge_update" title="Update Gauge"
+            image="./img/gauge_update.gif" method="Fill" options="600x q80 webp">}}
+{{< /cards >}}
+
 ### Candlestick
 
 {{< cards >}}
@@ -143,8 +153,6 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
             image="./img/line_airpassengers.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./others/sankey" title="Basic Sankey"
             image="./img/sankey.jpg" method="Fill" options="600x q80 webp">}}
-    {{< card link="./others/gauge" title="Basic Gauge"
-            image="./img/gauge.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./others/wordcloud" title="Word Cloud"
             image="./img/wordcloud.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./others/geo_svg_lines" title="GEO SVG Lines"

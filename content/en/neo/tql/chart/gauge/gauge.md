@@ -1,5 +1,5 @@
 ---
-title: Basic Gauge
+title: Speed Gauge
 type: docs
 weight: 940
 ---
