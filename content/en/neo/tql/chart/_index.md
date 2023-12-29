@@ -121,6 +121,8 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
             image="./img/bar3d-dataset.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./bar3d/bar3d-stacked" title="Stacked 3D Bar"
             image="./img/bar3d-stacked.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./bar3d/bar3d-transparent" title="Transparent 3D Bar"
+            image="./img/bar3d-transparent.jpg" method="Fill" options="600x q80 webp">}}
 {{< /cards >}}
 
 ### Others
