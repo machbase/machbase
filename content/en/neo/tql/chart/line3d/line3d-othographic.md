@@ -1,5 +1,5 @@
 ---
-title: Stacked 3D Line
+title: Orthographic Projection
 type: docs
 weight: 20
 ---

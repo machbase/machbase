@@ -128,7 +128,7 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
 ### 3D Line
 
 {{< cards >}}
-    {{< card link="./line3d/line3d-othographic" title="3D Line with Dataset"
+    {{< card link="./line3d/line3d-othographic" title="Orthographic Projection"
             image="./img/line3d-othographic.jpg" method="Fill" options="600x q80 webp">}}
 {{< /cards >}}
 
