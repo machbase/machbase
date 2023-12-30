@@ -6,13 +6,36 @@ weight: 130
 
 ```js
 FAKE( json({
-    ["Brazil", 18203, 19325],
-    ["Indonesia", 23489, 23438],
-    ["USA", 29034, 31000],
-    ["India", 104970, 121594],
-    ["Chilna", 131744, 134141],
-    ["World", 630230, 681807]
+    ["2011", "Brazil", 18203],
+    ["2011", "Indonesia", 23489],
+    ["2011", "USA", 29034],
+    ["2011", "India", 104970],
+    ["2011", "Chilna", 131744],
+    ["2011", "World", 630230],
+    ["2022", "Brazil", 19325],
+    ["2022", "Indonesia", 23438],
+    ["2022", "USA", 31000],
+    ["2022", "India", 121594],
+    ["2022", "Chilna", 134141],
+    ["2022", "World", 681807]
 }) )
+// |   0      1         2
+// +-> year   country   population
+// |
+MAPVALUE(3, value(0) == "2011" ? value(2) : 0)
+// |   0      1         2            3
+// +-> year   country   population   2011-populration
+// |
+MAPVALUE(4, value(0) == "2022" ? value(2) : 0)
+// |   0      1         2            3                  4
+// +-> year   country   population   2011-populration   2022-population
+// |
+POPVALUE(0, 2)
+// |   0        1                  2
+// +-> country  2011-populration   2022-population
+// |
+GROUP( by(value(0)), max(value(1)), max(value(2)), lazy(true))
+// |
 CHART(
     chartOption({
         "legend":{"show":true},
@@ -22,7 +45,7 @@ CHART(
                 "type": "shadow"
             }
         },
-        "xAxis": { "type": "category" },
+        "xAxis": { "type": "category", "data": column(0) },
         "yAxis": { },
         "series": [
             { "type": "bar", "name": "2011", "data": column(1) },

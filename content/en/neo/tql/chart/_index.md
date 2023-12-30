@@ -45,9 +45,9 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
 {{< cards >}}
     {{< card link="./bar/basic_bar" title="Basic Bar Chart"
             image="./img/basic_bar.jpg" method="Fill" options="600x q80 webp">}}
-    {{< card link="./bar/bar_category" title="Category Bar"
+    {{< card link="./bar/bar_category" title="Category Bar" subtitle="GROUP-by-lazy"
             image="./img/bar_category.jpg" method="Fill" options="600x q80 webp">}}
-    {{< card link="./bar/bar_stacked_normalize" title="Stacked Bar Normalization"
+    {{< card link="./bar/bar_stacked_normalize" title="Stacked Bar Normalization" subtitle="percentage normalize"
             image="./img/bar_stacked_normalize.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./bar/bar_negative" title="Negative Values"
             image="./img/bar_negative.jpg" method="Fill" options="600x q80 webp">}}
