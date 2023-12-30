@@ -24,14 +24,20 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
             image="./img/area_pieces.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./line/step_line" title="Step Line"
             image="./img/step_line.jpg" method="Fill" options="600x q80 webp">}}
-    {{< card link="./line/cartesian_coord" title="Cartesian Coordinate System"
-            image="./img/cartesian_coord.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./line/multiple_x_axes" title="Multiple X axes"
             image="./img/multiple_x_axes.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./line/multiple_y_axes" title="Multiple Y axes"
+            image="./img/multiple_y_axes.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./line/basic_mix" title="Basic Mix" subtitle="Line and Bar Series"
+            image="./img/basic_mix.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./line/large_area" title="Large Area Chart" subtitle="lttb downsampling"
             image="./img/large_area.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./line/line_datatransform" title="Data Transform"
             image="./img/line_datatransform.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./line/line_airpassengers" title="Air Passengers"
+        image="./img/line_airpassengers.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./line/cartesian_coord" title="Cartesian Coordinate System"
+            image="./img/cartesian_coord.jpg" method="Fill" options="600x q80 webp">}}
 {{< /cards >}}
 
 ### Bar
@@ -39,12 +45,14 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
 {{< cards >}}
     {{< card link="./bar/basic_bar" title="Basic Bar Chart"
             image="./img/basic_bar.jpg" method="Fill" options="600x q80 webp">}}
-    {{< card link="./bar/tangential_polar_bar" title="Tangential Polar Bar"
-            image="./img/tangential_polar_bar.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./bar/bar_category" title="Category Bar"
             image="./img/bar_category.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./bar/bar_stacked_normalize" title="Stacked Bar Normalization"
+            image="./img/bar_stacked_normalize.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./bar/bar_negative" title="Negative Values"
             image="./img/bar_negative.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./bar/tangential_polar_bar" title="Tangential Polar Bar"
+            image="./img/tangential_polar_bar.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./bar/bar_largescale" title="Large Scale Bar Chart"
             image="./img/bar_largescale.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./bar/bar_race" title="Bar race"
@@ -145,12 +153,8 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
 ### Others
 
 {{< cards >}}
-    {{< card link="./others/basic_mix" title="Basic Mix" subtitle="Bar and Line Series"
-            image="./img/basic_mix.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./others/basic_radar" title="Radar"
             image="./img/basic_radar.jpg" method="Fill" options="600x q80 webp">}}
-    {{< card link="./others/line_airpassengers" title="Air Passengers"
-            image="./img/line_airpassengers.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./others/sankey" title="Basic Sankey"
             image="./img/sankey.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./others/wordcloud" title="Word Cloud"
