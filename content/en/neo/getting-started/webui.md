@@ -75,7 +75,7 @@ SELECT time, value FROM example WHERE name = 'my-car';
 
 Click *CHART* tab from the right side pane. It will show a line chart with the query result.
 
-{{< figure src="/images/web-select-chart.jpg" >}}
+{{< figure src="/images/web-select-chart.jpg" width="600" >}}
 
 ### Delete Table
 
