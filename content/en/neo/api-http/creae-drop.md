@@ -57,6 +57,8 @@ curl -o - http://127.0.0.1:5654/db/query \
 
 ## Drop table
 
+**Request**
+
 {{< tabs items="Linux/macOS,Windows">}}
 {{< tab >}}
 ```sh
@@ -72,8 +74,8 @@ curl -o - http://127.0.0.1:5654/db/query ^
 {{< /tab >}}
 {{< /tabs >}}
 
-- response
+**Response**
 
-    ```json
-    {"success":true,"reason":"Dropped successfully.","elapse":"185.37292ms"}
-    ```
+```json
+{"success":true,"reason":"Dropped successfully.","elapse":"185.37292ms"}
+```
