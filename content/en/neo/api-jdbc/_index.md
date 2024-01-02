@@ -1,16 +1,14 @@
 ---
-title: Java
+title: JDBC
 type: docs
-weight: 110
+weight: 140
 ---
-
-# How to use JDBC driver
 
 JDBC driver is provided for Java developers.
 
 ## Install
 
-Please refer to the [maven cetral repository](https://central.sonatype.com/artifact/com.machbase/machjdbc/{{ site.jdbc_version }}) for other build tool chains.
+Please refer to the [maven cetral repository](https://central.sonatype.com/artifact/com.machbase/machjdbc/{{< jdbc_version >}}) for other build tool chains.
 
 ### maven
 
@@ -18,20 +16,20 @@ Please refer to the [maven cetral repository](https://central.sonatype.com/artif
 <dependency>
     <groupId>com.machbase</groupId>
     <artifactId>machjdbc</artifactId>
-    <version>{{ site.jdbc_version }}</version>
+    <version>{{< jdbc_version >}}</version>
 </dependency>
 ```
 
 ### gradle
 
 ```
-implementation group: 'com.machbase', name: 'machjdbc', version: '{{ site.jdbc_version }}'
+implementation group: 'com.machbase', name: 'machjdbc', version: '{{< jdbc_version >}}'
 ```
 
 ### sbt
 
 ```
-libraryDependencies += "com.machbase" % "machjdbc" % "{{ site.jdbc_version }}"
+libraryDependencies += "com.machbase" % "machjdbc" % "{{< jdbc_version >}}"
 ```
 
 ## Connect
@@ -46,3 +44,7 @@ sProps.put("password", "manager");
 String sURL = "jdbc:machbase://localhost:5656/mhdb";
 Connection conn = DriverManager.getConnection(sURL, sProps);
 ```
+
+## JDBC
+
+Please refer to [JDBC Reference Manual](/dbms/sdk/jdbc) for more information.

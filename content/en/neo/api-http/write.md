@@ -63,7 +63,7 @@ curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE \
 {{< /tab >}}
 {{< tab >}}
 
-Set the header `Content-Encoding: gzip` telling machbase-neo that the incoming stream is gzip-compressed.
+Set the header `Content-Encoding: gzip` tells machbase-neo that the incoming stream is gzip-compressed.
 
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE \

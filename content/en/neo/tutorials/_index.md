@@ -14,7 +14,6 @@ weight: 30
 
 ### HTTP
 
-- [Create and drop table](./020.http/20.create-drop)
 - [Insert table](./020.http/21.insert)
 - [Select table](./020.http/22.select)
 - [How to insert data from Line Protocol](./020.http/50.connectivity-line-protocol)
@@ -45,10 +44,6 @@ weight: 30
 - [HTTP API in Go](./100.go/100.go-http-writing)
 - [gRPC API in Go](./100.go/101.go-grpc-writing)
 - [How to use Go driver](./100.go/102.go-driver)
-
-### Java
-
-- [How to use JDBC driver](./110.java)
 
 ### Python
 

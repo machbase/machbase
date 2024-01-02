@@ -19,18 +19,6 @@ Choose the latest version for your platform.
 | macOS      | x64            | [machbase-neo-{{< neo_latestver >}}-darwin-amd64.zip]({{< neo_releases_url >}}/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-darwin-amd64.zip) |
 | Windows[^1] | x64     | [machbase-neo-{{< neo_latestver >}}-windows-amd64.zip]({{< neo_releases_url >}}/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-windows-amd64.zip)[^2] |
 
-
-<!--
-### GUI Launcher for macOS
-
-The (_experimental_) GUI releases for macOS users.
-
-| OS         | Architecture   |  Download |
-|:-----------|:---------------|:----------|
-| macOS      | Apple          | [neow-{{< neo_latestver >}}-darwin-arm64.zip]({{< neo_releases_url >}}/download/{{< neo_latestver >}}/neow-{{< neo_latestver >}}-darwin-arm64.zip)|
-| macOS      | Intel          | [neow-{{< neo_latestver >}}-darwin-amd64.zip]({{< neo_releases_url >}}/download/{{< neo_latestver >}}/neow-{{< neo_latestver >}}-darwin-amd64.zip)|
--->
-
 ### What's Changed {{< neo_latestver >}}
 
 [Changes](https://github.com/machbase/neo-server/releases/tag/{{< neo_latestver >}})
