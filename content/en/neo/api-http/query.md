@@ -59,7 +59,7 @@ machbase-neo» help timeformat;
       second         05 or with sub-seconds '05.999999999'
 ```
 
-[List of Time Zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+[List of Time Zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) - wikipedia.org
 ```
 machbase-neo» help tz;
   timezones:
@@ -81,10 +81,21 @@ machbase-neo» help tz;
 
 Set query param `format=json` or omit it for the default value.
 
+{{< tabs items="Linux/macOS,Windows">}}
+{{< tab >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode "q=select * from EXAMPLE limit 2"
 ```
+{{< /tab >}}
+{{< tab >}}
+```sh
+curl -o - http://127.0.0.1:5654/db/query ^
+    --data-urlencode "q=select * from EXAMPLE limit 2"
+```
+{{< /tab >}}
+{{< /tabs >}}
+
 
 The server responses in `Content-Type: application/json`.
 
@@ -118,10 +129,20 @@ The server responses in `Content-Type: application/json`.
 
 Set query param `format=box` in the request.
 
+{{< tabs items="Linux/macOS,Windows">}}
+{{< tab >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode "q=select * from EXAMPLE limit 2" --data-urlencode "format=box"
 ```
+{{< /tab >}}
+{{< tab >}}
+```sh
+curl -o - http://127.0.0.1:5654/db/query ^
+    --data-urlencode "q=select * from EXAMPLE limit 2" --data-urlencode "format=box"
+```
+{{< /tab >}}
+{{< /tabs >}}
 
 The result data in plain text with ascii box. The Content-Type of the response is `plain/text` 
 
@@ -138,10 +159,20 @@ The result data in plain text with ascii box. The Content-Type of the response i
 
 Set query param `format=csv` in the request.
 
-```
+{{< tabs items="Linux/macOS,Windows">}}
+{{< tab >}}
+```sh
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode "q=select * from EXAMPLE limit 2" --data-urlencode "format=csv"
 ```
+{{< /tab >}}
+{{< tab >}}
+```sh
+curl -o - http://127.0.0.1:5654/db/query ^
+    --data-urlencode "q=select * from EXAMPLE limit 2" --data-urlencode "format=csv"
+```
+{{< /tab >}}
+{{< /tabs >}}
 
 The response comes with `Content-Type: text/csv`
 
@@ -161,48 +192,38 @@ It is also possible to request query in JSON form as below example.
 |:------------ |:-----------|:------------------------------------|
 | q            | string     | SQL query string                    |
 
+{{< tabs items="Linux/macOS,Windows">}}
+{{< tab >}}
 ```sh
 curl -o - -X POST http://127.0.0.1:5654/db/query \
     -H 'Content-Type: application/json' \
-    -d '{ "q":"select * from EXAMPLE" }'
+    -d '{ "q":"select * from EXAMPLE limit 2" }'
 ```
+{{< /tab >}}
+{{< tab >}}
+```sh
+curl -o - -X POST http://127.0.0.1:5654/db/query ^
+    -H "Content-Type: application/json" ^
+    -d "{ \"q\":\"select * from EXAMPLE limit 2\" }"
+```
+{{< /tab >}}
+{{< /tabs >}}
 
 ## Post Form Data
 
 HTML Form data format is available too. HTTP header `Content-type` should be `application/x-www-form-urlencoded` in this case.
 
+{{< tabs items="Linux/macOS,Windows">}}
+{{< tab >}}
 ```sh
 curl -o - -X POST http://127.0.0.1:5654/db/query \
-    --data-urlencode "q=select * from TAGDATA"
+    --data-urlencode "q=select * from EXAMPLE limit 2"
 ```
-
-## DDL
-
-The HTTP "Query" API doesn't accept only "SELECT" SQL but also DDL. So it is possible to create and drop tables via HTTP API
-
-### Create table
-
+{{< /tab >}}
+{{< tab >}}
 ```sh
-curl -o - http://127.0.0.1:5654/db/query \
-    --data-urlencode \
-    "q=create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"
+curl -o - -X POST http://127.0.0.1:5654/db/query ^
+    --data-urlencode "q=select * from EXAMPLE limit 2"
 ```
-
-- response
-
-    ```json
-    {"success":true,"reason":"success","elapse":"92.489922ms"}
-    ```
-
-### Drop table
-
-```sh
-curl -o - http://127.0.0.1:5654/db/query \
-    --data-urlencode "q=drop table EXAMPLE"
-```
-
-- response
-
-    ```json
-    {"success":true,"reason":"executed.","elapse":"185.37292ms"}
-    ```
+{{< /tab >}}
+{{< /tabs >}}
