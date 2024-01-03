@@ -15,9 +15,9 @@ CHART(
             let smallBaseValue;
             function next(idx) {
                 smallBaseValue =
-                idx % 30 === 0
-                    ? Math.random() * 700
-                    : smallBaseValue + Math.random() * 500 - 250;
+                    idx % 30 === 0
+                        ? Math.random() * 700
+                        : smallBaseValue + Math.random() * 500 - 250;
                 baseValue += Math.random() * 20 - 10;
                 return Math.max(0, Math.round(baseValue + smallBaseValue) + 3000);
             }
@@ -25,7 +25,7 @@ CHART(
             const valueData = [];
             for (let i = 0; i < count; i++) {
                 categoryData.push(
-                echarts.format.formatTime('yyyy-MM-dd\nhh:mm:ss', time, false)
+                    echarts.format.formatTime('yyyy-MM-dd\nhh:mm:ss', time, false)
                 );
                 valueData.push(next(i).toFixed(2));
                 time += 1000;
