@@ -10,7 +10,7 @@ One is `query` that can execuate any type of SQL statements, the other is `write
 General purpose of HTTP API is exposing functionalities that access the data stored in machbase database for the user's service applications and data analytics tools,
 while sensors and things are storing data into machbase via MQTT and HTTP.
 
-![mqtt_http](/images/interfaces.jpg)
+{{< figure src="/images/interfaces.jpg" width="500" >}}
 
 
 ## Endpoints
