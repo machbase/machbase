@@ -10,23 +10,23 @@ Analyzing and visualizing data stored in a DATABASE, one of the most cumbersome 
 
 For example, when you try to display an time-value chart in some fixed intervals, if you simply query the data with a SELECT query and input it into the chart library, the time interval between the retrieved records may be different from the chart's time-axis (there could be no intermediate data or there are many dense data in a timer-period), making it impossible to process them in the desired format.
 
-Usually, application developers create an array of fixed "time" intervals and iteratively fills the elements (slots) of the array by traversing the query result records. When a slot has already a value, it is maintained as a single value through a specific operation (min, max, first, last, ...), and at the last, slots without values are filled with arbitrary values (0 or NULL).
+Usually, application developers create an array of fixed "time" intervals and iteratively fills the elements (slots) of the array by traversing the query result records. When a slot has already a value, it is maintained as a single value through a specific operation (min, max, first, last, ...), and at the end, slots without values are filled with arbitrary values (0 or NULL).
 
 To alleviate the repetitive and cumbersome work in the application development process, a new TQL function called `TIMEWINDOW()` has been introduced in v8.0.5.
 
 ### Syntax
 
-The syntax is as follows. {{< neo_since ver="8.0.5" />}}
+The syntax is as below. {{< neo_since ver="8.0.5" />}}
 
 ```js
-TIMEWINDOW(fromTime, untilTime, period, [nullValue], columns...)
+TIMEWINDOW(fromTime, untilTime, period [, nullValue], columns...)
 ```
 
-The first and second arguments, *fromTime* and *untilTime*, are the time range of the x-axis to be drawn. Regardless of the existence of actual data, you can specify the desired time range. Note that fromTime is inclusive and untilTime is exclusive.
+The first and second arguments, *fromTime* and *untilTime*, are the time range of the x-axis to be drawn. Regardless of the existence of actual data, you can specify the desired time range. Note that *fromTime* is inclusive and *untilTime* is exclusive.
 
-The third argument, period, represents the time interval. In the example above, it can be expressed as period(“1s”).
+The third argument, period, represents the time interval. In the example above, it can be expressed as period("1s").
 
-The fourth argument, nullValue, is optional, and you can specify a value to use instead of the data that does not exist for a specific slot. If not specified, it is filled with NULL, and if specified as `nullValue(0)``, it is filled with 0.
+The fourth argument, nullValue, is optional, and you can specify a value to use instead of the data that does not exist for a specific slot. If not specified, it is filled with NULL, and if specified as `nullValue(0)`, it is filled with 0.
 
 In the last variadic arguments, specify the aggregation functions as string according to the order of each column. The available values are:
 
@@ -66,8 +66,7 @@ TIMEWINDOW(
     time(1700022912 * 1000000000),
     time(1700022929 * 1000000000),
     period("1s"),
-    "time",
-    "last")
+    "time", "last")
 CSV(sqlTimeformat('YYYY-MM-DD HH24:MI:SS'), heading(true))
 ```
 
@@ -83,8 +82,7 @@ TIMEWINDOW(
     time('now - 2s'),
     time('now + 13s'),
     period("1s"),
-    "time",
-    "last")
+    "time", "last")
 CSV(sqlTimeformat('YYYY-MM-DD HH24:MI:SS'), heading(true))
 ```
 
@@ -100,8 +98,7 @@ TIMEWINDOW(
     time('now + 13s'),
     period("1s"),
     nullValue(100),
-    "time",
-    "last")
+    "time", "last")
 ```
 
 ![ex-tw-2](../img/ex-tw-2.jpg)
@@ -136,9 +133,7 @@ TIMEWINDOW(
     time('now - 2s'),
     time('now + 13s'),
     period("1s"),
-    "time",
-    "last",
-    "last:LinearRegression")
+    "time", "last", "last:LinearRegression")
 CSV(sqlTimeformat('YYYY-MM-DD HH24:MI:SS'), heading(true))
 ```
 
