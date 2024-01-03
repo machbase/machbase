@@ -81,6 +81,15 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
             image="./img/million_points.jpg" method="Fill" options="600x q80 webp">}}
 {{< /cards >}}
 
+### Radar
+
+{{< cards >}}
+    {{< card link="./radar/basic_radar" title="Basic Radar"
+            image="./img/basic_radar.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./radar/radar_custom" title="Custom Radar"
+            image="./img/radar_custom.jpg" method="Fill" options="600x q80 webp">}}
+{{< /cards >}}
+
 ### Gaguge
 {{< cards >}}
     {{< card link="./gauge/basic_gauge" title="Basic Gauge"
@@ -153,8 +162,6 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
 ### Others
 
 {{< cards >}}
-    {{< card link="./others/basic_radar" title="Radar"
-            image="./img/basic_radar.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./others/sankey" title="Basic Sankey"
             image="./img/sankey.jpg" method="Fill" options="600x q80 webp">}}
     {{< card link="./others/wordcloud" title="Word Cloud"

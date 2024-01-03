@@ -1,7 +1,7 @@
 ---
 title: Basic Radar
 type: docs
-weight: 910
+weight: 10
 ---
 
 ```js
