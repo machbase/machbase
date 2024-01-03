@@ -38,7 +38,6 @@ These values are set when the Machbase server starts and are used continuously d
 - [DISK_TABLESPACE_DIRECT_IO_FSYNC](#disk_tablespace_direct_io_fsync)
 - [DISK_TABLESPACE_DIRECT_IO_READ](#disk_tablespace_direct_io_read)
 - [DISK_TABLESPACE_DIRECT_IO_WRITE](#disk_tablespace_direct_io_write)
-- [DISK_TAG_AUTO_RECLAIM](#disk_tag_auto_reclaim)
 - [DUMP_APPEND_ERROR](#dump_append_error)
 - [DUMP_TRACE_INFO](#dump_trace_info)
 - [DURATION_BEGIN](#duration_begin)
@@ -789,33 +788,6 @@ Sets whether to use DIRECT I/O for data write operation. If DIRECT I/O is not su
 |Min|    0|  
 |Max|    1|  
 |Default|    1|
-
-## DISK_TAG_AUTO_RECLAIM
-
-Determines whether to automatically secure unused space for TAG data.
-
-If it is 1, which is the default value, the automatic space securing function works, and if it is 0, it does not work, and the user must directly execute the function using the ALTER TABLE statement.
-
-<table>
-  <thead>
-    <th> </th>
-    <th>Value</th>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Minimum</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <td>Maximum</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <td style="background-color: #F0FFFF;">Default</td>
-      <td>1</td>
-    </tr>
-  </tbody>
-</table>
 
 
 ## DUMP_APPEND_ERROR

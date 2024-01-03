@@ -39,7 +39,6 @@ type: docs
 - [DISK_TABLESPACE_DIRECT_IO_FSYNC](#disk_tablespace_direct_io_fsync)
 - [DISK_TABLESPACE_DIRECT_IO_READ](#disk_tablespace_direct_io_read)
 - [DISK_TABLESPACE_DIRECT_IO_WRITE](#disk_tablespace_direct_io_write)
-- [DISK_TAG_AUTO_RECLAIM](#disk_tag_auto_reclaim)
 - [DUMP_APPEND_ERROR](#dump_append_error)
 - [DUMP_TRACE_INFO](#dump_trace_info)
 - [DURATION_BEGIN](#duration_begin)
@@ -366,15 +365,6 @@ Fsync를 수행하지 않아도 일반적 상황에서는 데이터 유실이 �
 |최대값|	1|
 |기본값|	1|
 
-## DISK_TAG_AUTO_RECLAIM
-
-TAG 데이터에 대해서 사용되지 않는 공간을 자동 확보할 것인지의 여부를 결정한다. 기본값인 1인 경우, 자동 공간 확보 기능이 동작하고 0 인 경우에는 동작하지 않으며 사용자가 ALTER TABLE문을 이용하여 해당 기능을 직접 수행해야 한다.
-
-||Value|
-|-|----|
-|최소값|	0|
-|최대값|	1|
-|기본값|	1|
 
 ## DUMP_APPEND_ERROR
 
