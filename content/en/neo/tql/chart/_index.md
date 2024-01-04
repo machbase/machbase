@@ -111,6 +111,13 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
             image="./img/stock_dji.jpg" method="Fill" options="600x q80 webp">}}
 {{< /cards >}}
 
+### GeoJSON
+
+{{< cards >}}
+    {{< card link="./geojson/seoul_gu" title="GEOJSON - Seoul"
+            image="./img/seoul_gu.jpg" method="Fill" options="600x q80 webp">}}
+{{< /cards >}}
+
 ### Heatmap
 
 {{< cards >}}
