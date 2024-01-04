@@ -9,55 +9,55 @@ Separate from [Property](../property), Property (Cluster) organizes the Property
 
 # Index
 
-* [CLUSTER_LINK_ACCEPT_TIMEOUT](#cluster_link_accept_timeout)
-* [CLUSTER_LINK_BUFFER_SIZE](#cluster_link_buffer_size)
-* [CLUSTER_LINK_CHECK_INTERVAL](#cluster_link_check_interval)
-* [CLUSTER_LINK_CONNECT_RETRY_TIMEOUT](#cluster_link_connect_retry_timeout)
-* [CLUSTER_LINK_CONNECT_TIMEOUT](#cluster_link_connect_timeout)
-* [CLUSTER_LINK_ERROR_ADD_ORIGIN_HOST](#cluster_link_error_add_origin_host)
-* [CLUSTER_LINK_HANDSHAKE_TIMEOUT](#cluster_link_handshake_timeout)
-* [CLUSTER_LINK_SEND_RETRY_COUNT](#cluster_link_send_retry_count)
-* [CLUSTER_LINK_HOST](#cluster_link_host)
-* [CLUSTER_LINK_LONG_TERM_CALLBACK_INTERVAL](#cluster_link_long_term_callback_interval)
-* [CLUSTER_LINK_LONG_WAIT_INTERVAL](#cluster_link_long_wait_interval)
-* [CLUSTER_LINK_MAX_LISTEN](#cluster_link_max_listen)
-* [CLUSTER_LINK_MAX_POLL](#cluster_link_max_poll)
-* [CLUSTER_LINK_PORT_NO](#cluster_link_port_no)
-* [CLUSTER_LINK_RECEIVE_TIMEOUT](#cluster_link_receive_timeout)
-* [CLUSTER_LINK_REQUEST_TIMEOUT](#cluster_link_request_timeout)
-* [CLUSTER_LINK_SEND_RETRY_COUNT](#cluster_link_send_retry_count)
-* [CLUSTER_LINK_SEND_TIMEOUT](#cluster_link_send_timeout)
-* [CLUSTER_LINK_SESSION_TIMEOUT](#cluster_link_session_timeout)
-* [CLUSTER_LINK_THREAD_COUNT](#cluster_link_thread_count)
-* [CLUSTER_QUERY_STAT_LOG_ENABLE](#cluster_query_stat_log_enable)
-* [CLUSTER_REPLICATION_BLOCK_SIZE](#cluster_replication_block_size)
-* [CLUSTER_WAREHOUSE_DIRECT_DML_ENABLE](#cluster_warehouse_direct_dml_enable)
-* [COORDINATOR_DBS_PATH](#coordinator_dbs_path)
-* [COORDINATOR_DDL_REQUEST_TIMEOUT](#coordinator_ddl_request_timeout)
-* [COORDINATOR_DDL_TIMEOUT](#coordinator_ddl_timeout)
-* [COORDINATOR_DECISION_DELAY](#coordinator_decision_delay)
-* [COORDINATOR_DECISION_INTERVAL](#coordinator_decision_interval)
-* [COORDINATOR_HOST_RESOURCE_ENABLE](#coordinator_host_resource_enable)
-* [COORDINATOR_HOST_RESOURCE_COLLECT_INTERVAL](#coordinator_host_resource_collect_interval)
-* [COORDINATOR_HOST_RESOURCE_INTERVAL](#coordinator_host_resource_interval)
-* [COORDINATOR_HOST_RESOURCE_REQUEST_TIMEOUT](#coordinator_host_resource_request_timeout)
-* [COORDINATOR_NODE_REQUEST_TIMEOUT](#coordinator_node_request_timeout)
-* [COORDINATOR_NODE_TIMEOUT](#coordinator_node_timeout)
-* [COORDINATOR_STARTUP_DELAY](#coordinator_startup_delay)
-* [COORDINATOR_STATUS_NODE_INTERVAL](#coordinator_status_node_interval)
-* [COORDINATOR_STATUS_NODE_REQUEST_TIMEOUT](#coordinator_status_node_request_timeout)
-* [COORDINATOR_DISK_FULL_UPPER_BOUND_RATIO](#coordinator_disk_full_upper_bound_ratio)
-* [COORDINATOR_DISK_FULL_LOWER_BOUND_RATIO](#coordinator_disk_full_lower_bound_ratio)
-* [DEPLOYER_DBS_PATH](#deployer_dbs_path)
-* [EXECUTION_STAGE_MEMORY_MAX](#execution_stage_memory_max)
-* [HTTP_ADMIN_PORT](#http_admin_port)
-* [HTTP_CONNECT_TIMEOUT](#http_connect_timeout)
-* [HTTP_RECEIVE_TIMEOUT](#http_receive_timeout)
-* [HTTP_SEND_TIMEOUT](#http_send_timeout)
-* [INSERT_BULK_DATA_MAX_SIZE](#insert_bulk_data_max_size)
-* [INSERT_RECORD_COUNT_PER_NODE](#insert_record_count_per_node)
-* [LOOKUPNODE_COMMAND_RETRY_MAX_COUNT](#lookupnode_command_retry_max_count)
-* [STAGE_RESULT_BLOCK_SIZE](#stage_result_block_size)
+- [Index](#index)
+  - [CLUSTER_LINK_ACCEPT_TIMEOUT](#cluster_link_accept_timeout)
+  - [CLUSTER_LINK_BUFFER_SIZE](#cluster_link_buffer_size)
+  - [CLUSTER_LINK_CHECK_INTERVAL](#cluster_link_check_interval)
+  - [CLUSTER_LINK_CONNECT_RETRY_TIMEOUT](#cluster_link_connect_retry_timeout)
+  - [CLUSTER_LINK_CONNECT_TIMEOUT](#cluster_link_connect_timeout)
+  - [CLUSTER_LINK_ERROR_ADD_ORIGIN_HOST](#cluster_link_error_add_origin_host)
+  - [CLUSTER_LINK_HANDSHAKE_TIMEOUT](#cluster_link_handshake_timeout)
+  - [CLUSTER_LINK_SEND_RETRY_COUNT](#cluster_link_send_retry_count)
+  - [CLUSTER_LINK_HOST](#cluster_link_host)
+  - [CLUSTER_LINK_LONG_TERM_CALLBACK_INTERVAL](#cluster_link_long_term_callback_interval)
+  - [CLUSTER_LINK_LONG_WAIT_INTERVAL](#cluster_link_long_wait_interval)
+  - [CLUSTER_LINK_MAX_LISTEN](#cluster_link_max_listen)
+  - [CLUSTER_LINK_MAX_POLL](#cluster_link_max_poll)
+  - [CLUSTER_LINK_PORT_NO](#cluster_link_port_no)
+  - [CLUSTER_LINK_RECEIVE_TIMEOUT](#cluster_link_receive_timeout)
+  - [CLUSTER_LINK_REQUEST_TIMEOUT](#cluster_link_request_timeout)
+  - [CLUSTER_LINK_SEND_TIMEOUT](#cluster_link_send_timeout)
+  - [CLUSTER_LINK_SESSION_TIMEOUT](#cluster_link_session_timeout)
+  - [CLUSTER_LINK_THREAD_COUNT](#cluster_link_thread_count)
+  - [CLUSTER_QUERY_STAT_LOG_ENABLE](#cluster_query_stat_log_enable)
+  - [CLUSTER_REPLICATION_BLOCK_SIZE](#cluster_replication_block_size)
+  - [CLUSTER_WAREHOUSE_DIRECT_DML_ENABLE](#cluster_warehouse_direct_dml_enable)
+  - [COORDINATOR_DBS_PATH](#coordinator_dbs_path)
+  - [COORDINATOR_DDL_REQUEST_TIMEOUT](#coordinator_ddl_request_timeout)
+  - [COORDINATOR_DDL_TIMEOUT](#coordinator_ddl_timeout)
+  - [COORDINATOR_DECISION_DELAY](#coordinator_decision_delay)
+  - [COORDINATOR_DECISION_INTERVAL](#coordinator_decision_interval)
+  - [COORDINATOR_HOST_RESOURCE_ENABLE](#coordinator_host_resource_enable)
+  - [COORDINATOR_HOST_RESOURCE_COLLECT_INTERVAL](#coordinator_host_resource_collect_interval)
+  - [COORDINATOR_HOST_RESOURCE_INTERVAL](#coordinator_host_resource_interval)
+  - [COORDINATOR_HOST_RESOURCE_REQUEST_TIMEOUT](#coordinator_host_resource_request_timeout)
+  - [COORDINATOR_NODE_REQUEST_TIMEOUT](#coordinator_node_request_timeout)
+  - [COORDINATOR_NODE_TIMEOUT](#coordinator_node_timeout)
+  - [COORDINATOR_STARTUP_DELAY](#coordinator_startup_delay)
+  - [COORDINATOR_STATUS_NODE_INTERVAL](#coordinator_status_node_interval)
+  - [COORDINATOR_STATUS_NODE_REQUEST_TIMEOUT](#coordinator_status_node_request_timeout)
+  - [COORDINATOR_DISK_FULL_UPPER_BOUND_RATIO](#coordinator_disk_full_upper_bound_ratio)
+  - [COORDINATOR_DISK_FULL_LOWER_BOUND_RATIO](#coordinator_disk_full_lower_bound_ratio)
+  - [DEPLOYER_DBS_PATH](#deployer_dbs_path)
+  - [EXECUTION_STAGE_MEMORY_MAX](#execution_stage_memory_max)
+  - [HTTP_ADMIN_PORT](#http_admin_port)
+  - [HTTP_CONNECT_TIMEOUT](#http_connect_timeout)
+  - [HTTP_RECEIVE_TIMEOUT](#http_receive_timeout)
+  - [HTTP_SEND_TIMEOUT](#http_send_timeout)
+  - [INSERT_BULK_DATA_MAX_SIZE](#insert_bulk_data_max_size)
+  - [INSERT_RECORD_COUNT_PER_NODE](#insert_record_count_per_node)
+  - [LOOKUPNODE_COMMAND_RETRY_MAX_COUNT](#lookupnode_command_retry_max_count)
+  - [STAGE_RESULT_BLOCK_SIZE](#stage_result_block_size)
 
 
 
@@ -278,7 +278,7 @@ The default value is 5000 (msec).
     </tr>
     <tr>
       <td>Maximum</td>
-      <td>2^64-1</td>
+      <td>2^32-1</td>
     </tr>
     <tr>
       <td style="background-color: #F0FFFF;">Default</td>
@@ -493,37 +493,6 @@ The default value is 60 seconds, Timeout is long enough because it is not known 
     <tr>
       <td style="background-color: #F0FFFF;">Default</td>
       <td>60000000</td>
-    </tr>
-  </tbody>
-</table>
-
-
-## CLUSTER_LINK_SEND_RETRY_COUNT
-Number of times to retry transmission until the transmit buffer is empty.
-
-Each retry will result in 1 ms of rest.
-
-If you try again beyond this number, disconnect.
-
-The default value is 5000.
-
-<table>
-  <thead>
-    <th style="background-color: lightyellow;">(count)</th>
-    <th>Value</th>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Minimum</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <td>Maximum</td>
-      <td>2^32-1</td>
-    </tr>
-    <tr>
-      <td style="background-color: #F0FFFF;">Default</td>
-      <td>5000</td>
     </tr>
   </tbody>
 </table>
