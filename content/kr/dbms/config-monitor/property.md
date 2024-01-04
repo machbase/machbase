@@ -10,74 +10,73 @@ type: docs
 
 ## 목차
 
-* [CPU_AFFINITY_BEGIN_ID](#cpu_affinity_begin_id)
-* [CPU_AFFINITY_COUNT](#cpu_affinity_count)
-* [CPU_COUNT](#cpu_count)
-* [CPU_PARALLEL](#cpu_parallel)
-* [DBS_PATH](#dbs_path)
-* [DEFAULT_LSM_MAX_LEVEL](#default_lsm_max_level)
-* [DISK_BUFFER_COUNT](#disk_buffer_count)
-* [DISK_COLUMNAR_INDEX_CHECKPOINT_INTERVAL_SEC](#disk_columnar_index_checkpoint_interval_sec)
-* [DISK_COLUMNAR_INDEX_FDCACHE_COUNT](#disk_columnar_index_fdcache_count)
-* [DISK_COLUMNAR_INDEX_SHUTDOWN_BUILD_FINISH](#disk_columnar_index_shutdown_build_finish)
-* [DISK_COLUMNAR_PAGE_CACHE_MAX_SIZE](#disk_columnar_page_cache_max_size)
-* [DISK_COLUMNAR_TABLE_CHECKPOINT_INTERVAL_SEC](#disk_columnar_table_checkpoint_interval_sec)
-* [DISK_COLUMNAR_TABLE_COLUMN_FDCACHE_COUNT](#disk_columnar_table_column_fdcache_count)
-* [DISK_COLUMNAR_TABLE_COLUMN_MINMAX_CACHE_SIZE](#disk_columnar_table_column_minmax_cache_size)
-* [DISK_COLUMNAR_TABLE_COLUMN_PART_FLUSH_MODE](#disk_columnar_table_column_part_flush_mode)
-* [DISK_COLUMNAR_TABLE_COLUMN_PART_IO_INTERVAL_MIN_SEC](#disk_columnar_table_column_part_io_interval_min_sec)
-* [DISK_COLUMNAR_TABLE_COLUMN_PARTITION_PRECREATE_COUNT](#disk_columnar_table_column_partition_precreate_count)
-* [DISK_COLUMNAR_TABLE_TIME_INVERSION_MODE](#disk_columnar_table_time_inversion_mode)
-* [DISK_COLUMNAR_TABLESPACE_DWFILE_EXT_SIZE](#disk_columnar_tablespace_dwfile_ext_size)
-* [DISK_COLUMNAR_TABLESPACE_DWFILE_INT_SIZE](#disk_columnar_tablespace_dwfile_int_size)
-* [DISK_COLUMNAR_TABLESPACE_MEMORY_EXT_SIZE](#disk_columnar_tablespace_memory_ext_size)
-* [DISK_COLUMNAR_TABLESPACE_MEMORY_MAX_SIZE](#disk_columnar_tablespace_memory_max_size)
-* [DISK_COLUMNAR_TABLESPACE_MEMORY_MIN_SIZE](#disk_columnar_tablespace_memory_min_size)
-* [DISK_COLUMNAR_TABLESPACE_MEMORY_SLOWDOWN_HIGH_LIMIT_PCT](#disk_columnar_tablespace_memory_slowdown_high_limit_pct)
-* [DISK_COLUMNAR_TABLESPACE_MEMORY_SLOWDOWN_MSEC](#disk_columnar_tablespace_memory_slowdown_msec)
-* [DISK_IO_THREAD_COUNT](#disk_io_thread_count)
-* [DISK_TABLESPACE_DIRECT_IO_FSYNC](#disk_tablespace_direct_io_fsync)
-* [DISK_TABLESPACE_DIRECT_IO_READ](#disk_tablespace_direct_io_read)
-* [DISK_TABLESPACE_DIRECT_IO_WRITE](#disk_tablespace_direct_io_write)
-* [DISK_TAG_AUTO_RECLAIM](#disk_tag_auto_reclaim)
-* [DUMP_APPEND_ERROR](#dump_append_error)
-* [DUMP_TRACE_INFO](#dump_trace_info)
-* [DURATION_BEGIN](#duration_begin)
-* [DURATION_GAP](#duration_gap)
-* [FEEDBACK_APPEND_ERROR](#feedback_append_error)
-* [GRANT_REMOTE_ACCESS](#grant_remote_access)
-* [HTTP_THREAD_COUNT](#http_thread_count)
-* [INDEX_BUILD_MAX_ROW_COUNT_PER_THREAD](#index_build_max_row_count_per_thread)
-* [INDEX_BUILD_THREAD_COUNT](#index_build_thread_count)
-* [INDEX_FLUSH_MAX_REQUEST_COUNT_PER_INDEX](#index_flush_max_request_count_per_index)
-* [INDEX_LEVEL_PARTITION_AGER_THREAD_COUNT](#index_level_partition_ager_thread_count)
-* [INDEX_LEVEL_PARTITION_BUILD_MEMORY_HIGH_LIMIT_PCT](#index_level_partition_build_memory_high_limit_pct)
-* [INDEX_LEVEL_PARTITION_BUILD_THREAD_COUNT](#index_level_partition_build_thread_count)
-* [LOOKUP_APPEND_UPDATE_ON_DUPKEY](#lookup_append_update_on_dupkey)
-* [MAX_QPX_MEM](#max_qpx_mem)
-* [MEMORY_ROW_TEMP_TABLE_PAGESIZE](#memory_row_temp_table_pagesize)
-* [PID_PATH](#pid_path)
-* [PORT_NO](#port_no)
-* [PROCESS_MAX_SIZE](#process_max_size)
-* [QUERY_PARALLEL_FACTOR](#query_parallel_factor)
-* [ROLLUP_FETCH_COUNT_LIMIT](#rollup_fetch_count_limit)
-* [RS_CACHE_APPROXIMATE_RESULT_ENABLE](#rs_cache_approximate_result_enable)
-* [RS_CACHE_ENABLE](#rs_cache_enable)
-* [RS_CACHE_MAX_MEMORY_PER_QUERY](#rs_cache_max_memory_per_query)
-* [RS_CACHE_MAX_MEMORY_SIZE](#rs_cache_max_memory_size)
-* [RS_CACHE_MAX_RECORD_PER_QUERY](#rs_cache_max_record_per_query)
-* [RS_CACHE_TIME_BOUND_MSEC](#rs_cache_time_bound_msec)
-* [SHOW_HIDDEN_COLS](#show_hidden_cols)
-* [TABLE_SCAN_DIRECTION](#table_scan_direction)
-* [TAGDATA_AUTO_META_INSERT](#tagdata_auto_meta_insert)
-* [TAG_PARTITION_COUNT](#tag_partition_count)
-* [TAG_DATA_PART_SIZE](#tag_data_part_size)
-* [TAG_TABLE_META_MAX_SIZE](#tag_table_meta_max_size)
-* [TRACE_LOGFILE_COUNT](#trace_logfile_count)
-* [TRACE_LOGFILE_PATH](#trace_logfile_path)
-* [TRACE_LOGFILE_SIZE](#trace_logfile_size)
-* [UNIX_PATH](#unix_path)
-* [VOLATILE_TABLESPACE_MEMORY_MAX_SIZE](#volatile_tablespace_memory_max_size)
+- [목차](#목차)
+- [CPU_AFFINITY_BEGIN_ID](#cpu_affinity_begin_id)
+- [CPU_AFFINITY_COUNT](#cpu_affinity_count)
+- [CPU_COUNT](#cpu_count)
+- [CPU_PARALLEL](#cpu_parallel)
+- [DBS_PATH](#dbs_path)
+- [DEFAULT_LSM_MAX_LEVEL](#default_lsm_max_level)
+- [DISK_BUFFER_COUNT](#disk_buffer_count)
+- [DISK_COLUMNAR_INDEX_CHECKPOINT_INTERVAL_SEC](#disk_columnar_index_checkpoint_interval_sec)
+- [DISK_COLUMNAR_INDEX_FDCACHE_COUNT](#disk_columnar_index_fdcache_count)
+- [DISK_COLUMNAR_INDEX_SHUTDOWN_BUILD_FINISH](#disk_columnar_index_shutdown_build_finish)
+- [DISK_COLUMNAR_PAGE_CACHE_MAX_SIZE](#disk_columnar_page_cache_max_size)
+- [DISK_COLUMNAR_TABLE_CHECKPOINT_INTERVAL_SEC](#disk_columnar_table_checkpoint_interval_sec)
+- [DISK_COLUMNAR_TABLE_COLUMN_FDCACHE_COUNT](#disk_columnar_table_column_fdcache_count)
+- [DISK_COLUMNAR_TABLE_COLUMN_MINMAX_CACHE_SIZE](#disk_columnar_table_column_minmax_cache_size)
+- [DISK_COLUMNAR_TABLE_COLUMN_PART_FLUSH_MODE](#disk_columnar_table_column_part_flush_mode)
+- [DISK_COLUMNAR_TABLE_COLUMN_PART_IO_INTERVAL_MIN_SEC](#disk_columnar_table_column_part_io_interval_min_sec)
+- [DISK_COLUMNAR_TABLE_TIME_INVERSION_MODE](#disk_columnar_table_time_inversion_mode)
+- [DISK_COLUMNAR_TABLESPACE_DWFILE_EXT_SIZE](#disk_columnar_tablespace_dwfile_ext_size)
+- [DISK_COLUMNAR_TABLESPACE_DWFILE_INT_SIZE](#disk_columnar_tablespace_dwfile_int_size)
+- [DISK_COLUMNAR_TABLESPACE_MEMORY_EXT_SIZE](#disk_columnar_tablespace_memory_ext_size)
+- [DISK_COLUMNAR_TABLESPACE_MEMORY_MAX_SIZE](#disk_columnar_tablespace_memory_max_size)
+- [DISK_COLUMNAR_TABLESPACE_MEMORY_MIN_SIZE](#disk_columnar_tablespace_memory_min_size)
+- [DISK_COLUMNAR_TABLESPACE_MEMORY_SLOWDOWN_HIGH_LIMIT_PCT](#disk_columnar_tablespace_memory_slowdown_high_limit_pct)
+- [DISK_COLUMNAR_TABLESPACE_MEMORY_SLOWDOWN_MSEC](#disk_columnar_tablespace_memory_slowdown_msec)
+- [DISK_IO_THREAD_COUNT](#disk_io_thread_count)
+- [DISK_TABLESPACE_DIRECT_IO_FSYNC](#disk_tablespace_direct_io_fsync)
+- [DISK_TABLESPACE_DIRECT_IO_READ](#disk_tablespace_direct_io_read)
+- [DISK_TABLESPACE_DIRECT_IO_WRITE](#disk_tablespace_direct_io_write)
+- [DUMP_APPEND_ERROR](#dump_append_error)
+- [DUMP_TRACE_INFO](#dump_trace_info)
+- [DURATION_BEGIN](#duration_begin)
+- [DURATION_GAP](#duration_gap)
+- [FEEDBACK_APPEND_ERROR](#feedback_append_error)
+- [GRANT_REMOTE_ACCESS](#grant_remote_access)
+- [HTTP_THREAD_COUNT](#http_thread_count)
+- [INDEX_BUILD_MAX_ROW_COUNT_PER_THREAD](#index_build_max_row_count_per_thread)
+- [INDEX_BUILD_THREAD_COUNT](#index_build_thread_count)
+- [INDEX_FLUSH_MAX_REQUEST_COUNT_PER_INDEX](#index_flush_max_request_count_per_index)
+- [INDEX_LEVEL_PARTITION_AGER_THREAD_COUNT](#index_level_partition_ager_thread_count)
+- [INDEX_LEVEL_PARTITION_BUILD_MEMORY_HIGH_LIMIT_PCT](#index_level_partition_build_memory_high_limit_pct)
+- [INDEX_LEVEL_PARTITION_BUILD_THREAD_COUNT](#index_level_partition_build_thread_count)
+- [LOOKUP_APPEND_UPDATE_ON_DUPKEY](#lookup_append_update_on_dupkey)
+- [MAX_QPX_MEM](#max_qpx_mem)
+- [MEMORY_ROW_TEMP_TABLE_PAGESIZE](#memory_row_temp_table_pagesize)
+- [PID_PATH](#pid_path)
+- [PORT_NO](#port_no)
+- [PROCESS_MAX_SIZE](#process_max_size)
+- [QUERY_PARALLEL_FACTOR](#query_parallel_factor)
+- [ROLLUP_FETCH_COUNT_LIMIT](#rollup_fetch_count_limit)
+- [RS_CACHE_APPROXIMATE_RESULT_ENABLE](#rs_cache_approximate_result_enable)
+- [RS_CACHE_ENABLE](#rs_cache_enable)
+- [RS_CACHE_MAX_MEMORY_PER_QUERY](#rs_cache_max_memory_per_query)
+- [RS_CACHE_MAX_MEMORY_SIZE](#rs_cache_max_memory_size)
+- [RS_CACHE_MAX_RECORD_PER_QUERY](#rs_cache_max_record_per_query)
+- [RS_CACHE_TIME_BOUND_MSEC](#rs_cache_time_bound_msec)
+- [SHOW_HIDDEN_COLS](#show_hidden_cols)
+- [TABLE_SCAN_DIRECTION](#table_scan_direction)
+- [TAGDATA_AUTO_META_INSERT](#tagdata_auto_meta_insert)
+- [TAG_TABLE_META_MAX_SIZE](#tag_table_meta_max_size)
+- [TAG_PARTITION_COUNT](#tag_partition_count)
+- [TAG_DATA_PART_SIZE](#tag_data_part_size)
+- [TRACE_LOGFILE_COUNT](#trace_logfile_count)
+- [TRACE_LOGFILE_PATH](#trace_logfile_path)
+- [TRACE_LOGFILE_SIZE](#trace_logfile_size)
+- [UNIX_PATH](#unix_path)
+- [VOLATILE_TABLESPACE_MEMORY_MAX_SIZE](#volatile_tablespace_memory_max_size)
 
 ## CPU_AFFINITY_BEGIN_ID
 
@@ -237,15 +236,6 @@ _ARRIVAL_TIME 컬럼에 설정되는 기본 MINMAX 캐쉬의 크기를 설정한
 |최대값|	2^32-1 (sec)|
 |기본값|	3 (sec)|
 
-## DISK_COLUMNAR_TABLE_COLUMN_PARTITION_PRECREATE_COUNT
-
-테이블에 대해서 사용할 예정인 컬럼 파티션 객체의 사전 생성 수를 정의한다.
-
-||Value|
-|-|----|
-|최소값|	1|
-|최대값|	2^32-1|
-|기본값|	3|
 
 ## DISK_COLUMNAR_TABLE_TIME_INVERSION_MODE
 
@@ -375,15 +365,6 @@ Fsync를 수행하지 않아도 일반적 상황에서는 데이터 유실이 �
 |최대값|	1|
 |기본값|	1|
 
-## DISK_TAG_AUTO_RECLAIM
-
-TAG 데이터에 대해서 사용되지 않는 공간을 자동 확보할 것인지의 여부를 결정한다. 기본값인 1인 경우, 자동 공간 확보 기능이 동작하고 0 인 경우에는 동작하지 않으며 사용자가 ALTER TABLE문을 이용하여 해당 기능을 직접 수행해야 한다.
-
-||Value|
-|-|----|
-|최소값|	0|
-|최대값|	1|
-|기본값|	1|
 
 ## DUMP_APPEND_ERROR
 

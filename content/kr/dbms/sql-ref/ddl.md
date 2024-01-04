@@ -635,29 +635,6 @@ ALTER TABLE table_name MODIFY COLUMN column_name NULL;
 alter table t1 modify column c1 null;
 ```
 
-### ALTER TABLE RECLAIM STORAGE
-
-**alter_table_reclaim_storage_stmt:**
-
-![alter_table_reclaim_storage_stmt](../ddl_image/alter_table_reclaim_storage_stmt.png)
-
-```sql
-alter_table_reclaim_storage_stmt ::= 'ALTER TABLE' table_name 'RECLAIM STORAGE'
-```
-
-Tag 테이블에서 사용되지 않는 데이터를 삭제하여 가용공간을 확보한다.
-
-시스템 프로퍼티 DISK_TAG_AUTO_RECLAIM 가 1 인 경우(기본값) 특별히 수행하지 않아도 자동으로 수행된다.
-
-이 값을 0으로 설정한 경우에는 원하는 시점에 이 질의를 수행하여 저장 공간을 확보할 수 있다.
-
-Tag 테이블에 대해서만 용가능하다.
-
-
-```sql
--- tag table의 저장공간을 확보한다.
-alter table tag reclaim storage;
-```
 
 ### ALTER TABLE RENAME TO
 

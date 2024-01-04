@@ -617,24 +617,6 @@ ALTER TABLE table_name MODIFY COLUMN column_name NULL;
 alter table t1 modify column c1 null;
 ```
 
-### ALTER TABLE RECLAIM STORAGE
-
-**alter_table_reclaim_storage_stmt:**
-
-![alter_table_reclaim_storage_stmt](../ddl_image/alter_table_reclaim_storage_stmt.png)
-
-```sql
-alter_table_reclaim_storage_stmt ::= 'ALTER TABLE' table_name 'RECLAIM STORAGE'
-```
-
-Delete unused data from the Tag table to secure available space.
-If the system property DISK_TAG_AUTO_RECLAIM is 1 (default), it is automatically performed without special execution.
-When this value is set to 0, the storage space may be secured by performing this query at a desired time. Only available for Tag table.
-
-```sql
--- Reclaim the storage space of the tag table.
-alter table tag reclaim storage;
-```
 
 ### ALTER TABLE RENAME TO
 
