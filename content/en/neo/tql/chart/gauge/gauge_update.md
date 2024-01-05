@@ -43,10 +43,11 @@ CHART(
             }).then(function(rsp){
                 return rsp.json()
             }).then(function(obj){
-                // console.log(obj)
                 _chartOption.series[0].data[0].value = obj.data.rows[0][0]
                 _chart.setOption(_chartOption)
-                setTimeout(updateGauge, 1000)
+                if (document.getElementById(_chartID) != null) {
+                    setTimeout(updateGauge, 1000)
+                }
             }).catch(function(err){
                 console.warn("data fetch error", err)
             });
