@@ -9,15 +9,15 @@ FAKE( linspace(0, 360, 100))
 MAPVALUE(2, sin((value(0)/180)*PI))
 CHART(
     chartOption({
-        "xAxis": {
-            "type": "category",
-            "data": column(0)
+        xAxis: {
+            type: "category",
+            data: column(0)
         },
-        "yAxis": {},
-        "series": [
+        yAxis: {},
+        series: [
             {
-                "type": "line",
-                "data": column(1)
+                type: "line",
+                data: column(1)
             }
         ]
     })

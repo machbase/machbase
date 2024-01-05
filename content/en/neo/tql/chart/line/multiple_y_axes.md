@@ -26,75 +26,75 @@ CHART(
     const colors = ['#5470C6', '#91CC75', '#EE6666'];
   }),
   chartOption({
-    "color": colors,
-    "tooltip": {
-      "trigger": "axis",
-      "axisPointer": {
-        "type": "cross"
+    color: colors,
+    tooltip: {
+      trigger: "axis",
+      axisPointer: {
+        type: "cross"
       }
     },
-    "grid": { "right": "23%" },
-    "toolbox": {
-      "feature": {
-        "dataView": { "show": true, "readOnly": false },
-        "restore": { "show": true },
-        "saveAsImage": { "show": true }
+    grid: { right: "23%" },
+    toolbox: {
+      feature: {
+        dataView: { show: true, readOnly: false },
+        restore: { show: true },
+        saveAsImage: { show: true }
       }
     },
-    "legend": { "bottom": 10, "data": [ column(1)[0], column(2)[0], column(3)[0]] },
-    "xAxis": [
+    legend: { bottom: 10, data: [ column(1)[0], column(2)[0], column(3)[0]] },
+    xAxis: [
         {
-          "type": "category",
-          "axisTick": {
-            "alignWithLabel": true
+          type: "category",
+          axisTick: {
+            alignWithLabel: true
           },
-          "data": column(0).slice(1)
+          data: column(0).slice(1)
         }
       ],
-    "yAxis": [
+    yAxis: [
       {
-        "type": "value",
-        "name": "Evaporation",
-        "position": "right",
-        "alignTicks": true,
-        "axisLine": { "show": true, "lineStyle": { "color": colors[0] } },
-        "axisLabel": { "formatter": "{value} ml" }
+        type: "value",
+        name: "Evaporation",
+        position: "right",
+        alignTicks: true,
+        axisLine: { show: true, lineStyle: { color: colors[0] } },
+        axisLabel: { formatter: "{value} ml" }
       },
       {
-        "type": "value",
-        "name": "Precipitation",
-        "position": "right",
-        "alignTicks": true,
-        "offset": 80,
-        "axisLine": { "show": true, "lineStyle": { "color": colors[1] } },
-        "axisLabel": { "formatter": "{value} ml" }
+        type: "value",
+        name: "Precipitation",
+        position: "right",
+        alignTicks: true,
+        offset: 80,
+        axisLine: { show: true, lineStyle: { color: colors[1] } },
+        axisLabel: { formatter: "{value} ml" }
       },
       {
-        "type": "value",
-        "name": "Temperature",
-        "position": "left",
-        "alignTicks": true,
-        "axisLine": { "show": true, "lineStyle": { "color": colors[2] } },
-        "axisLabel": { "formatter": "{value} °C" }
+        type: "value",
+        name: "Temperature",
+        position: "left",
+        alignTicks: true,
+        axisLine: { show: true, lineStyle: { color: colors[2] } },
+        axisLabel: { formatter: "{value} °C" }
       }
     ],
-    "series": [
+    series: [
       {
-        "name": "Evaporation",
-        "type": "bar",
-        "data": column(1).slice(1)
+        name: "Evaporation",
+        type: "bar",
+        data: column(1).slice(1)
       },
       {
-        "name": "Precipitation",
-        "type": "bar",
-        "yAxisIndex": 1,
-        "data": column(2).slice(1)
+        name: "Precipitation",
+        type: "bar",
+        yAxisIndex: 1,
+        data: column(2).slice(1)
       },
       {
-        "name": "Temperature",
-        "type": "line",
-        "yAxisIndex": 2,
-        "data": column(3).slice(1)
+        name: "Temperature",
+        type: "line",
+        yAxisIndex: 2,
+        data: column(3).slice(1)
       }
     ]
   })

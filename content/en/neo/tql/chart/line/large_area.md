@@ -46,56 +46,56 @@ CHART(
         }
     }),
     chartOption({
-        "tooltip": {
-            "trigger": "axis",
-            "position": position
+        tooltip: {
+            trigger: "axis",
+            position: position
         },
-        "title": {
-            "left": "center",
-            "text": "Large Area Chart"
+        title: {
+            left: "center",
+            text: "Large Area Chart"
         },
-        "toolbox": {
-            "feature": {
-                "dataZoom": {
-                    "yAxisIndex": "none"
+        toolbox: {
+            feature: {
+                dataZoom: {
+                    yAxisIndex: "none"
                 },
-                "restore": {},
-                "saveAsImage": {}
+                restore: {},
+                saveAsImage: {}
             }
         },
-        "xAxis": {
-            "type": "category",
-            "boundaryGap": false,
-            "data": column(0)
+        xAxis: {
+            type: "category",
+            boundaryGap: false,
+            data: column(0)
         },
-        "yAxis": {
-            "type": "value",
-            "boundaryGap": [0, "100%"]
+        yAxis: {
+            type: "value",
+            boundaryGap: [0, "100%"]
         },
-        "dataZoom": [
+        dataZoom: [
             {
-                "type": "inside",
-                "start": 0,
-                "end": 10
+                type: "inside",
+                start: 0,
+                end: 10
             },
             {
-                "start": 0,
-                "end": 10
+                start: 0,
+                end: 10
             }
         ],
-        "series": [
+        series: [
             {
-                "name": "Fake Data",
-                "type": "line",
-                "symbol": "none",
-                "sampling": "lttb",
-                "itemStyle": {
-                    "color": "rgb(255, 70, 131)"
+                name: "Fake Data",
+                type: "line",
+                symbol: "none",
+                sampling: "lttb",
+                itemStyle: {
+                    color: "rgb(255, 70, 131)"
                 },
-                "areaStyle": {
-                    "color": areaColor()
+                areaStyle: {
+                    color: areaColor()
                 },
-                "data": column(1)
+                data: column(1)
             }
         ]
     })

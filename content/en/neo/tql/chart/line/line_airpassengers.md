@@ -24,10 +24,10 @@ MAPVALUE(1, parseFloat(value(1)))
 
 CHART(
     chartOption({
-        "xAxis": { "data": column(0) },
-        "yAxis": {},
-        "series": [
-            {"type": "line", "name": "passengers", "smooth": false, "data": column(1)}
+        xAxis: { data: column(0) },
+        yAxis: {},
+        series: [
+            {type: "line", name: "passengers", smooth: false, data: column(1)}
         ]
     })
 )

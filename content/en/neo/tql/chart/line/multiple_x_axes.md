@@ -72,79 +72,77 @@ CHART(
         }
     }),
     chartOption({
-        "color": colors(),
-        "tooltip": {
-            "trigger": "none",
-            "axisPointer": {
+        color: colors(),
+        tooltip: {
+            trigger: "none",
+            axisPointer: {
                 type: "cross"
             }
         },
-        "legend": {},
-        "grid": {
-            "top": 70,
-            "bottom": 50
+        legend: {},
+        grid: {
+            top: 70,
+            bottom: 50
         },
-        "xAxis": [
+        xAxis: [
             {
-                "type": "category",
-                "axisTick": {
-                    "alignWithLabel": true
+                type: "category",
+                axisTick: {
+                    alignWithLabel: true
                 },
-                "axisLine": {
-                    "onZero": false,
-                    "lineStyle": {
-                        "color": colors()[1]
+                axisLine: {
+                    onZero: false,
+                    lineStyle: {
+                        color: colors()[1]
                     }
                 },
-                "axisPointer": {
-                    "label": {
-                        "formatter": labelformat
+                axisPointer: {
+                    label: {
+                        formatter: labelformat
                     }
                 }
             },
             {
-            "type": "category",
-                "axisTick": {
-                    "alignWithLabel": true
+                type: "category",
+                axisTick: {
+                    alignWithLabel: true
                 },
-                "axisLine": {
-                    "onZero": false,
-                    "lineStyle": {
-                        "color": colors()[0]
+                axisLine: {
+                    onZero: false,
+                    lineStyle: {
+                        color: colors()[0]
                     }
                 },
-                "axisPointer": {
-                    "label": {
-                        "formatter": labelformat
+                axisPointer: {
+                    label: {
+                        formatter: labelformat
                     }
                 }
             }
         ],
-        "yAxis": [
-            {
-                "type": "value"
-            }
+        yAxis: [
+            { type: "value" }
         ],
-        "series": [
+        series: [
             {
-                "name": "Precipitation(2015)",
-                "type": "line",
-                "xAxisIndex": 1,
-                "smooth": true,
-                "emphasis": {
-                    "focus": "series"
+                name: "Precipitation(2015)",
+                type: "line",
+                xAxisIndex: 1,
+                smooth: true,
+                emphasis: {
+                    focus: "series"
                 },
-                "data": column(1)
+                data: column(1)
             },
             {
-                "name": "Precipitation(2016)",
-                "type": "line",
-                "xAxisIndex": 0,
-                "smooth": true,
-                "emphasis": {
-                    "focus": "series"
+                name: "Precipitation(2016)",
+                type: "line",
+                xAxisIndex: 0,
+                smooth: true,
+                emphasis: {
+                    focus: "series"
                 },
-                "data": column(2)
+                data: column(2)
             }
         ]
     })

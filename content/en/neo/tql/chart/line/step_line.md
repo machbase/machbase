@@ -16,19 +16,19 @@ FAKE( json({
 }) )
 CHART(
     chartOption({
-        "legend":{ "show":true },
-        "grid": [{
-            "left": "3%",
-            "right": "4%",
-            "bottom": "3%",
-            "containLabel": true
+        legend: { show:true },
+        grid: [{
+            left: "3%",
+            right: "4%",
+            bottom: "3%",
+            containLabel: true
         }],
-        "xAxis": { "type": "category", "data": column(0) },
-        "yAxis": {},
-        "series": [
-            {"type": "line", "data": column(1), "step": "start", "name": "Step Start"},
-            {"type": "line", "data": column(2), "step": "middle", "name": "Step Middle"},
-            {"type": "line", "data": column(3), "step": "end", "name": "Step End"}
+        xAxis: { type: "category", data: column(0) },
+        yAxis: {},
+        series: [
+            {type: "line", data: column(1), step: "start", name: "Step Start"},
+            {type: "line", data: column(2), step: "middle", name: "Step Middle"},
+            {type: "line", data: column(3), step: "end", name: "Step End"}
         ]
     })
 )

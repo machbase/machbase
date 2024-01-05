@@ -17,14 +17,14 @@ FAKE( json({
 
 CHART(
     chartOption({
-        "xAxis": { "data": column(0) },
-        "yAxis": {},
-        "series": [
-            {"type": "line", "data": column(1), "smooth":false, "name": "email", "stack": "total"},
-            {"type": "line", "data": column(2), "smooth":false, "name": "ads", "stack": "total"},
-            {"type": "line", "data": column(3), "smooth":false, "name": "video", "stack": "total"},
-            {"type": "line", "data": column(4), "smooth":false, "name": "direct", "stack": "total"},
-            {"type": "line", "data": column(5), "smooth":false, "name": "search", "stack": "total"}
+        xAxis: { data: column(0) },
+        yAxis: {},
+        series: [
+            {type: "line", data: column(1), smooth:false, name: "email", stack: "total"},
+            {type: "line", data: column(2), smooth:false, name: "ads", stack: "total"},
+            {type: "line", data: column(3), smooth:false, name: "video", stack: "total"},
+            {type: "line", data: column(4), smooth:false, name: "direct", stack: "total"},
+            {type: "line", data: column(5), smooth:false, name: "search", stack: "total"}
         ]
     })
 )

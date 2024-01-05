@@ -33,26 +33,27 @@ GROUP( by(value(2)), max(value(3)), max(value(4)) )
 // |
 CHART(
     chartOption({
-        "xAxis": { "name": "Year", "type": "category", "data": column(0) },
-        "yAxis": { "name": "Income"},
-        "tooltip": {
-            "trigger": "axis",
-            "formatter":"{b}<br/> {a0}:{c0}<br/> {a1}:{c1}"
+        xAxis: { name: "Year", type: "category", data: column(0) },
+        yAxis: { name: "Income"},
+        legend: { show: true },
+        tooltip: {
+            trigger: "axis",
+            formatter:"{b}<br/> {a0}:{c0}<br/> {a1}:{c1}"
         },
-        "series": [
+        series: [
             {
-                "type": "line",
-                "name": "Germany",
-                "showSymbol": false,
-                "data": column(1),
-                "tooltip": ["income"]
+                type: "line",
+                name: "Germany",
+                showSymbol: false,
+                data: column(1),
+                tooltip: ["income"]
             },
             {
-                "type": "line",
-                "name": "France",
-                "showSymbol": false,
-                "data": column(2),
-                "tooltip": ["income"]
+                type: "line",
+                name: "France",
+                showSymbol: false,
+                data: column(2),
+                tooltip: ["income"]
             }
         ]
     })

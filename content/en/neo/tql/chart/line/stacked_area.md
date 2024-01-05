@@ -17,16 +17,16 @@ FAKE( json({
 
 CHART(
     chartOption({
-        "xAxis": {"data": column(0)},
-        "yAxis": {},
-        "animation": false,
-        "series": [
-            {"type": "line", "data":column(1), "name": "email", "stack": "total", "areaStyle":{} },
-            {"type": "line", "data":column(2), "name": "ads", "stack": "total", "areaStyle":{} },
-            {"type": "line", "data":column(3), "name": "video", "stack": "total", "areaStyle":{} },
-            {"type": "line", "data":column(4), "name": "direct", "stack": "total", "areaStyle":{} },
-            {"type": "line", "data":column(5), "name": "search", "stack": "total", "areaStyle":{},
-                "label": {"show": true, "position": "top"}
+        xAxis: {data: column(0)},
+        yAxis: {},
+        animation: false,
+        series: [
+            {type: "line", data:column(1), name: "email", stack: "total", areaStyle:{} },
+            {type: "line", data:column(2), name: "ads", stack: "total", areaStyle:{} },
+            {type: "line", data:column(3), name: "video", stack: "total", areaStyle:{} },
+            {type: "line", data:column(4), name: "direct", stack: "total", areaStyle:{} },
+            {type: "line", data:column(5), name: "search", stack: "total", areaStyle:{},
+                label: {show: true, position: "top"}
             }
         ]
     })
