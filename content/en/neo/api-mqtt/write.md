@@ -8,7 +8,7 @@ The examples below shows how to efficiently write data with mqtt client (`mosqui
 The destination topic should be `db/append/`+table_name.
 
 
-## Multiple records in a publish
+## PUBLISH multiple records
 
 ```sh
 mosquitto_pub -h 127.0.0.1 -p 5653 \
@@ -31,7 +31,7 @@ it appends the table with multiple records received through a mqtt message.
 It is also possible to publish single tuple like below. 
 Machbase Neo accepts both types of payload via mqtt.
 
-## Single record per a publish
+## PUBLISH single record
 
 ```sh
 mosquitto_pub -h 127.0.0.1 -p 5653 \
@@ -57,11 +57,11 @@ The maximum size of payload in a PUBILSH message is 256MB by MQTT specification.
 machbase-neo serve --mqtt-max-message 1048576
 ```
 
-## Payload formats and compression
+## Payload formats
 
 Compose the MQTT topic with table name, payload format and compression separated by colon(`:`) to use the payload other than plain JSON.
 
-### Write Compressed JSON
+### Compressed JSON
 
 Topic = Table + ':' + "json:gzip"
 
@@ -71,7 +71,7 @@ mosquitto_pub -h 127.0.0.1 -p 5653 \
     -f mqtt-data.json.gz
 ```
 
-### Write CSV
+### CSV
 
 Topic = Table + ':' + "csv"
 
@@ -84,7 +84,7 @@ mosquitto_pub -h 127.0.0.1 -p 5653 \
     -f mqtt-data.csv
 ```
 
-### Write Compressed CSV
+### Compressed CSV
 
 Topic = Table + ":csv:gzip"
 
@@ -105,7 +105,7 @@ mosquitto_pub -h 127.0.0.1 -p 5653 \
     -f data-write.json
 ```
 
-Since `db/write` works in `INSERT ... INTO...` SQL statement, it is required to provide the columns in json payload. Content of `data-write.json` is below.
+Since `db/write` works in `INSERT ... INTO...` SQL statement, it is required the columns in json payload. Content of `data-write.json` is below.
 
 ```json
 {
@@ -123,5 +123,5 @@ Since `db/write` works in `INSERT ... INTO...` SQL statement, it is required to 
 
 When the data transforming is required for writing into the database, prepare the proper *tql* script and publish the data to the topic named `db/tql/`+`{tql_file.tql}`.
 
-Please refer to the [As Writing API](../tql/04.writing) for the writing data via MQTT and *tql*.
+Please refer to the [As Writing API](../../tql/04.writing) for the writing data via MQTT and *tql*.
 
