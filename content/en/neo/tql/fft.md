@@ -68,9 +68,9 @@ FAKE(
 // |    0      1
 // +--> time   magnitude
 // |
-MAPVALUE(-1,'signal')
+PUSHVALUE(0,'signal')
 // |    0         1      2
-// +--> 'example' time   magnitude
+// +--> 'signal' time   magnitude
 // |
 APPEND( table('example') )
 ```
