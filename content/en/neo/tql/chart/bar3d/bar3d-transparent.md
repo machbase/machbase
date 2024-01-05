@@ -41,51 +41,51 @@ CHART(
                     'Wednesday', 'Tuesday', 'Monday', 'Sunday'];
     }),
     chartOption({
-        "tooltip": {},
-        "visualMap": {
-            "max": 20,
-            "inRange": {
-                "color": [
+        tooltip: {},
+        visualMap: {
+            max: 20,
+            inRange: {
+                color: [
                     "#313695", "#4575b4", "#74add1", "#abd9e9", "#e0f3f8", "#ffffbf",
                     "#fee090", "#fdae61", "#f46d43", "#d73027", "#a50026"
                 ]
             }
         },
-        "xAxis3D": { "type": "category", "data": hours },
-        "yAxis3D": { "type": "category", "data": days },
-        "zAxis3D": { "type": "value" },
-        "grid3D": {
-            "boxWidth": 200,
-            "boxDepth": 80,
-            "light": {
-                "main": {
-                    "intensity": 1.2
+        xAxis3D: { type: "category", data: hours },
+        yAxis3D: { type: "category", data: days },
+        zAxis3D: { type: "value" },
+        grid3D: {
+            boxWidth: 200,
+            boxDepth: 80,
+            light: {
+                main: {
+                    intensity: 1.2
                 },
-                "ambient": {
-                    "intensity": 0.3
+                ambient: {
+                    intensity: 0.3
                 }
             }
         },
-        "series": [
+        series: [
             {
-                "type": "bar3D",
-                "data": column(0),
-                "shading": "color",
-                "label": {
-                    "show": false,
-                    "fontSize": 16,
-                    "borderWidth": 1
+                type: "bar3D",
+                data: column(0),
+                shading: "color",
+                label: {
+                    show: false,
+                    fontSize: 16,
+                    borderWidth: 1
                 },
-                "itemStyle": {
-                    "opacity": 0.6
+                itemStyle: {
+                    opacity: 0.6
                 },
-                "emphasis": {
-                    "label": {
-                        "fontSize": 20,
-                        "color": '#900'
+                emphasis: {
+                    label: {
+                        fontSize: 20,
+                        color: '#900'
                     },
-                    "itemStyle": {
-                        "color": '#900'
+                    itemStyle: {
+                        color: '#900'
                     }
                 }
             }

@@ -18,15 +18,15 @@ FAKE(json({
 MAPVALUE(6, value(1)+value(2)+value(3)+value(4)+value(5), "Total")
 CHART(
     chartOption({
-        "legend": {
-            "selectedMode": false
+        legend: {
+            selectedMode: false
         },
-        "grid": {
-            "left": 100, "right": 100, "top": 50, "bottom": 50
+        grid: {
+            left: 100, right: 100, top: 50, bottom: 50
         },
-        "yAxis": { "type": "value", "show": false },
-        "xAxis": { "type": "category", "data": _column_0.slice(1) },
-        "series": [ ]
+        yAxis: { type: "value", show: false },
+        xAxis: { type: "category", data: _column_0.slice(1) },
+        series: [ ]
     }),
     chartJSCode({
         let total = _columns[6].slice(1)

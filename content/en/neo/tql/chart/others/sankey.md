@@ -17,15 +17,15 @@ MAPVALUE(0, dict("source", value(0), "target", value(1), "value", value(2)))
 POPVALUE(1,2)
 CHART(
     chartOption({
-        "series": {
-            "type": "sankey",
-            "layout": "none",
-            "emphasis": {
-                "focus": "adjacency"
+        series: {
+            type: "sankey",
+            layout: "none",
+            emphasis: {
+                focus: "adjacency"
             },
-            "links": column(0),
-            "data": [
-                {"name": "a"}, {"name": "b"}, {"name": "a1"}, {"name": "a2"}, {"name": "b1"}, {"name": "c"}
+            links: column(0),
+            data: [
+                {name: "a"}, {name: "b"}, {name: "a1"}, {name: "a2"}, {name: "b1"}, {name: "c"}
             ]
         }
     })

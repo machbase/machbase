@@ -12,12 +12,12 @@ TRANSPOSE()
 CHART(
     plugins("liquidfill"),
     chartOption({
-        "series": [
+        series: [
             {
-                "type": "liquidFill",
-                "data": column(0),
-                "amplitude": 0,
-                "waveAnimation": 0
+                type: "liquidFill",
+                data: column(0),
+                amplitude: 0,
+                waveAnimation: 0
             }
         ]
     })

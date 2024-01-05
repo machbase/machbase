@@ -20,19 +20,19 @@ MAPVALUE(0, dict("name", value(0), "value", value(1)))
 POPVALUE(1)
 CHART(
     chartOption({
-        "title":{ "text": "GEOJSON - Seoul"},
-        "tooltip": { "trigger": "item", "formatter": "{b}<br/>{c} %"},
-        "visualMap": {
-            "min": 0,
-            "max": 100,
-            "text": ["100%", "0%"],
-            "realtime": false,
-            "calculable": true,
-            "inRange": {
-                "color": [ "#89b6fe", "#25529a"]
+        title:{ text: "GEOJSON - Seoul"},
+        tooltip: { trigger: "item", formatter: "{b}<br/>{c} %"},
+        visualMap: {
+            min: 0,
+            max: 100,
+            text: ["100%", "0%"],
+            realtime: false,
+            calculable: true,
+            inRange: {
+                color: [ "#89b6fe", "#25529a"]
             },
         },
-        "series": []
+        series: []
     }),
     chartJSCode({
         fetch("https://machbase.com/assets/example/seoul_gu.json"
@@ -49,9 +49,9 @@ CHART(
                 }
             };
             _chartOption.series[0] ={
-                "type": "map",
-                "geoIndex": 0,
-                "data": _column_0
+                type: "map",
+                geoIndex: 0,
+                data: _column_0
             };
             _chart.setOption(_chartOption);
         }).catch(function(err){

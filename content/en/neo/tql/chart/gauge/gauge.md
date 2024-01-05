@@ -8,51 +8,51 @@ weight: 940
 FAKE(json(`[70]`))
 CHART(
     chartOption({
-        "series": [{
-            "type": "gauge",
-            "progress": {
-                "show": true,
-                "width": 18
+        series: [{
+            type: "gauge",
+            progress: {
+                show: true,
+                width: 18
             },
-            "axisLine": {
-                "lineStyle": {
-                    "width": 18
+            axisLine: {
+                lineStyle: {
+                    width: 18
                 }
             },
-            "axisTick": {
-                "show": false
+            axisTick: {
+                show: false
             },
-            "splitLine": {
-                "length": 15,
-                "lineStyle": {
-                    "width": 2,
-                    "color": "#999"
+            splitLine: {
+                length: 15,
+                lineStyle: {
+                    width: 2,
+                    color: "#999"
                 }
             },
-            "axisLabel": {
-                "distance": 25,
-                "color": "#999",
-                "fontSize": 20
+            axisLabel: {
+                distance: 25,
+                color: "#999",
+                fontSize: 20
             },
-            "anchor": {
-                "show": true,
-                "showAbove": true,
-                "size": 25,
-                "itemStyle": {
-                    "borderWidth": 10
+            anchor: {
+                show: true,
+                showAbove: true,
+                size: 25,
+                itemStyle: {
+                    borderWidth: 10
                 }
             },
-            "title": {
-                "show": false
+            title: {
+                show: false
             },
-            "detail": {
-                "valueAnimation": true,
-                "fontSize": 80,
-                "offsetCenter": [0, "70%"]
+            detail: {
+                valueAnimation: true,
+                fontSize: 80,
+                offsetCenter: [0, "70%"]
             },
-            "data": [
+            data: [
                 {
-                    "value": column(0)
+                    value: column(0)
                 }
             ]
         }]

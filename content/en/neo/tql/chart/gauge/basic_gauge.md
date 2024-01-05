@@ -8,20 +8,20 @@ weight: 10
 FAKE(linspace(55, 60, 1))
 CHART(
     chartOption({
-        "tooltip": {
-            "formatter": "{a} <br/>{b} : {c}%"
+        tooltip: {
+            formatter: "{a} <br/>{b} : {c}%"
         },
-        "series": [
+        series: [
             {
-                "name": "Pressure",
-                "type": "gauge",
-                "detail": {
-                    "formatter": "{value}"
+                name: "Pressure",
+                type: "gauge",
+                detail: {
+                    formatter: "{value}"
                 },
-                "data": [
+                data: [
                     {
-                        "value": column(0)[0],
-                        "name": "PRESSURE"
+                        value: column(0)[0],
+                        name: "PRESSURE"
                     }
                 ]
             }

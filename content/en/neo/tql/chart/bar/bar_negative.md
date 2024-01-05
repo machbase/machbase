@@ -22,72 +22,72 @@ MAPVALUE(3, parseFloat(value(3))) // parse float from string
 
 CHART(
     chartOption({
-        "tooltip": {
-            "trigger": "axis",
-            "axisPointer": {
-                "type": "shadow"
+        tooltip: {
+            trigger: "axis",
+            axisPointer: {
+                type: "shadow"
             }
         },
-        "legend": {
-            "data": ["Profit", "Expenses", "Income"]
+        legend: {
+            data: ["Profit", "Expenses", "Income"]
         },
-        "grid": {
-            "left": "3%",
-            "right": "4%",
-            "bottom": "3%",
-            "containLabel": true
+        grid: {
+            left: "3%",
+            right: "4%",
+            bottom: "3%",
+            containLabel: true
         },
-        "xAxis": [
+        xAxis: [
             {
-                "type": "value"
-            }
-        ],
-        "yAxis": [
-            {
-                "type": "category",
-                "axisTick": {
-                    "show": false
-                },
-                "data": column(0)
+                type: "value"
             }
         ],
-        "series": [
+        yAxis: [
             {
-                "name": "Profit",
-                "type": "bar",
-                "label": {
-                    "show": true,
-                    "position": "inside"
+                type: "category",
+                axisTick: {
+                    show: false
                 },
-                "emphasis": {
-                    "focus": "series"
+                data: column(0)
+            }
+        ],
+        series: [
+            {
+                name: "Profit",
+                type: "bar",
+                label: {
+                    show: true,
+                    position: "inside"
                 },
-                "data": column(1)
+                emphasis: {
+                    focus: "series"
+                },
+                data: column(1)
             },
             {
-                "name": "Income",
-                "type": "bar",
-                "stack": "Total",
-                "label": {
-                    "show": true
+                name: "Income",
+                type: "bar",
+                stack: "Total",
+                label: {
+                    show: true
                 },
-                "emphasis": {
-                    "focus": "series"
+                emphasis: {
+                    focus: "series"
                 },
-                "data": column(2)
+                data: column(2)
             },
             {
-                "name": "Expenses",
-                "type": "bar",
-                "stack": "Total",
-                "label": {
-                    "show": true,
-                    "position": "left"
+                name: "Expenses",
+                type: "bar",
+                stack: "Total",
+                label: {
+                    show: true,
+                    position: "left"
                 },
-                "emphasis": {
-                    "focus": "series"
+                emphasis: {
+                    focus: "series"
                 },
-                "data": [-120, -132, -101, -134, -190, -230, -210]
+                data: [-120, -132, -101, -134, -190, -230, -210]
             }
         ]
     })

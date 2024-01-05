@@ -16,26 +16,26 @@ MAPVALUE(1, dict("name", value(0), "value", value(1)))
 POPVALUE(2,3,4,5,6)
 CHART(
     chartOption({
-        "title": { "text": "Basic Radar Chart" },
-        "legend": {
-            "data": column(0),
-            "top": "95%"
+        title: { "text": "Basic Radar Chart" },
+        legend: {
+            data: column(0),
+            top: "95%"
         },
-        "radar": {
-            "indicator": [
-                { "name": "Sales", "max": 6500 },
-                { "name": "Administration", "max": 16000 },
-                { "name": "Information Technology", "max": 30000 },
-                { "name": "Customer Support", "max": 38000 },
-                { "name": "Development", "max": 52000 },
-                { "name": "Marketing", "max": 25000 }
+        radar: {
+            indicator: [
+                { name: "Sales", max: 6500 },
+                { name: "Administration", max: 16000 },
+                { name: "Information Technology", max: 30000 },
+                { name: "Customer Support", max: 38000 },
+                { name: "Development", max: 52000 },
+                { name: "Marketing", max: 25000 }
             ]
         },
-        "series": [
+        series: [
             {
-                "name":"Budgrt vs spending",
-                "type": "radar",
-                "data": column(1)
+                name: "Budgrt vs spending",
+                type: "radar",
+                data: column(1)
             }
         ]
     })

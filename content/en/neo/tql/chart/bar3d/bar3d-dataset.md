@@ -32,30 +32,30 @@ POPVALUE(1,2,3)
 CHART(
     plugins("gl"),
     chartOption({
-        "grid3D": {},
-        "tooltip": {},
-        "xAxis3D": { "type": "category" },
-        "yAxis3D": { "type": "category" },
-        "zAxis3D": {},
-        "visualMap": { "max": 100000000, "dimension": "Population"},
-        "dataset": {
-            "dimensions": [
-                { "name": "Year", "type": "ordinal"},
+        grid3D: {},
+        tooltip: {},
+        xAxis3D: { type: "category" },
+        yAxis3D: { type: "category" },
+        zAxis3D: {},
+        visualMap: { max: 100000000, dimension: "Population"},
+        dataset: {
+            dimensions: [
+                { name: "Year", type: "ordinal"},
                 "Life Expectancy",
                 "Population",
                 "Country"
             ],
-            "source": column(0)
+            source: column(0)
         },
-        "series": [
+        series: [
             {
-                "type": "bar3D",
-                "shading": "lambert",
-                "encode": {
-                    "x": "Year",
-                    "y": "Country",
-                    "z": "Lefe Expectancy",
-                    "tooltip": [0, 1, 2, 3]
+                type: "bar3D",
+                shading: "lambert",
+                encode: {
+                    x: "Year",
+                    y: "Country",
+                    z: "Lefe Expectancy",
+                    tooltip: [0, 1, 2, 3]
                 }
             }
         ]

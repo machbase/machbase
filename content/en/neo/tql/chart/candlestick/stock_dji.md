@@ -50,197 +50,197 @@ CHART(
         }
     }),
     chartOption({
-        "animation": false,
-        "legend":{
-            "bottom": 10,
-            "left": "center",
-            "data":["Dow-Jones Index", "MA5", "MA10", "MA20", "MA30"]
+        animation: false,
+        legend: {
+            bottom: 10,
+            left: "center",
+            data:["Dow-Jones Index", "MA5", "MA10", "MA20", "MA30"]
         },
-        "tooltip": {
-            "trigger": "axis",
-            "axisPointer": { "type": "cross" },
-            "borderWidth": 1,
-            "borderColor": "#ccc",
-            "padding": 10,
-            "textStyle": {
-                "color": "#000"
+        tooltip: {
+            trigger: "axis",
+            axisPointer: { "type": "cross" },
+            borderWidth: 1,
+            borderColor: "#ccc",
+            padding: 10,
+            textStyle: {
+                color: "#000"
             },
-            "backgroundColor": "#ffff"
+            backgroundColor: "#ffff"
             // ,"position": tooltipPosition
         },
-        "axisPointer": {
-            "link": [
-                { "xAxisIndex": "all"}
+        axisPointer: {
+            link: [
+                { xAxisIndex: "all"}
             ],
-            "label": {
-                "backgroundColor": "#aaa"
+            label: {
+                backgroundColor: "#aaa"
             }
         },
-        "toolbox": {
-            "feature": {
-                "saveAsImage": { "show": true, "title": "save as image", "name": "dji" },
-                "dataZoom": {
-                    "yAxisIndex": false,
-                    "title": { "zoom": "zoom", "back": "restore"}
+        toolbox: {
+            feature: {
+                saveAsImage: { show: true, title: "save as image", name: "dji" },
+                dataZoom: {
+                    yAxisIndex: false,
+                    title: { zoom: "zoom", back: "restore"}
                 },
-                "brush": {
-                    "type": ["lineX", "clear"],
-                    "title": { "lineX": "Horizontal selection", "clear": "Clear selection"}
+                brush: {
+                    type: ["lineX", "clear"],
+                    title: { lineX: "Horizontal selection", clear: "Clear selection"}
                 }
             }
         },
-        "brush": {
-            "xAxisIndex": "all",
-            "brushLink": "all",
-            "outOfBrush": {
-                "colorAlpha": 0.1
+        brush: {
+            xAxisIndex: "all",
+            brushLink: "all",
+            outOfBrush: {
+                colorAlpha: 0.1
             }
         },
-        "visualMap": {
-            "show": false,
-            "seriesIndex": 1,
-            "dimension": 2,
-            "pieces": [
-                { "value": 1, "color": "#ec0000" }, 
-                { "value": -1, "color": "#00da3c" }
+        visualMap: {
+            show: false,
+            seriesIndex: 1,
+            dimension: 2,
+            pieces: [
+                { value: 1, color: "#ec0000" }, 
+                { value: -1, color: "#00da3c" }
             ]
         },
-        "grid": [
+        grid: [
             {
-                "left": "10%",
-                "right": "8%",
-                "height": "50%"
+                left: "10%",
+                right: "8%",
+                height: "50%"
             },
             {
-                "left": "10%",
-                "right": "8%",
-                "top": "65%",
-                "height": "16%"
+                left: "10%",
+                right: "8%",
+                top: "65%",
+                height: "16%"
             }
         ],
-        "dataZoom": [
+        dataZoom: [
             {
-                "type": "inside",
-                "xAxisIndex": [0, 1],
-                "start": 98,
-                "end": 100
+                type: "inside",
+                xAxisIndex: [0, 1],
+                start: 98,
+                end: 100
             },
             {
-                "show": true,
-                "type": "slider",
-                "xAxisIndex": [0, 1],
-                "top": "85%",
-                "start": 98,
-                "end": 100
+                show: true,
+                type: "slider",
+                xAxisIndex: [0, 1],
+                top: "85%",
+                start: 98,
+                end: 100
             }
         ],
-        "xAxis": [
+        xAxis: [
             {
-                "type": "category",
-                "data": column(0),
-                "boundaryGap": false,
-                "axisLine": {"onZero": false},
-                "splitLine": {"show": false},
-                "min": "dataMin",
-                "max": "dataMax",
-                "axisPointer": {
-                    "z": 100
+                type: "category",
+                data: column(0),
+                boundaryGap: false,
+                axisLine: {onZero: false},
+                splitLine: {show: false},
+                min: "dataMin",
+                max: "dataMax",
+                axisPointer: {
+                    z: 100
                 }
             },
             {
-                "type": "category",
-                "gridIndex": 1,
-                "data": column(0),
-                "boundaryGap": false,
-                "axisLine": { "onZero": false },
-                "axisTick": { "show": false },
-                "splitLine": { "show": false },
-                "axisLabel": { "show": false},
-                "min": "dataMin",
-                "max": "dataMax",
-                "axisPointer": {
-                    "z": 100
+                type: "category",
+                gridIndex: 1,
+                data: column(0),
+                boundaryGap: false,
+                axisLine: { onZero: false },
+                axisTick: { show: false },
+                splitLine: { show: false },
+                axisLabel: { show: false},
+                min: "dataMin",
+                max: "dataMax",
+                axisPointer: {
+                    z: 100
                 }
             }
         ],
-        "yAxis": [
+        yAxis: [
             {
-                "scale": true,
-                "splitArea": {
-                    "show": true
+                scale: true,
+                splitArea: {
+                    show: true
                 }
             },
             {
-                "scale": true,
-                "gridIndex": 1,
-                "splitNumber": 2,
-                "axisLabel": { "show": false },
-                "axisLine": { "show": false },
-                "axisTick": { "show": false },
-                "splitLine": { "show": false }
+                scale: true,
+                gridIndex: 1,
+                splitNumber: 2,
+                axisLabel: { show: false },
+                axisLine: { show: false },
+                axisTick: { show: false },
+                splitLine: { show: false }
             }
         ],
-        "series": [
+        series: [
             {
-                "name": "Dow-Jones Index",
-                "type": "candlestick",
-                "data": column(1),
-                "smooth": true,
-                "itemStyle": {
-                    "color": "#00da3c",
-                    "color0": "#ec0000",
-                    "borderColor": "#00da3c",
-                    "borderColor0": "#ec0000"
+                name: "Dow-Jones Index",
+                type: "candlestick",
+                data: column(1),
+                smooth: true,
+                itemStyle: {
+                    color: "#00da3c",
+                    color0: "#ec0000",
+                    borderColor: "#00da3c",
+                    borderColor0: "#ec0000"
                 }
             },
             {
-                "name": "Volume",
-                "type": "bar",
-                "data": column(2),
-                "xAxisIndex": 1,
-                "yAxisIndex": 1
+                name: "Volume",
+                type: "bar",
+                data: column(2),
+                xAxisIndex: 1,
+                yAxisIndex: 1
             },
             {
-                "name": "MA5",
-                "type": "line",
-                "data": column(3),
-                "lineStyle": {
-                    "opacity": 0.5
+                name: "MA5",
+                type: "line",
+                data: column(3),
+                lineStyle: {
+                    opacity: 0.5
                 }
             },
             {
-                "name": "MA10",
-                "type": "line",
-                "data": column(4),
-                "lineStyle": {
-                    "opacity": 0.5
+                name: "MA10",
+                type: "line",
+                data: column(4),
+                lineStyle: {
+                    opacity: 0.5
                 }
             },
             {
-                "name": "MA20",
-                "type": "line",
-                "data": column(5),
-                "lineStyle": {
-                    "opacity": 0.5
+                name: "MA20",
+                type: "line",
+                data: column(5),
+                lineStyle: {
+                    opacity: 0.5
                 }
             },
             {
-                "name": "MA30",
-                "type": "line",
-                "data": column(6),
-                "lineStyle": {
-                    "opacity": 0.5
+                name: "MA30",
+                type: "line",
+                data: column(6),
+                lineStyle: {
+                    opacity: 0.5
                 }
             }
         ]
     }),
     chartDispatchAction({
-        "type": "brush",
-        "areas":[
+        type: "brush",
+        areas:[
             {
-                "brushType": "lineX",
-                "coordRange": ["2016-06-02", "2016-06-20"],
-                "xAxisIndex": 0
+                brushType: "lineX",
+                coordRange: ["2016-06-02", "2016-06-20"],
+                xAxisIndex: 0
             }
         ]
     })

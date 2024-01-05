@@ -107,56 +107,56 @@ POPVALUE(2, 3, 4)
 
 CHART(
     chartOption({
-        "xAxis": { "type": "category", "data": column(0) },
-        "yAxis": { "min": 2100, "max": 2500 },
-        "dataZoom": [
-            { "type": "inside", "start": 50, "end": 100 },
-            { "show": true, "type": "slider", "top": "90%", "start": 50, "end": 100 }
+        xAxis: { type: "category", data: column(0) },
+        yAxis: { min: 2100, max: 2500 },
+        dataZoom: [
+            { type: "inside", start: 50, end: 100 },
+            { show: true, type: "slider", top: "90%", start: 50, end: 100 }
         ],
-        "toolbox": {
-            "feature": {
-                "saveAsImage": { "show": true, "title": "save as image", "name": "stock" }
+        toolbox: {
+            feature: {
+                saveAsImage: { show: true, title: "save as image", name: "stock" }
             }
         },
-        "series": [
+        series: [
             {
-                "name": "日K",
-                "data": column(1),
-                "type": "candlestick",
-                "itemStyle": {
-                    "color": "#ec0000",
-                    "color0": "#00da3c",
-                    "borderColor": "#8A0000",
-                    "borderColor0": "#008F28"
+                name: "日K",
+                data: column(1),
+                type: "candlestick",
+                itemStyle: {
+                    color: "#ec0000",
+                    color0: "#00da3c",
+                    borderColor: "#8A0000",
+                    borderColor0: "#008F28"
                 }
             },
             {
-                "name": "MA5",
-                "data": column(2),
-                "type": "line",
-                "smooth": true,
-                "lineStyle": { "opacity": 0.5 }
+                name: "MA5",
+                data: column(2),
+                type: "line",
+                smooth: true,
+                lineStyle: { opacity: 0.5 }
             },
             {
-                "name": "MA10",
-                "data": column(3),
-                "type": "line",
-                "smooth": true,
-                "lineStyle": { "opacity": 0.5 }
+                name: "MA10",
+                data: column(3),
+                type: "line",
+                smooth: true,
+                lineStyle: { opacity: 0.5 }
             },
             {
-                "name": "MA20",
-                "data": column(4),
-                "type": "line",
-                "smooth": true,
-                "lineStyle": { "opacity": 0.5 }
+                name: "MA20",
+                data: column(4),
+                type: "line",
+                smooth: true,
+                lineStyle: { opacity: 0.5 }
             },
             {
-                "name": "MA30",
-                "data": column(5),
-                "type": "line",
-                "smooth": true,
-                "lineStyle": { "opacity": 0.5 }
+                name: "MA30",
+                data: column(5),
+                type: "line",
+                smooth: true,
+                lineStyle: { opacity: 0.5 }
             }
         ]
     })

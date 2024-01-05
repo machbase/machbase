@@ -14,24 +14,24 @@ FAKE( json({
 
 CHART(
     chartOption({
-        "title": {
-            "text": "Tangential Polar Bar Label Position (middle)"
+        title: {
+            text: "Tangential Polar Bar Label Position (middle)"
         },
-        "polar": { "radius": [30, "80%"] },
-        "radiusAxis": {
-            "type": "category",
-            "data": column(0)
+        polar: { radius: [30, "80%"] },
+        radiusAxis: {
+            type: "category",
+            data: column(0)
         },
-        "angleAxis": { "max": 4, "startAngle": 90 },
-        "tooltip": {},
-        "series": {   
-            "type": "bar",
-            "coordinateSystem": "polar",
-            "data": column(1),
-            "label": {
-                "show": true,
-                "position": "middle",
-                "formatter": "{b}: {c}"
+        angleAxis: { max: 4, startAngle: 90 },
+        tooltip: {},
+        series: {   
+            type: "bar",
+            coordinateSystem: "polar",
+            data: column(1),
+            label: {
+                show: true,
+                position: "middle",
+                formatter: "{b}: {c}"
             }
         }
     })

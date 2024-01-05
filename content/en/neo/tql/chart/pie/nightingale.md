@@ -14,26 +14,26 @@ MAPVALUE(0, dict("name", value(0), "value", value(1)))
 
 CHART(
     chartOption({
-        "legend": {
+        legend: {
             "top": "bottom"
         },
-        "toolbox": {
-            "show": true,
-            "feature": {
-                "saveAsImage": { "show": true, "title": "save as image", "name": "sample" }
+        toolbox: {
+            show: true,
+            feature: {
+                saveAsImage: { show: true, title: "save as image", name: "sample" }
             }
         },
-        "series": [
+        series: [
             {
-                "name": "Nightingale Chart",
-                "type": "pie",
-                "radius": ["50", "250"],
-                "center": ["50%", "50%"],
-                "roseType": "area",
-                "itemStyle": {
-                    "borderRadius": 8
+                name: "Nightingale Chart",
+                type: "pie",
+                radius: ["50", "250"],
+                center: ["50%", "50%"],
+                roseType: "area",
+                itemStyle: {
+                    borderRadius: 8
                 },
-                "data": column(0)
+                data: column(0)
             }
         ]
     })

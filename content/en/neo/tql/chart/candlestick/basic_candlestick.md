@@ -16,11 +16,11 @@ MAPVALUE(1, list(value(1), value(2), value(3), value(4)))
 POPVALUE(2, 3, 4)
 CHART(
     chartOption({
-        "legend":{"show": false},
-        "xAxis": { "data": column(0) },
-        "yAxis": {},
-        "series": [
-            { "type": "candlestick", "data": column(1) }
+        legend: { show: false },
+        xAxis: { data: column(0) },
+        yAxis: {},
+        series: [
+            { type: "candlestick", data: column(1) }
         ]
     })
 )

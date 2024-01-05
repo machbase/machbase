@@ -14,36 +14,36 @@ POPVALUE(1)
 
 CHART(
     chartOption({
-        "legend": { "show": false },
-        "xAxis": { "data": column(0) },
-        "yAxis": {},
-        "dataZoom": [
-            { "type": "inside" },
-            { "type": "slider" }
+        legend: { show: false },
+        xAxis: { data: column(0) },
+        yAxis: {},
+        dataZoom: [
+            { type: "inside" },
+            { type: "slider" }
         ],
-        "animation": false,
-        "series": [
+        animation: false,
+        series: [
             {
-                "name": "A",
-                "type": "scatter",
-                "data": column(1),
-                "symbolSize": 3,
-                "itemStyle": {
-                    "color": "#9ECB7F",
-                    "opacity": 0.5
+                name: "A",
+                type: "scatter",
+                data: column(1),
+                symbolSize: 3,
+                itemStyle: {
+                    color: "#9ECB7F",
+                    opacity: 0.5
                 },
-                "large": true
+                large: true
             },
             {
-                "name": "B",
-                "type": "scatter",
-                "data": column(2),
-                "symbolSize": 3,
-                "itemStyle": {
-                    "color": "#5872C0",
-                    "opacity": 0.5
+                name: "B",
+                type: "scatter",
+                data: column(2),
+                symbolSize: 3,
+                itemStyle: {
+                    color: "#5872C0",
+                    opacity: 0.5
                 },
-                "large": true
+                large: true
             }
         ]
     })

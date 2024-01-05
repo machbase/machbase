@@ -12,35 +12,35 @@ MAPVALUE(0, time(value(0)*1000000000))
 MAPVALUE(0, list(value(0), value(1)))
 CHART(
     chartOption({
-        "title": {
-            "top": 30,
-            "left": "center",
-            "text": "Daily Measurements"
+        title: {
+            top: 30,
+            left: "center",
+            text: "Daily Measurements"
         },
-        "tooltip": {},
-        "visualMap": {
-            "min": 0,
-            "max": 2.0,
-            "type": "piecewise",
-            "orient": "horizontal",
-            "left": "center",
-            "top": 65
+        tooltip: {},
+        visualMap: {
+            min: 0,
+            max: 2.0,
+            type: "piecewise",
+            orient: "horizontal",
+            left: "center",
+            top: 65
         },
-        "calendar": {
-            "top": 120,
-            "left": 30,
-            "right": 30,
-            "cellSize": ["auto", 13],
-            "range": "2023",
-            "itemStyle": {
-                "borderWidth": 0.5
+        calendar: {
+            top: 120,
+            left: 30,
+            right: 30,
+            cellSize: ["auto", 13],
+            range: "2023",
+            itemStyle: {
+                borderWidth: 0.5
             },
-            "yearLabel": {"show":true}
+            yearLabel: {show:true}
         },
-        "series": {
-            "type": "heatmap",
-            "coordinateSystem": "calendar",
-            "data": column(0)
+        series: {
+            type: "heatmap",
+            coordinateSystem: "calendar",
+            data: column(0)
         }
     })
 )

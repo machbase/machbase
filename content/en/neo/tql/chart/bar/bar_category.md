@@ -38,18 +38,18 @@ GROUP( by(value(0)), max(value(1)), max(value(2)), lazy(true))
 // |
 CHART(
     chartOption({
-        "legend":{"show":true},
-        "tooltip": {
-            "trigger": "axis",
-            "axisPointer": {
-                "type": "shadow"
+        legend: { show:true},
+        tooltip: {
+            trigger: "axis",
+            axisPointer: {
+                type: "shadow"
             }
         },
-        "xAxis": { "type": "category", "data": column(0) },
-        "yAxis": { },
-        "series": [
-            { "type": "bar", "name": "2011", "data": column(1) },
-            { "type": "bar", "name": "2022", "data": column(2) }
+        xAxis: { type: "category", data: column(0) },
+        yAxis: { },
+        series: [
+            { type: "bar", name: "2011", data: column(1) },
+            { type: "bar", name: "2022", data: column(2) }
         ]
     })
 )

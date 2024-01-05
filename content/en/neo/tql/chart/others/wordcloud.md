@@ -61,30 +61,30 @@ POPVALUE(1)
 CHART(
     plugins("wordcloud"),
     chartOption({
-        "series": {
-            "type": "wordCloud",
-            "gridSize": 8,
-            "sizeRange": [12, 50],
-            "rotationRange": [-90, 90],
-            "shape": "circle",
-            "width": 580,
-            "height": 580,
-            "drawOutOfBound": false,
-            "left": "center",
-            "top": "center",
-            "data": column(0),
-            "emphasis": {
-                "focus": "self",
-                "textStyle": {
-                    "textShadowBlur": 10,
-                    "textShadowColor": "#333"
+        series: {
+            type: "wordCloud",
+            gridSize: 8,
+            sizeRange: [12, 50],
+            rotationRange: [-90, 90],
+            shape: "circle",
+            width: 580,
+            height: 580,
+            drawOutOfBound: false,
+            left: "center",
+            top: "center",
+            data: column(0),
+            emphasis: {
+                focus: "self",
+                textStyle: {
+                    textShadowBlur: 10,
+                    textShadowColor: "#333"
                 }
             },
-            "layoutAnimation": true,
-            "textStyle": {
-                "fontFamily": "sans-serif",
-                "fontWeight": "bold",
-                "color": wordColor
+            layoutAnimation: true,
+            textStyle: {
+                fontFamily: "sans-serif",
+                fontWeight: "bold",
+                color: wordColor
             }
         }
     }),

@@ -37,30 +37,30 @@ CHART(
         }
     }),
     chartOption({
-        "title": {
-            "text": "500,000 Data",
-            "left": 10
+        title: {
+            text: "500,000 Data",
+            left: 10
         },
-        "toolbox": {
-            "feature": {
-                "dataZoom": {
-                    "yAxisIndex": false
+        toolbox: {
+            feature: {
+                dataZoom: {
+                    yAxisIndex: false
                 },
-                "saveAsImage": {
-                    "pixelRatio": 2
+                saveAsImage: {
+                    pixelRatio: 2
                 }
             }
         },
-        "tooltip": {
-            "trigger": "axis",
-            "axisPointer": {
-                "type": "shadow"
+        tooltip: {
+            trigger: "axis",
+            axisPointer: {
+                type: "shadow"
             }
         },
-        "grid": {
-            "bottom": 90
+        grid: {
+            bottom: 90
         },
-        "dataZoom": [
+        dataZoom: [
             {
                 "type": "inside"
             },
@@ -68,26 +68,26 @@ CHART(
                 "type": "slider"
             }
         ],
-        "xAxis": {
-            "data": data.categoryData,
-            "silent": false,
-            "splitLine": {
-                "show": false
+        xAxis: {
+            data: data.categoryData,
+            silent: false,
+            splitLine: {
+                show: false
             },
-            "splitArea": {
-                "show": false
+            splitArea: {
+                show: false
             }
         },
-        "yAxis": {
-            "splitArea": {
-                "show": false
+        yAxis: {
+            splitArea: {
+                show: false
             }
         },
-        "series": [
+        series: [
             {
-                "type": "bar",
-                "data": data.valueData,
-                "large": true
+                type: "bar",
+                data: data.valueData,
+                large: true
             }
         ]
     })

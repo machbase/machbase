@@ -8,74 +8,72 @@ weight: 150
 CSV( file("https://machbase.com/assets/example/life-expectancy-table.csv") )
 CHART(
     chartOption({
-        "grid": {
-            "top": 10,
-            "bottom": 30,
-            "left": 150,
-            "right": 80
+        grid: {
+            top: 10,
+            bottom: 30,
+            left: 150,
+            right: 80
         },
-        "xAxis": {
-            "max": "dataMax",
-            "axisLabel": {
-             }
+        xAxis: {
+            max: "dataMax",
+            axisLabel: { }
         },
-        "dataset": {
-            "source": [],
+        dataset: {
+            source: [],
         },
-        "yAxis": {
-            "type": "category",
-            "inverse": true,
-            "max": 10,
-            "axisLabel": {
-                "show": true,
-                "fontSize": 14,
-                "rich": {
-                    "flag": {
-                        "fontSize": 25,
-                        "padding": 5
+        yAxis: {
+            type: "category",
+            inverse: true,
+            max: 10,
+            axisLabel: {
+                show: true,
+                fontSize: 14,
+                rich: {
+                    flag: {
+                        fontSize: 25,
+                        padding: 5
                     }
                 }
             },
-            "animationDuration": 300,
-            "animationDurationUpdate": 300
+            animationDuration: 300,
+            animationDurationUpdate: 300
         },
-        "series": [
+        series: [
             {
-                "realtimeSort": true,
-                "type": "bar",
-                "seriesLayoutBy": "column",
-                "itemStyle": {
-                    "color":""
+                realtimeSort: true,
+                type: "bar",
+                seriesLayoutBy: "column",
+                itemStyle: {
+                    color:""
                 },
-                "encode": {
-                    "x": 0,
-                    "y": 3
+                encode: {
+                    x: 0, y: 3
                 },
-                "label": {
-                    "show": true,
-                    "precision": 1,
-                    "position": "right",
-                    "valueAnimation": true,
-                    "fontFamily": "monospace"
+                label: {
+                    show: true,
+                    precision: 1,
+                    position: "right",
+                    valueAnimation: true,
+                    fontFamily: "monospace"
                 }
             }
         ],
-        "animationDuration": 0,
-        "animationDurationUpdate": 2000,
-        "animationEasing": "linear",
-        "animationEasingUpdate": "linear",
-        "graphic": {
-            "elements": [
+        animationDuration: 0,
+        animationDurationUpdate: 2000,
+        animationEasing: "linear",
+        animationEasingUpdate: "linear",
+        graphic: {
+            elements: [
                 {
-                    "type": "text",
-                    "right": 40,
-                    "bottom": 60,
-                    "style": {
-                        "text": "loading...",
-                        "font": "bolder 50px monospace",
-                        "fill": "rgba(100, 100, 100, 0.25)"
+                    type: "text",
+                    right: 40,
+                    bottom: 60,
+                    style: {
+                        text: "loading...",
+                        font: "bolder 50px monospace",
+                        fill: "rgba(100, 100, 100, 0.25)"
                     },
-                    "z": 100
+                    z: 100
                 }
             ]
         }

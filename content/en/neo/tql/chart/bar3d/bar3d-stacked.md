@@ -14,56 +14,56 @@ POPVALUE(0,1)
 CHART(
     plugins("gl"),
     chartOption({
-        "xAxis3D": { "type": "value" },
-        "yAxis3D": { "type": "value" },
-        "zAxis3D": { "type": "value" },
-        "grid3D": {
-            "viewControl": {
+        xAxis3D: { type: "value" },
+        yAxis3D: { type: "value" },
+        zAxis3D: { type: "value" },
+        grid3D: {
+            viewControl: {
                 // autoRotate: true
             },
-            "light": {
-                "main": {
-                    "shadow": true,
-                    "quality": "ultra",
-                    "intensity": 1.5
+            light: {
+                main: {
+                    shadow: true,
+                    quality: "ultra",
+                    intensity: 1.5
                 }
             }
         },
-        "series": [
+        series: [
             {
-                "type": "bar3D",
-                "data": column(0),
-                "stack": "stack",
-                "shading": "lambert",
-                "emphasis": {
-                    "label": { "show": false }
+                type: "bar3D",
+                data: column(0),
+                stack: "stack",
+                shading: "lambert",
+                emphasis: {
+                    label: { show: false }
                 }
             },
             {
-                "type": "bar3D",
-                "data": column(1),
-                "stack": "stack",
-                "shading": "lambert",
-                "emphasis": {
-                    "label": { "show": false }
+                type: "bar3D",
+                data: column(1),
+                stack: "stack",
+                shading: "lambert",
+                emphasis: {
+                    label: { show: false }
                 }
             },
             {
-                "type": "bar3D",
-                "data": column(2),
-                "stack": "stack",
-                "shading": "lambert",
-                "emphasis": {
-                    "label": { "show": false }
+                type: "bar3D",
+                data: column(2),
+                stack: "stack",
+                shading: "lambert",
+                emphasis: {
+                    label: { show: false }
                 }
             },
             {
-                "type": "bar3D",
-                "data": column(3),
-                "stack": "stack",
-                "shading": "lambert",
-                "emphasis": {
-                    "label": { "show": false }
+                type: "bar3D",
+                data: column(3),
+                stack: "stack",
+                shading: "lambert",
+                emphasis: {
+                    label: { show: false }
                 }
             }
         ]

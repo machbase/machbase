@@ -8,24 +8,24 @@ weight: 30
 FAKE(linspace(0, 1, 1))
 CHART(
     chartOption({
-        "tooltip": {
-            "formatter": "{a} <br/>{b} : {c}%"
+        tooltip: {
+            formatter: "{a} <br/>{b} : {c}%"
         },
-        "series": [
+        series: [
             {
-                "name": "Pressure",
-                "type": "gauge",
-                "progress": {
-                    "show": true
+                name: "Pressure",
+                type: "gauge",
+                progress: {
+                    show: true
                 },
-                "detail": {
-                    "valueAnimation": true,
-                    "formatter": "{value}"
+                detail: {
+                    valueAnimation: true,
+                    formatter: "{value}"
                 },
-                "data": [
+                data: [
                     {
-                        "value": 0,
-                        "name": "RANDOM"
+                        value: 0,
+                        name: "RANDOM"
                     }
                 ]
             }

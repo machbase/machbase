@@ -12,8 +12,8 @@ TRANSPOSE()
 CHART(
     plugins("liquidfill"),
     chartOption({
-        "series": [
-            { "type": "liquidFill", "data": column(0) }
+        series: [
+            { type: "liquidFill", data: column(0) }
         ]
     })
 )

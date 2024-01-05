@@ -16,27 +16,27 @@ MAPVALUE(2, "https://machbase.com/assets/example/"+value(2))
 CHART(
     plugins("gl"),
     chartOption({
-        "backgroundColor": "#000",
-        "globe": {
-            "baseTexture": column(0)[0],
-            "heightTexture": column(0)[0],
-            "displacementScale": 0.04,
-            "shading": "realistic",
-            "environment": column(1)[0],
-            "realisticMaterial": {
-                "roughness": 0.9
+        backgroundColor: "#000",
+        globe: {
+            baseTexture: column(0)[0],
+            heightTexture: column(0)[0],
+            displacementScale: 0.04,
+            shading: "realistic",
+            environment: column(1)[0],
+            realisticMaterial: {
+                roughness: 0.9
             },
-            "postEffect": {
-                "enable": true
+            postEffect: {
+                enable: true
             },
-            "light": {
-                "main": {
-                    "intensity": 5,
-                    "shadow": true
+            light: {
+                main: {
+                    intensity: 5,
+                    shadow: true
                 },
-                "ambientCubemap": {
-                    "texture": column(2)[0],
-                    "diffuseIntensity": 0.2
+                ambientCubemap: {
+                    texture: column(2)[0],
+                    diffuseIntensity: 0.2
                 }
             }
         }

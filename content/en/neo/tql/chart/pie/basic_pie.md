@@ -15,29 +15,25 @@ FAKE( json({
 MAPVALUE(0, list(value(0), value(1)))
 CHART(
     chartOption({
-        "tooltip": {
-            "trigger": "item"
+        tooltip: {
+            trigger: "item"
         },
-        "legend": {
-            "orient": "vertical",
-            "left": "left"
+        legend: {
+            orient: "vertical",
+            left: "left"
         },
-        "dataset": [
+        dataset: [ { source: column(0) } ],
+        series: [
             {
-                "source": column(0)
-            }
-        ],
-        "series": [
-            {
-                "name": "Access From",
-                "type": "pie",
-                "radius": "70%",
-                "datasetIndex": 0,
-                "emphasis": {
-                    "itemStyle": {
-                        "shadowBlur": 10,
-                        "shadowOffsetX": 0,
-                        "shadowColor": "rgba(0, 0, 0, 0.5)"
+                name: "Access From",
+                type: "pie",
+                radius: "70%",
+                datasetIndex: 0,
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: "rgba(0, 0, 0, 0.5)"
                     }
                 }
             }

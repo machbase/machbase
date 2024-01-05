@@ -27,33 +27,33 @@ POPVALUE(1, 2, 3, 4, 5, 6)
 CHART(
     plugins("gl"),
     chartOption({
-        "backgroundColor": "#000",
-        "globe": {
-            "baseTexture": "https://machbase.com/assets/example/world.topo.bathy.200401.jpg",
-            "heightTexture": "https://machbase.com/assets/example/bathymetry_bw_composite_4k.jpg",
-            "shading": "lambert",
-            "light": {
-                "ambient": {
-                    "intensity": 0.4
+        backgroundColor: "#000",
+        globe: {
+            baseTexture: "https://machbase.com/assets/example/world.topo.bathy.200401.jpg",
+            heightTexture: "https://machbase.com/assets/example/bathymetry_bw_composite_4k.jpg",
+            shading: "lambert",
+            light: {
+                ambient: {
+                    intensity: 0.4
                 },
-                "main": {
-                    "intensity": 0.4
+                main: {
+                    intensity: 0.4
                 }
             },
-            "viewControl": {
-                "autoRotate": false
+            viewControl: {
+                autoRotate: false
             }
         },
-        "series": {
-            "type": "lines3D",
-            "coordinateSystem": "globe",
-            "blendMode": "lighter",
-            "lineStyle": {
-                "width": 0.5,
-                "color": "rgb(50, 50, 150)",
-                "opacity": 0.05
+        series: {
+            type: "lines3D",
+            coordinateSystem: "globe",
+            blendMode: "lighter",
+            lineStyle: {
+                width: 0.5,
+                color: "rgb(50, 50, 150)",
+                opacity: 0.1
             },
-            "data": column(0)
+            data: column(0)
         }
     })
 )
