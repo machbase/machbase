@@ -14,7 +14,9 @@ FAKE( json({
     ["Sat", 230, 330, 330, 330, 1330],
     ["Sun", 210, 310, 410, 320, 1320]
 }) )
-
+// |   0      1       2      3      4       5
+// +-> day    email   ads    video  direct  search
+// |
 CHART(
     chartOption({
         xAxis: { data: column(0) },

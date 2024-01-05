@@ -14,6 +14,9 @@ FAKE( json({
     ["Sat", 1330],
     ["Sun", 1320]
 }) )
+// |   0      1
+// +-> day    value
+// |
 CHART(
     chartOption({
         legend:{ show:false },

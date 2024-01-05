@@ -6,7 +6,13 @@ weight: 10
 
 ```js
 FAKE( linspace(0, 360, 100))
-MAPVALUE(2, sin((value(0)/180)*PI))
+// |   0
+// +-> x
+// |
+MAPVALUE(1, sin((value(0)/180)*PI))
+// |   0   1
+// +-> x   sin(x)
+// |
 CHART(
     chartOption({
         xAxis: {

@@ -18,9 +18,17 @@ FAKE(
         ["2019-10-18", 100]
     })
 )
-
+// |   0      1
+// +-> date   value
+// |
 MAPVALUE(0, list(value(0), value(1)))
-
+// |   0               1
+// +-> [date, value]   value
+// |
+POPVALUE(1)
+// |   0
+// +-> [date, value]
+// |
 CHART(
     chartOption({
         title: { text: "Area Pieces" },
