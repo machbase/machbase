@@ -227,3 +227,434 @@ curl -o - -X POST http://127.0.0.1:5654/db/query ^
 ```
 {{< /tab >}}
 {{< /tabs >}}
+
+## Examples
+
+Please refer to the detail of the API 
+- [Request endpoint and params](/neo/api-http/query)
+- [List of Time Zones from wikipedia.org](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+
+For this tutorials, pre-write data below.
+
+{{% steps %}}
+
+### Data file
+
+Copy and paste on a new file `data-nano-1.json`.
+
+```json
+{
+    "data":{
+    "columns":["NAME","TIME","VALUE"],
+    "rows":[
+        ["wave.sin",1676432361,0],
+        ["wave.sin",1676432362,0.406736],
+        ["wave.sin",1676432363,0.743144],
+        ["wave.sin",1676432364,0.951056],
+        ["wave.sin",1676432365,0.994522]
+    ]
+    }
+}
+```
+Or download it from [here](https://machbase.com/assets/example/data-epoch-1.json).
+
+### Create table
+```sh
+curl -o - http://127.0.0.1:5654/db/query \
+    --data-urlencode \
+    "q=create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"
+```
+### Write data
+```sh
+curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=ns \
+    -H "Content-Type: application/json"                           \
+    --data-binary "@data-nano-1.json"
+```
+
+{{% /steps %}}
+
+
+### Select in JSON (default)
+
+**Request**
+
+Set query param `format=json` or omit it for the default value.
+```sh
+curl -o - http://127.0.0.1:5654/db/query \
+      --data-urlencode "q=select * from EXAMPLE"
+```
+
+**Response**
+
+[See Response JSON format](/neo/api-http/query#get)
+
+```json
+{
+  "data": {
+    "columns": [ "NAME", "TIME", "VALUE" ],
+    "types": [ "string", "datetime", "double" ],
+    "rows": [
+      [ "wave.sin", 1676432361000000000, 0.111111 ],
+      [ "wave.sin", 1676432362111111111, 0.222222 ],
+      [ "wave.sin", 1676432363222222222, 0.333333 ],
+      [ "wave.sin", 1676432364333333333, 0.444444 ],
+      [ "wave.sin", 1676432365444444444, 0.555555 ]
+    ]
+  },
+  "success": true,
+  "reason": "success",
+  "elapse": "1.085625ms"
+}
+```
+
+### Select in CSV
+
+**Request**
+Set the `format=csv` query param for CSV format.
+```sh
+curl -o - http://127.0.0.1:5654/db/query       \
+    --data-urlencode "q=select * from EXAMPLE" \
+    --data-urlencode "format=csv"
+```
+
+**Response**
+```
+NAME,TIME,VALUE
+wave.sin,1676432361000000000,0.111111
+wave.sin,1676432362111111111,0.222222
+wave.sin,1676432363222222222,0.333333
+wave.sin,1676432364333333333,0.444444
+wave.sin,1676432365444444444,0.555555
+```
+
+### Select in BOX
+
+**Request**
+
+Set the `format=box` query param for BOX format.
+
+```sh
+curl -o - http://127.0.0.1:5654/db/query       \
+    --data-urlencode "q=select * from EXAMPLE" \
+    --data-urlencode "format=box"
+```
+
+**Response**
+
+```
++----------+---------------------+----------+
+| NAME     | TIME                | VALUE    |
++----------+---------------------+----------+
+| wave.sin | 1676432361000000000 | 0        |
+| wave.sin | 1676432362111111111 | 0.406736 |
+| wave.sin | 1676432363222222222 | 0.743144 |
+| wave.sin | 1676432364333333333 | 0.951056 |
+| wave.sin | 1676432365444444444 | 0.994522 |
++----------+---------------------+----------+
+```
+
+### Select in BOX with rownum
+
+**Request**
+
+Set the `format=box` query param for BOX format.
+
+```sh
+curl -o - http://127.0.0.1:5654/db/query       \
+    --data-urlencode "q=select * from EXAMPLE" \
+    --data-urlencode "format=box"              \
+    --data-urlencode "rownum=true"
+```
+
+**Response**
+
+```
++--------+----------+---------------------+----------+
+| ROWNUM | NAME     | TIME                | VALUE    |
++--------+----------+---------------------+----------+
+|      1 | wave.sin | 1676432361000000000 | 0.111111 |
+|      2 | wave.sin | 1676432362111111111 | 0.222222 |
+|      3 | wave.sin | 1676432363222222222 | 0.333333 |
+|      4 | wave.sin | 1676432364333333333 | 0.444444 |
+|      5 | wave.sin | 1676432365444444444 | 0.555555 |
++--------+----------+---------------------+----------+
+```
+
+
+### Select in BOX without heading
+
+**Request**
+
+Set the `format=box` and `heading=false` query param for BOX format without header.
+
+```sh
+curl -o - http://127.0.0.1:5654/db/query       \
+    --data-urlencode "q=select * from EXAMPLE" \
+    --data-urlencode "format=box"              \
+    --data-urlencode "heading=false"
+```
+
+**Response**
+
+```
++----------+---------------------+----------+
+| wave.sin | 1676432361000000000 | 0        |
+| wave.sin | 1676432362111111111 | 0.406736 |
+| wave.sin | 1676432363222222222 | 0.743144 |
+| wave.sin | 1676432364333333333 | 0.951056 |
+| wave.sin | 1676432365444444444 | 0.994522 |
++----------+---------------------+----------+
+```
+
+### Select in BOX value in INTEGER
+
+**Request**
+
+Set the `format=box` and `precision=0` query param for BOX format with integer precision.
+
+```sh
+curl -o - http://127.0.0.1:5654/db/query       \
+    --data-urlencode "q=select * from EXAMPLE" \
+    --data-urlencode "format=box"              \
+    --data-urlencode "precision=0"
+```
+
+**Response**
+
+```
++----------+---------------------+-------+
+| NAME     | TIME                | VALUE |
++----------+---------------------+-------+
+| wave.sin | 1676432361000000000 | 0     |
+| wave.sin | 1676432362111111111 | 0     |
+| wave.sin | 1676432363222222322 | 0     |
+| wave.sin | 1676432364333333233 | 0     |
+| wave.sin | 1676432365444444444 | 1     |
++----------+---------------------+-------+
+```
+
+### Select in Default Time
+
+**Request**
+
+Set query param `timeformat=Default`
+
+```sh
+ curl -o - http://127.0.0.1:5654/db/query      \
+    --data-urlencode "q=select * from EXAMPLE" \
+    --data-urlencode "format=box"              \
+    --data-urlencode "timeformat=Default"
+```
+
+**Response**
+
+```
++----------+-------------------------+----------+
+| NAME     | TIME                    | VALUE    |
++----------+-------------------------+----------+
+| wave.sin | 2023-02-15 03:39:21     | 0.111111 |
+| wave.sin | 2023-02-15 03:39:22.111 | 0.222222 |
+| wave.sin | 2023-02-15 03:39:23.222 | 0.333333 |
+| wave.sin | 2023-02-15 03:39:24.333 | 0.444444 |
+| wave.sin | 2023-02-15 03:39:25.444 | 0.555555 |
++----------+-------------------------+----------+
+```
+
+### Select rows in default time format with `Asia/Seoul`
+
+**Request**
+Set query param `timeformat=Default` and `tz=Asia/Seoul`
+
+```sh
+ curl -o - http://127.0.0.1:5654/db/query \
+    --data-urlencode "q=select * from EXAMPLE" \
+    --data-urlencode "format=box"              \
+    --data-urlencode "timeformat=Default"      \
+    --data-urlencode "tz=Asia/Seoul"
+```
+
+**Response**
+
+```
+ +----------+-------------------------+----------+
+| NAME     | TIME                    | VALUE    |
++----------+-------------------------+----------+
+| wave.sin | 2023-02-15 12:39:21     | 0.111111 |
+| wave.sin | 2023-02-15 12:39:22.111 | 0.222222 |
+| wave.sin | 2023-02-15 12:39:23.222 | 0.333333 |
+| wave.sin | 2023-02-15 12:39:24.333 | 0.444444 |
+| wave.sin | 2023-02-15 12:39:25.444 | 0.555555 |
++----------+-------------------------+----------+
+```
+
+### Select rows in `RFC3339`
+
+**Request**
+
+Set query param `timeformat=Default`
+
+```sh
+ curl -o - http://127.0.0.1:5654/db/query      \
+    --data-urlencode "q=select * from EXAMPLE" \
+    --data-urlencode "format=box"              \
+    --data-urlencode "timeformat=RFC3339"
+```
+
+**Response**
+
+```
++----------+----------------------+----------+
+| NAME     | TIME                 | VALUE    |
++----------+----------------------+----------+
+| wave.sin | 2023-02-15T03:39:21Z | 0.111111 |
+| wave.sin | 2023-02-15T03:39:22Z | 0.222222 |
+| wave.sin | 2023-02-15T03:39:23Z | 0.333333 |
+| wave.sin | 2023-02-15T03:39:24Z | 0.444444 |
+| wave.sin | 2023-02-15T03:39:25Z | 0.555555 |
++----------+----------------------+----------+
+```
+
+### Select in RFC3339 with Nano precision
+
+**Request**
+
+Set query param `timeformat=Default`
+
+```sh
+ curl -o - http://127.0.0.1:5654/db/query      \
+    --data-urlencode "q=select * from EXAMPLE" \
+    --data-urlencode "format=box"              \
+    --data-urlencode "timeformat=RFC3339Nano"
+```
+
+**Response**
+
+```
+ +----------+--------------------------------+----------+
+| NAME     | TIME                           | VALUE    |
++----------+--------------------------------+----------+
+| wave.sin | 2023-02-15T03:39:21Z           | 0.111111 |
+| wave.sin | 2023-02-15T03:39:22.111111111Z | 0.222222 |
+| wave.sin | 2023-02-15T03:39:23.222222322Z | 0.333333 |
+| wave.sin | 2023-02-15T03:39:24.333333233Z | 0.444444 |
+| wave.sin | 2023-02-15T03:39:25.444444444Z | 0.555555 |
++----------+--------------------------------+----------+
+```
+
+### Select in RFC3339 with Nano precision in America/New_York Time Zone
+
+**Request**
+
+Set query param `timeformat=Default`
+
+```sh
+ curl -o - http://127.0.0.1:5654/db/query      \
+    --data-urlencode "q=select * from EXAMPLE" \
+    --data-urlencode "format=box"              \
+    --data-urlencode "timeformat=RFC3339Nano"  \
+    --data-urlencode "tz=America/New_York"
+```
+
+**Response**
+
+```
++----------+-------------------------------------+----------+
+| NAME     | TIME                                | VALUE    |
++----------+-------------------------------------+----------+
+| wave.sin | 2023-02-14T22:39:21-05:00           | 0.111111 |
+| wave.sin | 2023-02-14T22:39:22.111111111-05:00 | 0.222222 |
+| wave.sin | 2023-02-14T22:39:23.222222222-05:00 | 0.333333 |
+| wave.sin | 2023-02-14T22:39:24.333333333-05:00 | 0.444444 |
+| wave.sin | 2023-02-14T22:39:25.444444444-05:00 | 0.555555 |
++----------+-------------------------------------+----------+
+```
+
+### Select in Custom Time Format
+
+In Machbase Neo Rest API, specific numbers are used to replace the format of certain time.
+Set query param `timeformat=<custom-format-as-below>`
+
+```bash
+ custom format
+      year           2006
+      month          01
+      day            02
+      hour           03 or 15
+      minute         04
+      second         05 or with sub-seconds '05.999999999'
+```
+
+### Typical Custom Time Format
+
+**Request**
+
+```sh
+ curl -o - http://127.0.0.1:5654/db/query      \
+    --data-urlencode "q=select * from EXAMPLE" \
+    --data-urlencode "format=box"              \
+    --data-urlencode "timeformat=2006-01-02 03:04:05.999999999"
+```
+
+**Response**
+```
++----------+-------------------------------+----------+
+| NAME     | TIME                          | VALUE    |
++----------+-------------------------------+----------+
+| wave.sin | 2023-02-15 03:39:21           | 0.111111 |
+| wave.sin | 2023-02-15 03:39:22.111111111 | 0.222222 |
+| wave.sin | 2023-02-15 03:39:23.222222222 | 0.333333 |
+| wave.sin | 2023-02-15 03:39:24.333333333 | 0.444444 |
+| wave.sin | 2023-02-15 03:39:25.444444444 | 0.555555 |
++----------+-------------------------------+----------+
+```
+
+### Typical Re-ordered Custom Time Format
+
+**Request**
+
+```sh
+ curl -o - http://127.0.0.1:5654/db/query      \
+    --data-urlencode "q=select * from EXAMPLE" \
+    --data-urlencode "format=box"              \
+    --data-urlencode "timeformat=03:04:05.999999999-ReOrder-2006-01-02 "
+```
+
+**Response**
+
+```
++----------+----------------------------------------+----------+
+| NAME     | TIME                                   | VALUE    |
++----------+----------------------------------------+----------+
+| wave.sin | 03:39:21-ReOrder-2023-02-15            | 0.111111 |
+| wave.sin | 03:39:22.111111111-ReOrder-2023-02-15  | 0.222222 |
+| wave.sin | 03:39:23.222222222-ReOrder-2023-02-15  | 0.333333 |
+| wave.sin | 03:39:24.333333333-ReOrder-2023-02-15  | 0.444444 |
+| wave.sin | 03:39:25.444444444-ReOrder-2023-02-15  | 0.555555 |
++----------+----------------------------------------+----------+
+```
+
+### Typical Re-ordered Custom Time Format in America/New_York Time Zone
+
+**Request**
+
+```sh
+ curl -o - http://127.0.0.1:5654/db/query                                 \
+    --data-urlencode "q=select * from EXAMPLE"                            \
+    --data-urlencode "format=box"                                         \
+    --data-urlencode "timeformat=03:04:05.999999999-ReOrder-2006-01-02 "  \
+    --data-urlencode "tz=America/New_York"
+```
+
+**Response**
+
+```
++----------+----------------------------------------+----------+
+| NAME     | TIME                                   | VALUE    |
++----------+----------------------------------------+----------+
+| wave.sin | 10:39:21-ReOrder-2023-02-14            | 0.111111 |
+| wave.sin | 10:39:22.111111111-ReOrder-2023-02-14  | 0.222222 |
+| wave.sin | 10:39:23.222222222-ReOrder-2023-02-14  | 0.333333 |
+| wave.sin | 10:39:24.333333333-ReOrder-2023-02-14  | 0.444444 |
+| wave.sin | 10:39:25.444444444-ReOrder-2023-02-14  | 0.555555 |
++----------+----------------------------------------+----------+
+```

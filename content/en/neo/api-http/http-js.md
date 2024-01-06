@@ -1,5 +1,5 @@
 ---
-title: HTTP client in JavaScript
+title: Client in JavaScript
 type: docs
 weight: 61
 ---

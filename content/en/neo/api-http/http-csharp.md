@@ -1,5 +1,5 @@
 ---
-title: HTTP client in C#
+title: Client in C#
 type: docs
 weight: 64
 ---

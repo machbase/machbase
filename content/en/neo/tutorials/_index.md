@@ -10,13 +10,6 @@ weight: 30
 - [Glance Shell](./010.shell)
 - [Write waves by shell](./010.shell/11.shell-write-waves)
 - [Read waves by shell](./010.shell/12.shell-read-waves)
-- [Chart on terminal](./010.shell/13.shell-chart-on-terminal)
-
-### HTTP
-
-- [Insert table](./020.http/21.insert)
-- [Select table](./020.http/22.select)
-- [How to insert data from Line Protocol](./020.http/50.connectivity-line-protocol)
 
 ### Import
 
@@ -41,14 +34,7 @@ weight: 30
 
 ### Go
 
-- [HTTP API in Go](./100.go/100.go-http-writing)
-- [gRPC API in Go](./100.go/101.go-grpc-writing)
 - [How to use Go driver](./100.go/102.go-driver)
-
-### Python
-
-- [Chart Python](./120.python/120.python-chart)
-- [Reads CSV with Pandas](./120.python/121.python-read-csv-pandas)
 
 ### Raspberry PI
 
