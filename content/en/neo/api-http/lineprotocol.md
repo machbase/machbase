@@ -1,5 +1,5 @@
 ---
-title: Write via http line protocol
+title: ILP line protocol
 type: docs
 weight: 50
 ---
@@ -8,7 +8,7 @@ Machbase Neo provides a compatibility api that accepts messages in a format of i
 This api is convenient way to utilize existing client softwares that produce lineprotocol messages (e.g telegraf).
 
 {{< callout emoji="📢">}}
-Since Machbase is different scheme of database from influxdb, some translations will be automatically occurred.
+Since Machbase has a different scheme from influxdb, some translations will be automatically occurred.
 {{< /callout >}}
 
 **Translation**
