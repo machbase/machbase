@@ -18,7 +18,7 @@ $ vi neo-start.sh
 
 ```sh
 #!/bin/bash 
-/data/machbase-neo serve --host 0.0.0.0 --log-filename /data/log/machbase-neo.log
+exec /data/machbase-neo serve --host 0.0.0.0 --log-filename /data/log/machbase-neo.log
 ```
 
 ```sh
@@ -77,6 +77,15 @@ $ sudo systemctl stop neo.service
 
 ## Using supervisord
 
+### Create neo-start.sh
+
+*neo-start.sh*
+
+```sh
+#!/bin/bash 
+exec /data/machbase-neo serve --host 0.0.0.0 --log-filename /data/log/machbase-neo.log
+```
+
 ### Create neo.conf
 
 ```sh
@@ -85,9 +94,8 @@ $ sudo vi neo.conf
 ```
 
 ```ini
-[program:neo]   
-command=/data/machbase-neo serve --host 0.0.0.0 --log-filename /data/log/machbase-neo.log   
-  
+[program:neo]
+command=/data/neo-start.sh
 priority=10   
 autostart=true   
 autorestart=true   
@@ -97,8 +105,8 @@ stderr_logfile=/data/log/machbase-neo_stderr.log
 user=machbase   
 ```
 
-* Modify the user and paths according to your environment.
-* In the above example, the `/data/log` folder must be created in advance.
+* Modify the `user` and paths according to your environment.
+* In the above example, the log folder `/data/log` should exist in advance.
 
 ### Update Supervisor
 
