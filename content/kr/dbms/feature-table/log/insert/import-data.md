@@ -1,5 +1,5 @@
 ---
-title : 'import'
+title : '데이터 불러오기 : Import'
 type: docs
 weight: 30
 ---

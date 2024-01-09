@@ -4,6 +4,4 @@ type : docs
 weight: 50
 ---
 
-* [Coordinator / Deployer 설치, Package 추가](./coordinator-deployer-install)
-* [Lookup / Broker / Warehouse 설치](./lookup-broker-warehouse-install)
-
+{{< children_toc />}}
