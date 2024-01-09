@@ -2,6 +2,7 @@
 title: JDBC
 type: docs
 weight: 140
+draft: true
 ---
 
 JDBC driver is provided for Java developers.
