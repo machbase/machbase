@@ -49,7 +49,18 @@ flowchart RL
     end
 ```
 
-## 2023 2H
+## 2023 Q4
+- [x] Data visualization
+
+  Support Apache echarts.
+
+## 2024 Q1
+
+- [ ] Geo Location visualization
+
+   Support leaflet.js for geo-location data visualization.
+
+## 2024 1H
 
 - [ ] Kafka Consumer
 
