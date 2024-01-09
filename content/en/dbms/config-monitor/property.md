@@ -785,8 +785,8 @@ Sets whether to use DIRECT I/O for data write operation. If DIRECT I/O is not su
 
 ||Value|
 |-|----|
-|Min|    0|  
-|Max|    1|  
+|Minimum|    0|  
+|Maximum|    1|  
 |Default|    1|
 
 
@@ -962,9 +962,9 @@ Set the number of threads to be used by the Machbase web server.
 
 ||Value|
 |-|----|
-|최소값| 0|  
-|최대값| 1024|
-|기본값| 32| 
+|Minimum| 0|  
+|Maximum| 1024|
+|Default| 32| 
 
 
 ## INDEX_BUILD_MAX_ROW_COUNT_PER_THREAD
@@ -1151,8 +1151,8 @@ If one query uses memory with a larger value, the query is canceled. At this tim
 
 ||Value|
 |--|----|
-|Min|    1024 * 1024|
-|Max|    2^64 - 1|
+|Minimum|    1024 * 1024|
+|Maximum|    2^64 - 1|
 |Default|    500 * 1024 * 1024|
 
 
@@ -1581,8 +1581,8 @@ When creating the TAGDATA table, set the maximum size of memory to store the met
 
 ||Value|
 |-|----|
-|Min|    1024*1024|
-|Max|    2^32-1|
+|Minimum|    1024*1024|
+|Maximum|    2^32-1|
 |Default|    100\*1024\*1024|
 
 
@@ -1592,9 +1592,9 @@ Specify the number of Key Value tables that consist the tag table.
 
 ||Value|
 |--|--|
-|최소값| 1|
-|최대값| 4|
-|기본값| 1024 |
+|Minimum| 1|
+|Maximum| 4|
+|Default| 1024 |
 
 ## TAG_DATA_PART_SIZE
 
@@ -1602,9 +1602,9 @@ Determines the partition size in tag data storage.
 
 ||Value|
 |--|--|
-|최소값| 1048576 (1MB)|
-|최대값| 1073741824 (1GB)|
-|기본값| 16777216 (16MB) |
+|Minimum| 1048576 (1MB)|
+|Maximum| 1073741824 (1GB)|
+|Default| 16777216 (16MB) |
 
 ## TRACE_LOGFILE_COUNT
 Specifies the maximum number of log trace files generated in TRACE_LOGFILE_PATH. To save disk space, delete the oldest log file if more than the maximum number of log files are created.

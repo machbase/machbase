@@ -98,8 +98,8 @@ If this size is insufficient, it will try again until the buffer is empty during
 
 |(byte)|    Value|
 |------|---------|
-|Min|    1024768|
-|Max|    2^32 - 1|
+|Minimum|    1024768|
+|Maximum|    2^32 - 1|
 |Default|    33554432 (32M)|
 
 
@@ -740,8 +740,8 @@ This value means the time it takes to wait after the broker requests the coordin
 
 |(usec)|Value|
 |--|--|
-|Min|0|  
-|Max|2^64 - 1|
+|Minimum|0|  
+|Maximum|2^64 - 1|
 |Default|3600000000|
 
 ## COORDINATOR_DECISION_DELAY
