@@ -37,3 +37,16 @@ For machines with larger memory and more CPU cores, such as a personal workstati
 
 [^1]: Windows Fall 2018 or newer versions.
 [^2]: Windows release includes both of the `machbase-neo` and `neow` (GUI frontend) executables.
+
+### SDK with CLASSIC
+
+This releases are the legacy MACHBASE DBMS and application driver such as JDBC, ODBC and C client library.
+
+| OS         | Architecture   |  Download |
+|:-----------|:---------------|:----------|
+| Linux      | x64            | [machbase-SDK-{{< classic_version >}}.official-LINUX-X86-64-release.tgz](https://stage.machbase.com/package/download/machbase-SDK-{{< classic_version >}}.official-LINUX-X86-64-release.tgz) |
+| Linux      | arm64          | [machbase-SDK-{{< classic_version >}}.official-LINUX-ARM_CORTEX_A53-64-release.tgz](https://stage.machbase.com/package/download/machbase-SDK-{{< classic_version >}}.official-LINUX-ARM_CORTEX_A53-64-release.tgz) |
+| Windows    | x64            | [machbase-SDK-{{< classic_version >}}.official-WINDOWS-X86-64-release.msi](https://stage.machbase.com/package/download/machbase-SDK-{{< classic_version >}}.official-WINDOWS-X86-64-release.msi)
+| Windows    | x86            | [machbase-SDK-{{< classic_version >}}.official-WINDOWS-X86-32-release.msi](https://stage.machbase.com/package/download/machbase-SDK-{{< classic_version >}}.official-WINDOWS-X86-32-release.msi) |
+| macOS      | arm64          | [machbase-SDK-{{< classic_version >}}.official-DARWIN-ARM_M1-64-release.tgz](https://stage.machbase.com/package/download/machbase-SDK-{{< classic_version >}}.official-DARWIN-ARM_M1-64-release.tgz) |
+| macOS      | x64            | [machbase-SDK-{{< classic_version >}}.official-DARWIN-X86-64-release.tgz](https://stage.machbase.com/package/download/machbase-SDK-{{< classic_version >}}.official-DARWIN-X86-64-release.tgz) |

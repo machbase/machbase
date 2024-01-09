@@ -123,7 +123,7 @@ images:
           </div>
           <div class="next-navi-btn-wrap">
             <button
-              onclick="location.href='/kr/home/download'"
+              onclick="location.href='/neo/releases/'"
               class="next-navi-btn"
             >
               Get Machbase
