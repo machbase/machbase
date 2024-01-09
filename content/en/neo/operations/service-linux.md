@@ -8,22 +8,25 @@ Using *systemd* or *supervisord*, you can run and manage machbase-neo process as
 
 ## Using systemd
 
+{{% steps %}}
+
 ### Create neo-start.sh
 
 ```sh
 $ vi neo-start.sh
 ```
 
-*neo-start.sh*
-
 ```sh
 #!/bin/bash 
 exec /data/machbase-neo serve --host 0.0.0.0 --log-filename /data/log/machbase-neo.log
 ```
 
+### Executable neo-start.sh
+
 ```sh
 $ chmod 755 neo-start.sh
 ```
+
 ### Create neo.service
 
 ```sh
@@ -31,7 +34,6 @@ $ cd /etc/systemd/system
 $ sudo vi neo.service
 ```
 
-*neo.service*
 ```ini
 [Unit]   
 Description=neo service   
@@ -67,6 +69,8 @@ Make the service to auto-start when host machine re-boot.
 $ sudo systemctl enable neo.service
 ```
 
+### Done
+
 After activating the service, you can control it with the following commands:
 
 ```sh
@@ -74,16 +78,27 @@ $ sudo systemctl start neo.service
 $ sudo systemctl status neo.service
 $ sudo systemctl stop neo.service
 ```
+{{% /steps %}}
 
 ## Using supervisord
 
+{{% steps %}}
+
 ### Create neo-start.sh
 
-*neo-start.sh*
+```sh
+$ vi neo-start.sh
+```
 
 ```sh
 #!/bin/bash 
 exec /data/machbase-neo serve --host 0.0.0.0 --log-filename /data/log/machbase-neo.log
+```
+
+### Executable neo-start.sh
+
+```sh
+$ chmod 755 neo-start.sh
 ```
 
 ### Create neo.conf
@@ -108,12 +123,14 @@ user=machbase
 * Modify the `user` and paths according to your environment.
 * In the above example, the log folder `/data/log` should exist in advance.
 
-### Update Supervisor
+### Update Supervisord
 
 ```sh
 $ sudo supervisorctl reread
 $ sudo supervisorctl update
 ```
+
+### Done
 
 After activating the service, you can control machbase-neo with the following commands:
 ```sh
@@ -121,3 +138,5 @@ $ sudo supervisorctl start neo
 $ sudo supervisorctl status neo
 $ sudo supervisorctl stop neo
 ```
+
+{{% /steps %}}
