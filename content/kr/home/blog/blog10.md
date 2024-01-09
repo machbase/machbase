@@ -355,7 +355,7 @@ images:
         </p>
         <div class="tech-code-box">
           <span
-            >$ sh -c "$(curl -fsSL https://neo.machbase.com/install.sh)"</span
+            >$ sh -c "$(curl -fsSL https://machbase.com/install.sh)"</span
           >
         </div>
         <p class="tech-contents-text">
