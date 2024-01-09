@@ -93,6 +93,123 @@ $ ps -aef |grep machbase-neo
   501 13551  3598   0  9:33AM ttys000    0:00.07 machbase-neo shell --user sys --password manager
 ```
 
+**Run Query**
+  
+```sh
+machbase-neo» select binary_signature from v$version;
+┌────────┬─────────────────────────────────────────────┐
+│ ROWNUM │ BINARY_SIGNATURE                            │
+├────────┼─────────────────────────────────────────────┤
+│      1 │ 8.0.2.develop-LINUX-X86-64-release-standard │
+└────────┴─────────────────────────────────────────────┘
+a row fetched.
+```
+
+**Create Table**
+
+```sh
+machbase-neo» create tag table if not exists example (name varchar(20) primary key, time datetime basetime, value double summarized);
+executed.
+```
+
+**Schema Table**
+
+```sh
+machbase-neo» desc example;
+┌────────┬───────┬──────────┬────────┐
+│ ROWNUM │ NAME  │ TYPE     │ LENGTH │
+├────────┼───────┼──────────┼────────┤
+│      1 │ NAME  │ varchar  │     20 │
+│      2 │ TIME  │ datetime │      8 │
+│      3 │ VALUE │ double   │      8 │
+└────────┴───────┴──────────┴────────┘
+```
+
+**Insert Table**
+
+```sh
+machbase-neo» insert into example values('tag0', to_date('2021-08-12'), 100);
+a row inserted.
+```
+
+**Select Table**
+
+```sh
+machbase-neo» select * from example;
+┌────────┬──────┬─────────────────────┬───────┐
+│ ROWNUM │ NAME │ TIME(LOCAL)         │ VALUE │
+├────────┼──────┼─────────────────────┼───────┤
+│      1 │ tag0 │ 2021-08-12 00:00:00 │ 100   │
+└────────┴──────┴─────────────────────┴───────┘
+a row fetched.
+```
+
+**Drop Table**
+
+```sh
+machbase-neo» drop table example;
+executed.
+```
+
+### Show
+
+Display information.
+
+```sh
+show [options] <object>
+        objects:
+          info                   show server info
+          license                show license info
+          ports                  show service ports
+          users                  list users
+          tables [-a]            list tables
+          table [-a] <table>     describe the table
+          meta-tables            list meta tables
+...
+        options:
+          -a,--all               includes all hidden tables/columns
+```
+
+#### show info
+
+```sh
+machbase-neo» show info;
+┌────────────────────┬─────────────────────────────┐
+│ NAME               │ VALUE                       │
+├────────────────────┼─────────────────────────────┤
+│ build.version      │ v2.0.0                      │
+│ build.hash         │ #c953293f                   │
+│ build.timestamp    │ 2023-08-29T08:08:00         │
+│ build.engine       │ static_standard_linux_amd64 │
+│ runtime.os         │ linux                       │
+│ runtime.arch       │ amd64                       │
+│ runtime.pid        │ 57814                       │
+│ runtime.uptime     │ 2h 30m 57s                  │
+│ runtime.goroutines │ 45                          │
+│ mem.sys            │ 32.6 MB                     │
+│ mem.heap.sys       │ 19.0 MB                     │
+│ mem.heap.alloc     │ 9.7 MB                      │
+│ mem.heap.in-use    │ 13.0 MB                     │
+│ mem.stack.sys      │ 1,024.0 KB                  │
+│ mem.stack.in-use   │ 1,024.0 KB                  │
+└────────────────────┴─────────────────────────────┘
+```
+
+### Desc
+
+Describe table structure.
+
+```sh
+machbase-neo» desc example;
+┌────────┬───────┬──────────┬────────┐
+│ ROWNUM │ NAME  │ TYPE     │ LENGTH │
+├────────┼───────┼──────────┼────────┤
+│      1 │ NAME  │ varchar  │     20 │
+│      2 │ TIME  │ datetime │      8 │
+│      3 │ VALUE │ double   │      8 │
+└────────┴───────┴──────────┴────────┘
+```
+
 ## machbase-neo version
 
 Show version and engine info.
