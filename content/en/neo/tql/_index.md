@@ -7,8 +7,16 @@ weight: 40
 It is required to properly read (translate) data that is sent from sensors.
 And also read and send data from database to other systems in demanded format.
 
+{{< tabs items="CSV,JSON,CHART">}}
+{{< tab >}} {{< figure src="./img/tql_intro_csv.jpg">}} {{</ tab >}}
+{{< tab >}} {{< figure src="./img/tql_intro_json.jpg">}} {{</ tab >}}
+{{< tab >}} {{< figure src="./img/tql_intro.jpg">}} {{</ tab >}}
+{{</ tabs >}}
+
 The purpose of *TQL* is transforming data format.
 This chapter shows how to do this without developing additional applications.
+
+## N:M transforming
 
 {{< figure src="/images/tql-concept.png" caption="TQL Concept" >}}
 
