@@ -71,9 +71,8 @@
         <div class="products-content">
           <div class="products-sub"><a href="/kr/home/tsdb">TSDB</a></div>
           <div class="products-num"><a href="/kr/home/mos">MOS</a></div>
-          <div class="products-cems">
-            <a href="/kr/home/cems">CEMS</a>
-          </div>
+          <div class="products-ras"><a href="/kr/home/ras">RAS</a></div>
+          <div class="products-cems"><a href="/kr/home/cems">CEMS</a></div>
         </div>
       </li>
       <li><a href="/kr/home/blog">Blog</a></li>
@@ -91,7 +90,6 @@
 <script>
   //drop down menu
   const productsMenuWrap = document.getElementById("productsMenuWrap");
-  const docsMenuWrap = document.getElementById("docsMenuWrap");
   const dropdown = document.getElementById("dropdown");
   dropdown.style.display = "none";
   productsMenuWrap.addEventListener("mouseover", function () {
@@ -100,18 +98,13 @@
   productsMenuWrap.addEventListener("mouseout", function () {
     dropdown.style.display = "none";
   });
-  docsMenuWrap.addEventListener("mouseover", function () {
-    dropdownDocs.style.display = "block";
-  });
-  docsMenuWrap.addEventListener("mouseout", function () {
-    dropdownDocs.style.display = "none";
-  });
   //tablet menu
   const menuIcon = document.querySelector(".tablet-menu-icon");
   const tabletMenu = document.querySelector(".tablet-menu");
   const productsToggle = document.querySelector(".products-toggle");
   const productsSub = document.querySelector(".products-sub");
   const productsNum = document.querySelector(".products-num");
+  const productsRas = document.querySelector(".products-ras");
   const productsCems = document.querySelector(".products-cems");
   const docsToggle = document.querySelector(".docs-toggle");
   const docsSub = document.querySelector(".docs-sub");
@@ -123,6 +116,7 @@
   productsToggle.addEventListener("click", () => {
     productsSub.classList.toggle("show");
     productsNum.classList.toggle("show");
+    productsRas.classList.toggle("show");
     productsCems.classList.toggle("show");
   });
   docsToggle.addEventListener("click", () => {

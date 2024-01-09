@@ -1195,11 +1195,18 @@ footer {
   }
   .products-sub,
   .products-num,
+  .products-ras{
+    display: none;
+  }
   .products-cems {
     display: none;
   }
   .products-sub.show,
   .products-num.show,
+  .products-ras.show {
+    display: flex;
+    color: #253fd0;
+  }
   .products-cems.show {
     display: flex;
     color: #253fd0;
