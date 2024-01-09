@@ -95,7 +95,7 @@ System 의 Property 를 수정할 수 있다. 수정 가능한 Property 는 다�
 * QUERY_PARALLEL_FACTOR
 * DEFAULT_DATE_FORMAT
 * TRACE_LOG_LEVEL
-* PAGE_CACHE_MAX_SIZE
+* DISK_COLUMNAR_PAGE_CACHE_MAX_SIZE
 * MAX_SESSION_COUNT
 * SESSION_IDLE_TIMEOUT_SEC
 * PROCESS_MAX_SIZE
@@ -161,27 +161,27 @@ default_date_format
 YYYY-MM-DD HH24:MI:SS mmm:uuu:nnn                                                
 [1] row(s) selected.
  
-Mach> INSERT INTO time_table VALUES(TO_DATE('2016-11-11'));
-[ERR-00300 : Invalid date format or input string.([2016-11-11]:[%Y-%m-%d %H:%M:%S %0:%1:%2])]
+Mach> INSERT INTO time_table VALUES(TO_DATE('2016/11/12'));
+[ERR-00300: Invalid date value.(2016/11/12)]
  
-Mach> ALTER SESSION SET DEFAULT_DATE_FORMAT='YYYY-MM-DD';
+Mach> ALTER SESSION SET DEFAULT_DATE_FORMAT='YYYY/MM/DD';
 Altered successfully.
  
 Mach> SELECT DEFAULT_DATE_FORMAT from v$session;
  
 default_date_format                                                              
 ----------------------------------------------
-YYYY-MM-DD                                                                       
+YYYY/MM/DD                                                                       
 [1] row(s) selected.
  
-Mach> INSERT INTO time_table VALUES(TO_DATE('2016-11-11'));
+Mach> INSERT INTO time_table VALUES(TO_DATE('2016/11/12'));
 1 row(s) inserted.
  
 Mach> SELECT * FROM time_table;
  
 TIME                              
 ----------------------------------
-2016-11-11
+2016/11/12
  
 [1] row(s) selected.
 ```
