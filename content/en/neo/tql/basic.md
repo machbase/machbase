@@ -90,7 +90,7 @@ CSV()
 Every `.tql` script should start with one source statement which can generates a record or records.
 For example, `SQL()`, `QUERY()` and `SCRIPT()` that generates records with `yield()`, `yieldKey()` can be a source.
 And the last statement should be a sink statement that encode the result or write into the database.
-For example, `APPEND()`, `INSERT()` and all `CHART_XXX` functions can be a sink.
+For example, `APPEND()`, `INSERT()` and all `CHART()` functions can be a sink.
 
 ## MAP functions
 
@@ -125,7 +125,7 @@ QUERY(
 CSV()
 ```
 
-## Query Param - Example
+**Example**
 
 {{% steps %}}
 
@@ -148,8 +148,9 @@ curl http://127.0.0.1:5654/db/tql/param.tql?name=TAG0
 
 {{% /steps %}}
 
-## Operator `? :`
-The conditional operator `? :` is kind of similar to the if-else statements in other programing languages
+## Ternary
+
+The ternary operator `? :` is kind of similar to the if-else statements in other programing languages
 as it follows the same algorithm as of if-else statement
 
 ```js {linenos=table,hl_lines=[4]}
@@ -163,7 +164,7 @@ QUERY(
 CSV()
 ```
 
-## Operator `??`
+## Nil coalescing
 
 `??` operator takes left and right operand. if left operand is defined it returns value of it, if left operand is not defined it returns right operand instead.
 The example below shows the common use case of the `??` operator. If caller did not provide query param variables, the right side operand will be taken as a default value.
@@ -190,23 +191,27 @@ SQL( `select * from example limit ?`, param('limit') ?? 1)
 CSV()
 ```
 
-### Client Get request without query param
+### HTTP GET
 
-```
+GET request without query param
+
+```sh
 curl http://127.0.0.1:5654/db/tql/param-default.tql
 ```
 
-```
+```csv
 TAG0,1628694000000000000,10
 ```
 
-### Client Get request with query param
+### HTTP GET with param
 
-```
+GET request with query param
+
+```sh
 curl http://127.0.0.1:5654/db/tql/param-default.tql?limit=2
 ```
 
-```
+```csv
 TAG0,1628694000000000000,10
 TAG0,1628780400000000000,11
 ```

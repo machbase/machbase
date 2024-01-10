@@ -1,5 +1,5 @@
 ---
-title: MAP Functions
+title: MAP
 type: docs
 weight: 31
 ---
@@ -384,8 +384,6 @@ If the `idx` is out of range, it works as `PUSHVALUE()` does. `MAPVALUE(-1, valu
 
 An example usage of math functions with `MAPVALUE`.
 
-{{< tabs items="MAPVALUE(),RESULT">}}
-{{< tab >}}
 ```js {linenos=table,hl_lines=["7"],linenostart=1}
 FAKE(
     meshgrid(
@@ -400,11 +398,8 @@ CHART_LINE3D(
     visualMap(-0.12, 0.12)
 )
 ```
-{{< /tab >}}
-{{< tab >}}
-![tql-math-example2](../img/tql-math-example2.jpg)
-{{< /tab >}}
-{{< /tabs >}}
+
+{{< figure src="../img/tql-math-example2.jpg" width="400px" >}}
 
 ## MAP_DIFF()
 
@@ -415,6 +410,27 @@ CHART_LINE3D(
 - `newName` *string* change column's name with given string
 
 `MAP_DIFF()` replaces the value of the element at the given index with difference between current and previous values (*current - previous*). 
+
+```js {linenos=table,hl_lines=["3"],linenostart=1}
+FAKE( linspace(0.5, 3, 10) )
+MAPVALUE(0, log(value(0)), "VALUE")
+MAP_DIFF(1, value(0), "DIFF")
+CSV( header(true), precision(3) )
+```
+
+```csv
+VALUE,DIFF
+-0.693,NULL
+-0.251,0.442
+0.054,0.305
+0.288,0.234
+0.477,0.189
+0.636,0.159
+0.773,0.137
+0.894,0.121
+1.001,0.108
+1.099,0.097
+```
 
 ## MAP_ABSDIFF()
 
@@ -450,6 +466,26 @@ If the difference is less than zero it applies zero instead of a negative value.
 If values are not accumulated enough to the `lag`, it applies `NULL` instead.
 If all incoming values are `NULL` (or not a number) for the lastest `lag` count, it applies `NULL`.
 If some accumulated values are `NULL` (or not a number), it makes average value from only valid values excluding the `NULL`s.
+
+```js {linenos=table,hl_lines=["2"],linenostart=1}
+FAKE( linspace(1, 10, 10) )
+MAP_MOVAVG(1, value(0), 3, "MA_3")
+CSV( header(true), precision(3) )
+```
+
+```csv
+x,MA_3
+1.000,NULL
+2.000,NULL
+3.000,2.000
+4.000,3.000
+5.000,4.000
+6.000,5.000
+7.000,6.000
+8.000,7.000
+9.000,8.000
+10.000,9.000
+```
 
 ## TRANSPOSE()
 

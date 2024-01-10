@@ -1,5 +1,5 @@
 ---
-title: SINK Functions
+title: SINK
 type: docs
 weight: 21
 ---

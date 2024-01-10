@@ -16,7 +16,7 @@ CREATE TAG TABLE IF NOT EXISTS EXAMPLE (
 VALUE DOUBLE SUMMARIZED);
 ```
 
-## Write CSV with `INSERT`
+## `INSERT` CSV
 
 {{% steps %}}
 
@@ -34,7 +34,7 @@ CSV(payload(),
 INSERT("name", "time", "value", table("example"))
 ```
 
-### Client POST request
+### HTTP POST
 
 Prepare data file as `input-csv.csv`
 
@@ -51,7 +51,7 @@ curl -X POST http://127.0.0.1:5654/db/tql/input-csv.tql \
 ```
 {{% /steps %}}
 
-## Write CSV with `APPEND`
+## `APPEND` CSV
 
 {{% steps %}}
 
@@ -69,7 +69,7 @@ CSV(payload(),
 APPEND(table('example'))
 ```
 
-### Client POST request
+### HTTP POST
 
 Prepare data file as `append-csv.csv`
 
@@ -87,7 +87,7 @@ curl -X POST http://127.0.0.1:5654/db/tql/append-csv.tql \
 {{% /steps %}}
 
 
-## Write JSON in custom format
+## Custom JSON
 
 {{% steps %}}
 
@@ -109,7 +109,7 @@ SCRIPT({
 INSERT("name", "time", "value", table("example"))
 ```
 
-### Client POST request
+### HTTP POST
 
 Prepare data file as `input-json.json`
 
@@ -134,13 +134,13 @@ curl -X POST http://127.0.0.1:5654/db/tql/input-json.tql \
 ```
 {{% /steps %}}
 
-## Parse & write custom text data via MQTT & HTTP-POST
+## Custom Text
 
 When the data transforming is required for writing to the database, prepare the proper *tql* script and publish the data to the topic named `db/tql/`+`{tql_file.tql}`.
 
 The example code below shows how to handle multi-lines text data for writing into a table.
 
-{{< tabs items="MAP,SCRIPT,RESULT">}}
+{{< tabs items="MAP,SCRIPT">}}
 {{< tab >}}
 Transforming using MAP functions
 ```js {linenos=table,hl_lines=["13-15"],linenostart=1}
@@ -194,7 +194,9 @@ SCRIPT({
 CSV()
 ```
 {{</ tab >}}
-{{< tab >}}
+{{</ tabs >}}
+
+**Result**
 ```csv
 text_1,2023-12-02 11:03:36.054,12
 text_2,2023-12-02 11:03:36.054,23
@@ -202,8 +204,6 @@ text_3,2023-12-02 11:03:36.054,78
 text_4,2023-12-02 11:03:36.054,89
 text_5,2023-12-02 11:03:36.054,90
 ```
-{{</ tab >}}
-{{</ tabs >}}
 
 Run the code above and if there is no error and works as expected, 
 then replace the last line `CSV()` with `APPEND(table('example'))`.
@@ -218,6 +218,8 @@ Save the code as "script-post-lines.tql", then send some test data to the topic 
 332222
 442222
 ```
+
+### MQTT PUBLISH
 
 ```sh
 mosquitto_pub -h 127.0.0.1 -p 5653 \
@@ -237,6 +239,8 @@ $ machbase-neo shell "select * from example where name like 'text_%'"
       4  text_2  2023-07-14 08:51:10.926  33.000000 
 4 rows fetched.
 ```
+
+### HTTP POST
 
 For the note, the same *tql* file also works with HTTP POST.
 

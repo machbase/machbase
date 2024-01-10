@@ -1,5 +1,5 @@
 ---
-title: SRC Functions
+title: SRC
 type: docs
 weight: 11
 ---
