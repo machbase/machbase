@@ -148,7 +148,87 @@ curl http://127.0.0.1:5654/db/tql/param.tql?name=TAG0
 
 {{% /steps %}}
 
-## Ternary
+## Operators
+
+### Arithmetic Operators
+
+The arithmetic operators perform addition `+`, subtraction `-`, multiplication `*`, division `/` operations.
+
+```js {linenos=table,hl_lines=[2]}
+FAKE(linspace(1, 10, 5))
+MAPVALUE( 1, value(0) * 100 )
+CSV()
+```
+
+```csv
+1,100
+3.25,325
+5.5,550
+7.75,775
+10,1000
+```
+
+### Concatenation
+
+If operator `+` takes strings as its operands, it returns cacontenated string.
+
+```js {linenos=table,hl_lines=[4]}
+FAKE(json({
+    ["hello", "world"]
+}))
+MAPVALUE(2, value(0) + " " + value(1) + "?")
+CSV()
+```
+
+```csv
+hello,world,hello world?
+```
+
+### Relational Operator
+
+| Relational Op.         | Operator | Desc. |
+| :--------------------- | :--  | :-- |
+| Equality               | `==` | Returns TRUE if the operands are equal |
+| Inequality             | `!=` | Returns TRUE if the operands are not equal |
+| Greater Than           | `>`  | Test whether the value of the left operand is greater than the value of the right |
+| Greater Than or Equal  | `>=` | Test whether the value of the left operand is greater than or equal to the value of the right |
+| Less Than              | `<`  | Test whether the value of the left operand is less than the value of the right |
+| Less Than or Equal     | `<=` | Test whether the value of the left operand is less than or equal to the value of the right |
+
+
+```js {linenos=table,hl_lines=[2]}
+FAKE(linspace(1, 5, 5))
+FILTER( value(0) >= 4 )
+CSV()
+```
+
+```csv
+4
+5
+```
+
+### Logical Operators
+
+Logical operators perform and, or, and not operations.
+
+| Logical Op.| Operator | Desc. |
+| :-- | :--  | :-- |
+| AND | `&&` | Returns TRUE if both operands evaluate to TRUE |
+| OR  | `\|\|` | Returns TRUE if either operand evaluates to TRUE |
+| NOT | `!`  | Takes only one operand |
+
+```js {linenos=table,hl_lines=[2]}
+FAKE(linspace(1, 5, 5))
+FILTER( value(0) > 0  && mod(value(0), 2) == 0 )
+CSV()
+```
+
+```csv
+2
+4
+```
+
+### Ternary Operator
 
 The ternary operator `? :` is kind of similar to the if-else statements in other programing languages
 as it follows the same algorithm as of if-else statement
@@ -164,7 +244,7 @@ QUERY(
 CSV()
 ```
 
-## Nil coalescing
+### Nil coalescing
 
 `??` operator takes left and right operand. if left operand is defined it returns value of it, if left operand is not defined it returns right operand instead.
 The example below shows the common use case of the `??` operator. If caller did not provide query param variables, the right side operand will be taken as a default value.
@@ -182,7 +262,7 @@ CSV()
 
 {{% steps %}}
 
-### Use `??`
+#### Use `??`
 
 Save the code below as `param-default.tql`.
 
@@ -191,7 +271,7 @@ SQL( `select * from example limit ?`, param('limit') ?? 1)
 CSV()
 ```
 
-### HTTP GET
+#### HTTP GET
 
 GET request without query param
 
@@ -203,7 +283,7 @@ curl http://127.0.0.1:5654/db/tql/param-default.tql
 TAG0,1628694000000000000,10
 ```
 
-### HTTP GET with param
+#### HTTP GET with param
 
 GET request with query param
 
