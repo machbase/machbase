@@ -140,3 +140,77 @@ $ sudo supervisorctl stop neo
 ```
 
 {{% /steps %}}
+
+## Using PM2
+
+{{% steps %}}
+
+### Create neo-start.sh
+
+```sh
+$ vi neo-start.sh
+```
+
+```sh
+#!/bin/bash
+exec /data/machbase-neo serve --host 0.0.0.0
+```
+* Logs will be managed by PM2, so the `--log-filename` option is not necessary.
+
+### Executable neo-start.sh
+
+```sh
+$ chmod 755 neo-start.sh
+```
+
+### Run machbase-neo using PM2.
+
+```sh
+$ pm2 start /data/neo-start.sh --name neo --log /data/log/machbase-neo.log
+```
+
+Check the status of machbase-neo.
+```sh
+$ pm2 status neo
+```
+
+### Make PM2 to auto-start
+
+* You can skip this process if you have already executed it.
+
+To automatically generate and configuration a startup script just type the command (without sudo) `pm2 startup`:
+```sh
+$ pm2 startup
+[PM2] Init System found: systemd
+[PM2] To setup the Startup Script, copy/paste the following command:
+sudo env PATH=$PATH:/usr/local/bin /usr/local/lib/node_modules/pm2/bin/pm2 startup systemd -u machbase --hp /home/machbase
+```
+
+Then copy/paste the displayed command onto the terminal:
+```sh
+$ sudo env PATH=$PATH:/usr/local/bin /usr/local/lib/node_modules/pm2/bin/pm2 startup systemd -u machbase --hp /home/machbase
+```
+Now PM2 will automatically restart at boot.
+
+### Saving the app list
+
+Once you have started all desired apps, save the app list so it will respawn after reboot:
+```sh
+$ pm2 save
+```
+
+### Done
+
+You can control machbase-neo with the following commands:
+
+```sh
+$ pm2 start neo
+$ pm2 status neo
+$ pm2 stop neo
+$ pm2 restart neo
+
+$ pm2 logs neo
+$ pm2 monit
+```
+
+{{% /steps %}}
