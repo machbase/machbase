@@ -185,6 +185,50 @@ world,3.141792,hello world? 3.14
 {{< /tab >}}
 {{< /tabs >}}
 
+### strTime()
+
+*Syntax*: `strTime(time, format, tz)` {{< neo_since ver="8.0.7" />}}
+
+- `time` *time*
+- `format` *string*|*sqlTimeformat()*
+- `tz` *tz()* time zone
+
+`strTime()` formats time value to string according to the given format and time zone.
+
+**numeric timeformat**
+
+```js {linenos=table,hl_lines=["2"],linenostart=1}
+FAKE( linspace(0, 1, 1))
+MAPVALUE(0, strTime(time("now"), "2006/01/02 15:04:05.999", tz("UTC")), "result")
+MARKDOWN(rownum(true))
+```
+
+**sqlTimeformat()**
+
+```js {linenos=table,hl_lines=["2"],linenostart=1}
+FAKE( linspace(0, 1, 1))
+MAPVALUE(0, strTime(time("now"), sqlTimeformat("YYYY/MM/DD HH24:MI:SS.nnn"), tz("UTC")), "result")
+MARKDOWN(rownum(true))
+```
+
+|ROWNUM|result|
+|:-----|:-----|
+|1|2024/01/10 07:27:29.667|
+
+**named timeformat**
+
+{{< neo_since ver="8.0.12" />}}
+
+```js {linenos=table,hl_lines=["2"],linenostart=1}
+FAKE( linspace(0, 1, 1))
+MAPVALUE(0, strTime(time("now"), "RFC822", tz("UTC")), "time")
+MARKDOWN(rownum(true))
+```
+
+|ROWNUM|time|
+|:-----|:-----|
+|1|10 Jan 24 07:23 UTC|
+
 
 ### parseFloat()
 
