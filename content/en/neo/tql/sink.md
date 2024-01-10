@@ -170,6 +170,8 @@ Refer to [CHART() examples](/neo/tql/chart/) for the various usages.
 
 Generates a line chart in HTML format.
 
+{{< tabs items="CHART_LINE(),CHART()">}}
+{{< tab >}}
 ```js {linenos=table,hl_lines=["5-8"],linenostart=1}
 FAKE( oscillator(freq(1.5, 1.0), freq(1.0, 0.7), range('now', '3s', '25ms')))
 // |    0      1
@@ -180,6 +182,32 @@ CHART_LINE(
     xAxis(0, "T", "time"), yAxis(0, "V", "value")
 )
 ```
+{{< /tab >}}
+{{< tab >}}
+```js {linenos=table,hl_lines=["7-19"],linenostart=1}
+FAKE( oscillator(freq(1.5, 1.0), freq(1.0, 0.7), range('now', '3s', '25ms')))
+// |    0      1
+// +--> time   value
+// |
+CHART(
+    size("600px", "400px"),
+    chartOption({
+        xAxis: { name: "T", type:"time" },
+        yAxis: { name: "V"},
+        legend: { show: true },
+        tooltip: { show: true, trigger: "axis" },
+        series: [{ 
+            type: "line",
+            name: "column[1]",
+            data: column(0).map(function(t, idx){
+                return [t, column(1)[idx]];
+            })
+        }]
+    })
+)
+```
+{{< /tab >}}
+{{< /tabs >}}
 
 {{< figure src="../img/chart_line.jpg" width="500" >}}
 
@@ -191,6 +219,8 @@ CHART_LINE(
 
 Generates a bar chart in HTML format.
 
+{{< tabs items="CHART_BAR(),CHART()">}}
+{{< tab >}}
 ```js {linenos=table,hl_lines=["5-8"],linenostart=1}
 FAKE( oscillator(freq(1.5, 1.0), freq(1.0, 0.7), range('now', '3s', '25ms')))
 // |    0      1
@@ -201,6 +231,32 @@ CHART_BAR(
     xAxis(0, "T", "time"), yAxis(0, "V", "value")
 )
 ```
+{{< /tab >}}
+{{< tab >}}
+```js {linenos=table,hl_lines=["7-19"],linenostart=1}
+FAKE( oscillator(freq(1.5, 1.0), freq(1.0, 0.7), range('now', '3s', '25ms')))
+// |    0      1
+// +--> time   value
+// |
+CHART(
+    size("600px", "400px"),
+    chartOption({
+        xAxis: { name: "T", type:"time" },
+        yAxis: { name: "V"},
+        legend: { show: true },
+        tooltip: { show: true, trigger: "axis" },
+        series: [{ 
+            type: "bar",
+            name: "column[1]",
+            data: column(0).map(function(t, idx){
+                return [t, column(1)[idx]];
+            })
+        }]
+    })
+)
+```
+{{< /tab >}}
+{{< /tabs >}}
 
 {{< figure src="../img/chart_bar.jpg" width="500" >}}
 
@@ -212,6 +268,8 @@ CHART_BAR(
 
 Generates a scatter chart in HTML format.
 
+{{< tabs items="CHART_SCATTER(),CHART()">}}
+{{< tab >}}
 ```js {linenos=table,hl_lines=["5-8"],linenostart=1}
 FAKE( oscillator(freq(1.5, 1.0), freq(1.0, 0.7), range('now', '3s', '25ms')))
 // |    0      1
@@ -222,6 +280,32 @@ CHART_SCATTER(
     xAxis(0, "T", "time"), yAxis(0, "V", "value")
 )
 ```
+{{< /tab >}}
+{{< tab >}}
+```js {linenos=table,hl_lines=["7-19"],linenostart=1}
+FAKE( oscillator(freq(1.5, 1.0), freq(1.0, 0.7), range('now', '3s', '25ms')))
+// |    0      1
+// +--> time   value
+// |
+CHART(
+    size("600px", "400px"),
+    chartOption({
+        xAxis: { name: "T", type:"time" },
+        yAxis: { name: "V"},
+        legend: { show: true },
+        tooltip: { show: true, trigger: "axis" },
+        series: [{ 
+            type: "scatter",
+            name: "column[1]",
+            data: column(0).map(function(t, idx){
+                return [t, column(1)[idx]];
+            })
+        }]
+    })
+)
+```
+{{< /tab >}}
+{{< /tabs >}}
 
 {{< figure src="../img/chart_scatter.jpg" width="500" >}}
 
@@ -233,6 +317,8 @@ CHART_SCATTER(
 
 Generates a 3D line chart in HTML format.
 
+{{< tabs items="CHART_LINE3D(),CHART()">}}
+{{< tab >}}
 ```js {linenos=table,hl_lines=["9-14"],linenostart=1}
 FAKE(meshgrid(linspace(-1.0,1.0,100), linspace(-1.0, 1.0, 100)))
 // |    0   1
@@ -249,6 +335,44 @@ CHART_LINE3D(
   visualMap(-0.12, 0.12)
 )
 ```
+{{< /tab >}}
+{{< tab >}}
+```js {linenos=table,hl_lines=[10, "12-31"],linenostart=1}
+FAKE(meshgrid(linspace(-1.0,1.0,100), linspace(-1.0, 1.0, 100)))
+// |    0   1
+// +--> x   y
+// |
+MAPVALUE(2, sin(10*(pow(value(0), 2) + pow(value(1), 2))) / 10 )
+// |    0   1   2
+// +--> x   y   z
+// |
+CHART(
+  plugins("gl"),
+  size('600px', '600px'),
+  chartOption({
+    grid3D:{ boxWidth: 100, boxHeight: 30, boxDepth: 100},
+    xAxis3D:{name:"x"},
+    yAxis3D:{name:"y"},
+    zAxis3D:{name:"z"},
+    series:[{
+        type: "line3D",
+        lineStyle: { "width": 2 },
+        data: column(0).map(function(x, idx){
+            return [x, column(1)[idx], column(2)[idx]]
+        })
+    }],
+    visualMap: {
+        min: -0.12, max:0.12,
+        inRange: {
+            color:["#313695", "#4575b4", "#74add1", "#abd9e9", "#e0f3f8", "#ffffbf",
+		    "#fee090", "#fdae61", "#f46d43", "#d73027", "#a50026"]
+        }
+    }
+  })
+)
+```
+{{< /tab >}}
+{{< /tabs >}}
 
 {{< figure src="../img/chart_line3d.jpg" width="500" >}}
 
@@ -261,6 +385,8 @@ CHART_LINE3D(
 
 Generates a 3D bar chart in HTML format.
 
+{{< tabs items="CHART_BAR3D(),CHART()">}}
+{{< tab >}}
 ```js {linenos=table,hl_lines=["9-14"],linenostart=1}
 FAKE(meshgrid(linspace(-1.0,1.0,100), linspace(-1.0, 1.0, 100)))
 // |    0   1
@@ -277,6 +403,43 @@ CHART_BAR3D(
   visualMap(-0.12, 0.12)
 )
 ```
+{{< /tab >}}
+{{< tab >}}
+```js {linenos=table,hl_lines=[10, "12-30"],linenostart=1}
+FAKE(meshgrid(linspace(-1.0,1.0,100), linspace(-1.0, 1.0, 100)))
+// |    0   1
+// +--> x   y
+// |
+MAPVALUE(2, sin(10*(pow(value(0), 2) + pow(value(1), 2))) / 10 )
+// |    0   1   2
+// +--> x   y   z
+// |
+CHART(
+  plugins("gl"),
+  size('600px', '600px'),
+  chartOption({
+    grid3D:{ boxWidth: 100, boxHeight: 30, boxDepth: 100},
+    xAxis3D:{name:"x"},
+    yAxis3D:{name:"y"},
+    zAxis3D:{name:"z"},
+    series:[{
+        type: "bar3D",
+        data: column(0).map(function(x, idx){
+            return [x, column(1)[idx], column(2)[idx]]
+        })
+    }],
+    visualMap: {
+        min: -0.12, max:0.12,
+        inRange: {
+            color:["#313695", "#4575b4", "#74add1", "#abd9e9", "#e0f3f8", "#ffffbf",
+		    "#fee090", "#fdae61", "#f46d43", "#d73027", "#a50026"]
+        }
+    }
+  })
+)
+```
+{{< /tab >}}
+{{< /tabs >}}
 
 {{< figure src="../img/chart_bar3d.jpg" width="500" >}}
 
@@ -288,6 +451,8 @@ CHART_BAR3D(
 
 Generates a 3D scatter chart in HTML format.
 
+{{< tabs items="CHART_SCATTER3D(),CHART()">}}
+{{< tab >}}
 ```js {linenos=table,hl_lines=["9-14"],linenostart=1}
 FAKE(meshgrid(linspace(-1.0,1.0,100), linspace(-1.0, 1.0, 100)))
 // |    0   1
@@ -304,6 +469,43 @@ CHART_SCATTER3D(
   visualMap(-0.12, 0.12)
 )
 ```
+{{< /tab >}}
+{{< tab >}}
+```js {linenos=table,hl_lines=[10, "12-30"],linenostart=1}
+FAKE(meshgrid(linspace(-1.0,1.0,100), linspace(-1.0, 1.0, 100)))
+// |    0   1
+// +--> x   y
+// |
+MAPVALUE(2, sin(10*(pow(value(0), 2) + pow(value(1), 2))) / 10 )
+// |    0   1   2
+// +--> x   y   z
+// |
+CHART(
+  plugins("gl"),
+  size('600px', '600px'),
+  chartOption({
+    grid3D:{ boxWidth: 100, boxHeight: 30, boxDepth: 100},
+    xAxis3D:{name:"x"},
+    yAxis3D:{name:"y"},
+    zAxis3D:{name:"z"},
+    series:[{
+        type: "scatter3D",
+        data: column(0).map(function(x, idx){
+            return [x, column(1)[idx], column(2)[idx]]
+        })
+    }],
+    visualMap: {
+        min: -0.12, max:0.12,
+        inRange: {
+            color:["#313695", "#4575b4", "#74add1", "#abd9e9", "#e0f3f8", "#ffffbf",
+		    "#fee090", "#fdae61", "#f46d43", "#d73027", "#a50026"]
+        }
+    }
+  })
+)
+```
+{{< /tab >}}
+{{< /tabs >}}
 
 {{< figure src="../img/chart_scatter3d.jpg" width="500" >}}
 
