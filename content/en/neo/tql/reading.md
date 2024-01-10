@@ -20,6 +20,9 @@ INSERT INTO EXAMPLE VALUES('TAG0', TO_DATE('2021-08-13'), 11);
 
 ## CSV format
 
+> {{< figure src="/images/copy_addr_icon.jpg" width="24px" >}}
+> When tql script is saved, the editor shows the link icon on the top right corner, click it to copy the address of the script file.
+
 {{% steps %}}
 
 ### Save *tql* file
