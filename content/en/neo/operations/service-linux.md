@@ -204,13 +204,13 @@ $ pm2 save
 You can control machbase-neo with the following commands:
 
 ```sh
-pm2 start neo
-pm2 status neo
-pm2 stop neo
-pm2 restart neo
+$ pm2 start neo
+$ pm2 status neo
+$ pm2 stop neo
+$ pm2 restart neo
 
-pm2 restart neo
-pm2 monit
+$ pm2 logs neo
+$ pm2 monit
 ```
 
 {{% /steps %}}
