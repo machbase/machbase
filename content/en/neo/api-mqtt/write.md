@@ -123,5 +123,5 @@ Since `db/write` works in `INSERT ... INTO...` SQL statement, it is required the
 
 When the data transforming is required for writing into the database, prepare the proper *tql* script and publish the data to the topic named `db/tql/`+`{tql_file.tql}`.
 
-Please refer to the [As Writing API](../../tql/04.writing) for the writing data via MQTT and *tql*.
+Please refer to the [As Writing API](../../tql/writing) for the writing data via MQTT and *tql*.
 

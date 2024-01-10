@@ -253,7 +253,7 @@ If the timzone is omitted, it assumes 'UTC' by default.
 
 - `datetimeType('RC822')`
 
-The first argument of the `datetimeType()` directs how to parse the input data that uses the same syntax with `timeformat()` function. Please refer to the description of the `timeformat()` function for the [timeformat spec](../41.utilities/#timeformat).
+The first argument of the `datetimeType()` directs how to parse the input data that uses the same syntax with `timeformat()` function. Please refer to the description of the `timeformat()` function for the [timeformat spec](../utilities/#timeformat).
 
 ### charset()
 
