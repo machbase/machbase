@@ -34,7 +34,7 @@ print(response.json())
 ## Example - matplotlib
 
 {{< callout emoji="📌" >}}
-To write test data, use the command below from the [Write waves by shell](/neo/tutorials/010.shell/11.shell-write-waves).
+To write test data, use the command below from the [Write waves by shell](/neo/tutorials/shellscript-waves).
 {{< /callout >}}
 
 ```sh
@@ -77,7 +77,7 @@ plt.show()
 ## Example - pandas
 
 {{< callout emoji="📌" >}}
-To write test data, use the command below from the [Write waves by shell](/neo/tutorials/010.shell/11.shell-write-waves).
+To write test data, use the command below from the [Write waves by shell](/neo/tutorials/shellscript-waves).
 {{< /callout >}}
 
 ```sh
