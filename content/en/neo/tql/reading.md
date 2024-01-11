@@ -200,11 +200,18 @@ $ curl http://127.0.0.1:5654/db/tql/output-markdown.tql
 {{% steps %}}
 
 ### Save *tql* file
+
 Save the code below as `output-chart.tql`.
 
-```js
+```js {linenos=table,hl_lines=[4,6],linenostart=1}
 SQL(`select time, value from example where name = ? limit 2`, "TAG0")
-CHART_BAR()
+CHART(
+    chartOption({
+        xAxis: { data: column(0) },
+        yAxis: {},
+        series: { type:"bar", data: column(1) }
+    })
+)
 ```
 
 ### HTTP GET
@@ -213,38 +220,90 @@ Open web browser with `http://127.0.0.1:5654/db/tql/output-chart.tql`
 
 {{< figure src="../img/reading-chart-bar.jpg" width="500" >}}
 
-> CHART_BAR() and its family functions are deprecated with the new `CHART()` function.
-> Please refer to the [CHART()](/neo/tql/chart) for the examples.
-{{% /steps %}}
-
-### CHART
-
-> `CHART_LINE()`, `CHART_BAR()`, `CHART_SCATTER()` and its family functions are deprecated 
+> The legacy `CHART_LINE()`, `CHART_BAR()`, `CHART_SCATTER()` and its family functions are deprecated 
 > with the new `CHART()` function.
 > Please refer to the [CHART()](/neo/tql/chart) for the examples.
 
-{{< tabs items="CHART_LINE,CHART_BAR,CHART_SCATTER" >}}
-    
-    {{< tab >}}
-    ```js
-    FAKE( oscillator(freq(1.5, 1.0), freq(1.0, 0.7), range('now', '3s', '10ms')))
-    CHART_LINE()
-    ```
-    {{< figure src="/images/chart_line.jpg" width="500" >}}
-    {{< /tab >}}
+{{% /steps %}}
 
-    {{< tab >}}
-    ```js
-    FAKE( oscillator(freq(1.5, 1.0), freq(1.0, 0.7), range('now', '3s', '10ms')))
-    CHART_BAR()
-    ```
-    {{< figure src="/images/chart_bar.jpg" width="500" >}}
-    {{< /tab >}}
-    {{< tab >}}
-    ```js
-    FAKE( oscillator(freq(1.5, 1.0), freq(1.0, 0.7), range('now', '3s', '10ms')))
-    CHART_SCATTER()
-    ```
-    {{< figure src="/images/chart_scatter.jpg" width="500" >}}
-    {{< /tab >}}
-{{< /tabs >}}
+## CHART with chartJson()
+
+{{% steps %}}
+
+### Save *tql* file
+
+Save the code below as `output-chart.tql`.
+
+```js {linenos=table,hl_lines=[3],linenostart=1}
+SQL(`select time, value from example where name = ? limit 2`, "TAG0")
+CHART(
+    chartJson(true),
+    chartOption({
+        xAxis: { data: column(0) },
+        yAxis: {},
+        series: { type:"bar", data: column(1) }
+    })
+)
+```
+
+### HTTP GET
+
+Open web browser with `http://127.0.0.1:5654/db/tql/output-chart.tql`
+
+```json
+{
+  "chartID":"MzM3NjYzNjg5MTYxNjQ2MDg_", 
+  "jsAssets": ["/web/echarts/echarts.min.js"],
+  "jsCodeAssets": ["/web/api/tql-assets/MzM3NjYzNjg5MTYxNjQ2MDg_.js"],
+  "style": {
+      "width": "600px",
+      "height": "600px"	
+  },
+  "theme": "white"
+}
+```
+
+{{% /steps %}}
+
+
+## CHART with chartId()
+
+{{% steps %}}
+
+### Save *tql* file
+
+Save the code below as `output-chart.tql`.
+
+```js {linenos=table,hl_lines=[3],linenostart=1}
+SQL(`select time, value from example where name = ? limit 2`, "TAG0")
+CHART(
+    chartId("myChart"),
+    chartJson(true),
+    chartOption({
+        xAxis: { data: column(0) },
+        yAxis: {},
+        series: { type:"bar", data: column(1) }
+    })
+)
+```
+
+### HTTP GET
+
+Open web browser with `http://127.0.0.1:5654/db/tql/output-chart.tql`
+
+```json
+{
+  "chartID":"myChart", 
+  "jsAssets": ["/web/echarts/echarts.min.js"],
+  "jsCodeAssets": ["/web/api/tql-assets/myChart.js"],
+  "style": {
+      "width": "600px",
+      "height": "600px"	
+  },
+  "theme": "white"
+}
+```
+
+This scenario is useful when your DOM document has `<div id='myChart'/>`.
+
+{{% /steps %}}
