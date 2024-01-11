@@ -266,7 +266,7 @@ Open web browser with `http://127.0.0.1:5654/db/tql/output-chart.tql`
 {{% /steps %}}
 
 
-## CHART with chartId()
+## CHART with chartID()
 
 {{% steps %}}
 
@@ -277,7 +277,7 @@ Save the code below as `output-chart.tql`.
 ```js {linenos=table,hl_lines=[3],linenostart=1}
 SQL(`select time, value from example where name = ? limit 2`, "TAG0")
 CHART(
-    chartId("myChart"),
+    chartId("myChart"), // chartId() is deprecated, use chartID()
     chartJson(true),
     chartOption({
         xAxis: { data: column(0) },
@@ -305,5 +305,23 @@ Open web browser with `http://127.0.0.1:5654/db/tql/output-chart.tql`
 ```
 
 This scenario is useful when your DOM document has `<div id='myChart'/>`.
+
+```html
+... in HTML ...
+<div id='myChart' />
+<script>
+    fetch('http://127.0.0.1:5654/db/tql/output-chart.tql').then( function(rsp) {
+        return rsp.json();
+    }).then( function(c) {
+        c.jsAssets.concat(c.jsCodeAssets).forEach((src) => {
+            const sScript = document.createElement('script');
+            sScript.src = src;
+            sScript.type = 'text/javascript';
+            document.getElementsByTagName('head')[0].appendChild(sScript);
+        })
+    })
+</script>
+... omit ...
+```
 
 {{% /steps %}}
