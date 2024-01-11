@@ -72,6 +72,25 @@ QUERY(
     between('last-10s', 'last')
 )
 ```
+is equivalent with the `SQL()` statement below
+```js
+SQL(`SELECT
+        time, value
+    FROM
+        EXAMPLE
+    WHERE
+        name = 'TAG1'
+    AND time BETWEEN (
+        SELECT MAX_TIME-10000000000
+        FROM V$EXAMPLE_STAT
+        WHERE name = 'temperature')
+    AND (
+        SELECT MAX_TIME
+        FROM V$EXAMPLE_STAT
+        WHERE name = 'temperature')
+    LIMIT 0, 1000000
+`)
+```
 
 ### from()
 

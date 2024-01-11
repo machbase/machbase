@@ -47,11 +47,28 @@ TAG0,1628953200000000000,13
 ```
 
 Invoke `input-csv.tql` with the data file with `curl` command
-```
+
+```sh
 curl -X POST http://127.0.0.1:5654/db/tql/input-csv.tql \
     -H "Content-Type: application/csv" \
     --data-binary "@input-csv.csv"
 ```
+
+### MQTT PUBLISH
+
+Prepare data file as `input-csv.csv`
+
+```csv
+TAG1,1628866800000000000,12
+TAG1,1628953200000000000,13
+```
+
+```sh
+mosquitto_pub -h 127.0.0.1 -p 5653 \
+    -t db/tql/input-csv.tql \
+    -f input-csv.csv
+```
+
 {{% /steps %}}
 
 ## `APPEND` CSV
@@ -77,8 +94,8 @@ APPEND(table('example'))
 Prepare data file as `append-csv.csv`
 
 ```csv
-TAG0,1628866800000000000,12
-TAG0,1628953200000000000,13
+TAG2,1628866800000000000,12
+TAG2,1628953200000000000,13
 ```
 
 Invoke `append-csv.tql` with the data file with `curl` command
@@ -87,6 +104,22 @@ curl -X POST http://127.0.0.1:5654/db/tql/append-csv.tql \
     -H "Content-Type: application/csv" \
     --data-binary "@append-csv.csv"
 ```
+
+### MQTT PUBLISH
+
+Prepare data file as `append-csv.csv`
+
+```csv
+TAG3,1628866800000000000,12
+TAG3,1628953200000000000,13
+```
+
+```sh
+mosquitto_pub -h 127.0.0.1 -p 5653 \
+    -t db/tql/input-csv.tql \
+    -f append-csv.csv
+```
+
 {{% /steps %}}
 
 
@@ -97,6 +130,8 @@ curl -X POST http://127.0.0.1:5654/db/tql/append-csv.tql \
 ### Save *tql* file
 
 Use SCRIPT() function to parse a custom format JSON.
+
+Save the code below as `input-json.tql`.
 
 ```js
 BYTES(payload())
@@ -134,6 +169,29 @@ Invoke `input-csv.tql` with the data file with `curl` command
 curl -X POST http://127.0.0.1:5654/db/tql/input-json.tql \
     -H "Content-Type: application/json" \
     --data-binary "@input-json.json"
+```
+
+### MQTT PUBLISH
+
+Prepare data file as `input-json.json`
+
+```json
+{
+  "data": {
+    "columns": [ "NAME", "TIME", "VALUE" ],
+    "types": [ "string", "datetime", "double" ],
+    "rows": [
+      [ "TAG1", 1628866800000000000, 12 ],
+      [ "TAG1", 1628953200000000000, 13 ]
+    ]
+  }
+}
+```
+
+```sh
+mosquitto_pub -h 127.0.0.1 -p 5653 \
+    -t db/tql/input-json.tql \
+    -f input-json.json
 ```
 {{% /steps %}}
 
@@ -222,6 +280,16 @@ Save the code as "script-post-lines.tql", then send some test data to the topic 
 442222
 ```
 
+### HTTP POST
+
+For the note, the same *tql* file also works with HTTP POST.
+
+```sh
+curl -H "Content-Type: text/plain" \
+    --data-binary @lines.txt \
+    http://127.0.0.1:5654/db/tql/script-post-lines.tql
+```
+
 ### MQTT PUBLISH
 
 ```sh
@@ -241,14 +309,4 @@ $ machbase-neo shell "select * from example where name like 'text_%'"
       3  text_1  2023-07-14 08:51:10.926  22.000000 
       4  text_2  2023-07-14 08:51:10.926  33.000000 
 4 rows fetched.
-```
-
-### HTTP POST
-
-For the note, the same *tql* file also works with HTTP POST.
-
-```sh
-curl -H "Content-Type: text/plain" \
-    --data-binary @lines.txt \
-    http://127.0.0.1:5654/db/tql/script-post-lines.tql
 ```

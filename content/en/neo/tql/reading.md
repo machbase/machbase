@@ -18,7 +18,7 @@ INSERT INTO EXAMPLE VALUES('TAG0', TO_DATE('2021-08-12'), 10);
 INSERT INTO EXAMPLE VALUES('TAG0', TO_DATE('2021-08-13'), 11);
 ```
 
-## CSV format
+## CSV
 
 > {{< figure src="/images/copy_addr_icon.jpg" width="24px" >}}
 > When tql script is saved, the editor shows the link icon on the top right corner, click it to copy the address of the script file.
@@ -33,7 +33,7 @@ SQL( `select * from example limit 2` )
 CSV()
 ```
 
-### Client GET request
+### HTTP GET
 
 Invoke the tql file with *curl* command.
 
@@ -48,7 +48,7 @@ TAG0,1628780400000000000,11
 
 {{% /steps %}}
 
-## JSON format
+## JSON
 
 {{% steps %}}
 
@@ -60,7 +60,7 @@ SQL( `select * from example limit 2` )
 JSON()
 ```
 
-### Client GET request
+### HTTP GET
 Invoke the tql file with *curl* command.
 
 ```sh
@@ -84,7 +84,7 @@ $ curl http://127.0.0.1:5654/db/tql/output-json.tql
 ```
 {{% /steps %}}
 
-## JSON format with `transpose()`
+## JSON with `transpose()`
 
 {{% steps %}}
 
@@ -96,7 +96,7 @@ SQL( `select * from example limit 2` )
 JSON( transpose(true) )
 ```
 
-### Client GET request
+### HTTP GET
 Invoke the tql file with *curl* command.
 
 ```sh
@@ -122,7 +122,7 @@ $ curl http://127.0.0.1:5654/db/tql/output-json.tql
 {{% /steps %}}
 
 
-## MARKDOWN format
+## MARKDOWN
 
 {{% steps %}}
 
@@ -134,7 +134,7 @@ SQL( `select * from example limit 2` )
 MARKDOWN()
 ```
 
-### Client GET request
+### HTTP GET
 Invoke the tql file with *curl* command.
 
 ```sh
@@ -150,7 +150,7 @@ $ curl http://127.0.0.1:5654/db/tql/output-markdown.tql
 {{% /steps %}}
 
 
-## MARKDOWN format with `html()`
+## MARKDOWN with `html()`
 
 {{% steps %}}
 
@@ -162,7 +162,7 @@ SQL( `select * from example limit 2` )
 MARKDOWN( html(true) )
 ```
 
-### Client GET request
+### HTTP GET
 Invoke the tql file with *curl* command.
 
 ```sh
@@ -195,7 +195,7 @@ $ curl http://127.0.0.1:5654/db/tql/output-markdown.tql
 ```
 {{% /steps %}}
 
-## CHART format
+## CHART
 
 {{% steps %}}
 
@@ -207,14 +207,21 @@ SQL(`select time, value from example where name = ? limit 2`, "TAG0")
 CHART_BAR()
 ```
 
-### Client GET request
+### HTTP GET
+
 Open web browser with `http://127.0.0.1:5654/db/tql/output-chart.tql`
 
 {{< figure src="../img/reading-chart-bar.jpg" width="500" >}}
 
+> CHART_BAR() and its family functions are deprecated with the new `CHART()` function.
+> Please refer to the [CHART()](/neo/tql/chart) for the examples.
 {{% /steps %}}
 
-### CHART types
+### CHART
+
+> `CHART_LINE()`, `CHART_BAR()`, `CHART_SCATTER()` and its family functions are deprecated 
+> with the new `CHART()` function.
+> Please refer to the [CHART()](/neo/tql/chart) for the examples.
 
 {{< tabs items="CHART_LINE,CHART_BAR,CHART_SCATTER" >}}
     
