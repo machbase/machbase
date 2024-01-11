@@ -342,7 +342,7 @@ OUTPUT: 2 WORLD
 
 *Syntax*: `FAKE( generator )`
 
-- `generator` one of the `oscillator()`, `meshgrid()`, `linspace()`, `csv()`, `json()`
+- `generator` one of the `oscillator()`, `meshgrid()`, `linspace()`, `arrange()`, `csv()`, `json()`
 
 Producing "fake" data by given generator.
 
@@ -359,10 +359,10 @@ Generating wave data by given frequency and time range. If provide multiple `fre
 
 It produce sine wave by time `amplitude * SIN( 2*Pi * frequency * time + phase) + bias`.
 
-- `frequence` `number` frequency in Hertz (Hz).
-- `amplitude` `number`
-- `bias` `number`
-- `phase` `number` in radian
+- `frequence` *number* frequency in Hertz (Hz).
+- `amplitude` *number*
+- `bias` *number*
+- `phase` *number* in radian
 
 #### range()
 
@@ -370,9 +370,30 @@ It produce sine wave by time `amplitude * SIN( 2*Pi * frequency * time + phase) 
 
 It specifies time range from `fromTime` to `fromTime+duration`.
 
-- `fromTime` `string|number` 'now' and 'last' is available for string type, Or assign number as unix epoch time in nanosecond
-- `duration` `string|number` duration expression, Or assign number in nanoseconds. ex) `'-1d2h30m'`, `'1s100ms'`
-- `period` `string|number` duration expression, Or assign number in nanoseconds. Logically only positive period makes sense.
+- `fromTime` *string*|*number* 'now' and 'last' is available for string type, Or assign number as unix epoch time in nanosecond
+- `duration` *string*|*number* duration expression, Or assign number in nanoseconds. ex) `'-1d2h30m'`, `'1s100ms'`
+- `period` *string*|*number* duration expression, Or assign number in nanoseconds. Logically only positive period makes sense.
+
+### arrange()
+
+*Syntax*: `arrange(start, stop, step)` {{< neo_since ver="8.0.12" />}}
+
+- `start` *number*
+- `stop` *number*
+- `step` *number*
+
+```js
+FAKE(
+   arrange(1, 2, 0.5)
+)
+CSV()
+```
+
+```csv
+1
+1.5
+2
+```
 
 ### linspace()
 
@@ -424,7 +445,7 @@ CHART(
 
 ### meshgrid()
 
-*Syntax*: `meshgrid(xsereis, yseries)`
+*Syntax*: `meshgrid(xseries, yseries)`
 
 It generates {key:index, value:[][][]{x[n], y[m]}}
 
