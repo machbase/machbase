@@ -94,7 +94,9 @@ mosquitto_pub -h 127.0.0.1 -p 5653 \
     -f mqtt-data.csv.gz
 ```
 
-## Topic `db/write/{table}` for `INSERT`
+## PUBLISH to table
+
+Topic `db/write/{table}` is for `INSERT`.
 
 It is strongly recommended using `db/append/{table}` for the better performance through MQTT.
 Refer this example of `db/write/{table}` only for the inevitable situation.
@@ -119,7 +121,9 @@ Since `db/write` works in `INSERT ... INTO...` SQL statement, it is required the
 }
 ```
 
-## Topic `db/tql/{file.tql}` for transforming
+## PUBLISH to tql
+
+Topic `db/tql/{file.tql}` is for transforming.
 
 When the data transforming is required for writing into the database, prepare the proper *tql* script and publish the data to the topic named `db/tql/`+`{tql_file.tql}`.
 

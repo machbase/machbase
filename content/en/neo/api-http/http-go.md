@@ -53,7 +53,7 @@ A client can request a JSON message containing a SQL query.
 
 Make JSON content with a SQL query.
 
-```go
+```go {linenos=table,linenostart=12}
 queryJson := `{"q":"select count(*) from M$SYS_TABLES where name = 'TAGDATA'"}`
 ```
 
