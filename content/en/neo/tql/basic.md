@@ -8,7 +8,7 @@ weight: 02
 
 TQL has three types for primitive `string`, `number` and `boolean`.
 
-### `string`
+### string
 
 Define constant strings as like traditional programming languages with quation marks, single('), double (") and backtick(`).
 The backtick'ed string is usuful when you need to define a string in multiple lines including quation marks inside such as long SQL statement.
@@ -46,9 +46,9 @@ STRING({{
 CSV()
 ```
 
-### `number`
+### number
 
-TQL treats all numberic constants as 64bit floating number.
+TQL treats all numeric constants as 64bit floating number.
 
 ```js {linenos=table}
 QUERY( 'value', from('example', 'temperature'), limit(10))
@@ -60,7 +60,7 @@ FAKE( oscillator( freq(12.34, 20), range("now", "1s", "100ms")) )
 CSV()
 ```
 
-### `boolean`
+### boolean
 
 `true` and `false`
 
