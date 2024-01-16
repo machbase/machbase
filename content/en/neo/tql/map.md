@@ -350,6 +350,28 @@ It works the oposite way of *GROUPBYKEY()*. Take a record whose value is multi-d
 
 For example, if an original record was `{key:k, value:[[v1,v2],[v3,v4],...,[vx,vy]]}`, it produces the new multiple records as `{key:k, value:[v1, v2]}`, `{key:k, value:{v3, v4}}`...`{key:k, value:{vx, vy}}`.
 
+## SET()
+
+*Syntax*: `SET(name, expression)` {{< neo_since ver="8.0.12" />}}
+
+- `name` *keyword* variable name
+- `expression` *expression* value
+
+*SET* defines a record-scoped variable with given name and value. If a new variable `var` is defined as `SET(var, 10)`, it can be refered as `$var`. Because the variables are not a part of the values, it is not included in the final result of SINK.
+
+```js {linenos=table,hl_lines=["2-3"],linenostart=1}
+FAKE( linspace(0, 1, 3))
+SET(temp, value(0) * 10)
+SET(temp, $temp + 1)
+MAPVALUE(1, $temp)
+CSV()
+```
+
+```csv
+0,1
+0.5,6
+1,11
+```
 ## PUSHVALUE()
 
 *Syntax*: `PUSHVALUE( idx, value [, name] )` {{< neo_since ver="8.0.5" />}}
