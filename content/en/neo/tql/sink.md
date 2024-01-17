@@ -62,16 +62,83 @@ For example, if a record was `{key: k, value:[v1,v2]}`, it generates an CSV reco
 
 ## JSON()
 
-*Syntax*: `JSON( [transpose(), tz(), timeformat(), precision(), rownum() ] )`
+*Syntax*: `JSON( [transpose(), tz(), timeformat(), precision(), rownum(), rowsFlatten() ] )`
 
 Generates JSON results from the values of the records.
 
 - `transpose` *transpose(boolean)* transpose rows and columns, it is useful that specifying `transpose(true)` for the most of chart libraries.
-- `tz` *tz(name)* time zone, default is `tz('UTC')`
-- `timeformat` *timeformat(string)* specify the format how represents datetime fields, default is `timeformat('ns')`
-- `rownum` *rownum(boolean)` adds rownum column
-- `precision` *precision(int)* specify precision of float fields, `precision(-1)` means no restriction, `precision(0)` converts to integer
+- `tz` *tz(name)* time zone, default is `tz('UTC')`.
+- `timeformat` *timeformat(string)* specify the format how represents datetime fields, default is `timeformat('ns')`.
+- `rownum` *rownum(boolean)` adds rownum column.
+- `precision` *precision(int)* specify precision of float fields, `precision(-1)` means no restriction, `precision(0)` converts to integer.
+- `rowsFlatten` *rowsFlatten(boolean)* reduces the array dimension of the *rows* field in the JSON object. If `JSON()` has `transpose(true)` and `rowsFlatten(true)` together, it ignores `rowsFlatten(true)` and only `transpose(true)` affects on the result. {{< neo_since ver="8.0.12" />}}
 
+```js {linenos=table,hl_lines=[3],linenostart=1}
+FAKE( arrange(1, 3, 1))
+MAPVALUE(1, value(0)*10)
+JSON()
+```
+
+**Result**
+```json {hl_lines=[5]}
+{
+    "data": {
+        "columns": [ "x" ],
+        "types": [ "double" ],
+        "rows": [ [ 1, 10 ], [ 2, 20 ], [ 3, 30 ] ]
+    },
+    "success": true,
+    "reason": "success",
+    "elapse": "228.541µs"
+}
+```
+
+{{< tabs items="transpose,rowsFlatten">}}
+{{< tab >}}
+```js  {linenos=table,hl_lines=[3],linenostart=1}
+FAKE( arrange(1, 3, 1))
+MAPVALUE(1, value(0)*10, "x10")
+JSON( transpose(true) )
+```
+
+**Result**
+```json {hl_lines=[5]}
+{
+    "data": {
+        "columns": [ "x", "x10" ],
+        "types": [ "double", "double" ],
+        "cols": [ [ 1, 2, 3 ], [ 20, 30, 40 ] ]
+    },
+    "success": true,
+    "reason": "success",
+    "elapse": "121.375µs"
+}
+```
+{{</ tab >}}
+{{< tab >}}
+```js  {linenos=table,hl_lines=[3],linenostart=1}
+FAKE( arrange(1, 3, 1))
+MAPVALUE(1, value(0)*10, "x10")
+JSON( rowsFlatten(true) )
+```
+
+**Result**
+```json {hl_lines=[5]}
+{
+    "data": {
+        "columns": [ "x", "x10" ],
+        "types": [ "double", "double" ],
+        "rows": [ 1, 10, 2, 20, 3, 30 ]
+    },
+    "success": true,
+    "reason": "success",
+    "elapse": "130.916µs"
+}
+```
+{{</ tab >}}
+{{</ tabs >}}
+
+---------
 
 ## MARKDOWN()
 
