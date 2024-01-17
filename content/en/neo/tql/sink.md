@@ -59,6 +59,33 @@ For example, if a record was `{key: k, value:[v1,v2]}`, it generates an CSV reco
 - `delimiter` *delimiter(string)* specify fields separator other than the default comma(`,`).
 - `substituteNull` *substitute(string)* specify sustitution string for the *NULL* value, default is `substituteNull('NULL')`
 
+{{< tabs items="default,heading">}}
+{{< tab >}}
+```js {linenos=table,hl_lines=[3],linenostart=1}
+FAKE( arrange(1, 3, 1))
+MAPVALUE(1, value(0)*10)
+CSV()
+```
+```csv
+1,10
+2,20
+3,30
+```
+{{</ tab >}}
+{{< tab >}}
+```js {linenos=table,hl_lines=[3],linenostart=1}
+FAKE( arrange(1, 3, 1))
+MAPVALUE(1, value(0)*10, "x10")
+CSV( heading(true) )
+```
+```csv
+x,x10
+1,10
+2,20
+3,30
+```
+{{</ tab >}}
+{{</ tabs >}}
 
 ## JSON()
 
