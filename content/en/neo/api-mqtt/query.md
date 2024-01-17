@@ -67,6 +67,24 @@ The messages ➍, ➎ are sent by server asynchronous way which is nature of MQT
 If client is only publishing to `db/append` for writing data, it is not necessary to subscribe `db/reply`. This topic is required only for receiving query result.
 {{< /callout >}}
 
+## Request JSON
+
+| param       | default | description                   |
+|:----------- |---------|:----------------------------- |
+| **q**       | _n/a_   | SQL query string              |
+| reply       | db/reply| The topic where to receive the result of query |
+| format      | json    | Result data format: json, csv, box |
+| timeformat  | ns      | Time format: s, ms, us, ns    |
+| tz          | UTC     | Time Zone: UTC, Local and location spec |
+| compress    | _no compression_   | compression method: gzip      |
+| rownum      | false   | including rownum: true, false |
+| heading     | true    | showing heading: true, false  |
+| precision   | -1      | precision of float value, -1 for no round, 0 for int |
+
+
+A baisc query example shows the client subscribe to `db/reply/#` and publish a query request to `db/query` with *reply* field `db/reply/my_query` so that it can identify the individual reply from multiple messages.
+
+{{< figure src="../img/query_mqttx.png" width="600px" caption="A demonstration shows how to query and receive responses over MQTT. (Using MQTTX.app)">}}
 
 ## Sample code
 

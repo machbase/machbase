@@ -7,9 +7,12 @@ weight: 20
 There are three different ways of executing SQL statement via HTTP.
 Those api support not only "SELECT" but also "CREATE TABLE", "ALTER TABLE", "INSERT"... all other SQL statements.
 
-## Get
+The `query` API supports *GET*, *POST JSON* and *POST form-data*. all those methods have the same parameters.
 
-**Request Params**
+For example the parameter `format` can be specified in query parameter in *GET* method like `GET /db/query?format=csv`,
+or be a JSON field in *POST-JSON* method as `{ "format": "csv" }`.
+
+**Query Parameters**
 
 | param       | default | description                   |
 |:----------- |---------|:----------------------------- |
@@ -22,60 +25,7 @@ Those api support not only "SELECT" but also "CREATE TABLE", "ALTER TABLE", "INS
 | heading     | true    | showing heading: true, false  |
 | precision   | -1      | precision of float value, -1 for no round, 0 for int |
 
-> Use `machbase-neo help tz` and `machbase-neo help timeformat` to see more available options for timezone and timeformat options
-
-```
-machbase-neo» help timeformat;
-  timeformats:
-    epoch
-      ns             nanoseconds
-      us             microseconds
-      ms             milliseconds
-      s              seconds
-    abbreviations
-      Default,-      2006-01-02 15:04:05.999
-      Numeric        01/02 03:04:05PM '06 -0700
-      Ansic          Mon Jan _2 15:04:05 2006
-      Unix           Mon Jan _2 15:04:05 MST 2006
-      Ruby           Mon Jan 02 15:04:05 -0700 2006
-      RFC822         02 Jan 06 15:04 MST
-      RFC822Z        02 Jan 06 15:04 -0700
-      RFC850         Monday, 02-Jan-06 15:04:05 MST
-      RFC1123        Mon, 02 Jan 2006 15:04:05 MST
-      RFC1123Z       Mon, 02 Jan 2006 15:04:05 -0700
-      RFC3339        2006-01-02T15:04:05Z07:00
-      RFC3339Nano    2006-01-02T15:04:05.999999999Z07:00
-      Kitchen        3:04:05PM
-      Stamp          Jan _2 15:04:05
-      StampMili      Jan _2 15:04:05.000
-      StampMicro     Jan _2 15:04:05.000000
-      StampNano      Jan _2 15:04:05.000000000
-    custom format
-      year           2006
-      month          01
-      day            02
-      hour           03 or 15
-      minute         04
-      second         05 or with sub-seconds '05.999999999'
-```
-
-[List of Time Zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) - wikipedia.org
-```
-machbase-neo» help tz;
-  timezones:
-    abbreviations
-      UTC
-      Local
-      Europe/London
-      America/New_York
-      ...
-    location examples
-      America/Los_Angeles
-      Europe/Paris
-      ...
-    Time Coordinates examples
-      UTC+9
-```
+## Get
 
 **Response in JSON format (default)**
 
@@ -182,15 +132,66 @@ wave.sin,1676337568,0.000000
 wave.sin,1676337569,0.406736
 ```
 
+> Use `machbase-neo help tz` and `machbase-neo help timeformat` to see more available options for timezone and timeformat options
+
+```
+machbase-neo» help timeformat;
+  timeformats:
+    epoch
+      ns             nanoseconds
+      us             microseconds
+      ms             milliseconds
+      s              seconds
+    abbreviations
+      Default,-      2006-01-02 15:04:05.999
+      Numeric        01/02 03:04:05PM '06 -0700
+      Ansic          Mon Jan _2 15:04:05 2006
+      Unix           Mon Jan _2 15:04:05 MST 2006
+      Ruby           Mon Jan 02 15:04:05 -0700 2006
+      RFC822         02 Jan 06 15:04 MST
+      RFC822Z        02 Jan 06 15:04 -0700
+      RFC850         Monday, 02-Jan-06 15:04:05 MST
+      RFC1123        Mon, 02 Jan 2006 15:04:05 MST
+      RFC1123Z       Mon, 02 Jan 2006 15:04:05 -0700
+      RFC3339        2006-01-02T15:04:05Z07:00
+      RFC3339Nano    2006-01-02T15:04:05.999999999Z07:00
+      Kitchen        3:04:05PM
+      Stamp          Jan _2 15:04:05
+      StampMili      Jan _2 15:04:05.000
+      StampMicro     Jan _2 15:04:05.000000
+      StampNano      Jan _2 15:04:05.000000000
+    custom format
+      year           2006
+      month          01
+      day            02
+      hour           03 or 15
+      minute         04
+      second         05 or with sub-seconds '05.999999999'
+```
+
+[List of Time Zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) - wikipedia.org
+```
+machbase-neo» help tz;
+  timezones:
+    abbreviations
+      UTC
+      Local
+      Europe/London
+      America/New_York
+      ...
+    location examples
+      America/Los_Angeles
+      Europe/Paris
+      ...
+    Time Coordinates examples
+      UTC+9
+```
+
 ## Post JSON
 
 It is also possible to request query in JSON form as below example.
 
 **Request JSON message**
-
-| name         | type       |  description                        |
-|:------------ |:-----------|:------------------------------------|
-| q            | string     | SQL query string                    |
 
 {{< tabs items="Linux/macOS,Windows">}}
 {{< tab >}}
