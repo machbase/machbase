@@ -73,13 +73,14 @@ Generates JSON results from the values of the records.
 - `precision` *precision(int)* specify precision of float fields, `precision(-1)` means no restriction, `precision(0)` converts to integer.
 - `rowsFlatten` *rowsFlatten(boolean)* reduces the array dimension of the *rows* field in the JSON object. If `JSON()` has `transpose(true)` and `rowsFlatten(true)` together, it ignores `rowsFlatten(true)` and only `transpose(true)` affects on the result. {{< neo_since ver="8.0.12" />}}
 
+{{< tabs items="default,transpose,rowsFlatten">}}
+{{< tab >}}
 ```js {linenos=table,hl_lines=[3],linenostart=1}
 FAKE( arrange(1, 3, 1))
 MAPVALUE(1, value(0)*10)
 JSON()
 ```
 
-**Result**
 ```json {hl_lines=[5]}
 {
     "data": {
@@ -92,8 +93,7 @@ JSON()
     "elapse": "228.541µs"
 }
 ```
-
-{{< tabs items="transpose,rowsFlatten">}}
+{{</ tab >}}
 {{< tab >}}
 ```js  {linenos=table,hl_lines=[3],linenostart=1}
 FAKE( arrange(1, 3, 1))
@@ -101,7 +101,6 @@ MAPVALUE(1, value(0)*10, "x10")
 JSON( transpose(true) )
 ```
 
-**Result**
 ```json {hl_lines=[5]}
 {
     "data": {
@@ -122,7 +121,6 @@ MAPVALUE(1, value(0)*10, "x10")
 JSON( rowsFlatten(true) )
 ```
 
-**Result**
 ```json {hl_lines=[5]}
 {
     "data": {
@@ -138,8 +136,6 @@ JSON( rowsFlatten(true) )
 {{</ tab >}}
 {{</ tabs >}}
 
----------
-
 ## MARKDOWN()
 
 Generates a table in markdown format or HTML.
@@ -151,7 +147,7 @@ Generates a table in markdown format or HTML.
 - `brief(boolean)` omit result rows, `brief(true)` is equivalent with `briefCount(5)`
 - `briefCount(limit int)` omit result rows if the records exceeds the given limit, no omition if limit is `0`
 
-{{< tabs items="CODE,RESULT">}}
+{{< tabs items="default,briefCount,html">}}
 {{< tab >}}
 ```js
 FAKE( csv(`
@@ -163,8 +159,7 @@ FAKE( csv(`
 `))
 MARKDOWN()
 ```
-{{< /tab >}}
-{{< tab >}}
+```
 |column0 |	column1 |
 |:-------|:---------|
 | 10     | The first line |
@@ -172,14 +167,10 @@ MARKDOWN()
 | 30     | Third line |
 | 40     | 4th line |
 | 50     | The last is 5th |
+```
 {{< /tab >}}
-{{< /tabs >}}
-
-
-If `briefCount()` is applied...
-
-{{< tabs items="CODE,RESULT">}}
 {{< tab >}}
+
 ```js
 FAKE( csv(`
 10,The first line 
@@ -190,8 +181,8 @@ FAKE( csv(`
 `))
 MARKDOWN( briefCount(2) )
 ```
-{{< /tab >}}
-{{< tab >}}
+
+```
 |column0 |	column1 |
 |:-------|:---------|
 | 10     | The first line |
@@ -199,6 +190,29 @@ MARKDOWN( briefCount(2) )
 | ...    | ...      |
 
 > Total 5 records
+```
+{{< /tab >}}
+{{< tab >}}
+
+```js
+FAKE( csv(`
+10,The first line 
+20,2nd line
+30,Third line
+40,4th line
+50,The last is 5th
+`))
+MARKDOWN( briefCount(2), html(true) )
+```
+
+|column0 |	column1 |
+|:-------|:---------|
+| 10     | The first line |
+| 20     | 2nd line |
+| ...    | ...      |
+
+> Total 5 records
+
 {{< /tab >}}
 {{< /tabs >}}
 
