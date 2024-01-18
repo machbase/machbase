@@ -18,23 +18,19 @@ INSERT INTO EXAMPLE VALUES('TAG0', TO_DATE('2021-08-12'), 10);
 INSERT INTO EXAMPLE VALUES('TAG0', TO_DATE('2021-08-13'), 11);
 ```
 
+> {{< figure src="/images/copy_addr_icon.jpg" width="24px" >}}
+> When a tql file is saved, the editor shows the link icon on the top right corner, click it to copy the address of the script file.
+
 ## CSV
 
-> {{< figure src="/images/copy_addr_icon.jpg" width="24px" >}}
-> When tql script is saved, the editor shows the link icon on the top right corner, click it to copy the address of the script file.
-
-{{% steps %}}
-
-### Save *tql* file
+{{< tabs items="default,delimiter()" >}}
+{{< tab >}}
 Save the code below as `output-csv.tql`.
 
-```js
+```js {linenos=table,hl_lines=[2]}
 SQL( `select * from example limit 2` )
 CSV()
 ```
-
-### HTTP GET
-
 Invoke the tql file with *curl* command.
 
 ```sh
@@ -45,65 +41,76 @@ $ curl http://127.0.0.1:5654/db/tql/output-csv.tql
 TAG0,1628694000000000000,10
 TAG0,1628780400000000000,11
 ```
+{{< /tab >}}
+{{< tab >}}
+Save the code below as `output-csv.tql`.
 
-{{% /steps %}}
+```js {linenos=table,hl_lines=[2]}
+SQL( `select * from example limit 2` )
+CSV( delimiter("|") )
+```
+
+Invoke the tql file with *curl* command.
+
+```sh
+$ curl http://127.0.0.1:5654/db/tql/output-csv.tql
+```
+
+```csv
+TAG0|1628694000000000000|10
+TAG0|1628780400000000000|11
+```
+{{< /tab >}}
+{{< /tabs >}}
 
 ## JSON
 
-{{% steps %}}
-
-### Save *tql* file
+{{< tabs items="default,transpose(),rowsFlatten(),rowsArray()" >}}
+{{< tab >}}
 Save the code below as `output-json.tql`.
 
-```js
+```js {linenos=table,hl_lines=[2],linenostart=1}
 SQL( `select * from example limit 2` )
 JSON()
 ```
 
-### HTTP GET
 Invoke the tql file with *curl* command.
 
 ```sh
 $ curl http://127.0.0.1:5654/db/tql/output-json.tql
 ```
 
-```json
+```json {hl_lines=["5-8"]}
 {
-  "data": {
-    "columns": [ "NAME", "TIME", "VALUE" ],
-    "types": [ "string", "datetime", "double" ],
-    "rows": [
-      [ "TAG0", 1628694000000000000, 10 ],
-      [ "TAG0", 1628780400000000000, 11 ]
-    ]
-  },
-  "success": true,
-  "reason": "success",
-  "elapse": "770.078µs"
+    "data": {
+        "columns": [ "NAME", "TIME", "VALUE" ],
+        "types": [ "string", "datetime", "double" ],
+        "rows": [
+            [ "TAG0", 1628694000000000000, 10 ],
+            [ "TAG0", 1628780400000000000, 11 ]
+        ]
+    },
+    "success": true,
+    "reason": "success",
+    "elapse": "770.078µs"
 }
 ```
-{{% /steps %}}
-
-## JSON with `transpose()`
-
-{{% steps %}}
-
-### Save *tql* file
+{{< /tab >}}
+{{< tab >}}
 Save the code below as `output-json.tql`.
 
-```js
+```js {linenos=table,hl_lines=[2],linenostart=1}
 SQL( `select * from example limit 2` )
 JSON( transpose(true) )
 ```
 
-### HTTP GET
 Invoke the tql file with *curl* command.
 
 ```sh
 $ curl http://127.0.0.1:5654/db/tql/output-json.tql
 ```
 
-```json
+```json {hl_lines=["5-9"]}
 {
     "data": {
         "columns": [ "NAME", "TIME", "VALUE" ],
@@ -119,22 +126,81 @@ $ curl http://127.0.0.1:5654/db/tql/output-json.tql
     "elapse": "718.625µs"
 }
 ```
-{{% /steps %}}
+{{< /tab >}}
+{{< tab >}}
+Save the code below as `output-json.tql`.
+
+```js {linenos=table,hl_lines=[2],linenostart=1}
+SQL( `select * from example limit 2` )
+JSON( rowsFlatten(true) )
+```
+
+Invoke the tql file with *curl* command.
+
+```sh
+$ curl http://127.0.0.1:5654/db/tql/output-json.tql
+```
+
+```json {hl_lines=["5-8"]}
+{
+    "data": {
+        "columns": [ "NAME", "TIME", "VALUE" ],
+        "types": [ "string", "datetime", "double" ],
+        "rows": [
+            "TAG0", 1628694000000000000, 10,
+            "TAG0", 1628780400000000000, 11
+        ]
+    },
+    "success": true,
+    "reason": "success",
+    "elapse": "718.625µs"
+}
+```
+{{< /tab >}}
+{{< tab >}}
+Save the code below as `output-json.tql`.
+
+```js {linenos=table,hl_lines=[2],linenostart=1}
+SQL( `select * from example limit 2` )
+JSON( rowsArray(true) )
+```
+
+Invoke the tql file with *curl* command.
+
+```sh
+$ curl http://127.0.0.1:5654/db/tql/output-json.tql
+```
+
+```json {hl_lines=["5-8"]}
+{
+    "data": {
+        "columns": [ "NAME", "TIME", "VALUE" ],
+        "types": [ "string", "datetime", "double" ],
+        "rows": [
+            { "NAME": "TAG0", "TIME": 1628694000000000000, "VALUE": 10 },
+            { "NAME": "TAG0", "TIME": 1628780400000000000, "VALUE": 11 }
+        ]
+    },
+    "success": true,
+    "reason": "success",
+    "elapse": "718.625µs"
+}
+```
+{{< /tab >}}
+{{< /tabs >}}
 
 
 ## MARKDOWN
 
-{{% steps %}}
-
-### Save *tql* file
+{{< tabs items="default,html()">}}
+{{< tab >}}
 Save the code below as `output-markdown.tql`.
 
-```js
+```js {linenos=table,hl_lines=[2]}
 SQL( `select * from example limit 2` )
 MARKDOWN()
 ```
 
-### HTTP GET
 Invoke the tql file with *curl* command.
 
 ```sh
@@ -147,22 +213,15 @@ $ curl http://127.0.0.1:5654/db/tql/output-markdown.tql
 |TAG0|1628694000000000000|10.000000|
 |TAG0|1628780400000000000|11.000000|
 ```
-{{% /steps %}}
-
-
-## MARKDOWN with `html()`
-
-{{% steps %}}
-
-### Save *tql* file
+{{< /tab >}}
+{{< tab >}}
 Save the code below as `output-markdown.tql`.
 
-```js
+```js {linenos=table,hl_lines=[2]}
 SQL( `select * from example limit 2` )
 MARKDOWN( html(true) )
 ```
 
-### HTTP GET
 Invoke the tql file with *curl* command.
 
 ```sh
@@ -170,30 +229,21 @@ $ curl http://127.0.0.1:5654/db/tql/output-markdown.tql
 ```
 
 ```html
-<div><table>
+<div>
+<table>
 <thead>
-<tr>
-<th align="left">NAME</th>
-<th align="left">TIME</th>
-<th align="left">VALUE</th>
-</tr>
+    <tr><th align="left">NAME</th><th align="left">TIME</th><th align="left">VALUE</th></tr>
 </thead>
 <tbody>
-<tr>
-<td align="left">TAG0</td>
-<td align="left">1628694000000000000</td>
-<td align="left">10.000000</td>
-</tr>
-<tr>
-<td align="left">TAG0</td>
-<td align="left">1628780400000000000</td>
-<td align="left">11.000000</td>
-</tr>
+    <tr><td align="left">TAG0</td><td align="left">1628694000000000000</td><td align="left">10.000000</td></tr>
+    <tr><td align="left">TAG0</td><td align="left">1628780400000000000</td><td align="left">11.000000</td>
+    </tr>
 </tbody>
 </table>
 </div>
 ```
-{{% /steps %}}
+{{< /tab >}}
+{{< /tabs >}}
 
 ## CHART
 
@@ -277,7 +327,7 @@ Save the code below as `output-chart.tql`.
 ```js {linenos=table,hl_lines=[3],linenostart=1}
 SQL(`select time, value from example where name = ? limit 2`, "TAG0")
 CHART(
-    chartId("myChart"), // chartId() is deprecated, use chartID()
+    chartID("myChart"),
     chartJson(true),
     chartOption({
         xAxis: { data: column(0) },

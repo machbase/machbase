@@ -59,7 +59,7 @@ For example, if a record was `{key: k, value:[v1,v2]}`, it generates an CSV reco
 - `delimiter` *delimiter(string)* specify fields separator other than the default comma(`,`).
 - `substituteNull` *substitute(string)* specify sustitution string for the *NULL* value, default is `substituteNull('NULL')`
 
-{{< tabs items="default,heading">}}
+{{< tabs items="default,heading(),delimiter()">}}
 {{< tab >}}
 ```js {linenos=table,hl_lines=[3],linenostart=1}
 FAKE( arrange(1, 3, 1))
@@ -85,6 +85,19 @@ x,x10
 3,30
 ```
 {{</ tab >}}
+{{< tab >}}
+```js {linenos=table,hl_lines=[3],linenostart=1}
+FAKE( arrange(1, 3, 1))
+MAPVALUE(1, value(0)*10, "x10")
+CSV( heading(true), delimiter("|") )
+```
+```csv
+x|x10
+1|10
+2|20
+3|30
+```
+{{</ tab >}}
 {{</ tabs >}}
 
 ## JSON()
@@ -101,7 +114,7 @@ Generates JSON results from the values of the records.
 - `rowsFlatten` *rowsFlatten(boolean)* reduces the array dimension of the *rows* field in the JSON object. If `JSON()` has `transpose(true)` and `rowsFlatten(true)` together, it ignores `rowsFlatten(true)` and only `transpose(true)` affects on the result. {{< neo_since ver="8.0.12" />}}
 - `rowsArray` *rowsArray(boolean)* produces JSON that contains only array of object for each record. The `rowsArray(true)` has higher priority than `transpose(true)` and `rowsFlatten(true)`. {{< neo_since ver="8.0.12" />}}
 
-{{< tabs items="default,transpose,rowsFlatten,rowsArray">}}
+{{< tabs items="default,transpose(),rowsFlatten(),rowsArray()">}}
 {{< tab >}}
 ```js {linenos=table,hl_lines=[3],linenostart=1}
 FAKE( arrange(1, 3, 1))
@@ -188,10 +201,11 @@ JSON( rowsArray(true) )
 
 Generates a table in markdown format or HTML.
 
-*Syntax*: `MARKDOWN( [html(), rownum(), brief(), briefCount() ] )`
+*Syntax*: `MARKDOWN( [html(), rownum(), brief(), briefCount(), precision() ] )`
 
 - `html(boolean)` produce result by HTML renderer, default `false`
 - `rownum(boolean)` show rownum column
+- `precision` *precision(int)* specify precision of float fields, `precision(-1)` means no restriction, `precision(0)` converts to integer.
 - `brief(boolean)` omit result rows, `brief(true)` is equivalent with `briefCount(5)`
 - `briefCount(limit int)` omit result rows if the records exceeds the given limit, no omition if limit is `0`
 
