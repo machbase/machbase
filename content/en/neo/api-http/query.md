@@ -67,7 +67,8 @@ The server responses in `Content-Type: application/json`.
 | data         |            | exists only when execution successed  |
 | data.columns | array of strings | represents columns of result    |
 | data.types   | array of strings | represents data types of result |
-| data.rows    | array of tuples  | a tuple represents a record     |
+| data.rows    | array of records | array represents the result set records.<br/>This field will be replaced with `cols` if `transpose` is `true` |
+| data.cols    | array of series  | array represents the result set column-series.<br/> This element exists when `transpose` is `true` |
 
 {{< tabs items="default,transpose,rowsFlatten,rowsArray">}}
 {{< tab >}}
