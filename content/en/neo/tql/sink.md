@@ -169,12 +169,17 @@ MAPVALUE(1, value(0)*10, "x10")
 JSON( rowsArray(true) )
 ```
 
-```json
-[
-    {"x":1,"x10":10},
-    {"x":2,"x10":20},
-    {"x":3,"x10":30}
-]
+```json {hl_lines=[5]}
+{
+    "data": {
+        "columns": [ "x", "x10" ],
+        "types": [ "double", "double" ],
+        "rows": [ { "x": 1, "x10": 10 }, { "x": 2, "x10": 20 }, { "x": 3, "x10": 30 } ]
+    },
+    "success": true,
+    "reason": "success",
+    "elapse": "549.833µs"
+}
 ```
 {{</ tab >}}
 {{</ tabs >}}
