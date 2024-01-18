@@ -6,11 +6,9 @@ weight: 82
 
 Using *systemd* or *supervisord*, you can run and manage machbase-neo process as as system service, so that make it to start automatically when the system boot.
 
-## Using systemd
+## Create start/stop script
 
-{{% steps %}}
-
-### Create neo-start.sh
+**Create neo-start.sh**
 
 ```sh
 $ vi neo-start.sh
@@ -21,11 +19,28 @@ $ vi neo-start.sh
 exec /data/machbase-neo serve --host 0.0.0.0 --log-filename /data/log/machbase-neo.log
 ```
 
-### Executable neo-start.sh
-
 ```sh
 $ chmod 755 neo-start.sh
 ```
+
+**Create neo-stop.sh**
+
+```sh
+$ vi neo-stop.sh
+```
+
+```sh
+#!/bin/bash 
+/data/machbase-neo shell shutdown
+```
+
+```sh
+$ chmod 755 neo-stop.sh
+```
+
+## systemd
+
+{{% steps %}}
 
 ### Create neo.service
 
@@ -43,8 +58,8 @@ StartLimitIntervalSec=10
 [Service]   
 User=machbase   
 LimitNOFILE=65535   
-ExecStart=/data/neo-start.sh   
-ExecStop=/data/machbase-neo shell shutdown   
+ExecStart=/data/neo-start.sh
+ExecStop=/data/neo-stop.sh
 ExecStartPre=sleep 2   
 WorkingDirectory=/data   
 Restart=always   
@@ -80,26 +95,9 @@ $ sudo systemctl stop neo.service
 ```
 {{% /steps %}}
 
-## Using supervisord
+## supervisord
 
 {{% steps %}}
-
-### Create neo-start.sh
-
-```sh
-$ vi neo-start.sh
-```
-
-```sh
-#!/bin/bash 
-exec /data/machbase-neo serve --host 0.0.0.0 --log-filename /data/log/machbase-neo.log
-```
-
-### Executable neo-start.sh
-
-```sh
-$ chmod 755 neo-start.sh
-```
 
 ### Create neo.conf
 
@@ -141,7 +139,7 @@ $ sudo supervisorctl stop neo
 
 {{% /steps %}}
 
-## Using PM2
+## PM2
 
 {{% steps %}}
 
