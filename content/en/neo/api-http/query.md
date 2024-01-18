@@ -12,6 +12,12 @@ The `query` API supports *GET*, *POST JSON* and *POST form-data*. all those meth
 For example the parameter `format` can be specified in query parameter in *GET* method like `GET /db/query?format=csv`,
 or be a JSON field in *POST-JSON* method as `{ "format": "csv" }`.
 
+**Query Example**
+
+```
+http://127.0.0.1:5654/db/query?q=select%20*%20from%20EXAMPLE%20limit%202
+```
+
 **Query Parameters**
 
 | param       | default | description                   |

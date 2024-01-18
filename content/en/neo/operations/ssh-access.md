@@ -11,6 +11,7 @@ Users can access the sql interpreter via ssh command like below.
 
 - User: SYS
 - Default password: manager
+- Default port: 5652
 
 ```sh
 $ ssh -p 5652 sys@127.0.0.1
