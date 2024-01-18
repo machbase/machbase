@@ -24,10 +24,18 @@ or be a JSON field in *POST-JSON* method as `{ "format": "csv" }`.
 | rownum      | false   | including rownum: true, false |
 | heading     | true    | showing heading: true, false  |
 | precision   | -1      | precision of float value, -1 for no round, 0 for int |
-| rowsFlatten | false   | reduce the array dimension of the *rows* field in the JSON object,<br/>It works only when `format=json`. {{< neo_since ver="8.0.12" />}} |
-| rowsArray   | false   | produce JSON that contains only array of object for each record,<br/>It works only when `format=json`. {{< neo_since ver="8.0.12" />}} |
 
-## Get
+**More Parameters in `format=json`** {{< neo_since ver="8.0.12" />}}
+
+Those options are available only when `format=json`
+
+| param       | default | description                   |
+|:----------- |---------|:----------------------------- |
+| transpose   | false   | produce cols array instead of rows. |
+| rowsFlatten | false   | reduce the array dimension of the *rows* field in the JSON object. |
+| rowsArray   | false   | produce JSON that contains only array of object for each record.  |
+
+## GET
 
 **Response in JSON format (default)**
 
@@ -61,21 +69,103 @@ The server responses in `Content-Type: application/json`.
 | data.types   | array of strings | represents data types of result |
 | data.rows    | array of tuples  | a tuple represents a record     |
 
+{{< tabs items="default,transpose,rowsFlatten,rowsArray">}}
+{{< tab >}}
+```sh
+curl -o - http://127.0.0.1:5654/db/query \
+      --data-urlencode "q=select * from EXAMPLE"
+```
+
 ```json
 {
-  "success": true,
-  "reason": "success",
-  "elapse": "281.288µs",
   "data": {
     "columns": [ "NAME", "TIME", "VALUE" ],
     "types": [ "string", "datetime", "double" ],
     "rows": [
-      [ "wave.sin", 1676337568, 0 ],
-      [ "wave.sin", 1676337569, 0.406736 ]
+      [ "wave.sin", 1705381958775759000, 0.8563571936170834 ],
+      [ "wave.sin", 1705381958785759000, 0.9011510331449053 ],
+      [ "wave.sin", 1705381958795759000, 0.9379488170706388 ]
     ]
-  }
+  },
+  "success": true,
+  "reason": "success",
+  "elapse": "1.887042ms"
 }
 ```
+{{< /tab >}}
+{{< tab >}}
+```sh
+curl -o - http://127.0.0.1:5654/db/query \
+      --data-urlencode "q=select * from EXAMPLE" \
+      --data-urlencode "transpose=true"
+```
+
+```json
+{
+  "data": {
+    "columns": [ "NAME", "TIME", "VALUE" ],
+    "types": [ "string", "datetime", "double" ],
+    "cols": [
+      [ "wave.sin", "wave.sin", "wave.sin" ],
+      [ 1705381958775759000, 1705381958785759000, 1705381958795759000 ],
+      [ 0.8563571936170834, 0.9011510331449053, 0.9379488170706388 ]
+    ]
+  },
+  "success": true,
+  "reason": "success",
+  "elapse": "4.090667ms"
+}
+```
+{{< /tab >}}
+{{< tab >}}
+```sh
+curl -o - http://127.0.0.1:5654/db/query \
+      --data-urlencode "q=select * from EXAMPLE" \
+      --data-urlencode "rowsFlatten=true"
+```
+
+```json
+{
+  "data": {
+    "columns": [ "NAME", "TIME", "VALUE" ],
+    "types": [ "string", "datetime", "double" ],
+    "rows": [
+      "wave.sin", 1705381958775759000, 0.8563571936170834,
+      "wave.sin", 1705381958785759000, 0.9011510331449053,
+      "wave.sin", 1705381958795759000, 0.9379488170706388
+    ]
+  },
+  "success": true,
+  "reason": "success",
+  "elapse": "2.255625ms"
+}
+```
+{{< /tab >}}
+{{< tab >}}
+```sh
+curl -o - http://127.0.0.1:5654/db/query \
+      --data-urlencode "q=select * from EXAMPLE" \
+      --data-urlencode "rowsArray=true"
+```
+
+```json
+{
+  "data": {
+    "columns": [ "NAME", "TIME", "VALUE" ],
+    "types": [ "string", "datetime", "double" ],
+    "rows": [
+      { "NAME": "wave.sin", "TIME": 1705381958775759000, "VALUE": 0.8563571936170834 },
+      { "NAME": "wave.sin", "TIME": 1705381958785759000, "VALUE": 0.9011510331449053 },
+      { "NAME": "wave.sin", "TIME": 1705381958795759000, "VALUE": 0.9379488170706388 }
+    ]
+  },
+  "success": true,
+  "reason": "success",
+  "elapse": "3.178458ms"
+}
+```
+{{< /tab >}}
+{{< /tabs >}}
 
 **Response in BOX format**
 
@@ -189,7 +279,7 @@ machbase-neo» help tz;
       UTC+9
 ```
 
-## Post JSON
+## POST JSON
 
 It is also possible to request query in JSON form as below example.
 
@@ -212,7 +302,7 @@ curl -o - -X POST http://127.0.0.1:5654/db/query ^
 {{< /tab >}}
 {{< /tabs >}}
 
-## Post Form Data
+## POST Form
 
 HTML Form data format is available too. HTTP header `Content-type` should be `application/x-www-form-urlencoded` in this case.
 
@@ -276,44 +366,12 @@ curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=ns \
 
 {{% /steps %}}
 
-
-### Select in JSON (default)
-
-**Request**
-
-Set query param `format=json` or omit it for the default value.
-```sh
-curl -o - http://127.0.0.1:5654/db/query \
-      --data-urlencode "q=select * from EXAMPLE"
-```
-
-**Response**
-
-[See Response JSON format](/neo/api-http/query#get)
-
-```json
-{
-  "data": {
-    "columns": [ "NAME", "TIME", "VALUE" ],
-    "types": [ "string", "datetime", "double" ],
-    "rows": [
-      [ "wave.sin", 1676432361000000000, 0.111111 ],
-      [ "wave.sin", 1676432362111111111, 0.222222 ],
-      [ "wave.sin", 1676432363222222222, 0.333333 ],
-      [ "wave.sin", 1676432364333333333, 0.444444 ],
-      [ "wave.sin", 1676432365444444444, 0.555555 ]
-    ]
-  },
-  "success": true,
-  "reason": "success",
-  "elapse": "1.085625ms"
-}
-```
-
 ### Select in CSV
 
 **Request**
+
 Set the `format=csv` query param for CSV format.
+
 ```sh
 curl -o - http://127.0.0.1:5654/db/query       \
     --data-urlencode "q=select * from EXAMPLE" \
