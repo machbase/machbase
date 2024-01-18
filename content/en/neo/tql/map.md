@@ -826,7 +826,7 @@ WHEN( condition,
 - `tps` *float* specify in number of records per a second.
 
 `THROTTLE` relays a record to the next step with delay to fit to the specified *tps*.
-It makes data frow which has a certain period from stored data (e.g a CSV file), 
+It makes data flow which has a certain period from stored data (e.g a CSV file), 
 so that *simulates* a sensor device that sends measurements by periods.
 
 ```js {linenos=table,hl_lines=["2"],linenostart=1}
