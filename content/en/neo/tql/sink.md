@@ -89,7 +89,7 @@ x,x10
 
 ## JSON()
 
-*Syntax*: `JSON( [transpose(), tz(), timeformat(), precision(), rownum(), rowsFlatten() ] )`
+*Syntax*: `JSON( [transpose(), tz(), timeformat(), precision(), rownum(), rowsFlatten(), rowsArray() ] )`
 
 Generates JSON results from the values of the records.
 
@@ -99,8 +99,9 @@ Generates JSON results from the values of the records.
 - `rownum` *rownum(boolean)` adds rownum column.
 - `precision` *precision(int)* specify precision of float fields, `precision(-1)` means no restriction, `precision(0)` converts to integer.
 - `rowsFlatten` *rowsFlatten(boolean)* reduces the array dimension of the *rows* field in the JSON object. If `JSON()` has `transpose(true)` and `rowsFlatten(true)` together, it ignores `rowsFlatten(true)` and only `transpose(true)` affects on the result. {{< neo_since ver="8.0.12" />}}
+- `rowsArray` *rowsArray(boolean)* produces JSON that contains only array of object for each record. The `rowsArray(true)` has higher priority than `transpose(true)` and `rowsFlatten(true)`. {{< neo_since ver="8.0.12" />}}
 
-{{< tabs items="default,transpose,rowsFlatten">}}
+{{< tabs items="default,transpose,rowsFlatten,rowsArray">}}
 {{< tab >}}
 ```js {linenos=table,hl_lines=[3],linenostart=1}
 FAKE( arrange(1, 3, 1))
@@ -159,6 +160,21 @@ JSON( rowsFlatten(true) )
     "reason": "success",
     "elapse": "130.916µs"
 }
+```
+{{</ tab >}}
+{{< tab >}}
+```js  {linenos=table,hl_lines=[3],linenostart=1}
+FAKE( arrange(1, 3, 1))
+MAPVALUE(1, value(0)*10, "x10")
+JSON( rowsArray(true) )
+```
+
+```json
+[
+    {"x":1,"x10":10},
+    {"x":2,"x10":20},
+    {"x":3,"x10":30}
+]
 ```
 {{</ tab >}}
 {{</ tabs >}}

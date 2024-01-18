@@ -80,6 +80,8 @@ If client is only publishing to `db/append` for writing data, it is not necessar
 | rownum      | false   | including rownum: true, false |
 | heading     | true    | showing heading: true, false  |
 | precision   | -1      | precision of float value, -1 for no round, 0 for int |
+| rowsFlatten | false   | reduce the array dimension of the *rows* field in the JSON object,<br/>It works only when `format=json`. {{< neo_since ver="8.0.12" />}} |
+| rowsArray   | false   | produce JSON that contains only array of object for each record,<br/>It works only when `format=json`. {{< neo_since ver="8.0.12" />}} |
 
 
 A baisc query example shows the client subscribe to `db/reply/#` and publish a query request to `db/query` with *reply* field `db/reply/my_query` so that it can identify the individual reply from multiple messages.

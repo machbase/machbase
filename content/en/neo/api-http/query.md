@@ -24,6 +24,8 @@ or be a JSON field in *POST-JSON* method as `{ "format": "csv" }`.
 | rownum      | false   | including rownum: true, false |
 | heading     | true    | showing heading: true, false  |
 | precision   | -1      | precision of float value, -1 for no round, 0 for int |
+| rowsFlatten | false   | reduce the array dimension of the *rows* field in the JSON object,<br/>It works only when `format=json`. {{< neo_since ver="8.0.12" />}} |
+| rowsArray   | false   | produce JSON that contains only array of object for each record,<br/>It works only when `format=json`. {{< neo_since ver="8.0.12" />}} |
 
 ## Get
 
@@ -246,14 +248,14 @@ Copy and paste on a new file `data-nano-1.json`.
 ```json
 {
     "data":{
-    "columns":["NAME","TIME","VALUE"],
-    "rows":[
-        ["wave.sin",1676432361,0],
-        ["wave.sin",1676432362,0.406736],
-        ["wave.sin",1676432363,0.743144],
-        ["wave.sin",1676432364,0.951056],
-        ["wave.sin",1676432365,0.994522]
-    ]
+      "columns":["NAME","TIME","VALUE"],
+      "rows":[
+          ["wave.sin",1676432361,0],
+          ["wave.sin",1676432362,0.406736],
+          ["wave.sin",1676432363,0.743144],
+          ["wave.sin",1676432364,0.951056],
+          ["wave.sin",1676432365,0.994522]
+      ]
     }
 }
 ```
