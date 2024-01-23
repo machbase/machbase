@@ -105,7 +105,7 @@ A supported attribute for the TAG table, determines the data size for each parti
 **TAG_STAT_ENABLE(Default:1)**
 A supported attribute for the TAG Table, determines whether to store statistical information for each TAG ID.
 
-**TAG_DUPLICATE_CHECK_DURATION(Default:0, Max:30)**
+**TAG_DUPLICATE_CHECK_DURATION(Default:30, Max:30)**
 A supported attribute for the TAG Table, the period within which duplicates can be removed is set in days based on the current system time. Duplicates can be deleted only for data within this specified period from the current system time. If the set period is 0, duplicate removal will not be performed.
 
 ### Column Property

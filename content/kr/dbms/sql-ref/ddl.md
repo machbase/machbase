@@ -108,7 +108,7 @@ TAG Table에 대해 지원되는 속성으로 파티션 테이블 별 데이터 
 
 TAG Table에 대해 지원되는 속성으로 TAG ID 별 통계 정보 저장 여부를 결정한다.
 
-**TAG_DUPLICATE_CHECK_DURATION(Default:0, Max:30)**
+**TAG_DUPLICATE_CHECK_DURATION(Default:30, Max:30)**
 
 TAG Table에 대해 지원되는 속성으로 현재 시스템시간을 기준으로 중복 제거가 가능한 기간을 일단위로 설정한다.
 현재 시스템시간으로부터 설정된 기간 이내의 데이터에 한해서 중복을 제거할 수 있으며 0일 경우 중복제거를 수행하지 않는다.
