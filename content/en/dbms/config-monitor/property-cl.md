@@ -1032,7 +1032,7 @@ Instead, if there is no status query response, the Coordinator will wait for as 
     </tr>
     <tr>
       <td style="background-color: #F0FFFF;">Default</td>
-      <td>5000000</td>
+      <td>15000000</td>
     </tr>
   </tbody>
 </table>
