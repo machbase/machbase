@@ -10,16 +10,23 @@ Start machbase-neo server process.
 
 **Flags**
              
-| flag (long)  | flag (short) | desc                                                                             |
-|:-------------|:-------------|:-------------------------------------------------------------------------------- |
-| `--host`     |              | listening network addr (default `127.0.0.1`) <br/> ex) `--host 0.0.0.0`          |
-| `--config`   | `-c`         | config file location  <br/> ex) `--config /data/machbase-neo.conf`               |
-| `--pid`      |              | file path to save pid <br/> ex) `--pid /data/machbase-neo.pid`                   |
-| `--data`     |              | path to database (default `./machbase_home`) <br/> ex) `--data /data/machbase`   |
-| `--file`     |              | path to files (default `.`)<br/> ex) `--file /data/files`                        |
-| `--log-filename` |          | log file path (default `-` stdout)<br/> ex) `--log-filename /data/logs/machbase-neo.log` |
-| `--log-level`|              | log level. TRACE, DEBUG, INFO, WARN, ERROR (default `INFO`)<br/> ex) `--log-level INFO`  |
-| `--preset`   |              | database preset `auto`, `fog`, `edge` (default `auto`)<br/> ex) `--preset edge`  |
+| flag             | desc                                                                             |
+|:-----------------|:-------------------------------------------------------------------------------- |
+| `--host`         | listening network addr (default `127.0.0.1`) <br/> ex) `--host 0.0.0.0`          |
+| `-c`, `--config` | config file location  <br/> ex) `--config /data/machbase-neo.conf`               |
+| `--pid`          | file path to save pid <br/> ex) `--pid /data/machbase-neo.pid`                   |
+| `--data`         | path to database (default `./machbase_home`) <br/> ex) `--data /data/machbase`   |
+| `--file`         | path to files (default `.`)<br/> ex) `--file /data/files`                        |
+| `--log-filename`        | log file path (default `-` stdout)<br/> ex) `--log-filename /data/logs/machbase-neo.log` |
+| `--log-level`           | log level. TRACE, DEBUG, INFO, WARN, ERROR (default `INFO`)<br/> ex) `--log-level INFO`  |
+| `--log-append`          | append existing log file. (default true)               {{< neo_since ver="8.0.13" />}}   |
+| `--log-rotate-schedule` | time scheduled log file rotation (defualt `@midnight`) {{< neo_since ver="8.0.13" />}}   |
+| `--log-max-size`        | file max size in MB (default 10)                       {{< neo_since ver="8.0.13" />}}   |
+| `--log-max-backups`     | maximum log file backups (default 1)                   {{< neo_since ver="8.0.13" />}}   |
+| `--log-max-age`         | maximum days in backup files (default 7)               {{< neo_since ver="8.0.13" />}}   | 
+| `--log-compress`        | gzip compress the backup files (dfeault false)         {{< neo_since ver="8.0.13" />}}   |
+| `--log-time-utc`        | use UTC time for logging (default false)               {{< neo_since ver="8.0.13" />}}   |
+| `--preset`              | database preset `auto`, `fog`, `edge` (default `auto`)<br/> ex) `--preset edge`  |
 
 {{< callout type="info" emoji="📌">}}
 **IMPORTANT**<br/>

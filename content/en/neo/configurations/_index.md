@@ -115,6 +115,13 @@ define VARS {
 | DefaultEnableSourceLocation | bool      | enable logging source filename and line number           |
 | DefaultLevel                | string    | `TRACE`, `DEBUG`, `INFO`, `WARN`, `ERROR`                |
 | Levels                      | array     | array of Level object                                    |
+| Append                      | bool      | append log file, if it exists                            |
+| RotateSchedule              | string    | schedule to rotate log file ex) "@midnight"              |
+| MaxSize                     | int       | max log file size in MB                                  |
+| MaxBackups                  | int       | max number of backup files                               |
+| MaxAge                      | int       | max days to keep the backup files                        |
+| Compress                    | bool      | compress the backup files                                |
+| UTC                         | bool      | Use UTC time for logging                                 |
 
 - Level object
 
