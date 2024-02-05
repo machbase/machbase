@@ -1102,7 +1102,7 @@ SCRIPT({
   z := calc(x, y)
   // Yield new value
   //  - yieldKey() build and passes new value with new key to the next step.
-  //  - yeild() build and passes new value to the next step with the received key from previous step
+  //  - yield() build and passes new value to the next step with the received key from previous step
   ctx.yield(x, y, z)
 })
 CHART_LINE3D(

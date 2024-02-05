@@ -309,7 +309,7 @@ Split the input content by separator and yield records that separated sub conten
 
 The both of `BYTES()` and `STRING()` works exactly same,
 except the value types that yields, as the function's name implies,
-`BYTES()` yeilds value in 'array of byte' and `STRING()` yeidls `string` value.
+`BYTES()` yields value in 'array of byte' and `STRING()` yeidls `string` value.
 
 ```js
 STRING(payload() ?? `12345
