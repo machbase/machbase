@@ -297,15 +297,17 @@ If `aggregatos` exists, `GROUP` yields the result value of the aggregate functio
 The fields below differ from the other functions above in that they hold all the values
 of the corresponding key in memory buffer and generate the value when the key changed and yield record.
 
-| aggregator               | description          |
-| :---------------------- | :------------------- |
-| `mean(value [, name])`  | mean                 |
-| `median(value [, name])`| median (lower value) |
-| `meidanInterpolated(value [,name])` | median (lower interpolated value) |
-| `stddev(value [, name])` | standard deviation   |
-| `stderr(value [, name])` | standard error       |
-| `entropy(value [, name])`| Shannon entropy of a distribution. The natural logarithm is used. |
-| `mode(value [, name])`   | The most common value in the dataset. Strict float64 equality is used when comparing values, so users should take caution. If several values are the mode, any of them may be returned. |
+| aggregator                                 | description          |
+| :----------------------------------------- | :------------------- |
+| `mean(value [, name])`                     | mean                                              |
+| `quantile(value, p [, name])`              | quantile (lower value) {{< neo_since ver="8.0.13" />}} |
+| `quantileInterpolated(vlaue, p, [, name])` | quantile (lower interpolated value) {{< neo_since ver="8.0.13" />}} |
+| `median(value [, name])`                   | equiv. `quantile(value, 0.5 [,name])`             |
+| `meidanInterpolated(value [,name])`        | equiv. `quantileInterpolated(value, 0.5 [,name])` |
+| `stddev(value [, name])`                   | standard deviation   |
+| `stderr(value [, name])`                   | standard error       |
+| `entropy(value [, name])`                  | Shannon entropy of a distribution. The natural logarithm is used. |
+| `mode(value [, name])`                     | The most common value in the dataset.<br/>Strict float64 equality is used when comparing values,<br/>so users should take caution.<br/>If several values are the mode, any of them may be returned. |
 
 {{< tabs items="GROUP(),RESULT">}}
 {{< tab >}}
