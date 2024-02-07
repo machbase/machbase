@@ -301,7 +301,7 @@ of the corresponding key in memory buffer and generate the value when the key ch
 | :----------------------------------------- | :------------------- |
 | `mean(value [, name])`                     | mean                                              |
 | `quantile(value, p [, name])`              | quantile (lower value) {{< neo_since ver="8.0.13" />}} |
-| `quantileInterpolated(vlaue, p, [, name])` | quantile (lower interpolated value) {{< neo_since ver="8.0.13" />}} |
+| `quantileInterpolated(value, p, [, name])` | quantile (lower interpolated value) {{< neo_since ver="8.0.13" />}} |
 | `median(value [, name])`                   | equiv. `quantile(value, 0.5 [,name])`             |
 | `meidanInterpolated(value [,name])`        | equiv. `quantileInterpolated(value, 0.5 [,name])` |
 | `stddev(value [, name])`                   | standard deviation   |
