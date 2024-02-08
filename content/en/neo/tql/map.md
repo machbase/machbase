@@ -303,7 +303,7 @@ of the corresponding key in memory buffer and generate the value when the key ch
 | `quantile(value, p [, name])`              | quantile (lower value) {{< neo_since ver="8.0.13" />}} |
 | `quantileInterpolated(value, p, [, name])` | quantile (lower interpolated value) {{< neo_since ver="8.0.13" />}} |
 | `median(value [, name])`                   | equiv. `quantile(value, 0.5 [,name])`             |
-| `meidanInterpolated(value [,name])`        | equiv. `quantileInterpolated(value, 0.5 [,name])` |
+| `medianInterpolated(value [,name])`        | equiv. `quantileInterpolated(value, 0.5 [,name])` |
 | `stddev(value [, name])`                   | standard deviation   |
 | `stderr(value [, name])`                   | standard error       |
 | `entropy(value [, name])`                  | Shannon entropy of a distribution. The natural logarithm is used. |
