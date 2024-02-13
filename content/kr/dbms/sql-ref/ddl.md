@@ -33,15 +33,6 @@ weight: 20
 
 ![with_rollup](../ddl_image/with_rollup_opt.png)
 
-```sql
-create_table_stmt ::= 'CREATE' ( 'LOG' | 'VOLATILE' | 'LOOKUP' | 'TAG' )? 'TABLE' ('IF' 'NOT' 'EXISTS')?  table_name '('column_list')' ('METADATA' '(' column_list ')')?  with_rollup? table_property_list?
-column_list ::= column_name column_type column_property_list? 'PRIMARY KEY'? 'NOT NULL'? ( ',' column_name column_type column_property_list? 'PRIMARY KEY'? 'NOT NULL'? )*
-column_property_list ::= 'PROPERTY' '(' ( 'PART_PAGE_COUNT' | 'PAGE_VALUE_COUNT' | 'MINMAX_CACHE_SIZE' | 'MAX_CACHE_PART_COUNT' ) '=' value ( ',' ( 'PART_PAGE_COUNT' | 'PAGE_VALUE_COUNT' | 'MINMAX_CACHE_SIZE' | 'MAX_CACHE_PART_COUNT' ) '=' value )* ')'
-table_property_list ::=  ('TAG_PARTITION_COUNT' ) '=' value
-column_type ::= 'SHORT' | 'USHORT' | 'INTEGER' | 'UINTEGER' | 'LONG' | 'ULONG' | 'FLOAT' | 'DOUBLE' | 'DATETIME' | 'VARCHAR' '(' size ')' | 'IPV4' | 'IPV6' | 'TEXT' | 'BINARY'
-with_rollup_opt ::= WITH ROLLUP ( 'SEC' | 'MIN' | 'HOUR' )
-```
-
 #### LOG 테이블 생성 예제
 
 ```sql
@@ -80,9 +71,9 @@ CREATE TABLE special_tbl ( "with.dot" INTEGER );
 
 |테이블 종류|설명|
 |--|--|
-|LOG_TABLE|CREATE TABLE 사이에 아무런 키워드를 넣지 않았다면 Log Table이 생성된다.|
-|VOLATILE_TABLE|VOLATILE_TABLE은 모든 데이터가 임시 메모리에 상주하는 임시 테이블이며 로그 테이블을 조인하여 결과를 향상시킵니다만, Machbase 서버가 종료 되자마자 사라집니다.|
-|LOOKUP_TABLE|VOLATILE_TABLE과 마찬가지로 LOOKUP_TABLE은 메모리의 모든 데이터를 저장함으로써 빠른 쿼리 처리를 수행 할 수 있습니다.|
+|LOG|CREATE TABLE 사이에 아무런 키워드를 넣지 않았다면 Log Table이 생성된다.|
+|VOLATILE|VOLATILE_TABLE은 모든 데이터가 임시 메모리에 상주하는 임시 테이블이며 로그 테이블을 조인하여 결과를 향상시킵니다만, Machbase 서버가 종료 되자마자 사라집니다.|
+|LOOKUP|VOLATILE_TABLE과 마찬가지로 LOOKUP_TABLE은 메모리의 모든 데이터를 저장함으로써 빠른 쿼리 처리를 수행 할 수 있습니다.|
 
 
 ### 테이블 프로퍼티(Table Property)
@@ -95,23 +86,28 @@ Table에 대한 속성을 지정한다.
 |TAG_DATA_PART_SIZE| TAG TABLE|
 |TAG_STAT_ENABLE|	 TAG TABLE|
 |TAG_DUPLICATE_CHECK_DURATION|	 TAG TABLE|
+|VARCHAR_FIXED_LENGTH_MAX| TAG table |
 
-**TAG_PARTITION_COUNT(Default:4)**
+#### TAG_PARTITION_COUNT(Default:4)
 
 TAG Table에 대해 지원되는 속성으로 TAG 테이블을 내부적으로 몇 개의 파티션 테이블에 저장할 것인지 결정한다. TAG의 수나 서버의 성능에 따라 설정하여야 한다.
 
-**TAG_DATA_PART_SIZE(Default:16MB)**
+#### TAG_DATA_PART_SIZE(Default:16MB)
 
 TAG Table에 대해 지원되는 속성으로 파티션 테이블 별 데이터 사이즈를 결정한다.
 
-**TAG_STAT_ENABLE(Default:1)**
+#### TAG_STAT_ENABLE(Default:1)
 
 TAG Table에 대해 지원되는 속성으로 TAG ID 별 통계 정보 저장 여부를 결정한다.
 
-**TAG_DUPLICATE_CHECK_DURATION(Default:30, Max:30)**
+#### TAG_DUPLICATE_CHECK_DURATION(Default:30, Max:30)
 
 TAG Table에 대해 지원되는 속성으로 현재 시스템시간을 기준으로 중복 제거가 가능한 기간을 일단위로 설정한다.
 현재 시스템시간으로부터 설정된 기간 이내의 데이터에 한해서 중복을 제거할 수 있으며 0일 경우 중복제거를 수행하지 않는다.
+
+#### VARCHAR_FIXED_LENGTH_MAX (Default: 15, Max: 127)
+
+내부 파일에 저장할 VARCHAR 컬럼의 최대 길이를 지정한다.
 
 ### 컬럼 프로퍼티(Column Property)
 

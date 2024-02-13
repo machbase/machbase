@@ -35,15 +35,6 @@ weight: 20
 
 ![with_rollup](../ddl_image/with_rollup_opt.png)
 
-```sql
-create_table_stmt ::= 'CREATE' ( 'LOG' | 'VOLATILE' | 'LOOKUP' | 'TAG' )? 'TABLE' ('IF' 'NOT' 'EXISTS')?  table_name '('column_list')' ('METADATA' '(' column_list ')')?  with_rollup? table_property_list?
-column_list ::= column_name column_type column_property_list? 'PRIMARY KEY'? 'NOT NULL'? ( ',' column_name column_type column_property_list? 'PRIMARY KEY'? 'NOT NULL'? )*
-column_property_list ::= 'PROPERTY' '(' ( 'PART_PAGE_COUNT' | 'PAGE_VALUE_COUNT' | 'MINMAX_CACHE_SIZE' | 'MAX_CACHE_PART_COUNT' ) '=' value ( ',' ( 'PART_PAGE_COUNT' | 'PAGE_VALUE_COUNT' | 'MINMAX_CACHE_SIZE' | 'MAX_CACHE_PART_COUNT' ) '=' value )* ')'
-table_property_list ::=  ( 'CHECK_FORGERY' | 'TAG_PARTITION_COUNT' ) '=' value
-column_type ::= 'SHORT' | 'USHORT' | 'INTEGER' | 'UINTEGER' | 'LONG' | 'ULONG' | 'FLOAT' | 'DOUBLE' | 'DATETIME' | 'VARCHAR' '(' size ')' | 'IPV4' | 'IPV6' | 'TEXT' | 'BINARY'
-with_rollup_opt ::= WITH ROLLUP ( 'SEC' | 'MIN' | 'HOUR' )
-```
-
 #### Create LOG table
 
 ```sql
@@ -80,9 +71,9 @@ This function only takes effect when the types of tables are equal.
 
 |Table Type|Description|
 |--|--|
-|LOG_TABLE|If there is no keyword between CREATE TABLE, a log table is created.|
-|VOLATILE_TABLE|VOLATILE_TABLE is a temporary table in which all data resides in temporary memory and joins the log table to improve the results,<br>The Machbase server disappears as soon as it is shut down.|
-|LOOKUP_TABLE|Like VOLATILE_TABLE, LOOKUP_TABLE can perform fast query processing by storing all the data in memory.|
+|LOG|If there is no keyword between CREATE TABLE, a log table is created.|
+|VOLATILE|VOLATILE_TABLE is a temporary table in which all data resides in temporary memory and joins the log table to improve the results,<br>The Machbase server disappears as soon as it is shut down.|
+|LOOKUP|Like VOLATILE_TABLE, LOOKUP_TABLE can perform fast query processing by storing all the data in memory.|
 
 
 ### Table Property
@@ -91,22 +82,27 @@ Specifies the attributes for the table.
 
 |**Property Name**|**Available Table Types**|
 |--|--|
-|TAG_PARTITION_COUNT|TAG TABLE|
-|TAG_DATA_PART_SIZE|TAG TABLE|
-|TAG_STAT_ENABLE|TAG TABLE|
-|TAG_DUPLICATE_CHECK_DURATION| TAG TABLE|
+|TAG_PARTITION_COUNT|TAG table |
+|TAG_DATA_PART_SIZE|TAG table |
+|TAG_STAT_ENABLE|TAG table |
+|TAG_DUPLICATE_CHECK_DURATION| TAG table |
+|VARCHAR_FIXED_LENGTH_MAX| TAG table |
 
-**TAG_PARTITION_COUNT(Default:4)**
+#### TAG_PARTITION_COUNT(Default:4)
 A supported attribute for the TAG table, determines how many partition tables will store the TAG table internally. It should be set according to the number of tags or the performance of the server.
 
-**TAG_DATA_PART_SIZE(Default:16MB)**
+#### TAG_DATA_PART_SIZE(Default:16MB)
 A supported attribute for the TAG table, determines the data size for each partition table.
 
-**TAG_STAT_ENABLE(Default:1)**
+#### TAG_STAT_ENABLE(Default:1)
 A supported attribute for the TAG Table, determines whether to store statistical information for each TAG ID.
 
-**TAG_DUPLICATE_CHECK_DURATION(Default:30, Max:30)**
+#### TAG_DUPLICATE_CHECK_DURATION(Default:30, Max:30)
 A supported attribute for the TAG Table, the period within which duplicates can be removed is set in days based on the current system time. Duplicates can be deleted only for data within this specified period from the current system time. If the set period is 0, duplicate removal will not be performed.
+
+#### VARCHAR_FIXED_LENGTH_MAX (Default: 15, Max: 127)
+
+Specifies the length of the maximum varchar column to be stored in the internal file.
 
 ### Column Property
 

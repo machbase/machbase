@@ -1,0 +1,2 @@
+table_property_list
+         ::= ( 'TAG_PARTITION_COUNT' | 'TAG_DATA_PART_SIZE' | 'TAG_STAT_ENABLE' | 'TAG_DUPLICATE_CHECK_DURATION' | 'VARCHAR_FIXED_LENGTH_MAX' ) '=' value
