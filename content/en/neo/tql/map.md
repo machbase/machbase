@@ -15,7 +15,7 @@ weight: 31
 Takes first *n* records and stop the stream.
 
 - `offset` *number* optional, take records from the offset. (default 0 when omitted) {{< neo_since ver="8.0.6" />}}
-- `n` *number* specify how may records to be taken.
+- `n` *number* specify how many records to be taken.
 
 {{< tabs items="TAKE(n),TAKE(offset n)">}}
 {{< tab >}}
@@ -65,7 +65,7 @@ TAG0,1629039600000000000,14
 Ignore first *n* records, it simply drops the *n* records.
 
 - `offset` *number* optional, drop records from the offset. (default 0 when omitted) {{< neo_since ver="8.0.6" />}}
-- `n` *number* specify how may records to be dropped.
+- `n` *number* specify how many records to be dropped.
 
 {{< tabs items="DROP(n),DROP(offset n)">}}
 {{< tab >}}
@@ -348,7 +348,7 @@ CHART(
 
 *Syntax*: `FLATTEN()`
 
-It works the oposite way of *GROUPBYKEY()*. Take a record whose value is multi-dimension tuple, produces multiple records for each elements of the tuple reducing the dimension.
+It works the opposite way of *GROUPBYKEY()*. Take a record whose value is multi-dimension tuple, produces multiple records for each elements of the tuple reducing the dimension.
 
 For example, if an original record was `{key:k, value:[[v1,v2],[v3,v4],...,[vx,vy]]}`, it produces the new multiple records as `{key:k, value:[v1, v2]}`, `{key:k, value:{v3, v4}}`...`{key:k, value:{vx, vy}}`.
 
@@ -468,7 +468,7 @@ VALUE,DIFF
 
 ## MAP_NONEGDIFF()
 
-*Syntax*: `MAP_NOENGDIFF( idx, value [, newName]  )` {{< neo_since ver="8.0.8" />}}
+*Syntax*: `MAP_NONEGDIFF( idx, value [, newName]  )` {{< neo_since ver="8.0.8" />}}
 
 - `idx` *int*  Index of the value tuple. (0 based)
 - `value` *float*
