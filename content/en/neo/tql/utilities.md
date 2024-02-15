@@ -348,6 +348,38 @@ CSV()
 {{< /tab >}}
 {{< /tabs >}}
 
+### timeUnix()
+
+*Syntax*: `timeUnix( time )` {{< neo_since ver="8.0.13" />}}
+
+*timeUnix* returns `time` as a Unix time, the number of seconds elapsed
+since January 1, 1970 UTC. The result does not depend on the
+location associated with `time`.
+
+### timeUnixMilli()
+
+*Syntax*: `timeUnixMilli( time )` {{< neo_since ver="8.0.13" />}}
+
+*timeUnixMilli* returns `time` as a Unix time, the number of milliseconds elapsed
+since January 1, 1970 UTC. The result does not depend on the
+location associated with `time`.
+
+### timeUnixMicro()
+
+*Syntax*: `timeUnixMicro( time )` {{< neo_since ver="8.0.13" />}}
+
+*timeUnixMicro* returns `time` as a Unix time, the number of microseconds elapsed
+since January 1, 1970 UTC. The result does not depend on the
+location associated with `time`.
+
+### timeUnixNano()
+
+*Syntax*: `timeUnixNano( time )` {{< neo_since ver="8.0.13" />}}
+
+*timeUnixNano* returns `time` as a Unix time, the number of nanoseconds elapsed
+since January 1, 1970 UTC. The result does not depend on the
+location associated with `time`.
+
 ### timeAdd()
 
 *Syntax*: `timeAdd( number|string [, timeExpression] )`

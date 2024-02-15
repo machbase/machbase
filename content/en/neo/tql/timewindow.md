@@ -4,6 +4,12 @@ type: docs
 weight: 62
 ---
 
+{{< callout type="warning" >}}
+**Use GROUP()**<br/>
+Since v8.0.13, `GROUP()` can have `by(..., timewindow(...))` option which works exactly same as `TIMEWINDOW()` does.<br/>
+Because `GROUP()` provides more flexible ways to manipulate data records, please use `GROUP()` instead of `TIMEWINDOW()`.
+{{< /callout >}}
+
 ## Motivation
 
 Analyzing and visualizing data stored in a DATABASE, one of the most cumbersome tasks is the process of refining it when there is no data in the desired time range or when there are multiple data.

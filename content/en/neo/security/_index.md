@@ -187,9 +187,11 @@ machbase-neo accepts TLS (a.k.a SSL) connecions from clients.
 If TLS is enabled, it ignores token based authentication and accepts only connection that finished ssl-handshaking successfully 
 with pre-registered X.509 certificates.
 
-{: .note }
-> When TLS option is applied, machbase-neo mqtt server ignores `username` and `passowrd` fields of CONNECT message.
-> Do not specify those values. But still need to set `client-id` for the clarity.
+{{< callout >}}
+When TLS option is applied, machbase-neo mqtt server ignores `username` and `passowrd` fields of CONNECT message.
+Do not specify those values. But still need to set `client-id` for the clarity.
+{{< /callout >}}
+
 
 A client should use the pre-registered client-id and key and certificate those were generated as the above section.
 Apply client-id for the `client-id` of CONNECT message and do not set the `username` and `password`.
