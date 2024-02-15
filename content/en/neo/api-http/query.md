@@ -22,16 +22,16 @@ http://127.0.0.1:5654/db/query?q=select%20*%20from%20EXAMPLE%20limit%202
 
 | param       | default | description                   |
 |:----------- |---------|:----------------------------- |
-| **q**       | _n/a_   | SQL query string              |
-| format      | json    | Result data format: json, csv, box |
-| timeformat  | ns      | Time format: s, ms, us, ns    |
-| tz          | UTC     | Time Zone: UTC, Local and location spec |
+| **q**       | _required_ | SQL query string              |
+| format      | `json`    | Result data format: json, csv, box |
+| timeformat  | `ns`      | Time format: s, ms, us, ns    |
+| tz          | `UTC`     | Time Zone: UTC, Local and location spec |
 | compress    | _no compression_   | compression method: gzip      |
-| rownum      | false   | including rownum: true, false |
-| heading     | true    | showing heading: true, false  |
-| precision   | -1      | precision of float value, -1 for no round, 0 for int |
+| rownum      | `false`   | including rownum: true, false |
+| heading     | `true`    | showing heading: true, false  |
+| precision   | `-1`      | precision of float value, -1 for no round, 0 for int |
 
-**More Parameters in `format=json`** {{< neo_since ver="8.0.12" />}}
+**Available parameters with `format=json`** {{< neo_since ver="8.0.12" />}}
 
 Those options are available only when `format=json`
 
@@ -40,6 +40,28 @@ Those options are available only when `format=json`
 | transpose   | false   | produce cols array instead of rows. |
 | rowsFlatten | false   | reduce the array dimension of the *rows* field in the JSON object. |
 | rowsArray   | false   | produce JSON that contains only array of object for each record.  |
+
+**Available timeformat**
+
+| timeformat    |  result                             |
+|:------------- |:------------------------------------|
+| `Default`     | 2006-01-02 15:04:05.999             |
+| `Numeric`     | 01/02 03:04:05PM '06 -0700          |
+| `Ansic`       | Mon Jan _2 15:04:05 2006            |
+| `Unix`        | Mon Jan _2 15:04:05 MST 2006        |
+| `Ruby`        | Mon Jan 02 15:04:05 -0700 2006      |
+| `RFC822`      | 02 Jan 06 15:04 MST                 |
+| `RFC822Z`     | 02 Jan 06 15:04 -0700               |
+| `RFC850`      | Monday, 02-Jan-06 15:04:05 MST      |
+| `RFC1123`     | Mon, 02 Jan 2006 15:04:05 MST       |
+| `RFC1123Z`    | Mon, 02 Jan 2006 15:04:05 -0700     |
+| `RFC3339`     | 2006-01-02T15:04:05Z07:00           |
+| `RFC3339Nano` | 2006-01-02T15:04:05.999999999Z07:00 |
+| `Kitchen`     | 3:04:05PM                           |
+| `Stamp`       | Jan _2 15:04:05                     |
+| `StampMili`   | Jan _2 15:04:05.000                 |
+| `StampMicro`  | Jan _2 15:04:05.000000              |
+| `StampNano`   | Jan _2 15:04:05.000000000           |
 
 ## GET
 
