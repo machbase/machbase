@@ -308,6 +308,7 @@ of the corresponding key in memory buffer and generate the value when the key ch
 | `stderr(value [, name])`                   | standard error       |
 | `entropy(value [, name])`                  | Shannon entropy of a distribution. The natural logarithm is used. |
 | `mode(value [, name])`                     | The most common value in the dataset.<br/>Strict float64 equality is used when comparing values,<br/>so users should take caution.<br/>If several values are the mode, any of them may be returned. |
+| `lrs(x, y [, name])`                       | linear regression slope, assuming *x*-*y* othogonal coordinate system. *x* can be number or time type {{< neo_since ver="8.0.13" />}} |
 
 {{< tabs items="GROUP(),RESULT">}}
 {{< tab >}}
