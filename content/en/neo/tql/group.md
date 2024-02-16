@@ -102,25 +102,43 @@ If `GROUP()` use `lazy(true)` and Type 2 functions together, it holds the entire
 
 Type 1, *Syntax*: `avg(value [, option...])` 
 
+Average of the values in a group.
+
 #### sum()
 
 Type 1, *Syntax*: `sum(value [, option...])` 
+
+Total sum of the values in a group.
+
+#### count()
+
+Type 1, *Syntax*: `count(value [, option...])` {{< neo_since ver="8.0.13" />}}
+
+Count of the values in a group.
 
 #### first()
 
 Type 1, *Syntax*: `first(value [, option...])` 
 
+The first value of the group.
+
 #### last()
 
 Type 1, *Syntax*: `last(value [, option...])` 
+
+The last value of the group.
 
 #### min()
 
 Type 1, *Syntax*: `min(value [, option...])` 
 
+The smallest value of the group.
+
 #### max()
 
 Type 1, *Syntax*: `max(value [, option...])` 
+
+The largest value of the group.
 
 #### rss()
 
