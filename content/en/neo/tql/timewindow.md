@@ -7,7 +7,7 @@ weight: 62
 {{< callout type="warning" >}}
 **Use GROUP()**<br/>
 Since v8.0.13, `GROUP()` can have `by(..., timewindow(...))` option which works exactly same as `TIMEWINDOW()` does.<br/>
-Because `GROUP()` provides more flexible ways to manipulate data records, please use `GROUP()` instead of `TIMEWINDOW()`.
+Because `GROUP()` provides more flexible ways to manipulate data records, `GROUP()` is strongly recommended.
 {{< /callout >}}
 
 ## Motivation

@@ -2,6 +2,7 @@
 title: GROUP()
 type: docs
 weight: 60
+math: true
 ---
 
 {{< neo_since ver="8.0.7" />}}
@@ -54,13 +55,13 @@ Takes multiple continuous records that have same value of `by()`, then produces 
 
 ## Aggregator
 
-*Syntax*: `function_name( value [, value...] [, where()] [, nullValue()] [, predict()] [, name])`
+*Syntax*: `function_name( value [, value...] [, where()] [, nullValue()] [, predict()] [, label])`
 
 - `value` one or more values depends on the function.
 - `where( predicate )` take boolean expression for the predication.
 - `nullValue(alternative)` specify alternative value to use instead of `NULL` when the aggregator has no value to produce.
 - `predict(algorithm)` specify an algorithm to predict value to use instead of `NULL` when the aggregator has no value to produce.
-- `name` *string* set the name of the column (default is the name of aggregator).
+- `label` *string* set the label of the column (default is the name of aggregator function).
 
 There are two types of aggregator functions, Type 1 functions only keep the final candidate value for the result.
 Type 2 functions hold the whole data of a group, it uses the data to produce the result of the aggregation then release memory for the next group.
@@ -94,7 +95,7 @@ If `GROUP()` use `lazy(true)` and Type 2 functions together, it holds the entire
 
 ### options
 
-`where()`, `nullValue()`, `predict()` and `name` arguments are the optional and it represents the `option` of the each function syntax description below.
+`where()`, `nullValue()`, `predict()` and `label` arguments are the optional and it represents the `option` of the each function syntax description below.
 
 ### functions
 
@@ -351,7 +352,7 @@ CSV( timeformat("Default"), header(true) )
 `roundTime(..., "1s")` makes time value aligned in second, then make records grouped that has same time.
 `avg(...)` produces the average value of a group.
 
-But it lost first column value that indicates if the value is temperature or humidity, so the result values become meaningless.
+But it lost the first column information that indicates if the value is temperature or humidity, so the result values become meaningless.
 To solve this problem use `where()`. Aggregator functions accept values only when `where()` has the predicate `true`.
 
 ```js {linenos=table,hl_lines=[4,7],linenostart=15}
@@ -368,7 +369,7 @@ GROUP(
 
 {{< figure src="../img/group-where-ex3.jpg" width="600" >}}
 
-It is also possible to interpolate the missing data of the last record with `predict()` or `nullValue()`
+It is also possible to interpolate the missing data of the last record with `predict()` and `nullValue()`
 
 ```js {linenos=table,hl_lines=[8],linenostart=15}
 GROUP(
