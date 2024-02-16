@@ -101,55 +101,55 @@ If `GROUP()` use `lazy(true)` and Type 2 functions together, it holds the entire
 
 #### avg()
 
-Type 1, *Syntax*: `avg(value [, option...])` 
+Type 1, *Syntax*: `avg(x [, option...])` 
 
 Average of the values in a group.
 
 #### sum()
 
-Type 1, *Syntax*: `sum(value [, option...])` 
+Type 1, *Syntax*: `sum(x [, option...])` 
 
 Total sum of the values in a group.
 
 #### count()
 
-Type 1, *Syntax*: `count(value [, option...])` {{< neo_since ver="8.0.13" />}}
+Type 1, *Syntax*: `count(x [, option...])` {{< neo_since ver="8.0.13" />}}
 
 Count of the values in a group.
 
 #### first()
 
-Type 1, *Syntax*: `first(value [, option...])` 
+Type 1, *Syntax*: `first(x [, option...])` 
 
 The first value of the group.
 
 #### last()
 
-Type 1, *Syntax*: `last(value [, option...])` 
+Type 1, *Syntax*: `last(x [, option...])` 
 
 The last value of the group.
 
 #### min()
 
-Type 1, *Syntax*: `min(value [, option...])` 
+Type 1, *Syntax*: `min(x [, option...])` 
 
 The smallest value of the group.
 
 #### max()
 
-Type 1, *Syntax*: `max(value [, option...])` 
+Type 1, *Syntax*: `max(x [, option...])` 
 
 The largest value of the group.
 
 #### rss()
 
-Type 1, *Syntax*: `max(value [, option...])` 
+Type 1, *Syntax*: `max(x [, option...])` 
 
 Root sum square
 
 #### rms()
 
-Type 1, *Syntax*: `rms(value [, option...])` 
+Type 1, *Syntax*: `rms(x [, option...])` 
 
 Root mean square
 
@@ -161,58 +161,122 @@ Linear Regression Slope, assuming *x*-*y* is a point on a othogonal coordinate s
 
 #### mean()
 
-Type 2, *Syntax*: `mean(value [, option...])` 
+Type 2, *Syntax*: `mean(x [, weight(w)] [, option...])` 
+
+- `x` *float* value
+- `weight(w)` if omitted then all of the weights are 1.
+
+`mean()` computes the weighted mean of the grouped values.
+
+mean($x$, weight($w$)) = $ \frac{\sum {w_i  x_i}} {\sum {w_i}} $
+
+#### cdf()
+
+Type 2, *Syntax*: `cdf(x, q [, option...])` {{< neo_since ver="8.0.14" />}}
+
+`cdf()` returns the empirical cumulative distribution function value of *x*, that is the fraction of the samples less than or equal to q.
+`cdf()` is theoretically the inverse of the `quantile()` function, though it may not be the actual inverse for all values *q*.
+
+#### correlation()
+
+Type 2, *Syntax*: `correlation(x, y [, weight(w)] [, option...])` {{< neo_since ver="8.0.14" />}}
+
+- `x`, `y` *float* value
+- `weight(w)` if omitted then all of the weights are 1.
+
+`correlation()` returns the weighted correlation between the samples of *x* and *y*.
+
+correlation($x$, $y$, weight($w$)) = $ \frac{\sum {w_i (x_i - \bar{x}) (y_i - \bar{y})}} {stdX * stdY} $,
+($\bar{x}$ = mean x, $\bar{y}$ = mean y)
+
+#### covariance()
+
+Type 2, *Syntax*: `covariance(x, y [, weight(w)] [, option...])` {{< neo_since ver="8.0.14" />}}
+
+- `x`, `y` *float* value
+- `weight(w)` if omitted then all of the weights are 1.
+
+`covariance()` returns the weighted covariance between the samples of *x* and *y*.
+
+covariance($x$, $y$, weight($w$)) = $ \frac{\sum {w_i (x_i - \bar{x}) (y_i - \bar{y})}} { \sum {w_i} -1 } $,
+($\bar{x}$ = mean x, $\bar{y}$ = mean y)
+
 
 #### quantile()
 
-Type 2, *Syntax*: `quantile(value, p [, option...])` {{< neo_since ver="8.0.13" />}}
+Type 2, *Syntax*: `quantile(x, p [, option...])` {{< neo_since ver="8.0.13" />}}
 
-Quantile (lower value)
+- `x` *float* value
+- `p` *float* fraction
+
+`quantile()` returns the sample of x such that x is greater than or equal to the fraction p of samples, p should be a number between 0 and 1.
+
+It returns the lowest value q for which q is greater than or equal to the fraction p of samples
 
 #### quantileInterpolated()
 
-Type 2, *Syntax*: `quantileInterpolated(value, p [, option...])` {{< neo_since ver="8.0.13" />}}
+Type 2, *Syntax*: `quantileInterpolated(x, p [, option...])` {{< neo_since ver="8.0.13" />}}
 
-Quantile (lower value)
+- `x` *float* value
+- `p` *float* fraction
+
+`quantile()` returns the sample of x such that x is greater than or equal to the fraction p of samples, p should be a number between 0 and 1.
+
+The return value is the linearly interpolated.
 
 #### median()
 
-Type 2, *Syntax*: `median(value [, option...])`
+Type 2, *Syntax*: `median(x [, option...])`
 
-Equivalent to `quantile(value, 0.5 [, option...])` 
+Equivalent to `quantile(x, 0.5 [, option...])` 
 
 #### medianInterpolated()
 
-Type 2, *Syntax*: `medianInterpolated(value [, option...])`
+Type 2, *Syntax*: `medianInterpolated(x [, option...])`
 
-Equivalent to `quantileInterpolated(value, 0.5 [, option...])` 
+Equivalent to `quantileInterpolated(x, 0.5 [, option...])` 
 
 #### stddev()
 
-Type 2, *Syntax*: `stddev(value [, option...])`
+Type 2, *Syntax*: `stddev(x [, weight(w)] [, option...])`
 
-standard deviation 
+- `weight(w)` if omitted then all of the weights are 1.
+
+`stddev()` returns the sample standard deviation.
 
 #### stderr()
 
-Type 2, *Syntax*: `stderr(value [, option...])`
+Type 2, *Syntax*: `stderr(x [, weight(w)] [, option...])`
 
-standard error 
+- `weight(w)` if omitted then all of the weights are 1.
+
+`stderr()` returns the standard error in the mean with stddev of the given values.
 
 #### entropy()
 
-Type 2, *Syntax*: `entropy(value [, option...])`
+Type 2, *Syntax*: `entropy(x [, option...])`
 
 Shannon entropy of a distribution. The natural logarithm is used.
 
 #### mode()
 
-Type 2, *Syntax*: `mode(value [, option...])`
+Type 2, *Syntax*: `mode(x [, weight(w)] [, option...])`
 
-The most common value in the dataset.
+- `weight(w)` if omitted then all of the weights are 1.
 
+`mode()` returns the most common value in the dataset specified by *value* and the given weights.
 Strict float64 equality is used when comparing values, so users should take caution.
 If several values are the mode, any of them may be returned.
+
+#### moment()
+
+Type 2, *Syntax*: `moment(x, n [, weight(w)] [, option...])` {{< neo_since ver="8.0.14" />}}
+
+- `x` float64 value
+- `n` float64 mement
+- `weight(w)` if omitted then all of the weights are 1.
+
+`moment()` computes the weighted *n*-th moment of the samples.
 
 ## Examples
 
