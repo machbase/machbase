@@ -301,7 +301,7 @@ JSON()
 
 *Syntax*: `glob(pattern, text)` {{< neo_since ver="8.0.7" />}}
 
-`glob` retuns true if the `text` does match with `pattern`.
+`glob` returns true if the `text` does match with `pattern`.
 
 ```js {linenos=table,hl_lines=["3"],linenostart=1}
 FAKE( linspace(1, 4, 4))
