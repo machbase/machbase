@@ -351,8 +351,8 @@ CSV( timeformat("Default"), header(true) )
 `roundTime(..., "1s")` makes time value aligned in second, then make records grouped that has same time.
 `avg(...)` produces the average value of a group.
 
-But it lost first column value that indicates temperature and humidity, so the result values are meaningless.
-To solve this problem use `where()`. Aggregator functions accept values only when `where()` returns `true`.
+But it lost first column value that indicates if the value is temperature or humidity, so the result values become meaningless.
+To solve this problem use `where()`. Aggregator functions accept values only when `where()` has the predicate `true`.
 
 ```js {linenos=table,hl_lines=[4,7],linenostart=15}
 GROUP(
