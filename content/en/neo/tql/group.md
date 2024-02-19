@@ -155,7 +155,11 @@ Root mean square
 
 #### lrs()
 
-Type 2, *Syntax*: `lrs(x, y [, option...])` {{< neo_since ver="8.0.13" />}}
+Type 2, *Syntax*: `lrs(x, y [, weight(w)] [, option...])` {{< neo_since ver="8.0.13" />}}
+
+- `x` *float* or *time*
+- `y` *float* value
+- `weight(w)` if omitted then all of the weights are 1.
 
 Linear Regression Slope, assuming *x*-*y* is a point on a othogonal coordinate system. *x* can be number or time type.
 
@@ -166,13 +170,17 @@ Type 2, *Syntax*: `mean(x [, weight(w)] [, option...])`
 - `x` *float* value
 - `weight(w)` if omitted then all of the weights are 1.
 
-`mean()` computes the weighted mean of the grouped values.
+`mean()` computes the weighted mean of the grouped values. If all of the weights are 1, use the lightweight `avg()` for the performance.
 
 mean($x$, weight($w$)) = $ \frac{\sum {w_i  x_i}} {\sum {w_i}} $
 
 #### cdf()
 
-Type 2, *Syntax*: `cdf(x, q [, option...])` {{< neo_since ver="8.0.14" />}}
+Type 2, *Syntax*: `cdf(x, q [, weight(w)] [, option...])` {{< neo_since ver="8.0.14" />}}
+
+- `x` *float*
+- `q` *float* 
+- `weight(w)` if omitted then all of the weights are 1.
 
 `cdf()` returns the empirical cumulative distribution function value of *x*, that is the fraction of the samples less than or equal to q.
 `cdf()` is theoretically the inverse of the `quantile()` function, though it may not be the actual inverse for all values *q*.
@@ -204,10 +212,11 @@ covariance($x$, $y$, weight($w$)) = $ \frac{\sum {w_i (x_i - \bar{x}) (y_i - \ba
 
 #### quantile()
 
-Type 2, *Syntax*: `quantile(x, p [, option...])` {{< neo_since ver="8.0.13" />}}
+Type 2, *Syntax*: `quantile(x, p [, weight(w)] [, option...])` {{< neo_since ver="8.0.13" />}}
 
 - `x` *float* value
 - `p` *float* fraction
+- `weight(w)` if omitted then all of the weights are 1.
 
 `quantile()` returns the sample of x such that x is greater than or equal to the fraction p of samples, p should be a number between 0 and 1.
 
@@ -215,10 +224,11 @@ It returns the lowest value q for which q is greater than or equal to the fracti
 
 #### quantileInterpolated()
 
-Type 2, *Syntax*: `quantileInterpolated(x, p [, option...])` {{< neo_since ver="8.0.13" />}}
+Type 2, *Syntax*: `quantileInterpolated(x, p [, weight(w)] [, option...])` {{< neo_since ver="8.0.13" />}}
 
 - `x` *float* value
 - `p` *float* fraction
+- `weight(w)` if omitted then all of the weights are 1.
 
 `quantile()` returns the sample of x such that x is greater than or equal to the fraction p of samples, p should be a number between 0 and 1.
 
@@ -226,13 +236,19 @@ The return value is the linearly interpolated.
 
 #### median()
 
-Type 2, *Syntax*: `median(x [, option...])`
+Type 2, *Syntax*: `median(x [, weight(w)] [, option...])`
+
+- `x` *float* value
+- `weight(w)` if omitted then all of the weights are 1.
 
 Equivalent to `quantile(x, 0.5 [, option...])` 
 
 #### medianInterpolated()
 
-Type 2, *Syntax*: `medianInterpolated(x [, option...])`
+Type 2, *Syntax*: `medianInterpolated(x [, weight(w)] [, option...])`
+
+- `x` *float* value
+- `weight(w)` if omitted then all of the weights are 1.
 
 Equivalent to `quantileInterpolated(x, 0.5 [, option...])` 
 
@@ -273,7 +289,7 @@ If several values are the mode, any of them may be returned.
 Type 2, *Syntax*: `moment(x, n [, weight(w)] [, option...])` {{< neo_since ver="8.0.14" />}}
 
 - `x` float64 value
-- `n` float64 mement
+- `n` float64 moment
 - `weight(w)` if omitted then all of the weights are 1.
 
 `moment()` computes the weighted *n*-th moment of the samples.
