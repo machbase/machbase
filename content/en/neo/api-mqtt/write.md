@@ -7,6 +7,22 @@ weight: 30
 The examples below shows how to efficiently write data with mqtt client (`mosquitto_pub`).
 The destination topic should be `db/append/`+table_name.
 
+```mermaid
+sequenceDiagram
+    CLIENT->> SERVER: CONNECT
+    activate SERVER
+    SERVER -->> CLIENT: CONNACK
+    deactivate SERVER
+    loop
+        CLIENT ->> SERVER: PUBLISH 'db/append/{table_name}'
+        activate SERVER
+        SERVER -->> CLIENT: PUBACK
+        deactivate SERVER
+    end
+    CLIENT->> SERVER: DISCONNECT
+```
+
+
 
 ## PUBLISH multiple records
 
