@@ -10,7 +10,7 @@ math: true
 ## Syntax
 
 ```
-GROUP( [lazy(boolean),] by [, aggregator...] )
+GROUP( [lazy(boolean)] [, by()] [, aggregator...] )
 ```
 
 - `lazy(boolean)` set lazy mode (default: false)
@@ -293,6 +293,26 @@ Type 2, *Syntax*: `moment(x, n [, weight(w)] [, option...])` {{< neo_since ver="
 - `weight(w)` if omitted then all of the weights are 1.
 
 `moment()` computes the weighted *n*-th moment of the samples.
+
+#### variance()
+
+Type 2, *Syntax*: `variance(x [, weight(w)] [, option...])` {{< neo_since ver="8.0.14" />}}
+
+- `x` *float* value
+- `weight(w)` if omitted then all of the weights are 1.
+
+`variance()` computes the unbiased weighted variance of the grouped values.
+When weights sum to 1 or less, a biased variance estimator should be used.
+
+```js {linenos=table,hl_lines=["3-4"],linenostart=1}
+FAKE(json({[8,2], [2,2], [-9,6], [15,7], [4,1]}))
+GROUP(
+    variance(value(0), "VARIANCE"),
+    variance(value(0), weight(value(1)), "WEIGHTED VARIANCE")
+)
+CSV(heading(true), precision(4))
+```
+{{< figure src="../img/group-variance.jpg" width="600" >}}
 
 ## Examples
 
