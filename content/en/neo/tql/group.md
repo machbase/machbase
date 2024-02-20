@@ -17,7 +17,24 @@ GROUP( [lazy(boolean),] by [, aggregator...] )
 - `by(value [, timewindow()] [, name])` specify how to make group with given value.
 - `aggregator` *list of aggregator*, comma separated multiple functions are possible.
 
-> See the [basic example](#basic)
+```js {linenos=table,hl_lines=["7-12"],linenostart=1}
+FAKE(json({
+    ["A", 1],
+    ["A", 2],
+    ["B", 3],
+    ["B", 4]
+}))
+GROUP(
+    by( value(0), "CATEGORY" ),
+    avg( value(1), "AVG" ),
+    sum( value(1), "SUM"),
+    first( value(1) * 10, "x10")
+)
+CSV( header(true) )
+```
+
+**Result**
+{{< figure src="../img/group-type1-ex1.jpg" width="600" >}}
 
 
 ### `by()`
@@ -215,24 +232,6 @@ Strict float64 equality is used when comparing values, so users should take caut
 If several values are the mode, any of them may be returned.
 
 ## Examples
-
-### Basic
-
-```js {linenos=table,hl_lines=["4-9"],linenostart=1}
-FAKE(json({
-    ["A",1], ["A",2], ["B",3], ["B", 4]
-}))
-GROUP(
-    by( value(0), "CATEGORY" ),
-    avg( value(1), "AVG" ),
-    sum( value(1), "SUM"),
-    first( value(1) * 10, "x10")
-)
-CSV( header(true) )
-```
-
-**Result**
-{{< figure src="../img/group-type1-ex1.jpg" width="600" >}}
 
 ### timewindow()
 

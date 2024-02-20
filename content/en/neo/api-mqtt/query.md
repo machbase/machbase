@@ -40,14 +40,17 @@ After establised MQTT sesion by exchanging `CONNECT`and `CONNACK`, Client should
 
 ```mermaid
 sequenceDiagram
-    autonumber
+    CLIENT->> SERVER: CONNECT
+    activate SERVER
+    SERVER -->> CLIENT: CONNACK
+    deactivate SERVER
 
     CLIENT ->> SERVER: SUBSCRIBE 'db/reply'
     activate SERVER
     SERVER -->> CLIENT: SUBACK
     deactivate SERVER
 
-    loop
+    loop async
         CLIENT ->> SERVER: PUBLISH 'db/query'
         activate SERVER
         SERVER -->> CLIENT: PUBACK
@@ -58,6 +61,8 @@ sequenceDiagram
         CLIENT -->> SERVER: PUBACK
         deactivate CLIENT
     end
+
+    CLIENT->> SERVER: DISCONNECT
 ```
 
 The messages ➍, ➎ are sent by server asynchronous way which is nature of MQTT protocol. Then a client application shouldn't be implemented based specific order of those two messages.

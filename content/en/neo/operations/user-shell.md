@@ -26,7 +26,17 @@ Click "Edit..." and make some changes.
 - Command: any executable command in full path with arguments
 - Theme : terminal color theme
 
+{{< tabs items="cmd.exe,bash,PostgreSQL" >}}
+{{< tab >}}
+{{< figure src="../img/shell-custom-cmd.jpg" width="400px">}}
+{{< /tab >}}
+{{< tab >}}
 {{< figure src="/images/shell-edit.jpg" width="400px">}}
+{{< /tab >}}
+{{< tab >}}
+{{< figure src="../img/shell-custom-psql.jpg" width="400px">}}
+{{< /tab >}}
+{{< /tabs >}}
 
 ### CLI
 

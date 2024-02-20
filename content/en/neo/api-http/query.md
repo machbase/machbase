@@ -33,7 +33,7 @@ http://127.0.0.1:5654/db/query?q=select%20*%20from%20EXAMPLE%20limit%202
 
 **Available parameters with `format=json`** {{< neo_since ver="8.0.12" />}}
 
-Those options are available only when `format=json`
+* The options are only available when `format=json`. Those options are exclusive each other, applicable only one of them per a request.
 
 | param       | default | description                   |
 |:----------- |---------|:----------------------------- |

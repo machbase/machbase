@@ -18,11 +18,23 @@ Write API's endpoint is "/db/write/" following by table name, `/db/write/{TABLE}
 | timeformat  | ns      | Time format: s, ms, us, ns      |
 | tz          | UTC     | Time Zone: UTC, Local and location spec |
 | method      | insert  | Wrting methods: insert, append  |
+
+**Available parameters with `Content-Type: text/csv`**
+
+These options are only applicable when the content body is in CSV format.
+
+| param       | default | description                     |
+|:----------- |---------|:------------------------------- |
 | heading     | false   | If CSV contains header line, set `true` to skip the first line|
 | delimiter   | ,       | CSV delimiter, ignored if content is not csv |
 
+
+**Content-Type Header**
+
 The machbase-neo server recognizes the format of incoming data stream by `Content-Type` header,
 for example, `Content-Type: application/json` for JSON data, `Content-Type: text/csv` for csv data.
+
+**Content-Encoding Header**
 
 If client sends gzip'd compress stream, it should set the header `Content-Encoding: gzip` 
 that tells the machbase-neo the incoming data stream is encoded in gzip.
