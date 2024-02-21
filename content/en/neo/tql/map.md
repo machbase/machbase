@@ -310,6 +310,7 @@ CSV()
 0.5,6
 1,11
 ```
+
 ## PUSHVALUE()
 
 *Syntax*: `PUSHVALUE( idx, value [, name] )` {{< neo_since ver="8.0.5" />}}
@@ -318,7 +319,19 @@ CSV()
 - `value` *expression* New value
 - `name` *string* column's name (default 'column')
 
-Insert the given value into the current values.
+Insert the given value (new column) into the current values.
+
+```js {linenos=table,hl_lines=["2-3"],linenostart=1}
+FAKE( linspace(0, 1, 3))
+PUSHVALUE(1, value(0) * 10)
+CSV()
+```
+
+```csv
+0.0,0
+0.5,5
+1.0,10
+```
 
 ## POPVALUE()
 
@@ -326,7 +339,20 @@ Insert the given value into the current values.
 
 - `idx` *int* array of indexes that will removed from values
 
-It removes elements that specified by `idx`es from value array.
+It removes column of values that specified by `idx`es from value array.
+
+```js {linenos=table,hl_lines=["2-3"],linenostart=1}
+FAKE( linspace(0, 1, 3))
+PUSHVALUE(1, value(0) * 10)
+POPVALUE(0)
+CSV()
+```
+
+```csv
+0
+5
+10
+```
 
 ## MAPVALUE()
 
@@ -342,7 +368,19 @@ It removes elements that specified by `idx`es from value array.
 
 If the `idx` is out of range, it works as `PUSHVALUE()` does. `MAPVALUE(-1, value(1)+'_suffix')` inserts a new string value that concatenates '_suffix' with the 2nd element of value.
 
-An example usage of math functions with `MAPVALUE`.
+```js {linenos=table,hl_lines=["2-3"],linenostart=1}
+FAKE( linspace(0, 1, 3))
+MAPVALUE(0, value(0) * 10)
+CSV()
+```
+
+```csv
+0
+5
+10
+```
+
+An example use of mathematic operation with `MAPVALUE`.
 
 ```js {linenos=table,hl_lines=["7"],linenostart=1}
 FAKE(
