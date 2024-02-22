@@ -12,7 +12,7 @@ The basic SINK function might be `INSERT()` which write the incoming records ont
 
 ## INSERT()
 
-*Syntax*: `INSERT( [bridge(),] columns..., table(), tag() )`
+*Syntax*: `INSERT( [bridge(),] columns..., table() [, tag()] )`
 
 `INSERT()` stores incoming records into specified databse table by an 'INSERT' statement for each record.
 
@@ -21,18 +21,35 @@ The basic SINK function might be `INSERT()` which write the incoming records ont
 - `table()` *table('name')*
 - `tag()` *tag('name')*
 
-*Example)*
+- Write records to machbase that contains tag name.
 
-- Insert records into machbase
+```js {{linenos=table,hl_lines=[6]}}
+FAKE(json({
+    ["temperature", 1708582790, 23.45],
+    ["temperature", 1708582791, 24.56]
+}))
+MAPVALUE(1, value(1)*1000000000) // convert epoch sec to nanosec
+INSERT("name", "time", "value", table("example"))
+```
 
-```js
+- Write records to machbase with same tag name.
+
+```js {{linenos=table,hl_lines=[6]}}
+FAKE(json({
+    [1708582792, 32.34],
+    [1708582793, 33.45]
+}))
+MAPVALUE(0, value(0)*1000000000) // convert epoch sec to nanosec
 INSERT("time", "value", table("example"), tag('temperature'))
 ```
 
 - Insert records into bridged database
 
-```js
-INSERT(bridge("sqlite"), "company", "employee", "created_on", table("example"))
+```js {{linenos=table,hl_lines=[2]}}
+INSERT(
+    bridge("sqlite"),
+    "company", "employee", "created_on", table("example")
+)
 ```
 
 ## APPEND()
@@ -42,6 +59,15 @@ INSERT(bridge("sqlite"), "company", "employee", "created_on", table("example"))
 *APPEND()* stores incoming records into specified databse table via the 'append' method of machbase-neo.
 
 - `table()` *table(string)* specify destination table
+
+```js {{linenos=table,hl_lines=[6]}}
+FAKE(json({
+    ["temperature", 1708582794, 12.34],
+    ["temperature", 1708582795, 13.45]
+}))
+MAPVALUE(1, value(1)*1000000000 ) // convert epoch sec to nanosec
+APPEND( table("example") )
+```
 
 ## CSV()
 

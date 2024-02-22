@@ -15,12 +15,6 @@ Utility functions can be commonly used as parameters of any functions.
 
 ## Context
 
-### context()
-
-*Syntax*: `context()`
-
-Returns context object of the script runtime.
-
 ### key()
 
 *Syntax*: `key()`
@@ -57,6 +51,12 @@ If the *tql* script is called via MQTT, the `payload()` returns the payload of t
 - `name` *string* name of the query parameter
 
 When the *tql* script is called via HTTP, the requested query parameters can be accessed by `param()` function.
+
+### context()
+
+*Syntax*: `context()`
+
+Returns context object of the script runtime.
 
 ## String
 
@@ -169,21 +169,16 @@ The verb at the end defines the type and the interpretation of its corresponding
 | v     | default format         |
 | %%    | a single %             |
 
-{{< tabs items="CODE,RESULT">}}
-{{< tab >}}
 ```js {linenos=table,hl_lines=["3"],linenostart=1}
 FAKE( csv(`world,3.141792`) )
 MAPVALUE(1, parseFloat(value(1)))
 MAPVALUE(2, strSprintf(`hello %s? %1.2f`, value(0), value(1)))
 CSV()
 ```
-{{< /tab >}}
-{{< tab >}}
+
 ```csv
 world,3.141792,hello world? 3.14
 ```
-{{< /tab >}}
-{{< /tabs >}}
 
 ### strTime()
 
@@ -447,8 +442,6 @@ Returns time zone that matched with the given name
 
 - `format` *string*
 
-{{< tabs items="CODE,RESULT">}}
-{{< tab >}}
 ```js {linenos=table,hl_lines=["6"],linenostart=1}
 FAKE( json({
     [ 1701345032123456789, 10],
@@ -457,14 +450,11 @@ FAKE( json({
 MAPVALUE(0, time(value(0)) )
 CSV(timeformat("DEFAULT"), tz("Asia/Seoul"))
 ```
-{{< /tab >}}
-{{< tab >}}
+
 ```
 2023-11-30 20:50:32.123,10
 2023-11-30 20:50:43.219,11
 ```
-{{< /tab >}}
-{{< /tabs >}}
 
 | format         | result of timeformatting                          |
 |:---------------|:------------------------------------------------- |
@@ -517,8 +507,6 @@ CSV(timeformat("DEFAULT"), tz("Asia/Seoul"))
 | AM             | AM/PM                                             |
 | nnn...         | 1 to 9 digits fractions of a second               |
 
-{{< tabs items="CODE,RESULT">}}
-{{< tab >}}
 ```js {linenos=table,hl_lines=["6"],linenostart=1}
 FAKE( json({
     [ 1701345032123456789, 10],
@@ -527,15 +515,11 @@ FAKE( json({
 MAPVALUE(0, time(value(0)) )
 CSV( sqlTimeformat("YYYY-MM-DD HH24:MI:SS.nnnnnn"), tz("Asia/Seoul") )
 ```
-{{< /tab >}}
-{{< tab >}}
+
 ```
 2023-11-30 20:50:32.123456,10
 2023-11-30 20:50:43.219876,11
 ```
-{{< /tab >}}
-{{< /tabs >}}
-
 
 ### ansiTimeformat()
 
@@ -543,8 +527,6 @@ CSV( sqlTimeformat("YYYY-MM-DD HH24:MI:SS.nnnnnn"), tz("Asia/Seoul") )
 
 - `format` *string*
 
-{{< tabs items="CODE,RESULT">}}
-{{< tab >}}
 ```js {linenos=table,hl_lines=["6"],linenostart=1}
 FAKE( json({
     [ 1701345032123456789, 10],
@@ -553,14 +535,11 @@ FAKE( json({
 MAPVALUE(0, time(value(0)) )
 CSV( ansiTimeformat("yyyy-mm-dd hh:nn:ss.ffffff"), tz("UTC"))
 ```
-{{< /tab >}}
-{{< tab >}}
+
 ```
 2023-11-30 11:50:32.123456,10
 2023-11-30 11:50:43.219876,11
 ```
-{{< /tab >}}
-{{< /tabs >}}
 
 | format         | result of timeformatting                          |
 |:---------------|:------------------------------------------------- |
@@ -620,11 +599,25 @@ FAKE(meshgrid(linspace(-4,4,100), linspace(-4,4, 100)))
 MAPVALUE(2,
     sin(pow(value(0), 2) + pow(value(1), 2)) / (pow(value(0), 2) + pow(value(1), 2))
 )
-CHART_LINE3D()
+MAPVALUE(0, list(value(0), value(1), value(2)))
+POPVALUE(1, 2)
+CHART(
+    plugins("gl"),
+    size("600px", "600px"),
+    chartOption({
+        grid3D:{},
+        xAxis3D:{},
+        yAxis3D:{},
+        zAxis3D:{},
+        series:[
+            {type: "line3D", data: column(0)},
+        ]
+    })
+)
 ```
 {{< /tab >}}
 {{< tab >}}
-![tql-math-example](../img/tql-math-example.jpg)
+{{< figure src="../img/tql-math-example.jpg" width="380px" >}}
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -652,11 +645,28 @@ FAKE(
     )
 )
 MAPVALUE(2, abs( simplex(123, value(0), value(1)) ) * 10)
-CHART_BAR3D( opacity(1.0), visualMap(0, 8), gridSize(100,10,100))
+MAPVALUE(0, list(value(0), value(1), value(2)))
+CHART(
+    plugins("gl"),
+    size("600px", "600px"),
+    chartOption({
+        visualMap: {
+            max: 8,
+            inRange:{ color:[ 
+                    "#313695", "#74add1", "#e0f3f8",
+                    "#fee090",  "#f46d43", "#a50026"]}
+        },
+        grid3D:{ boxWidth:100, boxDepth:100, boxHeight:20},
+        xAxis3D:{}, yAxis3D:{}, zAxis3D:{},
+        series:[
+            {type: "bar3D", data: column(0), itemStyle:{opacity:1.0}},
+        ]
+    })
+)
 ```
 {{< /tab >}}
 {{< tab >}}
-{{< figure src="../img/map_simplex.jpg" width="300px" >}}
+{{< figure src="../img/map_simplex.jpg" width="430px" >}}
 {{< /tab >}}
 {{< /tabs >}}
 
