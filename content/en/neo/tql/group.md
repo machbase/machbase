@@ -84,6 +84,10 @@ There are two types of aggregator functions, Type 1 functions only keep the fina
 Type 2 functions hold the whole data of a group, it uses the data to produce the result of the aggregation then release memory for the next group.
 If `GROUP()` use `lazy(true)` and Type 2 functions together, it holds the entire input data of the related columns.
 
+### Options
+
+`where()`, `nullValue()`, `predict()` and `label` arguments are the optional and it represents the `option` of the each function syntax description below.
+
 #### where()
 
 *Syntax*: `where(predicate)` {{< neo_since ver="8.0.13" />}}
@@ -110,11 +114,7 @@ If `GROUP()` use `lazy(true)` and Type 2 functions together, it holds the entire
 | `FritschButland`             | A piecewise cubic 1-dimensional interpolation with continuous value and first derivative. <br/> See Fritsch, F. N. and Butland, J., "A method for constructing local monotone piecewise cubic interpolants" (1984), SIAM J. Sci. Statist. Comput., 5(2), pp. 300-304. |
 | `LinearRegression`           | Linear regression with nearby values                  |
 
-### options
-
-`where()`, `nullValue()`, `predict()` and `label` arguments are the optional and it represents the `option` of the each function syntax description below.
-
-### functions
+### Functions
 
 #### avg()
 
