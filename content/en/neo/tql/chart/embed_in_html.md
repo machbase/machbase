@@ -1,5 +1,6 @@
 ---
 title: Embed in HTML
+type: docs
 weight: 10
 ---
 
@@ -15,7 +16,7 @@ weight: 10
 
 ## JSON Response
 
-Call *.tql* script file with a special header `X-Chart-Output: json` to produce the result in JSON instead of full HTML document,
+Call *.tql* script file with a special header `X-Chart-Output: json` {{< neo_since ver="8.0.14" />}} to produce the result in JSON instead of full HTML document,
 so that caller can embed the chart into any place of the HTML DOM.
 
 When the reponse of `/db/tql` is JSON, it contains required addresses of the result javascript.
