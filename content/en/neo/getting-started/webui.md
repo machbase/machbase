@@ -28,7 +28,7 @@ Copy the below DDL statement and paste it to the editor.
 CREATE TAG TABLE IF NOT EXISTS example (
   name varchar(100) primary key,
   time datetime basetime,
-  value double
+  value double summarized
 );
 ```
 
