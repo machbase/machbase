@@ -116,7 +116,7 @@ It may equivalent to `... WHERE ... TIME BETWEEN <fromTime> AND <toTime>...`.
 
 You can specify `fromTime` and `toTime` with 'now' and 'last' with delta duration expression. 
 For example, `'now-1h30m'` specifies the time that 1 hour 30 minutes before from now.
-`'last-30s'` means 30 seconds before the lastest(=max) time of the `base_time_coolumn`.
+`'last-30s'` means 30 seconds before the lastest(=max) time of the `base_time_column`.
 
 If `period` is specified it will generate 'GROUP BY' experssion with aggregation SQL functions.
 
@@ -167,7 +167,7 @@ If `payload()` is used, it will reads CSV from HTTP POST request body stream. It
 - `file() | payload()` input stream
 - `field(idx, type, name)` specifying fields
 - `header(bool)` specifies if the first line of input stream is a header
-- `charset(string)` sepcify charset if the CSV data is in non UTF-8. {{< neo_since ver="8.0.8" />}}.
+- `charset(string)` specify charset if the CSV data is in non UTF-8. {{< neo_since ver="8.0.8" />}}.
 
 *Example)*
 
@@ -231,7 +231,7 @@ Returns the input stream of the request content if the *tql* script has been inv
 Specify field-types of the input CSV data.
 
 - `idx` *int* 0-based index of the field.
-- `typefunc` sepcify the type of the field. (see below)
+- `typefunc` specify the type of the field. (see below)
 - `name` *string* specify the name of the field.
 
 | type function    | type      |
@@ -371,6 +371,52 @@ Producing "fake" data by given generator.
 *Syntax*: `oscillator( freq() [, freq()...], range() )`
 
 Generating wave data by given frequency and time range. If provide multiple `freq()` arguments, it composites waves.
+
+{{< tabs items="Clean,Add noise">}}
+{{< tab >}}
+```js {{linenos=table,hl_lines=[1],linenostart=1}}
+FAKE( oscillator( freq(3, 1.0), range("now-3s", "3s", "5ms") ))
+// | 0        1
+// | time     amplitude
+MAPVALUE(0, list(value(0), value(1)))
+// | 0                  1
+// | (time, amplitude)  amplitude
+POPVALUE(1)
+// | 0
+// | (time, amplitude)
+CHART(
+    chartOption({
+        xAxis: { type: "time" },
+        yAxis: {},
+        series:[ { type: "line", data: column(0) } ]
+    })
+)
+```
+{{< /tab >}}
+{{< tab >}}
+```js {{linenos=table,hl_lines=[4],linenostart=1}}
+FAKE( oscillator( freq(3, 1.0), range("now-3s", "3s", "5ms") ))
+// | 0        1
+// | time     amplitude
+MAPVALUE(1, value(1) + (random()-0.5) * 0.2 )
+// | 0        1
+// | time     amplitude
+MAPVALUE(0, list(value(0), value(1)))
+// | 0                  1
+// | (time, amplitude)  amplitude
+POPVALUE(1)
+// | 0
+// | (time, amplitude)
+CHART(
+    chartOption({
+        xAxis: { type: "time" },
+        yAxis: {},
+        series:[ { type: "line", data: column(0) } ]
+    })
+)
+```
+{{< /tab >}}
+{{< /tabs >}}
 
 #### freq()
 
