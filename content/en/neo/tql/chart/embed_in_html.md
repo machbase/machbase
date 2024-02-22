@@ -16,7 +16,8 @@ weight: 10
 
 ## JSON Response
 
-Call *.tql* script file with a special header `X-Chart-Output: json` {{< neo_since ver="8.0.14" />}} to produce the result in JSON instead of full HTML document,
+Call *.tql* script file with a custom HTTP header `X-Chart-Output: json` {{< neo_since ver="8.0.14" />}} 
+to produce the result in JSON instead of full HTML document,
 so that caller can embed the chart into any place of the HTML DOM.
 
 When the reponse of `/db/tql` is JSON, it contains required addresses of the result javascript.
@@ -55,8 +56,8 @@ The line 22, 23 of the below example, it merged `jsAssets` and `jsCodeAssets` an
             }).then(function(obj) {
                 const chartDiv = document.createElement('div')
                 chartDiv.setAttribute("id", obj.chartID)
-                chartDiv.style.width=obj.style.width
-                chartDiv.style.height=obj.style.height
+                chartDiv.style.width = obj.style.width
+                chartDiv.style.height = obj.style.height
                 document.getElementById('chart_is_here').appendChild(chartDiv)
                 const assets = obj.jsAssets.concat(obj.jsCodeAssets)
                 assets.forEach((js) => loadJS(js))
@@ -121,4 +122,46 @@ In this example, the `chartID()` (line 19) is provided and the document has a `<
         </script>
     </body>
 </html>
+```
+
+## Loading Sequence Problem
+
+In the examples above, we loaded the result javascript files in a time for briefness.
+```js {linenos=table,linenostart=38}
+const assets = obj.jsAssets.concat(obj.jsCodeAssets)
+assets.forEach((js) => loadJS(js))
+```
+
+In real application, the chart library (apache echarts) in `obj.jsAssets` might not be completely loaded before `obj.jsCodeAssets` are loaded.
+If there is a problem in loading sequence, it can be fixed like below code.
+
+Add `load` event listener to enable callback for load-completion.
+
+```js {linenos=table,hl_lines=["5-9"],linenostart=5}
+function loadJS(url, callback) {
+    var scriptElement = document.createElement('script');
+    scriptElement.src = url;
+    document.getElementsByTagName('body')[0].appendChild(scriptElement);
+    scriptElement.addEventListener("load", ()=>{
+        if (callback !== undefined) {
+            callback()
+        }
+    })
+}
+```
+
+When the last `jsAssets` loaded, start to load `jsCodeAssets`.
+
+```js {linenos=table,hl_lines=[5,"7-9"],linenostart=38}
+// const assets = obj.jsAssets.concat(obj.jsCodeAssets)
+// assets.forEach((js) => loadJS(js))
+for (let i = 0; i < obj.jsAssets.length; i++ ){
+    if (i < obj.jsAssets.length -1){ 
+        loadJS(obj.jsAssets[i])
+    } else { // when the last asset is loaded, start to load jsCodeAssets
+        loadJS(obj.jsAssets[i], () => {
+            obj.jsCodeAssets.forEach(js => loadJS(js)) 
+        })
+    }
+}
 ```
