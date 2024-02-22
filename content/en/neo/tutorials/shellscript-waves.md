@@ -277,7 +277,7 @@ machbase-neo shell sql \
 
 ### Query Time format
 
-Use `--timeformat` option to sepcify time output format.
+Use `--timeformat` option to specify time output format.
 
 Execute `help timeformat` to display pre-defined formats and syntax for custom format.
 
