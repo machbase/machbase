@@ -8,7 +8,7 @@ weight: 10
 ```html {linenos=table,hl_lines=[3],linenostart=1}
 <html>
     <body>
-        <iframe src="doughunut.tql" width="600" height="600"/>
+        <iframe src="basic_line.tql" width="600" height="600"/>
     </body>
 </html>
 ```
@@ -47,7 +47,7 @@ The line 22, 23 of the below example, it merged `jsAssets` and `jsCodeAssets` an
             }
         </script>
         <script>
-            fetch("doughunut.tql", {
+            fetch("basic_line.tql", {
                 headers: { "X-Chart-Output": "json" }
             }).then(function(rsp){
                 return rsp.json()
