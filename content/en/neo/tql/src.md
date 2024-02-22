@@ -32,16 +32,18 @@ SQL (`
 `)
 ```
 
+- Query with variadic arguments
+
+```js
+SQL(`SELECT time, value FROM example WHERE name = ? LIMIT ?`,
+    param('name') ?? 'temperature',
+    param('limit') ?? 10)
+```
+
 - Query to bridge database
 
 ```js
 SQL( bridge('sqlite'), `SELECT * FROM EXAMPLE`)
-```
-
-- With variadic arguments
-
-```js
-SQL(`SELECT time, value FROM example LIMIT ?`, param('limit') ?? 10)
 ```
 
 ```js
