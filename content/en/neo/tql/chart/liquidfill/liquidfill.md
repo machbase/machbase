@@ -4,11 +4,10 @@ type: docs
 weight: 500
 ---
 
-```js
+```js {{linenos="table",hl_lines=[5,8]}}
 FAKE(json({
     [0.6]
 }))
-TRANSPOSE()
 CHART(
     plugins("liquidfill"),
     chartOption({

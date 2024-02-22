@@ -8,9 +8,34 @@ It is required to properly read (translate) data that is sent from sensors.
 And also read and send data from database to other systems in demanded format.
 
 {{< tabs items="CSV,JSON,CHART">}}
-{{< tab >}} {{< figure src="./img/tql_intro_csv.jpg">}} {{</ tab >}}
-{{< tab >}} {{< figure src="./img/tql_intro_json.jpg">}} {{</ tab >}}
-{{< tab >}} {{< figure src="./img/tql_intro.jpg">}} {{</ tab >}}
+{{< tab >}}
+```js {linenos=table,hl_lines=[2],linenostart=1}
+SQL( `select time, value from example where name='sig.1' limit 100` )
+CSV( timeformat("Default") )
+```
+{{< figure src="./img/tql_intro_csv.jpg">}}
+{{</ tab >}}
+{{< tab >}}
+```js {linenos=table,hl_lines=[2],linenostart=1}
+SQL( `select time, value from example where name='sig.1' limit 100` )
+JSON( timeformat("Default") )
+```
+{{< figure src="./img/tql_intro_json.jpg">}}
+{{</ tab >}}
+{{< tab >}}
+```js {linenos=table,hl_lines=[2-9],linenostart=1}
+SQL( `select time, value from example where name='sig.1' limit 100` )
+CHART(
+    size("600px", "340px"),
+    chartOption({
+        xAxis:{data:column(0)},
+        yAxis:{},
+        series:[ { type:"line", data:column(1)} ]
+    })
+)
+```
+{{< figure src="./img/tql_intro.jpg">}}
+{{</ tab >}}
 {{</ tabs >}}
 
 The purpose of *TQL* is transforming data format.
@@ -81,3 +106,7 @@ CHART(
 {{< figure src="./img/groupbykey_stddev.jpg" width="500" >}}
 {{</ tab >}}
 {{</ tabs >}}
+
+## In this chapter
+
+{{< children_toc />}}

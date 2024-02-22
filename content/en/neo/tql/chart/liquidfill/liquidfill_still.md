@@ -4,7 +4,7 @@ type: docs
 weight: 520
 ---
 
-```js
+```js {{linenos="table",hl_lines=[6,"10-13"]}}
 FAKE(json({
     [0.6, 0.5, 0.4, 0.3]
 }))

@@ -135,159 +135,6 @@ TAG0,1628694000000000000,10
 TAG0,1628780400000000000,11
 ```
 
-## MAPKEY()
-
-![map_mapkey](../img/map_mapkey.jpg)
-
-*Syntax*: `MAPKEY( newkey )`
-
-Replace current key value with the given newkey.
-
-```js {linenos=table,hl_lines=["9"],linenostart=1}
-FAKE( json({
-    [ "TAG0", 1628694000000000000, 10],
-    [ "TAG0", 1628780400000000000, 11],
-    [ "TAG0", 1628866800000000000, 12],
-    [ "TAG0", 1628953200000000000, 13],
-    [ "TAG0", 1629039600000000000, 14],
-    [ "TAG0", 1629126000000000000, 15]
-}))
-MAPKEY(time("now"))
-PUSHKEY("do-not-see")
-CSV()
-```
-```csv
-1701343504143299000,TAG0,1628694000000000000,10
-1701343504143303000,TAG0,1628780400000000000,11
-1701343504143308000,TAG0,1628866800000000000,12
-1701343504143365000,TAG0,1628953200000000000,13
-1701343504143379000,TAG0,1629039600000000000,14
-1701343504143383000,TAG0,1629126000000000000,15
-```
-
-## PUSHKEY()
-
-![map_pushkey](../img/map_pushkey.jpg)
-
-*Syntax*: `PUSHKEY( newkey )`
-
-Apply new key on each record. The orignal key is push into value tuple.
-
-For example, if an original record was `{key: 'k1', value: [v1, v2]}` and applied `PUSHKEY(newkey)`, it produces the updated record as `{key: newkey, values: [k1, v1, v1]}`.
-
-```js {linenos=table,hl_lines=["10"],linenostart=1}
-FAKE( json({
-    [ "TAG0", 1628694000000000000, 10],
-    [ "TAG0", 1628780400000000000, 11],
-    [ "TAG0", 1628866800000000000, 12],
-    [ "TAG0", 1628953200000000000, 13],
-    [ "TAG0", 1629039600000000000, 14],
-    [ "TAG0", 1629126000000000000, 15]
-}))
-MAPKEY(time("now"))
-PUSHKEY("do-not-see")
-CSV()
-```
-```csv
-1701343504143299000,TAG0,1628694000000000000,10
-1701343504143303000,TAG0,1628780400000000000,11
-1701343504143308000,TAG0,1628866800000000000,12
-1701343504143365000,TAG0,1628953200000000000,13
-1701343504143379000,TAG0,1629039600000000000,14
-1701343504143383000,TAG0,1629126000000000000,15
-```
-
-## POPKEY()
-
-![map_popkey](../img/map_popkey.jpg)
-
-*Syntax*: `POPKEY( [idx] )`
-
-Drop current key of the record, then promote *idx*th element of *tuple* as a new key.
-
-For example, if an original record was `{key: k, value: [v1, v2, v3]}` and applied `POPKEY(1)`, it produces the updated record as `{key: v2, value:[v1, v3]}`.
-
-if use `POPKEY()` without argument it is equivalent with `POPKEY(0)` which is promoting the first element of the value tuple as the key.
-
-{{< tabs items="POPKEY(),POPKEY(idx)">}}
-{{< tab >}}
-```js {linenos=table,hl_lines=["9"],linenostart=1}
-FAKE( json({
-    [ "TAG0", 1628694000000000000, 10],
-    [ "TAG0", 1628780400000000000, 11],
-    [ "TAG0", 1628866800000000000, 12],
-    [ "TAG0", 1628953200000000000, 13],
-    [ "TAG0", 1629039600000000000, 14],
-    [ "TAG0", 1629126000000000000, 15]
-}))
-POPKEY()
-CSV()
-```
-```csv
-1628694000000000000,10
-1628780400000000000,11
-1628866800000000000,12
-1628953200000000000,13
-1629039600000000000,14
-1629126000000000000,15
-```
-{{< /tab >}}
-{{< tab >}}
-```js {linenos=table,hl_lines=["9"],linenostart=1}
-FAKE( json({
-    [ "TAG0", 1628694000000000000, 10],
-    [ "TAG0", 1628780400000000000, 11],
-    [ "TAG0", 1628866800000000000, 12],
-    [ "TAG0", 1628953200000000000, 13],
-    [ "TAG0", 1629039600000000000, 14],
-    [ "TAG0", 1629126000000000000, 15]
-}))
-POPKEY(1)
-CSV()
-```
-```csv
-TAG0,10
-TAG0,11
-TAG0,12
-TAG0,13
-TAG0,14
-TAG0,15
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-## GROUPBYKEY()
-
-![map_popkey](../img/map_groupbykey.jpg)
-
-*Syntax*: `GROUPBYKEY( [lazy(boolean)] )`
-
-- `lazy(boolean)` If it set `false` which is default, *GROUPBYKEY()* yields new grouped record when the key of incoming record has changed from previous record. If it set `true`, *GROUPBYKEY()* waits the end of the input stream before yield any record. 
-
-`GROUPBYKEY` is equivalent expression with `GROUP( by( key() ) )`.
-
-## GROUP()
-
-*Syntax*: `GROUP( [lazy(boolean),] by [, aggregators...] )` {{< neo_since ver="8.0.7" />}}
-
-- `lazy(boolean)` If it set `false` which is default, *GROUP()* yields new aggregated record when the value of `by()` has changed from previous record. If it set `true`, *GROUP()* waits the end of the input stream before yield any record.
-
-- `by(value [, name])` The value how to group the values.
-
-- `aggregators` *array of aggregator* Aggregate functions
-
-Group aggregation function, please refer to the [GROUP()](/neo/tql/group/) section for the detail description.
-
-## FLATTEN()
-
-![map_flatten](../img/map_flatten.jpg)
-
-*Syntax*: `FLATTEN()`
-
-It works the opposite way of *GROUPBYKEY()*. Take a record whose value is multi-dimension tuple, produces multiple records for each elements of the tuple reducing the dimension.
-
-For example, if an original record was `{key:k, value:[[v1,v2],[v3,v4],...,[vx,vy]]}`, it produces the new multiple records as `{key:k, value:[v1, v2]}`, `{key:k, value:{v3, v4}}`...`{key:k, value:{vx, vy}}`.
-
 ## SET()
 
 *Syntax*: `SET(name, expression)` {{< neo_since ver="8.0.12" />}}
@@ -310,6 +157,19 @@ CSV()
 0.5,6
 1,11
 ```
+
+## GROUP()
+
+*Syntax*: `GROUP( [lazy(boolean),] by [, aggregators...] )` {{< neo_since ver="8.0.7" />}}
+
+- `lazy(boolean)` If it set `false` which is default, *GROUP()* yields new aggregated record when the value of `by()` has changed from previous record. If it set `true`, *GROUP()* waits the end of the input stream before yield any record.
+
+- `by(value [, name])` The value how to group the values.
+
+- `aggregators` *array of aggregator* Aggregate functions
+
+Group aggregation function, please refer to the [GROUP()](/neo/tql/group/) section for the detail description.
+
 ## PUSHVALUE()
 
 *Syntax*: `PUSHVALUE( idx, value [, name] )` {{< neo_since ver="8.0.5" />}}
@@ -318,7 +178,19 @@ CSV()
 - `value` *expression* New value
 - `name` *string* column's name (default 'column')
 
-Insert the given value into the current values.
+Insert the given value (new column) into the current values.
+
+```js {linenos=table,hl_lines=[2],linenostart=1}
+FAKE( linspace(0, 1, 3))
+PUSHVALUE(1, value(0) * 10)
+CSV()
+```
+
+```csv
+0.0,0
+0.5,5
+1.0,10
+```
 
 ## POPVALUE()
 
@@ -326,7 +198,20 @@ Insert the given value into the current values.
 
 - `idx` *int* array of indexes that will removed from values
 
-It removes elements that specified by `idx`es from value array.
+It removes column of values that specified by `idx`es from value array.
+
+```js {linenos=table,hl_lines=[3],linenostart=1}
+FAKE( linspace(0, 1, 3))
+PUSHVALUE(1, value(0) * 10)
+POPVALUE(0)
+CSV()
+```
+
+```csv
+0
+5
+10
+```
 
 ## MAPVALUE()
 
@@ -342,20 +227,40 @@ It removes elements that specified by `idx`es from value array.
 
 If the `idx` is out of range, it works as `PUSHVALUE()` does. `MAPVALUE(-1, value(1)+'_suffix')` inserts a new string value that concatenates '_suffix' with the 2nd element of value.
 
-An example usage of math functions with `MAPVALUE`.
+```js {linenos=table,hl_lines=[2],linenostart=1}
+FAKE( linspace(0, 1, 3))
+MAPVALUE(0, value(0) * 10)
+CSV()
+```
 
-```js {linenos=table,hl_lines=["7"],linenostart=1}
+```csv
+0
+5
+10
+```
+
+An example use of mathematic operation with `MAPVALUE`.
+
+```js {linenos=table,hl_lines=["7-8"],linenostart=1}
 FAKE(
     meshgrid(
-        linspace(-1.0,1.0,200),
-        linspace(-1.0, 1.0, 200)
+        linspace(-4,4,100),
+        linspace(-4,4, 100)
     )
 )
-MAPVALUE(2, sin(10*(pow(value(0), 2) + pow(value(1),2 )))/10 )
-CHART_LINE3D(
-    lineWidth(4),
-    gridSize(100, 30, 100),
-    visualMap(-0.12, 0.12)
+MAPVALUE(2, sin(pow(value(0), 2) + pow(value(1), 2)) / (pow(value(0), 2) + pow(value(1), 2)))
+MAPVALUE(0, list(value(0), value(1), value(2)))
+POPVALUE(1, 2)
+CHART(
+    plugins("gl"),
+    size("600px", "600px"),
+    chartOption({
+        grid3D:{},
+        xAxis3D:{}, yAxis3D:{}, zAxis3D:{},
+        series:[
+            {type: "line3D", data: column(0)},
+        ]
+    })
 )
 ```
 
@@ -465,7 +370,7 @@ FAKE(csv(`CITY,DATE,TEMPERATURE,HUMIDITY,NOISE
 Tokyo,2023/12/07,23,30,40
 Beijing,2023/12/07,24,50,60
 `))
-TRANSPOSE( header(true), fixed(0, 1) ) // transpose column 2, 3, 4 with its header
+TRANSPOSE( header(true), 2, 3, 4 ) // transpose column 2, 3, 4 with its header
 MAPVALUE(0, strToUpper(value(0)) + "-" + value(2)) // concatenate city and transposed column name (from header)
 MAPVALUE(1, parseTime(value(1), sqlTimeformat("YYYY/MM/DD"), tz("UTC"))) // conver time
 MAPVALUE(3, parseFloat(value(3))) // convert value into number
@@ -756,6 +661,147 @@ WHEN( condition,
 )
 // ...
 ```
+
+## FLATTEN()
+
+![map_flatten](../img/map_flatten.jpg)
+
+*Syntax*: `FLATTEN()`
+
+It works the opposite way of *GROUPBYKEY()*. Take a record whose value is multi-dimension tuple, produces multiple records for each elements of the tuple reducing the dimension.
+
+For example, if an original record was `{key:k, value:[[v1,v2],[v3,v4],...,[vx,vy]]}`, it produces the new multiple records as `{key:k, value:[v1, v2]}`, `{key:k, value:{v3, v4}}`...`{key:k, value:{vx, vy}}`.
+
+## MAPKEY()
+
+![map_mapkey](../img/map_mapkey.jpg)
+
+*Syntax*: `MAPKEY( newkey )`
+
+Replace current key value with the given newkey.
+
+```js {linenos=table,hl_lines=["9"],linenostart=1}
+FAKE( json({
+    [ "TAG0", 1628694000000000000, 10],
+    [ "TAG0", 1628780400000000000, 11],
+    [ "TAG0", 1628866800000000000, 12],
+    [ "TAG0", 1628953200000000000, 13],
+    [ "TAG0", 1629039600000000000, 14],
+    [ "TAG0", 1629126000000000000, 15]
+}))
+MAPKEY(time("now"))
+PUSHKEY("do-not-see")
+CSV()
+```
+```csv
+1701343504143299000,TAG0,1628694000000000000,10
+1701343504143303000,TAG0,1628780400000000000,11
+1701343504143308000,TAG0,1628866800000000000,12
+1701343504143365000,TAG0,1628953200000000000,13
+1701343504143379000,TAG0,1629039600000000000,14
+1701343504143383000,TAG0,1629126000000000000,15
+```
+
+## PUSHKEY()
+
+![map_pushkey](../img/map_pushkey.jpg)
+
+*Syntax*: `PUSHKEY( newkey )`
+
+Apply new key on each record. The orignal key is push into value tuple.
+
+For example, if an original record was `{key: 'k1', value: [v1, v2]}` and applied `PUSHKEY(newkey)`, it produces the updated record as `{key: newkey, values: [k1, v1, v1]}`.
+
+```js {linenos=table,hl_lines=["10"],linenostart=1}
+FAKE( json({
+    [ "TAG0", 1628694000000000000, 10],
+    [ "TAG0", 1628780400000000000, 11],
+    [ "TAG0", 1628866800000000000, 12],
+    [ "TAG0", 1628953200000000000, 13],
+    [ "TAG0", 1629039600000000000, 14],
+    [ "TAG0", 1629126000000000000, 15]
+}))
+MAPKEY(time("now"))
+PUSHKEY("do-not-see")
+CSV()
+```
+```csv
+1701343504143299000,TAG0,1628694000000000000,10
+1701343504143303000,TAG0,1628780400000000000,11
+1701343504143308000,TAG0,1628866800000000000,12
+1701343504143365000,TAG0,1628953200000000000,13
+1701343504143379000,TAG0,1629039600000000000,14
+1701343504143383000,TAG0,1629126000000000000,15
+```
+
+## POPKEY()
+
+![map_popkey](../img/map_popkey.jpg)
+
+*Syntax*: `POPKEY( [idx] )`
+
+Drop current key of the record, then promote *idx*th element of *tuple* as a new key.
+
+For example, if an original record was `{key: k, value: [v1, v2, v3]}` and applied `POPKEY(1)`, it produces the updated record as `{key: v2, value:[v1, v3]}`.
+
+if use `POPKEY()` without argument it is equivalent with `POPKEY(0)` which is promoting the first element of the value tuple as the key.
+
+{{< tabs items="POPKEY(),POPKEY(idx)">}}
+{{< tab >}}
+```js {linenos=table,hl_lines=["9"],linenostart=1}
+FAKE( json({
+    [ "TAG0", 1628694000000000000, 10],
+    [ "TAG0", 1628780400000000000, 11],
+    [ "TAG0", 1628866800000000000, 12],
+    [ "TAG0", 1628953200000000000, 13],
+    [ "TAG0", 1629039600000000000, 14],
+    [ "TAG0", 1629126000000000000, 15]
+}))
+POPKEY()
+CSV()
+```
+```csv
+1628694000000000000,10
+1628780400000000000,11
+1628866800000000000,12
+1628953200000000000,13
+1629039600000000000,14
+1629126000000000000,15
+```
+{{< /tab >}}
+{{< tab >}}
+```js {linenos=table,hl_lines=["9"],linenostart=1}
+FAKE( json({
+    [ "TAG0", 1628694000000000000, 10],
+    [ "TAG0", 1628780400000000000, 11],
+    [ "TAG0", 1628866800000000000, 12],
+    [ "TAG0", 1628953200000000000, 13],
+    [ "TAG0", 1629039600000000000, 14],
+    [ "TAG0", 1629126000000000000, 15]
+}))
+POPKEY(1)
+CSV()
+```
+```csv
+TAG0,10
+TAG0,11
+TAG0,12
+TAG0,13
+TAG0,14
+TAG0,15
+```
+{{< /tab >}}
+{{< /tabs >}}
+
+## GROUPBYKEY()
+
+![map_popkey](../img/map_groupbykey.jpg)
+
+*Syntax*: `GROUPBYKEY( [lazy(boolean)] )`
+
+- `lazy(boolean)` If it set `false` which is default, *GROUPBYKEY()* yields new grouped record when the key of incoming record has changed from previous record. If it set `true`, *GROUPBYKEY()* waits the end of the input stream before yield any record. 
+
+`GROUPBYKEY` is equivalent expression with `GROUP( by( key() ) )`.
 
 ## THROTTLE()
 
