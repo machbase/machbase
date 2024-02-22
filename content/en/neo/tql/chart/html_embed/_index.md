@@ -13,15 +13,71 @@ weight: 10
 </html>
 ```
 
+## JSON Response
+
+Call *.tql* script file with a special header `X-Chart-Output: json` to produce the result in JSON instead of full HTML document,
+so that caller can embed the chart into any place of the HTML DOM.
+
+When the reponse of `/db/tql` is JSON, it contains required addresses of the result javascript.
+
+```json
+{
+    "chartID":"NDg4ODQ4MzMxMjgyMDYzMzY",
+    "jsAssets": ["/web/echarts/echarts.min.js"],
+	"jsCodeAssets": ["/web/api/tql-assets/NDg4ODQ4MzMxMjgyMDYzMzY.js"],
+    "style": {
+        "width": "600px",
+        "height": "600px"	
+    },
+    "theme": "white"
+}
+```
+
+The line 22, 23 of the below example, it merged `jsAssets` and `jsCodeAssets` and loaded into the HTML document.
+
+```html {linenos=table,hl_lines=[3,13,18,"22-23"],linenostart=1}
+<html>
+    <body id="body">
+        <div id="chart_is_here"/>
+        <script>
+            function loadJS(url) {
+                var scriptElement = document.createElement('script');
+                scriptElement.src = url;
+                document.getElementsByTagName('body')[0].appendChild(scriptElement);
+            }
+        </script>
+        <script>
+            fetch("doughunut.tql", {
+                headers: { "X-Chart-Output": "json" }
+            }).then(function(rsp){
+                return rsp.json()
+            }).then(function(obj) {
+                const chartDiv = document.createElement('div')
+                chartDiv.setAttribute("id", obj.chartID)
+                chartDiv.style.width=obj.style.width
+                chartDiv.style.height=obj.style.height
+                document.getElementById('chart_is_here').appendChild(chartDiv)
+                const assets = obj.jsAssets.concat(obj.jsCodeAssets)
+                assets.forEach((js) => loadJS(js))
+            }).catch(function(err){
+                console.log("chart fetch error", err)
+            })
+        </script>
+    </body>
+</html>
+```
+
 ## Dynamic TQL
 
 The api `/db/tql` can receive POSTed TQL script and produces the result in javascript.
 Caller side javascrpt can load the result javascript dynamically as the example below.
 
-```html {linenos=table,hl_lines=[3,12,38,39],linenostart=1}
+In this example, the `chartID()` (line 19) is provided and the document has a `<div>` with the same `id`.
+
+```html {linenos=table,hl_lines=[3,12,19,38,39],linenostart=1}
 <html>
     <body id="body">
-        <div id="chart_is_here" style="width:600px; height:600px"/>
+        <div id="chart_is_here"/>
         <script>
             function loadJS(url) {
                 var scriptElement = document.createElement('script');
@@ -39,10 +95,7 @@ Caller side javascrpt can load the result javascript dynamically as the example 
                         CHART(
                             chartID("chart_is_here"),
                             chartOption({
-                                xAxis: {
-                                    type: "category",
-                                    data: column(0)
-                                },
+                                xAxis: { type: "category", data: column(0) },
                                 yAxis: {},
                                 series: [
                                     {
@@ -56,6 +109,9 @@ Caller side javascrpt can load the result javascript dynamically as the example 
             ).then(function(rsp){
                 return rsp.json()
             }).then(function(obj) {
+                const chartDiv = document.getElementById('chart_is_here')
+                chartDiv.style.width = obj.style.width
+                chartDiv.style.height = obj.style.height
                 const assets = obj.jsAssets.concat(obj.jsCodeAssets)
                 assets.forEach((js) => loadJS(js))
             }).catch(function(err){
@@ -64,20 +120,4 @@ Caller side javascrpt can load the result javascript dynamically as the example 
         </script>
     </body>
 </html>
-```
-
-The actual the reponse of `/db/tql` is JSON that points the result javascript.
-The line 38, 39 of the above example, it merged `jsAssets` and `jsCodeAssets` and loaded into the HTML document.
-
-```json
-{
-    "chartID":"chart_is_here",
-    "jsAssets": ["/web/echarts/echarts.min.js"],
-	"jsCodeAssets": ["/web/api/tql-assets/chart_is_here.js"],
-    "style": {
-        "width": "600px",
-        "height": "600px"	
-    },
-    "theme": "white"
-}
 ```
