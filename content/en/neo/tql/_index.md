@@ -106,3 +106,7 @@ CHART(
 {{< figure src="./img/groupbykey_stddev.jpg" width="500" >}}
 {{</ tab >}}
 {{</ tabs >}}
+
+## In this chapter
+
+{{< children_toc />}}

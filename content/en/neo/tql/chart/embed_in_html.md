@@ -24,7 +24,7 @@ When the reponse of `/db/tql` is JSON, it contains required addresses of the res
 
 ```json
 {
-    "chartID":"NDg4ODQ4MzMxMjgyMDYzMzY",
+    "chartID": "NDg4ODQ4MzMxMjgyMDYzMzY",
     "jsAssets": ["/web/echarts/echarts.min.js"],
 	"jsCodeAssets": ["/web/api/tql-assets/NDg4ODQ4MzMxMjgyMDYzMzY.js"],
     "style": {

@@ -23,3 +23,7 @@ Applications and sensors can read/write data via HTTP API.
 | POST    | `/db/query`      | execute query with JSON and form data |
 | POST    | `/db/write`      | write data from JSON and CSV formats  |
 | POST    | `/metrics/write` | write data in ILP (influx line protocol) |
+
+## In this chapter
+
+{{< children_toc />}}
