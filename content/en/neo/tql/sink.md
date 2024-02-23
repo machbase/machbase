@@ -239,8 +239,10 @@ JSON( rowsArray(true) )
 
 Generates a table in markdown format or HTML.
 
-*Syntax*: `MARKDOWN( [html(), rownum(), brief(), briefCount(), precision() ] )`
+*Syntax*: `MARKDOWN( [ options... ] )`
 
+- `tz(string)` time zone, default is `tz('UTC')`
+- `timeformat(string)` specify the format how represents datetime fields, default is `timeformat('ns')`
 - `html(boolean)` produce result by HTML renderer, default `false`
 - `rownum(boolean)` show rownum column
 - `precision` *precision(int)* specify precision of float fields, `precision(-1)` means no restriction, `precision(0)` converts to integer.
