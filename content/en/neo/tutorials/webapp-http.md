@@ -16,52 +16,54 @@ CREATE TAG TABLE IF NOT EXISTS EXAMPLE  (
 );
 ```
 
-## Write data
+## HTML
 
 Let's make a html file named `simple-webapp.html`. machbase-neo supports `.html`, `.js` and `.css` file editing {{< neo_since ver="8.0.14" />}}.
 If you are using previous version of machbase-neo, please update it or use your favorite editor instead.
 
 {{< figure src="../img/simple-webapp-1.jpg" width="600px" >}}
 
+## Write data
+
 Copy and paste the below codes.
 
 ```html {{linenos="table",hl_lines=[6,9,"11-18"]}}
 <html>
-    <head>
-        <script>
-            function submitData() {
-                const value  = Number(document.getElementById("userInput").value)
-                fetch("http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=ms", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        "data": {
-                            "columns": ["name", "time", "value"],
-                            "rows": [
-                                [ "webapp", Date.now(), value ]
-                            ]
-                        }
-                    })
-                }).then(function(rsp){
-                    return rsp.json()
-                }).then(function(obj){
-                    document.getElementById("rspSuccess").innerHTML = "success: " + obj.success
-                    document.getElementById("rspReason").innerHTML = "reason: " + obj.reason
-                    document.getElementById("rspElapse").innerHTML = "elapse: " + obj.elapse
+<head>
+    <script>
+        function submitData() {
+            const value  = Number(document.getElementById("userInput").value)
+            fetch("http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=ms", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    "data": {
+                        "columns": ["name", "time", "value"],
+                        "rows": [
+                            [ "webapp", Date.now(), value ]
+                        ]
+                    }
                 })
-            }
-        </script>
-    </head>
-    <body>
-        <h4> Input data </h4>
-        <form>
-            <input id="userInput">
-            <a href="#" onClick="submitData()">Submit</a>
-        </form>
-        <div id="rspSuccess"></div> <div id="rspReason"></div> <div id="rspElapse"></div>
-    </body>
+            }).then(function(rsp){
+                return rsp.json()
+            }).then(function(obj){
+                document.getElementById("rspSuccess").innerHTML = "success: " + obj.success
+                document.getElementById("rspReason").innerHTML = "reason: " + obj.reason
+                document.getElementById("rspElapse").innerHTML = "elapse: " + obj.elapse
+            })
+        }
+    </script>
+</head>
+<body>
+    <h4> Input data </h4>
+    <form>
+        <input id="userInput">
+        <a href="#" onClick="submitData()">Submit</a>
+    </form>
+    <div id="rspSuccess"></div> <div id="rspReason"></div> <div id="rspElapse"></div>
+</body>
 </html>
 ```
 
@@ -122,7 +124,7 @@ function markdownData() {
 
 ```html {{linenos="table",linenostart=61}}
 <h4> Markdown </h4>
-<a href="#" onClick="markdownData()">Query</a> &nbsp;&nbsp;
+<a href="#" onClick="markdownData()">Markdown</a> &nbsp;&nbsp;
 <input type="checkbox" id="htmlMarkdown">HTML Output<br/>
 <div id=rspMarkdown></div>
 ```
@@ -290,7 +292,7 @@ And add Apache echart library, it is already included in machabse-neo for pre-lo
     <div id=rspQuery></div>
 
     <h4> Markdown </h4>
-    <a href="#" onClick="markdownData()">Query</a> &nbsp;&nbsp;
+    <a href="#" onClick="markdownData()">Markdown</a> &nbsp;&nbsp;
     <input type="checkbox" id="htmlMarkdown">HTML Output<br/>
     <div id=rspMarkdown></div>
 
