@@ -4,13 +4,28 @@ type: docs
 weight: 10
 ---
 
+Save the code below as `basic_line.tql` and we will show you how to embed the result of this *TQL* into web page.
+
+```js
+FAKE( linspace(0, 360, 100))
+MAPVALUE(2, sin((value(0)/180)*PI))
+CHART(
+    theme("white"),
+    chartOption({
+        "xAxis": { "type": "category", "data": column(0) },
+        "yAxis": {},
+        "series": [ { "type": "line", "data": column(1) } ]
+    })
+)
+```
+
 ## IFRAME
 
 ```html {linenos=table,hl_lines=[3],linenostart=1}
 <html>
-    <body>
-        <iframe src="basic_line.tql" width="600" height="600"/>
-    </body>
+<body>
+    <iframe src="basic_line.tql" width="600" height="600"/>
+</body>
 </html>
 ```
 
@@ -35,41 +50,41 @@ When the reponse of `/db/tql` is JSON, it contains required addresses of the res
 }
 ```
 
-The line 22, 23 of the below example, it merged `jsAssets` and `jsCodeAssets` and loaded into the HTML document.
-
-The HTTP header `X-Chart-Output: json` in line 13 is defined 
+- Line 3, Pre-load apache echarts library which is included in `jsAssets` fields in above response example.
+- Line 14, The HTTP header `X-Chart-Output: json`.
 so that machbase-neo TQL engine generates a JSON containing meta information of chart instead of full HTML document.
 Becuase when a client requests a `*.tql` file with `GET` method, machbase-neo generates HTML document for the chart by default.
+- Line 23, Load js files into the HTML DOM tree that are generated and replied in `jsCodeAssets`.
 
-```html {linenos=table,hl_lines=[3,13,18,"22-23"],linenostart=1}
+```html {linenos=table,hl_lines=[4,14,19,23],linenostart=1}
 <html>
-    <body id="body">
-        <div id="chart_is_here"/>
-        <script>
-            function loadJS(url) {
-                var scriptElement = document.createElement('script');
-                scriptElement.src = url;
-                document.getElementsByTagName('body')[0].appendChild(scriptElement);
-            }
-        </script>
-        <script>
-            fetch("basic_line.tql", {
-                headers: { "X-Chart-Output": "json" }
-            }).then(function(rsp){
-                return rsp.json()
-            }).then(function(obj) {
-                const chartDiv = document.createElement('div')
-                chartDiv.setAttribute("id", obj.chartID)
-                chartDiv.style.width = obj.style.width
-                chartDiv.style.height = obj.style.height
-                document.getElementById('chart_is_here').appendChild(chartDiv)
-                const assets = obj.jsAssets.concat(obj.jsCodeAssets)
-                assets.forEach((js) => loadJS(js))
-            }).catch(function(err){
-                console.log("chart fetch error", err)
-            })
-        </script>
-    </body>
+<body>
+    <script src="/web/echarts/echarts.min.js"></script>
+    <div id="chart_is_here"></div>
+    <script>
+        function loadJS(url) {
+            var scriptElement = document.createElement('script');
+            scriptElement.src = url;
+            document.getElementsByTagName('body')[0].appendChild(scriptElement);
+        }
+    </script>
+    <script>
+        fetch("basic_line.tql", {
+            headers: { "X-Chart-Output": "json" }
+        }).then(function(rsp){
+            return rsp.json()
+        }).then(function(obj) {
+            const chartDiv = document.createElement('div')
+            chartDiv.setAttribute("id", obj.chartID)
+            chartDiv.style.width = obj.style.width
+            chartDiv.style.height = obj.style.height
+            document.getElementById('chart_is_here').appendChild(chartDiv)
+            obj.jsCodeAssets.forEach((js) => loadJS(js))
+        }).catch(function(err){
+            console.log("chart fetch error", err)
+        })
+    </script>
+</body>
 </html>
 ```
 
@@ -78,70 +93,67 @@ Becuase when a client requests a `*.tql` file with `GET` method, machbase-neo ge
 The api `/db/tql` can receive POSTed TQL script and produces the result in javascript.
 Caller side javascrpt can load the result javascript dynamically as the example below.
 
-In this example, the `chartID()` (line 19) is provided and the document has a `<div>` with the same `id`.
+In this example, the `chartID()` (line 20) is provided and the document has a `<div>` with the same `id`.
 
-```html {linenos=table,hl_lines=[3,12,19,38,39],linenostart=1}
+```html {linenos=table,hl_lines=[4,13,20,34],linenostart=1}
 <html>
-    <body id="body">
-        <div id="chart_is_here"/>
-        <script>
-            function loadJS(url) {
-                var scriptElement = document.createElement('script');
-                scriptElement.src = url;
-                document.getElementsByTagName('body')[0].appendChild(scriptElement);
-            }
-        </script>
-        <script>
-            fetch("/db/tql", 
-                {
-                    method:"POST", 
-                    body:`
-                        FAKE( linspace(0, 360, 100) )
-                        MAPVALUE( 1, sin(value(0)/180*PI) )
-                        CHART(
-                            chartID("chart_is_here"),
-                            chartOption({
-                                xAxis: { type: "category", data: column(0) },
-                                yAxis: {},
-                                series: [
-                                    {
-                                        type: "line",
-                                        data: column(1)
-                                    }
-                                ]
-                            })
-                        )
-                `}
-            ).then(function(rsp){
-                return rsp.json()
-            }).then(function(obj) {
-                const chartDiv = document.getElementById('chart_is_here')
-                chartDiv.style.width = obj.style.width
-                chartDiv.style.height = obj.style.height
-                const assets = obj.jsAssets.concat(obj.jsCodeAssets)
-                assets.forEach((js) => loadJS(js))
-            }).catch(function(err){
-                console.log("chart fetch error", err)
-            })
-        </script>
-    </body>
+<body id="body">
+    <script src="/web/echarts/echarts.min.js"></script>
+    <div id="chart_is_here"/>
+    <script>
+        function loadJS(url) {
+            var scriptElement = document.createElement('script');
+            scriptElement.src = url;
+            document.getElementsByTagName('body')[0].appendChild(scriptElement);
+        }
+    </script>
+    <script>
+        fetch("/db/tql", 
+            {
+                method:"POST", 
+                body:`
+                    FAKE( linspace(0, 360, 100) )
+                    MAPVALUE( 1, sin(value(0)/180*PI) )
+                    CHART(
+                        chartID("chart_is_here"),
+                        chartOption({
+                            xAxis: { type: "category", data: column(0) },
+                            yAxis: {},
+                            series: [ { type: "line", data: column(1) } ]
+                        })
+                    )
+            `}
+        ).then(function(rsp){
+            return rsp.json()
+        }).then(function(obj) {
+            const chartDiv = document.getElementById('chart_is_here')
+            chartDiv.style.width = obj.style.width
+            chartDiv.style.height = obj.style.height
+            obj.jsCodeAssets.forEach((js) => loadJS(js))
+        }).catch(function(err){
+            console.log("chart fetch error", err)
+        })
+    </script>
+</body>
 </html>
 ```
 
 ## Loading Sequence Problem
 
-In the examples above, we loaded the result javascript files in a time for briefness.
+In the examples above, if we tried to load the both of `jsAssets` and `jsCodeAssets` dynamically, like below code for example.
+
 ```js {linenos=table,linenostart=38}
 const assets = obj.jsAssets.concat(obj.jsCodeAssets)
 assets.forEach((js) => loadJS(js))
 ```
 
-In real application, the chart library (apache echarts) in `obj.jsAssets` might not be completely loaded before `obj.jsCodeAssets` are loaded.
-If there is a problem in loading sequence, it can be fixed like below code.
+There must be some loading sequence issue, because the chart library (apache echarts) in `obj.jsAssets` might not be completely loaded 
+before `obj.jsCodeAssets` are loaded.
+To avoid the problem of loading sequence, it can be fixed like below code.
 
 Add `load` event listener to enable callback for load-completion.
 
-```js {linenos=table,hl_lines=["5-9"],linenostart=5}
+```js {linenos=table,hl_lines=["5-9"],linenostart=6}
 function loadJS(url, callback) {
     var scriptElement = document.createElement('script');
     scriptElement.src = url;
@@ -156,9 +168,8 @@ function loadJS(url, callback) {
 
 When the last `jsAssets` loaded, start to load `jsCodeAssets`.
 
-```js {linenos=table,hl_lines=[5,"7-9"],linenostart=38}
-// const assets = obj.jsAssets.concat(obj.jsCodeAssets)
-// assets.forEach((js) => loadJS(js))
+```js {linenos=table,hl_lines=[4,"6-8"],linenostart=34}
+// obj.jsCodeAssets.forEach((js) => loadJS(js))
 for (let i = 0; i < obj.jsAssets.length; i++ ){
     if (i < obj.jsAssets.length -1){ 
         loadJS(obj.jsAssets[i])
