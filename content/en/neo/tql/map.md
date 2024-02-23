@@ -194,7 +194,7 @@ CSV()
 
 ## POPVALUE()
 
-*Syntax*: `PUSHVALUE( idx [, idx2, idx3, ...] )` {{< neo_since ver="8.0.5" />}}
+*Syntax*: `POPVALUE( idx [, idx2, idx3, ...] )` {{< neo_since ver="8.0.5" />}}
 
 - `idx` *int* array of indexes that will removed from values
 
