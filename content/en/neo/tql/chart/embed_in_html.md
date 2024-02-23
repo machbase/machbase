@@ -37,6 +37,10 @@ When the reponse of `/db/tql` is JSON, it contains required addresses of the res
 
 The line 22, 23 of the below example, it merged `jsAssets` and `jsCodeAssets` and loaded into the HTML document.
 
+The HTTP header `X-Chart-Output: json` in line 13 is defined 
+so that machbase-neo TQL engine generates a JSON containing meta information of chart instead of full HTML document.
+Becuase when a client requests a `*.tql` file with `GET` method, machbase-neo generates HTML document for the chart by default.
+
 ```html {linenos=table,hl_lines=[3,13,18,"22-23"],linenostart=1}
 <html>
     <body id="body">

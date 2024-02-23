@@ -5,7 +5,7 @@ weight: 30
 ---
 
 {{< callout emoji="📌">}}
-For the demonstration, the following table should be created in advance.
+For the demonstration, the example table should be created in advance.
 {{< /callout >}}
 
 ```sql
@@ -22,6 +22,8 @@ Let's make a html file named `simple-webapp.html`. machbase-neo supports `.html`
 If you are using previous version of machbase-neo, please update it or use your favorite editor instead.
 
 {{< figure src="../img/simple-webapp-1.jpg" width="600px" >}}
+
+Edit and save html file, open in web browser by click ► button on left top corner of the editor.
 
 ## Write data
 
@@ -49,9 +51,7 @@ Copy and paste the below codes.
             }).then(function(rsp){
                 return rsp.json()
             }).then(function(obj){
-                document.getElementById("rspSuccess").innerHTML = "success: " + obj.success
-                document.getElementById("rspReason").innerHTML = "reason: " + obj.reason
-                document.getElementById("rspElapse").innerHTML = "elapse: " + obj.elapse
+                 document.getElementById("rspInput").innerHTML = '<pre>'+JSON.stringify(obj, null, 2)+'</pre>'
             })
         }
     </script>
@@ -70,8 +70,6 @@ Copy and paste the below codes.
 - line 6: Declare the data payload contains time value in millisecond unix epoc. which is used in line 14 `Date.now()`.
 - line 9: Set content-type of the payload, so that machbase-neo interprets it properly.
 - line 11-18: The actual data in payload. This example has only one record in the `rows` field, but it may contain multiple records, 
-
-Save the code and open in web browser by click ► button on left top corner of the editor.
 
 {{< figure src="../img/simple-webapp-2.jpg" width="600px" >}}
 
@@ -133,14 +131,14 @@ function markdownData() {
 
 ## Chart
 
-You can visualize data with any chart library that you preference by retrieving the query result in JSON and CSV.
-Still it is useful TQL provides `CHART()` SINK by default.
+You can visualize data with any chart library that you prefer by retrieving the query result in JSON and CSV via HTTP API.
+But it is still simple and powerful using TQL `CHART()` SINK.
 
 This example shows how to visualize data with TQL without any extra tool.
 
 Add `function chartData()` and a helper `function loadJS()`.
 
-```js {{linenos="table",hl_lines=[28,32],linenostart=48}}
+```js {{linenos="table",hl_lines=[20,28,32],linenostart=48}}
 function loadJS(url) {
     var scriptElement = document.getElementById("chartScript")
     if ( scriptElement != null) {
