@@ -15,6 +15,7 @@ GROUP( [lazy(boolean)] [, by()] [, aggregator...] )
 
 - `lazy(boolean)` set lazy mode (default: false)
 - `by(value [, timewindow()] [, name])` specify how to make group with given value.
+`by()` was mandatory in `GROUP()` but it has become an optional {{< neo_since ver="8.0.14" />}} to apply aggregator on the whole data in a time.
 - `aggregator` *list of aggregator*, comma separated multiple functions are possible.
 
 ```js {linenos=table,hl_lines=["7-12"],linenostart=1}
