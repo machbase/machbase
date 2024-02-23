@@ -66,8 +66,8 @@ Copy and paste the below codes.
 ```
 
 - line 6: Declare the data payload contains time value in millisecond unix epoc. which is used in line 14 `Date.now()`.
-- line 9: Set content-type of the payload, so that machbase-neo interpret it properly.
-- line 11-18: The actual data payload in payload. This example has only one record, but it may contain multiple records, 
+- line 9: Set content-type of the payload, so that machbase-neo interprets it properly.
+- line 11-18: The actual data in payload. This example has only one record in the `rows` field, but it may contain multiple records, 
 
 Save the code and open in web browser by click ► button on left top corner of the editor.
 
