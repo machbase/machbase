@@ -71,7 +71,7 @@ APPEND( table("example") )
 
 ## CSV()
 
-*Syntax*: `CSV( [tz(), timeformat(), precision(), rownum(), heading(), delimiter(), substituteNull() ] )`
+*Syntax*: `CSV( [tz(), timeformat(), precision(), rownum(), heading(), delimiter(), nullValue() ] )`
 
 Makes the records of the result in CSV format. The values of the records become the fields of the CSV lines.
 
@@ -83,9 +83,10 @@ For example, if a record was `{key: k, value:[v1,v2]}`, it generates an CSV reco
 - `precision` *precision(int)* specify precision of float fields, `precision(-1)` means no restriction, `precision(0)` converts to integer
 - `heading` *heading(boolean)* add fields names as the first row
 - `delimiter` *delimiter(string)* specify fields separator other than the default comma(`,`).
-- `substituteNull` *substitute(string)* specify sustitution string for the *NULL* value, default is `substituteNull('NULL')`
+- `nullValue()` specify sustitution string for the *NULL* value, default is `nullValue('NULL')`. {{< neo_since ver="8.0.14" />}}
+- `substituteNull` *substitute(string)* specify sustitution string for the *NULL* value, default is `substituteNull('NULL')`. (deprecated, replaced by `nullValue()`)
 
-{{< tabs items="default,heading(),delimiter()">}}
+{{< tabs items="default,heading(),delimiter(),nullValue()">}}
 {{< tab >}}
 ```js {linenos=table,hl_lines=[3],linenostart=1}
 FAKE( arrange(1, 3, 1))
@@ -122,6 +123,17 @@ x|x10
 1|10
 2|20
 3|30
+```
+{{</ tab >}}
+{{< tab >}}
+```js {linenos=table,hl_lines=[2],linenostart=1}
+FAKE( json({ ["A", 123], ["B", null], ["C", 234] }) )
+CSV( nullValue("***") )
+```
+```csv
+A|123
+B|***
+C|234
 ```
 {{</ tab >}}
 {{</ tabs >}}
@@ -331,7 +343,64 @@ Generates chart using Apache echarts.
 
 Refer to [CHART() examples](/neo/tql/chart/) for the various usages.
 
-## CHART_LINE()
+### size()
+
+*Syntax*: `size(width, height)`
+
+- `width` *string* chart width in HTML syntax ex) '800px'
+- `height` *string* chart height in HTML syntax ex) '800px'
+
+### chartOption()
+
+*Syntax*: `chartOption( { json in apache echart options } )`
+
+### chartJSCode()
+
+*Syntax*: `chartJSCode( { user javascript code } )`
+
+### theme()
+
+*Syntax*: `theme(name)`
+
+- `name` *string* theme name
+
+Apply a chart theme.
+
+Available themes : `chalk`, `essos`, `infographic`, `macarons`, `purple-passion`, `roma`, `romantic`, `shine`, `vintage`, `walden`, `westeros`, `wonderland`
+
+{{< tabs items="chalk,essos,infographic,macarons,purple-passion,roma">}}
+  {{< tab >}}{{< figure src="../img/theme_chalk.jpg" width="500" >}}{{< /tab >}}
+  {{< tab >}}{{< figure src="../img/theme_essos.jpg" width="500" >}}{{< /tab >}}
+  {{< tab >}}{{< figure src="../img/theme_infographic.jpg" width="500" >}}{{< /tab >}}
+  {{< tab >}}{{< figure src="../img/theme_macarons.jpg" width="500" >}}{{< /tab >}}
+  {{< tab >}}{{< figure src="../img/theme_purple-passion.jpg" width="500" >}}{{< /tab >}}
+  {{< tab >}}{{< figure src="../img/theme_roma.jpg" width="500" >}}{{< /tab >}}
+{{< /tabs >}}
+
+{{< tabs items="romantic,shine,vintage,walden,westeros,wonderland">}}
+  {{< tab >}}{{< figure src="../img/theme_romantic.jpg" width="500" >}}{{< /tab >}}
+  {{< tab >}}{{< figure src="../img/theme_shine.jpg" width="500" >}}{{< /tab >}}
+  {{< tab >}}{{< figure src="../img/theme_vintage.jpg" width="500" >}}{{< /tab >}}
+  {{< tab >}}{{< figure src="../img/theme_walden.jpg" width="500" >}}{{< /tab >}}
+  {{< tab >}}{{< figure src="../img/theme_westeros.jpg" width="500" >}}{{< /tab >}}
+  {{< tab >}}{{< figure src="../img/theme_wonderland.jpg" width="500" >}}{{< /tab >}}
+{{< /tabs >}}
+
+### plugins()
+
+*Syntax*: `plugins(plugin...)`
+
+- `plugin` *stirng*  pre-defined plugin name or url of plugin module.
+
+| Pre-defined plugin |  Actual module url |
+| :----------------- | :------------------|
+| liquidfill         | `/web/echarts/echarts-liquidfill.min.js` |
+| wordcloud          | `/web/echarts/echarts-wordcloud.min.js`  |
+| gl                 | `/web/echarts/echarts-gl.min.js`         |
+
+## Deprecated
+
+### CHART_LINE()
 
 > **DEPRECATED**: use CHART() instead.
 
@@ -380,7 +449,7 @@ CHART(
 
 {{< figure src="../img/chart_line.jpg" width="500" >}}
 
-## CHART_BAR()
+### CHART_BAR()
 
 > **DEPRECATED**: use CHART() instead.
 
@@ -429,7 +498,7 @@ CHART(
 
 {{< figure src="../img/chart_bar.jpg" width="500" >}}
 
-## CHART_SCATTER()
+### CHART_SCATTER()
 
 > **DEPRECATED**: use CHART() instead.
 
@@ -478,7 +547,7 @@ CHART(
 
 {{< figure src="../img/chart_scatter.jpg" width="500" >}}
 
-## CHART_LINE3D()
+### CHART_LINE3D()
 
 > **DEPRECATED**: use CHART() instead.
 
@@ -546,7 +615,7 @@ CHART(
 {{< figure src="../img/chart_line3d.jpg" width="500" >}}
 
 
-## CHART_BAR3D()
+### CHART_BAR3D()
 
 > **DEPRECATED**: use CHART() instead.
 
@@ -612,7 +681,7 @@ CHART(
 
 {{< figure src="../img/chart_bar3d.jpg" width="500" >}}
 
-## CHART_SCATTER3D()
+### CHART_SCATTER3D()
 
 > **DEPRECATED**: use CHART() instead.
 
@@ -677,15 +746,6 @@ CHART(
 {{< /tabs >}}
 
 {{< figure src="../img/chart_scatter3d.jpg" width="500" >}}
-
-## Chart options
-
-### size()
-
-*Syntax*: `size(width, height)`
-
-- `width` *string* chart width in HTML syntax ex) '800px'
-- `height` *string* chart height in HTML syntax ex) '800px'
 
 ### title()
 
@@ -918,31 +978,3 @@ CHART_SCATTER(
 ```
 
 {{< figure src="../img/chart_marker_y.jpg" width="500" >}}
-
-### theme()
-
-*Syntax*: `theme(name)`
-
-- `name` *string* theme name
-
-Apply a chart theme.
-
-Available themes : `chalk`, `essos`, `infographic`, `macarons`, `purple-passion`, `roma`, `romantic`, `shine`, `vintage`, `walden`, `westeros`, `wonderland`
-
-{{< tabs items="chalk,essos,infographic,macarons,purple-passion,roma">}}
-  {{< tab >}}{{< figure src="../img/theme_chalk.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_essos.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_infographic.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_macarons.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_purple-passion.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_roma.jpg" width="500" >}}{{< /tab >}}
-{{< /tabs >}}
-
-{{< tabs items="romantic,shine,vintage,walden,westeros,wonderland">}}
-  {{< tab >}}{{< figure src="../img/theme_romantic.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_shine.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_vintage.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_walden.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_westeros.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_wonderland.jpg" width="500" >}}{{< /tab >}}
-{{< /tabs >}}
