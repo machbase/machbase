@@ -62,12 +62,12 @@ Copy and paste the below codes.
         <input id="userInput">
         <a href="#" onClick="submitData()">Submit</a>
     </form>
-    <div id="rspSuccess"></div> <div id="rspReason"></div> <div id="rspElapse"></div>
+    <div id="rspInput"></div>
 </body>
 </html>
 ```
 
-- line 6: Declare the data payload contains time value in millisecond unix epoc. which is used in line 14 `Date.now()`.
+- line 6: `timeformat=ms` Declare the data payload contains time value in millisecond unix epoc. which is used in line 15 `Date.now()`.
 - line 9: Set content-type of the payload, so that machbase-neo interprets it properly.
 - line 11-18: The actual data in payload. This example has only one record in the `rows` field, but it may contain multiple records, 
 
