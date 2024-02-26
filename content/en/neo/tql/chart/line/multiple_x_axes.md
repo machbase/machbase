@@ -4,7 +4,7 @@ type: docs
 weight: 70
 ---
 
-```js
+```js {{linenos="table",hl_lines=["39-44"]}}
 FAKE(csv(`2015-1,2.6
 2015-2,5.9
 2015-3,9.0
@@ -30,7 +30,6 @@ FAKE(csv(`2015-1,2.6
 2016-11,10.3
 2016-12,0.7
 `))
-
 PUSHVALUE(1, value(0))
 // | 0        1         2
 // + YYYY-M   YYYY-M    value
@@ -44,12 +43,12 @@ PUSHVALUE(2, strSub(value(0), 5) )
 // | 0        1         2         3
 // + YYYY-M   YYYY      Month     value
 // |
-MAPVALUE(4, value(1) == "2016" ? value(3) : 0)
-MAPVALUE(3, value(1) == "2015" ? value(3) : 0)
-// | 0        1        2        3              4
-// + YYYY-M   YYYY    Month     2015-value     2016-value
-// |
-GROUP( by(parseFloat(value(2))), max(value(3)), max(value(4)), lazy(true) )
+GROUP(
+    by(parseFloat(value(2))),
+    max(value(3), where(value(1) == "2016")),
+    max(value(3), where(value(1) == "2015")),
+    lazy(true)
+)
 // | 0        1              2
 // + Month    2015-value     2016-value
 // |

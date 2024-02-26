@@ -4,7 +4,7 @@ type: docs
 weight: 90
 ---
 
-```js
+```js {{linenos="table",hl_lines=[10,"18-22"]}}
 CSV( file("https://machbase.com/assets/example/life-expectancy-table.csv") )
 DROP(1) // skip header line
 // |   0          1                 2            3         4
@@ -22,12 +22,11 @@ MAPVALUE(0, parseFloat(value(0)))
 // |   0          1         2
 // +-> income     Country   Year
 // |
-MAPVALUE(3, value(1) == "Germany" ? value(0) : 0)
-MAPVALUE(4, value(1) == "France" ? value(0) : 0)
-// |   0          1         2         3            4
-// +-> income     Country   Year   Germany-income  France-income
-// |
-GROUP( by(value(2)), max(value(3)), max(value(4)) )
+GROUP(
+    by(value(2)),
+    max(value(0), where( value(1) == "Germany" )),
+    max(value(0), where( value(1) == "France" ))
+)
 // |   0      1               2
 // +-> Year   Germany-income  France-income
 // |
