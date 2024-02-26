@@ -182,11 +182,11 @@ world,3.141792,hello world? 3.14
 
 ### strTime()
 
-*Syntax*: `strTime(time, format, tz)` {{< neo_since ver="8.0.7" />}}
+*Syntax*: `strTime(time, format [, tz])` {{< neo_since ver="8.0.7" />}}
 
 - `time` *time*
 - `format` *string*|*sqlTimeformat()*
-- `tz` *tz()* time zone
+- `tz` *tz()* optional, time zone if omitted default is `tz('UTC')`.
 
 `strTime()` formats time value to string according to the given format and time zone.
 
