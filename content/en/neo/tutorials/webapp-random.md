@@ -28,8 +28,8 @@ This example generates random data per second and refresh chart automatically.
 <html>
 <head>
     <script>
+        var timer
         function toggleTimer(){
-            var timer
             const btn = document.getElementById('btn')
             if (btn.value == 'start') {
                 btn.value = 'stop'
@@ -73,6 +73,7 @@ This example generates random data per second and refresh chart automatically.
                             chartOption({
                                 xAxis:{ type: "time", axisLabel: { rotate: 30, interval:5 } },
                                 yAxis:{ min: 0, max: 1.0},
+                                animation: true,
                                 series:[ { type:"line", data:column(0) } ]
                             })
                         )`
