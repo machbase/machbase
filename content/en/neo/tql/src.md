@@ -449,7 +449,7 @@ It specifies time range from `fromTime` to `fromTime+duration`.
 - `stop` *number*
 - `step` *number*
 
-```js
+```js {{linenos="table",hl_lines=[2]}}
 FAKE(
    arrange(1, 2, 0.5)
 )
@@ -470,7 +470,7 @@ It generates 1 dimension linear space.
 
 {{< tabs items="CSV,CHART">}}
 {{< tab >}}
-```js
+```js {{linenos="table",hl_lines=[2]}}
 FAKE(
    linspace(1, 3, 3)
 )
@@ -485,8 +485,8 @@ CSV()
 {{< /tab >}}
 {{< tab >}}
 
-```js
-FAKE(linspace(0,4*PI,100))
+```js {{linenos="table",hl_lines=[1]}}
+FAKE( linspace(0,4*PI,100) )
 MAPVALUE(1, sin(value(0)))
 MAPVALUE(2, cos(value(0)))
 CHART(
@@ -518,7 +518,7 @@ It generates {key:index, value:[][][]{x[n], y[m]}}
 
 {{< tabs items="CSV,CHART">}}
 {{< tab >}}
-```js
+```js {{linenos="table",hl_lines=[2]}}
 FAKE(
     meshgrid( linspace(1, 3, 3), linspace(10, 30, 3) )
 )
@@ -538,8 +538,8 @@ CSV()
 ```
 {{< /tab >}}
 {{< tab >}}
-```js
-FAKE(meshgrid(linspace(0,2*3.1415,30), linspace(0, 3.1415, 20)))
+```js {{linenos="table",hl_lines=[1]}}
+FAKE( meshgrid(linspace(0,2*3.1415,30), linspace(0, 3.1415, 20)) )
 
 MAPVALUE(2, cos(value(0))*sin(value(1)))  // x
 MAPVALUE(3, sin(value(0))*sin(value(1)))  // y
@@ -577,7 +577,7 @@ CHART(
 
 It generates records from the given csv content.
 
-```js
+```js {{linenos="table",hl_lines=["2-6"]}}
 FAKE(
     csv( strTrimSpace(`
         A,1,true
@@ -603,12 +603,14 @@ C,30,true
 
 It generates records from the given multiple json array.
 
-```js
-FAKE( json({
-    ["A", 1, true],
-    ["B", 2, false],
-    ["C", 3, true]
-}) )
+```js {{linenos="table",hl_lines=["2-6"]}}
+FAKE(
+    json({
+        ["A", 1, true],
+        ["B", 2, false],
+        ["C", 3, true]
+    })
+)
 MAPVALUE(1, value(1)*10)
 CSV()
 ```
