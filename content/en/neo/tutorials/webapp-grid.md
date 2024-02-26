@@ -20,10 +20,11 @@ This example shows how to utilize grid library with data from machbase-neo.
 
 {{< figure src="../img/grid-webapp-1.jpg" width="600px" >}}
 
-- line 18,19, Embed Grid.JS library
+- line 18,19, Embed Grid.js library.
 - line 29,30, Assign columns and data fields from the result JSON.
+- line 37, Update data when user request refresh the grid.
 
-```html {{linenos="table",hl_lines=["18-19","29-30"]}}
+```html {{linenos="table",hl_lines=["18-19","29-30",37]}}
 <html>
 <head>
     <script>
