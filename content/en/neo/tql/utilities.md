@@ -77,37 +77,37 @@ CSV()
 
 ### strTrimSpace()
 
-*Syntax*: `strTrimSpace(str)` {{< neo_since ver="8.0.7" />}}
+*Syntax*: `strTrimSpace(str) : string` {{< neo_since ver="8.0.7" />}}
 
 `strTrimSpace` returns a slice of the string str, with all leading and trailing white space removed.
 
 ### strTrimPrefix()
 
-*Syntax*: `strTrimPrefix(str, prefix)` {{< neo_since ver="8.0.7" />}}
+*Syntax*: `strTrimPrefix(str, prefix) : string` {{< neo_since ver="8.0.7" />}}
 
 `strTrimPrefix` returns str without the provided leading prefix string. If str doesn't start with prefix, str is returned unchanged.
 
 ### strTrimSuffix()
 
-*Syntax*: `strTrimSuffix(str, suffix)` {{< neo_since ver="8.0.7" />}}
+*Syntax*: `strTrimSuffix(str, suffix) : string` {{< neo_since ver="8.0.7" />}}
 
 `strTrimSuffix` returns str without the provided trailing suffix string. If str doesn't end with suffix, str is returned unchanged.
 
 ### strHasPrefix()
 
-*Syntax*: `strHasPrefix(str, prefix)` {{< neo_since ver="8.0.7" />}}
+*Syntax*: `strHasPrefix(str, prefix) : boolean` {{< neo_since ver="8.0.7" />}}
 
 `strHasPrefix` tests whether the string str begins with prefix.
 
 ### strHasSuffix()
 
-*Syntax*: `strHasSuffix(str, suffix)` {{< neo_since ver="8.0.7" />}}
+*Syntax*: `strHasSuffix(str, suffix) : boolean` {{< neo_since ver="8.0.7" />}}
 
 `strHasSuffix` tests whether the string s ends with suffix.
 
 ### strReplaceAll()
 
-*Syntax*: `strReplaceAll(str, old, new)` {{< neo_since ver="8.0.7" />}}
+*Syntax*: `strReplaceAll(str, old, new) : string` {{< neo_since ver="8.0.7" />}}
 
 `strReplaceAll` returns a copy of the string s with all non-overlapping instances of old replaced by new.
 If old is empty, it matches at the beginning of the string
@@ -115,7 +115,7 @@ and after each UTF-8 sequence, yielding up to k+1 replacements for a k-rune stri
 
 ### strReplace()
 
-*Syntax*: `strReplace(str, old, new, n)` {{< neo_since ver="8.0.7" />}}
+*Syntax*: `strReplace(str, old, new, n) : string` {{< neo_since ver="8.0.7" />}}
 
 - `str` *string*
 - `old` *string*
@@ -129,37 +129,37 @@ If n < 0, there is no limit on the number of replacements.
 
 ### strSub()
 
-*Syntax*: `strSub(str, offset [, count])` {{< neo_since ver="8.0.7" />}}
+*Syntax*: `strSub(str, offset [, count]) : string` {{< neo_since ver="8.0.7" />}}
 
 `strSub` returns substring of str.
 
 ### strIndex()
 
-*Syntax*: `strIndex(str, substr)` {{< neo_since ver="8.0.15" />}}
+*Syntax*: `strIndex(str, substr) : number` {{< neo_since ver="8.0.15" />}}
 
 Returns the index of the first instance of substr in str, or -1 if substr is not present in str.
 
 ### strLastIndex()
 
-*Syntax*: `strLastIndex(str, substr)` {{< neo_since ver="8.0.15" />}}
+*Syntax*: `strLastIndex(str, substr) : number` {{< neo_since ver="8.0.15" />}}
 
 Returns the index of the last instance of substr in str, or -1 if substr is not present in str.
 
 ### strToUpper()
 
-*Syntax*: `strToUpper(str)` {{< neo_since ver="8.0.7" />}}
+*Syntax*: `strToUpper(str) : string` {{< neo_since ver="8.0.7" />}}
 
 `strToUpper` returns str with all Unicode letters mapped to their upper case.
 
 ### strToLower()
 
-*Syntax*: `strToLower(str, suffix)` {{< neo_since ver="8.0.7" />}}
+*Syntax*: `strToLower(str, suffix) : string` {{< neo_since ver="8.0.7" />}}
 
 `strToLower` returns str with all Unicode letters mapped to their lower case.
 
 ### strSprintf()
 
-*Syntax*: `strSprintf(fmt, args...)` {{< neo_since ver="8.0.7" />}}
+*Syntax*: `strSprintf(fmt, args...) : string` {{< neo_since ver="8.0.7" />}}
 
 `strSprintf()` formats according to a format specifier and returns the resulting string.
 
@@ -194,7 +194,7 @@ world,3.141792,hello world? 3.14
 
 ### strTime()
 
-*Syntax*: `strTime(time, format [, tz])` {{< neo_since ver="8.0.7" />}}
+*Syntax*: `strTime(time, format [, tz]) : string` {{< neo_since ver="8.0.7" />}}
 
 - `time` *time*
 - `format` *string*|*sqlTimeformat()*
@@ -306,7 +306,7 @@ JSON()
 
 ### glob()
 
-*Syntax*: `glob(pattern, text)` {{< neo_since ver="8.0.7" />}}
+*Syntax*: `glob(pattern, text) : boolean` {{< neo_since ver="8.0.7" />}}
 
 `glob` returns true if the `text` does match with `pattern`.
 
@@ -319,7 +319,7 @@ CSV()
 
 ### regexp()
 
-*Syntax*: `regexp(expression, text)` {{< neo_since ver="8.0.7" />}}
+*Syntax*: `regexp(expression, text) : boolean` {{< neo_since ver="8.0.7" />}}
 
 `regexp` returns true if the `text` does match with `expression`.
 
@@ -334,7 +334,7 @@ CSV()
 
 ### time()
 
-*Syntax*: `time( number|string )`
+*Syntax*: `time( number|string ) : time`
 
 - `time('now')` returns current time.
 - `time('now -10s50ms')` returns the time 10.05 seconds before from now.
@@ -357,7 +357,7 @@ CSV()
 
 ### timeUnix()
 
-*Syntax*: `timeUnix( time )` {{< neo_since ver="8.0.13" />}}
+*Syntax*: `timeUnix( time ) : number` {{< neo_since ver="8.0.13" />}}
 
 *timeUnix* returns `time` as a Unix time, the number of seconds elapsed
 since January 1, 1970 UTC. The result does not depend on the
@@ -365,7 +365,7 @@ location associated with `time`.
 
 ### timeUnixMilli()
 
-*Syntax*: `timeUnixMilli( time )` {{< neo_since ver="8.0.13" />}}
+*Syntax*: `timeUnixMilli( time ) : number` {{< neo_since ver="8.0.13" />}}
 
 *timeUnixMilli* returns `time` as a Unix time, the number of milliseconds elapsed
 since January 1, 1970 UTC. The result does not depend on the
@@ -373,7 +373,7 @@ location associated with `time`.
 
 ### timeUnixMicro()
 
-*Syntax*: `timeUnixMicro( time )` {{< neo_since ver="8.0.13" />}}
+*Syntax*: `timeUnixMicro( time ) : number` {{< neo_since ver="8.0.13" />}}
 
 *timeUnixMicro* returns `time` as a Unix time, the number of microseconds elapsed
 since January 1, 1970 UTC. The result does not depend on the
@@ -381,7 +381,7 @@ location associated with `time`.
 
 ### timeUnixNano()
 
-*Syntax*: `timeUnixNano( time )` {{< neo_since ver="8.0.13" />}}
+*Syntax*: `timeUnixNano( time ) : number` {{< neo_since ver="8.0.13" />}}
 
 *timeUnixNano* returns `time` as a Unix time, the number of nanoseconds elapsed
 since January 1, 1970 UTC. The result does not depend on the
@@ -389,7 +389,7 @@ location associated with `time`.
 
 ### timeAdd()
 
-*Syntax*: `timeAdd( number|string|time [, timeExpression] )`
+*Syntax*: `timeAdd( number|string|time [, timeExpression] ) : time`
 
 *Example)*
 
@@ -414,7 +414,7 @@ CSV()
 
 ### roundTime()
 
-*Syntax*: `roundTime( time, duration )`
+*Syntax*: `roundTime( time, duration ) : time`
 
 Returns rounded time.
 
@@ -425,7 +425,7 @@ Returns rounded time.
 
 ### parseTime()
 
-*Syntax*: `parseTime( time, format, timezone )`
+*Syntax*: `parseTime( time, format, timezone ) : time`
 
 - `time` *string* time expression
 - `format` *string* time format expression
@@ -439,7 +439,7 @@ Returns rounded time.
 
 ### tz()
 
-*Syntax*: `tz( name )`
+*Syntax*: `tz( name ) : timeZone`
 
 Returns time zone that matched with the given name
 
@@ -687,18 +687,18 @@ CHART(
 
 ### count()
 
-*Syntax*: `count( array|tuple )`
+*Syntax*: `count( array|tuple ) : number`
 
 Returns the number of the elements.
 
 ### list()
 
-*Syntax*: `list(args...)` {{< neo_since ver="8.0.7" />}}
+*Syntax*: `list(args...) : list` {{< neo_since ver="8.0.7" />}}
 
 `list()` returns a new tuple that contains the `args` as its elements.
 
 ### dict()
 
-*Syntax*: `dict( name1, value1 [, name2, value2 ...])` {{< neo_since ver="8.0.8" />}}
+*Syntax*: `dict( name1, value1 [, name2, value2 ...]) : dictionary` {{< neo_since ver="8.0.8" />}}
 
 `dict()` returns a new dictionary that contains pairs of name*n*:value*n*.
