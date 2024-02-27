@@ -133,6 +133,18 @@ If n < 0, there is no limit on the number of replacements.
 
 `strSub` returns substring of str.
 
+### strIndex()
+
+*Syntax*: `strIndex(str, substr)` {{< neo_since ver="8.0.15" />}}
+
+Returns the index of the first instance of substr in str, or -1 if substr is not present in str.
+
+### strLastIndex()
+
+*Syntax*: `strLastIndex(str, substr)` {{< neo_since ver="8.0.15" />}}
+
+Returns the index of the last instance of substr in str, or -1 if substr is not present in str.
+
 ### strToUpper()
 
 *Syntax*: `strToUpper(str)` {{< neo_since ver="8.0.7" />}}
