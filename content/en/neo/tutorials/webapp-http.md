@@ -77,10 +77,11 @@ Copy and paste the below codes.
 
 Extend the simple-webapp.html to read data, add new `function queryData(){...}` and "query" action.
 
-```js {{linenos="table",hl_lines=[3],linenostart=26}}
+```js {{linenos="table",hl_lines=[4],linenostart=26}}
 function queryData() {
-    const query = `select * from example where name = 'webapp'`
-    fetch(`http://127.0.0.1:5654/db/query?timeformat=ms&q=`+query).then(function(rsp){
+    const query = `select * from example where name = 'webapp' limit 5`
+    const opt  = document.querySelector('input[name="opt"]:checked').value + '=true'
+    fetch(`http://127.0.0.1:5654/db/query?timeformat=ms&`+opt+`&q=`+query).then(function(rsp){
         return rsp.json()
     }).then(function(obj){
         document.getElementById("rspQuery").innerHTML = '<pre>'+JSON.stringify(obj, null, 2)+'</pre>'
@@ -90,8 +91,12 @@ function queryData() {
 
 - line 28: Specify the time format of result should be unix epoch in milliseconds.
 
-```html {{linenos="table",linenostart=44}}
+```html {{linenos="table",linenostart=94}}
 <h4> Query data </h4>
+<input type="radio" name="opt" value="none" checked/>none
+<input type="radio" name="opt" value="transpose" />transpose
+<input type="radio" name="opt" value="rowsFlatten" />rowsFlatten
+<input type="radio" name="opt" value="rowsArray" />rowsArray
 <a href="#" onClick="queryData()">Query</a>
 <div id=rspQuery></div>
 ```
@@ -102,7 +107,7 @@ function queryData() {
 
 The query result can be transform to markdown using *TQL*, let's add `function markdownData(){...}`  and "Markdown" action.
 
-```js {{linenos="table",hl_lines=[2,6],linenostart=35}}
+```js {{linenos="table",hl_lines=[2,6],linenostart=36}}
 function markdownData() {
     const asHtml = document.getElementById("htmlMarkdown").checked
     fetch(`http://127.0.0.1:5654/db/tql`, {
@@ -120,10 +125,10 @@ function markdownData() {
 - line 36: Get output format option if HTML or MARKDOWN text.
 - line 40: `MARKDOWN()` TQL SINK with options `html(boolean)`, `timeformat()`, `tz()`...
 
-```html {{linenos="table",linenostart=61}}
+```html {{linenos="table",linenostart=102}}
 <h4> Markdown </h4>
-<a href="#" onClick="markdownData()">Markdown</a> &nbsp;&nbsp;
-<input type="checkbox" id="htmlMarkdown">HTML Output<br/>
+<input type="checkbox" id="htmlMarkdown">HTML Output &nbsp;&nbsp;
+<a href="#" onClick="markdownData()">Markdown</a><br/>
 <div id=rspMarkdown></div>
 ```
 
@@ -138,7 +143,7 @@ This example shows how to visualize data with TQL without any extra tool.
 
 Add `function chartData()` and a helper `function loadJS()`.
 
-```js {{linenos="table",hl_lines=[20,28,32],linenostart=48}}
+```js {{linenos="table",hl_lines=[20,28,32],linenostart=49}}
 function loadJS(url) {
     var scriptElement = document.getElementById("chartScript")
     if ( scriptElement != null) {
@@ -177,11 +182,11 @@ function chartData() {
 
 And add Apache echart library, it is already included in machabse-neo for pre-loading.
 
-```html {{linenos="table",linenostart=85}}
+```html {{linenos="table",linenostart=84}}
 <script src="http://127.0.0.1:5654/web/echarts/echarts.min.js"></script>
 ```
 
-```html {{linenos="table",linenostart=102}}
+```html {{linenos="table",linenostart=107}}
 <h4> Chart </h4>
 <a href="#" onClick="chartData()">Chart</a>
 <div id=rspChart></div>
@@ -192,7 +197,7 @@ And add Apache echart library, it is already included in machabse-neo for pre-lo
 
 ## Full source code
 
-```html {{linenos="table"}}
+```html {{linenos="table",hl_lines=[4,26,36,49,60,84]}}
 <html>
 <head>
     <script>
@@ -219,8 +224,9 @@ And add Apache echart library, it is already included in machabse-neo for pre-lo
         }
 
         function queryData() {
-            const query = `select * from example where name = 'webapp'`
-            fetch(`http://127.0.0.1:5654/db/query?timeformat=ms&q=`+query).then(function(rsp){
+            const query = `select * from example where name = 'webapp' limit 5`
+            const opt  = document.querySelector('input[name="opt"]:checked').value + '=true'
+            fetch(`http://127.0.0.1:5654/db/query?timeformat=ms&`+opt+`&q=`+query).then(function(rsp){
                 return rsp.json()
             }).then(function(obj){
                 document.getElementById("rspQuery").innerHTML = '<pre>'+JSON.stringify(obj, null, 2)+'</pre>'
@@ -286,12 +292,16 @@ And add Apache echart library, it is already included in machabse-neo for pre-lo
     <div id="rspInput"></div>
 
     <h4> Query data </h4>
+    <input type="radio" name="opt" value="none" checked/>none
+    <input type="radio" name="opt" value="transpose" />transpose
+    <input type="radio" name="opt" value="rowsFlatten" />rowsFlatten
+    <input type="radio" name="opt" value="rowsArray" />rowsArray
     <a href="#" onClick="queryData()">Query</a>
     <div id=rspQuery></div>
 
     <h4> Markdown </h4>
-    <a href="#" onClick="markdownData()">Markdown</a> &nbsp;&nbsp;
-    <input type="checkbox" id="htmlMarkdown">HTML Output<br/>
+    <input type="checkbox" id="htmlMarkdown">HTML Output &nbsp;&nbsp;
+    <a href="#" onClick="markdownData()">Markdown</a><br/>
     <div id=rspMarkdown></div>
 
     <h4> Chart </h4>

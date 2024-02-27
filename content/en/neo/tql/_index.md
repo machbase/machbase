@@ -4,27 +4,29 @@ type: docs
 weight: 40
 ---
 
-It is required to properly read (translate) data that is sent from sensors.
+It is required to properly read and transform data that has been sent by sensors.
 And also read and send data from database to other systems in demanded format.
+
+### Output format independent
 
 {{< tabs items="CSV,JSON,CHART">}}
 {{< tab >}}
 ```js {linenos=table,hl_lines=[2],linenostart=1}
-SQL( `select time, value from example where name='sig.1' limit 100` )
+SQL( `select time, value from example where name='signal' limit 100` )
 CSV( timeformat("Default") )
 ```
 {{< figure src="./img/tql_intro_csv.jpg">}}
 {{</ tab >}}
 {{< tab >}}
 ```js {linenos=table,hl_lines=[2],linenostart=1}
-SQL( `select time, value from example where name='sig.1' limit 100` )
+SQL( `select time, value from example where name='signal' limit 100` )
 JSON( timeformat("Default") )
 ```
 {{< figure src="./img/tql_intro_json.jpg">}}
 {{</ tab >}}
 {{< tab >}}
 ```js {linenos=table,hl_lines=[2-9],linenostart=1}
-SQL( `select time, value from example where name='sig.1' limit 100` )
+SQL( `select time, value from example where name='signal' limit 100` )
 CHART(
     size("600px", "340px"),
     chartOption({
@@ -38,14 +40,53 @@ CHART(
 {{</ tab >}}
 {{</ tabs >}}
 
+### Data source independent
+
+{{< tabs items="JSON,CSV,SQL">}}
+{{< tab >}}
+```js {{linenos="table",hl_lines=["1-5"]}}
+FAKE( json({ 
+    [ "A", 1.0 ],
+    [ "B", 1.5 ],
+    [ "C", 2.0 ],
+    [ "D", 2.5 ] }))
+
+MAPVALUE(1, value(1) * 10 )
+
+CSV()
+```
+{{</ tab >}}
+{{< tab >}}
+```js {{linenos="table",hl_lines=["1-4"]}}
+CSV(`A,1.0
+B,1.5
+C,2.0
+D,2.5`, field(1, doubleType(), "value"))
+
+MAPVALUE(1, value(1) * 10 )
+
+CSV()
+```
+{{</ tab >}}
+{{< tab >}}
+```js  {{linenos="table",hl_lines=[1]}}
+SQL(`select time, value from example where name = 'signal' limit 4`)
+
+MAPVALUE(1, value(1) * 10 )
+
+CSV()
+```
+{{</ tab >}}
+{{</ tabs >}}
+
 The purpose of *TQL* is transforming data format.
 This chapter shows how to do this without developing additional applications.
 
-## N:M transforming
+### N:M transforming
 
 {{< figure src="/images/tql-concept.png" caption="TQL Concept" >}}
 
-## Iris
+### Iris
 
 The example tql code below gives a brief idea of what is TQL for.
 
