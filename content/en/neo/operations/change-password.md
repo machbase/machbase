@@ -6,8 +6,16 @@ weight: 11
 
 Change default password for the security before allowing remote access.
 
+{{< figure src="../img/change_passwd.jpg" width="800px" >}}
+
+```sql
+ALTER USER sys IDENTIFIED BY new_password;
+```
+
+### Command line
+
 ```sh
-machbase-neo shell "ALTER USER SYS IDENTIFIED BY my_password"
+machbase-neo shell "ALTER USER SYS IDENTIFIED BY new_password"
 ```
 
 {{< callout type="info" emoji="❗️">}}
