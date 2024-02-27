@@ -16,12 +16,15 @@ The basic SINK function might be `INSERT()` which write the incoming records ont
 
 `INSERT()` stores incoming records into specified databse table by an 'INSERT' statement for each record.
 
-- `bridge()` *bridge('name')*
-- `columns` *string*
-- `table()` *table('name')*
-- `tag()` *tag('name')*
+- `bridge()` *bridge('name')* optional.
+- `columns` *string* column list.
+- `table()` *table('name')* specify the destination table name.
+- `tag()` *tag('name')* optional, applicable only to tag tables.
 
-- Write records to machbase that contains tag name.
+
+{{<tabs items="Example,PUSHVALUE(),tag()">}}
+{{<tab>}}
+Write records to machbase that contains tag name.
 
 ```js {{linenos=table,hl_lines=[6]}}
 FAKE(json({
@@ -31,9 +34,21 @@ FAKE(json({
 MAPVALUE(1, value(1)*1000000000) // convert epoch sec to nanosec
 INSERT("name", "time", "value", table("example"))
 ```
-
-- Write records to machbase with same tag name.
-
+{{</tab>}}
+{{<tab>}}
+Write records to machbase with same tag name by adding "name" field by `PUSHVALUE()`.
+```js {{linenos=table,hl_lines=[5,7]}}
+FAKE(json({
+    [1708582792, 32.34],
+    [1708582793, 33.45]
+}))
+PUSHVALUE(0, "temperature")
+MAPVALUE(1, value(1)*1000000000) // convert epoch sec to nanosec
+INSERT("name","time", "value", table("example"))
+```
+{{</tab>}}
+{{<tab>}}
+Write records to machbase with same tag name by using `tag()` option if the destination is a tag table.
 ```js {{linenos=table,hl_lines=[6]}}
 FAKE(json({
     [1708582792, 32.34],
@@ -42,13 +57,15 @@ FAKE(json({
 MAPVALUE(0, value(0)*1000000000) // convert epoch sec to nanosec
 INSERT("time", "value", table("example"), tag('temperature'))
 ```
+{{</tab>}}
+{{</tabs>}}
 
-- Insert records into bridged database
+Insert records into bridged database.
 
 ```js {{linenos=table,hl_lines=[2]}}
 INSERT(
     bridge("sqlite"),
-    "company", "employee", "created_on", table("example")
+    "company", "employee", "created_on", table("mem_example")
 )
 ```
 

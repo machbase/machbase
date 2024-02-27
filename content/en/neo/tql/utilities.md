@@ -377,12 +377,13 @@ location associated with `time`.
 
 ### timeAdd()
 
-*Syntax*: `timeAdd( number|string [, timeExpression] )`
+*Syntax*: `timeAdd( number|string|time [, timeExpression] )`
 
 *Example)*
 
 - `timeAdd('now', 0)` returns current time.
 - `timeAdd('now', '-10s50ms')` returns the time 10.05 seconds before from now.
+- `timeAdd(value(0), '1m')` if value(0) is time, it returns the time of 1 minute later from value(0).
 
 {{< tabs items="timeAdd('now'),timeAdd(epoch)">}}
 {{< tab >}}
