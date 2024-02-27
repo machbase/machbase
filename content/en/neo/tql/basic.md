@@ -6,7 +6,7 @@ weight: 02
 
 ## Primitive types
 
-TQL has three types for primitive `string`, `number` and `boolean`.
+TQL has three types for primitive `string`, `number`, `boolean` and `time`.
 
 ### string
 
@@ -34,6 +34,8 @@ CSV()
 There is a user convenient way specifying JSON string in a TQL script by using double braces.
 It doesn't require quotation marks escaping.
 
+The two string expressions used below are equivalent.
+
 ```js {linenos=table}
 STRING({{ 
     "name": "Connan",
@@ -44,6 +46,19 @@ STRING({{
     }
 }})
 CSV()
+```
+
+```js {linenos=table}
+STRING(`{ 
+    "name": "Connan",
+    "hired": true,
+    "company": {
+        "name":"acme",
+        "employee": 123
+    }
+}`)
+CSV()
+
 ```
 
 ### number
@@ -68,6 +83,30 @@ CSV()
 FAKE( linspace(0, 1, 1))
 CSV( heading(false) )
 ```
+
+### time
+
+Time type values can be created by calling `time()`, `parseTime()` functions, or retrieved from `datetime` column of a SQL query result.
+
+## Auxiliary types
+
+### time zone
+
+TimeZone type values can be created by calling `tz()` function.
+
+ex) `tz('UTC')`, `tz('Local')`, `tz('Asia/Seoul')`
+
+### list
+
+A list is an array of other values, it can be created by calling `list()` function.
+
+ex) `list(1, 2, 3)`
+
+### dictionary
+
+A dictionary is a set of (string) name and value pairs, created by calling `dict()` function.
+
+ex) `dict("name", "pi", "value", 3.14)`
 
 ## Statements
 
@@ -233,6 +272,8 @@ CSV()
 The ternary operator `? :` is kind of similar to the if-else statements in other programing languages
 as it follows the same algorithm as of if-else statement
 
+- Whether param('name') is defined
+
 ```js {linenos=table,hl_lines=[4]}
 QUERY(
     'value',
@@ -242,6 +283,22 @@ QUERY(
     limit( param('count') ?? 10 )
 )
 CSV()
+```
+
+- Conditional value changes
+
+```js {linenos=table,hl_lines=[2]}
+FAKE(linspace(1, 5, 5))
+MAPVALUE(0, mod(value(0), 2) == 0 ? value(0)*10 : value(0))
+CSV()
+```
+
+```
+1
+20
+3
+40
+5
 ```
 
 ### Nil coalescing
