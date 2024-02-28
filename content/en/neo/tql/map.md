@@ -135,6 +135,69 @@ TAG0,1628694000000000000,10
 TAG0,1628780400000000000,11
 ```
 
+## FILTER_CHANGED()
+
+*Syntax*: `FILTER_CHANGED( value [, retain(time, duration)] )` {{< neo_since ver="8.0.15" />}}
+
+It passes only the `value` has been changed from the previous.
+The first record is always passed, use `DROP(1)` after `FILTER_CHANGED()` to discard the first record.
+
+If `retain()` option is specified, the records that keeps tje changed `value` for the given `duration` based `time` value, are passed.
+
+{{<tabs items="example,retain()">}}
+{{<tab>}}
+```js {linenos=table,hl_lines=[2,4,10,11,14]}
+FAKE(json({
+    ["A", 1692329338, 1.0],
+    ["A", 1692329339, 2.0],
+    ["B", 1692329340, 3.0],
+    ["B", 1692329341, 4.0],
+    ["B", 1692329342, 5.0],
+    ["B", 1692329343, 6.0],
+    ["B", 1692329344, 7.0],
+    ["B", 1692329345, 8.0],
+    ["C", 1692329346, 9.0],
+    ["D", 1692329347, 9.1]
+}))
+MAPVALUE(1, parseTime(value(1), "s", tz("UTC")))
+FILTER_CHANGED(value(0))
+CSV(timeformat("s"))
+```
+
+```csv
+A,1692329338,1
+B,1692329340,3
+C,1692329346,9
+D,1692329347,9.1
+```
+
+{{</tab>}}
+{{<tab>}}
+```js {linenos=table,hl_lines=[4,6,14]}
+FAKE(json({
+    ["A", 1692329338, 1.0],
+    ["A", 1692329339, 2.0],
+    ["B", 1692329340, 3.0],
+    ["B", 1692329341, 4.0],
+    ["B", 1692329342, 5.0],
+    ["B", 1692329343, 6.0],
+    ["B", 1692329344, 7.0],
+    ["B", 1692329345, 8.0],
+    ["C", 1692329346, 9.0],
+    ["D", 1692329347, 9.1]
+}))
+MAPVALUE(1, parseTime(value(1), "s", tz("UTC")))
+FILTER_CHANGED(value(0), retain(value(1), "2s"))
+CSV(timeformat("s"))
+```
+
+```csv
+A,1692329338,1
+B,1692329342,5
+```
+{{</tab>}}
+{{</tabs>}}
+
 ## SET()
 
 *Syntax*: `SET(name, expression)` {{< neo_since ver="8.0.12" />}}
