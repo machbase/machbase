@@ -425,12 +425,11 @@ Returns rounded time.
 
 ### parseTime()
 
-*Syntax*: `parseTime( time, format, timezone ) : time`
+*Syntax*: `parseTime( time, format [, timezone] ) : time`
 
 - `time` *string* time expression
 - `format` *string* time format expression
-- `timezone` *tz* timezone value typically use `tz()` function to get the demand location
-
+- `timezone` *tz* timezone, use `tz()` to get the demand location, if ommited default is `tz("UTC")`.
 
 *Example)*
 
