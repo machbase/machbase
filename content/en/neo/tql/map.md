@@ -142,7 +142,7 @@ TAG0,1628780400000000000,11
 It passes only the `value` has been changed from the previous.
 The first record is always passed, use `DROP(1)` after `FILTER_CHANGED()` to discard the first record.
 
-If `retain()` option is specified, the records that keeps tje changed `value` for the given `duration` based `time` value, are passed.
+If `retain()` option is specified, the records that keep the changed `value` for the given `duration` based `time`, are passed.
 
 {{<tabs items="example,retain()">}}
 {{<tab>}}
@@ -159,7 +159,7 @@ FAKE(json({
     ["C", 1692329346, 9.0],
     ["D", 1692329347, 9.1]
 }))
-MAPVALUE(1, parseTime(value(1), "s", tz("UTC")))
+MAPVALUE(1, parseTime(value(1), "s"))
 FILTER_CHANGED(value(0))
 CSV(timeformat("s"))
 ```
@@ -186,7 +186,7 @@ FAKE(json({
     ["C", 1692329346, 9.0],
     ["D", 1692329347, 9.1]
 }))
-MAPVALUE(1, parseTime(value(1), "s", tz("UTC")))
+MAPVALUE(1, parseTime(value(1), "s"))
 FILTER_CHANGED(value(0), retain(value(1), "2s"))
 CSV(timeformat("s"))
 ```
@@ -435,7 +435,7 @@ Beijing,2023/12/07,24,50,60
 `))
 TRANSPOSE( header(true), 2, 3, 4 ) // transpose column 2, 3, 4 with its header
 MAPVALUE(0, strToUpper(value(0)) + "-" + value(2)) // concatenate city and transposed column name (from header)
-MAPVALUE(1, parseTime(value(1), sqlTimeformat("YYYY/MM/DD"), tz("UTC"))) // conver time
+MAPVALUE(1, parseTime(value(1), sqlTimeformat("YYYY/MM/DD"))) // convert time
 MAPVALUE(3, parseFloat(value(3))) // convert value into number
 POPVALUE(2) // remove transposed column name, no more needed
 CSV(timeformat("s"))

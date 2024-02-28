@@ -127,11 +127,11 @@ string expression to time value.
 
 ### parseTime()
 
-*Syntax*: `parseTime(str, format, timezone)`
+*Syntax*: `parseTime(str, format [, timezone])`
 
 - `str` *string* time expression in string according to the given `format`
 - `format` *string* specifies the format of the time expression
-- `timezone` *tz()* specifies the time zone
+- `timezone` *tz* timezone, use `tz()` to get the demand location, if ommited default is `tz("UTC")`.
 
 *Example)*
 

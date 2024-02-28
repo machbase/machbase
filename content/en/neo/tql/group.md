@@ -437,7 +437,7 @@ FAKE( json({
     ["humidity",    1691800177998, 66],
     ["temperature", 1691800178184, 18]
 }) )
-MAPVALUE(1, parseTime(value(1), "ms", "UTC"))
+MAPVALUE(1, parseTime(value(1), "ms"))
 
 GROUP(
     by( roundTime(value(1), "1s")),
