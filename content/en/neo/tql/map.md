@@ -137,7 +137,10 @@ TAG0,1628780400000000000,11
 
 ## FILTER_CHANGED()
 
-*Syntax*: `FILTER_CHANGED( value [, retain(time, duration)] )` {{< neo_since ver="8.0.15" />}}
+*Syntax*: `FILTER_CHANGED( value [, retain(time, duration)] [, useFirstWithLast()] )` {{< neo_since ver="8.0.15" />}}
+
+- `retain(time, duration)`
+- `useFirstWithLast(boolean)`
 
 It passes only the `value` has been changed from the previous.
 The first record is always passed, use `DROP(1)` after `FILTER_CHANGED()` to discard the first record.
