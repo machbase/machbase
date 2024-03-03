@@ -53,7 +53,7 @@ When the reponse of `/db/tql` is JSON, it contains required addresses of the res
 - Line 3, Pre-load apache echarts library which is included in `jsAssets` fields in above response example.
 - Line 14, The HTTP header `X-Chart-Output: json`.
 so that machbase-neo TQL engine generates a JSON containing meta information of chart instead of full HTML document.
-Becuase when a client requests a `*.tql` file with `GET` method, machbase-neo generates HTML document for the chart by default.
+Because when a client requests a `*.tql` file with `GET` method, machbase-neo generates HTML document for the chart by default.
 - Line 23, Load js files into the HTML DOM tree that are generated and replied in `jsCodeAssets`.
 
 ```html {linenos=table,hl_lines=[4,14,19,23],linenostart=1}

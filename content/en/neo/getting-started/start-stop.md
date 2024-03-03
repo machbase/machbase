@@ -1,7 +1,7 @@
 ---
 title: Start and Stop
 type: docs
-weith: 12
+weight: 12
 ---
 
 ## Start
@@ -72,7 +72,7 @@ The commands below should be executed in Administrator mode.
 
 - Install
 
-Register a service. The following arguments after `machbase-neo service install` are same as `machbase-neo serve`, but all paths should *abolute path*.
+Register a service. The following arguments after `machbase-neo service install` are same as `machbase-neo serve`, but all paths should *absolute path*.
 
 ```
 C:\neo-server>.\machbase-neo service install --host 127.0.0.1 --data C:\neo-server\database --file C:\neo-server\files --log-filename C:\neo-server\machbase-neo.log --log-level INFO

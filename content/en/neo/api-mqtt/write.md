@@ -67,7 +67,7 @@ Use this MQTT method only when a client can keep a connection relatively long ti
 
 ## Max message size
 
-The maximum size of payload in a PUBILSH message is 256MB by MQTT specification. If a malcious or malfunctioning client sends large messages continuously it can consume all of network bandwidth and computing resource of server side then it may lead server to out of service status. It is good practice to set max message limit as just little more than what client applicatoins demand. The default mqtt max message size is 1MB (`1048576`), it can be adjusted by command line flag like below or `MaxMessageSizeLimit` in the configuration file.
+The maximum size of payload in a PUBLISH message is 256MB by MQTT specification. If a malicious or malfunctioning client sends large messages continuously it can consume all of network bandwidth and computing resource of server side then it may lead server to out of service status. It is good practice to set max message limit as just little more than what client applications demand. The default mqtt max message size is 1MB (`1048576`), it can be adjusted by command line flag like below or `MaxMessageSizeLimit` in the configuration file.
 
 ```sh
 machbase-neo serve --mqtt-max-message 1048576

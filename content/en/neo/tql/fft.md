@@ -156,7 +156,7 @@ CHART_BAR3D(
 `QUERY(...)` yields records from the query result, and *tql* treats the first field as *key* and the others are *value* tuple. `{key: time, value: (value) }`
 
 ### MAPKEY()
-`MAPKEY( roundTime(value(0), '500ms'))` sets the new key with the result of roundTime `value(0)` by 500 miliseconds. 
+`MAPKEY( roundTime(value(0), '500ms'))` sets the new key with the result of roundTime `value(0)` by 500 milliseconds. 
 As result the records are transformed into `{key: (time/500ms)*500ms, value:(time, value)}`
 
 ### GROUPBYKEY()

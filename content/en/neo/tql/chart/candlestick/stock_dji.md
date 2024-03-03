@@ -27,7 +27,7 @@ POPVALUE(2,3,4)
 
 MAP_DIFF(7, value(2))
 //  |    0    1                            2      3   4    5    6     7
-//  +-> date [open,close,lowest,highest]  volume MA5 MA10 MA20 MA30  volumneDiff
+//  +-> date [open,close,lowest,highest]  volume MA5 MA10 MA20 MA30  volumeDiff
 
 MAPVALUE(7, value(7) == NULL || value(7) > 0 ? 1 : -1)
 //  |    0    1                            2      3   4    5    6     7

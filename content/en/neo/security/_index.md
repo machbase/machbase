@@ -26,7 +26,7 @@ The starting log shows HTTP token authentication is enabled.
 ......
 ```
 
-#### Enabling token based authentiation for MQTT API
+#### Enabling token based authentication for MQTT API
 
 Enable it by specifying `--mqtt-enable-token-auth true` command line option or set `EnableTokenAuth = true` in the config file. When you launching server with this option, MQTT CONNECT message requires `client-id`, `username` with pre-registered id and token.
 
@@ -80,7 +80,7 @@ deleted
 **Register new client authentication keys and tokens**
 
 `machbase-neo shell key gen` subcommand generates new key pair and token for the given client-id.
-It writes keys and token into the file that you specfiy by `--output` option.
+It writes keys and token into the file that you specify by `--output` option.
 
 ```
 machbase-neo shell key gen <client-id> --output <output_file>
@@ -141,7 +141,7 @@ curl --output - http://127.0.0.1:5654/db/query \
 }
 ```
 
-Let's try without the `Authroization` header, or wrong token.
+Let's try without the `Authorization` header, or wrong token.
 
 ```
 curl --output - http://127.0.0.1:5654/db/query \
@@ -174,7 +174,7 @@ If a client doesn't set `client-id` and `username` properly, the server rejects 
 mosquitto_pub -h 127.0.0.1 -p 5653 -t db/write/EXAMPLE \
     -m '[ "wave.pi", `date +%s000000000`, 3.1415]'
 
-Connection error: Connection Refused: not authorised.
+Connection error: Connection Refused: not authorized.
 Error: The connection was refused.
 ```
 
@@ -183,12 +183,12 @@ Error: The connection was refused.
 ### Enabling TLS and X.509 authentication for MQTT API
 
 When machbase-neo starts with `--mqtt-enable-tls true` command line option or set `Tls.Enabled = true` in the configurationfile,
-machbase-neo accepts TLS (a.k.a SSL) connecions from clients. 
+machbase-neo accepts TLS (a.k.a SSL) connections from clients. 
 If TLS is enabled, it ignores token based authentication and accepts only connection that finished ssl-handshaking successfully 
 with pre-registered X.509 certificates.
 
 {{< callout >}}
-When TLS option is applied, machbase-neo mqtt server ignores `username` and `passowrd` fields of CONNECT message.
+When TLS option is applied, machbase-neo mqtt server ignores `username` and `password` fields of CONNECT message.
 Do not specify those values. But still need to set `client-id` for the clarity.
 {{< /callout >}}
 

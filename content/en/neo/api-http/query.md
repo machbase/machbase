@@ -89,10 +89,10 @@ The server responses in `Content-Type: application/json`.
 
 | name         | type       |  description                        |
 |:------------ |:-----------|:------------------------------------|
-| **success**  | bool       | `true` if query execution successed |
+| **success**  | bool       | `true` if query execution succeed |
 | **reason**   | string     | execution result message, this will contains error message if `success` is `false`  |
 | **elapse**   | string     | elapse time of the query execution    |
-| data         |            | exists only when execution successed  |
+| data         |            | exists only when execution succeed  |
 | data.columns | array of strings | represents columns of result    |
 | data.types   | array of strings | represents data types of result |
 | data.rows    | array of records | array represents the result set records.<br/>This field will be replaced with `cols` if `transpose` is `true` |

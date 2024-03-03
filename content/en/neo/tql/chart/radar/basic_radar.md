@@ -8,7 +8,7 @@ weight: 10
 //                       sales, admin, it,  cs,   dev,   mkt
 FAKE(json({
     ["Allocated Budget", 4200, 3000, 20000, 35000, 50000, 18000],
-    ["Actual Speding"  , 5000, 14000, 28000, 26000, 42000, 21000]
+    ["Actual Spending"  , 5000, 14000, 28000, 26000, 42000, 21000]
 }))
 
 MAPVALUE(1, list(value(1), value(2), value(3), value(4), value(5), value(6)))
@@ -33,7 +33,7 @@ CHART(
         },
         series: [
             {
-                name: "Budgrt vs spending",
+                name: "Budget vs spending",
                 type: "radar",
                 data: column(1)
             }

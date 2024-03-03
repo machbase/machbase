@@ -43,7 +43,7 @@ curl -o - http://127.0.0.1:5654/db/query \
     "q=create tag table if not exists EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"
 ```
 
-### TAG STATISTCIS
+### TAG STATISTICS
 
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \

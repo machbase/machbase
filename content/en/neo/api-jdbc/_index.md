@@ -9,7 +9,7 @@ JDBC driver is provided for Java developers.
 
 ## Install
 
-Please refer to the [maven cetral repository](https://central.sonatype.com/artifact/com.machbase/machjdbc/{{< jdbc_version >}}) for other build tool chains.
+Please refer to the [maven central repository](https://central.sonatype.com/artifact/com.machbase/machjdbc/{{< jdbc_version >}}) for other build tool chains.
 
 ### maven
 

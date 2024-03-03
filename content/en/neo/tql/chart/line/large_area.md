@@ -22,7 +22,7 @@ MAPVALUE(0, time(value(0)))
 MAPVALUE(0, strTime(value(0), sqlTimeformat("YYYY/MM/DD"), tz("Local")))
 // |   0         1
 // +-- date      n
-// |         randome values
+// |         random values
 MAPVALUE(1, sin(value(1)/20000 * 3*PI) * 300 + (100*random())+50)
 // |   0         1
 // +-- date      value

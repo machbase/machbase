@@ -6,7 +6,7 @@ weight: 55
 
 These user interface API validates the requests from clients with JWT based authentication.
 
-## User Authetnicate
+## User Authenticate
 
 ### Login
 
@@ -276,13 +276,13 @@ Web socket for the bi-directional messages
 | type           |  fields          | description        |
 |:---------------| :----------------| :------------------|
 | `ping`         |                  | ping message       |
-|                | `ping.tick`      | any integer number, server will repond with the same number that client sends |
+|                | `ping.tick`      | any integer number, server will respond with the same number that client sends |
 | `log`          | `log.level`      | log level `TRACE`, `DEBUG`, `INFO`, `WARN`, `ERROR`|
 |                | `log.message`    | log message        |
 |                | `log.repeat`     | count, if the same message repeats more than two times in serial |
 
 
-## TQL & Worksapce
+## TQL & Workspace
 
 **Content-types of TQL**
 
@@ -431,12 +431,12 @@ Delete the file at the `path`, if the path is pointing a directory and is not em
     "type": "type",
     "title": "display title",
     "address": "url address",
-    "target": "brower link target"
+    "target": "browser link target"
 }
 ```
 
 - type: `url`, `wrk`, `tql`, `sql`
-- address: if address has prefix `serverfiel://<path>` it points a server side file, 
+- address: if address has prefix `serverfile://<path>` it points a server side file, 
   otherwise external web url that starts with `https://`
 
 

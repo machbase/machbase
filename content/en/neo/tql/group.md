@@ -40,7 +40,7 @@ CSV( header(true) )
 
 ### `by()`
 
-`by()` takes value as the first argument and optionaly `timewindow()` and `name`.
+`by()` takes value as the first argument and optionally `timewindow()` and `name`.
 
 *Syntax*: `by( value [, timewindow] [, name] )`
 

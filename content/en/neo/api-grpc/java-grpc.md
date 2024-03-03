@@ -29,7 +29,7 @@ option java_package = "com.machbase.neo.rpc";
 Next we need to generate the gRPC client from `machrpc.proto`. It is using the `protoc` with a gRPC Java plugin.
 
 When using Gradle or Maven, the protoc build plugin can generate the necessary code as part of the build process.
-Please refer to the [grpc-java READM](https://github.com/grpc/grpc-java/blob/master/README.md) 
+Please refer to the [grpc-java README](https://github.com/grpc/grpc-java/blob/master/README.md) 
 for how to generate code from `.proto` file.
 
 ### Add dependencies in `pom.xml`
@@ -63,7 +63,7 @@ for how to generate code from `.proto` file.
 
 ### Make source file
 
-Download or paste the soruce code from the link below into `src/main/java/com/machbase/neo/example/Example.java`.
+Download or paste the source code from the link below into `src/main/java/com/machbase/neo/example/Example.java`.
 
 {{< callout type="info">}}
 Full source code of the example is available in [here]({{< neo_examples_url >}}/java/grpc).
@@ -160,7 +160,7 @@ static String convpb(Any any) {
                 return Double.toString(v.getValue());
             }
             default:
-                return "unsupproted " + any.getTypeUrl();
+                return "unsupported " + any.getTypeUrl();
         }
     } catch (Exception e) {
         return "error " + e.getMessage();

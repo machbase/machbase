@@ -18,7 +18,7 @@ In contrast with general MQTT brokers, machbase-neo delivers messages only if th
 
 For example, while `CLIENT-M` and `CLIENT-P` subscribed to same `TOPIC` and waiting messages.
 Server sends messages `M1` and `M2` to `TOPIC` that were inscribed to `CLIENT-M`.
-Those messages are delivered only to `CLIENT-M` but `CLIENT-P` recevies `P1` and `P2` that were explicitly designated to it by server. If another client `PUBLISHER-X` sends `X1` to `TOPIC`, this `X1` will be delivered to server and the other clients will not know about this event.
+Those messages are delivered only to `CLIENT-M` but `CLIENT-P` receives `P1` and `P2` that were explicitly designated to it by server. If another client `PUBLISHER-X` sends `X1` to `TOPIC`, this `X1` will be delivered to server and the other clients will not know about this event.
 
 ```mermaid
 flowchart LR
@@ -36,7 +36,7 @@ Application needs a preparing step to query machbase-neo via MQTT which is subsc
 In the diagram below we shows general procedure assuming `CLIENT` uses QoS 1.
 for the notes, machbase-neo support QoS 0, 1 of MQTT v3.1.1 specification.
 
-After establised MQTT sesion by exchanging `CONNECT`and `CONNACK`, Client should subscribe to `db/reply` first before send query message to `db/query`, otherwise it can not receive any "query result".
+After established MQTT session by exchanging `CONNECT`and `CONNACK`, Client should subscribe to `db/reply` first before send query message to `db/query`, otherwise it can not receive any "query result".
 
 ```mermaid
 sequenceDiagram
@@ -97,14 +97,14 @@ Those options are available only when `format=json`
 | rowsArray   | false   | produce JSON that contains only array of object for each record.  |
 
 
-A baisc query example shows the client subscribe to `db/reply/#` and publish a query request to `db/query` with *reply* field `db/reply/my_query` so that it can identify the individual reply from multiple messages.
+A basic query example shows the client subscribe to `db/reply/#` and publish a query request to `db/query` with *reply* field `db/reply/my_query` so that it can identify the individual reply from multiple messages.
 
 {{< figure src="../img/query_mqttx.png" width="600px" caption="A demonstration shows how to query and receive responses over MQTT. (Using MQTTX.app)">}}
 
 ## Sample code
 
 
-**Define data structure for reponse**
+**Define data structure for response**
 
 ```go
 type Result struct {
