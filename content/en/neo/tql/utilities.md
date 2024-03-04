@@ -355,6 +355,87 @@ CSV()
 {{< /tab >}}
 {{< /tabs >}}
 
+### timeYear()
+
+*Syntax*: `timeYear( time [, timezone] ) : int`  {{< neo_since ver="8.0.15" />}}
+
+timeYear() returns the year in which *time* occurs.
+
+### timeMonth()
+
+*Syntax*: `timeMonth( time [, timezone] ) : int`  {{< neo_since ver="8.0.15" />}}
+
+timeMonth()  returns the month of the year specified by *time*.
+
+### timeDay()
+
+*Syntax*: `timeMonth( time [, timezone] ) : int`  {{< neo_since ver="8.0.15" />}}
+
+timeDay()  returns the day of the month specified by *time*.
+
+### timeHour()
+
+*Syntax*: `timeHour( time [, timezone] ) : int`  {{< neo_since ver="8.0.15" />}}
+
+timeHour() returns the hour within the day specified by *time*, in the range [0, 23]..
+
+### timeMinute()
+
+*Syntax*: `timeMinute( time [, timezone] ) : int`  {{< neo_since ver="8.0.15" />}}
+
+timeMinute() returns the minute offset within the hour specified by *time*, in the range [0, 59].
+
+### timeSecond()
+
+*Syntax*: `timeSecond( time ) : int`  {{< neo_since ver="8.0.15" />}}
+
+timeSecond() returns the second offset within the minute specified by *time*, in the range [0, 59].
+
+### timeNanosecond()
+
+*Syntax*: `timeNanosecond( time ) : int`  {{< neo_since ver="8.0.15" />}}
+
+timeNanosecond() returns the nanosecond offset within the second specified by *time*, in the range [0, 999999999].
+
+### timeISOYear()
+
+*Syntax*: `timeISOYear( time [, timezone] ) : int`  {{< neo_since ver="8.0.15" />}}
+
+timeISOYear() returns the ISO 8601 year number in which ts occurs.
+
+### timeISOWeek()
+
+*Syntax*: `timeISOWeek( time [, timezone] ) : int`  {{< neo_since ver="8.0.15" />}}
+
+timeISOWeek() returns the ISO 8601 week number in which *time* occurs.
+Week ranges from 1 to 53. Jan 01 to Jan 03 of year n might belong to
+week 52 or 53 of year n-1, and Dec 29 to Dec 31 might belong to week 1
+of year n+1.
+
+According to the rule that the first calendar week of a calendar year is
+the week including the first Thursday of that year, and that the last one is
+the week immediately preceding the first calendar week of the next calendar year.
+See https://www.iso.org/obp/ui#iso:std:iso:8601:-1:ed-1:v1:en:term:3.1.1.23 for details.
+
+### timeYearDay()
+
+*Syntax*: `timeYearDay( time [, timezone] ) : int`  {{< neo_since ver="8.0.15" />}}
+
+timeYearDay() returns the day of the year specified by t, in the range [1,365] for non-leap years, and [1,366] in leap years.
+
+### timeWeekDay()
+
+*Syntax*: `timeWeekDay( time [, timezone] ) : int`  {{< neo_since ver="8.0.15" />}}
+
+timeWeekDay() returns the day of the week specified by t. (Sunday = 0, ...).
+
+```js {{linenos=table,hl_lines=[3]}}
+FAKE(arrange(1, 7, 1))
+MAPVALUE(0, time(strSprintf("now - %.fd",value(0))))
+GROUP( lazy(true), by(timeWeekDay(value(0))), count(value(0)) )
+CSV()
+```
+
 ### timeUnix()
 
 *Syntax*: `timeUnix( time ) : number` {{< neo_since ver="8.0.13" />}}

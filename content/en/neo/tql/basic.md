@@ -267,6 +267,30 @@ CSV()
 4
 ```
 
+### IN Operator
+
+```js {linenos=table,hl_lines=[7]}
+FAKE(json({
+    ["A", 1.0],
+    ["B", 1.5],
+    ["C", 2.0],
+    ["D", 2.5]
+}))
+FILTER( value(0) in ("A", "C") )
+CSV()
+```
+
+```js {linenos=table,hl_lines=[7]}
+FAKE(json({
+    ["A", 1.0],
+    ["B", 1.5],
+    ["C", 2.0],
+    ["D", 2.5]
+}))
+FILTER( value(1) in (1.5, 2.5) )
+CSV()
+```
+
 ### Ternary Operator
 
 The ternary operator `? :` is kind of similar to the if-else statements in other programing languages

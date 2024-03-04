@@ -514,7 +514,7 @@ CHART(
 
 *Syntax*: `meshgrid(xseries, yseries)`
 
-It generates {key:index, value:[][][]{x[n], y[m]}}
+It generates meshed values - [xseries, yseries].
 
 {{< tabs items="CSV,CHART">}}
 {{< tab >}}
@@ -539,17 +539,17 @@ CSV()
 {{< /tab >}}
 {{< tab >}}
 ```js {{linenos="table",hl_lines=[1]}}
-FAKE( meshgrid(linspace(0,2*3.1415,30), linspace(0, 3.1415, 20)) )
+FAKE(meshgrid(linspace(0,2*3.1415,30), linspace(0, 3.1415, 20)))
 
-MAPVALUE(2, cos(value(0))*sin(value(1)))  // x
-MAPVALUE(3, sin(value(0))*sin(value(1)))  // y
-MAPVALUE(4, cos(value(1)))                // z
-MAPVALUE(0, list(value(2), value(3), value(4)))
-POPVALUE(1,2,3,4)
+SET(x, cos(value(0))*sin(value(1)))
+SET(y, sin(value(0))*sin(value(1)))
+SET(z, cos(value(1)))
+MAPVALUE(0, list($x, $y, $z))
+POPVALUE(1)
 
 CHART(
   plugins("gl"),
-  size("400px", "400px"),
+  size("600px", "600px"),
   chartOption({
     grid3D:{},
     xAxis3D:{}, yAxis3D:{}, zAxis3D:{},

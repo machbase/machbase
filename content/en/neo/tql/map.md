@@ -238,6 +238,8 @@ Group aggregation function, please refer to the [GROUP()](/neo/tql/group/) secti
 
 ## PUSHVALUE()
 
+![map_pushvalue](../img/map_pushvalue.jpg)
+
 *Syntax*: `PUSHVALUE( idx, value [, name] )` {{< neo_since ver="8.0.5" />}}
 
 - `idx` *int* Index where newValue insert at. (0 based)
@@ -259,6 +261,8 @@ CSV()
 ```
 
 ## POPVALUE()
+
+![map_popvalue](../img/map_popvalue.jpg)
 
 *Syntax*: `POPVALUE( idx [, idx2, idx3, ...] )` {{< neo_since ver="8.0.5" />}}
 
