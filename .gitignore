@@ -17,3 +17,5 @@ vhs/machbase-neo
 examples/**/target/
 
 *.swp
+
+.vscode/
