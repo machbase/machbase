@@ -147,7 +147,7 @@ The first record is always passed, use `DROP(1)` after `FILTER_CHANGED()` to dis
 
 If `retain()` option is specified, the records that keep the changed `value` for the given `duration` based `time`, are passed.
 
-{{<tabs items="example,retain()">}}
+{{<tabs items="example,retain(),useFirstWithLast(),useFirstWithLast()">}}
 {{<tab>}}
 ```js {linenos=table,hl_lines=[2,4,10,11,14]}
 FAKE(json({
@@ -197,6 +197,60 @@ CSV(timeformat("s"))
 ```csv
 A,1692329338,1
 B,1692329342,5
+```
+{{</tab>}}
+{{<tab>}}
+```js {linenos=table,hl_lines=[4,6,14]}
+FAKE(json({
+    ["A", 1692329338, 1.0],
+    ["A", 1692329339, 2.0],
+    ["B", 1692329340, 3.0],
+    ["B", 1692329341, 4.0],
+    ["B", 1692329342, 5.0],
+    ["B", 1692329343, 6.0],
+    ["B", 1692329344, 7.0],
+    ["B", 1692329345, 8.0],
+    ["C", 1692329346, 9.0],
+    ["D", 1692329347, 9.1]
+}))
+MAPVALUE(1, parseTime(value(1), "s"))
+FILTER_CHANGED(value(0), retain(value(1), "2s"), useFirstWithLast(false))
+CSV(timeformat("s"))
+```
+
+```csv
+A,1692329338,1
+B,1692329340,3
+```
+{{</tab>}}
+{{<tab>}}
+```js {linenos=table,hl_lines=[14]}
+FAKE(json({
+    ["A", 1692329338, 1.0],
+    ["A", 1692329339, 2.0],
+    ["B", 1692329340, 3.0],
+    ["B", 1692329341, 4.0],
+    ["B", 1692329342, 5.0],
+    ["B", 1692329343, 6.0],
+    ["B", 1692329344, 7.0],
+    ["B", 1692329345, 8.0],
+    ["C", 1692329346, 9.0],
+    ["D", 1692329347, 9.1]
+}))
+MAPVALUE(1, parseTime(value(1), "s"))
+FILTER_CHANGED(value(0), useFirstWithLast(true))
+CSV(timeformat("s"))
+```
+
+```csv
+A,1692329338,1
+A,1692329339,2
+B,1692329340,3
+B,1692329345,8
+C,1692329346,9
+C,1692329346,9
+D,1692329347,9.1
+D,1692329347,9.1
 ```
 {{</tab>}}
 {{</tabs>}}
