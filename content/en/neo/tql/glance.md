@@ -6,8 +6,8 @@ weight: 01
 
 machbase-neo supports Transforming Query Language and execution API.
 
-As application developers, we generally take similar approching to build applications that utilize databases.
-The process is starting typically with quering database and retrieving data in a tabular form(rows and colums), converting it into the desired data structure,
+As application developers, we generally take similar approaching to build applications that utilize databases.
+The process is starting typically with querying database and retrieving data in a tabular form(rows and columns), converting it into the desired data structure,
 then manipulating and displaying the final result into demanded shapes such as JSON, CSV or chart.
 
 TQL is simplifying this process within few lines of script. And other inter-working applications call the TQL via HTTP endpoint as if it is an executable API.
@@ -34,7 +34,7 @@ So, TQL script should start with *SRC* and end with *SINK* and it can has zero o
 
 ### SRC
 
-There are serveral SRC functions. For example, `SQL()` produces records by querying machbase-neo database or even external (bridged) databases with the given sql statement. `FAKE()` generates artifitial data. `CSV()` can read csv data, `BYTES()` reads arbitrary binary data from file system or client's HTTP request and MQTT payload.
+There are several SRC functions. For example, `SQL()` produces records by querying machbase-neo database or even external (bridged) databases with the given sql statement. `FAKE()` generates artificial data. `CSV()` can read csv data, `BYTES()` reads arbitrary binary data from file system or client's HTTP request and MQTT payload.
 
 ![tql_src](../img/tql_src.jpg)
 
@@ -219,7 +219,7 @@ $ curl -o - -v http://127.0.0.1:5654/db/tql/hello.tql
 }
 ```
 
-This feature is the simplest way for deveropers to create RESTful APIs providing other applications accessing data.
+This feature is the simplest way for developers to create RESTful APIs providing other applications accessing data.
 
 ### INSERT
 

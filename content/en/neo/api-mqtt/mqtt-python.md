@@ -25,13 +25,13 @@ mkdir python-mqtt && cd python-mqtt
 ```python
 import paho.mqtt.client as mqtt
 
-mqttClient = mqtt.Client("python_pub") # name of puclisher
+mqttClient = mqtt.Client("python_pub") # name of publisher
 ```
 
 ### Connect Callback
 
 ```python
-def on_connect(client, userdata, falgs, rc):
+def on_connect(client, userdata, flags, rc):
     if rc == 0:
         print("CONNACK OK")
     else:
@@ -81,7 +81,7 @@ mqttClient.publish("db/append/example", """[
 import paho.mqtt.client as mqtt
 import time
 
-def on_connect(client, userdata, falgs, rc):
+def on_connect(client, userdata, flags, rc):
     if rc == 0:
         print("CONNACK OK")
     else:

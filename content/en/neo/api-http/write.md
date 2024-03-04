@@ -4,7 +4,7 @@ type: docs
 weight: 30
 ---
 
-Even `query` api can execute 'INSERT' statement, it is not an effecient way to write data,
+Even `query` api can execute 'INSERT' statement, it is not an efficient way to write data,
 since clients should build a static sql text in `q` parameter for the every request.
 The proper way writing data is the `write` api which is the `INSERT` statement equivalent. 
 And another benefit of `write` is that a client application can insert multiple records in a single `write` request.
@@ -17,7 +17,7 @@ Write API's endpoint is "/db/write/" following by table name, `/db/write/{TABLE}
 |:----------- |---------|:------------------------------- |
 | timeformat  | ns      | Time format: s, ms, us, ns      |
 | tz          | UTC     | Time Zone: UTC, Local and location spec |
-| method      | insert  | Wrting methods: insert, append  |
+| method      | insert  | Writing methods: insert, append  |
 
 **Available parameters with `Content-Type: text/csv`**
 
@@ -123,7 +123,7 @@ curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE?heading=true \
 ## INSERT vs. APPEND
 The `/db/write` API writes the posted data with “INSERT INTO…” statement by default. As long as the total number of records to write is small, there is not a big difference from “append” method.
 
-When you are writing a large amount of data (e.g. more than several hundreds thousands records), Use `method=append` parameter that specify machbase-neo to use “append” method instead of “INSERT INTO…” statement which is implicitly speicified as `method=insert`.
+When you are writing a large amount of data (e.g. more than several hundreds thousands records), Use `method=append` parameter that specify machbase-neo to use “append” method instead of “INSERT INTO…” statement which is implicitly specified as `method=insert`.
 
 ## Example
 
@@ -468,7 +468,7 @@ curl -o - http://127.0.0.1:5654/db/query       \
 +----------+-------------------------+----------+
 ```
 
-### Insert CSV file in custome time format with `America/New_York`
+### Insert CSV file in custom time format with `America/New_York`
 
 **Prepare data file**
 

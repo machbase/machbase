@@ -67,7 +67,7 @@ Copy and paste the below codes.
 </html>
 ```
 
-- line 6: `timeformat=ms` Declare the data payload contains time value in millisecond unix epoc. which is used in line 15 `Date.now()`.
+- line 6: `timeformat=ms` Declare the data payload contains time value in millisecond unix epoch. which is used in line 15 `Date.now()`.
 - line 9: Set content-type of the payload, so that machbase-neo interprets it properly.
 - line 11-18: The actual data in payload. This example has only one record in the `rows` field, but it may contain multiple records, 
 
@@ -180,7 +180,7 @@ function chartData() {
 }
 ```
 
-And add Apache echart library, it is already included in machabse-neo for pre-loading.
+And add Apache echart library, it is already included in machbase-neo for pre-loading.
 
 ```html {{linenos="table",linenostart=84}}
 <script src="http://127.0.0.1:5654/web/echarts/echarts.min.js"></script>

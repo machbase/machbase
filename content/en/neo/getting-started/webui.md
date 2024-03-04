@@ -1,7 +1,7 @@
 ---
 title: Web UI
 type: docs
-weith: 13
+weight: 13
 ---
 
 It provides a built-in web UI for easy handling of Machbase Neo.
@@ -58,7 +58,7 @@ SELECT time, value FROM example WHERE name = 'my-car';
 
 ### Chart Draw
 
-Insert more records by executing insert statement repeately.
+Insert more records by executing insert statement repeatedly.
 
 ```sql
 INSERT INTO example VALUES('my-car', now, 1.2345*1.1);

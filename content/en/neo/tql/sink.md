@@ -14,7 +14,7 @@ The basic SINK function might be `INSERT()` which write the incoming records ont
 
 *Syntax*: `INSERT( [bridge(),] columns..., table() [, tag()] )`
 
-`INSERT()` stores incoming records into specified databse table by an 'INSERT' statement for each record.
+`INSERT()` stores incoming records into specified database table by an 'INSERT' statement for each record.
 
 - `bridge()` *bridge('name')* optional.
 - `columns` *string* column list.
@@ -73,7 +73,7 @@ INSERT(
 
 *Syntax*: `APPEND( table() )`
 
-*APPEND()* stores incoming records into specified databse table via the 'append' method of machbase-neo.
+*APPEND()* stores incoming records into specified database table via the 'append' method of machbase-neo.
 
 - `table()` *table(string)* specify destination table
 
@@ -100,8 +100,8 @@ For example, if a record was `{key: k, value:[v1,v2]}`, it generates an CSV reco
 - `precision` *precision(int)* specify precision of float fields, `precision(-1)` means no restriction, `precision(0)` converts to integer
 - `heading` *heading(boolean)* add fields names as the first row
 - `delimiter` *delimiter(string)* specify fields separator other than the default comma(`,`).
-- `nullValue()` specify sustitution string for the *NULL* value, default is `nullValue('NULL')`. {{< neo_since ver="8.0.14" />}}
-- `substituteNull` *substitute(string)* specify sustitution string for the *NULL* value, default is `substituteNull('NULL')`. (deprecated, replaced by `nullValue()`)
+- `nullValue()` specify substitution string for the *NULL* value, default is `nullValue('NULL')`. {{< neo_since ver="8.0.14" />}}
+- `substituteNull` *substitute(string)* specify substitution string for the *NULL* value, default is `substituteNull('NULL')`. (deprecated, replaced by `nullValue()`)
 
 {{< tabs items="default,heading(),delimiter(),nullValue()">}}
 {{< tab >}}
@@ -264,7 +264,7 @@ Generates a table in markdown format or HTML.
 - `rownum(boolean)` show rownum column
 - `precision` *precision(int)* specify precision of float fields, `precision(-1)` means no restriction, `precision(0)` converts to integer.
 - `brief(boolean)` omit result rows, `brief(true)` is equivalent with `briefCount(5)`
-- `briefCount(limit int)` omit result rows if the records exceeds the given limit, no omition if limit is `0`
+- `briefCount(limit int)` omit result rows if the records exceeds the given limit, no omission if limit is `0`
 
 {{< tabs items="default,briefCount,html">}}
 {{< tab >}}
@@ -409,7 +409,7 @@ Available themes : `chalk`, `essos`, `infographic`, `macarons`, `purple-passion`
 
 *Syntax*: `plugins(plugin...)`
 
-- `plugin` *stirng*  pre-defined plugin name or url of plugin module.
+- `plugin` *string*  pre-defined plugin name or url of plugin module.
 
 | Pre-defined plugin |  Actual module url |
 | :----------------- | :------------------|
@@ -840,7 +840,7 @@ CHART(
 
 > **DEPRECATED**: use chartOption() with CHART() instead.
 
-*Syntax*: `seriesLabels( lable... )`
+*Syntax*: `seriesLabels( label... )`
 
 - `label` *string*
 
@@ -934,7 +934,7 @@ CHART_LINE(
 
 *Syntax*: `markArea(coord0, coord1 [, label [, color [, opacity]]])`
 
-- `coord0` *any* : area begining x-value
+- `coord0` *any* : area beginning x-value
 - `coord1` *any* : area ending x-value
 - `label` *string* : title
 - `color` *string* : color of area

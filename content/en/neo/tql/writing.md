@@ -228,7 +228,7 @@ CSV( timeformat("DEFAULT") )
 ```
 {{</ tab >}}
 {{< tab >}}
-Alternative version of tranforming using SCRIPT()
+Alternative version of transforming using SCRIPT()
 ```js {linenos=table,hl_lines=["9-22"],linenostart=1}
 STRING(payload() ?? ` 12345
                      23456
@@ -298,7 +298,7 @@ mosquitto_pub -h 127.0.0.1 -p 5653 \
     -f lines.txt
 ```
 
-Then find if the data was successfuly tranformed and stored.
+Then find if the data was successfully transformed and stored.
 
 ```sh
 $ machbase-neo shell "select * from example where name like 'text_%'"

@@ -51,10 +51,10 @@ Syntax of config file adopts the HCL syntax.
 
 ### functions
 
-Serveral functions are supproted for the value of config item.
+Several functions are supported for the value of config item.
 
 - `flag(A, B)` : Get value of command line flag 'A'. if not specified, apply B as default value.
-- `env(A, B)` : get value of Envrionment variable 'A'. if not specified, appy B as default value
+- `env(A, B)` : get value of Environment variable 'A'. if not specified, apply B as default value
 - `execDir()` : Get directory path where executable file is.
 - `userDir()` : Get user's home directory, On Linux and macOS, it returns the $HOME environment variable.
 - `prefDir(subdir)` : Ger user's preference directory, On Linux and macOS, it returns the real path of $HOME/.config/{subdir}
@@ -62,13 +62,13 @@ Serveral functions are supproted for the value of config item.
 {{< callout type="info">}}
 **Combine env() and flag()**<br/>
 It is general practice for seeking user's setting 
-that check command line flag first then find Environment variable and finally apply default value if both are not sepcified.
+that check command line flag first then find Environment variable and finally apply default value if both are not specified.
 We can write value `flag("--my-var", env("MY_VAR", "myvalue"))` for this use case
 {{< /callout >}}
 
 ### define DEF
 
-This section is for the default values. the variables in this section are refered in other section.
+This section is for the default values. the variables in this section are referred in other section.
 Users can define their own variables and even change the command line flags.
 As example below, `LISTEN_HOST` is taken value from `--host` flag of command line, but take `"127.0.0.1"` as default if `--host` flag is not provided.
 
@@ -165,7 +165,7 @@ please refer [Property section of Machbase Manual](/dbms/config-monitor/property
 
 #### Shell
 
-This allows remote access machbase-neo shell via ssh. Since default `LISTEN_HOST` is `"127.0.0.1"` the ssh access only available from same host machine. Set `"0.0.0.0"` or exact IP adress of host machine to allow remote access.
+This allows remote access machbase-neo shell via ssh. Since default `LISTEN_HOST` is `"127.0.0.1"` the ssh access only available from same host machine. Set `"0.0.0.0"` or exact IP address of host machine to allow remote access.
 
 {{< callout type="warning" >}}
 **Security**<br/>
@@ -174,7 +174,7 @@ Before allow remote access, it is strongly recommended to change `SYS`'s default
 
 | Key                         | Type               | Desc                                                     |
 |:----------------------------|:-------------------|----------------------------------------------------------|
-| Listeners                   | array of string    | listening adresses (ex: `tcp://127.0.0.1:5652`, `tcp://0.0.0.0:5652`)|
+| Listeners                   | array of string    | listening addresses (ex: `tcp://127.0.0.1:5652`, `tcp://0.0.0.0:5652`)|
 | IdleTimeout                 | duration           | server will close the ssh connection if there is no activity for the specified time |
 
 
@@ -184,7 +184,7 @@ machbase-neo's gRPC listening address and size limit of messages are configured.
 
 | Key                         | Type               | Desc                                                     |
 |:----------------------------|:-------------------|----------------------------------------------------------|
-| Listeners                   | array of string    | listening adresses                                       |
+| Listeners                   | array of string    | listening addresses                                       |
 | MaxRecvMsgSize              | int                | maximum message size in MB that server can receive       |
 | MaxSendMsgSize              | int                | maximum message size in MB                               |
 
@@ -194,7 +194,7 @@ server's HTTP listener config.
 
 | Key                         | Type               | Desc                                                     |
 |:----------------------------|:-------------------|----------------------------------------------------------|
-| Listeners                   | array of string    | listening adresses                                       |
+| Listeners                   | array of string    | listening addresses                                       |
 | Handlers                    | array of handler object |                                                     |
 | EnableTokenAuth             | bool               | enable token based authentication (default `false`)      |
 
@@ -212,7 +212,7 @@ More handlers will be added along with future releases.
 
 | Key                         | Type               | Desc                                                     |
 |:----------------------------|:-------------------|----------------------------------------------------------|
-| Listeners                   | array of string    | listening adresses                                       |
+| Listeners                   | array of string    | listening addresses                                       |
 | Handlers                    | array of handler object |                                                     |
 | MaxMessageSizeLimit         | int                | maximum size limit of payload in a PUBLISH <br/> (default 1048576 = 1MB) |
 | EnableTokenAuth             | bool               | enable token based authentication (default `false`)      |

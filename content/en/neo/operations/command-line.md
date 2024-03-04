@@ -20,11 +20,11 @@ Start machbase-neo server process.
 | `--log-filename`        | log file path (default `-` stdout)<br/> ex) `--log-filename /data/logs/machbase-neo.log` |
 | `--log-level`           | log level. TRACE, DEBUG, INFO, WARN, ERROR (default `INFO`)<br/> ex) `--log-level INFO`  |
 | `--log-append`          | append existing log file. (default true)               {{< neo_since ver="8.0.13" />}}   |
-| `--log-rotate-schedule` | time scheduled log file rotation (defualt `@midnight`) {{< neo_since ver="8.0.13" />}}   |
+| `--log-rotate-schedule` | time scheduled log file rotation (default `@midnight`) {{< neo_since ver="8.0.13" />}}   |
 | `--log-max-size`        | file max size in MB (default 10)                       {{< neo_since ver="8.0.13" />}}   |
 | `--log-max-backups`     | maximum log file backups (default 1)                   {{< neo_since ver="8.0.13" />}}   |
 | `--log-max-age`         | maximum days in backup files (default 7)               {{< neo_since ver="8.0.13" />}}   | 
-| `--log-compress`        | gzip compress the backup files (dfeault false)         {{< neo_since ver="8.0.13" />}}   |
+| `--log-compress`        | gzip compress the backup files (default false)         {{< neo_since ver="8.0.13" />}}   |
 | `--log-time-utc`        | use UTC time for logging (default false)               {{< neo_since ver="8.0.13" />}}   |
 | `--preset`              | database preset `auto`, `fog`, `edge` (default `auto`)<br/> ex) `--preset edge`  |
 

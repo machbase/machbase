@@ -189,7 +189,7 @@ services:
       - "5656:5656" # database engine
 ```
 
-Then copy below and execute in your project's root direcotry.
+Then copy below and execute in your project's root directory.
 
 ```sh
 $ docker compose up -d

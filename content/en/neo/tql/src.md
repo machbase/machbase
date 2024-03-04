@@ -6,7 +6,7 @@ weight: 11
 
 All *tql* scripts must start with one of the data source functions.
 
-There are serveral SRC functions are included. For example, `SQL()` produces records by querying machbase-neo database or even external (bridged) database with the given sql statement. `FAKE()` generates artifitial data. `CSV()` can read csv data, `BYTES()` reads arbitrary binary data from file system or client's HTTP request and MQTT payload.
+There are several SRC functions are included. For example, `SQL()` produces records by querying machbase-neo database or even external (bridged) database with the given sql statement. `FAKE()` generates artificial data. `CSV()` can read csv data, `BYTES()` reads arbitrary binary data from file system or client's HTTP request and MQTT payload.
 
 ![tql_src](../img/tql_src.jpg)
 
@@ -17,7 +17,7 @@ There are serveral SRC functions are included. For example, `SQL()` produces rec
 
 - `bridge()` *bridge('name')* If a bridge is given, the SQL query is executed on the bridge
 - `sqltext` *string* : SQL SELECT statement to retrieve data from database. Use backtick(`) for multi-line sql string.
-- `params` : Varidic arguments for the bind arguments for the query.
+- `params` : Variadic arguments for the bind arguments for the query.
 
 *Example)*
 
@@ -61,10 +61,10 @@ SQL(
 
 *QUERY()* source function provides same functionality with *SQL()*, but it simplifies the usage by standardization option functions other than using the raw SQL statement.
 
-This function actully works equivalent to `SQL()` but it takes query conditions via simplified functions instead of SQL statement.
+This function actually works equivalent to `SQL()` but it takes query conditions via simplified functions instead of SQL statement.
 It assigns time range condition easier way than using `WHERE` condition in SQL statement.
 
-The example below procudes data by query `SELECT time, value FROM example WHERE NAME = 'temperature' AND time BETWEEN...`.
+The example below process data by query `SELECT time, value FROM example WHERE NAME = 'temperature' AND time BETWEEN...`.
 The base 'time' column will be always first column of the SELECT query, even it is not specified in *fields* arguments.
 
 ```js
@@ -112,15 +112,15 @@ It provides table name and tag name to `QUERY()` function generating SQL interna
 It provides time range condition to `QUERY()` function generating SQL internally.
 It may equivalent to `... WHERE ... TIME BETWEEN <fromTime> AND <toTime>...`.
 
-- `fromTime` *string,number* time expressesion with 'now' and 'last' as string, Or assign number as unix epoch time in nanosecond
+- `fromTime` *string,number* time expression with 'now' and 'last' as string, Or assign number as unix epoch time in nanosecond
 - `toTime` *string,number* time expression
 - `period` *string,number* duration expression, Or assign number for the unix epoch time in nanoseconds. Logically only positive period makes sense.
 
 You can specify `fromTime` and `toTime` with 'now' and 'last' with delta duration expression. 
 For example, `'now-1h30m'` specifies the time that 1 hour 30 minutes before from now.
-`'last-30s'` means 30 seconds before the lastest(=max) time of the `base_time_column`.
+`'last-30s'` means 30 seconds before the latest(=max) time of the `base_time_column`.
 
-If `period` is specified it will generate 'GROUP BY' experssion with aggregation SQL functions.
+If `period` is specified it will generate 'GROUP BY' expression with aggregation SQL functions.
 
 If it is required to use string expressions for the `fromTime`, `toTime` instead of unix epoch nano seconds, use `parseTime()` to convert
 string expression to time value.
@@ -188,7 +188,7 @@ CSV(payload(),
 APPEND(table('example'))
 ```
 
-Combination of `CSV()` and `APPEND()` as above example, it is simple, useful. Be aware that it is 5 times slower than command line import command, but stil faster than `INSERT()` function when writing more than serveral thousands records per a HTTP request.
+Combination of `CSV()` and `APPEND()` as above example, it is simple, useful. Be aware that it is 5 times slower than command line import command, but still faster than `INSERT()` function when writing more than several thousands records per a HTTP request.
 
 Use `??` operator to make it works with or without HTTP POST request.
 
@@ -242,7 +242,7 @@ Specify field-types of the input CSV data.
 | `doubleType()`   | number    |
 | `datetimeType()` | datetime  |
 
-The `stringType()` and `doubleType()` take no arguments, `datetimeType()` functiont takes one or two paramters for proper conversion of date-time data.
+The `stringType()` and `doubleType()` take no arguments, `datetimeType()` function takes one or two parameters for proper conversion of date-time data.
 
 If the input data of the field specifies time in unix epoch time, specify the one of the time units `ns`, `us`, `ms` and `s`.
 - `datetimeType('s')`
@@ -250,7 +250,7 @@ If the input data of the field specifies time in unix epoch time, specify the on
 - `datetimeType('us')`
 - `datetimeType('ns')`
 
-The input field represets time in human readable format, it is requires to specifying how to parse them including time zone.
+The input field represents time in human readable format, it is requires to specifying how to parse them including time zone.
 
 - `datetimeType('DEFAULT', 'Local')`
 
@@ -270,7 +270,7 @@ field(1, datetimeType('RFC3339', 'EST'), 'time'))
 CSV()
 ```
 
-If the timzone is omitted, it assumes 'UTC' by default.
+If the timezone is omitted, it assumes 'UTC' by default.
 
 - `datetimeType('RC822')`
 
@@ -311,7 +311,7 @@ Split the input content by separator and yield records that separated sub conten
 
 The both of `BYTES()` and `STRING()` works exactly same,
 except the value types that yields, as the function's name implies,
-`BYTES()` yields value in 'array of byte' and `STRING()` yeidls `string` value.
+`BYTES()` yields value in 'array of byte' and `STRING()` yields `string` value.
 
 ```js
 STRING(payload() ?? `12345
@@ -354,7 +354,7 @@ WHEN( value(0) == 2, do( value(0), strToUpper(value(1)), {
 CSV()
 ```
 
-The code print log message on the output cosole.
+The code print log message on the output console.
 ```
 OUTPUT: 2 WORLD
 ```
@@ -426,7 +426,7 @@ CHART(
 
 It produce sine wave by time `amplitude * SIN( 2*Pi * frequency * time + phase) + bias`.
 
-- `frequence` *number* frequency in Hertz (Hz).
+- `frequency` *number* frequency in Hertz (Hz).
 - `amplitude` *number*
 - `bias` *number*
 - `phase` *number* in radian

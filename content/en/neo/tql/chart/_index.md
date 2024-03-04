@@ -90,7 +90,7 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
             image="./img/radar_custom.jpg" method="Fill" options="600x q80 webp">}}
 {{< /cards >}}
 
-### Gaguge
+### Gauge
 {{< cards >}}
     {{< card link="./gauge/basic_gauge" title="Basic Gauge"
             image="./img/basic_gauge.jpg" method="Fill" options="600x q80 webp">}}

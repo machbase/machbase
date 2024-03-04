@@ -10,8 +10,8 @@ TQL has three types for primitive `string`, `number`, `boolean` and `time`.
 
 ### string
 
-Define constant strings as like traditional programming languages with quation marks, single('), double (") and backtick(`).
-The backtick'ed string is usuful when you need to define a string in multiple lines including quation marks inside such as long SQL statement.
+Define constant strings as like traditional programming languages with quotation marks, single('), double (") and backtick(`).
+The backtick'ed string is useful when you need to define a string in multiple lines including quotation marks inside such as long SQL statement.
 
 
 *Example)* Escaping single quote with backslash(`\'`)
@@ -209,7 +209,7 @@ CSV()
 
 ### Concatenation
 
-If operator `+` takes strings as its operands, it returns cacontenated string.
+If operator `+` takes strings as its operands, it returns concatenated string.
 
 ```js {linenos=table,hl_lines=[4]}
 FAKE(json({
@@ -293,7 +293,7 @@ CSV()
 
 ### Ternary Operator
 
-The ternary operator `? :` is kind of similar to the if-else statements in other programing languages
+The ternary operator `? :` is kind of similar to the if-else statements in other programming languages
 as it follows the same algorithm as of if-else statement
 
 - Whether param('name') is defined

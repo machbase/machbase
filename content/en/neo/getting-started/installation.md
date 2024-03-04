@@ -4,7 +4,7 @@ type: docs
 weight: 10
 ---
 
-The intallation process of machbase-neo is just simple as downloading, unarchiving and run the executable.
+The installation process of machbase-neo is just simple as downloading, unarchiving and run the executable.
 
 {{% steps %}}
 

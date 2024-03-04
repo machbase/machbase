@@ -116,7 +116,7 @@ TAG0,1629126000000000000,15
 
 Apply the condition statement on the incoming record, then it pass the record only if the *condition* is *true*.
 
-For example, if an original record was `{key: k1, value[v1, v2]}` and apply `FILTER(count(V) > 2)`, it simply drop the record. If the codition was `FILTER(count(V) >= 2)`, it pass the record to the next function.
+For example, if an original record was `{key: k1, value[v1, v2]}` and apply `FILTER(count(V) > 2)`, it simply drop the record. If the condition was `FILTER(count(V) >= 2)`, it pass the record to the next function.
 
 ```js {linenos=table,hl_lines=["9"],linenostart=1}
 FAKE( json({
@@ -208,7 +208,7 @@ B,1692329342,5
 - `name` *keyword* variable name
 - `expression` *expression* value
 
-*SET* defines a record-scoped variable with given name and value. If a new variable `var` is defined as `SET(var, 10)`, it can be refered as `$var`. Because the variables are not a part of the values, it is not included in the final result of SINK.
+*SET* defines a record-scoped variable with given name and value. If a new variable `var` is defined as `SET(var, 10)`, it can be referred as `$var`. Because the variables are not a part of the values, it is not included in the final result of SINK.
 
 ```js {linenos=table,hl_lines=["2-3"],linenostart=1}
 FAKE( linspace(0, 1, 3))
@@ -293,7 +293,7 @@ CSV()
 - `newValue` *expression* New value
 - `newName` *string* change column's name with given string
 
-`MAPVALUE()` replaces the value of the element at the given index. For examaple, `MAPVALUE(0, value(0)*10)` replaces a new value that is 10 times of the first element of value tuple.
+`MAPVALUE()` replaces the value of the element at the given index. For example, `MAPVALUE(0, value(0)*10)` replaces a new value that is 10 times of the first element of value tuple.
 
 If the `idx` is out of range, it works as `PUSHVALUE()` does. `MAPVALUE(-1, value(1)+'_suffix')` inserts a new string value that concatenates '_suffix' with the 2nd element of value.
 
@@ -375,7 +375,7 @@ VALUE,DIFF
 - `value` *float*
 - `newName` *string* change column's name with given string
 
-`MAP_ABSDIFF()` replaces the value of the element at the given index with abolute difference between current and previous value abs(*current - previous*).
+`MAP_ABSDIFF()` replaces the value of the element at the given index with absolute difference between current and previous value abs(*current - previous*).
 
 ## MAP_NONEGDIFF()
 
@@ -399,7 +399,7 @@ If the difference is less than zero it applies zero instead of a negative value.
 
 `MAP_MOVAVG` replaces the value of the element at the given index with a moving average of values by given lag count.
 If values are not accumulated enough to the `lag`, it applies `NULL` instead.
-If all incoming values are `NULL` (or not a number) for the lastest `lag` count, it applies `NULL`.
+If all incoming values are `NULL` (or not a number) for the latest `lag` count, it applies `NULL`.
 If some accumulated values are `NULL` (or not a number), it makes average value from only valid values excluding the `NULL`s.
 
 ```js {linenos=table,hl_lines=["2"],linenostart=1}
@@ -431,7 +431,7 @@ When TQL loads data from CSV or external RDBMS via 'bridge'd SQL query, it may r
 
 - `fixed(columnIdx...)` specify which columns are "fixed", this can not mix-use with transposed columns.
 - `columnIdx...` specify multiple columns which are "transposed", this can not mix-use with "fixed()".
-- `header(boolean)` if it set `header(true)`, `TRANSPOSE` consider the first record is the hreader record. And it produce the header of the transposed column records as a new column.
+- `header(boolean)` if it set `header(true)`, `TRANSPOSE` consider the first record is the header record. And it produce the header of the transposed column records as a new column.
 
 {{< tabs items="TRANSPOSE,all columns,header(),fixed()">}}
 {{< tab >}}
@@ -533,7 +533,7 @@ Beijing,2023/12/07,NOISE,60
 
 ## TIMEWINDOW()
 
-*Synatax*: `TIMEWINDOW( fromTime, untilTime, period [, nullValue], columns...)` {{< neo_since ver="8.0.5" />}}
+*Syntax*: `TIMEWINDOW( fromTime, untilTime, period [, nullValue], columns...)` {{< neo_since ver="8.0.5" />}}
 
 Aggregate raw values between fromTime and untilTime into a periodic duration and fill zero value if any value exists for the period.
 
@@ -541,7 +541,7 @@ Aggregate raw values between fromTime and untilTime into a periodic duration and
 - `untilTime` *time* until (exclusive)
 - `period` *duration* ex: `period('1s')`
 - `nullValue` if a certain period has no actual values it yields the given *alternativeValue*.(default is *NULL*) ex: `nullValue(alternativeValue)`
-- `columns` *string* specifies each field's aggration function and indicates which column is the time. It should be one of pre-defines keywords. 
+- `columns` *string* specifies each field's aggregation function and indicates which column is the time. It should be one of pre-defines keywords. 
 
 Please refer to the [TIMEWINDOW()](/neo/tql/timewindow/) section for the more information including interpolation methods.
 
@@ -684,7 +684,7 @@ CSV()
 
 The log messages of the above code shows the two important points.
 
-1. The main flow is bloked and waits until its sub flow finishes the job.
+1. The main flow is blocked and waits until its sub flow finishes the job.
 2. The sub flow is executed every time for a record that matches the condition.
 
 ```
@@ -778,7 +778,7 @@ CSV()
 
 *Syntax*: `PUSHKEY( newkey )`
 
-Apply new key on each record. The orignal key is push into value tuple.
+Apply new key on each record. The original key is push into value tuple.
 
 For example, if an original record was `{key: 'k1', value: [v1, v2]}` and applied `PUSHKEY(newkey)`, it produces the updated record as `{key: newkey, values: [k1, v1, v1]}`.
 
@@ -927,7 +927,7 @@ it passes the record to the next function without any changes.
 
 ![map_script](../img/map_script.jpg)
 
-A context in the code of `SCRIPT()` provides serveral methods.
+A context in the code of `SCRIPT()` provides several methods.
 
 | method                |  description|
 |:--------------------- | :----------------------------------------------------------------|

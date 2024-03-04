@@ -15,9 +15,9 @@ machbase-neo shell import   \
     EXAMPLE
 ```
 The command above is downloading a compressed csv file from the remote web server by `curl`.
-It writes out data (compresed, binary) into its stdout stream because we have set `-o -` option, then the output stream is passed to `machbase-neo shell import`, it reads data from stdout by flag `--input -`.
+It writes out data (compressed, binary) into its stdout stream because we have set `-o -` option, then the output stream is passed to `machbase-neo shell import`, it reads data from stdout by flag `--input -`.
 
-Combining two commands with pipe `|`, so that we don't need to store the data in a temporary file comsuing the local storage.
+Combining two commands with pipe `|`, so that we don't need to store the data in a temporary file consuming the local storage.
 
 The result output shows that 1,000 records are imported.
 
@@ -92,7 +92,7 @@ machbase-neo shell \
     "create tag table EXAMPLE_COPY (name varchar(100) primary key, time datetime basetime, value double)"
 ```
 
-Then execute imort and export command together.
+Then execute import and export command together.
 
 ```sh
 machbase-neo shell export       \
@@ -143,7 +143,7 @@ machbase-neo shell import \
 ```
 
 We selected data that tag name is `wave.sin`, then import it into the `EXAMPLE_COPY` table.
-It is required `--no-rownum` and `--no-heading` options in `sql` command becuase `import` command need to verify the number of fields and data type of the incoming csv data.
+It is required `--no-rownum` and `--no-heading` options in `sql` command because `import` command need to verify the number of fields and data type of the incoming csv data.
 
 ## Import from query result with HTTP API
 
@@ -166,7 +166,7 @@ As long as the total number of records to write is small, there is not a big dif
 
 When you are expecting a large amount of data (e.g. more than several hundreds thousands records),
 Use `--method append` flag that specify machbase-neo to use "append" method 
-instead of "INSERT INTO..." statement which is implicitly speicified as `--method insert`. 
+instead of "INSERT INTO..." statement which is implicitly specified as `--method insert`. 
 
 ## Example
 

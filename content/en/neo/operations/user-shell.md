@@ -40,7 +40,7 @@ Click "Edit..." and make some changes.
 
 ### CLI
 
-The custom shells are managable with machbase-neo shell command line interface.
+The custom shells are manageably with machbase-neo shell command line interface.
 
 #### Add new custom shell
 

@@ -4,7 +4,7 @@ type: docs
 weight: 21
 ---
 
-`machbase-neo shell run <file>` executes multiple comands in the given file.
+`machbase-neo shell run <file>` executes multiple commands in the given file.
 
 ## Make a script file
 

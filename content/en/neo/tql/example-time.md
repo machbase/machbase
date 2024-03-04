@@ -19,7 +19,7 @@ INSERT INTO EXAMPLE VALUES('TAG0', TO_DATE('2021-08-13 12:00:00 123:456:789'), 1
 ```
 
 
-TQL supports serveral `Time` manipulation functions.
+TQL supports several `Time` manipulation functions.
 
 ## Time function
 
@@ -41,7 +41,7 @@ CSV()
 
 ### Timestamp
 
-`time(epoch)`  returns time that reprents in UNIX epoch in nano-seconds.
+`time(epoch)`  returns time that represents in UNIX epoch in nano-seconds.
 
 ```js
 SQL(`select to_char(time), value from example where time = ?`, time(1628737200123456789))

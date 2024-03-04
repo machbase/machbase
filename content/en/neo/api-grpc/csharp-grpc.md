@@ -391,7 +391,7 @@ finally {
 }
 ```
 
-Make `Main()` as `async Task Main()` to allow awiat for async operation.
+Make `Main()` as `async Task Main()` to allow await for async operation.
 
 ```c#
 private static async Task Main(string[] args) {

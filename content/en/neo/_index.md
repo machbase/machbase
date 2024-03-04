@@ -19,7 +19,7 @@ Machbase is the world's fastest timeseries database[^1] with a minimal footprint
 
 ### Data Transformation and Visualization
 
-Data transformation and visualization language *TQL* is supproted out of the box.
+Data transformation and visualization language *TQL* is supported out of the box.
 
 {{< figure src="/images/data-visualization.jpg" width="740" >}}
 

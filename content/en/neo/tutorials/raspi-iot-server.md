@@ -127,7 +127,7 @@ While `machbase-neo serve` is running, create `example` table by the shell comma
 
 ### Write data into machbase-neo
 
-Execute `dht.py` and redirect its output to `machabse-neo shell import`.
+Execute `dht.py` and redirect its output to `machbase-neo shell import`.
 Import command accepts csv format by default and keep writing incoming line by line to the specified table (here `example`) until it reaches to the EOF.
 
 ```sh
@@ -140,7 +140,7 @@ Since we redirect python's standard output into `machbase-neo shell import` comm
 
 ### Read recently written data
 
-While running wrting process, open another terminal and run sql the check the recently written data.
+While running writing process, open another terminal and run sql the check the recently written data.
 
 The option `--tz local` is for displaying TIME field in local time zone instead of UTC.
 

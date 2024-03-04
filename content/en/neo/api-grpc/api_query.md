@@ -6,7 +6,7 @@ weight: 13
 
 Generally an application retrieves multiple records after executing a query through for-loop.
 
-`Query` returns result handle as result of execution, then applicatoin can fetch all records with the handle by loop.
+`Query` returns result handle as result of execution, then application can fetch all records with the handle by loop.
 
 - Request `QueryRequest`
 
