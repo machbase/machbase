@@ -62,7 +62,7 @@ Returns context object of the script runtime.
 
 ### escapeParam()
 
-*Syntax*: `escapeParam( str )` {{< neo_since ver="8.0.7" />}}
+*Syntax*: `escapeParam( str ) : string` {{< neo_since ver="8.0.7" />}}
 
 `escapeParam()` escapes the string so it can be safely placed inside a URL query.
 
@@ -239,7 +239,7 @@ MARKDOWN(rownum(true))
 
 ### parseFloat()
 
-*Syntax*: `parseFloat( str )` {{< neo_since ver="8.0.7" />}}
+*Syntax*: `parseFloat( str )  : number` {{< neo_since ver="8.0.7" />}}
 
 - `str` *string*
 
@@ -271,7 +271,7 @@ JSON()
 
 ### parseBool()
 
-*Syntax*: `parseBool( str )` {{< neo_since ver="8.0.7" />}}
+*Syntax*: `parseBool( str ) : boolean` {{< neo_since ver="8.0.7" />}}
 
 - `str` *string*
 
@@ -357,55 +357,55 @@ CSV()
 
 ### timeYear()
 
-*Syntax*: `timeYear( time [, timezone] ) : int`  {{< neo_since ver="8.0.15" />}}
+*Syntax*: `timeYear( time [, timezone] ) : number`  {{< neo_since ver="8.0.15" />}}
 
 timeYear() returns the year in which *time* occurs.
 
 ### timeMonth()
 
-*Syntax*: `timeMonth( time [, timezone] ) : int`  {{< neo_since ver="8.0.15" />}}
+*Syntax*: `timeMonth( time [, timezone] ) : number`  {{< neo_since ver="8.0.15" />}}
 
 timeMonth()  returns the month of the year specified by *time*.
 
 ### timeDay()
 
-*Syntax*: `timeMonth( time [, timezone] ) : int`  {{< neo_since ver="8.0.15" />}}
+*Syntax*: `timeMonth( time [, timezone] ) : number`  {{< neo_since ver="8.0.15" />}}
 
 timeDay()  returns the day of the month specified by *time*.
 
 ### timeHour()
 
-*Syntax*: `timeHour( time [, timezone] ) : int`  {{< neo_since ver="8.0.15" />}}
+*Syntax*: `timeHour( time [, timezone] ) : number`  {{< neo_since ver="8.0.15" />}}
 
 timeHour() returns the hour within the day specified by *time*, in the range [0, 23]..
 
 ### timeMinute()
 
-*Syntax*: `timeMinute( time [, timezone] ) : int`  {{< neo_since ver="8.0.15" />}}
+*Syntax*: `timeMinute( time [, timezone] ) : number`  {{< neo_since ver="8.0.15" />}}
 
 timeMinute() returns the minute offset within the hour specified by *time*, in the range [0, 59].
 
 ### timeSecond()
 
-*Syntax*: `timeSecond( time ) : int`  {{< neo_since ver="8.0.15" />}}
+*Syntax*: `timeSecond( time ) : number`  {{< neo_since ver="8.0.15" />}}
 
 timeSecond() returns the second offset within the minute specified by *time*, in the range [0, 59].
 
 ### timeNanosecond()
 
-*Syntax*: `timeNanosecond( time ) : int`  {{< neo_since ver="8.0.15" />}}
+*Syntax*: `timeNanosecond( time ) : number`  {{< neo_since ver="8.0.15" />}}
 
 timeNanosecond() returns the nanosecond offset within the second specified by *time*, in the range [0, 999999999].
 
 ### timeISOYear()
 
-*Syntax*: `timeISOYear( time [, timezone] ) : int`  {{< neo_since ver="8.0.15" />}}
+*Syntax*: `timeISOYear( time [, timezone] ) : number`  {{< neo_since ver="8.0.15" />}}
 
 timeISOYear() returns the ISO 8601 year number in which ts occurs.
 
 ### timeISOWeek()
 
-*Syntax*: `timeISOWeek( time [, timezone] ) : int`  {{< neo_since ver="8.0.15" />}}
+*Syntax*: `timeISOWeek( time [, timezone] ) : number`  {{< neo_since ver="8.0.15" />}}
 
 timeISOWeek() returns the ISO 8601 week number in which *time* occurs.
 Week ranges from 1 to 53. Jan 01 to Jan 03 of year n might belong to
@@ -419,13 +419,13 @@ See https://www.iso.org/obp/ui#iso:std:iso:8601:-1:ed-1:v1:en:term:3.1.1.23 for 
 
 ### timeYearDay()
 
-*Syntax*: `timeYearDay( time [, timezone] ) : int`  {{< neo_since ver="8.0.15" />}}
+*Syntax*: `timeYearDay( time [, timezone] ) : number`  {{< neo_since ver="8.0.15" />}}
 
 timeYearDay() returns the day of the year specified by t, in the range [1,365] for non-leap years, and [1,366] in leap years.
 
 ### timeWeekDay()
 
-*Syntax*: `timeWeekDay( time [, timezone] ) : int`  {{< neo_since ver="8.0.15" />}}
+*Syntax*: `timeWeekDay( time [, timezone] ) : number`  {{< neo_since ver="8.0.15" />}}
 
 timeWeekDay() returns the day of the week specified by t. (Sunday = 0, ...).
 
@@ -716,13 +716,13 @@ CHART(
 
 ### random()
 
-*Syntax*: `random()` {{< neo_since ver="8.0.7" />}}
+*Syntax*: `random() : number` {{< neo_since ver="8.0.7" />}}
 
 `random()` returns a float, a pseudo-random number in the half-open interval [0.0,1.0).
 
 ### simplex()
 
-*Syntax*: `simplex(seed, dim1 [, dim2 [, dim3 [, dim4]]])` {{< neo_since ver="8.0.7" />}}
+*Syntax*: `simplex(seed, dim1 [, dim2 [, dim3 [, dim4]]]) : number` {{< neo_since ver="8.0.7" />}}
 
 - `seed` *int* seed number
 - `dim1` ~ `dim4` *float number*
