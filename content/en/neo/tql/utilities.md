@@ -421,13 +421,13 @@ See https://www.iso.org/obp/ui#iso:std:iso:8601:-1:ed-1:v1:en:term:3.1.1.23 for 
 
 *Syntax*: `timeYearDay( time [, timezone] ) : number`  {{< neo_since ver="8.0.15" />}}
 
-timeYearDay() returns the day of the year specified by t, in the range [1,365] for non-leap years, and [1,366] in leap years.
+timeYearDay() returns the day of the year specified by *time*, in the range [1,365] for non-leap years, and [1,366] in leap years.
 
 ### timeWeekDay()
 
 *Syntax*: `timeWeekDay( time [, timezone] ) : number`  {{< neo_since ver="8.0.15" />}}
 
-timeWeekDay() returns the day of the week specified by t. (Sunday = 0, ...).
+timeWeekDay() returns the day of the week specified by *time*. (Sunday = 0, ...).
 
 ```js {{linenos=table,hl_lines=[3]}}
 FAKE(arrange(1, 7, 1))

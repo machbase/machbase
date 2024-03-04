@@ -423,37 +423,37 @@ VALUE,DIFF
 
 ## MAP_ABSDIFF()
 
-*Syntax*: `MAP_ABSDIFF( idx, value [, newName]  )` {{< neo_since ver="8.0.8" />}}
+*Syntax*: `MAP_ABSDIFF( idx, value [, label]  )` {{< neo_since ver="8.0.8" />}}
 
 - `idx` *number*  Index of the value tuple. (0 based)
 - `value` *number*
-- `newName` *string* change column's name with given string
+- `label` *string* change column's label with given string
 
 `MAP_ABSDIFF()` replaces the value of the element at the given index with absolute difference between current and previous value abs(*current - previous*).
 
 ## MAP_NONEGDIFF()
 
-*Syntax*: `MAP_NONEGDIFF( idx, value [, newName]  )` {{< neo_since ver="8.0.8" />}}
+*Syntax*: `MAP_NONEGDIFF( idx, value [, label]  )` {{< neo_since ver="8.0.8" />}}
 
 - `idx` *number*  Index of the value tuple. (0 based)
 - `value` *number*
-- `newName` *string* change column's name with given string
+- `label` *string* change column's label with given string
 
 `MAP_NONEGDIFF()` replaces the value of the element at the given index with difference between current and previous value (*current - previous*). 
 If the difference is less than zero it applies zero instead of a negative value.
 
 ## MAP_MOVAVG()
 
-*Syntax*: `MAP_MOVAVG(idx, value, lag [, newName] )`  {{< neo_since ver="8.0.8" />}}
+*Syntax*: `MAP_MOVAVG(idx, value, window [, label] )`  {{< neo_since ver="8.0.8" />}}
 
 - `idx` *number*  Index of the value tuple. (0 based)
 - `value` *number*
-- `lag` *number* specifies how many records it accumulates.
-- `newName` *string* change column's name with given string
+- `window` *number* specifies how many records it accumulates.
+- `label` *string* change column's label with given string
 
-`MAP_MOVAVG` replaces the value of the element at the given index with a moving average of values by given lag count.
-If values are not accumulated enough to the `lag`, it applies `NULL` instead.
-If all incoming values are `NULL` (or not a number) for the latest `lag` count, it applies `NULL`.
+`MAP_MOVAVG` replaces the value of the element at the given index with a moving average of values by given window count.
+If values are not accumulated enough to the `window`, it applies `sum/count_of_values` instead.
+If all incoming values are `NULL` (or not a number) for the last `window` count, it applies `NULL`.
 If some accumulated values are `NULL` (or not a number), it makes average value from only valid values excluding the `NULL`s.
 
 ```js {linenos=table,hl_lines=["2"],linenostart=1}
@@ -464,8 +464,8 @@ CSV( header(true), precision(3) )
 
 ```csv
 x,MA_3
-1.000,NULL
-2.000,NULL
+1.000,1.000
+2.000,1.500
 3.000,2.000
 4.000,3.000
 5.000,4.000
