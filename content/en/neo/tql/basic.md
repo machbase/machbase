@@ -21,6 +21,13 @@ SQL( 'select * from example where name=\'temperature\' limit 10' )
 CSV()
 ```
 
+*Example)* Double quote string
+
+```js {linenos=table}
+SQL( "select * from example where name='temperature' limit 10" )
+CSV()
+```
+
 *Example)* Use multi-lines sql statement without escaping by backtick(`)
 
 ```js {linenos=table}
@@ -88,9 +95,7 @@ CSV( heading(false) )
 
 Time type values can be created by calling `time()`, `parseTime()` functions, or retrieved from `datetime` column of a SQL query result.
 
-## Auxiliary types
-
-### time zone
+### timeZone
 
 TimeZone type values can be created by calling `tz()` function.
 
@@ -147,7 +152,7 @@ TAKE(5)
 CSV()
 ```
 
-## Query Param
+## Param
 
 When external applications call a *.tql script via HTTP it can provide arguments as query parameters.
 The function `param()` is purposed to retrieve the values from query parameters in TQL script.
@@ -268,6 +273,8 @@ CSV()
 ```
 
 ### IN Operator
+
+`A in (args...)` returns true if the args contains `A`, otherwise it returns false.
 
 ```js {linenos=table,hl_lines=[7]}
 FAKE(json({
