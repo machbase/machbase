@@ -154,8 +154,8 @@ between( parseTime("2023-03-01 14:00:00", "DEFAULT", tz("Local")),
 
 It will be translated into `SELECT... LIMIT offset, count` statement.
 
-- `offset` *int* default is `0`. if omitted
-- `count` *int*
+- `offset` *number* default is `0`. if omitted
+- `count` *number*
 
 
 ## CSV()
@@ -232,7 +232,7 @@ Returns the input stream of the request content if the *tql* script has been inv
 
 Specify field-types of the input CSV data.
 
-- `idx` *int* 0-based index of the field.
+- `idx` *number* 0-based index of the field.
 - `typefunc` specify the type of the field. (see below)
 - `name` *string* specify the name of the field.
 

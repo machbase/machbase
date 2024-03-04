@@ -296,7 +296,7 @@ Group aggregation function, please refer to the [GROUP()](/neo/tql/group/) secti
 
 *Syntax*: `PUSHVALUE( idx, value [, name] )` {{< neo_since ver="8.0.5" />}}
 
-- `idx` *int* Index where newValue insert at. (0 based)
+- `idx` *number* Index where newValue insert at. (0 based)
 - `value` *expression* New value
 - `name` *string* column's name (default 'column')
 
@@ -320,7 +320,7 @@ CSV()
 
 *Syntax*: `POPVALUE( idx [, idx2, idx3, ...] )` {{< neo_since ver="8.0.5" />}}
 
-- `idx` *int* array of indexes that will removed from values
+- `idx` *number* array of indexes that will removed from values
 
 It removes column of values that specified by `idx`es from value array.
 
@@ -343,7 +343,7 @@ CSV()
 
 *Syntax*: `MAPVALUE( idx, newValue [, newName] )`
 
-- `idx` *int*  Index of the value tuple. (0 based)
+- `idx` *number*  Index of the value tuple. (0 based)
 - `newValue` *expression* New value
 - `newName` *string* change column's name with given string
 
@@ -394,8 +394,8 @@ CHART(
 
 *Syntax*: `MAP_DIFF( idx, value [, newName] )` {{< neo_since ver="8.0.8" />}}
 
-- `idx` *int*  Index of the value tuple. (0 based)
-- `value` *float*
+- `idx` *number*  Index of the value tuple. (0 based)
+- `value` *number*
 - `newName` *string* change column's name with given string
 
 `MAP_DIFF()` replaces the value of the element at the given index with difference between current and previous values (*current - previous*). 
@@ -425,8 +425,8 @@ VALUE,DIFF
 
 *Syntax*: `MAP_ABSDIFF( idx, value [, newName]  )` {{< neo_since ver="8.0.8" />}}
 
-- `idx` *int*  Index of the value tuple. (0 based)
-- `value` *float*
+- `idx` *number*  Index of the value tuple. (0 based)
+- `value` *number*
 - `newName` *string* change column's name with given string
 
 `MAP_ABSDIFF()` replaces the value of the element at the given index with absolute difference between current and previous value abs(*current - previous*).
@@ -435,8 +435,8 @@ VALUE,DIFF
 
 *Syntax*: `MAP_NONEGDIFF( idx, value [, newName]  )` {{< neo_since ver="8.0.8" />}}
 
-- `idx` *int*  Index of the value tuple. (0 based)
-- `value` *float*
+- `idx` *number*  Index of the value tuple. (0 based)
+- `value` *number*
 - `newName` *string* change column's name with given string
 
 `MAP_NONEGDIFF()` replaces the value of the element at the given index with difference between current and previous value (*current - previous*). 
@@ -446,9 +446,9 @@ If the difference is less than zero it applies zero instead of a negative value.
 
 *Syntax*: `MAP_MOVAVG(idx, value, lag [, newName] )`  {{< neo_since ver="8.0.8" />}}
 
-- `idx` *int*  Index of the value tuple. (0 based)
-- `value` *float*
-- `lag` *integer* specifies how many records it accumulates.
+- `idx` *number*  Index of the value tuple. (0 based)
+- `value` *number*
+- `lag` *number* specifies how many records it accumulates.
 - `newName` *string* change column's name with given string
 
 `MAP_MOVAVG` replaces the value of the element at the given index with a moving average of values by given lag count.
@@ -931,7 +931,7 @@ TAG0,15
 
 *Syntax*: `THROTTLE(tps)` {{< neo_since ver="8.0.8" />}}
 
-- `tps` *float* specify in number of records per a second.
+- `tps` *number* specify in number of records per a second.
 
 `THROTTLE` relays a record to the next step with delay to fit to the specified *tps*.
 It makes data flow which has a certain period from stored data (e.g a CSV file), 
