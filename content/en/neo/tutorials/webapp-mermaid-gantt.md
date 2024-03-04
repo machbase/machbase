@@ -9,11 +9,11 @@ This example shows how to utilize mermaid.js library for gantt diagram.
 {{< figure src="../img/gantt-webapp-1.jpg" width="600px" >}}
 
 - line 8, Embed mermaid.js library.
-- line 15, `<div>` with `class="mermaid"`.
 - line 36, Use `FILTER_CHANGED()` that extracts the first and last records of the each states.
 - line 54-56, Append mermaid script.
+- line 62, `<div>` with `class="mermaid"`.
 
-```html {{linenos="table",hl_lines=[8,15,36,"54-56"]}}
+```html {{linenos="table",hl_lines=[8,15,"52-54",57,62]}}
 <!DOCTYPE html>
 <html>
 <head>
@@ -27,8 +27,6 @@ This example shows how to utilize mermaid.js library for gantt diagram.
             mermaid.run()
         };
     </script>
-
-    <div id=chart class="mermaid" style='width:800px;'></div>
     <script>
         function draw() {
             fetch('/db/tql', {
@@ -75,8 +73,9 @@ This example shows how to utilize mermaid.js library for gantt diagram.
                 updateGantt()
             })
         }
-        draw()
     </script>
+    <a href="#" onClick="draw()">Draw</a>
+    <div id=chart class="mermaid" style='width:800px;'></div>
 </body>
 </html>
 ```
