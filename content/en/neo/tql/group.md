@@ -42,11 +42,11 @@ CSV( header(true) )
 
 `by()` takes value as the first argument and optionally `timewindow()` and `name`.
 
-*Syntax*: `by( value [, timewindow] [, name] )`
+*Syntax*: `by( value [, timewindow] [, label] )`
 
 - `value` grouping value, usually it might be time.
 - `timewindow(from, until, period)` timewindow option. 
-- `name` *string* set new column name, (default "GROUP")
+- `label` *string* set new column label, (default "GROUP")
 
 ### `lazy()`
 

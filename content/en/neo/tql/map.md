@@ -284,7 +284,7 @@ CSV()
 
 - `lazy(boolean)` If it set `false` which is default, *GROUP()* yields new aggregated record when the value of `by()` has changed from previous record. If it set `true`, *GROUP()* waits the end of the input stream before yield any record.
 
-- `by(value [, name])` The value how to group the values.
+- `by(value [, label])` The value how to group the values.
 
 - `aggregators` *array of aggregator* Aggregate functions
 
