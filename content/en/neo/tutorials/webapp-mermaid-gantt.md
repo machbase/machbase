@@ -8,25 +8,19 @@ This example shows how to utilize mermaid.js library for gantt diagram.
 
 {{< figure src="../img/gantt-webapp-1.jpg" width="600px" >}}
 
-- line 8, Embed mermaid.js library.
-- line 36, Use `FILTER_CHANGED()` that extracts the first and last records of the each states.
-- line 54-56, Append mermaid script.
-- line 62, `<div>` with `class="mermaid"`.
+- line 7, `<div>` with `class="mermaid"`.
+- line 56, Embed mermaid.js library with `startOnLoad:false`.
+- line 28, Use `FILTER_CHANGED()` {{< neo_since ver="8.0.15" />}} that extracts the first and last records of the each states.
+- line 46-48, Append mermaid script.
 
-```html {{linenos="table",hl_lines=[8,15,"52-54",57,62]}}
+```html {{linenos="table",hl_lines=[7,28,"46-48",56,57]}}
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
 </head>
 <body>
-    <script type="module">
-        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-        mermaid.initialize({ startOnLoad: false });
-        window.updateGantt = function() {
-            mermaid.run()
-        };
-    </script>
+    <div id=chart class="mermaid" style='width:800px;'></div>
     <script>
         function draw() {
             fetch('/db/tql', {
@@ -74,8 +68,14 @@ This example shows how to utilize mermaid.js library for gantt diagram.
             })
         }
     </script>
-    <a href="#" onClick="draw()">Draw</a>
-    <div id=chart class="mermaid" style='width:800px;'></div>
+        <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: false });
+        window.updateGantt = function() {
+            mermaid.run();
+        };
+        draw();
+    </script>
 </body>
 </html>
 ```

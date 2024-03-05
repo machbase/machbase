@@ -212,6 +212,23 @@ CSV()
 10,1000
 ```
 
+### Modulo Operator
+
+The modulo operator (also known as the modulus operator), denoted by `%`, is an arithmetic operator.
+The modulo division operator produces the remainder of an integer division which is also called the modulus of the operation.
+
+```js {linenos=table,hl_lines=[2]}
+FAKE(arrange(1, 10, 1))
+FILTER(value(0) % 3 == 0)
+CSV()
+```
+
+```csv
+3
+6
+9
+```
+
 ### Concatenation
 
 If operator `+` takes strings as its operands, it returns concatenated string.
