@@ -2,6 +2,7 @@
 title: MAP
 type: docs
 weight: 31
+math: true
 ---
 
 *MAP* functions are the core of the transforming data.
@@ -442,6 +443,22 @@ VALUE,DIFF
 `MAP_NONEGDIFF()` replaces the value of the element at the given index with difference between current and previous value (*current - previous*). 
 If the difference is less than zero it applies zero instead of a negative value.
 
+## MAP_AVG()
+
+*Syntax*: `MAP_AVG(idx, value [, label] )`  {{< neo_since ver="8.0.15" />}}
+
+- `idx` *number*  Index of the value tuple. (0 based)
+- `value` *number*
+- `label` *string* change column's label with given string
+
+`MAP_AVG` sets the value of the element at the given index with a average of values which is the averaging filter.
+
+When $k$ is number of data.
+
+Let $\alpha = \frac{1}{k}$
+
+$\overline{x_k} = (1 - \alpha) \overline{x_{k-1}} + \alpha x_k$
+
 ## MAP_MOVAVG()
 
 *Syntax*: `MAP_MOVAVG(idx, value, window [, label] )`  {{< neo_since ver="8.0.8" />}}
@@ -451,7 +468,7 @@ If the difference is less than zero it applies zero instead of a negative value.
 - `window` *number* specifies how many records it accumulates.
 - `label` *string* change column's label with given string
 
-`MAP_MOVAVG` replaces the value of the element at the given index with a moving average of values by given window count.
+`MAP_MOVAVG` sets the value of the element at the given index with a moving average of values by given window count.
 If values are not accumulated enough to the `window`, it applies `sum/count_of_values` instead.
 If all incoming values are `NULL` (or not a number) for the last `window` count, it applies `NULL`.
 If some accumulated values are `NULL` (or not a number), it makes average value from only valid values excluding the `NULL`s.
@@ -475,6 +492,22 @@ x,MA_3
 9.000,8.000
 10.000,9.000
 ```
+
+## MAP_LOWPASS()
+
+*Syntax*: `MAP_LOWPATH(idx, value, alpha [, label] )`  {{< neo_since ver="8.0.15" />}}
+
+- `idx` *number*  Index of the value tuple. (0 based)
+- `value` *number*
+- `alpha` *number*, 0 < alpha < 1
+- `label` *string* change column's label with given string
+
+`MAP_LOWPASS` sets the value of the elment at the given index with exponentially weighted moving average.
+
+When $ 0 < \alpha < 1$
+
+$\overline{x_k} = (1 - \alpha) \overline{x_{k-1}} + \alpha x_k$
+
 
 ## TRANSPOSE()
 
