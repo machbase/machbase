@@ -53,23 +53,22 @@ SQL(
     param('name') ?? "temperature")
 ```
 
-## QUERY()
+## SQL_SELECT()
 
-*Syntax*: `QUERY( fields..., from(), between() [, limit()] )`
+*Syntax*: `QUERY( fields..., from(), between() [, limit()] )` {{< neo_since ver="8.0.15" />}}
 
 - `fields` `string` : column names, multiple columns are possible.
 
-*QUERY()* source function provides same functionality with *SQL()*, but it simplifies the usage by standardization option functions other than using the raw SQL statement.
+*SQL_SELECT()* source function provides same functionality with *SQL()*, but it simplifies the usage by standardization option functions other than using the raw SQL statement.
 
-This function actually works equivalent to `SQL()` but it takes query conditions via simplified functions instead of SQL statement.
+This function actually works equivalent to `SQL()` but it takes query conditions via simplified options instead of a full SQL statement.
 It assigns time range condition easier way than using `WHERE` condition in SQL statement.
 
 The example below process data by query `SELECT time, value FROM example WHERE NAME = 'temperature' AND time BETWEEN...`.
-The base 'time' column will be always first column of the SELECT query, even it is not specified in *fields* arguments.
 
 ```js
-QUERY(
-    'value',
+SQL_SELECT(
+    'time', 'value',
     from('example', 'temperature'),
     between('last-10s', 'last')
 )
@@ -120,28 +119,12 @@ You can specify `fromTime` and `toTime` with 'now' and 'last' with delta duratio
 For example, `'now-1h30m'` specifies the time that 1 hour 30 minutes before from now.
 `'last-30s'` means 30 seconds before the latest(=max) time of the `base_time_column`.
 
-If `period` is specified it will generate 'GROUP BY' expression with aggregation SQL functions.
+If `period` is specified it will generate 'GROUP BY' *time* expression with aggregation SQL functions. In this case the base *time* column should be included in the *fields* arguments of the `SQL_SELECT()`.
 
 If it is required to use string expressions for the `fromTime`, `toTime` instead of unix epoch nano seconds, use `parseTime()` to convert
-string expression to time value.
-
-### parseTime()
-
-*Syntax*: `parseTime(str, format [, timezone])`
-
-- `str` *string* time expression in string according to the given `format`
-- `format` *string* specifies the format of the time expression
-- `timezone` *tz* timezone, use `tz()` to get the demand location, if ommited default is `tz("UTC")`.
+string-time-expression to time value. Refer to the document about utility function [*parseTime()*](/neo/tql/utilities/#parsetime)
 
 *Example)*
-
-```js
-parseTime("2023-03-01 14:01:02", "DEFAULT", tz("UTC"))
-parseTime("2023-03-01 14:01:02", "DEFAULT", tz("Local"))
-parseTime("2023-03-01 14:01:02", "DEFAULT", tz("Europe/Paris"))
-```
-
-- Combine with `between()`
 
 ```js
 between( parseTime("2023-03-01 14:00:00", "DEFAULT", tz("Local")),
@@ -157,6 +140,45 @@ It will be translated into `SELECT... LIMIT offset, count` statement.
 - `offset` *number* default is `0`. if omitted
 - `count` *number*
 
+## QUERY()
+
+*Syntax*: `QUERY( fields..., from(), between() [, limit()] )`
+
+- `fields` `string` : column names, multiple columns are possible.
+
+> **Deprecated**, Use `SQL_SELECT()` instead.
+
+*QUERY()* is almost same with `SQL_SELECT()` except that *QUERY* produce a query SQL 
+which always implicitly includes the base 'time' column as the first column, even it is not specified in *fields* arguments.
+
+The base 'time' column will be always the first column of the SELECT query.
+
+```js
+QUERY(
+    'value',
+    from('example', 'temperature'),
+    between('last-10s', 'last')
+)
+```
+is equivalent with the `SQL()` statement below
+```js
+SQL(`SELECT
+        time, value
+    FROM
+        EXAMPLE
+    WHERE
+        name = 'TAG1'
+    AND time BETWEEN (
+        SELECT MAX_TIME-10000000000
+        FROM V$EXAMPLE_STAT
+        WHERE name = 'temperature')
+    AND (
+        SELECT MAX_TIME
+        FROM V$EXAMPLE_STAT
+        WHERE name = 'temperature')
+    LIMIT 0, 1000000
+`)
+```
 
 ## CSV()
 
