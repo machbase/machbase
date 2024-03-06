@@ -22,7 +22,7 @@ This example generates random data per second and refresh chart automatically.
 
 - line 11, When the "start" button is clicked, it start timer and write data into `EXAMPLE` table.
 - line 13, The payload is CSV format.
-- line 37, The TQL combined `QUERY()`-`CHART()` generates a chart.
+- line 37, The TQL combined `SQL_SELECT()`-`CHART()` generates a chart.
 
 ```html {{linenos="table",hl_lines=[11,"13-14",26,37]}}
 <html>
@@ -63,7 +63,7 @@ This example generates random data per second and refresh chart automatically.
         function chartData() {
             fetch(`http://127.0.0.1:5654/db/tql`, {
                 method: "POST",
-                body: ` QUERY("value", from("example", "webapp"), between("last-60s", "last"))
+                body: ` SQL_SELECT("time", "value", from("example", "webapp"), between("last-60s", "last"))
                         MAPVALUE(0, list(value(0), value(1)))
                         POPVALUE(1)
                         CHART(

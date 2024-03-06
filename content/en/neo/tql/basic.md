@@ -73,7 +73,7 @@ CSV()
 TQL treats all numeric constants as 64bit floating number.
 
 ```js {linenos=table}
-QUERY( 'value', from('example', 'temperature'), limit(10))
+SQL_SELECT( 'time', 'value', from('example', 'temperature'), limit(10))
 CSV()
 ```
 
@@ -121,8 +121,8 @@ Every statement in TQL should be a function call except the literal constants of
 // A comment line starts with '//'
 
 // Each statement should start from first column.
-QUERY(
-    'value',
+SQL_SELECT(
+    'time', 'value',
     from('example', 'temperature'),
     limit(10)
 )
@@ -132,7 +132,7 @@ CSV()
 ## SRC and SINK
 
 Every `.tql` script should start with one source statement which can generates a record or records.
-For example, `SQL()`, `QUERY()` and `SCRIPT()` that generates records with `yield()`, `yieldKey()` can be a source.
+For example, `SQL()`, `SQL_SELECT()` and `SCRIPT()` that generates records with `yield()`, `yieldKey()` can be a source.
 And the last statement should be a sink statement that encode the result or write into the database.
 For example, `APPEND()`, `INSERT()` and all `CHART()` functions can be a sink.
 
@@ -142,8 +142,8 @@ There may be zero or more map functions between source and sink statements.
 The names of all map functions are with capital letters, in contrast lower case camel notation functions are used as arguments of the other map functions.
 
 ```js {linenos=table,hl_lines=["6-7"],linenostart=1}
-QUERY(
-    'value',
+SQL_SELECT(
+    'time', 'value',
     from('example', 'temperature'),
     limit(10)
 )
@@ -161,8 +161,8 @@ If the script below saved as 'hello2.tql', applications can call this script by 
 Then `param('name')` returns "temperature", `param('count')` is 10, as expected.
 
 ```js {linenos=table}
-QUERY(
-    'value',
+SQL_SELECT(
+    'time', 'value',
     from('example', param('name')),
     limit( param('count') )
 )
@@ -323,8 +323,8 @@ as it follows the same algorithm as of if-else statement
 - Whether param('name') is defined
 
 ```js {linenos=table,hl_lines=[4]}
-QUERY(
-    'value',
+SQL_SELECT(
+    'time', 'value',
     from('example',
         param('name') == NULL ? 'temperature' : param('name')
     ),
@@ -355,8 +355,8 @@ CSV()
 The example below shows the common use case of the `??` operator. If caller did not provide query param variables, the right side operand will be taken as a default value.
 
 ```js {linenos=table,hl_lines=[3]}
-QUERY(
-    'value',
+SQL_SELECT(
+    'time', 'value',
     from('example', param('name') ?? 'temperature'),
     limit( param('count') ?? 10 )
 )

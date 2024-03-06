@@ -55,7 +55,7 @@ SQL(
 
 ## SQL_SELECT()
 
-*Syntax*: `QUERY( fields..., from(), between() [, limit()] )` {{< neo_since ver="8.0.15" />}}
+*Syntax*: `SQL_SELECT( fields..., from(), between() [, limit()] )` {{< neo_since ver="8.0.15" />}}
 
 - `fields` `string` : column names, multiple columns are possible.
 
@@ -97,7 +97,7 @@ SQL(`SELECT
 
 *Syntax*: `from( table, tag [, time_column [, name_column] ] )`
 
-It provides table name and tag name to `QUERY()` function generating SQL internally. It may equivalent to `... FROM <table> WHERE NAME = <tag> ...`.
+It provides table name and tag name to `SQL_SELECT()` function generating SQL internally. It may equivalent to `... FROM <table> WHERE NAME = <tag> ...`.
 
 - `table` *string* table name
 - `tag` *string* tag name
@@ -108,7 +108,7 @@ It provides table name and tag name to `QUERY()` function generating SQL interna
 
 *Syntax*: `between( fromTime, toTime [, period] )`
 
-It provides time range condition to `QUERY()` function generating SQL internally.
+It provides time range condition to `SQL_SELECT()` function generating SQL internally.
 It may equivalent to `... WHERE ... TIME BETWEEN <fromTime> AND <toTime>...`.
 
 - `fromTime` *string,number* time expression with 'now' and 'last' as string, Or assign number as unix epoch time in nanosecond
