@@ -508,6 +508,22 @@ When $ 0 < \alpha < 1$
 
 $\overline{x_k} = (1 - \alpha) \overline{x_{k-1}} + \alpha x_k$
 
+## HISTOGRAM()
+
+*Syntax*: `HISTOGRAM(value, bins )`  {{< neo_since ver="8.0.15" />}}
+
+- `value` *number*
+- `bins` *bins(min,max,count)* option for histogram bin configuration.
+
+`HISTOGRAM()` takes values and count the distribution of the each bins, the bins are configured by min/max range of the value and the count of bins.
+If the actual value comes in the out of the min/max range, `HISTOGRAM()` adds lower or higher bins automatically.
+
+```js {{lineno=table,hl_lines=[3]}}
+FAKE( arrange(1, 100, 1) )
+MAPVALUE(0, (simplex(12, value(0)) + 1) * 100)
+HISTOGRAM(value(0), bins(0, 200, 10))
+CSV( precision(0) )
+```
 
 ## TRANSPOSE()
 
