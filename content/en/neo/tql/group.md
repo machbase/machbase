@@ -171,6 +171,101 @@ Type 1, *Syntax*: `rms(x [, option...])`
 
 Root mean square
 
+#### list()
+
+Type 2, *Syntax*: `list(x [, option...])` {{< neo_since ver="8.0.15" />}}
+
+- `x` *float* value
+
+`list()` aggregates the all *x* values and produce a single list which contians the individual values.
+
+{{< tabs items="JSON,JSON(rowsArray), FLATTEN">}}
+{{< tab >}}
+```js {linenos=table,hl_lines=[4]}
+FAKE(json({["A",1], ["A",2], ["B",3], ["B",4], ["C",5]}))
+GROUP(
+    by(value(0)),
+    list(value(1))
+)
+JSON()
+```
+
+```json
+{
+    "data":{
+        "columns":["GROUP","LIST"],
+        "types":["string","float64"],
+        "rows":[
+            ["A",[1,2]],
+            ["B",[3,4]],
+            ["C",[5]]
+        ]
+    },
+    "success":true,
+    "reason":"success",
+    "elapse":"220.375µs"
+}
+```
+{{</ tab >}}
+{{< tab >}}
+```js {linenos=table,hl_lines=[4,7]}
+FAKE(json({["A",1], ["A",2], ["B",3], ["B",4], ["C",5]}))
+GROUP(
+    by(value(0),"name"),
+    avg(value(1), "avg"),
+    list(value(1), "values")
+)
+JSON(rowsArray(true))
+```
+
+```json
+{
+    "data": {
+        "columns": ["name", "values", "avg"],
+        "types": [ "string", "list", "float64" ],
+        "rows": [
+            {  "name": "A", "avg": 1.5, "values": [ 1, 2 ] },
+            {  "name": "B", "avg": 3.5, "values": [ 3, 4 ] },
+            {  "name": "C", "avg": 5,  "values": [ 5 ] }
+        ]
+    },
+    "success": true,
+    "reason": "success",
+    "elapse": "270.25µs"
+}
+```
+{{</ tab >}}
+{{< tab >}}
+```js {linenos=table,hl_lines=[4,7]}
+FAKE(json({["A",1], ["A",2], ["B",3], ["B",4], ["C",5]}))
+GROUP(
+    by(value(0)),
+    list(value(1))
+)
+POPVALUE(0)
+FLATTEN()
+JSON()
+```
+
+```json
+{
+    "data": {
+        "columns": ["LIST"],
+        "types": ["list"],
+        "rows": [
+            [1,2],
+            [3,4],
+            [5]
+        ]
+    },
+    "success": true,
+    "reason": "success",
+    "elapse": "252.625µs"
+}
+```
+{{</ tab >}}
+{{</ tabs >}}
+
 #### lrs()
 
 Type 2, *Syntax*: `lrs(x, y [, weight(w)] [, option...])` {{< neo_since ver="8.0.13" />}}
