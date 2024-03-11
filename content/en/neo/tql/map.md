@@ -518,12 +518,45 @@ $\overline{x_k} = (1 - \alpha) \overline{x_{k-1}} + \alpha x_k$
 `HISTOGRAM()` takes values and count the distribution of the each bins, the bins are configured by min/max range of the value and the count of bins.
 If the actual value comes in the out of the min/max range, `HISTOGRAM()` adds lower or higher bins automatically.
 
-```js {{lineno=table,hl_lines=[3]}}
+{{< tabs items="CSV,CHART">}}
+{{< tab >}}
+```js {{linenos=table,hl_lines=[3]}}
 FAKE( arrange(1, 100, 1) )
 MAPVALUE(0, (simplex(12, value(0)) + 1) * 100)
-HISTOGRAM(value(0), bins(0, 200, 10))
-CSV( precision(0) )
+HISTOGRAM(value(0), bins(0, 200, 5))
+CSV( precision(0), header(true) )
 ```
+
+```csv
+low,high,count
+0,40,2
+40,80,31
+80,120,47
+120,160,16
+160,200,4
+```
+{{</ tab>}}
+{{< tab >}}
+```js {{linenos=table,hl_lines=[3]}}
+FAKE( arrange(1, 100, 1) )
+MAPVALUE(0, (simplex(12, value(0)) + 1) * 100)
+HISTOGRAM(value(0), bins(0, 200, 5))
+MAPVALUE(0, strSprintf("%.f~%.f", value(0), value(1)))
+CHART(
+    size("300px","300px"),
+    chartOption({
+        xAxis:{ type:"category", data:column(0)},
+        yAxis:{},
+        tooltip:{trigger:"axis"},
+        series:[
+            {type:"bar", data: column(2)}
+        ]
+    })
+)
+```
+{{< figure src="../img/tql-histogram.jpg" width="500" >}}
+{{</ tab >}}
+{{</ tabs >}}
 
 ## TRANSPOSE()
 
