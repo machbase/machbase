@@ -6,7 +6,8 @@ weight: 100
 
 - Line 9: `BOXPLOT()` is available {{< neo_since ver="8.0.15" />}}.
 - Line 13: `boxplotOutput("chart")` makes `BOXPLOT()` to yield records those formats are fit to echarts.
-- Line 22: column().flat() is require to display outlier points.
+- Line 21: a series for the boxplot.
+- Line 22: column().flat() is required to display outlier points.
 
 ```js {linenos=table,hl_lines=[9,13,18,21,22]}
 FAKE(json({
