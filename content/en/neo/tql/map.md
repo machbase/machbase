@@ -581,6 +581,18 @@ CHART(
 {{</ tab >}}
 {{</ tabs >}}
 
+## BOXPLOT()
+
+*Syntax*: `BOXPLOT(value, category [, order] [, boxplotInterp] [, boxplotOutput])` {{< neo_since ver="8.0.15" />}}
+
+- `value` *number*
+- `category` *category(name_value)*
+- `order` *order(name...string)* category order
+- `boxplotOutput` *boxplotOutput( "" | "chart" | "dict" )*
+- `boxplotInterp` *boxplotInterop(Q1 boolean, Q2 boolean, Q3 boolean)*
+
+See [Michelson-Morley-Experiment chart](../chart/boxplot/michelson-morley).
+
 ## TRANSPOSE()
 
 *Syntax*: `TRANSPOSE( [fixed(columnIdx...) | columnIdx...] [, header(boolean)] )` {{< neo_since ver="8.0.8" />}}
