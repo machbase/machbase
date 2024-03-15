@@ -18,7 +18,7 @@ MAPVALUE(4, strToUpper(strTrimPrefix(value(4), "Iris-")))
 BOXPLOT(
     value(0),
     category(value(4)),
-    order("Iris-setosa", "Iris-vericolor"),
+    order("SETOSA", "VERSICOLOR", "VIRGINICA"),
     boxplotOutput("chart")
 )
 
