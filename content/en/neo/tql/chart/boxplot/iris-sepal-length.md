@@ -4,24 +4,23 @@ type: docs
 weight: 110
 ---
 
-- Line 3: `BOXPLOT()` is available {{< neo_since ver="8.0.15" />}}.
-- Line 4: `value(0)` sepal length
-- Line 5: `value(4)` species
-- Line 7: `boxplotOutput("chart")` makes `BOXPLOT()` to yield records those formats are fit to echarts.
-- Line 18: a series for the boxplot.
-- Line 19: column().flat() is required to display outlier points.
+- Line 4: `BOXPLOT()` is available {{< neo_since ver="8.0.15" />}}.
+- Line 5: `value(0)` sepal length
+- Line 6: `value(4)` species
+- Line 8: `boxplotOutput("chart")` makes `BOXPLOT()` to yield records those formats are fit to echarts.
+- Line 17: a series for the boxplot.
+- Line 18: column().flat() is required to display outlier points.
 
-```js {linenos=table,hl_lines=[4,5,7,18,19]}
+```js {linenos=table,hl_lines=[5,6,8,17,18]}
 CSV(file("https://machbase.com/assets/example/iris.csv"))
+MAPVALUE(4, strToUpper(strTrimPrefix(value(4), "Iris-")))
 
 BOXPLOT(
     value(0),
     category(value(4)),
-    order("Iris-setosa", "Iris-Vericolor"),
+    order("Iris-setosa", "Iris-vericolor"),
     boxplotOutput("chart")
 )
-
-MAPVALUE(0, strToUpper(strTrimPrefix(value(0), "Iris-")))
 
 CHART(
     chartOption({
@@ -29,8 +28,8 @@ CHART(
         xAxis:{ type:"category", boundaryGap: true, data: column(0) },
         yAxis:{ type:"value", name: "sepal length", min:4, max:8, splitArea:{ show: true } },
         series:[
-            { name: "sepal length", type:"boxplot", data: column(1) },
-            { name: "outlier", type:"scatter", data: column(2).flat() },
+            { name: "sepal length", type:"boxplot", data: column(1)},
+            { name: "outlier", type:"scatter", data: column(2).flat()},
         ],
         tooltip: { trigger: 'item', axisPointer: { type: 'shadow' } },
         legend: {show: true, bottom:'2%'},
