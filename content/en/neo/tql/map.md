@@ -520,7 +520,7 @@ $\overline{x_k} = (1 - \alpha) \overline{x_{k-1}} + \alpha x_k$
 `HISTOGRAM()` takes values and count the distribution of the each bins, the bins are configured by min/max range of the value and the count of bins.
 If the actual value comes in the out of the min/max range, `HISTOGRAM()` adds lower or higher bins automatically.
 
-{{< tabs items="CSV,SINGLE,MULTI">}}
+{{< tabs items="CSV,CHART,CATEGORY">}}
 {{< tab >}}
 ```js {{linenos=table,hl_lines=[3]}}
 FAKE( arrange(1, 100, 1) )
@@ -591,7 +591,8 @@ CHART(
 - `boxplotOutput` *boxplotOutput( "" | "chart" | "dict" )*
 - `boxplotInterp` *boxplotInterop(Q1 boolean, Q2 boolean, Q3 boolean)*
 
-See [Michelson-Morley-Experiment chart](../chart/boxplot/michelson-morley).
+  - See [Michelson & Morley Experiment](../chart/boxplot/michelson-morley).
+  - See [Iris Sepal Length](../chart/boxplot/iris-sepal-length)
 
 ## TRANSPOSE()
 
