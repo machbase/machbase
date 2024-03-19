@@ -459,6 +459,25 @@ Let $\alpha = \frac{1}{k}$
 
 $\overline{x_k} = (1 - \alpha) \overline{x_{k-1}} + \alpha x_k$
 
+```js {linenos=table,hl_lines=[3]}
+FAKE(arrange(0, 1000, 1))
+MAPVALUE(1, sin(2 * PI *10*value(0)/1000))
+MAP_AVG(2, value(1))
+CHART(
+    chartOption({
+        xAxis:{ type:"category", data:column(0)},
+        yAxis:{},
+        series:[
+            { type:"line", data:column(1), name:"RAW" },
+            { type:"line", data:column(2), name:"AVG" }
+        ],
+        legend:{ bottom:10}
+    })
+)
+```
+
+{{< figure src="../img/tql-map_avg.jpg" width="500" >}}
+
 ## MAP_MOVAVG()
 
 *Syntax*: `MAP_MOVAVG(idx, value, window [, label] )`  {{< neo_since ver="8.0.8" />}}
@@ -473,6 +492,8 @@ If values are not accumulated enough to the `window`, it applies `sum/count_of_v
 If all incoming values are `NULL` (or not a number) for the last `window` count, it applies `NULL`.
 If some accumulated values are `NULL` (or not a number), it makes average value from only valid values excluding the `NULL`s.
 
+{{< tabs items="example,value+noise,value+filtered" >}}
+{{< tab >}}
 ```js {linenos=table,hl_lines=["2"],linenostart=1}
 FAKE( linspace(1, 10, 10) )
 MAP_MOVAVG(1, value(0), 3, "MA_3")
@@ -492,6 +513,56 @@ x,MA_3
 9.000,8.000
 10.000,9.000
 ```
+{{< /tab >}}
+{{< tab >}}
+
+```js {linenos=table,hl_lines=[5,11]}
+FAKE(arrange(1,5,0.03))
+MAPVALUE(0, round(value(0)*100)/100)
+SET(sig, sin(1.2*2*PI*value(0)) )
+SET(noise, 0.09*cos(9*2*PI*value(0)) + 0.15*sin(12*2*PI*value(0)))
+MAPVALUE(1, $sig + $noise)
+CHART(
+    chartOption({
+        xAxis:{ type: "category", data: column(0)},
+        yAxis:{ max:1.5, min:-1.5 },
+        series:[
+            { type: "line", data: column(1), name:"value+noise" },
+        ],
+        legend: { bottom: 10 }
+    })
+)
+```
+
+{{< figure src="../img/tql-map_movavg_noise.jpg" width="500" >}}
+
+{{< /tab >}}
+{{< tab >}}
+
+```js {linenos=table,hl_lines=[6,13]}
+FAKE(arrange(1,5,0.03))
+MAPVALUE(0, round(value(0)*100)/100)
+SET(sig, sin(1.2*2*PI*value(0)) )
+SET(noise, 0.09*cos(9*2*PI*value(0)) + 0.15*sin(12*2*PI*value(0)))
+MAPVALUE(1, $sig + $noise)
+MAP_MOVAVG(2, value(1), 10)
+CHART(
+    chartOption({
+        xAxis:{ type: "category", data: column(0)},
+        yAxis:{ max:1.5, min:-1.5 },
+        series:[
+            { type: "line", data: column(1), name:"value+noise" },
+            { type: "line", data: column(2), name:"MA(10)" },
+        ],
+        legend: { bottom: 10 }
+    })
+)
+```
+
+{{< figure src="../img/tql-map_movavg_filter.jpg" width="500" >}}
+
+{{< /tab >}}
+{{< /tabs >}}
 
 ## MAP_LOWPASS()
 
@@ -508,6 +579,56 @@ When $ 0 < \alpha < 1$
 
 $\overline{x_k} = (1 - \alpha) \overline{x_{k-1}} + \alpha x_k$
 
+{{< tabs items="value+noise,value+filtered" >}}
+{{< tab >}}
+
+```js {linenos=table,hl_lines=[5,11]}
+FAKE(arrange(1,5,0.03))
+MAPVALUE(0, round(value(0)*100)/100)
+SET(sig, sin(1.2*2*PI*value(0)) )
+SET(noise, 0.09*cos(9*2*PI*value(0)) + 0.15*sin(12*2*PI*value(0)))
+MAPVALUE(1, $sig + $noise)
+CHART(
+    chartOption({
+        xAxis:{ type: "category", data: column(0)},
+        yAxis:{ max:1.5, min:-1.5 },
+        series:[
+            { type: "line", data: column(1), name:"value+noise" },
+        ],
+        legend: { bottom: 10 }
+    })
+)
+```
+
+{{< figure src="../img/tql-map_lowpass_noise.jpg" width="500" >}}
+
+{{< /tab >}}
+{{< tab >}}
+
+```js {linenos=table,hl_lines=[6,13]}
+FAKE(arrange(1,5,0.03))
+MAPVALUE(0, round(value(0)*100)/100)
+SET(sig, sin(1.2*2*PI*value(0)) )
+SET(noise, 0.09*cos(9*2*PI*value(0)) + 0.15*sin(12*2*PI*value(0)))
+MAPVALUE(1, $sig + $noise)
+MAP_LOWPASS(2, $sig + $noise, 0.40)
+CHART(
+    chartOption({
+        xAxis:{ type: "category", data: column(0)},
+        yAxis:{ max:1.5, min:-1.5 },
+        series:[
+            { type: "line", data: column(1), name:"value+noise" },
+            { type: "line", data: column(2), name:"lpf" },
+        ],
+        legend: { bottom: 10 }
+    })
+)
+```
+
+{{< figure src="../img/tql-map_lowpass_filter.jpg" width="500" >}}
+
+{{< /tab >}}
+{{< /tabs >}}
 ## HISTOGRAM()
 
 *Syntax*: `HISTOGRAM(value, bins [, category] [, order] )`  {{< neo_since ver="8.0.15" />}}
@@ -715,6 +836,8 @@ Aggregate raw values between fromTime and untilTime into a periodic duration and
 - `nullValue` if a certain period has no actual values it yields the given *alternativeValue*.(default is *NULL*) ex: `nullValue(alternativeValue)`
 - `columns` *string* specifies each field's aggregation function and indicates which column is the time. It should be one of pre-defines keywords. 
 
+> Since v8.0.13, `GROUP()` can have `by(..., timewindow())` option which is equivalent to `TIMEWINDOW()`. Use `GROUP()` instead of `TIMEWINDOW()` becuase `GROUP()` is more flexible and feature-rich.
+
 Please refer to the [TIMEWINDOW()](/neo/tql/timewindow/) section for the more information including interpolation methods.
 
 ## FFT()
@@ -727,8 +850,6 @@ It assumes value of the incoming record is an array of *time,amplitude* tuples, 
 
 For example, if the incoming record was `{key: k, value[ [t1,a1],[t2,a2],...[tn,an] ]}`, it transforms the value to `{key:k, value[ [F1,A1], [F2,A2],...[Fm,Am] ]}`.
 
-{{< tabs items="FFT(),RESULT">}}
-{{< tab >}}
 ```js {linenos=table,hl_lines=["9"],linenostart=1}
 FAKE(
     oscillator(
@@ -745,11 +866,8 @@ CHART_LINE(
     dataZoom('slider', 0, 10) 
 )
 ```
-{{< /tab >}}
-{{< tab >}}
+
 {{< figure src="/images/web-fft-tql-2d.png" width="510" >}}
-{{< /tab >}}
-{{< /tabs >}}
 
 
 ## WHEN()
