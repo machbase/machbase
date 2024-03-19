@@ -4,7 +4,7 @@ type: docs
 weight: 500
 ---
 
-## Measurments
+## Measuring sensors
 
 The IoT data we can observe is composed of values measured through sensors.
 Every sensor inherently includes some degree of noise, which represents unavoidable errors.
@@ -39,8 +39,6 @@ CHART(
 {{< /tab >}}
 {{< /tabs >}}
 
-
-### Noise mixed
 
 Generally, noise tends to be higher frequency than the data we intend to observe, as depicted in the graph below.
 
@@ -78,7 +76,7 @@ CHART(
 
 Ultimately, the values measured through sensors result in a graph like the one below, where noise is mixed in.
 
-In databases, the stored values are a blend of the aforementioned noise, and during the data analysis process, we often desire to observe the data with some degree of noise removal (filtering).
+In databases, the stored values are a blend of the aforementioned noise, and during the data analysis process, we often desire to observe the data with some degree of noise removal (noise filtering).
 
 {{< tabs items="chart,code">}}
 {{< tab >}}
