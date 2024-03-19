@@ -941,10 +941,10 @@ FAKE( json({
     [ 4, "世界" ]
 }))
 WHEN(
-    mod(value(0), 2) == 0,
+    value(0) % 2 == 0,
     do( "Greetings:", value(0), value(1), {
         ARGS()
-        WHEN( true, doLog( value(0), value(2) ) )
+        WHEN( true, doLog( value(0), value(2), "idx:", value(1) ) )
         DISCARD()
     })
 )
@@ -956,13 +956,13 @@ The log messages of the above code shows the two important points.
 1. The main flow is blocked and waits until its sub flow finishes the job.
 2. The sub flow is executed every time for a record that matches the condition.
 
-```
+```sh {hl_lines=[3,6],linenostart=1}
 2023-12-02 07:54:42.160 TRACE 0xc000bfa580 Task compiled FAKE() → WHEN() → CSV()
 2023-12-02 07:54:42.160 TRACE 0xc000bfa840 Task compiled ARGS() → WHEN() → DISCARD()
-2023-12-02 07:54:42.160 INFO  0xc000bfa840 Greetings: 你好
+2023-12-02 07:54:42.160 INFO  0xc000bfa840 Greetings: 你好 idx: 2
 2023-12-02 07:54:42.160 DEBUG 0xc000bfa840 Task elapsed 254.583µs
 2023-12-02 07:54:42.161 TRACE 0xc000bfa9a0 Task compiled ARGS() → WHEN() → DISCARD()
-2023-12-02 07:54:42.161 INFO  0xc000bfa9a0 Greetings: 世界
+2023-12-02 07:54:42.161 INFO  0xc000bfa9a0 Greetings: 世界 idx: 4
 2023-12-02 07:54:42.161 DEBUG 0xc000bfa9a0 Task elapsed 190.552µs
 2023-12-02 07:54:42.161 DEBUG 0xc000bfa580 Task elapsed 1.102681ms
 ```
