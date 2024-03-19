@@ -362,60 +362,6 @@ Generates chart using Apache echarts.
 
 Refer to [CHART() examples](/neo/tql/chart/) for the various usages.
 
-### size()
-
-*Syntax*: `size(width, height)`
-
-- `width` *string* chart width in HTML syntax ex) '800px'
-- `height` *string* chart height in HTML syntax ex) '800px'
-
-### chartOption()
-
-*Syntax*: `chartOption( { json in apache echart options } )`
-
-### chartJSCode()
-
-*Syntax*: `chartJSCode( { user javascript code } )`
-
-### theme()
-
-*Syntax*: `theme(name)`
-
-- `name` *string* theme name
-
-Apply a chart theme.
-
-Available themes : `chalk`, `essos`, `infographic`, `macarons`, `purple-passion`, `roma`, `romantic`, `shine`, `vintage`, `walden`, `westeros`, `wonderland`
-
-{{< tabs items="chalk,essos,infographic,macarons,purple-passion,roma">}}
-  {{< tab >}}{{< figure src="../img/theme_chalk.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_essos.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_infographic.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_macarons.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_purple-passion.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_roma.jpg" width="500" >}}{{< /tab >}}
-{{< /tabs >}}
-
-{{< tabs items="romantic,shine,vintage,walden,westeros,wonderland">}}
-  {{< tab >}}{{< figure src="../img/theme_romantic.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_shine.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_vintage.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_walden.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_westeros.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_wonderland.jpg" width="500" >}}{{< /tab >}}
-{{< /tabs >}}
-
-### plugins()
-
-*Syntax*: `plugins(plugin...)`
-
-- `plugin` *string*  pre-defined plugin name or url of plugin module.
-
-| Pre-defined plugin |  Actual module url |
-| :----------------- | :------------------|
-| liquidfill         | `/web/echarts/echarts-liquidfill.min.js` |
-| wordcloud          | `/web/echarts/echarts-wordcloud.min.js`  |
-| gl                 | `/web/echarts/echarts-gl.min.js`         |
 
 ## Deprecated
 
