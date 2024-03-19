@@ -492,53 +492,6 @@ If values are not accumulated enough to the `window`, it applies `sum/count_of_v
 If all incoming values are `NULL` (or not a number) for the last `window` count, it applies `NULL`.
 If some accumulated values are `NULL` (or not a number), it makes average value from only valid values excluding the `NULL`s.
 
-{{< tabs items="example,value+noise,value+filtered" >}}
-{{< tab >}}
-```js {linenos=table,hl_lines=["2"],linenostart=1}
-FAKE( linspace(1, 10, 10) )
-MAP_MOVAVG(1, value(0), 3, "MA_3")
-CSV( header(true), precision(3) )
-```
-
-```csv
-x,MA_3
-1.000,1.000
-2.000,1.500
-3.000,2.000
-4.000,3.000
-5.000,4.000
-6.000,5.000
-7.000,6.000
-8.000,7.000
-9.000,8.000
-10.000,9.000
-```
-{{< /tab >}}
-{{< tab >}}
-
-```js {linenos=table,hl_lines=[5,11]}
-FAKE(arrange(1,5,0.03))
-MAPVALUE(0, round(value(0)*100)/100)
-SET(sig, sin(1.2*2*PI*value(0)) )
-SET(noise, 0.09*cos(9*2*PI*value(0)) + 0.15*sin(12*2*PI*value(0)))
-MAPVALUE(1, $sig + $noise)
-CHART(
-    chartOption({
-        xAxis:{ type: "category", data: column(0)},
-        yAxis:{ max:1.5, min:-1.5 },
-        series:[
-            { type: "line", data: column(1), name:"value+noise" },
-        ],
-        legend: { bottom: 10 }
-    })
-)
-```
-
-{{< figure src="../img/tql-map_movavg_noise.jpg" width="500" >}}
-
-{{< /tab >}}
-{{< tab >}}
-
 ```js {linenos=table,hl_lines=[6,13]}
 FAKE(arrange(1,5,0.03))
 MAPVALUE(0, round(value(0)*100)/100)
@@ -559,10 +512,10 @@ CHART(
 )
 ```
 
-{{< figure src="../img/tql-map_movavg_filter.jpg" width="500" >}}
+- Line 5 : Generate signal value mxied with noise
+- Line 6 : Moving average with windows size is 10
 
-{{< /tab >}}
-{{< /tabs >}}
+{{< figure src="../img/tql-map_movavg_filter.jpg" width="500" >}}
 
 ## MAP_LOWPASS()
 
@@ -578,32 +531,6 @@ CHART(
 When $ 0 < \alpha < 1$
 
 $\overline{x_k} = (1 - \alpha) \overline{x_{k-1}} + \alpha x_k$
-
-{{< tabs items="value+noise,value+filtered" >}}
-{{< tab >}}
-
-```js {linenos=table,hl_lines=[5,11]}
-FAKE(arrange(1,5,0.03))
-MAPVALUE(0, round(value(0)*100)/100)
-SET(sig, sin(1.2*2*PI*value(0)) )
-SET(noise, 0.09*cos(9*2*PI*value(0)) + 0.15*sin(12*2*PI*value(0)))
-MAPVALUE(1, $sig + $noise)
-CHART(
-    chartOption({
-        xAxis:{ type: "category", data: column(0)},
-        yAxis:{ max:1.5, min:-1.5 },
-        series:[
-            { type: "line", data: column(1), name:"value+noise" },
-        ],
-        legend: { bottom: 10 }
-    })
-)
-```
-
-{{< figure src="../img/tql-map_lowpass_noise.jpg" width="500" >}}
-
-{{< /tab >}}
-{{< tab >}}
 
 ```js {linenos=table,hl_lines=[6,13]}
 FAKE(arrange(1,5,0.03))
@@ -625,16 +552,62 @@ CHART(
 )
 ```
 
+- Line 5: Generate signal value with noise
+- Line 6: Apply low pass filter with *alpha* = `0.40`
+
 {{< figure src="../img/tql-map_lowpass_filter.jpg" width="500" >}}
 
-{{< /tab >}}
-{{< /tabs >}}
+
+## MAP_KALMAN()
+
+*Syntax*: `MAP_KALMAN(idx, value, model() [, label])` {{< neo_since ver="8.0.15" />}}
+- `idx` *number*  Index of the value tuple. (0 based)
+- `value` *number*
+- `model` *model(initial, progress, observation)* Set system matrices
+- `label` *string* change column's label with given string
+
+
+```js {linenos=table,hl_lines=[10]}
+FAKE(arrange(0, 10, 0.1))
+MAPVALUE(0, round(value(0)*100)/100 )
+
+SET(real, 14.4)
+SET(noise, 4 * simplex(1234, value(0)))
+SET(measure, $real + $noise)
+
+MAPVALUE(1, $real )
+MAPVALUE(2, $measure)
+MAP_KALMAN(3, $measure, model(0.1, 0.001, 1.0))
+CHART(
+    chartOption({
+        title:{text:"Kalman filter"},
+        xAxis:{type:"category", data:column(0)},
+        yAxis:{ min:10, max: 18 },
+        series:[
+            {type:"line", data:column(1), name:"real"},
+            {type:"line", data:column(2), name:"measured"},
+            {type:"line", data:column(3), name:"filtered"}
+        ],
+        tooltip: {show: true, trigger:"axis"},
+        legend: { bottom: 10},
+        animation: false
+    })
+)
+```
+
+- Line 4: The real value is a constant `14.4`
+- Line 5: Random(simple x) noise
+- Line 6: Artificially generated meaured value *value*+*noise*.
+- Line 10: Apply Kalman filter on the meatured values.
+
+{{< figure src="../img/tql-map_kalman_filter.jpg" width="500" >}}
+
 ## HISTOGRAM()
 
 *Syntax*: `HISTOGRAM(value, bins [, category] [, order] )`  {{< neo_since ver="8.0.15" />}}
 
 - `value` *number*
-- `bins` *bins(min,max,step)* histogram bin configuration.
+- `bins` *bins(min, max, step)* histogram bin configuration.
 - `category` *category(name_value)*
 - `order` *order(name...string)* category order
 
@@ -646,7 +619,7 @@ If the actual value comes in the out of the min/max range, `HISTOGRAM()` adds lo
 ```js {{linenos=table,hl_lines=[3]}}
 FAKE( arrange(1, 100, 1) )
 MAPVALUE(0, (simplex(12, value(0)) + 1) * 100)
-HISTOGRAM(value(0), bins(0, 200, 5))
+HISTOGRAM(value(0), bins(0, 200, 40))
 CSV( precision(0), header(true) )
 ```
 
@@ -663,7 +636,7 @@ low,high,count
 ```js {{linenos=table,hl_lines=[3]}}
 FAKE( arrange(1, 100, 1) )
 MAPVALUE(0, (simplex(12, value(0)) + 1) * 100)
-HISTOGRAM(value(0), bins(0, 200, 5))
+HISTOGRAM(value(0), bins(0, 200, 40))
 MAPVALUE(0, strSprintf("%.f~%.f", value(0), value(1)))
 CHART(
     chartOption({
@@ -733,14 +706,20 @@ FAKE(csv(`CITY,DATE,TEMPERATURE,HUMIDITY,NOISE
 Tokyo,2023/12/07,23,30,40
 Beijing,2023/12/07,24,50,60
 `))
-TRANSPOSE( header(true), 2, 3, 4 ) // transpose column 2, 3, 4 with its header
-MAPVALUE(0, strToUpper(value(0)) + "-" + value(2)) // concatenate city and transposed column name (from header)
-MAPVALUE(1, parseTime(value(1), sqlTimeformat("YYYY/MM/DD"))) // convert time
-MAPVALUE(3, parseFloat(value(3))) // convert value into number
-POPVALUE(2) // remove transposed column name, no more needed
+TRANSPOSE( header(true), 2, 3, 4 )
+MAPVALUE(0, strToUpper(value(0)) + "-" + value(2))
+MAPVALUE(1, parseTime(value(1), sqlTimeformat("YYYY/MM/DD")))
+MAPVALUE(3, parseFloat(value(3)))
+POPVALUE(2)
 CSV(timeformat("s"))
 ```
 This example is a common use case.
+- Line 5: Transpose column 2, 3, 4 with its header.
+- Line 6: Concatenate city and transposed column name (from header).
+- Line 7: Convert string to time.
+- Line 8: Convert value string into number.
+- Line 9: Remove transposed column names, no more needed.
+
 ```csv
 TOKYO-TEMPERATURE,1701907200,23
 TOKYO-HUMIDITY,1701907200,30
