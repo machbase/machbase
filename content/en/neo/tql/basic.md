@@ -21,6 +21,13 @@ SQL( 'select * from example where name=\'temperature\' limit 10' )
 CSV()
 ```
 
+*Example)* Double quote string
+
+```js {linenos=table}
+SQL( "select * from example where name='temperature' limit 10" )
+CSV()
+```
+
 *Example)* Use multi-lines sql statement without escaping by backtick(`)
 
 ```js {linenos=table}
@@ -66,7 +73,7 @@ CSV()
 TQL treats all numeric constants as 64bit floating number.
 
 ```js {linenos=table}
-QUERY( 'value', from('example', 'temperature'), limit(10))
+SQL_SELECT( 'time', 'value', from('example', 'temperature'), limit(10))
 CSV()
 ```
 
@@ -88,9 +95,7 @@ CSV( heading(false) )
 
 Time type values can be created by calling `time()`, `parseTime()` functions, or retrieved from `datetime` column of a SQL query result.
 
-## Auxiliary types
-
-### time zone
+### timeZone
 
 TimeZone type values can be created by calling `tz()` function.
 
@@ -116,8 +121,8 @@ Every statement in TQL should be a function call except the literal constants of
 // A comment line starts with '//'
 
 // Each statement should start from first column.
-QUERY(
-    'value',
+SQL_SELECT(
+    'time', 'value',
     from('example', 'temperature'),
     limit(10)
 )
@@ -127,7 +132,7 @@ CSV()
 ## SRC and SINK
 
 Every `.tql` script should start with one source statement which can generates a record or records.
-For example, `SQL()`, `QUERY()` and `SCRIPT()` that generates records with `yield()`, `yieldKey()` can be a source.
+For example, `SQL()`, `SQL_SELECT()` and `SCRIPT()` that generates records with `yield()`, `yieldKey()` can be a source.
 And the last statement should be a sink statement that encode the result or write into the database.
 For example, `APPEND()`, `INSERT()` and all `CHART()` functions can be a sink.
 
@@ -137,8 +142,8 @@ There may be zero or more map functions between source and sink statements.
 The names of all map functions are with capital letters, in contrast lower case camel notation functions are used as arguments of the other map functions.
 
 ```js {linenos=table,hl_lines=["6-7"],linenostart=1}
-QUERY(
-    'value',
+SQL_SELECT(
+    'time', 'value',
     from('example', 'temperature'),
     limit(10)
 )
@@ -147,7 +152,7 @@ TAKE(5)
 CSV()
 ```
 
-## Query Param
+## Param
 
 When external applications call a *.tql script via HTTP it can provide arguments as query parameters.
 The function `param()` is purposed to retrieve the values from query parameters in TQL script.
@@ -156,8 +161,8 @@ If the script below saved as 'hello2.tql', applications can call this script by 
 Then `param('name')` returns "temperature", `param('count')` is 10, as expected.
 
 ```js {linenos=table}
-QUERY(
-    'value',
+SQL_SELECT(
+    'time', 'value',
     from('example', param('name')),
     limit( param('count') )
 )
@@ -205,6 +210,23 @@ CSV()
 5.5,550
 7.75,775
 10,1000
+```
+
+### Modulo Operator
+
+The modulo operator (also known as the modulus operator), denoted by `%`, is an arithmetic operator.
+The modulo division operator produces the remainder of an integer division which is also called the modulus of the operation.
+
+```js {linenos=table,hl_lines=[2]}
+FAKE(arrange(1, 10, 1))
+FILTER(value(0) % 3 == 0)
+CSV()
+```
+
+```csv
+3
+6
+9
 ```
 
 ### Concatenation
@@ -269,6 +291,8 @@ CSV()
 
 ### IN Operator
 
+`A in (args...)` returns true if the args contains `A`, otherwise it returns false.
+
 ```js {linenos=table,hl_lines=[7]}
 FAKE(json({
     ["A", 1.0],
@@ -299,8 +323,8 @@ as it follows the same algorithm as of if-else statement
 - Whether param('name') is defined
 
 ```js {linenos=table,hl_lines=[4]}
-QUERY(
-    'value',
+SQL_SELECT(
+    'time', 'value',
     from('example',
         param('name') == NULL ? 'temperature' : param('name')
     ),
@@ -331,8 +355,8 @@ CSV()
 The example below shows the common use case of the `??` operator. If caller did not provide query param variables, the right side operand will be taken as a default value.
 
 ```js {linenos=table,hl_lines=[3]}
-QUERY(
-    'value',
+SQL_SELECT(
+    'time', 'value',
     from('example', param('name') ?? 'temperature'),
     limit( param('count') ?? 10 )
 )

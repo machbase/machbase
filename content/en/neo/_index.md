@@ -1,11 +1,13 @@
 ---
 title: machbase-neo
 weight: 10
-toc: false
+toc: true
 ---
 
 ✓ Performant timeseries database<br/>
 ✓ Scalable from Raspberry Pi to high-end servers<br/>
+✓ Data transformation and visualization<br/>
+✓ Data monitoring with dashboard<br/>
 ✓ Easy to install - instant download and run<br/>
 ✓ Easy to learn - familiar SQL with Tables and Columns<br/>
 ✓ Easy to write and query via **HTTP**, **MQTT** and **gRPC**<br/>
@@ -16,38 +18,6 @@ toc: false
 {{< label color="green" >}} LATEST <i>{{< neo_latestver >}}</i> {{< /label>}}
 
 Machbase is the world's fastest timeseries database[^1] with a minimal footprint. It's an ideal solution for environments that require scalability, from small servers with limited resources like the Raspberry Pi to horizontally scaled clusters. Machbase Neo, built on Machbase, adds crucial features required for the IoT industry. It ingests and handles query data through various protocols, such as MQTT for direct data transfer from IoT sensors, and SQL via HTTP for data retrieval by applications.
-
-### Data Transformation and Visualization
-
-Data transformation and visualization language *TQL* is supported out of the box.
-
-{{< figure src="/images/data-visualization.jpg" width="740" >}}
-
-- [TQL](/neo/tql) is the DSL for data transformation.
-- [CHART()](/neo/tql/chart/) for the data visualization examples.
-
-### API and Interfaces
-
-- [x] HTTP : Applications and Sensors read/write data via [HTTP](/neo/api-http) REST API
-- [x] MQTT : Sensors write data via [MQTT](/neo/api-mqtt) protocol
-- [x] gRPC : The first class API for extensions
-- [x] SSH : Command line user interface via [ssh](/neo/operations/ssh-access)
-- [x] GUI : [Web](/neo/getting-started/webui/) user interface
-
-{{< figure src="/images/interfaces.jpg" width="600" >}}
-
-### Bridges
-
-Integration with external systems
-
-- [x] SQLite
-- [x] PostgreSQL
-- [x] MySQL
-- [x] MS-SQL
-- [x] MQTT Broker
-- [ ] Kafka
-- [ ] NATS
-
 
 ### Download 
 
@@ -72,6 +42,44 @@ Integration with external systems
     Find and download the file for the version and platform from the [releases](./releases/) page.
     {{< /tab >}}
 {{< /tabs >}}
+
+
+### Data Visualization
+
+Data transformation and visualization language *TQL* is supported out of the box.
+
+{{< figure src="/images/data-visualization.jpg" width="740" >}}
+
+- [TQL](/neo/tql) is the DSL for data transformation.
+- [CHART()](/neo/tql/chart/) for the data visualization examples.
+
+### Dashbaord
+
+Realtime data monitoring on the fly.
+
+{{< figure src="/images/dashboard.png" width="740" >}}
+
+### API and Interfaces
+
+- [x] HTTP : Applications and Sensors read/write data via [HTTP](/neo/api-http) REST API
+- [x] MQTT : Sensors write data via [MQTT](/neo/api-mqtt) protocol
+- [x] gRPC : The first class API for extensions
+- [x] SSH : Command line user interface via [ssh](/neo/operations/ssh-access)
+- [x] GUI : [Web](/neo/getting-started/webui/) user interface
+
+{{< figure src="/images/interfaces.jpg" width="600" >}}
+
+### Bridges
+
+Integration with external systems
+
+- [x] SQLite
+- [x] PostgreSQL
+- [x] MySQL
+- [x] MS-SQL
+- [x] MQTT Broker
+- [ ] Kafka
+- [ ] NATS
 
 
 ### Contributing

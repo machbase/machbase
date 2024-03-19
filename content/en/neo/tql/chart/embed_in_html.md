@@ -34,6 +34,8 @@ CHART(
 Call *.tql* script file with a custom HTTP header `X-Chart-Output: json` {{< neo_since ver="8.0.14" />}} 
 to produce the result in JSON instead of full HTML document,
 so that caller can embed the chart into any place of the HTML DOM.
+The `X-Chart-Output: json` header is actually equivalent to the `CHART()` SINK with `chartJson(true)` option like `CHART( chartJson(true), chartOption({...}))`.
+The example of `chartJson(true)` can be found in the section "[As Reading API](/neo/tql/reading/#chart-with-chartjson)".
 
 When the reponse of `/db/tql` is JSON, it contains required addresses of the result javascript.
 
@@ -50,13 +52,13 @@ When the reponse of `/db/tql` is JSON, it contains required addresses of the res
 }
 ```
 
-- Line 3, Pre-load apache echarts library which is included in `jsAssets` fields in above response example.
-- Line 14, The HTTP header `X-Chart-Output: json`.
-so that machbase-neo TQL engine generates a JSON containing meta information of chart instead of full HTML document.
-Because when a client requests a `*.tql` file with `GET` method, machbase-neo generates HTML document for the chart by default.
-- Line 23, Load js files into the HTML DOM tree that are generated and replied in `jsCodeAssets`.
+- `chartID` random generated chartID of echarts, a client can set a specific ID with `chartID()` option.
+- `jsAssets` server returns the addresses of echarts resources. The array may contains the main echarts (`echarts.min.js`) and extra plugins javascript files.
+- `jsCodeAssets` machbase-neo generates the javascript to properly render the echarts with the result data.
 
-```html {linenos=table,hl_lines=[4,14,19,23],linenostart=1}
+The HTML document below is an exmaple to utilize the JSON response above to render echarts.
+
+```html {linenos=table,hl_lines=[3,14,19,23],linenostart=1}
 <html>
 <body>
     <script src="/web/echarts/echarts.min.js"></script>
@@ -87,6 +89,12 @@ Because when a client requests a `*.tql` file with `GET` method, machbase-neo ge
 </body>
 </html>
 ```
+- Line 3, Pre-load apache echarts library which is included in `jsAssets` fields in above response example.
+- Line 14, The HTTP header `X-Chart-Output: json`.
+so that machbase-neo TQL engine generates a JSON containing meta information of chart instead of full HTML document.
+Becuase when a client requests a `*.tql` file with `GET` method, machbase-neo generates HTML document for the chart by default.
+- Line 23, Load js files into the HTML DOM tree that are generated and replied in `jsCodeAssets`.
+
 
 ## Dynamic TQL
 
@@ -169,11 +177,10 @@ function loadJS(url, callback) {
 When the last `jsAssets` loaded, start to load `jsCodeAssets`.
 
 ```js {linenos=table,hl_lines=[4,"6-8"],linenostart=34}
-// obj.jsCodeAssets.forEach((js) => loadJS(js))
 for (let i = 0; i < obj.jsAssets.length; i++ ){
     if (i < obj.jsAssets.length -1){ 
         loadJS(obj.jsAssets[i])
-    } else { // when the last asset is loaded, start to load jsCodeAssets
+    } else { // when the last asset file is loaded, start to load jsCodeAssets
         loadJS(obj.jsAssets[i], () => {
             obj.jsCodeAssets.forEach(js => loadJS(js)) 
         })

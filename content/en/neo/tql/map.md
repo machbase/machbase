@@ -2,6 +2,7 @@
 title: MAP
 type: docs
 weight: 31
+math: true
 ---
 
 *MAP* functions are the core of the transforming data.
@@ -135,6 +136,126 @@ TAG0,1628694000000000000,10
 TAG0,1628780400000000000,11
 ```
 
+## FILTER_CHANGED()
+
+*Syntax*: `FILTER_CHANGED( value [, retain(time, duration)] [, useFirstWithLast()] )` {{< neo_since ver="8.0.15" />}}
+
+- `retain(time, duration)`
+- `useFirstWithLast(boolean)`
+
+It passes only the `value` has been changed from the previous.
+The first record is always passed, use `DROP(1)` after `FILTER_CHANGED()` to discard the first record.
+
+If `retain()` option is specified, the records that keep the changed `value` for the given `duration` based `time`, are passed.
+
+{{<tabs items="example,retain(),useFirstWithLast(),useFirstWithLast()">}}
+{{<tab>}}
+```js {linenos=table,hl_lines=[2,4,10,11,14]}
+FAKE(json({
+    ["A", 1692329338, 1.0],
+    ["A", 1692329339, 2.0],
+    ["B", 1692329340, 3.0],
+    ["B", 1692329341, 4.0],
+    ["B", 1692329342, 5.0],
+    ["B", 1692329343, 6.0],
+    ["B", 1692329344, 7.0],
+    ["B", 1692329345, 8.0],
+    ["C", 1692329346, 9.0],
+    ["D", 1692329347, 9.1]
+}))
+MAPVALUE(1, parseTime(value(1), "s"))
+FILTER_CHANGED(value(0))
+CSV(timeformat("s"))
+```
+
+```csv
+A,1692329338,1
+B,1692329340,3
+C,1692329346,9
+D,1692329347,9.1
+```
+
+{{</tab>}}
+{{<tab>}}
+```js {linenos=table,hl_lines=[4,6,14]}
+FAKE(json({
+    ["A", 1692329338, 1.0],
+    ["A", 1692329339, 2.0],
+    ["B", 1692329340, 3.0],
+    ["B", 1692329341, 4.0],
+    ["B", 1692329342, 5.0],
+    ["B", 1692329343, 6.0],
+    ["B", 1692329344, 7.0],
+    ["B", 1692329345, 8.0],
+    ["C", 1692329346, 9.0],
+    ["D", 1692329347, 9.1]
+}))
+MAPVALUE(1, parseTime(value(1), "s"))
+FILTER_CHANGED(value(0), retain(value(1), "2s"))
+CSV(timeformat("s"))
+```
+
+```csv
+A,1692329338,1
+B,1692329342,5
+```
+{{</tab>}}
+{{<tab>}}
+```js {linenos=table,hl_lines=[4,6,14]}
+FAKE(json({
+    ["A", 1692329338, 1.0],
+    ["A", 1692329339, 2.0],
+    ["B", 1692329340, 3.0],
+    ["B", 1692329341, 4.0],
+    ["B", 1692329342, 5.0],
+    ["B", 1692329343, 6.0],
+    ["B", 1692329344, 7.0],
+    ["B", 1692329345, 8.0],
+    ["C", 1692329346, 9.0],
+    ["D", 1692329347, 9.1]
+}))
+MAPVALUE(1, parseTime(value(1), "s"))
+FILTER_CHANGED(value(0), retain(value(1), "2s"), useFirstWithLast(false))
+CSV(timeformat("s"))
+```
+
+```csv
+A,1692329338,1
+B,1692329340,3
+```
+{{</tab>}}
+{{<tab>}}
+```js {linenos=table,hl_lines=[14]}
+FAKE(json({
+    ["A", 1692329338, 1.0],
+    ["A", 1692329339, 2.0],
+    ["B", 1692329340, 3.0],
+    ["B", 1692329341, 4.0],
+    ["B", 1692329342, 5.0],
+    ["B", 1692329343, 6.0],
+    ["B", 1692329344, 7.0],
+    ["B", 1692329345, 8.0],
+    ["C", 1692329346, 9.0],
+    ["D", 1692329347, 9.1]
+}))
+MAPVALUE(1, parseTime(value(1), "s"))
+FILTER_CHANGED(value(0), useFirstWithLast(true))
+CSV(timeformat("s"))
+```
+
+```csv
+A,1692329338,1
+A,1692329339,2
+B,1692329340,3
+B,1692329345,8
+C,1692329346,9
+C,1692329346,9
+D,1692329347,9.1
+D,1692329347,9.1
+```
+{{</tab>}}
+{{</tabs>}}
+
 ## SET()
 
 *Syntax*: `SET(name, expression)` {{< neo_since ver="8.0.12" />}}
@@ -164,7 +285,7 @@ CSV()
 
 - `lazy(boolean)` If it set `false` which is default, *GROUP()* yields new aggregated record when the value of `by()` has changed from previous record. If it set `true`, *GROUP()* waits the end of the input stream before yield any record.
 
-- `by(value [, name])` The value how to group the values.
+- `by(value [, label])` The value how to group the values.
 
 - `aggregators` *array of aggregator* Aggregate functions
 
@@ -176,7 +297,7 @@ Group aggregation function, please refer to the [GROUP()](/neo/tql/group/) secti
 
 *Syntax*: `PUSHVALUE( idx, value [, name] )` {{< neo_since ver="8.0.5" />}}
 
-- `idx` *int* Index where newValue insert at. (0 based)
+- `idx` *number* Index where newValue insert at. (0 based)
 - `value` *expression* New value
 - `name` *string* column's name (default 'column')
 
@@ -200,7 +321,7 @@ CSV()
 
 *Syntax*: `POPVALUE( idx [, idx2, idx3, ...] )` {{< neo_since ver="8.0.5" />}}
 
-- `idx` *int* array of indexes that will removed from values
+- `idx` *number* array of indexes that will removed from values
 
 It removes column of values that specified by `idx`es from value array.
 
@@ -223,7 +344,7 @@ CSV()
 
 *Syntax*: `MAPVALUE( idx, newValue [, newName] )`
 
-- `idx` *int*  Index of the value tuple. (0 based)
+- `idx` *number*  Index of the value tuple. (0 based)
 - `newValue` *expression* New value
 - `newName` *string* change column's name with given string
 
@@ -274,8 +395,8 @@ CHART(
 
 *Syntax*: `MAP_DIFF( idx, value [, newName] )` {{< neo_since ver="8.0.8" />}}
 
-- `idx` *int*  Index of the value tuple. (0 based)
-- `value` *float*
+- `idx` *number*  Index of the value tuple. (0 based)
+- `value` *number*
 - `newName` *string* change column's name with given string
 
 `MAP_DIFF()` replaces the value of the element at the given index with difference between current and previous values (*current - previous*). 
@@ -303,58 +424,269 @@ VALUE,DIFF
 
 ## MAP_ABSDIFF()
 
-*Syntax*: `MAP_ABSDIFF( idx, value [, newName]  )` {{< neo_since ver="8.0.8" />}}
+*Syntax*: `MAP_ABSDIFF( idx, value [, label]  )` {{< neo_since ver="8.0.8" />}}
 
-- `idx` *int*  Index of the value tuple. (0 based)
-- `value` *float*
-- `newName` *string* change column's name with given string
+- `idx` *number*  Index of the value tuple. (0 based)
+- `value` *number*
+- `label` *string* change column's label with given string
 
 `MAP_ABSDIFF()` replaces the value of the element at the given index with absolute difference between current and previous value abs(*current - previous*).
 
 ## MAP_NONEGDIFF()
 
-*Syntax*: `MAP_NONEGDIFF( idx, value [, newName]  )` {{< neo_since ver="8.0.8" />}}
+*Syntax*: `MAP_NONEGDIFF( idx, value [, label]  )` {{< neo_since ver="8.0.8" />}}
 
-- `idx` *int*  Index of the value tuple. (0 based)
-- `value` *float*
-- `newName` *string* change column's name with given string
+- `idx` *number*  Index of the value tuple. (0 based)
+- `value` *number*
+- `label` *string* change column's label with given string
 
 `MAP_NONEGDIFF()` replaces the value of the element at the given index with difference between current and previous value (*current - previous*). 
 If the difference is less than zero it applies zero instead of a negative value.
 
+## MAP_AVG()
+
+*Syntax*: `MAP_AVG(idx, value [, label] )`  {{< neo_since ver="8.0.15" />}}
+
+- `idx` *number*  Index of the value tuple. (0 based)
+- `value` *number*
+- `label` *string* change column's label with given string
+
+`MAP_AVG` sets the value of the element at the given index with a average of values which is the averaging filter.
+
+When $k$ is number of data.
+
+Let $\alpha = \frac{1}{k}$
+
+$\overline{x_k} = (1 - \alpha) \overline{x_{k-1}} + \alpha x_k$
+
+```js {linenos=table,hl_lines=[3]}
+FAKE(arrange(0, 1000, 1))
+MAPVALUE(1, sin(2 * PI *10*value(0)/1000))
+MAP_AVG(2, value(1))
+CHART(
+    chartOption({
+        xAxis:{ type:"category", data:column(0)},
+        yAxis:{},
+        series:[
+            { type:"line", data:column(1), name:"RAW" },
+            { type:"line", data:column(2), name:"AVG" }
+        ],
+        legend:{ bottom:10}
+    })
+)
+```
+
+{{< figure src="../img/tql-map_avg.jpg" width="500" >}}
+
 ## MAP_MOVAVG()
 
-*Syntax*: `MAP_MOVAVG(idx, value, lag [, newName] )`  {{< neo_since ver="8.0.8" />}}
+*Syntax*: `MAP_MOVAVG(idx, value, window [, label] )`  {{< neo_since ver="8.0.8" />}}
 
-- `idx` *int*  Index of the value tuple. (0 based)
-- `value` *float*
-- `lag` *integer* specifies how many records it accumulates.
-- `newName` *string* change column's name with given string
+- `idx` *number*  Index of the value tuple. (0 based)
+- `value` *number*
+- `window` *number* specifies how many records it accumulates.
+- `label` *string* change column's label with given string
 
-`MAP_MOVAVG` replaces the value of the element at the given index with a moving average of values by given lag count.
-If values are not accumulated enough to the `lag`, it applies `NULL` instead.
-If all incoming values are `NULL` (or not a number) for the latest `lag` count, it applies `NULL`.
+`MAP_MOVAVG` sets the value of the element at the given index with a moving average of values by given window count.
+If values are not accumulated enough to the `window`, it applies `sum/count_of_values` instead.
+If all incoming values are `NULL` (or not a number) for the last `window` count, it applies `NULL`.
 If some accumulated values are `NULL` (or not a number), it makes average value from only valid values excluding the `NULL`s.
 
-```js {linenos=table,hl_lines=["2"],linenostart=1}
-FAKE( linspace(1, 10, 10) )
-MAP_MOVAVG(1, value(0), 3, "MA_3")
-CSV( header(true), precision(3) )
+```js {linenos=table,hl_lines=[6,13]}
+FAKE(arrange(1,5,0.03))
+MAPVALUE(0, round(value(0)*100)/100)
+SET(sig, sin(1.2*2*PI*value(0)) )
+SET(noise, 0.09*cos(9*2*PI*value(0)) + 0.15*sin(12*2*PI*value(0)))
+MAPVALUE(1, $sig + $noise)
+MAP_MOVAVG(2, value(1), 10)
+CHART(
+    chartOption({
+        xAxis:{ type: "category", data: column(0)},
+        yAxis:{ max:1.5, min:-1.5 },
+        series:[
+            { type: "line", data: column(1), name:"value+noise" },
+            { type: "line", data: column(2), name:"MA(10)" },
+        ],
+        legend: { bottom: 10 }
+    })
+)
+```
+
+- Line 5 : Generate signal value mxied with noise
+- Line 6 : Moving average with windows size is 10
+
+{{< figure src="../img/tql-map_movavg_filter.jpg" width="500" >}}
+
+## MAP_LOWPASS()
+
+*Syntax*: `MAP_LOWPATH(idx, value, alpha [, label] )`  {{< neo_since ver="8.0.15" />}}
+
+- `idx` *number*  Index of the value tuple. (0 based)
+- `value` *number*
+- `alpha` *number*, 0 < alpha < 1
+- `label` *string* change column's label with given string
+
+`MAP_LOWPASS` sets the value of the elment at the given index with exponentially weighted moving average.
+
+When $ 0 < \alpha < 1$
+
+$\overline{x_k} = (1 - \alpha) \overline{x_{k-1}} + \alpha x_k$
+
+```js {linenos=table,hl_lines=[6,13]}
+FAKE(arrange(1,5,0.03))
+MAPVALUE(0, round(value(0)*100)/100)
+SET(sig, sin(1.2*2*PI*value(0)) )
+SET(noise, 0.09*cos(9*2*PI*value(0)) + 0.15*sin(12*2*PI*value(0)))
+MAPVALUE(1, $sig + $noise)
+MAP_LOWPASS(2, $sig + $noise, 0.40)
+CHART(
+    chartOption({
+        xAxis:{ type: "category", data: column(0)},
+        yAxis:{ max:1.5, min:-1.5 },
+        series:[
+            { type: "line", data: column(1), name:"value+noise" },
+            { type: "line", data: column(2), name:"lpf" },
+        ],
+        legend: { bottom: 10 }
+    })
+)
+```
+
+- Line 5: Generate signal value with noise
+- Line 6: Apply low pass filter with *alpha* = `0.40`
+
+{{< figure src="../img/tql-map_lowpass_filter.jpg" width="500" >}}
+
+
+## MAP_KALMAN()
+
+*Syntax*: `MAP_KALMAN(idx, value, model() [, label])` {{< neo_since ver="8.0.15" />}}
+- `idx` *number*  Index of the value tuple. (0 based)
+- `value` *number*
+- `model` *model(initial, progress, observation)* Set system matrices
+- `label` *string* change column's label with given string
+
+
+```js {linenos=table,hl_lines=[10]}
+FAKE(arrange(0, 10, 0.1))
+MAPVALUE(0, round(value(0)*100)/100 )
+
+SET(real, 14.4)
+SET(noise, 4 * simplex(1234, value(0)))
+SET(measure, $real + $noise)
+
+MAPVALUE(1, $real )
+MAPVALUE(2, $measure)
+MAP_KALMAN(3, $measure, model(0.1, 0.001, 1.0))
+CHART(
+    chartOption({
+        title:{text:"Kalman filter"},
+        xAxis:{type:"category", data:column(0)},
+        yAxis:{ min:10, max: 18 },
+        series:[
+            {type:"line", data:column(1), name:"real"},
+            {type:"line", data:column(2), name:"measured"},
+            {type:"line", data:column(3), name:"filtered"}
+        ],
+        tooltip: {show: true, trigger:"axis"},
+        legend: { bottom: 10},
+        animation: false
+    })
+)
+```
+
+- Line 4: The real value is a constant `14.4`
+- Line 5: Random(simple x) noise
+- Line 6: Artificially generated meaured value *value*+*noise*.
+- Line 10: Apply Kalman filter on the meatured values.
+
+{{< figure src="../img/tql-map_kalman_filter.jpg" width="500" >}}
+
+## HISTOGRAM()
+
+*Syntax*: `HISTOGRAM(value, bins [, category] [, order] )`  {{< neo_since ver="8.0.15" />}}
+
+- `value` *number*
+- `bins` *bins(min, max, step)* histogram bin configuration.
+- `category` *category(name_value)*
+- `order` *order(name...string)* category order
+
+`HISTOGRAM()` takes values and count the distribution of the each bins, the bins are configured by min/max range of the value and the count of bins.
+If the actual value comes in the out of the min/max range, `HISTOGRAM()` adds lower or higher bins automatically.
+
+{{< tabs items="CSV,CHART,CATEGORY">}}
+{{< tab >}}
+```js {{linenos=table,hl_lines=[3]}}
+FAKE( arrange(1, 100, 1) )
+MAPVALUE(0, (simplex(12, value(0)) + 1) * 100)
+HISTOGRAM(value(0), bins(0, 200, 40))
+CSV( precision(0), header(true) )
 ```
 
 ```csv
-x,MA_3
-1.000,NULL
-2.000,NULL
-3.000,2.000
-4.000,3.000
-5.000,4.000
-6.000,5.000
-7.000,6.000
-8.000,7.000
-9.000,8.000
-10.000,9.000
+low,high,count
+0,40,2
+40,80,31
+80,120,47
+120,160,16
+160,200,4
 ```
+{{</ tab>}}
+{{< tab >}}
+```js {{linenos=table,hl_lines=[3]}}
+FAKE( arrange(1, 100, 1) )
+MAPVALUE(0, (simplex(12, value(0)) + 1) * 100)
+HISTOGRAM(value(0), bins(0, 200, 40))
+MAPVALUE(0, strSprintf("%.f~%.f", value(0), value(1)))
+CHART(
+    chartOption({
+        xAxis:{ type:"category", data:column(0)},
+        yAxis:{},
+        tooltip:{trigger:"axis"},
+        series:[
+            {type:"bar", data: column(2)}
+        ]
+    })
+)
+```
+{{< figure src="../img/tql-histogram.jpg" width="500" >}}
+{{</ tab >}}
+{{< tab >}}
+```js {{linenos=table,hl_lines=[4,"13-14"]}}
+FAKE( arrange(1, 100, 1) )
+MAPVALUE(0, (simplex(12, value(0)) + 1) * 100)
+PUSHVALUE(0, key() % 2 == 0 ? "Cat.A" : "Cat.B")
+HISTOGRAM(value(1), bins(0, 200, 40), category(value(0)))
+MAPVALUE(0, strSprintf("%.f~%.f", value(0), value(1)))
+CHART(
+    chartOption({
+        xAxis:{ type:"category", data:column(0)},
+        yAxis:{},
+        tooltip:{trigger:"axis"},
+        legend:{bottom:5},
+        series:[
+            {type:"bar", data: column(2), name:"Cat.A"},
+            {type:"bar", data: column(3), name:"Cat.B"},
+        ]
+    })
+)
+```
+{{< figure src="../img/tql-histogram-cat.jpg" width="500" >}}
+{{</ tab >}}
+{{</ tabs >}}
+
+## BOXPLOT()
+
+*Syntax*: `BOXPLOT(value, category [, order] [, boxplotInterp] [, boxplotOutput])` {{< neo_since ver="8.0.15" />}}
+
+- `value` *number*
+- `category` *category(name_value)*
+- `order` *order(name...string)* category order
+- `boxplotOutput` *boxplotOutput( "" | "chart" | "dict" )*
+- `boxplotInterp` *boxplotInterop(Q1 boolean, Q2 boolean, Q3 boolean)*
+
+  - See [Michelson & Morley Experiment](../chart/boxplot/michelson-morley).
+  - See [Iris Sepal Length](../chart/boxplot/iris-sepal-length)
 
 ## TRANSPOSE()
 
@@ -374,14 +706,20 @@ FAKE(csv(`CITY,DATE,TEMPERATURE,HUMIDITY,NOISE
 Tokyo,2023/12/07,23,30,40
 Beijing,2023/12/07,24,50,60
 `))
-TRANSPOSE( header(true), 2, 3, 4 ) // transpose column 2, 3, 4 with its header
-MAPVALUE(0, strToUpper(value(0)) + "-" + value(2)) // concatenate city and transposed column name (from header)
-MAPVALUE(1, parseTime(value(1), sqlTimeformat("YYYY/MM/DD"), tz("UTC"))) // convert time
-MAPVALUE(3, parseFloat(value(3))) // convert value into number
-POPVALUE(2) // remove transposed column name, no more needed
+TRANSPOSE( header(true), 2, 3, 4 )
+MAPVALUE(0, strToUpper(value(0)) + "-" + value(2))
+MAPVALUE(1, parseTime(value(1), sqlTimeformat("YYYY/MM/DD")))
+MAPVALUE(3, parseFloat(value(3)))
+POPVALUE(2)
 CSV(timeformat("s"))
 ```
 This example is a common use case.
+- Line 5: Transpose column 2, 3, 4 with its header.
+- Line 6: Concatenate city and transposed column name (from header).
+- Line 7: Convert string to time.
+- Line 8: Convert value string into number.
+- Line 9: Remove transposed column names, no more needed.
+
 ```csv
 TOKYO-TEMPERATURE,1701907200,23
 TOKYO-HUMIDITY,1701907200,30
@@ -477,6 +815,8 @@ Aggregate raw values between fromTime and untilTime into a periodic duration and
 - `nullValue` if a certain period has no actual values it yields the given *alternativeValue*.(default is *NULL*) ex: `nullValue(alternativeValue)`
 - `columns` *string* specifies each field's aggregation function and indicates which column is the time. It should be one of pre-defines keywords. 
 
+> Since v8.0.13, `GROUP()` can have `by(..., timewindow())` option which is equivalent to `TIMEWINDOW()`. Use `GROUP()` instead of `TIMEWINDOW()` becuase `GROUP()` is more flexible and feature-rich.
+
 Please refer to the [TIMEWINDOW()](/neo/tql/timewindow/) section for the more information including interpolation methods.
 
 ## FFT()
@@ -489,8 +829,6 @@ It assumes value of the incoming record is an array of *time,amplitude* tuples, 
 
 For example, if the incoming record was `{key: k, value[ [t1,a1],[t2,a2],...[tn,an] ]}`, it transforms the value to `{key:k, value[ [F1,A1], [F2,A2],...[Fm,Am] ]}`.
 
-{{< tabs items="FFT(),RESULT">}}
-{{< tab >}}
 ```js {linenos=table,hl_lines=["9"],linenostart=1}
 FAKE(
     oscillator(
@@ -507,11 +845,8 @@ CHART_LINE(
     dataZoom('slider', 0, 10) 
 )
 ```
-{{< /tab >}}
-{{< tab >}}
+
 {{< figure src="/images/web-fft-tql-2d.png" width="510" >}}
-{{< /tab >}}
-{{< /tabs >}}
 
 
 ## WHEN()
@@ -606,10 +941,10 @@ FAKE( json({
     [ 4, "世界" ]
 }))
 WHEN(
-    mod(value(0), 2) == 0,
+    value(0) % 2 == 0,
     do( "Greetings:", value(0), value(1), {
         ARGS()
-        WHEN( true, doLog( value(0), value(2) ) )
+        WHEN( true, doLog( value(0), value(2), "idx:", value(1) ) )
         DISCARD()
     })
 )
@@ -621,13 +956,13 @@ The log messages of the above code shows the two important points.
 1. The main flow is blocked and waits until its sub flow finishes the job.
 2. The sub flow is executed every time for a record that matches the condition.
 
-```
+```sh {hl_lines=[3,6],linenostart=1}
 2023-12-02 07:54:42.160 TRACE 0xc000bfa580 Task compiled FAKE() → WHEN() → CSV()
 2023-12-02 07:54:42.160 TRACE 0xc000bfa840 Task compiled ARGS() → WHEN() → DISCARD()
-2023-12-02 07:54:42.160 INFO  0xc000bfa840 Greetings: 你好
+2023-12-02 07:54:42.160 INFO  0xc000bfa840 Greetings: 你好 idx: 2
 2023-12-02 07:54:42.160 DEBUG 0xc000bfa840 Task elapsed 254.583µs
 2023-12-02 07:54:42.161 TRACE 0xc000bfa9a0 Task compiled ARGS() → WHEN() → DISCARD()
-2023-12-02 07:54:42.161 INFO  0xc000bfa9a0 Greetings: 世界
+2023-12-02 07:54:42.161 INFO  0xc000bfa9a0 Greetings: 世界 idx: 4
 2023-12-02 07:54:42.161 DEBUG 0xc000bfa9a0 Task elapsed 190.552µs
 2023-12-02 07:54:42.161 DEBUG 0xc000bfa580 Task elapsed 1.102681ms
 ```
@@ -811,7 +1146,7 @@ TAG0,15
 
 *Syntax*: `THROTTLE(tps)` {{< neo_since ver="8.0.8" />}}
 
-- `tps` *float* specify in number of records per a second.
+- `tps` *number* specify in number of records per a second.
 
 `THROTTLE` relays a record to the next step with delay to fit to the specified *tps*.
 It makes data flow which has a certain period from stored data (e.g a CSV file), 

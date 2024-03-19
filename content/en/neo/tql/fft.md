@@ -84,7 +84,7 @@ The 'APPEND' works only when fields of input records exactly match with columns 
 The code below reads the stored data from the 'example' table.
 
 ```js
-QUERY('value', from('example', 'signal'), between('last-10s', 'last'))
+SQL_SELECT('time', 'value', from('example', 'signal'), between('last-10s', 'last'))
 CHART_LINE( size("600px", "350px"), dataZoom('slider', 95, 100))
 ```
 
@@ -92,10 +92,10 @@ CHART_LINE( size("600px", "350px"), dataZoom('slider', 95, 100))
 
 ## Fast Fourier Transform
 
-Add few data manipulation function between `QUERY()` source and `CHART_LINE()` sink.
+Add few data manipulation function between `SQL_SELECT()` source and `CHART_LINE()` sink.
 
 ```js {linenos=table,hl_lines=["2-4"],linenostart=1}
-QUERY('value', from('example', 'signal'), between('last-10s', 'last'))
+SQL_SELECT('time', 'value', from('example', 'signal'), between('last-10s', 'last'))
 MAPKEY('sample')
 GROUPBYKEY()
 FFT()
@@ -113,8 +113,8 @@ CHART_LINE(
 
 {{% steps %}}
 
-### QUERY()
-`QUERY(...)` yields records from the query result, and *tql* treats the first field as *key* and the others are *value* tuple. `{key: rownum, value: (time, value) }`
+### SQL_SELECT()
+`SQL_SELECT(...)` yields records from the query result in the form of `{key: rownum, value: (time, value) }`
 
 ### MAPKEY('sample')
 `MAPKEY('sample')` sets the constant string 'sample' as a new key for all records.
@@ -131,7 +131,7 @@ As result all records have same *key* `'sample'` and `(time, value)` as *value*.
 ## Adding time axis
 
 ```js {linenos=table,hl_lines=["3-7"],linenostart=1}
-QUERY( 'value', from('example', 'signal'), between('last-10s', 'last'))
+SQL_SELECT( 'time', 'value', from('example', 'signal'), between('last-10s', 'last'))
 
 MAPKEY( roundTime(value(0), '500ms') )
 GROUPBYKEY()
@@ -152,8 +152,9 @@ CHART_BAR3D(
 
 {{% steps %}}
 
-### QUERY()
-`QUERY(...)` yields records from the query result, and *tql* treats the first field as *key* and the others are *value* tuple. `{key: time, value: (value) }`
+### SQL_SELECT()
+
+`SQL_SELECT(...)` yields records from the query result. `{key: time, value: (value) }`
 
 ### MAPKEY()
 `MAPKEY( roundTime(value(0), '500ms'))` sets the new key with the result of roundTime `value(0)` by 500 milliseconds. 

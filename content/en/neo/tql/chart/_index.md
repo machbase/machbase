@@ -169,6 +169,15 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
             image="./img/stock_dji.jpg" method="Fill" options="600x q80 webp">}}
 {{< /cards >}}
 
+### Boxplot
+
+{{< cards >}}
+    {{< card link="./boxplot/michelson-morley" title="Michelson-Morley Experiment"
+            image="./img/boxplot_michelson_morley.jpg" method="Fill" options="600x q80 webp">}}
+    {{< card link="./boxplot/iris-sepal-length" title="Iris Sepal Length"
+            image="./img/boxplot_iris_sepal_length.jpg" method="Fill" options="600x q80 webp">}}
+{{< /cards >}}
+
 ### GeoJSON
 
 {{< cards >}}
