@@ -216,8 +216,10 @@ CHART(
 
 ## Kalman Filter
 
-The model() function takes input values representing mathematical system variables. Determining optimal values lies beyond the scope of this document. However, in practice, you can easily apply a simple Kalman filter model in TQL and iteratively find empirically optimal parameters. The example below demonstrates how changing the model’s value affects the graph.
+The `model()` argument of the `MAP_KALMAN()` function takes input values representing mathematical system variables. Explaining how to determine optimal system values lies beyond the scope of this document.
+However, in practice, you can easily apply a simple Kalman filter model in TQL and iteratively find empirically optimal parameters.
 
+The example below demonstrates how changing the model’s value affects the graph.
 Feel free to experiment with different model values and observe how the graph responds
 
 {{< tabs items="chart,code">}}
