@@ -1,7 +1,7 @@
 ---
 title: Noise Filters
 type: docs
-weight: 500
+weight: 80
 ---
 
 ## Measuring sensors
