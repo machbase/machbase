@@ -13,7 +13,6 @@ Machbase Neo is developed and tested on the following environment, it can run on
 
 - **Linux amd64**
     - Developed and tested on Ubuntu 20.04 with general desktop PC.
-    - Tested on ~~CentOS 6~~, CentOS 7
     - Tested on Ubuntu ~~18.04~~, 20.04, 22.04
 
 - **macOS with Apple silicon**
