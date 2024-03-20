@@ -4,23 +4,24 @@ type: docs
 weight: 51
 ---
 
-{{< neo_since ver="8.0.8" />}}
+*Syntax*: `CHART(chartOption() [,size()] [, theme()] [, chartJSCode()])` {{< neo_since ver="8.0.8" />}}
+
 ## Options
+
+### chartOption()
+
+*Syntax*: `chartOption( { json in apache echarts options } )`
+
+### chartJSCode()
+
+*Syntax*: `chartJSCode( { user javascript code } )`
 
 ### size()
 
 *Syntax*: `size(width, height)`
 
-- `width` *string* chart width in HTML syntax ex) '800px'
-- `height` *string* chart height in HTML syntax ex) '800px'
-
-### chartOption()
-
-*Syntax*: `chartOption( { json in apache echart options } )`
-
-### chartJSCode()
-
-*Syntax*: `chartJSCode( { user javascript code } )`
+- `width` *string* chart width in HTML syntax ex) `'800px'`
+- `height` *string* chart height in HTML syntax ex) `'800px'`
 
 ### theme()
 
@@ -30,25 +31,9 @@ weight: 51
 
 Apply a chart theme.
 
-Available themes : `chalk`, `essos`, `infographic`, `macarons`, `purple-passion`, `roma`, `romantic`, `shine`, `vintage`, `walden`, `westeros`, `wonderland`
+Available themes : `white`, `dark`, `chalk`, `essos`, `infographic`, `macarons`, `purple-passion`, `roma`, `romantic`, `shine`, `vintage`, `walden`, `westeros`, `wonderland`
 
-{{< tabs items="chalk,essos,infographic,macarons,purple-passion,roma">}}
-  {{< tab >}}{{< figure src="../img/theme_chalk.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_essos.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_infographic.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_macarons.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_purple-passion.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_roma.jpg" width="500" >}}{{< /tab >}}
-{{< /tabs >}}
-
-{{< tabs items="romantic,shine,vintage,walden,westeros,wonderland">}}
-  {{< tab >}}{{< figure src="../img/theme_romantic.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_shine.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_vintage.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_walden.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_westeros.jpg" width="500" >}}{{< /tab >}}
-  {{< tab >}}{{< figure src="../img/theme_wonderland.jpg" width="500" >}}{{< /tab >}}
-{{< /tabs >}}
+Please refer to [this section](#themes) for the preview of the each theme.
 
 ### plugins()
 
@@ -243,3 +228,69 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
     {{< card link="./others/geo_svg_lines" title="GEO SVG Lines"
             image="./img/geo_svg_lines.gif" method="Fill" options="600x q80 webp">}}
 {{< /cards >}}
+
+## Themes
+
+```js {{linenos=table,hl_lines=[6]}}
+FAKE( arrange(1, 100, 1))
+MAPVALUE(1, sin(2 * PI * 5 * value(0)/100) )
+MAPVALUE(2, sin(2 * PI * 5 * (value(0)+5)/100) )
+MAPVALUE(3, sin(2 * PI * 5 * (value(0)+10)/100) )
+CHART(  size("500px", "200px"),
+        theme("dark"),
+        chartOption({
+            title:{ text:"theme(dark)" },
+            xAxis:{ data:column(0), axisLabel:{show: false} },
+            yAxis:{},
+            series:[
+                {type:"line", data:column(1), name:"series1"},
+                {type:"line", data:column(2), name:"series2"},
+                {type:"line", data:column(3), name:"series3"},
+            ],
+            legend:{ bottom: 10 }
+        })
+)
+```
+
+**white**
+{{< figure src="../img/theme_white.jpg" width="500" >}}
+
+**dark**
+{{< figure src="../img/theme_dark.jpg" width="500" >}}
+
+**chalk**
+{{< figure src="../img/theme_chalk.jpg" width="500" >}}
+
+**essos**
+{{< figure src="../img/theme_essos.jpg" width="500" >}}
+
+**infographic**
+{{< figure src="../img/theme_infographic.jpg" width="500" >}}
+
+**macarons**
+{{< figure src="../img/theme_macarons.jpg" width="500" >}}
+
+**purple-passion**
+{{< figure src="../img/theme_purple-passion.jpg" width="500" >}}
+
+**roma**
+{{< figure src="../img/theme_roma.jpg" width="500" >}}
+
+**romantic**
+{{< figure src="../img/theme_romantic.jpg" width="500" >}}
+
+**shine**
+{{< figure src="../img/theme_shine.jpg" width="500" >}}
+
+**vintage**
+{{< figure src="../img/theme_vintage.jpg" width="500" >}}
+
+**walden**
+{{< figure src="../img/theme_walden.jpg" width="500" >}}
+
+**westeros**
+{{< figure src="../img/theme_westeros.jpg" width="500" >}}
+
+**wonderland**
+{{< figure src="../img/theme_wonderland.jpg" width="500" >}}
+
