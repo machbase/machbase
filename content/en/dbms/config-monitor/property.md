@@ -1607,30 +1607,16 @@ Determines the partition size in tag data storage.
 |Default| 16777216 (16MB) |
 
 ## TRACE_LOGFILE_COUNT
+
 Specifies the maximum number of log trace files generated in TRACE_LOGFILE_PATH. To save disk space, delete the oldest log file if more than the maximum number of log files are created.
 
 If more than the maximum number of log trace files is created and the oldest file is deleted, the name of the deleted file is saved as the newest log file.
 
-<table>
-  <thead>
-    <th> </th>
-    <th>Value</th>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Minimum</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <td>Maximum</td>
-      <td>2^32-1</td>
-    </tr>
-    <tr>
-      <td style="background-color: #F0FFFF;">Default</td>
-      <td>5</td>
-    </tr>
-  </tbody>
-</table>
+||Value|
+|-|----|
+|Minimum|    1|
+|Maximum|    2^32 - 1|
+|Default|    1000|
 
 
 ## TRACE_LOGFILE_PATH
