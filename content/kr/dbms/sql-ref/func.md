@@ -2451,7 +2451,7 @@ WINDOW 함수는 SELECT 구문에만 사용할 수 있다.
 WINDOW_FUNCTION (ARGUMENTS) OVER ([PARTITION BY column_name] [ORDER BY column_name])
 ```
 
-* WINDOW_FUNCTION : 윈도우 함수 
+* WINDOW_FUNCTION : 윈도우 함수 명
 * ARGUMENTS : 함수에 따라 0 ~ N개 인수가 지정될 수 있다. 
 * PARTITION BY 절 : 전체 집합을 기준에 의해 소그룹으로 나눌 수 있다.(생략 가능)
 * ORDER BY 절 : 어떤 항목에 대해 정렬할 지 order by 절을 기술한다.(생략 가능)
