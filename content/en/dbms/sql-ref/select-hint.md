@@ -4,8 +4,18 @@ type: docs
 weight: 50
 ---
 
-Hints that can be used in a SELECT queries are described.
+# Index
 
+* [Introduction](#introduction)
+* [PARALLEL](#parallel)
+* [NOPARALLEL](#noparallel)
+* [FULL](#full)
+* [NO_INDEX](#no_index)
+* [RID_RANGE](#rid_range)
+* [SCAN_FORWARD, SCAN_BACKWARD](#scan_forward-scan_backward)
+
+
+Hints that can be used in a SELECT queries are described.
 
 ##  PARALLEL
 

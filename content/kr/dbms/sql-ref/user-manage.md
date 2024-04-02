@@ -4,6 +4,14 @@ type: docs
 weight: 60
 ---
 
+# 목차
+* [CREATE USER](#create-user)
+* [DROP USER](#drop-user)
+* [ALTER USER](#alter-user)
+* [CONNECT](#connect)
+* [GRANT/REVOKE](#grantrevoke)
+* [사용자 관리 예제](#사용자-관리-예제)
+
 ## CREATE USER
 
 **create_user_stmt:**
