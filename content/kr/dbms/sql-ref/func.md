@@ -5,6 +5,57 @@ type: docs
 weight: 70
 ---
 
+# 목차
+* [ABS](#abs)
+* [ADD_TIME](#add_time)
+* [AVG](#avg)
+* [BITAND / BITOR](#bitand--bitor)
+* [COUNT](#count)
+* [DATE_TRUNC](#date_trunc)
+* [DAYOFWEEK](#dayofweek)
+* [DECODE](#decode)
+* [FIRST / LAST](#first--last)
+* [FROM_UNIXTIME](#from_unixtime)
+* [FROM_TIMESTAMP](#from_timestamp)
+* [GROUP_CONCAT](#group_concat)
+* [INSTR](#instr)
+* [LEAST / GREATEST](#least--greatest)
+* [LENGTH](#length)
+* [LOWER](#lower)
+* [LPAD / RPAD](#lpad--rpad)
+* [LTRIM / RTRIM](#ltrim--rtrim)
+* [MAX](#max)
+* [MIN](#min)
+* [NVL](#nvl)
+* [ROUND](#round)
+* [ROWNUM](#rownum)
+* [SERIESNUM](#seriesnum)
+* [STDDEV / STDDEV_POP](#stddev--stddev_pop)
+* [SUBSTR](#substr)
+* [SUBSTRING_INDEX](#substring_index)
+* [SUM](#sum)
+* [SUMSQ](#sumsq)
+* [SYSDATE / NOW](#sysdate--now)
+* [TO_CHAR](#to_char)
+* [TO_DATE](#to_date)
+* [TO_DATE_SAFE](#to_date_safe)
+* [TO_HEX](#to_hex)
+* [TO_IPV4 / TO_IPV4_SAFE](#to_ipv4--to_ipv4_safe)
+* [TO_IPV6 / TO_IPV6_SAFE](#to_ipv6--to_ipv6_safe)
+* [TO_NUMBER / TO_NUMBER_SAFE](#to_number--to_number_safe)
+* [TO_TIMESTAMP](#to_timestamp)
+* [TRUNC](#trunc)
+* [TS_CHANGE_COUNT](#ts_change_count)
+* [UNIX_TIMESTAMP](#unix_timestamp)
+* [UPPER](#upper)
+* [VARIANCE / VAR_POP](#variance--var_pop)
+* [YEAR / MONTH / DAY](#year--month--day)
+* [ISNAN / ISINF](#isnan--isinf)
+* [내장 함수 지원 타입](#내장-함수-지원-타입)
+* [JSON 관련 함수](#json-관련-함수)
+* [JSON Operator](#json-operator)
+* [WINDOW 함수](#window-함수)
+
 ## ABS
 
 이 함수는 숫자형 컬럼에 대해 동작하고, 양의 값으로 변환해서 실수형으로 값을 리턴한다.
@@ -2435,4 +2486,92 @@ name3                 test3
 name2                 NULL                                                                             
 name1                 NULL                                                                             
 [4] row(s) selected
+```
+
+## WINDOW 함수
+
+WINDOW 함수란 행과 행 간 비교, 연산, 정의하기 위한 함수며, 분석함수 또는 순위함수라고 하기도 한다.
+
+WINDOW 함수는 SELECT 구문에만 사용할 수 있다.
+
+### WINDOW 함수 문법
+
+윈도우 함수는 OVER 절을 필수로 포함한다.
+
+```
+WINDOW_FUNCTION (ARGUMENTS) OVER ([PARTITION BY column_name] [ORDER BY column_name])
+```
+
+* WINDOW_FUNCTION : 윈도우 함수 명
+* ARGUMENTS : 함수에 따라 0 ~ N개 인수가 지정될 수 있다. 
+* PARTITION BY 절 : 전체 집합을 기준에 의해 소그룹으로 나눌 수 있다.(생략 가능)
+* ORDER BY 절 : 어떤 항목에 대해 정렬할 지 order by 절을 기술한다.(생략 가능)
+
+### WINDOW 함수 종류
+
+#### LAG
+
+파티션별 윈도우에서 이전 N 번째 행의 값을 가져올 수 있다.
+
+가져올 행이 존재하지 않으면 NULL을 리턴한다.
+
+```
+LAG(column_name, N) OVER ([PARTITION BY column_name] [ORDER BY column_name])
+```
+
+```
+Mach> CREATE TABLE lag_table (name varchar(10), dt datetime, value INTEGER);
+Created successfully.
+ 
+Mach> INSERT INTO lag_table VALUES('name1', TO_DATE('2024-01-01'), 1);
+1 row(s) inserted.
+
+Mach> INSERT INTO lag_table VALUES('name1', TO_DATE('2024-01-02'), 2);
+1 row(s) inserted.
+
+Mach> INSERT INTO lag_table VALUES('name1', TO_DATE('2024-01-03'), 3);
+1 row(s) inserted.
+
+-- name 별로 집합을 나누고, dt 기준으로 정렬하여 1번째 이전 값을 가져온다.
+Mach> SELECT name, dt, value, LAG(value, 1) OVER(PARTITION BY name ORDER BY dt) FROM lag_table;
+name        dt                              value       LAG(value, 1) 
+---------------------------------------------------------------------------
+name1       2024-01-01 00:00:00 000:000:000 1           NULL          
+name1       2024-01-02 00:00:00 000:000:000 2           1             
+name1       2024-01-03 00:00:00 000:000:000 3           2             
+[3] row(s) selected.
+```
+
+
+#### LEAD
+
+파티션별 윈도우에서 이후 N 번째 행의 값을 가져올 수 있다. 
+
+가져올 행이 존재하지 않으면 NULL을 리턴한다.
+
+```
+LEAD(column_name, N) OVER ([PARTITION BY column_name] [ORDER BY column_name])
+```
+
+```
+Mach> CREATE TABLE lead_table (name varchar(10), dt datetime, value INTEGER);
+Created successfully.
+ 
+Mach> INSERT INTO lead_table VALUES('name1', TO_DATE('2024-01-01'), 1);
+1 row(s) inserted.
+
+Mach> INSERT INTO lead_table VALUES('name1', TO_DATE('2024-01-02'), 2);
+1 row(s) inserted.
+
+Mach> INSERT INTO lead_table VALUES('name1', TO_DATE('2024-01-03'), 3);
+1 row(s) inserted.
+
+-- name 별로 집합을 나누고, dt 기준으로 정렬하여 1번째 이후 값을 가져온다.
+Mach> SELECT name, dt, value, LEAD(value, 1) OVER(PARTITION BY name ORDER BY dt) FROM lead_table;
+name        dt                              value       LEAD(value, 1) 
+----------------------------------------------------------------------------
+name1       2024-01-01 00:00:00 000:000:000 1           2              
+name1       2024-01-02 00:00:00 000:000:000 2           3              
+name1       2024-01-03 00:00:00 000:000:000 3           NULL           
+[3] row(s) selected.
 ```

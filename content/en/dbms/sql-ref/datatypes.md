@@ -4,6 +4,11 @@ type: docs
 weight: 10
 ---
 
+# Index
+
+* [Data Type Table](#data-type-table)
+* [SQL DataType Table](#sql-datatype-table)
+
 ## Data Type Table
 
 |Type Name|Description|Value Range|NULL Value|

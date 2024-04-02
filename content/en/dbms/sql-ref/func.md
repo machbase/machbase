@@ -4,6 +4,58 @@ type: docs
 weight: 70
 ---
 
+# Index
+
+* [ABS](#abs)
+* [ADD_TIME](#add_time)
+* [AVG](#avg)
+* [BITAND / BITOR](#bitand--bitor)
+* [COUNT](#count)
+* [DATE_TRUNC](#date_trunc)
+* [DAYOFWEEK](#dayofweek)
+* [DECODE](#decode)
+* [FIRST / LAST](#first--last)
+* [FROM_UNIXTIME](#from_unixtime)
+* [FROM_TIMESTAMP](#from_timestamp)
+* [GROUP_CONCAT](#group_concat)
+* [INSTR](#instr)
+* [LEAST / GREATEST](#least--greatest)
+* [LENGTH](#length)
+* [LOWER](#lower)
+* [LPAD / RPAD](#lpad--rpad)
+* [LTRIM / RTRIM](#ltrim--rtrim)
+* [MAX](#max)
+* [MIN](#min)
+* [NVL](#nvl)
+* [ROUND](#round)
+* [ROWNUM](#rownum)
+* [SERIESNUM](#seriesnum)
+* [STDDEV / STDDEV_POP](#stddev--stddev_pop)
+* [SUBSTR](#substr)
+* [SUBSTRING_INDEX](#substring_index)
+* [SUM](#sum)
+* [SUMSQ](#sumsq)
+* [SYSDATE / NOW](#sysdate--now)
+* [TO_CHAR](#to_char)
+* [TO_DATE](#to_date)
+* [TO_DATE_SAFE](#to_date_safe)
+* [TO_HEX](#to_hex)
+* [TO_IPV4 / TO_IPV4_SAFE](#to_ipv4--to_ipv4_safe)
+* [TO_IPV6 / TO_IPV6_SAFE](#to_ipv6--to_ipv6_safe)
+* [TO_NUMBER / TO_NUMBER_SAFE](#to_number--to_number_safe)
+* [TO_TIMESTAMP](#to_timestamp)
+* [TRUNC](#trunc)
+* [TS_CHANGE_COUNT](#ts_change_count)
+* [UNIX_TIMESTAMP](#unix_timestamp)
+* [UPPER](#upper)
+* [VARIANCE / VAR_POP](#variance--var_pop)
+* [YEAR / MONTH / DAY](#year--month--day)
+* [ISNAN / ISINF](#isnan--isinf)
+* [Support Type of Built-In Function](#support-type-of-built-in-function)
+* [JSON-related function](#json-related-function)
+* [JSON Operator](#json-operator)
+* [WINDOW FUNCTION](#window-function)
+
 ## ABS
 
 This function works on a numeric column, converts it to a positive value, and returns the value as a real number.
@@ -2514,4 +2566,92 @@ name3                 test3
 name2                 NULL                                                                             
 name1                 NULL                                                                             
 [4] row(s) selected
+```
+
+## WINDOW FUNCTION
+
+The WINDOW function is a function for comparison, operation, and definition between rows. It is also called an analysis function or ranking function.
+
+It can only be used in the SELECT statement.
+
+### WINDOW FUNCTION SYNTAX
+
+Window functions necessarily include the OVER clause.
+
+```
+WINDOW_FUNCTION (ARGUMENTS) OVER ([PARTITION BY column_name] [ORDER BY column_name])
+```
+
+* WINDOW_FUNCTION: Window function name
+* ARGUMENTS: Depending on the function, 0 to N arguments can be specified.
+* PARTITION BY clause: The entire set can be divided into small groups based on criteria. (can be omitted)
+* ORDER BY clause: Describes the order by clause on which items to sort. (Can be omitted)
+
+### WINDOW FUNCTION LIST
+
+#### LAG
+
+Retrieve the value of the previous Nth row in a partition-specific window.
+
+If there are no rows to retrieve, NULL is returned.
+
+```
+LAG(column_name, N) OVER ([PARTITION BY column_name] [ORDER BY column_name])
+```
+
+```
+Mach> CREATE TABLE lag_table (name varchar(10), dt datetime, value INTEGER);
+Created successfully.
+ 
+Mach> INSERT INTO lag_table VALUES('name1', TO_DATE('2024-01-01'), 1);
+1 row(s) inserted.
+
+Mach> INSERT INTO lag_table VALUES('name1', TO_DATE('2024-01-02'), 2);
+1 row(s) inserted.
+
+Mach> INSERT INTO lag_table VALUES('name1', TO_DATE('2024-01-03'), 3);
+1 row(s) inserted.
+
+-- Divide the set by name, sort by dt, and retrieve the first previous value.
+Mach> SELECT name, dt, value, LAG(value, 1) OVER(PARTITION BY name ORDER BY dt) FROM lag_table;
+name        dt                              value       LAG(value, 1) 
+---------------------------------------------------------------------------
+name1       2024-01-01 00:00:00 000:000:000 1           NULL          
+name1       2024-01-02 00:00:00 000:000:000 2           1             
+name1       2024-01-03 00:00:00 000:000:000 3           2             
+[3] row(s) selected.
+```
+
+
+#### LEAD
+
+Retrieve the value of the Nth row from the partition-specific window.
+
+If there are no rows to retrieve, NULL is returned.
+
+```
+LEAD(column_name, N) OVER ([PARTITION BY column_name] [ORDER BY column_name])
+```
+
+```
+Mach> CREATE TABLE lead_table (name varchar(10), dt datetime, value INTEGER);
+Created successfully.
+ 
+Mach> INSERT INTO lead_table VALUES('name1', TO_DATE('2024-01-01'), 1);
+1 row(s) inserted.
+
+Mach> INSERT INTO lead_table VALUES('name1', TO_DATE('2024-01-02'), 2);
+1 row(s) inserted.
+
+Mach> INSERT INTO lead_table VALUES('name1', TO_DATE('2024-01-03'), 3);
+1 row(s) inserted.
+
+-- Divide the set by name, sort by dt, and retrieve the first and subsequent values.
+Mach> SELECT name, dt, value, LEAD(value, 1) OVER(PARTITION BY name ORDER BY dt) FROM lead_table;
+name        dt                              value       LEAD(value, 1) 
+----------------------------------------------------------------------------
+name1       2024-01-01 00:00:00 000:000:000 1           2              
+name1       2024-01-02 00:00:00 000:000:000 2           3              
+name1       2024-01-03 00:00:00 000:000:000 3           NULL           
+[3] row(s) selected.
 ```

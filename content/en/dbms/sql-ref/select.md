@@ -4,8 +4,36 @@ type: docs
 weight: 40
 ---
 
-SELECT is a syntax used to find, filter, and manipulate data from various tables in Machbase.
+# Index
 
+* [SELECT Syntax](#select-syntax)
+* [SET OPERATOR](#set-operator)
+* [TARGET LIST](#target-list)
+    * [CASE statement](#case-statement)
+* [FROM](#from)
+    * [SUBQUERY(INLINE VIEW)](#subqueryinline-view)
+    * [JOIN(INNER JOIN)](#joininner-join)
+    * [INNER JOIN and OUTER JOIN](#inner-join-and-outer-join)
+    * [PIVOT](#pivot)
+* [WHERE](#where)
+    * [Use of SUBQUERY](#use-of-subquery)
+    * [SEARCH Statement](#search-statement)
+    * [ESEARCH Statement](#esearch-statement)
+    * [NOT SEARCH Statement](#not-search-statement)
+    * [REGEXP Statement](#regexp-statement)
+    * [IN Statement](#in-statement)
+    * [Use In Statement and SUBQUERY](#use-in-statement-and-subquery)
+    * [BETWEEN Statement](#between-statement)
+    * [RANGE Statement](#range-statement)
+* [GROUP BY / HAVING](#group-by--having)
+* [ORDER BY](#order-by)
+* [SERIES BY](#series-by)
+* [LIMIT](#limit)
+* [DURATION](#duration)
+* [SAVE DATA](#save-data)
+
+
+SELECT is a syntax used to find, filter, and manipulate data from various tables in Machbase.
 
 ## SELECT Syntax
 

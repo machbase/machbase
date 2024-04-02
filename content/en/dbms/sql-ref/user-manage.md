@@ -4,6 +4,16 @@ type: docs
 weight: 60
 ---
 
+# Index
+
+* [CREATE USER](#create-user)
+* [DROP USER](#drop-user)
+* [ALTER USER](#alter-user)
+* [CONNECT](#connect)
+* [GRANT/REVOKE](#grantrevoke)
+* [Managing User Example](#managing-user-example)
+
+
 ## CREATE USER
 
 **create_user_stmt:**
