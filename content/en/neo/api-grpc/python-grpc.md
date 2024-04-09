@@ -2,6 +2,7 @@
 title: gRPC client in Python
 type: docs
 weight: 54
+draft: true
 ---
 
 ## Setup
@@ -25,7 +26,7 @@ mkdir machrpc-py && cd machrpc-py
 Download proto file.
 
 ```sh
-curl -o machrpc.proto https://raw.githubusercontent.com/machbase/neo-grpc/main/proto/machrpc.proto
+curl -o machrpc.proto https://raw.githubusercontent.com/machbase/neo-client/main/machrpc/machrpc.proto
 ```
 
 Compile proto file into Python.

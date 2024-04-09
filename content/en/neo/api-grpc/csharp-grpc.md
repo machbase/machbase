@@ -2,6 +2,7 @@
 title: gRPC client in C#
 type: docs
 weight: 53
+draft: true
 ---
 
 ## Setup

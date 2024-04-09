@@ -2,6 +2,7 @@
 title: gRPC client in Java
 type: docs
 weight: 51
+draft: true
 ---
 
 ## Setup
@@ -17,7 +18,7 @@ mkdir machrpc-java && cd machrpc-java
 
 ```sh
 mkdir -p src/main/proto
-curl -o src/main/proto/machrpc.proto https://raw.githubusercontent.com/machbase/neo-grpc/main/proto/machrpc.proto
+curl -o src/main/proto/machrpc.proto https://raw.githubusercontent.com/machbase/neo-client/main/machrpc/machrpc.proto
 ```
 
 After downloading proto file, it is required to add `java_package` option in the file.
@@ -39,18 +40,18 @@ for how to generate code from `.proto` file.
     <dependency>
         <groupId>io.grpc</groupId>
         <artifactId>grpc-netty-shaded</artifactId>
-        <version>1.52.1</version>
+        <version>1.63.0</version>
         <scope>runtime</scope>
     </dependency>
     <dependency>
         <groupId>io.grpc</groupId>
         <artifactId>grpc-protobuf</artifactId>
-        <version>1.52.1</version>
+        <version>1.63.0</version>
     </dependency>
     <dependency>
         <groupId>io.grpc</groupId>
         <artifactId>grpc-stub</artifactId>
-        <version>1.52.1</version>
+        <version>1.63.0</version>
     </dependency>
     <dependency> <!-- necessary for Java 9+ -->
         <groupId>org.apache.tomcat</groupId>

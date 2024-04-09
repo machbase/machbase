@@ -6,7 +6,7 @@ weight: 90
 
 The latest version of .proto file is hosted in github. 
 
-Please [find it from github](https://github.com/machbase/neo-grpc/tree/main/proto/machrpc.proto).
+Please [find it from github](https://github.com/machbase/neo-client/tree/main/machrpc/machrpc.proto).
 
 ```proto
 service Machbase {
