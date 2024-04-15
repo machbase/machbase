@@ -97,6 +97,18 @@ The criteria entered in time_unit are viewed as the smallest criteria and even t
 
 > When a rollup table name conflict occurs, all rollup table creation fails and only tag tables are generated.
 
+### Extended ROLLUP
+
+By adding the EXTENSION keyword at the end of the syntax for creating Rollup tables, you can create an extended Rollup. An extended Rollup includes both the starting and ending values of the specified interval.
+
+```sql
+-- Manually create an Extended Rollup table
+CREATE ROLLUP _tag_rollup_sec ON tag(value) INTERVAL 1 SEC EXTENSION;
+
+-- Automatically generate Extended Rollup tables
+CREATE TAG TABLE tagtbl (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED) WITH ROLLUP EXTENSION;
+```
+
 ## Start/Stop Rollup Table
 
 When rollup is created, rollup thread is automatically started, and the user can start/stop rollup thread arbitrarily.
@@ -222,6 +234,7 @@ Depending on the selection of TIME_UNIT, the searched rollup table is different.
 Since using the ROLLUP clause directly performs a rollup table lookup, to use an aggregate function, it has the following characteristics.
 
 * **The aggregate function must be called on the numeric type column**. However, only the six aggregate functions (SUM, COUNT, MIN, MAX, AVG, SUMSQ) supported by the rollup table are supported.
+    * In the case of Extended Rollup, (FIRST, LAST) is additionally supported.
 * **GROUP BY must be done directly with the BASETIME column to be ROLLUP.**
     * You can use the ROLLUP clause with the same meaning as it is.
     * Alternatively, an alias may be attached to the ROLLUP clause, and the alias may be written in GROUP BY.
@@ -243,7 +256,7 @@ GROUP BY mtime;
 Below is sample data for rollup test.
 
 ```sql
-create tag table TAG (name varchar(20) primary key, time datetime basetime, value double summarized);
+create tag table TAG (name varchar(20) primary key, time datetime basetime, value double summarized) with rollup extension;
  
 insert into tag metadata values ('TAG_0001');
  
@@ -416,6 +429,34 @@ mtime                           SUMSQ(value)
 2018-01-01 03:01:00 000:000:000 25                         
 2018-01-01 03:02:00 000:000:000 61                         
 [9] row(s) selected.
+```
+
+## Get ROLLUP FIRST/LAST
+
+Below is an example of obtaining the start and end values provided by Extended Rollup.
+
+```sql
+Mach> SELECT time ROLLUP 1 MIN mtime, FIRST(time, value), LAST(time, value) FROM tag GROUP BY mtime ORDER BY mtime;
+mtime                           FIRST(time, value)          LAST(time, value)           
+--------------------------------------------------------------------------------------------
+2018-01-01 01:00:00 000:000:000 1                           2                           
+2018-01-01 01:01:00 000:000:000 3                           4                           
+2018-01-01 01:02:00 000:000:000 5                           6                           
+2018-01-01 02:00:00 000:000:000 1                           2                           
+2018-01-01 02:01:00 000:000:000 3                           4                           
+2018-01-01 02:02:00 000:000:000 5                           6                           
+2018-01-01 03:00:00 000:000:000 1                           2                           
+2018-01-01 03:01:00 000:000:000 3                           4                           
+2018-01-01 03:02:00 000:000:000 5                           6                           
+[9] row(s) selected.
+
+Mach> SELECT time ROLLUP 1 HOUR mtime, FIRST(time, value), LAST(time, value) FROM tag GROUP BY mtime ORDER BY mtime;
+mtime                           FIRST(time, value)          LAST(time, value)           
+--------------------------------------------------------------------------------------------
+2018-01-01 01:00:00 000:000:000 1                           6                           
+2018-01-01 02:00:00 000:000:000 1                           6                           
+2018-01-01 03:00:00 000:000:000 1                           6                           
+[3] row(s) selected.
 ```
 
 ## Grouping at Various Time Intervals
