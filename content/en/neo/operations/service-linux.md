@@ -14,7 +14,7 @@ Using *systemd* or *supervisord*, you can run and manage machbase-neo process as
 $ vi neo-start.sh
 ```
 
-```sh
+```sh {{linenos=table}}
 #!/bin/bash 
 exec /data/machbase-neo serve --host 0.0.0.0 --log-filename /data/log/machbase-neo.log
 ```
@@ -29,7 +29,7 @@ $ chmod 755 neo-start.sh
 $ vi neo-stop.sh
 ```
 
-```sh
+```sh  {{linenos=table}}
 #!/bin/bash 
 /data/machbase-neo shell shutdown
 ```
@@ -49,7 +49,7 @@ $ cd /etc/systemd/system
 $ sudo vi neo.service
 ```
 
-```ini
+```ini  {{linenos=table}}
 [Unit]   
 Description=neo service   
 StartLimitBurst=10   
@@ -106,7 +106,7 @@ $ cd /etc/supervisor/conf.d
 $ sudo vi neo.conf
 ```
 
-```ini
+```ini  {{linenos=table}}
 [program:neo]
 command=/data/neo-start.sh
 priority=10   
@@ -149,7 +149,7 @@ $ sudo supervisorctl stop neo
 $ vi neo-start.sh
 ```
 
-```sh
+```sh  {{linenos=table}}
 #!/bin/bash
 exec /data/machbase-neo serve --host 0.0.0.0
 ```
@@ -185,7 +185,7 @@ sudo env PATH=$PATH:/usr/local/bin /usr/local/lib/node_modules/pm2/bin/pm2 start
 ```
 
 Then copy/paste the displayed command onto the terminal:
-```sh
+```sh  {{linenos=table}}
 $ sudo env PATH=$PATH:/usr/local/bin /usr/local/lib/node_modules/pm2/bin/pm2 startup systemd -u machbase --hp /home/machbase
 ```
 Now PM2 will automatically restart at boot.
