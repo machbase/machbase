@@ -1035,16 +1035,6 @@ footer {
   margin-left: 20px;
   border-radius: 4px;
 }
-#languageSelector,
-#languageSelector2 {
-  background-color: #253fd0;
-  color: #fff;
-  border-radius: 6px;
-  width: 90px;
-  height: 35px;
-  padding: 0 3px;
-  font-size: 14px !important;
-}
 /* End: Footer
 ------------------------------------------------------------------
 */
@@ -1098,9 +1088,6 @@ footer {
   .hamberger-right {
     display: flex;
     align-items: center;
-  }
-  #languageSelector2 {
-    margin-right: 10px;
   }
 }
 @media screen and (max-width: 1120px) {

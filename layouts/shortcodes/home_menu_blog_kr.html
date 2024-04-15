@@ -37,12 +37,6 @@
           <a href="https://support.machbase.com/hc/en-us">Support</a>
         </li>
         <li class="menu-a"><a href="/kr/home/contactus">Contact US</a></li>
-        <li class="menu-a">
-          <select id="languageSelector" onchange="changeLanguage()">
-            <option value="kr">한국어</option>
-            <option value="en">English</option>
-          </select>
-        </li>
       </ul>
     </div>
   </div>
@@ -50,10 +44,6 @@
 <nav class="tablet-menu-wrap">
   <a href="/kr/home"><img src="../../img/logo_machbase.png" alt="" /></a>
   <div class="hamberger-right">
-    <select id="languageSelector2" onchange="changeLanguage2()">
-      <option value="kr">한국어</option>
-      <option value="en">English</option>
-    </select>
     <div class="tablet-menu-icon">
       <div class="tablet-bar"></div>
       <div class="tablet-bar"></div>
@@ -125,24 +115,6 @@
     docsSub.classList.toggle("show");
     docsNum.classList.toggle("show");
   });
-  function changeLanguage() {
-    var languageSelector = document.getElementById("languageSelector");
-    var selectedLanguage = languageSelector.value;
-    if (selectedLanguage !== "kr") {
-      let locationPath = location.pathname.split("/");
-      locationPath.splice(1, 1);
-      location.href = location.origin + locationPath.join("/");
-    }
-  }
-  function changeLanguage2() {
-    var languageSelector = document.getElementById("languageSelector2");
-    var selectedLanguage = languageSelector.value;
-    if (selectedLanguage !== "kr") {
-      let locationPath = location.pathname.split("/");
-      locationPath.splice(1, 1);
-      location.href = location.origin + locationPath.join("/");
-    }
-  }
   window.addEventListener("load", function () {
     var elementsWithDarkClass = document.querySelectorAll(".dark");
     for (var i = 0; i < elementsWithDarkClass.length; i++) {
