@@ -93,6 +93,20 @@ time_unit 에 들어간 기준을 가장 작은 기준으로 보고 상위 time 
 
 > 롤업 테이블 이름 충돌이 발생할시 롤업 테이블 생성은 모두 실패하고 태그 테이블만 생성된다.
 
+### 확장 ROLLUP
+
+Rollup 테이블 생성 구문 마지막에 `EXTENSION` 키워드를 추가하면 확장 Rollup을 생성할 수 있다.
+확장 Rollup은 해당 구간의 시작 값, 종료 값을 가지고 있다.
+
+```sql
+-- 확장 Rollup 테이블 수동 생성
+CREATE ROLLUP _tag_rollup_sec ON tag(value) INTERVAL 1 SEC EXTENSION;
+
+-- 확장 Rollup 테이블 자동 생성
+CREATE TAG TABLE tagtbl (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED) WITH ROLLUP EXTENSION;
+```
+
+
 ## ROLLUP 테이블 시작/중지
 
 rollup 생성시 rollup thread가 자동으로 시작되며, 사용자가 rollup thread를 임의로 시작/중지 가능하다.
@@ -218,6 +232,7 @@ TIME_UNIT 의 선택에 따라, 조회되는 롤업 테이블이 달라진다.
 ROLLUP 절을 사용하는 것은 롤업 테이블 조회를 직접 하는 것이기 때문에, 집계 함수를 사용하려면 다음의 특징이 있다.
 
 * 숫자형 타입의 컬럼에 집계 함수를 호출해야 한다. 단, 롤업 테이블에서 지원하는 여섯 가지 집계 함수 (SUM, COUNT, MIN, MAX, AVG, SUMSQ) 만 지원한다.
+    * 확장 롤업의 경우 (FIRST, LAST)도 추가로 지원한다.
 * ROLLUP 하는 BASETIME 컬럼으로 GROUP BY 를 직접 해야 한다.
     * 같은 의미의 ROLLUP 절을 그대로 사용해도 된다.
     * 또는, ROLLUP 절에 별명 (alias) 를 붙이고, 별명으로 GROUP BY 에 작성해도 된다.
@@ -238,7 +253,7 @@ GROUP BY mtime;
 아래는 롤업 테스트를 위한 샘플 데이터이다.
 
 ```sql
-create tag table TAG (name varchar(20) primary key, time datetime basetime, value double summarized);
+create tag table TAG (name varchar(20) primary key, time datetime basetime, value double summarized) with rollup extension;
  
 insert into tag metadata values ('TAG_0001');
  
@@ -407,6 +422,34 @@ mtime                           SUMSQ(value)
 2018-01-01 03:01:00 000:000:000 25                         
 2018-01-01 03:02:00 000:000:000 61                         
 [9] row(s) selected.
+```
+
+## ROLLUP 시작/종료 값 얻기
+
+아래는 확장 롤업에서 제공하는 시작 및 종료 값을 얻는 예제이다.
+
+```sql
+Mach> SELECT time ROLLUP 1 MIN mtime, FIRST(time, value), LAST(time, value) FROM tag GROUP BY mtime ORDER BY mtime;
+mtime                           FIRST(time, value)          LAST(time, value)           
+--------------------------------------------------------------------------------------------
+2018-01-01 01:00:00 000:000:000 1                           2                           
+2018-01-01 01:01:00 000:000:000 3                           4                           
+2018-01-01 01:02:00 000:000:000 5                           6                           
+2018-01-01 02:00:00 000:000:000 1                           2                           
+2018-01-01 02:01:00 000:000:000 3                           4                           
+2018-01-01 02:02:00 000:000:000 5                           6                           
+2018-01-01 03:00:00 000:000:000 1                           2                           
+2018-01-01 03:01:00 000:000:000 3                           4                           
+2018-01-01 03:02:00 000:000:000 5                           6                           
+[9] row(s) selected.
+
+Mach> SELECT time ROLLUP 1 HOUR mtime, FIRST(time, value), LAST(time, value) FROM tag GROUP BY mtime ORDER BY mtime;
+mtime                           FIRST(time, value)          LAST(time, value)           
+--------------------------------------------------------------------------------------------
+2018-01-01 01:00:00 000:000:000 1                           6                           
+2018-01-01 02:00:00 000:000:000 1                           6                           
+2018-01-01 03:00:00 000:000:000 1                           6                           
+[3] row(s) selected.
 ```
 
 ## 다양한 시간 간격으로 그룹화
