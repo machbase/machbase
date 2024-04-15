@@ -103,7 +103,7 @@ images:
               <span>
                 <a
                   class="main_why_more product-margin-bottom"
-                  href="https://machbase.com/dbms"
+                  href="https://docs.machbase.com/dbms"
                 >
                   View More<ArrowSvg />
                 </a>
@@ -122,19 +122,19 @@ images:
                 <ul class="product-margin-bottom">
                   <a
                     class="product-link"
-                    href="https://machbase.com/neo/api-mqtt/"
+                    href="https://docs.machbase.com/neo/api-mqtt/"
                     ><li>MQTT server for IoT data</li></a
                   >
                   <a
                     class="product-link"
-                    href="https://machbase.com/neo/api-http/"
+                    href="https://docs.machbase.com/neo/api-http/"
                     ><li>
                       Web server with HTTP protocol support for Rest APIs
                     </li></a
                   >
                   <a
                     class="product-link"
-                    href="https://machbase.com/neo/api-grpc/"
+                    href="https://docs.machbase.com/neo/api-grpc/"
                     ><li>
                       A gRPC server, a high-performance, high-definition,
                       language-neutral remote procedure call framework developed
@@ -143,7 +143,7 @@ images:
                   >
                   <a
                     class="product-link"
-                    href="https://machbase.com/neo/operations/13.ssh-access/"
+                    href="https://docs.machbase.com/neo/operations/13.ssh-access/"
                     ><li>
                       SSH server for secure data and manipulation security — all
                       four essential features are integrated
@@ -163,7 +163,7 @@ images:
                   </p>
                   <a
                     class="main_why_more product-margin-bottom"
-                    href="https://machbase.com/neo"
+                    href="https://docs.machbase.com/neo"
                   >
                     View More<ArrowSvg />
                   </a>
@@ -302,7 +302,7 @@ images:
             >
               Get Machbase
             </button>
-            <a href="https://machbase.com/neo"
+            <a href="https://docs.machbase.com/neo"
               ><button class="next-navi-btn">Document</button></a
             >
           </div>

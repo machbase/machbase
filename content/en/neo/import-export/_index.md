@@ -7,7 +7,7 @@ weight: 600
 ## Import csv
 
 ```sh
-curl -o - https://machbase.com/assets/example/example.csv.gz | \
+curl -o - https://docs.machbase.com/assets/example/example.csv.gz | \
 machbase-neo shell import   \
     --input -               \
     --compress gzip         \
@@ -31,7 +31,7 @@ import total 1000 record(s) inserted
 Or, we can download data file in the local storage then import from it.
 
 ```sh
-curl -o data.csv.gz https://machbase.com/assets/example/example.csv.gz
+curl -o data.csv.gz https://docs.machbase.com/assets/example/example.csv.gz
 ```
 
 It is possible to import compressed or uncompressed csv file.

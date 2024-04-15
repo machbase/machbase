@@ -12,7 +12,7 @@ weight: 110
 - Line 18: column().flat() is required to display outlier points.
 
 ```js {linenos=table,hl_lines=[5,6,8,17,18]}
-CSV(file("https://machbase.com/assets/example/iris.csv"))
+CSV(file("https://docs.machbase.com/assets/example/iris.csv"))
 MAPVALUE(4, strToUpper(strTrimPrefix(value(4), "Iris-")))
 
 BOXPLOT(

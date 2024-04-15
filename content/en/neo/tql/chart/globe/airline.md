@@ -6,7 +6,7 @@ weight: 1010
 
 
 ```js
-CSV(file("https://machbase.com/assets/example/flights.csv"))
+CSV(file("https://docs.machbase.com/assets/example/flights.csv"))
 DROP(1) // skip header
 // |   0         1     2    3      4     5    6
 // +-> flights   name1 lon1 lat1   name2 lon2 lat2
@@ -29,8 +29,8 @@ CHART(
     chartOption({
         backgroundColor: "#000",
         globe: {
-            baseTexture: "https://machbase.com/assets/example/world.topo.bathy.200401.jpg",
-            heightTexture: "https://machbase.com/assets/example/bathymetry_bw_composite_4k.jpg",
+            baseTexture: "https://docs.machbase.com/assets/example/world.topo.bathy.200401.jpg",
+            heightTexture: "https://docs.machbase.com/assets/example/bathymetry_bw_composite_4k.jpg",
             shading: "lambert",
             light: {
                 ambient: {

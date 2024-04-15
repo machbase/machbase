@@ -584,7 +584,7 @@ GROUP(
 ### Chart
 
 ```js {linenos=table,hl_lines=["4-8"],linenostart=1}
-CSV(file("https://machbase.com/assets/example/iris.csv"))
+CSV(file("https://docs.machbase.com/assets/example/iris.csv"))
 FILTER( strToUpper(value(4)) == "IRIS-SETOSA")
 GROUP( by(value(4)), 
     min(value(0), "Min"),

@@ -5,7 +5,7 @@ weight: 920
 ---
 
 ```js
-CSV (file("https://machbase.com/assets/example/AirPassengers.csv"))
+CSV (file("https://docs.machbase.com/assets/example/AirPassengers.csv"))
 
 // drop header : rownames,time,value
 DROP(1) 

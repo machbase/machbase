@@ -5,7 +5,7 @@ weight: 90
 ---
 
 ```js {{linenos="table",hl_lines=[10,"18-22"]}}
-CSV( file("https://machbase.com/assets/example/life-expectancy-table.csv") )
+CSV( file("https://docs.machbase.com/assets/example/life-expectancy-table.csv") )
 DROP(1) // skip header line
 // |   0          1                 2            3         4
 // +-> income     life expectancy   population   Country   Year

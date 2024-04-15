@@ -35,24 +35,24 @@ images:
     </div>
     <div class="chart_wrap">
       <div class="chart">
-        <a href="https://machbase.com/neo"
+        <a href="https://docs.machbase.com/neo"
           ><img class="main_chart" src="./img/neo_main2.png" alt=""
         /></a>
       </div>
       <div class="chart_hover">
-        <a href="https://machbase.com/neo"
+        <a href="https://docs.machbase.com/neo"
           ><img class="main_chart" src="./img/Neo_hover2.png" alt=""
         /></a>
       </div>
     </div>
     <div class="tablet_chart_wrap">
       <div class="tablet_chart">
-        <a href="https://machbase.com/neo"
+        <a href="https://docs.machbase.com/neo"
           ><img class="main_chart" src="./img/neo_main.png" alt=""
         /></a>
       </div>
       <div class="tablet_chart_hover">
-        <a href="https://machbase.com/neo"
+        <a href="https://docs.machbase.com/neo"
           ><img class="main_chart" src="./img/Neo_hover.png" alt=""
         /></a>
       </div>

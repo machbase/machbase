@@ -201,7 +201,7 @@ images:
             >
               Get Machbase
             </button>
-            <a href="https://machbase.com/neo"
+            <a href="https://docs.machbase.com/neo"
               ><button class="next-navi-btn">Document</button></a
             >
           </div>

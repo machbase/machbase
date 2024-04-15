@@ -94,7 +94,7 @@ images:
               <span>
                 <a
                   class="main_why_more product-margin-bottom"
-                  href="https://machbase.com/dbms"
+                  href="https://docs.machbase.com/dbms"
                 >
                   View More
                 </a>
@@ -113,19 +113,19 @@ images:
                 <ul class="product-margin-bottom">
                   <a
                     class="product-link"
-                    href="https://machbase.com/neo/api-mqtt/"
+                    href="https://docs.machbase.com/neo/api-mqtt/"
                     ><li>IoT 데이터를 위한 MQTT 서버</li></a
                   >
                   <a
                     class="product-link"
-                    href="https://machbase.com/neo/api-http/"
+                    href="https://docs.machbase.com/neo/api-http/"
                     ><li>
                       Rest API를 위한 HTTP 프로토콜을 지원하는 웹 서버
                     </li></a
                   >
                   <a
                     class="product-link"
-                    href="https://machbase.com/neo/api-grpc/"
+                    href="https://docs.machbase.com/neo/api-grpc/"
                     ><li>
                       Google에서 개발한 고성능, 고화질, 언어 중립적인 원격
                       프로시저 호출 프레임워크인 gRPC 서버
@@ -133,7 +133,7 @@ images:
                   >
                   <a
                     class="product-link"
-                    href="https://machbase.com/neo/operations/13.ssh-access/"
+                    href="https://docs.machbase.com/neo/operations/13.ssh-access/"
                     ><li>
                       안전한 데이터 및 조작 보안을 위한 SSH 서버 - 네 가지 필수
                       기능이 모두 통합되어 있습니다.
@@ -152,7 +152,7 @@ images:
                   </p>
                   <a
                     class="main_why_more product-margin-bottom"
-                    href="https://machbase.com/neo"
+                    href="https://docs.machbase.com/neo"
                   >
                     View More<ArrowSvg />
                   </a>
@@ -260,7 +260,7 @@ images:
             >
               Get Machbase
             </button>
-            <a href="https://machbase.com/neo"
+            <a href="https://docs.machbase.com/neo"
               ><button class="next-navi-btn">Document</button></a
             >
           </div>

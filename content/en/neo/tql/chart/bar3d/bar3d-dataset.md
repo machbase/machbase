@@ -5,7 +5,7 @@ weight: 10
 ---
 
 ```js
-CSV( file("https://machbase.com/assets/example/life-expectancy-table.csv") )
+CSV( file("https://docs.machbase.com/assets/example/life-expectancy-table.csv") )
 // |   0        1                 2            3        4
 // +-> income   life-expectancy   population   country  year
 // |

@@ -9,9 +9,9 @@ FAKE( json({
     ["world.topo.bathy.200401.jpg", "starfield.jpg", "pisa.hdr"]
 }) )
 
-MAPVALUE(0, "https://machbase.com/assets/example/"+value(0))
-MAPVALUE(1, "https://machbase.com/assets/example/"+value(1))
-MAPVALUE(2, "https://machbase.com/assets/example/"+value(2))
+MAPVALUE(0, "https://docs.machbase.com/assets/example/"+value(0))
+MAPVALUE(1, "https://docs.machbase.com/assets/example/"+value(1))
+MAPVALUE(2, "https://docs.machbase.com/assets/example/"+value(2))
 
 CHART(
     plugins("gl"),

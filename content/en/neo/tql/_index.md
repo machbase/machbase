@@ -94,7 +94,7 @@ The example tql code below gives a brief idea of what is TQL for.
 {{< tab >}}
 - avg. values of each classes.
 ```js
-CSV(file("https://machbase.com/assets/example/iris.csv"))
+CSV(file("https://docs.machbase.com/assets/example/iris.csv"))
 GROUP( by(value(4), "species"),
     avg(value(0), "Avg. Sepal L."),
     avg(value(1), "Avg. Sepal W."),
@@ -120,7 +120,7 @@ CHART(
 {{< tab >}}
 - min, median, avg, max, stddev of sepal length of the setosa class.
 ```js
-CSV(file("https://machbase.com/assets/example/iris.csv"))
+CSV(file("https://docs.machbase.com/assets/example/iris.csv"))
 FILTER( strToUpper(value(4)) == "IRIS-SETOSA")
 GROUP( by(value(4)), 
     min(value(0), "Min"),

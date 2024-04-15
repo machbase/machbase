@@ -35,7 +35,7 @@ CHART(
         series: []
     }),
     chartJSCode({
-        fetch("https://machbase.com/assets/example/seoul_gu.json"
+        fetch("https://docs.machbase.com/assets/example/seoul_gu.json"
         ).then( function(rsp) {
             return rsp.json();
         }).then( function(seoulJSON) {

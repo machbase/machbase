@@ -36,7 +36,7 @@ POPVALUE(1)  // remove y
 // +--> [ (x, y) ]
 CHART(
     chartJSCode({
-        fetch("https://machbase.com/assets/example/MacOdrum-LV5-floorplan-web.svg"
+        fetch("https://docs.machbase.com/assets/example/MacOdrum-LV5-floorplan-web.svg"
         ).then( function(rsp) {
             return rsp.text();
         }).then( function(svg) {

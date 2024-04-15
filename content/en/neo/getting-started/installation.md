@@ -13,7 +13,7 @@ The installation process of machbase-neo is just simple as downloading, unarchiv
 Use the instant download with the script below.
 
 ```sh
-sh -c "$(curl -fsSL https://machbase.com/install.sh)"
+sh -c "$(curl -fsSL https://docs.machbase.com/install.sh)"
 ```
 
 Or, download the latest version for your platform from [releases](/neo/releases) page.

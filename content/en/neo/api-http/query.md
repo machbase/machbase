@@ -378,7 +378,7 @@ Copy and paste on a new file `data-nano-1.json`.
     }
 }
 ```
-Or download it from [here](https://machbase.com/assets/example/data-epoch-1.json).
+Or download it from [here](https://docs.machbase.com/assets/example/data-epoch-1.json).
 
 ### Create table
 ```sh

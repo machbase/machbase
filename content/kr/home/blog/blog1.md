@@ -56,8 +56,8 @@ images:
         </p>
         <p class="tech-contents-text">
           Machbase Neo에 대한 자세한 내용은 웹사이트
-          <a class="tech-contents-link" href="https://machbase.com/neo"
-            >https://machbase.com/neo</a
+          <a class="tech-contents-link" href="https://docs.machbase.com/neo"
+            >https://docs.machbase.com/neo</a
           >을 참고하면 됩니다.
         </p>
         <p class="tech-contents-text">

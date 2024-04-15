@@ -110,8 +110,8 @@ images:
         </div>
         <p class="tech-contents-text">
           First, let me provide a description of Machbase Neo
-          <a class="tech-contents-link" href="https://machbase.com/neo"
-            >(https://machbase.com/neo)</a
+          <a class="tech-contents-link" href="https://docs.machbase.com/neo"
+            >(https://docs.machbase.com/neo)</a
           >. This product is a time-series database solution, but it goes beyond
           traditional boundaries by embracing an All-In-One concept that aligns
           with future technological trends. Machbase Neo aims to streamline the

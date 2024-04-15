@@ -350,8 +350,8 @@ images:
         <p class="tech-contents-text">
           Machbase Neo is the result of this approach.(<a
             class="tech-link"
-            href="https://machbase.com/neo"
-            >https://machbase.com/neo</a
+            href="https://docs.machbase.com/neo"
+            >https://docs.machbase.com/neo</a
           >)
         </p>
         <p class="tech-contents-text">
@@ -372,8 +372,8 @@ images:
           MQTT interface for storing data from sensors. For more details, you
           can refer to the documentation and tutorials on the official site(<a
             class="tech-link"
-            href="https://machbase.com/neo"
-            >(https://machbase.com/neo)</a
+            href="https://docs.machbase.com/neo"
+            >(https://docs.machbase.com/neo)</a
           >) For the sake of demonstration, we’ll be testing MQTT with the
           mosquito_pub command, so you’ll need to have the mosquito-client tool
           installed first. And machbase-neo can be downloaded from the site or
@@ -382,7 +382,7 @@ images:
         </p>
         <div class="tech-code-box">
           <span
-            >$ sh -c "$(curl -fsSL https://machbase.com/install.sh)"</span
+            >$ sh -c "$(curl -fsSL https://docs.machbase.com/install.sh)"</span
           >
         </div>
         <p class="tech-contents-text">
@@ -439,8 +439,8 @@ images:
         <p class="tech-contents-text">
           I believe Machbase Neo(<a
             class="tech-link"
-            href="https://machbase.com/neo"
-            >(https://machbase.com/neo)</a
+            href="https://docs.machbase.com/neo"
+            >(https://docs.machbase.com/neo)</a
           >) is a good example of how the technology accumulated in the
           development of time series databases can help solve the problems of
           developers in the IoT space. I hope this article will be useful for

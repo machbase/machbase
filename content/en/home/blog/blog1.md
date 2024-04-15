@@ -60,8 +60,8 @@ images:
         <p class="tech-contents-text">
           For detailed information about Machbase Neo, please refer to the
           website at
-          <a class="tech-contents-link" href="https://machbase.com/neo"
-            >https://machbase.com/neo</a
+          <a class="tech-contents-link" href="https://docs.machbase.com/neo"
+            >https://docs.machbase.com/neo</a
           >.
         </p>
         <p class="tech-contents-text">

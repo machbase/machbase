@@ -212,7 +212,7 @@ If csv data has header line like below, set the `heading=false` query param.
 **Prepare data file**
 
 `data-epoch-1-no-header.csv`
-[download](https://machbase.com/assets/example/data-epoch-1-no-header.csv)
+[download](https://docs.machbase.com/assets/example/data-epoch-1-no-header.csv)
 
 ```
 wave.sin,1676432361,0.000000
@@ -237,7 +237,7 @@ When loading a large CSV file, using the "append" method can allow data to be in
 **Prepare data file**
 
 `data-epoch-bulk.csv`
-[download](https://machbase.com/assets/example/data-epoch-bulk.csv)
+[download](https://docs.machbase.com/assets/example/data-epoch-bulk.csv)
 
 ```
 wave.sin,1676432361,0.000000
@@ -261,7 +261,7 @@ curl -X POST "http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=s&heading=false&
 **Prepare data file**
 
 `data-timeformat-1.csv`
-[download](https://machbase.com/assets/example/data-timeformat-1.csv)
+[download](https://docs.machbase.com/assets/example/data-timeformat-1.csv)
 
 ```
 wave.sin,2023-02-15 03:39:21,0.111111
@@ -302,7 +302,7 @@ wave.sin,2023-02-15 03:39:25.444,0.555555
 **Prepare data file**
 
 `data-timeformat-1-tz-seoul.csv`
-[download](https://machbase.com/assets/example/data-timeformat-1-tz-seoul.csv)
+[download](https://docs.machbase.com/assets/example/data-timeformat-1-tz-seoul.csv)
 
 ```
 wave.sin,2023-02-15 12:39:21,0.111111
@@ -343,7 +343,7 @@ wave.sin,2023-02-15 03:39:25.444,0.555555
 **Prepare data file**
 
 `data-timeformat-rfc3339.csv`
-[download](https://machbase.com/assets/example/data-timeformat-rfc3339.csv)
+[download](https://docs.machbase.com/assets/example/data-timeformat-rfc3339.csv)
 
 ```
 wave.sin,2023-02-15T03:39:21Z,0.111111
@@ -384,7 +384,7 @@ wave.sin,2023-02-15T03:39:25Z,0.555555
 **Prepare data file**
 
 `data-timeformat-rfc3339nano-tz-newyork.csv`
-[download](https://machbase.com/assets/example/data-timeformat-rfc3339nano-tz-newyork.csv)
+[download](https://docs.machbase.com/assets/example/data-timeformat-rfc3339nano-tz-newyork.csv)
 
 ```
 wave.sin,2023-02-14T22:39:21.000000000-05:00,0.111111
@@ -429,7 +429,7 @@ curl -o - http://127.0.0.1:5654/db/query      \
 **Prepare data file**
 
 `data-timeformat-custom-1.csv`
-[download](https://machbase.com/assets/example/data-timeformat-custom-1.csv)
+[download](https://docs.machbase.com/assets/example/data-timeformat-custom-1.csv)
 
 ```
 wave.sin,2023-02-15 03:39:21,0.111111
@@ -473,7 +473,7 @@ curl -o - http://127.0.0.1:5654/db/query       \
 **Prepare data file**
 
 `data-timeformat-custom-2.csv`
-[download](https://machbase.com/assets/example/data-timeformat-custom-2.csv)
+[download](https://docs.machbase.com/assets/example/data-timeformat-custom-2.csv)
 > `hour:min:sec-SPLIT-year-month-day` format in newyork timezone
 ```
 wave.sin,10:39:21-SPLIT-2023-02-14 ,0.111111

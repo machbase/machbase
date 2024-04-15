@@ -326,8 +326,8 @@ images:
         <p class="tech-contents-text">
           이런 접근법으로 실현한 결과물이 machbase-neo이다.(<a
             class="tech-link"
-            href="https://machbase.com/neo"
-            >https://machbase.com/neo</a
+            href="https://docs.machbase.com/neo"
+            >https://docs.machbase.com/neo</a
           >)
         </p>
         <p class="tech-contents-text">
@@ -345,8 +345,8 @@ images:
         <p class="tech-contents-text">
           간략하게 센서의 데이터를 저장하기 위한 machbase-neo의 MQTT
           인터페이스를 간략히 살펴보도록 하겠다. 더 자세한 내용은 공식 사이트의
-          문서(<a class="tech-link" href="https://machbase.com/neo"
-            >(https://machbase.com/neo)</a
+          문서(<a class="tech-link" href="https://docs.machbase.com/neo"
+            >(https://docs.machbase.com/neo)</a
           >) 와 튜토리얼을 참고하면 된다. 여기서는 데모를 위해 mosquito_pub
           명령어로 MQTT를 시험할 것이므로 먼저 mosquito-client 도구가 설치되어
           있어야 한다. 그리고 machbase-neo는 사이트에서 내려받거나 아래와 같은
@@ -355,7 +355,7 @@ images:
         </p>
         <div class="tech-code-box">
           <span
-            >$ sh -c "$(curl -fsSL https://machbase.com/install.sh)"</span
+            >$ sh -c "$(curl -fsSL https://docs.machbase.com/install.sh)"</span
           >
         </div>
         <p class="tech-contents-text">

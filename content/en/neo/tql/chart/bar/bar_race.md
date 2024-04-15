@@ -5,7 +5,7 @@ weight: 150
 ---
 
 ```js
-CSV( file("https://machbase.com/assets/example/life-expectancy-table.csv") )
+CSV( file("https://docs.machbase.com/assets/example/life-expectancy-table.csv") )
 CHART(
     chartOption({
         grid: {
