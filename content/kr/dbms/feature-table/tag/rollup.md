@@ -95,7 +95,7 @@ time_unit 에 들어간 기준을 가장 작은 기준으로 보고 상위 time 
 
 ### 확장 ROLLUP
 
-Rollup 테이블 생성 구문 마지막에 `EXTENSION` 키워드를 추가하면 확장 롤업을 생성할 수 있다.
+Rollup 테이블 생성 구문 마지막에 `EXTENSION` 키워드를 추가하면 확장 Rollup을 생성할 수 있다.
 확장 Rollup은 해당 구간의 시작 값, 종료 값을 가지고 있다.
 
 ```sql
