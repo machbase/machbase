@@ -6,11 +6,11 @@ weight: 61
 
 ## Query
 
-{{< tabs items="JSON,CSV" >}}
-{{< tab >}}
+**JSON**
+
 Set `format=json` or omit it for the default.
 
-```js
+```js {{linenos=table}}
 q = "select * from example"
 fetch(`http://127.0.0.1:5654/db/query?q=${encodeURIComponent(q)}`)
   .then(res => {
@@ -20,11 +20,12 @@ fetch(`http://127.0.0.1:5654/db/query?q=${encodeURIComponent(q)}`)
     console.log(data)
   });
 ```
-{{< /tab >}}
-{{< tab >}}
+
+**CSV**
+
 Set `format=csv` explicitly.
 
-```js
+```js {{linenos=table}}
 q = "select * from example"
 fetch(`http://127.0.0.1:5654/db/query?q=${encodeURIComponent(q)}&format=csv`)
   .then(res => {
@@ -34,15 +35,12 @@ fetch(`http://127.0.0.1:5654/db/query?q=${encodeURIComponent(q)}&format=csv`)
     console.log(data)
   });
 ```
-{{< /tab >}}
-{{< /tabs >}}
 
 ## Write
 
-{{< tabs items="JSON,CSV" >}}
-{{< tab >}}
+**JSON**
 
-```js
+```js  {{linenos=table,hl_lines=[14]}}
 payload = {
     data: {
         columns: ["NAME", "TIME", "VALUE"],
@@ -62,10 +60,9 @@ fetch('http://127.0.0.1:5654/db/write/example', {
   });
 ```
 
-{{< /tab >}}
-{{< tab >}}
+**CSV**
 
-```js
+```js  {{linenos=table,hl_lines=[7]}}
 payload = `temperature,1677033057000000000,21.1
 humidity,1677033057000000000,0.53`
 
@@ -77,5 +74,3 @@ fetch('http://127.0.0.1:5654/db/write/example', {
     body: payload
   });
 ```
-{{< /tab >}}
-{{< /tabs >}}
