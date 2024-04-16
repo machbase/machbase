@@ -18,8 +18,10 @@ VALUE DOUBLE SUMMARIZED);
 
 ## `INSERT` CSV
 
-> {{< figure src="/images/copy_addr_icon.jpg" width="24px" >}}
-> When tql script is saved, the editor shows the link icon on the top right corner, click it to copy the address of the script file.
+| Icon      | Description |
+|-----------|:------------|
+| {{< figure src="/images/copy_addr_icon.jpg" width="24px" >}} | When tql script is saved, the editor shows the link icon on the top right corner, click it to copy the address of the script file. |
+
 
 {{% steps %}}
 

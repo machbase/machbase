@@ -141,8 +141,10 @@ MARKDOWN( html(true) )
 
 Save this code as `hello.tql` (click save icon on the top right of the editor) and open it with web browser at [http://127.0.0.1:5654/db/tql/hello.tql](http://127.0.0.1:5654/db/tql/hello.tql), or use *curl* command on the terminal.
 
-> {{< figure src="/images/copy_addr_icon.jpg" width="24px" >}}
-> When tql script is saved, the editor shows the link icon on the top right corner, click it to copy the address of the script file.
+| Icon      | Description |
+|-----------|:------------|
+| {{< figure src="/images/copy_addr_icon.jpg" width="24px" >}} | When tql script is saved, the editor shows the link icon on the top right corner, click it to copy the address of the script file. |
+
 
 ```sh
 curl -o - http://127.0.0.1:5654/db/tql/hello.tql
