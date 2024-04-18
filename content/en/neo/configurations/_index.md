@@ -83,6 +83,8 @@ define DEF {
     MQTT_PORT         = flag("--mqtt-port", "5653")
     HTTP_PORT         = flag("--http-port", "5654")
     GRPC_PORT         = flag("--grpc-port", "5655")
+    GRPC_SOCK         = flag("--grpc-sock", "${execDir()}/mach-grpc.sock")
+    MACH_PORT         = flag("--mach-port", "5656")
 }
 ```
 
@@ -92,16 +94,36 @@ This section defines commonly used variables.
 
 ```hcl
 define VARS {
-    DATA_DIR          = flag("--data", "${execDir()}/machbase_home")
-    SHELL_LISTEN_HOST = flag("--shell-listen-host", DEF_LISTEN_HOST)
-    SHELL_LISTEN_PORT = flag("--shell-listen-port", DEF_SHELL_PORT)
-    GRPC_LISTEN_HOST  = flag("--grpc-listen-host", DEF_LISTEN_HOST)
-    GRPC_LISTEN_PORT  = flag("--grpc-listen-port", DEF_GRPC_PORT)
-    HTTP_LISTEN_HOST  = flag("--http-listen-host", DEF_LISTEN_HOST)
-    HTTP_LISTEN_PORT  = flag("--http-listen-port", DEF_HTTP_PORT)
-    MQTT_LISTEN_HOST  = flag("--mqtt-listen-host", DEF_LISTEN_HOST)
-    MQTT_LISTEN_PORT  = flag("--mqtt-listen-port", DEF_MQTT_PORT)
-    MQTT_MAXMESSAGE   = flag("--mqtt-max-message", 1048576)
+    PREF_DIR              = flag("--pref", prefDir("machbase"))
+    DATA_DIR              = flag("--data", "${execDir()}/machbase_home")
+    FILE_DIR              = flag("--file", "${execDir()}")
+    UI_DIR                = flag("--ui", "")
+    MACH_LISTEN_HOST      = flag("--mach-listen-host", DEF_LISTEN_HOST)
+    MACH_LISTEN_PORT      = flag("--mach-listen-port", DEF_MACH_PORT)
+    SHELL_LISTEN_HOST     = flag("--shell-listen-host", DEF_LISTEN_HOST)
+    SHELL_LISTEN_PORT     = flag("--shell-listen-port", DEF_SHELL_PORT)
+    GRPC_LISTEN_HOST      = flag("--grpc-listen-host", DEF_LISTEN_HOST)
+    GRPC_LISTEN_PORT      = flag("--grpc-listen-port", DEF_GRPC_PORT)
+    GRPC_LISTEN_SOCK      = flag("--grpc-listen-sock", DEF_GRPC_SOCK)
+    HTTP_LISTEN_HOST      = flag("--http-listen-host", DEF_LISTEN_HOST)
+    HTTP_LISTEN_PORT      = flag("--http-listen-port", DEF_HTTP_PORT)
+    MQTT_LISTEN_HOST      = flag("--mqtt-listen-host", DEF_LISTEN_HOST)
+    MQTT_LISTEN_PORT      = flag("--mqtt-listen-port", DEF_MQTT_PORT)
+    MQTT_MAXMESSAGE       = flag("--mqtt-max-message", 1048576) // 1MB
+
+    HTTP_ENABLE_TOKENAUTH = flag("--http-enable-token-auth", false)
+    MQTT_ENABLE_TOKENAUTH = flag("--mqtt-enable-token-auth", false)
+    MQTT_ENABLE_TLS       = flag("--mqtt-enable-tls", false)
+
+    HTTP_ENABLE_WEBUI     = flag("--http-enable-web", true)
+    HTTP_DEBUG_MODE       = flag("--http-debug", false)
+
+    EXPERIMENT_MODE       = flag("--experiment", false)
+
+    MACHBASE_ENABLE_SIGHANDLER = flag("--machbase-enable-sighandler", false)
+    MACHBASE_INIT_OPTION       = flag("--machbase-init-option", 2)
+
+    CREATEDB_SCRIPT_FILES  = flag("--createdb-script-files", "")
 }
 ```
 
@@ -136,6 +158,13 @@ module "machbase.com/neo-logging" {
     config {
         Console                     = false
         Filename                    = flag("--log-filename", "-")
+        Append                      = flag("--log-append", true)
+        RotateSchedule              = flag("--log-rotate-schedule", "@midnight")
+        MaxSize                     = flag("--log-max-size", 10)
+        MaxBackups                  = flag("--log-max-backups", 1)
+        MaxAge                      = flag("--log-max-age", 7)
+        Compress                    = flag("--log-compress", false)
+        UTC                         = flag("--log-time-utc", false)
         DefaultPrefixWidth          = 16
         DefaultEnableSourceLocation = flag("--log-source-location", false)
         DefaultLevel                = flag("--log-level", "INFO")
