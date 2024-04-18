@@ -194,39 +194,18 @@ server's HTTP listener config.
 
 | Key                         | Type               | Desc                                                     |
 |:----------------------------|:-------------------|----------------------------------------------------------|
-| Listeners                   | array of string    | listening addresses                                       |
-| Handlers                    | array of handler object |                                                     |
+| Listeners                   | array of string    | listening addresses                                      |
 | EnableTokenAuth             | bool               | enable token based authentication (default `false`)      |
-
-- handler object
-
-| Key                         | Type               | Desc                                                     |
-|:----------------------------|:-------------------|----------------------------------------------------------|
-| Prefix                      | string             | prefix of http path, must start with `/`                 |
-| Handler                     | string             | handler implementation: `machbase`, `influx`             |
-
-`machbase` handler is for standard HTTP API, `influx` handler is for ingesting line protocol.
-More handlers will be added along with future releases.
+| EnableWebUI                 | bool               | enable web user interface (default `true`)               |
 
 #### Mqtt
 
 | Key                         | Type               | Desc                                                     |
 |:----------------------------|:-------------------|----------------------------------------------------------|
 | Listeners                   | array of string    | listening addresses                                       |
-| Handlers                    | array of handler object |                                                     |
 | MaxMessageSizeLimit         | int                | maximum size limit of payload in a PUBLISH <br/> (default 1048576 = 1MB) |
 | EnableTokenAuth             | bool               | enable token based authentication (default `false`)      |
 | EnableTls                   | bool               | enable TLS for the TCP listeners (default `false`)       |
-
-- handler object
-
-| Key                         | Type               | Desc                                                     |
-|:----------------------------|:-------------------|----------------------------------------------------------|
-| Prefix                      | string             | prefix of mqtt topic, must compatible MQTT specification |
-| Handler                     | string             | handler implementation: `machbase`, `influx`             |
-
-`machbase` handler is for standard MQTT API, `influx` handler is for ingesting payload that encoded in line protocol.
-More handlers will be added along with future releases.
 
 ### neo-server config
 
@@ -234,9 +213,15 @@ More handlers will be added along with future releases.
 module "machbase.com/neo-server" {
     name = "neosvr"
     config {
-        MachbaseHome     = VARS_DATA_DIR
+        PrefDir          = VARS_PREF_DIR
+        DataDir          = VARS_DATA_DIR
+        FileDirs         = [ VARS_FILE_DIR ]
+        ExperimentMode   = VARS_EXPERIMENT_MODE
+        CreateDBScriptFiles = [ VARS_CREATEDB_SCRIPT_FILES ]
         Machbase         = {
             HANDLE_LIMIT     = 2048
+            PORT_NO          = VARS_MACH_LISTEN_PORT
+            BIND_IP_ADDRESS  = VARS_MACH_LISTEN_HOST
         }
         Shell = {
             Listeners        = [ "tcp://${VARS_SHELL_LISTEN_HOST}:${VARS_SHELL_LISTEN_PORT}" ]
@@ -244,7 +229,7 @@ module "machbase.com/neo-server" {
         }
         Grpc = {
             Listeners        = [ 
-                "unix://${execDir()}/mach-grpc.sock",
+                "unix://${VARS_GRPC_LISTEN_SOCK}",
                 "tcp://${VARS_GRPC_LISTEN_HOST}:${VARS_GRPC_LISTEN_PORT}",
             ]
             MaxRecvMsgSize   = 4
@@ -252,22 +237,23 @@ module "machbase.com/neo-server" {
         }
         Http = {
             Listeners        = [ "tcp://${VARS_HTTP_LISTEN_HOST}:${VARS_HTTP_LISTEN_PORT}" ]
-            Handlers         = [
-                { Prefix: "/db",      Handler: "machbase" },
-                { Prefix: "/metrics", Handler: "influx" },
-            ]
+            WebDir           = VARS_UI_DIR
             EnableTokenAuth  = VARS_HTTP_ENABLE_TOKENAUTH
+            DebugMode        = VARS_HTTP_DEBUG_MODE
+            EnableWebUI      = VARS_HTTP_ENABLE_WEBUI
         }
         Mqtt = {
-            Listeners        = [ "tcp://${VARS_MQTT_LISTEN_HOST}:${VARS_MQTT_LISTEN_PORT}"]
-            Handlers         = [
-                { Prefix: "db",       Handler: "machbase" },
-                { Prefix: "metrics",  Handler: "influx" },
-            ]
+            Listeners           = [ "tcp://${VARS_MQTT_LISTEN_HOST}:${VARS_MQTT_LISTEN_PORT}"]
             EnableTokenAuth     = VARS_MQTT_ENABLE_TOKENAUTH
             EnableTls           = VARS_MQTT_ENABLE_TLS
             MaxMessageSizeLimit = VARS_MQTT_MAXMESSAGE
         }
+        Jwt = {
+            AtDuration = flag("--jwt-at-expire", "5m")
+            RtDuration = flag("--jwt-rt-expire", "60m")
+        }
+        MachbaseInitOption       = VARS_MACHBASE_INIT_OPTION
+        EnableMachbaseSigHandler = VARS_MACHBASE_ENABLE_SIGHANDLER
     }
 }
 ```
