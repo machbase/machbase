@@ -312,7 +312,10 @@ Run the tql of the path, refer the section of 'Content-types of TQL' for the res
 **POST `/web/api/tql`**
 
 Post tql script as content payload, server will response the execution result.
-refer the section of 'Content-types of TQL' for the response
+refer the section of 'Content-types of TQL' for the response.
+
+If the request has a `$` named query parameter, it will be taken as the tql script,
+and the payload will be treated as data. This `$` query parameter is available since v8.0.17.
 
 ### Markdown rendering
 
