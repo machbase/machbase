@@ -217,6 +217,14 @@ machbase-neo» desc example;
 └────────┴───────┴──────────┴────────┘
 ```
 
+## machbase-neo restore
+
+Restore database from backup.
+
+```sh
+$ machbase-neo restore --data <machbase home dir>  <backup dir>
+```
+
 ## machbase-neo version
 
 Show version and engine info.
