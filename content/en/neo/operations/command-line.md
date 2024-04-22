@@ -360,6 +360,8 @@ a row fetched.
 
 #### session list
 
+Syntax: `session list` {{< neo_since ver="8.0.17" />}}
+
 ```sh
  machbase-neo» session list;
 ┌────┬───────────┬─────────┬────────────┬─────────┬─────────┬──────────┐
@@ -371,9 +373,11 @@ a row fetched.
 
 #### session kill
 
-Syntax `session kill <ID>`
+Syntax `session kill <ID>` {{< neo_since ver="8.0.17" />}}
 
 #### session stat
+
+Syntax: `session stat` {{< neo_since ver="8.0.17" />}}
 
 ```sh
 machbase-neo» session stat;
@@ -408,6 +412,8 @@ machbase-neo» desc example;
 ```
 
 ## machbase-neo restore
+
+Syntax `machbase-neo restore --data <machbase_home_dir> <backup_dir>` {{< neo_since ver="8.0.17" />}}
 
 Restore database from backup.
 
