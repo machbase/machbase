@@ -472,6 +472,7 @@ COUNT(*)             tm
 시간 단위와, 시간 단위별 허용되는 시간 범위는 다음과 같다.
 
 * nanosecond, microsecond, milisecond 단위와 축약어는, 5.5.6 부터 사용 가능하다.
+* week의 기준은 일요일이다.
 
 |시간 단위 (축약어)|시간 범위|
 |----:|:----|
@@ -482,6 +483,7 @@ COUNT(*)             tm
 |minute (min)|	1440 (1일)|
 |hour|	24 (1일)|
 |day|	1|
+|week|	1|
 |month|	1|
 |year|	1|
 

@@ -487,6 +487,7 @@ The allowable time ranges for time units and time units are as follows.
 |minute (min)|1440 (1 day)|
 |hour|24 (1 day)|
 |day|1|
+|week|1|
 |month|1|
 |year|1|
 
