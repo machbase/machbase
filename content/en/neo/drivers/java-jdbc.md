@@ -1,8 +1,7 @@
 ---
-title: JDBC
+title: Java JDBC
 type: docs
-weight: 140
-draft: true
+weight: 100
 ---
 
 JDBC driver is provided for Java developers.

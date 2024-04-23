@@ -6,7 +6,7 @@ weight: 11
 
 `Exec` execute query which doesn't require result set.
 It is suitable to execute queries that doesn't return any record but success or failure,
-for example `create table...`, `drop table...`, `insert into ...`.
+for example `create table...`, `drop table...`, `insert into...`.
 
 - Request `ExecRequest`
 
