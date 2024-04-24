@@ -13,7 +13,7 @@ Start machbase-neo server process.
 **General flags**
              
 | flag             | default              | desc                                                              |
-|:-----------------|:--------------------:|:----------------------------------------------------------------- |
+|:-----------------|:---------------------|:----------------------------------------------------------------- |
 | `--host`         | `127.0.0.1`          | listening network addr<br/> ex) `--host 0.0.0.0`                  |
 | `-c`, `--config` |                      | config file location  <br/> ex) `--config /data/machbase-neo.conf`|
 | `--pid`          |                      | file path to save pid <br/> ex) `--pid /data/machbase-neo.pid`    |
@@ -25,7 +25,7 @@ Start machbase-neo server process.
 **Log flags**
 
 | flag                    | default     | desc                                                                      |
-|:------------------------|:-----------:|:------------------------------------------------------------------------- |
+|:------------------------|:------------|:------------------------------------------------------------------------- |
 | `--log-filename`        | `-` (stdout)| log file path<br/> ex) `--log-filename /data/logs/machbase-neo.log`       |
 | `--log-level`           | `INFO`      | log level. TRACE, DEBUG, INFO, WARN, ERROR<br/> ex) `--log-level INFO`    |
 | `--log-append`          | `true`      | append existing log file.               {{< neo_since ver="8.0.13" />}}   |
@@ -39,7 +39,7 @@ Start machbase-neo server process.
 **Listener flags**
 
 | flag             | default   | desc                            |
-|:-----------------|:---------:|-------------------------------- |
+|:-----------------|:----------|-------------------------------- |
 | `--shell-port`   | `5652`    | ssh listen port                 |
 | `--mqtt-port`    | `5653`    | mqtt listen port                |
 | `--http-port`    | `5654`    | http listen port                |
@@ -47,24 +47,6 @@ Start machbase-neo server process.
 | `--grpc-sock`    | `mach-grpc.sock` | grpc unix domain socket  |
 | `--grpc-insecure`| `false`   | disable TLS of grpc listen port |
 | `--mach-port`    | `5656`    | machbase native listen port     |
-
-**Host and port listener flags**
-
-If a listener requires to listen different network interface, use listen host and port flags.
-
-| flag                   | default                | desc                            |
-|:-----------------------|:-----------------------|-------------------------------- |
-| `--mach-listen-host`   | value of `--host`      |                                 |
-| `--mach-listen-port`   | value of `--mach-port` |                                 |
-| `--shell-listen-host`  | value of `--host`      |                                 |
-| `--shell-listen-port`  | value of `--shell-port`|                                 |
-| `--grpc-listen-host`   | value of `--host`      |                                 |
-| `--grpc-listen-port`   | value of `--grpc-port` |                                 |
-| `--grpc-listen-sock`   | value of `--grpc-sock` |                                 |
-| `--http-listen-host`   | value of `--host`      |                                 |
-| `--http-listen-port`   | value of `--http-port` |                                 |
-| `--mqtt-listen-host`   | value of `--host`      |                                 |
-| `--mqtt-listen-port`   | value of `--mqtt-port` |                                 |
 
 {{< callout type="info" emoji="📌">}}
 **IMPORTANT**<br/>
@@ -91,13 +73,16 @@ Start machbase-neo shell. It will start interactive mode shell if there are no o
 
 **Flags**
 
-| flag (long)       | desc                                                             |
-|:------------------|:-----------------------------------------------------------------|
-| `-s`, `--server`  | machbase-neo's gRPC address. <br/> default: `--server tcp://127.0.0.1:5655` <br/> e.g. `-s unix://./mach-grpc.sock` |
-| `--user`          | user name.<br/>default: `sys` <br/>env: `NEOSHELL_USER`             {{< neo_since ver="8.0.4" />}} |
-| `--password`      | password.<br/>default: `manager` <br/>env: `NEOSHELL_PASSWORD`      {{< neo_since ver="8.0.4" />}} |
+| flag (long)       | default                | desc                                                             |
+|:------------------|:-----------------------|:-----------------------------------------------------------------|
+| `-s`, `--server`  | `tcp://127.0.0.1:5655` | machbase-neo's gRPC address.<br/> e.g. `-s unix://./mach-grpc.sock`<br/>e.g. `--server tcp://127.0.0.1:5655` |
+| `--user`          | `sys`                  | user name.<br/>env: `NEOSHELL_USER`         {{< neo_since ver="8.0.4" />}} |
+| `--password`      | `manager`              | password.<br/>env: `NEOSHELL_PASSWORD`      {{< neo_since ver="8.0.4" />}} |
 
-When machbase-neo shell starts, it is looking for the user name and password from OS's environment variables `NEOSHELL_USER` and `NEOSHELL_PASSWORD`. Then if the flags `--user` and `--password` are provided, it will override the provided values instead of the environment variables.
+When machbase-neo shell starts, it is looking for the user name and password
+from OS's environment variables `NEOSHELL_USER` and `NEOSHELL_PASSWORD`.
+Then if the flags `--user` and `--password` are provided,
+it will override the provided values instead of the environment variables.
 
 ###  Precedence of username and password
 
