@@ -480,7 +480,7 @@ The allowable time ranges for time units and time units are as follows.
 
 * nanosecond, microsecond, and milisecond units and abbreviations can be used starting from 5.5.6.
 * week is start from Sunday.
-* The starting date of the day is January 1, 1970.
+* day is counted from January 1, 1970.
 
 |Time Unit|Time Range|
 |--|--|
