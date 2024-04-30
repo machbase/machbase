@@ -228,6 +228,7 @@ Depending on the selection of TIME_UNIT, the searched rollup table is different.
 |minute (min)|1440 (1 day)|MINUTE|
 |hour|24 (1 day)|HOUR|
 |day|1|HOUR|
+|week|1 (SUN~SAT)|HOUR|
 |month|1|HOUR|
 |year|1|HOUR|
 

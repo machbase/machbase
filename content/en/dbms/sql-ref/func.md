@@ -466,7 +466,7 @@ COUNT(*)             tm
 1                    1999-11-11 01:02:03 011:005:008
 [8] row(s) selected.
  
-Mach> SELECT COUNT(*), DATE_TRUNC('nsec', i2, 1000000000) tm FROM trunc_table group by tm ORDER BY 2; //DATE_TRUNC('sec', i2, 1) 과같음
+Mach> SELECT COUNT(*), DATE_TRUNC('nsec', i2, 1000000000) tm FROM trunc_table group by tm ORDER BY 2; //Same as DATE_TRUNC('sec', i2, 1)
 COUNT(*)             tm
 --------------------------------------------------------
 2                    1999-11-11 01:02:00 000:000:000
@@ -478,6 +478,9 @@ COUNT(*)             tm
 
 The allowable time ranges for time units and time units are as follows.
 
+* nanosecond, microsecond, and milisecond units and abbreviations can be used starting from 5.5.6.
+* week is start from Sunday.
+
 |Time Unit|Time Range|
 |--|--|
 |nanosecond (nsec)|1000000000 (1 second)|
@@ -487,6 +490,7 @@ The allowable time ranges for time units and time units are as follows.
 |minute (min)|1440 (1 day)|
 |hour|24 (1 day)|
 |day|1|
+|week|1|
 |month|1|
 |year|1|
 
