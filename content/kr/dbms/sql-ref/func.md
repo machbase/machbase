@@ -473,6 +473,7 @@ COUNT(*)             tm
 
 * nanosecond, microsecond, milisecond 단위와 축약어는, 5.5.6 부터 사용 가능하다.
 * week의 기준은 일요일이다.
+* day의 시작 기준은 1970년 1월 1일이다.
 
 |시간 단위 (축약어)|시간 범위|
 |----:|:----|
@@ -482,12 +483,13 @@ COUNT(*)             tm
 |second (sec)|	86400 (1일)|
 |minute (min)|	1440 (1일)|
 |hour|	24 (1일)|
-|day|	1|
+|day|	제한 없음|
 |week|	1|
 |month|	1|
 |year|	1|
 
 예를 들어, DATE_TRUNC('second', time, 120) 으로 입력하면, 반환되는 값은 2분 간격으로 표시될 것이며 이는 DATE_TRUNC('minute', time, 2) 와 동일하다.
+그리고, DATE_TRUNC('day', time, 3) 으로 입력하면, 1970년 1월 1일부터 3일 간격으로 표시된다.
 
 ## DAYOFWEEK
 

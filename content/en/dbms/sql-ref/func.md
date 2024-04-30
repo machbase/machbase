@@ -480,6 +480,7 @@ The allowable time ranges for time units and time units are as follows.
 
 * nanosecond, microsecond, and milisecond units and abbreviations can be used starting from 5.5.6.
 * week is start from Sunday.
+* The starting date of the day is January 1, 1970.
 
 |Time Unit|Time Range|
 |--|--|
@@ -489,12 +490,13 @@ The allowable time ranges for time units and time units are as follows.
 |second (sec)|86400 (1 day)|
 |minute (min)|1440 (1 day)|
 |hour|24 (1 day)|
-|day|1|
+|day|no limit|
 |week|1|
 |month|1|
 |year|1|
 
 For example, if you type in DATE_TRUNC('second', time, 120), the value returned will be displayed **every two minutes** and is the same as DATE_TRUNC('minute', time, 2).
+And, if you type in DATE_TRUNC('day', time, 3), the value returned will be displayed at 3-day intervals starting from January 1, 1970.
 
 
 ## DAYOFWEEK

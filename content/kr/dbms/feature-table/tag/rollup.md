@@ -225,7 +225,7 @@ TIME_UNIT 의 선택에 따라, 조회되는 롤업 테이블이 달라진다.
 |second (sec)|86400 (1일)|SECOND|
 |minute (min)|1440 (1일)|MINUTE|
 |hour|24 (1일)|HOUR|
-|day|1|HOUR|
+|day|제한 없음|HOUR|
 |week|1 (일요일~토요일)|HOUR|
 |month|1|HOUR|
 |year|1|HOUR|
