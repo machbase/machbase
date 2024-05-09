@@ -823,7 +823,9 @@ Please refer to the [TIMEWINDOW()](/neo/tql/timewindow/) section for the more in
 
 ![map_fft](../img/map_fft.jpg)
 
-*Syntax*: `FFT()`
+*Syntax*: `FFT([minHz(value), maxHz(value)])`
+- `minHz(value`) *minimum Hz for analysis*
+- `maxHz(value`) *maximum Hz for analysis*
 
 It assumes value of the incoming record is an array of *time,amplitude* tuples, then applies *Fast Fourier Transform* on the array and replaces the value with an array of *frequency,amplitude* tuples. The key remains same.
 
@@ -848,6 +850,7 @@ CHART_LINE(
 
 {{< figure src="/images/web-fft-tql-2d.png" width="510" >}}
 
+Please refer to the [FFT()](/neo/tql/fft) section for the more information including 3D sample codes
 
 ## WHEN()
 
