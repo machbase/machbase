@@ -6,55 +6,67 @@ weight: 70
 ---
 
 # 목차
-* [ABS](#abs)
-* [ADD_TIME](#add_time)
-* [AVG](#avg)
-* [BITAND / BITOR](#bitand--bitor)
-* [COUNT](#count)
-* [DATE_TRUNC](#date_trunc)
-* [DAYOFWEEK](#dayofweek)
-* [DECODE](#decode)
-* [FIRST / LAST](#first--last)
-* [FROM_UNIXTIME](#from_unixtime)
-* [FROM_TIMESTAMP](#from_timestamp)
-* [GROUP_CONCAT](#group_concat)
-* [INSTR](#instr)
-* [LEAST / GREATEST](#least--greatest)
-* [LENGTH](#length)
-* [LOWER](#lower)
-* [LPAD / RPAD](#lpad--rpad)
-* [LTRIM / RTRIM](#ltrim--rtrim)
-* [MAX](#max)
-* [MIN](#min)
-* [NVL](#nvl)
-* [ROUND](#round)
-* [ROWNUM](#rownum)
-* [SERIESNUM](#seriesnum)
-* [STDDEV / STDDEV_POP](#stddev--stddev_pop)
-* [SUBSTR](#substr)
-* [SUBSTRING_INDEX](#substring_index)
-* [SUM](#sum)
-* [SUMSQ](#sumsq)
-* [SYSDATE / NOW](#sysdate--now)
-* [TO_CHAR](#to_char)
-* [TO_DATE](#to_date)
-* [TO_DATE_SAFE](#to_date_safe)
-* [TO_HEX](#to_hex)
-* [TO_IPV4 / TO_IPV4_SAFE](#to_ipv4--to_ipv4_safe)
-* [TO_IPV6 / TO_IPV6_SAFE](#to_ipv6--to_ipv6_safe)
-* [TO_NUMBER / TO_NUMBER_SAFE](#to_number--to_number_safe)
-* [TO_TIMESTAMP](#to_timestamp)
-* [TRUNC](#trunc)
-* [TS_CHANGE_COUNT](#ts_change_count)
-* [UNIX_TIMESTAMP](#unix_timestamp)
-* [UPPER](#upper)
-* [VARIANCE / VAR_POP](#variance--var_pop)
-* [YEAR / MONTH / DAY](#year--month--day)
-* [ISNAN / ISINF](#isnan--isinf)
-* [내장 함수 지원 타입](#내장-함수-지원-타입)
-* [JSON 관련 함수](#json-관련-함수)
-* [JSON Operator](#json-operator)
-* [WINDOW 함수](#window-함수)
+- [목차](#목차)
+  - [ABS](#abs)
+  - [ADD_TIME](#add_time)
+  - [AVG](#avg)
+  - [BITAND / BITOR](#bitand--bitor)
+  - [COUNT](#count)
+  - [DATE_TRUNC](#date_trunc)
+  - [DATE_BIN](#date_bin)
+  - [DAYOFWEEK](#dayofweek)
+  - [DECODE](#decode)
+  - [FIRST / LAST](#first--last)
+  - [FROM_UNIXTIME](#from_unixtime)
+  - [FROM_TIMESTAMP](#from_timestamp)
+  - [GROUP_CONCAT](#group_concat)
+  - [INSTR](#instr)
+  - [LEAST / GREATEST](#least--greatest)
+  - [LENGTH](#length)
+  - [LOWER](#lower)
+  - [LPAD / RPAD](#lpad--rpad)
+  - [LTRIM / RTRIM](#ltrim--rtrim)
+  - [MAX](#max)
+  - [MIN](#min)
+  - [NVL](#nvl)
+  - [ROUND](#round)
+  - [ROWNUM](#rownum)
+    - [사용 가능한 절](#사용-가능한-절)
+    - [정렬로 인한 결과 변화](#정렬로-인한-결과-변화)
+  - [SERIESNUM](#seriesnum)
+  - [STDDEV / STDDEV_POP](#stddev--stddev_pop)
+  - [SUBSTR](#substr)
+  - [SUBSTRING_INDEX](#substring_index)
+  - [SUM](#sum)
+  - [SUMSQ](#sumsq)
+  - [SYSDATE / NOW](#sysdate--now)
+  - [TO_CHAR](#to_char)
+    - [TO_CHAR : 기본 자료형](#to_char--기본-자료형)
+    - [TO_CHAR : 부동소수형](#to_char--부동소수형)
+    - [TO_CHAR : DATETIME 형](#to_char--datetime-형)
+    - [TO_CHAR : 지원하지 않는 타입](#to_char--지원하지-않는-타입)
+  - [TO_DATE](#to_date)
+  - [TO_DATE_SAFE](#to_date_safe)
+  - [TO_HEX](#to_hex)
+  - [TO_IPV4 / TO_IPV4_SAFE](#to_ipv4--to_ipv4_safe)
+  - [TO_IPV6 / TO_IPV6_SAFE](#to_ipv6--to_ipv6_safe)
+  - [TO_NUMBER / TO_NUMBER_SAFE](#to_number--to_number_safe)
+  - [TO_TIMESTAMP](#to_timestamp)
+  - [TRUNC](#trunc)
+  - [TS_CHANGE_COUNT](#ts_change_count)
+  - [UNIX_TIMESTAMP](#unix_timestamp)
+  - [UPPER](#upper)
+  - [VARIANCE / VAR_POP](#variance--var_pop)
+  - [YEAR / MONTH / DAY](#year--month--day)
+  - [ISNAN / ISINF](#isnan--isinf)
+  - [내장 함수 지원 타입](#내장-함수-지원-타입)
+  - [JSON 관련 함수](#json-관련-함수)
+  - [JSON Operator](#json-operator)
+  - [WINDOW 함수](#window-함수)
+    - [WINDOW 함수 문법](#window-함수-문법)
+    - [WINDOW 함수 종류](#window-함수-종류)
+      - [LAG](#lag)
+      - [LEAD](#lead)
 
 ## ABS
 
@@ -488,6 +500,72 @@ COUNT(*)             tm
 |year|	1|
 
 예를 들어, DATE_TRUNC('second', time, 120) 으로 입력하면, 반환되는 값은 2분 간격으로 표시될 것이며 이는 DATE_TRUNC('minute', time, 2) 와 동일하다.
+
+## DATE_BIN
+이 함수는 주어진 datetime 값을 `지정된 원점`에 맞춰 `시간 단위`와 `시간 범위`으로 `Binning` 한다.
+
+```sql
+DATE_BIN (field, count, source time, origin time)
+```
+
+```sql
+Mach> CREATE TABLE log (time DATETIME);
+Created successfully.
+
+Mach> INSERT INTO log VALUES (TO_DATE('2000-01-01 00:00:00'));
+1 row(s) inserted.
+
+Mach> INSERT INTO log VALUES (TO_DATE('2000-01-01 01:00:00'));
+1 row(s) inserted.
+
+Mach> INSERT INTO log VALUES (TO_DATE('2000-01-01 02:00:00'));
+1 row(s) inserted.
+
+Mach> INSERT INTO log VALUES (TO_DATE('2000-01-01 03:00:00'));
+1 row(s) inserted.
+
+Mach> INSERT INTO log VALUES (TO_DATE('2000-01-01 04:00:00'));
+1 row(s) inserted.
+
+Mach> SELECT TIME, DATE_BIN('hour', 2, time, TO_DATE('2020-01-01 00:00:00')) FROM log ORDER BY time;
+TIME                            DATE_BIN('hour', 2, time, TO_DATE('2020-01-01 00:00:00')) 
+---------------------------------------------------------------------------------------------
+2000-01-01 00:00:00 000:000:000 2000-01-01 00:00:00 000:000:000                           
+2000-01-01 01:00:00 000:000:000 2000-01-01 00:00:00 000:000:000                           
+2000-01-01 02:00:00 000:000:000 2000-01-01 02:00:00 000:000:000                           
+2000-01-01 03:00:00 000:000:000 2000-01-01 02:00:00 000:000:000                           
+2000-01-01 04:00:00 000:000:000 2000-01-01 04:00:00 000:000:000                           
+[5] row(s) selected.
+
+Mach> SELECT TIME, DATE_BIN('hour', 3, time, TO_DATE('2020-01-01 01:00:00')) FROM log ORDER BY time;
+TIME                            DATE_BIN('hour', 3, time, TO_DATE('2020-01-01 01:00:00')) 
+---------------------------------------------------------------------------------------------
+2000-01-01 00:00:00 000:000:000 1999-12-31 22:00:00 000:000:000                           
+2000-01-01 01:00:00 000:000:000 2000-01-01 01:00:00 000:000:000                           
+2000-01-01 02:00:00 000:000:000 2000-01-01 01:00:00 000:000:000                           
+2000-01-01 03:00:00 000:000:000 2000-01-01 01:00:00 000:000:000                           
+2000-01-01 04:00:00 000:000:000 2000-01-01 04:00:00 000:000:000                           
+[5] row(s) selected.
+```
+
+시간 단위는 다음과 같다.
+
+* nanosecond, microsecond, milisecond 단위와 축약어는, 5.5.6 부터 사용 가능하다.
+* week는 7 day랑 같다.
+
+|시간 단위 (축약어)|
+|----:|
+|nanosecond (nsec)|
+|microsecond (usec)|
+|milisecond (msec)|
+|second (sec)|
+|minute (min)|
+|hour|
+|day|
+|week|
+|month|
+|year|
+
 
 ## DAYOFWEEK
 
