@@ -6,55 +6,67 @@ weight: 70
 
 # Index
 
-* [ABS](#abs)
-* [ADD_TIME](#add_time)
-* [AVG](#avg)
-* [BITAND / BITOR](#bitand--bitor)
-* [COUNT](#count)
-* [DATE_TRUNC](#date_trunc)
-* [DAYOFWEEK](#dayofweek)
-* [DECODE](#decode)
-* [FIRST / LAST](#first--last)
-* [FROM_UNIXTIME](#from_unixtime)
-* [FROM_TIMESTAMP](#from_timestamp)
-* [GROUP_CONCAT](#group_concat)
-* [INSTR](#instr)
-* [LEAST / GREATEST](#least--greatest)
-* [LENGTH](#length)
-* [LOWER](#lower)
-* [LPAD / RPAD](#lpad--rpad)
-* [LTRIM / RTRIM](#ltrim--rtrim)
-* [MAX](#max)
-* [MIN](#min)
-* [NVL](#nvl)
-* [ROUND](#round)
-* [ROWNUM](#rownum)
-* [SERIESNUM](#seriesnum)
-* [STDDEV / STDDEV_POP](#stddev--stddev_pop)
-* [SUBSTR](#substr)
-* [SUBSTRING_INDEX](#substring_index)
-* [SUM](#sum)
-* [SUMSQ](#sumsq)
-* [SYSDATE / NOW](#sysdate--now)
-* [TO_CHAR](#to_char)
-* [TO_DATE](#to_date)
-* [TO_DATE_SAFE](#to_date_safe)
-* [TO_HEX](#to_hex)
-* [TO_IPV4 / TO_IPV4_SAFE](#to_ipv4--to_ipv4_safe)
-* [TO_IPV6 / TO_IPV6_SAFE](#to_ipv6--to_ipv6_safe)
-* [TO_NUMBER / TO_NUMBER_SAFE](#to_number--to_number_safe)
-* [TO_TIMESTAMP](#to_timestamp)
-* [TRUNC](#trunc)
-* [TS_CHANGE_COUNT](#ts_change_count)
-* [UNIX_TIMESTAMP](#unix_timestamp)
-* [UPPER](#upper)
-* [VARIANCE / VAR_POP](#variance--var_pop)
-* [YEAR / MONTH / DAY](#year--month--day)
-* [ISNAN / ISINF](#isnan--isinf)
-* [Support Type of Built-In Function](#support-type-of-built-in-function)
-* [JSON-related function](#json-related-function)
-* [JSON Operator](#json-operator)
-* [WINDOW FUNCTION](#window-function)
+- [Index](#index)
+  - [ABS](#abs)
+  - [ADD_TIME](#add_time)
+  - [AVG](#avg)
+  - [BITAND / BITOR](#bitand--bitor)
+  - [COUNT](#count)
+  - [DATE_TRUNC](#date_trunc)
+  - [DATE_BIN](#date_bin)
+  - [DAYOFWEEK](#dayofweek)
+  - [DECODE](#decode)
+  - [FIRST / LAST](#first--last)
+  - [FROM_UNIXTIME](#from_unixtime)
+  - [FROM_TIMESTAMP](#from_timestamp)
+  - [GROUP_CONCAT](#group_concat)
+  - [INSTR](#instr)
+  - [LEAST / GREATEST](#least--greatest)
+  - [LENGTH](#length)
+  - [LOWER](#lower)
+  - [LPAD / RPAD](#lpad--rpad)
+  - [LTRIM / RTRIM](#ltrim--rtrim)
+  - [MAX](#max)
+  - [MIN](#min)
+  - [NVL](#nvl)
+  - [ROUND](#round)
+  - [ROWNUM](#rownum)
+    - [Available Clauses](#available-clauses)
+    - [Altering Results Due to Sorting](#altering-results-due-to-sorting)
+  - [SERIESNUM](#seriesnum)
+  - [STDDEV / STDDEV_POP](#stddev--stddev_pop)
+  - [SUBSTR](#substr)
+  - [SUBSTRING_INDEX](#substring_index)
+  - [SUM](#sum)
+  - [SUMSQ](#sumsq)
+  - [SYSDATE / NOW](#sysdate--now)
+  - [TO_CHAR](#to_char)
+    - [TO_CHAR:  Default Datatype](#to_char--default-datatype)
+    - [TO_CHAR : Floating point number](#to_char--floating-point-number)
+    - [TO_CHAR: DATETIME Type](#to_char-datetime-type)
+    - [TO_CHAR: Unsupported Type](#to_char-unsupported-type)
+  - [TO_DATE](#to_date)
+  - [TO_DATE_SAFE](#to_date_safe)
+  - [TO_HEX](#to_hex)
+  - [TO_IPV4 / TO_IPV4_SAFE](#to_ipv4--to_ipv4_safe)
+  - [TO_IPV6 / TO_IPV6_SAFE](#to_ipv6--to_ipv6_safe)
+  - [TO_NUMBER / TO_NUMBER_SAFE](#to_number--to_number_safe)
+  - [TO_TIMESTAMP](#to_timestamp)
+  - [TRUNC](#trunc)
+  - [TS_CHANGE_COUNT](#ts_change_count)
+  - [UNIX_TIMESTAMP](#unix_timestamp)
+  - [UPPER](#upper)
+  - [VARIANCE / VAR_POP](#variance--var_pop)
+  - [YEAR / MONTH / DAY](#year--month--day)
+  - [ISNAN / ISINF](#isnan--isinf)
+  - [Support Type of Built-In Function](#support-type-of-built-in-function)
+  - [JSON-related function](#json-related-function)
+  - [JSON Operator](#json-operator)
+  - [WINDOW FUNCTION](#window-function)
+    - [WINDOW FUNCTION SYNTAX](#window-function-syntax)
+    - [WINDOW FUNCTION LIST](#window-function-list)
+      - [LAG](#lag)
+      - [LEAD](#lead)
 
 ## ABS
 
@@ -495,6 +507,71 @@ The allowable time ranges for time units and time units are as follows.
 |year|1|
 
 For example, if you type in DATE_TRUNC('second', time, 120), the value returned will be displayed **every two minutes** and is the same as DATE_TRUNC('minute', time, 2).
+
+## DATE_BIN
+This function `Binnings` the given datetime value into `time unit` and `time range` according to `specified origin`.
+
+```sql
+DATE_BIN (field, count, source time, origin time)
+```
+
+```sql
+Mach> CREATE TABLE log (time DATETIME);
+Created successfully.
+
+Mach> INSERT INTO log VALUES (TO_DATE('2000-01-01 00:00:00'));
+1 row(s) inserted.
+
+Mach> INSERT INTO log VALUES (TO_DATE('2000-01-01 01:00:00'));
+1 row(s) inserted.
+
+Mach> INSERT INTO log VALUES (TO_DATE('2000-01-01 02:00:00'));
+1 row(s) inserted.
+
+Mach> INSERT INTO log VALUES (TO_DATE('2000-01-01 03:00:00'));
+1 row(s) inserted.
+
+Mach> INSERT INTO log VALUES (TO_DATE('2000-01-01 04:00:00'));
+1 row(s) inserted.
+
+Mach> SELECT TIME, DATE_BIN('hour', 2, time, TO_DATE('2020-01-01 00:00:00')) FROM log ORDER BY time;
+TIME                            DATE_BIN('hour', 2, time, TO_DATE('2020-01-01 00:00:00')) 
+---------------------------------------------------------------------------------------------
+2000-01-01 00:00:00 000:000:000 2000-01-01 00:00:00 000:000:000                           
+2000-01-01 01:00:00 000:000:000 2000-01-01 00:00:00 000:000:000                           
+2000-01-01 02:00:00 000:000:000 2000-01-01 02:00:00 000:000:000                           
+2000-01-01 03:00:00 000:000:000 2000-01-01 02:00:00 000:000:000                           
+2000-01-01 04:00:00 000:000:000 2000-01-01 04:00:00 000:000:000                           
+[5] row(s) selected.
+
+Mach> SELECT TIME, DATE_BIN('hour', 3, time, TO_DATE('2020-01-01 01:00:00')) FROM log ORDER BY time;
+TIME                            DATE_BIN('hour', 3, time, TO_DATE('2020-01-01 01:00:00')) 
+---------------------------------------------------------------------------------------------
+2000-01-01 00:00:00 000:000:000 1999-12-31 22:00:00 000:000:000                           
+2000-01-01 01:00:00 000:000:000 2000-01-01 01:00:00 000:000:000                           
+2000-01-01 02:00:00 000:000:000 2000-01-01 01:00:00 000:000:000                           
+2000-01-01 03:00:00 000:000:000 2000-01-01 01:00:00 000:000:000                           
+2000-01-01 04:00:00 000:000:000 2000-01-01 04:00:00 000:000:000                           
+[5] row(s) selected.
+```
+
+The allowable time ranges for time units and time units are as follows.
+
+* nanosecond, microsecond, and milisecond units and abbreviations can be used starting from 5.5.6.
+* week is equal to 7 days.
+
+|Time Unit|
+|----:|
+|nanosecond (nsec)|
+|microsecond (usec)|
+|milisecond (msec)|
+|second (sec)|
+|minute (min)|
+|hour|
+|day|
+|week|
+|month|
+|year|
 
 
 ## DAYOFWEEK
