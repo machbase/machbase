@@ -498,7 +498,7 @@ The allowable time ranges for time units and time units are as follows.
 For example, if you type in DATE_TRUNC('second', time, 120), the value returned will be displayed **every two minutes** and is the same as DATE_TRUNC('minute', time, 2).
 
 ## DATE_BIN
-This function `Binning` the given datetime value into `time unit` and `time range` based on `specified origin`.
+This function `bins` the given datetime value into `time unit` and `time range` based on `specified origin`.
 
 ```sql
 DATE_BIN(field, count, source, origin)
