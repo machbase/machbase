@@ -492,7 +492,7 @@ COUNT(*)             tm
 예를 들어, DATE_TRUNC('second', time, 120) 으로 입력하면, 반환되는 값은 2분 간격으로 표시될 것이며 이는 DATE_TRUNC('minute', time, 2) 와 동일하다.
 
 ## DATE_BIN
-이 함수는 주어진 datetime 값을 `지정된 원점` 기준으로 `시간 단위`와 `시간 범위`으로 `bins` 한다.
+이 함수는 주어진 datetime `source` 를 지정된 원점 `origin` 기준으로 시간단위 `field` 와 시간범위 `count` 로 bin 한다.
 
 ```sql
 DATE_BIN(field, count, source, origin)
