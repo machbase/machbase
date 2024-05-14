@@ -501,7 +501,7 @@ For example, if you type in DATE_TRUNC('second', time, 120), the value returned 
 This function `Binning` the given datetime value into `time unit` and `time range` based on `specified origin`.
 
 ```sql
-DATE_BIN (field, count, source time, origin time)
+DATE_BIN (field, count, source, origin)
 ```
 
 ```sql
