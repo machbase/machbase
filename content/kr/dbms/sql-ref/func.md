@@ -495,7 +495,7 @@ COUNT(*)             tm
 이 함수는 주어진 datetime 값을 `지정된 원점` 기준으로 `시간 단위`와 `시간 범위`으로 `Binning` 한다.
 
 ```sql
-DATE_BIN (field, count, source, origin)
+DATE_BIN(field, count, source, origin)
 ```
 
 ```sql
