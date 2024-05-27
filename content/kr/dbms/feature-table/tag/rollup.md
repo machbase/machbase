@@ -201,8 +201,6 @@ USER_NAME             DB_NAME                                             TABLE_
 
 ## 조회 문법
 
-### 기존 문법
-
 ```sql
 SELECT TIME ROLLUP 3 SECOND, AVG(VALUE) FROM TAG WHERE ...;
 ```
@@ -499,9 +497,9 @@ mtime                           sum(value)                  count(value)
 
 ## 기준 시간 변경
 
-ROLLUP 데이터를 조회할 때 집계 시간 구간을 특정 시간 기준으로 나누고 싶은 경우가 있다.
+ROLLUP 데이터를 조회할 때 시간 구간을 특정 시간 기준으로 나누고 싶은 경우가 있다.
 
-WEEK (7 DAYS) 구간으로 ROLLUP 데이터를 조회하면 기존 ROLLUP은 `1970-01-01` 목요일 ~ 수요일 구간으로 데이터가 집계된다.
+WEEK (7 DAYS) 구간으로 ROLLUP 데이터를 조회하면 기존 ROLLUP은 `1970-01-01` 기준으로 목요일 ~ 수요일 구간으로 데이터가 집계된다.
 
 이를 해결하기 위해 개선된 ROLLUP 문법에서 기준 시간을 지정할 수 있는 기능을 지원한다.
 아래 예시는 `1970-01-04` 일요일 ~ 토요일 구간으로 데이터를 집계하는 ROLLUP 쿼리 예시이다.
@@ -527,7 +525,6 @@ mtime                           COUNT(value)
 1970-01-11 00:00:00 000:000:000 2                    
 [3] row(s) selected.
 ```
-
 
 ## JSON 타입 대상의 ROLLUP 활용
 

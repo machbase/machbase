@@ -213,9 +213,23 @@ As above, if the ROLLUP clause is appended after the Datetime type column specif
 [BASETIME_COLUMN] ROLLUP [PERIOD] [TIME_UNIT]
 ```
 
+```sql
+SELECT ROLLUP('SEC', 1, TIME, '1970-01-01'), AVG(VALUE) FROM TAG WHERE ...;
+```
+
+If you use the ROLLUP keyword as above and specify the ROLLUP attribute afterwards, the rollup table is selected.
+
+```
+ROLLUP([TIME_UNIT], [PERIOD], [BASETIME_COLUMN], [ORIGIN_TIME])
+```
+
+### Improved Syntax
+
 * BASETIME_COLUMN : Datetime column of the TAG table specified by the BASETIME attribute
-* PERIOD : DATE_TRUNC() can specify a range for each unit of time available. (see below)
-* TIME_UNIT : Any time unit available in the DATE_TRUNC() function can be used. (see below)
+* PERIOD : DATE_BIN() can specify a range for each unit of time available. (see below)
+* TIME_UNIT : Any time unit available in the DATE_BIN() function can be used. (see below)
+* ORIGIN_TIME : It means the origin time to divide the ROLLUP time interval.
+  * If not specified, it will be designated as `1970-01-01` as in the existing grammar.
 
 Depending on the selection of TIME_UNIT, the searched rollup table is different.
 
@@ -228,7 +242,7 @@ Depending on the selection of TIME_UNIT, the searched rollup table is different.
 |minute (min)|1440 (1 day)|MINUTE|
 |hour|24 (1 day)|HOUR|
 |day|1|HOUR|
-|week|1 (SUN~SAT)|HOUR|
+|week|1 (7 DAYS)|HOUR|
 |month|1|HOUR|
 |year|1|HOUR|
 
@@ -247,6 +261,11 @@ GROUP BY time rollup 3 sec mtime;
  
 -- or
 SELECT   time rollup 3 sec mtime, avg(value)
+FROM     TAG
+GROUP BY mtime;
+
+-- improved
+SELECT   rollup('sec', 3, time) mtime, avg(value)
 FROM     TAG
 GROUP BY mtime;
 ```
@@ -482,6 +501,36 @@ mtime                           sum(value)                  count(value)
 2018-01-01 03:02:00 000:000:000 11                          2
 ```
 
+## Change the origin time
+
+When inquiring about ROLLUP data, there are times when you want to divide the time interval into specific time criteria.
+
+When the ROLLEUP data is searched in the WEEK (7 DAYS) section, the existing ROLLEUP data is aggregated in the Thursday to Wednesday section based on `1970-01-01`.
+
+To address this, we support the ability to specify the origin time in the improved ROLLUP syntax.
+The example below is an example of a ROLLUP query that aggregates data in the Sunday to Saturday section based on `1970-01-04`.
+
+```sql
+CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED) WITH ROLLUP;
+
+-- Insert
+INSERT INTO TAG VALUES('TAG-0', '1970-01-04', 1);
+INSERT INTO TAG VALUES('TAG-0', '1970-01-05', 1);
+INSERT INTO TAG VALUES('TAG-0', '1970-01-11', 1);
+INSERT INTO TAG VALUES('TAG-0', '1970-01-12', 1);
+INSERT INTO TAG VALUES('TAG-0', '1970-01-18', 1);
+INSERT INTO TAG VALUES('TAG-0', '1970-01-19', 1);
+EXEC ROLLUP_FORCE;
+
+-- Select
+Mach> SELECT ROLLUP('week', 1, time, '1970-01-04') mtime, COUNT(value) FROM tag GROUP BY mtime;
+mtime                           COUNT(value)         
+--------------------------------------------------------
+1970-01-04 00:00:00 000:000:000 2                    
+1970-01-18 00:00:00 000:000:000 2                    
+1970-01-11 00:00:00 000:000:000 2                    
+[3] row(s) selected.
+```
 
 ## Using ROLLUP for JSON type
 
