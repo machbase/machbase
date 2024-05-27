@@ -6,12 +6,14 @@ weight: 70
 ---
 
 # 목차
+
 * [ABS](#abs)
 * [ADD_TIME](#add_time)
 * [AVG](#avg)
 * [BITAND / BITOR](#bitand--bitor)
 * [COUNT](#count)
 * [DATE_TRUNC](#date_trunc)
+* [DATE_BIN](#date_bin)
 * [DAYOFWEEK](#dayofweek)
 * [DECODE](#decode)
 * [FIRST / LAST](#first--last)
@@ -488,6 +490,72 @@ COUNT(*)             tm
 |year|	1|
 
 예를 들어, DATE_TRUNC('second', time, 120) 으로 입력하면, 반환되는 값은 2분 간격으로 표시될 것이며 이는 DATE_TRUNC('minute', time, 2) 와 동일하다.
+
+## DATE_BIN
+이 함수는 주어진 datetime `source` 를 지정된 원점 `origin` 기준으로 시간단위 `field` 와 시간범위 `count` 로 bin 한다.
+
+```sql
+DATE_BIN(field, count, source, origin)
+```
+
+```sql
+Mach> CREATE TABLE log (time DATETIME);
+Created successfully.
+
+Mach> INSERT INTO log VALUES (TO_DATE('2000-01-01 00:00:00'));
+1 row(s) inserted.
+
+Mach> INSERT INTO log VALUES (TO_DATE('2000-01-01 01:00:00'));
+1 row(s) inserted.
+
+Mach> INSERT INTO log VALUES (TO_DATE('2000-01-01 02:00:00'));
+1 row(s) inserted.
+
+Mach> INSERT INTO log VALUES (TO_DATE('2000-01-01 03:00:00'));
+1 row(s) inserted.
+
+Mach> INSERT INTO log VALUES (TO_DATE('2000-01-01 04:00:00'));
+1 row(s) inserted.
+
+Mach> SELECT TIME, DATE_BIN('hour', 2, time, TO_DATE('2020-01-01 00:00:00')) FROM log ORDER BY time;
+TIME                            DATE_BIN('hour', 2, time, TO_DATE('2020-01-01 00:00:00')) 
+---------------------------------------------------------------------------------------------
+2000-01-01 00:00:00 000:000:000 2000-01-01 00:00:00 000:000:000                           
+2000-01-01 01:00:00 000:000:000 2000-01-01 00:00:00 000:000:000                           
+2000-01-01 02:00:00 000:000:000 2000-01-01 02:00:00 000:000:000                           
+2000-01-01 03:00:00 000:000:000 2000-01-01 02:00:00 000:000:000                           
+2000-01-01 04:00:00 000:000:000 2000-01-01 04:00:00 000:000:000                           
+[5] row(s) selected.
+
+Mach> SELECT TIME, DATE_BIN('hour', 3, time, TO_DATE('2020-01-01 01:00:00')) FROM log ORDER BY time;
+TIME                            DATE_BIN('hour', 3, time, TO_DATE('2020-01-01 01:00:00')) 
+---------------------------------------------------------------------------------------------
+2000-01-01 00:00:00 000:000:000 1999-12-31 22:00:00 000:000:000                           
+2000-01-01 01:00:00 000:000:000 2000-01-01 01:00:00 000:000:000                           
+2000-01-01 02:00:00 000:000:000 2000-01-01 01:00:00 000:000:000                           
+2000-01-01 03:00:00 000:000:000 2000-01-01 01:00:00 000:000:000                           
+2000-01-01 04:00:00 000:000:000 2000-01-01 04:00:00 000:000:000                           
+[5] row(s) selected.
+```
+
+시간 단위는 다음과 같다.
+
+* nanosecond, microsecond, milisecond 단위와 축약어는, 5.5.6 부터 사용 가능하다.
+* week는 7 day랑 같다.
+
+|시간 단위 (축약어)|
+|----:|
+|nanosecond (nsec)|
+|microsecond (usec)|
+|milisecond (msec)|
+|second (sec)|
+|minute (min)|
+|hour|
+|day|
+|week|
+|month|
+|year|
+
 
 ## DAYOFWEEK
 

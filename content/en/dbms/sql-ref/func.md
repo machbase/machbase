@@ -12,6 +12,7 @@ weight: 70
 * [BITAND / BITOR](#bitand--bitor)
 * [COUNT](#count)
 * [DATE_TRUNC](#date_trunc)
+* [DATE_BIN](#date_bin)
 * [DAYOFWEEK](#dayofweek)
 * [DECODE](#decode)
 * [FIRST / LAST](#first--last)
@@ -495,6 +496,71 @@ The allowable time ranges for time units and time units are as follows.
 |year|1|
 
 For example, if you type in DATE_TRUNC('second', time, 120), the value returned will be displayed **every two minutes** and is the same as DATE_TRUNC('minute', time, 2).
+
+## DATE_BIN
+This function `bins` the given datetime value into `time unit` and `time range` based on `specified origin`.
+
+```sql
+DATE_BIN(field, count, source, origin)
+```
+
+```sql
+Mach> CREATE TABLE log (time DATETIME);
+Created successfully.
+
+Mach> INSERT INTO log VALUES (TO_DATE('2000-01-01 00:00:00'));
+1 row(s) inserted.
+
+Mach> INSERT INTO log VALUES (TO_DATE('2000-01-01 01:00:00'));
+1 row(s) inserted.
+
+Mach> INSERT INTO log VALUES (TO_DATE('2000-01-01 02:00:00'));
+1 row(s) inserted.
+
+Mach> INSERT INTO log VALUES (TO_DATE('2000-01-01 03:00:00'));
+1 row(s) inserted.
+
+Mach> INSERT INTO log VALUES (TO_DATE('2000-01-01 04:00:00'));
+1 row(s) inserted.
+
+Mach> SELECT TIME, DATE_BIN('hour', 2, time, TO_DATE('2020-01-01 00:00:00')) FROM log ORDER BY time;
+TIME                            DATE_BIN('hour', 2, time, TO_DATE('2020-01-01 00:00:00')) 
+---------------------------------------------------------------------------------------------
+2000-01-01 00:00:00 000:000:000 2000-01-01 00:00:00 000:000:000                           
+2000-01-01 01:00:00 000:000:000 2000-01-01 00:00:00 000:000:000                           
+2000-01-01 02:00:00 000:000:000 2000-01-01 02:00:00 000:000:000                           
+2000-01-01 03:00:00 000:000:000 2000-01-01 02:00:00 000:000:000                           
+2000-01-01 04:00:00 000:000:000 2000-01-01 04:00:00 000:000:000                           
+[5] row(s) selected.
+
+Mach> SELECT TIME, DATE_BIN('hour', 3, time, TO_DATE('2020-01-01 01:00:00')) FROM log ORDER BY time;
+TIME                            DATE_BIN('hour', 3, time, TO_DATE('2020-01-01 01:00:00')) 
+---------------------------------------------------------------------------------------------
+2000-01-01 00:00:00 000:000:000 1999-12-31 22:00:00 000:000:000                           
+2000-01-01 01:00:00 000:000:000 2000-01-01 01:00:00 000:000:000                           
+2000-01-01 02:00:00 000:000:000 2000-01-01 01:00:00 000:000:000                           
+2000-01-01 03:00:00 000:000:000 2000-01-01 01:00:00 000:000:000                           
+2000-01-01 04:00:00 000:000:000 2000-01-01 04:00:00 000:000:000                           
+[5] row(s) selected.
+```
+
+The allowable time ranges for time units and time units are as follows.
+
+* nanosecond, microsecond, and milisecond units and abbreviations can be used starting from 5.5.6.
+* week is equal to 7 days.
+
+|Time Unit|
+|----:|
+|nanosecond (nsec)|
+|microsecond (usec)|
+|milisecond (msec)|
+|second (sec)|
+|minute (min)|
+|hour|
+|day|
+|week|
+|month|
+|year|
 
 
 ## DAYOFWEEK
