@@ -201,6 +201,8 @@ USER_NAME             DB_NAME                                             TABLE_
 
 ## 조회 문법
 
+### 기존 문법
+
 ```sql
 SELECT TIME ROLLUP 3 SECOND, AVG(VALUE) FROM TAG WHERE ...;
 ```
@@ -211,9 +213,24 @@ SELECT TIME ROLLUP 3 SECOND, AVG(VALUE) FROM TAG WHERE ...;
 [BASETIME_COLUMN] ROLLUP [PERIOD] [TIME_UNIT]
 ```
 
+### 개선된 문법
+
+```sql
+SELECT ROLLUP('SEC', 1, TIME, '1970-01-01'), AVG(VALUE) FROM TAG WHERE ...;
+```
+
+위와 같이 ROLLUP 키워드를 쓰고 뒤에 ROLLUP 속성을 지정하면 롤업 테이블 조회가 된다.
+
+```
+ROLLUP([TIME_UNIT], [PERIOD], [BASETIME_COLUMN], [ORIGIN_TIME])
+```
+
+
 * BASETIME_COLUMN : BASETIME 속성으로 지정된 TAG 테이블의 Datetime 형 컬럼
-* PERIOD : DATE_TRUNC() 함수에서 사용 가능한 시간 단위별 범위를 지정할 수 있다. (아래 참고)
-* TIME_UNIT : DATE_TRUNC() 함수에서 사용 가능한 모든 시간 단위를 사용할 수 있다. (아래 참고)
+* PERIOD : DATE_BIN() 함수에서 사용 가능한 시간 단위별 범위를 지정할 수 있다. (아래 참고)
+* TIME_UNIT : DATE_BIN() 함수에서 사용 가능한 모든 시간 단위를 사용할 수 있다. (아래 참고)
+* ORIGIN_TIME : ROLLUP 시간 구간을 나눌 기준 시간을 의미한다.
+  * 지정 안 하면 기존 문법과 같이 `1970-01-01` 으로 지정된다.
 
 TIME_UNIT 의 선택에 따라, 조회되는 롤업 테이블이 달라진다.
 
@@ -226,7 +243,7 @@ TIME_UNIT 의 선택에 따라, 조회되는 롤업 테이블이 달라진다.
 |minute (min)|1440 (1일)|MINUTE|
 |hour|24 (1일)|HOUR|
 |day|1|HOUR|
-|week|1 (일요일~토요일)|HOUR|
+|week|1 (7 DAYS)|HOUR|
 |month|1|HOUR|
 |year|1|HOUR|
 
@@ -245,6 +262,11 @@ GROUP BY time rollup 3 sec mtime;
  
 -- 또는
 SELECT   time rollup 3 sec mtime, avg(value)
+FROM     TAG
+GROUP BY mtime;
+
+-- 개선된 문법
+SELECT   rollup('sec', 3, time) mtime, avg(value)
 FROM     TAG
 GROUP BY mtime;
 ```
@@ -474,6 +496,38 @@ mtime                           sum(value)                  count(value)
 2018-01-01 03:01:00 000:000:000 7                           2
 2018-01-01 03:02:00 000:000:000 11                          2
 ```
+
+## 기준 시간 변경
+
+ROLLUP 데이터를 조회할 때 집계 시간 구간을 특정 시간 기준으로 나누고 싶은 경우가 있다.
+
+WEEK (7 DAYS) 구간으로 ROLLUP 데이터를 조회하면 기존 ROLLUP은 `1970-01-01` 목요일 ~ 수요일 구간으로 데이터가 집계된다.
+
+이를 해결하기 위해 개선된 ROLLUP 문법에서 기준 시간을 지정할 수 있는 기능을 지원한다.
+아래 예시는 `1970-01-04` 일요일 ~ 토요일 구간으로 데이터를 집계하는 ROLLUP 쿼리 예시이다.
+
+```sql
+CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED) WITH ROLLUP;
+
+-- 데이터 입력
+INSERT INTO TAG VALUES('TAG-0', '1970-01-04', 1);
+INSERT INTO TAG VALUES('TAG-0', '1970-01-05', 1);
+INSERT INTO TAG VALUES('TAG-0', '1970-01-11', 1);
+INSERT INTO TAG VALUES('TAG-0', '1970-01-12', 1);
+INSERT INTO TAG VALUES('TAG-0', '1970-01-18', 1);
+INSERT INTO TAG VALUES('TAG-0', '1970-01-19', 1);
+EXEC ROLLUP_FORCE;
+
+-- 조회
+Mach> SELECT ROLLUP('week', 1, time, '1970-01-04') mtime, COUNT(value) FROM tag GROUP BY mtime;
+mtime                           COUNT(value)         
+--------------------------------------------------------
+1970-01-04 00:00:00 000:000:000 2                    
+1970-01-18 00:00:00 000:000:000 2                    
+1970-01-11 00:00:00 000:000:000 2                    
+[3] row(s) selected.
+```
+
 
 ## JSON 타입 대상의 ROLLUP 활용
 
