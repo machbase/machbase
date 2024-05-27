@@ -502,12 +502,12 @@ ROLLUP 데이터를 조회할 때 시간 구간을 특정 시간 기준으로 �
 WEEK (7 DAYS) 구간으로 ROLLUP 데이터를 조회하면 기존 ROLLUP은 `1970-01-01` 기준으로 목요일 ~ 수요일 구간으로 데이터가 집계된다.
 
 이를 해결하기 위해 개선된 ROLLUP 문법에서 기준 시간을 지정할 수 있는 기능을 지원한다.
-아래 예시는 `1970-01-04` 일요일 ~ 토요일 구간으로 데이터를 집계하는 ROLLUP 쿼리 예시이다.
+아래 예시는 `1970-01-04` 기준으로 일요일 ~ 토요일 구간으로 데이터를 집계하는 ROLLUP 쿼리 예시이다.
 
 ```sql
 CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED) WITH ROLLUP;
 
--- 데이터 입력
+-- 입력
 INSERT INTO TAG VALUES('TAG-0', '1970-01-04', 1);
 INSERT INTO TAG VALUES('TAG-0', '1970-01-05', 1);
 INSERT INTO TAG VALUES('TAG-0', '1970-01-11', 1);
