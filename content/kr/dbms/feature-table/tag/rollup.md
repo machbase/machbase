@@ -227,8 +227,8 @@ SELECT TIME ROLLUP 3 SECOND, AVG(VALUE) FROM TAG WHERE ...;
 * BASETIME_COLUMN : BASETIME 속성으로 지정된 TAG 테이블의 Datetime 형 컬럼
 * PERIOD : DATE_BIN() 함수에서 사용 가능한 시간 단위별 범위를 지정할 수 있다. (아래 참고)
 * TIME_UNIT : DATE_BIN() 함수에서 사용 가능한 모든 시간 단위를 사용할 수 있다. (아래 참고)
-* ORIGIN_TIME : ROLLUP 시간 구간을 나눌 기준 시간을 의미한다.
-  * 지정 안 하면 기존 문법과 같이 `1970-01-01` 으로 지정된다.
+* ORIGIN : ROLLUP 시간 구간을 나눌 기준 시간을 의미한다.
+  * 지정 안 하면 기존 문법과 같이 `1970-01-01 00:00:00` 으로 지정된다.
 
 TIME_UNIT 의 선택에 따라, 조회되는 롤업 테이블이 달라진다.
 

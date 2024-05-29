@@ -228,8 +228,8 @@ As above, if the ROLLUP clause is appended after the Datetime type column specif
 * BASETIME_COLUMN : Datetime column of the TAG table specified by the BASETIME attribute
 * PERIOD : DATE_BIN() can specify a range for each unit of time available. (see below)
 * TIME_UNIT : Any time unit available in the DATE_BIN() function can be used. (see below)
-* ORIGIN_TIME : It means the origin time to divide the ROLLUP time interval.
-  * If not specified, it will be designated as `1970-01-01` as in the existing grammar.
+* ORIGIN : It means the origin time to divide the ROLLUP time interval.
+  * If not specified, it will be designated as `1970-01-01 00:00:00` as in the existing grammar.
 
 Depending on the selection of TIME_UNIT, the searched rollup table is different.
 
