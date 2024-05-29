@@ -206,7 +206,7 @@ USER_NAME             DB_NAME                                             TABLE_
 SELECT ROLLUP('SEC', 1, TIME, '1970-01-01'), AVG(VALUE) FROM TAG WHERE ...;
 ```
 
-위와 같이 ROLLUP 키워드를 쓰고 뒤에 ROLLUP 속성을 지정하면 롤업 테이블 조회가 된다.
+위와 같이 ROLLUP 키워드를 사용할 경우, 해당하는 롤업 테이블에서 데이터를 가져온다.
 
 ```
 ROLLUP(time_unit, period, basetime_column [, origin])

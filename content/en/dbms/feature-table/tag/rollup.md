@@ -207,7 +207,7 @@ USER_NAME             DB_NAME                                             TABLE_
 SELECT ROLLUP('SEC', 1, TIME, '1970-01-01'), AVG(VALUE) FROM TAG WHERE ...;
 ```
 
-If you use the ROLLUP keyword as above and specify the ROLLUP attribute afterwards, the rollup table is selected.
+If you use the ROLLUP keyword as above, the records are fetched from a appropriate rollup table.
 
 ```
 ROLLUP(time_unit, period, basetime_column [, origin])
