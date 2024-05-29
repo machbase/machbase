@@ -209,7 +209,7 @@ SELECT ROLLUP('SEC', 1, TIME, '1970-01-01'), AVG(VALUE) FROM TAG WHERE ...;
 위와 같이 ROLLUP 키워드를 쓰고 뒤에 ROLLUP 속성을 지정하면 롤업 테이블 조회가 된다.
 
 ```
-ROLLUP([TIME_UNIT], [PERIOD], [BASETIME_COLUMN], [ORIGIN_TIME])
+ROLLUP(time_unit, period, basetime_column [, origin])
 ```
 
 ### Deprecated (7.5 version 이하에서 지원)

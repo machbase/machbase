@@ -210,7 +210,7 @@ SELECT ROLLUP('SEC', 1, TIME, '1970-01-01'), AVG(VALUE) FROM TAG WHERE ...;
 If you use the ROLLUP keyword as above and specify the ROLLUP attribute afterwards, the rollup table is selected.
 
 ```
-ROLLUP([TIME_UNIT], [PERIOD], [BASETIME_COLUMN], [ORIGIN_TIME])
+ROLLUP(time_unit, period, basetime_column [, origin])
 ```
 
 ### Deprecated (supported in 7.5 version and below)
