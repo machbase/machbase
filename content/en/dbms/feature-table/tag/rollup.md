@@ -502,37 +502,6 @@ mtime                           sum(value)                  count(value)
 2018-01-01 03:02:00 000:000:000 11                          2
 ```
 
-## Change the origin time
-
-When inquiring about ROLLUP data, there are times when you want to divide the time interval into specific time criteria.
-
-When the ROLLEUP data is searched in the WEEK (7 DAYS) section, the existing ROLLEUP data is aggregated in the Thursday to Wednesday section based on `1970-01-01`.
-
-To address this, we support the ability to specify the origin time in the improved ROLLUP syntax.
-The example below is an example of a ROLLUP query that aggregates data in the Sunday to Saturday section based on `1970-01-04`.
-
-```sql
-CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED) WITH ROLLUP;
-
--- Insert
-INSERT INTO TAG VALUES('TAG-0', '1970-01-04', 1);
-INSERT INTO TAG VALUES('TAG-0', '1970-01-05', 1);
-INSERT INTO TAG VALUES('TAG-0', '1970-01-11', 1);
-INSERT INTO TAG VALUES('TAG-0', '1970-01-12', 1);
-INSERT INTO TAG VALUES('TAG-0', '1970-01-18', 1);
-INSERT INTO TAG VALUES('TAG-0', '1970-01-19', 1);
-EXEC ROLLUP_FORCE;
-
--- Select
-Mach> SELECT ROLLUP('week', 1, time, '1970-01-04') mtime, COUNT(value) FROM tag GROUP BY mtime;
-mtime                           COUNT(value)         
---------------------------------------------------------
-1970-01-04 00:00:00 000:000:000 2                    
-1970-01-18 00:00:00 000:000:000 2                    
-1970-01-11 00:00:00 000:000:000 2                    
-[3] row(s) selected.
-```
-
 ## Using ROLLUP for JSON type
 
 Starting from version 7.5, ROLLUP can be used for JSON types.
