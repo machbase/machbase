@@ -204,16 +204,6 @@ USER_NAME             DB_NAME                                             TABLE_
 ## Syntax
 
 ```sql
-SELECT TIME ROLLUP 3 SECOND, AVG(VALUE) FROM TAG WHERE ...;
-```
-
-As above, if the ROLLUP clause is appended after the Datetime type column specified as the BASETIME attribute, the rollup table is selected.
-
-```sql
-[BASETIME_COLUMN] ROLLUP [PERIOD] [TIME_UNIT]
-```
-
-```sql
 SELECT ROLLUP('SEC', 1, TIME, '1970-01-01'), AVG(VALUE) FROM TAG WHERE ...;
 ```
 
@@ -223,7 +213,17 @@ If you use the ROLLUP keyword as above and specify the ROLLUP attribute afterwar
 ROLLUP([TIME_UNIT], [PERIOD], [BASETIME_COLUMN], [ORIGIN_TIME])
 ```
 
-### Improved Syntax
+### Deprecated (supported in 7.5 version and below)
+
+```sql
+SELECT TIME ROLLUP 3 SECOND, AVG(VALUE) FROM TAG WHERE ...;
+```
+
+As above, if the ROLLUP clause is appended after the Datetime type column specified as the BASETIME attribute, the rollup table is selected.
+
+```sql
+[BASETIME_COLUMN] ROLLUP [PERIOD] [TIME_UNIT]
+```
 
 * BASETIME_COLUMN : Datetime column of the TAG table specified by the BASETIME attribute
 * PERIOD : DATE_BIN() can specify a range for each unit of time available. (see below)

@@ -201,17 +201,6 @@ USER_NAME             DB_NAME                                             TABLE_
 
 ## 조회 문법
 
-```sql
-SELECT TIME ROLLUP 3 SECOND, AVG(VALUE) FROM TAG WHERE ...;
-```
-
-위와 같이 BASETIME 속성으로 지정된 Datetime 형 컬럼 뒤에 ROLLUP 절을 붙여 지정하면 롤업 테이블 조회가 된다.
-
-```
-[BASETIME_COLUMN] ROLLUP [PERIOD] [TIME_UNIT]
-```
-
-### 개선된 문법
 
 ```sql
 SELECT ROLLUP('SEC', 1, TIME, '1970-01-01'), AVG(VALUE) FROM TAG WHERE ...;
@@ -223,6 +212,17 @@ SELECT ROLLUP('SEC', 1, TIME, '1970-01-01'), AVG(VALUE) FROM TAG WHERE ...;
 ROLLUP([TIME_UNIT], [PERIOD], [BASETIME_COLUMN], [ORIGIN_TIME])
 ```
 
+### Deprecated (7.5 version 이하에서 지원)
+
+```sql
+SELECT TIME ROLLUP 3 SECOND, AVG(VALUE) FROM TAG WHERE ...;
+```
+
+위와 같이 BASETIME 속성으로 지정된 Datetime 형 컬럼 뒤에 ROLLUP 절을 붙여 지정하면 롤업 테이블 조회가 된다.
+
+```
+[BASETIME_COLUMN] ROLLUP [PERIOD] [TIME_UNIT]
+```
 
 * BASETIME_COLUMN : BASETIME 속성으로 지정된 TAG 테이블의 Datetime 형 컬럼
 * PERIOD : DATE_BIN() 함수에서 사용 가능한 시간 단위별 범위를 지정할 수 있다. (아래 참고)
