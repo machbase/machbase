@@ -45,7 +45,7 @@ Start machbase-neo server process.
 | `--http-port`    | `5654`    | http listen port                |
 | `--grpc-port`    | `5655`    | grpc listen port                |
 | `--grpc-sock`    | `mach-grpc.sock` | grpc unix domain socket  |
-| `--grpc-insecure`| `false`   | set `true` to use plain tcp socket, disable TLS |
+| `--grpc-insecure`| `false`   | set `true` to use plain tcp socket,<br/>disable TLS {{< neo_since ver="8.0.18" />}} |
 | `--mach-port`    | `5656`    | machbase native listen port     |
 
 {{< callout type="info" emoji="📌">}}
