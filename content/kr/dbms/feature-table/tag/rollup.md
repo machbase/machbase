@@ -201,6 +201,19 @@ USER_NAME             DB_NAME                                             TABLE_
 
 ## 조회 문법
 
+
+```sql
+SELECT ROLLUP('SEC', 1, TIME, '1970-01-01'), AVG(VALUE) FROM TAG WHERE ...;
+```
+
+위와 같이 ROLLUP 키워드를 사용할 경우, 해당하는 롤업 테이블에서 데이터를 가져온다.
+
+```
+ROLLUP(time_unit, period, basetime_column [, origin])
+```
+
+### Deprecated (7.5 version 이하에서 지원)
+
 ```sql
 SELECT TIME ROLLUP 3 SECOND, AVG(VALUE) FROM TAG WHERE ...;
 ```
@@ -212,8 +225,10 @@ SELECT TIME ROLLUP 3 SECOND, AVG(VALUE) FROM TAG WHERE ...;
 ```
 
 * BASETIME_COLUMN : BASETIME 속성으로 지정된 TAG 테이블의 Datetime 형 컬럼
-* PERIOD : DATE_TRUNC() 함수에서 사용 가능한 시간 단위별 범위를 지정할 수 있다. (아래 참고)
-* TIME_UNIT : DATE_TRUNC() 함수에서 사용 가능한 모든 시간 단위를 사용할 수 있다. (아래 참고)
+* PERIOD : DATE_BIN() 함수에서 사용 가능한 시간 단위별 범위를 지정할 수 있다. (아래 참고)
+* TIME_UNIT : DATE_BIN() 함수에서 사용 가능한 모든 시간 단위를 사용할 수 있다. (아래 참고)
+* ORIGIN : ROLLUP 시간 구간을 나눌 기준 시간을 의미한다.
+  * 지정 안 하면 기존 문법과 같이 `1970-01-01 00:00:00` 으로 지정된다.
 
 TIME_UNIT 의 선택에 따라, 조회되는 롤업 테이블이 달라진다.
 
@@ -226,7 +241,7 @@ TIME_UNIT 의 선택에 따라, 조회되는 롤업 테이블이 달라진다.
 |minute (min)|1440 (1일)|MINUTE|
 |hour|24 (1일)|HOUR|
 |day|1|HOUR|
-|week|1 (일요일~토요일)|HOUR|
+|week|1 (7 DAYS)|HOUR|
 |month|1|HOUR|
 |year|1|HOUR|
 
@@ -239,6 +254,11 @@ ROLLUP 절을 사용하는 것은 롤업 테이블 조회를 직접 하는 것�
     * 또는, ROLLUP 절에 별명 (alias) 를 붙이고, 별명으로 GROUP BY 에 작성해도 된다.
 
 ```sql
+SELECT   rollup('sec', 3, time) mtime, avg(value)
+FROM     TAG
+GROUP BY mtime;
+
+-- deprecated
 SELECT   time rollup 3 sec mtime, avg(value)
 FROM     TAG
 GROUP BY time rollup 3 sec mtime;
@@ -247,6 +267,8 @@ GROUP BY time rollup 3 sec mtime;
 SELECT   time rollup 3 sec mtime, avg(value)
 FROM     TAG
 GROUP BY mtime;
+
+
 ```
 
 ## 데이터 샘플
@@ -288,49 +310,49 @@ insert into tag values('TAG_0001', '2018-01-01 03:02:02 000:000:000', 6);
 아래는 해당 태그에 대해 초, 분, 시 단위의 평균값을 얻는 예제이다.
 
 ```sql
-Mach> SELECT time rollup 1 sec mtime, avg(value) FROM TAG WHERE name = 'TAG_0001' group by mtime order by mtime;
-mtime                           avg(value)
+Mach> SELECT rollup('sec', 1, time) as mtime, avg(value) FROM TAG WHERE name = 'TAG_0001' group by mtime order by mtime;
+mtime                           avg(value)                  
 ---------------------------------------------------------------
-2018-01-01 01:00:01 000:000:000 1
-2018-01-01 01:00:02 000:000:000 2
-2018-01-01 01:01:01 000:000:000 3
-2018-01-01 01:01:02 000:000:000 4
-2018-01-01 01:02:01 000:000:000 5
-2018-01-01 01:02:02 000:000:000 6
-2018-01-01 02:00:01 000:000:000 1
-2018-01-01 02:00:02 000:000:000 2
-2018-01-01 02:01:01 000:000:000 3
-2018-01-01 02:01:02 000:000:000 4
-2018-01-01 02:02:01 000:000:000 5
-2018-01-01 02:02:02 000:000:000 6
-2018-01-01 03:00:01 000:000:000 1
-2018-01-01 03:00:02 000:000:000 2
-2018-01-01 03:01:01 000:000:000 3
-2018-01-01 03:01:02 000:000:000 4
-2018-01-01 03:02:01 000:000:000 5
-2018-01-01 03:02:02 000:000:000 6
+2018-01-01 01:00:01 000:000:000 1                           
+2018-01-01 01:00:02 000:000:000 2                           
+2018-01-01 01:01:01 000:000:000 3                           
+2018-01-01 01:01:02 000:000:000 4                           
+2018-01-01 01:02:01 000:000:000 5                           
+2018-01-01 01:02:02 000:000:000 6                           
+2018-01-01 02:00:01 000:000:000 1                           
+2018-01-01 02:00:02 000:000:000 2                           
+2018-01-01 02:01:01 000:000:000 3                           
+2018-01-01 02:01:02 000:000:000 4                           
+2018-01-01 02:02:01 000:000:000 5                           
+2018-01-01 02:02:02 000:000:000 6                           
+2018-01-01 03:00:01 000:000:000 1                           
+2018-01-01 03:00:02 000:000:000 2                           
+2018-01-01 03:01:01 000:000:000 3                           
+2018-01-01 03:01:02 000:000:000 4                           
+2018-01-01 03:02:01 000:000:000 5                           
+2018-01-01 03:02:02 000:000:000 6                           
 [18] row(s) selected.
  
-Mach> SELECT time rollup 1 min mtime, avg(value) FROM TAG WHERE name = 'TAG_0001' group by mtime order by mtime;
-mtime                           avg(value)
+Mach> SELECT rollup('min', 1, time) as mtime, avg(value) FROM TAG WHERE name = 'TAG_0001' group by mtime order by mtime;
+mtime                           avg(value)                  
 ---------------------------------------------------------------
-2018-01-01 01:00:00 000:000:000 1.5
-2018-01-01 01:01:00 000:000:000 3.5
-2018-01-01 01:02:00 000:000:000 5.5
-2018-01-01 02:00:00 000:000:000 1.5
-2018-01-01 02:01:00 000:000:000 3.5
-2018-01-01 02:02:00 000:000:000 5.5
-2018-01-01 03:00:00 000:000:000 1.5
-2018-01-01 03:01:00 000:000:000 3.5
-2018-01-01 03:02:00 000:000:000 5.5
+2018-01-01 01:00:00 000:000:000 1.5                         
+2018-01-01 01:01:00 000:000:000 3.5                         
+2018-01-01 01:02:00 000:000:000 5.5                         
+2018-01-01 02:00:00 000:000:000 1.5                         
+2018-01-01 02:01:00 000:000:000 3.5                         
+2018-01-01 02:02:00 000:000:000 5.5                         
+2018-01-01 03:00:00 000:000:000 1.5                         
+2018-01-01 03:01:00 000:000:000 3.5                         
+2018-01-01 03:02:00 000:000:000 5.5                         
 [9] row(s) selected.
- 
-Mach> SELECT time rollup 1 hour mtime, avg(value) FROM TAG WHERE name = 'TAG_0001' group by mtime order by mtime;
-mtime                           avg(value)
+
+Mach> SELECT rollup('hour', 1, time) as mtime, avg(value) FROM TAG WHERE name = 'TAG_0001' group by mtime order by mtime;
+mtime                           avg(value)                  
 ---------------------------------------------------------------
-2018-01-01 01:00:00 000:000:000 3.5
-2018-01-01 02:00:00 000:000:000 3.5
-2018-01-01 03:00:00 000:000:000 3.5
+2018-01-01 01:00:00 000:000:000 3.5                         
+2018-01-01 02:00:00 000:000:000 3.5                         
+2018-01-01 03:00:00 000:000:000 3.5                         
 [3] row(s) selected.
 ```
 
@@ -339,7 +361,7 @@ mtime                           avg(value)
 아래는 해당 태그의 시간 범위에 따른 최소/최대값을 얻는 예제를 나타낸다. 이전 예제와 다른 점은, 쿼리 한 번에 최대값과 최소값을 동시에 얻을 수 있다는 것이다.
 
 ```sql
-Mach> SELECT time rollup 1 hour mtime, min(value), max(value) FROM TAG WHERE name = 'TAG_0001' group by mtime order by mtime;
+Mach> SELECT rollup('hour', 1, time) as mtime, min(value), max(value) FROM TAG WHERE name = 'TAG_0001' group by mtime order by mtime;
 mtime                           min(value)                  max(value)
 --------------------------------------------------------------------------------------------
 2018-01-01 01:00:00 000:000:000 1                           6
@@ -347,7 +369,7 @@ mtime                           min(value)                  max(value)
 2018-01-01 03:00:00 000:000:000 1                           6
 [3] row(s) selected.
  
-Mach> SELECT time rollup 1 min mtime, min(value), max(value) FROM TAG WHERE name = 'TAG_0001' group by mtime order by mtime;
+Mach> SELECT rollup('min', 1, time) as mtime, min(value), max(value) FROM TAG WHERE name = 'TAG_0001' group by mtime order by mtime;
 mtime                           min(value)                  max(value)
 --------------------------------------------------------------------------------------------
 2018-01-01 01:00:00 000:000:000 1                           2
@@ -367,7 +389,7 @@ mtime                           min(value)                  max(value)
 아래는 합계 및 데이터 개수 값을 얻는 예제이다. 역시 하나의 쿼리에 합계와 개수를 얻을 수 있다.
 
 ```sql
-Mach> SELECT time rollup 1 min  mtime, sum(value), count(value) FROM TAG WHERE name = 'TAG_0001' group by mtime order by mtime;
+Mach> SELECT rollup('min', 1, time) as mtime, sum(value), count(value) FROM TAG WHERE name = 'TAG_0001' group by mtime order by mtime;
 mtime                           sum(value)                  count(value)
 -------------------------------------------------------------------------------------
 2018-01-01 01:00:00 000:000:000 3                           2
@@ -387,7 +409,7 @@ mtime                           sum(value)                  count(value)
 아래는 제곱합 값을 얻는 예제이다.
 
 ```sql
-Mach> SELECT time ROLLUP 1 SEC mtime, SUMSQ(value) FROM tag GROUP BY mtime ORDER BY mtime;
+Mach> SELECT rollup('sec', 1, time) as mtime, SUMSQ(value) FROM tag GROUP BY mtime ORDER BY mtime;
 mtime                           SUMSQ(value)               
 ---------------------------------------------------------------
 2018-01-01 01:00:01 000:000:000 1                          
@@ -410,7 +432,7 @@ mtime                           SUMSQ(value)
 2018-01-01 03:02:02 000:000:000 36                         
 [18] row(s) selected.
  
-Mach> SELECT time ROLLUP 1 MIN mtime, SUMSQ(value) FROM tag GROUP BY mtime ORDER BY mtime;
+Mach> SELECT rollup('min', 1, time) as mtime, SUMSQ(value) FROM tag GROUP BY mtime ORDER BY mtime;
 mtime                           SUMSQ(value)               
 ---------------------------------------------------------------
 2018-01-01 01:00:00 000:000:000 5                          
@@ -430,7 +452,7 @@ mtime                           SUMSQ(value)
 아래는 확장 롤업에서 제공하는 시작 및 종료 값을 얻는 예제이다.
 
 ```sql
-Mach> SELECT time ROLLUP 1 MIN mtime, FIRST(time, value), LAST(time, value) FROM tag GROUP BY mtime ORDER BY mtime;
+Mach> SELECT rollup('min', 1, time) as mtime, FIRST(time, value), LAST(time, value) FROM tag GROUP BY mtime ORDER BY mtime;
 mtime                           FIRST(time, value)          LAST(time, value)           
 --------------------------------------------------------------------------------------------
 2018-01-01 01:00:00 000:000:000 1                           2                           
@@ -444,7 +466,7 @@ mtime                           FIRST(time, value)          LAST(time, value)
 2018-01-01 03:02:00 000:000:000 5                           6                           
 [9] row(s) selected.
 
-Mach> SELECT time ROLLUP 1 HOUR mtime, FIRST(time, value), LAST(time, value) FROM tag GROUP BY mtime ORDER BY mtime;
+Mach> SELECT rollup('hour', 1, time) as mtime, FIRST(time, value), LAST(time, value) FROM tag GROUP BY mtime ORDER BY mtime;
 mtime                           FIRST(time, value)          LAST(time, value)           
 --------------------------------------------------------------------------------------------
 2018-01-01 01:00:00 000:000:000 1                           6                           
@@ -455,13 +477,13 @@ mtime                           FIRST(time, value)          LAST(time, value)
 
 ## 다양한 시간 간격으로 그룹화
 
-ROLLUP 절의 장점은, DATE_TRUNC() 를 의도적으로 사용해서 시간 간격을 다변화할 필요가 없다는 것이다.
+ROLLUP 절의 장점은, DATE_BIN() 를 의도적으로 사용해서 시간 간격을 다변화할 필요가 없다는 것이다.
 
 3초 간격의 합계와 데이터 개수를 얻으려면 아래와 같이 하면 된다.
 예제 시간 범위가 0초, 1초, 2초 뿐이라 전부 0초로 수렴된 것을 확인할 수 있다. 결과적으로는 '분 단위 롤업' 조회 결과와 일치한다.
 
 ```sql
-Mach> SELECT time rollup 3 sec  mtime, sum(value), count(value) FROM TAG WHERE name = 'TAG_0001' GROUP BY mtime ORDER BY mtime;
+Mach> SELECT rollup('sec', 3, time) as mtime, sum(value), count(value) FROM TAG WHERE name = 'TAG_0001' GROUP BY mtime ORDER BY mtime;
 mtime                           sum(value)                  count(value)
 -------------------------------------------------------------------------------------
 2018-01-01 01:00:00 000:000:000 3                           2
@@ -507,7 +529,7 @@ CREATE ROLLUP _tag_rollup_jval_y_sec ON tag(jval->'$.y') INTERVAL 1 SEC;
 ROLLUP 조회도 동일하게 사용하면 된다.
 
 ```sql
-Mach> SELECT time ROLLUP 2 SEC mtime, MIN(jval->'$.x'), MAX(jval->'$.x'), SUM(jval->'$.x'), COUNT(jval->'$.x'), SUMSQ(jval->'$.x') FROM tag GROUP BY mtime ORDER BY mtime;
+Mach> SELECT rollup('sec', 2, time) as mtime, MIN(jval->'$.x'), MAX(jval->'$.x'), SUM(jval->'$.x'), COUNT(jval->'$.x'), SUMSQ(jval->'$.x') FROM tag GROUP BY mtime ORDER BY mtime;
 mtime                           min(jval->'$.x')            max(jval->'$.x')            sum(jval->'$.x')            count(jval->'$.x')   sumsq(jval->'$.x')         
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 2022-09-01 01:01:00 000:000:000 1                           1                           1                           1                    1                          
@@ -520,7 +542,7 @@ mtime                           min(jval->'$.x')            max(jval->'$.x')    
 2022-09-01 01:06:00 000:000:000 10                          10                          10                          1                    100                        
 [8] row(s) selected.
  
-Mach> SELECT time ROLLUP 2 SEC mtime, MIN(jval->'$.y'), MAX(jval->'$.y'), SUM(jval->'$.y'), COUNT(jval->'$.y'), SUMSQ(jval->'$.y') FROM tag GROUP BY mtime ORDER BY mtime
+Mach> SELECT rollup('sec', 2, time) as mtime, MIN(jval->'$.y'), MAX(jval->'$.y'), SUM(jval->'$.y'), COUNT(jval->'$.y'), SUMSQ(jval->'$.y') FROM tag GROUP BY mtime ORDER BY mtime;
 mtime                           min(jval->'$.y')            max(jval->'$.y')            sum(jval->'$.y')            count(jval->'$.y')   sumsq(jval->'$.y')         
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 2022-09-01 01:01:00 000:000:000 1.1                         1.1                         1.1                         1                    1.21                       
