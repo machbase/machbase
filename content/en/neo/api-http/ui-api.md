@@ -414,6 +414,424 @@ This api returns status code `200 OK` if the operation has done successfully.
 
 Delete the file at the `path`, if the path is pointing a directory and is not empty, it will return error.
 
+## Key management
+
+### List Key
+
+**GET `/web/api/keys/:id`**
+
+Return key info list
+
+`response`
+
+```json
+{
+    "success": true,
+    "reason": "success",
+    "data": [
+        {
+            "idx": 0,
+            "id": "eleven",
+            "notBefore": 1713171461,
+            "notAfter": 2028531461
+        }
+    ],
+    "elapse": "131.9µs"
+}
+```
+### Generate Key
+
+**POST `/web/api/keys`**
+
+generate key
+- `name` is required
+- `notAfter` is expiration date
+
+{{< tabs items="Request,Response">}}
+{{< tab >}}
+```json
+{
+    "name": "eleven",
+    "notBefore": 0,
+    "notAfter": 0
+}
+```
+{{< /tab >}}
+{{< tab >}}
+```json
+{
+    "success": true,
+    "reason": "success",
+    "elapse": "5.4961ms",
+    "certificate": "-----BEGIN CERTIFICATE-----\nXXXXXXXXXXXXXXXXXX\n-----END CERTIFICATE-----\n",
+    "privateKey": "-----BEGIN EC PRIVATE KEY-----\nXXXXXXXXXXXXXXXX\n-----END EC PRIVATE KEY-----\n",
+    "token": "eleven:b:XXXXXXXXXXXXXXXXX"
+}
+```
+{{< /tab >}}
+{{< /tabs >}}
+
+
+
+### Delete Key
+
+**DELETE `/web/api/keys/:id`**
+
+Delete the key of the given id
+
+`response`
+
+```json
+{
+    "success": true,
+    "reason": "success",
+    "elapse": "112.8µs"
+}
+```
+## Timer
+
+### List Timer
+
+**GET `/web/api/timers`**
+
+Return timer info list
+
+`response`
+
+```json
+{
+    "success": true,
+    "reason": "success",
+    "data": [
+        {
+            "name": "ELEVEN",
+            "type": "TIMER",
+            "state": "STOP",
+            "task": "timer.tql",
+            "schedule": "0 30 * * * *"
+        }
+    ],
+    "elapse": "92.1µs"
+}
+```
+### Add Timer
+
+**POST `/web/api/timers`**
+
+Add Timer
+- `name`, `autoStart`, `schedule`, `path` is required  
+
+Timer `schedule`
+- `0 30 * * * *`           Every hour on the half hour
+- `@every 1h30m`           Every hour thirty
+- `@daily`                 Every day
+
+{{< tabs items="Request,Response">}}
+{{< tab >}}
+```json
+{
+    "name":"eleven",
+    "autoStart":false,
+    "schedule":"@every 10s",
+    "path":"timer.tql"
+}
+```
+{{< /tab >}}
+{{< tab >}}
+```json
+{
+    "success": true,
+    "reason": "success",
+    "elapse": "4.9658ms"
+}
+```
+{{< /tab >}}
+{{< /tabs >}}
+
+### Start Timer
+
+**POST `/web/api/timers/:name/state`**
+
+Start Timer
+- `state` is required
+
+{{< tabs items="Request,Response">}}
+{{< tab >}}
+```json
+{
+    "state":"start",
+}
+```
+{{< /tab >}}
+{{< tab >}}
+```json
+{
+    "success": true,
+    "reason": "success",
+    "elapse": "822.601µs"
+}
+```
+{{< /tab >}}
+{{< /tabs >}}
+
+### Stop Timer
+
+**POST `/web/api/timers/:name/state`**
+
+Stop Timer
+- `state` is required
+
+{{< tabs items="Request,Response">}}
+{{< tab >}}
+```json
+{
+    "state":"stop",
+}
+```
+{{< /tab >}}
+{{< tab >}}
+```json
+{
+    "success": true,
+    "reason": "success",
+    "elapse": "26.2µs"
+}
+```
+{{< /tab >}}
+{{< /tabs >}}
+
+### Update Timer
+
+**PUT `/web/api/timers/:name`**
+
+Update Timer
+- `autoStart`, `schedule`, `path` 
+
+{{< tabs items="Request,Response">}}
+{{< tab >}}
+```json
+{
+    "audoStart" : true,
+    "schedule":"@every 5s",
+    "path":"timer.tql"
+}
+```
+{{< /tab >}}
+{{< tab >}}
+```json
+{
+    "elapse": "459.6µs",
+    "reason": "success",
+    "success": true
+}
+```
+{{< /tab >}}
+{{< /tabs >}}
+
+
+
+### Delete Timer
+
+**DELETE `/web/api/timers/:name`**
+
+Delete Timer
+
+`Response`
+```json
+{
+    "success": true,
+    "reason": "success",
+    "elapse": "4.8664ms"
+}
+```
+
+
+## Bridge
+
+### List Bridge
+
+**GET `/web/api/bridges`**
+
+Return bridge info list
+
+`response`
+
+```json
+{
+    "success": true,
+    "reason": "success",
+    "data": [
+        {
+            "name": "pg",
+            "type": "postgres",
+            "path": "host=127.0.0.1 port=5432 user=postgres password=1234 dbname=bridgedb sslmode=disable"
+        }
+    ],
+    "elapse": "1.328301ms"
+}
+```
+### Add Bridge
+
+**POST `/web/api/bridges`**
+
+Add Bridge
+- `name`, `type`, `path` is required
+- supported bridges `SQLite`, `PostgreSql`, `Mysql`, `MSSQL`, `MQTT`
+
+{{< tabs items="Request,Response">}}
+{{< tab >}}
+```json
+{
+    "name":"pg",
+    "type":"postgres", // sqlite, postgres, mysql, mssql, mqtt
+    "path":"host=127.0.0.1 port=5432 user=postgres password=1234 dbname=bridgedb sslmode=disable"
+}
+```
+{{< /tab >}}
+{{< tab >}}
+```json
+{
+    "success": true,
+    "reason": "success",
+    "elapse": "193.499µs"
+}
+```
+{{< /tab >}}
+{{< /tabs >}}
+
+### Exec Bridge
+
+**POST `/web/api/bridges/:name/state`**
+
+Exec Bridge
+- `state`, `command` is required
+
+{{< tabs items="Request,Response">}}
+{{< tab >}}
+```json
+{
+    "state":"exec",
+    "command":"CREATE TABLE IF NOT EXISTS pg_example(id SERIAL PRIMARY KEY,company VARCHAR(50) UNIQUE NOT NULL,employee  INT,discount REAL,plan FLOAT(8),code UUID,valid BOOL, memo TEXT, created_on TIMESTAMP NOT NULL)"
+}
+```
+{{< /tab >}}
+{{< tab >}}
+```json
+{
+    "success": true,
+    "reason": "success",
+    "elapse": "217.4µs"
+}
+```
+{{< /tab >}}
+{{< /tabs >}}
+
+### Query Bridge
+
+**POST `/web/api/bridges/:name/state`**
+
+Query Bridge
+- `state`, `command` is required
+
+{{< tabs items="Request,Response">}}
+{{< tab >}}
+```json
+{
+    "state":"query",
+    "command":"select * from pg_example"
+}
+```
+{{< /tab >}}
+{{< tab >}}
+```json
+{
+    "success": true,
+    "reason": "success",
+    "column": [
+        "id",
+        "company",
+        "employee",
+        "discount",
+        "plan",
+        "code",
+        "valid",
+        "memo",
+        "created_on"
+    ],
+    "rows": [
+        [
+            2,
+            "test-company",
+            10,
+            1.234,
+            2.3456,
+            "c2d29867-3d0b-d497-9191-18a9d8ee7830",
+            true,
+            "test memo",
+            "2023-08-09T14:20:00+09:00"
+        ],
+        [
+            3,
+            "test-company2",
+            10,
+            1.234,
+            2.3456,
+            null,
+            null,
+            null,
+            "2023-08-09T14:20:00+09:00"
+        ]
+    ],
+    "elapse": "53.015905ms"
+}
+```
+{{< /tab >}}
+{{< /tabs >}}
+
+### Test Bridge
+
+**POST `/web/api/bridges/:name/state`**
+
+Test Bridge
+
+{{< tabs items="Request,Response">}}
+{{< tab >}}
+```json
+{
+    "state":"test",
+}
+```
+{{< /tab >}}
+{{< tab >}}
+```json
+{
+    "success": true,
+    "reason": "success",
+    "elapse": "331.1µs"
+}
+```
+{{< /tab >}}
+{{< /tabs >}}
+
+
+### Delete Bridge
+
+**DELETE `/web/api/bridges/:name`**
+
+Delete the bridge of the given name
+
+`response`
+
+```json
+{
+    "success": true,
+    "reason": "success",
+    "elapse": "112.8µs"
+}
+```
+
+
+
 ## Others
 
 ### References
