@@ -11,7 +11,7 @@ toc: true
 ✓ Easy to install - instant download and run<br/>
 ✓ Easy to learn - familiar SQL with Tables and Columns<br/>
 ✓ Easy to write and query via **HTTP**, **MQTT** and **gRPC**<br/>
-✓ Bridge to SQLite, PostgreSQL, MySQL, MSSQL, MQTT Broker<br/>
+✓ Bridge to SQLite, PostgreSQL, MySQL, MSSQL, MQTT Broker, NATS<br/>
 
 {{< button color="purple" href="./getting-started/">}} Get Started {{< /button >}}
 {{< button color="green" href="./releases/">}} Download  {{< /button >}}
