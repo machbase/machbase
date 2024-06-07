@@ -61,7 +61,7 @@ CSV()
 CSV(`A,1.0
 B,1.5
 C,2.0
-D,2.5`, field(1, doubleType(), "value"))
+D,2.5`, field(1, floatType(), "value"))
 
 MAPVALUE(1, value(1) * 10 )
 

@@ -78,8 +78,8 @@ Integration with external systems
 - [x] MySQL
 - [x] MS-SQL
 - [x] MQTT Broker
-- [ ] Kafka
-- [ ] NATS
+- [x] NATS {{< neo_since ver="8.0.20" />}}
+- [ ] Kafka (planning)
 
 
 ### Contributing

@@ -203,8 +203,8 @@ If `payload()` is used, it will reads CSV from HTTP POST request body stream. It
 // dishwasher,1677646800,3.33e-05
 CSV(payload(), 
     field(0, stringType(), 'name'),
-    field(1, datetimeType('s'), 'time'),
-    field(2, doubleType(), 'value'),
+    field(1, timeType('s'), 'time'),
+    field(2, floatType(), 'value'),
     header(false)
 )
 APPEND(table('example'))
@@ -216,8 +216,8 @@ Use `??` operator to make it works with or without HTTP POST request.
 
 ```js
 CSV(payload() ?? file('/absolute/path/to/data.csv'),
-    field(0, doubleType(), 'freq'),
-    field(1, doubleType(), 'ampl')
+    field(0, floatType(), 'freq'),
+    field(1, floatType(), 'ampl')
 )
 CHART_LINE()
 ```
@@ -261,42 +261,45 @@ Specify field-types of the input CSV data.
 | type function    | type      |
 |:-----------------| :---------|
 | `stringType()`   | string    |
-| `doubleType()`   | number    |
-| `datetimeType()` | datetime  |
+| `floatType()`    | number {{< neo_since ver="8.0.20" />}}   |
+| `timeType()`     | datetime {{< neo_since ver="8.0.20" />}} |
+| `boolType()`     | boolean  {{< neo_since ver="8.0.20" />}} |
+| ~~`doubleType()`~~   | *deprected, use `floatType()`*  |
+| ~~`datetimeType()`~~ | *deprecated, use `timeType()`*  |
 
-The `stringType()` and `doubleType()` take no arguments, `datetimeType()` function takes one or two parameters for proper conversion of date-time data.
+The `stringType()`, `boolType()` and `floatType()` take no arguments, `timeType()` function takes one or two parameters for proper conversion of date-time data.
 
 If the input data of the field specifies time in unix epoch time, specify the one of the time units `ns`, `us`, `ms` and `s`.
-- `datetimeType('s')`
-- `datetimeType('ms')`
-- `datetimeType('us')`
-- `datetimeType('ns')`
+- `timeType('s')`
+- `timeType('ms')`
+- `timeType('us')`
+- `timeType('ns')`
 
 The input field represents time in human readable format, it is requires to specifying how to parse them including time zone.
 
-- `datetimeType('DEFAULT', 'Local')`
+- `timeType('DEFAULT', 'Local')`
 
 ```js
 CSV(payload() ??
 `name,2006-01-02 15:04:05.999,10`,
-field(1, datetimeType('DEFAULT', 'Local'), 'time'))
+field(1, timeType('DEFAULT', 'Local'), 'time'))
 CSV()
 ```
 
-- `datetimeType('RFC3339', 'EST')`
+- `timeType('RFC3339', 'EST')`
 
 ```js
 CSV(payload() ??
 `name,2006-01-02T15:04:05.999Z,10`,
-field(1, datetimeType('RFC3339', 'EST'), 'time'))
+field(1, timeType('RFC3339', 'EST'), 'time'))
 CSV()
 ```
 
 If the timezone is omitted, it assumes 'UTC' by default.
 
-- `datetimeType('RC822')`
+- `timeType('RC822')`
 
-The first argument of the `datetimeType()` directs how to parse the input data that uses the same syntax with `timeformat()` function. Please refer to the description of the `timeformat()` function for the [timeformat spec](../utilities/#timeformat).
+The first argument of the `timeType()` directs how to parse the input data that uses the same syntax with `timeformat()` function. Please refer to the description of the `timeformat()` function for the [timeformat spec](../utilities/#timeformat).
 
 ### charset()
 

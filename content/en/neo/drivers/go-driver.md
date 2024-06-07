@@ -9,13 +9,30 @@ The driver is provided for Go developers.
 ## Import
 
 ```go
-import _ "github.com/machbase/neo-client/driver"
+import driver "github.com/machbase/neo-client/driver"
+```
+
+## Register DataSource
+
+```go
+serverAddr := "tcp://127.0.0.1:5655"
+datasourceName := "neo"
+
+driver.RegisterDataSource(datasourceName, &driver.DataSource{
+		ServerAddr: serverAddr,
+		User:     "sys",
+		Password: "manager",
+        // TLS Certificates...
+        // ServerCert: serverCert,
+		// ClientKey:  clientKey,
+		// ClientCert: clientCert,
+	})
 ```
 
 ## QueryRow
 
 ```go
-db, err := sql.Open(driver.Name, dataSourceName)
+db, err := sql.Open(driver.Name, datasourceName)
 if err != nil {
     panic(err)
 }

@@ -32,8 +32,8 @@ Save the code below as `input-csv.tql`.
 ```js
 CSV(payload(), 
     field(0, stringType(), 'name'),
-    field(1, datetimeType('ns'), 'time'),
-    field(2, doubleType(), 'value'),
+    field(1, timeType('ns'), 'time'),
+    field(2, floatType(), 'value'),
     header(false)
 )
 INSERT("name", "time", "value", table("example"))
@@ -84,8 +84,8 @@ Save the code below as `append-csv.tql`.
 ```js
 CSV(payload(), 
     field(0, stringType(), 'name'),
-    field(1, datetimeType('ns'), 'time'),
-    field(2, doubleType(), 'value'),
+    field(1, timeType('ns'), 'time'),
+    field(2, floatType(), 'value'),
     header(false)
 )
 APPEND(table('example'))
