@@ -54,15 +54,28 @@ flowchart RL
 
   Support Apache echarts.
 
-## 2024 Q1
+## 2024 Q2
 
-- [ ] Geo Location visualization
+- [X] NATS Subscriber
 
-   Support leaflet.js for geo-location data visualization.
+```mermaid
+flowchart RL
+    external-system --PUBLISH--> machbase-neo
+    machbase-neo --SUBSCRIBE--> external-system
+    subgraph machbase-neo
+        direction RL
+        subscriber["NATS Subscriber"] --Write--> machbase
+        machbase[("machbase engine")]
+    end
+    subgraph external-system
+        direction RL
+        client["NATS Client"] --PUBLISH--> mqtt[[NATS Server]]
+    end
+```
 
-## 2024 1H
+## Later 2024
 
-- [ ] Kafka Consumer
+- [ ] Kafka Consumer (planning...)
 
 ```mermaid
 flowchart RL
@@ -79,19 +92,7 @@ flowchart RL
     end
 ```
 
-- [ ] NATS Subscriber
+- [ ] Geo Location visualization (planning...)
 
-```mermaid
-flowchart RL
-    external-system --PUBLISH--> machbase-neo
-    machbase-neo --SUBSCRIBE--> external-system
-    subgraph machbase-neo
-        direction RL
-        subscriber["NATS Subscriber"] --Write--> machbase
-        machbase[("machbase engine")]
-    end
-    subgraph external-system
-        direction RL
-        client["NATS Client"] --PUBLISH--> mqtt[[NATS Server]]
-    end
-```
+   Support leaflet.js for geo-location data visualization.
+
