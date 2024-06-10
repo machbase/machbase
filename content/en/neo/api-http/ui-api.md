@@ -488,6 +488,84 @@ Delete the key of the given id
     "elapse": "112.8µs"
 }
 ```
+
+## Ssh Key
+
+### List Ssh Key
+
+**GET `/web/api/keys/:id`**
+
+Return key info list
+
+`response`
+
+```json
+{
+    "success": true,
+    "reason": "success",
+    "data": [
+        {
+            "idx": 0,
+            "id": "eleven",
+            "notBefore": 1713171461,
+            "notAfter": 2028531461
+        }
+    ],
+    "elapse": "131.9µs"
+}
+```
+### Generate Key
+
+**POST `/web/api/keys`**
+
+generate key
+- `name` is required
+- `notAfter` is expiration date
+
+{{< tabs items="Request,Response">}}
+{{< tab >}}
+```json
+{
+    "name": "eleven",
+    "notBefore": 0,
+    "notAfter": 0
+}
+```
+{{< /tab >}}
+{{< tab >}}
+```json
+{
+    "success": true,
+    "reason": "success",
+    "elapse": "5.4961ms",
+    "certificate": "-----BEGIN CERTIFICATE-----\nXXXXXXXXXXXXXXXXXX\n-----END CERTIFICATE-----\n",
+    "privateKey": "-----BEGIN EC PRIVATE KEY-----\nXXXXXXXXXXXXXXXX\n-----END EC PRIVATE KEY-----\n",
+    "token": "eleven:b:XXXXXXXXXXXXXXXXX"
+}
+```
+{{< /tab >}}
+{{< /tabs >}}
+
+
+
+### Delete Key
+
+**DELETE `/web/api/keys/:id`**
+
+Delete the key of the given id
+
+`response`
+
+```json
+{
+    "success": true,
+    "reason": "success",
+    "elapse": "112.8µs"
+}
+```
+
+
+
 ## Timer
 
 ### List Timer
@@ -830,6 +908,164 @@ Delete the bridge of the given name
 }
 ```
 
+## Subscriber
+
+### List Subscriber
+
+**GET `/web/api/bridges`**
+
+Return bridge info list
+
+`response`
+
+```json
+{
+    "success": true,
+    "reason": "success",
+    "data": [
+        {
+            "name": "pg",
+            "type": "postgres",
+            "path": "host=127.0.0.1 port=5432 user=postgres password=1234 dbname=bridgedb sslmode=disable"
+        }
+    ],
+    "elapse": "1.328301ms"
+}
+```
+### Add Subscriber
+
+**POST `/web/api/bridges`**
+
+Add Bridge
+- `name`, `type`, `path` is required
+- supported bridges `SQLite`, `PostgreSql`, `Mysql`, `MSSQL`, `MQTT`
+
+{{< tabs items="Request,Response">}}
+{{< tab >}}
+```json
+{
+    "name":"pg",
+    "type":"postgres", // sqlite, postgres, mysql, mssql, mqtt
+    "path":"host=127.0.0.1 port=5432 user=postgres password=1234 dbname=bridgedb sslmode=disable"
+}
+```
+{{< /tab >}}
+{{< tab >}}
+```json
+{
+    "success": true,
+    "reason": "success",
+    "elapse": "193.499µs"
+}
+```
+{{< /tab >}}
+{{< /tabs >}}
+
+### Start Subscriber
+
+**POST `/web/api/bridges/:name/state`**
+
+Exec Bridge
+- `state`, `command` is required
+
+{{< tabs items="Request,Response">}}
+{{< tab >}}
+```json
+{
+    "state":"exec",
+    "command":"CREATE TABLE IF NOT EXISTS pg_example(id SERIAL PRIMARY KEY,company VARCHAR(50) UNIQUE NOT NULL,employee  INT,discount REAL,plan FLOAT(8),code UUID,valid BOOL, memo TEXT, created_on TIMESTAMP NOT NULL)"
+}
+```
+{{< /tab >}}
+{{< tab >}}
+```json
+{
+    "success": true,
+    "reason": "success",
+    "elapse": "217.4µs"
+}
+```
+{{< /tab >}}
+{{< /tabs >}}
+
+### Stop Subscriber
+
+**POST `/web/api/bridges/:name/state`**
+
+Query Bridge
+- `state`, `command` is required
+
+{{< tabs items="Request,Response">}}
+{{< tab >}}
+```json
+{
+    "state":"query",
+    "command":"select * from pg_example"
+}
+```
+{{< /tab >}}
+{{< tab >}}
+```json
+{
+    "success": true,
+    "reason": "success",
+    "column": [
+        "id",
+        "company",
+        "employee",
+        "discount",
+        "plan",
+        "code",
+        "valid",
+        "memo",
+        "created_on"
+    ],
+    "rows": [
+        [
+            2,
+            "test-company",
+            10,
+            1.234,
+            2.3456,
+            "c2d29867-3d0b-d497-9191-18a9d8ee7830",
+            true,
+            "test memo",
+            "2023-08-09T14:20:00+09:00"
+        ],
+        [
+            3,
+            "test-company2",
+            10,
+            1.234,
+            2.3456,
+            null,
+            null,
+            null,
+            "2023-08-09T14:20:00+09:00"
+        ]
+    ],
+    "elapse": "53.015905ms"
+}
+```
+{{< /tab >}}
+{{< /tabs >}}
+
+
+### Delete Subscriber
+
+**DELETE `/web/api/bridges/:name`**
+
+Delete the bridge of the given name
+
+`response`
+
+```json
+{
+    "success": true,
+    "reason": "success",
+    "elapse": "112.8µs"
+}
+```
 
 
 ## Others
