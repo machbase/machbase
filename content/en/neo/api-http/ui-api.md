@@ -493,54 +493,48 @@ Delete the key of the given id
 
 ### List Ssh Key
 
-**GET `/web/api/keys/:id`**
+**GET `/web/api/sshkeys`**
 
-Return key info list
+Return ssh-key info list
 
 `response`
 
 ```json
 {
-    "success": true,
-    "reason": "success",
     "data": [
         {
-            "idx": 0,
-            "id": "eleven",
-            "notBefore": 1713171461,
-            "notAfter": 2028531461
+            "keyType": "ssh-rsa",
+            "fingerprint": "f08h89fhf0dkv0v0v9c9x0cx9v9",
+            "comment": "example@machbase.com"
         }
     ],
-    "elapse": "131.9µs"
+    "elapse": "67.6µs",
+    "reason": "success",
+    "success": true
 }
 ```
-### Generate Key
+### Generate Ssh Key
 
-**POST `/web/api/keys`**
+**POST `/web/api/sshkeys`**
 
-generate key
-- `name` is required
-- `notAfter` is expiration date
+**Use public key authentication with SSH**   
+
+Adding the public key to machbase-neo server makes it possible to execute any `machbase-neo shell` command without prompt and entering password.
 
 {{< tabs items="Request,Response">}}
 {{< tab >}}
 ```json
 {
-    "name": "eleven",
-    "notBefore": 0,
-    "notAfter": 0
+    "key": "your publickey"
 }
 ```
 {{< /tab >}}
 {{< tab >}}
 ```json
 {
-    "success": true,
+    "elapse": "138.801µs",
     "reason": "success",
-    "elapse": "5.4961ms",
-    "certificate": "-----BEGIN CERTIFICATE-----\nXXXXXXXXXXXXXXXXXX\n-----END CERTIFICATE-----\n",
-    "privateKey": "-----BEGIN EC PRIVATE KEY-----\nXXXXXXXXXXXXXXXX\n-----END EC PRIVATE KEY-----\n",
-    "token": "eleven:b:XXXXXXXXXXXXXXXXX"
+    "success": true
 }
 ```
 {{< /tab >}}
@@ -548,21 +542,31 @@ generate key
 
 
 
-### Delete Key
+### Delete Ssh Key
 
-**DELETE `/web/api/keys/:id`**
+**DELETE `/web/api/sshkeys`**
 
-Delete the key of the given id
+Delete the ssh-key of the given id
 
-`response`
 
+{{< tabs items="Request,Response">}}
+{{< tab >}}
 ```json
 {
-    "success": true,
+    "fingerprint":"f08h89fhf0dkv0v0v9c9x0cx9v9"
+} 
+```
+{{< /tab >}}
+{{< tab >}}
+```json
+{
+    "elapse": "198.8µs",
     "reason": "success",
-    "elapse": "112.8µs"
+    "success": true
 }
 ```
+{{< /tab >}}
+{{< /tabs >}}
 
 
 
@@ -946,6 +950,8 @@ Add Subscriber
 - bridge: `my_nats` the name of the bridge that the subscriber is going to use.   
 - topic: `iot.sensor` subject name to subscribe. it should be in NATS subject syntax.   
 - task: `db/append/EXAMPLE:csv` writing descriptor, it means the incoming data is in CSV format and writing data into the table EXAMPLE in append mode.   
+
+nats-bridge manual https://docs.machbase.com/neo/bridges/31.nats/
 
 {{< tabs items="Request,Response">}}
 {{< tab >}}
