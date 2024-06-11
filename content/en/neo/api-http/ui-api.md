@@ -912,50 +912,59 @@ Delete the bridge of the given name
 
 ### List Subscriber
 
-**GET `/web/api/bridges`**
+**GET `/web/api/subscribers`**
 
-Return bridge info list
+Return subscriber list
 
 `response`
 
 ```json
 {
-    "success": true,
-    "reason": "success",
     "data": [
         {
-            "name": "pg",
-            "type": "postgres",
-            "path": "host=127.0.0.1 port=5432 user=postgres password=1234 dbname=bridgedb sslmode=disable"
+            "name": "NATS_SUBR",
+            "type": "SUBSCRIBER",
+            "autoStart": true,
+            "state": "RUNNING",
+            "task": "db/append/EXAMPLE:csv",
+            "bridge": "my_nats",
+            "topic": "iot.sensor"
         }
     ],
-    "elapse": "1.328301ms"
+    "elapse": "253.4µs",
+    "reason": "success",
+    "success": true
 }
 ```
-### Add Subscriber
+### Add Subscribers
 
-**POST `/web/api/bridges`**
+**POST `/web/api/subscribers`**
 
-Add Bridge
-- `name`, `type`, `path` is required
-- supported bridges `SQLite`, `PostgreSql`, `Mysql`, `MSSQL`, `MQTT`
+Add Subscriber   
+- autostart:   `--autostart` makes the subscriber starts along with machbase-neo starts. Ommit this to start/stop manually.   
+- name: `nats_subr` the name of the subscriber.   
+- bridge: `my_nats` the name of the bridge that the subscriber is going to use.   
+- topic: `iot.sensor` subject name to subscribe. it should be in NATS subject syntax.   
+- task: `db/append/EXAMPLE:csv` writing descriptor, it means the incoming data is in CSV format and writing data into the table EXAMPLE in append mode.   
 
 {{< tabs items="Request,Response">}}
 {{< tab >}}
 ```json
 {
-    "name":"pg",
-    "type":"postgres", // sqlite, postgres, mysql, mssql, mqtt
-    "path":"host=127.0.0.1 port=5432 user=postgres password=1234 dbname=bridgedb sslmode=disable"
+    "name":"nats_subr",
+    "autoStart":true,
+    "bridge":"my_nats",
+    "topic":"iot.sensor",
+    "task":"db/append/EXAMPLE:csv"
 }
 ```
 {{< /tab >}}
 {{< tab >}}
 ```json
 {
-    "success": true,
+    "elapse": "260µs",
     "reason": "success",
-    "elapse": "193.499µs"
+    "success": true
 }
 ```
 {{< /tab >}}
@@ -963,26 +972,24 @@ Add Bridge
 
 ### Start Subscriber
 
-**POST `/web/api/bridges/:name/state`**
+**POST `/web/api/subscribers/:name/state`**
 
-Exec Bridge
-- `state`, `command` is required
+- `state` is required
 
 {{< tabs items="Request,Response">}}
 {{< tab >}}
 ```json
 {
-    "state":"exec",
-    "command":"CREATE TABLE IF NOT EXISTS pg_example(id SERIAL PRIMARY KEY,company VARCHAR(50) UNIQUE NOT NULL,employee  INT,discount REAL,plan FLOAT(8),code UUID,valid BOOL, memo TEXT, created_on TIMESTAMP NOT NULL)"
+    "state":"start",
 }
 ```
 {{< /tab >}}
 {{< tab >}}
 ```json
 {
-    "success": true,
+    "elapse": "166.1µs",
     "reason": "success",
-    "elapse": "217.4µs"
+    "success": true
 }
 ```
 {{< /tab >}}
@@ -990,61 +997,24 @@ Exec Bridge
 
 ### Stop Subscriber
 
-**POST `/web/api/bridges/:name/state`**
+**POST `/web/api/subscribers/:name/state`**
 
-Query Bridge
-- `state`, `command` is required
+- `state` is required
 
 {{< tabs items="Request,Response">}}
 {{< tab >}}
 ```json
 {
-    "state":"query",
-    "command":"select * from pg_example"
+    "state":"stop",
 }
 ```
 {{< /tab >}}
 {{< tab >}}
 ```json
 {
-    "success": true,
+    "elapse": "54.2µs",
     "reason": "success",
-    "column": [
-        "id",
-        "company",
-        "employee",
-        "discount",
-        "plan",
-        "code",
-        "valid",
-        "memo",
-        "created_on"
-    ],
-    "rows": [
-        [
-            2,
-            "test-company",
-            10,
-            1.234,
-            2.3456,
-            "c2d29867-3d0b-d497-9191-18a9d8ee7830",
-            true,
-            "test memo",
-            "2023-08-09T14:20:00+09:00"
-        ],
-        [
-            3,
-            "test-company2",
-            10,
-            1.234,
-            2.3456,
-            null,
-            null,
-            null,
-            "2023-08-09T14:20:00+09:00"
-        ]
-    ],
-    "elapse": "53.015905ms"
+    "success": true
 }
 ```
 {{< /tab >}}
@@ -1053,17 +1023,17 @@ Query Bridge
 
 ### Delete Subscriber
 
-**DELETE `/web/api/bridges/:name`**
+**DELETE `/web/api/subscribers/:name`**
 
-Delete the bridge of the given name
+Delete the subscriber of the given name
 
 `response`
 
 ```json
 {
-    "success": true,
+    "elapse": "77.1µs",
     "reason": "success",
-    "elapse": "112.8µs"
+    "success": true
 }
 ```
 
