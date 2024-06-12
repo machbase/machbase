@@ -544,20 +544,11 @@ Adding the public key to machbase-neo server makes it possible to execute any `m
 
 ### Delete Ssh Key
 
-**DELETE `/web/api/sshkeys`**
+**DELETE `/web/api/sshkeys/:fingerprint`**
 
-Delete the ssh-key of the given id
+Delete the ssh-key of the given fingerprint   
 
-
-{{< tabs items="Request,Response">}}
-{{< tab >}}
-```json
-{
-    "fingerprint":"f08h89fhf0dkv0v0v9c9x0cx9v9"
-} 
-```
-{{< /tab >}}
-{{< tab >}}
+`response`
 ```json
 {
     "elapse": "198.8µs",
@@ -565,8 +556,6 @@ Delete the ssh-key of the given id
     "success": true
 }
 ```
-{{< /tab >}}
-{{< /tabs >}}
 
 
 
@@ -945,11 +934,14 @@ Return subscriber list
 **POST `/web/api/subscribers`**
 
 Add Subscriber   
-- autostart:   `--autostart` makes the subscriber starts along with machbase-neo starts. Ommit this to start/stop manually.   
-- name: `nats_subr` the name of the subscriber.   
-- bridge: `my_nats` the name of the bridge that the subscriber is going to use.   
-- topic: `iot.sensor` subject name to subscribe. it should be in NATS subject syntax.   
-- task: `db/append/EXAMPLE:csv` writing descriptor, it means the incoming data is in CSV format and writing data into the table EXAMPLE in append mode.   
+- `autostart`:   '--autostart' makes the subscriber starts along with machbase-neo starts. Ommit this to start/stop manually.   
+- `name` 'nats_subr' the name of the subscriber.   
+- `bridge` 'my_nats' the name of the bridge that the subscriber is going to use.   
+- `topic` 'iot.sensor' subject name to subscribe. it should be in NATS subject syntax.   
+- `task` 'db/append/EXAMPLE:csv' writing descriptor, it means the incoming data is in CSV format and writing data into the table EXAMPLE in append mode.   
+- `autostart` makes the subscriber will start automatically when machbase-neo starts. If the subscriber is not autostart mode, you can make it start and stop manually by subscriber start <name> and subscriber stop <name> commands.
+- `qos` <int> if the bridge is MQTT type, it specifies the QoS level of the subscription to the topic. It supports 0, 1 and the default is 0 if it is not specified.
+- `queue` <string> if the bridge is NATS type, it specifies the Queue Group.
 
 nats-bridge manual https://docs.machbase.com/neo/bridges/31.nats/
 
