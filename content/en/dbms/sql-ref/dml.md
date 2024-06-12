@@ -204,19 +204,26 @@ delete from t1 where i1 = 2;
 ![delete_from_tag_where_stmt](../dml_image/delete_from_tag_where_stmt.png)
 
 ```sql
-delete_from_tag_where_stmt ::= 'DELETE FROM' table_name 'WHERE' tag_name '=' value ( and tag_time '<' datetime_expression  )?
+delete_from_tag_where_stmt ::= 'DELETE FROM' table_name 'ROLLUP'? 'WHERE' tag_name '=' value ( and tag_time '<' datetime_expression  )?
 ```
 
-The Tag table additionally supports two types of deletion queries as follows.
+A Tag or Rollup table supports the following two types of DELETE statements.
+
 * Delete by tag name
 * Delete by tag name and tag time
 
 ```sql
 -- Delete by tag name
-DELETE FROM tag where tag_name = 'my_tag_2021'
+DELETE FROM tag WHERE tag_name = 'my_tag_2021'
  
 -- Delete by tag name and tag time
-DELETE FROM tag where tag_name = 'my_tag_2021' and tag_time < TO_DATE('2021-07-01', 'YYYY-MM-DD');
+DELETE FROM tag WHERE tag_name = 'my_tag_2021' AND tag_time < TO_DATE('2021-07-01', 'YYYY-MM-DD');
+
+-- Delete rollup by tag name
+DELETE FROM tag ROLLUP WHERE tag_name = 'my_tag_2021'
+ 
+-- Delete rollup by tag name and tag time
+DELETE FROM tag ROLLUP WHERE tag_name = 'my_tag_2021' AND tag_time < TO_DATE('2021-07-01', 'YYYY-MM-DD');
 ```
 
 * The time it takes for the deleted row to be physically deleted from the storage space after the deletion query is executed may vary depending on the situation of the DBMS.

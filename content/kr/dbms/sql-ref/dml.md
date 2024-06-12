@@ -201,20 +201,26 @@ delete from t1 where i1 = 2;
 ![delete_from_tag_where_stmt](../dml_image/delete_from_tag_where_stmt.png)
 
 ```sql
-delete_from_tag_where_stmt ::= 'DELETE FROM' table_name 'WHERE' tag_name '=' value ( and tag_time '<' datetime_expression  )?
+delete_from_tag_where_stmt ::= 'DELETE FROM' table_name 'ROLLUP'? 'WHERE' tag_name '=' value ( and tag_time '<' datetime_expression  )?
 ```
 
-Tag 테이블은 아래와 같이 2가지 방식의 삭제쿼리가, 추가적으로 지원된다.
+Tag 테이블 및 Rollup 테이블은 아래와 같이 두가지 방식의 삭제 구문이 지원된다.
 
 * Tag name 기준 삭제
 * Tag name과 Tag time 기준 삭제
 
 ```sql
 -- tag name 기준 삭제
-DELETE FROM tag where tag_name = 'my_tag_2021'
+DELETE FROM tag WHERE tag_name = 'my_tag_2021'
  
 -- tag name 와 tag time 기준 삭제
-DELETE FROM tag where tag_name = 'my_tag_2021' and tag_time < TO_DATE('2021-07-01', 'YYYY-MM-DD');
+DELETE FROM tag WHERE tag_name = 'my_tag_2021' AND tag_time < TO_DATE('2021-07-01', 'YYYY-MM-DD');
+
+-- tag name 기준 rollup 삭제
+DELETE FROM tag ROLLUP WHERE tag_name = 'my_tag_2021'
+ 
+-- tag name 와 tag time 기준 rollup 삭제
+DELETE FROM tag ROLLUP WHERE tag_name = 'my_tag_2021' AND tag_time < TO_DATE('2021-07-01', 'YYYY-MM-DD');
 ```
 
 * 삭제 쿼리가 실행된 후에, 삭제된 row가 저장공간에서 물리적으로 삭제되기 까지 걸리는 시간은, DBMS의 동작상황에 따라서 다를 수 있다.
