@@ -59,7 +59,7 @@ udp listener 정보.
 수신된 udp 패킷을 내부 NATS의 설정된 Subject(`Topic`)로 전송한다.
 | 키                   | 타입         | 필수 |    설명             |
 |:---------------------|:------------:|:----:|:--------------------|
-| Name                 | string       | O    | name of UdpServer   |
+| Name                 | string       |      | name of UdpServer   |
 | Listen               | string       | O    | ip:port             |
 | Topic                | string       | O    | NATS subject        |
 | DumpHex              | bool         |      | true로 설정되면 서버 로그에 수신된 패킷 전체를 dump한다. |
