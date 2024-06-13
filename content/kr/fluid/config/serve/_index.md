@@ -36,7 +36,6 @@ tcp listener 정보
 | KeepAlive            | int          |      | keep alive timeout (sec) |
 | AccessPolicy         | string       |      | name of access policy |
 
-
 ### HttpServer
 http listener 정보. `<ip_addr>:<port>` 또는 `<ip_addr>:auto-cert`  
 `:auto-cert`가 설정되었다면, fluid는 `<ip_addr>:443`과 `<ip_addr>:80` 포트를 listen 하고 `Tls/Cert` 와 `Tls/Key` 설정을 무시한다.  
@@ -54,6 +53,16 @@ ex) 0.0.0.0:auto-cert
 | TlsCert              | string       |      | certificate file의 경로 |
 | TlsKey               | string       |      | key file의 경로      |
 | AccessPolicy         | string       |      | name of access policy |
+
+### UdpServer
+udp listener 정보
+수신된 udp 패킷을 내부 NATS의 설정된 Subject(`Topic`)로 전송한다.
+| 키                   | 타입         | 필수 |    설명             |
+|:---------------------|:------------:|:----:|:--------------------|
+| Name                 | string       |      | name of UdpServer   |
+| Listen               | string       | O    | ip:port             |
+| Topic                | string       | O    | NATS subject        |
+| DumpHex              | bool         |      | true로 설정되면 서버 로그에 수신된 패킷 전체를 dump한다. |
 
 ### HttpRouter
 `Host` 항목에는 하단에 설명된 matcher를 사용할 수 있다.
@@ -101,7 +110,6 @@ ex) 0.0.0.0:auto-cert
 | ForceAttemptHTTP2    | int          |      | default false       |
 | WriteBufferSize      | int          |      | if zero, default 4096 |
 | ReadBufferSize       | int          |      | if zero, default 4096 |
-
 
 ### HttpRouter/Route/Static
 
