@@ -12,6 +12,7 @@ Reverse Proxy란 클라이언트와 서버 간의 중개자 역할을 하는 서
 - Static contents 지원
 - Auto Cert(인증서 무중단 자동 갱신) 지원
 - TCP socket reverse proxy 지원
+- UDP Listen 지원
 
 
 ## Command line
@@ -129,4 +130,13 @@ TcpServer:
   Listen: 0.0.0.0:5213
   Destination: [ 192.168.0.113:22 ]
   AccessPolicy: allow-all
+```
+
+### UDP에서 수신된 패킷을 내부 NATS(Subject : udp.in)로 Publish
+```
+UdpServer:
+- Name: udp_514
+  Listen: 0.0.0.0:514
+  Topic: udp.in
+  DumpHex: true
 ```
