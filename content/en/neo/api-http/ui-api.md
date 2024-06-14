@@ -917,11 +917,13 @@ Return subscriber list
         {
             "name": "NATS_SUBR",
             "type": "SUBSCRIBER",
-            "autoStart": true,
+            "autoStart": true, // omitempty
             "state": "RUNNING",
             "task": "db/append/EXAMPLE:csv",
             "bridge": "my_nats",
-            "topic": "iot.sensor"
+            "topic": "iot.sensor",
+            "queue":"", // omitempty
+            "QoS":""    // omitempty
         }
     ],
     "elapse": "253.4µs",
@@ -940,7 +942,7 @@ Add Subscriber
 - `topic` 'iot.sensor' subject name to subscribe. it should be in NATS subject syntax.   
 - `task` 'db/append/EXAMPLE:csv' writing descriptor, it means the incoming data is in CSV format and writing data into the table EXAMPLE in append mode.   
 - `autostart` makes the subscriber will start automatically when machbase-neo starts. If the subscriber is not autostart mode, you can make it start and stop manually by subscriber start <name> and subscriber stop <name> commands.
-- `qos` <int> if the bridge is MQTT type, it specifies the QoS level of the subscription to the topic. It supports 0, 1 and the default is 0 if it is not specified.
+- `QoS` <int> if the bridge is MQTT type, it specifies the QoS level of the subscription to the topic. It supports 0, 1 and the default is 0 if it is not specified.
 - `queue` <string> if the bridge is NATS type, it specifies the Queue Group.
 
 nats-bridge manual https://docs.machbase.com/neo/bridges/31.nats/
@@ -954,8 +956,8 @@ nats-bridge manual https://docs.machbase.com/neo/bridges/31.nats/
     "bridge":"my_nats",
     "topic":"iot.sensor",
     "task":"db/append/EXAMPLE:csv",
-    "qos": "",  // option
-    "queue": "" // option
+    "QoS": "",  // mqtt bridge option 0 or 1 ( default 0 )
+    "queue": "" // nats birdge option
 }
 ```
 {{< /tab >}}
