@@ -953,7 +953,9 @@ nats-bridge manual https://docs.machbase.com/neo/bridges/31.nats/
     "autoStart":true,
     "bridge":"my_nats",
     "topic":"iot.sensor",
-    "task":"db/append/EXAMPLE:csv"
+    "task":"db/append/EXAMPLE:csv",
+    "qos": "",  // option
+    "queue": "" // option
 }
 ```
 {{< /tab >}}
