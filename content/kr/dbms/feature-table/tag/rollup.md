@@ -228,10 +228,6 @@ SELECT ROLLUP('MIN', 30, time, '1970-01-01'), MIN(value), MAX(value), AVG(value)
 
 위와 같이 BASETIME 속성으로 지정된 Datetime 형 컬럼 뒤에 ROLLUP 절을 붙여 지정하면 롤업 테이블 조회가 된다.
 
-```
-[BASETIME_COLUMN] ROLLUP [PERIOD] [TIME_UNIT]
-```
-
 TIME_UNIT 의 선택에 따라, 조회되는 롤업 테이블이 달라진다.
 
 |시간 단위(축약어)| 조회 대상 롤업 테이블|
