@@ -203,12 +203,8 @@ USER_NAME             DB_NAME                                             TABLE_
 
 ## Syntax
 
-```
-rollup_expr := ROLLUP(time_unit, period, basetime_column [, origin])
-```
-
 ```sql
-SELECT ROLLUP('SEC', 1, TIME, '1970-01-01'), AVG(VALUE) FROM TAG WHERE ...;
+rollup_expr := ROLLUP(time_unit, period, basetime_column [, origin])
 
 --ex)
 SELECT ROLLUP('MIN', 30, time, '1970-01-01'), MIN(value), MAX(value), AVG(value) FROM tag ..
