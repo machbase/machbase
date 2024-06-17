@@ -202,21 +202,29 @@ USER_NAME             DB_NAME                                             TABLE_
 ## 조회 문법
 
 
-```sql
-SELECT ROLLUP('SEC', 1, TIME, '1970-01-01'), AVG(VALUE) FROM TAG WHERE ...;
+```
+rollup_expr := ROLLUP(time_unit, period, basetime_column [, origin])
+
+-- ex)
+SELECT ROLLUP('MIN', 30, time, '1970-01-01'), MIN(value), MAX(value), AVG(value) FROM tag ..
 ```
 
 위와 같이 ROLLUP 키워드를 사용할 경우, 해당하는 롤업 테이블에서 데이터를 가져온다.
 
-```
-ROLLUP(time_unit, period, basetime_column [, origin])
-```
+* time_unit: `DATE_BIN` 함수에서 사용 가능한 시간단위
+* period: `DATE_BIN` 함수에서 사용 가능한 시간단위
+* basetime_column: `BASETIME` 속성으로 지정된 태그 테이블의 DATETIME 형 컬럼
+* origin: ROLLUP 시간 구간을 나눌 기준 시간, 지정하지 않을 경우 기본값 `1970-01-01 00:00:00` 으로 지정된다.
 
-### Deprecated (7.5 version 이하에서 지원)
 
-```sql
-SELECT TIME ROLLUP 3 SECOND, AVG(VALUE) FROM TAG WHERE ...;
-```
+> **Deprecated (7.5 version 이하에서 지원)**<br>
+> 7.5 이하 버전에서는 다음과 같은 ROLLUP expression 을 사용한다.
+> ```sql
+> rollup_expr := basetime_column ROLLUP n time_unit
+>
+> -- ex)
+> SELECT time ROLLUP 30 MIN, MIN(value), MAX(value), AVG(VALUE) FROM tag ..
+> ```
 
 위와 같이 BASETIME 속성으로 지정된 Datetime 형 컬럼 뒤에 ROLLUP 절을 붙여 지정하면 롤업 테이블 조회가 된다.
 
@@ -224,26 +232,20 @@ SELECT TIME ROLLUP 3 SECOND, AVG(VALUE) FROM TAG WHERE ...;
 [BASETIME_COLUMN] ROLLUP [PERIOD] [TIME_UNIT]
 ```
 
-* BASETIME_COLUMN : BASETIME 속성으로 지정된 TAG 테이블의 Datetime 형 컬럼
-* PERIOD : DATE_BIN() 함수에서 사용 가능한 시간 단위별 범위를 지정할 수 있다. (아래 참고)
-* TIME_UNIT : DATE_BIN() 함수에서 사용 가능한 모든 시간 단위를 사용할 수 있다. (아래 참고)
-* ORIGIN : ROLLUP 시간 구간을 나눌 기준 시간을 의미한다.
-  * 지정 안 하면 기존 문법과 같이 `1970-01-01 00:00:00` 으로 지정된다.
-
 TIME_UNIT 의 선택에 따라, 조회되는 롤업 테이블이 달라진다.
 
-|시간 단위(축약어)|시간 범위| 조회 대상 롤업 테이블|
-|--|--|--|
-|nanosecond (nsec)|1000000000 (1초)|SECOND|
-|microsecond (usec)|60000000 (60초)|SECOND|
-|milisecond (msec)|60000 (60초)|SECOND|
-|second (sec)|86400 (1일)|SECOND|
-|minute (min)|1440 (1일)|MINUTE|
-|hour|24 (1일)|HOUR|
-|day|1|HOUR|
-|week|1 (7 DAYS)|HOUR|
-|month|1|HOUR|
-|year|1|HOUR|
+|시간 단위(축약어)| 조회 대상 롤업 테이블|
+|--|--|
+|nanosecond (nsec)|SECOND|
+|microsecond (usec)|SECOND|
+|milisecond (msec)|SECOND|
+|second (sec)|SECOND|
+|minute (min)|MINUTE|
+|hour|HOUR|
+|day|HOUR|
+|week|HOUR|
+|month|HOUR|
+|year|HOUR|
 
 ROLLUP 절을 사용하는 것은 롤업 테이블 조회를 직접 하는 것이기 때문에, 집계 함수를 사용하려면 다음의 특징이 있다.
 
@@ -267,8 +269,6 @@ GROUP BY time rollup 3 sec mtime;
 SELECT   time rollup 3 sec mtime, avg(value)
 FROM     TAG
 GROUP BY mtime;
-
-
 ```
 
 ## 데이터 샘플
@@ -496,6 +496,65 @@ mtime                           sum(value)                  count(value)
 2018-01-01 03:01:00 000:000:000 7                           2
 2018-01-01 03:02:00 000:000:000 11                          2
 ```
+
+## 1 Day 이상의 Rollup
+
+### Day Rollup
+
+```sql
+Mach> SELECT ROLLUP('day', 10, time, '2023-01-01') AS mtime, COUNT(value) FROM tag WHERE time BETWEEN TO_DATE('2023-05-01') AND TO_DATE('2023-05-31') GROUP BY mtime ORDER BY mtime;
+mtime                           COUNT(value)         
+--------------------------------------------------------
+2023-05-01 00:00:00 000:000:000 10                   
+2023-05-11 00:00:00 000:000:000 10                   
+2023-05-21 00:00:00 000:000:000 10                   
+2023-05-31 00:00:00 000:000:000 1                    
+[4] row(s) selected.
+```
+
+### Week Rollup
+
+origin 을 지정하지 않을 경우 (목요일-수요일) 범위로 집계된다. (일요일-토요일) 범위로 집계를 원할 경우 origin 에 일요일에 해당하는 datetime 을 지정해야 한다.
+
+```sql
+Mach> SELECT ROLLUP('week', 2, time, '2024-05-05') AS mtime, COUNT(value) FROM tag WHERE time BETWEEN TO_DATE('2024-05-01') AND TO_DATE('2024-05-31') GROUP BY mtime ORDER BY mtime;
+mtime                           COUNT(value)         
+--------------------------------------------------------
+2024-04-21 00:00:00 000:000:000 4                    
+2024-05-05 00:00:00 000:000:000 14                   
+2024-05-19 00:00:00 000:000:000 13    
+```
+
+### Month Rollup
+
+origin 은 항상 달의 시작일(1일)로 지정해야 한다.
+
+```
+Mach> SELECT ROLLUP('month', 2, time) AS mtime, COUNT(value) FROM tag WHERE time BETWEEN to_date('2024-05-01') AND to_date('2024-07-31') GROUP BY mtime ORDER BY mtime;
+mtime                           COUNT(value)         
+--------------------------------------------------------
+2024-05-01 00:00:00 000:000:000 61                   
+2024-07-01 00:00:00 000:000:000 31                   
+[2] row(s) selected.
+
+Mach> SELECT ROLLUP('month', 1, time, '2024-05-05') AS mtime, COUNT(value) FROM tag WHERE time BETWEEN to_date('2024-05-01') AND to_date('2024-07-31') GROUP BY mtime ORDER BY mtime;
+mtime                           COUNT(value)         
+--------------------------------------------------------
+[ERR-02356: Origin must be the first day of the month.]
+```
+
+### Year Rollup
+
+```
+Mach> SELECT ROLLUP('year', 1, time, '2022-01-01') AS mtime, COUNT(value) FROM tag WHERE time BETWEEN TO_DATE('2022-01-01') AND TO_DATE('2023-12-31') GROUP BY mtime ORDER BY mtime;
+mtime                           COUNT(value)         
+--------------------------------------------------------
+2022-01-01 00:00:00 000:000:000 365                  
+2023-01-01 00:00:00 000:000:000 365                  
+[2] row(s) selected.
+
+```
+
 
 ## JSON 타입 대상의 ROLLUP 활용
 
