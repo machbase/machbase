@@ -577,7 +577,7 @@ Return timer info list
         {
             "name": "ELEVEN",
             "type": "TIMER",
-            "state": "STOP",
+            "state": "STOP", // RUNNING, STARTING, STOP, STOPPING, FAILED, UNKNWON
             "task": "timer.tql",
             "schedule": "0 30 * * * *"
         }
@@ -917,8 +917,8 @@ Return subscriber list
         {
             "name": "NATS_SUBR",
             "type": "SUBSCRIBER",
-            "autoStart": true, // omitempty
-            "state": "RUNNING",
+            "autoStart": true,  // omitempty
+            "state": "RUNNING", //  RUNNING, STARTING, STOP, STOPPING, FAILED, UNKNWON
             "task": "db/append/EXAMPLE:csv",
             "bridge": "my_nats",
             "topic": "iot.sensor",
