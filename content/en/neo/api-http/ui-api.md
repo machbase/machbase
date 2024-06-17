@@ -561,11 +561,13 @@ Delete the ssh-key of the given fingerprint
 
 ## Timer
 
-### List Timer
+### Get Timer
 
-**GET `/web/api/timers`**
+**GET `/web/api/timers/:name`**
 
-Return timer info list
+Return timer info
+
+- state: `RUNNING`, `STARTING`, `STOP`, `STOPPING`,`FAILED`, `UNKNWON`
 
 `response`
 
@@ -577,9 +579,42 @@ Return timer info list
         {
             "name": "ELEVEN",
             "type": "TIMER",
-            "state": "STOP", // RUNNING, STARTING, STOP, STOPPING, FAILED, UNKNWON
+            "state": "STOP", 
             "task": "timer.tql",
             "schedule": "0 30 * * * *"
+        }
+    ],
+    "elapse": "92.1µs"
+}
+```
+
+### List Timer
+
+**GET `/web/api/timers`**
+
+Return timer info list
+- state: `RUNNING`, `STARTING`, `STOP`, `STOPPING`,`FAILED`, `UNKNWON`
+
+`response`
+
+```json
+{
+    "success": true,
+    "reason": "success",
+    "data": [
+        {
+            "name": "ELEVEN",
+            "type": "TIMER",
+            "state": "STOP",
+            "task": "timer.tql",
+            "schedule": "0 30 * * * *"
+        },
+        {
+            "name": "TWELVE",
+            "type": "TIMER",
+            "state": "RUNNING",
+            "task": "timer2.tql",
+            "schedule": "1 30 * * * *"
         }
     ],
     "elapse": "92.1µs"
@@ -903,11 +938,13 @@ Delete the bridge of the given name
 
 ## Subscriber
 
-### List Subscriber
+### Get Subscriber
 
-**GET `/web/api/subscribers`**
+**GET `/web/api/subscribers/:name`**
 
-Return subscriber list
+Return subscriber info
+- state: `RUNNING`, `STARTING`, `STOP`, `STOPPING`,`FAILED`, `UNKNWON`
+- `autoStart`, `queue`, `Qos` field is omitempty
 
 `response`
 
@@ -918,10 +955,52 @@ Return subscriber list
             "name": "NATS_SUBR",
             "type": "SUBSCRIBER",
             "autoStart": true,  // omitempty
-            "state": "RUNNING", //  RUNNING, STARTING, STOP, STOPPING, FAILED, UNKNWON
+            "state": "RUNNING", 
             "task": "db/append/EXAMPLE:csv",
             "bridge": "my_nats",
             "topic": "iot.sensor",
+            "queue":"", // omitempty
+            "QoS":""    // omitempty
+        }
+    ],
+    "elapse": "253.4µs",
+    "reason": "success",
+    "success": true
+}
+```
+
+### List Subscriber
+
+**GET `/web/api/subscribers`**
+
+Return subscriber info list
+- state: `RUNNING`, `STARTING`, `STOP`, `STOPPING`,`FAILED`, `UNKNWON`
+- `autoStart`, `queue`, `Qos` field is omitempty
+
+`response`
+
+```json
+{
+    "data": [
+        {
+            "name": "NATS_SUBR",
+            "type": "SUBSCRIBER",
+            "autoStart": true,  // omitempty
+            "state": "RUNNING",
+            "task": "db/append/EXAMPLE:csv",
+            "bridge": "my_nats",
+            "topic": "iot.sensor",
+            "queue":"", // omitempty
+            "QoS":""    // omitempty
+        },
+        {
+            "name": "NATS_SUBR2",
+            "type": "SUBSCRIBER",
+            "autoStart": true,  // omitempty
+            "state": "STARTING",
+            "task": "db/insert/EXAMPLE2:csv",
+            "bridge": "my_nats2",
+            "topic": "iot.sensor2",
             "queue":"", // omitempty
             "QoS":""    // omitempty
         }
