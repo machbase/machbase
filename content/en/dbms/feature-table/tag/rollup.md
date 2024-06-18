@@ -204,47 +204,44 @@ USER_NAME             DB_NAME                                             TABLE_
 ## Syntax
 
 ```sql
-SELECT ROLLUP('SEC', 1, TIME, '1970-01-01'), AVG(VALUE) FROM TAG WHERE ...;
+rollup_expr := ROLLUP(time_unit, period, basetime_column [, origin])
+
+--ex)
+SELECT ROLLUP('MIN', 30, time, '1970-01-01'), MIN(value), MAX(value), AVG(value) FROM tag ..
 ```
 
 If you use the ROLLUP keyword as above, the records are fetched from an appropriate rollup table.
 
-```
-ROLLUP(time_unit, period, basetime_column [, origin])
-```
+* time_unit: Any time unit available in the DATE_BIN() function can be used. (see below)
+* period: DATE_BIN() can specify a range for each unit of time available. (see below)
+* basetime_column: Datetime column of the TAG table specified by the BASETIME attribute
+* origin: The origin time to bin the ROLLUP time interval. If not specified, it is set to '1970-01-01' by default.
 
-### Deprecated (supported in 7.5 version and below)
-
-```sql
-SELECT TIME ROLLUP 3 SECOND, AVG(VALUE) FROM TAG WHERE ...;
-```
+>**Deprecated** (7.5 version and lower)<br>
+>In versions 7.5 and lower, use the following ROLLUP expression.
+>```sql
+>rollup_expr := basetime_column ROLLUP n time_unit
+>
+>-- ex)
+>SELECT time ROLLUP 30 MIN, MIN(value), MAX(value), AVG(value) FROM tag ..
+>```
 
 As above, if the ROLLUP clause is appended after the Datetime type column specified as the BASETIME attribute, the rollup table is selected.
 
-```sql
-[BASETIME_COLUMN] ROLLUP [PERIOD] [TIME_UNIT]
-```
-
-* BASETIME_COLUMN : Datetime column of the TAG table specified by the BASETIME attribute
-* PERIOD : DATE_BIN() can specify a range for each unit of time available. (see below)
-* TIME_UNIT : Any time unit available in the DATE_BIN() function can be used. (see below)
-* ORIGIN : It means the origin time to divide the ROLLUP time interval.
-  * If not specified, it will be designated as `1970-01-01 00:00:00` as in the existing grammar.
-
 Depending on the selection of TIME_UNIT, the searched rollup table is different.
 
-|unit of time(Abbreviation)|range of time|rollup table|
-|--|--|--|
-|nanosecond (nsec)|1000000000 (1 sec)|SECOND|
-|microsecond (usec)|60000000 (60 sec)|SECOND|
-|milisecond (msec)|60000 (60 sec)|SECOND|
-|second (sec)|86400 (1 day)|SECOND|
-|minute (min)|1440 (1 day)|MINUTE|
-|hour|24 (1 day)|HOUR|
-|day|1|HOUR|
-|week|1 (7 DAYS)|HOUR|
-|month|1|HOUR|
-|year|1|HOUR|
+|unit of time(Abbreviation)|rollup table|
+|--|--|
+|nanosecond (nsec)|SECOND|
+|microsecond (usec)|SECOND|
+|milisecond (msec)|SECOND|
+|second (sec)|SECOND|
+|minute (min)|MINUTE|
+|hour|HOUR|
+|day|HOUR|
+|week|HOUR|
+|month|HOUR|
+|year|HOUR|
 
 Since using the ROLLUP clause directly performs a rollup table lookup, to use an aggregate function, it has the following characteristics.
 
@@ -500,6 +497,53 @@ mtime                           sum(value)                  count(value)
 2018-01-01 03:00:00 000:000:000 3                           2
 2018-01-01 03:01:00 000:000:000 7                           2
 2018-01-01 03:02:00 000:000:000 11                          2
+```
+
+## Rollup of more than 1 day
+
+### Day Rollup
+
+```sql
+Mach> SELECT ROLLUP('day', 10, time, '2023-01-01') AS mtime, COUNT(value) FROM tag WHERE time BETWEEN TO_DATE('2023-05-01') AND TO_DATE('2023-05-31') GROUP BY mtime ORDER BY mtime;
+mtime                           COUNT(value)         
+--------------------------------------------------------
+2023-05-01 00:00:00 000:000:000 10                   
+2023-05-11 00:00:00 000:000:000 10                   
+2023-05-21 00:00:00 000:000:000 10                   
+2023-05-31 00:00:00 000:000:000 1                    
+[4] row(s) selected.
+```
+
+### Week Rollup
+
+If origin is not specified, it is counted in the range (Thursday-Wednesday). If you want to aggregate in the range (Sunday-Saturday), you must specify the datetime corresponding to Sunday in origin.
+
+### Month Rollup
+
+origin should always be specified as the first day of the month (1st day).
+
+```
+Mach> SELECT ROLLUP('month', 2, time) AS mtime, COUNT(value) FROM tag WHERE time BETWEEN to_date('2024-05-01') AND to_date('2024-07-31') GROUP BY mtime ORDER BY mtime;
+mtime                           COUNT(value)         
+--------------------------------------------------------
+2024-05-01 00:00:00 000:000:000 61                   
+2024-07-01 00:00:00 000:000:000 31                   
+[2] row(s) selected.
+Mach> SELECT ROLLUP('month', 1, time, '2024-05-05') AS mtime, COUNT(value) FROM tag WHERE time BETWEEN to_date('2024-05-01') AND to_date('2024-07-31') GROUP BY mtime ORDER BY mtime;
+mtime                           COUNT(value)         
+--------------------------------------------------------
+[ERR-02356: Origin must be the first day of the month.]
+```
+
+### Year Rollup
+
+```
+Mach> SELECT ROLLUP('year', 1, time, '2022-01-01') AS mtime, COUNT(value) FROM tag WHERE time BETWEEN TO_DATE('2022-01-01') AND TO_DATE('2023-12-31') GROUP BY mtime ORDER BY mtime;
+mtime                           COUNT(value)         
+--------------------------------------------------------
+2022-01-01 00:00:00 000:000:000 365                  
+2023-01-01 00:00:00 000:000:000 365                  
+[2] row(s) selected.
 ```
 
 ## Using ROLLUP for JSON type
