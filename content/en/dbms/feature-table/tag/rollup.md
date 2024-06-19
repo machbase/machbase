@@ -14,7 +14,7 @@ When user create tag table, Rollup does not created default, user must create by
 * source table name : Name of source table which rollup will aggregate data.
 * src_table_column : rollup target data column name
     * Only numeric type columns are allowed
-    * If the source table is a rollup table, it is ommited and automatically designated as the rollup target column of the source table
+    * If the source table is a rollup table, it is omitted and automatically designated as the rollup target column of the source table
 * number sec/min/hour : time and time unit for aggregate <br>
    ex) 1 sec aggregate : 1 sec <br>
    ex) 30 seconds aggregate : 30 sec <br>

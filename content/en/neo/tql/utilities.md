@@ -510,7 +510,7 @@ Returns rounded time.
 
 - `time` *string* time expression
 - `format` *string* time format expression
-- `timezone` *tz* timezone, use `tz()` to get the demand location, if ommited default is `tz("UTC")`.
+- `timezone` *tz* timezone, use `tz()` to get the demand location, if omitted default is `tz("UTC")`.
 
 *Example)*
 
