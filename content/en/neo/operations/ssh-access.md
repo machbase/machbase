@@ -4,8 +4,11 @@ type: docs
 weight: 13
 ---
 
-machbase-neo supports ssh interface for the remote operation and administration.
-Users can access the sql interpreter via ssh command like below.
+SSH (Secure Shell) is a protocol used to securely log onto remote systems.
+It can use a password for authentication, but it also supports a more secure method called public key authentication.
+
+machbase-neo provides an SSH interface for remote operation and administration.
+Users can access the SQL interpreter by using the SSH command as shown below.
 
 ## SSH from remote hosts
 
@@ -35,23 +38,49 @@ machbase-neoÂ» select * from example;
 
 ## SSH without password
 
+1. **Generate a key pair**: The first step is to generate a new key pair on the local machine (the machine you will log in from). 
+   This is done using the `ssh-keygen` command.
+
+    > You can skep this step, if you have already a key pair.
+
+
+    ```bash
+    ssh-keygen -t rsa
+    ```
+
+    This command will create two files in the .ssh directory in your home directory: `id_rsa` (private key) and `id_rsa.pub` (public key).
+
+2. **Copy the public key to the remote machine**: The next step is to copy the public key to the remote machine.
+
+    To register the public key into the machbase server, follow the steps below.
+
+3. **Log in with the key pair**: Now you can log in to the machbase server using your key pair.
+The SSH client will automatically use your private key to decrypt a challenge sent by the server, proving your identity.
+
+    ```bash
+    ssh -p 5652 sys@127.0.0.1
+    ```
+
+    If everything is set up correctly, you should be logged in to the machbase-neo without being asked for a password.
+
 ### Register ssh key from Web UI
 
 1. Select "SSH Keys" menu from the left bottom menu. {{< neo_since ver="8.0.20" />}}
 
 {{< figure src="../img/ssh_keys.jpg" width="207px" >}}
 
-2. Click "New SSH Key" button. Paste your public key and write any title. The press "Add SSH Key"
+2. To add a new SSH key, click on the "New SSH Key" button. Paste your public key in the designated field and provide a title.
+   Finally, click on the "Add SSH Key" button to complete the process.
 
 {{< figure src="../img/ssh_keys2.jpg" width="630px" >}}
 
-3. Your SSH key has been registered in the list.
+3. Your SSH key has been registered shows on the list.
 
 {{< figure src="../img/ssh_keys3.jpg" width="630px" >}}
 
-
 ### Register ssh key from shell command
-Adding the public key to machbase-neo server makes it possible to execute any `machbase-neo shell` command without prompt and entering password.
+
+Adding the public key to the machbase-neo server enables the execution of any `machbase-neo shell` command without the need for a prompt or password entry.
 
 1. Add your public key to server
 
@@ -110,3 +139,10 @@ $ ssh -p 5652 sys@127.0.0.1 'select * from example order by time desc limit 5'â†
  4       wave.cos  2023-02-09 11:46:45  1.000000  
  5       wave.cos  2023-02-09 11:46:44  0.913431  
 ```
+
+## Security Considerations
+
+While public key authentication is more secure than password authentication,
+it is important to keep your private key safe. Anyone who gains access to 
+your private key can log in to any system that has your public key.
+
