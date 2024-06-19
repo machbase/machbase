@@ -6,6 +6,18 @@ weight: 11
 
 Change default password for the security before allowing remote access.
 
+### Web UI
+
+1. Select "Change password" menu from the left bottom menu. {{< neo_since ver="8.0.20" />}}
+
+{{< figure src="../img/change_passwd_ui.jpg" width="203px" >}}
+
+2. Enter the new password and re-type for confirmation on the dialog.
+
+{{< figure src="../img/change_passwd_ui2.jpg" width="342px" >}}
+
+### SQL
+
 {{< figure src="../img/change_passwd.jpg" width="800px" >}}
 
 ```sql
