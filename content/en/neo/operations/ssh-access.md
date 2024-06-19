@@ -7,7 +7,7 @@ weight: 13
 machbase-neo supports ssh interface for the remote operation and administration.
 Users can access the sql interpreter via ssh command like below.
 
-## Connect from a remote host
+## SSH from remote hosts
 
 - User: SYS
 - Default password: manager
@@ -33,17 +33,33 @@ machbase-neo» select * from example;
 └─────────┴──────────┴─────────────────────────┴───────────┘
 ```
 
-## Use public key authentication with SSH
+## SSH without password
 
+### Register ssh key from Web UI
+
+1. Select "SSH Keys" menu from the left bottom menu. {{< neo_since ver="8.0.20" />}}
+
+{{< figure src="../img/ssh_keys.jpg" width="207px" >}}
+
+2. Click "New SSH Key" button. Paste your public key and write any title. The press "Add SSH Key"
+
+{{< figure src="../img/ssh_keys2.jpg" width="630px" >}}
+
+3. Your SSH key has been registered in the list.
+
+{{< figure src="../img/ssh_keys3.jpg" width="630px" >}}
+
+
+### Register ssh key from shell command
 Adding the public key to machbase-neo server makes it possible to execute any `machbase-neo shell` command without prompt and entering password.
 
-### Add your public key to server
+1. Add your public key to server
 
 ```sh
 machbase-neo shell ssh-key add `cat ~/.ssh/id_rsa.pub`
 ```
 
-### Get list of registered public keys
+2. Get list of registered public keys
 
 ```sh
 machbase-neo shell ssh-key list
@@ -63,10 +79,20 @@ machbase-neo» ssh-key list
 └────────┴────────────────────────────┴─────────────────────┴──────────────────────────────────┘
 ```
 
-### Remove registered public key
+3. Remove registered public key
 
 ```sh
 machbase-neo» ssh-key del <fingerprint>
+```
+
+## Connect without password
+
+```sh
+$ ssh -p 5652 sys@127.0.0.1 ↵
+
+Greetings, SYS
+machbase-neo v8.0.20-snapshot (8f10fa95 2024-06-19T16:32:09) standard
+sys machbase-neo»
 ```
 
 ## Execute commands via SSH
