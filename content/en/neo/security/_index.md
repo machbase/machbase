@@ -4,47 +4,22 @@ type: docs
 weight: 300
 ---
 
-## Token based authentication
+## Generates Key & Token
 
-HTTP and MQTT API of machbase-neo supports the token based authentication.
+### Web UI
 
-### Server enables token based authentication
-#### Enabling token based authentication for HTTP API
+1. Select the <img src="./img/key_icon.jpg" width=47 style="display:inline"> menu icon from the left most side.
 
-Enable it by specifying `--http-enable-token-auth true` command line option or set `EnableTokenAuth = true` in the config file. When you launching server with the option, all HTTP API invocations requires `Authorization` header with pre-registered token.
+2. And Click `+` icon <img src="./img/key_add_icon.jpg" width=221 style="display:inline"> from the top left pane.
 
-```
-machbase-neo serve --http-enable-token-auth true
-```
+3. Set "Client Id" for unique name and set the valid period (default is 3 years from tody).
+Then click "Generate" to generates key files for the client.
 
-The starting log shows HTTP token authentication is enabled.
+{{< figure src="./img/key_gen.jpg" width=927px >}}
 
-```
-......
-2023/02/20 20:14:29.878 INFO  neo neosvr           HTTP token authentication enabled
-2023/02/20 20:14:29.878 INFO  neo neosvr           HTTP Listen tcp://127.0.0.1:5654
-......
-```
+4. Click "Download *.zip" button or copy & paste each file's content. This is not re-generatable and only chance to make a copy.
 
-#### Enabling token based authentication for MQTT API
-
-Enable it by specifying `--mqtt-enable-token-auth true` command line option or set `EnableTokenAuth = true` in the config file. When you launching server with this option, MQTT CONNECT message requires `client-id`, `username` with pre-registered id and token.
-
-```
-machbase-neo serve --mqtt-enable-token-auth true
-```
-
-The starting log shows MQTT token authentication is enabled.
-
-```
-......
-2023/02/21 13:43:11.178 INFO  neosvr           MQTT token authentication enabled
-2023/02/21 13:43:11.180 INFO  mqtt-tcp         MQTT Listen tcp://127.0.0.1:5653
-......
-```
-
-
-### Generates & Manage Tokens
+### Shell Command
 
 The subcommand `machbase-neo shell key` manages client keys and tokens.
 
@@ -115,6 +90,34 @@ $ cat ./myapp01_token
 myapp01:b:d59310703c1ebf627f8b781fb50437326ec65b067257ebc72f07b12846761d17   
 ```
 
+**Server Certificate**
+
+To retrieve server's certificate, execute command `machbase-neo key server-key --output <path>`, it export server's certificate into the file that specified the path.
+
+```
+machbase-neo shell key server-cert --output ./machbase-neo.crt
+```
+
+## HTTP Token based authentication
+
+HTTP API of machbase-neo supports the token based authentication.
+
+Enable it by specifying `--http-enable-token-auth true` command line option or set `EnableTokenAuth = true` in the config file.
+When you launching server with the option, all HTTP API invocations requires `Authorization` header with pre-registered token.
+
+```
+machbase-neo serve --http-enable-token-auth true
+```
+
+The starting log shows HTTP token authentication is enabled.
+
+```
+......
+2023/02/20 20:14:29.878 INFO  neo neosvr           HTTP token authentication enabled
+2023/02/20 20:14:29.878 INFO  neo neosvr           HTTP Listen tcp://127.0.0.1:5654
+......
+```
+
 ### HTTP Client using token
 
 Let's use the token for API authentication. Set `Authorization` bearer header with the content of token file.
@@ -155,6 +158,27 @@ If client provides an invalid token, the server responses `HTTP/1.1 401 Unauthor
 {"success":false,"reason":"invalid token"}
 ```
 
+
+## MQTT Token based authentication
+
+MQTT API of machbase-neo supports the token based authentication.
+
+Enable it by specifying `--mqtt-enable-token-auth true` command line option or set `EnableTokenAuth = true` in the config file.
+When you launching server with this option, MQTT CONNECT message requires `client-id`, `username` with pre-registered id and token.
+
+```
+machbase-neo serve --mqtt-enable-token-auth true
+```
+
+The starting log shows MQTT token authentication is enabled.
+
+```
+......
+2023/02/21 13:43:11.178 INFO  neosvr           MQTT token authentication enabled
+2023/02/21 13:43:11.180 INFO  mqtt-tcp         MQTT Listen tcp://127.0.0.1:5653
+......
+```
+
 ### MQTT client using token
 
 Apply registered client-id on `client-id` and set token in `username` of CONNECT message.
@@ -178,9 +202,7 @@ Connection error: Connection Refused: not authorized.
 Error: The connection was refused.
 ```
 
-## X.509 authentication
-
-### Enabling TLS and X.509 authentication for MQTT API
+## MQTT X.509 authentication
 
 When machbase-neo starts with `--mqtt-enable-tls true` command line option or set `Tls.Enabled = true` in the configurationfile,
 machbase-neo accepts TLS (a.k.a SSL) connections from clients. 
@@ -192,6 +214,7 @@ When TLS option is applied, machbase-neo mqtt server ignores `username` and `pas
 Do not specify those values. But still need to set `client-id` for the clarity.
 {{< /callout >}}
 
+### MQTT client using X.509
 
 A client should use the pre-registered client-id and key and certificate those were generated as the above section.
 Apply client-id for the `client-id` of CONNECT message and do not set the `username` and `password`.
@@ -212,8 +235,3 @@ mosquitto_pub -h 127.0.0.1 -p 5653 \
 - `--cafile` set server's certificate since the client's certificate is singed by server. see below to know how to get this file.
 - `--insecure` additionally required because server's certificate is self-signed one.
 
-To retrieve server's certificate, execute command `machbase-neo key server-key --output <path>`, it export server's certificate into the file that specified the path.
-
-```
-machbase-neo shell key server-cert --output ./machbase-neo.crt
-```
