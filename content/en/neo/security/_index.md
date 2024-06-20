@@ -98,7 +98,7 @@ To retrieve server's certificate, execute command `machbase-neo key server-key -
 machbase-neo shell key server-cert --output ./machbase-neo.crt
 ```
 
-## HTTP Token based authentication
+## HTTP Token authentication
 
 HTTP API of machbase-neo supports the token based authentication.
 
@@ -159,7 +159,7 @@ If client provides an invalid token, the server responses `HTTP/1.1 401 Unauthor
 ```
 
 
-## MQTT Token based authentication
+## MQTT Token authentication
 
 MQTT API of machbase-neo supports the token based authentication.
 
