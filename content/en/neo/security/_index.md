@@ -12,7 +12,7 @@ weight: 300
 
 2. And Click `+` icon <img src="./img/key_add_icon.jpg" width=221 style="display:inline"> from the top left pane.
 
-3. Set "Client Id" for unique name and set the valid period (default is 3 years from tody).
+3. Set "Client Id" for unique name and set the valid period (default is 3 years from today).
 Then click "Generate" to generates key files for the client.
 
 {{< figure src="./img/key_gen.jpg" width=927px >}}
