@@ -10,39 +10,43 @@ Open a *SHELL* on the web ui or run `machbase-neo shell` on the terminal, and us
 
 In this example, we are going to show how to add a user-defined shell that invokes `/bin/bash` (or `/bin/zsh`) for *nix users and `cmd.exe` for Windows users. You may add any programming language's REPL, other database's command line interface and ssh command that connects to your servers for example.
 
-## Add a user-defined shell
+## Add a custom shell
 
-On web ui the "SHELL" menu has a special small icon on its top right corner. Click it and it shows "Make a copy" menu.
+### Register a custom shell
 
-{{< figure src="/images/shell-make-copy.jpg" width="204px" >}}
+1. Select the <img src="../img/shell_icon.jpg" width=47 style="display:inline"> menu icon from the left most size of the web ui.
 
-Then it makes a new copy in name of "CUSTOM SHELL". Any copy of "SHELL" has "Edit..." and "Remove" menu.
+2. And Click `+` icon <img src="../img/shell_add_icon.jpg" width=265 style="display:inline"> from the top left pane.
 
-{{< figure src="/images/shell-custom.jpg" width="204px" >}}
+3. Set a preferred "Display name" and provide the absolute path and flags for the "Command" field.
+For example, to set 'zsh' as the command line on macOS, use the absolute path of your program and click "Save".
 
-Click "Edit..." and make some changes.
+{{< figure src="../img/shell_add_form.jpg" width="684px">}}
 
 - Name: display name. (Any valid text is possible except some reserved words that machbase-neo reserves for the future use)
 - Command: any executable command in full path with arguments
 - Theme : terminal color theme
 
-{{< tabs items="cmd.exe,bash,PostgreSQL" >}}
-{{< tab >}}
-{{< figure src="../img/shell-custom-cmd.jpg" width="400px">}}
-{{< /tab >}}
-{{< tab >}}
-{{< figure src="/images/shell-edit.jpg" width="400px">}}
-{{< /tab >}}
-{{< tab >}}
-{{< figure src="../img/shell-custom-psql.jpg" width="400px">}}
-{{< /tab >}}
-{{< /tabs >}}
+Any terminal program can be the custome "Command", for example...
+- Windows Cmd.exe: `C:\Windows\System32\cmd.exe`
+- Linux bash: `/bin/bash`
+- PostgreSQL Client on macOS: `/opt/homebrew/bin/psql postgres`
 
-### CLI
+### Use the custom shell
+
+- Open the custom shell on the main editor area.
+
+{{< figure src="/images/web-custom-shell.jpeg" width="600px">}}
+
+- Open the custom shell on the console area.
+
+{{< figure src="../img/web-custom-shell-console.jpg" width="700px">}}
+
+## Command line
 
 The custom shells are manageably with machbase-neo shell command line interface.
 
-#### Add new custom shell
+### Add new custom shell
 
 Use `shell add <name> <command and args>`. You can give a any name and any executable command with arguments, but the default shell name `SHELL` is reserved.
 
@@ -61,9 +65,7 @@ machbase-neo» shell add console C:\Windows\System32\cmd.exe;
 added
 ```
 
-{{< figure src="/images/web-custom-shell.jpeg" width="600px">}}
-
-#### Show registered shell list
+### Show registered shell list
 
 ```sh
 machbase-neo» shell list;
@@ -76,7 +78,7 @@ machbase-neo» shell list;
 ```
 
 
-#### Delete a custom shell
+### Delete a custom shell
 
 ```sh
 machbase-neo» shell del 11F4AFFD-2A9B-4FC5-BB20-637;
