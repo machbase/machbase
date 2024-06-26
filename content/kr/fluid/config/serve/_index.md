@@ -14,6 +14,7 @@ weight: 320
 | HttpRouter           | obj array    | O    | http router 정보 목록 |
 | HttpLog              | string       |      | http logger name    |
 | TcpServer            | obj array    |      | tcp listener 정보 목록 |
+| UdpServer            | obj array    |      | udp listener 정보 목록 |
 | Relay                | obj array    |      | relay 정보 목록 |
 | AccessPolicy         | obj array    |      | name of access policy |
 | AutoCert             | obj          |      | auto certification (인증서 무중단 자동 갱신) 정보 |
