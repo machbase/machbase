@@ -488,13 +488,112 @@ Delete the key of the given id
     "elapse": "112.8µs"
 }
 ```
+
+## Ssh Key
+
+### List Ssh Key
+
+**GET `/web/api/sshkeys`**
+
+Return ssh-key info list
+
+`response`
+
+```json
+{
+    "data": [
+        {
+            "keyType": "ssh-rsa",
+            "fingerprint": "f08h89fhf0dkv0v0v9c9x0cx9v9",
+            "comment": "example@machbase.com"
+        }
+    ],
+    "elapse": "67.6µs",
+    "reason": "success",
+    "success": true
+}
+```
+### Generate Ssh Key
+
+**POST `/web/api/sshkeys`**
+
+**Use public key authentication with SSH**   
+
+Adding the public key to machbase-neo server makes it possible to execute any `machbase-neo shell` command without prompt and entering password.
+
+{{< tabs items="Request,Response">}}
+{{< tab >}}
+```json
+{
+    "key": "your publickey"
+}
+```
+{{< /tab >}}
+{{< tab >}}
+```json
+{
+    "elapse": "138.801µs",
+    "reason": "success",
+    "success": true
+}
+```
+{{< /tab >}}
+{{< /tabs >}}
+
+
+
+### Delete Ssh Key
+
+**DELETE `/web/api/sshkeys/:fingerprint`**
+
+Delete the ssh-key of the given fingerprint   
+
+`response`
+```json
+{
+    "elapse": "198.8µs",
+    "reason": "success",
+    "success": true
+}
+```
+
+
+
 ## Timer
+
+### Get Timer
+
+**GET `/web/api/timers/:name`**
+
+Return timer info
+
+- state: `RUNNING`, `STARTING`, `STOP`, `STOPPING`,`FAILED`, `UNKNWON`
+
+`response`
+
+```json
+{
+    "success": true,
+    "reason": "success",
+    "data": [
+        {
+            "name": "ELEVEN",
+            "type": "TIMER",
+            "state": "STOP", 
+            "task": "timer.tql",
+            "schedule": "0 30 * * * *"
+        }
+    ],
+    "elapse": "92.1µs"
+}
+```
 
 ### List Timer
 
 **GET `/web/api/timers`**
 
 Return timer info list
+- state: `RUNNING`, `STARTING`, `STOP`, `STOPPING`,`FAILED`, `UNKNWON`
 
 `response`
 
@@ -509,6 +608,13 @@ Return timer info list
             "state": "STOP",
             "task": "timer.tql",
             "schedule": "0 30 * * * *"
+        },
+        {
+            "name": "TWELVE",
+            "type": "TIMER",
+            "state": "RUNNING",
+            "task": "timer2.tql",
+            "schedule": "1 30 * * * *"
         }
     ],
     "elapse": "92.1µs"
@@ -830,6 +936,187 @@ Delete the bridge of the given name
 }
 ```
 
+## Subscriber
+
+### Get Subscriber
+
+**GET `/web/api/subscribers/:name`**
+
+Return subscriber info
+- state: `RUNNING`, `STARTING`, `STOP`, `STOPPING`,`FAILED`, `UNKNWON`
+- `autoStart`, `queue`, `Qos` field is omitempty
+
+`response`
+
+```json
+{
+    "data": [
+        {
+            "name": "NATS_SUBR",
+            "type": "SUBSCRIBER",
+            "autoStart": true,  // omitempty
+            "state": "RUNNING", 
+            "task": "db/append/EXAMPLE:csv",
+            "bridge": "my_nats",
+            "topic": "iot.sensor",
+            "queue":"", // omitempty
+            "QoS":""    // omitempty
+        }
+    ],
+    "elapse": "253.4µs",
+    "reason": "success",
+    "success": true
+}
+```
+
+### List Subscriber
+
+**GET `/web/api/subscribers`**
+
+Return subscriber info list
+- state: `RUNNING`, `STARTING`, `STOP`, `STOPPING`,`FAILED`, `UNKNWON`
+- `autoStart`, `queue`, `Qos` field is omitempty
+
+`response`
+
+```json
+{
+    "data": [
+        {
+            "name": "NATS_SUBR",
+            "type": "SUBSCRIBER",
+            "autoStart": true,  // omitempty
+            "state": "RUNNING",
+            "task": "db/append/EXAMPLE:csv",
+            "bridge": "my_nats",
+            "topic": "iot.sensor",
+            "queue":"", // omitempty
+            "QoS":""    // omitempty
+        },
+        {
+            "name": "NATS_SUBR2",
+            "type": "SUBSCRIBER",
+            "autoStart": true,  // omitempty
+            "state": "STARTING",
+            "task": "db/insert/EXAMPLE2:csv",
+            "bridge": "my_nats2",
+            "topic": "iot.sensor2",
+            "queue":"", // omitempty
+            "QoS":""    // omitempty
+        }
+    ],
+    "elapse": "253.4µs",
+    "reason": "success",
+    "success": true
+}
+```
+### Add Subscribers
+
+**POST `/web/api/subscribers`**
+
+Add Subscriber   
+- `autostart`:   '--autostart' makes the subscriber starts along with machbase-neo starts. Ommit this to start/stop manually.   
+- `name` 'nats_subr' the name of the subscriber.   
+- `bridge` 'my_nats' the name of the bridge that the subscriber is going to use.   
+- `topic` 'iot.sensor' subject name to subscribe. it should be in NATS subject syntax.   
+- `task` 'db/append/EXAMPLE:csv' writing descriptor, it means the incoming data is in CSV format and writing data into the table EXAMPLE in append mode.   
+- `autostart` makes the subscriber will start automatically when machbase-neo starts. If the subscriber is not autostart mode, you can make it start and stop manually by subscriber start <name> and subscriber stop <name> commands.
+- `QoS` <int> if the bridge is MQTT type, it specifies the QoS level of the subscription to the topic. It supports 0, 1 and the default is 0 if it is not specified.
+- `queue` <string> if the bridge is NATS type, it specifies the Queue Group.
+
+nats-bridge manual https://docs.machbase.com/neo/bridges/31.nats/
+
+{{< tabs items="Request,Response">}}
+{{< tab >}}
+```json
+{
+    "name":"nats_subr",
+    "autoStart":true,
+    "bridge":"my_nats",
+    "topic":"iot.sensor",
+    "task":"db/append/EXAMPLE:csv",
+    "QoS": "",  // mqtt bridge option 0 or 1 ( default 0 )
+    "queue": "" // nats birdge option
+}
+```
+{{< /tab >}}
+{{< tab >}}
+```json
+{
+    "elapse": "260µs",
+    "reason": "success",
+    "success": true
+}
+```
+{{< /tab >}}
+{{< /tabs >}}
+
+### Start Subscriber
+
+**POST `/web/api/subscribers/:name/state`**
+
+- `state` is required
+
+{{< tabs items="Request,Response">}}
+{{< tab >}}
+```json
+{
+    "state":"start",
+}
+```
+{{< /tab >}}
+{{< tab >}}
+```json
+{
+    "elapse": "166.1µs",
+    "reason": "success",
+    "success": true
+}
+```
+{{< /tab >}}
+{{< /tabs >}}
+
+### Stop Subscriber
+
+**POST `/web/api/subscribers/:name/state`**
+
+- `state` is required
+
+{{< tabs items="Request,Response">}}
+{{< tab >}}
+```json
+{
+    "state":"stop",
+}
+```
+{{< /tab >}}
+{{< tab >}}
+```json
+{
+    "elapse": "54.2µs",
+    "reason": "success",
+    "success": true
+}
+```
+{{< /tab >}}
+{{< /tabs >}}
+
+
+### Delete Subscriber
+
+**DELETE `/web/api/subscribers/:name`**
+
+Delete the subscriber of the given name
+
+`response`
+
+```json
+{
+    "elapse": "77.1µs",
+    "reason": "success",
+    "success": true
+}
+```
 
 
 ## Others
