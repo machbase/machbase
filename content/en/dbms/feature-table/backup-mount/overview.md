@@ -4,7 +4,7 @@ type : docs
 weight: 10
 ---
 
-## BACKUP/MOUNT
+## The Concept of BACKUP/MOUNT
 
 To ensure the permanence of the database, the data stored in memory is stored on the disk as soon as possible. In case of a general failure such as Process Failure, Restart Recovery makes the database consistent. However, in case of power failure or hardware damage caused by fire, database recovery is impossible. In order to solve this problem, the database backup and recovery function saves data to another disk or hardware periodically in another area and recovers the data using the corresponding data in case of an emergency.
 
@@ -14,7 +14,7 @@ Database backups are divided into two types depending on when they are performed
 
 First, the Offline Backup function is called Cold Backup as it shuts down the DBMS and copies the database. It is very simple, but it has the disadvantage of the user's service being interrupted. Therefore, it is rarely used during operation and tends to be used only for initial testing or data construction.
 
-Second, Online Backup is called Hot Backup as a function to backup the database when DBMS is running. This function can be performed without interrupting the service, increasing the user's service availability. Most DBMS Backup refers to Online Backup. Unlike other database backups, Machbase, a time-series database, provides Duration Backup. This allows you to specify the time of the database to be backed up at the time of backup so that only the data at the desired time will be backed up.
+Second, Online Backup is called Hot Backup as a function to backup the database when DBMS is running. This function can be performed without interrupting the service, increasing the user's service availability. Most DBMS Backup refers to Online Backup. Unlike other database backups, Machbase, a time-series database, provides time range backup. This allows you to specify the time of the database to be backed up at the time of backup so that only the data at the desired time will be backed up.
 
 ![overview1](../overview1.png)
 
@@ -46,16 +46,19 @@ The backup command provided by DB is as follows.
 BACKUP [ DATABASE | TABLE table_name ]  [ time_duration ] INTO DISK = 'path/backup_name';
 time_duration = FROM start_time TO end_time
 path = 'absolute_path' or  'relative_path'
-# Directory backup
-       BACKUP DATABASE INTO DISK = 'backup_dir_name';
-# Set backup duration
-      - Directory backup
-       BACKUP DATABASE FROM TO_DATE('2015-07-14 00:00:00','YYYY-MM-DD HH24:MI:SS')
-                         TO TO_DATE('2015-07-14 23:59:59','YYYY-MM-DD HH24:MI:SS')
-                         INTO DISK = '/home/machbase/backup_20150714'
 ```
 
-When performing a DB backup, the backup type, time duration, and path must be entered as options. When backing up DATABASE entirely, type DATABASE for the backup type. To backup only a specific table, enter TABLE, and then enter the name of the table to be backed up. The TIME_DURATION statement can be set to back up only the data for the required period. In the FROM field, enter the start time of the date you want to back up, and enter the time of the last date in the TO field. In Example 3, the TIME_DURATION is set to FROM, "July 14, 2014, 0, 0, 0", and TO "July 14, 2015, 23:59:59" meaning only 14 days of data are set to be backed up. If information is not entered for the DURATION item, the FROM item is set to 'January 1, 1970, 9:00:00,' and the TO item is automatically set to the time to execute the command. Time range backup using the DURATION clause cannot be used in the database including the TAG table and the TAG table, and the INCREMENTAL BACKUP function, which is a function to back up incremental data, must be used.
+```
+-- Directory backup
+BACKUP DATABASE INTO DISK = 'backup_dir_name';
+
+-- Time range backup
+BACKUP DATABASE FROM TO_DATE('2015-07-14 00:00:00','YYYY-MM-DD HH24:MI:SS')
+                     TO TO_DATE('2015-07-14 23:59:59','YYYY-MM-DD HH24:MI:SS')
+                     INTO DISK = '/home/machbase/backup_20150714'
+```
+
+When performing a DB backup, the backup type, time duration, and path must be entered as options. When backing up DATABASE entirely, type DATABASE for the backup type. To backup only a specific table, enter TABLE, and then enter the name of the table to be backed up. The `time_duration` clause can be set to back up only the data for the required period. In the FROM field, enter the start time of the date you want to back up, and enter the time of the last date in the TO field. In Example 2, the `time_duration` is set to FROM, "July 14, 2014, 0, 0, 0", and TO "July 14, 2015, 23:59:59" meaning only 14 days of data are set to be backed up. If `time_duration` is not specified, the FROM item is set to 'January 1, 1970, 9:00:00,' and the TO item is automatically set to the time to execute the command.
 
 
 Finally, a storage medium to store needs to be configured to store the results of the backup. If you want to create a backup in a single file, set the creation type to IBFILE, or enter DISK to create it in directory units. Note that you can specify the PATH information to store the product. If you enter a relative path, it will be created in the path specified in the DB_PATH item of the current DB configuration. If you want to store it somewhere other than DB_PATH, you must enter an absolute path starting with '/'.

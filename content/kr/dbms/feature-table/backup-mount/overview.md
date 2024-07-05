@@ -21,7 +21,7 @@ weight: 10
 
 두 번째, Online Backup은 DBMS가 동작 중일 때, 데이터베이스를 Backup하는 기능으로 Hot Backup이라고 부르기도 한다. <br/>
 이 기능은 서비스를 중단하지 않고 수행될 수 있어 사용자의 Service Availability를 증가시켜 대부분의 DBMS Backup은 Online Backup을 의미한다. <br/>
-다른 데이터베이스의 Backup과 달리 시계열 데이터베이스인 Machbase 는 Duration Backup을 제공한다. 이는 Backup시 백업될 Database의 시간을 지정하여 원하는 시간대의 데이터만 Backup할 수 있다.
+다른 데이터베이스의 Backup과 달리 시계열 데이터베이스인 Machbase 는 time range 을 제공한다. 이는 Backup시 백업될 Database의 시간을 지정하여 원하는 시간대의 데이터만 Backup할 수 있다.
 
 ![Backup](../overview.png)
 
@@ -56,14 +56,14 @@ path = 'absolute_path' or  'relative_path'
 -- full backup
 BACKUP DATABASE INTO DISK = 'backup_dir_name';
 
--- duration backup
+-- time range backup
 BACKUP DATABASE FROM TO_DATE('2015-07-14 00:00:00','YYYY-MM-DD HH24:MI:SS')
                 TO TO_DATE('2015-07-14 23:59:59','YYYY-MM-DD HH24:MI:SS')
                 INTO DISK = '/home/machbase/backup_20150714'
 ```
 
 DB 백업을 수행할 때 옵션은 백업 타입, `time_duration`, 경로를 입력해야 한다. DATABASE 전체를 백업할 때는 백업 타입에 DATABASE를 입력하고, 특정 Table만 백업하려면 TABLE을 입력한 후 백업하려는 table_name을 입력한다. <br/>
-`time_duration` 구문은 필요한 기간의 데이터만 백업하도록 설정할 수 있다. FROM 항목에 백업을 원하는 날짜의 시작 시간을 입력하고 TO 항목에 백업의 마지막 날짜의 시간을 입력하면 그 기간의 데이터만 선택하여 백업할 수 있다. 예제 3번을 보면 TIME_DURATION 항목의 FROM에 '2015년 7월 14일 0시 0분 0초'로 설정하고 TO에 '2015년 7월 14일 23시 59분 59초'로 설정하여 2015년 7월 14일의 데이터만 백업되도록 설정하였다. <br/>
+`time_duration` 구문은 필요한 기간의 데이터만 백업하도록 설정할 수 있다. FROM 항목에 백업을 원하는 날짜의 시작 시간을 입력하고 TO 항목에 백업의 마지막 날짜의 시간을 입력하면 그 기간의 데이터만 선택하여 백업할 수 있다. 예제 2번을 보면 `time_duration` 항목의 FROM에 '2015년 7월 14일 0시 0분 0초'로 설정하고 TO에 '2015년 7월 14일 23시 59분 59초'로 설정하여 2015년 7월 14일의 데이터만 백업되도록 설정하였다. <br/>
 만약 `time_duration` 항목에 대한 정보를 입력하지 않으면 FROM 항목에는 '1970년 1월 1일 9시 0분 0초'로 설정되고 TO 항목에는 명령을 수행하는 시간으로 자동 설정된다.
 
 마지막으로, 백업 수행의 결과를 저장할 저장 매체에 대한 설정이 필요하다. 디렉터리 단위로 생성하려면 DISK를 입력한다. <br/>
