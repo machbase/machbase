@@ -16,29 +16,29 @@ weight: 20
 Syntax:
 
 ```sql
-# Full backup
+-- Full backup
 BACKUP [ DATABASE | TABLE table_name ]  INTO [ DISK ] = 'path/backup_name';
 time_duration = FROM start_time TO end_time
 
-# Incremental backup
+-- Incremental backup
 BACKUP [ DATABASE | TABLE table_name ] AFTER 'previous_backup_dir' INTO [ DISK ] = 'path/backup_name';
 
-# Duration backup
+-- Duration backup
 BACKUP [ DATABASE | TABLE table_name ]  [ time_duration ] INTO [ DISK ] = 'path/backup_name';
 ```
 path는 절대경로 또는 상대경로를 사용할 수 있다.
-time_duration은 백업할 데이터의 시작시간과 마지막시간을 설정한다.
+`time_duration`은 백업할 데이터의 시작시간과 마지막시간을 설정한다.
 
 Example:
 
 ```sql
-# Full backup backup
+-- Full backup backup
 BACKUP DATABASE INTO DISK = 'backup_dir_name';
  
-# Incremental backup
+-- Incremental backup
 BACKUP DATABASE INTO DISK = 'previous_backup_dir' INTO DISK = 'path/backup_name';
 
-# Duration backup
+-- Duration backup
 BACKUP DATABASE FROM TO_DATE('2015-07-14 00:00:00','YYYY-MM-DD HH24:MI:SS')
                 TO TO_DATE('2015-07-14 23:59:59','YYYY-MM-DD HH24:MI:SS')
                 INTO DISK = '/home/machbase/backup_20150714'

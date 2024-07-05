@@ -30,13 +30,13 @@ set start time and end time of backup data for time_duration.
 Example:
 
 ```sql
-# Full backup backup
+-- Full backup backup
 BACKUP DATABASE INTO DISK = 'backup_dir_name';
 
-# Incremental backup
+-- Incremental backup
 BACKUP DATABASE INTO DISK = 'previous_backup_dir' INTO DISK = 'path/backup_name';
 
-# Duration backup
+-- Time range backup
 BACKUP DATABASE FROM TO_DATE('2015-07-14 00:00:00','YYYY-MM-DD HH24:MI:SS')
                 TO TO_DATE('2015-07-14 23:59:59','YYYY-MM-DD HH24:MI:SS')
                 INTO DISK = '/home/machbase/backup_20150714'
@@ -44,9 +44,9 @@ BACKUP DATABASE FROM TO_DATE('2015-07-14 00:00:00','YYYY-MM-DD HH24:MI:SS')
 
 When executing the backup command, the backup type and backup destination path must be defined. To back up the entire database, you must specify "DATABASE". To back up specific tables, specify "TABLE" as the backup type. When backing up specific tables, you must specify the table name.
 
-You can specify the backup destination using the DURATION conditional statement. Specify the start time and end time of the backup target data in the FROM and TO clauses. In the example above, "2015-07-14 00:00:00" is defined as FROM and "2015-07-14 23:59:59" is defined as TO, so the user will be able to see all data for July 14, 2015 Quot; Duration If you do not specify a time condition, "1970-01-01 00:00:00" is set to FROM and the current time at which it is executed is set in the TO clause.
+You can specify the backup destination using the `time_duration` clause. Specify the start time and end time of the backup target data in the FROM and TO clauses. In the example above, "2015-07-14 00:00:00" is defined as FROM and "2015-07-14 23:59:59" is defined as TO, so the user will be able to see all data for July 14, 2015 Quot; Duration If you do not specify a time condition, "1970-01-01 00:00:00" is set to FROM and the current time at which it is executed is set in the TO clause.
 
-Specify "IBFILE" to create a backup file as a single file, or "DISK" as a backup option to create multiple files and directories. Note that when specifying a backup path, backup files are created under "$ MACHBASE_HOME / dbs" when a relative path is specified. To specify an absolute path, you must always set a path that starts with "/". 
+Note that when specifying a backup path, backup files are created under "$ MACHBASE_HOME / dbs" when a relative path is specified. To specify an absolute path, you must always set a path that starts with "/". 
 
 
 ## Database Restore
@@ -56,7 +56,7 @@ Data can be restored from the backup files with the following constraints.
 * The database must be in a stopped state.
 * The current data will be deleted after restore(confirmation is required to ensure that the current data are not used any longer).
 * For incremental backup, previous full and incremental backup files are required.
-* In case of tag table, restoration of duration backup is not supported.
+* In case of tag table, restoration of time range backup is not supported.
 
 Syntax:
 
