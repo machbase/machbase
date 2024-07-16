@@ -39,14 +39,14 @@ weight: 30
 
 ## SQL Reference
 
-* [자료형](./sql-ref/data-types)
+* [자료형](./sql-ref/datatypes)
 * [DDL](./sql-ref/ddl)
 * [DML](./sql-ref/dml)
 * [SELECT](./sql-ref/select)
 * [SELECT Hint](./sql-ref/select-hint)
-* [사용자 관리](./sql-ref/user)
+* [사용자 관리](./sql-ref/user-manage)
 * [지원 함수](./sql-ref/func)
-* [시스템/세션 관리](./sql-ref/sys-session)
+* [시스템/세션 관리](./sql-ref/sys-session-manage)
 
 ## SDK
 
