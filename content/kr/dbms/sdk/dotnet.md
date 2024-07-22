@@ -556,6 +556,8 @@ MachCommand 를 만들어 쿼리를 수행하면 된다.
 String sConnString = String.Format("SERVER={0};PORT_NO={1};UID=;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
 using (MachConnection sConn = new MachConnection(sConnString))
 {
+    sConn.Open();
+
     String sQueryString = "CREATE TABLE tab1 ( col1 INTEGER, col2 VARCHAR(20) )";
     MachCommand sCommand = new MachCommand(sQueryString , sConn)
     try
@@ -574,6 +576,8 @@ using (MachConnection sConn = new MachConnection(sConnString))
 String sConnString = String.Format("SERVER={0};PORT_NO={1};UID=;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
 using (MachConnection sConn = new MachConnection(sConnString))
 {
+    sConn.Open();
+
     String sQueryString = "CREATE TABLE tab1 ( col1 INTEGER, col2 VARCHAR(20) )";
     using(MachCommand sCommand = new MachCommand(sQueryString , sConn))
     {
@@ -597,6 +601,8 @@ MachDataReader 를 통해 레코드를 하나씩 Fetch 할 수 있다.
 String sConnString = String.Format("SERVER={0};PORT_NO={1};UID=;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
 using (MachConnection sConn = new MachConnection(sConnString))
 {
+    sConn.Open();
+
     String sQueryString = "SELECT * FROM tab1;";
     using(MachCommand sCommand = new MachCommand(sQueryString , sConn))
     {
@@ -627,6 +633,8 @@ MachParameterCollection 을 생성한 다음, MachCommand 에 연결해서 수�
 String sConnString = String.Format("SERVER={0};PORT_NO={1};UID=;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
 using (MachConnection sConn = new MachConnection(sConnString))
 {
+    sConn.Open();
+
     string sSelectQuery = @"SELECT *
         FROM tab2
         WHERE CreatedDateTime < @CurrentTime
@@ -671,6 +679,8 @@ AppendFlush() 를 하면 모든 레코드의 입력이 반영되며, AppendClose
 String sConnString = String.Format("SERVER={0};PORT_NO={1};UID=;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
 using (MachConnection sConn = new MachConnection(sConnString))
 {
+    sConn.Open();
+
     using (MachCommand sAppendCommand = new MachCommand(sConn))
     {
         MachAppendWriter sWriter = sAppendCommand.AppendOpen("tab2");
