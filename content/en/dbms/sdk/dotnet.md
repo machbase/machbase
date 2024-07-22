@@ -558,6 +558,8 @@ Create a MachCommand and perform the query.
 String sConnString = String.Format("DSN={0};PORT_NO={1};UID=;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
 using (MachConnection sConn = new MachConnection(sConnString))
 {
+    sConn.Open();
+
     String sQueryString = "CREATE TABLE tab1 ( col1 INTEGER, col2 VARCHAR(20) )";
     MachCommand sCommand = new MachCommand(sQueryString , sConn)
     try
@@ -576,6 +578,8 @@ Again, using the using statement, MachCommand release can be done immediately.
 String sConnString = String.Format("DSN={0};PORT_NO={1};UID=;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
 using (MachConnection sConn = new MachConnection(sConnString))
 {
+    sConn.Open();
+
     String sQueryString = "CREATE TABLE tab1 ( col1 INTEGER, col2 VARCHAR(20) )";
     using(MachCommand sCommand = new MachCommand(sQueryString , sConn))
     {
@@ -599,6 +603,8 @@ You can fetch the records one by one through the MachDataReader.
 String sConnString = String.Format("DSN={0};PORT_NO={1};UID=;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
 using (MachConnection sConn = new MachConnection(sConnString))
 {
+    sConn.Open();
+
     String sQueryString = "SELECT * FROM tab1;";
     using(MachCommand sCommand = new MachCommand(sQueryString , sConn))
     {
@@ -673,6 +679,8 @@ AppendFlush() will reflect the input of all records, and AppendClose () will end
 String sConnString = String.Format("DSN={0};PORT_NO={1};UID=;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
 using (MachConnection sConn = new MachConnection(sConnString))
 {
+    sConn.Open();
+
     using (MachCommand sAppendCommand = new MachCommand(sConn))
     {
         MachAppendWriter sWriter = sAppendCommand.AppendOpen("tab2");
