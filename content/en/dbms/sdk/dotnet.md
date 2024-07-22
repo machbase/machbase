@@ -635,6 +635,8 @@ You can create a MachParameterCollection and then link it to a MachCommand.
 String sConnString = String.Format("DSN={0};PORT_NO={1};UID=;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
 using (MachConnection sConn = new MachConnection(sConnString))
 {
+    sConn.Open();
+
     string sSelectQuery = @"SELECT *
         FROM tab2
         WHERE CreatedDateTime < @CurrentTime
