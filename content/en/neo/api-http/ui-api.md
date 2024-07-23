@@ -1122,21 +1122,18 @@ Delete the subscriber of the given name
 
 ### Get Backup
 
-**GET `/web/api/backup/archives?path=example_dir`**
+**GET `/web/api/backup/archives`**
 
 Return backup list
-
-Query Parameter
- - `path` is backup directory
 
 `response`
 
 ```json
 {
     "data": [
-        "/home/mach/neo-server/tmp/machbase_home/dbs/example_backup1/",
-        "/home/mach/neo-server/tmp/machbase_home/dbs/example_backup2/",
-        "/home/mach/neo-server/tmp/machbase_home/dbs/example_backup3/"
+        "example_backup1/",
+        "example_backup2/",
+        "example_backup3/"
     ],
     "elapse": "475.6µs",
     "reason": "success",
