@@ -1122,9 +1122,12 @@ Delete the subscriber of the given name
 
 ### Get Backup
 
-**GET `/web/api/backup/archives`**
+**GET `/web/api/backup/archives?path=example_dir`**
 
-Return bakcup path list
+Return backup list
+
+Query Parameter
+ - `path` is backup directory
 
 `response`
 
