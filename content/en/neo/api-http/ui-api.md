@@ -1125,15 +1125,16 @@ Delete the subscriber of the given name
 **GET `/web/api/backup/archives`**
 
 Return backup list
+- machbase-neo serve `--backup-dir={path}` required
 
 `response`
 
 ```json
 {
     "data": [
-        "example_backup1/",
-        "example_backup2/",
-        "example_backup3/"
+        "example_backup1",
+        "example_backup2",
+        "example_backup3"
     ],
     "elapse": "475.6µs",
     "reason": "success",
