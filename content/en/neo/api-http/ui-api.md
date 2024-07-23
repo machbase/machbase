@@ -1118,6 +1118,32 @@ Delete the subscriber of the given name
 }
 ```
 
+## Backup
+
+### Get Backup
+
+**GET `/web/api/backup/archives`**
+
+Return bakcup path list
+
+`response`
+
+```json
+{
+    "data": [
+        "/home/mach/neo-server/tmp/machbase_home/dbs/example_backup1/",
+        "/home/mach/neo-server/tmp/machbase_home/dbs/example_backup2/",
+        "/home/mach/neo-server/tmp/machbase_home/dbs/example_backup3/"
+    ],
+    "elapse": "475.6µs",
+    "reason": "success",
+    "success": true
+}
+```
+
+
+
+
 
 ## Others
 
