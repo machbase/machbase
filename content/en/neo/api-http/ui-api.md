@@ -1134,7 +1134,7 @@ Return backup list
     "data": [
         "example_backup1",
         "example_backup2",
-        "example_backup3"
+        "example_backup3/backup3"
     ],
     "elapse": "475.6µs",
     "reason": "success",
@@ -1142,7 +1142,38 @@ Return backup list
 }
 ```
 
+## Mount
 
+### Get Mount
+
+**GET `/web/api/backup/mounts`**
+
+Return mount list
+- `MOUNT DATABASE '/home/user/{backup_path}' TO {mount_name}` command required.
+
+`response`
+
+```json
+{
+    "data": [
+        {
+            "name": "machbase_backup_19700101090000_20240726104832_15",
+            "path": "backup1",
+            "tbsid": 23,
+            "scn": 15,
+            "mountdb": "MOUNT_BACKUP1",
+            "dbBeginTime": "1970-01-01 09:00:00",
+            "dbEndTime": "2024-07-26 10:48:32",
+            "backupBeginTime": "2024-07-26 10:48:32",
+            "backupEndTime": "2024-07-26 10:48:34",
+            "flag": 0
+        }
+    ],
+    "elapse": "424.3µs",
+    "reason": "success",
+    "success": true
+}
+```
 
 
 
