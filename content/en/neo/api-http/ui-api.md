@@ -1188,9 +1188,8 @@ Return mount list
 **POST `/web/api/backup/mounts/:name`**
 
 database mount
-- `name` mount name
-- `path` database backup path
--  path : `Absolute Path`, `Relative Path` available
+- `:name` mount name
+- `path` backup database path (`Absolute Path`, `Relative Path` available)
 
 {{< tabs items="Request,Response">}}
 {{< tab >}}
@@ -1217,7 +1216,7 @@ database mount
 **DELETE `/web/api/backup/mounts/:name`**
 
 database unmount
-- `name` unmount name
+- `:name` unmount name
 
 `response`
 ```json
