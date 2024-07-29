@@ -1125,6 +1125,7 @@ Delete the subscriber of the given name
 **GET `/web/api/backup/archives`**
 
 Return backup list
+- default backup dir `$MACHBASE_HOME/dbs/backup`
 - machbase-neo serve `--backup-dir={path}` required
 
 `response`
@@ -1132,11 +1133,20 @@ Return backup list
 ```json
 {
     "data": [
-        "example_backup1",
-        "example_backup2",
-        "example_backup3/backup3"
+        {
+            "path": "example_backup1",
+            "isMount": true
+        },
+        {
+            "path": "example_backup2",
+            "isMount": false
+        },
+        {
+            "path": "example_backup3",
+            "isMount": false
+        }
     ],
-    "elapse": "475.6µs",
+    "elapse": "538.7µs",
     "reason": "success",
     "success": true
 }
@@ -1144,12 +1154,11 @@ Return backup list
 
 ## Mount
 
-### Get Mount
+### Mount List
 
 **GET `/web/api/backup/mounts`**
 
 Return mount list
-- `MOUNT DATABASE '/home/user/{backup_path}' TO {mount_name}` command required.
 
 `response`
 
@@ -1174,8 +1183,50 @@ Return mount list
     "success": true
 }
 ```
+### DB Mount
 
+**POST `/web/api/backup/mounts/:name`**
 
+database mount
+- `name` mount name
+- `path` database backup path
+-  path : `Absolute Path`, `Relative Path` available
+
+{{< tabs items="Request,Response">}}
+{{< tab >}}
+```json
+{
+    "path":"example_backup1" // Relative Path
+    // "path":"/home/machbase/machbase_home/dbs/example_backup1" // Absolute Path
+}
+```
+{{< /tab >}}
+{{< tab >}}
+```json
+{
+    "elapse": "46.8694ms",
+    "reason": "success",
+    "success": true
+}
+```
+{{< /tab >}}
+{{< /tabs >}}
+
+### DB Unmount
+
+**DELETE `/web/api/backup/mounts/:name`**
+
+database unmount
+- `name` unmount name
+
+`response`
+```json
+{
+    "elapse": "46.8694ms",
+    "reason": "success",
+    "success": true
+}
+```
 
 ## Others
 
