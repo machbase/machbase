@@ -1152,6 +1152,97 @@ Return backup list
     "success": true
 }
 ```
+### DB Backup
+
+**POST `/web/api/backup/archive`**
+
+backup database</br>
+- **Full backup**:   Backup of entire data
+- **Incremental backup**:   Backup of the data added after the full or previous incremental backup
+- **Time Duration backup**:   Backup of data for a specific period
+
+`request`
+{{< tabs items="Full Backup,Incremental Backup,Time Backup">}}
+{{< tab >}}
+```json
+{
+    "type":"database", // table
+    "duration":{
+        "type":"full",
+        "after":"",
+        "from":"",
+        "to":""
+    },
+    "path":"example_backup1" 
+    // "path":"/home/neo/backups/example_backup1" 
+}
+```
+{{< /tab >}}
+{{< tab >}}
+```json
+{
+    "type":"database", // table
+    "duration":{
+        "type":"incremental",
+        "after":"{previous_backup_dir}",
+        "from":"",
+        "to":""
+    },
+    "path":"example_backup1" 
+    // "path":"/home/neo/backups/example_backup1" 
+}
+```
+{{< /tab >}}
+{{< tab >}}
+```json
+{
+    "type":"database", // table
+    "duration":{
+        "type":"time",
+        "after":"",
+        "from":"2024-08-01 00:00:00",
+        "to":"2024-08-02 23:59:59"
+    },
+    "path":"example_backup1" 
+    // "path":"/home/neo/backups/example_backup1" 
+}
+```
+{{< /tab >}}
+{{< /tabs >}}
+
+`response`
+```json
+{
+    "success": true,
+    "reason": "success",
+    "elapse": "231.3µs"
+}
+```
+
+### Status Backup
+
+**GET `/web/api/backup/archive/status`**
+
+return backup status</br>
+
+`response`
+```json
+{
+    "data": {
+        "type": "database",
+        "duration": {
+            "type": "full",
+            "after": "",
+            "from": "",
+            "to": ""
+        },
+        "path": "/home/neo/neo-server/tmp/machbase_home/dbs/example_backup1"
+    },
+    "elapse": "1.1µs",
+    "reason": "success",
+    "success": true
+}
+```
 
 ## Mount
 
