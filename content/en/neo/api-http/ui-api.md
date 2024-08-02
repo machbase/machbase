@@ -1135,7 +1135,8 @@ Return backup list
     "data": [
         {
             "path": "example_backup1",
-            "isMount": true
+            "isMount": true,
+            "mountName": "backup1"
         },
         {
             "path": "example_backup2",
@@ -1236,7 +1237,7 @@ database unmount
 
 `Query Parameter`
  - `name` is package name, required
- - `possible` is search count ( possible=0 is all search )
+ - `possible` is search count ( possible=0 all search )
 
 
 `response`
