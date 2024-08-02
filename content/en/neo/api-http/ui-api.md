@@ -1227,6 +1227,80 @@ database unmount
 }
 ```
 
+
+## Package
+
+### Package Search
+
+**GET `/web/api/pkgs/search?name=pkg_name&possibles=10`**
+
+`Query Parameter`
+ - `name` is package name, required
+ - `possible` is search count ( possible=0 is all search )
+
+
+`response`
+
+```json
+{
+    "success": true,
+    "reason": "success",
+    "data":{},
+    "elapse": "547.1µs"
+}
+```
+### Package Sync
+
+**GET `/web/api/pkgs/sync`**
+
+Package sync 
+
+`response`
+
+```json
+{
+    "success": true,
+    "reason": "success",
+    "elapse": "30.9144ms"
+}
+```
+
+
+### Package Install
+
+**GET `/web/api/pkgs/insall/:name`**
+
+ - `:name` is install package name, required
+
+`response`
+```json
+{
+    "success": true,
+    "reason": "success",
+    "data":{}, // omitempty
+    "log":"",
+    "elapse": "23.1491ms"
+}
+```
+
+### Package Uninstall
+
+**GET `/web/api/pkgs/uninsall/:name`**
+
+ - `:name` is uninstall package name, required
+
+`response`
+```json
+{
+    "success": true,
+    "reason": "success",
+    "data":{}, // omitempty
+    "log":"",
+    "elapse": "88.4133ms"
+}
+```
+
+
 ## Others
 
 ### References
