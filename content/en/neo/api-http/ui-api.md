@@ -1158,11 +1158,12 @@ backup database</br>
 - **Time Duration backup**:   Backup of data for a specific period
 
 `request`
-{{< tabs items="Full Backup,Incremental Backup,Time Backup">}}
+{{< tabs items="Full Backup,Incremental Backup,Time Backup, Table Backup">}}
 {{< tab >}}
 ```json
 {
     "type":"database", // database or table
+    "tableName":"",
     "duration":{
         "type":"full",
         "after":"",
@@ -1178,6 +1179,7 @@ backup database</br>
 ```json
 {
     "type":"database", // database or table
+    "tableName":"",
     "duration":{
         "type":"incremental",
         "after":"{previous_backup_dir}",
@@ -1193,11 +1195,28 @@ backup database</br>
 ```json
 {
     "type":"database", // database or table
+    "tableName":"",
     "duration":{
         "type":"time",
         "after":"",
         "from":"2024-08-01 00:00:00",
         "to":"2024-08-02 23:59:59"
+    },
+    "path":"example_backup1" 
+    // "path":"/home/neo/backups/example_backup1" 
+}
+```
+{{< /tab >}}
+{{< tab >}}
+```json
+{
+    "type":"table", // database or table
+    "tableName":"example",
+    "duration":{
+        "type":"full",
+        "after":"",
+        "from":"",
+        "to":""
     },
     "path":"example_backup1" 
     // "path":"/home/neo/backups/example_backup1" 
@@ -1226,6 +1245,7 @@ return backup status</br>
 {
     "data": {
         "type": "database",
+        "tableName": "",
         "duration": {
             "type": "full",
             "after": "",
