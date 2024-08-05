@@ -1141,10 +1141,6 @@ Return backup list
         {
             "path": "example_backup2",
             "isMount": false
-        },
-        {
-            "path": "example_backup3",
-            "isMount": false
         }
     ],
     "elapse": "538.7µs",
@@ -1166,7 +1162,7 @@ backup database</br>
 {{< tab >}}
 ```json
 {
-    "type":"database", // table
+    "type":"database", // database or table
     "duration":{
         "type":"full",
         "after":"",
@@ -1181,7 +1177,7 @@ backup database</br>
 {{< tab >}}
 ```json
 {
-    "type":"database", // table
+    "type":"database", // database or table
     "duration":{
         "type":"incremental",
         "after":"{previous_backup_dir}",
@@ -1196,7 +1192,7 @@ backup database</br>
 {{< tab >}}
 ```json
 {
-    "type":"database", // table
+    "type":"database", // database or table
     "duration":{
         "type":"time",
         "after":"",
@@ -1236,7 +1232,8 @@ return backup status</br>
             "from": "",
             "to": ""
         },
-        "path": "/home/neo/neo-server/tmp/machbase_home/dbs/example_backup1"
+        "path": "/home/neo/neo-server/tmp/machbase_home/dbs/example_backup1",
+        "size": 276118588 // bytes
     },
     "elapse": "1.1µs",
     "reason": "success",
@@ -1322,13 +1319,13 @@ database unmount
 
 ## Package
 
-### Package Search
+### Search
 
 **GET `/web/api/pkgs/search?name=pkg_name&possibles=10`**
 
 `Query Parameter`
  - `name` is package name, required
- - `possible` is search count ( possible=0 all search )
+ - `possible` is search count ( possible=0, all search )
 
 
 `response`
@@ -1341,7 +1338,7 @@ database unmount
     "elapse": "547.1µs"
 }
 ```
-### Package Sync
+### Sync
 
 **GET `/web/api/pkgs/sync`**
 
@@ -1358,7 +1355,7 @@ Package sync
 ```
 
 
-### Package Install
+### Install
 
 **GET `/web/api/pkgs/insall/:name`**
 
@@ -1375,7 +1372,7 @@ Package sync
 }
 ```
 
-### Package Uninstall
+### Uninstall
 
 **GET `/web/api/pkgs/uninsall/:name`**
 
