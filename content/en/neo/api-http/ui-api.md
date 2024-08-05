@@ -1143,7 +1143,7 @@ Return backup list
             "isMount": false
         }
     ],
-    "elapse": "538.7µs",
+    "elapse": "6.562299ms",
     "reason": "success",
     "success": true
 }
@@ -1233,7 +1233,6 @@ return backup status</br>
             "to": ""
         },
         "path": "/home/neo/neo-server/tmp/machbase_home/dbs/example_backup1",
-        "size": 276118588 // bytes
     },
     "elapse": "1.1µs",
     "reason": "success",
