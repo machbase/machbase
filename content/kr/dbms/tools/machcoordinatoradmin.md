@@ -25,6 +25,7 @@ mach@localhost:~$ machcoordinatoradmin -h
 | \-e, --check                           | Coordinator 프로세스가 작동 중인지 확인                                                  |
 | \-i, --silence                         | 출력 없이 실행                                                                     |
 | \--configuration[=name]                | configuration 설정에서의 키와 값 출력(특정 키만 출력 가능)                                     |
+| \--configure                           | Coordinator 에 설정된 system property 를 확인 |
 | \--activate                            | Cluster status를 Service로 전환                                                  |
 | \--deactivate                          | Cluster status를 Deactivate로 전환                                               |
 | \--list-package[=package]              | 등록한 Package들의 정보를 나열(특정 Package만 출력 가능)                                      |
@@ -136,6 +137,41 @@ mach@localhost:~$ machcoordinatoradmin --configuration=decision
               Name : DECISION
              Value : ON
             Format : text/plain
+```
+
+## System Property 확인
+
+Syntax
+
+```
+machcoordinatoradmin --configure
+```
+
+Example
+
+```
+mach@localhost:~$ machcoordinatoradmin --configure
+
+CLUSTER_LINK_HOST=192.168.0.30
+CLUSTER_LINK_PORT_NO=36110
+CLUSTER_LINK_THREAD_COUNT=16
+CLUSTER_LINK_MAX_LISTEN=512
+CLUSTER_LINK_MAX_POLL=4096
+CLUSTER_LINK_ACCEPT_TIMEOUT=5000000
+CLUSTER_LINK_CHECK_INTERVAL=1000000
+CLUSTER_LINK_CONNECT_RETRY_TIMEOUT=60000000
+CLUSTER_LINK_CONNECT_TIMEOUT=5000000
+CLUSTER_LINK_HANDSHAKE_TIMEOUT=5000000
+CLUSTER_LINK_LONG_TERM_CALLBACK_INTERVAL=1000000
+CLUSTER_LINK_LONG_WAIT_INTERVAL=1000000
+CLUSTER_LINK_RECEIVE_TIMEOUT=5000000
+CLUSTER_LINK_REQUEST_TIMEOUT=60000000
+CLUSTER_LINK_SEND_TIMEOUT=5000000
+CLUSTER_LINK_SESSION_TIMEOUT=3600000000
+CLUSTER_LINK_ERROR_ADD_ORIGIN_HOST=0
+CLUSTER_LINK_BUFFER_SIZE=33554432
+..
+..
 ```
 
 ## Cluster Status 변경

@@ -27,6 +27,7 @@ mach@localhost:~$ machcoordinatoradmin -h
 |-e, --check | Checks that the Coordinator process is running|
 |-i, --silence | Runs without output|
 |--configuration[=name] | Outputs keys and values in configuration settings (only certain keys can be output)|
+|--configure | Lists the system properties |
 |--activate | Switches Cluster status to Service|
 |--deactivate | Switches Cluster status to Deactivate|
 |--list-package[=package] | Lists information of registered packages (only specific packages can be output)|
@@ -139,6 +140,42 @@ mach@localhost:~$ machcoordinatoradmin --configuration=decision
              Value : ON
             Format : text/plain
 ```
+
+## List the system properties
+
+Syntax
+
+```
+machcoordinatoradmin --configure
+```
+
+Example
+
+```
+mach@localhost:~$ machcoordinatoradmin --configure
+
+CLUSTER_LINK_HOST=192.168.0.30
+CLUSTER_LINK_PORT_NO=36110
+CLUSTER_LINK_THREAD_COUNT=16
+CLUSTER_LINK_MAX_LISTEN=512
+CLUSTER_LINK_MAX_POLL=4096
+CLUSTER_LINK_ACCEPT_TIMEOUT=5000000
+CLUSTER_LINK_CHECK_INTERVAL=1000000
+CLUSTER_LINK_CONNECT_RETRY_TIMEOUT=60000000
+CLUSTER_LINK_CONNECT_TIMEOUT=5000000
+CLUSTER_LINK_HANDSHAKE_TIMEOUT=5000000
+CLUSTER_LINK_LONG_TERM_CALLBACK_INTERVAL=1000000
+CLUSTER_LINK_LONG_WAIT_INTERVAL=1000000
+CLUSTER_LINK_RECEIVE_TIMEOUT=5000000
+CLUSTER_LINK_REQUEST_TIMEOUT=60000000
+CLUSTER_LINK_SEND_TIMEOUT=5000000
+CLUSTER_LINK_SESSION_TIMEOUT=3600000000
+CLUSTER_LINK_ERROR_ADD_ORIGIN_HOST=0
+CLUSTER_LINK_BUFFER_SIZE=33554432
+..
+..
+```
+
 
 ## Change Cluster Status
 
