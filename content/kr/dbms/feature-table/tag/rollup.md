@@ -217,8 +217,8 @@ SELECT ROLLUP('MIN', 30, time, '1970-01-01'), MIN(value), MAX(value), AVG(value)
 * origin: ROLLUP 시간 구간을 나눌 기준 시간, 지정하지 않을 경우 기본값 `1970-01-01 00:00:00` 으로 지정된다.
 
 
-> **Deprecated (7.5 version 이하에서 지원)**<br>
-> 7.5 이하 버전에서는 다음과 같은 ROLLUP expression 을 사용한다.
+> **Deprecated (version <= 8.0.19)**<br>
+> 8.0.19 이하 버전에서는 다음과 같은 ROLLUP expression 을 사용한다.
 > ```sql
 > rollup_expr := basetime_column ROLLUP n time_unit
 >
