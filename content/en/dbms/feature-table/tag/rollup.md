@@ -217,8 +217,8 @@ If you use the ROLLUP keyword as above, the records are fetched from an appropri
 * basetime_column: Datetime column of the TAG table specified by the BASETIME attribute
 * origin: The origin time to bin the ROLLUP time interval. If not specified, it is set to '1970-01-01' by default.
 
->**Deprecated** (7.5 version and lower)<br>
->In versions 7.5 and lower, use the following ROLLUP expression.
+>**Deprecated** (version <= 8.0.19)<br>
+>In version 8.0.19 and below, use the following ROLLUP expression.
 >```sql
 >rollup_expr := basetime_column ROLLUP n time_unit
 >
