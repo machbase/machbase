@@ -6,6 +6,10 @@ hasCJKLanguage: true
 googleAnalytics: G-5VYQQQFHCH
 baseURL: https://docs.machbase.com/
 
+ignoreFiles:
+  - "/content/en/home/*"
+  - "/content/kr/home/*"
+
 DefaultContentLanguage: en
 languages:
   en:
