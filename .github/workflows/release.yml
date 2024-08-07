@@ -2,8 +2,6 @@ name: Upload build file into Artifact
 
 on:
   push:
-    branches:
-      - dev-*
     tags:
       - "*"
 
