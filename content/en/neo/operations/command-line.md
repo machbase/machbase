@@ -19,6 +19,7 @@ Start machbase-neo server process.
 | `--pid`          |                      | file path to save pid <br/> ex) `--pid /data/machbase-neo.pid`    |
 | `--data`         | `./machbase_home`    | path to database<br/> ex) `--data /data/machbase`                 |
 | `--file`         | `.`                  | path to files<br/> ex) `--file /data/files`                       |
+| `--backup-dir`   | `./backups`          | path to the backup dir ex) `--backup-dir /data/backups` {{< neo_since ver="8.0.26" />}} |
 | `--pref`         | `~/.config/machbase` | path to preference directory path                                 |
 | `--preset`       | `auto`               | database preset `auto`, `fog`, `edge`<br/> ex) `--preset edge`    |
 
