@@ -32,7 +32,7 @@ jobs:
                 --minify \
                 --baseURL "/"
       - name: Archive
-        run: tar zcf neo-docs.tar.gz ./public/
+        run: tar zcf neo-docs.tar.gz --exclude "dbms/archive/*.pdf" ./public/
       - name: Release files
         uses: svenstaro/upload-release-action@v2
         if: startsWith(github.ref, 'refs/tags/')
