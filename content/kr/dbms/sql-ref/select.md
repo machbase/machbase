@@ -6,7 +6,7 @@ weight: 40
 
 SELECT는 마크베이스에서 각종 테이블로부터 데이터를 찾거나 필터링 및 조작하는 데 사용되는 구문이다.
 
-# 목차
+## 목차
 
 * [SELECT Syntax](#select-syntax)
 * [SET OPERATOR](#set-operator)
@@ -40,8 +40,20 @@ SELECT는 마크베이스에서 각종 테이블로부터 데이터를 찾거나
 select_stmt UNION ALL select_stmt
 ```
 ```sql
-SELECT target_list FROM TableList WHERE Condition GROUP BY Expr ORDER BY Expr [Desc] HAVING Expr SERIES BY Expr LIMIT N[,N] DURATION TimeExpr;
+SELECT target_list FROM table_list
+WHERE condition_expr DURATION time_expr
+GROUP BY expr ORDER BY expr [DESC] HAVING expr SERIES BY expr
+LIMIT n[,n];
 ```
+
+> version <= 8.0.25 에서는 아래와 같은 문법을 따른다.
+> ```sql
+> SELECT target_list FROM table_list
+> WHERE condition_expr
+> GROUP BY expr ORDER BY expr [DESC] HAVING expr SERIES BY expr
+> LIMIT n[,n];
+> DURATION time_expr
+> ```
 
 ## SET OPERATOR
 
