@@ -4,7 +4,7 @@ type: docs
 weight: 63
 ---
 
-Since machbase-neo v8.0.27, it supports MQTT over websocket.
+Since machbase-neo v8.0.28, it supports MQTT over websocket.
 
 We will be utilizing the MQTT.js library for our JavaScript client, which can be found at [https://github.com/mqttjs/MQTT.js](https://github.com/mqttjs/MQTT.js).
 
