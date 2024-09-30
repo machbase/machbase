@@ -87,6 +87,30 @@ curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE \
 {{< /tab >}}
 {{< /tabs >}}
 
+### Request JSON with timeformat
+
+When time fields are string format instead of UNIX epoch.
+
+```json
+{
+    "data": {
+        "columns":["name", "time", "value"],
+        "rows": [
+            [ "my-car", "2022-12-07 02:32:22", 1.0001 ],
+            [ "my-car", "2022-12-07 02:32:23", 2.0002 ]
+        ]
+    }
+}
+```
+
+Add `timeformat` and `tz` query parameters.
+
+```sh
+curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=DEFAULT&tz=Asia/Seoul' \
+    -H "Content-Type: application/json" \
+    --data-binary "@post-data.json"
+```
+
 ## Request CSV
 
 If csv data has header line like below, set the `heading=true` query param.
@@ -119,6 +143,22 @@ curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE?heading=true \
 ```
 {{< /tab >}}
 {{< /tabs >}}
+
+### Request CSV with timeformat
+
+```csv
+NAME,TIME,VALUE
+my-car,2022-12-07 11:32:22,1.0001
+my-car,2022-12-07 11:32:22,2.0002
+```
+
+Add `timeformat` and `tz` query parameters.
+
+```sh
+curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE?heading=true&timeformat=Default&tz=Asia/Seoul' \
+    -H "Content-Type: text/csv" \
+    --data-binary "@post-data.csv"
+```
 
 ## INSERT vs. APPEND
 The `/db/write` API writes the posted data with “INSERT INTO…” statement by default. As long as the total number of records to write is small, there is not a big difference from “append” method.

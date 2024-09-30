@@ -67,7 +67,7 @@ http://127.0.0.1:5654/db/query?q=select%20*%20from%20EXAMPLE%20limit%202
 | `RFC3339Nano` | 2006-01-02T15:04:05.999999999Z07:00 |
 | `Kitchen`     | 3:04:05PM                           |
 | `Stamp`       | Jan _2 15:04:05                     |
-| `StampMili`   | Jan _2 15:04:05.000                 |
+| `StampMilli`   | Jan _2 15:04:05.000                 |
 | `StampMicro`  | Jan _2 15:04:05.000000              |
 | `StampNano`   | Jan _2 15:04:05.000000000           |
 | `S_NS`        | 05.999999999                        |
