@@ -4,7 +4,7 @@ type: docs
 weight: 20
 ---
 
-General purposed MQTT brokers deliver messages to all subscribers of the topic as diagram below. When a publisher sends message `M1`, `M2` to the `TOPIC`, both of `SUBSCRIBER-A` and `SUBSCRIBER-B` receive the same messages. 
+General-purpose MQTT brokers deliver messages to all subscribers of a topic, as shown in the diagram below. When a publisher sends messages `M1` and `M2` to the `TOPIC`, both `SUBSCRIBER-A` and `SUBSCRIBER-B` receive the same messages.
 
 ```mermaid
 flowchart LR
@@ -13,8 +13,7 @@ PUBLISHER -->|m1,m2| TOPIC
 TOPIC -->|m1, m2| A(SUBSCRIBER-A)
 TOPIC -->|m1, m2| B(SUBSCRIBER-B)
 ```
-
-In contrast with general MQTT brokers, machbase-neo delivers messages only if the publisher and subscriber share same connection (or session in terms of MQTT). This means machbase-neo MQTT is not working as a message broker, but it just uses MQTT as transport layer and subscription and publication is scoped per connection.
+Machbase-neo functions similarly to a standard MQTT broker by delivering all messages to subscribers. The exception is the query response message, which is sent only to the client that requested the query. In other words, machbase-neo sends the query result exclusively if the publisher and subscriber share the same connection (or session in MQTT terms). This means that while machbase-neo operates as a message broker, query result messages are not replicated to other subscribers.
 
 For example, while `CLIENT-M` and `CLIENT-P` subscribed to same `TOPIC` and waiting messages.
 Server sends messages `M1` and `M2` to `TOPIC` that were inscribed to `CLIENT-M`.
@@ -23,13 +22,16 @@ Those messages are delivered only to `CLIENT-M` but `CLIENT-P` receives `P1` and
 ```mermaid
 flowchart LR
 
-SERVER -->|m1, m2| T(TOPIC)
-SERVER -->|p1, p2| T(TOPIC)
-PUBLISHER-X-->|x1| T(TOPIC)
+M -->|m1|Q(db/query)
+P -->|p1|Q(db/query)
 
-T -->|m1,m2| M(CLIENT-M)
-T -->|p1,p2| P(CLIENT-P)
-T -->|x1| SERVER
+R -->|m2|M(CLIENT-M)
+R -->|p2|P(CLIENT-P)
+
+Q -->|m1| SERVER
+Q -->|p1| SERVER
+SERVER--> |m2|R(db/reply)
+SERVER--> |p2|R
 ```
 
 Application needs a preparing step to query machbase-neo via MQTT which is subscribing to `db/reply`.

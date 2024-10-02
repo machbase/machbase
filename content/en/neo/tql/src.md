@@ -191,7 +191,8 @@ If `payload()` is used, it will reads CSV from HTTP POST request body stream. It
 - `file() | payload()` input stream
 - `field(idx, type, name)` specifying fields
 - `header(bool)` specifies if the first line of input stream is a header
-- `charset(string)` specify charset if the CSV data is in non UTF-8. {{< neo_since ver="8.0.8" />}}.
+- `charset(string)` specify charset if the CSV data is in non UTF-8. {{< neo_since ver="8.0.8" />}}
+- `logProgress([int])` logs progress messages every `n` rows. If `n` is omitted, it defaults to 500,000. {{< neo_since ver="8.0.29" />}}
 
 *Example)*
 
