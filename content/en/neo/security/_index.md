@@ -1,7 +1,7 @@
 ---
-title: Security
+title: API Security
 type: docs
-weight: 300
+weight: 60
 ---
 
 ## Generates Key & Token

@@ -1,7 +1,7 @@
 ---
 title: TQL
 type: docs
-weight: 40
+weight: 70
 ---
 
 It is required to properly read and transform data that has been sent by sensors.

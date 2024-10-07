@@ -1,7 +1,7 @@
 ---
 title: MQTT API
 type: docs
-weight: 120
+weight: 30
 ---
 
 

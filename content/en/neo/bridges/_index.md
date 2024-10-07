@@ -1,7 +1,7 @@
 ---
 title: Bridges
 type: docs
-weight: 50
+weight: 90
 ---
 
 Bridges make machbase-neo enabled to inter-work external systems.

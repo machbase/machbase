@@ -1,7 +1,7 @@
 ---
 title: HTTP API
 type: docs
-weight: 110
+weight: 40
 ---
 
 The machbase-neo provides two main functions via HTTP API.
