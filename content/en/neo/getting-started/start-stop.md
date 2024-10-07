@@ -4,9 +4,9 @@ type: docs
 weight: 12
 ---
 
-## Start
+## Linux & macOS
 
-### foreground
+Run machbase-neo with `serve` command on Linux and macOS.
 
 ```sh
 machbase-neo serve
@@ -14,16 +14,7 @@ machbase-neo serve
 
 {{< figure src="../img/server-serve.gif" width="600" >}}
 
-### background
-
-If pid file path is given, the process id of machbase-neo will be written on it.
-It could be helpful later to stop the process running in background mode with `--daemon` option.
-
-```sh
-machbase-neo serve --daemon --pid ./machbase-neo.pid
-```
-
-### expose ports
+### Expose ports
 
 machbase-neo runs and listens to only localhost by default for the security reason. If clients that runs remotely need to access machbase-neo through network, it requires to start with listen address as `--host <bind address>` option.
 
@@ -39,25 +30,19 @@ To allow a specific address, set the IP address of the host.
 machbase-neo serve --host 192.168.1.10
 ```
 
-## Stop
-
-### foreground
+### Stop
 
 If the server is running in foreground mode, simply press `Ctrl+C`.
-
-###  background
-
-If a pid file was generated, signal `SIGTERM` to process as like the command below.
-
-```sh
-kill `cat ./machbase-neo.pid`
-```
 
 Or use `shutdown` command. It works only if it is executed in the same host.
 
 ```sh
 machbase-neo shell shutdown
 ```
+
+## Linux Service
+
+Refer to the document at [Operations/Linux service](../../operations/service-linux/) that shows how to register machbase-neo as a background process.
 
 ## Windows
 
