@@ -1,7 +1,7 @@
 ---
-title: Configurations
+title: Config file
 type: docs
-weight: 400
+weight: 11
 ---
 
 ## Create a new config file

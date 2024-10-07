@@ -1,7 +1,7 @@
 ---
 title: Change password
 type: docs
-weight: 11
+weight: 12
 ---
 
 Change default password for the security before allowing remote access.
