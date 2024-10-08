@@ -667,6 +667,7 @@ Tagdata Table 의 파티션 테이블에 대한 정보를 표시한다.
 | INDEX_STATE          | 현재 인덱스 구축 상태<br>IDLE: 구축 완료, 대기중.<br>PROGRESS: 구축 진행중<br>IOWAIT: 스토리지에 입출력 연산 대기.<br>PENDING: 테이블에 읽기 잠금 대기중<br>SHUTDOWN: 정지됨. DELETE 연산, 혹은 DROP 연산 진행중.<br>ABNORMAL: 비정상 종료                |
 | DELETE_STATE         | 현재 DELETE 연산의 상태. DELETE 명령이 들어올 때에만 수행되므로 IDLE이 없다.<br>PROGRESS: 삭제 진행중<br>IOWAIT: 스토리지에 입출력 연산 대기.<br>PENDING: 테이블에 읽기/쓰기 잠금 대기중<br>SHUTDOWN: 정지됨. DELETE 연산이 진행되지 않음.<br>ABNORMAL: 비정상 종료 |
 | SAVE_STATE           | 현재 테이블 저장 연산의 상태.<br>IDLE: 저장 완료, 대기중.<br>PROGRESS: 저장 진행중<br>IOWAIT: 스토리지에 입출력 연산 대기.<br>PENDING: 테이블에 읽기 잠금 대기중<br>SHUTDOWN: 정지됨. DELETE 연산, 혹은 DROP 연산 진행중.<br>ABNORMAL: 비정상 종료           |
+| VINDEX_STATE         | 현재 VARCHAR 인덱스 구축 상태<br>IDLE: 구축 완료, 대기중.<br>PROGRESS: 구축 진행중<br>IOWAIT: 스토리지에 입출력 연산 대기.<br>PENDING: 테이블에 읽기 잠금 대기중<br>SHUTDOWN: 정지됨. DELETE 연산, 혹은 DROP 연산 진행중.<br>ABNORMAL: 비정상 종료                |
 
 ### V$STORAGE_TAG_CACHE
 ---

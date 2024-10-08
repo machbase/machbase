@@ -710,9 +710,10 @@ Displays information about the partition table in the Tagdata Table.
 |MEMORY_INDEX_END_RID|Table end RID in memory index|
 |DELETE_MIN_DATE|Minimum time of deleted data by execute  DELETE BETWEEN query|
 |DELETE_MAX_DATE|Maximum time of deleted data by execute  DELETE BETWEEN/BEFORE query|
-|INDEX_STATE|Current Index Build Stats<br> - IDLE: Build Complete, waiting<br> - PROGRESS: Build in progress<br> - IOWAIT: Waiting for I/O operation in storage<br> - PENDING: Waiting for table read lock<br> - SHUTDOWN:  Stopped. DELETE operation or DROP operation in progress.<br> - ABNORMAL: Abnormal end|
+|INDEX_STATE|Current Index Build State<br> - IDLE: Build Complete, waiting<br> - PROGRESS: Build in progress<br> - IOWAIT: Waiting for I/O operation in storage<br> - PENDING: Waiting for table read lock<br> - SHUTDOWN:  Stopped. DELETE operation or DROP operation in progress.<br> - ABNORMAL: Abnormal end|
 |DELETE_STATE|Current DELETE operation state.<br>There is no IDLE because it is performed only when a DELETE command is entered.<br> - PROGRESS: Deletion in progress<br> - IOWAIT: Waiting for I/O operation in storage<br> - PENDING: Waiting for table read/write lock<br> - SHUTDOWN: Stopped. DELETE operation or DROP operation in progress.<br> - ABNORMAL: Abnormal end|
 |SAVE_STATE|Current Table Save operation state.<br> - IDLE: Save Complete, waiting<br> - PROGRESS: Save in progress<br> - IOWAIT: Waiting for I/O operation in storage<br> - PENDING: Waiting for table read lock<br> - SHUTDOWN: Stopped. DELETE operation or DROP operation in progress.<br> - ABNORMAL: Abnormal end|
+|VINDEX_STATE|Current VARCHAR Index Build State<br> - IDLE: Build Complete, waiting<br> - PROGRESS: Build in progress<br> - IOWAIT: Waiting for I/O operation in storage<br> - PENDING: Waiting for table read lock<br> - SHUTDOWN:  Stopped. DELETE operation or DROP operation in progress.<br> - ABNORMAL: Abnormal end|
 
 
 ### V$STORAGE_TAG_CACHE
