@@ -33,7 +33,55 @@ A basic query example shows the client subscribe to `db/reply/#` and publish a q
 
 {{< figure src="../img/query_mqttx.png" width="600px" caption="A demonstration shows how to query and receive responses over MQTT. (Using MQTTX.app)">}}
 
-## Sample code
+## Javascript Client
+
+```sh
+npm install mqtt --save
+```
+
+```js
+const mqtt = require("mqtt");
+
+const client = mqtt.connect("mqtt://127.0.0.1:5653", {
+    clean: true,
+    connectTimeout: 3000,
+    autoUseTopicAlias: true,
+    protocolVersion: 5,
+});
+
+client.on("connect", () => {
+    client.subscribe("db/reply/#", (err) => {
+        if (!err) {
+            const req = {
+                q: "SELECT time,value FROM example where name = 'neo_cpu.percent' limit 3",
+                format: "box",
+                precision: 1,
+                timeformat: "15:04:05",
+            };
+            client.publish("db/query", JSON.stringify(req));
+        }
+    });
+});
+
+client.on("message", (topic, message) => {
+    console.log(message.toString());
+    client.end();
+});
+```
+
+```sh
+$ node main.js
+
++----------+-------+
+| TIME     | VALUE |
++----------+-------+
+| 05:46:19 | 69.4  |
+| 05:46:22 | 26.4  |
+| 05:46:25 | 42.8  |
++----------+-------+
+```
+
+## Go client
 
 
 **Define data structure for response**

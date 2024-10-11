@@ -30,11 +30,11 @@ client.on("connect", () => {
     client.subscribe("db/reply/#", (err) => {
         if (!err) {
             const req = {
-                "q": "SELECT * FROM example where name = 'neo_cpu.percent' limit 3",
-                "format": "box",
-                "timeformat": "default",
-                "tz": "local",
-                "precision": 2
+                q: "SELECT * FROM example where name = 'neo_cpu.percent' limit 3",
+                format: "box",
+                timeformat: "default",
+                tz: "local",
+                precision: 2
             };
             client.publish("db/query", JSON.stringify(req));
         }
@@ -98,8 +98,8 @@ By default, the WebSocket address for MQTT is `ws://127.0.0.1:5654/web/api/mqtt`
             client.subscribe('db/reply', function (err) {
                 if (!err) {
                     // Publish a query to a topic 'db/query'
-                    const req = '{"q": "SELECT * FROM example limit 10", "format":"box", "precision": 2}'
-                    client.publish('db/query', req)
+                    const req = {q: "SELECT * FROM example limit 10", format:"box", precision: 2}
+                    client.publish('db/query', JSON.stringify(req))
                 }
             })
         })
