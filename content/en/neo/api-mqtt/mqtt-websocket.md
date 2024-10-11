@@ -1,16 +1,77 @@
 ---
-title: Websocket and Javascript
+title: Javascript & WS
 type: docs
 weight: 63
 ---
 
-Since machbase-neo v8.0.28, it supports MQTT over websocket.
+We will use the MQTT.js library for our JavaScript client, available at [MQTT.js GitHub Repository](https://github.com/mqttjs/MQTT.js).
 
-We will be utilizing the MQTT.js library for our JavaScript client, which can be found at [https://github.com/mqttjs/MQTT.js](https://github.com/mqttjs/MQTT.js).
+## Node.js
 
-To include mqtt.js in our project, we can simply embed it from the CDN using the following script tag: `<script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>`.
+Install `mqtt.js` library.
 
-By default, the web socket address for MQTT is set to `ws://127.0.0.1:5654/web/api/mqtt`, and it is served by the machbase-neo HTTP server.
+```sh
+npm install mqtt --save
+```
+
+Create `main.js` file.
+
+```js
+const mqtt = require("mqtt");
+
+const client = mqtt.connect("mqtt://127.0.0.1:5653", {
+    clean: true,
+    connectTimeout: 3000,
+    autoUseTopicAlias: true,
+    protocolVersion: 5,
+});
+
+client.on("connect", () => {
+    client.subscribe("db/reply/#", (err) => {
+        if (!err) {
+            const req = {
+                "q": "SELECT * FROM example where name = 'neo_cpu.percent' limit 3",
+                "format": "box",
+                "timeformat": "default",
+                "tz": "local",
+                "precision": 2
+            };
+            client.publish("db/query", JSON.stringify(req));
+        }
+    });
+});
+
+client.on("message", (topic, message) => {
+    console.log(message.toString());
+    client.end();
+});
+```
+
+Run `main.js` with `node` command.
+
+```sh
+$ node main.js
+
++-----------------+-------------------------+-------+
+| NAME            | TIME                    | VALUE |
++-----------------+-------------------------+-------+
+| neo_cpu.percent | 2024-09-06 14:46:19.852 | 69.40 |
+| neo_cpu.percent | 2024-09-06 14:46:22.853 | 26.40 |
+| neo_cpu.percent | 2024-09-06 14:46:25.852 | 42.80 |
++-----------------+-------------------------+-------+
+```
+
+## Websocket
+
+Since Machbase Neo v8.0.28, MQTT over WebSocket is supported.
+
+To include MQTT.js in our project, embed it from the CDN using the following script tag:
+
+```html
+<script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+````
+
+By default, the WebSocket address for MQTT is `ws://127.0.0.1:5654/web/api/mqtt`, served by the Machbase Neo HTTP server.
 
 
 ```html
@@ -29,10 +90,6 @@ By default, the web socket address for MQTT is set to `ws://127.0.0.1:5654/web/a
             // Clean session
             clean: true,
             connectTimeout: 4000,
-            // Authentication
-            clientId: 'mqtt_test',
-            username: 'mqtt_test',
-            password: 'mqtt_test',
         }
         const client = mqtt.connect(url, options)
         client.on('connect', function () {
