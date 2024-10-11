@@ -1,46 +1,45 @@
 ---
 title: Write via http
 type: docs
-weight: 30
+weight: 20
 ---
+
+The Write API endpoint is `/db/write/{TABLE}`, where `{TABLE}` is the name of the table you want to write to.
 
 Even `query` api can execute 'INSERT' statement, it is not an efficient way to write data,
 since clients should build a static sql text in `q` parameter for the every request.
 The proper way writing data is the `write` api which is the `INSERT` statement equivalent. 
 And another benefit of `write` is that a client application can insert multiple records in a single `write` request.
 
-## Request endpoint and params
+## Parameters
 
-Write API's endpoint is "/db/write/" following by table name, `/db/write/{TABLE}`
-
-| param       | default | description                     |
-|:----------- |---------|:------------------------------- |
-| timeformat  | ns      | Time format: s, ms, us, ns      |
-| tz          | UTC     | Time Zone: UTC, Local and location spec |
-| method      | insert  | Writing methods: insert, append  |
-
-**Available parameters with `Content-Type: text/csv`**
-
-These options are only applicable when the content body is in CSV format.
+**Write Parameters**
 
 | param       | default | description                     |
 |:----------- |---------|:------------------------------- |
-| heading     | false   | If CSV contains header line, set `true` to skip the first line|
-| delimiter   | ,       | CSV delimiter, ignored if content is not csv |
+| timeformat  | `ns`     | Time format: `s`, `ms`, `us`, `ns` |
+| tz          | `UTC`    | Time Zone: `UTC`, `Local` and location spec |
+| method      | `insert` | Writing methods: `insert`, `append`  |
 
+**INSERT vs. APPEND**
+
+By default, the `/db/write` API uses the `INSERT INTO...` statement to write data. For a small number of records, this method performs similarly to the `append` method.
+
+When writing a large amount of data (e.g., more than several hundred thousand records), use the `method=append` parameter. This specifies that Machbase Neo should use the "append" method instead of the default "INSERT INTO..." statement, which is implicitly specified as `method=insert`.
 
 **Content-Type Header**
 
 The machbase-neo server recognizes the format of incoming data stream by `Content-Type` header,
-for example, `Content-Type: application/json` for JSON data, `Content-Type: text/csv` for csv data.
+for example, `Content-Type: application/json` for JSON data, `Content-Type: text/csv` for csv data, and `Content-type: application/x-ndjson` for newline delimiter json data.
 
 **Content-Encoding Header**
 
 If client sends gzip'd compress stream, it should set the header `Content-Encoding: gzip` 
 that tells the machbase-neo the incoming data stream is encoded in gzip.
 
+## Inputs
 
-## Request JSON
+### JSON
 
 This request message is equivalent that consists INSERT SQL statement as `INSERT into {table} (columns...) values (values...)`
 
@@ -50,20 +49,19 @@ This request message is equivalent that consists INSERT SQL statement as `INSERT
 | data.columns | array of strings | represents columns            |
 | data.rows    | array of tuples  | values of records             |
 
+**JSON**
+
 ```json
 {
     "data": {
         "columns":["name", "time", "value"],
         "rows": [
-            [ "my-car", 1670380342000000000, 1.0001 ],
-            [ "my-car", 1670380343000000000, 2.0002 ]
+            [ "json-data", 1670380342000000000, 1.0001 ],
+            [ "json-data", 1670380343000000000, 2.0002 ]
         ]
     }
 }
 ```
-
-{{< tabs items="JSON,JSON(gzip)">}}
-{{< tab >}}
 
 Set `Content-Type` header as `application/json`.
 
@@ -72,8 +70,8 @@ curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE \
     -H "Content-Type: application/json" \
     --data-binary "@post-data.json"
 ```
-{{< /tab >}}
-{{< tab >}}
+
+**Compressed JSON**
 
 Set the header `Content-Encoding: gzip` tells machbase-neo that the incoming stream is gzip-compressed.
 
@@ -84,10 +82,7 @@ curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE \
     --data-binary "@post-data.json.gz"
 ```
 
-{{< /tab >}}
-{{< /tabs >}}
-
-### Request JSON with timeformat
+**JSON with timeformat**
 
 When time fields are string format instead of UNIX epoch.
 
@@ -96,14 +91,14 @@ When time fields are string format instead of UNIX epoch.
     "data": {
         "columns":["name", "time", "value"],
         "rows": [
-            [ "my-car", "2022-12-07 02:32:22", 1.0001 ],
-            [ "my-car", "2022-12-07 02:32:23", 2.0002 ]
+            [ "json-data", "2022-12-07 02:32:22", 1.0001 ],
+            [ "json-data", "2022-12-07 02:32:23", 2.0002 ]
         ]
     }
 }
 ```
 
-Add `timeformat` and `tz` query parameters.
+Add `timeformat` and `tz` parameters.
 
 ```sh
 curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=DEFAULT&tz=Asia/Seoul' \
@@ -111,61 +106,127 @@ curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=DEFAULT&tz=Asia/
     --data-binary "@post-data.json"
 ```
 
-## Request CSV
+### NDJSON
 
-If csv data has header line like below, set the `heading=true` query param.
+NDJSON (Newline Delimited JSON) is a format for streaming JSON data where each line is a valid JSON object. This is useful for processing large datasets or streaming data.
+
+This request message is equivalent that consists INSERT SQL statement as `INSERT into {table} (columns...) values (values...)`
+
+**NDJSON**
+
+```json
+{"NAME":"ndjson-data", "TIME":1670380342000000000, "VALUE":1.001}
+{"NAME":"ndjson-data", "TIME":1670380343000000000, "VALUE":2.002}
+```
+
+Set `Content-Type` header as `application/x-ndjson`.
+
+```sh
+curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE \
+    -H "Content-Type: application/x-ndjson" \
+    --data-binary "@post-data.json"
+```
+
+
+**NDJSON with timeformat**
+
+When time fields are string format instead of UNIX epoch.
+
+```json
+{"NAME":"ndjson-data", "TIME":"2022-12-07 02:33:22", "VALUE":1.001}
+{"NAME":"ndjson-data", "TIME":"2022-12-07 02:33:23", "VALUE":2.002}
+```
+
+Add `timeformat` and `tz` parameters.
+
+```sh
+curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=Default&tz=Local' \
+    -H "Content-Type: application/x-ndjson" \
+    --data-binary "@post-data.json"
+```
+
+
+### CSV
+
+These options are only applicable when the content body is in CSV format.
+
+| param         | default | description                     |
+|:------------- |---------|:------------------------------- |
+| header {{< neo_since ver="8.0.33" />}} |         | `skip`: simply skip the first line<br/> `columns`: the CSV has a header line where fields match the column names. |
+| heading       | false   | Deprecated, `heading=true` is equivalent with `header=skip`. |
+| delimiter     | ,       | field delimiter |
+
+If the CSV data includes a header line, set the `header=skip` query parameter to make machbase-neo to ignore the first line.
+
+If the CSV header line specifies columns to write, use `header=columns`. This option ensures that the header matches the column names of the table. The header line will be used as the *columns* part of the SQL statement `INSERT INTO TABLE(columns...) VALUES(...)`.
+
+If the header line is not included and omit `header` option (or equivalent with `heading=false`) which is default, each line's fields must match all the columns of the table in order to match the SQL statement `INSERT INTO TABLE VALUES(...)`.
+
+> According to the semantics of append method, `header=columns` does not work with `method=append`.
+
+**header=skip**
+
+If you set `header=skip`, the server will ignore the first line, and the data should be in the same order as the columns of the table.
 
 ```csv
 NAME,TIME,VALUE
-my-car,1670380342000000000,1.0001
-my-car,1670380343000000000,2.0002
+csv-data,1670380342000000000,1.0001
+csv-data,1670380343000000000,2.0002
 ```
 
-{{< tabs items="CSV,CSV(gzip)">}}
-{{< tab >}}
 The `Content-Type` header should be `text/csv`.
-
 ```sh
-curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE?heading=true \
+curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE?header=skip \
     -H "Content-Type: text/csv" \
     --data-binary "@post-data.csv"
 ```
-{{< /tab >}}
-{{< tab >}}
 
-Set the header `Content-Encoding: gzip` telling machbase-neo that the incoming stream is gzip-compressed.
+**header=columns**
+
+If the CSV fields are in a different order or are a subset of the actual table columns, set `header=columns`. The server will then treat the first line as the column names. The example below generates an internal SQL statement similar to `INSERT INTO EXAMPLE (TIME, NAME, VALUE) VALUES(?, ?, ?)`
+
+```csv
+TIME,NAME,VALUE
+1670380342000000000,csv-data,1.0001
+1670380343000000000,csv-data,2.0002
+```
+
+The `Content-Type` header should be `text/csv`.
 
 ```sh
-curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE?heading=true \
+curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE?header=columns \
+    -H "Content-Type: text/csv" \
+    --data-binary "@post-data.csv"
+```
+
+**Compressed CSV**
+
+Set the header `Content-Encoding: gzip` to inform machbase neo that the incoming stream is gzip-compressed.
+
+```sh
+curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE?header=skip \
     -H "Content-Type: text/csv" \
     -H "Content-Encoding: gzip" \
     --data-binary "@post-data.csv.gz"
 ```
-{{< /tab >}}
-{{< /tabs >}}
 
-### Request CSV with timeformat
+**CSV with timeformat**
 
 ```csv
 NAME,TIME,VALUE
-my-car,2022-12-07 11:32:22,1.0001
-my-car,2022-12-07 11:32:22,2.0002
+csv-data,2022-12-07 11:39:32,1.0001
+csv-data,2022-12-07 11:39:33,2.0002
 ```
 
 Add `timeformat` and `tz` query parameters.
 
 ```sh
-curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE?heading=true&timeformat=Default&tz=Asia/Seoul' \
+curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE?header=skip&timeformat=Default&tz=Asia/Seoul' \
     -H "Content-Type: text/csv" \
     --data-binary "@post-data.csv"
 ```
 
-## INSERT vs. APPEND
-The `/db/write` API writes the posted data with “INSERT INTO…” statement by default. As long as the total number of records to write is small, there is not a big difference from “append” method.
-
-When you are writing a large amount of data (e.g. more than several hundreds thousands records), Use `method=append` parameter that specify machbase-neo to use “append” method instead of “INSERT INTO…” statement which is implicitly specified as `method=insert`.
-
-## Example
+## Examples
 
 Please refer to the detail of the API [Request endpoint and params](/neo/api-http/write#request-endpoint-and-params)
 
@@ -221,7 +282,7 @@ curl -o - http://127.0.0.1:5654/db/query \
 
 ### Insert CSV file with epoch time and header
 
-If csv data has header line like below, set the `heading=true` query param.
+If csv data has header line like below, set the `header=skip` query param.
 
 **Prepare data file**
 
@@ -240,14 +301,12 @@ wave.sin,1676432363,0.743144
 **Post data**
 
 ```sh
-curl -X POST "http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=s&heading=true" \
+curl -X POST "http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=s&header=skip" \
     -H "Content-Type: text/csv" \
     --data-binary "@data-epoch-1-header.csv"
 ```
 
 ### Insert CSV file with epoch time and no header
-
-If csv data has header line like below, set the `heading=false` query param.
 
 **Prepare data file**
 
@@ -265,7 +324,7 @@ wave.sin,1676432363,0.743144
 **Post data**
 
 ```sh
-curl -X POST "http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=s&heading=false" \
+curl -X POST "http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=s" \
     -H "Content-Type: text/csv" \
     --data-binary "@data-epoch-1-no-header.csv"
 ```
@@ -291,7 +350,7 @@ wave.sin,1676432363,0.743144
 **Post data**
 
 ```sh
-curl -X POST "http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=s&heading=false&method=append" \
+curl -X POST "http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=s&method=append" \
     -H "Content-Type: text/csv" \
     --data-binary "@data-epoch-bulk.csv"
 ```
@@ -314,7 +373,7 @@ wave.sin,2023-02-15 03:39:25.444,0.555555
 **Post data**
 
 ```sh
-curl -X POST "http://127.0.0.1:5654/db/write/EXAMPLE?heading=false&timeformat=Default" \
+curl -X POST "http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=Default" \
     -H "Content-Type: text/csv" \
     --data-binary "@data-timeformat-1.csv"
 ```
@@ -323,7 +382,7 @@ curl -X POST "http://127.0.0.1:5654/db/write/EXAMPLE?heading=false&timeformat=De
 
 ```sh
 curl -o - http://127.0.0.1:5654/db/query       \
-    --data-urlencode "q=select * from EXAMPLE" \
+    --data-urlencode "q=select * from EXAMPLE limit 10" \
     --data-urlencode "timeformat=Default"      \
     --data-urlencode "format=csv"
 ```
@@ -355,7 +414,7 @@ wave.sin,2023-02-15 12:39:25.444,0.555555
 **Post data**
 
 ```sh
-curl -X POST "http://127.0.0.1:5654/db/write/EXAMPLE?heading=false&timeformat=Default&tz=Asia/Seoul" \
+curl -X POST "http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=Default&tz=Asia/Seoul" \
         -H "Content-Type: text/csv" \
         --data-binary "@data-timeformat-1-tz-seoul.csv"
 ```
@@ -396,7 +455,7 @@ wave.sin,2023-02-15T03:39:25Z,0.555555
 **Post data**
 
 ```sh
- curl -X POST "http://127.0.0.1:5654/db/write/EXAMPLE?heading=false&timeformat=RFC3339" \
+ curl -X POST "http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=RFC3339" \
         -H "Content-Type: text/csv" \
         --data-binary "@data-timeformat-rfc3339.csv"
 ```
@@ -437,7 +496,7 @@ wave.sin,2023-02-14T22:39:25.444444444-05:00,0.555555
 **Post data**
 
 ```sh
- curl -X POST "http://127.0.0.1:5654/db/write/EXAMPLE?heading=false&timeformat=RFC3339Nano&tz=America/New_York" \
+ curl -X POST "http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=RFC3339Nano&tz=America/New_York" \
         -H "Content-Type: text/csv"  \
         --data-binary "@data-timeformat-rfc3339nano-tz-newyork.csv"
 ```
@@ -482,7 +541,7 @@ wave.sin,2023-02-15 03:39:25.444444444,0.555555
 **Post data**
 
 ```sh
-curl -X POST "http://127.0.0.1:5654/db/write/EXAMPLE?heading=false&timeformat=Default" \
+curl -X POST "http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=Default" \
         -H "Content-Type: text/csv" \
         --data-binary "@data-timeformat-custom-1.csv"
 ```
@@ -526,7 +585,7 @@ wave.sin,10:39:25.444444444-SPLIT-2023-02-14 ,0.555555
 **Post data**
 
 ```sh
-curl -X POST "http://127.0.0.1:5654/db/write/EXAMPLE?heading=false&timeformat=03:04:05.999999999-SPLIT-2006-01-02&tz=America/New_York" \
+curl -X POST "http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=03:04:05.999999999-SPLIT-2006-01-02&tz=America/New_York" \
         -H "Content-Type: text/csv" \
         --data-binary "@data-timeformat-custom-2.csv"
 ```

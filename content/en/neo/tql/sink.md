@@ -91,6 +91,7 @@ APPEND( table("example") )
 *Syntax*: `CSV( [tz(), timeformat(), precision(), rownum(), heading(), delimiter(), nullValue() ] )`
 
 Makes the records of the result in CSV format. The values of the records become the fields of the CSV lines.
+The end of the data is identified by the last two consecutive newline characters (`\n\n`).
 
 For example, if a record was `{key: k, value:[v1,v2]}`, it generates an CSV records as `v1,v2`.
 
@@ -251,6 +252,31 @@ JSON( rowsArray(true) )
 ```
 {{</ tab >}}
 {{</ tabs >}}
+
+## NDJSON()
+
+*Syntax*: `NDJSON( [tz(), timeformat(), rownum()] )` {{< neo_since ver="8.0.33" />}}
+
+Generates NDJSON results from the values of the records.
+
+NDJSON (Newline Delimited JSON) is a format for streaming JSON data where each line is a valid JSON object. This is useful for processing large datasets or streaming data because it allows you to handle one JSON object at a time.
+The end of the data is identified by the last two consecutive newline characters (`\n\n`).
+
+- `tz` *tz(name)* time zone, default is `tz('UTC')`.
+- `timeformat` *timeformat(string)* specify the format how represents datetime fields, default is `timeformat('ns')`.
+- `rownum` *rownum(boolean)` adds rownum column.
+
+```js {linenos=table,hl_lines=[2],linenostart=1}
+SQL(`select * from example where name = 'neo_load1' limit 3`)
+NDJSON(timeformat('Default'), tz('local'), rownum(true))
+```
+
+```json
+{"NAME":"neo_load1","ROWNUM":1,"TIME":"2024-09-06 14:46:19.852","VALUE":4.58}
+{"NAME":"neo_load1","ROWNUM":2,"TIME":"2024-09-06 14:46:22.853","VALUE":4.69}
+{"NAME":"neo_load1","ROWNUM":3,"TIME":"2024-09-06 14:46:25.852","VALUE":4.69}
+
+```
 
 ## MARKDOWN()
 

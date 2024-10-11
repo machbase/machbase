@@ -1,54 +1,69 @@
 ---
 title: Query via http
 type: docs
-weight: 20
+weight: 10
 ---
 
-There are three different ways of executing SQL statement via HTTP.
-Those api support not only "SELECT" but also "CREATE TABLE", "ALTER TABLE", "INSERT"... all other SQL statements.
+Query API endpoint is `/db/query`.
 
-The `query` API supports *GET*, *POST JSON* and *POST form-data*. all those methods have the same parameters.
+The query api does not support only "SELECT" but also "CREATE TABLE", "ALTER TABLE", "INSERT"... all other SQL statements.
+
+The `/db/query` API supports *GET*, *POST JSON* and *POST form-data*. The all methods supports the same parameters.
 
 For example the parameter `format` can be specified in query parameter in *GET* method like `GET /db/query?format=csv`,
 or be a JSON field in *POST-JSON* method as `{ "format": "csv" }`.
 
 **Query Example**
 
+```sh 
+curl -o - http://127.0.0.1:5654/db/query \
+     --data-urlencode "q=select * from EXAMPLE limit 2"
 ```
-http://127.0.0.1:5654/db/query?q=select%20*%20from%20EXAMPLE%20limit%202
-```
+
+## Parameters
 
 **Query Parameters**
 
 | param       | default | description                   |
 |:----------- |---------|:----------------------------- |
 | **q**       | _required_ | SQL query string              |
-| format      | `json`    | Result data format: json, csv, box |
+| format      | `json`    | Result data format: json, csv, box, ndjson |
 | timeformat  | `ns`      | Time format: s, ms, us, ns    |
 | tz          | `UTC`     | Time Zone: UTC, Local and location spec |
 | compress    | _no compression_   | compression method: gzip      |
 | rownum      | `false`   | including rownum: true, false |
-| heading     | `true`    | showing heading: true, false  |
-| precision   | `-1`      | precision of float value, -1 for no round, 0 for int |
 
-**Available parameters with `format=json`** {{< neo_since ver="8.0.12" />}}
+**Available parameters with `format=json`**
 
 * The options are only available when `format=json`. Those options are exclusive each other, applicable only one of them per a request.
 
 | param       | default | description                   |
 |:----------- |---------|:----------------------------- |
-| transpose   | false   | produce cols array instead of rows. |
-| rowsFlatten | false   | reduce the array dimension of the *rows* field in the JSON object. |
-| rowsArray   | false   | produce JSON that contains only array of object for each record.  |
+| transpose   | false   | produce cols array instead of rows. {{< neo_since ver="8.0.12" />}}|
+| rowsFlatten | false   | reduce the array dimension of the *rows* field in the JSON object. {{< neo_since ver="8.0.12" />}}|
+| rowsArray   | false   | produce JSON that contains only array of object for each record.  {{< neo_since ver="8.0.12" />}} |
+
+**Available parameters with `format=csv`**
+
+| param       | default | description                    |
+|:----------- |---------|:------------------------------ |
+| heading     | `true`  | show header line: true, false  |
+| precision   | `-1`    | precision of float value, -1 for no round, 0 for integers |
 
 **Available timeformat**
  
- Please refer to the [API Options/timeformat](../../options/timeformat/) section for the available time formats.
+* Please refer to the [API Options/timeformat](../../options/timeformat/) section for the available time formats.
 
-## GET
+## Outputs
 
-**Response in JSON format (default)**
+If the response content is too large to determine the total length, The header `Transfer-Encoding: chunked` is set, and the `Content-Length` header is omitted. The end of the response is identified by the last two consecutive newline characters (`\n\n`).
 
+- `Transfer-Encoding: chunked`: Means the data is sent in a series of chunks, useful for streaming.
+- Absence of `Content-Length`: Indicates that the total length of the response body is not known in advance.
+
+### JSON
+
+The `/db/query` api's default output format is json.
 Set query param `format=json` or omit it for the default value.
 
 {{< tabs items="Linux/macOS,Windows">}}
@@ -178,7 +193,69 @@ curl -o - http://127.0.0.1:5654/db/query \
 {{< /tab >}}
 {{< /tabs >}}
 
-**Response in BOX format**
+### NDJSON
+
+Set query param `format=ndjson` in the request. {{< neo_since ver="8.0.33" />}}
+
+NDJSON (Newline Delimited JSON) is a format for streaming JSON data where each line is a valid JSON object. This is useful for processing large datasets or streaming data because it allows you to handle one JSON object at a time.
+
+{{< tabs items="Linux/macOS,Windows">}}
+{{< tab >}}
+```sh
+curl -o - http://127.0.0.1:5654/db/query \
+    --data-urlencode "q=select * from EXAMPLE limit 2" \
+    --data-urlencode "format=ndjson"
+```
+{{< /tab >}}
+{{< tab >}}
+```sh
+curl -o - http://127.0.0.1:5654/db/query ^
+    --data-urlencode "q=select * from EXAMPLE limit 2" \
+    --data-urlencode "format=ndjson"
+```
+{{< /tab >}}
+{{< /tabs >}}
+
+The response comes with `Content-Type: application/x-ndjson`.
+
+```json
+{"NAME":"wave.sin","TIME":1705381958775759000,"VALUE":0.8563571936170834}
+{"NAME":"wave.sin","TIME":1705381958785759000,"VALUE":0.9011510331449053}
+
+```
+
+### CSV
+
+Set query param `format=csv` in the request.
+
+CSV format is also useful for processing large datasets or streaming data because it allows you to handle one line at a time.
+
+{{< tabs items="Linux/macOS,Windows">}}
+{{< tab >}}
+```sh
+curl -o - http://127.0.0.1:5654/db/query \
+    --data-urlencode "q=select * from EXAMPLE limit 2" \
+    --data-urlencode "format=csv"
+```
+{{< /tab >}}
+{{< tab >}}
+```sh
+curl -o - http://127.0.0.1:5654/db/query ^
+    --data-urlencode "q=select * from EXAMPLE limit 2" \
+    --data-urlencode "format=csv"
+```
+{{< /tab >}}
+{{< /tabs >}}
+
+The response comes with `Content-Type: text/csv; utf-8`
+
+```csv
+NAME,TIME,VALUE
+wave.sin,1705381958775759000,0.8563571936170834
+wave.sin,1705381958785759000,0.9011510331449053
+```
+
+### BOX
 
 Set query param `format=box` in the request.
 
@@ -186,13 +263,15 @@ Set query param `format=box` in the request.
 {{< tab >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
-    --data-urlencode "q=select * from EXAMPLE limit 2" --data-urlencode "format=box"
+    --data-urlencode "q=select * from EXAMPLE limit 2" \
+    --data-urlencode "format=box"
 ```
 {{< /tab >}}
 {{< tab >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query ^
-    --data-urlencode "q=select * from EXAMPLE limit 2" --data-urlencode "format=box"
+    --data-urlencode "q=select * from EXAMPLE limit 2" \
+    --data-urlencode "format=box"
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -200,12 +279,12 @@ curl -o - http://127.0.0.1:5654/db/query ^
 The result data in plain text with ascii box. The Content-Type of the response is `plain/text` 
 
 ```
-+----------+---------------------+----------+
-| NAME     | TIME(UTC)           | VALUE    |
-+----------+---------------------+----------+
-| wave.sin | 1676337568          | 0.000000 |
-| wave.sin | 1676337569          | 0.406736 |
-+----------+---------------------+----------+
++----------+---------------------+--------------------+
+| NAME     | TIME(UTC)           | VALUE              |
++----------+---------------------+--------------------+
+| wave.sin | 1705381958775759000 | 0.8563571936170834 |
+| wave.sin | 1705381958785759000 | 0.9011510331449053 |
++----------+---------------------+--------------------+
 ```
 
 **Response in CSV format**
@@ -216,13 +295,15 @@ Set query param `format=csv` in the request.
 {{< tab >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
-    --data-urlencode "q=select * from EXAMPLE limit 2" --data-urlencode "format=csv"
+    --data-urlencode "q=select * from EXAMPLE limit 2" \
+    --data-urlencode "format=csv"
 ```
 {{< /tab >}}
 {{< tab >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query ^
-    --data-urlencode "q=select * from EXAMPLE limit 2" --data-urlencode "format=csv"
+    --data-urlencode "q=select * from EXAMPLE limit 2" \
+    --data-urlencode "format=csv"
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -231,8 +312,8 @@ The response comes with `Content-Type: text/csv`
 
 ```csv
 NAME,TIME,VALUE
-wave.sin,1676337568,0.000000
-wave.sin,1676337569,0.406736
+wave.sin,1705381958775759000,0.8563571936170834
+wave.sin,1705381958785759000,0.9011510331449053
 ```
 
 ## POST JSON

@@ -1,7 +1,7 @@
 ---
 title: Create, Drop table
 type: docs
-weight: 10
+weight: 30
 ---
 
 The HTTP "Query" API doesn't accept only "SELECT" SQL but also DDL. So it is possible to create and drop tables via HTTP API
