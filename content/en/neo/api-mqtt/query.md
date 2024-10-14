@@ -4,6 +4,8 @@ type: docs
 weight: 20
 ---
 
+The database query topic for MQTT is `db/query`. Send a query request to this topic, and the server will respond with the result to the `db/reply` topic or the topic specified in the `reply` field of the request.
+
 ## Request JSON
 
 | param       | default | description                   |
