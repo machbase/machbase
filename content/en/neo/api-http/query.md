@@ -1,5 +1,5 @@
 ---
-title: Query via http
+title: HTTP Query
 type: docs
 weight: 10
 ---

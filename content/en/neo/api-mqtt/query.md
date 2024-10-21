@@ -1,5 +1,5 @@
 ---
-title: MQTT Query API
+title: MQTT Query
 type: docs
 weight: 20
 ---

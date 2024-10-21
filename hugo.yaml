@@ -72,7 +72,7 @@ menu:
       pageRef: /neo
       weight: 20
     - identifier: dbms
-      name: MACHBASE CLASSIC
+      name: DBMS REFERENCES
       pageRef: /dbms
       weight: 30
     - name: Search

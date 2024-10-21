@@ -1,5 +1,5 @@
 ---
-title: Write via http
+title: HTTP Write
 type: docs
 weight: 20
 ---

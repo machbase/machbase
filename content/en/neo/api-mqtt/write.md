@@ -1,5 +1,5 @@
 ---
-title: MQTT Write API
+title: MQTT Write
 type: docs
 weight: 30
 ---
