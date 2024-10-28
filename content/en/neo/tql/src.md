@@ -262,43 +262,43 @@ Specify field-types of the input CSV data.
 | type function    | type      |
 |:-----------------| :---------|
 | `stringType()`   | string    |
-| `floatType()`    | number {{< neo_since ver="8.0.20" />}}   |
-| `timeType()`     | datetime {{< neo_since ver="8.0.20" />}} |
+| `doubleType()`   | double    |
+| `datetimeType()` | datetime  |
 | `boolType()`     | boolean  {{< neo_since ver="8.0.20" />}} |
-| ~~`doubleType()`~~   | *deprected, use `floatType()`*  |
-| ~~`datetimeType()`~~ | *deprecated, use `timeType()`*  |
+| ~~`floatType()`~~    | *deprecated, use `doubleType()`*  {{< neo_since ver="8.0.20" />}} |
+| ~~`timeType()`~~     | *deprecated, use `datetimeType()`*  {{< neo_since ver="8.0.20" />}}|
 
 The `stringType()`, `boolType()` and `floatType()` take no arguments, `timeType()` function takes one or two parameters for proper conversion of date-time data.
 
 If the input data of the field specifies time in unix epoch time, specify the one of the time units `ns`, `us`, `ms` and `s`.
-- `timeType('s')`
-- `timeType('ms')`
-- `timeType('us')`
-- `timeType('ns')`
+- `datetimeType('s')`
+- `datetimeType('ms')`
+- `datetimeType('us')`
+- `datetimeType('ns')`
 
 The input field represents time in human readable format, it is requires to specifying how to parse them including time zone.
 
-- `timeType('DEFAULT', 'Local')`
+- `datetimeType('DEFAULT', 'Local')`
 
 ```js
 CSV(payload() ??
 `name,2006-01-02 15:04:05.999,10`,
-field(1, timeType('DEFAULT', 'Local'), 'time'))
+field(1, datetimeType('DEFAULT', 'Local'), 'time'))
 CSV()
 ```
 
-- `timeType('RFC3339', 'EST')`
+- `datetimeType('RFC3339', 'EST')`
 
 ```js
 CSV(payload() ??
 `name,2006-01-02T15:04:05.999Z,10`,
-field(1, timeType('RFC3339', 'EST'), 'time'))
+field(1, datetimeType('RFC3339', 'EST'), 'time'))
 CSV()
 ```
 
 If the timezone is omitted, it assumes 'UTC' by default.
 
-- `timeType('RC822')`
+- `datetimeType('RC822')`
 
 The first argument of the `timeType()` directs how to parse the input data that uses the same syntax with `timeformat()` function. Please refer to the description of the `timeformat()` function for the [timeformat spec](../utilities/#timeformat).
 

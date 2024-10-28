@@ -76,7 +76,7 @@ plt.show()
 
 ## Example - pandas
 
-### Load dataframe
+### Load dataframe from table
 
 - Load pandas dataframe from machbase-neo HTTP API.
 
@@ -108,7 +108,7 @@ df.to_csv(stream, encoding='utf-8', header=False, index=False)
 stream.seek(0)
 
 file_upload_resp = requests.post(
-    "http://127.0.0.1:5654/db/write/example?timeformat=s",
+    "http://127.0.0.1:5654/db/write/example?timeformat=s&method=append",
     headers={'Content-type':'text/csv'},
     data=stream )
 
@@ -116,7 +116,7 @@ print(file_upload_resp.json())
 ```
 
 ```python
-{'success': True, 'reason': 'success, 5 record(s) inserted', 'elapse': '1.288791ms'}
+{'success': True, 'reason': 'success, 500 record(s) appended', 'elapse': '2.288791ms'}
 ```
 
 ### Load CSV
