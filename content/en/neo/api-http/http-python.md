@@ -76,15 +76,9 @@ plt.show()
 
 ## Example - pandas
 
-{{< callout emoji="📌" >}}
-To write test data, use the command below from the [Write waves by shell](/neo/tutorials/shellscript-waves).
-{{< /callout >}}
+### Load dataframe
 
-```sh
-sh gen_wave.sh | machbase-neo shell import --timeformat=s EXAMPLE
-```
-
-This example shows how to load data into pandas dataframe via machbase-neo HTTP API.
+- Load pandas dataframe from machbase-neo HTTP API.
 
 ```python
 from urllib import parse
@@ -100,6 +94,30 @@ df
 ```
 
 {{< figure src="/images/python_http_csv.jpg" width="500px">}}
+
+### Write dataframe into table
+
+- Write pandas dataframe into a tag table via machbase-neo HTTP API.
+
+
+```python {{hl_lines=[4]}}
+import io, requests
+
+stream = io.StringIO()
+df.to_csv(stream, encoding='utf-8', header=False, index=False)
+stream.seek(0)
+
+file_upload_resp = requests.post(
+    "http://127.0.0.1:5654/db/write/example?timeformat=s",
+    headers={'Content-type':'text/csv'},
+    data=stream )
+
+print(file_upload_resp.json())
+```
+
+```python
+{'success': True, 'reason': 'success, 5 record(s) inserted', 'elapse': '1.288791ms'}
+```
 
 ### Load CSV
 
