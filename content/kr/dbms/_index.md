@@ -68,6 +68,7 @@ weight: 30
 
 ## 자주 묻는 질문(FAQ)
 
+* [Error Code](./faq/error-code)
 * [쿼리 에러를 Property 수정하여 해결하는 방법](./faq/faq)
 
 ## Archive
