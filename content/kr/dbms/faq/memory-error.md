@@ -1,7 +1,7 @@
 ---
 title : '쿼리 에러를 Property 수정하여 해결하는 방법'
 type: docs
-weight: 10
+weight: 100
 ---
 
 쿼리를 실행한 후 메모리 부족 에러가 발생하였을 때 Property를 수정하여 해결하는 방법을 설명한다.

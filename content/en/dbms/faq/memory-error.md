@@ -1,7 +1,7 @@
 ---
 title : 'Insufficient Memory'
 type: docs
-weight: 10
+weight: 100
 ---
 
 This section describes how to fix properties when an insufficient memory error occurs after executing a query.
