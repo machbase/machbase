@@ -68,6 +68,7 @@ weight: 30
 
 ## FAQ
 
+* [Error code](./faq/error-code)
 * [How to fix properties when an insufficient memory error occurs](./faq/memory-error)
 
 ## Archive
