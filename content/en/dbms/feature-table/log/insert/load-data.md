@@ -13,7 +13,7 @@ First, create a table to store the data, using the first line of the csv file to
 
 To save the table data as csv file, use the SAVE DATA statement.
 
-If you already know the data type for each field in the csv file, you can create the table in advance and enter the data.
+If you create the table in advance, the data type for each field in the CSV file must be set as VARCHAR or TEXT.
 
 If you enter the file 'load_sample.csv' into the LOAD DATA statement, the table 'load_sample' is automatically created.
 
