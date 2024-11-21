@@ -305,6 +305,62 @@ DISCARD()
 
 {{< figure src="../img/script_js_helloworld.png" width="550px" >}}
 
+### Sphere
+
+```js {{linenos=table,hl_lines=["3-12"]}}
+FAKE(meshgrid(linspace(0,2*3.1415,30), linspace(0, 3.1415, 20)))
+
+SCRIPT("js", {
+  s0 = Math.sin($.values[0]);
+  c0 = Math.cos($.values[0]);
+  s1 = Math.sin($.values[1]);
+  c1 = Math.cos($.values[1]);
+  x = c0 * s1;
+  y = s0 * s1;
+  z = c1;
+  $.yield([x,y,z]);
+})
+
+CHART(
+  plugins("gl"),
+  size("600px", "600px"),
+  chartOption({
+    grid3D:{}, xAxis3D:{}, yAxis3D:{}, zAxis3D:{},
+    visualMap:[{  min:-1, max:1, 
+      inRange:{color:["#313695",  "#74add1", "#ffffbf","#f46d43", "#a50026"]
+    }}],
+    series:[ { type:"scatter3D", data: column(0)} ]
+  })
+)
+```
+
+The equivalent result using a method other than Javascript is:
+
+```js {{linenos=table,hl_lines=["3-7"]}}
+FAKE(meshgrid(linspace(0,2*3.1415,30), linspace(0, 3.1415, 20)))
+
+SET(x, cos(value(0))*sin(value(1)))
+SET(y, sin(value(0))*sin(value(1)))
+SET(z, cos(value(1)))
+MAPVALUE(0, list($x, $y, $z))
+POPVALUE(1)
+
+CHART(
+  plugins("gl"),
+  size("600px", "600px"),
+  chartOption({
+    grid3D:{}, xAxis3D:{}, yAxis3D:{}, zAxis3D:{},
+    visualMap:[{  min:-1, max:1, 
+      inRange:{color:["#313695",  "#74add1", "#ffffbf","#f46d43", "#a50026"]
+    }}],
+    series:[ { type:"scatter3D", data: column(0)} ]
+  })
+)
+
+```
+
+{{< figure src="../img/script_js_sphere.png" width="550px" >}}
+
 ### JSON parser
 
 ```js {{linenos=table,hl_lines=["11"]}}
