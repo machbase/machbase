@@ -47,7 +47,8 @@ curl -o - http://127.0.0.1:5654/db/query \
 
 | param       | default | description                    |
 |:----------- |---------|:------------------------------ |
-| heading     | `true`  | show header line: true, false  |
+| header      |         | `skip` do not include header line, equivalent to `heading=false` |
+| heading     | `true`  | show header line: true, false, Deprecated use `header` instead  |
 | precision   | `-1`    | precision of float value, -1 for no round, 0 for integers |
 
 **Available timeformat**

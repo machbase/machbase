@@ -18,7 +18,7 @@ mkdir machrpc-java && cd machrpc-java
 
 ```sh
 mkdir -p src/main/proto
-curl -o src/main/proto/machrpc.proto https://raw.githubusercontent.com/machbase/neo-client/main/machrpc/machrpc.proto
+curl -o src/main/proto/machrpc.proto https://raw.githubusercontent.com/machbase/neo-server/main/api/proto/machrpc.proto
 ```
 
 After downloading proto file, it is required to add `java_package` option in the file.

@@ -318,6 +318,13 @@ KOI8R, KOI8U, MACINTOSH, MACINTOSHCYRILLIC, WINDOWS1250, WINDOWS1251, WINDOWS125
 WINDOWS1253, WINDOWS1254, WINDOWS1255, WINDOWS1256, WINDOWS1257, WINDOWS1258, WINDOWS874,
 XUSERDEFINED, HZ-GB2312
 
+## SCRIPT()
+
+Supporting user defined script language.
+
+See [SCRIPT](../script/) section for the details with examples.
+
+
 ## BYTES(), STRING()
 
 *Syntax*: `BYTES( src [, separator(char), trimspace(boolean) ] )`

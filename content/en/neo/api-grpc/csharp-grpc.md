@@ -36,7 +36,7 @@ dotnet add package Google.Protobuf
 ### Download machrpc.proto
 
 ```sh
-curl -o machrpc.proto https://raw.githubusercontent.com/machbase/neo-client/main/machrpc/machrpc.proto
+curl -o machrpc.proto https://raw.githubusercontent.com/machbase/neo-server/main/api/proto/machrpc.proto
 ```
 
 After downloading proto file, it is required to add csharp_namespace option in the file.

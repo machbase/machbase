@@ -1118,6 +1118,296 @@ Delete the subscriber of the given name
 }
 ```
 
+## Backup
+
+### Get Backup
+
+**GET `/web/api/backup/archives`**
+
+Return backup list
+- default backup dir `$MACHBASE_HOME/dbs/backup`
+- machbase-neo serve `--backup-dir={path}` required
+
+`response`
+
+```json
+{
+    "data": [
+        {
+            "path": "example_backup1",
+            "isMount": true,
+            "mountName": "backup1"
+        },
+        {
+            "path": "example_backup2",
+            "isMount": false
+        }
+    ],
+    "elapse": "6.562299ms",
+    "reason": "success",
+    "success": true
+}
+```
+### DB Backup
+
+**POST `/web/api/backup/archive`**
+
+backup database</br>
+- **Full backup**:   Backup of entire data
+- **Incremental backup**:   Backup of the data added after the full or previous incremental backup
+- **Time Duration backup**:   Backup of data for a specific period
+
+`request`
+{{< tabs items="Full Backup,Incremental Backup,Time Backup, Table Backup">}}
+{{< tab >}}
+```json
+{
+    "type":"database", // database or table
+    "tableName":"",
+    "duration":{
+        "type":"full",
+        "after":"",
+        "from":"",
+        "to":""
+    },
+    "path":"example_backup1" 
+    // "path":"/home/neo/backups/example_backup1" 
+}
+```
+{{< /tab >}}
+{{< tab >}}
+```json
+{
+    "type":"database", // database or table
+    "tableName":"",
+    "duration":{
+        "type":"incremental",
+        "after":"{previous_backup_dir}",
+        "from":"",
+        "to":""
+    },
+    "path":"example_backup1" 
+    // "path":"/home/neo/backups/example_backup1" 
+}
+```
+{{< /tab >}}
+{{< tab >}}
+```json
+{
+    "type":"database", // database or table
+    "tableName":"",
+    "duration":{
+        "type":"time",
+        "after":"",
+        "from":"2024-08-01 00:00:00",
+        "to":"2024-08-02 23:59:59"
+    },
+    "path":"example_backup1" 
+    // "path":"/home/neo/backups/example_backup1" 
+}
+```
+{{< /tab >}}
+{{< tab >}}
+```json
+{
+    "type":"table", // database or table
+    "tableName":"example",
+    "duration":{
+        "type":"full",
+        "after":"",
+        "from":"",
+        "to":""
+    },
+    "path":"example_backup1" 
+    // "path":"/home/neo/backups/example_backup1" 
+}
+```
+{{< /tab >}}
+{{< /tabs >}}
+
+`response`
+```json
+{
+    "success": true,
+    "reason": "success",
+    "elapse": "231.3µs"
+}
+```
+
+### Status Backup
+
+**GET `/web/api/backup/archive/status`**
+
+return backup status</br>
+
+`response`
+```json
+{
+    "data": {
+        "type": "database",
+        "tableName": "",
+        "duration": {
+            "type": "full",
+            "after": "",
+            "from": "",
+            "to": ""
+        },
+        "path": "/home/neo/neo-server/tmp/machbase_home/dbs/example_backup1",
+    },
+    "elapse": "1.1µs",
+    "reason": "success",
+    "success": true
+}
+```
+
+## Mount
+
+### Mount List
+
+**GET `/web/api/backup/mounts`**
+
+Return mount list
+
+`response`
+
+```json
+{
+    "data": [
+        {
+            "name": "machbase_backup_19700101090000_20240726104832_15",
+            "path": "backup1",
+            "tbsid": 23,
+            "scn": 15,
+            "mountdb": "MOUNT_BACKUP1",
+            "dbBeginTime": "1970-01-01 09:00:00",
+            "dbEndTime": "2024-07-26 10:48:32",
+            "backupBeginTime": "2024-07-26 10:48:32",
+            "backupEndTime": "2024-07-26 10:48:34",
+            "flag": 0
+        }
+    ],
+    "elapse": "424.3µs",
+    "reason": "success",
+    "success": true
+}
+```
+### DB Mount
+
+**POST `/web/api/backup/mounts/:name`**
+
+database mount
+- `:name` mount name
+- `path` backup database path (`Absolute Path`, `Relative Path` available)
+
+{{< tabs items="Request,Response">}}
+{{< tab >}}
+```json
+{
+    "path":"example_backup1" // Relative Path
+    // "path":"/home/machbase/machbase_home/dbs/example_backup1" // Absolute Path
+}
+```
+{{< /tab >}}
+{{< tab >}}
+```json
+{
+    "elapse": "46.8694ms",
+    "reason": "success",
+    "success": true
+}
+```
+{{< /tab >}}
+{{< /tabs >}}
+
+### DB Unmount
+
+**DELETE `/web/api/backup/mounts/:name`**
+
+database unmount
+- `:name` unmount name
+
+`response`
+```json
+{
+    "elapse": "46.8694ms",
+    "reason": "success",
+    "success": true
+}
+```
+
+
+## Package
+
+### Search
+
+**GET `/web/api/pkgs/search?name=pkg_name&possibles=10`**
+
+`Query Parameter`
+ - `name` is package name, required
+ - `possible` is search count ( possible=0, all search )
+
+
+`response`
+
+```json
+{
+    "success": true,
+    "reason": "success",
+    "data":{},
+    "elapse": "547.1µs"
+}
+```
+### Sync
+
+**GET `/web/api/pkgs/sync`**
+
+Package sync 
+
+`response`
+
+```json
+{
+    "success": true,
+    "reason": "success",
+    "elapse": "30.9144ms"
+}
+```
+
+
+### Install
+
+**GET `/web/api/pkgs/insall/:name`**
+
+ - `:name` is install package name, required
+
+`response`
+```json
+{
+    "success": true,
+    "reason": "success",
+    "data":{}, // omitempty
+    "log":"",
+    "elapse": "23.1491ms"
+}
+```
+
+### Uninstall
+
+**GET `/web/api/pkgs/uninsall/:name`**
+
+ - `:name` is uninstall package name, required
+
+`response`
+```json
+{
+    "success": true,
+    "reason": "success",
+    "data":{}, // omitempty
+    "log":"",
+    "elapse": "88.4133ms"
+}
+```
+
 
 ## Others
 
@@ -1148,6 +1438,48 @@ Delete the subscriber of the given name
   otherwise external web url that starts with `https://`
 
 
+### SQL statements splitter
+
+**POST `/web/api/splitter/sql`**
+
+```json
+{
+    "success": true,
+    "reason": "success or error reason",
+    "elapse": "elapse time",
+    "data": {
+        "statements": [
+            {
+                "text": "-- env: bridge=sqlite",
+                "beginLine": 1,
+                "endLine": 1,
+                "isComment": true,
+                "env": {
+                    "bridge": "sqlite",
+                    "error": "if there are syntax error in `-- env: bridge=database`"
+                }
+            },
+            {
+                "text": "select * from table",
+                "beginLine": 2,
+                "endLine": 2,
+                "isComment": false,
+                "env": {
+                    "bridge": "sqlite",
+                    "error": "if there are syntax error in `-- env: bridge=database`"
+                }
+            },
+            {
+                "text": "-- comment",
+                "beginLine": 3,
+                "endLine": 3,
+                "isComment": true,
+                "env": {}
+            }
+        ]
+    }
+}
+```
 
 ### License info
 

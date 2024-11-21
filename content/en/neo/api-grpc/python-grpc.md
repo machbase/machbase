@@ -26,7 +26,7 @@ mkdir machrpc-py && cd machrpc-py
 Download proto file.
 
 ```sh
-curl -o machrpc.proto https://raw.githubusercontent.com/machbase/neo-client/main/machrpc/machrpc.proto
+curl -o machrpc.proto https://raw.githubusercontent.com/machbase/neo-server/main/api/proto/machrpc.proto
 ```
 
 Compile proto file into Python.
