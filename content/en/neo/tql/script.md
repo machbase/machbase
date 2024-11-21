@@ -305,19 +305,20 @@ DISCARD()
 
 {{< figure src="../img/script_js_helloworld.png" width="550px" >}}
 
-### Sphere
+### Builtin Math object
 
-```js {{linenos=table,hl_lines=["3-12"]}}
+{{< tabs items="JS,SET-MAP">}}
+{{< tab >}}
+
+Javascript builtin functions are available:
+
+```js {{linenos=table,hl_lines=["3-8"]}}
 FAKE(meshgrid(linspace(0,2*3.1415,30), linspace(0, 3.1415, 20)))
 
 SCRIPT("js", {
-  s0 = Math.sin($.values[0]);
-  c0 = Math.cos($.values[0]);
-  s1 = Math.sin($.values[1]);
-  c1 = Math.cos($.values[1]);
-  x = c0 * s1;
-  y = s0 * s1;
-  z = c1;
+  x = Math.cos($.values[0]) * Math.sin($.values[1]);
+  y = Math.sin($.values[0]) * Math.sin($.values[1]);
+  z = Math.cos($.values[1]);
   $.yield([x,y,z]);
 })
 
@@ -333,15 +334,18 @@ CHART(
   })
 )
 ```
+{{< /tab >}}
+{{< tab >}}
 
-The equivalent result using a method other than Javascript is:
+The equivalent result using SET-MAP functions instead of Javascript is:
 
-```js {{linenos=table,hl_lines=["3-7"]}}
+```js {{linenos=table,hl_lines=["3-8"]}}
 FAKE(meshgrid(linspace(0,2*3.1415,30), linspace(0, 3.1415, 20)))
 
 SET(x, cos(value(0))*sin(value(1)))
 SET(y, sin(value(0))*sin(value(1)))
 SET(z, cos(value(1)))
+
 MAPVALUE(0, list($x, $y, $z))
 POPVALUE(1)
 
@@ -356,8 +360,9 @@ CHART(
     series:[ { type:"scatter3D", data: column(0)} ]
   })
 )
-
 ```
+{{< /tab >}}
+{{< /tabs >}}
 
 {{< figure src="../img/script_js_sphere.png" width="550px" >}}
 
