@@ -235,20 +235,12 @@ STRING(payload() ?? `1,100,value,10
 2,200,value,11
 3,140,value,12`, separator('\n'))
 
-SCRIPT({
-    text := import("text")
-    ctx := import("context")
-
-    key := ctx.key()
-    values := ctx.value()
-    str :=  text.trim_space(values[0])
-
-    str = text.split(str, ',')
-
-    ctx.yield(
+SCRIPT("js", {
+    str =  $.values[0].trim().split(',');
+    $.yield(
         "tag-" + str[0],
-        text.parse_int(str[1], 10, 64),
-        text.parse_int(str[3], 10, 64)
+        (new Date().getTime()*1000000),
+        parseInt(str[1])+parseInt(str[3])
     )
 })
 APPEND(table("example"))
@@ -295,16 +287,25 @@ Prepare test data saved in `import-data.json`.
 Copy the code below into TQL editor and save `import-tql-json.tql`.
 
 ```js
-BYTES(payload())
-SCRIPT({
-  json := import("json")
-  ctx := import("context")
-  val := ctx.value()
-  obj := json.decode(val[0])
-  // parse a value from json, yield multiple records
-  ctx.yield(obj.tag+"_0", obj.data.time*1000000000, obj.data.number)
-  ctx.yield(obj.tag+"_1", obj.data.time*1000000000, obj.array[1])
-  ctx.yield(obj.tag+"_2", obj.data.time*1000000000, obj.array[2])
+BYTES( payload() ?? {
+    {
+        "tag": "pump",
+        "data": {
+            "string": "Hello TQL?",
+            "number": "123.456",
+            "time": 1687405320,
+            "boolean": true
+        },
+        "array": ["elements", 234.567, 345.678, false]
+    }
+})
+SCRIPT("js", {
+    obj = JSON.parse($.values[0]);
+    $.yield(obj.tag+"_0", obj.data.time*1000000000, obj.data.number)
+    $.yield(obj.tag+"_1", obj.data.time*1000000000, obj.data.array[1])
+    $.yield(obj.tag+"_2", obj.data.time*1000000000, obj.data.array[2])
+    for (i = 0; i < obj.array.length; i++) {
+    }
 })
 APPEND(table("example"))
 ```
@@ -457,23 +458,15 @@ JSON()
 Copy the code below into TQL editor and save `export-tql-csv.tql`.
 
 ```js
-SQL( 'select * from example' )
-SCRIPT({
-    text := import("text")
-    ctx := import("context")
-
-    key := ctx.key()
-    column := ctx.value()
-    value := int(column[1])
-    r_value := ""
-
-    if  (value % 2) == 0 {
+SQL( 'select * from example limit 30' )
+SCRIPT("js", {
+    if  ($.values[2] % 2 == 0) {
         r_value = "even"
     } else {
         r_value = "odd"
     }
 
-    ctx.yield(key + "-tql", value,  r_value)
+    $.yield($.key + "-tql", $.values[2],  r_value)
 })
 CSV()
 ```

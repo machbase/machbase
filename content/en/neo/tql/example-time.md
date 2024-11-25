@@ -58,19 +58,11 @@ TQL can be used to facilitate conversion between `Timestamp` and `Time format st
 Copy the code below into TQL editor and save `time_to_format.tql`.
 
 ```js
-STRING(param("format_time") ?? "808210800000000000", separator('\n'))
-SCRIPT({
-    ctx := import("context")
-    times := import("times")
-    text := import("text")
-
-    epoch_txt := ctx.value()[0]
-    epoch := text.parse_int(epoch_txt, 10, 64)
-    epoch = epoch / 1000000000
-
-    t_time := times.time_format(epoch, "Mon Jan 2 15:04:05 -0700 MST 2006")
-
-    ctx.yield(epoch, t_time)
+STRING(param("format_time") ?? "808210800", separator('\n'))
+SCRIPT("js", {
+    epoch = parseInt($.values[0])
+    time = new Date(epoch*1000)
+    $.yield(epoch, time.toISOString())
 })
 CSV()
 ```
@@ -82,21 +74,16 @@ CSV()
 Copy the code below into TQL editor and save `format_to_time.tql`.
 
 ```js
-STRING(param("timestamp") ?? "Sat Aug 12 00:00:00 -0700 MST 1995", separator('\n'))
-SCRIPT({
-    ctx := import("context")
-    times := import("times")
-    text := import("text")
-
-    time_format := ctx.value()[0]
-    epoch := times.parse("Mon Jan 2 15:04:05 -0700 MST 2006", time_format)
-
-    ctx.yield(epoch, time_format)
+STRING(param("timestamp") ?? "1995-08-12T00:00:00.000Z", separator('\n'))
+SCRIPT("js", {
+    ts = new Date(Date.parse($.values[0]));
+    epoch = ts.getTime() / 1000;
+    $.yield(epoch, ts.toISOString())
 })
 CSV()
 ```
 
-`http://127.0.0.1:5654/db/tql/format_to_time.tql?timestamp=Sat Aug 12 00:00:01 -0700 MST 1995`
+`http://127.0.0.1:5654/db/tql/format_to_time.tql?timestamp=1995-08-12T00:00:00.000Z`
 
 
 ## Format
