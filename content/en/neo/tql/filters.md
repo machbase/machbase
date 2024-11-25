@@ -182,11 +182,36 @@ They tend to be slow in reflecting recent trends due to equal weighting applied 
 They are less responsive to significant changes in values.
 To address this, a common practice is to apply different weights to the most recent and older values within the window when calculating the average.
 
-{{< tabs items="chart,code">}}
+{{< tabs items="chart,SCRIPT,SET-MAP">}}
 {{< tab >}}
 
 {{< figure src="../img/filter_lpf.jpg" width="600px" >}}
 
+{{< /tab >}}
+{{< tab >}}
+```js {{linenos=table,hl_lines=[9,17]}}
+FAKE(arrange(1,5,0.03))
+SCRIPT("js", {
+    val = Math.round($.values[0]*100)/100;
+    sig = Math.sin( 1.2*2*Math.PI*val );
+    noise = 0.09 * Math.cos(9*2*Math.PI*val) + 
+            0.15 * Math.sin(12*2*Math.PI*val);
+    $.yield( sig+noise, sig );
+})
+MAP_LOWPASS(1, value(0), 0.3)
+CHART(
+    size("600px", "400px"),
+    chartOption({
+        xAxis:{ type: "category", data: column(0)},
+        yAxis:{ max:1.5, min:-1.5 },
+        series:[
+            { type: "line", data: column(1), name:"value+noise" },
+            { type: "line", data: column(2), name:"lpf" },
+        ],
+        legend: { bottom: 10 }
+    })
+)
+```
 {{< /tab >}}
 {{< tab >}}
 ```js {{linenos=table,hl_lines=[6,14]}}
