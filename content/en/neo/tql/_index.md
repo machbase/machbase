@@ -42,7 +42,7 @@ CHART(
 
 ### Data source independent
 
-{{< tabs items="JSON,CSV,SQL">}}
+{{< tabs items="JSON,CSV,SQL,SCRIPT">}}
 {{< tab >}}
 ```js {{linenos="table",hl_lines=["1-5"]}}
 FAKE( json({ 
@@ -70,12 +70,24 @@ CSV()
 {{</ tab >}}
 {{< tab >}}
 ```js  {{linenos="table",hl_lines=[1]}}
-SQL(`select time, value from example where name = 'signal' limit 4`)
+SQL(`select time, value from example where name = 'my-car' limit 4`)
 
 MAPVALUE(1, value(1) * 10 )
 
 CSV()
 ```
+{{</ tab >}}
+{{< tab >}}
+```js {{linenos="table",hl_lines=["1-5"]}}
+SCRIPT("js", {
+    for (i = 0; i < 10; i++) {
+        $.yield("script", Math.random())
+    }
+})
+
+MAPVALUE(1, value(1) * 10 )
+
+CSV()
 {{</ tab >}}
 {{</ tabs >}}
 

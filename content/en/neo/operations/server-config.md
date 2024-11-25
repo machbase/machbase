@@ -33,8 +33,8 @@ The default value of `PrefDir` is `prefDir("machbase")` which is `$HOME/.config/
 | Listener                  | Config                    | default                 |
 |:--------------------------|:--------------------------|:------------------------|
 | SSH Shell                 | Shell.Listeners           | `tcp://127.0.0.1:5652`  |
-| MQTT                      | Mqtt.Listeners            | `tcp://127.0.0.1:5653`  |
-| HTTP                      | Http.Listeners            | `tcp://127.0.0.1:5654`  |
+| MQTT                      | Mqtt.Listeners            | `tcp://127.0.0.1:5653` <br/> `unix://${tempDir()}/machbase-neo-mqtt.sock`  |
+| HTTP                      | Http.Listeners            | `tcp://127.0.0.1:5654` <br/> `unix://${tempDir()}/machbase-neo.sock`  |
 | gRPC                      | Grpc.Listeners            | `tcp://127.0.0.1:5655` <br/> `unix://${execDir()}/mach-grpc.sock` |
 | Machbase native           | Machbase.PORT_NO          | `5656`                  |
 |                           | Machbase.BIND_IP_ADDRESS  | `127.0.0.1`             |
@@ -56,6 +56,7 @@ Several functions are supported for the value of config item.
 - `flag(A, B)` : Get value of command line flag 'A'. if not specified, apply B as default value.
 - `env(A, B)` : get value of Environment variable 'A'. if not specified, apply B as default value
 - `execDir()` : Get directory path where executable file is.
+- `tempDir()` : Get system temp dir path. {{< neo_since ver="8.0.36" />}}
 - `userDir()` : Get user's home directory, On Linux and macOS, it returns the $HOME environment variable.
 - `prefDir(subdir)` : Ger user's preference directory, On Linux and macOS, it returns the real path of $HOME/.config/{subdir}
 

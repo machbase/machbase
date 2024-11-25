@@ -43,7 +43,9 @@ Start machbase-neo server process.
 |:-----------------|:----------|-------------------------------- |
 | `--shell-port`   | `5652`    | ssh listen port                 |
 | `--mqtt-port`    | `5653`    | mqtt listen port                |
+| `--mqtt-sock`    | `/tmp/machbase-neo-mqtt.sock`| mqtt unix socket {{< neo_since ver="8.0.36" />}}|
 | `--http-port`    | `5654`    | http listen port                |
+| `--http-sock`    | `/tmp/machbase-neo.sock` | http unix socket {{< neo_since ver="8.0.36" />}}|
 | `--grpc-port`    | `5655`    | grpc listen port                |
 | `--grpc-sock`    | `mach-grpc.sock` | grpc unix domain socket  |
 | `--grpc-insecure`| `false`   | set `true` to use plain tcp socket,<br/>disable TLS {{< neo_since ver="8.0.18" />}} |
