@@ -364,6 +364,7 @@ CHART(
 {{< /tab >}}
 {{< /tabs >}}
 
+**Result**
 {{< figure src="../img/script_js_sphere.png" width="550px" >}}
 
 ### JSON parser
@@ -391,9 +392,7 @@ JSON()
     "data": {
         "columns": [ "NAME", "AGE", "IS_MEMBER", "HOBBY" ],
         "types": [ "string", "int32", "bool", "string" ],
-        "rows": [
-            [ "James", 24, true, "book,game" ]
-        ]
+        "rows": [ [ "James", 24, true, "book,game" ] ]
     },
     "success": true,
     "reason": "success",
@@ -401,7 +400,7 @@ JSON()
 }
 ```
 
-### Fetch CSV
+### Request CSV
 
 ```js {{linenos=table,hl_lines=["17-19"]}}
 SCRIPT("js", {
@@ -431,7 +430,7 @@ SCRIPT("js", {
 CSV(header(true))
 ```
 
-### Fetch JSON text
+### Request JSON text
 
 This example demonstrates how to fetch JSON content from a remote server and parse it using Javascript.
 

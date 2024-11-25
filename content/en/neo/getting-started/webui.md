@@ -77,6 +77,12 @@ Click *CHART* tab from the right side pane. It will show a line chart with the q
 
 {{< figure src="/images/web-select-chart.jpg" width="600" >}}
 
+### Download CSV file
+
+The full result of the query can be exported in a CSV file.
+
+{{< figure src="../img/web-select-download.png" >}}
+
 ### Delete Table
 
 Delete records with a *DELETE* statement.
@@ -90,6 +96,38 @@ Or, remove the table if you want to create a fresh one.
 ```sql
 DROP TABLE example;
 ```
+
+## Non-SQL
+
+### show tables
+
+Simplified command that queries `M$SYS_TABLES` table.
+
+```
+show tables;
+```
+
+{{< figure src="../img/web-show-tables.png" >}}
+
+### desc _table_name_
+
+Describe table's columns and related index.
+
+```
+desc example;
+```
+
+{{< figure src="../img/web-desc-table.png" >}}
+
+### show tags _table_name_
+
+```
+show tags example;
+```
+
+Query stored tags of the table, it works to TAG table only.
+
+{{< figure src="../img/web-show-tags.png" >}}
 
 ## Shell
 
