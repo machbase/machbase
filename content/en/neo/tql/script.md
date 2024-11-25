@@ -169,6 +169,19 @@ Yield the new record to the next step, with the key automatically assigned as a 
 
 Returns a new database connection. The connection provides `query()`, `exec()` functions.
 
+If the *option* object is specified as a parameter, for example, `$.db({bridge: "sqlite"})`,
+it returns a new connection to the bridged database instead of the machbase database.
+
+**option**
+
+The option parameter is supproted {{< neo_since ver="8.0.37" />}}
+
+```js
+{
+    bridge: "name", // bridge name
+}
+```
+
 ### `$.db().query()`
 
 JavaScript can query the database using `$.db().query()`. 
