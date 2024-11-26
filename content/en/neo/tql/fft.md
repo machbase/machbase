@@ -94,6 +94,8 @@ CHART_LINE( size("600px", "350px"), dataZoom('slider', 95, 100))
 
 Add few data manipulation function between `SQL_SELECT()` source and `CHART_LINE()` sink.
 
+{{< tabs items="GROUPBYKEY,SCRIPT">}}
+{{< tab >}}
 ```js {linenos=table,hl_lines=["2-4"],linenostart=1}
 SQL_SELECT('time', 'value', from('example', 'signal'), between('last-10s', 'last'))
 MAPKEY('sample')
@@ -106,6 +108,31 @@ CHART_LINE(
   dataZoom('slider', 0, 10) 
 )
 ```
+{{< /tab >}}
+{{< tab >}}
+
+```js {linenos=table,hl_lines=[10,12],linenostart=1}
+SQL_SELECT('time', 'value', from('example', 'signal'), between('last-10s', 'last'))
+SCRIPT("js", {
+    var list = [];
+    function finalize() {
+        $.yield(list);
+    }
+},{
+    ts = $.values[0];
+    val = $.values[1];
+    list.push([ts, val]);
+})
+FFT()
+CHART_LINE(
+  size("600px", "350px"), 
+  xAxis(0, 'Hz'),
+  yAxis(1, 'Amplitude'),
+  dataZoom('slider', 0, 10) 
+)
+```
+{{< /tab >}}
+{{< /tabs >}}
 
 {{< figure src="/images/web-fft-tql-2d.png" width="500" >}}
 
