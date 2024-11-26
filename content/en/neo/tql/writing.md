@@ -133,9 +133,6 @@ Use SCRIPT() function to parse a custom format JSON.
 
 Save the code below as `input-json.tql`.
 
-{{< tabs items="Javascript,Tengo">}}
-{{< tab >}}
-
 ```js
 STRING( payload() )
 SCRIPT("js", {
@@ -147,24 +144,6 @@ SCRIPT("js", {
 })
 INSERT("name", "time", "value", table("example"))
 ```
-
-{{< /tab >}}
-{{< tab >}}
-```js
-STRING( payload() )
-SCRIPT("tengo", {
-  json := import("json")
-  ctx := import("context")
-  val := ctx.value()
-  obj := json.decode(val[0])
-  for i := 0; i < len(obj.data.rows); i++ {
-    ctx.yield(obj.data.rows[i][0], obj.data.rows[i][1], obj.data.rows[i][2])
-  }
-})
-INSERT("name", "time", "value", table("example"))
-```
-{{< /tab >}}
-{{< /tabs >}}
 
 ### HTTP POST
 
@@ -220,15 +199,15 @@ When the data transforming is required for writing to the database, prepare the 
 
 The example code below shows how to handle multi-lines text data for writing into a table.
 
-{{< tabs items="MAP,SCRIPT-JAVASCRIPT,SCRIPT-TENGO">}}
+{{< tabs items="MAP,SCRIPT">}}
 {{< tab >}}
-Transforming using MAP functions
+Transforming using MAP functions.
 ```js {linenos=table,hl_lines=["13-15"],linenostart=1}
 // payload() returns the payload that arrived via HTTP-POST or MQTT,
 // The ?? operator means that if tql is called without content,
 //        the right side value is applied
 // It is a good practice while the code is being developed on the tql editor of web-ui.
-STRING(payload() ?? ` 12345
+STRING( payload() ?? ` 12345
                      23456
                      78901
                      89012
@@ -247,8 +226,18 @@ CSV( timeformat("DEFAULT") )
 ```
 {{</ tab >}}
 {{< tab >}}
-```js {linenos=table,hl_lines=["9-14"],linenostart=1}
-STRING( payload(), separator('\n'), trimspace(true) )
+The alternative way using SCRIPT function.
+```js {linenos=table,hl_lines=["13-18"],linenostart=1}
+// payload() returns the payload that arrived via HTTP-POST or MQTT,
+// The ?? operator means that if tql is called without content,
+//        the right side value is applied
+// It is a good practice while the code is being developed on the tql editor of web-ui.
+STRING( payload() ?? ` 12345
+                     23456
+                     78901
+                     89012
+                     90123
+                  `, separator('\n'), trimspace(true) )
 FILTER( len(value(0)) > 0) // filter empty line
 // transforming data
 SCRIPT("js", {
@@ -258,29 +247,7 @@ SCRIPT("js", {
   $.yieldKey("text_"+$.key, ts, parseInt(str))
 })
 CSV()
-```
-{{</ tab >}}
-{{< tab >}}
-Alternative version of transforming using SCRIPT()
-```js {linenos=table,hl_lines=["9-22"],linenostart=1}
-STRING( payload(), separator('\n'), trimspace(true))
-FILTER( len(value(0)) > 0) // filter empty line
-// transforming data
-SCRIPT("tengo", {
-  text := import("text")
-  times := import("times")
-  ctx := import("context")
-  key := ctx.key()
-  values := ctx.value()
-  str := text.trim_space(values[0]) // trim spaces
-  str = text.substr(str, 0, 2)      // takes the first 2 letters of the line
-  ctx.yieldKey(
-      "text_"+key,                // compose new key (which is NAME column of the table)
-      times.now(),                // current time
-      text.parse_int(str, 10, 64) // convert to number type 
-  )
-})
-CSV()
+// APPEND(table('example'))
 ```
 {{</ tab >}}
 {{</ tabs >}}
