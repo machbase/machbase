@@ -133,9 +133,26 @@ Use SCRIPT() function to parse a custom format JSON.
 
 Save the code below as `input-json.tql`.
 
+{{< tabs items="Javascript,Tengo">}}
+{{< tab >}}
+
 ```js
-BYTES(payload())
-SCRIPT({
+STRING( payload() )
+SCRIPT("js", {
+  obj = JSON.parse($.values[0])
+  for (i = 0; i < obj.data.rows.length; i++) {
+    row = obj.data.rows[i];
+    $.yield(row[0], row[1], row[2]);
+  }
+})
+INSERT("name", "time", "value", table("example"))
+```
+
+{{< /tab >}}
+{{< tab >}}
+```js
+STRING( payload() )
+SCRIPT("tengo", {
   json := import("json")
   ctx := import("context")
   val := ctx.value()
@@ -146,6 +163,8 @@ SCRIPT({
 })
 INSERT("name", "time", "value", table("example"))
 ```
+{{< /tab >}}
+{{< /tabs >}}
 
 ### HTTP POST
 
@@ -201,7 +220,7 @@ When the data transforming is required for writing to the database, prepare the 
 
 The example code below shows how to handle multi-lines text data for writing into a table.
 
-{{< tabs items="MAP,SCRIPT">}}
+{{< tabs items="MAP,SCRIPT-JAVASCRIPT,SCRIPT-TENGO">}}
 {{< tab >}}
 Transforming using MAP functions
 ```js {linenos=table,hl_lines=["13-15"],linenostart=1}
@@ -228,17 +247,26 @@ CSV( timeformat("DEFAULT") )
 ```
 {{</ tab >}}
 {{< tab >}}
-Alternative version of transforming using SCRIPT()
-```js {linenos=table,hl_lines=["9-22"],linenostart=1}
-STRING(payload() ?? ` 12345
-                     23456
-                     78901
-                     89012
-                     90123
-                  `, separator('\n'), trimspace(true))
+```js {linenos=table,hl_lines=["9-14"],linenostart=1}
+STRING( payload(), separator('\n'), trimspace(true) )
 FILTER( len(value(0)) > 0) // filter empty line
 // transforming data
-SCRIPT({
+SCRIPT("js", {
+  str = $.values[0].trim() ;  // trim spaces
+  str = str.substring(0, 2);  // takes the first 2 letters of the line
+  ts = (new Date()).getTime() * 1000000 // ms. to ns.
+  $.yieldKey("text_"+$.key, ts, parseInt(str))
+})
+CSV()
+```
+{{</ tab >}}
+{{< tab >}}
+Alternative version of transforming using SCRIPT()
+```js {linenos=table,hl_lines=["9-22"],linenostart=1}
+STRING( payload(), separator('\n'), trimspace(true))
+FILTER( len(value(0)) > 0) // filter empty line
+// transforming data
+SCRIPT("tengo", {
   text := import("text")
   times := import("times")
   ctx := import("context")
@@ -257,7 +285,9 @@ CSV()
 {{</ tab >}}
 {{</ tabs >}}
 
+
 **Result**
+
 ```csv
 text_1,2023-12-02 11:03:36.054,12
 text_2,2023-12-02 11:03:36.054,23
