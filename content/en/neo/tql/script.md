@@ -321,6 +321,19 @@ SCRIPT("js", {
 CSV()
 ```
 
+To query a bridged database in the SQL editor, use the `-- env: bridge=name` notation for the query.
+
+```sql
+-- env: bridge=mem
+SELECT
+    name,
+    datetime(time/1000, 'unixepoch', 'localtime') as time,
+    value
+FROM
+    example;
+-- env: reset
+```
+
 {{< figure src="../img/script_js_db_sqlite_exec.png" width="600px" >}}
 
 {{< /tab >}}
