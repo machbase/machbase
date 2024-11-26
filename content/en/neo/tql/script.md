@@ -191,6 +191,8 @@ If the callback function of `.forEach()` explicitly returns `false`, the iterati
 If the callback function returns `true` or does not return anything (which means it returns `undefined`), 
 the iteration continues until the end of the query result.
 
+{{< tabs items="MACHBASE,BRIDGE-SQLITE">}}
+{{< tab >}}
 ```js {{linenos=table,hl_lines=["7-9"]}}
 SCRIPT("js", {
     var data = $.payload;
@@ -218,10 +220,42 @@ cpu.percent,1725343901314955000,10.8
 cpu.percent,1725343904315952000,40
 ```
 
+{{< /tab >}}
+{{< tab >}}
+```js {{linenos=table,hl_lines=["7-10"]}}
+SCRIPT("js", {
+    var data = $.payload;
+    if (data === undefined) {
+        data = '{ "tag": "testing", "offset": 0, "limit": 5 }';
+    }
+    var obj = JSON.parse(data);
+    $.db({bridge:"mem"})
+     .query("SELECT name, time, value FROM example WHERE name = ? LIMIT ?, ?",
+        obj.tag, obj.offset, obj.limit
+    ).forEach( function(row){
+        name = row[0]
+        time = row[1]
+        value = row[2]
+        $.yield(name, time, value);
+    })
+})
+CSV()
+```
+
+```csv
+testing,1732589744886,16.70559756851126
+testing,1732589744886,49.93214293713331
+testing,1732589744886,54.485508690434905
+```
+{{< /tab >}}
+{{< /tabs >}}
+
 ### `$.db().exec()`
 
 If the SQL is not a SELECT statement, use `$.db().exec()` to execute INSERT, DELETE, CREATE TABLE statements.
 
+{{< tabs items="MACHBASE,BRIDGE-SQLITE">}}
+{{< tab >}}
 ```js {{linenos=table,hl_lines=["10-14", "21-22"]}}
 SCRIPT("js", {
     for( i = 0; i < 3; i++) {
@@ -253,6 +287,44 @@ SCRIPT("js", {
 })
 CSV()
 ```
+{{< /tab >}}
+{{< tab >}}
+```js {{linenos=table,hl_lines=["10-14", "21-22"]}}
+SCRIPT("js", {
+    for( i = 0; i < 3; i++) {
+        ts = Date.now(); // ms
+        $.yield("testing", ts, Math.random()*100);
+    }
+})
+SCRIPT("js", {
+    // This section contains initialization code
+    // that runs once before processing the first record.
+    err = $.db({bridge:"mem"}).exec("CREATE TABLE IF NOT EXISTS example ("+
+        "NAME TEXT,"+
+        "TIME INTEGER,"+
+        "VALUE REAL"+
+    ")");
+    if (err instanceof Error) {
+        console.error("Fail to create table", err.message);
+    }
+}, {
+    // This section contains the main code
+    // that runs over every record.
+    err = $.db({bridge:"mem"}).exec("INSERT INTO example values(?, ?, ?)", 
+        $.values[0], $.values[1], $.values[2]);
+    if (err instanceof Error) {
+        console.error("Fail to insert", err.message);
+    } else {
+        $.yield($.values[0], $.values[1], $.values[2]);
+    }
+})
+CSV()
+```
+
+{{< figure src="../img/script_js_db_sqlite_exec.png" width="600px" >}}
+
+{{< /tab >}}
+{{< /tabs >}}
 
 ### `$.request().do()`
 
