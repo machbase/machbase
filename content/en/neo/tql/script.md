@@ -22,6 +22,7 @@ Machbase-neo exposes the `$` variable as the context object. JavaScript can acce
 
 - `$.payload` Input data of the request.
 - `$.params` Input query parameters of the request.
+- `$.result` Specifies the names and types of the result columns yielded by the `SCRIPT()` function.
 - `$.key`, `$.values` Javascript access point to the key and values of the current record. It is only available if the `SCRIPT()` is a MAP function.
 - `$.yield()` Yield a new record with values
 - `$.yieldKey()` Yield a new record with key and values
@@ -108,6 +109,26 @@ curl -o - -X POST "http://127.0.0.1:5654/db/tql/test.tql?"\
 
 The result is: `testing,12,20`.
 
+### `$.result`
+
+Specifies the type of result data that the `SCRIPT` function yields.
+It works within the _init_ code section, as shown in the example below.
+
+```js {{linenos=table,hl_lines=["2-5"]}}
+SCRIPT("js", {
+    $.result = {
+        columns: ["val", "sig"],
+        types: ["double", "double"] 
+    }
+},{
+    for (i = 1.0; i <= 5.0; i+=0.03) {
+        val = Math.round(i*100)/100;
+        sig = Math.sin( 1.2*2*Math.PI*val );
+        $.yield( val, sig );
+    }
+})
+JSON()
+```
 
 ### `$.key`
 
@@ -387,6 +408,23 @@ $.request("https://server/path", {
     console.log("Content-Type:", rsp.headers["Content-Type"]);
 });
 ```
+
+### finalize()
+
+If `SCRIPT("js")` contains `function finalize(){}` function in the Javascript, it will be called by system at the end after all records are processed.
+
+```js
+FAKE( arrange(1, 3, 1) )
+SCRIPT("js", {
+    function finalize() {
+        $.yield(999);
+    }
+    $.yield($.values[0]);
+})
+CSV()
+```
+
+This example yields 4 records: `1`,`2`,`3`,`999`.
 
 ## Examples
 
