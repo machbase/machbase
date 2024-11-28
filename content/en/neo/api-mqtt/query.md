@@ -6,7 +6,7 @@ weight: 20
 
 The database query topic for MQTT is `db/query`. Send a query request to this topic, and the server will respond with the result to the `db/reply` topic or the topic specified in the `reply` field of the request.
 
-## Request JSON
+## Query JSON
 
 | param       | default | description                   |
 |:----------- |---------|:----------------------------- |
@@ -33,9 +33,19 @@ Those options are available only when `format=json`
 
 A basic query example shows the client subscribe to `db/reply/#` and publish a query request to `db/query` with *reply* field `db/reply/my_query` so that it can identify the individual reply from multiple messages.
 
+```json
+{
+    "q": "select name,time,value from example limit 5",
+    "format": "csv",
+    "reply": "db/reply/my_query"
+}
+```
+
 {{< figure src="../img/query_mqttx.png" width="600px" caption="A demonstration shows how to query and receive responses over MQTT. (Using MQTTX.app)">}}
 
-## Javascript Client
+## Client Examples
+
+### Javascript Client
 
 ```sh
 npm install mqtt --save
@@ -83,8 +93,7 @@ $ node main.js
 +----------+-------+
 ```
 
-## Go client
-
+### Go client
 
 **Define data structure for response**
 
