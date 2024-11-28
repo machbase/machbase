@@ -64,23 +64,23 @@ Create the subscriber and set its state to "RUNNING" as shown below.
 
 Let's define another bridge to an external database. In this example, we will use SQLite. The process is similar for other types of databases, but the connection string options will vary depending on the database type.
 
-If you only want to store the incoming data into machbase-neo, defining another bridge to an external database is not required.
-
 - Name: `destdb`
-- Type: `SQLIte`
+- Type: `SQLite`
 - Connection String `file:///tmp/mqtt.db`
 
 {{< figure src="../img/mqtt-sqlite-bridge-sqlite.png" width="600" >}}
 
+> If you only want to store the incoming data in machbase-neo, you do not need to define another bridge to an external database.
+
 ## TQL
 
-Now everything is ready to write the actual TQL code, which will be executed whenever the `mosquitto` bridge receives published messages on the topic `demo/#` via the mosquitto server.
+Now, we are ready to write the actual TQL code that will execute whenever the `mosquitto` bridge receives messages published on the topic `demo/#` via the mosquitto server.
 
 - Line 2-11: This JSON string is used for testing purposes when you execute a test run of this TQL. If `payload()` returns NULL because there are no "real" messages, the `??` operator takes the provided JSON string instead of NULL.
 
-- Line 13: `SCRIPT("js", {}, {})` is special TQL MAP function which executes the given Javascript. Please refer to the reference document for the details.
+- Line 13: `SCRIPT("js", {}, {})` is a TQL MAP function which executes the given Javascript. Please refer to the reference document in [here](/neo/tql/script/) for the details.
 
-- Line 44: In this example, the SCRIPT MAP function handles all the tasks. There is nothing to do in the SINK function, but all TQL scripts must end with a "SINK" function. Therefore, we use the `DISCARD()` function instead.
+- Line 44: In this example, the SCRIPT MAP function handles all the tasks. There is no need for additional processing in the SINK function, but all TQL scripts must end with a SINK function. Therefore, we use the `DISCARD()` function to fulfill this requirement.
 
 ```js {linenos=table,hl_lines=["17-22","33-40"],linenostart=1}
 STRING( payload() ?? `
@@ -159,7 +159,7 @@ mosquitto_pub -h 127.0.0.1 -p 1883 \
 
 ## Query bridged DB
 
-Verify that the data has been stored in the destination database. The SQL editor in machbase-neo allows you to execute queries directly on the bridged database. Use the `-- env: bridge=destdb` comment to instruct machbase-neo to run the query on the bridged database instead of the machbase-neo database itself.
+Verify that the data has been stored in the destination database. The SQL editor in machbase-neo allows you to execute queries directly on the bridged database. Use the `-- env: bridge=destdb` comment to instruct machbase-neo to run the query on the bridged database instead of the machbase-neo itself.
 
 ```sql
 -- env: bridge=destdb

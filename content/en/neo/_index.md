@@ -51,7 +51,8 @@ Data transformation and visualization language *TQL* is supported out of the box
 {{< figure src="/images/data-visualization.jpg" width="740" >}}
 
 - [TQL](/neo/tql) is the DSL for data transformation.
-- [CHART()](/neo/tql/chart/) for the data visualization examples.
+- [CHART()](/neo/tql/chart/) for the data visualization.
+- [SCRIPT()](/neo/tql/script/) for implementing custom logic.
 
 ### Dashbaord
 
