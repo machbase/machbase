@@ -13,19 +13,18 @@ For the examples, create a table with the following SQL statements.
 CREATE TAG TABLE IF NOT EXISTS EXAMPLE (
     NAME VARCHAR(20) PRIMARY KEY,
     TIME DATETIME BASETIME,
-VALUE DOUBLE SUMMARIZED);
+    VALUE DOUBLE SUMMARIZED
+);
 ```
 
 ## `INSERT` CSV
-
-When you save a TQL script, the editor will display a link icon <img src="/images/copy_addr_icon.jpg" width="24px" style="display:inline"> in the top right corner. Click on it to copy the address of the script file.
-
 
 {{% steps %}}
 
 ### Save *tql* file
 
 Save the code below as `input-csv.tql`.
+When you save a TQL script, the editor will display a link icon <img src="/images/copy_addr_icon.jpg" width="24px" style="display:inline"> in the top right corner. Click on it to copy the script file's address.
 
 ```js
 CSV(payload(), 
@@ -78,6 +77,7 @@ mosquitto_pub -h 127.0.0.1 -p 5653 \
 ### Save *tql* file
 
 Save the code below as `append-csv.tql`.
+When you save a TQL script, the editor will display a link icon <img src="/images/copy_addr_icon.jpg" width="24px" style="display:inline"> in the top right corner. Click on it to copy the script file's address.
 
 ```js
 CSV(payload(), 
