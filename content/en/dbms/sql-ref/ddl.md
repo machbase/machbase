@@ -10,30 +10,30 @@ weight: 20
 
 **create_table_stmt:**
 
-![create_table_stmt](../ddl_image/create_table_stmt.png)
+![create_table_stmt](/images/sql/ddl/create_table_stmt.png)
 
 **column_list:**
 
-![column_list](../ddl_image/column_list.png)
+![column_list](/images/sql/ddl/column_list.png)
 
 **column_property_list:**
 
-![column_property_list](../ddl_image/column_property_list.png)
+![column_property_list](/images/sql/ddl/column_property_list.png)
 
 
 **table_property_list:**
 
-![table_property_list](../ddl_image/table_property_list.png)
+![table_property_list](/images/sql/ddl/table_property_list.png)
 
 
 **column_type:**
 
-![column_type](../ddl_image/column_type.png)
+![column_type](/images/sql/ddl/column_type.png)
 
 
 **with_rollup:**
 
-![with_rollup](../ddl_image/with_rollup_opt.png)
+![with_rollup](/images/sql/ddl/with_rollup_opt.png)
 
 #### Create LOG table
 
@@ -179,7 +179,7 @@ On the other hand, Machbase is a chronologically partitioned structure in order 
 If the range of data to be searched is divided into 1000 partitions, it means that 1000 files should be opened and retrieved every time. Although it is designed as an efficient columnar database structure, the MINMAX_CACHE structure is a way to improve the performance because the I/O cost is proportional to the number of index partitions.
 MINMAX_CACHE is a structure that holds the index file information of the partition in memory, and is a contiguous memory space that keeps the minimum and maximum values ​​of the column in memory. By maintaining such structure, when a partition containing a specific value is searched, if the value is smaller than the minimum value of the index or is larger than the maximum value, the corresponding partition can be skipped altogether, thereby enabling high-performance data analysis.
 
-![When you find a value "85"](../ddl_image/whenyoufindavalue85.png)
+![When you find a value "85"](/images/sql/ddl/whenyoufindavalue85.png)
 
 As shown in the figure above, to find the value 85, only the partitions 1 and 5 included in MIN/MAX among the 5 partitions are actually searched, and the partitions 2, 3 and 4 are skipped altogether.
 
@@ -280,7 +280,7 @@ SELECT nextval(v1), v2 FROM table_name;
 
 **drop_table_stmt:**
 
-![drop_table_stmt](../ddl_image/drop_table_stmt.png)
+![drop_table_stmt](/images/sql/ddl/drop_table_stmt.png)
 
 ```sql
 drop_table_stmt ::= 'DROP TABLE' table_name
@@ -297,19 +297,19 @@ DROP TABLE TableName;
 
 **create_tablespace_stmt:**
 
-![create_tablespace_stmt](../ddl_image/create_tablespace_stmt.png)
+![create_tablespace_stmt](/images/sql/ddl/create_tablespace_stmt.png)
 
 **datadisk_list:**
 
-![datadisk_list](../ddl_image/datadisk_list.png)
+![datadisk_list](/images/sql/ddl/datadisk_list.png)
 
 **data_disk:**
 
-![data_disk](../ddl_image/data_disk.png)
+![data_disk](/images/sql/ddl/data_disk.png)
 
 **data_disk_property:**
 
-![data_disk_property](../ddl_image/data_disk_property.png)
+![data_disk_property](/images/sql/ddl/data_disk_property.png)
 
 ```sql
 create_tablespace_stmt ::= 'CREATE TABLESPACE' tablespace_name 'DATADISK' datadisk_list
@@ -348,7 +348,7 @@ Defines disk belonging to a tablespace. Each Disk has the following properties.
 
 **drop_tablespace_stmt:**
 
-![drop_tablespace_stmt](../ddl_image/drop_tablespace_stmt.png)
+![drop_tablespace_stmt](/images/sql/ddl/drop_tablespace_stmt.png)
 
 ```sql
 drop_table_stmt ::= 'DROP TABLESPACE' tablespace_name
@@ -366,19 +366,19 @@ DROP TABLESPACE TablespaceName;
 
 **create_index_stmt:**
 
-![create_index_stmt](../ddl_image/create_index_stmt.png)
+![create_index_stmt](/images/sql/ddl/create_index_stmt.png)
 
 **index_type:**
 
-![index_type](../ddl_image/index_type.png)
+![index_type](/images/sql/ddl/index_type.png)
 
 **table_space:**
 
-![table_space](../ddl_image/table_space.png)
+![table_space](/images/sql/ddl/table_space.png)
 
 **index_property_list:**
 
-![index_property_list](../ddl_image/index_property_list.png)
+![index_property_list](/images/sql/ddl/index_property_list.png)
 
 ```sql
 create_index_stmt ::= 'CREATE' 'INDEX' index_name 'ON' table_name '(' column_name ')' index_type? table_space? index_property_list?
@@ -448,7 +448,7 @@ CREATE INDEX index2 on table1 (var_column) INDEX_TYPE KEYWORD PAGE_SIZE=100000;
 
 **drop_index_stmt:**
 
-![drop_index_stmt](../ddl_image/drop_index_stmt.png)
+![drop_index_stmt](/images/sql/ddl/drop_index_stmt.png)
 
 ```sql
 drop_index_stmt ::= 'DROP INDEX' index_name
@@ -476,7 +476,7 @@ This syntax changes the properties of a table. Currently there are no dynamicall
 
 **alter_table_add_stmt:**
 
-![alter_table_add_stmt](../ddl_image/alter_table_add_stmt.png)
+![alter_table_add_stmt](/images/sql/ddl/alter_table_add_stmt.png)
 
 ```sql
 alter_table_add_stmt ::= 'ALTER TABLE' table_name 'ADD COLUMN' '(' column_name column_type ( 'DEFAULT' value )? ')'
@@ -498,7 +498,7 @@ alter table atest2 add column (id8 varchar(4) default 'hello');
 
 **alter_table_drop_stmt:**
 
-![alter_table_drop_stmt](../ddl_image/alter_table_drop_stmt.png)
+![alter_table_drop_stmt](/images/sql/ddl/alter_table_drop_stmt.png)
 
 ```sql
 alter_table_drop_stmt ::= 'ALTER TABLE' table_name 'DROP COLUMN' '(' column_name ')'
@@ -516,7 +516,7 @@ alter table atest2 drop column (id8);
 
 **alter_table_column_rename_stmt:**
 
-![alter_table_column_rename_stmt](../ddl_image/alter_table_column_rename_stmt.png)
+![alter_table_column_rename_stmt](/images/sql/ddl/alter_table_column_rename_stmt.png)
 
 ```sql
 alter_table_column_rename_stmt ::= 'ALTER TABLE' table_name 'RENAME COLUMN' old_column_name 'TO' new_column_name
@@ -533,7 +533,7 @@ alter table atest2 rename column id7 to id7_rename;
 
 **alter_table_modify_stmt:**
 
-![alter_table_modify_stmt](../ddl_image/alter_table_modify_stmt.png)
+![alter_table_modify_stmt](/images/sql/ddl/alter_table_modify_stmt.png)
 
 ```sql
 alter_table_modify_stmt ::= 'ALTER TABLE' table_name 'MODIFY COLUMN' ( '(' column_name 'VARCHAR' '(' new_size ')' ')' | column_name ( 'NOT'? 'NULL' | 'SET' 'MINMAX_CACHE_SIZE' '=' value ) )
@@ -618,7 +618,7 @@ alter table t1 modify column c1 null;
 
 **alter_table_rename_stmt:**
 
-![alter_table_rename_stmt](../ddl_image/alter_table_rename_stmt.png)
+![alter_table_rename_stmt](/images/sql/ddl/alter_table_rename_stmt.png)
 
 ```sql
 alter_table_rename_stmt ::= 'ALTER TABLE' table_name 'RENAME TO' new_name
@@ -641,7 +641,7 @@ ALTER TABLE worker RENAME TO employee;
 alter_table_add_retention_stmt ::=  'ALTER TABLE' table_name 'ADD RETENTION' policy_name
 ```
 
-![alter_table_add_retention_stmt](../ddl_image/alter_table_add_retention_stmt.png)
+![alter_table_add_retention_stmt](/images/sql/ddl/alter_table_add_retention_stmt.png)
 
 ```sql
 ALTER TABLE tag ADD RETENTION policy_1d_1h;
@@ -656,7 +656,7 @@ ALTER TABLE tag ADD RETENTION policy_1d_1h;
 alter_table_drop_retention_stmt ::=  'ALTER TABLE' table_name 'DROP RETENTION'
 ```
 
-![alter_table_drop_retention_stmt](../ddl_image/alter_table_drop_retention_stmt.png)
+![alter_table_drop_retention_stmt](/images/sql/ddl/alter_table_drop_retention_stmt.png)
 
 ```sql
 ALTER TABLE tag DROP RETENTION;
@@ -673,7 +673,7 @@ This syntax is used to change the properties of DATADISK in Tablespace.
 
 **alter_tablespace_stmt:**
 
-![alter_tablespace_stmt](../ddl_image/alter_tablespace_stmt.png)
+![alter_tablespace_stmt](/images/sql/ddl/alter_tablespace_stmt.png)
 
 ```sql
 alter_tablespace_stmt ::= 'ALTER TABLESPACE' table_name 'MODIFY DATADISK' disk_name 'SET' 'PARALLEL_IO' '=' value
@@ -688,7 +688,7 @@ ALTER TABLESPACE tbs1 MODIFY DATADISK disk1 SET PARALLEL_IO = 10;
 
 **truncate_table_stmt:**
 
-![truncate_table_stmt](../ddl_image/truncate_table_stmt.png)
+![truncate_table_stmt](/images/sql/ddl/truncate_table_stmt.png)
 
 ```sql
 truncate_table_stmt ::= 'TRUNCATE TABLE' table_name
@@ -708,7 +708,7 @@ Deletes all data in the specified table. However, if there is another session in
 
 **create_rollup_stmt:**
 
-![create_rollup_stmt](../ddl_image/create_rollup_stmt.png)
+![create_rollup_stmt](/images/sql/ddl/create_rollup_stmt.png)
 
 ```sql
 create_rollup_stmt ::= 'CREATE ROLLUP' rollup_name 'ON' src_table_name '('src_table_column')' 'INTERVAL' number ('SEC' | 'MIN' | 'HOUR')
@@ -725,7 +725,7 @@ Executed successfully
 
 **drop_rollup_stmt:**
 
-![drop_rollup_stmt](../ddl_image/drop_rollup_stmt.png)
+![drop_rollup_stmt](/images/sql/ddl/drop_rollup_stmt.png)
 
 ```sql
 drop_rollup_stmt ::= 'DROP ROLLUP' rollup_name
@@ -741,7 +741,7 @@ Executed successfully
 
 **create_retention_stmt:**
 
-![create_retention_stmt](../ddl_image/create_retention_stmt.png)
+![create_retention_stmt](/images/sql/ddl/create_retention_stmt.png)
 
 ```sql
 create_retention_stmt ::= 'CREATE RETENTION' policy_name 'DURATION' duration ( 'MONTH' | 'DAY' ) 'INTERVAL' interval ( 'DAY' | 'HOUR' )
@@ -756,7 +756,7 @@ Executed successfully
 
 **drop_retention_stmt:**
 
-![drop_retention_stmt](../ddl_image/drop_retention_stmt.png)
+![drop_retention_stmt](/images/sql/ddl/drop_retention_stmt.png)
 
 ```sql
 drop_retention_stmt ::= 'DROP RETENTION' policy_name

@@ -18,7 +18,7 @@ weight: 60
 
 **create_user_stmt:**
 
-![create_user_stmt](../user_image/create_user_stmt.png)
+![create_user_stmt](/images/sql/user/create_user_stmt.png)
 
 ```sql
 create_user_stmt ::= 'CREATE USER' user_name 'IDENTIFIED BY' password
@@ -36,7 +36,7 @@ CREATE USER new_user IDENTIFIED BY password
 
 **drop_user_stmt:**
 
-![drop_user_stmt](../user_image/drop_user_stmt.png)
+![drop_user_stmt](/images/sql/user/drop_user_stmt.png)
 
 ```sql
 drop_user_stmt ::= 'DROP USER' user_name
@@ -54,7 +54,7 @@ DROP USER old_user
 
 **alter_user_pwd_stmt:**
 
-![alter_user_pwd_stmt](../user_image/alter_user_pwd_stmt.png)
+![alter_user_pwd_stmt](/images/sql/user/alter_user_pwd_stmt.png)
 
 ```sql
 alter_user_pwd_stmt ::= 'ALTER USER' user_name 'IDENTIFIED BY' password
@@ -72,7 +72,7 @@ ALTER USER user1 IDENTIFIED BY password
 
 **user_connect_stmt:**
 
-![user_connect_stmt](../user_image/user_connect_stmt.png)
+![user_connect_stmt](/images/sql/user/user_connect_stmt.png)
 
 ```sql
 user_connect_stmt: 'CONNECT' user_name '/' password
@@ -88,11 +88,11 @@ CONNECT user1/password;
 
 ## GRANT/REVOKE
 
-![grant_stmt](../user_image/grant_stmt.png)
+![grant_stmt](/images/sql/user/grant_stmt.png)
 
-![revoke_stmt](../user_image/revoke_stmt.png)
+![revoke_stmt](/images/sql/user/revoke_stmt.png)
 
-![priv_value](../user_image/priv_value.png)
+![priv_value](/images/sql/user/priv_value.png)
 
 Grants authority to the table to the user through the GRANT statement.
 

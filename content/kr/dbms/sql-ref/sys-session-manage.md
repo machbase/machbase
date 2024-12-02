@@ -32,7 +32,7 @@ weight: 80
 
 **alter_system_kill_session_stmt:**
 
-![alter_system_kill_session_stmt](../sys_image/alter_system_kill_session_stmt.png)
+![alter_system_kill_session_stmt](/images/sql/sys/alter_system_kill_session_stmt.png)
 
 ```sql
 alter_system_kill_session_stmt: 'ALTER SYSTEM KILL SESSION' number
@@ -46,7 +46,7 @@ SessionID를 가진 특정 세션을 종료시킨다.
 
 **alter_system_cancel_session_stmt:**
 
-![alter_system_cancel_session_stmt](../sys_image/alter_system_cancel_session_stmt.png)
+![alter_system_cancel_session_stmt](/images/sql/sys/alter_system_cancel_session_stmt.png)
 
 ```sql
 alter_system_cancel_session_stmt ::= 'ALTER SYSTEM CANCEL SESSION' number
@@ -60,7 +60,7 @@ SessionID를 가진 특정 세션을 취소시킨다.
 
 **alter_system_check_disk_stmt:**
 
-![alter_system_check_disk_stmt](../sys_image/alter_system_check_disk_stmt.png)
+![alter_system_check_disk_stmt](/images/sql/sys/alter_system_check_disk_stmt.png)
 
 ```sql
 alter_system_check_disk_stmt ::= 'ALTER SYSTEM CHECK DISK_USAGE'
@@ -74,7 +74,7 @@ Process Failure나 Power Failure 발생시 디스크 사용량이 부정확할 �
 
 **alter_system_install_license_stmt:**
 
-![alter_system_install_license_stmt](../sys_image/alter_system_install_license_stmt.png)
+![alter_system_install_license_stmt](/images/sql/sys/alter_system_install_license_stmt.png)
 
 ```sql
 alter_system_install_license_stmt ::= 'ALTER SYSTEM INSTALL LICENSE'
@@ -88,7 +88,7 @@ alter_system_install_license_stmt ::= 'ALTER SYSTEM INSTALL LICENSE'
 
 **alter_system_install_license_path_stmt:**
 
-![alter_system_install_license_path_stmt](../sys_image/alter_system_install_license_path_stmt.png)
+![alter_system_install_license_path_stmt](/images/sql/sys/alter_system_install_license_path_stmt.png)
 
 ```sql
 alter_system_install_license_path_stmt: ::= 'ALTER SYSTEM INSTALL LICENSE' '=' "'" path "'"
@@ -104,7 +104,7 @@ alter_system_install_license_path_stmt: ::= 'ALTER SYSTEM INSTALL LICENSE' '=' "
 
 **alter_system_set_stmt:**
 
-![alter_system_set_stmt](../sys_image/alter_system_set_stmt.png)
+![alter_system_set_stmt](/images/sql/sys/alter_system_set_stmt.png)
 
 ```sql
 alter_system_set_stmt ::= 'ALTER SYSTEM SET' prop_name '=' value
@@ -129,7 +129,7 @@ System 의 Property 를 수정할 수 있다. 수정 가능한 Property 는 다�
 
 **alter_session_sql_logging_stmt:**
 
-![alter_session_sql_logging_stmt](../sys_image/alter_session_sql_logging_stmt.png)
+![alter_session_sql_logging_stmt](/images/sql/sys/alter_session_sql_logging_stmt.png)
 
 ```sql
 alter_session_sql_logging_stmt ::= 'ALTER SESSION SET SQL_LOGGING' '=' flag
@@ -156,7 +156,7 @@ Mach> exit
 
 **alter_session_set_defalut_dateformat_stmt:**
 
-![alter_session_set_defalut_dateformat_stmt](../sys_image/alter_session_set_defalut_dateformat_stmt.png)
+![alter_session_set_defalut_dateformat_stmt](/images/sql/sys/alter_session_set_defalut_dateformat_stmt.png)
 
 ```sql
 alter_session_set_defalut_dateformat_stmt ::= 'ALTER SESSION SET DEFAULT_DATE_FORMAT' '=' date_format
@@ -209,7 +209,7 @@ TIME
 
 **alter_session_set_hidden_column_stmt:**
 
-![alter_session_set_hidden_column_stmt](../sys_image/alter_session_set_hidden_column_stmt.png)
+![alter_session_set_hidden_column_stmt](/images/sql/sys/alter_session_set_hidden_column_stmt.png)
 
 ```sql
 alter_session_set_hidden_column_stmt ::= 'ALTER SESSION SET SHOW_HIDDEN_COLS' '=' ( '0' | '1' )
@@ -247,7 +247,7 @@ SHOW_HIDDEN_COLS DEFAULT_DATE_FORMAT                                            
 
 **alter_session_set_feedback_append_err_stmt:**
 
-![alter_session_set_feedback_append_err_stmt](../sys_image/alter_session_set_feedback_append_err_stmt.png)
+![alter_session_set_feedback_append_err_stmt](/images/sql/sys/alter_session_set_feedback_append_err_stmt.png)
 
 ```sql
 alter_session_set_feedback_append_err_stmt ::= 'ALTER SESSION SET FEEDBACK_APPEND_ERROR' '=' ( '0' | '1' )
@@ -271,7 +271,7 @@ Altered successfully.
 
 **alter_session_set_max_qpx_mem_stmt:**
 
-![alter_session_set_max_qpx_mem_stmt](../sys_image/alter_session_set_max_qpx_mem_stmt.png)
+![alter_session_set_max_qpx_mem_stmt](/images/sql/sys/alter_session_set_max_qpx_mem_stmt.png)
 
 ```sql
 alter_session_set_max_qpx_mem_stmt ::= 'ALTER SESSION SET MAX_QPX_MEM' '=' value
@@ -324,7 +324,7 @@ Elapsed time: 0.447
 
 **alter_session_set_session_idle_timeout_sec_stmt:**
 
-![alter_session_set_session_idle_timeout_sec_stmt](../sys_image/alter_session_set_session_idle_timeout_sec_stmt.png)
+![alter_session_set_session_idle_timeout_sec_stmt](/images/sql/sys/alter_session_set_session_idle_timeout_sec_stmt.png)
 
 ```sql
 alter_session_set_session_idle_timeout_sec_stmt ::= 'ALTER SESSION SET SESSION_IDLE_TIMEOUT_SEC' '=' value
@@ -353,7 +353,7 @@ IDLE_TIMEOUT
 
 **alter_session_set_query_timeout_stmt:**
 
-![alter_session_set_query_timeout_stmt](../sys_image/alter_session_set_query_timeout_stmt.png)
+![alter_session_set_query_timeout_stmt](/images/sql/sys/alter_session_set_query_timeout_stmt.png)
 
 ```sql
 alter_session_set_query_timeout_stmt ::= 'ALTER SESSION SET QUERY_TIMEOUT' '=' value

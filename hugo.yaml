@@ -2,7 +2,7 @@ title: Machbase
 
 enableRobotsTXT: true
 enableGitInfo: true
-hasCJKLanguage: true
+hasCJKLanguage: false
 googleAnalytics: G-5VYQQQFHCH
 baseURL: https://docs.machbase.com/
 

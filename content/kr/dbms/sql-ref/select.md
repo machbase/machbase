@@ -187,7 +187,7 @@ SELECT t1.i1 t2.i1 FROM t1 LEFT OUTER JOIN t2 ON (t1.i1 = t2.i1) WHERE t2.i2 = 1
 
 **pivot_clause:**
 
-![pivot](../select_image/pivot_clause.png)
+![pivot](/images/sql/select/pivot_clause.png)
 
 
 PIVOT 구문은 ROW로 출력되는 GROUP BY에 대한 집계 결과를 컬럼으로 재배열하여 보여준다.

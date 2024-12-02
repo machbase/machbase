@@ -11,27 +11,27 @@ weight: 20
 
 **create_table_stmt:**
 
-![create_table_stmt](../ddl_image/create_table_stmt.png)
+![create_table_stmt](/images/sql/ddl/create_table_stmt.png)
 
 **column_list:**
 
-![column_list](../ddl_image/column_list.png)
+![column_list](/images/sql/ddl/column_list.png)
 
 **column_property_list:**
 
-![column_property_list](../ddl_image/column_property_list.png)
+![column_property_list](/images/sql/ddl/column_property_list.png)
 
 **table_property_list:**
 
-![table_property_list](../ddl_image/table_property_list.png)
+![table_property_list](/images/sql/ddl/table_property_list.png)
 
 **column_type:**
 
-![column_type](../ddl_image/column_type.png)
+![column_type](/images/sql/ddl/column_type.png)
 
 **with_rollup:**
 
-![with_rollup](../ddl_image/with_rollup_opt.png)
+![with_rollup](/images/sql/ddl/with_rollup_opt.png)
 
 #### LOG 테이블 생성 예제
 
@@ -195,7 +195,7 @@ i1
 
 이 MINMAX_CACHE는 해당 파티션의 인덱스 파일 정보를 메모리에 담고 있는 구조체로서 해당 컬럼의 최소 및 최대 값을 메모리에 유지하는 연속된 메모리 공간이다. 이런 구조를 유지함으로써 특정 값이 포함된 파티션을 검색할 경우 그 값이 해당 인덱스의 최소값 보다 작거나 최대 값보다 클 경우에는 아예 해당 파티션을 건너뛸 수 있기 때문에 고성능의 데이터 분석이 가능해진다.
 
-![When you find a value "85"](../ddl_image/whenyoufindavalue85.png)
+![When you find a value "85"](/images/sql/ddl/whenyoufindavalue85.png)
 
 위의 그림에서 볼 수 있듯이 85라는 값을 찾기 위해서 5개의 파티션 중에서 MIN/MAX에 포함된 1번과 5번 파티션만을 실제로 검색하게 되며, 2, 3, 4 번 파티션은 아예 건너뛰는 모습을 볼 수 있다.
 
@@ -298,7 +298,7 @@ SELECT nextval(v1), v2 FROM table_name;
 
 **drop_table_stmt:**
 
-![drop_table_stmt](../ddl_image/drop_table_stmt.png)
+![drop_table_stmt](/images/sql/ddl/drop_table_stmt.png)
 
 ```sql
 drop_table_stmt ::= 'DROP TABLE' table_name
@@ -316,19 +316,19 @@ DROP TABLE TableName;
 
 **create_tablespace_stmt:**
 
-![create_tablespace_stmt](../ddl_image/create_tablespace_stmt.png)
+![create_tablespace_stmt](/images/sql/ddl/create_tablespace_stmt.png)
 
 **datadisk_list:**
 
-![datadisk_list](../ddl_image/datadisk_list.png)
+![datadisk_list](/images/sql/ddl/datadisk_list.png)
 
 **data_disk:**
 
-![data_disk](../ddl_image/data_disk.png)
+![data_disk](/images/sql/ddl/data_disk.png)
 
 **data_disk_property:**
 
-![data_disk_property](../ddl_image/data_disk_property.png)
+![data_disk_property](/images/sql/ddl/data_disk_property.png)
 
 ```sql
 create_tablespace_stmt ::= 'CREATE TABLESPACE' tablespace_name 'DATADISK' datadisk_list
@@ -367,7 +367,7 @@ Tablespace에 속한 Disk를 정의한다. 각 Disk는 다음과 같은 속성�
 
 **drop_tablespace_stmt:**
 
-![drop_tablespace_stmt](../ddl_image/drop_tablespace_stmt.png)
+![drop_tablespace_stmt](/images/sql/ddl/drop_tablespace_stmt.png)
 
 ```sql
 drop_table_stmt ::= 'DROP TABLESPACE' tablespace_name
@@ -384,19 +384,19 @@ DROP TABLESPACE TablespaceName;
 
 **create_index_stmt:**
 
-![create_index_stmt](../ddl_image/create_index_stmt.png)
+![create_index_stmt](/images/sql/ddl/create_index_stmt.png)
 
 **index_type:**
 
-![index_type](../ddl_image/index_type.png)
+![index_type](/images/sql/ddl/index_type.png)
 
 **table_space:**
 
-![table_space](../ddl_image/table_space.png)
+![table_space](/images/sql/ddl/table_space.png)
 
 **index_property_list:**
 
-![index_property_list](../ddl_image/index_property_list.png)
+![index_property_list](/images/sql/ddl/index_property_list.png)
 
 ```sql
 create_index_stmt ::= 'CREATE' 'INDEX' index_name 'ON' table_name '(' column_name ')' index_type? table_space? index_property_list?
@@ -465,7 +465,7 @@ CREATE INDEX index2 on table1 (var_column) INDEX_TYPE KEYWORD PAGE_SIZE=100000;
 
 **drop_index_stmt:**
 
-![drop_index_stmt](../ddl_image/drop_index_stmt.png)
+![drop_index_stmt](/images/sql/ddl/drop_index_stmt.png)
 
 ```sql
 drop_index_stmt ::= 'DROP INDEX' index_name
@@ -492,7 +492,7 @@ ALTER TABLE 구문은 지정된 테이블의 스키마 정보를 변경시키기
 
 **alter_table_add_stmt:**
 
-![alter_table_add_stmt](../ddl_image/alter_table_add_stmt.png)
+![alter_table_add_stmt](/images/sql/ddl/alter_table_add_stmt.png)
 
 ```sql
 alter_table_add_stmt ::= 'ALTER TABLE' table_name 'ADD COLUMN' '(' column_name column_type ( 'DEFAULT' value )? ')'
@@ -514,7 +514,7 @@ alter table atest2 add column (id8 varchar(4) default 'hello');
 
 **alter_table_drop_stmt:**
 
-![alter_table_drop_stmt](../ddl_image/alter_table_drop_stmt.png)
+![alter_table_drop_stmt](/images/sql/ddl/alter_table_drop_stmt.png)
 
 ```sql
 alter_table_drop_stmt ::= 'ALTER TABLE' table_name 'DROP COLUMN' '(' column_name ')'
@@ -532,7 +532,7 @@ alter table atest2 drop column (id8);
 
 **alter_table_column_rename_stmt:**
 
-![alter_table_column_rename_stmt](../ddl_image/alter_table_column_rename_stmt.png)
+![alter_table_column_rename_stmt](/images/sql/ddl/alter_table_column_rename_stmt.png)
 
 ```sql
 alter_table_column_rename_stmt ::= 'ALTER TABLE' table_name 'RENAME COLUMN' old_column_name 'TO' new_column_name
@@ -549,7 +549,7 @@ alter table atest2 rename column id7 to id7_rename;
 
 **alter_table_modify_stmt:**
 
-![alter_table_modify_stmt](../ddl_image/alter_table_modify_stmt.png)
+![alter_table_modify_stmt](/images/sql/ddl/alter_table_modify_stmt.png)
 
 ```sql
 alter_table_modify_stmt ::= 'ALTER TABLE' table_name 'MODIFY COLUMN' ( '(' column_name 'VARCHAR' '(' new_size ')' ')' | column_name ( 'NOT'? 'NULL' | 'SET' 'MINMAX_CACHE_SIZE' '=' value ) )
@@ -636,7 +636,7 @@ alter table t1 modify column c1 null;
 
 **alter_table_rename_stmt:**
 
-![alter_table_rename_stmt](../ddl_image/alter_table_rename_stmt.png)
+![alter_table_rename_stmt](/images/sql/ddl/alter_table_rename_stmt.png)
 
 ```sql
 alter_table_rename_stmt ::= 'ALTER TABLE' table_name 'RENAME TO' new_name
@@ -659,7 +659,7 @@ ALTER TABLE worker RENAME TO employee;
 alter_table_add_retention_stmt ::=  'ALTER TABLE' table_name 'ADD RETENTION' policy_name
 ```
 
-![alter_table_add_retention_stmt](../ddl_image/alter_table_add_retention_stmt.png)
+![alter_table_add_retention_stmt](/images/sql/ddl/alter_table_add_retention_stmt.png)
 
 ```sql
 ALTER TABLE tag ADD RETENTION policy_1d_1h;
@@ -674,7 +674,7 @@ ALTER TABLE tag ADD RETENTION policy_1d_1h;
 alter_table_drop_retention_stmt ::=  'ALTER TABLE' table_name 'DROP RETENTION'
 ```
 
-![alter_table_drop_retention_stmt](../ddl_image/alter_table_drop_retention_stmt.png)
+![alter_table_drop_retention_stmt](/images/sql/ddl/alter_table_drop_retention_stmt.png)
 
 ```sql
 ALTER TABLE tag DROP RETENTION;
@@ -690,7 +690,7 @@ ALTER TABLESPACE 구문은 지정된 Tablespace에 관련된 정보를 변경하
 
 **alter_tablespace_stmt:**
 
-![alter_tablespace_stmt](../ddl_image/alter_tablespace_stmt.png)
+![alter_tablespace_stmt](/images/sql/ddl/alter_tablespace_stmt.png)
 
 ```sql
 alter_tablespace_stmt ::= 'ALTER TABLESPACE' table_name 'MODIFY DATADISK' disk_name 'SET' 'PARALLEL_IO' '=' value
@@ -705,7 +705,7 @@ ALTER TABLESPACE tbs1 MODIFY DATADISK disk1 SET PARALLEL_IO = 10;
 
 **truncate_table_stmt:**
 
-![truncate_table_stmt](../ddl_image/truncate_table_stmt.png)
+![truncate_table_stmt](/images/sql/ddl/truncate_table_stmt.png)
 
 ```sql
 truncate_table_stmt ::= 'TRUNCATE TABLE' table_name
@@ -723,7 +723,7 @@ Truncated successfully.
 
 **create_rollup_stmt:**
 
-![create_rollup_stmt](../ddl_image/create_rollup_stmt.png)
+![create_rollup_stmt](/images/sql/ddl/create_rollup_stmt.png)
 
 ```sql
 create_rollup_stmt ::= 'CREATE ROLLUP' rollup_name 'ON' src_table_name '('src_table_column')' 'INTERVAL' number ('SEC' | 'MIN' | 'HOUR')
@@ -740,7 +740,7 @@ Executed successfully
 
 **drop_rollup_stmt:**
 
-![drop_rollup_stmt](../ddl_image/drop_rollup_stmt.png)
+![drop_rollup_stmt](/images/sql/ddl/drop_rollup_stmt.png)
 
 ```sql
 drop_rollup_stmt ::= 'DROP ROLLUP' rollup_name
@@ -756,7 +756,7 @@ Executed successfully
 
 **create_retention_stmt:**
 
-![create_retention_stmt](../ddl_image/create_retention_stmt.png)
+![create_retention_stmt](/images/sql/ddl/create_retention_stmt.png)
 
 ```sql
 create_retention_stmt ::= 'CREATE RETENTION' policy_name 'DURATION' duration ( 'MONTH' | 'DAY' ) 'INTERVAL' interval ( 'DAY' | 'HOUR' )
@@ -772,7 +772,7 @@ Executed successfully
 
 **drop_retention_stmt:**
 
-![drop_retention_stmt](../ddl_image/drop_retention_stmt.png)
+![drop_retention_stmt](/images/sql/ddl/drop_retention_stmt.png)
 
 ```sql
 drop_retention_stmt ::= 'DROP RETENTION' policy_name

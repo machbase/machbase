@@ -8,19 +8,19 @@ weight: 30
 
 **insert_stmt:**
 
-![insert_stmt](../dml_image/insert_stmt.png)
+![insert_stmt](/images/sql/dml/insert_stmt.png)
 
 **insert_column_list:**
 
-![insert_column_list](../dml_image/insert_column_list.png)
+![insert_column_list](/images/sql/dml/insert_column_list.png)
 
 **value_list:**
 
-![value_list](../dml_image/value_list.png)
+![value_list](/images/sql/dml/value_list.png)
 
 **set_list:**
 
-![set_list](../dml_image/set_list.png)
+![set_list](/images/sql/dml/set_list.png)
 
 ```sql
 insert_stmt ::= 'INSERT INTO' table_name ( '(' insert_column_list ')' )? 'METADATA'? 'VALUES' '(' value_list ')' ( 'ON DUPLICATE KEY UPDATE' ( 'SET' set_list )? )?
@@ -60,7 +60,7 @@ METADATA는 tag table에만 사용이 가능하다.
 
 **insert_select_stmt:**
 
-![insert_select_stmt](../dml_image/insert_select_stmt.png)
+![insert_select_stmt](/images/sql/dml/insert_select_stmt.png)
 
 ```sql
 insert_select_stmt ::= 'INSERT INTO' table_name ( '(' insert_column_list ')' )? select_stmt
@@ -97,15 +97,15 @@ insert into t2 (_arrival_time, i1, i2, i3) select _arrival_time, * from t1;
 
 **update_stmt:**
 
-![update_stmt](../dml_image/update_stmt.png)
+![update_stmt](/images/sql/dml/update_stmt.png)
 
 **update_expr_list:**
 
-![update_expr_list](../dml_image/update_expr_list.png)
+![update_expr_list](/images/sql/dml/update_expr_list.png)
 
 **update_expr:**
 
-![update_expr](../dml_image/update_expr.png)
+![update_expr](/images/sql/dml/update_expr.png)
 
 ```sql
 update_stmt ::= 'UPDATE' table_name ( 'METADATA' )? 'SET' update_expr_list 'WHERE' primary_key_column '=' value
@@ -131,11 +131,11 @@ UPDATE TAG METADATA SET ...
 
 **delete_stmt:**
 
-![delete_stmt](../dml_image/delete_stmt.png)
+![delete_stmt](/images/sql/dml/delete_stmt.png)
 
 **time_unit:**
 
-![time_unit](../dml_image/time_unit.png)
+![time_unit](/images/sql/dml/time_unit.png)
 
 ```sql
 delete_stmt ::= 'DELETE FROM' table_name ( 'OLDEST' number 'ROWS' | 'EXCEPT' number ( 'ROWS' | time_unit ) | 'BEFORE' datetime_expression )? 'NO WAIT'?
@@ -175,7 +175,7 @@ DELETE FROM tag ROLLUP BEFORE TO_DATE('2014-06-01', 'YYYY-MM-DD');
 
 **delete_where_stmt:**
 
-![delete_where_stmt](../dml_image/delete_where_stmt.png)
+![delete_where_stmt](/images/sql/dml/delete_where_stmt.png)
 
 ```sql
 delete_where_stmt ::= 'DELETE FROM' table_name 'WHERE' column_name '=' value
@@ -198,7 +198,7 @@ delete from t1 where i1 = 2;
 
 **delete_from_tag_where_stmt:**
 
-![delete_from_tag_where_stmt](../dml_image/delete_from_tag_where_stmt.png)
+![delete_from_tag_where_stmt](/images/sql/dml/delete_from_tag_where_stmt.png)
 
 ```sql
 delete_from_tag_where_stmt ::= 'DELETE FROM' table_name 'ROLLUP'? 'WHERE' tag_name '=' value ( and tag_time '<' datetime_expression  )?
@@ -229,7 +229,7 @@ DELETE FROM tag ROLLUP WHERE tag_name = 'my_tag_2021' AND tag_time < TO_DATE('20
 
 **load_data_infile_stmt:**
 
-![load_data_infile_stmt](../dml_image/load_data_infile_stmt.png)
+![load_data_infile_stmt](/images/sql/dml/load_data_infile_stmt.png)
 
 ```sql
 load_data_infile_stmt: 'LOAD DATA INFILE' file_name 'INTO TABLE' table_name ( 'TABLESPACE' tbs_name )? ( 'AUTO' ( 'BULKLOAD' | 'HEADUSE' | 'HEADUSE_ESCAPE' ) )? ( ( 'FIELDS' | 'COLUMNS' ) ( 'TERMINATED BY' char )? ( 'ENCLOSED BY' char )? )? ( 'TRIM' ( 'ON' | 'OFF' ) )? ( 'IGNORE' number ( 'LINES' | 'ROWS' ) )? ( 'MAX_LINE_LENGTH' number )? ( 'ENCODED BY' coding_name )? ( 'ON ERROR' ( 'STOP' | 'IGNORE' ) )?
