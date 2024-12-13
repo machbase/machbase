@@ -58,7 +58,7 @@ This is a function that automatically removes duplicated data.
 If the TAG name and time of newly inserted data matches those of existing data within a predefined duration (with a maxmum duration of 30 days) those redundant data will be automatically deleted.
 
 ## VARCHAR storage option
-An option where a VARCHAR is stored in a fixed area if its size is below the configured value.
+Maximum size that varchar data can be stored in a fixed area.
 
 ## Operations
 

@@ -5,8 +5,9 @@ weight: 80
 ---
 
 ## VARCHAR 저장 옵션
-VARCHAR의 size가 설정 값 이하일 경우 fixed 영역에 저장하는 옵션으로 설정 값을 table property로 전달한다.
-최소 15 에서 최대 127 bytes까지 설정할 수 있으며 기본 값은 15이다.
+varchar 데이터를 고정영역에 저장할 수 있는 최대 크기이다.
+이 값보다 긴 varchar 값은 가변 영역에 저장한다.
+이 값은 15에서 127까지 지정할 수 있으며 기본 값은 15이다.
 
 ```sql
 -- 입력되는 VARCHAR DATA중 size가 15이하인 경우 확장파일이 아닌 fixed데이터 파일에 저장된다.
