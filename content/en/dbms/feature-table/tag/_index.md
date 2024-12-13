@@ -57,6 +57,8 @@ This is a function that automatically removes duplicated data.
 
 If the TAG name and time of newly inserted data matches those of existing data within a predefined duration (with a maxmum duration of 30 days) those redundant data will be automatically deleted.
 
+## VARCHAR storage option
+Maximum size that varchar data can be stored in a fixed area.
 
 ## Operations
 
@@ -68,3 +70,4 @@ If the TAG name and time of newly inserted data matches those of existing data w
 * [Index fo tag table](./tag-index)
 * [Duplication removal](./duplication-removal)
 * [Tag Meta LSL/USL Setting](./tagmeta-limit)
+* [Tag table VARCHAR storage option](./varchar-fixed-length-max)
