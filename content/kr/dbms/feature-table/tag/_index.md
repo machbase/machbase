@@ -60,6 +60,9 @@ Tag 테이블에 대한 Rollup 질의를 통해 Rollup 결과값을 얻어올 �
 
 새로운 데이터가 입력되었을 때 기존 입력된 데이터 중 설정 기간(최대 30일) 이내에 TAG NAME과 TIME이 일치하는 데이터가 있을 경우 새로 들어온 데이터를 자동으로 삭제 처리한다.
 
+## VARCHAR 저장 옵션
+VARCHAR의 size가 설정 값 이하일 경우 fixed 영역에 저장하는 옵션이다.
+
 
 ## 활용
 
@@ -71,3 +74,4 @@ Tag 테이블에 대한 Rollup 질의를 통해 Rollup 결과값을 얻어올 �
 * [태그 테이블 인덱스 생성 및 관리](./tag-index)
 * [태그 테이블 중복제거 설정](./duplication-removal)
 * [태그 메타 LSL/USL 설정](./tagmeta-limit)
+* [태그 테이블 VARCHAR 저장 옵션](./varchar-fixed-length-max)
