@@ -14,7 +14,7 @@ VARCHAR의 size가 설정 값 이하일 경우 fixed 영역에 저장하는 옵�
 CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED, strval VARCHAR(100)) VARCHAR_FIXED_LENGTH_MAX = 15;
 ```
   
-m$sys_table_property에서 중복제거 설정정보를 확인할  수 있다.
+m$sys_table_property에서 VARCHAR 저장옵션 설정정보를 확인할  수 있다.
 ```sql
 SELECT * FROM m$sys_table_property WHERE id={table_id} AND name = 'VARCHAR_FIXED_LENGTH_MAX';
 ```
