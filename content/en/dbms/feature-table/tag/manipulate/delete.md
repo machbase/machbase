@@ -69,7 +69,7 @@ TAG_0001              2024-01-01 10:00:10 000:000:000 1
 When a specific tag and time are specified, data associated with that tag before the specified time is deleted.
 
 ```sql
-DELETE FROM TAG WHERE NAME = 'TAG-ID' AND BEFORE TO_DATE('Time-string');
+DELETE FROM TAG WHERE NAME = 'TAG-ID' AND TIME <= 'Time-string';
 ```
 
 ```sql
