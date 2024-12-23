@@ -70,7 +70,7 @@ TAG_0001              2024-01-01 10:00:10 000:000:000 1
 특정 태그 아이디와 특정 시간을 지정하면 해당 태그의 특정 시간 이전 데이터를 삭제한다.
 
 ```sql
-DELETE FROM TAG WHERE NAME = 'TAG-ID' AND TIME >= 'Time-string';
+DELETE FROM TAG WHERE NAME = 'TAG-ID' AND TIME <= 'Time-string';
 ```
 
 ```sql
