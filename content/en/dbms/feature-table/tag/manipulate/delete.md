@@ -22,7 +22,7 @@ Supported tag data deletion condition
 
 ## Execute the DELETE statement
 
-### Delete specific tag ID data
+### Delete specific tag data
 
 When a specific tag is specified, all data associated with that tag is deleted.
 
