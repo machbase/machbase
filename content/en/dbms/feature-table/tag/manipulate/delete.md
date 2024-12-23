@@ -14,7 +14,7 @@ Unsupported tag data deletion condition
 
 Supported tag data deletion condition
 
-* Delete specific tag ID data
+* Delete specific tag data
 * Delete data before a specific time for a specific tag
 * Delete specific time range data for a specific tag
 * Delete all tags before a specific time
@@ -24,7 +24,7 @@ Supported tag data deletion condition
 
 ### Delete specific tag ID data
 
-When a specific tag ID is specified, all data associated with that tag is deleted.
+When a specific tag is specified, all data associated with that tag is deleted.
 
 ```sql
 DELETE FROM TAG WHERE NAME = 'TAG-ID';
@@ -66,7 +66,7 @@ TAG_0001              2024-01-01 10:00:10 000:000:000 1
 
 ### Delete data before a specific time for a specific tag
 
-When a specific tag ID and time are specified, data associated with that tag before the specified time is deleted.
+When a specific tag and time are specified, data associated with that tag before the specified time is deleted.
 
 ```sql
 DELETE FROM TAG WHERE NAME = 'TAG-ID' AND BEFORE TO_DATE('Time-string');
@@ -110,7 +110,7 @@ TAG_0002              2024-01-01 10:00:08 000:000:000 1
 
 ### Delete specific time range data for a specific tag
 
-When a specific tag ID and time range are specified, data associated with that tag within the specified time range is deleted.
+When a specific tag and time range are specified, data associated with that tag within the specified time range is deleted.
 
 ```sql
 DELETE FROM TAG WHERE NAME = 'TAG-ID' AND TIME >= 'Time-string' AND TIME <= 'Time-string';
@@ -152,7 +152,7 @@ TAG_0002              2024-01-01 10:00:03 000:000:000 1
 ```
 ### Delete all tags before a specific time
 
-When a specific tag is specified, all associated entries are deleted.
+When a time is specified in the BEFORE clause, all tags before that time are deleted.
 
 ```sql
 DELETE FROM TAG BEFORE TO_DATE('Time-string');
