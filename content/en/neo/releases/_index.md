@@ -17,7 +17,7 @@ Choose the latest version for your platform.
 | Linux      | arm32          | [machbase-neo-{{< neo_latestver >}}-linux-arm32.zip]({{< neo_releases_url >}}/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-linux-arm32.zip)   |
 | macOS      | arm64          | [machbase-neo-{{< neo_latestver >}}-darwin-arm64.zip]({{< neo_releases_url >}}/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-darwin-arm64.zip) |
 | macOS      | x64            | [machbase-neo-{{< neo_latestver >}}-darwin-amd64.zip]({{< neo_releases_url >}}/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-darwin-amd64.zip) |
-| Windows[^1] | x64     | [machbase-neo-{{< neo_latestver >}}-windows-amd64.zip]({{< neo_releases_url >}}/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-windows-amd64.zip)[^2] |
+| Windows    | x64     | [machbase-neo-{{< neo_latestver >}}-windows-amd64.zip]({{< neo_releases_url >}}/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-windows-amd64.zip) |
 
 ### What about other Linux
 
@@ -46,9 +46,6 @@ Since v1.5.0, the editions are integrated into the single "standard" edition.<br
 If you plan to run old version of machbase-neo on a small device such as Raspberry Pi, select the Edge edition.<br/>
 For machines with larger memory and more CPU cores, such as a personal workstation or server, choose the Fog edition.
 {{< /callout >}}
-
-[^1]: Windows Fall 2018 or newer versions.
-[^2]: Windows release includes both of the `machbase-neo` and `neow` (GUI frontend) executables.
 
 ### SDK with CLASSIC
 
