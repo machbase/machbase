@@ -35,6 +35,14 @@ If the pre-built packages are not compatible with your Linux distribution, you c
 
 [Changes](https://github.com/machbase/neo-server/releases/tag/{{< neo_latestver >}})
 
+### How to upgrade from the previous v8.0.x version
+
+The upgrade process is straightforward and involves replacing the executable file.
+
+1. Shut down the machbase-neo process.
+2. Replace the executable file `machbase-neo` (or `machbase-neo.exe`).
+3. Start the machbase-neo process.
+
 ### Previous releases
 
 Find previously released versions in [here](https://github.com/machbase/neo-server/releases).
