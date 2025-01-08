@@ -15,10 +15,23 @@ or be a JSON field in *POST-JSON* method as `{ "format": "csv" }`.
 
 **Query Example**
 
+{{< tabs items="cURL,REST client">}}
+{{< tab >}}
 ```sh 
 curl -o - http://127.0.0.1:5654/db/query \
      --data-urlencode "q=select * from EXAMPLE limit 2"
 ```
+{{< /tab >}}
+{{< tab >}}
+```
+###
+
+GET http://127.0.0.1:5654/db/query
+    ?q=select * from EXAMPLE limit 2
+```
+{{< /tab >}}
+{{< /tabs >}}
+
 
 ## Parameters
 
@@ -67,7 +80,7 @@ If the response content is too large to determine the total length, The header `
 The `/db/query` api's default output format is json.
 Set query param `format=json` or omit it for the default value.
 
-{{< tabs items="Linux/macOS,Windows">}}
+{{< tabs items="cURL,REST client">}}
 {{< tab >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
@@ -75,9 +88,11 @@ curl -o - http://127.0.0.1:5654/db/query \
 ```
 {{< /tab >}}
 {{< tab >}}
-```sh
-curl -o - http://127.0.0.1:5654/db/query ^
-    --data-urlencode "q=select * from EXAMPLE limit 2"
+```
+###
+
+GET http://127.0.0.1:5654/db/query
+    ?q=select * from EXAMPLE limit 2
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -200,7 +215,7 @@ Set query param `format=ndjson` in the request. {{< neo_since ver="8.0.33" />}}
 
 NDJSON (Newline Delimited JSON) is a format for streaming JSON data where each line is a valid JSON object. This is useful for processing large datasets or streaming data because it allows you to handle one JSON object at a time.
 
-{{< tabs items="Linux/macOS,Windows">}}
+{{< tabs items="cURL,REST client">}}
 {{< tab >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
@@ -209,10 +224,12 @@ curl -o - http://127.0.0.1:5654/db/query \
 ```
 {{< /tab >}}
 {{< tab >}}
-```sh
-curl -o - http://127.0.0.1:5654/db/query ^
-    --data-urlencode "q=select * from EXAMPLE limit 2" \
-    --data-urlencode "format=ndjson"
+```
+###
+
+GET http://127.0.0.1:5654/db/query
+    ?q=select * from EXAMPLE limit 2
+    &format=ndjson
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -231,7 +248,7 @@ Set query param `format=csv` in the request.
 
 CSV format is also useful for processing large datasets or streaming data because it allows you to handle one line at a time.
 
-{{< tabs items="Linux/macOS,Windows">}}
+{{< tabs items="cURL,REST client">}}
 {{< tab >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
@@ -240,10 +257,12 @@ curl -o - http://127.0.0.1:5654/db/query \
 ```
 {{< /tab >}}
 {{< tab >}}
-```sh
-curl -o - http://127.0.0.1:5654/db/query ^
-    --data-urlencode "q=select * from EXAMPLE limit 2" \
-    --data-urlencode "format=csv"
+```
+###
+
+GET http://127.0.0.1:5654/db/query
+    ?q=select * from EXAMPLE limit 2
+    &format=csv
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -260,7 +279,7 @@ wave.sin,1705381958785759000,0.9011510331449053
 
 Set query param `format=box` in the request.
 
-{{< tabs items="Linux/macOS,Windows">}}
+{{< tabs items="cURL,REST client">}}
 {{< tab >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
@@ -269,10 +288,12 @@ curl -o - http://127.0.0.1:5654/db/query \
 ```
 {{< /tab >}}
 {{< tab >}}
-```sh
-curl -o - http://127.0.0.1:5654/db/query ^
-    --data-urlencode "q=select * from EXAMPLE limit 2" \
-    --data-urlencode "format=box"
+```
+###
+
+GET http://127.0.0.1:5654/db/query
+    ?q=select * from EXAMPLE limit 2
+    &format=box
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -292,7 +313,7 @@ The result data in plain text with ascii box. The Content-Type of the response i
 
 Set query param `format=csv` in the request.
 
-{{< tabs items="Linux/macOS,Windows">}}
+{{< tabs items="cURL,REST client">}}
 {{< tab >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
@@ -301,10 +322,12 @@ curl -o - http://127.0.0.1:5654/db/query \
 ```
 {{< /tab >}}
 {{< tab >}}
-```sh
-curl -o - http://127.0.0.1:5654/db/query ^
-    --data-urlencode "q=select * from EXAMPLE limit 2" \
-    --data-urlencode "format=csv"
+```
+###
+
+GET http://127.0.0.1:5654/db/query
+    ?q=select * from EXAMPLE limit 2
+    &format=csv
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -323,7 +346,7 @@ It is also possible to request query in JSON form as below example.
 
 **Request JSON message**
 
-{{< tabs items="Linux/macOS,Windows">}}
+{{< tabs items="cURL,REST client">}}
 {{< tab >}}
 ```sh
 curl -o - -X POST http://127.0.0.1:5654/db/query \
@@ -332,10 +355,15 @@ curl -o - -X POST http://127.0.0.1:5654/db/query \
 ```
 {{< /tab >}}
 {{< tab >}}
-```sh
-curl -o - -X POST http://127.0.0.1:5654/db/query ^
-    -H "Content-Type: application/json" ^
-    -d "{ \"q\":\"select * from EXAMPLE limit 2\" }"
+```
+###
+
+POST http://127.0.0.1:5654/db/query
+Content-Type: application/json
+
+{
+  "q": "select * from EXAMPLE limit 2"
+}
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -344,7 +372,7 @@ curl -o - -X POST http://127.0.0.1:5654/db/query ^
 
 HTML Form data format is available too. HTTP header `Content-type` should be `application/x-www-form-urlencoded` in this case.
 
-{{< tabs items="Linux/macOS,Windows">}}
+{{< tabs items="cURL,REST client">}}
 {{< tab >}}
 ```sh
 curl -o - -X POST http://127.0.0.1:5654/db/query \
@@ -352,9 +380,13 @@ curl -o - -X POST http://127.0.0.1:5654/db/query \
 ```
 {{< /tab >}}
 {{< tab >}}
-```sh
-curl -o - -X POST http://127.0.0.1:5654/db/query ^
-    --data-urlencode "q=select * from EXAMPLE limit 2"
+```
+###
+
+POST http://127.0.0.1:5654/db/query
+Content-Type: application/x-www-form-urlencoded
+
+q=select * from EXAMPLE limit 2
 ```
 {{< /tab >}}
 {{< /tabs >}}

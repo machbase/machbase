@@ -77,7 +77,7 @@ If multiple values are inserted during this period, the server will send only th
 |:----------- |---------|:----------------------------- |
 | max-rows    | `20`   | Maximum number of records the server sends in a period.<br/>If there are more records than specified,<br/> the server will omit the excess data for that period.<br/>The hard limit is 100.|
 
-## CURL Example
+## cURL Example
 
 Use *curl* command to receive stream of the lates values of the tags:
 

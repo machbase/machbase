@@ -12,7 +12,7 @@ Please refer to the docs for understanding what is the [Tag Tables](/dbms/featur
 
 **Request**
 
-{{< tabs items="Linux/macOS,Windows">}}
+{{< tabs items="cURL,REST client">}}
 {{< tab >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
@@ -21,10 +21,11 @@ curl -o - http://127.0.0.1:5654/db/query \
 ```
 {{< /tab >}}
 {{< tab >}}
-```sh
-curl -o - http://127.0.0.1:5654/db/query ^
-    --data-urlencode ^
-    "q=create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"
+```
+###
+
+GET http://127.0.0.1:5654/db/query
+    ?q=create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -37,19 +38,43 @@ curl -o - http://127.0.0.1:5654/db/query ^
 
 ### IF NOT EXISTS
 
+{{< tabs items="cURL,REST client">}}
+{{< tab >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode \
     "q=create tag table if not exists EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"
 ```
+{{< /tab >}}
+{{< tab >}}
+```
+###
+
+GET http://127.0.0.1:5654/db/query
+    ?q=create tag table if not exists EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)
+```
+{{< /tab >}}
+{{< /tabs >}}
 
 ### TAG STATISTICS
 
+{{< tabs items="cURL,REST client">}}
+{{< tab >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode \
     "q=create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double summarized)"
 ```
+{{< /tab >}}
+{{< tab >}}
+```
+###
+
+GET http://127.0.0.1:5654/db/query
+    q=create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double summarized)
+```
+{{< /tab >}}
+{{< /tabs >}}
 
 {{< callout emoji="📢" >}}
 **Note** The keyword "summarized" refers to the automatic generation of statistics on the internal tag data structure when data is written into the corresponding tag table. For more detailed information, please refer to the link below. [Tag Statistics](/dbms/feature-table/tag/manipulate/extract/#display-statistical-information-by-specific-tag-id)
@@ -59,7 +84,7 @@ curl -o - http://127.0.0.1:5654/db/query \
 
 **Request**
 
-{{< tabs items="Linux/macOS,Windows">}}
+{{< tabs items="cURL,REST client">}}
 {{< tab >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
@@ -67,9 +92,11 @@ curl -o - http://127.0.0.1:5654/db/query \
 ```
 {{< /tab >}}
 {{< tab >}}
-```sh
-curl -o - http://127.0.0.1:5654/db/query ^
-    --data-urlencode "q=drop table EXAMPLE"
+```
+###
+
+GET http://127.0.0.1:5654/db/query
+    ?q=drop table EXAMPLE
 ```
 {{< /tab >}}
 {{< /tabs >}}

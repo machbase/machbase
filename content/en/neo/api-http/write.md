@@ -65,11 +65,33 @@ This request message is equivalent that consists INSERT SQL statement as `INSERT
 
 Set `Content-Type` header as `application/json`.
 
+{{< tabs items="cURL,REST client">}}
+{{< tab >}}
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE \
     -H "Content-Type: application/json" \
     --data-binary "@post-data.json"
 ```
+{{< /tab >}}
+{{< tab >}}
+```
+###
+
+POST http://127.0.0.1:5654/db/write/EXAMPLE
+Content-Type: application/json
+
+{
+    "data": {
+        "columns":["name", "time", "value"],
+        "rows": [
+            [ "json-data", 1670380342000000000, 1.0001 ],
+            [ "json-data", 1670380343000000000, 2.0002 ]
+        ]
+    }
+}
+```
+{{< /tab >}}
+{{< /tabs >}}
 
 **Compressed JSON**
 
@@ -100,11 +122,35 @@ When time fields are string format instead of UNIX epoch.
 
 Add `timeformat` and `tz` parameters.
 
+{{< tabs items="cURL,REST client">}}
+{{< tab >}}
 ```sh
 curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=DEFAULT&tz=Asia/Seoul' \
     -H "Content-Type: application/json" \
     --data-binary "@post-data.json"
 ```
+{{< /tab >}}
+{{< tab >}}
+```
+###
+
+POST http://127.0.0.1:5654/db/write/EXAMPLE
+    ?timeformat=DEFAULT
+    &tz=Asia/Seoul
+Content-Type: application/json
+
+{
+    "data": {
+        "columns":["name", "time", "value"],
+        "rows": [
+            [ "json-data", "2022-12-07 02:32:22", 1.0001 ],
+            [ "json-data", "2022-12-07 02:32:23", 2.0002 ]
+        ]
+    }
+}
+```
+{{< /tab >}}
+{{< /tabs >}}
 
 ### NDJSON
 
@@ -121,11 +167,26 @@ This request message is equivalent that consists INSERT SQL statement as `INSERT
 
 Set `Content-Type` header as `application/x-ndjson`.
 
+{{< tabs items="cURL,REST client">}}
+{{< tab >}}
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE \
     -H "Content-Type: application/x-ndjson" \
     --data-binary "@post-data.json"
 ```
+{{< /tab >}}
+{{< tab >}}
+```
+###
+
+POST http://127.0.0.1:5654/db/write/EXAMPLE
+Content-Type: application/x-ndjson
+
+{"NAME":"ndjson-data", "TIME":1670380342000000000, "VALUE":1.001}
+{"NAME":"ndjson-data", "TIME":1670380343000000000, "VALUE":2.002}
+```
+{{< /tab >}}
+{{< /tabs >}}
 
 
 **NDJSON with timeformat**
@@ -139,11 +200,27 @@ When time fields are string format instead of UNIX epoch.
 
 Add `timeformat` and `tz` parameters.
 
+{{< tabs items="cURL,REST client">}}
+{{< tab >}}
 ```sh
 curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=Default&tz=Local' \
     -H "Content-Type: application/x-ndjson" \
     --data-binary "@post-data.json"
 ```
+{{< /tab >}}
+{{< tab >}}
+```
+###
+
+POST http://127.0.0.1:5654/db/write/EXAMPLE
+    ?timeformat=DEFAULT
+    &tz=Local
+
+{"NAME":"ndjson-data", "TIME":"2022-12-07 02:33:22", "VALUE":1.001}
+{"NAME":"ndjson-data", "TIME":"2022-12-07 02:33:23", "VALUE":2.002}
+```
+{{< /tab >}}
+{{< /tabs >}}
 
 
 ### CSV
@@ -175,11 +252,27 @@ csv-data,1670380343000000000,2.0002
 ```
 
 The `Content-Type` header should be `text/csv`.
+{{< tabs items="cURL,REST client">}}
+{{< tab >}}
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE?header=skip \
     -H "Content-Type: text/csv" \
     --data-binary "@post-data.csv"
 ```
+{{< /tab >}}
+{{< tab >}}
+```
+###
+
+POST http://127.0.0.1:5654/db/write/EXAMPLE?header=skip
+Content-Type: text/csv
+
+NAME,TIME,VALUE
+csv-data,1670380342000000000,1.0001
+csv-data,1670380343000000000,2.0002
+```
+{{< /tab >}}
+{{< /tabs >}}
 
 **header=columns**
 
@@ -193,11 +286,27 @@ TIME,NAME,VALUE
 
 The `Content-Type` header should be `text/csv`.
 
+{{< tabs items="cURL,REST client">}}
+{{< tab >}}
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE?header=columns \
     -H "Content-Type: text/csv" \
     --data-binary "@post-data.csv"
 ```
+{{< /tab >}}
+{{< tab >}}
+```
+###
+
+POST http://127.0.0.1:5654/db/write/EXAMPLE?header=columns
+Content-Type: text/csv
+
+TIME,NAME,VALUE
+1670380342000000000,csv-data,1.0001
+1670380343000000000,csv-data,2.0002
+```
+{{< /tab >}}
+{{< /tabs >}}
 
 **Compressed CSV**
 
