@@ -26,6 +26,7 @@ Machbase-neo exposes the `$` variable as the context object. JavaScript can acce
 - `$.key`, `$.values` Javascript access point to the key and values of the current record. It is only available if the `SCRIPT()` is a MAP function.
 - `$.yield()` Yield a new record with values
 - `$.yieldKey()` Yield a new record with key and values
+- `$.yieldArray()` Same as `$.yield()`, but it take only one argument of array type instead of multiple arguments. 
 - `$.db()` Returns a new database connection.
 - `$.db().query()` Execute SQL query.
 - `$.db().exec()` Execute non-SELECT SQL.
@@ -182,9 +183,33 @@ The output is:
 
 Yield the new record to the next step, with the key automatically assigned as a sequentially increasing number.
 
+```js
+$.yield(field1, field2, field3);
+```
+
 ### `$.yieldKey()`
 
 `yieldKey()` functions similarly to `$.yield()`, with the exception that the first argument specifies the key of the record.
+
+```js
+$.yieldKey(key, field1, field2, field3);
+```
+
+### `$.yieldArray()`
+
+{{< neo_since ver="8.0.39" />}}
+
+Yield a record contained in an array. 
+`$.yieldArray()` takes a single array argument representing a record, in contrast to `$.yield()`, which takes variable-length arguments.
+This is useful when working with arrays.
+
+```js
+var arr = [];
+for( i = 0; i < unknown; i++) {
+    arr.push(field_values[i]);
+}
+$.yieldArray(arr);
+```
 
 ### `$.db()`
 
@@ -195,7 +220,7 @@ it returns a new connection to the bridged database instead of the machbase data
 
 **option**
 
-The option parameter is supproted {{< neo_since ver="8.0.37" />}}
+The option parameter is supported {{< neo_since ver="8.0.37" />}}
 
 ```js
 {
@@ -214,7 +239,7 @@ the iteration continues until the end of the query result.
 
 {{< tabs items="MACHBASE,BRIDGE-SQLITE">}}
 {{< tab >}}
-```js {{linenos=table,hl_lines=["7-9"]}}
+```js {{linenos=table,hl_lines=["7-9",13]}}
 SCRIPT("js", {
     var data = $.payload;
     if (data === undefined) {
@@ -270,6 +295,19 @@ testing,1732589744886,54.485508690434905
 ```
 {{< /tab >}}
 {{< /tabs >}}
+
+Choose specific columns from the result of `$.db().query()` to yield using `$.yield()`.
+Use `$.yieldArray()` {{< neo_since ver="8.0.39" />}} to yield all columns in a time.
+
+```js {{linenos=table,hl_lines=["4"]}}
+SCRIPT("js", {
+    var sql = "SELECT name, time, value FROM example WHERE name = 'cpu.percent' LIMIT 3";
+    $.db().query(sql).forEach( function(row){
+        $.yieldArray(row);
+    })
+})
+CSV()
+```
 
 ### `$.db().exec()`
 
