@@ -304,10 +304,27 @@ SCRIPT("js", {
     var sql = "SELECT name, time, value FROM example WHERE name = 'cpu.percent' LIMIT 3";
     $.db().query(sql).forEach( function(row){
         $.yieldArray(row);
-    })
+    });
 })
 CSV()
 ```
+
+Or use `$.db().query().yield()` {{< neo_since ver="8.0.39" />}} to yield automatically.
+
+```js {{linenos=table,hl_lines=["9"]}}
+SCRIPT("js", {
+    var tags = ["mem.total", "mem.used", "mem.free"];
+    for( i = 0; i < tags.length; i++) {
+        $.yield(tags[i]);
+    }
+})
+SCRIPT("js", {
+    var sql = "SELECT * FROM example WHERE name = ? LIMIT 1";
+    $.db().query(sql, $.values[0]).yield();
+})
+CSV( header(true) )
+```
+
 
 ### `$.db().exec()`
 
