@@ -34,6 +34,31 @@ CHART(
 
 {{< figure src="../../img/basic_line.jpg" width="500" >}}
 
+## SRC :: SCRIPT()
+
+```js
+SCRIPT("js", {
+    for( x = 0; x < 360; x+=3.6) {
+        $.yield(x, Math.sin(x/180*Math.PI));
+    }
+})
+CHART(
+    chartOption({
+        xAxis: {
+            type: "category",
+            data: column(0)
+        },
+        yAxis: {},
+        series: [
+            {
+                type: "line",
+                data: column(1)
+            }
+        ]
+    })
+)
+```
+
 ## SRC :: SQL()
 
 {{% steps %}}

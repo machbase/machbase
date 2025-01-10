@@ -231,6 +231,8 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
 
 ## Themes
 
+{{< tabs items="MAPVALUE,SCRIPT">}}
+{{< tab >}}
 ```js {{linenos=table,hl_lines=[6]}}
 FAKE( arrange(1, 100, 1))
 MAPVALUE(1, sin(2 * PI * 5 * value(0)/100) )
@@ -251,6 +253,36 @@ CHART(  size("500px", "200px"),
         })
 )
 ```
+{{< /tab >}}
+{{< tab >}}
+```js {{linenos=table,hl_lines=[12]}}
+SCRIPT("js", {
+    for( i = 1; i <= 100; i++) {
+        $.yield(
+            i,
+            Math.sin(2 * Math.PI * 5 * i / 100),
+            Math.sin(2 * Math.PI * 5 * (i + 5) / 100),
+            Math.sin(2 * Math.PI * 5 * (i + 10) / 100)
+        )
+    }
+})
+CHART(  size("500px", "200px"),
+        theme("dark"),
+        chartOption({
+            title:{ text:"theme(dark)" },
+            xAxis:{ data:column(0), axisLabel:{show: false} },
+            yAxis:{},
+            series:[
+                {type:"line", data:column(1), name:"series1"},
+                {type:"line", data:column(2), name:"series2"},
+                {type:"line", data:column(3), name:"series3"},
+            ],
+            legend:{ bottom: 10 }
+        })
+)
+```
+{{< /tab >}}
+{{< /tabs >}}
 
 **white**
 {{< figure src="../img/theme_white.jpg" width="500" >}}
