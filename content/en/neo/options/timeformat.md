@@ -6,7 +6,7 @@ weight: 10
 
 ## Available time formats
 
-The value of `timeformat` is *case-insensitive*
+The value of `timeformat` is *case-insensitive*.
 
 | timeformat    |  result                             |
 |:------------- |:------------------------------------|
@@ -30,7 +30,7 @@ The value of `timeformat` is *case-insensitive*
 | `RFC3339Nano` | 2006-01-02T15:04:05.999999999Z07:00 |
 | `Kitchen`     | 3:04:05PM                           |
 | `Stamp`       | Jan _2 15:04:05                     |
-| `StampMilli`   | Jan _2 15:04:05.000                 |
+| `StampMilli`  | Jan _2 15:04:05.000                 |
 | `StampMicro`  | Jan _2 15:04:05.000000              |
 | `StampNano`   | Jan _2 15:04:05.000000000           |
 | `S_NS`        | 05.999999999                        |
@@ -40,6 +40,18 @@ The value of `timeformat` is *case-insensitive*
 | `S.US`        | 05.000000                           |
 | `S.MS`        | 05.000                              |
 
+Unix epoch timeformat.
+
+| timeformat    |  result                             |
+|:------------- |:------------------------------------|
+| `ns`          | unix epoch time in nano-seconds     |
+| `ns.str`      | string type instead of number       |
+| `us`          | unix epoch time in micro-seconds    |
+| `us.str`      | string type instead of number       |
+| `ms`          | unix epoch time in milli-seconds    |
+| `ms.str`      | string type instead of number       |
+| `s`           | unix epoch time in seconds          |
+| `s.str`       | string type instead of number       |
 
 ## Examples
 
