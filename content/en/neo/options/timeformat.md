@@ -40,7 +40,7 @@ The value of `timeformat` is *case-insensitive*.
 | `S.US`        | 05.000000                           |
 | `S.MS`        | 05.000                              |
 
-Unix epoch timeformat.
+Unix epoch timeformat. {{< neo_since ver="8.0.40" />}}
 
 | timeformat    |  result                             |
 |:------------- |:------------------------------------|
