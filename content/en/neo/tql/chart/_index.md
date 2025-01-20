@@ -48,7 +48,8 @@ Please refer to [this section](#themes) for the preview of the each theme.
 | gl                 | `/web/echarts/echarts-gl.min.js`         |
 
 
-## New Charts
+## Examples
+
 The new `CHART()` provides more fine-tunable options to create attractive charts.
 It is the new version of API that replaces for the previous `CHART_LINE()`, `CHART_BAR()`, `CHART_SCATTER`, `CHART_LINE3D`, `CHART_BAR3D()` and `CHART_SCATTER3D()` functions.
 
