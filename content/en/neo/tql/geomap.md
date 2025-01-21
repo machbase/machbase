@@ -2,7 +2,6 @@
 title: GEOMAP()
 type: docs
 weight: 51
-draft: true
 ---
 
 {{< neo_since ver="8.0.40" />}}

@@ -2,7 +2,6 @@
 title: Upload files
 type: docs
 weight: 25
-draft: true
 ---
 
  {{< neo_since ver="8.0.40" />}}
