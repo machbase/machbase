@@ -5,20 +5,9 @@ weight: 25
 draft: true
 ---
 
-This demo assumes the `EXAMPLE` table has already been created:
+ {{< neo_since ver="8.0.40" />}}
 
-```sql {hl_lines=[5]}
-CREATE TAG TABLE EXAMPLE(
-    NAME     VARCHAR  primary key,
-    TIME     DATETIME basetime,
-    VALUE    DOUBLE,
-    EXTDATA  JSON
-)
-```
-
-## Upload Files
-
-A client can upload arbitrary files to Machbase-Neo via HTTP *multipart/form-data* encoding {{< neo_since ver="8.0.35" />}}.
+A client can upload arbitrary files to Machbase-Neo via HTTP *multipart/form-data* encoding.
 The attached files are stored in the specified directory,
 and the database keeps the metadata of the file as a JSON string in the column.
 
@@ -29,6 +18,21 @@ where the file should be stored.
 If the specified directory in `X-Store-Dir` does not exist, the server will create it automatically.
 The file content will be stored in the directory with a generated unique name in UUID format.
 
+## Upload file
+
+This demo assumes the `EXAMPLE` table has already been created:
+
+```sql {hl_lines=[5]}
+CREATE TAG TABLE EXAMPLE(
+    NAME     VARCHAR(80)  primary key,
+    TIME     DATETIME basetime,
+    VALUE    DOUBLE,
+    EXTDATA  JSON
+)
+```
+
+{{< tabs items="cURL,REST Client">}}
+{{< tab >}}
 This example uses `curl` with the `-F` option to make a POST request in *multipart/form-data* encoding.
 
 ```sh {hl_lines=[5]}
@@ -38,10 +42,51 @@ curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE' \
     -F 'VALUE=0' \
     -F 'EXTDATA=@./image_file.png;headers="X-Store-Dir: /tmp/store"'
 ```
+{{< /tab >}}
+{{< tab >}}
+This example uses Visual Studio Code's REST Client extension.
 
+``` {hl_lines=[17,18]}
+POST http://127.0.0.1:5654/db/write/EXAMPLE
+Content-Type: multipart/form-data; boundary=----Boundary7MA4YWxkTrZu0gW
+
+------Boundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="NAME"
+
+camera-1
+------Boundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="TIME"
+
+now
+------Boundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="VALUE"
+
+0
+------Boundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="EXTDATA"; filename="image_file.png"
+X-Store-Dir: /tmp/store
+Content-Type: image/png
+
+< ./image_file.png
+------Boundary7MA4YWxkTrZu0gW--
+```
+{{< /tab >}}
+{{< /tabs >}}
+
+### X-Store-Dir
+
+The uploaded file content is stored in the directory specified by the `X-Store-Dir` header,
+and the file name is based on the `ID` of the response.
+The `X-Store-Dir` header can be included in the part's header, as shown in the example above,
+or it can be specified as a top-level header.
+
+**`${data}`**<br/>
+You can use the `${data}` variable in the `X-Store-Dir` path to represent the database home directory. This directory is specified by the `--data` flag when launching the machbase-neo process, or it defaults to the directory where the machbase-neo executable resides if the `--data` flag is not used.
+
+For example, if you set `X-Store-Dir: ${data}/store`, the uploaded file will be saved in `some/path/to/machbase_home/store/file_name_is_ID_of_the_response`.
+
+### Response Message
 Once the file is successfully uploaded, the server responds with the stored file information as shown below.
-The actual file content is stored in the directory specified by the `X-Store-Dir` header,
-with the file named according to the `ID`.
 
 - ID : Unique id assigned by the server
 - FN : Original file name
@@ -86,18 +131,40 @@ AND EXTDATA->'$.FN' = 'image_file.png';
 
 The examples that use the SELECT query with the `/db/query` API:
 
+{{< tabs items="cURL,REST Client">}}
+{{< tab >}}
 ```sh
 curl -o - 'http://127.0.0.1:5654/db/query' \
-  --data-urlencode "q=select EXTDATA from EXAMPLE \
-    where NAME = 'camera-1'
+  --data-urlencode "q=select EXTDATA from EXAMPLE\
+    where NAME = 'camera-1'"
 ```
+{{< /tab >}}
+{{< tab >}}
+```
+GET http://127.0.0.1:5654/db/query
+  ?q=select EXTDATA from EXAMPLE where NAME = 'camera-1'
+```
+{{< /tab >}}
+{{< /tabs >}}
 
+Using json path condition with `->` notation.
+
+{{< tabs items="cURL,REST Client">}}
+{{< tab >}}
 ```sh
 curl -o - 'http://127.0.0.1:5654/db/query' \
-  --data-urlencode "q=select EXTDATA from EXAMPLE \
+  --data-urlencode "q=select EXTDATA from EXAMPLE\
     where NAME = 'camera-1' \
     and EXTDATA->'$.FN' = 'image_file.png'"
 ```
+{{< /tab >}}
+{{< tab >}}
+```
+GET http://127.0.0.1:5654/db/query
+  ?q=select EXTDATA from EXAMPLE where NAME = 'camera-1' and EXTDATA->'$.FN' = 'image_file.png'
+```
+{{< /tab >}}
+{{< /tabs >}}
 
 The `EXTDATA` column contains the file information as shown below.
 
@@ -117,14 +184,26 @@ The `EXTDATA` column contains the file information as shown below.
   "elapse": "843.666µs"
 }
 ```
+
 Use JSON path to extract specific fields from the JSON type column:
 
+{{< tabs items="cURL,REST Client">}}
+{{< tab >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
   --data-urlencode "format=ndjson"   \
   --data-urlencode "q=SELECT NAME, TIME, EXTDATA->'$.ID' as FID  \
     FROM EXAMPLE WHERE NAME = 'camera-1'"
 ```
+{{< /tab >}}
+{{< tab >}}
+```
+GET http://127.0.0.1:5654/db/query
+    ?format=ndjson
+    &q=SELECT NAME, TIME, EXTDATA->'$.ID' as FID  FROM EXAMPLE WHERE NAME = 'camera-1'
+```
+{{< /tab >}}
+{{< /tabs >}}
 
 ```json
 {"NAME":"camera-1","TIME":1728950208158594000,"FID":"1ef8a87f-96bd-6576-9ff5-972fa7638db8"}
@@ -135,11 +214,11 @@ curl -o - http://127.0.0.1:5654/db/query \
 
 The file content can be accessed by the query API:
 
-`/db/query/file/{table}/{column}/{ID}`
+`http://{server_address}/db/query/file/{table}/{column}/{ID}`
 
 If the table is TAG table, set `tag` parameter to improve the server response time:
 
-`/db/query/{tag_table}/{column}/{ID}?tag=camera-1`
+`http://{server_address}/db/query/{tag_table}/{column}/{ID}?tag=camera-1`
 
 If the table is a LOG table, the `ID` is generated based on the time when the record is inserted. For a TAG table, the `ID` is derived from the base time column of the record.
 
@@ -173,7 +252,11 @@ If the table is a TAG table and the tag name is known, use the `tag` query param
 </html>
 ```
 
-## Javascript Example
+## Examples
+
+### Javascript
+
+Uploading file in Javascript.
 
 ```js
 const request = require('request');
@@ -197,7 +280,9 @@ request(req, function(err, res, body){
 })
 ```
 
-## Python Example
+### Python
+
+Uploading file in Python.
 
 ```python
 import requests
