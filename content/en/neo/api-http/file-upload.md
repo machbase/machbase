@@ -80,7 +80,7 @@ The `X-Store-Dir` header can be included in the part's header, as shown in the e
 or it can be specified as a top-level header.
 
 **`${data}`**<br/>
-You can use the `${data}` variable in the `X-Store-Dir` path to represent the database home directory. This directory is specified by the `--data` flag when launching the machbase-neo process, or it defaults to the directory where the machbase-neo executable resides if the `--data` flag is not used.
+You can use the `${data}` variable in the `X-Store-Dir` path to represent the database home directory. This directory is specified by the `--data` flag when launching the machbase-neo process, or it defaults to the sub-directory `machbase_home`  under the directory where the machbase-neo executable resides if the `--data` flag is not used. Please refer to the document about [command line flags](/neo/operations/command-line/).
 
 For example, if you set `X-Store-Dir: ${data}/store`, the uploaded file will be saved in `some/path/to/machbase_home/store/file_name_is_ID_of_the_response`.
 
