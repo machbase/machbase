@@ -9,7 +9,7 @@ weight: 51
 *Syntax*: `GEOMAP( [mapId()] [, tileTemplate()] [, size()] )` 
 
 `GEOMAP` generates a map display and shows markers and geometric shapes based on provided coordinates.
-It functions similarly to `CHART`, but it uses coordinates instead of scalar values.
+It functions similarly to `CHART`, but it uses coordinates instead of scalar values. The supproted coordinates system is [WGS84](https://en.wikipedia.org/wiki/World_Geodetic_System).
 
 The `GEOMAP()` function processes input data in JavaScript Object format.
 Each input object must include `type` and `coordinates` fields, with an optional `properties` field.

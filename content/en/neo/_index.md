@@ -54,6 +54,12 @@ Data transformation and visualization language *TQL* is supported out of the box
 - [CHART()](/neo/tql/chart/) for the data visualization.
 - [SCRIPT()](/neo/tql/script/) for implementing custom logic.
 
+<span class="badge-new">NEW!</span> Geodetic data visualization.
+
+{{< figure src="/images/map-visualization.jpg" width="600" >}}
+
+- [GEOMAP()](/neo/tql/geomap/) for map visualization.
+
 ### Dashbaord
 
 Realtime data monitoring on the fly.
@@ -79,8 +85,7 @@ Integration with external systems
 - [x] MySQL
 - [x] MS-SQL
 - [x] MQTT Broker
-- [x] NATS {{< neo_since ver="8.0.20" />}}
-- [ ] Kafka (planning)
+- [x] NATS
 
 
 ### Contributing
