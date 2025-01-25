@@ -192,23 +192,27 @@ GEOMAP()
 
 ### Layer Properties
 
-| Property         | Type   | Default   | Description   |
+| Property        | Type   | Default   | Description   |
 |:--------------- |:-------|:----------|:--------------|
-| `stroke`        | Boolean| true      | Whether to draw stroke along the path. Set it to false to disable borders on polygons or circles. |
-| `color`         | String | '#3388ff' | Stroke color  |
-| `weight`        | Number | 3         | Stroke width in pixels |
+| `stroke`        | Boolean| `true`    | Whether to draw stroke along the path. Set it to false to disable borders on polygons or circles. |
+| `color`         | String | `'#3388ff'` | Stroke color  |
+| `weight`        | Number | `3`       | Stroke width in pixels |
 | `opacity`       | Number | `1.0`     | The opacity of the marker.|
 | `fillColor`     | String |           | Fill color. Defaults to the value of the color property. |
-| `fillOpacity`   | Number | 0.2       | Fill opacity. |
+| `fillOpacity`   | Number | `0.2`     | Fill opacity. |
 | `popup`         | Object | `null`    | See [Popup](#popup). |
+| `tooltip`       | Object | `null`    | See [Tooltip](#tooltip). |
 
 ### Popup
 
 If layer properties has `popup` object it displays popup message when user click the layer.
 
-| Property         | Type   | Default    | Description   |
+| Property        | Type   | Default    | Description   |
 |:--------------- |:-------|:-----------|:--------------|
-| `content`       | String |            | The content of the popup in HTML. |
+| `content`       | String |            | The content of the popup in Text/HTML. |
+| `open`          | Boolean| `false`    | Set initial open state |
+| `maxWidth`      | Number | `300`      | Max width of the popup, in pixels. |
+| `minWidth`      | Number | `50`       | Min width of the popup, in pixels. |
 
 ```js {{linenos=table,hl_lines=["13-17"]}}
 FAKE(json({
@@ -235,6 +239,47 @@ GEOMAP()
 ```
 
 {{< figure src="../img/geomap-marker-popup.png" width="500" >}}
+
+### Tooltip
+
+{{< neo_since ver="8.0.41" />}}
+
+Used to display small texts on top of map layers.
+
+| Property         | Type   | Default    | Description   |
+|:--------------- |:-------|:-----------|:--------------|
+| `content`       | String |            | The content of the popup in Text/HTML. |
+| `open`          | Boolean| `false`    | Set initial open state |
+| `direction`     | String | `auto`     | Direction where to open the tooltip. `right,left,top,bottom,center,auto` |
+| `permanent`     | Boolean| `false`    | Whether to open the tooltip permanently or only on mouseover |
+| `opacity`       | Number | `0.9`      | Tooltip container opacity |
+
+```js {{linenos=table,hl_lines=["13-17"]}}
+FAKE(json({
+    ["Stoll Mountain", 38.9934, -105.5018],
+    ["Pulver Mountain", 39.0115, -105.5173]
+}))
+SCRIPT("js", {
+    var name = $.values[0];
+    var lat  = $.values[1];
+    var lon  = $.values[2];
+    $.yield({
+        type: "marker",
+        coordinates: [lat, lon],
+        properties: {
+            tooltip: {
+                content: '<b>'+name+'</b>',
+                direction: "auto",
+                permanent: true
+            }
+        }
+    });
+})
+GEOMAP()
+```
+
+{{< figure src="../img/geomap-marker-tooltip.png" width="500" >}}
+
 
 <!--
 ## GeoJSON
