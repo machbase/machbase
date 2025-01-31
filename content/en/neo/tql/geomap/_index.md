@@ -49,6 +49,30 @@ If you need to sepcify the map id (*string*) instead of auto-generated one.
 ## Layers
 
 Layers are markers and geometric shapes that `GEOMAP` shows on the map.
+The input data of `GEOMAP()` should be a dictionary structure represented as a JavaScript object.
+
+The object must have `type` and `coordinates` fields, with an optional `properties` field.
+
+**syntax**
+
+```js
+{
+    type: "circle", // marker, circleMarker, polyline ...
+    coordinates: [Lat, Lon],
+    properties: {
+        radius: Radius,
+        color: "#FF0000",
+        weight: 1
+    }
+}
+```
+
+| Name            | Type          | Description   |
+|:--------------- |:--------------|:--------------|
+| `type`          | `String`      | Type of the layer. <br/> e.g., `marker`, `circle`, `circleMarker`, etc. |
+| `coordinates`   | `[]Float`,<br/> `[][]Float`, ... | Coordinates for the `type` in [latitude, longitude] order |
+| `properties`    | `Dictionary` | Various options depending on the `type`.<br/>See [Properties](#properties) |
+
 
 ### marker
 
