@@ -46,7 +46,7 @@ between the API and DBMS. If this number is exceeded, it will wait at the API le
   - `> 0` If a positive number is set, it operates according to the set value.
 
 This setting value can be checked as a command `session limit` within `machbase-neo shell` 
-and can be changed with `session limit --set <num>`.
+and can be changed with `session limit --set=<num>`.
 Since the change is maintained only while the process is running,
 the startup script must be modified to change it permanently.
 
