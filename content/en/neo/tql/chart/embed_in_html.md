@@ -31,10 +31,10 @@ CHART(
 
 ## JSON Response
 
-Call *.tql* script file with a custom HTTP header `X-Chart-Output: json` {{< neo_since ver="8.0.14" />}} 
+Call *.tql* script file with a custom HTTP header `X-Tql-Output: json` {{< neo_since ver="8.0.42" />}} (which replaces the deprecated header `X-Chart-Output` {{< neo_since ver="8.0.14" />}})
 to produce the result in JSON instead of full HTML document,
 so that caller can embed the chart into any place of the HTML DOM.
-The `X-Chart-Output: json` header is actually equivalent to the `CHART()` SINK with `chartJson(true)` option like `CHART( chartJson(true), chartOption({...}))`.
+The `X-Tql-Output: json` header is actually equivalent to the `CHART()` SINK with `chartJson(true)` option like `CHART( chartJson(true), chartOption({...}))`.
 The example of `chartJson(true)` can be found in the section "[As Reading API](/neo/tql/reading/#chart-with-chartjson)".
 
 When the reponse of `/db/tql` is JSON, it contains required addresses of the result javascript.
@@ -72,7 +72,7 @@ The HTML document below is an exmaple to utilize the JSON response above to rend
     </script>
     <script>
         fetch("basic_line.tql", {
-            headers: { "X-Chart-Output": "json" }
+            headers: { "X-Tql-Output": "json" }
         }).then(function(rsp){
             return rsp.json()
         }).then(function(obj) {
@@ -90,7 +90,7 @@ The HTML document below is an exmaple to utilize the JSON response above to rend
 </html>
 ```
 - Line 3, Pre-load apache echarts library which is included in `jsAssets` fields in above response example.
-- Line 14, The HTTP header `X-Chart-Output: json`.
+- Line 14, The HTTP header `X-Tql-Output: json`.
 so that machbase-neo TQL engine generates a JSON containing meta information of chart instead of full HTML document.
 Becuase when a client requests a `*.tql` file with `GET` method, machbase-neo generates HTML document for the chart by default.
 - Line 23, Load js files into the HTML DOM tree that are generated and replied in `jsCodeAssets`.

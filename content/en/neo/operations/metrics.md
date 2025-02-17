@@ -77,78 +77,100 @@ CHART(
 All metrics are based on the selected sampling period,
 which can be one of the following:<br/> 1 minute (`1m`), 5 minutes (`5m`), or 15 minutes (`15m`).
 
-### Go
-
-| Metric                                 | Unit       | Description                         |
-|:---------------------------------------|:----------:|:------------------------------------|
-| `go:num_cgo_call_avg`                  |            | Average number of calls of CGO functions |
-| `go:num_cgo_call_max`                  |            | Max number of calls of CGO functions     |
-| `go:num_cgo_call_min`                  |            | Min number of calls of CGO functions     |
-| `go:num_goroutine_avg`                 |            | Average number of go routines            |
-| `go:num_goroutine_max`                 |            | Max number of go routines                |
-| `go:num_goroutine_min`                 |            | Min number of go routines                |
-
 ### HTTP
 
 | Metric                                 | Unit       | Description                         |
 |:---------------------------------------|:----------:|:------------------------------------|
-| `machbase:http:count`                  |            | Total HTTP request count                 |
-| `machbase:http:latency_p50`            |  ns.       | HTTP response latency in 0.5 quantile    |
-| `machbase:http:latency_p90`            |  ns.       | HTTP response latency in 0.9 quantile    |
-| `machbase:http:latency_p99`            |  ns.       | HTTP response latency in 0.99 quantile   |
-| `machbase:http:recv_bytes`             | byte       | HTTP request payload size                |
-| `machbase:http:send_bytes`             | byte       | HTTP response payload size               |
-| `machbase:http:status_1xx`             |            | HTTP responses that replied in 1xx status|
-| `machbase:http:status_2xx`             |            | HTTP responses that replied in 2xx status|
-| `machbase:http:status_3xx`             |            | HTTP responses that replied in 3xx status|
-| `machbase:http:status_4xx`             |            | HTTP responses that replied in 4xx status|
-| `machbase:http:status_5xx`             |            | HTTP responses that replied in 5xx status|
+| `machbase:http:count`                  |            | Total number of HTTP requests                 |
+| `machbase:http:latency_p50`            |  ns.       | HTTP response latency at the 50th percentile (median) |
+| `machbase:http:latency_p90`            |  ns.       | HTTP response latency at the 90th percentile  |
+| `machbase:http:latency_p99`            |  ns.       | HTTP response latency at the 99th percentile  |
+| `machbase:http:recv_bytes`             | byte       | Total size of HTTP request payloads           |
+| `machbase:http:send_bytes`             | byte       | Total size of HTTP response payloads          |
+| `machbase:http:status_1xx`             |            | Number of HTTP responses with 1xx status codes|
+| `machbase:http:status_2xx`             |            | Number of HTTP responses with 2xx status codes|
+| `machbase:http:status_3xx`             |            | Number of HTTP responses with 3xx status codes|
+| `machbase:http:status_4xx`             |            | Number of HTTP responses with 4xx status codes|
+| `machbase:http:status_5xx`             |            | Number of HTTP responses with 5xx status codes|
+
+### MQTT
+
+| Metric                                 | Unit       | Description                         |
+|:---------------------------------------|:----------:|:------------------------------------|
+| `machbase:mqtt:recv_bytes`             | byte       | total number of bytes received      |
+| `machbase:mqtt:send_bytes`             | byte       | total number of bytes sent          |
+| `machbase:mqtt:recv_pkts`              |            | the total number of publish messages received |
+| `machbase:mqtt:send_pkts`              |            | total number of messages of any type sent  |
+| `machbase:mqtt:recv_msgs`              |            | total number of publish messages received  |
+| `machbase:mqtt:send_msgs`              |            | total number of publish messages sent      |
+| `machbase:mqtt:drop_msgs`              |            | total number of publish messages dropped to slow subscriber  |
+| `machbase:mqtt:retained`               |            | total number of retained messages active on the broker  |
+| `machbase:mqtt:subscriptions`          |            | total number of subscriptions active on the broker  |
+| `machbase:mqtt:clients`                |            | total number of connected and disconnected clients with a persistent session currently connected and registered  |
+| `machbase:mqtt:clients_connected`      |            | number of currently connected clients  |
+| `machbase:mqtt:clients_disconnected`   |            | total number of persistent clients (with clean session disabled) that are registered at the broker but are currently disconnected  |
+| `machbase:mqtt:inflight`               |            | the number of messages currently in-flight  | 
+| `machbase:mqtt:inflight_dropped`       |            | the number of inflight messages which were dropped  | 
 
 ### TQL
 
 | Metric                                 | Unit       | Description                         |
 |:---------------------------------------|:----------:|:------------------------------------|
-| `machbase:tql:cache:count_avg`         |            | Average number of TQL cache items          |
-| `machbase:tql:cache:count_max`         |            | Max number of TQL cache items              |
-| `machbase:tql:cache:count_min`         |            | Min number of TQL cache items              |
-| `machbase:tql:cache:data_size_avg`     | byte       | Average size of the total TQL cache        |
-| `machbase:tql:cache:data_size_max`     | byte       | Max size of the total TQL cache            |
-| `machbase:tql:cache:data_size_min`     | byte       | Min size of the total TQL cache            |
-| `machbase:tql:cache:evictions`         |            | TQL count of the evicted items removed from the cache |
-| `machbase:tql:cache:insertions`        |            | The count of the new items inserted into the cache |
-| `machbase:tql:cache:hits`              |            | TQL cache hit count                        |
-| `machbase:tql:cache:misses`            |            | TQL cache miss count                       |
+| `machbase:tql:cache:count_avg`         |            | Average number of items in the TQL cache |
+| `machbase:tql:cache:count_max`         |            | Maximum number of items in the TQL cache |
+| `machbase:tql:cache:count_min`         |            | Minimum number of items in the TQL cache |
+| `machbase:tql:cache:data_size_avg`     | byte       | Average total size of the TQL cache      |
+| `machbase:tql:cache:data_size_max`     | byte       | Maximum total size of the TQL cache      |
+| `machbase:tql:cache:data_size_min`     | byte       | Minimum total size of the TQL cache      |
+| `machbase:tql:cache:evictions`         |            | Number of items evicted from the TQL cache |
+| `machbase:tql:cache:insertions`        |            | Number of new items inserted into the TQL cache |
+| `machbase:tql:cache:hits`              |            | Number of cache hits in the TQL cache   |
+| `machbase:tql:cache:misses`            |            | Number of cache misses in the TQL cache |
 
-### Database
+### Database Sessions
 
 | Metric                                 | Unit       | Description                         |
 |:---------------------------------------|:----------:|:------------------------------------|
-| `machbase:session:append:count`        |            | The number of appenders used             |
-| `machbase:session:append:in_use`       |            | The number of appenders that are in open state |
-| `machbase:session:conn:count`          |            | The number of conn used                  |
-| `machbase:session:conn:in_use`         |            | The number of conn that are in open state|
-| `machbase:session:stmt:count`          |            | The number of stmt used                  |
-| `machbase:session:stmt:in_use`         |            | The number of stmt that are in open state|
-| `machbase:session:conn:use_time_avg`   |  ns.       | Average time of conn uses                |
-| `machbase:session:conn:use_time_max`   |  ns.       | Max time of conn uses                    |
-| `machbase:session:conn:use_time_min`   |  ns.       | Min time of conn uses                    |
-| `machbase:session:conn:wait_time_avg`  |  ns.       | Average time of the fetch iteration limit wait |
-| `machbase:session:conn:wait_time_max`  |  ns.       | Max time of the fetch iteration limit wait|
-| `machbase:session:conn:wait_time_min`  |  ns.       | Min time of the fetch iteration limit wait|
-| `machbase:session:query:count`         |            | Total queries (only that use fetch iteration)   |
-| `machbase:session:query:exec_time_avg` |  ns.       | Average time of the prepare stmt. time     |
-| `machbase:session:query:exec_time_max` |  ns.       | Max time of the prepare stmt. time         |
-| `machbase:session:query:exec_time_min` |  ns.       | Min time of the prepare stmt. time         |
-| `machbase:session:query:fetch_time_avg`|  ns.       | Average time of the fetch time             |
-| `machbase:session:query:fetch_time_max`|  ns.       | Max time of the fetch time                 |
-| `machbase:session:query:fetch_time_min`|  ns.       | Min time of the fetch time                 |
-| `machbase:session:query:wait_time_avg` |  ns.       | Average time of the iteration limit wait   |
-| `machbase:session:query:wait_time_max` |  ns.       | Max time of the iteration limit wait       |
-| `machbase:session:query:wait_time_min` |  ns.       | Min time of the iteration limit wait       |
-| `machbase:session:query:hwm:elapse`    |  ns.       | High Water Marked Query total elapse time  |
-| `machbase:session:query:hwm:exec_time` |  ns.       | High Water Marked Query's stmt prepare time|
-| `machbase:session:query:hwm:fetch_time`|  ns.       | High Water Marked Query's fetch time       |
-| `machbase:session:query:hwm:wait_time` |  ns.       | High Water Marked Query's iteration limit wait |
+| `machbase:session:append:count`        |            | Total number of appenders used      |
+| `machbase:session:append:in_use`       |            | Number of appenders currently open  |
+| `machbase:session:conn:count`          |            | Total number of connections used    |
+| `machbase:session:conn:in_use`         |            | Number of connections currently open|
+| `machbase:session:stmt:count`          |            | Total number of statements used     |
+| `machbase:session:stmt:in_use`         |            | Number of statements currently open |
+| `machbase:session:conn:use_time_avg`   |  ns.       | Average connection usage time       |
+| `machbase:session:conn:use_time_max`   |  ns.       | Maximum connection usage time       |
+| `machbase:session:conn:use_time_min`   |  ns.       | Minimum connection usage time       |
+| `machbase:session:conn:wait_time_avg`  |  ns.       | Average wait time for fetch iteration limit |
+| `machbase:session:conn:wait_time_max`  |  ns.       | Maximum wait time for fetch iteration limit |
+| `machbase:session:conn:wait_time_min`  |  ns.       | Minimum wait time for fetch iteration limit |
+| `machbase:session:query:count`         |            | Total number of queries (only those using fetch iteration) |
+| `machbase:session:query:exec_time_avg` |  ns.       | Average execution time of prepared statements |
+| `machbase:session:query:exec_time_max` |  ns.       | Maximum execution time of prepared statements |
+| `machbase:session:query:exec_time_min` |  ns.       | Minimum execution time of prepared statements |
+| `machbase:session:query:fetch_time_avg`|  ns.       | Average fetch time                 |
+| `machbase:session:query:fetch_time_max`|  ns.       | Maximum fetch time                 |
+| `machbase:session:query:fetch_time_min`|  ns.       | Minimum fetch time                 |
+| `machbase:session:query:wait_time_avg` |  ns.       | Average wait time for iteration limit       |
+| `machbase:session:query:wait_time_max` |  ns.       | Maximum wait time for iteration limit       |
+| `machbase:session:query:wait_time_min` |  ns.       | Minimum wait time for iteration limit       |
+| `machbase:session:query:hwm:elapse`    |  ns.       | High Water Marked Query total elapsed time  |
+| `machbase:session:query:hwm:exec_time` |  ns.       | High Water Marked Query's statement preparation time|
+| `machbase:session:query:hwm:fetch_time`|  ns.       | High Water Marked Query's fetch time        |
+| `machbase:session:query:hwm:wait_time` |  ns.       | High Water Marked Query's iteration limit wait time |
 | `machbase:session:query:hwm:sql_args`  | []string   | High Water Marked Query's SQL bind variables |
-| `machbase:session:query:hwm:sql_text`  | string     | High Water Marked Query's SQL              |
+| `machbase:session:query:hwm:sql_text`  | string     | High Water Marked Query's SQL text           |
+
+### Go
+
+| Metric                             | Unit       | Description                          |
+|:-----------------------------------|:----------:|:-------------------------------------|
+| `go:heap_in_use_avg`               | byte       | Average heap usage                   |
+| `go:heap_in_use_max`               | byte       | Maximum heap usage                   |
+| `go:heap_in_use_min`               | byte       | Minimum heap usage                   |
+| `go:cgo_call_avg`                  |            | Average number of CGO function calls |
+| `go:cgo_call_max`                  |            | Maximum number of CGO function calls |
+| `go:cgo_call_min`                  |            | Minimum number of CGO function calls |
+| `go:goroutine_avg`                 |            | Average number of goroutines         |
+| `go:goroutine_max`                 |            | Maximum number of goroutines         |
+| `go:goroutine_min`                 |            | Minimum number of goroutines         |
 

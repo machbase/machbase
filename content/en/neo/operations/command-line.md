@@ -12,16 +12,67 @@ Start machbase-neo server process.
 
 **General flags**
              
-| flag             | default              | desc                                                              |
-|:-----------------|:---------------------|:----------------------------------------------------------------- |
-| `--host`         | `127.0.0.1`          | listening network addr<br/> ex) `--host 0.0.0.0`                  |
-| `-c`, `--config` |                      | config file location  <br/> ex) `--config /data/machbase-neo.conf`|
-| `--pid`          |                      | file path to save pid <br/> ex) `--pid /data/machbase-neo.pid`    |
-| `--data`         | `./machbase_home`    | path to database<br/> ex) `--data /data/machbase`                 |
-| `--file`         | `.`                  | path to files<br/> ex) `--file /data/files`                       |
-| `--backup-dir`   | `./backups`          | path to the backup dir ex) `--backup-dir /data/backups` {{< neo_since ver="8.0.26" />}} |
-| `--pref`         | `~/.config/machbase` | path to preference directory path                                 |
-| `--preset`       | `auto`               | database preset `auto`, `fog`, `edge`<br/> ex) `--preset edge`    |
+| flag             | desc                                                              |
+|:-----------------|:----------------------------------------------------------------- |
+| `--host`         | listening network addr (default: `127.0.0.1`)<br/> ex) `--host 0.0.0.0`                  |
+| `-c`, `--config` | config file location  <br/> ex) `--config /data/machbase-neo.conf`|
+| `--pid`          | file path to save pid <br/> ex) `--pid /data/machbase-neo.pid`    |
+| `--data`         | path to database (default: `./machbase_home`)<br/> ex) `--data /data/machbase`                 |
+| `--file`         | path to files (default: `.`)<br/> ex) `--file /data/files`                       |
+| `--backup-dir`   | path to the backup dir (default: `./backups`)<br/> ex) `--backup-dir /data/backups` {{< neo_since ver="8.0.26" />}} |
+| `--pref`         | path to preference directory path.<br/>(default: `~/.config/machbase`)                                |
+| `--preset`       | database preset `auto`, `fog`, `edge` (default: `auto`)<br/> ex) `--preset edge`    |
+
+**Database Sessions flags**
+
+Conceptually, if we divide machbase-neo into the API part (http, mqtt, etc.) that includes tql 
+and the DBMS part, there have been no restrictions on traffic between the API and DBMS so far.
+
+If 100 MQTT clients and 100 HTTP clients, a total of 200 clients, execute a db query "simultaneously",
+200 sessions will be executed in the DBMS.
+If there is a tool that can control the traffic flow delivered to the DBMS, it would be possible
+to configure flexibly depending on the situation.
+Therefore, new flags that can be used in `machbase-neo serve` have been added. {{< neo_since ver="8.0.42" />}}
+
+| flag                     | desc                                                              |
+|:-------------------------|:----------------------------------------------------------------- |
+| `--max-open-conn`        | `< 0` : unlimited (default) <br/> `0` : `= CPU_count * factor`<br/>  `> 0` : specified max open connections |
+| `--max-open-conn-factor` | used to calculate the number of the max open connections when `--max-open-conn` is 0. (default `2`). |
+| `--max-open-query`       | `< 0` : unlimited<br/> `0` (default) : `= CPU_count * factor`<br/> `> 0` : specified max open query iterations |
+| `--max-open-query-factor`| used to calculate the number of the max open query iterations when `--max-open-query` is 0. (default `2`) |
+
+- *--mach-open-conn* controls the number of connections (=sessions) that can be OPENED "simultaneously"
+between the API and DBMS. If this number is exceeded, it will wait at the API level.
+  - `< 0` If a negative number (e.g., -1) is set, it operates without restrictions as in previous versions.
+  - `0` If no settings are made by default, it is calculated as `the number of CPU cores * max-open-conn-factor`. The default max-open-conn-factor is 1.5.
+  - `> 0` If a positive number is set, it operates according to the set value.
+
+This setting value can be checked as a command `session limit` within `machbase-neo shell` 
+and can be changed with `session limit --set=<num>`.
+Since the change is maintained only while the process is running,
+the startup script must be modified to change it permanently.
+
+- *--mach-open-conn-factor* sets the factor value to calculate as `the number of CPU cores * factor` when `--mach-open-conn` described above is 0 (default).
+This value must be 0 or higher, and if it is 0 or negative, the default `2.0` is applied.
+
+As example,
+if the number of CPU cores is 8 and the factor is 2.0, the open limit becomes 16,
+and if it is 0.5, the open limit becomes 4.
+If none of the two options described above are given, the default factor 2.0 is applied,
+and the open limit becomes 16.
+
+**Http flags**
+
+{{< neo_since ver="8.0.43" />}}
+
+| flag                    | default     | desc                                                                      |
+|:------------------------|:------------|:------------------------------------------------------------------------- |
+| `--http-linger`         | `-1`        | HTTP socket option, `-1` means disable SO_LINGER, `>=0` means set SO_LINGER |
+| `--http-readbuf-size`   | `0`         | HTTP socket read buffer size. `0` means use system default.                 |
+| `--http-writebuf-size`  | `0`         | HTTP socket write buffer size. `0` means use system default.                |
+| `--http-debug`          | `false`     | Enable HTTP Ddebug log                                                      |
+| `--http-debug-latency`  | `"0"`       | Log HTTP requests that take longer than the specified duration to respond (e.g., "3s"). "0" means all request. |
+| `--http-allow-statz`    |             | Allow source IPs (comma separated) to access `/db/statz` API. default allows only `127.0.0.1`. |
 
 **Log flags**
 

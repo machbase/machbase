@@ -4,9 +4,9 @@ type: docs
 weight: 51
 ---
 
-{{< neo_since ver="8.0.40" />}}
+{{< neo_since ver="8.0.44" />}}
 
-*Syntax*: `GEOMAP( [mapId()] [, tileTemplate()] [, size()] )` 
+*Syntax*: `GEOMAP( [geomapID()] [, tileTemplate()] [, size()] )` 
 
 `GEOMAP` generates a map display and shows markers and geometric shapes based on provided coordinates.
 It functions similarly to `CHART`, but it uses coordinates instead of scalar values. The supproted coordinates system is [WGS84](https://en.wikipedia.org/wiki/World_Geodetic_System).
@@ -33,9 +33,9 @@ The default is `https://tile.openstreetmap.org/{z}/{x}/{y}.png`.
 > Please refer to the following for more information about the tile server:
 > https://wiki.openstreetmap.org/wiki/Tile_servers
 
-### mapId()
+### geomapID()
 
-*Syntax*: `mapId(id)`
+*Syntax*: `geomapID(id)`
 
 If you need to sepcify the map id (*string*) instead of auto-generated one.
 
@@ -49,6 +49,30 @@ If you need to sepcify the map id (*string*) instead of auto-generated one.
 ## Layers
 
 Layers are markers and geometric shapes that `GEOMAP` shows on the map.
+The input data of `GEOMAP()` should be a dictionary structure represented as a JavaScript object.
+
+The object must have `type` and `coordinates` fields, with an optional `properties` field.
+
+**syntax**
+
+```js
+{
+    type: "circle", // marker, circleMarker, polyline ...
+    coordinates: [Lat, Lon],
+    properties: {
+        radius: Radius,
+        color: "#FF0000",
+        weight: 1
+    }
+}
+```
+
+| Name            | Type          | Description   |
+|:--------------- |:--------------|:--------------|
+| `type`          | `String`      | Type of the layer. <br/> e.g., `marker`, `circle`, `circleMarker`, etc. |
+| `coordinates`   | `[]Float`,<br/> `[][]Float`, ... | Coordinates for the `type` in [latitude, longitude] order |
+| `properties`    | `Dictionary` | Various options depending on the `type`.<br/>See [Properties](#properties) |
+
 
 ### marker
 
@@ -242,7 +266,7 @@ GEOMAP()
 
 ### Tooltip
 
-{{< neo_since ver="8.0.41" />}}
+{{< neo_since ver="8.0.44" />}}
 
 Used to display small texts on top of map layers.
 
