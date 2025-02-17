@@ -403,7 +403,7 @@ This scenario is useful when your DOM document has `<div id='myChart'/>`.
 The `cache()` option function has been added to `CSV()`, `JSON()`, and `NDJSON()` SINK as shown below.
 
 ```js
-SQL( "select * from test_table limit ?, 10000",  param("offset") ?? 0 )
+SQL( "select * from example limit ?, 10000",  param("offset") ?? 0 )
 JSON( cache( param("offset") ?? "0", "60s" ) )
 ```
 
