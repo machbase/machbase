@@ -267,9 +267,7 @@ $ curl http://127.0.0.1:5654/db/tql/output-markdown.tql
 
 ## CHART
 
-{{% steps %}}
-
-### Save *tql* file
+**Save *tql* file**
 
 Save the code below as `output-chart.tql`.
 
@@ -284,7 +282,7 @@ CHART(
 )
 ```
 
-### HTTP GET
+**HTTP GET**
 
 Open web browser with `http://127.0.0.1:5654/db/tql/output-chart.tql`
 
@@ -294,13 +292,9 @@ Open web browser with `http://127.0.0.1:5654/db/tql/output-chart.tql`
 > with the new `CHART()` function.
 > Please refer to the [CHART()](/neo/tql/chart) for the examples.
 
-{{% /steps %}}
+### CHART with chartJson()
 
-## CHART with chartJson()
-
-{{% steps %}}
-
-### Save *tql* file
+**Save *tql* file**
 
 Save the code below as `output-chart.tql`.
 
@@ -316,7 +310,7 @@ CHART(
 )
 ```
 
-### HTTP GET
+**HTTP GET**
 
 Open web browser with `http://127.0.0.1:5654/db/tql/output-chart.tql`
 
@@ -333,14 +327,10 @@ Open web browser with `http://127.0.0.1:5654/db/tql/output-chart.tql`
 }
 ```
 
-{{% /steps %}}
 
+### CHART with chartID()
 
-## CHART with chartID()
-
-{{% steps %}}
-
-### Save *tql* file
+**Save *tql* file**
 
 Save the code below as `output-chart.tql`.
 
@@ -357,7 +347,7 @@ CHART(
 )
 ```
 
-### HTTP GET
+**HTTP GET**
 
 Open web browser with `http://127.0.0.1:5654/db/tql/output-chart.tql`
 
@@ -394,8 +384,6 @@ This scenario is useful when your DOM document has `<div id='myChart'/>`.
 ... omit ...
 ```
 
-{{% /steps %}}
-
 ## Cache Result Data
 
 {{< neo_since ver="8.0.43" />}}
@@ -403,7 +391,7 @@ This scenario is useful when your DOM document has `<div id='myChart'/>`.
 The `cache()` option function has been added to `CSV()`, `JSON()`, and `NDJSON()` SINK as shown below.
 
 ```js
-SQL( "select * from example limit ?, 10000",  param("offset") ?? 0 )
+SQL( "select * from example limit ?, 1000",  param("offset") ?? 0 )
 JSON( cache( param("offset") ?? "0", "60s" ) )
 ```
 
