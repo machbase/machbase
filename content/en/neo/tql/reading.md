@@ -188,6 +188,27 @@ $ curl http://127.0.0.1:5654/db/tql/output-json.tql
 {{< /tab >}}
 {{< /tabs >}}
 
+## NDJSON
+
+Save the code below as `output-ndjson.tql`.
+
+```js {linenos=table,hl_lines=[2],linenostart=1}
+SQL( `select * from example limit 2` )
+NDJSON( )
+```
+
+Invoke the tql file with *curl* command.
+
+```sh
+$ curl http://127.0.0.1:5654/db/tql/output-ndjson.tql
+```
+
+```json {hl_lines=["5-8"]}
+{ "NAME": "TAG0", "TIME": 1628694000000000000, "VALUE": 10 }↵
+{ "NAME": "TAG0", "TIME": 1628780400000000000, "VALUE": 11 }↵
+↵
+```
+
 
 ## MARKDOWN
 
@@ -374,3 +395,42 @@ This scenario is useful when your DOM document has `<div id='myChart'/>`.
 ```
 
 {{% /steps %}}
+
+## Cache Result Data
+
+{{< neo_since ver="8.0.43" />}}
+
+The `cache()` option function has been added to `CSV()`, `JSON()`, and `NDJSON()` SINK as shown below.
+
+```js
+SQL( "select * from test_table limit ?, 10000",  param("offset") ?? 0 )
+JSON( cache( param("offset") ?? "0", "60s" ) )
+```
+
+The new `cache()` option accepts two mandatory parameters, `CACHE_KEY` and `TTL`, and one optional parameter `r`.
+
+**Syntax**: `cache(CACHE_KEY string, TTL string, [r float])`
+
+1.	The first parameter, `CACHE_KEY`, is used to register/search the cache data and is composed of 
+    `[filename] + [source_code_hash] + [CACHE_KEY]`. 
+    Therefore, the results executed with the same `CACHE_KEY` in the same TQL (same filename + same code) 
+    will have the same key, and the later executed results will overwrite the existing cache data.
+2.	The second parameter, `TTL`, automatically deletes the cache after the given period.
+    Requests received after TTL will query the actual DB and return the result data,
+    which will then be registered in the cache again.
+3.	The third optional parameter, `r`, is the "preemptive-cache-update-ratio" 
+    and must be a value between 0 and 1.0 (excludes 0 and 1.0).
+    For the first request received between `r * TTL` and `TTL`,
+    the system will respond with the current cache data and then execute the query to update the cache.
+    Subsequent requests will get the updated results from the cache.
+    This ensures that frequently requested `CACHE_KEY`s have continuously updated cache data in the background.
+
+If the code is modified, the `source_code_hash` will change, resulting in a cache miss.
+A cache miss will also occur if the `TTL` has expired and the cache is automatically deleted.
+In either case, the request will be executed, and the result data will be registered in the cache.
+
+The described behavior only applies when the `cache()` option is added to the SINK function.
+TQLs without the `cache()` option will not search the cache.
+
+> Note: Excessive use of cache may cause memory shortage issues.
+> For example, using cache() in TQLs that SELECT multiple billions of records...

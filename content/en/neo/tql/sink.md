@@ -103,6 +103,7 @@ For example, if a record was `{key: k, value:[v1,v2]}`, it generates an CSV reco
 - `delimiter` *delimiter(string)* specify fields separator other than the default comma(`,`).
 - `nullValue()` specify substitution string for the *NULL* value, default is `nullValue('NULL')`. {{< neo_since ver="8.0.14" />}}
 - `substituteNull` *substitute(string)* specify substitution string for the *NULL* value, default is `substituteNull('NULL')`. (deprecated, replaced by `nullValue()`)
+- `cache()` cache result data. see [Cache Result Data](../reading/#cache-result-data) for details. {{< neo_since ver="8.0.43" />}}
 
 {{< tabs items="default,heading(),delimiter(),nullValue()">}}
 {{< tab >}}
@@ -169,6 +170,7 @@ Generates JSON results from the values of the records.
 - `precision` *precision(int)* specify precision of float fields, `precision(-1)` means no restriction, `precision(0)` converts to integer.
 - `rowsFlatten` *rowsFlatten(boolean)* reduces the array dimension of the *rows* field in the JSON object. If `JSON()` has `transpose(true)` and `rowsFlatten(true)` together, it ignores `rowsFlatten(true)` and only `transpose(true)` affects on the result. {{< neo_since ver="8.0.12" />}}
 - `rowsArray` *rowsArray(boolean)* produces JSON that contains only array of object for each record. The `rowsArray(true)` has higher priority than `transpose(true)` and `rowsFlatten(true)`. {{< neo_since ver="8.0.12" />}}
+- `cache()` cache result data. see [Cache Result Data](../reading/#cache-result-data) for details. {{< neo_since ver="8.0.43" />}}
 
 {{< tabs items="default,transpose(),rowsFlatten(),rowsArray()">}}
 {{< tab >}}
@@ -265,6 +267,7 @@ The end of the data is identified by the last two consecutive newline characters
 - `tz` *tz(name)* time zone, default is `tz('UTC')`.
 - `timeformat` *timeformat(string)* specify the format how represents datetime fields, default is `timeformat('ns')`.
 - `rownum` *rownum(boolean)` adds rownum column.
+- `cache()` cache result data. see [Cache Result Data](../reading/#cache-result-data) for details. {{< neo_since ver="8.0.43" />}}
 
 ```js {linenos=table,hl_lines=[2],linenostart=1}
 SQL(`select * from example where name = 'neo_load1' limit 3`)
