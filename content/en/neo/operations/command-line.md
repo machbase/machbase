@@ -121,6 +121,23 @@ it is equivalent with
 $ machbase-neo serve --host 127.0.0.1 --data ./machbase_home --file . --preset auto
 ```
 
+### Head Only Mode
+
+If the `--data` flag value is a URL pointing to another Machbase DBMS's mach port (`5656`), as shown in the example below:
+
+```sh
+SECRET="sys:manager@" machbase-neo serve --data machbase://${SECRET}192.168.0.207:5656
+```
+
+In this mode, the machbase-neo process starts without its own database and uses the target database instead. 
+The process does not provide the 5656 port service, and all other APIs work with the destination DBMS.
+
+### Headless Mode
+
+`machbase-neo serve-headless` starts a DBMS process using only the Machbase DBMS mach port (`5656`). This mode is useful for running a DBMS process without other service ports (HTTP, MQTT, gRPC, SSH) and their related functions.
+
+This running mode is specifically designed to work with the separate "head-only" mode process, allowing the separation of service ports and the DBMS engine.
+
 ## machbase-neo shell
 
 Start machbase-neo shell. It will start interactive mode shell if there are no other arguments.
