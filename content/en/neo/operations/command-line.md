@@ -32,7 +32,7 @@ If 100 MQTT clients and 100 HTTP clients, a total of 200 clients, execute a db q
 200 sessions will be executed in the DBMS.
 If there is a tool that can control the traffic flow delivered to the DBMS, it would be possible
 to configure flexibly depending on the situation.
-Therefore, new flags that can be used in `machbase-neo serve` have been added. {{< neo_since ver="8.0.42" />}}
+Therefore, new flags that can be used in `machbase-neo serve` have been added. {{< neo_since ver="8.0.44" />}}
 
 | flag                     | desc                                                              |
 |:-------------------------|:----------------------------------------------------------------- |
