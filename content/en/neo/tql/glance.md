@@ -4,49 +4,64 @@ type: docs
 weight: 01
 ---
 
-machbase-neo supports Transforming Query Language and execution API.
+Machbase-neo supports Transforming Query Language (TQL) and execution API.
 
-As application developers, we generally take similar approaching to build applications that utilize databases.
-The process is starting typically with querying database and retrieving data in a tabular form(rows and columns), converting it into the desired data structure,
-then manipulating and displaying the final result into demanded shapes such as JSON, CSV or chart.
+As application developers, we typically follow a similar approach to build applications that utilize databases.
+The process usually starts with querying the database and retrieving data in a tabular form (rows and columns).
+This data is then converted into the desired data structure, manipulated, and displayed in the required formats such as JSON, CSV, or charts.
 
-TQL is simplifying this process within few lines of script. And other inter-working applications call the TQL via HTTP endpoint as if it is an executable API.
+TQL simplifies this process with just a few lines of script.
+Additionally, other applications can interact with TQL via HTTP endpoints, treating it as an executable API.
 
 ## What is TQL
-
-TQL (transforming Query Language) is a DSL for the data manipulation.
-It defines a flow of data stream, and the individual data unit is a record.
-A records has *key* and *value*, a key is generally auto-generated sequential integer like *ROWNUM* of query result.
-a value is a tuple that contains actual data fields.
+TQL (Transforming Query Language) is a domain-specific language (DSL) for data manipulation.
+It defines a flow of data streams, where each individual data unit is a record.
+A record has a *key* and a *value*.
+The key is generally an auto-generated sequential integer,
+similar to *ROWNUM* in query results.
+The value is a tuple that contains the actual data fields.
 
 ![tql_records](../img/tql_records.jpg)
 
-TQL script starts with *SRC* (source) that defines how to retrieve data and generates records by transforming the raw data. The *SINK* should be the end of TQL script which defines how to output records.
+TQL scripts start with *SRC* (source) functions that define how to retrieve data and generate records by transforming the raw data.
+The script ends with *SINK* functions, which define how to output the records.
+Between *SRC* and *SINK*, you can use *MAP* functions to transform the data as needed.
 
 ![tql_flow_min](../img/tql_flow_min.jpg)
 
-In some cases TQL script needs to transform records, involving mathematic calculation, simply string concatenation or interacts with external databases.
-Those tasks can be defined in *MAP* functions.
+In some cases, a TQL script needs to transform records, involving mathematical calculations, simple string concatenations,
+or interactions with external databases. These tasks can be defined using *MAP* functions.
 
-So, TQL script should start with *SRC* and end with *SINK* and it can has zero or one more *MAP* functions.
+Thus, a TQL script should start with *SRC* functions and end with *SINK* functions.
+It can include zero or more *MAP* functions in between to perform the necessary transformations.
 
 ![tql_flow](../img/tql_flow.jpg)
 
 ### SRC
 
-There are several SRC functions. For example, `SQL()` produces records by querying machbase-neo database or even external (bridged) databases with the given sql statement. `FAKE()` generates artificial data. `CSV()` can read csv data, `BYTES()` reads arbitrary binary data from file system or client's HTTP request and MQTT payload.
+There are several SRC functions available in TQL.
+For example, the `SQL()` function produces records by querying the Machbase-neo database or even external (bridged) databases using the given SQL statement.
+The `FAKE()` function generates artificial data for testing purposes.
+The `CSV()` function reads data from CSV files,
+while the `BYTES()` function reads arbitrary binary data from the file system, client's HTTP request, or MQTT payload.
 
 ![tql_src](../img/tql_src.jpg)
 
 ### SINK
 
-The basic SINK function might be `INSERT()` which writes the incoming records onto machbase-neo database. `CHART()` function renders a chart with incoming records. `JSON()` and `CSV()` encode incoming data into proper formats.
+The basic SINK functions include `INSERT()`, which writes the incoming records to the Machbase-neo database,
+and `CHART()`, which renders a chart with the incoming records.
+Additionally, `JSON()` and `CSV()` functions encode the incoming data into their respective formats,
+making it easier to integrate with other applications or display the data in a user-friendly manner.
 
 ![tql_sink](../img/tql_sink.jpg)
 
 ### MAP
 
-*MAP* functions are the core of the transforming data from a shape to an other.
+*MAP* functions are essential for transforming data from one shape to another.
+They allow you to perform various operations such as mathematical calculations, string manipulations, and data format conversions.
+By using *MAP* functions, you can efficiently process and reshape your data to meet the specific requirements of your application.
+
 
 ![tql_map](../img/tql_map.jpg)
 
@@ -55,10 +70,13 @@ The basic SINK function might be `INSERT()` which writes the incoming records on
 {{% steps %}}
 
 ### Open Web UI
-Open machbase-neo web UI with your web browser,
-the default address is `http://127.0.0.1:5654/`, username `sys` and password `manager`.
 
-### New TQL page
+Open the Machbase-neo web UI in your web browser.
+The default address is `http://127.0.0.1:5654/`.
+Use the username `sys` and the password `manager`.
+
+### New TQL Page
+
 Select "TQL" on the 'New...' page.
 <br/>
 {{< figure src="/images/web-tql-pick.png" width="550" >}}
@@ -67,8 +85,8 @@ Select "TQL" on the 'New...' page.
 
 Copy and paste the sample TQL code into the TQL editor.
 
-Then click ▶︎ icon on the top left of the editor, it will display a line chart as the image below.
-Which is a wave that has 1.5 Hz frequency and 1.0 amplitude.
+Then click the ▶︎ icon on the top left of the editor.
+It will display a line chart as shown in the image below, representing a wave with a frequency of 1.5 Hz and an amplitude of 1.0.
 
 {{% /steps %}}
 
@@ -96,7 +114,12 @@ CHART_BAR()
 {{< /tab >}}
 {{< /tabs >}}
 
-Let's try some CSV,JSON formats.
+Let's explore some data formats like CSV and JSON.
+
+- **CSV Format**: This format is useful for exporting data to spreadsheets or other applications that support CSV files.
+- **JSON Format**: This format is ideal for web applications and APIs, as it is easy to parse and integrate with JavaScript.
+
+By using TQL, you can easily convert your data into these formats with just a few lines of code.
 
 {{< tabs items="JSON-rows,JSON-cols,CSV,MARKDOWN,HTML">}}
 {{< tab >}}
@@ -139,11 +162,13 @@ MARKDOWN( html(true) )
 
 ## TQL as API
 
-Save this code as `hello.tql` (click save icon on the top right of the editor) and open it with web browser at [http://127.0.0.1:5654/db/tql/hello.tql](http://127.0.0.1:5654/db/tql/hello.tql), or use *curl* command on the terminal.
+Save this code as `hello.tql` by clicking the save icon at the top right corner of the editor.
+You can then access it through your web browser at [http://127.0.0.1:5654/db/tql/hello.tql](http://127.0.0.1:5654/db/tql/hello.tql),
+or use the *curl* command in the terminal to retrieve the data.
 
 | Icon      | Description |
 |-----------|:------------|
-| {{< figure src="/images/copy_addr_icon.jpg" width="24px" >}} | When tql script is saved, the editor shows the link icon on the top right corner, click it to copy the address of the script file. |
+| {{< figure src="/images/copy_addr_icon.jpg" width="24px" >}} | When a TQL script is saved, the editor displays a link icon at the top right corner. Click this icon to copy the address of the script file. |
 
 
 ```sh
@@ -197,7 +222,9 @@ $ curl -o - -v http://127.0.0.1:5654/db/tql/hello.tql
 
 ### JSON() with transpose()
 
-If you are developing a data visualization application, it shall be helpful to know that *tql* JSON output supports transpose the result in columns instead of rows. Apply `JSON( transpose(true) )` and invoke it again. The result JSON contains *cols* array.
+If you are developing a data visualization application,
+it is helpful to know that TQL's JSON output supports transposing the result into columns instead of rows.
+By applying `JSON( transpose(true) )` and invoking it again, the resulting JSON will contain a `cols` array.
 
 ```sh
 $ curl -o - -v http://127.0.0.1:5654/db/tql/hello.tql
@@ -221,7 +248,7 @@ $ curl -o - -v http://127.0.0.1:5654/db/tql/hello.tql
 }
 ```
 
-This feature is the simplest way for developers to create RESTful APIs providing other applications accessing data.
+This feature is the simplest way for developers to create RESTful APIs, allowing other applications to access data seamlessly.
 
 ### INSERT
 
