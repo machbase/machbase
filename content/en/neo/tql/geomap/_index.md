@@ -423,3 +423,70 @@ GEOMAP()
 ```
 
 {{< figure src="./img/trajectory-firenze.png" width="600" >}}
+
+### Distance and Speed
+
+Using the Haversine formula to calculate the distance moved in meters between two points,
+then computing the moving speed in kilometers per hour (Km/H) based on the time difference between these points.
+
+```js {{linenos=table,hl_lines=[5,19,42]}}
+// CSV Format: TIME("23-04-21 16:53:21:568000"), LAT, LON
+CSV(file("https://docs.machbase.com/assets/example/data-trajectory-firenze.csv"))
+DROP(1) // skip header
+SCRIPT("js", {
+    function parseTime(str) { // parse '23-04-21 16:53:21'
+        var y = str.substr(0,2)+2000;
+            m = str.substr(3,2) - 1,
+            d = str.substr(6,2);
+            hours = str.substr(9, 2);
+            mins = str.substr(12,2);
+            secs = str.substr(15, 2);
+        var D = new Date(y, m, d,hours, mins, secs);
+        return (D.getFullYear() == y && D.getMonth() == m && D.getDate() == d) ? D : 'invalid date';
+    }
+    function degreesToRadians(d) {
+        return d * Math.PI / 180;
+    }
+    var EarthRadius = 6378137.0; // meters
+    function distance(p1, p2) {  // haversine distance
+        var lat1 = degreesToRadians(p1[0]);
+        var lon1 = degreesToRadians(p1[1]);
+        var lat2 = degreesToRadians(p2[0]);
+        var lon2 = degreesToRadians(p2[1]);
+        var diffLat = lat2 - lat1;
+        var diffLon = lon2 - lon1;
+        var a = Math.pow(Math.sin(diffLat/2), 2) + Math.cos(lat1)*Math.cos(lat2)*Math.pow(Math.sin(diffLon/2), 2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return c * EarthRadius;
+    }
+    var prevLoc;
+    var dist;
+    var prevTs;
+},{
+    var ts = parseTime($.values[0]);
+    var coord = [
+        parseFloat($.values[1]), 
+        parseFloat($.values[2])
+    ];
+    if( prevLoc === undefined) dist = 0;
+    else dist = distance(prevLoc, coord);
+    if (prevTs === undefined) speed = 0;
+    else  speed = (dist / ((ts.getTime() - prevTs.getTime())/1000))*3.600;
+    prevLoc = coord;
+    prevTs = ts;
+    $.yield({
+        type:"circleMarker",
+        coordinates: coord,
+        properties: {
+            radius: 4,
+            tooltip: {
+                content: "speed: "+speed.toFixed(0)+" KM/H<br/>"+
+                         "dist: "+dist.toFixed(0)+" m",
+            }
+        }
+    });
+})
+GEOMAP()
+```
+
+{{< figure src="./img/trajectory-firenze-speed.png" width="600" >}}
