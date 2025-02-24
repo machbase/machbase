@@ -435,12 +435,12 @@ CSV(file("https://docs.machbase.com/assets/example/data-trajectory-firenze.csv")
 DROP(1) // skip header
 SCRIPT("js", {
     function parseTime(str) { // parse '23-04-21 16:53:21'
-        var y = str.substr(0,2)+2000;
-            m = str.substr(3,2) - 1,
-            d = str.substr(6,2);
-            hours = str.substr(9, 2);
-            mins = str.substr(12,2);
-            secs = str.substr(15, 2);
+        y = str.substr(0,2)+2000;
+        m = str.substr(3,2) - 1;
+        d = str.substr(6,2);
+        hours = str.substr(9, 2);
+        mins = str.substr(12,2);
+        secs = str.substr(15, 2);
         var D = new Date(y, m, d,hours, mins, secs);
         return (D.getFullYear() == y && D.getMonth() == m && D.getDate() == d) ? D : 'invalid date';
     }
@@ -449,14 +449,14 @@ SCRIPT("js", {
     }
     var EarthRadius = 6378137.0; // meters
     function distance(p1, p2) {  // haversine distance
-        var lat1 = degreesToRadians(p1[0]);
-        var lon1 = degreesToRadians(p1[1]);
-        var lat2 = degreesToRadians(p2[0]);
-        var lon2 = degreesToRadians(p2[1]);
-        var diffLat = lat2 - lat1;
-        var diffLon = lon2 - lon1;
-        var a = Math.pow(Math.sin(diffLat/2), 2) + Math.cos(lat1)*Math.cos(lat2)*Math.pow(Math.sin(diffLon/2), 2);
-        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        lat1 = degreesToRadians(p1[0]);
+        lon1 = degreesToRadians(p1[1]);
+        lat2 = degreesToRadians(p2[0]);
+        lon2 = degreesToRadians(p2[1]);
+        diffLat = lat2 - lat1;
+        diffLon = lon2 - lon1;
+        a = Math.pow(Math.sin(diffLat/2), 2) + Math.cos(lat1)*Math.cos(lat2)*Math.pow(Math.sin(diffLon/2), 2);
+        c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         return c * EarthRadius;
     }
     var prevLoc;
