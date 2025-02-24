@@ -390,3 +390,36 @@ GEOMAP()
 {{< figure src="../img/geomap-geojson-collection.png" width="500" >}}
 
 -->
+
+## Examples
+
+### Trajectory
+
+```js {{linenos=table,hl_lines=["8-11"]}}
+// CSV Format: TIME, LAT, LON
+CSV(file("https://docs.machbase.com/assets/example/data-trajectory-firenze.csv"))
+
+DROP(1) // skip header
+
+SCRIPT("js", {
+    var timestamp = $.values[0];
+    var coord = [
+        parseFloat($.values[1]), 
+        parseFloat($.values[2])
+    ];
+    $.yield({
+        type:"circle",
+        coordinates: coord,
+        properties: {
+            radius: 15,
+            tooltip: {
+                content: timestamp
+            }
+        }
+    });
+})
+
+GEOMAP()
+```
+
+{{< figure src="./img/trajectory-firenze.png" width="600" >}}
