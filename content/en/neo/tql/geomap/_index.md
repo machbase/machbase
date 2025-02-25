@@ -393,8 +393,76 @@ GEOMAP()
 
 ## Examples
 
+Load test data from a CSV file and insert it into the "TRIP" table.
+This TQL downloads the CSV file from the given URL, 
+converts the CSV strings into the appropriate data types,
+and inserts the records into the TRIP table.
+
+```js {{linenos=table,hl_lines=["6-12",30,35]}}
+// CSV Format: TIME, LAT, LON
+CSV(file("https://docs.machbase.com/assets/example/data-trajectory-firenze.csv"))
+DROP(1) // skip header
+SCRIPT("js", {
+    // create trip table, if not exists
+    $.db().exec("CREATE TAG TABLE IF NOT EXISTS TRIP ("+
+        "name varchar(100) primary key, "+
+        "time datetime basetime, "+
+        "value double summarized, "+
+        "lat double, "+
+        "lon double "+
+    ")")
+    // parse time form csv string '23-04-21 16:53:21:123000'
+    function parseTime(str) { 
+        y = "20"+str.substr(0,2);
+        m = str.substr(3,2) - 1;
+        d = str.substr(6,2);
+        hours = str.substr(9, 2);
+        mins = str.substr(12,2);
+        secs = str.substr(15, 2);
+        milli = str.substr(18, 3)
+        var D = new Date(y, m, d, hours, mins, secs, milli);
+        return (D.getFullYear() == y && D.getMonth() == m && D.getDate() == d) ? D : 'invalid date';
+    }
+}, {
+    var ts = parseTime($.values[0]).getTime(); // epoch mills
+    var lat = parseFloat($.values[1]);
+    var lon = parseFloat($.values[2]);
+    // yield name, time, value, lat, lon
+    $.yield("firenze", ts, 0, lat, lon)
+})
+// epoch from milli to nano
+MAPVALUE(1, time(value(1)*1000000))
+// insert into trip table
+INSERT("name", "time", "value", "lat", "lon", table("TRIP"))
+```
+
 ### Trajectory
 
+{{< tabs items="SQL,CSV">}}
+{{< tab >}}
+```js {{linenos=table,hl_lines=[5,7]}}
+SQL(`SELECT time, lat, lon FROM TRIP
+     WHERE name = 'firenze' ORDER BY time`)
+SCRIPT("js", {
+    // time to epoch nanos to Date (javascript)
+    var timestamp = new Date($.values[0].UnixNano()/1000000); 
+    // coordinate [lat, lon]
+    var coord = [$.values[1], $.values[2]]; 
+    $.yield({
+        type:"circle",
+        coordinates: coord,
+        properties: {
+            radius: 15,
+            tooltip: {
+                content: ""+timestamp
+            }
+        }
+    });
+})
+GEOMAP()
+```
+{{< /tab >}}
+{{< tab >}}
 ```js {{linenos=table,hl_lines=["8-11"]}}
 // CSV Format: TIME, LAT, LON
 CSV(file("https://docs.machbase.com/assets/example/data-trajectory-firenze.csv"))
@@ -421,6 +489,8 @@ SCRIPT("js", {
 
 GEOMAP()
 ```
+{{< /tab >}}
+{{< /tabs >}}
 
 {{< figure src="./img/trajectory-firenze.png" width="600" >}}
 
@@ -429,6 +499,50 @@ GEOMAP()
 Using the Haversine formula to calculate the distance moved in meters between two points,
 then computing the moving speed in kilometers per hour (Km/H) based on the time difference between these points.
 
+{{< tabs items="SQL,CSV">}}
+{{< tab >}}
+```js {{linenos=table,hl_lines=[7,"22-23",28]}}
+SQL(`SELECT time, lat, lon FROM TRIP
+     WHERE name = 'firenze' ORDER BY time`)
+// calculate the distance and speed
+SCRIPT("js", {
+    var EarthRadius = 6378137.0; // meters
+    function degreesToRadians(d) { return d * Math.PI / 180; }
+    function distance(p1, p2) {  // haversine distance
+        lat1 = degreesToRadians(p1[0]);
+        lon1 = degreesToRadians(p1[1]);
+        lat2 = degreesToRadians(p2[0]);
+        lon2 = degreesToRadians(p2[1]);
+        diffLat = lat2 - lat1;
+        diffLon = lon2 - lon1;
+        a = Math.pow(Math.sin(diffLat/2), 2) + Math.cos(lat1)*Math.cos(lat2)*Math.pow(Math.sin(diffLon/2), 2);
+        c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return c * EarthRadius;
+    }
+    var prevLoc, prevTs, dist;
+},{
+    var ts = $.values[0].Unix(); // unix epoch sec.
+    var coord = [$.values[1], $.values[2]];
+    dist = prevLoc === undefined ? 0 : distance(prevLoc, coord);
+    speed = prevTs === undefined ? 0 : dist*3.600 / (ts - prevTs);
+    prevLoc = coord;
+    prevTs = ts;
+    $.yield({
+        type:"circleMarker",
+        coordinates: coord,
+        properties: {
+            radius: 4,
+            tooltip: {
+                content: "speed: "+speed.toFixed(0)+" KM/H<br/>"+
+                         "dist: "+dist.toFixed(0)+" m",
+            }
+        }
+    });
+})
+GEOMAP()
+```
+{{< /tab >}}
+{{< tab >}}
 ```js {{linenos=table,hl_lines=["20-22",30,51,"45-46"]}}
 // CSV Format: TIME("23-04-21 16:53:21:568000"), LAT, LON
 CSV(file("https://docs.machbase.com/assets/example/data-trajectory-firenze.csv"))
@@ -492,5 +606,7 @@ SCRIPT("js", {
 })
 GEOMAP()
 ```
+{{< /tab >}}
+{{< /tabs >}}
 
 {{< figure src="./img/trajectory-firenze-speed.png" width="600" >}}
