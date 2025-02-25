@@ -429,10 +429,14 @@ GEOMAP()
 Using the Haversine formula to calculate the distance moved in meters between two points,
 then computing the moving speed in kilometers per hour (Km/H) based on the time difference between these points.
 
-```js {{linenos=table,hl_lines=[5,19,42]}}
+```js {{linenos=table,hl_lines=["20-22",30,51,"45-46"]}}
 // CSV Format: TIME("23-04-21 16:53:21:568000"), LAT, LON
 CSV(file("https://docs.machbase.com/assets/example/data-trajectory-firenze.csv"))
-DROP(1) // skip header
+
+// skip header, the first line
+DROP(1) 
+
+// parse time, and coordinates from strings
 SCRIPT("js", {
     function parseTime(str) { // parse '23-04-21 16:53:21'
         y = str.substr(0,2)+2000;
@@ -444,10 +448,17 @@ SCRIPT("js", {
         var D = new Date(y, m, d,hours, mins, secs);
         return (D.getFullYear() == y && D.getMonth() == m && D.getDate() == d) ? D : 'invalid date';
     }
-    function degreesToRadians(d) {
-        return d * Math.PI / 180;
-    }
+},{ 
+    var ts = parseTime($.values[0]).getTime()/1000; // epoch seconds
+    var lat = parseFloat($.values[1]);
+    var lon = parseFloat($.values[2]);
+    $.yield(ts, lat, lon);
+})
+
+// calculate the distance and speed
+SCRIPT("js", {
     var EarthRadius = 6378137.0; // meters
+    function degreesToRadians(d) { return d * Math.PI / 180; }
     function distance(p1, p2) {  // haversine distance
         lat1 = degreesToRadians(p1[0]);
         lon1 = degreesToRadians(p1[1]);
@@ -459,19 +470,12 @@ SCRIPT("js", {
         c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         return c * EarthRadius;
     }
-    var prevLoc;
-    var dist;
-    var prevTs;
+    var prevLoc, prevTs, dist;
 },{
-    var ts = parseTime($.values[0]);
-    var coord = [
-        parseFloat($.values[1]), 
-        parseFloat($.values[2])
-    ];
-    if( prevLoc === undefined) dist = 0;
-    else dist = distance(prevLoc, coord);
-    if (prevTs === undefined) speed = 0;
-    else  speed = (dist / ((ts.getTime() - prevTs.getTime())/1000))*3.600;
+    var ts = $.values[0];
+    var coord = [$.values[1], $.values[2]];
+    dist = prevLoc === undefined ? 0 : distance(prevLoc, coord);
+    speed = prevTs === undefined ? 0 : dist*3.600 / (ts - prevTs);
     prevLoc = coord;
     prevTs = ts;
     $.yield({
