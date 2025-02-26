@@ -430,7 +430,7 @@ SCRIPT("js", {
     // yield name, time, value, lat, lon
     $.yield("firenze", ts, 0, lat, lon)
 })
-// epoch from milli to nano
+// epoch from milli to nano and to datetime type
 MAPVALUE(1, time(value(1)*1000000))
 // insert into trip table
 INSERT("name", "time", "value", "lat", "lon", table("TRIP"))
