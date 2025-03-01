@@ -803,22 +803,6 @@ Beijing,2023/12/07,NOISE,60
 {{< /tab >}}
 {{< /tabs >}}
 
-## TIMEWINDOW()
-
-*Syntax*: `TIMEWINDOW( fromTime, untilTime, period [, nullValue], columns...)` {{< neo_since ver="8.0.5" />}}
-
-Aggregate raw values between fromTime and untilTime into a periodic duration and fill zero value if any value exists for the period.
-
-- `fromTime` *time* from (inclusive)
-- `untilTime` *time* until (exclusive)
-- `period` *duration* ex: `period('1s')`
-- `nullValue` if a certain period has no actual values it yields the given *alternativeValue*.(default is *NULL*) ex: `nullValue(alternativeValue)`
-- `columns` *string* specifies each field's aggregation function and indicates which column is the time. It should be one of pre-defines keywords. 
-
-> Since v8.0.13, `GROUP()` can have `by(..., timewindow())` option which is equivalent to `TIMEWINDOW()`. Use `GROUP()` instead of `TIMEWINDOW()` becuase `GROUP()` is more flexible and feature-rich.
-
-Please refer to the [TIMEWINDOW()](/neo/tql/timewindow/) section for the more information including interpolation methods.
-
 ## FFT()
 
 ![map_fft](../img/map_fft.jpg)
