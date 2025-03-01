@@ -183,7 +183,7 @@ Type 2, *Syntax*: `list(x [, option...])` {{< neo_since ver="8.0.15" />}}
 
 - `x` *float* value
 
-`list()` aggregates the all *x* values and produce a single list which contians the individual values.
+`list()` aggregates the all *x* values and produce a single list which contains the individual values.
 
 {{< tabs items="JSON,JSON(rowsArray), FLATTEN">}}
 {{< tab >}}
@@ -280,7 +280,7 @@ Type 2, *Syntax*: `lrs(x, y [, weight(w)] [, option...])` {{< neo_since ver="8.0
 - `y` *float* value
 - `weight(w)` if omitted then all of the weights are 1.
 
-Linear Regression Slope, assuming *x*-*y* is a point on a othogonal coordinate system. *x* can be number or time type.
+Linear Regression Slope, assuming *x*-*y* is a point on a orthogonal coordinate system. *x* can be number or time type.
 
 #### mean()
 

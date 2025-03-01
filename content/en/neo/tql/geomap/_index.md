@@ -9,7 +9,7 @@ weight: 51
 *Syntax*: `GEOMAP( [geomapID()] [, tileTemplate()] [, size()] )` 
 
 `GEOMAP` generates a map display and shows markers and geometric shapes based on provided coordinates.
-It functions similarly to `CHART`, but it uses coordinates instead of scalar values. The supproted coordinates system is [WGS84](https://en.wikipedia.org/wiki/World_Geodetic_System).
+It functions similarly to `CHART`, but it uses coordinates instead of scalar values. The supported coordinates system is [WGS84](https://en.wikipedia.org/wiki/World_Geodetic_System).
 
 The `GEOMAP()` function processes input data in JavaScript Object format.
 Each input object must include `type` and `coordinates` fields, with an optional `properties` field.
@@ -33,11 +33,18 @@ The default is `https://tile.openstreetmap.org/{z}/{x}/{y}.png`.
 > Please refer to the following for more information about the tile server:
 > https://wiki.openstreetmap.org/wiki/Tile_servers
 
+### tileGrayscale()
+
+*Syntax* `tileGrayscale(scale)`
+
+- `scale` *float* Set the gray scale of the tile image it should be 0 ≤ scale ≤ 1.0. (Default: `0`)
+
+
 ### geomapID()
 
 *Syntax*: `geomapID(id)`
 
-If you need to sepcify the map id (*string*) instead of auto-generated one.
+If you need to specify the map id (*string*) instead of auto-generated one.
 
 ### size()
 

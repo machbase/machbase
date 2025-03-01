@@ -48,7 +48,7 @@ to produce the result in JSON instead of full HTML document,
 so that caller can embed the chart into any place of the HTML DOM.
 The `X-Tql-Output: json` header is actually equivalent to the `GEOMAP()` SINK with `geoMapJson(true)` option like `GEOMAP( geoMapJson(true)))`.
 
-When the reponse of `/db/tql/basic_map.tql` is JSON, it contains required addresses of the result javascript.
+When the response of `/db/tql/basic_map.tql` is JSON, it contains required addresses of the result javascript.
 
 ```json
 {
@@ -72,7 +72,7 @@ When the reponse of `/db/tql/basic_map.tql` is JSON, it contains required addres
 - `cssAssets` contains css assets required by lefletjs.
 - `jsCodeAssets` machbase-neo generates the javascript to properly render the lefletjs with the result data.
 
-The HTML document below is an exmaple to utilize the JSON response above to render maps.
+The HTML document below is an example to utilize the JSON response above to render maps.
 
 ```html {linenos=table,hl_lines=[3,6,17,22,26],linenostart=1}
 <html>
@@ -112,14 +112,14 @@ The HTML document below is an exmaple to utilize the JSON response above to rend
 - Line 6, Pre-load lefletjs library which is included in `jsAssets` fields in above response example.
 - Line 17, The HTTP header `X-Tql-Output: json`.
 So that machbase-neo TQL engine generates a JSON containing meta information of map instead of full HTML document.
-Becuase when a client requests a `*.tql` file with `GET` method, machbase-neo generates HTML document by default.
+Because when a client requests a `*.tql` file with `GET` method, machbase-neo generates HTML document by default.
 - Line 26, Load js files into the HTML DOM tree that are generated and replied in `jsCodeAssets`.
 
 
 ## Dynamic TQL
 
 The api `/db/tql` can receive POSTed TQL script and produces the result in javascript.
-Caller side javascrpt can load the result javascript dynamically as the example below.
+Caller side javascript can load the result javascript dynamically as the example below.
 
 In this example, the `geomapID()` (line 20) is provided and the document has a `<div>` with the same `id`.
 
