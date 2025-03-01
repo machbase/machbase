@@ -66,6 +66,12 @@ Regardless of the existence of actual data, you can specify the desired time ran
 
 > See the [timewindow example](#timewindow-1)
 
+Analyzing and visualizing data stored in a database can be cumbersome, especially when there is no data in the desired time range or when there are multiple data points.
+
+For example, when displaying a time-value chart at fixed intervals, simply querying the data with a SELECT statement and inputting it into the chart library may result in time intervals between records that do not align with the chart's time axis. This misalignment can occur due to missing intermediate data or densely packed data within a time period, making it difficult to format the data as desired.
+
+Typically, application developers create an array of fixed time intervals and iteratively fill the elements (slots) of the array by traversing the query result records. When a slot already contains a value, it is maintained as a single value through a specific operation (e.g., min, max, first, last). At the end, slots without values are filled with arbitrary values (e.g., 0 or NULL).
+
 ### `aggregator`
 
 If no aggregator is specified `GROUP` make new array of the raw records for a each group by default.
