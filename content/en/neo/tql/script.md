@@ -20,7 +20,7 @@ enhancing their ability to create more dynamic and powerful scripts within TQL.
 
 Machbase-neo exposes the `$` variable as the context object. JavaScript can access and yield records and database through this context.
 
-- `$.payload` Input data of the request.
+- `$.payload` Input data of the request. Available only when `SCRIPT()` is used as an SRC node; otherwise, it is `undefined`.
 - `$.params` Input query parameters of the request.
 - `$.result` Specifies the names and types of the result columns yielded by the `SCRIPT()` function.
 - `$.key`, `$.values` Javascript access point to the key and values of the current record. It is only available if the `SCRIPT()` is a MAP function.
@@ -46,6 +46,7 @@ Machbase-neo exposes the `$` variable as the context object. JavaScript can acce
 ### `$.payload`
 
 JavaScript can access the input data of the request using `$.payload`. If there is no input data, `$.payload` will be `undefined`.
+`$.payload` is available only when `SCRIPT()` is used as an SRC node; otherwise, it is `undefined`.
 
 ```js {{linenos=table,hl_lines=[2]}}
 SCRIPT("js", {
