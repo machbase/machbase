@@ -405,3 +405,40 @@ TAG0,1628780400000000000,11
 ```
 
 {{% /steps %}}
+
+## Pragma
+
+The `//+ name=value` directive provides instructions on how Machbase Neo should execute the TQL script.
+
+### log-level
+
+{{< neo_since ver="8.0.47" />}}
+
+Set the log-level to one of `[TRACE | DEBUG | INFO | WARN | ERROR]`.
+The default is `ERROR`, which suppresses most log messages when called from HTTP and MQTT APIs.
+
+```js {linenos=table,hl_lines=["1"]}
+//+ log-level=TRACE
+SQL(`select * from my_table where name = ?`, param("name"))
+WHEN(true, doLog('hello world'))
+CSV()
+```
+
+### sql-thread-lock
+
+{{< neo_since ver="8.0.47" />}}
+
+This pragma ensures that the specified `SQL()` runs on a dedicated native thread,
+which is terminated once the TQL script completes.
+It works only with the SRC `SQL()`.
+
+According to the internal performance tests that runs a hundred HTTP clients simultaneously request to execute the TQL file,
+it increases response latency by 35% compared to running without this option,
+but it significantly reduces memory consumption.
+
+```js {linenos=table,hl_lines=["1"]}
+//+ sql-thread-lock
+SQL(`select * from my_table where name = ?`, param("name"))
+WHEN(true, doLog('hello world'))
+CSV()
+```
