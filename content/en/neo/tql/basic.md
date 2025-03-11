@@ -432,9 +432,8 @@ This pragma ensures that the specified `SQL()` runs on a dedicated native thread
 which is terminated once the TQL script completes.
 It works only with the SRC `SQL()`.
 
-According to the internal performance tests that runs a hundred HTTP clients simultaneously request to execute the TQL file,
-it increases response latency by 35% compared to running without this option,
-but it significantly reduces memory consumption.
+According to internal performance tests with a hundred simultaneous HTTP client requests to execute the TQL file,
+enabling this option increases response latency by 35% but significantly reduces memory release delay.
 
 ```js {linenos=table,hl_lines=["1"]}
 //+ sql-thread-lock
