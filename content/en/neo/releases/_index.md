@@ -23,11 +23,11 @@ Choose the latest version for your platform.
 
 {{< callout type="warning" >}}
 The pre-built Linux packages will be based on Ubuntu 22.04.
-Due to the deprecation of GitHub's action runner image on 2025-02-01,
-Machbase Neo pre-built packages will transition to Ubuntu 22.04 as per [the schedule](https://github.com/actions/runner-images/issues/11101).
+Due to the deprecation of GitHub's Ubuntu 20.04 action runner image on 2025-02-01,
+Machbase Neo pre-built packages will transition from Ubuntu 20.04 to 22.04 as per [the schedule](https://github.com/actions/runner-images/issues/11101).
 {{< /callout >}}
 
-The pre-build linux packages are built on ubuntu 20.04.
+The pre-built linux packages are built on ubuntu 20.04.
 If the pre-built packages are not compatible with your Linux distribution, you can still build from the source code on your system.
 
 0. Ensure you have Go 1.23 and gcc installed.
