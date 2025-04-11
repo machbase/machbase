@@ -4,8 +4,9 @@ type: docs
 weight: 65
 ---
 
-The Machbase SQL described in this chapter covers the core concepts for tag tables.
-For more detailed information, please refer to the DBMS References. [link](https://docs.machbase.com/dbms/)
+This chapter provides an overview of the core concepts and features of tag tables.
+For comprehensive details and other features,
+please visit the [DBMS References](https://docs.machbase.com/dbms/).
 
 ### In this chapter
 
