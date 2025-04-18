@@ -24,7 +24,6 @@ Choose the latest version for your platform.
 Release v8.0.51 was the final pre-built package based on Ubuntu 20.04. Starting from v8.0.52, pre-built packages are now based on Ubuntu 22.04.
 {{< /callout >}}
 
-The pre-built linux packages are built on ubuntu 20.04.
 If the pre-built packages are not compatible with your Linux distribution, you can still build from the source code on your system.
 
 1. Ensure you have Go 1.23 and gcc installed.
