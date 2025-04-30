@@ -23,7 +23,10 @@ p = require("@jsh/process");
 p.print("Hello", "World?", "\n")
 ```
 
-JSH can be accessed from the "New..." page.
+Select "JSH" from the "New..." page.
+
+{{< figure src="./img/fish.jpg" width="86">}}
+
 It serves as a straightforward command-line interpreter for executing `.js` files.
 
 To run the saved script, use the following command:
@@ -33,6 +36,9 @@ jsh / > ./hello.js
 Hello World? 
 ```
 
+{{< figure src="./img/fish-hello.jpg" width="486">}}
+
+
 ## Commands
 
 - `exit` ends the current JSH session.
@@ -40,6 +46,7 @@ Hello World?
 - `cd` change workding directory.
 - `ps` list all processes and its pid.
 - `kill <pid>` terminates the specified process.
+- `servicectl` service control, [see details](#service-control-commands)
 
 While its functionality is basic, it is sufficient for testing your scripts.
 
@@ -131,3 +138,5 @@ The exception is the `@jsh/process` module, which is only available in `*.js` ap
 Conversely, the TQL context object `$`, which provides useful methods such as `$.yield()`, is exclusive to TQL and is not accessible from `*.js` applications.
 
 For detailed information, refer to the documentation for each module.
+
+{{< children_toc />}}
