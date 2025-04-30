@@ -191,18 +191,20 @@ Imagine the zero-point calibration process for sensors. When we accumulate conse
 
 {{< /tab >}}
 {{< tab >}}
-```js {{linenos=table,hl_lines=[11,19]}}
+```js {{linenos=table,hl_lines=[2,11]}}
 SCRIPT("js", {
-    $.result = { columns: ["val", "sig"], types: ["double", "double"] }
-    for (i = 1.0; i <= 5.0; i+=0.03) {
-        val = Math.round(i*100)/100;
+    const filter = require("@jsh/filter")
+    const avg = new filter.Avg();
+    const { arrange } = require("@jsh/generator");
+}, {
+    for( val of arrange(1, 5, 0.03)) {
+        val = Math.round(val*100)/100;
         sig = Math.sin( 1.2*2*Math.PI*val );
         noise = 0.09 * Math.cos(9*2*Math.PI*val) + 
                 0.15 * Math.sin(12*2*Math.PI*val);
-        $.yield( val, sig + noise );
+        $.yield( val, sig + noise, avg.eval(sig+noise) );
     }
 })
-MAP_AVG(2, value(1))
 CHART(
     size("600px", "400px"),
     chartOption({
@@ -252,18 +254,21 @@ Instead of calculating the average for the entire accumulated sample, we use a f
 
 {{< /tab >}}
 {{< tab >}}
-```js {{linenos=table,hl_lines=[11,19]}}
+```js {{linenos=table,hl_lines=[2,11]}}
 SCRIPT("js", {
-    $.result = { columns: ["val", "sig"], types: ["double", "double"] }
-    for (i = 1.0; i <= 5.0; i+=0.03) {
-        val = Math.round(i*100)/100;
+    const filter = require("@jsh/filter")
+    const movavg = new filter.MovAvg(10);
+    const { arrange } = require("@jsh/generator");
+    $.result = { columns: ["val", "sig", "ma10"], types: ["double", "double", "double"] }
+}, {
+    for( val of arrange(1, 5, 0.03)) {
+        val = Math.round(val*100)/100;
         sig = Math.sin( 1.2*2*Math.PI*val );
         noise = 0.09 * Math.cos(9*2*Math.PI*val) + 
                 0.15 * Math.sin(12*2*Math.PI*val);
-        $.yield( val, sig + noise );
+        $.yield( val, sig + noise, movavg.eval(sig+noise) );
     }
 })
-MAP_MOVAVG(2, value(1), 10)
 CHART(
     size("600px", "400px"),
     chartOption({
@@ -317,18 +322,21 @@ To address this, a common practice is to apply different weights to the most rec
 
 {{< /tab >}}
 {{< tab >}}
-```js {{linenos=table,hl_lines=[11,19]}}
+```js {{linenos=table,hl_lines=[2,11]}}
 SCRIPT("js", {
-    $.result = { columns: ["val", "sig+noise"], types: ["double", "double"] }
-    for (i = 1.0; i <= 5.0; i+=0.03) {
-        val = Math.round(i*100)/100;
+    const filter = require("@jsh/filter")
+    const lowpass = new filter.Lowpass(0.40);
+    const { arrange } = require("@jsh/generator");
+    $.result = { columns: ["val", "sig", "lpf"], types: ["double", "double", "double"] }
+}, {
+    for( val of arrange(1, 5, 0.03)) {
+        val = Math.round(val*100)/100;
         sig = Math.sin( 1.2*2*Math.PI*val );
         noise = 0.09 * Math.cos(9*2*Math.PI*val) + 
                 0.15 * Math.sin(12*2*Math.PI*val);
-        $.yield( val, sig+noise );
+        $.yield( val, sig + noise, lowpass.eval(sig+noise) );
     }
 })
-MAP_LOWPASS(2, value(1), 0.40)
 CHART(
     size("600px", "400px"),
     chartOption({
@@ -338,7 +346,7 @@ CHART(
             { type: "line", data: column(1), name:"value+noise" },
             { type: "line", data: column(2), name:"lpf" },
         ],
-        legend: { bottom: 10 }
+        legend: { bottom: 10 },
     })
 )
 ```
@@ -382,18 +390,23 @@ Feel free to experiment with different model values and observe how the graph re
 
 {{< /tab >}}
 {{< tab >}}
-```js {{linenos=table,hl_lines=[11,19]}}
+```js {{linenos=table,hl_lines=[2,13]}}
 SCRIPT("js", {
-    $.result = { columns: ["val", "sig"], types: ["double", "double"] }
-    for (i = 1.0; i <= 5.0; i+=0.03) {
-        val = Math.round(i*100)/100;
+    const filter = require("@jsh/filter")
+    const kalman = new filter.Kalman(0.1, 0.5, 1.0);
+    const { arrange } = require("@jsh/generator");
+    var ts = require("@jsh/system").now();
+    $.result = { columns: ["val", "sig", "kalman"], types: ["double", "double", "double"] }
+}, {
+    for( val of arrange(1, 5, 0.03)) {
+        val = Math.round(val*100)/100;
         sig = Math.sin( 1.2*2*Math.PI*val );
         noise = 0.09 * Math.cos(9*2*Math.PI*val) + 
                 0.15 * Math.sin(12*2*Math.PI*val);
-        $.yield( val, sig + noise );
+        ts = ts.Add(1000000000)
+        $.yield( val, sig+noise, kalman.eval(ts, sig+noise) );
     }
 })
-MAP_KALMAN(2, value(1), model(0.1, 0.6, 1.0))
 CHART(
     size("600px", "400px"),
     chartOption({
