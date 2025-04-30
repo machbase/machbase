@@ -124,3 +124,10 @@ Each JSON file is treated as a service instruction to launch the specified appli
 **`servicectl reread`** Re-read the configurations from `/etc/services/*.json` and shows the changes.
 
 **`servicectl update`** Re-read configurations and apply the changes.
+
+## Modules
+JSH includes various JavaScript modules that can be used in `SCRIPT()` within TQL and in `*.js` applications.
+The exception is the `@jsh/process` module, which is only available in `*.js` applications and cannot be used in TQL.
+Conversely, the TQL context object `$`, which provides useful methods such as `$.yield()`, is exclusive to TQL and is not accessible from `*.js` applications.
+
+For detailed information, refer to the documentation for each module.
