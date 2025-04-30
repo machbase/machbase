@@ -43,7 +43,7 @@ try {
 |:------------------------|:----------------------------------------------|
 | new Client(*options*)     | Instantiates a database client object with an options |
 
-If `bridge` and `driver` are not sepcified, it create a client that connects to the internal machbase dbms.
+If neither `bridge` nor `driver` is specified, the client defaults to connecting to the internal Machbase DBMS.
 
 ### Options
 
@@ -51,17 +51,23 @@ If `bridge` and `driver` are not sepcified, it create a client that connects to 
 |:--------------------|:-------------|:---------------|:--------------------|
 | lowerCaseColumns    | Boolean      | `false`        | map the lower-cased column names to the result object |
 
-- Options for Bridge
-| Option              | Type         | Default        | Description         |
-|:--------------------|:-------------|:---------------|:--------------------|
-| bridge              | String       | `""`           | bridge name         |
+- Options for Drivers
 
-- Options for DataSource
+[Using Drivers](#using-drivers) shows the examples how to connect to the databases with driver and dataSource.
 
 | Option              | Type         | Default        | Description         |
 |:--------------------|:-------------|:---------------|:--------------------|
 | driver              | String       |                | driver name         |
 | dataSource          | String       |                | database connection string |
+
+- Options for Bridge
+
+It is also possible to create Client with predefined bridge.
+
+| Option              | Type         | Default        | Description         |
+|:--------------------|:-------------|:---------------|:--------------------|
+| bridge              | String       |                | bridge name         |
+
 
 ### Methods
 
@@ -82,6 +88,8 @@ If `bridge` and `driver` are not sepcified, it create a client that connects to 
 
 ## Rows
 
+Rows encapsulates the result set obtained from executing a query.
+
 ### Methods
 
 | Method                                 | Returns             | Description        |
@@ -92,7 +100,7 @@ If `bridge` and `driver` are not sepcified, it create a client that connects to 
 | columnNames()                          | String[]            | names of the result |
 | columnTypes()                          | String[]            | types of the result |
 
-It implements Symbol.iterable, so that it supports two patterns...:
+It implements `Symbol.iterable`, enabling support for both patterns:
 
 ```js
 for(rec := rows.next(); rec != null; rec = rows.next()) {
@@ -105,6 +113,8 @@ for (rec of rows) {
 ```
 
 ## Result
+
+Result represents the outcome of the `exec()` method, providing details about the execution.
 
 ### Properties
 
@@ -123,7 +133,7 @@ for (rec of rows) {
 | types              | []String   | types of the result |
 
 
-## External Database Drivers
+## Using Drivers
 
 `@jsh/db` module supports `sqlite`, `mysql`, `mssql`, `postgresql` and `machbase` without pre-defined bridge.
 
@@ -134,11 +144,15 @@ This example demonstrates how to connect to another Machbase instance via port 5
 
 Set `lowerCaseColumns: true` at line 5 to ensure that the query results use lower-cased property names in the record object, as demonstrated at line 17.
 
-```js {linenos=table,linenostart=1,hl_lines=[4]}
+```js {linenos=table,linenostart=1,hl_lines=[8]}
 db = require("@jsh/db");
+host = "192.168.0.207"
+port = 5656
+user = "sys"
+pass = "manager"
 client = db.Client({
     driver: "machbase",
-    dataSource: "host=192.168.0.207 port=5656 user=sys password=manager",
+    dataSource: `host=${host} port=${port} user=${user} password=${pass}`,
     lowerCaseColumns: true
 })
 
@@ -161,7 +175,7 @@ try {
 }
 ```
 
-### Sqlite
+### SQLite
 
 ```js {linenos=table,linenostart=1,hl_lines=[4]}
 const db = require("@jsh/db");

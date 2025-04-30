@@ -8,7 +8,25 @@ weight: 50
 
 ## arrange()
 
-**Usage example**
+Returns array of numbers.
+
+<h4>Syntax</h4>
+
+```js
+arrange(start, end, step)
+```
+
+<h6>Parameters</h6>
+
+- `start` `Number` start from
+- `end` `Number` end to
+- `step` `Number` increments
+
+<h6>Return value</h6>
+
+`Number[]` generated numbers in an array.
+
+<h4>Usage example</h4>
 
 ```js {linenos=table,linenostart=1}
 const { arrange } = require("@jsh/generator")
@@ -21,7 +39,26 @@ arrange(0, 6, 3).forEach((i) => console.log(i))
 
 ## linspace()
 
-**Usage example**
+Returns array of numbers.
+
+<h4>Syntax</h4>
+
+```js
+linspace(start, end, count)
+```
+
+<h6>Parameters</h6>
+
+- `start` `Number` start from
+- `end` `Number` end to
+- `count` `Number` total count of numbers to generate
+
+<h6>Return value</h6>
+
+`Number[]` generated numbers in an array.
+
+<h4>Usage example</h4>
+
 
 ```js {linenos=table,linenostart=1}
 const { linspace } = require("@jsh/generator")
@@ -34,7 +71,25 @@ linspace(0, 1, 3).forEach((i) => console.log(i))
 
 ## meshgrid()
 
-**Usage example**
+Returns array of numbers array.
+
+<h4>Syntax</h4>
+
+```js
+meshgrid(arr1, arr2)
+```
+
+<h6>Parameters</h6>
+
+- `arr1` `Number[]`
+- `arr2` `Number[]`
+
+<h6>Return value</h6>
+
+`Number[][]` generated numbers in an array of numbers.
+
+<h4>Usage example</h4>
+
 
 ```js {linenos=table,linenostart=1}
 const { meshgrid } = require("@jsh/generator")
@@ -54,7 +109,23 @@ for(i=0; i < gen.length; i++) {
 
 ## random()
 
-**Usage example**
+Returns a random number between [0.0, 1.0).
+
+<h4>Syntax</h4>
+
+```js
+random()
+```
+
+<h6>Parameters</h6>
+
+None.
+
+<h6>Return value</h6>
+
+`Number` random number between 0.0 and 1.0 : `[0.0, 1.0)`
+
+<h4>Usage example</h4>
 
 ```js {linenos=table,linenostart=1}
 const { random } = require("@jsh/generator")
@@ -69,25 +140,95 @@ for(i=0; i < 3; i++) {
 
 ## Simplex
 
-**Usage example**
+A noise generator based on the Simplex noise algorithm.
+
+<h4>Syntax</h4>
+
+```js
+new Simplex(seed)
+```
+
+<h6>Parameters</h6>
+
+`seed` seed number.
+
+<h6>Return value</h6>
+
+A new Simplex generator object.
+
+### Simplex.eval()
+
+Returns a random noise value. Repeated calls with the same args inputs will have the same output.
+
+<h4>Syntax</h4>
+
+```js
+eval(arg1)
+eval(arg1, arg2)
+eval(arg1, arg2, arg3)
+eval(arg1, arg2, arg3, arg4)
+```
+
+<h6>Parameters</h6>
+
+`args` `Number` A variable-length list of numbers, representing dimensions. The function accepts a minimum of one argument (1-dimensional) and a maximum of four arguments (4-dimensional).
+
+<h6>Return value</h6>
+
+`Number` random noise value
+
+<h4>Usage example</h4>
 
 ```js {linenos=table,linenostart=1}
-const {Simplex} = require("@jsh/generator")
-simplex = new Simplex(123);
+const g = require("@jsh/generator")
+simplex = new g.Simplex(123);
 for(i=0; i < 5; i++) {
-    console.log(i, simplex.eval(i, i * 0.6).toFixed(3));
+    noise = simplex.eval(i, i * 0.6).toFixed(3);
+    console.log(i, (i*0.6).toFixed(1), "=>", noise);
 }
 
-// 0 0.000
-// 1 0.349
-// 2 0.319
-// 3 0.038
-// 4 -0.364
+// 0 0.0 => 0.000
+// 1 0.6 => 0.349
+// 2 1.2 => 0.319
+// 3 1.8 => 0.038
+// 4 2.4 => -0.364
 ```
 
 ## UUID
 
-**Usage example**
+UUID generator
+
+<h4>Syntax</h4>
+
+```js
+new UUID(ver)
+```
+
+<h6>Parameters</h6>
+
+`ver` UUID version number. It should be one of 1, 4, 6, 7.
+
+<h6>Return value</h6>
+
+a new UUID generator object.
+
+### UUID.eval()
+
+<h4>Syntax</h4>
+
+```js
+eval()
+```
+
+<h6>Parameters</h6>
+
+None.
+
+<h6>Return value</h6>
+
+`String` a new UUID.
+
+<h4>Usage example</h4>
 
 ```js {linenos=table,linenostart=1}
 const {UUID} = require("@jsh/generator")
