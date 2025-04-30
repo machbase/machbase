@@ -284,12 +284,12 @@ This function is provided in the process module for convenience and has an equiv
 <h4>Syntax</h4>
 
 ```js
-sleep(sec)
+sleep(duration)
 ```
 
 <h6>Parameters</h6>
 
-`sec` `Number` sleep duration in seconds.
+`duration` `Number` sleep duration in milliseconds.
 
 <h6>Return value</h6>
 
@@ -299,7 +299,7 @@ None.
 
 ```js {linenos=table,linenostart=1}
 p = require("@jsh/process")
-p.sleep(10)
+p.sleep(1000) // 1 sec.
 ```
 
 ## kill()

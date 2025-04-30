@@ -33,17 +33,17 @@ console.log("now =", m.now())
 
 ## sleep()
 
-Get the process id of the current process.
+Pause the current control flow.
 
 <h4>Syntax</h4>
 
 ```js
-sleep(seconds)
+sleep(duration)
 ```
 
 <h6>Parameters</h6>
 
-`seconds` *Number* sleep time in seconds
+`duration` *Number* sleep time in milliseconds
 
 <h6>Return value</h6>
 
@@ -53,5 +53,5 @@ None.
 
 ```js {linenos=table,linenostart=1}
 const m = require("@jsh/system")
-m.sleep(10)
+m.sleep(1000) // 1 sec.
 ```
