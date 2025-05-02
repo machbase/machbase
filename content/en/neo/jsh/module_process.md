@@ -1,7 +1,7 @@
 ---
 title: "@jsh/process"
 type: docs
-weight: 1
+weight: 3
 ---
 
 {{< neo_since ver="8.0.52" />}}
