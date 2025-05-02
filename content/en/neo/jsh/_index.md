@@ -4,12 +4,13 @@ type: docs
 weight: 75
 ---
 
+{{< neo_since ver="8.0.52" />}}
+
 {{< callout type="warning" >}}
 **BETA Notice**<br/>
 JSH is currently in beta. Its API and commands are subject to change in future releases.
 {{< /callout >}}
 
-{{< neo_since ver="8.0.52" />}}
 
 JSH allows developers to create applications using JavaScript that execute directly within the machbase-neo process.
 Files with the `.js` extension are recognized by machbase-neo as executable scripts.

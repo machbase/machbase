@@ -4,6 +4,8 @@ type: docs
 weight: 70
 ---
 
+{{< neo_since ver="8.0.52" />}}
+
 ## sort()
 
 The `sort` function sorts the elements of an array in ascending order.

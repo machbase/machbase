@@ -84,6 +84,7 @@ It is also possible to create Client with predefined bridge.
 |:---------------------------------------|:------------------|:-------------------|
 | close()                                |                   | disconnect to the database and release |
 | query(String *sqlText*, any ...*args*) | [Rows](#rows)     |                    |
+| queryRow(String *sqlText*, any ...*args*) | [Row](#Row)    |                    |
 | exec(String *sqlText*, any ...*args*)  | [Result](#result) |                    |
 
 ## Rows
@@ -111,6 +112,18 @@ for (rec of rows) {
     console.log(...rec);
 }
 ```
+
+## Row
+Row encapsulates the result of queryRow which retrieve a single record.
+
+### Methods
+
+| Method              | Returns             | Description        |
+|:--------------------|:--------------------|:-------------------|
+| columns()           | [Columns](#columns) |                    |
+| columnNames()       | String[]            | names of the result |
+| columnTypes()       | String[]            | types of the result |
+| values              | Object              | result columns      |
 
 ## Result
 

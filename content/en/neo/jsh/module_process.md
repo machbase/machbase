@@ -220,6 +220,31 @@ p = require("@jsh/process")
 p.print("Hello", "World!", "\n")
 ```
 
+## println()
+
+Write arguments into the output, the default output is the log file or stdout if log filename is not set.
+
+<h4>Syntax</h4>
+
+```js
+print(...args)
+```
+
+<h6>Parameters</h6>
+
+`args` `...any` Variable length of argument to write.
+
+<h6>Return value</h6>
+
+None.
+
+<h4>Usage example</h4>
+
+```js {linenos=table,linenostart=1}
+p = require("@jsh/process")
+p.println("Hello", "World!")
+```
+
 ## exec()
 
 Run another JavaScript application.
@@ -363,8 +388,6 @@ for( const x of list ) {
 ## Process
 
 Process information that returned by `ps()`.
-
-### Properties
 
 | Property           | Type       | Description        |
 |:-------------------|:-----------|:-------------------|
