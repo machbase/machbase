@@ -301,6 +301,44 @@ if( p.ppid() == 1) {
 }
 ```
 
+## schedule()
+Run the callback function according to the specified schedule.
+The control flow remains blocked until the token's `stop()` method is invoked.
+
+<h4>Syntax</h4>
+
+```js
+schedule(spec, callback)
+```
+
+<h6>Parameters</h6>
+
+- `spec` `String` schedule spec. Refer to [Timer Schedule Spec.](/neo/timer/#timer-schedule-spec).
+- `callback` `(timestamp, token) => {}` A callback function where the second parameter, `token`, can be used to stop the schedule.
+
+<h6>Return value</h6>
+
+None.
+
+<h4>Usage example</h4>
+
+```js {linenos=table,linenostart=1}
+const {schedule} = require("@jsh/process");
+
+var count = 0;
+schedule("@every 2s", (ts, token)=>{
+    count++;
+    console.log(count, ts);
+    if(count >= 5) token.stop();
+})
+
+// 1 2025-05-02 16:45:48.00115
+// 2 2025-05-02 16:45:50.002231
+// 3 2025-05-02 16:45:52.002161
+// 4 2025-05-02 16:45:54.002173
+// 5 2025-05-02 16:45:56.002096
+```
+
 ## sleep()
 
 Pause the current control flow.

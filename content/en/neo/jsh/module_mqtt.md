@@ -20,10 +20,13 @@ const client = new mqtt.Client({
         serverUrls: ["tcp://127.0.0.1:1236"],
         keepAlive: 30,
         cleanStart: true,
-    }, (evt, msg) => {
-        console.log(evt, msg);
-    }
-);
+        onConnect: (ack) => {
+            println("connected.");
+        },
+        onConnectError: (err) => {
+            println("connect error", err);
+        },
+    });
 
 try {    
     client.connect();
