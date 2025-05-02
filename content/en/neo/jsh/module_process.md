@@ -342,7 +342,6 @@ schedule("@every 2s", (ts, token)=>{
 ## sleep()
 
 Pause the current control flow.
-This function is provided in the process module for convenience and has an equivalent in the `@jsh/system` module.
 
 <h4>Syntax</h4>
 

@@ -30,28 +30,3 @@ Current time in native object.
 const m = require("@jsh/system")
 console.log("now =", m.now())
 ```
-
-## sleep()
-
-Pause the current control flow.
-
-<h4>Syntax</h4>
-
-```js
-sleep(duration)
-```
-
-<h6>Parameters</h6>
-
-`duration` *Number* sleep time in milliseconds
-
-<h6>Return value</h6>
-
-None.
-
-<h4>Usage example</h4>
-
-```js {linenos=table,linenostart=1}
-const m = require("@jsh/system")
-m.sleep(1000) // 1 sec.
-```
