@@ -314,7 +314,9 @@ schedule(spec, callback)
 <h6>Parameters</h6>
 
 - `spec` `String` schedule spec. Refer to [Timer Schedule Spec.](/neo/timer/#timer-schedule-spec).
-- `callback` `(timestamp, token) => {}` A callback function where the second parameter, `token`, can be used to stop the schedule.
+- `callback` `(time_epoch, token) => {}` The first parameter, `time_epoch`, is UNIX epoch timestamp in milliseconds unit.
+    A callback function where the second parameter, `token`, can be used to stop the schedule.
+    
 
 <h6>Return value</h6>
 
@@ -328,15 +330,15 @@ const {schedule} = require("@jsh/process");
 var count = 0;
 schedule("@every 2s", (ts, token)=>{
     count++;
-    console.log(count, ts);
+    console.log(count, new Date(ts));
     if(count >= 5) token.stop();
 })
 
-// 1 2025-05-02 16:45:48.00115
-// 2 2025-05-02 16:45:50.002231
-// 3 2025-05-02 16:45:52.002161
-// 4 2025-05-02 16:45:54.002173
-// 5 2025-05-02 16:45:56.002096
+// 1 2025-05-02 16:45:48
+// 2 2025-05-02 16:45:50
+// 3 2025-05-02 16:45:52
+// 4 2025-05-02 16:45:54
+// 5 2025-05-02 16:45:56
 ```
 
 ## sleep()

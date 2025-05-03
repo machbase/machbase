@@ -163,7 +163,8 @@ if( process.ppid() == 1 ) {
 function runSysmon() {
     // Schedules a task to run at specific intervals.
     // Here, it runs every 15 seconds (0,15,30,45 in the cron-like syntax).
-    // The callback function receives a timestamp (ts) for when the task is executed
+    // The callback function receives a UNIX epoch timestamp (ts) in milliseconds
+    // for when the task is executed
     process.schedule("0,15,30,45 * * * * *", (ts) => {
         // Retrieves the system's load averages for the past 1, 5, and 15 minutes.
         // The values are destructured into load1, load5, and load15.
@@ -177,7 +178,7 @@ function runSysmon() {
         let cpu = psutil.cpuPercent(0, false);
 
         process.println(
-            new Date(ts.Unix()*1000).toLocaleString("en-US"),
+            new Date(ts).toLocaleString("en-US"),
             "Load1: "+load1.toFixed(2),
             "Load5: "+load5.toFixed(2),
             "Load15: "+load15.toFixed(2),
