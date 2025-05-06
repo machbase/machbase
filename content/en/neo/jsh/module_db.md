@@ -11,7 +11,7 @@ weight: 10
 
 The database client.
 
-**Usage example**
+<h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1}
 const db = require("@jsh/db");
@@ -45,7 +45,7 @@ try {
 
 If neither `bridge` nor `driver` is specified, the client defaults to connecting to the internal Machbase DBMS.
 
-### Options
+<h6>Options</h6>
 
 | Option              | Type         | Default        | Description         |
 |:--------------------|:-------------|:---------------|:--------------------|
@@ -53,7 +53,7 @@ If neither `bridge` nor `driver` is specified, the client defaults to connecting
 
 - Options for Drivers
 
-[Using Drivers](#using-drivers) shows the examples how to connect to the databases with driver and dataSource.
+`driver` and `dataSource` options support `sqlite`, `mysql`, `mssql`, `postgresql` and `machbase` without pre-defined bridge.
 
 | Option              | Type         | Default        | Description         |
 |:--------------------|:-------------|:---------------|:--------------------|
@@ -71,35 +71,69 @@ It is also possible to create Client with predefined bridge.
 
 ### Methods
 
-| Method                                 | Returns           | Description        |
-|:---------------------------------------|:------------------|:-------------------|
-| connect()                              | [Conn](#Conn)     | connect to the database |
+#### connect()
+
+connect to the database.
+
+<h6>Return value</h6>
+
+[Conn](#Conn)
 
 
 ## Conn
 
 ### Methods
 
-| Method                                 | Returns           | Description        |
-|:---------------------------------------|:------------------|:-------------------|
-| close()                                |                   | disconnect to the database and release |
-| query(String *sqlText*, any ...*args*) | [Rows](#rows)     |                    |
-| queryRow(String *sqlText*, any ...*args*) | [Row](#Row)    |                    |
-| exec(String *sqlText*, any ...*args*)  | [Result](#result) |                    |
+#### close()
+
+disconnect to the database and release
+
+<h6>Syntax</h6>
+
+```js
+close()
+```
+
+#### query()
+
+<h6>Syntax</h6>
+
+```js
+query(String *sqlText*, any ...*args*)
+```
+
+<h6>Return value</h6>
+
+[Rows](#rows)
+
+#### queryRow()
+
+<h6>Syntax</h6>
+
+```js
+queryRow(String *sqlText*, any ...*args*)
+```
+
+<h6>Return value</h6>
+
+[Row](#Row)
+
+
+#### exec()
+
+<h6>Syntax</h6>
+
+```js
+exec(String *sqlText*, any ...*args*)
+```
+
+<h6>Return value</h6>
+
+[Result](#result)
 
 ## Rows
 
 Rows encapsulates the result set obtained from executing a query.
-
-### Methods
-
-| Method                                 | Returns             | Description        |
-|:---------------------------------------|:--------------------|:-------------------|
-| close()                                |                     | release database statement |
-| next()                                 | any[]               | fetch a record, returns null if no more records |
-| columns()                              | [Columns](#columns) |                    |
-| columnNames()                          | String[]            | names of the result |
-| columnTypes()                          | String[]            | types of the result |
 
 It implements `Symbol.iterable`, enabling support for both patterns:
 
@@ -113,23 +147,175 @@ for (rec of rows) {
 }
 ```
 
+### Methods
+
+#### close()
+
+Release database statement
+
+<h6>Syntax</h6>
+
+```js
+close()
+```
+
+<h6>Parameters</h6>
+
+None.
+
+<h6>Return value</h6>
+
+None.
+
+#### next()
+
+fetch a record, returns null if no more records
+
+<h6>Syntax</h6>
+
+```js
+next()
+```
+
+<h6>Parameters</h6>
+
+None.
+
+<h6>Return value</h6>
+
+any[]
+
+#### columns()
+
+<h6>Syntax</h6>
+
+```js
+columns()
+```
+
+<h6>Parameters</h6>
+
+None.
+
+<h6>Return value</h6>
+
+[Columns](#columns)
+
+#### columnNames()
+
+<h6>Syntax</h6>
+
+```js
+columnNames()
+```
+
+<h6>Parameters</h6>
+
+None.
+
+<h6>Return value</h6>
+
+String[]
+
+#### columnTypes()
+
+<h6>Syntax</h6>
+
+```js
+columnTypes()
+```
+
+<h6>Parameters</h6>
+
+None.
+
+<h6>Return value</h6>
+
+String[]
+
+
 ## Row
 Row encapsulates the result of queryRow which retrieve a single record.
 
 ### Methods
 
-| Method              | Returns             | Description        |
-|:--------------------|:--------------------|:-------------------|
-| columns()           | [Columns](#columns) |                    |
-| columnNames()       | String[]            | names of the result |
-| columnTypes()       | String[]            | types of the result |
-| values              | Object              | result columns      |
+#### columns()
+
+<h6>Syntax</h6>
+
+```js
+columns()
+```
+
+<h6>Parameters</h6>
+
+None.
+
+<h6>Return value</h6>
+
+[Columns](#columns)
+
+
+#### columnNames()
+
+names of the result
+
+<h6>Syntax</h6>
+
+```js
+columnNames()
+```
+
+<h6>Parameters</h6>
+
+None.
+
+<h6>Return value</h6>
+
+String[]
+
+#### columnTypes()
+
+types of the result
+
+<h6>Syntax</h6>
+
+```js
+columnTypes()
+```
+
+<h6>Parameters</h6>
+
+None.
+
+<h6>Return value</h6>
+
+String[]
+
+
+#### values()
+
+result columns
+
+<h6>Syntax</h6>
+
+```js
+values()
+```
+
+<h6>Parameters</h6>
+
+None.
+
+<h6>Return value</h6>
+
+Object
 
 ## Result
 
 Result represents the outcome of the `exec()` method, providing details about the execution.
 
-### Properties
+<h6>Properties</h6>
 
 | Property           | Type       | Description        |
 |:-------------------|:-----------|:-------------------|
@@ -138,88 +324,11 @@ Result represents the outcome of the `exec()` method, providing details about th
 
 ## Columns
 
-### Properties
+<h6>Properties</h6>
 
 | Property           | Type       | Description        |
 |:-------------------|:-----------|:-------------------|
 | columns            | []String   | names of the result |
 | types              | []String   | types of the result |
 
-
-## Using Drivers
-
-`@jsh/db` module supports `sqlite`, `mysql`, `mssql`, `postgresql` and `machbase` without pre-defined bridge.
-
-
-### Machbase
-
-This example demonstrates how to connect to another Machbase instance via port 5656 and execute a query.
-
-Set `lowerCaseColumns: true` at line 5 to ensure that the query results use lower-cased property names in the record object, as demonstrated at line 17.
-
-```js {linenos=table,linenostart=1,hl_lines=[8]}
-db = require("@jsh/db");
-host = "192.168.0.207"
-port = 5656
-user = "sys"
-pass = "manager"
-client = db.Client({
-    driver: "machbase",
-    dataSource: `host=${host} port=${port} user=${user} password=${pass}`,
-    lowerCaseColumns: true
-})
-
-try {
-    sqlText = "select * from example where name = ? limit ?,?";
-    tag = "my-car";
-    off = 10;
-    limit = 5;
-
-    conn = client.connect()
-    rows = conn.query(sqlText, tag, off, limit)
-    for( rec of rows) {
-        console.log(rec.name, rec.time, rec.value)
-    }
-} catch(e) {
-    console.error(e.message)
-} finally {
-    rows.close()
-    conn.close()
-}
-```
-
-### SQLite
-
-```js {linenos=table,linenostart=1,hl_lines=[4]}
-const db = require("@jsh/db");
-client = new db.Client({
-    driver:"sqlite",
-    dataSource:"file::memory:?cache=shared"
-});
-
-try{
-    conn = client.connect()
-    conn.exec(`
-        CREATE TABLE IF NOT EXISTS mem_example(
-            id         INTEGER NOT NULL PRIMARY KEY,
-            company    TEXT,
-            employee   INTEGER
-        )
-    `);
-
-    conn.exec(`INSERT INTO mem_example(company, employee) values(?, ?);`, 
-        'Fedel-Gaylord', 12);
-
-    rows = conn.query(`select * from mem_example`);
-    for( rec of rows ) {
-        console.log(...rec)
-    }
-}catch(e){
-    console.error(e.message);
-}finally{
-    rows.close();
-    conn.close();
-}
-
-```
 

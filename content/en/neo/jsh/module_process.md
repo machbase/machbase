@@ -13,7 +13,7 @@ and is not available in the `SCRIPT()` function within TQL, unlike other JSH mod
 
 Get the process id of the current process.
 
-<h4>Syntax</h4>
+<h6>Syntax</h6>
 
 ```js
 pid()
@@ -27,7 +27,7 @@ None.
 
 A number value that represents the process ID.
 
-<h4>Usage example</h4>
+<h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1}
 const m = require("@jsh/process")
@@ -38,7 +38,7 @@ console.log("my pid =", m.pid())
 
 Get the process id of the parent process.
 
-<h4>Syntax</h4>
+<h6>Syntax</h6>
 
 ```js
 ppid()
@@ -52,7 +52,7 @@ None.
 
 A number value that represents the parent process ID.
 
-<h4>Usage example</h4>
+<h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1}
 const m = require("@jsh/process")
@@ -63,7 +63,7 @@ console.log("parent pid =", m.ppid())
 
 Get command line arguments
 
-<h4>Syntax</h4>
+<h6>Syntax</h6>
 
 ```js
 args()
@@ -77,7 +77,7 @@ None.
 
 `String[]`
 
-<h4>Usage example</h4>
+<h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1}
 p = require("@jsh/process");
@@ -90,7 +90,7 @@ console.log("x =", x);
 
 Get the current working directory
 
-<h4>Syntax</h4>
+<h6>Syntax</h6>
 
 ```js
 cwd()
@@ -104,7 +104,7 @@ None.
 
 String
 
-<h4>Usage example</h4>
+<h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1}
 p = require("@jsh/process");
@@ -115,7 +115,7 @@ console.log("cwd :", p.cwd());
 
 Change the current working directory.
 
-<h4>Syntax</h4>
+<h6>Syntax</h6>
 
 ```js
 cd(path)
@@ -129,7 +129,7 @@ cd(path)
 
 None.
 
-<h4>Usage example</h4>
+<h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1}
 p = require("@jsh/process");
@@ -141,7 +141,7 @@ console.log("cwd :", p.cwd());
 
 Read files and sub-directories of the given directory.
 
-<h4>Syntax</h4>
+<h6>Syntax</h6>
 
 ```js
 readDir(path, callback)
@@ -156,7 +156,7 @@ readDir(path, callback)
 
 None.
 
-<h4>Usage example</h4>
+<h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1}
 
@@ -177,7 +177,7 @@ None.
 
 ...
 
-<h4>Syntax</h4>
+<h6>Syntax</h6>
 
 ```js
 ```
@@ -190,7 +190,7 @@ None.
 
 None.
 
-<h4>Usage example</h4>
+<h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1}
 ``` -->
@@ -199,7 +199,7 @@ None.
 
 Write arguments into the output, the default output is the log file or stdout if log filename is not set.
 
-<h4>Syntax</h4>
+<h6>Syntax</h6>
 
 ```js
 print(...args)
@@ -213,7 +213,7 @@ print(...args)
 
 None.
 
-<h4>Usage example</h4>
+<h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1}
 p = require("@jsh/process")
@@ -224,7 +224,7 @@ p.print("Hello", "World!", "\n")
 
 Write arguments into the output, the default output is the log file or stdout if log filename is not set.
 
-<h4>Syntax</h4>
+<h6>Syntax</h6>
 
 ```js
 print(...args)
@@ -238,7 +238,7 @@ print(...args)
 
 None.
 
-<h4>Usage example</h4>
+<h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1}
 p = require("@jsh/process")
@@ -249,7 +249,7 @@ p.println("Hello", "World!")
 
 Run another JavaScript application.
 
-<h4>Syntax</h4>
+<h6>Syntax</h6>
 
 ```js
 exec(cmd, ...args)
@@ -264,7 +264,7 @@ exec(cmd, ...args)
 
 None.
 
-<h4>Usage example</h4>
+<h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1}
 p = require("@jsh/process")
@@ -275,7 +275,7 @@ p.exec("/sbin/hello.js")
 
 Run the current script file as a daemon process with its parent process ID set to `1`.
 
-<h4>Syntax</h4>
+<h6>Syntax</h6>
 
 ```js
 daemonize()
@@ -289,7 +289,7 @@ None.
 
 None.
 
-<h4>Usage example</h4>
+<h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1}
 p = require("@jsh/process")
@@ -305,7 +305,7 @@ if( p.ppid() == 1) {
 Run the callback function according to the specified schedule.
 The control flow remains blocked until the token's `stop()` method is invoked.
 
-<h4>Syntax</h4>
+<h6>Syntax</h6>
 
 ```js
 schedule(spec, callback)
@@ -322,7 +322,7 @@ schedule(spec, callback)
 
 None.
 
-<h4>Usage example</h4>
+<h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1}
 const {schedule} = require("@jsh/process");
@@ -345,7 +345,7 @@ schedule("@every 2s", (ts, token)=>{
 
 Pause the current control flow.
 
-<h4>Syntax</h4>
+<h6>Syntax</h6>
 
 ```js
 sleep(duration)
@@ -359,7 +359,7 @@ sleep(duration)
 
 None.
 
-<h4>Usage example</h4>
+<h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1}
 p = require("@jsh/process")
@@ -370,7 +370,7 @@ p.sleep(1000) // 1 sec.
 
 Terminate a process using the specified process ID (pid).
 
-<h4>Syntax</h4>
+<h6>Syntax</h6>
 
 ```js
 kill(pid)
@@ -384,7 +384,7 @@ kill(pid)
 
 None.
 
-<h4>Usage example</h4>
+<h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1}
 p = require("@jsh/process")
@@ -395,7 +395,7 @@ p.kill(123)
 
 List all currently running processes.
 
-<h4>Syntax</h4>
+<h6>Syntax</h6>
 
 ```js
 ps()
@@ -409,7 +409,7 @@ None.
 
 [`Process[]`](#Process): Array of Process objects.
 
-<h4>Usage example</h4>
+<h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1}
 p = require("@jsh/process")
@@ -440,7 +440,7 @@ Process information that returned by `ps()`.
 ## addCleanup()
 Add a function to execute when the current JavaScript VM terminates.
 
-<h4>Syntax</h4>
+<h6>Syntax</h6>
 
 ```js
 addCleanup(fn)
@@ -454,7 +454,7 @@ addCleanup(fn)
 
 `Number` A token for remove the cleanup callback.
 
-<h4>Usage example</h4>
+<h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1,hl_lines=[2]}
 p = require("@jsh/process")
@@ -473,7 +473,7 @@ for(i = 0; i < 3; i++) {
 
 Remove a previously registered cleanup callback using the provided token.
 
-<h4>Syntax</h4>
+<h6>Syntax</h6>
 
 ```js
 removeCleanup(token)
@@ -487,7 +487,7 @@ removeCleanup(token)
 
 None.
 
-<h4>Usage example</h4>
+<h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1,hl_lines=[2,6]}
 p = require("@jsh/process")

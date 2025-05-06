@@ -198,3 +198,76 @@ function runSysmon() {
 // 05/03/2025, 10:23:00 Load1: 1.81 Load5: 2.42 Load15: 2.71 CPU: 5.32% MEM: 62.41%
 
 ```
+
+## Machbase Client
+
+This example demonstrates how to connect to another Machbase instance via port 5656 and execute a query.
+
+Set `lowerCaseColumns: true` at line 8 to ensure that the query results use lower-cased property names in the record object, as demonstrated at line 21.
+
+```js {linenos=table,linenostart=1,hl_lines=[8,21]}
+db = require("@jsh/db");
+host = "192.168.0.207"
+port = 5656
+user = "sys"
+pass = "manager"
+client = db.Client({
+    driver: "machbase",
+    dataSource: `host=${host} port=${port} user=${user} password=${pass}`,
+    lowerCaseColumns: true
+})
+
+try {
+    sqlText = "select * from example where name = ? limit ?,?";
+    tag = "my-car";
+    off = 10;
+    limit = 5;
+
+    conn = client.connect()
+    rows = conn.query(sqlText, tag, off, limit)
+    for( rec of rows) {
+        console.log(rec.name, rec.time, rec.value)
+    }
+} catch(e) {
+    console.error(e.message)
+} finally {
+    rows.close()
+    conn.close()
+}
+```
+
+## SQLite
+
+```js {linenos=table,linenostart=1,hl_lines=[4]}
+const db = require("@jsh/db");
+client = new db.Client({
+    driver:"sqlite",
+    dataSource:"file::memory:?cache=shared"
+});
+
+try{
+    conn = client.connect()
+    conn.exec(`
+        CREATE TABLE IF NOT EXISTS mem_example(
+            id         INTEGER NOT NULL PRIMARY KEY,
+            company    TEXT,
+            employee   INTEGER
+        )
+    `);
+
+    conn.exec(`INSERT INTO mem_example(company, employee) values(?, ?);`, 
+        'Fedel-Gaylord', 12);
+
+    rows = conn.query(`select * from mem_example`);
+    for( rec of rows ) {
+        console.log(...rec)
+    }
+}catch(e){
+    console.error(e.message);
+}finally{
+    rows.close();
+    conn.close();
+}
+
+```
+

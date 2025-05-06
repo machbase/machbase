@@ -10,7 +10,7 @@ weight: 50
 
 Returns array of numbers.
 
-<h4>Syntax</h4>
+<h6>Syntax</h6>
 
 ```js
 arrange(start, end, step)
@@ -26,7 +26,7 @@ arrange(start, end, step)
 
 `Number[]` generated numbers in an array.
 
-<h4>Usage example</h4>
+<h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1}
 const { arrange } = require("@jsh/generator")
@@ -41,7 +41,7 @@ arrange(0, 6, 3).forEach((i) => console.log(i))
 
 Returns array of numbers.
 
-<h4>Syntax</h4>
+<h6>Syntax</h6>
 
 ```js
 linspace(start, end, count)
@@ -57,7 +57,7 @@ linspace(start, end, count)
 
 `Number[]` generated numbers in an array.
 
-<h4>Usage example</h4>
+<h6>Usage example</h6>
 
 
 ```js {linenos=table,linenostart=1}
@@ -73,7 +73,7 @@ linspace(0, 1, 3).forEach((i) => console.log(i))
 
 Returns array of numbers array.
 
-<h4>Syntax</h4>
+<h6>Syntax</h6>
 
 ```js
 meshgrid(arr1, arr2)
@@ -88,7 +88,7 @@ meshgrid(arr1, arr2)
 
 `Number[][]` generated numbers in an array of numbers.
 
-<h4>Usage example</h4>
+<h6>Usage example</h6>
 
 
 ```js {linenos=table,linenostart=1}
@@ -111,7 +111,7 @@ for(i=0; i < gen.length; i++) {
 
 Returns a random number between [0.0, 1.0).
 
-<h4>Syntax</h4>
+<h6>Syntax</h6>
 
 ```js
 random()
@@ -125,7 +125,7 @@ None.
 
 `Number` random number between 0.0 and 1.0 : `[0.0, 1.0)`
 
-<h4>Usage example</h4>
+<h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1}
 const { random } = require("@jsh/generator")
@@ -142,7 +142,7 @@ for(i=0; i < 3; i++) {
 
 A noise generator based on the Simplex noise algorithm.
 
-<h4>Syntax</h4>
+<h6>Syntax</h6>
 
 ```js
 new Simplex(seed)
@@ -160,7 +160,7 @@ A new Simplex generator object.
 
 Returns a random noise value. Repeated calls with the same args inputs will have the same output.
 
-<h4>Syntax</h4>
+<h6>Syntax</h6>
 
 ```js
 eval(arg1)
@@ -177,7 +177,7 @@ eval(arg1, arg2, arg3, arg4)
 
 `Number` random noise value
 
-<h4>Usage example</h4>
+<h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1}
 const g = require("@jsh/generator")
@@ -198,7 +198,7 @@ for(i=0; i < 5; i++) {
 
 UUID generator
 
-<h4>Syntax</h4>
+<h6>Syntax</h6>
 
 ```js
 new UUID(ver)
@@ -214,7 +214,7 @@ a new UUID generator object.
 
 ### UUID.eval()
 
-<h4>Syntax</h4>
+<h6>Syntax</h6>
 
 ```js
 eval()
@@ -228,7 +228,7 @@ None.
 
 `String` a new UUID.
 
-<h4>Usage example</h4>
+<h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1}
 const {UUID} = require("@jsh/generator")

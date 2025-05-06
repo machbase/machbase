@@ -11,7 +11,7 @@ weight: 11
 
 The MQTT client.
 
-**Usage example**
+<h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1}
 const mqtt = require("@jsh/mqtt");
@@ -45,7 +45,7 @@ try {
 |:------------------------|:----------------------------------------------|
 | new Client(*options*)   | Instantiates a MQTT client object with an options |
 
-### Options
+<h6>Options</h6>
 
 | Option              | Type         | Default        | Description         |
 |:--------------------|:-------------|:---------------|:--------------------|
@@ -63,12 +63,12 @@ try {
 
 ### Methods
 
-### connect()
+#### connect()
 
-### disconnect()
+#### disconnect()
 
-### awaitConnection()
+#### awaitConnection()
 
-### subscribe()
+#### subscribe()
 
-### publish()
+#### publish()
