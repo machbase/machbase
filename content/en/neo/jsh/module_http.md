@@ -33,7 +33,7 @@ client.do(url, option, callback)
 
 - `url` `String`
 - `option` `Object` [RequestOption](#requestoption)
-- `callback` `(response) => {}` callback function.
+- `callback` `(response) => {}` callback function with [ClientResponse](#ClientResponse).
 
 <h6>Return value</h6>
 
@@ -78,7 +78,7 @@ request(url, option)
 
 <h6>Return value</h6>
 
-`Request` [Request](#Request) Object
+`ClientRequest` [ClientRequest](#ClientRequest) Object
 
 <h6>Usage example</h6>
 
@@ -99,7 +99,7 @@ try {
 }
 ```
 
-## RequestOption
+## ClientRequestOption
 
 | Option              | Type         | Default        | Description         |
 |:--------------------|:-------------|:---------------|:--------------------|
@@ -108,7 +108,7 @@ try {
 | body                | String       |                | Content to send     |
 
 
-## Request
+## ClientRequest
 
 ### Methods
 
@@ -129,7 +129,7 @@ do(callback)
 
 None.
 
-## Response
+## ClientResponse
 
 <h4>Properties</h4>
 
@@ -143,7 +143,7 @@ None.
 | error              | String     | error message      |
 
 
-## Listener
+## Server
 
 The HTTP server listener.
 
@@ -196,7 +196,7 @@ all(request_path, handler)
 <h6>Parameters</h6>
 
 - `request_path` `String`
-- `handler` `(context) => {}` A callback function that processes incoming requests, with the [context](#HttpContext) parameter providing request-specific details.
+- `handler` `(context) => {}` A callback function that processes incoming requests, with the [context](#ServerContext) parameter providing request-specific details.
 
 <h6>Return value</h6>
 
@@ -215,7 +215,7 @@ get(request_path, handler)
 <h6>Parameters</h6>
 
 - `request_path` `String`
-- `handler` `(context) => {}` A callback function that processes incoming requests, with the [context](#HttpContext) parameter providing request-specific details.
+- `handler` `(context) => {}` A callback function that processes incoming requests, with the [context](#ServerContext) parameter providing request-specific details.
 
 <h6>Return value</h6>
 
@@ -234,7 +234,7 @@ put(request_path, handler)
 <h6>Parameters</h6>
 
 - `request_path` `String`
-- `handler` `(context) => {}` A callback function that processes incoming requests, with the [context](#HttpContext) parameter providing request-specific details.
+- `handler` `(context) => {}` A callback function that processes incoming requests, with the [context](#ServerContext) parameter providing request-specific details.
 
 <h6>Return value</h6>
 
@@ -253,7 +253,7 @@ put(request_path, handler)
 <h6>Parameters</h6>
 
 - `request_path` `String`
-- `handler` `(context) => {}` A callback function that processes incoming requests, with the [context](#HttpContext) parameter providing request-specific details.
+- `handler` `(context) => {}` A callback function that processes incoming requests, with the [context](#ServerContext) parameter providing request-specific details.
 
 <h6>Return value</h6>
 
@@ -272,7 +272,7 @@ delete(request_path, handler)
 <h6>Parameters</h6>
 
 - `request_path` `String`
-- `handler` `(context) => {}` A callback function that processes incoming requests, with the [context](#HttpContext) parameter providing request-specific details.
+- `handler` `(context) => {}` A callback function that processes incoming requests, with the [context](#ServerContext) parameter providing request-specific details.
 
 <h6>Return value</h6>
 
@@ -324,11 +324,12 @@ Blocks the control flow and starts listening until `stop()` is called.
 
 ```js
 listen()
+listen(callback)
 ```
 
 <h6>Parameters</h6>
 
-None.
+- `callback` `(result)=>{}` optional callback with [ServerResult](#ServerResult)
 
 <h6>Return value</h6>
 
@@ -372,7 +373,16 @@ None.
 
 #### staticFile() -->
 
-## HttpContext
+## ServerResult
+
+### Properties
+
+| Property           | Type       | Description           |
+|:-------------------|:-----------|:----------------------|
+| network            | String     | e.g. `tcp`            |
+| message            | String     | e.g. `127.0.0.1:8080` |
+
+## ServerContext
 
 ### Properties
 
@@ -404,17 +414,19 @@ None.
 
 #### TOML
 
-## HttpRequest
+## ServerRequest
 
 ### Properties
 
-- header
-- method
-- host
-- path
-- query
-- body
-- remoteAddr
+| Property           | Type       | Description           |
+|:-------------------|:-----------|:----------------------|
+| method             | String     |                       |
+| host               | String     |                       |
+| path               | String     |                       |
+| query              | String     |                       |
+| header             | Object     |                       |
+| body               | Object     |                       |
+| remoteAddress      | String     |                       |
 
 ### Methods
 
