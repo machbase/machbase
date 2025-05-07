@@ -74,12 +74,12 @@ println(ts.In(system.location("UTC")).Format("2006-01-02 15:04:05"));
 <h6>Syntax</h6>
 
 ```js
-location()
+location(timezone)
 ```
 
 <h6>Parameters</h6>
 
-None.
+- `timezone` `String` time zone, e.g. `"UTC"`, `"Local"`, `"GMT"`, `"ETS"`, `"America/New_York"`...
 
 <h6>Return value</h6>
 

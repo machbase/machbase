@@ -37,26 +37,53 @@ try {
 }
 ```
 
-### Creation
+<h6>Creation</h6>
 
 | Constructor             | Description                          |
 |:------------------------|:----------------------------------------------|
 | new Client(*options*)   | Instantiates a opcua client object with an options |
 
-### Options
+<h6>Options</h6>
 
 | Option              | Type         | Default        | Description         |
 |:--------------------|:-------------|:---------------|:--------------------|
 | endpoint            | String       | `""`           | server address      |
 | readRetryInterval   | Number       | `100`          | read retry interval in ms. |
-| messageSecurityMode | [MessageSecurityMode](#messagesecuritymode) | `MessageSecurityMode.None` |         |
+| messageSecurityMode |              | |  [MessageSecurityMode](#messagesecuritymode) |
 
-### Methods
+### close()
 
-| Method                                 | Returns           | Description        |
-|:---------------------------------------|:------------------|:-------------------|
-| close()                                |                   | disconnect         |
-| read(ReadOptions *option*)             | [ReadResult[]](#readresult) |                    |
+Disconnect.
+
+<h6>Syntax</h6>
+
+```js
+close()
+```
+
+<h6>Parameters</h6>
+
+None.
+
+<h6>Return value</h6>
+
+None.
+
+### read()
+
+<h6>Syntax</h6>
+
+```js
+read(option)
+```
+
+<h6>Parameters</h6>
+
+`option` `Object[]` Array of [ReadOptions](#readoptions)
+
+<h6>Return value</h6>
+
+None.
 
 ## ReadOptions
 
@@ -64,11 +91,11 @@ try {
 |:--------------------|:-------------|:---------------|:--------------------|
 | nodes               | []String     |                | server address      |
 | maxAge              | Number       | `100`          | read retry interval in ms. |
-| timestampsToReturn  | [TimestampToReturn](#timestamptoreturn) | `TimestampToReturn.Neither` |      |
+| timestampsToReturn  |              |  | [TimestampToReturn](#timestamptoreturn)     |
 
 ## ReadResult
 
-### Properties
+<h6>Properties</h6>
 
 | Property           | Type       | Description        |
 |:-------------------|:-----------|:-------------------|
@@ -82,17 +109,13 @@ try {
 
 ## MessageSecurityMode
 
-| Property           | Type       | Description        |
-|:-------------------|:-----------|:-------------------|
-| None               |            |                    |
-| Sign               |            |                    |
-| SignAndEncrypt     |            |                    |
+- `MessageSecurityMode.None`
+- `MessageSecurityMode.Sign`
+- `MessageSecurityMode.SignAndEncrypt`
 
 ## TimestampToReturn
 
-| Property           | Type       | Description        |
-|:-------------------|:-----------|:-------------------|
-| Source             |            |                    |
-| Server             |            |                    |
-| Both               |            |                    |
-| Neither            |            |                    |
+- `TimestampToReturn.Source`
+- `TimestampToReturn.Server`
+- `TimestampToReturn.Both`
+- `TimestampToReturn.Neither`

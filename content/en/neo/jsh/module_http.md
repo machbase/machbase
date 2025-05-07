@@ -48,16 +48,17 @@ try {
 
 The HTTP client.
 
-### Creation
+<h6>Creation</h6>
 
 | Constructor             | Description                          |
 |:------------------------|:-------------------------------------|
 | new Client()            | Instantiates a HTTP client           |
 
 
-### Methods
+### do()
 
-#### do()
+The do() function is a method of the HTTP client that sends an HTTP request to a specified URL and processes the response.
+It supports optional request options (e.g., method, headers, body) and a callback function to handle the response.
 
 <h6>Syntax</h6>
 
@@ -112,9 +113,9 @@ client.do(
 
 ## ClientRequest
 
-### Methods
+### do()
 
-#### do()
+The do() function is a method of the HTTP client that sends an HTTP request to a specified URL and processes the response.
 
 <h6>Syntax</h6>
 
@@ -169,7 +170,7 @@ lsnr.static("/html", "/html")
 lsnr.listen();
 ```
 
-### Creation
+<h6>Creation</h6>
 
 | Constructor             | Description                          |
 |:------------------------|:-------------------------------------|
@@ -182,12 +183,14 @@ lsnr.listen();
 | network      | String    | `tcp`      | network type        |
 | address      | String    |            | listen address      |
 
+### all()
 
-### Methods
+The all() function is a method of the HTTP server listener that adds a route to handle all HTTP methods, including GET, POST, PUT, DELETE, and others. It allows you to define a single handler for multiple request types.
 
-#### all()
+Key Features:
 
-Add a route to handle all methods includes GET, POST, PUT, DELETE...
+1. Universal Method Handling: Handles all HTTP methods for a specific route.
+2. Custom Request Processing: Provides a callback function to process incoming requests using the context parameter, which contains request-specific details.
 
 <h6>Syntax</h6>
 
@@ -197,16 +200,28 @@ all(request_path, handler)
 
 <h6>Parameters</h6>
 
-- `request_path` `String`
-- `handler` `(context) => {}` A callback function that processes incoming requests, with the [context](#ServerContext) parameter providing request-specific details.
+- `request_path` `String` The URL path to match.
+- `handler` `(context) => {}` A callback function that processes incoming requests, with the [context](#ServerContext) parameter providing details like request headers, parameters, and body.
 
 <h6>Return value</h6>
 
 None.
 
-#### get()
+<h6>Usage example</h6>
 
-Add a route to handle GET method.
+```js {linenos=table,linenostart=1}
+const http = require("@jsh/http");
+
+const lsnr = new http.Listener({ network: 'tcp', address: '127.0.0.1:8080' });
+lsnr.all("/api/resource", (ctx) => {
+    ctx.JSON(http.status.OK, { message: "Handled all methods" });
+});
+lsnr.listen();
+```
+
+### get()
+
+The get() function is a method of the HTTP server listener that adds a route to handle HTTP GET requests. It allows you to define a handler for processing incoming GET requests to a specific URL path.
 
 <h6>Syntax</h6>
 
@@ -216,16 +231,30 @@ get(request_path, handler)
 
 <h6>Parameters</h6>
 
-- `request_path` `String`
-- `handler` `(context) => {}` A callback function that processes incoming requests, with the [context](#ServerContext) parameter providing request-specific details.
+- `request_path` `String` The URL path to match.
+- `handler` `(context) => {}` A callback function that processes incoming requests, with the [context](#ServerContext) parameter providing details like request headers, parameters, and body.
 
 <h6>Return value</h6>
 
 None.
 
-#### post()
+<h6>Usage example</h6>
 
-Add a route to handle POST method.
+```js {linenos=table,linenostart=1}
+const http = require("@jsh/http");
+
+const lsnr = new http.Listener({ network: 'tcp', address: '127.0.0.1:8080' });
+lsnr.get("/hello/:name", (ctx) => {
+    const name = ctx.param("name");
+    ctx.JSON(http.status.OK, { message: `Hello, ${name}!` });
+});
+lsnr.listen();
+```
+
+
+### post()
+
+The post() function is a method of the HTTP server listener that adds a route to handle HTTP POST requests. It allows you to define a handler for processing incoming POST requests to a specific URL path.
 
 <h6>Syntax</h6>
 
@@ -235,14 +264,27 @@ put(request_path, handler)
 
 <h6>Parameters</h6>
 
-- `request_path` `String`
+- `request_path` `String`  The URL path to match.
 - `handler` `(context) => {}` A callback function that processes incoming requests, with the [context](#ServerContext) parameter providing request-specific details.
 
 <h6>Return value</h6>
 
 None.
 
-#### put()
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1}
+const http = require("@jsh/http");
+
+const lsnr = new http.Listener({ network: 'tcp', address: '127.0.0.1:8080' });
+lsnr.post("/submit", (ctx) => {
+    const data = ctx.body; // Access the request body
+    ctx.JSON(http.status.Created, { message: "Data received", data: data });
+});
+lsnr.listen();
+```
+
+### put()
 
 Add a route to handle PUT method.
 
@@ -261,7 +303,7 @@ put(request_path, handler)
 
 None.
 
-#### delete()
+### delete()
 
 Add a route to handle DELETE method.
 
@@ -280,9 +322,14 @@ delete(request_path, handler)
 
 None.
 
-#### static()
+### static()
 
-Defines a route to serve files from a specified static directory in response to requests matching a given path.
+The static() function is a method of the HTTP server listener that defines a route to serve files from a specified static directory. It is useful for serving static assets like HTML, CSS, JavaScript, images, or other files in response to HTTP requests.
+
+Key Features:
+
+1. Static File Serving: Serves files from a specified directory for requests matching a given path.
+2. Efficient Resource Delivery: Ideal for delivering static assets in web applications.
 
 <h6>Syntax</h6>
 
@@ -292,16 +339,32 @@ static(request_path, dir_path)
 
 <h6>Parameters</h6>
 
-- `request_path` `String`
-- `dir_path` `String`
+- `request_path` `String` The URL path to match.
+- `dir_path` `String` The directory path containing the static files to serve.
 
 <h6>Return value</h6>
 
 None.
 
-#### staticFile()
+<h6>Usage example</h6>
 
-Add a route to serve static file content for a specified request path.
+```js {linenos=table,linenostart=1}
+const http = require("@jsh/http");
+
+const lsnr = new http.Listener({ network: 'tcp', address: '127.0.0.1:8080' });
+lsnr.static("/public", "/path/to/static/files");
+lsnr.listen();
+```
+
+### staticFile()
+
+The staticFile() function is a method of the HTTP server listener that defines a route to serve a specific static file for a given request path. It is useful for serving individual files, such as a single HTML page, image, or configuration file, in response to HTTP requests.
+
+Key Features:
+
+- Single File Serving: Serves a specific file for a specified request path.
+- Efficient Resource Delivery: Ideal for delivering individual static resources.
+
 
 <h6>Syntax</h6>
 
@@ -311,16 +374,26 @@ staticFile(request_path, file_path)
 
 <h6>Parameters</h6>
 
-- `request_path` `String`
-- `file_path` `String`
+- `request_path` `String` The URL path to match.
+- `file_path` `String` The file path of the static file to serve.
 
 <h6>Return value</h6>
 
 None.
 
-#### listen()
+<h6>Usage example</h6>
 
-Blocks the control flow and starts listening until `stop()` is called.
+```js {linenos=table,linenostart=1}
+const http = require("@jsh/http");
+
+const lsnr = new http.Listener({ network: 'tcp', address: '127.0.0.1:8080' });
+lsnr.staticFile("/favicon.ico", "/path/to/favicon.ico");
+lsnr.listen();
+```
+
+### listen()
+
+The listen() function is a method of the HTTP server listener that starts the server and blocks the control flow until the stop() function is called. It begins listening for incoming requests on the specified network and address.
 
 <h6>Syntax</h6>
 
@@ -331,15 +404,26 @@ listen(callback)
 
 <h6>Parameters</h6>
 
-- `callback` `(result)=>{}` optional callback with [ServerResult](#ServerResult)
+- `callback` `(result)=>{}` An optional callback function that receives a [ServerResult](#ServerResult) object containing details like the network type and address.
 
 <h6>Return value</h6>
 
 None.
 
-#### close()
+<h6>Usage example</h6>
 
-Stop and shutdown the listener.
+```js {linenos=table,linenostart=1}
+const http = require("@jsh/http");
+
+const lsnr = new http.Listener({ network: 'tcp', address: '127.0.0.1:8080' });
+lsnr.listen((result) => {
+    console.log(`Server is listening on ${result.network}://${result.message}`);
+});
+```
+
+### close()
+
+Stop and shutdown the server.
 
 <h6>Syntax</h6>
 
@@ -377,7 +461,7 @@ None.
 
 ## ServerResult
 
-### Properties
+<h6>Properties</h6>
 
 | Property           | Type       | Description           |
 |:-------------------|:-----------|:----------------------|
@@ -386,39 +470,194 @@ None.
 
 ## ServerContext
 
-### Properties
+<h6>Properties</h6>
 
-- request
+| Property           | Type       | Description           |
+|:-------------------|:-----------|:----------------------|
+| request            | Object     | [ServerRequest](#serverrequest) |
 
-### Methods
 
-#### abort()
+### abort()
 
-#### redirect()
+<h6>Syntax</h6>
 
-#### getHeader()
+```js
+abort()
+```
 
-#### setHeader()
+<h6>Parameters</h6>
 
-#### param()
+None.
 
-#### query()
+<h6>Return value</h6>
 
-#### TEXT()
+None.
 
-#### JSON()
+### redirect()
 
-#### HTML()
+<h6>Syntax</h6>
 
-#### XML()
+```js
+redirect(statusCode, url)
+```
 
-#### YAML()
+<h6>Parameters</h6>
 
-#### TOML
+- `statusCode` `Number` HTTP status code. e.g. `302`, `http.status.Found`
+- `url` `String` address to redirect.
+
+<h6>Return value</h6>
+
+None.
+
+### setHeader()
+
+<h6>Syntax</h6>
+
+```js
+setHeader(name, value)
+```
+
+<h6>Parameters</h6>
+
+- `name` `String`
+- `value` `String`
+
+<h6>Return value</h6>
+
+None.
+
+### param()
+
+<h6>Syntax</h6>
+
+```js
+param(name)
+```
+
+<h6>Parameters</h6>
+
+- `name` `String`
+
+<h6>Return value</h6>
+
+- `String`
+
+### query()
+
+<h6>Syntax</h6>
+
+```js
+query(name)
+```
+
+<h6>Parameters</h6>
+
+- `name` `String`
+
+<h6>Return value</h6>
+
+- `String`
+
+### TEXT()
+
+<h6>Syntax</h6>
+
+```js
+TEXT(statusCode, content)
+```
+
+<h6>Parameters</h6>
+
+None.
+
+<h6>Return value</h6>
+
+None.
+
+### JSON()
+
+<h6>Syntax</h6>
+
+```js
+JSON(statusCode, content)
+```
+
+<h6>Parameters</h6>
+
+None.
+
+<h6>Return value</h6>
+
+None.
+
+### HTML()
+
+<h6>Syntax</h6>
+
+```js
+HTML(statusCode, content)
+```
+
+<h6>Parameters</h6>
+
+None.
+
+<h6>Return value</h6>
+
+None.
+
+### XML()
+
+<h6>Syntax</h6>
+
+```js
+XML(statusCode, content)
+```
+
+<h6>Parameters</h6>
+
+None.
+
+<h6>Return value</h6>
+
+None.
+
+### YAML()
+
+<h6>Syntax</h6>
+
+```js
+YAML(statusCode, content)
+```
+
+<h6>Parameters</h6>
+
+None.
+
+<h6>Return value</h6>
+
+None.
+
+### TOML
+
+<h6>Syntax</h6>
+
+```js
+TOML(statusCode, content)
+```
+
+<h6>Parameters</h6>
+
+None.
+
+<h6>Return value</h6>
+
+None.
 
 ## ServerRequest
 
-### Properties
+<h6>Properties</h6>
 
 | Property           | Type       | Description           |
 |:-------------------|:-----------|:----------------------|
@@ -430,6 +669,18 @@ None.
 | body               | Object     |                       |
 | remoteAddress      | String     |                       |
 
-### Methods
+### getHeader()
 
-#### getHeader()
+<h6>Syntax</h6>
+
+```js
+getHeader(name)
+```
+
+<h6>Parameters</h6>
+
+- `name` `String` head name. e.g. `Content-Type`, `Content-Length`
+
+<h6>Return value</h6>
+
+- `String` header value.

@@ -37,7 +37,7 @@ try {
 }
 ```
 
-### Creation
+<h6>Creation</h6>
 
 | Constructor             | Description                          |
 |:------------------------|:----------------------------------------------|
@@ -69,9 +69,7 @@ It is also possible to create Client with predefined bridge.
 | bridge              | String       |                | bridge name         |
 
 
-### Methods
-
-#### connect()
+### connect()
 
 connect to the database.
 
@@ -82,9 +80,7 @@ connect to the database.
 
 ## Conn
 
-### Methods
-
-#### close()
+### close()
 
 disconnect to the database and release
 
@@ -94,7 +90,7 @@ disconnect to the database and release
 close()
 ```
 
-#### query()
+### query()
 
 <h6>Syntax</h6>
 
@@ -106,7 +102,7 @@ query(String *sqlText*, any ...*args*)
 
 [Rows](#rows)
 
-#### queryRow()
+### queryRow()
 
 <h6>Syntax</h6>
 
@@ -119,7 +115,7 @@ queryRow(String *sqlText*, any ...*args*)
 [Row](#Row)
 
 
-#### exec()
+### exec()
 
 <h6>Syntax</h6>
 
@@ -147,9 +143,7 @@ for (rec of rows) {
 }
 ```
 
-### Methods
-
-#### close()
+### close()
 
 Release database statement
 
@@ -167,7 +161,7 @@ None.
 
 None.
 
-#### next()
+### next()
 
 fetch a record, returns null if no more records
 
@@ -185,7 +179,7 @@ None.
 
 any[]
 
-#### columns()
+### columns()
 
 <h6>Syntax</h6>
 
@@ -201,7 +195,7 @@ None.
 
 [Columns](#columns)
 
-#### columnNames()
+### columnNames()
 
 <h6>Syntax</h6>
 
@@ -217,7 +211,7 @@ None.
 
 String[]
 
-#### columnTypes()
+### columnTypes()
 
 <h6>Syntax</h6>
 
@@ -237,9 +231,7 @@ String[]
 ## Row
 Row encapsulates the result of queryRow which retrieve a single record.
 
-### Methods
-
-#### columns()
+### columns()
 
 <h6>Syntax</h6>
 
@@ -256,7 +248,7 @@ None.
 [Columns](#columns)
 
 
-#### columnNames()
+### columnNames()
 
 names of the result
 
@@ -274,7 +266,7 @@ None.
 
 String[]
 
-#### columnTypes()
+### columnTypes()
 
 types of the result
 
@@ -293,7 +285,7 @@ None.
 String[]
 
 
-#### values()
+### values()
 
 result columns
 

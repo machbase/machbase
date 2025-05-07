@@ -156,7 +156,7 @@ new Simplex(seed)
 
 A new Simplex generator object.
 
-### Simplex.eval()
+### eval()
 
 Returns a random noise value. Repeated calls with the same args inputs will have the same output.
 
@@ -212,7 +212,7 @@ new UUID(ver)
 
 a new UUID generator object.
 
-### UUID.eval()
+### eval()
 
 <h6>Syntax</h6>
 

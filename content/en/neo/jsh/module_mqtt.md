@@ -39,7 +39,7 @@ try {
 }
 ```
 
-### Creation
+<h6>Creation</h6>
 
 | Constructor             | Description                          |
 |:------------------------|:----------------------------------------------|
@@ -61,14 +61,12 @@ try {
 | onDisconnect        | function     | null           | (disconnect) => {}  |
 | onMessage           | function     | null           | (msg) => {}         |
 
-### Methods
+### connect()
 
-#### connect()
+### disconnect()
 
-#### disconnect()
+### awaitConnection()
 
-#### awaitConnection()
+### subscribe()
 
-#### subscribe()
-
-#### publish()
+### publish()
