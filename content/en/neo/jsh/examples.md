@@ -4,6 +4,118 @@ type: docs
 weight: 1
 ---
 
+## HTTP Server
+
+This example demonstrates how to create a simple HTTP server using the `@jsh/http` module.
+The server listens on a specified address and port (`127.0.0.1:56802`)
+and provides a RESTful API endpoint (`/hello/:name`).
+When a client sends a GET request to this endpoint with a name parameter,
+the server responds with a JSON object containing a greeting message and the provided name.
+
+This example is ideal for learning how to build lightweight HTTP servers with dynamic routing and JSON responses in JavaScript.
+
+<h6>Key Features:</h6>
+
+1. **Daemonization**: The script checks if it is running as a daemon using `process.ppid()`. If not, it daemonizes itself using `process.daemonize()` to run in the background.
+2. **Routing**: The server uses a route (`/hello/:name`) to extract the `name` parameter from the URL.
+3. **JSON Response**: The server responds with a JSON object containing the `name` and a greeting message.
+
+```js {linenos=table,linenostart=1}
+const process = require("@jsh/process");
+const {println} = require("@jsh/process");
+const http = require("@jsh/http")
+
+// This ensures the server runs as a background process.
+if( process.ppid() == 1 ) {
+    runServer();
+} else {
+    process.daemonize();
+}
+
+function runServer() {
+    // Creates an HTTP server bound to the specified address and port.
+    const svr = new http.Server({network:'tcp', address:'127.0.0.1:56802'})
+    // Route Handling
+    svr.get("/hello/:name", (ctx) => {
+        let name = ctx.param("name")
+        // Defines a GET route that extracts the `name` parameter
+        // from the URL and responds with a JSON object.
+        ctx.JSON(http.status.OK, {
+            "name": name,
+            "message": "greetings",
+        })
+    })
+
+    // Starts the server and logs the address it is listening on.
+    svr.listen( (result)=>{ 
+        println("server started", "http://"+result.address) ;
+    });
+}
+```
+
+<h6>Usage:</h6>
+
+1. Run the script to start the server.
+2. Use a tool like `curl` to send a GET request to the server:
+
+```sh
+curl -o - http://127.0.0.1:56802/hello/Karl
+```
+
+The server will respond with:
+
+```json
+{"message":"greetings","name":"Karl"}
+```
+
+## HTTP Client
+
+This example demonstrates how to create an HTTP client using the `@jsh/http` module.
+The client sends a GET request to a specified URL  and processes the server's response.
+It showcases how to handle HTTP requests and parse JSON responses in JavaScript.
+
+This example is ideal for learning how to build HTTP clients in JavaScript, handle responses, and parse JSON data.
+
+<h6>Key Features:</h6>
+
+1. **Request Handling**: The client sends an HTTP GET request to the server.
+2. **Response Parsing**: The response is parsed to extract details such as status, headers, and body content.
+3. **Error Handling**: The example includes a `try-catch` block to handle potential errors during the request.
+
+```js {linenos=table,linenostart=1}
+const {println} = require("@jsh/process");
+const http = require("@jsh/http")
+try {
+    // Creates an HTTP GET request to the specified URL.
+    req = http.request("http://127.0.0.1:56802/hello/Steve")
+    // Logs the URL, status, and headers.
+    //  Parses the response body as JSON and logs the `message` and `name` fields.
+    req.do((rsp) => {
+        // url: http://127.0.0.1:56802/hello/Steve
+        println("url:", rsp.url);
+        // error: <nil>
+        println("error:", rsp.error());
+        // status: 200
+        println("status:", rsp.status);
+        // statusText: 200 OK
+        println("statusText:", rsp.statusText);
+        // content-type: application/json; charset=utf-8
+        println("content-type:", rsp.headers["Content-Type"]);
+        obj = rsp.json(); // parse content body to JSON object
+        // greetings, Steve
+        println("body:", `${obj.message}, ${obj.name}`);
+    })
+} catch (e) {
+    // Catches and logs any errors that occur during the request.
+    println(e);
+}
+```
+
+<h6>Usage:</h6>
+
+1. Ensure the HTTP server is running (refer to the HTTP Server example).
+2. Run the script to send a GET request to the server.
+
 ## MQTT Subscriber
 
 The MQTT Subscriber example demonstrates how to create a background application that connects to an MQTT broker, subscribes to a specific topic, and processes incoming messages.
@@ -204,6 +316,12 @@ function runSysmon() {
 This example demonstrates how to connect to another Machbase instance via port 5656 and execute a query.
 
 Set `lowerCaseColumns: true` at line 8 to ensure that the query results use lower-cased property names in the record object, as demonstrated at line 21.
+
+`sourceSource` supports two formats for historical reasons: the first uses a semi-colon delimiter, while the second uses a space delimiter. Both are equivalent.
+
+1. Classic Format: `SERVER=${host};PORT_NO=${port};UID=${user};PWD=${pass}`
+2. Name=Value Format: `host=<ip> port=<port> user=<username> password=<pass>`
+
 
 ```js {linenos=table,linenostart=1,hl_lines=[8,21]}
 db = require("@jsh/db");

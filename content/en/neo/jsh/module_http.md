@@ -6,6 +6,44 @@ weight: 12
 
 {{< neo_since ver="8.0.52" />}}
 
+## request()
+
+Convenient function for making HTTP client requests.
+
+<h6>Syntax</h6>
+
+```js
+request(url, option)
+```
+
+<h6>Parameters</h6>
+
+- `url` `String` destination address. e.g. `http://192.168.0.120/api/members`
+- `option` `Object` optional [RequestOption](#RequestOption).
+
+<h6>Return value</h6>
+
+`ClientRequest` [ClientRequest](#ClientRequest) Object
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1}
+const {println} = require("@jsh/process");
+const http = require("@jsh/http")
+try {
+    req = http.request("http://127.0.0.1:29876/hello")
+    req.do((rsp) => {
+        println("url:", rsp.url);
+        println("error:", rsp.error());
+        println("status:", rsp.status);
+        println("statusText:", rsp.statusText);
+        println("body:", rsp.text());
+    })
+} catch (e) {
+    println(e.toString());
+}
+```
+
 ## Client
 
 The HTTP client.
@@ -61,42 +99,6 @@ client.do(
         println("content-type:", rsp.headers["Content-Type"]);
         println("body:", rsp.text());
     })
-```
-
-## request()
-
-<h6>Syntax</h6>
-
-```js
-request(url, option)
-```
-
-<h6>Parameters</h6>
-
-- `url` `String` destination address. e.g. `http://192.168.0.120/api/members`
-- `option` `Object` optional [RequestOption](#RequestOption).
-
-<h6>Return value</h6>
-
-`ClientRequest` [ClientRequest](#ClientRequest) Object
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1}
-const {println} = require("@jsh/process");
-const http = require("@jsh/http")
-try {
-    req = http.request("http://127.0.0.1:29876/hello")
-    req.do((rsp) => {
-        println("url:", rsp.url);
-        println("error:", rsp.error());
-        println("status:", rsp.status);
-        println("statusText:", rsp.statusText);
-        println("body:", rsp.text());
-    })
-} catch (e) {
-    println(e.toString());
-}
 ```
 
 ## ClientRequestOption
