@@ -47,8 +47,8 @@ function runServer() {
     })
 
     // Starts the server and logs the address it is listening on.
-    svr.listen( (result)=>{ 
-        println("server started", "http://"+result.address) ;
+    svr.listen( (evt)=>{ 
+        println("server started", "http://"+evt.address) ;
     });
 }
 ```
@@ -356,8 +356,14 @@ try {
 
 ## SQLite
 
-```js {linenos=table,linenostart=1,hl_lines=[4]}
+This example demonstrates how to use the `@jsh/db` module to interact with an in-memory SQLite database.
+It covers creating a table, inserting data, and querying the database.
+This example is ideal for learning how to perform basic database operations in JavaScript using SQLite.
+
+```js {linenos=table,linenostart=1,hl_lines=[6]}
 const db = require("@jsh/db");
+
+// Intializes a new SQLite client with an in-memory database.
 client = new db.Client({
     driver:"sqlite",
     dataSource:"file::memory:?cache=shared"
@@ -365,6 +371,8 @@ client = new db.Client({
 
 try{
     conn = client.connect()
+    // Creates a table named `mem_example`
+    // with three columns: `id`, `company`, and `employee`.
     conn.exec(`
         CREATE TABLE IF NOT EXISTS mem_example(
             id         INTEGER NOT NULL PRIMARY KEY,
@@ -373,19 +381,27 @@ try{
         )
     `);
 
+    // Inserts a record into the `mem_example` table with the values
+    // `'Fedel-Gaylord'` for `company` and `12` for `employee`.
     conn.exec(`INSERT INTO mem_example(company, employee) values(?, ?);`, 
         'Fedel-Gaylord', 12);
 
+    // Queries all rows from the `mem_example` table and logs the results to the console.
     rows = conn.query(`select * from mem_example`);
     for( rec of rows ) {
         console.log(...rec)
     }
 }catch(e){
+    // Handles any errors that occur during database operations 
     console.error(e.message);
 }finally{
+    // Ensures that the `rows` and `conn` objects are closed to release resources.
     rows.close();
     conn.close();
 }
-
 ```
 
+When the script is run, it outputs the inserted record:
+```plaintext
+1 Fedel-Gaylord 12
+```
