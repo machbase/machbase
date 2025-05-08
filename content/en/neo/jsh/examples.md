@@ -94,8 +94,8 @@ svr.get("/movies", (ctx) => {
     ctx.JSON(http.status.OK, list);
 })
 svr.post("/movies", (ctx) => {
-    obj = ctx.body;
-    console.log("post:", obj);
+    obj = ctx.request.body;
+    console.log("post:", JSON.stringify(obj));
     ctx.JSON(http.status.Created, {success: true});
 });
 svr.delete("/movies/:id", (ctx) => {
