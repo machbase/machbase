@@ -245,72 +245,6 @@ jsh / > ps
 └──────┴──────┴──────┴──────┴────────┘ 
 ```
 
-
-## System Monitoring
-
-The System Monitoring example demonstrates how to create a lightweight system monitoring tool using the `@jsh/process` and `@jsh/psutil` modules.
-This script runs as a background daemon and periodically collects key system metrics, such as CPU usage, memory utilization, and load averages over the past 1, 5, and 15 minutes.
-The monitoring task is scheduled to execute every 15 seconds using a cron-like syntax.
-The collected data is formatted and printed with timestamps, providing a clear snapshot of the system's performance at regular intervals.
-This example showcases how to leverage JavaScript for efficient process management and real-time system monitoring.
-
-```js {linenos=table,linenostart=1}
-const process = require("@jsh/process");
-const psutil = require("@jsh/psutil");
-
-// Checks the parent process ID. If it equals 1,
-// the process is already running as a daemon.
-if( process.ppid() == 1 ) {
-    // If it is already a daemon,
-    // the `runSysmon()` function is executed to start
-    // system monitoring.
-    runSysmon();
-} else {
-    // If the process is not a daemon,
-    // `process.daemonize()` is called to restart the process
-    // as a background daemon.
-    process.daemonize();
-}
-
-function runSysmon() {
-    // Schedules a task to run at specific intervals.
-    // Here, it runs every 15 seconds (0,15,30,45 in the cron-like syntax).
-    // The callback function receives a UNIX epoch timestamp (ts) in milliseconds
-    // for when the task is executed
-    process.schedule("0,15,30,45 * * * * *", (ts) => {
-        // Retrieves the system's load averages for the past 1, 5, and 15 minutes.
-        // The values are destructured into load1, load5, and load15.
-        let {load1, load5, load15} = psutil.loadAvg();
-        // Retrieves information about virtual memory usage, including total, used, and free memory.
-        let mem = psutil.memVirtual();
-        // Calculates the CPU usage percentage since the last call.
-        // The first argument (0) specifies the interval in seconds,
-        // if it is 0 like this example, it calculates from the previous call.
-        // the second argument (false) disables per-CPU statistics.
-        let cpu = psutil.cpuPercent(0, false);
-
-        process.println(
-            new Date(ts).toLocaleString("en-US"),
-            "Load1: "+load1.toFixed(2),
-            "Load5: "+load5.toFixed(2),
-            "Load15: "+load15.toFixed(2),
-            "CPU: "+cpu[0].toFixed(2) +"%",
-            "MEM: "+mem.usedPercent.toFixed(2)+"%",
-        );
-    })
-}
-
-// The output shows the timestamp, load averages, CPU usage,
-// and memory usage at each scheduled interval.
-//
-// 05/03/2025, 10:22:00 Load1: 1.81 Load5: 2.52 Load15: 2.77 CPU: 7.45% MEM: 62.42%
-// 05/03/2025, 10:22:15 Load1: 1.78 Load5: 2.48 Load15: 2.75 CPU: 3.75% MEM: 62.41%
-// 05/03/2025, 10:22:30 Load1: 2.22 Load5: 2.55 Load15: 2.77 CPU: 5.40% MEM: 62.30%
-// 05/03/2025, 10:22:45 Load1: 1.86 Load5: 2.46 Load15: 2.73 CPU: 4.94% MEM: 62.39%
-// 05/03/2025, 10:23:00 Load1: 1.81 Load5: 2.42 Load15: 2.71 CPU: 5.32% MEM: 62.41%
-
-```
-
 ## Machbase Client
 
 This example demonstrates how to connect to another Machbase instance via port 5656 and execute a query.
@@ -437,3 +371,228 @@ When the script is run, it outputs the inserted record:
 ```plaintext
 1 Fedel-Gaylord 12
 ```
+
+## System Monitoring
+
+The System Monitoring example demonstrates how to create a lightweight system monitoring tool using the `@jsh/process` and `@jsh/psutil` modules.
+This script runs as a background daemon and periodically collects key system metrics, such as CPU usage, memory utilization, and load averages over the past 1, 5, and 15 minutes.
+The monitoring task is scheduled to execute every 15 seconds using a cron-like syntax.
+The collected data is formatted and printed with timestamps, providing a clear snapshot of the system's performance at regular intervals.
+This example showcases how to leverage JavaScript for efficient process management and real-time system monitoring.
+
+### Basic usage
+
+```js {linenos=table,linenostart=1}
+const process = require("@jsh/process");
+const psutil = require("@jsh/psutil");
+
+// Checks the parent process ID. If it equals 1,
+// the process is already running as a daemon.
+if( process.ppid() == 1 ) {
+    // If it is already a daemon,
+    // the `runSysmon()` function is executed to start
+    // system monitoring.
+    runSysmon();
+} else {
+    // If the process is not a daemon,
+    // `process.daemonize()` is called to restart the process
+    // as a background daemon.
+    process.daemonize();
+}
+
+function runSysmon() {
+    // Schedules a task to run at specific intervals.
+    // Here, it runs every 15 seconds (0,15,30,45 in the cron-like syntax).
+    // The callback function receives a UNIX epoch timestamp (ts) in milliseconds
+    // for when the task is executed
+    process.schedule("0,15,30,45 * * * * *", (tick) => {
+        // Retrieves the system's load averages for the past 1, 5, and 15 minutes.
+        // The values are destructured into load1, load5, and load15.
+        let {load1, load5, load15} = psutil.loadAvg();
+        // Retrieves information about virtual memory usage, including total, used, and free memory.
+        let mem = psutil.memVirtual();
+        // Calculates the CPU usage percentage since the last call.
+        // The first argument (0) specifies the interval in seconds,
+        // if it is 0 like this example, it calculates from the previous call.
+        // the second argument (false) disables per-CPU statistics.
+        let cpu = psutil.cpuPercent(0, false);
+
+        process.println(
+            new Date(tick).toLocaleString("en-US"),
+            "Load1: "+load1.toFixed(2),
+            "Load5: "+load5.toFixed(2),
+            "Load15: "+load15.toFixed(2),
+            "CPU: "+cpu[0].toFixed(2) +"%",
+            "MEM: "+mem.usedPercent.toFixed(2)+"%",
+        );
+    })
+}
+
+// The output shows the timestamp, load averages, CPU usage,
+// and memory usage at each scheduled interval.
+//
+// 05/03/2025, 10:22:00 Load1: 1.81 Load5: 2.52 Load15: 2.77 CPU: 7.45% MEM: 62.42%
+// 05/03/2025, 10:22:15 Load1: 1.78 Load5: 2.48 Load15: 2.75 CPU: 3.75% MEM: 62.41%
+// 05/03/2025, 10:22:30 Load1: 2.22 Load5: 2.55 Load15: 2.77 CPU: 5.40% MEM: 62.30%
+// 05/03/2025, 10:22:45 Load1: 1.86 Load5: 2.46 Load15: 2.73 CPU: 4.94% MEM: 62.39%
+// 05/03/2025, 10:23:00 Load1: 1.81 Load5: 2.42 Load15: 2.71 CPU: 5.32% MEM: 62.41%
+
+```
+
+### Store into database
+
+Save the example code as `sysmon.js` and execute it through the `JSH` terminal.
+It will store system load averages, CPU usage, and memory utilization percentages into the database table named "EXAMPLE".
+
+```js {linenos=table,linenostart=1}
+const process = require("@jsh/process");
+const psutil = require("@jsh/psutil");
+const db = require("@jsh/db");
+const { parseTime } = require("@jsh/system");
+
+const tableName = "EXAMPLE";
+const tagPrefix = "sys_";
+
+if( process.ppid() == 1 ) {
+    runSysmon();
+} else {
+    process.daemonize();
+}
+
+function runSysmon() {
+  process.schedule("0,15,30,45 * * * * *", (tick) => {
+    let {load1, load5, load15} = psutil.loadAvg();
+    let mem = psutil.memVirtual();
+    let cpu = psutil.cpuPercent(0, false);
+    let ts = parseTime(tick, "ms")
+    try{
+      client = new db.Client({lowerCaseColumns:true});
+      conn = client.connect();
+      appender = conn.appender(tableName, "name","time","value");
+      appender.append(tagPrefix+"load1", ts, load1);
+      appender.append(tagPrefix+"load5", ts, load5);
+      appender.append(tagPrefix+"load15", ts, load15);
+      appender.append(tagPrefix+"cpu", ts, cpu[0]);
+      appender.append(tagPrefix+"mem", ts, mem.usedPercent);
+    } finally {
+      appender.close();
+      conn.close();
+    }
+  })
+}
+```
+
+### Visualize the data
+
+Since the system usage data is stored in the database, querying and visualizing it becomes straightforward.
+
+#### TQL
+
+```js {linenos=table,linenostart=1}
+SQL_SELECT(
+    "name", "time", "value",
+    from("EXAMPLE", "sys_load1"),
+    between("last-1200s", "last")
+)
+MAPVALUE(2, list(value(1), value(2)))
+CHART(
+    size("600px", "400px"),
+    chartJSCode({
+        function yformatter(val, idx){
+            return val.toFixed(1)
+        }
+    }),
+    chartOption({
+        animation: false,
+        yAxis: { type: "value", axisLabel:{ formatter: yformatter }},
+        xAxis: { type: "time", axisLabel:{ rotate: -90 }},
+        series: [
+            {type: "line", data: column(2), smooth:false, name: "LOAD1"},
+        ],
+        tooltip: {trigger: "axis", valueFormatter: yformatter},
+        legend: {}
+    })
+)
+```
+
+{{< figure src="../img/sysmon-tql.jpg" width="538">}}
+
+#### HTML
+
+```html {linenos=table,linenostart=1}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>System Monitoring Chart</title>
+  <script src="/web/echarts/echarts.min.js"></script>
+  <script>
+    function loadJS(url) {
+      var scriptElement = document.createElement('script');
+      scriptElement.src = url;
+      document.getElementsByTagName('body')[0].appendChild(scriptElement);
+      }
+    function buildTQL(table, tag) {
+      return `
+      SQL_SELECT( "name", "time", "value",
+        from("${table}", "${tag}"), between("last-1200s", "last")
+      )
+      MAPVALUE(2, list(value(1), value(2)))
+      CHART(
+        size("400px", "200px"),
+        chartJSCode({
+            function yformatter(val, idx){
+                return val.toFixed(1)
+            }
+        }),
+        chartOption({
+            animation: false,
+            yAxis: { type: "value", axisLabel:{ formatter: yformatter }},
+            xAxis: { type: "time", axisLabel:{ rotate: -90 }},
+            series: [
+              {type:"line", data:column(2), name:"${tag}", symbol:"none"},
+            ],
+            tooltip: {trigger: "axis", valueFormatter: yformatter},
+            legend: {}
+        })
+      )`
+    }
+    function loadChart(container, table, tag) {
+      fetch('/db/tql', {method:"POST", body: buildTQL(table, tag)})
+      .then(response => {
+        return response.json()
+      })
+      .then(obj => {
+        const chartDiv = document.createElement('div')
+        chartDiv.setAttribute("id", obj.chartID)
+        chartDiv.style.width = obj.style.width
+        chartDiv.style.height = obj.style.height
+        container.appendChild(chartDiv)
+        obj.jsCodeAssets.forEach((js) => loadJS(js))
+      })
+      .catch(error => {
+        console.error('Error fetching chart data:', error);
+      });
+    }
+   </script>
+</head>
+<body>
+    <div style='display:flex;float:left;flex-flow:row wrap'>
+        <div id="chart1" style="width: 400px; height: 200px;"></div>
+        <div id="chart2" style="width: 400px; height: 200px;"></div>
+        <div id="chart3" style="width: 400px; height: 200px;"></div>
+        <div id="chart4" style="width: 400px; height: 200px;"></div>
+    </div>
+
+    <script>
+        loadChart(document.getElementById('chart1'), "EXAMPLE", "sys_load1")
+        loadChart(document.getElementById('chart2'), "EXAMPLE", "sys_load5")
+        loadChart(document.getElementById('chart3'), "EXAMPLE", "sys_cpu")
+        loadChart(document.getElementById('chart4'), "EXAMPLE", "sys_mem")
+    </script>
+</body>
+</html>
+```
+
+{{< figure src="../img/sysmon-html.jpg" width="600">}}
