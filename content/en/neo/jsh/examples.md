@@ -376,11 +376,13 @@ When the script is run, it outputs the inserted record:
 
 The System Monitoring example demonstrates how to create a lightweight system monitoring tool using the `@jsh/process` and `@jsh/psutil` modules.
 This script runs as a background daemon and periodically collects key system metrics, such as CPU usage, memory utilization, and load averages over the past 1, 5, and 15 minutes.
+
 The monitoring task is scheduled to execute every 15 seconds using a cron-like syntax.
 The collected data is formatted and printed with timestamps, providing a clear snapshot of the system's performance at regular intervals.
 This example showcases how to leverage JavaScript for efficient process management and real-time system monitoring.
 
-### Basic usage
+Save the example code as `sysmon.js` and execute it through the `JSH` terminal.
+It will store system load averages, CPU usage, and memory utilization percentages into the database table named "EXAMPLE".
 
 Save the following code as `sysmon.js` and execute it through the JSH terminal.
 
@@ -395,67 +397,7 @@ jsh / > ps
 └──────┴──────┴──────┴─────────────────┴──────────┘ 
 ```
 
-```js {linenos=table,linenostart=1}
-const process = require("@jsh/process");
-const psutil = require("@jsh/psutil");
-
-// Checks the parent process ID. If it equals 1,
-// the process is already running as a daemon.
-if( process.ppid() == 1 ) {
-    // If it is already a daemon,
-    // the `runSysmon()` function is executed to start
-    // system monitoring.
-    runSysmon();
-} else {
-    // If the process is not a daemon,
-    // `process.daemonize()` is called to restart the process
-    // as a background daemon.
-    process.daemonize();
-}
-
-function runSysmon() {
-    // Schedules a task to run at specific intervals.
-    // Here, it runs every 15 seconds (0,15,30,45 in the cron-like syntax).
-    // The callback function receives a UNIX epoch timestamp (ts) in milliseconds
-    // for when the task is executed
-    process.schedule("0,15,30,45 * * * * *", (tick) => {
-        // Retrieves the system's load averages for the past 1, 5, and 15 minutes.
-        // The values are destructured into load1, load5, and load15.
-        let {load1, load5, load15} = psutil.loadAvg();
-        // Retrieves information about virtual memory usage, including total, used, and free memory.
-        let mem = psutil.memVirtual();
-        // Calculates the CPU usage percentage since the last call.
-        // The first argument (0) specifies the interval in seconds,
-        // if it is 0 like this example, it calculates from the previous call.
-        // the second argument (false) disables per-CPU statistics.
-        let cpu = psutil.cpuPercent(0, false);
-
-        process.println(
-            new Date(tick).toLocaleString("en-US"),
-            "Load1: "+load1.toFixed(2),
-            "Load5: "+load5.toFixed(2),
-            "Load15: "+load15.toFixed(2),
-            "CPU: "+cpu[0].toFixed(2) +"%",
-            "MEM: "+mem.usedPercent.toFixed(2)+"%",
-        );
-    })
-}
-
-// The output shows the timestamp, load averages, CPU usage,
-// and memory usage at each scheduled interval.
-//
-// 05/03/2025, 10:22:00 Load1: 1.81 Load5: 2.52 Load15: 2.77 CPU: 7.45% MEM: 62.42%
-// 05/03/2025, 10:22:15 Load1: 1.78 Load5: 2.48 Load15: 2.75 CPU: 3.75% MEM: 62.41%
-// 05/03/2025, 10:22:30 Load1: 2.22 Load5: 2.55 Load15: 2.77 CPU: 5.40% MEM: 62.30%
-// 05/03/2025, 10:22:45 Load1: 1.86 Load5: 2.46 Load15: 2.73 CPU: 4.94% MEM: 62.39%
-// 05/03/2025, 10:23:00 Load1: 1.81 Load5: 2.42 Load15: 2.71 CPU: 5.32% MEM: 62.41%
-
-```
-
-### Store into database
-
-Save the example code as `sysmon.js` and execute it through the `JSH` terminal.
-It will store system load averages, CPU usage, and memory utilization percentages into the database table named "EXAMPLE".
+- sysmon.js
 
 ```js {linenos=table,linenostart=1}
 const process = require("@jsh/process");
@@ -495,11 +437,9 @@ function runSysmon() {
 }
 ```
 
-### Visualize the data
+### Chart in TQL
 
 Since the system usage data is stored in the database, querying and visualizing it becomes straightforward.
-
-#### TQL
 
 ```js {linenos=table,linenostart=1}
 SQL_SELECT(
@@ -530,10 +470,13 @@ CHART(
 
 {{< figure src="../img/sysmon-tql.jpg" width="538">}}
 
-#### HTML
+### Chart in HTML
+
+Save the following HTML code as `sysmon.html` and open it in a web browser to visualize the system monitoring data.
+
+- sysmon.html
 
 ```html {linenos=table,linenostart=1}
-<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -548,13 +491,10 @@ CHART(
       }
     function buildTQL(table, tag, begin, end, format) {
       return `
-      SQL("select name, time, value "+
-        "from ${table} "+
+      SQL("select time, value from ${table} "+
         "where name = '${tag}' "+
-        "and time "+
-             "between ${begin}000000 "+
-             "and ${end}000000")
-      MAPVALUE(2, list(value(1), value(2)))
+        "and time between ${begin}000000 and ${end}000000")
+      MAPVALUE(1, list(value(0), value(1)))
       CHART(
         size("400px", "200px"),
         chartJSCode({
@@ -570,7 +510,7 @@ CHART(
             yAxis: { type: "value", axisLabel:{ formatter:${format} }},
             xAxis: { type: "time", axisLabel:{ rotate: -90 }},
             series: [
-              {type:"line", data:column(2), name:"${tag}", symbol:"none"},
+              {type:"line", data:column(1), name:"${tag}", symbol:"none"},
             ],
             tooltip: {trigger: "axis", valueFormatter:${format} },
             legend: {}
@@ -600,20 +540,20 @@ CHART(
    </script>
 </head>
 <body>
-    <div style='display:flex;float:left;flex-flow:row wrap'>
-        <div id="chart1" style="width: 400px; height: 200px;"></div>
-        <div id="chart2" style="width: 400px; height: 200px;"></div>
-        <div id="chart3" style="width: 400px; height: 200px;"></div>
-        <div id="chart4" style="width: 400px; height: 200px;"></div>
-    </div>
-    <script>
-        let end = (new Date()).getTime(); // now in millisec.
-        let begin = end - 30*(60*1000);   // 30 minutes before
-        loadChart('chart1', "EXAMPLE", "sys_load1", begin, end, "unitFormat")
-        loadChart('chart2', "EXAMPLE", "sys_load5", begin, end, "unitFormat")
-        loadChart('chart3', "EXAMPLE", "sys_cpu", begin, end, "percentFormat")
-        loadChart('chart4', "EXAMPLE", "sys_mem", begin, end, "percentFormat")
-    </script>
+  <div style='display:flex;float:left;flex-flow:row wrap'>
+    <div id="chart1" style="width: 400px; height: 200px;"></div>
+    <div id="chart2" style="width: 400px; height: 200px;"></div>
+    <div id="chart3" style="width: 400px; height: 200px;"></div>
+    <div id="chart4" style="width: 400px; height: 200px;"></div>
+  </div>
+  <script>
+    let end = (new Date()).getTime(); // now in millisec.
+    let begin = end - 30*(60*1000);   // 30 minutes before
+    loadChart('chart1', "EXAMPLE", "sys_load1", begin, end, "unitFormat")
+    loadChart('chart2', "EXAMPLE", "sys_load5", begin, end, "unitFormat")
+    loadChart('chart3', "EXAMPLE", "sys_cpu", begin, end, "percentFormat")
+    loadChart('chart4', "EXAMPLE", "sys_mem", begin, end, "percentFormat")
+  </script>
 </body>
 </html>
 ```
