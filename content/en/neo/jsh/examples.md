@@ -403,23 +403,44 @@ jsh / > ps
 const process = require("@jsh/process");
 const psutil = require("@jsh/psutil");
 const db = require("@jsh/db");
-const { parseTime } = require("@jsh/system");
+const system = require("@jsh/system");
 
 const tableName = "EXAMPLE";
 const tagPrefix = "sys_";
 
+// Checks the parent process ID. If it equals 1,
+// the process is already running as a daemon.
 if( process.ppid() == 1 ) {
+    // If it is already a daemon,
+    // the `runSysmon()` function is executed to start
+    // system monitoring.
     runSysmon();
 } else {
+    // If the process is not a daemon,
+    // `process.daemonize()` is called to restart the process
+    // as a background daemon.
     process.daemonize();
 }
 
 function runSysmon() {
+  // Schedules a task to run at specific intervals.
+  // Here, it runs every 15 seconds (0,15,30,45 in the cron-like syntax).
+  // The callback function receives a UNIX epoch (tick) in milliseconds
+  // for when the task is executed
   process.schedule("0,15,30,45 * * * * *", (tick) => {
+    // Retrieves the system's load averages for the past 1, 5, and 15 minutes.
+    // The values are destructured into load1, load5, and load15.
     let {load1, load5, load15} = psutil.loadAvg();
+    // Retrieves information about virtual memory usage,
+    // including total, used, and free memory.
     let mem = psutil.memVirtual();
+    // Calculates the CPU usage percentage since the last call.
+    // The first argument (0) specifies the interval in seconds,
+    // if it is 0 like this example, it calculates from the previous call.
+    // the second argument (false) disables per-CPU statistics.
     let cpu = psutil.cpuPercent(0, false);
-    let ts = parseTime(tick, "ms")
+    // Convert current time from milliseconds UNIX epoch to native time.
+    let ts = system.parseTime(tick, "ms")
     try{
       client = new db.Client({lowerCaseColumns:true});
       conn = client.connect();
@@ -460,7 +481,7 @@ CHART(
         yAxis: { type: "value", axisLabel:{ formatter: yformatter }},
         xAxis: { type: "time", axisLabel:{ rotate: -90 }},
         series: [
-            {type: "line", data: column(2), smooth:false, name: "LOAD1"},
+            {type: "line", data: column(2), name: "LOAD1", symbol:"none"},
         ],
         tooltip: {trigger: "axis", valueFormatter: yformatter},
         legend: {}
