@@ -68,6 +68,75 @@ The server will respond with:
 {"message":"greetings","name":"Karl"}
 ```
 
+### Static Content
+
+```js {linenos=table,linenostart=1}
+svr.staticFile("/readme", "/path/to/file.txt");
+svr.static("/static", "/path/to/static_dir");
+```
+
+### Redirect
+
+```js {linenos=table,linenostart=1}
+svr.get("/readme", (ctx) => {
+    ctx.redirect(http.status.Found, "/docs/readme.html");
+});
+```
+
+### RESTful API
+
+```js {linenos=table,linenostart=1}
+svr.get("/movies", (ctx) => {
+    list = [
+        {title:"Indiana Jones", id: 59793, studio: ["Paramount"]},
+        {title:"Indiana Jones", id: 64821, studio: ["Lucasfilm"]},
+    ]
+    ctx.JSON(http.status.OK, list);
+})
+svr.post("/movies", (ctx) => {
+    obj = ctx.body;
+    console.log("post:", obj);
+    ctx.JSON(http.status.Created, {success: true});
+});
+svr.delete("/movies/:id", (ctx) => {
+    let id = ctx.param("id");
+    console.log("delete:", id)
+    ctx.TEXT(http.status.NoContent, "Deleted.")
+})
+```
+
+- GET
+```sh
+curl -o - http://127.0.0.1:56802/movies
+```
+```json
+[
+  { "id": 59793, "studio": [ "Paramount" ], "title": "Indiana Jones" },
+  { "id": 64821, "studio": [ "Lucasfilm" ], "title": "Indiana Jones" }
+]
+```
+
+- POST
+
+```sh
+curl -o - -X POST http://127.0.0.1:56802/movies \
+    -H "Content-Type: application/json" \
+    -d '{"title":"new movie", "id":12345, "studio":["Unknown"]}'
+```
+
+- DELETE
+
+```sh
+curl -v -o - -X DELETE http://127.0.0.1:56802/movies/12345
+```
+
+```sh
+< HTTP/1.1 204 No Content
+< Content-Type: text/plain; charset=utf-8
+< Date: Thu, 08 May 2025 20:39:34 GMT
+<
+```
+
 ## HTTP Client
 
 This example demonstrates how to create an HTTP client using the `@jsh/http` module.

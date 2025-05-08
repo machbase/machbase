@@ -19,11 +19,11 @@ request(url, option)
 <h6>Parameters</h6>
 
 - `url` `String` destination address. e.g. `http://192.168.0.120/api/members`
-- `option` `Object` optional [RequestOption](#RequestOption).
+- `option` `Object` optional [ClientRequestOption](#clientrequestoption).
 
 <h6>Return value</h6>
 
-`ClientRequest` [ClientRequest](#ClientRequest) Object
+`ClientRequest` [ClientRequest](#clientrequest) Object
 
 <h6>Usage example</h6>
 
@@ -71,8 +71,8 @@ client.do(url, option, callback)
 <h6>Parameters</h6>
 
 - `url` `String`
-- `option` `Object` [RequestOption](#requestoption)
-- `callback` `(response) => {}` callback function with [ClientResponse](#ClientResponse).
+- `option` `Object` [ClientRequestOption](#clientrequestoption)
+- `callback` `(response) => {}` callback function with [ClientResponse](#clientresponse).
 
 <h6>Return value</h6>
 
@@ -162,8 +162,8 @@ lsnr.get("/hello/:name", (ctx) => {
     name = ctx.param("name")
     greeting = ctx.query("greeting")
     ctx.JSON(http.status.OK, {
-        "greeting": greeting,
-        "name": name,
+        "greeting =  greeting,
+        "name =  name,
     })
 })
 lsnr.static("/html", "/html")
@@ -201,7 +201,7 @@ all(request_path, handler)
 <h6>Parameters</h6>
 
 - `request_path` `String` The URL path to match.
-- `handler` `(context) => {}` A callback function that processes incoming requests, with the [context](#ServerContext) parameter providing details like request headers, parameters, and body.
+- `handler` `(context) => {}` A callback function that processes incoming requests, with the [context](#servercontext) parameter providing details like request headers, parameters, and body.
 
 <h6>Return value</h6>
 
@@ -232,7 +232,7 @@ get(request_path, handler)
 <h6>Parameters</h6>
 
 - `request_path` `String` The URL path to match.
-- `handler` `(context) => {}` A callback function that processes incoming requests, with the [context](#ServerContext) parameter providing details like request headers, parameters, and body.
+- `handler` `(context) => {}` A callback function that processes incoming requests, with the [context](#servercontext) parameter providing details like request headers, parameters, and body.
 
 <h6>Return value</h6>
 
@@ -265,7 +265,7 @@ put(request_path, handler)
 <h6>Parameters</h6>
 
 - `request_path` `String`  The URL path to match.
-- `handler` `(context) => {}` A callback function that processes incoming requests, with the [context](#ServerContext) parameter providing request-specific details.
+- `handler` `(context) => {}` A callback function that processes incoming requests, with the [context](#servercontext) parameter providing request-specific details.
 
 <h6>Return value</h6>
 
@@ -297,7 +297,7 @@ put(request_path, handler)
 <h6>Parameters</h6>
 
 - `request_path` `String`
-- `handler` `(context) => {}` A callback function that processes incoming requests, with the [context](#ServerContext) parameter providing request-specific details.
+- `handler` `(context) => {}` A callback function that processes incoming requests, with the [context](#servercontext) parameter providing request-specific details.
 
 <h6>Return value</h6>
 
@@ -316,7 +316,7 @@ delete(request_path, handler)
 <h6>Parameters</h6>
 
 - `request_path` `String`
-- `handler` `(context) => {}` A callback function that processes incoming requests, with the [context](#ServerContext) parameter providing request-specific details.
+- `handler` `(context) => {}` A callback function that processes incoming requests, with the [context](#servercontext) parameter providing request-specific details.
 
 <h6>Return value</h6>
 
@@ -684,3 +684,66 @@ getHeader(name)
 <h6>Return value</h6>
 
 - `String` header value.
+
+## status
+
+Defines http status codes.
+
+```js
+const http = require("@jsh/http");
+
+http.status.OK =                              200;
+http.status.Created =                         201;
+http.status.Accepted =                        202;
+http.status.NonAuthoritativeInfo =            203;
+http.status.NoContent =                       204;
+http.status.ResetContent =                    205;
+http.status.PartialContent =                  206;
+http.status.MultipleChoices =                 300;
+http.status.MovedPermanently =                301;
+http.status.Found =                           302;
+http.status.SeeOther =                        303;
+http.status.NotModified =                     304;
+http.status.UseProxy =                        305;
+http.status.TemporaryRedirect =               307;
+http.status.PermanentRedirect =               308;
+http.status.BadRequest =                      400;
+http.status.Unauthorized =                    401;
+http.status.PaymentRequired =                 402;
+http.status.Forbidden =                       403;
+http.status.NotFound =                        404;
+http.status.MethodNotAllowed =                405;
+http.status.NotAcceptable =                   406;
+http.status.ProxyAuthRequired =               407;
+http.status.RequestTimeout =                  408;
+http.status.Conflict =                        409;
+http.status.Gone =                            410;
+http.status.LengthRequired =                  411;
+http.status.PreconditionFailed =              412;
+http.status.RequestEntityTooLarge =           413;
+http.status.RequestURITooLong =               414;
+http.status.UnsupportedMediaType =            415;
+http.status.RequestedRangeNotSatisfiable =    416;
+http.status.ExpectationFailed =               417;
+http.status.Teapot =                          418;
+http.status.UnprocessableEntity =             422;
+http.status.Locked =                          423;
+http.status.FailedDependency =                424;
+http.status.TooEarly =                        425;
+http.status.UpgradeRequired =                 426;
+http.status.PreconditionRequired =            428;
+http.status.TooManyRequests =                 429;
+http.status.RequestHeaderFieldsTooLarge =     431;
+http.status.UnavailableForLegalReasons =      451;
+http.status.InternalServerError =             500;
+http.status.NotImplemented =                  501;
+http.status.BadGateway =                      502;
+http.status.ServiceUnavailable =              503;
+http.status.GatewayTimeout =                  504;
+http.status.HTTPVersionNotSupported =         505;
+http.status.VariantAlsoNegotiates =           506;
+http.status.InsufficientStorage =             507;
+http.status.LoopDetected =                    508;
+http.status.NotExtended =                     510;
+http.status.NetworkAuthenticationRequired =   511;
+```
