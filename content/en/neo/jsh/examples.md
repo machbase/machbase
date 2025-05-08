@@ -354,6 +354,38 @@ try {
 }
 ```
 
+## Machbase Append
+
+```js {linenos=table,linenostart=1,hl_lines=[10,16]}
+const db = require("@jsh/db");
+const { now, parseTime } = require("@jsh/system");
+
+client = new db.Client({lowerCaseColumns:true});
+var conn = null;
+var appender = null;
+try{
+    console.log("supportAppend:", client.supportAppend);
+    conn = client.connect();
+    appender = conn.appender("example", "name", "time", "value");
+    let ts = (new Date()).getTime(); // unix epoch (ms.)
+    for (let i = 0; i < 100; i++) {
+        // add 10 millisec.
+        ts = ts + 10;
+        // name, time, value
+        appender.append("tag-append", parseTime(ts, "ms"), i);
+    }
+} catch(e) {
+    console.log("Error:", e);
+} finally {
+    if (appender) appender.close();
+    if (conn) conn.close();
+}
+console.log("append:", appender.result());
+
+// supportAppend: true
+// append: {success:100, fail:0}
+```
+
 ## SQLite
 
 This example demonstrates how to use the `@jsh/db` module to interact with an in-memory SQLite database.

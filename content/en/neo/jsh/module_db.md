@@ -68,6 +68,11 @@ It is also possible to create Client with predefined bridge.
 |:--------------------|:-------------|:---------------|:--------------------|
 | bridge              | String       |                | bridge name         |
 
+<h6>Properties</h6>
+
+| Property           | Type       | Description           |
+|:-------------------|:-----------|:----------------------|
+| supportAppend      | Boolean    | `true` if the client supports "Append" mode. |
 
 ### connect()
 
@@ -126,6 +131,25 @@ exec(String *sqlText*, any ...*args*)
 <h6>Return value</h6>
 
 [Result](#result)
+
+### appender()
+
+Create new "appender".
+
+<h6>Syntax</h6>
+
+```js
+appender(table_name, ...columns)
+```
+
+<h6>Parameters</h6>
+
+- `table_name` `String` The table name of to append.
+- `columns` `String` A variable-length list of column names. If `columns` is omitted, all columns of the table will be appended in order.
+
+<h6>Return value</h6>
+
+[Appender](#appender)
 
 ## Rows
 
@@ -324,3 +348,61 @@ Result represents the outcome of the `exec()` method, providing details about th
 | types              | []String   | types of the result |
 
 
+## Appender
+
+### append()
+
+Invoke the `append` method with the specified values in the order of the columns.
+
+<h6>Syntax</h6>
+
+```js
+append(...values)
+```
+
+<h6>Parameters</h6>
+
+- `values` `any` The values to be appended to the table, provided in the order of the specified columns.
+
+<h6>Return value</h6>
+
+None.
+
+### close()
+
+Close the appender.
+
+<h6>Syntax</h6>
+
+```js
+close()
+```
+
+<h6>Parameters</h6>
+
+None.
+
+<h6>Return value</h6>
+
+None.
+
+### result()
+
+Returns the result of the append operation after the appender is closed.
+
+<h6>Syntax</h6>
+
+```js
+result()
+```
+
+<h6>Parameters</h6>
+
+None.
+
+<h6>Return value</h6>
+
+| Property           | Type       | Description        |
+|:-------------------|:-----------|:-------------------|
+| success            | Number     |                    |
+| faile              | Number     |                    |
