@@ -382,6 +382,19 @@ This example showcases how to leverage JavaScript for efficient process manageme
 
 ### Basic usage
 
+Save the following code as `sysmon.js` and execute it through the JSH terminal.
+
+```sh
+jsh / > sysmon
+jsh / > ps
+┌──────┬──────┬──────┬─────────────────┬──────────┐ 
+│  PID │ PPID │ USER │ NAME            │ UPTIME   │ 
+├──────┼──────┼──────┼─────────────────┼──────────┤ 
+│ 1040 │ 1    │ sys  │ /sysmon.js      │ 2h37m43s │ 
+│ 1042 │ 1025 │ sys  │ ps              │ 0s       │ 
+└──────┴──────┴──────┴─────────────────┴──────────┘ 
+```
+
 ```js {linenos=table,linenostart=1}
 const process = require("@jsh/process");
 const psutil = require("@jsh/psutil");
@@ -533,37 +546,46 @@ CHART(
       scriptElement.src = url;
       document.getElementsByTagName('body')[0].appendChild(scriptElement);
       }
-    function buildTQL(table, tag) {
+    function buildTQL(table, tag, begin, end, format) {
       return `
-      SQL_SELECT( "name", "time", "value",
-        from("${table}", "${tag}"), between("last-1200s", "last")
-      )
+      SQL("select name, time, value "+
+        "from ${table} "+
+        "where name = '${tag}' "+
+        "and time "+
+             "between ${begin}000000 "+
+             "and ${end}000000")
       MAPVALUE(2, list(value(1), value(2)))
       CHART(
         size("400px", "200px"),
         chartJSCode({
-            function yformatter(val, idx){
-                return val.toFixed(1)
+            function unitFormat(val){
+                return val.toFixed(1);
+            }
+            function percentFormat(val) {
+                return ""+val.toFixed(0)+"%";
             }
         }),
         chartOption({
             animation: false,
-            yAxis: { type: "value", axisLabel:{ formatter: yformatter }},
+            yAxis: { type: "value", axisLabel:{ formatter:${format} }},
             xAxis: { type: "time", axisLabel:{ rotate: -90 }},
             series: [
               {type:"line", data:column(2), name:"${tag}", symbol:"none"},
             ],
-            tooltip: {trigger: "axis", valueFormatter: yformatter},
+            tooltip: {trigger: "axis", valueFormatter:${format} },
             legend: {}
         })
       )`
     }
-    function loadChart(container, table, tag) {
-      fetch('/db/tql', {method:"POST", body: buildTQL(table, tag)})
+    function loadChart(containerID, table, tag, begin, end, format) {
+      fetch('/db/tql',
+        {method:"POST", body: buildTQL(table, tag, begin, end, format)}
+      )
       .then(response => {
         return response.json()
       })
       .then(obj => {
+        const container = document.getElementById(containerID)
         const chartDiv = document.createElement('div')
         chartDiv.setAttribute("id", obj.chartID)
         chartDiv.style.width = obj.style.width
@@ -584,12 +606,13 @@ CHART(
         <div id="chart3" style="width: 400px; height: 200px;"></div>
         <div id="chart4" style="width: 400px; height: 200px;"></div>
     </div>
-
     <script>
-        loadChart(document.getElementById('chart1'), "EXAMPLE", "sys_load1")
-        loadChart(document.getElementById('chart2'), "EXAMPLE", "sys_load5")
-        loadChart(document.getElementById('chart3'), "EXAMPLE", "sys_cpu")
-        loadChart(document.getElementById('chart4'), "EXAMPLE", "sys_mem")
+        let end = (new Date()).getTime(); // now in millisec.
+        let begin = end - 30*(60*1000);   // 30 minutes before
+        loadChart('chart1', "EXAMPLE", "sys_load1", begin, end, "unitFormat")
+        loadChart('chart2', "EXAMPLE", "sys_load5", begin, end, "unitFormat")
+        loadChart('chart3', "EXAMPLE", "sys_cpu", begin, end, "percentFormat")
+        loadChart('chart4', "EXAMPLE", "sys_mem", begin, end, "percentFormat")
     </script>
 </body>
 </html>
