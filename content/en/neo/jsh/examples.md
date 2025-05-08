@@ -374,6 +374,8 @@ When the script is run, it outputs the inserted record:
 
 ## System Monitoring
 
+### Data Collector
+
 The System Monitoring example demonstrates how to create a lightweight system monitoring tool using the `@jsh/process` and `@jsh/psutil` modules.
 This script runs as a background daemon and periodically collects key system metrics, such as CPU usage, memory utilization, and load averages over the past 1, 5, and 15 minutes.
 
@@ -383,8 +385,6 @@ This example showcases how to leverage JavaScript for efficient process manageme
 
 Save the example code as `sysmon.js` and execute it through the `JSH` terminal.
 It will store system load averages, CPU usage, and memory utilization percentages into the database table named "EXAMPLE".
-
-Save the following code as `sysmon.js` and execute it through the JSH terminal.
 
 ```sh
 jsh / > sysmon
@@ -458,30 +458,27 @@ function runSysmon() {
 }
 ```
 
-### Chart in TQL
+### Chart TQL
 
 Since the system usage data is stored in the database, querying and visualizing it becomes straightforward.
 
 ```js {linenos=table,linenostart=1}
-SQL_SELECT(
-    "name", "time", "value",
-    from("EXAMPLE", "sys_load1"),
-    between("last-1200s", "last")
-)
-MAPVALUE(2, list(value(1), value(2)))
+SQL(`select time, value from EXAMPLE
+    where name = ? and time between ? and ?`, 
+    "sys_load1", time("now -12000s"), time("now"))
+MAPVALUE(0, list(value(0), value(1)))
+POPVALUE(1)
 CHART(
-    size("600px", "400px"),
+    size("500px", "300px"),
     chartJSCode({
-        function yformatter(val, idx){
-            return val.toFixed(1)
-        }
+        function yformatter(val, idx){ return val.toFixed(1) }
     }),
     chartOption({
         animation: false,
         yAxis: { type: "value", axisLabel:{ formatter: yformatter }},
         xAxis: { type: "time", axisLabel:{ rotate: -90 }},
         series: [
-            {type: "line", data: column(2), name: "LOAD1", symbol:"none"},
+            {type: "line", data: column(0), name: "LOAD1", symbol:"none"},
         ],
         tooltip: {trigger: "axis", valueFormatter: yformatter},
         legend: {}
@@ -491,7 +488,52 @@ CHART(
 
 {{< figure src="../img/sysmon-tql.jpg" width="538">}}
 
-### Chart in HTML
+### Chart TQL with SCRIPT
+
+```js {linenos=table,linenostart=1}
+SCRIPT({
+    const db = require("@jsh/db");
+    const client = new db.Client();
+    const tags = [ "load1", "load5", "load15" ];
+    const end = (new Date()).getTime();
+    const begin = end - 240*(60*1000);
+    var result = {};
+    try {
+        conn = client.connect();
+        for(tag of tags) {
+            rows = conn.query(`
+                select time, value from example
+                where name = 'sys_${tag}'
+                and time between ${begin}000000 and ${end}000000`);
+            lst = [];
+            for( r of rows ) lst.push([r.time, r.value]);
+            if(rows) rows.close();
+            result[tag] = lst;
+        }
+    } catch(e) {
+        console.log(e.message);
+    } finally {
+        if(conn) conn.close();
+    }
+    $.yield({
+      animation: false,
+      yAxis: { type: "value", axisLabel:{ }},
+      xAxis: { type: "time", axisLabel:{ rotate: -90 }},
+      series: [
+        {type:"line", data:result.load1, name:"LOAD1", symbol:"none", smooth:true},
+        {type:"line", data:result.load5, name:"LOAD5", symbol:"none", smooth:true},
+        {type:"line", data:result.load15, name:"LOAD15", symbol:"none", smooth:true},
+      ],
+      tooltip: {trigger: "axis"},
+      legend: {}
+    });
+})
+CHART( size("500px", "300px") )
+```
+
+{{< figure src="../img/sysmon-tql-js.jpg" width="500">}}
+
+### Charts in HTML
 
 Save the following HTML code as `sysmon.html` and open it in a web browser to visualize the system monitoring data.
 
