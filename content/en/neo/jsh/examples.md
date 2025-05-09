@@ -696,24 +696,21 @@ Save the following HTML code as `sysmon.html` and open it in a web browser to vi
 
 The OPCUA Client example demonstrates how to create a data collector that connects to an OPC UA server, retrieves system metrics, and stores them in a database for further analysis and visualization. 
 
-**Key Features:**
-
-1. OPC UA Integration: Connects to an OPC UA server using the `@jsh/opcua` module to read system metrics.
-2. Scheduled Data Collection: Uses a cron-like schedule to periodically fetch data from the OPC UA server.
-3. Database Storage: Stores the collected data in a database table (`EXAMPLE`) for persistence and analysis.
-4. Data Visualization: The collected data can be visualized using the chart examples provided in the *System Monitoring* example.
-
 **Workflow:**
 
-1. Connection to OPC UA Server:
+1. OPC UA Integration:
+    - Connects to an OPC UA server using the `@jsh/opcua` module to read data.
     - The script connects to an OPC UA server at `opc.tcp://localhost:4840`.
     - It reads specific nodes (e.g., `cpu_percent`, `mem_percent`, `load1`, etc.) to retrieve system metrics.
-2. Data Collection:
+2. Scheduled Data Collection:
+    - Uses a cron-like schedule to periodically fetch data from the OPC UA server.
     - The script schedules a task to run every 10 seconds using `process.schedule`.
     - At each interval, it reads the values of the specified nodes and stores them in the database.
 3. Database Storage:
+    - Stores the collected data in a database table (`EXAMPLE`) for persistence and analysis.
     - The collected data is inserted into the `EXAMPLE` table with columns for `name`, `time`, and `value`.
 4. Data Visualization:
+    - The collected data can be visualized using the chart examples provided in the *System Monitoring* example.
     - The stored data can be visualized using the chart examples from the *System Monitoring* example. For instance, you can use the provided TQL or HTML chart examples to display metrics like CPU usage, memory utilization, and load averages.
 
 ### Data Collector
@@ -742,7 +739,7 @@ db = require("@jsh/db");
 if( process.ppid() == 1 ) {
   runClient();
 } else {
-  process.daemonize({reload:true});
+  process.daemonize();
 }
 
 function runClient() {
