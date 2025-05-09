@@ -278,12 +278,23 @@ Run the current script file as a daemon process with its parent process ID set t
 <h6>Syntax</h6>
 
 ```js
-daemonize()
+daemonize(opts)
 ```
 
 <h6>Parameters</h6>
 
-None.
+`opts` `Object` Options
+
+| Property           | Type       | Description        |
+|:-------------------|:-----------|:-------------------|
+| reload             | Boolean    | enable hot-reload  |
+
+If `reload` is set to `true`, the daemon process starts with a source code change watcher.
+When the main source code file is modified, the current daemon process is stopped and restarted immediately to apply the changes.
+This feature is useful during development and testing
+but should not be enabled in production environments, as it requires an additional system resources to monitor file changes.
+
+
 
 <h6>Return value</h6>
 
