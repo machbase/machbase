@@ -23,7 +23,7 @@ request(url, option)
 
 <h6>Return value</h6>
 
-`ClientRequest` [ClientRequest](#clientrequest) Object
+`Object` [ClientRequest](#clientrequest)
 
 <h6>Usage example</h6>
 
@@ -76,6 +76,8 @@ client.do(url, option, callback)
 
 <h6>Return value</h6>
 
+`Object`
+
 | Property           | Type       | Description        |
 |:-------------------|:-----------|:-------------------|
 | status             | Number     | http status code   |
@@ -109,7 +111,9 @@ client.do(
 | method              | String       | `GET`          | GET, POST, DELETE, PUT... |
 | headers             | Object       |                |                     |
 | body                | String       |                | Content to send     |
+| unix                | String       |                | Unix Domain Socket file path |
 
+If the `unix` option is specified, the HTTP client will attempt to connect to the server using the provided Unix domain socket file path.
 
 ## ClientRequest
 
@@ -159,11 +163,12 @@ const lsnr = new http.Listener({
     address:'127.0.0.1:8080',
 })
 lsnr.get("/hello/:name", (ctx) => {
-    name = ctx.param("name")
-    greeting = ctx.query("greeting")
+    let name = ctx.param("name");
+    let hello = ctx.query("greeting");
+    hello = hello == "" ?  "hello" : hello;
     ctx.JSON(http.status.OK, {
-        "greeting =  greeting,
-        "name =  name,
+        greeting: hello,
+        name:  name,
     })
 })
 lsnr.static("/html", "/html")
@@ -180,9 +185,11 @@ lsnr.listen();
 
 | Option       | Type      | Default    | Description         |
 |:-------------|:----------|:-----------|:--------------------|
-| network      | String    | `tcp`      | network type        |
-| address      | String    |            | listen address      |
+| network      | String    | `tcp`      | `tcp`, `unix`       |
+| address      | String    |            | `host:port`, `/path/to/file` |
 
+- TCP/IP: `{network:"tcp", address:"192.168.0.100:8080"}`
+- Unix Domain Socket: `{network:"unix", address:"/tmp/http.sock"}`
 ### all()
 
 The all() function is a method of the HTTP server listener that adds a route to handle all HTTP methods, including GET, POST, PUT, DELETE, and others. It allows you to define a single handler for multiple request types.
@@ -683,7 +690,7 @@ getHeader(name)
 
 <h6>Return value</h6>
 
-- `String` header value.
+`String` header value.
 
 ## status
 

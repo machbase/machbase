@@ -34,7 +34,10 @@ if( process.ppid() == 1 ) {
 
 function runServer() {
     // Creates an HTTP server bound to the specified address and port.
-    const svr = new http.Server({network:'tcp', address:'127.0.0.1:56802'})
+    const svr = new http.Server({
+        network:'tcp',
+        address:'127.0.0.1:56802',
+    })
     // Route Handling
     svr.get("/hello/:name", (ctx) => {
         let name = ctx.param("name")
@@ -66,6 +69,40 @@ The server will respond with:
 
 ```json
 {"message":"greetings","name":"Karl"}
+```
+
+### Unix Domain Socket
+
+The Unix Domain Socket example demonstrates how to create an HTTP server that communicates using a Unix domain socket instead of a TCP/IP network socket.
+This approach is useful for inter-process communication (IPC) on the same machine.
+
+**Workflow:**
+
+1. *Unix Domain Socket* Communication:
+    - Uses a file-based socket (/tmp/service.sock) for local communication.
+2. Efficient IPC:
+    - Ideal for scenarios where processes on the same machine need to communicate without network overhead.
+3. Compatibility with Tools:
+    - Supports tools like curl for testing and interacting with the server.
+
+```js {linenos=table,linenostart=1,hl_lines=[4,5]}
+const http = require("@jsh/http");
+
+const svr = new http.Server({
+    network: "unix",
+    address: "/tmp/service.sock",
+});
+svr.get("/hello/:name", (ctx) => {
+    const name = ctx.param("name");
+    ctx.JSON(http.status.OK, { message: `Hello, ${name}!` });
+});
+svr.listen();
+```
+
+Use curl to send a request to the server via the Unix domain socket:
+
+```sh
+curl -o - --unix-socket /tmp/service.sock http://localhost/hello/Karl
 ```
 
 ### Static Content
@@ -158,7 +195,8 @@ try {
     // Creates an HTTP GET request to the specified URL.
     req = http.request("http://127.0.0.1:56802/hello/Steve")
     // Logs the URL, status, and headers.
-    //  Parses the response body as JSON and logs the `message` and `name` fields.
+    // Parses the response body as JSON 
+    // and logs the `message` and `name` fields.
     req.do((rsp) => {
         // url: http://127.0.0.1:56802/hello/Steve
         println("url:", rsp.url);
@@ -184,6 +222,24 @@ try {
 
 1. Ensure the HTTP server is running (refer to the HTTP Server example).
 2. Run the script to send a GET request to the server.
+
+### Unix Domain Socket
+
+Use `{unix: "/path/to/unix_domain_socket/file"}` option to connect server using the unix domain socket.
+
+```js {linenos=table,linenostart=1}
+const {println} = require("@jsh/process");
+const http = require("@jsh/http")
+try {
+    req = http.request("http://localhost/movies", {unix:"/tmp/test.sock"})
+    req.do((rsp) => {
+        obj = rsp.json();
+        println(JSON.stringify(obj))
+    })
+} catch (e) {
+    println(e.toString());
+}
+```
 
 ## MQTT Subscriber
 
