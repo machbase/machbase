@@ -29,8 +29,7 @@ const http = require("@jsh/http")
 if( process.ppid() == 1 ) {
     runServer();
 } else {
-    // Enable hot-reloading to simplify testing during development.
-    process.daemonize({reload: true});
+    process.daemonize();
 }
 
 function runServer() {
