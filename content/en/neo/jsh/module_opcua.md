@@ -103,8 +103,8 @@ None.
 | statusText         | String     |                    |
 | statusCode         | String     |                    |
 | value              | any        |                    |
-| sourceTimestamp    | Time       |                    |
-| sourceTimestamp    | Time       |                    |
+| sourceTimestamp    | Number     | Unix epoch (milliseconds) |
+| sourceTimestamp    | Number     | Unix epoch (milliseconds) |
 
 
 ## MessageSecurityMode
