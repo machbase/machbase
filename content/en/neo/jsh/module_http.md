@@ -582,6 +582,30 @@ None.
 
 None.
 
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1}
+svr.get("/formats/text", ctx => {
+    ctx.TEXT(http.status.OK, "Hello World");
+})
+
+// Content-Type: "text/plain; charset=utf-8"
+//
+// Hello World
+```
+
+```js {linenos=table,linenostart=1}
+svr.get("/formats/text", ctx => {
+    name = "PI";
+    pi = 3.1415;
+    ctx.TEXT(http.status.OK, "Hello %s, %3.2f", name, pi);
+})
+
+// Content-Type: "text/plain; charset=utf-8"
+//
+// Hello PI, 3.14
+```
+
 ### JSON()
 
 <h6>Syntax</h6>
@@ -598,37 +622,33 @@ None.
 
 None.
 
-### HTML()
+<h6>Usage example</h6>
 
-<h6>Syntax</h6>
+```js {linenos=table,linenostart=1}
+svr.get("/formats/json", ctx => {
+    obj = {str:"Hello World", num: 123, bool: true};
+    ctx.JSON(http.status.OK, obj);
+})
 
-```js
-HTML(statusCode, content)
+// Content-Type: application/json; charset=utf-8
+//
+// {"bool":true,"num":123,"str":"Hello World"}
 ```
 
-<h6>Parameters</h6>
+```js {linenos=table,linenostart=1}
+svr.get("/formats/json-indent", ctx => {
+    obj = {str:"Hello World", num: 123, bool: true};
+    ctx.JSON(http.status.OK, obj, {indent: true})
+})
 
-None.
-
-<h6>Return value</h6>
-
-None.
-
-### XML()
-
-<h6>Syntax</h6>
-
-```js
-XML(statusCode, content)
+// Content-Type: application/json; charset=utf-8
+//
+// {
+//     "bool": true,
+//     "num": 123,
+//     "str": "Hello World"
+// }
 ```
-
-<h6>Parameters</h6>
-
-None.
-
-<h6>Return value</h6>
-
-None.
 
 ### YAML()
 
@@ -646,6 +666,20 @@ None.
 
 None.
 
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1}
+svr.get("/formats/yaml", ctx => {
+    ctx.YAML(http.status.OK, {str:"Hello World", num: 123, bool: true})
+})
+
+// Content-Type: application/yaml; charset=utf-8
+//
+// bool: true
+// num: 123
+// str: Hello World
+```
+
 ### TOML
 
 <h6>Syntax</h6>
@@ -661,6 +695,64 @@ None.
 <h6>Return value</h6>
 
 None.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1}
+svr.get("/formats/toml", ctx => {
+    ctx.TOML(http.status.OK, {str:"Hello World", num: 123, bool: true})
+})
+
+// Content-Type: application/toml; charset=utf-8
+//
+// bool = true
+// num = 123
+// str = 'Hello World'
+```
+
+### XML()
+
+<h6>Syntax</h6>
+
+```js
+XML(statusCode, content)
+```
+
+<h6>Parameters</h6>
+
+None.
+
+<h6>Return value</h6>
+
+None.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1}
+svr.get("/formats/xml", ctx => {
+    ctx.XML(http.status.OK, {str:"Hello World", num: 123, bool: true})
+})
+
+// Content-Type: application/xml; charset=utf-8
+//
+// <map><str>Hello World</str><num>123</num><bool>true</bool></map>
+```
+
+<!-- ### HTML()
+
+<h6>Syntax</h6>
+
+```js
+HTML(statusCode, content)
+```
+
+<h6>Parameters</h6>
+
+None.
+
+<h6>Return value</h6>
+
+None. -->
 
 ## ServerRequest
 
