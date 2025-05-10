@@ -39,7 +39,7 @@ function runServer() {
         address:'127.0.0.1:56802',
     })
     // Route Handling
-    svr.get("/hello/:name", (ctx) => {
+    svr.get("/hello/:name", ctx => {
         let name = ctx.param("name")
         // Defines a GET route that extracts the `name` parameter
         // from the URL and responds with a JSON object.
@@ -50,7 +50,7 @@ function runServer() {
     })
 
     // Starts the server and logs the address it is listening on.
-    svr.serve( (evt)=>{ 
+    svr.serve( evt => { 
         println("server started", "http://"+evt.address) ;
     });
 }
@@ -115,7 +115,7 @@ svr.static("/static", "/path/to/static_dir");
 ### Redirect
 
 ```js {linenos=table,linenostart=1}
-svr.get("/readme", (ctx) => {
+svr.get("/readme", ctx => {
     ctx.redirect(http.status.Found, "/docs/readme.html");
 });
 ```
@@ -123,19 +123,19 @@ svr.get("/readme", (ctx) => {
 ### RESTful API
 
 ```js {linenos=table,linenostart=1}
-svr.get("/movies", (ctx) => {
+svr.get("/movies", ctx => {
     list = [
         {title:"Indiana Jones", id: 59793, studio: ["Paramount"]},
-        {title:"Indiana Jones", id: 64821, studio: ["Lucasfilm"]},
+        {title:"Star Wars", id: 64821, studio: ["Lucasfilm"]},
     ]
     ctx.JSON(http.status.OK, list);
 })
-svr.post("/movies", (ctx) => {
+svr.post("/movies", ctx => {
     obj = ctx.request.body;
     console.log("post:", JSON.stringify(obj));
     ctx.JSON(http.status.Created, {success: true});
 });
-svr.delete("/movies/:id", (ctx) => {
+svr.delete("/movies/:id", ctx => {
     let id = ctx.param("id");
     console.log("delete:", id)
     ctx.TEXT(http.status.NoContent, "Deleted.")
@@ -149,7 +149,7 @@ curl -o - http://127.0.0.1:56802/movies
 ```json
 [
   { "id": 59793, "studio": [ "Paramount" ], "title": "Indiana Jones" },
-  { "id": 64821, "studio": [ "Lucasfilm" ], "title": "Indiana Jones" }
+  { "id": 64821, "studio": [ "Lucasfilm" ], "title": "Star Wars" }
 ]
 ```
 
@@ -172,6 +172,61 @@ curl -v -o - -X DELETE http://127.0.0.1:56802/movies/12345
 < Content-Type: text/plain; charset=utf-8
 < Date: Thu, 08 May 2025 20:39:34 GMT
 <
+```
+
+### HTML Templates
+
+This line enables the server to load all HTML template files matching the `/*.html` pattern.
+These templates allow the server to dynamically generate HTML responses by combining predefined layouts with data provided during runtime.
+
+```js
+svr.loadHTMLGlob("/*.html")
+
+// Defines a GET route /movielist that serves an HTML page.
+svr.get("/movielist", ctx => {
+    obj = {
+        subject: "Move List",
+        list: [
+            {title:"Indiana Jones", id: 59793, studio: ["Paramount"]},
+            {title:"Star Wars", id: 64821, studio: ["Lucasfilm"]},
+        ]
+    }
+    ctx.HTML(http.status.OK, "movie_list.html", obj)
+})
+```
+
+- HTML Template Code `movie_list.html`
+
+```html
+<html>
+    <body>
+        <h1>{{.subject}}</h1>
+        <ol>
+        {{range .list }}
+            <li> {{.id}} {{.title}} {{.studio}}
+        {{end}}
+        </ol>
+    </body>
+</html>
+```
+
+Sends a GET request to the `/movielist` endpoint.
+The server responds with an HTML page generated using the `movie_list.html` template and the `obj` data.
+
+```sh
+curl -v -o - -X DELETE http://127.0.0.1:56802/movielist
+```
+
+```
+<html>
+    <body>
+        <h1>Move List</h1>
+        <ol>
+            <li> 59793 Indiana Jones [Paramount]
+            <li> 64821 Star Wars [Lucasfilm]
+        </ol>
+    </body>
+</html>
 ```
 
 ## HTTP Client
