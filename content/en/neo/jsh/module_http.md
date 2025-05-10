@@ -405,13 +405,12 @@ svr.serve();
 <h6>Syntax</h6>
 
 ```js
-loadHTMLGlob(base_dir, pattern)
+loadHTMLGlob(pattern)
 ```
 
 <h6>Parameters</h6>
 
-- `base_dir` `String` The base directory path.
-- `pattern` `String` The file name glob pattern.
+- `pattern` `String` The file path glob pattern.
 
 <h6>Return value</h6>
 
@@ -423,7 +422,7 @@ None.
 const http = require("@jsh/http");
 
 const svr = new http.Server({ network: 'tcp', address: '127.0.0.1:8080' });
-svr.loadHTMLGlob("/templates", "**/*.html")
+svr.loadHTMLGlob("/templates/*.html")
 svr.get("/docs/hello.html", ctx => {
     ctx.HTML(http.status.OK, "hello.html", {str:"Hello World", num: 123, bool: true})
 })
@@ -792,7 +791,7 @@ None.
 <h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1}
-svr.loadHTMLGlob("/templates", "**/*.html")
+svr.loadHTMLGlob("/templates/*.html")
 
 svr.get("/hello.html", ctx => {
     obj = {str:"World", num: 123, bool: true};
