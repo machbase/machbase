@@ -152,17 +152,17 @@ None.
 
 ## Server
 
-The HTTP server listener.
+The HTTP server.
 
 <h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1}
 const http = require("@jsh/http")
-const lsnr = new http.Listener({
+const svr = new http.Server({
     network:'tcp',
     address:'127.0.0.1:8080',
 })
-lsnr.get("/hello/:name", (ctx) => {
+svr.get("/hello/:name", (ctx) => {
     let name = ctx.param("name");
     let hello = ctx.query("greeting");
     hello = hello == "" ?  "hello" : hello;
@@ -171,15 +171,15 @@ lsnr.get("/hello/:name", (ctx) => {
         name:  name,
     })
 })
-lsnr.static("/html", "/html")
-lsnr.listen();
+svr.static("/html", "/html")
+svr.serve();
 ```
 
 <h6>Creation</h6>
 
 | Constructor             | Description                          |
 |:------------------------|:-------------------------------------|
-| new Listener(options)   | Instantiates a HTTP client           |
+| new Server(options)      | Instantiates a HTTP server          |
 
 <h6>Options</h6>
 
@@ -190,9 +190,10 @@ lsnr.listen();
 
 - TCP/IP: `{network:"tcp", address:"192.168.0.100:8080"}`
 - Unix Domain Socket: `{network:"unix", address:"/tmp/http.sock"}`
+
 ### all()
 
-The all() function is a method of the HTTP server listener that adds a route to handle all HTTP methods, including GET, POST, PUT, DELETE, and others. It allows you to define a single handler for multiple request types.
+The all() function is a method of the HTTP server that adds a route to handle all HTTP methods, including GET, POST, PUT, DELETE, and others. It allows you to define a single handler for multiple request types.
 
 Key Features:
 
@@ -219,16 +220,16 @@ None.
 ```js {linenos=table,linenostart=1}
 const http = require("@jsh/http");
 
-const lsnr = new http.Listener({ network: 'tcp', address: '127.0.0.1:8080' });
-lsnr.all("/api/resource", (ctx) => {
+const svr = new http.Server({ network: 'tcp', address: '127.0.0.1:8080' });
+svr.all("/api/resource", (ctx) => {
     ctx.JSON(http.status.OK, { message: "Handled all methods" });
 });
-lsnr.listen();
+svr.serve();
 ```
 
 ### get()
 
-The get() function is a method of the HTTP server listener that adds a route to handle HTTP GET requests. It allows you to define a handler for processing incoming GET requests to a specific URL path.
+The get() function is a method of the HTTP server that adds a route to handle HTTP GET requests. It allows you to define a handler for processing incoming GET requests to a specific URL path.
 
 <h6>Syntax</h6>
 
@@ -250,18 +251,18 @@ None.
 ```js {linenos=table,linenostart=1}
 const http = require("@jsh/http");
 
-const lsnr = new http.Listener({ network: 'tcp', address: '127.0.0.1:8080' });
-lsnr.get("/hello/:name", (ctx) => {
+const svr = new http.Server({ network: 'tcp', address: '127.0.0.1:8080' });
+svr.get("/hello/:name", (ctx) => {
     const name = ctx.param("name");
     ctx.JSON(http.status.OK, { message: `Hello, ${name}!` });
 });
-lsnr.listen();
+svr.serve();
 ```
 
 
 ### post()
 
-The post() function is a method of the HTTP server listener that adds a route to handle HTTP POST requests. It allows you to define a handler for processing incoming POST requests to a specific URL path.
+The post() function is a method of the HTTP server that adds a route to handle HTTP POST requests. It allows you to define a handler for processing incoming POST requests to a specific URL path.
 
 <h6>Syntax</h6>
 
@@ -283,12 +284,12 @@ None.
 ```js {linenos=table,linenostart=1}
 const http = require("@jsh/http");
 
-const lsnr = new http.Listener({ network: 'tcp', address: '127.0.0.1:8080' });
-lsnr.post("/submit", (ctx) => {
+const svr = new http.Server({ network: 'tcp', address: '127.0.0.1:8080' });
+svr.post("/submit", (ctx) => {
     const data = ctx.body; // Access the request body
     ctx.JSON(http.status.Created, { message: "Data received", data: data });
 });
-lsnr.listen();
+svr.serve();
 ```
 
 ### put()
@@ -331,7 +332,7 @@ None.
 
 ### static()
 
-The static() function is a method of the HTTP server listener that defines a route to serve files from a specified static directory. It is useful for serving static assets like HTML, CSS, JavaScript, images, or other files in response to HTTP requests.
+The static() function is a method of the HTTP server that defines a route to serve files from a specified static directory. It is useful for serving static assets like HTML, CSS, JavaScript, images, or other files in response to HTTP requests.
 
 Key Features:
 
@@ -358,14 +359,14 @@ None.
 ```js {linenos=table,linenostart=1}
 const http = require("@jsh/http");
 
-const lsnr = new http.Listener({ network: 'tcp', address: '127.0.0.1:8080' });
-lsnr.static("/public", "/path/to/static/files");
-lsnr.listen();
+const svr = new http.Server({ network: 'tcp', address: '127.0.0.1:8080' });
+svr.static("/public", "/path/to/static/files");
+svr.serve();
 ```
 
 ### staticFile()
 
-The staticFile() function is a method of the HTTP server listener that defines a route to serve a specific static file for a given request path. It is useful for serving individual files, such as a single HTML page, image, or configuration file, in response to HTTP requests.
+The staticFile() function is a method of the HTTP server that defines a route to serve a specific static file for a given request path. It is useful for serving individual files, such as a single HTML page, image, or configuration file, in response to HTTP requests.
 
 Key Features:
 
@@ -393,20 +394,52 @@ None.
 ```js {linenos=table,linenostart=1}
 const http = require("@jsh/http");
 
-const lsnr = new http.Listener({ network: 'tcp', address: '127.0.0.1:8080' });
-lsnr.staticFile("/favicon.ico", "/path/to/favicon.ico");
-lsnr.listen();
+const svr = new http.Server({ network: 'tcp', address: '127.0.0.1:8080' });
+svr.staticFile("/favicon.ico", "/path/to/favicon.ico");
+svr.serve();
 ```
 
-### listen()
+### loadHTMLGlob()
 
-The listen() function is a method of the HTTP server listener that starts the server and blocks the control flow until the stop() function is called. It begins listening for incoming requests on the specified network and address.
 
 <h6>Syntax</h6>
 
 ```js
-listen()
-listen(callback)
+loadHTMLGlob(base_dir, pattern)
+```
+
+<h6>Parameters</h6>
+
+- `base_dir` `String` The base directory path.
+- `pattern` `String` The file name glob pattern.
+
+<h6>Return value</h6>
+
+None.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1}
+const http = require("@jsh/http");
+
+const svr = new http.Server({ network: 'tcp', address: '127.0.0.1:8080' });
+svr.loadHTMLGlob("/templates", "**/*.html")
+svr.get("/docs/hello.html", ctx => {
+    ctx.HTML(http.status.OK, "hello.html", {str:"Hello World", num: 123, bool: true})
+})
+svr.serve();
+```
+
+### serve()
+
+The serve() function is a method of the HTTP server that starts the server and blocks the control flow until the stop() function is called.
+It begins listening for incoming requests on the specified network and address.
+
+<h6>Syntax</h6>
+
+```js
+serve()
+serve(callback)
 ```
 
 <h6>Parameters</h6>
@@ -422,8 +455,8 @@ None.
 ```js {linenos=table,linenostart=1}
 const http = require("@jsh/http");
 
-const lsnr = new http.Listener({ network: 'tcp', address: '127.0.0.1:8080' });
-lsnr.listen((result) => {
+const svr = new http.Server({ network: 'tcp', address: '127.0.0.1:8080' });
+svr.serve((result) => {
     console.log(`Server is listening on ${result.network}://${result.message}`);
 });
 ```

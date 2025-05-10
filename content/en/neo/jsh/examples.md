@@ -50,7 +50,7 @@ function runServer() {
     })
 
     // Starts the server and logs the address it is listening on.
-    svr.listen( (evt)=>{ 
+    svr.serve( (evt)=>{ 
         println("server started", "http://"+evt.address) ;
     });
 }
@@ -96,7 +96,7 @@ svr.get("/hello/:name", (ctx) => {
     const name = ctx.param("name");
     ctx.JSON(http.status.OK, { message: `Hello, ${name}!` });
 });
-svr.listen();
+svr.serve();
 ```
 
 Use curl to send a request to the server via the Unix domain socket:
