@@ -771,21 +771,56 @@ svr.get("/formats/xml", ctx => {
 // <map><str>Hello World</str><num>123</num><bool>true</bool></map>
 ```
 
-<!-- ### HTML()
+### HTML()
 
 <h6>Syntax</h6>
 
 ```js
-HTML(statusCode, content)
+HTML(statusCode, template, obj)
 ```
 
 <h6>Parameters</h6>
 
-None.
+- `statusCode` `Number` HTTP Response Status Code
+- `template` `String` Template name
+- `obj` `any` Template value
 
 <h6>Return value</h6>
 
-None. -->
+None.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1}
+svr.loadHTMLGlob("/templates", "**/*.html")
+
+svr.get("/hello.html", ctx => {
+    obj = {str:"World", num: 123, bool: true};
+    ctx.HTML(http.status.OK, "hello.html", obj);
+})
+
+// Content-Type: text/html; charset=utf-8
+//
+// <html>
+//     <body>
+//         <h1>Hello, World!</h1>
+//         <p>num: 123</p>
+//         <p>bool: true</p>
+//     </body>
+// </html>
+```
+
+- /templates/hello.html
+
+```html
+<html>
+    <body>
+        <h1>Hello, {{.str}}!</h1>
+        <p>num: {{.num}}</p>
+        <p>bool: {{.bool}}</p>
+    </body>
+</html>
+```
 
 ## ServerRequest
 
