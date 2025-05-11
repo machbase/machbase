@@ -214,7 +214,7 @@ Sends a GET request to the `/movielist` endpoint.
 The server responds with an HTML page generated using the `movie_list.html` template and the `obj` data.
 
 ```sh
-curl -v -o - -X DELETE http://127.0.0.1:56802/movielist
+curl -v -o - http://127.0.0.1:56802/movielist
 ```
 
 ```
