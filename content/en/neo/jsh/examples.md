@@ -891,3 +891,72 @@ function runClient() {
   }
 }
 ```
+
+### Chart HTML Template
+
+This example demonstrates how to create an HTTP server route (`/sysmon`) that serves an HTML page containing a chart.
+The server fetches system monitoring data (e.g., load averages) from a database
+and dynamically generates the chart using the ECharts library.
+The HTML template (`http-sysmon.html`) is populated with the retrieved data,
+allowing for real-time visualization of system metrics such as `load1`, `load5`, and `load15`.
+This approach showcases how to integrate server-side data processing with client-side chart rendering for effective data visualization.
+
+```js {linenos=table,linenostart=1,hl_lines=[24]}
+svr.get("/sysmon", ctx => {
+    const tags = [ "load1", "load5", "load15" ];
+    const end = (new Date()).getTime();
+    const begin = end - 240*(60*1000);
+    var result = {};
+    try {
+        client = new db.Client();
+        conn = client.connect();
+        for( tag of tags ) {
+            rows = conn.query(`
+                select time, value from example
+                where name = 'sys_${tag}'
+                and time between ${begin}000000 and ${end}000000`)
+            lst = [];
+            for( r of rows ) lst.push([r.time, r.value]);
+            if(rows) rows.close();
+            result[tag] = lst;
+        }
+    } catch(e) {
+        console.log(e.message);
+    } finally {
+        if (conn) conn.close();
+    }
+    ctx.HTML(http.status.OK, "http-sysmon.html", result)
+})
+```
+
+- `http-sysmon.html`
+
+```html
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.6.0/echarts.min.js"></script>
+</head>
+
+<body>
+<div id="load" style="width:400px;height:300px;margin:auto;"></div>
+<script>
+    let chart = echarts.init(document.getElementById('load'), "dark");
+    chart.setOption({
+        title:{"text":"System Load Avg."},
+        animation:false, "color":["#80FFA5", "#00DDFF", "#37A2FF"],
+        legend:{ bottom: 7 },
+        tooltip:{"trigger":"axis"},
+        xAxis:{type:"time", axisLabel:{ rotate: -90 }},
+        yAxis:{type:"value"},
+        series:[
+            { type:"line", name:"load1", symbol:"none", data:{{.load1}} },
+            { type:"line", name:"load5", symbol:"none", data:{{.load5}} },
+            { type:"line", name:"load15",symbol:"none", data:{{.load15}} },
+        ]
+    });
+</script>
+</body>
+</html>
+```
+
+{{< figure src="../img/sysmon-template.jpg" width="397">}}
