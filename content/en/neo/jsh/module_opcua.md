@@ -86,7 +86,10 @@ read(read_request)
 `Object[]` Array of [ReadResult](#readresult)
 
 ```js
-vs = client.read({nodes:nodes, timestampsToReturn:ua.TimestampsToReturn.Both});
+vs = client.read({
+    nodes: [ "ns=1;s=ro_bool", "ns=1;s=rw_int32"],
+    timestampsToReturn:ua.TimestampsToReturn.Both
+});
 vs.forEach((v, idx) => {
     console.log(nodes[idx], v.status, v.statusCode, v.value, v.type);
 })

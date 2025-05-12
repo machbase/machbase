@@ -185,7 +185,7 @@ svr.loadHTMLGlob("/*.html")
 // Defines a GET route /movielist that serves an HTML page.
 svr.get("/movielist", ctx => {
     obj = {
-        subject: "Move List",
+        subject: "Movie List",
         list: [
             {title:"Indiana Jones", id: 59793, studio: ["Paramount"]},
             {title:"Star Wars", id: 64821, studio: ["Lucasfilm"]},
@@ -214,13 +214,13 @@ Sends a GET request to the `/movielist` endpoint.
 The server responds with an HTML page generated using the `movie_list.html` template and the `obj` data.
 
 ```sh
-curl -v -o - http://127.0.0.1:56802/movielist
+curl -o - http://127.0.0.1:56802/movielist
 ```
 
-```
+```html
 <html>
     <body>
-        <h1>Move List</h1>
+        <h1>Movie List</h1>
         <ol>
             <li> 59793 Indiana Jones [Paramount]
             <li> 64821 Star Wars [Lucasfilm]
