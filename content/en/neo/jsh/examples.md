@@ -902,7 +902,7 @@ allowing for real-time visualization of system metrics such as `load1`, `load5`,
 This approach showcases how to integrate server-side data processing with client-side chart rendering for effective data visualization.
 
 - `sysmon-server.js`
-```js {linenos=table,linenostart=1,hl_lines=[17,41]}
+```js {linenos=table,linenostart=1,hl_lines=[18,41]}
 const process = require("@jsh/process");
 const http = require("@jsh/http")
 const db = require("@jsh/db")
@@ -918,12 +918,12 @@ if( process.ppid() == 1 ) {
 }
 
 function runServer() {
+    const tags = [ "load1", "load5", "load15", "cpu", "mem" ];
     const svr = new http.Server({address:'127.0.0.1:56802'})
     svr.loadHTMLGlob("/*.html")
     svr.get("/sysmon", ctx => {
-        const tags = [ "load1", "load5", "load15" ];
         const end = (new Date()).getTime();
-        const begin = end - 240*(60*1000);
+        const begin = end - 20*(60*1000); // last 20 min.
         var result = {};
         try {
             client = new db.Client();
@@ -958,27 +958,38 @@ function runServer() {
 <head>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.6.0/echarts.min.js"></script>
 </head>
-
 <body>
-<div id="load" style="width:400px;height:300px;margin:auto;"></div>
+<div style='display:flex;float:left;flex-flow:row wrap;width:100%;'>
+    <div id="load" style="width:400px;height:300px;margin:4px;"></div>
+    <div id="cpu" style="width:400px;height:300px;margin:4px;"></div>
+    <div id="mem" style="width:400px;height:300px;margin:4px;"></div>
+</div>
 <script>
-    let chart = echarts.init(document.getElementById('load'), "dark");
-    chart.setOption({
-        title:{"text":"System Load Avg."},
-        animation:false, "color":["#80FFA5", "#00DDFF", "#37A2FF"],
-        legend:{ bottom: 7 },
-        tooltip:{"trigger":"axis"},
-        xAxis:{type:"time", axisLabel:{ rotate: -90 }},
-        yAxis:{type:"value"},
-        series:[
-            { type:"line", name:"load1", symbol:"none", data:{{.load1}} },
-            { type:"line", name:"load5", symbol:"none", data:{{.load5}} },
-            { type:"line", name:"load15",symbol:"none", data:{{.load15}} },
-        ]
-    });
+    function doChart(element, title, data) {
+        let chart = echarts.init(element, "dark");
+        chart.setOption({
+            animation:false, "color":["#80FFA5", "#00DDFF", "#37A2FF"],
+            title:{"text":title},
+            legend:{ bottom: 7 }, tooltip:{"trigger":"axis"},
+            xAxis:{type:"time", axisLabel:{ rotate: -90 }},
+            yAxis:{type:"value"},
+            series: data,
+        });
+    }
+    doChart(document.getElementById('load'), "System Load Avg.", [
+        { type:"line", name:"load1", symbol:"none", data:{{.load1}} },
+        { type:"line", name:"load5", symbol:"none", data:{{.load5}} },
+        { type:"line", name:"load15", symbol:"none", data:{{.load15}} },
+    ])
+    doChart(document.getElementById('cpu'), "CPU Usage", [
+        { type:"line", name:"cpu usage", symbol:"none", data:{{.cpu}} },
+    ])
+    doChart(document.getElementById('mem'), "Memory Usage", [
+        { type:"line", name:"mem usage", symbol:"none", data:{{.mem}} },
+    ])
 </script>
 </body>
 </html>
 ```
 
-{{< figure src="../img/sysmon-template.jpg" width="397">}}
+{{< figure src="../img/sysmon-template.jpg" width="600">}}
