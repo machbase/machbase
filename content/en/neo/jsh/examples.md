@@ -668,7 +668,7 @@ CHART(
 
 {{< figure src="../img/sysmon-tql.jpg" width="538">}}
 
-### Chart TQL with SCRIPT
+### Chart TQL with SCRIPT()
 
 ```js {linenos=table,linenostart=1}
 SCRIPT({
@@ -713,7 +713,7 @@ CHART( size("500px", "300px") )
 
 {{< figure src="../img/sysmon-tql-js.jpg" width="500">}}
 
-### Charts in HTML
+### Chart TQL in HTML
 
 Save the following HTML code as `sysmon.html` and open it in a web browser to visualize the system monitoring data.
 
@@ -803,6 +803,108 @@ Save the following HTML code as `sysmon.html` and open it in a web browser to vi
 
 {{< figure src="../img/sysmon-html.jpg" width="600">}}
 
+### Chart in HTML Template
+
+This example demonstrates how to create an HTTP server route (`/sysmon`) that serves an HTML page containing a chart.
+The server fetches system monitoring data (e.g., load averages) from a database
+and dynamically generates the chart using the ECharts library.
+The HTML template (`http-sysmon.html`) is populated with the retrieved data,
+allowing for real-time visualization of system metrics such as `load1`, `load5`, and `load15`.
+This approach showcases how to integrate server-side data processing with client-side chart rendering for effective data visualization.
+
+- `sysmon-server.js`
+```js {linenos=table,linenostart=1,hl_lines=[18,41]}
+const process = require("@jsh/process");
+const http = require("@jsh/http")
+const db = require("@jsh/db")
+
+if( process.ppid() == 1 ) {
+    try {
+        runServer();
+    }catch(e) {
+        console.log("server error", e)
+    }
+} else {
+    process.daemonize({reload:true});
+}
+
+function runServer() {
+    const tags = [ "load1", "load5", "load15", "cpu", "mem" ];
+    const svr = new http.Server({address:'127.0.0.1:56802'})
+    svr.loadHTMLGlob("/*.html")
+    svr.get("/sysmon", ctx => {
+        const end = (new Date()).getTime();
+        const begin = end - 20*(60*1000); // last 20 min.
+        var result = {};
+        try {
+            client = new db.Client();
+            conn = client.connect();
+            for( tag of tags ) {
+                rows = conn.query(`
+                    select time, value from example
+                    where name = 'sys_${tag}'
+                    and time between ${begin}000000 and ${end}000000`)
+                lst = [];
+                for( r of rows ) lst.push([r.time, r.value]);
+                if(rows) rows.close();
+                result[tag] = lst;
+            }
+        } catch(e) {
+            console.log(e);
+        } finally {
+            if (conn) conn.close();
+        }
+        ctx.HTML(http.status.OK, "http-sysmon.html", result)
+    })
+    svr.serve( (result)=>{ 
+        console.log("server started", "http://"+result.address) ;
+    });
+}
+```
+
+- `http-sysmon.html`
+
+```html
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js"></script>
+</head>
+<body>
+<div style='display:flex;float:left;flex-flow:row wrap;width:100%;'>
+    <div id="load" style="width:400px;height:300px;margin:4px;"></div>
+    <div id="cpu" style="width:400px;height:300px;margin:4px;"></div>
+    <div id="mem" style="width:400px;height:300px;margin:4px;"></div>
+</div>
+<script>
+    function doChart(element, title, data) {
+        let chart = echarts.init(element, "dark");
+        chart.setOption({
+            animation:false, "color":["#80FFA5", "#00DDFF", "#37A2FF"],
+            title:{"text":title},
+            legend:{ bottom: 7 }, tooltip:{"trigger":"axis"},
+            xAxis:{type:"time", axisLabel:{ rotate: -90 }},
+            yAxis:{type:"value"},
+            series: data,
+        });
+    }
+    doChart(document.getElementById('load'), "System Load Avg.", [
+        { type:"line", name:"load1", symbol:"none", data:{{.load1}} },
+        { type:"line", name:"load5", symbol:"none", data:{{.load5}} },
+        { type:"line", name:"load15", symbol:"none", data:{{.load15}} },
+    ])
+    doChart(document.getElementById('cpu'), "CPU Usage", [
+        { type:"line", name:"cpu usage", symbol:"none", data:{{.cpu}} },
+    ])
+    doChart(document.getElementById('mem'), "Memory Usage", [
+        { type:"line", name:"mem usage", symbol:"none", data:{{.mem}} },
+    ])
+</script>
+</body>
+</html>
+```
+
+{{< figure src="../img/sysmon-template.jpg" width="600">}}
+
 ## OPCUA Client
 
 The OPCUA Client example demonstrates how to create a data collector that connects to an OPC UA server, retrieves system metrics, and stores them in a database for further analysis and visualization. 
@@ -891,105 +993,3 @@ function runClient() {
   }
 }
 ```
-
-### Chart HTML Template
-
-This example demonstrates how to create an HTTP server route (`/sysmon`) that serves an HTML page containing a chart.
-The server fetches system monitoring data (e.g., load averages) from a database
-and dynamically generates the chart using the ECharts library.
-The HTML template (`http-sysmon.html`) is populated with the retrieved data,
-allowing for real-time visualization of system metrics such as `load1`, `load5`, and `load15`.
-This approach showcases how to integrate server-side data processing with client-side chart rendering for effective data visualization.
-
-- `sysmon-server.js`
-```js {linenos=table,linenostart=1,hl_lines=[18,41]}
-const process = require("@jsh/process");
-const http = require("@jsh/http")
-const db = require("@jsh/db")
-
-if( process.ppid() == 1 ) {
-    try {
-        runServer();
-    }catch(e) {
-        console.log("server error", e)
-    }
-} else {
-    process.daemonize({reload:true});
-}
-
-function runServer() {
-    const tags = [ "load1", "load5", "load15", "cpu", "mem" ];
-    const svr = new http.Server({address:'127.0.0.1:56802'})
-    svr.loadHTMLGlob("/*.html")
-    svr.get("/sysmon", ctx => {
-        const end = (new Date()).getTime();
-        const begin = end - 20*(60*1000); // last 20 min.
-        var result = {};
-        try {
-            client = new db.Client();
-            conn = client.connect();
-            for( tag of tags ) {
-                rows = conn.query(`
-                    select time, value from example
-                    where name = 'sys_${tag}'
-                    and time between ${begin}000000 and ${end}000000`)
-                lst = [];
-                for( r of rows ) lst.push([r.time, r.value]);
-                if(rows) rows.close();
-                result[tag] = lst;
-            }
-        } catch(e) {
-            console.log(e);
-        } finally {
-            if (conn) conn.close();
-        }
-        ctx.HTML(http.status.OK, "http-sysmon.html", result)
-    })
-    svr.serve( (result)=>{ 
-        console.log("server started", "http://"+result.address) ;
-    });
-}
-```
-
-- `http-sysmon.html`
-
-```html
-<html>
-<head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.6.0/echarts.min.js"></script>
-</head>
-<body>
-<div style='display:flex;float:left;flex-flow:row wrap;width:100%;'>
-    <div id="load" style="width:400px;height:300px;margin:4px;"></div>
-    <div id="cpu" style="width:400px;height:300px;margin:4px;"></div>
-    <div id="mem" style="width:400px;height:300px;margin:4px;"></div>
-</div>
-<script>
-    function doChart(element, title, data) {
-        let chart = echarts.init(element, "dark");
-        chart.setOption({
-            animation:false, "color":["#80FFA5", "#00DDFF", "#37A2FF"],
-            title:{"text":title},
-            legend:{ bottom: 7 }, tooltip:{"trigger":"axis"},
-            xAxis:{type:"time", axisLabel:{ rotate: -90 }},
-            yAxis:{type:"value"},
-            series: data,
-        });
-    }
-    doChart(document.getElementById('load'), "System Load Avg.", [
-        { type:"line", name:"load1", symbol:"none", data:{{.load1}} },
-        { type:"line", name:"load5", symbol:"none", data:{{.load5}} },
-        { type:"line", name:"load15", symbol:"none", data:{{.load15}} },
-    ])
-    doChart(document.getElementById('cpu'), "CPU Usage", [
-        { type:"line", name:"cpu usage", symbol:"none", data:{{.cpu}} },
-    ])
-    doChart(document.getElementById('mem'), "Memory Usage", [
-        { type:"line", name:"mem usage", symbol:"none", data:{{.mem}} },
-    ])
-</script>
-</body>
-</html>
-```
-
-{{< figure src="../img/sysmon-template.jpg" width="600">}}
