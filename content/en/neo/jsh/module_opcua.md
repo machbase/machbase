@@ -15,10 +15,10 @@ The OPCUA client.
 ```js {linenos=table,linenostart=1}
 opcua = require("@jsh/opcua");
 nodes = [
-        "ns=1;s=NoPermVariable",
-        "ns=1;s=ReadWriteVariable",
-        "ns=1;s=ReadOnlyVariable",
-        "ns=1;s=NoAccessVariable",
+    "ns=1;s=NoPermVariable",
+    "ns=1;s=ReadWriteVariable",
+    "ns=1;s=ReadOnlyVariable",
+    "ns=1;s=NoAccessVariable",
 ];
 
 try {
@@ -74,22 +74,53 @@ None.
 <h6>Syntax</h6>
 
 ```js
-read(option)
+read(read_request)
 ```
 
 <h6>Parameters</h6>
 
-`option` `Object[]` Array of [ReadOptions](#readoptions)
+`read_request` `Object` [ReadRequest](#readrequest)
 
 <h6>Return value</h6>
 
-None.
+`Object[]` Array of [ReadResult](#readresult)
 
-## ReadOptions
+```js
+vs = client.read({nodes:nodes, timestampsToReturn:ua.TimestampsToReturn.Both});
+vs.forEach((v, idx) => {
+    console.log(nodes[idx], v.status, v.statusCode, v.value, v.type);
+})
+```
+
+### write()
+
+<h6>Syntax</h6>
+
+```js
+write(...write_request)
+```
+
+<h6>Parameters</h6>
+
+`write_request` `Object` Variable length of [WriteRequest](#writerequest)
+
+<h6>Return value</h6>
+
+`Object` [WriteResult](#writeresult)
+
+```js
+rsp = client.write(
+    {node: "ns=1;s=rw_bool", value: false},
+    {node: "ns=1;s=rw_int32", value: 1234}
+)
+console.log("results:", rsp.results);
+```
+
+## ReadRequest
 
 | Option              | Type         | Default        | Description         |
 |:--------------------|:-------------|:---------------|:--------------------|
-| nodes               | []String     |                | server address      |
+| nodes               | String[]     |                | array of node IDs   |
 | maxAge              | Number       | `100`          | read retry interval in ms. |
 | timestampsToReturn  |              |  | [TimestampToReturn](#timestamptoreturn)     |
 
@@ -106,6 +137,25 @@ None.
 | sourceTimestamp    | Number     | Unix epoch (milliseconds) |
 | sourceTimestamp    | Number     | Unix epoch (milliseconds) |
 
+
+## WriteRequest
+
+<h6>Properties</h6>
+
+| Property           | Type       | Description        |
+|:-------------------|:-----------|:-------------------|
+| node               | String     | node ID            |
+| value              | any        | value to write     |
+
+## WriteResult
+
+<h6>Properties</h6>
+
+| Property           | Type       | Description        |
+|:-------------------|:-----------|:-------------------|
+| results            | Number[]   | array of status codes     |
+| timestamp          | Number     | Unix epoch (milliseconds) |
+| stringTables       | String[]   | array of strings   |
 
 ## MessageSecurityMode
 
