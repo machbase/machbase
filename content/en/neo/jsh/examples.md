@@ -901,32 +901,54 @@ The HTML template (`http-sysmon.html`) is populated with the retrieved data,
 allowing for real-time visualization of system metrics such as `load1`, `load5`, and `load15`.
 This approach showcases how to integrate server-side data processing with client-side chart rendering for effective data visualization.
 
-```js {linenos=table,linenostart=1,hl_lines=[24]}
-svr.get("/sysmon", ctx => {
-    const tags = [ "load1", "load5", "load15" ];
-    const end = (new Date()).getTime();
-    const begin = end - 240*(60*1000);
-    var result = {};
+- `sysmon-server.js`
+```js {linenos=table,linenostart=1,hl_lines=[17,41]}
+const process = require("@jsh/process");
+const http = require("@jsh/http")
+const db = require("@jsh/db")
+
+if( process.ppid() == 1 ) {
     try {
-        client = new db.Client();
-        conn = client.connect();
-        for( tag of tags ) {
-            rows = conn.query(`
-                select time, value from example
-                where name = 'sys_${tag}'
-                and time between ${begin}000000 and ${end}000000`)
-            lst = [];
-            for( r of rows ) lst.push([r.time, r.value]);
-            if(rows) rows.close();
-            result[tag] = lst;
-        }
-    } catch(e) {
-        console.log(e.message);
-    } finally {
-        if (conn) conn.close();
+        runServer();
+    }catch(e) {
+        console.log("server error", e)
     }
-    ctx.HTML(http.status.OK, "http-sysmon.html", result)
-})
+} else {
+    process.daemonize({reload:true});
+}
+
+function runServer() {
+    const svr = new http.Server({address:'127.0.0.1:56802'})
+    svr.loadHTMLGlob("/*.html")
+    svr.get("/sysmon", ctx => {
+        const tags = [ "load1", "load5", "load15" ];
+        const end = (new Date()).getTime();
+        const begin = end - 240*(60*1000);
+        var result = {};
+        try {
+            client = new db.Client();
+            conn = client.connect();
+            for( tag of tags ) {
+                rows = conn.query(`
+                    select time, value from example
+                    where name = 'sys_${tag}'
+                    and time between ${begin}000000 and ${end}000000`)
+                lst = [];
+                for( r of rows ) lst.push([r.time, r.value]);
+                if(rows) rows.close();
+                result[tag] = lst;
+            }
+        } catch(e) {
+            console.log(e);
+        } finally {
+            if (conn) conn.close();
+        }
+        ctx.HTML(http.status.OK, "http-sysmon.html", result)
+    })
+    svr.serve( (result)=>{ 
+        console.log("server started", "http://"+result.address) ;
+    });
+}
 ```
 
 - `http-sysmon.html`
