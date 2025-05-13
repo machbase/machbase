@@ -95,3 +95,108 @@ println(ts.Format("2006-01-02 15:04:05"));
 
 // 1970-01-01 00:00:01
 ```
+
+## Log
+
+<h6>Creation</h6>
+
+| Constructor             | Description                          |
+|:------------------------|:----------------------------------------------|
+| new Log(*name*)         | Instantiates a logger with the given name     |
+
+<h6>Options</h6>
+
+- `name` `String` logger name
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1}
+const system = require("@jsh/system");
+const log = new system.Log("testing");
+
+log.info("hello", "world");
+
+// Log output:
+//
+// 2025/05/13 14:08:41.937 INFO  testing    hello world
+```
+
+### trace()
+
+<h6>Syntax</h6>
+
+```js
+trace(...args)
+```
+
+<h6>Parameters</h6>
+
+- `args` `any` variable length of arguments for writing log message.
+
+<h6>Return value</h6>
+
+None.
+
+### debug()
+
+<h6>Syntax</h6>
+
+```js
+debug(...args)
+```
+
+<h6>Parameters</h6>
+
+- `args` `any` variable length of arguments for writing log message.
+
+<h6>Return value</h6>
+
+None.
+
+### info()
+
+<h6>Syntax</h6>
+
+```js
+info(...args)
+```
+
+<h6>Parameters</h6>
+
+- `args` `any` variable length of arguments for writing log message.
+
+<h6>Return value</h6>
+
+None.
+
+### warn()
+
+<h6>Syntax</h6>
+
+```js
+warn(...args)
+```
+
+<h6>Parameters</h6>
+
+- `args` `any` variable length of arguments for writing log message.
+
+<h6>Return value</h6>
+
+None.
+
+### error()
+
+<h6>Syntax</h6>
+
+```js
+error(...args)
+```
+
+<h6>Parameters</h6>
+
+- `args` `any` variable length of arguments for writing log message.
+
+<h6>Return value</h6>
+
+None.
