@@ -813,17 +813,13 @@ allowing for real-time visualization of system metrics such as `load1`, `load5`,
 This approach showcases how to integrate server-side data processing with client-side chart rendering for effective data visualization.
 
 - `sysmon-server.js`
-```js {linenos=table,linenostart=1,hl_lines=[18,41]}
+```js {linenos=table,linenostart=1,hl_lines=[14,37]}
 const process = require("@jsh/process");
 const http = require("@jsh/http")
 const db = require("@jsh/db")
 
 if( process.ppid() == 1 ) {
-    try {
-        runServer();
-    }catch(e) {
-        console.log("server error", e)
-    }
+    runServer();
 } else {
     process.daemonize({reload:true});
 }
