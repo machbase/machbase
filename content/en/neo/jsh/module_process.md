@@ -278,19 +278,12 @@ Run the current script file as a daemon process with its parent process ID set t
 <h6>Syntax</h6>
 
 ```js
-daemonize()
-```
-
-<h6>Parameters</h6>
-None.
-
-<!-- ```js
 daemonize(opts)
 ```
 
 <h6>Parameters</h6>
 
-`opts` `Object` Options
+- `opts` `Object` Options
 
 | Property           | Type       | Description        |
 |:-------------------|:-----------|:-------------------|
@@ -299,7 +292,7 @@ daemonize(opts)
 If `reload` is set to `true`, the daemon process starts with a source code change watcher.
 When the main source code file is modified, the current daemon process is stopped and restarted immediately to apply the changes.
 This feature is useful during development and testing
-but should not be enabled in production environments, as it requires an additional system resources to monitor file changes. -->
+but should not be enabled in production environments, as it requires an additional system resources to monitor file changes.
 
 <h6>Return value</h6>
 
@@ -308,7 +301,7 @@ None.
 <h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1}
-p = require("@jsh/process")
+const p = require("@jsh/process")
 if( p.ppid() == 1) {
     doBackgroundJob()
 } else {
@@ -316,14 +309,52 @@ if( p.ppid() == 1) {
     p.print("daemonize self, then exit")
 }
 
-func doBackgroundJob() {
+function doBackgroundJob() {
     for(true){
         p.sleep(1000);
     }
 }
 ```
 
+## isDaemon()
+
+Returns `true` if the parent process ID (`ppid()`) is `1`. This is equivalent to the condition `ppid() == 1`.
+
+<h6>Syntax</h6>
+
+```js
+isDaemon()
+```
+
+<h6>Parameters</h6>
+
+None.
+
+<h6>Return value</h6>
+
+Boolean
+
+## isOrphan()
+
+Returns `true` if the parent process ID is not assigned. This is equivalent to the condition `ppid() == 0xFFFFFFFF`.
+
+<h6>Syntax</h6>
+
+```js
+isOrphan()
+```
+
+<h6>Parameters</h6>
+
+None.
+
+<h6>Return value</h6>
+
+Boolean
+
+
 ## schedule()
+
 Run the callback function according to the specified schedule.
 The control flow remains blocked until the token's `stop()` method is invoked.
 
@@ -429,7 +460,7 @@ None.
 
 <h6>Return value</h6>
 
-[`Process[]`](#Process): Array of Process objects.
+`Object[]`: Array of [Process](#Process) objects.
 
 <h6>Usage example</h6>
 
@@ -439,7 +470,7 @@ list = p.ps()
 for( const x of list ) {
     console.log(
         p.pid, 
-        (p.ppid == 0xFFFFFFFF ? "-" : p.ppid), 
+        p.isOrphan() ? "-" : p.ppid,
         p.user, 
         p.name, 
         p.uptime)

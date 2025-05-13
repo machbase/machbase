@@ -80,7 +80,7 @@ connect to the database.
 
 <h6>Return value</h6>
 
-[Conn](#Conn)
+- `Object` [Conn](#Conn)
 
 
 ## Conn
@@ -105,7 +105,7 @@ query(String *sqlText*, any ...*args*)
 
 <h6>Return value</h6>
 
-[Rows](#rows)
+- `Object` [Rows](#rows)
 
 ### queryRow()
 
@@ -117,7 +117,7 @@ queryRow(String *sqlText*, any ...*args*)
 
 <h6>Return value</h6>
 
-[Row](#Row)
+- `Object` [Row](#Row)
 
 
 ### exec()
@@ -125,12 +125,17 @@ queryRow(String *sqlText*, any ...*args*)
 <h6>Syntax</h6>
 
 ```js
-exec(String *sqlText*, any ...*args*)
+exec(sqlText, ...args)
 ```
+
+<h6>Parameters</h6>
+
+- `sqlText` `String` Sql text string
+- `args` `any` A variable-length list of arguments.
 
 <h6>Return value</h6>
 
-[Result](#result)
+- `Object` [Result](#result)
 
 ### appender()
 
@@ -149,7 +154,7 @@ appender(table_name, ...columns)
 
 <h6>Return value</h6>
 
-[Appender](#appender)
+- `Object` [Appender](#appender)
 
 ## Rows
 
@@ -201,7 +206,7 @@ None.
 
 <h6>Return value</h6>
 
-any[]
+- `any[]`
 
 ### columns()
 
@@ -217,7 +222,7 @@ None.
 
 <h6>Return value</h6>
 
-[Columns](#columns)
+- `Object` [Columns](#columns)
 
 ### columnNames()
 
@@ -233,7 +238,7 @@ None.
 
 <h6>Return value</h6>
 
-String[]
+- `String[]`
 
 ### columnTypes()
 
@@ -249,7 +254,7 @@ None.
 
 <h6>Return value</h6>
 
-String[]
+- `String[]`
 
 
 ## Row
@@ -269,7 +274,7 @@ None.
 
 <h6>Return value</h6>
 
-[Columns](#columns)
+- `Object` [Columns](#columns)
 
 
 ### columnNames()
@@ -288,7 +293,7 @@ None.
 
 <h6>Return value</h6>
 
-String[]
+- `String[]`
 
 ### columnTypes()
 
@@ -306,8 +311,7 @@ None.
 
 <h6>Return value</h6>
 
-String[]
-
+- `String[]`
 
 ### values()
 
@@ -325,7 +329,7 @@ None.
 
 <h6>Return value</h6>
 
-Object
+- `any[]`
 
 ## Result
 
@@ -401,6 +405,8 @@ result()
 None.
 
 <h6>Return value</h6>
+
+- `Object`
 
 | Property           | Type       | Description        |
 |:-------------------|:-----------|:-------------------|

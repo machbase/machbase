@@ -23,7 +23,7 @@ request(url, option)
 
 <h6>Return value</h6>
 
-`Object` [ClientRequest](#clientrequest)
+- `Object` [ClientRequest](#clientrequest)
 
 <h6>Usage example</h6>
 
@@ -76,7 +76,7 @@ client.do(url, option, callback)
 
 <h6>Return value</h6>
 
-`Object`
+- `Object`
 
 | Property           | Type       | Description        |
 |:-------------------|:-----------|:-------------------|
@@ -130,7 +130,6 @@ do(callback)
 <h6>Parameters</h6>
 
 - `callback` `(response) => {}` callback function.
-
 
 <h6>Return value</h6>
 
@@ -849,7 +848,7 @@ getHeader(name)
 
 <h6>Return value</h6>
 
-`String` header value.
+- `String` header value.
 
 ## status
 

@@ -29,7 +29,7 @@ const http = require("@jsh/http")
 if( process.ppid() == 1 ) {
     runServer();
 } else {
-    process.daemonize();
+    process.daemonize({reload:true});
 }
 
 function runServer() {
@@ -306,27 +306,29 @@ This example is ideal for scenarios requiring real-time message processing and l
 - Create an application as `mqtt-sub.js`.
 
 ```js {linenos=table,linenostart=1}
-// This script creates a background MQTT subscriber that connects to a broker,
-// subscribes to a topic (test/topic), and processes incoming messages.
+// This script creates a background MQTT subscriber that connects
+// to a broker, subscribes to a topic (test/topic),
+// and processes incoming messages.
 // It demonstrates how to handle connection events, errors,
 // and message reception efficiently using JavaScript.
 //
 // Provides utilities for process management,
 // such as daemonizing and printing.
 const process = require("@jsh/process");
-const println = process.println;
+const system = require("@jsh/system")
+const log = new system.Log("mqtt-demo");
 // Provides MQTT client functionality for connecting to brokers
 // and handling messages.
 const mqtt = require("@jsh/mqtt");
 
 // Checks the parent process ID.
-// If it equals 1, the process is already running as a daemon.
-if( process.ppid() == 1 ) {
+// If the process is already running as a daemon.
+if( process.isDaemon() ) {
     // If the process is a daemon, it calls runBackground() to start
     // the MQTT subscriber logic.
-    console.log("mqtt-sub start...")
+    log.info("mqtt-sub start...");
     runBackground();
-    console.log("mqtt-sub terminated.")
+    log.info("mqtt-sub terminated.");
 } else {
     // If the process is not a daemon, process.daemonize() is called to
     // restart the process as a background daemon.
@@ -337,7 +339,7 @@ if( process.ppid() == 1 ) {
 function runBackground() {
     // A variable to hold the MQTT client instance.
     var client;
-    // Specifies the topic (test/topic) to which the subscriber will listen.
+    // Specifies the topic to which the subscriber will listen.
     var testTopic = "test/topic";
     client = new mqtt.Client({
         serverUrls: ["tcp://127.0.0.1:5653"],
@@ -346,22 +348,22 @@ function runBackground() {
         onConnect: (ack) => {
             // Triggered when the client successfully connects to the broker.
             // It subscribes to the test/topic with QoS level 0.
-            println("connected.");
-            println("subscribe to", testTopic);
+            log.info("connected.");
+            log.info("subscribe to", testTopic);
             client.subscribe({subscriptions:[{topic:testTopic, qos:0}]});
         },
         onConnectError: (err) => {
             // Triggered if there is an error during connection.
-            println("connect error", err);
+            log.warn("connect error", err);
         },
         onDisconnect: (disconn) => {
             // Triggered when the client disconnects from the broker.
-            println("disconnected.");
+            log.info("disconnected.");
         },
         onMessage: (msg) => {
             // Triggered when a message is received.
             // It logs the topic, QoS, and payload of the message.
-            println("recv topic:", msg.topic,
+            log.info("recv topic:", msg.topic,
                 "QoS:", msg.qos,
                 "payload:", msg.payload.string())
         },
@@ -375,7 +377,7 @@ function runBackground() {
             process.sleep(1000);
         }
     } catch (e) {
-        console.error(e.toString());
+        log.error(e.toString());
     } finally {
         client.disconnect()
     }
@@ -599,7 +601,7 @@ if( process.ppid() == 1 ) {
     // If the process is not a daemon,
     // `process.daemonize()` is called to restart the process
     // as a background daemon.
-    process.daemonize();
+    process.daemonize({reload:true});
 }
 
 function runSysmon() {
@@ -948,7 +950,7 @@ db = require("@jsh/db");
 if( process.ppid() == 1 ) {
   runClient();
 } else {
-  process.daemonize();
+  process.daemonize({reload:true});
 }
 
 function runClient() {
