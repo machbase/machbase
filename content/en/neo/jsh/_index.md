@@ -55,49 +55,48 @@ While its functionality is basic, it is sufficient for testing your scripts.
 
 For creating applications that run in the background, consider implementing them as daemon processes.
 
-```js {linenos=table,hl_lines=[4,"18-22"],linenostart=1}
-p = require("@jsh/process")
+```js {linenos=table,hl_lines=[8,"18-22"],linenostart=1}
+const p = require("@jsh/process")
+const s = require("@jsh/system")
+const log = new s.Log("example-daemon");
 
-if( p.ppid() != 1) {
-    p.daemonize()
-    console.log("svc daemonized")
-} else {
+if( p.isDaemon()) {
     doService()
+} else {
+    p.daemonize()
+    log.info("svc daemonized")
 }
-
 function doService() {
-    console.log("svc start - "+p.pid())
+    log.info("svc start - "+p.pid())
     p.addCleanup(()=>{
         // this code be executed when the process is terminated
-        console.log("svc stop - "+p.pid())
+        log.info("svc stop - "+p.pid())
     })
-
     sum = 0
     for( i = 0; i < 60; i++) {
         p.sleep(1000)
         sum += i
-        console.log("svc pid =", p.pid(), "i =", i)
+        log.info("svc pid =", p.pid(), "i =", i)
     }
-    console.log("svc sum =", sum)
+    log.info("svc sum =", sum)
 }
 ```
 
-- Line 4: `daemonize()` makes the current application to run as backgound process.
+- Line 8: `daemonize()` makes the current application to run as backgound process.
 - Line 18-22 : it runs every 1 second for a minute.
 
 Save the above code and run, the output messages are printed on the stdout which is the default log writer.
 
 ```
-2025/04/28 15:44:25.295 INFO  /sbin/svc.js     svc start - 1035
-2025/04/28 15:44:26.296 INFO  /sbin/svc.js     svc pid = 1035 i = 0
-2025/04/28 15:44:27.296 INFO  /sbin/svc.js     svc pid = 1035 i = 1
-2025/04/28 15:44:28.298 INFO  /sbin/svc.js     svc pid = 1035 i = 2
+2025/04/28 15:44:25.295 INFO  example-daemon   svc start - 1035
+2025/04/28 15:44:26.296 INFO  example-daemon   svc pid = 1035 i = 0
+2025/04/28 15:44:27.296 INFO  example-daemon   svc pid = 1035 i = 1
+2025/04/28 15:44:28.298 INFO  example-daemon   svc pid = 1035 i = 2
                 ... omit ...
-2025/04/28 15:45:24.358 INFO  /sbin/svc.js     svc pid = 1035 i = 58
-2025/04/28 15:45:25.360 INFO  /sbin/svc.js     svc pid = 1035 i = 59
-2025/04/28 15:45:25.360 INFO  /sbin/svc.js     svc sum = 1770
-2025/04/28 15:45:25.360 INFO  /sbin/svc.js     svc stop - 1035
-
+2025/04/28 15:45:24.358 INFO  example-daemon   svc pid = 1035 i = 58
+2025/04/28 15:45:25.360 INFO  example-daemon   svc pid = 1035 i = 59
+2025/04/28 15:45:25.360 INFO  example-daemon   svc sum = 1770
+2025/04/28 15:45:25.360 INFO  example-daemon   svc stop - 1035
 ```
 
 ## Services

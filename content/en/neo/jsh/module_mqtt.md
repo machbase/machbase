@@ -30,7 +30,7 @@ const client = new mqtt.Client({
 
 try {    
     client.connect();
-    client.awaitConnection(1000);
+    client.awaitConnect(1000);
     client.publish("test/topic", "Hello, MQTT!", 0)
 } catch(e) {
     console.log("Error:", e);
@@ -47,19 +47,24 @@ try {
 
 <h6>Options</h6>
 
-| Option              | Type         | Default        | Description         |
-|:--------------------|:-------------|:---------------|:--------------------|
-| serverUrls          | []String     |                | server addresses    |
-| keepAlive           | Number       | `10`           |                     |
-| cleanStart          | Boolean      | false          | clean session       |
-| username            | String       |                |                     |
-| password            | String       |                |                     |
-| clientID            | String       | random id      |                     |
-| onClientError       | function     |                | (err) => {}         |
-| onConnect           | function     |                | (ack) => {}         |
-| onConnectError      | function     |                | (err) => {}         |
-| onDisconnect        | function     |                | (disconnect) => {}  |
-| onMessage           | function     |                | (msg) => {}         |
+| Option                             | Type         | Default        | Description         |
+|:-----------------------------------|:-------------|:---------------|:--------------------|
+| serverUrls                         | String[]     |                | server addresses    |
+| keepAlive                          | Number       | `10`           |                     |
+| cleanStart                         | Boolean      | `true`         | clean session       |
+| username                           | String       |                |                     |
+| password                           | String       |                |                     |
+| clientID                           | String       | random id      |                     |
+| [onConnect](#onconnect)            | function     |                | (ack) => {}         |
+| [onConnectError](#onconnecterror)  | function     |                | (err) => {}         |
+| [onDisconnect](#ondisconnect)      | function     |                | (disconnect) => {}  |
+| [onClientError](#onclienterror)    | function     |                | (err) => {}         |
+| debug                              | Boolean      | `false`        |                     |
+| sessionExpiryInterval              | Number       | `60`           |                     |
+| connectRetryDelay                  | Number       | `10`           |                     |
+| connectTimeout                     | Number       | `10`           |                     |
+| packetTimeout                      | Number       | `5`            |                     |
+| queue                              | String       |                | `memory`            |
 
 ### connect()
 
@@ -82,28 +87,49 @@ None.
 <h6>Syntax</h6>
 
 ```js
-disconnect()
+disconnect(opt)
 ```
 
 <h6>Parameters</h6>
 
-None.
+- `opt` `Object`
+
+| Property           | Type       | Description           |
+|:-------------------|:-----------|:----------------------|
+| waitForEmptyQueue  | Boolean    |                       |
+| timeout            | Number     | disconnect wait timeout in milliseconds |
 
 <h6>Return value</h6>
 
 None.
 
-### awaitConnection()
+### awaitConnect()
 
 <h6>Syntax</h6>
 
 ```js
-awaitConnection()
+awaitConnect(timeout)
 ```
 
 <h6>Parameters</h6>
 
+- `timeout` `Number` time in milliseconds.
+
+<h6>Return value</h6>
+
 None.
+
+### awaitDisconnect()
+
+<h6>Syntax</h6>
+
+```js
+awaitDisconnect(timeout)
+```
+
+<h6>Parameters</h6>
+
+- `timeout` `Number` time in milliseconds.
 
 <h6>Return value</h6>
 
@@ -119,41 +145,16 @@ subscribe(opts)
 
 <h6>Parameters</h6>
 
-- `opts` `Object` [SubscriptionOption](#subscriptionoption)
+- `opts` `Object` *SubscriptionOption*
 
-<h6>Return value</h6>
-
-None.
-
-### publish()
-
-<h6>Syntax</h6>
-
-```js
-publish()
-```
-
-<h6>Parameters</h6>
-
-None.
-
-<h6>Return value</h6>
-
-None.
-
-
-## SubscriptionOption
-
-<h6>Properties</h6>
+<h6>SubscriptionOption</h6>
 
 | Property           | Type       | Description           |
 |:-------------------|:-----------|:----------------------|
-| subscriptions      | Object[]   | Array of [Subscription](#subscriptions) |
+| subscriptions      | Object[]   | Array of *Subscription* |
 | userProperties     | Object     | key-value object      |
 
-## Subscription
-
-<h6>Properties</h6>
+<h6>Subscription</h6>
 
 | Property           | Type       | Description           |
 |:-------------------|:-----------|:----------------------|
@@ -163,92 +164,107 @@ None.
 | noLocal            | Boolean    |                       |
 | retainAsPublished  | Boolean    |                       |
 
-## onMessage()
+<h6>Return value</h6>
 
-On publish message callback.
+None.
+
+<h6>Usage example</h6>
+
+```js
+const topicName = 'sensor/temperature';
+client.subscribe({subscriptions:[{topic:topicName, qos:0}]});
+```
+
+### publish()
 
 <h6>Syntax</h6>
 
 ```js
-funciton (msg) { }
+publish(topic, payload, qos)
 ```
 
 <h6>Parameters</h6>
 
-- `msg` `Message` [Message](#message)
+- `topic` `String`
+- `payload` `String` or `Number`
+- `qos` `Number` QoS `0`, `1`, `2`
+
+<h6>Return value</h6>
+
+- `Object`
+
+| Property           | Type       | Description           |
+|:-------------------|:-----------|:----------------------|
+| reasonCode         | Number     |                       |
+| properties         | Object     |                       |
+
+<h6>Usage example</h6>
+
+```js
+let r = client.publish('sensor/temperature', 'Hello World', 1)
+console.log(r.reasonCode)
+```
+
+### addPublishReceived()
+
+<h6>Syntax</h6>
+
+```js
+addPublishReceived(callback)
+```
+
+<h6>Parameters</h6>
+
+- `callback` `(msg) => {}` onPublishReceived callback
 
 <h6>Return value</h6>
 
 None.
 
+## onPublishReceived callback
 
-### Message
+Callback function that receives a message.
+
+<h6>Syntax</h6>
+
+```js
+function (msg) {}
+```
+
+<h6>Parameters</h6>
+
+- `msg` `Object` Message
+
+<h6>Message</h6>
+
+| Property           | Type       | Description           |
+|:-------------------|:-----------|:----------------------|
+| packetID           | Number     |                       |
+| topic              | String     |                       |
+| qos                | Number     | 0, 1, 2               |
+| retain             | Boolean    |                       |
+| payload            | Object     | Payload               |
+| properties         | Object     | Properties            |
+
+<h6>Payload</h6>
+
+- `msg.payload.bytes()`
+- `msg.payload.string()`
 
 <h6>Properties</h6>
 
 | Property           | Type       | Description           |
 |:-------------------|:-----------|:----------------------|
-| packetID           | Number     |                       |
-| qos                | Number     |                       |
-| retain             | Boolean    |                       |
-| topic              | String     |                       |
-| payload            | Object     | [Payload](#payload)   |
-| properties         | Object     | [MessageProperties](#messageproperties) |
-| user               | Object     | [UserProperties](#userproperties)       |
+| correlationData    | byte[]     |                       |
+| contentType        | String     |                       |
+| responseTopic      | String     |                       |
+| payloadFormat      | Number     | or undefined          |
+| messageExpiry      | Number     | or undefined          |
+| subscriptionIdentifier | Number | or undefined          |
+| topicAlias         | Number     | or undefined          |
+| user               | Object     |                       |
 
-### Payload
-
-#### bytes()
-
-<h6>Syntax</h6>
-
-```js
-bytes()
-```
-
-<h6>Parameters</h6>
-
-None.
-
-<h6>Return value</h6>
-
-Array of bytes.
-
-#### string()
-
-<h6>Syntax</h6>
-
-```js
-string()
-```
-
-<h6>Parameters</h6>
-
-None.
-
-<h6>Return value</h6>
-
-String
-
-### MessageProperties
-
-| Property           | Type       | Description           |
-|:-------------------|:-----------|:----------------------|
-| correlationData    |            |                       |
-| contentType        |            |                       |
-| responseTopic      |            |                       |
-| payloadFormat      |            |                       |
-| messageExpiry      |            |                       |
-| subscriptionIdentifier |        |                       |
-| topicAlias         |            |                       |
-
-### UserProperties
-
-| Property           | Type       | Description           |
-|:-------------------|:-----------|:----------------------|
-|                    |            |                       |
-
-## onConnect()
+## onConnect callback
 
 On connect callback.
 
@@ -262,11 +278,29 @@ funciton (ack) { }
 
 - `ack` `Object`
 
+| Property           | Type       | Description           |
+|:-------------------|:-----------|:----------------------|
+| sessionPresent     | Boolean    |                       |
+| reasonCode         | Number     |                       |
+| properties         | Object     | Properties            |
+
+<h6>Properties</h6>
+
+| Property           | Type       | Description           |
+|:-------------------|:-----------|:----------------------|
+| reasonString       | String     |                       |
+| reasonInfo         | String     |                       |
+| assignedClientID   | String     |                       |
+| authMethod         | String     |                       |
+| serverKeepAlive    | Number     | or undefined          |
+| sessionExpiryInterval | Number  | or undefined          |
+| user               | Object     |                       |
+
 <h6>Return value</h6>
 
 None.
 
-## onConnectError()
+## onConnectError callback
 
 On connect error callback.
 
@@ -284,7 +318,7 @@ funciton (err) { }
 
 None.
 
-## onDisconnect()
+## onDisconnect callback
 
 On disconnect callback
 
@@ -302,7 +336,7 @@ funciton (disconn) { }
 
 None.
 
-## onClientError()
+## onClientError callback
 
 On client error callback
 

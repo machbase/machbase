@@ -26,7 +26,7 @@ const {println} = require("@jsh/process");
 const http = require("@jsh/http")
 
 // This ensures the server runs as a background process.
-if( process.ppid() == 1 ) {
+if( process.isDaemon() ) { // equiv. if( process.ppid() == 1)
     runServer();
 } else {
     process.daemonize({reload:true});
@@ -323,7 +323,7 @@ const mqtt = require("@jsh/mqtt");
 
 // Checks the parent process ID.
 // If the process is already running as a daemon.
-if( process.isDaemon() ) {
+if( process.isDaemon() ) {  // equiv. if( process.ppid() == 1)
     // If the process is a daemon, it calls runBackground() to start
     // the MQTT subscriber logic.
     log.info("mqtt-sub start...");
@@ -343,8 +343,6 @@ function runBackground() {
     var testTopic = "test/topic";
     client = new mqtt.Client({
         serverUrls: ["tcp://127.0.0.1:5653"],
-        keepAlive: 30,
-        cleanStart: true,
         onConnect: (ack) => {
             // Triggered when the client successfully connects to the broker.
             // It subscribes to the test/topic with QoS level 0.
@@ -360,20 +358,25 @@ function runBackground() {
             // Triggered when the client disconnects from the broker.
             log.info("disconnected.");
         },
-        onMessage: (msg) => {
+    });
+    try {
+        // Initiates the connection to the MQTT broker.
+        client.connect();
+        client.awaitConnect(3*1000);
+        let count = 0;
+        client.addPublishReceived(msg => {
             // Triggered when a message is received.
             // It logs the topic, QoS, and payload of the message.
             log.info("recv topic:", msg.topic,
                 "QoS:", msg.qos,
                 "payload:", msg.payload.string())
-        },
-    });
-    try {
-        // Initiates the connection to the MQTT broker.
-        client.connect();
+            count++;
+        })
+        client.subscribe({subscriptions:[{topic:'test/#'}]})
         // Keeps the process running indefinitely,
         // allowing the subscriber to listen for messages.
-        while(true) {
+        for( i = 0; i < 10; i++) {
+            client.publish({topic:'test/topic'}, "num="+i);
             process.sleep(1000);
         }
     } catch (e) {
@@ -534,7 +537,8 @@ try{
     conn.exec(`INSERT INTO mem_example(company, employee) values(?, ?);`, 
         'Fedel-Gaylord', 12);
 
-    // Queries all rows from the `mem_example` table and logs the results to the console.
+    // Queries all rows from the `mem_example` table and logs 
+    // the results to the console.
     rows = conn.query(`select * from mem_example`);
     for( rec of rows ) {
         console.log(...rec)
@@ -543,7 +547,8 @@ try{
     // Handles any errors that occur during database operations 
     console.error(e.message);
 }finally{
-    // Ensures that the `rows` and `conn` objects are closed to release resources.
+    // Ensures that the `rows` and `conn` objects are closed 
+    // to release resources.
     rows.close();
     conn.close();
 }
@@ -592,7 +597,7 @@ const tagPrefix = "sys_";
 
 // Checks the parent process ID. If it equals 1,
 // the process is already running as a daemon.
-if( process.ppid() == 1 ) {
+if( process.isDaemon() ) {
     // If it is already a daemon,
     // the `runSysmon()` function is executed to start
     // system monitoring.
@@ -610,7 +615,7 @@ function runSysmon() {
   // The callback function receives a UNIX epoch (tick) in milliseconds
   // for when the task is executed
   process.schedule("0,15,30,45 * * * * *", (tick) => {
-    // Retrieves the system's load averages for the past 1, 5, and 15 minutes.
+    // Retrieves the system's load averages for the past 1,5 and 15 minutes.
     // The values are destructured into load1, load5, and load15.
     let {load1, load5, load15} = psutil.loadAvg();
     // Retrieves information about virtual memory usage,
@@ -820,7 +825,7 @@ const process = require("@jsh/process");
 const http = require("@jsh/http")
 const db = require("@jsh/db")
 
-if( process.ppid() == 1 ) {
+if( process.isDaemon() ) {  // equiv. if( process.ppid() == 1)
     runServer();
 } else {
     process.daemonize({reload:true});
@@ -947,7 +952,7 @@ process = require("@jsh/process");
 system = require("@jsh/system");
 db = require("@jsh/db");
 
-if( process.ppid() == 1 ) {
+if( process.isDaemon() ) {  // equiv. if( process.ppid() == 1)
   runClient();
 } else {
   process.daemonize({reload:true});
