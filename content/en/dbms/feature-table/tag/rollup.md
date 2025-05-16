@@ -97,6 +97,11 @@ The criteria entered in time_unit are viewed as the smallest criteria and even t
 
 > When a rollup table name conflict occurs, all rollup table creation fails and only tag tables are generated.
 
+When automatically generating a rollup, you can configure the rollup's DATA_PART_SIZE in bytes.
+```sql
+CREATE TAG TABLE tagtbl (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED) WITH ROLLUP ROLLUP_DATA_PART_SIZE=(data_part_size)
+```
+
 ### Extended ROLLUP
 
 By adding the EXTENSION keyword at the end of the syntax for creating Rollup tables, you can create an extended Rollup. An extended Rollup includes both the starting and ending values of the specified interval.

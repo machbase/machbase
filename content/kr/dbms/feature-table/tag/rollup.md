@@ -93,6 +93,11 @@ time_unit 에 들어간 기준을 가장 작은 기준으로 보고 상위 time 
 
 > 롤업 테이블 이름 충돌이 발생할시 롤업 테이블 생성은 모두 실패하고 태그 테이블만 생성된다.
 
+rollup을 자동으로 생성할때 rollup 의 DATA_PART_SIZE를 bytes 단위로 설정할 수 있다.
+```sql
+CREATE TAG TABLE tagtbl (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED) WITH ROLLUP ROLLUP_DATA_PART_SIZE=(data_part_size)
+```
+
 ### 확장 ROLLUP
 
 Rollup 테이블 생성 구문 마지막에 `EXTENSION` 키워드를 추가하면 확장 Rollup을 생성할 수 있다.
