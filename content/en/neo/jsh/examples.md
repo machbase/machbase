@@ -298,7 +298,8 @@ try {
 
 ## MQTT Subscriber
 
-The MQTT Subscriber example demonstrates how to create a background application that connects to an MQTT broker, subscribes to a specific topic, and processes incoming messages.
+The MQTT Subscriber example demonstrates how to create a background application that connects to an MQTT broker,
+subscribes to a specific topic, and processes incoming messages.
 Using the `@jsh/process` and `@jsh/mqtt` modules, the script runs as a daemon, ensuring it operates in the background.
 It handles events such as connection establishment, message reception, and disconnection, showcasing how to build a robust and efficient MQTT client in JavaScript.
 This example is ideal for scenarios requiring real-time message processing and lightweight background operations.
@@ -338,56 +339,53 @@ if( process.isDaemon() ) {  // equiv. if( process.ppid() == 1)
 // Defines the main function for the MQTT subscriber logic.
 function runBackground() {
     // A variable to hold the MQTT client instance.
-    var client;
-    // Specifies the topic to which the subscriber will listen.
-    var testTopic = "test/topic";
-    client = new mqtt.Client({
+    var client = new mqtt.Client({
         serverUrls: ["tcp://127.0.0.1:5653"],
-        onConnect: (ack) => {
-            // Triggered when the client successfully connects to the broker.
-            // It subscribes to the test/topic with QoS level 0.
-            log.info("connected.");
-            log.info("subscribe to", testTopic);
-            client.subscribe({subscriptions:[{topic:testTopic, qos:0}]});
-        },
-        onConnectError: (err) => {
-            // Triggered if there is an error during connection.
-            log.warn("connect error", err);
-        },
-        onDisconnect: (disconn) => {
-            // Triggered when the client disconnects from the broker.
-            log.info("disconnected.");
-        },
     });
     try {
-        // Initiates the connection to the MQTT broker.
-        client.connect();
-        client.awaitConnect(3*1000);
-        let count = 0;
-        client.addPublishReceived(msg => {
-            // Triggered when a message is received.
-            // It logs the topic, QoS, and payload of the message.
-            log.info("recv topic:", msg.topic,
-                "QoS:", msg.qos,
-                "payload:", msg.payload.string())
-            count++;
-        })
-        client.subscribe({subscriptions:[{topic:'test/#'}]})
-        // Keeps the process running indefinitely,
-        // allowing the subscriber to listen for messages.
-        for( i = 0; i < 10; i++) {
-            client.publish({topic:'test/topic'}, "num="+i);
-            process.sleep(1000);
+        // Triggered if there is an error during connection.
+        client.onConnectError = err => { log.warn("connect error", err); }
+        // Triggered when the client disconnects from the broker.
+        client.onDisconnect = () => { log.info("disconnected."); }
+        // Triggered when the client successfully connects to the broker.
+        var count = 0;
+        client.onConnect = ack => {
+            log.info("connected.", ack.reasonCode);
+            // It subscribes to the test/topic with QoS level 2.
+            r = client.subscribe({subscriptions:[{topic:'test/topic', qos: 2}]})
+            log.info("subscribe", 'test/topic', "result", r);
+            client.onMessage = msg => {
+                // Triggered when a message is received.
+                // It logs the topic, QoS, and payload of the message.
+                log.info("recv topic:", msg.topic,"payload:", msg.payload.string())
+                count++;
+                return true;
+            }
         }
+
+        // Initiates the connection to the MQTT broker.
+        client.connect({timeout: 3*1000});
+
+        // publish test messages to the topic.
+        for( let i = 0; i < 10; i++) {
+            client.publish({topic:'test/topic', qos: 1}, "test num="+i);
+        }
+        // wait the subscriber receives all messages.
+        while(true) {
+            if(count >= 10) break;
+            process.sleep(100);
+        }
+        // unsubscribe
+        client.unsubscribe({topics:['test/topic']})
+        // disconnect
+        client.disconnect({waitForEmptyQueue:true})
     } catch (e) {
-        log.error(e.toString());
-    } finally {
-        client.disconnect()
+        log.error("Error", e.message);
     }
 }
 ```
 
-- Run `mqtt-sub.js` from JSH.
+<!-- - Run `mqtt-sub.js` from JSH.
 
 ```
 jsh / > mqtt-sub
@@ -428,7 +426,7 @@ jsh / > ps
 │ 1025 │ -    │ sys  │ jsh  │ 16m50s │ 
 │ 1041 │ 1025 │ sys  │ ps   │ 0s     │ 
 └──────┴──────┴──────┴──────┴────────┘ 
-```
+``` -->
 
 ## Machbase Client
 
@@ -840,7 +838,7 @@ function runServer() {
         const begin = end - 20*(60*1000); // last 20 min.
         var result = {};
         try {
-            client = new db.Client();
+            client = new db.Client({lowerCaseColumns:true});
             conn = client.connect();
             for( tag of tags ) {
                 rows = conn.query(`
