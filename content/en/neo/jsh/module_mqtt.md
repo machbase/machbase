@@ -108,18 +108,24 @@ subscribe(opts)
 
 | Property           | Type       | Description           |
 |:-------------------|:-----------|:----------------------|
-| subscriptions      | Object[]   | Array of *Subscription* |
-| userProperties     | Object     | key-value object      |
+| **subscriptions**  | Object[]   | Array of *Subscription* |
+| properties         | Object     | *Properties*            |
 
 <h6>Subscription</h6>
 
 | Property           | Type       | Description           |
 |:-------------------|:-----------|:----------------------|
-| topic              | String     |                       |
+| **topic**          | String     |                       |
 | qos                | Number     | `0`, `1`, `2`         |
 | retainHandling     | Number     |                       |
 | noLocal            | Boolean    |                       |
 | retainAsPublished  | Boolean    |                       |
+
+<h6>Properties</h6>
+
+| Property           | Type       | Description           |
+|:-------------------|:-----------|:----------------------|
+| user               | Object     | key-value properties  |
 
 <h6>Return value</h6>
 
@@ -142,32 +148,55 @@ unsubscribe(opts)
 
 <h6>Parameters</h6>
 
-- `opts` `Object` *UnsubscriptionOption*
+- `opts` `Object` *UnsubscribeOption*
 
-<h6>UnsubscriptionOption</h6>
+<h6>UnsubscribeOption</h6>
 
 | Property           | Type       | Description           |
 |:-------------------|:-----------|:----------------------|
-| Topics             | String[]   | Array of topics to unsubscribe |
-| userProperties     | Object     | key-value object      |
+| **topics**         | String[]   | Array of topics to unsubscribe |
+| properties         | Object     | *Properties*          |
+
+<h6>Properties</h6>
+
+| Property           | Type       | Description           |
+|:-------------------|:-----------|:----------------------|
+| user               | Object     | user key-value properties |
 
 <h6>Return value</h6>
 
 None.
+
+<h6>Usage example</h6>
+
+```js
+const topicName = 'sensor/temperature';
+client.unsubscribe({topics:[topicName]});
+```
 
 ### publish()
 
 <h6>Syntax</h6>
 
 ```js
-publish(topic, payload, qos)
+publish(opts, payload)
 ```
 
 <h6>Parameters</h6>
 
-- `topic` `String`
+- `opts` `Object` *PublishOptions*
 - `payload` `String` or `Number`
-- `qos` `Number` QoS `0`, `1`, `2`
+
+<h6>PublishOptions</h6>
+
+| Property           | Type       | Description           |
+|:-------------------|:-----------|:----------------------|
+| **topic**          | String     |                       |
+| qos                | Number     | `0`, `1`, `2`         |
+| packetID           | String     |                       |
+| retain             | Boolean    |                       |
+| properties         | Object     |                       |
+
 
 <h6>Return value</h6>
 
@@ -233,7 +262,7 @@ On connect callback.
 <h6>Syntax</h6>
 
 ```js
-funciton (ack) { }
+function (ack) { }
 ```
 
 <h6>Parameters</h6>
@@ -269,7 +298,7 @@ On connect error callback.
 <h6>Syntax</h6>
 
 ```js
-funciton (err) { }
+function (err) { }
 ```
 
 <h6>Parameters</h6>
@@ -287,7 +316,7 @@ On disconnect callback
 <h6>Syntax</h6>
 
 ```js
-funciton (disconn) { }
+function (disconn) { }
 ```
 
 <h6>Parameters</h6>
@@ -305,7 +334,7 @@ On client error callback
 <h6>Syntax</h6>
 
 ```js
-funciton (err) { }
+function (err) { }
 ```
 
 <h6>Parameters</h6>

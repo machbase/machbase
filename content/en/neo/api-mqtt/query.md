@@ -49,16 +49,35 @@ A basic query example shows the client subscribe to `db/reply/#` and publish a q
 
 {{< neo_since ver="8.0.52" />}}
 
-- mqtt.js
+In this example, you will learn how to subscribe to a reply topic,
+send an SQL query request, and receive the result over MQTT.
 
-```js
+1. **Subscribe to the Reply Topic**  
+   The client first subscribes to a specific reply topic, such as `db/reply/my_query`.
+   This topic is where the server will send the query result.
+
+2. **Publish the SQL Query Request**  
+   The client then publishes a message to the `db/query` topic.
+   The message includes the SQL query (`q`),
+   the desired result format (`format`),
+   and the reply topic (`reply`) where the result should be sent.
+
+3. **Receive and Process the Response**  
+   When the server processes the query,
+   it sends the result to the specified reply topic.
+   The client receives this message and prints the result.
+
+Below is the complete code example:
+
+```js {linenos=table,linenostart=1,hl_lines=["9-11","13-17","20-24"]}
 const process = require("@jsh/process");
 const mqtt = require("@jsh/mqtt");
 
 const topicReply = "db/reply/my_query";
 const topicQuery = "db/query";
 try {
-    var client = new mqtt.Client( { serverUrls: ["tcp://127.0.0.1:5653"] } );
+    var conf = { serverUrls: ["tcp://127.0.0.1:5653"] };
+    var client = new mqtt.Client(conf);
     client.onConnect = () => {
         client.subscribe({subscriptions:[{topic:topicReply, qos: 1}]})
     }
@@ -78,6 +97,7 @@ try {
     do {
         process.sleep(100);
     } while(!received)
+    client.unsubscribe({topics:[topicReply]})
     client.disconnect({timeout:1000});
 } catch (e) {
     console.error("Error:", e.message);
@@ -90,7 +110,7 @@ try {
 npm install mqtt --save
 ```
 
-```js
+```js {linenos=table,linenostart=1}
 const mqtt = require("mqtt");
 
 const client = mqtt.connect("mqtt://127.0.0.1:5653", {
@@ -100,11 +120,14 @@ const client = mqtt.connect("mqtt://127.0.0.1:5653", {
     protocolVersion: 5,
 });
 
+const sqlText = "SELECT time,value FROM example "+
+    "where name = 'neo_cpu.percent' limit 3";
+
 client.on("connect", () => {
     client.subscribe("db/reply/#", (err) => {
         if (!err) {
             const req = {
-                q: "SELECT time,value FROM example where name = 'neo_cpu.percent' limit 3",
+                q: sqlText,
                 format: "box",
                 precision: 1,
                 timeformat: "15:04:05",
@@ -153,7 +176,7 @@ type ResultData struct {
 
 **Subscribe 'db/reply'**
 
-```go
+```go {linenos=table,linenostart=1}
 client.Subscribe("db/reply", 1, func(_ paho.Client, msg paho.Message) {
     buff := msg.Payload()
     result := Result{}

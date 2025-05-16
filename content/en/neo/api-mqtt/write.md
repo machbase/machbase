@@ -102,6 +102,8 @@ It is also possible to publish a single tuple, as shown below. Machbase Neo acce
 ]
 ```
 
+- mosquitto_pub
+
 {{< tabs items="MQTT v5,MQTT v3.1">}}
 {{< tab >}}
 
@@ -124,6 +126,61 @@ mosquitto_pub -h 127.0.0.1 -p 5653 \
 
 {{< /tab >}}
 {{< /tabs >}}
+
+- JSH app
+
+The following JSH app demonstrates how to publish multiple records to a Machbase Neo table using MQTT in JavaScript.
+This code runs as a standalone JSH script and SCRIPT() function in a TQL script.
+
+This example shows how to efficiently send multiple records to a Machbase Neo table using MQTT and JSH application.
+The use of the append method and array payload allows for high-throughput data ingestion,
+which is ideal for IoT and real-time data collection scenarios.
+
+Here’s a step-by-step explanation for each main part of the code:
+
+```js {linenos=table,linenostart=1,hl_lines=["24-28",34]}
+// The script imports the required modules and creates an MQTT client
+// configured to connect to the local MQTT broker at port 5653.
+const system = require("@jsh/system");
+const mqtt = require("@jsh/mqtt");
+var conf = { serverUrls: ["tcp://127.0.0.1:5653"] };
+var client = new mqtt.Client(conf);
+
+// Sets up the publish options:
+var pubOpt = {
+    topic:"db/write/EXAMPLE", // Data will be written to the EXAMPLE table.
+    qos:0,                    // Quality of Service level 0 (at most once).
+    properties: {
+        user: {
+            method: "append", // "append" mode.
+            timeformat: "ms", // timestamps are in milliseconds.
+        },
+    },
+};
+
+// Prepares an array of records to be written.
+// Each record contains a name,
+// a timestamp (in milliseconds), and a value.
+ts = (new Date()).getTime();
+var pubPayload = [
+    [ "my-car", ts+0, 32.1 ],
+    [ "my-car", ts+1, 65.4 ],
+    [ "my-car", ts+2, 76.5 ],
+];
+
+client.onConnect = ()=>{
+    // When the client connects to the broker,
+    // it publishes the prepared payload to the specified topic
+    // with the defined options.
+    client.publish(pubOpt, JSON.stringify(pubPayload))
+}
+
+// The client connects to the broker (with a 3-second timeout),
+// sends the data,
+// and then disconnects after ensuring all messages have been sent.
+client.connect({timeout:3000});
+client.disconnect({waitForEmptyQueue: true, timeout:3000});
+```
 
 **PUBLISH single record**
 
