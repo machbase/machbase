@@ -45,7 +45,46 @@ A basic query example shows the client subscribe to `db/reply/#` and publish a q
 
 ## Client Examples
 
-### Javascript Client
+### JSH app
+
+{{< neo_since ver="8.0.52" />}}
+
+- mqtt.js
+
+```js
+const process = require("@jsh/process");
+const mqtt = require("@jsh/mqtt");
+
+const topicReply = "db/reply/my_query";
+const topicQuery = "db/query";
+try {
+    var client = new mqtt.Client( { serverUrls: ["tcp://127.0.0.1:5653"] } );
+    client.onConnect = () => {
+        client.subscribe({subscriptions:[{topic:topicReply, qos: 1}]})
+    }
+    var received = false
+    client.onMessage = (msg) => {
+        console.log('---- reply ----')
+        console.log(msg.payload.string());
+        received = true
+    }
+
+    client.connect( {timeout: 1000} );
+    client.publish({topic:topicQuery, qos: 1}, JSON.stringify({
+        q: `select name,time,value from example limit 5`,
+        format: 'csv',
+        reply: topicReply,
+    }))
+    do {
+        process.sleep(100);
+    } while(!received)
+    client.disconnect({timeout:1000});
+} catch (e) {
+    console.error("Error:", e.message);
+}
+```
+
+### Node.js Client
 
 ```sh
 npm install mqtt --save
