@@ -6,7 +6,7 @@ weight: 70
 
 ## Configuration of duplication removal
 
-When creating the TAG table, the duration for duplicate removal is passed as a table property. The maximum configurable duration for duplicate removal is 43,200 minutes (30 days).
+When creating the TAG table, the duration for duplicate removal is passed as a table property. The maximum configurable duration for duplicate removal is 43200 minutes (30 days).
 
 ```sql
 -- If the newly inserted data duplicates existing data within 1440 minutes(one day) from system time those data will be deleted.
@@ -51,5 +51,5 @@ ALTER TABLE {table_name} set TAG_DUPLICATE_CHECK_DURATION={duration in minutes};
 
 ## Constraints of duplication removal
 
-* The duplication removal setting can be configured on a minute basis, with a maximum limit of 43,200 minutes (30 days).
+* The duplication removal setting can be configured on a minute basis, with a maximum limit of 43200 minutes (30 days).
 * If the existing input data has already been deleted, any subsequent occurrence of the same data will not be considered as a duplicate for the purpose of duplication removal.
