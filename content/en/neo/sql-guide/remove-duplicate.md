@@ -25,7 +25,7 @@ Essentially, this mechanism implements a "first-write-wins" semantic within the 
 
 The Duplicate Transmission Removal feature is configured at the time of TAG table creation using a specific table property:
 
-*   **`TAG_DUPLICATE_CHECK_DURATION`**: This property specifies the duration, in days, for the lookback window used for duplicate detection.
+*   **`TAG_DUPLICATE_CHECK_DURATION`**: This property specifies the duration, in minutes, for the lookback window used for duplicate detection.
 
 **Syntax:**
 
@@ -36,13 +36,13 @@ CREATE TAG TABLE table_name (
     value_column datatype [SUMMARIZED]
     [, additional_columns...]
 )
-TAG_DUPLICATE_CHECK_DURATION = duration_in_days;
+TAG_DUPLICATE_CHECK_DURATION = duration_in_minutes;
 ```
 
-*   `duration_in_days`: An integer specifying the lookback period in days.
-    *   Minimum value: `1` (day)
-    *   Maximum value: `30` (days)
-    *   Default value: `30` (days)
+*   `duration_in_days`: An integer specifying the lookback period in minutes.
+    *   Minimum value: `1` (minute)
+    *   Maximum value: `43200` (minutes)
+    *   Default value: `0` (disabled)
 
 **Verification:**
 
@@ -63,12 +63,17 @@ The configured duration for a specific TAG table can be verified by querying the
       AND name = 'TAG_DUPLICATE_CHECK_DURATION';
     ```
 
+**Changing configuration**
+TAG_DUPLICATE_CHECK_DURATION settings can be modified as shown below.
+```sql
+ALTER TABLE {table_name} set TAG_DUPLICATE_CHECK_DURATION={duration in minutes};
+```
+
 ## Behavior and Constraints
 
 Understanding the following constraints and behavioral aspects is crucial for effectively utilizing this feature:
 
-*   **Immutability:** The `TAG_DUPLICATE_CHECK_DURATION` policy, once set during table creation, **cannot** be altered thereafter. Modifying the deduplication duration requires recreating the table.
-*   **Granularity and Scope:** The duration is configured exclusively in daily units, with a maximum temporal scope of 30 days.
+*   **Granularity and Scope:** The duration is configured exclusively in minutes units, with a maximum temporal scope of 43200 minutes(30 days).
 *   **Interaction with Data Deletion:** The deduplication check relies on the presence of the original data point within the lookback window. If the *original* data record (the "first write") is explicitly deleted from the TAG table *before* an identical duplicate arrives, the newly arriving record will **not** be identified as a duplicate. It will be treated as a new "first write" because its potential duplicate counterpart no longer exists for comparison within the database's current state.
 *   **Semantic Behavior:** The mechanism strictly adheres to keeping the *first* encountered record for a given (Primary Key, Basetime) combination and discarding subsequent identical entries within the defined window. It is not suitable for scenarios requiring "last-write-wins" semantics.
 *   **Consistency Model:** In high-volume, real-time ingestion scenarios, there might be minimal latency between data insertion and the point at which the deduplication check fully reflects the most current state across all internal structures. This is consistent with typical eventually consistent behaviors in distributed data systems.
@@ -86,13 +91,13 @@ This section provides practical examples of creating a TAG table with duplicate 
 DROP TABLE IF EXISTS dup_tag;
 
 -- Create a TAG table named 'dup_tag'
--- Configure it to check for duplicates within a 1-day window
+-- Configure it to check for duplicates within a 1440 minutes (1-day) window
 CREATE TAG TABLE dup_tag (
     name VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
     value DOUBLE SUMMARIZED -- Value column (summarized is optional for dedupe itself)
 )
-TAG_DUPLICATE_CHECK_DURATION=1; -- Enable deduplication with a 1-day lookback
+TAG_DUPLICATE_CHECK_DURATION=1440; -- Enable deduplication with a 1440 minutes (1-day) lookback
 ```
 
 **2. Data Insertion:**
