@@ -15,27 +15,16 @@ The MQTT client.
 
 ```js {linenos=table,linenostart=1}
 const mqtt = require("@jsh/mqtt");
-
-const client = new mqtt.Client({
-        serverUrls: ["tcp://127.0.0.1:1236"],
-        keepAlive: 30,
-        cleanStart: true,
-        onConnect: (ack) => {
-            println("connected.");
-        },
-        onConnectError: (err) => {
-            println("connect error", err);
-        },
-    });
-
-try {    
-    client.connect();
-    client.awaitConnect(1000);
+const client = new mqtt.Client({ serverUrls: ["tcp://127.0.0.1:1236"] });
+try {
+    client.onConnect = connAck => { println("connected."); }
+    client.onConnectError = err => { println("connect error", err); }
+    client.connect({timeout: 10*1000});
     client.publish("test/topic", "Hello, MQTT!", 0)
 } catch(e) {
     console.log("Error:", e);
 } finally {
-    client.disconnect();
+    client.disconnect({waitForEmptyQueue:true});
 }
 ```
 
@@ -55,28 +44,28 @@ try {
 | username                           | String       |                |                     |
 | password                           | String       |                |                     |
 | clientID                           | String       | random id      |                     |
-| [onConnect](#onconnect)            | function     |                | (ack) => {}         |
-| [onConnectError](#onconnecterror)  | function     |                | (err) => {}         |
-| [onDisconnect](#ondisconnect)      | function     |                | (disconnect) => {}  |
-| [onClientError](#onclienterror)    | function     |                | (err) => {}         |
 | debug                              | Boolean      | `false`        |                     |
 | sessionExpiryInterval              | Number       | `60`           |                     |
 | connectRetryDelay                  | Number       | `10`           |                     |
 | connectTimeout                     | Number       | `10`           |                     |
 | packetTimeout                      | Number       | `5`            |                     |
-| queue                              | String       |                | `memory`            |
+| queue                              | String       | `memory`       |                     |
 
 ### connect()
 
 <h6>Syntax</h6>
 
 ```js
-connect()
+connect(opts)
 ```
 
 <h6>Parameters</h6>
 
-None.
+- `opts` `Object`
+
+| Property           | Type       | Description           |
+|:-------------------|:-----------|:----------------------|
+| timeout            | Number     | connection timeout in milliseconds |
 
 <h6>Return value</h6>
 
@@ -87,49 +76,17 @@ None.
 <h6>Syntax</h6>
 
 ```js
-disconnect(opt)
+disconnect(opts)
 ```
 
 <h6>Parameters</h6>
 
-- `opt` `Object`
+- `opts` `Object`
 
 | Property           | Type       | Description           |
 |:-------------------|:-----------|:----------------------|
 | waitForEmptyQueue  | Boolean    |                       |
 | timeout            | Number     | disconnect wait timeout in milliseconds |
-
-<h6>Return value</h6>
-
-None.
-
-### awaitConnect()
-
-<h6>Syntax</h6>
-
-```js
-awaitConnect(timeout)
-```
-
-<h6>Parameters</h6>
-
-- `timeout` `Number` time in milliseconds.
-
-<h6>Return value</h6>
-
-None.
-
-### awaitDisconnect()
-
-<h6>Syntax</h6>
-
-```js
-awaitDisconnect(timeout)
-```
-
-<h6>Parameters</h6>
-
-- `timeout` `Number` time in milliseconds.
 
 <h6>Return value</h6>
 
@@ -175,6 +132,29 @@ const topicName = 'sensor/temperature';
 client.subscribe({subscriptions:[{topic:topicName, qos:0}]});
 ```
 
+### unsubscribe()
+
+<h6>Syntax</h6>
+
+```js
+unsubscribe(opts)
+```
+
+<h6>Parameters</h6>
+
+- `opts` `Object` *UnsubscriptionOption*
+
+<h6>UnsubscriptionOption</h6>
+
+| Property           | Type       | Description           |
+|:-------------------|:-----------|:----------------------|
+| Topics             | String[]   | Array of topics to unsubscribe |
+| userProperties     | Object     | key-value object      |
+
+<h6>Return value</h6>
+
+None.
+
 ### publish()
 
 <h6>Syntax</h6>
@@ -205,33 +185,15 @@ let r = client.publish('sensor/temperature', 'Hello World', 1)
 console.log(r.reasonCode)
 ```
 
-### addPublishReceived()
-
-<h6>Syntax</h6>
-
-```js
-addPublishReceived(callback)
-```
-
-<h6>Parameters</h6>
-
-- `callback` `(msg) => {}` onPublishReceived callback
-
-<h6>Return value</h6>
-
-None.
-
-## onPublishReceived callback
+### onMessage callback
 
 Callback function that receives a message.
 
 <h6>Syntax</h6>
 
 ```js
-function (msg) {}
+function (msg) { }
 ```
-
-<h6>Parameters</h6>
 
 - `msg` `Object` Message
 
@@ -262,9 +224,9 @@ function (msg) {}
 | messageExpiry      | Number     | or undefined          |
 | subscriptionIdentifier | Number | or undefined          |
 | topicAlias         | Number     | or undefined          |
-| user               | Object     |                       |
+| user               | Object     | user properties       |
 
-## onConnect callback
+### onConnect callback
 
 On connect callback.
 
@@ -286,21 +248,21 @@ funciton (ack) { }
 
 <h6>Properties</h6>
 
-| Property           | Type       | Description           |
-|:-------------------|:-----------|:----------------------|
-| reasonString       | String     |                       |
-| reasonInfo         | String     |                       |
-| assignedClientID   | String     |                       |
-| authMethod         | String     |                       |
-| serverKeepAlive    | Number     | or undefined          |
-| sessionExpiryInterval | Number  | or undefined          |
-| user               | Object     |                       |
+| Property              | Type       | Description           |
+|:----------------------|:-----------|:----------------------|
+| reasonString          | String     |                       |
+| reasonInfo            | String     |                       |
+| assignedClientID      | String     |                       |
+| authMethod            | String     |                       |
+| serverKeepAlive       | Number     | or undefined          |
+| sessionExpiryInterval | Number     | or undefined          |
+| user                  | Object     |                       |
 
 <h6>Return value</h6>
 
 None.
 
-## onConnectError callback
+### onConnectError callback
 
 On connect error callback.
 
@@ -318,7 +280,7 @@ funciton (err) { }
 
 None.
 
-## onDisconnect callback
+### onDisconnect callback
 
 On disconnect callback
 
@@ -336,7 +298,7 @@ funciton (disconn) { }
 
 None.
 
-## onClientError callback
+### onClientError callback
 
 On client error callback
 
