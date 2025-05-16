@@ -838,7 +838,7 @@ function runServer() {
         const begin = end - 20*(60*1000); // last 20 min.
         var result = {};
         try {
-            client = new db.Client();
+            client = new db.Client({lowerCaseColumns:true});
             conn = client.connect();
             for( tag of tags ) {
                 rows = conn.query(`
