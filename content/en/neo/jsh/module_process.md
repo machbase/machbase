@@ -83,7 +83,7 @@ None.
 p = require("@jsh/process");
 args = p.args();
 x = parseInt(args[1]);
-console.log("x =", x);
+console.log(`x = ${x}`);
 ```
 
 ## cwd()

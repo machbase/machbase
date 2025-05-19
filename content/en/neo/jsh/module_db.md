@@ -348,9 +348,8 @@ Result represents the outcome of the `exec()` method, providing details about th
 
 | Property           | Type       | Description        |
 |:-------------------|:-----------|:-------------------|
-| columns            | []String   | names of the result |
-| types              | []String   | types of the result |
-
+| columns            | String[]   | names of the result |
+| types              | String[]   | types of the result |
 
 ## Appender
 
