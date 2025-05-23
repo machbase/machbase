@@ -364,6 +364,50 @@ MARKDOWN( briefCount(2), html(true) )
 {{< /tab >}}
 {{< /tabs >}}
 
+<!-- ## HTML()
+
+*Syntax*: `HTML(template())` {{< neo_since ver="8.0.52" />}}
+
+- `template(string)`: An HTML template using the Go HTML template language. For details, see [Go html/template documentation](https://pkg.go.dev/html/template).
+
+The template can use value object that exposes record values and rownum.
+
+| Field          | Desc.                               |
+|:---------------|:------------------------------------|
+| `.Values`      | Column values of the current record |
+| `.RowNum`      | The record number                   |
+| `.IsFirst`     | `true` if it is the first record    |
+| `.IsLast`      | `true` if it is the last record     |
+
+```js {linenos=table,hl_lines=[9,16,18,20],linenostart=1}
+FAKE( csv(`
+10,The first line 
+20,2nd line
+30,Third line
+40,4th line
+50,The last is 5th
+`))
+HTML(template({
+    {{ if .IsFirst }}
+        <html>
+        <body>
+            <h2>HTML Template Example</h2>
+            <hr>
+    {{ end }}
+
+    <li>{{ (index .Values 0) }} : {{ (index .Values 1 ) }}
+    
+    {{ if .IsLast }}
+        <hr>
+        Total: {{ .RowNum }}
+        </body>
+        </html>
+    {{ end }}
+}))
+```
+
+{{< figure src="../img/html_template.jpg" width="518" >}} -->
+
 ## DISCARD()
 
 *Syntax*: `DISCARD()` {{< neo_since ver="8.0.7" />}}
@@ -392,7 +436,7 @@ Generates chart using Apache echarts.
 Refer to [CHART() examples](/neo/tql/chart/) for the various usages.
 
 
-## Deprecated
+<!-- ## Deprecated
 
 ### CHART_LINE()
 
@@ -971,4 +1015,4 @@ CHART_SCATTER(
 )
 ```
 
-{{< figure src="../img/chart_marker_y.jpg" width="500" >}}
+{{< figure src="../img/chart_marker_y.jpg" width="500" >}} -->

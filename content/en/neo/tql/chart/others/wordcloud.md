@@ -5,6 +5,74 @@ weight: 940
 ---
 
 ```js
+SCRIPT({
+    counter = {};
+    data = [];
+},{
+    const http = require("@jsh/http");
+    req = http.request("https://docs.machbase.com/assets/example/wordcount.txt")
+    req.do((rsp) => {
+        content = rsp.text();
+        words = content.split(/\s+/)
+        for(w of words) {
+            w = w.toLowerCase();
+            if(counter[w]) {
+                counter[w].count++;
+            } else {
+                counter[w] = {count:1}
+            }
+        }
+    })
+},{
+    Object.keys(counter).forEach(w =>{
+        data.push({name: w, value: counter[w].count})
+    })
+    $.yield({
+        series: {
+            type: "wordCloud",
+            gridSize: 4,
+            sizeRange: [12, 50],
+            rotationRange: [-90, 90],
+            shape: "circle",
+            width: 580,
+            height: 580,
+            drawOutOfBound: false,
+            left: "center",
+            top: "center",
+            data: data,
+            emphasis: {
+                focus: "self",
+                textStyle: {
+                    textShadowBlur: 10,
+                    textShadowColor: "#333"
+                }
+            },
+            layoutAnimation: true,
+            textStyle: {
+                fontFamily: "sans-serif",
+                fontWeight: "bold",
+            }
+        }
+    })
+})
+CHART(
+    plugins("wordcloud"),
+    chartOption({}),
+    chartJSCode({
+        _chartOption.series.textStyle.color = function() {
+            let r = Math.round(Math.random() * 160);
+            let g = Math.round(Math.random() * 160);
+            let b = Math.round(Math.random() * 160);
+            return `rgb(${r},${g},${b})`;
+        }
+        _chart.setOption(_chartOption);
+    })
+)
+```
+
+{{< figure src="../../img/wordcloud_js.jpg" width="500" >}}
+
+```js
 FAKE(csv(
 `Deep Learning,6181
 Computer Vision,4386

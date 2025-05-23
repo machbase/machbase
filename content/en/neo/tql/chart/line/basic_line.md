@@ -36,7 +36,7 @@ CHART(
 
 ## SRC :: SCRIPT()
 
-```js
+```js {linenos=table,linenostart=1}
 SCRIPT({
     for( x = 0; x < 360; x+=3.6) {
         $.yield(x, Math.sin(x/180*Math.PI));
@@ -61,8 +61,6 @@ CHART(
 
 ## SRC :: SQL()
 
-{{% steps %}}
-
 ### Prepare data
 
 ```js {linenos=table,linenostart=1}
@@ -85,10 +83,29 @@ PUSHVALUE(0, "chart-line")
 APPEND(table("example"))
 ```
 
+### Prepare data with SCRIPT
+
+```js {linenos=table,linenostart=1}
+SCRIPT({
+    const gen = require("@jsh/generator");
+    const sys = require("@jsh/system");
+    ts = (new Date()).getTime() - 100 * 1000; // now - 100s.
+    for(x of gen.arrange(1, 100, 1)) {
+        y = Math.sin(x/100*2*Math.PI)
+        ts += 1000; // add 1 sec.
+        $.yield("chart-line", sys.parseTime(ts, "ms"), y);
+    }
+})
+APPEND(table("example"))
+```
+
 ### SQL() to CHART()
 
 ```js {linenos=table,hl_lines=[4,10],linenostart=1}
 SQL(`select time, value from example where name = 'chart-line'`)
+SCRIPT({
+    $.yield([$.values[0], $.values[1]])
+})
 CHART(
     chartOption({
         xAxis: { type: "time" },
@@ -97,13 +114,67 @@ CHART(
         series: [
             {
                 type: "line",
-                data: column(0).map((v, idx) => [v, column(1)[idx]])
+                data: column(0)
             }
         ]
     })
 )
 ```
 
-{{% /steps %}}
-
 {{< figure src="../../img/basic_line_sql.jpg" width="500" >}}
+
+### SCRIPT() to CHART()
+
+```js
+SCRIPT({
+    db = require("@jsh/db");
+    cli = new db.Client();
+    conn = cli.connect();
+    rows = conn.query(`select time, value from example where name = 'chart-line'`)
+    data = [];
+    for( r of rows) {
+        data.push([r.time, r.value]);
+    }
+    rows.close();
+    conn.close();
+    $.yield({
+        xAxis: { type: "time" },
+        yAxis: {},
+        tooltip: { trigger:"axis" },
+        series: [
+            {
+                type: "line",
+                data: data,
+            }
+        ]
+    })
+})
+CHART()
+```
+
+```js
+SQL(`select time, value from example where name = 'chart-line'`)
+SCRIPT({ data = [];
+    },{  data.push([$.values[0], $.values[1]]);
+    },{  $.yield(data); })
+HTML(template({
+    <span>
+        <script src="/web/echarts/echarts.min.js"></script>
+        <div id='xyz' style="width:600px;height:400px;"></div>
+        <script>
+            var data = {{ .Values }};
+            var chartDom = document.getElementById('xyz');
+            var myChart = echarts.init(chartDom);
+            var option = {
+                xAxis: { type: "time" },
+                yAxis: {},
+                tooltip: { trigger:"axis" },
+                series: [
+                    {type: 'line',  data: data, symbol:"none"}
+                ]
+            };
+            option && myChart.setOption(option);
+        </script>
+    </span>
+}))
+```
