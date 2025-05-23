@@ -113,7 +113,7 @@ CHART_LINE(
 
 ```js {linenos=table,hl_lines=[10,12],linenostart=1}
 SQL_SELECT('time', 'value', from('example', 'signal'), between('last-10s', 'last'))
-SCRIPT("js", {
+SCRIPT({
     var list = [];
     function finalize() {
         $.yield(list);

@@ -18,7 +18,7 @@ Data without any noise, in a purely theoretical sense, can only be mathematicall
 {{< /tab >}}
 {{< tab >}}
 ```js {{linenos=table,hl_lines=[5]}}
-SCRIPT("js", {
+SCRIPT({
     $.result = { columns: ["val", "sig"], types: ["double", "double"] }
     for (i = 1.0; i <= 5.0; i+=0.03) {
         val = Math.round(i*100)/100;
@@ -73,7 +73,7 @@ Generally, noise tends to be higher frequency than the data we intend to observe
 {{< /tab >}}
 {{< tab >}}
 ```js {{linenos=table,hl_lines=[6,7]}}
-SCRIPT("js", {
+SCRIPT({
     $.result = { columns: ["val", "sig", "noise"], types: ["double", "double", "double"] }
     for (i = 1.0; i <= 5.0; i+=0.03) {
         val = Math.round(i*100)/100;
@@ -135,7 +135,7 @@ In databases, the stored values are a blend of the aforementioned noise, and dur
 {{< /tab >}}
 {{< tab >}}
 ```js {{linenos=table,hl_lines=[6,7,17]}}
-SCRIPT("js", {
+SCRIPT({
     $.result = { columns: ["val", "sig"], types: ["double", "double"] }
     for (i = 1.0; i <= 5.0; i+=0.03) {
         val = Math.round(i*100)/100;
@@ -192,7 +192,7 @@ Imagine the zero-point calibration process for sensors. When we accumulate conse
 {{< /tab >}}
 {{< tab >}}
 ```js {{linenos=table,hl_lines=[2,11]}}
-SCRIPT("js", {
+SCRIPT({
     const filter = require("@jsh/filter")
     const avg = new filter.Avg();
     const { arrange } = require("@jsh/generator");
@@ -255,7 +255,7 @@ Instead of calculating the average for the entire accumulated sample, we use a f
 {{< /tab >}}
 {{< tab >}}
 ```js {{linenos=table,hl_lines=[2,11]}}
-SCRIPT("js", {
+SCRIPT({
     const filter = require("@jsh/filter")
     const movavg = new filter.MovAvg(10);
     const { arrange } = require("@jsh/generator");
@@ -323,7 +323,7 @@ To address this, a common practice is to apply different weights to the most rec
 {{< /tab >}}
 {{< tab >}}
 ```js {{linenos=table,hl_lines=[2,11]}}
-SCRIPT("js", {
+SCRIPT({
     const filter = require("@jsh/filter")
     const lowpass = new filter.Lowpass(0.40);
     const { arrange } = require("@jsh/generator");
@@ -391,7 +391,7 @@ Feel free to experiment with different model values and observe how the graph re
 {{< /tab >}}
 {{< tab >}}
 ```js {{linenos=table,hl_lines=[2,13]}}
-SCRIPT("js", {
+SCRIPT({
     const filter = require("@jsh/filter")
     const kalman = new filter.Kalman(0.1, 0.5, 1.0);
     const { arrange } = require("@jsh/generator");

@@ -88,7 +88,7 @@ FAKE(json({
     [38.9934, -105.5018]
 }))
 
-SCRIPT("js", {
+SCRIPT({
     var lat = $.values[0];
     var lon = $.values[1];
     $.yield({
@@ -115,7 +115,7 @@ FAKE(json({
     [38.935, -105.520]
 }))
 
-SCRIPT("js", {
+SCRIPT({
     var lat = $.values[0];
     var lon = $.values[1];
     $.yield({
@@ -145,7 +145,7 @@ FAKE(json({
     [38.935, -105.520]
 }))
 
-SCRIPT("js", {
+SCRIPT({
     var lat = $.values[0];
     var lon = $.values[1];
     $.yield({
@@ -171,7 +171,7 @@ FAKE(json({
     [34.04, -118.2]
 }))
 
-SCRIPT("js", {
+SCRIPT({
     var points = [];
     function finalize() {
         $.yield({
@@ -200,7 +200,7 @@ FAKE(json({
     [37, -102.05]
 }))
 
-SCRIPT("js", {
+SCRIPT({
     var points = [];
     function finalize() {
         $.yield({
@@ -251,7 +251,7 @@ FAKE(json({
     ["Pulver Mountain", 39.0115, -105.5173]
 }))
 
-SCRIPT("js", {
+SCRIPT({
     var name = $.values[0];
     var lat  = $.values[1];
     var lon  = $.values[2];
@@ -290,7 +290,7 @@ FAKE(json({
     ["Stoll Mountain", 38.9934, -105.5018],
     ["Pulver Mountain", 39.0115, -105.5173]
 }))
-SCRIPT("js", {
+SCRIPT({
     var name = $.values[0];
     var lat  = $.values[1];
     var lon  = $.values[2];
@@ -318,7 +318,7 @@ GEOMAP()
 ### FeatureCollection
 
 ```js
-SCRIPT("js", {
+SCRIPT({
     $.yield({
         type: "FeatureCollection",
         features: [
@@ -362,7 +362,7 @@ GEOMAP()
 ### Feature
 
 ```js
-SCRIPT("js", {
+SCRIPT({
     $.yield({
         type: "Feature",
         geometry: {
@@ -409,7 +409,7 @@ and inserts the records into the TRIP table.
 // CSV Format: TIME, LAT, LON
 CSV(file("https://docs.machbase.com/assets/example/data-trajectory-firenze.csv"))
 DROP(1) // skip header
-SCRIPT("js", {
+SCRIPT({
     // create trip table, if not exists
     $.db().exec("CREATE TAG TABLE IF NOT EXISTS TRIP ("+
         "name varchar(100) primary key, "+
@@ -450,7 +450,7 @@ INSERT("name", "time", "value", "lat", "lon", table("TRIP"))
 ```js {{linenos=table,hl_lines=[5,7]}}
 SQL(`SELECT time, lat, lon FROM TRIP
      WHERE name = 'firenze' ORDER BY time`)
-SCRIPT("js", {
+SCRIPT({
     // time to epoch nanos to Date (javascript)
     var timestamp = new Date($.values[0].UnixNano()/1000000); 
     // coordinate [lat, lon]
@@ -476,7 +476,7 @@ CSV(file("https://docs.machbase.com/assets/example/data-trajectory-firenze.csv")
 
 DROP(1) // skip header
 
-SCRIPT("js", {
+SCRIPT({
     var timestamp = $.values[0];
     var coord = [
         parseFloat($.values[1]), 
@@ -512,7 +512,7 @@ then computing the moving speed in kilometers per hour (Km/H) based on the time 
 SQL(`SELECT time, lat, lon FROM TRIP
      WHERE name = 'firenze' ORDER BY time`)
 // calculate the distance and speed
-SCRIPT("js", {
+SCRIPT({
     var EarthRadius = 6378137.0; // meters
     function degreesToRadians(d) { return d * Math.PI / 180; }
     function distance(p1, p2) {  // haversine distance
@@ -558,7 +558,7 @@ CSV(file("https://docs.machbase.com/assets/example/data-trajectory-firenze.csv")
 DROP(1) 
 
 // parse time, and coordinates from strings
-SCRIPT("js", {
+SCRIPT({
     function parseTime(str) { // parse '23-04-21 16:53:21'
         y = str.substr(0,2)+2000;
         m = str.substr(3,2) - 1;
@@ -577,7 +577,7 @@ SCRIPT("js", {
 })
 
 // calculate the distance and speed
-SCRIPT("js", {
+SCRIPT({
     var EarthRadius = 6378137.0; // meters
     function degreesToRadians(d) { return d * Math.PI / 180; }
     function distance(p1, p2) {  // haversine distance

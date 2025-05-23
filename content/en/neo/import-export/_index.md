@@ -235,7 +235,7 @@ STRING(payload() ?? `1,100,value,10
 2,200,value,11
 3,140,value,12`, separator('\n'))
 
-SCRIPT("js", {
+SCRIPT({
     str =  $.values[0].trim().split(',');
     $.yield(
         "tag-" + str[0],
@@ -299,7 +299,7 @@ BYTES( payload() ?? {
         "array": ["elements", 234.567, 345.678, false]
     }
 })
-SCRIPT("js", {
+SCRIPT({
     obj = JSON.parse($.values[0]);
     $.yield(obj.tag+"_0", obj.data.time*1000000000, obj.data.number)
     $.yield(obj.tag+"_1", obj.data.time*1000000000, obj.data.array[1])
@@ -459,7 +459,7 @@ Copy the code below into TQL editor and save `export-tql-csv.tql`.
 
 ```js
 SQL( 'select * from example limit 30' )
-SCRIPT("js", {
+SCRIPT({
     if  ($.values[2] % 2 == 0) {
         r_value = "even"
     } else {

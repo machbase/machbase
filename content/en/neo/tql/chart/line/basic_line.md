@@ -37,7 +37,7 @@ CHART(
 ## SRC :: SCRIPT()
 
 ```js
-SCRIPT("js", {
+SCRIPT({
     for( x = 0; x < 360; x+=3.6) {
         $.yield(x, Math.sin(x/180*Math.PI));
     }

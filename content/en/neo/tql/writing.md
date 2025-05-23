@@ -135,7 +135,7 @@ Save the code below as `input-json.tql`.
 
 ```js
 STRING( payload() )
-SCRIPT("js", {
+SCRIPT({
   obj = JSON.parse($.values[0])
   for (i = 0; i < obj.data.rows.length; i++) {
     row = obj.data.rows[i];
@@ -240,7 +240,7 @@ STRING( payload() ?? ` 12345
                   `, separator('\n'), trimspace(true) )
 FILTER( len(value(0)) > 0) // filter empty line
 // transforming data
-SCRIPT("js", {
+SCRIPT({
   str = $.values[0].trim() ;  // trim spaces
   str = str.substring(0, 2);  // takes the first 2 letters of the line
   ts = (new Date()).getTime() * 1000000 // ms. to ns.

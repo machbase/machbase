@@ -56,11 +56,12 @@ Data Science,138
 Semi-Supervised Learning,137
 Artificial Neural Networks,125
 `))
-MAPVALUE(0, dict("name", value(0), "value", value(1)))
-POPVALUE(1)
-CHART(
-    plugins("wordcloud"),
-    chartOption({
+SCRIPT({
+    data = [];
+},{
+    data.push({name: $.values[0], value: $.values[1]})
+},{
+    $.yield({
         series: {
             type: "wordCloud",
             gridSize: 8,
@@ -72,7 +73,7 @@ CHART(
             drawOutOfBound: false,
             left: "center",
             top: "center",
-            data: column(0),
+            data: data,
             emphasis: {
                 focus: "self",
                 textStyle: {
@@ -84,19 +85,22 @@ CHART(
             textStyle: {
                 fontFamily: "sans-serif",
                 fontWeight: "bold",
-                color: wordColor
             }
         }
-    }),
+    })
+})
+CHART(
+    plugins("wordcloud"),
+    chartOption({}),
     chartJSCode({
-        function wordColor() {
-                // Random color
-                return 'rgb(' + [
-                    Math.round(Math.random() * 160),
-                    Math.round(Math.random() * 160),
-                    Math.round(Math.random() * 160)
-                ].join(',') + ')';
-            }
+        _chartOption.series.textStyle.color = function() {
+            return 'rgb(' + [
+                Math.round(Math.random() * 160),
+                Math.round(Math.random() * 160),
+                Math.round(Math.random() * 160)
+            ].join(',') + ')';
+        }
+        _chart.setOption(_chartOption);
     })
 )
 ```

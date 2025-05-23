@@ -115,7 +115,7 @@ for( x of [1.3, 10.2, 5.0, 3.4] ) {
 ## Kalman Filter vs. Smoother
 
 ```js
-SCRIPT("js", {
+SCRIPT({
     const { now } = require("@jsh/system");
     const { arrange, Simplex } = require("@jsh/generator");
     const m = require("@jsh/filter")

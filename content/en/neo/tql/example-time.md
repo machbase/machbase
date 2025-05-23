@@ -59,7 +59,7 @@ Copy the code below into TQL editor and save `time_to_format.tql`.
 
 ```js
 STRING(param("format_time") ?? "808210800", separator('\n'))
-SCRIPT("js", {
+SCRIPT({
     epoch = parseInt($.values[0])
     time = new Date(epoch*1000)
     $.yield(epoch, time.toISOString())
@@ -75,7 +75,7 @@ Copy the code below into TQL editor and save `format_to_time.tql`.
 
 ```js
 STRING(param("timestamp") ?? "1995-08-12T00:00:00.000Z", separator('\n'))
-SCRIPT("js", {
+SCRIPT({
     ts = new Date(Date.parse($.values[0]));
     epoch = ts.getTime() / 1000;
     $.yield(epoch, ts.toISOString())

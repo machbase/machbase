@@ -68,7 +68,7 @@ JavaScript can access the input data of the request using `$.payload`. If there 
 `$.payload` is available only when `SCRIPT()` is used as an SRC node; otherwise, it is `undefined`.
 
 ```js {{linenos=table,hl_lines=[2]}}
-SCRIPT("js", {
+SCRIPT({
     var data = $.payload;
     if (data === undefined) {
         data = '{ "prefix": "name", "offset": 0, "limit": 10}';
@@ -104,7 +104,7 @@ or bracket notation (`$.params["name"]`).
 Both forms are interchangeable and can be used based on the context or preference.
 
 ```js {{linenos=table,hl_lines=["2-4"]}}
-SCRIPT("js", {
+SCRIPT({
     var prefix = $.params.prefix ? $.params.prefix : "name";
     var offset = $.params.offset ? $.params.offset : 0;
     var limit = $.params.limit ? $.params.limit: 10;
@@ -136,7 +136,7 @@ Specifies the type of result data that the `SCRIPT` function yields.
 It works within the _init_ code section, as shown in the example below.
 
 ```js {{linenos=table,hl_lines=["2-5"]}}
-SCRIPT("js", {
+SCRIPT({
     $.result = {
         columns: ["val", "sig"],
         types: ["double", "double"] 
@@ -158,12 +158,12 @@ This is defined only when `SCRIPT` is used as a MAP function.
 If `SCRIPT` is used as an SRC function, it will be `undefined`.
 
 ```js {{linenos=table,hl_lines=["7"]}}
-SCRIPT("js", {
+SCRIPT({
     for( i = 0; i < 3; i++) {
         $.yieldKey(i, "hello-"+(i+1));
     }
 })
-SCRIPT("js", {
+SCRIPT({
     $.yieldKey($.key, $.values[0], 'key is '+$.key);
 })
 CSV()
@@ -182,10 +182,10 @@ This is defined only when `SCRIPT` is used as a MAP function.
 If `SCRIPT` is used as an SRC function, it will be `undefined`.
 
 ```js {{linenos=table,hl_lines=["7"]}}
-SCRIPT("js", {
+SCRIPT({
         $.yield("string", 10, 3.14);
 })
-SCRIPT("js", {
+SCRIPT({
     $.yield(
         "the first value is "+$.values[0],
         "2nd value is "+$.values[1],
@@ -260,7 +260,7 @@ the iteration continues until the end of the query result.
 {{< tabs items="MACHBASE,BRIDGE-SQLITE">}}
 {{< tab >}}
 ```js {{linenos=table,hl_lines=["7-9",13]}}
-SCRIPT("js", {
+SCRIPT({
     var data = $.payload;
     if (data === undefined) {
         data = '{ "tag": "name", "offset": 0, "limit": 5 }';
@@ -289,7 +289,7 @@ cpu.percent,1725343904315952000,40
 {{< /tab >}}
 {{< tab >}}
 ```js {{linenos=table,hl_lines=["7-10"]}}
-SCRIPT("js", {
+SCRIPT({
     var data = $.payload;
     if (data === undefined) {
         data = '{ "tag": "testing", "offset": 0, "limit": 5 }';
@@ -320,7 +320,7 @@ Choose specific columns from the result of `$.db().query()` to yield using `$.yi
 Use `$.yieldArray()` {{< neo_since ver="8.0.39" />}} to yield all columns in a time.
 
 ```js {{linenos=table,hl_lines=["4"]}}
-SCRIPT("js", {
+SCRIPT({
     var sql = "SELECT name, time, value FROM example WHERE name = 'cpu.percent' LIMIT 3";
     $.db().query(sql).forEach( function(row){
         $.yieldArray(row);
@@ -332,13 +332,13 @@ CSV()
 Or use `$.db().query().yield()` {{< neo_since ver="8.0.39" />}} to yield automatically.
 
 ```js {{linenos=table,hl_lines=["9"]}}
-SCRIPT("js", {
+SCRIPT({
     var tags = ["mem.total", "mem.used", "mem.free"];
     for( i = 0; i < tags.length; i++) {
         $.yield(tags[i]);
     }
 })
-SCRIPT("js", {
+SCRIPT({
     var sql = "SELECT * FROM example WHERE name = ? LIMIT 1";
     $.db().query(sql, $.values[0]).yield();
 })
@@ -353,13 +353,13 @@ If the SQL is not a SELECT statement, use `$.db().exec()` to execute INSERT, DEL
 {{< tabs items="MACHBASE,BRIDGE-SQLITE">}}
 {{< tab >}}
 ```js {{linenos=table,hl_lines=["10-14", "21-22"]}}
-SCRIPT("js", {
+SCRIPT({
     for( i = 0; i < 3; i++) {
         ts = Date.now()*1000000; // ms to ns
         $.yield("testing", ts, Math.random()*100);
     }
 })
-SCRIPT("js", {
+SCRIPT({
     // This section contains initialization code
     // that runs once before processing the first record.
     err = $.db().exec("CREATE TAG TABLE IF NOT EXISTS example ("+
@@ -386,13 +386,13 @@ CSV()
 {{< /tab >}}
 {{< tab >}}
 ```js {{linenos=table,hl_lines=["10-14", "21-22"]}}
-SCRIPT("js", {
+SCRIPT({
     for( i = 0; i < 3; i++) {
         ts = Date.now(); // ms
         $.yield("testing", ts, Math.random()*100);
     }
 })
-SCRIPT("js", {
+SCRIPT({
     // This section contains initialization code
     // that runs once before processing the first record.
     err = $.db({bridge:"mem"}).exec("CREATE TABLE IF NOT EXISTS example ("+
@@ -486,15 +486,32 @@ $.request("https://server/path", {
 
 ### finalize()
 
-If `SCRIPT("js")` contains `function finalize(){}` function in the Javascript, it will be called by system at the end after all records are processed.
+If the JavaScript code in `SCRIPT()` defines a `function finalize() {}`,
+the system will automatically call this function after all records have been processed.
+
+The following two code examples are equivalent; both yield `999` as the final record.
 
 ```js
 FAKE( arrange(1, 3, 1) )
-SCRIPT("js", {
+SCRIPT({
     function finalize() {
         $.yield(999);
     }
     $.yield($.values[0]);
+})
+CSV()
+```
+
+```js
+FAKE( arrange(1, 3, 1) )
+SCRIPT({
+    // init; do nothing
+},{
+    // main
+    $.yield($.values[0]);
+}, {
+    // deinit;
+    $.yield(999);
 })
 CSV()
 ```
@@ -506,7 +523,7 @@ This example yields 4 records: `1`,`2`,`3`,`999`.
 ### Hello World
 
 ```js
-SCRIPT("js", {
+SCRIPT({
     console.log("Hello World?");
 })
 DISCARD()
@@ -526,7 +543,7 @@ Javascript builtin functions are available:
 ```js {{linenos=table,hl_lines=["3-8"]}}
 FAKE(meshgrid(linspace(0,2*3.1415,30), linspace(0, 3.1415, 20)))
 
-SCRIPT("js", {
+SCRIPT({
   x = Math.cos($.values[0]) * Math.sin($.values[1]);
   y = Math.sin($.values[0]) * Math.sin($.values[1]);
   z = Math.cos($.values[1]);
@@ -581,7 +598,7 @@ CHART(
 ### JSON parser
 
 ```js {{linenos=table,hl_lines=["11"]}}
-SCRIPT("js", {
+SCRIPT({
     $.result = {
         columns: ["NAME", "AGE", "IS_MEMBER", "HOBBY"],
         types: ["string", "int32", "bool", "string"],
@@ -614,7 +631,7 @@ JSON()
 ### Request CSV
 
 ```js {{linenos=table,hl_lines=["17-19"]}}
-SCRIPT("js", {
+SCRIPT({
     $.result = {
         columns: ["SepalLen", "SepalWidth", "PetalLen", "PetalWidth", "Species"],
         types: ["double", "double", "double", "double", "string"]
@@ -646,7 +663,7 @@ CSV(header(true))
 This example demonstrates how to fetch JSON content from a remote server and parse it using Javascript.
 
 ```js {{linenos=table,hl_lines=["17-23"]}}
-SCRIPT("js", {
+SCRIPT({
     $.result = {
         columns: ["ID", "USER_ID", "TITLE", "COMPLETED"],
         types: ["int64", "int64", "string", "boolean"]

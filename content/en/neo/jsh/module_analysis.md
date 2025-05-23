@@ -33,9 +33,20 @@ console.log(ana.sum([1.3, 1.2, 1.1])) // 3.6
 
 ## cdf()
 
-The `cdf` function calculates the cumulative distribution function (CDF) for a given dataset or probability distribution. 
+The `cdf` function calculates the cumulative distribution function (CDF) for a given dataset `x` 
+that is the fraction of the samples less than or equal to `q`.
 It represents the probability that a random variable takes on a value less than or equal to a specified value. 
 This function is commonly used in statistical analysis and probability theory to understand the distribution of data.
+
+<h6>Syntax</h6>
+
+```js
+cdf(q, x, weights)
+```
+
+- `q` `Number`
+- `x` `Number[]` The `x` data must be sorted in increasing order.
+- `weights` `Number[]` If weights is not specified then all of the weights are 1. If weights is specified, then length of `x` must equal length of `weights`.
 
 **Usage example**
 
@@ -45,7 +56,8 @@ x = [];
 for( i=1; i<=100; i++) {
     x.push(i);
 }
-console.log(ana.cdf(1.0, x)) // 0.01
+x = ana.sort(x);
+console.log(ana.cdf(1.0, x)); // 0.01
 ```
 
 ## mean()
@@ -194,11 +206,21 @@ The `quantile` function calculates the quantile of a given dataset for a specifi
 Quantiles divide the dataset into intervals with equal probabilities, such as quartiles (4 intervals) or percentiles (100 intervals). 
 This function is useful for understanding the distribution of data.
 
+<h6>Syntax</h6>
+
+```js
+quantile(p, x, weights)
+```
+
+- `p` `Number`
+- `x` `Number[]` The `x` data must be sorted in increasing order.
+- `weights` `Number[]` If weights is not specified then all of the weights are 1. If weights is specified, then length of `x` must equal length of `weights`.
+
 **Usage example**
 
 ```js {linenos=table,linenostart=1}
 const ana = require("@jsh/analysis")
-data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+data = ana.sort([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 console.log(ana.quantile(0.25, data)) // 3
 console.log(ana.quantile(0.5, data))  // 5
 console.log(ana.quantile(0.74, data)) // 8
@@ -208,11 +230,21 @@ console.log(ana.quantile(0.74, data)) // 8
 
 The `quantileInterp` function is same as `quantile` except it returns the linear interpolated value.
 
+<h6>Syntax</h6>
+
+```js
+quantileInterp(p, x, weights)
+```
+
+- `p` `Number`
+- `x` `Number[]` The `x` data must be sorted in increasing order.
+- `weights` `Number[]` If weights is not specified then all of the weights are 1. If weights is specified, then length of `x` must equal length of `weights`.
+
 **Usage example**
 
 ```js {linenos=table,linenostart=1}
 const ana = require("@jsh/analysis")
-data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+data = ana.sort([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 console.log(ana.quantileInterp(0.25, data)) // 2.5
 console.log(ana.quantileInterp(0.5, data))  // 5
 console.log(ana.quantileInterp(0.74, data)) // 7.4
@@ -242,12 +274,23 @@ If there are multiple modes, the function may return all of them or handle it ba
 
 It returns `{value: number, count: number}`.
 
+<h6>Syntax</h6>
+
+```js
+mode(x, weights)
+```
+
+- `x` `Number[]` The `x` data must be sorted in increasing order.
+- `weights` `Number[]` If weights is not specified then all of the weights are 1. If weights is specified, then length of `x` must equal length of `weights`.
+
 **Usage example**
 
 ```js {linenos=table,linenostart=1}
 const ana = require("@jsh/analysis")
-console.log(ana.mode([1, 2, 2, 3, 4])) // {value:2, count:2}
-console.log(ana.mode([1, 1, 2, 2, 3])) // {value:1, count:2}
+data = ana.sort([1, 2, 2, 3, 4])
+console.log(ana.mode(data)) // {value:2, count:2}
+data = ana.sort([1, 1, 2, 3, 4])
+console.log(ana.mode(data)) // {value:1, count:2}
 ```
 
 ## moment()
@@ -323,9 +366,9 @@ fft(times, amplitudes)
 
 The length of times and amplitudes should be equal.
 
-## interpPiecewiseConstant()
+## PiecewiseConstant
 
-The `interpPiecewiseConstant` function performs piecewise constant interpolation on a dataset. 
+The `PiecewiseConstant` performs piecewise constant interpolation on a dataset. 
 It approximates the value of a function by using the nearest data point in each interval. 
 This method is useful for step-like data.
 
@@ -334,13 +377,14 @@ This method is useful for step-like data.
 ```js {linenos=table,linenostart=1}
 x = [1, 2, 3, 4]
 y = [10, 20, 30, 40]
-interp = ana.interpPiecewiseConstant(x,y)
-console.log(interp.predict(2.5)) // 30
+interp = new ana.PiecewiseConstant();
+interp.fit(x,y);
+console.log(interp.predict(2.5)); // 30
 ```
 
-## interpPiecewiseLinear()
+## PiecewiseLinear
 
-The `interpPiecewiseLinear` function performs piecewise linear interpolation on a dataset. 
+The `PiecewiseLinear` performs piecewise linear interpolation on a dataset. 
 It approximates the value of a function by connecting data points with straight lines. 
 This method is useful for smooth transitions between data points.
 
@@ -350,13 +394,14 @@ This method is useful for smooth transitions between data points.
 const ana = require("@jsh/analysis")
 x = [1, 2, 3, 4]
 y = [10, 20, 30, 40]
-interp = ana.interpPiecewiseLinear(x,y)
-console.log(interp.predict(2.5)) // 25
+interp = new ana.PiecewiseLinear();
+interp.fit(x,y);
+console.log(interp.predict(2.5)); // 25
 ```
 
-## interpAkimaSpline()
+## AkimaSpline
 
-The `interpAkimaSpline` function performs Akima spline interpolation on a dataset. 
+The `AkimaSpline` performs Akima spline interpolation on a dataset. 
 This method creates a smooth curve that passes through the data points, avoiding oscillations in regions with sparse data.
 
 **Usage example**
@@ -365,13 +410,14 @@ This method creates a smooth curve that passes through the data points, avoiding
 const ana = require("@jsh/analysis")
 x = [1, 2, 3, 4]
 y = [10, 20, 30, 40]
-interp = ana.interpAkimaSpline(x,y)
-console.log(interp.predict(2.5)) // 25
+interp = new ana.AkimaSpline();
+interp.fit(x,y);
+console.log(interp.predict(2.5)); // 25
 ```
 
-## interpFritschButland()
+## FritschButland
 
-The `interpFritschButland` function performs Fritsch-Butland interpolation on a dataset. 
+The `FritschButland` performs Fritsch-Butland interpolation on a dataset. 
 This method ensures monotonicity in the interpolated values, making it suitable for datasets where preserving order is important.
 
 **Usage example**
@@ -380,13 +426,14 @@ This method ensures monotonicity in the interpolated values, making it suitable 
 const ana = require("@jsh/analysis")
 x = [1, 2, 3, 4]
 y = [10, 20, 30, 40]
-interp = ana.interpFritschButland(x,y)
-console.log(interp.predict(2.5)) // 25
+interp = new ana.FritschButland();
+interp.fit(x,y);
+console.log(interp.predict(2.5)); // 25
 ```
 
-## interpLinearRegression()
+## LinearRegression
 
-The `interpLinearRegression` function performs linear regression-based interpolation on a dataset. 
+The `LinearRegression` performs linear regression-based interpolation on a dataset. 
 It predicts the value of a function at a given point using the best-fit line derived from the data.
 
 **Usage example**
@@ -395,6 +442,55 @@ It predicts the value of a function at a given point using the best-fit line der
 const ana = require("@jsh/analysis")
 x = [1, 2, 3, 4]
 y = [10, 20, 30, 40]
-interp = ana.interpLinearRegression(x,y)
-console.log(interp.predict(2.5)) // 25
+interp = new ana.LinearRegression();
+interp.fit(x,y);
+console.log(interp.predict(2.5)); // 25
+```
+
+## ClampedCubic
+
+The `ClampedCubic` performs linear clamped-cubic interpolation on a dataset. 
+It predicts the value of a function at a given point using the best-fit line derived from the data.
+
+**Usage example**
+
+```js {linenos=table,linenostart=1}
+const ana = require("@jsh/analysis")
+x = [1, 2, 3, 4]
+y = [10, 20, 30, 40]
+interp = new ana.ClampedCubic();
+interp.fit(x,y);
+console.log(interp.predict(2.5)); // 25
+```
+
+## NaturalCubic
+
+The `ClampedCubic` performs linear natural-cubic interpolation on a dataset. 
+It predicts the value of a function at a given point using the best-fit line derived from the data.
+
+**Usage example**
+
+```js {linenos=table,linenostart=1}
+const ana = require("@jsh/analysis")
+x = [1, 2, 3, 4]
+y = [10, 20, 30, 40]
+interp = new ana.NaturalCubic();
+interp.fit(x,y);
+console.log(interp.predict(2.5)); // 25
+```
+
+## NotAKnotCubic
+
+The `ClampedCubic` performs linear not-a-knot cubic spline interpolation on a dataset. 
+It predicts the value of a function at a given point using the best-fit line derived from the data.
+
+**Usage example**
+
+```js {linenos=table,linenostart=1}
+const ana = require("@jsh/analysis")
+x = [1, 2, 3, 4]
+y = [10, 20, 30, 40]
+interp = new ana.NotAKnotCubic();
+interp.fit(x,y);
+console.log(interp.predict(2.5)); // 25
 ```

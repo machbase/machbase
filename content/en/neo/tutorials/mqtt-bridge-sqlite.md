@@ -78,7 +78,7 @@ Now, we are ready to write the actual TQL code that will execute whenever the `m
 
 - Line 2-11: This JSON string is used for testing purposes when you execute a test run of this TQL. If `payload()` returns NULL because there are no "real" messages, the `??` operator takes the provided JSON string instead of NULL.
 
-- Line 13: `SCRIPT("js", {}, {})` is a TQL MAP function which executes the given Javascript. Please refer to the reference document in [here](/neo/tql/script/) for the details.
+- Line 13: `SCRIPT({}, {})` is a TQL MAP function which executes the given Javascript. Please refer to the reference document in [here](/neo/tql/script/) for the details.
 
 - Line 44: In this example, the SCRIPT MAP function handles all the tasks. There is no need for additional processing in the SINK function, but all TQL scripts must end with a SINK function. Therefore, we use the `DISCARD()` function to fulfill this requirement.
 
@@ -95,7 +95,7 @@ STRING( payload() ?? `
         }
     }
 `)
-SCRIPT("js", {
+SCRIPT({
     // Initialization code block:
     // This code block executes once for every new message that arrives,
     // before the first record is passing to the main code block.

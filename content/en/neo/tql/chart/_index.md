@@ -257,7 +257,7 @@ CHART(  size("500px", "200px"),
 {{< /tab >}}
 {{< tab >}}
 ```js {{linenos=table,hl_lines=[12]}}
-SCRIPT("js", {
+SCRIPT({
     for( i = 1; i <= 100; i++) {
         $.yield(
             i,

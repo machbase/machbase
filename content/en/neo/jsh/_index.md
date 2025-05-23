@@ -1,5 +1,5 @@
 ---
-title: JSH
+title: JSH - JavaScript
 type: docs
 weight: 75
 ---

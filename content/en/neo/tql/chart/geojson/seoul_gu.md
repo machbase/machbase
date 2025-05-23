@@ -15,9 +15,13 @@ FAKE(json({
     ["강동구", 10], ["송파구", 30], ["강남구", 50],
     ["서초구", 50], ["동작구", 90], ["관악구", 70], ["금천구", 90]
 }))
-
-MAPVALUE(0, dict("name", value(0), "value", value(1)))
-POPVALUE(1)
+SCRIPT({
+    data = [];
+},{
+    data.push({name:$.values[0], value:$.values[1]})
+}, {
+    $.yield(data)
+})
 CHART(
     chartOption({
         title:{ text: "GEOJSON - Seoul"},
@@ -51,7 +55,7 @@ CHART(
             _chartOption.series[0] ={
                 type: "map",
                 geoIndex: 0,
-                data: _column_0
+                data: column(0)[0]
             };
             _chart.setOption(_chartOption);
         }).catch(function(err){

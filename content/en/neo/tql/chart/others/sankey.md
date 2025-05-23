@@ -13,23 +13,26 @@ a,b1,3
 b1,a1,1
 b1,c,2
 `))
-MAPVALUE(0, dict("source", value(0), "target", value(1), "value", value(2)))
-POPVALUE(1,2)
-CHART(
-    chartOption({
+SCRIPT({
+    data = [];
+},{
+    data.push({source: $.values[0], target: $.values[1], value: $.values[2]})
+},{
+    $.yield({
         series: {
             type: "sankey",
             layout: "none",
             emphasis: {
                 focus: "adjacency"
             },
-            links: column(0),
+            links: data,
             data: [
                 {name: "a"}, {name: "b"}, {name: "a1"}, {name: "a2"}, {name: "b1"}, {name: "c"}
             ]
         }
     })
-)
+})
+CHART()
 ```
 
 {{< figure src="../../img/sankey.jpg" width="500" >}}

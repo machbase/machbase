@@ -79,7 +79,7 @@ CSV()
 {{</ tab >}}
 {{< tab >}}
 ```js {{linenos="table",hl_lines=["1-5"]}}
-SCRIPT("js", {
+SCRIPT({
     for (i = 0; i < 10; i++) {
         $.yield("script", Math.random())
     }

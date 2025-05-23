@@ -7,7 +7,7 @@ weight: 10
 Save the code below as `basic_map.tql` and we will show you how to embed the result of this *TQL* into web page.
 
 ```js
-SCRIPT("js", {
+SCRIPT({
     $.yield({
         type:"polygon",
         coordinates:[[37,-109.05],[41,-109.03],[41,-102.05],[37,-102.05]],
@@ -142,7 +142,7 @@ In this example, the `geomapID()` (line 20) is provided and the document has a `
         fetch("/db/tql", {
             method:"POST", 
             body:`
-            SCRIPT("js", {
+            SCRIPT({
                 $.yield({
                     type:"polygon",
                     coordinates:[[37,-109.05],[41,-109.03],[41,-102.05],[37,-102.05]],

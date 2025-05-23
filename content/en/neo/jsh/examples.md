@@ -503,7 +503,7 @@ console.log("append:", appender.result());
 // append: {success:100, fail:0}
 ```
 
-## SQLite
+## SQLite Client
 
 This example demonstrates how to use the `@jsh/db` module to interact with an in-memory SQLite database.
 It covers creating a table, inserting data, and querying the database.
@@ -555,6 +555,50 @@ try{
 When the script is run, it outputs the inserted record:
 ```plaintext
 1 Fedel-Gaylord 12
+```
+
+## PostgreSQL Client
+
+```js {linenos=table,linenostart=1,hl_lines=[]}
+const db = require("@jsh/db");
+const { now, parseTime } = require("@jsh/system");
+
+client = new db.Client({
+    driver: "postgres",
+    dataSource: "host=127.0.0.1 port=15455 dbname=db user=dbuser password=dbpass sslmode=disable",
+    lowerCaseColumns:true,
+});
+var conn = null;
+var rows = null;
+try{
+    conn = client.connect();
+    r = conn.exec("CREATE TABLE test (id SERIAL PRIMARY KEY, name TEXT)");
+    console.log("create table:", r.message);
+    // create table: Created successfully.
+
+    r = conn.exec("INSERT INTO test (name) VALUES ($1)", "foo")
+    console.log("insert foo:", r.message, r.rowsAffected);
+    // insert foo: a row inserted. 1
+
+    r = conn.exec("INSERT INTO test (name) VALUES ($1)", "bar")
+    console.log("insert bar:", r.message, r.rowsAffected);
+    // insert bar: a row inserted. 1
+
+    rows = conn.query("SELECT * FROM test ORDER BY id");
+    console.log("cols.names:", JSON.stringify(rows.columnNames()));
+    // cols.names: ["id","name"]
+
+    for (const rec of rows) {
+        console.log(...rec);
+    }
+    // 1 foo
+    // 2 bar
+} catch(e) {
+    console.log("Error:", e.message);
+} finally {
+    if(rows) rows.close();
+    if(conn) conn.close();
+}
 ```
 
 ## System Monitoring
@@ -958,8 +1002,8 @@ if( process.isDaemon() ) {  // equiv. if( process.ppid() == 1)
 
 function runClient() {
   const nodes = [
-    "ns=1;s=cpu_percent",
-    "ns=1;s=mem_percent",
+    "ns=1;s=sys_cpu",
+    "ns=1;s=sys_mem",
     "ns=1;s=load1",
     "ns=1;s=load5",
     "ns=1;s=load15",
@@ -993,4 +1037,68 @@ function runClient() {
     uaClient.close();
   }
 }
+```
+
+### Simulator Server
+
+To test `opcua-client.js`, you need a running OPC UA server that provides the necessary system metric nodes.
+
+For your convenience, a simulator server is available.
+This simulator mimics a real OPC UA server and provides sample data for nodes
+such as `sys_cpu`, `sys_mem`, `load1`, `load5`, and `load15`.
+
+Using the simulator allows you to develop and test your data collector and visualization workflows
+without requiring access to a physical OPC UA-enabled device.
+
+You can find the simulator server code and setup instructions at the following repository:
+
+[https://github.com/machbase/neo-server/tree/main/mods/jsh/opcua/test_server](https://github.com/machbase/neo-server/tree/main/mods/jsh/opcua/test_server)
+
+Simply follow the instructions in the repository to start the simulator server before running your `opcua-client.js` script.
+This will ensure that your OPC UA client can successfully connect and collect data for testing and demonstration purposes.
+
+## Statistics
+
+The following TQL example demonstrates how to use the JSH `@jsh/analysis` module to perform basic statistical analysis on an array of numbers.
+This example calculates and outputs common statistics such as the mean, median, variance, and standard deviation,
+which are essential for understanding the distribution and spread of your data.
+
+- An array of sample values is defined.
+- The script uses functions from the `@jsh/analysis` module to compute:
+  - **Mean**: The average value of the dataset.
+  - **Variance**: A measure of how much the values differ from the mean.
+  - **Standard Deviation**: The square root of the variance, indicating the spread of the data.
+  - **Median**: The middle value when the data is sorted.
+- Results are output using `$.yield()` for each statistic, making them available for further processing or export (e.g., as CSV).
+
+
+```js {linenos=table,linenostart=1}
+SCRIPT({
+    const system = require("@jsh/system");
+    const ana = require("@jsh/analysis");
+    xs = ana.sort([
+		32.32, 56.98, 21.52, 44.32,
+		55.63, 13.75, 43.47, 43.34,
+		12.34,
+    ]);
+    $.yield("data", JSON.stringify(xs))
+
+    mean = ana.mean(xs)
+    variance = ana.variance(xs)
+    stddev = Math.sqrt(variance)
+
+    median = ana.quantile(0.5, xs)
+
+    $.yield("mean", mean)
+    $.yield("median", median)
+    $.yield("variance", variance)
+    $.yield("std-dev", stddev)
+})
+CSV()
+
+// data     [12.34,13.75,21.52,32.32,43.34,43.47,44.32,55.63,56.98]
+// mean     35.96333333333334
+// median   43.34
+// variance 285.306875
+// std-dev  16.891029423927957
 ```
