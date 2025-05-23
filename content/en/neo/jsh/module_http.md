@@ -148,6 +148,21 @@ None.
 | url                | String     | request url        |
 | error              | String     | error message      |
 
+### text()
+
+Returns the entire response body as a single string.
+
+### json()
+
+Parses the response body and returns it as a JSON object.
+
+### csv()
+
+Parses the response body and returns it as an array of string arrays, where each inner array represents a row of CSV data.
+
+<!-- ### blob() 
+    todo implement bytes stream first.
+-->
 
 ## Server
 
