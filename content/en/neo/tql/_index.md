@@ -9,7 +9,7 @@ And also read and send data from database to other systems in demanded format.
 
 ### Output format independent
 
-{{< tabs items="CSV,JSON,CHART">}}
+{{< tabs items="CSV,JSON,CHART,HTML">}}
 {{< tab >}}
 ```js {linenos=table,hl_lines=[2],linenostart=1}
 SQL( `select time, value from example where name='signal' limit 100` )
@@ -38,11 +38,31 @@ CHART(
 ```
 {{< figure src="./img/tql_intro.jpg">}}
 {{</ tab >}}
+{{< tab >}}
+```html {linenos=table,hl_lines=[2],linenostart=1}
+SQL(`select time, value from example where name='signal' limit 100`)
+HTML({
+  {{if .IsFirst }}
+    <table>
+    <tr>
+        <th>TIME</th><th>VALUE</th>
+    </tr>
+  {{end}}
+    <tr>
+        <td>{{.V.time}}</td><td>{{.V.value}}</td>
+    </tr>
+  {{if .IsLast }}
+    </table>
+  {{end}}
+})
+```
+{{< figure src="./img/tql_intro_html.jpg">}}
+{{</ tab >}}
 {{</ tabs >}}
 
 ### Data source independent
 
-{{< tabs items="JSON,CSV,SQL,SCRIPT">}}
+{{< tabs items="JSON,CSV,SQL,SCRIPT,SCRIPT">}}
 {{< tab >}}
 ```js {{linenos="table",hl_lines=["1-5"]}}
 FAKE( json({ 
@@ -74,6 +94,18 @@ SQL(`select time, value from example where name = 'my-car' limit 4`)
 
 MAPVALUE(1, value(1) * 10 )
 
+CSV()
+```
+{{</ tab >}}
+{{< tab >}}
+```js {{linenos="table",hl_lines=[2]}}
+SCRIPT({
+    list = JSON.parse(`[["A",1.0], ["B",1.5], ["C",2.0], ["D",2.5]]`);
+    for( v of list) {
+        $.yield(v[0], v[1])
+    }
+})
+MAPVALUE(1, value(1) * 10 )
 CSV()
 ```
 {{</ tab >}}
