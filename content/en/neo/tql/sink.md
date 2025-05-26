@@ -297,7 +297,7 @@ Generates a table in markdown format or HTML.
 
 {{< tabs items="default,briefCount,html">}}
 {{< tab >}}
-```js
+```js {linenos=table,hl_lines=[8]}
 FAKE( csv(`
 10,The first line 
 20,2nd line
@@ -319,7 +319,7 @@ MARKDOWN()
 {{< /tab >}}
 {{< tab >}}
 
-```js
+```js {linenos=table,hl_lines=[8]}
 FAKE( csv(`
 10,The first line 
 20,2nd line
@@ -342,7 +342,7 @@ MARKDOWN( briefCount(2) )
 {{< /tab >}}
 {{< tab >}}
 
-```js
+```js {linenos=table,hl_lines=[8]}
 FAKE( csv(`
 10,The first line 
 20,2nd line
@@ -364,20 +364,61 @@ MARKDOWN( briefCount(2), html(true) )
 {{< /tab >}}
 {{< /tabs >}}
 
-<!-- ## HTML()
+## HTML()
 
-*Syntax*: `HTML(template())` {{< neo_since ver="8.0.52" />}}
+*Syntax*: `HTML(templates...)` {{< neo_since ver="8.0.52" />}}
 
-- `template(string)`: An HTML template using the Go HTML template language. For details, see [Go html/template documentation](https://pkg.go.dev/html/template).
+- `templates`: One or more template strings or `file(path)` references. Each argument can be a direct template string or a file path using `file(path)` to load the template from a file. The template content uses the Go HTML template language. For more information, see the [template documentation](https://pkg.go.dev/html/template).
 
-The template can use value object that exposes record values and rownum.
+Within the template, you have access to a value object that exposes the current record's field values and row number.
 
-| Field          | Desc.                               |
-|:---------------|:------------------------------------|
-| `.Values`      | Column values of the current record |
-| `.RowNum`      | The record number                   |
-| `.IsFirst`     | `true` if it is the first record    |
-| `.IsLast`      | `true` if it is the last record     |
+The following fields and properties are available within the HTML template context:
+
+| Field        | Description                                 |
+|:-------------|:--------------------------------------------|
+| `.Num`       | The current record's row number             |
+| `.V`         | Map of field names to their values          |
+| `.Values`    | Array of all field values in the record     |
+| `.Value idx` | Value of the field at the specified index   |
+| `.IsFirst`   | `true` if this is the first record          |
+| `.IsLast`    | `true` if this is the last record           |
+
+{{< tabs items=".V,.Value,.Values">}}
+{{< tab >}}
+
+`.V` is a map object containing field names as keys and their corresponding values.
+
+```html {linenos=table,hl_lines=[3,"11-13",15,18],linenostart=1}
+SQL(`select name, time, value from example limit 5`)
+HTML({
+    {{ if .IsFirst }}
+        <html>
+        <body>
+            <h2>HTML Template Example</h2>
+            <hr>
+            <table>
+    {{ end }}
+        <tr>
+            <td>{{ .V.name }}</td>
+            <td>{{ .V.time }}</td>
+            <td>{{ .V.value }}</td>
+        </tr>
+    {{ if .IsLast }}
+        </table>
+            <hr>
+            Total: {{ .Num }}
+        </body>
+        </html>
+    {{ end }}
+})
+```
+
+{{< figure src="../img/html_template_2.jpg" width="518" >}}
+
+{{< /tab >}}
+{{< tab >}}
+
+`.Value` is a function that accesses the fields of the current record by their index.
 
 ```js {linenos=table,hl_lines=[9,16,18,20],linenostart=1}
 FAKE( csv(`
@@ -387,7 +428,41 @@ FAKE( csv(`
 40,4th line
 50,The last is 5th
 `))
-HTML(template({
+HTML({
+    {{ if .IsFirst }}
+        <html>
+        <body>
+            <h2>HTML Template Example</h2>
+            <hr>
+    {{ end }}
+
+    <li>{{ .Value 0 }} : {{ .Value 1 }}
+    
+    {{ if .IsLast }}
+        <hr>
+        Total: {{ .Num }}
+        </body>
+        </html>
+    {{ end }}
+})
+```
+
+{{< figure src="../img/html_template.jpg" width="518" >}}
+
+{{< /tab>}}
+{{< tab >}}
+
+`.Values` is an array containing all field values of the current record.
+
+```js {linenos=table,hl_lines=[9,16,18,20],linenostart=1}
+FAKE( csv(`
+10,The first line 
+20,2nd line
+30,Third line
+40,4th line
+50,The last is 5th
+`))
+HTML({
     {{ if .IsFirst }}
         <html>
         <body>
@@ -399,14 +474,17 @@ HTML(template({
     
     {{ if .IsLast }}
         <hr>
-        Total: {{ .RowNum }}
+        Total: {{ .Num }}
         </body>
         </html>
     {{ end }}
-}))
+})
 ```
 
-{{< figure src="../img/html_template.jpg" width="518" >}} -->
+{{< figure src="../img/html_template.jpg" width="518" >}}
+
+{{< /tab>}}
+{{< /tabs >}}
 
 ## DISCARD()
 
