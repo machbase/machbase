@@ -369,6 +369,7 @@ MARKDOWN( briefCount(2), html(true) )
 *Syntax*: `HTML(templates...)` {{< neo_since ver="8.0.52" />}}
 
 - `templates`: One or more template strings or `file(path)` references. Each argument can be a direct template string or a file path using `file(path)` to load the template from a file. The template content uses the Go HTML template language. For more information, see the [template documentation](https://pkg.go.dev/html/template).
+- `cache()` cache result data. see [Cache Result Data](../reading/#cache-result-data) for details.
 
 Within the template, you have access to a value object that exposes the current record's field values and row number.
 
