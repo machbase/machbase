@@ -265,6 +265,40 @@ $ curl http://127.0.0.1:5654/db/tql/output-markdown.tql
 {{< /tab >}}
 {{< /tabs >}}
 
+## HTML
+
+The `HTML()` function generates an HTML document as output, using the provided template language for formatting.
+This allows you to fully customize the structure and appearance of the HTML output based on your query results.
+
+You can use template expressions (such as `{{ .V.column_name }}` for column values, `{{ if .IsFirst }}` for the first row, and `{{ if .IsLast }}` for the last row) to control how the HTML is generated. This makes it easy to create tables, reports, or any other HTML-based representation of your data directly from TQL scripts.
+
+```html {linenos=table,hl_lines=["10-14"]}
+SQL(`select name, time, value from example limit 5`)
+HTML({
+{{ if .IsFirst }}
+    <html>
+    <body>
+        <h2>HTML Template Example</h2>
+        <hr>
+        <table>
+{{ end }}
+    <tr>
+        <td>{{ .V.name }}</td>
+        <td>{{ .V.time }}</td>
+        <td>{{ .V.value }}</td>
+    </tr>
+{{ if .IsLast }}
+    </table>
+        <hr>
+        Total: {{ .Num }}
+    </body>
+    </html>
+{{ end }}
+})
+```
+
+{{< figure src="../img/html_template_2.jpg" width="518" >}}
+
 ## CHART
 
 **Save *tql* file**
@@ -388,7 +422,7 @@ This scenario is useful when your DOM document has `<div id='myChart'/>`.
 
 {{< neo_since ver="8.0.43" />}}
 
-The `cache()` option function has been added to `CSV()`, `JSON()`, and `NDJSON()` SINK as shown below.
+The `cache()` option function has been added to `CSV()`, `JSON()`, `NDJSON()` and `HTML()` SINK as shown below.
 
 ```js
 SQL( "select * from example limit ?, 1000",  param("offset") ?? 0 )

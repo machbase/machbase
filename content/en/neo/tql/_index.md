@@ -62,7 +62,7 @@ HTML({
 
 ### Data source independent
 
-{{< tabs items="JSON,CSV,SQL,SCRIPT,SCRIPT">}}
+{{< tabs items="JSON,CSV,SQL,SCRIPT-json,SCRIPT-for">}}
 {{< tab >}}
 ```js {{linenos="table",hl_lines=["1-5"]}}
 FAKE( json({ 
@@ -134,10 +134,12 @@ This chapter shows how to do this without developing additional applications.
 
 The example tql code below gives a brief idea of what is TQL for.
 
-{{< tabs items="AVG,STAT">}}
+{{< tabs items="AVG,STAT,SCRIPT-bar,SCRIPT-boxplot">}}
 {{< tab >}}
+
 - avg. values of each classes.
-```js
+
+```js {{linenos="table"}}
 CSV(file("https://docs.machbase.com/assets/example/iris.csv"))
 GROUP( by(value(4), "species"),
     avg(value(0), "Avg. Sepal L."),
@@ -162,8 +164,10 @@ CHART(
 {{< figure src="./img/groupbykey_avg.jpg" width="500" >}}
 {{</ tab >}}
 {{< tab >}}
+
 - min, median, avg, max, stddev of sepal length of the setosa class.
-```js
+
+```js {{linenos="table"}}
 CSV(file("https://docs.machbase.com/assets/example/iris.csv"))
 FILTER( strToUpper(value(4)) == "IRIS-SETOSA")
 GROUP( by(value(4)), 
@@ -190,6 +194,129 @@ CHART(
 ```
 {{< figure src="./img/groupbykey_stddev.jpg" width="500" >}}
 {{</ tab >}}
+
+{{<tab>}}
+
+```js {{linenos="table"}}
+CSV(file("https://docs.machbase.com/assets/example/iris.csv"))
+SCRIPT({
+    var board = {};
+},{
+    species = $.values[4];
+    o = board[species];
+    if(o === undefined) {
+        o = {
+            sepalLength: [],
+            sepalWidth: [],
+            petalLength: [],
+            petalWidth: [],
+        };
+        board[species] = o;
+    }
+    o.sepalLength.push(parseFloat($.values[0]));
+    o.sepalWidth.push(parseFloat($.values[1]));
+    o.petalLength.push(parseFloat($.values[2]));
+    o.petalWidth.push(parseFloat($.values[3]))
+},{
+    chart = {
+        xAxis: {type: "category", data:[]},
+        yAxis: {},
+        legend: {show:true},
+        series: [
+            {type: "bar", name: "min. sepal L.", data:[]},
+            {type: "bar", name: "max. sepal L.", data:[]},
+            {type: "bar", name: "min. sepal W.", data:[]},
+            {type: "bar", name: "max. sepal W.", data:[]},
+            {type: "bar", name: "min. petal L.", data:[]},
+            {type: "bar", name: "max. petal L.", data:[]},
+            {type: "bar", name: "min. petal W.", data:[]},
+            {type: "bar", name: "max. petal W.", data:[]},
+        ],
+    };
+    for( s in board) {
+        o = board[s];
+        chart.xAxis.data.push(s);
+        chart.series[0].data.push(Math.min(...o.sepalLength));
+        chart.series[1].data.push(Math.max(...o.sepalLength));
+        chart.series[2].data.push(Math.min(...o.sepalWidth));
+        chart.series[3].data.push(Math.max(...o.sepalWidth));
+        chart.series[4].data.push(Math.min(...o.petalLength));
+        chart.series[5].data.push(Math.max(...o.petalLength));
+        chart.series[6].data.push(Math.min(...o.petalWidth));
+        chart.series[7].data.push(Math.max(...o.petalWidth));
+    }
+    $.yield(chart);
+})
+CHART()
+```
+
+{{< figure src="./img/iris_script_min_max.jpg" width="500" >}}
+
+{{</tab>}}
+{{<tab>}}
+
+```js {{linenos="table"}}
+CSV(file("https://docs.machbase.com/assets/example/iris.csv"))
+SCRIPT({
+    var board = {};
+},{
+    species = $.values[4];
+    o = board[species];
+    if(o === undefined) {
+        o = {
+            sepalLength: [],
+            sepalWidth: [],
+            petalLength: [],
+            petalWidth: [],
+        };
+        board[species] = o;
+    }
+    o.sepalLength.push(parseFloat($.values[0]));
+    o.sepalWidth.push(parseFloat($.values[1]));
+    o.petalLength.push(parseFloat($.values[2]));
+    o.petalWidth.push(parseFloat($.values[3]))
+},{
+    chart = {
+        title: {text: "Iris Sepal/Petal Length", left: "center"},
+        grid: {bottom: "10%"},
+        xAxis: {type: "category", data:[], boundaryGap: true},
+        yAxis: {type: "value", splitArea:{show:true}},
+        legend: {show:true, bottom:"2%"},
+        tooltip: {trigger: "item", axisPointer:{type:"shadow"}},
+        series: [
+            {type: "boxplot", name: "sepal length", data:[]},
+            {type: "boxplot", name: "petal length", data:[]},
+        ],
+    };
+    const ana = require("@jsh/analysis");
+    for( s in board) {
+        o = board[s];
+        chart.xAxis.data.push(s);
+        // sepal length
+        o.sepalLength = ana.sort(o.sepalLength)
+        min = Math.min(...o.sepalLength);
+        max = Math.max(...o.sepalLength);
+        q1 = ana.quantile(0.25, o.sepalLength);
+        q2 = ana.quantile(0.5, o.sepalLength);
+        q3 = ana.quantile(0.75, o.sepalLength);
+        chart.series[0].data.push([min, q1, q2, q3, max]);
+        // petal length
+        o.petalLength = ana.sort(o.petalLength)
+        min = Math.min(...o.petalLength);
+        max = Math.max(...o.petalLength);
+        q1 = ana.quantile(0.25, o.petalLength);
+        q2 = ana.quantile(0.5, o.petalLength);
+        q3 = ana.quantile(0.75, o.petalLength);
+        chart.series[1].data.push([min, q1, q2, q3, max]);
+    }
+    $.yield(chart);
+})
+CHART()
+```
+
+{{< figure src="./img/iris_script_quantile.jpg" width="500" >}}
+
+{{</tab>}}
 {{</ tabs >}}
 
 ## In this chapter
