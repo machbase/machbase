@@ -296,6 +296,40 @@ try {
 }
 ```
 
+## MQTT Publisher
+
+- Create an application as `mqtt.js`.
+
+```js {linenos=table,linenostart=1}
+const mqtt = require("@jsh/mqtt");
+const process = require("@jsh/process");
+const system = require("@jsh/system")
+
+const log = new system.Log("mqtt-demo");
+const testTopic = "test/string";
+
+var client = new mqtt.Client({
+    serverUrls: ["tcp://127.0.0.1:5653"],
+});
+
+try {
+    client.onConnectError = err => { log.error("connect error", err); }
+    client.onClientError = err => { log.error("client error", err); }
+    client.onConnect = (ack) => { log.info("client connected"); }
+
+    client.connect({timeout: 3*1000});
+    
+    for(i = 0; i < 10; i++) {
+        process.sleep(1000);
+        r = client.publish({topic: testTopic, qos: 1}, 'Hello World:'+i)
+    }
+} catch (e) {
+    log.error("Error:", e.message);
+} finally {
+    client.disconnect({waitForEmptyQueue:true})
+}
+```
+
 ## MQTT Subscriber
 
 The MQTT Subscriber example demonstrates how to create a background application that connects to an MQTT broker,
