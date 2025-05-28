@@ -390,7 +390,7 @@ The following fields and properties are available within the HTML template conte
 `.V` is a map object containing field names as keys and their corresponding values.
 
 ```html {linenos=table,hl_lines=[3,"11-13",15,18],linenostart=1}
-SQL(`select name, time, value from example limit 5`)
+SQL(`SELECT NAME, TIME, VALUE FROM EXAMPLE LIMIT 5`)
 HTML({
     {{ if .IsFirst }}
         <html>
@@ -400,9 +400,9 @@ HTML({
             <table>
     {{ end }}
         <tr>
-            <td>{{ .V.name }}</td>
-            <td>{{ .V.time }}</td>
-            <td>{{ .V.value }}</td>
+            <td>{{ .V.NAME }}</td>
+            <td>{{ .V.TIME }}</td>
+            <td>{{ .V.VALUE }}</td>
         </tr>
     {{ if .IsLast }}
         </table>
@@ -421,7 +421,7 @@ HTML({
 
 `.Value` is a function that accesses the fields of the current record by their index.
 
-```js {linenos=table,hl_lines=[9,16,18,20],linenostart=1}
+```html {linenos=table,hl_lines=[9,16,18,20],linenostart=1}
 FAKE( csv(`
 10,The first line 
 20,2nd line
@@ -455,7 +455,7 @@ HTML({
 
 `.Values` is an array containing all field values of the current record.
 
-```js {linenos=table,hl_lines=[9,16,18,20],linenostart=1}
+```html {linenos=table,hl_lines=[9,16,18,20],linenostart=1}
 FAKE( csv(`
 10,The first line 
 20,2nd line

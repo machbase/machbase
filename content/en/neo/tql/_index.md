@@ -12,21 +12,21 @@ And also read and send data from database to other systems in demanded format.
 {{< tabs items="CSV,JSON,CHART,HTML">}}
 {{< tab >}}
 ```js {linenos=table,hl_lines=[2],linenostart=1}
-SQL( `select time, value from example where name='signal' limit 100` )
+SQL( `SELECT TIME, VALUE FROM EXAMPLE WHERE NAME='signal' LIMIT 100` )
 CSV( timeformat("Default") )
 ```
 {{< figure src="./img/tql_intro_csv.jpg">}}
 {{</ tab >}}
 {{< tab >}}
 ```js {linenos=table,hl_lines=[2],linenostart=1}
-SQL( `select time, value from example where name='signal' limit 100` )
+SQL( `SELECT TIME, VALUE FROM EXAMPLE WHERE NAME='signal' LIMIT 100` )
 JSON( timeformat("Default") )
 ```
 {{< figure src="./img/tql_intro_json.jpg">}}
 {{</ tab >}}
 {{< tab >}}
 ```js {linenos=table,hl_lines=[2-9],linenostart=1}
-SQL( `select time, value from example where name='signal' limit 100` )
+SQL( `SELECT TIME, VALUE FROM EXAMPLE WHERE NAME='signal' LIMIT 100` )
 CHART(
     size("600px", "340px"),
     chartOption({
@@ -40,7 +40,7 @@ CHART(
 {{</ tab >}}
 {{< tab >}}
 ```html {linenos=table,hl_lines=[2],linenostart=1}
-SQL(`select time, value from example where name='signal' limit 100`)
+SQL(`SELECT TIME, VALUE FROM EXAMPLE WHERE NAME='signal' LIMIT 100`)
 HTML({
   {{if .IsFirst }}
     <table>
@@ -49,7 +49,7 @@ HTML({
     </tr>
   {{end}}
     <tr>
-        <td>{{.V.time}}</td><td>{{.V.value}}</td>
+        <td>{{.V.TIME}}</td><td>{{.V.VALUE}}</td>
     </tr>
   {{if .IsLast }}
     </table>
