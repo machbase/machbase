@@ -112,7 +112,7 @@ HTML({
 <li> Line2 Hello World
 ```
 
-### `toUpper`
+### `toLower`
 
 ```html {linenos=table,hl_lines=[6]}
 SCRIPT({
@@ -129,7 +129,7 @@ HTML({
 <li> Say: hello world?
 ```
 
-### `toLower`
+### `toUpper`
 
 ```html {linenos=table,hl_lines=[6]}
 SCRIPT({
