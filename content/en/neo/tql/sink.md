@@ -381,6 +381,8 @@ The following fields and properties are available within the HTML template conte
 | `.V`         | Map of field names to their values          |
 | `.Values`    | Array of all field values in the record     |
 | `.Value idx` | Value of the field at the specified index   |
+| `.Column idx`| Name of field                               |
+| `.Columns`   | Array of all field names in the record      |
 | `.IsFirst`   | `true` if this is the first record          |
 | `.IsLast`    | `true` if this is the last record           |
 
@@ -389,32 +391,37 @@ The following fields and properties are available within the HTML template conte
 
 `.V` is a map object containing field names as keys and their corresponding values.
 
-```html {linenos=table,hl_lines=[3,"11-13",15,18],linenostart=1}
+```html {linenos=table,hl_lines=[3,"10-12","16-18",20,23],linenostart=1}
 SQL(`SELECT NAME, TIME, VALUE FROM EXAMPLE LIMIT 5`)
 HTML({
-    {{ if .IsFirst }}
-        <html>
-        <body>
-            <h2>HTML Template Example</h2>
-            <hr>
-            <table>
-    {{ end }}
-        <tr>
-            <td>{{ .V.NAME }}</td>
-            <td>{{ .V.TIME }}</td>
-            <td>{{ .V.VALUE }}</td>
-        </tr>
-    {{ if .IsLast }}
-        </table>
-            <hr>
-            Total: {{ .Num }}
-        </body>
-        </html>
-    {{ end }}
+  {{ if .IsFirst }}
+    <html>
+    <body>
+      <h2>HTML Template Example</h2>
+      <hr>
+      <table>
+      <tr>
+        {{range .Columns}}
+          <th>{{ . }}</th>
+        {{end}}
+      </tr>
+  {{ end }}
+      <tr>
+        <td>{{ .V.NAME }}</td>
+        <td>{{ .V.TIME | timeformat "RFC3339" "Asia/Seoul"}}</td>
+        <td>{{ .V.VALUE }}</td>
+      </tr>
+  {{ if .IsLast }}
+      </table>
+      <hr>
+        Total: {{ .Num }}
+    </body>
+    </html>
+  {{ end }}
 })
 ```
 
-{{< figure src="../img/html_template_2.jpg" width="518" >}}
+{{< figure src="../img/html_template_3.jpg" width="452" >}}
 
 {{< /tab >}}
 {{< tab >}}

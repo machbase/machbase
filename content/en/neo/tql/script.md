@@ -259,21 +259,22 @@ the iteration continues until the end of the query result.
 
 {{< tabs items="MACHBASE,BRIDGE-SQLITE">}}
 {{< tab >}}
-```js {{linenos=table,hl_lines=["7-9",13]}}
+```js {{linenos=table,hl_lines=["7-10",14]}}
 SCRIPT({
-    var data = $.payload;
-    if (data === undefined) {
-        data = '{ "tag": "name", "offset": 0, "limit": 5 }';
-    }
-    var obj = JSON.parse(data);
-    $.db().query("SELECT name, time, value FROM example WHERE name = ? LIMIT ?, ?",
-        obj.tag, obj.offset, obj.limit
-    ).forEach( function(row){
-        name = row[0]
-        time = row[1]
-        value = row[2]
-        $.yield(name, time, value);
-    })
+  var data = $.payload;
+  if (data === undefined) {
+    data = '{ "tag": "cpu.percent", "offset": 0, "limit": 3 }';
+  }
+  var obj = JSON.parse(data);
+  $.db()
+   .query("SELECT name, time, value FROM example WHERE name = ? LIMIT ?, ?",
+    obj.tag, obj.offset, obj.limit
+  ).forEach( function(row){
+    name = row[0]
+    time = row[1]
+    value = row[2]
+    $.yield(name, time, value);
+  })
 })
 CSV()
 ```
@@ -282,28 +283,26 @@ CSV()
 cpu.percent,1725330085908925000,73.9
 cpu.percent,1725343895315420000,73.6
 cpu.percent,1725343898315887000,6.1
-cpu.percent,1725343901314955000,10.8
-cpu.percent,1725343904315952000,40
 ```
 
 {{< /tab >}}
 {{< tab >}}
-```js {{linenos=table,hl_lines=["7-10"]}}
+```js {{linenos=table,hl_lines=["7-10",14]}}
 SCRIPT({
-    var data = $.payload;
-    if (data === undefined) {
-        data = '{ "tag": "testing", "offset": 0, "limit": 5 }';
-    }
-    var obj = JSON.parse(data);
-    $.db({bridge:"mem"})
-     .query("SELECT name, time, value FROM example WHERE name = ? LIMIT ?, ?",
-        obj.tag, obj.offset, obj.limit
-    ).forEach( function(row){
-        name = row[0]
-        time = row[1]
-        value = row[2]
-        $.yield(name, time, value);
-    })
+  var data = $.payload;
+  if (data === undefined) {
+    data = '{ "tag": "testing", "offset": 0, "limit": 3 }';
+  }
+  var obj = JSON.parse(data);
+  $.db({bridge:"mem"})
+   .query("SELECT name, time, value FROM example WHERE name = ? LIMIT ?, ?",
+    obj.tag, obj.offset, obj.limit
+  ).forEach( function(row){
+    name = row[0]
+    time = row[1]
+    value = row[2]
+    $.yield(name, time, value);
+  })
 })
 CSV()
 ```
