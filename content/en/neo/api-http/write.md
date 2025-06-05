@@ -97,6 +97,16 @@ curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE \
 
 Set the header `Content-Encoding: gzip` tells machbase-neo that the incoming stream is gzip-compressed.
 
+~~~
+```http
+POST http://127.0.0.1:5654/db/write/EXAMPLE
+Content-Type: application/json
+Content-Encoding: gzip
+
+< /csv/post-data.json.gz
+```
+~~~
+
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE \
     -H "Content-Type: application/json" \
@@ -108,7 +118,18 @@ curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE \
 
 When time fields are string format instead of UNIX epoch.
 
-```json
+
+Add `timeformat` and `tz` parameters.
+
+{{< tabs items="HTTP, cURL">}}
+{{< tab >}}
+~~~
+```http
+POST http://127.0.0.1:5654/db/write/EXAMPLE
+    ?timeformat=DEFAULT
+    &tz=Asia/Seoul
+Content-Type: application/json
+
 {
     "data": {
         "columns":["name", "time", "value"],
@@ -119,26 +140,18 @@ When time fields are string format instead of UNIX epoch.
     }
 }
 ```
-
-Add `timeformat` and `tz` parameters.
-
-{{< tabs items="cURL,REST client">}}
+~~~
+{{< /tab >}}
 {{< tab >}}
 ```sh
 curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=DEFAULT&tz=Asia/Seoul' \
     -H "Content-Type: application/json" \
     --data-binary "@post-data.json"
 ```
-{{< /tab >}}
-{{< tab >}}
-```
-###
 
-POST http://127.0.0.1:5654/db/write/EXAMPLE
-    ?timeformat=DEFAULT
-    &tz=Asia/Seoul
-Content-Type: application/json
+- `post-data.json`
 
+```json
 {
     "data": {
         "columns":["name", "time", "value"],
