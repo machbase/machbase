@@ -140,46 +140,6 @@ It will be translated into `SELECT... LIMIT offset, count` statement.
 - `offset` *number* default is `0`. if omitted
 - `count` *number*
 
-## QUERY()
-
-*Syntax*: `QUERY( fields..., from(), between() [, limit()] )`
-
-- `fields` `string` : column names, multiple columns are possible.
-
-> **Deprecated**, Use `SQL_SELECT()` instead.
-
-*QUERY()* is almost same with `SQL_SELECT()` except that *QUERY* produce a query SQL 
-which always implicitly includes the base 'time' column as the first column, even it is not specified in *fields* arguments.
-
-The base 'time' column will be always the first column of the SELECT query.
-
-```js
-QUERY(
-    'value',
-    from('example', 'temperature'),
-    between('last-10s', 'last')
-)
-```
-is equivalent with the `SQL()` statement below
-```js
-SQL(`SELECT
-        time, value
-    FROM
-        EXAMPLE
-    WHERE
-        name = 'TAG1'
-    AND time BETWEEN (
-        SELECT MAX_TIME-10000000000
-        FROM V$EXAMPLE_STAT
-        WHERE name = 'temperature')
-    AND (
-        SELECT MAX_TIME
-        FROM V$EXAMPLE_STAT
-        WHERE name = 'temperature')
-    LIMIT 0, 1000000
-`)
-```
-
 ## CSV()
 
 *Syntax*: `CSV( file(file_path_string) | payload() [, charset()] [,field()...[, header()]] )`

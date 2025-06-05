@@ -15,19 +15,19 @@ or be a JSON field in *POST-JSON* method as `{ "format": "csv" }`.
 
 **Query Example**
 
-{{< tabs items="cURL,REST client">}}
+{{< tabs items="HTTP,cURL">}}
+{{< tab >}}
+~~~
+```http
+GET http://127.0.0.1:5654/db/query
+    ?q=select * from EXAMPLE limit 2
+```
+~~~
+{{< /tab >}}
 {{< tab >}}
 ```sh 
 curl -o - http://127.0.0.1:5654/db/query \
      --data-urlencode "q=select * from EXAMPLE limit 2"
-```
-{{< /tab >}}
-{{< tab >}}
-```
-###
-
-GET http://127.0.0.1:5654/db/query
-    ?q=select * from EXAMPLE limit 2
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -80,19 +80,19 @@ If the response content is too large to determine the total length, The header `
 The `/db/query` api's default output format is json.
 Set query param `format=json` or omit it for the default value.
 
-{{< tabs items="cURL,REST client">}}
+{{< tabs items="HTTP,cURL">}}
+{{< tab >}}
+~~~
+```http
+GET http://127.0.0.1:5654/db/query
+    ?q=select * from EXAMPLE limit 2
+```
+~~~
+{{< /tab >}}
 {{< tab >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode "q=select * from EXAMPLE limit 2"
-```
-{{< /tab >}}
-{{< tab >}}
-```
-###
-
-GET http://127.0.0.1:5654/db/query
-    ?q=select * from EXAMPLE limit 2
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -113,10 +113,12 @@ The server responses in `Content-Type: application/json`.
 
 {{< tabs items="default,transpose,rowsFlatten,rowsArray">}}
 {{< tab >}}
-```sh
-curl -o - http://127.0.0.1:5654/db/query \
-      --data-urlencode "q=select * from EXAMPLE"
+~~~
+```http
+GET http://127.0.0.1:5654/db/query
+    ?q=select * from EXAMPLE limit 3
 ```
+~~~
 
 ```json
 {
@@ -136,11 +138,13 @@ curl -o - http://127.0.0.1:5654/db/query \
 ```
 {{< /tab >}}
 {{< tab >}}
-```sh
-curl -o - http://127.0.0.1:5654/db/query \
-      --data-urlencode "q=select * from EXAMPLE" \
-      --data-urlencode "transpose=true"
+~~~
+```http
+GET http://127.0.0.1:5654/db/query
+    ?q=select * from EXAMPLE limit 3
+    &transpose=true
 ```
+~~~
 
 ```json
 {
@@ -160,11 +164,13 @@ curl -o - http://127.0.0.1:5654/db/query \
 ```
 {{< /tab >}}
 {{< tab >}}
-```sh
-curl -o - http://127.0.0.1:5654/db/query \
-      --data-urlencode "q=select * from EXAMPLE" \
-      --data-urlencode "rowsFlatten=true"
+~~~
+```http
+GET http://127.0.0.1:5654/db/query
+    ?q=select * from EXAMPLE limit 3
+    &rowsFlatten=true
 ```
+~~~
 
 ```json
 {
@@ -184,11 +190,13 @@ curl -o - http://127.0.0.1:5654/db/query \
 ```
 {{< /tab >}}
 {{< tab >}}
-```sh
-curl -o - http://127.0.0.1:5654/db/query \
-      --data-urlencode "q=select * from EXAMPLE" \
-      --data-urlencode "rowsArray=true"
+~~~
+```http
+GET http://127.0.0.1:5654/db/query
+    ?q=select * from EXAMPLE limit 3
+    &rowsArray=true
 ```
+~~~
 
 ```json
 {
@@ -215,21 +223,21 @@ Set query param `format=ndjson` in the request. {{< neo_since ver="8.0.33" />}}
 
 NDJSON (Newline Delimited JSON) is a format for streaming JSON data where each line is a valid JSON object. This is useful for processing large datasets or streaming data because it allows you to handle one JSON object at a time.
 
-{{< tabs items="cURL,REST client">}}
+{{< tabs items="HTTP,cURL">}}
+{{< tab >}}
+~~~
+```http
+GET http://127.0.0.1:5654/db/query
+    ?q=select * from EXAMPLE limit 2
+    &format=ndjson
+```
+~~~
+{{< /tab >}}
 {{< tab >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode "q=select * from EXAMPLE limit 2" \
     --data-urlencode "format=ndjson"
-```
-{{< /tab >}}
-{{< tab >}}
-```
-###
-
-GET http://127.0.0.1:5654/db/query
-    ?q=select * from EXAMPLE limit 2
-    &format=ndjson
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -248,21 +256,21 @@ Set query param `format=csv` in the request.
 
 CSV format is also useful for processing large datasets or streaming data because it allows you to handle one line at a time.
 
-{{< tabs items="cURL,REST client">}}
+{{< tabs items="HTTP,cURL">}}
+{{< tab >}}
+~~~
+```http
+GET http://127.0.0.1:5654/db/query
+    ?q=select * from EXAMPLE limit 2
+    &format=csv
+```
+~~~
+{{< /tab >}}
 {{< tab >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode "q=select * from EXAMPLE limit 2" \
     --data-urlencode "format=csv"
-```
-{{< /tab >}}
-{{< tab >}}
-```
-###
-
-GET http://127.0.0.1:5654/db/query
-    ?q=select * from EXAMPLE limit 2
-    &format=csv
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -279,21 +287,21 @@ wave.sin,1705381958785759000,0.9011510331449053
 
 Set query param `format=box` in the request.
 
-{{< tabs items="cURL,REST client">}}
+{{< tabs items="HTTP,cURL">}}
+{{< tab >}}
+~~~
+```http
+GET http://127.0.0.1:5654/db/query
+    ?q=select * from EXAMPLE limit 2
+    &format=box
+```
+~~~
+{{< /tab >}}
 {{< tab >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode "q=select * from EXAMPLE limit 2" \
     --data-urlencode "format=box"
-```
-{{< /tab >}}
-{{< tab >}}
-```
-###
-
-GET http://127.0.0.1:5654/db/query
-    ?q=select * from EXAMPLE limit 2
-    &format=box
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -313,21 +321,21 @@ The result data in plain text with ascii box. The Content-Type of the response i
 
 Set query param `format=csv` in the request.
 
-{{< tabs items="cURL,REST client">}}
+{{< tabs items="HTTP,cURL">}}
+{{< tab >}}
+~~~
+```http
+GET http://127.0.0.1:5654/db/query
+    ?q=select * from EXAMPLE limit 2
+    &format=csv
+```
+~~~
+{{< /tab >}}
 {{< tab >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode "q=select * from EXAMPLE limit 2" \
     --data-urlencode "format=csv"
-```
-{{< /tab >}}
-{{< tab >}}
-```
-###
-
-GET http://127.0.0.1:5654/db/query
-    ?q=select * from EXAMPLE limit 2
-    &format=csv
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -346,24 +354,24 @@ It is also possible to request query in JSON form as below example.
 
 **Request JSON message**
 
-{{< tabs items="cURL,REST client">}}
+{{< tabs items="HTTP,cURL">}}
 {{< tab >}}
-```sh
-curl -o - -X POST http://127.0.0.1:5654/db/query \
-    -H 'Content-Type: application/json' \
-    -d '{ "q":"select * from EXAMPLE limit 2" }'
-```
-{{< /tab >}}
-{{< tab >}}
-```
-###
-
+~~~
+```http
 POST http://127.0.0.1:5654/db/query
 Content-Type: application/json
 
 {
   "q": "select * from EXAMPLE limit 2"
 }
+```
+~~~
+{{< /tab >}}
+{{< tab >}}
+```sh
+curl -o - -X POST http://127.0.0.1:5654/db/query \
+    -H 'Content-Type: application/json' \
+    -d '{ "q":"select * from EXAMPLE limit 2" }'
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -372,21 +380,21 @@ Content-Type: application/json
 
 HTML Form data format is available too. HTTP header `Content-type` should be `application/x-www-form-urlencoded` in this case.
 
-{{< tabs items="cURL,REST client">}}
+{{< tabs items="HTTP,cURL">}}
 {{< tab >}}
-```sh
-curl -o - -X POST http://127.0.0.1:5654/db/query \
-    --data-urlencode "q=select * from EXAMPLE limit 2"
-```
-{{< /tab >}}
-{{< tab >}}
-```
-###
-
+~~~
+```http
 POST http://127.0.0.1:5654/db/query
 Content-Type: application/x-www-form-urlencoded
 
 q=select * from EXAMPLE limit 2
+```
+~~~
+{{< /tab >}}
+{{< tab >}}
+```sh
+curl -o - -X POST http://127.0.0.1:5654/db/query \
+    --data-urlencode "q=select * from EXAMPLE limit 2"
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -401,11 +409,26 @@ For this tutorials, pre-write data below.
 
 {{% steps %}}
 
-### Data file
+### Create Table
 
-Copy and paste on a new file `data-nano-1.json`.
+~~~
+```http
+POST http://127.0.0.1:5654/db/query
+Content-Type: application/json
 
-```json
+{
+  "q":"create tag table if not exists EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"
+}
+```
+~~~
+
+### Insert Table
+
+~~~
+```http
+POST http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=ns
+Content-Type: application/json
+
 {
     "data":{
       "columns":["NAME","TIME","VALUE"],
@@ -419,20 +442,7 @@ Copy and paste on a new file `data-nano-1.json`.
     }
 }
 ```
-Or download it from [here](https://docs.machbase.com/assets/example/data-epoch-1.json).
-
-### Create table
-```sh
-curl -o - http://127.0.0.1:5654/db/query \
-    --data-urlencode \
-    "q=create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"
-```
-### Write data
-```sh
-curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=ns \
-    -H "Content-Type: application/json"                           \
-    --data-binary "@data-nano-1.json"
-```
+~~~
 
 {{% /steps %}}
 
@@ -442,11 +452,13 @@ curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=ns \
 
 Set the `format=csv` query param for CSV format.
 
-```sh
-curl -o - http://127.0.0.1:5654/db/query       \
-    --data-urlencode "q=select * from EXAMPLE" \
-    --data-urlencode "format=csv"
+~~~
+```http
+GET http://127.0.0.1:5654/db/query
+    ?q=select * from EXAMPLE limit 5
+    &format=csv
 ```
+~~~
 
 **Response**
 ```
@@ -464,11 +476,13 @@ wave.sin,1676432365444444444,0.555555
 
 Set the `format=box` query param for BOX format.
 
-```sh
-curl -o - http://127.0.0.1:5654/db/query       \
-    --data-urlencode "q=select * from EXAMPLE" \
-    --data-urlencode "format=box"
+~~~
+```http
+GET http://127.0.0.1:5654/db/query
+    ?q=select * from EXAMPLE limit 5
+    &format=box
 ```
+~~~
 
 **Response**
 
@@ -490,12 +504,14 @@ curl -o - http://127.0.0.1:5654/db/query       \
 
 Set the `format=box` query param for BOX format.
 
-```sh
-curl -o - http://127.0.0.1:5654/db/query       \
-    --data-urlencode "q=select * from EXAMPLE" \
-    --data-urlencode "format=box"              \
-    --data-urlencode "rownum=true"
+~~~
+```http
+GET http://127.0.0.1:5654/db/query
+    ?q=select * from EXAMPLE limit 5
+    &format=box
+    &rownum=true
 ```
+~~~
 
 **Response**
 
@@ -516,14 +532,16 @@ curl -o - http://127.0.0.1:5654/db/query       \
 
 **Request**
 
-Set the `format=box` and `heading=false` query param for BOX format without header.
+Set the `format=box` and `header=skip` query param for BOX format without header.
 
-```sh
-curl -o - http://127.0.0.1:5654/db/query       \
-    --data-urlencode "q=select * from EXAMPLE" \
-    --data-urlencode "format=box"              \
-    --data-urlencode "heading=false"
+~~~
+```http
+GET http://127.0.0.1:5654/db/query
+    ?q=select * from EXAMPLE limit 5
+    &format=box
+    &header=skip
 ```
+~~~
 
 **Response**
 
@@ -543,12 +561,14 @@ curl -o - http://127.0.0.1:5654/db/query       \
 
 Set the `format=box` and `precision=0` query param for BOX format with integer precision.
 
-```sh
-curl -o - http://127.0.0.1:5654/db/query       \
-    --data-urlencode "q=select * from EXAMPLE" \
-    --data-urlencode "format=box"              \
-    --data-urlencode "precision=0"
+~~~
+```http
+GET http://127.0.0.1:5654/db/query
+    ?q=select * from EXAMPLE limit 5
+    &format=box
+    &precision=0
 ```
+~~~
 
 **Response**
 
