@@ -284,6 +284,11 @@ Supporting user defined script language.
 
 See [SCRIPT](../script/) section for the details with examples.
 
+## HTTP()
+
+Request HTTP Request within simple DSL.
+
+See [HTTP](../http/) section for the details with examples.
 
 ## BYTES(), STRING()
 

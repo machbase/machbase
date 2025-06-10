@@ -30,22 +30,12 @@ CREATE TAG TABLE EXAMPLE(
 )
 ```
 
-{{< tabs items="cURL,REST Client">}}
-{{< tab >}}
-This example uses `curl` with the `-F` option to make a POST request in *multipart/form-data* encoding.
-
-```sh {hl_lines=[5]}
-curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE' \
-    -F 'NAME=camera-1' \
-    -F 'TIME=now' \
-    -F 'VALUE=0' \
-    -F 'EXTDATA=@./image_file.png;headers="X-Store-Dir: /tmp/store"'
-```
-{{< /tab >}}
+{{< tabs items="HTTP,cURL">}}
 {{< tab >}}
 This example uses Visual Studio Code's REST Client extension.
 
-``` {hl_lines=[17,18]}
+~~~
+```http
 POST http://127.0.0.1:5654/db/write/EXAMPLE
 Content-Type: multipart/form-data; boundary=----Boundary7MA4YWxkTrZu0gW
 
@@ -66,8 +56,20 @@ Content-Disposition: form-data; name="EXTDATA"; filename="image_file.png"
 X-Store-Dir: /tmp/store
 Content-Type: image/png
 
-< ./image_file.png
+< /data/image_file.png
 ------Boundary7MA4YWxkTrZu0gW--
+```
+~~~
+{{< /tab >}}
+{{< tab >}}
+This example uses `curl` with the `-F` option to make a POST request in *multipart/form-data* encoding.
+
+```sh {hl_lines=[5]}
+curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE' \
+    -F 'NAME=camera-1' \
+    -F 'TIME=now' \
+    -F 'VALUE=0' \
+    -F 'EXTDATA=@./data/image_file.png;headers="X-Store-Dir: /tmp/store"'
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -130,7 +132,15 @@ AND EXTDATA->'$.FN' = 'image_file.png';
 
 The examples that use the SELECT query with the `/db/query` API:
 
-{{< tabs items="cURL,REST Client">}}
+{{< tabs items="HTTP,cURL">}}
+{{< tab >}}
+~~~
+```http
+GET http://127.0.0.1:5654/db/query
+  ?q=select EXTDATA from EXAMPLE where NAME = 'camera-1'
+```
+~~~
+{{< /tab >}}
 {{< tab >}}
 ```sh
 curl -o - 'http://127.0.0.1:5654/db/query' \
@@ -138,29 +148,25 @@ curl -o - 'http://127.0.0.1:5654/db/query' \
     where NAME = 'camera-1'"
 ```
 {{< /tab >}}
-{{< tab >}}
-```
-GET http://127.0.0.1:5654/db/query
-  ?q=select EXTDATA from EXAMPLE where NAME = 'camera-1'
-```
-{{< /tab >}}
 {{< /tabs >}}
 
 Using json path condition with `->` notation.
 
-{{< tabs items="cURL,REST Client">}}
+{{< tabs items="HTTP,cURL">}}
+{{< tab >}}
+~~~
+```http
+GET http://127.0.0.1:5654/db/query
+  ?q=select EXTDATA from EXAMPLE where NAME = 'camera-1' and EXTDATA->'$.FN' = 'image_file.png'
+```
+~~~
+{{< /tab >}}
 {{< tab >}}
 ```sh
 curl -o - 'http://127.0.0.1:5654/db/query' \
   --data-urlencode "q=select EXTDATA from EXAMPLE\
     where NAME = 'camera-1' \
     and EXTDATA->'$.FN' = 'image_file.png'"
-```
-{{< /tab >}}
-{{< tab >}}
-```
-GET http://127.0.0.1:5654/db/query
-  ?q=select EXTDATA from EXAMPLE where NAME = 'camera-1' and EXTDATA->'$.FN' = 'image_file.png'
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -186,20 +192,22 @@ The `EXTDATA` column contains the file information as shown below.
 
 Use JSON path to extract specific fields from the JSON type column:
 
-{{< tabs items="cURL,REST Client">}}
+{{< tabs items="HTTP,cURL">}}
+{{< tab >}}
+~~~
+```http
+GET http://127.0.0.1:5654/db/query
+    ?format=ndjson
+    &q=SELECT NAME, TIME, EXTDATA->'$.ID' as FID  FROM EXAMPLE WHERE NAME = 'camera-1'
+```
+~~~
+{{< /tab >}}
 {{< tab >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
   --data-urlencode "format=ndjson"   \
   --data-urlencode "q=SELECT NAME, TIME, EXTDATA->'$.ID' as FID  \
     FROM EXAMPLE WHERE NAME = 'camera-1'"
-```
-{{< /tab >}}
-{{< tab >}}
-```
-GET http://127.0.0.1:5654/db/query
-    ?format=ndjson
-    &q=SELECT NAME, TIME, EXTDATA->'$.ID' as FID  FROM EXAMPLE WHERE NAME = 'camera-1'
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -226,10 +234,21 @@ Note that the timestamp in the `ID` is *NOT* exactly the same as the base time o
 
 ### HTTP GET
 
+{{< tabs items="HTTP,cURL">}}
+{{< tab >}}
+~~~
+```http
+GET http://127.0.0.1:5654/db/query/file/EXAMPLE/EXTDATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8
+```
+~~~
+{{< /tab >}}
+{{< tab >}}
 ```sh
 curl -o ./img-download.png \
     http://127.0.0.1:5654/db/query/file/EXAMPLE/EXTDATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8
 ```
+{{< /tab >}}
+{{< /tabs >}}
 
 ### Use &lt;img&gt; in HTML
 

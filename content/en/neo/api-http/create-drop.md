@@ -12,20 +12,20 @@ Please refer to the docs for understanding what is the [Tag Tables](/dbms/featur
 
 **Request**
 
-{{< tabs items="cURL,REST client">}}
+{{< tabs items="HTTP,cURL">}}
+{{< tab >}}
+~~~
+```http
+GET http://127.0.0.1:5654/db/query
+    ?q=create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)
+```
+~~~
+{{< /tab >}}
 {{< tab >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode \
     "q=create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"
-```
-{{< /tab >}}
-{{< tab >}}
-```
-###
-
-GET http://127.0.0.1:5654/db/query
-    ?q=create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -38,7 +38,15 @@ GET http://127.0.0.1:5654/db/query
 
 ### IF NOT EXISTS
 
-{{< tabs items="cURL,REST client">}}
+{{< tabs items="HTTP,cURL">}}
+{{< tab >}}
+~~~
+```http
+GET http://127.0.0.1:5654/db/query
+    ?q=create tag table if not exists EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)
+```
+~~~
+{{< /tab >}}
 {{< tab >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
@@ -46,32 +54,24 @@ curl -o - http://127.0.0.1:5654/db/query \
     "q=create tag table if not exists EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"
 ```
 {{< /tab >}}
-{{< tab >}}
-```
-###
-
-GET http://127.0.0.1:5654/db/query
-    ?q=create tag table if not exists EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)
-```
-{{< /tab >}}
 {{< /tabs >}}
 
 ### TAG STATISTICS
 
-{{< tabs items="cURL,REST client">}}
+{{< tabs items="HTTP,cURL">}}
+{{< tab >}}
+~~~
+```http
+GET http://127.0.0.1:5654/db/query
+    q=create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double summarized)
+```
+~~~
+{{< /tab >}}
 {{< tab >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode \
     "q=create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double summarized)"
-```
-{{< /tab >}}
-{{< tab >}}
-```
-###
-
-GET http://127.0.0.1:5654/db/query
-    q=create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double summarized)
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -84,19 +84,19 @@ GET http://127.0.0.1:5654/db/query
 
 **Request**
 
-{{< tabs items="cURL,REST client">}}
+{{< tabs items="HTTP,cURL">}}
+{{< tab >}}
+~~~
+```http
+GET http://127.0.0.1:5654/db/query
+    ?q=drop table EXAMPLE
+```
+~~~
+{{< /tab >}}
 {{< tab >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode "q=drop table EXAMPLE"
-```
-{{< /tab >}}
-{{< tab >}}
-```
-###
-
-GET http://127.0.0.1:5654/db/query
-    ?q=drop table EXAMPLE
 ```
 {{< /tab >}}
 {{< /tabs >}}

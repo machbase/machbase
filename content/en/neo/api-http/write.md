@@ -97,18 +97,44 @@ curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE \
 
 Set the header `Content-Encoding: gzip` tells machbase-neo that the incoming stream is gzip-compressed.
 
+{{< tabs items="HTTP,cURL">}}
+{{< tab >}}
+~~~
+```http
+POST http://127.0.0.1:5654/db/write/EXAMPLE
+Content-Type: application/json
+Content-Encoding: gzip
+
+< /csv/post-data.json.gz
+```
+~~~
+{{< /tab >}}
+{{< tab >}}
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE \
     -H "Content-Type: application/json" \
     -H "Content-Encoding: gzip" \
     --data-binary "@post-data.json.gz"
 ```
+{{< /tab >}}
+{{< /tabs >}}
 
 **JSON with timeformat**
 
 When time fields are string format instead of UNIX epoch.
 
-```json
+
+Add `timeformat` and `tz` parameters.
+
+{{< tabs items="HTTP, cURL">}}
+{{< tab >}}
+~~~
+```http
+POST http://127.0.0.1:5654/db/write/EXAMPLE
+    ?timeformat=DEFAULT
+    &tz=Asia/Seoul
+Content-Type: application/json
+
 {
     "data": {
         "columns":["name", "time", "value"],
@@ -119,26 +145,18 @@ When time fields are string format instead of UNIX epoch.
     }
 }
 ```
-
-Add `timeformat` and `tz` parameters.
-
-{{< tabs items="cURL,REST client">}}
+~~~
+{{< /tab >}}
 {{< tab >}}
 ```sh
 curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=DEFAULT&tz=Asia/Seoul' \
     -H "Content-Type: application/json" \
     --data-binary "@post-data.json"
 ```
-{{< /tab >}}
-{{< tab >}}
-```
-###
 
-POST http://127.0.0.1:5654/db/write/EXAMPLE
-    ?timeformat=DEFAULT
-    &tz=Asia/Seoul
-Content-Type: application/json
+- `post-data.json`
 
+```json
 {
     "data": {
         "columns":["name", "time", "value"],
@@ -312,12 +330,28 @@ curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE?header=columns \
 
 Set the header `Content-Encoding: gzip` to inform machbase neo that the incoming stream is gzip-compressed.
 
+{{< tabs items="HTTP,cURL">}}
+{{< tab >}}
+~~~
+```http
+POST http://127.0.0.1:5654/db/write/EXAMPLE?header=skip
+Content-Type: text/csv
+Content-Encoding: gzip
+
+< /csv/post-data.json.gz
+```
+~~~
+{{< /tab >}}
+{{< tab >}}
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE?header=skip \
     -H "Content-Type: text/csv" \
     -H "Content-Encoding: gzip" \
     --data-binary "@post-data.csv.gz"
 ```
+{{< /tab >}}
+{{< /tabs >}}
+
 
 **CSV with timeformat**
 

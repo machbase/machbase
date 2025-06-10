@@ -40,6 +40,36 @@ Applications and sensors can read/write data via HTTP API.
 | POST    | `/db/tql`                 | execute the tql which is passed as the payload of the request |
 | POST    | `/db/tql?$={tql_script}`  | execute the tql which is passed in query param `$` with the payload of the request {{< neo_since ver="8.0.17" />}} |
 
+## Testing HTTP API
+
+Machbase-neo WEB UI includes a built-in REST API client that allows you to test HTTP APIs directly within markdown and TQL,
+as shown in the following examples.
+
+- Markdown in Worksheet.
+
+~~~
+```http
+GET http://127.0.0.1:5654/db/query
+    ?q=select count(*) from example
+    &format=ndjson
+```
+~~~
+
+{{< figure src="./img/http_client_wrk.jpg" width="936" >}}
+
+- TQL
+
+```
+HTTP({
+    GET http://127.0.0.1:5654/db/query
+        ?q=select count(*) from example
+        &format=ndjson
+})
+TEXT()
+```
+
+{{< figure src="./img/http_client_tql.jpg" width="733" >}}
+
 ## In this chapter
 
 {{< children_toc />}}

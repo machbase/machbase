@@ -137,18 +137,22 @@ GET http://127.0.0.1:5654/db/query
 
 You can include query strings directly in the request line:
 
-```
+~~~
+```http
 GET https://example.com/comments?page=2&pageSize=10
 ```
+~~~
 
 If there are many query parameters, you can spread them across multiple lines for better readability.  
 Lines immediately after the request line that start with `?` or `&` are parsed as query parameters:
 
-```
+~~~
+```http
 GET https://example.com/comments
     ?page=2
     &pageSize=10
 ```
+~~~
 
 ## Request Headers
 
@@ -169,7 +173,9 @@ Content-Type: application/json
 To provide a request body, add a blank line after the headers. All content after this blank line is treated as the request body.
 
 **Example:**
-```
+
+~~~
+```http
 POST https://example.com/comments HTTP/1.1
 Content-Type: application/xml
 Authorization: token xxx
@@ -179,22 +185,33 @@ Authorization: token xxx
     <time>Wed, 21 Oct 2015 18:27:50 GMT</time>
 </request>
 ```
+~~~
 
-You can also specify a file as the request body by starting the line with `<` followed by the file path (absolute or relative):
+**External File:**
 
-```
+You can also specify a file as the request body by starting the line with `<` followed by the file path as shown in the file explorer.  
+Alternatively, use the `@` prefix before the path to indicate that it is an absolute path on the operating system.
+
+For example:  
+- `< /doc.xml` — refers to a file located in the TQL root directory.  
+- `< @/home/data/doc.xml` — refers to a file located at an absolute path on the operating system.
+
+~~~
+```http
 POST https://example.com/comments HTTP/1.1
 Content-Type: application/xml
 Authorization: token xxx
 
-< ./demo.xml
+< /data/demo.xml
 ```
+~~~
 
 ## Multipart Form Data
 
 When the request body is `multipart/form-data`, you can mix text and file uploads:
 
-```
+~~~
+```http
 POST https://api.example.com/user/upload
 Content-Type: multipart/form-data; boundary=----Boundary7MA4YWxkTrZu0gW
 
@@ -206,23 +223,25 @@ title
 Content-Disposition: form-data; name="image"; filename="1.png"
 Content-Type: image/png
 
-< ./1.png
+< /data/1.png
 ------Boundary7MA4YWxkTrZu0gW--
 ```
-
+~~~
 
 ## x-www-form-urlencoded
 
 For `application/x-www-form-urlencoded` content, you can split the body into multiple lines.  
 Each key-value pair should be on its own line, starting with `&` after the first line:
 
-```
+~~~
+```http
 POST https://api.example.com/login HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 name=foo
 &password=bar
 ```
+~~~
 
 ---
 

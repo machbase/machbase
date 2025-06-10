@@ -22,20 +22,20 @@ Since Machbase has a different scheme from influxdb, some translations will be a
 
 **Line protocol example**
 
-{{< tabs items="cURL,REST client">}}
+{{< tabs items="HTTP,cURL">}}
+{{< tab >}}
+~~~
+```http
+POST http://127.0.0.1:5654/metrics/write?db=tagdata
+
+my-car speed=87.6 167038034500000
+```
+~~~
+{{< /tab >}}
 {{< tab >}}
 ```sh
 curl -o - -X POST "http://127.0.0.1:5654/metrics/write?db=tagdata" \
     --data-binary 'my-car speed=87.6 167038034500000'
-```
-{{< /tab >}}
-{{< tab >}}
-```
-###
-
-POST http://127.0.0.1:5654/metrics/write?db=tagdata
-
-my-car speed=87.6 167038034500000
 ```
 {{< /tab >}}
 {{< /tabs >}}

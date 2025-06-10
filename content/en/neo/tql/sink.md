@@ -368,131 +368,17 @@ MARKDOWN( briefCount(2), html(true) )
 
 *Syntax*: `HTML(templates...)` {{< neo_since ver="8.0.52" />}}
 
-- `templates`: One or more template strings or `file(path)` references. Each argument can be a direct template string or a file path using `file(path)` to load the template from a file. The template content uses the Go HTML template language. For more information, see the [template documentation](https://pkg.go.dev/html/template).
-- `cache()` cache result data. see [Cache Result Data](../reading/#cache-result-data) for details.
+Generates an HTML document using the provided templates.
 
-Within the template, you have access to a value object that exposes the current record's field values and row number.
+For detailed usage and examples, refer to the [HTML](../html/) section.
 
-The following fields and properties are available within the HTML template context:
+## TEXT()
 
-| Field        | Description                                 |
-|:-------------|:--------------------------------------------|
-| `.Num`       | The current record's row number             |
-| `.V`         | Map of field names to their values          |
-| `.Values`    | Array of all field values in the record     |
-| `.Value idx` | Value of the field at the specified index   |
-| `.Column idx`| Name of field                               |
-| `.Columns`   | Array of all field names in the record      |
-| `.IsFirst`   | `true` if this is the first record          |
-| `.IsLast`    | `true` if this is the last record           |
+*Syntax*: `TEXT(templates...)` {{< neo_since ver="8.0.52" />}}
 
-{{< tabs items=".V,.Value,.Values">}}
-{{< tab >}}
+Generates a text document using the provided templates.
 
-`.V` is a map object containing field names as keys and their corresponding values.
-
-```html {linenos=table,hl_lines=[3,"10-12","16-18",20,23],linenostart=1}
-SQL(`SELECT NAME, TIME, VALUE FROM EXAMPLE LIMIT 5`)
-HTML({
-  {{ if .IsFirst }}
-    <html>
-    <body>
-      <h2>HTML Template Example</h2>
-      <hr>
-      <table>
-      <tr>
-        {{range .Columns}}
-          <th>{{ . }}</th>
-        {{end}}
-      </tr>
-  {{ end }}
-      <tr>
-        <td>{{ .V.NAME }}</td>
-        <td>{{ .V.TIME | timeformat "RFC3339" "Asia/Seoul"}}</td>
-        <td>{{ .V.VALUE }}</td>
-      </tr>
-  {{ if .IsLast }}
-      </table>
-      <hr>
-        Total: {{ .Num }}
-    </body>
-    </html>
-  {{ end }}
-})
-```
-
-{{< figure src="../img/html_template_3.jpg" width="452" >}}
-
-{{< /tab >}}
-{{< tab >}}
-
-`.Value` is a function that accesses the fields of the current record by their index.
-
-```html {linenos=table,hl_lines=[9,16,18,20],linenostart=1}
-FAKE( csv(`
-10,The first line 
-20,2nd line
-30,Third line
-40,4th line
-50,The last is 5th
-`))
-HTML({
-    {{ if .IsFirst }}
-        <html>
-        <body>
-            <h2>HTML Template Example</h2>
-            <hr>
-    {{ end }}
-
-    <li>{{ .Value 0 }} : {{ .Value 1 }}
-    
-    {{ if .IsLast }}
-        <hr>
-        Total: {{ .Num }}
-        </body>
-        </html>
-    {{ end }}
-})
-```
-
-{{< figure src="../img/html_template.jpg" width="518" >}}
-
-{{< /tab>}}
-{{< tab >}}
-
-`.Values` is an array containing all field values of the current record.
-
-```html {linenos=table,hl_lines=[9,16,18,20],linenostart=1}
-FAKE( csv(`
-10,The first line 
-20,2nd line
-30,Third line
-40,4th line
-50,The last is 5th
-`))
-HTML({
-    {{ if .IsFirst }}
-        <html>
-        <body>
-            <h2>HTML Template Example</h2>
-            <hr>
-    {{ end }}
-
-    <li>{{ (index .Values 0) }} : {{ (index .Values 1 ) }}
-    
-    {{ if .IsLast }}
-        <hr>
-        Total: {{ .Num }}
-        </body>
-        </html>
-    {{ end }}
-})
-```
-
-{{< figure src="../img/html_template.jpg" width="518" >}}
-
-{{< /tab>}}
-{{< /tabs >}}
+It functions similarly to `HTML()`, but does not perform HTML escaping on the data.
 
 ## DISCARD()
 
