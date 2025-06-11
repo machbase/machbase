@@ -225,6 +225,7 @@ Add `timeformat` and `tz` parameters.
 POST http://127.0.0.1:5654/db/write/EXAMPLE
     ?timeformat=DEFAULT
     &tz=Local
+Content-Type: application/x-ndjson
 
 {"NAME":"ndjson-data", "TIME":"2022-12-07 02:33:22", "VALUE":1.001}
 {"NAME":"ndjson-data", "TIME":"2022-12-07 02:33:23", "VALUE":2.002}
