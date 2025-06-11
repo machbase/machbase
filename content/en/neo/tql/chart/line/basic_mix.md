@@ -4,7 +4,7 @@ type: docs
 weight: 900
 ---
 
-```js
+```js {{linenos=table,linenostart=1}}
 FAKE( linspace(0, 360, 50))
 MAPVALUE(1, sin((value(0)/180)*PI))
 MAPVALUE(2, cos((value(0)/180)*PI))

@@ -4,7 +4,7 @@ type: docs
 weight: 20
 ---
 
-```js
+```js {{linenos=table,linenostart=1}}
 FAKE(linspace(0, 24.999, 25000))
 MAPVALUE(1, (1 + 0.25 * cos(75 * value(0))) * cos(value(0)))
 MAPVALUE(2, (1 + 0.25 * cos(75 * value(0))) * sin(value(0)))

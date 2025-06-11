@@ -125,7 +125,7 @@ CHART(
 
 ### SCRIPT() to CHART()
 
-```js
+```js {{linenos=table,linenostart=1}}
 SCRIPT({
     db = require("@jsh/db");
     cli = new db.Client();
@@ -152,7 +152,7 @@ SCRIPT({
 CHART()
 ```
 
-```html
+```html {{linenos=table,linenostart=1}}
 SQL(`select time, value from example where name = 'chart-line'`)
 SCRIPT({
     data = [];

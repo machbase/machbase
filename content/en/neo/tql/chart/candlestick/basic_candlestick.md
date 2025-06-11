@@ -4,7 +4,7 @@ type: docs
 weight: 400
 ---
 
-```js
+```js {{linenos=table,linenostart=1}}
 FAKE(json({
     ["2017-10-24", 20, 34, 10, 38 ], 
     ["2017-10-25", 40, 35, 30, 50 ],

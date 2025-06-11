@@ -4,7 +4,7 @@ type: docs
 weight: 140
 ---
 
-```js
+```js {{linenos=table,linenostart=1}}
 FAKE(linspace(0,1,1))
 CHART(
     chartJSCode({

@@ -4,7 +4,7 @@ type: docs
 weight: 10
 ---
 
-```js
+```js {{linenos=table,linenostart=1}}
 FAKE(json({
     ["노원구", 10], ["도봉구", 50], ["강북구", 90],
     ["성북구", 20], ["종로구", 10], ["서대문구", 40],

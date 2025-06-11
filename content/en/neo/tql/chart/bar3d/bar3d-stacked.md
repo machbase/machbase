@@ -4,7 +4,7 @@ type: docs
 weight: 20
 ---
 
-```js
+```js {{linenos=table,linenostart=1}}
 FAKE( meshgrid(linspace(0, 10, 11), linspace(0, 10, 11)) )
 MAPVALUE(2, list( value(0), value(1), simplex(10, value(0)/5, value(1)/5) * 2 + 4))
 MAPVALUE(3, list( value(0), value(1), simplex(20, value(0)/5, value(1)/5) * 2 + 4))

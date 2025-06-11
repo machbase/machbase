@@ -4,7 +4,7 @@ type: docs
 weight: 1000
 ---
 
-```js
+```js {{linenos=table,linenostart=1}}
 FAKE( json({
     ["world.topo.bathy.200401.jpg", "starfield.jpg", "pisa.hdr"]
 }) )

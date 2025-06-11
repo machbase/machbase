@@ -4,7 +4,7 @@ type: docs
 weight: 10
 ---
 
-```js
+```js {{linenos=table,linenostart=1}}
 CSV( file("https://docs.machbase.com/assets/example/life-expectancy-table.csv") )
 // |   0        1                 2            3        4
 // +-> income   life-expectancy   population   country  year

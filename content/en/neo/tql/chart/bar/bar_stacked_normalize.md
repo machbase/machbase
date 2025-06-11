@@ -4,7 +4,7 @@ type: docs
 weight: 135
 ---
 
-```js
+```js {{linenos=table,linenostart=1}}
 FAKE(json({
     ["Day",  "Direct", "Mail Ad", "Affiliate Ad", "Video Ad", "Search Engine"],
     ["Mon", 100, 320, 220, 150, 820],

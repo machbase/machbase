@@ -4,7 +4,7 @@ type: docs
 weight: 620
 ---
 
-```js
+```js {{linenos=table,linenostart=1}}
 FAKE(linspace(1, 365, 365))
 MAPVALUE(1, simplex(10, value(0))+0.9)
 MAPVALUE(0, 1672444800+(value(0)*3600*24)) // 2023/01/01 00:00:00

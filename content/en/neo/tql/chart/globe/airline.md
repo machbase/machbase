@@ -5,7 +5,7 @@ weight: 1010
 ---
 
 
-```js
+```js {{linenos=table,linenostart=1}}
 CSV(file("https://docs.machbase.com/assets/example/flights.csv"))
 DROP(1) // skip header
 // |   0         1     2    3      4     5    6

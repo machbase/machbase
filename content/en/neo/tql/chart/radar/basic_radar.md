@@ -4,7 +4,7 @@ type: docs
 weight: 10
 ---
 
-```js
+```js {{linenos=table,linenostart=1}}
 //                       sales, admin, it,  cs,   dev,   mkt
 FAKE(json({
     ["Allocated Budget", 4200, 3000, 20000, 35000, 50000, 18000],

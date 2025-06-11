@@ -4,7 +4,7 @@ type: docs
 weight: 420
 ---
 
-```js
+```js {{linenos=table,linenostart=1}}
 CSV( file("https://docs.machbase.com/assets/example/stock-DJI.csv") )
 DROP(1) // drop header
 MAPVALUE(0, value(0), "date")

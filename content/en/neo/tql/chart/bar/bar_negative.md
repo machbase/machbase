@@ -4,7 +4,7 @@ type: docs
 weight: 130
 ---
 
-```js
+```js {{linenos=table,linenostart=1}}
 FAKE(csv(`day,profit,income,expenses
 Mon,200,320,-120
 Tue,170,302,-132

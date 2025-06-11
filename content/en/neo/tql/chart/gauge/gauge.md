@@ -4,7 +4,7 @@ type: docs
 weight: 940
 ---
 
-```js
+```js {{linenos=table,linenostart=1}}
 FAKE(json(`[70]`))
 CHART(
     chartOption({

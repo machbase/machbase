@@ -4,7 +4,7 @@ type: docs
 weight: 150
 ---
 
-```js
+```js {{linenos=table,linenostart=1}}
 CSV( file("https://docs.machbase.com/assets/example/life-expectancy-table.csv") )
 CHART(
     chartOption({

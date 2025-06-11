@@ -4,7 +4,7 @@ type: docs
 weight: 930
 ---
 
-```js
+```js {{linenos=table,linenostart=1}}
 FAKE( linspace(0, 10, 500000) )
 
 MAPVALUE(1, random()*10)

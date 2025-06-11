@@ -4,7 +4,7 @@ type: docs
 weight: 920
 ---
 
-```js
+```js {{linenos=table,linenostart=1}}
 FAKE( json({
     ["Search Engine", 1048 ],
     ["Direct"       ,  735 ],

@@ -6,7 +6,7 @@ weight: 80
 
 Largest-Triangle-Three-Buckets algorithm for downsampling time-series data.
 
-```js
+```js {{linenos=table,linenostart=1}}
 FAKE(linspace(0,19999,20000))
 // |   0
 // +-- n

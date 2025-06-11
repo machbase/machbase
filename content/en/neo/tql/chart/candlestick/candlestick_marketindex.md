@@ -4,7 +4,7 @@ type: docs
 weight: 410
 ---
 
-```js
+```js {{linenos=table,linenostart=1}}
 //            open     close    lowest  highest
 FAKE(json({
   ["2013/1/24", 2320.26, 2320.26, 2287.3, 2362.94],

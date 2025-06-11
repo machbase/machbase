@@ -37,7 +37,7 @@ CHART(
 {{< /tab >}}
 {{< tab >}}
 
-```js {linenos=table,linenostart=1}
+```js {{linenos=table,linenostart=1}}
 CSV (file("https://docs.machbase.com/assets/example/AirPassengers.csv"))
 
 // drop header : rownames,time,value

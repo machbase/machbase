@@ -4,7 +4,7 @@ type: docs
 weight: 930
 ---
 
-```js
+```js {{linenos=table,linenostart=1}}
 FAKE(csv(
 `a,a1,5
 a,a2,3

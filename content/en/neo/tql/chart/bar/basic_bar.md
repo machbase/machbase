@@ -4,7 +4,7 @@ type: docs
 weight: 110
 ---
 
-```js
+```js {{linenos=table,linenostart=1}}
 FAKE( linspace(0, 360, 50))
 MAPVALUE(2, sin((value(0)/180)*PI))
 CHART(
