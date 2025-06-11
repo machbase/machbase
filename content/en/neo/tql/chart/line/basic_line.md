@@ -152,11 +152,15 @@ SCRIPT({
 CHART()
 ```
 
-```js
+```html
 SQL(`select time, value from example where name = 'chart-line'`)
-SCRIPT({ data = [];
-    },{  data.push([$.values[0], $.values[1]]);
-    },{  $.yield(data); })
+SCRIPT({
+    data = [];
+}, {
+    data.push([$.values[0], $.values[1]]);
+}, {
+    $.yield(data); 
+})
 HTML(template({
     <span>
         <script src="/web/echarts/echarts.min.js"></script>
