@@ -181,18 +181,16 @@ The starting log shows MQTT token authentication is enabled.
 
 ### MQTT client using token
 
-Apply registered client-id on `client-id` and set token in `username` of CONNECT message.
-Do not set any value in `password`.
+Use the registered token as the `username` in the CONNECT message, and leave the `password` field empty.
 
 ```
 mosquitto_pub -h 127.0.0.1 -p 5653 \
-    --id mqtt-api-app01            \
     --username `cat ./mqtt-api-app01_token` \
     -t db/write/EXAMPLE            \
     -m '[ "wave.pi", `date +%s000000000`, 3.1415]'
 ```
 
-If a client doesn't set `client-id` and `username` properly, the server rejects the CONNECT messages.
+If a client does not provide the correct token in the `username` field, the server will reject the CONNECT message.
 
 ```
 mosquitto_pub -h 127.0.0.1 -p 5653 -t db/write/EXAMPLE \
