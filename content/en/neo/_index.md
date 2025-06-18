@@ -77,7 +77,7 @@ Realtime data monitoring on the fly.
 - [x] HTTP : Applications and Sensors read/write data via [HTTP](/neo/api-http) REST API
 - [x] MQTT : Sensors write data via [MQTT](/neo/api-mqtt) protocol (MQTT v3.1.1 & v5)
 - [x] gRPC : The first class API for extensions
-- [x] SSH : Command line user interface via [ssh](/neo/operations/ssh-access)
+- [x] SSH : Command line user interface via [ssh](/neo/shell/#remote-access-via-ssh)
 - [x] GUI : [Web](/neo/getting-started/webui/) user interface
 
 {{< figure src="/images/interfaces.jpg" width="600" >}}

@@ -1,7 +1,7 @@
 ---
 title: Tag Analyzer
 type: docs
-weight: 15
+weight: 26
 ---
 
 ## Overview

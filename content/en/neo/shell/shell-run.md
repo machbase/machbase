@@ -1,7 +1,7 @@
 ---
 title: Run sql file
 type: docs
-weight: 21
+weight: 20
 ---
 
 `machbase-neo shell run <file>` executes multiple commands in the given file.

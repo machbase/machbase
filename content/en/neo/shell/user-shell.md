@@ -1,7 +1,7 @@
 ---
-title: Custom shell in web-ui
+title: Custom shell
 type: docs
-weight: 22
+weight: 10
 ---
 
 User can customize command line shell and open it in the web ui.
