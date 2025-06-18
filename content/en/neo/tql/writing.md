@@ -19,14 +19,12 @@ CREATE TAG TABLE IF NOT EXISTS EXAMPLE (
 
 ## `INSERT` CSV
 
-{{% steps %}}
-
-### Save *tql* file
+### 1. Create *tql* file
 
 Save the code below as `input-csv.tql`.
 When you save a TQL script, the editor will display a link icon <img src="/images/copy_addr_icon.jpg" width="24px" style="display:inline"> in the top right corner. Click on it to copy the script file's address.
 
-```js
+```js {linenos=table,hl_lines=["7"]}
 CSV(payload(), 
     field(0, stringType(), 'name'),
     field(1, timeType('ns'), 'time'),
@@ -36,7 +34,23 @@ CSV(payload(),
 INSERT("name", "time", "value", table("example"))
 ```
 
-### HTTP POST
+### 2. HTTP POST
+
+{{< tabs items="HTTP,cURL">}}
+{{< tab >}}
+
+~~~
+```http
+POST http://127.0.0.1:5654/db/tql/input-csv.tql
+Content-Type: text/csv
+
+TAG0,1628866800000000000,12
+TAG0,1628953200000000000,13
+```
+~~~
+
+{{< /tab >}}
+{{< tab >}}
 
 Prepare data file as `input-csv.csv`
 
@@ -49,11 +63,13 @@ Invoke `input-csv.tql` with the data file with `curl` command
 
 ```sh
 curl -X POST http://127.0.0.1:5654/db/tql/input-csv.tql \
-    -H "Content-Type: application/csv" \
+    -H "Content-Type: text/csv" \
     --data-binary "@input-csv.csv"
 ```
+{{< /tab >}}
+{{< /tabs >}}
 
-### MQTT PUBLISH
+### 3. MQTT PUBLISH
 
 Prepare data file as `input-csv.csv`
 
@@ -68,18 +84,14 @@ mosquitto_pub -h 127.0.0.1 -p 5653 \
     -f input-csv.csv
 ```
 
-{{% /steps %}}
-
 ## `APPEND` CSV
 
-{{% steps %}}
-
-### Save *tql* file
+### 1. Create *tql* file
 
 Save the code below as `append-csv.tql`.
 When you save a TQL script, the editor will display a link icon <img src="/images/copy_addr_icon.jpg" width="24px" style="display:inline"> in the top right corner. Click on it to copy the script file's address.
 
-```js
+```js {linenos=table,hl_lines=["7"]}
 CSV(payload(), 
     field(0, stringType(), 'name'),
     field(1, timeType('ns'), 'time'),
@@ -89,7 +101,23 @@ CSV(payload(),
 APPEND(table('example'))
 ```
 
-### HTTP POST
+### 2. HTTP POST
+
+{{< tabs items="HTTP,cURL">}}
+{{< tab >}}
+
+~~~
+```http
+POST http://127.0.0.1:5654/db/tql/append-csv.tql
+Content-Type: text/csv
+
+TAG0,1628866800000000000,12
+TAG0,1628953200000000000,13
+```
+~~~
+
+{{< /tab >}}
+{{< tab >}}
 
 Prepare data file as `append-csv.csv`
 
@@ -101,11 +129,13 @@ TAG2,1628953200000000000,13
 Invoke `append-csv.tql` with the data file with `curl` command
 ```
 curl -X POST http://127.0.0.1:5654/db/tql/append-csv.tql \
-    -H "Content-Type: application/csv" \
+    -H "Content-Type: text/csv" \
     --data-binary "@append-csv.csv"
 ```
+{{< /tab >}}
+{{< /tabs >}}
 
-### MQTT PUBLISH
+### 3. MQTT PUBLISH
 
 Prepare data file as `append-csv.csv`
 
@@ -120,32 +150,48 @@ mosquitto_pub -h 127.0.0.1 -p 5653 \
     -f append-csv.csv
 ```
 
-{{% /steps %}}
-
 
 ## Custom JSON
 
-{{% steps %}}
-
-### Save *tql* file
+### 1. Create *tql* file
 
 Use SCRIPT() function to parse a custom format JSON.
 
 Save the code below as `input-json.tql`.
 
-```js
-STRING( payload() )
+```js {linenos=table}
 SCRIPT({
-  obj = JSON.parse($.values[0])
-  for (i = 0; i < obj.data.rows.length; i++) {
-    row = obj.data.rows[i];
-    $.yield(row[0], row[1], row[2]);
-  }
+    obj = JSON.parse($.payload)
+    obj.data.rows.forEach(r => $.yield(...r))
 })
 INSERT("name", "time", "value", table("example"))
 ```
 
-### HTTP POST
+### 2. HTTP POST
+
+{{< tabs items="HTTP,cURL">}}
+{{< tab >}}
+
+~~~
+```http
+POST http://127.0.0.1:5654/db/tql/input-json.tql
+Content-Type: application/json
+
+{
+  "data": {
+    "columns": [ "NAME", "TIME", "VALUE" ],
+    "types": [ "string", "datetime", "double" ],
+    "rows": [
+      [ "TAG0", 1628866800000000000, 12 ],
+      [ "TAG0", 1628953200000000000, 13 ]
+    ]
+  }
+}
+```
+~~~
+
+{{< /tab >}}
+{{< tab >}}
 
 Prepare data file as `input-json.json`
 
@@ -163,13 +209,16 @@ Prepare data file as `input-json.json`
 ```
 
 Invoke `input-csv.tql` with the data file with `curl` command
-```
+
+```sh
 curl -X POST http://127.0.0.1:5654/db/tql/input-json.tql \
     -H "Content-Type: application/json" \
     --data-binary "@input-json.json"
 ```
+{{< /tab >}}
+{{< /tabs >}}
 
-### MQTT PUBLISH
+### 3. MQTT PUBLISH
 
 Prepare data file as `input-json.json`
 
@@ -191,11 +240,12 @@ mosquitto_pub -h 127.0.0.1 -p 5653 \
     -t db/tql/input-json.tql \
     -f input-json.json
 ```
-{{% /steps %}}
 
 ## Custom Text
 
 When the data transforming is required for writing to the database, prepare the proper *tql* script and publish the data to the topic named `db/tql/`+`{tql_file.tql}`.
+
+### 1. Create tql file
 
 The example code below shows how to handle multi-lines text data for writing into a table.
 
@@ -277,7 +327,7 @@ Save the code as "script-post-lines.tql", then send some test data to the topic 
 442222
 ```
 
-### HTTP POST
+### 3. HTTP POST
 
 For the note, the same *tql* file also works with HTTP POST.
 
@@ -287,7 +337,7 @@ curl -H "Content-Type: text/plain" \
     http://127.0.0.1:5654/db/tql/script-post-lines.tql
 ```
 
-### MQTT PUBLISH
+### 3. MQTT PUBLISH
 
 ```sh
 mosquitto_pub -h 127.0.0.1 -p 5653 \
