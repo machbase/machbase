@@ -1,7 +1,7 @@
 ---
 title: Web UI
 type: docs
-weight: 13
+weight: 15
 ---
 
 ## Login

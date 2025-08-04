@@ -1,12 +1,13 @@
 ---
 title: Deploy modes
 type: docs
-weight: 11
+weight: 13
 ---
 
-{{< neo_since ver="8.0.45" />}}
 
 ## Head Only Mode
+
+{{< neo_since ver="8.0.45" />}}
 
 If the `--data` flag value is a URL pointing to another Machbase DBMS's mach port (`5656`), as shown in the example below:
 
