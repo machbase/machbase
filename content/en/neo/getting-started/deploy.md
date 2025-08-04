@@ -12,6 +12,12 @@ weight: 13
 If the `--data` flag value is a URL pointing to another Machbase DBMS's mach port (`5656`), as shown in the example below:
 
 ```sh
+machbase-neo serve --data machbase://sys:manager@192.168.1.100:5656
+```
+
+or using environment variable for username and password pair:
+
+```sh
 SECRET="sys:manager" \
 machbase-neo serve --data machbase://${SECRET}@192.168.1.100:5656
 ```
