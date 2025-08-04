@@ -20,13 +20,10 @@ Choose the latest version for your platform.
 | Windows    | x64     | [machbase-neo-{{< neo_latestver >}}-windows-amd64.zip]({{< neo_releases_url >}}/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-windows-amd64.zip) |
 
 ### What about other Linux
-{{< callout type="warning" >}}
-Release v8.0.51 was the final pre-built package based on Ubuntu 20.04. Starting from v8.0.52, pre-built packages are now based on Ubuntu 22.04.
-{{< /callout >}}
 
 If the pre-built packages are not compatible with your Linux distribution, you can still build from the source code on your system.
 
-1. Ensure you have Go 1.23 and gcc installed.
+1. Ensure you have Go 1.24 and gcc installed.
 2. Clone the neo-server repository from [GitHub](https://github.com/machbase/neo-server).
 3. Run `go run mage.go install-neo-web` to download the web UI for Machbase Neo.
 4. Run `go run mage.go machbase-neo` to build Machbase Neo.
