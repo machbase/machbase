@@ -1575,7 +1575,57 @@ which follows the JSON-RPC specification.
 RPC enables clients to invoke server-side methods and receive structured responses,
 facilitating seamless communication and integration between client applications and the server.
 
-**llmGetProviders**
+**Request**
+
+- Direction: C -> S
+
+```json
+{
+    "type": "rpc_req",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 1234,
+        "method": "add",
+        "params": [1, 2]
+    }
+}
+```
+
+**Response**
+
+- Direction: S -> C
+
+**success**
+
+```json
+{
+    "type": "rpc_rsp",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 1234,
+        "result": 3
+    }
+}
+```
+
+**error**
+
+```json
+{
+    "type": "rpc_rsp",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 1234,
+        "error": {
+            "code": -32000,
+            "message": "some error message"
+        }
+    }
+}
+```
+
+
+#### llmGetProviders
 
 `llmGetProviders()`
 
@@ -1617,7 +1667,7 @@ facilitating seamless communication and integration between client applications 
 }
 ```
 
-**markdownRender**
+#### markdownRender
 
 `markdownRender(markdown, darkmode)`
 
@@ -1651,56 +1701,6 @@ facilitating seamless communication and integration between client applications 
     }
 }
 ```
-
-#### Request
-
-- Direction: C -> S
-
-```json
-{
-    "type": "rpc_req",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 1234,
-        "method": "add",
-        "params": [1, 2]
-    }
-}
-```
-
-#### Response
-
-- Direction: S -> C
-
-**success**
-
-```json
-{
-    "type": "rpc_rsp",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 1234,
-        "result": 3
-    }
-}
-```
-
-**error**
-
-```json
-{
-    "type": "rpc_rsp",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 1234,
-        "error": {
-            "code": -32000,
-            "message": "some error message"
-        }
-    }
-}
-```
-
 
 ### MESSAGE
 
@@ -1750,7 +1750,6 @@ The MESSAGE feature over WebSocket is currently under active development. Functi
 
 - Direction: S -> C
 
-```json
 ```json
 {
     "type": "msg",
