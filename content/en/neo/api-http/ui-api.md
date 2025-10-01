@@ -1579,21 +1579,77 @@ facilitating seamless communication and integration between client applications 
 
 `llmGetProviders()`
 
-*Returns*
+*Request*
 
 ```json
-[
-    {
-        "name": "Ollama qweb3:0.6b",
-        "provider": "ollama",
-        "model": "qwen3:0.6b"
-    },
-    {
-        "name": "claude Sonnet 4",
-        "provider": "claude",
-        "model": "claude-sonnet-4-20250514"
-    },
-]
+{
+    "type": "rpc_req",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 10,
+        "method": "llmGetProviders",
+        "params": [1, 2]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 10,
+        "result": [
+            {
+                "name": "Ollama qweb3:0.6b",
+                "provider": "ollama",
+                "model": "qwen3:0.6b"
+            },
+            {
+                "name": "claude Sonnet 4",
+                "provider": "claude",
+                "model": "claude-sonnet-4-20250514"
+            },
+        ]
+    }
+}
+```
+
+**markdownRender**
+
+`markdownRender(markdown, darkmode)`
+
+*Params*
+- `markdown` *string* markdown content
+- `darkmode` *bool* true for darkmode
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "markdownRender",
+        "params": ["# Hello World\nThis is a **test**.", false]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": "<h1>Hello World</h1>\n<p>This is a <strong>test</strong>.</p>\n"
+    }
+}
 ```
 
 #### Request
