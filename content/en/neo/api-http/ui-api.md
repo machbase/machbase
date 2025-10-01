@@ -1637,8 +1637,7 @@ facilitating seamless communication and integration between client applications 
     "rpc": {
         "jsonrpc": "2.0",
         "id": 10,
-        "method": "llmGetProviders",
-        "params": [1, 2]
+        "method": "llmGetProviders"
     }
 }
 ```
