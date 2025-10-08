@@ -1,346 +1,550 @@
 ---
-title : 'Python'
+title : Python (KR)
 type : docs
 weight: 30
 ---
 
-## Python 모듈 사용 개요
+## 개요
 
-마크베이스에서는 Python 모듈을 지원한다. 모듈을 설치함으로써 마크베이스 서버와 CLI 방식으로 값을 주고 받을 수 있는 클래스를 제공한다. 이를 활용해서 Python에서 쉽게 마크베이스에 질의 형태로 값을 입력하거나 삭제, 테이블 생성, 삭제 등 다양한 명령어를 사용할 수 있다.
+Machbase는 데이터베이스에서 배포되는 네이티브 CLI 클라이언트를 감싼 CPython 확장 모듈 `machbaseAPI`를 제공합니다. 패키지는 다음 두 클래스를 노출합니다.
 
-## 사용 환경 설정
+- `machbaseAPI.machbaseAPI`: 네이티브 공유 라이브러리에 대한 얇은 ctypes 바인딩.
+- `machbaseAPI.machbase`: 연결 관리, SQL 실행, 메타데이터 조회, Append 프로토콜 헬퍼를 제공하는 상위 레벨 헬퍼.
 
-**리눅스**
+이 문서의 예제는 애플리케이션 개발자의 진입점인 `machbase` 클래스를 기준으로 설명합니다.
 
-이를 사용하기 위해서는 간단한 환경 설정과 라이브러리 파일들이 필요하다. 먼저 $LD_LIBRARY_PATH에 $MACHBASE_HOME/lib 디렉터리가 등록되어있는지 확인한다. CLI를 이용해서 마크베이스에 접속하기 때문에 `libmachbasecli_dll.so` 파일이 라이브러리 폴더에 존재해야 한다. 그리고 $MACHBASE_HOME/3rd-party/python3-module 폴더에 있는 machbaseAPI-1.0.tar.gz를 압축 해제후 `python setup.py install` 명령을 통해 사용하려는 Python에 모듈을 설치한다.
+## 설치
 
-**윈도우**
+### 요구 사항
 
-먼저 %MACHBASE_HOME%/3rd-party/python3-module 폴더에 있는 machbaseAPI-1.0.zip을 압축 해제 후 `python setup.py install` 명령을 통해 사용하려는 Python에 모듈을 설치한다.
+- `pip`이 포함된 Python 3.8 이상.
+- 접근 가능한 Machbase 서버와 자격 증명(기본값은 포트 `5656`의 `SYS/MANAGER`).
+- 휠 패키지에 포함된 Machbase 공유 라이브러리(또는 소스 설치 시 번들된 라이브러리).
 
-## Class 생성
-
-마크베이스 Python 모듈을 사용하기 위해서 해당 클래스를 선언해야 한다.
-
-해당 클래스 명은 machbase이다.
-
-```python
-from machbaseAPI import machbase
-```
-
-## 접속과 접속해제
-
-### machbase.open(aHost, aUser, aPw, aPort)
-
-마크베이스에 접속하는 함수이다. 알맞은 파라미터 값을 입력했을시에 DB에 접속 성공했는지 실패했는지를 반환한다. 정상 종료시 1, 실패시 0을 반환한다.
-
-### machbase.close()
-
-마크베이스 접속을 해제하는 함수이다. 정상 종료시 1, 실패시 0을 반환한다.
-
-### machbase.isConnected()
-
-선언한 클래스가 해당 서버에 접속중인지 아닌지를 판별하는 함수이다. 접속 중일 때 1, 접속 중이 아닐 때 0을 반환한다.
-
-## 명령어 실행 및 사용자 편의 함수
-
-### machbase.execute(aSql)
-
-서버에 접속되어 있을 때 해당 서버에 질의문을 전송하는 명령어이다. 정상적으로 실행되었을 때 1, 실패하거나 에러가 발생했을 시에는 0을 반환한다.
-
-마크베이스에서 지원하지 않는 UPDATE를 제외하고 모든 명령어들을 사용할 수 있다.
-
-결과를 한꺼번에 return하는 구조이기 때문에 SELECT 구문을 사용하는 경우 메모리 부족 오류가 발생할 수 있다. 따라서 SELECT 구문은 machbase.select() 함수를 사용한다.
-
-### machbase.append(aTableName, aTypes, aValues, aFormat)
-
-마크베이스에서 지원하는 Append 프로토콜을 사용할 수 있는 함수이다.
-
-데이터를 입력하게 될 테이블명, 각 컬럼들의 타입의 딕셔너리, 그리고 입력할 값들을 JSON 형태로 입력하고 dateformat을 지정해 주면 Append를 실행할 수 있다.
-
-정상적으로 실행하였다면 1, 실패시에는 0을 반환한다.
-
-|  타입명  |  값 |
-|:--------:|:---:|
-| short    | 4   |
-| ushort   | 104 |
-| integer  | 8   |
-| uinteger | 108 |
-| long     | 12  |
-| ulong    | 112 |
-| float    | 16  |
-| double   | 20  |
-| datetime | 6   |
-| varchar  | 5   |
-| ipv4     | 32  |
-| ipv6     | 36  |
-| text     | 49  |
-| binary   | 97  |
-
-
-### machbase.tables()
-
-접속한 서버에 있는 모든 테이블들의 정보를 반환한다. 정상적으로 실행되었다면 1, 실패했을 시에는 0을 반환한다.
-
-### machbase.columns(aTableName)
-
-접속한 서버에 있는 해당 테이블 내의 컬럼들의 정보를 반환한다. 정상적으로 실행되었다면 1, 실패했을 시에는 0을 반환한다.
-
-## 결과 확인
-
-마크베이스 Python 모듈에서 모든 결과값은 JSON으로 반환된다.
-
-다양한 환경에서 활용하기 쉬운 형태의 결과를 반환하는 것으로 채택하였다.
-
-### machbase.result()
-
-위쪽에서 설명하였던 함수들은 실행 결과들을 해당 함수의 반환값으로 나타내지 않고 성공, 실패 여부만 반환한다. 함수들의 결과값은 이 함수의 반환값으로만 얻을 수 있다.
-
-## SELECT 결과 확인
-
-machbase.execute() 함수로 SELECT 결과를 읽어오면 모든 결과를 한번에 읽기때문에 많은 메모리가 필요하며 경우에 따라서 메모리 부족 오류가 발생할 수 있다.
-
-따라서 SELECT 구문의 경우에는 한 레코드씩 결과를 얻을 수 있는 함수를 사용해야 한다.
-
-### machbase.select(aSql)
-
-서버에 접속되어 있을 때 해당 서버에 SELECT 질의문을 전송하는 명령어이다. 정상적으로 실행되었을 때 1, 실패하거나 에러가 발생했을 시에는 0을 반환한다.
-
-SELECT 구문만 사용이 가능하며, 모든 결과를 한번에 가져오는 machbase.execute() 함수와 달리 machbase.fetch()함수를 사용해서 1 레코드 씩 결과를 얻을 수 있다.
-
-### machbase.fetch()
-
-machbase.select(aSql) 함수의 결과를 한 레코드 씩 읽어온다.
-
-return 값은 성공여부와 결과값으로 성공여부는 1과 0으로 표시되고, 결과값은 한 레코드의 결과가 json 형식으로 return 된다.
-
-### machbase.selectClose()
-
-한번 선택된 machbase.select()의 결과는 다른 machbase.select()나 machbase.execute() 함수가 호출될 때까지 open된 상태로 존재한다.
-
-이 것을 명시적으로 닫아주는 것이 machbase.selectClose() 함수이다.
-
-### machbase.select() 예제
-
-```python
-db = machbase()
-if db.open('127.0.0.1','SYS','MANAGER', 5656) is 0 :
-    return db.result()
- 
-query = 'SELECT * from sample_table'
-while True:
-    is_success, result = db.fetch()
-    if is_success is 0:
-        break;
- 
-    res = json.loads(result)
- 
-db.selectClose()
-if db.close() is 0 :
-    return db.result()
-```
-## 예제
-
-간단한 예제들을 통해서 마크베이스 Python 모듈을 사용하는 방법을 알아보자
-
-$MACHBASE_HOME/sample/python 파일들을 이용해서 확인할 수 있다. 해당 디렉터리에는 간편하게 테스트를 해 볼 수 있게 해주는 Makefile과 데이터를 만들어주는 MakeData.py 파일이 있다. Makefile 내부 변수 중 PYPATH의 값을 마크베이스 Python 모듈이 설치된 파이썬으로 지정해야 정상 작동한다. 기본값은 마크베이스 패키지에 설치된 파이썬으로 지정되어 있다. 또한 파이썬에서 모듈을 독자적으로 실행하기 위해서는 __init__.py 파일이 필요하므로 해당 디렉터리에 파일이 존재하는지 확인하도록 하다.
+### PyPI에서 설치
 
 ```bash
-[mach@localhost]$ cd $MACHBASE_HOME/sample/python
-[mach@localhost python]$ ls -l
-total 20
--rw-rw-r-- 1 mach mach    0 Oct  7 14:37 __init__.py
--rw-rw-r-- 1 mach mach  764 Oct  7 14:37 MakeData.py
--rw-rw-r-- 1 mach mach  593 Oct  7 14:58 Makefile
--rw-rw-r-- 1 mach mach  664 Oct  7 14:37 Sample1Connect.py
--rw-rw-r-- 1 mach mach 2401 Oct  7 14:37 Sample2Simple.py
--rw-rw-r-- 1 mach mach 1997 Oct  7 14:37 Sample3Append.py
+pip3 install machbaseAPI
 ```
 
-### Connect
+`pip3`가 PATH에 없다면 `python3 -m pip install machbaseAPI`를 사용하세요.
 
-아래의 예제는 서버에 접속해서 질의를 실행하고 결과값을 반환하는 단순한 함수이다. 각각의 함수들이 실패(0)를 반환했을 때에 결과값을 반환하는 경우는 에러 결과를 반환하기 위함이다. 정상적으로 실행된다면 m$tables 테이블의 값들 개수가 반환 된다.
-
-파일 이름은 Sample1Connect.py이다.
-
-```python
-from machbaseAPI import machbase
-def connect():
-    db = machbase()
-    if db.open('127.0.0.1','SYS','MANAGER',5656) is 0 :
-        return db.result()
-    if db.execute('select count(*) from m$tables') is 0 :
-        return db.result()
-    result = db.result()
-    if db.close() is 0 :
-        return db.result()
-    return result
-if __name__=="__main__":
-    print connect()
-```
+### 모듈 확인
 
 ```bash
-[mach@localhost python]$ make run_sample1
-/home/machbase/machbase_home/webadmin/flask/Python/bin/python Sample1Connect.py
-{"count(*)":"13"}
+python3 - <<'PY'
+from machbaseAPI.machbaseAPI import machbase
+print('machbaseAPI import ok')
+cli = machbase()
+print('isConnected():', cli.isConnected())
+PY
 ```
 
-### Simple
+정상적으로 실행되면 모듈 임포트와 인스턴스 생성을 확인할 수 있습니다.
 
-아래 예제를 이용해서 단순하게 마크베이스에 파이썬을 이용해서 테이블을 만들고 값을 입력하고 입력된 값을 추출해서 확인하는 예제이다. 파일 이름은 Sample2Simple.py이다.
+## 빠른 시작
+
+아래 스니펫은 로컬 서버에 연결하고, 샘플 테이블을 생성하고, 데이터를 삽입한 뒤 조회 후 세션을 종료합니다.
 
 ```python
-import re
+#!/usr/bin/env python3
 import json
-from machbaseAPI import machbase
-def insert():
+from machbaseAPI.machbaseAPI import machbase
+
+def main():
     db = machbase()
-    if db.open('127.0.0.1','SYS','MANAGER',5656) is 0 :
-        return db.result()
-    db.execute('drop table sample_table')
-    db.result()
-    if db.execute('create table sample_table(d1 short, d2 integer, d3 long, f1 float, f2 double, name varchar(20), text text, bin binary, v4 ipv4, v6 ipv6, dt datetime)') is 0:
-        return db.result()
-    db.result()
-    for i in range(1,10):
-        sql = "INSERT INTO SAMPLE_TABLE VALUES ("
-        sql += str((i - 5) * 6552) #short
-        sql += ","+ str((i - 5) * 42949672) #integer
-        sql += ","+ str((i - 5) * 92233720368547758L) #long
-        sql += ","+ "1.234"+str((i-5)*7) #float
-        sql += ","+ "1.234"+str((i-5)*61) #double
-        sql += ",'id-"+str(i)+"'" #varchar
-        sql += ",'name-"+str(i)+"'" #text
-        sql += ",'aabbccddeeff'" #binary
-        sql += ",'192.168.0."+str(i)+"'" #ipv4
-        sql += ",'::192.168.0."+str(i)+"'" #ipv6
-        sql += ",TO_DATE('2015-08-0"+str(i)+"','YYYY-MM-DD')" #date
-        sql += ")";
-        if db.execute(sql) is 0 :
-            return db.result()
-        else:
-            print db.result()
-        print str(i)+" record inserted."
-    query = "SELECT d1, d2, d3, f1, f2, name, text, bin, to_hex(bin), v4, v6, to_char(dt,'YYYY-MM-DD') as dt from SAMPLE_TABLE";
-    if db.execute(query) is 0 :
-        return db.result()
-    result = db.result()
-    for item in re.findall('{[^}]+}',result):
-        res = json.loads(item)
-        print "d1 : "+res.get('d1')
-        print "d2 : "+res.get('d2')
-        print "d3 : "+res.get('d3')
-        print "f1 : "+res.get('f1')
-        print "f2 : "+res.get('f2')
-        print "name : "+res.get('name')
-        print "text : "+res.get('text')
-        print "bin : "+res.get('bin')
-        print "to_hex(bin) : "+res.get('to_hex(bin)')
-        print "v4 : "+res.get('v4')
-        print "v6 : "+res.get('v6')
-        print "dt : "+res.get('dt')
-    if db.close() is 0 :
-        return db.result()
-    return result
-if __name__=="__main__":
-    print insert()
+    if db.open('127.0.0.1', 'SYS', 'MANAGER', 5656) == 0:
+        raise SystemExit(db.result())
+
+    try:
+        rc = db.execute('drop table py_sample')
+        print('drop table rc:', rc)
+        print('drop table result:', db.result())
+
+        ddl = (
+            "create table py_sample ("
+            "ts datetime,"
+            "device varchar(40),"
+            "value double"
+            ")"
+        )
+        if db.execute(ddl) == 0:
+            raise SystemExit(db.result())
+        print('create table result:', db.result())
+
+        for seq in range(3):
+            sql = (
+                "insert into py_sample values ("
+                f"to_date('2024-01-0{seq+1}','YYYY-MM-DD'),"
+                f"'sensor-{seq}',"
+                f"{20.5 + seq}"
+                ")"
+            )
+            if db.execute(sql) == 0:
+                raise SystemExit(db.result())
+            print('insert result:', db.result())
+
+        if db.select('select * from py_sample order by ts') == 0:
+            raise SystemExit(db.result())
+
+        print('rows available:', db.count())
+        while True:
+            rc, payload = db.fetch()
+            if rc == 0:
+                break
+            row = json.loads(payload)
+            print('row:', row)
+
+        db.selectClose()
+    finally:
+        if db.close() == 0:
+            raise SystemExit(db.result())
+
+if __name__ == '__main__':
+    main()
 ```
 
-```bash
-[mach@loclahost python]$ make run_sample2
-/home/machbase/machbase_home/webadmin/flask/Python/bin/python Sample2Simple.py
-{"EXECUTE RESULT":"Execute Success"}
-1 record inserted.
-{"EXECUTE RESULT":"Execute Success"}
-2 record inserted.
-{"EXECUTE RESULT":"Execute Success"}
-3 record inserted.
-{"EXECUTE RESULT":"Execute Success"}
-4 record inserted.
-{"EXECUTE RESULT":"Execute Success"}
-5 record inserted.
-{"EXECUTE RESULT":"Execute Success"}
-6 record inserted.
-{"EXECUTE RESULT":"Execute Success"}
-7 record inserted.
-{"EXECUTE RESULT":"Execute Success"}
-8 record inserted.
-{"EXECUTE RESULT":"Execute Success"}
-9 record inserted.
-d1 : 26208
-d2 : 171798688
-d3 : 368934881474191032
-f1 : 1.23428
-f2 : 1.23424
-name : id-9
-text : name-9
-bin : 616162626363646465656666
-to_hex(bin) : 616162626363646465656666
-v4 : 192.168.0.9
-v6 : ::192.168.0.9
-...
-```
+## 결과 처리
 
-### Append
+대부분의 `machbase` 메서드는 성공 시 `1`, 실패 시 `0`을 반환합니다. 호출 직후 `db.result()`를 사용해 서버가 전달한 JSON 형식 페이로드를 읽어야 합니다. `db.count()`는 현재 결과 집합에 버퍼링된 행 개수를 알려줍니다. `select()` 후에는 `db.fetch()`를 반환값 `(0, '')`가 나올 때까지 반복 호출하고, 이후 `db.selectClose()`로 리소스를 해제합니다.
 
-마크베이스에서 고속으로 데이터를 입력할 수 있는 Append 방식 또한 파이썬 모듈을 활용해서 사용할 수 있다. 아래의 예제는 고속으로 데이터를 입력하는 예제이다. 컬럼 정보 및 초기화를 위한 접속 클래스 db, Append를 하기 위한 접속용 클래스 db2를 선언하여 각각의 함수를 활용하는 방식을 사용했다. 파일 이름은 Sample3Append.py이다.
+## 지원 API 매트릭스
+
+| 클래스 | API | 설명 | 반환 |
+| -- | -- | -- | -- |
+| `machbase` | `open(host, user, password, port)` | 기본 자격 증명과 포트로 Machbase 서버에 연결합니다. | 성공 시 `1`, 실패 시 `0` |
+| `machbase` | `openEx(host, user, password, port, conn_str)` | 추가 연결 문자열 속성을 지정해 확장 연결을 수행합니다. | `1` 또는 `0` |
+| `machbase` | `close()` | 현재 세션을 종료합니다. | `1` 또는 `0` |
+| `machbase` | `isOpened()` | 핸들이 열려 있는지 확인합니다. | `1` 또는 `0` |
+| `machbase` | `isConnected()` | 서버 연결 상태를 확인합니다. | `1` 또는 `0` |
+| `machbase` | `getSessionId()` | 서버가 부여한 세션 식별자를 반환합니다. | 세션 ID 정수 |
+| `machbase` | `execute(sql, type=0)` | `UPDATE`를 제외한 SQL 문을 실행합니다. | `1` 또는 `0` |
+| `machbase` | `schema(sql)` | 스키마 관련 문장을 실행합니다. | `1` 또는 `0` |
+| `machbase` | `tables()` | 모든 테이블 메타데이터를 조회합니다. | `1` 또는 `0` |
+| `machbase` | `columns(table_name)` | 특정 테이블의 컬럼 정보를 조회합니다. | `1` 또는 `0` |
+| `machbase` | `column(table_name)` | 로우 레벨 카탈로그 호출을 통해 컬럼 레이아웃을 가져옵니다. | `1` 또는 `0` |
+| `machbase` | `statistics(table_name, user='SYS')` | 테이블 통계를 요청합니다. | `1` 또는 `0` |
+| `machbase` | `select(sql)` | `SELECT` 또는 `DESC` 문을 스트리밍 방식으로 실행합니다. | `1` 또는 `0` |
+| `machbase` | `fetch()` | `select()` 이후 다음 행을 가져옵니다. | `(rc, json_str)` |
+| `machbase` | `selectClose()` | 열린 결과 집합 커서를 닫습니다. | `1` 또는 `0` |
+| `machbase` | `result()` | 최신 JSON 페이로드를 반환합니다. | JSON 문자열 |
+| `machbase` | `count()` | 현재 버퍼에 있는 행 수를 반환합니다. | 정수 |
+| `machbase` | `checkBit()` | 포인터 폭(32 또는 64비트)을 보고합니다. | `32` 또는 `64` |
+| `machbase` | `appendOpen(table_name, types)` | 컬럼 타입 코드를 사용해 Append 프로토콜을 시작합니다. | `1` 또는 `0` |
+| `machbase` | `appendData(table_name, types, values, format)` | 활성화된 Append 세션으로 행을 추가합니다. | `1` 또는 `0` |
+| `machbase` | `appendDataByTime(table_name, types, values, format, times)` | 에포크 타임스탬프를 명시해 행을 추가합니다. | `1` 또는 `0` |
+| `machbase` | `appendFlush()` | Append 버퍼를 디스크로 플러시합니다. | `1` 또는 `0` |
+| `machbase` | `appendClose()` | Append 세션을 종료합니다. | `1` 또는 `0` |
+| `machbase` | `append(table_name, types, values, format)` | Open → Append → Close를 한번에 수행하는 편의 함수입니다. | `1` 또는 `0` |
+| `machbase` | `appendByTime(table_name, types, values, format, times)` | 타임스탬프 기반 Append 편의 함수입니다. | `1` 또는 `0` |
+| `machbaseAPI` | `get_library_path()` | 번들된 네이티브 클라이언트의 경로를 확인합니다. | 문자열 경로 |
+| `machbaseAPI` | `machbaseAPI.openDB(...)` | 로우 레벨 연결 함수(`machbase.open`과 동일). | 포인터 또는 `None` |
+| `machbaseAPI` | `machbaseAPI.openDBEx(...)` | 로우 레벨 확장 연결 함수. | 포인터 또는 `None` |
+| `machbaseAPI` | `machbaseAPI.closeDB(handle)` | 로우 핸들을 닫습니다. | 정수 상태값 |
+| `machbaseAPI` | `machbaseAPI.execDirect(handle, sql)` | 분류 없이 SQL을 실행합니다. | 정수 상태값 |
+| `machbaseAPI` | `machbaseAPI.execSelect(handle, sql, type)` | SQL을 실행하고 결과 버퍼를 준비합니다. | 정수 상태값 |
+| `machbaseAPI` | `machbaseAPI.execSchema(handle, sql)` | 스키마 문장을 실행합니다. | 정수 상태값 |
+| `machbaseAPI` | `machbaseAPI.execStatistics(handle, table, user)` | 테이블 통계를 요청합니다. | 정수 상태값 |
+| `machbaseAPI` | `machbaseAPI.execAppendOpen(...)` | Append 프로토콜을 시작합니다. | 정수 상태값 |
+| `machbaseAPI` | `machbaseAPI.execAppendData(...)` | Append 데이터 행을 전달합니다. | 정수 상태값 |
+| `machbaseAPI` | `machbaseAPI.execAppendDataByTime(...)` | 타임스탬프와 함께 Append를 실행합니다. | 정수 상태값 |
+| `machbaseAPI` | `machbaseAPI.execAppendFlush(handle)` | Append 버퍼를 플러시합니다. | 정수 상태값 |
+| `machbaseAPI` | `machbaseAPI.execAppendClose(handle)` | Append 세션을 종료합니다. | 정수 상태값 |
+| `machbaseAPI` | `machbaseAPI.getColumns(handle, table)` | 컬럼 메타데이터를 조회합니다. | 정수 상태값 |
+| `machbaseAPI` | `machbaseAPI.getIsConnected(handle)` | 연결 상태 플래그를 확인합니다. | 정수 상태값 |
+| `machbaseAPI` | `machbaseAPI.getDataCount(handle)` | 버퍼링된 행 수를 반환합니다. | 부호 없는 정수 |
+| `machbaseAPI` | `machbaseAPI.getData(handle)` | JSON 버퍼 포인터를 반환합니다. | `ctypes.c_char_p` |
+| `machbaseAPI` | `machbaseAPI.getlAddr(handle)` | 결과 포인터의 하위 워드를 반환합니다(64비트). | 정수 |
+| `machbaseAPI` | `machbaseAPI.getrAddr(handle)` | 결과 포인터의 상위 워드를 반환합니다(64비트). | 정수 |
+| `machbaseAPI` | `machbaseAPI.getSessionId(handle)` | 서버 세션 ID를 반환합니다. | 부호 없는 정수 |
+| `machbaseAPI` | `machbaseAPI.fetchRow(handle)` | 결과 집합 커서를 전진합니다. | 정수 상태값 |
+| `machbaseAPI` | `machbaseAPI.selectClose(handle)` | select 커서를 닫습니다. | 정수 상태값 |
+
+## API 참조 및 샘플
+
+필요에 따라 호스트, 포트, 사용자 이름, 암호 값을 조정하세요. 모든 스니펫은 독립 실행 가능하며 `python3 script.py` 형태로 실행할 수 있습니다.
+
+### 연결 관리
+
+#### machbase.open(), machbase.isOpened(), machbase.isConnected(), machbase.getSessionId(), machbase.close()
 
 ```python
-import re
-import json
-from machbaseAPI import machbase
-def append():
-#init,columns start
+#!/usr/bin/env python3
+from machbaseAPI.machbaseAPI import machbase
+
+def main():
     db = machbase()
-    if db.open('127.0.0.1','SYS','MANAGER',5656) is 0 :
-        return db.result()
-    db.execute('drop table sample_table')
-    db.result()
-    if db.execute('create table sample_table(d1 short, d2 integer, d3 long, f1 float, f2 double, name varchar(20), text text, bin binary, v4 ipv4, v6 ipv6, dt datetime)') is 0:
-        return db.result()
-    db.result()
-    tableName = 'sample_table'
-    db.columns(tableName)
-    result = db.result()
-    if db.close() is 0 :
-        return db.result()
-#init, colums end
-#append start
-    db2 = machbase()
-    if db2.open('127.0.0.1','SYS','MANAGER',5656) is 0 :
-        return db2.result()
-    types = []
-    for item in re.findall('{[^}]+}',result):
-        types.append(json.loads(item).get('type'))
-    values = []
-    with open('data.txt','r') as f:
-        for line in f.readlines():
-            v = []
-            i = 0
-            for l in line[:-1].split(','):
-                t = int(types[i])
-                if t == 4 or t == 8 or t == 12 or t == 104 or t == 108 or t == 112:
-                    #short   integer    long       ushort      uinteger     ulong
-                    v.append(int(l))
-                elif t == 16 or t == 20:
-                    #float      double
-                    v.append(float(l))
-                else:
-                    v.append(l)
-                i+=1
-            values.append(v)
-    db2.append(tableName, types, values, 'YYYY-MM-DD HH24:MI:SS')
-    result = db2.result()
-    if db2.close() is 0 :
-        return db2.result()
-#append end
-    return result
-if __name__=="__main__":
-    print append()
+    print('isOpened before open:', db.isOpened())
+    print('isConnected before open:', db.isConnected())
+
+    if db.open('127.0.0.1', 'SYS', 'MANAGER', 5656) == 0:
+        raise SystemExit(db.result())
+
+    print('session id:', db.getSessionId())
+    print('isOpened after open:', db.isOpened())
+    print('isConnected after open:', db.isConnected())
+
+    if db.close() == 0:
+        raise SystemExit(db.result())
+
+    print('isOpened after close:', db.isOpened())
+    print('isConnected after close:', db.isConnected())
+
+if __name__ == '__main__':
+    main()
 ```
 
-```bash
-[mach@localhost python]$ make run_sample3
-/home/machbase/machbase_home/webadmin/flask/Python/bin/python Sample3Append.py
-{"EXECUTE RESULT":"Append success"}
+#### machbase.openEx()
+
+```python
+#!/usr/bin/env python3
+from machbaseAPI.machbaseAPI import machbase
+
+def main():
+    db = machbase()
+    conn_str = 'APP_NAME=python-demo'
+    if db.openEx('127.0.0.1', 'SYS', 'MANAGER', 5656, conn_str) == 0:
+        raise SystemExit(db.result())
+    print('connected with openEx, session id:', db.getSessionId())
+    if db.close() == 0:
+        raise SystemExit(db.result())
+
+if __name__ == '__main__':
+    main()
 ```
+
+### DML과 결과 버퍼
+
+#### machbase.execute(), machbase.result(), machbase.count()
+
+```python
+#!/usr/bin/env python3
+import json
+from machbaseAPI.machbaseAPI import machbase
+
+def main():
+    db = machbase()
+    if db.open('127.0.0.1', 'SYS', 'MANAGER', 5656) == 0:
+        raise SystemExit(db.result())
+
+    try:
+        rc = db.execute('drop table py_exec_demo')
+        print('drop table rc:', rc)
+        print('drop table result:', db.result())
+
+        ddl = 'create table py_exec_demo(id integer, note varchar(32))'
+        if db.execute(ddl) == 0:
+            raise SystemExit(db.result())
+        print('create table result:', db.result())
+
+        for idx in range(2):
+            sql = f"insert into py_exec_demo values ({idx}, 'row-{idx}')"
+            if db.execute(sql) == 0:
+                raise SystemExit(db.result())
+            print('insert result:', db.result())
+
+        if db.execute('select * from py_exec_demo order by id') == 0:
+            raise SystemExit(db.result())
+        payload = db.result()
+        print('select payload:', payload)
+        rows = json.loads(payload)
+        print('decoded rows:', rows)
+        print('row count via count():', db.count())
+    finally:
+        if db.close() == 0:
+            raise SystemExit(db.result())
+
+if __name__ == '__main__':
+    main()
+```
+
+### 스트리밍 SELECT 헬퍼
+
+#### machbase.select(), machbase.fetch(), machbase.selectClose()
+
+```python
+#!/usr/bin/env python3
+import json
+from machbaseAPI.machbaseAPI import machbase
+
+def main():
+    db = machbase()
+    if db.open('127.0.0.1', 'SYS', 'MANAGER', 5656) == 0:
+        raise SystemExit(db.result())
+
+    try:
+        rc = db.execute('drop table py_select_demo')
+        print('drop table rc:', rc)
+        print('drop table result:', db.result())
+
+        ddl = 'create table py_select_demo(id integer, value double)'
+        if db.execute(ddl) == 0:
+            raise SystemExit(db.result())
+        print('create table result:', db.result())
+
+        for idx in range(5):
+            sql = f"insert into py_select_demo values ({idx}, {idx * 1.5})"
+            if db.execute(sql) == 0:
+                raise SystemExit(db.result())
+            print('insert result:', db.result())
+
+        if db.select('select id, value from py_select_demo order by id') == 0:
+            raise SystemExit(db.result())
+
+        print('buffered rows:', db.count())
+        while True:
+            rc, payload = db.fetch()
+            if rc == 0:
+                break
+            print('fetched row:', json.loads(payload))
+
+        db.selectClose()
+    finally:
+        if db.close() == 0:
+            raise SystemExit(db.result())
+
+if __name__ == '__main__':
+    main()
+```
+
+### 스키마 헬퍼
+
+#### machbase.schema()
+
+```python
+#!/usr/bin/env python3
+from machbaseAPI.machbaseAPI import machbase
+
+def main():
+    db = machbase()
+    if db.open('127.0.0.1', 'SYS', 'MANAGER', 5656) == 0:
+        raise SystemExit(db.result())
+
+    try:
+        rc = db.schema('drop table py_schema_demo')
+        print('schema drop rc:', rc)
+        print('schema drop result:', db.result())
+
+        ddl = 'create table py_schema_demo(name varchar(20), created datetime)'
+        if db.schema(ddl) == 0:
+            raise SystemExit(db.result())
+        print('schema create result:', db.result())
+    finally:
+        if db.close() == 0:
+            raise SystemExit(db.result())
+
+if __name__ == '__main__':
+    main()
+```
+
+### 메타데이터와 통계
+
+#### machbase.tables(), machbase.columns(), machbase.column(), machbase.statistics()
+
+```python
+#!/usr/bin/env python3
+from machbaseAPI.machbaseAPI import machbase
+
+def main():
+    db = machbase()
+    if db.open('127.0.0.1', 'SYS', 'MANAGER', 5656) == 0:
+        raise SystemExit(db.result())
+
+    try:
+        if db.tables() == 0:
+            raise SystemExit(db.result())
+        print('tables metadata:', db.result())
+
+        if db.columns('PY_EXEC_DEMO') == 0:
+            raise SystemExit(db.result())
+        print('columns metadata:', db.result())
+
+        if db.column('PY_EXEC_DEMO') == 0:
+            raise SystemExit(db.result())
+        print('column metadata:', db.result())
+
+        if db.statistics('PY_EXEC_DEMO') == 0:
+            raise SystemExit(db.result())
+        print('statistics output:', db.result())
+    finally:
+        if db.close() == 0:
+            raise SystemExit(db.result())
+
+if __name__ == '__main__':
+    main()
+```
+
+### Append 프로토콜 기본기
+
+`appendOpen()`, `appendData()`, `appendFlush()`, `appendClose()`는 행을 효율적으로 스트리밍합니다. 아래 예시는 `columns()` 결과로부터 컬럼 타입 코드를 추출한 뒤 데이터를 적재합니다.
+
+```python
+#!/usr/bin/env python3
+import json
+import re
+from machbaseAPI.machbaseAPI import machbase
+
+def main():
+    db = machbase()
+    if db.open('127.0.0.1', 'SYS', 'MANAGER', 5656) == 0:
+        raise SystemExit(db.result())
+
+    try:
+        rc = db.execute('drop table py_append_demo')
+        print('drop table rc:', rc)
+        print('drop table result:', db.result())
+
+        ddl = 'create table py_append_demo(ts datetime, device varchar(32), value double)'
+        if db.execute(ddl) == 0:
+            raise SystemExit(db.result())
+        print('create table result:', db.result())
+
+        if db.columns('PY_APPEND_DEMO') == 0:
+            raise SystemExit(db.result())
+        column_payload = db.result()
+        col_specs = [json.loads(item) for item in re.findall(r'\{[^}]+\}', column_payload)]
+        types = [spec.get('type') for spec in col_specs]
+        print('append column types:', types)
+
+        if db.appendOpen('PY_APPEND_DEMO', types) == 0:
+            raise SystemExit(db.result())
+
+        rows = [
+            ['2024-01-01 09:00:00', 'sensor-a', 21.5],
+            ['2024-01-01 09:05:00', 'sensor-b', 22.1],
+        ]
+        if db.appendData('PY_APPEND_DEMO', types, rows) == 0:
+            raise SystemExit(db.result())
+        print('appendData result:', db.result())
+
+        if db.appendFlush() == 0:
+            raise SystemExit(db.result())
+        print('appendFlush result:', db.result())
+
+        if db.appendClose() == 0:
+            raise SystemExit(db.result())
+        print('appendClose result:', db.result())
+    finally:
+        if db.close() == 0:
+            raise SystemExit(db.result())
+
+if __name__ == '__main__':
+    main()
+```
+
+### Append 편의 함수
+
+#### machbase.append()
+
+```python
+#!/usr/bin/env python3
+from machbaseAPI.machbaseAPI import machbase
+
+def main():
+    db = machbase()
+    if db.open('127.0.0.1', 'SYS', 'MANAGER', 5656) == 0:
+        raise SystemExit(db.result())
+
+    try:
+        db.execute('drop table py_append_auto')
+        db.result()
+        ddl = 'create table py_append_auto(ts datetime, tag varchar(16), reading double)'
+        if db.execute(ddl) == 0:
+            raise SystemExit(db.result())
+        db.result()
+
+        types = ['6', '5', '20']
+        values = [
+            ['2024-01-01 10:00:00', 'node-1', 30.0],
+            ['2024-01-01 10:01:00', 'node-1', 30.5],
+        ]
+        if db.append('PY_APPEND_AUTO', types, values) == 0:
+            raise SystemExit(db.result())
+        print('append() result:', db.result())
+    finally:
+        if db.close() == 0:
+            raise SystemExit(db.result())
+
+if __name__ == '__main__':
+    main()
+```
+
+#### machbase.appendDataByTime(), machbase.appendByTime()
+
+```python
+#!/usr/bin/env python3
+from machbaseAPI.machbaseAPI import machbase
+
+def main():
+    db = machbase()
+    if db.open('127.0.0.1', 'SYS', 'MANAGER', 5656) == 0:
+        raise SystemExit(db.result())
+
+    try:
+        db.execute('drop table py_append_time')
+        db.result()
+        ddl = 'create table py_append_time(ts datetime, tag varchar(16), reading double)'
+        if db.execute(ddl) == 0:
+            raise SystemExit(db.result())
+        db.result()
+
+        types = ['6', '5', '20']
+        rows = [
+            ['2024-01-01 11:00:00', 'node-2', 40.1],
+            ['2024-01-01 11:01:00', 'node-2', 40.7],
+        ]
+        epoch_times = [1704106800, 1704106860]
+
+        if db.appendOpen('PY_APPEND_TIME', types) == 0:
+            raise SystemExit(db.result())
+        if db.appendDataByTime('PY_APPEND_TIME', types, rows, 'YYYY-MM-DD HH24:MI:SS', epoch_times) == 0:
+            raise SystemExit(db.result())
+        print('appendDataByTime result:', db.result())
+        db.appendClose()
+
+        if db.appendByTime('PY_APPEND_TIME', types, rows, 'YYYY-MM-DD HH24:MI:SS', epoch_times) == 0:
+            raise SystemExit(db.result())
+        print('appendByTime result:', db.result())
+    finally:
+        if db.close() == 0:
+            raise SystemExit(db.result())
+
+if __name__ == '__main__':
+    main()
+```
+
+### 진단 도구
+
+#### machbase.checkBit()
+
+```python
+#!/usr/bin/env python3
+from machbaseAPI.machbaseAPI import machbase
+
+def main():
+    db = machbase()
+    print('client pointer width:', db.checkBit())
+
+if __name__ == '__main__':
+    main()
+```
+
+### 로우 레벨 바인딩
+
+하위 레벨 `machbaseAPI` 클래스는 원시 ctypes 바인딩과 `get_library_path()` 헬퍼를 제공합니다.
+
+```python
+#!/usr/bin/env python3
+from machbaseAPI import machbaseAPI
+from machbaseAPI.machbaseAPI import get_library_path
+
+def main():
+    print('native library path:', get_library_path())
+    api = machbaseAPI.machbaseAPI()
+    print('openDB argtypes:', api.clib.openDB.argtypes)
+
+if __name__ == '__main__':
+    main()
+```
+
+일상적인 데이터베이스 작업은 `machbase` 헬퍼가 대부분을 처리하므로, C 레이어에 직접 접근해야 할 때만 로우 레벨 인터페이스를 사용하세요.
