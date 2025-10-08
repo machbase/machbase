@@ -53,6 +53,7 @@ weight: 30
 * [CLI/ODBC](./sdk/cli-odbc)
 * [CLI/ODBC Example](./sdk/cli-odbc-example)
 * [JDBC](./sdk/jdbc)
+* [NPM](./sdk/npm)
 * [Python](./sdk/python)
 * [.Net Connector](./sdk/dotnet)
 * [RESTfull API](./sdk/restful)
