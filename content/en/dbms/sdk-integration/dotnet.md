@@ -1,32 +1,37 @@
 ---
+title: '.NET Connector'
 type: docs
-layout : post
-title : '.NET Connector'
-type : docs
-weight: 40
+weight: 20
 ---
 
 ## Index
 
+* [Overview](#overview)
 * [Install](#install)
 * [Install Connector via NuGet Package Manager](#install-connector-via-nuget-package-manager)
+* [Connection String Reference](#connection-string-reference)
 * [API Reference](#api-reference)
-* [Usage and examples](#usage-and-examples)
+* [Usage and Examples](#usage-and-examples)
+* [Full Provider APIs (Protocol 4.0-full)](#full-provider-apis-protocol-40-full)
+
+## Overview
+
+Machbase ships a universal ADO.NET provider, **UniMachNetConnector**, that wraps every supported Machbase wire protocol (2.1 through 4.0). Beginning with Machbase 8.0.50, this universal connector is bundled with the server packages, and the version number appended to the DLL name matches the Machbase release you built or installed. The connector automatically chooses the correct protocol at runtime based on the connection string.
 
 ## Install
 
-The .NET (C #) Connector library that supports some features of the ADO.NET driver is provided.
+The Machbase server and client installers include the universal .NET provider under `$MACHBASE_HOME/lib/`. After installation you will see:
 
-The library location is  $MACHBASE_HOME/lib/ provided as a DLL type. It provides different DLLs depending on the .NET version.
+- **UniMachNetConnector** – the framework-neutral entry point. The files are named `UniMachNetConnector-net{50|60|70|80}-<version>.dll` so you can pick the build that matches your target framework.
+- **Legacy protocol connectors** – optional protocol-specific assemblies that the universal loader can activate on demand, such as `machNetConnector-XX-net{50|60|70|80}-<version>.dll`.
 
-* .NET Framework 4.0: machNetConnector40.dll
-* .NET Framework 5.0: machNetConnector50.dll
+Reference the DLL that matches your application (for example `UniMachNetConnector-net80-8.0.50.dll`) or copy it next to your binaries when you deploy.
 
 ## Install Connector via NuGet Package Manager
 
-<u>.NET Connector 5.0 of Machbase has already enrolled to NuGet package!</u>   
-If you use Visual Studio, you'll easily get and use .NET Connector from NuGet repository.   
-Below procedure is about how to get machNetConnector5.0 from NuGet.   
+> **Note**: .NET Connector 5.0 of Machbase has already enrolled to NuGet package! This 5.0 package is the legacy standalone distribution that predates the unified UniMachNetConnector bundled with Machbase 8.0.50.
+
+If you use Visual Studio, you'll easily get and use .NET Connector from NuGet repository. Below procedure is about how to get machNetConnector5.0 from NuGet.
 
 1. In Visual Studio, create a new C# .NET project.
 2. When the project is created, activate context menu above project name at Solution Explorer and select "Manage NuGet Packages".
@@ -36,6 +41,28 @@ Below procedure is about how to get machNetConnector5.0 from NuGet.
 6. When the package was installed successfully, you can confirm it at "Dependencies - Packages" on Solution Explorer.
 7. Now, you can use machNetConnector by "using Mach.Data.MachClient" at Program.cs.
 
+## Connection String Reference
+
+Connection-string segments are separated by semicolons (`;`). Keywords listed in the same row are aliases.
+
+| Keyword                                                         | Description                                                                                              | Example                                         | Default |
+|-----------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|-------------------------------------------------|---------|
+| `DSN`, `SERVER`, `HOST`                                         | Hostname or IP address                                                                                    | `SERVER=127.0.0.1`                              | _(none)_|
+| `PORT`, `PORT_NO`                                               | Listener port                                                                                             | `PORT=55656`                                    | `5656`  |
+| `USERID`, `USERNAME`, `USER`, `UID`                             | Username                                                                                                  | `UID=SYS`                                       | `SYS`   |
+| `PASSWORD`, `PWD`                                               | Password                                                                                                  | `PWD=manager`                                   | _(none)_|
+| `CONNECT_TIMEOUT`, `ConnectionTimeout`, `connectTimeout`        | Connection timeout in milliseconds                                                                        | `CONNECT_TIMEOUT=10000`                        | `60000` |
+| `COMMAND_TIMEOUT`, `CommandTimeout`, `commandTimeout`           | Per-command timeout in milliseconds                                                                       | `COMMAND_TIMEOUT=50000`                        | `60000` |
+| `PROTOCOL`, `ProtocolVersion`, `MachProtocol`                   | Preferred wire protocol (for example `2.1`, `3.0`, `4.0`, `4.0-full`). UniMachNetConnector now defaults to `4.0` when omitted. | `PROTOCOL=4.0-full`                            | `4.0`   |
+
+Example:
+
+```csharp
+var connectionString = string.Format(
+    "SERVER={0};PORT_NO={1};UID=SYS;PWD=MANAGER;COMMAND_TIMEOUT=50000;PROTOCOL=4.0-full",
+    host,
+    port);
+```
 
 ## API Reference
 
@@ -50,7 +77,7 @@ If you call a method or field that is not a named instance, it generates NotImpl
 public sealed class MachConnection : DbConnection
 ```
 
-This class is responsible for linking with Machbase. 
+This class is responsible for linking with Machbase.
 
 Because it inherits IDisposable like DbConnection, it supports disassociation through Dispose () or automatic disposition of object using using () statement.
 
@@ -100,7 +127,7 @@ Set flush to be performed automatically during append.
 public sealed class MachCommand : DbCommand
 ```
 
-A class that performs **SQL commands or APPEND** using MachConnection. 
+A class that performs **SQL commands or APPEND** using MachConnection.
 
 Since it inherits IDisposable like DbCommand, it supports object disposal through Dispose () or automatic disposal of object using using () statement
 
@@ -152,9 +179,8 @@ void AppendData(MachAppendWriter aWriter, List<object> aDataList)
 Through the MachAppendWriter object, it takes a list containing the data and enters it into the database.
 - In the order of the data in the List, each datatype must match the datatype of the column represented in the table.
 - If the data in the List is insufficient or overflows, an error occurs.
-<blockquote> 
-  <p>When representing a time value with a ulong object, simply do not enter the Tick value of the DateTime object. <br><br>In that value, you must enter a <u>value that excludes the DateTime Tick value that represents 1970-01-01</u>.</p>
-</blockquote>
+
+> **Note**: When representing a time value with a ulong object, simply do not enter the Tick value of the DateTime object. In that value, you must enter a value that excludes the DateTime Tick value that represents 1970-01-01.
 
 
 ```cs
@@ -334,7 +360,7 @@ public sealed class MachParameterCollection : DbParameterCollection, IEnumerable
 
 This is a class that binds parameters needed by MachCommand.
 
-If you do this after binding, the values ​​are done together. 
+If you do this after binding, the values ​​are done together.
 
 > Since the concept of Prepared Statement is not implemented, execution performance after Binding is the same as the performance performed first.
 
@@ -368,7 +394,7 @@ Adds the parameter name and its value. Returns the added MachParameter object.|
 #### Contains
 
 ```cs
-bool Contains(object value)                                        
+bool Contains(object value)
 ```
 
 Determines whether or not the corresponding value is added.
@@ -528,13 +554,13 @@ string GetRowBuffer()
 
 A data buffer in which an error has occurred can be obtained.
 
-## Usage and examples
+## Usage and Examples
 
 ### Connection
 
 You can create a MachConnection and use Open () - Close ().
 ```c#
-String sConnString = String.Format("DSN={0};PORT_NO={1};UID=;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
+String sConnString = String.Format("DSN={0};PORT_NO={1};UID=SYS;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
 MachConnection sConn = new MachConnection(sConnString);
 sConn.Open();
 //... do something
@@ -543,7 +569,7 @@ sConn.Close();
 
 If you use the using statement, you do not need to call Close (), which is a connection closing task.
 ```c#
-String sConnString = String.Format("DSN={0};PORT_NO={1};UID=;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
+String sConnString = String.Format("DSN={0};PORT_NO={1};UID=SYS;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
 using (MachConnection sConn = new MachConnection(sConnString))
 {
     sConn.Open();
@@ -556,7 +582,7 @@ using (MachConnection sConn = new MachConnection(sConnString))
 Create a MachCommand and perform the query.
 
 ```c#
-String sConnString = String.Format("DSN={0};PORT_NO={1};UID=;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
+String sConnString = String.Format("DSN={0};PORT_NO={1};UID=SYS;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
 using (MachConnection sConn = new MachConnection(sConnString))
 {
     sConn.Open();
@@ -576,7 +602,7 @@ using (MachConnection sConn = new MachConnection(sConnString))
 
 Again, using the using statement, MachCommand release can be done immediately.
 ```c#
-String sConnString = String.Format("DSN={0};PORT_NO={1};UID=;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
+String sConnString = String.Format("DSN={0};PORT_NO={1};UID=SYS;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
 using (MachConnection sConn = new MachConnection(sConnString))
 {
     sConn.Open();
@@ -597,11 +623,11 @@ using (MachConnection sConn = new MachConnection(sConnString))
 ```
 
 ### Executing SELECT
-You can get a MachDataReader by executing a MachCommand with a SELECT query. 
+You can get a MachDataReader by executing a MachCommand with a SELECT query.
 
 You can fetch the records one by one through the MachDataReader.
 ```c#
-String sConnString = String.Format("DSN={0};PORT_NO={1};UID=;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
+String sConnString = String.Format("DSN={0};PORT_NO={1};UID=SYS;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
 using (MachConnection sConn = new MachConnection(sConnString))
 {
     sConn.Open();
@@ -633,7 +659,7 @@ using (MachConnection sConn = new MachConnection(sConnString))
 ### Parameter Binding
 You can create a MachParameterCollection and then link it to a MachCommand.
 ```c#
-String sConnString = String.Format("DSN={0};PORT_NO={1};UID=;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
+String sConnString = String.Format("DSN={0};PORT_NO={1};UID=SYS;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
 using (MachConnection sConn = new MachConnection(sConnString))
 {
     sConn.Open();
@@ -642,19 +668,19 @@ using (MachConnection sConn = new MachConnection(sConnString))
         FROM tab2
         WHERE CreatedDateTime < @CurrentTime
         AND CreatedDateTime >= @PastTime";
- 
+
     using (MachCommand sCommand = new MachCommand(sSelectQuery, sConn))
     {
         DateTime sCurrtime = DateTime.Now;
         DateTime sPastTime = sCurrtime.AddMinutes(-1);
- 
+
         try
         {
             sCommand.ParameterCollection.Add(new MachParameter { ParameterName = "@CurrentTime", Value = sCurrtime });
             sCommand.ParameterCollection.Add(new MachParameter { ParameterName = "@PastTime", Value = sPastTime });
- 
+
             MachDataReader sDataReader = sCommand.ExecuteReader();
- 
+
             while (sDataReader.Read())
             {
                 for (int i = 0; i < sDataReader.FieldCount; i++)
@@ -679,7 +705,7 @@ When you run AppendOpen () on a MachCommand, you get a MachAppendWriter object.
 Using this object and MachCommand, you can get a list of one input record and perform an AppendData().
 AppendFlush() will reflect the input of all records, and AppendClose () will end the entire Append process.
 ```c#
-String sConnString = String.Format("DSN={0};PORT_NO={1};UID=;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
+String sConnString = String.Format("DSN={0};PORT_NO={1};UID=SYS;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
 using (MachConnection sConn = new MachConnection(sConnString))
 {
     sConn.Open();
@@ -688,23 +714,23 @@ using (MachConnection sConn = new MachConnection(sConnString))
     {
         MachAppendWriter sWriter = sAppendCommand.AppendOpen("tab2");
         sWriter.SetErrorDelegator(AppendErrorDelegator);
- 
+
         var sList = new List<object>();
         for (int i = 1; i <= 100000; i++)
         {
             sList.Add(i);
             sList.Add(String.Format("NAME_{0}", i % 100));
- 
+
             sAppendCommand.AppendData(sWriter, sList);
- 
+
             sList.Clear();
- 
+
             if (i % 1000 == 0)
             {
                 sAppendCommand.AppendFlush();
             }
         }
- 
+
         sAppendCommand.AppendClose(sWriter);
         Console.WriteLine(String.Format("Success Count : {0}", sWriter.SuccessCount));
         Console.WriteLine(String.Format("Failure Count : {0}", sWriter.FailureCount));
@@ -719,32 +745,13 @@ private static void AppendErrorDelegator(MachAppendException e)
 }
 ```
 
-#### Connection String
-
-Each item is separated by a semicolon (;).
-Many of the keywords in the same section have the same meaning.
-
-| Keyword                                                | Description   | Example            | Default value |
-| ------------------------------------------------------ | ------------- | ------------------ | ---- |
-| DSN<br>SERVER<br>HOST                                  | Hostname      | DSN=localhost<br>SERVER=192.168.0.1 |      |
-| PORT<br>PORT_NO                                        | Port No.      | PORT=5656          | 5656 |
-| USERID<br>USERNAME<br>USER<br>UID                      | User ID        | USER=SYS           | SYS  |
-| PASSWORD<br>PWD                                        | User password      | PWD=manager        |      |
-| CONNECT_TIMEOUT<br>ConnectionTimeout<br>connectTimeout | Maximum connection time     | CONNECT_TIMEOUT    | 60 second  |
-| COMMAND_TIMEOUT<br>commandTimeout                      | Maximum time to perform each command | COMMAND_TIMEOUT    | 60 second  |
-
-As an example, we can prepare the following string.
-```
-String sConnString = String.Format("DSN={0};PORT_NO={1};UID=;PWD=MANAGER;CONNECT_TIMEOUT=10000;COMMAND_TIMEOUT=50000", SERVER_HOST, SERVER_PORT);
-```
-
 ### Set Error Delegator
 
 In MachAppendWriter, you can specify a function to detect errors occurring on the MACHBASE server side during APPEND.
 
 In .NET, this function type is specified as a Delegator Function.
 ```c#
-public static void ErrorCallbackFunc(MachAppendException e) 
+public static void ErrorCallbackFunc(MachAppendException e)
 {
     Console.WriteLine("====================");
     Console.WriteLine("Error occured");
@@ -753,12 +760,12 @@ public static void ErrorCallbackFunc(MachAppendException e)
     Console.WriteLine("====================");
 }
 
-public static void DoAppend() 
+public static void DoAppend()
 {
     MachCommand com = new MachCommand(conn);
     MachAppendWriter writer = com.AppendOpen("tag", errorCheckCount);
     writer.SetErrorDelegator(ErrorCallbackFunc);
-    //... do append 
+    //... do append
 }
 ```
 
@@ -769,7 +776,7 @@ If you set `Set Connect Append Flush` to true in the connection, flush is automa
 ```cs
 private static string connString = $"SERVER={HOST};PORT_NO={port};USER={USER};PWD={PWD}";
 
-public static void Main(string[] args) 
+public static void Main(string[] args)
 {
     MachConnection conn = new MachConnection(connString);
     conn.Open();
@@ -783,3 +790,106 @@ If set to false, the function is disabled.
 conn.SetConnectAppendFlush(false);
 ```
 
+## Full Provider APIs (Protocol 4.0-full)
+
+The `4.0-full` handshake unlocks the full ADO.NET surface that ships with Machbase 8.0.50 and later. Load one of the assemblies below when you need these provider features:
+
+- `UniMachNetConnector-net80-8.0.50.dll` – bundled with Machbase 8.0.50+.
+- `machNetConnector-40-net80-3.2.0.dll` – the standalone connector that exposes the same surface.
+
+### Key types introduced by 4.0-full
+- `MachDbProviderFactory` (`Instance`, `Register()`, and the standard `Create*` methods) so frameworks can resolve the connector by invariant name `Mach.Data`.
+- `MachConnectionStringBuilder` for strongly typed connection-string edits without remembering every keyword.
+- `MachDataAdapter` plus the `MachRowUpdating`/`MachRowUpdated` events for DataTable/DataSet workflows.
+- `MachCommandBuilder` to auto-generate INSERT/DELETE (and UPDATE for tables that support it—never for log/tag tables) commands from a SELECT statement.
+
+### Enable the full provider stack
+```csharp
+var connString = "SERVER=127.0.0.1;PORT_NO=55656;UID=SYS;PWD=MANAGER;PROTOCOL=4.0-full";
+using var connection = new MachConnection(connString);
+connection.Open();
+
+if (!connection.SupportsFullApi)
+{
+    throw new InvalidOperationException("Full provider API negotiation failed.");
+}
+```
+
+Use lookup or volatile tables when you need INSERT/DELETE/UPDATE semantics. Log and tag tables do not accept UPDATE statements, so keep those workloads append-only.
+
+### Build connection strings fluently
+```csharp
+var builder = new MachConnectionStringBuilder
+{
+    Server = "127.0.0.1",
+    Port = 55656,
+    UserID = "SYS",
+    Password = "MANAGER"
+};
+
+// Protocol stays a string key so older connectors understand the value.
+builder["PROTOCOL"] = "4.0-full";
+
+using var connection = new MachConnection(builder.ConnectionString);
+connection.Open();
+```
+
+### Sample: append rows with MachDataAdapter
+This example downloads a lookup table into a `DataTable`, appends a new row, and pushes the change back. The `MachCommandBuilder` auto-generates the INSERT statement. (If the table does not exist yet, create it once: `CREATE LOOKUP TABLE dotnet_lookup_demo(id LONG PRIMARY KEY, name VARCHAR(64));`)
+
+```csharp
+using Mach.Data.MachClient;
+using System.Data;
+
+var connString = "SERVER=127.0.0.1;PORT_NO=55656;UID=SYS;PWD=MANAGER;PROTOCOL=4.0-full";
+using var connection = new MachConnection(connString);
+connection.Open();
+
+var adapter = new MachDataAdapter(
+    "SELECT id, name FROM dotnet_lookup_demo ORDER BY id",
+    connection);
+var builder = new MachCommandBuilder(adapter);
+
+var table = new DataTable();
+adapter.Fill(table);
+
+var newRow = table.NewRow();
+newRow["id"] = 2001;
+newRow["name"] = "Inserted from MachDataAdapter";
+table.Rows.Add(newRow);
+
+adapter.Update(table);
+```
+
+> **Tip**: When you need to inspect or veto outgoing commands, subscribe to `MachDataAdapter.MachRowUpdating` / `MachRowUpdated`.
+
+```csharp
+adapter.MachRowUpdating += (sender, args) =>
+{
+    Console.WriteLine($"About to run {args.StatementType} with SQL: {args.Command?.CommandText}");
+};
+```
+
+### Sample: work through DbProviderFactory
+`MachDbProviderFactory.Instance` lets you plug Machbase into provider-agnostic infrastructure such as `DbProviderFactories`, Dapper, or your own DI container.
+
+```csharp
+using System.Data.Common;
+using Mach.Data.MachClient;
+
+DbProviderFactory factory = MachDbProviderFactory.Instance;
+
+using DbConnection connection = factory.CreateConnection()!;
+connection.ConnectionString = "SERVER=127.0.0.1;PORT_NO=55656;UID=SYS;PWD=MANAGER;PROTOCOL=4.0-full";
+connection.Open();
+
+using DbCommand command = connection.CreateCommand();
+command.CommandText = "SELECT COUNT(*) FROM dotnet_lookup_demo";
+var count = (long)command.ExecuteScalar();
+
+Console.WriteLine($"Lookup rows: {count}");
+```
+
+Need to make the factory visible to configuration-driven apps? Call `MachDbProviderFactory.Register()` once during startup so `DbProviderFactories.GetFactory("Mach.Data")` returns the same instance.
+
+Remember that `4.0-full` is only available when you connect to Machbase 7.x or later servers; fall back to `Protocol=4.0` (limited surface) or the 2.x/3.x protocols for older clusters.
