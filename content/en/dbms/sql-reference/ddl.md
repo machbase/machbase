@@ -574,6 +574,8 @@ alter table tag rename column v0001 to vmax;
 
 > **Note**: For Tag Tables, you can rename any column including additional value columns, but PRIMARY KEY, BASETIME, and METADATA column names can also be changed. However, if the tag table has ROLLUP tables defined, renaming columns may be restricted.
 
+> **Note**: RENAME COLUMN operation for Tag Tables is supported from Machbase version 8.0.50 or later.
+
 ### ALTER TABLE MODIFY COLUMN
 
 **alter_table_modify_stmt:**

@@ -54,6 +54,8 @@ Setting connection parameter with -c option, it takes precedence over environmen
 
 machsql supports HEREDOC (Here Document) syntax, allowing you to pass SQL commands directly from the shell without creating a separate file. This is particularly useful for automation scripts and one-time SQL execution.
 
+> **Note**: This feature is supported from Machbase version 8.0.50 or later.
+
 ### Basic Syntax
 
 ```bash
