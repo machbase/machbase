@@ -466,7 +466,10 @@ DROP INDEX IndexName;
 
 ## ALTER TABLE
 
-The ALTER TABLE statement is used to change the schema information of the specified table, and only the Log Table is available.
+The ALTER TABLE statement is used to change the schema information of the specified table.
+
+- Most ALTER TABLE operations are available only for Log Tables
+- RENAME COLUMN operation is available for both Log Tables and Tag Tables
 
 ### ALTER TABLE SET
 
@@ -522,12 +525,17 @@ alter table atest2 drop column (id8);
 alter_table_column_rename_stmt ::= 'ALTER TABLE' table_name 'RENAME COLUMN' old_column_name 'TO' new_column_name
 ```
 
-This syntax is a function that changes a specific column name in a table.
+This syntax is a function that changes a specific column name in a table. This operation is available for both Log Tables and Tag Tables.
 
 ```sql
--- Example
+-- Example for Log Table
 alter table atest2 rename column id7 to id7_rename;
+
+-- Example for Tag Table
+alter table tag rename column v0001 to vmax;
 ```
+
+> **Note**: For Tag Tables, you can rename any column including additional value columns, but PRIMARY KEY, BASETIME, and METADATA column names can also be changed. However, if the tag table has ROLLUP tables defined, renaming columns may be restricted.
 
 ### ALTER TABLE MODIFY COLUMN
 
