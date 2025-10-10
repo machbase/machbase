@@ -1624,7 +1624,6 @@ facilitating seamless communication and integration between client applications 
 }
 ```
 
-
 #### llmGetProviders
 
 `llmGetProviders()`
@@ -1636,7 +1635,7 @@ facilitating seamless communication and integration between client applications 
     "type": "rpc_req",
     "rpc": {
         "jsonrpc": "2.0",
-        "id": 10,
+        "id": 11,
         "method": "llmGetProviders"
     }
 }
@@ -1649,19 +1648,211 @@ facilitating seamless communication and integration between client applications 
     "type": "rpc_rsp",
     "rpc": {
         "jsonrpc": "2.0",
+        "id": 11,
+        "result": ["claude", "ollama"]
+    }
+}
+```
+
+#### llmGetProviderConfigTemplate
+
+`llmGetProviderConfigTemplate(provider)`
+
+*Params*
+- `provider` *string* one of "claude", "ollama"
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 13,
+        "method": "llmGetProviderConfigTemplate",
+        "params": ["claude"]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 13,
+        "result": {
+            "key": "your-key",
+            "max_tokens": 1024
+        }
+    }
+}
+```
+
+#### llmGetProviderConfig
+
+`llmGetProviderConfig(provider)`
+
+*Params*
+- `provider` *string* one of "claude", "ollama"
+
+> Some properties are provider-specific and may be hidden for security reasons. For example, the Claude API key is not fully exposed in the configuration response.
+
+#### llmSetProviderConfig
+
+`llmSetProviderConfig(provider, config)`
+
+*Params*
+- `provider` *string* one of "claude", "ollama"
+- `config` *object*
+
+*Calude Config Object*
+
+```json
+{
+    "key": "your-key",
+    "max_tokens": 1024
+}
+```
+
+*Ollama Config Object*
+
+```json
+{
+    "url": "http://127.0.0.1:11434"
+}
+```
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 15,
+        "method": "llmSetProviderConfig",
+        "params": ["claude", {"key":"your-key-here", "max_tokens":1024}]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 15,
+        "result": null
+    }
+}
+```
+
+#### llmGetModels
+
+`llmGetModels()`
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "rpc": {
+        "jsonrpc": "2.0",
         "id": 10,
-        "result": [
-            {
-                "name": "Ollama qweb3:0.6b",
-                "provider": "ollama",
-                "model": "qwen3:0.6b"
-            },
-            {
-                "name": "claude Sonnet 4",
-                "provider": "claude",
-                "model": "claude-sonnet-4-20250514"
-            },
-        ]
+        "method": "llmGetModels"
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 10,
+        "result": {
+            "claude": [
+                {
+                    "name": "Ollama qweb3:0.6b",
+                    "provider": "ollama",
+                    "model": "qwen3:0.6b"
+                }
+            ],
+            "ollama": [
+                {
+                    "name": "claude Sonnet 4",
+                    "provider": "claude",
+                    "model": "claude-sonnet-4-20250514"
+                }
+            ]
+        }
+    }
+}
+```
+
+#### llmAddModels
+
+`llmAddModels()`
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 10,
+        "method": "llmAddModels",
+        "params": [{"name": "Ollama deepseek-r1",  "provider":"ollama", "model":"deepseek-r1:8b"}]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 10
+    }
+}
+```
+
+#### llmRemoveModels
+
+`llmRemoveModels()`
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 10,
+        "method": "llmRemoveModels",
+        "params": [{"name": "Ollama deepseek-r1",  "provider":"ollama", "model":"deepseek-r1:8b"}]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 10
     }
 }
 ```
