@@ -515,6 +515,43 @@ alter table atest2 drop column (id4);
 alter table atest2 drop column (id8);
 ```
 
+### ALTER TABLE METADATA ADD COLUMN
+
+**alter_table_metadata_add_stmt:**
+
+```sql
+alter_table_metadata_add_stmt ::= 'ALTER TABLE' table_name 'METADATA ADD COLUMN' '(' column_name column_type ( 'DEFAULT' value )? ')'
+```
+
+This syntax adds a metadata column to a TAG table. Metadata columns store tag-specific information that doesn't change frequently with each data point.
+
+> **Note**: This operation is only available for TAG tables.
+
+```sql
+-- Example: Add metadata columns to a TAG table
+ALTER TABLE altertbl METADATA ADD COLUMN (m1 DOUBLE);
+ALTER TABLE altertbl METADATA ADD COLUMN (m2 VARCHAR(100));
+ALTER TABLE altertbl METADATA ADD COLUMN (m3 INTEGER DEFAULT 0);
+```
+
+### ALTER TABLE METADATA DROP COLUMN
+
+**alter_table_metadata_drop_stmt:**
+
+```sql
+alter_table_metadata_drop_stmt ::= 'ALTER TABLE' table_name 'METADATA DROP COLUMN' '(' column_name ')'
+```
+
+This syntax removes a metadata column from a TAG table.
+
+> **Note**: This operation is only available for TAG tables.
+
+```sql
+-- Example: Drop metadata columns from a TAG table
+ALTER TABLE altertbl METADATA DROP COLUMN (m1);
+ALTER TABLE altertbl METADATA DROP COLUMN (m2);
+```
+
 ### ALTER TABLE RENAME COLUMN
 
 **alter_table_column_rename_stmt:**

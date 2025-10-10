@@ -50,6 +50,76 @@ export MACHBASE_CONNECTION_STRING=ALTERNATIVE_SERVERS=192.168.0.148:8888;CONNECT
 Setting connection parameter with -c option, it takes precedence over environment variables. This option is supported from version 6.1 or later
 
 
+## Using HEREDOC for SQL Scripts
+
+machsql supports HEREDOC (Here Document) syntax, allowing you to pass SQL commands directly from the shell without creating a separate file. This is particularly useful for automation scripts and one-time SQL execution.
+
+### Basic Syntax
+
+```bash
+machsql -s <server> -u <user> -p <password> <<'DELIMITER'
+SQL statements here
+DELIMITER
+```
+
+The delimiter can be any string (commonly `EOF`, `SQL`, or `SQLBLOCK`). Using quotes around the delimiter (`<<'DELIMITER'`) prevents shell variable expansion.
+
+### Examples
+
+**Simple query execution:**
+
+```bash
+machsql -s 127.0.0.1 -u sys -p manager <<'SQLBLOCK'
+select 'WORKS!!!!' from v$tables limit 2;
+SQLBLOCK
+```
+
+**Multiple statements:**
+
+```bash
+machsql -s 127.0.0.1 -u sys -p manager <<'EOF'
+CREATE TABLE test_table (id INTEGER, name VARCHAR(100));
+INSERT INTO test_table VALUES (1, 'First Record');
+INSERT INTO test_table VALUES (2, 'Second Record');
+SELECT * FROM test_table;
+DROP TABLE test_table;
+EOF
+```
+
+**Using variables (without quotes on delimiter):**
+
+```bash
+TABLE_NAME="my_table"
+machsql -s 127.0.0.1 -u sys -p manager <<EOF
+SELECT COUNT(*) FROM ${TABLE_NAME};
+EOF
+```
+
+**With output redirection:**
+
+```bash
+machsql -s 127.0.0.1 -u sys -p manager <<'SQL' > output.csv
+SELECT name, time, value FROM tag_table
+WHERE time >= NOW - INTERVAL 1 HOUR
+ORDER BY time DESC;
+SQL
+```
+
+### Benefits of HEREDOC
+
+1. **No temporary files**: Execute SQL without creating separate script files
+2. **Inline scripts**: Embed SQL directly in shell scripts for better readability
+3. **Automation**: Simplify deployment and maintenance scripts
+4. **Variable substitution**: Use shell variables in SQL when needed (without quotes)
+
+### Notes
+
+- Use quotes around the delimiter (`<<'DELIMITER'`) to prevent variable expansion
+- Remove quotes (`<<DELIMITER`) if you want to use shell variables in your SQL
+- The delimiter must appear alone on a line to terminate the HEREDOC
+- Works with all machsql command-line options
+
+
 ## SHOW Command
 
 Displays information such as tables, tablespaces, and indexes.
