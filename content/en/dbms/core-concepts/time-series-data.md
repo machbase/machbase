@@ -1,4 +1,5 @@
 ---
+type: docs
 title: 'Understanding Time-Series Data'
 weight: 10
 ---

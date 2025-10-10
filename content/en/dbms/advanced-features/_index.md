@@ -1,4 +1,5 @@
 ---
+type: docs
 layout: post
 title : Backup and Mount
 type : docs

@@ -1,4 +1,5 @@
 ---
+type: docs
 title: 'Installation Guide'
 weight: 20
 ---

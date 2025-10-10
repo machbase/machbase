@@ -1,4 +1,5 @@
 ---
+type: docs
 title: 'Table Types'
 weight: 60
 ---

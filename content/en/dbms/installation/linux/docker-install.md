@@ -1,4 +1,5 @@
 ---
+type: docs
 title : 'Docker Installation'
 type : docs
 weight: 30

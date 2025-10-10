@@ -1,4 +1,5 @@
 ---
+type: docs
 title : Data Retention
 type : docs
 weight: 70

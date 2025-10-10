@@ -1,4 +1,5 @@
 ---
+type: docs
 title : Creating and Managing Volatile Table
 type : docs
 weight: 10

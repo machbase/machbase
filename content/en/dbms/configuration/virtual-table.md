@@ -1,4 +1,5 @@
 ---
+type: docs
 layout : post
 title : Virtual Table
 type : docs

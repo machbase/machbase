@@ -1,4 +1,5 @@
 ---
+type: docs
 title : Volatile Data Extraction
 type : docs
 weight: 20

@@ -1,4 +1,5 @@
 ---
+type: docs
 title: 'Connecting to Machbase'
 weight: 10
 ---

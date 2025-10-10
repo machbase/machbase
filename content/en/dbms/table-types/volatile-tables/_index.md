@@ -1,4 +1,5 @@
 ---
+type: docs
 title: 'Volatile Tables'
 weight: 30
 ---

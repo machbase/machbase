@@ -1,4 +1,5 @@
 ---
+type: docs
 title : 'RESTful API'
 type : docs
 weight: 50

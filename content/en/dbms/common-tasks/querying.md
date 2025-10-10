@@ -1,4 +1,5 @@
 ---
+type: docs
 title: 'Querying Data'
 weight: 30
 ---

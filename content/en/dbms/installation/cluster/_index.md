@@ -1,4 +1,5 @@
 ---
+type: docs
 title : 'Cluster Installation'
 type : docs
 weight: 50

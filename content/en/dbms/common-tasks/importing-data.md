@@ -1,4 +1,5 @@
 ---
+type: docs
 title: 'Importing Data'
 weight: 20
 ---

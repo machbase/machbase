@@ -1,4 +1,5 @@
 ---
+type: docs
 title: 'Machbase DBMS'
 weight: 30
 ---

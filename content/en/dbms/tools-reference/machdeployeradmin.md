@@ -1,4 +1,5 @@
 ---
+type: docs
 title : 'machdeployeradmin'
 type : docs
 weight: 60

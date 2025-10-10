@@ -1,4 +1,5 @@
 ---
+type: docs
 title: 'Quick Start'
 weight: 10
 ---

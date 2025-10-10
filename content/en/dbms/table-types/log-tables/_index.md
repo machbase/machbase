@@ -1,4 +1,5 @@
 ---
+type: docs
 title: 'Log Tables'
 weight: 20
 ---

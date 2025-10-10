@@ -1,4 +1,5 @@
 ---
+type: docs
 title : 'CLI/ODBC'
 type : docs
 weight: 10

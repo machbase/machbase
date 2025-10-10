@@ -1,4 +1,5 @@
 ---
+type: docs
 title : 'Cluster Edition Upgrade'
 type : docs
 weight: 60

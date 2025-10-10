@@ -1,4 +1,5 @@
 ---
+type: docs
 title : 'License Installation'
 type : docs
 weight: 40

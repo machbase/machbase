@@ -1,4 +1,5 @@
 ---
+type: docs
 title: 'Tutorial 1: IoT Sensor Data'
 weight: 10
 ---

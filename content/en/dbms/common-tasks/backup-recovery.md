@@ -1,4 +1,5 @@
 ---
+type: docs
 title: 'Backup and Recovery'
 weight: 50
 ---

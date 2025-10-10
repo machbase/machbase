@@ -1,4 +1,5 @@
 ---
+type: docs
 title: 'Tutorial 3: Real-time Analytics'
 weight: 30
 ---

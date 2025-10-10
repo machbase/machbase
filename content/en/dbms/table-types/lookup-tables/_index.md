@@ -1,4 +1,5 @@
 ---
+type: docs
 title: 'Lookup Tables'
 weight: 40
 ---

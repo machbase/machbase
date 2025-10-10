@@ -1,4 +1,5 @@
 ---
+type: docs
 title : 'Package Overview'
 type : docs
 weight: 10

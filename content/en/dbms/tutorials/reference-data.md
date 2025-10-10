@@ -1,4 +1,5 @@
 ---
+type: docs
 title: 'Tutorial 4: Reference Data'
 weight: 40
 ---

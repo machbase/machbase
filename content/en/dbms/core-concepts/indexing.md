@@ -1,4 +1,5 @@
 ---
+type: docs
 title: 'Indexing and Performance'
 weight: 30
 ---

@@ -1,4 +1,5 @@
 ---
+type: docs
 title: 'First Steps with machsql'
 weight: 30
 ---

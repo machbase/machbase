@@ -1,4 +1,5 @@
 ---
+type: docs
 title: 'Troubleshooting'
 weight: 110
 ---

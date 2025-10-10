@@ -1,4 +1,5 @@
 ---
+type: docs
 title : 'machcoordinatoradmin'
 type : docs
 weight: 50

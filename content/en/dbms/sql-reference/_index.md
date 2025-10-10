@@ -1,4 +1,5 @@
 ---
+type: docs
 title: 'SQL Reference'
 weight: 80
 ---

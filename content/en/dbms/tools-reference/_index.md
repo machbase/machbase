@@ -1,4 +1,5 @@
 ---
+type: docs
 title: 'Tools Reference'
 weight: 90
 ---

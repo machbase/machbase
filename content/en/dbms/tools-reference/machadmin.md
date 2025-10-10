@@ -1,4 +1,5 @@
 ---
+type: docs
 title : machadmin
 type : docs
 weight: 20

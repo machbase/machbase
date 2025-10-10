@@ -1,4 +1,5 @@
 ---
+type: docs
 title: 'Basic Concepts'
 weight: 40
 ---

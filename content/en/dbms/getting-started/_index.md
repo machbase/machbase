@@ -1,4 +1,5 @@
 ---
+type: docs
 title: 'Getting Started'
 weight: 10
 ---

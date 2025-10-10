@@ -1,4 +1,5 @@
 ---
+type: docs
 title: 'Tutorial 2: Application Logs'
 weight: 20
 ---

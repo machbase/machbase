@@ -1,4 +1,5 @@
 ---
+type: docs
 title : 'Windows Installation'
 type : docs
 weight: 30

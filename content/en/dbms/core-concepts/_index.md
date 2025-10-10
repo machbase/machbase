@@ -1,4 +1,5 @@
 ---
+type: docs
 title: 'Core Concepts'
 weight: 40
 ---

@@ -1,4 +1,5 @@
 ---
+type: docs
 title: 'Table Types: Complete Guide'
 weight: 20
 ---

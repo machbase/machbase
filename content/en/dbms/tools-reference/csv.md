@@ -1,4 +1,5 @@
 ---
+type: docs
 title : 'csvimport / csvexport'
 type : docs
 weight: 10

@@ -1,4 +1,5 @@
 ---
+type: docs
 title : machsql
 type : docs
 weight: 40

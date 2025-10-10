@@ -1,4 +1,5 @@
 ---
+type: docs
 title : Backup and Restore
 type : docs
 weight: 20

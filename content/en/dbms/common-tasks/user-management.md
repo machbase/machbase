@@ -1,4 +1,5 @@
 ---
+type: docs
 title: 'User Management'
 weight: 40
 ---

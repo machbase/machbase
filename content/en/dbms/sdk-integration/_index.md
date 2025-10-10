@@ -1,4 +1,5 @@
 ---
+type: docs
 title: 'SDK & Integration'
 weight: 120
 ---
