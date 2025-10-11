@@ -1,47 +1,74 @@
 ---
+title: '.NET Connector'
 type: docs
-layout : post
-title : '.Net Connector'
-type : docs
-weight: 40
+weight: 20
 ---
 
-## 목차
+## 목차 {#index}
 
-* [설치](#설치)
-* [NuGet 패키지 관리자를 이용한 설치](#nuget-패키지-관리자를-이용한-설치)
-* [API Reference](#api-reference)
-* [사용 및 예제](#사용-및-예제)
+* [개요](#overview)
+* [설치](#install)
+* [NuGet 패키지를 이용한 설치](#install-connector-via-nuget-package-manager)
+* [커넥션 문자열 참고](#connection-string-reference)
+* [API 레퍼런스](#api-reference)
+* [사용 예시](#usage-and-examples)
+* [프로토콜 4.0-full 전체 API](#full-provider-apis-protocol-40-full)
 
-## 설치
+## 개요 {#overview}
 
-ADO.NET 드라이버 일부 기능을 지원하는 .NET (C#) Connector 라이브러리를 제공하고 있다. 
+Machbase는 모든 지원 Machbase 와이어 프로토콜(2.1~4.0)을 포괄하는 범용 ADO.NET 프로바이더 **UniMachNetConnector**를 제공합니다. Machbase 8.0.50부터 이 커넥터가 서버 패키지에 기본 포함되며, DLL 파일명에 붙는 버전 번호는 빌드 또는 설치한 Machbase 버전과 동일합니다. 커넥터는 실행 시 커넥션 문자열을 참고해 올바른 프로토콜을 자동으로 협상하므로, 시계열 데이터 수집·질의 워크로드에도 별도 설정 없이 적합한 프로토콜을 선택합니다.
 
-라이브러리 위치는 $MACHBASE_HOME/lib/ 에서 DLL 형태로 제공하고 있으며, .NET 버전에 따라 다른 DLL 을 제공한다.
+## 설치 {#install}
 
-* .NET Framework 4.0: machNetConnector40.dll
-* .NET Framework 5.0: machNetConnector50.dll
+설치된 Machbase 서버·클라이언트에는 `$MACHBASE_HOME/lib/` 경로에 범용 .NET 프로바이더가 함께 배포됩니다. 설치 후 다음과 같은 파일을 볼 수 있습니다.
 
-## NuGet 패키지 관리자를 이용한 설치
+- **UniMachNetConnector**: 프레임워크에 구애받지 않는 진입점입니다. `UniMachNetConnector-net{50|60|70|80}-<version>.dll` 형식으로 제공되며, 대상 프레임워크에 맞는 파일을 선택하면 됩니다.
+- **레거시 프로토콜 커넥터**: `machNetConnector-XX-net{50|60|70|80}-<version>.dll`과 같이 프로토콜별로 나뉜 어셈블리입니다. UniMachNetConnector가 필요 시 로드합니다.
 
-Machbase의 .NET Connector 5.0는 NuGet package에 등록되어 있다!
-Visual Studio를 이용하면 .NET Connector을 쉽게 원격에서 가져와 사용할 수 있다.   
-NuGet에서 machNetConnector5.0을 가져오는 방법은 다음과 같다.   
+응용 프로그램에서는 대상 프레임워크에 맞는 DLL(예: `UniMachNetConnector-net80-8.0.50.dll`)을 참조하거나, 배포 시 실행 파일과 같은 위치에 함께 배치하면 됩니다.
 
-1. Visual Studio에서 새로운 C# .NET 프로젝트를 생성해준다.
-2. 프로젝트가 생성되었으면 솔루션 탐색기에서 프로젝트 이름을 마우스 우클릭해 "NuGet 패키지 관리"를 눌러준다.
-3. NuGet 패키지 관리자 창이 활성화되면 상단의 "찾아보기" 탭을 누르고, machNet을 검색한다.
-4. 검색 결과가 목록에 나오는데, "machNetConnector5.0"을 선택하고, "설치"를 누른다.
-5. 변경 내용 미리 보기 창이 떠도 "OK"를 눌러 설치를 계속 진행시킨다.
-6. 정상적으로 설치가 완료되면 솔루션 탐색기의 "종속성 - 패키지"에서 설치된 패키지를 확인할 수 있다.
-7. Program.cs에서 using Mach.Data.MachClient 구문을 입력하여 machNetConnector을 사용하면 된다.
+## NuGet 패키지를 이용한 설치 {#install-connector-via-nuget-package-manager}
 
+> **참고**: Machbase .NET Connector 5.0 패키지는 NuGet에 등록되어 있으며, 통합형 UniMachNetConnector가 도입되기 이전의 독립 배포본입니다.
 
-## API Reference
+Visual Studio를 사용하면 NuGet 저장소에서 .NET Connector를 쉽게 내려받을 수 있습니다. 아래 절차는 `machNetConnector5.0` 패키지를 가져오는 예시입니다.
+
+1. Visual Studio에서 새 C# .NET 프로젝트를 생성합니다.
+2. 솔루션 탐색기에서 프로젝트 이름을 마우스 오른쪽 클릭하고 **NuGet 패키지 관리**를 선택합니다.
+3. NuGet 패키지 관리자 창이 열리면 상단의 **찾아보기** 탭을 선택하고 `machNet`을 검색합니다.
+4. 검색 결과 목록에서 **machNetConnector5.0**을 선택하고 **설치**를 클릭합니다.
+5. **변경 내용 미리 보기** 창이 나타나면 **확인**을 눌러 설치를 계속합니다.
+6. 설치가 완료되면 솔루션 탐색기 > **종속성 → 패키지**에서 설치된 패키지를 확인할 수 있습니다.
+7. `Program.cs`에 `using Mach.Data.MachClient;`를 추가하면 machNetConnector API를 사용할 수 있습니다.
+
+## 커넥션 문자열 참고 {#connection-string-reference}
+
+커넥션 문자열의 각 항목은 세미콜론(`;`)으로 구분합니다. 표의 한 행에 표시된 키워드는 서로 동일한 의미를 갖습니다.
+
+| 키워드                                                         | 설명                                                                                                  | 예시                                             | 기본값  |
+|----------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|--------------------------------------------------|---------|
+| `DSN`, `SERVER`, `HOST`                                        | 호스트명 또는 IP 주소                                                                                 | `SERVER=127.0.0.1`                               | 없음    |
+| `PORT`, `PORT_NO`                                              | 수신 포트                                                                                             | `PORT=55656`                                     | `5656`  |
+| `USERID`, `USERNAME`, `USER`, `UID`                            | 사용자 이름                                                                                            | `UID=SYS`                                        | `SYS`   |
+| `PASSWORD`, `PWD`                                              | 비밀번호                                                                                               | `PWD=manager`                                    | 없음    |
+| `CONNECT_TIMEOUT`, `ConnectionTimeout`, `connectTimeout`       | 커넥션 타임아웃(밀리초)                                                                                | `CONNECT_TIMEOUT=10000`                          | `60000` |
+| `COMMAND_TIMEOUT`, `CommandTimeout`, `commandTimeout`          | 명령별 타임아웃(밀리초)                                                                               | `COMMAND_TIMEOUT=50000`                          | `60000` |
+| `PROTOCOL`, `ProtocolVersion`, `MachProtocol`                  | 선호하는 와이어 프로토콜 (`2.1`, `3.0`, `4.0`, `4.0-full` 등). 값을 지정하지 않으면 `4.0`을 사용합니다. | `PROTOCOL=4.0-full`                              | `4.0`   |
+
+예시:
+
+```csharp
+var connectionString = string.Format(
+    "SERVER={0};PORT_NO={1};UID=SYS;PWD=MANAGER;COMMAND_TIMEOUT=50000;PROTOCOL=4.0-full",
+    host,
+    port);
+```
+
+## API 레퍼런스 {#api-reference}
 
 {{<callout type="warning">}}
-아래 소개된 기능 외의 것은 아직 구현되어 있지 않거나, 올바르게 작동되지 않을 수 있다.<br>
-미구현으로 명시된 메서드나 필드를 부르는 경우, NotImplementedException 또는 NotSupportedException 을 발생시킨다.
+아래에 명시되지 않은 기능은 아직 구현되지 않았거나 정상적으로 동작하지 않을 수 있습니다.<br>
+존재하지 않는 메서드나 필드를 호출하면 `NotImplementedException` 또는 `NotSupportedException`이 발생합니다.
 {{</callout>}}
 
 ### MachConnection
@@ -50,9 +77,7 @@ NuGet에서 machNetConnector5.0을 가져오는 방법은 다음과 같다.
 public sealed class MachConnection : DbConnection
 ```
 
-마크베이스와의 연결을 담당하는 클래스이다. 
-
-DbConnection 과 같이 IDisposable 을 상속받기 때문에, Dispose() 를 통한 객체 해제나 using() 문을 이용한 객체의 자동 Dispose를 지원한다.
+Machbase와의 연결을 담당하는 클래스입니다. `DbConnection`과 동일하게 `IDisposable`을 구현하므로 `Dispose()` 호출이나 `using` 문으로 안전하게 해제할 수 있습니다.
 
 #### 생성자
 
@@ -60,7 +85,7 @@ DbConnection 과 같이 IDisposable 을 상속받기 때문에, Dispose() 를 �
 MachConnection(string aConnectionString)
 ```
 
-Connection String 을 입력으로, MachConnection 을 생성한다.
+커넥션 문자열을 입력 받아 `MachConnection` 인스턴스를 생성합니다.
 
 #### Open
 
@@ -68,7 +93,7 @@ Connection String 을 입력으로, MachConnection 을 생성한다.
 void Open()
 ```
 
-입력받은 Connection String 으로 실제 연결을 시도한다. 
+커넥션 문자열을 사용해 실제 연결을 수립합니다.
 
 #### Close
 
@@ -76,7 +101,7 @@ void Open()
 void Close()
 ```
 
-연결중인 경우, 해당 연결을 종료한다.
+열려 있는 연결을 종료합니다.
 
 #### SetConnectAppendFlush
 
@@ -84,15 +109,14 @@ void Close()
 void SetConnectAppendFlush(bool activeFlush)
 ```
 
-Append 도중 flush 를 자동으로 수행하도록 설정한다.
+Append 작업 중 자동으로 flush를 수행할지 여부를 설정합니다.
 
 #### 필드
 
-| 이름 | 설명                                                                                                                        |
+| 이름 | 설명 |
 |--|--|
-| State         | System.Data.ConnectionState 값을 나타낸다.                                                                                      |
-| StatusString  | 연결된 MachCommand 로 수행하는 상태를 나타낸다.<br>Error Message 를 꾸미는 용도로 내부에서 사용되며, 작업이 시작된 상태를 나타내기 때문에 이 값으로 쿼리 상태를 체크하는 것은 적절하지 않다. |
-
+| `State` | `System.Data.ConnectionState` 값을 나타냅니다. |
+| `StatusString` | 현재 연결이 의존하는 `MachCommand`의 상태 문자열입니다. 내부 로깅용이므로 쿼리 상태 판단 용도로 사용하지 않는 것이 좋습니다. |
 
 ### MachCommand
 
@@ -100,9 +124,7 @@ Append 도중 flush 를 자동으로 수행하도록 설정한다.
 public sealed class MachCommand : DbCommand
 ```
 
-MachConnection 을 이용해 SQL 명령 또는 APPEND 를 수행하는 클래스이다.  
-
-DbCommand 와 같이 IDisposable 을 상속받기 때문에, Dispose() 를 통한 객체 해제나 using() 문을 이용한 객체의 자동 Dispose를 지원한다.
+`MachConnection`을 통해 SQL 명령이나 Append 작업을 실행하는 클래스입니다. `DbCommand`와 마찬가지로 `IDisposable`을 구현합니다.
 
 #### 생성자
 
@@ -110,14 +132,13 @@ DbCommand 와 같이 IDisposable 을 상속받기 때문에, Dispose() 를 통�
 MachCommand(string aQueryString, MachConnection aConn)
 ```
 
-연결할 MachConnection 객체와 함께, 수행할 쿼리를 입력해서 생성한다. 
+실행할 쿼리와 연결 객체를 지정해 인스턴스를 생성합니다.
 
 ```cs
 MachCommand(MachConnection aConn)
 ```
 
-연결할 MachConnection 객체를 입력해서 생성한다. 수행할 쿼리가 없는 경우 (e.g. APPEND) 에만 사용한다.
-
+쿼리가 필요 없는 Append 전용 커맨드를 생성합니다.
 
 #### CreateParameter
 
@@ -125,63 +146,66 @@ MachCommand(MachConnection aConn)
 MachParameter CreateParameter()
 ```
 
-새로운 MachParameter 를 생성한다.
+새로운 `MachParameter`를 생성합니다.
 
 #### AppendOpen
 
 ```cs
-MachAppendWriter AppendOpen(aTableName, aErrorCheckCount = 0, MachAppendOption = None)
+MachAppendWriter AppendOpen(
+    string aTableName,
+    int aErrorCheckCount = 0,
+    MachAppendOption option = MachAppendOption.None)
 ```
 
-APPEND 를 시작한다. MachAppendWriter 객체를 반환한다.
+Append 세션을 열고 `MachAppendWriter`를 반환합니다.
 
-* aTableName: 대상 테이블 이름
-* ErrorCheckCount: APPEND-DATA 로 입력한 레코드 누적 개수가 일치할 때 마다, 서버로 보내 실패 여부를 확인한다.
-말하자면, 자동 APPEND-FLUSH 지점을 정하는 셈이다.
-* MachAppendOption: 현재는 하나의 옵션만 제공하고 있다.
-    * MachAppendOption.None : 아무런 옵션도 붙지 않는다.
-    * MachAppendOption.MicroSecTruncated: DateTime 객체의 값 입력 시, microsecond 까지만 표현된 값을 입력한다.
-    (DateTime 객체의 Ticks 값은 100 nanosecond 까지 표현된다.)
+* `aTableName`: 대상 테이블 이름
+* `aErrorCheckCount`: 지정한 레코드 수마다 서버에 전송해 실패 여부를 확인합니다. 즉, 자동 `APPEND-FLUSH` 지점을 설정합니다.
+* `option`: `None` 또는 `MicroSecTruncated` 옵션을 지정할 수 있습니다.
 
 #### AppendData
 
 ```cs
-void AppendData(MachAppendWriter aWriter, List<object> aDataList)
+void AppendData(MachAppendWriter writer, List<object> dataList)
 ```
 
-MachAppendWriter 객체를 통해, 데이터가 들어있는 리스트를 받아 데이터베이스에 입력한다.  
-- List 에 들어간 데이터 순서대로, 각각의 자료형은 테이블에 표현된 컬럼의 자료형과 일치해야 한다.  
-- List 에 들어있는 데이터가 모자라거나 넘치면, 에러를 발생시킨다.
+리스트에 있는 값을 순서대로 Append 버퍼에 적재합니다. 각 값의 타입은 테이블 컬럼 타입과 일치해야 하며, 값이 부족하거나 초과하면 예외가 발생합니다.
 
+> **참고**: `_arrival_time`을 `ulong`으로 직접 지정할 때는 Machbase가 기대하는 1970-01-01 UTC 기준 나노초 값을 입력해야 합니다.
 
 ```cs
-void AppendDataWithTime(MachAppendWriter aWriter, List<object> aDataList, DateTime aArrivalTime)
+void AppendDataWithTime(
+    MachAppendWriter writer,
+    List<object> dataList,
+    DateTime arrivalTime)
 ```
 
-AppendData() 에서, \_arrival_time 값을 DateTime 객체로 명시적으로 넣을 수 있는 메서드이다.
-
+`_arrival_time`을 `DateTime`으로 명시적으로 지정합니다.
 
 ```cs
-void AppendDataWithTime(MachAppendWriter aWriter, List<object> aDataList, ulong aArrivalTimeLong) 
+void AppendDataWithTime(
+    MachAppendWriter writer,
+    List<object> dataList,
+    ulong arrivalTime)
 ```
 
-AppendData() 에서, \_arrival_time 값을 ulong 객체로 명시적으로 넣을 수 있는 메서드이다. ulong 값을 \_arrival_time 값으로 입력할 때 발생할 수 있는 문제는 위의 AppendData() 를 참고한다.
+`_arrival_time`을 나노초 단위 `ulong`으로 지정합니다.
 
 #### AppendFlush
 
 ```cs
-void AppendFlush(MachAppendWriter aWriter)
+void AppendFlush(MachAppendWriter writer)
 ```
 
-AppendData() 로 입력한 데이터들을 즉시 서버로 보내, 데이터 입력을 강제한다. 호출 빈도가 높을수록, 성능은 떨어지지만 시스템 오류로 인한 데이터 유실율을 낮출 수 있고 에러 검사를 빠르게 할 수 있다.
+버퍼에 쌓인 데이터를 즉시 서버로 전송합니다. 호출 주기가 짧을수록 장애 시 데이터 유실이 줄어들지만 처리량은 낮아집니다.
 
 #### AppendClose
 
 ```cs
-void AppendClose(MachAppendWriter aWriter)
+void AppendClose(MachAppendWriter writer)
 ```
 
-APPEND 를 마친다. 내부적으로 AppendFlush() 를 호출한 뒤에 실제 프로토콜을 마친다.
+Append 세션을 종료합니다. 내부적으로 `AppendFlush()` 호출 후 프로토콜을 마무리합니다.
 
 #### ExecuteNonQuery
 
@@ -189,7 +213,7 @@ APPEND 를 마친다. 내부적으로 AppendFlush() 를 호출한 뒤에 실제 
 int ExecuteNonQuery()
 ```
 
-입력받았던 쿼리를 수행한다. 쿼리가 영향을 미친 레코드 개수를 반환한다. 보통 SELECT 를 제외한 쿼리를 수행할 때 사용한다.
+쿼리를 실행하고 영향을 받은 레코드 수를 반환합니다. 주로 `INSERT`, `UPDATE`, `DELETE`, DDL에서 사용합니다.
 
 #### ExecuteScalar
 
@@ -197,27 +221,26 @@ int ExecuteNonQuery()
 object ExecuteScalar()
 ```
 
-입력받았던 쿼리를 수행한다. 쿼리 Targetlist 의 첫 번째 값을 객체로 반환한다. 보통 SELECT 쿼리, 그 중에서도 결과가 1건만 나오는 SELECT (Scalar Query) 를 수행해 DbDataReader 없이 결과를 받고자 하는 경우 사용한다. 
+쿼리를 실행하고 첫 번째 컬럼 값을 반환합니다.
 
 #### ExecuteDbDataReader
 
 ```cs
-DbDataReader ExecuteDbDataReader(CommandBehavior aBehavior)
+DbDataReader ExecuteDbDataReader(CommandBehavior behavior)
 ```
 
-입력받았던 쿼리를 수행해, 해당 쿼리의 결과를 읽어 올 수 있는 DbDataReader 를 생성해 반환한다.
+쿼리를 실행하고 결과를 순차적으로 읽을 수 있는 `DbDataReader`를 반환합니다.
 
 #### 필드
 
-| 이름 | 설명|
+| 이름 | 설명 |
 |--|--|
-| Connection /<br>DbConnection                   | 연결된 MachConnection.                                                                  |
-| ParameterCollection /<br>DbParameterCollection | Binding 목적으로 사용할 MachParameterCollection.                                            |
-| CommandText                                    | 쿼리 문자열.                                                                              |
-| CommandTimeout                                 | 특정 작업 수행 중, 서버로부터 응답을 기다리기까지의 시간.<br>MachConnection 에 설정된 값을 따르며, 여기서는 값 참조만 할 수 있다. |
-| FetchSize                                      | 한번에 서버로부터 Fetch 할 레코드 개수. 기본값은 3000 이다.                                              |
-| IsAppendOpened                                 | APPEND 작업 중인 경우, Append 가 이미 열려있는지 아닌지를 판단한다.                                        |
-
+| `Connection` / `DbConnection` | 현재 연결된 `MachConnection`입니다. |
+| `ParameterCollection` / `DbParameterCollection` | 바인딩에 사용할 파라미터 컬렉션입니다. |
+| `CommandText` | 실행할 SQL 문자열입니다. |
+| `CommandTimeout` | 서버 응답을 기다리는 최대 시간(밀리초)입니다. 값은 `MachConnection` 설정을 따르며 여기서는 조회만 가능합니다. |
+| `FetchSize` | 서버에서 한 번에 가져올 레코드 수입니다. 기본값은 3000입니다. |
+| `IsAppendOpened` | Append 세션이 열려 있는지 여부입니다. |
 
 ### MachDataReader
 
@@ -225,7 +248,7 @@ DbDataReader ExecuteDbDataReader(CommandBehavior aBehavior)
 public sealed class MachDataReader : DbDataReader
 ```
 
-Fetch 한 결과를 읽어들이는 클래스이다. 명시적으로 생성이 불가능하고 MachCommand.ExecuteDbDataReader() 로 생성된 객체만 사용이 가능하다.
+Fetch된 결과를 순차적으로 읽는 리더입니다. `MachCommand.ExecuteDbDataReader()`로 획득한 객체만 사용할 수 있습니다.
 
 #### GetName
 
@@ -233,7 +256,7 @@ Fetch 한 결과를 읽어들이는 클래스이다. 명시적으로 생성이 �
 string GetName(int ordinal)
 ```
 
-ordinal 번째 컬럼 이름을 반환한다.
+지정한 인덱스의 컬럼 이름을 반환합니다.
 
 #### GetDataTypeName
 
@@ -241,7 +264,7 @@ ordinal 번째 컬럼 이름을 반환한다.
 string GetDataTypeName(int ordinal)
 ```
 
-ordinal 번째 컬럼의 자료형 이름을 반환한다.
+Machbase 컬럼 타입 이름을 반환합니다.
 
 #### GetFieldType
 
@@ -249,8 +272,7 @@ ordinal 번째 컬럼의 자료형 이름을 반환한다.
 Type GetFieldType(int ordinal)
 ```
 
-ordinal 번째 컬럼의 자료형을 반환한다.
-
+.NET 측 매핑 타입을 반환합니다.
 
 #### GetOrdinal
 
@@ -258,8 +280,7 @@ ordinal 번째 컬럼의 자료형을 반환한다.
 int GetOrdinal(string name)
 ```
 
-컬럼 이름이 위치한 인덱스를 반환한다.
-
+컬럼 이름에 해당하는 인덱스를 반환합니다.
 
 #### GetValue
 
@@ -267,7 +288,7 @@ int GetOrdinal(string name)
 object GetValue(int ordinal)
 ```
 
-현재 위치한 레코드의 ordinal 번째 값을 반환한다.
+현재 레코드의 값을 `object`로 반환합니다.
 
 #### IsDBNull
 
@@ -275,7 +296,7 @@ object GetValue(int ordinal)
 bool IsDBNull(int ordinal)
 ```
 
-현재 위치한 레코드의 ordinal 번째 값이 NULL 인지 여부를 반환한다.
+해당 컬럼 값이 `NULL`인지 확인합니다.
 
 #### GetValues
 
@@ -283,9 +304,9 @@ bool IsDBNull(int ordinal)
 int GetValues(object[] values)
 ```
 
-현재 위치한 레코드의 모든 값들을 전부 설정하고, 그 개수를 반환한다.
+현재 레코드의 값을 배열에 채워 넣고 채워진 항목 수를 반환합니다.
 
-#### Get*xxxx*
+#### Get*XXXX*
 
 ```cs
 bool GetBoolean(int ordinal)
@@ -301,7 +322,7 @@ double GetDouble(int ordinal)
 float GetFloat(int ordinal)
 ```
 
-ordinal 번째 컬럼 값을, 자료형에 맞춰 반환한다.
+컬럼 값을 지정한 타입으로 반환합니다.
 
 #### Read
 
@@ -309,30 +330,32 @@ ordinal 번째 컬럼 값을, 자료형에 맞춰 반환한다.
 bool Read()
 ```
 
-다음 레코드를 읽는다. 결과가 존재하지 않으면 False 를 반환한다.
+다음 레코드를 읽습니다. 결과가 더 이상 없으면 `false`를 반환합니다.
 
 #### 필드
 
-| 이름 | 설명|
-| --| --|
-| FetchSize         | 한번에 서버로부터 Fetch 할 레코드 개수. 기본값은 3000 이며 여기서는 수정할 수 없다. |
-| FieldCount        | 결과 컬럼 개수.                                             |
-| this[int ordinal] | object GetValue(int ordinal) 와 동일하다.                  |
-| this[string name] | object GetValue(GetOrdinal(name)) 와 동일하다.             |
-| HasRows           | 결과가 존재하는지 여부를 나타낸다.                                   |
-| RecordsAffected   | MachCommand 의 것과 달리, 여기서는 Fetch Count 를 나타낸다.         |
+| 이름 | 설명 |
+|--|--|
+| `FetchSize` | 서버에서 한 번에 가져올 레코드 수입니다. 기본값은 3000이며 여기에서는 수정할 수 없습니다. |
+| `FieldCount` | 결과 컬럼 수입니다. |
+| `this[int ordinal]` | `GetValue(int ordinal)`과 동일합니다. |
+| `this[string name]` | `GetValue(GetOrdinal(name))`과 동일합니다. |
+| `HasRows` | 결과가 존재하는지 여부입니다. |
+| `RecordsAffected` | Fetch된 레코드 수를 나타냅니다. |
 
 ### MachParameterCollection
 
 ```cs
-public sealed class MachParameterCollection : DbParameterCollection, IEnumerable<MachParameter>
+public sealed class MachParameterCollection :
+    DbParameterCollection,
+    IEnumerable<MachParameter>
 ```
 
-MachCommand 에 필요한 파라메터를 바인딩하는 클래스이다.
+`MachCommand`에 바인딩할 파라미터 집합을 관리하는 클래스입니다.
 
-바인딩한 이후에 수행하게 되면, 해당 값이 같이 수행된다. 
+파라미터를 설정한 뒤 실행하면 해당 값이 함께 전송됩니다.
 
-> Prepared Statement 개념이 구현되어 있지 않아, Binding 이후 Execute 를 해도 수행 성능은 최초 수행한 것과 같다.
+> 현재 버전에는 Prepared Statement 의미에서의 실행 계획 캐시가 구현되어 있지 않으므로, 동일한 쿼리를 반복 실행하더라도 성능은 첫 실행과 동일합니다.
 
 #### Add
 
@@ -340,26 +363,25 @@ MachCommand 에 필요한 파라메터를 바인딩하는 클래스이다.
 MachParameter Add(string parameterName, DbType dbType)
 ```
 
-파라메터 이름과 타입을 지정해, MachParameter 를 추가한다. 추가된 MachParameter 객체를 반환한다. 
+파라미터 이름과 타입을 지정해 `MachParameter`를 추가하고, 생성된 객체를 반환합니다.
 
 ```cs
 int Add(object value)
 ```
 
-값을 추가한다. 추가된 인덱스를 반환한다.
-
+값을 추가하고 추가된 인덱스를 반환합니다.
 
 ```cs
 void AddRange(Array values)
 ```
 
-단순 값의 배열을 모두 추가한다.
+단순 값 배열을 한 번에 추가합니다.
 
 ```cs
-MachParameter<br>AddWithValue(string parameterName, object value)
+MachParameter AddWithValue(string parameterName, object value)
 ```
 
-파라메터 이름과 그 값을 추가한다. 추가된 MachParameter 객체를 반환한다.
+파라미터 이름과 값을 동시에 추가하고, 생성된 `MachParameter`를 반환합니다.
 
 #### Contains
 
@@ -367,13 +389,13 @@ MachParameter<br>AddWithValue(string parameterName, object value)
 bool Contains(object value)
 ```
 
-해당 값이 추가되었는지 여부를 판단한다.
+해당 값이 이미 추가되어 있는지 확인합니다.
 
 ```cs
-bool Contains(string value)
+bool Contains(string parameterName)
 ```
 
-해당 파라메터 이름이 추가되었는지 여부를 판단한다.
+지정한 파라미터 이름이 존재하는지 확인합니다.
 
 #### Clear
 
@@ -381,7 +403,7 @@ bool Contains(string value)
 void Clear()
 ```
 
-파라메터들을 모두 삭제한다.
+모든 파라미터를 제거합니다.
 
 #### IndexOf
 
@@ -389,13 +411,13 @@ void Clear()
 int IndexOf(object value)
 ```
 
-해당 값의 인덱스를 반환한다.
+해당 값이 있는 인덱스를 반환합니다.
 
 ```cs
 int IndexOf(string parameterName)
 ```
 
-해당 파라메터 이름의 인덱스를 반환한다.
+파라미터 이름이 위치한 인덱스를 반환합니다.
 
 #### Insert
 
@@ -403,7 +425,7 @@ int IndexOf(string parameterName)
 void Insert(int index, object value)
 ```
 
-특정 인덱스에, 해당 값을 추가한다.
+지정한 위치에 값을 삽입합니다.
 
 #### Remove
 
@@ -411,29 +433,27 @@ void Insert(int index, object value)
 void Remove(object value)
 ```
 
-해당 값을 포함한 파라메터를 삭제한다.
+해당 값을 포함한 파라미터를 제거합니다.
 
 ```cs
 void RemoveAt(int index)
 ```
 
-인덱스에 위치한 파라메터를 삭제한다.
+인덱스에 위치한 파라미터를 제거합니다.
 
 ```cs
 void RemoveAt(string parameterName)
 ```
 
-해당 이름을 가진 파라메터를 삭제한다.
-
+지정한 이름의 파라미터를 제거합니다.
 
 #### 필드
 
-| 이름| 설명                                      |
-| ----------------- | --------------------------------------- |
-| Count             | 파라메터 개수                                 |
-| this[int index]   | index 번째의 MachParameter 를 나타낸다.         |
-| this[string name] | 파라메터 이름과 일치하는 순서의 MachParameter 를 나타낸다. |
-
+| 이름 | 설명 |
+|--|--|
+| `Count` | 파라미터 개수입니다. |
+| `this[int index]` | 해당 인덱스의 `MachParameter`입니다. |
+| `this[string name]` | 이름과 일치하는 `MachParameter`입니다. |
 
 ### MachParameter
 
@@ -441,23 +461,20 @@ void RemoveAt(string parameterName)
 public sealed class MachParameter : DbParameter
 ```
 
-MachCommand 에 필요한 파라메터를 각각 바인딩한 정보를 담는 클래스이다.
-
-특별히 메서드는 지원하지 않는다.
+개별 파라미터의 바인딩 정보를 저장하는 클래스입니다.
 
 #### 필드
 
-| 이름| 설명                                                                                |
-| ------------- | --------------------------------------------------------------------------------- |
-| ParameterName | 파라메터 이름                                                                           |
-| Value         | 값                                                                                 |
-| Size          | 값의 크기                                                                             |
-| Direction     | ParameterDirection (Input / Output / InputOutput / ReturnValue)<br>기본값은 Input 이다. |
-| DbType        | DB Type                                                                           |
-| MachDbType    | MACHBASE DB Type<br>DB Type 과 다를 수 있다.                                            |
-| IsNullable    | NULL 가능 여부                                                                        |
-| HasSetDbType  | DB Type 이 지정되었는지 여부                                                               |
-
+| 이름 | 설명 |
+|--|--|
+| `ParameterName` | 파라미터 이름입니다. |
+| `Value` | 전송할 값입니다. |
+| `Size` | 값의 길이입니다. |
+| `Direction` | `ParameterDirection` 값입니다. 기본값은 `Input`입니다. |
+| `DbType` | .NET 측 DB 타입입니다. |
+| `MachDbType` | Machbase 고유 타입입니다. |
+| `IsNullable` | `NULL` 허용 여부입니다. |
+| `HasSetDbType` | `DbType`이 설정되었는지 여부입니다. |
 
 ### MachException
 
@@ -465,16 +482,13 @@ MachCommand 에 필요한 파라메터를 각각 바인딩한 정보를 담는 �
 public class MachException : DbException
 ```
 
-마크베이스에서 나타나는 에러를 표시하는 클래스이다.
-
-에러 메시지가 설정되어 있는데, 모든 에러 메시지는 MachErrorMsg 에서 확인할 수 있다.
+Machbase에서 발생한 오류를 표현하는 예외 클래스입니다.
 
 #### 필드
 
-| 이름| 설명                     |
-| ----------------- | ---------------------- |
-| int MachErrorCode | MACHBASE 에서 제공하는 에러 코드 |
-
+| 이름 | 설명 |
+|--|--|
+| `MachErrorCode` | Machbase가 반환한 오류 코드입니다. |
 
 ### MachAppendWriter
 
@@ -482,28 +496,25 @@ public class MachException : DbException
 public sealed class MachAppendWriter
 ```
 
-MachCommand 를 사용하는 별도의 클래스로 APPEND 를 지원한다. ADO.NET 표준이 아닌, MACHBASE 의 Append Protocol 을 지원하기 위한 클래스이다.
-
-별도의 생성자 없이 MachCommand 의 AppendOpen() 으로 생성된다.
+Append 프로토콜을 다루기 위한 보조 클래스입니다. `MachCommand.AppendOpen()` 호출 시 인스턴스를 획득합니다.
 
 #### SetErrorDelegator
 
 ```cs
-void SetErrorDelegator(ErrorDelegateFuncType aFunc)
+void SetErrorDelegator(ErrorDelegateFuncType callback)
 
 void ErrorDelegateFuncType(MachAppendException e);
 ```
 
-에러가 발생했을 때 호출할 ErrorDelegateFunc 을 지정한다.
+Append 중 오류가 발생했을 때 호출할 델리게이트를 등록합니다.
 
 #### 필드
 
-| 이름 | 설명                                    |
-| ------------ | ------------------------------------- |
-| SuccessCount | 입력 성공한 레코드 개수. AppendClose() 이후 설정된다. |
-| FailureCount | 입력 실패한 레코드 개수. AppendClose() 이후 설정된다. |
-| Option       | AppendOpen() 때 입력받은 MachAppendOption  |
-
+| 이름 | 설명 |
+|--|--|
+| `SuccessCount` | 성공적으로 저장된 레코드 수입니다. `AppendClose()` 이후에 확인할 수 있습니다. |
+| `FailureCount` | 실패한 레코드 수입니다. `AppendClose()` 이후에 설정됩니다. |
+| `Option` | `AppendOpen()` 호출 시 사용한 `MachAppendOption` 값입니다. |
 
 ### MachAppendException
 
@@ -511,12 +522,7 @@ void ErrorDelegateFuncType(MachAppendException e);
 public sealed class MachAppendException : MachException
 ```
 
-MachException 과 동일하지만, 다음 점이 다르다.
-
-* 에러 메시지가 서버 측으로부터 수신된다.
-* 에러가 발생한 데이터 버퍼를 획득할 수 있다. (comma-separated) 이 데이터를 가공해 다시 APPEND 하거나 기록하는 용도로 사용할 수 있다.
-
-해당 예외는 ErrorDelegateFunc 내부에서만 획득이 가능하다.
+Append 과정에서 발생한 오류 정보를 추가로 제공하는 예외입니다. 서버가 반환한 오류 메시지를 그대로 전달하며, 실패한 레코드를 문자열로 확인할 수 있습니다.
 
 #### GetRowBuffer
 
@@ -524,259 +530,289 @@ MachException 과 동일하지만, 다음 점이 다르다.
 string GetRowBuffer()
 ```
 
-에러가 발생한 데이터 버퍼를 가져온다.
+오류가 발생한 원본 레코드를 문자열 형태로 반환합니다.
 
-## 사용 및 예제
+## 사용 예시 {#usage-and-examples}
 
 ### 연결
 
-MachConnection 을 만들어 Open() - Close() 하면 된다.
-```c#
-String sConnString = String.Format("SERVER={0};PORT_NO={1};UID=;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
-MachConnection sConn = new MachConnection(sConnString);
-sConn.Open();
-//... do something
-sConn.Close();
+`MachConnection`을 생성해 `Open()`/`Close()`로 연결을 제어할 수 있습니다.
+
+```csharp
+var connString = string.Format(
+    "SERVER={0};PORT_NO={1};UID=SYS;PWD=MANAGER;",
+    SERVER_HOST,
+    SERVER_PORT);
+
+var connection = new MachConnection(connString);
+connection.Open();
+// ... 작업 ...
+connection.Close();
 ```
 
-using 구문을 사용하면, Connection 종료 작업인 Close() 를 호출하지 않아도 된다.
-```c#
-String sConnString = String.Format("SERVER={0};PORT_NO={1};UID=;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
-using (MachConnection sConn = new MachConnection(sConnString))
+`using` 문을 사용하면 `Close()`를 직접 호출하지 않아도 자원이 정리됩니다.
+
+```csharp
+var connString = string.Format(
+    "SERVER={0};PORT_NO={1};UID=SYS;PWD=MANAGER;",
+    SERVER_HOST,
+    SERVER_PORT);
+
+using (var connection = new MachConnection(connString))
 {
-    sConn.Open();
-    //... do something
-} // you don't need to call sConn.Close();
-```
-
-### Non-Query 수행
-
-MachCommand 를 만들어 쿼리를 수행하면 된다.
-
-```c#
-String sConnString = String.Format("SERVER={0};PORT_NO={1};UID=;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
-using (MachConnection sConn = new MachConnection(sConnString))
-{
-    sConn.Open();
-
-    String sQueryString = "CREATE TABLE tab1 ( col1 INTEGER, col2 VARCHAR(20) )";
-    MachCommand sCommand = new MachCommand(sQueryString , sConn)
-    try
-    {
-        sCommand.ExecuteNonQuery();
-    }
-    catch (MachException me)
-    {
-        throw me;
-    }
+    connection.Open();
+    // ... 작업 ...
 }
 ```
 
-이 역시 using 구문을 사용하면, MachCommand 해제 작업을 곧바로 진행할 수 있다.
-```c#
-String sConnString = String.Format("SERVER={0};PORT_NO={1};UID=;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
-using (MachConnection sConn = new MachConnection(sConnString))
-{
-    sConn.Open();
+### 쿼리 실행
 
-    String sQueryString = "CREATE TABLE tab1 ( col1 INTEGER, col2 VARCHAR(20) )";
-    using(MachCommand sCommand = new MachCommand(sQueryString , sConn))
-    {
-        try
-        {
-            sCommand.ExecuteNonQuery();
-        }
-        catch (MachException me)
-        {
-            throw me;
-        }
-    }
+`MachCommand`로 SQL 구문을 실행할 수 있습니다.
+
+```csharp
+var connString = string.Format(
+    "SERVER={0};PORT_NO={1};UID=SYS;PWD=MANAGER;",
+    SERVER_HOST,
+    SERVER_PORT);
+
+using (var connection = new MachConnection(connString))
+{
+    connection.Open();
+
+    const string sql = "CREATE TABLE tab1 ( col1 INTEGER, col2 VARCHAR(20) )";
+    using var command = new MachCommand(sql, connection);
+    command.ExecuteNonQuery();
 }
 ```
 
-### SELECT 수행
-SELECT 쿼리를 가진 MachCommand 를 실행해 MachDataReader 를 얻을 수 있다.
+### SELECT 실행
 
-MachDataReader 를 통해 레코드를 하나씩 Fetch 할 수 있다.
-```c#
-String sConnString = String.Format("SERVER={0};PORT_NO={1};UID=;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
-using (MachConnection sConn = new MachConnection(sConnString))
+`MachCommand.ExecuteReader()`를 사용하면 `MachDataReader`로 결과를 순차적으로 읽을 수 있습니다.
+
+```csharp
+var connString = string.Format(
+    "SERVER={0};PORT_NO={1};UID=SYS;PWD=MANAGER;",
+    SERVER_HOST,
+    SERVER_PORT);
+
+using (var connection = new MachConnection(connString))
 {
-    sConn.Open();
+    connection.Open();
 
-    String sQueryString = "SELECT * FROM tab1;";
-    using(MachCommand sCommand = new MachCommand(sQueryString , sConn))
+    using var command = new MachCommand("SELECT * FROM tab1", connection);
+    using var reader = command.ExecuteReader();
+
+    while (reader.Read())
     {
-        try
+        for (var i = 0; i < reader.FieldCount; i++)
         {
-            MachDataReader sDataReader = sCommand.ExecuteReader();
-            while (sDataReader.Read())
-            {
-                for (int i = 0; i < sDataReader.FieldCount; i++)
-                {
-                    Console.WriteLine(String.Format("{0} : {1}",
-                                                    sDataReader.GetName(i),
-                                                    sDataReader.GetValue(i)));
-                }
-            }
-        }
-        catch (MachException me)
-        {
-            throw me;
+            Console.WriteLine($"{reader.GetName(i)} : {reader.GetValue(i)}");
         }
     }
 }
 ```
 
-### 파라메터 바인딩
-MachParameterCollection 을 생성한 다음, MachCommand 에 연결해서 수행할 수 있다.
-```c#
-String sConnString = String.Format("SERVER={0};PORT_NO={1};UID=;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
-using (MachConnection sConn = new MachConnection(sConnString))
-{
-    sConn.Open();
+### 파라미터 바인딩
 
-    string sSelectQuery = @"SELECT *
-        FROM tab2
-        WHERE CreatedDateTime < @CurrentTime
-        AND CreatedDateTime >= @PastTime";
- 
-    using (MachCommand sCommand = new MachCommand(sSelectQuery, sConn))
+`MachParameterCollection`을 이용하면 시계열 조회 조건 등을 파라미터로 안전하게 전달할 수 있습니다.
+
+```csharp
+using var connection = new MachConnection(connString);
+connection.Open();
+
+const string sql = @"
+    SELECT *
+      FROM tab2
+     WHERE CreatedDateTime < @CurrentTime
+       AND CreatedDateTime >= @PastTime";
+
+using var command = new MachCommand(sql, connection);
+
+var now = DateTime.UtcNow;
+var past = now.AddMinutes(-1);
+
+command.ParameterCollection.Add(
+    new MachParameter { ParameterName = "@CurrentTime", Value = now });
+command.ParameterCollection.Add(
+    new MachParameter { ParameterName = "@PastTime", Value = past });
+
+using var reader = command.ExecuteReader();
+while (reader.Read())
+{
+    Console.WriteLine($"{reader.GetName(0)} : {reader.GetValue(0)}");
+}
+```
+
+### Append
+
+Append 프로토콜을 사용하면 대량의 시계열 데이터를 빠르게 적재할 수 있습니다.
+
+```csharp
+using var connection = new MachConnection(connString);
+connection.Open();
+
+using var appendCommand = new MachCommand(connection);
+var writer = appendCommand.AppendOpen("tab2");
+
+var row = new List<object>();
+for (var i = 1; i <= 100000; i++)
+{
+    row.Add(i);
+    row.Add($"NAME_{i % 100}");
+
+    appendCommand.AppendData(writer, row);
+    row.Clear();
+
+    if (i % 1000 == 0)
     {
-        DateTime sCurrtime = DateTime.Now;
-        DateTime sPastTime = sCurrtime.AddMinutes(-1);
- 
-        try
-        {
-            sCommand.ParameterCollection.Add(new MachParameter { ParameterName = "@CurrentTime", Value = sCurrtime });
-            sCommand.ParameterCollection.Add(new MachParameter { ParameterName = "@PastTime", Value = sPastTime });
- 
-            MachDataReader sDataReader = sCommand.ExecuteReader();
- 
-            while (sDataReader.Read())
-            {
-                for (int i = 0; i < sDataReader.FieldCount; i++)
-                {
-                    Console.WriteLine(String.Format("{0} : {1}",
-                                                    sDataReader.GetName(i),
-                                                    sDataReader.GetValue(i)));
-                }
-            }
-        }
-        catch (MachException me)
-        {
-            throw me;
-        }
+        appendCommand.AppendFlush(writer);
     }
 }
-```
 
-### APPEND
-MachCommand 에서 AppendOpen() 을 수행하면, MachAppendWriter 객체를 얻을 수 있다.
-
-이 객체와 MachCommand 를 이용해, 입력 레코드 1건을 리스트로 준비해 AppendData() 를 수행하면 입력이 이뤄진다.
-AppendFlush() 를 하면 모든 레코드의 입력이 반영되며, AppendClose() 를 통해 Append 전체 과정을 종료할 수 있다.
-```c#
-String sConnString = String.Format("SERVER={0};PORT_NO={1};UID=;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
-using (MachConnection sConn = new MachConnection(sConnString))
-{
-    sConn.Open();
-
-    using (MachCommand sAppendCommand = new MachCommand(sConn))
-    {
-        MachAppendWriter sWriter = sAppendCommand.AppendOpen("tab2");
-        sWriter.SetErrorDelegator(AppendErrorDelegator);
- 
-        var sList = new List<object>();
-        for (int i = 1; i <= 100000; i++)
-        {
-            sList.Add(i);
-            sList.Add(String.Format("NAME_{0}", i % 100));
- 
-            sAppendCommand.AppendData(sWriter, sList);
- 
-            sList.Clear();
- 
-            if (i % 1000 == 0)
-            {
-                sAppendCommand.AppendFlush();
-            }
-        }
- 
-        sAppendCommand.AppendClose(sWriter);
-        Console.WriteLine(String.Format("Success Count : {0}", sWriter.SuccessCount));
-        Console.WriteLine(String.Format("Failure Count : {0}", sWriter.FailureCount));
-    }
-}
-```
-```c#
-private static void AppendErrorDelegator(MachAppendException e)
-{
-    Console.WriteLine("{0}", e.Message);
-    Console.WriteLine("{0}", e.GetRowBuffer());
-}
-```
-
-### Connection String
-
-각 항목은 semicolon (;) 으로 구분되며, 다음을 사용할 수 있다.
-동일 항목에 있는 여러 Keyword 는, 모두 같은 의미이다.
-
-| Keyword                                                | 설명            | 예제                 | 기본값  |
-| ------------------------------------------------------ | ------------- | ------------------ | ---- |
-| DSN<br>SERVER<br>HOST                                  | Hostname      | DSN=localhost<br>SERVER=192.168.0.1 |      |
-| PORT<br>PORT_NO                                        | Port No.      | PORT=5656          | 5656 |
-| USERID<br>USERNAME<br>USER<br>UID                      | 사용자 ID        | USER=SYS           | SYS  |
-| PASSWORD<br>PWD                                        | 사용자 패스워드      | PWD=manager        |      |
-| CONNECT_TIMEOUT<br>ConnectionTimeout<br>connectTimeout | 연결 최대 시간      | CONNECT_TIMEOUT    | 60초  |
-| COMMAND_TIMEOUT<br>commandTimeout                      | 각 명령 수행 최대 시간 | COMMAND_TIMEOUT    | 60초  |
-
-예제로, 아래와 같은 문자열을 준비해 둘 수 있다.
-```
-String sConnString = String.Format("SERVER={0};PORT_NO={1};UID=;PWD=MANAGER;CONNECT_TIMEOUT=10000;COMMAND_TIMEOUT=50000", SERVER_HOST, SERVER_PORT);
+appendCommand.AppendClose(writer);
+Console.WriteLine($"Success Count : {writer.SuccessCount}");
+Console.WriteLine($"Failure Count : {writer.FailureCount}");
 ```
 
 ### Error Delegator 설정
 
-MachAppendWriter 에서, APPEND 도중 MACHBASE 서버 측에서 발생하는 Error 를 감지하기 위한 함수를 지정할 수 있다.
+Append 중 서버에서 오류가 발생하면 지정한 델리게이트가 호출됩니다.
 
-.NET 에서는 이 함수형을 Delegator Function 으로 지정한다.
-```c#
-public static void ErrorCallbackFunc(MachAppendException e) 
+```csharp
+void AppendErrorDelegator(MachAppendException e)
 {
     Console.WriteLine("====================");
-    Console.WriteLine("Error occured");
+    Console.WriteLine("Append error");
     Console.WriteLine(e.Message);
-    Console.WriteLine(e.StackTrace);
+    Console.WriteLine(e.GetRowBuffer());
     Console.WriteLine("====================");
 }
 
-public static void DoAppend() 
+// 등록
+writer.SetErrorDelegator(AppendErrorDelegator);
+```
+
+### 자동 AppendFlush 설정
+
+`MachConnection.SetConnectAppendFlush(true)`로 설정하면 Append 중 일정 주기로 자동 flush가 실행됩니다.
+
+```csharp
+var connection = new MachConnection(connString);
+connection.Open();
+connection.SetConnectAppendFlush(true);
+```
+
+`false`로 설정하면 자동 flush가 비활성화됩니다.
+
+## 프로토콜 4.0-full 전체 API {#full-provider-apis-protocol-40-full}
+
+`PROTOCOL=4.0-full`을 사용하면 Machbase 8.0.50 이상에서 확장된 ADO.NET 표면을 사용할 수 있습니다. 다음 어셈블리 중 하나를 로드해 기능을 활성화합니다.
+
+- `UniMachNetConnector-net80-8.0.50.dll` – Machbase 8.0.50 이상에 포함된 기본 커넥터
+- `machNetConnector-40-net80-3.2.0.dll` – 동일한 기능을 제공하는 독립 배포본
+
+### 4.0-full에서 추가된 주요 타입
+
+- `MachDbProviderFactory`: `Mach.Data` invariant 이름으로 프로바이더를 등록/생성할 수 있습니다.
+- `MachConnectionStringBuilder`: 키워드 오타 없이 커넥션 문자열을 구성할 수 있습니다.
+- `MachDataAdapter`, `MachRowUpdating`, `MachRowUpdated`: `DataTable`/`DataSet` 기반 워크플로를 지원합니다.
+- `MachCommandBuilder`: SELECT 문으로부터 INSERT/DELETE(조건에 따라 UPDATE) 구문을 자동 생성합니다. 로그·태그 테이블은 UPDATE를 허용하지 않는다는 점에 유의하십시오.
+
+### 전체 API 협상 확인
+
+```csharp
+var connString =
+    "SERVER=127.0.0.1;PORT_NO=55656;UID=SYS;PWD=MANAGER;PROTOCOL=4.0-full";
+using var connection = new MachConnection(connString);
+connection.Open();
+
+if (!connection.SupportsFullApi)
 {
-    MachCommand com = new MachCommand(conn);
-    MachAppendWriter writer = com.AppendOpen("tag", errorCheckCount);
-    writer.SetErrorDelegator(ErrorCallbackFunc);
-    //... do append 
+    throw new InvalidOperationException(
+        "Full provider API negotiation failed.");
 }
 ```
 
-### AppendFlush 설정
+UPDATE/DELETE가 필요한 경우에는 Lookup/Volatile 테이블을 사용하고, 로그·태그 테이블은 Append 전용으로 유지하십시오.
 
-connection 에 `SetConnectAppendFlush` 를 true 설정할 경우, append 도중 flush 가 자동으로 수행된다.
+### 커넥션 문자열 빌더 사용
 
-```c#
-private static string connString = $"SERVER={HOST};PORT_NO={port};USER={USER};PWD={PWD}";
-
-public static void Main(string[] args) 
+```csharp
+var builder = new MachConnectionStringBuilder
 {
-    MachConnection conn = new MachConnection(connString);
-    conn.Open();
-    conn.SetConnectAppendFlush(true);
-}
+    Server = "127.0.0.1",
+    Port = 55656,
+    UserID = "SYS",
+    Password = "MANAGER"
+};
+
+builder["PROTOCOL"] = "4.0-full";
+
+using var connection = new MachConnection(builder.ConnectionString);
+connection.Open();
 ```
 
-false 로 설정할 경우 해당 기능이 disable 된다.
+### 예시: MachDataAdapter로 append
 
-```c#
-conn.SetConnectAppendFlush(false);
+Lookup 테이블을 `DataTable`로 가져온 뒤 새 레코드를 추가하고 `MachDataAdapter`로 다시 반영할 수 있습니다.
+
+```csharp
+using Mach.Data.MachClient;
+using System.Data;
+
+var connString =
+    "SERVER=127.0.0.1;PORT_NO=55656;UID=SYS;PWD=MANAGER;PROTOCOL=4.0-full";
+using var connection = new MachConnection(connString);
+connection.Open();
+
+var adapter = new MachDataAdapter(
+    "SELECT id, name FROM dotnet_lookup_demo ORDER BY id",
+    connection);
+var builder = new MachCommandBuilder(adapter);
+
+var table = new DataTable();
+adapter.Fill(table);
+
+var newRow = table.NewRow();
+newRow["id"] = 2001;
+newRow["name"] = "Inserted from MachDataAdapter";
+table.Rows.Add(newRow);
+
+adapter.Update(table);
 ```
+
+> **Tip**: 전송 전 SQL을 확인하려면 `MachDataAdapter.MachRowUpdating` / `MachRowUpdated` 이벤트를 구독하십시오.
+
+```csharp
+adapter.MachRowUpdating += (sender, args) =>
+{
+    Console.WriteLine(
+        $"About to run {args.StatementType} with SQL: {args.Command?.CommandText}");
+};
+```
+
+### 예시: DbProviderFactory 활용
+
+`MachDbProviderFactory.Instance`를 사용하면 `DbProviderFactories`, Dapper 등 프로바이더 중립 구성에 Machbase를 연결할 수 있습니다.
+
+```csharp
+using System.Data.Common;
+using Mach.Data.MachClient;
+
+DbProviderFactory factory = MachDbProviderFactory.Instance;
+
+using DbConnection connection = factory.CreateConnection()!;
+connection.ConnectionString =
+    "SERVER=127.0.0.1;PORT_NO=55656;UID=SYS;PWD=MANAGER;PROTOCOL=4.0-full";
+connection.Open();
+
+using DbCommand command = connection.CreateCommand();
+command.CommandText = "SELECT COUNT(*) FROM dotnet_lookup_demo";
+var count = (long)command.ExecuteScalar();
+
+Console.WriteLine($"Lookup rows: {count}");
+```
+
+설정 기반 애플리케이션에서 팩터리를 자동으로 노출하려면 시작 시 `MachDbProviderFactory.Register()`를 한 번 호출해 `DbProviderFactories.GetFactory("Mach.Data")`가 동일한 인스턴스를 반환하도록 구성하십시오.
+
+`4.0-full` 프로토콜은 Machbase 7.x 이상 서버에서만 사용 가능합니다. 더 낮은 버전에서는 `PROTOCOL=4.0`(제한된 기능) 또는 2.x/3.x 프로토콜을 사용해야 합니다.

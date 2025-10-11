@@ -7,7 +7,7 @@ weight: 20
 
 ## JDBC 개요
 
-자바 프로그래밍 언어로 만들어진 데이터베이스 조작 인터페이스의 집합을 JDBC(Java DataBase Connectivity)라고 한다. 다양한 관계형 데이터베이스를 위해 일관된 인터페이스를 제공하는 API 집합으로서 프로그래머가 SQL 요구를 만드는데 사용할 일련의 객체지향 프로그램의 클래스들을 정의하고 있다. 즉, 어떤 데이터베이스를 사용하더라도 JDBC 드라이버만 제공된다면 코드 수정 없이 바로 적용 가능한 장점이 있다.
+자바 프로그래밍 언어로 만들어진 데이터베이스 조작 인터페이스의 집합을 JDBC(Java DataBase Connectivity)라고 합니다. 다양한 관계형 데이터베이스를 위해 일관된 인터페이스를 제공하는 API 집합으로서 프로그래머가 SQL 요구를 만드는데 사용할 일련의 객체지향 프로그램의 클래스들을 정의하고 있습니다. 즉, 어떤 데이터베이스를 사용하더라도 JDBC 드라이버만 제공된다면 코드 수정 없이 바로 적용 가능한 장점이 있습니다.
 
 ## 표준 JDBC 함수
 
@@ -21,18 +21,18 @@ weight: 20
 void setIpv4(int ind, String ipString)
 ```
 
-PrepareStatement에서 IPv4 주소 타입을 입력하기 위한 함수이다.
+PrepareStatement에서 IPv4 주소 타입을 입력하기 위한 함수입니다.
 
-컬럼 인덱스와 IPv4 문자열을 인자로 받는다.
+컬럼 인덱스와 IPv4 문자열을 인자로 받습니다.
 
 ### setIPv6
 
 ```java
 void setIpv6(int ind, String ipString)
 ```
-PrepareStatement에서 IPv6 주소 타입을 입력하기 위한 함수이다.
+PrepareStatement에서 IPv6 주소 타입을 입력하기 위한 함수입니다.
 
-컬럼 인덱스와 IPv6 문자열을 인자로 받는다.
+컬럼 인덱스와 IPv6 문자열을 인자로 받습니다.
 
 ### executeAppendOpen
 
@@ -40,9 +40,9 @@ PrepareStatement에서 IPv6 주소 타입을 입력하기 위한 함수이다.
 ResultSet executeAppendOpen(String aTableName, int aErrorCheckCount)
 ```
 
-Statement에서 Append 프로토콜을 쓰기 위한 것으로 프로토콜을 오픈한다.
+Statement에서 Append 프로토콜을 쓰기 위한 것으로 프로토콜을 오픈합니다.
 
-테이블 이름과 오류 검사 간격을 인자로 받는다. 결과값으로 ResultSet을 리턴한다. 
+테이블 이름과 오류 검사 간격을 인자로 받습니다. 결과값으로 ResultSet을 리턴합니다. 
 
 ### executeAppendData
 
@@ -50,9 +50,9 @@ Statement에서 Append 프로토콜을 쓰기 위한 것으로 프로토콜을 �
 int executeAppendData(ResultSetMetaData rsmd, ArrayList aData)
 ```
 
-Statement에서 Append 프로토콜을 위한 것으로 실제 데이터를 입력한다.
+Statement에서 Append 프로토콜을 위한 것으로 실제 데이터를 입력합니다.
 
-executeAppendOpen의 결과값인 ResultSet의 메타데이터와 입력하고자 하는 데이터를 인자로 받는다. 결과값이 전송 버퍼에 저장되면 1이 리턴되고, 전송 버퍼가 차서 마크베이스로 전송되면 2가 리턴된다. 따라서 1 또는 2가 리턴되면 성공으로 판단하면 된다. 
+executeAppendOpen의 결과값인 ResultSet의 메타데이터와 입력하고자 하는 데이터를 인자로 받습니다. 결과값이 전송 버퍼에 저장되면 1이 리턴되고, 전송 버퍼가 차서 마크베이스로 전송되면 2가 리턴됩니다. 따라서 1 또는 2가 리턴되면 성공으로 판단하면 됩니다. 
 
 ### executeAppendDataByTime
 
@@ -60,9 +60,9 @@ executeAppendOpen의 결과값인 ResultSet의 메타데이터와 입력하고�
 int executeAppendDataByTime(ResultSetMetaData rsmd, long aTime, ArrayList aData)
 ```
 
-Statement에서 Append 프로토콜을 위한 것으로 실제 데이터를 시간 기준으로 입력한다.
+Statement에서 Append 프로토콜을 위한 것으로 실제 데이터를 시간 기준으로 입력합니다.
 
-executeAppendOpen의 결과값인 ResultSet의 메타데이터와 설정하고자 하는 특정 시간대의 시간 값, 입력하고자 하는 데이터를 인자로 받는다. 결과값이 전송 버퍼에 저장되면 1이 리턴된다.  
+executeAppendOpen의 결과값인 ResultSet의 메타데이터와 설정하고자 하는 특정 시간대의 시간 값, 입력하고자 하는 데이터를 인자로 받습니다. 결과값이 전송 버퍼에 저장되면 1이 리턴됩니다.  
 
 ### executeAppendClose
 
@@ -70,9 +70,9 @@ executeAppendOpen의 결과값인 ResultSet의 메타데이터와 설정하고�
 int executeAppendClose()
 ```
 
-Statement에서 Append 프로토콜을 위한 것으로 statement를 종료한다.
+Statement에서 Append 프로토콜을 위한 것으로 statement를 종료합니다.
 
-결과값으로 성공하면 1을 리턴한다.
+결과값으로 성공하면 1을 리턴합니다.
 
 ### executeSetAppendErrorCallback
 
@@ -80,9 +80,9 @@ Statement에서 Append 프로토콜을 위한 것으로 statement를 종료한�
 int executeSetAppendErrorCallback(MachAppendCallback aCallback)
 ```
 
-Append 수행하는 도중에 에러가 발생하는 경우 에러를 출력하는 콜백 함수를 설정한다.
+Append 수행하는 도중에 에러가 발생하는 경우 에러를 출력하는 콜백 함수를 설정합니다.
 
-에러 로그를 출력하는 콜백 함수를 인자로 받는다. 결과값으로 성공하면 1이 리턴된다. 
+에러 로그를 출력하는 콜백 함수를 인자로 받습니다. 결과값으로 성공하면 1이 리턴됩니다. 
 
 ### getAppendSuccessCount
 
@@ -90,24 +90,24 @@ Append 수행하는 도중에 에러가 발생하는 경우 에러를 출력하�
 long getAppendSuccessCount()
 ```
 
-Statement에서 Append 프로토콜을 위한 것으로 성공한 개수를 리턴한다.
+Statement에서 Append 프로토콜을 위한 것으로 성공한 개수를 리턴합니다.
 
-결과값으로 성공한 개수를 리턴한다. 
+결과값으로 성공한 개수를 리턴합니다. 
 
 ### getAppendFailCount
 
 ```java
 long getAppendFailCount()
 ```
-Statement에서 Append 프로토콜을 위한 것으로 실패한 개수를 리턴한다.
+Statement에서 Append 프로토콜을 위한 것으로 실패한 개수를 리턴합니다.
 
-결과값으로 실패한 개수를 리턴한다. 
+결과값으로 실패한 개수를 리턴합니다. 
 
 ## 응용 프로그램 개발
 
 ### JDBC 라이브러리 설치 확인
 
-$MACHBASE_HOME/lib 디렉터리에 machbase.jar 파일이 있는지 확인한다.
+$MACHBASE_HOME/lib 디렉터리에 machbase.jar 파일이 있는지 확인합니다.
 
 ```bash
 [mach@localhost ~]$ cd $MACHBASE_HOME/lib
@@ -118,7 +118,7 @@ $MACHBASE_HOME/lib 디렉터리에 machbase.jar 파일이 있는지 확인한다
 
 ### Makefile 작성 가이드
 
-$(MACHBASE_HOME)/lib/machbase.jar를 classpath에 지정해주어야 한다. 다음은 Makefile 예시이다.
+$(MACHBASE_HOME)/lib/machbase.jar를 classpath에 지정해주어야 합니다. 다음은 Makefile 예시입니다.
 
 ```bash
 CLASSPATH=".:$(MACHBASE_HOME)/lib/machbase.jar"
@@ -155,7 +155,7 @@ clean:
 
 ### 컴파일 및 링크
 
-다음과 같이 make 명령어를 수행하여 컴파일 및 링크를 수행한다. 
+다음과 같이 make 명령어를 수행하여 컴파일 및 링크를 수행합니다. 
 
 ```bash
 [mach@localhost jdbc]$ make
@@ -165,12 +165,12 @@ javac -classpath ".:/home/machbase/machbase_home/lib/machbase.jar" -d . Sample1C
 
 ## Maven을 이용한 응용 프로그램 개발
 
-Maven을 사용해서 마크베이스 JDBC(machjdbc)를 프로젝트로 가져올 수 있다.   
-Machbase JDBC 드라이버는 [Maven Central Repository](https://mvnrepository.com/artifact/com.machbase/machjdbc)에서 찾을 수 있다.   
+Maven을 사용해서 마크베이스 JDBC(machjdbc)를 프로젝트로 가져올 수 있습니다.   
+Machbase JDBC 드라이버는 [Maven Central Repository](https://mvnrepository.com/artifact/com.machbase/machjdbc)에서 찾을 수 있습니다.   
 
 ### machjdbc을 가져와서 사용하기
 
-machjdbc를 프로젝트에 가져오려면, `pom.xml`를 열어서 아래의 내용을 `<dependencies>` 태그 안에 추가해준다.
+machjdbc를 프로젝트에 가져오려면, `pom.xml`를 열어서 아래의 내용을 `<dependencies>` 태그 안에 추가해 줍니다.
 ```
 <dependency>
     <groupId>com.machbase</groupId>
@@ -178,10 +178,10 @@ machjdbc를 프로젝트에 가져오려면, `pom.xml`를 열어서 아래의 �
     <version>{{< jdbc_version >}}</version>
 </dependency>
 ```
-> 버전 번호인 {{< jdbc_version >}}은 Maven Central의 최신 버전으로 바꾸어도 된다.
+> 버전 번호인 {{< jdbc_version >}}은 Maven Central의 최신 버전으로 바꾸어도 됩니다.
 <br>
 
-그러면 아래처럼 `import` 구문을 이용해서 machjdbc를 소스 안에서 사용할 수 있다.
+그러면 아래처럼 `import` 구문을 이용해서 machjdbc를 소스 안에서 사용할 수 있습니다.
 ```
 import com.machbase.jdbc.*;
 ```
@@ -191,11 +191,11 @@ import com.machbase.jdbc.*;
 
 ### 접속 예제
 
-마크베이스 JDBC 드라이버를 이용하여 마크베이스 서버에 접속하는 예제 프로그램을 작성해 보기로 한다. 소스 파일명을 Sample1Connect.java로 한다.
+마크베이스 JDBC 드라이버를 이용하여 마크베이스 서버에 접속하는 예제 프로그램을 작성해 보기로 합니다. 소스 파일명을 Sample1Connect.java로 합니다.
 
-> [Tips] _arrival_time 컬럼은 디폴트로 표시되지 않는다.<br>
-> 따라서 _arrival_time 컬럼을 표시하려면, 연결 문자열에 show_hidden_cols=1 을 추가하면 된다.<br><br>
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;아래 예제 소스에서 접속 문자열을 다음과 같이 수정하면 된다.<br>
+> [Tips] _arrival_time 컬럼은 디폴트로 표시되지 않습니다.<br>
+> 따라서 _arrival_time 컬럼을 표시하려면, 연결 문자열에 show_hidden_cols=1 을 추가하면 됩니다.<br><br>
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;아래 예제 소스에서 접속 문자열을 다음과 같이 수정하면 됩니다.<br>
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;String sURL = "jdbc:machbase://localhost:5656/machbasedb?show_hidden_cols=1";
 
 ```java
@@ -258,7 +258,7 @@ public class Sample1Connect
 }
 ```
 
-이제 소스 코드를 컴파일하고 실행한다. 이미 작성한 Makefile을 이용한다.
+이제 소스 코드를 컴파일하고 실행합니다. 이미 작성한 Makefile을 이용합니다.
 
 ```bash
 [mach@localhost jdbc]$ make
@@ -270,12 +270,12 @@ mach JDBC connected.
 
 ### 데이터 입력 및 출력 예제 (1) 직접 입/출력
 
-마크베이스 JDBC 드라이버를 이용하여 데이터를 입력하고 출력하는 예제를 작성하여 보기로 한다.
+마크베이스 JDBC 드라이버를 이용하여 데이터를 입력하고 출력하는 예제를 작성하여 보기로 합니다.
 
-소스 파일명은 Sample2Insert.java 라고 한다.
+소스 파일명은 Sample2Insert.java 라고 합니다.
 
-먼저, machsql 프로그램을 이용하여 필요한 테이블을 생성하여야 한다.
-예제에서는 sample_table이라는 테이블을 미리 생성한 뒤에 샘플 코드를 이용하는 방식을 사용했다.
+먼저, machsql 프로그램을 이용하여 필요한 테이블을 생성하여야 합니다.
+예제에서는 sample_table이라는 테이블을 미리 생성한 뒤에 샘플 코드를 이용하는 방식을 사용했습니다.
 
 ```bash
 [mach@localhost jdbc]$ machsql
@@ -426,7 +426,7 @@ public class Sample2Insert
     }
 }
 ```
-이제 소스 코드를 컴파일하고 실행한다. 이미 작성한 Makefile을 이용한다.
+이제 소스 코드를 컴파일하고 실행합니다. 이미 작성한 Makefile을 이용합니다.
 
 ```bash
 [mach@localhost jdbc]$ make
@@ -457,9 +457,9 @@ d1: -26208, d2: -1717986912, d3: -3689348814741910320, f1: 1.2345679E-28, f2: 1.
 
 ### 데이터 입력 및 출력 예제 (2) PreparedStatement 이용한 입력
 
-PreparedStatement를 이용하여 데이터를 입력하고 출력하는 예제를 작성하여 보기로 한다.
+PreparedStatement를 이용하여 데이터를 입력하고 출력하는 예제를 작성하여 보기로 합니다.
 
-소스 파일명은 Sample3PrepareStmt.java 로 한다.
+소스 파일명은 Sample3PrepareStmt.java 로 합니다.
 
 ```java
 import java.util.*;
@@ -600,9 +600,9 @@ public class Sample3PrepareStmt
     }
 }
 ```
-이제 소스 코드를 컴파일하고 실행본다. 이미 작성한 Makefile을 이용한다.
+이제 소스 코드를 컴파일하고 실행해 봅니다. 이미 작성한 Makefile을 이용합니다.
 
-Sample2Insert.java에서 입력한 데이터가 함께 출력되고 있다는 점에 유의해야 한다.
+Sample2Insert.java에서 입력한 데이터가 함께 출력되고 있다는 점에 유의해야 합니다.
 
 ```bash
 [mach@localhost jdbc]$ make
@@ -686,14 +686,14 @@ name: id-1, text: name-1, bin: aabbccddeeff, hexbin: 616162626363646465656666, v
 
 ### 확장 함수 Append 예제
 
-마크베이스 JDBC 드라이버는 많은 건수의 데이터를 빠르게 업로드하기 위한 Append 프로토콜을 지원한다.
+마크베이스 JDBC 드라이버는 많은 건수의 데이터를 빠르게 업로드하기 위한 Append 프로토콜을 지원합니다.
 
-다음은 Append 프로토콜 사용 예제이다. 
-이전 예제에 사용된 sample_table을 그대로 이용한다.
+다음은 Append 프로토콜 사용 예제입니다. 
+이전 예제에 사용된 sample_table을 그대로 이용합니다.
 
-소스 파일명은 Sample4Append.java 라고 한다.
-data.txt에 있는 내용을 sample_table에 입력한다.
-CLI append 예제에 이용한 data.txt 파일을 복사하여 사용하기로 한다.
+소스 파일명은 Sample4Append.java 라고 합니다.
+data.txt에 있는 내용을 sample_table에 입력합니다.
+CLI append 예제에 이용한 data.txt 파일을 복사하여 사용하기로 합니다.
 
 ```java
 import java.util.*;
@@ -854,7 +854,7 @@ public class Sample4Append
 }
 ```
 
-Append를 할 때 date 타입 데이터는 반드시 long 타입의 나노초 단위 시간으로 변환하여 전송하여야 한다.
+Append를 할 때 date 타입 데이터는 반드시 long 타입의 나노초 단위 시간으로 변환하여 전송하여야 합니다.
 
 ```bash
 [mach@localhost jdbc]$ make run_sample4
@@ -871,11 +871,11 @@ timegap 6905594 in microseconds, 60000 records
 8688.61 records/second
 ```
 
-10,000건마다 점(.)을 표시하고 있으며, 입력 소요 시간을 알 수 있다.
+10,000건마다 점(.)을 표시하고 있으며, 입력 소요 시간을 알 수 있습니다.
 
 ```bash
 ## machsql을 이용하여 실제 입력된 건수를 확인해보자.
-## Sample2Insert,Sample3PrepareStmt에서 입력한 건수와 함께 60018건이 입력된 것을 확인한다.
+## Sample2Insert,Sample3PrepareStmt에서 입력한 건수와 함께 60018건이 입력된 것을 확인합니다.
  
  
 [mach@localhost jdbc]$ machsql

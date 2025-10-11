@@ -1,5 +1,5 @@
 ---
-title : 'User Management'
+title : '사용자 관리'
 type: docs
 weight: 60
 ---

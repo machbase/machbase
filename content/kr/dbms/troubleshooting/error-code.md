@@ -7,7 +7,7 @@ weight: 10
 ---
 
 |code|mssage|설명입니다.|
-|--|--|--입니다.|
+|--|--|--|
 |1|Failed to create file<%s>, errno = %d.|파일 생성에 실패했습니다.|
 |2|Failed to truncate file<%s>, errno = %d.|파일 truncate에 실패했습니다.|
 |3|Failed to duplicate file<%s>, errno = %d.|파일 복제에 실패했습니다.|

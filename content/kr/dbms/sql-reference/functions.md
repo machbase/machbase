@@ -4,7 +4,7 @@ type: docs
 weight: 70
 ---
 
-# Index
+# 목차
 
 * [ABS](#abs)
 * [ADD_TIME](#add_time)
@@ -52,14 +52,14 @@ weight: 70
 * [VARIANCE / VAR_POP](#variance--var_pop)
 * [YEAR / MONTH / DAY](#year--month--day)
 * [ISNAN / ISINF](#isnan--isinf)
-* [Support Type of Built-In Function](#support-type-of-built-in-function)
-* [JSON-related function](#json-related-function)
-* [JSON Operator](#json-operator)
+* [내장 함수 지원 타입](#support-type-of-built-in-function)
+* [JSON 관련 함수](#json-related-function)
+* [JSON 연산자](#json-operator)
 * [WINDOW FUNCTION](#window-function)
 
 ## ABS
 
-This function works on a numeric column, converts it to a positive value, and returns the value as a real number.
+이 함수는 숫자형 컬럼에 대해 동작하며, 값을 양수로 변환하여 실수로 반환합니다.
 
 ```sql
 ABS(column_expr)
@@ -91,7 +91,7 @@ ABS(c1)                     ABS(c2)
 
 ## ADD_TIME
 
-This function performs a date and time operation on a given datetime column. Supports increment/decrement operations up to year, month, day, hour, minute, and second, and does not support operations on milli, micro, and nanoseconds. The Diff format is: "Year/Month/Day Hour:Minute:Second". Each item has a positive or negative value.
+이 함수는 주어진 datetime 컬럼에 대해 날짜 및 시간 연산을 수행합니다. 년, 월, 일, 시, 분, 초 단위의 증감 연산을 지원하며, 밀리초, 마이크로초, 나노초에 대한 연산은 지원하지 않습니다. Diff 형식은 "Year/Month/Day Hour:Minute:Second"입니다. 각 항목은 양수 또는 음수 값을 가질 수 있습니다.
 
 ```sql
 ADD_TIME(column,time_diff_format)
@@ -223,7 +223,7 @@ ID          DT
 
 ## AVG
 
-This function is an aggregate function that operates on a numeric column and prints the average value of that column.
+이 함수는 숫자형 컬럼에 대해 동작하는 집계 함수로, 해당 컬럼의 평균 값을 출력합니다.
 
 ```sql
 AVG(column_name)
@@ -265,9 +265,9 @@ NULL             4
 
 ## BITAND / BITOR
 
-This function converts two input values ​​to a 64-bit signed integer and returns the result of bitwise and/or. The input value must be an integer and the output value is a 64-bit signed integer.
+이 함수는 두 개의 입력 값을 64비트 부호 있는 정수로 변환하고 비트 단위 AND/OR 연산의 결과를 반환합니다. 입력 값은 반드시 정수형이어야 하며, 출력 값은 64비트 부호 있는 정수입니다.
 
-For integer values ​​less than 0, it is recommended to use only uinteger and ushort types, because different results may be obtained depending on the platform.
+0보다 작은 정수 값의 경우, 플랫폼에 따라 다른 결과가 나올 수 있으므로 uinteger 및 ushort 타입만 사용하는 것을 권장합니다.
 
 ```sql
 BITAND (<expression1>, <expression2>)
@@ -357,7 +357,7 @@ BITOR(i1, i6)
 
 ## COUNT
 
-This function is an aggregate function that obtains the number of records in a given column.
+이 함수는 주어진 컬럼의 레코드 개수를 구하는 집계 함수입니다.
 
 ```sql
 COUNT(column_name)
@@ -404,7 +404,7 @@ COUNT(id1)
 
 ## DATE_TRUNC
 
-This function returns a given datetime value as a new datetime value that is displayed only up to 'time unit' and 'time range'.
+이 함수는 주어진 datetime 값을 '시간 단위'와 '시간 범위'까지만 표시되는 새로운 datetime 값으로 반환합니다.
 
 ```sql
 DATE_TRUNC (field, date_val [, count])
@@ -477,12 +477,12 @@ COUNT(*)             tm
 [4] row(s) selected.
 ```
 
-The allowable time ranges for time units and time units are as follows.
+시간 단위별로 허용되는 시간 범위는 다음과 같습니다.
 
-* nanosecond, microsecond, and milisecond units and abbreviations can be used starting from 5.5.6.
-* week is start from Sunday.
+* nanosecond, microsecond, milisecond 단위 및 약어는 5.5.6부터 사용 가능합니다.
+* week는 일요일부터 시작합니다.
 
-|Time Unit|Time Range|
+|시간 단위|시간 범위|
 |--|--|
 |nanosecond (nsec)|1000000000 (1 second)|
 |microsecond (usec)|60000000 (60 seconds)|
@@ -495,7 +495,7 @@ The allowable time ranges for time units and time units are as follows.
 |month|1|
 |year|1|
 
-For example, if you type in DATE_TRUNC('second', time, 120), the value returned will be displayed **every two minutes** and is the same as DATE_TRUNC('minute', time, 2).
+예를 들어, DATE_TRUNC('second', time, 120)을 입력하면 반환되는 값은 **2분마다** 표시되며, 이는 DATE_TRUNC('minute', time, 2)와 동일합니다.
 
 ## DATE_BIN
 This function `bins` the given datetime value into `time unit` and `time range` based on `specified origin`.

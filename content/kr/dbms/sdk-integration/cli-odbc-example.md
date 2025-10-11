@@ -9,7 +9,7 @@ weight: 15
 
 ### CLI 설치 확인
 
-마크베이스가 설치된 디렉터리의 include 및 lib에 다음과 같은 파일이 있으면 응용 프로그램을 개발할 수 있는 환경이 완비된 것이다.
+마크베이스가 설치된 디렉터리의 include 및 lib에 다음과 같은 파일이 있으면 응용 프로그램을 개발할 수 있는 환경이 완비된 것입니다.
 
 
 ```bash
@@ -36,7 +36,7 @@ mach@localhost:~/machbase_home/sample$ cd cli/
 mach@localhost:~/machbase_home/sample/cli$ ls
 Makefile sample1_connect.c
 ```
-마크베이스 패키지를 설치했다면, 다음 경로에 샘플 프로그램이 설치되어 있을 것이다.
+마크베이스 패키지를 설치했다면, 다음 경로에 샘플 프로그램이 설치되어 있을 것입니다.
 
 ```makefile
 include $(MACHBASE_HOME)/install/machbase_env.mk
@@ -56,7 +56,7 @@ clean :
 
 ### 컴파일 및 링크
 
-주어진 샘플에 대해 다음과 같이 수행하면 실행 파일이 만들어진다.
+주어진 샘플에 대해 다음과 같이 수행하면 실행 파일이 만들어집니다.
 
 ```bash
 mach@localhost:~/machbase_home/sample/cli$ make
@@ -71,17 +71,17 @@ drwxrwxr-x 4 mach mach 4096 Jun 18 19:26 ..
 -rw-rw-r-- 1 mach mach 549 Jun 18 19:26 sample1_connect.c
 -rw-rw-r-- 1 mach mach 8168 Jun 18 20:15 sample1_connect.o
 ```
-필요에 따라 얼마든지 위의 샘플 Makefile을 수정하여 응용 프로그램을 작성할 수 있을 것이다.
+필요에 따라 얼마든지 위의 샘플 Makefile을 수정하여 응용 프로그램을 작성할 수 있을 것입니다.
 
 ## 샘플 프로그램
 
 ### 접속 예제
 
-CLI를 이용하여 접속하는 예제 프로그램을 작성해 보기로 한다.
+CLI를 이용하여 접속하는 예제 프로그램을 작성해 보기로 합니다.
 
-샘플 파일명은 sample1_connect.c 로 한다.
+샘플 파일명은 sample1_connect.c 로 합니다.
 
-MACHBASE_PORT_NO는 $MACHBASE_HOME/conf/machbase.conf 파일에 있는 PORT_NO 값과 같아야 한다.
+MACHBASE_PORT_NO는 $MACHBASE_HOME/conf/machbase.conf 파일에 있는 PORT_NO 값과 같아야 합니다.
 
 <details>
 <summary>sample1_connect.c</summary>
@@ -165,7 +165,7 @@ int main()
 </div>
 </details>
 
-Makefile에 sample1_connect.c를 등록하고 컴파일하여 실행하면 다음과 같이 나온다. 
+Makefile에 sample1_connect.c를 등록하고 컴파일하여 실행하면 다음과 같이 나옵니다. 
 
 ```bash
 [mach@localhost cli]$ make
@@ -176,9 +176,9 @@ connected ...
 
 ### 데이터 입력 및 출력 예제
 
-아래의 예제 소스에서는 CREATE TABLE 구문을 이용하여 테이블을 생성하고, 간단한 데이터 값들을 임의로 생성해서 INSERT 구문을 사용해서 데이터를 입력하고, SELECT 구문을 이용하여 데이터를 출력한다. 이를 활용하여 직접 값을 입력하고 확인할 때 각 타입별로 어떻게 설정을 해야 하는지 알수 있을 것이다.
+아래의 예제 소스에서는 CREATE TABLE 구문을 이용하여 테이블을 생성하고, 간단한 데이터 값들을 임의로 생성해서 INSERT 구문을 사용해서 데이터를 입력하고, SELECT 구문을 이용하여 데이터를 출력합니다. 이를 활용하여 직접 값을 입력하고 확인할 때 각 타입별로 어떻게 설정을 해야 하는지 알수 있을 것입니다.
 
-샘플 파일명은 sample2_insert.c 라고 한다.
+샘플 파일명은 sample2_insert.c 라고 합니다.
 
 <details>
 <summary>sample2_insert.c</summary>
@@ -422,7 +422,7 @@ int main()
 </details>
 
 
-Makefile에 sample2_insert.c를 등록하고 컴파일하여 실행하면 다음과 같이 나온다. 
+Makefile에 sample2_insert.c를 등록하고 컴파일하여 실행하면 다음과 같이 나옵니다. 
 
 ```bash
 [mach@localhost cli]$ make
@@ -463,11 +463,11 @@ seq = 1, score = 2, total = 30000, percentage = 0.00, ratio = 3.3e-05, id = id-1
 
 데이터를 binding하여 INSERT하는 예제 프로그램을 작성해 보자.
 
-마크베이스에서 데이터를 binding 하는 방식으로 값을 입력할수 있는데 이를 이용할시에는 데이터의 값들의 타입들을 명확히 지정해주고, 긴 문자열 타입들의 경우에는 길이 값을 반드시 지정해줘야 한다.
+마크베이스에서 데이터를 binding 하는 방식으로 값을 입력할수 있는데 이를 이용할시에는 데이터의 값들의 타입들을 명확히 지정해주고, 긴 문자열 타입들의 경우에는 길이 값을 반드시 지정해줘야 합니다.
 
-아래의 예제를 통해서 각 타입별로 데이터를 binding하는 방법을 알수 있다.
+아래의 예제를 통해서 각 타입별로 데이터를 binding하는 방법을 알수 있습니다.
 
-파일명은 sample3_prepare.c 라고 한다.
+파일명은 sample3_prepare.c 라고 합니다.
 
 <details>
 <summary>sample3_prepare.c</summary>
@@ -894,7 +894,7 @@ int main()
 </div>
 </details>
 
-Makefile에 sample3_prepare.c를 등록하고 컴파일하여 실행하면 다음과 같이 나온다.
+Makefile에 sample3_prepare.c를 등록하고 컴파일하여 실행하면 다음과 같이 나옵니다.
 
 ``` bash
 [mach@localhost cli]$ make
@@ -933,11 +933,11 @@ seq = 1, score = 2, total = 30000, percentage = 2.00, ratio = 6.66667e-05, id = 
 
 ### 확장 함수 Append 예제
 
-마크베이스에서는 대량의 데이터를 파일로부터 읽어서 고속으로 입력하는 방법으로 Append 프로토콜을 제공하고 있다. 이 Append 프로토콜을 이용하는 예제 프로그램을 작성해 보자.
+마크베이스에서는 대량의 데이터를 파일로부터 읽어서 고속으로 입력하는 방법으로 Append 프로토콜을 제공하고 있습니다. 이 Append 프로토콜을 이용하는 예제 프로그램을 작성해 보자.
 
-먼저 마크베이스에서 제공하는 다양한 타입별로 append 하는 방식의 예제를 살펴보자. Append 방식은 각 타입별로 편리하게 입력해 줄 수 있도록 각각의 설정값들이 정해져있다. 그러므로 모든 방법별로 사용하는 입력하는 방식에 대한 숙지를 한다면 더욱더 효율적으로 프로그램을 작성할 수 있을 것이다. 아래쪽에 있는 예제 코드에 그 방법들이 모두 나와있다.
+먼저 마크베이스에서 제공하는 다양한 타입별로 append 하는 방식의 예제를 살펴보자. Append 방식은 각 타입별로 편리하게 입력해 줄 수 있도록 각각의 설정값들이 정해져 있습니다. 그러므로 모든 방법별로 사용하는 입력하는 방식에 대한 숙지를 한다면 더욱더 효율적으로 프로그램을 작성할 수 있을 것입니다. 아래쪽에 있는 예제 코드에 그 방법들이 모두 나와 있습니다.
 
-파일명은 sample4_append1.c 라고 한다.
+파일명은 sample4_append1.c 라고 합니다.
 
 
 <details>
@@ -1293,7 +1293,7 @@ time_t getTimeStamp()
 </div>
 </details>
 
-Makefile에 sample4_append1.c를 등록하고 컴파일하여 실행하면 다음과 같이 나온다.
+Makefile에 sample4_append1.c를 등록하고 컴파일하여 실행하면 다음과 같이 나옵니다.
 
 ```bash
 [mach@localhost cli]$ make sample4_append1
@@ -1374,15 +1374,15 @@ NULL
 [12] row(s) selected.
 ```
 
-이제 파일을 이용해서 고속으로 append하는 방식을 사용해 보자. 실제로 업무에서 사용되는 많은 양의 로그, 패킷등의 값들을 고속으로 입력하는 데 유용한 예제이다. 파일명은 sample4_append2.c 라고 한다.
+이제 파일을 이용해서 고속으로 append하는 방식을 사용해 보자. 실제로 업무에서 사용되는 많은 양의 로그, 패킷등의 값들을 고속으로 입력하는 데 유용한 예제입니다. 파일명은 sample4_append2.c 라고 합니다.
 
-미리 입력할 데이터를 data.txt에 저장해 두어야 한다. 
+미리 입력할 데이터를 data.txt에 저장해 두어야 합니다. 
 
 ```bash
 ./make_data
 ```
 
-미리 주어진 make_data.c 를 수정하면 상황에 맞게 data.txt 파일을 생성할 수 있다.
+미리 주어진 make_data.c 를 수정하면 상황에 맞게 data.txt 파일을 생성할 수 있습니다.
 
 
 <details>
@@ -1671,7 +1671,7 @@ time_t getTimeStamp()
 </div>
 </details>
 
-Makefile에 sample4_append2.c를 등록하고 컴파일하여 실행하면 다음과 같이 나온다.
+Makefile에 sample4_append2.c를 등록하고 컴파일하여 실행하면 다음과 같이 나옵니다.
 
 ```bash
 [mach@localhost cli]$ make
@@ -1692,13 +1692,13 @@ timegap = 1641503 microseconds for 1000000 records
 
 ### 테이블 열 정보 획득 예제
 
-테이블 열 정보를 획득하는 방법은 다양하지만 그중에 SQLDescribeCol과 SQLColumns를 이용한 방법을 살펴본다.
+테이블 열 정보를 획득하는 방법은 다양하지만 그중에 SQLDescribeCol과 SQLColumns를 이용한 방법을 살펴봅니다.
 
 #### SQLDescribeCol
 
-SQLDescribeCol은 테이블 열의 번호, 이름, 버퍼 크기, 길이, 타입 등을 가져오는 함수로 이를 이용해서 데이터베이스 내부에서 원하는 내용을 손쉽게 가져올수 있다.
+SQLDescribeCol은 테이블 열의 번호, 이름, 버퍼 크기, 길이, 타입 등을 가져오는 함수로 이를 이용해서 데이터베이스 내부에서 원하는 내용을 손쉽게 가져올수 있습니다.
 
-예제 파일명은 sample5_describe.c 라고 한다.
+예제 파일명은 sample5_describe.c 라고 합니다.
 
 
 <details>
@@ -1895,7 +1895,7 @@ int main()
 </div>
 </details>
 
-위의 파일을 추가하고 make를 실행하면 아래와 같이 원하는 열의 내용들이 나타나는 것을 볼 수 있다.
+위의 파일을 추가하고 make를 실행하면 아래와 같이 원하는 열의 내용들이 나타나는 것을 볼 수 있습니다.
 
 ```bash
 [mach@localhost cli]$ make
@@ -1922,9 +1922,9 @@ IMAGE -2 67108864
 
 #### SQLColumns
 
-SQLColumns은 현재 테이블 내에 존재하는 컬럼들의 정보를 알아낼 수 있는 함수이다. 마크베이스에서도 위와 같은 함수를 지원하고 있으며 이를 이용하여 컬럼 각각의 정보들을 알아낼 수 있다.
+SQLColumns은 현재 테이블 내에 존재하는 컬럼들의 정보를 알아낼 수 있는 함수입니다. 마크베이스에서도 위와 같은 함수를 지원하고 있으며 이를 이용하여 컬럼 각각의 정보들을 알아낼 수 있습니다.
 
-파일이름은 sample6_columns.c라고 한다.
+파일이름은 sample6_columns.c라고 합니다.
 
 
 <details>
@@ -2110,7 +2110,7 @@ int main()
 </div>
 </details>
 
-위의 파일을 추가하고 make를 실행한다. 결과는 다음과 같다.
+위의 파일을 추가하고 make를 실행합니다. 결과는 다음과 같습니다.
 
 ```bash
 [mach@localhost cli]$ make
@@ -2138,9 +2138,9 @@ IMAGE -2 BINARY 67108864
 
 ## 멀티 쓰레드 append 예제
 
-하나의 프로그램에서 여러 스레드를 이용해 여러 테이블에 append하는 예제이다.
+하나의 프로그램에서 여러 스레드를 이용해 여러 테이블에 append하는 예제입니다.
 
-파일 이름은 sample8_multi_session_multi_table.c로 한다.
+파일 이름은 sample8_multi_session_multi_table.c로 합니다.
 
 
 <details>
@@ -2791,7 +2791,7 @@ int main()
 </div>
 </details>
 
-make 코드를 추가하고 실행 파일을 실행해본다. 쓰레드를 이용하므로 출력 순서가 다를 수 있다. 실행 결과는 다음과 같다.
+make 코드를 추가하고 실행 파일을 실행해 봅니다. 쓰레드를 이용하므로 출력 순서가 다를 수 있습니다. 실행 결과는 다음과 같습니다.
 
 ```bash
 [mach@localhost cli]$ make sample8_multi_session_multi_table
@@ -2854,7 +2854,7 @@ append result success : 100000, failure : 0
 3 thread join
 ```
 
-machsql을 통해 아래와 같이 결과를 확인할 수 있다.
+machsql을 통해 아래와 같이 결과를 확인할 수 있습니다.
 
 ```bash
 [mach@localhost cli]$ machsql
