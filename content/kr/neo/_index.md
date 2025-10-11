@@ -13,7 +13,7 @@ toc: true
 ✓ **HTTP**, **MQTT**, **gRPC**를 통해 손쉽게 데이터를 적재하고 조회하실 수 있습니다.<br/>
 ✓ SQLite, PostgreSQL, MySQL, MSSQL, MQTT 브로커, NATS와 연동할 수 있습니다.<br/>
 
-{{< button color="purple" href="./getting-started/">}} 바로 시작하기 {{< /button >}}
+{{< button color="purple" href="./getting-started/">}} 시작하기 {{< /button >}}
 {{< button color="green" href="./releases/">}} 다운로드 {{< /button >}}
 {{< label color="green" >}} 최신 버전 <i>{{< neo_latestver >}}</i> {{< /label>}}
 
