@@ -66,10 +66,10 @@ var connectionString = string.Format(
 
 ## API 레퍼런스 {#api-reference}
 
-{{<callout type="warning">}}
+{{< callout type="warning" >}}
 아래에 명시되지 않은 기능은 아직 구현되지 않았거나 정상적으로 동작하지 않을 수 있습니다.<br>
 존재하지 않는 메서드나 필드를 호출하면 `NotImplementedException` 또는 `NotSupportedException`이 발생합니다.
-{{</callout>}}
+{{< /callout >}}
 
 ### MachConnection
 

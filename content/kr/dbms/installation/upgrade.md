@@ -85,9 +85,9 @@ machdeployeradmin --startup
 
 Broker / Warehouse를 업그레이드하려면 Coordinator에 패키지를 등록하고 업그레이드를 진행합니다.
 
-{{<callout type="info">}}
+{{< callout type="info" >}}
 경량 패키지를 등록하는 것이 좋습니다.
-{{</callout>}}
+{{< /callout >}}
 
 먼저 $MACH_COORDINATOR_HOME이 있는 호스트로 패키지를 이동합니다.
 
