@@ -1582,6 +1582,7 @@ facilitating seamless communication and integration between client applications 
 ```json
 {
     "type": "rpc_req",
+    "session": "client-session-#1",
     "rpc": {
         "jsonrpc": "2.0",
         "id": 1234,
@@ -1600,6 +1601,7 @@ facilitating seamless communication and integration between client applications 
 ```json
 {
     "type": "rpc_rsp",
+    "session": "client-session-#1",
     "rpc": {
         "jsonrpc": "2.0",
         "id": 1234,
@@ -1613,6 +1615,7 @@ facilitating seamless communication and integration between client applications 
 ```json
 {
     "type": "rpc_rsp",
+    "session": "client-session-#1",
     "rpc": {
         "jsonrpc": "2.0",
         "id": 1234,
@@ -1633,6 +1636,7 @@ facilitating seamless communication and integration between client applications 
 ```json
 {
     "type": "rpc_req",
+    "session": "client-session-#1",
     "rpc": {
         "jsonrpc": "2.0",
         "id": 11,
@@ -1646,6 +1650,7 @@ facilitating seamless communication and integration between client applications 
 ```json
 {
     "type": "rpc_rsp",
+    "session": "client-session-#1",
     "rpc": {
         "jsonrpc": "2.0",
         "id": 11,
@@ -1666,6 +1671,7 @@ facilitating seamless communication and integration between client applications 
 ```json
 {
     "type": "rpc_req",
+    "session": "client-session-#1",
     "rpc": {
         "jsonrpc": "2.0",
         "id": 13,
@@ -1680,6 +1686,7 @@ facilitating seamless communication and integration between client applications 
 ```json
 {
     "type": "rpc_rsp",
+    "session": "client-session-#1",
     "rpc": {
         "jsonrpc": "2.0",
         "id": 13,
@@ -1730,6 +1737,7 @@ facilitating seamless communication and integration between client applications 
 ```json
 {
     "type": "rpc_req",
+    "session": "client-session-#1",
     "rpc": {
         "jsonrpc": "2.0",
         "id": 15,
@@ -1744,6 +1752,7 @@ facilitating seamless communication and integration between client applications 
 ```json
 {
     "type": "rpc_rsp",
+    "session": "client-session-#1",
     "rpc": {
         "jsonrpc": "2.0",
         "id": 15,
@@ -1761,6 +1770,7 @@ facilitating seamless communication and integration between client applications 
 ```json
 {
     "type": "rpc_req",
+    "session": "client-session-#1",
     "rpc": {
         "jsonrpc": "2.0",
         "id": 10,
@@ -1774,6 +1784,7 @@ facilitating seamless communication and integration between client applications 
 ```json
 {
     "type": "rpc_rsp",
+    "session": "client-session-#1",
     "rpc": {
         "jsonrpc": "2.0",
         "id": 10,
@@ -1806,6 +1817,7 @@ facilitating seamless communication and integration between client applications 
 ```json
 {
     "type": "rpc_req",
+    "session": "client-session-#1",
     "rpc": {
         "jsonrpc": "2.0",
         "id": 10,
@@ -1820,6 +1832,7 @@ facilitating seamless communication and integration between client applications 
 ```json
 {
     "type": "rpc_rsp",
+    "session": "client-session-#1",
     "rpc": {
         "jsonrpc": "2.0",
         "id": 10
@@ -1836,6 +1849,7 @@ facilitating seamless communication and integration between client applications 
 ```json
 {
     "type": "rpc_req",
+    "session": "client-session-#1",
     "rpc": {
         "jsonrpc": "2.0",
         "id": 10,
@@ -1850,6 +1864,7 @@ facilitating seamless communication and integration between client applications 
 ```json
 {
     "type": "rpc_rsp",
+    "session": "client-session-#1",
     "rpc": {
         "jsonrpc": "2.0",
         "id": 10
@@ -1870,6 +1885,7 @@ facilitating seamless communication and integration between client applications 
 ```json
 {
     "type": "rpc_req",
+    "session": "client-session-#1",
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
@@ -1884,6 +1900,7 @@ facilitating seamless communication and integration between client applications 
 ```json
 {
     "type": "rpc_rsp",
+    "session": "client-session-#1",
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
@@ -1901,6 +1918,7 @@ The MESSAGE feature over WebSocket is currently under active development. Functi
 ```json
 {
     "type": "msg",
+    "session": "client-session-#2",
     "msg": {
         "ver": "1.0",
         "id": 1234,
@@ -1923,6 +1941,7 @@ The MESSAGE feature over WebSocket is currently under active development. Functi
 ```json
 {
     "type": "msg",
+    "session": "client-session-#2",
     "msg": {
         "ver": "1.0",
         "id": 1234,
@@ -1943,6 +1962,7 @@ The MESSAGE feature over WebSocket is currently under active development. Functi
 ```json
 {
     "type": "msg",
+    "session": "client-session-#2",
     "msg": {
         "ver": "1.0",
         "id": 1234,
