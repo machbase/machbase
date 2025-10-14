@@ -1659,45 +1659,6 @@ facilitating seamless communication and integration between client applications 
 }
 ```
 
-#### llmGetProviderConfigTemplate
-
-`llmGetProviderConfigTemplate(provider)`
-
-*Params*
-- `provider` *string* one of "claude", "ollama"
-
-*Request*
-
-```json
-{
-    "type": "rpc_req",
-    "session": "client-session-#1",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 13,
-        "method": "llmGetProviderConfigTemplate",
-        "params": ["claude"]
-    }
-}
-```
-
-*Response*
-
-```json
-{
-    "type": "rpc_rsp",
-    "session": "client-session-#1",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 13,
-        "result": {
-            "key": "your-key",
-            "max_tokens": 1024
-        }
-    }
-}
-```
-
 #### llmGetProviderConfig
 
 `llmGetProviderConfig(provider)`
