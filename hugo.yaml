@@ -39,8 +39,13 @@ taxonomies:
   keyword: keywords
   tag: tags
 
+ignoreFiles:
+  - ".DS_Store"
+  - "content/en/dbms-legacy/*"
+  - "content/kr/fluid/*"
+
 params:
-  latestNeoVer: v8.0.61
+  latestNeoVer: v8.0.62
   examples_url: https://github.com/machbase/neo-server/tree/main/examples
   releases_url: https://github.com/machbase/neo-server/releases
   jdbc_version: 8.0.2

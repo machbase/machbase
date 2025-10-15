@@ -1,78 +1,55 @@
 ---
+type: docs
 title: 'Machbase DBMS'
 weight: 30
 ---
 
+Welcome to Machbase DBMS documentation. Machbase is a high-performance time-series database designed for IoT, sensor data, and real-time analytics.
 
-## Introduction
+## New to Machbase?
 
-* [Introduction of Machbase](./intro/)
-* [Machbase Features](./intro/features/)
-* [Introduction of Machbase Products](./intro/edition/)
- 
-## Installation
+Start here to get up and running quickly:
 
-* [Package Overview](./install/package)
-* [Linux Installation](./install/linux)
-* [Windows Installation](./install/windows)
-* [License Installation](./install/license)
-* [Cluster Edition Installation](./install/cluster)
-* [Cluster Edition Upgrade](./install/upgrade)
+* [Quick Start](./getting-started/quick-start/) - Get started in 5 minutes
+* [Installation Guide](./getting-started/installation/) - Install Machbase on your system
+* [First Steps](./getting-started/first-steps/) - Learn basic commands with machsql
+* [Basic Concepts](./getting-started/concepts/) - Understand core concepts
 
-## Feature and Tables
+## Learn by Doing
 
-* [Tag Table](./feature-table/tag)
-* [Log Table](./feature-table/log)
-* [Volatile Table](./feature-table/volatile)
-* [Lookup Table](./feature-table/lookup)
-* [STREAM](./feature-table/stream)
-* [Backup and Mount](./feature-table/backup-mount)
-* [Data Auto Delete](./feature-table/retention)
+Follow these hands-on tutorials:
 
-## Configuration and Monitoring
+* [Tutorial 1: IoT Sensor Data](./tutorials/iot-sensor-data/) - Store and query sensor data
+* [Tutorial 2: Application Logs](./tutorials/application-logs/) - Handle log data efficiently
+* [Tutorial 3: Real-time Analytics](./tutorials/realtime-analytics/) - Work with real-time data
+* [Tutorial 4: Reference Data](./tutorials/reference-data/) - Manage lookup tables
 
-* [Meta Table](./config-monitor/meta-table)
-* [Virtual Table](./config-monitor/virtual-table)
-* [Property](./config-monitor/property)
-* [Property(Cluster)](./config-monitor/property-cl)
-* [Timezone](./config-monitor/timezone)
+## Common Tasks
 
-## SQL Reference
+Jump to what you need:
 
-* [Datatypes](./sql-ref/datatypes)
-* [DDL](./sql-ref/ddl)
-* [DML](./sql-ref/dml)
-* [SELECT](./sql-ref/select)
-* [SELECT Hint](./sql-ref/select-hint)
-* [User Management](./sql-ref/user-manage)
-* [Functions](./sql-ref/func)
-* [System/Session Management](./sql-ref/sys-session-manage)
+* [Connecting to Database](./common-tasks/connecting/)
+* [Importing Data](./common-tasks/importing-data/)
+* [Querying Data](./common-tasks/querying/)
+* [Managing Users](./common-tasks/user-management/)
+* [Backup and Recovery](./common-tasks/backup-recovery/)
 
-## SDK
+## Core Documentation
 
-* [CLI/ODBC](./sdk/cli-odbc)
-* [CLI/ODBC Example](./sdk/cli-odbc-example)
-* [JDBC](./sdk/jdbc)
-* [NPM](./sdk/npm)
-* [Python](./sdk/python)
-* [.Net Connector](./sdk/dotnet)
-* [RESTfull API](./sdk/restful)
+* [Core Concepts](./core-concepts/) - Understand Machbase architecture
+* [Table Types](./table-types/) - Choose the right table type
+* [SQL Reference](./sql-reference/) - Complete SQL syntax reference
+* [Tools Reference](./tools-reference/) - Command-line tools
+* [SDK & Integration](./sdk-integration/) - Connect from your application
 
-## Tools
+## Advanced Topics
 
-* [csvimport/csvexport](./tools/csv)
-* [machadmin](./tools/machadmin)
-* [machloader](./tools/machloader)
-* [machsql](./tools/machsql)
-* [machcoordinatoradmin](./tools/machcoordinatoradmin)
-* [machdeployeradmin](./tools/machdeployeradmin)
+* [Advanced Features](./advanced-features/) - STREAM, Rollup, and more
+* [Configuration](./configuration/) - Server configuration
+* [Troubleshooting](./troubleshooting/) - Solve common issues
 
-## FAQ
+## Need Help?
 
-* [Error code](./faq/error-code)
-* [How to fix properties when an insufficient memory error occurs](./faq/memory-error)
-
-## Archive
-
-* [6.7 Manual](./archive/M67-Eng.pdf)
-* [5.0 Manual](./archive/M5-Eng.pdf)
+* [Troubleshooting Guide](./troubleshooting/)
+* [FAQ](./troubleshooting/faq/)
+* [Error Codes](./troubleshooting/error-codes/)
