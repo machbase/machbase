@@ -1892,7 +1892,7 @@ The MESSAGE feature over WebSocket is currently under active development. Functi
 
 - **ver**: The protocol version, which must be set to `"1.0"`.
 - **id**: A unique sequence number identifying the current message or question.
-- **type**: Specifies the message type. Valid values include `"question"`, `"answer-start"`, `"answer-stop"`, `"stream-message-start"`, `"stream-message-delta"`, `"stream-message-stop"`, `"stream-block-start"`, `"stream-block-delta"`, and `"stream-block-stop"`.
+- **type**: Specifies the message type. Valid values include `"question"`, `"input"`, `"answer-start"`, `"answer-stop"`, `"stream-message-start"`, `"stream-message-delta"`, `"stream-message-stop"`, `"stream-block-start"`, `"stream-block-delta"`, and `"stream-block-stop"`.
 - **body**: Contains the payload relevant to the specified message type.
 
 **Question**
@@ -1930,6 +1930,25 @@ The MESSAGE feature over WebSocket is currently under active development. Functi
         "type": "stream-block-delta",
         "body": {
             "data": "hello, I'm a machbase-neo agent",
+        }
+    }
+}
+```
+
+**Interrupt Stream**
+
+- Direction: C -> S
+
+```json
+{
+    "type": "msg",
+    "session": "client-session",
+    "msg": {
+        "ver": "1.0",
+        "id": 2345,
+        "type": "input",
+        "body": {
+            "control": "^C",
         }
     }
 }
