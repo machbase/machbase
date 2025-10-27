@@ -275,9 +275,9 @@ func main() {
     
     // 샘플 테이블 생성
     result := conn.Exec(ctx, `
-        CREATE TABLE IF NOT EXISTS sample_data (
-            name VARCHAR(100),
-            time DATETIME,
+        CREATE TAG TABLE IF NOT EXISTS sample_data (
+            name VARCHAR(100) primary key,
+            time DATETIME basetime,
             value DOUBLE
         )
     `)
