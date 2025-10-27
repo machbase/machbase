@@ -311,7 +311,7 @@ func main() {
         if err := rows.Scan(&name, &tm, &value); err != nil {
             log.Fatal(err)
         }
-        
+        tm = tm.Local()
         fmt.Printf("Name: %s, Time: %s, Value: %.2f\n", 
             name, tm.Format(time.RFC3339), value)
     }
