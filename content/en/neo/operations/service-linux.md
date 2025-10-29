@@ -14,10 +14,17 @@ Using *systemd* or *supervisord*, you can run and manage machbase-neo process as
 $ vi neo-start.sh
 ```
 
+Use `serve` command with `--pid <path>` flag to write the process id.
+
 ```sh {{linenos=table}}
 #!/bin/bash 
-exec /data/machbase-neo serve --host 0.0.0.0 --log-filename /data/log/machbase-neo.log
+exec /data/machbase-neo serve \
+    --pid /data/neo.pid \
+    --host 0.0.0.0 \
+    --log-filename /data/log/machbase-neo.log
 ```
+
+Change shell script to be executable.
 
 ```sh
 $ chmod 755 neo-start.sh
@@ -28,10 +35,15 @@ $ chmod 755 neo-start.sh
 ```sh
 $ vi neo-stop.sh
 ```
+Use the stored pid file to terminate with the `kill` command and wait until the process is completely terminated using the `kill -0` command.
 
 ```sh  {{linenos=table}}
 #!/bin/bash 
-/data/machbase-neo shell shutdown
+PID=`cat /data/neo.pid`
+kill $PID
+while kill -0 $PID 2>/dev/null; do
+  sleep 1
+done
 ```
 
 ```sh

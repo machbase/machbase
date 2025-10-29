@@ -14,10 +14,17 @@ weight: 82
 $ vi neo-start.sh
 ```
 
+`--pid <path>` 플래그와 함께 `serve` 명령을 사용하여 프로세스 ID를 지정한 경로의 파일에 기록합니다.
+
 ```sh {{linenos=table}}
-#!/bin/bash 
-exec /data/machbase-neo serve --host 0.0.0.0 --log-filename /data/log/machbase-neo.log
+#!/bin/bash
+exec /data/machbase-neo serve \
+    --pid /data/neo.pid \
+    --host 0.0.0.0 \
+    --log-filename /data/log/machbase-neo.log
 ```
+
+쉘 스크립트를 실행 가능하게 변경합니다.
 
 ```sh
 $ chmod 755 neo-start.sh
@@ -29,9 +36,15 @@ $ chmod 755 neo-start.sh
 $ vi neo-stop.sh
 ```
 
+저정된 pid 파일을 사용하여 `kill` 명령어로 종료하고 프로세스가 완전히 종료할 때까지 `kill -0` 명령어를 사용하여 기다립니다.
+
 ```sh  {{linenos=table}}
 #!/bin/bash 
-/data/machbase-neo shell shutdown
+PID=`cat /data/neo.pid`
+kill $PID
+while kill -0 $PID 2>/dev/null; do
+  sleep 1
+done
 ```
 
 ```sh
