@@ -1,5 +1,4 @@
 ---
-type: docs
 layout : post
 title : 'Error Code'
 type: docs

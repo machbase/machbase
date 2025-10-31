@@ -1,5 +1,4 @@
 ---
-type: docs
 title : '패키지 개요'
 type : docs
 weight: 10

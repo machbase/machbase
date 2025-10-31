@@ -1,5 +1,4 @@
 ---
-type: docs
 layout : post
 title : 메타 테이블
 type : docs

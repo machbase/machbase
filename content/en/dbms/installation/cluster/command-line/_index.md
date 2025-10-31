@@ -1,5 +1,4 @@
 ---
-type: docs
 title : 'Cluster Installation (command line)'
 type : docs
 weight: 50

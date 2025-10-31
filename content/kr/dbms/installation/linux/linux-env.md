@@ -1,5 +1,4 @@
 ---
-type: docs
 title : '설치를 위한 리눅스 환경 준비'
 type : docs
 weight: 10

@@ -1,5 +1,4 @@
 ---
-type: docs
 title : 'JDBC'
 type : docs
 weight: 20

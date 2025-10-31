@@ -1,5 +1,4 @@
 ---
-type: docs
 title : Database Mount
 type : docs
 weight: 30

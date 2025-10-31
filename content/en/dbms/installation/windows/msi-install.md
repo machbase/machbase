@@ -1,5 +1,4 @@
 ---
-type: docs
 title : 'MSI Installation'
 type : docs
 weight: 20

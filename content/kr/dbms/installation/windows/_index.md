@@ -1,5 +1,4 @@
 ---
-type: docs
 title : 'Windows 설치'
 type : docs
 weight: 30

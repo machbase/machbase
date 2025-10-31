@@ -1,5 +1,4 @@
 ---
-type: docs
 title : 'Windows 설치 환경 준비'
 type : docs
 weight: 10

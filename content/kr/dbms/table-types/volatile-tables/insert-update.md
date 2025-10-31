@@ -1,5 +1,4 @@
 ---
-type: docs
 title : Volatile 데이터 삽입 및 업데이트
 type : docs
 weight: 30

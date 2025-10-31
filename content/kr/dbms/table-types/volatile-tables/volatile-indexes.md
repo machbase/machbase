@@ -1,5 +1,4 @@
 ---
-type: docs
 title : Volatile 인덱스 생성 및 관리
 type : docs
 weight: 50

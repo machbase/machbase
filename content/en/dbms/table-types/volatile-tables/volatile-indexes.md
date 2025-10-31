@@ -1,5 +1,4 @@
 ---
-type: docs
 title : Creating and Managing Volatile Index
 type : docs
 weight: 50

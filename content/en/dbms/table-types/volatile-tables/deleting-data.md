@@ -1,5 +1,4 @@
 ---
-type: docs
 title : Deleting Volatile Data
 type : docs
 weight: 40

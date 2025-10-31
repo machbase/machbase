@@ -1,5 +1,4 @@
 ---
-type: docs
 title : machloader
 type : docs
 weight: 30

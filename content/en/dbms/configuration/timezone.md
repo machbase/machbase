@@ -1,5 +1,4 @@
 ---
-type: docs
 layout : post
 title : 'Timezone'
 type : docs

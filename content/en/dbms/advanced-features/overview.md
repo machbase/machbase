@@ -1,5 +1,4 @@
 ---
-type: docs
 title : Backup Overview
 type : docs
 weight: 10

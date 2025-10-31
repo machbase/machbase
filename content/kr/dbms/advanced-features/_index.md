@@ -1,5 +1,4 @@
 ---
-type: docs
 layout: post
 title : 백업과 마운트
 type : docs

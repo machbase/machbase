@@ -1,5 +1,4 @@
 ---
-type: docs
 title : 백업과 복원
 type : docs
 weight: 20

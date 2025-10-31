@@ -1,5 +1,4 @@
 ---
-type: docs
 title : 'Cluster Edition 업그레이드'
 type : docs
 weight: 60

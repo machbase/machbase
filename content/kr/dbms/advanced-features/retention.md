@@ -1,5 +1,4 @@
 ---
-type: docs
 title : 데이터 보존
 type : docs
 weight: 70

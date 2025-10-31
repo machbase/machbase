@@ -1,5 +1,4 @@
 ---
-type: docs
 title : 백업 개요
 type : docs
 weight: 10

@@ -1,5 +1,4 @@
 ---
-type: docs
 title : Volatile 데이터 삭제
 type : docs
 weight: 40

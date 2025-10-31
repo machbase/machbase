@@ -1,5 +1,4 @@
 ---
-type: docs
 title : 'Tarball Installation'
 type : docs
 weight: 20

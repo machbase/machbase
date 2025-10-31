@@ -1,5 +1,4 @@
 ---
-type: docs
 title : 'Preparing Windows Environment for Installation'
 type : docs
 weight: 10

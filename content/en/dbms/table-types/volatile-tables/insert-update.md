@@ -1,5 +1,4 @@
 ---
-type: docs
 title : Inserting and Updating Volatile Data
 type : docs
 weight: 30

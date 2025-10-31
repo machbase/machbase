@@ -1,5 +1,4 @@
 ---
-type: docs
 title : 'Preparing Linux Environment for Installation'
 type : docs
 weight: 10

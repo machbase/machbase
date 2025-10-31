@@ -1,5 +1,4 @@
 ---
-type: docs
 title : Volatile 데이터 추출
 type : docs
 weight: 20

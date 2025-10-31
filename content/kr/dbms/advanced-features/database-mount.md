@@ -1,5 +1,4 @@
 ---
-type: docs
 title : 데이터베이스 마운트
 type : docs
 weight: 30

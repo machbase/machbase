@@ -1,5 +1,4 @@
 ---
-type: docs
 title : '라이선스 설치'
 type : docs
 weight: 40
