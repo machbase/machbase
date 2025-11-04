@@ -174,7 +174,7 @@ HTML(template({
                 yAxis: {},
                 tooltip: { trigger:"axis" },
                 series: [
-                    {type: 'line',  data: data, symbol:"none"}
+                    {type: 'line',  data: data[0], symbol:"none"}
                 ]
             };
             option && myChart.setOption(option);
