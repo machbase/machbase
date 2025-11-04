@@ -8,6 +8,20 @@ weight: 70
 데이터베이스에 저장된 값을 다른 시스템이 요구하는 형식으로 전달하시려면 전용 도구가 필요합니다.
 TQL은 이러한 데이터를 쉽고 유연하게 가공하실 수 있도록 제공되는 Machbase의 변환 언어입니다.
 
+### 예제 'signal' 데이터 생성
+
+아래 예제들을 위해 먼저 샘플 데이터를 생성합니다.
+
+```js
+FAKE(
+  oscillator(
+    freq(15, 1.0), freq(24, 1.5),
+    range('now', '10s', '1ms')
+  )
+)
+INSERT( 'time', 'value', table('example'), tag('signal') )
+```
+
 ### 출력 형식과 무관하게 사용
 
 {{< tabs items="CSV,JSON,CHART,HTML">}}

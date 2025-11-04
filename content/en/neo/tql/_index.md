@@ -7,6 +7,20 @@ weight: 70
 It is required to properly read and transform data that has been sent by sensors.
 And also read and send data from database to other systems in demanded format.
 
+### Generate example 'signal' data
+
+First, generate sample data for the examples below.
+
+```js
+FAKE(
+  oscillator(
+    freq(15, 1.0), freq(24, 1.5),
+    range('now', '10s', '1ms')
+  )
+)
+INSERT( 'time', 'value', table('example'), tag('signal') )
+```
+
 ### Output format independent
 
 {{< tabs items="CSV,JSON,CHART,HTML">}}
