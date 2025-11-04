@@ -11,13 +11,11 @@ languages:
   en:
     languageName: English
     languageCode: en-US
-    contentDir: content/en
     title: MACHBASE
     weight: 1
   kr:
     languageName: 한국어
     languageCode: ko-KR
-    contentDir: content/kr
     title: 마크베이스
     weight: 2
 
@@ -41,8 +39,8 @@ taxonomies:
 
 ignoreFiles:
   - ".DS_Store"
-  - "content/en/dbms-legacy/*"
-  - "content/kr/fluid/*"
+  - "content/dbms-legacy/*"
+  - "content/fluid/*"
 
 params:
   latestNeoVer: v8.0.63
