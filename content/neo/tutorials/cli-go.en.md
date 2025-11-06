@@ -213,7 +213,7 @@ defer apd.Close() // Always close the appender to flush remaining data
 
 // High-speed bulk insertion
 for i := range 10_000 {
-    err := apd.Append(ctx, "tag1", time.Now(), 1.23*float64(i))
+    err := apd.Append("tag1", time.Now(), 1.23*float64(i))
     if err != nil {
         panic(err)
     }

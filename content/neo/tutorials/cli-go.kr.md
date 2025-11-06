@@ -213,7 +213,7 @@ defer apd.Close() // 남은 데이터를 플러시하기 위해 항상 어펜더
 
 // 고속 대량 삽입
 for i := range 10_000 {
-    err := apd.Append(ctx, "tag1", time.Now(), 1.23*float64(i))
+    err := apd.Append("tag1", time.Now(), 1.23*float64(i))
     if err != nil {
         panic(err)
     }
