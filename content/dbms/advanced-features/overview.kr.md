@@ -16,7 +16,7 @@ weight: 10
 
 둘째, 온라인 백업은 DBMS가 실행 중일 때 데이터베이스를 백업하는 기능으로 핫 백업이라고 합니다. 이 기능은 서비스를 중단하지 않고 수행할 수 있어 사용자의 서비스 가용성을 높입니다. 대부분의 DBMS 백업은 온라인 백업을 의미합니다. 시계열 데이터베이스인 Machbase는 다른 데이터베이스 백업과 달리 시간 범위 백업을 제공합니다. 이를 통해 백업 시 백업할 데이터베이스의 시간을 지정하여 원하는 시간의 데이터만 백업할 수 있습니다.
 
-![overview1](../overview1.png)
+![overview1](/dbms/advanced-features/overview1.png)
 
 ```sql
 backup database into disk = 'backup';
