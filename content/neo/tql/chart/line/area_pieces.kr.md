@@ -107,4 +107,4 @@ CHART(
 {{< /tab >}}
 {{< /tabs >}}
 
-{{< figure src="../../img/area_pieces.jpg" width="500" >}}
+{{< figure src="/neo/tql/chart/img/area_pieces.jpg" width="500" >}}

@@ -70,7 +70,7 @@ CHART(
 )
 ```
 
-{{< figure src="../../img/wordcloud_js.jpg" width="500" >}}
+{{< figure src="/neo/tql/chart/img/wordcloud_js.jpg" width="500" >}}
 
 ```js
 FAKE(csv(
@@ -173,4 +173,4 @@ CHART(
 )
 ```
 
-{{< figure src="../../img/wordcloud.jpg" width="500" >}}
+{{< figure src="/neo/tql/chart/img/wordcloud.jpg" width="500" >}}

@@ -6,7 +6,7 @@ weight: 33
 
 이 예시는 mermaid.js 라이브러리를 활용해 간트 차트를 표현하는 방법을 보여 줍니다.
 
-{{< figure src="../img/gantt-webapp-1.jpg" width="600px" >}}
+{{< figure src="/neo/tutorials/img/gantt-webapp-1.jpg" width="600px" >}}
 
 - 7행: `class="mermaid"`를 가진 `<div>`를 렌더링 영역으로 사용합니다.
 - 28행: 각 상태의 첫 번째·마지막 레코드를 추출하는 `FILTER_CHANGED()` {{< neo_since ver="8.0.15" />}}를 사용합니다.

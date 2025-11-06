@@ -9,7 +9,7 @@ math: true
 
 ## TAKE()
 
-![map_take](../img/map_take.jpg)
+![map_take](/neo/tql/img/map_take.jpg)
 
 *구문*: `TAKE( [offset,] n )`
 
@@ -59,7 +59,7 @@ TAG0,1629039600000000000,14
 
 ## DROP()
 
-![map_drop](../img/map_drop.jpg)
+![map_drop](/neo/tql/img/map_drop.jpg)
 
 *구문*: `DROP( [offset,] n  )`
 
@@ -111,7 +111,7 @@ TAG0,1629126000000000000,15
 
 ## FILTER()
 
-![map_filter](../img/map_filter.jpg)
+![map_filter](/neo/tql/img/map_filter.jpg)
 
 *구문*: `FILTER( condition )`
 
@@ -293,7 +293,7 @@ CSV()
 
 ## PUSHVALUE()
 
-![map_pushvalue](../img/map_pushvalue.jpg)
+![map_pushvalue](/neo/tql/img/map_pushvalue.jpg)
 
 *구문*: `PUSHVALUE( idx, value [, name] )` {{< neo_since ver="8.0.5" />}}
 
@@ -317,7 +317,7 @@ CSV()
 
 ## POPVALUE()
 
-![map_popvalue](../img/map_popvalue.jpg)
+![map_popvalue](/neo/tql/img/map_popvalue.jpg)
 
 *구문*: `POPVALUE( idx [, idx2, idx3, ...] )` {{< neo_since ver="8.0.5" />}}
 
@@ -340,7 +340,7 @@ CSV()
 
 ## MAPVALUE()
 
-![map_mapvalue](../img/map_mapvalue.jpg)
+![map_mapvalue](/neo/tql/img/map_mapvalue.jpg)
 
 *구문*: `MAPVALUE( idx, newValue [, newName] )`
 
@@ -389,7 +389,7 @@ CHART(
 )
 ```
 
-{{< figure src="../img/tql-math-example2.jpg" width="400px" >}}
+{{< figure src="/neo/tql/img/tql-math-example2.jpg" width="400px" >}}
 
 ## MAP_DIFF()
 
@@ -475,7 +475,7 @@ CHART(
 )
 ```
 
-{{< figure src="../img/tql-map_avg.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/tql-map_avg.jpg" width="500" >}}
 
 ## MAP_MOVAVG()
 
@@ -514,7 +514,7 @@ CHART(
 - 5행: 노이즈가 섞인 신호 값을 생성합니다.
 - 6행: 윈도 크기 10으로 이동 평균을 계산합니다.
 
-{{< figure src="../img/tql-map_movavg_filter.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/tql-map_movavg_filter.jpg" width="500" >}}
 
 ## MAP_LOWPASS()
 
@@ -554,7 +554,7 @@ CHART(
 - 5행: 노이즈가 포함된 신호를 생성합니다.
 - 6행: `alpha = 0.40`인 저역 통과 필터를 적용합니다.
 
-{{< figure src="../img/tql-map_lowpass_filter.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/tql-map_lowpass_filter.jpg" width="500" >}}
 
 
 ## MAP_KALMAN()
@@ -599,7 +599,7 @@ CHART(
 - 6행: 실제 값과 노이즈를 합쳐 측정값을 만듭니다.
 - 10행: 측정값에 칼만 필터를 적용합니다.
 
-{{< figure src="../img/tql-map_kalman_filter.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/tql-map_kalman_filter.jpg" width="500" >}}
 
 ## HISTOGRAM()
 
@@ -651,7 +651,7 @@ CHART(
     })
 )
 ```
-{{< figure src="../img/tql-histogram.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/tql-histogram.jpg" width="500" >}}
 {{< /tab >}}
 {{< tab >}}
 ```js {{linenos=table,hl_lines=[4,"13-14"]}}
@@ -673,7 +673,7 @@ CHART(
     })
 )
 ```
-{{< figure src="../img/tql-histogram-cat.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/tql-histogram-cat.jpg" width="500" >}}
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -833,7 +833,7 @@ Beijing,2023/12/07,NOISE,60
 
 ## FFT()
 
-![map_fft](../img/map_fft.jpg)
+![map_fft](/neo/tql/img/map_fft.jpg)
 
 *구문*: `FFT([minHz(value), maxHz(value)])`
 - `minHz(value`) : 분석에 사용할 최소 주파수
@@ -1019,7 +1019,7 @@ WHEN( condition,
 
 ## FLATTEN()
 
-![map_flatten](../img/map_flatten.jpg)
+![map_flatten](/neo/tql/img/map_flatten.jpg)
 
 *구문*: `FLATTEN()`
 
@@ -1029,7 +1029,7 @@ WHEN( condition,
 
 ## MAPKEY()
 
-![map_mapkey](../img/map_mapkey.jpg)
+![map_mapkey](/neo/tql/img/map_mapkey.jpg)
 
 *구문*: `MAPKEY( newkey )`
 
@@ -1059,7 +1059,7 @@ CSV()
 
 ## PUSHKEY()
 
-![map_pushkey](../img/map_pushkey.jpg)
+![map_pushkey](/neo/tql/img/map_pushkey.jpg)
 
 *구문*: `PUSHKEY( newkey )`
 
@@ -1091,7 +1091,7 @@ CSV()
 
 ## POPKEY()
 
-![map_popkey](../img/map_popkey.jpg)
+![map_popkey](/neo/tql/img/map_popkey.jpg)
 
 *구문*: `POPKEY( [idx] )`
 
@@ -1150,7 +1150,7 @@ TAG0,15
 
 ## GROUPBYKEY()
 
-![map_popkey](../img/map_groupbykey.jpg)
+![map_popkey](/neo/tql/img/map_groupbykey.jpg)
 
 *구문*: `GROUPBYKEY( [lazy(boolean)] )`
 

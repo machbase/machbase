@@ -14,14 +14,14 @@ weight: 10
 
 ### 셸 등록
 
-1. 왼쪽 메뉴에서 <img src="../img/shell_icon.jpg" width=47 style="display:inline"> 아이콘을 선택합니다.
+1. 왼쪽 메뉴에서 <img src="/neo/shell/img/shell_icon.jpg" width=47 style="display:inline"> 아이콘을 선택합니다.
 
-2. 상단 왼쪽 패널에서 `+` 아이콘 <img src="../img/shell_add_icon.jpg" width=265 style="display:inline"> 을 클릭합니다.
+2. 상단 왼쪽 패널에서 `+` 아이콘 <img src="/neo/shell/img/shell_add_icon.jpg" width=265 style="display:inline"> 을 클릭합니다.
 
 3. "Display name"을 입력하고 "Command" 필드에 실행 파일의 절대 경로와 인자를 지정합니다.
    예를 들어 macOS에서 zsh를 등록하려면 절대 경로를 입력한 뒤 "Save"를 클릭합니다.
 
-{{< figure src="../img/shell_add_form.jpg" width="684px">}}
+{{< figure src="/neo/shell/img/shell_add_form.jpg" width="684px">}}
 
 - Name: 표시 이름(예약어를 제외한 임의의 텍스트 사용 가능)
 - Command: 전체 경로와 인자를 포함한 실행 명령
@@ -40,7 +40,7 @@ weight: 10
 
 - 콘솔 영역에서 사용자 정의 셸을 엽니다.
 
-{{< figure src="../img/web-custom-shell-console.jpg" width="700px">}}
+{{< figure src="/neo/shell/img/web-custom-shell-console.jpg" width="700px">}}
 
 ## 명령줄에서 제어
 

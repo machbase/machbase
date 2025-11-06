@@ -20,7 +20,7 @@ bridge add -t sqlite mem file::memory:?cache=shared
 
 아래 명령은 그림과 같은 웹 UI에서 수행하는 설정과 동일합니다.
 
-{{< figure src="../img/sqlite-add.png" width="500" >}}
+{{< figure src="/neo/bridges/img/sqlite-add.png" width="500" >}}
 
 
 ## 브리지 연결 테스트
@@ -30,7 +30,7 @@ machbase-neo» bridge test mem;
 Test bridge mem connectivity... success 11.917µs
 ```
 
-{{< figure src="../img/sqlite-test.png" width="600" >}}
+{{< figure src="/neo/bridges/img/sqlite-test.png" width="600" >}}
 
 ## 테이블 생성
 
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS mem_example(
 -- env: reset
 ```
 
-{{< figure src="../img/sqlite-sql-create-table.png" width="600" >}}
+{{< figure src="/neo/bridges/img/sqlite-sql-create-table.png" width="600" >}}
 
 ## SQL 에디터에서 DML 수행
 
@@ -84,7 +84,7 @@ DELETE from mem_example;
 -- env: reset
 ```
 
-{{< figure src="../img/sqlite-sql-dml.png" width="600" >}}
+{{< figure src="/neo/bridges/img/sqlite-sql-dml.png" width="600" >}}
 
 ## SQLite에 TQL로 쓰기
 

@@ -49,4 +49,4 @@ CHART(
 {{< /tab >}}
 {{< /tabs >}}
 
-{{< figure src="../../img/basic_candlestick.jpg" width="500" >}}
+{{< figure src="/neo/tql/chart/img/basic_candlestick.jpg" width="500" >}}

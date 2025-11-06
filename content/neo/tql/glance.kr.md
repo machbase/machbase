@@ -17,14 +17,14 @@ TQL(Transforming Query Language)은 데이터 변환을 위한 DSL입니다.
 - key : 보통 자동 증가하는 정수(쿼리 결과의 ROWNUM과 유사)
 - value : 실제 데이터를 담고 있는 튜플
 
-![tql_records](../img/tql_records.jpg)
+![tql_records](/neo/tql/img/tql_records.jpg)
 
 TQL 스크립트는 데이터를 가져오는 *SRC* 함수로 시작하고, 변환 결과를 출력하는 *SINK* 함수로 끝납니다.  
 중간에는 필요한 만큼 *MAP* 함수를 삽입해 데이터를 원하는 형태로 변형할 수 있습니다.
 
-![tql_flow_min](../img/tql_flow_min.jpg)
+![tql_flow_min](/neo/tql/img/tql_flow_min.jpg)
 
-![tql_flow](../img/tql_flow.jpg)
+![tql_flow](/neo/tql/img/tql_flow.jpg)
 
 ### SRC
 
@@ -33,7 +33,7 @@ TQL 스크립트는 데이터를 가져오는 *SRC* 함수로 시작하고, 변�
 - `CSV()` : CSV 파일 읽기
 - `BYTES()` : 파일 시스템/HTTP 요청/MQTT 페이로드에서 바이너리 데이터 읽기
 
-![tql_src](../img/tql_src.jpg)
+![tql_src](/neo/tql/img/tql_src.jpg)
 
 ### SINK
 
@@ -41,14 +41,14 @@ TQL 스크립트는 데이터를 가져오는 *SRC* 함수로 시작하고, 변�
 - `CHART()` : 레코드를 차트로 렌더링
 - `JSON()`, `CSV()` : 데이터를 각각 JSON/CSV 형식으로 인코딩
 
-![tql_sink](../img/tql_sink.jpg)
+![tql_sink](/neo/tql/img/tql_sink.jpg)
 
 ### MAP
 
 *MAP* 함수는 데이터를 다른 형태로 바꾸는 핵심 도구입니다.  
 수학 연산, 문자열 처리, 형식 변환, 외부 시스템 연동 등을 수행할 수 있습니다.
 
-![tql_map](../img/tql_map.jpg)
+![tql_map](/neo/tql/img/tql_map.jpg)
 
 ## TQL 실행
 
@@ -76,21 +76,21 @@ TQL 스크립트는 데이터를 가져오는 *SRC* 함수로 시작하고, 변�
 FAKE( oscillator(freq(1.5, 1.0), range('now', '3s', '10ms')) )
 CHART_SCATTER()
 ```
-{{< figure src="../img/web-hello-tql-chart-scatter.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/web-hello-tql-chart-scatter.jpg" width="500" >}}
 {{< /tab >}}
 {{< tab >}}
 ```js
 FAKE( oscillator(freq(1.5, 1.0), range('now', '3s', '10ms')) )
 CHART_LINE()
 ```
-{{< figure src="../img/web-hello-tql-chart-line.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/web-hello-tql-chart-line.jpg" width="500" >}}
 {{< /tab >}}
 {{< tab >}}
 ```js
 FAKE( oscillator(freq(1.5, 1.0), range('now', '3s', '10ms')) )
 CHART_BAR()
 ```
-{{< figure src="../img/web-hello-tql-chart-bar.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/web-hello-tql-chart-bar.jpg" width="500" >}}
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -107,35 +107,35 @@ TQL로 간단히 포맷을 변경할 수 있습니다.
 FAKE( oscillator(freq(1.5, 1.0), range('now', '3s', '10ms')) )
 JSON()
 ```
-{{< figure src="../img/web-hello-tql-json.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/web-hello-tql-json.jpg" width="500" >}}
 {{< /tab >}}
 {{< tab >}}
 ```js
 FAKE( oscillator(freq(1.5, 1.0), range('now', '3s', '10ms')) )
 JSON(transpose(true))
 ```
-{{< figure src="../img/web-hello-tql-json-transpose.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/web-hello-tql-json-transpose.jpg" width="500" >}}
 {{< /tab >}}
 {{< tab >}}
 ```js
 FAKE( oscillator(freq(1.5, 1.0), range('now', '3s', '10ms')) )
 CSV()
 ```
-{{< figure src="../img/web-hello-tql-csv.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/web-hello-tql-csv.jpg" width="500" >}}
 {{< /tab >}}
 {{< tab >}}
 ```js
 FAKE( oscillator(freq(1.5, 1.0), range('now', '3s', '10ms')) )
 MARKDOWN()
 ```
-{{< figure src="../img/web-hello-tql-markdown.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/web-hello-tql-markdown.jpg" width="500" >}}
 {{< /tab >}}
 {{< tab >}}
 ```js
 FAKE( oscillator(freq(1.5, 1.0), range('now', '3s', '10ms')) )
 MARKDOWN(html(true))
 ```
-{{< figure src="../img/web-hello-tql-markdown-html.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/web-hello-tql-markdown-html.jpg" width="500" >}}
 {{< /tab >}}
 {{< /tabs >}}
 

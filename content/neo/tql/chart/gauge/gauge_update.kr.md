@@ -57,4 +57,4 @@ CHART(
 )
 ```
 
-{{< figure src="../../img/gauge_update.gif" width="500" >}}
+{{< figure src="/neo/tql/chart/img/gauge_update.gif" width="500" >}}

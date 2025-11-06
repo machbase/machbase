@@ -11,7 +11,7 @@ IoT 환경에서 수집되는 값은 모두 센서를 통해 측정된 데이터
 {{< tabs items="chart,SCRIPT,SET-MAP">}}
 {{< tab >}}
 
-{{< figure src="../img/filter_pure.jpg" width="600px" >}}
+{{< figure src="/neo/tql/img/filter_pure.jpg" width="600px" >}}
 
 {{< /tab >}}
 {{< tab >}}
@@ -65,7 +65,7 @@ CHART(
 {{< tabs items="chart,SCRIPT,SET-MAP">}}
 {{< tab >}}
 
-{{< figure src="../img/filter_pure_noise.jpg" width="600px" >}}
+{{< figure src="/neo/tql/img/filter_pure_noise.jpg" width="600px" >}}
 
 {{< /tab >}}
 {{< tab >}}
@@ -125,7 +125,7 @@ CHART(
 {{< tabs items="chart,SCRIPT,SET-MAP">}}
 {{< tab >}}
 
-{{< figure src="../img/filter_mix_noise.jpg" width="600px" >}}
+{{< figure src="/neo/tql/img/filter_mix_noise.jpg" width="600px" >}}
 
 {{< /tab >}}
 {{< tab >}}
@@ -182,7 +182,7 @@ CHART(
 {{< tabs items="chart,SCRIPT,SET-MAP">}}
 {{< tab >}}
 
-{{< figure src="../img/filter_avg.jpg" width="600px" >}}
+{{< figure src="/neo/tql/img/filter_avg.jpg" width="600px" >}}
 
 {{< /tab >}}
 {{< tab >}}

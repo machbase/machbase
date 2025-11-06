@@ -18,7 +18,7 @@ CREATE TAG TABLE IF NOT EXISTS EXAMPLE  (
 
 이 예시는 machbase-neo의 데이터를 Grid.js 라이브러리로 표시하는 방법을 보여 줍니다.
 
-{{< figure src="../img/grid-webapp-1.jpg" width="600px" >}}
+{{< figure src="/neo/tutorials/img/grid-webapp-1.jpg" width="600px" >}}
 
 - 18~19행: Grid.js 라이브러리를 포함합니다.
 - 29~30행: 결과 JSON에서 컬럼과 데이터를 매핑합니다.

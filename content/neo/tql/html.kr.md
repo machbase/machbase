@@ -183,7 +183,7 @@ HTML({
 })
 ```
 
-{{< figure src="../img/html_template_3.jpg" width="452" >}}
+{{< figure src="/neo/tql/img/html_template_3.jpg" width="452" >}}
 
 {{< /tab >}}
 {{< tab >}}
@@ -217,7 +217,7 @@ HTML({
 })
 ```
 
-{{< figure src="../img/html_template.jpg" width="518" >}}
+{{< figure src="/neo/tql/img/html_template.jpg" width="518" >}}
 
 {{< /tab >}}
 {{< tab >}}
@@ -251,7 +251,7 @@ HTML({
 })
 ```
 
-{{< figure src="../img/html_template.jpg" width="518" >}}
+{{< figure src="/neo/tql/img/html_template.jpg" width="518" >}}
 
 {{< /tab >}}
 {{< /tabs >}}

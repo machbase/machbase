@@ -35,7 +35,7 @@ CSV(header(true))
 ```
 
 **결과**
-{{< figure src="../img/group-type1-ex1.jpg" width="600" >}}
+{{< figure src="/neo/tql/img/group-type1-ex1.jpg" width="600" >}}
 
 ### `by()`
 

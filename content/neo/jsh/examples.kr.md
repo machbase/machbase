@@ -720,7 +720,7 @@ CHART(
 )
 ```
 
-{{< figure src="../img/sysmon-tql.jpg" width="538">}}
+{{< figure src="/neo/jsh/img/sysmon-tql.jpg" width="538">}}
 
 ### SCRIPT() 활용 차트 TQL
 
@@ -765,7 +765,7 @@ SCRIPT({
 CHART( size("500px", "300px") )
 ```
 
-{{< figure src="../img/sysmon-tql-js.jpg" width="500">}}
+{{< figure src="/neo/jsh/img/sysmon-tql-js.jpg" width="500">}}
 
 ### HTML에서 차트 그리기
 
@@ -855,7 +855,7 @@ CHART( size("500px", "300px") )
 </html>
 ```
 
-{{< figure src="../img/sysmon-html.jpg" width="600">}}
+{{< figure src="/neo/jsh/img/sysmon-html.jpg" width="600">}}
 
 ### HTML 템플릿 차트
 
@@ -949,7 +949,7 @@ function runServer() {
 </html>
 ```
 
-{{< figure src="../img/sysmon-template.jpg" width="600">}}
+{{< figure src="/neo/jsh/img/sysmon-template.jpg" width="600">}}
 
 ## OPCUA 클라이언트
 

@@ -86,7 +86,7 @@ SCRIPT({
 GEOMAP()
 ```
 
-{{< figure src="../img/geomap-marker.png" width="500" >}}
+{{< figure src="/neo/tql/img/geomap-marker.png" width="500" >}}
 
 ### circleMarker
 
@@ -116,7 +116,7 @@ SCRIPT({
 GEOMAP()
 ```
 
-{{< figure src="../img/geomap-circlemarker.png" width="500" >}}
+{{< figure src="/neo/tql/img/geomap-circlemarker.png" width="500" >}}
 
 ### circle
 
@@ -146,7 +146,7 @@ SCRIPT({
 GEOMAP()
 ```
 
-{{< figure src="../img/geomap-circle.png" width="500" >}}
+{{< figure src="/neo/tql/img/geomap-circle.png" width="500" >}}
 
 ### polyline
 
@@ -174,7 +174,7 @@ SCRIPT({
 GEOMAP()
 ```
 
-{{< figure src="../img/geomap-polyline.png" width="500" >}}
+{{< figure src="/neo/tql/img/geomap-polyline.png" width="500" >}}
 
 ### polygon
 
@@ -203,7 +203,7 @@ SCRIPT({
 GEOMAP()
 ```
 
-{{< figure src="../img/geomap-polygon.png" width="500" >}}
+{{< figure src="/neo/tql/img/geomap-polygon.png" width="500" >}}
 
 ## Properties
 
@@ -255,7 +255,7 @@ SCRIPT({
 GEOMAP()
 ```
 
-{{< figure src="../img/geomap-marker-popup.png" width="500" >}}
+{{< figure src="/neo/tql/img/geomap-marker-popup.png" width="500" >}}
 
 ### Tooltip
 
@@ -295,4 +295,4 @@ SCRIPT({
 GEOMAP()
 ```
 
-{{< figure src="../img/geomap-marker-tooltip.png" width="500" >}}
+{{< figure src="/neo/tql/img/geomap-marker-tooltip.png" width="500" >}}

@@ -12,7 +12,7 @@ Linux와 macOS에서는 `serve` 명령으로 machbase-neo를 실행합니다.
 machbase-neo serve
 ```
 
-{{< figure src="../img/server-serve.gif" width="600" >}}
+{{< figure src="/neo/getting-started/img/server-serve.gif" width="600" >}}
 
 ### 포트 개방
 

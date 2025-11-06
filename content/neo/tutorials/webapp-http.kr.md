@@ -21,7 +21,7 @@ CREATE TAG TABLE IF NOT EXISTS EXAMPLE  (
 `simple-webapp.html` 파일을 만들어 봅시다. machbase-neo는 {{< neo_since ver="8.0.14" />}}부터 `.html`, `.js`, `.css` 파일을 직접 편집할 수 있습니다.
 이전 버전을 사용 중이라면 업데이트하거나 선호하는 편집기를 사용해 주십시오.
 
-{{< figure src="../img/simple-webapp-1.jpg" width="600px" >}}
+{{< figure src="/neo/tutorials/img/simple-webapp-1.jpg" width="600px" >}}
 
 파일을 수정 후 저장하고, 편집기 좌측 상단의 ► 버튼을 클릭하면 브라우저에서 바로 열 수 있습니다.
 
@@ -71,7 +71,7 @@ CREATE TAG TABLE IF NOT EXISTS EXAMPLE  (
 - 9행: 콘텐츠 타입을 지정해 machbase-neo가 페이로드 형식을 올바르게 해석하도록 합니다.
 - 11~18행: 전송할 실제 데이터입니다. 예시는 1건이지만 `rows` 배열에 여러 건을 담을 수 있습니다.
 
-{{< figure src="../img/simple-webapp-2.jpg" width="600px" >}}
+{{< figure src="/neo/tutorials/img/simple-webapp-2.jpg" width="600px" >}}
 
 ## 데이터 조회
 
@@ -101,7 +101,7 @@ function queryData() {
 <div id=rspQuery></div>
 ```
 
-{{< figure src="../img/simple-webapp-3.jpg" width="600px" >}}
+{{< figure src="/neo/tutorials/img/simple-webapp-3.jpg" width="600px" >}}
 
 ## Markdown
 
@@ -132,7 +132,7 @@ function markdownData() {
 <div id=rspMarkdown></div>
 ```
 
-{{< figure src="../img/simple-webapp-4.jpg" width="600px" >}}
+{{< figure src="/neo/tutorials/img/simple-webapp-4.jpg" width="600px" >}}
 
 ## 차트
 
@@ -190,7 +190,7 @@ function chartData() {
 <div id=rspChart></div>
 ```
 
-{{< figure src="../img/simple-webapp-5.jpg" width="600px" >}}
+{{< figure src="/neo/tutorials/img/simple-webapp-5.jpg" width="600px" >}}
 
 
 ## 전체 소스 코드

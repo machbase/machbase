@@ -160,4 +160,4 @@ SCRIPT({
 CHART(size("600px", "400px"))
 ```
 
-{{< figure src="../img/kalman_filter_smoother.jpg">}}
+{{< figure src="/neo/jsh/img/kalman_filter_smoother.jpg">}}

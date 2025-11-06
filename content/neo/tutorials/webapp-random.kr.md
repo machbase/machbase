@@ -18,7 +18,7 @@ CREATE TAG TABLE IF NOT EXISTS EXAMPLE  (
 
 이 예시는 초마다 랜덤 데이터를 생성하고 차트를 자동으로 갱신합니다.
 
-{{< figure src="../img/random-webapp-1.jpg" width="600px" >}}
+{{< figure src="/neo/tutorials/img/random-webapp-1.jpg" width="600px" >}}
 
 - 11행: "start" 버튼을 누르면 타이머가 동작하며 `EXAMPLE` 테이블에 데이터를 기록합니다.
 - 13행: 페이로드는 CSV 형식입니다.

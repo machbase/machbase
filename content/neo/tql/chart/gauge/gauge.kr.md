@@ -60,4 +60,4 @@ CHART(
 )
 ```
 
-{{< figure src="../../img/gauge.jpg" width="500" >}}
+{{< figure src="/neo/tql/chart/img/gauge.jpg" width="500" >}}

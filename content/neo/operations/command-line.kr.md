@@ -490,7 +490,7 @@ $ machbase-neo restore --data <machbase home dir>  <backup dir>
 
 버전 및 엔진 정보를 보여 줍니다.
 
-![machbase-neo_version](../img/machbase-neo-version.png)
+![machbase-neo_version](/neo/operations/img/machbase-neo-version.png)
 
 ## machbase-neo gen-config
 

@@ -25,7 +25,7 @@ STRING(payload())
 DISCARD()
 ```
 
-{{< figure src="../img/mqtt-sqlite-bridge-tql-1.png" width="600" >}}
+{{< figure src="/neo/tutorials/img/mqtt-sqlite-bridge-tql-1.png" width="600" >}}
 
 ## MQTT 브리지 정의
 
@@ -37,11 +37,11 @@ DISCARD()
 
 연결 문자열 옵션에 대한 자세한 내용은 [문서](/neo/bridges/21.mqtt/)를 참고하십시오.
 
-{{< figure src="../img/mqtt-sqlite-bridge-mqtt.png" width="600" >}}
+{{< figure src="/neo/tutorials/img/mqtt-sqlite-bridge-mqtt.png" width="600" >}}
 
 "Test" 버튼을 눌러 연결을 확인합니다. 오류가 발생한다면 연결 문자열을 수정해 성공할 때까지 다시 시도합니다.
 
-{{< figure src="../img/mqtt-sqlite-bridge-mqtt-test.png" width="600" >}}
+{{< figure src="/neo/tutorials/img/mqtt-sqlite-bridge-mqtt-test.png" width="600" >}}
 
 
 ## MQTT 브리지에 TQL 연결
@@ -54,11 +54,11 @@ DISCARD()
 - Topic: `demo/#`
 - Destination: "TQL Script"를 선택한 후 방금 만든 TQL 파일을 지정합니다.
 
-{{< figure src="../img/mqtt-sqlite-bridge-sub1.png" width="600" >}}
+{{< figure src="/neo/tutorials/img/mqtt-sqlite-bridge-sub1.png" width="600" >}}
 
 구독자를 생성하고 상태를 "RUNNING"으로 설정합니다.
 
-{{< figure src="../img/mqtt-sqlite-bridge-sub2.png" width="600" >}}
+{{< figure src="/neo/tutorials/img/mqtt-sqlite-bridge-sub2.png" width="600" >}}
 
 ## 대상 DB 브리지 정의
 
@@ -68,7 +68,7 @@ DISCARD()
 - Type: `SQLite`
 - Connection String `file:///tmp/mqtt.db`
 
-{{< figure src="../img/mqtt-sqlite-bridge-sqlite.png" width="600" >}}
+{{< figure src="/neo/tutorials/img/mqtt-sqlite-bridge-sqlite.png" width="600" >}}
 
 > 수신 데이터를 machbase-neo 내부에만 저장하려면 외부 데이터베이스 브리지를 추가할 필요가 없습니다.
 
@@ -165,4 +165,4 @@ SELECT * FROM DATA;
 -- env: reset
 ```
 
-{{< figure src="../img/mqtt-sqlite-bridge-select.png" width="600" >}}
+{{< figure src="/neo/tutorials/img/mqtt-sqlite-bridge-select.png" width="600" >}}

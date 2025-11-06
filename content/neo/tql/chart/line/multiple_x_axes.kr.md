@@ -148,4 +148,4 @@ CHART(
 )
 ```
 
-{{< figure src="../../img/multiple_x_axes.jpg" width="500" >}}
+{{< figure src="/neo/tql/chart/img/multiple_x_axes.jpg" width="500" >}}

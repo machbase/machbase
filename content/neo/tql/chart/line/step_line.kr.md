@@ -66,4 +66,4 @@ CHART(
 {{< /tab >}}
 {{< /tabs >}}
 
-{{< figure src="../../img/step_line.jpg" width="500" >}}
+{{< figure src="/neo/tql/chart/img/step_line.jpg" width="500" >}}

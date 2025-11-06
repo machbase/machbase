@@ -163,4 +163,4 @@ CHART(
 )
 ```
 
-{{< figure src="../../img/candlestick_marketindex.jpg" width="500" >}}
+{{< figure src="/neo/tql/chart/img/candlestick_marketindex.jpg" width="500" >}}

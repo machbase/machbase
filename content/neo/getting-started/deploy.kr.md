@@ -25,7 +25,7 @@ machbase-neo serve --data machbase://${SECRET}@192.168.1.100:5656
 이 모드에서는 machbase-neo 프로세스가 자체 데이터베이스 없이 실행되고 대상 데이터베이스를 그대로 사용합니다.
 "헤드 온리 machbase-neo"는 5656 포트를 제공하지 않으며, 나머지 API는 모두 대상 DBMS와 연동됩니다.
 
-{{< figure src="../img/head-only-1.png" width="600px" >}}
+{{< figure src="/neo/getting-started/img/head-only-1.png" width="600px" >}}
 
 
 ## 헤드리스 모드
@@ -37,4 +37,4 @@ machbase-neo serve --data machbase://${SECRET}@192.168.1.100:5656
 이 실행 모드는 별도로 구동되는 "헤드 온리" 프로세스와 함께 동작하도록 설계되어,
 API 서비스와 DBMS 엔진을 분리할 수 있습니다.
 
-{{< figure src="../img/head-only-2.png" width="600px" >}}
+{{< figure src="/neo/getting-started/img/head-only-2.png" width="600px" >}}

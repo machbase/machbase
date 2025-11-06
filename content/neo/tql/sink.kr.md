@@ -8,7 +8,7 @@ weight: 21
 
 기본적으로 `INSERT()`를 사용해 Machbase Neo 데이터베이스에 레코드를 저장할 수 있으며, `CHART()`는 입력 레코드를 다양한 차트로 렌더링합니다. `JSON()`과 `CSV()`는 데이터를 각각 JSON·CSV 형식으로 출력합니다.
 
-![tql_sink](../img/tql_sink.jpg)
+![tql_sink](/neo/tql/img/tql_sink.jpg)
 
 ## INSERT()
 

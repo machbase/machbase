@@ -8,7 +8,7 @@ weight: 11
 
 SRC 함수는 다양합니다. 예를 들어 `SQL()`은 Machbase Neo 또는 브리지를 통해 연결한 외부 데이터베이스에서 SQL을 실행해 레코드를 생성합니다. `FAKE()`는 가상 데이터를 만들어 주며, `CSV()`는 CSV 파일을 읽고, `BYTES()`는 파일 시스템·HTTP 요청·MQTT 페이로드에서 바이너리 데이터를 수집합니다.
 
-![tql_src](../img/tql_src.jpg)
+![tql_src](/neo/tql/img/tql_src.jpg)
 
 ## SQL()
 
@@ -484,7 +484,7 @@ CHART(
 )
 ```
 
-{{< figure src="../img/linspace_chart.jpg" width="600px" >}}
+{{< figure src="/neo/tql/img/linspace_chart.jpg" width="600px" >}}
 
 {{< /tab >}}
 {{< /tabs >}}
@@ -543,7 +543,7 @@ CHART(
 )
 ```
 
-{{< figure src="../img/meshgrid_chart.jpg" width="350px" >}}
+{{< figure src="/neo/tql/img/meshgrid_chart.jpg" width="350px" >}}
 
 {{< /tab >}}
 {{< /tabs >}}

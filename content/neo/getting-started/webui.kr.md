@@ -18,15 +18,15 @@ weight: 15
 
 1. 왼쪽 아래 메뉴에서 "Change password"를 선택해 주십시오. {{< neo_since ver="8.0.20" />}}
 
-{{< figure src="../img/change_passwd_ui.jpg" width="203px" >}}
+{{< figure src="/neo/getting-started/img/change_passwd_ui.jpg" width="203px" >}}
 
 2. 대화 상자에서 새 비밀번호를 입력한 뒤 한 번 더 입력하여 확인해 주십시오.
 
-{{< figure src="../img/change_passwd_ui2.jpg" width="342px" >}}
+{{< figure src="/neo/getting-started/img/change_passwd_ui2.jpg" width="342px" >}}
 
 ### SQL
 
-{{< figure src="../img/change_passwd.jpg" width="800px" >}}
+{{< figure src="/neo/getting-started/img/change_passwd.jpg" width="800px" >}}
 
 ```sql
 ALTER USER sys IDENTIFIED BY new_password;

@@ -41,7 +41,7 @@ MQTT에서 데이터베이스 쿼리를 실행하려면 `db/query` 토픽으로 
 }
 ```
 
-{{< figure src="../img/query_mqttx.png" width="600px" caption="A demonstration shows how to query and receive responses over MQTT. (Using MQTTX.app)">}}
+{{< figure src="/neo/api-mqtt/img/query_mqttx.png" width="600px" caption="A demonstration shows how to query and receive responses over MQTT. (Using MQTTX.app)">}}
 
 ## 클라이언트 예시
 

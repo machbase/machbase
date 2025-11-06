@@ -90,4 +90,4 @@ CHART(
 )
 ```
 
-{{< figure src="../../img/geo_svg_lines.gif" width="500" >}}
+{{< figure src="/neo/tql/chart/img/geo_svg_lines.gif" width="500" >}}

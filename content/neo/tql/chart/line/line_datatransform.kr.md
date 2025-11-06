@@ -59,4 +59,4 @@ CHART(
 )
 ```
 
-{{< figure src="../../img/line_datatransform.jpg" width="500" >}}
+{{< figure src="/neo/tql/chart/img/line_datatransform.jpg" width="500" >}}

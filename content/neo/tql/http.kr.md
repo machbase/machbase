@@ -110,7 +110,7 @@ POST http://127.0.0.1:5654/db/query
 ```
 ~~~
 
-{{< figure src="../img/http_wrk_example.jpg" width="700" >}}
+{{< figure src="/neo/tql/img/http_wrk_example.jpg" width="700" >}}
 
 
 ### 마크다운
@@ -130,7 +130,7 @@ GET http://127.0.0.1:5654/db/query
 ```
 ~~~
 
-{{< figure src="../img/http_md_example.jpg" width="637" >}}
+{{< figure src="/neo/tql/img/http_md_example.jpg" width="637" >}}
 
 
 ## 쿼리 문자열

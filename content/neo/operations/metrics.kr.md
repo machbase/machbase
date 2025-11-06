@@ -28,7 +28,7 @@ http://127.0.0.1:5654/debug/statz?interval=[1m|5m|15m]&format=[json|html]
 
 {{< tabs items="CHART,Code">}}
 {{< tab >}}
-{{< figure src="../img/metrics_http_latency.jpg" width="600" >}}
+{{< figure src="/neo/operations/img/metrics_http_latency.jpg" width="600" >}}
 {{< /tab >}}
 {{< tab >}}
 ```js

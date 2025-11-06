@@ -42,4 +42,4 @@ CHART(
 )
 ```
 
-{{< figure src="../../img/doughnut.jpg" width="500" >}}
+{{< figure src="/neo/tql/chart/img/doughnut.jpg" width="500" >}}

@@ -51,4 +51,4 @@ CHART(
 )
 ```
 
-{{< figure src="../../img/boxplot_michelson_morley.jpg" width="500" >}}
+{{< figure src="/neo/tql/chart/img/boxplot_michelson_morley.jpg" width="500" >}}

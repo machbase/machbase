@@ -297,7 +297,7 @@ HTML({
 })
 ```
 
-{{< figure src="../img/html_template_2.jpg" width="518" >}}
+{{< figure src="/neo/tql/img/html_template_2.jpg" width="518" >}}
 
 ## CHART
 
@@ -320,7 +320,7 @@ CHART(
 
 웹 브라우저에서 `http://127.0.0.1:5654/db/tql/output-chart.tql` 주소를 열어 주십시오.
 
-{{< figure src="../img/reading-chart-bar.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/reading-chart-bar.jpg" width="500" >}}
 
 > 기존 `CHART_LINE()`, `CHART_BAR()`, `CHART_SCATTER()` 계열 함수는 새로운 `CHART()` 함수로 대체되었습니다.  
 > 예시는 [CHART()](/neo/tql/chart) 문서를 참고해 주십시오.

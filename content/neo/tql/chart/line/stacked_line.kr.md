@@ -32,4 +32,4 @@ CHART(
 )
 ```
 
-{{< figure src="../../img/stacked_line.jpg" width="500" >}}
+{{< figure src="/neo/tql/chart/img/stacked_line.jpg" width="500" >}}
