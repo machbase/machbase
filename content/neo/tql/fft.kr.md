@@ -111,19 +111,23 @@ CHART_LINE(
 {{< /tab >}}
 {{< tab >}}
 
-```js {linenos=table,hl_lines=[10,12],linenostart=1}
+```js {linenos=table,hl_lines=[11,12],linenostart=1}
 SQL_SELECT('time', 'value', from('example', 'signal'), between('last-10s', 'last'))
 SCRIPT({
-    var list = [];
-    function finalize() {
-        $.yield(list);
-    }
+    var times = [];
+    var values = [];
 },{
     ts = $.values[0];
     val = $.values[1];
-    list.push([ts, val]);
+    times.push(ts);
+    values.push(val);
+},{
+    const ana = require("@jsh/analysis");
+    result = ana.fft(times, values);
+    for(i = 0; i < result.x.length; i++) {
+        $.yield(result.x[i], result.y[i]);
+    }
 })
-FFT()
 CHART_LINE(
   size("600px", "350px"), 
   xAxis(0, 'Hz'),
