@@ -1,5 +1,5 @@
 ---
-title: 파형 데이터 만들어 보기
+title: 파형 데이터 만들기
 type: docs
 weight: 10
 ---

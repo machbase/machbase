@@ -1,5 +1,5 @@
 ---
-title: 랜덤 데이터를 활용한 웹 앱
+title: 랜덤 데이터 웹 앱
 type: docs
 weight: 31
 ---

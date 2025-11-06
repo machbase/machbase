@@ -1,5 +1,5 @@
 ---
-title: HTTP API를 활용한 웹 앱
+title: HTTP API 웹 앱
 type: docs
 weight: 30
 ---
