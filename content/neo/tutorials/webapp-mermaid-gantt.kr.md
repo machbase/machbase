@@ -1,5 +1,5 @@
 ---
-title: mermaid.js로 간트 차트 만들기
+title: mermaid.js 간트 차트
 type: docs
 weight: 33
 ---

@@ -1,5 +1,5 @@
 ---
-title: MQTT와 RDBMS 브리지 연동
+title: MQTT와 RDBMS 브리지
 type: docs
 weight: 300
 ---

@@ -1,5 +1,5 @@
 ---
-title: Install machbase-neo
+title: 설치
 type: docs
 weight: 10
 ---

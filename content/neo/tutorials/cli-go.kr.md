@@ -1,5 +1,5 @@
 ---
-title: Go C 클라이언트 라이브러리
+title: Go C 클라이언트
 type: docs
 weight: 300
 ---

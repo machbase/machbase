@@ -1,5 +1,5 @@
 ---
-title: Raspberry PI로 IoT 서버 구축하기
+title: Raspberry PI IoT 서버
 type: docs
 weight: 200
 ---
