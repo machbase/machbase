@@ -4,6 +4,9 @@ type: docs
 weight: 60
 ---
 
+The tokens are used for HTTP API and MQTT client authentication.
+The generated keys (X.509) are used for MQTT TLS connections and gRPC connections.
+
 ## Generates Key & Token
 
 ### Web UI

@@ -4,18 +4,21 @@ type: docs
 weight: 60
 ---
 
+토큰은 HTTP API와 MQTT 클라이언트 인증에 사용됩니다.
+생성된 키(X.509)는 MQTT TLS 연결과 gRPC 연결에 사용됩니다.
+
 ## 키 & 토큰 생성
 
 ### 웹 UI
 
-1. 좌측 메뉴에서 <img src="./img/key_icon.jpg" width=47 style="display:inline"> 아이콘을 선택합니다.
+1. 좌측 메뉴에서 <img src="/neo/security/img/key_icon.jpg" width=47 style="display:inline"> 아이콘을 선택합니다.
 
-2. 상단 좌측 영역의 `+` 아이콘 <img src="./img/key_add_icon.jpg" width=221 style="display:inline">을 클릭합니다.
+2. 상단 좌측 영역의 `+` 아이콘 <img src="/neo/security/img/key_add_icon.jpg" width=221 style="display:inline">을 클릭합니다.
 
 3. 고유한 “Client Id”를 입력하고 유효 기간을 설정합니다(기본값은 오늘 기준 3년).  
    “Generate” 버튼을 누르면 해당 클라이언트용 키 파일이 생성됩니다.
 
-{{< figure src="./img/key_gen.jpg" width=927px >}}
+{{< figure src="/neo/security/img/key_gen.jpg" width=927px >}}
 
 4. “Download *.zip” 버튼을 클릭하거나 각 파일 내용을 복사해 저장합니다.  
    키는 다시 생성할 수 없으므로 이 단계가 유일한 백업 기회입니다.
@@ -118,7 +121,7 @@ machbase-neo serve --http-enable-token-auth true
 ......
 ```
 
-### 토큰을 사용하는 HTTP 클라이언트
+### 토큰 사용 HTTP 클라이언트
 
 토큰 파일 내용을 `Authorization: Bearer <token>` 헤더에 설정해 API를 호출합니다.
 
@@ -178,7 +181,7 @@ machbase-neo serve --mqtt-enable-token-auth true
 ......
 ```
 
-### 토큰을 사용하는 MQTT 클라이언트
+### 토큰 사용 MQTT 클라이언트
 
 CONNECT 메시지의 `username`에 등록된 토큰을 사용하고 `password`는 비워 둡니다.
 
@@ -199,22 +202,22 @@ Connection error: Connection Refused: not authorized.
 Error: The connection was refused.
 ```
 
-## MQTT X.509 authentication
+## MQTT X.509 인증
 
-When machbase-neo starts with `--mqtt-enable-tls true` command line option or set `Tls.Enabled = true` in the configurationfile,
-machbase-neo accepts TLS (a.k.a SSL) connections from clients. 
-If TLS is enabled, it ignores token based authentication and accepts only connection that finished ssl-handshaking successfully 
-with pre-registered X.509 certificates.
+machbase-neo는 `--mqtt-enable-tls true` 명령줄 옵션 또는 설정 파일에서 `Tls.Enabled = true`로 시작하면,
+클라이언트로부터 TLS(일명 SSL) 연결을 수신합니다.
+TLS가 활성화되면 토큰 기반 인증은 무시되며, 사전에 등록된 X.509 인증서로 SSL 핸드셰이크를 성공적으로 완료한 연결만 허용합니다.
 
 {{< callout >}}
-When TLS option is applied, machbase-neo mqtt server ignores `username` and `password` fields of CONNECT message.
-Do not specify those values. But still need to set `client-id` for the clarity.
+TLS 옵션이 적용되면 machbase-neo MQTT 서버는 CONNECT 메시지의 `username`과 `password` 필드를 무시합니다.
+해당 값들을 지정하지 마십시오. 하지만 명확성을 위해 `client-id`는 여전히 설정해야 합니다.
 {{< /callout >}}
 
-### MQTT client using X.509
+### X.509 사용 MQTT 클라이언트
 
-A client should use the pre-registered client-id and key and certificate those were generated as the above section.
-Apply client-id for the `client-id` of CONNECT message and do not set the `username` and `password`.
+클라이언트는 위 섹션에서 생성한 사전 등록된 client-id와 키, 인증서를 사용해야 합니다.
+CONNECT 메시지의 `client-id`에는 등록된 client-id를 적용하고, `username`과 `password`는 설정하지 마십시오.
+
 
 ```sh
 mosquitto_pub -h 127.0.0.1 -p 5653 \
@@ -226,8 +229,8 @@ mosquitto_pub -h 127.0.0.1 -p 5653 \
     -m '[ "wave.pi", `date +%s000000000`, 3.1415]'
 ```
 
-- `--id` apply `client-id` that was used for generating key
-- `--cert` client's certifcate file which was generated as `*_cert.pem`
-- `--key` client's key file that was generated as `*_key.pem`
-- `--cafile` set server's certificate since the client's certificate is singed by server. see below to know how to get this file.
-- `--insecure` additionally required because server's certificate is self-signed one.
+- `--id` 키 생성 시 사용한 `client-id`를 지정합니다
+- `--cert` `*_cert.pem`으로 생성된 클라이언트 인증서 파일입니다
+- `--key` `*_key.pem`으로 생성된 클라이언트 키 파일입니다
+- `--cafile` 클라이언트 인증서가 서버에 의해 서명되었으므로 서버 인증서를 지정합니다. 이 파일을 얻는 방법은 아래를 참조하세요.
+- `--insecure` 서버 인증서가 자체 서명되었기 때문에 추가로 필요합니다.
