@@ -10,22 +10,22 @@ weight: 80
 
 지정한 일정에 따라 실행할 작업을 등록합니다. 타이머 관리용 웹 UI는 {{< neo_since ver="8.0.20" />}}부터 제공됩니다.
 
-1. 좌측 메뉴에서 <img src=./img/timer_icon.png style="display:inline; width:32px;"/> 아이콘을 클릭합니다.
+1. 좌측 메뉴에서 <img src=/neo/timer/img/timer_icon.png style="display:inline; width:32px;"/> 아이콘을 클릭합니다.
 
-2. 좌측 상단의 `+` 아이콘 <img src=./img/timer_icon2.png style="display:inline; height:22px;"/>을 클릭합니다.
+2. 좌측 상단의 `+` 아이콘 <img src=/neo/timer/img/timer_icon2.png style="display:inline; height:22px;"/>을 클릭합니다.
 
 3. 타이머 ID(이름), 스케줄(Timer spec), 실행할 TQL 경로를 입력합니다.
 
-{{< figure src="./img/timer_form.png" width="488" >}}
+{{< figure src="/neo/timer/img/timer_form.png" width="488" >}}
 
 4. “Create” 버튼을 클릭해 타이머를 생성합니다.
 
 
 ## 타이머 시작/중지/삭제
 
-토글 버튼 <img src=./img/timer_toggle.png style="display:inline; height:25px;">을 눌러 시작하고, <img src=./img/timer_toggle_stop.png style="display:inline; height:25px;">을 눌러 중지합니다.
+토글 버튼 <img src=/neo/timer/img/timer_toggle.png style="display:inline; height:25px;">을 눌러 시작하고, <img src=/neo/timer/img/timer_toggle_stop.png style="display:inline; height:25px;">을 눌러 중지합니다.
 
-{{< figure src="./img/timer_detail.png" width="738" >}}
+{{< figure src="/neo/timer/img/timer_detail.png" width="738" >}}
 
 ## 타이머 스케줄 규격
 
@@ -145,7 +145,7 @@ a row fetched.
 
 웹 UI(8.0.20 도입)에서의 설정은 아래 셸 명령과 동일한 효과를 냅니다.
 
-{{< figure src="./img/timer_new.jpg" width="630px" >}}
+{{< figure src="/neo/timer/img/timer_new.jpg" width="630px" >}}
 
 아래 명령과 동일합니다.
 
@@ -153,7 +153,7 @@ a row fetched.
 timer add helloworld "@every 5s" helloworld.tql; 
 ```
 
-“Auto Start” 옵션을 선택하거나 <img src=./img/timer_toggle.png style="display:inline; height:25px;"> 버튼을 눌러 타이머를 시작합니다.  
+“Auto Start” 옵션을 선택하거나 <img src=/neo/timer/img/timer_toggle.png style="display:inline; height:25px;"> 버튼을 눌러 타이머를 시작합니다.  
 시작과 동시에 5초마다 새로운 레코드가 테이블에 삽입됩니다.
 
 **타이머 실행 결과 확인**
@@ -176,13 +176,13 @@ sys machbase-neo» select * from example where name = 'helloworld';
 
 자동 새로 고침 기능을 갖춘 대시보드를 만들면 타이머가 정상적으로 동작하는지 실시간으로 확인할 수 있습니다.
 
-{{< figure src="./img/helloworld-dsh-form.png" width="700px" >}}
+{{< figure src="/neo/timer/img/helloworld-dsh-form.png" width="700px" >}}
 
 ### 타이머 관리
 
 상세 페이지에서 수정·시작·중지·삭제 작업을 수행할 수 있습니다.
 
-{{< figure src="./img/timer_status.png" width="775px" >}}
+{{< figure src="/neo/timer/img/timer_status.png" width="775px" >}}
 
 
 **명령줄**
