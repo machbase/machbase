@@ -124,6 +124,6 @@ TAG 테이블의 저장된 태그 목록을 확인합니다.
 
 ## SQL 가이드
 
-아래 절에서는 TAG 테이블의 핵심 개념과 기능을 간략히 소개합니다. 자세한 내용은 [DBMS 레퍼런스](https://docs.machbase.com/dbms/)를 참고하십시오.
+아래 절에서는 TAG 테이블의 핵심 개념과 기능을 간략히 소개합니다. 자세한 내용은 [DBMS 레퍼런스](https://docs.machbase.com/kr/dbms/)를 참고하십시오.
 
 {{< children_toc />}}
