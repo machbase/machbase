@@ -220,6 +220,16 @@ for i := range 10_000 {
 }
 ```
 
+**Appender flush**
+
+To flush remaining data from the client buffer to the server over the network:
+
+```go
+if flusher, ok := apd.(api.Flusher); ok {
+    flusher.Flush()
+}
+```
+
 **Appender Best Practices:**
 
 {{< callout type="warning" >}}

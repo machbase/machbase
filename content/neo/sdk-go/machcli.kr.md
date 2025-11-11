@@ -220,6 +220,16 @@ for i := range 10_000 {
 }
 ```
 
+**Appender 플러시**
+
+클라이언트 버퍼에서 네트워크를 통해 서버로 남은 데이터를 플러시하려면:
+
+```go
+if flusher, ok := apd.(api.Flusher); ok {
+    flusher.Flush()
+}
+```
+
 **Appender 모범 사례:**
 
 {{< callout type="warning" >}}
