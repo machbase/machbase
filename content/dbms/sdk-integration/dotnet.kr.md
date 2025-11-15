@@ -8,7 +8,8 @@ weight: 20
 
 * [개요](#overview)
 * [설치](#install)
-* [NuGet 패키지를 이용한 설치](#install-connector-via-nuget-package-manager)
+* [NuGet(통합 8.0.51+)](#nuget-unified-connector)
+* [레거시 NuGet(5.x) 설치](#install-connector-via-nuget-package-manager)
 * [커넥션 문자열 참고](#connection-string-reference)
 * [API 레퍼런스](#api-reference)
 * [사용 예시](#usage-and-examples)
@@ -16,7 +17,7 @@ weight: 20
 
 ## 개요 {#overview}
 
-Machbase는 모든 지원 Machbase 와이어 프로토콜(2.1~4.0)을 포괄하는 범용 ADO.NET 프로바이더 **UniMachNetConnector**를 제공합니다. Machbase 8.0.50부터 이 커넥터가 서버 패키지에 기본 포함되며, DLL 파일명에 붙는 버전 번호는 빌드 또는 설치한 Machbase 버전과 동일합니다. 커넥터는 실행 시 커넥션 문자열을 참고해 올바른 프로토콜을 자동으로 협상하므로, 시계열 데이터 수집·질의 워크로드에도 별도 설정 없이 적합한 프로토콜을 선택합니다.
+Machbase는 모든 지원 Machbase 와이어 프로토콜(2.1~4.0)을 포괄하는 범용 ADO.NET 프로바이더 **UniMachNetConnector**를 제공합니다. Machbase 8.0.51부터 이 커넥터가 서버 패키지에 기본 포함되며, DLL 파일명에 붙는 버전 번호는 빌드 또는 설치한 Machbase 버전과 동일합니다. 커넥터는 실행 시 커넥션 문자열을 참고해 올바른 프로토콜을 자동으로 협상하므로, 시계열 데이터 수집·질의 워크로드에도 별도 설정 없이 적합한 프로토콜을 선택합니다.
 
 ## 설치 {#install}
 
@@ -25,13 +26,90 @@ Machbase는 모든 지원 Machbase 와이어 프로토콜(2.1~4.0)을 포괄하�
 - **UniMachNetConnector**: 프레임워크에 구애받지 않는 진입점입니다. `UniMachNetConnector-net{50|60|70|80}-<version>.dll` 형식으로 제공되며, 대상 프레임워크에 맞는 파일을 선택하면 됩니다.
 - **레거시 프로토콜 커넥터**: `machNetConnector-XX-net{50|60|70|80}-<version>.dll`과 같이 프로토콜별로 나뉜 어셈블리입니다. UniMachNetConnector가 필요 시 로드합니다.
 
-응용 프로그램에서는 대상 프레임워크에 맞는 DLL(예: `UniMachNetConnector-net80-8.0.50.dll`)을 참조하거나, 배포 시 실행 파일과 같은 위치에 함께 배치하면 됩니다.
+응용 프로그램에서는 대상 프레임워크에 맞는 DLL(예: `UniMachNetConnector-net80-8.0.51.dll`)을 참조하거나, 배포 시 실행 파일과 같은 위치에 함께 배치하면 됩니다.
 
-## NuGet 패키지를 이용한 설치 {#install-connector-via-nuget-package-manager}
+## NuGet로 설치 (통합 커넥터, 8.0.51+) {#nuget-unified-connector}
+
+Machbase 8.0.51부터 통합 커넥터는 NuGet에도 `UniMachNetConnector` 패키지로 게시됩니다. 새 프로젝트에서는 DLL 복사 대신 NuGet 패키지 참조 방식을 권장합니다.
+
+- 지원 TFM: net5.0, net6.0, net7.0, net8.0
+- 외부 NuGet 의존성 없음(자급자족 패키지)
+
+### 빠른 시작(명령줄)
+
+```bash
+# 프로젝트 폴더에서 실행
+dotnet add package UniMachNetConnector --version 8.0.51
+dotnet build
+```
+
+소스(피드)를 명시적으로 제어해야 하면 참조 추가만 하고, 별도로 복원하세요.
+
+```bash
+dotnet add package UniMachNetConnector --version 8.0.51 --no-restore
+
+# nuget.org 메타데이터를 강제로 갱신
+dotnet nuget locals http-cache --clear
+dotnet restore --no-cache --source https://api.nuget.org/v3/index.json
+```
+
+### Visual Studio
+
+- 프로젝트 마우스 오른쪽 클릭 → NuGet 패키지 관리 → 찾아보기 → “UniMachNetConnector” 검색 → 8.0.51 선택 → 설치.
+
+### 프로젝트 파일 예시
+
+```xml
+<ItemGroup>
+  <PackageReference Include="UniMachNetConnector" Version="8.0.51" />
+  <!-- 추가 Machbase 패키지 불필요 -->
+  <!-- 대상 프레임워크: net5.0|net6.0|net7.0|net8.0 -->
+</ItemGroup>
+```
+
+### 로컬/사내 피드 사용(선택)
+
+사내 레지스트리 또는 폴더 피드를 사용할 경우 다음과 같이 소스를 추가하고 복원합니다. 폴더 피드는 `UniMachNetConnector.8.0.51.nupkg`를 해당 디렉터리에 배치하면 됩니다.
+
+```bash
+# 1회 설정
+dotnet nuget add source /path/to/local-nuget -n mach-local
+
+# nuget.org와 병행 복원
+dotnet restore --no-cache \
+  --source /path/to/local-nuget \
+  --source https://api.nuget.org/v3/index.json
+```
+
+권한 제약이 있는 환경에서는 패키지 캐시 경로를 절대 경로로 지정하세요.
+
+```bash
+PKG_DIR="$(pwd)/.nuget-packages"; mkdir -p "$PKG_DIR"
+NUGET_PACKAGES="$PKG_DIR" dotnet restore --no-cache --source /path/to/local-nuget
+NUGET_PACKAGES="$PKG_DIR" dotnet run --no-restore
+```
+
+> 팁: 게시 직후 NU1102(지정 버전을 찾지 못함)나 “incompatible with 'all' frameworks”가 보이면 보통 인덱싱/캐시 이슈입니다. `dotnet nuget locals http-cache --clear` 후 `--no-cache`로 복원하면 해결됩니다. 패키지는 net5.0~net8.0을 지원합니다.
+
+### 최소 사용 예시
+
+```csharp
+using Mach.Data.MachClient;
+
+var cs = "SERVER=127.0.0.1;PORT_NO=55656;UID=SYS;PWD=MANAGER;PROTOCOL=4.0-full";
+using var conn = new MachConnection(cs);
+conn.Open();
+
+using var cmd = new MachCommand("SELECT COUNT(*) FROM V$TABLES", conn);
+var count = (long)cmd.ExecuteScalar();
+Console.WriteLine($"Tables: {count}");
+```
+
+## 레거시 NuGet(5.x) 설치 {#install-connector-via-nuget-package-manager}
 
 > **참고**: Machbase .NET Connector 5.0 패키지는 NuGet에 등록되어 있으며, 통합형 UniMachNetConnector가 도입되기 이전의 독립 배포본입니다.
 
-Visual Studio를 사용하면 NuGet 저장소에서 .NET Connector를 쉽게 내려받을 수 있습니다. 아래 절차는 `machNetConnector5.0` 패키지를 가져오는 예시입니다.
+Visual Studio를 사용하면 기존(통합 이전) .NET Connector도 NuGet에서 받을 수 있습니다. 아래 절차는 `machNetConnector5.0` 패키지를 설치하는 방법입니다. (새 프로젝트에는 통합형 `UniMachNetConnector` 8.0.51+ 사용을 권장합니다.)
 
 1. Visual Studio에서 새 C# .NET 프로젝트를 생성합니다.
 2. 솔루션 탐색기에서 프로젝트 이름을 마우스 오른쪽 클릭하고 **NuGet 패키지 관리**를 선택합니다.
@@ -40,6 +118,10 @@ Visual Studio를 사용하면 NuGet 저장소에서 .NET Connector를 쉽게 내
 5. **변경 내용 미리 보기** 창이 나타나면 **확인**을 눌러 설치를 계속합니다.
 6. 설치가 완료되면 솔루션 탐색기 > **종속성 → 패키지**에서 설치된 패키지를 확인할 수 있습니다.
 7. `Program.cs`에 `using Mach.Data.MachClient;`를 추가하면 machNetConnector API를 사용할 수 있습니다.
+
+> 어떤 NuGet을 써야 하나요?
+> - 신규/업그레이드 앱: `UniMachNetConnector` 8.0.51+ 권장(net5.0~net8.0 지원, 모든 프로토콜 및 4.0-full 포함).
+> - 레거시 유지: 통합 패키지로 전환이 어려울 때만 `machNetConnector5.0`을 사용하세요.
 
 ## 커넥션 문자열 참고 {#connection-string-reference}
 
@@ -706,9 +788,9 @@ connection.SetConnectAppendFlush(true);
 
 ## 프로토콜 4.0-full 전체 API {#full-provider-apis-protocol-40-full}
 
-`PROTOCOL=4.0-full`을 사용하면 Machbase 8.0.50 이상에서 확장된 ADO.NET 표면을 사용할 수 있습니다. 다음 어셈블리 중 하나를 로드해 기능을 활성화합니다.
+`PROTOCOL=4.0-full`을 사용하면 Machbase 8.0.51 이상에서 확장된 ADO.NET 표면을 사용할 수 있습니다. 다음 어셈블리 중 하나를 로드해 기능을 활성화합니다.
 
-- `UniMachNetConnector-net80-8.0.50.dll` – Machbase 8.0.50 이상에 포함된 기본 커넥터
+- `UniMachNetConnector-net80-8.0.51.dll` – Machbase 8.0.51 이상에 포함된 기본 커넥터
 - `machNetConnector-40-net80-3.2.0.dll` – 동일한 기능을 제공하는 독립 배포본
 
 ### 4.0-full에서 추가된 주요 타입
