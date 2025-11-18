@@ -151,7 +151,7 @@ var connectionString = string.Format(
 
 When your application connects to a mix of Machbase releases, set `PROTOCOL=auto` to let UniMachNetConnector negotiate the correct legacy handshake at runtime. The resolver works as follows:
 
-- `PROTOCOL=auto` (or `auto-limited`) tests versions 4.0, 3.0, 2.2, then 2.1 in that order, using your supplied host, port, user, password, database, and `CONNECT_TIMEOUT`.
+- `PROTOCOL=auto` tests versions 4.0, 3.0, 2.2, then 2.1 in that order, using your supplied host, port, user, password, database, and `CONNECT_TIMEOUT`.
 - `PROTOCOL=auto-full` behaves the same but, when the server reports protocol 4.0, the connector prefers the full-provider descriptor (`4.0-full`) before falling back to the limited surface area.
 - Multiple hosts in `SERVER=hostA:5700,hostB:6000` are tried sequentially; each failure message records the per-host/per-protocol attempt so you can pinpoint unreachable versions.
 - Credentials are upper-cased the same way as the legacy native drivers, so existing SYS/MANAGER test deployments work without change. Provide an explicit `DATABASE=` value when you do not use the default `data` catalog.
