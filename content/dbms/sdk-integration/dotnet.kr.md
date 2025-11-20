@@ -135,7 +135,7 @@ Visual Studio를 사용하면 기존(통합 이전) .NET Connector도 NuGet에�
 | `PASSWORD`, `PWD`                                              | 비밀번호                                                                                               | `PWD=manager`                                    | 없음    |
 | `CONNECT_TIMEOUT`, `ConnectionTimeout`, `connectTimeout`       | 커넥션 타임아웃(밀리초)                                                                                | `CONNECT_TIMEOUT=10000`                          | `60000` |
 | `COMMAND_TIMEOUT`, `CommandTimeout`, `commandTimeout`          | 명령별 타임아웃(밀리초)                                                                               | `COMMAND_TIMEOUT=50000`                          | `60000` |
-| `PROTOCOL`, `ProtocolVersion`, `MachProtocol`                  | 선호하는 와이어 프로토콜 (`2.1`, `3.0`, `4.0`, `4.0-full` 등). 값을 지정하지 않으면 `4.0`을 사용합니다. | `PROTOCOL=4.0-full`                              | `4.0`   |
+| `PROTOCOL`, `ProtocolVersion`, `MachProtocol`                  | 선호하는 와이어 프로토콜 (`2.1`, `3.0`, `4.0`, `4.0-full`, `auto`, `auto-full` 등). 입력하지 않으면 `4.0`을 사용합니다. | `PROTOCOL=auto`                                  | `4.0`   |
 
 예시:
 
@@ -145,6 +145,18 @@ var connectionString = string.Format(
     host,
     port);
 ```
+
+### 프로토콜 자동 감지 (`PROTOCOL=auto`)
+
+서버 버전이 혼재된 환경이라면 `PROTOCOL=auto`를 지정해 UniMachNetConnector가 실행 시 적절한 레거시 프로토콜을 협상하도록 설정할 수 있습니다. 동작 방식은 다음과 같습니다.
+
+- `PROTOCOL=auto`는 4.0 → 3.0 → 2.2 → 2.1 순서로 핸드셰이크를 시도하며, 커넥션 문자열에 전달한 호스트·포트·사용자·비밀번호·데이터베이스·`CONNECT_TIMEOUT` 값을 그대로 사용합니다.
+- `PROTOCOL=auto-full`은 위와 같지만 서버가 4.0을 리턴하면 먼저 `4.0-full` 디스크립터를 시도하고, 필요시 제한 버전(4.0)으로 폴백합니다.
+- `SERVER=hostA:5700,hostB:6000`처럼 여러 호스트를 지정하면 순차적으로 시도하며, 실패 메시지에는 각 호스트/프로토콜 조합이 기록되어 문제 지점을 파악할 수 있습니다.
+- 자격 증명은 기존 레거시 드라이버와 동일하게 대문자로 변환됩니다. 기본 데이터베이스(`data`)를 사용하지 않는다면 `DATABASE=` 값을 명시하세요.
+- `CONNECT_TIMEOUT` 값이 각 감지 라운드 트립에 적용됩니다. 예외 메시지에 `Protocol probe received an invalid response`가 보이면 포트·방화벽·TLS 설정을 다시 확인하십시오.
+
+이미 서버 버전을 알고 있다면 `PROTOCOL=2.1`, `3.0`, `4.0`, `4.0-full`처럼 명시적으로 지정해 자동 감지를 건너뛸 수도 있습니다.
 
 ## API 레퍼런스 {#api-reference}
 

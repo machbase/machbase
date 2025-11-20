@@ -136,7 +136,7 @@ Connection-string segments are separated by semicolons (`;`). Keywords listed in
 | `PASSWORD`, `PWD`                                               | Password                                                                                                  | `PWD=manager`                                   | _(none)_|
 | `CONNECT_TIMEOUT`, `ConnectionTimeout`, `connectTimeout`        | Connection timeout in milliseconds                                                                        | `CONNECT_TIMEOUT=10000`                        | `60000` |
 | `COMMAND_TIMEOUT`, `CommandTimeout`, `commandTimeout`           | Per-command timeout in milliseconds                                                                       | `COMMAND_TIMEOUT=50000`                        | `60000` |
-| `PROTOCOL`, `ProtocolVersion`, `MachProtocol`                   | Preferred wire protocol (for example `2.1`, `3.0`, `4.0`, `4.0-full`). UniMachNetConnector now defaults to `4.0` when omitted. | `PROTOCOL=4.0-full`                            | `4.0`   |
+| `PROTOCOL`, `ProtocolVersion`, `MachProtocol`                   | Preferred wire protocol (for example `2.1`, `3.0`, `4.0`, `4.0-full`, `auto`, `auto-full`). UniMachNetConnector defaults to `4.0` when omitted. | `PROTOCOL=auto`                                | `4.0`   |
 
 Example:
 
@@ -146,6 +146,18 @@ var connectionString = string.Format(
     host,
     port);
 ```
+
+### Protocol auto-detection (`PROTOCOL=auto`)
+
+When your application connects to a mix of Machbase releases, set `PROTOCOL=auto` to let UniMachNetConnector negotiate the correct legacy handshake at runtime. The resolver works as follows:
+
+- `PROTOCOL=auto` tests versions 4.0, 3.0, 2.2, then 2.1 in that order, using your supplied host, port, user, password, database, and `CONNECT_TIMEOUT`.
+- `PROTOCOL=auto-full` behaves the same but, when the server reports protocol 4.0, the connector prefers the full-provider descriptor (`4.0-full`) before falling back to the limited surface area.
+- Multiple hosts in `SERVER=hostA:5700,hostB:6000` are tried sequentially; each failure message records the per-host/per-protocol attempt so you can pinpoint unreachable versions.
+- Credentials are upper-cased the same way as the legacy native drivers, so existing SYS/MANAGER test deployments work without change. Provide an explicit `DATABASE=` value when you do not use the default `data` catalog.
+- The `CONNECT_TIMEOUT` governs each probe roundtrip. If you see `Protocol probe received an invalid response (missing result)` in the exception text, the handshake did not complete—verify the port, TLS/SSL settings, or firewall.
+
+Explicit `PROTOCOL=2.1`, `3.0`, `4.0`, or `4.0-full` remain available when you already know the exact server version and want to skip auto-detection.
 
 ## API Reference
 
