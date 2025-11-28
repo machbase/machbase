@@ -118,7 +118,7 @@ CREATE TAG TABLE tagtbl (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, v
 
 ## 조건 롤업·필터·힌트
 
-### 무엇이 달라졌나요?
+### 롤업 데이블 선택 로직 
 동일한 주기·값 컬럼·JSON PATH를 가진 롤업이 여러 개 있을 때 엔진이 "조건 없음 → 조건 있음" 순서로 자동 선택한다. 필요하면 힌트로 특정 롤업을 강제로 사용할 수 있고, 생성 시 잘못된 조건은 즉시 차단된다.
 
 ### 조건 있는 롤업 생성 방법
