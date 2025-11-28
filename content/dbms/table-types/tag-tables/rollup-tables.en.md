@@ -12,7 +12,7 @@ Rollup tables provide automatic time-based aggregation of tag data, dramatically
 
 When user create tag table, Rollup does not created default, user must create by themselves. Syntax is as follow.
 
-![create-rollup](../create-rollup.png)
+![create-rollup](/dbms/table-types/tag-tables/create-rollup.png)
 
 * rollup name : rollup table's name (Can be freely created with string up to 40)
 * source table name : Name of source table which rollup will aggregate data.

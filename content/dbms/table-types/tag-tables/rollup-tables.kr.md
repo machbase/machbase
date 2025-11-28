@@ -12,7 +12,7 @@ weight: 60
 
 Tag Table 생성시 Rollup이 기본으로 생성되지 않고, 사용자가 직접 생성하는 방식으로 변경되었으며 문법은 아래와 같다.
 
-![create-rollup](../create-rollup.png)
+![create-rollup](/dbms/table-types/tag-tables/create-rollup.png)
 
 * rollup name : 생성될 rollup table의 이름 (40자 이내의 문자열로 자유롭게 생성 가능)
 * source table name : 생성될 rollup이 데이터를 집계할 source table 이름
