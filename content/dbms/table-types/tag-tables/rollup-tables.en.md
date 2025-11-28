@@ -118,6 +118,75 @@ CREATE ROLLUP _tag_rollup_sec ON tag(value) INTERVAL 1 SEC EXTENSION;
 CREATE TAG TABLE tagtbl (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED) WITH ROLLUP EXTENSION;
 ```
 
+## Conditional Rollups, Filters, and Hints
+
+### What this feature solves
+When multiple rollups share the same interval, value column, and JSON path, the engine now distinguishes between “plain” rollups and “filtered” rollups. It automatically prefers the unfiltered one, yet lets you force a specific rollup with a hint. Filters are validated at creation time to prevent confusing or unsafe definitions.
+
+### How to create a filtered rollup
+```sql
+CREATE ROLLUP <rollup_name>
+  ON <table_name>(<value_col>)
+  INTERVAL <n> <SEC|MIN|HOUR>
+  [WITH <props>]
+  [WHERE <predicate>];
+```
+- The predicate is applied to source rows **before** aggregation; predicate columns are not stored in the rollup table.
+- Allowed: regular scalar expressions (AND/OR/NOT, comparison, BETWEEN, IN, LIKE, CASE, non-aggregate functions) that reference existing columns, including non‑summarized columns such as `value2` or `status`.
+- Not allowed: subqueries, aggregate functions, unknown columns, or the tag-name (PK) column of a tag table (it is internally numeric, so string comparison is meaningless).
+- Validation happens during `CREATE ROLLUP`; invalid predicates fail fast with an error.
+
+### Automatic selection order (no hint)
+1. If a `ROLLUP_TABLE(<rollup_table_name>)` hint exists, it always wins.
+2. Otherwise, among rollups that match interval/value/JSON path, one **without** a predicate is chosen first.
+3. If no plain rollup exists, a predicate rollup is used.
+4. If multiple candidates remain, the existing rule is kept: pick the largest frequency that divides the requested interval; for equal frequencies, the first registered rollup stays selected.
+
+### Quick recipe (mirrors the regression scenario)
+1) Create a tag table with extra columns you want to filter on, for example `value2 DOUBLE`, `status INTEGER` in addition to the summarized `value`.  
+2) Create both plain and filtered rollups:
+```sql
+CREATE ROLLUP _tag_rollup_plain_1s      ON tag_bulk(value) INTERVAL 1 SEC;
+CREATE ROLLUP _tag_rollup_plain_1m      FROM _tag_rollup_plain_1s INTERVAL 1 MIN;
+CREATE ROLLUP _tag_rollup_cond_1s       ON tag_bulk(value) INTERVAL 1 SEC
+  WHERE value2 >= 50 AND status >= 2;
+CREATE ROLLUP _tag_rollup_cond_1m       FROM _tag_rollup_cond_1s INTERVAL 1 MIN;
+
+-- Extended rollups for FIRST()/LAST()
+CREATE ROLLUP _tag_rollup_plain_1s_ext  ON tag_bulk(value) INTERVAL 1 SEC EXTENSION;
+CREATE ROLLUP _tag_rollup_cond_1s_ext   ON tag_bulk(value) INTERVAL 1 SEC EXTENSION
+  WHERE value2 >= 50 AND status >= 2;
+```
+3) Load data (bulk loader or INSERT), then flush to make aggregates available:
+```sql
+EXEC ROLLUP_FORCE(_TAG_BULK_ROLLUP_SEC);   -- auto rollup from WITH ROLLUP
+EXEC ROLLUP_FORCE(_tag_rollup_plain_1s);
+EXEC ROLLUP_FORCE(_tag_rollup_cond_1s);
+```
+4) Query without a hint (uses the plain rollup automatically):
+```sql
+SELECT rollup('sec', 30, time) AS rt, AVG(value), COUNT(value)
+FROM   tag_bulk
+WHERE  name = 'dev9' AND time BETWEEN '2020-01-02 00:00:00' AND '2020-01-02 00:10:00'
+GROUP BY rt
+ORDER BY rt;
+```
+5) Force a filtered rollup when you must honor the predicate:
+```sql
+SELECT /*+ ROLLUP_TABLE(_tag_rollup_cond_1s) */
+       rollup('sec', 30, time) AS rt, AVG(value), COUNT(value)
+FROM   tag_bulk
+WHERE  name = 'dev9' AND time BETWEEN '2020-01-02 00:00:00' AND '2020-01-02 00:10:00'
+GROUP BY rt
+ORDER BY rt;
+```
+6) Using FIRST()/LAST()? Point the hint to an `EXTENSION` rollup; the functions are not available on non-extension rollups.
+
+### Metadata and upgrade notes
+- `V$ROLLUP` now shows a `PREDICATE` column so you can confirm which filter a rollup was created with.
+- The meta version is bumped to 10.0 to add this column. On first server start after upgrade, the catalog is altered automatically. If the upgrade fails (for example on a very old or corrupted meta), stop the server, create a fresh database, and recreate rollups.
+- Rollup creation still enforces the existing rules on intervals and value types; filters do not change those constraints.
+
 ## Start/Stop Rollup Table
 
 When rollup is created, rollup thread is automatically started, and the user can start/stop rollup thread arbitrarily.

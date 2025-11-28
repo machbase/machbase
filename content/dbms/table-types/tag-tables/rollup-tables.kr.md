@@ -6,7 +6,7 @@ weight: 60
 
 ## 개요
 
-롤업 테이블은 태그 데이터를 시간 기준으로 자동 집계해 분석과 리포트 쿼리의 성능을 크게 향상시킵니다. 수백만 건의 원시 데이터를 스캔하는 대신, 다양한 구간별 통계가 미리 계산되어 저장됩니다.
+롤업 테이블은 태그 데이터를 시간 기준으로 자동 집계해 분석과 리포트 쿼리의 성능을 크게 향상시킨다. 수백만 건의 원시 데이터를 스캔하는 대신, 다양한 구간별 통계가 미리 계산되어 저장된다.
 
 ## ROLLUP 테이블 생성
 
@@ -114,6 +114,76 @@ CREATE ROLLUP _tag_rollup_sec ON tag(value) INTERVAL 1 SEC EXTENSION;
 -- 확장 Rollup 테이블 자동 생성
 CREATE TAG TABLE tagtbl (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED) WITH ROLLUP EXTENSION;
 ```
+
+
+## 조건 롤업·필터·힌트
+
+### 무엇이 달라졌나요?
+동일한 주기·값 컬럼·JSON PATH를 가진 롤업이 여러 개 있을 때 엔진이 "조건 없음 → 조건 있음" 순서로 자동 선택한다. 필요하면 힌트로 특정 롤업을 강제로 사용할 수 있고, 생성 시 잘못된 조건은 즉시 차단된다.
+
+### 조건 있는 롤업 생성 방법
+```sql
+CREATE ROLLUP <rollup_name>
+  ON <table_name>(<value_col>)
+  INTERVAL <n> <SEC|MIN|HOUR>
+  [WITH <props>]
+  [WHERE <predicate>];
+```
+- WHERE 조건은 집계 전에 원본 행에 적용되며, 조건에 사용한 컬럼은 롤업 테이블에 저장되지 않는다.
+- 허용: 일반 스칼라 표현식(AND/OR/NOT, 비교, BETWEEN, IN, LIKE, CASE, 비집계 함수)과 존재하는 컬럼 사용. `value2`, `status` 같은 비요약 컬럼도 자유롭게 조건으로 사용할 수 있다.
+- 금지: 서브쿼리, 집계 함수, 존재하지 않는 컬럼, 태그 테이블의 태그명(PK) 컬럼 조건(내부적으로 숫자 ID이므로 문자열 비교가 무의미).
+- `CREATE ROLLUP` 시점에 위반 사항이 있으면 에러로 생성이 거부된다.
+
+### 자동 선택 우선순위(힌트 없을 때)
+1. `ROLLUP_TABLE(<rollup_table_name>)` 힌트가 있으면 그 롤업을 무조건 사용.
+2. 같은 주기/값 컬럼/JSON PATH 후보 중 **조건 없는 롤업**을 우선.
+3. 조건 없는 롤업이 없으면 조건 롤업 사용.
+4. 남은 후보가 여러 개면 기존 규칙 유지: 요청 주기를 나누는 가장 큰 주기 → 같은 주기면 먼저 등록된 롤업을 그대로 사용.
+
+### 빠른 사용 예(회귀 테스트 시나리오 기반)
+1) `value`(SUMMARIZED) 외에 `value2`, `status` 같은 필터용 컬럼이 있는 태그 테이블을 만든다.  
+2) 조건 유무가 다른 롤업을 함께 만든다.
+```sql
+CREATE ROLLUP _tag_rollup_plain_1s     ON tag_bulk(value) INTERVAL 1 SEC;
+CREATE ROLLUP _tag_rollup_plain_1m     FROM _tag_rollup_plain_1s INTERVAL 1 MIN;
+CREATE ROLLUP _tag_rollup_cond_1s      ON tag_bulk(value) INTERVAL 1 SEC
+  WHERE value2 >= 50 AND status >= 2;
+CREATE ROLLUP _tag_rollup_cond_1m      FROM _tag_rollup_cond_1s INTERVAL 1 MIN;
+
+-- FIRST()/LAST()를 쓰려면 EXTENSION 롤업 필요
+CREATE ROLLUP _tag_rollup_plain_1s_ext ON tag_bulk(value) INTERVAL 1 SEC EXTENSION;
+CREATE ROLLUP _tag_rollup_cond_1s_ext  ON tag_bulk(value) INTERVAL 1 SEC EXTENSION
+  WHERE value2 >= 50 AND status >= 2;
+```
+3) 데이터를 로딩한 뒤 즉시 집계를 원하면 수동 플러시를 실행한다.
+```sql
+EXEC ROLLUP_FORCE(_TAG_BULK_ROLLUP_SEC);   -- WITH ROLLUP으로 생성된 기본 롤업
+EXEC ROLLUP_FORCE(_tag_rollup_plain_1s);
+EXEC ROLLUP_FORCE(_tag_rollup_cond_1s);
+```
+4) 힌트 없이 조회하면 조건 없는 롤업이 자동으로 사용된다.
+```sql
+SELECT rollup('sec', 30, time) AS rt, AVG(value), COUNT(value)
+FROM   tag_bulk
+WHERE  name = 'dev9' AND time BETWEEN '2020-01-02 00:00:00' AND '2020-01-02 00:10:00'
+GROUP BY rt
+ORDER BY rt;
+```
+5) 반드시 필터된 집계를 써야 할 때는 힌트를 지정한다.
+```sql
+SELECT /*+ ROLLUP_TABLE(_tag_rollup_cond_1s) */
+       rollup('sec', 30, time) AS rt, AVG(value), COUNT(value)
+FROM   tag_bulk
+WHERE  name = 'dev9' AND time BETWEEN '2020-01-02 00:00:00' AND '2020-01-02 00:10:00'
+GROUP BY rt
+ORDER BY rt;
+```
+6) `FIRST()`/`LAST()`를 사용할 경우 힌트 대상이 `EXTENSION` 롤업이어야 한다. 일반 롤업에 힌트를 주면 해당 함수가 없어 에러가 발생한다.
+
+### 메타 정보와 업그레이드 안내
+- `V$ROLLUP`에 `PREDICATE` 컬럼이 추가되어 롤업 필터를 바로 확인할 수 있다.
+- 메타 버전이 10.0으로 올라가며 서버 최초 기동 시 카탈로그가 자동으로 갱신된다. 오래된/손상된 메타로 인해 실패하면 서버를 중지한 뒤 새 DB를 생성하고 롤업을 다시 만들어 주세요.
+- 필터 기능은 기존 롤업 제약(주기 배수, 숫자형 대상 등)을 그대로 따른다.
 
 
 ## ROLLUP 테이블 시작/중지
