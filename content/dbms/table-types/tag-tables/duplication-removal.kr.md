@@ -57,3 +57,21 @@ ALTER TABLE {table_name} set TAG_DUPLICATE_CHECK_DURATION={duration in minutes};
 
 * 중복 제거 설정은 분 단위로 구성할 수 있으며, 최대 43200분(30일)의 제한이 있습니다.
 * 기존 입력 데이터가 이미 삭제된 경우, 동일한 데이터의 후속 발생은 중복 제거 목적으로 중복으로 간주되지 않습니다.
+
+## TRACE 로그로 중복 제거 확인
+- 위치: `$MACHBASE_HOME/trc/machbase.trc`
+- 빠른 필터:
+  ```bash
+  tail -n 50 $MACHBASE_HOME/trc/machbase.trc | grep DUP_DROP
+  ```
+- 로그 포맷: `DUP_DROP Table=<테이블명> TAG=<tag id> TIME=<시간> COL<n>=<값> ...`
+- 실제 예시 (TAG=1의 동일 TIME 중복):
+  ```
+  [2025-11-29 13:50:27 P-151395 T-126344581076672][SM-INFO] DUP_DROP Table=TAG TAG=1 TIME=1998-12-24 09:00:00 000:000:012  COL3=12.000000
+  ...
+  [2025-11-29 13:50:27 P-151395 T-126344581076672][SM-INFO] DUP_DROP Table=TAG TAG=1 TIME=1998-12-24 09:00:00 000:000:048  COL3=48.000000
+  ```
+- 활용 포인트
+  - TIME을 기준으로 동일 시각에 중복이 어떻게 제거되는지 확인.
+  - `Table=`/`TAG=`를 grep으로 추가 필터링하면 특정 테이블·태그만 빠르게 추적.
+- 주의: 한 줄 최대 약 4KB라 컬럼이 매우 많을 때 뒤가 잘릴 수 있으나 크래시는 발생하지 않습니다.

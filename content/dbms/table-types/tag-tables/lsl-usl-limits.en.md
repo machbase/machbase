@@ -183,3 +183,24 @@ Elapsed time: 0.001
 ```
 
 [^1]: [IEEE 754](https://en.wikipedia.org/wiki/IEEE_754)
+
+## Checking LSL/USL violations via TRACE log
+- Location: `$MACHBASE_HOME/trc/machbase.trc`
+- Quick filter:
+  ```bash
+  grep LIMIT_DROP $MACHBASE_HOME/trc/machbase.trc | tail -n 20
+  ```
+- Log format: `LIMIT_DROP (TYPE=<UPPER|LOWER>) TABLE=<table> TAG=<tag name> <column=value ...>`
+  - TYPE=LOWER/UPPER shows which bound was violated.
+  - DATETIME prints as `YYYY-MM-DD HH24:MI:SS mmm:uuu:nnn`.
+- Real sample:
+  ```
+  [2025-11-29 13:50:34 P-151395 T-126343511537344][QP-INFO] LIMIT_DROP (TYPE=LOWER) TABLE=TAG3 TAG=tag-1  TIME=2020-01-01 00:00:00 000:000:000 VALUE=5.55
+  [2025-11-29 13:50:34 P-151395 T-126343511537344][QP-INFO] LIMIT_DROP (TYPE=UPPER) TABLE=TAG3 TAG=tag-1  TIME=2020-01-01 00:00:04 000:000:000 VALUE=30.55
+  [2025-11-29 13:50:35 P-151395 T-126344475694784][QP-INFO] LIMIT_DROP (TYPE=LOWER) TABLE=TAG3 TAG=tag-2  TIME=1998-12-24 09:00:00 000:000:000 VALUE=0
+  [2025-11-29 13:50:35 P-151395 T-126344475694784][QP-INFO] LIMIT_DROP (TYPE=UPPER) TABLE=TAG3 TAG=tag-2  TIME=1998-12-24 09:00:00 000:000:008 VALUE=45
+  ```
+- How to use it
+  - Quickly spot which tag and timestamp violated LOWER/UPPER and what the exact VALUE was.
+  - Combine with grep on `TAG=` or `TABLE=` to focus on specific targets.
+- Note: Each line is capped at ~4KB; with many columns the tail may be truncated, and right after startup table names may show as IDs until meta cache is ready.
