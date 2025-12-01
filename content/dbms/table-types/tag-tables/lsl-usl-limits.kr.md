@@ -182,4 +182,25 @@ _ID                  TAG_ID                                              LSL    
 Elapsed time: 0.001
 ```
 
+## TRACE 로그로 LSL/USL 위반 확인
+- 위치: `$MACHBASE_HOME/trc/machbase.trc`
+- 빠른 필터:
+  ```bash
+  grep LIMIT_DROP $MACHBASE_HOME/trc/machbase.trc | tail -n 20
+  ```
+- 로그 포맷: `LIMIT_DROP (TYPE=<UPPER|LOWER>) TABLE=<테이블명> TAG=<tag name> <컬럼명=값 ...>`
+  - TYPE=LOWER/UPPER로 어떤 한계가 위반됐는지 구분.
+  - DATETIME은 `YYYY-MM-DD HH24:MI:SS mmm:uuu:nnn` 형태.
+- 실제 예시:
+  ```
+  [2025-11-29 13:50:34 P-151395 T-126343511537344][QP-INFO] LIMIT_DROP (TYPE=LOWER) TABLE=TAG3 TAG=tag-1  TIME=2020-01-01 00:00:00 000:000:000 VALUE=5.55
+  [2025-11-29 13:50:34 P-151395 T-126343511537344][QP-INFO] LIMIT_DROP (TYPE=UPPER) TABLE=TAG3 TAG=tag-1  TIME=2020-01-01 00:00:04 000:000:000 VALUE=30.55
+  [2025-11-29 13:50:35 P-151395 T-126344475694784][QP-INFO] LIMIT_DROP (TYPE=LOWER) TABLE=TAG3 TAG=tag-2  TIME=1998-12-24 09:00:00 000:000:000 VALUE=0
+  [2025-11-29 13:50:35 P-151395 T-126344475694784][QP-INFO] LIMIT_DROP (TYPE=UPPER) TABLE=TAG3 TAG=tag-2  TIME=1998-12-24 09:00:00 000:000:008 VALUE=45
+  ```
+- 활용 포인트
+  - TAG별로 LOWER/UPPER 위반 시각과 값을 한눈에 파악.
+  - grep으로 TAG/테이블명을 추가 필터하면 특정 대상만 추적 가능.
+- 주의: 한 줄 최대 약 4KB라 컬럼이 많을 때 뒤가 잘릴 수 있으며, 기동 직후 메타 캐시 준비 전에는 테이블명이 ID로 보일 수 있습니다.
+
 [^1]: [IEEE 754](https://en.wikipedia.org/wiki/IEEE_754)
