@@ -43,7 +43,7 @@ ignoreFiles:
   - "content/fluid/*"
 
 params:
-  latestNeoVer: v8.0.65
+  latestNeoVer: v8.0.66
   examples_url: https://github.com/machbase/neo-server/tree/main/examples
   releases_url: https://github.com/machbase/neo-server/releases
   jdbc_version: 8.0.2
