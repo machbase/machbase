@@ -1,3 +1,10 @@
+---
+layout : post
+title : 'Trace Log'
+type: docs
+weight: 10
+---
+
 # TRACE_LOG_LEVEL
 
 When issues occur in Machbase server, detailed operations can be checked through log files.
