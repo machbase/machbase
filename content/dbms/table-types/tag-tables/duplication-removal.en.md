@@ -59,7 +59,30 @@ ALTER TABLE {table_name} set TAG_DUPLICATE_CHECK_DURATION={duration in minutes};
 * If the existing input data has already been deleted, any subsequent occurrence of the same data will not be considered as a duplicate for the purpose of duplication removal.
 
 ## Checking duplicates via TRACE log
-- Location: `$MACHBASE_HOME/trc/machbase.trc`
+Adding 32(SM_2) to TRACE_LOG_LEVEL outputs deduplication logs.
+```sql
+-- Check current setting
+select name, value from v$property where name = 'TRACE_LOG_LEVEL';
+
+-- Change setting
+alter system set TRACE_LOG_LEVEL={current_value + 32};
+```
+
+**Configuration Example**
+```sql
+-- Check current value
+Mach> select name, value from v$property where name = 'TRACE_LOG_LEVEL';
+name                                                          value
+---------------------------------------------------------------------------------------------------------------------------------------------------
+TRACE_LOG_LEVEL                                               277
+[1] row(s) selected.
+
+-- Add 32 (277 + 32 = 309)
+Mach> alter system set TRACE_LOG_LEVEL=309;
+Altered successfully.
+```
+
+- Log file location: `$MACHBASE_HOME/trc/machbase.trc`
 - Quick filter:
   ```bash
   tail -n 50 $MACHBASE_HOME/trc/machbase.trc | grep DUP_DROP
