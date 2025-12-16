@@ -59,29 +59,30 @@ ALTER TABLE {table_name} set TAG_DUPLICATE_CHECK_DURATION={duration in minutes};
 * 기존 입력 데이터가 이미 삭제된 경우, 동일한 데이터의 후속 발생은 중복 제거 목적으로 중복으로 간주되지 않습니다.
 
 ## TRACE 로그로 중복 제거 확인
-TRACE_LOG_LEVEL에 32(SM_2)를 추가하면 중복제거시 로그로 출력됩니다. 
+TRACE_LOG_LEVEL에 32(SM_2)를 추가하면 중복제거 시 로그로 출력됩니다.
 ```sql
- -- 설정방법
-alter system set TRACE_LOG_LEVEL={TRACE_LOG_LEVEL};
+-- 설정 확인
+select name, value from v$property where name = 'TRACE_LOG_LEVEL';
 
- -- 설정 확인
-select name, value from v$property where name like 'TRACE_LOG_LEVEL';
-
+-- 설정 변경
+alter system set TRACE_LOG_LEVEL={기존값 + 32};
 ```
-- 설정예시
+
+**설정 예시**
 ```sql
- -- 기존 설정값 확인
-Mach> select name, value from v$property where name like 'TRACE_LOG_LEVEL';
-name                                                          value                                                                             
+-- 현재 값 확인
+Mach> select name, value from v$property where name = 'TRACE_LOG_LEVEL';
+name                                                          value
 ---------------------------------------------------------------------------------------------------------------------------------------------------
-TRACE_LOG_LEVEL                                               277                                                                               
+TRACE_LOG_LEVEL                                               277
 [1] row(s) selected.
 
- -- 기존 설정값에 32를 더한값인 309(277 + 32)를 설정
-alter system set TRACE_LOG_LEVEL=309
+-- 32 추가 (277 + 32 = 309)
+Mach> alter system set TRACE_LOG_LEVEL=309;
+Altered successfully.
 ```
 
-- 로그파일위치: `$MACHBASE_HOME/trc/machbase.trc`
+- 로그 파일 위치: `$MACHBASE_HOME/trc/machbase.trc`
 - 빠른 필터:
   ```bash
   tail -n 50 $MACHBASE_HOME/trc/machbase.trc | grep DUP_DROP
