@@ -26,7 +26,7 @@ weight: 10
 |ipv4|버전 4 인터넷 주소 타입 (4 바이트)|"0.0.0.0" ~ "255.255.255.255"|-|
 |ipv6|버전 6 인터넷 주소 타입 (16 바이트)|"0000:0000:0000:0000:0000:0000:0000:0000" ~ "FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF"|-|
 |text|텍스트 데이터 타입 (키워드 인덱스 생성 가능)|Length : 0 ~ 64M|-|
-|binary|바이너리 데이터 타입 (인덱스 생성 불가)|Length: 0 ~ 64M|-|
+|binary|바이너리(Log: 0~64M) / 태그 고정 길이(1~32K-1)|Log: 0 ~ 64M<br>Tag: 1 ~ 32767 bytes|-|
 |json|json 데이터 타입|json data length : 1 ~ 32768 (32K)<br><br>json path length : 1 ~ 512|-|
 
 ### short
@@ -87,10 +87,18 @@ VARCHAR 크기를 초과하는 텍스트나 문서를 저장하기 위한 데이
 
 ### binary
 
-컬럼에 비정형 데이터를 저장하기 위해 지원되는 타입입니다.
+로그/룩업/볼라타일 테이블의 바이너리 컬럼은 비정형 데이터를 저장하기 위한
+일반 타입입니다. 인덱스를 생성할 수 없으며 TEXT와 동일하게 최대 64MB까지
+저장할 수 있습니다.
 
-이미지, 비디오 또는 오디오와 같은 바이너리 데이터를 저장하는 데 사용됩니다. 이 타입에 대해서는 인덱스를 생성할 수 없습니다.
-저장을 위한 최대 데이터 크기는 TEXT 타입과 동일한 최대 64메가바이트입니다.
+Tag 테이블의 `BINARY(n)`은 센서 프레임용 고정 길이 변형입니다.
+유효 길이는 1~32K-1(32767)바이트이며, 입력은 헥스 문자열(0x 접두 선택)만
+허용합니다. 홀수 자릿수는 상위 니블을 0으로, 선언 길이보다 짧으면 0x00으로
+패딩합니다. 길이 초과나 비-헥스 문자는
+`[ERR-02233: Error occurred at column (n): (Invalid insert value.)]` 오류를 냅니다.
+`LENGTH` 및 메타데이터는 선언된 바이트 길이를 반환하며, machsql은 `0x` 없는
+대문자 헥스로 출력합니다. 이 고정 길이 `BINARY(n)`은 Tag 테이블에서만
+지원됩니다.
 
 ### json
 
@@ -120,5 +128,5 @@ Json은 "Key-Value" 쌍으로 구성된 데이터 객체를 텍스트 형식으�
 |ipv4|SQL_IPV4|SQL_VARCHAR|SQL_C_CHAR|char * (ip 문자열 입력)<br><br>unsigned char[4]|버전 4 인터넷 주소 타입|
 |ipv6|SQL_IPV6|SQL_VARCHAR|SQL_C_CHAR|char * (ip 문자열 입력)<br><br>unsigned char[16]|버전 6 인터넷 주소 타입|
 |text|SQL_TEXT|SQL_LONGVARCHAR|SQL_C_CHAR|char *|텍스트|
-|binary|SQL_BINARY|SQL_BINARY|SQL_C_BINARY|char *|바이너리 데이터|
+|binary|SQL_BINARY|SQL_BINARY|SQL_C_BINARY|char *|태그 테이블용 고정 길이 바이너리|
 |json|SQL_JSON|SQL_JSON|SQL_C_CHAR|json_t|json 데이터 타입|

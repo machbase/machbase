@@ -41,4 +41,5 @@ CREATE TAGDATA TABLE table_name (
 
 - [Tutorial: IoT Sensor Data](../../tutorials/iot-sensor-data/)
 - [Core Concepts: Table Types](../../core-concepts/table-types-overview/)
+- [Binary Columns](./binary-columns/)
 - Original reference: [Tag Tables](../../../dbms/feature-table/tag/)
