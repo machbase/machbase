@@ -11,6 +11,7 @@ weight: 50
 * [NOPARALLEL](#noparallel)
 * [FULL](#full)
 * [NO_INDEX](#no_index)
+* [ROLLUP_TABLE](#rollup_table)
 * [RID_RANGE](#rid_range)
 * [SCAN_FORWARD, SCAN_BACKWARD](#scan_forward-scan_backward)
 
@@ -198,6 +199,29 @@ PLAN
    [FILTER]                                                                      
     * I2 = 2                                                                     
 [7] row(s) selected.
+```
+
+
+##  ROLLUP_TABLE
+
+조건 롤업이 여러 개 있을 때 특정 롤업 테이블을 강제로 선택합니다. 힌트가 있으면 자동 선택 규칙보다 항상 우선합니다.
+
+```sql
+SELECT /*+ ROLLUP_TABLE(rollup_table_name) */ ...
+```
+
+- 힌트가 없으면 동일한 주기/값 컬럼/JSON PATH 후보 중 조건 없는 롤업이 우선 선택됩니다.
+- 조건 롤업을 반드시 써야 하는 경우 힌트로 지정합니다.
+- `FIRST()`/`LAST()`를 사용한다면 `EXTENSION` 롤업을 힌트로 지정해야 합니다.
+
+```sql
+SELECT /*+ ROLLUP_TABLE(_tag_rollup_cond_1s) */
+       rollup('sec', 30, time) AS rt, AVG(value), COUNT(value)
+FROM   tag_bulk
+WHERE  name = 'dev9'
+  AND  time BETWEEN '2020-01-02 00:00:00' AND '2020-01-02 00:10:00'
+GROUP BY rt
+ORDER BY rt;
 ```
 
 
