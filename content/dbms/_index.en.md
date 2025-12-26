@@ -24,15 +24,6 @@ Follow these hands-on tutorials:
 * [Tutorial 3: Real-time Analytics](./tutorials/realtime-analytics/) - Work with real-time data
 * [Tutorial 4: Reference Data](./tutorials/reference-data/) - Manage lookup tables
 
-## Common Tasks
-
-Jump to what you need:
-
-* [Connecting to Database](./common-tasks/connecting/)
-* [Importing Data](./common-tasks/importing-data/)
-* [Querying Data](./common-tasks/querying/)
-* [Managing Users](./common-tasks/user-management/)
-* [Backup and Recovery](./common-tasks/backup-recovery/)
 
 ## Core Documentation
 

@@ -24,16 +24,6 @@ Machbase DBMS 문서에 오신 것을 환영합니다. Machbase는 IoT, 센서 �
 * [튜토리얼 3: 실시간 분석](./tutorials/realtime-analytics/) - 실시간 데이터 작업
 * [튜토리얼 4: 참조 데이터](./tutorials/reference-data/) - 룩업 테이블 관리
 
-## 일반 작업
-
-필요한 내용으로 바로 이동:
-
-* [데이터베이스 연결](./common-tasks/connecting/)
-* [데이터 가져오기](./common-tasks/importing-data/)
-* [데이터 조회](./common-tasks/querying/)
-* [사용자 관리](./common-tasks/user-management/)
-* [백업 및 복구](./common-tasks/backup-recovery/)
-
 ## 핵심 문서
 
 * [핵심 개념](./core-concepts/) - Machbase 아키텍처 이해
