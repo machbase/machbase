@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'SQL Reference'
+title: 'SQL 문법 참조하기'
 weight: 80
 ---
 

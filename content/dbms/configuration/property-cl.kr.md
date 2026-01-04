@@ -1,6 +1,6 @@
 ---
 layout : post
-title : 'Property (Cluster)'
+title : '프로퍼티 (클러스터)'
 type: docs
 ---
 
