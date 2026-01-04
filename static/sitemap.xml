@@ -948,37 +948,37 @@
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://machbase.com/dbms/tools/</loc>
+  <loc>https://machbase.com/dbms/tools-reference/</loc>
   <lastmod>2023-11-06T00:06:02+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://machbase.com/dbms/tools/csv/</loc>
+  <loc>https://machbase.com/dbms/tools-reference/csv/</loc>
   <lastmod>2023-11-06T00:06:00+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://machbase.com/dbms/tools/machadmin/</loc>
+  <loc>https://machbase.com/dbms/tools-reference/machadmin/</loc>
   <lastmod>2023-11-06T00:06:00+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://machbase.com/dbms/tools/machloader/</loc>
+  <loc>https://machbase.com/dbms/tools-reference/machloader/</loc>
   <lastmod>2023-11-06T00:06:00+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://machbase.com/dbms/tools/machsql/</loc>
+  <loc>https://machbase.com/dbms/tools-reference/machsql/</loc>
   <lastmod>2023-11-06T00:06:00+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://machbase.com/dbms/tools/machcoordinatoradmin/</loc>
+  <loc>https://machbase.com/dbms/tools-reference/machcoordinatoradmin/</loc>
   <lastmod>2023-11-06T00:06:00+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://machbase.com/dbms/tools/machdeployeradmin/</loc>
+  <loc>https://machbase.com/dbms/tools-reference/machdeployeradmin/</loc>
   <lastmod>2023-11-06T00:06:00+00:00</lastmod>
   <priority>0.80</priority>
 </url>
@@ -1583,37 +1583,37 @@
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://machbase.com/kr/dbms/tools/</loc>
+  <loc>https://machbase.com/kr/dbms/tools-reference/</loc>
   <lastmod>2023-11-06T00:06:16+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://machbase.com/kr/dbms/tools/csv/</loc>
+  <loc>https://machbase.com/kr/dbms/tools-reference/csv/</loc>
   <lastmod>2023-11-06T00:06:15+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://machbase.com/kr/dbms/tools/machadmin/</loc>
+  <loc>https://machbase.com/kr/dbms/tools-reference/machadmin/</loc>
   <lastmod>2023-11-06T00:06:15+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://machbase.com/kr/dbms/tools/machloader/</loc>
+  <loc>https://machbase.com/kr/dbms/tools-reference/machloader/</loc>
   <lastmod>2023-11-06T00:06:15+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://machbase.com/kr/dbms/tools/machsql/</loc>
+  <loc>https://machbase.com/kr/dbms/tools-reference/machsql/</loc>
   <lastmod>2023-11-06T00:06:15+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://machbase.com/kr/dbms/tools/machcoordinatoradmin/</loc>
+  <loc>https://machbase.com/kr/dbms/tools-reference/machcoordinatoradmin/</loc>
   <lastmod>2023-11-06T00:06:15+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://machbase.com/kr/dbms/tools/machdeployeradmin/</loc>
+  <loc>https://machbase.com/kr/dbms/tools-reference/machdeployeradmin/</loc>
   <lastmod>2023-11-06T00:06:15+00:00</lastmod>
   <priority>0.64</priority>
 </url>

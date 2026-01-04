@@ -24,7 +24,7 @@ machadmin -b path     # 백업
 machadmin -r path     # 복구
 ```
 
-[전체 레퍼런스](../../dbms/tools/machadmin/)
+[전체 레퍼런스](./machadmin/)
 
 ### machsql
 
@@ -40,7 +40,7 @@ machsql -f script.sql            # 스크립트 실행
 machsql -o output.csv -r csv     # CSV로 내보내기
 ```
 
-[전체 레퍼런스](../../dbms/tools/machsql/)
+[전체 레퍼런스](./machsql/)
 
 ### machloader
 
@@ -53,7 +53,7 @@ machsql -o output.csv -r csv     # CSV로 내보내기
 machloader -t table -d csv -i data.csv
 ```
 
-[전체 레퍼런스](../../dbms/tools/machloader/)
+[전체 레퍼런스](./machloader/)
 
 ### machcoordinatoradmin
 
@@ -62,7 +62,7 @@ machloader -t table -d csv -i data.csv
 - 클러스터 설정
 - 노드 관리
 
-[전체 레퍼런스](../../dbms/tools/machcoordinatoradmin/)
+[전체 레퍼런스](./machcoordinatoradmin/)
 
 ### machdeployeradmin
 
@@ -71,7 +71,7 @@ machloader -t table -d csv -i data.csv
 - 웨어하우스 관리
 - 클러스터 배포
 
-[전체 레퍼런스](../../dbms/tools/machdeployeradmin/)
+[전체 레퍼런스](./machdeployeradmin/)
 
 ## 도구 빠른 레퍼런스
 
@@ -237,4 +237,4 @@ machsql
 machloader -t mytable -d csv -i data.csv
 ```
 
-자세한 도구 문서는 원본 문서의 [도구 레퍼런스](../../dbms/tools/)를 참조하세요.
+자세한 도구 문서는 원본 문서의 [도구 레퍼런스](../../dbms/tools-reference/)를 참조하세요.
