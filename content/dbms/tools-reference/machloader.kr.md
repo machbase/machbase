@@ -14,6 +14,8 @@ machloader의 기능은 다음과 같습니다.
 * machloader는 기본적으로 APPEND 모드를 지원합니다.
 * machloader는 기본적으로 `_ARRIVAL_TIME` 컬럼을 사용하지 않습니다. 해당 컬럼 데이터를 가져오거나 내보내려면 "-a" 옵션을 사용해야 합니다.
 
+지원하는 날짜/시간 포맷 토큰은 [TO_CHAR (DATETIME)](../../sql-reference/functions/#to_char-datetime-type)을 참고하세요.
+
 machloader의 옵션은 다음 명령으로 확인할 수 있습니다:
 
 ```bash
