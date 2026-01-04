@@ -114,6 +114,7 @@ Once you've finished, you'll be ready to:
 - [Core Concepts](../core-concepts/) - Deeper understanding of Machbase
 - [Common Tasks](../common-tasks/) - Everyday operations
 - [Table Types Deep Dive](../table-types/) - Advanced features
+- [Conditional Rollup for Filtering Noise](../table-types/tag-tables/rollup-conditional/) - Filter-based aggregation patterns
 
 ## Need Help?
 
