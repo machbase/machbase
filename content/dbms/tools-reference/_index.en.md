@@ -24,7 +24,7 @@ machadmin -b path     # Backup
 machadmin -r path     # Restore
 ```
 
-[Complete Reference](../../dbms/tools/machadmin/)
+[Complete Reference](./machadmin/)
 
 ### machsql
 
@@ -40,7 +40,7 @@ machsql -f script.sql            # Run script
 machsql -o output.csv -r csv     # Export to CSV
 ```
 
-[Complete Reference](../../dbms/tools/machsql/)
+[Complete Reference](./machsql/)
 
 ### machloader
 
@@ -53,7 +53,7 @@ Bulk data import tool:
 machloader -t table -d csv -i data.csv
 ```
 
-[Complete Reference](../../dbms/tools/machloader/)
+[Complete Reference](./machloader/)
 
 ### machcoordinatoradmin
 
@@ -62,7 +62,7 @@ Cluster coordinator management (cluster edition):
 - Cluster configuration
 - Node management
 
-[Complete Reference](../../dbms/tools/machcoordinatoradmin/)
+[Complete Reference](./machcoordinatoradmin/)
 
 ### machdeployeradmin
 
@@ -71,7 +71,7 @@ Cluster deployer management (cluster edition):
 - Warehouse management
 - Cluster deployment
 
-[Complete Reference](../../dbms/tools/machdeployeradmin/)
+[Complete Reference](./machdeployeradmin/)
 
 ## Tool Quick Reference
 
@@ -237,4 +237,4 @@ machsql
 machloader -t mytable -d csv -i data.csv
 ```
 
-For detailed tool documentation, see the [Tools Reference](../../dbms/tools/) in the original documentation.
+For detailed tool documentation, see the [Tools Reference](../../dbms/tools-reference/) in the original documentation.

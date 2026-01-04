@@ -6,7 +6,7 @@ weight: 30
 
 machloader 도구를 사용하면 CSV 또는 다른 구분자로 구분된 텍스트 파일을 입력할 수 있습니다.
 
-machloader 도구에 대한 자세한 설명은 [machloader](/dbms/tools/machloader) 문서를 참조하세요.
+machloader 도구에 대한 자세한 설명은 [machloader](/dbms/tools-reference/machloader) 문서를 참조하세요.
 
 ## 목차
 
