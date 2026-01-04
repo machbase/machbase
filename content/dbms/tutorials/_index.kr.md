@@ -114,6 +114,7 @@ weight: 20
 - [핵심 개념](../core-concepts/) - Machbase에 대한 깊이 있는 이해
 - [일반 작업](../common-tasks/) - 일상적인 운영 작업
 - [테이블 타입 심화](../table-types/) - 고급 기능
+- [조건부 롤업으로 이상치 제외 집계](../table-types/tag-tables/rollup-conditional/) - 조건 기반 집계 패턴
 
 ## 도움이 필요하신가요?
 
