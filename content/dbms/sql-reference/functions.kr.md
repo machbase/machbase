@@ -1,5 +1,5 @@
 ---
-title : 'Functions'
+title : '함수'
 type: docs
 weight: 70
 ---
@@ -56,7 +56,7 @@ weight: 70
 * [내장 함수 지원 타입](#support-type-of-built-in-function)
 * [JSON 관련 함수](#json-related-function)
 * [JSON 연산자](#json-operator)
-* [WINDOW FUNCTION](#window-function)
+* [윈도우 함수](#window-function)
 
 ## ABS
 
@@ -499,7 +499,7 @@ COUNT(*)             tm
 예를 들어, DATE_TRUNC('second', time, 120)을 입력하면 반환되는 값은 **2분마다** 표시되며, 이는 DATE_TRUNC('minute', time, 2)와 동일합니다.
 
 ## DATE_BIN
-This function `bins` the given datetime value into `time unit` and `time range` based on `specified origin`.
+이 함수는 지정한 `origin`을 기준으로 주어진 datetime 값을 `time unit`과 `time range`로 구간(bin) 처리합니다.
 
 ```sql
 DATE_BIN(field, count, source, origin)
@@ -545,12 +545,12 @@ TIME                            DATE_BIN('hour', 3, time, TO_DATE('2020-01-01 01
 [5] row(s) selected.
 ```
 
-The allowable time ranges for time units and time units are as follows.
+시간 단위별 허용 범위는 다음과 같습니다.
 
-* nanosecond, microsecond, and milisecond units and abbreviations can be used starting from 5.5.6.
-* week is equal to 7 days.
+* nanosecond, microsecond, milisecond 단위 및 약어는 5.5.6부터 사용할 수 있습니다.
+* week는 7일과 같습니다.
 
-|Time Unit|
+|시간 단위|
 |----:|
 |nanosecond (nsec)|
 |microsecond (usec)|
@@ -566,30 +566,30 @@ The allowable time ranges for time units and time units are as follows.
 
 ## DAYOFWEEK
 
-This function returns a natural number representing the day of the week for a given datetime value.
+이 함수는 주어진 datetime 값의 요일을 나타내는 자연수를 반환합니다.
 
-Returns a semantically equivalent value for [TO_CHAR (time, 'DAY')](#to_char), but returns an integer here.
+[TO_CHAR (time, 'DAY')](#to_char)와 의미적으로 동일하지만, 여기서는 정수를 반환합니다.
 
 ```sql
 DAYOFWEEK(date_val)
 ```
 
-The returned natural number represents the next day of the week.
+반환되는 자연수는 아래 표와 같이 요일을 나타냅니다.
 
-|Return Value|Day of Week|
+|반환값|요일|
 |--|--|
-|0|Sunday|
-|1|Monday|
-|2|Tuesday|
-|3|Wednesday|
-|4|Thursday|
-|5|Friday|
-|6|Saturday|
+|0|일요일|
+|1|월요일|
+|2|화요일|
+|3|수요일|
+|4|목요일|
+|5|금요일|
+|6|토요일|
 
 
 ## DECODE
 
-This function compares the given Column value with Search, and returns the next return value if it is the same. If there is no satisfactory Search value, it returns the default value. If Default is omitted, NULL is returned.
+이 함수는 지정한 컬럼 값을 search 값들과 비교하여 일치하면 해당 return 값을 반환합니다. 일치하는 search 값이 없으면 default 값을 반환하며, default를 생략하면 NULL을 반환합니다.
 
 ```sql
 DECODE(column, [search, return],.. default)
@@ -700,10 +700,10 @@ SELECT EXTRACT_SCALED_DOUBLE(frame, 0, 20, 0, 0.01, -100.0) AS current_a FROM t;
 
 ## FIRST / LAST
 
-This function is an aggregate function that returns the specific value of the highest (or last) record in the sequence in which the 'reference value' in each group is in order.
+각 그룹에서 '기준 값'으로 정렬한 순서 기준으로 가장 앞(또는 마지막) 레코드의 특정 값을 반환하는 집계 함수입니다.
 
-* FIRST: Returns a specific value from the most advanced record in the sequence
-* LAST: Returns a specific value from the last record in the sequence
+* FIRST: 정렬 순서에서 가장 앞 레코드의 값을 반환합니다.
+* LAST: 정렬 순서에서 마지막 레코드의 값을 반환합니다.
 
 ```sql
 FIRST(sort_expr, return_expr)
@@ -744,7 +744,7 @@ group_no    last(id, name)
 
 ## FROM_UNIXTIME
 
-This function converts a 32-bit UNIXTIME value entered as an integer to a datetime datatype value. (UNIX_TIMESTAMP converts datetime data to 32-bit UNIXTIME integer data.)
+정수로 입력된 32비트 UNIXTIME 값을 datetime 타입으로 변환합니다. (UNIX_TIMESTAMP는 datetime 데이터를 32비트 UNIXTIME 정수로 변환합니다.)
 
 ```sql
 FROM_UNIXTIME(unix_timestamp_value)
@@ -765,9 +765,9 @@ FROM_UNIXTIME(UNIX_TIMESTAMP('2001-01-01'))
 
 ## FROM_TIMESTAMP
 
-This function takes a nanosecond value that has passed since 1970-01-01 09:00 and converts it to a datetime data type.
+1970-01-01 09:00 이후 경과한 나노초 값을 datetime 타입으로 변환합니다.
 
-(TO_TIMESTAMP () converts a datetime data type to nanosecond data that has passed since 1970-01-01 09:00.)
+(TO_TIMESTAMP()는 datetime 타입을 1970-01-01 09:00 이후 경과 나노초 값으로 변환합니다.)
 
 ```sql
 FROM_TIMESTAMP(nanosecond_time_value)
@@ -780,9 +780,9 @@ FROM_TIMESTAMP(1562302560007248869)
 2019-07-05 13:56:00 007:248:869
 ```
 
-Both sysdate and now represent nanosecond values elapsed since 1970-01-01 09:00 at the current time, so you can use FROM_TIMESTAMP () immediately.
+sysdate와 now는 현재 시각 기준 1970-01-01 09:00 이후 경과한 나노초 값을 의미하므로 FROM_TIMESTAMP()에 바로 사용할 수 있습니다.
 
-Of course, the results are the same without using them. This can be useful if you have sysdate and now operations in nanoseconds.
+물론 변환하지 않아도 결과는 동일합니다. sysdate/now를 나노초 단위로 연산할 때 유용합니다.
 
 ```sql
 Mach> select sysdate, from_timestamp(sysdate) from test_tbl;
@@ -801,10 +801,10 @@ sysdate                         from_timestamp(sysdate-1000000)
 
 ## GROUP_CONCAT
 
-This function is an aggregate function that outputs the value of the corresponding column in the group in a string.
+이 함수는 그룹 내 해당 컬럼 값들을 문자열로 이어 붙여 반환하는 집계 함수입니다.
 
 {{< callout type="warning" >}}
-This function cannot be used in Cluster Edition.
+이 함수는 Cluster Edition에서 사용할 수 없습니다.
 {{< /callout >}}
 
 ```sql
@@ -816,15 +816,15 @@ GROUP_CONCAT(
 )
 ```
 
-* DISTINCT: Duplicate values ​​are not appended if duplicate values ​​are attached.
-* ORDER BY: Arranges the sequence of column values ​​to be attached according to the specified column values.
-* SEPARATOR: A delimiter string used to append column values. The default value is a comma (,).
+* DISTINCT: 중복 값은 한 번만 연결합니다.
+* ORDER BY: 지정한 컬럼 값을 기준으로 연결 순서를 정렬합니다.
+* SEPARATOR: 컬럼 값을 연결할 때 사용할 구분자 문자열입니다. 기본값은 쉼표(,)입니다.
 
-The syntax notes are as follows.
+구문 관련 주의사항은 다음과 같습니다.
 
-* You can specify only one column, and if you want to specify more than one column, you must use the TO_CHAR () function and the CONCAT operator (||) to make one expression.
-* ORDER BY can specify other columns besides the columns to be joined, and can specify multiple columns.
-* You must enter a string constant in SEPARATOR, and you can not enter a string column.
+* 하나의 컬럼만 지정할 수 있으며, 여러 컬럼을 붙이려면 TO_CHAR()와 CONCAT 연산자(||)로 하나의 표현식으로 만들어야 합니다.
+* ORDER BY에는 연결 대상 컬럼 외의 컬럼도 지정할 수 있으며, 여러 컬럼을 지정할 수 있습니다.
+* SEPARATOR에는 문자열 상수만 지정할 수 있으며, 문자열 컬럼은 지정할 수 없습니다.
 
 ```sql
 Mach> CREATE TABLE concat_table(id1 INTEGER, id2 DOUBLE, name VARCHAR(10));
@@ -885,10 +885,10 @@ John,Zara,Jill
 
 ## INSTR
 
-This function returns the index of the number of characters in the string entered together. The index starts at 1.
+이 함수는 대상 문자열에서 패턴 문자열이 시작하는 위치 인덱스를 반환합니다. 인덱스는 1부터 시작합니다.
 
-* If no string pattern is found, 0 is returned.
-* If the length of the string pattern to find is 0 or NULL, NULL is returned.
+* 패턴이 없으면 0을 반환합니다.
+* 찾을 패턴의 길이가 0이거나 NULL이면 NULL을 반환합니다.
 
 ```sql
 INSTR(target_string, pattern_string)
@@ -915,10 +915,10 @@ abstract              6
 
 ## LEAST / GREATEST
 
-Both functions return the smallest value (LEAST) or the largest value (GREATEST) if you specify multiple columns or values ​​as input parameters.
+여러 컬럼/값을 입력하면 LEAST는 최소값, GREATEST는 최대값을 반환합니다.
 
-If the input value is 1 or absent, it is treated as an error. If the input value is NULL, NULL is returned. Therefore, if the input value is a column, it must be converted in advance using a function.
-If a column (BLOB, TEXT) that can not be compared with the input value is included or type conversion is not possible for comparison, comparison is processed as an error.
+입력 값이 1개이거나 없으면 오류로 처리됩니다. 입력 값이 NULL이면 NULL을 반환합니다. 따라서 입력이 컬럼인 경우 함수로 미리 변환해야 합니다.
+비교할 수 없는 컬럼(BLOB, TEXT 등)이 포함되거나 비교를 위한 타입 변환이 불가능하면 오류로 처리됩니다.
 
 ```sql
 LEAST(value_list, value_list,...)
@@ -974,7 +974,7 @@ abstract
 
 ## LENGTH
 
-This function gets the length of a string column. The obtained value outputs the number of bytes in English.
+문자열 컬럼의 길이를 반환합니다. 반환 값은 영문(ASCII) 기준 바이트 수입니다.
 
 ```sql
 LENGTH(column_name)
@@ -1042,7 +1042,7 @@ NULL
 
 ## LOWER
 
-This function converts an English string to lowercase.
+영문 문자열을 소문자로 변환합니다.
 
 ```sql
 LOWER(column_name)
@@ -1081,10 +1081,10 @@ NULL
 
 ## LPAD / RPAD
 
-This function adds a character to the left (LPAD) or to the right (RPAD) until the input is of a given length.
+입력 문자열이 지정 길이가 될 때까지 왼쪽(LPAD) 또는 오른쪽(RPAD)에 문자를 채웁니다.
 
-The last parameter, char, can be omitted, or a space ' ' character if omitted. 
-If the input column value is longer than the given length, the characters are not appended but only the length is taken from the beginning.
+마지막 파라미터 char는 생략할 수 있으며, 생략 시 공백(' ')으로 채웁니다.
+입력 값이 지정 길이보다 길면 문자를 덧붙이지 않고 앞에서부터 지정 길이만큼만 반환합니다.
 
 ```sql
 LPAD(str, len, padstr)
@@ -1148,9 +1148,9 @@ Antonio***
 
 ## LTRIM / RTRIM
 
-This function removes the value corresponding to the pattern string from the first parameter. The LTRIM function checks to see if the characters are in pattern from left to right, the RTRIM function from right to left, and truncates until a character not in pattern is encountered. If all the strings are present in the pattern, NULL is returned.
+이 함수는 첫 번째 인자에서 패턴 문자열에 포함된 문자를 제거합니다. LTRIM은 왼쪽에서 오른쪽으로, RTRIM은 오른쪽에서 왼쪽으로 패턴에 포함된 문자를 검사하며, 패턴에 없는 문자를 만날 때까지 제거합니다. 모든 문자가 패턴에 포함되어 있으면 NULL을 반환합니다.
 
-If you do not specify a pattern expression, use the space character '' as a basis to remove the space character.
+패턴을 지정하지 않으면 공백(' ')을 기준으로 공백을 제거합니다.
 
 ```sql
 LTRIM(column_name, pattern)
@@ -1222,7 +1222,7 @@ NULL
 
 ## MAX
 
-This function is an aggregate function that obtains the maximum value of a given numeric column.
+지정한 숫자 컬럼의 최대값을 반환하는 집계 함수입니다.
 
 ```sql
 MAX(column_name)
@@ -1251,7 +1251,7 @@ MAX(c)
 
 ## MIN
 
-This function is an aggregate function that obtains the minimum value of a corresponding numeric column.
+지정한 숫자 컬럼의 최소값을 반환하는 집계 함수입니다.
 
 ```sql
 MIN(column_name)
@@ -1280,7 +1280,7 @@ MIN(c1)
 
 ## NVL
  
-This function returns value if the value of the column is NULL, or the value of the original column if it is not NULL.
+컬럼 값이 NULL이면 지정한 값으로 대체하고, NULL이 아니면 원래 값을 반환합니다.
 
 ```sql
 NVL(string1, replace_with)
@@ -1306,7 +1306,7 @@ Johnathan
 
 ## ROUND
 
-This function returns the result of rounding off the digits of the input value (input digit +1). If no digits are entered, the rounding is done at position 0. It is possible to enter a negative number in decimals place to round the decimal place.
+입력 값의 지정한 자릿수(입력 자릿수 + 1)를 반올림한 결과를 반환합니다. 자릿수를 생략하면 소수점 0자리에서 반올림합니다. 음수를 지정해 정수부 자리에서 반올림할 수 있습니다.
 
 ```sql
 ROUND(column_name, [decimals])
@@ -1332,19 +1332,19 @@ c1                          ROUND(c1, 2)
 
 ## ROWNUM
 
-This function assigns a number to the SELECT query result row.
+SELECT 결과 행에 번호를 부여합니다.
 
-It can be used inside Subquery or Inline View that is used inside SELECT query. If you use ROWNUM () function in Inline View in Target List, you need to give Alias ​​to refer to from outside.
+SELECT에서 사용하는 서브쿼리나 인라인 뷰 내부에서 사용할 수 있습니다. 인라인 뷰의 Target List에서 ROWNUM()을 사용한 경우 외부에서 참조할 수 있도록 Alias를 지정해야 합니다.
 
 ```sql
 ROWNUM()
 ```
 
-### Available Clauses
+### 사용 가능한 절
 
-This function can be used in the target list, GROUP BY, or ORDER BY clause of a SELECT query. However, it can not be used in the WHERE and HAVING clauses of a SELECT query. ROWNUM () If you want to control WHERE or HAVING clause with result number, you can use SELECT query with ROWNUM () in Inline View and refer to it in WHERE or HAVING clause.
+이 함수는 SELECT의 Target List, GROUP BY, ORDER BY 절에서 사용할 수 있습니다. WHERE와 HAVING 절에서는 사용할 수 없습니다. 결과 번호로 WHERE/HAVING을 제어하려면 인라인 뷰에서 ROWNUM()을 계산한 뒤, 외부 쿼리의 WHERE/HAVING에서 참조해야 합니다.
 
-|Available Clauses|Unavailable Clauses|
+|사용 가능 절|사용 불가 절|
 |--|--|
 |Target List / GROUP BY / ORDER BY|WHERE / HAVING|
 
@@ -1374,9 +1374,9 @@ INNER_RANK           NAME
 [2] row(s) selected.
 ```
 
-### Altering Results Due to Sorting
+### 정렬로 인한 결과 번호 변화
 
-If there is an ORDER BY clause in the SELECT query, the result number of ROWNUM () in the target list may not be sequentially assigned. This is because the ROWNUM () operation is performed before the operation of the ORDER BY clause. If you want to give it sequentially, you can use the query containing the ORDER BY clause in Inline View and then call ROWNUM () in the outer SELECT statement.
+SELECT에 ORDER BY 절이 있으면 Target List의 ROWNUM() 결과가 순차적으로 부여되지 않을 수 있습니다. 이는 ROWNUM()이 ORDER BY보다 먼저 처리되기 때문입니다. 순차 번호가 필요하면 ORDER BY를 포함한 쿼리를 인라인 뷰로 만든 뒤, 외부 SELECT에서 ROWNUM()을 호출하세요.
 
 ```sql
 Mach> CREATE TABLE rownum_table(c1 INTEGER, c2 DOUBLE, c3 VARCHAR(10));
@@ -1408,7 +1408,7 @@ ROWNUM()             SORT                        NAME
 
 ## SERIESNUM
 
-Returns a number indicating how many of the records belong to the series grouped by SERIES BY. The return type is BIGINT type, and always returns 1 if the SERIES BY clause is not used.
+SERIES BY로 그룹화된 시리즈에서 각 레코드가 몇 번째인지 나타내는 번호를 반환합니다. 반환 타입은 BIGINT이며, SERIES BY 절을 사용하지 않으면 항상 1을 반환합니다.
 
 ```sql
 SERIESNUM()
@@ -1457,7 +1457,7 @@ SERIESNUM() C1 C2
 
 ## STDDEV / STDDEV_POP
 
-This function is an aggregate function that returns the (standard) deviation and the population standard deviation of the (input) column. Equivalent to the square root of the VARIANCE and VAR_POP values, respectively.
+이 함수는 입력 컬럼의 표준편차와 모표준편차를 반환하는 집계 함수입니다. 각각 VARIANCE와 VAR_POP 값의 제곱근에 해당합니다.
 
 ```sql
 STDDEV(column)
@@ -1497,11 +1497,11 @@ c2                          STDDEV_POP(c1)
 
 ## SUBSTR
 
-This function truncates the variable string column data from START to SIZE.
+이 함수는 문자열 컬럼을 START부터 SIZE 길이만큼 잘라 반환합니다.
 
-* START starts at 1 and returns NULL if it is zero.
-* If SIZE is larger than the size of the corresponding string, only the maximum value of the string is returned.
-SIZE is optional, and if omitted, it is internally specified by the size of the string.
+* START는 1부터 시작하며 0이면 NULL을 반환합니다.
+* SIZE가 문자열 길이보다 크면 전체 문자열을 반환합니다.
+SIZE는 선택 사항이며 생략하면 문자열 길이가 사용됩니다.
 
 ```sql
 SUBSTRING(column_name, start, [length])
@@ -1569,9 +1569,9 @@ BCDEFG
 
 ## SUBSTRING_INDEX
 
-Returns the duplicate string until the given delim is found by the count entered. If count is a negative value, it checks the delimiter from the end of the input string and returns it from the position where the delimiter was found to the end of the string.
+입력된 count만큼 구분자(delim)를 찾을 때까지의 부분 문자열을 반환합니다. count가 음수이면 문자열 끝에서부터 구분자를 찾고, 구분자를 찾은 위치부터 문자열 끝까지 반환합니다.
 
-If you enter count as 0 or there is no delimiter in the string, the function will return NULL.
+count가 0이거나 문자열에 구분자가 없으면 NULL을 반환합니다.
 
 ```sql
 SUBSTRING_INDEX(expression, delim, count)
@@ -1618,7 +1618,7 @@ NULL
 
 ## SUM
 
-This function is an aggregate function that represents the sum of the numeric columns.
+숫자 컬럼의 합계를 반환하는 집계 함수입니다.
 
 ```sql
 SUM(column_name)
@@ -1669,7 +1669,7 @@ c1          SUM(c2)
 
 ## SUMSQ
 
-SUMSQ returns the sum of squares of the numeric values.
+SUMSQ는 숫자 값들의 제곱합을 반환합니다.
 
 ```sql
 SUMSQ(value)
@@ -1705,9 +1705,9 @@ c1          SUMSQ(c2)
 
 ## SYSDATE / NOW
 
-SYSDATE is a pseudocolumn, not a function, that returns the system's current time.
+SYSDATE는 함수가 아닌 의사 컬럼으로, 시스템 현재 시간을 반환합니다.
 
-NOW is the same function as SYSDATE and is provided for user convenience.
+NOW는 SYSDATE와 동일한 기능이며, 사용자 편의를 위해 제공합니다.
 
 ```sql
 SYSDATE
@@ -1725,15 +1725,15 @@ SYSDATE                         NOW
 
 ## TO_CHAR
 
-This function converts a given data type to a string type. Depending on the type, format_string may be specified, but not for binary types.
+주어진 데이터 타입을 문자열 타입으로 변환합니다. 타입에 따라 format_string을 지정할 수 있지만, 바이너리 타입에는 사용할 수 없습니다.
 
 ```sql
 TO_CHAR(column)
 ```
 
-### TO_CHAR:  Default Datatype
+### TO_CHAR: 기본 데이터 타입
 
-The default data types are converted to data in the form of strings as shown below.
+기본 데이터 타입은 아래와 같이 문자열 형태로 변환됩니다.
 
 ```sql
 Mach> CREATE TABLE fixed_table (id1 SHORT, id2 INTEGER, id3 LONG, id4 FLOAT, id5 DOUBLE, id6 IPV4, id7 IPV6, id8 VARCHAR (128));
@@ -1791,17 +1791,17 @@ Mach> SELECT '[ ' || TO_CHAR(id8) || ' ]' FROM fixed_table;
 [1] row(s) selected.
 ```
 
-### TO_CHAR : Floating point number
+### TO_CHAR: 부동소수점 숫자
 
-* Supported from 5.5.6 version
+* 5.5.6 버전부터 지원
 
-This function converts the values ​​of float and double into strings.
-Format expression cannot be used repeatedly, and must be entered in the form of '[letter][number]'.
+float와 double 값을 문자열로 변환합니다.
+포맷 표현식은 반복해서 사용할 수 없으며 '[letter][number]' 형태로 입력해야 합니다.
 
-|Format Expression|Descibe|
+|포맷 표현식|설명|
 |--|--|
-|F / f|Specifies the number of decimal places for the column value. The maximum numeric value to input is 30.|
-|N / n|Specify the number of decimal places for the column value, and enter a comma (,) for every three digits of the integer part. The maximum numeric value to input is 30.|
+|F / f|컬럼 값의 소수점 자릿수를 지정합니다. 입력 가능한 최대 값은 30입니다.|
+|N / n|소수점 자릿수를 지정하고 정수부 3자리마다 콤마(,)를 삽입합니다. 입력 가능한 최대 값은 30입니다.|
 
 ```sql
 Mach> create table float_table (i1 float, i2 double);
@@ -1817,35 +1817,35 @@ TO_CHAR(i1, 'f8')       TO_CHAR(i2, 'N9')
 [1] row(s) selected.
 ```
 
-### TO_CHAR: DATETIME Type
+### TO_CHAR: DATETIME 타입
 
-A function that converts the value of a datetime column to an arbitrary string. You can use this function to create and combine various types of strings.
+datetime 컬럼 값을 임의의 문자열로 변환하는 함수입니다. 이를 이용해 다양한 문자열을 생성하고 조합할 수 있습니다.
 
-If format_string is omitted, the default is "YYYY-MM-DD HH24: MI: SS mmm: uuu: nnn".
+format_string을 생략하면 기본값은 "YYYY-MM-DD HH24: MI: SS mmm: uuu: nnn"입니다.
 
-|Format Expression|Descibe|
+|포맷 표현식|설명|
 |--|--|
-|YYYY|Converts year to a four-digit number.|
-|YY|Converts year to a two-digit number.|
-|MM|Converts the month to a two-digit number.|
-|MON|Converts the month to a three-digit abbreviated alphabet. (eg JAN, FEB, MAY, ...)|
-|DD|Converts the day to a two-digit number.|
-|DAY|Converts the day of the week to a three-digit abbreviation . (eg SUN, MON, ...)|
-|IW|Converts the week number of a specific year from 1 to 53 (taking into account the day of the week) by the ISO 8601 rule.<br> - The start of one week is Monday.<br> - The first week can be considered as the last week of the previous year. Likewise, the last week can be considered the first week of the next year.<br>    See ISO 8601 more information.|
-|WW|Converts week number of the particular year from 1 to 53 (Week Number) not taking into account the day of the week.<br>That is, from January 1 to January 7, it is converted to 1.|
-|W|Converts week number of a given month from 1 to 5 (Number The Week) not taking in to account the day of the week.<br>That is, from March 1 to March 7 is converted to 1.|
-|HH|Converts the time to a two-digit number.|
-|HH12|Converts the time to a 2-digit number, from 1 to 12.|
-|HH24|Converts the time to a 2-digit number, from 1 to 23.|
-|HH2, HH3, HH6|Cuts the time to the number following HH.<br><br>That is, when HH6 is used, 0 is expressed from 0 to 5, and 6 is expressed from 6 to 11.<br>This expression is useful for calculating certain time-series statistics on time series.<br>This value is expressed on a 24-hour basis.|
-|MI|The minute is represented by a two-digit number.|
-|MI2, MI5, MI10, MI20, MI30|The corresponding minute is cut to the number following MI.<br><br>That is, when MI30 is used, 0 is expressed from 0 to 29 minutes, and 30 is represented from 30 to 59 minutes.<br>This expression is useful for calculating certain time-series statistics on time series.|
-|SS|The second is represented by a two-digit number.|
-|SS2, SS5, SS10, SS20, SS30|The corresponding seconds are truncated to successive digits.<br><br>That is, when SS30 is used, 0 is expressed from 0 to 29 seconds, and 30 is represented from 30 to 59 seconds.<br>This expression is useful for calculating certain time-series statistics on time series.|
-|AM|The current time is expressed in AM or PM according to AM and PM, respectively.|
-|mmm|The millisecond of the time is represented by a three-digit number.<br><br>The range of values ​​is 0 to 999.|
-|uuu|The micro second of the time is represented as a three-digit number.<br><br>The range of values ​​is 0 to 999.|
-|nnn|The nano second of the time is expressed as a three-digit number.<br><br>The range of values ​​is 0 to 999.|
+|YYYY|연도를 4자리 숫자로 변환합니다.|
+|YY|연도를 2자리 숫자로 변환합니다.|
+|MM|월을 2자리 숫자로 변환합니다.|
+|MON|월을 3자리 영문 약어로 변환합니다. (예: JAN, FEB, MAY, ...)|
+|DD|일을 2자리 숫자로 변환합니다.|
+|DAY|요일을 3자리 영문 약어로 변환합니다. (예: SUN, MON, ...)|
+|IW|ISO 8601 규칙에 따라 특정 연도의 주차를 1~53으로 변환합니다(요일 고려).<br> - 한 주의 시작은 월요일입니다.<br> - 첫 주는 전년도 마지막 주로 간주될 수 있습니다. 마찬가지로 마지막 주는 다음 해의 첫 주로 간주될 수 있습니다.<br>    자세한 내용은 ISO 8601을 참고하세요.|
+|WW|요일을 고려하지 않고 특정 연도의 주차를 1~53으로 변환합니다.<br>즉, 1월 1일~1월 7일은 1로 변환됩니다.|
+|W|요일을 고려하지 않고 특정 월의 주차를 1~5로 변환합니다.<br>즉, 3월 1일~3월 7일은 1로 변환됩니다.|
+|HH|시간을 2자리 숫자로 변환합니다.|
+|HH12|시간을 1~12 범위의 2자리 숫자로 변환합니다.|
+|HH24|시간을 1~23 범위의 2자리 숫자로 변환합니다.|
+|HH2, HH3, HH6|HH 뒤 숫자 단위로 시간을 절단합니다.<br><br>예를 들어 HH6을 사용하면 0~5는 0, 6~11은 6으로 표시합니다.<br>이 표현은 시간열 통계 계산에 유용합니다.<br>이 값은 24시간 기준으로 표시됩니다.|
+|MI|분을 2자리 숫자로 표시합니다.|
+|MI2, MI5, MI10, MI20, MI30|MI 뒤 숫자 단위로 분을 절단합니다.<br><br>예를 들어 MI30은 0~29분은 0, 30~59분은 30으로 표시합니다.<br>이 표현은 시간열 통계 계산에 유용합니다.|
+|SS|초를 2자리 숫자로 표시합니다.|
+|SS2, SS5, SS10, SS20, SS30|SS 뒤 숫자 단위로 초를 절단합니다.<br><br>예를 들어 SS30은 0~29초는 0, 30~59초는 30으로 표시합니다.<br>이 표현은 시간열 통계 계산에 유용합니다.|
+|AM|시간을 AM/PM으로 표시합니다.|
+|mmm|밀리초를 3자리 숫자로 표시합니다.<br><br>값 범위는 0~999입니다.|
+|uuu|마이크로초를 3자리 숫자로 표시합니다.<br><br>값 범위는 0~999입니다.|
+|nnn|나노초를 3자리 숫자로 표시합니다.<br><br>값 범위는 0~999입니다.|
 
 ```sql
 Mach> CREATE TABLE datetime_table (id integer, dt datetime);
@@ -1941,17 +1941,17 @@ id          TO_CHAR(dt, 'YYYY-MM-DD HH24:MI:SS mmm.
 [4] row(s) selected.
 ```
 
-### TO_CHAR: Unsupported Type
-Currently, TO_CHAR is not supported for binary types.
+### TO_CHAR: 지원하지 않는 타입
+현재 TO_CHAR는 바이너리 타입을 지원하지 않습니다.
 
-This is because it is impossible to convert to plain text. If you want to output it to the screen, you can check it by outputting hexadecimal value through TO_HEX () function.
+일반 문자열로 변환할 수 없기 때문입니다. 화면에 출력하려면 TO_HEX() 함수로 16진 값을 출력해 확인할 수 있습니다.
 
 
 ## TO_DATE
 
-This function converts a string represented by a given format string to a datetime type.
+지정한 포맷 문자열에 따라 문자열을 datetime 타입으로 변환합니다.
 
-If format_string is omitted, the default is "YYYY-MM-DD HH24: MI: SS mmm: uuu: nnn".
+format_string을 생략하면 기본값은 "YYYY-MM-DD HH24: MI: SS mmm: uuu: nnn"입니다.
 
 ```sql
 -- default format is "YYYY-MM-DD HH24:MI:SS mmm:uuu:nnn" if no format exists.
@@ -2055,7 +2055,7 @@ id           TO_DATE('1999-12-31 13:12:32 123:456:789', 'YYYY-MM-DD HH24:MI:SS m
 
 ## TO_DATE_SAFE
 
-Similar to TO_DATE (), but returns NULL without error if conversion fails.
+TO_DATE()와 유사하지만 변환에 실패하면 오류 없이 NULL을 반환합니다.
 
 ```sql
 TO_DATE_SAFE(date_string [, format_string])
@@ -2084,7 +2084,7 @@ NULL
 
 ## TO_HEX
 
-This function returns value if the value of the column is NULL, or the value of the original column if it is not NULL. To ensure consistency of output, convert to BIG ENDIAN type for short, int, and long types.
+컬럼 값이 NULL이면 NULL을 반환하고, NULL이 아니면 원래 값을 16진 문자열로 반환합니다. 출력 일관성을 위해 short, int, long 타입은 BIG ENDIAN으로 변환합니다.
 
 ```sql
 TO_HEX(column)
@@ -2116,9 +2116,9 @@ TO_HEX(id10)                                                                    
 
 ## TO_IPV4 / TO_IPV4_SAFE
 
-This function converts a given string to an IP version 4 type. If the string can not be converted to a numeric value, the TO_IPV4 () function returns an error and terminates the operation.
+주어진 문자열을 IPv4 타입으로 변환합니다. 문자열을 숫자 값으로 변환할 수 없으면 TO_IPV4()는 오류를 반환하고 작업을 중단합니다.
 
-However, in the case of the TO_IPV4_SAFE () function, NULL is returned in case of error, and the operation can continue.
+반면 TO_IPV4_SAFE()는 오류 발생 시 NULL을 반환하므로 작업을 계속할 수 있습니다.
 
 ```sql
 TO_IPV4(string_value)
@@ -2176,9 +2176,9 @@ NULL
 
 ## TO_IPV6 / TO_IPV6_SAFE
 
-This function converts a given string to an IP version 6 type. If the string can not be converted to a numeric type, the TO_IPV6 () function returns an error and terminates the operation.
+주어진 문자열을 IPv6 타입으로 변환합니다. 문자열을 숫자 타입으로 변환할 수 없으면 TO_IPV6()는 오류를 반환하고 작업을 중단합니다.
 
-However, in the case of the TO_IPV6_SAFE () function, NULL is returned in case of error, and the operation can continue.
+반면 TO_IPV6_SAFE()는 오류 발생 시 NULL을 반환하므로 작업을 계속할 수 있습니다.
 
 ```sql
 TO_IPV6(string_value)
@@ -2248,9 +2248,9 @@ NULL
 
 ## TO_NUMBER / TO_NUMBER_SAFE
 
-This function converts a given string to a numeric double. If the string can not be converted to a numeric value, the TO_NUMBER () function returns an error and terminates the operation.
+주어진 문자열을 숫자(double)로 변환합니다. 문자열을 숫자 값으로 변환할 수 없으면 TO_NUMBER()는 오류를 반환하고 작업을 중단합니다.
 
-However, in case of TO_NUMBER_SAFE () function, NULL is returned in case of error, and the operation can continue.
+반면 TO_NUMBER_SAFE()는 오류 발생 시 NULL을 반환하므로 작업을 계속할 수 있습니다.
 
 ```sql
 TO_NUMBER(string_value)
@@ -2300,7 +2300,7 @@ NULL
 
 ## TO_TIMESTAMP
 
-This function converts a datetime data type to nanosecond data that has passed since 1970-01-01 09:00.
+datetime 타입을 1970-01-01 09:00 이후 경과 나노초 값으로 변환합니다.
 
 ```sql
 TO_TIMESTAMP(datetime_value)
@@ -2323,9 +2323,9 @@ to_timestamp(c1)
 
 ## TRUNC
 
-The TRUNC function returns the number truncated at the nth place after the decimal point. 
+TRUNC 함수는 소수점 이하 n자리에서 잘라낸 값을 반환합니다.
 
-If n is omitted, treat it as 0 and delete all decimal places. If n is negative, it returns the value truncated from n before the decimal point.
+n을 생략하면 0으로 간주하여 소수점을 모두 제거합니다. n이 음수이면 소수점 앞 n자리에서 잘라낸 값을 반환합니다.
 
 ```sql
 TRUNC(number [, n])
@@ -2354,12 +2354,12 @@ TRUNC(i1, 2)                TRUNC(i1, -2)
 
 ## TS_CHANGE_COUNT
 
-This function is an aggregate function that obtains the number of changes to a particular column value.
+특정 컬럼 값의 변경 횟수를 구하는 집계 함수입니다.
 
-This function can not be used with 1) Join or 2) Inline view because it can be guaranteed that input data is input in chronological order.
-The current version only supports types except varchar.
+입력 데이터가 시간순으로 입력된다는 것을 보장할 수 없으므로 1) Join 또는 2) Inline view와 함께 사용할 수 없습니다.
+현재 버전은 varchar를 제외한 타입만 지원합니다.
 
-* **This function cannot be used in Cluster Edition.**
+* **이 함수는 Cluster Edition에서 사용할 수 없습니다.**
 
 ```sql
 TS_CHANGE_COUNT(column)
@@ -2404,7 +2404,7 @@ id          TS_CHANGE_COUNT(ip)
 
 ## UNIX_TIMESTAMP
 
-UNIX_TIMESTAMP is a function that converts a date type value to a 32-bit integer value that is converted by unix's time () system call. (FROM_UNIXTIME is a function that converts integer data to a date type value on the contrary.)
+UNIX_TIMESTAMP는 유닉스 time() 시스템 콜 기준으로 date 타입 값을 32비트 정수로 변환하는 함수입니다. (FROM_UNIXTIME은 반대로 정수 값을 date 타입으로 변환합니다.)
 
 ```sql
 UNIX_TIMESTAMP(datetime_value)
@@ -2427,7 +2427,7 @@ C1
 
 ## UPPER
 
-This function converts the contents of a given English column to uppercase.
+영문 문자열을 대문자로 변환합니다.
 
 ```sql
 UPPER(string_value)
@@ -2462,7 +2462,7 @@ id          UPPER(name)
 
 ## VARIANCE / VAR_POP
 
-This function is an aggregate function that returns the variance of a given numeric column value. The Variance function returns the variance for the sample, and the VAR_POP function returns the variance for the population.
+지정한 숫자 컬럼의 분산을 반환하는 집계 함수입니다. VARIANCE는 표본 분산, VAR_POP은 모분산을 반환합니다.
 
 ```sql
 VARIANCE(column_name)
@@ -2501,7 +2501,7 @@ VAR_POP(c1)
 
 ## YEAR / MONTH / DAY
 
-These functions extract the corresponding year, month, and day from the input datetime column value and return it as an integer type value.
+입력 datetime 컬럼 값에서 각각 연, 월, 일을 추출해 정수로 반환합니다.
 
 ```sql
 YEAR(datetime_col)
@@ -2525,7 +2525,7 @@ year(c1)    month(c1)   day(c1)
 
 ## ISNAN / ISINF
 
-This function determines whether the numeric value received as an argument is a NaN or Inf value. Returns 1 for NaN or Inf values, and 0 otherwise.
+인자로 받은 숫자 값이 NaN 또는 Inf인지 판별합니다. NaN 또는 Inf이면 1, 그렇지 않으면 0을 반환합니다.
 
 ```sql
 ISNAN(number)
@@ -2558,7 +2558,8 @@ nan                         inf                         0
 ```
 
 
-## Support Type of Built-In Function 
+<a id="support-type-of-built-in-function"></a>
+## 내장 함수 지원 타입
 
 | |Short|Integer|Long|Float|Double|Varchar|Text|Ipv4|Ipv6|Datetime|Binary|
 |--|--|--|--|--|--|--|--|--|--|--|--|
@@ -2606,18 +2607,19 @@ nan                         inf                         0
 |ISNAN / ISINF|o|o|o|o|o|x|x|x|x|x|x|
 
 
-## JSON-related function 
+<a id="json-related-function"></a>
+## JSON 관련 함수
 
-These functions use json data type as an argument.
+이 함수들은 JSON 데이터 타입을 인자로 사용합니다.
 
-|Function name|Explanation|Note|
+|함수명|설명|비고|
 |--|--|--|
-|JSON_EXTRACT(JSON column name, 'json path')|Return the value as string type.<br>(If the value does not exist, return ERROR.)| - JSON object or array : Convert every objects into string type and return it.<br> - String type : Return as is<br> - Numeric type : Convert into string type and return it<br> - boolean type : Return "True" or "False"|
-|JSON_EXTRACT_DOUBLE(JSON column name, 'json path')	|Return the value as 64 bits double type.<br>(If the value does not exist, return NULL.)| - JSON object or array : Return NULL<br> - String type : Convert and return if possible. Else return NULL.<br> - Numeric type : Return 64bit real number.<br> - boolean type : Return "True" as 1.0 or "False" as 0.0|
-|JSON_EXTRACT_INTEGER(JSON column name, 'json path')|Return the value as 64 bits integer type.<br>(If the value does not exist, return NULL.)| - JSON object or array : Return NULL<br> - String type : Convert and return if possible. Else return NULL.<br> - Numeric type : Return 64bit integer.<br> - boolean type : Return "True" as 1 or "False" as 0|
-|JSON_EXTRACT_STRING(JSON column name, 'json path')|Return the value as string type.<br>(If the value does not exist, return NULL.)<br>Returns same results as operator(→)| - JSON object or array : Convert every objects into string type and return it.<br> - String type : Return as is <br> - Numeric type : Convert into string type and return it <br> - boolean type : Return "True" or "False"|
-|JSON_IS_VALID('json string')|Check if the json string is valid for the json format| - 0 : False<br> - 1 : True|
-|JSON_TYPEOF(JSON column name, 'json path')|Returns the type of the value.| - None : Key does not exists.<br> - Object : Object type<br> - Integer : Integer Type<br> - Real : Real number type<br> - String : String type<br> - True/False : Boolean<br> - Array : Array Type<br> - Null : NULL|
+|JSON_EXTRACT(JSON column name, 'json path')|값을 문자열 타입으로 반환합니다.<br>(값이 없으면 ERROR를 반환합니다.)| - JSON object or array : 모든 객체를 문자열로 변환해 반환합니다.<br> - String type : 그대로 반환합니다.<br> - Numeric type : 문자열로 변환해 반환합니다.<br> - boolean type : \"True\" 또는 \"False\"를 반환합니다.|
+|JSON_EXTRACT_DOUBLE(JSON column name, 'json path')|값을 64비트 double 타입으로 반환합니다.<br>(값이 없으면 NULL을 반환합니다.)| - JSON object or array : NULL을 반환합니다.<br> - String type : 변환 가능하면 변환해 반환하고, 불가능하면 NULL을 반환합니다.<br> - Numeric type : 64비트 실수로 반환합니다.<br> - boolean type : \"True\"는 1.0, \"False\"는 0.0으로 반환합니다.|
+|JSON_EXTRACT_INTEGER(JSON column name, 'json path')|값을 64비트 정수 타입으로 반환합니다.<br>(값이 없으면 NULL을 반환합니다.)| - JSON object or array : NULL을 반환합니다.<br> - String type : 변환 가능하면 변환해 반환하고, 불가능하면 NULL을 반환합니다.<br> - Numeric type : 64비트 정수로 반환합니다.<br> - boolean type : \"True\"는 1, \"False\"는 0으로 반환합니다.|
+|JSON_EXTRACT_STRING(JSON column name, 'json path')|값을 문자열 타입으로 반환합니다.<br>(값이 없으면 NULL을 반환합니다.)<br>연산자(→)와 동일한 결과를 반환합니다.| - JSON object or array : 모든 객체를 문자열로 변환해 반환합니다.<br> - String type : 그대로 반환합니다. <br> - Numeric type : 문자열로 변환해 반환합니다. <br> - boolean type : \"True\" 또는 \"False\"를 반환합니다.|
+|JSON_IS_VALID('json string')|json 문자열이 형식에 맞는지 확인합니다.| - 0 : False<br> - 1 : True|
+|JSON_TYPEOF(JSON column name, 'json path')|값의 타입을 반환합니다.| - None : 키가 존재하지 않음<br> - Object : Object 타입<br> - Integer : 정수 타입<br> - Real : 실수 타입<br> - String : 문자열 타입<br> - True/False : Boolean<br> - Array : Array 타입<br> - Null : NULL|
 
 ```sql
 Mach> CREATE TABLE jsontbl (name VARCHAR(20), jval JSON);
@@ -2663,11 +2665,12 @@ name1                 String
 ```
 
 
-## JSON Operator
+<a id="json-operator"></a>
+## JSON 연산자
 
-'->' operator is used for accessing an object of JSON data.
+'->' 연산자는 JSON 데이터의 객체에 접근할 때 사용합니다.
 
-Returns the same results as JSON_EXTRACT_STRING function.
+JSON_EXTRACT_STRING 함수와 동일한 결과를 반환합니다.
 
 ```sql
 json_col -> 'json path'
@@ -2702,32 +2705,33 @@ name1                 NULL
 [4] row(s) selected
 ```
 
-## WINDOW FUNCTION
+<a id="window-function"></a>
+## 윈도우 함수
 
-The WINDOW function is a function for comparison, operation, and definition between rows. It is also called an analysis function or ranking function.
+윈도우 함수는 행 간 비교, 연산, 정의를 위한 함수이며 분석 함수 또는 랭킹 함수라고도 합니다.
 
-It can only be used in the SELECT statement.
+SELECT 문에서만 사용할 수 있습니다.
 
-### WINDOW FUNCTION SYNTAX
+### 윈도우 함수 구문
 
-Window functions necessarily include the OVER clause.
+윈도우 함수는 반드시 OVER 절을 포함합니다.
 
 ```
 WINDOW_FUNCTION (ARGUMENTS) OVER ([PARTITION BY column_name] [ORDER BY column_name])
 ```
 
-* WINDOW_FUNCTION: Window function name
-* ARGUMENTS: Depending on the function, 0 to N arguments can be specified.
-* PARTITION BY clause: The entire set can be divided into small groups based on criteria. (can be omitted)
-* ORDER BY clause: Describes the order by clause on which items to sort. (Can be omitted)
+* WINDOW_FUNCTION: 윈도우 함수 이름
+* ARGUMENTS: 함수에 따라 0~N개의 인자를 지정할 수 있습니다.
+* PARTITION BY clause: 전체 집합을 기준에 따라 작은 그룹으로 나눕니다. (생략 가능)
+* ORDER BY clause: 정렬 기준이 되는 ORDER BY 절을 지정합니다. (생략 가능)
 
-### WINDOW FUNCTION LIST
+### 윈도우 함수 목록
 
 #### LAG
 
-Retrieve the value of the previous Nth row in a partition-specific window.
+파티션별 윈도우에서 이전 N번째 행의 값을 가져옵니다.
 
-If there are no rows to retrieve, NULL is returned.
+가져올 행이 없으면 NULL을 반환합니다.
 
 ```
 LAG(column_name, N) OVER ([PARTITION BY column_name] [ORDER BY column_name])
@@ -2759,9 +2763,9 @@ name1       2024-01-03 00:00:00 000:000:000 3           2
 
 #### LEAD
 
-Retrieve the value of the Nth row from the partition-specific window.
+파티션별 윈도우에서 N번째 다음 행의 값을 가져옵니다.
 
-If there are no rows to retrieve, NULL is returned.
+가져올 행이 없으면 NULL을 반환합니다.
 
 ```
 LEAD(column_name, N) OVER ([PARTITION BY column_name] [ORDER BY column_name])

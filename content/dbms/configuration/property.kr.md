@@ -1,6 +1,6 @@
 ---
 layout : post
-title : 'Property'
+title : '프로퍼티'
 type: docs
 ---
 

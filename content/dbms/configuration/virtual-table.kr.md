@@ -1,6 +1,6 @@
 ---
 layout : post
-title : 'Virtual Table'
+title : '가상테이블'
 type: docs
 ---
 

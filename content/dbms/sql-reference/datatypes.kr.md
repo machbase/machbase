@@ -1,5 +1,5 @@
 ---
-title : 'Datatypes'
+title : '데이터 타입'
 type: docs
 weight: 10
 ---

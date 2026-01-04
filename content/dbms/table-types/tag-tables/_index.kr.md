@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'Tag Tables'
+title: 'Tag 테이블'
 weight: 10
 ---
 

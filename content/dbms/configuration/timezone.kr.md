@@ -1,6 +1,6 @@
 ---
 layout : post
-title : 'Timezone'
+title : '타임존'
 type : docs
 ---
 
