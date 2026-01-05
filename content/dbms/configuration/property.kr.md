@@ -43,8 +43,10 @@ type: docs
 - [DUMP_TRACE_INFO](#dump_trace_info)
 - [DURATION_BEGIN](#duration_begin)
 - [DURATION_GAP](#duration_gap)
+- [ENABLE_CASE_SENSITIVE_PASSWORD](#enable_case_sensitive_password)
 - [FEEDBACK_APPEND_ERROR](#feedback_append_error)
 - [GRANT_REMOTE_ACCESS](#grant_remote_access)
+- [BIND_IP_ADDRESS](#bind_ip_address)
 - [HTTP_THREAD_COUNT](#http_thread_count)
 - [INDEX_BUILD_MAX_ROW_COUNT_PER_THREAD](#index_build_max_row_count_per_thread)
 - [INDEX_BUILD_THREAD_COUNT](#index_build_thread_count)
@@ -54,6 +56,10 @@ type: docs
 - [INDEX_LEVEL_PARTITION_BUILD_THREAD_COUNT](#index_level_partition_build_thread_count)
 - [LOOKUP_APPEND_UPDATE_ON_DUPKEY](#lookup_append_update_on_dupkey)
 - [MAX_QPX_MEM](#max_qpx_mem)
+- [MAX_SESSION_COUNT](#max_session_count)
+- [MAX_STMT_COUNT_PER_SESSION](#max_stmt_count_per_session)
+- [SESSION_IDLE_TIMEOUT_SEC](#session_idle_timeout_sec)
+- [SESSION_QUERY_TIMEOUT_SEC](#session_query_timeout_sec)
 - [MEMORY_ROW_TEMP_TABLE_PAGESIZE](#memory_row_temp_table_pagesize)
 - [PID_PATH](#pid_path)
 - [PORT_NO](#port_no)
@@ -68,6 +74,11 @@ type: docs
 - [RS_CACHE_TIME_BOUND_MSEC](#rs_cache_time_bound_msec)
 - [SHOW_HIDDEN_COLS](#show_hidden_cols)
 - [TABLE_SCAN_DIRECTION](#table_scan_direction)
+- [TAG_CACHE_ENABLE](#tag_cache_enable)
+- [TAG_CACHE_MAX_MEMORY_SIZE](#tag_cache_max_memory_size)
+- [TAG_CACHE_POOL_COUNT](#tag_cache_pool_count)
+- [TAG_MEMORY_INDEX_TYPE](#tag_memory_index_type)
+- [TAG_MEMORY_INDEX_PANOUT](#tag_memory_index_panout)
 - [TAGDATA_AUTO_META_INSERT](#tagdata_auto_meta_insert)
 - [TAG_TABLE_META_MAX_SIZE](#tag_table_meta_max_size)
 - [TAG_PARTITION_COUNT](#tag_partition_count)
@@ -417,6 +428,19 @@ DURATION_BEGIN 값도 60이라면, 현재 시각에서 60초 이전부터 60초 
 |최대값|	Non-zero|
 |기본값|	0|
 
+## ENABLE_CASE_SENSITIVE_PASSWORD
+
+비밀번호의 대소문자 구분 여부를 설정한다.
+
+* 0: 구분하지 않음. 사용자 생성/변경/인증 시 비밀번호를 대문자로 변환한다.
+* 1: 구분함.
+
+||Value|
+|-|----|
+|최소값|	0|
+|최대값|	1|
+|기본값|	0|
+
 ## FEEDBACK_APPEND_ERROR
 
 Append API 실행시 오류가 발생하였을 경우, 오류 데이터를 클라이언트에 전송할지를 설정한다. 0이면 클라이언트에 오류 데이터를 전송하지 않으며 1이면 클라이언트에 오류 정보를 전송한다.
@@ -436,6 +460,14 @@ Append API 실행시 오류가 발생하였을 경우, 오류 데이터를 클�
 |최소값|	0 (False)|
 |최대값|	1 (True)|
 |기본값|    1 (True)|
+
+## BIND_IP_ADDRESS
+
+INET/HTTP 리스너가 바인드할 IP 주소를 지정한다. `GRANT_REMOTE_ACCESS=1`이면 이 주소로 바인드하고, `GRANT_REMOTE_ACCESS=0`이면 루프백 주소에만 바인드한다. `0.0.0.0`은 모든 인터페이스를 의미한다.
+
+||Value|
+|-|----|
+|기본값|	0.0.0.0|
 
 ## HTTP_THREAD_COUNT
 
@@ -530,6 +562,46 @@ GROUP BY, DISTINCT, ORDER BY 절을 수행하기 위해서 질의처리기가  �
 |최소값|	1024 * 1024|
 |최대값|	2^64 - 1|
 |기본값|	500 * 1024 * 1024|
+
+## MAX_SESSION_COUNT
+
+동시 세션의 최대 개수를 지정한다. 초과 시 신규 세션이 거부된다.
+
+||Value|
+|--|----|
+|최소값|	64|
+|최대값|	2^64 - 1|
+|기본값|	4096|
+
+## MAX_STMT_COUNT_PER_SESSION
+
+세션당 생성 가능한 statement의 최대 개수를 지정한다. 초과 시 statement 생성/사용이 실패한다.
+
+||Value|
+|--|----|
+|최소값|	512|
+|최대값|	2^32 - 1|
+|기본값|	1024|
+
+## SESSION_IDLE_TIMEOUT_SEC
+
+세션 유휴(idle) 상태의 최대 시간을 초 단위로 지정한다. 설정된 시간을 넘기면 세션 연결을 종료한다. 0이면 사용하지 않는다.
+
+||Value|
+|--|----|
+|최소값|	0 (sec)|
+|최대값|	2^64 - 1 (sec)|
+|기본값|	0 (sec)|
+
+## SESSION_QUERY_TIMEOUT_SEC
+
+쿼리 실행 최대 시간을 초 단위로 지정한다. 설정된 시간을 넘기면 해당 쿼리를 취소한다. 0이면 사용하지 않는다.
+
+||Value|
+|--|----|
+|최소값|	0 (sec)|
+|최대값|	2^64 - 1 (sec)|
+|기본값|	0 (sec)|
 
 ## MEMORY_ROW_TEMP_TABLE_PAGESIZE
 
@@ -688,6 +760,66 @@ _ARRIVAL_TIME 컬럼은 기본 설정으로는 SELECT * FROM 질의에 의해서
 |최소값|	-1|
 |최대값|	1|
 |기본값|	0|
+
+## TAG_CACHE_ENABLE
+
+TAG(키-값) 테이블 캐시 사용 범위를 비트 OR로 지정한다.
+
+* 0: 캐시 사용 안 함
+* 1: TAG map 캐시
+* 2: 실제 row 데이터 캐시
+* 4: data file 캐시
+* 8: 외부 VARCHAR file 캐시
+* 16: delete vector 캐시
+
+||Value|
+|--|----|
+|최소값|	0|
+|최대값|	31|
+|기본값|	31|
+
+## TAG_CACHE_MAX_MEMORY_SIZE
+
+TAG 캐시 풀 1개당 최대 메모리(바이트)를 지정한다. 전체 캐시 한도는 `TAG_CACHE_MAX_MEMORY_SIZE * TAG_CACHE_POOL_COUNT` 로 계산된다.
+
+||Value|
+|--|----|
+|최소값|	32 * 1024|
+|최대값|	2^64 - 1|
+|기본값|	512 * 1024 * 1024|
+
+## TAG_CACHE_POOL_COUNT
+
+TAG 캐시 풀의 개수를 지정한다.
+
+||Value|
+|--|----|
+|최소값|	1|
+|최대값|	128|
+|기본값|	1|
+
+## TAG_MEMORY_INDEX_TYPE
+
+메모리 인덱스 유형을 지정한다.
+
+* 0: RBTree
+* 1: BTree
+
+||Value|
+|--|----|
+|최소값|	0|
+|최대값|	1|
+|기본값|	1|
+
+## TAG_MEMORY_INDEX_PANOUT
+
+B-Tree 메모리 인덱스의 차수(order, fanout)를 지정한다. `TAG_MEMORY_INDEX_TYPE=1`일 때 적용된다.
+
+||Value|
+|--|----|
+|최소값|	127|
+|최대값|	65536|
+|기본값|	255|
 
 ## TAGDATA_AUTO_META_INSERT
 {{< callout type="info" >}}
