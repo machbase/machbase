@@ -39,7 +39,16 @@ alter_system_kill_session_stmt: 'ALTER SYSTEM KILL SESSION' number
 
 Terminates a specific session with a SessionID.
 
-However, only the SYS user can execute this statement and can not KILL their own session
+- Only `SYS` can execute this statement; self-kill or non-SYS attempts return `[ERR-03025: Not enough privileges to manipulate the session. (<sid>)]`.
+- If the session does not exist, an `ERR_MM_SESSION_ID_NOT_FOUND` error is returned.
+- Use this when you need to drop the connection entirely; the target session is disconnected and any in-flight transaction is rolled back.
+
+Example
+```sql
+-- As SYS
+SELECT id, user_id, program FROM v$session;
+ALTER SYSTEM KILL SESSION 12;
+```
 
 ### CANCEL SESSION
 
@@ -53,7 +62,19 @@ alter_system_cancel_session_stmt ::= 'ALTER SYSTEM CANCEL SESSION' number
 
 Cancels a specific session with a SessionID.
 
-Rather than disconnecting the connection, it cancels the action being performed and returns an error code to the user that the action was aborted. However, like KILL, you can not cancel your own connected sessions.
+- Cancels only the currently running statement and leaves the connection alive; the target session receives `[ERR-03027: This statement has been canceled.]`.
+- Allowed for the same user or `SYS`. Different users get `[ERR-03026: You should log in with the same user name in the target session. Now (<me>) Target(<them>)]`.
+- Self-cancel is rejected with the privilege error `[ERR-03025: Not enough privileges to manipulate the session. (<sid>)]`.
+- If the session ID is not found, an `ERR_MM_SESSION_ID_NOT_FOUND` error is returned.
+
+Example
+```sql
+-- Session A: find target SID
+SELECT id, user_id, program, sql_text FROM v$session;
+
+-- Session B (same user or SYS): cancel the running statement on SID 6
+ALTER SYSTEM CANCEL SESSION 6;
+```
 
 ### CHECK DISK_USAGE
 
