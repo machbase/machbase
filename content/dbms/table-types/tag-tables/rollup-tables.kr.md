@@ -188,16 +188,29 @@ ORDER BY rt;
 
 ## ROLLUP 테이블 시작/중지
 
-rollup 생성시 rollup thread가 자동으로 시작되며, 사용자가 rollup thread를 임의로 시작/중지 가능하다.
+rollup 생성 시 스레드가 자동으로 시작되며, 이후 SQL 또는 프로시저로 시작/중지를 제어할 수 있다.
 
 ```sql
+-- 롤업 시작/중지
+ALTER ROLLUP <rollup_name> START;
+ALTER ROLLUP <rollup_name> STOP;
 
--- 특정 rollup 시작
-EXEC ROLLUP_START(rollup_name)
- 
--- 특정 rollup 중지
-EXEC ROLLUP_STOP(rollup_name)
+-- 동일한 기능의 프로시저
+EXEC ROLLUP_START(<rollup_name>);
+EXEC ROLLUP_STOP(<rollup_name>);
 ```
+
+### Wakeup 주기와 스케줄
+- 각 롤업은 자체 wakeup 주기로 동작한다. 기본값은 롤업 주기와 동일하지만, 더 촘촘하게(단, 롤업 주기의 약수로) 설정해 더 자주 깨울 수 있다.
+- 설정 문법:
+```sql
+ALTER ROLLUP <rollup_name> SET WAKEUP INTERVAL <N> (SEC|MIN|HOUR);
+```
+  - `N`은 0보다 커야 한다.
+  - 변환된 wakeup 주기가 롤업 주기보다 크면 안 된다.
+  - 롤업 주기가 wakeup 주기의 정수배가 아니면 에러가 발생한다.
+  - 값을 변경하면 즉시 한 번 깨운 뒤 새 스케줄로 재정렬한다.
+- 관찰 포인트: `V$ROLLUP`에서 `WAKEUP_INTERVAL`, `LAST_WAKEUP_TIME`, `NEXT_WAKEUP_TIME`, `RUN_STATE`(INIT/SLEEPING/RUNNING)을 확인할 수 있고, `show rollupgap`도 마지막/다음 wakeup과 상태를 보여준다.
 
 ## ROLLUP 테이블 즉시 수집
 
@@ -208,8 +221,13 @@ rollup은 기본적으로 설정된 시간 단위마다 데이터 집계를 시�
 사용자가 수동으로 대기 시간을 무시하고 강제로 데이터 집계를 실행할 수 있다.
 
 ```sql
--- 특정 rollup 즉시 수집
-EXEC ROLLUP_FORCE(rollup_name)
+-- 비블로킹: 스레드를 바로 깨우고 반환
+ALTER ROLLUP <rollup_name> WAKEUP;
+
+-- 블로킹: 즉시 집계 실행 후 완료까지 대기
+ALTER ROLLUP <rollup_name> FORCE;
+-- 동일한 기능의 프로시저
+EXEC ROLLUP_FORCE(<rollup_name>);
 ```
 
 ## ROLLUP 테이블 삭제

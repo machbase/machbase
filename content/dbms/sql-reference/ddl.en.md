@@ -784,6 +784,37 @@ Mach> DROP ROLLUP _rollup_tag_value_sec;
 Executed successfully
 ```
 
+## ALTER ROLLUP
+
+Control rollup workers and their wakeup schedule.
+
+```sql
+alter_rollup_start_stop_stmt ::= 'ALTER ROLLUP' rollup_name ( 'START' | 'STOP' )
+alter_rollup_force_stmt      ::= 'ALTER ROLLUP' rollup_name 'FORCE'
+alter_rollup_wakeup_stmt     ::= 'ALTER ROLLUP' rollup_name 'WAKEUP'
+alter_rollup_wakeup_int_stmt ::= 'ALTER ROLLUP' rollup_name 'SET WAKEUP INTERVAL' number ( 'SEC' | 'MIN' | 'HOUR' )
+```
+
+Examples
+```sql
+-- Start/stop a rollup thread
+ALTER ROLLUP _rollup_tag_value_sec START;
+ALTER ROLLUP _rollup_tag_value_sec STOP;
+
+-- Wake the thread now (non-blocking)
+ALTER ROLLUP _rollup_tag_value_sec WAKEUP;
+
+-- Run immediately and wait for completion
+ALTER ROLLUP _rollup_tag_value_sec FORCE;
+
+-- Tighten the wakeup interval (must divide the rollup interval)
+ALTER ROLLUP _rollup_tag_value_sec SET WAKEUP INTERVAL 5 SEC;
+```
+
+Rules
+- Wakeup interval must be > 0, not larger than the rollup interval, and must evenly divide the rollup interval; otherwise an error is returned.
+- `WAKEUP` only pokes the thread and returns immediately. Use `FORCE` when you need to block until catch-up finishes.
+
 ## CREATE RETENTION
 
 **create_retention_stmt:**

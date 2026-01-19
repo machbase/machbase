@@ -744,17 +744,25 @@ Tagdata Table 에 생성된 인덱스 정보를 표시합니다.
 
 Tagdata 테이블의 Rollup 정보를 표시합니다.
 
-| 컬럼 이름             | 설명                                  |
-| ----------------- | ----------------------------------- |
-| ID                | Rollup 작업 ID                        |
-| ROLLUP_TABLE      | Rollup 이 저장할 테이블 이름                 |
-| SOURCE_TABLE      | Rollup 이 조회할 테이블 이름                 |
-| USER_ID           | Rollup Table과 Source Table의 User ID |
-| ROOT_TABLE        | 최상위 Source Table 이름                 |
-| INTERVAL          | Rollup의 실행 주기 (sec)                 |
-| ENABLED           | Rollup 진행 여부를 나타냄                   |
-| END_RID           | Source Table의 마지막 RID               |
-| LAST_ELAPSED_MSEC | 최근에 진행했던 Rollup의 경과 시간              |
+| 컬럼 이름          | 설명                                                      |
+| -------------- | ------------------------------------------------------- |
+| DATABASE_ID    | 데이터베이스 식별자(로컬 DB는 -1)                                  |
+| ID             | Rollup 작업 ID                                            |
+| ROLLUP_TABLE   | Rollup 테이블 이름                                         |
+| SOURCE_TABLE   | 집계 대상 테이블 이름(TAG/ROLLUP)                                |
+| COLUMN_NAME    | 집계 대상 값 컬럼                                               |
+| ROOT_TABLE     | 최상위 소스 태그 테이블 이름                                        |
+| USER_ID        | 소유자 User ID                                             |
+| INTERVAL_TIME  | Rollup 실행 주기(밀리초)                                         |
+| WAKEUP_INTERVAL| Wakeup 주기(밀리초)                                          |
+| LAST_WAKEUP_TIME| 최근 wakeup 시각                                            |
+| NEXT_WAKEUP_TIME| 다음 wakeup 예정 시각                                         |
+| ENABLED        | Rollup 활성화 여부(1/0)                                      |
+| END_RID        | 이 Rollup이 처리한 Source Table의 마지막 RID                      |
+| LAST_ELAPSED_MSEC | 직전 Rollup 실행에 걸린 시간(밀리초)                               |
+| EXT_TYPE       | 확장(EXTENSION) 여부 플래그                                     |
+| PREDICATE      | 조건 롤업의 필터 식(NULL이면 조건 없음)                              |
+| RUN_STATE      | 스레드 상태: I=INIT, S=SLEEPING, R=RUNNING                      |
 
 ## Stream
 ### V$STREAMS
