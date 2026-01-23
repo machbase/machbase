@@ -39,7 +39,16 @@ alter_system_kill_session_stmt: 'ALTER SYSTEM KILL SESSION' number
 
 세션 ID를 지정해 해당 세션을 강제로 종료합니다.
 
-SYS 사용자만 실행할 수 있으며, 자신의 세션은 종료할 수 없습니다.
+- SYS 사용자만 실행할 수 있으며, 자신의 세션이나 권한이 없는 세션을 대상으로 하면 `[ERR-03025: Not enough privileges to manipulate the session. (<sid>)]`가 반환됩니다.
+- 세션 ID가 없으면 `ERR_MM_SESSION_ID_NOT_FOUND` 오류가 반환됩니다.
+- 연결을 즉시 끊어야 할 때 사용합니다. 대상 세션의 접속이 종료되고 실행 중인 트랜잭션은 롤백됩니다.
+
+예시
+```sql
+-- SYS 계정에서 확인 후 종료
+SELECT id, user_id, program FROM v$session;
+ALTER SYSTEM KILL SESSION 12;
+```
 
 ### CANCEL SESSION
 
@@ -53,7 +62,19 @@ alter_system_cancel_session_stmt ::= 'ALTER SYSTEM CANCEL SESSION' number
 
 세션 ID를 지정해 해당 세션에서 수행 중인 작업을 취소합니다.
 
-연결을 끊는 대신, 현재 수행 중인 작업을 중단하고 작업이 취소되었다는 오류 코드를 사용자에게 반환합니다. 마찬가지로 자신의 세션은 취소할 수 없습니다.
+- 연결을 끊지 않고 현재 실행 중인 SQL만 중단합니다. 대상 세션에서는 `[ERR-03027: This statement has been canceled.]` 오류가 발생합니다.
+- 같은 사용자 또는 SYS만 취소할 수 있습니다. 다른 사용자가 취소하면 `[ERR-03026: You should log in with the same user name in the target session. Now (<me>) Target(<them>)]`를 반환합니다.
+- 자기 자신의 세션을 취소하려 하면 `[ERR-03025: Not enough privileges to manipulate the session. (<sid>)]`가 반환됩니다.
+- 세션 ID가 없으면 `ERR_MM_SESSION_ID_NOT_FOUND` 오류가 반환됩니다.
+
+예시
+```sql
+-- 세션 A: 대상 SID 확인
+SELECT id, user_id, program, sql_text FROM v$session;
+
+-- 세션 B (같은 사용자 또는 SYS): 실행 중인 문장만 취소
+ALTER SYSTEM CANCEL SESSION 6;
+```
 
 ### CHECK DISK_USAGE
 
