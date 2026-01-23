@@ -752,6 +752,37 @@ Mach> DROP ROLLUP _rollup_tag_value_sec;
 Executed successfully
 ```
 
+## ALTER ROLLUP
+
+롤업 워커를 제어하고 wakeup 주기를 조정한다.
+
+```sql
+alter_rollup_start_stop_stmt ::= 'ALTER ROLLUP' rollup_name ( 'START' | 'STOP' )
+alter_rollup_force_stmt      ::= 'ALTER ROLLUP' rollup_name 'FORCE'
+alter_rollup_wakeup_stmt     ::= 'ALTER ROLLUP' rollup_name 'WAKEUP'
+alter_rollup_wakeup_int_stmt ::= 'ALTER ROLLUP' rollup_name 'SET WAKEUP INTERVAL' number ( 'SEC' | 'MIN' | 'HOUR' )
+```
+
+예시
+```sql
+-- 롤업 스레드 시작/중지
+ALTER ROLLUP _rollup_tag_value_sec START;
+ALTER ROLLUP _rollup_tag_value_sec STOP;
+
+-- 지금 바로 깨우고 즉시 반환
+ALTER ROLLUP _rollup_tag_value_sec WAKEUP;
+
+-- 즉시 집계 실행 후 완료까지 대기
+ALTER ROLLUP _rollup_tag_value_sec FORCE;
+
+-- wakeup 주기 단축(롤업 주기의 약수만 허용)
+ALTER ROLLUP _rollup_tag_value_sec SET WAKEUP INTERVAL 5 SEC;
+```
+
+규칙
+- wakeup 주기는 0보다 커야 하고 롤업 주기보다 클 수 없으며, 롤업 주기의 정수배여야 한다. 위반 시 에러를 반환한다.
+- `WAKEUP`은 스레드를 깨우기만 하고 바로 반환한다. 즉시 실행과 완료 대기가 필요할 때는 `FORCE`를 사용한다.
+
 ## CREATE RETENTION
 
 **create_retention_stmt:**

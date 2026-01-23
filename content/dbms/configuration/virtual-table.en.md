@@ -799,15 +799,23 @@ Displays the Rollup information that stores information of the Tagdata table.
 
 |Column Name|Description|
 |--|--|
+|DATABASE_ID|Database identifier (always -1 for local DB)|
 |ID|Rollup job ID|
-|ROLLUP_TABLE_NAME|Table name to store Rollup information|
-|SOURCE_TABLE_NAME|Name of tag table that Rollup will query|
-|USER_ID|User ID of Rollup Table and Source Table|
-|ROOT_TABLE|Root Source Table Name|
-|INTERVAL|Rollup execution cycle (sec)|
-|END_RID|Source Table end RID|
-|ENABLED|Indicates Rollup progress status|
-|LAST_ELAPSED_MSEC|Number of recently entered records|
+|ROLLUP_TABLE|Name of the rollup table|
+|SOURCE_TABLE|Source table name (TAG/ROLLUP)|
+|COLUMN_NAME|Target value column aggregated by this rollup|
+|ROOT_TABLE|Root source tag table name|
+|USER_ID|Owner user ID|
+|INTERVAL_TIME|Rollup interval (msec)|
+|WAKEUP_INTERVAL|Wakeup interval (msec)|
+|LAST_WAKEUP_TIME|Last time the rollup thread woke up|
+|NEXT_WAKEUP_TIME|Next scheduled wakeup time|
+|ENABLED|Whether the rollup is enabled (1/0)|
+|END_RID|Source table end RID processed by this rollup|
+|LAST_ELAPSED_MSEC|Elapsed time of the last rollup run (msec)|
+|EXT_TYPE|Extension flag (supports FIRST/LAST when set)|
+|PREDICATE|Filter predicate for conditional rollups (NULL if none)|
+|RUN_STATE|Current worker state: I=INIT, S=SLEEPING, R=RUNNING|
 
 
 
