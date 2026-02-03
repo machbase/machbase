@@ -138,6 +138,62 @@ The list of properties that can be modified is as follows.
 * PROCESS_MAX_SIZE
 * TAG_CACHE_MAX_MEMORY_SIZE
 
+For numeric properties, extended expression syntax is supported.
+
+Supported syntax
+- Direct assignment (numeric or string):
+  - `ALTER SYSTEM SET <name> = <value>;`
+- Flag add (bitwise OR):
+  - `ALTER SYSTEM SET <name> = <name> | <number>;`
+  - `ALTER SYSTEM SET <name> = <number> | <name>;`
+- Flag remove (bitwise AND + NOT):
+  - `ALTER SYSTEM SET <name> = <name> & ~<number>;`
+  - `ALTER SYSTEM SET <name> = ~<number> & <name>;`
+
+Literal rules
+- `<number>` accepts decimal (`123`) or hexadecimal (`0x7B`, `0X7B`).
+- Bitwise expressions are allowed only for numeric properties. Non-numeric properties return an error.
+- If you need a literal string such as `0xABCD`, use quotes:
+  - `ALTER SYSTEM SET <name> = '0xABCD';`
+
+Notes
+- In bitwise expressions, the property name in the expression must match the left-hand side.
+- Existing non-expression behavior remains unchanged.
+
+Example
+```sql
+-- Set TRACE_LOG_LEVEL to a hex value
+ALTER SYSTEM SET TRACE_LOG_LEVEL=0x00000003;
+SELECT VALUE FROM V$PROPERTY WHERE NAME='TRACE_LOG_LEVEL';
+
+-- Add flags (bitwise OR)
+ALTER SYSTEM SET TRACE_LOG_LEVEL = TRACE_LOG_LEVEL | 0x00000004;
+SELECT VALUE FROM V$PROPERTY WHERE NAME='TRACE_LOG_LEVEL';
+
+ALTER SYSTEM SET TRACE_LOG_LEVEL = 0x00000008 | TRACE_LOG_LEVEL;
+SELECT VALUE FROM V$PROPERTY WHERE NAME='TRACE_LOG_LEVEL';
+
+ALTER SYSTEM SET TRACE_LOG_LEVEL = 16 | TRACE_LOG_LEVEL;
+SELECT VALUE FROM V$PROPERTY WHERE NAME='TRACE_LOG_LEVEL';
+
+-- Remove flags (bitwise AND + NOT)
+ALTER SYSTEM SET TRACE_LOG_LEVEL = TRACE_LOG_LEVEL & ~0x00000001;
+SELECT VALUE FROM V$PROPERTY WHERE NAME='TRACE_LOG_LEVEL';
+
+ALTER SYSTEM SET TRACE_LOG_LEVEL = ~0x00000002 & TRACE_LOG_LEVEL;
+SELECT VALUE FROM V$PROPERTY WHERE NAME='TRACE_LOG_LEVEL';
+
+ALTER SYSTEM SET TRACE_LOG_LEVEL = ~4 & TRACE_LOG_LEVEL;
+SELECT VALUE FROM V$PROPERTY WHERE NAME='TRACE_LOG_LEVEL';
+
+-- Non-numeric properties are not allowed in bitwise expressions (error)
+ALTER SYSTEM SET TRACE_LOG_LEVEL = 1 | DEFAULT_DATE_FORMAT;
+ALTER SYSTEM SET DEFAULT_DATE_FORMAT = DEFAULT_DATE_FORMAT | 1;
+
+-- Decimal assignment
+ALTER SYSTEM SET TRACE_LOG_LEVEL=277;
+```
+
 
 ## ALTER SESSION
 
