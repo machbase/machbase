@@ -138,6 +138,62 @@ alter_system_set_stmt ::= 'ALTER SYSTEM SET' prop_name '=' value
 * PROCESS_MAX_SIZE
 * TAG_CACHE_MAX_MEMORY_SIZE
 
+숫자 속성에 대해서는 확장 표현식을 지원합니다.
+
+지원 구문
+- 직접 대입(숫자 또는 문자열):
+  - `ALTER SYSTEM SET <name> = <value>;`
+- 플래그 추가(비트 OR):
+  - `ALTER SYSTEM SET <name> = <name> | <number>;`
+  - `ALTER SYSTEM SET <name> = <number> | <name>;`
+- 플래그 제거(비트 AND + NOT):
+  - `ALTER SYSTEM SET <name> = <name> & ~<number>;`
+  - `ALTER SYSTEM SET <name> = ~<number> & <name>;`
+
+리터럴 규칙
+- `<number>`는 10진수(`123`) 또는 16진수(`0x7B`, `0X7B`)를 허용합니다.
+- 비트 연산 표현식은 숫자 속성에만 허용됩니다. 비숫자 속성에는 오류가 발생합니다.
+- `0xABCD` 같은 문자열 리터럴을 설정하려면 따옴표를 사용합니다.
+  - `ALTER SYSTEM SET <name> = '0xABCD';`
+
+주의사항
+- 비트 연산 표현식에서 사용하는 속성 이름은 좌변과 동일해야 합니다.
+- 기존 비표현식 동작은 변경되지 않습니다.
+
+예시
+```sql
+-- TRACE_LOG_LEVEL을 16진수로 설정
+ALTER SYSTEM SET TRACE_LOG_LEVEL=0x00000003;
+SELECT VALUE FROM V$PROPERTY WHERE NAME='TRACE_LOG_LEVEL';
+
+-- 플래그 추가(비트 OR)
+ALTER SYSTEM SET TRACE_LOG_LEVEL = TRACE_LOG_LEVEL | 0x00000004;
+SELECT VALUE FROM V$PROPERTY WHERE NAME='TRACE_LOG_LEVEL';
+
+ALTER SYSTEM SET TRACE_LOG_LEVEL = 0x00000008 | TRACE_LOG_LEVEL;
+SELECT VALUE FROM V$PROPERTY WHERE NAME='TRACE_LOG_LEVEL';
+
+ALTER SYSTEM SET TRACE_LOG_LEVEL = 16 | TRACE_LOG_LEVEL;
+SELECT VALUE FROM V$PROPERTY WHERE NAME='TRACE_LOG_LEVEL';
+
+-- 플래그 제거(비트 AND + NOT)
+ALTER SYSTEM SET TRACE_LOG_LEVEL = TRACE_LOG_LEVEL & ~0x00000001;
+SELECT VALUE FROM V$PROPERTY WHERE NAME='TRACE_LOG_LEVEL';
+
+ALTER SYSTEM SET TRACE_LOG_LEVEL = ~0x00000002 & TRACE_LOG_LEVEL;
+SELECT VALUE FROM V$PROPERTY WHERE NAME='TRACE_LOG_LEVEL';
+
+ALTER SYSTEM SET TRACE_LOG_LEVEL = ~4 & TRACE_LOG_LEVEL;
+SELECT VALUE FROM V$PROPERTY WHERE NAME='TRACE_LOG_LEVEL';
+
+-- 비숫자 속성은 비트 연산 표현식에 사용할 수 없음(오류)
+ALTER SYSTEM SET TRACE_LOG_LEVEL = 1 | DEFAULT_DATE_FORMAT;
+ALTER SYSTEM SET DEFAULT_DATE_FORMAT = DEFAULT_DATE_FORMAT | 1;
+
+-- 10진수 직접 대입
+ALTER SYSTEM SET TRACE_LOG_LEVEL=277;
+```
+
 
 ## ALTER SESSION
 
