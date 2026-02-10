@@ -27,6 +27,9 @@ Virtual Table은 읽기 전용으로 사용자가 추가하거나 삭제, 갱신
 * [Result Cache](#result-cache)
   * [V$RS\_CACHE\_LIST](#vrs_cache_list)
   * [V$RS\_CACHE\_STAT](#vrs_cache_stat)
+* [PVO Statement Cache](#pvo-statement-cache)
+  * [V$PVO\_CACHE\_STAT](#vpvo_cache_stat)
+  * [V$PVO\_CACHE\_LIST](#vpvo_cache_list)
 * [Storage](#storage)
   * [V$STORAGE](#vstorage)
   * [V$STORAGE\_MOUNT\_DATABASES](#vstorage_mount_databases)
@@ -269,6 +272,51 @@ MACHBASE 의 버전에 대한 정보를 표시합니다.
 | AGGR_HIT           | 집계 결과의 총 캐시 히트 횟수 |
 | CACHE_REPLACED     | 캐시 교체 횟수          |
 | CACHE_MEMORY_USAGE | 캐시로 사용된 메모리 크기    |
+
+## PVO Statement Cache
+Standard 에디션에서만 제공되는 글로벌 PVO Statement Cache 상태를 조회한다.
+
+### V$PVO_CACHE_STAT
+---
+
+PVO Statement Cache의 전체 통계를 보여준다.
+
+| 컬럼 이름 | 설명 |
+| -- | -- |
+| CACHE_ENTRY_COUNT | 캐시에 적재된 SQL 엔트리 수 |
+| CACHE_HANDLE_COUNT | 모든 SQL에 대한 캐시된 플랜(핸들) 수 |
+| CACHE_MEMORY_USAGE | 사용 중인 캐시 메모리 크기 |
+| CACHE_MAX_MEMORY_SIZE | 설정된 캐시 메모리 한도 |
+| CACHE_MAX_PLANS_PER_SQL | SQL당 허용되는 최대 플랜 수 |
+| CACHE_MAX_SQL_ENTRIES | 허용되는 최대 SQL 엔트리 수 (0은 무제한) |
+| CACHE_SHARD_COUNT | 캐시 샤드 개수 |
+| CACHE_HIT | 캐시 히트 횟수 |
+| CACHE_MISS | 캐시 미스 횟수 |
+| SINGLEFLIGHT_WAIT | 동일 SQL 병행 빌드 대기 횟수 |
+| BUILD_COUNT | 플랜 빌드 시도 횟수 |
+| BUILD_FAIL | 빌드 실패 횟수 |
+| INVALIDATE_COUNT | 무효화된 플랜 수 |
+| EVICT_COUNT | 메모리 한도 등으로 인한 캐시 축출 횟수 |
+| FLUSH_COUNT | 명시적/내부 플러시 횟수 |
+
+### V$PVO_CACHE_LIST
+---
+
+PVO Statement Cache에 저장된 SQL별 상세 정보를 보여준다.
+
+| 컬럼 이름 | 설명 |
+| -- | -- |
+| TOUCH_TIME | 마지막 터치 시각 |
+| USER_ID | SQL을 소유한 사용자 ID |
+| QUERY | 원본 SQL 텍스트 |
+| DEFAULT_DATE_FORMAT | 실행 당시의 날짜 포맷 |
+| TIMEZONE_OFFSET | 실행 당시 타임존 오프셋 |
+| SHOW_HIDDEN_COLS | 숨김 컬럼 표시 여부 |
+| QUERY_PARALLEL_FACTOR | 병렬 실행 계수 |
+| HANDLE_COUNT | 보유한 플랜(핸들) 수 |
+| BUSY_COUNT | 동시에 사용 중인 핸들 수 |
+| HIT_COUNT | 캐시 히트 횟수 |
+| BUILD_IN_PROGRESS | 빌드 진행 중 여부 |
 
 ## Storage
 ### V$STORAGE
