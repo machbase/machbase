@@ -13,6 +13,8 @@ weight: 80
     * [INSTALL LICENSE](#install-license)
     * [INSTALL LICENSE (PATH)](#install-license-path)
     * [SET](#set)
+    * [SET PVO CACHE](#set-pvo-cache)
+    * [FLUSH PVO_CACHE](#flush-pvo_cache)
 * [ALTER SESSION](#alter-session)
     * [SET SQL_LOGGING](#set-sql_logging)
     * [SET DEFAULT_DATE_FORMAT](#set-default_date_format)
@@ -192,6 +194,25 @@ ALTER SYSTEM SET DEFAULT_DATE_FORMAT = DEFAULT_DATE_FORMAT | 1;
 
 -- 10진수 직접 대입
 ALTER SYSTEM SET TRACE_LOG_LEVEL=277;
+```
+
+### SET PVO CACHE
+
+Standard 에디션에서만 동작하는 글로벌 PVO Statement Cache 관련 속성을 런타임에 조정합니다. `PVO_CACHE_ENABLE`, `PVO_CACHE_MAX_MEMORY_SIZE`, `PVO_CACHE_MAX_PLANS_PER_SQL`, `PVO_CACHE_MAX_SQL_ENTRIES`는 즉시 반영되며, `PVO_CACHE_SHARD_COUNT`는 초기화 시점 값으로 서버 재시작이 필요합니다. 메모리·엔트리 한도는 샤드 수에 따라 분배되어 적용됩니다.
+
+```sql
+ALTER SYSTEM SET PVO_CACHE_ENABLE = 1;
+ALTER SYSTEM SET PVO_CACHE_MAX_MEMORY_SIZE = 268435456;
+ALTER SYSTEM SET PVO_CACHE_MAX_PLANS_PER_SQL = 512;
+ALTER SYSTEM SET PVO_CACHE_MAX_SQL_ENTRIES = 0;
+```
+
+### FLUSH PVO_CACHE
+
+PVO Statement Cache만 비웁니다. Result Cache와는 독립적으로 동작하며, DDL이 성공적으로 실행될 때도 내부적으로 PVO 캐시가 flush 됩니다.
+
+```sql
+ALTER SYSTEM FLUSH PVO_CACHE;
 ```
 
 

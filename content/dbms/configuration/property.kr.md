@@ -54,6 +54,7 @@ type: docs
 - [INDEX_LEVEL_PARTITION_AGER_THREAD_COUNT](#index_level_partition_ager_thread_count)
 - [INDEX_LEVEL_PARTITION_BUILD_MEMORY_HIGH_LIMIT_PCT](#index_level_partition_build_memory_high_limit_pct)
 - [INDEX_LEVEL_PARTITION_BUILD_THREAD_COUNT](#index_level_partition_build_thread_count)
+- [LIN_HASH_BIT_SIZE](#lin_hash_bit_size)
 - [LOOKUP_APPEND_UPDATE_ON_DUPKEY](#lookup_append_update_on_dupkey)
 - [MAX_QPX_MEM](#max_qpx_mem)
 - [MAX_SESSION_COUNT](#max_session_count)
@@ -64,6 +65,11 @@ type: docs
 - [PID_PATH](#pid_path)
 - [PORT_NO](#port_no)
 - [PROCESS_MAX_SIZE](#process_max_size)
+- [PVO_CACHE_ENABLE](#pvo_cache_enable)
+- [PVO_CACHE_SHARD_COUNT](#pvo_cache_shard_count)
+- [PVO_CACHE_MAX_MEMORY_SIZE](#pvo_cache_max_memory_size)
+- [PVO_CACHE_MAX_PLANS_PER_SQL](#pvo_cache_max_plans_per_sql)
+- [PVO_CACHE_MAX_SQL_ENTRIES](#pvo_cache_max_sql_entries)
 - [QUERY_PARALLEL_FACTOR](#query_parallel_factor)
 - [ROLLUP_FETCH_COUNT_LIMIT](#rollup_fetch_count_limit)
 - [RS_CACHE_APPROXIMATE_RESULT_ENABLE](#rs_cache_approximate_result_enable)
@@ -539,6 +545,23 @@ LSM 인덱스의 생성을 위한 병합 연산을 수행하는 스레드의 수
 |최대값|    1024|
 |기본값|	3|
 
+## LIN_HASH_BIT_SIZE
+
+내부 선형 해시의 초기 버킷 비트 수를 제어한다. 타입은 `UINT32`이며, 해시 기반 연산의 내부 순회 순서에 영향을 줄 수 있어 정렬을 지정하지 않은 쿼리의 출력 순서가 이전과 달라질 수 있다.
+
+||Value|
+|-|----|
+|최소값|	1|
+|최대값|	31|
+|기본값|	7|
+
+### 확인 SQL
+```sql
+SELECT name, value, type, min_value, max_value
+  FROM v$property
+ WHERE name = 'LIN_HASH_BIT_SIZE';
+```
+
 ## LOOKUP_APPEND_UPDATE_ON_DUPKEY
 
 Lookup 테이블에 Append 할 때 Primary Key가 중복일 경우 어떻게 처리할지 지정한다.
@@ -651,6 +674,56 @@ Volatile table및 lookup 테이블을 위한 임시 테이블 스페이스의 �
 |최소값|	1024 * 1024 * 1024|
 |최대값|	2^64 - 1|
 |기본값|	8 * 1024 * 1024 * 1024|
+
+## PVO_CACHE_ENABLE
+
+글로벌 PVO Statement Cache 사용 여부를 설정한다. Standard 에디션에서만 동작한다.
+
+||Value|
+|-|----|
+|최소값|	0 (비활성)|
+|최대값|	1 (활성)|
+|기본값|	1|
+
+## PVO_CACHE_SHARD_COUNT
+
+PVO Statement Cache의 샤드 수를 설정한다. 초기화 시점에만 적용되므로 변경 시 서버 재시작이 필요하며 런타임 변경은 불가능하다.
+
+||Value|
+|-|----|
+|최소값|	1|
+|최대값|	256|
+|기본값|	16|
+
+## PVO_CACHE_MAX_MEMORY_SIZE
+
+PVO Statement Cache 전체가 사용할 최대 메모리 크기(바이트)를 설정한다. 설정된 값은 샤드 수에 따라 균등 분배되어 적용된다. 런타임 변경이 가능하다.
+
+||Value|
+|-|----|
+|최소값|	32768|
+|최대값|	2^64 - 1|
+|기본값|	268435456|
+
+## PVO_CACHE_MAX_PLANS_PER_SQL
+
+하나의 SQL에 대해 보관할 수 있는 최대 플랜(핸들) 수를 설정한다. 런타임 변경이 가능하다.
+
+||Value|
+|-|----|
+|최소값|	1|
+|최대값|	512|
+|기본값|	512|
+
+## PVO_CACHE_MAX_SQL_ENTRIES
+
+PVO Statement Cache에 보관할 수 있는 SQL 엔트리의 최대 개수를 설정한다. 0은 무제한을 의미한다. 런타임 변경이 가능하며, 샤드 수에 따라 분배되어 적용된다.
+
+||Value|
+|-|----|
+|최소값|	0|
+|최대값|	2^64 - 1|
+|기본값|	0|
 
 ## QUERY_PARALLEL_FACTOR
 
