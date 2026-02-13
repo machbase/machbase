@@ -735,6 +735,53 @@ Mach> CREATE ROLLUP _rollup_tag_value_sec ON tag(value) INTERVAL 1 SEC;
 Executed successfully
 ```
 
+```sql
+create_conditional_rollup_stmt ::= 'CREATE ROLLUP' rollup_name
+                                   ( 'ON' src_table_name '('src_table_column')'
+                                   | 'FROM' src_rollup_table_name )
+                                   'INTERVAL' number ('SEC' | 'MIN' | 'HOUR')
+                                   'WHERE' predicate
+```
+
+```sql
+-- 조건부 rollup: value2 = 0 인 데이터만 집계
+Mach> CREATE ROLLUP _rollup_tag_value_min_ok
+      ON tag(value)
+      INTERVAL 1 MIN
+      WHERE value2 = 0;
+Executed successfully
+```
+
+```sql
+create_custom_rollup_stmt ::= 'CREATE ROLLUP' rollup_name
+                              'INTO' '(' dest_table_name ')'
+                              'AS' '(' select_stmt ')'
+                              'INTERVAL' number ('SEC' | 'MIN' | 'HOUR')
+                              [ 'WAKEUP INTERVAL' number ('SEC' | 'MIN' | 'HOUR') ]
+```
+
+```sql
+-- 사용자 정의 SELECT 집계를 대상 TAG 테이블로 저장하는 custom rollup 생성
+Mach> CREATE ROLLUP rollup_stock_1m
+      INTO (stock_rollup_1m)
+      AS (
+        SELECT code,
+               DATE_TRUNC('minute', time) AS time,
+               SUM(price)                 AS sum_price,
+               COUNT(*)                   AS cnt
+          FROM stock_tick
+         GROUP BY code, time
+      )
+      INTERVAL 1 MIN;
+Executed successfully
+```
+
+주의사항
+- 조건부 rollup의 `WHERE`는 `ON/FROM` 문법에서 사용한다.
+- Custom Rollup의 `WHERE`는 `SELECT` 내부에서만 사용한다.
+- `INTERVAL ... WHERE ...` 형태의 외부 WHERE는 Custom 문법에서 지원하지 않는다.
+- 자세한 제약/운영 패턴은 [Custom Rollup: 사용자 정의 집계](../../table-types/tag-tables/rollup-custom/)를 참고한다.
+
 
 ## DROP ROLLUP
 

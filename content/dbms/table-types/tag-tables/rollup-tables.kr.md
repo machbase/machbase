@@ -118,21 +118,27 @@ CREATE TAG TABLE tagtbl (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, v
 
 ## 조건 롤업·필터·힌트
 
-### 롤업 데이블 선택 로직 
+### 롤업 테이블 선택 로직
 동일한 주기·값 컬럼·JSON PATH를 가진 롤업이 여러 개 있을 때 엔진이 "조건 없음 → 조건 있음" 순서로 자동 선택한다. 필요하면 힌트로 특정 롤업을 강제로 사용할 수 있고, 생성 시 잘못된 조건은 즉시 차단된다.
 
 ### 조건 있는 롤업 생성 방법
 ```sql
 CREATE ROLLUP <rollup_name>
-  ON <table_name>(<value_col>)
+  ( ON <table_name>(<value_col>)
+  | FROM <src_rollup_table_name> )
   INTERVAL <n> <SEC|MIN|HOUR>
-  [WITH <props>]
-  [WHERE <predicate>];
+  WHERE <predicate>;
 ```
 - WHERE 조건은 집계 전에 원본 행에 적용되며, 조건에 사용한 컬럼은 롤업 테이블에 저장되지 않는다.
 - 허용: 일반 스칼라 표현식(AND/OR/NOT, 비교, BETWEEN, IN, LIKE, CASE, 비집계 함수)과 존재하는 컬럼 사용. `value2`, `status` 같은 비요약 컬럼도 자유롭게 조건으로 사용할 수 있다.
 - 금지: 서브쿼리, 집계 함수, 존재하지 않는 컬럼, 태그 테이블의 태그명(PK) 컬럼 조건(내부적으로 숫자 ID이므로 문자열 비교가 무의미).
 - `CREATE ROLLUP` 시점에 위반 사항이 있으면 에러로 생성이 거부된다.
+
+### 조건부 롤업과 Custom Rollup의 WHERE 차이
+- 조건부 롤업은 `ON/FROM` 문법의 외부 `WHERE`를 사용한다.
+- Custom Rollup(`INTO ... AS (SELECT ...)`)은 `SELECT` 내부 `WHERE`만 지원한다.
+- 즉, `CREATE ROLLUP ... INTO (...) AS (...) INTERVAL ... WHERE ...` 형태는 허용되지 않는다.
+- 자세한 Custom 문법은 [Custom Rollup: 사용자 정의 집계](./rollup-custom/), SQL 문법은 [DDL: CREATE ROLLUP](../../sql-reference/ddl/#create-rollup)을 참고한다.
 
 ### 자동 선택 우선순위(힌트 없을 때)
 1. `ROLLUP_TABLE(<rollup_table_name>)` 힌트가 있으면 그 롤업을 무조건 사용.
