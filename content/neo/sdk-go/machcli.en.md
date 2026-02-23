@@ -1,7 +1,7 @@
 ---
 title: CGo client
 type: docs
-weight: 100
+weight: 150
 ---
 
 ## Overview

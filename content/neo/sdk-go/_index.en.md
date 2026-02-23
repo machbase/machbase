@@ -4,11 +4,18 @@ type: docs
 weight: 65
 ---
 
-Machbase-neo provides two types of Go client libraries for Go developers.
-The first is the Go standard SQL driver compatible `machrpc`, and the other is the `machcli` package, which is a wrapper around a native C client library.
+Machbase-neo provides three types of Go client libraries for Go developers.
+For best performance and cross-platform deployment, **`machgo` is the recommended client**.
+`machcli` and `machrpc` are currently kept for backward compatibility, but they may be marked as deprecated and removed in future releases.
 
-- `machcli` is a Go wrapper around a C implementation that communicates through the *native port*, which defaults to port `5656`.
-- `machrpc` does not require CGo since it is a pure Go implementation. Since it relies on the gRPC layer for transportation, it requires TLS certification by default. The gRPC port is `5655`.
+- `machgo` (recommended) is a pure Go implementation for the *native port* (default `5656`) and provides an API compatible with `machcli`.
+- `machcli` is a Go wrapper around a C implementation that communicates through the *native port* (default `5656`). It remains available for backward compatibility.
+- `machrpc` is a Go SQL-driver style client based on gRPC (default `5655`) and typically requires TLS certificates. It remains available for backward compatibility.
+
+{{< callout type="warning" >}}
+`machcli` and `machrpc` may be marked as deprecated in future releases and can be removed later.
+Use `machgo` for new development whenever possible.
+{{< /callout >}}
 
 ## Other programming languages
 
