@@ -1,5 +1,5 @@
 ---
-title: 순수 Go 네이티브 클라이언트
+title: Go 네이티브 클라이언트
 type: docs
 weight: 100
 ---
@@ -117,7 +117,7 @@ defer conn.Close()
 기본 모드는 `machgo.Config.StatementCache`에 설정하고,
 연결별로 `api.WithStatementCache(...)`로 재정의할 수 있습니다.
 
-```go
+```go  {linenos=table,linenostart=1,hl_lines=[5,16]}
 // Connection A: statement 재사용을 적극적으로 사용
 connA, err := mdb.Connect(
     ctx,
@@ -146,8 +146,14 @@ defer connB.Close()
 `FetchRows`는 서버에서 한 번의 fetch 라운드에 미리 받아올 레코드 최대 개수를 제어합니다.
 기본값은 `machgo.Config.FetchRows`에 설정하고,
 연결별로 `api.WithFetchRows(...)`로 재정의할 수 있습니다.
+기본값은 `1000`입니다.
 
-```go
+{{< callout type="warning" >}}
+워크로드 검증 없이 `FetchRows` 값을 과도하게 크게 또는 작게 설정하지 마세요.
+네트워크 레이턴시와 쿼리 특성에 따라 부적절한 값은 급격한 성능 저하와 메모리 소비 증가를 유발할 수 있습니다.
+{{< /callout >}}
+
+```go  {linenos=table,linenostart=1,hl_lines=[5]}
 // Connection C: 대량 스캔 워크로드를 위한 큰 pre-fetch
 connC, err := mdb.Connect(
     ctx,
@@ -316,8 +322,8 @@ func main() {
     conf := &machgo.Config{
         Host:         "127.0.0.1",
         Port:         5656,
-        MaxOpenConn:  10,
-        MaxOpenQuery: 5,
+        MaxOpenConn:  -1,
+        MaxOpenQuery: -1,
     }
 
     mdb, err := machgo.NewDatabase(conf)

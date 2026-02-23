@@ -1,5 +1,5 @@
 ---
-title: Pure Go native client
+title: Go native client
 type: docs
 weight: 100
 ---
@@ -116,7 +116,7 @@ statement reuse can improve performance by reusing prepared statements.
 
 You can set a default mode in `machgo.Config.StatementCache`, and override per connection with `api.WithStatementCache(...)`.
 
-```go
+```go {linenos=table,linenostart=1,hl_lines=[5,16]}
 // Connection A: aggressive statement reuse
 connA, err := mdb.Connect(
     ctx,
@@ -144,8 +144,14 @@ defer connB.Close()
 
 `FetchRows` controls the maximum number of records pre-fetched from server in one fetch round.
 Set `machgo.Config.FetchRows` as the default, and override per connection via `api.WithFetchRows(...)`.
+The default value is `1000`.
 
-```go
+{{< callout type="warning" >}}
+Avoid setting `FetchRows` to excessively large or small values without workload validation.
+Depending on network latency and query characteristics, an improper value can cause significant performance degradation and increased memory consumption.
+{{< /callout >}}
+
+```go {linenos=table,linenostart=1,hl_lines=[5]}
 // Connection C: larger pre-fetch for scan-heavy workloads
 connC, err := mdb.Connect(
     ctx,
@@ -314,8 +320,8 @@ func main() {
     conf := &machgo.Config{
         Host:         "127.0.0.1",
         Port:         5656,
-        MaxOpenConn:  10,
-        MaxOpenQuery: 5,
+        MaxOpenConn:  -1,
+        MaxOpenQuery: -1,
     }
 
     mdb, err := machgo.NewDatabase(conf)
