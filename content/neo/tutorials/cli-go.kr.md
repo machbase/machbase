@@ -1,31 +1,38 @@
 ---
-title: Go C 클라이언트
+title: Go 클라이언트 튜토리얼
 type: docs
 weight: 300
 ---
 
 ## 개요
 
-`machcli` 패키지는 Machbase의 네이티브 C 클라이언트 라이브러리를 감싸는 Go 래퍼로, Go 개발자들에게 Machbase 데이터베이스에 대한 고성능 액세스를 제공하도록 설계되었습니다. 이 래퍼는 기본 C 라이브러리의 강력함과 효율성을 활용하면서도 표준 database/sql 패턴을 따르는 친숙한 Go API를 제공합니다.
+`machgo` 패키지는 Machbase 네이티브 프로토콜에 접근하는 순수 Go 클라이언트로,
+CGo 의존성 없이 고성능 데이터 처리 애플리케이션을 구현할 수 있도록 설계되었습니다.
+연결 관리, 쿼리, 어펜더를 포함한 친숙한 API 스타일을 제공합니다.
 
-### machcli를 사용하는 이유는?
+### machgo를 사용하는 이유는?
 
-- **고성능**: Machbase의 네이티브 C 라이브러리에 직접 액세스하여 시계열 데이터 작업에 최적의 성능 제공
-- **네이티브 통합**: Machbase 전용으로 구축되어 고속 어펜더 및 최적화된 쿼리 실행과 같은 기능 제공
-- **Go 친화적 API**: Go의 표준 database/sql 패키지와 유사한 친숙한 인터페이스
-- **타입 안전성**: 적절한 오류 처리를 통한 Go 개발자를 위한 강력한 타입 지원
+- **CGo 의존성 없음**: 순수 Go 툴체인으로 빌드/배포 가능
+- **네이티브 프로토콜 접근**: Machbase 네이티브 포트(기본 `5656`)로 연결
+- **Go 친화적 API**: Go의 표준 database/sql과 유사한 개발 경험
+- **운영 친화적**: 컨테이너 및 크로스 플랫폼 배포에 적합
 
 ### 사전 요구사항
 
-- **CGo 환경**: C 라이브러리의 래퍼이므로 CGo가 활성화된 Go 환경이 필요합니다
 - **Machbase Neo Server**: 실행 중인 Machbase Neo 서버 인스턴스
 - **Go 1.24+**: 최적의 호환성을 위한 최신 Go 버전
+
+### 설치
+
+```sh
+go get github.com/machbase/neo-server/v8
+```
 
 ## 시작하기
 
 ### Import
 
-먼저 필요한 패키지들을 import합니다. `machcli` 패키지는 Machbase의 C 클라이언트 라이브러리에 대한 Go 래퍼를 제공합니다:
+먼저 필요한 패키지들을 import합니다. `machgo` 패키지는 Machbase용 Go 네이티브 클라이언트를 제공합니다:
 
 ```go
 import (
@@ -34,20 +41,16 @@ import (
     "time"
     
     "github.com/machbase/neo-server/v8/api"
-    "github.com/machbase/neo-server/v8/api/machcli"
+    "github.com/machbase/neo-server/v8/api/machgo"
 )
 ```
-
-{{< callout type="info" >}}
-**CGo 요구사항**: `machcli`는 C 라이브러리를 감싸므로 빌드 환경에서 CGo를 지원해야 합니다. 빌드 환경에서 `CGO_ENABLED=1`인지 확인하세요.
-{{< /callout >}}
 
 ### 설정
 
 `Config` 구조체를 사용하여 데이터베이스 연결 매개변수를 설정합니다. 이를 통해 연결 동작과 성능 특성을 사용자 정의할 수 있습니다:
 
 ```go
-conf := &machcli.Config{
+conf := &machgo.Config{
     Host:         "127.0.0.1",    // Machbase 서버 호스트
     Port:         5656,           // Machbase 서버 포트
     MaxOpenConn:  0,              // 최대 연결 임계값
@@ -55,7 +58,7 @@ conf := &machcli.Config{
 }
 
 // 설정으로 데이터베이스 인스턴스 생성
-db, err := machcli.NewDatabase(conf)
+db, err := machgo.NewDatabase(conf)
 if err != nil {
     panic(err)
 }
@@ -72,6 +75,49 @@ if err != nil {
 
 {{< callout type="tip" >}}
 **성능 팁**: 고처리량 애플리케이션의 경우 시스템 리소스와 예상 로드 패턴을 기반으로 명시적 제한을 설정하는 것을 고려하세요.
+{{< /callout >}}
+
+추가로 연결별 옵션인 `api.WithStatementCache(...)`, `api.WithFetchRows(...)`를 사용해
+워크로드 특성에 맞게 튜닝할 수 있습니다.
+
+#### Statement cache와 성능 개선 포인트
+
+`StatementCache`는 동일 connection에서 반복 실행되는 SQL의 prepared statement를 재사용합니다.
+반복 SQL 비중이 높은 워크로드에서는 prepare 오버헤드를 줄여 처리량(throughput)과 지연시간(latency)을
+함께 개선할 수 있습니다.
+
+대표 사용 패턴:
+
+- **`api.StatementCacheAuto`**: 반복 쿼리/반복 INSERT가 많은 일반적인 서비스에 권장
+- **`api.StatementCacheOff`**: SQL 텍스트가 자주 바뀌어 재사용률이 낮은 경우
+
+```go
+// 반복 SQL이 많은 연결: statement cache 활성화
+connA, err := db.Connect(
+    ctx,
+    api.WithPassword("sys", "manager"),
+    api.WithStatementCache(api.StatementCacheAuto),
+)
+if err != nil {
+    panic(err)
+}
+defer connA.Close()
+
+// 동적 SQL이 많은 연결: 이 연결에서만 cache 비활성화
+connB, err := db.Connect(
+    ctx,
+    api.WithPassword("sys", "manager"),
+    api.WithStatementCache(api.StatementCacheOff),
+)
+if err != nil {
+    panic(err)
+}
+defer connB.Close()
+```
+
+{{< callout type="tip" >}}
+**성능 팁**: 워커가 동일 SQL을 고빈도로 반복 호출하는 구조에서는
+`StatementCacheAuto`만으로도 CPU 사용량과 응답 지연이 눈에 띄게 개선될 수 있습니다.
 {{< /callout >}}
 
 ### 연결 설정
@@ -234,6 +280,39 @@ for i := range 10_000 {
 - **오류 처리**: 중요한 애플리케이션에서는 각 `Append()` 호출의 오류를 확인
 - **리소스 정리**: 데이터가 플러시되도록 항상 어펜더를 `Close()`
 
+#### Appender batch 옵션과 튜닝
+
+Appender는 데이터를 메모리 버퍼에 모았다가 임계값에 도달하면 서버로 전송합니다.
+임계값은 다음 옵션으로 제어할 수 있습니다.
+
+- `WithBatchMaxRows(rows)`
+- `WithBatchMaxBytes(bytes)`
+- `WithBatchMaxDelay(duration)`
+
+기본값과 최소값:
+
+- `WithBatchMaxBytes`: 기본 `512KB`, 최소 `4KB`
+- `WithBatchMaxRows`: 기본 `512`, 최소 `1`
+- `WithBatchMaxDelay`: 기본 `5ms`, 최소 `1ms`
+- `WithBatchMaxDelay(0)`: 시간 기반 임계조건 비활성화
+
+```go
+apd, err := conn.Appender(ctx, "example_table")
+if err != nil {
+    panic(err)
+}
+defer apd.Close()
+
+apd.WithBatchMaxBytes(1024 * 1024).          // 1MB
+    WithBatchMaxRows(2000).                  // row 임계값
+    WithBatchMaxDelay(500 * time.Millisecond) // 지연 임계값
+```
+
+이 옵션은 성능 튜닝의 핵심입니다.
+
+- 임계값을 키우면 네트워크 왕복이 줄어 처리량 개선에 유리
+- 임계값을 줄이면 레코드당 지연시간과 메모리 사용량 제어에 유리
+
 ## 완전한 예제
 
 모든 개념을 보여주는 완전한 예제입니다:
@@ -248,19 +327,19 @@ import (
     "time"
 
     "github.com/machbase/neo-server/v8/api"
-    "github.com/machbase/neo-server/v8/api/machcli"
+    "github.com/machbase/neo-server/v8/api/machgo"
 )
 
 func main() {
     // 데이터베이스 연결 설정
-    conf := &machcli.Config{
+    conf := &machgo.Config{
         Host: "127.0.0.1",
         Port: 5656,
         MaxOpenConn: 10,
         MaxOpenQuery: 5,
     }
     
-    db, err := machcli.NewDatabase(conf)
+    db, err := machgo.NewDatabase(conf)
     if err != nil {
         panic(err)
     }
@@ -318,4 +397,4 @@ func main() {
 }
 ```
 
-이 예제는 연결 설정부터 데이터 조작까지의 완전한 워크플로우를 보여주며, Machbase와 함께 작업하는 Go 개발자를 위한 `machcli` 패키지의 강력함과 단순함을 보여줍니다.
+이 예제는 연결 설정부터 데이터 조작까지의 완전한 워크플로우를 보여주며, Machbase와 함께 작업하는 Go 개발자를 위한 권장 패키지 `machgo`의 사용 방법을 보여줍니다.

@@ -1,7 +1,7 @@
 ---
 title: MQTT and RDBMS Bridges
 type: docs
-weight: 300
+weight: 250
 ---
 
 This tutorial demonstrates how to receive JSON data from an external MQTT broker and store the data into another bridged database.

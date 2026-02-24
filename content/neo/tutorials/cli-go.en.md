@@ -1,31 +1,38 @@
 ---
-title: Go using C client library
+title: Go client tutorial
 type: docs
 weight: 300
 ---
 
 ## Overview
 
-The `machcli` package is a Go wrapper around Machbase's native C client library, designed to provide Go developers with high-performance access to Machbase databases. This wrapper leverages the power and efficiency of the underlying C library while offering a familiar Go API that follows standard database/sql patterns.
+The `machgo` package is a pure Go client for Machbase native protocol access, designed for
+high-performance applications without CGo dependencies. It offers a familiar API style for
+connection management, queries, and appenders.
 
-### Why use machcli?
+### Why use machgo?
 
-- **High Performance**: Direct access to Machbase's native C library provides optimal performance for time-series data operations
-- **Native Integration**: Built specifically for Machbase, offering features like high-speed appenders and optimized query execution
+- **No CGo dependency**: Build and deploy with a pure Go toolchain
+- **Native protocol access**: Connect through Machbase native port (`5656` by default)
 - **Go-friendly API**: Familiar interface similar to Go's standard database/sql package
-- **Type Safety**: Strong typing support for Go developers with proper error handling
+- **Production-ready**: Great fit for containers and cross-platform builds
 
 ### Prerequisites
 
-- **CGo Environment**: Since this is a wrapper around a C library, you'll need a CGo-enabled Go environment
 - **Machbase Neo Server**: A running Machbase Neo server instance
 - **Go 1.24+**: Modern Go version for optimal compatibility
+
+### Install
+
+```sh
+go get github.com/machbase/neo-server/v8
+```
 
 ## Getting Started
 
 ### Import
 
-First, import the necessary packages. The `machcli` package provides the Go wrapper around Machbase's C client library:
+First, import the necessary packages. The `machgo` package provides the Go native client:
 
 ```go
 import (
@@ -34,20 +41,16 @@ import (
     "time"
     
     "github.com/machbase/neo-server/v8/api"
-    "github.com/machbase/neo-server/v8/api/machcli"
+    "github.com/machbase/neo-server/v8/api/machgo"
 )
 ```
-
-{{< callout type="info" >}}
-**CGo Requirement**: Since `machcli` wraps a C library, your build environment must support CGo. Ensure `CGO_ENABLED=1` in your build environment.
-{{< /callout >}}
 
 ### Configuration
 
 Configure the database connection parameters using the `Config` struct. This allows you to customize connection behavior and performance characteristics:
 
 ```go
-conf := &machcli.Config{
+conf := &machgo.Config{
     Host:         "127.0.0.1",    // Machbase server host
     Port:         5656,           // Machbase server port
     MaxOpenConn:  0,              // Max Connection threshold
@@ -55,7 +58,7 @@ conf := &machcli.Config{
 }
 
 // Create a database instance with the configuration
-db, err := machcli.NewDatabase(conf)
+db, err := machgo.NewDatabase(conf)
 if err != nil {
     panic(err)
 }
@@ -72,6 +75,50 @@ if err != nil {
 
 {{< callout type="tip" >}}
 **Performance Tip**: For high-throughput applications, consider setting explicit limits based on your system resources and expected load patterns.
+{{< /callout >}}
+
+You can also tune connection behavior per connection with options such as
+`api.WithStatementCache(...)` and `api.WithFetchRows(...)`.
+
+#### Statement cache and performance impact
+
+`StatementCache` reuses prepared statements for repeated SQL in the same connection.
+In workloads where a small set of SQL statements is executed very frequently, this can reduce
+prepare overhead and improve throughput/latency.
+
+Typical usage patterns:
+
+- **`api.StatementCacheAuto`**: Recommended default for repeated-query workloads
+- **`api.StatementCacheOff`**: Use when SQL text varies heavily and reuse is low
+
+```go
+// Repeated SQL -> keep statement cache enabled
+connA, err := db.Connect(
+    ctx,
+    api.WithPassword("sys", "manager"),
+    api.WithStatementCache(api.StatementCacheAuto),
+)
+if err != nil {
+    panic(err)
+}
+defer connA.Close()
+
+// Highly dynamic SQL -> disable cache for this connection
+connB, err := db.Connect(
+    ctx,
+    api.WithPassword("sys", "manager"),
+    api.WithStatementCache(api.StatementCacheOff),
+)
+if err != nil {
+    panic(err)
+}
+defer connB.Close()
+```
+
+{{< callout type="tip" >}}
+**Performance tip**: If your application repeatedly executes the same prepared SQL (for example,
+high-frequency inserts/queries from workers), `StatementCacheAuto` often yields noticeable
+CPU and latency improvements.
 {{< /callout >}}
 
 ### Establishing Connection
@@ -234,6 +281,39 @@ for i := range 10_000 {
 - **Error Handling**: Check each `Append()` call for errors in critical applications
 - **Resource Cleanup**: Always `Close()` the appender to ensure data is flushed
 
+#### Appender batch options and tuning
+
+Appender buffers rows in memory and sends them to the server when a threshold is reached.
+You can control these thresholds with:
+
+- `WithBatchMaxRows(rows)`
+- `WithBatchMaxBytes(bytes)`
+- `WithBatchMaxDelay(duration)`
+
+Default and minimum values:
+
+- `WithBatchMaxBytes`: default `512KB`, minimum `4KB`
+- `WithBatchMaxRows`: default `512`, minimum `1`
+- `WithBatchMaxDelay`: default `5ms`, minimum `1ms`
+- `WithBatchMaxDelay(0)`: disables time-based threshold
+
+```go
+apd, err := conn.Appender(ctx, "example_table")
+if err != nil {
+    panic(err)
+}
+defer apd.Close()
+
+apd.WithBatchMaxBytes(1024 * 1024).        // 1MB
+    WithBatchMaxRows(2000).                // row threshold
+    WithBatchMaxDelay(500 * time.Millisecond) // delay threshold
+```
+
+These options are key performance levers:
+
+- Increase thresholds to reduce round trips and improve throughput
+- Decrease thresholds to reduce per-record latency and memory footprint
+
 ## Complete Example
 
 Here's a complete example demonstrating all the concepts:
@@ -248,19 +328,19 @@ import (
     "time"
 
     "github.com/machbase/neo-server/v8/api"
-    "github.com/machbase/neo-server/v8/api/machcli"
+    "github.com/machbase/neo-server/v8/api/machgo"
 )
 
 func main() {
     // Configure database connection
-    conf := &machcli.Config{
+    conf := &machgo.Config{
         Host: "127.0.0.1",
         Port: 5656,
         MaxOpenConn: 10,
         MaxOpenQuery: 5,
     }
     
-    db, err := machcli.NewDatabase(conf)
+    db, err := machgo.NewDatabase(conf)
     if err != nil {
         panic(err)
     }
@@ -318,4 +398,4 @@ func main() {
 }
 ```
 
-This example demonstrates the complete workflow from connection establishment to data manipulation, showcasing the power and simplicity of the `machcli` package for Go developers working with Machbase.
+This example demonstrates the complete workflow from connection establishment to data manipulation, showcasing the recommended `machgo` package for Go developers working with Machbase.

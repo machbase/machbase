@@ -1,7 +1,7 @@
 ---
 title: MQTT와 RDBMS 브리지
 type: docs
-weight: 300
+weight: 250
 ---
 
 이 튜토리얼은 외부 MQTT 브로커에서 JSON 데이터를 수신해 다른 브리지 데이터베이스에 저장하는 과정을 다룹니다.
