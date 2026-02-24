@@ -121,6 +121,34 @@ high-frequency inserts/queries from workers), `StatementCacheAuto` often yields 
 CPU and latency improvements.
 {{< /callout >}}
 
+#### FetchRows and scan/query performance
+
+`FetchRows` controls how many rows are pre-fetched from server in each fetch round.
+This setting mainly affects large scan workloads and network round-trip behavior.
+
+- Larger `FetchRows`: fewer round trips, often better throughput for wide-range scans
+- Smaller `FetchRows`: lower per-fetch memory usage, can help short-query latency stability
+
+Default value is typically `1000`. Tune with workload testing.
+
+```go
+// Increase pre-fetch size for scan-heavy workloads
+connC, err := db.Connect(
+    ctx,
+    api.WithPassword("sys", "manager"),
+    api.WithFetchRows(5000),
+)
+if err != nil {
+    panic(err)
+}
+defer connC.Close()
+```
+
+{{< callout type="warning" >}}
+Avoid choosing extremely large or small values without validation. Improper values may cause
+higher memory usage or performance degradation depending on query shape and network latency.
+{{< /callout >}}
+
 ### Establishing Connection
 
 Create a connection to the Machbase server using the configured database instance:
@@ -399,3 +427,5 @@ func main() {
 ```
 
 This example demonstrates the complete workflow from connection establishment to data manipulation, showcasing the recommended `machgo` package for Go developers working with Machbase.
+
+See also: [Go native client reference](/neo/sdk-go/machgo/)

@@ -120,6 +120,34 @@ defer connB.Close()
 `StatementCacheAuto`만으로도 CPU 사용량과 응답 지연이 눈에 띄게 개선될 수 있습니다.
 {{< /callout >}}
 
+#### FetchRows와 조회 성능
+
+`FetchRows`는 서버에서 한 번의 fetch 라운드에 미리 가져올 레코드 수를 제어합니다.
+대량 스캔 쿼리에서 네트워크 왕복 횟수와 처리량에 직접적인 영향을 줍니다.
+
+- `FetchRows`를 크게 설정: 왕복 횟수 감소, 넓은 범위 스캔 처리량 개선에 유리
+- `FetchRows`를 작게 설정: fetch당 메모리 사용량 감소, 짧은 쿼리의 안정성에 유리
+
+기본값은 보통 `1000`이며, 실제 워크로드 기준으로 튜닝하는 것이 좋습니다.
+
+```go
+// 대량 스캔 워크로드를 위해 pre-fetch 크기 증가
+connC, err := db.Connect(
+    ctx,
+    api.WithPassword("sys", "manager"),
+    api.WithFetchRows(5000),
+)
+if err != nil {
+    panic(err)
+}
+defer connC.Close()
+```
+
+{{< callout type="warning" >}}
+검증 없이 값을 지나치게 크게/작게 설정하지 마세요. 쿼리 형태와 네트워크 레이턴시에 따라
+메모리 사용량 증가나 성능 저하가 발생할 수 있습니다.
+{{< /callout >}}
+
 ### 연결 설정
 
 설정된 데이터베이스 인스턴스를 사용하여 Machbase 서버에 연결을 생성합니다:
@@ -398,3 +426,5 @@ func main() {
 ```
 
 이 예제는 연결 설정부터 데이터 조작까지의 완전한 워크플로우를 보여주며, Machbase와 함께 작업하는 Go 개발자를 위한 권장 패키지 `machgo`의 사용 방법을 보여줍니다.
+
+추가 참고: [Go 네이티브 클라이언트 레퍼런스](/kr/neo/sdk-go/machgo/)
