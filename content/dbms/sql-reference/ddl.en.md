@@ -767,6 +767,53 @@ Mach> CREATE ROLLUP _rollup_tag_value_sec ON tag(value) INTERVAL 1 SEC;
 Executed successfully
 ```
 
+```sql
+create_conditional_rollup_stmt ::= 'CREATE ROLLUP' rollup_name
+                                   ( 'ON' src_table_name '('src_table_column')'
+                                   | 'FROM' src_rollup_table_name )
+                                   'INTERVAL' number ('SEC' | 'MIN' | 'HOUR')
+                                   'WHERE' predicate
+```
+
+```sql
+-- Conditional rollup: aggregates only rows where value2 = 0
+Mach> CREATE ROLLUP _rollup_tag_value_min_ok
+      ON tag(value)
+      INTERVAL 1 MIN
+      WHERE value2 = 0;
+Executed successfully
+```
+
+```sql
+create_custom_rollup_stmt ::= 'CREATE ROLLUP' rollup_name
+                              'INTO' '(' dest_table_name ')'
+                              'AS' '(' select_stmt ')'
+                              'INTERVAL' number ('SEC' | 'MIN' | 'HOUR')
+                              [ 'WAKEUP INTERVAL' number ('SEC' | 'MIN' | 'HOUR') ]
+```
+
+```sql
+-- Creates a custom rollup that stores user-defined aggregation into a TAG table.
+Mach> CREATE ROLLUP rollup_stock_1m
+      INTO (stock_rollup_1m)
+      AS (
+        SELECT code,
+               DATE_TRUNC('minute', time) AS time,
+               SUM(price)                 AS sum_price,
+               COUNT(*)                   AS cnt
+          FROM stock_tick
+         GROUP BY code, time
+      )
+      INTERVAL 1 MIN;
+Executed successfully
+```
+
+Notes
+- Use conditional rollup `WHERE` with the `ON/FROM` rollup syntax.
+- For Custom Rollup, use `WHERE` only inside the `SELECT`.
+- External `INTERVAL ... WHERE ...` is not supported for Custom Rollup syntax.
+- For full constraints and query patterns, see [Custom Rollup: User-Defined Aggregation](../../table-types/tag-tables/rollup-custom/).
+
 
 ## DROP ROLLUP
 

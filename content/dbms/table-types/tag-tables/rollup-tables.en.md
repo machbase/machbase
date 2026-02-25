@@ -126,15 +126,21 @@ When multiple rollups share the same interval, value column, and JSON path, the 
 ### How to create a filtered rollup
 ```sql
 CREATE ROLLUP <rollup_name>
-  ON <table_name>(<value_col>)
+  ( ON <table_name>(<value_col>)
+  | FROM <src_rollup_table_name> )
   INTERVAL <n> <SEC|MIN|HOUR>
-  [WITH <props>]
-  [WHERE <predicate>];
+  WHERE <predicate>;
 ```
 - The predicate is applied to source rows **before** aggregation; predicate columns are not stored in the rollup table.
 - Allowed: regular scalar expressions (AND/OR/NOT, comparison, BETWEEN, IN, LIKE, CASE, non-aggregate functions) that reference existing columns, including non‑summarized columns such as `value2` or `status`.
 - Not allowed: subqueries, aggregate functions, unknown columns, or the tag-name (PK) column of a tag table (it is internally numeric, so string comparison is meaningless).
 - Validation happens during `CREATE ROLLUP`; invalid predicates fail fast with an error.
+
+### WHERE in conditional rollup vs custom rollup
+- Conditional rollup uses an external `WHERE` with the `ON/FROM` syntax.
+- Custom Rollup (`INTO ... AS (SELECT ...)`) supports `WHERE` only inside the `SELECT`.
+- Therefore, `CREATE ROLLUP ... INTO (...) AS (...) INTERVAL ... WHERE ...` is not valid.
+- See [Custom Rollup: User-Defined Aggregation](./rollup-custom/) and [DDL: CREATE ROLLUP](../../sql-reference/ddl/#create-rollup) for the full syntax.
 
 ### Automatic selection order (no hint)
 1. If a `ROLLUP_TABLE(<rollup_table_name>)` hint exists, it always wins.
