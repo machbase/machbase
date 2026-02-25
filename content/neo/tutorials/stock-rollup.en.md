@@ -251,10 +251,10 @@ UNION ALL
 
 select
     DATE_TRUNC('minute', time) as mtime,
-    SUM(price)/count(*) as avg_price,
+    AVG(price) as avg_price,
     SUM(volume) as total_volume,
-    SUM(bid_price)/count(*) as avg_bid,
-    SUM(ask_price)/count(*) as avg_ask
+    AVG(bid_price) as avg_bid,
+    AVG(ask_price) as avg_ask
 from stock_tick
 where code = ?
     and time >= DATE_TRUNC('minute', SYSDATE) - 2m
