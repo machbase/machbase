@@ -88,7 +88,8 @@ if err != nil {
 
 대표 사용 패턴:
 
-- **`api.StatementCacheAuto`**: 반복 쿼리/반복 INSERT가 많은 일반적인 서비스에 권장
+- **`api.StatementCacheAuto`**: 반복 쿼리가 많은 일반적인 조회 서비스에 권장
+- **`api.StatementCacheOn`**: 반복 쿼리 및 반복 INSERT가 많은 경우
 - **`api.StatementCacheOff`**: SQL 텍스트가 자주 바뀌어 재사용률이 낮은 경우
 
 ```go

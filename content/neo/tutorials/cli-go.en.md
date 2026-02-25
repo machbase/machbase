@@ -88,7 +88,8 @@ prepare overhead and improve throughput/latency.
 
 Typical usage patterns:
 
-- **`api.StatementCacheAuto`**: Recommended default for repeated-query workloads
+- **`api.StatementCacheAuto`**: Recommended for general read-heavy services with repeated queries
+- **`api.StatementCacheOn`**: Use when both repeated queries and repeated INSERTs are frequent
 - **`api.StatementCacheOff`**: Use when SQL text varies heavily and reuse is low
 
 ```go

@@ -51,8 +51,20 @@ create tag table if not exists stock_tick (
     ask_price double
 );
 
--- 1분 rollup 대상 테이블: stock_tick에서 집계한 합계(sum)와 건수(cnt)를 저장합니다.
+-- 1초 rollup 대상 테이블: stock_tick에서 집계한 합계(sum)와 건수(cnt)를 저장합니다.
 -- 조회 시 평균은 sum/cnt로 계산하여 원본 전체 스캔을 줄입니다.
+create tag table if not exists stock_rollup_1s (
+    code      varchar(20) primary key,
+    time      datetime basetime,
+    sum_price double,
+    sum_volume double,
+    sum_bid   double,
+    sum_ask   double,
+    cnt       integer
+);
+
+-- 1분 rollup 대상 테이블: 1초 rollup 결과를 다시 분 단위로 재집계합니다.
+-- 분사이에 많은 데이터가 발생하는 경우에 조회에서 CPU/IO 부하를 낮추기 위한 다단계 집계 구조입니다.
 create tag table if not exists stock_rollup_1m (
     code      varchar(20) primary key,
     time      datetime basetime,
@@ -64,7 +76,7 @@ create tag table if not exists stock_rollup_1m (
 );
 
 -- 1시간 rollup 대상 테이블: 1분 rollup 결과를 다시 시간 단위로 재집계합니다.
--- 장기간 조회에서 CPU/I/O 부하를 낮추기 위한 2단계 집계 구조입니다.
+-- 장기간 조회에서 CPU/I/O 부하를 낮추기 위한 다단계 집계 구조입니다.
 create tag table if not exists stock_rollup_1h (
     code      varchar(20) primary key,
     time      datetime basetime,
@@ -78,7 +90,26 @@ create tag table if not exists stock_rollup_1h (
 
 ## 3) rollup 작업 생성
 
-`stock_tick` 기준으로 1분 집계를 생성하는 `rollup_stock_1m`를 만듭니다.
+`stock_tick` 기준으로 1초 사이에 발생한 데이터에 대한 집계를 생성하는 `rollup_stock_1s`를 만듭니다.
+
+```sql
+create rollup rollup_stock_1s
+into (stock_rollup_1s)
+as (
+    select code,
+            date_trunc('second', time) as time,
+            sum(price) as sum_price,
+            sum(volume) as sum_volume,
+            sum(bid_price) as sum_bid,
+            sum(ask_price) as sum_ask,
+            count(*) as cnt
+        from stock_tick
+    group by code, time
+)
+interval 1 sec;
+```
+
+`stock_rollup_1s` 기준으로 1분 집계를 생성하는 `rollup_stock_1m`를 만듭니다.
 
 ```sql
 -- 원본 tick 데이터를 1분 버킷으로 집계합니다.
@@ -89,12 +120,12 @@ as (
     select
         code,
         date_trunc('minute', time) as time,
-        sum(price) as sum_price,
-        sum(volume) as sum_volume,
-        sum(bid_price) as sum_bid,
-        sum(ask_price) as sum_ask,
-        count(*) as cnt
-    from stock_tick
+        sum(sum_price) as sum_price,
+        sum(sum_volume) as sum_volume,
+        sum(sum_bid) as sum_bid,
+        sum(sum_ask) as sum_ask,
+        sum(cnt) as cnt
+    from stock_rollup_1s
     group by code, time
 )
 interval 1 min;
@@ -124,7 +155,7 @@ interval 1 hour;
 
 ### 롤업 테이블 조회 시 재집계가 필요한 이유
 
-`stock_rollup_1m`, `stock_rollup_1h` 테이블은 시간 버킷(분/시간)마다 항상 1건만 생성된다고
+`stock_rollup_1s`, `stock_rollup_1m`, `stock_rollup_1h` 테이블은 시간 버킷(초/분/시간)마다 항상 1건만 생성된다고
 가정하면 안 됩니다. 이벤트 발생 시각, 실제 DB 반영 시점, 그리고 rollup 프로세스가 기존 저장 데이터를
 읽는 시점의 경계가 완전히 일치하지 않으면, 같은 버킷에 누락분이 후속 주기에 추가 집계되어
 여러 레코드가 생길 수 있습니다.
@@ -166,6 +197,7 @@ func main() {
     }
     defer conn.Close()
 
+    // STOCK_TICK 테이블의 Appender를 생성
     apd, err := conn.Appender(ctx, "stock_tick")
     if err != nil {
         panic(err)
@@ -178,8 +210,8 @@ func main() {
 
     for minuteOffset := 0; minuteOffset < 120; minuteOffset++ {
         baseTime := start.Add(time.Duration(minuteOffset) * time.Minute)
-        for i := 0; i < 30; i++ {
-            ts := baseTime.Add(time.Duration(i*2) * time.Second)
+        for i := 0; i < 120; i++ {
+            ts := baseTime.Add(time.Duration(i/2) * time.Second)
 
             wave := math.Sin(float64(minuteOffset)/10.0) * 3.0
             noise := (rand.Float64() - 0.5) * 0.8
@@ -188,13 +220,34 @@ func main() {
             bid := price - 0.05 - rand.Float64()*0.02
             ask := price + 0.05 + rand.Float64()*0.02
 
+            // STOCK_TICK 데이터 입력
             if err := apd.Append(code, ts, price, volume, bid, ask); err != nil {
                 panic(err)
             }
         }
     }
+    if flusher, ok := apd.(api.Flusher); ok {
+        flusher.Flush()
+    }
+    fmt.Println("insert complete: 120 minutes × 120 ticks = 14,400 rows")
 
-    fmt.Println("insert complete: 120 minutes × 30 ticks = 3600 rows")
+    // 데이터가 실시간으로 들어오지 않고 한 번에 모두 적재되었으므로,
+    // rollup 작업이 자동으로 실행되지 않습니다.
+    // 테스트를 위해 각 rollup을 강제로 실행하여 집계 테이블을 즉시 업데이트합니다.
+    // (실제 운영 환경에서는 정해진 주기마다 자동 실행되므로 이 단계는 불필요합니다.)
+
+    result := conn.Exec(ctx, `exec rollup_force(rollup_stock_1s)`)
+	if result.Err() != nil {
+		panic(result.Err())
+	}
+    result = conn.Exec(ctx, `exec rollup_force(rollup_stock_1m)`)
+	if result.Err() != nil {
+		panic(result.Err())
+	}
+    result = conn.Exec(ctx, `exec rollup_force(rollup_stock_1h)`)
+	if result.Err() != nil {
+		panic(result.Err())
+	}
 }
 ```
 
@@ -203,10 +256,10 @@ func main() {
 조회 전략은 다음과 같습니다.
 
 - `now-2h ~ now-2m`: `stock_rollup_1m` 사용
-- `now-2m ~ now`: `stock_tick` 사용
+- `now-2m ~ now`: `stock_rollup_1s` 사용
 - `UNION ALL`로 하나의 결과로 결합
 
-이 방식은 조회 기간이 길어져도 raw 전체 스캔을 줄여 응답 시간과 DB 부하를 최소화할 수 있습니다.
+이 방식은 조회 대상 기간이 길어져도 raw 데이터인 STOCK_TICK 테이블의 스캔을 회피하여 응답 시간과 DB 부하를 최소화할 수 있습니다.
 
 ```go
 package main
@@ -235,33 +288,33 @@ func main() {
     defer conn.Close()
 
     sqlText := `
-select
-    DATE_TRUNC('minute', time) as mtime,
-        SUM(sum_price) / SUM(cnt) as avg_price,
-        SUM(sum_volume) as total_volume,
-        SUM(sum_bid) / SUM(cnt) as avg_bid,
-        SUM(sum_ask) / SUM(cnt) as avg_ask
-from stock_rollup_1m
-where code = ?
-    and time >= DATE_TRUNC('minute', SYSDATE) - 2h
-    and time < DATE_TRUNC('minute', SYSDATE) - 2m
-group by mtime
+        SELECT
+            DATE_TRUNC('minute', time) as mtime,
+                SUM(sum_price) / SUM(cnt) as avg_price,
+                SUM(sum_volume) as total_volume,
+                SUM(sum_bid) / SUM(cnt) as avg_bid,
+                SUM(sum_ask) / SUM(cnt) as avg_ask
+        FROM stock_rollup_1m
+        WHERE code = ?
+        AND time >= DATE_TRUNC('minute', SYSDATE) - 2h
+        AND time < DATE_TRUNC('minute', SYSDATE) - 2m
+        GROUP BY mtime
+        ORDER BY mtime
 
-UNION ALL
+        UNION ALL
 
-select
-    DATE_TRUNC('minute', time) as mtime,
-    AVG(price) as avg_price,
-    SUM(volume) as total_volume,
-    AVG(bid_price) as avg_bid,
-    AVG(ask_price) as avg_ask
-from stock_tick
-where code = ?
-    and time >= DATE_TRUNC('minute', SYSDATE) - 2m
-group by mtime
-order by mtime;
-`
-
+        SELECT
+            DATE_TRUNC('minute', time) as mtime,
+            SUM(sum_price) / SUM(cnt) as avg_price,
+            SUM(sum_volume) as total_volume,
+            SUM(sum_bid) / SUM(cnt) as avg_bid,
+            AVG(sum_ask) / SUM(cnt) as avg_ask
+        FROM stock_rollup_1s
+        WHERE code = ?
+        AND time >= date_trunc('minute', sysdate) - 2m
+        GROUP BY mtime
+        ORDER BY mtime
+    `
     rows, err := conn.Query(ctx, sqlText, "MO", "MO")
     if err != nil {
         panic(err)
@@ -298,14 +351,14 @@ order by mtime;
 적재 프로그램 실행 후 아래를 순서대로 확인합니다.
 
 1. `stock_tick` 데이터가 실시간으로 증가하는지 확인
-2. `stock_rollup_1m`가 1분 단위로 누적되는지 확인
-3. `stock_rollup_1h`가 1시간 단위로 누적되는지 확인
-4. 조회 프로그램이 분 단위 연속 결과를 반환하는지 확인
+2. `stock_rollup_1s`가 1초 단위로 누적되는지 확인
+3. `stock_rollup_1m`가 1분 단위로 누적되는지 확인
+4. `stock_rollup_1h`가 1시간 단위로 누적되는지 확인
+5. 조회 프로그램이 분 단위 연속 결과를 반환하는지 확인
 
 ## 정리
 
-- 과거 구간은 rollup 테이블 활용
-- 최신 구간은 raw 테이블 활용
-- 하나의 SQL로 실시간성과 조회 성능을 함께 확보
+- 다단계 rollup 테이블 활용
+- 데이터를 stock_tick raw 테이블에만 적재하면 자동으로 rollup 테이블로 누적
 
 Go API 상세 내용은 [MachGo SDK](/kr/neo/sdk-go/machgo/) 및 [Go SDK](/kr/neo/sdk-go/) 문서를 참고하세요.
