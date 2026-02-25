@@ -94,11 +94,11 @@ and the open limit becomes 16.
 |:-----------------|:----------|-------------------------------- |
 | `--shell-port`   | `5652`    | ssh listen port                 |
 | `--mqtt-port`    | `5653`    | mqtt listen port                |
-| `--mqtt-sock`    | `/tmp/machbase-neo-mqtt.sock`| mqtt unix socket {{< neo_since ver="8.0.36" />}}|
+| `--mqtt-sock`    | `/tmp/machbase-neo-mqtt-5653.sock`| mqtt unix socket {{< neo_since ver="8.0.36" />}}|
 | `--http-port`    | `5654`    | http listen port                |
-| `--http-sock`    | `/tmp/machbase-neo.sock` | http unix socket {{< neo_since ver="8.0.36" />}}|
+| `--http-sock`    | `/tmp/machbase-neo-http-5654.sock` | http unix socket {{< neo_since ver="8.0.36" />}}|
 | `--grpc-port`    | `5655`    | grpc listen port                |
-| `--grpc-sock`    | `mach-grpc.sock` | grpc unix domain socket  |
+| `--grpc-sock`    | `/tmp/machbase-neo-grpc-5655.sock` | grpc unix domain socket  |
 | `--grpc-insecure`| `false`   | set `true` to use plain tcp socket,<br/>disable TLS {{< neo_since ver="8.0.18" />}} |
 | `--mach-port`    | `5656`    | machbase native listen port     |
 
