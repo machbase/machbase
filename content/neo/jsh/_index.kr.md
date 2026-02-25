@@ -12,7 +12,7 @@ JSH는 현재 베타 단계입니다. 향후 릴리스에서 API와 명령어가
 {{< /callout >}}
 
 
-JSH를 이용하시면 Machbase Neo 프로세스 안에서 바로 실행되는 JavaScript 애플리케이션을 작성하실 수 있습니다.
+JSH를 이용하시면 Machbase Neo를 이용하는 JavaScript 애플리케이션을 작성하실 수 있습니다.
 확장자가 `.js`인 파일은 Machbase Neo에서 실행 가능한 스크립트로 인식됩니다.
 
 ## Hello World 예제
@@ -20,8 +20,7 @@ JSH를 이용하시면 Machbase Neo 프로세스 안에서 바로 실행되는 J
 아래 코드를 복사하여 `hello.js`로 저장하십시오.
 
 ```js
-p = require("@jsh/process");
-p.print("Hello", "World?", "\n")
+console.print("Hello World?\n")
 ```
 
 "New..." 페이지에서 "JSH"를 선택해 주십시오.
@@ -33,25 +32,70 @@ p.print("Hello", "World?", "\n")
 저장한 스크립트를 실행하려면 다음 명령을 입력해 주십시오.
 
 ```
-jsh / > ./hello.js
+/work > ./hello.js
 Hello World? 
 ```
 
 {{< figure src="./img/fish-hello.jpg" width="486">}}
 
 
+## 데이터베이스 예제
+
+마크베이스의 데이터를 조회하거나 입력하는 애플리케이션을 간단하게 작성할 수 있습니다.
+
+```js
+'use strict';
+// Load machbase client module.
+const machcli = require('machcli');
+// Create database client instance.
+const db = new machcli.Client({
+    host: '127.0.0.1',
+    port: 5656, // machbase native port
+    username:'sys',
+    password: 'manager'
+})
+
+var conn, rows;
+try {
+    // Create a database connection.
+    conn = db.connect();
+    // Execute query.
+    rows = conn.query('SELECT NAME, TYPE, COLCOUNT FROM m$sys_tables LIMIT 5');
+    // Iterates result set.
+    for (const row of rows) {
+        console.println(row.NAME, row.TYPE, row.COLCOUNT);
+    }
+} finally {
+    // Release resources
+    rows && rows.close();
+    conn && conn.close();
+}
+```
+
+## 외부 실행
+
+작성한 js 애플리케이션은 machbase-neo 서버 프로세스와 독립적인 환경에서 machbase-neo 실행파일만 있으면 아래와 같이 실행 가능하다.
+`machbase-neo jsh`를 실행하면 JSH 인터프리터가 주어진 스크립트를 실행하게 된다.
+이 방식으로 활용하면 machbase-neo 실행 파일만으로 추가적인 도구 없이 데이터베이스를 입력/조회하는 애플리케이션을 작성할 수 있다.
+
+```sh
+$ /path/to/the/machbase-neo jsh ./hello.js
+Hello World?
+```
+
 ## 명령어
 
 - `exit` 현재 JSH 세션을 종료합니다.
 - `ls` 현재 작업 디렉터리의 파일 목록을 표시합니다.
-- `cd` 작업 디렉터리를 변경합니다.
-- `ps` 실행 중인 프로세스와 PID를 보여 드립니다.
+- `cd` 작업 디렉터리를 변경하거나 `/work` 디렉터리로 이동합니다.
+<!-- - `ps` 실행 중인 프로세스와 PID를 보여 드립니다.
 - `kill <pid>` 지정한 PID의 프로세스를 종료합니다.
-- `servicectl` 서비스 제어 명령입니다. 자세한 내용은 [아래](#service-control-commands)를 참고하십시오.
+- `servicectl` 서비스 제어 명령입니다. 자세한 내용은 [아래](#service-control-commands)를 참고하십시오. -->
 
 기능은 단순하지만 스크립트를 검증하시기에는 충분합니다.
 
-## 데몬
+
+<!-- ## 데몬
 
 백그라운드에서 실행되는 애플리케이션이 필요하다면 데몬 프로세스로 구현하시기 바랍니다.
 
@@ -129,12 +173,11 @@ machbase-neo는 시작 시 `/etc/services` 디렉터리에서 JSON 파일을 검
 
 **`servicectl reread`** `/etc/services/*.json` 구성을 다시 읽고 변경 사항을 알려 드립니다.
 
-**`servicectl update`** 구성을 다시 읽고 변경 내용을 적용합니다.
+**`servicectl update`** 구성을 다시 읽고 변경 내용을 적용합니다. -->
 
 ## 모듈
 JSH는 TQL의 `SCRIPT()`와 `*.js` 애플리케이션에서 사용할 수 있는 다양한 JavaScript 모듈을 제공합니다.
-단, `@jsh/process` 모듈은 `*.js` 애플리케이션에서만 사용할 수 있으며 TQL에서는 사용할 수 없습니다.
-반대로 `$.yield()`와 같은 편리한 메서드를 제공하는 TQL 컨텍스트 객체 `$`는 TQL 전용으로, `*.js` 애플리케이션에서는 접근하실 수 없습니다.
+단, TQL의 `$.yield()`와 같은 편리한 메서드를 제공하는 TQL 컨텍스트 객체 `$`는 TQL 전용으로, `*.js` 애플리케이션에서는 접근하실 수 없습니다.
 
 자세한 내용은 각 모듈 문서를 참고해 주십시오.
 
