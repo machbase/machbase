@@ -57,37 +57,55 @@ create tag table if not exists stock_tick (
 -- 1-second rollup target table: stores sums and count aggregated from stock_tick.
 -- At query time, averages are calculated as sum/cnt to reduce full scans of raw data.
 create tag table if not exists stock_rollup_1s (
-    code      varchar(20) primary key,
-    time      datetime basetime,
-    sum_price double,
+    code       varchar(20) primary key,
+    time       datetime basetime,
+    sum_price  double,
     sum_volume double,
-    sum_bid   double,
-    sum_ask   double,
-    cnt       integer
+    sum_bid    double,
+    sum_ask    double,
+    cnt        integer,
+    open       double,
+    open_time  datetime,
+    close      double,
+    close_time datetime,
+    high       double,
+    low        double
 );
 
 -- 1-minute rollup target table: re-aggregates 1-second rollup data per minute.
 -- This multi-stage structure helps reduce CPU/IO load when many events arrive between minute boundaries.
 create tag table if not exists stock_rollup_1m (
-    code      varchar(20) primary key,
-    time      datetime basetime,
-    sum_price double,
+    code       varchar(20) primary key,
+    time       datetime basetime,
+    sum_price  double,
     sum_volume double,
-    sum_bid   double,
-    sum_ask   double,
-    cnt       integer
+    sum_bid    double,
+    sum_ask    double,
+    cnt        integer,
+    open       double,
+    open_time  datetime,
+    close      double,
+    close_time datetime,
+    high       double,
+    low        double
 );
 
 -- 1-hour rollup target table: re-aggregates 1-minute rollup rows into hourly buckets.
 -- This multi-stage structure helps reduce CPU/IO load for long-range queries.
 create tag table if not exists stock_rollup_1h (
-    code      varchar(20) primary key,
-    time      datetime basetime,
-    sum_price double,
+    code       varchar(20) primary key,
+    time       datetime basetime,
+    sum_price  double,
     sum_volume double,
-    sum_bid   double,
-    sum_ask   double,
-    cnt       integer
+    sum_bid    double,
+    sum_ask    double,
+    cnt        integer,
+    open       double,
+    open_time  datetime,
+    close      double,
+    close_time datetime,
+    high       double,
+    low        double
 );
 ```
 
@@ -105,7 +123,13 @@ as (
             sum(volume) as sum_volume,
             sum(bid_price) as sum_bid,
             sum(ask_price) as sum_ask,
-            count(*) as cnt
+            count(*) as cnt,
+            first(time, price) as open,
+            first(time, time) as open_time,
+            last(time, price) as close,
+            last(time, time) as close_time,
+            max(price) as high,
+            min(price) as low
         from stock_tick
     group by code, time
 )
@@ -127,7 +151,13 @@ as (
         sum(sum_volume) as sum_volume,
         sum(sum_bid) as sum_bid,
         sum(sum_ask) as sum_ask,
-        sum(cnt) as cnt
+        sum(cnt) as cnt,
+        first(open_time, open) as open,
+        first(open_time, open_time) as open_time,
+        last(close_time, close) as close,
+        last(close_time, close_time) as close_time,
+        max(high) as high,
+        min(low) as low
     from stock_rollup_1s
     group by code, time
 )
@@ -149,7 +179,13 @@ as (
         sum(sum_volume) as sum_volume,
         sum(sum_bid) as sum_bid,
         sum(sum_ask) as sum_ask,
-        sum(cnt) as cnt
+        sum(cnt) as cnt,
+        first(open_time, open) as open,
+        first(open_time, open_time) as open_time,
+        last(close_time, close) as close,
+        last(close_time, close_time) as close_time,
+        max(high) as high,
+        min(low) as low
     from stock_rollup_1m
     group by code, time
 )

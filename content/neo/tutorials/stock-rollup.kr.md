@@ -55,37 +55,55 @@ create tag table if not exists stock_tick (
 -- 1초 rollup 대상 테이블: stock_tick에서 집계한 합계(sum)와 건수(cnt)를 저장합니다.
 -- 조회 시 평균은 sum/cnt로 계산하여 원본 전체 스캔을 줄입니다.
 create tag table if not exists stock_rollup_1s (
-    code      varchar(20) primary key,
-    time      datetime basetime,
-    sum_price double,
+    code       varchar(20) primary key,
+    time       datetime basetime,
+    sum_price  double,
     sum_volume double,
-    sum_bid   double,
-    sum_ask   double,
-    cnt       integer
+    sum_bid    double,
+    sum_ask    double,
+    cnt        integer,
+    open       double,
+    open_time  datetime,
+    close      double,
+    close_time datetime,
+    high       double,
+    low        double
 );
 
 -- 1분 rollup 대상 테이블: 1초 rollup 결과를 다시 분 단위로 재집계합니다.
 -- 분사이에 많은 데이터가 발생하는 경우에 조회에서 CPU/IO 부하를 낮추기 위한 다단계 집계 구조입니다.
 create tag table if not exists stock_rollup_1m (
-    code      varchar(20) primary key,
-    time      datetime basetime,
-    sum_price double,
+    code       varchar(20) primary key,
+    time       datetime basetime,
+    sum_price  double,
     sum_volume double,
-    sum_bid   double,
-    sum_ask   double,
-    cnt       integer
+    sum_bid    double,
+    sum_ask    double,
+    cnt        integer,
+    open       double,
+    open_time  datetime,
+    close      double,
+    close_time datetime,
+    high       double,
+    low        double
 );
 
 -- 1시간 rollup 대상 테이블: 1분 rollup 결과를 다시 시간 단위로 재집계합니다.
 -- 장기간 조회에서 CPU/I/O 부하를 낮추기 위한 다단계 집계 구조입니다.
 create tag table if not exists stock_rollup_1h (
-    code      varchar(20) primary key,
-    time      datetime basetime,
-    sum_price double,
+    code       varchar(20) primary key,
+    time       datetime basetime,
+    sum_price  double,
     sum_volume double,
-    sum_bid   double,
-    sum_ask   double,
-    cnt       integer
+    sum_bid    double,
+    sum_ask    double,
+    cnt        integer,
+    open       double,
+    open_time  datetime,
+    close      double,
+    close_time datetime,
+    high       double,
+    low        double
 );
 ```
 
@@ -103,7 +121,13 @@ as (
             sum(volume) as sum_volume,
             sum(bid_price) as sum_bid,
             sum(ask_price) as sum_ask,
-            count(*) as cnt
+            count(*) as cnt,
+            first(time, price) as open,
+            first(time, time) as open_time,
+            last(time, price) as close,
+            last(time, time) as close_time,
+            max(price) as high,
+            min(price) as low
         from stock_tick
     group by code, time
 )
@@ -125,7 +149,13 @@ as (
         sum(sum_volume) as sum_volume,
         sum(sum_bid) as sum_bid,
         sum(sum_ask) as sum_ask,
-        sum(cnt) as cnt
+        sum(cnt) as cnt,
+        first(open_time, open) as open,
+        first(open_time, open_time) as open_time,
+        last(close_time, close) as close,
+        last(close_time, close_time) as close_time,
+        max(high) as high,
+        min(low) as low
     from stock_rollup_1s
     group by code, time
 )
@@ -147,7 +177,13 @@ as (
         sum(sum_volume) as sum_volume,
         sum(sum_bid) as sum_bid,
         sum(sum_ask) as sum_ask,
-        sum(cnt) as cnt
+        sum(cnt) as cnt,
+        first(open_time, open) as open,
+        first(open_time, open_time) as open_time,
+        last(close_time, close) as close,
+        last(close_time, close_time) as close_time,
+        max(high) as high,
+        min(low) as low
     from stock_rollup_1m
     group by code, time
 )
