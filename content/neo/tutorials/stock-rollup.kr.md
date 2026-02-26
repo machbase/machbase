@@ -6,17 +6,18 @@ toc: true
 ---
 
 이 튜토리얼은 Go 애플리케이션에서 주식 tick 데이터를 수집하고, Machbase custom rollup 기능으로
-1분/1시간 집계 데이터를 자동 생성한 뒤, 특정 종목 코드의 원하는 기간 데이터를 빠르게 조회하는 방법을 설명합니다.
+1초/1분/1시간 집계 데이터를 자동 생성한 뒤, 특정 종목 코드의 원하는 기간 데이터를 빠르게 조회하는 방법을 설명합니다.
 
-핵심은 과거 구간은 rollup 테이블을 사용하고, 최근 2분은 raw 테이블을 사용해 조회 부하를 줄이는 것입니다.
+핵심은 과거 구간은 rollup 테이블을 사용하고, 최근 2분은 더 세분화된 rollup 테이블을 사용해 조회 부하를 줄이는 것입니다.
 
 ## 구성 목표
 
 - `stock` 사용자와 주식 데이터용 테이블 구성
-- `stock_tick` → `stock_rollup_1m` (1분 rollup)
+- `stock_tick` → `stock_rollup_1s` (1초 rollup)
+- `stock_rollup_1s` → `stock_rollup_1m` (1분 rollup)
 - `stock_rollup_1m` → `stock_rollup_1h` (1시간 rollup)
-- 2시간 범위, 분당 약 30건 데이터를 적재하는 Go 예제
-- rollup + raw 데이터를 결합 조회하는 Go 예제
+- 2시간 범위, 분당 약 120건 데이터를 적재하는 Go 예제
+- rollup 계층 데이터를 `UNION ALL`로 결합 조회하는 Go 예제
 
 ## 사전 준비
 
@@ -112,7 +113,7 @@ interval 1 sec;
 `stock_rollup_1s` 기준으로 1분 집계를 생성하는 `rollup_stock_1m`를 만듭니다.
 
 ```sql
--- 원본 tick 데이터를 1분 버킷으로 집계합니다.
+-- 1초 rollup 데이터를 1분 버킷으로 집계합니다.
 -- 1분 주기로 실행되며 결과는 stock_rollup_1m에 저장됩니다.
 create rollup rollup_stock_1m
 into (stock_rollup_1m)
@@ -166,7 +167,7 @@ interval 1 hour;
 
 ## 4) Go 예제: 샘플 tick 데이터 적재
 
-아래 코드는 최근 2시간 구간에 대해 분당 약 30건씩 `stock_tick`에 데이터를 넣습니다.
+아래 코드는 최근 2시간 구간에 대해 분당 약 120건씩 `stock_tick`에 데이터를 넣습니다.
 종목 코드는 `MO`로 고정했기 때문에, 다음 조회 예제를 바로 실행할 수 있습니다.
 
 ```go
