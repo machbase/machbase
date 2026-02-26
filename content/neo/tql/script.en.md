@@ -257,8 +257,8 @@ If the callback function of `.forEach()` explicitly returns `false`, the iterati
 If the callback function returns `true` or does not return anything (which means it returns `undefined`), 
 the iteration continues until the end of the query result.
 
-{{< tabs items="MACHBASE,BRIDGE-SQLITE">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="MACHBASE" >}}
 ```js {{linenos=table,hl_lines=["7-10",14]}}
 SCRIPT({
   var data = $.payload;
@@ -286,7 +286,7 @@ cpu.percent,1725343898315887000,6.1
 ```
 
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="BRIDGE-SQLITE" >}}
 ```js {{linenos=table,hl_lines=["7-10",14]}}
 SCRIPT({
   var data = $.payload;
@@ -349,8 +349,8 @@ CSV( header(true) )
 
 If the SQL is not a SELECT statement, use `$.db().exec()` to execute INSERT, DELETE, CREATE TABLE statements.
 
-{{< tabs items="MACHBASE,BRIDGE-SQLITE">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="MACHBASE" >}}
 ```js {{linenos=table,hl_lines=["10-14", "21-22"]}}
 SCRIPT({
     for( i = 0; i < 3; i++) {
@@ -383,7 +383,7 @@ SCRIPT({
 CSV()
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="BRIDGE-SQLITE" >}}
 ```js {{linenos=table,hl_lines=["10-14", "21-22"]}}
 SCRIPT({
     for( i = 0; i < 3; i++) {
@@ -534,8 +534,8 @@ DISCARD()
 
 ### Builtin Math object
 
-{{< tabs items="JS,SET-MAP">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="JS" >}}
 
 Javascript builtin functions are available:
 
@@ -562,7 +562,7 @@ CHART(
 )
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="SET-MAP" >}}
 
 The equivalent result using SET-MAP functions instead of Javascript is:
 

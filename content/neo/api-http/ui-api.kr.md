@@ -12,8 +12,8 @@ weight: 55
 
 **POST `/web/api/login`**
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "loginName": "sys",
@@ -21,7 +21,7 @@ weight: 55
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "success": true,
@@ -40,15 +40,15 @@ weight: 55
 
 **POST `/web/api/relogin`**
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "refreshToken": "'login' 시 발급된 리프레시 토큰"
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "success": true,
@@ -446,8 +446,8 @@ weight: 55
 - `name`은 필수입니다.
 - `notAfter`는 만료 시각입니다.
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "name": "eleven",
@@ -456,7 +456,7 @@ weight: 55
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "success": true,
@@ -520,15 +520,15 @@ SSH 키 정보를 반환합니다.
 
 machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을 비밀번호 입력 없이 실행할 수 있습니다.
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "key": "your publickey"
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "elapse": "138.801µs",
@@ -631,8 +631,8 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 - `@every 1h30m`           1시간 30분 간격
 - `@daily`                 매일
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "name":"eleven",
@@ -642,7 +642,7 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "success": true,
@@ -660,15 +660,15 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 타이머를 시작합니다.
 - `state` 값이 필요합니다.
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "state":"start",
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "success": true,
@@ -686,15 +686,15 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 타이머를 중지합니다.
 - `state` 값이 필요합니다.
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "state":"stop",
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "success": true,
@@ -712,8 +712,8 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 타이머 설정을 수정합니다.
 - `autoStart`, `schedule`, `path`를 지정할 수 있습니다.
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "audoStart" : true,
@@ -722,7 +722,7 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "elapse": "459.6µs",
@@ -783,8 +783,8 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 - `name`, `type`, `path`는 필수입니다.
 - 지원되는 브리지는 `SQLite`, `PostgreSql`, `Mysql`, `MSSQL`, `MQTT`입니다.
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "name":"pg",
@@ -793,7 +793,7 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "success": true,
@@ -811,8 +811,8 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 브리지에서 명령을 실행합니다.
 - `state`, `command`가 필요합니다.
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "state":"exec",
@@ -820,7 +820,7 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "success": true,
@@ -838,8 +838,8 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 브리지에서 쿼리를 수행합니다.
 - `state`, `command`가 필요합니다.
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "state":"query",
@@ -847,7 +847,7 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "success": true,
@@ -899,15 +899,15 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 
 브리지를 테스트합니다.
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "state":"test",
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "success": true,
@@ -1025,8 +1025,8 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 
 자세한 설정은 nats-bridge 매뉴얼(https://docs.machbase.com/neo/bridges/31.nats/)을 참고해 주십시오.
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "name":"nats_subr",
@@ -1039,7 +1039,7 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "elapse": "260µs",
@@ -1056,15 +1056,15 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 
 - `state` 값이 필요합니다.
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "state":"start",
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "elapse": "166.1µs",
@@ -1081,15 +1081,15 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 
 - `state` 값이 필요합니다.
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "state":"stop",
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "elapse": "54.2µs",
@@ -1157,8 +1157,8 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 - **기간 백업**: 특정 기간의 데이터를 백업합니다.
 
 `request`
-{{< tabs items="Full Backup,Incremental Backup,Time Backup, Table Backup">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Full Backup" >}}
 ```json
 {
     "type":"database", // database 또는 table
@@ -1174,7 +1174,7 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Incremental Backup" >}}
 ```json
 {
     "type":"database", // database 또는 table
@@ -1190,7 +1190,7 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Time Backup" >}}
 ```json
 {
     "type":"database", // database 또는 table
@@ -1206,7 +1206,7 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Table Backup" >}}
 ```json
 {
     "type":"table", // database 또는 table
@@ -1298,8 +1298,8 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 - `:name`: 마운트 이름
 - `path`: 백업 데이터베이스 경로(절대 경로 또는 상대 경로 모두 사용 가능)
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "path":"example_backup1" // 상대 경로
@@ -1307,7 +1307,7 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "elapse": "46.8694ms",

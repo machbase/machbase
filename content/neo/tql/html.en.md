@@ -148,8 +148,8 @@ HTML({
 
 ## Usages
 
-{{< tabs items=".V,.Value,.Values">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name=".V" >}}
 
 `.V` is a map object containing field names as keys and their corresponding values.
 
@@ -186,7 +186,7 @@ HTML({
 {{< figure src="../img/html_template_3.jpg" width="452" >}}
 
 {{< /tab >}}
-{{< tab >}}
+{{< tab name=".Value" >}}
 
 `.Value` is a function that accesses the fields of the current record by their index.
 
@@ -220,7 +220,7 @@ HTML({
 {{< figure src="../img/html_template.jpg" width="518" >}}
 
 {{< /tab>}}
-{{< tab >}}
+{{< tab name=".Values" >}}
 
 `.Values` is an array containing all field values of the current record.
 

@@ -4,8 +4,8 @@ type: docs
 weight: 920
 ---
 
-{{< tabs items="HTTP,CSV">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ```js {linenos=table,linenostart=1}
 HTTP(`GET https://docs.machbase.com/assets/example/AirPassengers.csv`)
 SCRIPT({
@@ -35,7 +35,7 @@ CHART(
 )
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="CSV" >}}
 
 ```js {{linenos=table,linenostart=1}}
 CSV (file("https://docs.machbase.com/assets/example/AirPassengers.csv"))

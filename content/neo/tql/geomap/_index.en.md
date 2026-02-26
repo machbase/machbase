@@ -445,8 +445,8 @@ INSERT("name", "time", "value", "lat", "lon", table("TRIP"))
 
 ### Trajectory
 
-{{< tabs items="SQL,CSV">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="SQL" >}}
 ```js {{linenos=table,hl_lines=[5,7]}}
 SQL(`SELECT time, lat, lon FROM TRIP
      WHERE name = 'firenze' ORDER BY time`)
@@ -469,7 +469,7 @@ SCRIPT({
 GEOMAP()
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="CSV" >}}
 ```js {{linenos=table,hl_lines=["8-11"]}}
 // CSV Format: TIME, LAT, LON
 CSV(file("https://docs.machbase.com/assets/example/data-trajectory-firenze.csv"))
@@ -506,8 +506,8 @@ GEOMAP()
 Using the Haversine formula to calculate the distance moved in meters between two points,
 then computing the moving speed in kilometers per hour (Km/H) based on the time difference between these points.
 
-{{< tabs items="SQL,CSV">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="SQL" >}}
 ```js {{linenos=table,hl_lines=[7,"22-23",28]}}
 SQL(`SELECT time, lat, lon FROM TRIP
      WHERE name = 'firenze' ORDER BY time`)
@@ -549,7 +549,7 @@ SCRIPT({
 GEOMAP()
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="CSV" >}}
 ```js {{linenos=table,hl_lines=["20-22",30,51,"45-46"]}}
 // CSV Format: TIME("23-04-21 16:53:21:568000"), LAT, LON
 CSV(file("https://docs.machbase.com/assets/example/data-trajectory-firenze.csv"))

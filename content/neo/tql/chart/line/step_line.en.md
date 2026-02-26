@@ -4,8 +4,8 @@ type: docs
 weight: 60
 ---
 
-{{< tabs items="SCRIPT,FAKE">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="SCRIPT" >}}
 ```js {{linenos=table,linenostart=1}}
 SCRIPT({
   days    = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
@@ -33,7 +33,7 @@ SCRIPT({
 CHART()
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="FAKE" >}}
 ```js {{linenos=table,linenostart=1}}
 FAKE( json({
   ["Mon", 120, 220, 450],

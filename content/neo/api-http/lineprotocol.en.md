@@ -2,6 +2,9 @@
 title: ILP line protocol
 type: docs
 weight: 50
+params:
+    tabs:
+        sync: true
 ---
 
 Machbase Neo provides a compatibility api that accepts messages in a format of influxdata lineprotocol for writing data.
@@ -22,8 +25,8 @@ Since Machbase has a different scheme from influxdb, some translations will be a
 
 **Line protocol example**
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 POST http://127.0.0.1:5654/metrics/write?db=tagdata
@@ -32,7 +35,7 @@ my-car speed=87.6 167038034500000
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -o - -X POST "http://127.0.0.1:5654/metrics/write?db=tagdata" \
     --data-binary 'my-car speed=87.6 167038034500000'

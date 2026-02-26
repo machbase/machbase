@@ -2,6 +2,9 @@
 title: ILP 라인 프로토콜
 type: docs
 weight: 50
+params:
+    tabs:
+        sync: true
 ---
 
 Machbase Neo는 데이터를 적재하기 위해 InfluxData 라인 프로토콜 형식의 메시지를 수신하는 호환 API를 제공합니다.
@@ -22,8 +25,8 @@ Machbase는 influxdb와 스키마가 다르기 때문에 일부 항목은 자동
 
 **라인 프로토콜 예시**
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 POST http://127.0.0.1:5654/metrics/write?db=tagdata
@@ -32,7 +35,7 @@ my-car speed=87.6 167038034500000
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -o - -X POST "http://127.0.0.1:5654/metrics/write?db=tagdata" \
     --data-binary 'my-car speed=87.6 167038034500000'

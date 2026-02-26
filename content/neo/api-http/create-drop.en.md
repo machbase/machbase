@@ -2,6 +2,9 @@
 title: Create, Drop table
 type: docs
 weight: 30
+params:
+    tabs:
+        sync: true
 ---
 
 The HTTP "Query" API doesn't accept only "SELECT" SQL but also DDL. So it is possible to create and drop tables via HTTP API
@@ -12,8 +15,8 @@ Please refer to the docs for understanding what is the [Tag Tables](/dbms/featur
 
 **Request**
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP">}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
@@ -21,7 +24,7 @@ GET http://127.0.0.1:5654/db/query
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL">}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode \
@@ -38,8 +41,8 @@ curl -o - http://127.0.0.1:5654/db/query \
 
 ### IF NOT EXISTS
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs>}}
+{{< tab name="HTTP">}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
@@ -47,7 +50,7 @@ GET http://127.0.0.1:5654/db/query
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL">}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode \
@@ -58,8 +61,8 @@ curl -o - http://127.0.0.1:5654/db/query \
 
 ### TAG STATISTICS
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
@@ -67,7 +70,7 @@ GET http://127.0.0.1:5654/db/query
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode \
@@ -84,8 +87,8 @@ curl -o - http://127.0.0.1:5654/db/query \
 
 **Request**
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
@@ -93,7 +96,7 @@ GET http://127.0.0.1:5654/db/query
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode "q=drop table EXAMPLE"

@@ -27,11 +27,11 @@ By default, the output format is JSON. If `format=html` is specified, the respon
 The example below shows how to render machbase-neo's HTTP latency distribution in a chart.
 It uses `FAKE( statz(period, metrics...) )` SRC function, and then makes time-value pairs for input of the `CHART()`.
 
-{{< tabs items="CHART,Code">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="CHART" >}}
 {{< figure src="../img/metrics_http_latency.jpg" width="600" >}}
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Code" >}}
 ```js
 FAKE(statz("15m", 
     "machbase:http:latency_p50",

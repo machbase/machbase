@@ -18,8 +18,8 @@ math: true
 - `offset` *number*: 선택 값으로, 지정하면 해당 위치부터 레코드를 가져옵니다(생략 시 기본값 0). {{< neo_since ver="8.0.6" />}}
 - `n` *number*: 가져올 레코드 수입니다.
 
-{{< tabs items="TAKE(n),TAKE(offset n)">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="TAKE(n)" >}}
 ```js {linenos=table,hl_lines=["9"],linenostart=1}
 FAKE( json({
     [ "TAG0", 1628694000000000000, 10],
@@ -37,7 +37,7 @@ TAG0,1628694000000000000,10
 TAG0,1628780400000000000,11
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="TAKE(offset n)" >}}
 ```js {linenos=table,hl_lines=["9"],linenostart=1}
 FAKE( json({
     [ "TAG0", 1628694000000000000, 10],
@@ -68,8 +68,8 @@ TAG0,1629039600000000000,14
 - `offset` *number*: 선택 값으로, 지정된 위치부터 레코드를 삭제합니다(생략 시 기본값 0). {{< neo_since ver="8.0.6" />}}
 - `n` *number*: 삭제할 레코드 수입니다.
 
-{{< tabs items="DROP(n),DROP(offset n)">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="DROP(n)" >}}
 ```js {linenos=table,hl_lines=["9"],linenostart=1}
 FAKE( json({
     [ "TAG0", 1628694000000000000, 10],
@@ -88,7 +88,7 @@ TAG0,1629039600000000000,14
 TAG0,1629126000000000000,15
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="DROP(offset n)" >}}
 ```js {linenos=table,hl_lines=["9"],linenostart=1}
 FAKE( json({
     [ "TAG0", 1628694000000000000, 10],
@@ -148,8 +148,8 @@ TAG0,1628780400000000000,11
 
 `retain()` 옵션을 지정하면 `time` 값을 기준으로 주어진 기간 동안 변경된 `value`를 유지하는 레코드가 전달됩니다.
 
-{{< tabs items="example,retain(),useFirstWithLast(),useFirstWithLast()" >}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="example" >}}
 ```js {linenos=table,hl_lines=[2,4,10,11,14]}
 FAKE(json({
     ["A", 1692329338, 1.0],
@@ -176,7 +176,7 @@ D,1692329347,9.1
 ```
 
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="retain()" >}}
 ```js {linenos=table,hl_lines=[4,6,14]}
 FAKE(json({
     ["A", 1692329338, 1.0],
@@ -200,7 +200,7 @@ A,1692329338,1
 B,1692329342,5
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="useFirstWithLast()" >}}
 ```js {linenos=table,hl_lines=[4,6,14]}
 FAKE(json({
     ["A", 1692329338, 1.0],
@@ -224,7 +224,7 @@ A,1692329338,1
 B,1692329340,3
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="useFirstWithLast()" >}}
 ```js {linenos=table,hl_lines=[14]}
 FAKE(json({
     ["A", 1692329338, 1.0],
@@ -616,8 +616,8 @@ CHART(
 
 `HISTOGRAM()`은 값들의 분포를 지정한 구간으로 집계합니다. 구간은 최소/최대 값과 분할 수로 설정하며, 실제 값이 범위를 벗어나면 자동으로 하위 또는 상위 구간이 추가됩니다.
 
-{{< tabs items="CSV,CHART,CATEGORY">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="CSV" >}}
 ```js {{linenos=table,hl_lines=[3]}}
 FAKE( arrange(1, 100, 1) )
 MAPVALUE(0, (simplex(12, value(0)) + 1) * 100)
@@ -634,7 +634,7 @@ low,high,count
 160,200,4
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="CHART" >}}
 ```js {{linenos=table,hl_lines=[3]}}
 FAKE( arrange(1, 100, 1) )
 MAPVALUE(0, (simplex(12, value(0)) + 1) * 100)
@@ -653,7 +653,7 @@ CHART(
 ```
 {{< figure src="/neo/tql/img/tql-histogram.jpg" width="500" >}}
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="CATEGORY" >}}
 ```js {{linenos=table,hl_lines=[4,"13-14"]}}
 FAKE( arrange(1, 100, 1) )
 MAPVALUE(0, (simplex(12, value(0)) + 1) * 100)
@@ -727,8 +727,8 @@ CSV나 브리지를 통해 외부 RDBMS에서 데이터를 읽어 올 때, Machb
 - `columnIdx...`: 전환(transpose)할 컬럼 목록을 지정합니다. `fixed()`와 함께 사용할 수 없습니다.
 - `header(boolean)`: `header(true)`로 설정하면 첫 레코드를 헤더로 간주하고, 전환된 레코드에 헤더 값을 새 컬럼으로 추가합니다.
 
-{{< tabs items="TRANSPOSE,all columns,header(),fixed()">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="TRANSPOSE" >}}
 ```js {linenos=table,hl_lines=["5"],linenostart=1}
 FAKE(csv(`CITY,DATE,TEMPERATURE,HUMIDITY,NOISE
 Tokyo,2023/12/07,23,30,40
@@ -757,7 +757,7 @@ BEIJING-HUMIDITY,1701907200,50
 BEIJING-NOISE,1701907200,60
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="all columns" >}}
 ```js {linenos=table,hl_lines=["5"],linenostart=1}
 FAKE(csv(`CITY,DATE,TEMPERATURE,HUMIDITY,NOISE
 Tokyo,2023/12/07,23,30,40
@@ -785,7 +785,7 @@ Beijing
 60
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="header()" >}}
 ```js {linenos=table,hl_lines=["5"],linenostart=1}
 FAKE(csv(`CITY,DATE,TEMPERATURE,HUMIDITY,NOISE
 Tokyo,2023/12/07,23,30,40
@@ -808,7 +808,7 @@ HUMIDITY,50
 NOISE,60
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="fixed()" >}}
 ```js {linenos=table,hl_lines=["5", "7"],linenostart=1}
 FAKE(csv(`CITY,DATE,TEMPERATURE,HUMIDITY,NOISE
 Tokyo,2023/12/07,23,30,40
@@ -1101,8 +1101,8 @@ CSV()
 
 인자를 생략하면 `POPKEY(0)`과 동일하게 작동해 첫 번째 값을 키로 승격합니다.
 
-{{< tabs items="POPKEY(),POPKEY(idx)">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="POPKEY()" >}}
 ```js {linenos=table,hl_lines=["9"],linenostart=1}
 FAKE( json({
     [ "TAG0", 1628694000000000000, 10],
@@ -1124,7 +1124,7 @@ CSV()
 1629126000000000000,15
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="POPKEY(idx)" >}}
 ```js {linenos=table,hl_lines=["9"],linenostart=1}
 FAKE( json({
     [ "TAG0", 1628694000000000000, 10],

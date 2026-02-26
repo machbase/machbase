@@ -2,6 +2,9 @@
 title: Upload files
 type: docs
 weight: 25
+params:
+    tabs:
+        sync: true
 ---
 
  {{< neo_since ver="8.0.40" />}}
@@ -30,8 +33,8 @@ CREATE TAG TABLE EXAMPLE(
 )
 ```
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 This example uses Visual Studio Code's REST Client extension.
 
 ~~~
@@ -61,7 +64,7 @@ Content-Type: image/png
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 This example uses `curl` with the `-F` option to make a POST request in *multipart/form-data* encoding.
 
 ```sh {hl_lines=[5]}
@@ -132,8 +135,8 @@ AND EXTDATA->'$.FN' = 'image_file.png';
 
 The examples that use the SELECT query with the `/db/query` API:
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
@@ -141,7 +144,7 @@ GET http://127.0.0.1:5654/db/query
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -o - 'http://127.0.0.1:5654/db/query' \
   --data-urlencode "q=select EXTDATA from EXAMPLE\
@@ -152,8 +155,8 @@ curl -o - 'http://127.0.0.1:5654/db/query' \
 
 Using json path condition with `->` notation.
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
@@ -161,7 +164,7 @@ GET http://127.0.0.1:5654/db/query
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -o - 'http://127.0.0.1:5654/db/query' \
   --data-urlencode "q=select EXTDATA from EXAMPLE\
@@ -192,8 +195,8 @@ The `EXTDATA` column contains the file information as shown below.
 
 Use JSON path to extract specific fields from the JSON type column:
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
@@ -202,7 +205,7 @@ GET http://127.0.0.1:5654/db/query
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
   --data-urlencode "format=ndjson"   \
@@ -234,15 +237,15 @@ Note that the timestamp in the `ID` is *NOT* exactly the same as the base time o
 
 ### HTTP GET
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query/file/EXAMPLE/EXTDATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -o ./img-download.png \
     http://127.0.0.1:5654/db/query/file/EXAMPLE/EXTDATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8

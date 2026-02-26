@@ -228,8 +228,8 @@ weight: 51
 
 ## Themes
 
-{{< tabs items="MAPVALUE,SCRIPT">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="MAPVALUE" >}}
 ```js {{linenos=table,hl_lines=[6]}}
 FAKE( arrange(1, 100, 1))
 MAPVALUE(1, sin(2 * PI * 5 * value(0)/100) )
@@ -252,7 +252,7 @@ CHART(
 )
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="SCRIPT" >}}
 ```js {{linenos=table,hl_lines=[12]}}
 SCRIPT({
     for( i = 1; i <= 100; i++) {

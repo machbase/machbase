@@ -22,8 +22,8 @@ The basic SINK function might be `INSERT()` which write the incoming records ont
 - `tag()` *tag('name')* optional, applicable only to tag tables.
 
 
-{{<tabs items="Example,PUSHVALUE(),tag()">}}
-{{<tab>}}
+{{< tabs >}}
+{{< tab name="Example" >}}
 Write records to machbase that contains tag name.
 
 ```js {{linenos=table,hl_lines=[6]}}
@@ -35,7 +35,7 @@ MAPVALUE(1, value(1)*1000000000) // convert epoch sec to nanosec
 INSERT("name", "time", "value", table("example"))
 ```
 {{</tab>}}
-{{<tab>}}
+{{< tab name="PUSHVALUE()" >}}
 Write records to machbase with same tag name by adding "name" field by `PUSHVALUE()`.
 ```js {{linenos=table,hl_lines=[5,7]}}
 FAKE(json({
@@ -47,7 +47,7 @@ MAPVALUE(1, value(1)*1000000000) // convert epoch sec to nanosec
 INSERT("name","time", "value", table("example"))
 ```
 {{</tab>}}
-{{<tab>}}
+{{< tab name="tag()" >}}
 Write records to machbase with same tag name by using `tag()` option if the destination is a tag table.
 ```js {{linenos=table,hl_lines=[6]}}
 FAKE(json({
@@ -105,8 +105,8 @@ For example, if a record was `{key: k, value:[v1,v2]}`, it generates an CSV reco
 - `substituteNull` *substitute(string)* specify substitution string for the *NULL* value, default is `substituteNull('NULL')`. (deprecated, replaced by `nullValue()`)
 - `cache()` cache result data. see [Cache Result Data](../reading/#cache-result-data) for details. {{< neo_since ver="8.0.43" />}}
 
-{{< tabs items="default,heading(),delimiter(),nullValue()">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="default" >}}
 ```js {linenos=table,hl_lines=[3],linenostart=1}
 FAKE( arrange(1, 3, 1))
 MAPVALUE(1, value(0)*10)
@@ -118,7 +118,7 @@ CSV()
 3,30
 ```
 {{</ tab >}}
-{{< tab >}}
+{{< tab name="heading()" >}}
 ```js {linenos=table,hl_lines=[3],linenostart=1}
 FAKE( arrange(1, 3, 1))
 MAPVALUE(1, value(0)*10, "x10")
@@ -131,7 +131,7 @@ x,x10
 3,30
 ```
 {{</ tab >}}
-{{< tab >}}
+{{< tab name="delimiter()" >}}
 ```js {linenos=table,hl_lines=[3],linenostart=1}
 FAKE( arrange(1, 3, 1))
 MAPVALUE(1, value(0)*10, "x10")
@@ -144,7 +144,7 @@ x|x10
 3|30
 ```
 {{</ tab >}}
-{{< tab >}}
+{{< tab name="nullValue()" >}}
 ```js {linenos=table,hl_lines=[2],linenostart=1}
 FAKE( json({ ["A", 123], ["B", null], ["C", 234] }) )
 CSV( nullValue("***") )
@@ -172,8 +172,8 @@ Generates JSON results from the values of the records.
 - `rowsArray` *rowsArray(boolean)* produces JSON that contains only array of object for each record. The `rowsArray(true)` has higher priority than `transpose(true)` and `rowsFlatten(true)`. {{< neo_since ver="8.0.12" />}}
 - `cache()` cache result data. see [Cache Result Data](../reading/#cache-result-data) for details. {{< neo_since ver="8.0.43" />}}
 
-{{< tabs items="default,transpose(),rowsFlatten(),rowsArray()">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="default" >}}
 ```js {linenos=table,hl_lines=[3],linenostart=1}
 FAKE( arrange(1, 3, 1))
 MAPVALUE(1, value(0)*10)
@@ -193,7 +193,7 @@ JSON()
 }
 ```
 {{</ tab >}}
-{{< tab >}}
+{{< tab name="transpose()" >}}
 ```js  {linenos=table,hl_lines=[3],linenostart=1}
 FAKE( arrange(1, 3, 1))
 MAPVALUE(1, value(0)*10, "x10")
@@ -213,7 +213,7 @@ JSON( transpose(true) )
 }
 ```
 {{</ tab >}}
-{{< tab >}}
+{{< tab name="rowsFlatten()" >}}
 ```js  {linenos=table,hl_lines=[3],linenostart=1}
 FAKE( arrange(1, 3, 1))
 MAPVALUE(1, value(0)*10, "x10")
@@ -233,7 +233,7 @@ JSON( rowsFlatten(true) )
 }
 ```
 {{</ tab >}}
-{{< tab >}}
+{{< tab name="rowsArray()" >}}
 ```js  {linenos=table,hl_lines=[3],linenostart=1}
 FAKE( arrange(1, 3, 1))
 MAPVALUE(1, value(0)*10, "x10")
@@ -295,8 +295,8 @@ Generates a table in markdown format or HTML.
 - `brief(boolean)` omit result rows, `brief(true)` is equivalent with `briefCount(5)`
 - `briefCount(limit int)` omit result rows if the records exceeds the given limit, no omission if limit is `0`
 
-{{< tabs items="default,briefCount,html">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="default" >}}
 ```js {linenos=table,hl_lines=[8]}
 FAKE( csv(`
 10,The first line 
@@ -317,7 +317,7 @@ MARKDOWN()
 | 50     | The last is 5th |
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="briefCount" >}}
 
 ```js {linenos=table,hl_lines=[8]}
 FAKE( csv(`
@@ -340,7 +340,7 @@ MARKDOWN( briefCount(2) )
 > Total 5 records
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="html" >}}
 
 ```js {linenos=table,hl_lines=[8]}
 FAKE( csv(`
@@ -418,8 +418,8 @@ Refer to [CHART() examples](/neo/tql/chart/) for the various usages.
 
 Generates a line chart in HTML format.
 
-{{< tabs items="CHART_LINE(),CHART()">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="CHART_LINE()" >}}
 ```js {linenos=table,hl_lines=["5-8"],linenostart=1}
 FAKE( oscillator(freq(1.5, 1.0), freq(1.0, 0.7), range('now', '3s', '25ms')))
 // |    0      1
@@ -431,7 +431,7 @@ CHART_LINE(
 )
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="CHART()" >}}
 ```js {linenos=table,hl_lines=["7-19"],linenostart=1}
 FAKE( oscillator(freq(1.5, 1.0), freq(1.0, 0.7), range('now', '3s', '25ms')))
 // |    0      1
@@ -467,8 +467,8 @@ CHART(
 
 Generates a bar chart in HTML format.
 
-{{< tabs items="CHART_BAR(),CHART()">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="CHART_BAR()" >}}
 ```js {linenos=table,hl_lines=["5-8"],linenostart=1}
 FAKE( oscillator(freq(1.5, 1.0), freq(1.0, 0.7), range('now', '3s', '25ms')))
 // |    0      1
@@ -480,7 +480,7 @@ CHART_BAR(
 )
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="CHART()" >}}
 ```js {linenos=table,hl_lines=["7-19"],linenostart=1}
 FAKE( oscillator(freq(1.5, 1.0), freq(1.0, 0.7), range('now', '3s', '25ms')))
 // |    0      1
@@ -516,8 +516,8 @@ CHART(
 
 Generates a scatter chart in HTML format.
 
-{{< tabs items="CHART_SCATTER(),CHART()">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="CHART_SCATTER()" >}}
 ```js {linenos=table,hl_lines=["5-8"],linenostart=1}
 FAKE( oscillator(freq(1.5, 1.0), freq(1.0, 0.7), range('now', '3s', '25ms')))
 // |    0      1
@@ -529,7 +529,7 @@ CHART_SCATTER(
 )
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="CHART()" >}}
 ```js {linenos=table,hl_lines=["7-19"],linenostart=1}
 FAKE( oscillator(freq(1.5, 1.0), freq(1.0, 0.7), range('now', '3s', '25ms')))
 // |    0      1
@@ -565,8 +565,8 @@ CHART(
 
 Generates a 3D line chart in HTML format.
 
-{{< tabs items="CHART_LINE3D(),CHART()">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="CHART_LINE3D()" >}}
 ```js {linenos=table,hl_lines=["9-14"],linenostart=1}
 FAKE(meshgrid(linspace(-1.0,1.0,100), linspace(-1.0, 1.0, 100)))
 // |    0   1
@@ -584,7 +584,7 @@ CHART_LINE3D(
 )
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="CHART()" >}}
 ```js {linenos=table,hl_lines=[10, "12-31"],linenostart=1}
 FAKE(meshgrid(linspace(-1.0,1.0,100), linspace(-1.0, 1.0, 100)))
 // |    0   1
@@ -633,8 +633,8 @@ CHART(
 
 Generates a 3D bar chart in HTML format.
 
-{{< tabs items="CHART_BAR3D(),CHART()">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="CHART_BAR3D()" >}}
 ```js {linenos=table,hl_lines=["9-14"],linenostart=1}
 FAKE(meshgrid(linspace(-1.0,1.0,100), linspace(-1.0, 1.0, 100)))
 // |    0   1
@@ -652,7 +652,7 @@ CHART_BAR3D(
 )
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="CHART()" >}}
 ```js {linenos=table,hl_lines=[10, "12-30"],linenostart=1}
 FAKE(meshgrid(linspace(-1.0,1.0,100), linspace(-1.0, 1.0, 100)))
 // |    0   1
@@ -699,8 +699,8 @@ CHART(
 
 Generates a 3D scatter chart in HTML format.
 
-{{< tabs items="CHART_SCATTER3D(),CHART()">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="CHART_SCATTER3D()" >}}
 ```js {linenos=table,hl_lines=["9-14"],linenostart=1}
 FAKE(meshgrid(linspace(-1.0,1.0,100), linspace(-1.0, 1.0, 100)))
 // |    0   1
@@ -718,7 +718,7 @@ CHART_SCATTER3D(
 )
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="CHART()" >}}
 ```js {linenos=table,hl_lines=[10, "12-30"],linenostart=1}
 FAKE(meshgrid(linspace(-1.0,1.0,100), linspace(-1.0, 1.0, 100)))
 // |    0   1

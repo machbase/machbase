@@ -24,22 +24,22 @@ INSERT( 'time', 'value', table('example'), tag('signal') )
 
 ### 출력 형식과 무관하게 사용
 
-{{< tabs items="CSV,JSON,CHART,HTML">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="CSV" >}}
 ```js {linenos=table,hl_lines=[2],linenostart=1}
 SQL( `SELECT TIME, VALUE FROM EXAMPLE WHERE NAME='signal' LIMIT 100` )
 CSV( timeformat("Default") )
 ```
 {{< figure src="./img/tql_intro_csv.jpg">}}
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="JSON" >}}
 ```js {linenos=table,hl_lines=[2],linenostart=1}
 SQL( `SELECT TIME, VALUE FROM EXAMPLE WHERE NAME='signal' LIMIT 100` )
 JSON( timeformat("Default") )
 ```
 {{< figure src="./img/tql_intro_json.jpg">}}
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="CHART" >}}
 ```js {linenos=table,hl_lines=[2-9],linenostart=1}
 SQL( `SELECT TIME, VALUE FROM EXAMPLE WHERE NAME='signal' LIMIT 100` )
 CHART(
@@ -53,7 +53,7 @@ CHART(
 ```
 {{< figure src="./img/tql_intro.jpg">}}
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="HTML" >}}
 ```html {linenos=table,hl_lines=[2],linenostart=1}
 SQL(`SELECT TIME, VALUE FROM EXAMPLE WHERE NAME='signal' LIMIT 100`)
 HTML({
@@ -77,8 +77,8 @@ HTML({
 
 ### 입력 소스와 무관하게 사용
 
-{{< tabs items="JSON,CSV,SQL,SCRIPT-json,SCRIPT-for">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="JSON" >}}
 ```js {{linenos="table",hl_lines=["1-5"]}}
 FAKE( json({ 
     [ "A", 1.0 ],
@@ -91,7 +91,7 @@ MAPVALUE(1, value(1) * 10 )
 CSV()
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="CSV" >}}
 ```js {{linenos="table",hl_lines=["1-4"]}}
 CSV(`A,1.0
 B,1.5
@@ -103,7 +103,7 @@ MAPVALUE(1, value(1) * 10 )
 CSV()
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="SQL" >}}
 ```js  {{linenos="table",hl_lines=[1]}}
 SQL(`select time, value from example where name = 'my-car' limit 4`)
 
@@ -112,7 +112,7 @@ MAPVALUE(1, value(1) * 10 )
 CSV()
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="SCRIPT-json" >}}
 ```js {{linenos="table",hl_lines=[2]}}
 SCRIPT({
     list = JSON.parse(`[["A",1.0], ["B",1.5], ["C",2.0], ["D",2.5]]`);
@@ -124,7 +124,7 @@ MAPVALUE(1, value(1) * 10 )
 CSV()
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="SCRIPT-for" >}}
 ```js {{linenos="table",hl_lines=["1-5"]}}
 SCRIPT({
     for (i = 0; i < 10; i++) {
@@ -149,8 +149,8 @@ CSV()
 
 아래 Iris 데이터 예제를 통해 TQL이 어떤 용도로 사용되는지 간단히 살펴볼 수 있습니다.
 
-{{< tabs items="AVG,STAT,SCRIPT-bar,SCRIPT-boxplot">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="AVG" >}}
 
 - 클래스별 평균값
 
@@ -178,7 +178,7 @@ CHART(
 ```
 {{< figure src="./img/groupbykey_avg.jpg" width="500" >}}
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="STAT" >}}
 
 - setosa 클래스의 꽃받침 길이에 대한 최소, 중앙값, 평균, 최대, 표준편차
 
@@ -210,7 +210,7 @@ CHART(
 {{< figure src="./img/groupbykey_stddev.jpg" width="500" >}}
 {{< /tab >}}
 
-{{< tab >}}
+{{< tab name="SCRIPT-bar" >}}
 
 - 자바스크립트를 활용해 각 품종의 최소/최대 값을 한꺼번에 계산합니다.
 
@@ -270,7 +270,7 @@ CHART()
 {{< figure src="./img/iris_script_min_max.jpg" width="500" >}}
 
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="SCRIPT-boxplot" >}}
 
 - 사분위수 기반 상자 그림(boxplot)을 생성합니다.
 

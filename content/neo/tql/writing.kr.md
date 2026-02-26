@@ -35,8 +35,8 @@ INSERT("name", "time", "value", table("example"))
 
 ### 2. HTTP POST
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 
 ~~~
 ```http
@@ -49,7 +49,7 @@ TAG0,1628953200000000000,13
 ~~~
 
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 
 `input-csv.csv` 파일을 준비해 주십시오.
 
@@ -101,8 +101,8 @@ APPEND(table('example'))
 
 ### 2. HTTP POST
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 
 ~~~
 ```http
@@ -115,7 +115,7 @@ TAG0,1628953200000000000,13
 ~~~
 
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 
 `append-csv.csv` 파일을 준비해 주십시오.
 
@@ -166,8 +166,8 @@ INSERT("name", "time", "value", table("example"))
 
 ### 2. HTTP POST
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 
 ~~~
 ```http
@@ -188,7 +188,7 @@ Content-Type: application/json
 ~~~
 
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 
 `input-json.json` 파일을 준비해 주십시오.
 
@@ -246,8 +246,8 @@ mosquitto_pub -h 127.0.0.1 -p 5653 \
 
 다음 예시는 여러 줄의 텍스트 데이터를 가공해 테이블에 쓰는 방법을 보여 줍니다.
 
-{{< tabs items="MAP,SCRIPT">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="MAP" >}}
 MAP 함수를 사용한 변환 예시입니다.
 
 ```js {linenos=table,hl_lines=["13-15"],linenostart=1}
@@ -272,7 +272,7 @@ CSV( timeformat("DEFAULT") )
 // APPEND(table('example'))
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="SCRIPT" >}}
 `SCRIPT()`를 이용한 대안입니다.
 
 ```js {linenos=table,hl_lines=["13-18"],linenostart=1}

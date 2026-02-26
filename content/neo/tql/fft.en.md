@@ -94,8 +94,8 @@ CHART_LINE( size("600px", "350px"), dataZoom('slider', 95, 100))
 
 Add few data manipulation function between `SQL_SELECT()` source and `CHART_LINE()` sink.
 
-{{< tabs items="GROUPBYKEY,SCRIPT">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="GROUPBYKEY" >}}
 ```js {linenos=table,hl_lines=["2-4"],linenostart=1}
 SQL_SELECT('time', 'value', from('example', 'signal'), between('last-10s', 'last'))
 MAPKEY('sample')
@@ -109,7 +109,7 @@ CHART_LINE(
 )
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="SCRIPT" >}}
 
 ```js {linenos=table,hl_lines=[11,12],linenostart=1}
 SQL_SELECT('time', 'value', from('example', 'signal'), between('last-10s', 'last'))

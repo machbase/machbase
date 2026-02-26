@@ -8,13 +8,13 @@ weight: 80
 
 IoT 환경에서 수집되는 값은 모두 센서를 통해 측정된 데이터입니다. 모든 센서는 필연적으로 일정 수준의 노이즈(잡음)를 포함하며, 이론적으로 완전히 깨끗한 데이터는 수학적으로 생성한 가상 데이터일 뿐입니다. 아래 예제는 노이즈가 없는 순수한 신호를 표현합니다.
 
-{{< tabs items="chart,SCRIPT,SET-MAP">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="chart" >}}
 
 {{< figure src="/neo/tql/img/filter_pure.jpg" width="600px" >}}
 
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="SCRIPT" >}}
 ```js
 SCRIPT({
     $.result = { columns: ["val", "sig"], types: ["double", "double"] }
@@ -37,7 +37,7 @@ CHART(
 )
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="SET-MAP" >}}
 ```js
 FAKE(arrange(1,5,0.03))
 MAPVALUE(0, round(value(0)*100)/100)
@@ -62,13 +62,13 @@ CHART(
 
 일반적으로 우리가 제거하고 싶은 노이즈는 관측 대상 신호보다 더 높은 주파수를 갖습니다.
 
-{{< tabs items="chart,SCRIPT,SET-MAP">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="chart" >}}
 
 {{< figure src="/neo/tql/img/filter_pure_noise.jpg" width="600px" >}}
 
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="SCRIPT" >}}
 ```js
 SCRIPT({
     $.result = { columns: ["val", "sig", "noise"], types: ["double", "double", "double"] }
@@ -94,7 +94,7 @@ CHART(
 )
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="SET-MAP" >}}
 ```js
 FAKE(arrange(1,5,0.03))
 MAPVALUE(0, round(value(0)*100)/100)
@@ -122,13 +122,13 @@ CHART(
 
 실제 센서로부터 측정된 값은 위와 같은 노이즈가 섞인 형태가 되며, 분석 과정에서는 이 노이즈를 필터링해 신호를 관찰하고 싶어집니다.
 
-{{< tabs items="chart,SCRIPT,SET-MAP">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="chart" >}}
 
 {{< figure src="/neo/tql/img/filter_mix_noise.jpg" width="600px" >}}
 
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="SCRIPT" >}}
 ```js
 SCRIPT({
     $.result = { columns: ["val", "sig"], types: ["double", "double"] }
@@ -153,7 +153,7 @@ CHART(
 )
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="SET-MAP" >}}
 ```js
 FAKE(arrange(1,5,0.03))
 MAPVALUE(0, round(value(0)*100)/100)
@@ -179,13 +179,13 @@ CHART(
 
 센서의 영점 보정(zero-point calibration)처럼 연속된 값을 평균하면 노이즈가 줄어드는 효과가 있습니다. 아래 예시는 단순 평균을 적용한 결과입니다.
 
-{{< tabs items="chart,SCRIPT,SET-MAP">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="chart" >}}
 
 {{< figure src="/neo/tql/img/filter_avg.jpg" width="600px" >}}
 
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="SCRIPT" >}}
 ```js
 SCRIPT({
     const filter = require("@jsh/filter")
@@ -213,7 +213,7 @@ CHART(
 )
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="SET-MAP" >}}
 ```js
 FAKE(arrange(1,5,0.03))
 MAPVALUE(0, round(value(0)*100)/100)

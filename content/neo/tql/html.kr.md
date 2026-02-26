@@ -148,8 +148,8 @@ HTML({
 
 ## 활용 예시
 
-{{< tabs items=".V,.Value,.Values">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name=".V" >}}
 
 `.V`는 필드 이름을 키로 갖는 맵 객체입니다.
 
@@ -186,7 +186,7 @@ HTML({
 {{< figure src="/neo/tql/img/html_template_3.jpg" width="452" >}}
 
 {{< /tab >}}
-{{< tab >}}
+{{< tab name=".Value" >}}
 
 `.Value`는 현재 레코드의 필드를 인덱스로 접근하는 함수입니다.
 
@@ -220,7 +220,7 @@ HTML({
 {{< figure src="/neo/tql/img/html_template.jpg" width="518" >}}
 
 {{< /tab >}}
-{{< tab >}}
+{{< tab name=".Values" >}}
 
 `.Values`는 현재 레코드의 모든 필드 값을 담고 있는 배열입니다.
 

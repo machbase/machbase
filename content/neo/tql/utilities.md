@@ -245,15 +245,15 @@ MARKDOWN(rownum(true))
 
 Parsing `str` into float number.
 
-{{< tabs items="CODE,RESULT">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="CODE" >}}
 ```js {linenos=table,hl_lines=["2"],linenostart=1}
 FAKE( csv(`world,3.141792`) )
 MAPVALUE(1, parseFloat(value(1)))
 JSON()
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="RESULT" >}}
 ```json
 {
     "data": {
@@ -278,15 +278,15 @@ JSON()
 It takes one of the accepted string values: "1", "t", "T", "TRUE", "true", "True", "0", "f", "F", "FALSE", "false", "False" 
 and converts it to the equivalent boolean value: true or false. For any other string, the function returns an error.
 
-{{< tabs items="CODE,RESULT">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="CODE" >}}
 ```js {linenos=table,hl_lines=["2"],linenostart=1}
 FAKE( csv(`world,True`) )
 MAPVALUE(1, parseBool(value(1)))
 JSON()
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="RESULT" >}}
 ```json
 {
     "data": {
@@ -340,14 +340,14 @@ CSV()
 - `time('now -10s50ms')` returns the time 10.05 seconds before from now.
 - `time(1672531200*1000000000)` returns the time of Jan-1-2023 AM 12:00:00
 
-{{< tabs items="time('now'),time(epoch)">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="time('now')" >}}
 ```js {linenos=table}
 SQL(`select to_char(time), value from example where time < ?`, time('now'))
 CSV()
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="time(epoch)" >}}
 ```js
 SQL(`select to_char(time), value from example where time = ?`, time(1628737200123456789))
 CSV()
@@ -478,14 +478,14 @@ location associated with `time`.
 - `timeAdd('now', '-10s50ms')` returns the time 10.05 seconds before from now.
 - `timeAdd(value(0), '1m')` if value(0) is time, it returns the time of 1 minute later from value(0).
 
-{{< tabs items="timeAdd('now'),timeAdd(epoch)">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="timeAdd('now')" >}}
 ```js {linenos=table}
 SQL(`select to_char(time), value from example where time < ?`, timeAdd('now', '-10s'))
 CSV()
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="timeAdd(epoch)" >}}
 ```js
 SQL(`select to_char(time), value from example where time = ?`, timeAdd(1628737200123456789, '-5s'))
 CSV()
@@ -685,8 +685,8 @@ Mathematical functions. {{< neo_since ver="8.0.6" />}}
 
 An example usage of math functions with `MAPVALUE`.
 
-{{< tabs items="CODE,RESULT">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="CODE" >}}
 ```js {linenos=table,hl_lines=["3"],linenostart=1}
 FAKE(meshgrid(linspace(-4,4,100), linspace(-4,4, 100)))
 MAPVALUE(2,
@@ -709,7 +709,7 @@ CHART(
 )
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="RESULT" >}}
 {{< figure src="../img/tql-math-example.jpg" width="380px" >}}
 {{< /tab >}}
 {{< /tabs >}}
@@ -729,8 +729,8 @@ CHART(
 
 `simplex()` returns SimpleX noise([wikipedia](https://en.wikipedia.org/wiki/Simplex_noise)) by given seed and dimension values.
 
-{{< tabs items="CODE,RESULT">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="CODE" >}}
 ```js {linenos=table,hl_lines=["6"],linenostart=1}
 FAKE(
     meshgrid(
@@ -758,7 +758,7 @@ CHART(
 )
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="RESULT" >}}
 {{< figure src="../img/map_simplex.jpg" width="430px" >}}
 {{< /tab >}}
 {{< /tabs >}}

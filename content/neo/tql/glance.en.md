@@ -90,22 +90,22 @@ It will display a line chart as shown in the image below, representing a wave wi
 
 {{% /steps %}}
 
-{{< tabs items="SCATTER,LINE,BAR">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="SCATTER" >}}
 ```js
 FAKE( oscillator(freq(1.5, 1.0), range('now', '3s', '10ms')) )
 CHART_SCATTER()
 ```
 {{< figure src="../img/web-hello-tql-chart-scatter.jpg" width="500" >}}
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="LINE" >}}
 ```js
 FAKE( oscillator(freq(1.5, 1.0), range('now', '3s', '10ms')) )
 CHART_LINE()
 ```
 {{< figure src="../img/web-hello-tql-chart-line.jpg" width="500" >}}
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="BAR" >}}
 ```js
 FAKE( oscillator(freq(1.5, 1.0), range('now', '3s', '10ms')) )
 CHART_BAR()
@@ -121,36 +121,36 @@ Let's explore some data formats like CSV and JSON.
 
 By using TQL, you can easily convert your data into these formats with just a few lines of code.
 
-{{< tabs items="JSON-rows,JSON-cols,CSV,MARKDOWN,HTML">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="JSON-rows" >}}
 ```js
 FAKE( oscillator(freq(1.5, 1.0), range('now', '3s', '10ms')) )
 JSON()
 ```
 {{< figure src="../img/web-hello-tql-json.jpg" width="500" >}}
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="JSON-cols" >}}
 ```js
 FAKE( oscillator(freq(1.5, 1.0), range('now', '3s', '10ms')) )
 JSON( transpose(true) )
 ```
 {{< figure src="../img/web-hello-tql-json-transpose.jpg" width="500" >}}
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="CSV" >}}
 ```js
 FAKE( oscillator(freq(1.5, 1.0), range('now', '3s', '10ms')) )
 CSV()
 ```
 {{< figure src="../img/web-hello-tql-csv.jpg" width="500" >}}
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="MARKDOWN" >}}
 ```js
 FAKE( oscillator(freq(1.5, 1.0), range('now', '3s', '10ms')) )
 MARKDOWN()
 ```
 {{< figure src="../img/web-hello-tql-markdown.jpg" width="500" >}}
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="HTML" >}}
 ```js
 FAKE( oscillator(freq(1.5, 1.0), range('now', '3s', '10ms')) )
 MARKDOWN( html(true) )
