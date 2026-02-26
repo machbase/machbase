@@ -282,6 +282,7 @@ func main() {
         Port: 5656,
         MaxOpenConn: -1,
         MaxOpenQuery: -1,
+        StatementCache: api.StatementCacheAuto,
     })
     if err != nil {
         panic(err)

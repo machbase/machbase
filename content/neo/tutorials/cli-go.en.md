@@ -55,6 +55,7 @@ conf := &machgo.Config{
     Port:         5656,           // Machbase server port
     MaxOpenConn:  -1,             // Max Connection threshold, -1: no limit
     MaxOpenQuery: -1,             // Max Query concurrency limit
+    StatementCache: api.StatementCacheAuto,
 }
 
 // Create a database instance with the configuration
