@@ -319,7 +319,7 @@ func main() {
             AVG(sum_ask) / SUM(cnt) as avg_ask
         FROM stock_rollup_1s
         WHERE code = ?
-        AND time >= date_trunc('minute', sysdate) - 2m
+        AND time >= DATE_TRUNC('minute', sysdate) - 2m
         GROUP BY mtime
         ORDER BY mtime
     `

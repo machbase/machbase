@@ -2,7 +2,7 @@ title: Machbase
 
 enableRobotsTXT: true
 enableGitInfo: true
-hasCJKLanguage: false
+hasCJKLanguage: true
 googleAnalytics: G-5VYQQQFHCH
 baseURL: https://docs.machbase.com/
 
@@ -65,6 +65,10 @@ params:
     displayPoweredBy: false
     width: normal
 
+  page:
+    contextMenu:
+      enable: true
+
   search:
     enable: true
 
@@ -91,3 +95,7 @@ menu:
       params:
         icon: github
       weight: 50
+
+outputs:
+  page: [html, markdown]
+  section: [html, rss, markdown]
