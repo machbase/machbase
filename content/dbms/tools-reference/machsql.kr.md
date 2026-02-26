@@ -4,7 +4,7 @@ type : docs
 weight: 40
 ---
 
-MACHSQL은 터미널 화면을 통해 SQL질의를 수행하는 대화형 도구이다.
+MACHSQL은 터미널 화면을 통해 SQL질의를 수행하는 대화형 도구입니다.
 
 ## 구동 옵션 설명
 
@@ -40,16 +40,16 @@ machsql -s 127.0.0.1 -u sys -p manager -P 8888 -c ALTERNATIVE_SERVERS=192.168.0.
 
 ## 환경변수 MACHBASE_CONNECTION_STRING
 
-기본 접속  매개변수를 지정한다. 예를 들어 CONNECTION_TIMEOUT 값 설정 및 ALTERNATIVE_SERVERS 설정을 추가하기 위해 다음의 환경변수를 설정할 수 있다.
+기본 접속  매개변수를 지정합니다. 예를 들어 CONNECTION_TIMEOUT 값 설정 및 ALTERNATIVE_SERVERS 설정을 추가하기 위해 다음의 환경변수를 설정할 수 있습니다.
 
 ```bash
 export MACHBASE_CONNECTION_STRING=ALTERNATIVE_SERVERS=192.168.0.148:8888;CONNECTION_TIMEOUT=3
 ```
--c 옵션으로 접속 매개변수를 지정하면 환경변수보다 우선하여 수행된다. 이 기능은 6.1 이후 버전부터 지원한다.
+-c 옵션으로 접속 매개변수를 지정하면 환경변수보다 우선하여 수행됩니다. 이 기능은 6.1 이후 버전부터 지원합니다.
 
 ## SHOW 명령어
 
-테이블, 테이블스페이스, 인덱스 등의 정보를 출력한다.
+테이블, 테이블스페이스, 인덱스 등의 정보를 출력합니다.
 
 SHOW 명령어 목록
 
@@ -68,7 +68,7 @@ SHOW 명령어 목록
 
 ### SHOW INDEX
 
-인덱스 정보를 출력한다.
+인덱스 정보를 출력합니다.
 
 **Syntax:**
 
@@ -104,7 +104,7 @@ LSM          ENABLE   COMPRESSED    2           100000      EQUAL
 
 ### SHOW INDEXES
 
-인덱스 전체 리스트를 출력한다.
+인덱스 전체 리스트를 출력합니다.
 
 **Syntax:**
 
@@ -146,7 +146,7 @@ REDBLACK
 
 ### SHOW INDEXGAP
 
-인덱스 생성 GAP 정보를 출력한다. 
+인덱스 생성 GAP 정보를 출력합니다. 
 
 **Example:**
 
@@ -160,7 +160,7 @@ INDEX_TABLE                               T1_IDX2                               
 
 ### SHOW LSM
 
-LSM 인덱스 생성 정보를 출력한다.
+LSM 인덱스 생성 정보를 출력합니다.
 
 **Example:**
 
@@ -179,7 +179,7 @@ T1                                        IDX2                                  
 
 ### SHOW LICENSE
 
-라이선스 정보를 출력한다.
+라이선스 정보를 출력합니다.
 
 **Example:**
 
@@ -193,7 +193,7 @@ INSTALL_DATE          ISSUE_DATE            EXPIRY_DATE  TYPE        POLICY
 
 ### SHOW STATEMENTS
 
-서버에 등록(Prepare, Execute, Fetch)된 모든 질의문을 출력한다.
+서버에 등록(Prepare, Execute, Fetch)된 모든 질의문을 출력합니다.
 
 **Example:**
 
@@ -207,7 +207,7 @@ USER_ID     SESSION_ID  QUERY
 
 ### SHOW STORAGE
 
-사용자가 생성한 테이블 별 디스크 사용량을 출력한다.
+사용자가 생성한 테이블 별 디스크 사용량을 출력합니다.
 **Syntax:**
 
 ```
@@ -232,7 +232,7 @@ _TAG_META                                           0                    0      
 
 ### SHOW TABLE
 
-사용자가 생성한 테이블의 정보를 출력한다.
+사용자가 생성한 테이블의 정보를 출력합니다.
 
 **Syntax:**
 
@@ -268,7 +268,7 @@ T1_IDX2                       LSM                 C1
 
 ### SHOW TABLES
 
-사용자가 생성한 테이블 전체 목록을 출력한다.
+사용자가 생성한 테이블 전체 목록을 출력합니다.
 
 **Example:**
 
@@ -285,7 +285,7 @@ SALGRADE
 
 ### SHOW TABLESPACE
 
-테이블 스페이스 정보를 출력한다.
+테이블 스페이스 정보를 출력합니다.
 
 **Example:**
 
@@ -311,7 +311,7 @@ T1                                        ID                                    
 
 ### SHOW TABLESPACES
 
-테이블스페이스 전체 목록을 출력한다.
+테이블스페이스 전체 목록을 출력합니다.
 
 **Example:**
 
@@ -334,7 +334,7 @@ TBS1                                                                            
 
 ### SHOW USERS
 
-사용자 목록을 출력한다.
+사용자 목록을 출력합니다.
 
 **Example:**
 

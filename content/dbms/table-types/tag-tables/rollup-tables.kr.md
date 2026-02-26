@@ -6,7 +6,7 @@ weight: 60
 
 ## 개요
 
-롤업 테이블은 태그 데이터를 시간 기준으로 자동 집계해 분석과 리포트 쿼리의 성능을 크게 향상시킨다. 수백만 건의 원시 데이터를 스캔하는 대신, 다양한 구간별 통계가 미리 계산되어 저장된다.
+롤업 테이블은 태그 데이터를 시간 기준으로 자동 집계해 분석과 리포트 쿼리의 성능을 크게 향상시킨다. 수백만 건의 원시 데이터를 스캔하는 대신, 다양한 구간별 통계가 미리 계산되어 저장됩니다.
 
 ## ROLLUP 테이블 생성
 
@@ -27,7 +27,7 @@ Tag Table 생성시 Rollup이 기본으로 생성되지 않고, 사용자가 직
 
 * 제약조건
     * 집계할 source table은 tag table 또는 rollup table만 지정 가능하다.
-    * 집계할 source table이 rollup table일 경우 생성될 rollup table의 시간은 source table의 시간보다 크며, 배수어야 한다.
+    * 집계할 source table이 rollup table일 경우 생성될 rollup table의 시간은 source table의 시간보다 크며, 배수어야 합니다.
 
 롤업 테이블 생성 예시
 
@@ -57,18 +57,18 @@ Mach> CREATE ROLLUP _tag_rollup_sec ON tag(strvalue) INTERVAL 1 SEC;
 
 ### ROLLUP 테이블 자동 생성
 
-`WITH ROLLUP (time_unit)` 키워드를 사용해서 롤업 테이블을 자동으로 생성할 수 있다.
+`WITH ROLLUP (time_unit)` 키워드를 사용해서 롤업 테이블을 자동으로 생성할 수 있습니다.
 ```sql
 CREATE TAG TABLE tagtbl (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED) WITH ROLLUP (time_unit)
  
 time_unit := {SEC|MIN|HOUR}
 ```
-아래와 같이 time_unit 을 명시 안 해주면 SEC 기준으로 진행된다.
+아래와 같이 time_unit 을 명시 안 해주면 SEC 기준으로 진행됩니다.
 ```sql
 CREATE TAG TABLE tagtbl (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED) WITH ROLLUP
 ```
 
-자동으로 생성되는 rollup 의 이름은 다음과 같은 형식으로 생성된다. (`tagtbl` 에 tag tabe name 이 들어간다.)
+자동으로 생성되는 rollup 의 이름은 다음과 같은 형식으로 생성됩니다. (`tagtbl` 에 tag tabe name 이 들어간다.)
 * _`tagtbl`_ROLLUP_SEC
 * _`tagtbl`_ROLLUP_MIN
 * _`tagtbl`_ROLLUP_HOUR
@@ -95,17 +95,17 @@ Mach>
 
 time_unit 에 들어간 기준을 가장 작은 기준으로 보고 상위 time unit 까지 자동으로 생성해준다.
 
-> 롤업 테이블 이름 충돌이 발생할시 롤업 테이블 생성은 모두 실패하고 태그 테이블만 생성된다.
+> 롤업 테이블 이름 충돌이 발생할시 롤업 테이블 생성은 모두 실패하고 태그 테이블만 생성됩니다.
 
-rollup을 자동으로 생성할때 rollup 의 DATA_PART_SIZE를 bytes 단위로 설정할 수 있다.
+rollup을 자동으로 생성할때 rollup 의 DATA_PART_SIZE를 bytes 단위로 설정할 수 있습니다.
 ```sql
 CREATE TAG TABLE tagtbl (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED) WITH ROLLUP ROLLUP_DATA_PART_SIZE=(data_part_size)
 ```
 
 ### 확장 ROLLUP
 
-Rollup 테이블 생성 구문 마지막에 `EXTENSION` 키워드를 추가하면 확장 Rollup을 생성할 수 있다.
-확장 Rollup은 해당 구간의 시작 값, 종료 값을 가지고 있다.
+Rollup 테이블 생성 구문 마지막에 `EXTENSION` 키워드를 추가하면 확장 Rollup을 생성할 수 있습니다.
+확장 Rollup은 해당 구간의 시작 값, 종료 값을 가지고 있습니다.
 
 ```sql
 -- 확장 Rollup 테이블 수동 생성
@@ -119,7 +119,7 @@ CREATE TAG TABLE tagtbl (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, v
 ## 조건 롤업·필터·힌트
 
 ### 롤업 테이블 선택 로직
-동일한 주기·값 컬럼·JSON PATH를 가진 롤업이 여러 개 있을 때 엔진이 "조건 없음 → 조건 있음" 순서로 자동 선택한다. 필요하면 힌트로 특정 롤업을 강제로 사용할 수 있고, 생성 시 잘못된 조건은 즉시 차단된다.
+동일한 주기·값 컬럼·JSON PATH를 가진 롤업이 여러 개 있을 때 엔진이 "조건 없음 → 조건 있음" 순서로 자동 선택합니다. 필요하면 힌트로 특정 롤업을 강제로 사용할 수 있고, 생성 시 잘못된 조건은 즉시 차단됩니다.
 
 ### 조건 있는 롤업 생성 방법
 ```sql
@@ -130,15 +130,15 @@ CREATE ROLLUP <rollup_name>
   WHERE <predicate>;
 ```
 - WHERE 조건은 집계 전에 원본 행에 적용되며, 조건에 사용한 컬럼은 롤업 테이블에 저장되지 않는다.
-- 허용: 일반 스칼라 표현식(AND/OR/NOT, 비교, BETWEEN, IN, LIKE, CASE, 비집계 함수)과 존재하는 컬럼 사용. `value2`, `status` 같은 비요약 컬럼도 자유롭게 조건으로 사용할 수 있다.
+- 허용: 일반 스칼라 표현식(AND/OR/NOT, 비교, BETWEEN, IN, LIKE, CASE, 비집계 함수)과 존재하는 컬럼 사용. `value2`, `status` 같은 비요약 컬럼도 자유롭게 조건으로 사용할 수 있습니다.
 - 금지: 서브쿼리, 집계 함수, 존재하지 않는 컬럼, 태그 테이블의 태그명(PK) 컬럼 조건(내부적으로 숫자 ID이므로 문자열 비교가 무의미).
-- `CREATE ROLLUP` 시점에 위반 사항이 있으면 에러로 생성이 거부된다.
+- `CREATE ROLLUP` 시점에 위반 사항이 있으면 에러로 생성이 거부됩니다.
 
 ### 조건부 롤업과 Custom Rollup의 WHERE 차이
-- 조건부 롤업은 `ON/FROM` 문법의 외부 `WHERE`를 사용한다.
-- Custom Rollup(`INTO ... AS (SELECT ...)`)은 `SELECT` 내부 `WHERE`만 지원한다.
+- 조건부 롤업은 `ON/FROM` 문법의 외부 `WHERE`를 사용합니다.
+- Custom Rollup(`INTO ... AS (SELECT ...)`)은 `SELECT` 내부 `WHERE`만 지원합니다.
 - 즉, `CREATE ROLLUP ... INTO (...) AS (...) INTERVAL ... WHERE ...` 형태는 허용되지 않는다.
-- 자세한 Custom 문법은 [Custom Rollup: 사용자 정의 집계](./rollup-custom/), SQL 문법은 [DDL: CREATE ROLLUP](../../sql-reference/ddl/#create-rollup)을 참고한다.
+- 자세한 Custom 문법은 [Custom Rollup: 사용자 정의 집계](./rollup-custom/), SQL 문법은 [DDL: CREATE ROLLUP](../../sql-reference/ddl/#create-rollup)을 참고합니다.
 
 ### 자동 선택 우선순위(힌트 없을 때)
 1. `ROLLUP_TABLE(<rollup_table_name>)` 힌트가 있으면 그 롤업을 무조건 사용.
@@ -161,13 +161,13 @@ CREATE ROLLUP _tag_rollup_plain_1s_ext ON tag_bulk(value) INTERVAL 1 SEC EXTENSI
 CREATE ROLLUP _tag_rollup_cond_1s_ext  ON tag_bulk(value) INTERVAL 1 SEC EXTENSION
   WHERE value2 >= 50 AND status >= 2;
 ```
-3) 데이터를 로딩한 뒤 즉시 집계를 원하면 수동 플러시를 실행한다.
+3) 데이터를 로딩한 뒤 즉시 집계를 원하면 수동 플러시를 실행합니다.
 ```sql
 EXEC ROLLUP_FORCE(_TAG_BULK_ROLLUP_SEC);   -- WITH ROLLUP으로 생성된 기본 롤업
 EXEC ROLLUP_FORCE(_tag_rollup_plain_1s);
 EXEC ROLLUP_FORCE(_tag_rollup_cond_1s);
 ```
-4) 힌트 없이 조회하면 조건 없는 롤업이 자동으로 사용된다.
+4) 힌트 없이 조회하면 조건 없는 롤업이 자동으로 사용됩니다.
 ```sql
 SELECT rollup('sec', 30, time) AS rt, AVG(value), COUNT(value)
 FROM   tag_bulk
@@ -175,7 +175,7 @@ WHERE  name = 'dev9' AND time BETWEEN '2020-01-02 00:00:00' AND '2020-01-02 00:1
 GROUP BY rt
 ORDER BY rt;
 ```
-5) 반드시 필터된 집계를 써야 할 때는 힌트를 지정한다.
+5) 반드시 필터된 집계를 써야 할 때는 힌트를 지정합니다.
 ```sql
 SELECT /*+ ROLLUP_TABLE(_tag_rollup_cond_1s) */
        rollup('sec', 30, time) AS rt, AVG(value), COUNT(value)
@@ -184,17 +184,17 @@ WHERE  name = 'dev9' AND time BETWEEN '2020-01-02 00:00:00' AND '2020-01-02 00:1
 GROUP BY rt
 ORDER BY rt;
 ```
-6) `FIRST()`/`LAST()`를 사용할 경우 힌트 대상이 `EXTENSION` 롤업이어야 한다. 일반 롤업에 힌트를 주면 해당 함수가 없어 에러가 발생한다.
+6) `FIRST()`/`LAST()`를 사용할 경우 힌트 대상이 `EXTENSION` 롤업이어야 합니다. 일반 롤업에 힌트를 주면 해당 함수가 없어 에러가 발생합니다.
 
 ### 메타 정보와 업그레이드 안내
-- `V$ROLLUP`에 `PREDICATE` 컬럼이 추가되어 롤업 필터를 바로 확인할 수 있다.
-- 메타 버전이 10.0으로 올라가며 서버 최초 기동 시 카탈로그가 자동으로 갱신된다. 오래된/손상된 메타로 인해 실패하면 서버를 중지한 뒤 새 DB를 생성하고 롤업을 다시 만들어 주세요.
+- `V$ROLLUP`에 `PREDICATE` 컬럼이 추가되어 롤업 필터를 바로 확인할 수 있습니다.
+- 메타 버전이 10.0으로 올라가며 서버 최초 기동 시 카탈로그가 자동으로 갱신됩니다. 오래된/손상된 메타로 인해 실패하면 서버를 중지한 뒤 새 DB를 생성하고 롤업을 다시 만들어 주세요.
 - 필터 기능은 기존 롤업 제약(주기 배수, 숫자형 대상 등)을 그대로 따른다.
 
 
 ## ROLLUP 테이블 시작/중지
 
-rollup 생성 시 스레드가 자동으로 시작되며, 이후 SQL 또는 프로시저로 시작/중지를 제어할 수 있다.
+rollup 생성 시 스레드가 자동으로 시작되며, 이후 SQL 또는 프로시저로 시작/중지를 제어할 수 있습니다.
 
 ```sql
 -- 롤업 시작/중지
@@ -207,24 +207,24 @@ EXEC ROLLUP_STOP(<rollup_name>);
 ```
 
 ### Wakeup 주기와 스케줄
-- 각 롤업은 자체 wakeup 주기로 동작한다. 기본값은 롤업 주기와 동일하지만, 더 촘촘하게(단, 롤업 주기의 약수로) 설정해 더 자주 깨울 수 있다.
+- 각 롤업은 자체 wakeup 주기로 동작합니다. 기본값은 롤업 주기와 동일하지만, 더 촘촘하게(단, 롤업 주기의 약수로) 설정해 더 자주 깨울 수 있습니다.
 - 설정 문법:
 ```sql
 ALTER ROLLUP <rollup_name> SET WAKEUP INTERVAL <N> (SEC|MIN|HOUR);
 ```
-  - `N`은 0보다 커야 한다.
-  - 변환된 wakeup 주기가 롤업 주기보다 크면 안 된다.
-  - 롤업 주기가 wakeup 주기의 정수배가 아니면 에러가 발생한다.
-  - 값을 변경하면 즉시 한 번 깨운 뒤 새 스케줄로 재정렬한다.
+  - `N`은 0보다 커야 합니다.
+  - 변환된 wakeup 주기가 롤업 주기보다 크면 안 됩니다.
+  - 롤업 주기가 wakeup 주기의 정수배가 아니면 에러가 발생합니다.
+  - 값을 변경하면 즉시 한 번 깨운 뒤 새 스케줄로 재정렬합니다.
 - 관찰 포인트: `V$ROLLUP`에서 `WAKEUP_INTERVAL`, `LAST_WAKEUP_TIME`, `NEXT_WAKEUP_TIME`, `RUN_STATE`(INIT/SLEEPING/RUNNING)을 확인할 수 있고, `show rollupgap`도 마지막/다음 wakeup과 상태를 보여준다.
 
 ## ROLLUP 테이블 즉시 수집
 
-rollup은 기본적으로 설정된 시간 단위마다 데이터 집계를 시작한다.
+rollup은 기본적으로 설정된 시간 단위마다 데이터 집계를 시작합니다.
 
-* ex) 1시간 단위 rollup이라면 1시간 마다 한번씩 데이터 집계를 하고, 나머지 시간은 대기한다.
+* ex) 1시간 단위 rollup이라면 1시간 마다 한번씩 데이터 집계를 하고, 나머지 시간은 대기합니다.
 
-사용자가 수동으로 대기 시간을 무시하고 강제로 데이터 집계를 실행할 수 있다.
+사용자가 수동으로 대기 시간을 무시하고 강제로 데이터 집계를 실행할 수 있습니다.
 
 ```sql
 -- 비블로킹: 스레드를 바로 깨우고 반환
@@ -238,14 +238,14 @@ EXEC ROLLUP_FORCE(<rollup_name>);
 
 ## ROLLUP 테이블 삭제
 
-Rollup을 삭제한다.
+Rollup을 삭제합니다.
 
 ```sql
 DROP ROLLUP rollup_name
 ```
 
 * rollup_name : 삭제할 rollup 이름
-* 제약조건: 삭제할 rollup table을 source table로 참조하고 있는 rollup이 존재할 경우 삭제 할 수 없으며 rollup 간의 의존성이 있는 경우 rollup 을 생성한 역순으로 삭제해야 한다.
+* 제약조건: 삭제할 rollup table을 source table로 참조하고 있는 rollup이 존재할 경우 삭제 할 수 없으며 rollup 간의 의존성이 있는 경우 rollup 을 생성한 역순으로 삭제해야 합니다.
 
 ```sql
 mach> create tag table tag (name varchar(20) primary key, time datetime basetime, value double summarized);
@@ -257,14 +257,14 @@ mach> create rollup _tag_rollup_3 on _tag_rollup_2 interval 1 hour;
   
 tag -> _tag_rollup_1 -> _tag_rollup_2 -> _tag_rollup_3
   
-이 때 tag table이나, 중간에 있는 rollup을 삭제하려고 하면 에러가 발생한다.
+이 때 tag table이나, 중간에 있는 rollup을 삭제하려고 하면 에러가 발생합니다.
   
 mach> drop rollup tag
 > [ERR-02651: Dependent ROLLUP table exists.]
 mach> drop rollup _tag_rollup_1
 > [ERR-02651: Dependent ROLLUP table exists.]
   
-아래 순서대로 삭제해야 정상적으로 삭제할 수 있다.
+아래 순서대로 삭제해야 정상적으로 삭제할 수 있습니다.
   
 mach> drop rollup _tag_rollup_3;
 mach> drop rollup _tag_rollup_2;
@@ -272,7 +272,7 @@ mach> drop rollup _tag_rollup_1;
 mach> drop table tag;
 ```
 ### TAG 테이블 삭제시 ROLLUP 테이블 같이 삭제
-`CASCADE` 키워드를 사용해서 태그 테이블 삭제할 때 태그 테이블에 종속적인 롤업 테이블도 같이 삭제할 수 있다.
+`CASCADE` 키워드를 사용해서 태그 테이블 삭제할 때 태그 테이블에 종속적인 롤업 테이블도 같이 삭제할 수 있습니다.
 ```sql
 DROP TABLE TAG CASCADE;
 ```
@@ -317,11 +317,11 @@ SELECT ROLLUP('MIN', 30, time, '1970-01-01'), MIN(value), MAX(value), AVG(value)
 * time_unit: `DATE_BIN` 함수에서 사용 가능한 시간단위
 * period: `DATE_BIN` 함수에서 사용 가능한 시간단위
 * basetime_column: `BASETIME` 속성으로 지정된 태그 테이블의 DATETIME 형 컬럼
-* origin: ROLLUP 시간 구간을 나눌 기준 시간, 지정하지 않을 경우 기본값 `1970-01-01 00:00:00` 으로 지정된다.
+* origin: ROLLUP 시간 구간을 나눌 기준 시간, 지정하지 않을 경우 기본값 `1970-01-01 00:00:00` 으로 지정됩니다.
 
 
 > **Deprecated (version <= 8.0.19)**<br>
-> 8.0.19 이하 버전에서는 다음과 같은 ROLLUP expression 을 사용한다.
+> 8.0.19 이하 버전에서는 다음과 같은 ROLLUP expression 을 사용합니다.
 > ```sql
 > rollup_expr := basetime_column ROLLUP n time_unit
 >
@@ -329,7 +329,7 @@ SELECT ROLLUP('MIN', 30, time, '1970-01-01'), MIN(value), MAX(value), AVG(value)
 > SELECT time ROLLUP 30 MIN, MIN(value), MAX(value), AVG(VALUE) FROM tag ..
 > ```
 
-위와 같이 BASETIME 속성으로 지정된 Datetime 형 컬럼 뒤에 ROLLUP 절을 붙여 지정하면 롤업 테이블 조회가 된다.
+위와 같이 BASETIME 속성으로 지정된 Datetime 형 컬럼 뒤에 ROLLUP 절을 붙여 지정하면 롤업 테이블 조회가 됩니다.
 
 TIME_UNIT 의 선택에 따라, 조회되는 롤업 테이블이 달라진다.
 
@@ -346,13 +346,13 @@ TIME_UNIT 의 선택에 따라, 조회되는 롤업 테이블이 달라진다.
 |month|HOUR|
 |year|HOUR|
 
-ROLLUP 절을 사용하는 것은 롤업 테이블 조회를 직접 하는 것이기 때문에, 집계 함수를 사용하려면 다음의 특징이 있다.
+ROLLUP 절을 사용하는 것은 롤업 테이블 조회를 직접 하는 것이기 때문에, 집계 함수를 사용하려면 다음의 특징이 있습니다.
 
-* 숫자형 타입의 컬럼에 집계 함수를 호출해야 한다. 단, 롤업 테이블에서 지원하는 여섯 가지 집계 함수 (SUM, COUNT, MIN, MAX, AVG, SUMSQ) 만 지원한다.
-    * 확장 롤업의 경우 (FIRST, LAST)도 추가로 지원한다.
-* ROLLUP 하는 BASETIME 컬럼으로 GROUP BY 를 직접 해야 한다.
-    * 같은 의미의 ROLLUP 절을 그대로 사용해도 된다.
-    * 또는, ROLLUP 절에 별명 (alias) 를 붙이고, 별명으로 GROUP BY 에 작성해도 된다.
+* 숫자형 타입의 컬럼에 집계 함수를 호출해야 합니다. 단, 롤업 테이블에서 지원하는 여섯 가지 집계 함수 (SUM, COUNT, MIN, MAX, AVG, SUMSQ) 만 지원합니다.
+    * 확장 롤업의 경우 (FIRST, LAST)도 추가로 지원합니다.
+* ROLLUP 하는 BASETIME 컬럼으로 GROUP BY 를 직접 해야 합니다.
+    * 같은 의미의 ROLLUP 절을 그대로 사용해도 됩니다.
+    * 또는, ROLLUP 절에 별명 (alias) 를 붙이고, 별명으로 GROUP BY 에 작성해도 됩니다.
 
 ```sql
 SELECT   rollup('sec', 3, time) mtime, avg(value)
@@ -372,7 +372,7 @@ GROUP BY mtime;
 
 ## 데이터 샘플
 
-아래는 롤업 테스트를 위한 샘플 데이터이다.
+아래는 롤업 테스트를 위한 샘플 데이터입니다.
 
 ```sql
 create tag table TAG (name varchar(20) primary key, time datetime basetime, value double summarized) with rollup extension;
@@ -406,7 +406,7 @@ insert into tag values('TAG_0001', '2018-01-01 03:02:02 000:000:000', 6);
 
 ## ROLLUP 평균값 얻기
 
-아래는 해당 태그에 대해 초, 분, 시 단위의 평균값을 얻는 예제이다.
+아래는 해당 태그에 대해 초, 분, 시 단위의 평균값을 얻는 예제입니다.
 
 ```sql
 Mach> SELECT rollup('sec', 1, time) as mtime, avg(value) FROM TAG WHERE name = 'TAG_0001' group by mtime order by mtime;
@@ -457,7 +457,7 @@ mtime                           avg(value)
 
 ## ROLLUP 최소/최대값 얻기
 
-아래는 해당 태그의 시간 범위에 따른 최소/최대값을 얻는 예제를 나타낸다. 이전 예제와 다른 점은, 쿼리 한 번에 최대값과 최소값을 동시에 얻을 수 있다는 것이다.
+아래는 해당 태그의 시간 범위에 따른 최소/최대값을 얻는 예제를 나타낸다. 이전 예제와 다른 점은, 쿼리 한 번에 최대값과 최소값을 동시에 얻을 수 있다는 것입니다.
 
 ```sql
 Mach> SELECT rollup('hour', 1, time) as mtime, min(value), max(value) FROM TAG WHERE name = 'TAG_0001' group by mtime order by mtime;
@@ -485,7 +485,7 @@ mtime                           min(value)                  max(value)
 
 ## ROLLUP 합계/개수 얻기
 
-아래는 합계 및 데이터 개수 값을 얻는 예제이다. 역시 하나의 쿼리에 합계와 개수를 얻을 수 있다.
+아래는 합계 및 데이터 개수 값을 얻는 예제입니다. 역시 하나의 쿼리에 합계와 개수를 얻을 수 있습니다.
 
 ```sql
 Mach> SELECT rollup('min', 1, time) as mtime, sum(value), count(value) FROM TAG WHERE name = 'TAG_0001' group by mtime order by mtime;
@@ -505,7 +505,7 @@ mtime                           sum(value)                  count(value)
 
 ## ROLLUP 제곱합 얻기
 
-아래는 제곱합 값을 얻는 예제이다.
+아래는 제곱합 값을 얻는 예제입니다.
 
 ```sql
 Mach> SELECT rollup('sec', 1, time) as mtime, SUMSQ(value) FROM tag GROUP BY mtime ORDER BY mtime;
@@ -548,7 +548,7 @@ mtime                           SUMSQ(value)
 
 ## ROLLUP 시작/종료 값 얻기
 
-아래는 확장 롤업에서 제공하는 시작 및 종료 값을 얻는 예제이다.
+아래는 확장 롤업에서 제공하는 시작 및 종료 값을 얻는 예제입니다.
 
 ```sql
 Mach> SELECT rollup('min', 1, time) as mtime, FIRST(time, value), LAST(time, value) FROM tag GROUP BY mtime ORDER BY mtime;
@@ -576,10 +576,10 @@ mtime                           FIRST(time, value)          LAST(time, value)
 
 ## 다양한 시간 간격으로 그룹화
 
-ROLLUP 절의 장점은, DATE_BIN() 를 의도적으로 사용해서 시간 간격을 다변화할 필요가 없다는 것이다.
+ROLLUP 절의 장점은, DATE_BIN() 를 의도적으로 사용해서 시간 간격을 다변화할 필요가 없다는 것입니다.
 
-3초 간격의 합계와 데이터 개수를 얻으려면 아래와 같이 하면 된다.
-예제 시간 범위가 0초, 1초, 2초 뿐이라 전부 0초로 수렴된 것을 확인할 수 있다. 결과적으로는 '분 단위 롤업' 조회 결과와 일치한다.
+3초 간격의 합계와 데이터 개수를 얻으려면 아래와 같이 하면 됩니다.
+예제 시간 범위가 0초, 1초, 2초 뿐이라 전부 0초로 수렴된 것을 확인할 수 있습니다. 결과적으로는 '분 단위 롤업' 조회 결과와 일치합니다.
 
 ```sql
 Mach> SELECT rollup('sec', 3, time) as mtime, sum(value), count(value) FROM TAG WHERE name = 'TAG_0001' GROUP BY mtime ORDER BY mtime;
@@ -613,7 +613,7 @@ mtime                           COUNT(value)
 
 ### Week Rollup
 
-origin 을 지정하지 않을 경우 (목요일-수요일) 범위로 집계된다. (일요일-토요일) 범위로 집계를 원할 경우 origin 에 일요일에 해당하는 datetime 을 지정해야 한다.
+origin 을 지정하지 않을 경우 (목요일-수요일) 범위로 집계됩니다. (일요일-토요일) 범위로 집계를 원할 경우 origin 에 일요일에 해당하는 datetime 을 지정해야 합니다.
 
 ```sql
 Mach> SELECT ROLLUP('week', 2, time, '2024-05-05') AS mtime, COUNT(value) FROM tag WHERE time BETWEEN TO_DATE('2024-05-01') AND TO_DATE('2024-05-31') GROUP BY mtime ORDER BY mtime;
@@ -626,7 +626,7 @@ mtime                           COUNT(value)
 
 ### Month Rollup
 
-origin 은 항상 달의 시작일(1일)로 지정해야 한다.
+origin 은 항상 달의 시작일(1일)로 지정해야 합니다.
 
 ```
 Mach> SELECT ROLLUP('month', 2, time) AS mtime, COUNT(value) FROM tag WHERE time BETWEEN to_date('2024-05-01') AND to_date('2024-07-31') GROUP BY mtime ORDER BY mtime;
@@ -657,11 +657,11 @@ mtime                           COUNT(value)
 
 ## JSON 타입 대상의 ROLLUP 활용
 
-7.5 버전부터 JSON 타입을 대상으로 ROLLUP을 사용할 수 있다.
+7.5 버전부터 JSON 타입을 대상으로 ROLLUP을 사용할 수 있습니다.
 
-생성 구문에 JSON PATH를 OPERATOR와 연결하면 된다.
+생성 구문에 JSON PATH를 OPERATOR와 연결하면 됩니다.
 
-JSON 타입 특성상, 하나의 JSON 칼럼에 PATH 별로 ROLLUP을 생성할 수 있다.
+JSON 타입 특성상, 하나의 JSON 칼럼에 PATH 별로 ROLLUP을 생성할 수 있습니다.
 
 ```sql
 -- create tag table
@@ -684,7 +684,7 @@ CREATE ROLLUP _tag_rollup_jval_x_sec ON tag(jval->'$.x') INTERVAL 1 SEC;
 CREATE ROLLUP _tag_rollup_jval_y_sec ON tag(jval->'$.y') INTERVAL 1 SEC;
 ```
 
-ROLLUP 조회도 동일하게 사용하면 된다.
+ROLLUP 조회도 동일하게 사용하면 됩니다.
 
 ```sql
 Mach> SELECT rollup('sec', 2, time) as mtime, MIN(jval->'$.x'), MAX(jval->'$.x'), SUM(jval->'$.x'), COUNT(jval->'$.x'), SUMSQ(jval->'$.x') FROM tag GROUP BY mtime ORDER BY mtime;

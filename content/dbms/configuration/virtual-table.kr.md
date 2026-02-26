@@ -274,7 +274,7 @@ MACHBASE 의 버전에 대한 정보를 표시합니다.
 | CACHE_MEMORY_USAGE | 캐시로 사용된 메모리 크기    |
 
 ## PVO Statement Cache
-Standard 에디션에서만 제공되는 글로벌 PVO Statement Cache 상태를 조회한다.
+Standard 에디션에서만 제공되는 글로벌 PVO Statement Cache 상태를 조회합니다.
 
 ### V$PVO_CACHE_STAT
 ---

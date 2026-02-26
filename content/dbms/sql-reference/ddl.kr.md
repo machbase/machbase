@@ -777,10 +777,10 @@ Executed successfully
 ```
 
 주의사항
-- 조건부 rollup의 `WHERE`는 `ON/FROM` 문법에서 사용한다.
-- Custom Rollup의 `WHERE`는 `SELECT` 내부에서만 사용한다.
+- 조건부 rollup의 `WHERE`는 `ON/FROM` 문법에서 사용합니다.
+- Custom Rollup의 `WHERE`는 `SELECT` 내부에서만 사용합니다.
 - `INTERVAL ... WHERE ...` 형태의 외부 WHERE는 Custom 문법에서 지원하지 않는다.
-- 자세한 제약/운영 패턴은 [Custom Rollup: 사용자 정의 집계](../../table-types/tag-tables/rollup-custom/)를 참고한다.
+- 자세한 제약/운영 패턴은 [Custom Rollup: 사용자 정의 집계](../../table-types/tag-tables/rollup-custom/)를 참고합니다.
 
 
 ## DROP ROLLUP
@@ -801,7 +801,7 @@ Executed successfully
 
 ## ALTER ROLLUP
 
-롤업 워커를 제어하고 wakeup 주기를 조정한다.
+롤업 워커를 제어하고 wakeup 주기를 조정합니다.
 
 ```sql
 alter_rollup_start_stop_stmt ::= 'ALTER ROLLUP' rollup_name ( 'START' | 'STOP' )
@@ -827,8 +827,8 @@ ALTER ROLLUP _rollup_tag_value_sec SET WAKEUP INTERVAL 5 SEC;
 ```
 
 규칙
-- wakeup 주기는 0보다 커야 하고 롤업 주기보다 클 수 없으며, 롤업 주기의 정수배여야 한다. 위반 시 에러를 반환한다.
-- `WAKEUP`은 스레드를 깨우기만 하고 바로 반환한다. 즉시 실행과 완료 대기가 필요할 때는 `FORCE`를 사용한다.
+- wakeup 주기는 0보다 커야 하고 롤업 주기보다 클 수 없으며, 롤업 주기의 정수배여야 합니다. 위반 시 에러를 반환합니다.
+- `WAKEUP`은 스레드를 깨우기만 하고 바로 반환합니다. 즉시 실행과 완료 대기가 필요할 때는 `FORCE`를 사용합니다.
 
 ## CREATE RETENTION
 
