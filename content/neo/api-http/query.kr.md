@@ -2,6 +2,9 @@
 title: HTTP 쿼리
 type: docs
 weight: 10
+params:
+    tabs:
+        sync: true
 ---
 
 Query API 엔드포인트는 `/db/query`입니다.
@@ -15,8 +18,8 @@ Query API 엔드포인트는 `/db/query`입니다.
 
 **쿼리 예시**
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
@@ -24,7 +27,7 @@ GET http://127.0.0.1:5654/db/query
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh 
 curl -o - http://127.0.0.1:5654/db/query \
      --data-urlencode "q=select * from EXAMPLE limit 2"
@@ -80,8 +83,8 @@ curl -o - http://127.0.0.1:5654/db/query \
 `/db/query` API의 기본 출력 형식은 JSON입니다.
 쿼리 매개변수 `format=json`을 지정하거나 생략하면 기본값이 적용됩니다.
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
@@ -89,7 +92,7 @@ GET http://127.0.0.1:5654/db/query
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode "q=select * from EXAMPLE limit 2"
@@ -111,8 +114,8 @@ curl -o - http://127.0.0.1:5654/db/query \
 | data.rows    | array of records | 결과 레코드 배열입니다.<br/>`transpose=true`이면 이 필드는 `cols`로 대체됩니다. |
 | data.cols    | array of series  | 결과 컬럼별 시리즈 배열입니다.<br/>`transpose=true`일 때만 존재합니다.  |
 
-{{< tabs items="default,transpose,rowsFlatten,rowsArray">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="default" >}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
@@ -137,7 +140,7 @@ GET http://127.0.0.1:5654/db/query
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="transpose" >}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
@@ -163,7 +166,7 @@ GET http://127.0.0.1:5654/db/query
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="rowsFlatten" >}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
@@ -189,7 +192,7 @@ GET http://127.0.0.1:5654/db/query
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="rowsArray" >}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
@@ -223,8 +226,8 @@ GET http://127.0.0.1:5654/db/query
 
 NDJSON(Newline Delimited JSON)은 각 줄이 유효한 JSON 객체인 스트리밍 형식입니다. 한 번에 하나씩 처리할 수 있어 대규모 데이터나 스트리밍 데이터를 다룰 때 유용합니다.
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
@@ -233,7 +236,7 @@ GET http://127.0.0.1:5654/db/query
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode "q=select * from EXAMPLE limit 2" \
@@ -256,8 +259,8 @@ curl -o - http://127.0.0.1:5654/db/query \
 
 CSV 형식 역시 한 줄씩 처리할 수 있어 대용량 데이터나 스트리밍 데이터 처리에 적합합니다.
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
@@ -266,7 +269,7 @@ GET http://127.0.0.1:5654/db/query
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode "q=select * from EXAMPLE limit 2" \
@@ -287,8 +290,8 @@ wave.sin,1705381958785759000,0.9011510331449053
 
 요청에 `format=box` 쿼리 매개변수를 지정하십시오.
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
@@ -297,7 +300,7 @@ GET http://127.0.0.1:5654/db/query
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode "q=select * from EXAMPLE limit 2" \
@@ -321,8 +324,8 @@ curl -o - http://127.0.0.1:5654/db/query \
 
 요청에 `format=csv` 쿼리 매개변수를 지정하십시오.
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
@@ -331,7 +334,7 @@ GET http://127.0.0.1:5654/db/query
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode "q=select * from EXAMPLE limit 2" \
@@ -354,8 +357,8 @@ wave.sin,1705381958785759000,0.9011510331449053
 
 **요청 JSON 메시지**
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/query
@@ -367,7 +370,7 @@ Content-Type: application/json
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -o - -X POST http://127.0.0.1:5654/db/query \
     -H 'Content-Type: application/json' \
@@ -380,8 +383,8 @@ curl -o - -X POST http://127.0.0.1:5654/db/query \
 
 HTML 폼 데이터 형식도 사용할 수 있습니다. 이 경우 HTTP 헤더 `Content-Type`을 `application/x-www-form-urlencoded`로 설정해야 합니다.
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/query
@@ -391,7 +394,7 @@ q=select * from EXAMPLE limit 2
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -o - -X POST http://127.0.0.1:5654/db/query \
     --data-urlencode "q=select * from EXAMPLE limit 2"

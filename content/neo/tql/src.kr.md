@@ -353,8 +353,8 @@ OUTPUT: 2 WORLD
 
 주파수와 시간 범위를 지정해 파형 데이터를 생성합니다. `freq()`를 여러 개 지정하면 합성 파형이 만들어집니다.
 
-{{< tabs items="Clean,Add noise">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Clean" >}}
 ```js {{linenos=table,hl_lines=[1],linenostart=1}}
 FAKE( oscillator( freq(3, 1.0), range("now-3s", "3s", "5ms") ))
 // | 0        1
@@ -374,7 +374,7 @@ CHART(
 )
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Add noise" >}}
 ```js {{linenos=table,hl_lines=[4],linenostart=1}}
 FAKE( oscillator( freq(3, 1.0), range("now-3s", "3s", "5ms") ))
 // | 0        1
@@ -447,8 +447,8 @@ CSV()
 
 1차원 등간격 시퀀스를 생성합니다.
 
-{{< tabs items="CSV,CHART">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="CSV" >}}
 ```js {{linenos="table",hl_lines=[2]}}
 FAKE(
    linspace(1, 3, 3)
@@ -462,7 +462,7 @@ CSV()
 3
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="CHART" >}}
 
 ```js {{linenos="table",hl_lines=[1]}}
 FAKE( linspace(0,4*PI,100) )
@@ -495,8 +495,8 @@ CHART(
 
 x축과 y축 값을 조합한 메쉬 데이터를 생성합니다.
 
-{{< tabs items="CSV,CHART">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="CSV" >}}
 ```js {{linenos="table",hl_lines=[2]}}
 FAKE(
     meshgrid( linspace(1, 3, 3), linspace(10, 30, 3) )
@@ -516,7 +516,7 @@ CSV()
 3,30
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="CHART" >}}
 ```js {{linenos="table",hl_lines=[1]}}
 FAKE(meshgrid(linspace(0,2*3.1415,30), linspace(0, 3.1415, 20)))
 

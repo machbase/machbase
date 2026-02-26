@@ -372,8 +372,8 @@ Producing "fake" data by given generator.
 
 Generating wave data by given frequency and time range. If provide multiple `freq()` arguments, it composites waves.
 
-{{< tabs items="Clean,Add noise">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Clean" >}}
 ```js {{linenos=table,hl_lines=[1],linenostart=1}}
 FAKE( oscillator( freq(3, 1.0), range("now-3s", "3s", "5ms") ))
 // | 0        1
@@ -393,7 +393,7 @@ CHART(
 )
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Add noise" >}}
 ```js {{linenos=table,hl_lines=[4],linenostart=1}}
 FAKE( oscillator( freq(3, 1.0), range("now-3s", "3s", "5ms") ))
 // | 0        1
@@ -466,8 +466,8 @@ CSV()
 
 It generates 1 dimension linear space.
 
-{{< tabs items="CSV,CHART">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="CSV" >}}
 ```js {{linenos="table",hl_lines=[2]}}
 FAKE(
    linspace(1, 3, 3)
@@ -481,7 +481,7 @@ CSV()
 3
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="CHART" >}}
 
 ```js {{linenos="table",hl_lines=[1]}}
 FAKE( linspace(0,4*PI,100) )
@@ -514,8 +514,8 @@ CHART(
 
 It generates meshed values - [xseries, yseries].
 
-{{< tabs items="CSV,CHART">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="CSV" >}}
 ```js {{linenos="table",hl_lines=[2]}}
 FAKE(
     meshgrid( linspace(1, 3, 3), linspace(10, 30, 3) )
@@ -535,7 +535,7 @@ CSV()
 3,30
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="CHART" >}}
 ```js {{linenos="table",hl_lines=[1]}}
 FAKE(meshgrid(linspace(0,2*3.1415,30), linspace(0, 3.1415, 20)))
 

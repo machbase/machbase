@@ -12,8 +12,8 @@ These user interface API validates the requests from clients with JWT based auth
 
 **POST `/web/api/login`**
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "loginName": "sys",
@@ -21,7 +21,7 @@ These user interface API validates the requests from clients with JWT based auth
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "success": true,
@@ -40,15 +40,15 @@ These user interface API validates the requests from clients with JWT based auth
 
 **POST `/web/api/relogin`**
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "refreshToken": "refresh token that was issued with 'login'"
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "success": true,
@@ -447,8 +447,8 @@ generate key
 - `name` is required
 - `notAfter` is expiration date
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "name": "eleven",
@@ -457,7 +457,7 @@ generate key
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "success": true,
@@ -521,15 +521,15 @@ Return ssh-key info list
 
 Adding the public key to machbase-neo server makes it possible to execute any `machbase-neo shell` command without prompt and entering password.
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "key": "your publickey"
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "elapse": "138.801µs",
@@ -632,8 +632,8 @@ Timer `schedule`
 - `@every 1h30m`           Every hour thirty
 - `@daily`                 Every day
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "name":"eleven",
@@ -643,7 +643,7 @@ Timer `schedule`
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "success": true,
@@ -661,15 +661,15 @@ Timer `schedule`
 Start Timer
 - `state` is required
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "state":"start",
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "success": true,
@@ -687,15 +687,15 @@ Start Timer
 Stop Timer
 - `state` is required
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "state":"stop",
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "success": true,
@@ -713,8 +713,8 @@ Stop Timer
 Update Timer
 - `autoStart`, `schedule`, `path` 
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "audoStart" : true,
@@ -723,7 +723,7 @@ Update Timer
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "elapse": "459.6µs",
@@ -784,8 +784,8 @@ Add Bridge
 - `name`, `type`, `path` is required
 - supported bridges `SQLite`, `PostgreSql`, `Mysql`, `MSSQL`, `MQTT`
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "name":"pg",
@@ -794,7 +794,7 @@ Add Bridge
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "success": true,
@@ -812,8 +812,8 @@ Add Bridge
 Exec Bridge
 - `state`, `command` is required
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "state":"exec",
@@ -821,7 +821,7 @@ Exec Bridge
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "success": true,
@@ -839,8 +839,8 @@ Exec Bridge
 Query Bridge
 - `state`, `command` is required
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "state":"query",
@@ -848,7 +848,7 @@ Query Bridge
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "success": true,
@@ -900,15 +900,15 @@ Query Bridge
 
 Test Bridge
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "state":"test",
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "success": true,
@@ -1026,8 +1026,8 @@ Add Subscriber
 
 nats-bridge manual https://docs.machbase.com/neo/bridges/31.nats/
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "name":"nats_subr",
@@ -1040,7 +1040,7 @@ nats-bridge manual https://docs.machbase.com/neo/bridges/31.nats/
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "elapse": "260µs",
@@ -1057,15 +1057,15 @@ nats-bridge manual https://docs.machbase.com/neo/bridges/31.nats/
 
 - `state` is required
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "state":"start",
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "elapse": "166.1µs",
@@ -1082,15 +1082,15 @@ nats-bridge manual https://docs.machbase.com/neo/bridges/31.nats/
 
 - `state` is required
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "state":"stop",
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "elapse": "54.2µs",
@@ -1158,8 +1158,8 @@ backup database</br>
 - **Time Duration backup**:   Backup of data for a specific period
 
 `request`
-{{< tabs items="Full Backup,Incremental Backup,Time Backup, Table Backup">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Full Backup" >}}
 ```json
 {
     "type":"database", // database or table
@@ -1175,7 +1175,7 @@ backup database</br>
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Incremental Backup" >}}
 ```json
 {
     "type":"database", // database or table
@@ -1191,7 +1191,7 @@ backup database</br>
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Time Backup" >}}
 ```json
 {
     "type":"database", // database or table
@@ -1207,7 +1207,7 @@ backup database</br>
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Table Backup" >}}
 ```json
 {
     "type":"table", // database or table
@@ -1299,8 +1299,8 @@ database mount
 - `:name` mount name
 - `path` backup database path (`Absolute Path`, `Relative Path` available)
 
-{{< tabs items="Request,Response">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="Request" >}}
 ```json
 {
     "path":"example_backup1" // Relative Path
@@ -1308,7 +1308,7 @@ database mount
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Response" >}}
 ```json
 {
     "elapse": "46.8694ms",

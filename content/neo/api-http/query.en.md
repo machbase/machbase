@@ -2,6 +2,9 @@
 title: HTTP Query
 type: docs
 weight: 10
+params:
+    tabs:
+        sync: true
 ---
 
 Query API endpoint is `/db/query`.
@@ -15,8 +18,8 @@ or be a JSON field in *POST-JSON* method as `{ "format": "csv" }`.
 
 **Query Example**
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
@@ -24,7 +27,7 @@ GET http://127.0.0.1:5654/db/query
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh 
 curl -o - http://127.0.0.1:5654/db/query \
      --data-urlencode "q=select * from EXAMPLE limit 2"
@@ -80,8 +83,8 @@ If the response content is too large to determine the total length, The header `
 The `/db/query` api's default output format is json.
 Set query param `format=json` or omit it for the default value.
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
@@ -89,7 +92,7 @@ GET http://127.0.0.1:5654/db/query
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode "q=select * from EXAMPLE limit 2"
@@ -111,8 +114,8 @@ The server responses in `Content-Type: application/json`.
 | data.rows    | array of records | array represents the result set records.<br/>This field will be replaced with `cols` if `transpose` is `true` |
 | data.cols    | array of series  | array represents the result set column-series.<br/> This element exists when `transpose` is `true` |
 
-{{< tabs items="default,transpose,rowsFlatten,rowsArray">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="default" >}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
@@ -137,7 +140,7 @@ GET http://127.0.0.1:5654/db/query
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="transpose" >}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
@@ -163,7 +166,7 @@ GET http://127.0.0.1:5654/db/query
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="rowsFlatten" >}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
@@ -189,7 +192,7 @@ GET http://127.0.0.1:5654/db/query
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="rowsArray" >}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
@@ -223,8 +226,8 @@ Set query param `format=ndjson` in the request. {{< neo_since ver="8.0.33" />}}
 
 NDJSON (Newline Delimited JSON) is a format for streaming JSON data where each line is a valid JSON object. This is useful for processing large datasets or streaming data because it allows you to handle one JSON object at a time.
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
@@ -233,7 +236,7 @@ GET http://127.0.0.1:5654/db/query
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode "q=select * from EXAMPLE limit 2" \
@@ -256,8 +259,8 @@ Set query param `format=csv` in the request.
 
 CSV format is also useful for processing large datasets or streaming data because it allows you to handle one line at a time.
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
@@ -266,7 +269,7 @@ GET http://127.0.0.1:5654/db/query
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode "q=select * from EXAMPLE limit 2" \
@@ -287,8 +290,8 @@ wave.sin,1705381958785759000,0.9011510331449053
 
 Set query param `format=box` in the request.
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
@@ -297,7 +300,7 @@ GET http://127.0.0.1:5654/db/query
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode "q=select * from EXAMPLE limit 2" \
@@ -321,8 +324,8 @@ The result data in plain text with ascii box. The Content-Type of the response i
 
 Set query param `format=csv` in the request.
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
@@ -331,7 +334,7 @@ GET http://127.0.0.1:5654/db/query
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode "q=select * from EXAMPLE limit 2" \
@@ -354,8 +357,8 @@ It is also possible to request query in JSON form as below example.
 
 **Request JSON message**
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/query
@@ -367,7 +370,7 @@ Content-Type: application/json
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -o - -X POST http://127.0.0.1:5654/db/query \
     -H 'Content-Type: application/json' \
@@ -380,8 +383,8 @@ curl -o - -X POST http://127.0.0.1:5654/db/query \
 
 HTML Form data format is available too. HTTP header `Content-type` should be `application/x-www-form-urlencoded` in this case.
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/query
@@ -391,7 +394,7 @@ q=select * from EXAMPLE limit 2
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -o - -X POST http://127.0.0.1:5654/db/query \
     --data-urlencode "q=select * from EXAMPLE limit 2"

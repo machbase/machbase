@@ -26,11 +26,11 @@ http://127.0.0.1:5654/debug/statz?interval=[1m|5m|15m]&format=[json|html]
 아래 예시는 machbase-neo의 HTTP 지연 분포를 차트로 시각화하는 방법을 보여 줍니다.
 `FAKE( statz(period, metrics...) )` SRC 함수를 사용해 시간-값 쌍을 생성한 뒤 `CHART()`에 전달합니다.
 
-{{< tabs items="CHART,Code">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="CHART" >}}
 {{< figure src="/neo/operations/img/metrics_http_latency.jpg" width="600" >}}
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="Code" >}}
 ```js
 FAKE(statz("15m", 
     "machbase:http:latency_p50",

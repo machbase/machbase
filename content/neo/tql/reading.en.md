@@ -22,8 +22,8 @@ When you save a TQL script, the editor will display a link icon <img src="/image
 
 ## CSV
 
-{{< tabs items="default,delimiter()" >}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="default" >}}
 Save the code below as `output-csv.tql`.
 
 ```js {linenos=table,hl_lines=[2]}
@@ -41,7 +41,7 @@ TAG0,1628694000000000000,10
 TAG0,1628780400000000000,11
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="delimiter()" >}}
 Save the code below as `output-csv.tql`.
 
 ```js {linenos=table,hl_lines=[2]}
@@ -64,8 +64,8 @@ TAG0|1628780400000000000|11
 
 ## JSON
 
-{{< tabs items="default,transpose(),rowsFlatten(),rowsArray()" >}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="default" >}}
 Save the code below as `output-json.tql`.
 
 ```js {linenos=table,hl_lines=[2],linenostart=1}
@@ -95,7 +95,7 @@ $ curl http://127.0.0.1:5654/db/tql/output-json.tql
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="transpose()" >}}
 Save the code below as `output-json.tql`.
 
 ```js {linenos=table,hl_lines=[2],linenostart=1}
@@ -126,7 +126,7 @@ $ curl http://127.0.0.1:5654/db/tql/output-json.tql
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="rowsFlatten()" >}}
 Save the code below as `output-json.tql`.
 
 ```js {linenos=table,hl_lines=[2],linenostart=1}
@@ -156,7 +156,7 @@ $ curl http://127.0.0.1:5654/db/tql/output-json.tql
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="rowsArray()" >}}
 Save the code below as `output-json.tql`.
 
 ```js {linenos=table,hl_lines=[2],linenostart=1}
@@ -212,8 +212,8 @@ $ curl http://127.0.0.1:5654/db/tql/output-ndjson.tql
 
 ## MARKDOWN
 
-{{< tabs items="default,html()">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="default" >}}
 Save the code below as `output-markdown.tql`.
 
 ```js {linenos=table,hl_lines=[2]}
@@ -234,7 +234,7 @@ $ curl http://127.0.0.1:5654/db/tql/output-markdown.tql
 |TAG0|1628780400000000000|11.000000|
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="html()" >}}
 Save the code below as `output-markdown.tql`.
 
 ```js {linenos=table,hl_lines=[2]}

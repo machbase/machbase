@@ -22,8 +22,8 @@ TQL 스크립트를 저장하면 편집기 우측 상단에 <img src="/images/co
 
 ## CSV
 
-{{< tabs items="default,delimiter()" >}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="default" >}}
 아래 코드를 `output-csv.tql`로 저장해 주십시오.
 
 ```js {linenos=table,hl_lines=[2]}
@@ -42,7 +42,7 @@ TAG0,1628694000000000000,10
 TAG0,1628780400000000000,11
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="delimiter()" >}}
 아래 코드를 `output-csv.tql`로 저장해 주십시오.
 
 ```js {linenos=table,hl_lines=[2]}
@@ -65,8 +65,8 @@ TAG0|1628780400000000000|11
 
 ## JSON
 
-{{< tabs items="default,transpose(),rowsFlatten(),rowsArray()" >}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="default" >}}
 아래 코드를 `output-json.tql`로 저장해 주십시오.
 
 ```js {linenos=table,hl_lines=[2],linenostart=1}
@@ -96,7 +96,7 @@ $ curl http://127.0.0.1:5654/db/tql/output-json.tql
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="transpose()" >}}
 아래 코드를 `output-json.tql`로 저장해 주십시오.
 
 ```js {linenos=table,hl_lines=[2],linenostart=1}
@@ -127,7 +127,7 @@ $ curl http://127.0.0.1:5654/db/tql/output-json.tql
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="rowsFlatten()" >}}
 아래 코드를 `output-json.tql`로 저장해 주십시오.
 
 ```js {linenos=table,hl_lines=[2],linenostart=1}
@@ -157,7 +157,7 @@ $ curl http://127.0.0.1:5654/db/tql/output-json.tql
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="rowsArray()" >}}
 아래 코드를 `output-json.tql`로 저장해 주십시오.
 
 ```js {linenos=table,hl_lines=[2],linenostart=1}
@@ -212,8 +212,8 @@ $ curl http://127.0.0.1:5654/db/tql/output-ndjson.tql
 
 ## MARKDOWN
 
-{{< tabs items="default,html()">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="default" >}}
 아래 코드를 `output-markdown.tql`로 저장해 주십시오.
 
 ```js {linenos=table,hl_lines=[2]}
@@ -234,7 +234,7 @@ $ curl http://127.0.0.1:5654/db/tql/output-markdown.tql
 |TAG0|1628780400000000000|11.000000|
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="html()" >}}
 아래 코드를 `output-markdown.tql`로 저장해 주십시오.
 
 ```js {linenos=table,hl_lines=[2]}

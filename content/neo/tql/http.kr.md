@@ -19,8 +19,8 @@ weight: 49
 
 `HTTP()` 소스를 사용합니다.
 
-{{< tabs items="TEXT,HTML-simple,HTML-detail">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="TEXT" >}}
 ```
 HTTP({
     GET http://127.0.0.1:5654/db/query
@@ -32,7 +32,7 @@ HTTP({
 TEXT()
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="HTML-simple" >}}
 ```html
 HTTP({
     POST http://127.0.0.1:5654/db/query
@@ -47,7 +47,7 @@ HTTP({
 HTML(`<pre>{{ .Value 0 }}</pre>`)
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="HTML-detail" >}}
 ```html
 HTTP({
     POST http://127.0.0.1:5654/db/query

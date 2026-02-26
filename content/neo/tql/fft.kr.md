@@ -94,8 +94,8 @@ CHART_LINE( size("600px", "350px"), dataZoom('slider', 95, 100))
 
 `SQL_SELECT()` 소스와 `CHART_LINE()` 싱크 사이에 몇 가지 데이터 변환 함수를 추가합니다.
 
-{{< tabs items="GROUPBYKEY,SCRIPT">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="GROUPBYKEY" >}}
 ```js {linenos=table,hl_lines=["2-4"],linenostart=1}
 SQL_SELECT('time', 'value', from('example', 'signal'), between('last-10s', 'last'))
 MAPKEY('sample')
@@ -109,7 +109,7 @@ CHART_LINE(
 )
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="SCRIPT" >}}
 
 ```js {linenos=table,hl_lines=[11,12],linenostart=1}
 SQL_SELECT('time', 'value', from('example', 'signal'), between('last-10s', 'last'))

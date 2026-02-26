@@ -36,8 +36,8 @@ INSERT("name", "time", "value", table("example"))
 
 ### 2. HTTP POST
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 
 ~~~
 ```http
@@ -50,7 +50,7 @@ TAG0,1628953200000000000,13
 ~~~
 
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 
 Prepare data file as `input-csv.csv`
 
@@ -103,8 +103,8 @@ APPEND(table('example'))
 
 ### 2. HTTP POST
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 
 ~~~
 ```http
@@ -117,7 +117,7 @@ TAG0,1628953200000000000,13
 ~~~
 
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 
 Prepare data file as `append-csv.csv`
 
@@ -169,8 +169,8 @@ INSERT("name", "time", "value", table("example"))
 
 ### 2. HTTP POST
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 
 ~~~
 ```http
@@ -191,7 +191,7 @@ Content-Type: application/json
 ~~~
 
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 
 Prepare data file as `input-json.json`
 
@@ -249,8 +249,8 @@ When the data transforming is required for writing to the database, prepare the 
 
 The example code below shows how to handle multi-lines text data for writing into a table.
 
-{{< tabs items="MAP,SCRIPT">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="MAP" >}}
 Transforming using MAP functions.
 ```js {linenos=table,hl_lines=["13-15"],linenostart=1}
 // payload() returns the payload that arrived via HTTP-POST or MQTT,
@@ -275,7 +275,7 @@ CSV( timeformat("DEFAULT") )
 // APPEND(table('example'))
 ```
 {{</ tab >}}
-{{< tab >}}
+{{< tab name="SCRIPT" >}}
 The alternative way using SCRIPT function.
 ```js {linenos=table,hl_lines=["13-18"],linenostart=1}
 // payload() returns the payload that arrived via HTTP-POST or MQTT,

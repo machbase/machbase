@@ -185,8 +185,8 @@ Type 2, *Syntax*: `list(x [, option...])` {{< neo_since ver="8.0.15" />}}
 
 `list()` aggregates the all *x* values and produce a single list which contains the individual values.
 
-{{< tabs items="JSON,JSON(rowsArray), FLATTEN">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="JSON" >}}
 ```js {linenos=table,hl_lines=[4]}
 FAKE(json({["A",1], ["A",2], ["B",3], ["B",4], ["C",5]}))
 GROUP(
@@ -213,7 +213,7 @@ JSON()
 }
 ```
 {{</ tab >}}
-{{< tab >}}
+{{< tab name="JSON(rowsArray)" >}}
 ```js {linenos=table,hl_lines=[4,7]}
 FAKE(json({["A",1], ["A",2], ["B",3], ["B",4], ["C",5]}))
 GROUP(
@@ -241,7 +241,7 @@ JSON(rowsArray(true))
 }
 ```
 {{</ tab >}}
-{{< tab >}}
+{{< tab name="FLATTEN" >}}
 ```js {linenos=table,hl_lines=[4,7]}
 FAKE(json({["A",1], ["A",2], ["B",3], ["B",4], ["C",5]}))
 GROUP(

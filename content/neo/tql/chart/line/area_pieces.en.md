@@ -4,8 +4,8 @@ type: docs
 weight: 50
 ---
 
-{{< tabs items="SCRIPT,FAKE">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="SCRIPT" >}}
 ```js {{linenos=table,linenostart=1}}
 SCRIPT({
     data = [
@@ -47,7 +47,7 @@ SCRIPT({
 CHART()
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="FAKE" >}}
 
 ```js {{linenos=table,linenostart=1}}
 FAKE(

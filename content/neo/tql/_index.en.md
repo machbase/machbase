@@ -23,22 +23,22 @@ INSERT( 'time', 'value', table('example'), tag('signal') )
 
 ### Output format independent
 
-{{< tabs items="CSV,JSON,CHART,HTML">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="CSV" >}}
 ```js {linenos=table,hl_lines=[2],linenostart=1}
 SQL( `SELECT TIME, VALUE FROM EXAMPLE WHERE NAME='signal' LIMIT 100` )
 CSV( timeformat("Default") )
 ```
 {{< figure src="./img/tql_intro_csv.jpg">}}
 {{</ tab >}}
-{{< tab >}}
+{{< tab name="JSON" >}}
 ```js {linenos=table,hl_lines=[2],linenostart=1}
 SQL( `SELECT TIME, VALUE FROM EXAMPLE WHERE NAME='signal' LIMIT 100` )
 JSON( timeformat("Default") )
 ```
 {{< figure src="./img/tql_intro_json.jpg">}}
 {{</ tab >}}
-{{< tab >}}
+{{< tab name="CHART" >}}
 ```js {linenos=table,hl_lines=[2-9],linenostart=1}
 SQL( `SELECT TIME, VALUE FROM EXAMPLE WHERE NAME='signal' LIMIT 100` )
 CHART(
@@ -52,7 +52,7 @@ CHART(
 ```
 {{< figure src="./img/tql_intro.jpg">}}
 {{</ tab >}}
-{{< tab >}}
+{{< tab name="HTML" >}}
 ```html {linenos=table,hl_lines=[2],linenostart=1}
 SQL(`SELECT TIME, VALUE FROM EXAMPLE WHERE NAME='signal' LIMIT 100`)
 HTML({
@@ -76,8 +76,8 @@ HTML({
 
 ### Data source independent
 
-{{< tabs items="JSON,CSV,SQL,SCRIPT-json,SCRIPT-for">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="JSON" >}}
 ```js {{linenos="table",hl_lines=["1-5"]}}
 FAKE( json({ 
     [ "A", 1.0 ],
@@ -90,7 +90,7 @@ MAPVALUE(1, value(1) * 10 )
 CSV()
 ```
 {{</ tab >}}
-{{< tab >}}
+{{< tab name="CSV" >}}
 ```js {{linenos="table",hl_lines=["1-4"]}}
 CSV(`A,1.0
 B,1.5
@@ -102,7 +102,7 @@ MAPVALUE(1, value(1) * 10 )
 CSV()
 ```
 {{</ tab >}}
-{{< tab >}}
+{{< tab name="SQL" >}}
 ```js  {{linenos="table",hl_lines=[1]}}
 SQL(`select time, value from example where name = 'my-car' limit 4`)
 
@@ -111,7 +111,7 @@ MAPVALUE(1, value(1) * 10 )
 CSV()
 ```
 {{</ tab >}}
-{{< tab >}}
+{{< tab name="SCRIPT-json" >}}
 ```js {{linenos="table",hl_lines=[2]}}
 SCRIPT({
     list = JSON.parse(`[["A",1.0], ["B",1.5], ["C",2.0], ["D",2.5]]`);
@@ -123,7 +123,7 @@ MAPVALUE(1, value(1) * 10 )
 CSV()
 ```
 {{</ tab >}}
-{{< tab >}}
+{{< tab name="SCRIPT-for" >}}
 ```js {{linenos="table",hl_lines=["1-5"]}}
 SCRIPT({
     for (i = 0; i < 10; i++) {
@@ -148,8 +148,8 @@ This chapter shows how to do this without developing additional applications.
 
 The example tql code below gives a brief idea of what is TQL for.
 
-{{< tabs items="AVG,STAT,SCRIPT-bar,SCRIPT-boxplot">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="AVG" >}}
 
 - avg. values of each classes.
 
@@ -177,7 +177,7 @@ CHART(
 ```
 {{< figure src="./img/groupbykey_avg.jpg" width="500" >}}
 {{</ tab >}}
-{{< tab >}}
+{{< tab name="STAT" >}}
 
 - min, median, avg, max, stddev of sepal length of the setosa class.
 
@@ -209,7 +209,7 @@ CHART(
 {{< figure src="./img/groupbykey_stddev.jpg" width="500" >}}
 {{</ tab >}}
 
-{{<tab>}}
+{{< tab name="SCRIPT-bar" >}}
 
 ```js {{linenos="table"}}
 CSV(file("https://docs.machbase.com/assets/example/iris.csv"))
@@ -267,7 +267,7 @@ CHART()
 {{< figure src="./img/iris_script_min_max.jpg" width="500" >}}
 
 {{</tab>}}
-{{<tab>}}
+{{< tab name="SCRIPT-boxplot" >}}
 
 ```js {{linenos="table"}}
 CSV(file("https://docs.machbase.com/assets/example/iris.csv"))

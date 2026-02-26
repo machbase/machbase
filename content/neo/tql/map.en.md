@@ -18,8 +18,8 @@ Takes first *n* records and stop the stream.
 - `offset` *number* optional, take records from the offset. (default 0 when omitted) {{< neo_since ver="8.0.6" />}}
 - `n` *number* specify how many records to be taken.
 
-{{< tabs items="TAKE(n),TAKE(offset n)">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="TAKE(n)" >}}
 ```js {linenos=table,hl_lines=["9"],linenostart=1}
 FAKE( json({
     [ "TAG0", 1628694000000000000, 10],
@@ -37,7 +37,7 @@ TAG0,1628694000000000000,10
 TAG0,1628780400000000000,11
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="TAKE(offset n)" >}}
 ```js {linenos=table,hl_lines=["9"],linenostart=1}
 FAKE( json({
     [ "TAG0", 1628694000000000000, 10],
@@ -68,8 +68,8 @@ Ignore first *n* records, it simply drops the *n* records.
 - `offset` *number* optional, drop records from the offset. (default 0 when omitted) {{< neo_since ver="8.0.6" />}}
 - `n` *number* specify how many records to be dropped.
 
-{{< tabs items="DROP(n),DROP(offset n)">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="DROP(n)" >}}
 ```js {linenos=table,hl_lines=["9"],linenostart=1}
 FAKE( json({
     [ "TAG0", 1628694000000000000, 10],
@@ -88,7 +88,7 @@ TAG0,1629039600000000000,14
 TAG0,1629126000000000000,15
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="DROP(offset n)" >}}
 ```js {linenos=table,hl_lines=["9"],linenostart=1}
 FAKE( json({
     [ "TAG0", 1628694000000000000, 10],
@@ -148,8 +148,8 @@ The first record is always passed, use `DROP(1)` after `FILTER_CHANGED()` to dis
 
 If `retain()` option is specified, the records that keep the changed `value` for the given `duration` based `time`, are passed.
 
-{{<tabs items="example,retain(),useFirstWithLast(),useFirstWithLast()">}}
-{{<tab>}}
+{{< tabs >}}
+{{< tab name="example" >}}
 ```js {linenos=table,hl_lines=[2,4,10,11,14]}
 FAKE(json({
     ["A", 1692329338, 1.0],
@@ -176,7 +176,7 @@ D,1692329347,9.1
 ```
 
 {{</tab>}}
-{{<tab>}}
+{{< tab name="retain()" >}}
 ```js {linenos=table,hl_lines=[4,6,14]}
 FAKE(json({
     ["A", 1692329338, 1.0],
@@ -200,7 +200,7 @@ A,1692329338,1
 B,1692329342,5
 ```
 {{</tab>}}
-{{<tab>}}
+{{< tab name="useFirstWithLast()" >}}
 ```js {linenos=table,hl_lines=[4,6,14]}
 FAKE(json({
     ["A", 1692329338, 1.0],
@@ -224,7 +224,7 @@ A,1692329338,1
 B,1692329340,3
 ```
 {{</tab>}}
-{{<tab>}}
+{{< tab name="useFirstWithLast()" >}}
 ```js {linenos=table,hl_lines=[14]}
 FAKE(json({
     ["A", 1692329338, 1.0],
@@ -618,8 +618,8 @@ There are two types of `HISTOGRAM()`. The first type is "fixed bins" which is us
 `HISTOGRAM()` takes values and count the distribution of the each bins, the bins are configured by min/max range of the value and the count of bins.
 If the actual value comes in the out of the min/max range, `HISTOGRAM()` adds lower or higher bins automatically.
 
-{{< tabs items="CSV,CHART,CATEGORY">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="CSV" >}}
 ```js {{linenos=table,hl_lines=[3]}}
 FAKE( arrange(1, 100, 1) )
 MAPVALUE(0, (simplex(12, value(0)) + 1) * 100)
@@ -636,7 +636,7 @@ low,high,count
 160,200,4
 ```
 {{</ tab>}}
-{{< tab >}}
+{{< tab name="CHART" >}}
 ```js {{linenos=table,hl_lines=[3]}}
 FAKE( arrange(1, 100, 1) )
 MAPVALUE(0, (simplex(12, value(0)) + 1) * 100)
@@ -655,7 +655,7 @@ CHART(
 ```
 {{< figure src="../img/tql-histogram.jpg" width="500" >}}
 {{</ tab >}}
-{{< tab >}}
+{{< tab name="CATEGORY" >}}
 ```js {{linenos=table,hl_lines=[4,"13-14"]}}
 FAKE( arrange(1, 100, 1) )
 MAPVALUE(0, (simplex(12, value(0)) + 1) * 100)
@@ -732,8 +732,8 @@ When TQL loads data from CSV or external RDBMS via 'bridge'd SQL query, it may r
 - `columnIdx...` specify multiple columns which are "transposed", this can not mix-use with "fixed()".
 - `header(boolean)` if it set `header(true)`, `TRANSPOSE` consider the first record is the header record. And it produce the header of the transposed column records as a new column.
 
-{{< tabs items="TRANSPOSE,all columns,header(),fixed()">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="TRANSPOSE" >}}
 ```js {linenos=table,hl_lines=["5"],linenostart=1}
 FAKE(csv(`CITY,DATE,TEMPERATURE,HUMIDITY,NOISE
 Tokyo,2023/12/07,23,30,40
@@ -762,7 +762,7 @@ BEIJING-HUMIDITY,1701907200,50
 BEIJING-NOISE,1701907200,60
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="all columns" >}}
 ```js {linenos=table,hl_lines=["5"],linenostart=1}
 FAKE(csv(`CITY,DATE,TEMPERATURE,HUMIDITY,NOISE
 Tokyo,2023/12/07,23,30,40
@@ -790,7 +790,7 @@ Beijing
 60
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="header()" >}}
 ```js {linenos=table,hl_lines=["5"],linenostart=1}
 FAKE(csv(`CITY,DATE,TEMPERATURE,HUMIDITY,NOISE
 Tokyo,2023/12/07,23,30,40
@@ -813,7 +813,7 @@ HUMIDITY,50
 NOISE,60
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="fixed()" >}}
 ```js {linenos=table,hl_lines=["5", "7"],linenostart=1}
 FAKE(csv(`CITY,DATE,TEMPERATURE,HUMIDITY,NOISE
 Tokyo,2023/12/07,23,30,40
@@ -1105,8 +1105,8 @@ For example, if an original record was `{key: k, value: [v1, v2, v3]}` and appli
 
 if use `POPKEY()` without argument it is equivalent with `POPKEY(0)` which is promoting the first element of the value tuple as the key.
 
-{{< tabs items="POPKEY(),POPKEY(idx)">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="POPKEY()" >}}
 ```js {linenos=table,hl_lines=["9"],linenostart=1}
 FAKE( json({
     [ "TAG0", 1628694000000000000, 10],
@@ -1128,7 +1128,7 @@ CSV()
 1629126000000000000,15
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="POPKEY(idx)" >}}
 ```js {linenos=table,hl_lines=["9"],linenostart=1}
 FAKE( json({
     [ "TAG0", 1628694000000000000, 10],

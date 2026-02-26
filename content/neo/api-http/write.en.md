@@ -2,6 +2,9 @@
 title: HTTP Write
 type: docs
 weight: 20
+params:
+    tabs:
+        sync: true
 ---
 
 The Write API endpoint is `/db/write/{TABLE}`, where `{TABLE}` is the name of the table you want to write to.
@@ -65,8 +68,8 @@ This request message is equivalent that consists INSERT SQL statement as `INSERT
 
 Set `Content-Type` header as `application/json`.
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/write/EXAMPLE
@@ -84,7 +87,7 @@ Content-Type: application/json
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE \
     -H "Content-Type: application/json" \
@@ -97,8 +100,8 @@ curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE \
 
 Set the header `Content-Encoding: gzip` tells machbase-neo that the incoming stream is gzip-compressed.
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/write/EXAMPLE
@@ -109,7 +112,7 @@ Content-Encoding: gzip
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE \
     -H "Content-Type: application/json" \
@@ -126,8 +129,8 @@ When time fields are string format instead of UNIX epoch.
 
 Add `timeformat` and `tz` parameters.
 
-{{< tabs items="HTTP, cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/write/EXAMPLE
@@ -147,7 +150,7 @@ Content-Type: application/json
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=DEFAULT&tz=Asia/Seoul' \
     -H "Content-Type: application/json" \
@@ -185,8 +188,8 @@ This request message is equivalent that consists INSERT SQL statement as `INSERT
 
 Set `Content-Type` header as `application/x-ndjson`.
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/write/EXAMPLE
@@ -197,7 +200,7 @@ Content-Type: application/x-ndjson
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE \
     -H "Content-Type: application/x-ndjson" \
@@ -218,8 +221,8 @@ When time fields are string format instead of UNIX epoch.
 
 Add `timeformat` and `tz` parameters.
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/write/EXAMPLE
@@ -232,7 +235,7 @@ Content-Type: application/x-ndjson
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=Default&tz=Local' \
     -H "Content-Type: application/x-ndjson" \
@@ -271,8 +274,8 @@ csv-data,1670380343000000000,2.0002
 ```
 
 The `Content-Type` header should be `text/csv`.
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/write/EXAMPLE?header=skip
@@ -284,7 +287,7 @@ csv-data,1670380343000000000,2.0002
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE?header=skip \
     -H "Content-Type: text/csv" \
@@ -305,8 +308,8 @@ TIME,NAME,VALUE
 
 The `Content-Type` header should be `text/csv`.
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/write/EXAMPLE?header=columns
@@ -318,7 +321,7 @@ TIME,NAME,VALUE
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE?header=columns \
     -H "Content-Type: text/csv" \
@@ -331,8 +334,8 @@ curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE?header=columns \
 
 Set the header `Content-Encoding: gzip` to inform machbase neo that the incoming stream is gzip-compressed.
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/write/EXAMPLE?header=skip
@@ -343,7 +346,7 @@ Content-Encoding: gzip
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE?header=skip \
     -H "Content-Type: text/csv" \
@@ -378,8 +381,8 @@ Please refer to the detail of the API [Request endpoint and params](/neo/api-htt
 
 **Test Table**
 
-{{< tabs items="HTTP,cURL">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="HTTP" >}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
@@ -387,7 +390,7 @@ GET http://127.0.0.1:5654/db/query
 ```
 ~~~
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode \

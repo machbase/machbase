@@ -21,8 +21,8 @@ weight: 21
 - `table()` *table('name')*: 대상 테이블을 지정합니다.
 - `tag()` *tag('name')*: 선택 옵션으로, 태그 테이블에만 사용할 수 있습니다.
 
-{{<tabs items="Example,PUSHVALUE(),tag()">}}
-{{<tab>}}
+{{< tabs >}}
+{{< tab name="Example" >}}
 태그 이름을 포함한 레코드를 Machbase에 기록합니다.
 
 ```js {{linenos=table,hl_lines=[6]}}
@@ -34,7 +34,7 @@ MAPVALUE(1, value(1)*1000000000) // 초 단위를 나노초로 변환
 INSERT("name", "time", "value", table("example"))
 ```
 {{< /tab >}}
-{{<tab>}}
+{{< tab name="PUSHVALUE()" >}}
 `PUSHVALUE()`로 `name` 필드를 추가해 동일한 태그 이름으로 기록합니다.
 
 ```js {{linenos=table,hl_lines=[5,7]}}
@@ -47,7 +47,7 @@ MAPVALUE(1, value(1)*1000000000) // 초 단위를 나노초로 변환
 INSERT("name","time", "value", table("example"))
 ```
 {{< /tab >}}
-{{<tab>}}
+{{< tab name="tag()" >}}
 대상 테이블이 태그 테이블이라면 `tag()` 옵션으로 태그 이름을 지정할 수 있습니다.
 
 ```js {{linenos=table,hl_lines=[6]}}
@@ -105,8 +105,8 @@ APPEND( table("example") )
 - `substituteNull` *substitute(string)*: 이전 버전 옵션(현재는 `nullValue()` 사용)
 - `cache()` : 결과 데이터를 캐시합니다. {{< neo_since ver="8.0.43" />}}
 
-{{< tabs items="default,heading(),delimiter(),nullValue()">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="default" >}}
 ```js {linenos=table,hl_lines=[3],linenostart=1}
 FAKE( arrange(1, 3, 1))
 MAPVALUE(1, value(0)*10)
@@ -118,7 +118,7 @@ CSV()
 3,30
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="heading()" >}}
 ```js {linenos=table,hl_lines=[3],linenostart=1}
 FAKE( arrange(1, 3, 1))
 MAPVALUE(1, value(0)*10, "x10")
@@ -131,7 +131,7 @@ x,x10
 3,30
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="delimiter()" >}}
 ```js {linenos=table,hl_lines=[3],linenostart=1}
 FAKE( arrange(1, 3, 1))
 MAPVALUE(1, value(0)*10, "x10")
@@ -144,7 +144,7 @@ x|x10
 3|30
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="nullValue()" >}}
 ```js {linenos=table,hl_lines=[2],linenostart=1}
 FAKE( json({ ["A", 123], ["B", null], ["C", 234] }) )
 CSV( nullValue("***") )
@@ -172,8 +172,8 @@ C|234
 - `rowsArray` *rowsArray(boolean)*: 각 레코드를 객체 배열로 반환합니다. `transpose(true)` 및 `rowsFlatten(true)`보다 우선합니다. {{< neo_since ver="8.0.12" />}}
 - `cache()` : 결과 데이터를 캐시합니다. {{< neo_since ver="8.0.43" />}}
 
-{{< tabs items="default,transpose(),rowsFlatten(),rowsArray()">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="default" >}}
 ```js {linenos=table,hl_lines=[3],linenostart=1}
 FAKE( arrange(1, 3, 1))
 MAPVALUE(1, value(0)*10)
@@ -193,7 +193,7 @@ JSON()
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="transpose()" >}}
 ```js  {linenos=table,hl_lines=[3],linenostart=1}
 FAKE( arrange(1, 3, 1))
 MAPVALUE(1, value(0)*10, "x10")
@@ -213,7 +213,7 @@ JSON( transpose(true) )
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="rowsFlatten()" >}}
 ```js {linenos=table,hl_lines=[3],linenostart=1}
 FAKE( arrange(1, 3, 1))
 MAPVALUE(1, value(0)*10, "x10")
@@ -233,7 +233,7 @@ JSON( rowsFlatten(true) )
 }
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="rowsArray()" >}}
 ```js  {linenos=table,hl_lines=[3],linenostart=1}
 FAKE( arrange(1, 3, 1))
 MAPVALUE(1, value(0)*10, "x10")
@@ -292,8 +292,8 @@ NDJSON(timeformat('Default'), tz('local'), rownum(true))
 - `brief(boolean)` 결과 행 생략 여부. `brief(true)`는 `briefCount(5)`와 동일
 - `briefCount(limit int)` 레코드 수가 제한을 넘으면 행을 생략합니다(0이면 생략 없음)
 
-{{< tabs items="default,briefCount,html">}}
-{{< tab >}}
+{{< tabs >}}
+{{< tab name="default" >}}
 ```js {linenos=table,hl_lines=[8]}
 FAKE( csv(`
 10,The first line 
@@ -314,7 +314,7 @@ MARKDOWN()
 | 50     | The last is 5th |
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="briefCount" >}}
 
 ```js {linenos=table,hl_lines=[8]}
 FAKE( csv(`
@@ -337,7 +337,7 @@ MARKDOWN( briefCount(2) )
 > Total 5 records
 ```
 {{< /tab >}}
-{{< tab >}}
+{{< tab name="html" >}}
 
 ```js {linenos=table,hl_lines=[8]}
 FAKE( csv(`

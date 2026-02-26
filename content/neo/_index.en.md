@@ -27,8 +27,8 @@ Its versatility allows installation on a wide range of devices, from Raspberry P
 
 ### Download 
 
-{{< tabs items="Linux/macOS,Windows,Choose Manually">}}
-    {{< tab >}}
+{{< tabs >}}
+    {{< tab name="Linux/macOS" icon="terminal">}}
     Paste the script below into the shell prompt for the latest version of the platform.
 
     ```bash
@@ -36,7 +36,7 @@ Its versatility allows installation on a wide range of devices, from Raspberry P
     ```
     {{< /tab >}}
 
-    {{< tab >}}
+    {{< tab name="Windows" icon="desktop-computer">}}
     If GUI is preferred rather than command line, then execute `neow` included in the Windows release.
 
     Download the latest release for [Windows]({{< neo_releases_url >}}/download/{{< neo_latestver >}}/machbase-neo-{{< neo_latestver >}}-windows-amd64.zip)
@@ -44,7 +44,7 @@ Its versatility allows installation on a wide range of devices, from Raspberry P
     ![interfaces](/images/neow-win.png)
     {{< /tab >}}
 
-    {{< tab >}}
+    {{< tab name="Choose Manually" icon="globe">}}
     Find and download the file for the version and platform from the [releases](./releases/) page.
     {{< /tab >}}
 {{< /tabs >}}
@@ -60,7 +60,7 @@ Data transformation and visualization language *TQL* is supported out of the box
 - [CHART()](/neo/tql/chart/) for the data visualization.
 - [SCRIPT()](/neo/tql/script/) for implementing custom logic.
 
-<span class="badge-new">NEW!</span> Geodetic data visualization.
+Geodetic data visualization.
 
 {{< figure src="/images/map-visualization.jpg" width="600" >}}
 
