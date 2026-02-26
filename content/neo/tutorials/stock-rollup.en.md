@@ -278,7 +278,12 @@ import (
 func main() {
     ctx := context.Background()
 
-    db, err := machgo.NewDatabase(&machgo.Config{Host: "127.0.0.1", Port: 5656})
+    db, err := machgo.NewDatabase(&machgo.Config{
+        Host: "127.0.0.1",
+        Port: 5656,
+        MaxOpenConn: -1,
+        MaxOpenQuery: -1,
+    })
     if err != nil {
         panic(err)
     }

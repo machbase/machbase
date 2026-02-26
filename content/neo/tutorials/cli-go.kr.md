@@ -53,8 +53,8 @@ import (
 conf := &machgo.Config{
     Host:         "127.0.0.1",    // Machbase 서버 호스트
     Port:         5656,           // Machbase 서버 포트
-    MaxOpenConn:  0,              // 최대 연결 임계값
-    MaxOpenQuery: 0,              // 최대 쿼리 동시성 제한
+    MaxOpenConn:  -1,             // 최대 연결 임계값, -1: 제한 없음
+    MaxOpenQuery: -1,             // 최대 쿼리 동시성 제한
 }
 
 // 설정으로 데이터베이스 인스턴스 생성

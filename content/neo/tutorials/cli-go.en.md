@@ -53,8 +53,8 @@ Configure the database connection parameters using the `Config` struct. This all
 conf := &machgo.Config{
     Host:         "127.0.0.1",    // Machbase server host
     Port:         5656,           // Machbase server port
-    MaxOpenConn:  0,              // Max Connection threshold
-    MaxOpenQuery: 0,              // Max Query concurrency limit
+    MaxOpenConn:  -1,             // Max Connection threshold, -1: no limit
+    MaxOpenQuery: -1,             // Max Query concurrency limit
 }
 
 // Create a database instance with the configuration
