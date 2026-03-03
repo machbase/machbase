@@ -332,16 +332,17 @@ func main() {
     defer conn.Close()
 
     nMinute := 5
-	nGap := 1
-	if nMinute == 1 {
-		nGap = 2
-	}
+    nFrom := "0/0/0 -2:0:0" // -2 hours
+    nGap := fmt.Sprintf("0/0/0 0:-%d:0", nMinute) // now - n minutes
+    if nMinute == 1 {
+        nGap = "0/0/0 0:-2:0" // now -2 minutes, (The query can executes before 1 minute rollup has done)
+    }
 
     sqlText := `
         SELECT
             DATE_TRUNC('minute', time, ?) as mtime,
-            FIRST(open_time, open) as open,
-            LAST(close_time, close) as close,
+            first(open_time, open) as open,
+            last(close_time, close) as close,
             MAX(high) as high,
             MIN(low) as low,
             SUM(sum_price) / SUM(cnt) as avg_price,
@@ -350,8 +351,8 @@ func main() {
             SUM(sum_ask) / SUM(cnt) as avg_ask
         FROM stock_rollup_1m
         WHERE code = ?
-        AND time >= DATE_TRUNC('minute', SYSDATE) - 2h
-        AND time < DATE_TRUNC('minute', SYSDATE) - %dm
+        AND time >= ADD_TIME(DATE_TRUNC('minute', SYSDATE, ?), ?)
+        AND time <  ADD_TIME(DATE_TRUNC('minute', SYSDATE, ?), ?)
         GROUP BY mtime
         ORDER BY mtime
 
@@ -359,8 +360,8 @@ func main() {
 
         SELECT
             DATE_TRUNC('minute', time, ?) as mtime,
-            FIRST(open_time, open) as open,
-            LAST(close_time, close) as close,
+            first(open_time, open) as open,
+            last(close_time, close) as close,
             MAX(high) as high,
             MIN(low) as low,
             SUM(sum_price) / SUM(cnt) as avg_price,
@@ -369,12 +370,13 @@ func main() {
             AVG(sum_ask) / SUM(cnt) as avg_ask
         FROM stock_rollup_1s
         WHERE code = ?
-        AND time >= DATE_TRUNC('minute', sysdate) - %dm
+        AND time >= ADD_TIME(DATE_TRUNC('minute', SYSDATE, ?), ?)
         GROUP BY mtime
         ORDER BY mtime
     `
-    sqlText = fmt.Sprintf(sqlText, nMinute*nGap, nMinute*nGap)
-    rows, err := conn.Query(ctx, sqlText, nMinute, "MO", nMinute, "MO")
+    rows, err := conn.Query(ctx, sqlText, 
+        nMinute, "MO", nMinute, nFrom, nMinute, nGap,
+        nMinute, "MO", nMinute, nGap)
     if err != nil {
         panic(err)
     }
@@ -382,6 +384,10 @@ func main() {
 
     var (
         mtime       time.Time
+        open        float64
+		close       float64
+		high        float64
+		low         float64
         avgPrice    float64
         totalVolume float64
         avgBid      float64
@@ -389,18 +395,22 @@ func main() {
     )
 
     for rows.Next() {
-        if err := rows.Scan(&mtime, &avgPrice, &totalVolume, &avgBid, &avgAsk); err != nil {
-            panic(err)
-        }
+		if err := rows.Scan(&mtime, &open, &close, &high, &low, &avgPrice, &totalVolume, &avgBid, &avgAsk); err != nil {
+			panic(err)
+		}
 
-        fmt.Printf(
-            "%s avg=%.4f volume=%.2f bid=%.4f ask=%.4f\n",
-            mtime.Format("2006-01-02 15:04"),
-            avgPrice,
-            totalVolume,
-            avgBid,
-            avgAsk,
-        )
+		fmt.Printf(
+			"%s open=%.4f close=%.4f high=%.4f low=%.4f avg=%.4f volume=%.2f bid=%.4f ask=%.4f\n",
+			mtime.In(time.Local).Format("2006-01-02 15:04"),
+			open,
+			close,
+			high,
+			low,
+			avgPrice,
+			totalVolume,
+			avgBid,
+			avgAsk,
+		)
     }
 }
 ```
