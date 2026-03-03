@@ -288,7 +288,7 @@ func main() {
 }
 ```
 
-## 5) Go 예제: 최근 2시간 분 단위 평균 조회
+## 5) Go 예제: 최근 2시간 N분 단위 평균 조회
 
 조회 전략은 다음과 같습니다.
 
@@ -330,35 +330,50 @@ func main() {
     }
     defer conn.Close()
 
+    nMinute := 5
+	nGap := 1
+	if nMinute == 1 {
+		nGap = 2
+	}
+
     sqlText := `
         SELECT
-            DATE_TRUNC('minute', time) as mtime,
-                SUM(sum_price) / SUM(cnt) as avg_price,
-                SUM(sum_volume) as total_volume,
-                SUM(sum_bid) / SUM(cnt) as avg_bid,
-                SUM(sum_ask) / SUM(cnt) as avg_ask
+            DATE_TRUNC('minute', time, ?) as mtime,
+            FIRST(open_time, open) as open,
+            LAST(close_time, close) as close,
+            MAX(high) as high,
+            MIN(low) as low,
+            SUM(sum_price) / SUM(cnt) as avg_price,
+            SUM(sum_volume) as total_volume,
+            SUM(sum_bid) / SUM(cnt) as avg_bid,
+            SUM(sum_ask) / SUM(cnt) as avg_ask
         FROM stock_rollup_1m
         WHERE code = ?
         AND time >= DATE_TRUNC('minute', SYSDATE) - 2h
-        AND time < DATE_TRUNC('minute', SYSDATE) - 2m
+        AND time < DATE_TRUNC('minute', SYSDATE) - %dm
         GROUP BY mtime
         ORDER BY mtime
 
         UNION ALL
 
         SELECT
-            DATE_TRUNC('minute', time) as mtime,
+            DATE_TRUNC('minute', time, ?) as mtime,
+            FIRST(open_time, open) as open,
+            LAST(close_time, close) as close,
+            MAX(high) as high,
+            MIN(low) as low,
             SUM(sum_price) / SUM(cnt) as avg_price,
             SUM(sum_volume) as total_volume,
             SUM(sum_bid) / SUM(cnt) as avg_bid,
             AVG(sum_ask) / SUM(cnt) as avg_ask
         FROM stock_rollup_1s
         WHERE code = ?
-        AND time >= DATE_TRUNC('minute', sysdate) - 2m
+        AND time >= DATE_TRUNC('minute', sysdate) - %dm
         GROUP BY mtime
         ORDER BY mtime
     `
-    rows, err := conn.Query(ctx, sqlText, "MO", "MO")
+    sqlText = fmt.Sprintf(sqlText, nMinute*nGap, nMinute*nGap)
+    rows, err := conn.Query(ctx, sqlText, nMinute, "MO", nMinute, "MO")
     if err != nil {
         panic(err)
     }
