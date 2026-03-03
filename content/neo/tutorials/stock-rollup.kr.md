@@ -366,7 +366,7 @@ func main() {
             SUM(sum_price) / SUM(cnt) as avg_price,
             SUM(sum_volume) as total_volume,
             SUM(sum_bid) / SUM(cnt) as avg_bid,
-            AVG(sum_ask) / SUM(cnt) as avg_ask
+            SUM(sum_ask) / SUM(cnt) as avg_ask
         FROM stock_rollup_1s
         WHERE code = ?
         AND time >= ADD_TIME(DATE_TRUNC('minute', SYSDATE, ?), ?)
