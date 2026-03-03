@@ -1,556 +1,451 @@
 ---
-title: "@jsh/process"
+title: "process"
 type: docs
 weight: 3
 ---
 
-{{< neo_since ver="8.0.52" />}}
+{{< neo_since ver="8.0.73" />}}
 
-The `@jsh/process` module is specifically designed for use in JSH applications 
-and is not available in the `SCRIPT()` function within TQL, unlike other JSH modules.
+The `process` module is specifically designed for use in JSH applications.
 
-## pid()
+## env
 
-Get the process id of the current process.
-
-<h6>Syntax</h6>
-
-```js
-pid()
-```
-
-<h6>Parameters</h6>
-
-None.
-
-<h6>Return value</h6>
-
-A number value that represents the process ID.
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1}
-const m = require("@jsh/process")
-console.log("my pid =", m.pid())
-```
-
-## ppid()
-
-Get the process id of the parent process.
-
-<h6>Syntax</h6>
-
-```js
-ppid()
-```
-
-<h6>Parameters</h6>
-
-None.
-
-<h6>Return value</h6>
-
-A number value that represents the parent process ID.
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1}
-const m = require("@jsh/process")
-console.log("parent pid =", m.ppid())
-```
-
-## args()
-
-Get command line arguments
-
-<h6>Syntax</h6>
-
-```js
-args()
-```
-
-<h6>Parameters</h6>
-
-None.
-
-<h6>Return value</h6>
-
-`String[]`
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1}
-p = require("@jsh/process");
-args = p.args();
-x = parseInt(args[1]);
-console.log(`x = ${x}`);
-```
-
-## cwd()
-
-Get the current working directory
-
-<h6>Syntax</h6>
-
-```js
-cwd()
-```
-
-<h6>Parameters</h6>
-
-None.
-
-<h6>Return value</h6>
-
-String
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1}
-p = require("@jsh/process");
-console.log("cwd :", p.cwd());
-```
-
-## cd()
-
-Change the current working directory.
-
-<h6>Syntax</h6>
-
-```js
-cd(path)
-```
-
-<h6>Parameters</h6>
-
-`path` : directory path to move
-
-<h6>Return value</h6>
-
-None.
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1}
-p = require("@jsh/process");
-p.cd('/dir/path');
-console.log("cwd :", p.cwd());
-```
-
-## readDir()
-
-Read files and sub-directories of the given directory.
-
-<h6>Syntax</h6>
-
-```js
-readDir(path, callback)
-```
-
-<h6>Parameters</h6>
-
-- `path`: `String` path to the directory
-- `callback`: function ([DirEntry](#DirEntry)) [undefined|Boolean] callback function. if it returns false, the iteration will stop.
-
-<h6>Return value</h6>
-
-None.
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1}
-
-```
-
-## DirEntry
-
-| Property           | Type       | Description        |
-|:-------------------|:-----------|:-------------------|
-| name               | String     |                    |
-| isDir              | Boolean    |                    |
-| readOnly           | Boolean    |                    |
-| type               | String     |                    |
-| size               | Number     |                    |
-| virtual            | Boolean    |                    |
-
-<!-- ## readLine()
-
-...
-
-<h6>Syntax</h6>
-
-```js
-```
-
-<h6>Parameters</h6>
-
-None.
-
-<h6>Return value</h6>
-
-None.
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1}
-``` -->
-
-## print()
-
-Write arguments into the output, the default output is the log file or stdout if log filename is not set.
-
-<h6>Syntax</h6>
-
-```js
-print(...args)
-```
-
-<h6>Parameters</h6>
-
-`args` `...any` Variable length of argument to write.
-
-<h6>Return value</h6>
-
-None.
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1}
-p = require("@jsh/process")
-p.print("Hello", "World!", "\n")
-```
-
-## println()
-
-Write arguments into the output, the default output is the log file or stdout if log filename is not set.
-
-<h6>Syntax</h6>
-
-```js
-print(...args)
-```
-
-<h6>Parameters</h6>
-
-`args` `...any` Variable length of argument to write.
-
-<h6>Return value</h6>
-
-None.
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1}
-p = require("@jsh/process")
-p.println("Hello", "World!")
-```
-
-## exec()
-
-Run another JavaScript application.
-
-<h6>Syntax</h6>
-
-```js
-exec(cmd, ...args)
-```
-
-<h6>Parameters</h6>
-
-`cmd` `String` .js file path to run
-`args` `...String` arguments to pass to the cmd.
-
-<h6>Return value</h6>
-
-None.
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1}
-p = require("@jsh/process")
-p.exec("/sbin/hello.js")
-```
-
-## daemonize()
-
-Run the current script file as a daemon process with its parent process ID set to `1`.
-
-<h6>Syntax</h6>
-
-```js
-daemonize(opts)
-```
-
-<h6>Parameters</h6>
-
-- `opts` `Object` Options
-
-| Property           | Type       | Description        |
-|:-------------------|:-----------|:-------------------|
-| reload             | Boolean    | enable hot-reload  |
-
-If `reload` is set to `true`, the daemon process starts with a source code change watcher.
-When the main source code file is modified, the current daemon process is stopped and restarted immediately to apply the changes.
-This feature is useful during development and testing
-but should not be enabled in production environments, as it requires an additional system resources to monitor file changes.
-
-<h6>Return value</h6>
-
-None.
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1}
-const p = require("@jsh/process")
-if( p.ppid() == 1) {
-    doBackgroundJob()
-} else {
-    p.daemonize()
-    p.print("daemonize self, then exit")
-}
-
-function doBackgroundJob() {
-    for(true){
-        p.sleep(1000);
-    }
-}
-```
-
-## isDaemon()
-
-Returns `true` if the parent process ID (`ppid()`) is `1`. This is equivalent to the condition `ppid() == 1`.
-
-<h6>Syntax</h6>
-
-```js
-isDaemon()
-```
-
-<h6>Parameters</h6>
-
-None.
-
-<h6>Return value</h6>
-
-Boolean
-
-## isOrphan()
-
-Returns `true` if the parent process ID is not assigned. This is equivalent to the condition `ppid() == 0xFFFFFFFF`.
-
-<h6>Syntax</h6>
-
-```js
-isOrphan()
-```
-
-<h6>Parameters</h6>
-
-None.
-
-<h6>Return value</h6>
-
-Boolean
-
-
-## schedule()
-
-Run the callback function according to the specified schedule.
-The control flow remains blocked until the token's `stop()` method is invoked.
-
-<h6>Syntax</h6>
-
-```js
-schedule(spec, callback)
-```
-
-<h6>Parameters</h6>
-
-- `spec` `String` schedule spec. Refer to [Timer Schedule Spec.](/neo/timer/#timer-schedule-spec).
-- `callback` `(time_epoch, token) => {}` The first parameter, `time_epoch`, is UNIX epoch timestamp in milliseconds unit.
-    A callback function where the second parameter, `token`, can be used to stop the schedule.
-    
-
-<h6>Return value</h6>
-
-None.
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1}
-const {schedule} = require("@jsh/process");
-
-var count = 0;
-schedule("@every 2s", (ts, token)=>{
-    count++;
-    console.log(count, new Date(ts));
-    if(count >= 5) token.stop();
-})
-
-// 1 2025-05-02 16:45:48
-// 2 2025-05-02 16:45:50
-// 3 2025-05-02 16:45:52
-// 4 2025-05-02 16:45:54
-// 5 2025-05-02 16:45:56
-```
-
-## sleep()
-
-Pause the current control flow.
-
-<h6>Syntax</h6>
-
-```js
-sleep(duration)
-```
-
-<h6>Parameters</h6>
-
-`duration` `Number` sleep duration in milliseconds.
-
-<h6>Return value</h6>
-
-None.
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1}
-p = require("@jsh/process")
-p.sleep(1000) // 1 sec.
-```
-
-## kill()
-
-Terminate a process using the specified process ID (pid).
-
-<h6>Syntax</h6>
-
-```js
-kill(pid)
-```
-
-<h6>Parameters</h6>
-
-`pid` `Number` pid of target process.
-
-<h6>Return value</h6>
-
-None.
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1}
-p = require("@jsh/process")
-p.kill(123)
-```
-
-## ps()
-
-List all currently running processes.
-
-<h6>Syntax</h6>
-
-```js
-ps()
-```
-
-<h6>Parameters</h6>
-
-None.
-
-<h6>Return value</h6>
-
-`Object[]`: Array of [Process](#Process) objects.
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1}
-p = require("@jsh/process")
-list = p.ps()
-for( const x of list ) {
-    console.log(
-        p.pid, 
-        p.isOrphan() ? "-" : p.ppid,
-        p.user, 
-        p.name, 
-        p.uptime)
-}
-```
-
-## Process
-
-Process information that returned by `ps()`.
-
-| Property           | Type       | Description        |
-|:-------------------|:-----------|:-------------------|
-| pid                | Number     | process ID         |
-| ppid               | Number     | process ID of the parent |
-| user               | String     | username (e.g: `sys`)    |
-| name               | String     | Script file name         |
-| uptime             | String     | Elapse duration since started  |
-
-
-## addCleanup()
-Add a function to execute when the current JavaScript VM terminates.
-
-<h6>Syntax</h6>
-
-```js
-addCleanup(fn)
-```
-
-<h6>Parameters</h6>
-
-`fn` `()=>{}` callback function
-
-<h6>Return value</h6>
-
-`Number` A token for remove the cleanup callback.
+The JSH runtime environment object.
 
 <h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1,hl_lines=[2]}
-p = require("@jsh/process")
-p.addCleanup(()=>{ console.log("terminated") })
-for(i = 0; i < 3; i++) {
-    console.log("run -", i)
-}
-
-// run - 0
-// run - 1
-// run - 2
-// terminated
+const process = require('process');
+console.println(process.env.get('HOME'));
 ```
 
-## removeCleanup()
+## execPath
 
-Remove a previously registered cleanup callback using the provided token.
+The absolute file path to the executable file of the current process on the host operating system.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const process = require('process');
+console.println(process.execPath);
+```
+
+## pid
+
+The process ID of the current process.
+The value type is number and represents the process ID.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const process = require('process');
+console.println(process.pid);
+```
+
+## ppid
+
+The process ID of the parent process.
+The value type is number and represents the parent process ID.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const process = require('process');
+console.println(process.ppid);
+```
+
+## platform
+
+A string that identifies the operating system platform of the host machine. Common values include `windows`, `linux`, and `darwin` (macOS).
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const process = require('process');
+console.println(process.platform);
+```
+
+## arch
+
+A string that identifies the operating system architecture of the host machine.
+Common values include `amd64`, `aarch64`.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const process = require('process');
+console.println(process.arch);
+```
+
+## version
+
+A string that identifies the JSH runtime version.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const process = require('process');
+console.println(process.version);
+```
+
+## versions
+
+An object that provides detailed runtime version information.
+
+- `versions.jsh`: JSH runtime version string
+- `versions.go`: Go runtime version string
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+const process = require('process');
+console.println('jsh:', process.versions.jsh);
+console.println('go :', process.versions.go);
+```
+
+## title
+
+A string that identifies the current program.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const process = require('process');
+console.println(process.title);
+```
+
+
+## stdin, stdout, stderr
+
+Streams for stdin, stdout, and stderr.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+const process = require('process');
+process.stdout.write('Enter text: ');
+const text = process.stdin.readLine();
+console.println('Your input:', text);
+
+// Output:
+// Enter text: hello?
+// Your input: hello?
+```
+
+## addShutdownHook()
+
+Add a callback function that will be called at the termination of the current process.
 
 <h6>Syntax</h6>
 
 ```js
-removeCleanup(token)
+addShutdownHook(()=>{})
 ```
-
-<h6>Parameters</h6>
-
-`token` `Number` token that returned by `addCleanup()`.
-
-<h6>Return value</h6>
-
-None.
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,6]}
-p = require("@jsh/process")
-token = p.addCleanup(()=>{ console.log("terminated") })
-for(i = 0; i < 3; i++) {
-    console.log("run -", i)
-}
-p.removeCleanup(token)
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const process = require('process');
+process.addShutdownHook(()=>{
+    console.println("shutdown hook called.");
+})
+console.println("running...")
 
-// run - 0
-// run - 1
-// run - 2
+// Output:
+// running...
+// shutdown hook called.
 ```
+
+## exit()
+
+Exit the current process. If the *code* is omitted, default is `0`.
+
+<h6>Syntax</h6>
+
+```js
+exit([code])
+```
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const process = require('process');
+process.exit(-1);
+```
+
+
+## which()
+
+Finds a JavaScript command in `PATH` and returns the resolved file path.
+
+If the command does not include `.js`, it is added automatically.
+
+<h6>Syntax</h6>
+
+```js
+which(command)
+```
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const process = require('process');
+console.println(process.which('echo')); // e.g. /sbin/echo.js
+```
+
+## expand()
+
+Expands environment variables such as `$HOME` and `${HOME}` in a string.
+
+<h6>Syntax</h6>
+
+```js
+expand(value)
+```
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+const process = require('process');
+console.println(process.expand('$HOME/file.txt'));
+console.println(process.expand('${HOME}/../lib/file.txt'));
+```
+
+## exec()
+
+Executes a JavaScript command file and returns its exit code.
+
+<h6>Syntax</h6>
+
+```js
+exec(command, ...args)
+```
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[3]}
+const process = require('process');
+const path = process.which('echo');
+const code = process.exec(path, 'hello from exec');
+console.println('exit code:', code);
+```
+
+## execString()
+
+Executes JavaScript source code from a string and returns its exit code.
+
+<h6>Syntax</h6>
+
+```js
+execString(source, ...args)
+```
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const process = require('process');
+const code = process.execString("console.println('hello from execString')");
+console.println('exit code:', code);
+```
+
+## dispatchEvent()
+
+Dispatches an event to an event emitter object on the JSH event loop.
+
+This function returns `true` if the event is scheduled, `false` if the event loop is already terminated.
+
+<h6>Syntax</h6>
+
+```js
+dispatchEvent(target, eventName, ...args)
+```
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[4]}
+const process = require('process');
+process.on('hello', (msg) => console.println(msg));
+const ok = process.dispatchEvent(process, 'hello', 'from dispatchEvent');
+console.println('scheduled:', ok);
+```
+
+## now()
+
+Returns the current time as a JavaScript date-time object.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+const process = require('process');
+const now = process.now();
+console.println(typeof now); // object
+```
+
+## chdir()
+
+Changes the current working directory.
+
+If `path` is empty, JSH resolves it to `$HOME`.
+
+<h6>Syntax</h6>
+
+```js
+chdir(path)
+```
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[3,4]}
+const process = require('process');
+console.println('before:', process.cwd());
+process.chdir('/lib');
+console.println('after :', process.cwd());
+```
+
+## cwd()
+
+Returns the current working directory path.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const process = require('process');
+console.println(process.cwd());
+```
+
+## nextTick()
+
+Schedules a callback to run on the next event loop turn.
+
+If the first argument is not a function, this call does nothing and returns `undefined`.
+
+<h6>Syntax</h6>
+
+```js
+nextTick(callback, ...args)
+```
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[3]}
+const process = require('process');
+console.println('main');
+process.nextTick((a, b) => console.println('tick:', a, b), 'first', 'second');
+```
+
+## memoryUsage()
+
+Returns memory usage information as an object.
+
+Current implementation returns placeholder numeric values (`0`) for all fields.
+
+<h6>Returned fields</h6>
+
+- `rss`
+- `heapTotal`
+- `heapUsed`
+- `external`
+- `arrayBuffers`
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[3]}
+const process = require('process');
+const mem = process.memoryUsage();
+console.println(typeof mem.rss, typeof mem.heapUsed);
+```
+
+## cpuUsage()
+
+Returns CPU usage information.
+
+Current implementation returns placeholder numeric values (`0`) for both fields.
+
+<h6>Returned fields</h6>
+
+- `user`
+- `system`
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[3]}
+const process = require('process');
+const cpu = process.cpuUsage();
+console.println(typeof cpu.user, typeof cpu.system);
+```
+
+## uptime()
+
+Returns process uptime in seconds as a number.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[3]}
+const process = require('process');
+const up = process.uptime();
+console.println('uptime >= 0:', up >= 0);
+```
+
+## hrtime()
+
+Returns a high-resolution time tuple as `[seconds, nanoseconds]`.
+
+If a previous tuple is provided, it returns the elapsed time from that point.
+
+<h6>Syntax</h6>
+
+```js
+hrtime([previous])
+```
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+const process = require('process');
+const start = process.hrtime();
+const diff = process.hrtime([start[0], start[1]]);
+console.println(Array.isArray(diff), diff.length);
+```
+
+## kill()
+
+Sends a signal request to the given process id.
+
+Current implementation is a placeholder:
+
+- returns an `Error` object when `pid` is missing
+- returns `true` when `pid` is provided (signal defaults to `SIGTERM`)
+
+<h6>Syntax</h6>
+
+```js
+kill(pid[, signal])
+```
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const process = require('process');
+console.println(process.kill(12345, 'SIGKILL'));
+```
+
+## dumpStack()
+
+Prints the current JavaScript call stack up to the specified depth for debugging.
+
+<h6>Syntax</h6>
+
+```js
+dumpStack(depth)
+```
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[3]}
+const process = require('process');
+function trace() {
+    process.dumpStack(5);
+}
+trace();
+```
+
