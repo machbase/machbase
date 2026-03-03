@@ -262,15 +262,9 @@ The appender accumulates data from `Append()` calls in an internal buffer and se
 You can configure thresholds by byte size, row count, and delay (the time gap between the oldest buffered record and the newest one).
 If any one of these thresholds is exceeded, the buffered data is sent to the server.
 
-- `WithBatchMaxRows(rows)`
-- `WithBatchMaxBytes(bytes)`
-- `WithBatchMaxDelay(duration)`
-
-Default and minimum values:
-
-- `WithBatchMaxBytes`: default `512KB`, minimum `4KB`
-- `WithBatchMaxRows`: default `512`, minimum `1`
-- `WithBatchMaxDelay`: default `5ms`, minimum `1ms`
+- `WithBatchMaxRows(rows)` : default `512`, minimum `1`
+- `WithBatchMaxBytes(bytes)`: default `512KB`, minimum `4KB`
+- `WithBatchMaxDelay(duration)` : default `5ms`, minimum `1ms`
 - `WithBatchMaxDelay(0)` disables the time-based threshold
 
 ```go
