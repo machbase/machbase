@@ -2,6 +2,7 @@
 title: "@jsh/generator"
 type: docs
 weight: 50
+draft: true
 ---
 
 {{< neo_since ver="8.0.52" />}}

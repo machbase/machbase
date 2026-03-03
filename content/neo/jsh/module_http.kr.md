@@ -1,926 +1,254 @@
 ---
-title: "@jsh/http"
+title: "http"
 type: docs
 weight: 12
 ---
 
-{{< neo_since ver="8.0.52" />}}
+{{< neo_since ver="8.0.73" />}}
+
+`http` 모듈은 JSH 애플리케이션에서 사용할 수 있는 Node.js 호환 HTTP 클라이언트/서버 API를 제공합니다.
 
 ## request()
 
-간단한 HTTP 클라이언트 요청 헬퍼 함수입니다.
+`ClientRequest` 객체를 생성합니다.
+
+지원 시그니처:
+
+- `request(url[, options][, callback])`
+- `request(options[, callback])`
 
 <h6>사용 형식</h6>
 
 ```js
-request(url, option)
+request(url[, options][, callback])
+request(options[, callback])
 ```
 
-<h6>매개변수</h6>
+<h6>주요 요청 옵션</h6>
 
-- `url` `String` 요청 대상 주소입니다. 예: `http://192.168.0.120/api/members`
-- `option` `Object` 선택적 [ClientRequestOption](#clientrequestoption)입니다.
-
-<h6>반환값</h6>
-
-- `Object` [ClientRequest](#clientrequest)
+- `url` (`string` 또는 `URL`)
+- `protocol`, `host`, `hostname`, `port`, `path`
+- `method`
+- `headers`
+- `auth` (`Authorization: Basic ...`으로 변환)
+- `agent`
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1}
-const {println} = require("@jsh/process");
-const http = require("@jsh/http")
-try {
-    req = http.request("http://127.0.0.1:29876/hello")
-    req.do((rsp) => {
-        println("url:", rsp.url);
-        println("error:", rsp.error());
-        println("status:", rsp.status);
-        println("statusText:", rsp.statusText);
-        println("body:", rsp.text());
-    })
-} catch (e) {
-    println(e.toString());
-}
+```js {linenos=table,linenostart=1,hl_lines=[2,4]}
+const http = require('http');
+const req = http.request('http://127.0.0.1:8080/hello');
+req.on('response', (res) => {
+  console.println(res.statusCode, res.statusMessage);
+});
+req.end();
 ```
 
-## Client
+## get()
 
-HTTP 클라이언트 객체입니다.
+GET 요청 축약 함수입니다. 내부적으로 `request()`를 만들고 자동으로 `end()`를 호출합니다.
+
+지원 시그니처:
+
+- `get(url[, options][, callback])`
+- `get(options[, callback])`
+
+<h6>사용 형식</h6>
+
+```js
+get(url[, options][, callback])
+get(options[, callback])
+```
+
+## Agent
+
+HTTP agent 래퍼 객체입니다.
 
 <h6>생성</h6>
 
-| Constructor             | 설명                          |
-|:------------------------|:-------------------------------------|
-| new Client()            | HTTP 클라이언트를 생성합니다.        |
-
-
-### do()
-
-지정한 URL로 HTTP 요청을 전송하고 응답을 처리합니다. 메서드, 헤더, 본문 등 옵션과 콜백 함수를 함께 전달할 수 있습니다.
-
-<h6>사용 형식</h6>
-
 ```js
-client.do(url)
-client.do(url, option)
-client.do(url, option, callback)
+new Agent([options])
 ```
 
-<h6>매개변수</h6>
+<h6>메서드</h6>
 
-- `url` `String`
-- `option` `Object` [ClientRequestOption](#clientrequestoption)
-- `callback` `(response) => {}` [ClientResponse](#clientresponse)를 인자로 받는 콜백입니다.
-
-<h6>반환값</h6>
-
-- `Object`
-
-| Property           | Type       | 설명        |
-|:-------------------|:-----------|:-------------------|
-| status             | Number     | HTTP 상태 코드   |
-| statusText         | String     | HTTP 상태 메시지 |
-| url                | String     | 요청 URL         |
-| error              | String     | 오류 메시지       |
-
-<h6>사용 예시</h6>
-
-```js {linenos=table,linenostart=1}
-const http = require("@jsh/http");
-
-const client = new http.Client()
-client.do(
-    "http://127.0.0.1:29876/hello",
-    { method:"GET" }, 
-    (rsp)=>{
-        println("url:", rsp.url);
-        println("error:", rsp.error());
-        println("status:", rsp.status);
-        println("statusText:", rsp.statusText);
-        println("content-type:", rsp.headers["Content-Type"]);
-        println("body:", rsp.text());
-    })
-```
-
-## ClientRequestOption
-
-| 옵션                | 타입         | 기본값        | 설명                       |
-|:--------------------|:-------------|:--------------|:---------------------------|
-| method              | String       | `GET`         | GET, POST, DELETE, PUT 등 HTTP 메서드 |
-| headers             | Object       |               | 요청 헤더                  |
-| body                | String       |               | 전송할 본문                |
-| unix                | String       |               | 유닉스 도메인 소켓 파일 경로 |
-
-`unix` 옵션을 지정하면 해당 소켓 파일로 서버에 연결을 시도합니다.
+- `destroy()`
 
 ## ClientRequest
 
-### do()
+`request()`/`get()`가 반환하는 요청 객체입니다.
 
-ClientRequest 객체에서 콜백을 실행해 응답을 처리합니다.
+## ClientRequest 헤더 메서드
+
+- `setHeader(name, value)`
+- `getHeader(name)`
+- `hasHeader(name)`
+- `removeHeader(name)`
+- `getHeaders()`
+- `getHeaderNames()`
+
+<h6>사용 예시</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[4,5]}
+const http = require('http');
+const req = http.request('http://127.0.0.1:8080/hello');
+req.setHeader('X-Test-Header', 'TestValue');
+console.println(req.hasHeader('X-Test-Header'));
+console.println(req.getHeader('X-Test-Header'));
+req.end();
+```
+
+## ClientRequest.write()
+
+요청 본문 청크를 기록합니다.
+
+- `chunk`는 `string`, `Uint8Array`를 지원합니다.
+- 성공 시 `true`, 실패 시 `false`를 반환합니다.
 
 <h6>사용 형식</h6>
 
 ```js
-do(callback)
+write(chunk[, encoding][, callback])
 ```
 
-<h6>매개변수</h6>
+## ClientRequest.end()
 
-- `callback` `(response) => {}` 응답을 처리할 콜백입니다.
+요청을 종료하고 전송합니다.
 
-<h6>반환값</h6>
+<h6>사용 형식</h6>
 
-없음.
+```js
+end([data[, encoding]][, callback])
+```
 
-## ClientResponse
+## ClientRequest.destroy()
 
-<h4>프로퍼티</h4>
+요청 객체를 파기하고 필요 시 에러 이벤트를 발생시킵니다.
 
-| Property           | Type       | 설명        |
-|:-------------------|:-----------|:-------------------|
-| status             | Number     | 상태 코드 (예: 200, 404) |
-| statusText         | String     | 상태 메시지 (예: `200 OK`) |
-| headers            | Object     | 응답 헤더           |
-| method             | String     | 요청 메서드         |
-| url                | String     | 요청 URL            |
-| error              | String     | 오류 메시지         |
+<h6>사용 형식</h6>
 
-### text()
+```js
+destroy([err])
+```
 
-응답 본문을 문자열로 반환합니다.
+## ClientRequest 이벤트
 
-### json()
+- `response` (`IncomingMessage`)
+- `error` (`Error`)
+- `end` ()
 
-응답 본문을 JSON 객체로 반환합니다.
+## IncomingMessage
 
-### csv()
+HTTP 응답 객체입니다.
 
-응답 본문을 CSV 행 배열로 반환합니다.
+<h6>주요 프로퍼티</h6>
 
-<!-- ### blob() 
-    todo implement bytes stream first.
--->
+- `statusCode`
+- `statusMessage`
+- `ok` (2xx이면 true)
+- `headers`
+- `rawHeaders`
+- `httpVersion`
+- `complete`
+
+## IncomingMessage 본문 메서드
+
+- `text([encoding])`
+- `json()`
+- `readBody([encoding])`
+- `readBodyBuffer()`
+
+## IncomingMessage 유틸리티 메서드
+
+- `setTimeout(msecs[, callback])`
+- `close()`
+
+<h6>사용 예시</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[4,5]}
+const http = require('http');
+http.get('http://127.0.0.1:8080/hello', (res) => {
+  console.println(res.ok, res.statusCode);
+  console.println(res.text());
+});
+```
 
 ## Server
 
 HTTP 서버 객체입니다.
 
-<h6>사용 예시</h6>
-
-```js {linenos=table,linenostart=1}
-const http = require("@jsh/http")
-const svr = new http.Server({
-    network:'tcp',
-    address:'127.0.0.1:8080',
-})
-svr.get("/hello/:name", (ctx) => {
-    let name = ctx.param("name");
-    let hello = ctx.query("greeting");
-    hello = hello == "" ?  "hello" : hello;
-    ctx.JSON(http.status.OK, {
-        greeting: hello,
-        name:  name,
-    })
-})
-svr.static("/html", "/html")
-svr.serve();
-```
-
 <h6>생성</h6>
 
-| Constructor             | 설명                          |
-|:------------------------|:-------------------------------------|
-| new Server(options)      | HTTP 서버를 생성합니다.          |
+```js
+new Server([options])
+```
 
 <h6>옵션</h6>
 
-| 옵션         | 타입      | 기본값    | 설명                       |
-|:-------------|:----------|:-----------|:--------------------------|
-| network      | String    | `tcp`      | `tcp`, `unix`              |
-| address      | String    |            | `host:port`, `/path/to/file` |
+- `network`: `tcp` 또는 `unix` (기본값: `tcp`)
+- `address`: `host:port` 또는 unix socket 경로
 
-- TCP/IP 예시: `{network:"tcp", address:"192.168.0.100:8080"}`
-- Unix 도메인 소켓 예시: `{network:"unix", address:"/tmp/http.sock"}`
+## Server 라우트/정적 메서드
 
-### all()
+- `get(path, handler)`
+- `static(path, root)`
+- `staticFile(path, file)`
 
-모든 HTTP 메서드를 한 번에 처리할 라우트를 등록합니다.
+## Server 템플릿 메서드
 
-<h6>사용 형식</h6>
+- `loadHTMLFiles(...files)`
+- `loadHTMLGlob(pattern)`
 
-```js
-all(request_path, handler)
-```
+## Server 라이프사이클 메서드
 
-<h6>매개변수</h6>
+- `serve([callback])`
+- `close([callback])`
 
-- `request_path` `String` 매칭할 URL 경로입니다.
-- `handler` `(context) => {}` [context](#servercontext)를 사용해 요청 정보를 처리하는 콜백입니다.
-
-<h6>반환값</h6>
-
-없음.
+`serve(callback)`는 `{ network, address }`를 전달합니다.
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1}
-const http = require("@jsh/http");
-
-const svr = new http.Server({ network: 'tcp', address: '127.0.0.1:8080' });
-svr.all("/api/resource", (ctx) => {
-    ctx.JSON(http.status.OK, { message: "Handled all methods" });
+```js {linenos=table,linenostart=1,hl_lines=[3,4,5]}
+const http = require('http');
+const server = new http.Server({ network: 'tcp', address: '127.0.0.1:8080' });
+server.get('/hello/:name', (ctx) => {
+  const name = ctx.param('name');
+  ctx.json(http.status.OK, { greeting: 'hello', name });
 });
-svr.serve();
+server.serve();
 ```
 
-### get()
-
-GET 요청을 처리할 라우트를 등록합니다.
-
-<h6>사용 형식</h6>
-
-```js
-get(request_path, handler)
-```
-
-<h6>매개변수</h6>
-
-- `request_path` `String` 매칭할 URL 경로입니다.
-- `handler` `(context) => {}` 요청을 처리할 콜백입니다.
-
-<h6>반환값</h6>
-
-없음.
-
-<h6>사용 예시</h6>
-
-```js {linenos=table,linenostart=1}
-const http = require("@jsh/http");
-
-const svr = new http.Server({ network: 'tcp', address: '127.0.0.1:8080' });
-svr.get("/hello/:name", (ctx) => {
-    const name = ctx.param("name");
-    ctx.JSON(http.status.OK, { message: `Hello, ${name}!` });
-});
-svr.serve();
-```
-
-
-### post()
-
-POST 요청을 처리할 라우트를 등록합니다.
-
-<h6>사용 형식</h6>
-
-```js
-post(request_path, handler)
-```
-
-<h6>매개변수</h6>
-
-- `request_path` `String` 매칭할 URL 경로입니다.
-- `handler` `(context) => {}` 요청 본문 등을 처리할 콜백입니다.
-
-<h6>반환값</h6>
-
-없음.
-
-<h6>사용 예시</h6>
-
-```js {linenos=table,linenostart=1}
-const http = require("@jsh/http");
-
-const svr = new http.Server({ network: 'tcp', address: '127.0.0.1:8080' });
-svr.post("/submit", (ctx) => {
-    const data = ctx.body; // 요청 본문에 접근합니다.
-    ctx.JSON(http.status.Created, { message: "Data received", data: data });
-});
-svr.serve();
-```
-
-### put()
-
-PUT 요청을 처리할 라우트를 등록합니다.
-
-<h6>사용 형식</h6>
-
-```js
-put(request_path, handler)
-```
-
-<h6>매개변수</h6>
-
-- `request_path` `String`
-- `handler` `(context) => {}` 요청 정보를 처리할 콜백입니다.
-
-<h6>반환값</h6>
-
-없음.
-
-### delete()
-
-DELETE 요청을 처리할 라우트를 등록합니다.
-
-<h6>사용 형식</h6>
-
-```js
-delete(request_path, handler)
-```
-
-<h6>매개변수</h6>
-
-- `request_path` `String`
-- `handler` `(context) => {}` 요청 정보를 처리할 콜백입니다.
-
-<h6>반환값</h6>
-
-없음.
-
-### static()
-
-정적 디렉터리를 라우트에 매핑합니다. HTML, CSS, JavaScript, 이미지 등 정적 자산 제공에 적합합니다.
-
-<h6>사용 형식</h6>
-
-```js
-static(request_path, dir_path)
-```
-
-<h6>매개변수</h6>
-
-- `request_path` `String` 요청 경로 접두사입니다.
-- `dir_path` `String` 제공할 디렉터리 경로입니다.
-
-<h6>반환값</h6>
-
-없음.
-
-<h6>사용 예시</h6>
-
-```js {linenos=table,linenostart=1}
-const http = require("@jsh/http");
-
-const svr = new http.Server({ network: 'tcp', address: '127.0.0.1:8080' });
-svr.static("/public", "/path/to/static/files");
-svr.serve();
-```
-
-### staticFile()
-
-지정한 파일을 특정 경로로 제공하도록 라우트를 등록합니다.
-
-<h6>사용 형식</h6>
-
-```js
-staticFile(request_path, file_path)
-```
-
-<h6>매개변수</h6>
-
-- `request_path` `String` 매칭할 URL 경로입니다.
-- `file_path` `String` 제공할 파일 경로입니다.
-
-<h6>반환값</h6>
-
-없음.
-
-<h6>사용 예시</h6>
-
-```js {linenos=table,linenostart=1}
-const http = require("@jsh/http");
-
-const svr = new http.Server({ network: 'tcp', address: '127.0.0.1:8080' });
-svr.staticFile("/favicon.ico", "/path/to/favicon.ico");
-svr.serve();
-```
-
-### loadHTMLGlob()
-
-HTML 템플릿 파일을 일괄 로드합니다.
-
-<h6>사용 형식</h6>
-
-```js
-loadHTMLGlob(pattern)
-```
-
-<h6>매개변수</h6>
-
-- `pattern` `String` 글롭 패턴입니다.
-
-<h6>반환값</h6>
-
-없음.
-
-<h6>사용 예시</h6>
-
-```js {linenos=table,linenostart=1}
-const http = require("@jsh/http");
-
-const svr = new http.Server({ network: 'tcp', address: '127.0.0.1:8080' });
-svr.loadHTMLGlob("/templates/*.html")
-svr.get("/docs/hello.html", ctx => {
-    ctx.HTML(http.status.OK, "hello.html", {str:"Hello World", num: 123, bool: true})
-})
-svr.serve();
-```
-
-### serve()
-
-서버를 시작하고 `stop()`이 호출될 때까지 대기합니다.
-
-<h6>사용 형식</h6>
-
-```js
-serve()
-serve(callback)
-```
-
-<h6>매개변수</h6>
-
-- `callback` `(result)=>{}` [ServerResult](#serverresult)를 인자로 받는 선택적 콜백입니다.
-
-<h6>반환값</h6>
-
-없음.
-
-<h6>사용 예시</h6>
-
-```js {linenos=table,linenostart=1}
-const http = require("@jsh/http");
-
-const svr = new http.Server({ network: 'tcp', address: '127.0.0.1:8080' });
-svr.serve((result) => {
-    console.log(`Server is listening on ${result.network}://${result.message}`);
-});
-```
-
-### close()
-
-서버를 중지하고 종료합니다.
-
-<h6>사용 형식</h6>
-
-```js
-close()
-```
-
-<h6>매개변수</h6>
-
-없음.
-
-<h6>반환값</h6>
-
-없음.
-
-<!-- #### router()
-
-## Router
-
-### Methods
-
-#### all()
-
-#### get()
-
-#### post()
-
-#### put()
-
-#### delete()
-
-#### static()
-
-#### staticFile() -->
-
-## ServerResult
-
-<h6>프로퍼티</h6>
-
-| 프로퍼티           | 타입       | 설명               |
-|:-------------------|:-----------|:-------------------|
-| network            | String     | 예: `tcp`          |
-| message            | String     | 예: `127.0.0.1:8080` |
-
-## ServerContext
-
-<h6>프로퍼티</h6>
-
-| 프로퍼티           | 타입       | 설명               |
-|:-------------------|:-----------|:-------------------|
-| request            | Object     | [ServerRequest](#serverrequest) |
-
-
-### abort()
-
-요청 처리를 즉시 중단합니다.
-
-<h6>사용 형식</h6>
-
-```js
-abort()
-```
-
-<h6>매개변수</h6>
-
-없음.
-
-<h6>반환값</h6>
-
-없음.
-
-### redirect()
-
-지정한 상태 코드로 다른 URL에 리다이렉트합니다.
-
-<h6>사용 형식</h6>
-
-```js
-redirect(statusCode, url)
-```
-
-- `statusCode` `Number` HTTP 상태 코드 (예: `302`, `http.status.Found`)
-- `url` `String` 이동할 주소
-
-<h6>반환값</h6>
-
-없음.
-
-### setHeader()
-
-응답 헤더를 설정합니다.
-
-<h6>사용 형식</h6>
-
-```js
-setHeader(name, value)
-```
-
-<h6>매개변수</h6>
-
-- `name` `String`
-- `value` `String`
-
-<h6>반환값</h6>
-
-없음.
-
-### param()
-
-라우트 경로 파라미터 값을 반환합니다.
-
-<h6>사용 형식</h6>
-
-```js
-param(name)
-```
-
-- `name` `String` 파라미터 이름
-
-<h6>반환값</h6>
-
-- `String` 파라미터 값
-
-### query()
-
-쿼리 문자열 값을 반환합니다.
-
-<h6>사용 형식</h6>
-
-```js
-query(name)
-```
-
-- `name` `String` 쿼리 키
-
-<h6>반환값</h6>
-
-- `String` 쿼리 값
-
-### TEXT()
-
-텍스트 응답을 전송합니다.
-
-<h6>사용 형식</h6>
-
-```js
-TEXT(statusCode, content)
-```
-
-<h6>매개변수</h6>
-
-없음.
-
-<h6>반환값</h6>
-
-없음.
-
-<h6>사용 예시</h6>
-
-```js {linenos=table,linenostart=1}
-svr.get("/formats/text", ctx => {
-    ctx.TEXT(http.status.OK, "Hello World");
-})
-
-// Content-Type: "text/plain; charset=utf-8"
-//
-// Hello World
-```
-
-```js {linenos=table,linenostart=1}
-svr.get("/formats/text", ctx => {
-    name = "PI";
-    pi = 3.1415;
-    ctx.TEXT(http.status.OK, "Hello %s, %3.2f", name, pi);
-})
-
-// Content-Type: "text/plain; charset=utf-8"
-//
-// Hello PI, 3.14
-```
-
-### JSON()
-
-JSON 응답을 전송합니다.
-
-<h6>사용 형식</h6>
-
-```js
-JSON(statusCode, content)
-```
-
-<h6>매개변수</h6>
-
-없음.
-
-<h6>반환값</h6>
-
-없음.
-
-<h6>사용 예시</h6>
-
-```js {linenos=table,linenostart=1}
-svr.get("/formats/json", ctx => {
-    obj = {str:"Hello World", num: 123, bool: true};
-    ctx.JSON(http.status.OK, obj);
-})
-
-// Content-Type: application/json; charset=utf-8
-//
-// {"bool":true,"num":123,"str":"Hello World"}
-```
-
-```js {linenos=table,linenostart=1}
-svr.get("/formats/json-indent", ctx => {
-    obj = {str:"Hello World", num: 123, bool: true};
-    ctx.JSON(http.status.OK, obj, {indent: true})
-})
-
-// Content-Type: application/json; charset=utf-8
-//
-// {
-//     "bool": true,
-//     "num": 123,
-//     "str": "Hello World"
-// }
-```
-
-### YAML()
-
-YAML 응답을 전송합니다.
-
-<h6>사용 형식</h6>
-
-```js
-YAML(statusCode, content)
-```
-
-<h6>매개변수</h6>
-
-없음.
-
-<h6>반환값</h6>
-
-없음.
-
-<h6>사용 예시</h6>
-
-```js {linenos=table,linenostart=1}
-svr.get("/formats/yaml", ctx => {
-    ctx.YAML(http.status.OK, {str:"Hello World", num: 123, bool: true})
-})
-
-// Content-Type: application/yaml; charset=utf-8
-//
-// bool: true
-// num: 123
-// str: Hello World
-```
-
-### TOML
-
-TOML 응답을 전송합니다.
-
-<h6>사용 형식</h6>
-
-```js
-TOML(statusCode, content)
-```
-
-<h6>매개변수</h6>
-
-없음.
-
-<h6>반환값</h6>
-
-없음.
-
-<h6>사용 예시</h6>
-
-```js {linenos=table,linenostart=1}
-svr.get("/formats/toml", ctx => {
-    ctx.TOML(http.status.OK, {str:"Hello World", num: 123, bool: true})
-})
-
-// Content-Type: application/toml; charset=utf-8
-//
-// bool = true
-// num = 123
-// str = 'Hello World'
-```
-
-### XML()
-
-XML 응답을 전송합니다.
-
-<h6>사용 형식</h6>
-
-```js
-XML(statusCode, content)
-```
-
-<h6>매개변수</h6>
-
-없음.
-
-<h6>반환값</h6>
-
-없음.
-
-<h6>사용 예시</h6>
-
-```js {linenos=table,linenostart=1}
-svr.get("/formats/xml", ctx => {
-    ctx.XML(http.status.OK, {str:"Hello World", num: 123, bool: true})
-})
-
-// Content-Type: application/xml; charset=utf-8
-//
-// <map><str>Hello World</str><num>123</num><bool>true</bool></map>
-```
-
-### HTML()
-
-HTML 템플릿을 렌더링해 응답합니다.
-
-<h6>사용 형식</h6>
-
-```js
-HTML(statusCode, template, obj)
-```
-
-- `statusCode` `Number` HTTP 응답 코드
-- `template` `String` 템플릿 이름
-- `obj` `any` 템플릿에 바인딩할 값
-
-<h6>반환값</h6>
-
-없음.
-
-<h6>사용 예시</h6>
-
-```js {linenos=table,linenostart=1}
-svr.loadHTMLGlob("/templates/*.html")
-
-svr.get("/hello.html", ctx => {
-    obj = {str:"World", num: 123, bool: true};
-    ctx.HTML(http.status.OK, "hello.html", obj);
-})
-
-// Content-Type: text/html; charset=utf-8
-//
-// <html>
-//     <body>
-//         <h1>Hello, World!</h1>
-//         <p>num: 123</p>
-//         <p>bool: true</p>
-//     </body>
-// </html>
-```
-
-- /templates/hello.html
-
-```html
-<html>
-    <body>
-        <h1>Hello, {{.str}}!</h1>
-        <p>num: {{.num}}</p>
-        <p>bool: {{.bool}}</p>
-    </body>
-</html>
-```
-
-## ServerRequest
-
-<h6>프로퍼티</h6>
-
-| Property           | Type       | 설명           |
-|:-------------------|:-----------|:----------------------|
-| method             | String     | 요청 메서드           |
-| host               | String     | 요청 호스트           |
-| path               | String     | 요청 경로             |
-| query              | String     | 쿼리 문자열           |
-| header             | Object     | 요청 헤더             |
-| body               | Object     | 요청 본문             |
-| remoteAddress      | String     | 원격 주소             |
-
-### getHeader()
-
-<h6>사용 형식</h6>
-
-```js
-getHeader(name)
-```
-
-<h6>매개변수</h6>
-
-- `name` `String` head name. e.g. `Content-Type`, `Content-Length`
-
-<h6>반환값</h6>
-
-- `String` 헤더 값.
+## Server context (`ctx`)
+
+핸들러는 요청/응답 헬퍼를 포함한 `ctx`를 인자로 받습니다.
+
+<h6>요청 헬퍼</h6>
+
+- `ctx.request.path`
+- `ctx.request.query`
+- `ctx.request.body`
+- `ctx.request.getHeader(name)`
+- `ctx.param(name)`
+- `ctx.query(name)`
+
+<h6>응답 헬퍼</h6>
+
+- `ctx.setHeader(name, value)`
+- `ctx.redirect(status, url)`
+- `ctx.abort()`
+- `ctx.text(status, format[, ...args])`
+- `ctx.json(status, data[, { indent: boolean }])`
+- `ctx.html(status, template, data)`
+- `ctx.yaml(status, data)`
+- `ctx.toml(status, data)`
+- `ctx.xml(status, data)`
 
 ## status
 
-HTTP 상태 코드를 제공합니다.
+HTTP 상태 코드 맵입니다.
 
-```js
-const http = require("@jsh/http");
+예시:
 
-http.status.OK =                              200;
-http.status.Created =                         201;
-http.status.Accepted =                        202;
-http.status.NonAuthoritativeInfo =            203;
-http.status.NoContent =                       204;
-http.status.ResetContent =                    205;
-http.status.PartialContent =                  206;
-http.status.MultipleChoices =                 300;
-http.status.MovedPermanently =                301;
-http.status.Found =                           302;
-http.status.SeeOther =                        303;
-http.status.NotModified =                     304;
-http.status.UseProxy =                        305;
-http.status.TemporaryRedirect =               307;
-http.status.PermanentRedirect =               308;
-http.status.BadRequest =                      400;
-http.status.Unauthorized =                    401;
-http.status.PaymentRequired =                 402;
-http.status.Forbidden =                       403;
-http.status.NotFound =                        404;
-http.status.MethodNotAllowed =                405;
-http.status.NotAcceptable =                   406;
-http.status.ProxyAuthRequired =               407;
-http.status.RequestTimeout =                  408;
-http.status.Conflict =                        409;
-http.status.Gone =                            410;
-http.status.LengthRequired =                  411;
-http.status.PreconditionFailed =              412;
-http.status.RequestEntityTooLarge =           413;
-http.status.RequestURITooLong =               414;
-http.status.UnsupportedMediaType =            415;
-http.status.RequestedRangeNotSatisfiable =    416;
-http.status.ExpectationFailed =               417;
-http.status.Teapot =                          418;
-http.status.UnprocessableEntity =             422;
-http.status.Locked =                          423;
-http.status.FailedDependency =                424;
-http.status.TooEarly =                        425;
-http.status.UpgradeRequired =                 426;
-http.status.PreconditionRequired =            428;
-http.status.TooManyRequests =                 429;
-http.status.RequestHeaderFieldsTooLarge =     431;
-http.status.UnavailableForLegalReasons =      451;
-http.status.InternalServerError =             500;
-http.status.NotImplemented =                  501;
-http.status.BadGateway =                      502;
-http.status.ServiceUnavailable =              503;
-http.status.GatewayTimeout =                  504;
-http.status.HTTPVersionNotSupported =         505;
-http.status.VariantAlsoNegotiates =           506;
-http.status.InsufficientStorage =             507;
-http.status.LoopDetected =                    508;
-http.status.NotExtended =                     510;
-http.status.NetworkAuthenticationRequired =   511;
-```
+- `http.status.OK`
+- `http.status.NotFound`
+- `http.status.InternalServerError`

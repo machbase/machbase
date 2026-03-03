@@ -2,6 +2,7 @@
 title: "@jsh/spatial"
 type: docs
 weight: 70
+draft: true
 ---
 
 {{< neo_since ver="8.0.52" />}}
