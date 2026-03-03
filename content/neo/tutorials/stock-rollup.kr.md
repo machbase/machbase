@@ -340,8 +340,8 @@ func main() {
     sqlText := `
         SELECT
             DATE_TRUNC('minute', time, ?) as mtime,
-            first(open_time, open) as open,
-            last(close_time, close) as close,
+            FIRST(open_time, open) as open,
+            LAST(close_time, close) as close,
             MAX(high) as high,
             MIN(low) as low,
             SUM(sum_price) / SUM(cnt) as avg_price,
@@ -359,8 +359,8 @@ func main() {
 
         SELECT
             DATE_TRUNC('minute', time, ?) as mtime,
-            first(open_time, open) as open,
-            last(close_time, close) as close,
+            FIRST(open_time, open) as open,
+            LAST(close_time, close) as close,
             MAX(high) as high,
             MIN(low) as low,
             SUM(sum_price) / SUM(cnt) as avg_price,
