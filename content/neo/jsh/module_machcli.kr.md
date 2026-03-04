@@ -90,17 +90,28 @@ query(sql[, ...params])
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[4]}
+```js {linenos=table,linenostart=1,hl_lines=[12]}
 const { Client } = require('machcli');
-const db = new Client({ host: '127.0.0.1', port: 5656, user: 'sys', password: 'manager' });
-const conn = db.connect();
-const rows = conn.query('SELECT * FROM TAG LIMIT ?', 1);
-for (const row of rows) {
-  console.println(row.NAME, row.TIME, row.VALUE);
+var db, conn, rows;
+const conf = {
+    host: '127.0.0.1',
+    port: 5656,
+    user: 'sys',
+    password: 'manager' 
+};
+try {
+    db = new Client(conf);
+    conn = db.connect();
+    rows = conn.query('SELECT NAME, TIME, VALUE FROM TAG LIMIT ?', 1);
+    for (const row of rows) {
+        console.println(row.NAME, row.TIME, row.VALUE);
+    }
+} catch( e ) {
+    console.println("ERROR", e.message);
 }
-rows.close();
-conn.close();
-db.close();
+rows && rows.close();
+conn && conn.close();
+db && db.close();
 ```
 
 ## Connection.queryRow()
