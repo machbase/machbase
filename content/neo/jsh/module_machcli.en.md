@@ -34,7 +34,7 @@ const { Client } = require('machcli');
 const db = new Client({ host: '127.0.0.1', port: 5656, user: 'sys', password: 'manager' });
 ```
 
-## Client.connect()
+**Client.connect()**
 
 Opens a connection and returns a `Connection` object.
 
@@ -44,7 +44,7 @@ Opens a connection and returns a `Connection` object.
 connect()
 ```
 
-## Client.close()
+**Client.close()**
 
 Closes the underlying database client.
 
@@ -54,7 +54,7 @@ Closes the underlying database client.
 close()
 ```
 
-## Client.user()
+**Client.user()**
 
 Returns the configured user name (uppercase).
 
@@ -64,9 +64,9 @@ Returns the configured user name (uppercase).
 user()
 ```
 
-## Client.normalizeTableName()
+**Client.normalizeTableName()**
 
-Normalizes table name into `[database, user, table]` format.
+Normalizes a table name into `[database, user, table]` format.
 
 <h6>Syntax</h6>
 
@@ -78,9 +78,9 @@ normalizeTableName(tableName)
 
 Connection object returned by `Client.connect()`.
 
-## Connection.query()
+**Connection.query()**
 
-Executes a query and returns a `Rows` object.
+Executes a SELECT query and returns a `Rows` object.
 
 <h6>Syntax</h6>
 
@@ -114,7 +114,7 @@ conn && conn.close();
 db && db.close();
 ```
 
-## Connection.queryRow()
+**Connection.queryRow()**
 
 Executes a query and returns a single row object.
 
@@ -126,7 +126,7 @@ Returned object includes `_ROWNUM` and each column as a property.
 queryRow(sql[, ...params])
 ```
 
-## Connection.exec()
+**Connection.exec()**
 
 Executes DDL/DML and returns result object.
 
@@ -141,9 +141,9 @@ Returned fields:
 exec(sql[, ...params])
 ```
 
-## Connection.explain()
+**Connection.explain()**
 
-Returns execution plan text.
+Returns an execution plan string.
 
 <h6>Syntax</h6>
 
@@ -151,9 +151,9 @@ Returns execution plan text.
 explain(sql[, ...params])
 ```
 
-## Connection.append()
+**Connection.append()**
 
-Creates an appender object for high-volume insert.
+Creates an appender object for bulk inserts.
 
 The returned appender supports methods such as `append()`, `flush()`, `close()`.
 
@@ -178,7 +178,7 @@ conn.close();
 db.close();
 ```
 
-## Connection.close()
+**Connection.close()**
 
 Closes the connection.
 
@@ -192,11 +192,11 @@ close()
 
 Result set object returned by `Connection.query()`.
 
-## Rows.message
+**Rows.message**
 
 Message from query execution.
 
-## Rows.isFetchable()
+**Rows.isFetchable()**
 
 Returns whether the result set can fetch rows.
 
@@ -206,9 +206,9 @@ Returns whether the result set can fetch rows.
 isFetchable()
 ```
 
-## Rows.next()
+**Rows.next()**
 
-Returns iterator result object:
+Returns an iterator result object.
 
 - `{ value: Row, done: false }` while rows remain
 - `{ done: true }` when completed
@@ -219,7 +219,7 @@ Returns iterator result object:
 next()
 ```
 
-## Rows.close()
+**Rows.close()**
 
 Closes the result set.
 
@@ -231,7 +231,7 @@ close()
 
 ## Row
 
-Row object generated from a fetched row.
+Represents a fetched row object.
 
 - Each column is available as `row.COLUMN_NAME`.
 - `for...of` iteration is supported.
@@ -259,7 +259,9 @@ Returns table type code by normalized table name tokens.
 queryTableType(conn, names)
 ```
 
-## TableType and stringTableType()
+## TableType
+
+**stringTableType()**
 
 Table type constants and string converter.
 
@@ -273,7 +275,9 @@ Table type constants and string converter.
 stringTableType(type)
 ```
 
-## TableFlag and stringTableFlag()
+## TableFlag
+
+**stringTableFlag()**
 
 Table flag constants and string converter.
 
@@ -287,7 +291,7 @@ Table flag constants and string converter.
 stringTableFlag(flag)
 ```
 
-## stringTableDescription()
+**stringTableDescription()**
 
 Returns combined table description with type and flag text.
 
@@ -297,7 +301,9 @@ Returns combined table description with type and flag text.
 stringTableDescription(type, flag)
 ```
 
-## ColumnType and stringColumnType()
+## ColumnType
+
+**stringColumnType()**
 
 Column type constants and string converter.
 
@@ -313,7 +319,7 @@ Column type constants and string converter.
 stringColumnType(columnType)
 ```
 
-## columnWidth()
+**columnWidth()**
 
 Returns default display width for a column type.
 
@@ -323,7 +329,9 @@ Returns default display width for a column type.
 columnWidth(columnType, length)
 ```
 
-## ColumnFlag and stringColumnFlag()
+## ColumnFlag
+
+**stringColumnFlag()**
 
 Column flag constants and string converter.
 

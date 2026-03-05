@@ -204,6 +204,7 @@ new Server([options])
 
 - `network`: `tcp` 또는 `unix` (기본값: `tcp`)
 - `address`: `host:port` 또는 unix socket 경로
+- `env`: env object (optional), 파일 시스템에 접근하기위해 요구됨.
 
 **Server 라우트/정적 메서드**
 

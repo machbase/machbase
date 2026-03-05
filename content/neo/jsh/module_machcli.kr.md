@@ -34,7 +34,7 @@ const { Client } = require('machcli');
 const db = new Client({ host: '127.0.0.1', port: 5656, user: 'sys', password: 'manager' });
 ```
 
-## Client.connect()
+**Client.connect()**
 
 연결을 열고 `Connection` 객체를 반환합니다.
 
@@ -44,7 +44,7 @@ const db = new Client({ host: '127.0.0.1', port: 5656, user: 'sys', password: 'm
 connect()
 ```
 
-## Client.close()
+**Client.close()**
 
 내부 데이터베이스 클라이언트를 종료합니다.
 
@@ -54,7 +54,7 @@ connect()
 close()
 ```
 
-## Client.user()
+**Client.user()**
 
 설정된 사용자 이름(대문자)을 반환합니다.
 
@@ -64,7 +64,7 @@ close()
 user()
 ```
 
-## Client.normalizeTableName()
+**Client.normalizeTableName()**
 
 테이블 이름을 `[database, user, table]` 형식으로 정규화합니다.
 
@@ -78,7 +78,7 @@ normalizeTableName(tableName)
 
 `Client.connect()`가 반환하는 연결 객체입니다.
 
-## Connection.query()
+**Connection.query()**
 
 조회 SQL을 실행하고 `Rows` 객체를 반환합니다.
 
@@ -114,7 +114,7 @@ conn && conn.close();
 db && db.close();
 ```
 
-## Connection.queryRow()
+**Connection.queryRow()**
 
 조회 SQL을 실행하고 단일 행 객체를 반환합니다.
 
@@ -126,7 +126,7 @@ db && db.close();
 queryRow(sql[, ...params])
 ```
 
-## Connection.exec()
+**Connection.exec()**
 
 DDL/DML을 실행하고 결과 객체를 반환합니다.
 
@@ -141,7 +141,7 @@ DDL/DML을 실행하고 결과 객체를 반환합니다.
 exec(sql[, ...params])
 ```
 
-## Connection.explain()
+**Connection.explain()**
 
 실행 계획 문자열을 반환합니다.
 
@@ -151,7 +151,7 @@ exec(sql[, ...params])
 explain(sql[, ...params])
 ```
 
-## Connection.append()
+**Connection.append()**
 
 대량 입력용 appender 객체를 생성합니다.
 
@@ -178,7 +178,7 @@ conn.close();
 db.close();
 ```
 
-## Connection.close()
+**Connection.close()**
 
 연결을 종료합니다.
 
@@ -192,11 +192,11 @@ close()
 
 `Connection.query()`가 반환하는 결과 집합 객체입니다.
 
-## Rows.message
+**Rows.message**
 
 조회 실행 결과 메시지입니다.
 
-## Rows.isFetchable()
+**Rows.isFetchable()**
 
 행을 가져올 수 있는 결과인지 반환합니다.
 
@@ -206,7 +206,7 @@ close()
 isFetchable()
 ```
 
-## Rows.next()
+**Rows.next()**
 
 이터레이터 결과 객체를 반환합니다.
 
@@ -219,7 +219,7 @@ isFetchable()
 next()
 ```
 
-## Rows.close()
+**Rows.close()**
 
 결과 집합을 닫습니다.
 
@@ -259,7 +259,9 @@ queryDatabaseId(conn, dbName)
 queryTableType(conn, names)
 ```
 
-## TableType and stringTableType()
+## TableType
+
+**stringTableType()**
 
 테이블 타입 상수와 문자열 변환 함수입니다.
 
@@ -273,7 +275,9 @@ queryTableType(conn, names)
 stringTableType(type)
 ```
 
-## TableFlag and stringTableFlag()
+## TableFlag
+
+**stringTableFlag()**
 
 테이블 플래그 상수와 문자열 변환 함수입니다.
 
@@ -287,7 +291,7 @@ stringTableType(type)
 stringTableFlag(flag)
 ```
 
-## stringTableDescription()
+**stringTableDescription()**
 
 테이블 타입/플래그를 결합한 설명 문자열을 반환합니다.
 
@@ -297,7 +301,9 @@ stringTableFlag(flag)
 stringTableDescription(type, flag)
 ```
 
-## ColumnType and stringColumnType()
+## ColumnType
+
+**stringColumnType()**
 
 컬럼 타입 상수와 문자열 변환 함수입니다.
 
@@ -313,7 +319,7 @@ stringTableDescription(type, flag)
 stringColumnType(columnType)
 ```
 
-## columnWidth()
+**columnWidth()**
 
 컬럼 타입의 기본 표시 폭을 반환합니다.
 
@@ -323,7 +329,9 @@ stringColumnType(columnType)
 columnWidth(columnType, length)
 ```
 
-## ColumnFlag and stringColumnFlag()
+## ColumnFlag
+
+**stringColumnFlag()**
 
 컬럼 플래그 상수와 문자열 변환 함수입니다.
 

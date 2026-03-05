@@ -204,6 +204,7 @@ new Server([options])
 
 - `network`: `tcp` or `unix` (default: `tcp`)
 - `address`: `host:port` or unix socket path
+- `env`: env object (optional), It is required to access the filesystem.
 
 **Server route and static methods**
 

@@ -8,102 +8,102 @@ weight: 4
 
 The `fs` module provides synchronous, Node.js-compatible file system APIs for JSH applications.
 
-## readFileSync()
+## readFile()
 
 Reads a file and returns its content as a string (default: `utf8`) or as bytes.
 
 <h6>Syntax</h6>
 
 ```js
-readFileSync(path[, options])
+readFile(path[, options])
 ```
 
 <h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1,hl_lines=[2]}
 const fs = require('fs');
-const content = fs.readFileSync('/lib/fs/index.js', 'utf8');
+const content = fs.readFile('/lib/fs/index.js', 'utf8');
 console.println(content.length);
 ```
 
-## writeFileSync()
+## writeFile()
 
 Writes data to a file. Creates the file or overwrites existing content.
 
 <h6>Syntax</h6>
 
 ```js
-writeFileSync(path, data[, options])
+writeFile(path, data[, options])
 ```
 
 <h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1,hl_lines=[2]}
 const fs = require('fs');
-fs.writeFileSync('/work/test.txt', 'Hello', 'utf8');
+fs.writeFile('/work/test.txt', 'Hello', 'utf8');
 ```
 
-## appendFileSync()
+## appendFile()
 
 Appends data to a file. Creates the file when it does not exist.
 
 <h6>Syntax</h6>
 
 ```js
-appendFileSync(path, data[, options])
+appendFile(path, data[, options])
 ```
 
 <h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1,hl_lines=[3]}
 const fs = require('fs');
-fs.writeFileSync('/work/append.txt', 'Line 1\n', 'utf8');
-fs.appendFileSync('/work/append.txt', 'Line 2\n', 'utf8');
+fs.writeFile('/work/append.txt', 'Line 1\n', 'utf8');
+fs.appendFile('/work/append.txt', 'Line 2\n', 'utf8');
 ```
 
-## countLinesSync()
+## countLines()
 
 Counts newline-separated lines in a file.
 
 <h6>Syntax</h6>
 
 ```js
-countLinesSync(path)
+countLines(path)
 ```
 
 <h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1,hl_lines=[2]}
 const fs = require('fs');
-console.println(fs.countLinesSync('/work/append.txt'));
+console.println(fs.countLines('/work/append.txt'));
 ```
 
-## existsSync()
+## exists()
 
 Returns `true` if a file or directory exists.
 
 <h6>Syntax</h6>
 
 ```js
-existsSync(path)
+exists(path)
 ```
 
 <h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1,hl_lines=[2,3]}
 const fs = require('fs');
-console.println(fs.existsSync('/work/test.txt'));
-console.println(fs.existsSync('/work/not-found.txt'));
+console.println(fs.exists('/work/test.txt'));
+console.println(fs.exists('/work/not-found.txt'));
 ```
 
-## statSync()
+## stat()
 
 Returns file or directory metadata.
 
 <h6>Syntax</h6>
 
 ```js
-statSync(path)
+stat(path)
 ```
 
 <h6>Returned fields</h6>
@@ -116,22 +116,22 @@ statSync(path)
 
 ```js {linenos=table,linenostart=1,hl_lines=[3,4]}
 const fs = require('fs');
-const st = fs.statSync('/work/test.txt');
+const st = fs.stat('/work/test.txt');
 console.println(st.isFile(), st.size);
 console.println(st.name);
 ```
 
-## lstatSync()
+## lstat()
 
-Returns file metadata. Current implementation behaves the same as `statSync()`.
+Returns file metadata. Current implementation behaves the same as `stat()`.
 
 <h6>Syntax</h6>
 
 ```js
-lstatSync(path)
+lstat(path)
 ```
 
-## readdirSync()
+## readdir()
 
 Reads directory entries.
 
@@ -144,79 +144,79 @@ The current runtime directory listing includes `.` and `..` entries.
 <h6>Syntax</h6>
 
 ```js
-readdirSync(path[, options])
+readdir(path[, options])
 ```
 
 <h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1,hl_lines=[2,3]}
 const fs = require('fs');
-const names = fs.readdirSync('/lib');
-const entries = fs.readdirSync('/lib', { withFileTypes: true });
+const names = fs.readdir('/lib');
+const entries = fs.readdir('/lib', { withFileTypes: true });
 console.println(names.length, entries.length);
 ```
 
-## mkdirSync()
+## mkdir()
 
 Creates a directory. Supports recursive creation.
 
 <h6>Syntax</h6>
 
 ```js
-mkdirSync(path[, options])
+mkdir(path[, options])
 ```
 
 <h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1,hl_lines=[2]}
 const fs = require('fs');
-fs.mkdirSync('/work/a/b/c', { recursive: true });
+fs.mkdir('/work/a/b/c', { recursive: true });
 ```
 
-## rmdirSync()
+## rmdir()
 
 Removes a directory. With `{ recursive: true }`, removes children first.
 
 <h6>Syntax</h6>
 
 ```js
-rmdirSync(path[, options])
+rmdir(path[, options])
 ```
 
-## rmSync()
+## rm()
 
 Removes a file or directory.
 
-- Directory removal uses `rmdirSync()` internally
+- Directory removal uses `rmdir()` internally
 - `force: true` suppresses errors
 
 <h6>Syntax</h6>
 
 ```js
-rmSync(path[, options])
+rm(path[, options])
 ```
 
-## unlinkSync()
+## unlink()
 
 Removes a file.
 
 <h6>Syntax</h6>
 
 ```js
-unlinkSync(path)
+unlink(path)
 ```
 
-## renameSync()
+## rename()
 
 Renames or moves a file/directory in the same mounted filesystem.
 
 <h6>Syntax</h6>
 
 ```js
-renameSync(oldPath, newPath)
+rename(oldPath, newPath)
 ```
 
-## copyFileSync()
+## copyFile()
 
 Copies a single file.
 
@@ -225,10 +225,10 @@ Copies a single file.
 <h6>Syntax</h6>
 
 ```js
-copyFileSync(src, dest[, flags])
+copyFile(src, dest[, flags])
 ```
 
-## cpSync()
+## cp()
 
 Copies a file or directory.
 
@@ -237,40 +237,40 @@ Directory copy requires `{ recursive: true }`.
 <h6>Syntax</h6>
 
 ```js
-cpSync(src, dest[, options])
+cp(src, dest[, options])
 ```
 
-## symlinkSync()
+## symlink()
 
 Creates a symbolic link.
 
 <h6>Syntax</h6>
 
 ```js
-symlinkSync(target, path)
+symlink(target, path)
 ```
 
-## readlinkSync()
+## readlink()
 
 Reads a symbolic link target.
 
 <h6>Syntax</h6>
 
 ```js
-readlinkSync(path)
+readlink(path)
 ```
 
-## realpathSync()
+## realpath()
 
 Returns a resolved path with symlink resolution behavior.
 
 <h6>Syntax</h6>
 
 ```js
-realpathSync(path)
+realpath(path)
 ```
 
-## accessSync()
+## access()
 
 Checks path accessibility.
 
@@ -280,10 +280,10 @@ Checks path accessibility.
 <h6>Syntax</h6>
 
 ```js
-accessSync(path[, mode])
+access(path[, mode])
 ```
 
-## truncateSync()
+## truncate()
 
 Truncates file content.
 
@@ -293,10 +293,10 @@ Truncates file content.
 <h6>Syntax</h6>
 
 ```js
-truncateSync(path[, len])
+truncate(path[, len])
 ```
 
-## openSync()
+## open()
 
 Opens a file and returns a numeric file descriptor.
 
@@ -305,74 +305,74 @@ Supports string flags such as `r`, `r+`, `w`, `w+`, `a`, `a+`, `wx`, `wx+`, `ax`
 <h6>Syntax</h6>
 
 ```js
-openSync(path, flags[, mode])
+open(path, flags[, mode])
 ```
 
-## closeSync()
+## close()
 
 Closes a file descriptor.
 
 <h6>Syntax</h6>
 
 ```js
-closeSync(fd)
+close(fd)
 ```
 
-## readSync()
+## read()
 
 Reads from a file descriptor into a buffer.
 
 <h6>Syntax</h6>
 
 ```js
-readSync(fd, buffer, offset, length[, position])
+read(fd, buffer, offset, length[, position])
 ```
 
-## writeSync()
+## write()
 
 Writes string or buffer data to a file descriptor.
 
 <h6>Syntax</h6>
 
 ```js
-writeSync(fd, buffer, offset, length[, position])
+write(fd, buffer, offset, length[, position])
 ```
 
-## fstatSync()
+## fstat()
 
 Returns metadata from a file descriptor.
 
 <h6>Syntax</h6>
 
 ```js
-fstatSync(fd)
+fstat(fd)
 ```
 
-## fchmodSync(), fchownSync()
+## fchmod(), fchown()
 
 Changes mode/owner via file descriptor.
 
 <h6>Syntax</h6>
 
 ```js
-fchmodSync(fd, mode)
-fchownSync(fd, uid, gid)
+fchmod(fd, mode)
+fchown(fd, uid, gid)
 ```
 
-## fsyncSync(), fdatasyncSync()
+## fsync(), fdatasync()
 
 Flushes pending file data to storage.
 
-`fdatasyncSync()` currently uses the same behavior as `fsyncSync()`.
+`fdatasync()` currently uses the same behavior as `fsync()`.
 
 <h6>Syntax</h6>
 
 ```js
-fsyncSync(fd)
-fdatasyncSync(fd)
+fsync(fd)
+fdatasync(fd)
 ```
 
-## chmodSync(), chownSync()
+## chmod(), chown()
 
 Changes mode/owner by path.
 
@@ -381,8 +381,8 @@ On Windows, `chmod`/`chown` are no-op compatible behaviors in the current runtim
 <h6>Syntax</h6>
 
 ```js
-chmodSync(path, mode)
-chownSync(path, uid, gid)
+chmod(path, mode)
+chown(path, uid, gid)
 ```
 
 ## createReadStream(), createWriteStream()
@@ -438,11 +438,121 @@ Constant object for access, copy, and open flags.
 
 ```js {linenos=table,linenostart=1,hl_lines=[2]}
 const fs = require('fs');
-fs.accessSync('/work/test.txt', fs.constants.F_OK);
+fs.access('/work/test.txt', fs.constants.F_OK);
 ```
 
 ## Aliases
 
-For Node.js compatibility, the module also exports non-`Sync` aliases.
+For readability, this document introduces APIs using non-`Sync` names.
 
-Examples: `readFile`, `writeFile`, `appendFile`, `readdir`, `mkdir`, `rm`, `stat`, `open`, `close`, `read`, `write`, `fstat`, `fsync`, `fdatasync`.
+For Node.js compatibility, the module also exports `Sync`-suffixed aliases.
+
+Examples: `readFileSync`, `writeFileSync`, `appendFileSync`, `readdirSync`, `mkdirSync`, `rmSync`, `statSync`, `openSync`, `closeSync`, `readSync`, `writeSync`, `fstatSync`, `fsyncSync`, `fdatasyncSync`.
+
+
+## Examples
+
+### Example 1: Read and Parse JSON File
+
+```js {linenos=table,linenostart=1}
+const fs = require('fs');
+
+try {
+    const content = fs.readFile('/path/to/config.json', 'utf8');
+    const config = JSON.parse(content);
+    console.println('Config loaded:', config);
+} catch (e) {
+    console.println('Error reading config:', e);
+}
+```
+
+### Example 2: Write Log File
+
+```js {linenos=table,linenostart=1}
+const fs = require('fs');
+
+function log(message) {
+    const timestamp = new Date().toISOString();
+    const logEntry = `[${timestamp}] ${message}\n`;
+    fs.appendFile('/tmp/app.log', logEntry, 'utf8');
+}
+
+log('Application started');
+log('Processing request');
+```
+
+### Example 3: Directory Tree Walker
+
+```js {linenos=table,linenostart=1}
+const fs = require('fs');
+
+function walkDir(dir, callback, indent = '') {
+    const entries = fs.readdir(dir, { withFileTypes: true });
+
+    entries.forEach(entry => {
+        const fullPath = dir + '/' + entry.name;
+
+        if (entry.isDirectory()) {
+            console.println(indent + '[DIR] ' + entry.name);
+            walkDir(fullPath, callback, indent + '  ');
+        } else {
+            console.println(indent + entry.name);
+            callback(fullPath);
+        }
+    });
+}
+
+walkDir('/tmp', (file) => {
+    // Process each file
+});
+```
+
+### Example 4: File Backup
+
+```js {linenos=table,linenostart=1}
+const fs = require('fs');
+
+function backupFile(path) {
+    if (!fs.exists(path)) {
+        throw new Error('File does not exist');
+    }
+
+    const timestamp = Date.now();
+    const backupPath = path + '.backup.' + timestamp;
+
+    fs.copyFile(path, backupPath);
+    console.println('Backup created:', backupPath);
+
+    return backupPath;
+}
+
+backupFile('/tmp/important.txt');
+```
+
+### Example 5: Safe File Write
+
+```js {linenos=table,linenostart=1}
+const fs = require('fs');
+
+function safeWriteFile(path, data) {
+    const tempPath = path + '.tmp';
+
+    try {
+        // Write to temporary file first
+        fs.writeFile(tempPath, data, 'utf8');
+
+        // If successful, rename to target
+        fs.rename(tempPath, path);
+
+        console.println('File written safely');
+    } catch (e) {
+        // Clean up temp file if it exists
+        if (fs.exists(tempPath)) {
+            fs.unlink(tempPath);
+        }
+        throw e;
+    }
+}
+
+safeWriteFile('/tmp/data.txt', 'Important data');
+```

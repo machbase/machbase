@@ -1,7 +1,8 @@
 ---
-title: JSH - JavaScript
+title: JSH
 type: docs
 weight: 75
+tags: JavaScript
 ---
 
 {{< neo_since ver="8.0.52" />}}
