@@ -6,7 +6,7 @@ weight: 100
 
 {{< neo_since ver="8.0.73" />}}
 
-`@jsh/opcua` 모듈은 JSH 애플리케이션에서 OPC UA 서버에 읽기/쓰기를 수행하는 클라이언트 API를 제공합니다.
+`opcua` 모듈은 JSH 애플리케이션에서 OPC UA 서버에 읽기/쓰기를 수행하는 클라이언트 API를 제공합니다.
 
 ## Client
 
@@ -193,3 +193,87 @@ try {
 - `TimestampsToReturn.Both`
 - `TimestampsToReturn.Neither`
 - `TimestampsToReturn.Invalid`
+
+## OPCUA 클라이언트
+
+이 예제는 OPC UA 서버에 연결해 시스템 지표를 읽고 데이터베이스에 저장하는 수집기를 구현합니다.
+
+**동작 흐름**
+
+1. OPC UA 연동: `opcua` 모듈을 사용해 `opc.tcp://localhost:4840` 서버에 연결하고 `sys_cpu`, `sys_mem`, `load1` 등 노드 값을 조회합니다.
+2. 주기 수집: `setInterval()`을 활용해 10초마다 데이터를 읽습니다.
+3. 데이터 적재: 수집한 값은 `EXAMPLE` 테이블에 `name`, `time`, `value` 컬럼으로 저장합니다.
+
+### 데이터 수집기
+
+스크립트를 `opcua-client.js`로 저장한 뒤 JSH 터미널에서 백그라운드로 실행하십시오.
+
+```
+jsh / > opcua-client
+jsh / > ps
+┌──────┬──────┬──────┬──────────────────┬────────┐ 
+│  PID │ PPID │ USER │ NAME             │ UPTIME │ 
+├──────┼──────┼──────┼──────────────────┼────────┤ 
+│ 1044 │ 1    │ sys  │ /opcua-client.js │ 13s    │ 
+│ 1045 │ 1025 │ sys  │ ps               │ 0s     │ 
+└──────┴──────┴──────┴──────────────────┴────────┘ 
+```
+
+- opcua-client.js
+
+```js {linenos=table,linenostart=1}
+opcua = require("opcua");
+process = require("process");
+machcli = require("machcli");
+
+const nodes = [
+    "ns=1;s=sys_cpu",
+    "ns=1;s=sys_mem",
+    "ns=1;s=load1",
+    "ns=1;s=load5",
+    "ns=1;s=load15",
+];
+const tags = [
+    "sys_cpu", "sys_mem", "sys_load1", "sys_load5", "sys_load15"
+];
+const dbConf = { host: '127.0.0.1', port: 5656, user: 'sys', password: 'manager' };
+const sqlText = `INSERT INTO EXAMPLE (name,time,value) values(?,?,?)`;
+const uaClient = new opcua.Client({ endpoint: "opc.tcp://localhost:4840" });
+process.addShutdownHook(()=>{
+    uaClient.close();
+});
+setInterval(()=>{
+    const ts = process.now();
+    const vs = uaClient.read({
+        nodes: nodes,
+        timestampsToReturn: opcua.TimestampsToReturn.Both
+    });
+    var dbClient, conn;
+    try {
+        dbClient = new machcli.Client(dbConf);
+        conn = dbClient.connect();
+        vs.forEach((v, idx) => {
+            if( v.value !== null ) {
+                conn.exec(sqlText, tags[idx], ts, v.value);
+            }
+        })
+    } catch (e) {
+        console.println("Error:", e.message);
+    } finally {
+        conn && conn.close();
+        dbClient && dbClient.close();
+    }
+}, 10*1000);
+```
+
+### 시뮬레이터 서버
+
+`opcua-client.js`를 시험하려면 필요한 시스템 지표 노드를 제공하는 OPC UA 서버가 필요합니다.
+실환경이 없다면 아래 저장소에서 제공하는 시뮬레이터를 사용해 주십시오.
+`sys_cpu`, `sys_mem`, `load1`, `load5`, `load15` 등의 샘플 데이터를 제공하여 수집기 및 시각화 흐름을 검증하실 수 있습니다.
+
+설정 방법은 저장소의 안내를 따르시면 됩니다.
+
+[https://github.com/machbase/neo-server/tree/main/jsh/native/opcua/test_server](https://github.com/machbase/neo-server/tree/main/jsh/native/opcua/test_server)
+
+시뮬레이터를 실행한 뒤 `opcua-client.js`를 가동하면 OPC UA 클라이언트가 정상적으로 연결되어 데이터를 수집합니다.

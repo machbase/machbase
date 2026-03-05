@@ -6,7 +6,7 @@ weight: 100
 
 {{< neo_since ver="8.0.73" />}}
 
-The `@jsh/opcua` module provides an OPC UA client API for JSH applications.
+The `opcua` module provides an OPC UA client API for JSH applications.
 
 ## Client
 
@@ -193,3 +193,91 @@ try {
 - `TimestampsToReturn.Both`
 - `TimestampsToReturn.Neither`
 - `TimestampsToReturn.Invalid`
+
+## OPCUA Client
+
+This example implements a collector that connects to an OPC UA server, reads system metrics,
+and stores them in the database.
+
+**Flow**
+
+1. OPC UA integration: use the `opcua` module to connect to `opc.tcp://localhost:4840` and
+    read node values such as `sys_cpu`, `sys_mem`, and `load1`.
+2. Periodic collection: use `setInterval()` to read data every 10 seconds.
+3. Data ingestion: store collected values in the `EXAMPLE` table (`name`, `time`, `value`).
+
+### Data collector
+
+Save the script as `opcua-client.js`, then run it in the background from the JSH terminal.
+
+```
+jsh / > opcua-client
+jsh / > ps
+┌──────┬──────┬──────┬──────────────────┬────────┐ 
+│  PID │ PPID │ USER │ NAME             │ UPTIME │ 
+├──────┼──────┼──────┼──────────────────┼────────┤ 
+│ 1044 │ 1    │ sys  │ /opcua-client.js │ 13s    │ 
+│ 1045 │ 1025 │ sys  │ ps               │ 0s     │ 
+└──────┴──────┴──────┴──────────────────┴────────┘ 
+```
+
+- `opcua-client.js`
+
+```js {linenos=table,linenostart=1}
+opcua = require("opcua");
+process = require("process");
+machcli = require("machcli");
+
+const nodes = [
+    "ns=1;s=sys_cpu",
+    "ns=1;s=sys_mem",
+    "ns=1;s=load1",
+    "ns=1;s=load5",
+    "ns=1;s=load15",
+];
+const tags = [
+    "sys_cpu", "sys_mem", "sys_load1", "sys_load5", "sys_load15"
+];
+const dbConf = { host: '127.0.0.1', port: 5656, user: 'sys', password: 'manager' };
+const sqlText = `INSERT INTO EXAMPLE (name,time,value) values(?,?,?)`;
+const uaClient = new opcua.Client({ endpoint: "opc.tcp://localhost:4840" });
+process.addShutdownHook(()=>{
+    uaClient.close();
+});
+setInterval(()=>{
+    const ts = process.now();
+    const vs = uaClient.read({
+        nodes: nodes,
+        timestampsToReturn: opcua.TimestampsToReturn.Both
+    });
+    var dbClient, conn;
+    try {
+        dbClient = new machcli.Client(dbConf);
+        conn = dbClient.connect();
+        vs.forEach((v, idx) => {
+            if( v.value !== null ) {
+                conn.exec(sqlText, tags[idx], ts, v.value);
+            }
+        })
+    } catch (e) {
+        console.println("Error:", e.message);
+    } finally {
+        conn && conn.close();
+        dbClient && dbClient.close();
+    }
+}, 10*1000);
+```
+
+### Simulator server
+
+To test `opcua-client.js`, you need an OPC UA server that provides system metric nodes.
+If you do not have a real environment, use the simulator from the repository below.
+It provides sample data such as `sys_cpu`, `sys_mem`, `load1`, `load5`, and `load15`
+to validate collection and visualization flows.
+
+Follow the instructions in the repository to set it up.
+
+[https://github.com/machbase/neo-server/tree/main/jsh/native/opcua/test_server](https://github.com/machbase/neo-server/tree/main/jsh/native/opcua/test_server)
+
+After starting the simulator, run `opcua-client.js` and the OPC UA client will connect
+and collect data.
