@@ -66,25 +66,28 @@ get(url[, options][, callback])
 get(options[, callback])
 ```
 
-## Agent
+**status**
 
-HTTP agent wrapper.
+HTTP status-code map.
 
-<h6>Creation</h6>
+Examples:
 
-```js
-new Agent([options])
-```
+- `http.status.OK`
+- `http.status.NotFound`
+- `http.status.InternalServerError`
 
-<h6>Methods</h6>
+**Behavior notes**
 
-- `destroy()`
+- `response.ok` is `true` for status codes in the `200`-`299` range.
+- Keys in `response.headers` are normalized to lowercase.
+- `setHeader()` / `getHeader()` / `hasHeader()` / `removeHeader()` treat header names case-insensitively.
+- Multiple `write()` calls accumulate request body data before sending.
 
 ## ClientRequest
 
 Outgoing request object returned by `request()` / `get()`.
 
-## ClientRequest header methods
+**ClientRequest header methods**
 
 - `setHeader(name, value)`
 - `getHeader(name)`
@@ -104,7 +107,7 @@ console.println(req.getHeader('X-Test-Header'));
 req.end();
 ```
 
-## ClientRequest.write()
+**ClientRequest.write()**
 
 Writes body chunks.
 
@@ -117,7 +120,7 @@ Writes body chunks.
 write(chunk[, encoding][, callback])
 ```
 
-## ClientRequest.end()
+**ClientRequest.end()**
 
 Finishes and sends the request.
 
@@ -129,7 +132,7 @@ Finishes and sends the request.
 end([data[, encoding]][, callback])
 ```
 
-## ClientRequest.destroy()
+**ClientRequest.destroy()**
 
 Destroys request object and optionally emits an error.
 
@@ -139,7 +142,7 @@ Destroys request object and optionally emits an error.
 destroy([err])
 ```
 
-## ClientRequest events
+**ClientRequest events**
 
 - `response` (`IncomingMessage`)
 - `error` (`Error`)
@@ -160,7 +163,7 @@ HTTP response object.
 - `complete`
 - `raw` (internal Go response object)
 
-## IncomingMessage body methods
+**IncomingMessage body methods**
 
 - `text([encoding])`
 - `json()`
@@ -170,7 +173,7 @@ HTTP response object.
 - `text()` and `readBody()` use `utf-8` by default.
 - `json()` can throw if parsing fails.
 
-## IncomingMessage utility methods
+**IncomingMessage utility methods**
 
 - `setTimeout(msecs[, callback])`
 - `close()`
@@ -202,18 +205,18 @@ new Server([options])
 - `network`: `tcp` or `unix` (default: `tcp`)
 - `address`: `host:port` or unix socket path
 
-## Server route and static methods
+**Server route and static methods**
 
 - `get(path, handler)`
 - `static(path, root)`
 - `staticFile(path, file)`
 
-## Server template methods
+**Server template methods**
 
 - `loadHTMLFiles(...files)`
 - `loadHTMLGlob(pattern)`
 
-## Server lifecycle methods
+**Server lifecycle methods**
 
 - `serve([callback])`
 - `close([callback])`
@@ -232,7 +235,7 @@ server.get('/hello/:name', (ctx) => {
 server.serve();
 ```
 
-## Server context (`ctx`)
+**Server context**
 
 Handler receives `ctx` with request and response helpers.
 
@@ -256,23 +259,6 @@ Handler receives `ctx` with request and response helpers.
 - `ctx.yaml(status, data)`
 - `ctx.toml(status, data)`
 - `ctx.xml(status, data)`
-
-## status
-
-HTTP status-code map.
-
-Examples:
-
-- `http.status.OK`
-- `http.status.NotFound`
-- `http.status.InternalServerError`
-
-## Behavior notes
-
-- `response.ok` is `true` for status codes in the `200`-`299` range.
-- Keys in `response.headers` are normalized to lowercase.
-- `setHeader()` / `getHeader()` / `hasHeader()` / `removeHeader()` treat header names case-insensitively.
-- Multiple `write()` calls accumulate request body data before sending.
 
 ## Client examples
 

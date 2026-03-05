@@ -66,25 +66,28 @@ get(url[, options][, callback])
 get(options[, callback])
 ```
 
-## Agent
+**status**
 
-HTTP agent 래퍼 객체입니다.
+HTTP 상태 코드 맵입니다.
 
-<h6>생성</h6>
+예시:
 
-```js
-new Agent([options])
-```
+- `http.status.OK`
+- `http.status.NotFound`
+- `http.status.InternalServerError`
 
-<h6>메서드</h6>
+**동작 참고**
 
-- `destroy()`
+- `response.ok`는 상태 코드가 `200`~`299`일 때 `true`입니다.
+- `response.headers`의 키는 소문자로 정규화됩니다.
+- `setHeader()`/`getHeader()`/`hasHeader()`/`removeHeader()`는 헤더 이름을 대소문자 구분 없이 처리합니다.
+- `write()`를 여러 번 호출하면 요청 본문이 누적된 뒤 전송됩니다.
 
 ## ClientRequest
 
 `request()`/`get()`가 반환하는 요청 객체입니다.
 
-## ClientRequest 헤더 메서드
+**ClientRequest 헤더 메서드**
 
 - `setHeader(name, value)`
 - `getHeader(name)`
@@ -104,7 +107,7 @@ console.println(req.getHeader('X-Test-Header'));
 req.end();
 ```
 
-## ClientRequest.write()
+**ClientRequest.write()**
 
 요청 본문 청크를 기록합니다.
 
@@ -117,7 +120,7 @@ req.end();
 write(chunk[, encoding][, callback])
 ```
 
-## ClientRequest.end()
+**ClientRequest.end()**
 
 요청을 종료하고 전송합니다.
 
@@ -129,7 +132,7 @@ write(chunk[, encoding][, callback])
 end([data[, encoding]][, callback])
 ```
 
-## ClientRequest.destroy()
+**ClientRequest.destroy()**
 
 요청 객체를 파기하고 필요 시 에러 이벤트를 발생시킵니다.
 
@@ -139,7 +142,7 @@ end([data[, encoding]][, callback])
 destroy([err])
 ```
 
-## ClientRequest 이벤트
+**ClientRequest 이벤트**
 
 - `response` (`IncomingMessage`)
 - `error` (`Error`)
@@ -160,7 +163,7 @@ HTTP 응답 객체입니다.
 - `complete`
 - `raw` (내부 Go 응답 객체)
 
-## IncomingMessage 본문 메서드
+**IncomingMessage 본문 메서드**
 
 - `text([encoding])`
 - `json()`
@@ -170,7 +173,7 @@ HTTP 응답 객체입니다.
 - `text()`/`readBody()`의 기본 인코딩은 `utf-8`입니다.
 - `json()`은 파싱 실패 시 예외를 발생시킬 수 있습니다.
 
-## IncomingMessage 유틸리티 메서드
+**IncomingMessage 유틸리티 메서드**
 
 - `setTimeout(msecs[, callback])`
 - `close()`
@@ -202,18 +205,18 @@ new Server([options])
 - `network`: `tcp` 또는 `unix` (기본값: `tcp`)
 - `address`: `host:port` 또는 unix socket 경로
 
-## Server 라우트/정적 메서드
+**Server 라우트/정적 메서드**
 
 - `get(path, handler)`
 - `static(path, root)`
 - `staticFile(path, file)`
 
-## Server 템플릿 메서드
+**Server 템플릿 메서드**
 
 - `loadHTMLFiles(...files)`
 - `loadHTMLGlob(pattern)`
 
-## Server 라이프사이클 메서드
+**Server 라이프사이클 메서드**
 
 - `serve([callback])`
 - `close([callback])`
@@ -232,7 +235,7 @@ server.get('/hello/:name', (ctx) => {
 server.serve();
 ```
 
-## Server context (`ctx`)
+**Server context**
 
 핸들러는 요청/응답 헬퍼를 포함한 `ctx`를 인자로 받습니다.
 
@@ -256,23 +259,6 @@ server.serve();
 - `ctx.yaml(status, data)`
 - `ctx.toml(status, data)`
 - `ctx.xml(status, data)`
-
-## status
-
-HTTP 상태 코드 맵입니다.
-
-예시:
-
-- `http.status.OK`
-- `http.status.NotFound`
-- `http.status.InternalServerError`
-
-## 동작 참고
-
-- `response.ok`는 상태 코드가 `200`~`299`일 때 `true`입니다.
-- `response.headers`의 키는 소문자로 정규화됩니다.
-- `setHeader()`/`getHeader()`/`hasHeader()`/`removeHeader()`는 헤더 이름을 대소문자 구분 없이 처리합니다.
-- `write()`를 여러 번 호출하면 요청 본문이 누적된 뒤 전송됩니다.
 
 ## 클라이언트 예제
 
