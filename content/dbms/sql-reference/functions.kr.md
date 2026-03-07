@@ -15,7 +15,7 @@ weight: 70
 * [DATE_BIN](#date_bin)
 * [DAYOFWEEK](#dayofweek)
 * [DECODE](#decode)
-* [EXTRACT_*](#extract_)
+* [EXTRACT_* / EXTRACT_LE_*](#extract_)
 * [FIRST / LAST](#first--last)
 * [FROM_UNIXTIME](#from_unixtime)
 * [FROM_TIMESTAMP](#from_timestamp)
@@ -637,64 +637,75 @@ NULL
 
 ## EXTRACT_*
 
-바이너리 프레임에서 비트를 추출하는 함수들입니다. 모든 함수는
-`BINARY/VARBINARY`를 입력으로 받으며 frame이 NULL이면 결과도 NULL입니다.
+바이너리 프레임에서 비트를 추출하는 함수 모음입니다.
+`EXTRACT_*`는 빅엔디안, `EXTRACT_LE_*`는 리틀엔디안 모델을 사용합니다.
+모든 함수는 `BINARY/VARBINARY`를 입력으로 받으며 frame이 NULL이면 결과도 NULL입니다.
 
-- 비트 인덱스는 0 기반이며, 바이트는 빅엔디언 순서이고 바이트 내부에서는
-  bit0이 MSB입니다.
-- 범위 규칙: 단일 비트 `0 <= bit_pos < frame_bits`, 범위는
-  `start_bit >= 0`, `bit_count` 1~64, `start_bit + bit_count <= frame_bits`.
-- 범위를 넘으면 런타임 오류가 발생하며, `EXTRACT_SCALED_DOUBLE`는
-  `[ERR-02229: Invalid argument value for function (EXTRACT_SCALED_DOUBLE).]`
-  메시지를 반환합니다.
+### 엔디안 모델
 
-### EXTRACT_BIT(frame, bit_pos) → TINYINT
+- `EXTRACT_*`: MSB 우선 (`bit 0`은 `byte[0]`의 MSB)
+- `EXTRACT_LE_*`: LSB 우선 (`bit 0`은 `byte[0]`의 LSB)
+- 비트 인덱스는 프레임 전체 기준으로 0부터 시작합니다.
+
+### 공통 규칙
+
+- 단일 비트: `0 <= bit_pos < frame_bits`
+- 범위 추출: `start_bit >= 0`, `1 <= bit_count <= 64`,
+  `start_bit + bit_count <= frame_bits`
+- `EXTRACT_FLOAT*`는 32비트, `EXTRACT_DOUBLE*`는 64비트를 읽습니다.
+- signed 추출은 2의 보수(two's complement)로 해석하고 64비트로 부호 확장합니다.
+- 범위 오류: `ERR_QP_INVALID_ARG_VALUE` (`ERR-02229` 계열)
+- 인자 타입 오류: `ERR_QP_FUNCTION_ARG_TYPE`
+
+### EXTRACT_BIT(frame, bit_pos) / EXTRACT_LE_BIT(frame, bit_pos) → TINYINT
 
 단일 비트를 0 또는 1로 반환합니다.
 
 ```sql
--- frame = 0x80
-SELECT EXTRACT_BIT(frame, 0) AS msb, EXTRACT_BIT(frame, 7) AS lsb FROM t;
+-- frame = 0x80 (1000 0000)
+SELECT EXTRACT_BIT(frame, 0)    AS be_bit0,
+       EXTRACT_LE_BIT(frame, 0) AS le_bit0
+FROM t;
 ```
 
-### EXTRACT_ULONG(frame, start_bit, bit_count) → BIGINT UNSIGNED
-### EXTRACT_LONG(frame, start_bit, bit_count) → BIGINT
+### EXTRACT_ULONG(frame, start_bit, bit_count) / EXTRACT_LE_ULONG(frame, start_bit, bit_count) → BIGINT UNSIGNED
+### EXTRACT_LONG(frame, start_bit, bit_count) / EXTRACT_LE_LONG(frame, start_bit, bit_count) → BIGINT
 
 1~64비트를 부호 없는/2의 보수 정수로 읽습니다.
 
 ```sql
--- frame = 0x12 34 56 (0001 0010 0011 0100 0101 0110)
-SELECT EXTRACT_ULONG(frame, 0, 8)   AS b0,   -- 0x12
-       EXTRACT_ULONG(frame, 4, 12)  AS mid,  -- 0x234
-       EXTRACT_LONG(frame, 12, 12)  AS tail  -- 0x456 as signed
+-- frame = 0x12 34
+SELECT EXTRACT_ULONG(frame, 0, 16)    AS be_u16,  -- 0x1234
+       EXTRACT_LE_ULONG(frame, 0, 16) AS le_u16   -- 0x3412
 FROM t;
 ```
 
-### EXTRACT_FLOAT(frame, start_bit) → FLOAT
-### EXTRACT_DOUBLE(frame, start_bit) → DOUBLE
+### EXTRACT_FLOAT(frame, start_bit) / EXTRACT_LE_FLOAT(frame, start_bit) → FLOAT
+### EXTRACT_DOUBLE(frame, start_bit) / EXTRACT_LE_DOUBLE(frame, start_bit) → DOUBLE
 
 32/64비트를 IEEE754 float/double로 재해석하며, 지정한 비트 구간이 frame 안에
 들어와야 합니다.
 
 ```sql
-SELECT EXTRACT_FLOAT(frame, 0)   AS f0,
-       EXTRACT_DOUBLE(frame, 64) AS d0
+SELECT EXTRACT_FLOAT(frame, 0)      AS be_f32,
+       EXTRACT_LE_FLOAT(frame, 0)   AS le_f32,
+       EXTRACT_DOUBLE(frame, 64)    AS be_f64,
+       EXTRACT_LE_DOUBLE(frame, 64) AS le_f64
 FROM sensor_bin;
 ```
 
 ### EXTRACT_SCALED_DOUBLE(frame, start_bit, bit_count, signed, scale, offset)
+### EXTRACT_LE_SCALED_DOUBLE(frame, start_bit, bit_count, signed, scale, offset)
 → DOUBLE
 
 1~64비트를 `signed=0`이면 부호 없는 값, `signed=1`이면 2의 보수 signed 값으로
-읽고, `raw * scale + offset`을 반환합니다.
+읽고 `raw * scale + offset`을 반환합니다.
 
 ```sql
--- frame = 0xF2 34 56 78 12 34 56 78
-SELECT EXTRACT_SCALED_DOUBLE(frame, 0, 8, 0, 1, 0)  AS u8,
-       EXTRACT_SCALED_DOUBLE(frame, 0, 8, 1, 1, 0)  AS s8;
-
--- 20비트 전류 센서: 0.01A/LSB, offset -100A
-SELECT EXTRACT_SCALED_DOUBLE(frame, 0, 20, 0, 0.01, -100.0) AS current_a FROM t;
+-- 20비트 센서값, scale 0.01, offset -40.0
+SELECT EXTRACT_SCALED_DOUBLE(frame, 0, 20, 0, 0.01, -40.0)    AS be_value,
+       EXTRACT_LE_SCALED_DOUBLE(frame, 0, 20, 0, 0.01, -40.0) AS le_value
+FROM t_bin;
 ```
 
 
