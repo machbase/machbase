@@ -87,13 +87,12 @@ APPEND(table("example"))
 
 ```js {linenos=table,linenostart=1}
 SCRIPT({
-    const gen = require("@jsh/generator");
-    const sys = require("@jsh/system");
-    ts = (new Date()).getTime() - 100 * 1000; // now - 100s.
-    for(x of gen.arrange(1, 100, 1)) {
+    const { arrange } = require("mathx");
+    now = (new Date()).getTime() - 100 * 1000; // now - 100s.
+    for(x of arrange(1, 100, 1)) {
         y = Math.sin(x/100*2*Math.PI)
-        ts += 1000; // add 1 sec.
-        $.yield("chart-line", sys.parseTime(ts, "ms"), y);
+        ts = new Date(now + x * 1000); // add 1 sec.
+        $.yield("chart-line", ts, y);
     }
 })
 APPEND(table("example"))

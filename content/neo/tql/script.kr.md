@@ -34,12 +34,11 @@ TQL은 **SRC**와 **MAP** 컨텍스트에서 JavaScript(ECMA5)를 활용할 수 
 
 {{< neo_since ver="8.0.52" />}}
 
-`require()`를 통해 `SCRIPT()` 안에서 JSH 모듈을 가져올 수 있습니다.  
-`@jsh/process`는 JSH 애플리케이션 내부에서만 사용 가능하며, 그 외 `@jsh` 모듈은 모두 사용할 수 있습니다.
+`require()`를 통해 `SCRIPT()` 안에서 JSH 모듈을 가져올 수 있습니다.
 
 ```js
 SCRIPT({
-    const { arrange } = require("@jsh/generator")
+    const { arrange } = require("mathx")
     arrange(0, 6, 3).forEach((i) =>$.yield(i))
 })
 CSV()

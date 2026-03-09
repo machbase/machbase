@@ -36,11 +36,10 @@ The *init_code* is optional and runs only once at the beginning. The *main_code*
 {{< neo_since ver="8.0.52" />}}
 
 You can import JSH modules into the SCRIPT() using `require()`.
-All "@jsh" modules are available except `@jsh/process` which is only accessible from inside JSH application.
 
 ```js
 SCRIPT({
-    const { arrange } = require("@jsh/generator")
+    const { arrange } = require("mathx")
     arrange(0, 6, 3).forEach((i) =>$.yield(i))
 })
 CSV()

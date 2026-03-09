@@ -307,25 +307,25 @@ SCRIPT({
             {type: "boxplot", name: "petal length", data:[]},
         ],
     };
-    const ana = require("@jsh/analysis");
+    const mx = require("mathx");
     for( s in board) {
         o = board[s];
         chart.xAxis.data.push(s);
         // sepal length
-        o.sepalLength = ana.sort(o.sepalLength)
+        o.sepalLength = mx.sort(o.sepalLength)
         min = Math.min(...o.sepalLength);
         max = Math.max(...o.sepalLength);
-        q1 = ana.quantile(0.25, o.sepalLength);
-        q2 = ana.quantile(0.5, o.sepalLength);
-        q3 = ana.quantile(0.75, o.sepalLength);
+        q1 = mx.quantile(0.25, o.sepalLength);
+        q2 = mx.quantile(0.5, o.sepalLength);
+        q3 = mx.quantile(0.75, o.sepalLength);
         chart.series[0].data.push([min, q1, q2, q3, max]);
         // petal length
-        o.petalLength = ana.sort(o.petalLength)
+        o.petalLength = mx.sort(o.petalLength)
         min = Math.min(...o.petalLength);
         max = Math.max(...o.petalLength);
-        q1 = ana.quantile(0.25, o.petalLength);
-        q2 = ana.quantile(0.5, o.petalLength);
-        q3 = ana.quantile(0.75, o.petalLength);
+        q1 = mx.quantile(0.25, o.petalLength);
+        q2 = mx.quantile(0.5, o.petalLength);
+        q3 = mx.quantile(0.75, o.petalLength);
         chart.series[1].data.push([min, q1, q2, q3, max]);
     }
     $.yield(chart);

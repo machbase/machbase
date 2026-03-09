@@ -191,11 +191,11 @@ Imagine the zero-point calibration process for sensors. When we accumulate conse
 
 {{< /tab >}}
 {{< tab name="SCRIPT" >}}
-```js {{linenos=table,hl_lines=[2,11]}}
+```js {{linenos=table,hl_lines=[4,11]}}
 SCRIPT({
-    const filter = require("@jsh/filter")
+    const filter = require("mathx/filter")
+    const { arrange } = require("mathx");
     const avg = new filter.Avg();
-    const { arrange } = require("@jsh/generator");
 }, {
     for( val of arrange(1, 5, 0.03)) {
         val = Math.round(val*100)/100;
@@ -254,11 +254,11 @@ Instead of calculating the average for the entire accumulated sample, we use a f
 
 {{< /tab >}}
 {{< tab name="SCRIPT" >}}
-```js {{linenos=table,hl_lines=[2,11]}}
+```js {{linenos=table,hl_lines=[4,12]}}
 SCRIPT({
-    const filter = require("@jsh/filter")
+    const { arrange } = require("mathx");
+    const filter = require("mathx/filter")
     const movavg = new filter.MovAvg(10);
-    const { arrange } = require("@jsh/generator");
     $.result = { columns: ["val", "sig", "ma10"], types: ["double", "double", "double"] }
 }, {
     for( val of arrange(1, 5, 0.03)) {
@@ -322,11 +322,11 @@ To address this, a common practice is to apply different weights to the most rec
 
 {{< /tab >}}
 {{< tab name="SCRIPT" >}}
-```js {{linenos=table,hl_lines=[2,11]}}
+```js {{linenos=table,hl_lines=[4,12]}}
 SCRIPT({
-    const filter = require("@jsh/filter")
+    const { arrange } = require("mathx");
+    const filter = require("mathx/filter")
     const lowpass = new filter.Lowpass(0.40);
-    const { arrange } = require("@jsh/generator");
     $.result = { columns: ["val", "sig", "lpf"], types: ["double", "double", "double"] }
 }, {
     for( val of arrange(1, 5, 0.03)) {
@@ -390,12 +390,11 @@ Feel free to experiment with different model values and observe how the graph re
 
 {{< /tab >}}
 {{< tab name="SCRIPT" >}}
-```js {{linenos=table,hl_lines=[2,13]}}
+```js {{linenos=table,hl_lines=[4,12]}}
 SCRIPT({
-    const filter = require("@jsh/filter")
+    const { arrange } = require("mathx");
+    const filter = require("mathx/filter")
     const kalman = new filter.Kalman(0.1, 0.5, 1.0);
-    const { arrange } = require("@jsh/generator");
-    var ts = require("@jsh/system").now();
     $.result = { columns: ["val", "sig", "kalman"], types: ["double", "double", "double"] }
 }, {
     for( val of arrange(1, 5, 0.03)) {
@@ -403,8 +402,7 @@ SCRIPT({
         sig = Math.sin( 1.2*2*Math.PI*val );
         noise = 0.09 * Math.cos(9*2*Math.PI*val) + 
                 0.15 * Math.sin(12*2*Math.PI*val);
-        ts = ts.Add(1000000000)
-        $.yield( val, sig+noise, kalman.eval(ts, sig+noise) );
+        $.yield( val, sig+noise, kalman.eval(new Date(), sig+noise) );
     }
 })
 CHART(

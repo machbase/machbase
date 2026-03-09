@@ -9,9 +9,9 @@ SCRIPT({
     counter = {};
     data = [];
 },{
-    const http = require("@jsh/http");
-    req = http.request("https://docs.machbase.com/assets/example/wordcount.txt")
-    req.do((rsp) => {
+    const http = require("http");
+    const url = "https://docs.machbase.com/assets/example/wordcount.txt";
+    req = http.get(url, (rsp) => {
         content = rsp.text();
         words = content.split(/\s+/)
         for(w of words) {

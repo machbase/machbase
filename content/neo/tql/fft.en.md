@@ -122,8 +122,8 @@ SCRIPT({
     times.push(ts);
     values.push(val);
 },{
-    const ana = require("@jsh/analysis");
-    result = ana.fft(times, values);
+    const mx = require("mathx");
+    result = mx.fft(times, values);
     for(i = 0; i < result.x.length; i++) {
         $.yield(result.x[i], result.y[i]);
     }

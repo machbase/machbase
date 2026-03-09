@@ -43,8 +43,7 @@ The following fields and properties are available within the HTML template conte
 
 ```html {linenos=table,hl_lines=[6]}
 SCRIPT({
-    const { now } = require("@jsh/system");
-    $.yield(now(), "Hello World");
+    $.yield(new Date(), "Hello World");
 })
 HTML({
     <li>{{ $.Value 0 | timeformat "RFC3339" "UTC" }}

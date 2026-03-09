@@ -186,17 +186,18 @@ CHART(
 
 {{< /tab >}}
 {{< tab name="SCRIPT" >}}
-```js
+```js {{linenos=table,hl_lines=[4,11]}}
 SCRIPT({
-    const filter = require("@jsh/filter")
+    const filter = require("mathx/filter")
+    const { arrange } = require("mathx");
     const avg = new filter.Avg();
-    const { arrange } = require("@jsh/generator");
 }, {
     for( val of arrange(1, 5, 0.03)) {
-        sig = Math.sin(1.2*2*Math.PI*val);
-        noise = 0.09*Math.cos(9*2*Math.PI*val)+0.15*Math.sin(12*2*Math.PI*val);
-        avg.push(sig + noise);
-        $.yield(val, sig + noise, avg.value());
+        val = Math.round(val*100)/100;
+        sig = Math.sin( 1.2*2*Math.PI*val );
+        noise = 0.09 * Math.cos(9*2*Math.PI*val) + 
+                0.15 * Math.sin(12*2*Math.PI*val);
+        $.yield( val, sig + noise, avg.eval(sig+noise) );
     }
 })
 CHART(
@@ -206,7 +207,7 @@ CHART(
         yAxis:{ max:1.5, min:-1.5 },
         series:[
             { type: "line", data: column(1), name:"value+noise" },
-            { type: "line", data: column(2), name:"avg" },
+            { type: "line", data: column(2), name:"AVG" },
         ],
         legend: { bottom: 10 },
     })
@@ -236,14 +237,202 @@ CHART(
 {{< /tab >}}
 {{< /tabs >}}
 
-## 누적 평균, 이동 평균, 지수 평균
+## 이동 평균
 
-Machbase TQL은 누적 평균, 이동 평균, 지수 평균 등을 쉽게 적용할 수 있는 필터 함수를 제공합니다. 각 필터에 관한 상세 예제는 하위 문서에서 확인할 수 있습니다.
+누적된 전체 샘플에 대해 평균을 계산하는 대신, 고정된 크기의 샘플 구간(window)을 사용해 평균을 계산합니다. 이는 주식 차트에서 흔히 보는 n일 이동 평균과 같은 개념입니다.
 
-## 시계열 필터 요약
+{{< tabs >}}
+{{< tab name="chart" >}}
 
-- **AVG / MOVAVG** : 저주파 신호에서 고주파 노이즈를 제거할 때 사용합니다.
-- **EWMA** : 최근 데이터에 더 많은 가중치를 주어 추이를 부드럽게 관찰할 수 있습니다.
-- **Median Filter** : 순간적인 이상치에 민감할 때 유용합니다.
+{{< figure src="/neo/tql/img/filter_movavg.jpg" width="600px" >}}
 
-{{< children_toc />}}
+{{< /tab >}}
+{{< tab name="SCRIPT" >}}
+```js {{linenos=table,hl_lines=[4,12]}}
+SCRIPT({
+    const { arrange } = require("mathx");
+    const filter = require("mathx/filter")
+    const movavg = new filter.MovAvg(10);
+    $.result = { columns: ["val", "sig", "ma10"], types: ["double", "double", "double"] }
+}, {
+    for( val of arrange(1, 5, 0.03)) {
+        val = Math.round(val*100)/100;
+        sig = Math.sin( 1.2*2*Math.PI*val );
+        noise = 0.09 * Math.cos(9*2*Math.PI*val) + 
+                0.15 * Math.sin(12*2*Math.PI*val);
+        $.yield( val, sig + noise, movavg.eval(sig+noise) );
+    }
+})
+CHART(
+    size("600px", "400px"),
+    chartOption({
+        xAxis:{ type: "category", data: column(0)},
+        yAxis:{ max:1.5, min:-1.5 },
+        series:[
+            { type: "line", data: column(1), name:"value+noise" },
+            { type: "line", data: column(2), name:"MA(10)" },
+        ],
+        legend: { bottom: 10 },
+    })
+)
+```
+{{< /tab >}}
+{{< tab name="SET-MAP" >}}
+```js {{linenos=table,hl_lines=[6,14]}}
+FAKE(arrange(1,5,0.03))
+MAPVALUE(0, round(value(0)*100)/100)
+SET(sig, sin(1.2*2*PI*value(0)) )
+SET(noise, 0.09*cos(9*2*PI*value(0)) + 0.15*sin(12*2*PI*value(0)))
+MAPVALUE(1, $sig + $noise)
+MAP_MOVAVG(2, value(1), 10)
+CHART(
+    size("600px", "400px"),
+    chartOption({
+        xAxis:{ type: "category", data: column(0)},
+        yAxis:{ max:1.5, min:-1.5 },
+        series:[
+            { type: "line", data: column(1), name:"value+noise" },
+            { type: "line", data: column(2), name:"MA(10)" },
+        ],
+        legend: { bottom: 10 }
+    })
+)
+```
+{{< /tab >}}
+{{< /tabs >}}
+
+## 저역 통과 필터
+
+이동 평균은 사용하기 쉽고 이해하기도 쉽지만, 몇 가지 한계가 있습니다.
+
+윈도우 안의 모든 샘플에 동일한 가중치를 적용하므로 최근 추세를 반영하는 속도가 느릴 수 있습니다.
+또한 값이 크게 변하는 구간에 비교적 둔감합니다.
+이를 보완하기 위해 평균을 계산할 때는 윈도우 안의 최근 값과 오래된 값에 서로 다른 가중치를 주는 방식을 흔히 사용합니다.
+
+{{< tabs >}}
+{{< tab name="chart" >}}
+
+{{< figure src="/neo/tql/img/filter_lpf.jpg" width="600px" >}}
+
+{{< /tab >}}
+{{< tab name="SCRIPT" >}}
+```js {{linenos=table,hl_lines=[4,12]}}
+SCRIPT({
+    const { arrange } = require("mathx");
+    const filter = require("mathx/filter")
+    const lowpass = new filter.Lowpass(0.40);
+    $.result = { columns: ["val", "sig", "lpf"], types: ["double", "double", "double"] }
+}, {
+    for( val of arrange(1, 5, 0.03)) {
+        val = Math.round(val*100)/100;
+        sig = Math.sin( 1.2*2*Math.PI*val );
+        noise = 0.09 * Math.cos(9*2*Math.PI*val) + 
+                0.15 * Math.sin(12*2*Math.PI*val);
+        $.yield( val, sig + noise, lowpass.eval(sig+noise) );
+    }
+})
+CHART(
+    size("600px", "400px"),
+    chartOption({
+        xAxis:{ type: "category", data: column(0)},
+        yAxis:{ max:1.5, min:-1.5 },
+        series:[
+            { type: "line", data: column(1), name:"value+noise" },
+            { type: "line", data: column(2), name:"lpf" },
+        ],
+        legend: { bottom: 10 },
+    })
+)
+```
+{{< /tab >}}
+{{< tab name="SET-MAP" >}}
+```js {{linenos=table,hl_lines=[6,14]}}
+FAKE(arrange(1,5,0.03))
+MAPVALUE(0, round(value(0)*100)/100)
+SET(sig, sin(1.2*2*PI*value(0)) )
+SET(noise, 0.09*cos(9*2*PI*value(0)) + 0.15*sin(12*2*PI*value(0)))
+MAPVALUE(1, $sig + $noise)
+MAP_LOWPASS(2, $sig + $noise, 0.40)
+CHART(
+    size("600px", "400px"),
+    chartOption({
+        xAxis:{ type: "category", data: column(0)},
+        yAxis:{ max:1.5, min:-1.5 },
+        series:[
+            { type: "line", data: column(1), name:"value+noise" },
+            { type: "line", data: column(2), name:"lpf" },
+        ],
+        legend: { bottom: 10 }
+    })
+)
+```
+{{< /tab >}}
+{{< /tabs >}}
+
+## 칼만 필터
+
+`MAP_KALMAN()` 함수의 `model()` 인자는 수학적 시스템 변수를 나타내는 입력값을 받습니다. 최적의 시스템 값을 어떻게 정할지는 이 문서의 범위를 벗어납니다.
+다만 실제로는 TQL에서 간단한 칼만 필터 모델을 쉽게 적용해 보고, 경험적으로 최적의 파라미터를 반복적으로 찾아갈 수 있습니다.
+
+아래 예제는 `model` 값의 변화가 그래프에 어떤 영향을 주는지 보여줍니다.
+여러 `model` 값을 적용해 보면서 그래프가 어떻게 반응하는지 확인해 보실 수 있습니다.
+
+{{< tabs >}}
+{{< tab name="chart" >}}
+
+{{< figure src="/neo/tql/img/filter_kalman.jpg" width="600px" >}}
+
+{{< /tab >}}
+{{< tab name="SCRIPT" >}}
+```js {{linenos=table,hl_lines=[4,12]}}
+SCRIPT({
+    const { arrange } = require("mathx");
+    const filter = require("mathx/filter")
+    const kalman = new filter.Kalman(0.1, 0.5, 1.0);
+    $.result = { columns: ["val", "sig", "kalman"], types: ["double", "double", "double"] }
+}, {
+    for( val of arrange(1, 5, 0.03)) {
+        val = Math.round(val*100)/100;
+        sig = Math.sin( 1.2*2*Math.PI*val );
+        noise = 0.09 * Math.cos(9*2*Math.PI*val) + 
+                0.15 * Math.sin(12*2*Math.PI*val);
+        $.yield( val, sig+noise, kalman.eval(new Date(), sig+noise) );
+    }
+})
+CHART(
+    size("600px", "400px"),
+    chartOption({
+        xAxis:{ type: "category", data: column(0)},
+        yAxis:{ max:1.5, min:-1.5 },
+        series:[
+            { type: "line", data: column(1), name:"value+noise" },
+            { type: "line", data: column(2), name:"kalman" },
+        ],
+        legend: { bottom: 10 },
+    })
+)
+```
+{{< /tab >}}
+{{< tab name="SET-MAP" >}}
+```js {{linenos=table,hl_lines=[6,14]}}
+FAKE(arrange(1,5,0.03))
+MAPVALUE(0, round(value(0)*100)/100)
+SET(sig, sin(1.2*2*PI*value(0)) )
+SET(noise, 0.09*cos(9*2*PI*value(0)) + 0.15*sin(12*2*PI*value(0)))
+MAPVALUE(1, $sig + $noise)
+MAP_KALMAN(2, $sig + $noise, model(0.1, 0.6, 1.0))
+CHART(
+    size("600px", "400px"),
+    chartOption({
+        xAxis:{ type: "category", data: column(0)},
+        yAxis:{ max:1.5, min:-1.5 },
+        series:[
+            { type: "line", data: column(1), name:"value+noise" },
+            { type: "line", data: column(2), name:"kalman" },
+        ],
+        legend: { bottom: 10 }
+    })
+)
+```
+{{< /tab >}}
+{{< /tabs >}}
