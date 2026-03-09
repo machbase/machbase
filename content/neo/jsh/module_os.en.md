@@ -1,7 +1,7 @@
 ---
 title: "os"
 type: docs
-weight: 6
+weight: 100
 ---
 
 {{< neo_since ver="8.0.73" />}}

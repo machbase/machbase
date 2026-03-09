@@ -1,48 +1,41 @@
 ---
-title: "@jsh/mat"
+title: "mat"
 type: docs
-weight: 70
-draft: true
+weight: 10
 ---
 
-{{< neo_since ver="8.0.52" />}}
+{{< neo_since ver="8.0.74" />}}
 
 ## Dense()
 
-밀집 행렬(Dense Matrix) 구현입니다.
+Dense Matrix
 
-<h6>생성</h6>
+<h6>Creation</h6>
 
 ```js
 new Dense(r, c, data)
 ```
 
-<h6>매개변수</h6>
+<h6>Parameters</h6>
 
-- `r` `Number` 행(row) 개수
-- `c` `Number` 열(column) 개수
-- `data` `Number[]` 행렬 요소 배열
+- `r` `Number` rows
+- `c` `Number` cols
+- `data` `Number[]`
 
-`r × c` 크기의 새로운 Dense 행렬을 생성합니다.
+creates a new dense matrix with r rows and c columns.
 
 ### dims()
 
-행렬의 `(행, 열)` 크기를 반환합니다.
-
 ### at()
-
-지정한 `(row, col)` 위치의 값을 반환합니다.
 
 ### set()
 
-지정한 위치의 값을 설정합니다.
-
 ### T()
 
-전치 행렬을 생성합니다.
+creates a new dense matrix of transposed.
 
 ```js {linenos=table,linenostart=1}
-const mat = require("@jsh/mat");
+const mat = require('mathx/mat');
 A = new mat.Dense(2, 2, [
     1, 2,
     3, 4,
@@ -56,10 +49,8 @@ console.log(mat.format(B))
 
 ### add()
 
-행렬 덧셈을 수행합니다.
-
 ```js {linenos=table,linenostart=1}
-const mat = require("@jsh/mat");
+const mat = require('mathx/mat');
 A = new mat.Dense(2, 2, [
     1, 2,
     3, 4,
@@ -78,10 +69,8 @@ console.log(mat.format(C))
 
 ### sub()
 
-행렬 뺄셈을 수행합니다.
-
 ```js {linenos=table,linenostart=1}
-const mat = require("@jsh/mat");
+const mat = require('mathx/mat');
 A = new mat.Dense(2, 2, [
     1, 2,
     3, 4,
@@ -100,10 +89,8 @@ console.log(mat.format(C))
 
 ### mul()
 
-행렬 곱셈을 수행합니다.
-
 ```js {linenos=table,linenostart=1}
-const mat = require("@jsh/mat");
+const mat = require('mathx/mat');
 A = new mat.Dense(2, 2, [
     1, 2,
     3, 4,
@@ -122,10 +109,8 @@ console.log(mat.format(C))
 
 ### mulElem()
 
-원소별(element-wise) 곱셈을 수행합니다.
-
 ```js {linenos=table,linenostart=1}
-const mat = require("@jsh/mat");
+const mat = require('mathx/mat');
 A = new mat.Dense(2, 2, [
     1, 2,
     3, 4,
@@ -143,15 +128,10 @@ console.log(mat.format(C))
 ```
 
 ### divElem()
-
-원소별 나눗셈을 수행합니다.
-
 ### inverse()
 
-역행렬을 구합니다.
-
 ```js {linenos=table,linenostart=1}
-const mat = require("@jsh/mat");
+const mat = require('mathx/mat');
 A = new mat.Dense(2, 2, [
     1, 2,
     3, 4,
@@ -173,95 +153,55 @@ console.log(mat.format(C, {format:"C=%.f", prefix:"  "}))
 ```
 
 ### solve()
-
-선형 방정식 `A * X = B`를 풀어 해를 반환합니다.
-
 ### exp()
-
-행렬 지수 함수를 계산합니다.
-
 ### pow()
-
-행렬 거듭제곱을 수행합니다.
-
 ### scale()
-
-스칼라 값을 곱해 행렬을 스케일링합니다.
 
 ## VecDense
 
-밀집 벡터 타입입니다.
+Vector
 
-<h6>생성</h6>
+<h6>Creation</h6>
 
 ```js
 new VecDense(n, data)
 ```
 
-<h6>매개변수</h6>
+<h6>Parameters</h6>
 
-- `n` `Number` 벡터 길이(0보다 커야 합니다)
-- `data` `Number[]` 요소 배열(생략 시 0으로 채워집니다)
+- `n` `Number` Creates a new VecDense of length n. It should be larger than 0.
+- `data` `Number[]` Array of elements. If data is omit, blank array is assigned.
 
 
 ### cap()
-
-내부 버퍼 용량을 반환합니다.
-
 ### len()
-
-벡터 길이를 반환합니다.
-
 ### atVec()
-
-지정한 인덱스의 값을 반환합니다.
-
 ### setVec()
-
-지정한 인덱스의 값을 설정합니다.
-
 ### addVec()
-
-두 벡터를 더해 결과를 저장합니다.
-
 ### subVec()
-
-벡터 뺄셈을 수행합니다.
-
 ### mulVec()
-
-행렬과 벡터의 곱을 계산합니다.
-
 ### mulElemVec()
-
-원소별 곱을 계산합니다.
-
 ### scaleVec()
-
-스칼라를 곱해 벡터를 스케일링합니다.
-
 ### solveVec()
-
-선형 시스템을 풀어 벡터 해를 구합니다.
 
 ## QR
 
-**QR 분해**는 행렬 *A*를 직교 행렬 *Q*와 상삼각 행렬 *R*의 곱 `A = QR`로 표현하는 방법입니다.
-선형 최소제곱(LLS) 문제를 풀거나 QR 고유값 알고리즘의 기초로 널리 사용됩니다.
+**QR factorization** is a decomposition of a matrix *A* into a product `A = QR` of an orthonormal matrix *Q* and a upper triangular matrix *R*.
+QR decomposition is often used to solve the linear least squares (LLS) problem and is the basis for a particular eigenvalue algorithm, the QR algorithm.
 
-임의의 실수 행렬 *A*는 다음과 같이 분해할 수 있습니다.
+Any real square matrix *A* may be decomposed as
 
 ```
 A = QR
 ```
 
-여기서 *Q*는 직교(정규 직교) 행렬, *R*은 상삼각 행렬입니다.
-*A*가 가역이면 *R*의 대각 원소를 양수로 두었을 때 분해가 유일하게 결정됩니다.
+where *Q* is an orthogonal matrix and *R* is an upper triangular matrix.
+If *A* is invertible, then the factorization is unique if we require the diagonal elements of *R* to be positive.
 
 **Usage example**
 
 ```js {linenos=table,linenostart=1}
-const m = require("@jsh/mat")
+const m = require('mathx/mat')
 A = new m.Dense(4, 2, [
     0, 1,
     1, 1,
@@ -291,7 +231,7 @@ console.log(m.format(x, { format: "x = %.2f", prefix: "    " }))
 ## format()
 
 ```js {linenos=table,linenostart=1}
-const m = require("@jsh/mat")
+const m = require('mathx/mat')
 A = new m.Dense(100, 100)
 for (let i = 0; i < 100; i++) {
     for (let j = 0; j < 100; j++) {

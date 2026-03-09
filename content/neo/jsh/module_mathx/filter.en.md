@@ -1,21 +1,18 @@
 ---
-title: "@jsh/filter"
+title: "filter"
 type: docs
-weight: 60
-draft: true
+weight: 10
 ---
 
-{{< neo_since ver="8.0.52" />}}
+{{< neo_since ver="8.0.74" />}}
 
 ## Avg
 
-값을 순차적으로 입력해 산술 평균을 갱신합니다.
-
-**사용 예시**
+**Usage example**
 
 ```js {linenos=table,linenostart=1}
-const { arrange } = require("@jsh/generator");
-const m = require("@jsh/filter")
+const { arrange } = require('mathx');
+const m = require('mathx/filter')
 const avg = new m.Avg();
 for( x of arrange(10, 30, 10) ) {
     console.log(x,  avg.eval(x).toFixed(2));
@@ -28,13 +25,11 @@ for( x of arrange(10, 30, 10) ) {
 
 ## MovAvg
 
-고정 길이 윈도우 기반 이동 평균을 계산합니다.
-
-**사용 예시**
+**Usage example**
 
 ```js {linenos=table,linenostart=1}
-const { linspace } = require("@jsh/generator");
-const m = require("@jsh/filter")
+const { linspace } = require('mathx');
+const m = require('mathx/filter')
 const movAvg = new m.MovAvg(10);
 for( x of linspace(0, 100, 100) ) {
     console.log(""+x.toFixed(4)+","+movAvg.eval(x).toFixed(4));
@@ -44,7 +39,7 @@ for( x of linspace(0, 100, 100) ) {
 // 1.0101,0.5051
 // 2.0202,1.0101
 // 3.0303,1.5152
-// ... 생략 ...
+// ... omit ...
 // 96.9697,92.4242
 // 97.9798,93.4343
 // 98.9899,94.4444
@@ -53,13 +48,11 @@ for( x of linspace(0, 100, 100) ) {
 
 ## Lowpass
 
-저역 통과 필터로 잡음을 완화합니다.
-
-**사용 예시**
+**Usage example**
 
 ```js {linenos=table,linenostart=1}
-const { arrange, Simplex } = require("@jsh/generator");
-const m = require("@jsh/filter")
+const { arrange, Simplex } = require('mathx');
+const m = require('mathx/filter')
 const lpf = new m.Lowpass(0.3);
 const simplex = new Simplex(1);
 
@@ -82,17 +75,15 @@ for( x of arrange(1, 10, 1) ) {
 
 ## Kalman
 
-칼만 필터를 사용해 시계열을 추정합니다.
-
-**사용 예시**
+**Usage example**
 
 ```js {linenos=table,linenostart=1}
-const m = require("@jsh/filter");
+const m = require('mathx/filter');
 const kalman = new m.Kalman(1.0, 1.0, 2.0);
-var ts = 1745484444000; // 밀리초
+var ts = 1745484444000; // ms
 
 for( x of [1.3, 10.2, 5.0, 3.4] ) {
-    ts += 1000; // 1초 증가
+    ts += 1000; // add 1 sec.
     console.log(kalman.eval(new Date(ts), x).toFixed(3));
 }
 
@@ -104,16 +95,14 @@ for( x of [1.3, 10.2, 5.0, 3.4] ) {
 
 ## KalmanSmoother
 
-스무딩용 칼만 필터로 보다 완만한 추세를 제공합니다.
-
-**사용 예시**
+**Usage example**
 
 ```js {linenos=table,linenostart=1}
-const m = require("@jsh/filter");
+const m = require('mathx/filter');
 const kalman = new m.KalmanSmoother(1.0, 1.0, 2.0);
-var ts = 1745484444000; // 밀리초
+var ts = 1745484444000; // ms
 for( x of [1.3, 10.2, 5.0, 3.4] ) {
-    ts += 1000; // 1초 증가
+    ts += 1000; // add 1 sec.
     console.log(kalman.eval(new Date(ts), x).toFixed(2));
 }
 
@@ -123,13 +112,13 @@ for( x of [1.3, 10.2, 5.0, 3.4] ) {
 // 2.70
 ```
 
-## 칼만 필터와 스무더 비교
+## Kalman Filter vs. Smoother
 
 ```js
 SCRIPT({
-    const { now } = require("@jsh/system");
-    const { arrange, Simplex } = require("@jsh/generator");
-    const m = require("@jsh/filter")
+    const { arrange } = require('mathx');
+    const { Simplex } = require('mathx/simplex');
+    const m = require('mathx/filter');
     const simplex = new Simplex(1234);
     const kalmanFilter = new m.Kalman(0.1, 0.001, 1.0);
     const kalmanSmoother = new m.KalmanSmoother(0.1, 0.001, 1.0);
@@ -138,11 +127,12 @@ SCRIPT({
     s_x = []; s_values = []; s_filter = []; s_smooth = [];
     for( x of arrange(0, 10, 0.1)) {
         x = Math.round(x*100)/100;
-        measure = real + simplex.eval(x) * 4;
+        measure = real + simplex.noise(x) * 4;
+        now = new Date();
         s_x.push(x);
         s_values.push(measure);
-        s_filter.push(kalmanFilter.eval(now(), measure));
-        s_smooth.push(kalmanSmoother.eval(now(), measure));
+        s_filter.push(kalmanFilter.eval(now, measure));
+        s_smooth.push(kalmanSmoother.eval(now, measure));
     }
     $.yield({
         title:{text:"Kalman filter vs. smoother"},

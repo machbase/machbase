@@ -1,11 +1,10 @@
 ---
-title: "@jsh/spatial"
+title: "spatial"
 type: docs
-weight: 70
-draft: true
+weight: 30
 ---
 
-{{< neo_since ver="8.0.52" />}}
+{{< neo_since ver="8.0.74" />}}
 
 ## haversine()
 
@@ -15,7 +14,7 @@ draft: true
 **사용 예시**
 
 ```js {linenos=table,hl_lines=[4],linenostart=1}
-m = require("@jsh/spatial");
+m = require("mathx/spatial");
 latLon1 = [45.04, 7.42];  // 이탈리아 토리노
 latLon2 = [3.09, 101.42]; // 말레이시아 쿠알라룸푸르
 distance = m.haversine({radius: 6371, coordinates:[latLon1, latLon2]})
