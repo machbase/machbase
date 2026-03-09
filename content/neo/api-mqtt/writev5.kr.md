@@ -84,43 +84,39 @@ append 방식과 배열 페이로드를 사용하면 IoT나 실시간 데이터 
 
 주요 코드 부분을 단계별로 살펴보면 다음과 같습니다.
 
-```js {linenos=table,linenostart=1,hl_lines=["24-28",34]}
+```js {linenos=table,linenostart=1,hl_lines=["8-11","18-19",25,30]}
 // 필요한 모듈을 임포트하고 5653 포트의 로컬 MQTT 브로커에 연결하는 클라이언트를 생성합니다.
-const system = require("@jsh/system");
-const mqtt = require("@jsh/mqtt");
-var conf = { serverUrls: ["tcp://127.0.0.1:5653"] };
+const mqtt = require('mqtt');
+var conf = { servers: ['tcp://127.0.0.1:5653'] };
 var client = new mqtt.Client(conf);
-
-// 발행 옵션을 설정합니다.
-var pubOpt = {
-    topic:"db/write/EXAMPLE", // EXAMPLE 테이블에 데이터를 씁니다.
-    qos:0,                    // QoS 0(최대 한 번 전송)
-    properties: {
-        user: {
-            method: "append", // append 모드
-            timeformat: "ms", // 타임스탬프 단위는 밀리초입니다.
-        },
-    },
-};
-
 // 전송할 레코드 배열을 준비합니다.
 // 각 레코드는 이름, 밀리초 단위 타임스탬프, 값을 포함합니다.
-ts = (new Date()).getTime();
+const ts = (new Date()).getTime();
 var pubPayload = [
-    [ "my-car", ts+0, 32.1 ],
-    [ "my-car", ts+1, 65.4 ],
-    [ "my-car", ts+2, 76.5 ],
+    [ "my-car", ts, 32.1 ],
+    [ "my-car", (ts+1000), 65.4 ],
+    [ "my-car", (ts+2000), 76.5 ],
 ];
-
-client.onConnect = ()=>{
-    // 클라이언트가 브로커에 연결되면 지정된 옵션으로 페이로드를 발행합니다.
-    client.publish(pubOpt, JSON.stringify(pubPayload))
+// 발행 옵션을 설정합니다.
+var pubOption = {
+    qos:1,
+    properties: {
+        user:{
+            method: 'append',  // write in 'append' mode
+            timeformat: 'ms'   // the time unit is ms. instead of ns.
+        }
+    }
 }
-
-// 클라이언트는 3초 타임아웃으로 브로커에 연결하고 데이터를 전송한 뒤,
-// 모든 메시지 발송이 완료되면 연결을 종료합니다.
-client.connect({timeout:3000});
-client.disconnect({waitForEmptyQueue: true, timeout:3000});
+client.on('open', () => {
+    // 클라이언트가 브로커에 연결되면 지정된 옵션으로 페이로드를 발행합니다.
+    client.publish('db/write/EXAMPLE', pubPayload, pubOption)
+});
+client.on('published', ()=>{
+    // 모든 메시지 발송이 완료되면 500ms. 이후 연결을 종료합니다.
+    setTimeout(() => {
+        client.close();
+    }, 500);
+})
 ```
 
 **단일 레코드 발행**

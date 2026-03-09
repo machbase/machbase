@@ -1,347 +1,250 @@
 ---
-title: "@jsh/mqtt"
+title: "mqtt"
 type: docs
-weight: 11
-draft: true
+weight: 100
 ---
 
-{{< neo_since ver="8.0.52" />}}
+{{< neo_since ver="8.0.74" />}}
 
+The `mqtt` is the MQTT client module.
+
+In JSH applications, you normally use:
+
+```js
+const mqtt = require('mqtt');
+```
+
+This module is event-driven and auto-connects when a `Client` is created.
 
 ## Client
 
-The MQTT client.
+MQTT client object.
+
+<h6>Creation</h6>
+
+```js
+new Client(options)
+```
+
+<h6>Options</h6>
+
+| Option                             | Type       | Default | Description |
+|:-----------------------------------|:-----------|:--------|:------------|
+| servers                            | String[]   |         | MQTT broker URLs (e.g. `tcp://127.0.0.1:1883`) |
+| username                           | String     |         | Username for broker authentication |
+| password                           | String     |         | Password for broker authentication |
+| keepAlive                          | Number     | `30`    | Keep alive in seconds |
+| connectRetryDelay                  | Number     | `0`     | Reconnect delay in milliseconds |
+| cleanStartOnInitialConnection      | Boolean    | `false` | MQTT v5 clean start on first connection |
+| connectTimeout                     | Number     | `0`     | Connect timeout in milliseconds |
 
 <h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1}
-const mqtt = require("@jsh/mqtt");
-const client = new mqtt.Client({ serverUrls: ["tcp://127.0.0.1:1236"] });
-try {
-    client.onConnect = connAck => { println("connected."); }
-    client.onConnectError = err => { println("connect error", err); }
-    client.connect({timeout: 10*1000});
-    client.publish("test/topic", "Hello, MQTT!", 0)
-} catch(e) {
-    console.log("Error:", e);
-} finally {
-    client.disconnect({waitForEmptyQueue:true});
-}
+const mqtt = require('mqtt');
+
+const client = new mqtt.Client({
+    servers: ['tcp://127.0.0.1:1883'],
+    username: 'user',
+    password: 'pass',
+    keepAlive: 60,
+    connectRetryDelay: 2000,
+    connectTimeout: 10 * 1000,
+    cleanStartOnInitialConnection: true,
+});
+
+client.on('open', () => {
+    console.println('Connected');
+    client.subscribe('test/topic');
+});
+
+client.on('subscribed', (topic, reason) => {
+    console.println('Subscribed:', topic, 'reason:', reason);
+    client.publish('test/topic', 'Hello, MQTT!');
+});
+
+client.on('message', (msg) => {
+    console.println('Message:', msg.topic, msg.payload);
+    client.close();
+});
+
+client.on('error', (err) => {
+    console.println('Error:', err.message);
+});
+
+client.on('close', () => {
+    console.println('Disconnected');
+});
 ```
 
-<h6>Creation</h6>
-
-| Constructor             | Description                          |
-|:------------------------|:----------------------------------------------|
-| new Client(*options*)   | Instantiates a MQTT client object with an options |
-
-<h6>Options</h6>
-
-| Option                             | Type         | Default        | Description         |
-|:-----------------------------------|:-------------|:---------------|:--------------------|
-| serverUrls                         | String[]     |                | server addresses    |
-| keepAlive                          | Number       | `10`           |                     |
-| cleanStart                         | Boolean      | `true`         | clean session       |
-| username                           | String       |                |                     |
-| password                           | String       |                |                     |
-| clientID                           | String       | random id      |                     |
-| debug                              | Boolean      | `false`        |                     |
-| sessionExpiryInterval              | Number       | `60`           |                     |
-| connectRetryDelay                  | Number       | `10`           |                     |
-| connectTimeout                     | Number       | `10`           |                     |
-| packetTimeout                      | Number       | `5`            |                     |
-| queue                              | String       | `memory`       |                     |
-
-### connect()
-
-<h6>Syntax</h6>
-
-```js
-connect(opts)
-```
-
-<h6>Parameters</h6>
-
-- `opts` `Object`
-
-| Property           | Type       | Description           |
-|:-------------------|:-----------|:----------------------|
-| timeout            | Number     | connection timeout in milliseconds |
-
-<h6>Return value</h6>
-
-None.
-
-### disconnect()
-
-<h6>Syntax</h6>
-
-```js
-disconnect(opts)
-```
-
-<h6>Parameters</h6>
-
-- `opts` `Object`
-
-| Property           | Type       | Description           |
-|:-------------------|:-----------|:----------------------|
-| waitForEmptyQueue  | Boolean    |                       |
-| timeout            | Number     | disconnect wait timeout in milliseconds |
-
-<h6>Return value</h6>
-
-None.
-
-### subscribe()
-
-<h6>Syntax</h6>
-
-```js
-subscribe(opts)
-```
-
-<h6>Parameters</h6>
-
-- `opts` `Object` *SubscriptionOption*
-
-<h6>SubscriptionOption</h6>
-
-| Property           | Type       | Description           |
-|:-------------------|:-----------|:----------------------|
-| **subscriptions**  | Object[]   | Array of *Subscription* |
-| properties         | Object     | *Properties*            |
-
-<h6>Subscription</h6>
-
-| Property           | Type       | Description           |
-|:-------------------|:-----------|:----------------------|
-| **topic**          | String     |                       |
-| qos                | Number     | `0`, `1`, `2`         |
-| retainHandling     | Number     |                       |
-| noLocal            | Boolean    |                       |
-| retainAsPublished  | Boolean    |                       |
-
-<h6>Properties</h6>
-
-| Property           | Type       | Description           |
-|:-------------------|:-----------|:----------------------|
-| user               | Object     | key-value properties  |
-
-<h6>Return value</h6>
-
-None.
-
-<h6>Usage example</h6>
-
-```js
-const topicName = 'sensor/temperature';
-client.subscribe({subscriptions:[{topic:topicName, qos:0}]});
-```
-
-### unsubscribe()
-
-<h6>Syntax</h6>
-
-```js
-unsubscribe(opts)
-```
-
-<h6>Parameters</h6>
-
-- `opts` `Object` *UnsubscribeOption*
-
-<h6>UnsubscribeOption</h6>
-
-| Property           | Type       | Description           |
-|:-------------------|:-----------|:----------------------|
-| **topics**         | String[]   | Array of topics to unsubscribe |
-| properties         | Object     | *Properties*          |
-
-<h6>Properties</h6>
-
-| Property           | Type       | Description           |
-|:-------------------|:-----------|:----------------------|
-| user               | Object     | user key-value properties |
-
-<h6>Return value</h6>
-
-None.
-
-<h6>Usage example</h6>
-
-```js
-const topicName = 'sensor/temperature';
-client.unsubscribe({topics:[topicName]});
-```
+## Methods
 
 ### publish()
 
+Publishes a message to a topic.
+
 <h6>Syntax</h6>
 
 ```js
-publish(opts, payload)
+publish(topic, message[, options])
 ```
 
 <h6>Parameters</h6>
 
-- `opts` `Object` *PublishOptions*
-- `payload` `String` or `Number`
+- `topic` `String`
+- `message` `String` | `Uint8Array` | `Object` | `Array`
+- `options` `Object` (optional)
 
-<h6>PublishOptions</h6>
+| Option      | Type    | Default | Description |
+|:------------|:--------|:--------|:------------|
+| qos         | Number  | `0`     | QoS level |
+| retain      | Boolean | `false` | Retain flag |
+| properties  | Object  |         | MQTT v5 publish properties |
 
-| Property           | Type       | Description           |
-|:-------------------|:-----------|:----------------------|
-| **topic**          | String     |                       |
-| qos                | Number     | `0`, `1`, `2`         |
-| packetID           | String     |                       |
-| retain             | Boolean    |                       |
-| properties         | Object     |                       |
+`options.properties` fields:
 
+| Property                  | Type     | Description |
+|:--------------------------|:---------|:------------|
+| payloadFormat             | Number   | Payload format indicator |
+| messageExpiry             | Number   | Expiry interval |
+| contentType               | String   | Content type |
+| responseTopic             | String   | Response topic |
+| correlationData           | String   | Converted to bytes |
+| topicAlias                | Number   | Topic alias |
+| subscriptionIdentifier    | Number   | Subscription identifier |
+| user                      | Object   | User properties (`key: value`) |
 
 <h6>Return value</h6>
 
-- `Object`
+None. Result is delivered by `published` or `error` events.
 
-| Property           | Type       | Description           |
-|:-------------------|:-----------|:----------------------|
-| reasonCode         | Number     |                       |
-| properties         | Object     |                       |
+### subscribe()
 
-<h6>Usage example</h6>
-
-```js
-let r = client.publish('sensor/temperature', 'Hello World', 1)
-console.log(r.reasonCode)
-```
-
-### onMessage callback
-
-Callback function that receives a message.
+Subscribes to a topic.
 
 <h6>Syntax</h6>
 
 ```js
-function (msg) { }
-```
-
-- `msg` `Object` Message
-
-<h6>Message</h6>
-
-| Property           | Type       | Description           |
-|:-------------------|:-----------|:----------------------|
-| packetID           | Number     |                       |
-| topic              | String     |                       |
-| qos                | Number     | 0, 1, 2               |
-| retain             | Boolean    |                       |
-| payload            | Object     | Payload               |
-| properties         | Object     | Properties            |
-
-<h6>Payload</h6>
-
-- `msg.payload.bytes()`
-- `msg.payload.string()`
-
-<h6>Properties</h6>
-
-| Property           | Type       | Description           |
-|:-------------------|:-----------|:----------------------|
-| correlationData    | byte[]     |                       |
-| contentType        | String     |                       |
-| responseTopic      | String     |                       |
-| payloadFormat      | Number     | or undefined          |
-| messageExpiry      | Number     | or undefined          |
-| subscriptionIdentifier | Number | or undefined          |
-| topicAlias         | Number     | or undefined          |
-| user               | Object     | user properties       |
-
-### onConnect callback
-
-On connect callback.
-
-<h6>Syntax</h6>
-
-```js
-function (ack) { }
+subscribe(topic)
 ```
 
 <h6>Parameters</h6>
 
-- `ack` `Object`
-
-| Property           | Type       | Description           |
-|:-------------------|:-----------|:----------------------|
-| sessionPresent     | Boolean    |                       |
-| reasonCode         | Number     |                       |
-| properties         | Object     | Properties            |
-
-<h6>Properties</h6>
-
-| Property              | Type       | Description           |
-|:----------------------|:-----------|:----------------------|
-| reasonString          | String     |                       |
-| reasonInfo            | String     |                       |
-| assignedClientID      | String     |                       |
-| authMethod            | String     |                       |
-| serverKeepAlive       | Number     | or undefined          |
-| sessionExpiryInterval | Number     | or undefined          |
-| user                  | Object     |                       |
+- `topic` `String`
 
 <h6>Return value</h6>
 
-None.
+None. Result is delivered by `subscribed` or `error` events.
 
-### onConnectError callback
+Note: current implementation subscribes with QoS 1.
 
-On connect error callback.
+### close()
+
+Closes the client connection.
 
 <h6>Syntax</h6>
 
 ```js
-function (err) { }
+close()
 ```
-
-<h6>Parameters</h6>
-
-- `error` `String`
 
 <h6>Return value</h6>
 
-None.
+None. Emits `close` event.
 
-### onDisconnect callback
+## Events
 
-On disconnect callback
+### open
 
-<h6>Syntax</h6>
+Emitted after the client is connected.
 
 ```js
-function (disconn) { }
+client.on('open', () => { ... })
 ```
 
-<h6>Parameters</h6>
+### message
 
-- `disconn` `Object`
-
-<h6>Return value</h6>
-
-None.
-
-### onClientError callback
-
-On client error callback
-
-<h6>Syntax</h6>
+Emitted when a subscribed message is received.
 
 ```js
-function (err) { }
+client.on('message', (msg) => { ... })
 ```
 
-<h6>Parameters</h6>
+`msg` fields:
 
-- `err` `String`
+| Property | Type   | Description |
+|:---------|:-------|:------------|
+| topic    | String | Topic name |
+| payload  | String | Message payload |
 
-<h6>Return value</h6>
+### subscribed
 
-None.
+Emitted when subscription ack is received.
+
+```js
+client.on('subscribed', (topic, reason) => { ... })
+```
+
+- `topic` `String`
+- `reason` `Number` (MQTT reason code)
+
+### published
+
+Emitted when publish ack is received.
+
+```js
+client.on('published', (topic, reason) => { ... })
+```
+
+- `topic` `String`
+- `reason` `Number` (MQTT reason code)
+
+### error
+
+Emitted when connection, subscribe, or publish fails.
+
+```js
+client.on('error', (err) => { ... })
+```
+
+- `err` `Error`
+
+### close
+
+Emitted when `close()` is called.
+
+```js
+client.on('close', () => { ... })
+```
+
+## MQTT v5 write properties example
+
+This example writes to `db/write/{table}` and sets MQTT v5 user properties documented in MQTT v5 write API.
+
+```js {linenos=table,linenostart=1}
+const mqtt = require('mqtt');
+
+const client = new mqtt.Client({
+    servers: ['tcp://127.0.0.1:5653'],
+});
+
+const rows = [
+    ['my-car', Date.now(), 32.1],
+    ['my-car', Date.now() + 1000, 65.4],
+];
+
+client.on('open', () => {
+    client.publish('db/write/EXAMPLE', rows, {
+        qos: 1,
+        properties: {
+            user: {
+                method: 'append',
+                timeformat: 'ms',
+            },
+        },
+    });
+});
+
+client.on('published', () => client.close());
+client.on('error', (err) => console.println(err.message));
+```

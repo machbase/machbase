@@ -1,347 +1,250 @@
 ---
-title: "@jsh/mqtt"
+title: "mqtt"
 type: docs
-weight: 11
-draft: true
+weight: 100
 ---
 
-{{< neo_since ver="8.0.52" />}}
+{{< neo_since ver="8.0.74" />}}
 
+`mqtt`는 JSH의 MQTT 클라이언트 모듈입니다.
+
+JSH 애플리케이션에서는 일반적으로 아래처럼 사용합니다.
+
+```js
+const mqtt = require('mqtt');
+```
+
+현재 API는 이벤트 기반이며, `Client`를 생성하면 자동으로 브로커 연결을 시도합니다.
 
 ## Client
 
-MQTT 클라이언트입니다.
+MQTT 클라이언트 객체입니다.
+
+<h6>생성</h6>
+
+```js
+new Client(options)
+```
+
+<h6>옵션</h6>
+
+| 옵션                              | 타입      | 기본값  | 설명 |
+|:----------------------------------|:----------|:--------|:-----|
+| servers                           | String[]  |         | MQTT 브로커 URL 목록 (예: `tcp://127.0.0.1:1883`) |
+| username                          | String    |         | 브로커 인증 사용자 이름 |
+| password                          | String    |         | 브로커 인증 비밀번호 |
+| keepAlive                         | Number    | `30`    | Keep Alive(초) |
+| connectRetryDelay                 | Number    | `0`     | 재접속 지연(밀리초) |
+| cleanStartOnInitialConnection     | Boolean   | `false` | 최초 연결 시 MQTT v5 clean start 여부 |
+| connectTimeout                    | Number    | `0`     | 연결 타임아웃(밀리초) |
 
 <h6>사용 예시</h6>
 
 ```js {linenos=table,linenostart=1}
-const mqtt = require("@jsh/mqtt");
-const client = new mqtt.Client({ serverUrls: ["tcp://127.0.0.1:1236"] });
-try {
-    client.onConnect = connAck => { println("connected."); }
-    client.onConnectError = err => { println("connect error", err); }
-    client.connect({timeout: 10*1000});
-    client.publish("test/topic", "Hello, MQTT!", 0)
-} catch(e) {
-    console.log("Error:", e);
-} finally {
-    client.disconnect({waitForEmptyQueue:true});
-}
+const mqtt = require('mqtt');
+
+const client = new mqtt.Client({
+    servers: ['tcp://127.0.0.1:1883'],
+    username: 'user',
+    password: 'pass',
+    keepAlive: 60,
+    connectRetryDelay: 2000,
+    connectTimeout: 10 * 1000,
+    cleanStartOnInitialConnection: true,
+});
+
+client.on('open', () => {
+    console.println('Connected');
+    client.subscribe('test/topic');
+});
+
+client.on('subscribed', (topic, reason) => {
+    console.println('Subscribed:', topic, 'reason:', reason);
+    client.publish('test/topic', 'Hello, MQTT!');
+});
+
+client.on('message', (msg) => {
+    console.println('Message:', msg.topic, msg.payload);
+    client.close();
+});
+
+client.on('error', (err) => {
+    console.println('Error:', err.message);
+});
+
+client.on('close', () => {
+    console.println('Disconnected');
+});
 ```
 
-<h6>생성</h6>
-
-| Constructor             | 설명                          |
-|:------------------------|:----------------------------------------------|
-| new Client(*options*)   | 옵션과 함께 MQTT 클라이언트를 생성합니다. |
-
-<h6>옵션</h6>
-
-| 옵션                               | 타입         | 기본값        | 설명                       |
-|:-----------------------------------|:-------------|:---------------|:---------------------------|
-| serverUrls                         | String[]     |                | 브로커 주소 목록           |
-| keepAlive                          | Number       | `10`           | Keep Alive 초              |
-| cleanStart                         | Boolean      | `true`         | 클린 세션 여부             |
-| username                           | String       |                | 사용자 이름                |
-| password                           | String       |                | 비밀번호                   |
-| clientID                           | String       | 랜덤 ID        | 클라이언트 ID              |
-| debug                              | Boolean      | `false`        | 디버그 로그 출력 여부       |
-| sessionExpiryInterval              | Number       | `60`           | 세션 만료 시간(초)         |
-| connectRetryDelay                  | Number       | `10`           | 재접속 지연(초)            |
-| connectTimeout                     | Number       | `10`           | 접속 타임아웃(초)          |
-| packetTimeout                      | Number       | `5`            | 패킷 타임아웃(초)          |
-| queue                              | String       | `memory`       | 메시지 큐 저장 방식        |
-
-### connect()
-
-<h6>사용 형식</h6>
-
-```js
-connect(opts)
-```
-
-<h6>매개변수</h6>
-
-- `opts` `Object`
-
-| Property           | Type       | 설명                      |
-|:-------------------|:-----------|:--------------------------|
-| timeout            | Number     | 접속 타임아웃(밀리초)     |
-
-<h6>반환값</h6>
-
-없음.
-
-### disconnect()
-
-<h6>사용 형식</h6>
-
-```js
-disconnect(opts)
-```
-
-<h6>매개변수</h6>
-
-- `opts` `Object`
-
-| Property           | Type       | 설명                               |
-|:-------------------|:-----------|:-----------------------------------|
-| waitForEmptyQueue  | Boolean    | 큐가 빌 때까지 기다릴지 여부        |
-| timeout            | Number     | 종료 대기 타임아웃(밀리초)          |
-
-<h6>반환값</h6>
-
-없음.
-
-### subscribe()
-
-<h6>사용 형식</h6>
-
-```js
-subscribe(opts)
-```
-
-<h6>매개변수</h6>
-
-- `opts` `Object` *SubscriptionOption*
-
-<h6>SubscriptionOption</h6>
-
-| Property           | Type       | 설명                         |
-|:-------------------|:-----------|:-----------------------------|
-| **subscriptions**  | Object[]   | *Subscription* 배열          |
-| properties         | Object     | *Properties* 객체            |
-
-<h6>Subscription</h6>
-
-| Property           | Type       | 설명                         |
-|:-------------------|:-----------|:-----------------------------|
-| **topic**          | String     | 구독할 토픽                  |
-| qos                | Number     | `0`, `1`, `2`                |
-| retainHandling     | Number     | Retain 처리 방식             |
-| noLocal            | Boolean    | 로컬 발행 메시지 수신 차단   |
-| retainAsPublished  | Boolean    | retain 플래그 유지 여부      |
-
-<h6>Properties</h6>
-
-| Property           | Type       | 설명                         |
-|:-------------------|:-----------|:-----------------------------|
-| user               | Object     | 사용자 정의 프로퍼티         |
-
-<h6>반환값</h6>
-
-없음.
-
-<h6>사용 예시</h6>
-
-```js
-const topicName = 'sensor/temperature';
-client.subscribe({subscriptions:[{topic:topicName, qos:0}]});
-```
-
-### unsubscribe()
-
-<h6>사용 형식</h6>
-
-```js
-unsubscribe(opts)
-```
-
-<h6>매개변수</h6>
-
-- `opts` `Object` *UnsubscribeOption*
-
-<h6>UnsubscribeOption</h6>
-
-| Property           | Type       | 설명                         |
-|:-------------------|:-----------|:-----------------------------|
-| **topics**         | String[]   | 해지할 토픽 목록             |
-| properties         | Object     | *Properties* 객체             |
-
-<h6>Properties</h6>
-
-| Property           | Type       | 설명                         |
-|:-------------------|:-----------|:-----------------------------|
-| user               | Object     | 사용자 정의 프로퍼티         |
-
-<h6>반환값</h6>
-
-없음.
-
-<h6>사용 예시</h6>
-
-```js
-const topicName = 'sensor/temperature';
-client.unsubscribe({topics:[topicName]});
-```
+## 메서드
 
 ### publish()
 
+토픽으로 메시지를 발행합니다.
+
 <h6>사용 형식</h6>
 
 ```js
-publish(opts, payload)
+publish(topic, message[, options])
 ```
 
 <h6>매개변수</h6>
 
-- `opts` `Object` *PublishOptions*
-- `payload` `String` 또는 `Number`
+- `topic` `String`
+- `message` `String` | `Uint8Array` | `Object` | `Array`
+- `options` `Object` (선택)
 
-<h6>PublishOptions</h6>
+| 옵션       | 타입    | 기본값  | 설명 |
+|:-----------|:--------|:--------|:-----|
+| qos        | Number  | `0`     | QoS 레벨 |
+| retain     | Boolean | `false` | Retain 플래그 |
+| properties | Object  |         | MQTT v5 발행 프로퍼티 |
 
-| Property           | Type       | 설명                         |
-|:-------------------|:-----------|:-----------------------------|
-| **topic**          | String     | 발행할 토픽                   |
-| qos                | Number     | `0`, `1`, `2`                |
-| packetID           | String     | 패킷 ID                       |
-| retain             | Boolean    | retain 플래그                 |
-| properties         | Object     | MQTT v5 프로퍼티              |
+`options.properties` 필드:
 
+| 프로퍼티                  | 타입    | 설명 |
+|:--------------------------|:--------|:-----|
+| payloadFormat             | Number  | Payload format indicator |
+| messageExpiry             | Number  | 만료 시간 |
+| contentType               | String  | 콘텐츠 타입 |
+| responseTopic             | String  | 응답 토픽 |
+| correlationData           | String  | 바이트로 변환됨 |
+| topicAlias                | Number  | Topic alias |
+| subscriptionIdentifier    | Number  | Subscription identifier |
+| user                      | Object  | 사용자 정의 프로퍼티 (`key: value`) |
 
 <h6>반환값</h6>
 
-- `Object`
+없음. 결과는 `published` 또는 `error` 이벤트로 전달됩니다.
 
-| Property           | Type       | Description           |
-|:-------------------|:-----------|:----------------------|
-| reasonCode         | Number     |                       |
-| properties         | Object     |                       |
+### subscribe()
 
-<h6>사용 예시</h6>
-
-```js
-let r = client.publish('sensor/temperature', 'Hello World', 1)
-console.log(r.reasonCode)
-```
-
-### onMessage callback
-
-Callback function that receives a message.
+토픽을 구독합니다.
 
 <h6>사용 형식</h6>
 
 ```js
-function (msg) { }
-```
-
-- `msg` `Object` Message
-
-<h6>Message</h6>
-
-| Property           | Type       | Description           |
-|:-------------------|:-----------|:----------------------|
-| packetID           | Number     |                       |
-| topic              | String     |                       |
-| qos                | Number     | 0, 1, 2               |
-| retain             | Boolean    |                       |
-| payload            | Object     | Payload               |
-| properties         | Object     | Properties            |
-
-<h6>Payload</h6>
-
-- `msg.payload.bytes()`
-- `msg.payload.string()`
-
-<h6>Properties</h6>
-
-| Property           | Type       | Description           |
-|:-------------------|:-----------|:----------------------|
-| correlationData    | byte[]     |                       |
-| contentType        | String     |                       |
-| responseTopic      | String     |                       |
-| payloadFormat      | Number     | or undefined          |
-| messageExpiry      | Number     | or undefined          |
-| subscriptionIdentifier | Number | or undefined          |
-| topicAlias         | Number     | or undefined          |
-| user               | Object     | user properties       |
-
-### onConnect callback
-
-On connect callback.
-
-<h6>사용 형식</h6>
-
-```js
-function (ack) { }
+subscribe(topic)
 ```
 
 <h6>매개변수</h6>
 
-- `ack` `Object`
-
-| Property           | Type       | Description           |
-|:-------------------|:-----------|:----------------------|
-| sessionPresent     | Boolean    |                       |
-| reasonCode         | Number     |                       |
-| properties         | Object     | Properties            |
-
-<h6>Properties</h6>
-
-| Property              | Type       | Description           |
-|:----------------------|:-----------|:----------------------|
-| reasonString          | String     |                       |
-| reasonInfo            | String     |                       |
-| assignedClientID      | String     |                       |
-| authMethod            | String     |                       |
-| serverKeepAlive       | Number     | or undefined          |
-| sessionExpiryInterval | Number     | or undefined          |
-| user                  | Object     |                       |
+- `topic` `String`
 
 <h6>반환값</h6>
 
-없음.
+없음. 결과는 `subscribed` 또는 `error` 이벤트로 전달됩니다.
 
-### onConnectError callback
+참고: 현재 구현은 QoS 1로 구독합니다.
 
-On connect error callback.
+### close()
+
+클라이언트 연결을 종료합니다.
 
 <h6>사용 형식</h6>
 
 ```js
-function (err) { }
+close()
 ```
-
-<h6>매개변수</h6>
-
-- `error` `String`
 
 <h6>반환값</h6>
 
-없음.
+없음. `close` 이벤트가 발생합니다.
 
-### onDisconnect callback
+## 이벤트
 
-On disconnect callback
+### open
 
-<h6>사용 형식</h6>
+클라이언트 연결이 완료되면 발생합니다.
 
 ```js
-function (disconn) { }
+client.on('open', () => { ... })
 ```
 
-<h6>매개변수</h6>
+### message
 
-- `disconn` `Object`
-
-<h6>반환값</h6>
-
-없음.
-
-### onClientError callback
-
-On client error callback
-
-<h6>사용 형식</h6>
+구독한 메시지를 수신하면 발생합니다.
 
 ```js
-function (err) { }
+client.on('message', (msg) => { ... })
 ```
 
-<h6>매개변수</h6>
+`msg` 필드:
 
-- `err` `String`
+| 프로퍼티 | 타입   | 설명 |
+|:---------|:-------|:-----|
+| topic    | String | 토픽 이름 |
+| payload  | String | 메시지 페이로드 |
 
-<h6>반환값</h6>
+### subscribed
 
-없음.
+구독 ACK를 받으면 발생합니다.
+
+```js
+client.on('subscribed', (topic, reason) => { ... })
+```
+
+- `topic` `String`
+- `reason` `Number` (MQTT reason code)
+
+### published
+
+발행 ACK를 받으면 발생합니다.
+
+```js
+client.on('published', (topic, reason) => { ... })
+```
+
+- `topic` `String`
+- `reason` `Number` (MQTT reason code)
+
+### error
+
+연결, 구독, 발행 중 오류가 발생하면 전달됩니다.
+
+```js
+client.on('error', (err) => { ... })
+```
+
+- `err` `Error`
+
+### close
+
+`close()` 호출 시 발생합니다.
+
+```js
+client.on('close', () => { ... })
+```
+
+## MQTT v5 쓰기 프로퍼티 예시
+
+아래 예시는 MQTT v5 write API의 사용자 프로퍼티를 사용해 `db/write/{table}` 토픽으로 데이터를 기록합니다.
+
+```js {linenos=table,linenostart=1}
+const mqtt = require('mqtt');
+
+const client = new mqtt.Client({
+    servers: ['tcp://127.0.0.1:5653'],
+});
+
+const rows = [
+    ['my-car', Date.now(), 32.1],
+    ['my-car', Date.now() + 1000, 65.4],
+];
+
+client.on('open', () => {
+    client.publish('db/write/EXAMPLE', rows, {
+        qos: 1,
+        properties: {
+            user: {
+                method: 'append',
+                timeformat: 'ms',
+            },
+        },
+    });
+});
+
+client.on('published', () => client.close());
+client.on('error', (err) => console.println(err.message));
+```

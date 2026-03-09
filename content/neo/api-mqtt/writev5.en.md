@@ -87,48 +87,41 @@ which is ideal for IoT and real-time data collection scenarios.
 
 Here’s a step-by-step explanation for each main part of the code:
 
-```js {linenos=table,linenostart=1,hl_lines=["24-28",34]}
+```js {linenos=table,linenostart=1,hl_lines=["9-13","18-19",27,32]}
 // The script imports the required modules and creates an MQTT client
 // configured to connect to the local MQTT broker at port 5653.
-const system = require("@jsh/system");
-const mqtt = require("@jsh/mqtt");
-var conf = { serverUrls: ["tcp://127.0.0.1:5653"] };
+const mqtt = require('mqtt');
+var conf = { servers: ['tcp://127.0.0.1:5653'] };
 var client = new mqtt.Client(conf);
-
-// Sets up the publish options:
-var pubOpt = {
-    topic:"db/write/EXAMPLE", // Data will be written to the EXAMPLE table.
-    qos:0,                    // Quality of Service level 0 (at most once).
-    properties: {
-        user: {
-            method: "append", // "append" mode.
-            timeformat: "ms", // timestamps are in milliseconds.
-        },
-    },
-};
-
 // Prepares an array of records to be written.
-// Each record contains a name,
-// a timestamp (in milliseconds), and a value.
-ts = (new Date()).getTime();
+// Each record contains name, timestamp, and value.
+const ts = (new Date()).getTime();
 var pubPayload = [
-    [ "my-car", ts+0, 32.1 ],
-    [ "my-car", ts+1, 65.4 ],
-    [ "my-car", ts+2, 76.5 ],
+    [ "my-car", ts, 32.1 ],
+    [ "my-car", (ts+1000), 65.4 ],
+    [ "my-car", (ts+2000), 76.5 ],
 ];
-
-client.onConnect = ()=>{
+var pubOption = {
+    qos:1,
+    properties: {
+        user:{
+            method: 'append',  // write in 'append' mode
+            timeformat: 'ms'   // the time unit is ms. instead of ns.
+        }
+    }
+}
+client.on('open', () => {
     // When the client connects to the broker,
     // it publishes the prepared payload to the specified topic
     // with the defined options.
-    client.publish(pubOpt, JSON.stringify(pubPayload))
-}
-
-// The client connects to the broker (with a 3-second timeout),
-// sends the data,
-// and then disconnects after ensuring all messages have been sent.
-client.connect({timeout:3000});
-client.disconnect({waitForEmptyQueue: true, timeout:3000});
+    client.publish('db/write/EXAMPLE', pubPayload, pubOption)
+});
+client.on('published', ()=>{
+    // When client sent data, it will close the connection with 500ms. delay.
+    setTimeout(() => {
+        client.close();
+    }, 500);
+})
 ```
 
 **PUBLISH single record**
