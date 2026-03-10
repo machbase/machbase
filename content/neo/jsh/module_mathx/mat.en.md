@@ -8,60 +8,116 @@ weight: 10
 
 ## Dense()
 
-Dense Matrix
+A dense matrix implementation.
 
 <h6>Creation</h6>
 
 ```js
-new Dense(r, c, data)
+Dense(r, c, data)
 ```
 
 <h6>Parameters</h6>
 
 - `r` `Number` rows
-- `c` `Number` cols
-- `data` `Number[]`
+- `c` `Number` columns
+- `data` `Number[]` matrix elements
 
-creates a new dense matrix with r rows and c columns.
+Creates a new Dense matrix of size `r × c`.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const mat = require('mathx/mat');
+const a = mat.Dense(3, 3, [11,12,13,21,22,23,31,32,33]);
+console.println(mat.format(a, {format:"a = %v",  prefix: "    "}))
+
+// a = ⎡11  12  13⎤
+//     ⎢21  22  23⎥
+//     ⎣31  32  33⎦
+```
 
 ### dims()
 
+Returns the matrix dimensions `(rows, columns)`.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[3]}
+const mat = require('mathx/mat');
+const a = mat.Dense(3, 3, [11,12,13,21,22,23,31,32,33]);
+console.println("dims:", a.dims());
+
+// dims: [3, 3]
+```
+
 ### at()
+
+Returns the value at the specified `(row, col)`.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[3]}
+const mat = require('mathx/mat');
+const a = mat.Dense(3, 3, [11,12,13,21,22,23,31,32,33]);
+console.println("at(1,2):", a.at(1,2));
+
+// at(1,2): 23
+```
 
 ### set()
 
-### T()
+Sets the value at the specified position.
 
-creates a new dense matrix of transposed.
+<h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1}
+```js {linenos=table,linenostart=1,hl_lines=[3]}
 const mat = require('mathx/mat');
-A = new mat.Dense(2, 2, [
+const a = mat.Dense(3, 3, [11,12,13,21,22,23,31,32,33]);
+a.set(2,2,55)
+console.println(mat.format(a, {format:"a = %v",  prefix: "    "}))
+
+// a = ⎡11  12  13⎤
+//     ⎢21  22  23⎥
+//     ⎣31  32  55⎦
+```
+
+### t()
+
+Creates a transposed matrix.
+
+```js {linenos=table,linenostart=1,hl_lines=[7]}
+const mat = require('mathx/mat');
+A = mat.Dense(2, 2, [
     1, 2,
     3, 4,
-])
-B = A.T()
-console.log(mat.format(B))
+]);
+console.println(mat.format(A, {format:"A=%v", prefix:"  "}));
+B = A.t();
+console.println(mat.format(B, {format:"B=%v", prefix:"  "}));
 
-// ⎡1 3⎤
-// ⎣2 4⎦
+// A=⎡1  2⎤
+//   ⎣3  4⎦
+// B=⎡1  3⎤
+//   ⎣2  4⎦
 ```
 
 ### add()
 
-```js {linenos=table,linenostart=1}
+Performs matrix addition.
+
+```js {linenos=table,linenostart=1,hl_lines=[11]}
 const mat = require('mathx/mat');
-A = new mat.Dense(2, 2, [
+A = mat.Dense(2, 2, [
     1, 2,
     3, 4,
-])
-B = new mat.Dense(2, 2, [
+]);
+B = mat.Dense(2, 2, [
     10, 20,
     30, 40,
-])
-C = new mat.Dense()
-C.add(A, B) // C = A + B
-console.log(mat.format(C))
+]);
+C = mat.Dense();
+C.add(A, B); // C = A + B
+console.println(mat.format(C));
 
 // ⎡11 22⎤ 
 // ⎣33 44⎦
@@ -69,19 +125,21 @@ console.log(mat.format(C))
 
 ### sub()
 
-```js {linenos=table,linenostart=1}
+Performs matrix subtraction.
+
+```js {linenos=table,linenostart=1,hl_lines=[11]}
 const mat = require('mathx/mat');
-A = new mat.Dense(2, 2, [
+A = mat.Dense(2, 2, [
     1, 2,
     3, 4,
-])
-B = new mat.Dense(2, 2, [
+]);
+B = mat.Dense(2, 2, [
     10, 20,
     30, 40,
-])
-C = new mat.Dense()
-C.sub(B, A) // C = B - A
-console.log(mat.format(C))
+]);
+C = mat.Dense();
+C.sub(B, A); // C = B - A
+console.println(mat.format(C));
 
 // ⎡ 9 18⎤ 
 // ⎣27 36⎦
@@ -89,19 +147,21 @@ console.log(mat.format(C))
 
 ### mul()
 
-```js {linenos=table,linenostart=1}
+Performs matrix multiplication.
+
+```js {linenos=table,linenostart=1,hl_lines=[11]}
 const mat = require('mathx/mat');
-A = new mat.Dense(2, 2, [
+A = mat.Dense(2, 2, [
     1, 2,
     3, 4,
-])
-B = new mat.Dense(2, 2, [
+]);
+B = mat.Dense(2, 2, [
     10, 20,
     30, 40,
-])
-C = new mat.Dense()
-C.mul(A, B) // C = A * B
-console.log(mat.format(C))
+]);
+C = mat.Dense();
+C.mul(A, B); // C = A * B
+console.println(mat.format(C));
 
 // ⎡ 70 100⎤ 
 // ⎣150 220⎦
@@ -109,42 +169,64 @@ console.log(mat.format(C))
 
 ### mulElem()
 
-```js {linenos=table,linenostart=1}
+Performs element-wise multiplication.
+
+```js {linenos=table,linenostart=1,hl_lines=[11]}
 const mat = require('mathx/mat');
-A = new mat.Dense(2, 2, [
+A = mat.Dense(2, 2, [
     1, 2,
     3, 4,
-])
-B = new mat.Dense(2, 2, [
+]);
+B = mat.Dense(2, 2, [
     10, 20,
     30, 40,
-])
-C = new mat.Dense()
-C.mulElem(A, B)
-console.log(mat.format(C))
+]);
+C = mat.Dense();
+C.mulElem(A, B);
+console.println(mat.format(C));
 
 // ⎡ 10 40⎤ 
 // ⎣ 90 160⎦
 ```
 
 ### divElem()
-### inverse()
 
-```js {linenos=table,linenostart=1}
+Performs element-wise division.
+
+```js {linenos=table,linenostart=1,hl_lines=[11]}
 const mat = require('mathx/mat');
-A = new mat.Dense(2, 2, [
+A = mat.Dense(2, 2, [
     1, 2,
     3, 4,
-])
+]);
+B = mat.Dense(2, 2, [
+    10, 20,
+    30, 40,
+]);
+C = mat.Dense();
+C.divElem(A, B);
+console.println(mat.format(C));
 
-B = new mat.Dense()
-B.inverse(A)
+// ⎡0.1  0.1⎤
+// ⎣0.1  0.1⎦
+```
 
-C = new mat.Dense()
-C.mul(A, B)
+### inverse()
 
-console.log(mat.format(B, {format:"B=%.f", prefix:"  "}))
-console.log(mat.format(C, {format:"C=%.f", prefix:"  "}))
+Calculates the inverse matrix.
+
+```js {linenos=table,linenostart=1,hl_lines=[7]}
+const mat = require('mathx/mat');
+A = mat.Dense(2, 2, [
+    1, 2,
+    3, 4,
+]);
+B = mat.Dense();
+B.inverse(A);
+C = mat.Dense();
+C.mul(A, B);
+console.println(mat.format(B, {format:"B=%.f", prefix:"  "}));
+console.println(mat.format(C, {format:"C=%.f", prefix:"  "}));
 
 //B=⎡-2  1⎤
 //  ⎣ 1 -0⎦
@@ -153,43 +235,83 @@ console.log(mat.format(C, {format:"C=%.f", prefix:"  "}))
 ```
 
 ### solve()
+
+Solves the linear equation `A * X = B` and returns the solution.
+
 ### exp()
+
+Computes the matrix exponential.
+
 ### pow()
+
+Performs matrix exponentiation.
+
 ### scale()
+
+Scales the matrix by a scalar value.
 
 ## VecDense
 
-Vector
+A dense vector type.
 
 <h6>Creation</h6>
 
 ```js
-new VecDense(n, data)
+VecDense(n, data)
 ```
 
 <h6>Parameters</h6>
 
-- `n` `Number` Creates a new VecDense of length n. It should be larger than 0.
-- `data` `Number[]` Array of elements. If data is omit, blank array is assigned.
+- `n` `Number` vector length (must be greater than 0)
+- `data` `Number[]` element array (filled with zeros if omitted)
 
 
 ### cap()
+
+Returns the internal buffer capacity.
+
 ### len()
+
+Returns the vector length.
+
 ### atVec()
+
+Returns the value at the specified index.
+
 ### setVec()
+
+Sets the value at the specified index.
+
 ### addVec()
+
+Adds two vectors and stores the result.
+
 ### subVec()
+
+Performs vector subtraction.
+
 ### mulVec()
+
+Computes matrix-vector multiplication.
+
 ### mulElemVec()
+
+Computes element-wise multiplication.
+
 ### scaleVec()
+
+Scales the vector by a scalar.
+
 ### solveVec()
+
+Solves a linear system and returns the vector solution.
 
 ## QR
 
-**QR factorization** is a decomposition of a matrix *A* into a product `A = QR` of an orthonormal matrix *Q* and a upper triangular matrix *R*.
+**QR factorization** is a decomposition of a matrix *A* into a product `A = QR` of an orthonormal matrix *Q* and an upper triangular matrix *R*.
 QR decomposition is often used to solve the linear least squares (LLS) problem and is the basis for a particular eigenvalue algorithm, the QR algorithm.
 
-Any real square matrix *A* may be decomposed as
+Any real matrix *A* may be decomposed as
 
 ```
 A = QR
@@ -200,28 +322,28 @@ If *A* is invertible, then the factorization is unique if we require the diagona
 
 **Usage example**
 
-```js {linenos=table,linenostart=1}
-const m = require('mathx/mat')
-A = new m.Dense(4, 2, [
+```js {linenos=table,linenostart=1,hl_lines=[13,16]}
+const m = require('mathx/mat');
+A = m.Dense(4, 2, [
     0, 1,
     1, 1,
     1, 1,
     2, 1,
-])
+]);
 
-qr = new m.QR()
-qr.factorize(A)
+qr = m.QR();
+qr.factorize(A);
 
-Q = new m.Dense()
-qr.QTo(Q)
+Q = m.Dense();
+qr.qTo(Q);
 
-R = new m.Dense()
-qr.RTo(R)
+R = m.Dense();
+qr.rTo(R);
 
-B = new m.Dense(4, 1, [1, 0, 2, 1])
-x = new m.Dense()
-qr.solveTo(x, false, B)
-console.log(m.format(x, { format: "x = %.2f", prefix: "    " }))
+B = m.Dense(4, 1, [1, 0, 2, 1]);
+x = m.Dense();
+qr.solveTo(x, false, B);
+console.println(m.format(x, { format: "x = %.2f", prefix: "    " }));
 
 // x = ⎡0.00⎤
 //     ⎣1.00⎦
@@ -230,20 +352,20 @@ console.log(m.format(x, { format: "x = %.2f", prefix: "    " }))
 
 ## format()
 
-```js {linenos=table,linenostart=1}
-const m = require('mathx/mat')
-A = new m.Dense(100, 100)
+```js {linenos=table,linenostart=1,hl_lines=["8-13"]}
+const m = require("mathx/mat");
+A = m.Dense(100, 100);
 for (let i = 0; i < 100; i++) {
     for (let j = 0; j < 100; j++) {
-        A.set(i, j, i + j)
+        A.set(i, j, i + j);
     }
 }
-console.log(m.format(A, {
+console.println(m.format(A, {
     format: "A = %v",
     prefix: "    ",
     squeeze: true,
     excerpt: 3,
-}))
+}));
 
 // A = Dims(100, 100)
 //     ⎡ 0    1    2  ...  ...   97   98   99⎤

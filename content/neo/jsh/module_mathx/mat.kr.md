@@ -13,7 +13,7 @@ weight: 10
 <h6>생성</h6>
 
 ```js
-new Dense(r, c, data)
+Dense(r, c, data)
 ```
 
 <h6>매개변수</h6>
@@ -24,52 +24,100 @@ new Dense(r, c, data)
 
 `r × c` 크기의 새로운 Dense 행렬을 생성합니다.
 
+<h6>사용 예시</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const mat = require('mathx/mat');
+const a = mat.Dense(3, 3, [11,12,13,21,22,23,31,32,33]);
+console.println(mat.format(a, {format:"a = %v",  prefix: "    "}))
+
+// a = ⎡11  12  13⎤
+//     ⎢21  22  23⎥
+//     ⎣31  32  33⎦
+```
+
 ### dims()
 
 행렬의 `(행, 열)` 크기를 반환합니다.
+
+<h6>사용 예시</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[3]}
+const mat = require('mathx/mat');
+const a = mat.Dense(3, 3, [11,12,13,21,22,23,31,32,33]);
+console.println("dims:", a.dims());
+
+// dims: [3, 3]
+```
 
 ### at()
 
 지정한 `(row, col)` 위치의 값을 반환합니다.
 
+<h6>사용 예시</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[3]}
+const mat = require('mathx/mat');
+const a = mat.Dense(3, 3, [11,12,13,21,22,23,31,32,33]);
+console.println("at(1,2):", a.at(1,2));
+
+// at(1,2): 23
+```
+
 ### set()
 
 지정한 위치의 값을 설정합니다.
 
-### T()
+<h6>사용 예시</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[3]}
+const mat = require('mathx/mat');
+const a = mat.Dense(3, 3, [11,12,13,21,22,23,31,32,33]);
+a.set(2,2,55)
+console.println(mat.format(a, {format:"a = %v",  prefix: "    "}))
+
+// a = ⎡11  12  13⎤
+//     ⎢21  22  23⎥
+//     ⎣31  32  55⎦
+```
+
+### t()
 
 전치 행렬을 생성합니다.
 
-```js {linenos=table,linenostart=1}
+```js {linenos=table,linenostart=1,hl_lines=[7]}
 const mat = require('mathx/mat');
-A = new mat.Dense(2, 2, [
+A = mat.Dense(2, 2, [
     1, 2,
     3, 4,
 ]);
-B = A.T();
-console.log(mat.format(B));
+console.println(mat.format(A, {format:"A=%v", prefix:"  "}));
+B = A.t();
+console.println(mat.format(B, {format:"B=%v", prefix:"  "}));
 
-// ⎡1 3⎤
-// ⎣2 4⎦
+// A=⎡1  2⎤
+//   ⎣3  4⎦
+// B=⎡1  3⎤
+//   ⎣2  4⎦
 ```
 
 ### add()
 
 행렬 덧셈을 수행합니다.
 
-```js {linenos=table,linenostart=1}
+```js {linenos=table,linenostart=1,hl_lines=[11]}
 const mat = require('mathx/mat');
-A = new mat.Dense(2, 2, [
+A = mat.Dense(2, 2, [
     1, 2,
     3, 4,
 ]);
-B = new mat.Dense(2, 2, [
+B = mat.Dense(2, 2, [
     10, 20,
     30, 40,
 ]);
-C = new mat.Dense();
+C = mat.Dense();
 C.add(A, B); // C = A + B
-console.log(mat.format(C));
+console.println(mat.format(C));
 
 // ⎡11 22⎤ 
 // ⎣33 44⎦
@@ -79,19 +127,19 @@ console.log(mat.format(C));
 
 행렬 뺄셈을 수행합니다.
 
-```js {linenos=table,linenostart=1}
+```js {linenos=table,linenostart=1,hl_lines=[11]}
 const mat = require('mathx/mat');
-A = new mat.Dense(2, 2, [
+A = mat.Dense(2, 2, [
     1, 2,
     3, 4,
 ]);
-B = new mat.Dense(2, 2, [
+B = mat.Dense(2, 2, [
     10, 20,
     30, 40,
 ]);
-C = new mat.Dense();
+C = mat.Dense();
 C.sub(B, A); // C = B - A
-console.log(mat.format(C));
+console.println(mat.format(C));
 
 // ⎡ 9 18⎤ 
 // ⎣27 36⎦
@@ -101,19 +149,19 @@ console.log(mat.format(C));
 
 행렬 곱셈을 수행합니다.
 
-```js {linenos=table,linenostart=1}
+```js {linenos=table,linenostart=1,hl_lines=[11]}
 const mat = require('mathx/mat');
-A = new mat.Dense(2, 2, [
+A = mat.Dense(2, 2, [
     1, 2,
     3, 4,
 ]);
-B = new mat.Dense(2, 2, [
+B = mat.Dense(2, 2, [
     10, 20,
     30, 40,
 ]);
-C = new mat.Dense();
+C = mat.Dense();
 C.mul(A, B); // C = A * B
-console.log(mat.format(C));
+console.println(mat.format(C));
 
 // ⎡ 70 100⎤ 
 // ⎣150 220⎦
@@ -123,19 +171,19 @@ console.log(mat.format(C));
 
 원소별(element-wise) 곱셈을 수행합니다.
 
-```js {linenos=table,linenostart=1}
+```js {linenos=table,linenostart=1,hl_lines=[11]}
 const mat = require('mathx/mat');
-A = new mat.Dense(2, 2, [
+A = mat.Dense(2, 2, [
     1, 2,
     3, 4,
 ]);
-B = new mat.Dense(2, 2, [
+B = mat.Dense(2, 2, [
     10, 20,
     30, 40,
 ]);
-C = new mat.Dense();
+C = mat.Dense();
 C.mulElem(A, B);
-console.log(mat.format(C));
+console.println(mat.format(C));
 
 // ⎡ 10 40⎤ 
 // ⎣ 90 160⎦
@@ -145,25 +193,40 @@ console.log(mat.format(C));
 
 원소별 나눗셈을 수행합니다.
 
+```js {linenos=table,linenostart=1,hl_lines=[11]}
+const mat = require('mathx/mat');
+A = mat.Dense(2, 2, [
+    1, 2,
+    3, 4,
+]);
+B = mat.Dense(2, 2, [
+    10, 20,
+    30, 40,
+]);
+C = mat.Dense();
+C.divElem(A, B);
+console.println(mat.format(C));
+
+// ⎡0.1  0.1⎤
+// ⎣0.1  0.1⎦
+```
+
 ### inverse()
 
 역행렬을 구합니다.
 
-```js {linenos=table,linenostart=1}
+```js {linenos=table,linenostart=1,hl_lines=[7]}
 const mat = require('mathx/mat');
-A = new mat.Dense(2, 2, [
+A = mat.Dense(2, 2, [
     1, 2,
     3, 4,
 ]);
-
-B = new mat.Dense();
+B = mat.Dense();
 B.inverse(A);
-
-C = new mat.Dense();
+C = mat.Dense();
 C.mul(A, B);
-
-console.log(mat.format(B, {format:"B=%.f", prefix:"  "}));
-console.log(mat.format(C, {format:"C=%.f", prefix:"  "}));
+console.println(mat.format(B, {format:"B=%.f", prefix:"  "}));
+console.println(mat.format(C, {format:"C=%.f", prefix:"  "}));
 
 //B=⎡-2  1⎤
 //  ⎣ 1 -0⎦
@@ -194,7 +257,7 @@ console.log(mat.format(C, {format:"C=%.f", prefix:"  "}));
 <h6>생성</h6>
 
 ```js
-new VecDense(n, data)
+VecDense(n, data)
 ```
 
 <h6>매개변수</h6>
@@ -259,28 +322,28 @@ A = QR
 
 **Usage example**
 
-```js {linenos=table,linenostart=1}
+```js {linenos=table,linenostart=1,hl_lines=[13,16]}
 const m = require('mathx/mat');
-A = new m.Dense(4, 2, [
+A = m.Dense(4, 2, [
     0, 1,
     1, 1,
     1, 1,
     2, 1,
 ]);
 
-qr = new m.QR();
+qr = m.QR();
 qr.factorize(A);
 
-Q = new m.Dense();
-qr.QTo(Q);
+Q = m.Dense();
+qr.qTo(Q);
 
-R = new m.Dense();
-qr.RTo(R);
+R = m.Dense();
+qr.rTo(R);
 
-B = new m.Dense(4, 1, [1, 0, 2, 1]);
-x = new m.Dense();
+B = m.Dense(4, 1, [1, 0, 2, 1]);
+x = m.Dense();
 qr.solveTo(x, false, B);
-console.log(m.format(x, { format: "x = %.2f", prefix: "    " }));
+console.println(m.format(x, { format: "x = %.2f", prefix: "    " }));
 
 // x = ⎡0.00⎤
 //     ⎣1.00⎦
@@ -289,15 +352,15 @@ console.log(m.format(x, { format: "x = %.2f", prefix: "    " }));
 
 ## format()
 
-```js {linenos=table,linenostart=1}
+```js {linenos=table,linenostart=1,hl_lines=["8-13"]}
 const m = require("mathx/mat");
-A = new m.Dense(100, 100);
+A = m.Dense(100, 100);
 for (let i = 0; i < 100; i++) {
     for (let j = 0; j < 100; j++) {
         A.set(i, j, i + j);
     }
 }
-console.log(m.format(A, {
+console.println(m.format(A, {
     format: "A = %v",
     prefix: "    ",
     squeeze: true,
