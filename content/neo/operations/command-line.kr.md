@@ -119,12 +119,12 @@ machbase-neo 셸을 실행합니다. 다른 인수가 없으면 대화형 모드
 
 | flag (long)       | default                | desc                                                             |
 |:------------------|:-----------------------|:-----------------------------------------------------------------|
-| `-s`, `--server`  | `tcp://127.0.0.1:5655` | machbase-neo gRPC 주소<br/> 예) `-s unix://./mach-grpc.sock`<br/>예) `--server tcp://127.0.0.1:5655` |
-| `--user`          | `sys`                  | 사용자 이름<br/>환경 변수: `NEOSHELL_USER`         {{< neo_since ver="8.0.4" />}} |
-| `--password`      | `manager`              | 비밀번호<br/>환경 변수: `NEOSHELL_PASSWORD`      {{< neo_since ver="8.0.4" />}} |
+| `-s`, `--server`  | `tcp://127.0.0.1:5654` | machbase-neo HTTP 주소<br/> 예) `--server 127.0.0.1:5654`<br/>환경 변수: `NEOSHELL_HOST` |
+| `--user`          | `sys`                  | 사용자 이름<br/>환경 변수: `NEOSHELL_USER`                            |
+| `--password`      | `manager`              | 비밀번호<br/>환경 변수: `NEOSHELL_PASSWORD`                          |
 
-machbase-neo 셸은 시작할 때 OS 환경 변수 `NEOSHELL_USER`, `NEOSHELL_PASSWORD`에서 사용자 이름과 비밀번호를 찾습니다.
-`--user`, `--password` 플래그를 지정하면 환경 변수 대신 해당 값을 사용합니다.
+machbase-neo 셸은 시작할 때 OS 환경 변수 `NEOSHELL_HOST`, `NEOSHELL_USER`, `NEOSHELL_PASSWORD`에서 서버 주소, 사용자 이름과 비밀번호를 찾습니다.
+`--server`, `--user`, `--password` 플래그를 지정하면 환경 변수 대신 해당 값을 사용합니다.
 
 ### 사용자 이름과 비밀번호의 우선순위
 

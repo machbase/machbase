@@ -129,13 +129,13 @@ Start machbase-neo shell. It will start interactive mode shell if there are no o
 
 | flag (long)       | default                | desc                                                             |
 |:------------------|:-----------------------|:-----------------------------------------------------------------|
-| `-s`, `--server`  | `tcp://127.0.0.1:5655` | machbase-neo's gRPC address.<br/> e.g. `-s unix://./mach-grpc.sock`<br/>e.g. `--server tcp://127.0.0.1:5655` |
-| `--user`          | `sys`                  | user name.<br/>env: `NEOSHELL_USER`         {{< neo_since ver="8.0.4" />}} |
-| `--password`      | `manager`              | password.<br/>env: `NEOSHELL_PASSWORD`      {{< neo_since ver="8.0.4" />}} |
+| `-s`, `--server`  | `tcp://127.0.0.1:5655` | machbase-neo's gRPC address. e.g. `--server tcp://127.0.0.1:5655`<br/>env: `NEOSHELL_HOST` |
+| `--user`          | `sys`                  | user name.<br/>env: `NEOSHELL_USER`    |
+| `--password`      | `manager`              | password.<br/>env: `NEOSHELL_PASSWORD` |
 
 When machbase-neo shell starts, it is looking for the user name and password
-from OS's environment variables `NEOSHELL_USER` and `NEOSHELL_PASSWORD`.
-Then if the flags `--user` and `--password` are provided,
+from OS's environment variables `NEOSHELL_HOST`, `NEOSHELL_USER` and `NEOSHELL_PASSWORD`.
+Then if the flags `--server`, `--user` and `--password` are provided,
 it will override the provided values instead of the environment variables.
 
 ###  Precedence of username and password
