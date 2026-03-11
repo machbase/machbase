@@ -127,11 +127,11 @@ Start machbase-neo shell. It will start interactive mode shell if there are no o
 
 **Flags**
 
-| flag (long)       | default                | desc                                                             |
-|:------------------|:-----------------------|:-----------------------------------------------------------------|
-| `-s`, `--server`  | `tcp://127.0.0.1:5654` | machbase-neo's gRPC address. e.g. `--server 127.0.0.1:5654`<br/>env: `NEOSHELL_HOST` |
-| `--user`          | `sys`                  | user name.<br/>env: `NEOSHELL_USER`    |
-| `--password`      | `manager`              | password.<br/>env: `NEOSHELL_PASSWORD` |
+| flag (long)       | default          | desc                                                             |
+|:------------------|:-----------------|:-----------------------------------------------------------------|
+| `-s`, `--server`  | `127.0.0.1:5654` | machbase-neo's HTTP address. e.g. `--server 127.0.0.1:5654`<br/>env: `NEOSHELL_HOST` |
+| `--user`          | `sys`            | user name.<br/>env: `NEOSHELL_USER`    |
+| `--password`      | `manager`        | password.<br/>env: `NEOSHELL_PASSWORD` |
 
 When machbase-neo shell starts, it is looking for the user name and password
 from OS's environment variables `NEOSHELL_HOST`, `NEOSHELL_USER` and `NEOSHELL_PASSWORD`.
