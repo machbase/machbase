@@ -20,7 +20,7 @@ weight: 100
 ### 사전 요구사항
 
 - **Machbase Neo Server**: 실행 중인 Machbase Neo 서버 인스턴스
-- **Go 1.24+**: 최신 Go 버전 권장
+- **Go 1.22+**: 최신 Go 버전 권장
 - **네트워크 접근**: 네이티브 포트(기본 `5656`) 접근 가능
 
 ## 시작하기
@@ -28,7 +28,7 @@ weight: 100
 ### 설치
 
 ```sh
-go get github.com/machbase/neo-server/v8
+go get github.com/machbase/neo-client@latest
 ```
 
 ### Import
@@ -41,8 +41,8 @@ import (
     "fmt"
     "time"
 
-    "github.com/machbase/neo-server/v8/api"
-    "github.com/machbase/neo-server/v8/api/machgo"
+    "github.com/machbase/neo-client/api"
+    "github.com/machbase/neo-client/machgo"
 )
 ```
 
@@ -308,8 +308,8 @@ import (
     "log"
     "time"
 
-    "github.com/machbase/neo-server/v8/api"
-    "github.com/machbase/neo-server/v8/api/machgo"
+    "github.com/machbase/neo-client/api"
+    "github.com/machbase/neo-client/machgo"
 )
 
 func main() {

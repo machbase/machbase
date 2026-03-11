@@ -20,7 +20,7 @@ If you need native-port performance with a fully Go toolchain, `machgo` is a goo
 ### Prerequisites
 
 - **Machbase Neo Server**: A running Machbase Neo server instance
-- **Go 1.24+**: Recent Go version recommended
+- **Go 1.22+**: Recent Go version recommended
 - **Network access**: Reachable native port (`5656` by default)
 
 ## Getting Started
@@ -28,7 +28,7 @@ If you need native-port performance with a fully Go toolchain, `machgo` is a goo
 ### Install
 
 ```sh
-go get github.com/machbase/neo-server/v8
+go get github.com/machbase/neo-client@latest
 ```
 
 ### Import
@@ -41,8 +41,8 @@ import (
     "fmt"
     "time"
 
-    "github.com/machbase/neo-server/v8/api"
-    "github.com/machbase/neo-server/v8/api/machgo"
+    "github.com/machbase/neo-client/api"
+    "github.com/machbase/neo-client/machgo"
 )
 ```
 
@@ -306,8 +306,8 @@ import (
     "log"
     "time"
 
-    "github.com/machbase/neo-server/v8/api"
-    "github.com/machbase/neo-server/v8/api/machgo"
+    "github.com/machbase/neo-client/api"
+    "github.com/machbase/neo-client/machgo"
 )
 
 func main() {
