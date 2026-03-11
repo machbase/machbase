@@ -12,14 +12,7 @@ weight: 13
 아래 예시처럼 `--data` 플래그 값이 다른 Machbase DBMS의 mach 포트(`5656`)를 가리키는 URL이라면 다음과 같이 실행합니다.
 
 ```sh
-machbase-neo serve --data machbase://sys:manager@192.168.1.100:5656
-```
-
-또는 사용자 이름과 비밀번호를 환경 변수로 전달할 수도 있습니다.
-
-```sh
-SECRET="sys:manager" \
-machbase-neo serve --data machbase://${SECRET}@192.168.1.100:5656
+machbase-neo serve --data machbase://192.168.1.100:5656
 ```
 
 이 모드에서는 machbase-neo 프로세스가 자체 데이터베이스 없이 실행되고 대상 데이터베이스를 그대로 사용합니다.
