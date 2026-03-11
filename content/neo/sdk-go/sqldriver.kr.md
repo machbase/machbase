@@ -5,9 +5,8 @@ weight: 110
 ---
 
 ## 개요
-`machbase` 패키지는 Machbase Neo용 표준 Go `database/sql` 드라이버를 제공합니다.
-이 드라이버는 `github.com/machbase/neo-client`의 네이티브 TCP 클라이언트를 기반으로 하며,
-네이티브 포트(기본 `5656`)를 사용합니다.
+`github.com/machbase/neo-client` 패키지는 Machbase Neo용 표준 Go `database/sql` 드라이버를 제공합니다.
+이 드라이버는 네이티브 TCP 클라이언트를 기반으로 하며, 네이티브 포트(기본 `5656`)를 사용합니다.
 
 애플리케이션이나 프레임워크가 Go의 `database/sql` 인터페이스를 요구한다면 이 드라이버를 사용하세요.
 `database/sql` 호환이 필요 없는 신규 코드라면 일반적으로 `machgo`가 더 적합합니다.
@@ -62,13 +61,13 @@ server=tcp://sys:manager@127.0.0.1:5656;fetch_rows=777;statement_cache=off;io_me
 
 | 키 | 설명 |
 |----|------|
-| `server` | `tcp://user:password@127.0.0.1:5656` 형식의 서버 URL |
+| `server`       | `tcp://user:password@127.0.0.1:5656` 형식의 서버 URL |
 | `host`, `port` | 서버 호스트와 포트를 별도로 지정 |
-| `user`, `uid` | 로그인 사용자 |
-| `password`, `pwd` | 로그인 비밀번호 |
-| `fetch_rows` | 한 번의 round trip에서 가져올 행 수 |
+| `user`         | 로그인 사용자 |
+| `password`     | 로그인 비밀번호 |
+| `fetch_rows`   | 한 번의 round trip에서 가져올 행 수 |
 | `statement_cache` | statement cache 모드: `auto`, `on`, `off` |
-| `io_metrics` | I/O metrics 활성화 여부: `true`, `false` |
+| `io_metrics`   | I/O metrics 활성화 여부: `true`, `false` |
 | `alternative_servers` | `127.0.0.2:5656` 형식의 대체 서버 주소 |
 | `alternative_host`, `alternative_port` | 대체 서버 호스트와 포트를 별도로 지정 |
 

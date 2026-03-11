@@ -5,9 +5,8 @@ weight: 110
 ---
 
 ## Overview
-The `machbase` package provides a standard Go `database/sql` driver for Machbase Neo.
-It is built on top of the native TCP client in `github.com/machbase/neo-client` and uses the native port
-(default `5656`).
+The `github.com/machbase/neo-client` package provides a standard Go `database/sql` driver for Machbase Neo.
+It is built on top of the native TCP client and uses the native port (default `5656`).
 
 Use this driver when your application or framework already depends on Go's `database/sql` interfaces.
 For new code that does not require `database/sql`, `machgo` is usually the better choice.
@@ -64,8 +63,8 @@ server=tcp://sys:manager@127.0.0.1:5656;fetch_rows=777;statement_cache=off;io_me
 |-----|-------------|
 | `server` | Server URL such as `tcp://user:password@127.0.0.1:5656` |
 | `host`, `port` | Server host and port provided separately |
-| `user`, `uid` | Login user |
-| `password`, `pwd` | Login password |
+| `user` | Login user |
+| `password` | Login password |
 | `fetch_rows` | Number of rows fetched per round trip |
 | `statement_cache` | Statement cache mode: `auto`, `on`, or `off` |
 | `io_metrics` | Enable I/O metrics: `true` or `false` |

@@ -1,5 +1,5 @@
 ---
-title: Go 네이티브 클라이언트
+title: Go 클라이언트
 type: docs
 weight: 100
 ---

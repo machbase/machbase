@@ -8,13 +8,6 @@ weight: 150
 
 The `machcli` package is a Go wrapper around Machbase's native C client library, designed to provide Go developers with high-performance access to Machbase databases. This wrapper leverages the power and efficiency of the underlying C library while offering a familiar Go API that follows standard database/sql patterns.
 
-### Why use machcli?
-
-- **High Performance**: Direct access to Machbase's native C library provides optimal performance for time-series data operations
-- **Native Integration**: Built specifically for Machbase, offering features like high-speed appenders and optimized query execution
-- **Go-friendly API**: Familiar interface similar to Go's standard database/sql package
-- **Type Safety**: Strong typing support for Go developers with proper error handling
-
 ### Prerequisites
 
 - **CGo Environment**: Since this is a wrapper around a C library, you'll need a CGo-enabled Go environment

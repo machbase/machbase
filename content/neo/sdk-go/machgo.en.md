@@ -1,5 +1,5 @@
 ---
-title: Go native client
+title: Go client
 type: docs
 weight: 100
 ---
