@@ -38,9 +38,12 @@ It is possible to import compressed or uncompressed csv file.
 
 Then import csv file from local storage with `--input <file>` flag. And use `--compress gzip` option if the file is gzip'd form.
 
+The `-v /mnt=.` flag mounts the current directory (`.`) into the shell runtime's `/mnt` path, enabling the `machbase-neo shell` command to access local files within that mounted directory. When importing, specify the full mounted path (e.g., `/mnt/data.csv.gz`) to reference your local files from inside the shell runtime environment.
+
 ```sh
-machbase-neo shell import \
-    --input ./data.csv    \
+machbase-neo shell -v /mnt=. \
+    import \
+    --input /mnt/data.csv    \
     --timeformat s        \
     EXAMPLE
 ```
@@ -97,7 +100,7 @@ Then execute import and export command together.
 ```sh
 machbase-neo shell export       \
     --output -                  \
-    --no-heading --no-footer    \
+    --no-header                 \
     --format csv                \
     --timeformat ns             \
     EXAMPLE  |  \
@@ -132,8 +135,7 @@ machbase-neo shell sql \
     --output -         \
     --format csv       \
     --no-rownum        \
-    --no-heading       \
-    --no-footer        \
+    --no-header        \
     --timeformat ns    \
     "select * from example where name = 'wave.sin' order by time" | \
 machbase-neo shell import \
@@ -143,7 +145,7 @@ machbase-neo shell import \
 ```
 
 We selected data that tag name is `wave.sin`, then import it into the `EXAMPLE_COPY` table.
-It is required `--no-rownum` and `--no-heading` options in `sql` command because `import` command need to verify the number of fields and data type of the incoming csv data.
+It is required `--no-rownum` and `--no-header` options in `sql` command because `import` command need to verify the number of fields and data type of the incoming csv data.
 
 ## Import from query result with HTTP API
 

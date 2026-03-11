@@ -37,9 +37,12 @@ curl -o data.csv.gz https://docs.machbase.com/assets/example/example.csv.gz
 압축 여부와 상관없이 CSV 파일을 import할 수 있습니다.  
 로컬에 저장된 파일을 `--input <파일>` 옵션으로 지정하고, gzip으로 압축된 경우 `--compress gzip` 옵션을 추가하십시오.
 
+`-v /mnt=.` 플래그는 현재 디렉토리(`.`)를 shell 런타임의 `/mnt` 경로에 마운트하므로, `machbase-neo shell` 명령이 마운트된 디렉토리 내의 로컬 파일에 접근할 수 있습니다. import할 때는 마운트된 전체 경로(예: `/mnt/data.csv.gz`)를 지정하여 컨테이너 환경 내에서 로컬 파일을 참조하세요.
+
 ```sh
-machbase-neo shell import \
-    --input ./data.csv    \
+machbase-neo shell -v /mnt=. \
+    import \
+    --input /mnt/data.csv    \
     --timeformat s        \
     EXAMPLE
 ```
@@ -94,7 +97,7 @@ machbase-neo shell \
 ```sh
 machbase-neo shell export       \
     --output -                  \
-    --no-heading --no-footer    \
+    --no-header                 \
     --format csv                \
     --timeformat ns             \
     EXAMPLE  |  \
@@ -128,8 +131,7 @@ machbase-neo shell sql \
     --output -         \
     --format csv       \
     --no-rownum        \
-    --no-heading       \
-    --no-footer        \
+    --no-header       \
     --timeformat ns    \
     "select * from example where name = 'wave.sin' order by time" | \
 machbase-neo shell import \
@@ -139,7 +141,7 @@ machbase-neo shell import \
 ```
 
 위 예제에서는 태그 이름이 `wave.sin`인 데이터를 선택해 `EXAMPLE_COPY` 테이블로 import했습니다.  
-`import` 명령은 입력되는 CSV의 필드 개수와 타입을 검증해야 하므로 `sql` 명령에 `--no-rownum`, `--no-heading`, `--no-footer` 옵션을 지정해야 합니다.
+`import` 명령은 입력되는 CSV의 필드 개수와 타입을 검증해야 하므로 `sql` 명령에 `--no-rownum`, `--no-header` 옵션을 지정해야 합니다.
 
 ## HTTP API로 쿼리 결과 가져오기
 
