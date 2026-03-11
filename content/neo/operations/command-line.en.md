@@ -129,7 +129,7 @@ Start machbase-neo shell. It will start interactive mode shell if there are no o
 
 | flag (long)       | default                | desc                                                             |
 |:------------------|:-----------------------|:-----------------------------------------------------------------|
-| `-s`, `--server`  | `tcp://127.0.0.1:5655` | machbase-neo's gRPC address. e.g. `--server tcp://127.0.0.1:5655`<br/>env: `NEOSHELL_HOST` |
+| `-s`, `--server`  | `tcp://127.0.0.1:5654` | machbase-neo's gRPC address. e.g. `--server 127.0.0.1:5654`<br/>env: `NEOSHELL_HOST` |
 | `--user`          | `sys`                  | user name.<br/>env: `NEOSHELL_USER`    |
 | `--password`      | `manager`              | password.<br/>env: `NEOSHELL_PASSWORD` |
 
@@ -144,9 +144,11 @@ it will override the provided values instead of the environment variables.
 
 ### Command line flags
 
-If `--user`, `--password` is provided? Use the given values
+If `--server`, `--user`, `--password` is provided? Use the given values
 
 ### Environment variables
+
+If `$NEOSHELL_HOST` (on windows `%NEOSHELL_HOST%`) is set? Use the value as the server address.
 
 If `$NEOSHELL_USER` (on windows `%NEOSHELL_USER%`) is set? Use the value as the user name.
 
@@ -154,7 +156,7 @@ If `$NEOSHELL_PASSWORD` (on windows `%NEOSHELL_PASSWORD%`) is set? Use the value
 
 ### Default
 
-None of those are provided? Use default value `sys` and `manager`.
+None of those are provided? Use default value `127.0.0.1:5654`, `sys` and `manager`.
 
 {{% /steps %}}
 

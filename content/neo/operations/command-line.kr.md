@@ -132,9 +132,11 @@ machbase-neo 셸은 시작할 때 OS 환경 변수 `NEOSHELL_HOST`, `NEOSHELL_US
 
 ### 명령줄 플래그
 
-`--user`, `--password`를 지정했다면 해당 값을 사용합니다.
+`--server`, `--user`, `--password`를 지정했다면 해당 값을 사용합니다.
 
 ### 환경 변수
+
+`$NEOSHELL_HOST`(Windows는 `%NEOSHELL_HOST%`)가 설정되어 있으면 해당 값을 서버 주소로 사용합니다.
 
 `$NEOSHELL_USER`(Windows는 `%NEOSHELL_USER%`)가 설정되어 있으면 해당 값을 사용자 이름으로 사용합니다.
 
@@ -142,7 +144,7 @@ machbase-neo 셸은 시작할 때 OS 환경 변수 `NEOSHELL_HOST`, `NEOSHELL_US
 
 ### 기본값
 
-위 항목이 모두 없으면 기본값 `sys`, `manager`를 사용합니다.
+위 항목이 모두 없으면 기본값 `127.0.0.1:5654`, `sys`, `manager`를 사용합니다.
 
 {{% /steps %}}
 
