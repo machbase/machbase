@@ -6,12 +6,18 @@ weight: 30
 
 ## Overview
 
-Machbase ships a CPython extension named `machbaseAPI` that wraps the native CLI client distributed with the database. The package exports two classes:
+This guide is updated for the 2.0 package: install name is lowercase `machbaseapi`, and the package is now implemented in pure Python (no native `.so/.dll/.dylib` dependency).
 
-- `machbaseAPI.machbaseAPI`: thin ctypes bindings for the native shared library.
-- `machbaseAPI.machbase`: higher-level helper that exposes connection management, SQL execution, metadata lookup, and append protocol helpers.
+You can continue using `import machbaseAPI` and existing `machbase` call patterns.
 
-The examples below target the `machbase` class, which is the entry point for application developers.
+- `machbaseAPI` package name on PyPI: `machbaseapi`
+- Module import pattern: `import machbaseAPI`
+- DB-API style: `connect()` and `cursor()` are available
+- `append*` callbacks can be observed through optional `on_ack` in append APIs
+- `append()` / `appendByTime()` can be called without explicit column type codes; Machbase metadata is used for type inference.
+- Connection-pool options are intentionally unsupported in 2.0 (`pool_name`, `pool_size`, `pool_reset_session`)
+
+The examples below target the `machbase` class, which remains the main entry point for legacy-style scripts.
 
 ## Installation
 
@@ -19,28 +25,40 @@ The examples below target the `machbase` class, which is the entry point for app
 
 - Python 3.8 or later with `pip`.
 - A reachable Machbase server and credentials (default `SYS/MANAGER` on port `5656`).
-- The Machbase shared library included in the wheel (Linux, Windows, macOS) or shipped alongside your source install.
+- No native Machbase shared library installation is required in 2.0.
 
 ### Install from PyPI
 
 ```bash
-pip3 install machbaseAPI
+pip3 install machbaseapi
 ```
 
-If `pip3` is not on your PATH, use `python3 -m pip install machbaseAPI`.
+If `pip3` is not on your PATH, use `python3 -m pip install machbaseapi`.
 
 ### Verify the module
 
 ```bash
 python3 - <<'PY'
-from machbaseAPI.machbaseAPI import machbase
-print('machbaseAPI import ok')
-cli = machbase()
-print('isConnected():', cli.isConnected())
+from machbaseAPI import machbase, connect
+print('machbase class import ok:', bool(machbase))
+print('connect function exists:', callable(connect))
+print('module import:', __import__('machbaseAPI'))
 PY
 ```
 
 A successful run confirms that the package can be imported and instantiated.
+
+You can also run 2.0-style DB-API samples with `connect()`.
+
+```python
+from machbaseAPI import connect
+
+conn = connect(host='127.0.0.1', port=5656, user='SYS', password='MANAGER')
+cur = conn.cursor()
+cur.execute('SELECT * FROM m$tables LIMIT 1')
+print(cur.fetchall())
+conn.close()
+```
 
 ## Quick Start
 
@@ -49,7 +67,7 @@ The snippet below connects to a local server, creates a sample table, inserts ro
 ```python
 #!/usr/bin/env python3
 import json
-from machbaseAPI.machbaseAPI import machbase
+from machbaseAPI import machbase
 
 def main():
     db = machbase()
@@ -87,7 +105,6 @@ def main():
         if db.select('select * from py_sample order by ts') == 0:
             raise SystemExit(db.result())
 
-        print('rows available:', db.count())
         while True:
             rc, payload = db.fetch()
             if rc == 0:
@@ -106,7 +123,7 @@ if __name__ == '__main__':
 
 ## Result Handling
 
-Most `machbase` methods return `1` on success and `0` on failure. After each call, use `db.result()` to read the JSON-formatted payload emitted by the server. The helper `db.count()` reports the row count buffered for the current result set. When iterating over `select()` results, call `db.fetch()` repeatedly until it returns `(0, '')`, then release resources with `db.selectClose()`.
+Most `machbase` methods return `1` on success and `0` on failure. After each call, use `db.result()` to read the JSON-formatted payload emitted by the server. When iterating over `select()` results, call `db.fetch()` repeatedly until it returns `(0, None)`, then release resources with `db.selectClose()`.
 
 ## Supported API Matrix
 
@@ -117,7 +134,6 @@ Most `machbase` methods return `1` on success and `0` on failure. After each cal
 | `machbase` | `close()` | Terminate the current session. | `1` or `0` |
 | `machbase` | `isOpened()` | Check whether a handle has been opened. | `1` or `0` |
 | `machbase` | `isConnected()` | Verify that the handle is connected to the server. | `1` or `0` |
-| `machbase` | `getSessionId()` | Return the numeric session identifier issued by the server. | Session ID integer |
 | `machbase` | `execute(sql, type=0)` | Run a SQL statement (all statements except `UPDATE`). | `1` or `0` |
 | `machbase` | `schema(sql)` | Execute schema-related statements. | `1` or `0` |
 | `machbase` | `tables()` | Fetch metadata for all tables. | `1` or `0` |
@@ -128,39 +144,67 @@ Most `machbase` methods return `1` on success and `0` on failure. After each cal
 | `machbase` | `fetch()` | Pull the next row after `select()`. | `(rc, json_str)` |
 | `machbase` | `selectClose()` | Close an open result set cursor. | `1` or `0` |
 | `machbase` | `result()` | Return the latest JSON payload. | JSON string |
-| `machbase` | `count()` | Return row count for the current buffer. | Integer |
-| `machbase` | `checkBit()` | Report pointer width (32 or 64 bits). | `32` or `64` |
 | `machbase` | `appendOpen(table_name, types)` | Begin append protocol with column type codes. | `1` or `0` |
-| `machbase` | `appendData(table_name, types, values, format)` | Append rows using the active append session. | `1` or `0` |
-| `machbase` | `appendDataByTime(table_name, types, values, format, times)` | Append rows with explicit epoch timestamps. | `1` or `0` |
+| `machbase` | `appendData(table_name, types, values=None, format='YYYY-MM-DD HH24:MI:SS', on_ack=None)` | Append rows using the active append session. In 2.0, when append session is opened from metadata, `types` can be omitted and rows can be passed as the second argument. | `1` or `0` |
+| `machbase` | `appendDataByTime(table_name, types, values=None, format='YYYY-MM-DD HH24:MI:SS', times=None, on_ack=None)` | Append rows with explicit epoch timestamps. Same type omission behavior applies as above. | `1` or `0` |
 | `machbase` | `appendFlush()` | Flush buffered append rows to disk. | `1` or `0` |
 | `machbase` | `appendClose()` | Close the append session. | `1` or `0` |
-| `machbase` | `append(table_name, types, values, format)` | Convenience wrapper that opens, appends, and closes. | `1` or `0` |
-| `machbase` | `appendByTime(table_name, types, values, format, times)` | Convenience wrapper for time-aware append. | `1` or `0` |
-| `machbaseAPI` | `get_library_path()` | Resolve the path of the bundled native client library. | String path |
-| `machbaseAPI` | `machbaseAPI.openDB(...)` | Low-level open call (mirrors `machbase.open`). | Pointer or `None` |
-| `machbaseAPI` | `machbaseAPI.openDBEx(...)` | Low-level extended open call. | Pointer or `None` |
-| `machbaseAPI` | `machbaseAPI.closeDB(handle)` | Close a raw handle. | Integer status |
-| `machbaseAPI` | `machbaseAPI.execDirect(handle, sql)` | Execute SQL without classification. | Integer status |
-| `machbaseAPI` | `machbaseAPI.execSelect(handle, sql, type)` | Execute SQL and prepare buffered result. | Integer status |
-| `machbaseAPI` | `machbaseAPI.execSchema(handle, sql)` | Execute schema statements. | Integer status |
-| `machbaseAPI` | `machbaseAPI.execStatistics(handle, table, user)` | Request table statistics. | Integer status |
-| `machbaseAPI` | `machbaseAPI.execAppendOpen(...)` | Start append protocol. | Integer status |
-| `machbaseAPI` | `machbaseAPI.execAppendData(...)` | Append data rows. | Integer status |
-| `machbaseAPI` | `machbaseAPI.execAppendDataByTime(...)` | Append data rows with timestamps. | Integer status |
-| `machbaseAPI` | `machbaseAPI.execAppendFlush(handle)` | Flush append buffer. | Integer status |
-| `machbaseAPI` | `machbaseAPI.execAppendClose(handle)` | Close append session. | Integer status |
-| `machbaseAPI` | `machbaseAPI.getColumns(handle, table)` | Retrieve column metadata. | Integer status |
-| `machbaseAPI` | `machbaseAPI.getIsConnected(handle)` | Check connection state flag. | Integer status |
-| `machbaseAPI` | `machbaseAPI.getDataCount(handle)` | Return buffered row count. | Unsigned long |
-| `machbaseAPI` | `machbaseAPI.getData(handle)` | Return pointer to JSON buffer. | `ctypes.c_char_p` |
-| `machbaseAPI` | `machbaseAPI.getlAddr(handle)` | Low part of result pointer (64-bit). | Integer |
-| `machbaseAPI` | `machbaseAPI.getrAddr(handle)` | High part of result pointer (64-bit). | Integer |
-| `machbaseAPI` | `machbaseAPI.getSessionId(handle)` | Fetch server session id. | Unsigned long |
-| `machbaseAPI` | `machbaseAPI.fetchRow(handle)` | Advance result set cursor. | Integer status |
-| `machbaseAPI` | `machbaseAPI.selectClose(handle)` | Close select cursor. | Integer status |
+| `machbase` | `append(table_name, aTypes, aValues=None, format='YYYY-MM-DD HH24:MI:SS')` | Convenience wrapper that opens, appends, and closes. In 2.0, `aTypes` can be omitted and `aValues` can be passed directly as second argument. | `1` or `0` |
+| `machbase` | `appendByTime(table_name, aTypes, aValues=None, format='YYYY-MM-DD HH24:MI:SS', times=None)` | Convenience wrapper for time-aware append. In 2.0, `aTypes` can be omitted and `aValues` can be passed directly as second argument. | `1` or `0` |
 
-## API Reference and Samples
+## DB-API style API (2.0)
+
+| API | Description | Return |
+| -- | -- | -- |
+| `connect(host, port, user, password, ...)` | Create DB-API connection | `MachbaseConnection` |
+| `cursor(dictionary=True)` | Create a cursor (`True`: dict rows, `False`: tuple rows) | `MachbaseCursor` |
+| `cursor.execute(sql, params=None)` | Execute SQL statement | `cursor` |
+| `cursor.fetchone()` | Fetch one row | `tuple | dict | None` |
+| `cursor.fetchmany(size)` | Fetch up to `size` rows | `list` |
+| `cursor.fetchall()` | Fetch all rows | `list` |
+| `cursor.close()` | Close cursor | `None` |
+| `cursor.rowcount` | Number of affected rows | `int` |
+
+## 2.0 append without explicit column types (recommended)
+
+`append()` and `appendByTime()` can be called without a type list.  
+Pass rows as the second argument and let the server metadata drive type handling.
+
+```python
+#!/usr/bin/env python3
+from machbaseAPI.machbaseAPI import machbase
+
+def main():
+    db = machbase()
+    if db.open('127.0.0.1', 'SYS', 'MANAGER', 5656) == 0:
+        raise SystemExit(db.result())
+
+    try:
+        db.execute('drop table py_append_auto')
+        db.result()
+        ddl = 'create table py_append_auto(ts datetime, tag varchar(16), reading double)'
+        if db.execute(ddl) == 0:
+            raise SystemExit(db.result())
+        db.result()
+
+        rows = [
+            ['2024-01-01 10:00:00', 'node-1', 30.0],
+            ['2024-01-01 10:01:00', 'node-1', 30.5],
+        ]
+        if db.append('PY_APPEND_AUTO', rows) == 0:
+            raise SystemExit(db.result())
+        print('append without types result:', db.result())
+    finally:
+        if db.close() == 0:
+            raise SystemExit(db.result())
+
+if __name__ == '__main__':
+    main()
+```
+
+## API Reference and Samples (Legacy 1.x behavior)
+
+The examples below are mainly compatibility references from legacy releases. In the current 2.0 package, methods such as `getSessionId()`, `count()`, and `checkBit()` are not provided.
 
 Update host, port, username, and password values as needed in each script. Every snippet is standalone and can be executed with `python3 script.py`.
 
@@ -517,34 +561,10 @@ if __name__ == '__main__':
 
 #### machbase.checkBit()
 
-```python
-#!/usr/bin/env python3
-from machbaseAPI.machbaseAPI import machbase
-
-def main():
-    db = machbase()
-    print('client pointer width:', db.checkBit())
-
-if __name__ == '__main__':
-    main()
-```
+`checkBit()` was used for native pointer-size checks in legacy releases and is not available in the 2.0 pure-Python package.
 
 ### Low-level bindings
 
-The lower-level `machbaseAPI` class exposes the raw ctypes bindings and the helper `get_library_path()`.
-
-```python
-#!/usr/bin/env python3
-from machbaseAPI import machbaseAPI
-from machbaseAPI.machbaseAPI import get_library_path
-
-def main():
-    print('native library path:', get_library_path())
-    api = machbaseAPI.machbaseAPI()
-    print('openDB argtypes:', api.clib.openDB.argtypes)
-
-if __name__ == '__main__':
-    main()
-```
-
-Use the low-level surface only when you need direct access to the C layer; the `machbase` helper covers day-to-day database tasks.
+The 2.0 package does not provide legacy ctypes helpers such as
+`get_library_path()`, `openDB()`, `execAppend*()`, or pointer utility APIs.
+For low-level C-layer access, please keep using the pre-2.0 package.

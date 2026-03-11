@@ -6,12 +6,18 @@ weight: 30
 
 ## 개요
 
-Machbase는 데이터베이스에 포함된 기본 CLI 클라이언트를 감싼 CPython 확장 모듈 `machbaseAPI`를 제공합니다. 이 패키지는 다음 두 클래스를 제공합니다.
+이 문서는 2.0 패키지를 기준으로 정리했습니다. PyPI 패키지명은 `machbaseapi`(소문자)이고 구현은 순수 Python입니다(네이티브 `.so/.dll/.dylib` 불필요).
 
-- `machbaseAPI.machbaseAPI`: 네이티브 공유 라이브러리를 감싸는 얇은 ctypes 바인딩
-- `machbaseAPI.machbase`: 연결 관리, SQL 실행, 메타데이터 조회, Append 프로토콜 도우미를 제공하는 상위 레벨 헬퍼
+기존 `machbase` 사용 흐름은 유지됩니다.
 
-아래 예제는 애플리케이션 개발자가 진입점으로 사용하는 `machbase` 클래스를 대상으로 설명합니다.
+- 패키지 설치명: `machbaseapi`
+- 기존과 동일하게 `import machbaseAPI` 사용
+- DB-API 방식 `connect()`, `cursor()` 지원
+- `append*`는 `on_ack` 콜백을 추가할 수 있어 ACK 관찰 가능
+- `append()` / `appendByTime()`는 타입 리스트를 생략해도 동작합니다. 서버 메타데이터 기반으로 타입을 자동 추론합니다.
+- 커넥션 풀 옵션(`pool_name`, `pool_size`, `pool_reset_session`) 미지원
+
+아래 예제는 기존 `machbase` 클래스 기반 레거시 스크립트를 대상으로 합니다.
 
 ## 설치
 
@@ -19,28 +25,40 @@ Machbase는 데이터베이스에 포함된 기본 CLI 클라이언트를 감싼
 
 - `pip`을 사용할 수 있는 Python 3.8 이상
 - 접속 가능한 Machbase 서버와 계정 정보(기본 계정 `SYS/MANAGER`, 포트 `5656`)
-- 휠에 포함된 Machbase 공유 라이브러리(리눅스·윈도우·macOS) 또는 소스 설치 시 제공되는 라이브러리
+- 2.0은 네이티브 라이브러리 의존성이 없습니다.
 
 ### PyPI에서 설치
 
 ```bash
-pip3 install machbaseAPI
+pip3 install machbaseapi
 ```
 
-`pip3`가 PATH에 없다면 `python3 -m pip install machbaseAPI` 명령을 사용합니다.
+`pip3`가 PATH에 없다면 `python3 -m pip install machbaseapi` 명령을 사용합니다.
 
 ### 모듈 확인
 
 ```bash
 python3 - <<'PY'
-from machbaseAPI.machbaseAPI import machbase
-print('machbaseAPI import ok')
-cli = machbase()
-print('isConnected():', cli.isConnected())
+from machbaseAPI import machbase, connect
+print('machbase 클래스 import:', bool(machbase))
+print('connect 함수 존재:', callable(connect))
+print('module import:', __import__('machbaseAPI'))
 PY
 ```
 
 위 명령이 성공하면 패키지를 정상적으로 import하고 인스턴스를 생성할 수 있음을 의미합니다.
+
+DB-API 방식 샘플도 바로 사용할 수 있습니다.
+
+```python
+from machbaseAPI import connect
+
+conn = connect(host='127.0.0.1', port=5656, user='SYS', password='MANAGER')
+cur = conn.cursor()
+cur.execute('SELECT * FROM m$tables LIMIT 1')
+print(cur.fetchall())
+conn.close()
+```
 
 ## 빠르게 시작하기
 
@@ -49,7 +67,7 @@ PY
 ```python
 #!/usr/bin/env python3
 import json
-from machbaseAPI.machbaseAPI import machbase
+from machbaseAPI import machbase
 
 def main():
     db = machbase()
@@ -87,7 +105,6 @@ def main():
         if db.select('select * from py_sample order by ts') == 0:
             raise SystemExit(db.result())
 
-        print('rows available:', db.count())
         while True:
             rc, payload = db.fetch()
             if rc == 0:
@@ -106,7 +123,7 @@ if __name__ == '__main__':
 
 ## 결과 처리
 
-대다수 `machbase` 메서드는 성공 시 `1`, 실패 시 `0`을 반환합니다. 호출 직후 `db.result()`를 사용하면 서버에서 반환한 JSON 형식의 페이로드를 확인할 수 있습니다. `db.count()`는 현재 결과 세트에 버퍼링된 행의 개수를 알려줍니다. `select()` 결과를 순회할 때는 `(0, '')`가 반환될 때까지 `db.fetch()`를 반복 호출하고, 마지막에 `db.selectClose()`로 리소스를 해제합니다.
+대다수 `machbase` 메서드는 성공 시 `1`, 실패 시 `0`을 반환합니다. 호출 직후 `db.result()`를 사용하면 서버에서 반환한 JSON 형식의 페이로드를 확인할 수 있습니다. `select()` 결과를 순회할 때는 `(0, None)`가 반환될 때까지 `db.fetch()`를 반복 호출하고, 마지막에 `db.selectClose()`로 리소스를 해제합니다.
 
 ## 지원 API 매트릭스
 
@@ -117,7 +134,6 @@ if __name__ == '__main__':
 | `machbase` | `close()` | 현재 세션을 종료합니다. | `1` 또는 `0` |
 | `machbase` | `isOpened()` | 핸들이 열려 있는지 확인합니다. | `1` 또는 `0` |
 | `machbase` | `isConnected()` | 서버와의 연결 상태를 확인합니다. | `1` 또는 `0` |
-| `machbase` | `getSessionId()` | 서버가 발급한 세션 식별자를 반환합니다. | 세션 ID 정수 |
 | `machbase` | `execute(sql, type=0)` | `UPDATE`를 제외한 SQL 문을 실행합니다. | `1` 또는 `0` |
 | `machbase` | `schema(sql)` | 스키마 관련 명령을 실행합니다. | `1` 또는 `0` |
 | `machbase` | `tables()` | 모든 테이블의 메타데이터를 조회합니다. | `1` 또는 `0` |
@@ -128,39 +144,67 @@ if __name__ == '__main__':
 | `machbase` | `fetch()` | `select()` 호출 이후 다음 행을 가져옵니다. | `(rc, json_str)` |
 | `machbase` | `selectClose()` | 열린 결과 집합 커서를 닫습니다. | `1` 또는 `0` |
 | `machbase` | `result()` | 최신 JSON 페이로드를 반환합니다. | JSON 문자열 |
-| `machbase` | `count()` | 현재 버퍼에 적재된 행 수를 반환합니다. | 정수 |
-| `machbase` | `checkBit()` | 포인터 폭이 32비트인지 64비트인지 확인합니다. | `32` 또는 `64` |
 | `machbase` | `appendOpen(table_name, types)` | 컬럼 타입 코드를 지정하여 Append 프로토콜을 시작합니다. | `1` 또는 `0` |
-| `machbase` | `appendData(table_name, types, values, format)` | 활성 Append 세션으로 행을 추가합니다. | `1` 또는 `0` |
-| `machbase` | `appendDataByTime(table_name, types, values, format, times)` | 명시적 타임스탬프로 행을 추가합니다. | `1` 또는 `0` |
+| `machbase` | `appendData(table_name, types, values=None, format='YYYY-MM-DD HH24:MI:SS', on_ack=None)` | 활성 Append 세션으로 행을 추가합니다. 2.0에서는 `appendOpen()` 시 메타데이터 기반으로 열 타입이 준비된 경우 `types`를 생략하고 행을 두 번째 인자로 바로 전달할 수 있습니다. | `1` 또는 `0` |
+| `machbase` | `appendDataByTime(table_name, types, values=None, format='YYYY-MM-DD HH24:MI:SS', times=None, on_ack=None)` | 명시적 타임스탬프로 행을 추가합니다. 위 항목과 동일하게 타입 생략이 가능합니다. | `1` 또는 `0` |
 | `machbase` | `appendFlush()` | 버퍼링된 Append 데이터를 디스크에 플러시합니다. | `1` 또는 `0` |
 | `machbase` | `appendClose()` | Append 세션을 종료합니다. | `1` 또는 `0` |
-| `machbase` | `append(table_name, types, values, format)` | 열기·추가·닫기를 한 번에 처리하는 편의 함수입니다. | `1` 또는 `0` |
-| `machbase` | `appendByTime(table_name, types, values, format, times)` | 타임스탬프 인지 Append를 위한 편의 함수입니다. | `1` 또는 `0` |
-| `machbaseAPI` | `get_library_path()` | 번들된 네이티브 클라이언트 라이브러리 경로를 확인합니다. | 문자열 경로 |
-| `machbaseAPI` | `machbaseAPI.openDB(...)` | 저수준 open 호출(`machbase.open`과 동일 동작). | 포인터 또는 `None` |
-| `machbaseAPI` | `machbaseAPI.openDBEx(...)` | 확장 open 호출을 수행합니다. | 포인터 또는 `None` |
-| `machbaseAPI` | `machbaseAPI.closeDB(handle)` | 원시 핸들을 닫습니다. | 정수 상태값 |
-| `machbaseAPI` | `machbaseAPI.execDirect(handle, sql)` | 분류 없이 SQL을 바로 실행합니다. | 정수 상태값 |
-| `machbaseAPI` | `machbaseAPI.execSelect(handle, sql, type)` | SQL을 실행하고 결과를 버퍼링합니다. | 정수 상태값 |
-| `machbaseAPI` | `machbaseAPI.execSchema(handle, sql)` | 스키마 명령을 실행합니다. | 정수 상태값 |
-| `machbaseAPI` | `machbaseAPI.execStatistics(handle, table, user)` | 테이블 통계를 요청합니다. | 정수 상태값 |
-| `machbaseAPI` | `machbaseAPI.execAppendOpen(...)` | Append 프로토콜을 시작합니다. | 정수 상태값 |
-| `machbaseAPI` | `machbaseAPI.execAppendData(...)` | Append 데이터 행을 전송합니다. | 정수 상태값 |
-| `machbaseAPI` | `machbaseAPI.execAppendDataByTime(...)` | 타임스탬프를 포함해 데이터 행을 전송합니다. | 정수 상태값 |
-| `machbaseAPI` | `machbaseAPI.execAppendFlush(handle)` | Append 버퍼를 플러시합니다. | 정수 상태값 |
-| `machbaseAPI` | `machbaseAPI.execAppendClose(handle)` | Append 세션을 닫습니다. | 정수 상태값 |
-| `machbaseAPI` | `machbaseAPI.getColumns(handle, table)` | 컬럼 메타데이터를 가져옵니다. | 정수 상태값 |
-| `machbaseAPI` | `machbaseAPI.getIsConnected(handle)` | 연결 상태 플래그를 확인합니다. | 정수 상태값 |
-| `machbaseAPI` | `machbaseAPI.getDataCount(handle)` | 버퍼링된 행 수를 반환합니다. | 부호 없는 long |
-| `machbaseAPI` | `machbaseAPI.getData(handle)` | JSON 버퍼 포인터를 반환합니다. | `ctypes.c_char_p` |
-| `machbaseAPI` | `machbaseAPI.getlAddr(handle)` | 결과 포인터의 하위 32비트를 반환합니다(64비트 환경). | 정수 |
-| `machbaseAPI` | `machbaseAPI.getrAddr(handle)` | 결과 포인터의 상위 32비트를 반환합니다(64비트 환경). | 정수 |
-| `machbaseAPI` | `machbaseAPI.getSessionId(handle)` | 서버 세션 ID를 조회합니다. | 부호 없는 long |
-| `machbaseAPI` | `machbaseAPI.fetchRow(handle)` | 결과 커서를 다음 행으로 이동합니다. | 정수 상태값 |
-| `machbaseAPI` | `machbaseAPI.selectClose(handle)` | select 커서를 닫습니다. | 정수 상태값 |
+| `machbase` | `append(table_name, aTypes, aValues=None, format='YYYY-MM-DD HH24:MI:SS')` | 열기·추가·닫기를 한 번에 처리하는 편의 함수입니다. 2.0에서는 `aTypes`를 생략하고 `aValues`를 두 번째 인자로 바로 전달할 수 있습니다. | `1` 또는 `0` |
+| `machbase` | `appendByTime(table_name, aTypes, aValues=None, format='YYYY-MM-DD HH24:MI:SS', times=None)` | 타임스탬프 인지 Append를 위한 편의 함수입니다. 2.0에서는 `aTypes`를 생략하고 `aValues`를 두 번째 인자로 바로 전달할 수 있습니다. | `1` 또는 `0` |
 
-## API 참고 및 샘플
+## DB-API 스타일 API (2.0)
+
+| API | 설명 | 반환 |
+| -- | -- | -- |
+| `connect(host, port, user, password, ...)` | DB-API 연결 생성 | `MachbaseConnection` |
+| `cursor(dictionary=True)` | 커서 생성 (`True`: dict, `False`: tuple) | `MachbaseCursor` |
+| `cursor.execute(sql, params=None)` | SQL 실행 | `cursor` |
+| `cursor.fetchone()` | 한 건 조회 | `tuple | dict | None` |
+| `cursor.fetchmany(size)` | 최대 `size`건 조회 | `list` |
+| `cursor.fetchall()` | 전체 조회 | `list` |
+| `cursor.close()` | 커서 종료 | `None` |
+| `cursor.rowcount` | 영향 행 수 | `int` |
+
+## 2.0 타입 리스트 생략 append (권장)
+
+`append()`와 `appendByTime()`는 타입 리스트를 생략하고 호출할 수 있습니다.  
+두 번째 인자로 행 집합을 그대로 전달하면 서버 메타데이터 기반으로 처리합니다.
+
+```python
+#!/usr/bin/env python3
+from machbaseAPI.machbaseAPI import machbase
+
+def main():
+    db = machbase()
+    if db.open('127.0.0.1', 'SYS', 'MANAGER', 5656) == 0:
+        raise SystemExit(db.result())
+
+    try:
+        db.execute('drop table py_append_auto')
+        db.result()
+        ddl = 'create table py_append_auto(ts datetime, tag varchar(16), reading double)'
+        if db.execute(ddl) == 0:
+            raise SystemExit(db.result())
+        db.result()
+
+        rows = [
+            ['2024-01-01 10:00:00', 'node-1', 30.0],
+            ['2024-01-01 10:01:00', 'node-1', 30.5],
+        ]
+        if db.append('PY_APPEND_AUTO', rows) == 0:
+            raise SystemExit(db.result())
+        print('append without types result:', db.result())
+    finally:
+        if db.close() == 0:
+            raise SystemExit(db.result())
+
+if __name__ == '__main__':
+    main()
+```
+
+## API 참고 및 샘플 (레거시 1.x 기준)
+
+아래 예제는 기존 레거시 버전 기준 정리입니다. 2.0 순수 Python에서는 `getSessionId()`, `count()`, `checkBit()`와 같은 API가 제공되지 않습니다. 필요 시 2.0 DB-API 예제를 참고하세요.
 
 각 스크립트에서 호스트·포트·계정 정보를 환경에 맞게 수정하세요. 모든 예제는 독립 실행이 가능하며 `python3 script.py` 형태로 실행할 수 있습니다.
 
@@ -517,34 +561,9 @@ if __name__ == '__main__':
 
 #### machbase.checkBit()
 
-```python
-#!/usr/bin/env python3
-from machbaseAPI.machbaseAPI import machbase
-
-def main():
-    db = machbase()
-    print('client pointer width:', db.checkBit())
-
-if __name__ == '__main__':
-    main()
-```
+`checkBit()`는 기존 native 기반 버전에 있던 포인터 폭 확인용 API로, 2.0 순수 Python 패키지에서는 더 이상 제공되지 않습니다.
 
 ### 저수준 바인딩
 
-저수준 `machbaseAPI` 클래스는 ctypes 바인딩과 `get_library_path()` 헬퍼를 그대로 제공합니다.
-
-```python
-#!/usr/bin/env python3
-from machbaseAPI import machbaseAPI
-from machbaseAPI.machbaseAPI import get_library_path
-
-def main():
-    print('native library path:', get_library_path())
-    api = machbaseAPI.machbaseAPI()
-    print('openDB argtypes:', api.clib.openDB.argtypes)
-
-if __name__ == '__main__':
-    main()
-```
-
-일상적인 데이터베이스 작업은 `machbase` 헬퍼로 충분하며, C 레이어에 직접 접근해야 할 때만 저수준 인터페이스를 사용하세요.
+2.0 순수 Python 패키지에서는 `get_library_path()`, `openDB()`, `execAppend*()` 또는 포인터 유틸리티 API(예: `getlAddr`, `getrAddr`)와 같은 저수준 ctypes 인터페이스를 제공하지 않습니다.
+기존 C 레이어 직접 접근이 필요한 경우에는 2.0 이전 버전을 사용하세요.
