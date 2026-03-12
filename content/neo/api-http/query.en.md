@@ -33,6 +33,43 @@ curl -o - http://127.0.0.1:5654/db/query \
      --data-urlencode "q=select * from EXAMPLE limit 2"
 ```
 {{< /tab >}}
+{{< tab name="Python" >}}
+```python
+import requests
+
+response = requests.get(
+  "http://127.0.0.1:5654/db/query",
+  params={"q": "select * from EXAMPLE limit 2"},
+)
+print(response.text)
+```
+{{< /tab >}}
+{{< tab name="Javascript" >}}
+```javascript
+async function runQuery() {
+  const params = new URLSearchParams({
+    q: "select * from EXAMPLE limit 2",
+  });
+
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  console.log(await response.text());
+}
+
+runQuery();
+```
+{{< /tab >}}
+{{< tab name="C#" >}}
+```csharp
+using System.Net.Http;
+
+using var client = new HttpClient();
+var sql = Uri.EscapeDataString("select * from EXAMPLE limit 2");
+
+var response = await client.GetAsync($"http://127.0.0.1:5654/db/query?q={sql}");
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+```
+{{< /tab >}}
 {{< /tabs >}}
 
 
@@ -55,16 +92,15 @@ curl -o - http://127.0.0.1:5654/db/query \
 
 | param       | default | description                   |
 |:----------- |---------|:----------------------------- |
-| transpose   | false   | produce cols array instead of rows. {{< neo_since ver="8.0.12" />}}|
-| rowsFlatten | false   | reduce the array dimension of the *rows* field in the JSON object. {{< neo_since ver="8.0.12" />}}|
-| rowsArray   | false   | produce JSON that contains only array of object for each record.  {{< neo_since ver="8.0.12" />}} |
+| transpose   | false   | produce cols array instead of rows. |
+| rowsFlatten | false   | reduce the array dimension of the *rows* field in the JSON object. |
+| rowsArray   | false   | produce JSON that contains only array of object for each record.   |
 
 **Available parameters with `format=csv`**
 
 | param       | default | description                    |
 |:----------- |---------|:------------------------------ |
-| header      |         | `skip` do not include header line, equivalent to `heading=false` |
-| heading     | `true`  | show header line: true, false, Deprecated use `header` instead  |
+| header      |         | `skip` do not include header line  |
 | precision   | `-1`    | precision of float value, -1 for no round, 0 for integers |
 
 **Available timeformat**
@@ -96,6 +132,43 @@ GET http://127.0.0.1:5654/db/query
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode "q=select * from EXAMPLE limit 2"
+```
+{{< /tab >}}
+{{< tab name="Python" >}}
+```python
+import requests
+
+response = requests.get(
+  "http://127.0.0.1:5654/db/query",
+  params={"q": "select * from EXAMPLE limit 2"},
+)
+print(response.text)
+```
+{{< /tab >}}
+{{< tab name="Javascript" >}}
+```javascript
+async function runQuery() {
+  const params = new URLSearchParams({
+    q: "select * from EXAMPLE limit 2",
+  });
+
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  console.log(await response.text());
+}
+
+runQuery();
+```
+{{< /tab >}}
+{{< tab name="C#" >}}
+```csharp
+using System.Net.Http;
+
+using var client = new HttpClient();
+var sql = Uri.EscapeDataString("select * from EXAMPLE limit 2");
+
+var response = await client.GetAsync($"http://127.0.0.1:5654/db/query?q={sql}");
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -243,6 +316,46 @@ curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode "format=ndjson"
 ```
 {{< /tab >}}
+{{< tab name="Python" >}}
+```python
+import requests
+
+response = requests.get(
+  "http://127.0.0.1:5654/db/query",
+  params={"q": "select * from EXAMPLE limit 2", "format": "ndjson"},
+)
+print(response.text)
+```
+{{< /tab >}}
+{{< tab name="Javascript" >}}
+```javascript
+async function runQuery() {
+  const params = new URLSearchParams({
+    q: "select * from EXAMPLE limit 2",
+    format: "ndjson",
+  });
+
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  console.log(await response.text());
+}
+
+runQuery();
+```
+{{< /tab >}}
+{{< tab name="C#" >}}
+```csharp
+using System.Net.Http;
+
+using var client = new HttpClient();
+var sql = Uri.EscapeDataString("select * from EXAMPLE limit 2");
+
+var response = await client.GetAsync(
+  $"http://127.0.0.1:5654/db/query?q={sql}&format=ndjson"
+);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+```
+{{< /tab >}}
 {{< /tabs >}}
 
 The response comes with `Content-Type: application/x-ndjson`.
@@ -276,6 +389,46 @@ curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode "format=csv"
 ```
 {{< /tab >}}
+{{< tab name="Python" >}}
+```python
+import requests
+
+response = requests.get(
+  "http://127.0.0.1:5654/db/query",
+  params={"q": "select * from EXAMPLE limit 2", "format": "csv"},
+)
+print(response.text)
+```
+{{< /tab >}}
+{{< tab name="Javascript" >}}
+```javascript
+async function runQuery() {
+  const params = new URLSearchParams({
+    q: "select * from EXAMPLE limit 2",
+    format: "csv",
+  });
+
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  console.log(await response.text());
+}
+
+runQuery();
+```
+{{< /tab >}}
+{{< tab name="C#" >}}
+```csharp
+using System.Net.Http;
+
+using var client = new HttpClient();
+var sql = Uri.EscapeDataString("select * from EXAMPLE limit 2");
+
+var response = await client.GetAsync(
+  $"http://127.0.0.1:5654/db/query?q={sql}&format=csv"
+);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+```
+{{< /tab >}}
 {{< /tabs >}}
 
 The response comes with `Content-Type: text/csv; utf-8`
@@ -305,6 +458,46 @@ GET http://127.0.0.1:5654/db/query
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode "q=select * from EXAMPLE limit 2" \
     --data-urlencode "format=box"
+```
+{{< /tab >}}
+{{< tab name="Python" >}}
+```python
+import requests
+
+response = requests.get(
+  "http://127.0.0.1:5654/db/query",
+  params={"q": "select * from EXAMPLE limit 2", "format": "box"},
+)
+print(response.text)
+```
+{{< /tab >}}
+{{< tab name="Javascript" >}}
+```javascript
+async function runQuery() {
+  const params = new URLSearchParams({
+    q: "select * from EXAMPLE limit 2",
+    format: "box",
+  });
+
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  console.log(await response.text());
+}
+
+runQuery();
+```
+{{< /tab >}}
+{{< tab name="C#" >}}
+```csharp
+using System.Net.Http;
+
+using var client = new HttpClient();
+var sql = Uri.EscapeDataString("select * from EXAMPLE limit 2");
+
+var response = await client.GetAsync(
+  $"http://127.0.0.1:5654/db/query?q={sql}&format=box"
+);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -339,6 +532,46 @@ GET http://127.0.0.1:5654/db/query
 curl -o - http://127.0.0.1:5654/db/query \
     --data-urlencode "q=select * from EXAMPLE limit 2" \
     --data-urlencode "format=csv"
+```
+{{< /tab >}}
+{{< tab name="Python" >}}
+```python
+import requests
+
+response = requests.get(
+  "http://127.0.0.1:5654/db/query",
+  params={"q": "select * from EXAMPLE limit 2", "format": "csv"},
+)
+print(response.text)
+```
+{{< /tab >}}
+{{< tab name="Javascript" >}}
+```javascript
+async function runQuery() {
+  const params = new URLSearchParams({
+    q: "select * from EXAMPLE limit 2",
+    format: "csv",
+  });
+
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  console.log(await response.text());
+}
+
+runQuery();
+```
+{{< /tab >}}
+{{< tab name="C#" >}}
+```csharp
+using System.Net.Http;
+
+using var client = new HttpClient();
+var sql = Uri.EscapeDataString("select * from EXAMPLE limit 2");
+
+var response = await client.GetAsync(
+  $"http://127.0.0.1:5654/db/query?q={sql}&format=csv"
+);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -377,6 +610,47 @@ curl -o - -X POST http://127.0.0.1:5654/db/query \
     -d '{ "q":"select * from EXAMPLE limit 2" }'
 ```
 {{< /tab >}}
+{{< tab name="Python" >}}
+```python
+import requests
+
+response = requests.post(
+  "http://127.0.0.1:5654/db/query",
+  json={"q": "select * from EXAMPLE limit 2"},
+)
+print(response.text)
+```
+{{< /tab >}}
+{{< tab name="Javascript" >}}
+```javascript
+async function runQuery() {
+  const response = await fetch("http://127.0.0.1:5654/db/query", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ q: "select * from EXAMPLE limit 2" }),
+  });
+
+  console.log(await response.text());
+}
+
+runQuery();
+```
+{{< /tab >}}
+{{< tab name="C#" >}}
+```csharp
+using System.Net.Http;
+using System.Net.Http.Json;
+
+using var client = new HttpClient();
+
+var response = await client.PostAsJsonAsync(
+  "http://127.0.0.1:5654/db/query",
+  new { q = "select * from EXAMPLE limit 2" }
+);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+```
+{{< /tab >}}
 {{< /tabs >}}
 
 ## POST Form
@@ -398,6 +672,54 @@ q=select * from EXAMPLE limit 2
 ```sh
 curl -o - -X POST http://127.0.0.1:5654/db/query \
     --data-urlencode "q=select * from EXAMPLE limit 2"
+```
+{{< /tab >}}
+{{< tab name="Python" >}}
+```python
+import requests
+
+response = requests.post(
+  "http://127.0.0.1:5654/db/query",
+  data={"q": "select * from EXAMPLE limit 2"},
+)
+print(response.text)
+```
+{{< /tab >}}
+{{< tab name="Javascript" >}}
+```javascript
+async function runQuery() {
+  const body = new URLSearchParams({
+    q: "select * from EXAMPLE limit 2",
+  });
+
+  const response = await fetch("http://127.0.0.1:5654/db/query", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body,
+  });
+
+  console.log(await response.text());
+}
+
+runQuery();
+```
+{{< /tab >}}
+{{< tab name="C#" >}}
+```csharp
+using System.Collections.Generic;
+using System.Net.Http;
+
+using var client = new HttpClient();
+using var content = new FormUrlEncodedContent(
+  new[]
+  {
+    new KeyValuePair<string, string>("q", "select * from EXAMPLE limit 2"),
+  }
+);
+
+var response = await client.PostAsync("http://127.0.0.1:5654/db/query", content);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```
 {{< /tab >}}
 {{< /tabs >}}

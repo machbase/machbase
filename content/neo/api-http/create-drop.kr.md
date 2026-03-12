@@ -27,8 +27,52 @@ GET http://127.0.0.1:5654/db/query
 {{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
-    --data-urlencode \
-    "q=create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"
+  --data-urlencode \
+  "q=create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"
+```
+{{< /tab >}}
+{{< tab name="Python" >}}
+```python
+import requests
+
+response = requests.get(
+  "http://127.0.0.1:5654/db/query",
+  params={
+  "q": (
+  "create tag table EXAMPLE "
+  "(name varchar(40) primary key, time datetime basetime, value double)"
+  )
+  },
+)
+print(response.text)
+```
+{{< /tab >}}
+{{< tab name="Javascript" >}}
+```javascript
+async function createTable() {
+  const params = new URLSearchParams({
+    q: "create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)",
+  });
+
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  console.log(await response.text());
+}
+
+createTable();
+```
+{{< /tab >}}
+{{< tab name="C#" >}}
+```csharp
+using System.Net.Http;
+
+using var client = new HttpClient();
+var sql = Uri.EscapeDataString(
+  "create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"
+);
+
+var response = await client.GetAsync($"http://127.0.0.1:5654/db/query?q={sql}");
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -53,8 +97,52 @@ GET http://127.0.0.1:5654/db/query
 {{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
-    --data-urlencode \
-    "q=create tag table if not exists EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"
+  --data-urlencode \
+  "q=create tag table if not exists EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"
+```
+{{< /tab >}}
+{{< tab name="Python" >}}
+```python
+import requests
+
+response = requests.get(
+  "http://127.0.0.1:5654/db/query",
+  params={
+  "q": (
+  "create tag table if not exists EXAMPLE "
+  "(name varchar(40) primary key, time datetime basetime, value double)"
+  )
+  },
+)
+print(response.text)
+```
+{{< /tab >}}
+{{< tab name="Javascript" >}}
+```javascript
+async function createTable() {
+  const params = new URLSearchParams({
+    q: "create tag table if not exists EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)",
+  });
+
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  console.log(await response.text());
+}
+
+createTable();
+```
+{{< /tab >}}
+{{< tab name="C#" >}}
+```csharp
+using System.Net.Http;
+
+using var client = new HttpClient();
+var sql = Uri.EscapeDataString(
+  "create tag table if not exists EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"
+);
+
+var response = await client.GetAsync($"http://127.0.0.1:5654/db/query?q={sql}");
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -73,8 +161,52 @@ GET http://127.0.0.1:5654/db/query
 {{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
-    --data-urlencode \
-    "q=create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double summarized)"
+  --data-urlencode \
+  "q=create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double summarized)"
+```
+{{< /tab >}}
+{{< tab name="Python" >}}
+```python
+import requests
+
+response = requests.get(
+  "http://127.0.0.1:5654/db/query",
+  params={
+  "q": (
+  "create tag table EXAMPLE "
+  "(name varchar(40) primary key, time datetime basetime, value double summarized)"
+  )
+  },
+)
+print(response.text)
+```
+{{< /tab >}}
+{{< tab name="Javascript" >}}
+```javascript
+async function createTable() {
+  const params = new URLSearchParams({
+    q: "create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double summarized)",
+  });
+
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  console.log(await response.text());
+}
+
+createTable();
+```
+{{< /tab >}}
+{{< tab name="C#" >}}
+```csharp
+using System.Net.Http;
+
+using var client = new HttpClient();
+var sql = Uri.EscapeDataString(
+  "create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double summarized)"
+);
+
+var response = await client.GetAsync($"http://127.0.0.1:5654/db/query?q={sql}");
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -99,7 +231,44 @@ GET http://127.0.0.1:5654/db/query
 {{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
-    --data-urlencode "q=drop table EXAMPLE"
+  --data-urlencode "q=drop table EXAMPLE"
+```
+{{< /tab >}}
+{{< tab name="Python" >}}
+```python
+import requests
+
+response = requests.get(
+  "http://127.0.0.1:5654/db/query",
+  params={"q": "drop table EXAMPLE"},
+)
+print(response.text)
+```
+{{< /tab >}}
+{{< tab name="Javascript" >}}
+```javascript
+async function dropTable() {
+  const params = new URLSearchParams({
+    q: "drop table EXAMPLE",
+  });
+
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  console.log(await response.text());
+}
+
+dropTable();
+```
+{{< /tab >}}
+{{< tab name="C#" >}}
+```csharp
+using System.Net.Http;
+
+using var client = new HttpClient();
+var sql = Uri.EscapeDataString("drop table EXAMPLE");
+
+var response = await client.GetAsync($"http://127.0.0.1:5654/db/query?q={sql}");
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```
 {{< /tab >}}
 {{< /tabs >}}

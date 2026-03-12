@@ -90,8 +90,80 @@ Content-Type: application/json
 {{< tab name="cURL" >}}
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE \
-    -H "Content-Type: application/json" \
-    --data-binary "@post-data.json"
+  -H "Content-Type: application/json" \
+  --data-binary "@post-data.json"
+```
+{{< /tab >}}
+{{< tab name="Python" >}}
+```python
+import requests
+
+payload = {
+  "data": {
+    "columns": ["name", "time", "value"],
+    "rows": [
+        ["json-data", 1670380342000000000, 1.0001],
+        ["json-data", 1670380343000000000, 2.0002],
+    ],
+  }
+}
+
+response = requests.post(
+  "http://127.0.0.1:5654/db/write/EXAMPLE",
+  json=payload,
+)
+print(response.text)
+```
+{{< /tab >}}
+{{< tab name="Javascript" >}}
+```javascript
+async function writeJson() {
+  const payload = {
+    data: {
+      columns: ["name", "time", "value"],
+      rows: [
+        ["json-data", 1670380342000000000, 1.0001],
+        ["json-data", 1670380343000000000, 2.0002],
+      ],
+    },
+  };
+
+  const response = await fetch("http://127.0.0.1:5654/db/write/EXAMPLE", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  console.log(await response.text());
+}
+
+writeJson();
+```
+{{< /tab >}}
+{{< tab name="C#" >}}
+```csharp
+using System.Net.Http;
+using System.Net.Http.Json;
+
+using var client = new HttpClient();
+
+var response = await client.PostAsJsonAsync(
+  "http://127.0.0.1:5654/db/write/EXAMPLE",
+  new
+  {
+    data = new
+    {
+      columns = new[] { "name", "time", "value" },
+      rows = new object[]
+      {
+        new object[] { "json-data", 1670380342000000000L, 1.0001 },
+        new object[] { "json-data", 1670380343000000000L, 2.0002 },
+      },
+    },
+  }
+);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -115,9 +187,110 @@ Content-Encoding: gzip
 {{< tab name="cURL" >}}
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE \
-    -H "Content-Type: application/json" \
-    -H "Content-Encoding: gzip" \
-    --data-binary "@post-data.json.gz"
+  -H "Content-Type: application/json" \
+  -H "Content-Encoding: gzip" \
+  --data-binary "@post-data.json.gz"
+```
+{{< /tab >}}
+{{< tab name="Python" >}}
+```python
+import gzip
+import json
+
+import requests
+
+payload = {
+  "data": {
+    "columns": ["name", "time", "value"],
+    "rows": [
+        ["json-data", 1670380342000000000, 1.0001],
+        ["json-data", 1670380343000000000, 2.0002],
+    ],
+  }
+}
+
+response = requests.post(
+  "http://127.0.0.1:5654/db/write/EXAMPLE",
+  headers={
+    "Content-Type": "application/json",
+    "Content-Encoding": "gzip",
+  },
+  data=gzip.compress(json.dumps(payload).encode("utf-8")),
+)
+print(response.text)
+```
+{{< /tab >}}
+{{< tab name="Javascript" >}}
+```javascript
+async function writeCompressedJson() {
+  const payload = {
+    data: {
+      columns: ["name", "time", "value"],
+      rows: [
+        ["json-data", 1670380342000000000, 1.0001],
+        ["json-data", 1670380343000000000, 2.0002],
+      ],
+    },
+  };
+
+  const stream = new Blob([JSON.stringify(payload)])
+  .stream()
+  .pipeThrough(new CompressionStream("gzip"));
+  const compressedBody = await new Response(stream).blob();
+
+  const response = await fetch("http://127.0.0.1:5654/db/write/EXAMPLE", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Content-Encoding": "gzip",
+    },
+    body: compressedBody,
+  });
+
+  console.log(await response.text());
+}
+
+writeCompressedJson();
+```
+{{< /tab >}}
+{{< tab name="C#" >}}
+```csharp
+using System.IO.Compression;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
+
+using var client = new HttpClient();
+
+var payload = new
+{
+  data = new
+  {
+    columns = new[] { "name", "time", "value" },
+    rows = new object[]
+    {
+      new object[] { "json-data", 1670380342000000000L, 1.0001 },
+      new object[] { "json-data", 1670380343000000000L, 2.0002 },
+    },
+  },
+};
+
+var json = JsonSerializer.Serialize(payload);
+using var buffer = new MemoryStream();
+using (var gzip = new GZipStream(buffer, CompressionMode.Compress, leaveOpen: true))
+using (var writer = new StreamWriter(gzip, Encoding.UTF8))
+{
+  writer.Write(json);
+}
+
+using var content = new ByteArrayContent(buffer.ToArray());
+content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+content.Headers.ContentEncoding.Add("gzip");
+
+var response = await client.PostAsync("http://127.0.0.1:5654/db/write/EXAMPLE", content);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -153,22 +326,100 @@ Content-Type: application/json
 {{< tab name="cURL" >}}
 ```sh
 curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=DEFAULT&tz=Asia/Seoul' \
-    -H "Content-Type: application/json" \
-    --data-binary "@post-data.json"
+  -H "Content-Type: application/json" \
+  --data-binary "@post-data.json"
 ```
 
 - `post-data.json`
 
 ```json
 {
-    "data": {
-        "columns":["name", "time", "value"],
-        "rows": [
-            [ "json-data", "2022-12-07 02:32:22", 1.0001 ],
-            [ "json-data", "2022-12-07 02:32:23", 2.0002 ]
-        ]
-    }
+  "data": {
+    "columns":["name", "time", "value"],
+    "rows": [
+        [ "json-data", "2022-12-07 02:32:22", 1.0001 ],
+        [ "json-data", "2022-12-07 02:32:23", 2.0002 ]
+    ]
+  }
 }
+```
+{{< /tab >}}
+{{< tab name="Python" >}}
+```python
+import requests
+
+payload = {
+  "data": {
+    "columns": ["name", "time", "value"],
+    "rows": [
+        ["json-data", "2022-12-07 02:32:22", 1.0001],
+        ["json-data", "2022-12-07 02:32:23", 2.0002],
+    ],
+  }
+}
+
+response = requests.post(
+  "http://127.0.0.1:5654/db/write/EXAMPLE",
+  params={"timeformat": "DEFAULT", "tz": "Asia/Seoul"},
+  json=payload,
+)
+print(response.text)
+```
+{{< /tab >}}
+{{< tab name="Javascript" >}}
+```javascript
+async function writeJson() {
+  const payload = {
+    data: {
+      columns: ["name", "time", "value"],
+      rows: [
+        ["json-data", "2022-12-07 02:32:22", 1.0001],
+        ["json-data", "2022-12-07 02:32:23", 2.0002],
+      ],
+    },
+  };
+
+  const params = new URLSearchParams({
+    timeformat: "DEFAULT",
+    tz: "Asia/Seoul",
+  });
+
+  const response = await fetch(`http://127.0.0.1:5654/db/write/EXAMPLE?${params}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  console.log(await response.text());
+}
+
+writeJson();
+```
+{{< /tab >}}
+{{< tab name="C#" >}}
+```csharp
+using System.Net.Http;
+using System.Net.Http.Json;
+
+using var client = new HttpClient();
+
+var response = await client.PostAsJsonAsync(
+  "http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=DEFAULT&tz=Asia/Seoul",
+  new
+  {
+    data = new
+    {
+      columns = new[] { "name", "time", "value" },
+      rows = new object[]
+      {
+        new object[] { "json-data", "2022-12-07 02:32:22", 1.0001 },
+        new object[] { "json-data", "2022-12-07 02:32:23", 2.0002 },
+      },
+    },
+  }
+);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -203,8 +454,68 @@ Content-Type: application/x-ndjson
 {{< tab name="cURL" >}}
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE \
-    -H "Content-Type: application/x-ndjson" \
-    --data-binary "@post-data.json"
+  -H "Content-Type: application/x-ndjson" \
+  --data-binary "@post-data.json"
+```
+{{< /tab >}}
+{{< tab name="Python" >}}
+```python
+import json
+
+import requests
+
+rows = [
+  {"NAME": "ndjson-data", "TIME": 1670380342000000000, "VALUE": 1.001},
+  {"NAME": "ndjson-data", "TIME": 1670380343000000000, "VALUE": 2.002},
+]
+payload = "\n".join(json.dumps(row) for row in rows)
+
+response = requests.post(
+  "http://127.0.0.1:5654/db/write/EXAMPLE",
+  headers={"Content-Type": "application/x-ndjson"},
+  data=payload,
+)
+print(response.text)
+```
+{{< /tab >}}
+{{< tab name="Javascript" >}}
+```javascript
+async function writeNdjson() {
+  const payload = [
+    JSON.stringify({ NAME: "ndjson-data", TIME: 1670380342000000000, VALUE: 1.001 }),
+    JSON.stringify({ NAME: "ndjson-data", TIME: 1670380343000000000, VALUE: 2.002 }),
+  ].join("\n");
+
+  const response = await fetch("http://127.0.0.1:5654/db/write/EXAMPLE", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-ndjson" },
+    body: payload,
+  });
+
+  console.log(await response.text());
+}
+
+writeNdjson();
+```
+{{< /tab >}}
+{{< tab name="C#" >}}
+```csharp
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
+
+using var client = new HttpClient();
+
+var lines = new[]
+{
+  JsonSerializer.Serialize(new { NAME = "ndjson-data", TIME = 1670380342000000000L, VALUE = 1.001 }),
+  JsonSerializer.Serialize(new { NAME = "ndjson-data", TIME = 1670380343000000000L, VALUE = 2.002 }),
+};
+
+using var content = new StringContent(string.Join("\n", lines), Encoding.UTF8, "application/x-ndjson");
+var response = await client.PostAsync("http://127.0.0.1:5654/db/write/EXAMPLE", content);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -238,8 +549,77 @@ Content-Type: application/x-ndjson
 {{< tab name="cURL" >}}
 ```sh
 curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=Default&tz=Local' \
-    -H "Content-Type: application/x-ndjson" \
-    --data-binary "@post-data.json"
+  -H "Content-Type: application/x-ndjson" \
+  --data-binary "@post-data.json"
+```
+{{< /tab >}}
+{{< tab name="Python" >}}
+```python
+import json
+
+import requests
+
+rows = [
+  {"NAME": "ndjson-data", "TIME": "2022-12-07 02:33:22", "VALUE": 1.001},
+  {"NAME": "ndjson-data", "TIME": "2022-12-07 02:33:23", "VALUE": 2.002},
+]
+payload = "\n".join(json.dumps(row) for row in rows)
+
+response = requests.post(
+  "http://127.0.0.1:5654/db/write/EXAMPLE",
+  params={"timeformat": "Default", "tz": "Local"},
+  headers={"Content-Type": "application/x-ndjson"},
+  data=payload,
+)
+print(response.text)
+```
+{{< /tab >}}
+{{< tab name="Javascript" >}}
+```javascript
+async function writeNdjson() {
+  const payload = [
+    JSON.stringify({ NAME: "ndjson-data", TIME: "2022-12-07 02:33:22", VALUE: 1.001 }),
+    JSON.stringify({ NAME: "ndjson-data", TIME: "2022-12-07 02:33:23", VALUE: 2.002 }),
+  ].join("\n");
+
+  const params = new URLSearchParams({
+    timeformat: "Default",
+    tz: "Local",
+  });
+
+  const response = await fetch(`http://127.0.0.1:5654/db/write/EXAMPLE?${params}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-ndjson" },
+    body: payload,
+  });
+
+  console.log(await response.text());
+}
+
+writeNdjson();
+```
+{{< /tab >}}
+{{< tab name="C#" >}}
+```csharp
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
+
+using var client = new HttpClient();
+
+var lines = new[]
+{
+  JsonSerializer.Serialize(new { NAME = "ndjson-data", TIME = "2022-12-07 02:33:22", VALUE = 1.001 }),
+  JsonSerializer.Serialize(new { NAME = "ndjson-data", TIME = "2022-12-07 02:33:23", VALUE = 2.002 }),
+};
+
+using var content = new StringContent(string.Join("\n", lines), Encoding.UTF8, "application/x-ndjson");
+var response = await client.PostAsync(
+  "http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=Default&tz=Local",
+  content
+);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -251,15 +631,14 @@ These options are only applicable when the content body is in CSV format.
 
 | param         | default | description                     |
 |:------------- |---------|:------------------------------- |
-| header {{< neo_since ver="8.0.33" />}} |         | `skip`: simply skip the first line<br/> `columns`: the CSV has a header line where fields match the column names. |
-| heading       | false   | Deprecated, `heading=true` is equivalent with `header=skip`. |
+| header        |         | `skip`: simply skip the first line<br/> `columns`: the CSV has a header line where fields match the column names. |
 | delimiter     | ,       | field delimiter |
 
 If the CSV data includes a header line, set the `header=skip` query parameter to make machbase-neo to ignore the first line.
 
 If the CSV header line specifies columns to write, use `header=columns`. This option ensures that the header matches the column names of the table. The header line will be used as the *columns* part of the SQL statement `INSERT INTO TABLE(columns...) VALUES(...)`.
 
-If the header line is not included and omit `header` option (or equivalent with `heading=false`) which is default, each line's fields must match all the columns of the table in order to match the SQL statement `INSERT INTO TABLE VALUES(...)`.
+If the header line is not included and omit `header` option, each line's fields must match all the columns of the table in order to match the SQL statement `INSERT INTO TABLE VALUES(...)`.
 
 > According to the semantics of append method, `header=columns` does not work with `method=append`.
 
@@ -290,8 +669,67 @@ csv-data,1670380343000000000,2.0002
 {{< tab name="cURL" >}}
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE?header=skip \
-    -H "Content-Type: text/csv" \
-    --data-binary "@post-data.csv"
+  -H "Content-Type: text/csv" \
+  --data-binary "@post-data.csv"
+```
+{{< /tab >}}
+{{< tab name="Python" >}}
+```python
+import requests
+
+payload = """NAME,TIME,VALUE
+csv-data,1670380342000000000,1.0001
+csv-data,1670380343000000000,2.0002
+"""
+
+response = requests.post(
+  "http://127.0.0.1:5654/db/write/EXAMPLE",
+  params={"header": "skip"},
+  headers={"Content-Type": "text/csv"},
+  data=payload,
+)
+print(response.text)
+```
+{{< /tab >}}
+{{< tab name="Javascript" >}}
+```javascript
+async function writeCsv() {
+  const payload = `NAME,TIME,VALUE
+csv-data,1670380342000000000,1.0001
+csv-data,1670380343000000000,2.0002`;
+
+  const response = await fetch("http://127.0.0.1:5654/db/write/EXAMPLE?header=skip", {
+    method: "POST",
+    headers: { "Content-Type": "text/csv" },
+    body: payload,
+  });
+
+  console.log(await response.text());
+}
+
+writeCsv();
+```
+{{< /tab >}}
+{{< tab name="C#" >}}
+```csharp
+using System.Net.Http;
+using System.Text;
+
+using var client = new HttpClient();
+
+var payload = """
+NAME,TIME,VALUE
+csv-data,1670380342000000000,1.0001
+csv-data,1670380343000000000,2.0002
+""";
+
+using var content = new StringContent(payload, Encoding.UTF8, "text/csv");
+var response = await client.PostAsync(
+  "http://127.0.0.1:5654/db/write/EXAMPLE?header=skip",
+  content
+);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -324,8 +762,67 @@ TIME,NAME,VALUE
 {{< tab name="cURL" >}}
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE?header=columns \
-    -H "Content-Type: text/csv" \
-    --data-binary "@post-data.csv"
+  -H "Content-Type: text/csv" \
+  --data-binary "@post-data.csv"
+```
+{{< /tab >}}
+{{< tab name="Python" >}}
+```python
+import requests
+
+payload = """TIME,NAME,VALUE
+1670380342000000000,csv-data,1.0001
+1670380343000000000,csv-data,2.0002
+"""
+
+response = requests.post(
+  "http://127.0.0.1:5654/db/write/EXAMPLE",
+  params={"header": "columns"},
+  headers={"Content-Type": "text/csv"},
+  data=payload,
+)
+print(response.text)
+```
+{{< /tab >}}
+{{< tab name="Javascript" >}}
+```javascript
+async function writeCsv() {
+  const payload = `TIME,NAME,VALUE
+1670380342000000000,csv-data,1.0001
+1670380343000000000,csv-data,2.0002`;
+
+  const response = await fetch("http://127.0.0.1:5654/db/write/EXAMPLE?header=columns", {
+    method: "POST",
+    headers: { "Content-Type": "text/csv" },
+    body: payload,
+  });
+
+  console.log(await response.text());
+}
+
+writeCsv();
+```
+{{< /tab >}}
+{{< tab name="C#" >}}
+```csharp
+using System.Net.Http;
+using System.Text;
+
+using var client = new HttpClient();
+
+var payload = """
+TIME,NAME,VALUE
+1670380342000000000,csv-data,1.0001
+1670380343000000000,csv-data,2.0002
+""";
+
+using var content = new StringContent(payload, Encoding.UTF8, "text/csv");
+var response = await client.PostAsync(
+  "http://127.0.0.1:5654/db/write/EXAMPLE?header=columns",
+  content
+);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -349,9 +846,93 @@ Content-Encoding: gzip
 {{< tab name="cURL" >}}
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE?header=skip \
-    -H "Content-Type: text/csv" \
-    -H "Content-Encoding: gzip" \
-    --data-binary "@post-data.csv.gz"
+  -H "Content-Type: text/csv" \
+  -H "Content-Encoding: gzip" \
+  --data-binary "@post-data.csv.gz"
+```
+{{< /tab >}}
+{{< tab name="Python" >}}
+```python
+import gzip
+
+import requests
+
+payload = """NAME,TIME,VALUE
+csv-data,1670380342000000000,1.0001
+csv-data,1670380343000000000,2.0002
+"""
+
+response = requests.post(
+  "http://127.0.0.1:5654/db/write/EXAMPLE",
+  params={"header": "skip"},
+  headers={
+    "Content-Type": "text/csv",
+    "Content-Encoding": "gzip",
+  },
+  data=gzip.compress(payload.encode("utf-8")),
+)
+print(response.text)
+```
+{{< /tab >}}
+{{< tab name="Javascript" >}}
+```javascript
+async function writeCompressedCsv() {
+  const payload = `NAME,TIME,VALUE
+csv-data,1670380342000000000,1.0001
+csv-data,1670380343000000000,2.0002`;
+
+  const stream = new Blob([payload])
+  .stream()
+  .pipeThrough(new CompressionStream("gzip"));
+  const compressedBody = await new Response(stream).blob();
+
+  const response = await fetch("http://127.0.0.1:5654/db/write/EXAMPLE?header=skip", {
+    method: "POST",
+    headers: {
+      "Content-Type": "text/csv",
+      "Content-Encoding": "gzip",
+    },
+    body: compressedBody,
+  });
+
+  console.log(await response.text());
+}
+
+writeCompressedCsv();
+```
+{{< /tab >}}
+{{< tab name="C#" >}}
+```csharp
+using System.IO.Compression;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+
+using var client = new HttpClient();
+
+var payload = """
+NAME,TIME,VALUE
+csv-data,1670380342000000000,1.0001
+csv-data,1670380343000000000,2.0002
+""";
+
+using var buffer = new MemoryStream();
+using (var gzip = new GZipStream(buffer, CompressionMode.Compress, leaveOpen: true))
+using (var writer = new StreamWriter(gzip, Encoding.UTF8))
+{
+  writer.Write(payload);
+}
+
+using var content = new ByteArrayContent(buffer.ToArray());
+content.Headers.ContentType = new MediaTypeHeaderValue("text/csv");
+content.Headers.ContentEncoding.Add("gzip");
+
+var response = await client.PostAsync(
+  "http://127.0.0.1:5654/db/write/EXAMPLE?header=skip",
+  content
+);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -393,8 +974,52 @@ GET http://127.0.0.1:5654/db/query
 {{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
-    --data-urlencode \
-    "q=create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"
+  --data-urlencode \
+  "q=create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"
+```
+{{< /tab >}}
+{{< tab name="Python" >}}
+```python
+import requests
+
+response = requests.get(
+  "http://127.0.0.1:5654/db/query",
+  params={
+    "q": (
+        "create tag table EXAMPLE "
+        "(name varchar(40) primary key, time datetime basetime, value double)"
+    )
+  },
+)
+print(response.text)
+```
+{{< /tab >}}
+{{< tab name="Javascript" >}}
+```javascript
+async function createTable() {
+  const params = new URLSearchParams({
+    q: "create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)",
+  });
+
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  console.log(await response.text());
+}
+
+createTable();
+```
+{{< /tab >}}
+{{< tab name="C#" >}}
+```csharp
+using System.Net.Http;
+
+using var client = new HttpClient();
+var sql = Uri.EscapeDataString(
+  "create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"
+);
+
+var response = await client.GetAsync($"http://127.0.0.1:5654/db/query?q={sql}");
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```
 {{< /tab >}}
 {{< /tabs >}}

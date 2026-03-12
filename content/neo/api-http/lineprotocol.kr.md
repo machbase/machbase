@@ -38,7 +38,46 @@ my-car speed=87.6 167038034500000
 {{< tab name="cURL" >}}
 ```sh
 curl -o - -X POST "http://127.0.0.1:5654/metrics/write?db=tagdata" \
-    --data-binary 'my-car speed=87.6 167038034500000'
+  --data-binary 'my-car speed=87.6 167038034500000'
+```
+{{< /tab >}}
+{{< tab name="Python" >}}
+```python
+import requests
+
+response = requests.post(
+  "http://127.0.0.1:5654/metrics/write",
+  params={"db": "tagdata"},
+  data="my-car speed=87.6 167038034500000",
+)
+print(response.text)
+```
+{{< /tab >}}
+{{< tab name="Javascript" >}}
+```javascript
+async function writeLineProtocol() {
+  const response = await fetch("http://127.0.0.1:5654/metrics/write?db=tagdata", {
+    method: "POST",
+    body: "my-car speed=87.6 167038034500000",
+  });
+
+  console.log(await response.text());
+}
+
+writeLineProtocol();
+```
+{{< /tab >}}
+{{< tab name="C#" >}}
+```csharp
+using System.Net.Http;
+using System.Text;
+
+using var client = new HttpClient();
+using var content = new StringContent("my-car speed=87.6 167038034500000", Encoding.UTF8);
+
+var response = await client.PostAsync("http://127.0.0.1:5654/metrics/write?db=tagdata", content);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```
 {{< /tab >}}
 {{< /tabs >}}

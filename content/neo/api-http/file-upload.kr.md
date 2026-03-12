@@ -67,10 +67,90 @@ Content-Type: image/png
 
 ```sh {hl_lines=[5]}
 curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE' \
-    -F 'NAME=camera-1' \
-    -F 'TIME=now' \
-    -F 'VALUE=0' \
-    -F 'EXTDATA=@./data/image_file.png;headers="X-Store-Dir: /tmp/store"'
+  -F 'NAME=camera-1' \
+  -F 'TIME=now' \
+  -F 'VALUE=0' \
+  -F 'EXTDATA=@./data/image_file.png;headers="X-Store-Dir: /tmp/store"'
+```
+{{< /tab >}}
+{{< tab name="Python" >}}
+  이 예시는 `requests`를 사용해 *multipart/form-data* 형식으로 파일을 업로드합니다.
+
+  ```python
+  import requests
+
+  url = "http://127.0.0.1:5654/db/write/EXAMPLE"
+
+  with open("./data/image_file.png", "rb") as image_file:
+    response = requests.post(
+      url,
+      data={"NAME": "camera-1", "TIME": "now", "VALUE": "0"},
+      files={"EXTDATA": ("image_file.png", image_file, "image/png")},
+      headers={"X-Store-Dir": "/tmp/store"},
+    )
+
+  response.raise_for_status()
+  print(response.text)
+  ```
+{{< /tab >}}
+{{< tab name="Javascript" >}}
+이 예시는 `fetch`와 `FormData`를 사용해 *multipart/form-data* 형식으로 파일을 업로드합니다.
+
+```javascript
+async function uploadFile(file) {
+  if (!file) {
+    throw new Error("업로드할 파일을 먼저 선택하세요.");
+  }
+
+  const formData = new FormData();
+  formData.append("NAME", "camera-1");
+  formData.append("TIME", "now");
+  formData.append("VALUE", "0");
+  formData.append("EXTDATA", file, file.name);
+
+  const response = await fetch("http://127.0.0.1:5654/db/write/EXAMPLE", {
+    method: "POST",
+    headers: { "X-Store-Dir": "/tmp/store" },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  console.log(await response.text());
+}
+
+const fileInput = document.querySelector("input[type=file]");
+uploadFile(fileInput.files[0]);
+```
+{{< /tab >}}
+{{< tab name="C#" >}}
+```csharp
+using System.Net.Http;
+using System.Net.Http.Headers;
+
+using var client = new HttpClient();
+using var form = new MultipartFormDataContent();
+
+form.Add(new StringContent("camera-1"), "NAME");
+form.Add(new StringContent("now"), "TIME");
+form.Add(new StringContent("0"), "VALUE");
+
+using var fileStream = File.OpenRead("./data/image_file.png");
+using var fileContent = new StreamContent(fileStream);
+fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+form.Add(fileContent, "EXTDATA", "image_file.png");
+
+using var request = new HttpRequestMessage(HttpMethod.Post, "http://127.0.0.1:5654/db/write/EXAMPLE")
+{
+  Content = form,
+};
+request.Headers.Add("X-Store-Dir", "/tmp/store");
+
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -145,7 +225,44 @@ GET http://127.0.0.1:5654/db/query
 ```sh
 curl -o - 'http://127.0.0.1:5654/db/query' \
   --data-urlencode "q=select EXTDATA from EXAMPLE\
-    where NAME = 'camera-1'"
+  where NAME = 'camera-1'"
+```
+{{< /tab >}}
+{{< tab name="Python" >}}
+```python
+import requests
+
+response = requests.get(
+  "http://127.0.0.1:5654/db/query",
+  params={"q": "select EXTDATA from EXAMPLE where NAME = 'camera-1'"},
+)
+print(response.text)
+```
+{{< /tab >}}
+{{< tab name="Javascript" >}}
+```javascript
+async function runQuery() {
+  const params = new URLSearchParams({
+    q: "select EXTDATA from EXAMPLE where NAME = 'camera-1'",
+  });
+
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  console.log(await response.text());
+}
+
+runQuery();
+```
+{{< /tab >}}
+{{< tab name="C#" >}}
+```csharp
+using System.Net.Http;
+
+using var client = new HttpClient();
+var sql = Uri.EscapeDataString("select EXTDATA from EXAMPLE where NAME = 'camera-1'");
+
+var response = await client.GetAsync($"http://127.0.0.1:5654/db/query?q={sql}");
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -165,8 +282,53 @@ GET http://127.0.0.1:5654/db/query
 ```sh
 curl -o - 'http://127.0.0.1:5654/db/query' \
   --data-urlencode "q=select EXTDATA from EXAMPLE\
-    where NAME = 'camera-1' \
-    and EXTDATA->'$.FN' = 'image_file.png'"
+  where NAME = 'camera-1' \
+  and EXTDATA->'$.FN' = 'image_file.png'"
+```
+{{< /tab >}}
+{{< tab name="Python" >}}
+```python
+import requests
+
+response = requests.get(
+  "http://127.0.0.1:5654/db/query",
+  params={
+    "q": (
+      "select EXTDATA from EXAMPLE "
+      "where NAME = 'camera-1' "
+      "and EXTDATA->'$.FN' = 'image_file.png'"
+    )
+  },
+)
+print(response.text)
+```
+{{< /tab >}}
+{{< tab name="Javascript" >}}
+```javascript
+async function runQuery() {
+  const params = new URLSearchParams({
+    q: "select EXTDATA from EXAMPLE where NAME = 'camera-1' and EXTDATA->'$.FN' = 'image_file.png'",
+  });
+
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  console.log(await response.text());
+}
+
+runQuery();
+```
+{{< /tab >}}
+{{< tab name="C#" >}}
+```csharp
+using System.Net.Http;
+
+using var client = new HttpClient();
+var sql = Uri.EscapeDataString(
+  "select EXTDATA from EXAMPLE where NAME = 'camera-1' and EXTDATA->'$.FN' = 'image_file.png'"
+);
+
+var response = await client.GetAsync($"http://127.0.0.1:5654/db/query?q={sql}");
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -207,7 +369,52 @@ GET http://127.0.0.1:5654/db/query
 curl -o - http://127.0.0.1:5654/db/query \
   --data-urlencode "format=ndjson"   \
   --data-urlencode "q=SELECT NAME, TIME, EXTDATA->'$.ID' as FID  \
-    FROM EXAMPLE WHERE NAME = 'camera-1'"
+  FROM EXAMPLE WHERE NAME = 'camera-1'"
+```
+{{< /tab >}}
+{{< tab name="Python" >}}
+```python
+import requests
+
+response = requests.get(
+  "http://127.0.0.1:5654/db/query",
+  params={
+  "format": "ndjson",
+  "q": "SELECT NAME, TIME, EXTDATA->'$.ID' as FID FROM EXAMPLE WHERE NAME = 'camera-1'",
+  },
+)
+print(response.text)
+```
+{{< /tab >}}
+{{< tab name="Javascript" >}}
+```javascript
+async function runQuery() {
+  const params = new URLSearchParams({
+    format: "ndjson",
+    q: "SELECT NAME, TIME, EXTDATA->'$.ID' as FID FROM EXAMPLE WHERE NAME = 'camera-1'",
+  });
+
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  console.log(await response.text());
+}
+
+runQuery();
+```
+{{< /tab >}}
+{{< tab name="C#" >}}
+```csharp
+using System.Net.Http;
+
+using var client = new HttpClient();
+var sql = Uri.EscapeDataString(
+  "SELECT NAME, TIME, EXTDATA->'$.ID' as FID FROM EXAMPLE WHERE NAME = 'camera-1'"
+);
+
+var response = await client.GetAsync(
+  $"http://127.0.0.1:5654/db/query?format=ndjson&q={sql}"
+);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -245,7 +452,54 @@ GET http://127.0.0.1:5654/db/query/file/EXAMPLE/EXTDATA/1ef8a87f-96bd-6576-9ff5-
 {{< tab name="cURL" >}}
 ```sh
 curl -o ./img-download.png \
-    http://127.0.0.1:5654/db/query/file/EXAMPLE/EXTDATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8
+  http://127.0.0.1:5654/db/query/file/EXAMPLE/EXTDATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8
+```
+{{< /tab >}}
+{{< tab name="Python" >}}
+```python
+import requests
+
+response = requests.get(
+  "http://127.0.0.1:5654/db/query/file/EXAMPLE/EXTDATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8"
+)
+response.raise_for_status()
+with open("./img-download.png", "wb") as output_file:
+  output_file.write(response.content)
+```
+{{< /tab >}}
+{{< tab name="Javascript" >}}
+```javascript
+async function downloadFile() {
+  const response = await fetch(
+  "http://127.0.0.1:5654/db/query/file/EXAMPLE/EXTDATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8"
+  );
+
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  const blob = await response.blob();
+
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "img-download.png";
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+
+downloadFile();
+```
+{{< /tab >}}
+{{< tab name="C#" >}}
+```csharp
+using System.Net.Http;
+
+using var client = new HttpClient();
+var bytes = await client.GetByteArrayAsync(
+  "http://127.0.0.1:5654/db/query/file/EXAMPLE/EXTDATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8"
+);
+
+await File.WriteAllBytesAsync("./img-download.png", bytes);
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -303,24 +557,21 @@ request(req, function(err, res, body){
 파이썬으로 파일을 업로드하는 예시입니다.
 
 ```python
+from pathlib import Path
+
 import requests
 
-# 파일을 업로드할 URL을 정의합니다.
-url = 'http://127.0.0.1:5654/db/write/EXAMPLE'
+url = "http://127.0.0.1:5654/db/write/EXAMPLE"
+file_path = Path("./image_file.png")
 
-# 이미지 파일 경로를 지정합니다.
-file_path = './image_file.png'
+with file_path.open("rb") as image_file:
+  response = requests.post(
+    url,
+    headers={"X-Store-Dir": "/tmp/store"},
+    data={"NAME": "camera-1", "TIME": "now", "VALUE": "0"},
+    files={"EXTDATA": (file_path.name, image_file, "image/png")},
+  )
 
-# 이미지를 바이너리 모드로 엽니다.
-with open(file_path, 'rb') as file:
-    headers = {'X-Store-Dir': '/tmp/store'}
-    data = {'NAME': 'camera-1', 'TIME': 'now', 'VALUE': 0}
-    files = {'EXTDATA': ('filename.png', file, 'image/png')}
-
-    # POST 요청을 전송합니다.
-    response = requests.post(url, data=data, files=files, headers=headers)
-    
-    # 서버에서 받은 응답을 출력합니다.
-    print(response.status_code)
-    print(response.text)
+response.raise_for_status()
+print(response.text)
 ```
