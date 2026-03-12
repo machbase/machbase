@@ -80,8 +80,30 @@ When you run `machbase-neo jsh`, the JSH interpreter executes the given script.
 With this approach, you can build database query/insert applications using only the machbase-neo executable,
 without additional tools.
 
+Use the `-C <code>` option when you want to run a short JavaScript snippet directly from the command line,
+without creating a separate script file.
+
 ```sh
-$ /path/to/the/machbase-neo jsh ./hello.js
+$ /path/to/the/machbase-neo jsh -C 'console.println("Hello World?")'
+Hello World?
+```
+
+To run a saved script without mounting a local directory, pass the script path with the
+`-C @<script_path>` form.
+
+```sh
+# If hello.js is located at ./src/hello.js
+$ /path/to/the/machbase-neo jsh -C @./src/hello.js
+Hello World?
+```
+
+If you want to run a script stored in a local directory, use the `-v <mount_point>=<src_dir>` option.
+This mounts the host directory into the JSH runtime, allowing you to run the script by its mounted path.
+It is especially useful when the script depends on other files in the same directory.
+
+```sh
+# If hello.js is at ./src/hello.js, mount the src directory to /script
+$ /path/to/the/machbase-neo jsh -v /script=./src /script/hello.js
 Hello World?
 ```
 

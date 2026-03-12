@@ -79,8 +79,29 @@ try {
 `machbase-neo jsh`를 실행하면 JSH 인터프리터가 주어진 스크립트를 실행하게 됩니다.
 이 방식으로 활용하면 machbase-neo 실행 파일만으로 추가적인 도구 없이 데이터베이스를 입력/조회하는 애플리케이션을 작성할 수 있습니다.
 
+짧은 JavaScript 코드를 별도의 스크립트 파일로 만들지 않고 명령줄에서 바로 실행하려면
+`-C <code>` 옵션을 사용하십시오.
+
 ```sh
-$ /path/to/the/machbase-neo jsh ./hello.js
+$ /path/to/the/machbase-neo jsh -C 'console.println("Hello World?")'
+Hello World?
+```
+
+로컬 디렉터리 마운트 없이 저장된 스크립트를 실행하려면 `-C @script_path` 옵션으로 스크립트의 경로를 지정합니다.
+
+```sh
+# hello.js 파일이 ./src/hello.js 에 있다면
+$ /path/to/the/machbase-neo jsh -C @./src/hello.js
+Hello World?
+```
+
+로컬 디렉터리에 저장된 스크립트를 실행하려면 `-v <mount_point>=<src_dir>` 옵션을 사용하십시오.
+이 옵션은 호스트 디렉터리를 JSH 런타임에 마운트하므로, 마운트된 경로를 통해 스크립트를 실행할 수 있습니다.
+특히 스크립트가 같은 디렉터리에 있는 다른 파일에 의존하는 경우에 유용합니다.
+
+```sh
+# hello.js 파일이 ./src/hello.js 에 있다면, src 디렉터리를 /script 로 마운트합니다.
+$ /path/to/the/machbase-neo jsh -v /script=./src /script/hello.js
 Hello World?
 ```
 

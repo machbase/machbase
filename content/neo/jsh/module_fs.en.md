@@ -22,7 +22,7 @@ readFile(path[, options])
 
 ```js {linenos=table,linenostart=1,hl_lines=[2]}
 const fs = require('fs');
-const content = fs.readFile('/lib/fs/index.js', 'utf8');
+const content = fs.readFile('/lib/fs.js', 'utf8');
 console.println(content.length);
 ```
 
