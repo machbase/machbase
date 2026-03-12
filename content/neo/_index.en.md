@@ -10,7 +10,7 @@ toc: true
 ✓ Data monitoring with dashboard<br/>
 ✓ Easy to install - instant download and run<br/>
 ✓ Easy to learn - familiar SQL with Tables and Columns<br/>
-✓ Easy to write and query via **HTTP**, **MQTT** and **gRPC**<br/>
+✓ Easy to write and query via **HTTP** and **MQTT**<br/>
 ✓ Bridge to SQLite, PostgreSQL, MySQL, MSSQL, MQTT Broker, NATS<br/>
 
 {{< button color="purple" href="./getting-started/">}} Get Started {{< /button >}}
@@ -76,7 +76,6 @@ Realtime data monitoring on the fly.
 
 - [x] HTTP : Applications and Sensors read/write data via [HTTP](/neo/api-http) REST API
 - [x] MQTT : Sensors write data via [MQTT](/neo/api-mqtt) protocol (MQTT v3.1.1 & v5)
-- [x] gRPC : The first class API for extensions
 - [x] SSH : Command line user interface via [ssh](/neo/shell/#remote-access-via-ssh)
 - [x] GUI : [Web](/neo/getting-started/webui/) user interface
 

@@ -16,6 +16,14 @@ JSH is currently in beta. Its API and commands are subject to change in future r
 JSH allows you to write JavaScript applications for Machbase Neo.
 Files with the `.js` extension are recognized by Machbase Neo as executable scripts.
 
+## Commands
+
+- `exit` ends the current JSH session.
+- `ls` shows the file list in the current working directory.
+- `cd` changes the working directory or moves to `/work`.
+
+While functionality is basic, it is sufficient for validating scripts.
+
 ## Hello World Example
 
 Copy the following code and save it as `hello.js`.
@@ -38,39 +46,6 @@ Hello World?
 ```
 
 {{< figure src="./img/fish-hello.jpg" width="486">}}
-
-## Database Example
-
-You can easily write applications that query and insert Machbase data.
-
-```js
-'use strict';
-// Load machbase client module.
-const machcli = require('machcli');
-// Create database client instance.
-const db = new machcli.Client({
-    host: '127.0.0.1',
-    port: 5656, // machbase native port
-    username:'sys',
-    password: 'manager'
-})
-
-var conn, rows;
-try {
-    // Create a database connection.
-    conn = db.connect();
-    // Execute query.
-    rows = conn.query('SELECT NAME, TYPE, COLCOUNT FROM m$sys_tables LIMIT 5');
-    // Iterates result set.
-    for (const row of rows) {
-        console.println(row.NAME, row.TYPE, row.COLCOUNT);
-    }
-} finally {
-    // Release resources
-    rows && rows.close();
-    conn && conn.close();
-}
-```
 
 ## External Execution
 
@@ -107,13 +82,38 @@ $ /path/to/the/machbase-neo jsh -v /script=./src /script/hello.js
 Hello World?
 ```
 
-## Commands
+## Database Example
 
-- `exit` ends the current JSH session.
-- `ls` shows the file list in the current working directory.
-- `cd` changes the working directory or moves to `/work`.
+You can easily write applications that query and insert Machbase data.
 
-While functionality is basic, it is sufficient for validating scripts.
+```js
+'use strict';
+// Load machbase client module.
+const machcli = require('machcli');
+// Create database client instance.
+const db = new machcli.Client({
+    host: '127.0.0.1',
+    port: 5656, // machbase native port
+    username:'sys',
+    password: 'manager'
+})
+
+var conn, rows;
+try {
+    // Create a database connection.
+    conn = db.connect();
+    // Execute query.
+    rows = conn.query('SELECT NAME, TYPE, COLCOUNT FROM m$sys_tables LIMIT 5');
+    // Iterates result set.
+    for (const row of rows) {
+        console.println(row.NAME, row.TYPE, row.COLCOUNT);
+    }
+} finally {
+    // Release resources
+    rows && rows.close();
+    conn && conn.close();
+}
+```
 
 ## Modules
 JSH includes various JavaScript modules that can be used in `SCRIPT()` within TQL and in `*.js` applications.

@@ -16,6 +16,17 @@ JSH는 현재 베타 단계입니다. 향후 릴리스에서 API와 명령어가
 JSH를 이용하시면 Machbase Neo를 이용하는 JavaScript 애플리케이션을 작성하실 수 있습니다.
 확장자가 `.js`인 파일은 Machbase Neo에서 실행 가능한 스크립트로 인식됩니다.
 
+## 명령어
+
+- `exit` 현재 JSH 세션을 종료합니다.
+- `ls` 현재 작업 디렉터리의 파일 목록을 표시합니다.
+- `cd` 작업 디렉터리를 변경하거나 `/work` 디렉터리로 이동합니다.
+<!-- - `ps` 실행 중인 프로세스와 PID를 보여 드립니다.
+- `kill <pid>` 지정한 PID의 프로세스를 종료합니다.
+- `servicectl` 서비스 제어 명령입니다. 자세한 내용은 [아래](#service-control-commands)를 참고하십시오. -->
+
+기능은 단순하지만 스크립트를 검증하시기에는 충분합니다.
+
 ## Hello World 예제
 
 아래 코드를 복사하여 `hello.js`로 저장하십시오.
@@ -38,6 +49,38 @@ Hello World?
 ```
 
 {{< figure src="./img/fish-hello.jpg" width="486">}}
+
+## 외부 실행
+
+작성한 js 애플리케이션은 machbase-neo 서버 프로세스와 독립적인 환경에서 machbase-neo 실행파일만 있으면 아래와 같이 실행 가능합니다.
+`machbase-neo jsh`를 실행하면 JSH 인터프리터가 주어진 스크립트를 실행하게 됩니다.
+이 방식으로 활용하면 machbase-neo 실행 파일만으로 추가적인 도구 없이 데이터베이스를 입력/조회하는 애플리케이션을 작성할 수 있습니다.
+
+짧은 JavaScript 코드를 별도의 스크립트 파일로 만들지 않고 명령줄에서 바로 실행하려면
+`-C <code>` 옵션을 사용하십시오.
+
+```sh
+$ /path/to/the/machbase-neo jsh -C 'console.println("Hello World?")'
+Hello World?
+```
+
+로컬 디렉터리 마운트 없이 저장된 스크립트를 실행하려면 `-C @script_path` 옵션으로 스크립트의 경로를 지정합니다.
+
+```sh
+# hello.js 파일이 ./src/hello.js 에 있다면
+$ /path/to/the/machbase-neo jsh -C @./src/hello.js
+Hello World?
+```
+
+로컬 디렉터리에 저장된 스크립트를 실행하려면 `-v <mount_point>=<src_dir>` 옵션을 사용하십시오.
+이 옵션은 호스트 디렉터리를 JSH 런타임에 마운트하므로, 마운트된 경로를 통해 스크립트를 실행할 수 있습니다.
+특히 스크립트가 같은 디렉터리에 있는 다른 파일에 의존하는 경우에 유용합니다.
+
+```sh
+# hello.js 파일이 ./src/hello.js 에 있다면, src 디렉터리를 /script 로 마운트합니다.
+$ /path/to/the/machbase-neo jsh -v /script=./src /script/hello.js
+Hello World?
+```
 
 
 ## 데이터베이스 예제
@@ -72,50 +115,6 @@ try {
     conn && conn.close();
 }
 ```
-
-## 외부 실행
-
-작성한 js 애플리케이션은 machbase-neo 서버 프로세스와 독립적인 환경에서 machbase-neo 실행파일만 있으면 아래와 같이 실행 가능합니다.
-`machbase-neo jsh`를 실행하면 JSH 인터프리터가 주어진 스크립트를 실행하게 됩니다.
-이 방식으로 활용하면 machbase-neo 실행 파일만으로 추가적인 도구 없이 데이터베이스를 입력/조회하는 애플리케이션을 작성할 수 있습니다.
-
-짧은 JavaScript 코드를 별도의 스크립트 파일로 만들지 않고 명령줄에서 바로 실행하려면
-`-C <code>` 옵션을 사용하십시오.
-
-```sh
-$ /path/to/the/machbase-neo jsh -C 'console.println("Hello World?")'
-Hello World?
-```
-
-로컬 디렉터리 마운트 없이 저장된 스크립트를 실행하려면 `-C @script_path` 옵션으로 스크립트의 경로를 지정합니다.
-
-```sh
-# hello.js 파일이 ./src/hello.js 에 있다면
-$ /path/to/the/machbase-neo jsh -C @./src/hello.js
-Hello World?
-```
-
-로컬 디렉터리에 저장된 스크립트를 실행하려면 `-v <mount_point>=<src_dir>` 옵션을 사용하십시오.
-이 옵션은 호스트 디렉터리를 JSH 런타임에 마운트하므로, 마운트된 경로를 통해 스크립트를 실행할 수 있습니다.
-특히 스크립트가 같은 디렉터리에 있는 다른 파일에 의존하는 경우에 유용합니다.
-
-```sh
-# hello.js 파일이 ./src/hello.js 에 있다면, src 디렉터리를 /script 로 마운트합니다.
-$ /path/to/the/machbase-neo jsh -v /script=./src /script/hello.js
-Hello World?
-```
-
-## 명령어
-
-- `exit` 현재 JSH 세션을 종료합니다.
-- `ls` 현재 작업 디렉터리의 파일 목록을 표시합니다.
-- `cd` 작업 디렉터리를 변경하거나 `/work` 디렉터리로 이동합니다.
-<!-- - `ps` 실행 중인 프로세스와 PID를 보여 드립니다.
-- `kill <pid>` 지정한 PID의 프로세스를 종료합니다.
-- `servicectl` 서비스 제어 명령입니다. 자세한 내용은 [아래](#service-control-commands)를 참고하십시오. -->
-
-기능은 단순하지만 스크립트를 검증하시기에는 충분합니다.
-
 
 <!-- ## 데몬
 
