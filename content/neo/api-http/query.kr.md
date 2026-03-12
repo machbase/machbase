@@ -450,6 +450,8 @@ wave.sin,1705381958785759000,0.9011510331449053
 GET http://127.0.0.1:5654/db/query
     ?q=select * from EXAMPLE limit 2
     &format=box
+    &timeformat=default
+    &tz=Asia/Seoul
 ```
 ~~~
 {{< /tab >}}
@@ -457,7 +459,9 @@ GET http://127.0.0.1:5654/db/query
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
   --data-urlencode "q=select * from EXAMPLE limit 2" \
-  --data-urlencode "format=box"
+    --data-urlencode "format=box" \
+    --data-urlencode "timeformat=default" \
+    --data-urlencode "tz=Asia/Seoul"
 ```
 {{< /tab >}}
 {{< tab name="Python" >}}
@@ -466,7 +470,12 @@ import requests
 
 response = requests.get(
   "http://127.0.0.1:5654/db/query",
-  params={"q": "select * from EXAMPLE limit 2", "format": "box"},
+  params={
+    "q": "select * from EXAMPLE limit 2", 
+    "format": "box",
+    "timeformat": "default",
+    "tz": "Asia/Seoul"
+  },
 )
 print(response.text)
 ```
@@ -477,6 +486,8 @@ async function runQuery() {
   const params = new URLSearchParams({
     q: "select * from EXAMPLE limit 2",
     format: "box",
+    timeformat: "default",
+    tz: "Asia/Seoul",
   });
 
   const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
@@ -494,7 +505,7 @@ using var client = new HttpClient();
 var sql = Uri.EscapeDataString("select * from EXAMPLE limit 2");
 
 var response = await client.GetAsync(
-  $"http://127.0.0.1:5654/db/query?q={sql}&format=box"
+  $"http://127.0.0.1:5654/db/query?q={sql}&format=box&timeformat=default&tz=Asia/Seoul"
 );
 response.EnsureSuccessStatusCode();
 Console.WriteLine(await response.Content.ReadAsStringAsync());
@@ -505,12 +516,12 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 결과는 ASCII 박스로 표현된 일반 텍스트 형식이며, 응답의 `Content-Type`은 `plain/text`입니다.
 
 ```
-+----------+---------------------+--------------------+
-| NAME     | TIME(UTC)           | VALUE              |
-+----------+---------------------+--------------------+
-| wave.sin | 1705381958775759000 | 0.8563571936170834 |
-| wave.sin | 1705381958785759000 | 0.9011510331449053 |
-+----------+---------------------+--------------------+
++---------+-------------------------+--------------------+
+| NAME    | TIME(ASIA/SEOUL)        | VALUE              |
++---------+-------------------------+--------------------+
+| work-10 | 2024-01-16 14:12:38.775 | 0.8563571936170834 |
+| work-10 | 2024-01-16 14:12:38.785 | 0.9011510331449053 |
++---------+-------------------------+--------------------+
 ```
 
 **CSV 형식 응답**
