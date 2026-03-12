@@ -2,6 +2,7 @@
 title: gRPC client
 type: docs
 weight: 200
+draft: true
 ---
 
 ## Overview

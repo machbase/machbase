@@ -2,6 +2,7 @@
 title: CGo 클라이언트
 type: docs
 weight: 150
+draft: true
 ---
 
 ## 개요

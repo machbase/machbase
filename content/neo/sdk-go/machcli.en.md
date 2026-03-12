@@ -2,6 +2,7 @@
 title: CGo client
 type: docs
 weight: 150
+draft: true
 ---
 
 ## Overview
