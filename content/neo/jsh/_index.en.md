@@ -47,6 +47,27 @@ Hello World?
 
 {{< figure src="./img/fish-hello.jpg" width="486">}}
 
+
+## Directory Mounting
+
+The JSH runtime environment uses a virtual file system that is isolated from the host OS file system.
+If you run JSH and execute `ls -l /` inside it, you can see that JSH has its own directory tree,
+which is different from the directory structure of the host operating system.
+
+{{< figure src="./img/fish-ls.jpg" width="513">}}
+
+Among these default directories, `/sbin` and `/lib` contain read-only files built into JSH.
+The `/work` directory is automatically mounted to the current OS directory, or to the directory shown in the file explorer in the web environment, unless another directory is specified when JSH starts.
+
+To mount an arbitrary directory, use the `-v <mount_point>=<os_dir>` option.
+For example, to mount the OS directory `/var/tmp` as `/tmp` in JSH, run the following command.
+
+```sh
+$ machbase-neo jsh -v /tmp=/var/tmp
+```
+
+{{< figure src="./img/fish-ls-mount.jpg" width="513">}}
+
 ## External Execution
 
 You can run a JavaScript application you wrote outside the machbase-neo server process,

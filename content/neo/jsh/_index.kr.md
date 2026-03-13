@@ -50,6 +50,25 @@ Hello World?
 
 {{< figure src="./img/fish-hello.jpg" width="486">}}
 
+## 디렉터리 마운트
+
+JSH 런타임 환경은 호스트 OS의 파일 시스템과 분리된 가상의 파일시스템으로 동작합니다.
+JSH를 실행해서 내부에서 `ls -l /`을 해보면 아래와 같이 JSH가 동작하는 OS와 완전히 다른 디렉터리 트리 구조를 가진 것을 확인할 수 있다.
+
+{{< figure src="./img/fish-ls.jpg" width="513">}}
+
+이 기본 디렉터리들 중에 `/sbin`, `/lib` 는 JSH에 기본으로 내장된 읽기만 가능한 파일들이 존재하며 
+`/work`는 JSH를 실행할 때 별도로 지정하지 않은 경우 OS의 현재 디렉터리 또는 웹 환경에서 파일 익스플로러에서 보이는 디렉터리가 자동으로 마운트 됩니다.
+
+사용자가 임의의 디렉터리를 마운트하려면 `-v mount_point=os_dir`옵션을 사용합니다.
+예를 들어 OS의 `/var/tmp`를 JSH의 `/tmp`로 마운트하려면 아래와 같이 실행합니다.
+
+```sh
+$ machbase-neo jsh -v /tmp=/var/tmp
+```
+
+{{< figure src="./img/fish-ls-mount.jpg" width="513">}}
+
 ## 외부 실행
 
 작성한 js 애플리케이션은 machbase-neo 서버 프로세스와 독립적인 환경에서 machbase-neo 실행파일만 있으면 아래와 같이 실행 가능합니다.
