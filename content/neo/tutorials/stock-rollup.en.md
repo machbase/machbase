@@ -125,9 +125,9 @@ as (
             sum(ask_price) as sum_ask,
             count(*) as cnt,
             first(time, price) as open,
-            first(time, time) as open_time,
+            min(time) as open_time,
             last(time, price) as close,
-            last(time, time) as close_time,
+            max(time) as close_time,
             max(price) as high,
             min(price) as low
         from stock_tick
@@ -153,9 +153,9 @@ as (
         sum(sum_ask) as sum_ask,
         sum(cnt) as cnt,
         first(open_time, open) as open,
-        first(open_time, open_time) as open_time,
+        min(open_time) as open_time,
         last(close_time, close) as close,
-        last(close_time, close_time) as close_time,
+        max(close_time) as close_time,
         max(high) as high,
         min(low) as low
     from stock_rollup_1s
@@ -181,9 +181,9 @@ as (
         sum(sum_ask) as sum_ask,
         sum(cnt) as cnt,
         first(open_time, open) as open,
-        first(open_time, open_time) as open_time,
+        min(open_time) as open_time,
         last(close_time, close) as close,
-        last(close_time, close_time) as close_time,
+        max(close_time) as close_time,
         max(high) as high,
         min(low) as low
     from stock_rollup_1m
