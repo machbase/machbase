@@ -6,7 +6,7 @@ weight: 30
 
 ## 개요
 
-이 문서는 2.0 패키지를 기준으로 정리했습니다. PyPI 패키지명은 `machbaseapi`(소문자)이고 구현은 순수 Python입니다(네이티브 `.so/.dll/.dylib` 불필요).
+이 문서는 2.1 패키지를 기준으로 정리했습니다. PyPI 패키지명은 `machbaseapi`(소문자)이고 구현은 순수 Python입니다(네이티브 `.so/.dll/.dylib` 불필요).
 
 기존 `machbase` 사용 흐름은 유지됩니다.
 
@@ -14,7 +14,7 @@ weight: 30
 - 기존과 동일하게 `import machbaseAPI` 사용
 - DB-API 방식 `connect()`, `cursor()` 지원
 - `append*`는 `on_ack` 콜백을 추가할 수 있어 ACK 관찰 가능
-- `append()` / `appendByTime()`는 타입 리스트를 생략해도 동작합니다. 서버 메타데이터 기반으로 타입을 자동 추론합니다.
+- `append()`, `appendByTime()`, `appendData()`, `appendDataByTime()`는 타입 리스트를 생략해도 동작합니다. 서버 메타데이터 기반으로 타입을 자동 추론합니다.
 - 커넥션 풀 옵션(`pool_name`, `pool_size`, `pool_reset_session`) 미지원
 
 아래 예제는 기존 `machbase` 클래스 기반 레거시 스크립트를 대상으로 합니다.
@@ -25,7 +25,7 @@ weight: 30
 
 - `pip`을 사용할 수 있는 Python 3.8 이상
 - 접속 가능한 Machbase 서버와 계정 정보(기본 계정 `SYS/MANAGER`, 포트 `5656`)
-- 2.0은 네이티브 라이브러리 의존성이 없습니다.
+- 2.1은 네이티브 라이브러리 의존성이 없습니다.
 
 ### PyPI에서 설치
 
@@ -144,15 +144,15 @@ if __name__ == '__main__':
 | `machbase` | `fetch()` | `select()` 호출 이후 다음 행을 가져옵니다. | `(rc, json_str)` |
 | `machbase` | `selectClose()` | 열린 결과 집합 커서를 닫습니다. | `1` 또는 `0` |
 | `machbase` | `result()` | 최신 JSON 페이로드를 반환합니다. | JSON 문자열 |
-| `machbase` | `appendOpen(table_name, types)` | 컬럼 타입 코드를 지정하여 Append 프로토콜을 시작합니다. | `1` 또는 `0` |
-| `machbase` | `appendData(table_name, types, values=None, format='YYYY-MM-DD HH24:MI:SS', on_ack=None)` | 활성 Append 세션으로 행을 추가합니다. 2.0에서는 `appendOpen()` 시 메타데이터 기반으로 열 타입이 준비된 경우 `types`를 생략하고 행을 두 번째 인자로 바로 전달할 수 있습니다. | `1` 또는 `0` |
-| `machbase` | `appendDataByTime(table_name, types, values=None, format='YYYY-MM-DD HH24:MI:SS', times=None, on_ack=None)` | 명시적 타임스탬프로 행을 추가합니다. 위 항목과 동일하게 타입 생략이 가능합니다. | `1` 또는 `0` |
+| `machbase` | `appendOpen(table_name, types=None)` | 컬럼 타입 코드를 지정하여 Append 프로토콜을 시작합니다. 생략 시 서버 메타데이터로 타입을 사용할 수 있습니다. | `1` 또는 `0` |
+| `machbase` | `appendData(table_name, aTypes=None, values=None, format='YYYY-MM-DD HH24:MI:SS', on_ack=None)` | 활성 Append 세션으로 행을 추가합니다. 2.1에서는 `aTypes`를 생략하고 두 번째 인자로 행을 바로 전달할 수 있습니다. | `1` 또는 `0` |
+| `machbase` | `appendDataByTime(table_name, aTypes=None, values=None, format='YYYY-MM-DD HH24:MI:SS', times=None, on_ack=None)` | 명시적 타임스탬프로 행을 추가합니다. 2.1에서는 `aTypes`를 생략하고 두 번째 인자로 행을 바로 전달할 수 있습니다. | `1` 또는 `0` |
 | `machbase` | `appendFlush()` | 버퍼링된 Append 데이터를 디스크에 플러시합니다. | `1` 또는 `0` |
 | `machbase` | `appendClose()` | Append 세션을 종료합니다. | `1` 또는 `0` |
-| `machbase` | `append(table_name, aTypes, aValues=None, format='YYYY-MM-DD HH24:MI:SS')` | 열기·추가·닫기를 한 번에 처리하는 편의 함수입니다. 2.0에서는 `aTypes`를 생략하고 `aValues`를 두 번째 인자로 바로 전달할 수 있습니다. | `1` 또는 `0` |
-| `machbase` | `appendByTime(table_name, aTypes, aValues=None, format='YYYY-MM-DD HH24:MI:SS', times=None)` | 타임스탬프 인지 Append를 위한 편의 함수입니다. 2.0에서는 `aTypes`를 생략하고 `aValues`를 두 번째 인자로 바로 전달할 수 있습니다. | `1` 또는 `0` |
+| `machbase` | `append(table_name, aTypes=None, aValues=None, format='YYYY-MM-DD HH24:MI:SS')` | 열기·추가·닫기를 한 번에 처리하는 편의 함수입니다. 2.1에서는 `aTypes`를 생략하고 `aValues`를 두 번째 인자로 바로 전달할 수 있습니다. | `1` 또는 `0` |
+| `machbase` | `appendByTime(table_name, aTypes=None, aValues=None, format='YYYY-MM-DD HH24:MI:SS', times=None)` | 타임스탬프 인지 Append를 위한 편의 함수입니다. 2.1에서는 `aTypes`를 생략하고 `aValues`를 두 번째 인자로 바로 전달할 수 있습니다. | `1` 또는 `0` |
 
-## DB-API 스타일 API (2.0)
+## DB-API 스타일 API (2.1)
 
 | API | 설명 | 반환 |
 | -- | -- | -- |
@@ -165,7 +165,7 @@ if __name__ == '__main__':
 | `cursor.close()` | 커서 종료 | `None` |
 | `cursor.rowcount` | 영향 행 수 | `int` |
 
-## 2.0 타입 리스트 생략 append (권장)
+## 2.1 타입 리스트 생략 append (권장)
 
 `append()`와 `appendByTime()`는 타입 리스트를 생략하고 호출할 수 있습니다.  
 두 번째 인자로 행 집합을 그대로 전달하면 서버 메타데이터 기반으로 처리합니다.
@@ -204,7 +204,7 @@ if __name__ == '__main__':
 
 ## API 참고 및 샘플 (레거시 1.x 기준)
 
-아래 예제는 기존 레거시 버전 기준 정리입니다. 2.0 순수 Python에서는 `getSessionId()`, `count()`, `checkBit()`와 같은 API가 제공되지 않습니다. 필요 시 2.0 DB-API 예제를 참고하세요.
+아래 예제는 기존 레거시 버전 기준 정리입니다. 2.1 순수 Python에서는 `getSessionId()`, `count()`, `checkBit()`와 같은 API가 제공되지 않습니다. 필요 시 2.1 DB-API 예제를 참고하세요.
 
 각 스크립트에서 호스트·포트·계정 정보를 환경에 맞게 수정하세요. 모든 예제는 독립 실행이 가능하며 `python3 script.py` 형태로 실행할 수 있습니다.
 
@@ -420,12 +420,10 @@ if __name__ == '__main__':
 
 ### Append 프로토콜 기본기
 
-`appendOpen()`, `appendData()`, `appendFlush()`, `appendClose()`를 조합하면 행을 효율적으로 스트리밍할 수 있습니다. 아래 예제는 `columns()` 결과에서 컬럼 타입 코드를 추출한 뒤 데이터를 적재합니다.
+`appendOpen()`, `appendData()`, `appendFlush()`, `appendClose()`를 조합하면 행을 효율적으로 스트리밍할 수 있습니다. 2.1부터는 타입을 생략하고 `appendOpen()`으로 시작할 수 있습니다.
 
 ```python
 #!/usr/bin/env python3
-import json
-import re
 from machbaseAPI.machbaseAPI import machbase
 
 def main():
@@ -443,21 +441,14 @@ def main():
             raise SystemExit(db.result())
         print('create table result:', db.result())
 
-        if db.columns('PY_APPEND_DEMO') == 0:
-            raise SystemExit(db.result())
-        column_payload = db.result()
-        col_specs = [json.loads(item) for item in re.findall(r'\{[^}]+\}', column_payload)]
-        types = [spec.get('type') for spec in col_specs]
-        print('append column types:', types)
-
-        if db.appendOpen('PY_APPEND_DEMO', types) == 0:
+        if db.appendOpen('PY_APPEND_DEMO') == 0:
             raise SystemExit(db.result())
 
         rows = [
             ['2024-01-01 09:00:00', 'sensor-a', 21.5],
             ['2024-01-01 09:05:00', 'sensor-b', 22.1],
         ]
-        if db.appendData('PY_APPEND_DEMO', types, rows) == 0:
+        if db.appendData('PY_APPEND_DEMO', rows) == 0:
             raise SystemExit(db.result())
         print('appendData result:', db.result())
 
@@ -497,12 +488,11 @@ def main():
             raise SystemExit(db.result())
         db.result()
 
-        types = ['6', '5', '20']
         values = [
             ['2024-01-01 10:00:00', 'node-1', 30.0],
             ['2024-01-01 10:01:00', 'node-1', 30.5],
         ]
-        if db.append('PY_APPEND_AUTO', types, values) == 0:
+        if db.append('PY_APPEND_AUTO', values) == 0:
             raise SystemExit(db.result())
         print('append() result:', db.result())
     finally:
@@ -532,21 +522,20 @@ def main():
             raise SystemExit(db.result())
         db.result()
 
-        types = ['6', '5', '20']
         rows = [
             ['2024-01-01 11:00:00', 'node-2', 40.1],
             ['2024-01-01 11:01:00', 'node-2', 40.7],
         ]
         epoch_times = [1704106800, 1704106860]
 
-        if db.appendOpen('PY_APPEND_TIME', types) == 0:
+        if db.appendOpen('PY_APPEND_TIME') == 0:
             raise SystemExit(db.result())
-        if db.appendDataByTime('PY_APPEND_TIME', types, rows, 'YYYY-MM-DD HH24:MI:SS', epoch_times) == 0:
+        if db.appendDataByTime('PY_APPEND_TIME', rows, 'YYYY-MM-DD HH24:MI:SS', epoch_times) == 0:
             raise SystemExit(db.result())
         print('appendDataByTime result:', db.result())
         db.appendClose()
 
-        if db.appendByTime('PY_APPEND_TIME', types, rows, 'YYYY-MM-DD HH24:MI:SS', epoch_times) == 0:
+        if db.appendByTime('PY_APPEND_TIME', rows, 'YYYY-MM-DD HH24:MI:SS', epoch_times) == 0:
             raise SystemExit(db.result())
         print('appendByTime result:', db.result())
     finally:
@@ -561,9 +550,9 @@ if __name__ == '__main__':
 
 #### machbase.checkBit()
 
-`checkBit()`는 기존 native 기반 버전에 있던 포인터 폭 확인용 API로, 2.0 순수 Python 패키지에서는 더 이상 제공되지 않습니다.
+`checkBit()`는 기존 native 기반 버전에 있던 포인터 폭 확인용 API로, 2.1 순수 Python 패키지에서는 더 이상 제공되지 않습니다.
 
 ### 저수준 바인딩
 
-2.0 순수 Python 패키지에서는 `get_library_path()`, `openDB()`, `execAppend*()` 또는 포인터 유틸리티 API(예: `getlAddr`, `getrAddr`)와 같은 저수준 ctypes 인터페이스를 제공하지 않습니다.
-기존 C 레이어 직접 접근이 필요한 경우에는 2.0 이전 버전을 사용하세요.
+2.1 순수 Python 패키지에서는 `get_library_path()`, `openDB()`, `execAppend*()` 또는 포인터 유틸리티 API(예: `getlAddr`, `getrAddr`)와 같은 저수준 `ctypes` 인터페이스를 제공하지 않습니다.
+기존 C 레이어 직접 접근이 필요한 경우에는 2.0 이전 버전(네이티브 기반 패키지)을 사용하세요.

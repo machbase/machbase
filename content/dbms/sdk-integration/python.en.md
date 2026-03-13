@@ -6,16 +6,16 @@ weight: 30
 
 ## Overview
 
-This guide is updated for the 2.0 package: install name is lowercase `machbaseapi`, and the package is now implemented in pure Python (no native `.so/.dll/.dylib` dependency).
+This guide is updated for the 2.1 package: install name is lowercase `machbaseapi`, and the package is now implemented in pure Python (no native `.so/.dll/.dylib` dependency).
 
 You can continue using `import machbaseAPI` and existing `machbase` call patterns.
 
 - `machbaseAPI` package name on PyPI: `machbaseapi`
 - Module import pattern: `import machbaseAPI`
 - DB-API style: `connect()` and `cursor()` are available
-- `append*` callbacks can be observed through optional `on_ack` in append APIs
-- `append()` / `appendByTime()` can be called without explicit column type codes; Machbase metadata is used for type inference.
-- Connection-pool options are intentionally unsupported in 2.0 (`pool_name`, `pool_size`, `pool_reset_session`)
+- `append*` callbacks can be observed through optional `on_ack` in append APIs.
+- `append()`, `appendByTime()`, `appendData()`, and `appendDataByTime()` can be called without explicit column type codes; Machbase metadata is used for type inference.
+- Connection-pool options are intentionally unsupported in 2.1 (`pool_name`, `pool_size`, `pool_reset_session`)
 
 The examples below target the `machbase` class, which remains the main entry point for legacy-style scripts.
 
@@ -25,7 +25,7 @@ The examples below target the `machbase` class, which remains the main entry poi
 
 - Python 3.8 or later with `pip`.
 - A reachable Machbase server and credentials (default `SYS/MANAGER` on port `5656`).
-- No native Machbase shared library installation is required in 2.0.
+- No native Machbase shared library installation is required in 2.1.
 
 ### Install from PyPI
 
@@ -48,7 +48,7 @@ PY
 
 A successful run confirms that the package can be imported and instantiated.
 
-You can also run 2.0-style DB-API samples with `connect()`.
+You can also run 2.1-style DB-API samples with `connect()`.
 
 ```python
 from machbaseAPI import connect
@@ -144,15 +144,15 @@ Most `machbase` methods return `1` on success and `0` on failure. After each cal
 | `machbase` | `fetch()` | Pull the next row after `select()`. | `(rc, json_str)` |
 | `machbase` | `selectClose()` | Close an open result set cursor. | `1` or `0` |
 | `machbase` | `result()` | Return the latest JSON payload. | JSON string |
-| `machbase` | `appendOpen(table_name, types)` | Begin append protocol with column type codes. | `1` or `0` |
-| `machbase` | `appendData(table_name, types, values=None, format='YYYY-MM-DD HH24:MI:SS', on_ack=None)` | Append rows using the active append session. In 2.0, when append session is opened from metadata, `types` can be omitted and rows can be passed as the second argument. | `1` or `0` |
-| `machbase` | `appendDataByTime(table_name, types, values=None, format='YYYY-MM-DD HH24:MI:SS', times=None, on_ack=None)` | Append rows with explicit epoch timestamps. Same type omission behavior applies as above. | `1` or `0` |
+| `machbase` | `appendOpen(table_name, types=None)` | Begin append protocol with column type codes. When omitted, metadata can be loaded from server-side schema. | `1` or `0` |
+| `machbase` | `appendData(table_name, aTypes=None, values=None, format='YYYY-MM-DD HH24:MI:SS', on_ack=None)` | Append rows using the active append session. `aTypes` can be omitted and rows can be passed directly as the second argument. | `1` or `0` |
+| `machbase` | `appendDataByTime(table_name, aTypes=None, values=None, format='YYYY-MM-DD HH24:MI:SS', times=None, on_ack=None)` | Append rows with explicit epoch timestamps. `aTypes` can also be omitted and rows can be passed directly as the second argument. | `1` or `0` |
 | `machbase` | `appendFlush()` | Flush buffered append rows to disk. | `1` or `0` |
 | `machbase` | `appendClose()` | Close the append session. | `1` or `0` |
-| `machbase` | `append(table_name, aTypes, aValues=None, format='YYYY-MM-DD HH24:MI:SS')` | Convenience wrapper that opens, appends, and closes. In 2.0, `aTypes` can be omitted and `aValues` can be passed directly as second argument. | `1` or `0` |
-| `machbase` | `appendByTime(table_name, aTypes, aValues=None, format='YYYY-MM-DD HH24:MI:SS', times=None)` | Convenience wrapper for time-aware append. In 2.0, `aTypes` can be omitted and `aValues` can be passed directly as second argument. | `1` or `0` |
+| `machbase` | `append(table_name, aTypes=None, aValues=None, format='YYYY-MM-DD HH24:MI:SS')` | Convenience wrapper that opens, appends, and closes. `aTypes` can be omitted and `aValues` can be passed directly as second argument. | `1` or `0` |
+| `machbase` | `appendByTime(table_name, aTypes=None, aValues=None, format='YYYY-MM-DD HH24:MI:SS', times=None)` | Convenience wrapper for time-aware append. `aTypes` can be omitted and `aValues` can be passed directly as second argument. | `1` or `0` |
 
-## DB-API style API (2.0)
+## DB-API style API (2.1)
 
 | API | Description | Return |
 | -- | -- | -- |
@@ -165,7 +165,7 @@ Most `machbase` methods return `1` on success and `0` on failure. After each cal
 | `cursor.close()` | Close cursor | `None` |
 | `cursor.rowcount` | Number of affected rows | `int` |
 
-## 2.0 append without explicit column types (recommended)
+## 2.1 append without explicit column types (recommended)
 
 `append()` and `appendByTime()` can be called without a type list.  
 Pass rows as the second argument and let the server metadata drive type handling.
@@ -204,7 +204,7 @@ if __name__ == '__main__':
 
 ## API Reference and Samples (Legacy 1.x behavior)
 
-The examples below are mainly compatibility references from legacy releases. In the current 2.0 package, methods such as `getSessionId()`, `count()`, and `checkBit()` are not provided.
+The examples below are mainly compatibility references from legacy releases. In the current 2.1 package, methods such as `getSessionId()`, `count()`, and `checkBit()` are not provided.
 
 Update host, port, username, and password values as needed in each script. Every snippet is standalone and can be executed with `python3 script.py`.
 
@@ -420,12 +420,11 @@ if __name__ == '__main__':
 
 ### Append protocol primitives
 
-`appendOpen()`, `appendData()`, `appendFlush()`, and `appendClose()` stream rows efficiently. The example derives column type codes from `columns()` output before pushing data.
+`appendOpen()`, `appendData()`, `appendFlush()`, and `appendClose()` stream rows efficiently.
+In 2.1 you can omit column types; server metadata is used automatically.
 
 ```python
 #!/usr/bin/env python3
-import json
-import re
 from machbaseAPI.machbaseAPI import machbase
 
 def main():
@@ -443,21 +442,14 @@ def main():
             raise SystemExit(db.result())
         print('create table result:', db.result())
 
-        if db.columns('PY_APPEND_DEMO') == 0:
-            raise SystemExit(db.result())
-        column_payload = db.result()
-        col_specs = [json.loads(item) for item in re.findall(r'\{[^}]+\}', column_payload)]
-        types = [spec.get('type') for spec in col_specs]
-        print('append column types:', types)
-
-        if db.appendOpen('PY_APPEND_DEMO', types) == 0:
+        if db.appendOpen('PY_APPEND_DEMO') == 0:
             raise SystemExit(db.result())
 
         rows = [
             ['2024-01-01 09:00:00', 'sensor-a', 21.5],
             ['2024-01-01 09:05:00', 'sensor-b', 22.1],
         ]
-        if db.appendData('PY_APPEND_DEMO', types, rows) == 0:
+        if db.appendData('PY_APPEND_DEMO', rows) == 0:
             raise SystemExit(db.result())
         print('appendData result:', db.result())
 
@@ -497,12 +489,11 @@ def main():
             raise SystemExit(db.result())
         db.result()
 
-        types = ['6', '5', '20']
         values = [
             ['2024-01-01 10:00:00', 'node-1', 30.0],
             ['2024-01-01 10:01:00', 'node-1', 30.5],
         ]
-        if db.append('PY_APPEND_AUTO', types, values) == 0:
+        if db.append('PY_APPEND_AUTO', values) == 0:
             raise SystemExit(db.result())
         print('append() result:', db.result())
     finally:
@@ -532,21 +523,20 @@ def main():
             raise SystemExit(db.result())
         db.result()
 
-        types = ['6', '5', '20']
         rows = [
             ['2024-01-01 11:00:00', 'node-2', 40.1],
             ['2024-01-01 11:01:00', 'node-2', 40.7],
         ]
         epoch_times = [1704106800, 1704106860]
 
-        if db.appendOpen('PY_APPEND_TIME', types) == 0:
+        if db.appendOpen('PY_APPEND_TIME') == 0:
             raise SystemExit(db.result())
-        if db.appendDataByTime('PY_APPEND_TIME', types, rows, 'YYYY-MM-DD HH24:MI:SS', epoch_times) == 0:
+        if db.appendDataByTime('PY_APPEND_TIME', rows, 'YYYY-MM-DD HH24:MI:SS', epoch_times) == 0:
             raise SystemExit(db.result())
         print('appendDataByTime result:', db.result())
         db.appendClose()
 
-        if db.appendByTime('PY_APPEND_TIME', types, rows, 'YYYY-MM-DD HH24:MI:SS', epoch_times) == 0:
+        if db.appendByTime('PY_APPEND_TIME', rows, 'YYYY-MM-DD HH24:MI:SS', epoch_times) == 0:
             raise SystemExit(db.result())
         print('appendByTime result:', db.result())
     finally:
@@ -561,10 +551,10 @@ if __name__ == '__main__':
 
 #### machbase.checkBit()
 
-`checkBit()` was used for native pointer-size checks in legacy releases and is not available in the 2.0 pure-Python package.
+`checkBit()` was used for native pointer-size checks in legacy releases and is not available in the 2.1 pure-Python package.
 
 ### Low-level bindings
 
-The 2.0 package does not provide legacy ctypes helpers such as
+The 2.1 package does not provide legacy ctypes helpers such as
 `get_library_path()`, `openDB()`, `execAppend*()`, or pointer utility APIs.
 For low-level C-layer access, please keep using the pre-2.0 package.
