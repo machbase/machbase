@@ -115,20 +115,21 @@ create tag table if not exists stock_rollup_1h (
 create rollup rollup_stock_1s
 into (stock_rollup_1s)
 as (
-    select code,
-            date_trunc('second', time) as time,
-            sum(price) as sum_price,
-            sum(volume) as sum_volume,
-            sum(bid_price) as sum_bid,
-            sum(ask_price) as sum_ask,
-            count(*) as cnt,
-            first(time, price) as open,
-            min(time) as open_time,
-            last(time, price) as close,
-            max(time) as close_time,
-            max(price) as high,
-            min(price) as low
-        from stock_tick
+    select 
+        code,
+        date_trunc('second', time) as time,
+        sum(price) as sum_price,
+        sum(volume) as sum_volume,
+        sum(bid_price) as sum_bid,
+        sum(ask_price) as sum_ask,
+        count(*) as cnt,
+        first(time, price) as open,
+        min(time) as open_time,
+        last(time, price) as close,
+        max(time) as close_time,
+        max(price) as high,
+        min(price) as low
+    from stock_tick
     group by code, time
 )
 interval 1 sec;
