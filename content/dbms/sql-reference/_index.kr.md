@@ -84,6 +84,7 @@ Machbase의 완전한 SQL 구문 레퍼런스입니다. 이 섹션은 모든 SQL
 - `ABS()`, `CEIL()`, `FLOOR()`
 - `ROUND()`, `TRUNC()`
 - `POWER()`, `SQRT()`
+- [Issue 3479 수학 함수](./math-functions)
 
 ## Machbase 전용 기능
 

@@ -84,6 +84,7 @@ Complete SQL syntax reference for Machbase. This section provides detailed docum
 - `ABS()`, `CEIL()`, `FLOOR()`
 - `ROUND()`, `TRUNC()`
 - `POWER()`, `SQRT()`
+- [Issue 3479 Mathematical Functions](./math-functions)
 
 ## Machbase-Specific Features
 
