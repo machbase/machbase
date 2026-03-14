@@ -4,9 +4,9 @@ type: docs
 weight: 40
 ---
 
-# 구현된 수학 함수 (Issue 3479)
+# 수학 함수
 
-현재 구현에서 제공되는 수학 함수를 한 번에 보기 쉽게 정리했습니다.
+Machbase에서 제공하는 수학 함수를 한 번에 확인할 수 있습니다.
 
 ## 함수 목록
 
@@ -29,9 +29,24 @@ weight: 40
 |RAND|`RAND()`|`DOUBLE`|인자 없음|[0, 1) 범위의 난수를 반환합니다. 내부 상태를 공유합니다.|
 |RAND|`RAND(seed)`|`DOUBLE`|정수 1개|같은 시드면 같은 난수가 나옵니다.|
 
-## 문법 및 사용 시 주의
+## 함수 목록 바로가기
 
-### PI
+- [PI()](#pi)
+- [SQRT()](#sqrt)
+- [POWER()](#power)
+- [POW()](#pow)
+- [LOG()](#log)
+- [LN()](#ln)
+- [EXP()](#exp)
+- [FLOOR()](#floor)
+- [CEIL()](#ceil)
+- [SIN()](#sin)
+- [COS()](#cos)
+- [TAN()](#tan)
+- [MOD()](#mod)
+- [RAND()](#rand)
+
+## PI()
 
 ```sql
 SELECT PI() FROM m$sys_users WHERE name = 'SYS';
@@ -39,24 +54,87 @@ SELECT PI() FROM m$sys_users WHERE name = 'SYS';
 
 `DOUBLE`을 반환하며, 인자를 넣으면 오류가 발생합니다.
 
-### SQRT / FLOOR / CEIL / SIN / COS / TAN / LN / EXP
+## SQRT()
 
-모든 함수는 숫자형 인자 1개만 허용하고 결과는 `DOUBLE`입니다.
+```sql
+SELECT SQRT(9)
+FROM m$sys_users WHERE name = 'SYS';
+```
+
+## FLOOR()
+
+```sql
+SELECT FLOOR(3.2), FLOOR(-1.2)
+FROM m$sys_users WHERE name = 'SYS';
+```
+
+## CEIL()
+
+```sql
+SELECT CEIL(3.2), CEIL(-1.2)
+FROM m$sys_users WHERE name = 'SYS';
+```
+
+## SIN()
+
+```sql
+SELECT SIN(PI()/2), SIN(0)
+FROM m$sys_users WHERE name = 'SYS';
+```
+
+## COS()
+
+```sql
+SELECT COS(0), COS(PI())
+FROM m$sys_users WHERE name = 'SYS';
+```
+
+## TAN()
+
+```sql
+SELECT TAN(0), TAN(PI()/4)
+FROM m$sys_users WHERE name = 'SYS';
+```
+
+## LN()
+
+```sql
+SELECT LN(2), LN(10)
+FROM m$sys_users WHERE name = 'SYS';
+```
+
+## EXP()
+
+```sql
+SELECT EXP(2), EXP(-1)
+FROM m$sys_users WHERE name = 'SYS';
+```
+
+모든 함수는 숫자형 인자를 요구하며 결과는 `DOUBLE`입니다.
 
 ```sql
 SELECT SQRT(9), FLOOR(3.2), CEIL(-1.2), SIN(PI()/2), LN(2), EXP(2)
 FROM m$sys_users WHERE name = 'SYS';
 ```
 
-### POWER / POW
+## POWER()
 
-`POWER`와 `POW`는 완전히 동일한 동작입니다.
+`POWER`와 `POW`의 동작은 동일합니다.
 
 ```sql
 SELECT POWER(3, 4), POW(2, -1) FROM m$sys_users WHERE name = 'SYS';
 ```
 
-### LOG
+## POW()
+
+`POWER()`의 별칭입니다.
+
+```sql
+SELECT POW(2, 3)
+FROM m$sys_users WHERE name = 'SYS';
+```
+
+## LOG()
 
 * `LOG(n)`은 `LN(n)`과 동일합니다.
 * `LOG(base, n)`은 `log_base(n)` 계산입니다.
@@ -65,7 +143,7 @@ SELECT POWER(3, 4), POW(2, -1) FROM m$sys_users WHERE name = 'SYS';
 SELECT LOG(2, 8), LOG(100) FROM m$sys_users WHERE name = 'SYS';
 ```
 
-### MOD
+## MOD()
 
 음수 입력이 들어오더라도 0 방향으로 절사한 몫을 기준으로 나머지를 계산합니다.
 
@@ -74,7 +152,7 @@ SELECT MOD(-10, 3), MOD(10, -3), MOD(-10, -3)
 FROM m$sys_users WHERE name = 'SYS';
 ```
 
-### RAND
+## RAND()
 
 * `RAND(seed)`는 정수 시드만 허용합니다. 같은 시드는 반복 실행 시 동일한 값입니다.
 * `RAND()`는 내부 상태 기반이라 같은 쿼리 안에서 호출할수록 다른 값이 나옵니다.

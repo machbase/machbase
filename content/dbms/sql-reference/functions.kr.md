@@ -2,6 +2,7 @@
 title : '함수'
 type: docs
 weight: 70
+tocSort: true
 ---
 
 # 목차
@@ -10,34 +11,52 @@ weight: 70
 * [ADD_TIME](#add_time)
 * [AVG](#avg)
 * [BITAND / BITOR](#bitand--bitor)
+* [CEIL()](#ceil)
 * [COUNT](#count)
-* [DATE_TRUNC](#date_trunc)
+* [COS()](#cos)
 * [DATE_BIN](#date_bin)
+* [DATE_TRUNC](#date_trunc)
 * [DAYOFWEEK](#dayofweek)
 * [DECODE](#decode)
+* [EXP()](#exp)
 * [EXTRACT_* / EXTRACT_LE_*](#extract_)
 * [FIRST / LAST](#first--last)
-* [FROM_UNIXTIME](#from_unixtime)
+* [FLOOR()](#floor)
 * [FROM_TIMESTAMP](#from_timestamp)
+* [FROM_UNIXTIME](#from_unixtime)
 * [GROUP_CONCAT](#group_concat)
 * [INSTR](#instr)
+* [ISNAN / ISINF](#isnan--isinf)
+* [JSON 관련 함수](#json-related-function)
+* [JSON 연산자](#json-operator)
 * [LEAST / GREATEST](#least--greatest)
 * [LENGTH](#length)
+* [LN()](#ln)
+* [LOG()](#log)
 * [LOWER](#lower)
 * [LPAD / RPAD](#lpad--rpad)
 * [LTRIM / RTRIM](#ltrim--rtrim)
 * [MAX](#max)
 * [MIN](#min)
+* [MOD()](#mod)
 * [NVL](#nvl)
+* [PI()](#pi)
+* [POWER()](#power)
+* [POW()](#pow)
+* [RAND()](#rand)
 * [ROUND](#round)
 * [ROWNUM](#rownum)
+* [SIN()](#sin)
+* [SQRT()](#sqrt)
 * [SERIESNUM](#seriesnum)
 * [STDDEV / STDDEV_POP](#stddev--stddev_pop)
 * [SUBSTR](#substr)
 * [SUBSTRING_INDEX](#substring_index)
 * [SUM](#sum)
 * [SUMSQ](#sumsq)
+* [내장 함수 지원 타입](#support-type-of-built-in-function)
 * [SYSDATE / NOW](#sysdate--now)
+* [TAN()](#tan)
 * [TO_CHAR](#to_char)
 * [TO_DATE](#to_date)
 * [TO_DATE_SAFE](#to_date_safe)
@@ -52,12 +71,7 @@ weight: 70
 * [UPPER](#upper)
 * [VARIANCE / VAR_POP](#variance--var_pop)
 * [YEAR / MONTH / DAY](#year--month--day)
-* [ISNAN / ISINF](#isnan--isinf)
-* [내장 함수 지원 타입](#support-type-of-built-in-function)
-* [JSON 관련 함수](#json-related-function)
-* [JSON 연산자](#json-operator)
 * [윈도우 함수](#window-function)
-
 ## ABS
 
 이 함수는 숫자형 컬럼에 대해 동작하며, 값을 양수로 변환하여 실수로 반환합니다.
@@ -2568,6 +2582,231 @@ nan                         inf                         0
 [1] row(s) selected.
 ```
 
+## PI() {#pi}
+
+`DOUBLE` 타입의 π 상수를 반환합니다.
+
+```sql
+SELECT PI();
+```
+
+```sql
+Mach> SELECT PI();
+PI()
+------------------------------
+3.141592653589793
+[1] row(s) selected.
+```
+
+## SQRT() {#sqrt}
+
+제곱근을 반환합니다.
+
+```sql
+SELECT SQRT(9), SQRT(2.25), SQRT(16.0);
+```
+
+```sql
+Mach> SELECT SQRT(9), SQRT(2.25), SQRT(16.0);
+SQRT(9)   SQRT(2.25)         SQRT(16.0)
+-----------------------------------------------
+3         1.5000000000000000  4
+[1] row(s) selected.
+```
+
+## POWER() {#power}
+
+`base`의 `exponent` 거듭제곱을 반환합니다.
+
+```sql
+SELECT POWER(2, 3), POWER(9, 0.5), POWER(4, -1);
+```
+
+```sql
+Mach> SELECT POWER(2, 3), POWER(9, 0.5), POWER(4, -1);
+POWER(2, 3)   POWER(9, 0.5)   POWER(4, -1)
+------------------------------------------------
+8             3.0000000000000000 0.2500000000000000
+[1] row(s) selected.
+```
+
+## POW() {#pow}
+
+`POWER()`의 별칭입니다.
+
+```sql
+SELECT POW(2, 3), POW(2, -1), POW(10, 0);
+```
+
+```sql
+Mach> SELECT POW(2, 3), POW(2, -1), POW(10, 0);
+POW(2, 3)   POW(2, -1)   POW(10, 0)
+-----------------------------------------
+8           0.5           1
+[1] row(s) selected.
+```
+
+## LOG() {#log}
+
+`LOG(n)`은 자연로그, `LOG(base, n)`은 지정한 밑의 로그를 계산합니다.
+
+```sql
+SELECT LOG(2, 8), LOG(100), LOG(10, 1000);
+```
+
+```sql
+Mach> SELECT LOG(2, 8), LOG(100), LOG(10, 1000);
+LOG(2, 8)   LOG(100)             LOG(10, 1000)
+------------------------------------------------
+3           4.605170185988092     3
+[1] row(s) selected.
+```
+
+## LN() {#ln}
+
+자연로그 `ln(n)`을 반환합니다.
+
+```sql
+SELECT LN(1), LN(10), LN(1000);
+```
+
+```sql
+Mach> SELECT LN(1), LN(10), LN(1000);
+LN(1)      LN(10)         LN(1000)
+-----------------------------------
+0          2.302585092994046 6.907755278982137
+[1] row(s) selected.
+```
+
+## EXP() {#exp}
+
+`e^n`을 반환합니다.
+
+```sql
+SELECT EXP(0), EXP(1), EXP(-1);
+```
+
+```sql
+Mach> SELECT EXP(0), EXP(1), EXP(-1);
+EXP(0)      EXP(1)         EXP(-1)
+-----------------------------------
+1           2.718281828459045 0.36787944117144233
+[1] row(s) selected.
+```
+
+## FLOOR() {#floor}
+
+음의 무한대 방향으로 내림합니다.
+
+```sql
+SELECT FLOOR(-1.2), FLOOR(3.9), FLOOR(-3.0);
+```
+
+```sql
+Mach> SELECT FLOOR(-1.2), FLOOR(3.9), FLOOR(-3.0);
+FLOOR(-1.2)  FLOOR(3.9)  FLOOR(-3.0)
+-----------------------------------------
+-2            3           -3
+[1] row(s) selected.
+```
+
+## CEIL() {#ceil}
+
+양의 무한대 방향으로 올림합니다.
+
+```sql
+SELECT CEIL(-1.2), CEIL(3.2), CEIL(-3.0);
+```
+
+```sql
+Mach> SELECT CEIL(-1.2), CEIL(3.2), CEIL(-3.0);
+CEIL(-1.2)  CEIL(3.2)  CEIL(-3.0)
+-------------------------------------
+-1           4          -3
+[1] row(s) selected.
+```
+
+## SIN() {#sin}
+
+라디안 입력, 사인값 반환.
+
+```sql
+SELECT SIN(0), SIN(PI()/2), SIN(PI());
+```
+
+```sql
+Mach> SELECT SIN(0), SIN(PI()/2), SIN(PI());
+SIN(0)      SIN(PI()/2)   SIN(PI())
+------------------------------------
+0           1             0
+[1] row(s) selected.
+```
+
+## COS() {#cos}
+
+라디안 입력, 코사인값 반환.
+
+```sql
+SELECT COS(0), COS(PI()), COS(PI()/2);
+```
+
+```sql
+Mach> SELECT COS(0), COS(PI()), COS(PI()/2);
+COS(0)      COS(PI())   COS(PI()/2)
+-------------------------------------
+1           -1          0
+[1] row(s) selected.
+```
+
+## TAN() {#tan}
+
+라디안 입력, 탄젠트값 반환.
+
+```sql
+SELECT TAN(0), TAN(PI()/4), TAN(PI());
+```
+
+```sql
+Mach> SELECT TAN(0), TAN(PI()/4), TAN(PI());
+TAN(0)      TAN(PI()/4)  TAN(PI())
+-----------------------------------
+0           1            0
+[1] row(s) selected.
+```
+
+## MOD() {#mod}
+
+몫을 0으로 절사한 기준으로 나머지를 계산합니다.
+
+```sql
+SELECT MOD(10, 3), MOD(11, 4), MOD(-10, 3), MOD(3.5, 0.5);
+```
+
+```sql
+Mach> SELECT MOD(10, 3), MOD(11, 4), MOD(-10, 3), MOD(3.5, 0.5);
+MOD(10, 3)  MOD(11, 4)  MOD(-10, 3)  MOD(3.5, 0.5)
+-------------------------------------------------------
+1           3           -1           0
+[1] row(s) selected.
+```
+
+## RAND() {#rand}
+
+난수 값을 생성합니다.
+
+```sql
+SELECT RAND(5) = RAND(5) AS same_seed, RAND(7) = RAND(8) AS diff_seed, RAND() = RAND() AS diff_default;
+```
+
+```sql
+Mach> SELECT RAND(5) = RAND(5) AS same_seed, RAND(7) = RAND(8) AS diff_seed, RAND() = RAND() AS diff_default FROM m$sys_users WHERE name = 'SYS';
+same_seed   diff_seed   diff_default
+------------------------------------
+1           0           0
+[1] row(s) selected.
+```
+
+`RAND(seed)`는 같은 시드면 동일한 값이 나오며, `RAND()`는 세션 내부 상태를 기반으로 `[0,1)` 범위의 값을 생성합니다.
 
 <a id="support-type-of-built-in-function"></a>
 ## 내장 함수 지원 타입

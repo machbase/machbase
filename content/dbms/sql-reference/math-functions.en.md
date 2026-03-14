@@ -4,9 +4,9 @@ type: docs
 weight: 40
 ---
 
-# Implemented Mathematical Functions (Issue 3479)
+# Mathematical Functions
 
-This page summarizes the mathematical functions introduced in the current implementation.
+This page summarizes mathematical functions in Machbase.
 
 ## Function Matrix
 
@@ -29,9 +29,24 @@ This page summarizes the mathematical functions introduced in the current implem
 |RAND|`RAND()`|`DOUBLE`|No arguments|Pseudo random in range `[0, 1)`, stateful per session.|
 |RAND|`RAND(seed)`|`DOUBLE`|1 integer argument|Deterministic pseudo random in `[0, 1)` for a given seed.|
 
-## Syntax and Notes
+## Function List
 
-### PI
+- [PI()](#pi)
+- [SQRT()](#sqrt)
+- [POWER()](#power)
+- [POW()](#pow)
+- [LOG()](#log)
+- [LN()](#ln)
+- [EXP()](#exp)
+- [FLOOR()](#floor)
+- [CEIL()](#ceil)
+- [SIN()](#sin)
+- [COS()](#cos)
+- [TAN()](#tan)
+- [MOD()](#mod)
+- [RAND()](#rand)
+
+## PI()
 
 ```sql
 SELECT PI() FROM m$sys_users WHERE name = 'SYS';
@@ -39,16 +54,70 @@ SELECT PI() FROM m$sys_users WHERE name = 'SYS';
 
 Returns a `DOUBLE` value. Passing arguments is not allowed.
 
-### SQRT, FLOOR, CEIL, SIN, COS, TAN, LN, EXP
-
-All of these functions require numeric input and return `DOUBLE`.
+## SQRT()
 
 ```sql
-SELECT SQRT(9), FLOOR(3.2), CEIL(-1.2), SIN(PI()/2), LN(2), EXP(2)
+SELECT SQRT(9)
 FROM m$sys_users WHERE name = 'SYS';
 ```
 
-### POWER / POW
+## FLOOR()
+
+```sql
+SELECT FLOOR(3.2), FLOOR(-1.2)
+FROM m$sys_users WHERE name = 'SYS';
+```
+
+## CEIL()
+
+```sql
+SELECT CEIL(3.2), CEIL(-1.2)
+FROM m$sys_users WHERE name = 'SYS';
+```
+
+## SIN()
+
+```sql
+SELECT SIN(PI()/2), SIN(0)
+FROM m$sys_users WHERE name = 'SYS';
+```
+
+## COS()
+
+```sql
+SELECT COS(0), COS(PI())
+FROM m$sys_users WHERE name = 'SYS';
+```
+
+## TAN()
+
+```sql
+SELECT TAN(0), TAN(PI()/4)
+FROM m$sys_users WHERE name = 'SYS';
+```
+
+## LN()
+
+```sql
+SELECT LN(2), LN(10)
+FROM m$sys_users WHERE name = 'SYS';
+```
+
+## EXP()
+
+```sql
+SELECT EXP(2), EXP(-1)
+FROM m$sys_users WHERE name = 'SYS';
+```
+
+All trigonometric and logarithmic/exponential functions require numeric input and return `DOUBLE`.
+
+```sql
+SELECT SQRT(9), LN(2), EXP(2), SIN(PI()/2)
+FROM m$sys_users WHERE name = 'SYS';
+```
+
+## POWER()
 
 `POWER` and `POW` are identical.
 
@@ -56,7 +125,16 @@ FROM m$sys_users WHERE name = 'SYS';
 SELECT POWER(3, 4), POW(2, -1) FROM m$sys_users WHERE name = 'SYS';
 ```
 
-### LOG
+## POW()
+
+Alias of `POWER()`.
+
+```sql
+SELECT POW(2, 3)
+FROM m$sys_users WHERE name = 'SYS';
+```
+
+## LOG()
 
 * `LOG(n)` is equivalent to `LN(n)`.
 * `LOG(base, n)` uses change-of-base: `log_base(n)`.
@@ -65,7 +143,7 @@ SELECT POWER(3, 4), POW(2, -1) FROM m$sys_users WHERE name = 'SYS';
 SELECT LOG(2, 8), LOG(100) FROM m$sys_users WHERE name = 'SYS';
 ```
 
-### MOD
+## MOD()
 
 For negative values, quotient truncation uses zero-centered truncation.
 
@@ -74,7 +152,7 @@ SELECT MOD(-10, 3), MOD(10, -3), MOD(-10, -3)
 FROM m$sys_users WHERE name = 'SYS';
 ```
 
-### RAND
+## RAND()
 
 * `RAND(seed)` requires an integer `seed`. Passing the same seed repeatedly returns the same value.
 * `RAND()` uses internal state, so successive calls in one statement return different values.
