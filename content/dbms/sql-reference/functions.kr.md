@@ -9,11 +9,14 @@ tocSort: true
 
 * [ABS](#abs)
 * [ADD_TIME](#add_time)
+* [APPROX_PERCENTILE / APPROX_MEDIAN / APPROX_P05 / APPROX_P10 / APPROX_P90 / APPROX_P95](#approx_percentile-family)
+* [AREA](#area)
 * [AVG](#avg)
 * [BITAND / BITOR](#bitand--bitor)
 * [CEIL()](#ceil)
 * [COUNT](#count)
 * [COS()](#cos)
+* [CUME_DIST](#cume_dist)
 * [DATE_BIN](#date_bin)
 * [DATE_TRUNC](#date_trunc)
 * [DAYOFWEEK](#dayofweek)
@@ -37,16 +40,22 @@ tocSort: true
 * [LPAD / RPAD](#lpad--rpad)
 * [LTRIM / RTRIM](#ltrim--rtrim)
 * [MAX](#max)
+* [MEDIAN](#median)
 * [MIN](#min)
 * [MOD()](#mod)
+* [MODE](#mode)
 * [NVL](#nvl)
+* [P05 / P10 / P90 / P95](#p05-p10-p90-p95)
+* [PERCENTILE_CONT / PERCENTILE_DISC](#percentile_cont-percentile_disc)
 * [PI()](#pi)
 * [POWER()](#power)
 * [POW()](#pow)
+* [QUANTILE](#quantile)
 * [RAND()](#rand)
 * [ROUND](#round)
 * [ROWNUM](#rownum)
 * [SIN()](#sin)
+* [SLOPE](#slope)
 * [SQRT()](#sqrt)
 * [SERIESNUM](#seriesnum)
 * [STDDEV / STDDEV_POP](#stddev--stddev_pop)
@@ -64,6 +73,7 @@ tocSort: true
 * [TO_IPV4 / TO_IPV4_SAFE](#to_ipv4--to_ipv4_safe)
 * [TO_IPV6 / TO_IPV6_SAFE](#to_ipv6--to_ipv6_safe)
 * [TO_NUMBER / TO_NUMBER_SAFE](#to_number--to_number_safe)
+* [TOP_K](#top_k)
 * [TO_TIMESTAMP](#to_timestamp)
 * [TRUNC](#trunc)
 * [TS_CHANGE_COUNT](#ts_change_count)
@@ -233,6 +243,53 @@ ID          DT
 5           2014-12-30 11:22:33 444:555:666
 4           2013-11-11 01:02:03 004:005:006
 [3] row(s) selected.
+```
+
+
+## APPROX_PERCENTILE / APPROX_MEDIAN / APPROX_P05 / APPROX_P10 / APPROX_P90 / APPROX_P95 {#approx_percentile-family}
+
+이 함수들은 원시 값을 모두 정렬하지 않고 제한된 크기의 summary를 유지해 분위값을 근사합니다. 입력 데이터가 매우 크고, 작은 오차를 허용할 수 있을 때 유용합니다.
+
+```sql
+APPROX_PERCENTILE(value, ratio)
+APPROX_MEDIAN(value)
+APPROX_P05(value)
+APPROX_P10(value)
+APPROX_P90(value)
+APPROX_P95(value)
+```
+
+- `value`는 숫자형이어야 합니다.
+- `ratio`는 `0.0` 이상 `1.0` 이하의 상수여야 합니다.
+- 반환 타입은 `DOUBLE`입니다.
+- `NULL` 값은 무시합니다.
+
+`APPROX_MEDIAN(value)`는 근사 중앙값이며, `APPROX_P05`, `APPROX_P10`, `APPROX_P90`, `APPROX_P95`는 자주 쓰는 분위값을 위한 축약형입니다.
+
+```sql
+SELECT APPROX_PERCENTILE(latency_ms, 0.95) AS ap95,
+       APPROX_MEDIAN(latency_ms) AS amedian,
+       APPROX_P05(latency_ms) AS ap05
+FROM api_log;
+```
+
+
+## AREA {#area}
+
+`AREA(y, x)`는 숫자형 `(x, y)` 점들로 이루어진 곡선 아래 면적을 정확하게 계산하는 집계 함수입니다.
+
+```sql
+AREA(y, x)
+```
+
+- 두 인자는 모두 숫자형이어야 합니다.
+- 둘 중 하나라도 `NULL`인 행은 무시합니다.
+- 유효한 점이 2개 미만이면 결과는 `NULL`입니다.
+- 반환 타입은 `DOUBLE`입니다.
+
+```sql
+SELECT AREA(power_kw, sample_sec)
+FROM power_log;
 ```
 
 
@@ -414,6 +471,25 @@ COUNT(id1)
 -----------------------
 6
 [1] row(s) selected.
+```
+
+
+## CUME_DIST {#cume_dist}
+
+`CUME_DIST(value, threshold)`는 `value`가 `threshold` 이하인 행의 누적 비율을 반환합니다.
+
+```sql
+CUME_DIST(value, threshold)
+```
+
+- 이 함수는 윈도우 함수가 아니라 집계 함수입니다.
+- 두 인자는 모두 숫자형이어야 합니다.
+- `threshold`는 상수여야 합니다.
+- 반환 값은 `0.0` 이상 `1.0` 이하의 `DOUBLE`입니다.
+
+```sql
+SELECT CUME_DIST(latency_ms, 100)
+FROM api_log;
 ```
 
 
@@ -1271,6 +1347,24 @@ MAX(c)
 --------------
 30
 [1] row(s) selected.
+```
+
+
+## MEDIAN {#median}
+
+`MEDIAN(value)`는 숫자식의 정확한 중앙값을 반환합니다. 현재 구현에서는 `PERCENTILE_CONT(value, 0.5)`와 같은 방식으로 동작합니다.
+
+```sql
+MEDIAN(value)
+```
+
+- `value`는 숫자형이어야 합니다.
+- `NULL` 값은 무시합니다.
+- 반환 타입은 `DOUBLE`입니다.
+
+```sql
+SELECT MEDIAN(temp_c)
+FROM sensor_log;
 ```
 
 
@@ -2323,6 +2417,32 @@ NULL
 ```
 
 
+## TOP_K {#top_k}
+
+`TOP_K(value, k)`는 가장 자주 등장한 `k`개의 숫자 값을 `value:count` 형식의 문자열로 반환합니다.
+
+```sql
+TOP_K(value, k)
+```
+
+- `value`는 숫자형이어야 합니다.
+- `k`는 양의 정수 상수여야 합니다.
+- `NULL` 값은 무시합니다.
+- 반환 타입은 `VARCHAR`입니다.
+- 정렬 기준은 빈도 내림차순이며, 빈도가 같으면 값 오름차순입니다.
+
+```sql
+SELECT TOP_K(alarm_code, 3)
+FROM event_log;
+```
+
+예시 결과:
+
+```text
+101:532,205:317,301:90
+```
+
+
 ## TO_TIMESTAMP
 
 datetime 타입을 1970-01-01 09:00 이후 경과 나노초 값으로 변환합니다.
@@ -2742,6 +2862,24 @@ SIN(0)      SIN(PI()/2)   SIN(PI())
 [1] row(s) selected.
 ```
 
+## SLOPE {#slope}
+
+`SLOPE(y, x)`는 숫자형 `(x, y)` 점들에 대한 선형 회귀 직선의 기울기를 계산합니다.
+
+```sql
+SLOPE(y, x)
+```
+
+- 두 인자는 모두 숫자형이어야 합니다.
+- `NULL` 값은 무시합니다.
+- 유효한 데이터가 부족하거나 `x` 분산이 0이면 결과는 `NULL`입니다.
+- 반환 타입은 `DOUBLE`입니다.
+
+```sql
+SELECT SLOPE(temp_c, sample_sec)
+FROM sensor_log;
+```
+
 ## COS() {#cos}
 
 라디안 입력, 코사인값 반환.
@@ -2790,6 +2928,88 @@ MOD(10, 3)  MOD(11, 4)  MOD(-10, 3)  MOD(3.5, 0.5)
 [1] row(s) selected.
 ```
 
+## MODE {#mode}
+
+`MODE(value)`는 입력 집합에서 가장 자주 나타나는 숫자 값을 반환합니다.
+
+```sql
+MODE(value)
+```
+
+- `value`는 숫자형이어야 합니다.
+- `NULL` 값은 무시합니다.
+- 최빈값이 여러 개면 더 작은 값을 반환합니다.
+- 현재 구현의 반환 타입은 `DOUBLE`입니다.
+
+```sql
+SELECT MODE(alarm_code)
+FROM event_log;
+```
+
+## P05 / P10 / P90 / P95 {#p05-p10-p90-p95}
+
+자주 쓰는 분위값을 빠르게 표현할 수 있도록 준비된 정확 분위수 축약 함수입니다.
+
+```sql
+P05(value)
+P10(value)
+P90(value)
+P95(value)
+```
+
+- `value`는 숫자형이어야 합니다.
+- `NULL` 값은 무시합니다.
+- 반환 타입은 `DOUBLE`입니다.
+
+`P05`, `P10`, `P90`, `P95`는 각각 `PERCENTILE_CONT(value, 0.05)`, `0.10`, `0.90`, `0.95`와 같은 의미입니다.
+
+```sql
+SELECT P05(response_ms),
+       P10(response_ms),
+       P90(response_ms),
+       P95(response_ms)
+FROM web_log;
+```
+
+## PERCENTILE_CONT / PERCENTILE_DISC {#percentile_cont-percentile_disc}
+
+이 함수들은 숫자형 입력에 대해 정확한 분위값을 계산하는 집계 함수입니다.
+
+```sql
+PERCENTILE_CONT(value, ratio)
+PERCENTILE_DISC(value, ratio)
+```
+
+- `value`는 숫자형이어야 합니다.
+- `ratio`는 `0.0` 이상 `1.0` 이하의 상수여야 합니다.
+- `PERCENTILE_CONT`는 필요하면 인접한 정렬 값 사이를 보간합니다.
+- `PERCENTILE_DISC`는 목표 순위에 해당하는 실제 관측값 중 하나를 선택합니다.
+- 현재 구현에서 두 함수 모두 반환 타입은 `DOUBLE`입니다.
+
+```sql
+SELECT PERCENTILE_CONT(latency_ms, 0.95) AS pcont95,
+       PERCENTILE_DISC(latency_ms, 0.95) AS pdisc95
+FROM api_log;
+```
+
+## QUANTILE {#quantile}
+
+`QUANTILE(value, ratio)`는 숫자형 입력에 대해 정확한 연속 분위값을 계산합니다.
+
+```sql
+QUANTILE(value, ratio)
+```
+
+- `value`는 숫자형이어야 합니다.
+- `ratio`는 `0.0` 이상 `1.0` 이하의 상수여야 합니다.
+- 반환 타입은 `DOUBLE`입니다.
+- 현재 구현에서는 `PERCENTILE_CONT`와 같은 연속 분위수 계열에 속합니다.
+
+```sql
+SELECT QUANTILE(cpu_usage, 0.75)
+FROM host_metric;
+```
+
 ## RAND() {#rand}
 
 난수 값을 생성합니다.
@@ -2815,9 +3035,12 @@ same_seed   diff_seed   diff_default
 |--|--|--|--|--|--|--|--|--|--|--|--|
 |ABS|o|o|o|o|o|x|x|x|x|x|x|
 |ADD_TIME|x|x|x|x|x|x|x|x|x|o|x|
+|APPROX_PERCENTILE / APPROX_MEDIAN / APPROX_P05 / APPROX_P10 / APPROX_P90 / APPROX_P95|o|o|o|o|o|x|x|x|x|x|x|
+|AREA|o|o|o|o|o|x|x|x|x|x|x|
 |AVG|o|o|o|o|o|x|x|x|x|x|x|
 |BITAND / BITOR|o|o|o|x|x|x|x|x|x|x|x|
 |COUNT|o|o|o|o|o|o|x|o|o|o|x|
+|CUME_DIST|o|o|o|o|o|x|x|x|x|x|x|
 |DATE_TRUNC|x|x|x|x|x|x|x|x|x|o|x|
 |DECODE|o|o|o|o|o|o|x|o|x|o|x|
 |FIRST / LAST|o|o|o|o|o|o|x|o|o|o|x|
@@ -2831,8 +3054,15 @@ same_seed   diff_seed   diff_default
 |LPAD / RPAD|x|x|x|x|x|o|x|x|x|x|x|
 |LTRIM / RTRIM|x|x|x|x|x|o|x|x|x|x|x|
 |MAX|o|o|o|o|o|o|x|o|o|o|x|
+|MEDIAN|o|o|o|o|o|x|x|x|x|x|x|
 |MIX|o|o|o|o|o|o|x|o|o|o|x|
+|MODE|o|o|o|o|o|x|x|x|x|x|x|
 |NVL|x|x|x|x|x|o|x|o|x|x|x|
+|P05 / P10 / P90 / P95|o|o|o|o|o|x|x|x|x|x|x|
+|PERCENTILE_CONT / PERCENTILE_DISC|o|o|o|o|o|x|x|x|x|x|x|
+|QUANTILE|o|o|o|o|o|x|x|x|x|x|x|
+|SLOPE|o|o|o|o|o|x|x|x|x|x|x|
+|TOP_K|o|o|o|o|o|x|x|x|x|x|x|
 |ROUND|o|o|o|o|o|x|x|x|x|x|x|
 |ROWNUM|o|o|o|o|o|o|o|o|o|o|o|
 |SERIESNUM|o|o|o|o|o|o|o|o|o|o|o|
@@ -3042,4 +3272,24 @@ name1       2024-01-01 00:00:00 000:000:000 1           2
 name1       2024-01-02 00:00:00 000:000:000 2           3              
 name1       2024-01-03 00:00:00 000:000:000 3           NULL           
 [3] row(s) selected.
+```
+
+
+#### NTILE
+
+`NTILE(n)`은 정렬된 행을 가능한 균등하게 `n`개의 버킷으로 나누고, 각 행이 속한 버킷 번호를 반환합니다.
+
+```
+NTILE(n) OVER ([PARTITION BY column_name] ORDER BY column_name)
+```
+
+- `n`은 양의 상수여야 합니다.
+- `OVER (...)` 안의 `ORDER BY`는 필수입니다.
+- 행 수가 균등하게 나누어지지 않으면 앞쪽 버킷이 한 행씩 더 가집니다.
+
+```
+Mach> SELECT user_id,
+             score,
+             NTILE(4) OVER (ORDER BY score) AS score_band
+      FROM exam_result;
 ```
