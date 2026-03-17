@@ -7,6 +7,7 @@ weight: 40
 ## Index
 
 * [SELECT Syntax](#select-syntax)
+* [SELECT without FROM](#select-without-from)
 * [SET OPERATOR](#set-operator)
 * [TARGET LIST](#target-list)
     * [CASE statement](#case-statement)
@@ -56,6 +57,52 @@ LIMIT n[,n];
 > LIMIT n[,n];
 > DURATION time_expr
 > ```
+
+In general, a `SELECT` statement uses a `FROM` clause. However, simple expressions can
+also be executed without a `FROM` clause.
+
+## SELECT without FROM
+
+A `SELECT` statement without `FROM` does not read from a table. It returns one row for
+constants, string literals, arithmetic expressions, and simple function results. This is
+useful for quick connectivity checks or simple calculations.
+
+```sql
+select 1;
+select 'alive';
+select 1 + 2;
+select abs(-7);
+```
+
+Each query returns a single row.
+
+The following extended forms are not supported.
+
+```sql
+select distinct 1;
+select 1 where 1 = 1;
+select 1 order by 1;
+select count(*);
+select *;
+select 1 by user;
+select 1 by for each row;
+select /*+ INTERPOLATION(...) */ 1;
+```
+
+Unsupported forms typically return the following error.
+
+```text
+ERR-02362: This statement is not supported.
+```
+
+`select *;` may return the following error.
+
+```text
+ERR-02039: No table specified in the target list.
+```
+
+`SELECT` without `FROM` is intended for single-row expression queries only. Aggregate
+functions, sorting, conditions, periodic options, and hints are not supported.
 
 ## SET OPERATOR
 

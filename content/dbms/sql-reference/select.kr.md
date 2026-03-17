@@ -7,6 +7,7 @@ weight: 40
 ## 목차
 
 * [SELECT 구문](#select-구문)
+* [FROM 절 없는 SELECT](#from-절-없는-select)
 * [집합 연산자](#집합-연산자)
 * [대상 목록](#대상-목록)
     * [CASE 문](#case-문)
@@ -56,6 +57,52 @@ LIMIT n[,n];
 > LIMIT n[,n];
 > DURATION time_expr
 > ```
+
+일반적인 `SELECT` 문은 `FROM` 절을 사용합니다. 다만 단순 표현식은 `FROM` 절 없이도
+실행할 수 있습니다.
+
+## FROM 절 없는 SELECT
+
+`FROM` 절 없이 실행하는 `SELECT`는 테이블을 조회하지 않고 상수, 문자열, 산술식,
+단순 함수 결과를 1행으로 반환합니다. 서버 연결 확인이나 간단한 계산 결과를 즉시
+확인할 때 사용할 수 있습니다.
+
+```sql
+select 1;
+select 'alive';
+select 1 + 2;
+select abs(-7);
+```
+
+각 질의는 1건의 결과를 반환합니다.
+
+다음과 같은 확장 구문은 지원하지 않습니다.
+
+```sql
+select distinct 1;
+select 1 where 1 = 1;
+select 1 order by 1;
+select count(*);
+select *;
+select 1 by user;
+select 1 by for each row;
+select /*+ INTERPOLATION(...) */ 1;
+```
+
+지원하지 않는 구문은 보통 다음 오류를 반환합니다.
+
+```text
+ERR-02362: This statement is not supported.
+```
+
+`select *;`는 다음 오류를 반환할 수 있습니다.
+
+```text
+ERR-02039: No table specified in the target list.
+```
+
+`FROM` 절 없는 `SELECT`는 단순 표현식 1행 조회 용도입니다. 집계, 정렬, 조건절,
+주기 옵션, 힌트와 같은 확장 구문은 사용할 수 없습니다.
 
 ## 집합 연산자
 
