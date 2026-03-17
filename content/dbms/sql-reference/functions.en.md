@@ -2,42 +2,70 @@
 title : 'Functions'
 type: docs
 weight: 70
+tocSort: true
 ---
 
 # Index
 
 * [ABS](#abs)
 * [ADD_TIME](#add_time)
+* [APPROX_PERCENTILE / APPROX_MEDIAN / APPROX_P05 / APPROX_P10 / APPROX_P90 / APPROX_P95](#approx_percentile-family)
+* [AREA](#area)
 * [AVG](#avg)
 * [BITAND / BITOR](#bitand--bitor)
+* [CEIL()](#ceil)
 * [COUNT](#count)
-* [DATE_TRUNC](#date_trunc)
+* [COS()](#cos)
+* [CUME_DIST](#cume_dist)
 * [DATE_BIN](#date_bin)
+* [DATE_TRUNC](#date_trunc)
 * [DAYOFWEEK](#dayofweek)
 * [DECODE](#decode)
+* [EXP()](#exp)
 * [EXTRACT_* / EXTRACT_LE_*](#extract_)
 * [FIRST / LAST](#first--last)
-* [FROM_UNIXTIME](#from_unixtime)
+* [FLOOR()](#floor)
 * [FROM_TIMESTAMP](#from_timestamp)
+* [FROM_UNIXTIME](#from_unixtime)
 * [GROUP_CONCAT](#group_concat)
 * [INSTR](#instr)
+* [ISNAN / ISINF](#isnan--isinf)
+* [JSON-related function](#json-related-function)
+* [JSON Operator](#json-operator)
 * [LEAST / GREATEST](#least--greatest)
 * [LENGTH](#length)
+* [LN()](#ln)
+* [LOG()](#log)
 * [LOWER](#lower)
 * [LPAD / RPAD](#lpad--rpad)
 * [LTRIM / RTRIM](#ltrim--rtrim)
 * [MAX](#max)
+* [MEDIAN](#median)
 * [MIN](#min)
+* [MOD()](#mod)
+* [MODE](#mode)
 * [NVL](#nvl)
+* [P05 / P10 / P90 / P95](#p05-p10-p90-p95)
+* [PERCENTILE_CONT / PERCENTILE_DISC](#percentile_cont-percentile_disc)
+* [PI()](#pi)
+* [POWER()](#power)
+* [POW()](#pow)
+* [QUANTILE](#quantile)
+* [RAND()](#rand)
 * [ROUND](#round)
 * [ROWNUM](#rownum)
+* [SIN()](#sin)
+* [SLOPE](#slope)
+* [SQRT()](#sqrt)
 * [SERIESNUM](#seriesnum)
 * [STDDEV / STDDEV_POP](#stddev--stddev_pop)
 * [SUBSTR](#substr)
 * [SUBSTRING_INDEX](#substring_index)
 * [SUM](#sum)
 * [SUMSQ](#sumsq)
+* [Support Type of Built-In Function](#support-type-of-built-in-function)
 * [SYSDATE / NOW](#sysdate--now)
+* [TAN()](#tan)
 * [TO_CHAR](#to_char)
 * [TO_DATE](#to_date)
 * [TO_DATE_SAFE](#to_date_safe)
@@ -45,19 +73,15 @@ weight: 70
 * [TO_IPV4 / TO_IPV4_SAFE](#to_ipv4--to_ipv4_safe)
 * [TO_IPV6 / TO_IPV6_SAFE](#to_ipv6--to_ipv6_safe)
 * [TO_NUMBER / TO_NUMBER_SAFE](#to_number--to_number_safe)
+* [TOP_K](#top_k)
 * [TO_TIMESTAMP](#to_timestamp)
 * [TRUNC](#trunc)
 * [TS_CHANGE_COUNT](#ts_change_count)
 * [UNIX_TIMESTAMP](#unix_timestamp)
 * [UPPER](#upper)
 * [VARIANCE / VAR_POP](#variance--var_pop)
-* [YEAR / MONTH / DAY](#year--month--day)
-* [ISNAN / ISINF](#isnan--isinf)
-* [Support Type of Built-In Function](#support-type-of-built-in-function)
-* [JSON-related function](#json-related-function)
-* [JSON Operator](#json-operator)
 * [WINDOW FUNCTION](#window-function)
-
+* [YEAR / MONTH / DAY](#year--month--day)
 ## ABS
 
 This function works on a numeric column, converts it to a positive value, and returns the value as a real number.
@@ -219,6 +243,53 @@ ID          DT
 5           2014-12-30 11:22:33 444:555:666
 4           2013-11-11 01:02:03 004:005:006
 [3] row(s) selected.
+```
+
+
+## APPROX_PERCENTILE / APPROX_MEDIAN / APPROX_P05 / APPROX_P10 / APPROX_P90 / APPROX_P95 {#approx_percentile-family}
+
+These aggregate functions estimate percentiles while keeping a bounded summary instead of sorting every raw value. They are useful when the input is very large and a small approximation error is acceptable.
+
+```sql
+APPROX_PERCENTILE(value, ratio)
+APPROX_MEDIAN(value)
+APPROX_P05(value)
+APPROX_P10(value)
+APPROX_P90(value)
+APPROX_P95(value)
+```
+
+- `value` must be numeric.
+- `ratio` must be a constant in the range `0.0` to `1.0`.
+- Return type is `DOUBLE`.
+- `NULL` values are ignored.
+
+`APPROX_MEDIAN(value)` is an approximate 50th percentile. `APPROX_P05`, `APPROX_P10`, `APPROX_P90`, and `APPROX_P95` are convenience forms for fixed percentile points.
+
+```sql
+SELECT APPROX_PERCENTILE(latency_ms, 0.95) AS ap95,
+       APPROX_MEDIAN(latency_ms) AS amedian,
+       APPROX_P05(latency_ms) AS ap05
+FROM api_log;
+```
+
+
+## AREA {#area}
+
+`AREA(y, x)` is an exact aggregate function that calculates the area under a curve formed by `(x, y)` pairs.
+
+```sql
+AREA(y, x)
+```
+
+- Both arguments must be numeric.
+- The function ignores rows where either argument is `NULL`.
+- At least two valid points are required. Otherwise, the result is `NULL`.
+- The result type is `DOUBLE`.
+
+```sql
+SELECT AREA(power_kw, sample_sec)
+FROM power_log;
 ```
 
 
@@ -400,6 +471,25 @@ COUNT(id1)
 -----------------------
 6
 [1] row(s) selected.
+```
+
+
+## CUME_DIST {#cume_dist}
+
+`CUME_DIST(value, threshold)` returns the cumulative ratio of rows whose `value` is less than or equal to the given threshold.
+
+```sql
+CUME_DIST(value, threshold)
+```
+
+- This is an aggregate function, not a window function.
+- Both arguments must be numeric.
+- `threshold` must be a constant.
+- The return value is a `DOUBLE` between `0.0` and `1.0`.
+
+```sql
+SELECT CUME_DIST(latency_ms, 100)
+FROM api_log;
 ```
 
 
@@ -1258,6 +1348,24 @@ MAX(c)
 --------------
 30
 [1] row(s) selected.
+```
+
+
+## MEDIAN {#median}
+
+`MEDIAN(value)` returns the exact median of a numeric expression. In the current implementation, it behaves like `PERCENTILE_CONT(value, 0.5)`.
+
+```sql
+MEDIAN(value)
+```
+
+- `value` must be numeric.
+- `NULL` values are ignored.
+- The result type is `DOUBLE`.
+
+```sql
+SELECT MEDIAN(temp_c)
+FROM sensor_log;
 ```
 
 
@@ -2310,6 +2418,32 @@ NULL
 ```
 
 
+## TOP_K {#top_k}
+
+`TOP_K(value, k)` returns the most frequent `k` numeric values as a comma-separated `value:count` string.
+
+```sql
+TOP_K(value, k)
+```
+
+- `value` must be numeric.
+- `k` must be a positive constant integer.
+- `NULL` values are ignored.
+- The result type is `VARCHAR`.
+- Rows are ordered by frequency descending and, for ties, value ascending.
+
+```sql
+SELECT TOP_K(alarm_code, 3)
+FROM event_log;
+```
+
+Example result:
+
+```text
+101:532,205:317,301:90
+```
+
+
 ## TO_TIMESTAMP
 
 This function converts a datetime data type to nanosecond data that has passed since 1970-01-01 09:00.
@@ -2569,6 +2703,331 @@ nan                         inf                         0
 [1] row(s) selected.
 ```
 
+## PI() {#pi}
+
+Returns a `DOUBLE` constant π.
+
+```sql
+SELECT PI();
+```
+
+```sql
+Mach> SELECT PI();
+PI()
+------------------------------
+3.141592653589793
+[1] row(s) selected.
+```
+
+## SQRT() {#sqrt}
+
+Returns the square root of one numeric argument.
+
+```sql
+SELECT SQRT(9), SQRT(2.25), SQRT(16.0);
+```
+
+```sql
+Mach> SELECT SQRT(9), SQRT(2.25), SQRT(16.0);
+SQRT(9)   SQRT(2.25)         SQRT(16.0)
+-----------------------------------------------
+3         1.5000000000000000  4
+[1] row(s) selected.
+```
+
+## POWER() {#power}
+
+Returns `base` raised to `exponent`.
+
+```sql
+SELECT POWER(2, 3), POWER(9, 0.5), POWER(4, -1);
+```
+
+```sql
+Mach> SELECT POWER(2, 3), POWER(9, 0.5), POWER(4, -1);
+POWER(2, 3)   POWER(9, 0.5)   POWER(4, -1)
+------------------------------------------------
+8             3.0000000000000000 0.2500000000000000
+[1] row(s) selected.
+```
+
+## POW() {#pow}
+
+Alias of `POWER()`.
+
+```sql
+SELECT POW(2, 3), POW(2, -1), POW(10, 0);
+```
+
+```sql
+Mach> SELECT POW(2, 3), POW(2, -1), POW(10, 0);
+POW(2, 3)   POW(2, -1)   POW(10, 0)
+-----------------------------------------
+8           0.5           1
+[1] row(s) selected.
+```
+
+## LOG() {#log}
+
+`LOG(n)` is the same as natural log; `LOG(base, n)` calculates logarithm with a base.
+
+```sql
+SELECT LOG(2, 8), LOG(100), LOG(10, 1000);
+```
+
+```sql
+Mach> SELECT LOG(2, 8), LOG(100), LOG(10, 1000);
+LOG(2, 8)   LOG(100)             LOG(10, 1000)
+------------------------------------------------
+3           4.605170185988092     3
+[1] row(s) selected.
+```
+
+## LN() {#ln}
+
+Returns natural logarithm `ln(n)`.
+
+```sql
+SELECT LN(1), LN(10), LN(1000);
+```
+
+```sql
+Mach> SELECT LN(1), LN(10), LN(1000);
+LN(1)      LN(10)         LN(1000)
+-----------------------------------
+0          2.302585092994046 6.907755278982137
+[1] row(s) selected.
+```
+
+## EXP() {#exp}
+
+Returns `e^n` of the argument.
+
+```sql
+SELECT EXP(0), EXP(1), EXP(-1);
+```
+
+```sql
+Mach> SELECT EXP(0), EXP(1), EXP(-1);
+EXP(0)      EXP(1)         EXP(-1)
+-----------------------------------
+1           2.718281828459045 0.36787944117144233
+[1] row(s) selected.
+```
+
+## FLOOR() {#floor}
+
+Rounds down toward negative infinity.
+
+```sql
+SELECT FLOOR(-1.2), FLOOR(3.9), FLOOR(-3.0);
+```
+
+```sql
+Mach> SELECT FLOOR(-1.2), FLOOR(3.9), FLOOR(-3.0);
+FLOOR(-1.2)  FLOOR(3.9)  FLOOR(-3.0)
+-----------------------------------------
+-2            3           -3
+[1] row(s) selected.
+```
+
+## CEIL() {#ceil}
+
+Rounds up toward positive infinity.
+
+```sql
+SELECT CEIL(-1.2), CEIL(3.2), CEIL(-3.0);
+```
+
+```sql
+Mach> SELECT CEIL(-1.2), CEIL(3.2), CEIL(-3.0);
+CEIL(-1.2)  CEIL(3.2)  CEIL(-3.0)
+-------------------------------------
+-1           4          -3
+[1] row(s) selected.
+```
+
+## SIN() {#sin}
+
+Returns sine value of a radian input.
+
+```sql
+SELECT SIN(0), SIN(PI()/2), SIN(PI());
+```
+
+```sql
+Mach> SELECT SIN(0), SIN(PI()/2), SIN(PI());
+SIN(0)      SIN(PI()/2)   SIN(PI())
+------------------------------------
+0           1             0
+[1] row(s) selected.
+```
+
+## SLOPE {#slope}
+
+`SLOPE(y, x)` calculates the slope of the linear regression line for numeric `(x, y)` pairs.
+
+```sql
+SLOPE(y, x)
+```
+
+- Both arguments must be numeric.
+- `NULL` values are ignored.
+- If there are not enough valid rows or the `x` variance is zero, the result is `NULL`.
+- The result type is `DOUBLE`.
+
+```sql
+SELECT SLOPE(temp_c, sample_sec)
+FROM sensor_log;
+```
+
+## COS() {#cos}
+
+Returns cosine value of a radian input.
+
+```sql
+SELECT COS(0), COS(PI()), COS(PI()/2);
+```
+
+```sql
+Mach> SELECT COS(0), COS(PI()), COS(PI()/2);
+COS(0)      COS(PI())   COS(PI()/2)
+-------------------------------------
+1           -1          0
+[1] row(s) selected.
+```
+
+## TAN() {#tan}
+
+Returns tangent value of a radian input.
+
+```sql
+SELECT TAN(0), TAN(PI()/4), TAN(PI());
+```
+
+```sql
+Mach> SELECT TAN(0), TAN(PI()/4), TAN(PI());
+TAN(0)      TAN(PI()/4)  TAN(PI())
+-----------------------------------
+0           1            0
+[1] row(s) selected.
+```
+
+## MOD() {#mod}
+
+Returns remainder using truncation toward zero of the quotient.
+
+```sql
+SELECT MOD(10, 3), MOD(11, 4), MOD(-10, 3), MOD(3.5, 0.5);
+```
+
+```sql
+Mach> SELECT MOD(10, 3), MOD(11, 4), MOD(-10, 3), MOD(3.5, 0.5);
+MOD(10, 3)  MOD(11, 4)  MOD(-10, 3)  MOD(3.5, 0.5)
+-------------------------------------------------------
+1           3           -1           0
+[1] row(s) selected.
+```
+
+## MODE {#mode}
+
+`MODE(value)` returns the most frequent numeric value in the input set.
+
+```sql
+MODE(value)
+```
+
+- `value` must be numeric.
+- `NULL` values are ignored.
+- If multiple values have the same highest frequency, the smallest value is returned.
+- The result type is `DOUBLE` in the current implementation.
+
+```sql
+SELECT MODE(alarm_code)
+FROM event_log;
+```
+
+## P05 / P10 / P90 / P95 {#p05-p10-p90-p95}
+
+These are shorthand forms of exact percentile calculations for frequently used percentile points.
+
+```sql
+P05(value)
+P10(value)
+P90(value)
+P95(value)
+```
+
+- `value` must be numeric.
+- `NULL` values are ignored.
+- The result type is `DOUBLE`.
+
+`P05`, `P10`, `P90`, and `P95` are equivalent to `PERCENTILE_CONT(value, 0.05)`, `0.10`, `0.90`, and `0.95`.
+
+```sql
+SELECT P05(response_ms),
+       P10(response_ms),
+       P90(response_ms),
+       P95(response_ms)
+FROM web_log;
+```
+
+## PERCENTILE_CONT / PERCENTILE_DISC {#percentile_cont-percentile_disc}
+
+These aggregate functions calculate exact percentiles on numeric input.
+
+```sql
+PERCENTILE_CONT(value, ratio)
+PERCENTILE_DISC(value, ratio)
+```
+
+- `value` must be numeric.
+- `ratio` must be a constant in the range `0.0` to `1.0`.
+- `PERCENTILE_CONT` interpolates between adjacent sorted values when needed.
+- `PERCENTILE_DISC` selects one of the observed values at the target rank.
+- Both functions currently return `DOUBLE`.
+
+```sql
+SELECT PERCENTILE_CONT(latency_ms, 0.95) AS pcont95,
+       PERCENTILE_DISC(latency_ms, 0.95) AS pdisc95
+FROM api_log;
+```
+
+## QUANTILE {#quantile}
+
+`QUANTILE(value, ratio)` calculates an exact continuous quantile on numeric input.
+
+```sql
+QUANTILE(value, ratio)
+```
+
+- `value` must be numeric.
+- `ratio` must be a constant in the range `0.0` to `1.0`.
+- The result type is `DOUBLE`.
+- In the current implementation, it belongs to the same continuous percentile family as `PERCENTILE_CONT`.
+
+```sql
+SELECT QUANTILE(cpu_usage, 0.75)
+FROM host_metric;
+```
+
+## RAND() {#rand}
+
+Generates pseudo-random values.
+
+```sql
+SELECT RAND(5) = RAND(5) AS same_seed, RAND(7) = RAND(8) AS diff_seed, RAND() = RAND() AS diff_default;
+```
+
+```sql
+Mach> SELECT RAND(5) = RAND(5) AS same_seed, RAND(7) = RAND(8) AS diff_seed, RAND() = RAND() AS diff_default FROM m$sys_users WHERE name = 'SYS';
+same_seed   diff_seed   diff_default
+------------------------------------
+1           0           0
+[1] row(s) selected.
+```
+
+`RAND(seed)` is deterministic for the same `seed`. `RAND()` without a seed uses session internal state and generates values in `[0,1)`.
 
 ## Support Type of Built-In Function 
 
@@ -2576,9 +3035,12 @@ nan                         inf                         0
 |--|--|--|--|--|--|--|--|--|--|--|--|
 |ABS|o|o|o|o|o|x|x|x|x|x|x|
 |ADD_TIME|x|x|x|x|x|x|x|x|x|o|x|
+|APPROX_PERCENTILE / APPROX_MEDIAN / APPROX_P05 / APPROX_P10 / APPROX_P90 / APPROX_P95|o|o|o|o|o|x|x|x|x|x|x|
+|AREA|o|o|o|o|o|x|x|x|x|x|x|
 |AVG|o|o|o|o|o|x|x|x|x|x|x|
 |BITAND / BITOR|o|o|o|x|x|x|x|x|x|x|x|
 |COUNT|o|o|o|o|o|o|x|o|o|o|x|
+|CUME_DIST|o|o|o|o|o|x|x|x|x|x|x|
 |DATE_TRUNC|x|x|x|x|x|x|x|x|x|o|x|
 |DECODE|o|o|o|o|o|o|x|o|x|o|x|
 |FIRST / LAST|o|o|o|o|o|o|x|o|o|o|x|
@@ -2592,8 +3054,15 @@ nan                         inf                         0
 |LPAD / RPAD|x|x|x|x|x|o|x|x|x|x|x|
 |LTRIM / RTRIM|x|x|x|x|x|o|x|x|x|x|x|
 |MAX|o|o|o|o|o|o|x|o|o|o|x|
+|MEDIAN|o|o|o|o|o|x|x|x|x|x|x|
 |MIX|o|o|o|o|o|o|x|o|o|o|x|
+|MODE|o|o|o|o|o|x|x|x|x|x|x|
 |NVL|x|x|x|x|x|o|x|o|x|x|x|
+|P05 / P10 / P90 / P95|o|o|o|o|o|x|x|x|x|x|x|
+|PERCENTILE_CONT / PERCENTILE_DISC|o|o|o|o|o|x|x|x|x|x|x|
+|QUANTILE|o|o|o|o|o|x|x|x|x|x|x|
+|SLOPE|o|o|o|o|o|x|x|x|x|x|x|
+|TOP_K|o|o|o|o|o|x|x|x|x|x|x|
 |ROUND|o|o|o|o|o|x|x|x|x|x|x|
 |ROWNUM|o|o|o|o|o|o|o|o|o|o|o|
 |SERIESNUM|o|o|o|o|o|o|o|o|o|o|o|
@@ -2800,4 +3269,24 @@ name1       2024-01-01 00:00:00 000:000:000 1           2
 name1       2024-01-02 00:00:00 000:000:000 2           3              
 name1       2024-01-03 00:00:00 000:000:000 3           NULL           
 [3] row(s) selected.
+```
+
+
+#### NTILE
+
+`NTILE(n)` divides ordered rows into `n` buckets as evenly as possible and returns the bucket number of each row.
+
+```
+NTILE(n) OVER ([PARTITION BY column_name] ORDER BY column_name)
+```
+
+- `n` must be a positive constant.
+- `ORDER BY` inside `OVER (...)` is required.
+- If rows cannot be divided evenly, earlier buckets receive one more row.
+
+```
+Mach> SELECT user_id,
+             score,
+             NTILE(4) OVER (ORDER BY score) AS score_band
+      FROM exam_result;
 ```
