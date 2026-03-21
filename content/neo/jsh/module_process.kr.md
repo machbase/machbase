@@ -4,7 +4,7 @@ type: docs
 weight: 100
 ---
 
-{{< neo_since ver="8.0.73" />}}
+{{< neo_since ver="8.0.74" />}}
 
 `process` 모듈은 JSH 애플리케이션에서 사용하도록 설계되었습니다.
 
@@ -408,14 +408,101 @@ const diff = process.hrtime([start[0], start[1]]);
 console.println(Array.isArray(diff), diff.length);
 ```
 
+## Signal Events
+
+`process`는 `EventEmitter`처럼 시그널 이벤트를 받을 수 있습니다.
+
+현재 문서 시점 기준으로 다음 시그널 이름을 지원합니다.
+
+- `SIGHUP`
+- `SIGINT`
+- `SIGQUIT`
+- `SIGABRT`
+- `SIGKILL`
+- `SIGUSR1`
+- `SIGSEGV`
+- `SIGUSR2`
+- `SIGPIPE`
+- `SIGALRM`
+- `SIGTERM`
+
+시그널 이벤트 리스너는 대소문자를 구분하지 않습니다.
+이벤트 이름은 `SIG` 접두어를 포함한 형태만 지원합니다.
+
+예를 들어 아래 이름들은 동일하게 동작합니다.
+
+- `SIGTERM`
+- `sigterm`
+
+`term` 같은 bare alias는 시그널 이벤트 이름으로 취급하지 않습니다.
+이 값은 일반 `EventEmitter` 이벤트 이름으로 유지됩니다.
+
+리스너를 등록하면 JSH가 해당 OS 시그널을 이벤트로 전달합니다.
+리스너가 없으면 운영체제의 기본 시그널 동작을 따릅니다.
+
+<h6>사용 예시</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2,3,4]}
+const process = require('process');
+
+process.on('sigint', () => {
+  console.println('caught SIGINT');
+});
+```
+
+<h6>지원하는 리스너 등록 예</h6>
+
+```js
+process.on('sigterm', handler);
+process.once('SIGTERM', handler);
+process.addListener('sigquit', handler);
+```
+
 ## kill()
 
-지정한 프로세스 ID로 시그널 전송을 요청합니다.
+지정한 프로세스 ID로 실제 OS 시그널을 전송합니다.
 
-현재 구현은 플레이스홀더 동작입니다.
+- `pid`는 양의 정수여야 합니다.
+- `signal`을 생략하면 기본값은 `SIGTERM`입니다.
+- 성공하면 `true`를 반환합니다.
+- 실패하면 `Error` 객체를 반환합니다.
+- `signal`에는 문자열 이름 또는 숫자 시그널 번호를 사용할 수 있습니다.
 
-- `pid`가 없으면 `Error` 객체를 반환합니다.
-- `pid`가 있으면 `true`를 반환합니다. (`signal` 기본값: `SIGTERM`)
+문자열 이름은 대소문자를 구분하지 않으며 `SIG` 접두어를 생략할 수 있습니다.
+
+이 별칭 지원은 `process.kill()`에 적용됩니다.
+
+예:
+
+- `SIGTERM`
+- `term`
+- `sigint`
+
+숫자 시그널은 현재 다음 값을 지원합니다.
+
+| 숫자 | 리터럴 |
+| --- | --- |
+| `0` | 없음 |
+| `1` | `SIGHUP` |
+| `2` | `SIGINT` |
+| `3` | `SIGQUIT` |
+| `6` | `SIGABRT` |
+| `9` | `SIGKILL` |
+| `10` | `SIGUSR1` |
+| `11` | `SIGSEGV` |
+| `12` | `SIGUSR2` |
+| `13` | `SIGPIPE` |
+| `14` | `SIGALRM` |
+| `15` | `SIGTERM` |
+
+`signal` 값 `0`은 실제 시그널을 보내지 않고, 대상 프로세스 존재 여부와 권한을 검사할 때 사용할 수 있습니다.
+
+Windows에서 `process.kill(pid, 'SIGINT')`는 Unix의 `kill(2)`처럼 실제 시그널을 직접 보내는 동작이 아닙니다.
+대신 대상 프로세스 그룹이 `SIGINT`에 가까운 인터럽트로 관찰할 수 있도록 interrupt 성격의 console control event 전달을 시도합니다.
+이 동작은 Windows에서 Node.js interrupt semantic에 가장 가깝게 맞춘 것이지만 best-effort입니다.
+즉, 대상이 콘솔에 연결된 프로세스 그룹이어야 하며 Windows가 control event를 라우팅할 수 없는 경우 실패할 수 있습니다.
+
+Windows에서 `SIGTERM`, `SIGQUIT`, `SIGKILL`은 Unix처럼 서로 다른 실제 시그널이라기보다 종료 요청으로 처리됩니다.
 
 <h6>사용 형식</h6>
 
@@ -425,9 +512,27 @@ kill(pid[, signal])
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1,hl_lines=[2,3,4]}
 const process = require('process');
 console.println(process.kill(12345, 'SIGKILL'));
+console.println(process.kill(12345, 'term'));
+console.println(process.kill(12345, 15));
+```
+
+<h6>Windows interrupt 예시</h6>
+
+```js
+const process = require('process');
+console.println(process.kill(12345, 'SIGINT'));
+```
+
+Windows가 control event를 라우팅할 수 없으면 `process.kill()`은 `Error` 객체를 반환합니다.
+
+<h6>프로세스 존재 여부 확인 예시</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const process = require('process');
+console.println(process.kill(process.pid, 0));
 ```
 
 ## dumpStack()

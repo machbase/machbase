@@ -55,7 +55,12 @@ const client = new mqtt.Client({
 
 client.on('open', () => {
     console.println('Connected');
-    client.subscribe('test/topic');
+    client.subscribe('test/topic', {
+        qos: 0,
+        properties: {
+            subscriptionIdentifier: 7,
+        },
+    });
 });
 
 client.on('subscribed', (topic, reason) => {
@@ -64,7 +69,18 @@ client.on('subscribed', (topic, reason) => {
 });
 
 client.on('message', (msg) => {
-    console.println('Message:', msg.topic, msg.payload);
+    console.println('Message:', msg.topic, msg.payloadText);
+    client.unsubscribe(msg.topic, {
+        properties: {
+            user: {
+                source: 'example',
+            },
+        },
+    });
+});
+
+client.on('unsubscribed', (topic, reason) => {
+    console.println('Unsubscribed:', topic, 'reason:', reason);
     client.close();
 });
 
@@ -125,18 +141,87 @@ Subscribes to a topic.
 <h6>Syntax</h6>
 
 ```js
-subscribe(topic)
+subscribe(topic[, options])
 ```
 
 <h6>Parameters</h6>
 
 - `topic` `String`
+- `options` `Object` (optional)
+
+| Option             | Type    | Default | Description |
+|:-------------------|:--------|:--------|:------------|
+| qos                | Number  | `1`     | QoS level |
+| retainHandling     | Number  |         | MQTT v5 retain handling |
+| noLocal            | Boolean | `false` | Whether to suppress messages published by the same client |
+| retainAsPublished  | Boolean | `false` | Whether to preserve the retain flag from the broker |
+| properties         | Object  |         | MQTT v5 subscribe properties |
+
+`options.properties` fields:
+
+| Property                 | Type   | Description |
+|:-------------------------|:-------|:------------|
+| subscriptionIdentifier   | Number | Subscription identifier |
+| user                     | Object | User properties (`key: value`) |
 
 <h6>Return value</h6>
 
 None. Result is delivered by `subscribed` or `error` events.
 
-Note: current implementation subscribes with QoS 1.
+<h6>Usage example</h6>
+
+```js
+client.subscribe('test/topic', {
+    qos: 0,
+    properties: {
+        subscriptionIdentifier: 7,
+        user: {
+            source: 'example',
+        },
+    },
+});
+```
+
+### unsubscribe()
+
+Unsubscribes from a topic.
+
+<h6>Syntax</h6>
+
+```js
+unsubscribe(topic[, options])
+```
+
+<h6>Parameters</h6>
+
+- `topic` `String`
+- `options` `Object` (optional)
+
+| Option      | Type   | Description |
+|:------------|:-------|:------------|
+| properties  | Object | MQTT v5 unsubscribe properties |
+
+`options.properties` fields:
+
+| Property | Type   | Description |
+|:---------|:-------|:------------|
+| user     | Object | User properties (`key: value`) |
+
+<h6>Return value</h6>
+
+None. Result is delivered by `unsubscribed` or `error` events.
+
+<h6>Usage example</h6>
+
+```js
+client.unsubscribe('test/topic', {
+    properties: {
+        user: {
+            source: 'example',
+        },
+    },
+});
+```
 
 ### close()
 
@@ -172,10 +257,47 @@ client.on('message', (msg) => { ... })
 
 `msg` fields:
 
-| Property | Type   | Description |
-|:---------|:-------|:------------|
-| topic    | String | Topic name |
-| payload  | String | Message payload |
+| Property    | Type   | Description |
+|:------------|:-------|:------------|
+| topic       | String | Topic name |
+| payload     | Buffer | Binary-safe message payload |
+| payloadText | String | UTF-8 decoded text convenience field |
+| properties  | Object | MQTT v5 publish properties |
+
+`msg.properties` fields:
+
+| Property                 | Type   | Description |
+|:-------------------------|:-------|:------------|
+| payloadFormat            | Number | Payload format indicator |
+| messageExpiry            | Number | Expiry interval |
+| contentType              | String | Content type |
+| responseTopic            | String | Response topic |
+| correlationData          | Buffer | Binary-safe correlation data |
+| topicAlias               | Number | Topic alias |
+| subscriptionIdentifier   | Number | Subscription identifier |
+| user                     | Object | User properties |
+
+For text messages, use `msg.payloadText` or `msg.payload.toString()`.
+
+For binary messages, inspect `msg.payload` directly.
+
+```js
+client.on('message', (msg) => {
+    console.println('Payload is buffer:', Buffer.isBuffer(msg.payload));
+    console.println('Payload bytes:', Array.from(msg.payload).join(','));
+});
+```
+
+MQTT v5 publish properties are available as `msg.properties`.
+
+```js
+client.on('message', (msg) => {
+    console.println('Content type:', msg.properties.contentType);
+    console.println('Response topic:', msg.properties.responseTopic);
+    console.println('Correlation data:', msg.properties.correlationData.toString());
+    console.println('User source:', msg.properties.user.source);
+});
+```
 
 ### subscribed
 
@@ -199,15 +321,28 @@ client.on('published', (topic, reason) => { ... })
 - `topic` `String`
 - `reason` `Number` (MQTT reason code)
 
+### unsubscribed
+
+Emitted when unsubscribe ack is received.
+
+```js
+client.on('unsubscribed', (topic, reason) => { ... })
+```
+
+- `topic` `String`
+- `reason` `Number` (MQTT reason code)
+
 ### error
 
-Emitted when connection, subscribe, or publish fails.
+Emitted when connection, subscribe, unsubscribe, or publish fails.
 
 ```js
 client.on('error', (err) => { ... })
 ```
 
 - `err` `Error`
+
+If `publish()`, `subscribe()`, or `unsubscribe()` is called before the client is connected or after `close()`, the error is delivered through the `error` event.
 
 ### close
 

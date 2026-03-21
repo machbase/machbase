@@ -4,7 +4,7 @@ type: docs
 weight: 100
 ---
 
-{{< neo_since ver="8.0.73" />}}
+{{< neo_since ver="8.0.74" />}}
 
 The `process` module is specifically designed for use in JSH applications.
 
@@ -407,14 +407,101 @@ const diff = process.hrtime([start[0], start[1]]);
 console.println(Array.isArray(diff), diff.length);
 ```
 
+## Signal Events
+
+`process` can receive signal events like an `EventEmitter`.
+
+At the time of writing, the following signal names are supported.
+
+- `SIGHUP`
+- `SIGINT`
+- `SIGQUIT`
+- `SIGABRT`
+- `SIGKILL`
+- `SIGUSR1`
+- `SIGSEGV`
+- `SIGUSR2`
+- `SIGPIPE`
+- `SIGALRM`
+- `SIGTERM`
+
+Signal event listener names are case-insensitive.
+Event names must use the `SIG`-prefixed form.
+
+For example, these names are treated the same.
+
+- `SIGTERM`
+- `sigterm`
+
+Bare aliases such as `term` are not treated as signal event names.
+They remain ordinary `EventEmitter` event names.
+
+When a listener is registered, JSH forwards the corresponding OS signal as an event.
+If no listener is registered, the process follows the operating system's default signal behavior.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[3,4]}
+const process = require('process');
+
+process.on('sigint', () => {
+    console.println('caught SIGINT');
+});
+```
+
+<h6>Listener registration examples</h6>
+
+```js
+process.on('sigterm', handler);
+process.once('SIGTERM', handler);
+process.addListener('sigquit', handler);
+```
+
 ## kill()
 
-Sends a signal request to the given process id.
+Sends a real OS signal to the given process id.
 
-Current implementation is a placeholder:
+- `pid` must be a positive integer.
+- If `signal` is omitted, the default is `SIGTERM`.
+- Returns `true` on success.
+- Returns an `Error` object on failure.
+- `signal` may be either a string name or a numeric signal number.
 
-- returns an `Error` object when `pid` is missing
-- returns `true` when `pid` is provided (signal defaults to `SIGTERM`)
+String signal names are case-insensitive, and the `SIG` prefix may be omitted.
+
+This alias support applies to `process.kill()`.
+
+Examples:
+
+- `SIGTERM`
+- `term`
+- `sigint`
+
+The following numeric signals are currently supported.
+
+| Number | Literal |
+| --- | --- |
+| `0` | none |
+| `1` | `SIGHUP` |
+| `2` | `SIGINT` |
+| `3` | `SIGQUIT` |
+| `6` | `SIGABRT` |
+| `9` | `SIGKILL` |
+| `10` | `SIGUSR1` |
+| `11` | `SIGSEGV` |
+| `12` | `SIGUSR2` |
+| `13` | `SIGPIPE` |
+| `14` | `SIGALRM` |
+| `15` | `SIGTERM` |
+
+Signal `0` does not send a real signal. It can be used to check whether the target process exists and whether the caller has permission to signal it.
+
+On Windows, `process.kill(pid, 'SIGINT')` does not behave like a Unix `kill(2)` signal send.
+Instead, JSH tries to deliver an interrupt-style console control event to the target process group so that the target can observe it as a `SIGINT`-like interruption.
+This is the closest available behavior to Node.js interrupt semantics on Windows, but it is best-effort.
+In particular, it requires a console-attached target process group and may fail when Windows cannot route the control event.
+
+On Windows, `SIGTERM`, `SIGQUIT`, and `SIGKILL` are handled as termination requests rather than Unix-style distinct signals.
 
 <h6>Syntax</h6>
 
@@ -424,9 +511,27 @@ kill(pid[, signal])
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1,hl_lines=[2,3,4]}
 const process = require('process');
 console.println(process.kill(12345, 'SIGKILL'));
+console.println(process.kill(12345, 'term'));
+console.println(process.kill(12345, 15));
+```
+
+<h6>Windows interrupt example</h6>
+
+```js
+const process = require('process');
+console.println(process.kill(12345, 'SIGINT'));
+```
+
+If Windows cannot route the control event, `process.kill()` returns an `Error` object.
+
+<h6>Process existence check example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const process = require('process');
+console.println(process.kill(process.pid, 0));
 ```
 
 ## dumpStack()

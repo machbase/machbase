@@ -4,7 +4,7 @@ type: docs
 weight: 100
 ---
 
-{{< neo_since ver="8.0.73" />}}
+{{< neo_since ver="8.0.74" />}}
 
 The `os` module provides Node.js-compatible operating system information APIs for JSH applications.
 
@@ -35,6 +35,13 @@ Returns platform name such as `darwin`, `linux`, or `windows`.
 platform()
 ```
 
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const os = require('os');
+console.println(os.platform());
+```
+
 ## type()
 
 Returns OS type such as `Darwin`, `Linux`, or `Windows_NT`.
@@ -43,6 +50,13 @@ Returns OS type such as `Darwin`, `Linux`, or `Windows_NT`.
 
 ```js
 type()
+```
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const os = require('os');
+console.println(os.type());
 ```
 
 ## release()
@@ -55,6 +69,13 @@ Returns kernel release/version string.
 release()
 ```
 
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const os = require('os');
+console.println(os.release());
+```
+
 ## hostname()
 
 Returns host name.
@@ -63,6 +84,13 @@ Returns host name.
 
 ```js
 hostname()
+```
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const os = require('os');
+console.println(os.hostname());
 ```
 
 ## homedir()
@@ -75,6 +103,13 @@ Returns current user home directory.
 homedir()
 ```
 
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const os = require('os');
+console.println(os.homedir());
+```
+
 ## tmpdir()
 
 Returns the default temporary directory path.
@@ -85,6 +120,13 @@ Returns the default temporary directory path.
 tmpdir()
 ```
 
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const os = require('os');
+console.println(os.tmpdir());
+```
+
 ## endianness()
 
 Returns CPU endianness: `BE` or `LE`.
@@ -93,6 +135,13 @@ Returns CPU endianness: `BE` or `LE`.
 
 ```js
 endianness()
+```
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const os = require('os');
+console.println(os.endianness());
 ```
 
 ## EOL
@@ -138,6 +187,13 @@ Returns system uptime in seconds.
 uptime()
 ```
 
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const os = require('os');
+console.println(os.uptime() >= 0);
+```
+
 ## bootTime()
 
 Returns system boot time as Unix timestamp.
@@ -148,6 +204,13 @@ Returns system boot time as Unix timestamp.
 bootTime()
 ```
 
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const os = require('os');
+console.println(os.bootTime() > 0);
+```
+
 ## loadavg()
 
 Returns load averages as `[1min, 5min, 15min]`.
@@ -156,6 +219,14 @@ Returns load averages as `[1min, 5min, 15min]`.
 
 ```js
 loadavg()
+```
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[3]}
+const os = require('os');
+const avg = os.loadavg();
+console.println(Array.isArray(avg), avg.length);
 ```
 
 ## cpus()
@@ -193,6 +264,14 @@ Returns CPU count.
 
 ```js
 cpuCounts(logical)
+```
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+const os = require('os');
+console.println(os.cpuCounts(true));
+console.println(os.cpuCounts(false));
 ```
 
 ## cpuPercent()
@@ -233,6 +312,14 @@ The object shape is:
 networkInterfaces()
 ```
 
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[3]}
+const os = require('os');
+const ifaces = os.networkInterfaces();
+console.println(typeof ifaces);
+```
+
 ## hostInfo()
 
 Returns host information object.
@@ -250,6 +337,14 @@ Common fields include:
 hostInfo()
 ```
 
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[3]}
+const os = require('os');
+const info = os.hostInfo();
+console.println(typeof info.hostname, typeof info.uptime);
+```
+
 ## userInfo()
 
 Returns current user information.
@@ -263,6 +358,14 @@ Returned fields include:
 
 ```js
 userInfo([options])
+```
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[3]}
+const os = require('os');
+const user = os.userInfo();
+console.println(user.username, user.homedir);
 ```
 
 ## diskPartitions()
@@ -295,6 +398,14 @@ Typical fields include `total`, `used`, `free`, `usedPercent`.
 diskUsage(path)
 ```
 
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[3]}
+const os = require('os');
+const usage = os.diskUsage('.');
+console.println(typeof usage.total, typeof usage.usedPercent);
+```
+
 ## diskIOCounters()
 
 Returns disk I/O counters.
@@ -308,6 +419,14 @@ Returns disk I/O counters.
 diskIOCounters([names])
 ```
 
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[3]}
+const os = require('os');
+const counters = os.diskIOCounters();
+console.println(typeof counters);
+```
+
 ## netProtoCounters()
 
 Returns network protocol counters.
@@ -318,21 +437,117 @@ Returns network protocol counters.
 netProtoCounters([proto])
 ```
 
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[3]}
+const os = require('os');
+const counters = os.netProtoCounters();
+console.println(typeof counters);
+```
+
 ## constants
 
-OS constants object.
+An object that contains operating system related constants.
+
+It currently provides the following child objects.
+
+- `os.constants.signals`
+- `os.constants.priority`
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[3,4]}
+const os = require('os');
+
+console.println(typeof os.constants.signals.SIGINT);
+console.println(typeof os.constants.priority.PRIORITY_NORMAL);
+```
+
+## os.constants.signals
+
+An object that provides signal names and their numeric values.
+
+These constants use canonical Unix-style signal numbers for API compatibility.
+On Windows, not every numeric value maps to a distinct native signal behavior.
+
+For example, it includes entries such as:
+
+| Literal | Number |
+| --- | --- |
+| `SIGHUP` | `1` |
+| `SIGINT` | `2` |
+| `SIGQUIT` | `3` |
+| `SIGABRT` | `6` |
+| `SIGKILL` | `9` |
+| `SIGUSR1` | `10` |
+| `SIGSEGV` | `11` |
+| `SIGUSR2` | `12` |
+| `SIGPIPE` | `13` |
+| `SIGALRM` | `14` |
+| `SIGTERM` | `15` |
+
+These values can be passed to `process.kill()` as numeric signals.
+
+On Windows, `SIGINT` is treated specially.
+JSH attempts to deliver it as an interrupt-style console control event, which is the closest available equivalent.
+By contrast, `SIGTERM`, `SIGQUIT`, and `SIGKILL` behave as termination requests on Windows.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[4]}
+const os = require('os');
+const process = require('process');
+
+process.kill(12345, os.constants.signals.SIGTERM);
+```
+
+## Relationship With The process Signal API
+
+`os.constants.signals` provides signal numbers, while the actual signal handling and delivery are performed by the `process` module.
+
+- receive a signal: `process.on('SIGINT', handler)`
+- send a signal: `process.kill(pid, os.constants.signals.SIGTERM)`
+
+`process.on()` accepts case-insensitive signal names, but signal event names must still use the canonical `SIG`-prefixed form such as `SIGINT` or `sigint`.
+Bare aliases such as `term` are not signal listener names.
+
+`process.kill()` is more permissive and accepts aliases such as `term` in addition to canonical names.
+By contrast, `os.constants.signals` exposes canonical constant names only.
+
+On Windows, `process.kill(pid, os.constants.signals.SIGINT)` is best-effort and depends on Windows console routing rules.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[4,8]}
+const os = require('os');
+const process = require('process');
+
+process.on('sigint', () => {
+  console.println('caught');
+});
+
+process.kill(process.pid, os.constants.signals.SIGINT);
+```
+
+## os.constants.priority
+
+An object that defines process priority levels.
 
 <h6>Main fields</h6>
 
-- `constants.signals`
-  - `SIGHUP`, `SIGINT`, `SIGQUIT`, `SIGILL`, `SIGTRAP`, `SIGABRT`, `SIGBUS`, `SIGFPE`, `SIGKILL`, `SIGUSR1`, `SIGSEGV`, `SIGUSR2`, `SIGPIPE`, `SIGALRM`, `SIGTERM`
-- `constants.priority`
-  - `PRIORITY_LOW`, `PRIORITY_BELOW_NORMAL`, `PRIORITY_NORMAL`, `PRIORITY_ABOVE_NORMAL`, `PRIORITY_HIGH`, `PRIORITY_HIGHEST`
+| Constant | Meaning |
+| --- | --- |
+| `PRIORITY_LOW` | low priority |
+| `PRIORITY_BELOW_NORMAL` | below-normal priority |
+| `PRIORITY_NORMAL` | normal default priority |
+| `PRIORITY_ABOVE_NORMAL` | above-normal priority |
+| `PRIORITY_HIGH` | high priority |
+| `PRIORITY_HIGHEST` | highest priority |
 
 <h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1,hl_lines=[2,3]}
 const os = require('os');
-console.println(os.constants.signals.SIGINT);
 console.println(os.constants.priority.PRIORITY_NORMAL);
+console.println(os.constants.priority.PRIORITY_HIGH);
 ```
