@@ -81,19 +81,19 @@ SSE(Server-Sent Events) 엔드포인트는 다음과 같습니다.
 
 ```sh
 curl -o - -v "http://127.0.0.1:5654/db/watch/example"\
-"?tag=neo_load1&tag=neo_load5&period=3s&timeformat=s"
+"?tag=machbase:ps:cpu_percent&tag=machbase:ps:mem_percent&period=3s&timeformat=s"
 ```
 
 클라이언트가 연결을 유지하는 동안 서버는 지속적으로 데이터를 전송합니다.
 
 ```sh
-data: {"NAME":"neo_load1","TIME":1729070964,"VALUE":1.87}
+data: {"NAME":"machbase:ps:mem_percent","TIME":1774408680,"VALUE":54.96323903401693}
 
-data: {"NAME":"neo_load5","TIME":1729070964,"VALUE":1.37}
+data: {"NAME":"machbase:ps:cpu_percent","TIME":1774408680,"VALUE":5.2510271571351295}
 
-data: {"NAME":"neo_load1","TIME":1729070969,"VALUE":1.8}
+data: {"NAME":"machbase:ps:mem_percent","TIME":1774408740,"VALUE":52.28118896484375}
 
-data: {"NAME":"neo_load5","TIME":1729070969,"VALUE":1.36}
+data: {"NAME":"machbase:ps:cpu_percent","TIME":1774408740,"VALUE":4.519490930962651}
 
 ^C
 ```
@@ -108,7 +108,7 @@ data: {"NAME":"neo_load5","TIME":1729070969,"VALUE":1.36}
     <script>
         // EventSource 인스턴스를 생성합니다.
         const addr = 'http://127.0.0.1:5654/db/watch/EXAMPLE';
-        const params = 'tag=neo_load1&tag=neo_load5&period=3s&keep-alive=30s&timeformat=default';
+        const params = 'tag=machbase:ps:cpu_percent&tag=machbase:ps:mem_percent&period=3s&keep-alive=30s&timeformat=default';
         const eventSource = new EventSource(`${addr}?${params}`);
 
         // 메시지를 표시할 div를 가져옵니다.
@@ -143,7 +143,7 @@ import sseclient
 # 서버 전송 이벤트 엔드포인트에 연결할 URL을 정의합니다.
 url = 'http://127.0.0.1:5654/db/watch/EXAMPLE'
 params = {
-    'tag': ['neo_load1', 'neo_load5'],
+    'tag': ['machbase:ps:cpu_percent', 'machbase:ps:mem_percent'],
     'period': '3s',
     'keep-alive': '30s',
     'timeformat': 'default'
