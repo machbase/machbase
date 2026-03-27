@@ -216,6 +216,7 @@ SELECT rollup_table,
 ## 운영 주의사항
 
 - Rollup이 존재하면 대상 테이블 `DROP`은 거부됩니다.
+- 원본 데이터 보정 후 대상 버킷을 다시 만들어야 하는 경우에는 [Rollup Rebuild 사용자 가이드](./rollup-rebuild/)의 절차를 따르십시오.
 - 권장 삭제 순서:
 
 ```sql
@@ -233,4 +234,5 @@ DROP TABLE <source_table>;
 - 결과 조회 SQL은 재집계 쿼리로 표준화하는 것이 안전합니다.
 - FIRST/LAST 계열은 `firsttime`, `lasttime` 보조 컬럼을 유지하는 것이 좋습니다.
 - 대상 스키마 변경이 필요하면 Rollup 중지/삭제 후 재생성 절차를 사용하십시오.
+- 이상 데이터 정정 후에는 delete 후 insert 기준의 버킷 재구성이 필요하며, rollup-on-rollup 구조에서는 반드시 하위부터 복구해야 합니다.
 - 운영 배치에서는 `WAKEUP INTERVAL`을 명시해 지연과 부하를 조정하십시오.

@@ -216,6 +216,7 @@ SELECT rollup_table,
 ## Operational Notes
 
 - Destination `DROP TABLE` is blocked while the rollup exists.
+- If corrected source data requires rebuilding destination buckets, follow [Rollup Rebuild Guide](./rollup-rebuild/).
 - Recommended drop order:
 
 ```sql
@@ -233,4 +234,5 @@ DROP TABLE <source_table>;
 - Standardize result queries as re-aggregation queries.
 - Keep `firsttime`/`lasttime` helper columns for FIRST/LAST patterns.
 - For destination schema changes, stop/drop/recreate the rollup.
+- After correcting anomalous data, rebuild by bucket using delete followed by insert. In rollup-on-rollup pipelines, always rebuild from lower stages first.
 - Configure `WAKEUP INTERVAL` explicitly to balance latency and load.
