@@ -12,6 +12,13 @@ reading files, printing text, creating and removing paths, and waiting for a per
 Most commands are implemented as JavaScript files under `/sbin` and are resolved through the JSH command path.
 The `cd` command is different: it is an internal shell command because it must change the current shell working directory.
 
+**Notes**
+
+- These commands operate inside the JSH virtual filesystem, not directly on the host OS filesystem.
+- Relative paths are resolved from the current JSH working directory.
+- `cd` affects the active shell session, while commands such as `pwd`, `ls`, and `rm` run as normal commands.
+- Some commands intentionally provide a smaller feature set than their Unix counterparts.
+
 ## cat
 
 Concatenates files to standard output.
@@ -221,10 +228,3 @@ The value is interpreted as seconds.
 ```sh
 /work > sleep 5
 ```
-
-## Notes
-
-- These commands operate inside the JSH virtual filesystem, not directly on the host OS filesystem.
-- Relative paths are resolved from the current JSH working directory.
-- `cd` affects the active shell session, while commands such as `pwd`, `ls`, and `rm` run as normal commands.
-- Some commands intentionally provide a smaller feature set than their Unix counterparts.
