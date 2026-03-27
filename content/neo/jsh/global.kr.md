@@ -1,7 +1,7 @@
 ---
-title: "global"
+title: 글로벌
 type: docs
-weight: 10
+weight: 900
 ---
 
 별도의 모듈 로딩 없이 바로 사용할 수 있는 전역 함수와 객체입니다.

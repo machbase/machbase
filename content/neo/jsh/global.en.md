@@ -1,7 +1,7 @@
 ---
 title: "global"
 type: docs
-weight: 10
+weight: 900
 ---
 
 These are global functions and objects available without loading any additional module.
