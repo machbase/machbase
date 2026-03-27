@@ -43,5 +43,6 @@ CREATE TAGDATA TABLE table_name (
 - [핵심 개념: 테이블 타입](../../core-concepts/table-types-overview/)
 - [조건부 롤업으로 이상치 제외 집계](./rollup-conditional/)
 - [Custom Rollup: 사용자 정의 집계](./rollup-custom/)
+- [Rollup Rebuild 사용자 가이드](./rollup-rebuild/)
 - [Binary 컬럼](./binary-columns/)
 - 원본 레퍼런스: [Tag Tables](../../../dbms/feature-table/tag/)

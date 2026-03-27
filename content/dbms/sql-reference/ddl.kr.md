@@ -735,6 +735,8 @@ Mach> CREATE ROLLUP _rollup_tag_value_sec ON tag(value) INTERVAL 1 SEC;
 Executed successfully
 ```
 
+> Rollup 생성 후 원본 이상 데이터 보정에 따라 기존 집계 결과를 다시 만들어야 하는 경우에는 [Rollup Rebuild 사용자 가이드](../../table-types/tag-tables/rollup-rebuild/)를 참고하십시오.
+
 ```sql
 create_conditional_rollup_stmt ::= 'CREATE ROLLUP' rollup_name
                                    ( 'ON' src_table_name '('src_table_column')'

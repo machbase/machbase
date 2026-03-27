@@ -43,5 +43,6 @@ CREATE TAGDATA TABLE table_name (
 - [Core Concepts: Table Types](../../core-concepts/table-types-overview/)
 - [Conditional Rollup for Filtering Noise](./rollup-conditional/)
 - [Custom Rollup: User-Defined Aggregation](./rollup-custom/)
+- [Rollup Rebuild Guide](./rollup-rebuild/)
 - [Binary Columns](./binary-columns/)
 - Original reference: [Tag Tables](../../../dbms/feature-table/tag/)
