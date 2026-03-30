@@ -79,8 +79,8 @@ service [--controller=<host:port|tcp://host:port|unix://path>] <command> [args..
     "APP_MODE": "prod",
     "PORT": "8080"
   },
-  "executable": "node",
-  "args": ["server.js", "--port", "8080"]
+  "executable": "server.js",
+  "args": ["--port", "8080"]
 }
 ```
 

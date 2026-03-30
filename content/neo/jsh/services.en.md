@@ -81,8 +81,8 @@ A service definition is a JSON object.
     "APP_MODE": "prod",
     "PORT": "8080"
   },
-  "executable": "node",
-  "args": ["server.js", "--port", "8080"]
+  "executable": "server.js",
+  "args": ["--port", "8080"]
 }
 ```
 

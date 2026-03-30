@@ -8,130 +8,6 @@ weight: 100
 
 The `process` module is specifically designed for use in JSH applications.
 
-## env
-
-The JSH runtime environment object.
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1,hl_lines=[2]}
-const process = require('process');
-console.println(process.env.get('HOME'));
-```
-
-## execPath
-
-The absolute file path to the executable file of the current process on the host operating system.
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1,hl_lines=[2]}
-const process = require('process');
-console.println(process.execPath);
-```
-
-## pid
-
-The process ID of the current process.
-The value type is number and represents the process ID.
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1,hl_lines=[2]}
-const process = require('process');
-console.println(process.pid);
-```
-
-## ppid
-
-The process ID of the parent process.
-The value type is number and represents the parent process ID.
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1,hl_lines=[2]}
-const process = require('process');
-console.println(process.ppid);
-```
-
-## platform
-
-A string that identifies the operating system platform of the host machine. Common values include `windows`, `linux`, and `darwin` (macOS).
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1,hl_lines=[2]}
-const process = require('process');
-console.println(process.platform);
-```
-
-## arch
-
-A string that identifies the operating system architecture of the host machine.
-Common values include `amd64`, `aarch64`.
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1,hl_lines=[2]}
-const process = require('process');
-console.println(process.arch);
-```
-
-## version
-
-A string that identifies the JSH runtime version.
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1,hl_lines=[2]}
-const process = require('process');
-console.println(process.version);
-```
-
-## versions
-
-An object that provides detailed runtime version information.
-
-- `versions.jsh`: JSH runtime version string
-- `versions.go`: Go runtime version string
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1,hl_lines=[2,3]}
-const process = require('process');
-console.println('jsh:', process.versions.jsh);
-console.println('go :', process.versions.go);
-```
-
-## title
-
-A string that identifies the current program.
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1,hl_lines=[2]}
-const process = require('process');
-console.println(process.title);
-```
-
-
-## stdin, stdout, stderr
-
-Streams for stdin, stdout, and stderr.
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1,hl_lines=[2,3]}
-const process = require('process');
-process.stdout.write('Enter text: ');
-const text = process.stdin.readLine();
-console.println('Your input:', text);
-
-// Output:
-// Enter text: hello?
-// Your input: hello?
-```
-
 ## addShutdownHook()
 
 Add a callback function that will be called at the termination of the current process.
@@ -154,6 +30,87 @@ console.println("running...")
 // Output:
 // running...
 // shutdown hook called.
+```
+
+## arch
+
+A string that identifies the operating system architecture of the host machine.
+Common values include `amd64`, `aarch64`.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const process = require('process');
+console.println(process.arch);
+```
+
+## argv
+
+An array of command-line arguments passed to the current process.
+
+- `argv[0]`: Absolute path to the JSH executable
+- `argv[1]`: Name (or path) of the script being executed
+- `argv[2:]`: Remaining arguments passed to the script
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2,3,4,5]}
+const process = require('process');
+console.println('argv[0]:', process.argv[0]);
+console.println('argv[1]:', process.argv[1]);
+console.println('argv[2]:', process.argv[2]);
+console.println('argv   :', process.argv);
+```
+
+## chdir()
+
+Changes the current working directory.
+
+If `path` is empty, JSH resolves it to `$HOME`.
+
+<h6>Syntax</h6>
+
+```js
+chdir(path)
+```
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[3,4]}
+const process = require('process');
+console.println('before:', process.cwd());
+process.chdir('/lib');
+console.println('after :', process.cwd());
+```
+
+## cpuUsage()
+
+Returns CPU usage information.
+
+Current implementation returns placeholder numeric values (`0`) for both fields.
+
+<h6>Returned fields</h6>
+
+- `user`
+- `system`
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[3]}
+const process = require('process');
+const cpu = process.cpuUsage();
+console.println(typeof cpu.user, typeof cpu.system);
+```
+
+## cwd()
+
+Returns the current working directory path.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const process = require('process');
+console.println(process.cwd());
 ```
 
 ## exit()
@@ -211,6 +168,18 @@ console.println(process.expand('$HOME/file.txt'));
 console.println(process.expand('${HOME}/../lib/file.txt'));
 ```
 
+## env
+
+The JSH runtime environment object.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const process = require('process');
+console.println(process.env.get('HOME'));
+```
+
+
 ## exec()
 
 Executes a JavaScript command file and returns its exit code.
@@ -230,6 +199,17 @@ const code = process.exec(path, 'hello from exec');
 console.println('exit code:', code);
 ```
 
+## execPath
+
+The absolute file path to the executable file of the current process on the host operating system.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const process = require('process');
+console.println(process.execPath);
+```
+
 ## execString()
 
 Executes JavaScript source code from a string and returns its exit code.
@@ -238,153 +218,6 @@ Executes JavaScript source code from a string and returns its exit code.
 
 ```js
 execString(source, ...args)
-```
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1,hl_lines=[2]}
-const process = require('process');
-const code = process.execString("console.println('hello from execString')");
-console.println('exit code:', code);
-```
-
-## dispatchEvent()
-
-Dispatches an event to an event emitter object on the JSH event loop.
-
-This function returns `true` if the event is scheduled, `false` if the event loop is already terminated.
-
-<h6>Syntax</h6>
-
-```js
-dispatchEvent(target, eventName, ...args)
-```
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1,hl_lines=[4]}
-const process = require('process');
-process.on('hello', (msg) => console.println(msg));
-const ok = process.dispatchEvent(process, 'hello', 'from dispatchEvent');
-console.println('scheduled:', ok);
-```
-
-## now()
-
-Returns the current time as a JavaScript date-time object.
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1,hl_lines=[2,3]}
-const process = require('process');
-const now = process.now();
-console.println(typeof now); // object
-```
-
-## chdir()
-
-Changes the current working directory.
-
-If `path` is empty, JSH resolves it to `$HOME`.
-
-<h6>Syntax</h6>
-
-```js
-chdir(path)
-```
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1,hl_lines=[3,4]}
-const process = require('process');
-console.println('before:', process.cwd());
-process.chdir('/lib');
-console.println('after :', process.cwd());
-```
-
-## cwd()
-
-Returns the current working directory path.
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1,hl_lines=[2]}
-const process = require('process');
-console.println(process.cwd());
-```
-
-## nextTick()
-
-Schedules a callback to run on the next event loop turn.
-
-If the first argument is not a function, this call does nothing and returns `undefined`.
-
-<h6>Syntax</h6>
-
-```js
-nextTick(callback, ...args)
-```
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1,hl_lines=[3]}
-const process = require('process');
-console.println('main');
-process.nextTick((a, b) => console.println('tick:', a, b), 'first', 'second');
-```
-
-## memoryUsage()
-
-Returns memory usage information as an object.
-
-Current implementation returns placeholder numeric values (`0`) for all fields.
-
-<h6>Returned fields</h6>
-
-- `rss`
-- `heapTotal`
-- `heapUsed`
-- `external`
-- `arrayBuffers`
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1,hl_lines=[3]}
-const process = require('process');
-const mem = process.memoryUsage();
-console.println(typeof mem.rss, typeof mem.heapUsed);
-```
-
-## cpuUsage()
-
-Returns CPU usage information.
-
-Current implementation returns placeholder numeric values (`0`) for both fields.
-
-<h6>Returned fields</h6>
-
-- `user`
-- `system`
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1,hl_lines=[3]}
-const process = require('process');
-const cpu = process.cpuUsage();
-console.println(typeof cpu.user, typeof cpu.system);
-```
-
-## uptime()
-
-Returns process uptime in seconds as a number.
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1,hl_lines=[3]}
-const process = require('process');
-const up = process.uptime();
-console.println('uptime >= 0:', up >= 0);
-```
 
 ## hrtime()
 
@@ -405,56 +238,6 @@ const process = require('process');
 const start = process.hrtime();
 const diff = process.hrtime([start[0], start[1]]);
 console.println(Array.isArray(diff), diff.length);
-```
-
-## Signal Events
-
-`process` can receive signal events like an `EventEmitter`.
-
-At the time of writing, the following signal names are supported.
-
-- `SIGHUP`
-- `SIGINT`
-- `SIGQUIT`
-- `SIGABRT`
-- `SIGKILL`
-- `SIGUSR1`
-- `SIGSEGV`
-- `SIGUSR2`
-- `SIGPIPE`
-- `SIGALRM`
-- `SIGTERM`
-
-Signal event listener names are case-insensitive.
-Event names must use the `SIG`-prefixed form.
-
-For example, these names are treated the same.
-
-- `SIGTERM`
-- `sigterm`
-
-Bare aliases such as `term` are not treated as signal event names.
-They remain ordinary `EventEmitter` event names.
-
-When a listener is registered, JSH forwards the corresponding OS signal as an event.
-If no listener is registered, the process follows the operating system's default signal behavior.
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1,hl_lines=[3,4]}
-const process = require('process');
-
-process.on('sigint', () => {
-    console.println('caught SIGINT');
-});
-```
-
-<h6>Listener registration examples</h6>
-
-```js
-process.on('sigterm', handler);
-process.once('SIGTERM', handler);
-process.addListener('sigquit', handler);
 ```
 
 ## kill()
@@ -534,6 +317,251 @@ const process = require('process');
 console.println(process.kill(process.pid, 0));
 ```
 
+## memoryUsage()
+
+Returns memory usage information as an object.
+
+Current implementation returns placeholder numeric values (`0`) for all fields.
+
+<h6>Returned fields</h6>
+
+- `rss`
+- `heapTotal`
+- `heapUsed`
+- `external`
+- `arrayBuffers`
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[3]}
+const process = require('process');
+const mem = process.memoryUsage();
+console.println(typeof mem.rss, typeof mem.heapUsed);
+```
+
+## nextTick()
+
+Schedules a callback to run on the next event loop turn.
+
+If the first argument is not a function, this call does nothing and returns `undefined`.
+
+<h6>Syntax</h6>
+
+```js
+nextTick(callback, ...args)
+```
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[3]}
+const process = require('process');
+console.println('main');
+process.nextTick((a, b) => console.println('tick:', a, b), 'first', 'second');
+```
+
+## now()
+
+Returns the current time as a JavaScript date-time object.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+const process = require('process');
+const now = process.now();
+console.println(typeof now); // object
+```
+
+## pid
+
+The process ID of the current process.
+The value type is number and represents the process ID.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const process = require('process');
+console.println(process.pid);
+```
+
+## platform
+
+A string that identifies the operating system platform of the host machine. Common values include `windows`, `linux`, and `darwin` (macOS).
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const process = require('process');
+console.println(process.platform);
+```
+
+## ppid
+
+The process ID of the parent process.
+The value type is number and represents the parent process ID.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const process = require('process');
+console.println(process.ppid);
+```
+
+## Signal Events
+
+`process` can receive signal events like an `EventEmitter`.
+
+At the time of writing, the following signal names are supported.
+
+- `SIGHUP`
+- `SIGINT`
+- `SIGQUIT`
+- `SIGABRT`
+- `SIGKILL`
+- `SIGUSR1`
+- `SIGSEGV`
+- `SIGUSR2`
+- `SIGPIPE`
+- `SIGALRM`
+- `SIGTERM`
+
+Signal event listener names are case-insensitive.
+Event names must use the `SIG`-prefixed form.
+
+For example, these names are treated the same.
+
+- `SIGTERM`
+- `sigterm`
+
+Bare aliases such as `term` are not treated as signal event names.
+They remain ordinary `EventEmitter` event names.
+
+When a listener is registered, JSH forwards the corresponding OS signal as an event.
+If no listener is registered, the process follows the operating system's default signal behavior.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[3,4]}
+const process = require('process');
+
+process.on('sigint', () => {
+    console.println('caught SIGINT');
+});
+```
+
+<h6>Listener registration examples</h6>
+
+```js
+process.on('sigterm', handler);
+process.once('SIGTERM', handler);
+process.addListener('sigquit', handler);
+```
+
+## stdin, stdout, stderr
+
+Streams for stdin, stdout, and stderr.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+const process = require('process');
+process.stdout.write('Enter text: ');
+const text = process.stdin.readLine();
+console.println('Your input:', text);
+
+// Output:
+// Enter text: hello?
+// Your input: hello?
+```
+
+## title
+
+A string that identifies the current program.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const process = require('process');
+console.println(process.title);
+```
+
+## uptime()
+
+Returns process uptime in seconds as a number.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[3]}
+const process = require('process');
+const up = process.uptime();
+console.println('uptime >= 0:', up >= 0);
+```
+
+## version
+
+A string that identifies the JSH runtime version.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const process = require('process');
+console.println(process.version);
+```
+
+## versions
+
+An object that provides detailed runtime version information.
+
+- `versions.jsh`: JSH runtime version string
+- `versions.go`: Go runtime version string
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+const process = require('process');
+console.println('jsh:', process.versions.jsh);
+console.println('go :', process.versions.go);
+```
+
+## which()
+
+Finds a JavaScript command in `PATH` and returns the resolved file path.
+
+If the command does not include `.js`, it is added automatically.
+
+<h6>Syntax</h6>
+
+```js
+which(command)
+```
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2]}
+const process = require('process');
+console.println(process.which('echo')); // e.g. /sbin/echo.js
+```
+
+## dispatchEvent()
+
+Dispatches an event to an event emitter object on the JSH event loop.
+
+This function returns `true` if the event is scheduled, `false` if the event loop is already terminated.
+
+<h6>Syntax</h6>
+
+```js
+dispatchEvent(target, eventName, ...args)
+```
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[4]}
+const process = require('process');
+process.on('hello', (msg) => console.println(msg));
+const ok = process.dispatchEvent(process, 'hello', 'from dispatchEvent');
+console.println('scheduled:', ok);
+```
+
 ## dumpStack()
 
 Prints the current JavaScript call stack up to the specified depth for debugging.
@@ -552,5 +580,23 @@ function trace() {
     process.dumpStack(5);
 }
 trace();
+```
+
+## expand()
+
+Expands environment variables such as `$HOME` and `${HOME}` in a string.
+
+<h6>Syntax</h6>
+
+```js
+expand(value)
+```
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+const process = require('process');
+console.println(process.expand('$HOME/file.txt'));
+console.println(process.expand('${HOME}/../lib/file.txt'));
 ```
 
