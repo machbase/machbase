@@ -42,6 +42,19 @@ JSH 애플리케이션이 `/work` 같은 프로젝트 디렉터리 안에서 의
 | `version` | `String` | 프로젝트 버전 |
 | `scripts` | `Object` | `pkg run`으로 실행할 이름 있는 명령행 |
 | `dependencies` | `Object` | 패키지 이름과 버전 지정자 맵 |
+| `neo.installType` | `String` | GitHub 저장소 패키지의 설치 방식을 지정하는 선택 필드 |
+
+GitHub 저장소 설치에서는 다음과 같은 사용자 정의 metadata를 인식합니다.
+
+```json
+{
+  "neo": {
+    "installType": "application"
+  }
+}
+```
+
+`neo.installType` 값이 `application`이면 `pkg install github.com/<org>/<repo>`는 내려받은 저장소를 라이브러리 의존성이 아니라 애플리케이션 프로젝트로 간주합니다.
 
 ## pkg init
 
@@ -158,6 +171,17 @@ Installed github.com/acme/notags@main
 
 - `generic-pkg` -> `node_modules/generic-pkg`
 - `github.com/acme/demo` -> `node_modules/github.com/acme/demo`
+
+다만 GitHub 저장소 패키지는 manifest metadata로 이 동작을 바꿀 수 있습니다.
+내려받은 `package.json`에 `neo.installType: "application"`이 있으면 `pkg`는 해당 저장소를 `node_modules` 아래에 두지 않고, 선택한 대상 디렉터리 자체에 애플리케이션으로 설치합니다.
+
+이 경우에는 다음과 같이 동작합니다.
+
+- 저장소 파일이 대상 프로젝트 파일이 됩니다.
+- 내려받은 `package.json`이 대상 프로젝트의 `package.json`이 됩니다.
+- 애플리케이션의 의존성만 대상 프로젝트의 `node_modules`에 설치됩니다.
+
+이 방식은 설치 후 바로 작업 디렉터리로 사용할 애플리케이션 템플릿이나 starter project에 유용합니다.
 
 ### lock file 동작
 

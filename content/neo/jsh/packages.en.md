@@ -42,6 +42,19 @@ Common fields used by `pkg` are:
 | `version` | `String` | Project version |
 | `scripts` | `Object` | Named command lines for `pkg run` |
 | `dependencies` | `Object` | Package name to version specifier map |
+| `neo.installType` | `String` | Optional install behavior hint for GitHub repository packages |
+
+`pkg` recognizes this custom metadata for GitHub repository installs:
+
+```json
+{
+  "neo": {
+    "installType": "application"
+  }
+}
+```
+
+If `neo.installType` is set to `application`, `pkg install github.com/<org>/<repo>` treats the downloaded repository as an application project instead of a library dependency.
 
 ## pkg init
 
@@ -159,6 +172,17 @@ For example:
 
 - `generic-pkg` -> `node_modules/generic-pkg`
 - `github.com/acme/demo` -> `node_modules/github.com/acme/demo`
+
+GitHub repository packages can override this behavior with manifest metadata.
+If the downloaded `package.json` contains `neo.installType: "application"`, `pkg` installs the repository into the selected target directory itself instead of `node_modules`.
+
+In that case:
+
+- the repository files become the target project files
+- the downloaded `package.json` becomes the target project's `package.json`
+- only the application's dependencies are installed into the target project's `node_modules`
+
+This is useful for application templates or starter projects that should become the working project directory after installation.
 
 ### Lock file behavior
 
