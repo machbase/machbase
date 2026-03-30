@@ -6,13 +6,13 @@ weight: 40
 
 ## Overview
 
-Machbase excels at high-speed tag data extraction, especially for time-range queries on specific tags. This guide covers all the query patterns you'll need for working with tag tables.
+Machbase excels at high-speed tag data extraction for axis-based range queries. This guide covers the main patterns you need for both time-axis and distance-axis tag tables.
 
 ## Quick Start
 
-Machbase provides high-speed tag data extraction, especially for the time range of a specific tag.
+Machbase provides high-speed tag data extraction for both time ranges and distance ranges on a specific tag.
 
-##  Sample Schema
+##  Sample Schema (Time Axis)
 
 In the following example, we created a TAG table and created two tags as shown below.
 
@@ -127,6 +127,87 @@ TAG_0002              2018-02-03 03:00:00 000:000:000 13
 TAG_0002              2018-02-04 04:00:00 000:000:000 14                         
 [4] row(s) selected.
 ```
+
+## Distance-Axis Sample Schema
+
+The following examples use a distance-axis (`BASE DISTANCE`) tag table.
+
+```sql
+CREATE TAG TABLE trip_tag (
+    name        VARCHAR(20) PRIMARY KEY,
+    distance_m  DOUBLE BASE DISTANCE,
+    value       DOUBLE,
+    quality     INTEGER
+);
+
+INSERT INTO trip_tag VALUES('ODO_A', 0, 10.1, 100);
+INSERT INTO trip_tag VALUES('ODO_A', 500, 11.2, 101);
+INSERT INTO trip_tag VALUES('ODO_A', 1000, 12.3, 102);
+
+INSERT INTO trip_tag VALUES('ODO_B', 1000.1, 21.5, 100);
+INSERT INTO trip_tag VALUES('ODO_B', 1500, 22.1, 101);
+INSERT INTO trip_tag VALUES('ODO_B', 2000, 22.9, 102);
+```
+
+## Query a Distance Range
+
+```sql
+SELECT name, distance_m, value, quality
+  FROM trip_tag
+ WHERE name = 'ODO_A'
+   AND distance_m BETWEEN 0 AND 1000
+ ORDER BY distance_m;
+```
+
+As with time-axis tables, narrowing the axis range is the basic query pattern.
+
+## Fractional Boundaries on a DOUBLE Distance Axis
+
+```sql
+SELECT name, distance_m, value, quality
+  FROM trip_tag
+ WHERE name = 'ODO_B'
+   AND distance_m BETWEEN 1000.1 AND 2000
+ ORDER BY distance_m;
+```
+
+This compares numeric values directly, so `1000` is excluded while `1500` and `2000` are included.
+
+## Check the Execution Plan for Distance Queries
+
+For large distance-axis tables, use `EXPLAIN` to confirm that the distance predicate is pushed into the key range.
+
+```sql
+EXPLAIN
+SELECT name, distance_m, value
+  FROM trip_tag
+ WHERE name = 'ODO_B'
+   AND distance_m BETWEEN 1000.1 AND 2000
+ ORDER BY distance_m;
+```
+
+Look for these points in the plan:
+
+- `KEYVALUE INDEX SCAN` or a similar index-scan step
+- A `KEY RANGE` entry that includes `distance_m between ...`
+
+## Distance Bucket Aggregation
+
+For distance-axis aggregations, using `TRUNC(..., 0)` is a safe way to build buckets.
+
+```sql
+SELECT TRUNC(distance_m / 500, 0) * 500 AS dist_bucket,
+       COUNT(*)                         AS sample_count,
+       MIN(value)                       AS min_v,
+       MAX(value)                       AS max_v,
+       AVG(value)                       AS avg_v
+  FROM trip_tag
+ WHERE name = 'ODO_B'
+ GROUP BY TRUNC(distance_m / 500, 0) * 500
+ ORDER BY dist_bucket;
+```
+
+For example, a distance of `1750` is aggregated into the `1500` bucket.
 
 ## Time range search for multiple tags
 

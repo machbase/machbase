@@ -10,7 +10,7 @@ Master the art of choosing the right table type for your data. This comprehensiv
 
 Machbase provides four specialized table types, each optimized for different workloads:
 
-1. **Tag Table** - Sensor/device time-series data
+1. **Tag Table** - Sensor/device axis-based data (time or distance)
 2. **Log Table** - Event streams and logs
 3. **Volatile Table** - In-memory real-time data
 4. **Lookup Table** - Reference and master data
@@ -36,8 +36,8 @@ Answer these questions to find your table type:
     └───┬───┘                 │  Table   │
         │                     └──────────┘
         ▼
-    Sensor data
-    (ID, time, value)?
+    Sensor/telemetry data
+    (ID, axis, value)?
         │
     ┌───┴────┐
     │        │
@@ -65,6 +65,7 @@ Answer these questions to find your table type:
 | Live user sessions | **Volatile Table** | Needs UPDATE, temporary |
 | Device metadata/registry | **Lookup Table** | Reference data, rare updates |
 | Stock market ticks | **Tag Table** | Symbol as tag, price as value |
+| Conveyor vibration by position | **Tag Table** | Distance-axis measurements |
 | HTTP access logs | **Log Table** | Event-based, many columns |
 | Shopping cart contents | **Volatile Table** | Frequent updates, session-based |
 | Product catalog | **Lookup Table** | Master data, infrequent changes |
@@ -78,22 +79,32 @@ Perfect for:
 - Industrial equipment telemetry
 - Smart meters
 - GPS tracking
-- Any data with (sensor_id, timestamp, value) pattern
+- Distance-based telemetry (odometer, conveyor length, rail position)
+- Any data with `(sensor_id, time|distance, value)` pattern
 
 ### Structure
 
 ```sql
+-- Time axis
 CREATE TAGDATA TABLE sensors (
     sensor_id VARCHAR(20) PRIMARY KEY,    -- Tag name (sensor identifier)
     time DATETIME BASETIME,               -- Timestamp
     value DOUBLE SUMMARIZED,              -- Measured value(s)
     other_value DOUBLE SUMMARIZED
 );
+
+-- Distance axis
+CREATE TAG TABLE conveyor_profile (
+    line_id VARCHAR(20) PRIMARY KEY,
+    distance_m DOUBLE BASE DISTANCE,
+    vibration DOUBLE,
+    temperature DOUBLE
+);
 ```
 
 ### Key Features
 
-**Automatic Rollup Statistics**:
+**Automatic Rollup Statistics (Time Axis Only)**:
 ```sql
 -- Raw data
 INSERT INTO sensors VALUES ('sensor01', NOW, 25.3);
@@ -102,6 +113,8 @@ INSERT INTO sensors VALUES ('sensor01', NOW, 25.3);
 SELECT * FROM sensors WHERE rollup = hour;
 -- Returns: min_value, max_value, avg_value, sum_value, count, sumsq_value
 ```
+
+Distance-axis tag tables use range queries and bucket aggregations instead of rollups.
 
 **Metadata Layer**:
 ```sql
@@ -115,7 +128,7 @@ UPDATE sensors._META SET location = 'Building A' WHERE name = 'sensor01';
 
 **Performance**:
 - Millions of inserts per second
-- Ultra-fast queries by sensor_id + time
+- Ultra-fast queries by tag + axis range
 - Automatic 3-level partitioned indexing
 
 ### Best Practices
@@ -123,7 +136,7 @@ UPDATE sensors._META SET location = 'Building A' WHERE name = 'sensor01';
 **DO**:
 - Use for multi-sensor data (1000s of sensors in one table)
 - Mark analytical columns as SUMMARIZED
-- Query rollup tables for statistics
+- Query rollup tables for statistics on time-axis tables
 - Use metadata table for sensor info
 
 **DON'T**:
@@ -152,6 +165,14 @@ CREATE TAGDATA TABLE air_quality (
     pm10 DOUBLE SUMMARIZED,
     co2 DOUBLE SUMMARIZED,
     temperature DOUBLE SUMMARIZED
+);
+
+-- Distance axis: Conveyor or route profile
+CREATE TAG TABLE route_profile (
+    route_id VARCHAR(30) PRIMARY KEY,
+    distance_m DOUBLE BASE DISTANCE,
+    vibration DOUBLE,
+    temperature DOUBLE
 );
 ```
 

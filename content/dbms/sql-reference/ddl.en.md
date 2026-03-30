@@ -44,14 +44,17 @@ CREATE TABLE ctest (id INTEGER, name VARCHAR(20), sipv4 IPV4, dipv6 IPV6, commen
 
 #### Create TAG table
 
-TAG tables must have PRIMARY KEY, BASETIME, SUMMARIZED columns.
+TAG tables must have a `PRIMARY KEY` column and an axis column. A time axis uses `DATETIME BASETIME` or `DATETIME BASE TIME`, and a distance axis uses `DOUBLE`, `LONG`, or `ULONG` with `BASE DISTANCE` or `BASEDISTANCE`. `SUMMARIZED` is optional and should be used on value columns that need rollup/statistical tracking.
 
 ```sql
 -- create TAG table
-CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED);
-CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED, value2 FLOAT, int_column INT);
-CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED, value2 FLOAT) METADATA (i1 INT);
+CREATE TAG TABLE tag_time (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED);
+CREATE TAG TABLE tag_time_ext (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED, value2 FLOAT, int_column INT);
+CREATE TAG TABLE tag_distance (name VARCHAR(20) PRIMARY KEY, distance_m DOUBLE BASE DISTANCE, value DOUBLE, quality INT);
+CREATE TAG TABLE tag_distance_meta (name VARCHAR(20) PRIMARY KEY, distance_m LONG BASEDISTANCE, value DOUBLE) METADATA (route_id VARCHAR(20));
 ```
+
+Distance-axis columns allow only `DOUBLE`, `LONG`, and `ULONG`. `WITH ROLLUP` is available only for time-axis tag tables.
 
 #### Rules for naming tables or columns
 

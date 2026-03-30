@@ -8,6 +8,32 @@ weight: 60
 
 Rollup tables provide automatic time-based aggregation of tag data, dramatically improving query performance for analytics and reporting. Instead of scanning millions of raw records, rollup tables pre-calculate statistics at different time intervals.
 
+## Time-Axis Feature Only
+
+ROLLUP is available only for time-axis (`BASETIME`, `BASE TIME`) tag tables. The following features are not supported on distance-axis (`BASE DISTANCE`, `BASEDISTANCE`) tag tables.
+
+- `WITH ROLLUP(...)`
+- `CREATE ROLLUP ... ON <distance_tag> ...`
+- `CREATE ROLLUP ... INTO (...) AS (...)`
+
+For example, the following statement fails.
+
+```sql
+CREATE TAG TABLE trip_rollup_test (
+    name        VARCHAR(20) PRIMARY KEY,
+    distance_m  DOUBLE BASE DISTANCE,
+    value       DOUBLE SUMMARIZED
+) WITH ROLLUP(SEC);
+
+[ERR-04999: ROLLUP is not supported on DISTANCE axis TAG table.]
+```
+
+For distance-axis tables, use these patterns instead.
+
+- Direct range queries with `BETWEEN a AND b`
+- Bucket aggregation with `TRUNC(distance / bucket, 0) * bucket`
+- `EXPLAIN` to verify that the distance predicate is used as a key range
+
 ## Creating Rollup Tables
 
 When user create tag table, Rollup does not created default, user must create by themselves. Syntax is as follow.

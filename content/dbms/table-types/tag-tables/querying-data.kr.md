@@ -6,13 +6,13 @@ weight: 40
 
 ## 개요
 
-Machbase는 특정 tag에 대한 시간 범위 조회에 특히 뛰어난 고속 tag 데이터 추출 기능을 제공합니다. 이 가이드는 tag 테이블 작업에 필요한 모든 조회 패턴을 다룹니다.
+Machbase는 특정 tag에 대한 축(axis) 범위 조회에 특히 뛰어난 고속 tag 데이터 추출 기능을 제공합니다. 이 가이드는 시간축과 거리축 Tag 테이블 작업에 필요한 주요 조회 패턴을 다룹니다.
 
 ## 빠른 시작
 
-Machbase는 특정 tag의 시간 범위에 대한 고속 tag 데이터 추출을 제공합니다.
+Machbase는 특정 tag의 시간 또는 거리 범위에 대한 고속 tag 데이터 추출을 제공합니다.
 
-##  샘플 스키마
+##  샘플 스키마 (시간축)
 
 다음 예제에서는 아래와 같이 TAG 테이블을 생성하고 두 개의 tag를 생성했습니다.
 
@@ -127,6 +127,87 @@ TAG_0002              2018-02-03 03:00:00 000:000:000 13
 TAG_0002              2018-02-04 04:00:00 000:000:000 14
 [4] row(s) selected.
 ```
+
+## 거리축 샘플 스키마
+
+아래 예제는 거리축(`BASE DISTANCE`) Tag 테이블을 기준으로 합니다.
+
+```sql
+CREATE TAG TABLE trip_tag (
+    name        VARCHAR(20) PRIMARY KEY,
+    distance_m  DOUBLE BASE DISTANCE,
+    value       DOUBLE,
+    quality     INTEGER
+);
+
+INSERT INTO trip_tag VALUES('ODO_A', 0, 10.1, 100);
+INSERT INTO trip_tag VALUES('ODO_A', 500, 11.2, 101);
+INSERT INTO trip_tag VALUES('ODO_A', 1000, 12.3, 102);
+
+INSERT INTO trip_tag VALUES('ODO_B', 1000.1, 21.5, 100);
+INSERT INTO trip_tag VALUES('ODO_B', 1500, 22.1, 101);
+INSERT INTO trip_tag VALUES('ODO_B', 2000, 22.9, 102);
+```
+
+## 거리 구간 조회
+
+```sql
+SELECT name, distance_m, value, quality
+  FROM trip_tag
+ WHERE name = 'ODO_A'
+   AND distance_m BETWEEN 0 AND 1000
+ ORDER BY distance_m;
+```
+
+시간축과 마찬가지로 거리축도 축 범위를 좁히는 것이 기본 조회 패턴입니다.
+
+## DOUBLE 거리축의 소수 경계 조회
+
+```sql
+SELECT name, distance_m, value, quality
+  FROM trip_tag
+ WHERE name = 'ODO_B'
+   AND distance_m BETWEEN 1000.1 AND 2000
+ ORDER BY distance_m;
+```
+
+이 쿼리는 숫자값 그대로 비교하므로 `1000`은 제외되고 `1500`, `2000`은 포함됩니다.
+
+## 거리축 실행 계획 확인
+
+대용량 거리축 조회에서는 `EXPLAIN`으로 거리 조건이 key range로 들어가는지 확인하는 것이 좋습니다.
+
+```sql
+EXPLAIN
+SELECT name, distance_m, value
+  FROM trip_tag
+ WHERE name = 'ODO_B'
+   AND distance_m BETWEEN 1000.1 AND 2000
+ ORDER BY distance_m;
+```
+
+확인할 포인트는 다음과 같습니다.
+
+- `KEYVALUE INDEX SCAN` 또는 유사한 인덱스 스캔이 보이는지
+- `KEY RANGE` 아래에 `distance_m between ...` 조건이 보이는지
+
+## 거리 버킷 집계
+
+거리축 집계는 `TRUNC(..., 0)`로 버킷을 나누는 방식이 안전합니다.
+
+```sql
+SELECT TRUNC(distance_m / 500, 0) * 500 AS dist_bucket,
+       COUNT(*)                         AS sample_count,
+       MIN(value)                       AS min_v,
+       MAX(value)                       AS max_v,
+       AVG(value)                       AS avg_v
+  FROM trip_tag
+ WHERE name = 'ODO_B'
+ GROUP BY TRUNC(distance_m / 500, 0) * 500
+ ORDER BY dist_bucket;
+```
+
+예를 들어 `1750`은 `1500` 버킷에 집계됩니다.
 
 ## 다중 tag에 대한 시간 범위 검색
 

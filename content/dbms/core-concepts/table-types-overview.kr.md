@@ -10,7 +10,7 @@ weight: 20
 
 Machbase는 각각 다른 워크로드에 최적화된 4가지 특화 테이블 타입을 제공합니다:
 
-1. **Tag 테이블** - 센서/장치 시계열 데이터
+1. **Tag 테이블** - 센서/장치 축 기반 데이터 (시간 또는 거리)
 2. **Log 테이블** - 이벤트 스트림 및 로그
 3. **Volatile 테이블** - 인메모리 실시간 데이터
 4. **Lookup 테이블** - 참조 및 마스터 데이터
@@ -36,8 +36,8 @@ Machbase는 각각 다른 워크로드에 최적화된 4가지 특화 테이블 
     └───┬───┘                 │  테이블  │
         │                     └──────────┘
         ▼
-    센서 데이터
-    (ID, 시간, 값)?
+    센서/텔레메트리 데이터
+    (ID, 축, 값)?
         │
     ┌───┴────┐
     │        │
@@ -65,6 +65,7 @@ Machbase는 각각 다른 워크로드에 최적화된 4가지 특화 테이블 
 | 라이브 사용자 세션 | **Volatile 테이블** | UPDATE 필요, 임시 |
 | 장치 메타데이터/레지스트리 | **Lookup 테이블** | 참조 데이터, 드문 업데이트 |
 | 주식 시장 틱 | **Tag 테이블** | 심볼을 태그로, 가격을 값으로 |
+| 컨베이어 위치별 진동 데이터 | **Tag 테이블** | 거리축 기반 측정값 |
 | HTTP 액세스 로그 | **Log 테이블** | 이벤트 기반, 많은 컬럼 |
 | 장바구니 내용 | **Volatile 테이블** | 빈번한 업데이트, 세션 기반 |
 | 제품 카탈로그 | **Lookup 테이블** | 마스터 데이터, 드문 변경 |
@@ -78,22 +79,32 @@ Machbase는 각각 다른 워크로드에 최적화된 4가지 특화 테이블 
 - 산업 장비 원격 측정
 - 스마트 미터
 - GPS 추적
-- (sensor_id, timestamp, value) 패턴을 가진 모든 데이터
+- 거리 기반 원격 측정 (주행거리, 컨베이어 길이, 선로 위치)
+- `(sensor_id, time|distance, value)` 패턴을 가진 모든 데이터
 
 ### 구조
 
 ```sql
+-- Time axis
 CREATE TAGDATA TABLE sensors (
     sensor_id VARCHAR(20) PRIMARY KEY,    -- 태그 이름 (센서 식별자)
     time DATETIME BASETIME,               -- 타임스탬프
     value DOUBLE SUMMARIZED,              -- 측정값
     other_value DOUBLE SUMMARIZED
 );
+
+-- Distance axis
+CREATE TAG TABLE conveyor_profile (
+    line_id VARCHAR(20) PRIMARY KEY,
+    distance_m DOUBLE BASE DISTANCE,
+    vibration DOUBLE,
+    temperature DOUBLE
+);
 ```
 
 ### 주요 기능
 
-**자동 Rollup 통계**:
+**자동 Rollup 통계 (시간축 전용)**:
 ```sql
 -- 원시 데이터
 INSERT INTO sensors VALUES ('sensor01', NOW, 25.3);
@@ -102,6 +113,8 @@ INSERT INTO sensors VALUES ('sensor01', NOW, 25.3);
 SELECT * FROM sensors WHERE rollup = hour;
 -- 반환: min_value, max_value, avg_value, sum_value, count, sumsq_value
 ```
+
+거리축 Tag 테이블은 rollup 대신 거리 범위 조회와 버킷 집계를 사용합니다.
 
 **메타데이터 계층**:
 ```sql
@@ -115,7 +128,7 @@ UPDATE sensors._META SET location = 'Building A' WHERE name = 'sensor01';
 
 **성능**:
 - 초당 수백만 건의 삽입
-- sensor_id + time에 의한 초고속 쿼리
+- tag + axis 범위에 의한 초고속 쿼리
 - 자동 3단계 파티션 인덱싱
 
 ### 모범 사례
@@ -123,7 +136,7 @@ UPDATE sensors._META SET location = 'Building A' WHERE name = 'sensor01';
 **DO (해야 할 것)**:
 - 다중 센서 데이터에 사용 (하나의 테이블에 수천 개의 센서)
 - 분석 컬럼을 SUMMARIZED로 표시
-- 통계를 위해 Rollup 테이블 쿼리
+- 시간축 테이블의 통계를 위해 Rollup 테이블 쿼리
 - 센서 정보를 위해 메타데이터 테이블 사용
 
 **DON'T (하지 말아야 할 것)**:
@@ -152,6 +165,14 @@ CREATE TAGDATA TABLE air_quality (
     pm10 DOUBLE SUMMARIZED,
     co2 DOUBLE SUMMARIZED,
     temperature DOUBLE SUMMARIZED
+);
+
+-- 거리축: 컨베이어/주행거리 프로파일
+CREATE TAG TABLE route_profile (
+    route_id VARCHAR(30) PRIMARY KEY,
+    distance_m DOUBLE BASE DISTANCE,
+    vibration DOUBLE,
+    temperature DOUBLE
 );
 ```
 
