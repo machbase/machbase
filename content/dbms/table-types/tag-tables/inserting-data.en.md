@@ -6,7 +6,7 @@ weight: 30
 
 ## Overview
 
-Machbase provides multiple methods to insert tag data, each optimized for different use cases. Choose the method that best fits your data volume and application requirements.
+Machbase provides multiple methods to insert both time-axis and distance-axis tag data. Choose the method that best fits your data volume and application requirements.
 
 ## Method 1: INSERT Statement
 
@@ -41,6 +41,31 @@ TAG_0001              2018-12-19 17:41:43 812:782:202 2
 ```
 
 > **When to use**: Testing, low-volume inserts, interactive data entry
+
+### Distance-Axis INSERT Example
+
+Distance-axis tag tables use the same `INSERT` syntax, but the axis column stores numeric distance values.
+
+```sql
+Mach> CREATE TAG TABLE trip_sensor (
+          name        VARCHAR(20) PRIMARY KEY,
+          distance_m  DOUBLE BASE DISTANCE,
+          value       DOUBLE,
+          quality     INTEGER
+      );
+Executed successfully.
+
+Mach> INSERT INTO trip_sensor VALUES('ODO_A', 0, 10.1, 100);
+1 row(s) inserted.
+
+Mach> INSERT INTO trip_sensor VALUES('ODO_A', 500, 11.2, 101);
+1 row(s) inserted.
+
+Mach> INSERT INTO trip_sensor VALUES('ODO_B', 1000.1, 21.5, 100);
+1 row(s) inserted.
+```
+
+A `DOUBLE` distance axis stores fractional distances directly, while `LONG` and `ULONG` are for integer distances only.
 
 ## Method 2: CSV File Import
 
@@ -90,6 +115,8 @@ Insert data via HTTP requests - perfect for IoT devices and web applications.
 ```
 
 If `date_format` is omitted, the default format `YYYY-MM-DD HH24:MI:SS mmm:uuu:nnn` is used.
+
+Time-axis tag tables use timestamp strings as the axis value, while distance-axis tag tables use numeric values that match the axis column type.
 
 ### API Example
 
@@ -150,6 +177,8 @@ conn.close()
 ## Working with Additional Columns
 
 If your tag table has additional columns, include them in your insert:
+
+The axis value must always match the table definition and column order. Time-axis tables expect a `DATETIME` value, while distance-axis tables expect `DOUBLE`, `LONG`, or `ULONG`.
 
 ```sql
 -- Tag table with additional columns

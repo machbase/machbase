@@ -6,16 +6,28 @@ weight: 10
 
 ## What You'll Learn
 
-Tag tables are the foundation for storing time-series sensor data in Machbase. This guide covers how to create, configure, and drop tag tables effectively.
+Tag tables are the foundation for storing axis-based sensor data in Machbase. This guide covers how to create, configure, and drop both time-axis and distance-axis tag tables.
 
-## Basic Tag Table Creation
+> **Version**: Distance-axis columns (`BASE DISTANCE`, `BASEDISTANCE`) are supported in Neo v8.0.75+.
 
-The simplest tag table requires three essential elements:
+## Axis Rules
+
+Tag tables store rows for the same `tag_name` along a single axis column.
+
+- Time axis: `DATETIME BASE TIME` or `DATETIME BASETIME`
+- Distance axis: `DOUBLE`, `LONG`, or `ULONG` with `BASE DISTANCE` or `BASEDISTANCE`
+- When you use `BASE`, it must be followed by either `TIME` or `DISTANCE`
+- A tag table can have only one axis column
+- Tag tables support `SELECT`, `INSERT`, and `DELETE`, but not `UPDATE`
+
+## Creating a Time-Axis Tag Table
+
+The most common time-axis tag table requires three essential elements:
 - **Tag name** (PRIMARY KEY): Identifies the sensor or data source
 - **Input time** (BASETIME): When the data was recorded
 - **Sensor value**: The actual measurement
 
-### Simple Creation Example
+### Time-Axis Creation Example
 
 ```sql
 -- This will fail - missing required keywords
@@ -42,9 +54,48 @@ VALUE     double          17
 
 > **Tip**: The SUMMARIZED keyword enables automatic statistical tracking (min, max, avg) for the value column, which is useful for analytics.
 
+## Creating a Distance-Axis Tag Table
+
+Distance-axis tag tables are used when the axis is cumulative distance, travel length, or line position instead of time.
+
+```sql
+Mach> CREATE TAG TABLE trip_sensor (
+          name        VARCHAR(20) PRIMARY KEY,
+          distance_m  DOUBLE BASE DISTANCE,
+          value       DOUBLE,
+          quality     INTEGER
+      );
+Executed successfully.
+
+Mach> CREATE TAG TABLE trip_sensor_alias (
+          name        VARCHAR(20) PRIMARY KEY,
+          distance_m  LONG BASEDISTANCE,
+          value       DOUBLE
+      ) METADATA (route_id VARCHAR(20), axis_unit VARCHAR(8));
+Executed successfully.
+```
+
+Distance-axis columns must use an 8-byte type.
+
+- `DOUBLE`
+- `LONG`
+- `ULONG`
+
+Use `DOUBLE` when you need fractional distances, and `LONG` or `ULONG` when integer distances are enough.
+
+The following types are not allowed for a distance axis:
+
+- `FLOAT`
+- `INTEGER`
+- `UINTEGER`
+- `SHORT`
+- `USHORT`
+
+> **Limitation**: Distance-axis tag tables do not support `WITH ROLLUP`. See [Rollup Tables for Aggregation](../rollup-tables) for details.
+
 ## Adding Additional Sensor Columns
 
-Real-world sensor data often requires more than just a name, time, and value. You can add additional columns for metadata like group IDs, IP addresses, etc.
+Real-world sensor data often requires more than just a name, axis, and value. You can add additional columns on both time-axis and distance-axis tables for fields such as group IDs or IP addresses.
 
 ```sql
 Mach> create tag table TAG (name varchar(20) primary key, time datetime basetime, value double, grpid short, myip ipv4);
