@@ -30,7 +30,7 @@ When the `service` command is launched by the machbase-neo runtime, the runtime 
 `SERVICE_CONTROLLER` automatically. In normal JSH service-management workflows, you usually do not
 need to specify `--controller` explicitly, so the examples below omit it for readability.
 
-Supported endpoint formats are:
+Supported controller address formats are:
 
 - `host:port`
 - `tcp://host:port`
@@ -39,7 +39,7 @@ Supported endpoint formats are:
 <h6>Syntax</h6>
 
 ```sh
-service [--controller=<host:port|tcp://host:port|unix://path>] <command> [args...]
+service [--controller=<addr>] <command> [args...]
 ```
 
 <h6>Common options</h6>
@@ -114,9 +114,12 @@ runtime status, PID, and executable.
 
 ```sh
 /work > service status
-NAME   ENABLED STATUS  PID EXECUTABLE
-alpha  yes     running 101 echo
-beta   no      stopped -   /bin/date
+┌───────┬─────────┬─────────┬─────┬────────────┐
+│ NAME  │ ENABLED │ STATUS  │ PID │ EXECUTABLE │
+├───────┼─────────┼─────────┼─────┼────────────┤
+│ alpha │ yes     │ running │ 101 │ echo       │
+│ beta  │ no      │ stopped │ -   │ /bin/date  │
+└───────┴─────────┴─────────┴─────┴────────────┘
 ```
 
 With a service name, it prints detailed status including working directory, environment,
@@ -151,30 +154,31 @@ Reads service configuration files from the controller configuration directory an
 service read
 ```
 
-The result is grouped into sections such as `UNCHANGED`, `ADDED`, `UPDATED`, `REMOVED`, and `ERRORED`.
+The result is rendered as a single table. Each row includes a `STATUS`
+column whose value is one of `UNCHANGED`, `ADDED`, `UPDATED`, `REMOVED`, or `ERRORED`.
+
+The table is rendered in the same pretty box format used by the `service status` list output.
 
 <h6>Usage example</h6>
 
 ```sh
 /work > service read
-UNCHANGED (1)
-  - alpha exec=echo
-ADDED (1)
-  - beta exec=node
-UPDATED (0)
-  (none)
-REMOVED (1)
-  - old exec=sleep
-ERRORED (1)
-  - broken read_error=invalid json
+┌────────┬───────────┬────────────┬──────────────┬─────────────┬────────────┐
+│ NAME   │ STATUS    │ EXECUTABLE │ READ_ERROR   │ START_ERROR │ STOP_ERROR │
+├────────┼───────────┼────────────┼──────────────┼─────────────┼────────────┤
+│ alpha  │ UNCHANGED │ echo       │              │             │            │
+│ beta   │ ADDED     │ node       │              │             │            │
+│ old    │ REMOVED   │ sleep      │              │             │            │
+│ broken │ ERRORED   │            │ invalid json │             │            │
+└────────┴───────────┴────────────┴──────────────┴─────────────┴────────────┘
 ```
 
 ## update and reload
 
 Both commands ask the controller to apply configuration changes.
 
-- `update` applies current configuration state
-- `reload` rereads configuration files and applies the resulting changes
+- `update` applies only the currently detected configuration changes. Added, removed, and updated services are reconciled, while unrelated services are left as-is.
+- `reload` rereads configuration files, stops all currently running services first, applies the configuration changes, and then starts only services with `enable=true`.
 
 <h6>Syntax</h6>
 
@@ -185,7 +189,7 @@ service reload
 
 The output contains two sections:
 
-- `ACTIONS`, which lists performed actions such as `UPDATE stop` or `UPDATE start`
+- `ACTIONS`, which lists performed actions such as `UPDATE stop`, `UPDATE start`, `RELOAD stop`, or `RELOAD start`
 - `SERVICES`, which shows the resulting service table
 
 ## install

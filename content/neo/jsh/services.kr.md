@@ -28,7 +28,7 @@ weight: 100
 설정합니다. 일반적인 JSH 서비스 관리 흐름에서는 `--controller`를 매번 명시하실 필요가 없으므로,
 아래 예시에서는 가독성을 위해 생략합니다.
 
-지원하는 endpoint 형식은 다음과 같습니다.
+지원하는 컨트롤러 주소 형식은 다음과 같습니다.
 
 - `host:port`
 - `tcp://host:port`
@@ -37,7 +37,7 @@ weight: 100
 <h6>사용 형식</h6>
 
 ```sh
-service [--controller=<host:port|tcp://host:port|unix://path>] <command> [args...]
+service [--controller=<addr>] <command> [args...]
 ```
 
 <h6>공통 옵션</h6>
@@ -111,9 +111,12 @@ service status [service_name]
 
 ```sh
 /work > service status
-NAME   ENABLED STATUS  PID EXECUTABLE
-alpha  yes     running 101 echo
-beta   no      stopped -   /bin/date
+┌───────┬─────────┬─────────┬─────┬────────────┐
+│ NAME  │ ENABLED │ STATUS  │ PID │ EXECUTABLE │
+├───────┼─────────┼─────────┼─────┼────────────┤
+│ alpha │ yes     │ running │ 101 │ echo       │
+│ beta  │ no      │ stopped │ -   │ /bin/date  │
+└───────┴─────────┴─────────┴─────┴────────────┘
 ```
 
 서비스 이름을 함께 주면 작업 디렉터리, 환경 변수, 최근 출력 라인까지 포함한 상세 상태를 보여줍니다.
@@ -147,30 +150,31 @@ beta   no      stopped -   /bin/date
 service read
 ```
 
-결과는 `UNCHANGED`, `ADDED`, `UPDATED`, `REMOVED`, `ERRORED` 섹션으로 나뉘어 출력됩니다.
+결과는 하나의 테이블로 출력되며, 각 행의 `STATUS` 컬럼에
+`UNCHANGED`, `ADDED`, `UPDATED`, `REMOVED`, `ERRORED` 상태가 표시됩니다.
+
+이 테이블은 `service status` 목록 출력과 같은 pretty box 형식으로 렌더링됩니다.
 
 <h6>사용 예시</h6>
 
 ```sh
 /work > service read
-UNCHANGED (1)
-  - alpha exec=echo
-ADDED (1)
-  - beta exec=node
-UPDATED (0)
-  (none)
-REMOVED (1)
-  - old exec=sleep
-ERRORED (1)
-  - broken read_error=invalid json
+┌────────┬───────────┬────────────┬──────────────┬─────────────┬────────────┐
+│ NAME   │ STATUS    │ EXECUTABLE │ READ_ERROR   │ START_ERROR │ STOP_ERROR │
+├────────┼───────────┼────────────┼──────────────┼─────────────┼────────────┤
+│ alpha  │ UNCHANGED │ echo       │              │             │            │
+│ beta   │ ADDED     │ node       │              │             │            │
+│ old    │ REMOVED   │ sleep      │              │             │            │
+│ broken │ ERRORED   │            │ invalid json │             │            │
+└────────┴───────────┴────────────┴──────────────┴─────────────┴────────────┘
 ```
 
 ## update 와 reload
 
 두 명령 모두 컨트롤러에게 설정 변경 적용을 요청합니다.
 
-- `update` 현재 설정 상태를 적용합니다.
-- `reload` 설정 파일을 다시 읽고 그 결과를 적용합니다.
+- `update` 현재 읽어 둔 변경분만 적용합니다. 추가, 제거, 수정된 서비스만 반영하고 나머지 서비스는 그대로 둡니다.
+- `reload` 설정 파일을 다시 읽은 뒤, 현재 실행 중인 서비스를 모두 먼저 종료하고 변경 사항을 반영한 다음 `enable=true` 인 서비스만 다시 시작합니다.
 
 <h6>사용 형식</h6>
 
@@ -181,7 +185,7 @@ service reload
 
 출력은 두 섹션으로 구성됩니다.
 
-- `ACTIONS`: `UPDATE stop`, `UPDATE start` 같은 수행 작업 목록
+- `ACTIONS`: `UPDATE stop`, `UPDATE start`, `RELOAD stop`, `RELOAD start` 같은 수행 작업 목록
 - `SERVICES`: 적용 후의 서비스 상태 표
 
 ## install
