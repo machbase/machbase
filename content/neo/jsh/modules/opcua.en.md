@@ -19,7 +19,7 @@ new Client(options)
 ```
 
 - Returns: `Client`
-- Throws `missing arguments` if `options` is omitted.
+- Throws `missing client options` if `options` is omitted.
 
 <h6>Options</h6>
 
@@ -67,7 +67,7 @@ Closes the client connection.
 close()
 ```
 
-- Returns: `undefined`
+- Returns: `null` on success
 
 ### read()
 
@@ -89,8 +89,7 @@ read(readRequest)
 
 Error behavior:
 
-- Throws `missing argument` if argument count is not exactly one.
-- Throws `missing nodes` when `nodes` is empty.
+- Throws an error when `nodes` is missing or empty.
 
 ### write()
 
@@ -141,6 +140,150 @@ try {
 }
 ```
 
+### browse()
+
+Browses references for one or more nodes.
+
+<h6>Syntax</h6>
+
+```js
+browse(browseRequest)
+```
+
+<h6>Parameters</h6>
+
+- `browseRequest` (`object`): [BrowseRequest](#browserequest)
+
+<h6>Return value</h6>
+
+- `object[]`: array of [BrowseResult](#browseresult)
+
+Error behavior:
+
+- Throws an error when `nodes` is missing or empty.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1}
+const ua = require("opcua");
+
+let client;
+try {
+    client = new ua.Client({ endpoint: "opc.tcp://localhost:4840" });
+    const results = client.browse({
+        nodes: ["ns=1;i=85"],
+        nodeClassMask: ua.NodeClass.Variable,
+        requestedMaxReferencesPerNode: 2,
+    });
+
+    console.println("continuationPoint:", results[0].continuationPoint);
+    results[0].references.forEach((ref) => {
+        console.println(ref.browseName, ref.nodeId, ref.nodeClass);
+    });
+} catch (e) {
+    console.println("Error:", e);
+} finally {
+    if (client !== undefined) client.close();
+}
+```
+
+### browseNext()
+
+Continues a paginated browse request using continuation points returned by [browse()](#browse) or `browseNext()`.
+
+<h6>Syntax</h6>
+
+```js
+browseNext(browseNextRequest)
+```
+
+<h6>Parameters</h6>
+
+- `browseNextRequest` (`object`): [BrowseNextRequest](#browsenextrequest)
+
+<h6>Return value</h6>
+
+- `object[]`: array of [BrowseResult](#browseresult)
+
+Error behavior:
+
+- Throws an error when `continuationPoints` is missing or empty.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1}
+const ua = require("opcua");
+
+let client;
+try {
+    client = new ua.Client({ endpoint: "opc.tcp://localhost:4840" });
+
+    let results = client.browse({
+        nodes: ["ns=1;i=85"],
+        nodeClassMask: ua.NodeClass.Variable,
+        requestedMaxReferencesPerNode: 2,
+    });
+
+    while (results[0].continuationPoint) {
+        results = client.browseNext({
+            continuationPoints: [results[0].continuationPoint],
+        });
+        results[0].references.forEach((ref) => {
+            console.println(ref.browseName, ref.nodeId, ref.nodeClass);
+        });
+    }
+} catch (e) {
+    console.println("Error:", e);
+} finally {
+    if (client !== undefined) client.close();
+}
+```
+
+### children()
+
+Returns direct child references of a node.
+
+<h6>Syntax</h6>
+
+```js
+children(childrenRequest)
+```
+
+<h6>Parameters</h6>
+
+- `childrenRequest` (`object`): [ChildrenRequest](#childrenrequest)
+
+<h6>Return value</h6>
+
+- `object[]`: array of [ChildrenResult](#childrenresult)
+
+Error behavior:
+
+- Throws an error when `node` is missing or empty.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1}
+const ua = require("opcua");
+
+let client;
+try {
+    client = new ua.Client({ endpoint: "opc.tcp://localhost:4840" });
+    const refs = client.children({
+        node: "ns=1;i=85",
+        nodeClassMask: ua.NodeClass.Variable,
+    });
+
+    refs.forEach((ref) => {
+        console.println(ref.browseName, ref.nodeId, ref.nodeClass);
+    });
+} catch (e) {
+    console.println("Error:", e);
+} finally {
+    if (client !== undefined) client.close();
+}
+```
+
 ## ReadRequest
 
 | Property            | Type       | Default                      | Description |
@@ -178,6 +321,97 @@ try {
 | serviceResult | `number`     | OPC UA service result code |
 | stringTable   | `string[]`   | OPC UA string table |
 | results       | `number[]`   | Per-node status code array |
+
+## BrowseRequest
+
+| Property                       | Type       | Default                  | Description |
+|:-------------------------------|:-----------|:-------------------------|:------------|
+| nodes                          | `string[]` |                          | List of OPC UA node IDs to browse |
+| browseDirection                | `number`   | `BrowseDirection.Forward` | Browse direction |
+| referenceTypeId                | `string`   | all references           | Reference type node ID to follow |
+| includeSubtypes                | `boolean`  | `true`                   | Whether to include subtypes of `referenceTypeId` |
+| nodeClassMask                  | `number`   | `0`                      | Bitmask of node classes to include |
+| resultMask                     | `number`   | `BrowseResultMask.All`   | Bitmask of fields to return |
+| requestedMaxReferencesPerNode  | `number`   | `0`                      | Server hint for maximum references returned per node before pagination |
+
+## BrowseNextRequest
+
+| Property                  | Type        | Default | Description |
+|:--------------------------|:------------|:--------|:------------|
+| continuationPoints        | `string[]`  |         | Base64-encoded continuation points returned from `browse()` or `browseNext()` |
+| releaseContinuationPoints | `boolean`   | `false` | Releases continuation points on the server without requesting more references |
+
+## BrowseResult
+
+| Property           | Type       | Description |
+|:-------------------|:-----------|:------------|
+| status             | `number`   | OPC UA status code (`uint32`) |
+| statusText         | `string`   | Status text |
+| continuationPoint  | `string`   | Base64-encoded continuation point. Empty string when there is no next page |
+| references         | `object[]` | Array of [BrowseReference](#browsereference) |
+
+## BrowseReference
+
+| Property         | Type      | Description |
+|:-----------------|:----------|:------------|
+| referenceTypeId  | `string`  | Reference type node ID |
+| isForward        | `boolean` | Whether the reference direction is forward |
+| nodeId           | `string`  | Target node ID |
+| browseName       | `string`  | Browse name |
+| displayName      | `string`  | Display name |
+| nodeClass        | `number`  | OPC UA node class value |
+| typeDefinition   | `string`  | Type definition node ID |
+
+## ChildrenRequest
+
+| Property       | Type     | Description |
+|:---------------|:---------|:------------|
+| node           | `string` | Parent node ID |
+| nodeClassMask  | `number` | Bitmask of node classes to include |
+
+## ChildrenResult
+
+| Property         | Type      | Description |
+|:-----------------|:----------|:------------|
+| referenceTypeId  | `string`  | Reference type node ID |
+| isForward        | `boolean` | Whether the reference direction is forward |
+| nodeId           | `string`  | Child node ID |
+| browseName       | `string`  | Browse name |
+| displayName      | `string`  | Display name |
+| nodeClass        | `number`  | OPC UA node class value |
+| typeDefinition   | `string`  | Type definition node ID |
+
+## BrowseDirection
+
+- `BrowseDirection.Forward`
+- `BrowseDirection.Inverse`
+- `BrowseDirection.Both`
+- `BrowseDirection.Invalid`
+
+## NodeClass
+
+- `NodeClass.Unspecified`
+- `NodeClass.Object`
+- `NodeClass.Variable`
+- `NodeClass.Method`
+- `NodeClass.ObjectType`
+- `NodeClass.VariableType`
+- `NodeClass.ReferenceType`
+- `NodeClass.DataType`
+- `NodeClass.View`
+
+## BrowseResultMask
+
+- `BrowseResultMask.None`
+- `BrowseResultMask.ReferenceTypeId`
+- `BrowseResultMask.IsForward`
+- `BrowseResultMask.NodeClass`
+- `BrowseResultMask.BrowseName`
+- `BrowseResultMask.DisplayName`
+- `BrowseResultMask.TypeDefinition`
+- `BrowseResultMask.All`
+- `BrowseResultMask.ReferenceTypeInfo`
+- `BrowseResultMask.TargetInfo`
 
 ## MessageSecurityMode
 

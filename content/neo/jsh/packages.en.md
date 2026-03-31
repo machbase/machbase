@@ -22,7 +22,7 @@ The `pkg` command supports these tasks:
 
 `pkg` treats `package.json` as the manifest of the selected package root.
 For a normal project install, that root is the current directory or the directory selected by `--dir`.
-For `pkg install -g` and `pkg uninstall -g`, the root is always `/work`.
+For `pkg install -g` and `pkg uninstall -g`, packages are installed under `/work/node_modules`, but `pkg` does not create `/work/package.json` or `/work/package-lock.json`.
 
 A minimal project manifest looks like this.
 
@@ -53,10 +53,10 @@ Notes:
 
 - `scripts` belongs to the current project manifest and is used only by `pkg run`.
 - `dependencies` is updated by `pkg install` and `pkg uninstall` for the selected package root.
-- `pkg` also writes `package-lock.json` beside `package.json` for reproducible installs.
+- For normal project installs, `pkg` also writes `package-lock.json` beside `package.json` for reproducible installs.
 - `bin` is read from each installed package's own `package.json` inside `node_modules`, and `pkg` uses it to generate wrappers in `node_modules/.bin`.
 
-For example, after `pkg install -g github.com/acme/demo`, the project manifest that is updated is `/work/package.json`, while the installed package manifest is `/work/node_modules/github.com/acme/demo/package.json`.
+For example, after `pkg install -g github.com/acme/demo`, the installed package manifest is `/work/node_modules/github.com/acme/demo/package.json`, and `pkg` keeps its global metadata under `/work/node_modules/.pkg/`.
 
 ## pkg init
 
@@ -71,7 +71,6 @@ pkg init [options] <name>
 <h6>Options</h6>
 
 - `-C, --dir <dir>` use the given project directory instead of the current working directory
-- `-g, --global` install into `/work` and `/work/node_modules`, ignoring `--dir`
 - `-h, --help` show help
 
 <h6>Usage example</h6>
@@ -106,14 +105,14 @@ pkg install [options] [name]
 <h6>Options</h6>
 
 - `-C, --dir <dir>` use the given project directory instead of the current working directory
-- `-g, --global` remove the package from `/work` and ignore `--dir`
+- `-g, --global` install into `/work/node_modules` and ignore `--dir`
 - `-h, --help` show help
 
-If `name` is omitted, `pkg install` installs the dependencies already declared in `package.json`.
+If `name` is omitted, `pkg install` installs the dependencies already declared in the selected project manifest. With `-g`, it uses the internal metadata under `/work/node_modules/.pkg/`.
 
 ### Global install
 
-`pkg install -g <name>` uses `/work` as the package root and `/work/node_modules` as the installation target.
+`pkg install -g <name>` uses `/work/node_modules` as the installation target.
 When `-g` is present, `pkg` ignores `--dir`.
 
 This makes two common cases possible:
@@ -273,7 +272,7 @@ If the conflicting file already existed without `pkg` ownership metadata, the wa
 
 ### Lock file behavior
 
-`pkg` writes `package-lock.json` and stores the resolved source for reproducible installs.
+For normal project installs, `pkg` writes `package-lock.json` and stores the resolved source for reproducible installs.
 For GitHub packages, the resolved source includes whether the install used a tag or a branch.
 
 Examples:
@@ -301,6 +300,7 @@ pkg run [options] <key> [...args]
 <h6>Options</h6>
 
 - `-C, --dir <dir>` use the given project directory instead of the current working directory
+- `-g, --global` remove the package from `/work/node_modules` and ignore `--dir`
 - `-h, --help` show help
 
 `pkg run` changes the current working directory to the selected project directory before executing the script.

@@ -19,7 +19,7 @@ new Client(options)
 ```
 
 - 반환값: `Client`
-- `options`를 생략하면 예외(`missing arguments`)가 발생합니다.
+- `options`를 생략하면 예외(`missing client options`)가 발생합니다.
 
 <h6>옵션</h6>
 
@@ -67,7 +67,7 @@ try {
 close()
 ```
 
-- 반환값: 없음 (`undefined`)
+- 반환값: 성공 시 `null`
 
 ### read()
 
@@ -89,8 +89,7 @@ read(readRequest)
 
 오류 동작:
 
-- 인자가 없거나 1개가 아니면 예외(`missing argument`)
-- `nodes`가 비어 있으면 예외(`missing nodes`)
+- `nodes`가 없거나 비어 있으면 예외가 발생합니다.
 
 ### write()
 
@@ -141,6 +140,150 @@ try {
 }
 ```
 
+### browse()
+
+하나 이상의 노드에 대한 참조를 탐색합니다.
+
+<h6>사용 형식</h6>
+
+```js
+browse(browseRequest)
+```
+
+<h6>매개변수</h6>
+
+- `browseRequest` (`object`): [BrowseRequest](#browserequest)
+
+<h6>반환값</h6>
+
+- `object[]`: [BrowseResult](#browseresult) 배열
+
+오류 동작:
+
+- `nodes`가 없거나 비어 있으면 예외가 발생합니다.
+
+<h6>사용 예시</h6>
+
+```js {linenos=table,linenostart=1}
+const ua = require("opcua");
+
+let client;
+try {
+    client = new ua.Client({ endpoint: "opc.tcp://localhost:4840" });
+    const results = client.browse({
+        nodes: ["ns=1;i=85"],
+        nodeClassMask: ua.NodeClass.Variable,
+        requestedMaxReferencesPerNode: 2,
+    });
+
+    console.println("continuationPoint:", results[0].continuationPoint);
+    results[0].references.forEach((ref) => {
+        console.println(ref.browseName, ref.nodeId, ref.nodeClass);
+    });
+} catch (e) {
+    console.println("Error:", e);
+} finally {
+    if (client !== undefined) client.close();
+}
+```
+
+### browseNext()
+
+`browse()` 또는 `browseNext()`가 반환한 continuation point를 사용해 다음 페이지를 계속 조회합니다.
+
+<h6>사용 형식</h6>
+
+```js
+browseNext(browseNextRequest)
+```
+
+<h6>매개변수</h6>
+
+- `browseNextRequest` (`object`): [BrowseNextRequest](#browsenextrequest)
+
+<h6>반환값</h6>
+
+- `object[]`: [BrowseResult](#browseresult) 배열
+
+오류 동작:
+
+- `continuationPoints`가 없거나 비어 있으면 예외가 발생합니다.
+
+<h6>사용 예시</h6>
+
+```js {linenos=table,linenostart=1}
+const ua = require("opcua");
+
+let client;
+try {
+    client = new ua.Client({ endpoint: "opc.tcp://localhost:4840" });
+
+    let results = client.browse({
+        nodes: ["ns=1;i=85"],
+        nodeClassMask: ua.NodeClass.Variable,
+        requestedMaxReferencesPerNode: 2,
+    });
+
+    while (results[0].continuationPoint) {
+        results = client.browseNext({
+            continuationPoints: [results[0].continuationPoint],
+        });
+        results[0].references.forEach((ref) => {
+            console.println(ref.browseName, ref.nodeId, ref.nodeClass);
+        });
+    }
+} catch (e) {
+    console.println("Error:", e);
+} finally {
+    if (client !== undefined) client.close();
+}
+```
+
+### children()
+
+지정한 노드의 직접 자식 참조를 반환합니다.
+
+<h6>사용 형식</h6>
+
+```js
+children(childrenRequest)
+```
+
+<h6>매개변수</h6>
+
+- `childrenRequest` (`object`): [ChildrenRequest](#childrenrequest)
+
+<h6>반환값</h6>
+
+- `object[]`: [ChildrenResult](#childrenresult) 배열
+
+오류 동작:
+
+- `node`가 없거나 비어 있으면 예외가 발생합니다.
+
+<h6>사용 예시</h6>
+
+```js {linenos=table,linenostart=1}
+const ua = require("opcua");
+
+let client;
+try {
+    client = new ua.Client({ endpoint: "opc.tcp://localhost:4840" });
+    const refs = client.children({
+        node: "ns=1;i=85",
+        nodeClassMask: ua.NodeClass.Variable,
+    });
+
+    refs.forEach((ref) => {
+        console.println(ref.browseName, ref.nodeId, ref.nodeClass);
+    });
+} catch (e) {
+    console.println("Error:", e);
+} finally {
+    if (client !== undefined) client.close();
+}
+```
+
 ## ReadRequest
 
 | 프로퍼티            | 타입       | 기본값                       | 설명 |
@@ -178,6 +321,97 @@ try {
 | serviceResult | `number`   | OPC UA 서비스 결과 코드 |
 | stringTable   | `string[]` | OPC UA 문자열 테이블 |
 | results       | `number[]` | 노드별 상태 코드 배열 |
+
+## BrowseRequest
+
+| 프로퍼티                      | 타입       | 기본값                    | 설명 |
+|:------------------------------|:-----------|:--------------------------|:-----|
+| nodes                         | `string[]` |                           | 탐색할 OPC UA 노드 ID 목록 |
+| browseDirection               | `number`   | `BrowseDirection.Forward` | 탐색 방향 |
+| referenceTypeId               | `string`   | 모든 reference            | 따라갈 참조 타입 노드 ID |
+| includeSubtypes               | `boolean`  | `true`                    | `referenceTypeId`의 하위 타입 포함 여부 |
+| nodeClassMask                 | `number`   | `0`                       | 포함할 노드 클래스 비트마스크 |
+| resultMask                    | `number`   | `BrowseResultMask.All`    | 반환할 필드 비트마스크 |
+| requestedMaxReferencesPerNode | `number`   | `0`                       | 서버가 노드별 최대 참조 수를 나누어 반환하도록 요청하는 힌트 |
+
+## BrowseNextRequest
+
+| 프로퍼티                 | 타입       | 기본값  | 설명 |
+|:-------------------------|:-----------|:--------|:-----|
+| continuationPoints       | `string[]` |         | `browse()` 또는 `browseNext()`가 반환한 base64 continuation point 목록 |
+| releaseContinuationPoints| `boolean`  | `false` | 다음 참조를 요청하지 않고 서버 측 continuation point를 해제할지 여부 |
+
+## BrowseResult
+
+| 프로퍼티          | 타입       | 설명 |
+|:------------------|:-----------|:-----|
+| status            | `number`   | OPC UA 상태 코드(`uint32`) |
+| statusText        | `string`   | 상태 텍스트 |
+| continuationPoint | `string`   | base64 continuation point. 다음 페이지가 없으면 빈 문자열 |
+| references        | `object[]` | [BrowseReference](#browsereference) 배열 |
+
+## BrowseReference
+
+| 프로퍼티        | 타입      | 설명 |
+|:----------------|:----------|:-----|
+| referenceTypeId | `string`  | 참조 타입 노드 ID |
+| isForward       | `boolean` | 정방향 참조 여부 |
+| nodeId          | `string`  | 대상 노드 ID |
+| browseName      | `string`  | Browse 이름 |
+| displayName     | `string`  | Display 이름 |
+| nodeClass       | `number`  | OPC UA 노드 클래스 값 |
+| typeDefinition  | `string`  | 타입 정의 노드 ID |
+
+## ChildrenRequest
+
+| 프로퍼티      | 타입     | 설명 |
+|:--------------|:---------|:-----|
+| node          | `string` | 부모 노드 ID |
+| nodeClassMask | `number` | 포함할 노드 클래스 비트마스크 |
+
+## ChildrenResult
+
+| 프로퍼티        | 타입      | 설명 |
+|:----------------|:----------|:-----|
+| referenceTypeId | `string`  | 참조 타입 노드 ID |
+| isForward       | `boolean` | 정방향 참조 여부 |
+| nodeId          | `string`  | 자식 노드 ID |
+| browseName      | `string`  | Browse 이름 |
+| displayName     | `string`  | Display 이름 |
+| nodeClass       | `number`  | OPC UA 노드 클래스 값 |
+| typeDefinition  | `string`  | 타입 정의 노드 ID |
+
+## BrowseDirection
+
+- `BrowseDirection.Forward`
+- `BrowseDirection.Inverse`
+- `BrowseDirection.Both`
+- `BrowseDirection.Invalid`
+
+## NodeClass
+
+- `NodeClass.Unspecified`
+- `NodeClass.Object`
+- `NodeClass.Variable`
+- `NodeClass.Method`
+- `NodeClass.ObjectType`
+- `NodeClass.VariableType`
+- `NodeClass.ReferenceType`
+- `NodeClass.DataType`
+- `NodeClass.View`
+
+## BrowseResultMask
+
+- `BrowseResultMask.None`
+- `BrowseResultMask.ReferenceTypeId`
+- `BrowseResultMask.IsForward`
+- `BrowseResultMask.NodeClass`
+- `BrowseResultMask.BrowseName`
+- `BrowseResultMask.DisplayName`
+- `BrowseResultMask.TypeDefinition`
+- `BrowseResultMask.All`
+- `BrowseResultMask.ReferenceTypeInfo`
+- `BrowseResultMask.TargetInfo`
 
 ## MessageSecurityMode
 
