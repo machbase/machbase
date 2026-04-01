@@ -38,7 +38,7 @@ request(options[, callback])
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,4]}
+```js {linenos=table,linenostart=1}
 const http = require('http');
 const req = http.request('http://127.0.0.1:8080/hello');
 req.on('response', (res) => {
@@ -98,7 +98,7 @@ Outgoing request object returned by `request()` / `get()`.
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[4,5]}
+```js {linenos=table,linenostart=1}
 const http = require('http');
 const req = http.request('http://127.0.0.1:8080/hello');
 req.setHeader('X-Test-Header', 'TestValue');
@@ -182,7 +182,7 @@ Response bodies are typically closed automatically in normal processing flow, an
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[4,5]}
+```js {linenos=table,linenostart=1}
 const http = require('http');
 http.get('http://127.0.0.1:8080/hello', (res) => {
   console.println(res.ok, res.statusCode);
@@ -226,7 +226,7 @@ new Server([options])
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3,4,5]}
+```js {linenos=table,linenostart=1}
 const http = require('http');
 const server = new http.Server({ network: 'tcp', address: '127.0.0.1:8080' });
 server.get('/hello/:name', (ctx) => {
@@ -265,7 +265,7 @@ Handler receives `ctx` with request and response helpers.
 
 ### GET request (callback)
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const http = require('http');
 
 http.get('http://127.0.0.1:8080/hello', (res) => {
@@ -276,7 +276,7 @@ http.get('http://127.0.0.1:8080/hello', (res) => {
 
 ### GET request (event listener)
 
-```js {linenos=table,linenostart=1,hl_lines=[4]}
+```js {linenos=table,linenostart=1}
 const http = require('http');
 
 const req = http.get('http://127.0.0.1:8080/hello');
@@ -288,7 +288,7 @@ req.on('response', (res) => {
 
 ### Set and read request headers
 
-```js {linenos=table,linenostart=1,hl_lines=[4,5,6]}
+```js {linenos=table,linenostart=1}
 const http = require('http');
 
 const req = http.request('http://127.0.0.1:8080/hello');
@@ -300,7 +300,7 @@ req.end();
 
 ### Read response headers and body
 
-```js {linenos=table,linenostart=1,hl_lines=[7,8,9]}
+```js {linenos=table,linenostart=1}
 const http = require('http');
 
 http.get('http://127.0.0.1:8080/hello', (res) => {
@@ -315,7 +315,7 @@ http.get('http://127.0.0.1:8080/hello', (res) => {
 
 ### POST request with JSON
 
-```js {linenos=table,linenostart=1,hl_lines=[4,14]}
+```js {linenos=table,linenostart=1}
 const http = require('http');
 
 const req = http.request('http://127.0.0.1:8080/echo', {
@@ -342,7 +342,7 @@ req.end();
 
 ### Handle 404 responses
 
-```js {linenos=table,linenostart=1,hl_lines=[5]}
+```js {linenos=table,linenostart=1}
 const http = require('http');
 
 http.get('http://127.0.0.1:8080/notfound', (res) => {

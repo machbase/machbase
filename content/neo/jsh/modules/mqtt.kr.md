@@ -38,6 +38,29 @@ new Client(options)
 | cleanStartOnInitialConnection     | Boolean   | `false` | 최초 연결 시 MQTT v5 clean start 여부 |
 | connectTimeout                    | Number    | `0`     | 연결 타임아웃(밀리초) |
 
+## 속성
+
+### config
+
+`client.config`는 네이티브 MQTT 클라이언트가 실제로 사용하는 파싱된 연결 설정을 노출합니다.
+
+대표적인 필드는 다음과 같습니다.
+
+| 필드 | 타입 | 설명 |
+|:-----|:-----|:-----|
+| `serverUrls` | Array | 파싱된 브로커 URL 목록 |
+| `connectUsername` | String | 설정된 사용자 이름 |
+| `connectPassword` | byte data | 바이트 형태의 비밀번호 |
+| `keepAlive` | Number | Keep Alive 간격 |
+| `reconnectBackoff(n)` | Function | 재접속 지연 계산 함수 |
+| `cleanStartOnInitialConnection` | Boolean | MQTT v5 clean start 플래그 |
+| `connectTimeout` | Number | 연결 타임아웃 |
+
+```js
+console.println(client.config.serverUrls);
+console.println(client.config.keepAlive);
+```
+
 <h6>사용 예시</h6>
 
 ```js {linenos=table,linenostart=1}
@@ -351,6 +374,13 @@ client.on('error', (err) => { ... })
 ```js
 client.on('close', () => { ... })
 ```
+
+## 동작 참고
+
+- `Client`는 constructor에서 자동으로 브로커 연결을 시도합니다.
+- JavaScript wrapper는 가능한 경우 수신 바이너리 payload를 `Buffer`로 변환합니다.
+- 텍스트 표현이 가능한 buffer payload에는 `msg.payloadText`가 자동으로 채워집니다.
+- MQTT v5의 `correlationData`는 바이너리 안전한 `Buffer`로 노출됩니다.
 
 ## MQTT v5 쓰기 프로퍼티 예시
 

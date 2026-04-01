@@ -26,7 +26,7 @@ Creates a new Dense matrix of size `r × c`.
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const mat = require('mathx/mat');
 const a = mat.Dense(3, 3, [11,12,13,21,22,23,31,32,33]);
 console.println(mat.format(a, {format:"a = %v",  prefix: "    "}))
@@ -42,7 +42,7 @@ Returns the matrix dimensions `(rows, columns)`.
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const mat = require('mathx/mat');
 const a = mat.Dense(3, 3, [11,12,13,21,22,23,31,32,33]);
 console.println("dims:", a.dims());
@@ -56,7 +56,7 @@ Returns the value at the specified `(row, col)`.
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const mat = require('mathx/mat');
 const a = mat.Dense(3, 3, [11,12,13,21,22,23,31,32,33]);
 console.println("at(1,2):", a.at(1,2));
@@ -70,7 +70,7 @@ Sets the value at the specified position.
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const mat = require('mathx/mat');
 const a = mat.Dense(3, 3, [11,12,13,21,22,23,31,32,33]);
 a.set(2,2,55)
@@ -85,7 +85,7 @@ console.println(mat.format(a, {format:"a = %v",  prefix: "    "}))
 
 Creates a transposed matrix.
 
-```js {linenos=table,linenostart=1,hl_lines=[7]}
+```js {linenos=table,linenostart=1}
 const mat = require('mathx/mat');
 A = mat.Dense(2, 2, [
     1, 2,
@@ -105,7 +105,7 @@ console.println(mat.format(B, {format:"B=%v", prefix:"  "}));
 
 Performs matrix addition.
 
-```js {linenos=table,linenostart=1,hl_lines=[11]}
+```js {linenos=table,linenostart=1}
 const mat = require('mathx/mat');
 A = mat.Dense(2, 2, [
     1, 2,
@@ -127,7 +127,7 @@ console.println(mat.format(C));
 
 Performs matrix subtraction.
 
-```js {linenos=table,linenostart=1,hl_lines=[11]}
+```js {linenos=table,linenostart=1}
 const mat = require('mathx/mat');
 A = mat.Dense(2, 2, [
     1, 2,
@@ -149,7 +149,7 @@ console.println(mat.format(C));
 
 Performs matrix multiplication.
 
-```js {linenos=table,linenostart=1,hl_lines=[11]}
+```js {linenos=table,linenostart=1}
 const mat = require('mathx/mat');
 A = mat.Dense(2, 2, [
     1, 2,
@@ -171,7 +171,7 @@ console.println(mat.format(C));
 
 Performs element-wise multiplication.
 
-```js {linenos=table,linenostart=1,hl_lines=[11]}
+```js {linenos=table,linenostart=1}
 const mat = require('mathx/mat');
 A = mat.Dense(2, 2, [
     1, 2,
@@ -193,7 +193,7 @@ console.println(mat.format(C));
 
 Performs element-wise division.
 
-```js {linenos=table,linenostart=1,hl_lines=[11]}
+```js {linenos=table,linenostart=1}
 const mat = require('mathx/mat');
 A = mat.Dense(2, 2, [
     1, 2,
@@ -215,7 +215,7 @@ console.println(mat.format(C));
 
 Calculates the inverse matrix.
 
-```js {linenos=table,linenostart=1,hl_lines=[7]}
+```js {linenos=table,linenostart=1}
 const mat = require('mathx/mat');
 A = mat.Dense(2, 2, [
     1, 2,
@@ -322,7 +322,7 @@ If *A* is invertible, then the factorization is unique if we require the diagona
 
 **Usage example**
 
-```js {linenos=table,linenostart=1,hl_lines=[13,16]}
+```js {linenos=table,linenostart=1}
 const m = require('mathx/mat');
 A = m.Dense(4, 2, [
     0, 1,
@@ -352,7 +352,7 @@ console.println(m.format(x, { format: "x = %.2f", prefix: "    " }));
 
 ## format()
 
-```js {linenos=table,linenostart=1,hl_lines=["8-13"]}
+```js {linenos=table,linenostart=1}
 const m = require("mathx/mat");
 A = m.Dense(100, 100);
 for (let i = 0; i < 100; i++) {

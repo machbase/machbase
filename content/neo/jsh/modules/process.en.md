@@ -20,7 +20,7 @@ addShutdownHook(()=>{})
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 process.addShutdownHook(()=>{
     console.println("shutdown hook called.");
@@ -39,7 +39,7 @@ Common values include `amd64`, `aarch64`.
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.arch);
 ```
@@ -54,7 +54,7 @@ An array of command-line arguments passed to the current process.
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3,4,5]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println('argv[0]:', process.argv[0]);
 console.println('argv[1]:', process.argv[1]);
@@ -76,7 +76,7 @@ chdir(path)
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3,4]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println('before:', process.cwd());
 process.chdir('/lib');
@@ -96,7 +96,7 @@ Current implementation returns placeholder numeric values (`0`) for both fields.
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 const cpu = process.cpuUsage();
 console.println(typeof cpu.user, typeof cpu.system);
@@ -108,7 +108,7 @@ Returns the current working directory path.
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.cwd());
 ```
@@ -125,7 +125,7 @@ exit([code])
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 process.exit(-1);
 ```
@@ -145,7 +145,7 @@ which(command)
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.which('echo')); // e.g. /sbin/echo.js
 ```
@@ -162,7 +162,7 @@ expand(value)
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.expand('$HOME/file.txt'));
 console.println(process.expand('${HOME}/../lib/file.txt'));
@@ -174,7 +174,7 @@ The JSH runtime environment object.
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.env.get('HOME'));
 ```
@@ -192,7 +192,7 @@ exec(command, ...args)
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 const path = process.which('echo');
 const code = process.exec(path, 'hello from exec');
@@ -205,7 +205,7 @@ The absolute file path to the executable file of the current process on the host
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.execPath);
 ```
@@ -233,7 +233,7 @@ hrtime([previous])
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 const start = process.hrtime();
 const diff = process.hrtime([start[0], start[1]]);
@@ -294,7 +294,7 @@ kill(pid[, signal])
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3,4]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.kill(12345, 'SIGKILL'));
 console.println(process.kill(12345, 'term'));
@@ -312,7 +312,7 @@ If Windows cannot route the control event, `process.kill()` returns an `Error` o
 
 <h6>Process existence check example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.kill(process.pid, 0));
 ```
@@ -333,7 +333,7 @@ Current implementation returns placeholder numeric values (`0`) for all fields.
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 const mem = process.memoryUsage();
 console.println(typeof mem.rss, typeof mem.heapUsed);
@@ -353,7 +353,7 @@ nextTick(callback, ...args)
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println('main');
 process.nextTick((a, b) => console.println('tick:', a, b), 'first', 'second');
@@ -365,7 +365,7 @@ Returns the current time as a JavaScript date-time object.
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 const now = process.now();
 console.println(typeof now); // object
@@ -378,7 +378,7 @@ The value type is number and represents the process ID.
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.pid);
 ```
@@ -389,7 +389,7 @@ A string that identifies the operating system platform of the host machine. Comm
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.platform);
 ```
@@ -401,7 +401,7 @@ The value type is number and represents the parent process ID.
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.ppid);
 ```
@@ -440,7 +440,7 @@ If no listener is registered, the process follows the operating system's default
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3,4]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 
 process.on('sigint', () => {
@@ -462,7 +462,7 @@ Streams for stdin, stdout, and stderr.
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 process.stdout.write('Enter text: ');
 const text = process.stdin.readLine();
@@ -479,7 +479,7 @@ A string that identifies the current program.
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.title);
 ```
@@ -490,7 +490,7 @@ Returns process uptime in seconds as a number.
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 const up = process.uptime();
 console.println('uptime >= 0:', up >= 0);
@@ -502,7 +502,7 @@ A string that identifies the JSH runtime version.
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.version);
 ```
@@ -516,7 +516,7 @@ An object that provides detailed runtime version information.
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println('jsh:', process.versions.jsh);
 console.println('go :', process.versions.go);
@@ -536,7 +536,7 @@ which(command)
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.which('echo')); // e.g. /sbin/echo.js
 ```
@@ -555,7 +555,7 @@ dispatchEvent(target, eventName, ...args)
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[4]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 process.on('hello', (msg) => console.println(msg));
 const ok = process.dispatchEvent(process, 'hello', 'from dispatchEvent');
@@ -574,7 +574,7 @@ dumpStack(depth)
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 function trace() {
     process.dumpStack(5);
@@ -594,7 +594,7 @@ expand(value)
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.expand('$HOME/file.txt'));
 console.println(process.expand('${HOME}/../lib/file.txt'));

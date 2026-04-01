@@ -41,7 +41,7 @@ createClient([options])
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const service = require('service');
 const client = service.createClient({ timeout: 1000 });
 ```
@@ -50,7 +50,7 @@ const client = service.createClient({ timeout: 1000 });
 
 명시적으로 다른 controller 주소를 사용할 때만 아래처럼 `controller`를 지정합니다.
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const service = require('service');
 const client = service.createClient({
     controller: 'unix:///tmp/example-service-controller.sock',
@@ -70,7 +70,7 @@ call(method[, params][, options], callback)
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const service = require('service');
 
 service.call('service.list', null, (err, result) => {
@@ -108,7 +108,7 @@ service.call('service.list', null, (err, result) => {
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[4,8]}
+```js {linenos=table,linenostart=1}
 const service = require('service');
 const client = service.createClient();
 
@@ -136,7 +136,7 @@ client.runtime.get(name, callback)
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3,7]}
+```js {linenos=table,linenostart=1}
 const service = require('service');
 
 service.runtime.get('alpha', (err, runtime) => {
@@ -164,7 +164,7 @@ client.details.get(name[, key], callback)
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3,7]}
+```js {linenos=table,linenostart=1}
 const service = require('service');
 
 service.details.get('alpha', 'health', (err, runtime) => {
@@ -217,7 +217,7 @@ client.details.set(name, key, value, callback)
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const service = require('service');
 
 service.details.set('alpha', 'health', 'ok', (err, runtime) => {
@@ -256,7 +256,7 @@ parseController(value)
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const service = require('service');
 const endpoint = service.parseController('unix:///tmp/example-service-controller.sock');
 console.println(endpoint.network, endpoint.path);
@@ -277,7 +277,7 @@ resolveController([value])
 
 <h6>동작 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+```js {linenos=table,linenostart=1}
 const service = require('service');
 console.println(service.resolveController());
 console.println(service.resolveController('unix:///tmp/example-service-controller.sock'));

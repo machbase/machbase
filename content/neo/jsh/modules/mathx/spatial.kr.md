@@ -13,7 +13,7 @@ weight: 30
 
 **사용 예시**
 
-```js {linenos=table,hl_lines=[4],linenostart=1}
+```js {linenos=table,linenostart=1}
 m = require("mathx/spatial");
 latLon1 = [45.04, 7.42];  // 이탈리아 토리노
 latLon2 = [3.09, 101.42]; // 말레이시아 쿠알라룸푸르

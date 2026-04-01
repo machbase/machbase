@@ -46,7 +46,7 @@ TAR 아카이브 바이트를 담은 `ArrayBuffer`를 반환합니다.
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,6]}
+```js {linenos=table,linenostart=1}
 const tar = require('archive/tar');
 const archive = tar.tarSync([
 	{ name: 'alpha.txt', data: 'Alpha' },
@@ -55,7 +55,7 @@ const archive = tar.tarSync([
 console.println(archive.constructor.name);
 ```
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+```js {linenos=table,linenostart=1}
 const tar = require('archive/tar');
 const archive = tar.tarSync('hello tar');
 const entries = tar.untarSync(archive);
@@ -85,7 +85,7 @@ untarSync(buffer)
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[7,8,9]}
+```js {linenos=table,linenostart=1}
 const tar = require('archive/tar');
 const archive = tar.tarSync([
 	{ name: 'assets', isDir: true, type: 'dir' },
@@ -126,7 +126,7 @@ untar(buffer, callback)
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3,4,5]}
+```js {linenos=table,linenostart=1}
 const tar = require('archive/tar');
 
 tar.tar('payload', function(err, archive) {
@@ -166,7 +166,7 @@ createUntar()
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[5,10,14,15]}
+```js {linenos=table,linenostart=1}
 const tar = require('archive/tar');
 const writer = tar.createTar();
 let archive = null;
@@ -274,7 +274,7 @@ extractAllTo(outputDir, overwrite, options)
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[7,8,9]}
+```js {linenos=table,linenostart=1}
 const tar = require('archive/tar');
 
 const t = new tar.Tar();
@@ -294,7 +294,7 @@ saved.extractAllTo('/tmp/out', {
 
 <h6>사용 예시: 파일을 묶고 다시 추출하기</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[8,9,12,14]}
+```js {linenos=table,linenostart=1}
 const fs = require('fs');
 const tar = require('archive/tar');
 const base = '/tmp/tar-files';
@@ -315,7 +315,7 @@ console.println(fs.readFile(base + '/out/renamed-two.txt', 'utf8'));
 
 <h6>사용 예시: 조건부 추출</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[8,13,18]}
+```js {linenos=table,linenostart=1}
 const tar = require('archive/tar');
 const fs = require('fs');
 const base = '/tmp/tar-filter';

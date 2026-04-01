@@ -28,7 +28,7 @@ createServer([options][, connectionListener])
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3,5,6]}
+```js {linenos=table,linenostart=1}
 const net = require('net');
 
 const server = net.createServer((socket) => {
@@ -64,7 +64,7 @@ connect(options[, connectListener])
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[4,8]}
+```js {linenos=table,linenostart=1}
 const net = require('net');
 
 const client = net.createConnection({ port: 5650, host: '127.0.0.1' }, () => {
@@ -87,7 +87,7 @@ Utility functions to validate IP string values.
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3,4]}
+```js {linenos=table,linenostart=1}
 const net = require('net');
 console.println(net.isIP('127.0.0.1')); // 4
 console.println(net.isIPv4('127.0.0.1')); // true
@@ -122,7 +122,7 @@ TCP server object returned by `createServer()`.
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[5,9]}
+```js {linenos=table,linenostart=1}
 const net = require('net');
 const server = net.createServer();
 
@@ -188,7 +188,7 @@ TCP client/server connection object.
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[6,10,13]}
+```js {linenos=table,linenostart=1}
 const net = require('net');
 const client = net.connect(5650, '127.0.0.1');
 

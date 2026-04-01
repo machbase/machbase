@@ -38,6 +38,29 @@ new Client(options)
 | cleanStartOnInitialConnection      | Boolean    | `false` | MQTT v5 clean start on first connection |
 | connectTimeout                     | Number     | `0`     | Connect timeout in milliseconds |
 
+## Properties
+
+### config
+
+`client.config` exposes the parsed connection configuration used by the native MQTT client.
+
+Representative fields include:
+
+| Field | Type | Description |
+|:------|:-----|:------------|
+| `serverUrls` | Array | Parsed broker URL list |
+| `connectUsername` | String | Configured username |
+| `connectPassword` | byte data | Configured password as bytes |
+| `keepAlive` | Number | Keep alive interval |
+| `reconnectBackoff(n)` | Function | Reconnect delay calculator |
+| `cleanStartOnInitialConnection` | Boolean | MQTT v5 clean start flag |
+| `connectTimeout` | Number | Connect timeout |
+
+```js
+console.println(client.config.serverUrls);
+console.println(client.config.keepAlive);
+```
+
 <h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1}
@@ -351,6 +374,13 @@ Emitted when `close()` is called.
 ```js
 client.on('close', () => { ... })
 ```
+
+## Behavior notes
+
+- `Client` starts the broker connection attempt automatically from the constructor.
+- The JavaScript wrapper converts incoming binary payloads to `Buffer` when possible.
+- `msg.payloadText` is filled automatically for buffer payloads when a text representation is available.
+- MQTT v5 `correlationData` is exposed as a binary-safe `Buffer`.
 
 ## MQTT v5 write properties example
 

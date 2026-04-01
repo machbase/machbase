@@ -38,7 +38,7 @@ request(options[, callback])
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,4]}
+```js {linenos=table,linenostart=1}
 const http = require('http');
 const req = http.request('http://127.0.0.1:8080/hello');
 req.on('response', (res) => {
@@ -98,7 +98,7 @@ HTTP 상태 코드 맵입니다.
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[4,5]}
+```js {linenos=table,linenostart=1}
 const http = require('http');
 const req = http.request('http://127.0.0.1:8080/hello');
 req.setHeader('X-Test-Header', 'TestValue');
@@ -182,7 +182,7 @@ HTTP 응답 객체입니다.
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[4,5]}
+```js {linenos=table,linenostart=1}
 const http = require('http');
 http.get('http://127.0.0.1:8080/hello', (res) => {
   console.println(res.ok, res.statusCode);
@@ -226,7 +226,7 @@ new Server([options])
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3,4,5]}
+```js {linenos=table,linenostart=1}
 const http = require('http');
 const server = new http.Server({ network: 'tcp', address: '127.0.0.1:8080' });
 server.get('/hello/:name', (ctx) => {
@@ -265,7 +265,7 @@ server.serve();
 
 ### GET 요청 (callback)
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const http = require('http');
 
 http.get('http://127.0.0.1:8080/hello', (res) => {
@@ -276,7 +276,7 @@ http.get('http://127.0.0.1:8080/hello', (res) => {
 
 ### GET 요청 (event listener)
 
-```js {linenos=table,linenostart=1,hl_lines=[4]}
+```js {linenos=table,linenostart=1}
 const http = require('http');
 
 const req = http.get('http://127.0.0.1:8080/hello');
@@ -288,7 +288,7 @@ req.on('response', (res) => {
 
 ### 요청 헤더 설정/조회
 
-```js {linenos=table,linenostart=1,hl_lines=[4,5,6]}
+```js {linenos=table,linenostart=1}
 const http = require('http');
 
 const req = http.request('http://127.0.0.1:8080/hello');
@@ -300,7 +300,7 @@ req.end();
 
 ### 응답 헤더/본문 읽기
 
-```js {linenos=table,linenostart=1,hl_lines=[7,8,9]}
+```js {linenos=table,linenostart=1}
 const http = require('http');
 
 http.get('http://127.0.0.1:8080/hello', (res) => {
@@ -315,7 +315,7 @@ http.get('http://127.0.0.1:8080/hello', (res) => {
 
 ### POST JSON 요청
 
-```js {linenos=table,linenostart=1,hl_lines=[4,14]}
+```js {linenos=table,linenostart=1}
 const http = require('http');
 
 const req = http.request('http://127.0.0.1:8080/echo', {
@@ -342,7 +342,7 @@ req.end();
 
 ### 404 응답 처리
 
-```js {linenos=table,linenostart=1,hl_lines=[5]}
+```js {linenos=table,linenostart=1}
 const http = require('http');
 
 http.get('http://127.0.0.1:8080/notfound', (res) => {

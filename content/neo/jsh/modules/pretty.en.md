@@ -62,7 +62,7 @@ Table(config)
 
 <h6>Usage example: basic box table</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3,4,5]}
+```js {linenos=table,linenostart=1}
 const pretty = require('pretty');
 const tw = pretty.Table({ boxStyle: 'light' });
 tw.appendHeader(['Name', 'Age']);
@@ -84,7 +84,7 @@ Output:
 
 <h6>Usage example: floating-point precision</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,4,5]}
+```js {linenos=table,linenostart=1}
 const pretty = require('pretty');
 const tw = pretty.Table({ boxStyle: 'light', precision: 2 });
 tw.appendHeader(['Item', 'Price']);
@@ -106,7 +106,7 @@ Output:
 
 <h6>Usage example: time formatting</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,4,5]}
+```js {linenos=table,linenostart=1}
 const pretty = require('pretty');
 const tw = pretty.Table({ boxStyle: 'light', timeformat: 'DATETIME', tz: 'UTC' });
 tw.appendHeader(['Event', 'Time']);
@@ -132,7 +132,7 @@ You can also pass a custom Go-style time layout string.
 
 <h6>Usage example: box styles</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,4]}
+```js {linenos=table,linenostart=1}
 const pretty = require('pretty');
 for (const style of ['light', 'double', 'bold', 'rounded', 'compact']) {
 	const tw = pretty.Table({ boxStyle: style, rownum: false });
@@ -168,7 +168,7 @@ compact:
 
 <h6>Usage example: JSON output</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,5]}
+```js {linenos=table,linenostart=1}
 const pretty = require('pretty');
 const tw = pretty.Table({ format: 'json', rownum: false });
 tw.appendHeader(['ID', 'Status', 'Value']);
@@ -185,7 +185,7 @@ Output:
 
 <h6>Usage example: CSV output</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,5]}
+```js {linenos=table,linenostart=1}
 const pretty = require('pretty');
 const tw = pretty.Table({ format: 'csv', rownum: false });
 tw.appendHeader(['Name', 'Score']);
@@ -204,7 +204,7 @@ Bob,87
 
 <h6>Usage example: TSV output</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,5]}
+```js {linenos=table,linenostart=1}
 const pretty = require('pretty');
 const tw = pretty.Table({ format: 'tsv', rownum: false });
 tw.appendHeader(['Name', 'Score']);
@@ -223,7 +223,7 @@ Bob	87
 
 <h6>Usage example: NDJSON output</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,5]}
+```js {linenos=table,linenostart=1}
 const pretty = require('pretty');
 const tw = pretty.Table({ format: 'ndjson', rownum: false });
 tw.appendHeader(['Name', 'Score']);
@@ -241,7 +241,7 @@ Output:
 
 <h6>Usage example: Markdown output</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,5]}
+```js {linenos=table,linenostart=1}
 const pretty = require('pretty');
 const tw = pretty.Table({ format: 'md', rownum: false });
 tw.appendHeader(['Name', 'Score']);
@@ -261,7 +261,7 @@ Output:
 
 <h6>Usage example: non-printable string escaping</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,4]}
+```js {linenos=table,linenostart=1}
 const pretty = require('pretty');
 const tw = pretty.Table({ stringEscape: true, rownum: false });
 tw.appendHeader(['Value']);
@@ -283,7 +283,7 @@ MakeRow(size)
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+```js {linenos=table,linenostart=1}
 const pretty = require('pretty');
 const row = pretty.MakeRow(3);
 console.println(row.length);
@@ -314,7 +314,7 @@ A tracker accepts `message` and `total`, and supports `increment(n)`, `value()`,
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3,7,8]}
+```js {linenos=table,linenostart=1}
 const pretty = require('pretty');
 const pw = pretty.Progress({ showPercentage: true, showETA: true });
 const tracker = pw.tracker({ message: 'Processing', total: 100 });

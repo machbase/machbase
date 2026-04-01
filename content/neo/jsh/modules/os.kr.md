@@ -20,7 +20,7 @@ arch()
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const os = require('os');
 console.println(os.arch());
 ```
@@ -37,7 +37,7 @@ platform()
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const os = require('os');
 console.println(os.platform());
 ```
@@ -54,7 +54,7 @@ type()
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const os = require('os');
 console.println(os.type());
 ```
@@ -71,7 +71,7 @@ release()
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const os = require('os');
 console.println(os.release());
 ```
@@ -88,7 +88,7 @@ hostname()
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const os = require('os');
 console.println(os.hostname());
 ```
@@ -105,7 +105,7 @@ homedir()
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const os = require('os');
 console.println(os.homedir());
 ```
@@ -122,7 +122,7 @@ tmpdir()
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const os = require('os');
 console.println(os.tmpdir());
 ```
@@ -139,7 +139,7 @@ endianness()
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const os = require('os');
 console.println(os.endianness());
 ```
@@ -153,7 +153,7 @@ console.println(os.endianness());
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const os = require('os');
 console.println(JSON.stringify(os.EOL));
 ```
@@ -171,7 +171,7 @@ freemem()
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+```js {linenos=table,linenostart=1}
 const os = require('os');
 console.println('total:', os.totalmem());
 console.println('free :', os.freemem());
@@ -189,7 +189,7 @@ uptime()
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const os = require('os');
 console.println(os.uptime() >= 0);
 ```
@@ -206,7 +206,7 @@ bootTime()
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const os = require('os');
 console.println(os.bootTime() > 0);
 ```
@@ -223,7 +223,7 @@ loadavg()
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const os = require('os');
 const avg = os.loadavg();
 console.println(Array.isArray(avg), avg.length);
@@ -247,7 +247,7 @@ cpus()
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const os = require('os');
 const list = os.cpus();
 console.println(Array.isArray(list), list.length > 0);
@@ -268,7 +268,7 @@ cpuCounts(logical)
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+```js {linenos=table,linenostart=1}
 const os = require('os');
 console.println(os.cpuCounts(true));
 console.println(os.cpuCounts(false));
@@ -289,7 +289,7 @@ cpuPercent(intervalSec, perCPU)
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const os = require('os');
 console.println(Array.isArray(os.cpuPercent(0, true)));
 ```
@@ -314,7 +314,7 @@ networkInterfaces()
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const os = require('os');
 const ifaces = os.networkInterfaces();
 console.println(typeof ifaces);
@@ -339,7 +339,7 @@ hostInfo()
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const os = require('os');
 const info = os.hostInfo();
 console.println(typeof info.hostname, typeof info.uptime);
@@ -362,7 +362,7 @@ userInfo([options])
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const os = require('os');
 const user = os.userInfo();
 console.println(user.username, user.homedir);
@@ -380,7 +380,7 @@ diskPartitions([all])
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const os = require('os');
 const parts = os.diskPartitions();
 console.println(Array.isArray(parts), parts.length >= 0);
@@ -400,7 +400,7 @@ diskUsage(path)
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const os = require('os');
 const usage = os.diskUsage('.');
 console.println(typeof usage.total, typeof usage.usedPercent);
@@ -421,7 +421,7 @@ diskIOCounters([names])
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const os = require('os');
 const counters = os.diskIOCounters();
 console.println(typeof counters);
@@ -439,7 +439,7 @@ netProtoCounters([proto])
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const os = require('os');
 const counters = os.netProtoCounters();
 console.println(typeof counters);
@@ -456,7 +456,7 @@ console.println(typeof counters);
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3,4]}
+```js {linenos=table,linenostart=1}
 const os = require('os');
 
 console.println(typeof os.constants.signals.SIGINT);
@@ -494,7 +494,7 @@ JSH는 이를 가능한 한 interrupt 성격의 console control event로 전달�
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[4]}
+```js {linenos=table,linenostart=1}
 const os = require('os');
 const process = require('process');
 
@@ -518,7 +518,7 @@ Windows에서 `process.kill(pid, os.constants.signals.SIGINT)`는 best-effort �
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[4,8]}
+```js {linenos=table,linenostart=1}
 const os = require('os');
 const process = require('process');
 
@@ -546,7 +546,7 @@ process.kill(process.pid, os.constants.signals.SIGINT);
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+```js {linenos=table,linenostart=1}
 const os = require('os');
 console.println(os.constants.priority.PRIORITY_NORMAL);
 console.println(os.constants.priority.PRIORITY_HIGH);

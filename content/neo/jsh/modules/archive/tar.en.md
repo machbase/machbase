@@ -46,7 +46,7 @@ This form is useful for quick tests or for building an archive before writing it
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,6]}
+```js {linenos=table,linenostart=1}
 const tar = require('archive/tar');
 const archive = tar.tarSync([
 	{ name: 'alpha.txt', data: 'Alpha' },
@@ -55,7 +55,7 @@ const archive = tar.tarSync([
 console.println(archive.constructor.name);
 ```
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+```js {linenos=table,linenostart=1}
 const tar = require('archive/tar');
 const archive = tar.tarSync('hello tar');
 const entries = tar.untarSync(archive);
@@ -85,7 +85,7 @@ and `linkname`.
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[7,8,9]}
+```js {linenos=table,linenostart=1}
 const tar = require('archive/tar');
 const archive = tar.tarSync([
 	{ name: 'assets', isDir: true, type: 'dir' },
@@ -126,7 +126,7 @@ Use these wrappers when you want callback-based control flow without managing st
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3,4,5]}
+```js {linenos=table,linenostart=1}
 const tar = require('archive/tar');
 
 tar.tar('payload', function(err, archive) {
@@ -168,7 +168,7 @@ createUntar()
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[5,10,14,15]}
+```js {linenos=table,linenostart=1}
 const tar = require('archive/tar');
 const writer = tar.createTar();
 let archive = null;
@@ -276,7 +276,7 @@ extractAllTo(outputDir, overwrite, options)
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[7,8,9]}
+```js {linenos=table,linenostart=1}
 const tar = require('archive/tar');
 
 const t = new tar.Tar();
@@ -296,7 +296,7 @@ saved.extractAllTo('/tmp/out', {
 
 <h6>Usage example: create from files and extract again</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[8,9,12,14]}
+```js {linenos=table,linenostart=1}
 const fs = require('fs');
 const tar = require('archive/tar');
 const base = '/tmp/tar-files';
@@ -317,7 +317,7 @@ console.println(fs.readFile(base + '/out/renamed-two.txt', 'utf8'));
 
 <h6>Usage example: filter extraction</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[8,13,18]}
+```js {linenos=table,linenostart=1}
 const tar = require('archive/tar');
 const fs = require('fs');
 const base = '/tmp/tar-filter';

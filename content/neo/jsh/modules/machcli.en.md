@@ -29,7 +29,7 @@ new Client(config)
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const { Client } = require('machcli');
 const db = new Client({ host: '127.0.0.1', port: 5656, user: 'sys', password: 'manager' });
 ```
@@ -90,7 +90,7 @@ query(sql[, ...params])
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[12]}
+```js {linenos=table,linenostart=1}
 const { Client } = require('machcli');
 var db, conn, rows;
 const conf = {
@@ -165,7 +165,7 @@ append(tableName)
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[4,6]}
+```js {linenos=table,linenostart=1}
 const { Client } = require('machcli');
 const db = new Client({ host: '127.0.0.1', port: 5656, user: 'sys', password: 'manager' });
 const conn = db.connect();

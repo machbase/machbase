@@ -28,7 +28,7 @@ createServer([options][, connectionListener])
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3,5,6]}
+```js {linenos=table,linenostart=1}
 const net = require('net');
 
 const server = net.createServer((socket) => {
@@ -64,7 +64,7 @@ connect(options[, connectListener])
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[4,8]}
+```js {linenos=table,linenostart=1}
 const net = require('net');
 
 const client = net.createConnection({ port: 5650, host: '127.0.0.1' }, () => {
@@ -87,7 +87,7 @@ IP 문자열 값 검증을 위한 유틸리티 함수입니다.
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3,4]}
+```js {linenos=table,linenostart=1}
 const net = require('net');
 console.println(net.isIP('127.0.0.1')); // 4
 console.println(net.isIPv4('127.0.0.1')); // true
@@ -122,7 +122,7 @@ console.println(net.isIPv6('::1')); // true
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[5,9]}
+```js {linenos=table,linenostart=1}
 const net = require('net');
 const server = net.createServer();
 
@@ -188,7 +188,7 @@ TCP 클라이언트/서버 연결 객체입니다.
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[6,10,13]}
+```js {linenos=table,linenostart=1}
 const net = require('net');
 const client = net.connect(5650, '127.0.0.1');
 

@@ -46,7 +46,7 @@ This form is useful for quick tests or for building an archive before writing it
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,6]}
+```js {linenos=table,linenostart=1}
 const zip = require('archive/zip');
 const archive = zip.zipSync([
 	{ name: 'alpha.txt', data: 'Alpha' },
@@ -55,7 +55,7 @@ const archive = zip.zipSync([
 console.println(archive.constructor.name);
 ```
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+```js {linenos=table,linenostart=1}
 const zip = require('archive/zip');
 const archive = zip.zipSync('hello zip');
 const entries = zip.unzipSync(archive);
@@ -85,7 +85,7 @@ and `modified`.
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[6,7,8]}
+```js {linenos=table,linenostart=1}
 const zip = require('archive/zip');
 const archive = zip.zipSync([
 	{ name: 'one.txt', data: 'One' },
@@ -125,7 +125,7 @@ Use these wrappers when you want callback-based control flow without managing st
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3,4,5]}
+```js {linenos=table,linenostart=1}
 const zip = require('archive/zip');
 
 zip.zip('payload', function(err, archive) {
@@ -167,7 +167,7 @@ createUnzip()
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[5,10,14,15]}
+```js {linenos=table,linenostart=1}
 const zip = require('archive/zip');
 const writer = zip.createZip();
 let archive = null;
@@ -271,7 +271,7 @@ extractAllTo(outputDir, overwrite, options)
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[6,9,10]}
+```js {linenos=table,linenostart=1}
 const zip = require('archive/zip');
 
 const z = new zip.Zip();
@@ -290,7 +290,7 @@ saved.extractAllTo('/tmp/out', {
 
 <h6>Usage example: create from files and extract again</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[8,9,12,14]}
+```js {linenos=table,linenostart=1}
 const fs = require('fs');
 const zip = require('archive/zip');
 const base = '/tmp/zip-files';
@@ -311,7 +311,7 @@ console.println(fs.readFile(base + '/out/renamed-two.txt', 'utf8'));
 
 <h6>Usage example: filter extraction</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[8,13,18]}
+```js {linenos=table,linenostart=1}
 const zip = require('archive/zip');
 const fs = require('fs');
 const base = '/tmp/zip-filter';

@@ -20,7 +20,7 @@ addShutdownHook(()=>{})
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 process.addShutdownHook(()=>{
     console.println("shutdown hook called.");
@@ -39,7 +39,7 @@ console.println("running...")
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.arch);
 ```
@@ -54,7 +54,7 @@ console.println(process.arch);
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3,4,5]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println('argv[0]:', process.argv[0]);
 console.println('argv[1]:', process.argv[1]);
@@ -76,7 +76,7 @@ chdir(path)
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3,4]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println('before:', process.cwd());
 process.chdir('/lib');
@@ -96,7 +96,7 @@ CPU 사용량 정보를 반환합니다.
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 const cpu = process.cpuUsage();
 console.println(typeof cpu.user, typeof cpu.system);
@@ -108,7 +108,7 @@ console.println(typeof cpu.user, typeof cpu.system);
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.cwd());
 ```
@@ -125,7 +125,7 @@ exit([code])
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 process.exit(-1);
 ```
@@ -145,7 +145,7 @@ which(command)
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.which('echo')); // 예: /sbin/echo.js
 ```
@@ -162,7 +162,7 @@ expand(value)
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.expand('$HOME/file.txt'));
 console.println(process.expand('${HOME}/../lib/file.txt'));
@@ -174,7 +174,7 @@ JSH 런타임 환경 객체입니다.
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.env.get('HOME'));
 ```
@@ -192,7 +192,7 @@ exec(command, ...args)
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 const path = process.which('echo');
 const code = process.exec(path, 'hello from exec');
@@ -205,7 +205,7 @@ console.println('exit code:', code);
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.execPath);
 ```
@@ -237,7 +237,7 @@ hrtime([previous])
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 const start = process.hrtime();
 const diff = process.hrtime([start[0], start[1]]);
@@ -298,7 +298,7 @@ kill(pid[, signal])
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3,4]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.kill(12345, 'SIGKILL'));
 console.println(process.kill(12345, 'term'));
@@ -316,7 +316,7 @@ Windows가 control event를 라우팅할 수 없으면 `process.kill()`은 `Erro
 
 <h6>프로세스 존재 여부 확인 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.kill(process.pid, 0));
 ```
@@ -337,7 +337,7 @@ console.println(process.kill(process.pid, 0));
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 const mem = process.memoryUsage();
 console.println(typeof mem.rss, typeof mem.heapUsed);
@@ -357,7 +357,7 @@ nextTick(callback, ...args)
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println('main');
 process.nextTick((a, b) => console.println('tick:', a, b), 'first', 'second');
@@ -369,7 +369,7 @@ process.nextTick((a, b) => console.println('tick:', a, b), 'first', 'second');
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 const now = process.now();
 console.println(typeof now); // object
@@ -382,7 +382,7 @@ console.println(typeof now); // object
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.pid);
 ```
@@ -394,7 +394,7 @@ console.println(process.pid);
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.platform);
 ```
@@ -406,7 +406,7 @@ console.println(process.platform);
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.ppid);
 ```
@@ -445,7 +445,7 @@ console.println(process.ppid);
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3,4]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 
 process.on('sigint', () => {
@@ -467,7 +467,7 @@ process.addListener('sigquit', handler);
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 process.stdout.write('Enter text: ');
 const text = process.stdin.readLine();
@@ -484,7 +484,7 @@ console.println('Your input:', text);
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.title);
 ```
@@ -495,7 +495,7 @@ console.println(process.title);
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 const up = process.uptime();
 console.println('uptime >= 0:', up >= 0);
@@ -507,7 +507,7 @@ JSH 런타임 버전을 식별하는 문자열입니다.
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.version);
 ```
@@ -521,7 +521,7 @@ console.println(process.version);
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println('jsh:', process.versions.jsh);
 console.println('go :', process.versions.go);
@@ -541,7 +541,7 @@ which(command)
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.which('echo')); // 예: /sbin/echo.js
 ```
@@ -560,7 +560,7 @@ dispatchEvent(target, eventName, ...args)
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 process.on('hello', (msg) => console.println(msg));
 const ok = process.dispatchEvent(process, 'hello', 'from dispatchEvent');
@@ -579,7 +579,7 @@ dumpStack(depth)
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 function trace() {
   process.dumpStack(5);
@@ -599,7 +599,7 @@ expand(value)
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+```js {linenos=table,linenostart=1}
 const process = require('process');
 console.println(process.expand('$HOME/file.txt'));
 console.println(process.expand('${HOME}/../lib/file.txt'));

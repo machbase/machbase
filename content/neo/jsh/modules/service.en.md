@@ -41,7 +41,7 @@ If neither `SERVICE_CONTROLLER` nor `options.controller` is available, client cr
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const service = require('service');
 const client = service.createClient({ timeout: 1000 });
 ```
@@ -50,7 +50,7 @@ This example assumes `SERVICE_CONTROLLER` is already set in the runtime environm
 
 Only pass `controller` explicitly when you need to override that default.
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const service = require('service');
 const client = service.createClient({
     controller: 'unix:///tmp/example-service-controller.sock',
@@ -70,7 +70,7 @@ call(method[, params][, options], callback)
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const service = require('service');
 
 service.call('service.list', null, (err, result) => {
@@ -108,7 +108,7 @@ The client returned by `createClient()`.
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[4,8]}
+```js {linenos=table,linenostart=1}
 const service = require('service');
 const client = service.createClient();
 
@@ -136,7 +136,7 @@ client.runtime.get(name, callback)
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3,7]}
+```js {linenos=table,linenostart=1}
 const service = require('service');
 
 service.runtime.get('alpha', (err, runtime) => {
@@ -164,7 +164,7 @@ client.details.get(name[, key], callback)
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3,7]}
+```js {linenos=table,linenostart=1}
 const service = require('service');
 
 service.details.get('alpha', 'health', (err, runtime) => {
@@ -217,7 +217,7 @@ client.details.set(name, key, value, callback)
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const service = require('service');
 
 service.details.set('alpha', 'health', 'ok', (err, runtime) => {
@@ -256,7 +256,7 @@ parseController(value)
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const service = require('service');
 const endpoint = service.parseController('unix:///tmp/example-service-controller.sock');
 console.println(endpoint.network, endpoint.path);
@@ -277,7 +277,7 @@ resolveController([value])
 
 <h6>Behavior example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+```js {linenos=table,linenostart=1}
 const service = require('service');
 console.println(service.resolveController());
 console.println(service.resolveController('unix:///tmp/example-service-controller.sock'));

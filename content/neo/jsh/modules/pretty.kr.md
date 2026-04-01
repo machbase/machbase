@@ -61,7 +61,7 @@ Table(config)
 
 <h6>사용 예시: 기본 box 테이블</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3,4,5]}
+```js {linenos=table,linenostart=1}
 const pretty = require('pretty');
 const tw = pretty.Table({ boxStyle: 'light' });
 tw.appendHeader(['Name', 'Age']);
@@ -83,7 +83,7 @@ console.println(tw.render());
 
 <h6>사용 예시: 부동소수점 반올림</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,4,5]}
+```js {linenos=table,linenostart=1}
 const pretty = require('pretty');
 const tw = pretty.Table({ boxStyle: 'light', precision: 2 });
 tw.appendHeader(['Item', 'Price']);
@@ -105,7 +105,7 @@ console.println(tw.render());
 
 <h6>사용 예시: 시간 포맷</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,4,5]}
+```js {linenos=table,linenostart=1}
 const pretty = require('pretty');
 const tw = pretty.Table({ boxStyle: 'light', timeformat: 'DATETIME', tz: 'UTC' });
 tw.appendHeader(['Event', 'Time']);
@@ -131,7 +131,7 @@ console.println(tw.render());
 
 <h6>사용 예시: box 스타일</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,4]}
+```js {linenos=table,linenostart=1}
 const pretty = require('pretty');
 for (const style of ['light', 'double', 'bold', 'rounded', 'compact']) {
 	const tw = pretty.Table({ boxStyle: style, rownum: false });
@@ -167,7 +167,7 @@ compact:
 
 <h6>사용 예시: JSON 출력</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,5]}
+```js {linenos=table,linenostart=1}
 const pretty = require('pretty');
 const tw = pretty.Table({ format: 'json', rownum: false });
 tw.appendHeader(['ID', 'Status', 'Value']);
@@ -184,7 +184,7 @@ console.println(tw.render());
 
 <h6>사용 예시: CSV 출력</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,5]}
+```js {linenos=table,linenostart=1}
 const pretty = require('pretty');
 const tw = pretty.Table({ format: 'csv', rownum: false });
 tw.appendHeader(['Name', 'Score']);
@@ -203,7 +203,7 @@ Bob,87
 
 <h6>사용 예시: TSV 출력</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,5]}
+```js {linenos=table,linenostart=1}
 const pretty = require('pretty');
 const tw = pretty.Table({ format: 'tsv', rownum: false });
 tw.appendHeader(['Name', 'Score']);
@@ -222,7 +222,7 @@ Bob	87
 
 <h6>사용 예시: NDJSON 출력</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,5]}
+```js {linenos=table,linenostart=1}
 const pretty = require('pretty');
 const tw = pretty.Table({ format: 'ndjson', rownum: false });
 tw.appendHeader(['Name', 'Score']);
@@ -240,7 +240,7 @@ console.println(tw.render());
 
 <h6>사용 예시: Markdown 출력</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,5]}
+```js {linenos=table,linenostart=1}
 const pretty = require('pretty');
 const tw = pretty.Table({ format: 'md', rownum: false });
 tw.appendHeader(['Name', 'Score']);
@@ -260,7 +260,7 @@ console.println(tw.render());
 
 <h6>사용 예시: 비가시 문자 이스케이프</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,4]}
+```js {linenos=table,linenostart=1}
 const pretty = require('pretty');
 const tw = pretty.Table({ stringEscape: true, rownum: false });
 tw.appendHeader(['Value']);
@@ -282,7 +282,7 @@ MakeRow(size)
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+```js {linenos=table,linenostart=1}
 const pretty = require('pretty');
 const row = pretty.MakeRow(3);
 console.println(row.length);
@@ -312,7 +312,7 @@ tracker는 `message`, `total`을 받으며, `increment(n)`, `value()`, `markAsDo
 
 <h6>사용 예시</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3,7,8]}
+```js {linenos=table,linenostart=1}
 const pretty = require('pretty');
 const pw = pretty.Progress({ showPercentage: true, showETA: true });
 const tracker = pw.tracker({ message: 'Processing', total: 100 });

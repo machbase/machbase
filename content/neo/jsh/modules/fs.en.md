@@ -20,7 +20,7 @@ readFile(path[, options])
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const fs = require('fs');
 const content = fs.readFile('/lib/fs.js', 'utf8');
 console.println(content.length);
@@ -38,7 +38,7 @@ writeFile(path, data[, options])
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const fs = require('fs');
 fs.writeFile('/work/test.txt', 'Hello', 'utf8');
 ```
@@ -55,7 +55,7 @@ appendFile(path, data[, options])
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3]}
+```js {linenos=table,linenostart=1}
 const fs = require('fs');
 fs.writeFile('/work/append.txt', 'Line 1\n', 'utf8');
 fs.appendFile('/work/append.txt', 'Line 2\n', 'utf8');
@@ -73,7 +73,7 @@ countLines(path)
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const fs = require('fs');
 console.println(fs.countLines('/work/append.txt'));
 ```
@@ -90,7 +90,7 @@ exists(path)
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+```js {linenos=table,linenostart=1}
 const fs = require('fs');
 console.println(fs.exists('/work/test.txt'));
 console.println(fs.exists('/work/not-found.txt'));
@@ -114,7 +114,7 @@ stat(path)
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[3,4]}
+```js {linenos=table,linenostart=1}
 const fs = require('fs');
 const st = fs.stat('/work/test.txt');
 console.println(st.isFile(), st.size);
@@ -149,7 +149,7 @@ readdir(path[, options])
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+```js {linenos=table,linenostart=1}
 const fs = require('fs');
 const names = fs.readdir('/lib');
 const entries = fs.readdir('/lib', { withFileTypes: true });
@@ -168,7 +168,7 @@ mkdir(path[, options])
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const fs = require('fs');
 fs.mkdir('/work/a/b/c', { recursive: true });
 ```
@@ -398,7 +398,7 @@ createWriteStream(path[, options])
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+```js {linenos=table,linenostart=1}
 const fs = require('fs');
 const rs = fs.createReadStream('/work/in.txt', { encoding: 'utf8' });
 const ws = fs.createWriteStream('/work/out.txt', { encoding: 'utf8' });
@@ -418,7 +418,7 @@ arch()
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2,3]}
+```js {linenos=table,linenostart=1}
 const fs = require('fs');
 console.println(fs.platform());
 console.println(fs.arch());
@@ -436,7 +436,7 @@ Constant object for access, copy, and open flags.
 
 <h6>Usage example</h6>
 
-```js {linenos=table,linenostart=1,hl_lines=[2]}
+```js {linenos=table,linenostart=1}
 const fs = require('fs');
 fs.access('/work/test.txt', fs.constants.F_OK);
 ```
