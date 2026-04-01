@@ -19,14 +19,16 @@ The service controller address is usually taken from the `SERVICE_CONTROLLER` en
 The controller may listen on a random address for each run, so it is usually not something you hardcode in an application.
 Use `options.controller` only when you already know an explicit controller address or intentionally want to talk to a different controller.
 
-## createClient()
+## Client
 
-Creates a `Client` instance that talks to the service controller.
+`Client` is the main service controller client type.
+
+Create it directly with `new service.Client(...)` when you want to keep a reusable client instance.
 
 <h6>Syntax</h6>
 
 ```js
-createClient([options])
+new Client([options])
 ```
 
 <h6>Options</h6>
@@ -43,7 +45,7 @@ If neither `SERVICE_CONTROLLER` nor `options.controller` is available, client cr
 
 ```js {linenos=table,linenostart=1}
 const service = require('service');
-const client = service.createClient({ timeout: 1000 });
+const client = new service.Client({ timeout: 1000 });
 ```
 
 This example assumes `SERVICE_CONTROLLER` is already set in the runtime environment.
@@ -52,39 +54,11 @@ Only pass `controller` explicitly when you need to override that default.
 
 ```js {linenos=table,linenostart=1}
 const service = require('service');
-const client = service.createClient({
+const client = new service.Client({
     controller: 'unix:///tmp/example-service-controller.sock',
     timeout: 1000,
 });
 ```
-
-## call()
-
-Calls an arbitrary service controller RPC method directly.
-
-<h6>Syntax</h6>
-
-```js
-call(method[, params][, options], callback)
-```
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1}
-const service = require('service');
-
-service.call('service.list', null, (err, result) => {
-    if (err) {
-        console.println(err.message);
-        return;
-    }
-    console.println(result.length);
-});
-```
-
-## Client
-
-The client returned by `createClient()`.
 
 <h6>Main properties</h6>
 
@@ -96,8 +70,7 @@ The client returned by `createClient()`.
 **Client methods**
 
 - `call(method[, params], callback)`
-- `list(callback)`
-- `get(name, callback)`
+- `status([name], callback)`
 - `read(callback)`
 - `update(callback)`
 - `reload(callback)`
@@ -110,15 +83,174 @@ The client returned by `createClient()`.
 
 ```js {linenos=table,linenostart=1}
 const service = require('service');
-const client = service.createClient();
+const client = new service.Client();
 
-client.list((err, services) => {
+client.status((err, services) => {
     if (err) {
         console.println(err.message);
         return;
     }
     console.println('count=', services.length);
 });
+```
+
+## call()
+
+Calls an arbitrary service controller RPC method directly.
+
+<h6>Syntax</h6>
+
+```js
+client.call(method[, params], callback)
+```
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1}
+const service = require('service');
+const client = new service.Client();
+
+client.call('service.list', null, (err, result) => {
+    if (err) {
+        console.println(err.message);
+        return;
+    }
+    console.println(result.length);
+});
+```
+
+## status()
+
+Gets the current service status.
+
+- If `name` is omitted, it returns the service list snapshot.
+- If `name` is specified, it returns the snapshot of a single service.
+- This method matches the `servicectl status [service_name]` command shape.
+
+<h6>Syntax</h6>
+
+```js
+client.status([name], callback)
+```
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1}
+const service = require('service');
+const client = new service.Client();
+
+client.status((err, services) => {
+    if (err) {
+        console.println(err.message);
+        return;
+    }
+    console.println('count=', services.length);
+});
+
+client.status('alpha', (err, snapshot) => {
+    if (err) {
+        console.println(err.message);
+        return;
+    }
+    console.println(snapshot.status);
+});
+```
+
+## read()
+
+Reads the service config directory and returns the latest reread snapshot.
+
+<h6>Syntax</h6>
+
+```js
+client.read(callback)
+```
+
+## update()
+
+Applies the current reread snapshot and returns the update result.
+
+- `update()` applies only the current reread delta.
+- It stops, starts, adds, or removes only the services affected by the reread result.
+
+<h6>Syntax</h6>
+
+```js
+client.update(callback)
+```
+
+## reload()
+
+Reads configs and immediately applies the reload result in one call.
+
+- Unlike `update()`, `reload()` first stops every currently running service.
+- After that, it starts only services whose config is enabled.
+- This means services that were running before `reload()` are not restarted unless they are enabled in the current config.
+
+<h6>Syntax</h6>
+
+```js
+client.reload(callback)
+```
+
+## install()
+
+Installs a service from a config object and returns the installed service snapshot.
+
+<h6>Syntax</h6>
+
+```js
+client.install(config, callback)
+```
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1}
+const service = require('service');
+const client = new service.Client();
+
+client.install({
+    name: 'alpha',
+    enable: false,
+    executable: 'echo',
+    args: ['hello'],
+}, (err, snapshot) => {
+    if (err) {
+        console.println(err.message);
+        return;
+    }
+    console.println(snapshot.config.name, snapshot.status);
+});
+```
+
+## uninstall()
+
+Uninstalls a service and returns `true` on success.
+
+<h6>Syntax</h6>
+
+```js
+client.uninstall(name, callback)
+```
+
+## start()
+
+Starts a service and returns the updated service snapshot.
+
+<h6>Syntax</h6>
+
+```js
+client.start(name, callback)
+```
+
+## stop()
+
+Stops a service and returns the updated service snapshot.
+
+<h6>Syntax</h6>
+
+```js
+client.stop(name, callback)
 ```
 
 ## runtime.get()
@@ -130,7 +262,6 @@ Gets the runtime snapshot of a service.
 <h6>Syntax</h6>
 
 ```js
-runtime.get(name[, options], callback)
 client.runtime.get(name, callback)
 ```
 
@@ -138,8 +269,9 @@ client.runtime.get(name, callback)
 
 ```js {linenos=table,linenostart=1}
 const service = require('service');
+const client = new service.Client();
 
-service.runtime.get('alpha', (err, runtime) => {
+client.runtime.get('alpha', (err, runtime) => {
     if (err) {
         console.println(err.message);
         return;
@@ -158,7 +290,6 @@ Gets service detail values.
 <h6>Syntax</h6>
 
 ```js
-details.get(name[, key][, options], callback)
 client.details.get(name[, key], callback)
 ```
 
@@ -166,8 +297,9 @@ client.details.get(name[, key], callback)
 
 ```js {linenos=table,linenostart=1}
 const service = require('service');
+const client = new service.Client();
 
-service.details.get('alpha', 'health', (err, runtime) => {
+client.details.get('alpha', 'health', (err, runtime) => {
     if (err) {
         console.println(err.message);
         return;
@@ -185,7 +317,6 @@ Adds a new detail key/value pair.
 <h6>Syntax</h6>
 
 ```js
-details.add(name, key, value[, options], callback)
 client.details.add(name, key, value, callback)
 ```
 
@@ -198,7 +329,6 @@ Updates an existing detail key/value pair.
 <h6>Syntax</h6>
 
 ```js
-details.update(name, key, value[, options], callback)
 client.details.update(name, key, value, callback)
 ```
 
@@ -211,7 +341,6 @@ Sets a detail key/value pair.
 <h6>Syntax</h6>
 
 ```js
-details.set(name, key, value[, options], callback)
 client.details.set(name, key, value, callback)
 ```
 
@@ -219,8 +348,9 @@ client.details.set(name, key, value, callback)
 
 ```js {linenos=table,linenostart=1}
 const service = require('service');
+const client = new service.Client();
 
-service.details.set('alpha', 'health', 'ok', (err, runtime) => {
+client.details.set('alpha', 'health', 'ok', (err, runtime) => {
     if (err) {
         console.println(err.message);
         return;
@@ -238,28 +368,7 @@ Deletes a detail key.
 <h6>Syntax</h6>
 
 ```js
-details.delete(name, key[, options], callback)
 client.details.delete(name, key, callback)
-```
-
-## parseController()
-
-Parses a controller address string.
-
-- Supported formats: `host:port`, `tcp://host:port`, `unix://path`
-
-<h6>Syntax</h6>
-
-```js
-parseController(value)
-```
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1}
-const service = require('service');
-const endpoint = service.parseController('unix:///tmp/example-service-controller.sock');
-console.println(endpoint.network, endpoint.path);
 ```
 
 ## resolveController()
@@ -286,9 +395,7 @@ console.println(service.resolveController('unix:///tmp/example-service-controlle
 ## Behavior notes
 
 - All APIs use a callback-based asynchronous style.
-- Promise / `await` is not used.
 - Connection failures, timeouts, and RPC errors are returned as the first callback argument.
 - While a service RPC is pending, the module keeps the request alive internally so that a short top-level script does not exit before the callback runs.
 - The keepalive window follows the effective `timeout` value and is released when the request completes, fails, or times out.
-- `createClient()`, `call()`, `runtime.get()`, and `details.*()` use `SERVICE_CONTROLLER` by default when `options.controller` is omitted.
-- Top-level helpers such as `service.details.get(...)` create a client internally for each call.
+- `new Client()` uses `SERVICE_CONTROLLER` by default when `options.controller` is omitted.

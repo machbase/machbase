@@ -19,14 +19,16 @@ service controller 주소는 보통 shell/session이 설정한 `SERVICE_CONTROLL
 controller는 실행할 때마다 random 주소로 열릴 수 있으므로 일반적으로는 주소를 하드코딩하지 않습니다.
 별도의 controller 주소를 이미 알고 있거나 명시적으로 다른 controller에 연결해야 하는 경우에만 `options.controller`를 사용합니다.
 
-## createClient()
+## Client
 
-service controller와 통신하는 `Client` 인스턴스를 생성합니다.
+`Client`는 service controller와 통신하는 기본 클라이언트 타입입니다.
+
+재사용할 클라이언트 인스턴스가 필요하면 `new service.Client(...)` 형태를 기본으로 사용하는 것이 좋습니다.
 
 <h6>사용 형식</h6>
 
 ```js
-createClient([options])
+new Client([options])
 ```
 
 <h6>옵션</h6>
@@ -43,7 +45,7 @@ createClient([options])
 
 ```js {linenos=table,linenostart=1}
 const service = require('service');
-const client = service.createClient({ timeout: 1000 });
+const client = new service.Client({ timeout: 1000 });
 ```
 
 위 예시는 `SERVICE_CONTROLLER` 환경 변수가 이미 설정되어 있다고 가정합니다.
@@ -52,39 +54,11 @@ const client = service.createClient({ timeout: 1000 });
 
 ```js {linenos=table,linenostart=1}
 const service = require('service');
-const client = service.createClient({
+const client = new service.Client({
     controller: 'unix:///tmp/example-service-controller.sock',
     timeout: 1000,
 });
 ```
-
-## call()
-
-임의의 service controller RPC 메서드를 직접 호출합니다.
-
-<h6>사용 형식</h6>
-
-```js
-call(method[, params][, options], callback)
-```
-
-<h6>사용 예시</h6>
-
-```js {linenos=table,linenostart=1}
-const service = require('service');
-
-service.call('service.list', null, (err, result) => {
-    if (err) {
-        console.println(err.message);
-        return;
-    }
-    console.println(result.length);
-});
-```
-
-## Client
-
-`createClient()`가 반환하는 service controller 클라이언트입니다.
 
 <h6>주요 프로퍼티</h6>
 
@@ -96,8 +70,7 @@ service.call('service.list', null, (err, result) => {
 **Client 메서드**
 
 - `call(method[, params], callback)`
-- `list(callback)`
-- `get(name, callback)`
+- `status([name], callback)`
 - `read(callback)`
 - `update(callback)`
 - `reload(callback)`
@@ -110,15 +83,174 @@ service.call('service.list', null, (err, result) => {
 
 ```js {linenos=table,linenostart=1}
 const service = require('service');
-const client = service.createClient();
+const client = new service.Client();
 
-client.list((err, services) => {
+client.status((err, services) => {
     if (err) {
         console.println(err.message);
         return;
     }
     console.println('count=', services.length);
 });
+```
+
+## call()
+
+임의의 service controller RPC 메서드를 직접 호출합니다.
+
+<h6>사용 형식</h6>
+
+```js
+client.call(method[, params], callback)
+```
+
+<h6>사용 예시</h6>
+
+```js {linenos=table,linenostart=1}
+const service = require('service');
+const client = new service.Client();
+
+client.call('service.list', null, (err, result) => {
+    if (err) {
+        console.println(err.message);
+        return;
+    }
+    console.println(result.length);
+});
+```
+
+## status()
+
+현재 서비스 상태를 조회합니다.
+
+- `name`을 생략하면 서비스 목록 snapshot을 반환합니다.
+- `name`을 지정하면 단일 서비스 snapshot을 반환합니다.
+- 이 메서드는 `servicectl status [service_name]` 명령 형태에 맞춰져 있습니다.
+
+<h6>사용 형식</h6>
+
+```js
+client.status([name], callback)
+```
+
+<h6>사용 예시</h6>
+
+```js {linenos=table,linenostart=1}
+const service = require('service');
+const client = new service.Client();
+
+client.status((err, services) => {
+    if (err) {
+        console.println(err.message);
+        return;
+    }
+    console.println('count=', services.length);
+});
+
+client.status('alpha', (err, snapshot) => {
+    if (err) {
+        console.println(err.message);
+        return;
+    }
+    console.println(snapshot.status);
+});
+```
+
+## read()
+
+service config directory를 다시 읽고 최신 reread snapshot을 반환합니다.
+
+<h6>사용 형식</h6>
+
+```js
+client.read(callback)
+```
+
+## update()
+
+현재 reread snapshot을 적용하고 update 결과를 반환합니다.
+
+- `update()`는 현재 reread 결과에 포함된 차이만 적용합니다.
+- reread 결과에 영향을 받은 서비스만 stop, start, add, remove 합니다.
+
+<h6>사용 형식</h6>
+
+```js
+client.update(callback)
+```
+
+## reload()
+
+config를 다시 읽고 그 결과를 바로 적용합니다.
+
+- `reload()`는 `update()`와 달리 현재 실행 중인 서비스를 먼저 모두 종료합니다.
+- 그 다음 현재 config에서 `enable` 된 서비스만 다시 시작합니다.
+- 따라서 `reload()` 이전에 실행 중이던 서비스라도 현재 config에서 `enable` 되어 있지 않으면 다시 시작되지 않습니다.
+
+<h6>사용 형식</h6>
+
+```js
+client.reload(callback)
+```
+
+## install()
+
+config object로 서비스를 설치하고 설치된 service snapshot을 반환합니다.
+
+<h6>사용 형식</h6>
+
+```js
+client.install(config, callback)
+```
+
+<h6>사용 예시</h6>
+
+```js {linenos=table,linenostart=1}
+const service = require('service');
+const client = new service.Client();
+
+client.install({
+    name: 'alpha',
+    enable: false,
+    executable: 'echo',
+    args: ['hello'],
+}, (err, snapshot) => {
+    if (err) {
+        console.println(err.message);
+        return;
+    }
+    console.println(snapshot.config.name, snapshot.status);
+});
+```
+
+## uninstall()
+
+서비스를 제거하고 성공 시 `true`를 반환합니다.
+
+<h6>사용 형식</h6>
+
+```js
+client.uninstall(name, callback)
+```
+
+## start()
+
+서비스를 시작하고 갱신된 service snapshot을 반환합니다.
+
+<h6>사용 형식</h6>
+
+```js
+client.start(name, callback)
+```
+
+## stop()
+
+서비스를 중지하고 갱신된 service snapshot을 반환합니다.
+
+<h6>사용 형식</h6>
+
+```js
+client.stop(name, callback)
 ```
 
 ## runtime.get()
@@ -130,7 +262,6 @@ client.list((err, services) => {
 <h6>사용 형식</h6>
 
 ```js
-runtime.get(name[, options], callback)
 client.runtime.get(name, callback)
 ```
 
@@ -138,8 +269,9 @@ client.runtime.get(name, callback)
 
 ```js {linenos=table,linenostart=1}
 const service = require('service');
+const client = new service.Client();
 
-service.runtime.get('alpha', (err, runtime) => {
+client.runtime.get('alpha', (err, runtime) => {
     if (err) {
         console.println(err.message);
         return;
@@ -158,7 +290,6 @@ service.runtime.get('alpha', (err, runtime) => {
 <h6>사용 형식</h6>
 
 ```js
-details.get(name[, key][, options], callback)
 client.details.get(name[, key], callback)
 ```
 
@@ -166,8 +297,9 @@ client.details.get(name[, key], callback)
 
 ```js {linenos=table,linenostart=1}
 const service = require('service');
+const client = new service.Client();
 
-service.details.get('alpha', 'health', (err, runtime) => {
+client.details.get('alpha', 'health', (err, runtime) => {
     if (err) {
         console.println(err.message);
         return;
@@ -185,7 +317,6 @@ service.details.get('alpha', 'health', (err, runtime) => {
 <h6>사용 형식</h6>
 
 ```js
-details.add(name, key, value[, options], callback)
 client.details.add(name, key, value, callback)
 ```
 
@@ -198,7 +329,6 @@ client.details.add(name, key, value, callback)
 <h6>사용 형식</h6>
 
 ```js
-details.update(name, key, value[, options], callback)
 client.details.update(name, key, value, callback)
 ```
 
@@ -211,7 +341,6 @@ detail key/value를 설정합니다.
 <h6>사용 형식</h6>
 
 ```js
-details.set(name, key, value[, options], callback)
 client.details.set(name, key, value, callback)
 ```
 
@@ -219,8 +348,9 @@ client.details.set(name, key, value, callback)
 
 ```js {linenos=table,linenostart=1}
 const service = require('service');
+const client = new service.Client();
 
-service.details.set('alpha', 'health', 'ok', (err, runtime) => {
+client.details.set('alpha', 'health', 'ok', (err, runtime) => {
     if (err) {
         console.println(err.message);
         return;
@@ -238,28 +368,7 @@ detail key를 제거합니다.
 <h6>사용 형식</h6>
 
 ```js
-details.delete(name, key[, options], callback)
 client.details.delete(name, key, callback)
-```
-
-## parseController()
-
-controller 주소 문자열을 파싱합니다.
-
-- 지원 형식: `host:port`, `tcp://host:port`, `unix://path`
-
-<h6>사용 형식</h6>
-
-```js
-parseController(value)
-```
-
-<h6>사용 예시</h6>
-
-```js {linenos=table,linenostart=1}
-const service = require('service');
-const endpoint = service.parseController('unix:///tmp/example-service-controller.sock');
-console.println(endpoint.network, endpoint.path);
 ```
 
 ## resolveController()
@@ -286,9 +395,7 @@ console.println(service.resolveController('unix:///tmp/example-service-controlle
 ## 동작 참고
 
 - 모든 API는 callback 기반 비동기 스타일입니다.
-- Promise / `await`는 사용하지 않습니다.
 - controller 연결 실패, timeout, RPC 오류는 callback의 첫 번째 인자로 전달됩니다.
 - service RPC가 진행 중인 동안에는 짧은 top-level script가 callback 전에 종료되지 않도록 module이 내부적으로 request lifetime을 유지합니다.
 - 이 keepalive 구간은 실제 `timeout` 값에 맞춰 동작하고, 요청이 성공, 실패, timeout 중 하나로 정리되면 바로 해제됩니다.
-- `createClient()`, `call()`, `runtime.get()`, `details.*()`는 `options.controller`를 생략하면 `SERVICE_CONTROLLER`를 기본으로 사용합니다.
-- top-level helper(`service.details.get(...)`)는 내부적으로 매 호출마다 client를 생성합니다.
+- `new Client()`는 `options.controller`를 생략하면 `SERVICE_CONTROLLER`를 기본으로 사용합니다.
