@@ -67,6 +67,9 @@ The `service` command supports these subcommands:
 - `status [service_name]`
 - `start <service_name>`
 - `stop <service_name>`
+- `details get <service_name> [key] [--format box|json]`
+- `details set <service_name> <key> <value> [--detail-type <string|number|boolean|bool|object|json>]`
+- `details delete <service_name> <key>`
 
 ## Service Configuration Format
 
@@ -276,6 +279,87 @@ The output includes the operation result and the current service state.
 ```sh
 /work > service start alpha
 /work > service stop alpha
+```
+
+## details
+
+Manages runtime detail values exposed by a service.
+These values are separate from the static service configuration and are intended for
+runtime metadata such as health status, counters, labels, or custom structured state.
+
+<h6>Syntax</h6>
+
+```sh
+service details get <service_name> [key] [--format box|json]
+service details set <service_name> <key> <value> [--detail-type <string|number|boolean|bool|object|json>]
+service details delete <service_name> <key>
+```
+
+<h6>Details options</h6>
+
+- `--format <box|json>` output format for `details get`, default `box`
+- `--detail-type <type>` value type for `details set`, default `string`
+
+Supported detail value types are:
+
+- `string`, the default when `--detail-type` is omitted
+- `number`
+- `boolean` or `bool`
+- `object` or `json`
+
+Type handling rules:
+
+- `string` stores the input text as-is
+- `number` parses the input as a JSON number
+- `boolean` and `bool` parse the input as JSON `true` or `false`
+- `object` and `json` parse the input as a JSON object, not an array or scalar
+
+`details set` uses a single RPC request and behaves as an upsert. If the key already exists,
+its value is replaced. If it does not exist, the key is created.
+
+When `--format json` is used:
+
+- `service details get <service_name>` prints the full details object
+- `service details get <service_name> <key>` prints a JSON object containing only that key
+
+<h6>Usage example: box output</h6>
+
+```sh
+/work > service details get alpha
+DETAILS (3)
+┌─────────┬─────────┬────────────────────┐
+│ KEY     │ TYPE    │ VALUE              │
+├─────────┼─────────┼────────────────────┤
+│ enabled │ boolean │ true               │
+│ labels  │ object  │ {"tier":"gold"}    │
+│ retries │ number  │ 3                  │
+└─────────┴─────────┴────────────────────┘
+```
+
+<h6>Usage example: JSON output</h6>
+
+```sh
+/work > service details get alpha labels --format json
+{
+  "labels": {
+    "tier": "gold"
+  }
+}
+```
+
+<h6>Usage example: set values</h6>
+
+```sh
+/work > service details set alpha mode warm
+/work > service details set alpha retries 3 --detail-type number
+/work > service details set alpha enabled true --detail-type bool
+/work > service details set alpha labels '{"tier":"gold"}' --detail-type json
+```
+
+<h6>Usage example: delete a key</h6>
+
+```sh
+/work > service details delete alpha labels
 ```
 
 ## uninstall

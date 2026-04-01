@@ -65,6 +65,9 @@ service [--controller=<addr>] <command> [args...]
 - `status [service_name]`
 - `start <service_name>`
 - `stop <service_name>`
+- `details get <service_name> [key] [--format box|json]`
+- `details set <service_name> <key> <value> [--detail-type <string|number|boolean|bool|object|json>]`
+- `details delete <service_name> <key>`
 
 ## 서비스 설정 형식
 
@@ -271,6 +274,87 @@ service stop <service_name>
 ```sh
 /work > service start alpha
 /work > service stop alpha
+```
+
+## details
+
+서비스가 노출하는 runtime detail 값을 조회, 설정, 삭제합니다.
+이 값들은 정적인 서비스 설정과는 별개이며, health 상태, 카운터, label,
+사용자 정의 structured state 같은 runtime metadata를 담는 용도입니다.
+
+<h6>사용 형식</h6>
+
+```sh
+service details get <service_name> [key] [--format box|json]
+service details set <service_name> <key> <value> [--detail-type <string|number|boolean|bool|object|json>]
+service details delete <service_name> <key>
+```
+
+<h6>details 옵션</h6>
+
+- `--format <box|json>` `details get` 출력 형식, 기본값 `box`
+- `--detail-type <type>` `details set` 값 타입, 기본값 `string`
+
+지원하는 detail 값 타입은 다음과 같습니다.
+
+- `string`, `--detail-type` 을 생략했을 때의 기본값
+- `number`
+- `boolean` 또는 `bool`
+- `object` 또는 `json`
+
+타입 처리 규칙은 다음과 같습니다.
+
+- `string` 은 입력한 문자열을 그대로 저장합니다
+- `number` 는 입력값을 JSON number로 파싱합니다
+- `boolean`, `bool` 은 입력값을 JSON `true`, `false` 로 파싱합니다
+- `object`, `json` 은 입력값을 JSON object로 파싱하며, 배열이나 scalar는 허용하지 않습니다
+
+`details set` 은 단일 RPC 요청으로 처리되며 upsert처럼 동작합니다.
+이미 존재하는 key이면 값을 덮어쓰고, 없으면 새로 생성합니다.
+
+`--format json` 을 사용하면:
+
+- `service details get <service_name>` 은 전체 details 객체를 JSON으로 출력합니다
+- `service details get <service_name> <key>` 는 해당 key만 포함한 JSON 객체를 출력합니다
+
+<h6>사용 예시: box 출력</h6>
+
+```sh
+/work > service details get alpha
+DETAILS (3)
+┌─────────┬─────────┬────────────────────┐
+│ KEY     │ TYPE    │ VALUE              │
+├─────────┼─────────┼────────────────────┤
+│ enabled │ boolean │ true               │
+│ labels  │ object  │ {"tier":"gold"}    │
+│ retries │ number  │ 3                  │
+└─────────┴─────────┴────────────────────┘
+```
+
+<h6>사용 예시: JSON 출력</h6>
+
+```sh
+/work > service details get alpha labels --format json
+{
+  "labels": {
+    "tier": "gold"
+  }
+}
+```
+
+<h6>사용 예시: 값 설정</h6>
+
+```sh
+/work > service details set alpha mode warm
+/work > service details set alpha retries 3 --detail-type number
+/work > service details set alpha enabled true --detail-type bool
+/work > service details set alpha labels '{"tier":"gold"}' --detail-type json
+```
+
+<h6>사용 예시: key 삭제</h6>
+
+```sh
+/work > service details delete alpha labels
 ```
 
 ## uninstall
