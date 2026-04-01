@@ -4,12 +4,12 @@ type: docs
 weight: 100
 ---
 
-`service` 명령은 서비스 컨트롤러를 통해 장시간 실행되는 JSH 서비스를 관리합니다.
+`servicectl` 명령은 서비스 컨트롤러를 통해 장시간 실행되는 JSH 서비스를 관리합니다.
 서비스 설정 읽기, 설치 및 제거, 시작과 중지, 현재 실행 상태 조회를 수행할 수 있습니다.
 
 ## 개요
 
-`service` 명령은 실행 중인 서비스 컨트롤러와 JSON-RPC로 통신합니다.
+`servicectl` 명령은 실행 중인 서비스 컨트롤러와 JSON-RPC로 통신합니다.
 직접 서비스를 실행하는 것이 아니라, 다음과 같은 관리 요청을 컨트롤러에 전달합니다.
 
 - 설정 파일 읽기
@@ -24,7 +24,7 @@ weight: 100
 이 명령은 서비스 컨트롤러 endpoint가 필요합니다.
 `--controller` 옵션으로 직접 지정하거나 `SERVICE_CONTROLLER` 환경 변수로 전달할 수 있습니다.
 
-`service` 명령이 machbase-neo runtime에서 실행되면 runtime이 `SERVICE_CONTROLLER`를 자동으로
+`servicectl` 명령이 machbase-neo runtime에서 실행되면 runtime이 `SERVICE_CONTROLLER`를 자동으로
 설정합니다. 일반적인 JSH 서비스 관리 흐름에서는 `--controller`를 매번 명시하실 필요가 없으므로,
 아래 예시에서는 가독성을 위해 생략합니다.
 
@@ -37,7 +37,7 @@ weight: 100
 <h6>사용 형식</h6>
 
 ```sh
-service [--controller=<addr>] <command> [args...]
+servicectl [--controller=<addr>] <command> [args...]
 ```
 
 <h6>공통 옵션</h6>
@@ -49,12 +49,12 @@ service [--controller=<addr>] <command> [args...]
 <h6>사용 예시</h6>
 
 ```sh
-/work > service status
+/work > servicectl status
 ```
 
 ## Commands
 
-`service` 명령은 다음 서브커맨드를 지원합니다.
+`servicectl` 명령은 다음 서브커맨드를 지원합니다.
 
 - `read`
 - `update`
@@ -105,7 +105,7 @@ service [--controller=<addr>] <command> [args...]
 <h6>사용 형식</h6>
 
 ```sh
-service status [service_name]
+servicectl status [service_name]
 ```
 
 서비스 이름 없이 호출하면 이름, 활성화 상태, 실행 상태, PID, executable을 표로 출력합니다.
@@ -113,7 +113,7 @@ service status [service_name]
 <h6>사용 예시: 서비스 목록</h6>
 
 ```sh
-/work > service status
+/work > servicectl status
 ┌───────┬─────────┬─────────┬─────┬────────────┐
 │ NAME  │ ENABLED │ STATUS  │ PID │ EXECUTABLE │
 ├───────┼─────────┼─────────┼─────┼────────────┤
@@ -127,7 +127,7 @@ service status [service_name]
 <h6>사용 예시: 단일 서비스</h6>
 
 ```sh
-/work > service status alpha
+/work > servicectl status alpha
 [alpha] ENABLED
   status: running
   exit_code: 0
@@ -150,18 +150,18 @@ service status [service_name]
 <h6>사용 형식</h6>
 
 ```sh
-service read
+servicectl read
 ```
 
 결과는 하나의 테이블로 출력되며, 각 행의 `STATUS` 컬럼에
 `UNCHANGED`, `ADDED`, `UPDATED`, `REMOVED`, `ERRORED` 상태가 표시됩니다.
 
-이 테이블은 `service status` 목록 출력과 같은 pretty box 형식으로 렌더링됩니다.
+이 테이블은 `servicectl status` 목록 출력과 같은 pretty box 형식으로 렌더링됩니다.
 
 <h6>사용 예시</h6>
 
 ```sh
-/work > service read
+/work > servicectl read
 ┌────────┬───────────┬────────────┬──────────────┬─────────────┬────────────┐
 │ NAME   │ STATUS    │ EXECUTABLE │ READ_ERROR   │ START_ERROR │ STOP_ERROR │
 ├────────┼───────────┼────────────┼──────────────┼─────────────┼────────────┤
@@ -182,8 +182,8 @@ service read
 <h6>사용 형식</h6>
 
 ```sh
-service update
-service reload
+servicectl update
+servicectl reload
 ```
 
 출력은 두 섹션으로 구성됩니다.
@@ -202,13 +202,13 @@ JSON 파일 또는 inline 옵션으로 서비스를 설치합니다.
 <h6>사용 형식</h6>
 
 ```sh
-service install <config.json>
+servicectl install <config.json>
 ```
 
 <h6>사용 예시</h6>
 
 ```sh
-/work > service install svc.json
+/work > servicectl install svc.json
 ```
 
 예를 들어 `svc.json`에 `"name": "alpha"`가 들어 있으면 설치된 설정은
@@ -219,7 +219,7 @@ service install <config.json>
 <h6>사용 형식</h6>
 
 ```sh
-service install \
+servicectl install \
   --name <service_name> \
   --executable <path> \
   [--working-dir <dir>] \
@@ -240,7 +240,7 @@ service install \
 <h6>사용 예시</h6>
 
 ```sh
-/work > service install \
+/work > servicectl install \
   --name svc-inline \
   --executable node \
   --working-dir /work/app \
@@ -263,8 +263,8 @@ service install \
 <h6>사용 형식</h6>
 
 ```sh
-service start <service_name>
-service stop <service_name>
+servicectl start <service_name>
+servicectl stop <service_name>
 ```
 
 출력에는 수행 결과와 현재 서비스 상태가 함께 포함됩니다.
@@ -272,8 +272,8 @@ service stop <service_name>
 <h6>사용 예시</h6>
 
 ```sh
-/work > service start alpha
-/work > service stop alpha
+/work > servicectl start alpha
+/work > servicectl stop alpha
 ```
 
 ## details
@@ -285,9 +285,9 @@ service stop <service_name>
 <h6>사용 형식</h6>
 
 ```sh
-service details get <service_name> [key] [--format box|json]
-service details set <service_name> <key> <value> [--detail-type <string|number|boolean|bool|object|json>]
-service details delete <service_name> <key>
+servicectl details get <service_name> [key] [--format box|json]
+servicectl details set <service_name> <key> <value> [--detail-type <string|number|boolean|bool|object|json>]
+servicectl details delete <service_name> <key>
 ```
 
 <h6>details 옵션</h6>
@@ -314,13 +314,13 @@ service details delete <service_name> <key>
 
 `--format json` 을 사용하면:
 
-- `service details get <service_name>` 은 전체 details 객체를 JSON으로 출력합니다
-- `service details get <service_name> <key>` 는 해당 key만 포함한 JSON 객체를 출력합니다
+- `servicectl details get <service_name>` 은 전체 details 객체를 JSON으로 출력합니다
+- `servicectl details get <service_name> <key>` 는 해당 key만 포함한 JSON 객체를 출력합니다
 
 <h6>사용 예시: box 출력</h6>
 
 ```sh
-/work > service details get alpha
+/work > servicectl details get alpha
 DETAILS (3)
 ┌─────────┬─────────┬────────────────────┐
 │ KEY     │ TYPE    │ VALUE              │
@@ -334,7 +334,7 @@ DETAILS (3)
 <h6>사용 예시: JSON 출력</h6>
 
 ```sh
-/work > service details get alpha labels --format json
+/work > servicectl details get alpha labels --format json
 {
   "labels": {
     "tier": "gold"
@@ -345,16 +345,16 @@ DETAILS (3)
 <h6>사용 예시: 값 설정</h6>
 
 ```sh
-/work > service details set alpha mode warm
-/work > service details set alpha retries 3 --detail-type number
-/work > service details set alpha enabled true --detail-type bool
-/work > service details set alpha labels '{"tier":"gold"}' --detail-type json
+/work > servicectl details set alpha mode warm
+/work > servicectl details set alpha retries 3 --detail-type number
+/work > servicectl details set alpha enabled true --detail-type bool
+/work > servicectl details set alpha labels '{"tier":"gold"}' --detail-type json
 ```
 
 <h6>사용 예시: key 삭제</h6>
 
 ```sh
-/work > service details delete alpha labels
+/work > servicectl details delete alpha labels
 ```
 
 ## uninstall
@@ -364,13 +364,13 @@ DETAILS (3)
 <h6>사용 형식</h6>
 
 ```sh
-service uninstall <service_name>
+servicectl uninstall <service_name>
 ```
 
 <h6>사용 예시</h6>
 
 ```sh
-/work > service uninstall alpha
+/work > servicectl uninstall alpha
 RESULT
 uninstall alpha yes removed
 ```
@@ -392,16 +392,16 @@ uninstall alpha yes removed
 그 다음 아래와 같은 흐름으로 관리할 수 있습니다.
 
 ```sh
-/work > service install alpha.json
-/work > service status
-/work > service stop alpha
-/work > service start alpha
-/work > service uninstall alpha
+/work > servicectl install alpha.json
+/work > servicectl status
+/work > servicectl stop alpha
+/work > servicectl start alpha
+/work > servicectl uninstall alpha
 ```
 
 ## 참고
 
-- `service` 명령은 접근 가능한 컨트롤러 endpoint가 필요합니다.
+- `servicectl` 명령은 접근 가능한 컨트롤러 endpoint가 필요합니다.
 - `status`는 인자가 없으면 전체 목록을, 인자가 있으면 단일 서비스 상세 정보를 출력합니다.
 - `install`은 config file 경로와 inline 설치 옵션을 섞어서 사용할 수 없습니다.
 - inline `--env` 값은 반드시 `KEY=VALUE` 형식이어야 합니다.

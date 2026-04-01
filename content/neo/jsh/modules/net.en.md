@@ -4,7 +4,7 @@ type: docs
 weight: 100
 ---
 
-{{< neo_since ver="8.0.74" />}}
+{{< neo_since ver="8.0.75" />}}
 
 The `net` module provides Node.js-compatible TCP networking APIs for JSH applications.
 

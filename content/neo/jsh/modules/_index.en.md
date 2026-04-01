@@ -5,6 +5,8 @@ weight: 900
 toc: true
 ---
 
+{{< neo_since ver="8.0.75" />}}
+
 JSH modules are built-in standard library modules for Machbase Neo.
 They are available in both TQL `SCRIPT()` blocks and standalone `*.js` applications,
 and you can load them with `require()` without installing additional packages.

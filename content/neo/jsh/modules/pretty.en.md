@@ -4,6 +4,8 @@ type: docs
 weight: 100
 ---
 
+{{< neo_since ver="8.0.75" />}}
+
 The `pretty` module formats values and renders terminal-friendly output for JSH applications.
 It is useful when you need readable tables, human-friendly byte and duration strings, or
 progress indicators for long-running jobs.

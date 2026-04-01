@@ -4,7 +4,7 @@ type: docs
 weight: 100
 ---
 
-{{< neo_since ver="8.0.74" />}}
+{{< neo_since ver="8.0.75" />}}
 
 The `process` module is specifically designed for use in JSH applications.
 

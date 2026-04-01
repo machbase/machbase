@@ -4,7 +4,7 @@ type: docs
 weight: 30
 ---
 
-{{< neo_since ver="8.0.74" />}}
+{{< neo_since ver="8.0.75" />}}
 
 ## haversine()
 

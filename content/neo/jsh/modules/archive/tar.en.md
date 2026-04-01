@@ -4,6 +4,8 @@ type: docs
 weight: 100
 ---
 
+{{< neo_since ver="8.0.75" />}}
+
 The `archive/tar` module creates and extracts TAR archives in JSH.
 It supports simple in-memory helpers, stream-style APIs, and a file-based `Tar` class.
 

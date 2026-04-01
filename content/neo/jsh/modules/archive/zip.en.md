@@ -4,6 +4,8 @@ type: docs
 weight: 100
 ---
 
+{{< neo_since ver="8.0.75" />}}
+
 The `archive/zip` module creates and extracts ZIP archives in JSH.
 It provides in-memory helpers, stream-style APIs, and a file-based `Zip` class.
 

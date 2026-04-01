@@ -7,7 +7,7 @@ keywords:
 - psutil
 ---
 
-{{< neo_since ver="8.0.52" />}}
+{{< neo_since ver="8.0.75" />}}
 
 ## hostID()
 

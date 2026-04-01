@@ -4,7 +4,7 @@ type: docs
 weight: 100
 ---
 
-{{< neo_since ver="8.0.73" />}}
+{{< neo_since ver="8.0.75" />}}
 
 The `opcua` module provides an OPC UA client API for JSH applications.
 

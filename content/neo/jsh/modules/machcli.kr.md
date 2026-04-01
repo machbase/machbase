@@ -4,7 +4,7 @@ type: docs
 weight: 100
 ---
 
-{{< neo_since ver="8.0.73" />}}
+{{< neo_since ver="8.0.75" />}}
 
 `machcli` 모듈은 JSH 애플리케이션에서 Machbase 데이터베이스를 사용할 수 있는 클라이언트 API를 제공합니다.
 

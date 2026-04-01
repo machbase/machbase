@@ -4,7 +4,7 @@ type: docs
 weight: 100
 ---
 
-{{< neo_since ver="8.0.73" />}}
+{{< neo_since ver="8.0.75" />}}
 
 `fs` 모듈은 JSH 애플리케이션에서 사용할 수 있는 Node.js 호환 동기 파일 시스템 API를 제공합니다.
 

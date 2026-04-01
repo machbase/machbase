@@ -4,7 +4,7 @@ type: docs
 weight: 100
 ---
 
-{{< neo_since ver="8.0.73" />}}
+{{< neo_since ver="8.0.75" />}}
 
 The `fs` module provides synchronous, Node.js-compatible file system APIs for JSH applications.
 

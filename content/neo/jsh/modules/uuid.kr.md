@@ -11,6 +11,7 @@ UUID 생성기입니다.
 
 <h6>사용 형식</h6>
 
+{{< neo_since ver="8.0.75" />}}
 ```js
 new UUID(ver)
 ```

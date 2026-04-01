@@ -4,13 +4,13 @@ type: docs
 weight: 100
 ---
 
-The `service` command manages long-running JSH services through a service controller.
+The `servicectl` command manages long-running JSH services through a service controller.
 It can read service configurations, install or uninstall services, start and stop them,
 and inspect current runtime state.
 
 ## Overview
 
-The `service` command talks to a running service controller over JSON-RPC.
+The `servicectl` command talks to a running service controller over JSON-RPC.
 It does not directly launch services by itself. Instead, it sends management requests such as:
 
 - Read configuration files
@@ -26,7 +26,7 @@ The command requires a controller endpoint.
 You can pass it explicitly with `--controller`, or provide it through the `SERVICE_CONTROLLER`
 environment variable.
 
-When the `service` command is launched by the machbase-neo runtime, the runtime sets
+When the `servicectl` command is launched by the machbase-neo runtime, the runtime sets
 `SERVICE_CONTROLLER` automatically. In normal JSH service-management workflows, you usually do not
 need to specify `--controller` explicitly, so the examples below omit it for readability.
 
@@ -39,7 +39,7 @@ Supported controller address formats are:
 <h6>Syntax</h6>
 
 ```sh
-service [--controller=<addr>] <command> [args...]
+servicectl [--controller=<addr>] <command> [args...]
 ```
 
 <h6>Common options</h6>
@@ -51,12 +51,12 @@ service [--controller=<addr>] <command> [args...]
 <h6>Usage example</h6>
 
 ```sh
-/work > service status
+/work > servicectl status
 ```
 
 ## Commands
 
-The `service` command supports these subcommands:
+The `servicectl` command supports these subcommands:
 
 - `read`
 - `update`
@@ -107,7 +107,7 @@ Shows either the full service list or one service detail.
 <h6>Syntax</h6>
 
 ```sh
-service status [service_name]
+servicectl status [service_name]
 ```
 
 When called without a service name, it prints a table with service name, enabled state,
@@ -116,7 +116,7 @@ runtime status, PID, and executable.
 <h6>Usage example: list services</h6>
 
 ```sh
-/work > service status
+/work > servicectl status
 ┌───────┬─────────┬─────────┬─────┬────────────┐
 │ NAME  │ ENABLED │ STATUS  │ PID │ EXECUTABLE │
 ├───────┼─────────┼─────────┼─────┼────────────┤
@@ -131,7 +131,7 @@ and recent output lines.
 <h6>Usage example: one service</h6>
 
 ```sh
-/work > service status alpha
+/work > servicectl status alpha
 [alpha] ENABLED
   status: running
   exit_code: 0
@@ -154,18 +154,18 @@ Reads service configuration files from the controller configuration directory an
 <h6>Syntax</h6>
 
 ```sh
-service read
+servicectl read
 ```
 
 The result is rendered as a single table. Each row includes a `STATUS`
 column whose value is one of `UNCHANGED`, `ADDED`, `UPDATED`, `REMOVED`, or `ERRORED`.
 
-The table is rendered in the same pretty box format used by the `service status` list output.
+The table is rendered in the same pretty box format used by the `servicectl status` list output.
 
 <h6>Usage example</h6>
 
 ```sh
-/work > service read
+/work > servicectl read
 ┌────────┬───────────┬────────────┬──────────────┬─────────────┬────────────┐
 │ NAME   │ STATUS    │ EXECUTABLE │ READ_ERROR   │ START_ERROR │ STOP_ERROR │
 ├────────┼───────────┼────────────┼──────────────┼─────────────┼────────────┤
@@ -186,8 +186,8 @@ Both commands ask the controller to apply configuration changes.
 <h6>Syntax</h6>
 
 ```sh
-service update
-service reload
+servicectl update
+servicectl reload
 ```
 
 The output contains two sections:
@@ -207,13 +207,13 @@ from the JSON file or from the `--name` option.
 <h6>Syntax</h6>
 
 ```sh
-service install <config.json>
+servicectl install <config.json>
 ```
 
 <h6>Usage example</h6>
 
 ```sh
-/work > service install svc.json
+/work > servicectl install svc.json
 ```
 
 If `svc.json` contains `"name": "alpha"`, the installed configuration is stored as
@@ -224,7 +224,7 @@ If `svc.json` contains `"name": "alpha"`, the installed configuration is stored 
 <h6>Syntax</h6>
 
 ```sh
-service install \
+servicectl install \
   --name <service_name> \
   --executable <path> \
   [--working-dir <dir>] \
@@ -245,7 +245,7 @@ service install \
 <h6>Usage example</h6>
 
 ```sh
-/work > service install \
+/work > servicectl install \
   --name svc-inline \
   --executable node \
   --working-dir /work/app \
@@ -268,8 +268,8 @@ Starts or stops a named service.
 <h6>Syntax</h6>
 
 ```sh
-service start <service_name>
-service stop <service_name>
+servicectl start <service_name>
+servicectl stop <service_name>
 ```
 
 The output includes the operation result and the current service state.
@@ -277,8 +277,8 @@ The output includes the operation result and the current service state.
 <h6>Usage example</h6>
 
 ```sh
-/work > service start alpha
-/work > service stop alpha
+/work > servicectl start alpha
+/work > servicectl stop alpha
 ```
 
 ## details
@@ -290,9 +290,9 @@ runtime metadata such as health status, counters, labels, or custom structured s
 <h6>Syntax</h6>
 
 ```sh
-service details get <service_name> [key] [--format box|json]
-service details set <service_name> <key> <value> [--detail-type <string|number|boolean|bool|object|json>]
-service details delete <service_name> <key>
+servicectl details get <service_name> [key] [--format box|json]
+servicectl details set <service_name> <key> <value> [--detail-type <string|number|boolean|bool|object|json>]
+servicectl details delete <service_name> <key>
 ```
 
 <h6>Details options</h6>
@@ -319,13 +319,13 @@ its value is replaced. If it does not exist, the key is created.
 
 When `--format json` is used:
 
-- `service details get <service_name>` prints the full details object
-- `service details get <service_name> <key>` prints a JSON object containing only that key
+- `servicectl details get <service_name>` prints the full details object
+- `servicectl details get <service_name> <key>` prints a JSON object containing only that key
 
 <h6>Usage example: box output</h6>
 
 ```sh
-/work > service details get alpha
+/work > servicectl details get alpha
 DETAILS (3)
 ┌─────────┬─────────┬────────────────────┐
 │ KEY     │ TYPE    │ VALUE              │
@@ -339,7 +339,7 @@ DETAILS (3)
 <h6>Usage example: JSON output</h6>
 
 ```sh
-/work > service details get alpha labels --format json
+/work > servicectl details get alpha labels --format json
 {
   "labels": {
     "tier": "gold"
@@ -350,16 +350,16 @@ DETAILS (3)
 <h6>Usage example: set values</h6>
 
 ```sh
-/work > service details set alpha mode warm
-/work > service details set alpha retries 3 --detail-type number
-/work > service details set alpha enabled true --detail-type bool
-/work > service details set alpha labels '{"tier":"gold"}' --detail-type json
+/work > servicectl details set alpha mode warm
+/work > servicectl details set alpha retries 3 --detail-type number
+/work > servicectl details set alpha enabled true --detail-type bool
+/work > servicectl details set alpha labels '{"tier":"gold"}' --detail-type json
 ```
 
 <h6>Usage example: delete a key</h6>
 
 ```sh
-/work > service details delete alpha labels
+/work > servicectl details delete alpha labels
 ```
 
 ## uninstall
@@ -369,13 +369,13 @@ Removes a service registration.
 <h6>Syntax</h6>
 
 ```sh
-service uninstall <service_name>
+servicectl uninstall <service_name>
 ```
 
 <h6>Usage example</h6>
 
 ```sh
-/work > service uninstall alpha
+/work > servicectl uninstall alpha
 RESULT
 uninstall alpha yes removed
 ```
@@ -397,16 +397,16 @@ Create a service JSON file:
 Then manage it with these commands:
 
 ```sh
-/work > service install alpha.json
-/work > service status
-/work > service stop alpha
-/work > service start alpha
-/work > service uninstall alpha
+/work > servicectl install alpha.json
+/work > servicectl status
+/work > servicectl stop alpha
+/work > servicectl start alpha
+/work > servicectl uninstall alpha
 ```
 
 ## Notes
 
-- `service` requires a reachable controller endpoint.
+- `servicectl` requires a reachable controller endpoint.
 - `status` without an argument lists all services; with one argument it shows one service in detail.
 - `install` cannot mix a config file path with inline install options.
 - Inline `--env` values must use `KEY=VALUE` form.

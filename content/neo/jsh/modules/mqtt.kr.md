@@ -4,7 +4,7 @@ type: docs
 weight: 100
 ---
 
-{{< neo_since ver="8.0.74" />}}
+{{< neo_since ver="8.0.75" />}}
 
 `mqtt`는 JSH의 MQTT 클라이언트 모듈입니다.
 

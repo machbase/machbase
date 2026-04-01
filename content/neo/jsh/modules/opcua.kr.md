@@ -4,7 +4,7 @@ type: docs
 weight: 100
 ---
 
-{{< neo_since ver="8.0.73" />}}
+{{< neo_since ver="8.0.75" />}}
 
 `opcua` 모듈은 JSH 애플리케이션에서 OPC UA 서버에 읽기/쓰기를 수행하는 클라이언트 API를 제공합니다.
 

@@ -5,6 +5,8 @@ weight: 900
 toc: true
 ---
 
+{{< neo_since ver="8.0.75" />}}
+
 JSH 모듈은 Machbase Neo에 기본 포함된 표준 라이브러리입니다.
 이 모듈들은 TQL의 `SCRIPT()` 블록과 독립적인 `*.js` 애플리케이션에서 모두 사용할 수 있으며,
 별도의 패키지 설치 없이 `require()`로 바로 불러올 수 있습니다.

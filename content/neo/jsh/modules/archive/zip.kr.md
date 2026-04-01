@@ -4,6 +4,8 @@ type: docs
 weight: 100
 ---
 
+{{< neo_since ver="8.0.75" />}}
+
 `archive/zip` 모듈은 JSH에서 ZIP 아카이브를 생성하고 해제하는 기능을 제공합니다.
 메모리 기반 헬퍼, 스트림 스타일 API, 파일 기반 `Zip` 클래스를 지원합니다.
 
