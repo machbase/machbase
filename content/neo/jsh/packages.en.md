@@ -105,7 +105,7 @@ pkg install [options] [name]
 <h6>Options</h6>
 
 - `-C, --dir <dir>` use the given project directory instead of the current working directory
-- `-g, --global` install into `/work/node_modules` and ignore `--dir`
+- `-g, --global` install into the global package directory and ignore `--dir`; this directory is reserved for global packages and must not be used as a normal project root
 - `-h, --help` show help
 
 If `name` is omitted, `pkg install` installs the dependencies already declared in the selected project manifest. With `-g`, it uses the internal metadata under `/work/node_modules/.pkg/`.
@@ -114,6 +114,7 @@ If `name` is omitted, `pkg install` installs the dependencies already declared i
 
 `pkg install -g <name>` uses `/work/node_modules` as the installation target.
 When `-g` is present, `pkg` ignores `--dir`.
+The global package directory is reserved for global packages and metadata, so create normal projects in a subdirectory such as `/work/my-app` instead of using `/work` itself as the project root.
 
 This makes two common cases possible:
 

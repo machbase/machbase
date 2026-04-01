@@ -105,7 +105,7 @@ pkg install [options] [name]
 <h6>옵션</h6>
 
 - `-C, --dir <dir>` 현재 작업 디렉터리 대신 지정한 프로젝트 디렉터리를 사용합니다.
-- `-g, --global` `--dir`를 무시하고 `/work/node_modules`에 설치합니다.
+- `-g, --global` `--dir`를 무시하고 전역 패키지 디렉터리에 설치합니다. 이 디렉터리는 전역 패키지 전용이므로 일반 프로젝트 루트로 사용하면 안 됩니다.
 - `-h, --help` 도움말을 표시합니다.
 
 `name`을 생략하면 선택된 프로젝트 manifest에 선언된 기존 의존성을 설치합니다. `-g`에서는 `/work/node_modules/.pkg/` 아래의 내부 metadata를 사용합니다.
@@ -114,6 +114,7 @@ pkg install [options] [name]
 
 `pkg install -g <name>`은 `/work/node_modules`에 설치합니다.
 `-g`가 있으면 `pkg`는 `--dir`을 무시합니다.
+전역 패키지 디렉터리는 전역 패키지와 metadata를 위한 예약 영역이므로, 일반 프로젝트는 `/work` 자체가 아니라 `/work/my-app` 같은 하위 디렉터리에 만들어야 합니다.
 
 이 방식으로 다음 두 가지를 처리할 수 있습니다.
 
