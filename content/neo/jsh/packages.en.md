@@ -218,8 +218,8 @@ The wrapper name comes from the installed package manifest.
 
 Supported `bin` forms are:
 
-- a string, such as `"bin": "./main.js"`
-- an object, such as `"bin": { "demo": "./bin/demo.js" }`
+- a string, such as `"bin": "main.js"`
+- an object, such as `"bin": { "demo": "demo.js" }`
 
 If `bin` is a string, `pkg` derives the wrapper name from the package name.
 For example, `github.com/acme/demo` produces `demo.js`.
@@ -232,7 +232,7 @@ For example, this installed package manifest:
 {
   "name": "github.com/acme/demo",
   "bin": {
-    "demo": "./bin/demo.js"
+    "demo": "demo.js"
   }
 }
 ```
