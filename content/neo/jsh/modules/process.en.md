@@ -12,6 +12,19 @@ The `process` module is specifically designed for use in JSH applications.
 
 Add a callback function that will be called at the termination of the current process.
 
+In the current implementation, this hook is called when the JSH runtime enters a shutdown path that it manages.
+For example, it runs when the script finishes normally or when `process.exit()` is called.
+
+It is not guaranteed in the following cases.
+
+- Forceful termination such as `SIGKILL` or `kill -9`
+- Fatal abnormal termination at the OS or Go runtime level
+- Termination caused by the default action of a signal that was not intercepted with `process.on(signal, handler)`
+
+If cleanup is required for catchable signals, it is recommended to perform that cleanup in `process.on(signal, handler)` and then let the process proceed into its normal shutdown flow.
+
+When multiple shutdown hooks are registered, they run in reverse registration order. In the current implementation, if one hook panics or throws, the remaining hooks still continue to run.
+
 <h6>Syntax</h6>
 
 ```js
@@ -31,6 +44,10 @@ console.println("running...")
 // running...
 // shutdown hook called.
 ```
+
+<h6>Notes</h6>
+
+`addShutdownHook()` is not an absolute guarantee for every possible termination scenario. If you must protect critical work such as flushing files, releasing locks, or closing external transactions, do not rely on the hook alone. Perform those operations explicitly whenever possible.
 
 ## arch
 

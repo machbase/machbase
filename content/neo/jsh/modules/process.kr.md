@@ -12,6 +12,19 @@ weight: 100
 
 현재 프로세스가 종료될 때 호출할 콜백 함수를 추가합니다.
 
+현재 구현에서 이 hook은 JSH 런타임이 관리하는 종료 경로에 들어왔을 때 호출됩니다.
+예를 들어 스크립트가 정상적으로 끝나거나 `process.exit()`를 호출한 경우에는 실행됩니다.
+
+다음과 같은 경우에는 호출이 보장되지 않습니다.
+
+- `SIGKILL`, `kill -9`와 같은 강제 종료
+- OS 또는 Go 런타임 수준의 치명적인 비정상 종료
+- `process.on(signal, handler)`로 가로채지 않은 signal의 기본 동작에 의한 종료
+
+catch 가능한 signal에 대해 정리가 필요하면 `process.on(signal, handler)`에서 정리 코드를 수행한 뒤 종료 흐름으로 들어가도록 작성하는 것이 좋습니다.
+
+여러 개의 shutdown hook이 등록된 경우에는 역순으로 실행됩니다. 현재 구현에서는 어떤 hook 하나가 panic 또는 예외를 발생시키더라도, 나머지 hook은 계속 실행됩니다.
+
 <h6>사용 형식</h6>
 
 ```js
@@ -31,6 +44,10 @@ console.println("running...")
 // running...
 // shutdown hook called.
 ```
+
+<h6>주의 사항</h6>
+
+`addShutdownHook()`는 모든 종료 상황에서 반드시 호출되는 것은 아닙니다. 강제 종료까지 포함한 절대적인 보장이 필요하다면 파일 flush, 외부 트랜잭션 정리, lock 해제 같은 작업은 hook에만 의존하지 말고 가능한 시점마다 명시적으로 수행해야 합니다.
 
 ## arch
 
