@@ -1,5 +1,5 @@
 ---
-title: 명령어 참조
+title: 명령어 레퍼런스
 type: docs
 weight: 10
 ---

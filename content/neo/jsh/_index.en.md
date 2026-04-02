@@ -23,7 +23,34 @@ Machbase Neo recognizes both standalone files with the `.js` extension and direc
 - `ls` shows the file list in the current working directory.
 - `cd` changes the working directory or moves to `/work`.
 
-While functionality is basic, it is sufficient for validating scripts.
+For the full command set, see the [Command Reference](./commands/) document.
+
+## Pipe and Redirection
+
+JSH supports shell-style pipe and redirection operators for external commands.
+
+- `cmd1 | cmd2` sends the standard output of `cmd1` to the standard input of `cmd2`.
+- `< file` redirects a file to standard input.
+- `> file` writes standard output to a file and overwrites it.
+- `>> file` appends standard output to a file.
+- `2> file` writes standard error to a file and overwrites it.
+- `2>> file` appends standard error to a file.
+- `2>&1` merges standard error into standard output.
+
+Examples:
+
+```sh
+ cat sample.txt | wc -l
+ sort < input.txt > output.txt
+ write-stderr boom 1 2> error.log
+ write-stderr boom 0 2>&1 | wc -l
+```
+
+Notes:
+
+- Pipe and redirection operators are parsed only outside quoted strings. For example, `echo "a | b"` treats `|` as plain text.
+- In a pipeline, input redirection is supported only on the first stage and output redirection only on the last stage.
+- Built-in internal commands such as `cd`, `ls`, and `exit` do not support redirection, and they cannot be used in pipelines.
 
 ## Hello World Example
 
