@@ -1,28 +1,50 @@
 ---
-title: 기본 명령어
+title: 명령어 참조
 type: docs
 weight: 10
 ---
 
-JSH는 디렉터리 이동, 파일 읽기, 텍스트 출력, 경로 생성 및 삭제, 대기 시간 처리에 사용할 수 있는
-기본 shell 스타일 명령어 집합을 제공합니다.
+이 페이지는 JSH shell에서 바로 사용할 수 있는 기본 명령을 기능별로 정리합니다.
 
 ## 개요
 
-대부분의 명령은 `/sbin` 아래의 JavaScript 파일로 구현되어 있으며 JSH 명령 경로를 통해 실행됩니다.
-`cd`는 예외로, 현재 shell의 작업 디렉터리를 변경해야 하므로 internal command로 구현되어 있습니다.
+이 문서는 사용 목적에 따라 명령을 분류합니다.
 
 **참고**
 
-- 이 명령들은 호스트 OS 파일 시스템이 아니라 JSH 가상 파일 시스템 안에서 동작합니다.
+- 모든 명령은 기본적으로 호스트 OS가 아니라 JSH 가상 파일 시스템에서 동작합니다.
 - 상대 경로는 현재 JSH 작업 디렉터리를 기준으로 해석됩니다.
-- `cd`는 현재 shell 세션에 영향을 주고, `pwd`, `ls`, `rm` 같은 나머지 명령은 일반 명령으로 실행됩니다.
-- 일부 명령은 Unix 명령과 비교했을 때 의도적으로 더 작은 기능 집합만 제공합니다.
+- 작업 디렉터리나 환경 변수처럼 현재 shell 상태에 영향을 주는 명령도 포함합니다.
+- 일부 명령은 Unix 도구보다 작은 기능 집합만 제공합니다.
 
-## cat
+## Filesystem Commands
+
+### cd
+
+현재 JSH shell 세션의 작업 디렉터리를 변경합니다.
+
+<h6>사용 형식</h6>
+
+```sh
+cd [directory]
+```
+
+인자를 생략하면 `$HOME`으로 이동합니다.
+대상 경로가 없으면 에러를 출력하고 non-zero 상태를 반환합니다.
+
+<h6>사용 예시</h6>
+
+```sh
+/work > cd subdir
+/work/subdir >
+/work/subdir > cd
+/work >
+```
+
+### cat
 
 파일 내용을 표준 출력으로 이어서 출력합니다.
-행 번호, 줄 끝 표시, 탭 표시, 빈 줄 압축, 문법 강조 기능도 지원합니다.
+행 번호, 줄 끝 표시, 탭 표시, 빈 줄 압축, 문법 강조를 지원합니다.
 
 <h6>사용 형식</h6>
 
@@ -39,16 +61,7 @@ cat [OPTION]... [FILE]...
 - `-c, --color` 문법 강조를 활성화합니다.
 - `-h, --help` 도움말을 표시합니다.
 
-`-c` 사용 시 다음 확장자에 대해 문법 강조를 지원합니다.
-
-- `.js`
-- `.json`
-- `.ndjson`
-- `.sql`
-- `.csv`
-- `.yaml`
-- `.yml`
-- `.toml`
+`-c`는 `.js`, `.json`, `.ndjson`, `.sql`, `.csv`, `.yaml`, `.yml`, `.toml` 파일을 강조 표시할 수 있습니다.
 
 <h6>사용 예시</h6>
 
@@ -58,50 +71,10 @@ cat [OPTION]... [FILE]...
 /work > cat -sE log.txt
 ```
 
-## cd
-
-현재 JSH shell 세션의 작업 디렉터리를 변경합니다.
-다른 명령과 달리 `cd`는 별도의 `/sbin/*.js` 파일이 아니라 internal command입니다.
-
-<h6>사용 형식</h6>
-
-```sh
-cd <directory>
-```
-
-대상 디렉터리가 존재하지 않으면 에러 메시지를 출력하고 non-zero 상태를 반환합니다.
-
-<h6>사용 예시</h6>
-
-```sh
-/work > cd subdir
-/work/subdir >
-```
-
-## echo
-
-전달받은 인자를 공백으로 구분하여 출력하고 마지막에 줄바꿈을 붙입니다.
-
-<h6>사용 형식</h6>
-
-```sh
-echo [ARG]...
-```
-
-현재 `echo`는 `-n` 같은 shell 스타일 플래그나 escape 시퀀스 해석을 지원하지 않습니다.
-전달된 인자를 그대로 출력합니다.
-
-<h6>사용 예시</h6>
-
-```sh
-/work > echo hello world
-hello world
-```
-
-## ls
+### ls
 
 디렉터리 내용을 나열합니다.
-기본적으로는 색상을 적용한 이름을 컬럼 형태로 출력합니다.
+기본 출력은 컬럼 형태이며, 숨김 파일, 상세 목록, 시간 정렬, 재귀 탐색을 지원합니다.
 
 <h6>사용 형식</h6>
 
@@ -116,8 +89,7 @@ ls [OPTION]... [PATH]...
 - `-t, --time` 수정 시간 기준으로 내림차순 정렬합니다.
 - `-R, --recursive` 하위 디렉터리를 재귀적으로 나열합니다.
 
-경로를 생략하면 현재 작업 디렉터리를 사용합니다.
-또한 경로 인자에서 `*`, `?` 같은 단순 wildcard 패턴도 지원합니다.
+경로 인자에서는 `*`, `?` wildcard도 지원합니다.
 
 <h6>사용 예시</h6>
 
@@ -129,7 +101,7 @@ ls [OPTION]... [PATH]...
 /work > ls *.js
 ```
 
-## mkdir
+### mkdir
 
 하나 이상의 디렉터리를 생성합니다.
 
@@ -145,8 +117,7 @@ mkdir [OPTION]... DIRECTORY...
 - `-v, --verbose` 생성한 디렉터리마다 메시지를 출력합니다.
 - `-h, --help` 도움말을 표시합니다.
 
-`-p` 없이 이미 존재하는 디렉터리를 만들면 에러를 반환합니다.
-`-p`를 사용하면 이미 존재하는 디렉터리는 허용됩니다.
+`-p` 없이 이미 존재하는 디렉터리를 생성하면 에러를 반환합니다.
 
 <h6>사용 예시</h6>
 
@@ -156,7 +127,7 @@ mkdir [OPTION]... DIRECTORY...
 /work > mkdir -pv build/output
 ```
 
-## pwd
+### pwd
 
 현재 작업 디렉터리를 출력합니다.
 
@@ -173,7 +144,7 @@ pwd
 /work
 ```
 
-## rm
+### rm
 
 파일이나 디렉터리를 삭제합니다.
 
@@ -187,16 +158,9 @@ rm [OPTION]... FILE...
 
 - `-r, -R, --recursive` 디렉터리와 그 하위 내용을 재귀적으로 삭제합니다.
 - `-d, --dir, --directory` 빈 디렉터리를 삭제합니다.
-- `-f, --force` 존재하지 않는 경로를 무시하고 missing operand 오류도 억제합니다.
+- `-f, --force` 존재하지 않는 경로와 missing operand 오류를 무시합니다.
 - `-v, --verbose` 삭제한 경로마다 메시지를 출력합니다.
 - `-h, --help` 도움말을 표시합니다.
-
-주요 동작은 다음과 같습니다.
-
-- `-r`, `-d` 없이 디렉터리를 삭제하려 하면 `Is a directory` 오류가 발생합니다.
-- `-d`는 빈 디렉터리만 삭제할 수 있습니다.
-- `-R`은 `-r`과 동일하게 처리됩니다.
-- `--directory`는 `--dir`과 동일하게 처리됩니다.
 
 <h6>사용 예시</h6>
 
@@ -207,24 +171,262 @@ rm [OPTION]... FILE...
 /work > rm -fv temp.txt missing.txt
 ```
 
-## sleep
+## Environment Commands
+
+### env
+
+환경 변수를 출력합니다.
+인자를 주지 않으면 전체 환경을 정렬해서 출력하고, 변수 이름을 주면 해당 변수만 출력합니다.
+
+<h6>사용 형식</h6>
+
+```sh
+env [NAME]...
+```
+
+<h6>사용 예시</h6>
+
+```sh
+/work > env
+/work > env HOME PWD
+```
+
+### setenv
+
+현재 shell 세션의 환경 변수를 설정합니다.
+
+<h6>사용 형식</h6>
+
+```sh
+setenv NAME VALUE
+setenv NAME=VALUE
+```
+
+변수 이름은 영문자 또는 `_`로 시작해야 하며, 이후에는 영문자, 숫자, `_`만 사용할 수 있습니다.
+
+<h6>사용 예시</h6>
+
+```sh
+/work > setenv GREETING hello
+/work > setenv MESSAGE='hello world'
+```
+
+### unsetenv
+
+현재 shell 세션에서 환경 변수를 제거합니다.
+
+<h6>사용 형식</h6>
+
+```sh
+unsetenv NAME
+```
+
+잘못된 변수 이름이나 누락된 인자를 전달하면 사용법 메시지를 출력합니다.
+
+<h6>사용 예시</h6>
+
+```sh
+/work > unsetenv GREETING
+```
+
+## System Commands
+
+### pkg
+
+JSH 패키지와 프로젝트 manifest를 관리합니다.
+서브커맨드, 옵션, 작업 흐름은 [패키지 관리자](../packages/) 문서를 참고하세요.
+
+<h6>사용 형식</h6>
+
+```sh
+pkg <command> [options] [args...]
+```
+
+### servicectl
+
+서비스 컨트롤러를 통해 장시간 실행되는 JSH 서비스를 관리합니다.
+서브커맨드, 옵션, 서비스 관리 흐름은 [서비스 관리자](../services/) 문서를 참고하세요.
+
+<h6>사용 형식</h6>
+
+```sh
+servicectl [--controller=<addr>] <command> [args...]
+```
+
+## Text And Utility Commands
+
+### echo
+
+인자를 공백으로 구분해 출력하고 마지막에 줄바꿈을 붙입니다.
+
+<h6>사용 형식</h6>
+
+```sh
+echo [ARG]...
+```
+
+현재 구현은 `-n` 같은 shell 스타일 플래그나 escape 시퀀스 해석을 지원하지 않습니다.
+
+<h6>사용 예시</h6>
+
+```sh
+/work > echo hello world
+hello world
+```
+
+### sleep
 
 지정한 초 수만큼 대기한 뒤 종료합니다.
 
 <h6>사용 형식</h6>
 
 ```sh
-sleep [options] <sec>
+sleep [OPTION] <sec>
 ```
 
 <h6>옵션</h6>
 
 - `-h, --help` 도움말을 표시합니다.
 
-값은 초 단위로 해석됩니다.
-
 <h6>사용 예시</h6>
 
 ```sh
 /work > sleep 5
+```
+
+### wc
+
+파일별 줄 수, 단어 수, 바이트 수, 문자 수를 계산합니다.
+파일을 생략하거나 `-`를 지정하면 표준 입력을 읽습니다.
+
+<h6>사용 형식</h6>
+
+```sh
+wc [OPTION]... [FILE]...
+```
+
+<h6>옵션</h6>
+
+- `-l, --lines` 줄 수를 출력합니다.
+- `-w, --words` 단어 수를 출력합니다.
+- `-c, --bytes` 바이트 수를 출력합니다.
+- `-m, --chars` 문자 수를 출력합니다.
+- `-h, --help` 도움말을 표시합니다.
+
+옵션을 지정하지 않으면 기본적으로 줄 수, 단어 수, 바이트 수를 출력합니다.
+
+<h6>사용 예시</h6>
+
+```sh
+/work > wc notes.txt
+/work > wc -l *.log
+/work > cat notes.txt | wc -w -
+```
+
+### which
+
+지정한 명령이 JSH 명령 경로에서 어디에 있는지 출력합니다.
+
+<h6>사용 형식</h6>
+
+```sh
+which <command>
+```
+
+명령을 찾지 못하면 에러를 출력하고 non-zero 상태를 반환합니다.
+
+<h6>사용 예시</h6>
+
+```sh
+/work > which ls
+/sbin/ls.js
+```
+
+## Messaging Commands
+
+### mqtt_pub
+
+MQTT broker에 메시지를 publish합니다.
+
+<h6>사용 형식</h6>
+
+```sh
+mqtt_pub [OPTION]...
+```
+
+<h6>옵션</h6>
+
+- `-t, --topic` publish할 topic입니다.
+- `-b, --broker` broker 주소입니다. 기본값은 `tcp://localhost:5653`입니다.
+- `-m, --message` 직접 지정한 메시지 payload입니다.
+- `-f, --file` payload를 읽을 파일입니다.
+- `-q, --qos` MQTT QoS 레벨입니다. `0`, `1`, `2`를 지원합니다.
+- `-d, --debug` 디버그 로그를 출력합니다.
+- `-h, --help` 도움말을 표시합니다.
+
+`-m`과 `-f`는 함께 사용할 수 없습니다.
+
+<h6>사용 예시</h6>
+
+```sh
+/work > mqtt_pub -t sensors/temp -m '{"value":21.5}'
+/work > mqtt_pub -b tcp://broker:1883 -t logs/app -f payload.json -q 1
+```
+
+### nats_pub
+
+NATS subject에 메시지를 publish합니다.
+reply subject를 지정하거나 request 모드로 단일 응답을 기다릴 수 있습니다.
+
+<h6>사용 형식</h6>
+
+```sh
+nats_pub [OPTION]...
+```
+
+<h6>옵션</h6>
+
+- `-t, --topic` publish 대상 subject입니다.
+- `-s, --subject` `--topic`과 동일한 의미의 별칭입니다.
+- `-b, --broker` broker 주소입니다. 기본값은 `nats://localhost:4222`입니다.
+- `-m, --message` 직접 지정한 메시지 payload입니다.
+- `-f, --file` payload를 읽을 파일입니다.
+- `-r, --reply` 응답을 기다릴 reply subject입니다.
+- `--request` 임시 inbox subject를 생성해 응답 하나를 기다립니다.
+- `--timeout` 연결과 응답 대기 타임아웃입니다. 기본값은 `10000`ms입니다.
+- `-d, --debug` 디버그 로그를 출력합니다.
+- `-h, --help` 도움말을 표시합니다.
+
+`-m`과 `-f`는 함께 사용할 수 없습니다.
+
+<h6>사용 예시</h6>
+
+```sh
+/work > nats_pub -t events.demo -m 'hello'
+/work > nats_pub -s rpc.echo -m 'ping' --request
+/work > nats_pub -s rpc.echo -m 'ping' -r reply.demo --timeout 3000
+```
+
+## Interactive Commands
+
+### repl
+
+JSH JavaScript REPL을 시작합니다.
+명령형 shell이 아니라 JavaScript 표현식을 직접 실행하는 대화형 환경입니다.
+
+<h6>사용 형식</h6>
+
+```sh
+repl
+```
+
+### shell
+
+새 JSH shell 세션을 시작합니다.
+현재 환경을 기반으로 별도 shell 루프를 실행할 때 사용합니다.
+
+<h6>사용 형식</h6>
+
+```sh
+shell
 ```
