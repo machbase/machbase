@@ -255,11 +255,42 @@ server.serve();
 - `ctx.redirect(status, url)`
 - `ctx.abort()`
 - `ctx.text(status, format[, ...args])`
-- `ctx.json(status, data[, { indent: boolean }])`
 - `ctx.html(status, template, data)`
 - `ctx.yaml(status, data)`
 - `ctx.toml(status, data)`
-- `ctx.xml(status, data)`
+- `ctx.json(status, data[, { space: number|string }])`
+- `ctx.xml(status, data[, { root: string }])`
+
+`ctx.json()`은 들여쓰기 옵션 `space` 을 지원합니다.
+
+```js
+ctx.json(http.status.OK, { greeting: 'hello', name: 'neo' }, { space: 2 });
+ctx.json(http.status.OK, { greeting: 'hello', name: 'neo' }, { space: '\t' });
+```
+
+`ctx.xml()`은 기본적으로 객체를 `<map>` 루트 엘리먼트로 렌더링합니다. 최상위 엘리먼트 이름을 바꾸려면 옵션 객체의 `root` 필드를 사용하면 됩니다.
+
+```js {linenos=table,linenostart=1}
+svr.get('/formats/xml', (ctx) => {
+  ctx.xml(http.status.OK, { str: 'Hello World', num: 123, bool: true });
+});
+
+svr.get('/formats/xml-root', (ctx) => {
+  ctx.xml(http.status.OK, { name: 'neo', count: 2 }, { root: 'user' });
+});
+```
+
+기본 XML 출력:
+
+```xml
+<map><str>Hello World</str><num>123</num><bool>true</bool></map>
+```
+
+`root` 지정 시 XML 출력:
+
+```xml
+<user><name>neo</name><count>2</count></user>
+```
 
 ## 클라이언트 예제
 

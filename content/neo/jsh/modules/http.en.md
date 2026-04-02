@@ -255,11 +255,42 @@ Handler receives `ctx` with request and response helpers.
 - `ctx.redirect(status, url)`
 - `ctx.abort()`
 - `ctx.text(status, format[, ...args])`
-- `ctx.json(status, data[, { indent: boolean }])`
 - `ctx.html(status, template, data)`
 - `ctx.yaml(status, data)`
 - `ctx.toml(status, data)`
-- `ctx.xml(status, data)`
+- `ctx.json(status, data[, { space: number|string }])`
+- `ctx.xml(status, data[, { root: string }])`
+
+`ctx.json()` accepts a `space` option for indentation.
+
+```js
+ctx.json(http.status.OK, { greeting: 'hello', name: 'neo' }, { space: 2 });
+ctx.json(http.status.OK, { greeting: 'hello', name: 'neo' }, { space: '\t' });
+```
+
+`ctx.xml()` renders objects with `<map>` as the default root element. Use the optional `root` field to override the top-level element name.
+
+```js {linenos=table,linenostart=1}
+svr.get('/formats/xml', (ctx) => {
+  ctx.xml(http.status.OK, { str: 'Hello World', num: 123, bool: true });
+});
+
+svr.get('/formats/xml-root', (ctx) => {
+  ctx.xml(http.status.OK, { name: 'neo', count: 2 }, { root: 'user' });
+});
+```
+
+Default XML output:
+
+```xml
+<map><str>Hello World</str><num>123</num><bool>true</bool></map>
+```
+
+XML output with `root`:
+
+```xml
+<user><name>neo</name><count>2</count></user>
+```
 
 ## Client examples
 
