@@ -13,6 +13,7 @@ JSH 애플리케이션이 `/work` 같은 프로젝트 디렉터리 안에서 의
 
 - 새 `package.json` 생성
 - `node_modules`에 의존성 설치
+- GitHub 프로젝트를 원하는 디렉터리로 복사하고 그 위치에서 프로젝트 의존성 설치
 - `package-lock.json` 유지
 - `package.json`의 `scripts` 실행
 - 설치한 패키지의 `bin` 항목으로 실행 wrapper 생성
@@ -286,6 +287,67 @@ lock file이 있으면 `pkg install`은 새 ref를 다시 해석하지 않고 lo
 
 GitHub ref를 결정하지 못하면 `pkg`는 두 단계의 실패 원인을 함께 보여줍니다.
 예를 들어 tags 조회 실패와 default branch 조회 실패를 한 문장에 묶어서 보고합니다.
+
+## pkg copy
+
+GitHub 저장소 패키지를 `node_modules` 아래에 설치하는 대신, 요청한 대상 디렉터리로 직접 복사합니다.
+프로젝트 파일을 복사한 뒤에는 복사된 프로젝트 루트와, 존재하는 경우 `cgi-bin` 에서 의존성을 설치합니다.
+
+<h6>사용 형식</h6>
+
+```sh
+pkg copy [options] <source> <dest>
+```
+
+<h6>옵션</h6>
+
+- `-f, --force` 대상 디렉터리가 이미 존재하고 비어 있지 않아도 계속 진행합니다.
+- `-h, --help` 도움말을 표시합니다.
+
+`source` 는 `pkg install` 이 지원하는 것과 동일한 GitHub 저장소 구문을 사용해야 합니다.
+지원 형식은 다음과 같습니다.
+
+- `github.com/<org>/<repo>`
+- `github.com/<org>/<repo>@<tag>`
+- `github.com/<org>/<repo>#tag=<tag>`
+- `github.com/<org>/<repo>#branch=<branch>`
+
+`dest` 는 현재 작업 디렉터리를 기준으로 해석하는 파일 시스템 경로입니다.
+대상 디렉터리가 없으면 `pkg copy` 가 생성합니다.
+대상 디렉터리가 이미 존재하고 비어 있지 않으면 `--force` 가 없는 한 실패합니다.
+
+### 복사 동작
+
+`pkg copy` 는 GitHub ref 해석 규칙을 `pkg install` 과 동일하게 재사용합니다.
+즉, 명시적인 tag 또는 branch 가 있으면 그것을 사용하고, 없으면 최신 tag 를 해석하며, tag 가 없으면 저장소의 `default_branch` 를 사용합니다.
+
+복사된 저장소 내용은 `<dest>` 아래에 직접 기록됩니다.
+`pkg install` 과 달리 GitHub 프로젝트를 `node_modules/github.com/...` 아래에 두지 않습니다.
+원본 디렉터리 구조는 대상 디렉터리 아래에서 그대로 유지됩니다.
+
+복사 단계가 끝나면 `pkg copy` 는 다음 프로젝트 루트를 검사하고, `pkg install` 과 동일한 설치 로직과 lock file 동작으로 의존성을 설치합니다.
+
+- `<dest>/package.json` 이 있으면 `<dest>`
+- `<dest>/cgi-bin/package.json` 이 있으면 `<dest>/cgi-bin`
+
+따라서 복사된 각 프로젝트 루트는 자신의 `node_modules`, `package-lock.json` 을 별도로 유지합니다.
+
+<h6>사용 예시</h6>
+
+```sh
+/work > pkg copy github.com/acme/helloapp public/hello
+Copying github.com/acme/helloapp#branch=main to /work/public/hello
+Installing dependencies in /work/public/hello
+Installing dependencies in /work/public/hello/cgi-bin
+```
+
+이 명령을 실행하면 다음과 같습니다.
+
+- 저장소 파일이 `/work/public/hello` 아래로 복사됩니다.
+- `/work/public/hello/package.json` 의 의존성이 `/work/public/hello/node_modules` 에 설치됩니다.
+- `/work/public/hello/cgi-bin/package.json` 이 있으면 그 의존성이 `/work/public/hello/cgi-bin/node_modules` 에 설치됩니다.
+
+특정 경로에 프로젝트 트리를 그대로 두고 싶지만, GitHub ref 해석과 복사된 프로젝트의 의존성 설치는 `pkg` 에 맡기고 싶을 때 `pkg copy` 를 사용하면 됩니다.
 
 ## pkg run
 

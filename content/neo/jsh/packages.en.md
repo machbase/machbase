@@ -13,6 +13,7 @@ The `pkg` command supports these tasks:
 
 - Create a new `package.json`
 - Install dependencies into `node_modules`
+- Copy a GitHub project into a destination directory and install its project dependencies in place
 - Maintain `package-lock.json`
 - Run commands defined in `package.json` `scripts`
 - Generate executable wrappers from installed package `bin` entries
@@ -287,6 +288,67 @@ When a lock file is present, `pkg install` reuses the locked GitHub ref instead 
 
 If `pkg` cannot determine a GitHub ref, it reports both resolution steps.
 For example, it can report a tags lookup failure together with a default branch lookup failure.
+
+## pkg copy
+
+Copies a GitHub repository package into the requested destination directory instead of installing the repository itself under `node_modules`.
+After copying the project files, `pkg copy` installs dependencies in the copied project root and, when present, in `cgi-bin`.
+
+<h6>Syntax</h6>
+
+```sh
+pkg copy [options] <source> <dest>
+```
+
+<h6>Options</h6>
+
+- `-f, --force` continue even if the destination directory already exists and is not empty
+- `-h, --help` show help
+
+`source` must use the same GitHub repository syntax supported by `pkg install`.
+Supported forms are:
+
+- `github.com/<org>/<repo>`
+- `github.com/<org>/<repo>@<tag>`
+- `github.com/<org>/<repo>#tag=<tag>`
+- `github.com/<org>/<repo>#branch=<branch>`
+
+`dest` is resolved as a file system path relative to the current working directory.
+If the destination does not exist, `pkg copy` creates it.
+If the destination already exists and is not empty, `pkg copy` fails unless `--force` is specified.
+
+### Copy behavior
+
+`pkg copy` reuses the same GitHub ref resolution rules as `pkg install`.
+That means it uses an explicit tag or branch when one is given, otherwise it resolves the latest tag, and if the repository has no tags it falls back to the repository `default_branch`.
+
+The copied repository contents are written directly into `<dest>`.
+Unlike `pkg install`, `pkg copy` does not place the GitHub project under `node_modules/github.com/...`.
+The original directory structure is preserved under the destination directory.
+
+After the copy step, `pkg copy` checks these project roots and installs dependencies using the same install logic and lock-file behavior as `pkg install`:
+
+- `<dest>` when `<dest>/package.json` exists
+- `<dest>/cgi-bin` when `<dest>/cgi-bin/package.json` exists
+
+This means each copied project root keeps its own `node_modules` and `package-lock.json`.
+
+<h6>Usage example</h6>
+
+```sh
+/work > pkg copy github.com/acme/helloapp public/hello
+Copying github.com/acme/helloapp#branch=main to /work/public/hello
+Installing dependencies in /work/public/hello
+Installing dependencies in /work/public/hello/cgi-bin
+```
+
+After this command:
+
+- the repository files are copied into `/work/public/hello`
+- dependencies for `/work/public/hello/package.json` are installed into `/work/public/hello/node_modules`
+- dependencies for `/work/public/hello/cgi-bin/package.json` are installed into `/work/public/hello/cgi-bin/node_modules` when that manifest exists
+
+Use `pkg copy` when you want a project tree to live at a specific path, while still letting `pkg` resolve GitHub refs and install the copied project's dependencies for you.
 
 ## pkg run
 
