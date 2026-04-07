@@ -1,235 +1,383 @@
 ---
-title: 'Managing Tag Metadata'
+title: 'Tag Metadata'
 type: docs
 weight: 20
 ---
 
-## Understanding Tag Metadata
+## Overview
 
-Tag metadata represents the identity and additional information of sensors or data sources in Machbase. Think of it as a registry of all your sensors - each tag has a unique name and can have associated descriptive information.
+Tag metadata stores static attributes for each tag. You can keep sensor location, device status, installation information, external identifiers, and JSON document-based properties in metadata.
 
-## Basic Tag Metadata Operations
+With the current feature set, you can use the following directly through `TAG METADATA` syntax.
 
-### Creating Simple Tag Metadata
+- Metadata-only queries
+- Metadata predicate based `UPDATE` and `DELETE`
+- `JSON` metadata columns
+- JSON path queries and JSON path indexes
+- Partial updates for JSON documents
 
-When you create a tag table, you define the structure. To actually use it, you need to register tag names:
+You do not need to access any internal metadata table directly.
 
-```sql
--- Create the tag table first
-create tag table TAG (name varchar(20) primary key, time datetime basetime, value double summarized);
+## Define Metadata Columns
 
-Mach> desc tag;
-[ COLUMN ]
-----------------------------------------------------------------
-NAME                          TYPE                LENGTH
-----------------------------------------------------------------
-NAME                          varchar             20
-TIME                          datetime            31
-VALUE                         double              17
-```
-
-### Inserting Tag Names
-
-Register a new sensor/tag:
+Define metadata columns in the `METADATA (...)` clause of `CREATE TAGDATA TABLE`.
 
 ```sql
-Mach> insert into tag metadata values ('TAG_0001');
-1 row(s) inserted.
-```
-
-### Viewing Tag Metadata
-
-Machbase provides a special table `_tag_meta` to view all registered tags:
-
-```sql
-Mach> select * from _tag_meta;
-ID                   NAME
-----------------------------------------------
-1                    TAG_0001
-[1] row(s) selected.
-```
-
-The ID is automatically assigned by the system.
-
-### Updating Tag Names
-
-You can modify tag names when needed:
-
-```sql
-Mach> update tag metadata set name = 'NEW_0001' where NAME = 'TAG_0001';
-1 row(s) updated.
-
-Mach> select * from _tag_meta;
-ID                   NAME
-----------------------------------------------
-1                    NEW_0001
-[1] row(s) selected.
-```
-
-### Deleting Tag Metadata
-
-Remove tag metadata when it's no longer needed:
-
-```sql
-Mach> delete from tag metadata where name = 'NEW_0001';
-1 row(s) deleted.
-
-Mach> select * from _tag_meta;
-ID                   NAME
-----------------------------------------------
-[0] row(s) selected.
-```
-
-> **Important**: You can only delete tag metadata if no actual sensor data references it.
-
-## Working with Additional Metadata
-
-### Creating Rich Metadata Structure
-
-Add descriptive information beyond just the tag name:
-
-```sql
-create tag table TAG (name varchar(20) primary key, time datetime basetime, value double summarized)
-metadata (type short, create_date datetime, srcip ipv4);
-
-Mach> desc tag;
-[ COLUMN ]
-----------------------------------------------------------------
-NAME                          TYPE                LENGTH
-----------------------------------------------------------------
-NAME                          varchar             20
-TIME                          datetime            31
-VALUE                         double              17
-[ META-COLUMN ]
-----------------------------------------------------------------
-NAME                          TYPE                LENGTH
-----------------------------------------------------------------
-TYPE                          short               6
-CREATE_DATE                   datetime            31
-SRCIP                         ipv4                15
-```
-
-### Inserting with Partial Metadata
-
-You can insert just the tag name - other fields will be NULL:
-
-```sql
-Mach> insert into tag metadata(name) values ('TAG_0001');
-1 row(s) inserted.
-
-Mach> select * from _tag_meta;
-ID                   NAME                  TYPE        CREATE_DATE                     SRCIP
--------------------------------------------------------------------------------------------------------------
-1                    TAG_0001              NULL        NULL                            NULL
-[1] row(s) selected.
-```
-
-### Inserting Complete Metadata
-
-Or provide all metadata fields:
-
-```sql
-Mach> insert into tag metadata values ('TAG_0002', 99, '2010-01-01', '1.1.1.1');
-1 row(s) inserted.
-
-Mach> select * from _tag_meta;
-ID                   NAME                  TYPE        CREATE_DATE                     SRCIP
--------------------------------------------------------------------------------------------------------------
-1                    TAG_0001              NULL        NULL                            NULL
-2                    TAG_0002              99          2010-01-01 00:00:00 000:000:000 1.1.1.1
-[2] row(s) selected.
-```
-
-### Updating Metadata Values
-
-Update any metadata field:
-
-```sql
-Mach> update tag metadata set type = 11 where name = 'TAG_0001';
-1 row(s) updated.
-
-Mach> select * from _tag_meta;
-ID                   NAME                  TYPE        CREATE_DATE                     SRCIP
--------------------------------------------------------------------------------------------------------------
-2                    TAG_0002              99          2010-01-01 00:00:00 000:000:000 1.1.1.1
-1                    TAG_0001              11          NULL                            NULL
-[2] row(s) selected.
-```
-
-> **Note**: When updating metadata, you must include the NAME column in the WHERE clause.
-
-## RESTful API for Tag Metadata
-
-### Getting All Tags
-
-Retrieve a list of all tags via HTTP:
-
-```bash
-$ curl -G "http://192.168.0.148:5001/machiot-rest-api/tags/list"
-{"ErrorCode": 0,
- "ErrorMessage": "",
- "Data": [{"NAME": "TAG_0001"},
-          {"NAME": "TAG_0002"}]}
-```
-
-### Getting Tag Time Ranges
-
-Find the min and max timestamp for a tag (useful for charting):
-
-```bash
-# Time range for all tags
-$ curl -G "http://192.168.0.148:5001/machiot-rest-api/tags/range/"
-{"ErrorCode": 0,
- "ErrorMessage": "",
- "Data": [{"MAX": "2018-02-10 10:00:00 000:000:000", "MIN": "2018-01-01 01:00:00 000:000:000"}]}
-
-# Time range for a specific tag
-$ curl -G "http://192.168.0.148:5001/machiot-rest-api/tags/range/TAG_0001"
-{"ErrorCode": 0,
- "ErrorMessage": "",
- "Data": [{"MAX": "2018-01-10 10:00:00 000:000:000", "MIN": "2018-01-01 01:00:00 000:000:000"}]}
-```
-
-## Real-World Example
-
-Here's a complete example showing how to set up temperature sensor metadata:
-
-```sql
--- Create tag table with metadata
-CREATE TAG TABLE sensors (
+CREATE TAGDATA TABLE sensors (
     name VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
-    value DOUBLE SUMMARIZED
-) METADATA (
-    location VARCHAR(50),
-    sensor_type VARCHAR(20),
-    installed_date DATETIME,
-    ip_address IPV4
+    value DOUBLE
+)
+METADATA (
+    location VARCHAR(100),
+    status VARCHAR(20),
+    srcip IPV4
 );
-
--- Register sensors with full metadata
-INSERT INTO sensors METADATA VALUES (
-    'TEMP_BUILDING_A_FLOOR1', 'Building A - Floor 1', 'Temperature', '2024-01-15', '192.168.1.101'
-);
-
-INSERT INTO sensors METADATA VALUES (
-    'TEMP_BUILDING_A_FLOOR2', 'Building A - Floor 2', 'Temperature', '2024-01-15', '192.168.1.102'
-);
-
--- View all registered sensors
-SELECT * FROM _sensors_meta;
 ```
 
-## Best Practices
+Metadata is stored as one row per tag name.
 
-1. **Use Descriptive Names**: Tag names should be meaningful and follow a consistent naming convention
-2. **Leverage Metadata**: Store static information in metadata columns to avoid redundancy in sensor data
-3. **Plan Your Schema**: Define all needed metadata columns when creating the tag table
-4. **Regular Cleanup**: Remove unused tag metadata to keep the registry clean
-5. **API Access**: Use the RESTful API for integration with external applications
+## Insert Metadata
 
-## Next Steps
+Use `INSERT INTO ... METADATA` to insert metadata.
 
-- Learn about [Inserting Tag Data](../inserting-data) to start recording sensor readings
-- Explore [Querying Tag Data](../querying-data) for data retrieval
-- Understand [Tag Indexes](../tag-indexes) for performance optimization
+```sql
+INSERT INTO sensors METADATA VALUES (
+    'TEMP_001',
+    'Building-A/F1',
+    'READY',
+    '192.168.0.11'
+);
+```
+
+You can also specify the column list.
+
+```sql
+INSERT INTO sensors METADATA (name, status, srcip, location)
+VALUES ('TEMP_002', 'STOP', '192.168.0.12', 'Building-A/F2');
+```
+
+Notes:
+
+- In `VALUES (...)`, the order is always `NAME` followed by metadata columns in declaration order.
+- Unspecified metadata columns are stored as `NULL`.
+- The row identity of tag metadata is always `NAME`.
+
+## Query Metadata
+
+### Query Metadata Only
+
+Use `FROM TAG METADATA` for metadata-only queries.
+
+```sql
+SELECT name, location, status, srcip
+  FROM sensors METADATA
+ ORDER BY name;
+```
+
+This returns one row per tag name.
+
+```sql
+SELECT *
+  FROM sensors METADATA
+ ORDER BY name;
+```
+
+`SELECT *` and `table_alias.*` return only `NAME` and user-defined metadata columns.
+
+### Query Data with Metadata Filters
+
+Use normal `FROM TAG` when you want time-series rows filtered by metadata conditions.
+
+```sql
+SELECT name, status, time, value
+  FROM sensors
+ WHERE status = 'READY'
+ ORDER BY name, time;
+```
+
+This query returns data rows, so the same metadata value is repeated for each data row of the tag.
+
+Notes:
+
+- `FROM TAG METADATA` does not allow data columns such as `TIME` or `VALUE`.
+- `FROM TAG` is data query mode, and `FROM TAG METADATA` is metadata query mode.
+- Internal columns such as `_ID` and `_RID` are not available through `TAG METADATA`.
+
+## Update Metadata
+
+Use `UPDATE TAG METADATA` to update metadata.
+
+```sql
+UPDATE sensors METADATA
+   SET status = 'DONE',
+       srcip = '10.0.0.20'
+ WHERE name = 'TEMP_001';
+```
+
+You can also update multiple tags with a metadata predicate.
+
+```sql
+UPDATE sensors METADATA
+   SET status = 'DONE'
+ WHERE status = 'READY';
+```
+
+Notes:
+
+- Only `NAME` and metadata columns can be updated.
+- Data columns such as `TIME` and `VALUE` cannot be updated through `UPDATE ... METADATA`.
+- Internal columns cannot be updated.
+
+## Delete Metadata
+
+Use `DELETE FROM TAG METADATA` to delete metadata.
+
+```sql
+DELETE FROM sensors METADATA
+ WHERE name = 'TEMP_002';
+```
+
+You can also delete multiple tags with a metadata predicate.
+
+```sql
+DELETE FROM sensors METADATA
+ WHERE status = 'STOP';
+```
+
+Notes:
+
+- If any matched tag still has data rows, the whole statement fails.
+- Metadata for tags that are still in use cannot be deleted.
+
+## JSON Metadata Columns
+
+You can define a `JSON` metadata column.
+
+```sql
+CREATE TAGDATA TABLE ships (
+    name VARCHAR(20) PRIMARY KEY,
+    time DATETIME BASETIME,
+    value DOUBLE
+)
+METADATA (
+    status VARCHAR(20),
+    info JSON
+);
+```
+
+Example insert:
+
+```sql
+INSERT INTO ships METADATA VALUES (
+    'SHIP_001',
+    'READY',
+    '{"name":"alpha","ship":{"status":"READY"}}'
+);
+```
+
+Notes:
+
+- Do not specify a length for a `JSON` metadata column.
+- Invalid JSON text raises an error.
+- No automatic index is created for the raw JSON metadata column itself.
+
+## Query JSON Paths
+
+Use the `->` operator to query JSON metadata.
+
+```sql
+SELECT name,
+       info->'$.name',
+       info->'$.ship.status'
+  FROM ships METADATA
+ WHERE info->'$.ship.status' = 'READY'
+ ORDER BY name;
+```
+
+The same path expression can be used in normal tag queries.
+
+```sql
+SELECT name, time, value
+  FROM ships
+ WHERE info->'$.ship.status' = 'READY'
+ ORDER BY name, time;
+```
+
+### Path Notation Rules
+
+Use full JSONPath syntax for query and mutation paths.
+
+- Simple key: `$.name`
+- Nested object key: `$.ship.status`
+- Use bracket notation if the key name contains `.` or `-`
+
+```sql
+SELECT info->'$[''ship.owner'']'
+  FROM ships METADATA;
+
+SELECT info->'$[''ship-owner'']'
+  FROM ships METADATA;
+```
+
+## JSON Path Indexes
+
+### Define Indexes When Creating the Table
+
+If you frequently query specific JSON paths, define them at table creation time.
+
+```sql
+CREATE TAGDATA TABLE ships (
+    name VARCHAR(20) PRIMARY KEY,
+    time DATETIME BASETIME,
+    value DOUBLE
+)
+METADATA (
+    status VARCHAR(20),
+    info JSON INDEX('name', 'ship.status')
+);
+```
+
+Strings inside `INDEX(...)` are interpreted as follows.
+
+- `'name'` becomes `$.name`
+- `'ship.status'` becomes `$.ship.status`
+- Use full JSONPath directly for special keys or complex paths
+
+```sql
+INFO JSON INDEX('$[''ship.owner'']')
+```
+
+### Add an Index After Table Creation
+
+You can also add a JSON path index later.
+
+```sql
+CREATE INDEX idx_ship_owner
+ON ships METADATA (info->'$.owner');
+```
+
+### Drop an Index
+
+Drop the index by name.
+
+```sql
+DROP INDEX idx_ship_owner;
+```
+
+For indexes created automatically by `INFO JSON INDEX(...)`, use `SHOW INDEX` to confirm the generated index name.
+
+```sql
+SHOW INDEX idx_ship_owner;
+```
+
+### Notes on Index Usage
+
+Current JSON path indexes work mainly for string comparisons.
+
+```sql
+SELECT name
+  FROM ships METADATA
+ WHERE info->'$.status' = 'READY';
+```
+
+String literal comparison can use the index. Numeric literal comparison may still fall back to a full scan.
+
+Examples:
+
+- `info->'$.num' = '10'` : index can be used
+- `info->'$.num' = 10` : full scan may be used
+
+## Partial JSON Updates
+
+You can update part of a JSON metadata document without rewriting the whole document.
+
+### JSON_SET
+
+Stores a SQL scalar value as a JSON scalar.
+
+```sql
+UPDATE ships METADATA
+   SET info = JSON_SET(info, '$.ship.status', 'DONE')
+ WHERE name = 'SHIP_001';
+```
+
+### JSON_SET_JSON
+
+Parses the input string as JSON and stores it as an object or array.
+
+```sql
+UPDATE ships METADATA
+   SET info = JSON_SET_JSON(info, '$.owner', '{"name":"machbase","team":"db"}')
+ WHERE name = 'SHIP_001';
+```
+
+### JSON_REMOVE
+
+Removes a member or subtree.
+
+```sql
+UPDATE ships METADATA
+   SET info = JSON_REMOVE(info, '$.owner.team')
+ WHERE name = 'SHIP_001';
+```
+
+### Partial Update Rules
+
+- `JSON_SET(..., path, NULL)` stores JSON `null`.
+- `JSON_SET_JSON(..., path, NULL)` returns SQL `NULL`.
+- If the JSON document argument is `NULL`, the function result is SQL `NULL`.
+- If the path is `NULL` or an empty string, the function raises an error.
+- `JSON_REMOVE` on a missing path is a no-op.
+- `JSON_REMOVE(..., '$')` is not allowed.
+- Partial mutation is supported for object paths.
+- Array element mutation such as `$.items[0]` is not supported.
+
+## Full Example
+
+```sql
+CREATE TAGDATA TABLE ships (
+    name VARCHAR(20) PRIMARY KEY,
+    time DATETIME BASETIME,
+    value DOUBLE
+)
+METADATA (
+    status VARCHAR(20),
+    srcip IPV4,
+    info JSON INDEX('name', 'ship.status')
+);
+
+INSERT INTO ships METADATA VALUES (
+    'SHIP_001',
+    'READY',
+    '192.168.0.11',
+    '{"name":"alpha","ship":{"status":"READY"}}'
+);
+
+INSERT INTO ships VALUES ('SHIP_001', '2026-04-01 00:00:00', 10.5);
+
+SELECT name, status, info
+  FROM ships METADATA;
+
+SELECT name, time, value
+  FROM ships
+ WHERE info->'$.ship.status' = 'READY';
+
+CREATE INDEX idx_ship_owner
+ON ships METADATA (info->'$.owner');
+
+UPDATE ships METADATA
+   SET info = JSON_SET(info, '$.ship.status', 'DONE')
+ WHERE name = 'SHIP_001';
+
+DROP INDEX idx_ship_owner;
+```
+
+## Summary
+
+- Use `FROM TAG METADATA` for metadata-only queries
+- Use `FROM TAG` for time-series data queries
+- Use `UPDATE/DELETE ... METADATA` for metadata changes
+- Use `INFO JSON` for JSON metadata
+- Use `INFO JSON INDEX(...)` or `CREATE INDEX ... ON TAG METADATA (...)` for JSON path indexes
+- Use `JSON_SET`, `JSON_SET_JSON`, and `JSON_REMOVE` for partial JSON updates

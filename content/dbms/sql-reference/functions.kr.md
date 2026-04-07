@@ -30,6 +30,9 @@ tocSort: true
 * [GROUP_CONCAT](#group_concat)
 * [INSTR](#instr)
 * [ISNAN / ISINF](#isnan--isinf)
+* [JSON_SET](#json_set)
+* [JSON_SET_JSON](#json_set_json)
+* [JSON_REMOVE](#json_remove)
 * [JSON 관련 함수](#json-related-function)
 * [JSON 연산자](#json-operator)
 * [LEAST / GREATEST](#least--greatest)
@@ -2702,6 +2705,78 @@ nan                         inf                         0
 [1] row(s) selected.
 ```
 
+## JSON_SET
+
+JSON 문서의 특정 경로에 SQL scalar 값을 JSON scalar로 저장합니다.
+
+```sql
+JSON_SET(json_doc, path, scalar)
+```
+
+```sql
+Mach> SELECT JSON_SET('{"ship":{"status":"READY"}}', '$.ship.status', 'DONE') FROM dual;
+JSON_SET('{"ship":{"status":"READY"}}', '$.ship.status', 'DONE')
+--------------------------------------------------------------------------------
+{"ship":{"status":"DONE"}}
+[1] row(s) selected.
+```
+
+주의사항:
+
+- `path` 는 full JSONPath를 사용해야 합니다.
+- `JSON_SET(..., path, NULL)` 은 JSON `null` 을 저장합니다.
+- JSON 문서 인자가 `NULL` 이면 결과는 SQL `NULL` 입니다.
+- `path` 가 `NULL` 이거나 빈 문자열이면 오류가 발생합니다.
+- object 경로 중심으로 지원합니다.
+- array element 갱신 예: `$.items[0]` 는 지원하지 않습니다.
+
+## JSON_SET_JSON
+
+세 번째 인자를 JSON 문자열로 해석하여 object 또는 array subtree를 저장합니다.
+
+```sql
+JSON_SET_JSON(json_doc, path, json_text)
+```
+
+```sql
+Mach> SELECT JSON_SET_JSON('{"ship":{}}', '$.ship.owner', '{"name":"machbase"}') FROM dual;
+JSON_SET_JSON('{"ship":{}}', '$.ship.owner', '{"name":"machbase"}')
+----------------------------------------------------------------------------
+{"ship":{"owner":{"name":"machbase"}}}
+[1] row(s) selected.
+```
+
+주의사항:
+
+- `path` 는 full JSONPath를 사용해야 합니다.
+- 세 번째 인자가 SQL `NULL` 이면 결과는 SQL `NULL` 입니다.
+- 유효하지 않은 JSON 문자열은 오류가 발생합니다.
+- object 경로 중심으로 지원합니다.
+- array element 갱신은 지원하지 않습니다.
+
+## JSON_REMOVE
+
+JSON 문서에서 특정 멤버 또는 하위 경로를 제거합니다.
+
+```sql
+JSON_REMOVE(json_doc, path)
+```
+
+```sql
+Mach> SELECT JSON_REMOVE('{"owner":{"name":"machbase","team":"db"}}', '$.owner.team') FROM dual;
+JSON_REMOVE('{"owner":{"name":"machbase","team":"db"}}', '$.owner.team')
+--------------------------------------------------------------------------
+{"owner":{"name":"machbase"}}
+[1] row(s) selected.
+```
+
+주의사항:
+
+- `path` 는 full JSONPath를 사용해야 합니다.
+- 존재하지 않는 경로는 no-op 으로 처리됩니다.
+- `JSON_REMOVE(..., '$')` 는 허용되지 않습니다.
+- JSON 문서 인자가 `NULL` 이면 결과는 SQL `NULL` 입니다.
+
 ## PI() {#pi}
 
 `DOUBLE` 타입의 π 상수를 반환합니다.
@@ -3098,6 +3173,9 @@ same_seed   diff_seed   diff_default
 |JSON_EXTRACT_DOUBLE(JSON column name, 'json path')|값을 64비트 double 타입으로 반환합니다.<br>(값이 없으면 NULL을 반환합니다.)| - JSON object or array : NULL을 반환합니다.<br> - String type : 변환 가능하면 변환해 반환하고, 불가능하면 NULL을 반환합니다.<br> - Numeric type : 64비트 실수로 반환합니다.<br> - boolean type : \"True\"는 1.0, \"False\"는 0.0으로 반환합니다.|
 |JSON_EXTRACT_INTEGER(JSON column name, 'json path')|값을 64비트 정수 타입으로 반환합니다.<br>(값이 없으면 NULL을 반환합니다.)| - JSON object or array : NULL을 반환합니다.<br> - String type : 변환 가능하면 변환해 반환하고, 불가능하면 NULL을 반환합니다.<br> - Numeric type : 64비트 정수로 반환합니다.<br> - boolean type : \"True\"는 1, \"False\"는 0으로 반환합니다.|
 |JSON_EXTRACT_STRING(JSON column name, 'json path')|값을 문자열 타입으로 반환합니다.<br>(값이 없으면 NULL을 반환합니다.)<br>연산자(→)와 동일한 결과를 반환합니다.| - JSON object or array : 모든 객체를 문자열로 변환해 반환합니다.<br> - String type : 그대로 반환합니다. <br> - Numeric type : 문자열로 변환해 반환합니다. <br> - boolean type : \"True\" 또는 \"False\"를 반환합니다.|
+|JSON_SET(json_doc, path, scalar)|지정한 경로에 SQL scalar 값을 JSON scalar로 저장한 새 JSON 문서를 반환합니다.| - `path` 는 full JSONPath를 사용합니다.<br> - `NULL` 값은 JSON `null` 로 저장됩니다.<br> - object 경로만 지원합니다.|
+|JSON_SET_JSON(json_doc, path, json_text)|지정한 경로에 JSON 문자열을 object 또는 array subtree로 저장한 새 JSON 문서를 반환합니다.| - `path` 는 full JSONPath를 사용합니다.<br> - 세 번째 인자가 SQL `NULL` 이면 결과는 SQL `NULL` 입니다.<br> - 유효하지 않은 JSON 문자열은 오류가 발생합니다.|
+|JSON_REMOVE(json_doc, path)|지정한 경로의 멤버 또는 subtree를 제거한 새 JSON 문서를 반환합니다.| - `path` 는 full JSONPath를 사용합니다.<br> - 존재하지 않는 경로는 no-op 입니다.<br> - `JSON_REMOVE(..., '$')` 는 허용되지 않습니다.|
 |JSON_IS_VALID('json string')|json 문자열이 형식에 맞는지 확인합니다.| - 0 : False<br> - 1 : True|
 |JSON_TYPEOF(JSON column name, 'json path')|값의 타입을 반환합니다.| - None : 키가 존재하지 않음<br> - Object : Object 타입<br> - Integer : 정수 타입<br> - Real : 실수 타입<br> - String : 문자열 타입<br> - True/False : Boolean<br> - Array : Array 타입<br> - Null : NULL|
 

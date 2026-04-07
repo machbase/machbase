@@ -126,6 +126,15 @@ UPDATE TAG METADATA SET ...
 ```
  
 * TAGDATA 테이블의 메타데이터는 INSERT ON DUPLICATE KEY UPDATE를 통해 입력하거나 수정할 수 없습니다.
+* 현재 `TAG METADATA` 는 `WHERE NAME = ...` 뿐 아니라 메타데이터 컬럼 조건도 사용할 수 있습니다.
+* `TIME`, `VALUE` 같은 데이터 컬럼은 `UPDATE ... METADATA` 에서 수정할 수 없습니다.
+* `NAME` 과 메타데이터 컬럼만 수정할 수 있습니다.
+
+```sql
+UPDATE sensors METADATA
+   SET status = 'DONE'
+ WHERE status = 'READY';
+```
 
 ## DELETE
 
@@ -195,6 +204,21 @@ delete from t1 where i1 = 2;
 * 기본 키가 지정된 휘발성 테이블에 대해서만 수행 가능합니다.
 * WHERE 절에는 (기본 키 컬럼) = (값) 조건만 허용되며, 다른 조건과 함께 작성할 수 없습니다.
 * 기본 키 컬럼이 아닌 다른 컬럼을 조건에 사용할 수 없습니다.
+
+### DELETE FROM TAG METADATA
+
+TAGDATA 테이블의 메타데이터는 `DELETE FROM TAG METADATA` 로 삭제할 수 있습니다.
+
+```sql
+DELETE FROM tag METADATA WHERE name = 'tag-1';
+DELETE FROM tag METADATA WHERE status = 'STOP';
+```
+
+주의사항:
+
+- `WHERE NAME = ...` 뿐 아니라 메타데이터 컬럼 조건을 사용할 수 있습니다.
+- 삭제 대상 중 하나라도 실제 데이터 row를 가지고 있으면 문장 전체가 실패합니다.
+- 사용 중인 tag의 메타데이터는 삭제할 수 없습니다.
 
 **delete_from_tag_where_stmt:**
 

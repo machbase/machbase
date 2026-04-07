@@ -59,6 +59,45 @@ PLAN
 [6] row(s) selected.
 ```
 
+## TAG Metadata JSON Path Indexes
+
+You can also create path indexes on JSON columns in `TAG METADATA`.
+
+```sql
+CREATE TAGDATA TABLE ships (
+    name VARCHAR(20) PRIMARY KEY,
+    time DATETIME BASETIME,
+    value DOUBLE
+)
+METADATA (
+    status VARCHAR(20),
+    info JSON
+);
+
+CREATE INDEX idx_ship_owner
+ON ships METADATA (info->'$.owner');
+```
+
+You can also declare frequently used paths when creating the table.
+
+```sql
+CREATE TAGDATA TABLE ships (
+    name VARCHAR(20) PRIMARY KEY,
+    time DATETIME BASETIME,
+    value DOUBLE
+)
+METADATA (
+    info JSON INDEX('name', 'ship.status')
+);
+```
+
+Notes:
+
+- Use `CREATE INDEX ... ON TAG METADATA (...)` for metadata JSON path indexes.
+- Use `INFO JSON INDEX(...)` to declare frequently used paths at table creation time.
+- Current JSON path indexes work mainly for string literal comparisons.
+- Numeric literal comparisons may still use a full scan.
+
 ## Delete Index
 
 Delete the specified index using the DROP INDEX statement. However, if there is another session in which the table is being searched, it will fail with an error.
@@ -70,4 +109,10 @@ DROP INDEX index_name;
 ```bash
 Mach> DROP INDEX id_index;
 Dropped successfully.
+```
+
+Metadata JSON path indexes can also be dropped by index name only.
+
+```sql
+DROP INDEX idx_ship_owner;
 ```

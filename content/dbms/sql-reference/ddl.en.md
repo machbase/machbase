@@ -53,12 +53,14 @@ CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, valu
 CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED, value2 FLOAT) METADATA (i1 INT);
 ```
 
+For `JSON` metadata columns and `JSON INDEX(...)` declarations in TAG metadata, see [Tag Metadata](../../table-types/tag-tables/tag-metadata).
+
 #### Rules for naming tables or columns
 
 Table names or column names consist of alphanumeric characters. Use double quotation marks (`"`) to use special characters.
 
 ```sql
-CREATE TABLE special_tbl ( "with.dot" INTEGER ); -- (Possible)
+CREATE TABLE special_tbl ( "with.dot" INTEGER );
 ```
 
 #### IF NOT EXISTS
@@ -442,7 +444,7 @@ CREATE INDEX index1 on table1 ( c1 )
 CREATE INDEX index2 on table1 (var_column) INDEX_TYPE KEYWORD PAGE_SIZE=100000;
 ```
 
-
+For TAGDATA metadata JSON path indexes, see [Tag Metadata](../../table-types/tag-tables/tag-metadata) and [Tag Table Indexes](../../table-types/tag-tables/tag-indexes).
 
 ## DROP INDEX
 
@@ -460,9 +462,6 @@ Deletes the specified index. However, if there is another session in which the t
 -- Example
 DROP INDEX IndexName;
 ```
-
-
-
 
 ## ALTER TABLE
 

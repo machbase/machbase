@@ -44,4 +44,6 @@ CREATE TAGDATA TABLE table_name (
 - [Conditional Rollup for Filtering Noise](./rollup-conditional/)
 - [Custom Rollup: User-Defined Aggregation](./rollup-custom/)
 - [Binary Columns](./binary-columns/)
+- [Tag Metadata](./tag-metadata/)
+- [Tag Table Indexes](./tag-indexes/)
 - Original reference: [Tag Tables](../../../dbms/feature-table/tag/)

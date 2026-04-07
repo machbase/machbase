@@ -44,4 +44,6 @@ CREATE TAGDATA TABLE table_name (
 - [조건부 롤업으로 이상치 제외 집계](./rollup-conditional/)
 - [Custom Rollup: 사용자 정의 집계](./rollup-custom/)
 - [Binary 컬럼](./binary-columns/)
+- [Tag 메타데이터](./tag-metadata/)
+- [Tag 테이블 인덱스](./tag-indexes/)
 - 원본 레퍼런스: [Tag Tables](../../../dbms/feature-table/tag/)
