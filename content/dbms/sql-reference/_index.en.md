@@ -14,8 +14,10 @@ Complete SQL syntax reference for Machbase. This section provides detailed docum
 - `CREATE TAGDATA TABLE` - Create tag tables
 - `CREATE VOLATILE TABLE` - Create volatile tables
 - `CREATE LOOKUP TABLE` - Create lookup tables
+- `CREATE VIEW` - Create stored VIEWs
 - `ALTER TABLE` - Modify table structure
 - `DROP TABLE` - Delete tables
+- `DROP VIEW` - Delete stored VIEWs
 - `CREATE INDEX` - Create indexes
 - `DROP INDEX` - Delete indexes
 
@@ -39,6 +41,7 @@ Complete SQL syntax reference for Machbase. This section provides detailed docum
 
 - `SHOW TABLES` - List tables
 - `SHOW TABLE` - View table structure
+- `SHOW VIEWS` - List VIEWs
 - `SHOW USERS` - List users
 - `SHOW INDEXES` - List indexes
 - `SHOW STORAGE` - View storage info
@@ -148,6 +151,11 @@ CREATE LOOKUP TABLE devices (
     device_id INTEGER,
     name VARCHAR(100)
 );
+
+-- VIEW
+CREATE VIEW active_devices AS
+SELECT device_id, name
+FROM devices;
 ```
 
 ### Query Data
@@ -189,6 +197,7 @@ ALTER USER analyst IDENTIFIED BY 'newpassword';
 
 ## Related Documentation
 
+- [VIEW](./view) - Stored VIEW creation, querying, metadata, performance, and limits
 - [Core Concepts](../core-concepts/) - Understanding Machbase
 - [Common Tasks](../common-tasks/querying/) - Query examples
 - [Tutorials](../tutorials/) - Hands-on practice

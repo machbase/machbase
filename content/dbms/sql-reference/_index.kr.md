@@ -14,8 +14,10 @@ Machbase의 완전한 SQL 구문 레퍼런스입니다. 이 섹션은 모든 SQL
 - `CREATE TAGDATA TABLE` - TAG 테이블 생성
 - `CREATE VOLATILE TABLE` - VOLATILE 테이블 생성
 - `CREATE LOOKUP TABLE` - LOOKUP 테이블 생성
+- `CREATE VIEW` - 저장 VIEW 생성
 - `ALTER TABLE` - 테이블 구조 수정
 - `DROP TABLE` - 테이블 삭제
+- `DROP VIEW` - 저장 VIEW 삭제
 - `CREATE INDEX` - 인덱스 생성
 - `DROP INDEX` - 인덱스 삭제
 
@@ -39,6 +41,7 @@ Machbase의 완전한 SQL 구문 레퍼런스입니다. 이 섹션은 모든 SQL
 
 - `SHOW TABLES` - 테이블 목록
 - `SHOW TABLE` - 테이블 구조 보기
+- `SHOW VIEWS` - VIEW 목록 보기
 - `SHOW USERS` - 사용자 목록
 - `SHOW INDEXES` - 인덱스 목록
 - `SHOW STORAGE` - 스토리지 정보 보기
@@ -148,6 +151,11 @@ CREATE LOOKUP TABLE devices (
     device_id INTEGER,
     name VARCHAR(100)
 );
+
+-- VIEW
+CREATE VIEW active_devices AS
+SELECT device_id, name
+FROM devices;
 ```
 
 ### 데이터 조회
@@ -189,6 +197,7 @@ ALTER USER analyst IDENTIFIED BY 'newpassword';
 
 ## 관련 문서
 
+- [VIEW](./view) - 저장 VIEW 생성, 조회, 메타 확인, 성능과 제한
 - [핵심 개념](../core-concepts/) - Machbase 이해하기
 - [일반 작업](../common-tasks/querying/) - 쿼리 예제
 - [튜토리얼](../tutorials/) - 실습 연습
