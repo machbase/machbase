@@ -2,6 +2,7 @@
 type: docs
 title: 'SQL 문법 참조하기'
 weight: 80
+toc: true
 ---
 
 Machbase의 완전한 SQL 구문 레퍼런스입니다. 이 섹션은 모든 SQL 명령어, 데이터 타입, 함수 및 연산자에 대한 상세한 문서를 제공합니다.

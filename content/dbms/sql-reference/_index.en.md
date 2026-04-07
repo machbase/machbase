@@ -2,6 +2,7 @@
 type: docs
 title: 'SQL Reference'
 weight: 80
+toc: true
 ---
 
 Complete SQL syntax reference for Machbase. This section provides detailed documentation for all SQL commands, data types, functions, and operators.

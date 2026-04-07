@@ -3,6 +3,7 @@ layout : post
 title : 'DDL'
 type: docs
 weight: 20
+toc: true
 ---
 
 ## CREATE TABLE

@@ -2,6 +2,7 @@
 title : 'VIEW'
 type: docs
 weight: 25
+toc: true
 ---
 
 ## Index
