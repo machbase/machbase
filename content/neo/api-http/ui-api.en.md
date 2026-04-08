@@ -281,6 +281,243 @@ Web socket for the bi-directional messages
 |                | `log.message`    | log message        |
 |                | `log.repeat`     | count, if the same message repeats more than two times in serial |
 
+## JSON-RPC
+
+The Web UI provides JSON-RPC endpoints for management-oriented features.
+
+- HTTP POST endpoint: `/web/api/rpc`
+- WebSocket endpoint: `/web/api/console/:console_id/data`
+
+For simple request/response interactions, use `/web/api/rpc`.
+When you need bi-directional messaging over an existing console session, use `/web/api/console/:console_id/data`.
+
+### HTTP JSON-RPC request format
+
+**POST `/web/api/rpc`**
+
+Request example:
+
+```json
+{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "shell.list",
+    "params": []
+}
+```
+
+Success response example:
+
+```json
+{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": []
+}
+```
+
+Error response example:
+
+```json
+{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "error": {
+        "code": -32000,
+        "message": "error message"
+    }
+}
+```
+
+Notes:
+
+- The HTTP status is normally `200 OK`.
+- Detect failures by checking the `error` field, not by the HTTP status code.
+
+### WebSocket JSON-RPC request format
+
+**`ws:/web/api/console/:console_id/data`**
+
+Over WebSocket, use `rpc_req` and `rpc_rsp` event wrappers.
+The `session` field is an identifier that the UI client can use to route the response back to the correct tab or view.
+
+Request example:
+
+```json
+{
+    "type": "rpc_req",
+    "session": "{\"view\":\"shell-tab-2\",\"requestId\":\"req-001\"}",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "shell.list",
+        "params": []
+    }
+}
+```
+
+Response example:
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "{\"view\":\"shell-tab-2\",\"requestId\":\"req-001\"}",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": []
+    }
+}
+```
+
+### Available major methods
+
+The following methods are currently available through JSON-RPC.
+
+#### Markdown
+
+- `markdown.render`
+  - params: `[markdown: string, darkMode: bool]`
+  - result: `string`
+
+#### Server / Service
+
+- `server.info.get`
+  - params: `[]`
+  - result: `server info object`
+- `service.port.list`
+  - params: `[serviceName: string]`
+  - result: `ServicePort[]`
+- `server.shutdown`
+  - params: `[]`
+  - result: `implementation dependent`
+- `server.certificate.get`
+  - params: `[]`
+  - result: `string`
+
+#### Shell
+
+- `shell.list`
+  - params: `[]`
+  - result: `ShellDefinition[]`
+- `shell.add`
+  - params: `[label: string, command: string]`
+  - result: `string`
+- `shell.delete`
+  - params: `[id: string]`
+  - result: `empty on success`
+
+#### Bridge
+
+- `bridge.list`
+  - params: `[]`
+  - result: `Bridge[]`
+- `bridge.get`
+  - params: `[name: string]`
+  - result: `Bridge`
+- `bridge.add`
+  - params: `[name: string, type: string, conn: string]`
+  - result: `empty on success`
+- `bridge.delete`
+  - params: `[name: string]`
+  - result: `empty on success`
+- `bridge.test`
+  - params: `[name: string]`
+  - result: `bool`
+- `bridge.stats`
+  - params: `[name: string]`
+  - result: `BridgeStats`
+- `bridge.exec`
+  - params: `[name: string, command: string]`
+  - result: `BridgeExecResult`
+- `bridge.query`
+  - params: `[name: string, query: string]`
+  - result: `BridgeQueryResult`
+- `bridge.result.fetch`
+  - params: `[handle: string]`
+  - result: `BridgeQueryRow`
+- `bridge.result.close`
+  - params: `[handle: string]`
+  - result: `empty on success`
+
+#### SSH Key
+
+- `sshkey.list`
+  - params: `[]`
+  - result: `AuthorizedSshKey[]`
+- `sshkey.add`
+  - params: `[type: string, key: string, comment: string]`
+  - result: `empty on success`
+- `sshkey.delete`
+  - params: `[key: string]`
+  - result: `empty on success`
+
+#### Key
+
+- `key.list`
+  - params: `[]`
+  - result: `KeyInfo[]`
+- `key.generate`
+  - params: `[id: string]`
+  - result: `generated key bundle object`
+- `key.delete`
+  - params: `[id: string]`
+  - result: `empty on success`
+
+#### Schedule
+
+- `schedule.list`
+  - params: `[]`
+  - result: `Schedule[]`
+- `schedule.timer.add`
+  - params: `[name: string, spec: string, command: string, autoStart: bool]`
+  - result: `empty on success`
+- `schedule.subscriber.add`
+  - params: `[name: string, bridge: string, command: string, autoStart: bool, topic: string, qos: number]`
+  - result: `empty on success`
+- `schedule.delete`
+  - params: `[name: string]`
+  - result: `empty on success`
+- `schedule.start`
+  - params: `[name: string]`
+  - result: `empty on success`
+- `schedule.stop`
+  - params: `[name: string]`
+  - result: `empty on success`
+
+#### Session / Utility
+
+- `session.list`
+  - params: `[]`
+  - result: `Session[]`
+- `session.kill`
+  - params: `[id: string, force: bool]`
+  - result: `empty on success`
+- `session.stat`
+  - params: `[reset: bool]`
+  - result: `Statz`
+- `session.limit.get`
+  - params: `[]`
+  - result: `SessionLimit`
+- `session.limit.set`
+  - params: `[config: object]`
+  - result: `empty on success`
+- `http.debug.set`
+  - params: `[config: object]`
+  - result: `normalized config object`
+- `sql.split`
+  - params: `[sqlText: string]`
+  - result: `SqlStatement[]`
+
+### Method examples
+
+- List shells: `shell.list`
+- Add a bridge: `bridge.add`
+- Get session limits: `session.limit.get`
+- Render markdown: `markdown.render`
+
+For new management features, JSON-RPC methods are the recommended integration path.
+
 
 ## TQL & Workspace
 

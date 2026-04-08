@@ -282,6 +282,243 @@ weight: 55
 |                | `log.message`    | 로그 메시지                                                    |
 |                | `log.repeat`     | 동일 메시지가 연속 두 번 이상 반복될 때의 횟수                |
 
+## JSON-RPC
+
+Web UI는 관리 기능을 위해 JSON-RPC endpoint를 제공합니다.
+
+- HTTP POST endpoint: `/web/api/rpc`
+- WebSocket endpoint: `/web/api/console/:console_id/data`
+
+단순 요청/응답 형태의 호출에는 `/web/api/rpc`를 사용하는 것을 권장합니다.
+콘솔 세션과 함께 양방향 메시지를 처리해야 하는 경우에는 `/web/api/console/:console_id/data`를 사용할 수 있습니다.
+
+### HTTP JSON-RPC 요청 형식
+
+**POST `/web/api/rpc`**
+
+요청 예시:
+
+```json
+{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "shell.list",
+    "params": []
+}
+```
+
+성공 응답 예시:
+
+```json
+{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": []
+}
+```
+
+오류 응답 예시:
+
+```json
+{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "error": {
+        "code": -32000,
+        "message": "error message"
+    }
+}
+```
+
+참고:
+
+- 응답의 HTTP status는 일반적으로 `200 OK` 입니다.
+- 성공 여부는 HTTP status가 아니라 `error` 필드 존재 여부로 판단하십시오.
+
+### WebSocket JSON-RPC 요청 형식
+
+**`ws:/web/api/console/:console_id/data`**
+
+WebSocket에서는 `rpc_req` / `rpc_rsp` 이벤트를 사용합니다.
+`session` 필드는 UI 클라이언트가 응답을 어느 탭 또는 어느 뷰에 연결할지 구분하기 위한 식별자입니다.
+
+요청 예시:
+
+```json
+{
+    "type": "rpc_req",
+    "session": "{\"view\":\"shell-tab-2\",\"requestId\":\"req-001\"}",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "shell.list",
+        "params": []
+    }
+}
+```
+
+응답 예시:
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "{\"view\":\"shell-tab-2\",\"requestId\":\"req-001\"}",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": []
+    }
+}
+```
+
+### 사용 가능한 주요 메서드
+
+다음 메서드는 현재 JSON-RPC로 사용할 수 있습니다.
+
+#### Markdown
+
+- `markdown.render`
+  - params: `[markdown: string, darkMode: bool]`
+  - result: `string`
+
+#### Server / Service
+
+- `server.info.get`
+  - params: `[]`
+  - result: `server info object`
+- `service.port.list`
+  - params: `[serviceName: string]`
+  - result: `ServicePort[]`
+- `server.shutdown`
+  - params: `[]`
+  - result: `implementation dependent`
+- `server.certificate.get`
+  - params: `[]`
+  - result: `string`
+
+#### Shell
+
+- `shell.list`
+  - params: `[]`
+  - result: `ShellDefinition[]`
+- `shell.add`
+  - params: `[label: string, command: string]`
+  - result: `string`
+- `shell.delete`
+  - params: `[id: string]`
+  - result: `empty on success`
+
+#### Bridge
+
+- `bridge.list`
+  - params: `[]`
+  - result: `Bridge[]`
+- `bridge.get`
+  - params: `[name: string]`
+  - result: `Bridge`
+- `bridge.add`
+  - params: `[name: string, type: string, conn: string]`
+  - result: `empty on success`
+- `bridge.delete`
+  - params: `[name: string]`
+  - result: `empty on success`
+- `bridge.test`
+  - params: `[name: string]`
+  - result: `bool`
+- `bridge.stats`
+  - params: `[name: string]`
+  - result: `BridgeStats`
+- `bridge.exec`
+  - params: `[name: string, command: string]`
+  - result: `BridgeExecResult`
+- `bridge.query`
+  - params: `[name: string, query: string]`
+  - result: `BridgeQueryResult`
+- `bridge.result.fetch`
+  - params: `[handle: string]`
+  - result: `BridgeQueryRow`
+- `bridge.result.close`
+  - params: `[handle: string]`
+  - result: `empty on success`
+
+#### SSH Key
+
+- `sshkey.list`
+  - params: `[]`
+  - result: `AuthorizedSshKey[]`
+- `sshkey.add`
+  - params: `[type: string, key: string, comment: string]`
+  - result: `empty on success`
+- `sshkey.delete`
+  - params: `[key: string]`
+  - result: `empty on success`
+
+#### Key
+
+- `key.list`
+  - params: `[]`
+  - result: `KeyInfo[]`
+- `key.generate`
+  - params: `[id: string]`
+  - result: `generated key bundle object`
+- `key.delete`
+  - params: `[id: string]`
+  - result: `empty on success`
+
+#### Schedule
+
+- `schedule.list`
+  - params: `[]`
+  - result: `Schedule[]`
+- `schedule.timer.add`
+  - params: `[name: string, spec: string, command: string, autoStart: bool]`
+  - result: `empty on success`
+- `schedule.subscriber.add`
+  - params: `[name: string, bridge: string, command: string, autoStart: bool, topic: string, qos: number]`
+  - result: `empty on success`
+- `schedule.delete`
+  - params: `[name: string]`
+  - result: `empty on success`
+- `schedule.start`
+  - params: `[name: string]`
+  - result: `empty on success`
+- `schedule.stop`
+  - params: `[name: string]`
+  - result: `empty on success`
+
+#### Session / Utility
+
+- `session.list`
+  - params: `[]`
+  - result: `Session[]`
+- `session.kill`
+  - params: `[id: string, force: bool]`
+  - result: `empty on success`
+- `session.stat`
+  - params: `[reset: bool]`
+  - result: `Statz`
+- `session.limit.get`
+  - params: `[]`
+  - result: `SessionLimit`
+- `session.limit.set`
+  - params: `[config: object]`
+  - result: `empty on success`
+- `http.debug.set`
+  - params: `[config: object]`
+  - result: `normalized config object`
+- `sql.split`
+  - params: `[sqlText: string]`
+  - result: `SqlStatement[]`
+
+### 메서드 선택 예시
+
+- 셸 목록 조회: `shell.list`
+- 브리지 추가: `bridge.add`
+- 세션 제한 조회: `session.limit.get`
+- 마크다운 렌더링: `markdown.render`
+
+신규 관리 기능은 가능한 한 JSON-RPC 메서드 기반으로 연동하는 것을 권장합니다.
+
 
 ## TQL 및 워크스페이스
 
