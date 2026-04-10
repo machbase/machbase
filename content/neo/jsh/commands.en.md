@@ -253,6 +253,31 @@ For subcommands, options, and service-management workflows, refer to [Service Ma
 servicectl [--controller=<addr>] <command> [args...]
 ```
 
+#### servicectl controller
+
+Shows and resets service-controller RPC runtime metrics.
+
+<h6>Syntax</h6>
+
+```sh
+servicectl [--controller=<addr>] controller [metrics|get|reset]
+```
+
+<h6>Behavior</h6>
+
+- `controller` and `controller metrics` are equivalent.
+- `controller get` is an alias of `controller metrics`.
+- `controller reset` resets cumulative counters and starts a new accumulation window.
+- `high_water_mark_connections` records the historical peak of concurrent RPC connections since the last reset.
+
+<h6>Usage example</h6>
+
+```sh
+servicectl controller metrics
+servicectl controller reset
+servicectl controller get
+```
+
 ## Text And Utility Commands
 
 ### echo

@@ -253,6 +253,31 @@ pkg <command> [options] [args...]
 servicectl [--controller=<addr>] <command> [args...]
 ```
 
+#### servicectl controller
+
+서비스 컨트롤러 RPC 런타임 메트릭을 조회하고 초기화합니다.
+
+<h6>사용 형식</h6>
+
+```sh
+servicectl [--controller=<addr>] controller [metrics|get|reset]
+```
+
+<h6>동작</h6>
+
+- `controller`와 `controller metrics`는 동일합니다.
+- `controller get`은 `controller metrics`의 별칭입니다.
+- `controller reset`은 누적 카운터를 초기화하고 새 집계 구간을 시작합니다.
+- `high_water_mark_connections`는 마지막 reset 이후 동시 RPC 연결의 최대값(최악 시점)을 유지합니다.
+
+<h6>사용 예시</h6>
+
+```sh
+servicectl controller metrics
+servicectl controller reset
+servicectl controller get
+```
+
 ## Text And Utility Commands
 
 ### echo
