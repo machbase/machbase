@@ -319,6 +319,31 @@ sleep [OPTION] <sec>
 /work > sleep 5
 ```
 
+### tail
+
+파일의 마지막 부분을 출력합니다.
+`-f` 옵션을 사용하면 파일에 추가되는 새 내용을 실시간으로 이어서 출력합니다.
+
+<h6>사용 형식</h6>
+
+```sh
+tail [OPTION]... <file>
+```
+
+<h6>옵션</h6>
+
+- `-n, --lines <N>` 마지막 N줄을 출력합니다. 기본값은 `10`입니다.
+- `-f, --follow` 파일에 추가되는 새 내용을 계속 출력합니다. `SIGINT` 또는 `SIGTERM`을 받으면 종료합니다.
+- `-h, --help` 도움말을 표시합니다.
+
+<h6>사용 예시</h6>
+
+```sh
+/work > tail app.log
+/work > tail -n 20 app.log
+/work > tail -f app.log
+```
+
 ### wc
 
 파일별 줄 수, 단어 수, 바이트 수, 문자 수를 계산합니다.

@@ -319,6 +319,31 @@ sleep [OPTION] <sec>
 /work > sleep 5
 ```
 
+### tail
+
+Outputs the last part of a file.
+With `-f`, it continuously prints new content appended to the file.
+
+<h6>Syntax</h6>
+
+```sh
+tail [OPTION]... <file>
+```
+
+<h6>Options</h6>
+
+- `-n, --lines <N>` output the last N lines, default `10`
+- `-f, --follow` follow the file as it grows; stops on `SIGINT` or `SIGTERM`
+- `-h, --help` show help
+
+<h6>Usage example</h6>
+
+```sh
+/work > tail app.log
+/work > tail -n 20 app.log
+/work > tail -f app.log
+```
+
 ### wc
 
 Counts lines, words, bytes, and characters for each file.

@@ -13,13 +13,11 @@ weight: 100
 - `util/parseArgs`: 명령행 스타일 인자 파서
 - `util/splitFields`: 따옴표를 인식하는 shell 스타일 필드 분리기
 
-루트 모듈을 통해 불러올 수도 있고, 각 하위 모듈을 직접 불러올 수도 있습니다.
+각 helper는 해당 모듈 경로로 직접 불러와 사용합니다.
 
 ```js
-const { parseArgs, splitFields } = require('util');
-
-const parseArgsDirect = require('util/parseArgs');
-const splitFieldsDirect = require('util/splitFields');
+const parseArgs = require('util/parseArgs');
+const splitFields = require('util/splitFields');
 ```
 
 옵션, positional, sub-command, help text 생성까지 함께 처리해야 하면 `parseArgs`를 사용하십시오.

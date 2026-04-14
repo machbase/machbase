@@ -7,7 +7,7 @@ weight: 100
 {{< neo_since ver="8.0.75" />}}
 
 `util/parseArgs` 모듈은 명령행 스타일의 인자 배열을 파싱합니다.
-`require('util/parseArgs')`와 `require('util').parseArgs` 두 형태로 모두 사용할 수 있습니다.
+`require('util/parseArgs')`로 불러와 사용합니다.
 
 ## parseArgs()
 
@@ -106,7 +106,7 @@ positionals: [
 ## 사용 예시
 
 ```js {linenos=table,linenostart=1}
-const { parseArgs } = require('util');
+const parseArgs = require('util/parseArgs');
 
 const result = parseArgs(['-v', '--output', 'file.txt', 'input.sql'], {
     options: {
@@ -129,7 +129,7 @@ console.println(JSON.stringify(result.namedPositionals));
 - `integer`, `float` 모두 JavaScript number를 반환합니다.
 
 ```js {linenos=table,linenostart=1}
-const { parseArgs } = require('util');
+const parseArgs = require('util/parseArgs');
 
 const result = parseArgs(['--port', '8080', '--ratio', '0.75'], {
     options: {
@@ -144,7 +144,7 @@ const result = parseArgs(['--port', '8080', '--ratio', '0.75'], {
 `allowNegative: true`를 지정하면 boolean long option에 `--no-...` 형식을 사용할 수 있습니다.
 
 ```js {linenos=table,linenostart=1}
-const { parseArgs } = require('util');
+const parseArgs = require('util/parseArgs');
 
 const result = parseArgs(['--no-color', '--verbose'], {
     options: {
@@ -240,4 +240,3 @@ console.println(parseArgs.toKebabCase('maxRetryCount'));
 - `strict` 모드에서는 알 수 없는 옵션과 예상하지 않은 positional에서 `TypeError`가 발생합니다.
 - `multiple: true`는 반복된 값을 배열로 수집합니다.
 - 기본값은 실제 옵션 값을 파싱하기 전에 먼저 적용됩니다.
-- `require('util').parseArgs`와 `require('util/parseArgs')`를 모두 사용할 수 있습니다.

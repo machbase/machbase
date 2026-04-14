@@ -7,7 +7,7 @@ weight: 100
 {{< neo_since ver="8.0.75" />}}
 
 The `util/splitFields` module splits a string into fields using whitespace separators while preserving quoted substrings.
-It is exposed both as `require('util/splitFields')` and as `require('util').splitFields`.
+Load it with `require('util/splitFields')`.
 
 ## splitFields()
 
@@ -32,7 +32,7 @@ splitFields(str[, options])
 ## Usage example
 
 ```js {linenos=table,linenostart=1}
-const { splitFields } = require('util');
+const splitFields = require('util/splitFields');
 
 console.println(JSON.stringify(splitFields('cmd "arg 1" "arg 2"')));
 console.println(JSON.stringify(splitFields("hello 'world foo' bar")));

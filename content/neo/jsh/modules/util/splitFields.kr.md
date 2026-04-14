@@ -7,7 +7,7 @@ weight: 100
 {{< neo_since ver="8.0.75" />}}
 
 `util/splitFields` 모듈은 공백 문자를 기준으로 문자열을 필드로 나누되, 따옴표로 감싼 부분은 하나의 필드로 유지합니다.
-`require('util/splitFields')`와 `require('util').splitFields` 두 형태로 모두 사용할 수 있습니다.
+`require('util/splitFields')`로 불러와 사용합니다.
 
 ## splitFields()
 
@@ -32,7 +32,7 @@ splitFields(str[, options])
 ## 사용 예시
 
 ```js {linenos=table,linenostart=1}
-const { splitFields } = require('util');
+const splitFields = require('util/splitFields');
 
 console.println(JSON.stringify(splitFields('cmd "arg 1" "arg 2"')));
 console.println(JSON.stringify(splitFields("hello 'world foo' bar")));

@@ -7,7 +7,7 @@ weight: 100
 {{< neo_since ver="8.0.75" />}}
 
 The `util/parseArgs` module parses command-line style argument arrays.
-It is exposed both as `require('util/parseArgs')` and as `require('util').parseArgs`.
+Load it with `require('util/parseArgs')`.
 
 ## parseArgs()
 
@@ -106,7 +106,7 @@ Rules:
 ## Usage example
 
 ```js {linenos=table,linenostart=1}
-const { parseArgs } = require('util');
+const parseArgs = require('util/parseArgs');
 
 const result = parseArgs(['-v', '--output', 'file.txt', 'input.sql'], {
     options: {
@@ -129,7 +129,7 @@ Use `integer` for whole-number arguments and `float` for decimal numbers.
 - Both `integer` and `float` return JavaScript numbers.
 
 ```js {linenos=table,linenostart=1}
-const { parseArgs } = require('util');
+const parseArgs = require('util/parseArgs');
 
 const result = parseArgs(['--port', '8080', '--ratio', '0.75'], {
     options: {
@@ -144,7 +144,7 @@ const result = parseArgs(['--port', '8080', '--ratio', '0.75'], {
 With `allowNegative: true`, boolean long options accept `--no-...`.
 
 ```js {linenos=table,linenostart=1}
-const { parseArgs } = require('util');
+const parseArgs = require('util/parseArgs');
 
 const result = parseArgs(['--no-color', '--verbose'], {
     options: {
@@ -240,4 +240,3 @@ console.println(parseArgs.toKebabCase('maxRetryCount'));
 - In `strict` mode, unknown options and unexpected positionals raise `TypeError`.
 - `multiple: true` collects repeated values into arrays.
 - Defaults are applied before parsing explicit option values.
-- The parser accepts both `require('util').parseArgs` and `require('util/parseArgs')` usage.
