@@ -2,11 +2,14 @@
 title: 'Rollup Tables for Aggregation'
 type: docs
 weight: 60
+description: 'Explains how to create and query rollup tables, use JSON SUMMARIZED aggregation, work with FIRST/LAST, and group data by time interval.'
 ---
 
 ## Overview
 
 Rollup tables provide automatic time-based aggregation of tag data, dramatically improving query performance for analytics and reporting. Instead of scanning millions of raw records, rollup tables pre-calculate statistics at different time intervals.
+
+<!--more-->
 
 ## Creating Rollup Tables
 
@@ -17,7 +20,8 @@ When user create tag table, Rollup does not created default, user must create by
 * rollup name : rollup table's name (Can be freely created with string up to 40)
 * source table name : Name of source table which rollup will aggregate data.
 * src_table_column : rollup target data column name
-    * Only numeric type columns are allowed
+    * Numeric columns are supported by default
+    * `JSON SUMMARIZED` is supported as a special mode that aggregates the whole JSON document for `value`.
     * If the source table is a rollup table, it is omitted and automatically designated as the rollup target column of the source table
 * number sec/min/hour : time and time unit for aggregate <br>
    ex) 1 sec aggregate : 1 sec <br>
@@ -552,6 +556,140 @@ mtime                           SUMSQ(value)
 [9] row(s) selected.
 ```
 
+## ROLLUP for JSON SUMMARIZED
+
+With `value JSON SUMMARIZED`, you can run ROLLUP aggregation on the full `value` document without defining separate JSON paths.
+
+This is useful when one JSON document contains multiple numeric leaves such as metrics, coordinates, or counters. The result keeps the object shape and aggregates only numeric leaves.
+
+### Supported Scope
+
+- DDL: `value JSON SUMMARIZED`
+- Aggregates: `AVG(value)`, `MIN(value)`, `MAX(value)`, `SUM(value)`, `SUMSQ(value)`
+- Counts: `COUNT(value)`, `COUNT(*)`
+- `FIRST(time, value)` and `LAST(time, value)` are available only on `EXTENSION` rollups.
+
+### Representative Examples
+
+```sql
+-- Aggregate the full JSON document with the default rollup
+CREATE TAG TABLE tag_json_rollup (
+    name  VARCHAR(20) PRIMARY KEY,
+    time  DATETIME BASETIME,
+    value JSON SUMMARIZED
+) WITH ROLLUP;
+
+INSERT INTO tag_json_rollup VALUES ('HVAC_A', '2026-04-07 12:00:00', '{"metrics":{"temp":20,"pressure":1000},"location":{"x":6},"status":"ok"}');
+INSERT INTO tag_json_rollup VALUES ('HVAC_A', '2026-04-07 12:00:01', '{"metrics":{"temp":22,"pressure":1002},"location":{"x":8},"status":true}');
+INSERT INTO tag_json_rollup VALUES ('HVAC_A', '2026-04-07 12:00:02', '{"metrics":{"temp":24,"pressure":1004},"location":{"x":10},"status":null}');
+-- If needed, use ROLLUP_FORCE or WAKEUP to collect immediately
+
+SELECT rollup('hour', 1, time) AS mtime,
+       COUNT(value), MIN(value), MAX(value), AVG(value), SUM(value), SUMSQ(value)
+  FROM tag_json_rollup
+ WHERE name = 'HVAC_A'
+ GROUP BY mtime
+ ORDER BY mtime;
+```
+
+```sql
+-- Aggregate only numeric leaves when strings, booleans, and nulls are mixed in
+CREATE TAG TABLE tag_json_mix (
+    name  VARCHAR(20) PRIMARY KEY,
+    time  DATETIME BASETIME,
+    value JSON SUMMARIZED
+) WITH ROLLUP TAG_PARTITION_COUNT=1;
+
+INSERT INTO tag_json_mix VALUES ('HVAC_B', '2026-04-07 13:00:00', '{"metrics":{"temp":10,"pressure":100},"location":{"x":1},"mode":"AUTO","enabled":false}');
+INSERT INTO tag_json_mix VALUES ('HVAC_B', '2026-04-07 13:00:01', '{"metrics":{"temp":20,"pressure":200},"location":{"x":2},"mode":"MANUAL","enabled":true}');
+INSERT INTO tag_json_mix VALUES ('HVAC_B', '2026-04-07 13:00:02', '{"metrics":{"temp":30,"pressure":300},"location":{"x":3},"mode":null,"enabled":null}');
+-- If needed, use ROLLUP_FORCE or WAKEUP to collect immediately
+
+SELECT rollup('hour', 1, time) AS mtime, COUNT(value), COUNT(*), AVG(value), MIN(value), MAX(value), SUM(value)
+  FROM tag_json_mix
+ GROUP BY mtime
+ ORDER BY mtime;
+```
+
+```sql
+-- Arrays are not flattened, and FIRST/LAST requires an EXTENSION rollup
+CREATE TAG TABLE tag_json_mix2 (
+    name  VARCHAR(20) PRIMARY KEY,
+    time  DATETIME BASETIME,
+    value JSON SUMMARIZED
+) WITH ROLLUP EXTENSION TAG_PARTITION_COUNT=1;
+
+INSERT INTO tag_json_mix2 VALUES ('HVAC_C', '2026-04-07 14:00:00', '{"metrics":{"temp":1,"pressure":10}, "location":{"x":1}, "history":[1,2,3]}');
+INSERT INTO tag_json_mix2 VALUES ('HVAC_C', '2026-04-07 14:00:01', '{"metrics":{"temp":3,"pressure":30}, "location":{"x":2}, "history":[4,5]}');
+INSERT INTO tag_json_mix2 VALUES ('HVAC_C', '2026-04-07 14:00:02', '{"metrics":{"temp":5,"pressure":50}, "location":{"x":3}, "history":[6]}');
+-- If needed, use ROLLUP_FORCE or WAKEUP to collect immediately
+
+SELECT rollup('hour', 1, time) AS mtime,
+       COUNT(value),
+       AVG(value),
+       SUM(value),
+       FIRST(time, value),
+       LAST(time, value)
+  FROM tag_json_mix2
+ GROUP BY mtime
+ ORDER BY mtime;
+```
+
+```sql
+-- Build a RAW -> SEC -> MIN -> HOUR chain
+CREATE TAG TABLE tag_json_chain (
+    name  VARCHAR(20) PRIMARY KEY,
+    time  DATETIME BASETIME,
+    value JSON SUMMARIZED
+);
+CREATE ROLLUP _tag_json_chain_sec  ON tag_json_chain(value) INTERVAL 1 SEC;
+CREATE ROLLUP _tag_json_chain_min  ON _tag_json_chain_sec INTERVAL 1 MIN;
+CREATE ROLLUP _tag_json_chain_hour ON _tag_json_chain_min INTERVAL 1 HOUR;
+```
+
+```sql
+SELECT rollup('hour', 1, time) AS mtime, COUNT(value), AVG(value), SUMSQ(value)
+  FROM tag_json_chain
+ GROUP BY mtime
+ ORDER BY mtime;
+```
+
+Malformed JSON is rejected at insert time, so it never participates in rollup aggregation.
+
+```sql
+-- Invalid JSON is not inserted and therefore not aggregated
+CREATE TAG TABLE tag_json_bad (
+    name  VARCHAR(20) PRIMARY KEY,
+    time  DATETIME BASETIME,
+    value JSON SUMMARIZED
+) WITH ROLLUP;
+
+INSERT INTO tag_json_bad VALUES ('HVAC_D', '2026-04-07 15:00:00', '{"metrics":{"temp":1,"pressure":2},"location":{"x":1}}');
+INSERT INTO tag_json_bad VALUES ('HVAC_D', '2026-04-07 15:00:01', '{"metrics":{"temp":1,"pressure":2},"location":{"x":1}');
+-- Rows rejected at insert time are excluded from aggregation
+
+SELECT rollup('hour', 1, time) AS mtime, COUNT(value), SUMSQ(value)
+  FROM tag_json_bad
+ GROUP BY mtime
+ ORDER BY mtime;
+```
+
+### Behavior Rules
+
+- Objects are merged recursively while preserving path union.
+- Only numeric leaves are aggregated.
+- Strings, booleans, nulls, and arrays are excluded from numeric aggregation; arrays are not flattened.
+- Missing paths are not created in the output object.
+- For duplicated keys on the same path, the last value after parser normalization is kept.
+- `COUNT(value)` counts non-null `value` rows; `COUNT(*)` counts all rows.
+
+### What to Check
+
+- Verify shape retention and numeric-leaf aggregation for `rollup('sec'|'min'|'hour', ...)`.
+- Check `COUNT(value)` and `COUNT(*)` independently.
+- Ensure `FIRST/LAST` is used only on `EXTENSION` rollups.
+- Because `FIRST/LAST` returns the full original JSON document, consider network and payload size.
+
 ## Get ROLLUP FIRST/LAST
 
 Below is an example of obtaining the start and end values provided by Extended Rollup.
@@ -647,61 +785,4 @@ mtime                           COUNT(value)
 2022-01-01 00:00:00 000:000:000 365                  
 2023-01-01 00:00:00 000:000:000 365                  
 [2] row(s) selected.
-```
-
-## Using ROLLUP for JSON type
-
-Starting from version 7.5, ROLLUP can be used for JSON types.
-You can create by adding the JSON PATH and OPERATOR at create statement.
-A ROLLUP can be created for each PATH in one JSON column.
-
-```sql
--- create tag table
-CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, jval JSON);
-  
--- insert data
-insert into tag values ('tag-01', '2022-09-01 01:01:01', "{ \"x\": 1, \"y\": 1.1}");
-insert into tag values ('tag-01', '2022-09-01 01:01:02', "{ \"x\": 2, \"y\": 1.2}");
-insert into tag values ('tag-01', '2022-09-01 01:01:03', "{ \"x\": 3, \"y\": 1.3}");
-insert into tag values ('tag-01', '2022-09-01 01:01:04', "{ \"x\": 4, \"y\": 1.4}");
-insert into tag values ('tag-01', '2022-09-01 01:01:05', "{ \"x\": 5, \"y\": 1.5}");
-insert into tag values ('tag-01', '2022-09-01 01:02:00', "{ \"x\": 6, \"y\": 1.6}");
-insert into tag values ('tag-01', '2022-09-01 01:03:00', "{ \"x\": 7, \"y\": 1.7}");
-insert into tag values ('tag-01', '2022-09-01 01:04:00', "{ \"x\": 8, \"y\": 1.8}");
-insert into tag values ('tag-01', '2022-09-01 01:05:00', "{ \"x\": 9, \"y\": 1.9}");
-insert into tag values ('tag-01', '2022-09-01 01:06:00', "{ \"x\": 10, \"y\": 2.0}");
-  
--- create rollup
-CREATE ROLLUP _tag_rollup_jval_x_sec ON tag(jval->'$.x') INTERVAL 1 SEC;
-CREATE ROLLUP _tag_rollup_jval_y_sec ON tag(jval->'$.y') INTERVAL 1 SEC;
-```
-
-You can also use selecting ROLLUP in the same way.
-
-```sql
-Mach> SELECT rollup('sec', 2, time) as mtime, MIN(jval->'$.x'), MAX(jval->'$.x'), SUM(jval->'$.x'), COUNT(jval->'$.x'), SUMSQ(jval->'$.x') FROM tag GROUP BY mtime ORDER BY mtime;
-mtime                           min(jval->'$.x')            max(jval->'$.x')            sum(jval->'$.x')            count(jval->'$.x')   sumsq(jval->'$.x')        
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-2022-09-01 01:01:00 000:000:000 1                           1                           1                           1                    1                         
-2022-09-01 01:01:02 000:000:000 2                           3                           5                           2                    13                        
-2022-09-01 01:01:04 000:000:000 4                           5                           9                           2                    41                        
-2022-09-01 01:02:00 000:000:000 6                           6                           6                           1                    36                        
-2022-09-01 01:03:00 000:000:000 7                           7                           7                           1                    49                        
-2022-09-01 01:04:00 000:000:000 8                           8                           8                           1                    64                        
-2022-09-01 01:05:00 000:000:000 9                           9                           9                           1                    81                        
-2022-09-01 01:06:00 000:000:000 10                          10                          10                          1                    100                       
-[8] row(s) selected.
-  
-Mach> SELECT rollup('sec', 2, time) as mtime, MIN(jval->'$.y'), MAX(jval->'$.y'), SUM(jval->'$.y'), COUNT(jval->'$.y'), SUMSQ(jval->'$.y') FROM tag GROUP BY mtime ORDER BY mtime;
-mtime                           min(jval->'$.y')            max(jval->'$.y')            sum(jval->'$.y')            count(jval->'$.y')   sumsq(jval->'$.y')        
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-2022-09-01 01:01:00 000:000:000 1.1                         1.1                         1.1                         1                    1.21                      
-2022-09-01 01:01:02 000:000:000 1.2                         1.3                         2.5                         2                    3.13                      
-2022-09-01 01:01:04 000:000:000 1.4                         1.5                         2.9                         2                    4.21                      
-2022-09-01 01:02:00 000:000:000 1.6                         1.6                         1.6                         1                    2.56                      
-2022-09-01 01:03:00 000:000:000 1.7                         1.7                         1.7                         1                    2.89                      
-2022-09-01 01:04:00 000:000:000 1.8                         1.8                         1.8                         1                    3.24                      
-2022-09-01 01:05:00 000:000:000 1.9                         1.9                         1.9                         1                    3.61                      
-2022-09-01 01:06:00 000:000:000 2                           2                           2                           1                    4                         
-[8] row(s) selected.
 ```
