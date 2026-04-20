@@ -4,6 +4,8 @@ type: docs
 weight: 20
 ---
 
+> **Note**: From Machbase 8.5 or later, a normal user may need database-scoped privileges on `MACHBASEDB` to run the `CREATE` and `DROP` statements described on this page. For privilege details, see [User Management](./user-manage/#grantrevoke).
+
 ## CREATE TABLE
 
 ### Syntax

@@ -6,6 +6,8 @@ weight: 20
 
 ## Database Backup
 
+> **Note**: From Machbase 8.5 or later, a normal user must have `BACKUP` privilege on `MACHBASEDB` to run `BACKUP DATABASE`. For the privilege details, see [User Management](../sql-reference/user-manage/#grantrevoke).
+
 Machbase's database backup is classified as follows, and either backup of the entire database or backup of the specific table is possible.
   - Full backup: Backup of entire data
   - Incremental backup: Backup of the data added after the full or previous incremental backup

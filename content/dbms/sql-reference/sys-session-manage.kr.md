@@ -29,6 +29,8 @@ weight: 80
 
 시스템 전역 자원을 관리하거나 설정을 변경할 때 사용하는 구문입니다.
 
+> **참고**: Machbase 8.5 이상에서는 일반 사용자가 `ALTER SYSTEM`을 실행하려면 `GRANT ALTER ON machbasedb TO user_name;` 형태의 권한이 필요합니다. 자세한 내용은 [사용자 관리](./user-manage/#grantrevoke)의 `GRANT/REVOKE`를 참고하세요.
+
 ### KILL SESSION
 
 **alter_system_kill_session_stmt:**

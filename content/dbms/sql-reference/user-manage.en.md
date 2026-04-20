@@ -94,7 +94,9 @@ CONNECT user1/password;
 
 ![priv_value](/images/sql/user/priv_value.png)
 
-Grants authority to the table to the user through the GRANT statement.
+Use `GRANT` to give privileges to a user and `REVOKE` to remove previously granted privileges.
+
+Basic examples:
 
 ```sql
 -- Grant user1 SELECT privileges on mytable
@@ -104,14 +106,195 @@ GRANT SELECT ON mytable TO user1;
 GRANT ALL ON mytable TO user1;
 ```
 
-Revokes the privilege granted to a user through the REVOKE statement.
-
 ```sql
 -- Revoke UPDATE privilege on mytable granted to user1
 REVOKE UPDATE ON mytable FROM user1;
  
 -- Revoke all privileges on mytable granted to user1
 REVOKE ALL ON mytable FROM user1;
+```
+
+### Table Privileges
+
+Use the following target formats when you grant privileges on a table:
+
+- `table`
+- `user.table`
+- `db.user.table`
+
+Available table privileges:
+
+- `SELECT`
+- `INSERT`
+- `DELETE`
+- `UPDATE`
+- `ALL`
+
+Examples:
+
+```sql
+GRANT SELECT ON sensor_log TO reader;
+GRANT SELECT, INSERT ON sys.sensor_log TO writer;
+REVOKE INSERT ON sys.sensor_log FROM writer;
+GRANT ALL ON machbasedb.sys.sensor_log TO app_user;
+```
+
+### Machbase 8.5+: Database Privileges
+
+> **Note**: The following behavior is supported from Machbase 8.5 or later.
+
+From Machbase 8.5, you can grant database-scoped privileges by using `MACHBASEDB` as the target.
+
+```sql
+GRANT CREATE ON machbasedb TO ddl_user;
+GRANT DROP ON machbasedb TO ddl_user;
+GRANT ALTER ON machbasedb TO ops_user;
+GRANT BACKUP ON machbasedb TO backup_user;
+GRANT MOUNT ON machbasedb TO mount_user;
+GRANT DDL ON machbasedb TO deploy_user;
+GRANT ALL ON machbasedb TO admin_user;
+```
+
+Available database-scoped privileges:
+
+- `CREATE`
+- `DROP`
+- `ALTER`
+- `MOUNT`
+- `BACKUP`
+- `DDL`
+- `ALL`
+
+Here, `DDL` means the combined `CREATE + DROP` privilege.
+
+### Meaning of `ALL`
+
+> **Note**: The following behavior is supported from Machbase 8.5 or later.
+
+`ALL` does not always mean the same thing. Its meaning depends on the target.
+
+- `GRANT ALL ON machbasedb TO user1`
+  - Grants the full set of database-scoped privileges.
+- `GRANT ALL ON sys.table1 TO user1`
+  - Grants the full set of DML privileges on that table.
+
+In other words, `ALL` on `MACHBASEDB` and `ALL` on a table use the same keyword, but they serve different purposes.
+
+### DML Privileges Cannot Be Granted Directly on `MACHBASEDB`
+
+> **Note**: The following behavior is supported from Machbase 8.5 or later.
+
+You cannot directly grant `SELECT`, `INSERT`, `DELETE`, or `UPDATE` on the database name `MACHBASEDB`.
+
+```sql
+GRANT SELECT ON machbasedb TO user1;
+GRANT INSERT ON machbasedb TO user1;
+REVOKE DELETE ON machbasedb FROM user1;
+REVOKE UPDATE ON machbasedb FROM user1;
+```
+
+These statements fail with:
+
+```sql
+[ERR-02186: Invalid database name.]
+```
+
+To grant read or write access, specify a table instead.
+
+```sql
+GRANT SELECT ON sys.sensor_log TO user1;
+GRANT INSERT ON sys.sensor_log TO user1;
+```
+
+### Use `MACHBASEDB` as the Database Target
+
+> **Note**: The following behavior is supported from Machbase 8.5 or later.
+
+Use `MACHBASEDB` when you grant database-scoped privileges.
+
+```sql
+GRANT BACKUP ON machbasedb TO backup_user;
+REVOKE BACKUP ON machbasedb FROM backup_user;
+```
+
+If you use an invalid database name, the statement fails.
+
+```sql
+GRANT BACKUP ON typo TO backup_user;
+```
+
+```sql
+[ERR-02186: Invalid database name.]
+```
+
+### Operations That Require Database Privileges
+
+> **Note**: The following behavior is supported from Machbase 8.5 or later.
+
+The following operations require database-scoped privileges on `MACHBASEDB`, not table-level privileges.
+
+- `CREATE TABLE`, `DROP TABLE`
+- `CREATE VIEW`, `DROP VIEW`
+- `CREATE INDEX`, `DROP INDEX`
+- `CREATE ROLLUP`, `DROP ROLLUP`
+- `CREATE TABLESPACE`, `DROP TABLESPACE`
+- `CREATE RETENTION`, `DROP RETENTION`
+- `ALTER SYSTEM`
+- `BACKUP DATABASE`
+- `MOUNT DATABASE`, `UNMOUNT DATABASE`
+
+For example, if a normal user needs to run `CREATE VIEW`, grant `CREATE` on `MACHBASEDB`.
+
+```sql
+GRANT CREATE ON machbasedb TO user1;
+```
+
+### Default Privileges for a New User
+
+When a new user is created, the following privileges are granted by default.
+
+- `SELECT`
+- `INSERT`
+- `DELETE`
+- `UPDATE`
+- `CREATE`
+- `DROP`
+
+The following privileges are not included by default and must be granted explicitly when needed.
+
+- `ALTER`
+- `MOUNT`
+- `BACKUP`
+
+### Privileges Do Not Override Table-Type Restrictions
+
+Even with privileges, the built-in restrictions of each table type still apply.
+
+- `LOG` and `TAG` tables do not support `UPDATE`.
+- `VOLATILE` and `LOOKUP` tables support all DML operations, but `WHERE` clauses for query, update, and delete operations must be based on the primary key.
+
+In other words, granting privileges does not enable unsupported DML behavior.
+
+### Common Grant Examples
+
+```sql
+-- Allow read-only access to a specific table
+GRANT SELECT ON sys.sensor_log TO reader;
+
+-- Allow read and insert on a specific table
+GRANT SELECT, INSERT ON sys.sensor_log TO writer;
+
+-- Allow only DDL operations for a normal user
+GRANT DDL ON machbasedb TO deploy_user;
+
+-- Allow ALTER SYSTEM
+GRANT ALTER ON machbasedb TO ops_user;
+
+-- Allow backup
+GRANT BACKUP ON machbasedb TO backup_user;
+
+-- Allow mount and unmount
+GRANT MOUNT ON machbasedb TO mount_user;
 ```
 
 

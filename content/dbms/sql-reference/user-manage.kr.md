@@ -94,7 +94,9 @@ CONNECT user1/password;
 
 ![priv_value](/images/sql/user/priv_value.png)
 
-GRANT 문을 통해 사용자에게 테이블에 대한 권한을 부여합니다.
+GRANT 문을 통해 사용자에게 권한을 부여하고, REVOKE 문을 통해 이미 부여된 권한을 회수합니다.
+
+기본 예제:
 
 ```sql
 -- user1에게 mytable에 대한 SELECT 권한 부여
@@ -104,14 +106,195 @@ GRANT SELECT ON mytable TO user1;
 GRANT ALL ON mytable TO user1;
 ```
 
-REVOKE 문을 통해 사용자에게 부여된 권한을 취소합니다.
-
 ```sql
 -- user1에게 부여된 mytable에 대한 UPDATE 권한 취소
 REVOKE UPDATE ON mytable FROM user1;
 
 -- user1에게 부여된 mytable에 대한 모든 권한 취소
 REVOKE ALL ON mytable FROM user1;
+```
+
+### 테이블 권한
+
+테이블에 대한 권한을 부여할 때는 다음과 같이 사용합니다.
+
+- `table`
+- `user.table`
+- `db.user.table`
+
+권한 종류:
+
+- `SELECT`
+- `INSERT`
+- `DELETE`
+- `UPDATE`
+- `ALL`
+
+예제:
+
+```sql
+GRANT SELECT ON sensor_log TO reader;
+GRANT SELECT, INSERT ON sys.sensor_log TO writer;
+REVOKE INSERT ON sys.sensor_log FROM writer;
+GRANT ALL ON machbasedb.sys.sensor_log TO app_user;
+```
+
+### Machbase 8.5 이상: 데이터베이스 권한
+
+> **참고**: 다음 설명은 Machbase 8.5 이상에서 지원됩니다.
+
+Machbase 8.5 이상에서는 `MACHBASEDB`를 대상으로 데이터베이스 범위 권한을 부여할 수 있습니다.
+
+```sql
+GRANT CREATE ON machbasedb TO ddl_user;
+GRANT DROP ON machbasedb TO ddl_user;
+GRANT ALTER ON machbasedb TO ops_user;
+GRANT BACKUP ON machbasedb TO backup_user;
+GRANT MOUNT ON machbasedb TO mount_user;
+GRANT DDL ON machbasedb TO deploy_user;
+GRANT ALL ON machbasedb TO admin_user;
+```
+
+데이터베이스 범위에서 사용할 수 있는 권한:
+
+- `CREATE`
+- `DROP`
+- `ALTER`
+- `MOUNT`
+- `BACKUP`
+- `DDL`
+- `ALL`
+
+여기서 `DDL`은 `CREATE + DROP` 묶음입니다.
+
+### `ALL`의 의미
+
+> **참고**: 다음 설명은 Machbase 8.5 이상에서 지원됩니다.
+
+`ALL`은 항상 같은 뜻이 아닙니다. 대상에 따라 의미가 달라집니다.
+
+- `GRANT ALL ON machbasedb TO user1`
+  - 데이터베이스 범위 전체 권한을 부여합니다.
+- `GRANT ALL ON sys.table1 TO user1`
+  - 해당 테이블에 대한 전체 DML 권한을 부여합니다.
+
+즉, `MACHBASEDB`에 대한 `ALL`과 테이블에 대한 `ALL`은 같은 문법이지만 용도가 다릅니다.
+
+### 데이터베이스 이름에 직접 DML 권한을 부여할 수 없는 경우
+
+> **참고**: 다음 설명은 Machbase 8.5 이상에서 지원됩니다.
+
+다음과 같이 데이터베이스 이름 `MACHBASEDB`에 `SELECT`, `INSERT`, `DELETE`, `UPDATE`를 직접 부여하는 방식은 사용할 수 없습니다.
+
+```sql
+GRANT SELECT ON machbasedb TO user1;
+GRANT INSERT ON machbasedb TO user1;
+REVOKE DELETE ON machbasedb FROM user1;
+REVOKE UPDATE ON machbasedb FROM user1;
+```
+
+이 경우에는 다음과 같은 오류가 발생합니다.
+
+```sql
+[ERR-02186: Invalid database name.]
+```
+
+조회나 입력 권한을 주려면 반드시 테이블을 지정해야 합니다.
+
+```sql
+GRANT SELECT ON sys.sensor_log TO user1;
+GRANT INSERT ON sys.sensor_log TO user1;
+```
+
+### 데이터베이스 대상 이름은 `MACHBASEDB`를 사용
+
+> **참고**: 다음 설명은 Machbase 8.5 이상에서 지원됩니다.
+
+데이터베이스 범위 권한을 부여할 때는 `MACHBASEDB`를 사용합니다.
+
+```sql
+GRANT BACKUP ON machbasedb TO backup_user;
+REVOKE BACKUP ON machbasedb FROM backup_user;
+```
+
+잘못된 데이터베이스 이름을 지정하면 오류가 발생합니다.
+
+```sql
+GRANT BACKUP ON typo TO backup_user;
+```
+
+```sql
+[ERR-02186: Invalid database name.]
+```
+
+### 데이터베이스 권한이 필요한 작업
+
+> **참고**: 다음 설명은 Machbase 8.5 이상에서 지원됩니다.
+
+다음 작업은 테이블 권한이 아니라 `MACHBASEDB`에 대한 데이터베이스 권한이 필요합니다.
+
+- `CREATE TABLE`, `DROP TABLE`
+- `CREATE VIEW`, `DROP VIEW`
+- `CREATE INDEX`, `DROP INDEX`
+- `CREATE ROLLUP`, `DROP ROLLUP`
+- `CREATE TABLESPACE`, `DROP TABLESPACE`
+- `CREATE RETENTION`, `DROP RETENTION`
+- `ALTER SYSTEM`
+- `BACKUP DATABASE`
+- `MOUNT DATABASE`, `UNMOUNT DATABASE`
+
+예를 들어 일반 사용자가 `CREATE VIEW`를 실행하려면 다음과 같이 `CREATE` 권한을 부여해야 합니다.
+
+```sql
+GRANT CREATE ON machbasedb TO user1;
+```
+
+### 사용자 생성 시 기본 권한
+
+사용자를 생성하면 기본적으로 다음 권한을 가집니다.
+
+- `SELECT`
+- `INSERT`
+- `DELETE`
+- `UPDATE`
+- `CREATE`
+- `DROP`
+
+다음 권한은 기본 권한에 포함되지 않으므로 필요할 때 명시적으로 부여해야 합니다.
+
+- `ALTER`
+- `MOUNT`
+- `BACKUP`
+
+### 권한과 테이블 유형 제약은 별개
+
+권한이 있어도 테이블 유형 자체의 제약은 그대로 적용됩니다.
+
+- `LOG`, `TAG` 테이블은 제품 특성상 `UPDATE`를 사용할 수 없습니다.
+- `VOLATILE`, `LOOKUP` 테이블은 모든 DML을 사용할 수 있지만, 조회/수정/삭제 시 `WHERE` 절은 기본키 기반으로 작성해야 합니다.
+
+즉, 권한을 부여한다고 해서 지원하지 않는 DML이 가능해지는 것은 아닙니다.
+
+### 자주 사용하는 권한 부여 예제
+
+```sql
+-- 특정 테이블 조회만 허용
+GRANT SELECT ON sys.sensor_log TO reader;
+
+-- 특정 테이블 조회와 입력 허용
+GRANT SELECT, INSERT ON sys.sensor_log TO writer;
+
+-- 일반 사용자에게 DDL만 허용
+GRANT DDL ON machbasedb TO deploy_user;
+
+-- ALTER SYSTEM 허용
+GRANT ALTER ON machbasedb TO ops_user;
+
+-- 백업 허용
+GRANT BACKUP ON machbasedb TO backup_user;
+
+-- 마운트/언마운트 허용
+GRANT MOUNT ON machbasedb TO mount_user;
 ```
 
 

@@ -29,6 +29,8 @@ weight: 80
 
 This statement is the syntax for managing system-wide resources or changing settings.
 
+> **Note**: From Machbase 8.5 or later, a normal user must have `ALTER` privilege on `MACHBASEDB` to run `ALTER SYSTEM`. See [User Management](./user-manage/#grantrevoke) for the `GRANT/REVOKE` details.
+
 ### KILL SESSION
 
 **alter_system_kill_session_stmt:**

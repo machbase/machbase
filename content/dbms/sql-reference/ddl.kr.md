@@ -5,6 +5,8 @@ type: docs
 weight: 20
 ---
 
+> **참고**: Machbase 8.5 이상에서는 일반 사용자가 이 문서의 `CREATE`/`DROP` 계열 구문을 실행할 때 `MACHBASEDB`에 대한 데이터베이스 권한이 필요할 수 있습니다. 자세한 권한 부여 방법은 [사용자 관리](./user-manage/#grantrevoke)의 `GRANT/REVOKE`를 참고하세요.
+
 ## CREATE TABLE
 
 ### Syntax
