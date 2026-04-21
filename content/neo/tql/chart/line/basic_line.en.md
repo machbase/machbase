@@ -126,16 +126,26 @@ CHART(
 
 ```js {{linenos=table,linenostart=1}}
 SCRIPT({
-    db = require("@jsh/db");
-    cli = new db.Client();
-    conn = cli.connect();
-    rows = conn.query(`select time, value from example where name = 'chart-line'`)
-    data = [];
-    for( r of rows) {
-        data.push([r.time, r.value]);
+    const {Client} = require("machcli");
+    var db, conn, rows;
+    var data = [];
+    const conf = { user: 'sys', password: 'manager' };
+    try {
+        db = new Client(conf);
+        conn = db.connect();
+        rows = conn.query(`select time, value from example where name = ?`, 'chart-line')
+        for( r of rows) {
+            data.push([r.time, r.value]);
+        }
+        rows.close();
+        conn.close();
+    } catch( e ) {
+        console.println("ERROR", e.message);
+    } finally {
+        rows && rows.close();
+        conn && conn.close();
+        db && db.close();
     }
-    rows.close();
-    conn.close();
     $.yield({
         xAxis: { type: "time" },
         yAxis: {},
