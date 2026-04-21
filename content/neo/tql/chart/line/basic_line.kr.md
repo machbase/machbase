@@ -137,8 +137,6 @@ SCRIPT({
         for( r of rows) {
             data.push([r.time, r.value]);
         }
-        rows.close();
-        conn.close();
     } catch( e ) {
         console.println("ERROR", e.message);
     } finally {
