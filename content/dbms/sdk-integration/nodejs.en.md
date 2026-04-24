@@ -8,7 +8,7 @@ weight: 40
 
 The Machbase TypeScript client (`@machbase/ts-client`) is a pure TypeScript implementation of the Machbase CMI protocol. It allows Node.js applications to connect to a Machbase (standard edition) server, execute SQL statements, fetch results, work with prepared statements, and append batches of log data without native bindings.
 
-This document covers installation, core APIs, practical examples, and important behavioural notes.
+This document covers installation, core APIs, practical examples, testing flows, and important behavioural notes.
 
 ## Installation
 
@@ -41,15 +41,12 @@ npm install ./machbase-ts-client-0.9.0.tgz
 ### Verify Installation
 
 ```bash
-python3 - <<'PY'
-from machbaseAPI.machbaseAPI import machbase
-print('machbaseAPI import ok')
-cli = machbase()
-print('isConnected():', cli.isConnected())
-PY
+node -e "const { createConnection } = require('@machbase/ts-client'); console.log(typeof createConnection === 'function' ? 'ts-client import ok' : 'ts-client import failed')"
 ```
 
 > **Note**: This client targets Node.js and uses TCP sockets; it is not a browser library (no WebSocket transport).
+>
+> The default credentials shown in this guide (`SYS`/`MANAGER`) are for local testing only. Use dedicated users and passwords in production.
 
 ## Quick Start
 
@@ -83,11 +80,11 @@ async function main() {
     host: '127.0.0.1',
     user: 'SYS',
     password: 'MANAGER',
-    port: 5656
+    port: 5656,
   });
   await conn.connect();
 
-  const [rows] = await conn.query('SELECT * FROM v$tables ORDER BY NAME LIMIT ?', [10]);
+  const [rows] = await conn.query('SELECT * FROM V$TABLES ORDER BY NAME LIMIT ?', [10]);
   console.table(rows);
 
   await conn.end();
@@ -97,6 +94,40 @@ main().catch(err => console.error('Unexpected failure:', err));
 ```
 
 > **Transaction notice:** Machbase autocommits every statement. Commands such as `BEGIN`, `COMMIT`, or `ROLLBACK` always return an error and should only be used to detect the lack of transaction support.
+
+### Machbase Facade
+
+If you prefer a facade similar to other Node.js SQL clients, `createConnection()` also supports callback and promise flows.
+
+```javascript
+// facade-basic.js (CommonJS)
+const { createConnection } = require('@machbase/ts-client');
+
+async function bootstrap() {
+  const conn = createConnection({ host: '127.0.0.1', user: 'SYS', password: 'MANAGER' });
+  await conn.connect();
+  try {
+    const [rows, fields] = await conn.query('SELECT NAME FROM V$TABLES ORDER BY NAME LIMIT ?', [3]);
+    console.log('rows', rows, 'fields', fields?.map(f => f.name));
+
+    await new Promise((resolve, reject) =>
+      conn.query('SELECT VALUE FROM V$SYSSTAT WHERE NAME = ?', ['SERVER_VERSION'], (err, result) => {
+        if (err) return reject(err);
+        console.log('callback result', result);
+        resolve();
+      })
+    );
+  } finally {
+    await conn.end();
+  }
+}
+
+bootstrap().catch(console.error);
+```
+
+The facade supports both callbacks and `.promise()`, surfaces `QueryError` for failed operations, and forwards server messages.
+
+> **Facade limitations:** `beginTransaction`, `commit`, and `rollback` report `QueryError` immediately because Machbase does not support SQL transactions. `UPDATE` on LOG or TAG tables also fails fast with an explicit server error.
 
 ## Common Issues
 
@@ -159,11 +190,27 @@ console.log('Rows affected:', create.affectedRows); // -> 0 for DDL
 
 const [insert] = await conn.execute("INSERT INTO demo VALUES (1, 'alpha')");
 console.log('Rows affected:', insert.affectedRows); // -> 1
+
+await expectTransactionUnsupported(conn, 'COMMIT');
+```
+
+Helper used in the integration suite:
+
+```javascript
+async function expectTransactionUnsupported(conn, sql) {
+  try {
+    await conn.execute(sql);
+    throw new Error(`Expected ${sql} to fail because Machbase does not support transactions.`);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.log(`${sql} expected failure:`, msg);
+  }
+}
 ```
 
 #### query(sql, values?)
 
-Executes a statement that returns rows. The facade resolves with a two‑element tuple `[rows, fields]`.
+Executes a statement that returns rows. The facade resolves with a two-element tuple `[rows, fields]`.
 
 ```javascript
 const [rows, fields] = await conn.query('SELECT ID, NAME FROM demo ORDER BY ID');
@@ -226,6 +273,8 @@ await update.execute([
 ]);
 ```
 
+Runnable example scripts are typically built into `dist/examples/` after `npm run build`. They commonly look for `MACHBASE_EXAMPLE_*` first, then `MACHBASE_SMOKE_*`, and finally fall back to `SYS/MANAGER@127.0.0.1`.
+
 ### Append Protocol
 
 #### appendBatch(table, columns, rows, options?)
@@ -250,13 +299,16 @@ console.log('Appended rows:', appendResult.rowsAppended);
 
 Supported column types: `int32`, `int64`, `float64`, `varchar`.
 
+- `rows` accepts either plain arrays or `{ values, arrivalTime }` objects. Nulls are automatically encoded using Machbase sentinel values.
+- `options` may supply `arrivalTime` (single default) or `arrivalTimes` (array per row).
+
 The promise resolves to `{ table, rowsAppended, rowsFailed, message }`.
 
-> **Tip**: A "column count does not match" error usually means the target table is not a log table or the provided columns are not in schema order.
+> **Tip**: A "column count does not match" error usually means the target table is not a log table or the provided columns are not in schema order. Use `appendOpen()` for TAG tables.
 
 #### appendOpen(table, columns, options?)
 
-Opens a lightweight append session. By default native APPEND open/data/close is enabled.
+Opens a lightweight append session. By default native APPEND open/data/close is enabled, and successful native writes do not produce per-chunk responses.
 
 ```javascript
 const stream = await conn.appendOpen('sensor_log', [
@@ -274,6 +326,10 @@ await stream.append({ values: [3, 'charlie', 2.5] });
 await stream.close();
 ```
 
+To disable native append and force prepared-statement fallback, set `MACHBASE_NATIVE_APPEND=0`. If the server rejects native append for a given table type or session, the facade automatically falls back to prepared statements.
+
+TAG tables expose a `DATETIME` column. Supply either `Date` objects or `bigint` epoch values.
+
 #### append(rows) on an append stream
 
 Sends one or more rows to the open append stream.
@@ -285,6 +341,8 @@ const frames = await stream.append([
 ]);
 console.log('frames sent:', frames);
 ```
+
+In native mode, success responses are suppressed for maximum throughput; errors still return failure packets.
 
 ### Helper Methods
 
@@ -313,6 +371,31 @@ Convenience utilities for building SQL strings safely.
 ```javascript
 const safeName = conn.escapeId('table_name');
 const safeValue = conn.escape('user input');
+```
+
+## Testing & Diagnostics
+
+### Scripts
+
+- `npm run build` – compile TypeScript.
+- `npm run lint` – run ESLint on `src/`.
+- `npm run smoke` – optional smoke test (skipped without environment variables).
+- `npm test` – full integration suite (requires a live server):
+  1. Creates a log table.
+  2. Inserts and selects sample data.
+  3. Demonstrates prepared statements with positional binds.
+  4. Performs stress append (default: 5 batches x 200 rows) and verifies row counts.
+  5. Issues `COMMIT` in each stage to demonstrate the expected transaction failure.
+  6. Exercises the Machbase facade and verifies that transactions or `UPDATE` on LOG/TAG tables raise `QueryError` immediately.
+
+Sample console output:
+
+```text
+COMMIT expected failure: Expected COMMIT to fail because Machbase does not support transactions.
+machbase-facade-basic callback query returned 3 rows.
+machbase-facade-update-log-fails message: UPDATE is not supported for LOG tables.
+append-batch progress: batch 4/5 { table: 'TS_CLIENT_IT_...', rowsAppended: 200, rowsFailed: 0 }
+append-batch final count: 1004
 ```
 
 ## Tutorials
@@ -358,7 +441,9 @@ const { createConnection } = require('@machbase/ts-client');
         const [rows] = await stmt.execute([id]);
         console.log(id, rows[0]?.NAME);
       }
-    } finally { await stmt.close(); }
+    } finally {
+      await stmt.close();
+    }
   } finally {
     await conn.execute(`DROP TABLE "${table}"`);
     await conn.end();
@@ -380,8 +465,12 @@ const { createConnection } = require('@machbase/ts-client');
     await conn.execute(`CREATE LOG TABLE "${table}" (ID INTEGER, NAME VARCHAR(64), VALUE DOUBLE)`);
     const result = await conn.appendBatch(
       table,
-      [ { name: 'ID', type: 'int32' }, { name: 'NAME', type: 'varchar' }, { name: 'VALUE', type: 'float64' } ],
-      [ [1, 'X', 0.5], [2, 'Y', 1.25] ],
+      [
+        { name: 'ID', type: 'int32' },
+        { name: 'NAME', type: 'varchar' },
+        { name: 'VALUE', type: 'float64' },
+      ],
+      [[1, 'X', 0.5], [2, 'Y', 1.25]],
     );
     console.log(result);
   } finally {
@@ -422,6 +511,8 @@ const { createConnection } = require('@machbase/ts-client');
   }
 })();
 ```
+
+> Native mode is enabled by default. To disable it, set `MACHBASE_NATIVE_APPEND=0`. On success the server does not send a per-chunk response; errors are still returned.
 
 ### Promise Wrapper + Ping
 
@@ -472,11 +563,11 @@ Typed binds cover the portable scalar set (`int32`, `int64`, `float64`, and `var
 
 ### Append Protocol
 
-Use `appendBatch` for log tables and the streaming helper (`appendOpen` / `append`) for scenarios that need incremental ingest. When the server does not support the streaming protocol for a given table type (for example TAG tables), the facade automatically falls back to a prepared-statement loop.
+Use `appendBatch` for log tables and the streaming helper (`appendOpen` / `append`) for scenarios that need incremental ingest. When the server does not support the streaming protocol for a given table type (for example TAG tables), the facade automatically falls back to a prepared-statement loop. The safe operating pattern is to chunk data, inspect `rowsFailed`, and retry if needed.
 
 ### Error Handling
 
-Errors propagate as standard `Error` objects (or `QueryError` when using the facade). Inspect `error.message` or the `QueryError` fields (`code`, `sql`) to diagnose issues.
+Errors propagate as standard `Error` objects (or `QueryError` when using the facade). Inspect `error.message` or the `QueryError` fields (`code`, `sql`) to diagnose issues. The integration suite deliberately exercises missing-table queries and unsupported `UPDATE` statements to keep failure messages descriptive.
 
 ### Table Type SQL Semantics
 
@@ -491,3 +582,27 @@ Errors propagate as standard `Error` objects (or `QueryError` when using the fac
 4. **Handle errors**: Wrap database operations in try-catch blocks and log errors appropriately.
 5. **Use connection pooling**: For production applications, implement connection pooling to manage multiple concurrent requests.
 6. **Parameterize queries**: Always use parameter binding (`?` placeholders) instead of string concatenation to prevent SQL injection.
+
+## Revision History
+
+### 2025-10-08
+
+- Added end-user installation steps for npm, yarn, pnpm, and offline `.tgz` packages.
+- Clarified the Node.js-only runtime requirement and expanded common connection troubleshooting notes.
+- Consolidated table-type SQL constraints in the behaviour notes.
+
+### 2025-10-03
+
+- Added the TAG streaming example and documented the default `MACHBASE_NATIVE_APPEND` behaviour.
+- Documented automatic fallback from native append to prepared statements when streaming is not supported.
+
+### 2025-10-02
+
+- Introduced the Machbase facade (`createConnection`, `QueryError`, `.promise()`, and facade prepared statements).
+- Expanded integration coverage for callbacks, promise flows, and rejected `UPDATE` on LOG/TAG tables.
+
+### 2025-09-30
+
+- Added prepared statements with positional parameter binding.
+- Added `appendBatch` for log tables, including null handling and append result statistics.
+- Added integration coverage and runnable examples for transactions, pagination, parameter binding, append chunking, and error handling.

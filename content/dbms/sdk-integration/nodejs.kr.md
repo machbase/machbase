@@ -8,7 +8,7 @@ weight: 40
 
 Machbase TypeScript 클라이언트(`@machbase/ts-client`)는 Machbase CMI 프로토콜을 순수 TypeScript로 구현한 라이브러리입니다. Node.js 애플리케이션이 네이티브 바인딩 없이도 Machbase(스탠더드 에디션) 서버에 연결해 SQL 실행, 결과 조회, Prepared Statement 처리, 로그 데이터 Append를 수행할 수 있습니다.
 
-이 문서는 설치 방법, 핵심 API, 실용적인 예제, 주의해야 할 동작 특성을 다룹니다.
+이 문서는 설치 방법, 핵심 API, 실용적인 예제, 테스트 흐름, 주의해야 할 동작 특성을 다룹니다.
 
 ## 설치
 
@@ -41,15 +41,12 @@ npm install ./machbase-ts-client-0.9.0.tgz
 ### 설치 확인
 
 ```bash
-python3 - <<'PY'
-from machbaseAPI.machbaseAPI import machbase
-print('machbaseAPI import ok')
-cli = machbase()
-print('isConnected():', cli.isConnected())
-PY
+node -e "const { createConnection } = require('@machbase/ts-client'); console.log(typeof createConnection === 'function' ? 'ts-client import ok' : 'ts-client import failed')"
 ```
 
 > **참고**: 이 클라이언트는 Node.js에서 TCP 소켓을 사용하며, 브라우저용 라이브러리(웹소켓 전송)를 제공하지 않습니다.
+>
+> 이 문서의 기본 계정(`SYS`/`MANAGER`)은 로컬 테스트용 예시입니다. 운영 환경에서는 전용 계정과 비밀번호를 사용하세요.
 
 ## 빠르게 시작하기
 
@@ -83,11 +80,11 @@ async function main() {
     host: '127.0.0.1',
     user: 'SYS',
     password: 'MANAGER',
-    port: 5656
+    port: 5656,
   });
   await conn.connect();
 
-  const [rows] = await conn.query('SELECT * FROM v$tables ORDER BY NAME LIMIT ?', [10]);
+  const [rows] = await conn.query('SELECT * FROM V$TABLES ORDER BY NAME LIMIT ?', [10]);
   console.table(rows);
 
   await conn.end();
@@ -97,6 +94,40 @@ main().catch(err => console.error('Unexpected failure:', err));
 ```
 
 > **트랜잭션 안내:** Machbase는 모든 명령을 자동 커밋합니다. `BEGIN`, `COMMIT`, `ROLLBACK` 같은 명령은 항상 에러를 반환하므로, 트랜잭션을 지원하지 않음을 확인하는 용도로만 사용하십시오.
+
+### Machbase 페이사드
+
+익숙한 Node.js SQL 클라이언트 스타일을 선호한다면 `createConnection()`으로 제공되는 페이사드를 사용할 수 있습니다.
+
+```javascript
+// facade-basic.js (CommonJS)
+const { createConnection } = require('@machbase/ts-client');
+
+async function bootstrap() {
+  const conn = createConnection({ host: '127.0.0.1', user: 'SYS', password: 'MANAGER' });
+  await conn.connect();
+  try {
+    const [rows, fields] = await conn.query('SELECT NAME FROM V$TABLES ORDER BY NAME LIMIT ?', [3]);
+    console.log('rows', rows, 'fields', fields?.map(f => f.name));
+
+    await new Promise((resolve, reject) =>
+      conn.query('SELECT VALUE FROM V$SYSSTAT WHERE NAME = ?', ['SERVER_VERSION'], (err, result) => {
+        if (err) return reject(err);
+        console.log('callback result', result);
+        resolve();
+      })
+    );
+  } finally {
+    await conn.end();
+  }
+}
+
+bootstrap().catch(console.error);
+```
+
+페이사드는 콜백과 `.promise()`를 모두 지원하고, 실패 시 `QueryError`를 반환하며, 서버 메시지를 그대로 전달합니다.
+
+> **페이사드 제약:** `beginTransaction`, `commit`, `rollback`은 Machbase가 SQL 트랜잭션을 지원하지 않으므로 즉시 `QueryError`를 반환합니다. LOG/TAG 테이블에 대한 `UPDATE`도 서버 오류로 바로 실패합니다.
 
 ## 자주 발생하는 문제
 
@@ -159,6 +190,22 @@ console.log('Rows affected:', create.affectedRows); // -> 0 for DDL
 
 const [insert] = await conn.execute("INSERT INTO demo VALUES (1, 'alpha')");
 console.log('Rows affected:', insert.affectedRows); // -> 1
+
+await expectTransactionUnsupported(conn, 'COMMIT');
+```
+
+통합 테스트에서 사용하는 보조 함수:
+
+```javascript
+async function expectTransactionUnsupported(conn, sql) {
+  try {
+    await conn.execute(sql);
+    throw new Error(`Expected ${sql} to fail because Machbase does not support transactions.`);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.log(`${sql} expected failure:`, msg);
+  }
+}
 ```
 
 #### query(sql, values?)
@@ -226,6 +273,8 @@ await update.execute([
 ]);
 ```
 
+실행 예제 스크립트는 보통 `npm run build` 후 `dist/examples/` 아래에 생성됩니다. 예제는 일반적으로 `MACHBASE_EXAMPLE_*`, `MACHBASE_SMOKE_*`, 마지막으로 `SYS/MANAGER@127.0.0.1` 순서로 접속 정보를 찾습니다.
+
 ### Append Protocol
 
 #### appendBatch(table, columns, rows, options?)
@@ -250,13 +299,16 @@ console.log('Appended rows:', appendResult.rowsAppended);
 
 지원 컬럼 타입: `int32`, `int64`, `float64`, `varchar`.
 
+- `rows`는 값 배열 또는 `{ values, arrivalTime }` 객체 배열을 받을 수 있습니다. `null`은 Machbase 센티널 값으로 자동 인코딩됩니다.
+- `options`는 `arrivalTime`(기본값 1개) 또는 `arrivalTimes`(행별 배열)를 지정할 수 있습니다.
+
 반환값은 `{ table, rowsAppended, rowsFailed, message }` 형태입니다.
 
-> **팁**: "column count does not match" 오류는 대상 테이블이 로그 테이블이 아니거나, 컬럼 순서가 스키마와 일치하지 않을 때 발생합니다.
+> **팁**: "column count does not match" 오류는 대상 테이블이 로그 테이블이 아니거나, 컬럼 순서가 스키마와 일치하지 않을 때 발생합니다. TAG 테이블에는 `appendOpen()`을 사용하세요.
 
 #### appendOpen(table, columns, options?)
 
-경량 Append 세션을 엽니다. 기본적으로 네이티브 APPEND open/data/close 흐름을 사용합니다.
+경량 Append 세션을 엽니다. 기본적으로 네이티브 APPEND open/data/close 흐름을 사용하며, 성공한 네이티브 쓰기는 청크별 응답을 반환하지 않습니다.
 
 ```javascript
 const stream = await conn.appendOpen('sensor_log', [
@@ -274,6 +326,10 @@ await stream.append({ values: [3, 'charlie', 2.5] });
 await stream.close();
 ```
 
+네이티브 Append를 끄고 Prepared Statement 기반으로 강제하려면 `MACHBASE_NATIVE_APPEND=0`을 설정하세요. 서버가 특정 테이블 타입이나 세션에서 네이티브 Append를 지원하지 않으면 페이사드가 자동으로 Prepared Statement 방식으로 폴백합니다.
+
+TAG 테이블의 `DATETIME` 컬럼에는 `Date` 객체 또는 `bigint` epoch 값을 전달하세요.
+
 #### append(rows) on an append stream
 
 열린 Append 스트림으로 하나 이상의 행을 전송합니다.
@@ -285,6 +341,8 @@ const frames = await stream.append([
 ]);
 console.log('frames sent:', frames);
 ```
+
+네이티브 모드에서는 최대 처리량을 위해 성공 응답이 생략되며, 오류가 있을 때만 실패 패킷이 반환됩니다.
 
 ### Helper Methods
 
@@ -313,6 +371,31 @@ SQL 문자열을 안전하게 구성하기 위한 유틸리티입니다.
 ```javascript
 const safeName = conn.escapeId('table_name');
 const safeValue = conn.escape('user input');
+```
+
+## 테스트 및 진단
+
+### 스크립트
+
+- `npm run build` – TypeScript 컴파일
+- `npm run lint` – `src/`에 ESLint 수행
+- `npm run smoke` – 선택적 스모크 테스트(환경변수 없으면 생략)
+- `npm test` – 통합 스위트(실서버 필요)
+  1. 로그 테이블 생성
+  2. 샘플 데이터 INSERT/SELECT
+  3. 자리기반 바인딩 준비문 시연
+  4. append 부하 테스트(기본: 5배치 x 200행) 및 건수 검증
+  5. 각 단계에서 `COMMIT`을 호출하여 트랜잭션 미지원 동작 확인
+  6. Machbase 페이사드와 `UPDATE` 제한 동작 검증
+
+샘플 출력:
+
+```text
+COMMIT expected failure: Expected COMMIT to fail because Machbase does not support transactions.
+machbase-facade-basic callback query returned 3 rows.
+machbase-facade-update-log-fails message: UPDATE is not supported for LOG tables.
+append-batch progress: batch 4/5 { table: 'TS_CLIENT_IT_...', rowsAppended: 200, rowsFailed: 0 }
+append-batch final count: 1004
 ```
 
 ## 튜토리얼
@@ -358,7 +441,9 @@ const { createConnection } = require('@machbase/ts-client');
         const [rows] = await stmt.execute([id]);
         console.log(id, rows[0]?.NAME);
       }
-    } finally { await stmt.close(); }
+    } finally {
+      await stmt.close();
+    }
   } finally {
     await conn.execute(`DROP TABLE "${table}"`);
     await conn.end();
@@ -380,8 +465,12 @@ const { createConnection } = require('@machbase/ts-client');
     await conn.execute(`CREATE LOG TABLE "${table}" (ID INTEGER, NAME VARCHAR(64), VALUE DOUBLE)`);
     const result = await conn.appendBatch(
       table,
-      [ { name: 'ID', type: 'int32' }, { name: 'NAME', type: 'varchar' }, { name: 'VALUE', type: 'float64' } ],
-      [ [1, 'X', 0.5], [2, 'Y', 1.25] ],
+      [
+        { name: 'ID', type: 'int32' },
+        { name: 'NAME', type: 'varchar' },
+        { name: 'VALUE', type: 'float64' },
+      ],
+      [[1, 'X', 0.5], [2, 'Y', 1.25]],
     );
     console.log(result);
   } finally {
@@ -422,6 +511,8 @@ const { createConnection } = require('@machbase/ts-client');
   }
 })();
 ```
+
+> 네이티브 모드는 기본 활성화입니다. 비활성화하려면 `MACHBASE_NATIVE_APPEND=0`을 설정하세요. 성공 시 청크별 응답은 생략되고, 오류만 실패 응답으로 전달됩니다.
 
 ### Promise 래퍼와 Ping
 
@@ -472,11 +563,12 @@ try {
 
 ### Append 프로토콜
 
-로그 테이블에는 `appendBatch`를, 점진적 유입이 필요한 경우 스트리밍 도우미(`appendOpen`/`append`)를 사용하세요. 특정 테이블 타입(예: TAG 테이블)에서 스트리밍을 지원하지 않으면 준비된 문 반복 방식으로 자동 대체됩니다.
+로그 테이블에는 `appendBatch`를, 점진적 유입이 필요한 경우 스트리밍 도우미(`appendOpen`/`append`)를 사용하세요. 특정 테이블 타입(예: TAG 테이블)에서 스트리밍을 지원하지 않으면 준비된 문 반복 방식으로 자동 대체됩니다. 운영 시에는 데이터를 청크로 나누고 `rowsFailed`를 확인하는 패턴이 안전합니다.
 
 ### 오류 처리
 
-오류는 기본 `Error` 객체(래퍼 사용 시 `QueryError`)로 전달됩니다. 문제를 진단하려면 `error.message` 또는 `QueryError`의 `code`, `sql` 필드를 확인하세요.
+오류는 기본 `Error` 객체(래퍼 사용 시 `QueryError`)로 전달됩니다. 문제를 진단하려면 `error.message` 또는 `QueryError`의 `code`, `sql` 필드를 확인하세요. 통합 테스트는 존재하지 않는 테이블 조회와 지원하지 않는 `UPDATE`를 일부러 실행해 오류 메시지가 충분히 설명적인지 확인합니다.
+
 ### 테이블 타입별 SQL 유의사항
 
 - **LOG/TAG 테이블**은 `SELECT`, `INSERT`, `DELETE`를 지원하며 `UPDATE`는 사용할 수 없습니다.
@@ -490,3 +582,27 @@ try {
 4. **오류 처리**: DB 작업을 `try...catch`로 감싸고 적절히 로깅합니다.
 5. **커넥션 풀 사용**: 운영 환경에서는 커넥션 풀을 도입해 동시 요청을 안정적으로 처리하세요.
 6. **쿼리 파라미터화**: SQL 인젝션을 방지하려면 문자열 결합 대신 바인딩(`?` 플레이스홀더)을 사용하세요.
+
+## 변경 이력
+
+### 2025-10-08
+
+- npm, yarn, pnpm 및 오프라인 `.tgz` 설치 절차를 일반 사용자 관점으로 정리했습니다.
+- Node.js 전용 런타임 제약과 연결 문제 해결 팁을 보강했습니다.
+- 테이블 타입별 SQL 제약 사항을 동작 특성 섹션에 통합했습니다.
+
+### 2025-10-03
+
+- TAG 스트리밍 예제를 추가하고 기본 `MACHBASE_NATIVE_APPEND` 동작을 문서화했습니다.
+- 네이티브 Append가 불가능할 때 Prepared Statement로 자동 폴백하는 동작을 정리했습니다.
+
+### 2025-10-02
+
+- Machbase 페이사드(`createConnection`, `QueryError`, `.promise()`, 페이사드 준비문)를 도입했습니다.
+- 콜백/프로미스 흐름과 LOG/TAG `UPDATE` 거부 동작에 대한 통합 검증을 확장했습니다.
+
+### 2025-09-30
+
+- 자리기반 Prepared Statement를 추가했습니다.
+- 로그 테이블용 `appendBatch`와 null 처리, 통계 반환을 추가했습니다.
+- 트랜잭션, 페이지네이션, 파라미터 바인딩, append 청크, 오류 처리 예제와 통합 검증을 보강했습니다.
