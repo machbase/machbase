@@ -6,7 +6,7 @@ weight: 30
 
 ## 개요
 
-Machbase는 Tag 데이터를 삽입하기 위한 여러 방법을 제공하며, 각 방법은 서로 다른 사용 사례에 최적화되어 있습니다. 데이터 볼륨과 애플리케이션 요구 사항에 가장 적합한 방법을 선택하십시오.
+Machbase는 시간축과 거리축 Tag 데이터를 삽입하기 위한 여러 방법을 제공하며, 각 방법은 서로 다른 사용 사례에 최적화되어 있습니다. 데이터 볼륨과 애플리케이션 요구 사항에 가장 적합한 방법을 선택하십시오.
 
 ## 방법 1: INSERT 문
 
@@ -41,6 +41,31 @@ TAG_0001              2018-12-19 17:41:43 812:782:202 2
 ```
 
 > **사용 시기**: 테스트, 저용량 삽입, 대화형 데이터 입력
+
+### 거리축 INSERT 예제
+
+거리축 Tag 테이블도 동일하게 `INSERT`를 사용하지만, 축 컬럼에는 숫자 값을 넣습니다.
+
+```sql
+Mach> CREATE TAG TABLE trip_sensor (
+          name        VARCHAR(20) PRIMARY KEY,
+          distance_m  DOUBLE BASE DISTANCE,
+          value       DOUBLE,
+          quality     INTEGER
+      );
+Executed successfully.
+
+Mach> INSERT INTO trip_sensor VALUES('ODO_A', 0, 10.1, 100);
+1 row(s) inserted.
+
+Mach> INSERT INTO trip_sensor VALUES('ODO_A', 500, 11.2, 101);
+1 row(s) inserted.
+
+Mach> INSERT INTO trip_sensor VALUES('ODO_B', 1000.1, 21.5, 100);
+1 row(s) inserted.
+```
+
+`DOUBLE` 거리축은 소수 거리값을 그대로 저장할 수 있고, `LONG`/`ULONG` 거리축은 정수 거리값만 저장합니다.
 
 ## 방법 2: CSV 파일 임포트
 
@@ -90,6 +115,8 @@ HTTP 요청을 통해 데이터를 삽입합니다 - IoT 디바이스와 웹 애
 ```
 
 `date_format`이 생략되면 기본 형식 `YYYY-MM-DD HH24:MI:SS mmm:uuu:nnn`이 사용됩니다.
+
+시간축 Tag 테이블은 축 값에 날짜/시간 문자열을 사용하고, 거리축 Tag 테이블은 축 컬럼 타입에 맞는 숫자 값을 사용합니다.
 
 ### API 예제
 
@@ -150,6 +177,8 @@ conn.close()
 ## 추가 컬럼 사용
 
 Tag 테이블에 추가 컬럼이 있는 경우 삽입 시 포함시킵니다:
+
+축 값은 항상 테이블 정의 순서와 타입을 따라야 합니다. 시간축은 `DATETIME`, 거리축은 `DOUBLE`/`LONG`/`ULONG` 값이 들어갑니다.
 
 ```sql
 -- Tag table with additional columns

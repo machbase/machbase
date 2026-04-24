@@ -8,6 +8,32 @@ weight: 60
 
 롤업 테이블은 태그 데이터를 시간 기준으로 자동 집계해 분석과 리포트 쿼리의 성능을 크게 향상시킨다. 수백만 건의 원시 데이터를 스캔하는 대신, 다양한 구간별 통계가 미리 계산되어 저장됩니다.
 
+## TIME 축 전용 기능
+
+ROLLUP은 시간축(`BASETIME`, `BASE TIME`) Tag 테이블에서만 사용할 수 있습니다. 거리축(`BASE DISTANCE`, `BASEDISTANCE`) Tag 테이블에서는 아래 기능을 지원하지 않습니다.
+
+- `WITH ROLLUP(...)`
+- `CREATE ROLLUP ... ON <distance_tag> ...`
+- `CREATE ROLLUP ... INTO (...) AS (...)`
+
+예를 들어 아래 구문은 실패합니다.
+
+```sql
+CREATE TAG TABLE trip_rollup_test (
+    name        VARCHAR(20) PRIMARY KEY,
+    distance_m  DOUBLE BASE DISTANCE,
+    value       DOUBLE SUMMARIZED
+) WITH ROLLUP(SEC);
+
+[ERR-04999: ROLLUP is not supported on DISTANCE axis TAG table.]
+```
+
+거리축에서는 다음 방식으로 접근하는 것이 안전합니다.
+
+- `BETWEEN a AND b` 조건으로 직접 범위 조회
+- `TRUNC(distance / bucket, 0) * bucket` 형태의 버킷 집계
+- `EXPLAIN`으로 거리 조건이 key range로 들어가는지 확인
+
 ## ROLLUP 테이블 생성
 
 Tag Table 생성시 Rollup이 기본으로 생성되지 않고, 사용자가 직접 생성하는 방식으로 변경되었으며 문법은 아래와 같다.

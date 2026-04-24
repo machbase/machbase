@@ -42,14 +42,17 @@ CREATE TABLE ctest (id INTEGER, name VARCHAR(20), sipv4 IPV4, dipv6 IPV6, commen
 
 #### TAG 테이블 생성 예제
 
-태그 테이블 생성시 반드시 PRIMARY KEY, BASETIME, SUMMARIZED 컬럼이 존재해야 합니다.
+태그 테이블은 `PRIMARY KEY` 컬럼과 축(axis) 컬럼이 필요합니다. 시간축은 `DATETIME BASETIME` 또는 `DATETIME BASE TIME`을 사용하고, 거리축은 `DOUBLE`, `LONG`, `ULONG` 타입에 `BASE DISTANCE` 또는 `BASEDISTANCE`를 사용합니다. `SUMMARIZED`는 선택 속성이며 rollup/statistics가 필요한 값 컬럼에 지정합니다.
 
 ```sql
 -- create tag table 예제
-CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED);
-CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED, value2 FLOAT, int_column INT);
-CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED, value2 FLOAT) METADATA (i1 INT);
+CREATE TAG TABLE tag_time (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED);
+CREATE TAG TABLE tag_time_ext (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED, value2 FLOAT, int_column INT);
+CREATE TAG TABLE tag_distance (name VARCHAR(20) PRIMARY KEY, distance_m DOUBLE BASE DISTANCE, value DOUBLE, quality INT);
+CREATE TAG TABLE tag_distance_meta (name VARCHAR(20) PRIMARY KEY, distance_m LONG BASEDISTANCE, value DOUBLE) METADATA (route_id VARCHAR(20));
 ```
+
+거리축 컬럼은 `DOUBLE`, `LONG`, `ULONG`만 허용합니다. `WITH ROLLUP`은 시간축 Tag 테이블에서만 사용할 수 있습니다.
 
 #### 테이블 및 컬럼 이름
 

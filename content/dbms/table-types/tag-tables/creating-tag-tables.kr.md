@@ -6,16 +6,28 @@ weight: 10
 
 ## 학습 내용
 
-Tag 테이블은 Machbase에서 시계열 센서 데이터를 저장하는 기본 구조입니다. 이 가이드는 Tag 테이블을 효과적으로 생성, 설정 및 삭제하는 방법을 다룹니다.
+Tag 테이블은 Machbase에서 축(axis) 기반 센서 데이터를 저장하는 기본 구조입니다. 이 가이드는 시간축과 거리축 Tag 테이블을 생성, 설정 및 삭제하는 방법을 다룹니다.
 
-## 기본 Tag 테이블 생성
+> **버전**: 거리축(`BASE DISTANCE`, `BASEDISTANCE`)은 Neo v8.0.75+에서 지원합니다.
 
-가장 간단한 Tag 테이블은 세 가지 필수 요소를 필요로 합니다:
+## 축(axis) 기본 규칙
+
+Tag 테이블은 같은 `tag_name`에 대해 하나의 축 컬럼을 따라 데이터를 저장합니다.
+
+- 시간축: `DATETIME BASE TIME` 또는 `DATETIME BASETIME`
+- 거리축: `DOUBLE`, `LONG`, `ULONG` 타입에 `BASE DISTANCE` 또는 `BASEDISTANCE`
+- `BASE`를 사용할 때는 뒤에 반드시 `TIME` 또는 `DISTANCE`가 와야 합니다
+- 축 컬럼은 하나만 가질 수 있습니다
+- Tag 테이블은 `SELECT`, `INSERT`, `DELETE`를 지원하고 `UPDATE`는 지원하지 않습니다
+
+## 시간축 Tag 테이블 생성
+
+가장 일반적인 시간축 Tag 테이블은 세 가지 핵심 요소를 필요로 합니다:
 - **태그 이름** (PRIMARY KEY): 센서 또는 데이터 소스를 식별
 - **입력 시간** (BASETIME): 데이터가 기록된 시간
 - **센서 값**: 실제 측정값
 
-### 간단한 생성 예제
+### 시간축 생성 예제
 
 ```sql
 -- 이것은 실패합니다 - 필수 키워드 누락
@@ -42,9 +54,48 @@ VALUE     double          17
 
 > **팁**: SUMMARIZED 키워드는 value 컬럼에 대한 자동 통계 추적(최소값, 최대값, 평균)을 활성화하며, 분석에 유용합니다.
 
+## 거리축 Tag 테이블 생성
+
+거리축 Tag 테이블은 누적 주행거리, 이송거리, 선로 위치처럼 거리값을 따라 데이터를 저장할 때 사용합니다.
+
+```sql
+Mach> CREATE TAG TABLE trip_sensor (
+          name        VARCHAR(20) PRIMARY KEY,
+          distance_m  DOUBLE BASE DISTANCE,
+          value       DOUBLE,
+          quality     INTEGER
+      );
+Executed successfully.
+
+Mach> CREATE TAG TABLE trip_sensor_alias (
+          name        VARCHAR(20) PRIMARY KEY,
+          distance_m  LONG BASEDISTANCE,
+          value       DOUBLE
+      ) METADATA (route_id VARCHAR(20), axis_unit VARCHAR(8));
+Executed successfully.
+```
+
+거리축 컬럼은 8바이트 타입만 사용할 수 있습니다.
+
+- `DOUBLE`
+- `LONG`
+- `ULONG`
+
+소수점 거리값이 필요하면 `DOUBLE`, 정수 거리값만 저장하면 `LONG` 또는 `ULONG`을 사용하는 것이 적합합니다.
+
+다음 타입은 거리축으로 사용할 수 없습니다.
+
+- `FLOAT`
+- `INTEGER`
+- `UINTEGER`
+- `SHORT`
+- `USHORT`
+
+> **제한 사항**: 거리축 Tag 테이블은 `WITH ROLLUP`을 지원하지 않습니다. 자세한 내용은 [집계용 롤업 테이블](../rollup-tables)을 참고하세요.
+
 ## 추가 센서 컬럼 추가
 
-실제 센서 데이터는 종종 이름, 시간, 값 이상을 필요로 합니다. 그룹 ID, IP 주소 등과 같은 메타데이터를 위한 추가 컬럼을 추가할 수 있습니다.
+실제 센서 데이터는 종종 이름, 축, 값 이상을 필요로 합니다. 시간축/거리축 모두에서 그룹 ID, IP 주소 등과 같은 추가 컬럼을 둘 수 있습니다.
 
 ```sql
 Mach> create tag table TAG (name varchar(20) primary key, time datetime basetime, value double, grpid short, myip ipv4);
