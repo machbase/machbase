@@ -80,6 +80,7 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 | param       | default | description                                                |
 |:----------- |---------|:-----------------------------------------------------------|
 | **q**       | _required_ | 실행할 SQL 구문입니다.                                     |
+| p           |         | `?` bind placeholder에 전달할 파라미터의 JSON 배열입니다.<br/> 예: `["name", 1234, 1.23, true]` {{< neo_since ver="8.0.75" />}} |
 | format      | `json`    | 결과 데이터 형식: json, csv, box, ndjson                  |
 | timeformat  | `ns`      | 시간 단위: s, ms, us, ns                                  |
 | tz          | `UTC`     | 시간대: UTC, Local, 위치 지정                             |
@@ -609,7 +610,8 @@ POST http://127.0.0.1:5654/db/query
 Content-Type: application/json
 
 {
-  "q": "select * from EXAMPLE limit 2"
+  "q": "select * from EXAMPLE limit ?",
+  "p": [2]
 }
 ```
 ~~~
@@ -617,8 +619,8 @@ Content-Type: application/json
 {{< tab name="cURL" >}}
 ```sh
 curl -o - -X POST http://127.0.0.1:5654/db/query \
-  -H 'Content-Type: application/json' \
-  -d '{ "q":"select * from EXAMPLE limit 2" }'
+    -H 'Content-Type: application/json' \
+    -d '{ "q":"select * from EXAMPLE limit ?", "p":[2] }'
 ```
 {{< /tab >}}
 {{< tab name="Python" >}}
@@ -627,7 +629,7 @@ import requests
 
 response = requests.post(
   "http://127.0.0.1:5654/db/query",
-  json={"q": "select * from EXAMPLE limit 2"},
+  json={"q": "select * from EXAMPLE limit ?", "p":[2]},
 )
 print(response.text)
 ```
@@ -638,7 +640,7 @@ async function runQuery() {
   const response = await fetch("http://127.0.0.1:5654/db/query", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ q: "select * from EXAMPLE limit 2" }),
+    body: JSON.stringify({ q: "select * from EXAMPLE limit ?", p:[2] }),
   });
 
   console.log(await response.text());
@@ -656,7 +658,7 @@ using var client = new HttpClient();
 
 var response = await client.PostAsJsonAsync(
   "http://127.0.0.1:5654/db/query",
-  new { q = "select * from EXAMPLE limit 2" }
+  new { q = "select * from EXAMPLE limit ?", p = new[] { 2 } }
 );
 response.EnsureSuccessStatusCode();
 Console.WriteLine(await response.Content.ReadAsStringAsync());

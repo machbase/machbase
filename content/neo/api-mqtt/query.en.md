@@ -11,6 +11,7 @@ The database query topic for MQTT is `db/query`. Send a query request to this to
 | param       | default | description                   |
 |:----------- |---------|:----------------------------- |
 | **q**       | _n/a_   | SQL query string              |
+| p           |         | Optional. JSON array of parameters for `?` bind placeholders.<br/>Example: `["name", 1234, 1.23, true]` {{< neo_since ver="8.0.75" />}} |
 | reply       | db/reply| The topic where to receive the result of query |
 | format      | json    | Result data format: json, csv, box |
 | timeformat  | ns      | Time format: s, ms, us, ns    |
@@ -31,11 +32,12 @@ Those options are available only when `format=json`
 | rowsArray   | false   | produce JSON that contains only array of object for each record.  |
 
 
-A basic query example shows the client subscribe to `db/reply/#` and publish a query request to `db/query` with *reply* field `db/reply/my_query` so that it can identify the individual reply from multiple messages.
+A basic query example shows the client subscribe to `db/reply/#` and publish a query request to `db/query` with *reply* field `db/reply/my_query` so that it can identify the individual reply from multiple messages. To use `?` bind placeholders, provide a JSON array in the `p` field.
 
 ```json
 {
-    "q": "select name,time,value from example limit 5",
+    "q": "select name,time,value from example where name = ? limit 5",
+    "p": ["wave.sin"],
     "format": "csv",
     "reply": "db/reply/my_query"
 }

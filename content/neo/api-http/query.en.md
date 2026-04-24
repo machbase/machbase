@@ -80,6 +80,7 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 | param       | default | description                   |
 |:----------- |---------|:----------------------------- |
 | **q**       | _required_ | SQL query string              |
+| p           |         | JSON array of parameters for `?` bind placeholders.<br/>Example: `["name", 1234, 1.23, true]` {{< neo_since ver="8.0.75" />}} |
 | format      | `json`    | Result data format: json, csv, box, ndjson |
 | timeformat  | `ns`      | Time format: s, ms, us, ns    |
 | tz          | `UTC`     | Time Zone: UTC, Local and location spec |
@@ -609,7 +610,8 @@ POST http://127.0.0.1:5654/db/query
 Content-Type: application/json
 
 {
-  "q": "select * from EXAMPLE limit 2"
+  "q": "select * from EXAMPLE limit ?",
+  "p": [2]
 }
 ```
 ~~~
@@ -618,7 +620,7 @@ Content-Type: application/json
 ```sh
 curl -o - -X POST http://127.0.0.1:5654/db/query \
     -H 'Content-Type: application/json' \
-    -d '{ "q":"select * from EXAMPLE limit 2" }'
+    -d '{ "q":"select * from EXAMPLE limit ?", "p":[2] }'
 ```
 {{< /tab >}}
 {{< tab name="Python" >}}
@@ -627,7 +629,7 @@ import requests
 
 response = requests.post(
   "http://127.0.0.1:5654/db/query",
-  json={"q": "select * from EXAMPLE limit 2"},
+  json={"q": "select * from EXAMPLE limit ?", "p":[2]},
 )
 print(response.text)
 ```
@@ -638,7 +640,7 @@ async function runQuery() {
   const response = await fetch("http://127.0.0.1:5654/db/query", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ q: "select * from EXAMPLE limit 2" }),
+    body: JSON.stringify({ q: "select * from EXAMPLE limit ?", p:[2] }),
   });
 
   console.log(await response.text());
@@ -656,7 +658,7 @@ using var client = new HttpClient();
 
 var response = await client.PostAsJsonAsync(
   "http://127.0.0.1:5654/db/query",
-  new { q = "select * from EXAMPLE limit 2" }
+  new { q = "select * from EXAMPLE limit ?", p = new[] { 2 } }
 );
 response.EnsureSuccessStatusCode();
 Console.WriteLine(await response.Content.ReadAsStringAsync());

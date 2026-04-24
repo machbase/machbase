@@ -11,6 +11,7 @@ MQTT에서 데이터베이스 쿼리를 실행하려면 `db/query` 토픽으로 
 | param       | default | description                                           |
 |:----------- |---------|:------------------------------------------------------|
 | **q**       | _n/a_   | 실행할 SQL 쿼리 문자열                                      |
+| p           |         | 선택 사항. `?` bind placeholder에 전달할 파라미터의 JSON 배열입니다.<br/>예: `["name", 1234, 1.23, true]` {{< neo_since ver="8.0.75" />}} |
 | reply       | db/reply| 쿼리 결과를 받을 토픽                                       |
 | format      | json    | 결과 형식: json, csv, box                               |
 | timeformat  | ns      | 시간 단위: s, ms, us, ns                                |
@@ -31,11 +32,12 @@ MQTT에서 데이터베이스 쿼리를 실행하려면 `db/query` 토픽으로 
 | rowsArray   | false   | 각 레코드를 객체 배열로 구성한 JSON을 생성합니다.                         |
 
 
-기본 예시는 클라이언트가 `db/reply/#`를 구독한 뒤 `reply` 필드를 `db/reply/my_query`로 지정해 `db/query` 토픽으로 쿼리를 발행하고, 여러 메시지 중 자신의 응답만 구분하는 방법을 보여 줍니다.
+기본 예시는 클라이언트가 `db/reply/#`를 구독한 뒤 `reply` 필드를 `db/reply/my_query`로 지정해 `db/query` 토픽으로 쿼리를 발행하고, 여러 메시지 중 자신의 응답만 구분하는 방법을 보여 줍니다. `?` bind placeholder를 사용할 때는 `p` 필드에 JSON 배열을 지정합니다.
 
 ```json
 {
-    "q": "select name,time,value from example limit 5",
+    "q": "select name,time,value from example where name = ? limit 5",
+    "p": ["wave.sin"],
     "format": "csv",
     "reply": "db/reply/my_query"
 }
