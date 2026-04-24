@@ -3,6 +3,7 @@ layout : post
 title : 'DDL'
 type: docs
 weight: 20
+toc: true
 ---
 
 ## CREATE TABLE
@@ -296,6 +297,24 @@ SELECT v1, v2 FROM table_name;
 -- Sequence 컬럼에 대한 잘못된 Select (nextval 컬럼은 insert 시에만 사용 가능)
 SELECT nextval(v1), v2 FROM table_name;
 ```
+
+## CREATE VIEW / DROP VIEW
+
+VIEW는 `SELECT` 결과를 이름 있는 논리 객체로 저장해 재사용하는 기능입니다.
+테이블과 달리 데이터를 별도로 저장하지 않으며, 조회 시 저장된 정의 SQL이 다시
+전개되어 실행됩니다.
+
+```sql
+CREATE VIEW v_example AS
+SELECT id, name
+FROM t1;
+
+DROP VIEW v_example;
+```
+
+`CREATE OR REPLACE VIEW`, `DROP VIEW IF EXISTS`, `SHOW VIEWS`, `M$SYS_VIEWS`,
+성능/제한, Tag / `BINARY` 예제까지 포함한 전체 설명은 [VIEW](../view) 문서를
+참조하세요.
 
 ## DROP TABLE
 

@@ -2,6 +2,7 @@
 title : 'DDL'
 type: docs
 weight: 20
+toc: true
 ---
 
 ## CREATE TABLE
@@ -278,6 +279,24 @@ SELECT v1, v2 FROM table_name;
 -- Invalid Select for Sequence column (nextval column can only be used in insert query)
 SELECT nextval(v1), v2 FROM table_name;
 ```
+
+## CREATE VIEW / DROP VIEW
+
+VIEW stores a `SELECT` definition as a named logical object for reuse.
+Unlike a table, a VIEW does not store data separately. When queried, the stored
+definition SQL is expanded and executed internally.
+
+```sql
+CREATE VIEW v_example AS
+SELECT id, name
+FROM t1;
+
+DROP VIEW v_example;
+```
+
+For the full description including `CREATE OR REPLACE VIEW`, `DROP VIEW IF EXISTS`,
+`SHOW VIEWS`, `M$SYS_VIEWS`, performance/limits, and Tag / `BINARY` examples,
+see [VIEW](../view).
 
 ## DROP TABLE
 

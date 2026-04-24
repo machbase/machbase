@@ -2,6 +2,7 @@
 title : 'SELECT'
 type: docs
 weight: 40
+toc: true
 ---
 
 ## 목차
@@ -13,6 +14,7 @@ weight: 40
     * [CASE 문](#case-문)
 * [FROM 절](#from-절)
     * [서브쿼리(인라인 뷰)](#서브쿼리인라인-뷰)
+    * [저장 VIEW](#저장-view)
     * [조인(INNER JOIN)](#조인inner-join)
     * [INNER JOIN과 OUTER JOIN](#inner-join과-outer-join)
     * [PIVOT](#pivot)
@@ -204,6 +206,21 @@ FROM (Select statement)
 괄호로 묶인 서브쿼리의 내용에 대한 데이터를 조회합니다.
 
 * Machbase 서버는 상관 서브쿼리를 지원하지 않으므로, 서브쿼리에서 외부 쿼리의 컬럼을 참조할 수 없습니다.
+
+### 저장 VIEW
+
+`FROM` 절에는 `CREATE VIEW`로 미리 정의한 저장 VIEW 이름도 사용할 수 있습니다.
+저장 VIEW는 인라인 뷰와 달리 이름 있는 논리 객체이며, `DESC`, `SHOW VIEWS`,
+`M$SYS_VIEWS`로 메타 정보를 확인할 수 있습니다.
+
+```sql
+SELECT *
+FROM v_customer
+WHERE id = 100;
+```
+
+저장 VIEW의 생성, 삭제, 메타 조회, 성능/제약, Tag / `BINARY` 예제는 [VIEW](../view)
+문서를 참조하세요.
 
 ### 조인(INNER JOIN)
 

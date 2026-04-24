@@ -2,6 +2,7 @@
 title : 'SELECT'
 type: docs
 weight: 40
+toc: true
 ---
 
 ## Index
@@ -13,6 +14,7 @@ weight: 40
     * [CASE statement](#case-statement)
 * [FROM](#from)
     * [SUBQUERY(INLINE VIEW)](#subqueryinline-view)
+    * [STORED VIEW](#stored-view)
     * [JOIN(INNER JOIN)](#joininner-join)
     * [INNER JOIN and OUTER JOIN](#inner-join-and-outer-join)
     * [PIVOT](#pivot)
@@ -204,6 +206,21 @@ FROM (Select statement)
 Retrievse data for the contents of the subquery enclosed in parentheses.
 
 * Machbase server does not support correlated subqueries, so you can not reference columns in a subquery in an outer query.
+
+### STORED VIEW
+
+The `FROM` clause can also use the name of a stored VIEW created in advance with
+`CREATE VIEW`. Unlike an inline view, a stored VIEW is a named logical object and
+its metadata can be inspected with `DESC`, `SHOW VIEWS`, and `M$SYS_VIEWS`.
+
+```sql
+SELECT *
+FROM v_customer
+WHERE id = 100;
+```
+
+For creation, deletion, metadata, performance/limits, and Tag / `BINARY` examples,
+see [VIEW](../view).
 
 ### JOIN(INNER JOIN)
 
