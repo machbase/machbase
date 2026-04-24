@@ -59,6 +59,45 @@ PLAN
 [6] row(s) selected.
 ```
 
+## Tag 메타데이터 JSON path 인덱스
+
+`TAG METADATA` 의 JSON 컬럼에도 path 인덱스를 생성할 수 있습니다.
+
+```sql
+CREATE TAGDATA TABLE ships (
+    name VARCHAR(20) PRIMARY KEY,
+    time DATETIME BASETIME,
+    value DOUBLE
+)
+METADATA (
+    status VARCHAR(20),
+    info JSON
+);
+
+CREATE INDEX idx_ship_owner
+ON ships METADATA (info->'$.owner');
+```
+
+생성 시 함께 선언할 수도 있습니다.
+
+```sql
+CREATE TAGDATA TABLE ships (
+    name VARCHAR(20) PRIMARY KEY,
+    time DATETIME BASETIME,
+    value DOUBLE
+)
+METADATA (
+    info JSON INDEX('name', 'ship.status')
+);
+```
+
+주의사항:
+
+- metadata JSON path 인덱스는 `CREATE INDEX ... ON TAG METADATA (...)` 문법을 사용합니다.
+- `INFO JSON INDEX(...)` 는 생성 시 자주 사용하는 path를 함께 선언하는 방식입니다.
+- 현재 JSON path 인덱스는 문자열 literal 비교 중심으로 동작합니다.
+- 숫자 literal 비교는 full scan 으로 처리될 수 있습니다.
+
 ## 인덱스 삭제
 
 DROP INDEX 문을 사용하여 지정된 인덱스를 삭제합니다. 그러나 테이블을 검색하고 있는 다른 세션이 있으면 오류와 함께 실패합니다.
@@ -70,4 +109,10 @@ DROP INDEX index_name;
 ```bash
 Mach> DROP INDEX id_index;
 Dropped successfully.
+```
+
+metadata JSON path 인덱스도 인덱스 이름만으로 삭제합니다.
+
+```sql
+DROP INDEX idx_ship_owner;
 ```

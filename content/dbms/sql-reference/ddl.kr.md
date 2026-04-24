@@ -1,5 +1,4 @@
 ---
-layout : post
 title : 'DDL'
 type: docs
 weight: 20
@@ -54,6 +53,7 @@ CREATE TAG TABLE tag_distance_meta (name VARCHAR(20) PRIMARY KEY, distance_m LON
 ```
 
 거리축 컬럼은 `DOUBLE`, `LONG`, `ULONG`만 허용합니다. `WITH ROLLUP`은 시간축 Tag 테이블에서만 사용할 수 있습니다.
+TAG 메타데이터의 `JSON` 컬럼과 `JSON INDEX(...)` 선언은 [Tag 메타데이터](../../table-types/tag-tables/tag-metadata) 문서를 참고하십시오.
 
 #### 테이블 및 컬럼 이름
 
@@ -481,6 +481,8 @@ CREATE INDEX index1 on table1 ( c1 )
 -- varchar type의 var_column에 keyword index가 적용되고 page_size의 단위는 100000가 되었습니다.
 CREATE INDEX index2 on table1 (var_column) INDEX_TYPE KEYWORD PAGE_SIZE=100000;
 ```
+
+TAGDATA 메타데이터의 JSON path 인덱스 사용법은 [Tag 메타데이터](../../table-types/tag-tables/tag-metadata) 및 [Tag 테이블 인덱스](../../table-types/tag-tables/tag-indexes) 문서를 참고하십시오.
 
 
 ## DROP INDEX

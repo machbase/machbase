@@ -55,4 +55,6 @@ CREATE TAG TABLE trip_data (
 - [Custom Rollup: User-Defined Aggregation](./rollup-custom/)
 - [Rollup Rebuild Guide](./rollup-rebuild/)
 - [Binary Columns](./binary-columns/)
+- [Tag Metadata](./tag-metadata/)
+- [Tag Table Indexes](./tag-indexes/)
 - Original reference: [Tag Tables](../../../dbms/feature-table/tag/)

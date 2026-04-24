@@ -55,4 +55,6 @@ CREATE TAG TABLE trip_data (
 - [Custom Rollup: 사용자 정의 집계](./rollup-custom/)
 - [Rollup Rebuild 사용자 가이드](./rollup-rebuild/)
 - [Binary 컬럼](./binary-columns/)
+- [Tag 메타데이터](./tag-metadata/)
+- [Tag 테이블 인덱스](./tag-indexes/)
 - 원본 레퍼런스: [Tag Tables](../../../dbms/feature-table/tag/)

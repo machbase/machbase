@@ -30,6 +30,9 @@ tocSort: true
 * [GROUP_CONCAT](#group_concat)
 * [INSTR](#instr)
 * [ISNAN / ISINF](#isnan--isinf)
+* [JSON_SET](#json_set)
+* [JSON_SET_JSON](#json_set_json)
+* [JSON_REMOVE](#json_remove)
 * [JSON-related function](#json-related-function)
 * [JSON Operator](#json-operator)
 * [LEAST / GREATEST](#least--greatest)
@@ -2739,6 +2742,78 @@ nan                         inf                         0
 [1] row(s) selected.
 ```
 
+## JSON_SET
+
+Stores a SQL scalar value at the given path as a JSON scalar.
+
+```sql
+JSON_SET(json_doc, path, scalar)
+```
+
+```sql
+Mach> SELECT JSON_SET('{"ship":{"status":"READY"}}', '$.ship.status', 'DONE') FROM dual;
+JSON_SET('{"ship":{"status":"READY"}}', '$.ship.status', 'DONE')
+--------------------------------------------------------------------------------
+{"ship":{"status":"DONE"}}
+[1] row(s) selected.
+```
+
+Notes:
+
+- `path` must use full JSONPath syntax.
+- `JSON_SET(..., path, NULL)` stores JSON `null`.
+- If the JSON document argument is `NULL`, the result is SQL `NULL`.
+- If `path` is `NULL` or an empty string, the function raises an error.
+- Object paths are supported.
+- Array element mutation such as `$.items[0]` is not supported.
+
+## JSON_SET_JSON
+
+Parses the third argument as JSON text and stores it as an object or array subtree.
+
+```sql
+JSON_SET_JSON(json_doc, path, json_text)
+```
+
+```sql
+Mach> SELECT JSON_SET_JSON('{"ship":{}}', '$.ship.owner', '{"name":"machbase"}') FROM dual;
+JSON_SET_JSON('{"ship":{}}', '$.ship.owner', '{"name":"machbase"}')
+----------------------------------------------------------------------------
+{"ship":{"owner":{"name":"machbase"}}}
+[1] row(s) selected.
+```
+
+Notes:
+
+- `path` must use full JSONPath syntax.
+- If the third argument is SQL `NULL`, the result is SQL `NULL`.
+- Invalid JSON text raises an error.
+- Object paths are supported.
+- Array element mutation is not supported.
+
+## JSON_REMOVE
+
+Removes a member or subtree from a JSON document.
+
+```sql
+JSON_REMOVE(json_doc, path)
+```
+
+```sql
+Mach> SELECT JSON_REMOVE('{"owner":{"name":"machbase","team":"db"}}', '$.owner.team') FROM dual;
+JSON_REMOVE('{"owner":{"name":"machbase","team":"db"}}', '$.owner.team')
+--------------------------------------------------------------------------
+{"owner":{"name":"machbase"}}
+[1] row(s) selected.
+```
+
+Notes:
+
+- `path` must use full JSONPath syntax.
+- A missing path is treated as a no-op.
+- `JSON_REMOVE(..., '$')` is not allowed.
+- If the JSON document argument is `NULL`, the result is SQL `NULL`.
+
 ## PI() {#pi}
 
 Returns a `DOUBLE` constant π.
@@ -3133,6 +3208,9 @@ These functions use json data type as an argument.
 |JSON_EXTRACT_DOUBLE(JSON column name, 'json path')	|Return the value as 64 bits double type.<br>(If the value does not exist, return NULL.)| - JSON object or array : Return NULL<br> - String type : Convert and return if possible. Else return NULL.<br> - Numeric type : Return 64bit real number.<br> - boolean type : Return "True" as 1.0 or "False" as 0.0|
 |JSON_EXTRACT_INTEGER(JSON column name, 'json path')|Return the value as 64 bits integer type.<br>(If the value does not exist, return NULL.)| - JSON object or array : Return NULL<br> - String type : Convert and return if possible. Else return NULL.<br> - Numeric type : Return 64bit integer.<br> - boolean type : Return "True" as 1 or "False" as 0|
 |JSON_EXTRACT_STRING(JSON column name, 'json path')|Return the value as string type.<br>(If the value does not exist, return NULL.)<br>Returns same results as operator(→)| - JSON object or array : Convert every objects into string type and return it.<br> - String type : Return as is <br> - Numeric type : Convert into string type and return it <br> - boolean type : Return "True" or "False"|
+|JSON_SET(json_doc, path, scalar)|Returns a new JSON document with the SQL scalar value stored at the given path as a JSON scalar.| - `path` must use full JSONPath syntax.<br> - `NULL` is stored as JSON `null`.<br> - Only object paths are supported.|
+|JSON_SET_JSON(json_doc, path, json_text)|Returns a new JSON document with the JSON text stored at the given path as an object or array subtree.| - `path` must use full JSONPath syntax.<br> - If the third argument is SQL `NULL`, the result is SQL `NULL`.<br> - Invalid JSON text raises an error.|
+|JSON_REMOVE(json_doc, path)|Returns a new JSON document with the member or subtree at the given path removed.| - `path` must use full JSONPath syntax.<br> - Missing paths are treated as no-op.<br> - `JSON_REMOVE(..., '$')` is not allowed.|
 |JSON_IS_VALID('json string')|Check if the json string is valid for the json format| - 0 : False<br> - 1 : True|
 |JSON_TYPEOF(JSON column name, 'json path')|Returns the type of the value.| - None : Key does not exists.<br> - Object : Object type<br> - Integer : Integer Type<br> - Real : Real number type<br> - String : String type<br> - True/False : Boolean<br> - Array : Array Type<br> - Null : NULL|
 

@@ -127,6 +127,15 @@ UPDATE TAG METADATA SET ...
 ```
  
 * The metadata of the TAGDATA table can not be entered/modified through INSERT ON DUPLICATE KEY UPDATE.
+* `TAG METADATA` now allows metadata predicates as well as `WHERE NAME = ...`.
+* Data columns such as `TIME` and `VALUE` cannot be updated through `UPDATE ... METADATA`.
+* Only `NAME` and metadata columns can be updated.
+
+```sql
+UPDATE sensors METADATA
+   SET status = 'DONE'
+ WHERE status = 'READY';
+```
 
 
 ## DELETE
@@ -198,6 +207,21 @@ delete from t1 where i1 = 2;
 * The primary key can only be performed on the specified volatile table.
 * The WHERE clause allows only conditions of (primary key column) = (value), and can not be created with other conditions.
 * You can not use a column other than the primary key column in the condition.
+
+### DELETE FROM TAG METADATA
+
+Metadata of a TAGDATA table can be deleted through `DELETE FROM TAG METADATA`.
+
+```sql
+DELETE FROM tag METADATA WHERE name = 'tag-1';
+DELETE FROM tag METADATA WHERE status = 'STOP';
+```
+
+Notes:
+
+- Metadata predicates as well as `WHERE NAME = ...` are allowed.
+- If any matched tag still has data rows, the whole statement fails.
+- Metadata of tags that are still in use cannot be deleted.
 
 **delete_from_tag_where_stmt:**
 
