@@ -2,6 +2,7 @@
 title : '집계용 롤업 테이블'
 type: docs
 weight: 60
+description: '태그 테이블과 롤업 테이블의 생성, 조회, JSON SUMMARIZED 집계, FIRST/LAST, 시간 단위별 그룹핑 방법을 설명합니다.'
 ---
 
 ## 개요
@@ -43,7 +44,8 @@ Tag Table 생성시 Rollup이 기본으로 생성되지 않고, 사용자가 직
 * rollup name : 생성될 rollup table의 이름 (40자 이내의 문자열로 자유롭게 생성 가능)
 * source table name : 생성될 rollup이 데이터를 집계할 source table 이름
 * src_table_column : rollup 대상 데이터 칼럼 이름
-    * 숫자형 타입의 칼럼만 가능
+    * 기본적으로 숫자형 타입의 칼럼만 가능
+    * `JSON SUMMARIZED` 타입 컬럼은 `value` 객체 전체를 대상로 한 특수 집계(JSON whole-document)가 지원됨
     * source table이 rollup table인 경우 생략하며, source table의 rollup 대상 칼럼으로 자동 지정
 * number sec/min/hour : 집계할 시간 숫자와 시간 단위 <br>
     ex) 1초 단위 집계 : 1 sec <br>
@@ -686,61 +688,136 @@ mtime                           COUNT(value)
 ```
 
 
-## JSON 타입 대상의 ROLLUP 활용
+## JSON SUMMARIZED 대상의 ROLLUP 집계
 
-7.5 버전부터 JSON 타입을 대상으로 ROLLUP을 사용할 수 있습니다.
+`value JSON SUMMARIZED`를 사용하면 JSON 내부 경로를 하나씩 지정하지 않고 `value` 전체를 대상으로 ROLLUP 집계를 수행할 수 있습니다.
 
-생성 구문에 JSON PATH를 OPERATOR와 연결하면 됩니다.
+센서 상태, 위치, 메트릭처럼 여러 숫자 leaf가 하나의 JSON 문서에 함께 들어오는 경우에 적합합니다. 집계 결과는 객체 구조를 유지한 채 숫자 leaf만 누적됩니다.
 
-JSON 타입 특성상, 하나의 JSON 칼럼에 PATH 별로 ROLLUP을 생성할 수 있습니다.
+### 지원 범위
 
-```sql
--- create tag table
-CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, jval JSON);
- 
--- insert data
-insert into tag values ('tag-01', '2022-09-01 01:01:01', "{ \"x\": 1, \"y\": 1.1}");
-insert into tag values ('tag-01', '2022-09-01 01:01:02', "{ \"x\": 2, \"y\": 1.2}");
-insert into tag values ('tag-01', '2022-09-01 01:01:03', "{ \"x\": 3, \"y\": 1.3}");
-insert into tag values ('tag-01', '2022-09-01 01:01:04', "{ \"x\": 4, \"y\": 1.4}");
-insert into tag values ('tag-01', '2022-09-01 01:01:05', "{ \"x\": 5, \"y\": 1.5}");
-insert into tag values ('tag-01', '2022-09-01 01:02:00', "{ \"x\": 6, \"y\": 1.6}");
-insert into tag values ('tag-01', '2022-09-01 01:03:00', "{ \"x\": 7, \"y\": 1.7}");
-insert into tag values ('tag-01', '2022-09-01 01:04:00', "{ \"x\": 8, \"y\": 1.8}");
-insert into tag values ('tag-01', '2022-09-01 01:05:00', "{ \"x\": 9, \"y\": 1.9}");
-insert into tag values ('tag-01', '2022-09-01 01:06:00', "{ \"x\": 10, \"y\": 2.0}");
- 
--- create rollup
-CREATE ROLLUP _tag_rollup_jval_x_sec ON tag(jval->'$.x') INTERVAL 1 SEC;
-CREATE ROLLUP _tag_rollup_jval_y_sec ON tag(jval->'$.y') INTERVAL 1 SEC;
-```
+- DDL: `value JSON SUMMARIZED`
+- 지원 집계 함수: `AVG(value)`, `MIN(value)`, `MAX(value)`, `SUM(value)`, `SUMSQ(value)`
+- 개수 집계: `COUNT(value)`, `COUNT(*)`
+- `FIRST(time, value)`, `LAST(time, value)`는 `EXTENSION` 롤업에서만 사용 가능
 
-ROLLUP 조회도 동일하게 사용하면 됩니다.
+### 대표 예제
 
 ```sql
-Mach> SELECT rollup('sec', 2, time) as mtime, MIN(jval->'$.x'), MAX(jval->'$.x'), SUM(jval->'$.x'), COUNT(jval->'$.x'), SUMSQ(jval->'$.x') FROM tag GROUP BY mtime ORDER BY mtime;
-mtime                           min(jval->'$.x')            max(jval->'$.x')            sum(jval->'$.x')            count(jval->'$.x')   sumsq(jval->'$.x')         
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-2022-09-01 01:01:00 000:000:000 1                           1                           1                           1                    1                          
-2022-09-01 01:01:02 000:000:000 2                           3                           5                           2                    13                         
-2022-09-01 01:01:04 000:000:000 4                           5                           9                           2                    41                         
-2022-09-01 01:02:00 000:000:000 6                           6                           6                           1                    36                         
-2022-09-01 01:03:00 000:000:000 7                           7                           7                           1                    49                         
-2022-09-01 01:04:00 000:000:000 8                           8                           8                           1                    64                         
-2022-09-01 01:05:00 000:000:000 9                           9                           9                           1                    81                         
-2022-09-01 01:06:00 000:000:000 10                          10                          10                          1                    100                        
-[8] row(s) selected.
- 
-Mach> SELECT rollup('sec', 2, time) as mtime, MIN(jval->'$.y'), MAX(jval->'$.y'), SUM(jval->'$.y'), COUNT(jval->'$.y'), SUMSQ(jval->'$.y') FROM tag GROUP BY mtime ORDER BY mtime;
-mtime                           min(jval->'$.y')            max(jval->'$.y')            sum(jval->'$.y')            count(jval->'$.y')   sumsq(jval->'$.y')         
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-2022-09-01 01:01:00 000:000:000 1.1                         1.1                         1.1                         1                    1.21                       
-2022-09-01 01:01:02 000:000:000 1.2                         1.3                         2.5                         2                    3.13                       
-2022-09-01 01:01:04 000:000:000 1.4                         1.5                         2.9                         2                    4.21                       
-2022-09-01 01:02:00 000:000:000 1.6                         1.6                         1.6                         1                    2.56                       
-2022-09-01 01:03:00 000:000:000 1.7                         1.7                         1.7                         1                    2.89                       
-2022-09-01 01:04:00 000:000:000 1.8                         1.8                         1.8                         1                    3.24                       
-2022-09-01 01:05:00 000:000:000 1.9                         1.9                         1.9                         1                    3.61                       
-2022-09-01 01:06:00 000:000:000 2                           2                           2                           1                    4                          
-[8] row(s) selected.
+-- 전체 JSON 문서를 기본 ROLLUP으로 집계
+CREATE TAG TABLE tag_json_rollup (
+    name  VARCHAR(20) PRIMARY KEY,
+    time  DATETIME BASETIME,
+    value JSON SUMMARIZED
+) WITH ROLLUP;
+
+INSERT INTO tag_json_rollup VALUES ('HVAC_A', '2026-04-07 12:00:00', '{"metrics":{"temp":20,"pressure":1000},"location":{"x":6},"status":"ok"}');
+INSERT INTO tag_json_rollup VALUES ('HVAC_A', '2026-04-07 12:00:01', '{"metrics":{"temp":22,"pressure":1002},"location":{"x":8},"status":true}');
+INSERT INTO tag_json_rollup VALUES ('HVAC_A', '2026-04-07 12:00:02', '{"metrics":{"temp":24,"pressure":1004},"location":{"x":10},"status":null}');
+-- 필요하면 ROLLUP_FORCE 또는 WAKEUP으로 수집 시점을 앞당겨 바로 확인
+
+SELECT rollup('hour', 1, time) AS mtime,
+       COUNT(value), MIN(value), MAX(value), AVG(value), SUM(value), SUMSQ(value)
+  FROM tag_json_rollup
+ WHERE name = 'HVAC_A'
+ GROUP BY mtime
+ ORDER BY mtime;
 ```
+
+```sql
+-- 숫자/문자/불리언/null이 함께 있을 때 숫자 leaf만 집계
+CREATE TAG TABLE tag_json_mix (
+    name  VARCHAR(20) PRIMARY KEY,
+    time  DATETIME BASETIME,
+    value JSON SUMMARIZED
+) WITH ROLLUP TAG_PARTITION_COUNT=1;
+
+INSERT INTO tag_json_mix VALUES ('HVAC_B', '2026-04-07 13:00:00', '{"metrics":{"temp":10,"pressure":100},"location":{"x":1},"mode":"AUTO","enabled":false}');
+INSERT INTO tag_json_mix VALUES ('HVAC_B', '2026-04-07 13:00:01', '{"metrics":{"temp":20,"pressure":200},"location":{"x":2},"mode":"MANUAL","enabled":true}');
+INSERT INTO tag_json_mix VALUES ('HVAC_B', '2026-04-07 13:00:02', '{"metrics":{"temp":30,"pressure":300},"location":{"x":3},"mode":null,"enabled":null}');
+-- 필요하면 ROLLUP_FORCE 또는 WAKEUP으로 수집 시점을 앞당겨 바로 확인
+
+SELECT rollup('hour', 1, time) AS mtime, COUNT(value), COUNT(*), AVG(value), MIN(value), MAX(value), SUM(value)
+  FROM tag_json_mix
+ GROUP BY mtime
+ ORDER BY mtime;
+```
+
+```sql
+-- 배열은 펼치지 않고, FIRST/LAST는 EXTENSION 롤업에서 사용
+CREATE TAG TABLE tag_json_mix2 (
+    name  VARCHAR(20) PRIMARY KEY,
+    time  DATETIME BASETIME,
+    value JSON SUMMARIZED
+) WITH ROLLUP EXTENSION TAG_PARTITION_COUNT=1;
+
+INSERT INTO tag_json_mix2 VALUES ('HVAC_C', '2026-04-07 14:00:00', '{"metrics":{"temp":1,"pressure":10}, "location":{"x":1}, "history":[1,2,3]}');
+INSERT INTO tag_json_mix2 VALUES ('HVAC_C', '2026-04-07 14:00:01', '{"metrics":{"temp":3,"pressure":30}, "location":{"x":2}, "history":[4,5]}');
+INSERT INTO tag_json_mix2 VALUES ('HVAC_C', '2026-04-07 14:00:02', '{"metrics":{"temp":5,"pressure":50}, "location":{"x":3}, "history":[6]}');
+-- 필요하면 ROLLUP_FORCE 또는 WAKEUP으로 수집 시점을 앞당겨 바로 확인
+
+SELECT rollup('hour', 1, time) AS mtime,
+       COUNT(value),
+       AVG(value),
+       SUM(value),
+       FIRST(time, value),
+       LAST(time, value)
+  FROM tag_json_mix2
+ GROUP BY mtime
+ ORDER BY mtime;
+```
+
+```sql
+-- RAW -> SEC -> MIN -> HOUR 체인 구성
+CREATE TAG TABLE tag_json_chain (
+    name  VARCHAR(20) PRIMARY KEY,
+    time  DATETIME BASETIME,
+    value JSON SUMMARIZED
+);
+CREATE ROLLUP _tag_json_chain_sec  ON tag_json_chain(value) INTERVAL 1 SEC;
+CREATE ROLLUP _tag_json_chain_min  ON _tag_json_chain_sec INTERVAL 1 MIN;
+CREATE ROLLUP _tag_json_chain_hour ON _tag_json_chain_min INTERVAL 1 HOUR;
+```
+
+```sql
+SELECT rollup('hour', 1, time) AS mtime, COUNT(value), AVG(value), SUMSQ(value)
+  FROM tag_json_chain
+ GROUP BY mtime
+ ORDER BY mtime;
+```
+
+잘못된 JSON은 INSERT 단계에서 거부되므로 롤업 집계에 포함되지 않습니다.
+
+```sql
+-- 잘못된 JSON은 삽입되지 않으므로 집계 대상에서도 제외
+CREATE TAG TABLE tag_json_bad (
+    name  VARCHAR(20) PRIMARY KEY,
+    time  DATETIME BASETIME,
+    value JSON SUMMARIZED
+) WITH ROLLUP;
+
+INSERT INTO tag_json_bad VALUES ('HVAC_D', '2026-04-07 15:00:00', '{"metrics":{"temp":1,"pressure":2},"location":{"x":1}}');
+INSERT INTO tag_json_bad VALUES ('HVAC_D', '2026-04-07 15:00:01', '{"metrics":{"temp":1,"pressure":2},"location":{"x":1}');
+-- 삽입 오류가 나는 행은 집계에서 제외
+
+SELECT rollup('hour', 1, time) AS mtime, COUNT(value), SUMSQ(value)
+  FROM tag_json_bad
+ GROUP BY mtime
+ ORDER BY mtime;
+```
+
+### 동작 규칙
+
+- 객체는 재귀 병합되며 경로별로 shape가 유지됩니다.
+- 숫자값만 집계 대상입니다.
+- 문자열/불리언/null/배열은 값 처리에서 제외되며, 배열은 내부 요소를 펼치지 않습니다.
+- 누락된 경로는 결과 객체에 새로 만들어지지 않습니다.
+- 같은 path의 중복 키는 마지막 값이 최종 반영됩니다(파서 정규화 기준).
+- `COUNT(value)`는 `value`가 NULL이 아닌 행 수, `COUNT(*)`는 row 수입니다.
+
+### 사용 시 점검 사항
+
+- `rollup('sec'| 'min' | 'hour', ...)` 결과에서 shape 유지와 숫자 leaf 집계 동작을 우선 확인
+- `COUNT(value)`와 `COUNT(*)` 동시 점검
+- `EXTENSION` 유무에 따라 `FIRST/LAST` 사용 가능 여부 점검
+- `FIRST/LAST`는 원본 JSON 전체를 반환하므로 객체 크기에 따른 대역폭/스토리지 영향 점검
