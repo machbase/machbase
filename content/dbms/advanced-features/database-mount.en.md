@@ -19,6 +19,8 @@ The MOUNT command reads the backed up data while the database is in service and 
 
 The Database MOUNT command allows you to read both the backup data and the main database contents simultaneously. Therefore, the mounted database can retrieve data in the same way as the existing data retrieval method.
 
+> **Note**: From Machbase 8.5 or later, a normal user must have `MOUNT` privilege on `MACHBASEDB` to run `MOUNT DATABASE` or `UNMOUNT DATABASE`. For the privilege details, see [User Management](../sql-reference/user-manage/#grantrevoke).
+
 To execute the MOUNT instruction, the following conditions must be met.
 * The backup database version and the metadata version must be compatible.
 * You can not create tables, create/delete indexes, or add/delete data to a mounted backup database.

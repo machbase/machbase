@@ -6,6 +6,8 @@ weight: 20
 
 ## 데이터베이스 백업
 
+> **참고**: Machbase 8.5 이상에서는 일반 사용자가 `BACKUP DATABASE`를 실행하려면 `GRANT BACKUP ON machbasedb TO user_name;` 권한이 필요합니다. 자세한 권한 부여 방법은 [사용자 관리](../sql-reference/user-manage/#grantrevoke)의 `GRANT/REVOKE`를 참고하세요.
+
 Machbase의 데이터베이스 백업은 다음과 같이 분류되며, 전체 데이터베이스 백업 또는 특정 테이블 백업이 가능합니다.
   - 전체 백업: 전체 데이터의 백업
   - 증분 백업: 전체 백업 또는 이전 증분 백업 이후에 추가된 데이터의 백업
