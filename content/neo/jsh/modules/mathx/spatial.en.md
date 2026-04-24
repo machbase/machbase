@@ -1,7 +1,7 @@
 ---
 title: "spatial"
 type: docs
-weight: 30
+weight: 10
 ---
 
 {{< neo_since ver="8.0.75" />}}

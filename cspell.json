@@ -3,6 +3,7 @@
         "go"
     ],
     "words": [
+        "ADVN",
         "basetime",
         "circlemarker",
         "CONNACK",
@@ -26,10 +27,13 @@
         "PUBACK",
         "PUSHKEY",
         "PUSHVALUE",
+        "sparkline",
         "stddev",
         "SUBACK",
+        "timeformat",
         "timewindow",
-        "varchar"
+        "varchar",
+        "vizspec"
     ],
     "ignoreWords": [
         "ANSIC",

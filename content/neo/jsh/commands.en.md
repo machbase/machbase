@@ -191,6 +191,29 @@ env [NAME]...
 /work > env HOME PWD
 ```
 
+### alias
+
+Defines or displays command aliases in the current shell session.
+With no arguments, `alias` prints the currently defined aliases in sorted order. `alias NAME` prints one alias.
+`alias NAME COMMAND [ARG]...` defines an alias, and the alias is expanded from the command head of later input in the same shell session.
+
+<h6>Syntax</h6>
+
+```sh
+alias
+alias NAME
+alias NAME COMMAND [ARG]...
+```
+
+<h6>Usage example</h6>
+
+```sh
+/work > alias ll ls -l
+/work > ll
+/work > alias
+/work > alias ll
+```
+
 ### setenv
 
 Sets an environment variable in the current shell session.
@@ -336,12 +359,59 @@ tail [OPTION]... <file>
 - `-f, --follow` follow the file as it grows; stops on `SIGINT` or `SIGTERM`
 - `-h, --help` show help
 
+
 <h6>Usage example</h6>
 
 ```sh
 /work > tail app.log
 /work > tail -n 20 app.log
 /work > tail -f app.log
+```
+
+### viz
+
+Views, validates, and exports vizspec documents(ADVN).
+It is intended for renderer-neutral analysis output produced by JSH or Machbase Neo workflows.
+
+<h6>Syntax</h6>
+
+```sh
+viz <command> [options] <file>
+```
+
+<h6>Subcommands</h6>
+
+- `viz view [options] <file>` render an vizspec as TUI blocks
+- `viz validate <file>` validate an vizspec file
+- `viz export [options] <file>` export an vizspec to SVG
+
+<h6>`view` options</h6>
+
+- `--compact` hide series summary and raw data tables
+- `--rows <n>` limit detail rows per block
+- `--width <n>` control sparkline, bar, and timeline width
+- `--verbose-meta` show block metadata
+- pretty-table options are also accepted
+
+<h6>`export` options</h6>
+
+- `--format svg` export format, currently only `svg` is supported
+- `-o, --output <file>` write the SVG to a file instead of standard output
+- `--width <n>` SVG width in pixels
+- `--height <n>` SVG height in pixels
+- `--padding <n>` outer SVG padding in pixels
+- `--title <text>` optional SVG title
+- `--background <color>` SVG background color
+- `--font-family <name>` SVG font family
+- `--font-size <n>` SVG base font size in pixels
+- `--hide-legend` suppress legend rendering
+
+<h6>Usage example</h6>
+
+```sh
+/work > viz validate sensor-overview.json
+/work > viz view --width 80 sensor-overview.json
+/work > viz export --title "CPU Overview" --output cpu.svg sensor-overview.json
 ```
 
 ### wc

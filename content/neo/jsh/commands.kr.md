@@ -191,6 +191,29 @@ env [NAME]...
 /work > env HOME PWD
 ```
 
+### alias
+
+현재 shell 세션에 command alias를 등록하거나 조회합니다.
+`alias`만 실행하면 현재 정의된 alias를 정렬해서 출력하고, `alias NAME`은 특정 alias 하나를 출력합니다.
+`alias NAME COMMAND [ARG]...` 형식은 alias를 등록하며, 이후 입력한 command head에서 확장됩니다.
+
+<h6>사용 형식</h6>
+
+```sh
+alias
+alias NAME
+alias NAME COMMAND [ARG]...
+```
+
+<h6>사용 예시</h6>
+
+```sh
+/work > alias ll ls -l
+/work > ll
+/work > alias
+/work > alias ll
+```
+
 ### setenv
 
 현재 shell 세션의 환경 변수를 설정합니다.
@@ -319,12 +342,11 @@ sleep [OPTION] <sec>
 /work > sleep 5
 ```
 
+
 ### tail
 
 파일의 마지막 부분을 출력합니다.
 `-f` 옵션을 사용하면 파일에 추가되는 새 내용을 실시간으로 이어서 출력합니다.
-
-<h6>사용 형식</h6>
 
 ```sh
 tail [OPTION]... <file>
@@ -342,6 +364,51 @@ tail [OPTION]... <file>
 /work > tail app.log
 /work > tail -n 20 app.log
 /work > tail -f app.log
+
+### viz
+
+시각화 스펙(vizspec, ADVN)을 조회하고, 검증하고, 파일로 내보냅니다.
+JSH 또는 Machbase Neo workflow에서 생성한 renderer-neutral 분석 결과를 다루는 사용자용 명령입니다.
+
+<h6>사용 형식</h6>
+
+```sh
+viz <command> [options] <file>
+```
+
+<h6>서브커맨드</h6>
+
+- `viz view [options] <file>` vizspec을 TUI block 형태로 렌더링합니다.
+- `viz validate <file>` vizspec 파일을 검증합니다.
+- `viz export [options] <file>` vizspec을 SVG로 내보냅니다.
+
+<h6>`view` 옵션</h6>
+
+- `--compact` series summary와 raw data table을 숨깁니다.
+- `--rows <n>` block마다 상세 row 수를 제한합니다.
+- `--width <n>` sparkline, bar, timeline의 폭을 지정합니다.
+- `--verbose-meta` block metadata를 표시합니다.
+- pretty-table 옵션도 함께 사용할 수 있습니다.
+
+<h6>`export` 옵션</h6>
+
+- `--format svg` export format입니다. 현재는 `svg`만 지원합니다.
+- `-o, --output <file>` 표준 출력 대신 파일로 SVG를 저장합니다.
+- `--width <n>` SVG 너비를 픽셀 단위로 지정합니다.
+- `--height <n>` SVG 높이를 픽셀 단위로 지정합니다.
+- `--padding <n>` 바깥쪽 SVG padding을 픽셀 단위로 지정합니다.
+- `--title <text>` SVG title을 지정합니다.
+- `--background <color>` SVG background 색상을 지정합니다.
+- `--font-family <name>` SVG font family를 지정합니다.
+- `--font-size <n>` 기본 SVG font size를 픽셀 단위로 지정합니다.
+- `--hide-legend` legend 렌더링을 숨깁니다.
+
+<h6>사용 예시</h6>
+
+```sh
+/work > viz validate sensor-overview.json
+/work > viz view --width 80 sensor-overview.json
+/work > viz export --title "CPU Overview" --output cpu.svg sensor-overview.json
 ```
 
 ### wc
