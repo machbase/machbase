@@ -236,6 +236,11 @@ ALTER ROLLUP <rollup_name> FORCE;
 EXEC ROLLUP_FORCE(<rollup_name>);
 ```
 
+### Rollup Rebuild 참고
+
+원본 TAG 데이터를 삭제하거나 이상 데이터를 정상 데이터로 재적재해도 기존 rollup 결과는 자동으로 되감기지 않습니다.
+built-in rollup의 시간 범위 복원, `EXEC ROLLUP_REBUILD(...)` 사용법, custom rollup 수동 복구 절차는 [Rollup Rebuild 사용자 가이드](./rollup-rebuild/)를 참고하십시오.
+
 ## ROLLUP 테이블 삭제
 
 Rollup을 삭제합니다.

@@ -767,6 +767,8 @@ Mach> CREATE ROLLUP _rollup_tag_value_sec ON tag(value) INTERVAL 1 SEC;
 Executed successfully
 ```
 
+> If corrected source data requires existing rollup results to be rebuilt, see [Rollup Rebuild Guide](../../table-types/tag-tables/rollup-rebuild/).
+
 ```sql
 create_conditional_rollup_stmt ::= 'CREATE ROLLUP' rollup_name
                                    ( 'ON' src_table_name '('src_table_column')'

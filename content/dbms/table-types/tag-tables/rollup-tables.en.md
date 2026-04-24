@@ -237,6 +237,11 @@ ALTER ROLLUP <rollup_name> FORCE;
 EXEC ROLLUP_FORCE(<rollup_name>);
 ```
 
+### Rollup Rebuild Reference
+
+Deleting raw TAG data or reloading corrected rows does not automatically rewind existing rollup results.
+For built-in time-range recovery, `EXEC ROLLUP_REBUILD(...)`, and manual custom rollup recovery steps, see [Rollup Rebuild Guide](./rollup-rebuild/).
+
 
 ## Drop Rollup
 
