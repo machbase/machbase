@@ -276,7 +276,7 @@ For subcommands, options, and service-management workflows, refer to [Service Ma
 servicectl [--controller=<addr>] <command> [args...]
 ```
 
-#### servicectl controller
+**servicectl controller**
 
 Shows and resets service-controller RPC runtime metrics.
 

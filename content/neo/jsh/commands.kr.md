@@ -276,7 +276,7 @@ pkg <command> [options] [args...]
 servicectl [--controller=<addr>] <command> [args...]
 ```
 
-#### servicectl controller
+**servicectl controller**
 
 서비스 컨트롤러 RPC 런타임 메트릭을 조회하고 초기화합니다.
 
