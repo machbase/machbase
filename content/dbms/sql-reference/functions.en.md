@@ -589,11 +589,25 @@ The allowable time ranges for time units and time units are as follows.
 For example, if you type in DATE_TRUNC('second', time, 120), the value returned will be displayed **every two minutes** and is the same as DATE_TRUNC('minute', time, 2).
 
 ## DATE_BIN
-This function `bins` the given datetime value into `time unit` and `time range` based on `specified origin`.
+This function bins the given datetime value into a `time unit` and `time range`
+based on the specified `origin`.
 
 ```sql
-DATE_BIN(field, count, source, origin)
+DATE_BIN(field, count, source [, origin])
 ```
+
+- If `origin` is specified, the bin boundary is calculated from that timestamp.
+- If `origin` is omitted, the bin boundary is calculated from `1970-01-01 00:00:00`
+  in the server's local timezone.
+- `count` must be an integer greater than or equal to 1.
+
+Use the 3-argument form when you want local-time bucket boundaries consistent with
+`DATE_TRUNC()` or `ROLLUP()`. Use the 4-argument form when you need a fixed origin
+that does not depend on the server timezone.
+
+For example, on a `UTC+09:00` server, users previously had to provide a timezone-adjusted
+`origin` value instead of `DATE_BIN(..., 0)` to align with local-time boundaries. The
+3-argument form now provides the same local-time alignment directly.
 
 ```sql
 Mach> CREATE TABLE log (time DATETIME);
@@ -623,16 +637,38 @@ TIME                            DATE_BIN('hour', 2, time, TO_DATE('2020-01-01 00
 2000-01-01 03:00:00 000:000:000 2000-01-01 02:00:00 000:000:000                           
 2000-01-01 04:00:00 000:000:000 2000-01-01 04:00:00 000:000:000                           
 [5] row(s) selected.
+```
 
-Mach> SELECT TIME, DATE_BIN('hour', 3, time, TO_DATE('2020-01-01 01:00:00')) FROM log ORDER BY time;
-TIME                            DATE_BIN('hour', 3, time, TO_DATE('2020-01-01 01:00:00')) 
----------------------------------------------------------------------------------------------
-2000-01-01 00:00:00 000:000:000 1999-12-31 22:00:00 000:000:000                           
-2000-01-01 01:00:00 000:000:000 2000-01-01 01:00:00 000:000:000                           
-2000-01-01 02:00:00 000:000:000 2000-01-01 01:00:00 000:000:000                           
-2000-01-01 03:00:00 000:000:000 2000-01-01 01:00:00 000:000:000                           
-2000-01-01 04:00:00 000:000:000 2000-01-01 04:00:00 000:000:000                           
-[5] row(s) selected.
+The following example shows local-time bucket alignment with the 3-argument form.
+
+```sql
+Mach> CREATE TABLE t3521 (ts DATETIME);
+Created successfully.
+
+Mach> INSERT INTO t3521 VALUES (TO_DATE('2000-01-01 00:30:00'));
+1 row(s) inserted.
+
+Mach> INSERT INTO t3521 VALUES (TO_DATE('2000-01-01 02:59:59'));
+1 row(s) inserted.
+
+Mach> INSERT INTO t3521 VALUES (TO_DATE('2000-01-01 03:00:00'));
+1 row(s) inserted.
+
+Mach> INSERT INTO t3521 VALUES (TO_DATE('2000-01-01 08:00:00'));
+1 row(s) inserted.
+
+Mach> SELECT ts,
+             DATE_BIN('hour', 3, ts) AS date_bin_3arg,
+             DATE_TRUNC('hour', ts, 3) AS date_trunc_3arg
+        FROM t3521
+    ORDER BY ts;
+ts                              date_bin_3arg                   date_trunc_3arg
+----------------------------------------------------------------------------------------------------
+2000-01-01 00:30:00 000:000:000 2000-01-01 00:00:00 000:000:000 2000-01-01 00:00:00 000:000:000
+2000-01-01 02:59:59 000:000:000 2000-01-01 00:00:00 000:000:000 2000-01-01 00:00:00 000:000:000
+2000-01-01 03:00:00 000:000:000 2000-01-01 03:00:00 000:000:000 2000-01-01 03:00:00 000:000:000
+2000-01-01 08:00:00 000:000:000 2000-01-01 06:00:00 000:000:000 2000-01-01 06:00:00 000:000:000
+[4] row(s) selected.
 ```
 
 The allowable time ranges for time units and time units are as follows.
