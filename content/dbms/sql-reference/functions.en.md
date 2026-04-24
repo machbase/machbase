@@ -5,86 +5,15 @@ weight: 70
 tocSort: true
 ---
 
-# Index
+## Error Handling
 
-* [ABS](#abs)
-* [ADD_TIME](#add_time)
-* [APPROX_PERCENTILE / APPROX_MEDIAN / APPROX_P05 / APPROX_P10 / APPROX_P90 / APPROX_P95](#approx_percentile-family)
-* [AREA](#area)
-* [AVG](#avg)
-* [BITAND / BITOR](#bitand--bitor)
-* [CEIL()](#ceil)
-* [COUNT](#count)
-* [COS()](#cos)
-* [CUME_DIST](#cume_dist)
-* [DATE_BIN](#date_bin)
-* [DATE_TRUNC](#date_trunc)
-* [DAYOFWEEK](#dayofweek)
-* [DECODE](#decode)
-* [EXP()](#exp)
-* [EXTRACT_* / EXTRACT_LE_*](#extract_)
-* [FIRST / LAST](#first--last)
-* [FLOOR()](#floor)
-* [FROM_TIMESTAMP](#from_timestamp)
-* [FROM_UNIXTIME](#from_unixtime)
-* [GROUP_CONCAT](#group_concat)
-* [INSTR](#instr)
-* [ISNAN / ISINF](#isnan--isinf)
-* [JSON_SET](#json_set)
-* [JSON_SET_JSON](#json_set_json)
-* [JSON_REMOVE](#json_remove)
-* [JSON-related function](#json-related-function)
-* [JSON Operator](#json-operator)
-* [LEAST / GREATEST](#least--greatest)
-* [LENGTH](#length)
-* [LN()](#ln)
-* [LOG()](#log)
-* [LOWER](#lower)
-* [LPAD / RPAD](#lpad--rpad)
-* [LTRIM / RTRIM](#ltrim--rtrim)
-* [MAX](#max)
-* [MEDIAN](#median)
-* [MIN](#min)
-* [MOD()](#mod)
-* [MODE](#mode)
-* [NVL](#nvl)
-* [P05 / P10 / P90 / P95](#p05-p10-p90-p95)
-* [PERCENTILE_CONT / PERCENTILE_DISC](#percentile_cont-percentile_disc)
-* [PI()](#pi)
-* [POWER()](#power)
-* [POW()](#pow)
-* [QUANTILE](#quantile)
-* [RAND()](#rand)
-* [ROUND](#round)
-* [ROWNUM](#rownum)
-* [SIN()](#sin)
-* [SLOPE](#slope)
-* [SQRT()](#sqrt)
-* [SERIESNUM](#seriesnum)
-* [STDDEV / STDDEV_POP](#stddev--stddev_pop)
-* [SUBSTR](#substr)
-* [SUBSTRING_INDEX](#substring_index)
-* [SUM](#sum)
-* [SUMSQ](#sumsq)
-* [Support Type of Built-In Function](#support-type-of-built-in-function)
-* [SYSDATE / NOW](#sysdate--now)
-* [TAN()](#tan)
-* [TO_CHAR](#to_char)
-* [TO_DATE](#to_date)
-* [TO_DATE_SAFE](#to_date_safe)
-* [TO_HEX](#to_hex)
-* [TO_IPV4 / TO_IPV4_SAFE](#to_ipv4--to_ipv4_safe)
-* [TO_IPV6 / TO_IPV6_SAFE](#to_ipv6--to_ipv6_safe)
-* [TO_NUMBER / TO_NUMBER_SAFE](#to_number--to_number_safe)
-* [TOP_K](#top_k)
-* [TO_TIMESTAMP](#to_timestamp)
-* [TRUNC](#trunc)
-* [TS_CHANGE_COUNT](#ts_change_count)
-* [UNIX_TIMESTAMP](#unix_timestamp)
-* [UPPER](#upper)
-* [VARIANCE / VAR_POP](#variance--var_pop)
-* [WINDOW FUNCTION](#window-function)
-* [YEAR / MONTH / DAY](#year--month--day)
+|Error Type|Code|When it occurs|
+|---|---|---|
+|Argument type error|`ERR-02036`, `ERR-02037`|A non-numeric value is passed, or an argument is passed to `PI`|
+|Runtime error|`ERR-02317`|Negative input to `SQRT`, division by zero in `MOD`, invalid base/value in `LOG`, overflow in `EXP`/`POWER`, and similar cases|
+
+If the input is `NULL`, the result is also `NULL`.
+
 ## ABS
 
 This function works on a numeric column, converts it to a positive value, and returns the value as a real number.
@@ -249,7 +178,16 @@ ID          DT
 ```
 
 
-## APPROX_PERCENTILE / APPROX_MEDIAN / APPROX_P05 / APPROX_P10 / APPROX_P90 / APPROX_P95 {#approx_percentile-family}
+## APPROX_PERCENTILE {#approx_percentile-family}
+
+```
+APPROX_PERCENTILE
+APPROX_MEDIAN
+APPROX_P05
+APPROX_P10
+APPROX_P90
+APPROX_P95
+```
 
 These aggregate functions estimate percentiles while keeping a bounded summary instead of sorting every raw value. They are useful when the input is very large and a small approximation error is acceptable.
 
@@ -770,13 +708,13 @@ Bit-extraction helpers for binary frames.
 `EXTRACT_*` uses a big-endian model and `EXTRACT_LE_*` uses a little-endian model.
 All functions accept `BINARY/VARBINARY` frames; NULL frames return NULL.
 
-### Endian Model
+**Endian Model**
 
 - `EXTRACT_*`: MSB-first (`bit 0` is the MSB of `byte[0]`)
 - `EXTRACT_LE_*`: LSB-first (`bit 0` is the LSB of `byte[0]`)
 - Bit indexes are zero-based across the full frame.
 
-### Common Rules
+**Common Rules**
 
 - Single bit: `0 <= bit_pos < frame_bits`
 - Bit range: `start_bit >= 0`, `1 <= bit_count <= 64`,
@@ -787,7 +725,11 @@ All functions accept `BINARY/VARBINARY` frames; NULL frames return NULL.
 - Range errors: `ERR_QP_INVALID_ARG_VALUE` (`ERR-02229` family)
 - Argument type errors: `ERR_QP_FUNCTION_ARG_TYPE`
 
-### EXTRACT_BIT(frame, bit_pos) / EXTRACT_LE_BIT(frame, bit_pos) → TINYINT
+### EXTRACT_BIT
+
+```
+EXTRACT_BIT(frame, bit_pos) / EXTRACT_LE_BIT(frame, bit_pos) → TINYINT
+```
 
 Returns a single bit as 0 or 1.
 
@@ -798,8 +740,14 @@ SELECT EXTRACT_BIT(frame, 0)    AS be_bit0,
 FROM t;
 ```
 
-### EXTRACT_ULONG(frame, start_bit, bit_count) / EXTRACT_LE_ULONG(frame, start_bit, bit_count) → BIGINT UNSIGNED
-### EXTRACT_LONG(frame, start_bit, bit_count) / EXTRACT_LE_LONG(frame, start_bit, bit_count) → BIGINT
+### EXTRACT_LONG, EXTRACT_ULONG
+
+```
+EXTRACT_ULONG(frame, start_bit, bit_count) → BIGINT UNSIGNED
+EXTRACT_LE_ULONG(frame, start_bit, bit_count) → BIGINT UNSIGNED
+EXTRACT_LONG(frame, start_bit, bit_count) → BIGINT
+EXTRACT_LE_LONG(frame, start_bit, bit_count) → BIGINT
+```
 
 Reads 1~64 bits as unsigned or two's-complement signed integers.
 
@@ -810,8 +758,14 @@ SELECT EXTRACT_ULONG(frame, 0, 16)    AS be_u16,  -- 0x1234
 FROM t;
 ```
 
-### EXTRACT_FLOAT(frame, start_bit) / EXTRACT_LE_FLOAT(frame, start_bit) → FLOAT
-### EXTRACT_DOUBLE(frame, start_bit) / EXTRACT_LE_DOUBLE(frame, start_bit) → DOUBLE
+### EXTRACT_FLOAT,EXTRACT_DOUBLE
+
+```
+EXTRACT_FLOAT(frame, start_bit) → FLOAT
+EXTRACT_LE_FLOAT(frame, start_bit) → FLOAT
+EXTRACT_DOUBLE(frame, start_bit) → DOUBLE
+EXTRACT_LE_DOUBLE(frame, start_bit) → DOUBLE
+```
 
 Reinterprets 32/64 bits as IEEE754 float/double; the selected bit window must
 fit within the frame.
@@ -824,9 +778,12 @@ SELECT EXTRACT_FLOAT(frame, 0)      AS be_f32,
 FROM sensor_bin;
 ```
 
-### EXTRACT_SCALED_DOUBLE(frame, start_bit, bit_count, signed, scale, offset)
-### EXTRACT_LE_SCALED_DOUBLE(frame, start_bit, bit_count, signed, scale, offset)
-→ DOUBLE
+### EXTRACT_SCALED_DOUBLE
+
+```
+EXTRACT_SCALED_DOUBLE(frame, start_bit, bit_count, signed, scale, offset) → DOUBLE
+EXTRACT_LE_SCALED_DOUBLE(frame, start_bit, bit_count, signed, scale, offset) → DOUBLE
+```
 
 Reads 1~64 bits as unsigned (`signed=0`) or two's-complement signed (`signed=1`)
 integer, then returns `raw * scale + offset`.
@@ -1499,7 +1456,7 @@ It can be used inside Subquery or Inline View that is used inside SELECT query. 
 ROWNUM()
 ```
 
-### Available Clauses
+**Available Clauses**
 
 This function can be used in the target list, GROUP BY, or ORDER BY clause of a SELECT query. However, it can not be used in the WHERE and HAVING clauses of a SELECT query. ROWNUM () If you want to control WHERE or HAVING clause with result number, you can use SELECT query with ROWNUM () in Inline View and refer to it in WHERE or HAVING clause.
 
@@ -1533,7 +1490,7 @@ INNER_RANK           NAME
 [2] row(s) selected.
 ```
 
-### Altering Results Due to Sorting
+**Altering Results Due to Sorting**
 
 If there is an ORDER BY clause in the SELECT query, the result number of ROWNUM () in the target list may not be sequentially assigned. This is because the ROWNUM () operation is performed before the operation of the ORDER BY clause. If you want to give it sequentially, you can use the query containing the ORDER BY clause in Inline View and then call ROWNUM () in the outer SELECT statement.
 
@@ -1890,7 +1847,7 @@ This function converts a given data type to a string type. Depending on the type
 TO_CHAR(column)
 ```
 
-### TO_CHAR:  Default Datatype
+**TO_CHAR: Default Datatype**
 
 The default data types are converted to data in the form of strings as shown below.
 
@@ -1950,7 +1907,7 @@ Mach> SELECT '[ ' || TO_CHAR(id8) || ' ]' FROM fixed_table;
 [1] row(s) selected.
 ```
 
-### TO_CHAR : Floating point number
+**TO_CHAR: Floating Point Number**
 
 * Supported from 5.5.6 version
 
@@ -1976,7 +1933,7 @@ TO_CHAR(i1, 'f8')       TO_CHAR(i2, 'N9')
 [1] row(s) selected.
 ```
 
-### TO_CHAR: DATETIME Type
+**TO_CHAR: DATETIME Type**
 
 A function that converts the value of a datetime column to an arbitrary string. You can use this function to create and combine various types of strings.
 
@@ -2100,7 +2057,8 @@ id          TO_CHAR(dt, 'YYYY-MM-DD HH24:MI:SS mmm.
 [4] row(s) selected.
 ```
 
-### TO_CHAR: Unsupported Type
+**TO_CHAR: Unsupported Type**
+
 Currently, TO_CHAR is not supported for binary types.
 
 This is because it is impossible to convert to plain text. If you want to output it to the screen, you can check it by outputting hexadecimal value through TO_HEX () function.
