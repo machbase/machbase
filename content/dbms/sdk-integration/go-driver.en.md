@@ -1,8 +1,7 @@
 ---
-title: SQL driver
+title: Go SQL driver
 type: docs
 weight: 110
-draft: true
 ---
 
 ## Overview

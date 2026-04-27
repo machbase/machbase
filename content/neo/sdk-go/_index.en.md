@@ -2,6 +2,7 @@
 title: Go SDK
 type: docs
 weight: 65
+draft: true
 ---
 
 Machbase-neo provides three types of Go client libraries for Go developers.

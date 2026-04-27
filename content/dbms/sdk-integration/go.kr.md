@@ -2,7 +2,6 @@
 title: Go 클라이언트
 type: docs
 weight: 100
-draft: true
 ---
 
 ## 개요

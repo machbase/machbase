@@ -1,8 +1,7 @@
 ---
-title: SQL 드라이버
+title: Go SQL 드라이버
 type: docs
 weight: 110
-draft: true
 ---
 
 ## 개요

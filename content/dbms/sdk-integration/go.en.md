@@ -2,7 +2,6 @@
 title: Go client
 type: docs
 weight: 100
-draft: true
 ---
 
 ## Overview

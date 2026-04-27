@@ -2,6 +2,7 @@
 title: Go SDK
 type: docs
 weight: 65
+draft: true
 ---
 
 Machbase-neo는 Go 개발자를 위해 세 가지 유형의 Go 클라이언트 라이브러리를 제공합니다.
