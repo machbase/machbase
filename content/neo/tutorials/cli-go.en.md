@@ -430,4 +430,4 @@ func main() {
 
 This example demonstrates the complete workflow from connection establishment to data manipulation, showcasing the recommended `machgo` package for Go developers working with Machbase.
 
-See also: [Go native client reference](/neo/sdk-go/machgo/)
+See also: [Go native client reference](/dbms/sdk-integration/go/)

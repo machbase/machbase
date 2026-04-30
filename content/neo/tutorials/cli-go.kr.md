@@ -429,4 +429,4 @@ func main() {
 
 이 예제는 연결 설정부터 데이터 조작까지의 완전한 워크플로우를 보여주며, Machbase와 함께 작업하는 Go 개발자를 위한 권장 패키지 `machgo`의 사용 방법을 보여줍니다.
 
-추가 참고: [Go 네이티브 클라이언트 레퍼런스](/kr/neo/sdk-go/machgo/)
+추가 참고: [Go 네이티브 클라이언트 레퍼런스](/kr/dbms/sdk-integration/go/)
