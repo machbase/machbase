@@ -9,6 +9,9 @@ weight: 60
 * [CREATE USER](#create-user)
 * [DROP USER](#drop-user)
 * [ALTER USER](#alter-user)
+* [AUTH KEY를 포함한 사용자 생성](#auth-key를-포함한-사용자-생성)
+* [AUTH KEY 관리](#auth-key-관리)
+* [AUTH KEY 메타 조회](#auth-key-메타-조회)
 * [CONNECT](#connect)
 * [GRANT/REVOKE](#grantrevoke)
 * [Managing User Example](#managing-user-example)
@@ -65,6 +68,88 @@ alter_user_pwd_stmt ::= 'ALTER USER' user_name 'IDENTIFIED BY' password
 ```sql
 -- Example
 ALTER USER user1 IDENTIFIED BY password
+```
+
+## AUTH KEY를 포함한 사용자 생성
+
+Machbase는 비밀번호 인증과 함께 공개키 기반 challenge 인증용 AUTH KEY를 사용자에 등록할 수 있습니다.
+
+```sql
+CREATE USER app_user IDENTIFIED BY 'App#1234'
+WITH AUTH KEY (
+    key='-----BEGIN PUBLIC KEY----- ... -----END PUBLIC KEY-----',
+    valid_before='2047-12-31',
+    comment='initial key'
+);
+```
+
+설명:
+
+- `key`에는 PEM 형식 공개키를 넣습니다.
+- `valid_before`는 `YYYY-MM-DD` 형식을 사용합니다.
+- `comment`는 선택입니다.
+- `CREATE USER ... WITH AUTH KEY`로 생성한 첫 키는 즉시 활성 상태(`ACTIVATED=1`)로 등록됩니다.
+
+## AUTH KEY 관리
+
+### AUTH KEY 추가
+
+```sql
+ALTER USER app_user ADD AUTH KEY (
+    key='-----BEGIN PUBLIC KEY----- ... -----END PUBLIC KEY-----',
+    valid_before='2048-01-31',
+    comment='rollover candidate'
+);
+```
+
+추가된 키는 기본적으로 비활성 상태(`ACTIVATED=0`)로 생성됩니다.
+
+### AUTH KEY 활성화 / 비활성화
+
+```sql
+ALTER USER app_user DEACTIVATE AUTH KEY ID 3;
+ALTER USER app_user ACTIVATE AUTH KEY ID 3;
+```
+
+- 비활성화된 키는 challenge 인증에 사용할 수 없습니다.
+- 한 사용자에 여러 AUTH KEY를 보유할 수 있습니다.
+
+### AUTH KEY 유효기간 변경
+
+```sql
+ALTER USER app_user ALTER AUTH KEY ID 3 VALID_BEFORE='2048-06-30';
+```
+
+- `VALID_BEFORE`가 지난 키는 인증에 사용할 수 없습니다.
+- 입력 형식은 `YYYY-MM-DD`입니다.
+
+### AUTH KEY 삭제
+
+```sql
+ALTER USER app_user DROP AUTH KEY ID 3;
+```
+
+- 삭제된 키는 즉시 인증에 사용할 수 없습니다.
+- 사용자 삭제 시 해당 사용자의 AUTH KEY 메타도 함께 정리됩니다.
+
+## AUTH KEY 메타 조회
+
+등록된 AUTH KEY 메타는 `V$USER_AUTH_KEYS`에서 조회할 수 있습니다.
+
+```sql
+SELECT key_id, user_name, key_algo, key_param, activated, valid_before, comment
+  FROM V$USER_AUTH_KEYS
+ WHERE user_name='APP_USER'
+ ORDER BY key_id;
+```
+
+공개키 본문까지 확인하려면 `PUBKEY` 컬럼을 조회합니다.
+
+```sql
+SELECT key_id, user_name, pubkey
+  FROM V$USER_AUTH_KEYS
+ WHERE user_name='APP_USER'
+ ORDER BY key_id;
 ```
 
 

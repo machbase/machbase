@@ -12,6 +12,80 @@ weight: 20
 
 [표준 함수 스펙 4.0](https://www.oracle.com/java/technologies/javase/javase-tech-database.html#corespec40)
 
+## JDBC 인증 방식
+
+Machbase JDBC는 기존 비밀번호 인증과 함께 공개키 기반 challenge 인증을 지원합니다.
+
+### 비밀번호 인증
+
+기존과 동일하게 `user`, `password`를 사용합니다.
+
+### AUTH KEY challenge 인증
+
+challenge 인증은 다음 속성을 사용합니다.
+
+- `AUTH_MODE`
+  - `PASSWORD` 또는 `CHALLENGE`
+- `AUTH_SIG_SCHEME`
+  - `ECDSA`
+  - `RSA_PKCS1_V15`
+  - `RSA_PSS`
+- `AUTH_KEY_FILE`
+  - 로컬 PEM 개인키 파일 경로
+
+설명:
+
+- `AUTH_MODE=CHALLENGE`에서는 `password`를 인증에 사용하지 않습니다.
+- `AUTH_KEY_FILE`은 필수입니다.
+- `AUTH_SIG_SCHEME`를 생략하면 키 파일 기반으로 기본 스킴을 자동 선택합니다.
+  - EC 키: `ECDSA`
+  - RSA 키: `RSA_PKCS1_V15`
+- `AUTH_KEY_FILE`만 주고 `AUTH_MODE`를 생략하면 내부적으로 `CHALLENGE`로 처리합니다.
+
+### Properties 예제
+
+```java
+String sURL = "jdbc:machbase://127.0.0.1:5656/machbasedb";
+
+Properties sProps = new Properties();
+sProps.put("user", "app_user");
+sProps.put("AUTH_MODE", "CHALLENGE");
+sProps.put("AUTH_SIG_SCHEME", "ECDSA");
+sProps.put("AUTH_KEY_FILE", "/opt/machbase/keys/app_user_ecdsa.pem");
+
+Class.forName("com.machbase.jdbc.MachDriver");
+Connection conn = DriverManager.getConnection(sURL, sProps);
+```
+
+### URL query string 예제
+
+```text
+jdbc:machbase://127.0.0.1:5656/machbasedb?AUTH_MODE=CHALLENGE&AUTH_SIG_SCHEME=ECDSA&AUTH_KEY_FILE=/opt/machbase/keys/app_user_ecdsa.pem
+```
+
+다만 키 파일 경로 노출 가능성 때문에 일반적으로는 `Properties` 또는 `DataSource` 사용을 권장합니다.
+
+### DataSource 예제
+
+```java
+MachDataSource ds = new MachDataSource();
+ds.setServerName("127.0.0.1");
+ds.setPortNumber(5656);
+ds.setDatabaseName("machbasedb");
+ds.setUser("app_user");
+ds.setAuthMode("CHALLENGE");
+ds.setAuthSigScheme("ECDSA");
+ds.setAuthKeyFile("/opt/machbase/keys/app_user_ecdsa.pem");
+
+Connection conn = ds.getConnection();
+```
+
+### reconnect 동작
+
+- 초기 연결이 `AUTH_MODE=CHALLENGE`였다면 reconnect도 challenge 인증을 다시 수행합니다.
+- reconnect 시 이전 nonce나 signature를 재사용하지 않습니다.
+- challenge 실패 시 password fallback을 자동으로 수행하지 않습니다.
+
 ## 확장 JDBC 함수
 
 ### setIPv4

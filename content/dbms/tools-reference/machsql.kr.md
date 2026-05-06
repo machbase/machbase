@@ -17,6 +17,7 @@ MACHSQL은 터미널 화면을 통해 SQL질의를 수행하는 대화형 도구
 | -s        | --server          | 접속할 서버의 IP 주소 (default : 127.0.0.1)     |
 | -u        | --user            | 사용자명 (default : SYS)                        |
 | -p        | --password        | 사용자 패스워드 (default : MANAGER)             |
+| -K        | --auth-key-file   | 인증용 개인키 파일 경로                         |
 | -P        | --port            | 서버의 포트 번호 (default : 5656)               |
 | -n        | --nls             | NLS 설정                                        |
 | -f        | --script          | 실행할 SQL 스크립트 파일                        |
@@ -25,6 +26,7 @@ MACHSQL은 터미널 화면을 통해 SQL질의를 수행하는 대화형 도구
 | -i        | --silent          | 저작권 출력 없이 실행                           |
 | -v        | --verbose         | 상세 출력                                       |
 | -r        | --format          | 출력 파일 포맷 지정 (default: csv)              |
+|           | --auth-sig-scheme | 인증 서명 스킴 (`ECDSA`, `RSA_PKCS1_V15`, `RSA_PSS`) |
 | -h        | --help            | 옵션 출력                                       |
 | -c        | N/A               | Connection 매개변수 추가(6.1이후 버전부터 지원) |
 
@@ -34,9 +36,50 @@ MACHSQL은 터미널 화면을 통해 SQL질의를 수행하는 대화형 도구
 machsql -s localhost -u sys -p manager
 machsql --server=localhost --user=sys --password=manager
 machsql -s localhost -u sys -p manager -f script.sql
+machsql -s localhost -u app_user -K /opt/machbase/keys/app_user_ecdsa.pem --auth-sig-scheme=ECDSA -f script.sql
 ## 6.1 이후버전부터 지원
 machsql -s 127.0.0.1 -u sys -p manager -P 8888 -c ALTERNATIVE_SERVERS=192.168.0.147:9209;CONNECTION_TIMEOUT=10
 ```
+
+## AUTH KEY challenge 인증
+
+`machsql`은 비밀번호 인증 외에 공개키 기반 challenge 인증도 지원합니다.
+
+### 전용 옵션 사용
+
+```bash
+machsql -s 127.0.0.1 -u app_user \
+    -K /opt/machbase/keys/app_user_ecdsa.pem \
+    --auth-sig-scheme=ECDSA \
+    -f script.sql
+```
+
+```bash
+machsql -s 127.0.0.1 -u app_user \
+    -K /opt/machbase/keys/app_user_rsa.pem \
+    --auth-sig-scheme=RSA_PSS \
+    -f script.sql
+```
+
+설명:
+
+- `-K`, `--auth-key-file`을 지정하면 내부적으로 `AUTH_MODE=CHALLENGE`가 적용됩니다.
+- `--auth-sig-scheme`를 생략하면 키 알고리즘 기준 기본 스킴을 사용합니다.
+  - ECDSA 키: `ECDSA`
+  - RSA 키: `RSA_PKCS1_V15`
+- `AUTH_MODE=CHALLENGE`에서는 `-p`를 인증에 사용하지 않습니다.
+
+### connection string 사용
+
+```bash
+machsql -c "SERVER=127.0.0.1;PORT_NO=5656;UID=APP_USER;AUTH_MODE=CHALLENGE;AUTH_SIG_SCHEME=ECDSA;AUTH_KEY_FILE=/opt/machbase/keys/app_user_ecdsa.pem;" -f script.sql
+```
+
+### 실패 예시
+
+- 키 파일이 없으면 인증이 실패합니다.
+- 키 타입과 `AUTH_SIG_SCHEME`가 맞지 않으면 인증이 실패합니다.
+- 만료(`VALID_BEFORE`)되었거나 비활성화된 AUTH KEY로는 인증할 수 없습니다.
 
 ## 환경변수 MACHBASE_CONNECTION_STRING
 

@@ -9,6 +9,9 @@ weight: 60
 * [CREATE USER](#create-user)
 * [DROP USER](#drop-user)
 * [ALTER USER](#alter-user)
+* [Create a User with AUTH KEY](#create-a-user-with-auth-key)
+* [Manage AUTH KEY](#manage-auth-key)
+* [Query AUTH KEY Metadata](#query-auth-key-metadata)
 * [CONNECT](#connect)
 * [GRANT/REVOKE](#grantrevoke)
 * [Managing User Example](#managing-user-example)
@@ -65,6 +68,90 @@ The user can change the password through the following syntax.
 ```sql
 -- Example
 ALTER USER user1 IDENTIFIED BY password
+```
+
+## Create a User with AUTH KEY
+
+Machbase can register an AUTH KEY for public-key challenge authentication together with password
+authentication.
+
+```sql
+CREATE USER app_user IDENTIFIED BY 'App#1234'
+WITH AUTH KEY (
+    key='-----BEGIN PUBLIC KEY----- ... -----END PUBLIC KEY-----',
+    valid_before='2047-12-31',
+    comment='initial key'
+);
+```
+
+Notes:
+
+- `key` must contain a PEM public key.
+- `valid_before` uses the `YYYY-MM-DD` format.
+- `comment` is optional.
+- The first key created by `CREATE USER ... WITH AUTH KEY` is registered as active
+  (`ACTIVATED=1`).
+
+## Manage AUTH KEY
+
+### Add AUTH KEY
+
+```sql
+ALTER USER app_user ADD AUTH KEY (
+    key='-----BEGIN PUBLIC KEY----- ... -----END PUBLIC KEY-----',
+    valid_before='2048-01-31',
+    comment='rollover candidate'
+);
+```
+
+An added key is created as inactive by default (`ACTIVATED=0`).
+
+### Activate / Deactivate AUTH KEY
+
+```sql
+ALTER USER app_user DEACTIVATE AUTH KEY ID 3;
+ALTER USER app_user ACTIVATE AUTH KEY ID 3;
+```
+
+- A deactivated key cannot be used for challenge authentication.
+- A user can own multiple AUTH KEY entries.
+
+### Change AUTH KEY Expiration
+
+```sql
+ALTER USER app_user ALTER AUTH KEY ID 3 VALID_BEFORE='2048-06-30';
+```
+
+- A key past `VALID_BEFORE` cannot be used for authentication.
+- The input format is `YYYY-MM-DD`.
+
+### Drop AUTH KEY
+
+```sql
+ALTER USER app_user DROP AUTH KEY ID 3;
+```
+
+- A dropped key cannot be used for authentication immediately.
+- When a user is dropped, the user's AUTH KEY metadata is also removed.
+
+## Query AUTH KEY Metadata
+
+Registered AUTH KEY metadata can be queried from `V$USER_AUTH_KEYS`.
+
+```sql
+SELECT key_id, user_name, key_algo, key_param, activated, valid_before, comment
+  FROM V$USER_AUTH_KEYS
+ WHERE user_name='APP_USER'
+ ORDER BY key_id;
+```
+
+To inspect the public key body, query the `PUBKEY` column.
+
+```sql
+SELECT key_id, user_name, pubkey
+  FROM V$USER_AUTH_KEYS
+ WHERE user_name='APP_USER'
+ ORDER BY key_id;
 ```
 
 

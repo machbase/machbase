@@ -13,6 +13,85 @@ The set of database manipulation interfaces created in the Java programming lang
 
 [Standard Function Specs 4.0](http://www.oracle.com/technetwork/java/javase/jdbc/index.html#corespec40)
 
+## JDBC Authentication Modes
+
+Machbase JDBC supports both the existing password authentication and public-key-based
+challenge authentication.
+
+### Password Authentication
+
+Use `user` and `password` as before.
+
+### AUTH KEY Challenge Authentication
+
+Challenge authentication uses the following properties.
+
+- `AUTH_MODE`
+  - `PASSWORD` or `CHALLENGE`
+- `AUTH_SIG_SCHEME`
+  - `ECDSA`
+  - `RSA_PKCS1_V15`
+  - `RSA_PSS`
+- `AUTH_KEY_FILE`
+  - Local PEM private key file path
+
+Notes:
+
+- `password` is not used for authentication when `AUTH_MODE=CHALLENGE`.
+- `AUTH_KEY_FILE` is required.
+- If `AUTH_SIG_SCHEME` is omitted, the driver selects the default scheme from the key file.
+  - EC key: `ECDSA`
+  - RSA key: `RSA_PKCS1_V15`
+- If `AUTH_KEY_FILE` is provided and `AUTH_MODE` is omitted, the driver treats the
+  connection as `CHALLENGE`.
+
+### Properties Example
+
+```java
+String sURL = "jdbc:machbase://127.0.0.1:5656/machbasedb";
+
+Properties sProps = new Properties();
+sProps.put("user", "app_user");
+sProps.put("AUTH_MODE", "CHALLENGE");
+sProps.put("AUTH_SIG_SCHEME", "ECDSA");
+sProps.put("AUTH_KEY_FILE", "/opt/machbase/keys/app_user_ecdsa.pem");
+
+Class.forName("com.machbase.jdbc.MachDriver");
+Connection conn = DriverManager.getConnection(sURL, sProps);
+```
+
+### URL Query String Example
+
+```text
+jdbc:machbase://127.0.0.1:5656/machbasedb?AUTH_MODE=CHALLENGE&AUTH_SIG_SCHEME=ECDSA&AUTH_KEY_FILE=/opt/machbase/keys/app_user_ecdsa.pem
+```
+
+However, `Properties` or `DataSource` is recommended because the key file path may be
+exposed more easily in logs or configuration dumps.
+
+### DataSource Example
+
+```java
+MachDataSource ds = new MachDataSource();
+ds.setServerName("127.0.0.1");
+ds.setPortNumber(5656);
+ds.setDatabaseName("machbasedb");
+ds.setUser("app_user");
+ds.setAuthMode("CHALLENGE");
+ds.setAuthSigScheme("ECDSA");
+ds.setAuthKeyFile("/opt/machbase/keys/app_user_ecdsa.pem");
+
+Connection conn = ds.getConnection();
+```
+
+### Reconnect Behavior
+
+- If the initial connection used `AUTH_MODE=CHALLENGE`, reconnect performs challenge
+  authentication again.
+- Reconnect does not reuse a previous nonce or signature.
+- If challenge authentication fails, the driver does not automatically fall back to
+  password authentication.
+
 
 ## Extension JDBC Functions
 
