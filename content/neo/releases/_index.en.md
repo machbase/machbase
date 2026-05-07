@@ -62,7 +62,7 @@ This releases are the legacy MACHBASE DBMS and application driver such as JDBC, 
 |:-----------|:---------------|:----------|
 | Linux      | x64            | [machbase-SDK-8.5.2.official-LINUX-X86-64-release.tgz](https://github.com/machbase/packages/releases/download/8.5.2/machbase-SDK-8.5.2.official-LINUX-X86-64-release.tgz) |
 | Linux      | arm64          | [machbase-SDK-8.5.2.official-LINUX-ARM_CORTEX_A53-64-release.tgz](https://github.com/machbase/packages/releases/download/8.5.2/machbase-SDK-8.5.2.official-LINUX-ARM_CORTEX_A53-64-release.tgz) |
+| Linux      | arm32          | [machbase-SDK-8.5.2.official-LINUX-ARM_CORTEX_A8-32-release.tgz](https://github.com/machbase/packages/releases/download/8.5.2/machbase-SDK-8.5.2.official-LINUX-ARM_CORTEX_A8-32-release.tgz) |
 | Windows    | x64            | [machbase-SDK-8.5.2.official-WINDOWS-X86-64-release.msi](https://github.com/machbase/packages/releases/download/8.5.2/machbase-SDK-8.5.2.official-WINDOWS-X86-64-release.msi)
-| Windows    | x86            | [machbase-SDK-8.5.2.official-WINDOWS-X86-32-release.msi](https://github.com/machbase/packages/releases/download/8.5.2/machbase-SDK-8.5.2.official-WINDOWS-X86-32-release.msi) |
 | macOS      | arm64          | [machbase-SDK-8.5.2.official-DARWIN-ARM_M1-64-release.tgz](https://github.com/machbase/packages/releases/download/8.5.2/machbase-SDK-8.5.2.official-DARWIN-ARM_M1-64-release.tgz) |
 | macOS      | x64            | [machbase-SDK-8.5.2.official-DARWIN-X86-64-release.tgz](https://github.com/machbase/packages/releases/download/8.5.2/machbase-SDK-8.5.2.official-DARWIN-X86-64-release.tgz) |
