@@ -41,6 +41,8 @@ challenge 인증은 다음 속성을 사용합니다.
   - EC 키: `ECDSA`
   - RSA 키: `RSA_PKCS1_V15`
 - `AUTH_KEY_FILE`만 주고 `AUTH_MODE`를 생략하면 내부적으로 `CHALLENGE`로 처리합니다.
+- 개인키 파일은 절대 경로 사용을 권장합니다. 상대 경로는 JVM의 현재 작업 디렉터리 기준으로 해석됩니다.
+- POSIX 환경에서는 개인키 파일 권한을 `600`으로 제한하는 것을 권장합니다.
 
 ### Properties 예제
 

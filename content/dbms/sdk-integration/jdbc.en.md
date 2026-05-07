@@ -44,6 +44,9 @@ Notes:
   - RSA key: `RSA_PKCS1_V15`
 - If `AUTH_KEY_FILE` is provided and `AUTH_MODE` is omitted, the driver treats the
   connection as `CHALLENGE`.
+- An absolute path is recommended for the private key file. Relative paths are resolved
+  from the JVM working directory.
+- On POSIX systems, restricting the private key file permission to `600` is recommended.
 
 ### Properties Example
 

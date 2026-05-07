@@ -68,12 +68,15 @@ machsql -s 127.0.0.1 -u app_user \
   - ECDSA 키: `ECDSA`
   - RSA 키: `RSA_PKCS1_V15`
 - `AUTH_MODE=CHALLENGE`에서는 `-p`를 인증에 사용하지 않습니다.
+- POSIX 환경에서는 개인키 파일 권한을 `600`으로 제한하는 것을 권장합니다.
 
 ### connection string 사용
 
 ```bash
 machsql -c "SERVER=127.0.0.1;PORT_NO=5656;UID=APP_USER;AUTH_MODE=CHALLENGE;AUTH_SIG_SCHEME=ECDSA;AUTH_KEY_FILE=/opt/machbase/keys/app_user_ecdsa.pem;" -f script.sql
 ```
+
+connection string 형태는 프로세스 인자나 로그에 키 파일 경로가 노출될 수 있으므로, 가능하면 `-K` 옵션 사용을 권장합니다.
 
 ### 실패 예시
 

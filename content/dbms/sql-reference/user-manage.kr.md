@@ -87,8 +87,10 @@ WITH AUTH KEY (
 
 - `key`에는 PEM 형식 공개키를 넣습니다.
 - `valid_before`는 `YYYY-MM-DD` 형식을 사용합니다.
+- `valid_before`에는 시각이 포함된 datetime 형식(`YYYY-MM-DD HH24:MI:SS`)을 사용할 수 없습니다.
 - `comment`는 선택입니다.
 - `CREATE USER ... WITH AUTH KEY`로 생성한 첫 키는 즉시 활성 상태(`ACTIVATED=1`)로 등록됩니다.
+- 사용자는 비밀번호와 AUTH KEY를 동시에 보유할 수 있습니다. 실제 인증은 클라이언트의 `AUTH_MODE` 선택에 따라 비밀번호 또는 challenge 중 하나만 수행되며, 실패 시 다른 방식으로 자동 fallback하지 않습니다.
 
 ## AUTH KEY 관리
 
@@ -121,7 +123,7 @@ ALTER USER app_user ALTER AUTH KEY ID 3 VALID_BEFORE='2048-06-30';
 ```
 
 - `VALID_BEFORE`가 지난 키는 인증에 사용할 수 없습니다.
-- 입력 형식은 `YYYY-MM-DD`입니다.
+- 입력 형식은 `YYYY-MM-DD`이며, 시각이 포함된 datetime 형식은 허용되지 않습니다.
 
 ### AUTH KEY 삭제
 
@@ -135,6 +137,19 @@ ALTER USER app_user DROP AUTH KEY ID 3;
 ## AUTH KEY 메타 조회
 
 등록된 AUTH KEY 메타는 `V$USER_AUTH_KEYS`에서 조회할 수 있습니다.
+
+주요 컬럼:
+
+- `KEY_ID`: AUTH KEY 식별자
+- `USER_NAME`: AUTH KEY 소유 사용자
+- `KEY_ALGO`: 키 알고리즘 (`RSA`, `ECDSA`)
+- `KEY_PARAM`: 키 파라미터
+  - RSA 키: 비트 길이 예) `2048`
+  - EC 키: 곡선 이름 예) `secp256r1`
+- `ACTIVATED`: 활성화 여부
+- `VALID_AFTER`, `VALID_BEFORE`: 유효 기간
+- `COMMENT`: 사용자 메모
+- `PUBKEY`: PEM 형식 공개키 본문
 
 ```sql
 SELECT key_id, user_name, key_algo, key_param, activated, valid_before, comment

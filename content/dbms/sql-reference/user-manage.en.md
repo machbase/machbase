@@ -88,9 +88,14 @@ Notes:
 
 - `key` must contain a PEM public key.
 - `valid_before` uses the `YYYY-MM-DD` format.
+- `valid_before` does not accept a datetime value with a time portion such as
+  `YYYY-MM-DD HH24:MI:SS`.
 - `comment` is optional.
 - The first key created by `CREATE USER ... WITH AUTH KEY` is registered as active
   (`ACTIVATED=1`).
+- A user may own both a password and one or more AUTH KEY entries. The actual
+  authentication method is chosen by the client's `AUTH_MODE`, and there is no automatic
+  fallback from one method to the other on failure.
 
 ## Manage AUTH KEY
 
@@ -123,7 +128,8 @@ ALTER USER app_user ALTER AUTH KEY ID 3 VALID_BEFORE='2048-06-30';
 ```
 
 - A key past `VALID_BEFORE` cannot be used for authentication.
-- The input format is `YYYY-MM-DD`.
+- The input format is `YYYY-MM-DD`, and a datetime value with a time portion is not
+  accepted.
 
 ### Drop AUTH KEY
 
@@ -137,6 +143,19 @@ ALTER USER app_user DROP AUTH KEY ID 3;
 ## Query AUTH KEY Metadata
 
 Registered AUTH KEY metadata can be queried from `V$USER_AUTH_KEYS`.
+
+Major columns:
+
+- `KEY_ID`: AUTH KEY identifier
+- `USER_NAME`: owner of the AUTH KEY
+- `KEY_ALGO`: key algorithm (`RSA`, `ECDSA`)
+- `KEY_PARAM`: key parameter
+  - RSA key: bit length such as `2048`
+  - EC key: curve name such as `secp256r1`
+- `ACTIVATED`: whether the key is active
+- `VALID_AFTER`, `VALID_BEFORE`: validity period
+- `COMMENT`: user note
+- `PUBKEY`: PEM public key body
 
 ```sql
 SELECT key_id, user_name, key_algo, key_param, activated, valid_before, comment

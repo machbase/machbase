@@ -69,12 +69,16 @@ Notes:
   - ECDSA key: `ECDSA`
   - RSA key: `RSA_PKCS1_V15`
 - `-p` is not used for authentication when `AUTH_MODE=CHALLENGE`.
+- On POSIX systems, restricting the private key file permission to `600` is recommended.
 
 ### Using a Connection String
 
 ```bash
 machsql -c "SERVER=127.0.0.1;PORT_NO=5656;UID=APP_USER;AUTH_MODE=CHALLENGE;AUTH_SIG_SCHEME=ECDSA;AUTH_KEY_FILE=/opt/machbase/keys/app_user_ecdsa.pem;" -f script.sql
 ```
+
+Because the connection string form may expose the key file path in process arguments or
+logs, using `-K` is recommended when possible.
 
 ### Failure Cases
 
