@@ -15,6 +15,8 @@ The set of database manipulation interfaces created in the Java programming lang
 
 ## JDBC Authentication Modes
 
+> **Note**: AUTH KEY challenge authentication is supported from Machbase 8.5 or later.
+
 Machbase JDBC supports both the existing password authentication and public-key-based
 challenge authentication.
 

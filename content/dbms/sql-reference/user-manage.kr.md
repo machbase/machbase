@@ -72,6 +72,8 @@ ALTER USER user1 IDENTIFIED BY password
 
 ## AUTH KEY를 포함한 사용자 생성
 
+> **참고**: 다음 설명은 Machbase 8.5 이상에서 지원됩니다.
+
 Machbase는 비밀번호 인증과 함께 공개키 기반 challenge 인증용 AUTH KEY를 사용자에 등록할 수 있습니다.
 
 ```sql

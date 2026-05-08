@@ -17,7 +17,7 @@ MACHSQL은 터미널 화면을 통해 SQL질의를 수행하는 대화형 도구
 | -s        | --server          | 접속할 서버의 IP 주소 (default : 127.0.0.1)     |
 | -u        | --user            | 사용자명 (default : SYS)                        |
 | -p        | --password        | 사용자 패스워드 (default : MANAGER)             |
-| -K        | --auth-key-file   | 인증용 개인키 파일 경로                         |
+| -K        | --auth-key-file   | 인증용 개인키 파일 경로 (Machbase 8.5 이상 지원) |
 | -P        | --port            | 서버의 포트 번호 (default : 5656)               |
 | -n        | --nls             | NLS 설정                                        |
 | -f        | --script          | 실행할 SQL 스크립트 파일                        |
@@ -26,7 +26,7 @@ MACHSQL은 터미널 화면을 통해 SQL질의를 수행하는 대화형 도구
 | -i        | --silent          | 저작권 출력 없이 실행                           |
 | -v        | --verbose         | 상세 출력                                       |
 | -r        | --format          | 출력 파일 포맷 지정 (default: csv)              |
-|           | --auth-sig-scheme | 인증 서명 스킴 (`ECDSA`, `RSA_PKCS1_V15`, `RSA_PSS`) |
+|           | --auth-sig-scheme | 인증 서명 스킴 (`ECDSA`, `RSA_PKCS1_V15`, `RSA_PSS`; Machbase 8.5 이상 지원) |
 | -h        | --help            | 옵션 출력                                       |
 | -c        | N/A               | Connection 매개변수 추가(6.1이후 버전부터 지원) |
 
@@ -42,6 +42,8 @@ machsql -s 127.0.0.1 -u sys -p manager -P 8888 -c ALTERNATIVE_SERVERS=192.168.0.
 ```
 
 ## AUTH KEY challenge 인증
+
+> **참고**: 이 기능은 Machbase 8.5 이상에서 지원됩니다.
 
 `machsql`은 비밀번호 인증 외에 공개키 기반 challenge 인증도 지원합니다.
 

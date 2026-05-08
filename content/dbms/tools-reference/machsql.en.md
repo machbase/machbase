@@ -17,7 +17,7 @@ machsql is an interactive tool that performs SQL queries through the terminal sc
 |-s | --server | Connecting server IP address (default: 127.0.0.1)|
 |-u | --user | User name (default: SYS)|
 |-p | --password | User password (default: MANAGER)|
-|-K | --auth-key-file | Authentication private key file path|
+|-K | --auth-key-file | Authentication private key file path (Machbase 8.5+)|
 |-P | --port | Server port number (default: 5656)|
 |-n | --nls | NLS configuration|
 |-f | --script | SQL script file to run|
@@ -26,7 +26,7 @@ machsql is an interactive tool that performs SQL queries through the terminal sc
 |-i | --silent | Runs without the copyright notice|
 |-v | --verbose | Detailed output|
 |-r | --format | Specifies output file format (default: csv)|
-|   | --auth-sig-scheme | Authentication signature scheme (`ECDSA`, `RSA_PKCS1_V15`, `RSA_PSS`)|
+|   | --auth-sig-scheme | Authentication signature scheme (`ECDSA`, `RSA_PKCS1_V15`, `RSA_PSS`; Machbase 8.5+)|
 |-h | --help | Displays options|
 |-c | N/A | Add Connection parameter(Supported from version 6.1 or later)|
 
@@ -42,6 +42,8 @@ machsql -s 127.0.0.1 -u sys -p manager -P 8888 -c ALTERNATIVE_SERVERS=192.168.0.
 ```
 
 ## AUTH KEY Challenge Authentication
+
+> **Note**: This feature is supported from Machbase 8.5 or later.
 
 `machsql` supports public-key-based challenge authentication in addition to password
 authentication.

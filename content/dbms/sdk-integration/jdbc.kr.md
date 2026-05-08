@@ -14,6 +14,8 @@ weight: 20
 
 ## JDBC 인증 방식
 
+> **참고**: AUTH KEY challenge 인증은 Machbase 8.5 이상에서 지원됩니다.
+
 Machbase JDBC는 기존 비밀번호 인증과 함께 공개키 기반 challenge 인증을 지원합니다.
 
 ### 비밀번호 인증

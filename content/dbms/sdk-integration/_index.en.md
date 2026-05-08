@@ -26,7 +26,7 @@ Standard JDBC driver for Java applications:
 - Standard JDBC interface
 - Connection pooling support
 - Spring/Hibernate compatible
-- AUTH KEY challenge authentication support
+- AUTH KEY challenge authentication support (Machbase 8.5 or later)
 - APPEND API support
 
 **Use when**: Building Java applications, need standard JDBC

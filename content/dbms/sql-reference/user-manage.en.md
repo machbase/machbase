@@ -72,6 +72,8 @@ ALTER USER user1 IDENTIFIED BY password
 
 ## Create a User with AUTH KEY
 
+> **Note**: The following behavior is supported from Machbase 8.5 or later.
+
 Machbase can register an AUTH KEY for public-key challenge authentication together with password
 authentication.
 
