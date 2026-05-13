@@ -5,7 +5,7 @@ weight: 75
 tags: JavaScript
 ---
 
-{{< neo_since ver="8.0.75" />}}
+{{< neo_since ver="8.5.0" />}}
 
 {{< callout type="warning" >}}
 **베타 안내**<br/>
