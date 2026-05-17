@@ -89,7 +89,7 @@ APPEND( table("example") )
 
 ## CSV()
 
-*구문*: `CSV( [tz(), timeformat(), precision(), rownum(), heading(), delimiter(), nullValue() ] )`
+*구문*: `CSV( [tz(), timeformat(), precision(), rownum(), heading(), delimiter(), nullValue(), binaryformat() ] )`
 
 레코드를 CSV 형식으로 출력합니다. 각 레코드의 값이 CSV 행의 필드가 되며, 두 개의 연속 개행(`\n\n`)을 데이터 종료로 인식합니다.
 
@@ -104,6 +104,7 @@ APPEND( table("example") )
 - `nullValue()` : `NULL` 값을 대체할 문자열(기본값 `nullValue('NULL')`) {{< neo_since ver="8.0.14" />}}
 - `substituteNull` *substitute(string)*: 이전 버전 옵션(현재는 `nullValue()` 사용)
 - `cache()` : 결과 데이터를 캐시합니다. {{< neo_since ver="8.0.43" />}}
+- `binaryformat()` *binaryformat(string)*: BINARY 타입의 값을 출력하는 형식을 지정합니다. `hex`, `base64`, `bytes`, `preview` {{< neo_since ver="8.5.2" />}}
 
 {{< tabs >}}
 {{< tab name="default" >}}
@@ -159,7 +160,7 @@ C|234
 
 ## JSON()
 
-*구문*: `JSON( [transpose(), tz(), timeformat(), precision(), rownum(), rowsFlatten(), rowsArray() ] )`
+*구문*: `JSON( [transpose(), tz(), timeformat(), precision(), rownum(), rowsFlatten(), rowsArray(), binaryformat() ] )`
 
 레코드를 JSON 형식으로 변환합니다.
 
@@ -171,6 +172,7 @@ C|234
 - `rowsFlatten` *rowsFlatten(boolean)*: `rows` 배열의 차원을 1단계 줄입니다. `transpose(true)`와 함께 사용하면 `rowsFlatten(true)`는 무시됩니다. {{< neo_since ver="8.0.12" />}}
 - `rowsArray` *rowsArray(boolean)*: 각 레코드를 객체 배열로 반환합니다. `transpose(true)` 및 `rowsFlatten(true)`보다 우선합니다. {{< neo_since ver="8.0.12" />}}
 - `cache()` : 결과 데이터를 캐시합니다. {{< neo_since ver="8.0.43" />}}
+- `binaryformat()` *binaryformat(string)*: BINARY 타입의 값을 출력하는 형식을 지정합니다. `hex`, `base64`, `bytes`, `preview` {{< neo_since ver="8.5.2" />}}
 
 {{< tabs >}}
 {{< tab name="default" >}}
@@ -257,7 +259,7 @@ JSON( rowsArray(true) )
 
 ## NDJSON()
 
-*구문*: `NDJSON( [tz(), timeformat(), rownum()] )` {{< neo_since ver="8.0.33" />}}
+*구문*: `NDJSON( [tz(), timeformat(), rownum(), binaryformat() ] )` {{< neo_since ver="8.0.33" />}}
 
 레코드를 NDJSON(Newline Delimited JSON) 형식으로 변환합니다. NDJSON은 한 줄당 하나의 JSON 객체를 포함하므로 대용량 데이터나 스트리밍 처리에 유리합니다. 데이터의 끝은 두 개의 연속 개행(`\n\n`)으로 표시됩니다.
 
@@ -265,6 +267,7 @@ JSON( rowsArray(true) )
 - `timeformat` *timeformat(string)*: `DATETIME` 출력 형식, 기본값 `timeformat('ns')`
 - `rownum` *rownum(boolean)*: 행 번호 컬럼 추가
 - `cache()` : 결과 데이터를 캐시합니다. {{< neo_since ver="8.0.43" />}}
+- `binaryformat()` *binaryformat(string)*: BINARY 타입의 값을 출력하는 형식을 지정합니다. `hex`, `base64`, `bytes`, `preview` {{< neo_since ver="8.5.2" />}}
 
 ```js {linenos=table,hl_lines=[2],linenostart=1}
 SQL(`select * from example where name = 'neo_load1' limit 3`)
@@ -291,6 +294,7 @@ NDJSON(timeformat('Default'), tz('local'), rownum(true))
 - `precision` *precision(int)*: 부동소수점 정밀도. `precision(-1)`은 제한 없음, `precision(0)`은 정수로 변환
 - `brief(boolean)` 결과 행 생략 여부. `brief(true)`는 `briefCount(5)`와 동일
 - `briefCount(limit int)` 레코드 수가 제한을 넘으면 행을 생략합니다(0이면 생략 없음)
+- `binaryformat()` *binaryformat(string)*: BINARY 타입의 값을 출력하는 형식을 지정합니다. `hex`, `base64`, `bytes`, `preview` {{< neo_since ver="8.5.2" />}}
 
 {{< tabs >}}
 {{< tab name="default" >}}

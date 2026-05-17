@@ -80,10 +80,11 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 | param       | default | description                                                |
 |:----------- |---------|:-----------------------------------------------------------|
 | **q**       | _required_ | 실행할 SQL 구문입니다.                                     |
-| p           |         | `?` bind placeholder에 전달할 파라미터의 JSON 배열입니다.<br/> 예: `["name", 1234, 1.23, true]` {{< neo_since ver="8.0.75" />}} |
+| p           |         | `?` bind placeholder에 전달할 파라미터의 JSON 배열입니다.<br/> 예: `["name", 1234, 1.23, true]` {{< neo_since ver="8.5.0" />}} |
 | format      | `json`    | 결과 데이터 형식: json, csv, box, ndjson                  |
 | timeformat  | `ns`      | 시간 단위: s, ms, us, ns                                  |
 | tz          | `UTC`     | 시간대: UTC, Local, 위치 지정                             |
+| binaryformat| `hex`     | binary encoding format: hex, base64, bytes, preview {{< neo_since ver="8.5.2" />}} |
 | compress    | _no compression_   | 압축 방식: gzip                                      |
 | rownum      | `false`   | 행 번호 포함 여부: true, false                            |
 

@@ -88,7 +88,7 @@ APPEND( table("example") )
 
 ## CSV()
 
-*Syntax*: `CSV( [tz(), timeformat(), precision(), rownum(), heading(), delimiter(), nullValue() ] )`
+*Syntax*: `CSV( [tz(), timeformat(), precision(), rownum(), heading(), delimiter(), nullValue(), binaryformat() ] )`
 
 Makes the records of the result in CSV format. The values of the records become the fields of the CSV lines.
 The end of the data is identified by the last two consecutive newline characters (`\n\n`).
@@ -104,6 +104,7 @@ For example, if a record was `{key: k, value:[v1,v2]}`, it generates an CSV reco
 - `nullValue()` specify substitution string for the *NULL* value, default is `nullValue('NULL')`. {{< neo_since ver="8.0.14" />}}
 - `substituteNull` *substitute(string)* specify substitution string for the *NULL* value, default is `substituteNull('NULL')`. (deprecated, replaced by `nullValue()`)
 - `cache()` cache result data. see [Cache Result Data](../reading/#cache-result-data) for details. {{< neo_since ver="8.0.43" />}}
+- `binaryformat()` *binaryformat(string)*: specify the encoding format for BINARY columns. Supported formats: `hex`, `base64`, `bytes`, `preview` {{< neo_since ver="8.5.2" />}}
 
 {{< tabs >}}
 {{< tab name="default" >}}
@@ -159,7 +160,7 @@ C|234
 
 ## JSON()
 
-*Syntax*: `JSON( [transpose(), tz(), timeformat(), precision(), rownum(), rowsFlatten(), rowsArray() ] )`
+*Syntax*: `JSON( [transpose(), tz(), timeformat(), precision(), rownum(), rowsFlatten(), rowsArray(), binaryformat() ] )`
 
 Generates JSON results from the values of the records.
 
@@ -171,6 +172,7 @@ Generates JSON results from the values of the records.
 - `rowsFlatten` *rowsFlatten(boolean)* reduces the array dimension of the *rows* field in the JSON object. If `JSON()` has `transpose(true)` and `rowsFlatten(true)` together, it ignores `rowsFlatten(true)` and only `transpose(true)` affects on the result. {{< neo_since ver="8.0.12" />}}
 - `rowsArray` *rowsArray(boolean)* produces JSON that contains only array of object for each record. The `rowsArray(true)` has higher priority than `transpose(true)` and `rowsFlatten(true)`. {{< neo_since ver="8.0.12" />}}
 - `cache()` cache result data. see [Cache Result Data](../reading/#cache-result-data) for details. {{< neo_since ver="8.0.43" />}}
+- `binaryformat()` *binaryformat(string)*: specify the encoding format for BINARY columns. Supported formats: `hex`, `base64`, `bytes`, `preview` {{< neo_since ver="8.5.2" />}}
 
 {{< tabs >}}
 {{< tab name="default" >}}
@@ -257,7 +259,7 @@ JSON( rowsArray(true) )
 
 ## NDJSON()
 
-*Syntax*: `NDJSON( [tz(), timeformat(), rownum()] )` {{< neo_since ver="8.0.33" />}}
+*Syntax*: `NDJSON( [tz(), timeformat(), rownum(), binaryformat()] )` {{< neo_since ver="8.0.33" />}}
 
 Generates NDJSON results from the values of the records.
 
@@ -268,6 +270,7 @@ The end of the data is identified by the last two consecutive newline characters
 - `timeformat` *timeformat(string)* specify the format how represents datetime fields, default is `timeformat('ns')`.
 - `rownum` *rownum(boolean)` adds rownum column.
 - `cache()` cache result data. see [Cache Result Data](../reading/#cache-result-data) for details. {{< neo_since ver="8.0.43" />}}
+- `binaryformat()` *binaryformat(string)*: specify the encoding format for BINARY columns. Supported formats: `hex`, `base64`, `bytes`, `preview` {{< neo_since ver="8.5.2" />}}
 
 ```js {linenos=table,hl_lines=[2],linenostart=1}
 SQL(`select * from example where name = 'neo_load1' limit 3`)
@@ -294,6 +297,7 @@ Generates a table in markdown format or HTML.
 - `precision` *precision(int)* specify precision of float fields, `precision(-1)` means no restriction, `precision(0)` converts to integer.
 - `brief(boolean)` omit result rows, `brief(true)` is equivalent with `briefCount(5)`
 - `briefCount(limit int)` omit result rows if the records exceeds the given limit, no omission if limit is `0`
+- `binaryformat()` *binaryformat(string)*: specify the encoding format for BINARY columns. Supported formats: `hex`, `base64`, `bytes`, `preview` {{< neo_since ver="8.5.2" />}}
 
 {{< tabs >}}
 {{< tab name="default" >}}
