@@ -80,10 +80,11 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 | param       | default | description                   |
 |:----------- |---------|:----------------------------- |
 | **q**       | _required_ | SQL query string              |
-| p           |         | JSON array of parameters for `?` bind placeholders.<br/>Example: `["name", 1234, 1.23, true]` {{< neo_since ver="8.0.75" />}} |
+| p           |         | JSON array of parameters for `?` bind placeholders.<br/>Example: `["name", 1234, 1.23, true]` {{< neo_since ver="8.5.0" />}} |
 | format      | `json`    | Result data format: json, csv, box, ndjson |
 | timeformat  | `ns`      | Time format: s, ms, us, ns    |
 | tz          | `UTC`     | Time Zone: UTC, Local and location spec |
+| binaryformat| `hex`     | binary encoding format: hex, base64, bytes, preview {{< neo_since ver="8.5.2" />}}|
 | compress    | _no compression_   | compression method: gzip      |
 | rownum      | `false`   | including rownum: true, false |
 

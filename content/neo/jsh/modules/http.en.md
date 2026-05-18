@@ -4,7 +4,7 @@ type: docs
 weight: 100
 ---
 
-{{< neo_since ver="8.0.75" />}}
+{{< neo_since ver="8.5.0" />}}
 
 The `http` module provides Node.js-compatible HTTP client and server APIs for JSH applications.
 
@@ -209,6 +209,10 @@ new Server([options])
 **Server route and static methods**
 
 - `get(path, handler)`
+- `post(path, handler)`
+- `put(path, handler)`
+- `delete(path, handler)`
+- `ws(path[, options], handler)`
 - `static(path, root)`
 - `staticFile(path, file)`
 
@@ -235,6 +239,62 @@ server.get('/hello/:name', (ctx) => {
 });
 server.serve();
 ```
+
+## Server.ws()
+
+{{< neo_since ver="8.5.2" />}}
+
+Sugar API for attaching a WebSocket route to an HTTP server.
+
+Internally this creates `require('ws').WebSocketServer` and attaches it to the current `http.Server` instance.
+
+<h6>Syntax</h6>
+
+```js
+server.ws(path, handler)
+server.ws(path, options, handler)
+```
+
+<h6>Options</h6>
+
+- `verifyClient({ origin, req })`
+- `handleProtocols(protocols, req)`
+- `clientTracking` (default: `true`)
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1}
+const http = require('http');
+
+const server = new http.Server({ network: 'tcp', address: '127.0.0.1:8080' });
+
+server.ws('/ws', {
+  verifyClient: ({ req }) => req.query('token') === 'allow',
+  handleProtocols: (protocols) => {
+    if (protocols.indexOf('machbase.rpc') >= 0) {
+      return 'machbase.rpc';
+    }
+    return false;
+  },
+}, (socket, request) => {
+  console.println(request.path, request.httpVersion, socket.protocol);
+  socket.on('message', (event) => {
+    socket.send('echo:' + event.data);
+  });
+});
+
+server.serve();
+```
+
+The `handler` receives `(socket, request)`. `socket` follows the same event model as `ws.WebSocket`, and `request` contains helper fields for the handshake request.
+
+**Server.ws() behavior notes**
+
+- `verifyClient()` and `handleProtocols()` are called synchronously.
+- If `verifyClient()` returns `false`, the handshake is rejected.
+- `handleProtocols()` should return the selected protocol string or a falsy value to reject protocol selection.
+- `request` is a JSH helper object, not a full Node.js `IncomingMessage` implementation.
+- Low-level `upgrade` events and `handleUpgrade()` APIs are not provided.
 
 **Server context**
 

@@ -281,243 +281,6 @@ Web socket for the bi-directional messages
 |                | `log.message`    | log message        |
 |                | `log.repeat`     | count, if the same message repeats more than two times in serial |
 
-## JSON-RPC
-
-The Web UI provides JSON-RPC endpoints for management-oriented features.
-
-- HTTP POST endpoint: `/web/api/rpc`
-- WebSocket endpoint: `/web/api/console/:console_id/data`
-
-For simple request/response interactions, use `/web/api/rpc`.
-When you need bi-directional messaging over an existing console session, use `/web/api/console/:console_id/data`.
-
-### HTTP JSON-RPC request format
-
-**POST `/web/api/rpc`**
-
-Request example:
-
-```json
-{
-    "jsonrpc": "2.0",
-    "id": 1,
-    "method": "shell.list",
-    "params": []
-}
-```
-
-Success response example:
-
-```json
-{
-    "jsonrpc": "2.0",
-    "id": 1,
-    "result": []
-}
-```
-
-Error response example:
-
-```json
-{
-    "jsonrpc": "2.0",
-    "id": 1,
-    "error": {
-        "code": -32000,
-        "message": "error message"
-    }
-}
-```
-
-Notes:
-
-- The HTTP status is normally `200 OK`.
-- Detect failures by checking the `error` field, not by the HTTP status code.
-
-### WebSocket JSON-RPC request format
-
-**`ws:/web/api/console/:console_id/data`**
-
-Over WebSocket, use `rpc_req` and `rpc_rsp` event wrappers.
-The `session` field is an identifier that the UI client can use to route the response back to the correct tab or view.
-
-Request example:
-
-```json
-{
-    "type": "rpc_req",
-    "session": "{\"view\":\"shell-tab-2\",\"requestId\":\"req-001\"}",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 1,
-        "method": "shell.list",
-        "params": []
-    }
-}
-```
-
-Response example:
-
-```json
-{
-    "type": "rpc_rsp",
-    "session": "{\"view\":\"shell-tab-2\",\"requestId\":\"req-001\"}",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 1,
-        "result": []
-    }
-}
-```
-
-### Available major methods
-
-The following methods are currently available through JSON-RPC.
-
-#### Markdown
-
-- `markdown.render`
-  - params: `[markdown: string, darkMode: bool]`
-  - result: `string`
-
-#### Server / Service
-
-- `server.info.get`
-  - params: `[]`
-  - result: `server info object`
-- `service.port.list`
-  - params: `[serviceName: string]`
-  - result: `ServicePort[]`
-- `server.shutdown`
-  - params: `[]`
-  - result: `implementation dependent`
-- `server.certificate.get`
-  - params: `[]`
-  - result: `string`
-
-#### Shell
-
-- `shell.list`
-  - params: `[]`
-  - result: `ShellDefinition[]`
-- `shell.add`
-  - params: `[label: string, command: string]`
-  - result: `string`
-- `shell.delete`
-  - params: `[id: string]`
-  - result: `empty on success`
-
-#### Bridge
-
-- `bridge.list`
-  - params: `[]`
-  - result: `Bridge[]`
-- `bridge.get`
-  - params: `[name: string]`
-  - result: `Bridge`
-- `bridge.add`
-  - params: `[name: string, type: string, conn: string]`
-  - result: `empty on success`
-- `bridge.delete`
-  - params: `[name: string]`
-  - result: `empty on success`
-- `bridge.test`
-  - params: `[name: string]`
-  - result: `bool`
-- `bridge.stats`
-  - params: `[name: string]`
-  - result: `BridgeStats`
-- `bridge.exec`
-  - params: `[name: string, command: string]`
-  - result: `BridgeExecResult`
-- `bridge.query`
-  - params: `[name: string, query: string]`
-  - result: `BridgeQueryResult`
-- `bridge.result.fetch`
-  - params: `[handle: string]`
-  - result: `BridgeQueryRow`
-- `bridge.result.close`
-  - params: `[handle: string]`
-  - result: `empty on success`
-
-#### SSH Key
-
-- `sshkey.list`
-  - params: `[]`
-  - result: `AuthorizedSshKey[]`
-- `sshkey.add`
-  - params: `[type: string, key: string, comment: string]`
-  - result: `empty on success`
-- `sshkey.delete`
-  - params: `[key: string]`
-  - result: `empty on success`
-
-#### Key
-
-- `key.list`
-  - params: `[]`
-  - result: `KeyInfo[]`
-- `key.generate`
-  - params: `[id: string]`
-  - result: `generated key bundle object`
-- `key.delete`
-  - params: `[id: string]`
-  - result: `empty on success`
-
-#### Schedule
-
-- `schedule.list`
-  - params: `[]`
-  - result: `Schedule[]`
-- `schedule.timer.add`
-  - params: `[name: string, spec: string, command: string, autoStart: bool]`
-  - result: `empty on success`
-- `schedule.subscriber.add`
-  - params: `[name: string, bridge: string, command: string, autoStart: bool, topic: string, qos: number]`
-  - result: `empty on success`
-- `schedule.delete`
-  - params: `[name: string]`
-  - result: `empty on success`
-- `schedule.start`
-  - params: `[name: string]`
-  - result: `empty on success`
-- `schedule.stop`
-  - params: `[name: string]`
-  - result: `empty on success`
-
-#### Session / Utility
-
-- `session.list`
-  - params: `[]`
-  - result: `Session[]`
-- `session.kill`
-  - params: `[id: string, force: bool]`
-  - result: `empty on success`
-- `session.stat`
-  - params: `[reset: bool]`
-  - result: `Statz`
-- `session.limit.get`
-  - params: `[]`
-  - result: `SessionLimit`
-- `session.limit.set`
-  - params: `[config: object]`
-  - result: `empty on success`
-- `http.debug.set`
-  - params: `[config: object]`
-  - result: `normalized config object`
-- `sql.split`
-  - params: `[sqlText: string]`
-  - result: `SqlStatement[]`
-
-### Method examples
-
-- List shells: `shell.list`
-- Add a bridge: `bridge.add`
-- Get session limits: `session.limit.get`
-- Render markdown: `markdown.render`
-
-For new management features, JSON-RPC methods are the recommended integration path.
-
 
 ## TQL & Workspace
 
@@ -1802,15 +1565,70 @@ These messages are designed to clearly communicate status, issues, or guidance t
 - **message**: The descriptive log message.
 - **repeat** (optional): Indicates the number of consecutive occurrences of the same log message, helping to minimize redundant output.
 
-### RPC
-{{< callout type="warning" >}}
-The RPC feature over WebSocket is currently under active development. Functionality, protocol details, and supported methods may change in future releases.
-{{< /callout >}}
+## JSON-RPC
 
 This section describes the remote procedure call (RPC) mechanism over WebSocket,
 which follows the JSON-RPC specification.
 RPC enables clients to invoke server-side methods and receive structured responses,
 facilitating seamless communication and integration between client applications and the server.
+
+The Web UI provides JSON-RPC endpoints for management-oriented features.
+
+- HTTP POST endpoint: `/web/api/rpc`
+- WebSocket endpoint: `/web/api/console/:console_id/data?token={jwt_token}`
+
+For simple request/response interactions, use `/web/api/rpc`.
+When you need bi-directional messaging over an existing console session, use `/web/api/console/:console_id/data?token={jwt_token}`.
+
+### HTTP JSON-RPC request format
+
+**POST `/web/api/rpc`**
+
+Request example:
+
+```json
+{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "shell.list",
+    "params": []
+}
+```
+
+Success response example:
+
+```json
+{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": []
+}
+```
+
+Error response example:
+
+```json
+{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "error": {
+        "code": -32000,
+        "message": "error message"
+    }
+}
+```
+
+Notes:
+
+- The HTTP status is normally `200 OK`.
+- Detect failures by checking the `error` field, not by the HTTP status code.
+
+### WebSocket JSON-RPC request format
+
+**`ws:/web/api/console/:console_id/data`**
+
+Over WebSocket, use `rpc_req` and `rpc_rsp` event wrappers.
+The `session` field is an identifier that the UI client can use to route the response back to the correct tab or view.
 
 **Request**
 
@@ -1819,7 +1637,7 @@ facilitating seamless communication and integration between client applications 
 ```json
 {
     "type": "rpc_req",
-    "session": "client-session-#1",
+    "session": "{\"view\":\"shell-tab-2\",\"requestId\":\"req-001\"}",
     "rpc": {
         "jsonrpc": "2.0",
         "id": 1234,
@@ -1838,7 +1656,7 @@ facilitating seamless communication and integration between client applications 
 ```json
 {
     "type": "rpc_rsp",
-    "session": "client-session-#1",
+    "session": "{\"view\":\"shell-tab-2\",\"requestId\":\"req-001\"}",
     "rpc": {
         "jsonrpc": "2.0",
         "id": 1234,
@@ -1852,7 +1670,7 @@ facilitating seamless communication and integration between client applications 
 ```json
 {
     "type": "rpc_rsp",
-    "session": "client-session-#1",
+    "session": "{\"view\":\"shell-tab-2\",\"requestId\":\"req-001\"}",
     "rpc": {
         "jsonrpc": "2.0",
         "id": 1234,
@@ -1864,9 +1682,22 @@ facilitating seamless communication and integration between client applications 
 }
 ```
 
-#### llmGetProviders
+### Markdown
 
-`llmGetProviders()`
+#### markdown.render
+
+`markdown.render(markdown, darkMode)`
+
+*Params*
+- `markdown` *string*
+- `darkMode` *bool*
+
+*Return*
+
+- `string|error`
+
+<details>
+<summary>Request/Response JSON</summary>
 
 *Request*
 
@@ -1876,8 +1707,12 @@ facilitating seamless communication and integration between client applications 
     "session": "client-session-#1",
     "rpc": {
         "jsonrpc": "2.0",
-        "id": 11,
-        "method": "llmGetProviders"
+        "id": 20,
+        "method": "markdown.render",
+        "params": [
+            "string",
+            false
+        ]
     }
 }
 ```
@@ -1890,45 +1725,30 @@ facilitating seamless communication and integration between client applications 
     "session": "client-session-#1",
     "rpc": {
         "jsonrpc": "2.0",
-        "id": 11,
-        "result": ["claude", "ollama"]
+        "id": 20,
+        "result": "string"
     }
 }
 ```
 
-#### llmGetProviderConfig
+</details>
 
-`llmGetProviderConfig(provider)`
 
-*Params*
-- `provider` *string* one of "claude", "ollama"
+### Vizspec
 
-> Some properties are provider-specific and may be hidden for security reasons. For example, the Claude API key is not fully exposed in the configuration response.
+#### vizspec.render
 
-#### llmSetProviderConfig
-
-`llmSetProviderConfig(provider, config)`
+`vizspec.render(vizspec)`
 
 *Params*
-- `provider` *string* one of "claude", "ollama"
-- `config` *object*
+- `vizspec` *object*
 
-*Calude Config Object*
+*Return*
 
-```json
-{
-    "key": "your-key",
-    "max_tokens": 1024
-}
-```
+- `object|error`
 
-*Ollama Config Object*
-
-```json
-{
-    "url": "http://127.0.0.1:11434"
-}
-```
+<details>
+<summary>Request/Response JSON</summary>
 
 *Request*
 
@@ -1938,9 +1758,11 @@ facilitating seamless communication and integration between client applications 
     "session": "client-session-#1",
     "rpc": {
         "jsonrpc": "2.0",
-        "id": 15,
-        "method": "llmSetProviderConfig",
-        "params": ["claude", {"key":"your-key-here", "max_tokens":1024}]
+        "id": 20,
+        "method": "vizspec.render",
+        "params": [
+            {}
+        ]
     }
 }
 ```
@@ -1953,130 +1775,609 @@ facilitating seamless communication and integration between client applications 
     "session": "client-session-#1",
     "rpc": {
         "jsonrpc": "2.0",
-        "id": 15,
+        "id": 20,
+        "result": {}
+    }
+}
+```
+
+</details>
+
+#### vizspec.export
+
+`vizspec.export(vizspec, format)`
+
+*Params*
+- `vizspec` *object*
+- `format` *string*
+
+*Return*
+
+- `object|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "vizspec.export",
+        "params": [
+            {},
+            "string"
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {}
+    }
+}
+```
+
+</details>
+
+
+### Server
+
+#### server.info.get
+
+`server.info.get()`
+
+*Params*
+
+- none
+
+*Return*
+
+- `object<ServerInfoResponse>|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "server.info.get",
+        "params": []
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {}
+    }
+}
+```
+
+</details>
+
+#### server.certificate.get
+
+`server.certificate.get()`
+
+*Params*
+
+- none
+
+*Return*
+
+- `string|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "server.certificate.get",
+        "params": []
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": "string"
+    }
+}
+```
+
+</details>
+
+#### server.shutdown
+
+mgmt server implements
+
+`server.shutdown()`
+
+*Params*
+
+- none
+
+*Return*
+
+- `object<ShutdownResponse>|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "server.shutdown",
+        "params": []
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {}
+    }
+}
+```
+
+</details>
+
+
+### Service
+
+#### service.port.list
+
+`service.port.list(svc)`
+
+*Params*
+- `svc` *string*
+
+*Return*
+
+- `array<object<model.ServicePort>>|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "service.port.list",
+        "params": [
+            "string"
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": []
+    }
+}
+```
+
+</details>
+
+
+### Proxy
+
+#### proxy.register
+
+`proxy.register(req)`
+
+*Params*
+- `req` *object<ProxyRegisterRequest>*
+
+*Return*
+
+- `object<ProxyEntrySnapshot>|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "proxy.register",
+        "params": [
+            {}
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {}
+    }
+}
+```
+
+</details>
+
+#### proxy.unregister
+
+`proxy.unregister(req)`
+
+*Params*
+- `req` *object<ProxyUnregisterRequest>*
+
+*Return*
+
+- `array<object<ProxyEntrySnapshot>>|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "proxy.unregister",
+        "params": [
+            {}
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": []
+    }
+}
+```
+
+</details>
+
+#### proxy.list
+
+`proxy.list(service)`
+
+*Params*
+- `service` *string*
+
+*Return*
+
+- `array<object<ProxyEntrySnapshot>>|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "proxy.list",
+        "params": [
+            "string"
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": []
+    }
+}
+```
+
+</details>
+
+#### proxy.get
+
+`proxy.get(req)`
+
+*Params*
+- `req` *object<ProxyGetRequest>*
+
+*Return*
+
+- `object<ProxyEntrySnapshot>|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "proxy.get",
+        "params": [
+            {}
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {}
+    }
+}
+```
+
+</details>
+
+
+### Shell
+
+#### shell.list
+
+`shell.list()`
+
+*Params*
+
+- none
+
+*Return*
+
+- `array<object<model.ShellDefinition>>|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "shell.list",
+        "params": []
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": []
+    }
+}
+```
+
+</details>
+
+#### shell.add
+
+`shell.add(name, command)`
+
+*Params*
+- `name` *string*
+- `command` *string*
+
+*Return*
+
+- `string|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "shell.add",
+        "params": [
+            "string",
+            "string"
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": "string"
+    }
+}
+```
+
+</details>
+
+#### shell.delete
+
+`shell.delete(id)`
+
+*Params*
+- `id` *string*
+
+*Return*
+
+- `null|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "shell.delete",
+        "params": [
+            "string"
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
         "result": null
     }
 }
 ```
 
-#### llmGetModels
+</details>
 
-`llmGetModels()`
 
-*Request*
+### Bridge
 
-```json
-{
-    "type": "rpc_req",
-    "session": "client-session-#1",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 10,
-        "method": "llmGetModels"
-    }
-}
-```
+#### bridge.list
 
-*Response*
-
-```json
-{
-    "type": "rpc_rsp",
-    "session": "client-session-#1",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 10,
-        "result": {
-            "claude": [
-                {
-                    "name": "Ollama qweb3:0.6b",
-                    "provider": "ollama",
-                    "model": "qwen3:0.6b"
-                }
-            ],
-            "ollama": [
-                {
-                    "name": "Claude Sonnet 4",
-                    "provider": "claude",
-                    "model": "claude-sonnet-4-20250514"
-                }
-            ]
-        }
-    }
-}
-```
-
-#### llmAddModels
-
-`llmAddModels()`
-
-*Request*
-
-```json
-{
-    "type": "rpc_req",
-    "session": "client-session-#1",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 10,
-        "method": "llmAddModels",
-        "params": [{"name": "Ollama deepseek-r1",  "provider":"ollama", "model":"deepseek-r1:8b"}]
-    }
-}
-```
-
-*Response*
-
-```json
-{
-    "type": "rpc_rsp",
-    "session": "client-session-#1",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 10
-    }
-}
-```
-
-#### llmRemoveModels
-
-`llmRemoveModels()`
-
-*Request*
-
-```json
-{
-    "type": "rpc_req",
-    "session": "client-session-#1",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 10,
-        "method": "llmRemoveModels",
-        "params": [{"name": "Ollama deepseek-r1",  "provider":"ollama", "model":"deepseek-r1:8b"}]
-    }
-}
-```
-
-*Response*
-
-```json
-{
-    "type": "rpc_rsp",
-    "session": "client-session-#1",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 10
-    }
-}
-```
-
-#### markdownRender
-
-`markdownRender(markdown, darkmode)`
+`bridge.list()`
 
 *Params*
-- `markdown` *string* markdown content
-- `darkmode` *bool* true for darkmode
+
+- none
+
+*Return*
+
+- `array<object<bridge.BridgeInfo>>|error`
+
+<details>
+<summary>Request/Response JSON</summary>
 
 *Request*
 
@@ -2087,8 +2388,8 @@ facilitating seamless communication and integration between client applications 
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "method": "markdownRender",
-        "params": ["# Hello World\nThis is a **test**.", false]
+        "method": "bridge.list",
+        "params": []
     }
 }
 ```
@@ -2102,91 +2403,1607 @@ facilitating seamless communication and integration between client applications 
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "result": "<h1>Hello World</h1>\n<p>This is a <strong>test</strong>.</p>\n"
+        "result": []
     }
 }
 ```
 
-### MESSAGE
+</details>
 
-{{< callout type="warning" >}}
-The MESSAGE feature over WebSocket is currently under active development. Functionality, protocol details, and supported methods may change in future releases.
-{{< /callout >}}
+#### bridge.get
+
+`bridge.get(name)`
+
+*Params*
+- `name` *string*
+
+*Return*
+
+- `object<bridge.BridgeInfo>|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
 
 ```json
 {
-    "type": "msg",
-    "session": "client-session-#2",
-    "msg": {
-        "ver": "1.0",
-        "id": 1234,
-        "type": "question",
-        "body": {
-        }
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "bridge.get",
+        "params": [
+            "string"
+        ]
     }
 }
 ```
 
-- **ver**: The protocol version, which must be set to `"1.0"`.
-- **id**: A unique sequence number identifying the current message or question.
-- **type**: Specifies the message type. Valid values include `"question"`, `"input"`, `"answer-start"`, `"answer-stop"`, `"stream-message-start"`, `"stream-message-delta"`, `"stream-message-stop"`, `"stream-block-start"`, `"stream-block-delta"`, and `"stream-block-stop"`.
-- **body**: Contains the payload relevant to the specified message type.
-
-**Question**
-
-- Direction: C -> S
+*Response*
 
 ```json
 {
-    "type": "msg",
-    "session": "client-session-#2",
-    "msg": {
-        "ver": "1.0",
-        "id": 1234,
-        "type": "question",
-        "body": {
-            "provider": "ollama",
-            "model": "qweb3.0:8b",
-            "text": "what kind of tables exists?"
-        }
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {}
     }
 }
 ```
 
-**Stream**
+</details>
 
-- Direction: S -> C
+#### bridge.add
+
+`bridge.add(name, typ, conn)`
+
+*Params*
+- `name` *string*
+- `typ` *string*
+- `conn` *string*
+
+*Return*
+
+- `null|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
 
 ```json
 {
-    "type": "msg",
-    "session": "client-session-#2",
-    "msg": {
-        "ver": "1.0",
-        "id": 1234,
-        "type": "stream-block-delta",
-        "body": {
-            "data": "hello, I'm a machbase-neo agent",
-        }
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "bridge.add",
+        "params": [
+            "string",
+            "string",
+            "string"
+        ]
     }
 }
 ```
 
-**Interrupt Stream**
-
-- Direction: C -> S
+*Response*
 
 ```json
 {
-    "type": "msg",
-    "session": "client-session",
-    "msg": {
-        "ver": "1.0",
-        "id": 2345,
-        "type": "input",
-        "body": {
-            "control": "^C",
-        }
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
     }
 }
 ```
+
+</details>
+
+#### bridge.delete
+
+`bridge.delete(name)`
+
+*Params*
+- `name` *string*
+
+*Return*
+
+- `null|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "bridge.delete",
+        "params": [
+            "string"
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
+
+#### bridge.test
+
+`bridge.test(name)`
+
+*Params*
+- `name` *string*
+
+*Return*
+
+- `bool|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "bridge.test",
+        "params": [
+            "string"
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": false
+    }
+}
+```
+
+</details>
+
+#### bridge.stats
+
+`bridge.stats(name)`
+
+*Params*
+- `name` *string*
+
+*Return*
+
+- `object<BridgeStats>|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "bridge.stats",
+        "params": [
+            "string"
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {}
+    }
+}
+```
+
+</details>
+
+#### bridge.exec
+
+`bridge.exec(name, command)`
+
+*Params*
+- `name` *string*
+- `command` *string*
+
+*Return*
+
+- `object<BridgeExecResult>|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "bridge.exec",
+        "params": [
+            "string",
+            "string"
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {}
+    }
+}
+```
+
+</details>
+
+#### bridge.query
+
+`bridge.query(name, query)`
+
+*Params*
+- `name` *string*
+- `query` *string*
+
+*Return*
+
+- `object<BridgeQueryResult>|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "bridge.query",
+        "params": [
+            "string",
+            "string"
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {}
+    }
+}
+```
+
+</details>
+
+#### bridge.result.fetch
+
+`bridge.result.fetch(handle)`
+
+*Params*
+- `handle` *string*
+
+*Return*
+
+- `object<BridgeQueryRow>|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "bridge.result.fetch",
+        "params": [
+            "string"
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {}
+    }
+}
+```
+
+</details>
+
+#### bridge.result.close
+
+`bridge.result.close(handle)`
+
+*Params*
+- `handle` *string*
+
+*Return*
+
+- `null|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "bridge.result.close",
+        "params": [
+            "string"
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
+
+
+### Sshkey
+
+#### sshkey.list
+
+`sshkey.list()`
+
+*Params*
+
+- none
+
+*Return*
+
+- `array<object<AuthorizedSshKey>>|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "sshkey.list",
+        "params": []
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": []
+    }
+}
+```
+
+</details>
+
+#### sshkey.add
+
+`sshkey.add(keyType, key, comment)`
+
+*Params*
+- `keyType` *string*
+- `key` *string*
+- `comment` *string*
+
+*Return*
+
+- `null|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "sshkey.add",
+        "params": [
+            "string",
+            "string",
+            "string"
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
+
+#### sshkey.delete
+
+`sshkey.delete(key)`
+
+*Params*
+- `key` *string*
+
+*Return*
+
+- `null|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "sshkey.delete",
+        "params": [
+            "string"
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
+
+
+### Key
+
+#### key.list
+
+`key.list()`
+
+*Params*
+
+- none
+
+*Return*
+
+- `array<object<KeyInfo>>|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "key.list",
+        "params": []
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": []
+    }
+}
+```
+
+</details>
+
+#### key.generate
+
+`key.generate(id)`
+
+*Params*
+- `id` *string*
+
+*Return*
+
+- `any|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "key.generate",
+        "params": [
+            "string"
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {}
+    }
+}
+```
+
+</details>
+
+#### key.delete
+
+`key.delete(id)`
+
+*Params*
+- `id` *string*
+
+*Return*
+
+- `null|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "key.delete",
+        "params": [
+            "string"
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
+
+
+### Schedule
+
+#### schedule.list
+
+`schedule.list()`
+
+*Params*
+
+- none
+
+*Return*
+
+- `array<object<scheduler.Schedule>>|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "schedule.list",
+        "params": []
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": []
+    }
+}
+```
+
+</details>
+
+#### schedule.timer.add
+
+`schedule.timer.add(name, spec, command, autoStart)`
+
+*Params*
+- `name` *string*
+- `spec` *string*
+- `command` *string*
+- `autoStart` *bool*
+
+*Return*
+
+- `null|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "schedule.timer.add",
+        "params": [
+            "string",
+            "string",
+            "string",
+            false
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
+
+#### schedule.subscriber.add
+
+`schedule.subscriber.add(name, bridge, command, autoStart, topic, qos)`
+
+*Params*
+- `name` *string*
+- `bridge` *string*
+- `command` *string*
+- `autoStart` *bool*
+- `topic` *string*
+- `qos` *int*
+
+*Return*
+
+- `null|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "schedule.subscriber.add",
+        "params": [
+            "string",
+            "string",
+            "string",
+            false,
+            "string",
+            0
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
+
+#### schedule.delete
+
+`schedule.delete(name)`
+
+*Params*
+- `name` *string*
+
+*Return*
+
+- `null|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "schedule.delete",
+        "params": [
+            "string"
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
+
+#### schedule.start
+
+`schedule.start(name)`
+
+*Params*
+- `name` *string*
+
+*Return*
+
+- `null|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "schedule.start",
+        "params": [
+            "string"
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
+
+#### schedule.stop
+
+`schedule.stop(name)`
+
+*Params*
+- `name` *string*
+
+*Return*
+
+- `null|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "schedule.stop",
+        "params": [
+            "string"
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
+
+
+### Http
+
+#### http.debug.set
+
+`http.debug.set(m)`
+
+*Params*
+- `m` *object*
+
+*Return*
+
+- `object|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "http.debug.set",
+        "params": [
+            {}
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {}
+    }
+}
+```
+
+</details>
+
+
+### Session
+
+#### session.list
+
+`session.list()`
+
+*Params*
+
+- none
+
+*Return*
+
+- `array<object<Session>>|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "session.list",
+        "params": []
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": []
+    }
+}
+```
+
+</details>
+
+#### session.kill
+
+`session.kill(id, force)`
+
+*Params*
+- `id` *string*
+- `force` *bool*
+
+*Return*
+
+- `null|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "session.kill",
+        "params": [
+            "string",
+            false
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
+
+#### session.stat
+
+`session.stat(reset)`
+
+*Params*
+- `reset` *bool*
+
+*Return*
+
+- `object<server_api.Statz>|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "session.stat",
+        "params": [
+            false
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {}
+    }
+}
+```
+
+</details>
+
+#### session.limit.get
+
+`session.limit.get()`
+
+*Params*
+
+- none
+
+*Return*
+
+- `object<SessionLimit>|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "session.limit.get",
+        "params": []
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {}
+    }
+}
+```
+
+</details>
+
+#### session.limit.set
+
+`session.limit.set(m)`
+
+*Params*
+- `m` *object*
+
+*Return*
+
+- `null|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "session.limit.set",
+        "params": [
+            {}
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
+
+
+### Sql
+
+#### sql.split
+
+`sql.split(content)`
+
+*Params*
+- `content` *string*
+
+*Return*
+
+- `array<object<util.SqlStatement>>|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "sql.split",
+        "params": [
+            "string"
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": []
+    }
+}
+```
+
+</details>
+
+
+### Lsp
+
+#### lsp.diagnostics
+
+`lsp.diagnostics(req)`
+
+*Params*
+- `req` *object<lspDocumentRequest>*
+
+*Return*
+
+- `object|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "lsp.diagnostics",
+        "params": [
+            {}
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {}
+    }
+}
+```
+
+</details>
+
+#### lsp.completion
+
+`lsp.completion(req)`
+
+*Params*
+- `req` *object<lspDocumentRequest>*
+
+*Return*
+
+- `object|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "lsp.completion",
+        "params": [
+            {}
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {}
+    }
+}
+```
+
+</details>
+
+#### lsp.hover
+
+`lsp.hover(req)`
+
+*Params*
+- `req` *object<lspDocumentRequest>*
+
+*Return*
+
+- `object|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "lsp.hover",
+        "params": [
+            {}
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {}
+    }
+}
+```
+
+</details>
+
+#### lsp.signature
+
+`lsp.signature(req)`
+
+*Params*
+- `req` *object<lspDocumentRequest>*
+
+*Return*
+
+- `object|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "lsp.signature",
+        "params": [
+            {}
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {}
+    }
+}
+```
+
+</details>
+
+#### lsp.metadata
+
+`lsp.metadata(req)`
+
+*Params*
+- `req` *object<lspMetadataRequest>*
+
+*Return*
+
+- `object|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "lsp.metadata",
+        "params": [
+            {}
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {}
+    }
+}
+```
+
+</details>
+

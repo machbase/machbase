@@ -4,7 +4,7 @@ type: docs
 weight: 100
 ---
 
-{{< neo_since ver="8.0.75" />}}
+{{< neo_since ver="8.5.0" />}}
 
 `http` 모듈은 JSH 애플리케이션에서 사용할 수 있는 Node.js 호환 HTTP 클라이언트/서버 API를 제공합니다.
 
@@ -209,6 +209,10 @@ new Server([options])
 **Server 라우트/정적 메서드**
 
 - `get(path, handler)`
+- `post(path, handler)`
+- `put(path, handler)`
+- `delete(path, handler)`
+- `ws(path[, options], handler)`
 - `static(path, root)`
 - `staticFile(path, file)`
 
@@ -235,6 +239,62 @@ server.get('/hello/:name', (ctx) => {
 });
 server.serve();
 ```
+
+## Server.ws()
+
+{{< neo_since ver="8.5.2" />}}
+
+HTTP 서버에 WebSocket route를 간단히 연결하는 sugar API입니다.
+
+이 메서드는 내부적으로 `require('ws').WebSocketServer`를 생성해 현재 `http.Server`에 연결합니다.
+
+<h6>사용 형식</h6>
+
+```js
+server.ws(path, handler)
+server.ws(path, options, handler)
+```
+
+<h6>옵션</h6>
+
+- `verifyClient({ origin, req })`
+- `handleProtocols(protocols, req)`
+- `clientTracking` (기본값: `true`)
+
+<h6>사용 예시</h6>
+
+```js {linenos=table,linenostart=1}
+const http = require('http');
+
+const server = new http.Server({ network: 'tcp', address: '127.0.0.1:8080' });
+
+server.ws('/ws', {
+  verifyClient: ({ req }) => req.query('token') === 'allow',
+  handleProtocols: (protocols) => {
+    if (protocols.indexOf('machbase.rpc') >= 0) {
+      return 'machbase.rpc';
+    }
+    return false;
+  },
+}, (socket, request) => {
+  console.println(request.path, request.httpVersion, socket.protocol);
+  socket.on('message', (event) => {
+    socket.send('echo:' + event.data);
+  });
+});
+
+server.serve();
+```
+
+`handler`는 `(socket, request)`를 받습니다. `socket`은 `ws.WebSocket`과 같은 이벤트 모델을 사용하고, `request`는 handshake 요청 정보를 담은 helper object입니다.
+
+**Server.ws() 동작 참고**
+
+- `verifyClient()`와 `handleProtocols()`는 동기적으로 호출됩니다.
+- `verifyClient()`가 `false`를 반환하면 handshake는 거부됩니다.
+- `handleProtocols()`는 선택한 protocol 문자열 또는 거부를 의미하는 falsy 값을 반환해야 합니다.
+- `request`는 Node.js의 완전한 `IncomingMessage`가 아니라 JSH용 helper object입니다.
+- 저수준 `upgrade` 이벤트나 `handleUpgrade()` API는 제공하지 않습니다.
 
 **Server context**
 

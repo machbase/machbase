@@ -4,15 +4,15 @@ type: docs
 weight: 100
 ---
 
-{{< neo_since ver="8.0.75" />}}
+{{< neo_since ver="8.5.2" />}}
 
-`ws` 모듈은 JSH 애플리케이션에서 사용할 수 있는 WebSocket 클라이언트를 제공합니다.
-Go 네이티브 WebSocket client 위에 구현된 `WebSocket` 클래스 하나를 노출합니다.
+`ws` 모듈은 JSH 애플리케이션에서 사용할 수 있는 WebSocket 클라이언트/서버 API를 제공합니다.
+Go 네이티브 WebSocket 위에 구현된 `WebSocket`과 `WebSocketServer` 클래스를 노출합니다.
 
 일반적으로 아래처럼 사용합니다.
 
 ```js
-const { WebSocket } = require('ws');
+const { WebSocket, WebSocketServer } = require('ws');
 ```
 
 ## WebSocket
@@ -23,11 +23,15 @@ WebSocket 클라이언트 연결을 생성합니다.
 
 ```js
 new WebSocket(url)
+new WebSocket(url, protocol)
+new WebSocket(url, protocols)
 ```
 
 <h6>매개변수</h6>
 
 - `url` `String`: `ws://host:port/path`, `wss://host:port/path` 같은 WebSocket 서버 주소
+- `protocol` `String`: 요청할 subprotocol 하나
+- `protocols` `String[]`: 요청할 subprotocol 목록
 
 `url`이 없거나 문자열이 아니면 constructor는 `TypeError`를 발생시킵니다.
 
@@ -36,6 +40,7 @@ new WebSocket(url)
 | 속성 | 타입 | 설명 |
 |:-----|:-----|:-----|
 | `url` | String | constructor에 전달한 원래 WebSocket URL |
+| `protocol` | String | 협상된 subprotocol. 없으면 빈 문자열 |
 | `readyState` | Number | 현재 연결 상태 |
 
 ### readyState 값
@@ -63,6 +68,8 @@ ws.send(data)
 <h6>매개변수</h6>
 
 - `data` `String`: 전송할 텍스트 메시지
+
+현재 JSH 구현에서 `send()`는 텍스트 메시지 사용을 기준으로 설계되어 있습니다.
 
 소켓이 아직 열려 있지 않으면 `error` 이벤트가 발생합니다.
 
@@ -143,6 +150,91 @@ ws.on('error', (err) => {
 });
 ```
 
+## WebSocketServer
+
+WebSocket 서버를 생성해 기존 `http.Server`에 연결합니다.
+
+<h6>사용 형식</h6>
+
+```js
+new WebSocketServer(options)
+```
+
+<h6>주요 옵션</h6>
+
+- `server`: 연결할 `http.Server` 인스턴스. 필수.
+- `path`: 수락할 WebSocket path. 기본값은 `/`.
+- `clientTracking`: `true`면 `clients` 집합을 유지합니다. 기본값은 `true`.
+- `verifyClient({ origin, req })`: handshake 수락 여부를 동기적으로 결정합니다. `false`를 반환하면 요청을 거부합니다.
+- `handleProtocols(protocols, req)`: 요청된 subprotocol 목록에서 선택할 값을 반환합니다.
+
+<h6>속성</h6>
+
+| 속성 | 타입 | 설명 |
+|:-----|:-----|:-----|
+| `server` | http.Server | 연결된 HTTP 서버 |
+| `path` | String | 수락할 WebSocket path |
+| `clients` | Set | 연결된 client 집합. `clientTracking === false`이면 `null` |
+
+### WebSocketServer 이벤트
+
+- `connection(socket, request)`
+- `error(err)`
+- `close()`
+
+### connection request object
+
+`connection` 이벤트의 `request`는 Node.js의 `IncomingMessage`와 비슷한 helper object입니다.
+
+주요 속성:
+
+- `url`
+- `method`
+- `headers`
+- `rawHeaders`
+- `path`
+- `host`
+- `requestUri`
+- `httpVersion`
+- `complete`
+- `remoteAddress`
+- `socket.remoteAddress`
+
+주요 메서드:
+
+- `query(name)`
+- `getHeader(name)`
+- `hasHeader(name)`
+
+<h6>사용 예시</h6>
+
+```js {linenos=table,linenostart=1}
+const http = require('http');
+const { WebSocketServer } = require('ws');
+
+const server = new http.Server({ network: 'tcp', address: '127.0.0.1:8080' });
+const wss = new WebSocketServer({
+    server,
+    path: '/ws',
+    verifyClient: ({ req }) => req.query('token') === 'allow',
+    handleProtocols: (protocols) => {
+        if (protocols.indexOf('machbase.rpc') >= 0) {
+            return 'machbase.rpc';
+        }
+        return false;
+    },
+});
+
+wss.on('connection', (socket, request) => {
+    console.println(request.path, request.httpVersion, socket.protocol);
+    socket.on('message', (event) => {
+        socket.send('echo:' + event.data);
+    });
+});
+
+server.serve();
+```
+
 ## 사용 예시
 
 ```js {linenos=table,linenostart=1}
@@ -167,7 +259,12 @@ ws.on('close', () => {
 
 ## 동작 참고
 
-- 이 모듈은 WebSocket 클라이언트만 제공합니다. 서버 측 upgrade 처리는 포함하지 않습니다.
-- 연결 시작은 constructor 내부에서 비동기적으로 진행됩니다.
+- 클라이언트 연결 시작은 constructor 내부에서 비동기적으로 진행됩니다.
 - 연결 실패는 `error` 이벤트로 보고됩니다.
 - 수신 메시지는 text 또는 binary일 수 있지만, JavaScript의 `send()` 메서드는 텍스트 메시지 용도로 사용하는 것이 안전합니다.
+- `WebSocketServer`는 저수준 `upgrade` 이벤트 대신 `http.Server`에 연결되는 상위 수준 API를 제공합니다.
+- `verifyClient()`와 `handleProtocols()`는 동기적으로 동작합니다.
+- `verifyClient()`와 `handleProtocols()` 안에서 Promise/`await` 기반 비동기 흐름은 사용할 수 없습니다.
+- `request`는 Node.js의 완전한 `IncomingMessage` 구현이 아니라 `url`, `headers`, `query()`, `getHeader()` 같은 주요 필드/메서드만 제공하는 helper object입니다.
+- `clientTracking`은 `clients` 집합을 유지하지만, 저수준 소켓 제어 API를 추가로 제공하지는 않습니다.
+- 저수준 `upgrade`, `handleUpgrade()`, `noServer` 같은 API는 현재 제공하지 않습니다.
