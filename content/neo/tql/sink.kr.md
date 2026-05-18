@@ -102,7 +102,6 @@ APPEND( table("example") )
 - `heading` *heading(boolean)*: 첫 행에 컬럼 이름 포함
 - `delimiter` *delimiter(string)*: 구분자 지정(기본값 `,`)
 - `nullValue()` : `NULL` 값을 대체할 문자열(기본값 `nullValue('NULL')`) {{< neo_since ver="8.0.14" />}}
-- `substituteNull` *substitute(string)*: 이전 버전 옵션(현재는 `nullValue()` 사용)
 - `cache()` : 결과 데이터를 캐시합니다. {{< neo_since ver="8.0.43" />}}
 - `binaryformat()` *binaryformat(string)*: BINARY 타입의 값을 출력하는 형식을 지정합니다. `hex`, `base64`, `bytes`, `preview` {{< neo_since ver="8.5.2" />}}
 

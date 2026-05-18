@@ -102,7 +102,6 @@ For example, if a record was `{key: k, value:[v1,v2]}`, it generates an CSV reco
 - `heading` *heading(boolean)* add fields names as the first row
 - `delimiter` *delimiter(string)* specify fields separator other than the default comma(`,`).
 - `nullValue()` specify substitution string for the *NULL* value, default is `nullValue('NULL')`. {{< neo_since ver="8.0.14" />}}
-- `substituteNull` *substitute(string)* specify substitution string for the *NULL* value, default is `substituteNull('NULL')`. (deprecated, replaced by `nullValue()`)
 - `cache()` cache result data. see [Cache Result Data](../reading/#cache-result-data) for details. {{< neo_since ver="8.0.43" />}}
 - `binaryformat()` *binaryformat(string)*: specify the encoding format for BINARY columns. Supported formats: `hex`, `base64`, `bytes`, `preview` {{< neo_since ver="8.5.2" />}}
 
