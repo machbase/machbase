@@ -9,6 +9,7 @@ weight: 60
 * [CREATE USER](#create-user)
 * [DROP USER](#drop-user)
 * [ALTER USER](#alter-user)
+* [AUTH KEY 파일 생성](#auth-key-파일-생성)
 * [AUTH KEY를 포함한 사용자 생성](#auth-key를-포함한-사용자-생성)
 * [AUTH KEY 관리](#auth-key-관리)
 * [AUTH KEY 메타 조회](#auth-key-메타-조회)
@@ -70,6 +71,54 @@ alter_user_pwd_stmt ::= 'ALTER USER' user_name 'IDENTIFIED BY' password
 ALTER USER user1 IDENTIFIED BY password
 ```
 
+## AUTH KEY 파일 생성
+
+> **참고**: 다음 설명은 Machbase 8.5 이상에서 지원됩니다.
+
+AUTH KEY 인증은 클라이언트 측 개인키 파일과 Machbase 사용자에 등록된 공개키를 사용합니다.
+일반적으로 `openssl`로 키 쌍을 생성하고, 개인키는 클라이언트 호스트에 보관하며, 공개키만
+Machbase에 등록합니다.
+
+ECDSA P-256 키 생성 예:
+
+```bash
+openssl ecparam -name prime256v1 -genkey -noout -out app_user_ecdsa.key
+openssl ec -in app_user_ecdsa.key -pubout -out app_user_ecdsa.pub
+chmod 600 app_user_ecdsa.key
+```
+
+RSA 2048-bit 키 생성 예:
+
+```bash
+openssl genrsa -out app_user_rsa.key 2048
+openssl rsa -in app_user_rsa.key -pubout -out app_user_rsa.pub
+chmod 600 app_user_rsa.key
+```
+
+공개키를 SQL에 넣을 때는 PEM 파일을 줄바꿈이 `\n`으로 이스케이프된 한 줄 문자열로
+변환합니다.
+
+```bash
+awk '{printf "%s\\n", $0}' app_user_ecdsa.pub
+```
+
+명령 출력 결과를 `CREATE USER ... WITH AUTH KEY` 또는 `ALTER USER ... ADD AUTH KEY`의
+`key` 값으로 사용합니다.
+
+다음 예는 생성한 공개키로 등록 SQL 파일을 만드는 방법입니다.
+
+```bash
+KEY_ESCAPED=$(awk '{printf "%s\\n", $0}' app_user_ecdsa.pub)
+
+cat > add_app_user_key.sql <<EOF
+ALTER USER app_user ADD AUTH KEY (
+    key='${KEY_ESCAPED}',
+    valid_before='2047-12-31',
+    comment='openssl generated ecdsa key'
+);
+EOF
+```
+
 ## AUTH KEY를 포함한 사용자 생성
 
 > **참고**: 다음 설명은 Machbase 8.5 이상에서 지원됩니다.
@@ -79,7 +128,7 @@ Machbase는 비밀번호 인증과 함께 공개키 기반 challenge 인증용 A
 ```sql
 CREATE USER app_user IDENTIFIED BY 'App#1234'
 WITH AUTH KEY (
-    key='-----BEGIN PUBLIC KEY----- ... -----END PUBLIC KEY-----',
+    key='-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEshxcrSmtosaqWjhRkOoAw4v3QWqL\ns3OFN2jbJrustEc12uAn/IdtTG94KK69bY7DWl80pzQ48dNL+ENXe8PT3g==\n-----END PUBLIC KEY-----\n',
     valid_before='2047-12-31',
     comment='initial key'
 );
@@ -88,6 +137,7 @@ WITH AUTH KEY (
 설명:
 
 - `key`에는 PEM 형식 공개키를 넣습니다.
+- SQL 문장 안에서는 PEM 줄바꿈을 `\n`으로 입력할 수 있습니다.
 - `valid_before`는 `YYYY-MM-DD` 형식을 사용합니다.
 - `valid_before`에는 시각이 포함된 datetime 형식(`YYYY-MM-DD HH24:MI:SS`)을 사용할 수 없습니다.
 - `comment`는 선택입니다.
@@ -100,7 +150,7 @@ WITH AUTH KEY (
 
 ```sql
 ALTER USER app_user ADD AUTH KEY (
-    key='-----BEGIN PUBLIC KEY----- ... -----END PUBLIC KEY-----',
+    key='-----BEGIN RSA PUBLIC KEY-----\nMIIBCgKCAQEAqO+tddiAQzsT8iajPy5QJPamIlyq2zB01wgHSTs3OOrvw0uKoFQD\ncqKaDzRya73LETXIEev3nwhGCnG4SjedMHj3EH9/rRJphFtv/dzw0OHum/UhVulR\nIXUYzrTbKPTQ+qyjS8UXTteMncf9OOh4AQyS4+iJW+U344fxymR8USRgZ25N9jhf\n2gkKnn5YSPZHf8ZHQGeA7OXANBwPmH5dQwfqghXRa7Nk1hmkIAnQQXCBJW/Lin+x\nwQfqv8DVwNaiziz77voPwaeD5akq1JYWvcPlOnh+NN3tpu5gudke/t/In4NFJ3W9\n4unVcYIfxcdDSoht3AMObGmuDazOjQJFGQIDAQAB\n-----END RSA PUBLIC KEY-----\n',
     valid_before='2048-01-31',
     comment='rollover candidate'
 );

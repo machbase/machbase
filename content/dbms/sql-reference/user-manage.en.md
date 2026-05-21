@@ -9,6 +9,7 @@ weight: 60
 * [CREATE USER](#create-user)
 * [DROP USER](#drop-user)
 * [ALTER USER](#alter-user)
+* [Generate AUTH KEY Files](#generate-auth-key-files)
 * [Create a User with AUTH KEY](#create-a-user-with-auth-key)
 * [Manage AUTH KEY](#manage-auth-key)
 * [Query AUTH KEY Metadata](#query-auth-key-metadata)
@@ -70,6 +71,54 @@ The user can change the password through the following syntax.
 ALTER USER user1 IDENTIFIED BY password
 ```
 
+## Generate AUTH KEY Files
+
+> **Note**: The following behavior is supported from Machbase 8.5 or later.
+
+AUTH KEY authentication uses a client-side private key file and a public key registered
+to the Machbase user. In normal operation, generate the key pair with `openssl`, keep the
+private key on the client host, and register only the public key in Machbase.
+
+ECDSA P-256 key example:
+
+```bash
+openssl ecparam -name prime256v1 -genkey -noout -out app_user_ecdsa.key
+openssl ec -in app_user_ecdsa.key -pubout -out app_user_ecdsa.pub
+chmod 600 app_user_ecdsa.key
+```
+
+RSA 2048-bit key example:
+
+```bash
+openssl genrsa -out app_user_rsa.key 2048
+openssl rsa -in app_user_rsa.key -pubout -out app_user_rsa.pub
+chmod 600 app_user_rsa.key
+```
+
+To embed the public key in SQL, convert the PEM file into a single SQL string with
+escaped line breaks.
+
+```bash
+awk '{printf "%s\\n", $0}' app_user_ecdsa.pub
+```
+
+Use the command output as the `key` value in `CREATE USER ... WITH AUTH KEY` or
+`ALTER USER ... ADD AUTH KEY`.
+
+The following example creates a registration SQL file from the generated public key.
+
+```bash
+KEY_ESCAPED=$(awk '{printf "%s\\n", $0}' app_user_ecdsa.pub)
+
+cat > add_app_user_key.sql <<EOF
+ALTER USER app_user ADD AUTH KEY (
+    key='${KEY_ESCAPED}',
+    valid_before='2047-12-31',
+    comment='openssl generated ecdsa key'
+);
+EOF
+```
+
 ## Create a User with AUTH KEY
 
 > **Note**: The following behavior is supported from Machbase 8.5 or later.
@@ -80,7 +129,7 @@ authentication.
 ```sql
 CREATE USER app_user IDENTIFIED BY 'App#1234'
 WITH AUTH KEY (
-    key='-----BEGIN PUBLIC KEY----- ... -----END PUBLIC KEY-----',
+    key='-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEshxcrSmtosaqWjhRkOoAw4v3QWqL\ns3OFN2jbJrustEc12uAn/IdtTG94KK69bY7DWl80pzQ48dNL+ENXe8PT3g==\n-----END PUBLIC KEY-----\n',
     valid_before='2047-12-31',
     comment='initial key'
 );
@@ -89,6 +138,7 @@ WITH AUTH KEY (
 Notes:
 
 - `key` must contain a PEM public key.
+- In SQL text, PEM line breaks can be written as `\n`.
 - `valid_before` uses the `YYYY-MM-DD` format.
 - `valid_before` does not accept a datetime value with a time portion such as
   `YYYY-MM-DD HH24:MI:SS`.
@@ -105,7 +155,7 @@ Notes:
 
 ```sql
 ALTER USER app_user ADD AUTH KEY (
-    key='-----BEGIN PUBLIC KEY----- ... -----END PUBLIC KEY-----',
+    key='-----BEGIN RSA PUBLIC KEY-----\nMIIBCgKCAQEAqO+tddiAQzsT8iajPy5QJPamIlyq2zB01wgHSTs3OOrvw0uKoFQD\ncqKaDzRya73LETXIEev3nwhGCnG4SjedMHj3EH9/rRJphFtv/dzw0OHum/UhVulR\nIXUYzrTbKPTQ+qyjS8UXTteMncf9OOh4AQyS4+iJW+U344fxymR8USRgZ25N9jhf\n2gkKnn5YSPZHf8ZHQGeA7OXANBwPmH5dQwfqghXRa7Nk1hmkIAnQQXCBJW/Lin+x\nwQfqv8DVwNaiziz77voPwaeD5akq1JYWvcPlOnh+NN3tpu5gudke/t/In4NFJ3W9\n4unVcYIfxcdDSoht3AMObGmuDazOjQJFGQIDAQAB\n-----END RSA PUBLIC KEY-----\n',
     valid_before='2048-01-31',
     comment='rollover candidate'
 );

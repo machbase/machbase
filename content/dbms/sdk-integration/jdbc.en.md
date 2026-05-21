@@ -71,23 +71,8 @@ Connection conn = DriverManager.getConnection(sURL, sProps);
 jdbc:machbase://127.0.0.1:5656/machbasedb?AUTH_MODE=CHALLENGE&AUTH_SIG_SCHEME=ECDSA&AUTH_KEY_FILE=/opt/machbase/keys/app_user_ecdsa.pem
 ```
 
-However, `Properties` or `DataSource` is recommended because the key file path may be
-exposed more easily in logs or configuration dumps.
-
-### DataSource Example
-
-```java
-MachDataSource ds = new MachDataSource();
-ds.setServerName("127.0.0.1");
-ds.setPortNumber(5656);
-ds.setDatabaseName("machbasedb");
-ds.setUser("app_user");
-ds.setAuthMode("CHALLENGE");
-ds.setAuthSigScheme("ECDSA");
-ds.setAuthKeyFile("/opt/machbase/keys/app_user_ecdsa.pem");
-
-Connection conn = ds.getConnection();
-```
+However, using `Properties` is recommended because the key file path may be exposed more
+easily in logs or configuration dumps when it is included in the URL.
 
 ### Reconnect Behavior
 
