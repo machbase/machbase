@@ -35,6 +35,10 @@ The syntax for creating a user is:
 CREATE USER new_user IDENTIFIED BY password
 ```
 
+User names are converted to uppercase when they are created. For example,
+`CREATE USER app_user ...` is stored and displayed as `APP_USER` in metadata tables and
+`V$` views. Later connection and privilege statements refer to the same user name.
+
 
 ## DROP USER
 

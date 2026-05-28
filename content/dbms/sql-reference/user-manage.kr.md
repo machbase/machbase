@@ -35,6 +35,10 @@ create_user_stmt ::= 'CREATE USER' user_name 'IDENTIFIED BY' password
 CREATE USER new_user IDENTIFIED BY password
 ```
 
+사용자명은 생성 시 대문자로 변환되어 저장됩니다. 예를 들어 `CREATE USER app_user ...`로 생성하면
+메타 테이블과 `V$` 뷰에서는 `APP_USER`로 조회됩니다. 이후 접속이나 권한 부여 구문에서도 같은 사용자명으로
+처리됩니다.
+
 
 ## DROP USER
 
