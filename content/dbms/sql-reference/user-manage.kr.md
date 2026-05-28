@@ -79,12 +79,38 @@ AUTH KEY 인증은 클라이언트 측 개인키 파일과 Machbase 사용자에
 일반적으로 `openssl`로 키 쌍을 생성하고, 개인키는 클라이언트 호스트에 보관하며, 공개키만
 Machbase에 등록합니다.
 
+지원되는 알고리즘과 키 크기는 다음과 같습니다.
+
+| 공개키 알고리즘 | 지원 키 파라미터 | 지원 서명 스킴 | 해시 |
+| --- | --- | --- | --- |
+| ECDSA | P-256, P-384, P-521 | `ECDSA` | SHA-256 |
+| RSA | 2048, 3072, 4096 bits | `RSA_PKCS1_V15` | SHA-256 |
+| RSA | 2048, 3072, 4096 bits | `RSA_PSS` | SHA-256 |
+
+`AUTH_SIG_SCHEME`를 생략하면 키 알고리즘에 따라 기본 스킴을 사용합니다.
+
+- ECDSA 키: `ECDSA`
+- RSA 키: `RSA_PKCS1_V15`
+
+RSA-PSS를 사용하려면 클라이언트 접속 옵션에서 `AUTH_SIG_SCHEME=RSA_PSS`를 명시합니다.
+등록된 공개키 타입과 클라이언트가 요청한 서명 스킴이 맞지 않으면 인증이 실패합니다.
+
 ECDSA P-256 키 생성 예:
 
 ```bash
 openssl ecparam -name prime256v1 -genkey -noout -out app_user_ecdsa.key
 openssl ec -in app_user_ecdsa.key -pubout -out app_user_ecdsa.pub
 chmod 600 app_user_ecdsa.key
+```
+
+ECDSA P-384, P-521 키 생성 예:
+
+```bash
+openssl ecparam -name secp384r1 -genkey -noout -out app_user_ecdsa_p384.key
+openssl ec -in app_user_ecdsa_p384.key -pubout -out app_user_ecdsa_p384.pub
+
+openssl ecparam -name secp521r1 -genkey -noout -out app_user_ecdsa_p521.key
+openssl ec -in app_user_ecdsa_p521.key -pubout -out app_user_ecdsa_p521.pub
 ```
 
 RSA 2048-bit 키 생성 예:
@@ -94,6 +120,8 @@ openssl genrsa -out app_user_rsa.key 2048
 openssl rsa -in app_user_rsa.key -pubout -out app_user_rsa.pub
 chmod 600 app_user_rsa.key
 ```
+
+RSA 3072-bit, 4096-bit 키를 사용하려면 `openssl genrsa`의 마지막 인자를 각각 `3072`, `4096`으로 지정합니다.
 
 공개키를 SQL에 넣을 때는 PEM 파일을 줄바꿈이 `\n`으로 이스케이프된 한 줄 문자열로
 변환합니다.
@@ -156,7 +184,7 @@ ALTER USER app_user ADD AUTH KEY (
 );
 ```
 
-추가된 키는 기본적으로 비활성 상태(`ACTIVATED=0`)로 생성됩니다.
+추가된 키는 즉시 활성 상태(`ACTIVATED=1`)로 생성됩니다. 롤오버 기간에는 한 사용자에 여러 활성 AUTH KEY를 둘 수 있습니다.
 
 ### AUTH KEY 활성화 / 비활성화
 
@@ -197,7 +225,7 @@ ALTER USER app_user DROP AUTH KEY ID 3;
 - `KEY_ALGO`: 키 알고리즘 (`RSA`, `ECDSA`)
 - `KEY_PARAM`: 키 파라미터
   - RSA 키: 비트 길이 예) `2048`
-  - EC 키: 곡선 이름 예) `secp256r1`
+  - EC 키: 곡선 이름 예) `P-256`, `P-384`, `P-521`
 - `ACTIVATED`: 활성화 여부
 - `VALID_AFTER`, `VALID_BEFORE`: 유효 기간
 - `COMMENT`: 사용자 메모

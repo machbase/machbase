@@ -79,12 +79,39 @@ AUTH KEY authentication uses a client-side private key file and a public key reg
 to the Machbase user. In normal operation, generate the key pair with `openssl`, keep the
 private key on the client host, and register only the public key in Machbase.
 
+Supported algorithms and key sizes are as follows.
+
+| Public key algorithm | Supported key parameters | Supported signature scheme | Hash |
+| --- | --- | --- | --- |
+| ECDSA | P-256, P-384, P-521 | `ECDSA` | SHA-256 |
+| RSA | 2048, 3072, 4096 bits | `RSA_PKCS1_V15` | SHA-256 |
+| RSA | 2048, 3072, 4096 bits | `RSA_PSS` | SHA-256 |
+
+If `AUTH_SIG_SCHEME` is omitted, Machbase uses the default scheme for the key algorithm.
+
+- ECDSA key: `ECDSA`
+- RSA key: `RSA_PKCS1_V15`
+
+To use RSA-PSS, specify `AUTH_SIG_SCHEME=RSA_PSS` in the client connection options.
+Authentication fails if the registered public key type does not match the requested
+signature scheme.
+
 ECDSA P-256 key example:
 
 ```bash
 openssl ecparam -name prime256v1 -genkey -noout -out app_user_ecdsa.key
 openssl ec -in app_user_ecdsa.key -pubout -out app_user_ecdsa.pub
 chmod 600 app_user_ecdsa.key
+```
+
+ECDSA P-384 and P-521 key examples:
+
+```bash
+openssl ecparam -name secp384r1 -genkey -noout -out app_user_ecdsa_p384.key
+openssl ec -in app_user_ecdsa_p384.key -pubout -out app_user_ecdsa_p384.pub
+
+openssl ecparam -name secp521r1 -genkey -noout -out app_user_ecdsa_p521.key
+openssl ec -in app_user_ecdsa_p521.key -pubout -out app_user_ecdsa_p521.pub
 ```
 
 RSA 2048-bit key example:
@@ -94,6 +121,9 @@ openssl genrsa -out app_user_rsa.key 2048
 openssl rsa -in app_user_rsa.key -pubout -out app_user_rsa.pub
 chmod 600 app_user_rsa.key
 ```
+
+To use a 3072-bit or 4096-bit RSA key, pass `3072` or `4096` as the last argument of
+`openssl genrsa`.
 
 To embed the public key in SQL, convert the PEM file into a single SQL string with
 escaped line breaks.
@@ -161,7 +191,8 @@ ALTER USER app_user ADD AUTH KEY (
 );
 ```
 
-An added key is created as inactive by default (`ACTIVATED=0`).
+An added key is created as active immediately (`ACTIVATED=1`). During key rollover, a user
+can have multiple active AUTH KEY entries.
 
 ### Activate / Deactivate AUTH KEY
 
@@ -203,7 +234,7 @@ Major columns:
 - `KEY_ALGO`: key algorithm (`RSA`, `ECDSA`)
 - `KEY_PARAM`: key parameter
   - RSA key: bit length such as `2048`
-  - EC key: curve name such as `secp256r1`
+  - EC key: curve name such as `P-256`, `P-384`, `P-521`
 - `ACTIVATED`: whether the key is active
 - `VALID_AFTER`, `VALID_BEFORE`: validity period
 - `COMMENT`: user note

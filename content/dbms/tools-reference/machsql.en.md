@@ -70,6 +70,9 @@ Notes:
 - If `--auth-sig-scheme` is omitted, the default scheme is chosen from the key algorithm.
   - ECDSA key: `ECDSA`
   - RSA key: `RSA_PKCS1_V15`
+- Supported key parameters are ECDSA `P-256`, `P-384`, `P-521` and RSA `2048`, `3072`,
+  `4096` bits.
+- To use RSA-PSS authentication, specify `--auth-sig-scheme=RSA_PSS`.
 - `-p` is not used for authentication when `AUTH_MODE=CHALLENGE`.
 - On POSIX systems, restricting the private key file permission to `600` is recommended.
 

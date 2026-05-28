@@ -69,6 +69,8 @@ machsql -s 127.0.0.1 -u app_user \
 - `--auth-sig-scheme`를 생략하면 키 알고리즘 기준 기본 스킴을 사용합니다.
   - ECDSA 키: `ECDSA`
   - RSA 키: `RSA_PKCS1_V15`
+- 지원 키 파라미터는 ECDSA `P-256`, `P-384`, `P-521` 및 RSA `2048`, `3072`, `4096` bits입니다.
+- RSA-PSS 인증을 사용하려면 `--auth-sig-scheme=RSA_PSS`를 명시합니다.
 - `AUTH_MODE=CHALLENGE`에서는 `-p`를 인증에 사용하지 않습니다.
 - POSIX 환경에서는 개인키 파일 권한을 `600`으로 제한하는 것을 권장합니다.
 

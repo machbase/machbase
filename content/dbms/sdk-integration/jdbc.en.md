@@ -44,6 +44,9 @@ Notes:
 - If `AUTH_SIG_SCHEME` is omitted, the driver selects the default scheme from the key file.
   - EC key: `ECDSA`
   - RSA key: `RSA_PKCS1_V15`
+- Supported key parameters are ECDSA `P-256`, `P-384`, `P-521` and RSA `2048`, `3072`,
+  `4096` bits.
+- To use RSA-PSS authentication, specify `AUTH_SIG_SCHEME=RSA_PSS`.
 - If `AUTH_KEY_FILE` is provided and `AUTH_MODE` is omitted, the driver treats the
   connection as `CHALLENGE`.
 - An absolute path is recommended for the private key file. Relative paths are resolved
