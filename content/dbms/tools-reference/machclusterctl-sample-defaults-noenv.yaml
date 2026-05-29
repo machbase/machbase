@@ -1,0 +1,173 @@
+# machclusterctl 3-node operational defaults/fallback sample
+# Static example file that can be read without environment-variable substitution.
+#
+# This file is a compact defaults-oriented version of the topology used in a
+# 3-node manual test. The actual test file used separate home_path values for
+# each node, but nodes of the same type on different hosts can share the same
+# port/home_path defaults. Override port/home_path only when two or more nodes
+# of the same type are placed on the same host.
+#
+# Test topology:
+#   - dev90: machbase@192.168.0.90, primary coordinator, deployer, lookup master, broker, two warehouses
+#   - dev37: machbase@192.168.0.37, secondary coordinator, deployer, lookup monitor, broker, two warehouses
+#   - dev33: machbase@192.168.0.33, deployer, lookup slave, two warehouses
+
+version: "1"
+
+cluster:
+  name: "machclusterctl-3node-sample"
+
+  # With host aliases, user@IP is written once and nodes refer to logical names.
+  # In user@address, user is the SSH execution user and address is used for cluster node identity.
+  hosts:
+    dev90:
+      address: machbase@192.168.0.90
+    dev37:
+      address: machbase@192.168.0.37
+    dev33:
+      address: machbase@192.168.0.33
+
+  defaults:
+    # Nodes of the same type on different hosts can share the same home_path without conflict.
+    coordinator:
+      home_path: "/machbase/coordinator"
+      cluster_link_port: 6601
+      http_admin_port: 6602
+
+    deployer:
+      home_path: "/machbase/deployer"
+      cluster_link_port: 6621
+      http_admin_port: 6622
+
+    lookup:
+      home_path: "/machbase/lookup"
+      cluster_link_port: 6651
+      http_admin_port: 6652
+
+    broker:
+      home_path: "/machbase/broker"
+      cluster_link_port: 6681
+      http_admin_port: 6682
+      service_port: 6680
+
+    # The first warehouse on each server uses these defaults as-is.
+    # Only the second warehouse on the same server overrides the *_b path and ports below.
+    warehouse:
+      home_path: "/machbase/warehouse_a"
+      cluster_link_port: 6701
+      http_admin_port: 6702
+      service_port: 6700
+
+  package:
+    name: machbase
+    # package.path points to the source archive kept outside the coordinator home.
+    # registered_path in exported YAML is observed current metadata, not an install/upgrade input.
+    path: "/machbase/packages/machbase-ent-release-lightweight.tgz"
+
+  ssh:
+    key_file: "/machbase/.ssh/id_rsa"
+
+  coordinators:
+    - alias: coord-primary-1
+      host: dev90
+      role: primary
+
+    - alias: coord-secondary-1
+      host: dev37
+      cluster_link_port: 6611
+      http_admin_port: 6612
+      role: secondary
+
+  deployers:
+    # Each host has one deployer, so all deployers inherit defaults.deployer.
+    - alias: deployer-1
+      host: dev90
+
+    - alias: deployer-2
+      host: dev37
+
+    - alias: deployer-3
+      host: dev33
+
+  lookup:
+    # Lookup type has role semantics, so each node sets it explicitly.
+    # Master/monitor use defaults.lookup ports as-is.
+    # Only the slave shows a port override example.
+    - alias: lookup-master-1
+      host: dev90
+      deployer: deployer-1
+      type: master
+
+    - alias: lookup-monitor-1
+      host: dev37
+      deployer: deployer-2
+      type: monitor
+
+    - alias: lookup-slave-1
+      host: dev33
+      deployer: deployer-3
+      cluster_link_port: 6661
+      http_admin_port: 6662
+      type: slave
+
+  brokers:
+    - alias: broker-1
+      host: dev90
+      deployer: deployer-1
+
+    - alias: broker-2
+      host: dev37
+      deployer: deployer-2
+      cluster_link_port: 6691
+      http_admin_port: 6692
+      service_port: 6690
+
+  warehouse_groups:
+    # A warehouse group is a replication unit.
+    # This topology places two warehouses on each of three hosts.
+    # The first warehouse on each host inherits defaults.warehouse.
+    # The second warehouse overrides ports/paths to avoid conflicts on the same host.
+    - name: group1
+      nodes:
+        - alias: warehouse-group1-1
+          host: dev90
+          deployer: deployer-1
+
+        - alias: warehouse-group1-2
+          host: dev37
+          deployer: deployer-2
+
+    - name: group2
+      nodes:
+        # This is the second warehouse on dev37, so it overrides port/home_path.
+        - alias: warehouse-group2-1
+          host: dev37
+          deployer: deployer-2
+          home_path: "/machbase/warehouse_b"
+          cluster_link_port: 6711
+          http_admin_port: 6712
+          service_port: 6710
+
+        - alias: warehouse-group2-2
+          host: dev33
+          deployer: deployer-3
+
+    - name: group3
+      nodes:
+        # This is the second warehouse on dev33, so it overrides port/home_path.
+        - alias: warehouse-group3-1
+          host: dev33
+          deployer: deployer-3
+          home_path: "/machbase/warehouse_b"
+          cluster_link_port: 6711
+          http_admin_port: 6712
+          service_port: 6710
+
+        # This is the second warehouse on dev90, so it overrides port/home_path.
+        - alias: warehouse-group3-2
+          host: dev90
+          deployer: deployer-1
+          home_path: "/machbase/warehouse_b"
+          cluster_link_port: 6711
+          http_admin_port: 6712
+          service_port: 6710
