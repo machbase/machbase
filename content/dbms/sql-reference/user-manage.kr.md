@@ -9,6 +9,7 @@ weight: 60
 * [CREATE USER](#create-user)
 * [DROP USER](#drop-user)
 * [ALTER USER](#alter-user)
+* [PASSWORD POLICY](#password-policy)
 * [AUTH KEY 파일 생성](#auth-key-파일-생성)
 * [AUTH KEY를 포함한 사용자 생성](#auth-key를-포함한-사용자-생성)
 * [AUTH KEY 관리](#auth-key-관리)
@@ -35,6 +36,18 @@ create_user_stmt ::= 'CREATE USER' user_name 'IDENTIFIED BY' password
 CREATE USER new_user IDENTIFIED BY password
 ```
 
+비밀번호 정책을 함께 지정하려면 다음 확장 구문을 사용합니다.
+
+```sql
+CREATE USER user_name IDENTIFIED BY password PASSWORD POLICY { NONE | LOW | HIGH }
+```
+
+예제:
+
+```sql
+CREATE USER app_user IDENTIFIED BY "Aa!StrongPwd1" PASSWORD POLICY LOW;
+CREATE USER ops_user IDENTIFIED BY "Bb@StrongPwd2" PASSWORD POLICY HIGH;
+```
 사용자명은 생성 시 대문자로 변환되어 저장됩니다. 예를 들어 `CREATE USER app_user ...`로 생성하면
 메타 테이블과 `V$` 뷰에서는 `APP_USER`로 조회됩니다. 이후 접속이나 권한 부여 구문에서도 같은 사용자명으로
 처리됩니다.
@@ -75,6 +88,62 @@ alter_user_pwd_stmt ::= 'ALTER USER' user_name 'IDENTIFIED BY' password
 ALTER USER user1 IDENTIFIED BY password
 ```
 
+비밀번호를 변경하면서 정책도 함께 변경할 수 있습니다.
+
+```sql
+ALTER USER user_name IDENTIFIED BY password PASSWORD POLICY { NONE | LOW | HIGH }
+```
+
+정책을 변경할 때는 새 비밀번호를 함께 지정해야 합니다. `ALTER USER user_name PASSWORD POLICY HIGH`처럼 정책만 단독으로 변경하는 구문은 허용되지 않습니다.
+
+
+## PASSWORD POLICY
+
+비밀번호 정책은 `CREATE USER`와 `ALTER USER ... IDENTIFIED BY ...`에서 비밀번호 강도를 검증하는 기능입니다. 정책을 지정하지 않으면 기존 호환성을 위해 `NONE`이 적용됩니다.
+
+정책 종류:
+
+- `NONE`
+  - 비밀번호 강도 제약이 없습니다.
+  - 비밀번호 만료 시각(`VALID_BEFORE`)은 `NULL`입니다.
+- `LOW`
+  - 최소 길이 10자 이상이어야 합니다.
+  - 대문자, 소문자, 특수문자를 포함해야 합니다.
+  - 5자리 이상 연속 숫자, 증가/감소 숫자 연번, 키보드 연속 문자열은 사용할 수 없습니다.
+  - 비밀번호 만료 시각(`VALID_BEFORE`)은 `NULL`입니다.
+- `HIGH`
+  - `LOW` 규칙을 모두 적용합니다.
+  - 현재 비밀번호와 최근 24개 이내의 과거 비밀번호를 재사용할 수 없습니다.
+  - 비밀번호 설정 시점부터 90일 후로 만료 시각(`VALID_BEFORE`)이 자동 설정됩니다.
+
+정책 적용 예:
+
+```sql
+CREATE USER user1 IDENTIFIED BY "Aa!StrongPwd1";
+CREATE USER user2 IDENTIFIED BY "Bb@StrongPwd2" PASSWORD POLICY LOW;
+CREATE USER user3 IDENTIFIED BY "Cc#StrongPwd3" PASSWORD POLICY HIGH;
+
+ALTER USER user2 IDENTIFIED BY "Dd$NewPwd44";
+ALTER USER user2 IDENTIFIED BY "Ee%NewPwd55" PASSWORD POLICY LOW;
+ALTER USER user3 IDENTIFIED BY "Ff#NewPwd66" PASSWORD POLICY NONE;
+```
+
+주의 사항:
+
+- `ALTER USER ... IDENTIFIED BY ...`는 해당 사용자에 저장된 정책으로 새 비밀번호를 검증합니다.
+- `ALTER USER ... IDENTIFIED BY ... PASSWORD POLICY ...`는 새 정책으로 새 비밀번호를 검증합니다.
+- 정책을 `HIGH`로 설정하거나 `HIGH` 사용자의 비밀번호를 변경하면 `VALID_BEFORE`가 현재 시각 기준 90일 뒤로 갱신됩니다.
+- 정책을 `LOW` 또는 `NONE`으로 설정하면 `VALID_BEFORE`는 `NULL`로 갱신됩니다.
+- 만료된 계정은 로그인할 수 없으므로 본인 계정으로 비밀번호를 변경할 수 없습니다. 관리자 계정에서 새 비밀번호로 리셋해야 합니다.
+
+정책과 만료 시각은 `M$SYS_USERS`에서 확인할 수 있습니다.
+
+```sql
+SELECT USER_ID, NAME, PWD_POLICY_LEVEL, VALID_BEFORE
+FROM M$SYS_USERS;
+```
+
+`PWD_POLICY_LEVEL` 값은 `0 = NONE`, `1 = LOW`, `2 = HIGH`를 의미합니다. `VALID_BEFORE`는 값이 있을 때 `YYYY-MM-DD` 형식으로 표시됩니다.
 ## AUTH KEY 파일 생성
 
 > **참고**: 다음 설명은 Machbase 8.5 이상에서 지원됩니다.
