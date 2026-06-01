@@ -10,6 +10,10 @@ weight: 60
 * [DROP USER](#drop-user)
 * [ALTER USER](#alter-user)
 * [PASSWORD POLICY](#password-policy)
+* [AUTH KEY 파일 생성](#auth-key-파일-생성)
+* [AUTH KEY를 포함한 사용자 생성](#auth-key를-포함한-사용자-생성)
+* [AUTH KEY 관리](#auth-key-관리)
+* [AUTH KEY 메타 조회](#auth-key-메타-조회)
 * [CONNECT](#connect)
 * [GRANT/REVOKE](#grantrevoke)
 * [Managing User Example](#managing-user-example)
@@ -44,6 +48,9 @@ CREATE USER user_name IDENTIFIED BY password PASSWORD POLICY { NONE | LOW | HIGH
 CREATE USER app_user IDENTIFIED BY "Aa!StrongPwd1" PASSWORD POLICY LOW;
 CREATE USER ops_user IDENTIFIED BY "Bb@StrongPwd2" PASSWORD POLICY HIGH;
 ```
+사용자명은 생성 시 대문자로 변환되어 저장됩니다. 예를 들어 `CREATE USER app_user ...`로 생성하면
+메타 테이블과 `V$` 뷰에서는 `APP_USER`로 조회됩니다. 이후 접속이나 권한 부여 구문에서도 같은 사용자명으로
+처리됩니다.
 
 
 ## DROP USER
@@ -137,6 +144,181 @@ FROM M$SYS_USERS;
 ```
 
 `PWD_POLICY_LEVEL` 값은 `0 = NONE`, `1 = LOW`, `2 = HIGH`를 의미합니다. `VALID_BEFORE`는 값이 있을 때 `YYYY-MM-DD` 형식으로 표시됩니다.
+## AUTH KEY 파일 생성
+
+> **참고**: 다음 설명은 Machbase 8.5 이상에서 지원됩니다.
+
+AUTH KEY 인증은 클라이언트 측 개인키 파일과 Machbase 사용자에 등록된 공개키를 사용합니다.
+일반적으로 `openssl`로 키 쌍을 생성하고, 개인키는 클라이언트 호스트에 보관하며, 공개키만
+Machbase에 등록합니다.
+
+지원되는 알고리즘과 키 크기는 다음과 같습니다.
+
+| 공개키 알고리즘 | 지원 키 파라미터 | 지원 서명 스킴 | 해시 |
+| --- | --- | --- | --- |
+| ECDSA | P-256, P-384, P-521 | `ECDSA` | SHA-256 |
+| RSA | 2048, 3072, 4096 bits | `RSA_PKCS1_V15` | SHA-256 |
+| RSA | 2048, 3072, 4096 bits | `RSA_PSS` | SHA-256 |
+
+`AUTH_SIG_SCHEME`를 생략하면 키 알고리즘에 따라 기본 스킴을 사용합니다.
+
+- ECDSA 키: `ECDSA`
+- RSA 키: `RSA_PKCS1_V15`
+
+RSA-PSS를 사용하려면 클라이언트 접속 옵션에서 `AUTH_SIG_SCHEME=RSA_PSS`를 명시합니다.
+등록된 공개키 타입과 클라이언트가 요청한 서명 스킴이 맞지 않으면 인증이 실패합니다.
+
+ECDSA P-256 키 생성 예:
+
+```bash
+openssl ecparam -name prime256v1 -genkey -noout -out app_user_ecdsa.key
+openssl ec -in app_user_ecdsa.key -pubout -out app_user_ecdsa.pub
+chmod 600 app_user_ecdsa.key
+```
+
+ECDSA P-384, P-521 키 생성 예:
+
+```bash
+openssl ecparam -name secp384r1 -genkey -noout -out app_user_ecdsa_p384.key
+openssl ec -in app_user_ecdsa_p384.key -pubout -out app_user_ecdsa_p384.pub
+
+openssl ecparam -name secp521r1 -genkey -noout -out app_user_ecdsa_p521.key
+openssl ec -in app_user_ecdsa_p521.key -pubout -out app_user_ecdsa_p521.pub
+```
+
+RSA 2048-bit 키 생성 예:
+
+```bash
+openssl genrsa -out app_user_rsa.key 2048
+openssl rsa -in app_user_rsa.key -pubout -out app_user_rsa.pub
+chmod 600 app_user_rsa.key
+```
+
+RSA 3072-bit, 4096-bit 키를 사용하려면 `openssl genrsa`의 마지막 인자를 각각 `3072`, `4096`으로 지정합니다.
+
+공개키를 SQL에 넣을 때는 PEM 파일을 줄바꿈이 `\n`으로 이스케이프된 한 줄 문자열로
+변환합니다.
+
+```bash
+awk '{printf "%s\\n", $0}' app_user_ecdsa.pub
+```
+
+명령 출력 결과를 `CREATE USER ... WITH AUTH KEY` 또는 `ALTER USER ... ADD AUTH KEY`의
+`key` 값으로 사용합니다.
+
+다음 예는 생성한 공개키로 등록 SQL 파일을 만드는 방법입니다.
+
+```bash
+KEY_ESCAPED=$(awk '{printf "%s\\n", $0}' app_user_ecdsa.pub)
+
+cat > add_app_user_key.sql <<EOF
+ALTER USER app_user ADD AUTH KEY (
+    key='${KEY_ESCAPED}',
+    valid_before='2047-12-31',
+    comment='openssl generated ecdsa key'
+);
+EOF
+```
+
+## AUTH KEY를 포함한 사용자 생성
+
+> **참고**: 다음 설명은 Machbase 8.5 이상에서 지원됩니다.
+
+Machbase는 비밀번호 인증과 함께 공개키 기반 challenge 인증용 AUTH KEY를 사용자에 등록할 수 있습니다.
+
+```sql
+CREATE USER app_user IDENTIFIED BY 'App#1234'
+WITH AUTH KEY (
+    key='-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEshxcrSmtosaqWjhRkOoAw4v3QWqL\ns3OFN2jbJrustEc12uAn/IdtTG94KK69bY7DWl80pzQ48dNL+ENXe8PT3g==\n-----END PUBLIC KEY-----\n',
+    valid_before='2047-12-31',
+    comment='initial key'
+);
+```
+
+설명:
+
+- `key`에는 PEM 형식 공개키를 넣습니다.
+- SQL 문장 안에서는 PEM 줄바꿈을 `\n`으로 입력할 수 있습니다.
+- `valid_before`는 `YYYY-MM-DD` 형식을 사용합니다.
+- `valid_before`에는 시각이 포함된 datetime 형식(`YYYY-MM-DD HH24:MI:SS`)을 사용할 수 없습니다.
+- `comment`는 선택입니다.
+- `CREATE USER ... WITH AUTH KEY`로 생성한 첫 키는 즉시 활성 상태(`ACTIVATED=1`)로 등록됩니다.
+- 사용자는 비밀번호와 AUTH KEY를 동시에 보유할 수 있습니다. 실제 인증은 클라이언트의 `AUTH_MODE` 선택에 따라 비밀번호 또는 challenge 중 하나만 수행되며, 실패 시 다른 방식으로 자동 fallback하지 않습니다.
+
+## AUTH KEY 관리
+
+### AUTH KEY 추가
+
+```sql
+ALTER USER app_user ADD AUTH KEY (
+    key='-----BEGIN RSA PUBLIC KEY-----\nMIIBCgKCAQEAqO+tddiAQzsT8iajPy5QJPamIlyq2zB01wgHSTs3OOrvw0uKoFQD\ncqKaDzRya73LETXIEev3nwhGCnG4SjedMHj3EH9/rRJphFtv/dzw0OHum/UhVulR\nIXUYzrTbKPTQ+qyjS8UXTteMncf9OOh4AQyS4+iJW+U344fxymR8USRgZ25N9jhf\n2gkKnn5YSPZHf8ZHQGeA7OXANBwPmH5dQwfqghXRa7Nk1hmkIAnQQXCBJW/Lin+x\nwQfqv8DVwNaiziz77voPwaeD5akq1JYWvcPlOnh+NN3tpu5gudke/t/In4NFJ3W9\n4unVcYIfxcdDSoht3AMObGmuDazOjQJFGQIDAQAB\n-----END RSA PUBLIC KEY-----\n',
+    valid_before='2048-01-31',
+    comment='rollover candidate'
+);
+```
+
+추가된 키는 즉시 활성 상태(`ACTIVATED=1`)로 생성됩니다. 롤오버 기간에는 한 사용자에 여러 활성 AUTH KEY를 둘 수 있습니다.
+
+### AUTH KEY 활성화 / 비활성화
+
+```sql
+ALTER USER app_user DEACTIVATE AUTH KEY ID 3;
+ALTER USER app_user ACTIVATE AUTH KEY ID 3;
+```
+
+- 비활성화된 키는 challenge 인증에 사용할 수 없습니다.
+- 한 사용자에 여러 AUTH KEY를 보유할 수 있습니다.
+
+### AUTH KEY 유효기간 변경
+
+```sql
+ALTER USER app_user ALTER AUTH KEY ID 3 VALID_BEFORE='2048-06-30';
+```
+
+- `VALID_BEFORE`가 지난 키는 인증에 사용할 수 없습니다.
+- 입력 형식은 `YYYY-MM-DD`이며, 시각이 포함된 datetime 형식은 허용되지 않습니다.
+
+### AUTH KEY 삭제
+
+```sql
+ALTER USER app_user DROP AUTH KEY ID 3;
+```
+
+- 삭제된 키는 즉시 인증에 사용할 수 없습니다.
+- 사용자 삭제 시 해당 사용자의 AUTH KEY 메타도 함께 정리됩니다.
+
+## AUTH KEY 메타 조회
+
+등록된 AUTH KEY 메타는 `V$USER_AUTH_KEYS`에서 조회할 수 있습니다.
+
+주요 컬럼:
+
+- `KEY_ID`: AUTH KEY 식별자
+- `USER_NAME`: AUTH KEY 소유 사용자
+- `KEY_ALGO`: 키 알고리즘 (`RSA`, `ECDSA`)
+- `KEY_PARAM`: 키 파라미터
+  - RSA 키: 비트 길이 예) `2048`
+  - EC 키: 곡선 이름 예) `P-256`, `P-384`, `P-521`
+- `ACTIVATED`: 활성화 여부
+- `VALID_AFTER`, `VALID_BEFORE`: 유효 기간
+- `COMMENT`: 사용자 메모
+- `PUBKEY`: PEM 형식 공개키 본문
+
+```sql
+SELECT key_id, user_name, key_algo, key_param, activated, valid_before, comment
+  FROM V$USER_AUTH_KEYS
+ WHERE user_name='APP_USER'
+ ORDER BY key_id;
+```
+
+공개키 본문까지 확인하려면 `PUBKEY` 컬럼을 조회합니다.
+
+```sql
+SELECT key_id, user_name, pubkey
+  FROM V$USER_AUTH_KEYS
+ WHERE user_name='APP_USER'
+ ORDER BY key_id;
+```
 
 
 ## CONNECT

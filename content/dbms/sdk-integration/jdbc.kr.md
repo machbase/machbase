@@ -12,6 +12,71 @@ weight: 20
 
 [표준 함수 스펙 4.0](https://www.oracle.com/java/technologies/javase/javase-tech-database.html#corespec40)
 
+## JDBC 인증 방식
+
+> **참고**: AUTH KEY challenge 인증은 Machbase 8.5 이상에서 지원됩니다.
+
+Machbase JDBC는 기존 비밀번호 인증과 함께 공개키 기반 challenge 인증을 지원합니다.
+
+### 비밀번호 인증
+
+기존과 동일하게 `user`, `password`를 사용합니다.
+
+### AUTH KEY challenge 인증
+
+challenge 인증은 다음 속성을 사용합니다.
+
+- `AUTH_MODE`
+  - `PASSWORD` 또는 `CHALLENGE`
+- `AUTH_SIG_SCHEME`
+  - `ECDSA`
+  - `RSA_PKCS1_V15`
+  - `RSA_PSS`
+- `AUTH_KEY_FILE`
+  - 로컬 PEM 개인키 파일 경로
+
+설명:
+
+- `AUTH_MODE=CHALLENGE`에서는 `password`를 인증에 사용하지 않습니다.
+- `AUTH_KEY_FILE`은 필수입니다.
+- `AUTH_SIG_SCHEME`를 생략하면 키 파일 기반으로 기본 스킴을 자동 선택합니다.
+  - EC 키: `ECDSA`
+  - RSA 키: `RSA_PKCS1_V15`
+- 지원 키 파라미터는 ECDSA `P-256`, `P-384`, `P-521` 및 RSA `2048`, `3072`, `4096` bits입니다.
+- RSA-PSS 인증을 사용하려면 `AUTH_SIG_SCHEME=RSA_PSS`를 명시합니다.
+- `AUTH_KEY_FILE`만 주고 `AUTH_MODE`를 생략하면 내부적으로 `CHALLENGE`로 처리합니다.
+- 개인키 파일은 절대 경로 사용을 권장합니다. 상대 경로는 JVM의 현재 작업 디렉터리 기준으로 해석됩니다.
+- POSIX 환경에서는 개인키 파일 권한을 `600`으로 제한하는 것을 권장합니다.
+
+### Properties 예제
+
+```java
+String sURL = "jdbc:machbase://127.0.0.1:5656/machbasedb";
+
+Properties sProps = new Properties();
+sProps.put("user", "app_user");
+sProps.put("AUTH_MODE", "CHALLENGE");
+sProps.put("AUTH_SIG_SCHEME", "ECDSA");
+sProps.put("AUTH_KEY_FILE", "/opt/machbase/keys/app_user_ecdsa.pem");
+
+Class.forName("com.machbase.jdbc.MachDriver");
+Connection conn = DriverManager.getConnection(sURL, sProps);
+```
+
+### URL query string 예제
+
+```text
+jdbc:machbase://127.0.0.1:5656/machbasedb?AUTH_MODE=CHALLENGE&AUTH_SIG_SCHEME=ECDSA&AUTH_KEY_FILE=/opt/machbase/keys/app_user_ecdsa.pem
+```
+
+다만 키 파일 경로를 URL에 포함하면 로그나 설정 덤프에 더 쉽게 노출될 수 있으므로, 일반적으로는 `Properties` 사용을 권장합니다.
+
+### reconnect 동작
+
+- 초기 연결이 `AUTH_MODE=CHALLENGE`였다면 reconnect도 challenge 인증을 다시 수행합니다.
+- reconnect 시 이전 nonce나 signature를 재사용하지 않습니다.
+- challenge 실패 시 password fallback을 자동으로 수행하지 않습니다.
+
 ## 확장 JDBC 함수
 
 ### setIPv4

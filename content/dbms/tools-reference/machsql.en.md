@@ -17,6 +17,7 @@ machsql is an interactive tool that performs SQL queries through the terminal sc
 |-s | --server | Connecting server IP address (default: 127.0.0.1)|
 |-u | --user | User name (default: SYS)|
 |-p | --password | User password (default: MANAGER)|
+|-K | --auth-key-file | Authentication private key file path (Machbase 8.5+)|
 |-P | --port | Server port number (default: 5656)|
 |-n | --nls | NLS configuration|
 |-f | --script | SQL script file to run|
@@ -25,6 +26,7 @@ machsql is an interactive tool that performs SQL queries through the terminal sc
 |-i | --silent | Runs without the copyright notice|
 |-v | --verbose | Detailed output|
 |-r | --format | Specifies output file format (default: csv)|
+|   | --auth-sig-scheme | Authentication signature scheme (`ECDSA`, `RSA_PKCS1_V15`, `RSA_PSS`; Machbase 8.5+)|
 |-h | --help | Displays options|
 |-c | N/A | Add Connection parameter(Supported from version 6.1 or later)|
 
@@ -34,9 +36,61 @@ Example:
 machsql -s localhost -u sys -p manager
 machsql --server=localhost --user=sys --password=manager
 machsql -s localhost -u sys -p manager -f script.sql
+machsql -s localhost -u app_user -K /opt/machbase/keys/app_user_ecdsa.pem --auth-sig-scheme=ECDSA -f script.sql
 ## Supported from version 6.1 or later
 machsql -s 127.0.0.1 -u sys -p manager -P 8888 -c ALTERNATIVE_SERVERS=192.168.0.147:9209;CONNECTION_TIMEOUT=10
 ```
+
+## AUTH KEY Challenge Authentication
+
+> **Note**: This feature is supported from Machbase 8.5 or later.
+
+`machsql` supports public-key-based challenge authentication in addition to password
+authentication.
+
+### Using Dedicated Options
+
+```bash
+machsql -s 127.0.0.1 -u app_user \
+    -K /opt/machbase/keys/app_user_ecdsa.pem \
+    --auth-sig-scheme=ECDSA \
+    -f script.sql
+```
+
+```bash
+machsql -s 127.0.0.1 -u app_user \
+    -K /opt/machbase/keys/app_user_rsa.pem \
+    --auth-sig-scheme=RSA_PSS \
+    -f script.sql
+```
+
+Notes:
+
+- `-K`, `--auth-key-file` internally enables `AUTH_MODE=CHALLENGE`.
+- If `--auth-sig-scheme` is omitted, the default scheme is chosen from the key algorithm.
+  - ECDSA key: `ECDSA`
+  - RSA key: `RSA_PKCS1_V15`
+- Supported key parameters are ECDSA `P-256`, `P-384`, `P-521` and RSA `2048`, `3072`,
+  `4096` bits.
+- To use RSA-PSS authentication, specify `--auth-sig-scheme=RSA_PSS`.
+- `-p` is not used for authentication when `AUTH_MODE=CHALLENGE`.
+- On POSIX systems, restricting the private key file permission to `600` is recommended.
+
+### Using a Connection String
+
+```bash
+machsql -c "SERVER=127.0.0.1;PORT_NO=5656;UID=APP_USER;AUTH_MODE=CHALLENGE;AUTH_SIG_SCHEME=ECDSA;AUTH_KEY_FILE=/opt/machbase/keys/app_user_ecdsa.pem;" -f script.sql
+```
+
+Because the connection string form may expose the key file path in process arguments or
+logs, using `-K` is recommended when possible.
+
+### Failure Cases
+
+- Authentication fails if the key file does not exist.
+- Authentication fails if the key type does not match `AUTH_SIG_SCHEME`.
+- Expired (`VALID_BEFORE`) or deactivated AUTH KEY entries cannot be used for
+  authentication.
 
 ## Environment Variable MACHBASE_CONNECTION_STRING
 

@@ -26,6 +26,7 @@ Standard JDBC driver for Java applications:
 - Standard JDBC interface
 - Connection pooling support
 - Spring/Hibernate compatible
+- AUTH KEY challenge authentication support (Machbase 8.5 or later)
 - APPEND API support
 
 **Use when**: Building Java applications, need standard JDBC
@@ -96,7 +97,7 @@ SQLDisconnect(conn);
 ### Java (JDBC)
 
 ```java
-Class.forName("com.machbase.jdbc.driver");
+Class.forName("com.machbase.jdbc.MachDriver");
 Connection conn = DriverManager.getConnection(
     "jdbc:machbase://127.0.0.1:5656/MACHBASE",
     "SYS", "MANAGER"
@@ -275,7 +276,7 @@ spring:
     url: jdbc:machbase://127.0.0.1:5656/MACHBASE
     username: SYS
     password: MANAGER
-    driver-class-name: com.machbase.jdbc.driver
+    driver-class-name: com.machbase.jdbc.MachDriver
 ```
 
 ### Django (Python)

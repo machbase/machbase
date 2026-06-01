@@ -10,6 +10,10 @@ weight: 60
 * [DROP USER](#drop-user)
 * [ALTER USER](#alter-user)
 * [PASSWORD POLICY](#password-policy)
+* [Generate AUTH KEY Files](#generate-auth-key-files)
+* [Create a User with AUTH KEY](#create-a-user-with-auth-key)
+* [Manage AUTH KEY](#manage-auth-key)
+* [Query AUTH KEY Metadata](#query-auth-key-metadata)
 * [CONNECT](#connect)
 * [GRANT/REVOKE](#grantrevoke)
 * [Managing User Example](#managing-user-example)
@@ -44,6 +48,9 @@ Examples:
 CREATE USER app_user IDENTIFIED BY "Aa!StrongPwd1" PASSWORD POLICY LOW;
 CREATE USER ops_user IDENTIFIED BY "Bb@StrongPwd2" PASSWORD POLICY HIGH;
 ```
+User names are converted to uppercase when they are created. For example,
+`CREATE USER app_user ...` is stored and displayed as `APP_USER` in metadata tables and
+`V$` views. Later connection and privilege statements refer to the same user name.
 
 
 ## DROP USER
@@ -137,6 +144,190 @@ FROM M$SYS_USERS;
 ```
 
 `PWD_POLICY_LEVEL` means `0 = NONE`, `1 = LOW`, and `2 = HIGH`. `VALID_BEFORE` is displayed in `YYYY-MM-DD` format when it has a value.
+## Generate AUTH KEY Files
+
+> **Note**: The following behavior is supported from Machbase 8.5 or later.
+
+AUTH KEY authentication uses a client-side private key file and a public key registered
+to the Machbase user. In normal operation, generate the key pair with `openssl`, keep the
+private key on the client host, and register only the public key in Machbase.
+
+Supported algorithms and key sizes are as follows.
+
+| Public key algorithm | Supported key parameters | Supported signature scheme | Hash |
+| --- | --- | --- | --- |
+| ECDSA | P-256, P-384, P-521 | `ECDSA` | SHA-256 |
+| RSA | 2048, 3072, 4096 bits | `RSA_PKCS1_V15` | SHA-256 |
+| RSA | 2048, 3072, 4096 bits | `RSA_PSS` | SHA-256 |
+
+If `AUTH_SIG_SCHEME` is omitted, Machbase uses the default scheme for the key algorithm.
+
+- ECDSA key: `ECDSA`
+- RSA key: `RSA_PKCS1_V15`
+
+To use RSA-PSS, specify `AUTH_SIG_SCHEME=RSA_PSS` in the client connection options.
+Authentication fails if the registered public key type does not match the requested
+signature scheme.
+
+ECDSA P-256 key example:
+
+```bash
+openssl ecparam -name prime256v1 -genkey -noout -out app_user_ecdsa.key
+openssl ec -in app_user_ecdsa.key -pubout -out app_user_ecdsa.pub
+chmod 600 app_user_ecdsa.key
+```
+
+ECDSA P-384 and P-521 key examples:
+
+```bash
+openssl ecparam -name secp384r1 -genkey -noout -out app_user_ecdsa_p384.key
+openssl ec -in app_user_ecdsa_p384.key -pubout -out app_user_ecdsa_p384.pub
+
+openssl ecparam -name secp521r1 -genkey -noout -out app_user_ecdsa_p521.key
+openssl ec -in app_user_ecdsa_p521.key -pubout -out app_user_ecdsa_p521.pub
+```
+
+RSA 2048-bit key example:
+
+```bash
+openssl genrsa -out app_user_rsa.key 2048
+openssl rsa -in app_user_rsa.key -pubout -out app_user_rsa.pub
+chmod 600 app_user_rsa.key
+```
+
+To use a 3072-bit or 4096-bit RSA key, pass `3072` or `4096` as the last argument of
+`openssl genrsa`.
+
+To embed the public key in SQL, convert the PEM file into a single SQL string with
+escaped line breaks.
+
+```bash
+awk '{printf "%s\\n", $0}' app_user_ecdsa.pub
+```
+
+Use the command output as the `key` value in `CREATE USER ... WITH AUTH KEY` or
+`ALTER USER ... ADD AUTH KEY`.
+
+The following example creates a registration SQL file from the generated public key.
+
+```bash
+KEY_ESCAPED=$(awk '{printf "%s\\n", $0}' app_user_ecdsa.pub)
+
+cat > add_app_user_key.sql <<EOF
+ALTER USER app_user ADD AUTH KEY (
+    key='${KEY_ESCAPED}',
+    valid_before='2047-12-31',
+    comment='openssl generated ecdsa key'
+);
+EOF
+```
+
+## Create a User with AUTH KEY
+
+> **Note**: The following behavior is supported from Machbase 8.5 or later.
+
+Machbase can register an AUTH KEY for public-key challenge authentication together with password
+authentication.
+
+```sql
+CREATE USER app_user IDENTIFIED BY 'App#1234'
+WITH AUTH KEY (
+    key='-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEshxcrSmtosaqWjhRkOoAw4v3QWqL\ns3OFN2jbJrustEc12uAn/IdtTG94KK69bY7DWl80pzQ48dNL+ENXe8PT3g==\n-----END PUBLIC KEY-----\n',
+    valid_before='2047-12-31',
+    comment='initial key'
+);
+```
+
+Notes:
+
+- `key` must contain a PEM public key.
+- In SQL text, PEM line breaks can be written as `\n`.
+- `valid_before` uses the `YYYY-MM-DD` format.
+- `valid_before` does not accept a datetime value with a time portion such as
+  `YYYY-MM-DD HH24:MI:SS`.
+- `comment` is optional.
+- The first key created by `CREATE USER ... WITH AUTH KEY` is registered as active
+  (`ACTIVATED=1`).
+- A user may own both a password and one or more AUTH KEY entries. The actual
+  authentication method is chosen by the client's `AUTH_MODE`, and there is no automatic
+  fallback from one method to the other on failure.
+
+## Manage AUTH KEY
+
+### Add AUTH KEY
+
+```sql
+ALTER USER app_user ADD AUTH KEY (
+    key='-----BEGIN RSA PUBLIC KEY-----\nMIIBCgKCAQEAqO+tddiAQzsT8iajPy5QJPamIlyq2zB01wgHSTs3OOrvw0uKoFQD\ncqKaDzRya73LETXIEev3nwhGCnG4SjedMHj3EH9/rRJphFtv/dzw0OHum/UhVulR\nIXUYzrTbKPTQ+qyjS8UXTteMncf9OOh4AQyS4+iJW+U344fxymR8USRgZ25N9jhf\n2gkKnn5YSPZHf8ZHQGeA7OXANBwPmH5dQwfqghXRa7Nk1hmkIAnQQXCBJW/Lin+x\nwQfqv8DVwNaiziz77voPwaeD5akq1JYWvcPlOnh+NN3tpu5gudke/t/In4NFJ3W9\n4unVcYIfxcdDSoht3AMObGmuDazOjQJFGQIDAQAB\n-----END RSA PUBLIC KEY-----\n',
+    valid_before='2048-01-31',
+    comment='rollover candidate'
+);
+```
+
+An added key is created as active immediately (`ACTIVATED=1`). During key rollover, a user
+can have multiple active AUTH KEY entries.
+
+### Activate / Deactivate AUTH KEY
+
+```sql
+ALTER USER app_user DEACTIVATE AUTH KEY ID 3;
+ALTER USER app_user ACTIVATE AUTH KEY ID 3;
+```
+
+- A deactivated key cannot be used for challenge authentication.
+- A user can own multiple AUTH KEY entries.
+
+### Change AUTH KEY Expiration
+
+```sql
+ALTER USER app_user ALTER AUTH KEY ID 3 VALID_BEFORE='2048-06-30';
+```
+
+- A key past `VALID_BEFORE` cannot be used for authentication.
+- The input format is `YYYY-MM-DD`, and a datetime value with a time portion is not
+  accepted.
+
+### Drop AUTH KEY
+
+```sql
+ALTER USER app_user DROP AUTH KEY ID 3;
+```
+
+- A dropped key cannot be used for authentication immediately.
+- When a user is dropped, the user's AUTH KEY metadata is also removed.
+
+## Query AUTH KEY Metadata
+
+Registered AUTH KEY metadata can be queried from `V$USER_AUTH_KEYS`.
+
+Major columns:
+
+- `KEY_ID`: AUTH KEY identifier
+- `USER_NAME`: owner of the AUTH KEY
+- `KEY_ALGO`: key algorithm (`RSA`, `ECDSA`)
+- `KEY_PARAM`: key parameter
+  - RSA key: bit length such as `2048`
+  - EC key: curve name such as `P-256`, `P-384`, `P-521`
+- `ACTIVATED`: whether the key is active
+- `VALID_AFTER`, `VALID_BEFORE`: validity period
+- `COMMENT`: user note
+- `PUBKEY`: PEM public key body
+
+```sql
+SELECT key_id, user_name, key_algo, key_param, activated, valid_before, comment
+  FROM V$USER_AUTH_KEYS
+ WHERE user_name='APP_USER'
+ ORDER BY key_id;
+```
+
+To inspect the public key body, query the `PUBKEY` column.
+
+```sql
+SELECT key_id, user_name, pubkey
+  FROM V$USER_AUTH_KEYS
+ WHERE user_name='APP_USER'
+ ORDER BY key_id;
+```
 
 
 ## CONNECT
