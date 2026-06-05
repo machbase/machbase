@@ -6,7 +6,7 @@ weight: 50
 
 Coordinator is a cluster-wide management tool.
 
-Only exits in Cluster Edition Package.
+Only exists in Cluster Edition Package.
 
 ## Options and Features
 
@@ -36,29 +36,49 @@ mach@localhost:~$ machcoordinatoradmin -h
 |--list-node[=node] | Lists information of nodes (only specific nodes can be output)|
 |--add-node=node | Adds node|
 |--remove-node=node | Deletes node|
+|--attach-node=node | Attaches an existing node to cluster metadata|
+|--detach-node=node | Detaches a node from cluster metadata|
 |--upgrade-node=node | Upgrades node|
 |--startup-node=node | Runs node|
 |--shutdown-node=node | Terminates node|
 |--kill-node=node | Stops node|
+|--startup-lookup | Starts lookup nodes|
+|--shutdown-lookup | Stops lookup nodes|
+|--set-lookup-master=node | Sets the lookup master node|
 |--cluster-status | Outputs each node status of the cluster|
 |--cluster-status-full | Outputs of each node status of cluster in detail|
+|--verbose | Prints deployer status together in cluster status output|
 |--cluster-node | Outputs information of cluster|
-|--set-group-state=`[normal | readonly]` | Changes the status of a specific warehouse group
+|--set-group-state=`[normal | readonly]` | Changes the status of a specific warehouse group|
+|--set-warehouse-state=`[normal | scrapped]` | Changes the state of the warehouse node specified by `--node`|
+|--force-restore-warehouse=node | Force-restores a scrapped warehouse node|
 |--get-host-resource | Outputs host resource information where each node is located|
 |--host-resource-enable | Starts collecting Host resource information of each node|
 |--host-resource-disable | Stops collecting Host resource information for each node|
+|--deactivate-broker=node | Changes the specified node to inactive state|
+|--activate-broker=node | Changes the specified node to normal state|
+|--snapshot-interval=sec | Sets the snapshot interval|
+|--exec-snapshot | Executes a snapshot (requires `--group`)|
+|--snapshot-recover=node | Recovers snapshot data for the specified node|
+|--exec-sync=node | Executes sync for the specified node|
+|--snapshot-clean | Cleans snapshots|
 
 |Additional Options|Description|Required Options|
 |--|--|--|
---file-name=filename | File name| --add-package|
-|--port-no=portno | Port number| --add-node|
+|--file-name=filename | File name| --add-package|
+|--port-no=portno | Service port number| --add-node, --attach-node|
+|--http-port-no=portno | HTTP administration port number| --add-node, --attach-node|
 |--deployer=node | Deployer node name| --add-node|
-|--package-name=packagename | Package name to be the installation source| --add-package|
-|--home-path=path | Based on Deployer server, installation path of current Node| --add-node|
-|--node-type=`[broker | warehouse]` | Node type to install (choose between broker/warehouse)| --add-node |
-|--group=groupname | Group name of the node to install| --add-node |
-|--replication=host:port | host: port to exchange replication| --add-node |
-|--no-replicate |Does not use Replication on the node to install |--add-node|
+|--package-name=packagename | Package name to use as the installation source| --add-node, --upgrade-node|
+|--home-path=path | Installation path of the current node, based on the Deployer server| --add-node, --attach-node|
+|--node-type=`[broker | warehouse | lookup]` | Node type| --add-node, --attach-node |
+|--lookup-type=`[master | slave | monitor]` | Lookup node type| --add-node, --attach-node |
+|--node=node | Target node name or alias for state changes| --set-warehouse-state|
+|--alias=alias | Alias of the node to add or attach| --add-node, --attach-node|
+|--dbs-path=path | Database file path for broker/warehouse nodes| --add-node|
+|--group=groupname | Group name of the node to install| --add-node, --attach-node, --set-group-state, --exec-snapshot |
+|--replication=host:port | host:port to exchange replication| --add-node, --attach-node |
+|--no-replicate |Does not use Replication on the node to install |--add-node, --attach-node|
 |--primary=host:port | Specifies the node name of the Primary Coordinator when installing the Secondary Coordinator |-u, --startup|
 |--host=host | Specifies specific host to output Host resource information| --get-host-resource|
 |--metric=`[cpu|memory|disk|network]` | Specifies specific metric to output Host resource information| --get-host-resource|
@@ -91,7 +111,7 @@ mach@localhost:~$ machcoordinatoradmin -c
      All Rights Reserved
 -------------------------------------------------------------------------
 Coordinator metadata created successfully.
-  
+
 mach@localhost:~$ machcoordinatoradmin -d
 -------------------------------------------------------------------------
      Machbase Coordinator Administration Tool
@@ -122,13 +142,13 @@ mach@localhost:~$ machcoordinatoradmin --configuration
 -------------------------------------------------------------------------
 Name  : CLUSTER
 Value : 3
- 
+
 Name  : DECISION
 Value : ON
- 
+
 Name  : HOST-RESOURCE
 Value : OFF
-  
+
 mach@localhost:~$ machcoordinatoradmin --configuration=decision
 -------------------------------------------------------------------------
      Machbase Coordinator Administration Tool
@@ -192,8 +212,8 @@ mach@localhost:~$ machcoordinatoradmin --activate
               Name : CLUSTER
              Value : 3
             Format : text/plain
- 
- 
+
+
 mach@localhost:~$ machcoordinatoradmin --deactivate
 -------------------------------------------------------------------------
      Machbase Coordinator Administration Tool
@@ -203,7 +223,7 @@ mach@localhost:~$ machcoordinatoradmin --deactivate
 -------------------------------------------------------------------------
               Name : CLUSTER
              Value : 0
-            Format : text/plain 
+            Format : text/plain
 ```
 
 ## List Package Information
@@ -227,12 +247,12 @@ mach@localhost:~$ machcoordinatoradmin --list-package
 Package Name : machbase
 File Name    : machbase-cluster-6bab497c9.develop-LINUX-X86-64-release-lightweight.tgz
 File Size    : 64630670 bytes
- 
+
 Package Name : machbase2
 File Name    : machbase-cluster-e3c0717.develop-LINUX-X86-64-release-lightweight.tgz
 File Size    : 64677030 bytes
- 
- 
+
+
 mach@localhost:~$ machcoordinatoradmin --list-package=machbase
 -------------------------------------------------------------------------
      Machbase Coordinator Administration Tool
@@ -244,6 +264,68 @@ Package Name : machbase
 File Name    : machbase-cluster-6bab497c9.develop-LINUX-X86-64-release-lightweight.tgz
 File Size    : 64630670 bytes
 ```
+
+## Add Node, Alias, And DBS_PATH
+
+When adding a broker or warehouse node, specify `--node-type`, `--deployer`, `--package-name`, `--home-path`, and `--port-no` together. If an HTTP administration port is required, specify `--http-port-no`.
+
+Example:
+
+```
+machcoordinatoradmin \
+  --add-node=192.168.0.32:5401 \
+  --node-type=warehouse \
+  --deployer=192.168.0.32:5201 \
+  --package-name=machbase \
+  --home-path=/home/machbase/warehouse_a1 \
+  --port-no=5400 \
+  --http-port-no=5402 \
+  --group=Group1 \
+  --alias=warehouse-a1 \
+  --dbs-path=/data/machbase/warehouse_a1_dbs
+```
+
+When adding or attaching a lookup node, specify `--node-type=lookup` and `--lookup-type` together.
+
+Example:
+
+```
+machcoordinatoradmin \
+  --add-node=192.168.0.32:5601 \
+  --node-type=lookup \
+  --lookup-type=master \
+  --deployer=192.168.0.32:5201 \
+  --package-name=machbase \
+  --home-path=/home/machbase/lookup1 \
+  --alias=lookup-master-1
+```
+
+Use `--attach-node` to attach an existing node to cluster metadata. `--attach-node` can use `--alias`, but it cannot use `--dbs-path`.
+
+```
+machcoordinatoradmin \
+  --attach-node=192.168.0.32:5401 \
+  --node-type=warehouse \
+  --home-path=/home/machbase/warehouse_a1 \
+  --port-no=5400 \
+  --http-port-no=5402 \
+  --group=Group1 \
+  --alias=warehouse-a1
+```
+
+`--alias` can be specified with `--add-node` and `--attach-node`. If it is omitted, the coordinator automatically generates an alias in the form `coordinator-N`, `deployer-N`, `broker-N`, `warehouse-N`, or `lookup-N` according to the node type.
+
+An alias must be at least one character and can contain only letters, digits, `-`, `_`, and `.`. It must be unique across the cluster and must not collide with any real node name.
+
+There is no separate command to change only the alias after registration.
+
+When resolving a command target, the coordinator checks the real node name first and then checks the alias. Therefore aliases can be used with `--startup-node`, `--shutdown-node`, `--kill-node`, `--remove-node`, `--detach-node`, `--upgrade-node`, `--set-lookup-master`, `--set-warehouse-state`, `--force-restore-warehouse`, `--snapshot-recover`, and `--exec-sync`. Status output can display a node as `alias(real-node-name)` when an alias exists.
+
+`--dbs-path` can be used only when adding a broker or warehouse node with `--add-node`. It cannot be used for lookup, coordinator, or deployer nodes, and it cannot be combined with other commands such as `--attach-node` or `--upgrade-node`.
+
+The `--dbs-path` value must start with `/` or `?`. Newlines, tabs, and trailing blanks are not allowed. Values that directly specify system paths such as `/`, `/etc`, `/usr`, `/home`, and `/bin` are rejected. A real data directory under a system path, such as `/home/machbase/warehouse_a1_dbs`, can be specified as a separate directory.
+
+When an absolute path is specified as a custom `DBS_PATH`, the directory must not exist when the node is added. The deployer creates the directory before running `machadmin -c`. If the directory already exists, adding the node fails with `DBS_PATH already exists`. If `--dbs-path` is omitted, the broker/warehouse configuration records the default value `DBS_PATH = ?/dbs`. When a broker/warehouse node is removed with `--remove-node`, an explicit absolute `DBS_PATH` is cleaned up separately from the node home path.
 
 
 ## List Node Information
@@ -274,7 +356,7 @@ Coordinator Host      : 192.168.0.32:5101
 Last Response Time    : 497590
 Last Modify Time      : 421020408
 Last Response Elapsed : 1006148
- 
+
 Node Name             : 192.168.0.32:5201
 Node Type             : deployer
 Group Name            : Deployer
@@ -284,10 +366,11 @@ Coordinator Host      : 192.168.0.32:5101
 Last Response Time    : 497594
 Last Modify Time      : 404915419
 Last Response Elapsed : 1006128
- 
+
 Node Name             : 192.168.0.32:5301
 Node Type             : broker
 Port Number           : 5757
+Http Port             : 5302
 Deployer              : 192.168.0.32:5201
 Package Name          : machbase
 Home Path             : /home/machbase/broker1
@@ -298,10 +381,11 @@ Coordinator Host      : 192.168.0.32:5101
 Last Response Time    : 497544
 Last Modify Time      : 353606480
 Last Response Elapsed : 1006157
- 
+
 Node Name             : 192.168.0.32:5401
 Node Type             : warehouse
 Port Number           : 5400
+Http Port             : 5402
 Deployer              : 192.168.0.32:5201
 Package Name          : machbase
 Home Path             : /home/machbase/warehouse_a1
@@ -312,7 +396,7 @@ Coordinator Host      : 192.168.0.32:5101
 Last Response Time    : 497556
 Last Modify Time      : 332480933
 Last Response Elapsed : 1006160
-  
+
 mach@localhost:~$  machcoordinatoradmin --list-node=192.168.0.32:5401
 -------------------------------------------------------------------------
      Machbase Coordinator Administration Tool
@@ -323,6 +407,7 @@ mach@localhost:~$  machcoordinatoradmin --list-node=192.168.0.32:5401
 Node Name             : 192.168.0.32:5401
 Node Type             : warehouse
 Port Number           : 5400
+Http Port             : 5402
 Deployer              : 192.168.0.32:5201
 Package Name          : machbase
 Home Path             : /home/cumulus/warehouse_a1
@@ -356,7 +441,7 @@ mach@localhost:~$ machcoordinatoradmin --cluster-status
 | broker      | 192.168.0.32:5301 | Broker            | normal            | leader       |
 | warehouse   | 192.168.0.32:5401 | Group1            | normal            | normal       |
 +-------------+-------------------+-------------------+-------------------+--------------+
- 
+
 mach@localhost:~$ machcoordinatoradmin --cluster-status-full
 -------------------------------------------------------------------------
      Machbase Coordinator Administration Tool
@@ -417,7 +502,7 @@ mach@localhost:~$ machcoordinatoradmin --set-group-state=readonly --group=Group1
 -------------------------------------------------------------------------
 Group Name: Group1
 Flag      : 1
-  
+
 mach@localhost:~$ machcoordinatoradmin --cluster-status
 -------------------------------------------------------------------------
      Machbase Coordinator Administration Tool
@@ -456,7 +541,7 @@ mach@localhost:~$ machcoordinatoradmin --host-resource-enable
               Name : HOST-RESOURCE
              Value : ON
             Format : text/plain
-  
+
 mach@localhost:~$ machcoordinatoradmin --get-host-resource
 -------------------------------------------------------------------------
      Machbase Coordinator Administration Tool
@@ -503,7 +588,7 @@ Host Name : 192.168.0.33
       /dev/sda1 : 64.2%
          |-> 192.168.0.33:5101   /home/cumulus/coordinator2
          |-> 192.168.0.33:5401   /home/cumulus/warehouse_a2
-  
+
 mach@localhost:~$ machcoordinatoradmin --get-host-resource --metric=cpu
 -------------------------------------------------------------------------
      Machbase Coordinator Administration Tool
@@ -525,7 +610,7 @@ Host Name : 192.168.0.33
       Number of CPU Cores : 4
       CPU Utilization     : 1.9%
       CPU IOWait Ratio    : 0.0%
-  
+
 mach@localhost:~$ machcoordinatoradmin --get-host-resource --host=192.168.0.33
 -------------------------------------------------------------------------
      Machbase Coordinator Administration Tool
@@ -552,7 +637,7 @@ Host Name : 192.168.0.33
       /dev/sda1 : 64.2%
          |-> 192.168.0.33:5101   /home/cumulus/coordinator2
          |-> 192.168.0.33:5401   /home/cumulus/warehouse_a2
-  
+
 mach@localhost:~$ machcoordinatoradmin --host-resource-disable
 -------------------------------------------------------------------------
      Machbase Coordinator Administration Tool
