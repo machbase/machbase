@@ -133,6 +133,8 @@ Notes:
 
 Use `DELETE FROM TAG METADATA` to delete metadata.
 
+To delete metadata for a specific tag, specify the tag name predicate in the `WHERE` clause.
+
 ```sql
 DELETE FROM sensors METADATA
  WHERE name = 'TEMP_002';
@@ -145,10 +147,28 @@ DELETE FROM sensors METADATA
  WHERE status = 'STOP';
 ```
 
+If the `WHERE` clause is omitted, all metadata rows in the TAGDATA table are deleted.
+
+```sql
+DELETE FROM sensors METADATA;
+```
+
 Notes:
 
 - If any matched tag still has data rows, the whole statement fails.
 - Metadata for tags that are still in use cannot be deleted.
+- Even for a full metadata delete, if any target tag is still in use, the whole statement fails
+  without partially deleting metadata rows.
+
+To delete metadata for a tag that is still in use, delete the data rows for that tag first,
+then run the metadata delete again.
+
+```sql
+DELETE FROM sensors
+ WHERE name = 'TEMP_001';
+
+DELETE FROM sensors METADATA;
+```
 
 ## JSON Metadata Columns
 

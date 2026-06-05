@@ -211,8 +211,10 @@ delete from t1 where i1 = 2;
 ### DELETE FROM TAG METADATA
 
 Metadata of a TAGDATA table can be deleted through `DELETE FROM TAG METADATA`.
+If the `WHERE` clause is omitted, all metadata rows in the TAGDATA table are deleted.
 
 ```sql
+DELETE FROM tag METADATA;
 DELETE FROM tag METADATA WHERE name = 'tag-1';
 DELETE FROM tag METADATA WHERE status = 'STOP';
 ```
@@ -222,6 +224,9 @@ Notes:
 - Metadata predicates as well as `WHERE NAME = ...` are allowed.
 - If any matched tag still has data rows, the whole statement fails.
 - Metadata of tags that are still in use cannot be deleted.
+- Even for a full metadata delete, if any target tag is still in use, the whole statement fails
+  without partially deleting metadata rows.
+- The same syntax is supported for TAGDATA tables whose tag name column is not named `name`.
 
 **delete_from_tag_where_stmt:**
 

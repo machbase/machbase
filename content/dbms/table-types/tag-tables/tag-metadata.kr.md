@@ -133,6 +133,8 @@ UPDATE sensors METADATA
 
 메타데이터 삭제는 `DELETE FROM TAG METADATA` 를 사용합니다.
 
+특정 태그의 메타데이터를 삭제하려면 `WHERE` 절에서 tag name 조건을 지정합니다.
+
 ```sql
 DELETE FROM sensors METADATA
  WHERE name = 'TEMP_002';
@@ -145,10 +147,27 @@ DELETE FROM sensors METADATA
  WHERE status = 'STOP';
 ```
 
+`WHERE` 절을 생략하면 해당 TAGDATA 테이블의 모든 메타데이터를 삭제합니다.
+
+```sql
+DELETE FROM sensors METADATA;
+```
+
 주의사항:
 
 - 삭제 대상 중 하나라도 실제 데이터 row를 가지고 있으면 문장 전체가 실패합니다.
 - 즉, 사용 중인 tag의 메타데이터는 삭제할 수 없습니다.
+- 전체 삭제 시에도 사용 중인 tag가 하나라도 있으면 일부만 삭제하지 않고 문장 전체가 실패합니다.
+
+사용 중인 tag의 메타데이터를 삭제하려면 먼저 해당 tag의 데이터 row를 삭제한 뒤
+메타데이터 삭제를 다시 수행합니다.
+
+```sql
+DELETE FROM sensors
+ WHERE name = 'TEMP_001';
+
+DELETE FROM sensors METADATA;
+```
 
 ## JSON 메타데이터 컬럼
 
