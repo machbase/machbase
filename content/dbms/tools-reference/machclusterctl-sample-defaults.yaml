@@ -1,0 +1,154 @@
+# machclusterctl defaults/fallback + node alias sample
+# Resolution precedence:
+#   0. Environment variable substitution (${VAR}, ${VAR:-default})
+#   1. cluster.ssh
+#   2. user@host in cluster.hosts.<alias>.address
+#   3. cluster.hosts.<alias>.ssh
+#   4. cluster.defaults.<node-type>
+#   5. Per-node settings
+# Node alias rules:
+#   - alias is optional
+#   - if alias is present, user input/output uses that name
+#   - if alias is absent, coordinator generates a default alias
+
+version: "1"
+
+# Write path fields as absolute paths.
+# validate fails if home_path is not absolute after substitution.
+# Use ${HOME}/... instead of ~/... for home-directory based paths.
+
+cluster:
+  name: "${CLUSTER_NAME:-prod-cluster}"
+
+  hosts:
+    server-1:
+      address: "${MACHBASE_SSH_USER:-machbase}@${SERVER1_HOST:-192.168.0.83}"
+    server-2:
+      address: "${MACHBASE_SSH_USER:-machbase}@${SERVER2_HOST:-192.168.0.84}"
+    server-3:
+      address: "${MACHBASE_SSH_USER:-machbase}@${SERVER3_HOST:-192.168.0.85}"
+    server-4:
+      address: "${MACHBASE_SSH_USER:-machbase}@${SERVER4_HOST:-192.168.0.86}"
+
+  defaults:
+    coordinator:
+      home_path: "${COORD_HOME_BASE:-/home/machbase}/coordinator"
+      cluster_link_port: "${COORD_CLUSTER_PORT:-5101}"
+      http_admin_port: "${COORD_HTTP_ADMIN_PORT:-5102}"
+
+    deployer:
+      home_path: "${DEPLOYER_HOME_BASE:-/home/machbase}/deployer"
+      cluster_link_port: "${DEPLOYER_CLUSTER_PORT:-5201}"
+      http_admin_port: "${DEPLOYER_HTTP_ADMIN_PORT:-5202}"
+
+    lookup:
+      home_path: "${LOOKUP_HOME_BASE:-/home/machbase}/lookup"
+      cluster_link_port: "${LOOKUP_CLUSTER_PORT:-5301}"
+      http_admin_port: "${LOOKUP_HTTP_ADMIN_PORT:-5302}"
+
+    broker:
+      home_path: "${BROKER_HOME_BASE:-/home/machbase}/broker"
+      http_admin_port: "${BROKER_HTTP_ADMIN_PORT:-5657}"
+      service_port: "${BROKER_SERVICE_PORT:-5656}"
+
+    warehouse:
+      home_path: "${WAREHOUSE_HOME_BASE:-/home/machbase}/warehouse"
+      http_admin_port: "${WAREHOUSE_HTTP_ADMIN_PORT:-5502}"
+      service_port: "${WAREHOUSE_SERVICE_PORT:-5500}"
+
+  package:
+    name: machbase
+    # package.path points to the source archive kept outside the coordinator home.
+    # registered_path in exported YAML is observed current metadata, not an install/upgrade input.
+    path: "${MACHBASE_PACKAGE_PATH:-/home/machbase/packages/machbase-ent-release-lightweight.tgz}"
+
+  ssh:
+    key_file: "${HOME}/.ssh/${MACHBASE_SSH_KEY:-id_rsa}"
+
+  # Coordinator alias is optional, but this sample sets it for operational clarity.
+  coordinators:
+    - alias: coord-primary-1
+      host: server-1
+      role: primary
+
+    # This coordinator overrides only ports.
+    - alias: coord-secondary-1
+      host: server-2
+      cluster_link_port: "${COORD2_CLUSTER_PORT:-5111}"
+      http_admin_port: "${COORD2_HTTP_ADMIN_PORT:-5112}"
+      role: secondary
+
+  # deployer-1 uses defaults as-is.
+  # deployer-2 overrides only alias and ports.
+  deployers:
+    - alias: deployer-1
+      host: server-1
+
+    - alias: deployer-2
+      host: server-2
+      cluster_link_port: "${DEPLOYER2_CLUSTER_PORT:-5211}"
+      http_admin_port: "${DEPLOYER2_HTTP_ADMIN_PORT:-5212}"
+
+  # Lookup nodes always set type and host explicitly.
+  # Master/monitor use defaults.lookup ports as-is.
+  # Only the slave shows a port override example.
+  lookup:
+    - alias: lookup-master-1
+      host: server-1
+      type: master
+
+    - alias: lookup-monitor-1
+      host: server-2
+      type: monitor
+
+    - alias: lookup-slave-1
+      host: server-3
+      cluster_link_port: "${LOOKUP_SLAVE_CLUSTER_PORT:-5321}"
+      http_admin_port: "${LOOKUP_SLAVE_HTTP_ADMIN_PORT:-5322}"
+      type: slave
+
+  # broker-1 uses default service/http/home values and sets only cluster_link_port.
+  # broker-2 overrides only alias and ports.
+  brokers:
+    - alias: broker-1
+      host: server-1
+      cluster_link_port: "${BROKER1_CLUSTER_PORT:-5401}"
+
+    - alias: broker-2
+      host: server-2
+      cluster_link_port: "${BROKER2_CLUSTER_PORT:-5411}"
+      http_admin_port: "${BROKER2_HTTP_ADMIN_PORT:-5412}"
+
+  warehouse_groups:
+    - name: group1
+      nodes:
+        # Match warehouse aliases with the group name for readability.
+        - alias: warehouse-group1-1
+          host: server-1
+          cluster_link_port: "${WAREHOUSE_G1_1_CLUSTER_PORT:-5501}"
+          http_admin_port: "${WAREHOUSE_G1_1_HTTP_ADMIN_PORT:-5502}"
+          home_path: "${WAREHOUSE_G1_HOME:-/home/machbase/warehouse_g1}"
+
+        # This is in the same group, but the second node overrides only ports.
+        - alias: warehouse-group1-2
+          host: server-2
+          cluster_link_port: "${WAREHOUSE_G1_2_CLUSTER_PORT:-5511}"
+          http_admin_port: "${WAREHOUSE_G1_2_HTTP_ADMIN_PORT:-5512}"
+          home_path: "${WAREHOUSE_G1_HOME:-/home/machbase/warehouse_g1}"
+
+    - name: group2
+      nodes:
+        # group2 overrides service/http/home values according to group policy.
+        - alias: warehouse-group2-1
+          host: server-3
+          cluster_link_port: "${WAREHOUSE_G2_1_CLUSTER_PORT:-5601}"
+          http_admin_port: "${WAREHOUSE_G2_1_HTTP_ADMIN_PORT:-5602}"
+          service_port: "${WAREHOUSE_G2_SERVICE_PORT:-5600}"
+          home_path: "${WAREHOUSE_G2_HOME:-/home/machbase/warehouse_g2}"
+
+        - alias: warehouse-group2-2
+          host: server-4
+          cluster_link_port: "${WAREHOUSE_G2_2_CLUSTER_PORT:-5611}"
+          http_admin_port: "${WAREHOUSE_G2_2_HTTP_ADMIN_PORT:-5612}"
+          service_port: "${WAREHOUSE_G2_SERVICE_PORT:-5600}"
+          home_path: "${WAREHOUSE_G2_HOME:-/home/machbase/warehouse_g2}"
