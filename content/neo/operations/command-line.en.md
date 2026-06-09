@@ -97,9 +97,6 @@ and the open limit becomes 16.
 | `--mqtt-sock`    | `/tmp/machbase-neo-mqtt-5653.sock`| mqtt unix socket {{< neo_since ver="8.0.36" />}}|
 | `--http-port`    | `5654`    | http listen port                |
 | `--http-sock`    | `/tmp/machbase-neo-http-5654.sock` | http unix socket {{< neo_since ver="8.0.36" />}}|
-| `--grpc-port`    | `5655`    | grpc listen port                |
-| `--grpc-sock`    | `/tmp/machbase-neo-grpc-5655.sock` | grpc unix domain socket  |
-| `--grpc-insecure`| `false`   | set `true` to use plain tcp socket,<br/>disable TLS {{< neo_since ver="8.0.18" />}} |
 | `--mach-port`    | `5656`    | machbase native listen port     |
 
 {{< callout type="info" emoji="📌">}}
@@ -194,7 +191,11 @@ a row fetched.
 **Create Table**
 
 ```sh
-machbase-neo» create tag table if not exists example (name varchar(20) primary key, time datetime basetime, value double summarized);
+machbase-neo» create tag table if not exists example (
+  name varchar(20) primary key,
+  time datetime basetime,
+  value double summarized
+);
 executed.
 ```
 
@@ -337,8 +338,6 @@ machbase-neo» show ports;
 ┌─────────┬────────────────────────────────────────┐
 │ SERVICE │ PORT                                   │
 ├─────────┼────────────────────────────────────────┤
-│ grpc    │ tcp://127.0.0.1:5655                   │
-│ grpc    │ unix:///database/mach-grpc.sock        │
 │ http    │ tcp://127.0.0.1:5654                   │
 │ mach    │ tcp://127.0.0.1:5656                   │
 │ mqtt    │ tcp://127.0.0.1:5653                   │
@@ -518,6 +517,5 @@ define DEF {
     SHELL_PORT        = flag("--shell-port", "5652")
     MQTT_PORT         = flag("--mqtt-port", "5653")
     HTTP_PORT         = flag("--http-port", "5654")
-    GRPC_PORT         = flag("--grpc-port", "5655")
 ......
 ```
