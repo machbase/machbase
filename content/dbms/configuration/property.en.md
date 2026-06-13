@@ -167,7 +167,7 @@ Specifies the number of CPUs set in the system. Based on this value, the Machbas
     </tr>
     <tr>
       <td>Default</td>
-      <td>0</td>
+      <td>1</td>
     </tr>
   </tbody>
 </table>
@@ -258,7 +258,7 @@ Specifies the number of buffers for disk I/O.
     </tr>
     <tr>
       <td>Maximum</td>
-      <td>4G (4 * 1024 * 1024 * 1024)</td>
+      <td>2^32 - 1</td>
     </tr>
     <tr>
       <td>Default</td>
@@ -368,7 +368,7 @@ Sets the maximum size of the page cache.
     </tr>
     <tr>
       <td>Default</td>
-      <td>2 * 1024 * 1024 * 1024</td>
+      <td>32 * 1024 * 1024</td>
     </tr>
   </tbody>
 </table>
@@ -453,7 +453,7 @@ Sets the size of the default MINMAX cache set in the _ARRIVAL_TIME column.
 
 ## DISK_COLUMNAR_TABLE_COLUMN_PART_FLUSH_MODE
 
-Sets the automatic flush interval for column partition files.
+Sets whether column partitions are flushed only when full.
 
 <table>
   <thead>
@@ -463,15 +463,15 @@ Sets the automatic flush interval for column partition files.
   <tbody>
     <tr>
       <td>Minimum</td>
-      <td>0 (sec)</td>
+      <td>0</td>
     </tr>
     <tr>
       <td>Maximum</td>
-      <td>2^32-1 (sec)</td>
+      <td>1</td>
     </tr>
     <tr>
       <td>Default</td>
-      <td>60 (sec)</td>
+      <td>0</td>
     </tr>
   </tbody>
 </table>
@@ -856,7 +856,7 @@ If it is set to 0, it is not recorded.
     </tr>
     <tr>
       <td>Default</td>
-      <td>60 (sec)</td>
+      <td>300 (sec)</td>
     </tr>
   </tbody>
 </table>
@@ -911,7 +911,7 @@ The default is 0 to retrieve all data.
     </tr>
     <tr>
       <td>Maximum</td>
-      <td>Non-zero</td>
+      <td>2^31 - 1</td>
     </tr>
     <tr>
       <td>Default</td>
@@ -1028,7 +1028,7 @@ Set the number of threads to be used by the Machbase web server.
 |-|----|
 |Minimum| 0|  
 |Maximum| 1024|
-|Default| 32| 
+|Default| 2|
 
 
 ## INDEX_BUILD_MAX_ROW_COUNT_PER_THREAD
@@ -1067,7 +1067,7 @@ Specifies the number of index creation threads. If set to 0, no index is created
   <tbody>
     <tr>
       <td>Minimum</td>
-      <td>1</td>
+      <td>0</td>
     </tr>
     <tr>
       <td>Maximum</td>
@@ -1117,7 +1117,7 @@ Specifies the number of threads to delete index files that are not needed when c
   <tbody>
     <tr>
       <td>Minimum</td>
-      <td>0</td>
+      <td>1</td>
     </tr>
     <tr>
       <td>Maximum</td>
@@ -1166,7 +1166,7 @@ Determines the number of threads performing the merge operation for the creation
   <tbody>
     <tr>
       <td>Minimum</td>
-      <td>0</td>
+      <td>1</td>
     </tr>
     <tr>
       <td>Maximum</td>
@@ -1247,7 +1247,7 @@ If one query uses memory with a larger value, the query is canceled. At this tim
 |--|----|
 |Minimum|    1024 * 1024|
 |Maximum|    2^64 - 1|
-|Default|    500 * 1024 * 1024|
+|Default|    1024 * 1024 * 1024|
 
 
 ## MAX_SESSION_COUNT
@@ -1402,7 +1402,7 @@ In this case, the performance is greatly degraded, so the cause of overuse of th
   <tbody>
     <tr>
       <td>Minimum</td>
-      <td>1024 * 1024 * 1024</td>
+      <td>32 * 1024 * 1024</td>
     </tr>
     <tr>
       <td>Maximum</td>
@@ -1538,6 +1538,7 @@ Limits the number of SQL entries stored in the PVO statement cache; 0 means unli
 
 ## QUERY_PARALLEL_FACTOR
 Specifies the number of execution threads of the parallel query executor.
+The standard build default is 0. The cluster build default is 4.
 
 <table>
   <thead>
@@ -1547,7 +1548,7 @@ Specifies the number of execution threads of the parallel query executor.
   <tbody>
     <tr>
       <td>Minimum</td>
-      <td>1</td>
+      <td>0</td>
     </tr>
     <tr>
       <td>Maximum</td>
@@ -1555,7 +1556,7 @@ Specifies the number of execution threads of the parallel query executor.
     </tr>
     <tr>
       <td>Default</td>
-      <td>8</td>
+      <td>0</td>
     </tr>
   </tbody>
 </table>
@@ -1575,7 +1576,7 @@ If set to 0, there is no limit.
   <tbody>
     <tr>
       <td>Minimum</td>
-      <td>1</td>
+      <td>0</td>
     </tr>
     <tr>
       <td>Maximum</td>
@@ -1728,7 +1729,7 @@ This value determines how fast the query executed should not be stored in the ca
   <tbody>
     <tr>
       <td>Minimum</td>
-      <td>1 (msec)</td>
+      <td>0 (msec)</td>
     </tr>
     <tr>
       <td>Maximum</td>
@@ -1864,8 +1865,8 @@ Sets the B-Tree order (fanout) for the TAG memory index. Effective when `TAG_MEM
 
 ## TAGDATA_AUTO_META_INSERT
 {{<callout type="info">}}
-In 5.5 version, this property name was TAGDATA_AUTO_NAME_INSERT and supports only 0 or 1.
-Below 5.7 version, default value is 1.
+In version 5.5, this property name was TAGDATA_AUTO_NAME_INSERT and supported
+only 0 or 1. In versions earlier than 5.7, the default value was 1.
 {{</callout>}}
 
 When entering data through APPEND / INSERT into the TAGDATA table, specify how to handle it if there is no matching TAG_NAME.
@@ -1892,7 +1893,7 @@ When entering data through APPEND / INSERT into the TAGDATA table, specify how t
     </tr>
     <tr>
       <td>Default</td>
-      <td>1</td>
+      <td>2</td>
     </tr>
   </tbody>
 </table>
@@ -1906,7 +1907,7 @@ When creating the TAGDATA table, set the maximum size of memory to store the met
 |-|----|
 |Minimum|    1024*1024|
 |Maximum|    2^32-1|
-|Default|    100\*1024\*1024|
+|Default|    524288000|
 
 
 ## TAG_PARTITION_COUNT
@@ -1916,8 +1917,8 @@ Specify the number of Key Value tables that consist the tag table.
 ||Value|
 |--|--|
 |Minimum| 1|
-|Maximum| 4|
-|Default| 1024 |
+|Maximum| 1024|
+|Default| 4 |
 
 ## TAG_DATA_PART_SIZE
 
@@ -1954,7 +1955,7 @@ These files continuously record internal information at the start, end, and run 
   <tbody>
     <tr>
       <td>Default</td>
-      <td>?/conf</td>
+      <td>?/trc</td>
     </tr>
   </tbody>
 </table>
@@ -1993,7 +1994,7 @@ Sets the maximum size of the log trace file. If it is necessary to record more d
   <tbody>
     <tr>
       <td>Minimum</td>
-      <td>10 * 1024 * 1024</td>
+      <td>1024 * 1024</td>
     </tr>
     <tr>
       <td>Maximum</td>
@@ -2008,7 +2009,7 @@ Sets the maximum size of the log trace file. If it is necessary to record more d
 
 
 ## UNIX_PATH
-Sets the path to the Unix domain socket file. The Default when not set by user is ?/conf/machbase-unix.
+Sets the Unix domain socket name.
 
 <table>
   <thead>
@@ -2018,7 +2019,7 @@ Sets the path to the Unix domain socket file. The Default when not set by user i
   <tbody>
     <tr>
       <td>Default</td>
-      <td>?/conf/machbase-unix</td>
+      <td>machbase-unix</td>
     </tr>
   </tbody>
 </table>

@@ -201,7 +201,7 @@ You can choose whether to add an errored host name to error messages that occur 
 
 If you want to display a detailed error message, set the property to 1. 
 
-The default value is 0, which means the host name is not displayed.
+The default value is 1, which means the host name is displayed.
 
 
 <table>
@@ -220,7 +220,7 @@ The default value is 0, which means the host name is not displayed.
     </tr>
     <tr>
       <td style="background-color: #F0FFFF;">Default</td>
-      <td>0</td>
+      <td>1</td>
     </tr>
   </tbody>
 </table>
@@ -278,7 +278,7 @@ The default value is 5000 (msec).
     </tr>
     <tr>
       <td>Maximum</td>
-      <td>2^32-1</td>
+      <td>2^32 - 1</td>
     </tr>
     <tr>
       <td style="background-color: #F0FFFF;">Default</td>
@@ -372,11 +372,11 @@ The maximum number of Socket's Accept Queue when connecting to a specific Node.
   <tbody>
     <tr>
       <td>Minimum</td>
-      <td>0</td>
+      <td>1</td>
     </tr>
     <tr>
       <td>Maximum</td>
-      <td>2^32-1</td>
+      <td>2^31-1</td>
     </tr>
     <tr>
       <td style="background-color: #F0FFFF;">Default</td>
@@ -402,7 +402,7 @@ The maximum number of Events that can be retrieved at a time by Poll when commun
     </tr>
     <tr>
       <td>Maximum</td>
-      <td>2^32-1</td>
+      <td>2^31-1</td>
     </tr>
     <tr>
       <td style="background-color: #F0FFFF;">Default</td>
@@ -581,7 +581,7 @@ If the size of the Cluster grows or the number of operations to be processed inc
     </tr>
     <tr>
       <td style="background-color: #F0FFFF;">Default</td>
-      <td>8</td>
+      <td>16</td>
     </tr>
   </tbody>
 </table>
@@ -727,7 +727,7 @@ This value refers to the time the Coordinator waits after requesting each Node t
     </tr>
     <tr>
       <td style="background-color: #F0FFFF;">Default</td>
-      <td>3600000000</td>
+      <td>300000000</td>
     </tr>
   </tbody>
 </table>
@@ -742,7 +742,7 @@ This value means the time it takes to wait after the broker requests the coordin
 |--|--|
 |Minimum|0|  
 |Maximum|2^64 - 1|
-|Default|3600000000|
+|Default|300000000|
 
 ## COORDINATOR_DECISION_DELAY
 Timeout until the Coordinator requests the status change and effectively reflects it.
@@ -1135,7 +1135,7 @@ The default value is 1GB.
   <tbody>
     <tr>
       <td>Minimum</td>
-      <td>1024</td>
+      <td>0</td>
     </tr>
     <tr>
       <td>Maximum</td>
@@ -1294,11 +1294,11 @@ Number of data inputs that lead to the warehouse group conversion when performin
     </tr>
     <tr>
       <td>Maximum</td>
-      <td>2^64 - 1</td>
+      <td>2^32 - 1</td>
     </tr>
     <tr>
       <td style="background-color: #F0FFFF;">Default</td>
-      <td>10000</td>
+      <td>1000</td>
     </tr>
   </tbody>
 </table>
@@ -1344,7 +1344,7 @@ Maximum block size created in one stage.
     </tr>
     <tr>
       <td>Maximum</td>
-      <td>2^64 - 1</td>
+      <td>2^32 - 1</td>
     </tr>
     <tr>
       <td style="background-color: #F0FFFF;">Default</td>
@@ -1352,4 +1352,3 @@ Maximum block size created in one stage.
     </tr>
   </tbody>
 </table>
-

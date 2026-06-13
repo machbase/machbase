@@ -2,9 +2,12 @@
 type: docs
 title: 'Configuration'
 weight: 100
+toc: true
 ---
 
-Server configuration and tuning guide for Machbase. Learn how to optimize server settings for your workload and hardware.
+Machbase server properties are key-value pairs read from `machbase.conf` when the server
+starts. This page shows commonly changed properties and points to the full property
+reference for exact limits.
 
 ## Configuration File
 
@@ -17,275 +20,165 @@ $MACHBASE_HOME/conf/machbase.conf
 ### Editing Configuration
 
 ```bash
-# Stop server before editing
+# Stop the server before editing.
 machadmin -s
 
-# Edit configuration
+# Edit the configuration file.
 vi $MACHBASE_HOME/conf/machbase.conf
 
-# Start server with new settings
+# Start the server with the new settings.
 machadmin -u
 ```
 
+Most properties are startup properties. Change them while the server is stopped unless
+the property reference explicitly says that runtime alteration is supported.
+
 ## Key Configuration Parameters
 
-### Network Settings
+### Network And Sessions
 
 ```properties
-# Server port
+# Server port.
 PORT_NO = 5656
 
-# Bind IP address (0.0.0.0 for all interfaces)
+# Bind IP address. Use 0.0.0.0 to listen on all interfaces.
 BIND_IP_ADDRESS = 0.0.0.0
 
-# Max connections
-MAX_CONNECTION = 100
+# Maximum concurrent sessions.
+MAX_SESSION_COUNT = 4096
+
+# Idle and query timeout in seconds. 0 disables the timeout.
+SESSION_IDLE_TIMEOUT_SEC = 0
+SESSION_QUERY_TIMEOUT_SEC = 0
 ```
 
-### Memory Settings
+### Memory
 
 ```properties
-# Shared buffer pool (recommend: 50-70% of available RAM)
-BUFFER_POOL_SIZE = 2G
+# Maximum memory size of the machbased process.
+PROCESS_MAX_SIZE = 8589934592 # 8GB
 
-# Volatile table memory
-VOLATILE_TABLESPACE_SIZE = 1G
+# Disk columnar tablespace memory limit.
+DISK_COLUMNAR_TABLESPACE_MEMORY_MAX_SIZE = 8589934592 # 8GB
 
-# Per-query memory limit
-MAX_QPX_MEM = 512M
+# Volatile tablespace memory limit.
+VOLATILE_TABLESPACE_MEMORY_MAX_SIZE = 2147483648 # 2GB
 
-# Log buffer size
-LOG_BUFFER_SIZE = 64M
+# Query processor memory limit per query.
+MAX_QPX_MEM = 1073741824 # 1GB
 ```
 
-### Performance Settings
+### Storage And Checkpoint
 
 ```properties
-# Checkpoint interval (seconds)
-CHECKPOINT_INTERVAL_SEC = 600
+# Database directory. ? is expanded to $MACHBASE_HOME.
+DBS_PATH = ?/dbs
 
-# Query timeout (seconds)
-QUERY_TIMEOUT = 60
-
-# Max parallel queries
-MAX_PARALLEL_QUERY = 4
+# Table and index checkpoint intervals in seconds.
+DISK_COLUMNAR_TABLE_CHECKPOINT_INTERVAL_SEC = 120
+DISK_COLUMNAR_INDEX_CHECKPOINT_INTERVAL_SEC = 120
 ```
 
-### Storage Settings
+### Query Processing
 
 ```properties
-# Database directory
-DB_DIR = $MACHBASE_HOME/dbs
+# Parallel query factor. Standard builds default to 0; cluster builds default to 4.
+QUERY_PARALLEL_FACTOR = 0
 
-# Log directory
-LOG_DIR = $MACHBASE_HOME/dbs
-
-# Trace log directory
-TRC_LOG_DIR = $MACHBASE_HOME/trc
+# Tag table scan direction: -1 backward, 0 engine-decided, 1 forward.
+TABLE_SCAN_DIRECTION = 0
 ```
 
-### Backup Settings
+### Trace Logging
 
 ```properties
-# Backup compression
-BACKUP_COMPRESSION = 1
+# Trace log directory. ? is expanded to $MACHBASE_HOME.
+TRACE_LOGFILE_PATH = ?/trc
 
-# Backup threads
-BACKUP_THREAD_COUNT = 4
+# Trace log file size and retained file count.
+TRACE_LOGFILE_SIZE = 10485760 # 10MB
+TRACE_LOGFILE_COUNT = 1000
+
+# Trace log level.
+TRACE_LOG_LEVEL = 277
 ```
 
-## Tuning by Workload
+## Tuning Examples
 
-### High Write Workload
+### Larger Memory Budget
 
 ```properties
-# Increase buffers
-BUFFER_POOL_SIZE = 4G
-LOG_BUFFER_SIZE = 128M
-
-# Reduce checkpoint frequency
-CHECKPOINT_INTERVAL_SEC = 900
-
-# Increase connections
-MAX_CONNECTION = 200
+PROCESS_MAX_SIZE = 17179869184 # 16GB
+DISK_COLUMNAR_TABLESPACE_MEMORY_MAX_SIZE = 12884901888 # 12GB
+MAX_QPX_MEM = 2147483648 # 2GB
 ```
 
-### High Read Workload
+### More Concurrent Clients
 
 ```properties
-# Increase buffer pool
-BUFFER_POOL_SIZE = 8G
-
-# Increase query memory
-MAX_QPX_MEM = 1G
-
-# Enable parallel queries
-MAX_PARALLEL_QUERY = 8
+MAX_SESSION_COUNT = 8192
+MAX_STMT_COUNT_PER_SESSION = 2048
 ```
 
-### Mixed Workload
+### Longer Running Queries
 
 ```properties
-# Balanced settings
-BUFFER_POOL_SIZE = 4G
-LOG_BUFFER_SIZE = 64M
-MAX_QPX_MEM = 512M
-CHECKPOINT_INTERVAL_SEC = 600
-MAX_PARALLEL_QUERY = 4
+# Disable query timeout.
+SESSION_QUERY_TIMEOUT_SEC = 0
+
+# Or set a 2 minute timeout.
+SESSION_QUERY_TIMEOUT_SEC = 120
 ```
 
 ## Monitoring Configuration
 
-### System Tables
-
 ```sql
--- View configuration
-SELECT * FROM SYSTEM_.SYS_PROPERTIES_;
+-- View current property values.
+SELECT * FROM V$PROPERTY;
 
--- Check memory usage
-SHOW STORAGE;
-```
-
-### Log Settings
-
-```properties
-# Enable trace logs
-TRC_LOG_LEVEL = 1
-
-# Log file size
-TRC_LOG_FILE_SIZE = 10M
-
-# Number of log files
-TRC_LOG_FILE_COUNT = 10
+-- Check storage usage.
+SELECT * FROM V$STORAGE;
 ```
 
 ## Security Configuration
 
-### Access Control
-
 ```properties
-# Restrict network access
+# Listen only on a specific interface.
 BIND_IP_ADDRESS = 192.168.1.100
 
-# Reduce max connections
-MAX_CONNECTION = 50
-```
-
-### SSL/TLS
-
-```properties
-# Enable SSL
-SSL_ENABLE = 1
-SSL_CERT = /path/to/cert.pem
-SSL_KEY = /path/to/key.pem
+# Block remote access and bind listeners to loopback.
+GRANT_REMOTE_ACCESS = 0
 ```
 
 ## Cluster Configuration
 
-For cluster deployments, additional configuration is required:
+Cluster edition has additional properties. Common examples include:
 
 ```properties
-# Cluster mode
-CLUSTER_ENABLE = 1
+# Cluster link endpoint.
+CLUSTER_LINK_HOST = localhost
+CLUSTER_LINK_PORT_NO = 3868
 
-# Cluster ID
-CLUSTER_ID = cluster01
+# Coordinator storage path.
+COORDINATOR_DBS_PATH = ?/dbs
 
-# Coordinator address
-COORDINATOR_HOST = 192.168.1.10
-COORDINATOR_PORT = 6656
+# Coordinator HTTP admin port.
+HTTP_ADMIN_PORT = 5779
 ```
 
-See [Cluster Installation](../../dbms/install/cluster/) for complete cluster setup.
+See [Cluster Installation](../installation/cluster/) for complete cluster setup.
 
 ## Configuration Best Practices
 
-1. **Backup config before changes** - Save original configuration
-2. **Test in staging** - Validate changes before production
-3. **Monitor after changes** - Watch logs and performance
-4. **Document changes** - Keep change log
-5. **Use appropriate values** - Match hardware and workload
-
-## Common Configuration Issues
-
-### Out of Memory
-
-**Symptom**: Server crashes or slow performance
-
-**Solution**:
-```properties
-# Reduce memory usage
-BUFFER_POOL_SIZE = 1G  # Reduce buffer pool
-MAX_QPX_MEM = 256M     # Reduce query memory
-```
-
-### Too Many Connections
-
-**Symptom**: "Max connections exceeded" error
-
-**Solution**:
-```properties
-# Increase connection limit
-MAX_CONNECTION = 200
-```
-
-### Slow Queries
-
-**Symptom**: Queries time out
-
-**Solution**:
-```properties
-# Increase query timeout
-QUERY_TIMEOUT = 120
-
-# Increase query memory
-MAX_QPX_MEM = 1G
-
-# Enable parallel queries
-MAX_PARALLEL_QUERY = 8
-```
+1. Back up `machbase.conf` before changes.
+2. Change one tuning area at a time.
+3. Verify values against the property reference before production use.
+4. Restart the server after startup property changes.
+5. Monitor `V$PROPERTY`, trace logs, and workload behavior after changes.
 
 ## Complete Configuration Reference
 
-For detailed configuration documentation, see:
-- [Configuration Properties](../../dbms/config-monitor/property/) - Complete parameter reference
-- [System Tables](../../dbms/config-monitor/meta-table/) - System metadata
-- [Virtual Tables](../../dbms/config-monitor/virtual-table/) - Monitoring tables
-
-## Configuration Template
-
-```properties
-# machbase.conf - Production configuration template
-
-# Network
-PORT_NO = 5656
-BIND_IP_ADDRESS = 0.0.0.0
-MAX_CONNECTION = 100
-
-# Memory (adjust based on available RAM)
-BUFFER_POOL_SIZE = 4G
-VOLATILE_TABLESPACE_SIZE = 1G
-MAX_QPX_MEM = 512M
-LOG_BUFFER_SIZE = 64M
-
-# Performance
-CHECKPOINT_INTERVAL_SEC = 600
-QUERY_TIMEOUT = 60
-MAX_PARALLEL_QUERY = 4
-
-# Storage
-DB_DIR = $MACHBASE_HOME/dbs
-LOG_DIR = $MACHBASE_HOME/dbs
-TRC_LOG_DIR = $MACHBASE_HOME/trc
-
-# Logging
-TRC_LOG_LEVEL = 1
-TRC_LOG_FILE_SIZE = 10M
-TRC_LOG_FILE_COUNT = 10
-```
-
-## Next Steps
-
-- **Apply Configuration**: [Tools Reference](../tools-reference/) - machadmin usage
-- **Monitor Performance**: [Troubleshooting](../troubleshooting/) - Performance tuning
-- **Advanced Setup**: [Advanced Features](../advanced-features/) - Cluster configuration
+- [Configuration Properties](./property/) - standard server property reference
+- [Cluster Configuration Properties](./property-cl/) - cluster edition property reference
+- [Meta Tables](./meta-table/) - system metadata tables
+- [Virtual Tables](./virtual-table/) - runtime monitoring tables

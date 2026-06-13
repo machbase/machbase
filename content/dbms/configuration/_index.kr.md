@@ -2,9 +2,12 @@
 type: docs
 title: '설정'
 weight: 100
+toc: true
 ---
 
-Machbase의 서버 설정 및 튜닝 가이드입니다. 워크로드와 하드웨어에 맞게 서버 설정을 최적화하는 방법을 알아봅니다.
+Machbase 서버 프로퍼티는 서버 시작 시 `machbase.conf`에서 읽는 키-값 쌍입니다. 이
+페이지는 자주 변경하는 프로퍼티 예시를 보여 주며, 정확한 범위는 전체 프로퍼티
+레퍼런스를 기준으로 확인합니다.
 
 ## 설정 파일
 
@@ -27,265 +30,155 @@ vi $MACHBASE_HOME/conf/machbase.conf
 machadmin -u
 ```
 
+대부분의 프로퍼티는 시작 시 적용됩니다. 프로퍼티 레퍼런스에 런타임 변경 가능 여부가
+명시되어 있지 않다면 서버를 중지한 상태에서 변경합니다.
+
 ## 주요 설정 파라미터
 
-### 네트워크 설정
+### 네트워크와 세션
 
 ```properties
 # 서버 포트
 PORT_NO = 5656
 
-# 바인드 IP 주소 (모든 인터페이스는 0.0.0.0)
+# 바인드 IP 주소. 모든 인터페이스에서 수신하려면 0.0.0.0을 사용합니다.
 BIND_IP_ADDRESS = 0.0.0.0
 
-# 최대 연결 수
-MAX_CONNECTION = 100
+# 최대 동시 세션 수
+MAX_SESSION_COUNT = 4096
+
+# 세션 유휴/쿼리 타임아웃(초). 0이면 사용하지 않습니다.
+SESSION_IDLE_TIMEOUT_SEC = 0
+SESSION_QUERY_TIMEOUT_SEC = 0
 ```
 
-### 메모리 설정
+### 메모리
 
 ```properties
-# 공유 버퍼 풀 (권장: 사용 가능한 RAM의 50-70%)
-BUFFER_POOL_SIZE = 2G
+# machbased 프로세스 최대 메모리
+PROCESS_MAX_SIZE = 8589934592 # 8GB
 
-# Volatile 테이블 메모리
-VOLATILE_TABLESPACE_SIZE = 1G
+# 디스크 컬럼 테이블스페이스 메모리 제한
+DISK_COLUMNAR_TABLESPACE_MEMORY_MAX_SIZE = 8589934592 # 8GB
 
-# 쿼리당 메모리 제한
-MAX_QPX_MEM = 512M
+# Volatile 테이블스페이스 메모리 제한
+VOLATILE_TABLESPACE_MEMORY_MAX_SIZE = 2147483648 # 2GB
 
-# 로그 버퍼 크기
-LOG_BUFFER_SIZE = 64M
+# 쿼리당 질의 처리기 메모리 제한
+MAX_QPX_MEM = 1073741824 # 1GB
 ```
 
-### 성능 설정
+### 스토리지와 체크포인트
 
 ```properties
-# 체크포인트 간격 (초)
-CHECKPOINT_INTERVAL_SEC = 600
+# 데이터베이스 디렉터리. ?는 $MACHBASE_HOME으로 확장됩니다.
+DBS_PATH = ?/dbs
 
-# 쿼리 타임아웃 (초)
-QUERY_TIMEOUT = 60
-
-# 최대 병렬 쿼리 수
-MAX_PARALLEL_QUERY = 4
+# 테이블/인덱스 체크포인트 간격(초)
+DISK_COLUMNAR_TABLE_CHECKPOINT_INTERVAL_SEC = 120
+DISK_COLUMNAR_INDEX_CHECKPOINT_INTERVAL_SEC = 120
 ```
 
-### 스토리지 설정
+### 질의 처리
 
 ```properties
-# 데이터베이스 디렉토리
-DB_DIR = $MACHBASE_HOME/dbs
+# 병렬 질의 계수. Standard 빌드 기본값은 0, Cluster 빌드 기본값은 4입니다.
+QUERY_PARALLEL_FACTOR = 0
 
-# 로그 디렉토리
-LOG_DIR = $MACHBASE_HOME/dbs
-
-# 트레이스 로그 디렉토리
-TRC_LOG_DIR = $MACHBASE_HOME/trc
+# Tag 테이블 스캔 방향: -1 역방향, 0 엔진 결정, 1 정방향
+TABLE_SCAN_DIRECTION = 0
 ```
 
-### 백업 설정
+### 트레이스 로그
 
 ```properties
-# 백업 압축
-BACKUP_COMPRESSION = 1
+# 트레이스 로그 디렉터리. ?는 $MACHBASE_HOME으로 확장됩니다.
+TRACE_LOGFILE_PATH = ?/trc
 
-# 백업 스레드 수
-BACKUP_THREAD_COUNT = 4
+# 트레이스 로그 파일 크기와 보관 개수
+TRACE_LOGFILE_SIZE = 10485760 # 10MB
+TRACE_LOGFILE_COUNT = 1000
+
+# 트레이스 로그 레벨
+TRACE_LOG_LEVEL = 277
 ```
 
-## 워크로드별 튜닝
+## 튜닝 예시
 
-### 쓰기 집약적 워크로드
+### 메모리 예산 확대
 
 ```properties
-# 버퍼 증가
-BUFFER_POOL_SIZE = 4G
-LOG_BUFFER_SIZE = 128M
-
-# 체크포인트 빈도 감소
-CHECKPOINT_INTERVAL_SEC = 900
-
-# 연결 수 증가
-MAX_CONNECTION = 200
+PROCESS_MAX_SIZE = 17179869184 # 16GB
+DISK_COLUMNAR_TABLESPACE_MEMORY_MAX_SIZE = 12884901888 # 12GB
+MAX_QPX_MEM = 2147483648 # 2GB
 ```
 
-### 읽기 집약적 워크로드
+### 동시 접속 확대
 
 ```properties
-# 버퍼 풀 증가
-BUFFER_POOL_SIZE = 8G
-
-# 쿼리 메모리 증가
-MAX_QPX_MEM = 1G
-
-# 병렬 쿼리 활성화
-MAX_PARALLEL_QUERY = 8
+MAX_SESSION_COUNT = 8192
+MAX_STMT_COUNT_PER_SESSION = 2048
 ```
 
-### 혼합 워크로드
+### 장시간 쿼리 허용
 
 ```properties
-# 균형 잡힌 설정
-BUFFER_POOL_SIZE = 4G
-LOG_BUFFER_SIZE = 64M
-MAX_QPX_MEM = 512M
-CHECKPOINT_INTERVAL_SEC = 600
-MAX_PARALLEL_QUERY = 4
+# 쿼리 타임아웃 비활성화
+SESSION_QUERY_TIMEOUT_SEC = 0
+
+# 또는 2분 타임아웃 설정
+SESSION_QUERY_TIMEOUT_SEC = 120
 ```
 
 ## 설정 모니터링
 
-### 시스템 테이블
-
 ```sql
--- 설정 확인
-SELECT * FROM SYSTEM_.SYS_PROPERTIES_;
+-- 현재 프로퍼티 값 확인
+SELECT * FROM V$PROPERTY;
 
--- 메모리 사용량 확인
-SHOW STORAGE;
-```
-
-### 로그 설정
-
-```properties
-# 트레이스 로그 활성화
-TRC_LOG_LEVEL = 1
-
-# 로그 파일 크기
-TRC_LOG_FILE_SIZE = 10M
-
-# 로그 파일 수
-TRC_LOG_FILE_COUNT = 10
+-- 스토리지 사용량 확인
+SELECT * FROM V$STORAGE;
 ```
 
 ## 보안 설정
 
-### 접근 제어
-
 ```properties
-# 네트워크 접근 제한
+# 특정 인터페이스에서만 수신
 BIND_IP_ADDRESS = 192.168.1.100
 
-# 최대 연결 수 감소
-MAX_CONNECTION = 50
-```
-
-### SSL/TLS
-
-```properties
-# SSL 활성화
-SSL_ENABLE = 1
-SSL_CERT = /path/to/cert.pem
-SSL_KEY = /path/to/key.pem
+# 원격 접근을 차단하고 리스너를 loopback에 바인드
+GRANT_REMOTE_ACCESS = 0
 ```
 
 ## 클러스터 설정
 
-클러스터 배포의 경우 추가 설정이 필요합니다:
+Cluster Edition에는 추가 프로퍼티가 있습니다. 자주 확인하는 예시는 다음과 같습니다.
 
 ```properties
-# 클러스터 모드
-CLUSTER_ENABLE = 1
+# 클러스터 링크 엔드포인트
+CLUSTER_LINK_HOST = localhost
+CLUSTER_LINK_PORT_NO = 3868
 
-# 클러스터 ID
-CLUSTER_ID = cluster01
+# 코디네이터 스토리지 경로
+COORDINATOR_DBS_PATH = ?/dbs
 
-# 코디네이터 주소
-COORDINATOR_HOST = 192.168.1.10
-COORDINATOR_PORT = 6656
+# 코디네이터 HTTP 관리 포트
+HTTP_ADMIN_PORT = 5779
 ```
 
-전체 클러스터 설정은 [클러스터 설치](../../dbms/install/cluster/)를 참조하세요.
+전체 클러스터 설정은 [클러스터 설치](../installation/cluster/)를 참조하세요.
 
 ## 설정 모범 사례
 
-1. **변경 전 설정 백업** - 원본 설정 저장
-2. **스테이징 환경에서 테스트** - 프로덕션 적용 전 검증
-3. **변경 후 모니터링** - 로그 및 성능 확인
-4. **변경 사항 문서화** - 변경 이력 유지
-5. **적절한 값 사용** - 하드웨어 및 워크로드에 맞춤
-
-## 일반적인 설정 문제
-
-### 메모리 부족
-
-**증상**: 서버 크래시 또는 느린 성능
-
-**해결책**:
-```properties
-# 메모리 사용량 감소
-BUFFER_POOL_SIZE = 1G  # 버퍼 풀 감소
-MAX_QPX_MEM = 256M     # 쿼리 메모리 감소
-```
-
-### 연결 수 초과
-
-**증상**: "Max connections exceeded" 오류
-
-**해결책**:
-```properties
-# 연결 제한 증가
-MAX_CONNECTION = 200
-```
-
-### 느린 쿼리
-
-**증상**: 쿼리 타임아웃
-
-**해결책**:
-```properties
-# 쿼리 타임아웃 증가
-QUERY_TIMEOUT = 120
-
-# 쿼리 메모리 증가
-MAX_QPX_MEM = 1G
-
-# 병렬 쿼리 활성화
-MAX_PARALLEL_QUERY = 8
-```
+1. 변경 전 `machbase.conf`를 백업합니다.
+2. 한 번에 하나의 튜닝 영역만 변경합니다.
+3. 운영 반영 전 프로퍼티 레퍼런스에서 값의 범위를 확인합니다.
+4. 시작 시 적용되는 프로퍼티를 변경한 뒤 서버를 재시작합니다.
+5. 변경 후 `V$PROPERTY`, 트레이스 로그, 워크로드 동작을 모니터링합니다.
 
 ## 전체 설정 참조
 
-자세한 설정 문서는 다음을 참조하세요:
-- [설정 속성](../../dbms/config-monitor/property/) - 전체 파라미터 참조
-- [시스템 테이블](../../dbms/config-monitor/meta-table/) - 시스템 메타데이터
-- [가상 테이블](../../dbms/config-monitor/virtual-table/) - 모니터링 테이블
-
-## 설정 템플릿
-
-```properties
-# machbase.conf - 프로덕션 설정 템플릿
-
-# 네트워크
-PORT_NO = 5656
-BIND_IP_ADDRESS = 0.0.0.0
-MAX_CONNECTION = 100
-
-# 메모리 (사용 가능한 RAM에 따라 조정)
-BUFFER_POOL_SIZE = 4G
-VOLATILE_TABLESPACE_SIZE = 1G
-MAX_QPX_MEM = 512M
-LOG_BUFFER_SIZE = 64M
-
-# 성능
-CHECKPOINT_INTERVAL_SEC = 600
-QUERY_TIMEOUT = 60
-MAX_PARALLEL_QUERY = 4
-
-# 스토리지
-DB_DIR = $MACHBASE_HOME/dbs
-LOG_DIR = $MACHBASE_HOME/dbs
-TRC_LOG_DIR = $MACHBASE_HOME/trc
-
-# 로깅
-TRC_LOG_LEVEL = 1
-TRC_LOG_FILE_SIZE = 10M
-TRC_LOG_FILE_COUNT = 10
-```
-
-## 다음 단계
-
-- **설정 적용**: [도구 참조](../tools-reference/) - machadmin 사용법
-- **성능 모니터링**: [문제 해결](../troubleshooting/) - 성능 튜닝
-- **고급 설정**: [고급 기능](../advanced-features/) - 클러스터 설정
+- [설정 프로퍼티](./property/) - Standard 서버 프로퍼티 레퍼런스
+- [클러스터 설정 프로퍼티](./property-cl/) - Cluster Edition 프로퍼티 레퍼런스
+- [메타 테이블](./meta-table/) - 시스템 메타데이터 테이블
+- [가상 테이블](./virtual-table/) - 런타임 모니터링 테이블
