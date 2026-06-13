@@ -17,12 +17,12 @@ Start here to get up and running quickly:
 
 ## Learn by Doing
 
-Follow these hands-on tutorials:
+Start with the table type guides for common data patterns:
 
-* [Tutorial 1: IoT Sensor Data](./tutorials/iot-sensor-data/) - Store and query sensor data
-* [Tutorial 2: Application Logs](./tutorials/application-logs/) - Handle log data efficiently
-* [Tutorial 3: Real-time Analytics](./tutorials/realtime-analytics/) - Work with real-time data
-* [Tutorial 4: Reference Data](./tutorials/reference-data/) - Manage lookup tables
+* [Tag Tables](./table-types/tag-tables/) - Store and query sensor data
+* [Log Tables](./table-types/log-tables/) - Handle log data efficiently
+* [Volatile Tables](./table-types/volatile-tables/) - Work with real-time data
+* [Lookup Tables](./table-types/lookup-tables/) - Manage reference data
 
 
 ## Core Documentation
@@ -42,5 +42,5 @@ Follow these hands-on tutorials:
 ## Need Help?
 
 * [Troubleshooting Guide](./troubleshooting/)
-* [FAQ](./troubleshooting/faq/)
-* [Error Codes](./troubleshooting/error-codes/)
+* [Common Issues](./troubleshooting/common-issues/)
+* [Error Codes](./troubleshooting/error-code/)

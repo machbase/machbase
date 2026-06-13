@@ -214,7 +214,7 @@ SELECT COUNT(*) FROM table WHERE column IS NULL;
 | -30000 | Out of memory | 쿼리 크기 축소, 메모리 증가 |
 | -30100 | Timeout | 시간 필터 추가, 타임아웃 증가 |
 
-전체 에러 코드 참조는 [에러 코드](../../dbms/faq/error-code/)를 참조하세요.
+전체 에러 코드 참조는 [에러 코드](./error-code/)를 참조하세요.
 
 ## 성능 최적화
 
@@ -351,9 +351,9 @@ SHOW LICENSE;
 
 ### 지원 리소스
 
-- **문서**: 이 가이드와 [FAQ](../../dbms/faq/)를 검토하세요
-- **에러 코드**: [에러 코드 참조](../../dbms/faq/error-code/)를 확인하세요
-- **메모리 문제**: [메모리 에러 가이드](../../dbms/faq/memory-error/)를 참조하세요
+- **문서**: 이 가이드와 [일반 문제](./common-issues/)를 검토하세요
+- **에러 코드**: [에러 코드 참조](./error-code/)를 확인하세요
+- **메모리 문제**: [메모리 에러 가이드](./memory-error/)를 참조하세요
 
 ## 문제를 피하기 위한 모범 사례
 
@@ -390,4 +390,4 @@ EOF
 
 - [구성](../configuration/) - 서버 구성
 - [도구 참조](../tools-reference/) - 명령줄 도구
-- [FAQ](../../dbms/faq/) - 자주 묻는 질문
+- [일반 문제](./common-issues/) - 자주 묻는 질문

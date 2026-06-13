@@ -438,7 +438,7 @@ SELECT AVG(temperature) FROM sensors;
 
 1. **읽기**: [테이블 타입 개요](../table-types-overview/) - 올바른 테이블 선택
 2. **학습**: [인덱싱 및 성능](../indexing/) - 쿼리 최적화
-3. **실습**: [튜토리얼](../../tutorials/) - 실습 연습
+3. **실습**: [Tag 테이블](../../table-types/tag-tables/) - 실습 연습
 
 ## 핵심 요점
 

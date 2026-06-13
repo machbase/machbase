@@ -418,8 +418,8 @@ CREATE LOOKUP TABLE equipment_list (...);
 
 Now that you understand the core concepts:
 
-1. [**Tutorials**](../../tutorials/) - Practice with real-world scenarios
-2. [**Common Tasks**](../../common-tasks/) - Learn everyday operations
+1. [**First Steps**](../first-steps/) - Practice everyday machsql operations
+2. [**SQL Reference**](../../sql-reference/) - Learn query and DDL syntax
 3. [**Table Types Deep Dive**](../../table-types/) - Detailed documentation
 
 ## Quick Reference

@@ -46,7 +46,7 @@ This section is for:
 
 Before diving into Core Concepts:
 - Complete [Getting Started](../getting-started/) section
-- Finish at least 2 of the [Tutorials](../tutorials/)
+- Read the [Table Types](../table-types/) guides
 - Have hands-on experience with Machbase
 
 ## Learning Path
@@ -235,7 +235,7 @@ Ready to dive deeper?
 3. **Finally**: [Indexing and Performance](./indexing/)
 
 Or jump to:
-- [Common Tasks](../common-tasks/) - Practical how-to guides
+- [First Steps](../getting-started/first-steps/) - Practical machsql workflows
 - [Table Types](../table-types/) - Detailed reference for each type
 - [SQL Reference](../sql-reference/) - Complete SQL syntax
 

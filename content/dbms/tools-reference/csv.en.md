@@ -10,7 +10,7 @@ The options have been simplified for simpler use of the CSV file using the machl
 
 In addition to the options described below, all options available in machloader are available.
 
-For supported date/time formatting tokens, see [TO_CHAR (DATETIME)](../../sql-reference/functions/#to_char-datetime-type).
+For supported date/time formatting tokens, see [TO_CHAR](../../sql-reference/functions/#to_char).
 
 ## csvimport 
 

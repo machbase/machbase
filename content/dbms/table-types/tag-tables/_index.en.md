@@ -48,7 +48,7 @@ CREATE TAG TABLE trip_data (
 
 ## Related Documentation
 
-- [Tutorial: IoT Sensor Data](../../tutorials/iot-sensor-data/)
+- [Inserting Tag Data](./inserting-data/)
 - [Core Concepts: Table Types](../../core-concepts/table-types-overview/)
 - [Creating and Dropping Tag Tables](./creating-tag-tables/)
 - [Conditional Rollup for Filtering Noise](./rollup-conditional/)
@@ -57,4 +57,3 @@ CREATE TAG TABLE trip_data (
 - [Binary Columns](./binary-columns/)
 - [Tag Metadata](./tag-metadata/)
 - [Tag Table Indexes](./tag-indexes/)
-- Original reference: [Tag Tables](../../../dbms/feature-table/tag/)

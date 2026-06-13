@@ -168,7 +168,7 @@ CREATE ROLLUP <rollup_name>
 - Conditional rollup uses an external `WHERE` with the `ON/FROM` syntax.
 - Custom Rollup (`INTO ... AS (SELECT ...)`) supports `WHERE` only inside the `SELECT`.
 - Therefore, `CREATE ROLLUP ... INTO (...) AS (...) INTERVAL ... WHERE ...` is not valid.
-- See [Custom Rollup: User-Defined Aggregation](./rollup-custom/) and [DDL: CREATE ROLLUP](../../sql-reference/ddl/#create-rollup) for the full syntax.
+- See [Custom Rollup: User-Defined Aggregation](../rollup-custom/) and [DDL: CREATE ROLLUP](../../../sql-reference/ddl/#create-rollup) for the full syntax.
 
 ### Automatic selection order (no hint)
 1. If a `ROLLUP_TABLE(<rollup_table_name>)` hint exists, it always wins.
@@ -268,7 +268,7 @@ EXEC ROLLUP_FORCE(<rollup_name>);
 ### Rollup Rebuild Reference
 
 Deleting raw TAG data or reloading corrected rows does not automatically rewind existing rollup results.
-For built-in time-range recovery, `EXEC ROLLUP_REBUILD(...)`, and manual custom rollup recovery steps, see [Rollup Rebuild Guide](./rollup-rebuild/).
+For built-in time-range recovery, `EXEC ROLLUP_REBUILD(...)`, and manual custom rollup recovery steps, see [Rollup Rebuild Guide](../rollup-rebuild/).
 
 
 ## Drop Rollup

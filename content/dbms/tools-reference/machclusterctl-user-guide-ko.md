@@ -2,7 +2,7 @@
 
 `machclusterctl`은 Machbase Cluster Edition을 YAML 파일로 설치하고 운영하기 위한 명령행 도구다. 운영자는 `cluster.yaml`에 원하는 클러스터 구성을 선언하고, `validate`, `install`, `apply`, `upgrade`, `start`, `stop` 같은 명령으로 클러스터를 관리한다.
 
-YAML 작성 방법은 [machclusterctl-yaml-guide-ko.md](./machclusterctl-yaml-guide-ko.md)를 함께 참고한다.
+YAML 작성 방법은 [machclusterctl-yaml-guide-ko](../machclusterctl-yaml-guide-ko/)를 함께 참고한다.
 
 ## 1. 기본 개념
 
@@ -447,7 +447,7 @@ machclusterctl upgrade -f cluster.yaml --online --dry-run --verbose
 
 ## 14. 참고 파일
 
-- YAML 작성 가이드: [machclusterctl-yaml-guide-ko.md](./machclusterctl-yaml-guide-ko.md)
-- 환경변수 기반 샘플: [machclusterctl-sample-defaults.yaml](./machclusterctl-sample-defaults.yaml)
-- 샘플 환경변수: [machclusterctl-sample-defaults.env.sh](./machclusterctl-sample-defaults.env.sh)
-- 정적 샘플: [machclusterctl-sample-defaults-noenv.yaml](./machclusterctl-sample-defaults-noenv.yaml)
+- YAML 작성 가이드: [machclusterctl-yaml-guide-ko](../machclusterctl-yaml-guide-ko/)
+- 환경변수 기반 샘플: [machclusterctl-sample-defaults.yaml](../machclusterctl-sample-defaults.yaml)
+- 샘플 환경변수: [machclusterctl-sample-defaults.env.sh](../machclusterctl-sample-defaults.env.sh)
+- 정적 샘플: [machclusterctl-sample-defaults-noenv.yaml](../machclusterctl-sample-defaults-noenv.yaml)

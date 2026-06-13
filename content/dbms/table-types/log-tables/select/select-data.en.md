@@ -10,7 +10,7 @@ The following example shows a search without creating an index.
 
 In other words, the last input data is outputed first.
 
-For more information, see the [SELECT](/dbms/sql-ref/select) section of the SQL Reference.
+For more information, see the [SELECT](../../../../sql-reference/select/) section of the SQL Reference.
 
 
 ## Basic access
@@ -155,5 +155,4 @@ Elapsed time: 0.001
 
 ### Property to set default scan direction
 
-With the [TABLE_SCAN_DIRECTION](/dbms/config-monitor/property/#table_scan_direction) property, you can set the scan direction of the log table when there is no hint in the SELECT statement.
-
+With the [TABLE_SCAN_DIRECTION](../../../../configuration/property/#table_scan_direction) property, you can set the scan direction of the log table when there is no hint in the SELECT statement.

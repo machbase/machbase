@@ -557,7 +557,7 @@ SELECT * FROM logs DURATION 30 DAY LIMIT 1000;
 
 ## 다음 단계
 
-- **지식 적용**: [일반 작업](../../common-tasks/querying/) - 쿼리 최적화
+- **지식 적용**: [SELECT 레퍼런스](../../sql-reference/select/) - 쿼리 최적화
 - **더 배우기**: [테이블 타입](../../table-types/) - 상세 테이블 문서
 - **문제 해결**: [문제 해결](../../troubleshooting/) - 성능 문제
 

@@ -140,10 +140,10 @@ curl -X POST http://localhost:5654/db/write/TAG \
 
 ### 지원 언어
 
-- **[C/C++ 라이브러리](/dbms/sdk/cli-odbc)** - 고성능 네이티브 통합
-- **[Java 라이브러리](/dbms/sdk/jdbc)** - 엔터프라이즈 Java 애플리케이션
-- **[Python 라이브러리](/dbms/sdk/python)** - 데이터 과학 및 자동화
-- **[C# 라이브러리](/dbms/sdk/dotnet)** - .NET 애플리케이션
+- **[C/C++ 라이브러리](../../../sdk-integration/cli-odbc/)** - 고성능 네이티브 통합
+- **[Java 라이브러리](../../../sdk-integration/jdbc/)** - 엔터프라이즈 Java 애플리케이션
+- **[Python 라이브러리](../../../sdk-integration/python/)** - 데이터 과학 및 자동화
+- **[C# 라이브러리](../../../sdk-integration/dotnet/)** - .NET 애플리케이션
 
 ### Python 예제
 

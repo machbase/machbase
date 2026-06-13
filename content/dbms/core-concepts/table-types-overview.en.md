@@ -644,7 +644,7 @@ CREATE TAGDATA TABLE sensor_readings (...);
 
 - **Deep Dive**: [Indexing and Performance](../indexing/) - Optimize queries
 - **Detailed Reference**: [Table Types](../../table-types/) - Complete documentation
-- **Hands-On**: [Tutorials](../../tutorials/) - Practice with real examples
+- **Hands-On**: [Table Types](../../table-types/) - Practice with real examples
 
 ## Key Takeaways
 

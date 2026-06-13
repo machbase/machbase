@@ -213,7 +213,7 @@ cat $MACHBASE_HOME/trc/machloader.log
 
 ## Related Documentation
 
-- [Common Tasks](../common-tasks/) - Practical how-to guides
+- [First Steps](../getting-started/first-steps/) - Practical how-to guides
 - [Configuration](../configuration/) - Server configuration
 - [Troubleshooting](../troubleshooting/) - Problem solving
 

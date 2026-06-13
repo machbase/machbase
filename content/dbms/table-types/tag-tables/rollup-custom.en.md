@@ -216,7 +216,7 @@ SELECT rollup_table,
 ## Operational Notes
 
 - Destination `DROP TABLE` is blocked while the rollup exists.
-- If corrected source data requires rebuilding destination buckets, follow [Rollup Rebuild Guide](./rollup-rebuild/).
+- If corrected source data requires rebuilding destination buckets, follow [Rollup Rebuild Guide](../rollup-rebuild/).
 - Recommended drop order:
 
 ```sql

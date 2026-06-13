@@ -1,6 +1,6 @@
 # machclusterctl YAML Authoring Guide
 
-This document describes how to write the `cluster.yaml` file used by `machclusterctl`. For command execution procedures, see [machclusterctl-user-guide-en.md](./machclusterctl-user-guide-en.md).
+This document describes how to write the `cluster.yaml` file used by `machclusterctl`. For command execution procedures, see [machclusterctl-user-guide-en](../machclusterctl-user-guide-en/).
 
 YAML describes the desired cluster state. `machclusterctl` reads the YAML and then applies `cluster.defaults`, `cluster.hosts`, and environment-variable substitution to produce the final resolved configuration.
 

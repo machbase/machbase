@@ -557,7 +557,7 @@ SELECT * FROM logs DURATION 30 DAY LIMIT 1000;
 
 ## Next Steps
 
-- **Apply Knowledge**: [Common Tasks](../../common-tasks/querying/) - Query optimization
+- **Apply Knowledge**: [SELECT Reference](../../sql-reference/select/) - Query optimization
 - **Learn More**: [Table Types](../../table-types/) - Detailed table documentation
 - **Troubleshoot**: [Troubleshooting](../../troubleshooting/) - Performance issues
 

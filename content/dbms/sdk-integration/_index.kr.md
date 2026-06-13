@@ -67,7 +67,7 @@ C# 애플리케이션을 위한 .NET 프로바이더:
 
 **사용 시점**: 웹 애플리케이션, 마이크로서비스, HTTP 전용 환경
 
-[전체 레퍼런스](restful_api/)
+REST API 레퍼런스는 이 DBMS 섹션에 포함되어 있지 않습니다.
 
 ## 빠른 시작 예제
 
@@ -375,10 +375,10 @@ monitor.close()
 - **Java**: [JDBC 레퍼런스](jdbc/)
 - **Python**: [Python SDK 레퍼런스](python/)
 - **.NET**: [.NET 레퍼런스](dotnet/)
-- **Web/REST**: [REST API 레퍼런스](restful_api/)
+- **Web/REST**: 배포 환경에서 HTTP 엔드포인트를 제공할 때 HTTP 기반 통합을 사용합니다.
 
 ## 관련 문서
 
-- [일반 작업: 연결하기](../common-tasks/connecting/) - 연결 예제
-- [일반 작업: 데이터 가져오기](../common-tasks/importing-data/) - 대량 로딩
-- [튜토리얼](../tutorials/) - 실습 예제
+- [첫 단계](../getting-started/first-steps/) - 연결 예제
+- [데이터 가져오기](../table-types/log-tables/insert/import-data/) - 대량 로딩
+- [테이블 타입](../table-types/) - 실습 예제

@@ -46,7 +46,7 @@ Machbase가 높은 성능을 달성하는 방법:
 
 핵심 개념을 시작하기 전에:
 - [시작하기](../getting-started/) 섹션 완료
-- [튜토리얼](../tutorials/) 중 최소 2개 완료
+- [테이블 타입](../table-types/) 가이드 읽기
 - Machbase에 대한 실습 경험 보유
 
 ## 학습 경로
@@ -235,7 +235,7 @@ SELECT sensor_id, AVG(value) FROM sensors GROUP BY sensor_id;
 3. **마지막**: [인덱싱 및 성능](./indexing/)
 
 또는 다음으로 이동:
-- [일반 작업](../common-tasks/) - 실용적인 사용 가이드
+- [첫 단계](../getting-started/first-steps/) - 실용적인 machsql 작업 흐름
 - [테이블 타입](../table-types/) - 각 타입에 대한 상세 레퍼런스
 - [SQL 레퍼런스](../sql-reference/) - 완전한 SQL 구문
 

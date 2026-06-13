@@ -45,6 +45,5 @@ CREATE VOLATILE TABLE table_name (
 
 ## Related Documentation
 
-- [Tutorial: Real-time Analytics](../../tutorials/realtime-analytics/)
+- [Insert and Update Data](./insert-update/)
 - [Core Concepts: Table Types](../../core-concepts/table-types-overview/)
-- Original reference: [Volatile Tables](../../../dbms/feature-table/volatile/)

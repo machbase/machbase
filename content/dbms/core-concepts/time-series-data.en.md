@@ -438,7 +438,7 @@ Now that you understand time-series data:
 
 1. **Read**: [Table Types Overview](../table-types-overview/) - Choose the right table
 2. **Learn**: [Indexing and Performance](../indexing/) - Optimize queries
-3. **Practice**: [Tutorials](../../tutorials/) - Hands-on exercises
+3. **Practice**: [Tag Tables](../../table-types/tag-tables/) - Hands-on exercises
 
 ## Key Takeaways
 

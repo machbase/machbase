@@ -418,8 +418,8 @@ CREATE LOOKUP TABLE equipment_list (...);
 
 이제 핵심 개념을 이해했습니다:
 
-1. [**튜토리얼**](../../tutorials/) - 실제 시나리오로 연습
-2. [**일반 작업**](../../common-tasks/) - 일상 작업 학습
+1. [**첫 단계**](../first-steps/) - 일상적인 machsql 작업 연습
+2. [**SQL 레퍼런스**](../../sql-reference/) - 쿼리와 DDL 구문 학습
 3. [**테이블 타입 심층 분석**](../../table-types/) - 상세한 문서
 
 ## 빠른 참조

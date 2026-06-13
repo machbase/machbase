@@ -88,7 +88,7 @@ Complete SQL syntax reference for Machbase. This section provides detailed docum
 - `ABS()`, `CEIL()`, `FLOOR()`
 - `ROUND()`, `TRUNC()`
 - `POWER()`, `SQRT()`
-- [Mathematical Functions](./math-functions)
+- [Functions](./functions/)
 
 ## Machbase-Specific Features
 
@@ -121,7 +121,7 @@ DELETE FROM table BEFORE datetime;
 ## Complete Reference
 
 For complete SQL syntax documentation, see:
-- [SQL Reference](../../dbms/sql-ref/) - Detailed SQL command reference
+- [DDL](./ddl/), [DML](./dml/), [SELECT](./select/), and [Functions](./functions/)
 
 ## Quick Reference Examples
 
@@ -200,5 +200,5 @@ ALTER USER analyst IDENTIFIED BY 'newpassword';
 
 - [VIEW](./view) - Stored VIEW creation, querying, metadata, performance, and limits
 - [Core Concepts](../core-concepts/) - Understanding Machbase
-- [Common Tasks](../common-tasks/querying/) - Query examples
-- [Tutorials](../tutorials/) - Hands-on practice
+- [SELECT](./select/) - Query examples
+- [Table Types](../table-types/) - Hands-on practice

@@ -48,7 +48,7 @@ CREATE TAG TABLE trip_data (
 
 ## 관련 문서
 
-- [튜토리얼: IoT 센서 데이터](../../tutorials/iot-sensor-data/)
+- [Tag 데이터 삽입](./inserting-data/)
 - [핵심 개념: 테이블 타입](../../core-concepts/table-types-overview/)
 - [Tag 테이블 생성 및 삭제](./creating-tag-tables/)
 - [조건부 롤업으로 이상치 제외 집계](./rollup-conditional/)
@@ -57,4 +57,3 @@ CREATE TAG TABLE trip_data (
 - [Binary 컬럼](./binary-columns/)
 - [Tag 메타데이터](./tag-metadata/)
 - [Tag 테이블 인덱스](./tag-indexes/)
-- 원본 레퍼런스: [Tag Tables](../../../dbms/feature-table/tag/)

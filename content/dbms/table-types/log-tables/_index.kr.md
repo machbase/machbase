@@ -40,6 +40,5 @@ CREATE TABLE table_name (
 
 ## 관련 문서
 
-- [튜토리얼: 애플리케이션 로그](../../tutorials/application-logs/)
+- [Log 데이터 입력](./insert/)
 - [핵심 개념: 테이블 타입](../../core-concepts/table-types-overview/)
-- 원본 참조: [Log 테이블](../../../dbms/feature-table/log/)

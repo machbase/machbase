@@ -146,7 +146,7 @@ Now that you have Machbase running:
 
 1. [**First Steps**](../first-steps/) - Learn more machsql commands
 2. [**Basic Concepts**](../concepts/) - Understand table types and when to use them
-3. [**Tutorials**](../../tutorials/) - Follow hands-on tutorials for real-world scenarios
+3. [**Table Types**](../../table-types/) - Choose the right table for real-world scenarios
 
 ## Common Commands
 
@@ -178,7 +178,7 @@ machsql
 
 **Need help?**
 - See [Troubleshooting Guide](../../troubleshooting/)
-- Check [Error Codes](../../troubleshooting/error-codes/)
+- Check [Error Codes](../../troubleshooting/error-code/)
 
 ---
 

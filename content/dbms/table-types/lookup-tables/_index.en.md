@@ -44,6 +44,5 @@ CREATE LOOKUP TABLE table_name (
 
 ## Related Documentation
 
-- [Tutorial: Reference Data](../../tutorials/reference-data/)
+- [Inserting Lookup Data](./inserting-data/)
 - [Core Concepts: Table Types](../../core-concepts/table-types-overview/)
-- Original reference: [Lookup Tables](../../../dbms/feature-table/lookup/)

@@ -82,7 +82,7 @@ docker run -d --name machbase \
 docker exec -it machbase machsql
 ```
 
-자세한 Docker 지침은 [Docker 설치](../../installation/docker/)를 참조하세요.
+자세한 Docker 지침은 [Docker 설치](../../installation/linux/docker-install/)를 참조하세요.
 
 ## Windows 설치
 
@@ -313,4 +313,4 @@ MEM_MAX_DB = 2G
 
 - [클러스터 에디션 설치](../../installation/cluster/)
 - [고가용성 설정](../../installation/cluster/)
-- [업그레이드 절차](../../installation/cluster/upgrade/)
+- [업그레이드 절차](../../installation/upgrade/)

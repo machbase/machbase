@@ -18,7 +18,7 @@ Native C/C++ API for maximum performance:
 
 **Use when**: Building C/C++ applications, need maximum performance
 
-[Complete Reference](../../dbms/sdk/cli-odbc/)
+[Complete Reference](cli-odbc/)
 
 ### JDBC (Java)
 
@@ -31,7 +31,7 @@ Standard JDBC driver for Java applications:
 
 **Use when**: Building Java applications, need standard JDBC
 
-[Complete Reference](../../dbms/sdk/jdbc/)
+[Complete Reference](jdbc/)
 
 ### Python
 
@@ -43,7 +43,7 @@ Python client library:
 
 **Use when**: Data science, scripting, Python applications
 
-[Complete Reference](../../dbms/sdk/python/)
+[Complete Reference](python/)
 
 ### .NET (C#)
 
@@ -55,7 +55,7 @@ Python client library:
 
 **Use when**: Building .NET/C# applications
 
-[Complete Reference](../../dbms/sdk/dotnet/)
+[Complete Reference](dotnet/)
 
 ### REST API
 
@@ -67,7 +67,7 @@ HTTP-based API for web applications:
 
 **Use when**: Web applications, microservices, HTTP-only environments
 
-[Complete Reference](../../dbms/sdk/restful_api/)
+REST API reference is not included in this DBMS section.
 
 ## Quick Start Examples
 
@@ -371,14 +371,14 @@ monitor.close()
 
 Choose the SDK that matches your development environment:
 
-- **C/C++**: [CLI/ODBC Reference](../../dbms/sdk/cli-odbc/)
-- **Java**: [JDBC Reference](../../dbms/sdk/jdbc/)
-- **Python**: [Python SDK Reference](../../dbms/sdk/python/)
-- **.NET**: [.NET Reference](../../dbms/sdk/dotnet/)
-- **Web/REST**: [REST API Reference](../../dbms/sdk/restful_api/)
+- **C/C++**: [CLI/ODBC Reference](cli-odbc/)
+- **Java**: [JDBC Reference](jdbc/)
+- **Python**: [Python SDK Reference](python/)
+- **.NET**: [.NET Reference](dotnet/)
+- **Web/REST**: Use HTTP-based integration when an endpoint is available for your deployment.
 
 ## Related Documentation
 
-- [Common Tasks: Connecting](../common-tasks/connecting/) - Connection examples
-- [Common Tasks: Importing Data](../common-tasks/importing-data/) - Bulk loading
-- [Tutorials](../tutorials/) - Hands-on examples
+- [First Steps](../getting-started/first-steps/) - Connection examples
+- [Import Data](../table-types/log-tables/insert/import-data/) - Bulk loading
+- [Table Types](../table-types/) - Hands-on examples

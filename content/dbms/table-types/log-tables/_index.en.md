@@ -40,6 +40,5 @@ CREATE TABLE table_name (
 
 ## Related Documentation
 
-- [Tutorial: Application Logs](../../tutorials/application-logs/)
+- [Insert Log Data](./insert/)
 - [Core Concepts: Table Types](../../core-concepts/table-types-overview/)
-- Original reference: [Log Tables](../../../dbms/feature-table/log/)

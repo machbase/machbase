@@ -82,7 +82,7 @@ docker run -d --name machbase \
 docker exec -it machbase machsql
 ```
 
-For detailed Docker instructions, see [Docker Installation](../../installation/docker/).
+For detailed Docker instructions, see [Docker Installation](../../installation/linux/docker-install/).
 
 ## Windows Installation
 
@@ -313,4 +313,4 @@ For advanced setups:
 
 - [Cluster Edition Installation](../../installation/cluster/)
 - [High Availability Setup](../../installation/cluster/)
-- [Upgrade Procedures](../../installation/cluster/upgrade/)
+- [Upgrade Procedures](../../installation/upgrade/)

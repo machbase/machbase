@@ -146,7 +146,7 @@ sensor01             25.3         65.2
 
 1. [**첫 단계**](../first-steps/) - machsql 명령어 더 배우기
 2. [**기본 개념**](../concepts/) - 테이블 타입과 사용 시기 이해
-3. [**튜토리얼**](../../tutorials/) - 실제 시나리오를 위한 실습 튜토리얼 따라하기
+3. [**테이블 타입**](../../table-types/) - 실제 시나리오에 맞는 테이블 선택
 
 ## 일반 명령어
 
@@ -178,7 +178,7 @@ machsql
 
 **도움이 필요하신가요?**
 - [문제 해결 가이드](../../troubleshooting/) 참조
-- [에러 코드](../../troubleshooting/error-codes/) 확인
+- [에러 코드](../../troubleshooting/error-code/) 확인
 
 ---
 

@@ -491,4 +491,4 @@ Mach>
 
 ### Setting basic scan direction property
 
-By using [TABLE_SCAN_DIRECTION](/dbms/config-monitor/property#table_scan_direction) property, user can set tag table scan direction when there is no hint in select query.
+By using [TABLE_SCAN_DIRECTION](../../../configuration/property/#table_scan_direction) property, user can set tag table scan direction when there is no hint in select query.

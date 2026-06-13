@@ -214,7 +214,7 @@ SELECT COUNT(*) FROM table WHERE column IS NULL;
 | -30000 | Out of memory | Reduce query size, increase memory |
 | -30100 | Timeout | Add time filter, increase timeout |
 
-For complete error code reference, see [Error Codes](../../dbms/faq/error-code/).
+For complete error code reference, see [Error Codes](./error-code/).
 
 ## Performance Optimization
 
@@ -351,9 +351,9 @@ When reporting issues, collect:
 
 ### Support Resources
 
-- **Documentation**: Review this guide and [FAQ](../../dbms/faq/)
-- **Error Codes**: Check [Error Code Reference](../../dbms/faq/error-code/)
-- **Memory Issues**: See [Memory Error Guide](../../dbms/faq/memory-error/)
+- **Documentation**: Review this guide and [Common Issues](./common-issues/)
+- **Error Codes**: Check [Error Code Reference](./error-code/)
+- **Memory Issues**: See [Memory Error Guide](./memory-error/)
 
 ## Best Practices to Avoid Issues
 
@@ -390,4 +390,4 @@ EOF
 
 - [Configuration](../configuration/) - Server configuration
 - [Tools Reference](../tools-reference/) - Command-line tools
-- [FAQ](../../dbms/faq/) - Frequently asked questions
+- [Common Issues](./common-issues/) - Frequently asked questions

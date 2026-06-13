@@ -422,7 +422,7 @@ SELECT COUNT(*), AVG(value) FROM large_table;
 Now that you know machsql basics:
 
 1. [**Basic Concepts**](../concepts/) - Understand table types and architecture
-2. [**Tutorials**](../../tutorials/) - Follow hands-on examples
+2. [**Table Types**](../../table-types/) - Choose the right table for your data
 3. [**SQL Reference**](../../sql-reference/) - Complete SQL syntax guide
 
 ## Quick Reference Card

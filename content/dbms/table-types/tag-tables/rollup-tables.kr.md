@@ -166,7 +166,7 @@ CREATE ROLLUP <rollup_name>
 - 조건부 롤업은 `ON/FROM` 문법의 외부 `WHERE`를 사용합니다.
 - Custom Rollup(`INTO ... AS (SELECT ...)`)은 `SELECT` 내부 `WHERE`만 지원합니다.
 - 즉, `CREATE ROLLUP ... INTO (...) AS (...) INTERVAL ... WHERE ...` 형태는 허용되지 않는다.
-- 자세한 Custom 문법은 [Custom Rollup: 사용자 정의 집계](./rollup-custom/), SQL 문법은 [DDL: CREATE ROLLUP](../../sql-reference/ddl/#create-rollup)을 참고합니다.
+- 자세한 Custom 문법은 [Custom Rollup: 사용자 정의 집계](../rollup-custom/), SQL 문법은 [DDL: CREATE ROLLUP](../../../sql-reference/ddl/#create-rollup)을 참고합니다.
 
 ### 자동 선택 우선순위(힌트 없을 때)
 1. `ROLLUP_TABLE(<rollup_table_name>)` 힌트가 있으면 그 롤업을 무조건 사용.
@@ -267,7 +267,7 @@ EXEC ROLLUP_FORCE(<rollup_name>);
 ### Rollup Rebuild 참고
 
 원본 TAG 데이터를 삭제하거나 이상 데이터를 정상 데이터로 재적재해도 기존 rollup 결과는 자동으로 되감기지 않습니다.
-built-in rollup의 시간 범위 복원, `EXEC ROLLUP_REBUILD(...)` 사용법, custom rollup 수동 복구 절차는 [Rollup Rebuild 사용자 가이드](./rollup-rebuild/)를 참고하십시오.
+built-in rollup의 시간 범위 복원, `EXEC ROLLUP_REBUILD(...)` 사용법, custom rollup 수동 복구 절차는 [Rollup Rebuild 사용자 가이드](../rollup-rebuild/)를 참고하십시오.
 
 ## ROLLUP 테이블 삭제
 

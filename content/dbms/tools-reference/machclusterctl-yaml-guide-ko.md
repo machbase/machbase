@@ -1,6 +1,6 @@
 # machclusterctl YAML 작성 가이드
 
-이 문서는 `machclusterctl`에서 사용하는 `cluster.yaml` 작성 방법을 설명한다. 명령 실행 절차는 [machclusterctl-user-guide-ko.md](./machclusterctl-user-guide-ko.md)를 참고한다.
+이 문서는 `machclusterctl`에서 사용하는 `cluster.yaml` 작성 방법을 설명한다. 명령 실행 절차는 [machclusterctl-user-guide-ko](../machclusterctl-user-guide-ko/)를 참고한다.
 
 YAML에는 클러스터의 목표 상태를 적는다. `machclusterctl`은 YAML을 읽은 뒤 `cluster.defaults`, `cluster.hosts`, 환경변수 치환을 적용해 최종 설정값을 만든다.
 

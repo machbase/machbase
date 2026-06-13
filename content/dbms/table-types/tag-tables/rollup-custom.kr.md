@@ -216,7 +216,7 @@ SELECT rollup_table,
 ## 운영 주의사항
 
 - Rollup이 존재하면 대상 테이블 `DROP`은 거부됩니다.
-- 원본 데이터 보정 후 대상 버킷을 다시 만들어야 하는 경우에는 [Rollup Rebuild 사용자 가이드](./rollup-rebuild/)의 절차를 따르십시오.
+- 원본 데이터 보정 후 대상 버킷을 다시 만들어야 하는 경우에는 [Rollup Rebuild 사용자 가이드](../rollup-rebuild/)의 절차를 따르십시오.
 - 권장 삭제 순서:
 
 ```sql

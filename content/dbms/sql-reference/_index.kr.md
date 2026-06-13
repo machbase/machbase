@@ -88,7 +88,7 @@ Machbase의 완전한 SQL 구문 레퍼런스입니다. 이 섹션은 모든 SQL
 - `ABS()`, `CEIL()`, `FLOOR()`
 - `ROUND()`, `TRUNC()`
 - `POWER()`, `SQRT()`
-- [수학 함수](./math-functions)
+- [함수](./functions/)
 
 ## Machbase 전용 기능
 
@@ -121,7 +121,7 @@ DELETE FROM table BEFORE datetime;
 ## 완전한 레퍼런스
 
 완전한 SQL 구문 문서는 다음을 참조하세요:
-- [SQL 레퍼런스](../../dbms/sql-ref/) - 상세한 SQL 명령어 레퍼런스
+- [DDL](./ddl/), [DML](./dml/), [SELECT](./select/), [함수](./functions/)
 
 ## 빠른 참조 예제
 
@@ -200,5 +200,5 @@ ALTER USER analyst IDENTIFIED BY 'newpassword';
 
 - [VIEW](./view) - 저장 VIEW 생성, 조회, 메타 확인, 성능과 제한
 - [핵심 개념](../core-concepts/) - Machbase 이해하기
-- [일반 작업](../common-tasks/querying/) - 쿼리 예제
-- [튜토리얼](../tutorials/) - 실습 연습
+- [SELECT](./select/) - 쿼리 예제
+- [테이블 타입](../table-types/) - 실습 연습

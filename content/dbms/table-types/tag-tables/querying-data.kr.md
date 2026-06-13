@@ -491,4 +491,4 @@ Mach>
 
 ### 기본 스캔 방향 속성 설정
 
-[TABLE_SCAN_DIRECTION](/dbms/config-monitor/property#table_scan_direction) 속성을 사용하여, select 쿼리에 힌트가 없을 때 tag 테이블 스캔 방향을 설정할 수 있습니다.
+[TABLE_SCAN_DIRECTION](../../../configuration/property/#table_scan_direction) 속성을 사용하여, select 쿼리에 힌트가 없을 때 tag 테이블 스캔 방향을 설정할 수 있습니다.

@@ -140,10 +140,10 @@ Use Machbase SDKs for programmatic data insertion from your applications.
 
 ### Supported Languages
 
-- **[C/C++ library](/dbms/sdk/cli-odbc)** - High-performance native integration
-- **[Java library](/dbms/sdk/jdbc)** - Enterprise Java applications
-- **[Python library](/dbms/sdk/python)** - Data science and automation
-- **[C# library](/dbms/sdk/dotnet)** - .NET applications
+- **[C/C++ library](../../../sdk-integration/cli-odbc/)** - High-performance native integration
+- **[Java library](../../../sdk-integration/jdbc/)** - Enterprise Java applications
+- **[Python library](../../../sdk-integration/python/)** - Data science and automation
+- **[C# library](../../../sdk-integration/dotnet/)** - .NET applications
 
 ### Python Example
 

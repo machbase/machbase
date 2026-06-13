@@ -2,7 +2,7 @@
 
 `machclusterctl` is a command-line tool for installing and operating Machbase Cluster Edition with a YAML file. Operators declare the desired cluster layout in `cluster.yaml` and manage the cluster with commands such as `validate`, `install`, `apply`, `upgrade`, `start`, and `stop`.
 
-For YAML authoring details, also see [machclusterctl-yaml-guide-en.md](./machclusterctl-yaml-guide-en.md).
+For YAML authoring details, also see [machclusterctl-yaml-guide-en](../machclusterctl-yaml-guide-en/).
 
 ## 1. Basic Concepts
 
@@ -447,7 +447,7 @@ machclusterctl upgrade -f cluster.yaml --online --dry-run --verbose
 
 ## 14. Reference Files
 
-- YAML authoring guide: [machclusterctl-yaml-guide-en.md](./machclusterctl-yaml-guide-en.md)
-- Environment-variable based sample: [machclusterctl-sample-defaults.yaml](./machclusterctl-sample-defaults.yaml)
-- Sample environment variables: [machclusterctl-sample-defaults.env.sh](./machclusterctl-sample-defaults.env.sh)
-- Static sample: [machclusterctl-sample-defaults-noenv.yaml](./machclusterctl-sample-defaults-noenv.yaml)
+- YAML authoring guide: [machclusterctl-yaml-guide-en](../machclusterctl-yaml-guide-en/)
+- Environment-variable based sample: [machclusterctl-sample-defaults.yaml](../machclusterctl-sample-defaults.yaml)
+- Sample environment variables: [machclusterctl-sample-defaults.env.sh](../machclusterctl-sample-defaults.env.sh)
+- Static sample: [machclusterctl-sample-defaults-noenv.yaml](../machclusterctl-sample-defaults-noenv.yaml)

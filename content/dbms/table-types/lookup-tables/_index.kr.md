@@ -44,6 +44,5 @@ CREATE LOOKUP TABLE table_name (
 
 ## 관련 문서
 
-- [튜토리얼: 참조 데이터](../../tutorials/reference-data/)
+- [Lookup 데이터 입력](./inserting-data/)
 - [핵심 개념: 테이블 타입](../../core-concepts/table-types-overview/)
-- 원본 레퍼런스: [Lookup Tables](../../../dbms/feature-table/lookup/)

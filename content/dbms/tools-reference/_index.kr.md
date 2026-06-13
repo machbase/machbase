@@ -213,7 +213,7 @@ cat $MACHBASE_HOME/trc/machloader.log
 
 ## 관련 문서
 
-- [일반 작업](../common-tasks/) - 실용적인 사용 가이드
+- [첫 단계](../getting-started/first-steps/) - 실용적인 사용 가이드
 - [설정](../configuration/) - 서버 설정
 - [문제 해결](../troubleshooting/) - 문제 해결
 

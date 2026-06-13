@@ -45,6 +45,5 @@ CREATE VOLATILE TABLE table_name (
 
 ## 관련 문서
 
-- [튜토리얼: 실시간 분석](../../tutorials/realtime-analytics/)
+- [데이터 입력 및 갱신](./insert-update/)
 - [핵심 개념: 테이블 유형](../../core-concepts/table-types-overview/)
-- 원본 참조: [Volatile 테이블](../../../dbms/feature-table/volatile/)
