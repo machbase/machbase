@@ -40,16 +40,16 @@ Tag 테이블은 자동으로 정교한 인덱싱 시스템을 생성합니다:
 ### 작동 방식
 
 ```sql
-CREATE TAGDATA TABLE sensors (
+CREATE TAG TABLE sensors (
     sensor_id VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
     temperature DOUBLE SUMMARIZED
-);
+) WITH ROLLUP;
 
 -- 내부적으로 Machbase가 생성:
 -- 1. sensor_id에 대한 인덱스 (태그 이름)
 -- 2. 시간 기반 파티션
--- 3. 각 파티션 내 temperature에 대한 인덱스
+-- 3. SUMMARIZED 컬럼을 위한 rollup/인덱스 구조
 ```
 
 ### 쿼리 최적화
@@ -68,7 +68,8 @@ WHERE sensor_id = 'sensor01'
 -- sensor_id + 시간 파티션 사용
 SELECT * FROM sensors
 WHERE sensor_id = 'sensor01'
-DURATION 1 HOUR;
+  AND time BETWEEN TO_DATE('2025-10-10 14:00:00', 'YYYY-MM-DD HH24:MI:SS')
+               AND TO_DATE('2025-10-10 15:00:00', 'YYYY-MM-DD HH24:MI:SS');
 ```
 
 **느린 쿼리** (전체 스캔):
@@ -80,23 +81,23 @@ WHERE temperature > 30.0;
 
 ### Rollup 테이블 인덱스
 
-Rollup 테이블은 자동으로 인덱싱됩니다:
+Rollup 테이블은 존재하는 경우 인덱싱됩니다:
 
 ```sql
 -- Rollup 쿼리 (매우 빠름, 사전 집계된 데이터)
-SELECT * FROM sensors
+SELECT rollup('hour', 1, time) AS hour_time, AVG(temperature), COUNT(temperature)
+FROM sensors
 WHERE sensor_id = 'sensor01'
-  AND rollup = hour
-DURATION 7 DAY;
+GROUP BY hour_time;
 
--- 사용 가능한 Rollup 레벨: sec, min, hour
+-- 일반적인 Rollup 레벨: sec, min, hour
 ```
 
 ### 모범 사례
 
 **DO (해야 할 것)**:
 - WHERE 절에 항상 sensor_id 포함
-- 시간 필터 사용 (DURATION 또는 시간 범위)
+- 시간 필터 사용 (Log 테이블은 `DURATION`, Tag 테이블은 BASETIME 범위)
 - 통계를 위해 Rollup 테이블 쿼리
 - Machbase가 인덱스를 자동 관리하도록 허용
 
@@ -171,9 +172,11 @@ WHERE level = 'ERROR'
 DURATION 1 HOUR;
 ```
 
-**인덱스 미사용**:
+**KEYWORD 인덱스 필요**:
 ```sql
--- 느림: 전체 스캔, 하지만 여전히 시간 파티셔닝 사용
+-- SEARCH 사용 전 KEYWORD 인덱스 생성
+CREATE INDEX idx_message ON app_logs(message) INDEX_TYPE KEYWORD;
+
 SELECT * FROM app_logs
 WHERE message SEARCH 'timeout'
 DURATION 1 HOUR;
@@ -224,13 +227,12 @@ SELECT * FROM device_status WHERE status = 'ERROR';
 
 ```sql
 CREATE LOOKUP TABLE devices (
-    device_id INTEGER,
+    device_id INTEGER PRIMARY KEY,
     device_name VARCHAR(100),
     location VARCHAR(200)
 );
 
 -- 자주 쿼리되는 컬럼에 인덱스 생성
-CREATE INDEX idx_device_id ON devices(device_id);
 CREATE INDEX idx_location ON devices(location);
 ```
 
@@ -240,7 +242,8 @@ Log 테이블 인덱싱과 동일한 원칙입니다.
 
 ### 자동 파티셔닝
 
-모든 디스크 기반 테이블 (Tag, Log, Lookup)은 시간 기반 파티셔닝을 사용합니다:
+Tag 및 Log 테이블은 효율적인 범위 쿼리를 위해 시간 인지 저장 구조를 사용합니다.
+Lookup 테이블은 영구 참조 테이블이며 primary key와 선택적 인덱스로 최적화합니다.
 
 ```
 파티션 구조:
@@ -303,7 +306,8 @@ SELECT * FROM sensors WHERE sensor_id = 'sensor01';
 ```sql
 SELECT * FROM sensors
 WHERE sensor_id = 'sensor01'
-DURATION 1 HOUR;
+  AND time BETWEEN TO_DATE('2025-10-10 14:00:00', 'YYYY-MM-DD HH24:MI:SS')
+               AND TO_DATE('2025-10-10 15:00:00', 'YYYY-MM-DD HH24:MI:SS');
 ```
 
 ### 2. DURATION 키워드 사용
@@ -316,17 +320,23 @@ SELECT * FROM logs DURATION 1 HOUR;
 **덜 최적** (수동 시간 필터):
 ```sql
 SELECT * FROM logs
-WHERE _arrival_time >= NOW - INTERVAL '1' HOUR;
+WHERE _arrival_time BETWEEN TO_DATE('2025-10-10 14:00:00', 'YYYY-MM-DD HH24:MI:SS')
+                        AND TO_DATE('2025-10-10 15:00:00', 'YYYY-MM-DD HH24:MI:SS');
 ```
 
 ### 3. 원시 데이터가 아닌 Rollup 쿼리
 
-**좋음** (즉각적인 결과):
+**좋음** (매칭되는 rollup이 있을 때 즉각적인 결과):
 ```sql
 SELECT * FROM sensors
 WHERE sensor_id = 'sensor01'
-  AND rollup = hour
-DURATION 7 DAY;
+  AND time BETWEEN TO_DATE('2025-10-01', 'YYYY-MM-DD')
+               AND TO_DATE('2025-10-08', 'YYYY-MM-DD');
+
+SELECT rollup('hour', 1, time) AS hour_time, AVG(temperature)
+FROM sensors
+WHERE sensor_id = 'sensor01'
+GROUP BY hour_time;
 ```
 
 **느림** (수백만 행):
@@ -334,7 +344,8 @@ DURATION 7 DAY;
 SELECT sensor_id, AVG(temperature)
 FROM sensors
 WHERE sensor_id = 'sensor01'
-DURATION 7 DAY
+  AND time BETWEEN TO_DATE('2025-10-01', 'YYYY-MM-DD')
+               AND TO_DATE('2025-10-08', 'YYYY-MM-DD')
 GROUP BY sensor_id;
 ```
 
@@ -444,16 +455,17 @@ SHOW INDEXGAP;
 
 ```properties
 # 메모리 설정
-BUFFER_POOL_SIZE = 2G          # 공유 버퍼 캐시
-VOLATILE_TABLESPACE_SIZE = 1G  # Volatile 테이블 메모리
+PROCESS_MAX_SIZE = 8G                         # 프로세스 메모리 제한
+VOLATILE_TABLESPACE_MEMORY_MAX_SIZE = 1G      # Volatile 테이블 메모리
+DISK_COLUMNAR_TABLESPACE_MEMORY_MAX_SIZE = 2G # 디스크 테이블 메모리
 
 # 쓰기 성능
-CHECKPOINT_INTERVAL_SEC = 600  # 체크포인트 주기
-LOG_BUFFER_SIZE = 64M          # 쓰기 버퍼 크기
+DISK_COLUMNAR_TABLE_CHECKPOINT_INTERVAL_SEC = 600
+DISK_COLUMNAR_INDEX_CHECKPOINT_INTERVAL_SEC = 600
 
 # 쿼리 성능
 MAX_QPX_MEM = 512M             # 쿼리당 메모리 제한
-QUERY_TIMEOUT = 60             # 쿼리 타임아웃 (초)
+SESSION_QUERY_TIMEOUT_SEC = 60 # 쿼리 타임아웃, 0은 비활성화
 ```
 
 ### 애플리케이션 최적화
@@ -493,22 +505,28 @@ SELECT * FROM sensors WHERE sensor_id = 'sensor01';
 ```sql
 SELECT * FROM sensors
 WHERE sensor_id = 'sensor01'
-DURATION 1 HOUR;  -- 빠름: 1개 파티션 스캔
+  AND time BETWEEN TO_DATE('2025-10-10 14:00:00', 'YYYY-MM-DD HH24:MI:SS')
+               AND TO_DATE('2025-10-10 15:00:00', 'YYYY-MM-DD HH24:MI:SS');
 ```
 
 ### 문제 2: 분석을 위해 원시 데이터 쿼리
 
 **문제**:
 ```sql
-SELECT AVG(temperature) FROM sensors DURATION 7 DAY;
+SELECT AVG(temperature)
+FROM sensors
+WHERE time BETWEEN TO_DATE('2025-10-01', 'YYYY-MM-DD')
+               AND TO_DATE('2025-10-08', 'YYYY-MM-DD');
 -- 느림: 수백만 행 집계
 ```
 
 **솔루션**:
 ```sql
-SELECT AVG(avg_temperature) FROM sensors
-WHERE rollup = hour
-DURATION 7 DAY;  -- 빠름: 사전 계산된 데이터 집계
+SELECT rollup('hour', 1, time) AS hour_time, AVG(temperature)
+FROM sensors
+WHERE time BETWEEN TO_DATE('2025-10-01', 'YYYY-MM-DD')
+               AND TO_DATE('2025-10-08', 'YYYY-MM-DD')
+GROUP BY hour_time;  -- 매칭되는 rollup이 있으면 빠름
 ```
 
 ### 문제 3: Log 테이블에 인덱스 누락

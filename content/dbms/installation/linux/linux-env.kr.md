@@ -71,7 +71,7 @@ Machbase가 사용할 운영체제 포트는 다른 프로그램이 사용하지
 아래 명령으로 예약 포트를 지정하면 운영체제가 해당 포트를 다른 프로그램에 할당하지 않아 포트 충돌을 예방할 수 있습니다.
 
 ```bash
-[machbase@localhost ~] sudo echo reserved port range~reserved port range > /proc/sys/net/ipv4/ip_local_reserved_ports
+[machbase@localhost ~] echo 5656-5657 | sudo tee /proc/sys/net/ipv4/ip_local_reserved_ports
 ```
 
 위 방법은 일시적인 설정입니다. 영구적으로 적용하려면 `/etc/sysctl.conf` 파일을 수정합니다.
@@ -79,6 +79,9 @@ Machbase가 사용할 운영체제 포트는 다른 프로그램이 사용하지
 ```bash
 [machbase@localhost ~] sudo vim /etc/sysctl.conf
 
-# 아래 내용을 추가합니다.
-net.ipv4.ip_local_reserved_ports = reserved port range-reserved port range
+# Standard 기본 native 및 HTTP REST 포트를 예약하려면 아래 내용을 추가합니다.
+net.ipv4.ip_local_reserved_ports = 5656-5657
 ```
+
+Cluster Edition 배포에서는 설정한 cluster link, admin, service, replication, HTTP 포트를
+모두 예약 포트 범위에 포함하십시오.

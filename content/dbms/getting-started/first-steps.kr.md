@@ -151,7 +151,7 @@ DELETE FROM app_logs OLDEST 100 ROWS;
 DELETE FROM app_logs EXCEPT 1000 ROWS;
 
 -- 7일 이상 된 데이터 삭제
-DELETE FROM app_logs EXCEPT 7 DAYS;
+DELETE FROM app_logs EXCEPT 7 DAY;
 
 -- 특정 날짜 이전 데이터 삭제
 DELETE FROM app_logs
@@ -161,19 +161,19 @@ BEFORE TO_DATE('2025-01-01', 'YYYY-MM-DD');
 ### 테이블 관리
 
 ```sql
--- 테이블 삭제
-DROP TABLE temperatures;
+-- 인덱스 생성
+CREATE INDEX idx_sensor ON temperatures(sensor_id);
 
 -- 테이블 초기화 (모든 데이터 삭제)
 TRUNCATE TABLE app_logs;
 
--- 인덱스 생성
-CREATE INDEX idx_sensor ON temperatures(sensor_id);
+-- 테이블 삭제
+DROP TABLE temperatures;
 ```
 
 ## _arrival_time 이해
 
-Machbase의 모든 레코드는 자동으로 타임스탬프를 받습니다:
+모든 로그 테이블 레코드는 자동으로 타임스탬프를 받습니다:
 
 ```sql
 SELECT _arrival_time, * FROM temperatures;
@@ -215,6 +215,9 @@ DURATION 30 MINUTE BEFORE 2 HOUR;
 컬럼 내 텍스트 검색:
 
 ```sql
+-- SEARCH 사용 전 KEYWORD 인덱스 생성
+CREATE INDEX idx_message ON app_logs(message) INDEX_TYPE KEYWORD;
+
 -- "error"가 포함된 로그 찾기
 SELECT * FROM app_logs
 WHERE message SEARCH 'error';
@@ -284,7 +287,8 @@ SELECT
 FROM
     temperatures
 WHERE
-    _arrival_time > NOW() - INTERVAL '1' HOUR
+    _arrival_time BETWEEN TO_DATE('2025-10-10 14:00:00', 'YYYY-MM-DD HH24:MI:SS')
+                      AND TO_DATE('2025-10-10 15:00:00', 'YYYY-MM-DD HH24:MI:SS')
 GROUP BY
     sensor_id;
 ```
@@ -328,10 +332,10 @@ SHOW STORAGE;
 
 ```sql
 -- 30일간의 데이터만 유지
-DELETE FROM app_logs EXCEPT 30 DAYS;
+DELETE FROM app_logs EXCEPT 30 DAY;
 
 -- 오래된 센서 데이터 제거
-DELETE FROM temperatures EXCEPT 7 DAYS;
+DELETE FROM temperatures EXCEPT 7 DAY;
 ```
 
 ### 성능 확인
@@ -402,9 +406,9 @@ netstat -an | grep 5656
 
 ### 쿼리 시간 초과
 
-```sql
--- 오래 실행되는 쿼리의 경우 시간 초과 증가
-SET QUERY_TIMEOUT = 300;  -- 5분
+```properties
+# machbase.conf에 설정한 뒤 서버 재시작
+SESSION_QUERY_TIMEOUT_SEC = 300
 ```
 
 ### 메모리 부족
@@ -438,7 +442,7 @@ DROP TABLE t;
 INSERT INTO t VALUES (...);
 SELECT * FROM t;
 SELECT * FROM t DURATION 10 MINUTE;
-DELETE FROM t EXCEPT 7 DAYS;
+DELETE FROM t EXCEPT 7 DAY;
 
 -- 시스템 정보
 SHOW LICENSE;
@@ -452,6 +456,7 @@ DURATION 1 DAY
 DURATION 30 MINUTE BEFORE 2 HOUR
 
 -- 텍스트 검색
+CREATE INDEX idx_col ON t(column) INDEX_TYPE KEYWORD;
 WHERE column SEARCH 'text'
 ```
 

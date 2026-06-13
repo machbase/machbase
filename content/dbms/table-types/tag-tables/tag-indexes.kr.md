@@ -64,7 +64,7 @@ PLAN
 `TAG METADATA` 의 JSON 컬럼에도 path 인덱스를 생성할 수 있습니다.
 
 ```sql
-CREATE TAGDATA TABLE ships (
+CREATE TAG TABLE ships (
     name VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
     value DOUBLE
@@ -81,7 +81,7 @@ ON ships METADATA (info->'$.owner');
 생성 시 함께 선언할 수도 있습니다.
 
 ```sql
-CREATE TAGDATA TABLE ships (
+CREATE TAG TABLE ships (
     name VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
     value DOUBLE

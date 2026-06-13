@@ -20,10 +20,10 @@ You do not need to access any internal metadata table directly.
 
 ## Define Metadata Columns
 
-Define metadata columns in the `METADATA (...)` clause of `CREATE TAGDATA TABLE`.
+Define metadata columns in the `METADATA (...)` clause of `CREATE TAG TABLE`.
 
 ```sql
-CREATE TAGDATA TABLE sensors (
+CREATE TAG TABLE sensors (
     name VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
     value DOUBLE
@@ -147,7 +147,7 @@ DELETE FROM sensors METADATA
  WHERE status = 'STOP';
 ```
 
-If the `WHERE` clause is omitted, all metadata rows in the TAGDATA table are deleted.
+If the `WHERE` clause is omitted, all metadata rows in the TAG table are deleted.
 
 ```sql
 DELETE FROM sensors METADATA;
@@ -175,7 +175,7 @@ DELETE FROM sensors METADATA;
 You can define a `JSON` metadata column.
 
 ```sql
-CREATE TAGDATA TABLE ships (
+CREATE TAG TABLE ships (
     name VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
     value DOUBLE
@@ -247,7 +247,7 @@ SELECT info->'$[''ship-owner'']'
 If you frequently query specific JSON paths, define them at table creation time.
 
 ```sql
-CREATE TAGDATA TABLE ships (
+CREATE TAG TABLE ships (
     name VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
     value DOUBLE
@@ -356,7 +356,7 @@ UPDATE ships METADATA
 ## Full Example
 
 ```sql
-CREATE TAGDATA TABLE ships (
+CREATE TAG TABLE ships (
     name VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
     value DOUBLE

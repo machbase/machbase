@@ -25,25 +25,18 @@ SELECT * FROM m$sys_table_property WHERE id={table_id} AND name = 'TAG_DUPLICATE
 
 Data insert/select example - duplication removal duration is 1440 minutes(one day)
 ```sql
--- Total inserted data are 6 and 4 of them are duplicates but 1 duplicated record was inserted 1440 minutes(one day) before
--- system time(1970-01-03 09:00:00 000:000:003).
--- Newly inserted duplicated data within the configured duration 1440 minutes(one day) are not displayed.
+-- Use a timestamp inside the duplicate-check window relative to the server clock.
+-- DATE_TRUNC('day', NOW) gives the same timestamp for repeated statements on the same day.
 
-INSERT INTO tag VALUES('tag1', '1970-01-01 09:00:00 000:000:001', 0);
-INSERT INTO tag VALUES('tag1', '1970-01-02 09:00:00 000:000:001', 0);
-INSERT INTO tag VALUES('tag1', '1970-01-02 09:00:00 000:000:002', 0);
-INSERT INTO tag VALUES('tag1', '1970-01-02 09:00:00 000:000:002', 1);
-INSERT INTO tag VALUES('tag1', '1970-01-03 09:00:00 000:000:003', 0);
-INSERT INTO tag VALUES('tag1', '1970-01-01 09:00:00 000:000:001', 0);
+INSERT INTO tag VALUES('tag1', DATE_TRUNC('day', NOW), 0);
+INSERT INTO tag VALUES('tag1', DATE_TRUNC('day', NOW), 0);
+
+EXEC TABLE_FLUSH(tag);
 
 SELECT * FROM tag WHERE name = 'tag1';
-NAME                  TIME                            VALUE                       
+NAME                  TIME                            VALUE
 --------------------------------------------------------------------------------------
-tag1                  1970-01-01 09:00:00 000:000:001 0
-tag1                  1970-01-02 09:00:00 000:000:001 0                           
-tag1                  1970-01-02 09:00:00 000:000:002 0
-tag1                  1970-01-03 09:00:00 000:000:003 0      
-tag1                  1970-01-01 09:00:00 000:000:001 0
+tag1                  <current day> 00:00:00 000:000:000 0
   
 ```
 ## Changing configuration

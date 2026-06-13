@@ -110,7 +110,7 @@ WHERE time BETWEEN '2025-10-09 00:00:00' AND '2025-10-10 00:00:00';
 - 사전 계산된 통계 없음
 - 대규모 데이터 세트에 대해 느림
 
-**Machbase 솔루션**: 사전 계산된 통계를 가진 자동 Rollup 테이블.
+**Machbase 솔루션**: rollup이 정의된 경우 사전 계산된 통계를 제공하는 Rollup 테이블.
 
 ## 전통적인 데이터베이스가 실패하는 이유
 
@@ -221,17 +221,18 @@ LSM (Log-Structured Merge) 인덱스:
 - 쓰기 증폭 없음
 - 일관된 성능
 
-### 5. 자동 통계 (Rollup)
+### 5. Rollup 통계
 
-Tag 테이블은 자동으로 통계를 생성합니다:
+Tag 테이블은 rollup이 활성화된 경우 통계를 생성합니다:
 
 ```sql
 -- 원시 데이터: 수백만 행
 INSERT INTO sensors VALUES ('sensor01', NOW, 25.3);
 
--- 자동 Rollup: 초당, 분당, 시간당
-SELECT * FROM sensors WHERE rollup = hour;
--- 반환: MIN, MAX, AVG, SUM, COUNT, SUMSQ
+-- Rollup 표현식: 초당, 분당, 시간당 버킷
+SELECT rollup('hour', 1, time) AS hour_time, AVG(value), COUNT(value)
+FROM sensors
+GROUP BY hour_time;
 ```
 
 **이점**:
@@ -263,14 +264,14 @@ SELECT * FROM sensors WHERE rollup = hour;
 데이터 볼륨: 일일 864,000회 측정
 ```
 
-**최적**: SUMMARIZED 컬럼을 가진 Tag 테이블
+**최적**: SUMMARIZED 컬럼 하나를 가진 Tag 테이블
 
 ```sql
-CREATE TAGDATA TABLE sensors (
+CREATE TAG TABLE sensors (
     sensor_id VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
     value DOUBLE SUMMARIZED
-);
+) WITH ROLLUP;
 ```
 
 ### 패턴 2: 이벤트 스트림
@@ -324,7 +325,7 @@ CREATE VOLATILE TABLE live_status (
 
 ```sql
 CREATE LOOKUP TABLE devices (
-    device_id INTEGER,
+    device_id INTEGER PRIMARY KEY,
     name VARCHAR(100),
     location VARCHAR(200)
 );
@@ -342,8 +343,10 @@ CREATE LOOKUP TABLE devices (
 - 시간 기반 보존
 
 ```sql
--- 30일만 유지
-DELETE FROM sensors EXCEPT 30 DAYS;
+-- 한 태그의 오래된 데이터 삭제
+DELETE FROM sensors
+WHERE sensor_id = 'sensor01'
+  AND time < TO_DATE('2025-01-01', 'YYYY-MM-DD');
 ```
 
 ### 과제 2: 쿼리 성능
@@ -351,13 +354,15 @@ DELETE FROM sensors EXCEPT 30 DAYS;
 **문제**: 수백만 행 분석이 느림
 
 **Machbase 솔루션**:
-- 자동 Rollup 통계
+- rollup이 정의된 경우 Rollup 통계
 - 시간 기반 파티셔닝
 - 컬럼형 스토리지
 
 ```sql
--- 빠름: 사전 집계된 데이터 쿼리
-SELECT * FROM sensors WHERE rollup = hour;
+-- 빠름: 시간별 버킷 쿼리
+SELECT rollup('hour', 1, time) AS hour_time, AVG(value)
+FROM sensors
+GROUP BY hour_time;
 ```
 
 ### 과제 3: 늦게 도착하는 데이터
@@ -398,7 +403,7 @@ machsql -z +0900  # 한국 시간대
 
 ```sql
 -- 일일 정리 작업
-DELETE FROM logs EXCEPT 90 DAYS;
+DELETE FROM logs EXCEPT 90 DAY;
 ```
 
 ### 3. 시간 쿼리에 DURATION 사용
@@ -410,7 +415,9 @@ DELETE FROM logs EXCEPT 90 DAYS;
 SELECT * FROM logs DURATION 1 HOUR;
 
 -- 덜 최적
-SELECT * FROM logs WHERE _arrival_time >= NOW - INTERVAL '1' HOUR;
+SELECT * FROM logs
+WHERE _arrival_time BETWEEN TO_DATE('2025-10-10 14:00:00', 'YYYY-MM-DD HH24:MI:SS')
+                        AND TO_DATE('2025-10-10 15:00:00', 'YYYY-MM-DD HH24:MI:SS');
 ```
 
 ### 4. 가능하면 배치 쓰기
@@ -426,7 +433,9 @@ SELECT * FROM logs WHERE _arrival_time >= NOW - INTERVAL '1' HOUR;
 
 ```sql
 -- 빠름: Rollup
-SELECT AVG(avg_temperature) FROM sensors WHERE rollup = hour;
+SELECT rollup('hour', 1, time) AS hour_time, AVG(temperature)
+FROM sensors
+GROUP BY hour_time;
 
 -- 느림: 원시 데이터
 SELECT AVG(temperature) FROM sensors;
@@ -447,7 +456,7 @@ SELECT AVG(temperature) FROM sensors;
 3. Machbase는 **추가 전용** 아키텍처 사용
 4. **컬럼형 스토리지**로 높은 압축 가능
 5. **시간 기반 파티셔닝**으로 쿼리 최적화
-6. **자동 Rollup**으로 즉각적인 분석 제공
+6. **Rollup 테이블**은 구성된 경우 즉각적인 분석 제공
 7. 데이터 패턴에 맞는 **올바른 테이블 타입** 선택
 
 ---

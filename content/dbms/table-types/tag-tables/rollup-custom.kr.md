@@ -41,7 +41,7 @@ SELECT code,
 ### Custom Rollup 생성
 
 ```sql
-CREATE ROLLUP <rollup_name>
+CREATE ROLLUP [IF NOT EXISTS] <rollup_name>
 INTO (<dest_tag_table>)
 AS (
   SELECT ...
@@ -58,6 +58,7 @@ INTERVAL <n> (SEC | MIN | HOUR)
 ```sql
 ALTER ROLLUP <rollup_name> START;
 ALTER ROLLUP <rollup_name> STOP;
+ALTER ROLLUP <rollup_name> WAKEUP;
 ALTER ROLLUP <rollup_name> FORCE;
 DROP ROLLUP <rollup_name>;
 ```
@@ -199,18 +200,21 @@ INTERVAL 10 MIN;
 ## 메타 확인
 
 ```sql
-SELECT rollup_table,
+SELECT rollup_name,
+       rollup_table,
        source_table,
        ext_type,
        enabled,
-       frequency,
+       interval_time,
        wakeup_interval,
        predicate
   FROM v$rollup
- WHERE rollup_table = 'ROLLUP_STOCK_1M';
+ WHERE rollup_name = 'ROLLUP_STOCK_1M';
 ```
 
 - `ext_type = 2`: Custom Rollup
+- `rollup_table`: Custom Rollup의 대상 TAG 테이블
+- `interval_time`과 `wakeup_interval`: 밀리초 단위 interval 값
 - `predicate`: Custom `SELECT` 본문
 
 ## 운영 주의사항

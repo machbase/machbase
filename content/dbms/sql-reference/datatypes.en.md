@@ -87,18 +87,19 @@ This type is mainly used to store and retrieve large text files as separate colu
 
 ### binary
 
-Binary columns in log/lookup/volatile tables store unstructured data such as
-images or documents. Indexes cannot be created, and up to 64 megabytes can be
-stored (same as TEXT).
+Binary columns in log tables store unstructured data such as images or
+documents. Up to 64 megabytes can be stored (same as TEXT). Lookup and Volatile
+tables do not accept `BINARY` columns.
 
 Tag-table `BINARY(n)` is a fixed-length variant for sensor frames.
 Valid sizes are 1 to 32K-1 (32767) bytes. Inputs must be hex strings (0x prefix
 optional); odd-length inputs pad the leading nibble with 0, and shorter values
 pad with 0x00 to the declared length. Over-length or non-hex input raises
-`[ERR-02233: Error occurred at column (n): (Invalid insert value.)]`. `LENGTH`
-and metadata report the declared byte length, and machsql displays uppercase
-hex without the `0x` prefix. This fixed-length `BINARY(n)` is accepted only in
-Tag tables.
+`[ERR-02233: Error occurred at column (n): (Invalid insert value.)]`.
+Metadata reports the declared byte length, while SQL `LENGTH(binary_col)` and
+machsql text output exclude trailing zero padding added for shorter inputs.
+machsql displays uppercase hex without the `0x` prefix. This fixed-length
+`BINARY(n)` is accepted only in Tag tables.
 
 ### json
 
@@ -128,5 +129,5 @@ The following table shows the SQL data types and C data types corresponding to t
 |ipv4|SQL_IPV4|SQL_VARCHAR|SQL_C_CHAR|char * (enter ip string)<br><br>unsigned char[4]|Version 4 Internet address type|
 |ipv6|SQL_IPV6|SQL_VARCHAR|SQL_C_CHAR|char * (enter ip string)<br><br>unsigned char[16]|Version 6 Internet address type|
 |text|SQL_TEXT|SQL_LONGVARCHAR|SQL_C_CHAR|char *|Text|
-|binary|SQL_BINARY|SQL_BINARY|SQL_C_BINARY|char *|Tag-table binary (fixed length)|
+|binary|SQL_BINARY|SQL_BINARY|SQL_C_BINARY|char *|Binary data|
 |json|SQL_JSON|SQL_JSON|SQL_C_CHAR|json_t|json data type|

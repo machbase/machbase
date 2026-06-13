@@ -101,7 +101,8 @@ Common options:
 | `-f`, `--file` | YAML file to use. Default is `./cluster.yaml` |
 | `--dry-run` | Print checks and execution plan without changing anything |
 | `-y`, `--yes` | Run without confirmation prompts |
-| `-v`, `--verbose` | Print detailed logs |
+| `-v`, `--verbose` | Accepted for compatibility; execution commands print progress by default |
+| `-s`, `--silent` | Suppress progress logs; takes precedence over `-v`/`--verbose` |
 | `--coordinator` | Primary coordinator home for `status`, `start`, `stop`, `connect`, and `export` when running without YAML |
 
 ## 5. YAML Validation

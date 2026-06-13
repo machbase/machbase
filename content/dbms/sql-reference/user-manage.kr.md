@@ -241,7 +241,7 @@ WITH AUTH KEY (
 - SQL 문장 안에서는 PEM 줄바꿈을 `\n`으로 입력할 수 있습니다.
 - `valid_before`는 `YYYY-MM-DD` 형식을 사용합니다.
 - `valid_before`에는 시각이 포함된 datetime 형식(`YYYY-MM-DD HH24:MI:SS`)을 사용할 수 없습니다.
-- `comment`는 선택입니다.
+- `comment`는 현재 AUTH KEY 문법에서 필수입니다.
 - `CREATE USER ... WITH AUTH KEY`로 생성한 첫 키는 즉시 활성 상태(`ACTIVATED=1`)로 등록됩니다.
 - 사용자는 비밀번호와 AUTH KEY를 동시에 보유할 수 있습니다. 실제 인증은 클라이언트의 `AUTH_MODE` 선택에 따라 비밀번호 또는 challenge 중 하나만 수행되며, 실패 시 다른 방식으로 자동 fallback하지 않습니다.
 

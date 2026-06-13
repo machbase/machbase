@@ -41,6 +41,30 @@ When user create tag table, Rollup does not created default, user must create by
 
 ![create-rollup](/dbms/table-types/tag-tables/create-rollup.png)
 
+Public syntax:
+
+```sql
+CREATE ROLLUP [IF NOT EXISTS] rollup_name
+  ON source_table(column_name)
+  INTERVAL n (SEC|MIN|HOUR)
+  [WAKEUP INTERVAL m (SEC|MIN|HOUR)]
+  [EXTENSION]
+  [WHERE predicate];
+
+CREATE ROLLUP [IF NOT EXISTS] rollup_name
+  ON source_table(json_column->'$.path')
+  INTERVAL n (SEC|MIN|HOUR)
+  [WAKEUP INTERVAL m (SEC|MIN|HOUR)]
+  [WHERE predicate];
+
+CREATE ROLLUP [IF NOT EXISTS] rollup_name
+  FROM source_rollup_table
+  INTERVAL n (SEC|MIN|HOUR)
+  [WAKEUP INTERVAL m (SEC|MIN|HOUR)]
+  [EXTENSION]
+  [WHERE predicate];
+```
+
 * rollup name : rollup table's name (Can be freely created with string up to 40)
 * source table name : Name of source table which rollup will aggregate data.
 * src_table_column : rollup target data column name
@@ -54,7 +78,6 @@ When user create tag table, Rollup does not created default, user must create by
    ex) 1 hour aggregate : 1 hour <br>
 * constraint
     * Source table for aggregation can specify only tag table or rollup table
-    * Only one rollup table can be exist to source table for aggregation
     * If source table for aggregation is rollup table, time for rollup table must be bigger than time for source table. And it must be multiple.
 
 

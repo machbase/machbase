@@ -27,7 +27,7 @@ sudo shutdown -r now
 3. Check the results. If the output is 65535, it has been successfully changed.
 
 ```bash
-unlimit -Sn
+ulimit -Sn
 ```
 
 
@@ -62,35 +62,35 @@ date
 1. Check the current set value.
 
 ```bash
-Check with the following command.                                 
+# Check with the following command.
 sysctl -a | egrep 'mem_(max|default)|tcp_.*mem'
 ```
 
 2. Change the setting value with the following command (for 64GB Memory).
 
 ```bash
-sysctl -w net.core.rmem_default = "33554432"     # 32MB
-sysctl -w net.core.wmem_default = "33554432"
-sysctl -w net.core.rmem_max     = "268435456"    # 256MB
-sysctl -w net.core.wmem_max     = "268435456"  
-sysctl -w net.ipv4.tcp_rmem     = "262144 33554432 268435456"
-sysctl -w net.ipv4.tcp_wmem     = "262144 33554432 268435456"
+sudo sysctl -w net.core.rmem_default=33554432     # 32MB
+sudo sysctl -w net.core.wmem_default=33554432
+sudo sysctl -w net.core.rmem_max=268435456        # 256MB
+sudo sysctl -w net.core.wmem_max=268435456
+sudo sysctl -w 'net.ipv4.tcp_rmem=262144 33554432 268435456'
+sudo sysctl -w 'net.ipv4.tcp_wmem=262144 33554432 268435456'
  
 # 8388608 Page * 4KB = 32GB
-sysctl -w net.ipv4.tcp_mem      = "8388608 8388608 8388608"
+sudo sysctl -w 'net.ipv4.tcp_mem=8388608 8388608 8388608'
 ```
 
 3. To keep the changes, add them to the /etc/sysctl.conf file and restart the host OS.
 
 ```bash
 # Modify the file /etc/sysctl.conf.
-net.core.rmem_default = "33554432"
-net.core.wmem_default = "33554432"
-net.core.rmem_max     = "268435456"
-net.core.wmem_max     = "268435456"
-net.ipv4.tcp_rmem     = "262144 33554432 268435456"
-net.ipv4.tcp_wmem     = "262144 33554432 268435456"
-net.ipv4.tcp_mem      = "8388608 8388608 8388608"
+net.core.rmem_default = 33554432
+net.core.wmem_default = 33554432
+net.core.rmem_max     = 268435456
+net.core.wmem_max     = 268435456
+net.ipv4.tcp_rmem     = 262144 33554432 268435456
+net.ipv4.tcp_wmem     = 262144 33554432 268435456
+net.ipv4.tcp_mem      = 8388608 8388608 8388608
 ```
 
 ## Create User

@@ -10,7 +10,7 @@ weight: 30
 
 ```bash
 ## ##  1. MACHBASE Git 저장소에서 샘플 데이터를 클론합니다.
-$ git clone https://www.github.com/MACHBASE/TagTutorial.git MyTutorial
+$ git clone https://github.com/MACHBASE/TagTutorial.git MyTutorial
 
 ## ##  2. 필요 데이터의 압축을 해제합니다.
 $ cd MyTutorial/
@@ -109,13 +109,13 @@ RUNNING EVENT_C15 PLC_TAG_TABLE insert into tag select 'MTAG_C15', tm, c15 from 
 
 ```bash
 $ cat 5_plc_tag_load.sh
-machloader  -t plc_tag_table -i -d 5_plc_tag.csv -F "tm YYYY-MM-DD HH24:MI:SS mmm:uuu:nnn"
+machloader -i -t plc_tag_table -d 5_plc_tag.csv -F "tm YYYY-MM-DD HH24:MI:SS mmm:uuu:nnn"
 
 $ sh 5_plc_tag_load.sh
 -----------------------------------------------------------------
      Machbase Data Import/Export Utility.
-     Release Version 6.5.1.official
-     Copyright 2014, MACHBASE Corporation or its subsidiaries.
+     Release Version 8.5.4.develop
+     Copyright 2014 MACHBASE Corporation or its subsidiaries.
      All Rights Reserved.
 -----------------------------------------------------------------
 NLS            : US7ASCII            EXECUTE MODE   : IMPORT
@@ -124,7 +124,7 @@ IMPORT MODE    : APPEND              FIELD TERM     : ,
 ROW TERM       : \n                  ENCLOSURE      : "
 ESCAPE         : \                   ARRIVAL_TIME   : FALSE
 ENCODING       : NONE                HEADER         : FALSE
-CREATE TABLE   : FALSE
+CREATE TABLE   : FALSE              CREATE TABLESPACE: FALSE
 
  Progress bar                       Imported records        Error records
                                               80000                    0

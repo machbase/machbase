@@ -203,8 +203,8 @@ delete from t1 where i1 = 2;
 1 row(s) deleted.
 ```
 
-* You can only delete records that match the conditions created in the WHERE clause, which can only be performed on volatile tables.
-* The primary key can only be performed on the specified volatile table.
+* You can delete records that match the conditions created in the WHERE clause for volatile tables and lookup tables.
+* The primary key can only be performed on the specified volatile or lookup table.
 * The WHERE clause allows only conditions of (primary key column) = (value), and can not be created with other conditions.
 * You can not use a column other than the primary key column in the condition.
 
@@ -233,26 +233,32 @@ Notes:
 ![delete_from_tag_where_stmt](/images/sql/dml/delete_from_tag_where_stmt.png)
 
 ```sql
-delete_from_tag_where_stmt ::= 'DELETE FROM' table_name 'ROLLUP'? 'WHERE' tag_name '=' value ( and tag_time '<' datetime_expression  )?
+delete_from_tag_where_stmt ::= 'DELETE FROM' table_name 'ROLLUP'? 'WHERE' predicate
 ```
 
-A Tag or Rollup table supports the following two types of DELETE statements.
+A Tag or Rollup table supports constrained DELETE predicates by tag name, by tag name plus time, or by time only.
 
-* Delete by tag name
-* Delete by tag name and tag time
+Supported time predicates include `=`, `<`, `<=`, and `BETWEEN`.
 
 ```sql
 -- Delete by tag name
-DELETE FROM tag WHERE tag_name = 'my_tag_2021'
+DELETE FROM tag WHERE tag_name = 'my_tag_2021';
  
 -- Delete by tag name and tag time
 DELETE FROM tag WHERE tag_name = 'my_tag_2021' AND tag_time < TO_DATE('2021-07-01', 'YYYY-MM-DD');
+DELETE FROM tag WHERE tag_name = 'my_tag_2021' AND tag_time BETWEEN TO_DATE('2021-07-01', 'YYYY-MM-DD') AND TO_DATE('2021-07-02', 'YYYY-MM-DD');
+
+-- Delete by time only
+DELETE FROM tag WHERE tag_time <= TO_DATE('2021-07-01', 'YYYY-MM-DD');
 
 -- Delete rollup by tag name
-DELETE FROM tag ROLLUP WHERE tag_name = 'my_tag_2021'
+DELETE FROM tag ROLLUP WHERE tag_name = 'my_tag_2021';
  
 -- Delete rollup by tag name and tag time
 DELETE FROM tag ROLLUP WHERE tag_name = 'my_tag_2021' AND tag_time < TO_DATE('2021-07-01', 'YYYY-MM-DD');
+
+-- Delete rollup by time only
+DELETE FROM tag ROLLUP WHERE tag_time BETWEEN TO_DATE('2021-07-01', 'YYYY-MM-DD') AND TO_DATE('2021-07-02', 'YYYY-MM-DD');
 ```
 
 * The time it takes for the deleted row to be physically deleted from the storage space after the deletion query is executed may vary depending on the situation of the DBMS.
@@ -274,7 +280,7 @@ Each option is explained as follows
 |Options|Description|
 |--|--|
 |AUTO mode_string<br><br>mode_string =<br><br>(BULKLOAD \| HEADUSE \| HEADUSE_ESCAPE)|Creates the corresponding table and automatically generates the column type (varchar type for automatic creation) and the column name.<br>BULKLOAD: Enters one row of data as one column. It is used for data that can not be divided into columns.<br>HEADUSE: Uses the column name as described in the first line of the data file as the column name of the table, and creates as many columns as there are in the line.<br>HEADUSE_ESCAPE: Similar to the HEADUSE option, but appends a '_' character to the front and back of the column name to avoid errors that can occur if the column name is the same as the reserved word in the DB. If a special character exists in the column name, changes it to '_'.|
-<br>(FIELDS\|COLUMNS) TERMINATED BY 'term_char'<br><br>ESCAPED BY 'escape_char'|Specifies the delimiter (term_char) and escape character (escape_char) for parsing the data line. For common CSV files, the delimiter is , and the escape character is '.|
+|(FIELDS\|COLUMNS) TERMINATED BY 'term_char'<br><br>ENCLOSED BY 'enclose_char'|Specifies the delimiter (`term_char`) and enclosing character (`enclose_char`) for parsing the data line. For common CSV files, the delimiter is `,` and the enclosing character is `"`.|
 |ENCODED BY coding_name<br>coding_name =<br>{ UTF8(default) \| MS949 \| KSC5601 \| EUCJP \| SHIFTJIS \| BIG5 \| GB231280 }|Specifies the encoding options for the data file. The default value is UTF-8.|
 |TRIM (ON \| OFF)|Removes or maintains the empty space of the column. The default is ON.|
 |IGNORE number (LINES \| ROWS)|Ignores data for a specified number of lines or lines. It is used to ignore header of CSV format file or ignore VCF header.|
@@ -292,7 +298,7 @@ LOAD DATA INFILE '/tmp/bbb.csv' INTO TABLE NEWTABLE AUTO BULKLOAD;
 LOAD DATA INFILE '/tmp/bbb.csv' INTO TABLE NEWTABLE AUTO HEADUSE;
   
 -- First line is ignored and field delimiter is ; and enclosing character is specified by '.
-LOAD DATA INFILE '/tmp/ccc.csv' INTO TABLE Sample_data FIELDS TERMINATED BY ';' ENCLOSED '\''  IGNORE 1 LINES ON ERROR IGNORE;
+LOAD DATA INFILE '/tmp/ccc.csv' INTO TABLE Sample_data FIELDS TERMINATED BY ';' ENCLOSED BY '\'' IGNORE 1 LINES ON ERROR IGNORE;
 ```
 
 * If the AUTO option is not used, all columns of the table must be created as VARCHAR or TEXT types.

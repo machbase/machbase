@@ -11,7 +11,7 @@ type : docs
     * [machsql](#machsql)
     * [machloader](#machloader)
     * [SDK](#sdk)
-    * [Rest API](#rest-api)
+    * [REST API](#rest-api)
 
 ## Machbase의 Timezone
 
@@ -101,7 +101,7 @@ machloader를 실행할 때 다음 옵션을 통해 작동할 타임존을 설�
 SERVER=127.0.0.1;UID=SYS;PWD=MANAGER;CONNTYPE=1;NLS_USE=UTF8;PORT_NO=5656;TIMEZONE=+0300
 ```
 
-### Rest API
+### REST API
 ---
 
 Rest API는 작업을 요청할 때 HTTP 프로토콜 HEADER에 지정된 타임존을 기준으로 작동합니다.
@@ -121,47 +121,27 @@ Timezone이 지정되지 않으면 서버의 Timezone으로 작동합니다.
 
 요청 예제: UTC로 설정
 
+```bash
+curl -H "The-Timezone-Machbase: +0000" -G "http://127.0.0.1:5657/machbase" \
+  --data-urlencode 'q=select sysdate from v$tables limit 1'
 ```
-curl -H "The-Timezone-Machbase: +0000" -G "http://127.0.0.1:${ITF_HTTP_PORT}/machbase" --data-urlencode 'q=select * from test_table order by c4 asc';
+
+```json
 {
   "error_code": 0,
   "error_message": "",
   "columns": [
     {
-      "name": "C1",
-      "type": 4,
-      "length": 6
-    },
-    {
-      "name": "C2",
-      "type": 8,
-      "length": 11
-    },
-    {
-      "name": "C3",
-      "type": 5,
-      "length": 20
-    },
-    {
-      "name": "C4",
+      "name": "sysdate",
       "type": 6,
       "length": 31
-    },
-    {
-      "name": "C5",
-      "type": 32,
-      "length": 15
     }
   ],
   "timezone": "+0000",
   "data": [
     {
-      "C1": 1,
-      "C2": 2,
-      "C3": "test1",
-      "C4": "1999-09-09 00:09:09 000:000:000",
-      "C5": "127.0.0.1"
-    },
+      "sysdate": "2026-06-13 07:58:30 328:941:439"
+    }
   ]
 }
 ```

@@ -31,6 +31,9 @@ Mach> insert into tag values('TAG_0001', now, 1);
 Mach> insert into tag values('TAG_0001', now, 2);
 1 row(s) inserted.
 
+Mach> EXEC TABLE_FLUSH(tag);
+Executed successfully.
+
 Mach> select * from tag where name = 'TAG_0001';
 NAME                  TIME                            VALUE
 --------------------------------------------------------------------------------------
@@ -39,6 +42,9 @@ TAG_0001              2018-12-19 17:41:42 327:839:368 1
 TAG_0001              2018-12-19 17:41:43 812:782:202 2
 [3] row(s) selected.
 ```
+
+`EXEC TABLE_FLUSH(tag)`는 대화형 예제에서 방금 입력한 TAG 데이터를 즉시
+조회하거나 통계 뷰에서 확인할 수 있게 합니다.
 
 > **사용 시기**: 테스트, 저용량 삽입, 대화형 데이터 입력
 
@@ -63,6 +69,9 @@ Mach> INSERT INTO trip_sensor VALUES('ODO_A', 500, 11.2, 101);
 
 Mach> INSERT INTO trip_sensor VALUES('ODO_B', 1000.1, 21.5, 100);
 1 row(s) inserted.
+
+Mach> EXEC TABLE_FLUSH(trip_sensor);
+Executed successfully.
 ```
 
 `DOUBLE` 거리축은 소수 거리값을 그대로 저장할 수 있고, `LONG`/`ULONG` 거리축은 정수 거리값만 저장합니다.
@@ -95,7 +104,7 @@ csvimport -t TAG -d data.csv -F "time YYYY-MM-DD HH24:MI:SS mmm:uuu:nnn" -l erro
 
 > **사용 시기**: 대량 로딩, 데이터 마이그레이션, 배치 임포트
 
-> **중요**: 데이터를 임포트하기 전에 태그 이름이 태그 메타데이터에 존재해야 합니다.
+> **중요**: Machbase는 임포트 중 존재하지 않는 태그 이름을 자동 등록합니다. 단위, 위치, 상태 같은 메타데이터 값을 명시해야 하는 경우에는 데이터를 로드하기 전에 태그 메타데이터를 먼저 등록하십시오.
 
 ## 방법 3: RESTful API
 
@@ -121,9 +130,10 @@ HTTP 요청을 통해 데이터를 삽입합니다 - IoT 디바이스와 웹 애
 ### API 예제
 
 ```bash
-curl -X POST http://localhost:5654/db/write/TAG \
+curl -X POST http://localhost:5657/machiot/datapoints/raw/TAG \
   -H "Content-Type: application/json" \
   -d '{
+    "date_format": "YYYY-MM-DD HH24:MI:SS",
     "values": [
       ["TAG_0001", "2024-01-01 10:00:00", 25.5],
       ["TAG_0001", "2024-01-01 10:01:00", 26.0],
@@ -141,7 +151,7 @@ curl -X POST http://localhost:5654/db/write/TAG \
 ### 지원 언어
 
 - **[C/C++ 라이브러리](../../../sdk-integration/cli-odbc/)** - 고성능 네이티브 통합
-- **[Java 라이브러리](../../../sdk-integration/jdbc/)** - 엔터프라이즈 Java 애플리케이션
+- **[Java 라이브러리](../../../sdk-integration/jdbc/)** - Java 애플리케이션
 - **[Python 라이브러리](../../../sdk-integration/python/)** - 데이터 과학 및 자동화
 - **[C# 라이브러리](../../../sdk-integration/dotnet/)** - .NET 애플리케이션
 
@@ -202,11 +212,11 @@ INSERT INTO sensors VALUES (
 
 ## 모범 사례
 
-1. **태그 먼저 등록**: 데이터를 삽입하기 전에 항상 태그 메타데이터를 삽입합니다
+1. **필요한 경우 태그 메타데이터 등록**: 없는 태그 이름은 자동 등록됩니다. 메타데이터 값을 명시해야 할 때 먼저 등록합니다
 2. **배치 작업 사용**: 대규모 데이터셋의 경우 CSV 임포트 또는 배치 API 호출을 사용합니다
 3. **에러 처리**: 항상 반환 값을 확인하고 에러를 로그에 기록합니다
 4. **시간 정밀도**: 데이터 전체에서 타임스탬프 정밀도를 일관되게 유지합니다
-5. **데이터 검증**: 에러를 방지하기 위해 삽입 전에 태그 이름이 존재하는지 확인합니다
+5. **데이터 검증**: 태그 이름과 타임스탬프가 운영 규칙을 따르는지 확인합니다
 
 ## 성능 팁
 

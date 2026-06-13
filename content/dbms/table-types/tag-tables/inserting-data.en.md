@@ -31,6 +31,9 @@ Mach> insert into tag values('TAG_0001', now, 1);
 Mach> insert into tag values('TAG_0001', now, 2);
 1 row(s) inserted.
 
+Mach> EXEC TABLE_FLUSH(tag);
+Executed successfully.
+
 Mach> select * from tag where name = 'TAG_0001';
 NAME                  TIME                            VALUE
 --------------------------------------------------------------------------------------
@@ -39,6 +42,9 @@ TAG_0001              2018-12-19 17:41:42 327:839:368 1
 TAG_0001              2018-12-19 17:41:43 812:782:202 2
 [3] row(s) selected.
 ```
+
+`EXEC TABLE_FLUSH(tag)` makes recently inserted TAG rows visible to immediate
+queries and statistic views in interactive examples.
 
 > **When to use**: Testing, low-volume inserts, interactive data entry
 
@@ -63,6 +69,9 @@ Mach> INSERT INTO trip_sensor VALUES('ODO_A', 500, 11.2, 101);
 
 Mach> INSERT INTO trip_sensor VALUES('ODO_B', 1000.1, 21.5, 100);
 1 row(s) inserted.
+
+Mach> EXEC TABLE_FLUSH(trip_sensor);
+Executed successfully.
 ```
 
 A `DOUBLE` distance axis stores fractional distances directly, while `LONG` and `ULONG` are for integer distances only.
@@ -95,7 +104,7 @@ csvimport -t TAG -d data.csv -F "time YYYY-MM-DD HH24:MI:SS mmm:uuu:nnn" -l erro
 
 > **When to use**: Bulk loading, data migration, batch imports
 
-> **Important**: Tag names must exist in tag metadata before importing data.
+> **Important**: Machbase auto-registers missing tag names during import. Pre-register tag metadata when you need explicit metadata values such as unit, location, or status before data is loaded.
 
 ## Method 3: RESTful API
 
@@ -121,9 +130,10 @@ Time-axis tag tables use timestamp strings as the axis value, while distance-axi
 ### API Example
 
 ```bash
-curl -X POST http://localhost:5654/db/write/TAG \
+curl -X POST http://localhost:5657/machiot/datapoints/raw/TAG \
   -H "Content-Type: application/json" \
   -d '{
+    "date_format": "YYYY-MM-DD HH24:MI:SS",
     "values": [
       ["TAG_0001", "2024-01-01 10:00:00", 25.5],
       ["TAG_0001", "2024-01-01 10:01:00", 26.0],
@@ -141,7 +151,7 @@ Use Machbase SDKs for programmatic data insertion from your applications.
 ### Supported Languages
 
 - **[C/C++ library](../../../sdk-integration/cli-odbc/)** - High-performance native integration
-- **[Java library](../../../sdk-integration/jdbc/)** - Enterprise Java applications
+- **[Java library](../../../sdk-integration/jdbc/)** - Java applications
 - **[Python library](../../../sdk-integration/python/)** - Data science and automation
 - **[C# library](../../../sdk-integration/dotnet/)** - .NET applications
 
@@ -202,11 +212,11 @@ INSERT INTO sensors VALUES (
 
 ## Best Practices
 
-1. **Register Tags First**: Always insert tag metadata before inserting data
+1. **Register Tag Metadata When Needed**: Missing tag names are auto-registered; insert metadata first when you need explicit metadata values
 2. **Use Batch Operations**: For large datasets, use CSV import or batch API calls
 3. **Handle Errors**: Always check return values and log errors
 4. **Time Precision**: Be consistent with timestamp precision across your data
-5. **Validate Data**: Ensure tag names exist before insertion to avoid errors
+5. **Validate Data**: Ensure tag names and timestamps follow your naming and time conventions
 
 ## Performance Tips
 

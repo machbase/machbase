@@ -25,10 +25,11 @@ MACHSQL은 터미널 화면을 통해 SQL질의를 수행하는 대화형 도구
 | -o        | --output          | 질의 결과를 저장할 파일명                       |
 | -i        | --silent          | 저작권 출력 없이 실행                           |
 | -v        | --verbose         | 상세 출력                                       |
+| -x        | --testing         | 테스트 모드로 실행                              |
 | -r        | --format          | 출력 파일 포맷 지정 (default: csv)              |
 |           | --auth-sig-scheme | 인증 서명 스킴 (`ECDSA`, `RSA_PKCS1_V15`, `RSA_PSS`; Machbase 8.5 이상 지원) |
 | -h        | --help            | 옵션 출력                                       |
-| -c        | N/A               | Connection 매개변수 추가(6.1이후 버전부터 지원) |
+| -c        | --connstr         | Connection 매개변수 추가(6.1 이후 버전부터 지원) |
 
 **Example:**
 
@@ -135,20 +136,20 @@ Mach> CREATE VOLATILE TABLE t2 (c1 INTEGER, c2 VARCHAR(10));
 Created successfully.
 Mach> CREATE INDEX t1_idx1 ON t1(c1) INDEX_TYPE LSM;
 Created successfully.
-Mach> CREATE INDEX t1_idx2 ON t1(c1) INDEX_TYPE BITMAP;
+Mach> CREATE INDEX t1_idx2 ON t1(c2) INDEX_TYPE BITMAP;
 Created successfully.
 Mach> CREATE INDEX t2_idx1 ON t2(c1) INDEX_TYPE REDBLACK;
 Created successfully.
 Mach> CREATE INDEX t2_idx2 ON t2(c2) INDEX_TYPE REDBLACK;
 Created successfully.
- 
+
 Mach> SHOW INDEX t1_idx2;
-TABLE_NAME                                COLUMN_NAME                               INDEX_NAME                      
-----------------------------------------------------------------------------------------------------------------------------------
-INDEX_TYPE   BLOOM_FILTER  KEY_COMPRESS  MAX_LEVEL   PART_VALUE_COUNT BITMAP_ENCODE
---------------------------------------------------------------------------------------------
-T1                                        C1                                        T1_IDX2                         
-LSM          ENABLE   COMPRESSED    2           100000      EQUAL
+TABLE_NAME                                          COLUMN_NAME                                         INDEX_NAME                                          INDEX_TYPE   KEY_COMPRESS  MAX_LEVEL
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+PART_VALUE_COUNT BITMAP_ENCODE
+-----------------------------------
+T1                                                  C2                                                  T1_IDX2                                             LSM          COMPRESSED    2
+100000           EQUAL
 [1] row(s) selected.
 ```
 
@@ -171,32 +172,26 @@ Mach> CREATE VOLATILE TABLE t2 (c1 INTEGER, c2 VARCHAR(10));
 Created successfully.
 Mach> CREATE INDEX t1_idx1 ON t1(c1) INDEX_TYPE LSM;
 Created successfully.
-Mach> CREATE INDEX t1_idx2 ON t1(c1) INDEX_TYPE BITMAP;
+Mach> CREATE INDEX t1_idx2 ON t1(c2) INDEX_TYPE BITMAP;
 Created successfully.
 Mach> CREATE INDEX t2_idx1 ON t2(c1) INDEX_TYPE REDBLACK;
 Created successfully.
 Mach> CREATE INDEX t2_idx2 ON t2(c2) INDEX_TYPE REDBLACK;
 Created successfully.
- 
+
 Mach> SHOW INDEXES;
-TABLE_NAME                                COLUMN_NAME                               INDEX_NAME                      
-----------------------------------------------------------------------------------------------------------------------------------
-INDEX_TYPE
----------------
-T1                                        C1                                        T1_IDX1                         
-LSM
-T1                                        C1                                        T1_IDX2                         
-LSM
-T2                                        C2                                        T2_IDX2                         
-REDBLACK
-T2                                        C1                                        T2_IDX1                         
-REDBLACK
+USER_NAME             TABLE_NAME                                          COLUMN_NAME                                         INDEX_NAME                                          INDEX_TYPE
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SYS                   T1                                                  C1                                                  T1_IDX1                                             LSM
+SYS                   T1                                                  C2                                                  T1_IDX2                                             LSM
+SYS                   T2                                                  C2                                                  T2_IDX2                                             REDBLACK
+SYS                   T2                                                  C1                                                  T2_IDX1                                             REDBLACK
 [4] row(s) selected.
 ```
 
 ### SHOW INDEXGAP
 
-인덱스 생성 GAP 정보를 출력합니다. 
+인덱스 생성 GAP 정보를 출력합니다.
 
 **Example:**
 
@@ -235,9 +230,9 @@ T1                                        IDX2                                  
 
 ```sql
 Mach> SHOW LICENSE
-INSTALL_DATE          ISSUE_DATE            EXPIRY_DATE  TYPE        POLICY    
+INSTALL_DATE          ISSUE_DATE            EXPIRY_DATE  TYPE        POLICY
 ---------------------------------------------------------------------------------------
-2016-07-01 10:24:37   20160325              20170325    2           0         
+2016-07-01 10:24:37   20160325              20170325    2           0
 [1] row(s) selected.
 ```
 
@@ -249,9 +244,9 @@ INSTALL_DATE          ISSUE_DATE            EXPIRY_DATE  TYPE        POLICY
 
 ```sql
 Mach> SHOW STATEMENTS
-USER_ID     SESSION_ID  QUERY                                                                           
+USER_ID     SESSION_ID  QUERY
 --------------------------------------------------------------------------------------------------------------
-0           2           SELECT ID USER_ID, SESS_ID SESSION_ID, QUERY FROM V$STMT                        
+0           2           SELECT ID USER_ID, SESS_ID SESSION_ID, QUERY FROM V$STMT
 [1] row(s) selected.
 ```
 
@@ -267,16 +262,16 @@ SHOW STORAGE
 **Example:**
 
 ```sql
-Mach> CREATE TAGDATA TABLE TAG (name varchar(20) primary key, time datetime basetime, value double summarized);
+Mach> CREATE TAG TABLE TAG (name varchar(20) primary key, time datetime basetime, value double summarized);
 Created successfully.
- 
+
 Mach> SHOW STORAGE
-TABLE_NAME                                          DATA_SIZE            INDEX_SIZE           TOTAL_SIZE          
-------------------------------------------------------------------------------------------------------------------------  
-_TAG_DATA_0                                         50335744             0                    50335744            
-_TAG_DATA_1                                         50335744             0                    50335744            
-_TAG_DATA_2                                         50335744             0                    50335744            
-_TAG_DATA_3                                         50335744             0                    50335744            
+TABLE_NAME                                          DATA_SIZE            INDEX_SIZE           TOTAL_SIZE
+------------------------------------------------------------------------------------------------------------------------
+_TAG_DATA_0                                         50335744             0                    50335744
+_TAG_DATA_1                                         50335744             0                    50335744
+_TAG_DATA_2                                         50335744             0                    50335744
+_TAG_DATA_3                                         50335744             0                    50335744
 _TAG_META                                           0                    0                    0
 ```
 
@@ -299,7 +294,7 @@ Mach> CREATE INDEX t1_idx1 ON t1(c1) INDEX_TYPE LSM;
 Created successfully.
 Mach> CREATE INDEX t1_idx2 ON t1(c1) INDEX_TYPE BITMAP;
 Created successfully.
- 
+
 Mach> SHOW TABLE T1
 [ COLUMN ]
 ----------------------------------------------------------------
@@ -307,7 +302,7 @@ NAME                          TYPE                LENGTH
 ----------------------------------------------------------------
 C1                            integer             11
 C2                            varchar             10
- 
+
 [ INDEX ]
 ----------------------------------------------------------------
 NAME                          TYPE                COLUMN
@@ -324,12 +319,12 @@ T1_IDX2                       LSM                 C1
 
 ```sql
 Mach> SHOW TABLES
-NAME                                    
+NAME
 --------------------------------------------
-BONUS                                   
-DEPT                                    
-EMP                                     
-SALGRADE                                
+BONUS
+DEPT
+EMP
+SALGRADE
 [4] row(s) selected.
 ```
 
@@ -344,18 +339,18 @@ Mach> CREATE TABLE t1 (id integer);
 Created successfully.
 Mach> CREATE INDEX t1_idx_id ON t1(id);
 Created successfully.
- 
+
 Mach> SHOW TABLESPACE SYSTEM_TABLESPACE;
 [TABLE]
 NAME                                      TYPE
 -------------------------------------------------------
 T1                                        LOG
 [1] row(s) selected.
- 
+
 [INDEX]
-TABLE_NAME                                COLUMN_NAME                               INDEX_NAME                      
+TABLE_NAME                                COLUMN_NAME                               INDEX_NAME
 ----------------------------------------------------------------------------------------------------------------------------------
-T1                                        ID                                        T1_IDX_ID                   
+T1                                        ID                                        T1_IDX_ID
 [1] row(s) selected.
 ```
 
@@ -368,12 +363,12 @@ T1                                        ID                                    
 ```sql
 Mach> CREATE TABLESPACE tbs1 DATADISK disk1 (DISK_PATH="tbs1_disk1"), disk2 (DISK_PATH="tbs1_disk2"), disk3 (DISK_PATH="tbs1_disk3");
 Created successfully.
- 
+
 -- 데이터를 입력한다
 ...
 ...
- 
- 
+
+
 Mach> SHOW TABLESPACES;
 NAME                                                                              DISK_COUNT  USAGE
 -----------------------------------------------------------------------------------------------------------------------
@@ -391,11 +386,11 @@ TBS1                                                                            
 ```sql
 Mach> CREATE USER testuser IDENTIFIED BY 'test1234';
 Created successfully.
- 
+
 Mach> SHOW USERS;
-USER_NAME                               
+USER_NAME
 --------------------------------------------
-SYS                                     
+SYS
 TESTUSER
 [2] row(s) selected.
 ```

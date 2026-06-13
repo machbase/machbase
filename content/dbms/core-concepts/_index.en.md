@@ -109,9 +109,9 @@ Data is stored column-by-column:
 - Faster analytical queries
 - Reduced storage costs
 
-### Automatic Rollup (Tag Tables)
+### Rollup Tables (Tag Tables)
 
-Statistics are generated automatically:
+Statistics are available when rollups are configured:
 - Per-second, per-minute, per-hour summaries
 - MIN, MAX, AVG, SUM, COUNT, SUMSQ
 - No manual aggregation needed
@@ -166,7 +166,8 @@ SELECT * FROM logs DURATION 1 HOUR;
 
 -- Less optimal: Manual time filtering
 SELECT * FROM logs
-WHERE _arrival_time >= NOW - INTERVAL '1' HOUR;
+WHERE _arrival_time BETWEEN TO_DATE('2025-10-10 14:00:00', 'YYYY-MM-DD HH24:MI:SS')
+                        AND TO_DATE('2025-10-10 15:00:00', 'YYYY-MM-DD HH24:MI:SS');
 ```
 
 ### 3. Implement Data Retention
@@ -174,7 +175,7 @@ WHERE _arrival_time >= NOW - INTERVAL '1' HOUR;
 Don't let data grow forever:
 ```sql
 -- Daily cleanup
-DELETE FROM logs EXCEPT 30 DAYS;
+DELETE FROM logs EXCEPT 30 DAY;
 ```
 
 ### 4. Use Rollup for Analytics
@@ -182,7 +183,9 @@ DELETE FROM logs EXCEPT 30 DAYS;
 Query pre-aggregated data:
 ```sql
 -- Fast: Use rollup
-SELECT * FROM sensors WHERE rollup = hour;
+SELECT rollup('hour', 1, time) AS hour_time, AVG(value)
+FROM sensors
+GROUP BY hour_time;
 
 -- Slow: Aggregate raw data
 SELECT sensor_id, AVG(value) FROM sensors GROUP BY sensor_id;

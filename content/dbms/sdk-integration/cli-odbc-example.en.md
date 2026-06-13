@@ -1150,7 +1150,7 @@ void appendData()
     SQLAppendDataV2(gStmt, sParam);
  
     /* DATETIME : absolute value */
-    sParam[5].mDateTime.mTime = MACH_UINT64_LITERAL(1000000000);
+    sParam[5].mDateTime.mTime = MACHBASE_UINT64_LITERAL(1000000000);
     SQLAppendDataV2(gStmt, sParam);
  
     /* DATETIME : current */
@@ -1230,8 +1230,8 @@ void appendData()
  
 int appendClose()
 {
-    int sSuccessCount = 0;
-    int sFailureCount = 0;
+    SQLBIGINT sSuccessCount = 0;
+    SQLBIGINT sFailureCount = 0;
  
     if( SQLAppendClose(gStmt, &sSuccessCount, &sFailureCount) != SQL_SUCCESS )
     {
@@ -1239,7 +1239,7 @@ int appendClose()
     }
  
     printf("append close ok\n");
-    printf("success : %d, failure : %d\n", sSuccessCount, sFailureCount);
+    printf("success : %ld, failure : %ld\n", sSuccessCount, sFailureCount);
     return sSuccessCount;
 }
  
@@ -1291,7 +1291,7 @@ If you register sample4_append1.c in the Makefile, compile and run it, it will a
 ```bash
 [mach@localhost cli]$ make sample4_append1
 gcc -c -g -W -Wall -rdynamic -fno-inline -m64 -mtune=k8 -g -W -Wall -rdynamic -fno-inline -m64 -mtune=k8 -I/home/mach/machbase_home/include -I. -L//home/mach/machbase_home/include -osample4_append1.o sample4_append1.c
-gcc -m64 -mtune=k8 -L/home/mach/machbase_home/lib -osample4_append1 sample4_append1.o -lmachcli -L/home/mach/machbase_home/lib -lm -lpthread -ldl -lrt -rdynamic
+gcc -m64 -mtune=k8 -L/home/mach/machbase_home/lib -osample4_append1 sample4_append1.o -lmachbasecli -L/home/mach/machbase_home/lib -lm -lpthread -ldl -lrt -rdynamic
 [mach@localhost cli]$ ./sample4_append1
 connected ...
 append open ok
@@ -1640,8 +1640,8 @@ int appendData()
  
 void appendClose()
 {
-    int sSuccessCount = 0;
-    int sFailureCount = 0;
+    SQLBIGINT sSuccessCount = 0;
+    SQLBIGINT sFailureCount = 0;
  
     if( SQLAppendClose(gStmt, &sSuccessCount, &sFailureCount) != SQL_SUCCESS )
     {
@@ -1649,7 +1649,7 @@ void appendClose()
     }
  
     printf("append close ok\n");
-    printf("success : %d, failure : %d\n", sSuccessCount, sFailureCount);
+    printf("success : %ld, failure : %ld\n", sSuccessCount, sFailureCount);
 }
  
 time_t getTimeStamp()
@@ -1667,9 +1667,9 @@ If you register sample4_append2.c in the Makefile, compile and run it, it will a
 
 ```
 [mach@localhost cli]$ make
-gcc -c -g -W -Wall -rdynamic -fno-inline -m64 -mtune=k8 -g -W -Wall -rdynamic -fno-inline -m64 -mtune=k8 -I/home/mach/machbase_home/include -I. -L//home/mach/machbase_home/include -osingle_append2.o single_append2.c
-gcc -m64 -mtune=k8 -L/home/mach/machbase_home/lib -osingle_append2 single_append2.o -lmachcli -L/home/mach/machbase_home/lib -lm -lpthread -ldl -lrt -rdynamic
-[mach@localhost cli]$ ./single_append2
+gcc -c -g -W -Wall -rdynamic -fno-inline -m64 -mtune=k8 -g -W -Wall -rdynamic -fno-inline -m64 -mtune=k8 -I/home/mach/machbase_home/include -I. -L//home/mach/machbase_home/include -osample4_append2.o sample4_append2.c
+gcc -m64 -mtune=k8 -L/home/mach/machbase_home/lib -osample4_append2 sample4_append2.o -lmachbasecli -L/home/mach/machbase_home/lib -lm -lpthread -ldl -lrt -rdynamic
+[mach@localhost cli]$ ./sample4_append2
 connected ...
 table created
 append open ok
@@ -2336,8 +2336,8 @@ int appendOpen(SQLHENV aEnv, SQLHDBC aCon, SQLHSTMT aStmt, char* aTableName)
  
 int appendClose(SQLHENV aEnv, SQLHDBC aCon, SQLHSTMT aStmt)
 {
-    int sSuccessCount = 0;
-    int sFailureCount = 0;
+    SQLBIGINT sSuccessCount = 0;
+    SQLBIGINT sFailureCount = 0;
  
     if( SQLAppendClose(aStmt, &sSuccessCount, &sFailureCount) != SQL_SUCCESS )
     {
@@ -2345,7 +2345,7 @@ int appendClose(SQLHENV aEnv, SQLHDBC aCon, SQLHSTMT aStmt)
         return RC_FAILURE;
     }
  
-    printf("append result success : %d, failure : %d\n", sSuccessCount, sFailureCount);
+    printf("append result success : %ld, failure : %ld\n", sSuccessCount, sFailureCount);
  
     return RC_SUCCESS;
 }
@@ -2784,7 +2784,7 @@ Add the make code and run the executable file. Because the threads are used, the
 ```
 [mach@localhost cli]$ make sample8_multi_session_multi_table
 gcc -c -g -W -Wall -rdynamic -fno-inline -m64 -mtune=k8 -g -W -Wall -rdynamic -fno-inline -m64 -mtune=k8 -I/home/mach/machbase_home/include -I. -L//home/mach/machbase_home/include -osample8_multi_session_multi_table.o sample8_multi_session_multi_table.c
-gcc -m64 -mtune=k8 -L/home/mach/machbase_home/lib -osample8_multi_session_multi_table sample8_multi_session_multi_table.o -lmachcli  -L/home/mach/machbase_home/lib -lm -lpthread -ldl -lrt -rdynamic
+gcc -m64 -mtune=k8 -L/home/mach/machbase_home/lib -osample8_multi_session_multi_table sample8_multi_session_multi_table.o -lmachbasecli  -L/home/mach/machbase_home/lib -lm -lpthread -ldl -lrt -rdynamic
 [mach@localhost cli]$ ./sample8_multi_session_multi_table
 connectDB success.
 createTables success.
@@ -2849,14 +2849,14 @@ You can see the result through machsql as below.
  
 =================================================================
      Machbase Client Query Utility
-     Release Version 3.5.0
+     Release Version 8.5.4.develop
      Copyright 2014, Machbase Inc. or its subsidiaries.
      All Rights Reserved.
 =================================================================
 Machbase Server Addr (Default:127.0.0.1) :
 Machbase User ID  (Default:SYS)
 Machbase User Password : manager
-MACH_CONNECT_MODE=INET, PORT=5656
+MACHBASE_CONNECT_MODE=INET, PORT=5656 EDITION=STANDARD
 Mach> select count(*) from table_f1;
 count(*)
 -----------------------

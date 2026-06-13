@@ -12,14 +12,15 @@ weight: 70
 
 보존 기간과 삭제 주기를 지정해 RETENTION POLICY를 생성합니다.
 
-보존 기간은 월 또는 일 단위로 지정하고, 삭제 주기는 일 또는 시간 단위로 지정할 수 있습니다.
+보존 기간은 월, 일, 시간, 분, 초 단위로 지정할 수 있습니다.
+삭제 주기는 일, 시간, 분, 초 단위로 지정할 수 있습니다.
 
 정책 정보는 **M$RETENTION** 테이블 조회로 확인할 수 있습니다.
 
 **Syntax:**
 
 ```sql
-CREATE RETENTION policy_name DURATION duration {MONTH|DAY} INTERVAL interval {DAY|HOUR}
+CREATE RETENTION policy_name DURATION duration {MONTH|DAY|HOUR|MIN|SEC} INTERVAL interval {DAY|HOUR|MIN|SEC}
 ```
 
 * policy_name : 생성할 정책 이름
@@ -37,12 +38,17 @@ Executed successfully.
 Mach> CREATE RETENTION policy_1m_3d DURATION 1 MONTH INTERVAL 3 DAY;
 Executed successfully.
 
+-- 짧은 초 단위 주기도 사용할 수 있습니다.
+Mach> CREATE RETENTION policy_30s_3s DURATION 30 SEC INTERVAL 3 SEC;
+Executed successfully.
+
 Mach> SELECT * FROM M$RETENTION;
-USER_ID     POLICY_NAME                               DURATION             INTERVAL             
+USER_ID     POLICY_NAME                               DURATION             INTERVAL
 -----------------------------------------------------------------------------------------------------
-1           POLICY_1D_1H                              86400                3600                 
-1           POLICY_1M_3D                              2592000              259200               
-[2] row(s) selected.
+1           POLICY_1D_1H                              86400                3600
+1           POLICY_1M_3D                              2592000              259200
+1           POLICY_30S_3S                             30                   3
+[3] row(s) selected.
 ```
 
 ## Apply Retention Policy
@@ -72,12 +78,12 @@ Mach> ALTER TABLE tag ADD RETENTION policy_1d_1h;
 Altered successfully.
 
 Mach> SELECT * FROM V$RETENTION_JOB;
-USER_NAME                                                                         TABLE_NAME                                                                        
+USER_NAME                                                                         TABLE_NAME
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-POLICY_NAME                                                                       STATE                                                                             LAST_DELETED_TIME               
+POLICY_NAME                                                                       STATE                                                                             LAST_DELETED_TIME
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-SYS                                                                               TAG                                                                               
-POLICY_1D_1H                                                                      WAITING                                                                           NULL                            
+SYS                                                                               TAG
+POLICY_1D_1H                                                                      WAITING                                                                           NULL
 [1] row(s) selected.
 
 ```

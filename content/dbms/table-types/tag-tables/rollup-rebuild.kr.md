@@ -15,8 +15,8 @@ Machbase 환경에서 현재 정리된 rebuild 방법은 아래 두 가지입니
 1. Python 스크립트
    - built-in rollup 전용
    - 일반 rollup / rollup extension 대상
-   - 시간 범위(`begintime ~ endtime`) 기준으로 재구성
-   - Machbase Neo REST API 사용
+   - 대상 시각 하나가 포함된 초, 분, 시간 버킷을 재구성
+   - Machbase HTTP REST API 사용
 2. 서버 내장 Procedure `EXEC ROLLUP_REBUILD(...)`
    - built-in rollup + rollup extension + custom rollup 대상
    - SQL에서 직접 호출 가능
@@ -38,7 +38,7 @@ Machbase 환경에서 현재 정리된 rebuild 방법은 아래 두 가지입니
 
 ### 적용 범위
 
-`test/regress/issue-all/173/rollup_rebuild_timerange.py` 계열 Python 스크립트는 기존 built-in rollup 전용입니다.
+`test/regress/issue-all/173/rollup_rebuild.py` Python 스크립트는 기존 built-in rollup 전용입니다.
 
 전제 조건:
 
@@ -62,37 +62,33 @@ custom rollup에는 그대로 적용할 수 없습니다.
 ### 실행 예
 
 ```bash
-python3 rollup_rebuild_timerange.py \
-  --server http://127.0.0.1:5654 \
+python3 rollup_rebuild.py \
+  --server http://127.0.0.1:5657 \
   --tablename TAG \
   --tagname tag-0 \
-  --begintime '2000-01-01 00:00:00' \
-  --endtime   '2000-01-01 00:00:11'
+  --time '2000-01-01 00:00:00'
 ```
 
 의미:
 
 - `tag-0`에 대해
-- `2000-01-01 00:00:00`부터 `2000-01-01 00:00:11` 사이의 원본 이상 데이터에 영향을 받는
-- 초, 분, 시간 rollup 버킷을 다시 구성합니다.
+- `2000-01-01 00:00:00`이 포함된 초, 분, 시간 rollup 버킷을 다시 구성합니다.
 
 ### 매개변수 설명
 
 1. `--server`
-   - Machbase Neo REST API 주소
-   - 기본값 예: `http://127.0.0.1:5654`
+   - Machbase HTTP REST API 주소
+   - 예: `http://127.0.0.1:5657`
+   - 실행 중인 서버의 HTTP 포트는 `SELECT HTTP_PORT FROM V$HTTP_STATUS`로 확인합니다.
 2. `--tablename`
    - TAG 테이블 이름
    - 대소문자 구분
 3. `--tagname`
    - 이상 데이터 식별 값
    - TAG TABLE 생성 시 `PRIMARY KEY`로 지정한 첫 번째 key 컬럼 값
-4. `--begintime`
-   - 오류/삭제 구간 시작 시각
-   - 버킷 경계 기준으로 절삭해서 주는 것이 안전
-5. `--endtime`
-   - 오류/삭제 구간 종료 시각
-   - 역시 버킷 경계 기준으로 절삭해서 주는 것이 안전
+4. `--time`
+   - 오류/삭제가 발생한 단일 시각
+   - 이 시각이 포함된 초, 분, 시간 버킷을 재구성합니다.
 
 ### Python 도구의 동작 개념
 
@@ -273,7 +269,7 @@ rebuild 순서는 반드시 하위부터입니다.
 3. 하나의 오류 시간대가 여러 버킷에 걸치면 각 버킷을 모두 재구성합니다.
 4. custom rollup destination table은 append-only 결과가 누적되므로 rebuild 시 반드시 delete 후 insert 합니다.
 5. rollup-on-rollup 구조에서는 반드시 하위부터 rebuild 하고, 이후 상위를 재구성합니다.
-6. built-in 대량 시간 범위 복원은 Python 타임레인지 도구가 더 편리하고, custom 또는 extension/custom 혼합 환경은 `EXEC ROLLUP_REBUILD(...)` 경로를 사용합니다.
+6. 오류 구간이 여러 버킷에 걸치면 Python 스크립트를 각 버킷 시각마다 호출하거나, 전체 범위를 지정할 수 있는 `EXEC ROLLUP_REBUILD(...)` 경로를 사용합니다.
 
 ## 최신 데이터를 포함한 효율적인 Rollup 질의 정리
 

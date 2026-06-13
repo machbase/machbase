@@ -50,7 +50,7 @@ alter_system_kill_session_stmt: 'ALTER SYSTEM KILL SESSION' number
 예시
 ```sql
 -- SYS 계정에서 확인 후 종료
-SELECT id, user_id, program FROM v$session;
+SELECT id, user_id, client_type FROM v$session;
 ALTER SYSTEM KILL SESSION 12;
 ```
 
@@ -74,7 +74,7 @@ alter_system_cancel_session_stmt ::= 'ALTER SYSTEM CANCEL SESSION' number
 예시
 ```sql
 -- 세션 A: 대상 SID 확인
-SELECT id, user_id, program, sql_text FROM v$session;
+SELECT id, user_id, client_type FROM v$session;
 
 -- 세션 B (같은 사용자 또는 SYS): 실행 중인 문장만 취소
 ALTER SYSTEM CANCEL SESSION 6;

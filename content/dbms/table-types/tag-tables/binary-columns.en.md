@@ -23,7 +23,9 @@ CREATE TAG TABLE t1(
 
 - Valid length: `1 <= n <= 32767` (32K-1).
 - Out-of-range sizes cause create-time errors (for example `BINARY(0)`).
-- `LENGTH` and `DESC` show the declared byte length (not hex width).
+- `DESC` and table metadata show the declared byte length (not hex width).
+  SQL `LENGTH(binary_col)` returns the displayed value length, excluding trailing
+  zero padding added for shorter inputs.
 
 ## Input Rules (all paths)
 
@@ -46,8 +48,8 @@ INSERT INTO t1 VALUES('k5', '2024-01-01', '0xFFFFFFFFF'); -- error: length excee
 
 ## Output and Tooling Notes
 
-- machsql displays uppercase hex without the `0x` prefix; output width follows
-  the declared length (including padding).
+- machsql displays uppercase hex without the `0x` prefix. Trailing zero padding
+  is not shown in the text output for shorter inputs.
 - machloader: declare `BINARY(n)` in the schema; odd-length hex pads, invalid
   hex or over-length values fail.
 - REST append: JSON string is decoded as hex; falls back to the legacy base64

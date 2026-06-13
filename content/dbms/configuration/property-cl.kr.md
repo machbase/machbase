@@ -335,7 +335,7 @@ Replication Active 가 되는 Warehouse (=전송을 하는 Warehouse) 에 직접
 Cluster Edition 에서, Warehouse 에 곧바로 접속해 DML 을 수행할 수 있도록 합니다.
 
 * 1 : 수행 가능
-* 2 : 수행 불가능. 에러가 반환됩니다.
+* 0 : 수행 불가능. 에러가 반환됩니다.
 
 Warehouse 에 직접 DML 을 수행할 경우 Broker 를 통한 것보다 성능 이점이 있지만, 동일 Group 에 DML 이 전파되지 않는 문제가 있습니다. 
 따라서, 데이터 불일치로 인한 비상 복구용 혹은 Group 의 데이터 불일치를 감안해도 되는 경우에 한해 사용합니다.

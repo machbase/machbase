@@ -49,12 +49,14 @@ To connect through the CLI, you need to create a connection string. The contents
 |PORT_NO|Port number to connect to|
 |PORT_DIR|Specifies the file path to use when connecting to a Unix domain from Unix.<br>(It is specified when modified from the server, and it works even if it is not specified by default.)|
 |CONNTYPE|Specifies the connection method between the client and the server.<br><br>1: Connection with TCP / IP INET<br>2: Connect to Unix Domain|
-|CONNTYPE|Specifies the connection method between the client and the server.<br><br>1: Connection with TCP / IP INET<br>2: Connect to Unix Domain|
 |COMPRESS|Indicates whether to compress the Append protocol.<br><br>If this value is 0, it is transmitted without compression.<br>If this value is any value greater than 0, it is compressed only if the Append record is larger than its value.<br><br>Ex) COMPRESS = 512<br>Only when the record size is larger than 512, it is compressed and operates.<br><br>For remote connection, compression improves transmission performance.|
 |SHOW_HIDDEN_COLS|Decides whether to show the hidden column (`_arrival_time`) when executing it with select *.<br><br>If it is 0, it is not shown. If it is 1, information of the corresponding column is output.|
 |CONNECTION_TIMEOUT|Sets how long to wait on the first connection.<br><br>The default setting is 30 seconds.<br>This value is set higher if the server response on the first connection is slower than 30 seconds.|
 |SOCKET_TIMEOUT|This is a timeout that occurs when Protocol I/O takes time.<br><br>The client checks and waits , then performing Disconnect.<br><br>Same as Read Timeout of ORACLE. (In MYSQL and MSSQL, uses SOCKET_TIMEOUT as same as Machbase.)<br><br>Set SOCKET_TIMEOUT=NN (seconds) in Connection String, and the default value is set to 30 minutes (1800).|
 |ALTERNATIVE_SERVERS|When using the cluster version, it is a setting to have the information of several brokers additionally.<br><br>When multiple brokers are registered, even if the connected broker is terminated, the data is continuously input after connecting to another broker.<br><br>Multiple brokers can be registered, and the values of <server address>:<server port> are separated by commas.<br><br>ex) ALTERNATIVE_SERVERS=192.168.0.10:20320,192.168.0.11:20320;|
+|AUTH_MODE|Authentication mode. Use `PASSWORD` for password authentication or `CHALLENGE` for private-key challenge authentication. If `AUTH_KEY_FILE` is set and `AUTH_MODE` is omitted, the CLI treats the connection as `CHALLENGE`.|
+|AUTH_SIG_SCHEME|Signature scheme for `AUTH_MODE=CHALLENGE`: `ECDSA`, `RSA_PKCS1_V15`, or `RSA_PSS`. If omitted, the client attempts to infer the default scheme from the key file.|
+|AUTH_KEY_FILE|Local PEM private key file path for `AUTH_MODE=CHALLENGE`. The key file is required for challenge authentication.|
 
 An example of CLI connection is as follows.
 
@@ -248,11 +250,11 @@ The function arguments are structured as follows.
 Below is the definition of SQL_APPEND_PARAM that will actually be used in V2 , which is included in machbase_sqlcli.h.
 
 ```c
-typedef struct machAppendVarStruct
+typedef struct machbaseAppendVarStruct
 {
     unsigned int mLength;
     void *mData;
-} machAppendVarStruct;
+} machbaseAppendVarStruct;
  
 /* for IPv4, IPv6 as bin or string representation */
 typedef struct machbaseAppendIPStruct
@@ -287,6 +289,7 @@ typedef union machbaseAppendParam
     machbaseAppendVarStruct      mVar;     /* for all varying type */
     machbaseAppendVarStruct      mVarchar; /* alias */
     machbaseAppendVarStruct      mText;    /* alias */
+    machbaseAppendVarStruct      mJson;    /* alias */
     machbaseAppendVarStruct      mBinary;  /* binary */
     machbaseAppendVarStruct      mBlob;    /* reserved alias */
     machbaseAppendVarStruct      mClob;    /* reserved alias */
@@ -380,7 +383,7 @@ char           *mFormatStr;
  
 void testAppendDateTimeFunc()
 {
-    SQL_mach_PARAM sParam[1];
+    SQL_APPEND_PARAM sParam[1];
     /* NULL Insert */
     sParam[0].mDateTime.mTime   = SQL_APPEND_DATETIME_NULL;
     SQLAppendDataV2(Stmt, sParam);
@@ -497,11 +500,11 @@ SQLAppendDataV2(Stmt, sParam);
 Variable data types include VARCHAR and TEXT, and BLOB and CLOB. In existing functions, only VARCHAR was supported, and there was no way for the user to enter the length of the string. For that reason, we had to get the length through the strlen () function each time, but from function V2, the user can directly specify the length for the variable data type. Thus, if the user knows the length in advance, data can be input more quickly. Internally, the variable data type is a structure. However, for convenience of development, members are created separately for each data type.
 
 ```c
-typedef struct machAppendVarStruct
+typedef struct machbaseAppendVarStruct
 {
 unsigned int mLength;
 void *mData;
-} machAppendVarStruct;
+} machbaseAppendVarStruct;
 ```
 
 When inputting a variable data type, set the length of the data to mLength and set the primitive data pointer to mData. If mLength is greater than the defined schema, it is automatically truncated. At this time, SQLAppendDataV2 () returns SQL_SUCCESS_WITH_INFO and also fills the internal structure with a related warning message. To see this warning message, use SQLError () function.
@@ -510,6 +513,7 @@ When inputting a variable data type, set the length of the data to mLength and s
 |--|--|--|
 |VARCHAR|SQL_APPEND_VARCHAR_NULL|mVarchar|
 |TEXT|SQL_APPEND_TEXT_NULL|mText|
+|JSON|SQL_APPEND_JSON_NULL|mJson|
 |BINARY|SQL_APPEND_BINARY_NULL|mBinary|
 |BLOB|SQL_APPEND_BLOB_NULL|mBlob|
 |CLOB|SQL_APPEND_CLOB_NULL|mClob|
@@ -523,10 +527,10 @@ CREATE TABLE ttt (name VARCHAR(10));
 ```c
 void testAppendVarcharFunc()
 {
-    SQL_mach_PARAM sParam[1];
+    SQL_APPEND_PARAM sParam[1];
  
     /*  VARCHAR : NULL */
-    sParam[0].mVarchar.mLength = SQL_APPEND_VARCHAR_NULL
+    sParam[0].mVarchar.mLength = SQL_APPEND_VARCHAR_NULL;
     SQLAppendDataV2(Stmt, sParam); /* OK */
  
     /*  VARCHAR : string */
@@ -552,13 +556,13 @@ CREATE TABLE ttt (doc TEXT);
 ```cpp
 void testAppendFunc()
 {
-    SQL_mach_PARAM sParam[1];
+    SQL_APPEND_PARAM sParam[1];
  
-    /*  VARCHAR : NULL */
-    sParam[0].mText.mLength = SQL_APPEND_TEXT_NULL
+    /*  TEXT : NULL */
+    sParam[0].mText.mLength = SQL_APPEND_TEXT_NULL;
     SQLAppendDataV2(Stmt, sParam); /* OK */
  
-    /*  VARCHAR : string */
+    /*  TEXT : string */
     strcpy(sText, "This is the sample document for tutorial.");
     sParam[0].mVar.mLength = strlen(sText);
     sParam[0].mVar.mData   = sText;
@@ -579,6 +583,43 @@ This function is a function to input data for the corresponding channel, and the
 * aData is an array containing pointers to the data to be input. The number of arrays must match the number of columns held by the table specified at Open.
 
 For the rest, refer to the SQLAppendDataV2 () function.
+
+### SQLAppendDataV3 and SQLAppendDataByTimeV3
+
+```c
+SQLRETURN SQLAppendDataV3(SQLHSTMT aStmtHandle,
+                          SQL_APPEND_PARAM *aData,
+                          SQLINTEGER aColCount);
+
+SQLRETURN SQLAppendDataByTimeV3(SQLHSTMT aStmtHandle,
+                                SQLBIGINT aTime,
+                                SQL_APPEND_PARAM *aData,
+                                SQLINTEGER aColCount);
+```
+
+V3 uses the same `SQL_APPEND_PARAM` values as V2 and adds `aColCount`.
+Use it when the number of values supplied by the client must be explicit instead of inferred only from the table metadata opened by `SQLAppendOpen`.
+
+### SQLAppendBatch and SQLAppendBatchByTime
+
+```c
+SQLRETURN SQLAppendBatch(SQLHSTMT aStmtHandle,
+                         SQLCHAR *aTableName,
+                         SQLINTEGER aRowCount,
+                         SQLINTEGER aColCount,
+                         SQL_APPEND_TYPES *aTypes,
+                         SQL_APPEND_PARAM *aData);
+
+SQLRETURN SQLAppendBatchByTime(SQLHSTMT aStmtHandle,
+                               SQLCHAR *aTableName,
+                               SQLBIGINT aTime,
+                               SQLINTEGER aRowCount,
+                               SQLINTEGER aColCount,
+                               SQL_APPEND_TYPES *aTypes,
+                               SQL_APPEND_PARAM *aData);
+```
+
+Batch append sends a rectangular row set in one call. `aTypes` is an array of `SQL_APPEND_TYPE_*` values, and `aData` contains `aRowCount * aColCount` values in row order. `SQL_APPEND_TYPE_JSON` is available for JSON columns; BLOB and CLOB type entries are retained for variable binary/text payloads.
 
 ### SQLAppendFlush
 

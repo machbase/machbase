@@ -151,7 +151,7 @@ DELETE FROM app_logs OLDEST 100 ROWS;
 DELETE FROM app_logs EXCEPT 1000 ROWS;
 
 -- Delete data older than 7 days
-DELETE FROM app_logs EXCEPT 7 DAYS;
+DELETE FROM app_logs EXCEPT 7 DAY;
 
 -- Delete before specific date
 DELETE FROM app_logs
@@ -161,19 +161,19 @@ BEFORE TO_DATE('2025-01-01', 'YYYY-MM-DD');
 ### Managing Tables
 
 ```sql
--- Drop table
-DROP TABLE temperatures;
+-- Create index
+CREATE INDEX idx_sensor ON temperatures(sensor_id);
 
 -- Truncate table (delete all data)
 TRUNCATE TABLE app_logs;
 
--- Create index
-CREATE INDEX idx_sensor ON temperatures(sensor_id);
+-- Drop table
+DROP TABLE temperatures;
 ```
 
 ## Understanding _arrival_time
 
-Every record in Machbase automatically gets a timestamp:
+Every Log table record automatically gets a timestamp:
 
 ```sql
 SELECT _arrival_time, * FROM temperatures;
@@ -215,6 +215,9 @@ DURATION 30 MINUTE BEFORE 2 HOUR;
 Search for text within columns:
 
 ```sql
+-- Create a keyword index before using SEARCH
+CREATE INDEX idx_message ON app_logs(message) INDEX_TYPE KEYWORD;
+
 -- Find logs containing "error"
 SELECT * FROM app_logs
 WHERE message SEARCH 'error';
@@ -284,7 +287,8 @@ SELECT
 FROM
     temperatures
 WHERE
-    _arrival_time > NOW() - INTERVAL '1' HOUR
+    _arrival_time BETWEEN TO_DATE('2025-10-10 14:00:00', 'YYYY-MM-DD HH24:MI:SS')
+                      AND TO_DATE('2025-10-10 15:00:00', 'YYYY-MM-DD HH24:MI:SS')
 GROUP BY
     sensor_id;
 ```
@@ -328,10 +332,10 @@ SHOW STORAGE;
 
 ```sql
 -- Keep only 30 days of data
-DELETE FROM app_logs EXCEPT 30 DAYS;
+DELETE FROM app_logs EXCEPT 30 DAY;
 
 -- Remove old sensor data
-DELETE FROM temperatures EXCEPT 7 DAYS;
+DELETE FROM temperatures EXCEPT 7 DAY;
 ```
 
 ### Performance Check
@@ -402,9 +406,9 @@ netstat -an | grep 5656
 
 ### Query Timeout
 
-```sql
--- For long-running queries, increase timeout
-SET QUERY_TIMEOUT = 300;  -- 5 minutes
+```properties
+# Set in machbase.conf, then restart the server
+SESSION_QUERY_TIMEOUT_SEC = 300
 ```
 
 ### Out of Memory
@@ -438,7 +442,7 @@ DROP TABLE t;
 INSERT INTO t VALUES (...);
 SELECT * FROM t;
 SELECT * FROM t DURATION 10 MINUTE;
-DELETE FROM t EXCEPT 7 DAYS;
+DELETE FROM t EXCEPT 7 DAY;
 
 -- SYSTEM INFO
 SHOW LICENSE;
@@ -452,6 +456,7 @@ DURATION 1 DAY
 DURATION 30 MINUTE BEFORE 2 HOUR
 
 -- TEXT SEARCH
+CREATE INDEX idx_col ON t(column) INDEX_TYPE KEYWORD;
 WHERE column SEARCH 'text'
 ```
 

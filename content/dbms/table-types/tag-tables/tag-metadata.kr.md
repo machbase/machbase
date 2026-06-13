@@ -20,10 +20,10 @@ Tag 메타데이터는 태그의 정적 속성을 저장하는 영역입니다. 
 
 ## 메타데이터 컬럼 정의
 
-메타데이터 컬럼은 `CREATE TAGDATA TABLE` 의 `METADATA (...)` 절에서 정의합니다.
+메타데이터 컬럼은 `CREATE TAG TABLE` 의 `METADATA (...)` 절에서 정의합니다.
 
 ```sql
-CREATE TAGDATA TABLE sensors (
+CREATE TAG TABLE sensors (
     name VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
     value DOUBLE
@@ -147,7 +147,7 @@ DELETE FROM sensors METADATA
  WHERE status = 'STOP';
 ```
 
-`WHERE` 절을 생략하면 해당 TAGDATA 테이블의 모든 메타데이터를 삭제합니다.
+`WHERE` 절을 생략하면 해당 TAG 테이블의 모든 메타데이터를 삭제합니다.
 
 ```sql
 DELETE FROM sensors METADATA;
@@ -174,7 +174,7 @@ DELETE FROM sensors METADATA;
 메타데이터에 `JSON` 컬럼을 선언할 수 있습니다.
 
 ```sql
-CREATE TAGDATA TABLE ships (
+CREATE TAG TABLE ships (
     name VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
     value DOUBLE
@@ -246,7 +246,7 @@ SELECT info->'$[''ship-owner'']'
 자주 조회하는 JSON path는 메타데이터 정의 시 함께 인덱싱할 수 있습니다.
 
 ```sql
-CREATE TAGDATA TABLE ships (
+CREATE TAG TABLE ships (
     name VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
     value DOUBLE
@@ -355,7 +355,7 @@ UPDATE ships METADATA
 ## 전체 예제
 
 ```sql
-CREATE TAGDATA TABLE ships (
+CREATE TAG TABLE ships (
     name VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
     value DOUBLE

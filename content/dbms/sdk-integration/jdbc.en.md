@@ -86,9 +86,26 @@ easily in logs or configuration dumps when it is included in the URL.
   password authentication.
 
 
+## JDBC Connection Options
+
+The driver accepts connection options either in `Properties` or in the URL query string.
+The current DBMS standard source handles these public options:
+
+| Option | Description |
+| -- | -- |
+| `user` / `password` | Password authentication credentials. |
+| `AUTH_MODE`, `AUTH_SIG_SCHEME`, `AUTH_KEY_FILE` | Challenge authentication options described above. |
+| `TIMEZONE` | Session timezone string such as `+0900`. Invalid timezone strings fail connection setup. |
+| `randomHost` | When `true`, randomizes the selected host from the parsed host list before connecting. |
+| `maxStatements` | Maximum cached statement count for pooled connections. |
+| `CONNECTION_TIMEOUT` | Socket connect timeout in seconds. `0` means no finite timeout. |
+| `SOCKET_TIMEOUT` | Socket read timeout in seconds. `0` means no finite timeout. |
+| `characterEncoding` | Client character encoding name. |
+
+
 ## Extension JDBC Functions
 
-### setIPv4
+### setIpv4
 
 ```java
 void setIpv4(int ind, String ipString)
@@ -98,7 +115,7 @@ This is a function to input IPv4 address type in PrepareStatement.
 
 Receives column index and IPv4 string as arguments.
 
-### setIPv6
+### setIpv6
 
 ```java
 void setIpv6(int ind, String ipString)
@@ -106,7 +123,7 @@ void setIpv6(int ind, String ipString)
 
 This is a function to input IPv6 address type in PrepareStatement.
 
-Receives column index and IPv6 string as arguments. 
+Receives column index and IPv6 string as arguments.
 
 ### executeAppendOpen
 
@@ -116,7 +133,7 @@ ResultSet executeAppendOpen(String aTableName, int aErrorCheckCount)
 
 Opens the protocol to write the Append protocol in the Statement.
 
-The table name and error checking interval are received as arguments. Returns a ResultSet with the result value. 
+The table name and error checking interval are received as arguments. Returns a ResultSet with the result value.
 
 ### executeAppendData
 
@@ -138,6 +155,14 @@ Enters the actual data for the Append protocol on a time basis in the statement.
 
 Receives the metadata of the ResultSet which is the result value of executeAppendOpen, the time value of the specific time zone to be set, and the data to input as arguments. If the result value is stored in the transmission buffer, 1 is returned.
 
+### executeAppendFlush
+
+```java
+int executeAppendFlush()
+```
+
+Flushes the current append stream and checks the pending append response. If the result is successful, it returns 1.
+
 ### executeAppendClose
 
 ```java
@@ -156,7 +181,7 @@ int executeSetAppendErrorCallback(MachAppendCallback aCallback)
 
 Sets a callback function that outputs an error if an error occurs during Append execution.
 
-It takes a callback function that outputs an error log as an argument. If the result is successful, 1 is returned. 
+It takes a callback function that outputs an error log as an argument. If the result is successful, 1 is returned.
 
 ### getAppendSuccessCount
 
@@ -166,17 +191,21 @@ long getAppendSuccessCount()
 
 Returns the number of successes for the Append protocol in the Statement.
 
-Returns the number of successful results. 
+Returns the number of successful results.
 
-### getAppendFailCount
+### getAppendFailureCount
 
 ```java
-long getAppendFailCount()
+long getAppendFailureCount()
 ```
 
 Returns the number of failures for the Append protocol in the Statement.
 
-Returns the number of failures as a result. 
+Returns the number of failures as a result.
+
+### Batch append implementation note
+
+The source includes internal protocol methods named `executeAppendAll` and `executeAppendAllByTime` for batch-style append writes. They are not exposed as public `MachStatement` methods in the checked DBMS standard source; use the public append methods documented above unless a later public wrapper is provided.
 
 
 ## Application Development
@@ -197,52 +226,55 @@ $(MACHBASE_HOME)/lib/machbase.jar must be specified in the classpath. The follow
 
 ```bash
 CLASSPATH=".:$(MACHBASE_HOME)/lib/machbase.jar"
- 
-SAMPLE_SRC = Sample1Connect.java Sample2Insert.java Sample3PrepareStmt.java Sample4Append.java
- 
+
+SAMPLE_SRC = MakeData.java Sample1Connect.java Sample2Insert.java Sample3PrepareStmt.java Sample4Append.java
+
 all: build
- 
+
 build:
     -@rm -rf *.class
     javac -classpath $(CLASSPATH) -d . $(SAMPLE_SRC)
- 
+
 create_table:
     machsql -s localhost -u sys -p manager -f createTable.sql
- 
+
 select_table:
     machsql -s localhost -u sys -p manager -f selectTable.sql
- 
+
+make_data_file:
+    java -classpath $(CLASSPATH) MakeData
+
 run_sample1:
     java -classpath $(CLASSPATH) Sample1Connect
- 
+
 run_sample2:
     java -classpath $(CLASSPATH) Sample2Insert
- 
+
 run_sample3:
     java -classpath $(CLASSPATH) Sample3PrepareStmt
- 
+
 run_sample4:
     java -classpath $(CLASSPATH) Sample4Append
- 
+
 clean:
     rm -rf *.class
 ```
 
 ### Compile and Link
-Run the make command to compile and link as follows: 
+Run the make command to compile and link as follows:
 
 ```bash
 [mach@localhost jdbc]$ make
-javac -classpath ".:/home/machbase/machbase_home/lib/machbase.jar" -d . Sample1Connect.java Sample2Insert.java Sample3PrepareStmt.java Sample4Append.java
+javac -classpath ".:/home/machbase/machbase_home/lib/machbase.jar" -d . MakeData.java Sample1Connect.java Sample2Insert.java Sample3PrepareStmt.java Sample4Append.java
 [mach@localhost jdbc]$
 ```
 
 ## Application Development with Maven
 
-Maven can be used to import Machbase JDBC (machjdbc) to a project.   
-Machbase JDBC driver can be found at [Maven Central Repository](https://mvnrepository.com/artifact/com.machbase/machjdbc).   
+Maven can be used to import Machbase JDBC (machjdbc) to a project.
+Machbase JDBC driver can be found at [Maven Central Repository](https://mvnrepository.com/artifact/com.machbase/machjdbc).
 
-### Import and use machjdbc 
+### Import and use machjdbc
 
 To import machjdbc, open `pom.xml` and add this tag in `<dependencies>` tag.
 ```
@@ -277,7 +309,7 @@ Let's write an example program that connects to a Machbase server using a Machba
 import java.util.*;
 import java.sql.*;
 import com.machbase.jdbc.*;
- 
+
 public class Sample1Connect
 {
     public static Connection connect()
@@ -286,11 +318,11 @@ public class Sample1Connect
         try
         {
             String sURL = "jdbc:machbase://localhost:5656/machbasedb";
- 
+
             Properties sProps = new Properties();
             sProps.put("user", "sys");
             sProps.put("password", "manager");
- 
+
             Class.forName("com.machbase.jdbc.MachDriver");
             conn = DriverManager.getConnection(sURL, sProps);
         }
@@ -304,17 +336,17 @@ public class Sample1Connect
         }
         return conn;
     }
- 
+
     public static void main(String[] args) throws Exception
     {
         Connection conn = null;
- 
+
         try
         {
             conn = connect();
             if( conn != null )
             {
-                System.out.println("mach JDBC connected.");
+                System.out.println("machbase JDBC connected.");
             }
         }
         catch( Exception e )
@@ -337,10 +369,10 @@ Now compile and run the source code. Use the Makefile you have already created.
 
 ```bash
 [mach@localhost jdbc]$ make
-javac -classpath ".:/home/machbase/machbase_home/lib/machbase.jar" -d . Sample1Connect.java Sample2Insert.java Sample3PrepareStmt.java Sample4Append.java
+javac -classpath ".:/home/machbase/machbase_home/lib/machbase.jar" -d . MakeData.java Sample1Connect.java Sample2Insert.java Sample3PrepareStmt.java Sample4Append.java
 [mach@localhost jdbc]$ make run_sample1
 java -classpath ".:/home/machbase/machbase_home/lib/machbase.jar" Sample1Connect
-mach JDBC connected.
+machbase JDBC connected.
 ```
 
 ### Data Input and Output Example (1) Direct I/O
@@ -348,21 +380,21 @@ mach JDBC connected.
 Create and display an example that uses the Machbase JDBC driver to input and output data.
 
 The name of the source file is called Sample2Insert.java.
-First, you need to create the necessary tables using the machsql program. 
+First, you need to create the necessary tables using the machsql program.
 In the example, we used the sample code to create a table called sample_table in advance.
 
 ```bash
 [mach@localhost jdbc]$ machsql
 =================================================================
      Machbase Client Query Utility
-     Release Version 3.5.0.826b8f2.official
+     Release Version 8.5.4.develop
      Copyright 2014, Machbase Inc. or its subsidiaries.
      All Rights Reserved.
 =================================================================
 Machbase server address (Default:127.0.0.1):
 Machbase rser ID  (Default:SYS)
 Machbase user password: MANAGER
-MACHBASE_CONNECT_MODE=INET, PORT=5656
+MACHBASE_CONNECT_MODE=INET, PORT=5656 EDITION=STANDARD
 mach> create table sample_table(d1 short, d2 integer, d3 long, f1 float, f2 double, name varchar(20), text text, bin binary, v4 ipv4, v6 ipv6, dt datetime);
 Created successfully.
 mach> exit
@@ -373,7 +405,7 @@ mach> exit
 import java.util.*;
 import java.sql.*;
 import com.machbase.jdbc.*;
- 
+
 public class Sample2Insert
 {
     public static Connection connect()
@@ -381,17 +413,17 @@ public class Sample2Insert
         Connection conn = null;
         try
         {
- 
+
             String sURL = "jdbc:machbase://localhost:5656/machbasedb";
- 
+
             Properties sProps = new Properties();
             sProps.put("user", "sys");
             sProps.put("password", "manager");
- 
+
             Class.forName("com.machbase.jdbc.MachDriver");
- 
+
             conn = DriverManager.getConnection(sURL, sProps);
- 
+
         }
         catch ( ClassNotFoundException ex )
         {
@@ -401,26 +433,26 @@ public class Sample2Insert
         {
             System.err.println("Exception : " + e.getMessage());
         }
- 
+
         return conn;
     }
- 
- 
+
+
     public static void main(String[] args) throws Exception
     {
         Connection conn = null;
         Statement stmt = null;
         String sql;
- 
+
         try
         {
             conn = connect();
             if( conn != null )
             {
-                System.out.println("mach JDBC connected.");
- 
+                System.out.println("machbase JDBC connected.");
+
                 stmt = conn.createStatement();
- 
+
                 for(int i=1; i<10; i++)
                 {
                     sql = "INSERT INTO SAMPLE_TABLE VALUES (";
@@ -436,12 +468,12 @@ public class Sample2Insert
                     sql += ",'::192.168.0."+i+"'";
                     sql += ",TO_DATE('2014-08-0"+i+"','YYYY-MM-DD')";//dt
                     sql += ")";
- 
+
                     stmt.execute(sql);
- 
+
                     System.out.println( i+" record inserted.");
                 }
- 
+
                 String query = "SELECT d1, d2, d3, f1, f2, name, text, bin, to_hex(bin), v4, v6, to_char(dt,'YYYY-MM-DD') as dt from SAMPLE_TABLE";
                 ResultSet rs = stmt.executeQuery(query);
                 while( rs.next () )
@@ -458,7 +490,7 @@ public class Sample2Insert
                     String v4 = rs.getString("v4");
                     String v6 = rs.getString("v6");
                     String dt = rs.getString("dt");
- 
+
                     System.out.print("d1: " + d1);
                     System.out.print(", d2: " + d2);
                     System.out.print(", d3: " + d3);
@@ -471,7 +503,7 @@ public class Sample2Insert
                     System.out.print(", v4: " + v4);
                     System.out.print(", v6: " + v6);
                     System.out.println(", dt: " + dt);
- 
+
                 }
                 rs.close();
             }
@@ -505,11 +537,11 @@ Now compile and run the source code. Use the Makefile you have already created.
 
 ```bash
 [mach@localhost jdbc]$ make
-javac -classpath ".:/home/machbase/machbase_home/lib/machbase.jar" -d . Sample1Connect.java Sample2Insert.java Sample3PrepareStmt.java Sample4Append.java
+javac -classpath ".:/home/machbase/machbase_home/lib/machbase.jar" -d . MakeData.java Sample1Connect.java Sample2Insert.java Sample3PrepareStmt.java Sample4Append.java
 [mach@localhost jdbc]$ make run_sample2
 make run_sample2
 java -classpath ".:/home/machbase/machbase_home/lib/machbase.jar" Sample2Insert
-mach JDBC connected.
+machbase JDBC connected.
 1 record inserted.
 2 record inserted.
 3 record inserted.
@@ -541,7 +573,7 @@ import java.util.*;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import com.machbase.jdbc.*;
- 
+
 public class Sample3PrepareStmt
 {
     public static Connection connect()
@@ -550,15 +582,15 @@ public class Sample3PrepareStmt
         try
         {
             String sURL = "jdbc:machbase://localhost:5656/machbasedb";
- 
+
             Properties sProps = new Properties();
             sProps.put("user", "sys");
             sProps.put("password", "manager");
- 
+
             Class.forName("com.machbase.jdbc.MachDriver");
- 
+
             conn = DriverManager.getConnection(sURL, sProps);
- 
+
         }
         catch ( ClassNotFoundException ex )
         {
@@ -570,24 +602,24 @@ public class Sample3PrepareStmt
         }
         return conn;
     }
- 
+
     public static void main(String[] args) throws Exception
     {
         Connection conn = null;
         Statement stmt = null;
-        machPreparedStatement preStmt = null;
+        MachPreparedStatement preStmt = null;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss SSS");
- 
+
         try
         {
             conn = connect();
             if( conn != null )
             {
-                System.out.println("mach JDBC connected.");
- 
+                System.out.println("machbase JDBC connected.");
+
                 stmt = conn.createStatement();
-                preStmt = (machPreparedStatement)conn.prepareStatement("INSERT INTO SAMPLE_TABLE VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
- 
+                preStmt = (MachPreparedStatement)conn.prepareStatement("INSERT INTO SAMPLE_TABLE VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
                 String ipStr = null;
                 String dateStr = null;
                 for(int i=1; i<10; i++)
@@ -600,7 +632,7 @@ public class Sample3PrepareStmt
                     }
                     java.util.Date day = sdf.parse(dateStr);
                     java.sql.Date sqlDate = new java.sql.Date(day.getTime());
- 
+
                     preStmt.setShort(1, (i-5) * 3276 );
                     preStmt.setInt(2, (i-5) * 214748364 );
                     preStmt.setLong(3, (i-5) * 922337203685477580L );
@@ -613,10 +645,10 @@ public class Sample3PrepareStmt
                     preStmt.setIpv6(10, "::"+ipStr);
                     preStmt.setDate(11, sqlDate);
                     preStmt.executeUpdate();
- 
+
                     System.out.println( i+" record inserted.");
                 }
- 
+
                 //date type format : YYYY-MM-DD HH24:MI:SS mmm:uuu:nnnn
                 String query = "SELECT d1, d2, d3, f1, f2, name, text, bin, to_hex(bin), v4, v6, to_char(dt,'YYYY-MM-DD HH24:MI:SS mmm:uuu:nnn') as dt from SAMPLE_TABLE";
                 ResultSet rs = stmt.executeQuery(query);
@@ -634,7 +666,7 @@ public class Sample3PrepareStmt
                     String v4 = rs.getString("v4");
                     String v6 = rs.getString("v6");
                     String dt = rs.getString("dt");
- 
+
                     System.out.print("d1: " + d1);
                     System.out.print(", d2: " + d2);
                     System.out.print(", d3: " + d3);
@@ -683,11 +715,11 @@ It should be noted that the data entered in Sample2Insert.java is output togethe
 ```bash
 [mach@localhost jdbc]$ make
 javac -classpath ".:/home/machbase/machbase_home/lib/machbase.jar" -d . Sample1Connect.java
-Sample2Insert.java Sample3PrepareStmt.java Sample4Append.java
+MakeData.java Sample2Insert.java Sample3PrepareStmt.java Sample4Append.java
 [mach@localhost jdbc]$ make run_sample3
 make run_sample3
 java -classpath ".:/home/machbase/machbase_home/lib/machbase.jar" Sample3PrepareStmt
-Mach JDBC connected.
+machbase JDBC connected.
 1 record inserted.
 2 record inserted.
 3 record inserted.
@@ -764,11 +796,11 @@ name: id-1, text: name-1, bin: aabbccddeeff, hexbin: 616162626363646465656666, v
 
 The Machbase JDBC driver supports the Append protocol to quickly upload large numbers of data.
 
-The following is an example of using the Append protocol. 
+The following is an example of using the Append protocol.
 Use the sample_table used in the previous example.
-The name of the source file is called Sample4Append.java. 
-Enter the contents of data.txt into sample_table. 
-Copy the data.txt file used in the CLI append example.
+The name of the source file is called Sample4Append.java.
+Enter the contents of data.txt into sample_table.
+Create `data.txt` with the `make_data_file` target before running the append sample.
 
 ```java
 import java.util.*;
@@ -777,28 +809,28 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.math.BigDecimal;
 import com.machbase.jdbc.*;
- 
- 
+
+
 public class Sample4Append
 {
     protected static final String sTableName = "sample_table";
     protected static final int sErrorCheckCount = 100;
- 
+
     public static Connection connect()
     {
         Connection conn = null;
         try
         {
             String sURL = "jdbc:machbase://localhost:5656/machbasedb";
- 
+
             Properties sProps = new Properties();
             sProps.put("user", "sys");
             sProps.put("password", "manager");
- 
+
             Class.forName("com.machbase.jdbc.MachDriver");
- 
+
             conn = DriverManager.getConnection(sURL, sProps);
- 
+
         }
         catch ( ClassNotFoundException ex )
         {
@@ -810,7 +842,7 @@ public class Sample4Append
         }
         return conn;
     }
- 
+
     public static void main(String[] args) throws Exception
     {
         Connection conn = null;
@@ -818,38 +850,38 @@ public class Sample4Append
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Calendar cal = Calendar.getInstance();
         String filename = "data.txt";
- 
+
         try
         {
             conn = connect();
             if( conn != null )
             {
-                System.out.println("Mach JDBC connected.");
- 
+                System.out.println("machbase JDBC connected.");
+
                 stmt = (MachStatement)conn.createStatement();
- 
+
                 ResultSet rs = stmt.executeAppendOpen(sTableName, sErrorCheckCount);
                 ResultSetMetaData rsmd = rs.getMetaData();
- 
+
                 System.out.println("append open ok");
- 
+
                 MachAppendCallback cb = new MachAppendCallback() {
                         @Override
                         public void onAppendError(long aErrNo, String aErrMsg, String aRowMsg) {
                              System.out.format("Append Error : [%05d - %s]\n%s\n", aErrNo, aErrMsg, aRowMsg);
                         }
                     };
- 
+
                 stmt.executeSetAppendErrorCallback(cb);
- 
+
                 System.out.println("append data start");
                 BufferedReader in = new BufferedReader(new FileReader(filename));
                 String buf = null;
                 int cnt = 0;
                 long dt;
- 
+
                 long startTime = System.nanoTime();
- 
+
                 while( (buf = in.readLine()) != null )
                 {
                     ArrayList<Object> sBuf = new ArrayList<Object>();
@@ -869,38 +901,38 @@ public class Sample4Append
                                 sBuf.add(st.nextToken()); break;
                         }
                     }
- 
+
                     if( stmt.executeAppendData(rsmd, sBuf) != 1 )
                     {
                         System.err.println("Error : AppendData error");
                         break;
                     }
- 
+
                     if( (cnt++%10000) == 0 )
                     {
                         System.out.print(".");
                     }
                     sBuf = null;
- 
+
                 }
                 System.out.println("\nappend data end");
- 
+
                 long endTime = System.nanoTime();
                 stmt.executeAppendClose();
                 System.out.println("append close ok");
                 System.out.println("Append Result : success = "+stmt.getAppendSuccessCount()+", failure = "+stmt.getAppendFailureCount());
                 System.out.println("timegap " + ((endTime - startTime)/1000) + " in microseconds, " + cnt + " records" );
- 
+
                 try {
                     BigDecimal records = new BigDecimal( cnt );
                     BigDecimal gap = new BigDecimal( (double)(endTime - startTime)/1000000000 );
                     BigDecimal rps = records.divide(gap, 2, BigDecimal.ROUND_UP );
- 
+
                     System.out.println( rps + " records/second" );
                 } catch(ArithmeticException ae) {
                     System.out.println( cnt + " records/second");
                 }
- 
+
                 rs.close();
             }
         }
@@ -935,14 +967,14 @@ When appending, date type data must be converted to long type nanosecond time.
 [mach@localhost jdbc]$ make run_sample4
 make run_sample4
 java -classpath ".:/home/machbase/machbase_home/lib/machbase.jar" Sample4Append;
-Mach JDBC connected.
+machbase JDBC connected.
 append open ok
 append data start
 ......
 append data end
 append close ok
-Append Result : success = 60000, failure = 0
-timegap 6905594 in microseconds, 60000 records
+Append Result : success = 100000, failure = 0
+timegap 6905594 in microseconds, 100000 records
 8688.61 records/second
 ```
 
@@ -950,23 +982,23 @@ Displays the dot (.) every 10,000, and can know the input time.
 
 ```bash
 ## Use machsql to check number actually entered.
-## Confirm that 60018 are entered including those from Sample2Insert and Sample3PrepareStmt.
- 
- 
+## Confirm that 100018 are entered including those from Sample2Insert and Sample3PrepareStmt.
+
+
 [mach@localhost jdbc]$ machsql
 =================================================================
      Machbase Client Query Utility
-     Release Version 3.0.0
+     Release Version 8.5.4.develop
      Copyright 2014, Machbase Inc. or its subsidiaries.
      All Rights Reserved.
 =================================================================
 Machbase server address (Default:127.0.0.1):
 Machbase user ID  (Default:SYS)
 Machbase user password: MANAGER
-MACH_CONNECT_MODE=INET, PORT=5656
+MACHBASE_CONNECT_MODE=INET, PORT=5656 EDITION=STANDARD
 mach> select count(*) from sample_table;
-count(*)            
+count(*)
 -----------------------
-60018               
+100018
 [1] row(s) selected.
 ```

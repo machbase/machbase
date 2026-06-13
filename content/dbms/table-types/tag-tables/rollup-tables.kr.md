@@ -41,6 +41,30 @@ Tag Table 생성시 Rollup이 기본으로 생성되지 않고, 사용자가 직
 
 ![create-rollup](/dbms/table-types/tag-tables/create-rollup.png)
 
+공개 문법은 다음과 같습니다.
+
+```sql
+CREATE ROLLUP [IF NOT EXISTS] rollup_name
+  ON source_table(column_name)
+  INTERVAL n (SEC|MIN|HOUR)
+  [WAKEUP INTERVAL m (SEC|MIN|HOUR)]
+  [EXTENSION]
+  [WHERE predicate];
+
+CREATE ROLLUP [IF NOT EXISTS] rollup_name
+  ON source_table(json_column->'$.path')
+  INTERVAL n (SEC|MIN|HOUR)
+  [WAKEUP INTERVAL m (SEC|MIN|HOUR)]
+  [WHERE predicate];
+
+CREATE ROLLUP [IF NOT EXISTS] rollup_name
+  FROM source_rollup_table
+  INTERVAL n (SEC|MIN|HOUR)
+  [WAKEUP INTERVAL m (SEC|MIN|HOUR)]
+  [EXTENSION]
+  [WHERE predicate];
+```
+
 * rollup name : 생성될 rollup table의 이름 (40자 이내의 문자열로 자유롭게 생성 가능)
 * source table name : 생성될 rollup이 데이터를 집계할 source table 이름
 * src_table_column : rollup 대상 데이터 칼럼 이름

@@ -6,6 +6,8 @@ weight: 10
 
 ##  Create Stream
 
+> **Edition note**: Stream procedures are supported in Standard Edition. Cluster Edition may reject stream/CQL statement types.
+
 The stream query can only be generated in the form of Insert... Select. When generating the stream, the query is checked to see if it is a query that can be executed normally.
 Use the following stored procedure to create the stream.
 

@@ -45,20 +45,13 @@ select_stmt UNION ALL select_stmt
 ```
 
 ```sql
-SELECT target_list FROM table_list
-WHERE condition_expr DURATION time_expr
-GROUP BY expr ORDER BY expr [DESC] HAVING expr SERIES BY expr
-LIMIT n[,n];
+SELECT target_list [FROM table_list]
+[WHERE condition_expr]
+[GROUP BY expr] [HAVING expr]
+[ORDER BY expr [DESC]] [SERIES BY expr]
+[LIMIT n[,n]]
+[DURATION duration_expr];
 ```
-
-> In version <= 8.0.25, the following syntax is used.
-> ```sql
-> SELECT target_list FROM table_list
-> WHERE condition_expr
-> GROUP BY expr ORDER BY expr [DESC] HAVING expr SERIES BY expr
-> LIMIT n[,n];
-> DURATION time_expr
-> ```
 
 In general, a `SELECT` statement uses a `FROM` clause. However, simple expressions can
 also be executed without a `FROM` clause.
@@ -86,9 +79,6 @@ select 1 where 1 = 1;
 select 1 order by 1;
 select count(*);
 select *;
-select 1 by user;
-select 1 by for each row;
-select /*+ INTERPOLATION(...) */ 1;
 ```
 
 Unsupported forms typically return the following error.
@@ -108,7 +98,11 @@ functions, sorting, conditions, periodic options, and hints are not supported.
 
 ## SET OPERATOR
 
-Used when receiving the results of multiple Select queries as a single query result. Machbase supports only the UNION ALL set operator. The set operator can be executed only if the left and right Select statements are (1) the same or compatible types, (2) the number of query results is the same, and if any of the two conditions does not match, they are treated as errors.
+Used when receiving the results of multiple Select queries as a single query result.
+Machbase supports only the `UNION ALL` set operator. The set operator can be executed
+only if the left and right Select statements are (1) the same or compatible types, (2)
+the number of query results is the same, and if any of the two conditions does not match,
+they are treated as errors.
 
 Data type conversion and compatibility verification are performed based on the following criteria.
 * Signed integer types and unsigned integer types are not compatible.
@@ -245,7 +239,7 @@ FROM TABLE_1 [INNER|LEFT OUTER|RIGHT OUTER] JOIN TABLE_2 ON expression
 The ON clause of the ANSI-style JOIN clause uses the conditional clause that is performed by the JOIN. If the WHERE clause in the OUTER JOIN query has a clause for an inner table (a table that is filled with NULL if the condition of the ON clause is not satisfied), the query is converted to an INNER JOIN.
 
 ```sql
-SELECT t1.i1 t2.i1 FROM t1 LEFT OUTER JOIN t2 ON (t1.i1 = t2.i1) WHERE t2.i2 = 1;
+SELECT t1.i1, t2.i1 FROM t1 LEFT OUTER JOIN t2 ON (t1.i1 = t2.i1) WHERE t2.i2 = 1;
 ```
 
 The above query is converted to an INNER JOIN by the condition t2.i2 = 1 in the WHERE clause.
@@ -623,8 +617,12 @@ DURATION is a keyword that allows you to easily determine the data retrieval sco
 
 ```sql
 DURATION Number TimeSpec [BEFORE/AFTER Number TimeSpec]
+DURATION FROM expr TO expr
 TimeSpec : YEAR | MONTH | WEEK |  DAY | HOUR | MINUTE | SECOND
 ```
+
+`DURATION FROM expr TO expr` selects an explicit `_arrival_time` range. `expr` can be a
+datetime expression such as `TO_DATE(value, format)`.
 
 ```sql
 create table t8(i1 integer);
@@ -633,7 +631,7 @@ insert into t8 values(2);
  
 select i1 from t8;
  
-## Without BEFORE clause
+-- Without BEFORE clause
 select i1 from t8 duration 2 second;
 select i1 from t8 duration 1 minute;
 select i1 from t8 duration 1 hour;
@@ -642,7 +640,7 @@ select i1 from t8 duration 1 week;
 select i1 from t8 duration 1 month;
 select i1 from t8 duration 1 year;
  
-## Using full DURATION statement
+-- Using full DURATION statement
 select i1 from t8 duration 1 second before 1 day;
 select i1 from t8 duration 1 minute before 1 day;
 select i1 from t8 duration 1 hour before 1 day;
@@ -650,6 +648,11 @@ select i1 from t8 duration 1 day before 1 day;
 select i1 from t8 duration 1 week before 1 day;
 select i1 from t8 duration 1 month before 1 day;
 select i1 from t8 duration 1 year before 1 day;
+
+-- Using explicit range
+select i1 from t8
+duration from to_date('2024-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+       to to_date('2030-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS');
 ```
 
 The results are as follows.
@@ -721,7 +724,7 @@ i1
 1          
 [2] row(s) selected.
  
-## Using full DURATION statement
+-- Using full DURATION statement
 Mach> select i1 from t8 duration 1 second before 1 day;
 i1         
 --------------
@@ -771,8 +774,8 @@ The options are described below.
 
 |Options|Description|
 |--|--|
-|HEADER (ON\|OFF)|Specifies the column delimiter and escape delimiter of the csv file to be created.|
-|(FIELDS\|COLUMNS) TERMINATED BY 'term_char'<br><br>ENCLOSED BY 'escape_char'|Decides whether to enter the column name on the first line of the csv file to be created. The default is OFF.|
+|HEADER (ON\|OFF)|Decides whether to write column names on the first line of the CSV file. The default is OFF.|
+|(FIELDS\|COLUMNS) TERMINATED BY 'term_char'<br><br>ENCLOSED BY 'enclose_char'|Specifies the field delimiter and enclosing character of the CSV file to be created.|
 |ENCODED BY coding_name<br><br>coding_name = ( UTF8, MS949, KSC5601, EUCJP, SHIFTJIS, BIG5, GB231280 )|Specifies the encoding format of the output data file. The default value is UTF8.|
 
 ```sql
@@ -780,5 +783,5 @@ SAVE DATA INTO '/tmp/aaa.csv' AS select * from t1;
 -- Execute select statement and write result to '/tmp/aaa.csv' file in csv format.
   
 SAVE DATA INTO '/tmp/ccc.csv' HEADER ON FIELDS TERMINATED BY ';' ENCLOSED BY '\'' ENCODED BY MS949 AS select * from t1 where i1 > 100;
--- Execute select statement and write result to /tmp/ccc.csv file. Specify field separator and escape separator, respectively, and set encoding of stored data to MS949.
+-- Execute select statement and write result to /tmp/ccc.csv file. Specify field delimiter and enclosing character, and set encoding of stored data to MS949.
 ```

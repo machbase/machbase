@@ -20,15 +20,15 @@ SEARCH  pattern;
 ```sql
 Mach> CREATE TABLE search_table (id INTEGER, name VARCHAR(20));
 Created successfully.
- 
-Mach> CREATE INDEX idx_SEARCH ON SEARCH_table (name) INDEX_TYPE KEYWORD;
-Created successfully.
- 
+
 Mach> INSERT INTO search_table VALUES(1, 'time flys');
 1 row(s) inserted.
  
 Mach> INSERT INTO search_table VALUES(1, 'time runs');
 1 row(s) inserted.
+
+Mach> CREATE INDEX idx_SEARCH ON search_table (name) INDEX_TYPE KEYWORD;
+Created successfully.
  
 Mach> SELECT * FROM search_table WHERE name SEARCH 'time' OR name SEARCH 'runs2' ;
 ID          NAME
@@ -64,10 +64,7 @@ SEARCH  pattern;
 ```sql
 Mach> CREATE TABLE multi_table (message varchar(100));
 Created successfully.
- 
-Mach> CREATE INDEX idx_multi ON multi_table(message)INDEX_TYPE KEYWORD;
-Created successfully.
- 
+
 Mach> INSERT INTO multi_table VALUES("Machbase is the combination of ideal solutions");
 1 row(s) inserted.
  
@@ -79,6 +76,9 @@ Mach> INSERT INTO multi_table VALUES("Machbaseは理想的なソリューショ�
  
 Mach> INSERT INTO multi_table VALUES("Machbaseは円柱状のDBMSです");
 1 row(s) inserted.
+
+Mach> CREATE INDEX idx_multi ON multi_table(message) INDEX_TYPE KEYWORD;
+Created successfully.
  
 Mach>  SELECT * from multi_table WHERE message SEARCH 'Machbase DBMS';
 MESSAGE
@@ -132,13 +132,7 @@ ESEARCH pattern;
 ```sql
 Mach> CREATE TABLE esearch_table(id INTEGER, name VARCHAR(20), data VARCHAR(40));
 Created successfully.
- 
-Mach> CREATE INDEX idx1 ON esearch_table(name) INDEX_TYPE KEYWORD;
-Created successfully.
- 
-Mach> CREATE INDEX idx2 ON esearch_table(data) INDEX_TYPE KEYWORD;
-Created successfully.
- 
+
 Mach> INSERT INTO esearch_table VALUES(1, 'machbase', 'Real-time search technology');
 1 row(s) inserted.
  
@@ -153,8 +147,14 @@ Mach> INSERT INTO esearch_table VALUES(4, 'ファ ッションアドバイザー
  
 Mach> INSERT INTO esearch_table VALUES(5, '인피 니 플럭스', 'socket232');
 1 row(s) inserted.
- 
-Mach> SELECT * FROM esearch_table where name ESEARCH '%mach';
+
+Mach> CREATE INDEX idx1 ON esearch_table(name) INDEX_TYPE KEYWORD;
+Created successfully.
+
+Mach> CREATE INDEX idx2 ON esearch_table(data) INDEX_TYPE KEYWORD;
+Created successfully.
+
+Mach> SELECT * FROM esearch_table where name ESEARCH '%base';
 ID          NAME                  DATA
 --------------------------------------------------------------------------------
 1           machbase            Real-time search technology

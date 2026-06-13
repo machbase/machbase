@@ -5,7 +5,7 @@ weight: 110
 ---
 
 ## Overview
-The `github.com/machbase/neo-client` package provides a standard Go `database/sql` driver for Machbase Neo.
+The `github.com/machbase/neo-client` package provides a standard Go `database/sql` driver for Machbase.
 It is built on top of the native TCP client and uses the native port (default `5656`).
 
 Use this driver when your application or framework already depends on Go's `database/sql` interfaces.
@@ -13,7 +13,7 @@ For new code that does not require `database/sql`, `machgo` is usually the bette
 
 ### Prerequisites
 
-- **Machbase Neo Server**: A running server instance reachable on the native port
+- **Machbase server**: A running DBMS or Neo server instance reachable on the native port
 - **Go 1.22+**: Required by `github.com/machbase/neo-client`
 - **Credentials**: A valid Machbase user account
 

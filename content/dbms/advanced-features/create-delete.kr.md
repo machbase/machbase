@@ -6,6 +6,8 @@ weight: 10
 
 ##  STREAM 생성
 
+> **에디션 참고**: STREAM 프로시저는 Standard Edition에서 지원됩니다. Cluster Edition에서는 stream/CQL statement가 거부될 수 있습니다.
+
 STREAM 쿼리는 Insert... Select 형태로만 생성할 수 있습니다. STREAM을 생성할 때 쿼리가 정상적으로 실행될 수 있는지 검사됩니다.
 다음 저장 프로시저를 사용하여 STREAM을 생성합니다.
 

@@ -12,7 +12,7 @@ volatile 테이블은 실시간 검색에 최적화된 RED-BLACK Tree를 제공�
 Mach> create volatile table vtable (id integer, name varchar(10));
 Created successfully.
 Mach> create index idx_vrb on vtable (name) index_type redblack;
-Created successfuly.
+Created successfully.
 Mach> desc vtable;
 ----------------------------------------------------------------
 NAME                          TYPE                LENGTH
@@ -25,7 +25,7 @@ NAME                          varchar             10
 NAME                          TYPE                COLUMN
 ----------------------------------------------------------------
 IDX_VRB                       REDBLACK            NAME
-iFlux>
+Mach>
 ```
 
 
@@ -49,7 +49,7 @@ NAME                          TYPE                COLUMN
 ----------------------------------------------------------------
 __PK_IDX_VTABLE               REDBLACK            ID
 
-iFlux>
+Mach>
 ```
 
 
@@ -59,7 +59,7 @@ log 테이블에서 사용되는 bitmap 또는 keyword 인덱스는 volatile 테
 
 ```sql
 Mach> create bitmap   index idx_1237 on vtable(id1);
-[ERR-02069 : Error in index for invalid table. BITMAP Index can only be created for LOG Table.]
+[ERR-02069: BITMAP index can only be created for LOG table.]
 Mach> create keyword  index idx_1238 on vtable(name);
-[ERR-02069 : Error in index for invalid table. KEYWORD Index can only be created for LOG Table.]
+[ERR-02069: KEYWORD index can only be created for LOG table.]
 ```

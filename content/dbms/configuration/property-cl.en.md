@@ -647,7 +647,7 @@ The default value is 640 KB.
 It is made possible to connect directly to the Warehouse to perform DML in Cluster Edition.
 
 * 1: Executable
-* 2: Not executable. An error is returned.
+* 0: Not executable. An error is returned.
 
 When directly performing the DML in Warehouse, there are performance advantages over Brokers but there is an issue where the DML is not propagated to the same Group. 
 

@@ -245,7 +245,7 @@ Notes:
 - `valid_before` uses the `YYYY-MM-DD` format.
 - `valid_before` does not accept a datetime value with a time portion such as
   `YYYY-MM-DD HH24:MI:SS`.
-- `comment` is optional.
+- `comment` is required by the current AUTH KEY syntax.
 - The first key created by `CREATE USER ... WITH AUTH KEY` is registered as active
   (`ACTIVATED=1`).
 - A user may own both a password and one or more AUTH KEY entries. The actual

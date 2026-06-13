@@ -30,7 +30,7 @@ kill $(lsof -t -i:5656)
 ls -la $MACHBASE_HOME/dbs/
 
 # Review logs
-tail -50 $MACHBASE_HOME/trc/machbase.log
+tail -50 $MACHBASE_HOME/trc/machbase.trc
 
 # Try starting again
 machadmin -u
@@ -46,14 +46,14 @@ machadmin -u
 **Solutions**:
 ```bash
 # Check logs
-tail -100 $MACHBASE_HOME/trc/machbase.log
+tail -100 $MACHBASE_HOME/trc/machbase.trc
 
 # Check system resources
 free -h
 df -h
 
 # Reduce memory usage (in machbase.conf)
-BUFFER_POOL_SIZE = 1G
+PROCESS_MAX_SIZE = 1073741824 # 1GB
 
 # Check for disk space
 du -sh $MACHBASE_HOME/dbs/
@@ -119,7 +119,10 @@ SELECT * FROM table DURATION 1 HOUR;  -- Add this!
 SELECT * FROM table LIMIT 1000;
 
 -- Query rollup instead of raw data
-SELECT * FROM sensors WHERE rollup = hour;
+SELECT ROLLUP('hour', 1, time) AS rtime, AVG(value)
+FROM sensors
+WHERE name = 'sensor-1'
+GROUP BY rtime;
 
 -- Create index
 CREATE INDEX idx_column ON table(column);
@@ -167,14 +170,14 @@ SHOW TABLE tablename;
 EOF
 
 # Check error log
-cat $MACHBASE_HOME/trc/machloader.log
+cat $MACHBASE_HOME/trc/machloader.trc
 
 # Validate data types
 # Ensure CSV columns match table schema
 
 # Try small batch first
 head -100 data.csv > test.csv
-machloader -t table -d csv -i test.csv
+machloader -i -t table -d test.csv
 ```
 
 #### Missing Data
@@ -237,9 +240,12 @@ DURATION 1 HOUR;
 SELECT AVG(value) FROM sensors DURATION 7 DAY;
 
 -- Fast
-SELECT AVG(avg_value) FROM sensors
-WHERE rollup = hour
-DURATION 7 DAY;
+-- sensors must be a TAG table created WITH ROLLUP.
+SELECT ROLLUP('hour', 1, time) AS rtime, AVG(value)
+FROM sensors
+WHERE name = 'sensor-1'
+  AND time BETWEEN now - 7d AND now
+GROUP BY rtime;
 ```
 
 3. **Create indexes**
@@ -256,13 +262,13 @@ SELECT * FROM logs DURATION 1 DAY LIMIT 1000;
 
 ```properties
 # Memory optimization
-BUFFER_POOL_SIZE = 4G       # 50-70% of RAM
-MAX_QPX_MEM = 1G            # Per-query memory
-LOG_BUFFER_SIZE = 128M      # Write buffer
+PROCESS_MAX_SIZE = 4294967296 # 4GB
+MAX_QPX_MEM = 1073741824      # Per-query memory
 
 # Performance tuning
-CHECKPOINT_INTERVAL_SEC = 900
-MAX_PARALLEL_QUERY = 8
+DISK_COLUMNAR_TABLE_CHECKPOINT_INTERVAL_SEC = 900
+DISK_COLUMNAR_INDEX_CHECKPOINT_INTERVAL_SEC = 900
+QUERY_PARALLEL_FACTOR = 8
 ```
 
 ### Data Management
@@ -309,13 +315,13 @@ EOF
 
 ```bash
 # Server log
-tail -50 $MACHBASE_HOME/trc/machbase.log
+tail -50 $MACHBASE_HOME/trc/machbase.trc
 
 # Error log
-grep -i error $MACHBASE_HOME/trc/machbase.log
+grep -i error $MACHBASE_HOME/trc/machbase.trc
 
 # Recent activity
-tail -100 $MACHBASE_HOME/trc/machbase.log
+tail -100 $MACHBASE_HOME/trc/machbase.trc
 ```
 
 ### System Information
@@ -344,7 +350,7 @@ SHOW LICENSE;
 When reporting issues, collect:
 
 1. **Error message** (exact text)
-2. **Server logs** ($MACHBASE_HOME/trc/machbase.log)
+2. **Server logs** ($MACHBASE_HOME/trc/machbase.trc)
 3. **Machbase version** (`machadmin -v`)
 4. **Operating system** (`uname -a`)
 5. **Steps to reproduce**
@@ -378,7 +384,7 @@ df -h
 free -h
 
 # View recent errors
-grep -i error $MACHBASE_HOME/trc/machbase.log | tail -20
+grep -i error $MACHBASE_HOME/trc/machbase.trc | tail -20
 
 # Test connection
 machsql -s localhost -u SYS -p MANAGER -f - <<EOF

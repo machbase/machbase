@@ -19,7 +19,7 @@ weight: 100
 
 ### 사전 요구사항
 
-- **Machbase Neo Server**: 실행 중인 Machbase Neo 서버 인스턴스
+- **Machbase server**: native port로 접근 가능한 실행 중인 DBMS 또는 Neo 서버
 - **Go 1.22+**: 최신 Go 버전 권장
 - **네트워크 접근**: 네이티브 포트(기본 `5656`) 접근 가능
 
@@ -354,6 +354,11 @@ func main() {
         if err := result.Err(); err != nil {
             log.Fatal(err)
         }
+    }
+
+    result = conn.Exec(ctx, `EXEC TABLE_FLUSH(sample_data)`)
+    if err := result.Err(); err != nil {
+        log.Fatal(err)
     }
 
     rows, err := conn.Query(ctx, 

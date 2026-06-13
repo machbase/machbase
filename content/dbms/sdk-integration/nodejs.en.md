@@ -35,7 +35,7 @@ If you received a `.tgz` file from Machbase:
 
 ```bash
 # example file name; your version may differ
-npm install ./machbase-ts-client-0.9.0.tgz
+npm install ./machbase-ts-client-1.0.0.tgz
 ```
 
 ### Verify Installation
@@ -45,6 +45,7 @@ node -e "const { createConnection } = require('@machbase/ts-client'); console.lo
 ```
 
 > **Note**: This client targets Node.js and uses TCP sockets; it is not a browser library (no WebSocket transport).
+> The DBMS standard source package version is `@machbase/ts-client` 1.0.0.
 >
 > The default credentials shown in this guide (`SYS`/`MANAGER`) are for local testing only. Use dedicated users and passwords in production.
 
@@ -149,7 +150,7 @@ Establishes a network session to the Machbase listener and completes the CMI han
 | `user` | string | – | Database user (commonly `SYS`) |
 | `password` | string | – | Password (commonly `MANAGER`) |
 | `database` | string | `data` | Database name |
-| `clientId` | string | `CLI` | Client identifier shown in server logs |
+| `clientId` | string | `NPM` | Client identifier shown in server logs |
 | `showHiddenColumns` | boolean | `false` | Include hidden columns in metadata |
 | `timezone` | string | empty | Optional time zone identifier |
 | `connectTimeout` | number | 5000 | Socket connect timeout (ms) |
@@ -257,7 +258,10 @@ await select.close();
 **Prepared upsert:**
 
 ```javascript
-const upsert = await conn.prepare('INSERT INTO devices VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE');
+const upsert = await conn.prepare(
+  'INSERT INTO devices (DEVICE_ID, SENSOR_VALUE) VALUES (?, ?) ' +
+  'ON DUPLICATE KEY UPDATE SET SENSOR_VALUE = ?',
+);
 const [result] = await upsert.execute([deviceId, firstValue, firstValue]);
 console.log('Affected rows:', result.affectedRows);
 await upsert.close();

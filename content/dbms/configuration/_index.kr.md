@@ -146,7 +146,8 @@ SELECT * FROM V$STORAGE;
 # 특정 인터페이스에서만 수신
 BIND_IP_ADDRESS = 192.168.1.100
 
-# 원격 접근을 차단하고 리스너를 loopback에 바인드
+# Native DB 원격 접근 차단. HTTP도 loopback으로 제한하려면
+# BIND_IP_ADDRESS=127.0.0.1로 설정
 GRANT_REMOTE_ACCESS = 0
 ```
 

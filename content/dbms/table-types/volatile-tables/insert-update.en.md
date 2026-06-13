@@ -37,7 +37,10 @@ for(int i=0; i<10000; i++)
 {
     sParam[0].mInteger  = i;
     sParam[1].mDouble   = i;
-    SQLAppendDataV2(stmt, sParam) != SQL_SUCCESS)
+    if (SQLAppendDataV2(stmt, sParam) != SQL_SUCCESS)
+    {
+        break;
+    }
 }
 ```
 

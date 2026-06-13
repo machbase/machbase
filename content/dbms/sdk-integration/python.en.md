@@ -25,7 +25,7 @@ The examples below target the `machbase` class, which remains the main entry poi
 
 ### Requirements
 
-- Python 3.8 or later with `pip`.
+- Python 3.6 or later with `pip`.
 - A reachable Machbase server and credentials (default `SYS/MANAGER` on port `5656`).
 - No native Machbase shared library installation is required in 2.3.
 
@@ -136,7 +136,7 @@ Most `machbase` methods return `1` on success and `0` on failure. After each cal
 | `machbase` | `close()` | Terminate the current session. | `1` or `0` |
 | `machbase` | `isOpened()` | Check whether a handle has been opened. | `1` or `0` |
 | `machbase` | `isConnected()` | Verify that the handle is connected to the server. | `1` or `0` |
-| `machbase` | `execute(sql, type=0)` | Run a SQL statement (all statements except `UPDATE`). | `1` or `0` |
+| `machbase` | `execute(sql)` | Run SQL directly. `SELECT`, `WITH`, `DESC`, `DESCRIBE`, and `SHOW` are routed through `select()`; other statements are executed with `exec_direct()`. | `1` or `0` |
 | `machbase` | `schema(sql)` | Execute schema-related statements. | `1` or `0` |
 | `machbase` | `tables()` | Fetch metadata for all tables. | `1` or `0` |
 | `machbase` | `columns(table_name)` | Fetch column metadata for a specific table. | `1` or `0` |
@@ -147,18 +147,18 @@ Most `machbase` methods return `1` on success and `0` on failure. After each cal
 | `machbase` | `selectClose()` | Close an open result set cursor. | `1` or `0` |
 | `machbase` | `result()` | Return the latest JSON payload. | JSON string |
 | `machbase` | `appendOpen(table_name, types=None)` | Begin append protocol with column type codes. When omitted, metadata can be loaded from server-side schema. | `1` or `0` |
-| `machbase` | `appendData(table_name, aTypes=None, values=None, format='YYYY-MM-DD HH24:MI:SS', on_ack=None)` | Append rows using the active append session. Since 2.1, `aTypes` can be omitted and rows can be passed directly as the second argument. The data packet is sent immediately when called. | `1` or `0` |
-| `machbase` | `appendDataByTime(table_name, aTypes=None, values=None, format='YYYY-MM-DD HH24:MI:SS', times=None, on_ack=None)` | Append rows with explicit epoch timestamps. Since 2.1, `aTypes` can be omitted and rows can be passed directly as the second argument. The data packet is sent immediately when called. | `1` or `0` |
+| `machbase` | `appendData(table_name, rows_or_types, values=None, format='YYYY-MM-DD HH24:MI:SS', on_ack=None)` | Append rows using the active append session. To omit the type list, pass rows as the second argument. The data packet is sent immediately when called. | `1` or `0` |
+| `machbase` | `appendDataByTime(table_name, rows_or_types, values=None, format='YYYY-MM-DD HH24:MI:SS', aTimes=None, on_ack=None)` | Append rows with explicit epoch timestamps. To omit the type list, pass rows as the second argument and timestamps with `aTimes`. The data packet is sent immediately when called. | `1` or `0` |
 | `machbase` | `appendFlush()` | Synchronization point that checks pending responses for already-sent append data. It is not a delayed-send buffer flush API. | `1` or `0` |
 | `machbase` | `appendClose()` | Close the append session. | `1` or `0` |
-| `machbase` | `append(table_name, aTypes=None, aValues=None, format='YYYY-MM-DD HH24:MI:SS')` | Convenience wrapper that opens, appends, and closes. `aTypes` can be omitted and `aValues` can be passed directly as second argument. | `1` or `0` |
-| `machbase` | `appendByTime(table_name, aTypes=None, aValues=None, format='YYYY-MM-DD HH24:MI:SS', times=None)` | Convenience wrapper for time-aware append. `aTypes` can be omitted and `aValues` can be passed directly as second argument. | `1` or `0` |
+| `machbase` | `append(table_name, rows_or_types, aValues=None, format='YYYY-MM-DD HH24:MI:SS')` | Convenience wrapper that opens, appends, and closes. To omit the type list, pass rows as the second argument. | `1` or `0` |
+| `machbase` | `appendByTime(table_name, rows_or_types, aValues=None, format='YYYY-MM-DD HH24:MI:SS', aTimes=None)` | Convenience wrapper for time-aware append. To omit the type list, pass rows as the second argument and timestamps with `aTimes`. | `1` or `0` |
 
 ## DB-API style API (2.3)
 
 | API | Description | Return |
 | -- | -- | -- |
-| `connect(host, port, user, password, ...)` | Create DB-API connection | `MachbaseConnection` |
+| `connect(**kwargs)` | Create a DB-API connection. Pass options by keyword, for example `host`, `port`, `user`, and `password`. | `MachbaseConnection` |
 | `cursor(dictionary=True)` | Create a cursor (`True`: dict rows, `False`: tuple rows) | `MachbaseCursor` |
 | `cursor.execute(sql, params=None)` | Execute SQL statement | `cursor` |
 | `cursor.fetchone()` | Fetch one row | `tuple | dict | None` |
@@ -216,7 +216,10 @@ from machbaseAPI import connect
 conn = connect(host='127.0.0.1', port=5656, user='SYS', password='MANAGER')
 cur = conn.cursor()
 
-cur.execute('drop table py_append_null')
+try:
+    cur.execute('drop table py_append_null')
+except Exception:
+    pass
 cur.execute('create table py_append_null(ts datetime, name varchar(20), value double, note varchar(40))')
 
 conn.append('PY_APPEND_NULL', [
@@ -241,7 +244,10 @@ from machbaseAPI import connect
 conn = connect(host='127.0.0.1', port=5656, user='SYS', password='MANAGER')
 cur = conn.cursor()
 
-cur.execute('drop table py_tag_append_null')
+try:
+    cur.execute('drop table py_tag_append_null')
+except Exception:
+    pass
 cur.execute('''
     create tag table py_tag_append_null (
         name varchar(40) primary key,
@@ -265,15 +271,17 @@ conn.close()
 
 In this example, `status`, `site`, and `line` are stored as `NULL`. A TAG append that omits `value` fails.
 
-## API Reference and Samples (Legacy 1.x behavior)
+## API Reference and Samples (Legacy-style `machbase` class)
 
-The examples below are mainly compatibility references from legacy releases. In the current 2.3 package, methods such as `getSessionId()`, `count()`, and `checkBit()` are not provided.
+The examples below use the legacy-style `machbase` class that remains available in the 2.3
+package. Methods such as `getSessionId()`, `count()`, and `checkBit()` were available in
+older native packages but are not provided by the current pure-Python implementation.
 
 Update host, port, username, and password values as needed in each script. Every snippet is standalone and can be executed with `python3 script.py`.
 
 ### Connection management
 
-#### machbase.open(), machbase.isOpened(), machbase.isConnected(), machbase.getSessionId(), machbase.close()
+#### machbase.open(), machbase.isOpened(), machbase.isConnected(), machbase.close()
 
 ```python
 #!/usr/bin/env python3
@@ -287,7 +295,6 @@ def main():
     if db.open('127.0.0.1', 'SYS', 'MANAGER', 5656) == 0:
         raise SystemExit(db.result())
 
-    print('session id:', db.getSessionId())
     print('isOpened after open:', db.isOpened())
     print('isConnected after open:', db.isConnected())
 
@@ -312,7 +319,7 @@ def main():
     conn_str = 'APP_NAME=python-demo'
     if db.openEx('127.0.0.1', 'SYS', 'MANAGER', 5656, conn_str) == 0:
         raise SystemExit(db.result())
-    print('connected with openEx, session id:', db.getSessionId())
+    print('connected with openEx:', db.isConnected())
     if db.close() == 0:
         raise SystemExit(db.result())
 
@@ -322,7 +329,7 @@ if __name__ == '__main__':
 
 ### DML and result buffers
 
-#### machbase.execute(), machbase.result(), machbase.count()
+#### machbase.execute(), machbase.result()
 
 ```python
 #!/usr/bin/env python3
@@ -356,7 +363,7 @@ def main():
         print('select payload:', payload)
         rows = json.loads(payload)
         print('decoded rows:', rows)
-        print('row count via count():', db.count())
+        print('row count:', len(rows))
     finally:
         if db.close() == 0:
             raise SystemExit(db.result())
@@ -398,12 +405,14 @@ def main():
         if db.select('select id, value from py_select_demo order by id') == 0:
             raise SystemExit(db.result())
 
-        print('buffered rows:', db.count())
+        fetched = 0
         while True:
             rc, payload = db.fetch()
             if rc == 0:
                 break
             print('fetched row:', json.loads(payload))
+            fetched += 1
+        print('fetched rows:', fetched)
 
         db.selectClose()
     finally:
@@ -595,12 +604,12 @@ def main():
 
         if db.appendOpen('PY_APPEND_TIME') == 0:
             raise SystemExit(db.result())
-        if db.appendDataByTime('PY_APPEND_TIME', rows, 'YYYY-MM-DD HH24:MI:SS', epoch_times) == 0:
+        if db.appendDataByTime('PY_APPEND_TIME', rows, aTimes=epoch_times) == 0:
             raise SystemExit(db.result())
         print('appendDataByTime result:', db.result())
         db.appendClose()
 
-        if db.appendByTime('PY_APPEND_TIME', rows, 'YYYY-MM-DD HH24:MI:SS', epoch_times) == 0:
+        if db.appendByTime('PY_APPEND_TIME', rows, aTimes=epoch_times) == 0:
             raise SystemExit(db.result())
         print('appendByTime result:', db.result())
     finally:

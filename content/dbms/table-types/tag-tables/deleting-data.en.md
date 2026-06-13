@@ -10,17 +10,16 @@ Machbase provides efficient deletion operations for tag data with specific const
 
 ## Tag Data Deletion Constraints
 
-Machbase only supports deletion of data before a specific time.
-
-Unsupported tag data deletion condition
-
-* Delete data for a specific time range
+Machbase supports tag-data deletion with constrained predicates. You can delete
+by tag name, by tag name plus a time predicate, by a time predicate across all
+tags, by `BEFORE`, or delete all rows.
 
 Supported tag data deletion condition
 
 * Delete specific tag data
 * Delete data before a specific time for a specific tag
 * Delete specific time range data for a specific tag
+* Delete all tags for a specific time or time range
 * Delete all tags before a specific time
 * Delete all data
 
@@ -336,4 +335,3 @@ Mach> delete from tag rollup where time = '2018-01-15 00:00:00';
 Mach> delete from tag rollup where time between '2018-01-10' and '2018-01-20';
 10 row(s) deleted.
 ```
-

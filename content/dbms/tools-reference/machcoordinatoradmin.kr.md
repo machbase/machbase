@@ -25,7 +25,7 @@ mach@localhost:~$ machcoordinatoradmin -h
 |-c, --createdb | Coordinator 메타 생성|
 |-d, --destroydb| Coordinator 메타 제거, $MACHBASE_COORDINATOR_HOME/package의 패키지 파일 삭제|
 |-e, --check | Coordinator 프로세스 실행 여부 확인|
-|-i, --silence | 출력 없이 실행|
+|-i, --silent | 배너 출력 없이 실행|
 |--configuration[=name] | 설정의 키와 값 출력 (특정 키만 출력 가능)|
 |--configure | 시스템 속성 목록 출력 |
 |--activate | 클러스터 상태를 Service로 전환|

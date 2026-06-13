@@ -122,7 +122,7 @@ Mach> CREATE TABLE log_no_index_test (sensor VARCHAR(32), I1 INTEGER, I2 INTEGER
 Mach> CREATE INDEX idx_I1 ON log_no_index_test (I1);
 Mach> CREATE INDEX idx_I2 ON log_no_index_test (I2);
  
-Mach> EXPLAIN SELECT * FROM TEST WHERE I1 = 1;
+Mach> EXPLAIN SELECT * FROM log_no_index_test WHERE I1 = 1;
 PLAN
 ------------------------------------------------------------------------------------
  PROJECT
@@ -132,7 +132,7 @@ PLAN
     * I1 = 1                                                                    
 [5] row(s) selected.
  
-Mach> EXPLAIN SELECT /*+ NO_INDEX(TEST,TEST_IDX) */ * FROM TEST WHERE I1 = 1;
+Mach> EXPLAIN SELECT /*+ NO_INDEX(log_no_index_test,idx_I1) */ * FROM log_no_index_test WHERE I1 = 1;
 PLAN
 ------------------------------------------------------------------------------------
  PROJECT

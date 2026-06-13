@@ -74,7 +74,7 @@ REST API reference is not included in this DBMS section.
 ### C/C++ (ODBC/CLI)
 
 ```c
-#include "machbase_cli.h"
+#include <machbase_sqlcli.h>
 
 SQLHENV env;
 SQLHDBC conn;
@@ -114,9 +114,9 @@ while (rs.next()) {
 ### Python
 
 ```python
-import machbase
+from machbaseAPI import connect
 
-conn = machbase.connect('127.0.0.1', 5656, 'SYS', 'MANAGER')
+conn = connect(host='127.0.0.1', port=5656, user='SYS', password='MANAGER')
 cur = conn.cursor()
 
 cur.execute("SELECT * FROM sensors DURATION 1 HOUR")
@@ -129,9 +129,9 @@ conn.close()
 ### C# (.NET)
 
 ```csharp
-using Machbase.Data.MachbaseClient;
+using Mach.Data.MachClient;
 
-string connString = "Server=127.0.0.1;Port=5656;User Id=SYS;Password=MANAGER;";
+string connString = "SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;PWD=MANAGER;PROTOCOL=4.0-full";
 MachConnection conn = new MachConnection(connString);
 conn.Open();
 
@@ -146,14 +146,11 @@ while (reader.Read()) {
 ### REST API (JavaScript)
 
 ```javascript
-const response = await fetch('http://localhost:5654/machbase', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({
-        sql: 'SELECT * FROM sensors DURATION 1 HOUR',
-        format: 'json'
-    })
+const params = new URLSearchParams({
+    q: 'SELECT * FROM sensors DURATION 1 HOUR'
 });
+
+const response = await fetch(`http://localhost:5657/machbase?${params}`);
 
 const data = await response.json();
 console.log(data);
@@ -165,20 +162,19 @@ console.log(data);
 
 ```python
 # Sensor data collector
-import machbase
+from machbaseAPI import connect
 import time
 
-conn = machbase.connect('127.0.0.1', 5656, 'SYS', 'MANAGER')
+conn = connect(host='127.0.0.1', port=5656, user='SYS', password='MANAGER')
 
 while True:
-    appender = conn.create_appender('sensors')
-
+    rows = []
     for i in range(1000):
         sensor_id = f'sensor{i % 100:03d}'
         value = read_sensor(sensor_id)
-        appender.append(sensor_id, time.time(), value)
+        rows.append([sensor_id, time.time(), value])
 
-    appender.close()
+    conn.append('sensors', rows)
     time.sleep(10)
 ```
 
@@ -247,10 +243,13 @@ HikariDataSource pool = new HikariDataSource(config);
 ### Connection Retry (Python)
 
 ```python
+import time
+from machbaseAPI import connect
+
 def connect_with_retry(max_retries=3):
     for i in range(max_retries):
         try:
-            return machbase.connect('127.0.0.1', 5656, 'SYS', 'MANAGER')
+            return connect(host='127.0.0.1', port=5656, user='SYS', password='MANAGER')
         except Exception as e:
             if i == max_retries - 1:
                 raise
@@ -279,20 +278,16 @@ spring:
     driver-class-name: com.machbase.jdbc.MachDriver
 ```
 
-### Django (Python)
+### Generic DB-API (Python)
 
 ```python
-# settings.py
-DATABASES = {
-    'default': {
-        'ENGINE': 'machbase_django',
-        'NAME': 'MACHBASE',
-        'USER': 'SYS',
-        'PASSWORD': 'MANAGER',
-        'HOST': '127.0.0.1',
-        'PORT': '5656',
-    }
-}
+from machbaseAPI import connect
+
+conn = connect(host='127.0.0.1', port=5656, user='SYS', password='MANAGER')
+cur = conn.cursor()
+cur.execute("SELECT * FROM sensors DURATION 1 HOUR")
+rows = cur.fetchall()
+conn.close()
 ```
 
 ## Security Best Practices
@@ -339,18 +334,16 @@ except:
 
 ```python
 #!/usr/bin/env python3
-import machbase
+from machbaseAPI import connect
 import time
 from datetime import datetime
 
 class SensorMonitor:
     def __init__(self):
-        self.conn = machbase.connect('127.0.0.1', 5656, 'SYS', 'MANAGER')
+        self.conn = connect(host='127.0.0.1', port=5656, user='SYS', password='MANAGER')
 
     def collect_data(self, sensor_id, value):
-        appender = self.conn.create_appender('sensors')
-        appender.append(sensor_id, datetime.now(), value)
-        appender.close()
+        self.conn.append('sensors', [[sensor_id, datetime.now(), value]])
 
     def get_recent_data(self):
         cur = self.conn.cursor()

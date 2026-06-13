@@ -30,7 +30,7 @@ ID          NAME
 2           east device
 3           north device
 4           south device
-[4] row(s) inserted.
+[4] row(s) selected.
 Mach> delete from vtable where id = 2;
 [1] row(s) deleted.
 Mach> select * from vtable;

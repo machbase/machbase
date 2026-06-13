@@ -30,13 +30,13 @@ mach>DELETE FROM devices;
  
 -- 가장 오래된 5개 삭제
 mach>DELETE FROM devices OLDEST 5 ROWS;
-10 row(s) deleted.
+5 row(s) deleted.
  
 -- 마지막 5개를 제외한 모든 데이터 삭제
 mach>DELETE FROM devices EXCEPT 5 ROWS;
 15 row(s) deleted.
  
--- 2018년 6월 1일 이전의 모든 데이터 삭제
+-- 2018년 6월 1일 이전 또는 같은 시각의 모든 데이터 삭제
 mach>DELETE FROM devices BEFORE TO_DATE('2018-06-01', 'YYYY-MM-DD');
 50 row(s) deleted.
 ```

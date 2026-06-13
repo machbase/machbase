@@ -19,7 +19,7 @@ If you need native-port performance with a fully Go toolchain, `machgo` is a goo
 
 ### Prerequisites
 
-- **Machbase Neo Server**: A running Machbase Neo server instance
+- **Machbase server**: A running DBMS or Neo server instance reachable on the native port
 - **Go 1.22+**: Recent Go version recommended
 - **Network access**: Reachable native port (`5656` by default)
 
@@ -352,6 +352,11 @@ func main() {
         if err := result.Err(); err != nil {
             log.Fatal(err)
         }
+    }
+
+    result = conn.Exec(ctx, `EXEC TABLE_FLUSH(sample_data)`)
+    if err := result.Err(); err != nil {
+        log.Fatal(err)
     }
 
     rows, err := conn.Query(ctx, 

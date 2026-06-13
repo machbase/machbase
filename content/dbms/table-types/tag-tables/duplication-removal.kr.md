@@ -25,25 +25,18 @@ SELECT * FROM m$sys_table_property WHERE id={table_id} AND name = 'TAG_DUPLICATE
 
 데이터 삽입/조회 예제 - 중복 제거 기간이 1440분(하루)인 경우
 ```sql
--- 총 6개의 데이터가 삽입되었고 그 중 4개가 중복이지만, 1개의 중복 레코드는 시스템 시간(1970-01-03 09:00:00 000:000:003)으로부터
--- 1440분(하루) 전에 삽입되었습니다.
--- 설정된 기간 1440분(하루) 이내에 새로 삽입된 중복 데이터는 표시되지 않습니다.
+-- 서버 시각 기준 중복 제거 기간 안에 들어오는 타임스탬프를 사용합니다.
+-- DATE_TRUNC('day', NOW)는 같은 날 반복 실행 시 동일한 타임스탬프를 만듭니다.
 
-INSERT INTO tag VALUES('tag1', '1970-01-01 09:00:00 000:000:001', 0);
-INSERT INTO tag VALUES('tag1', '1970-01-02 09:00:00 000:000:001', 0);
-INSERT INTO tag VALUES('tag1', '1970-01-02 09:00:00 000:000:002', 0);
-INSERT INTO tag VALUES('tag1', '1970-01-02 09:00:00 000:000:002', 1);
-INSERT INTO tag VALUES('tag1', '1970-01-03 09:00:00 000:000:003', 0);
-INSERT INTO tag VALUES('tag1', '1970-01-01 09:00:00 000:000:001', 0);
+INSERT INTO tag VALUES('tag1', DATE_TRUNC('day', NOW), 0);
+INSERT INTO tag VALUES('tag1', DATE_TRUNC('day', NOW), 0);
+
+EXEC TABLE_FLUSH(tag);
 
 SELECT * FROM tag WHERE name = 'tag1';
 NAME                  TIME                            VALUE
 --------------------------------------------------------------------------------------
-tag1                  1970-01-01 09:00:00 000:000:001 0
-tag1                  1970-01-02 09:00:00 000:000:001 0
-tag1                  1970-01-02 09:00:00 000:000:002 0
-tag1                  1970-01-03 09:00:00 000:000:003 0
-tag1                  1970-01-01 09:00:00 000:000:001 0
+tag1                  <current day> 00:00:00 000:000:000 0
 
 ```
 ## 설정 변경

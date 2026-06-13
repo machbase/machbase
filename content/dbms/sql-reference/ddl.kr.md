@@ -245,7 +245,10 @@ Mach>
 
 ### 기본 키(Primary Key)
 
-Volatile/Lookup 테이블의 컬럼에 부여할 수 있는 제약 사항으로, 해당 컬럼의 값이 중복되는 것을 방지합니다. Volatile/Lookup 테이블이 항상 기본 키를 가지고 있을 필요는 없으나, 기본 키가 없으면 INSERT ON DUPLICATE KEY UPDATE 구문을 사용할 수 없습니다.
+Volatile/Lookup 테이블의 컬럼에 부여할 수 있는 제약 사항으로, 해당 컬럼의 값이
+중복되는 것을 방지합니다. Lookup 테이블은 기본 키가 필수입니다. Volatile
+테이블은 기본 키를 생략할 수 있지만, `INSERT ... ON DUPLICATE KEY UPDATE`
+구문은 대상 테이블에 기본 키가 있을 때만 사용할 수 있습니다.
 
 기본 키를 부여하면, 기본 키에 대응되는 레드-블랙 트리 인덱스가 생성됩니다.
 
@@ -424,7 +427,7 @@ DROP TABLESPACE TablespaceName;
 
 ```sql
 create_index_stmt ::= 'CREATE' 'INDEX' index_name 'ON' table_name '(' column_name ')' index_type? table_space? index_property_list?
-index_type ::= 'INDEX_TYPE' ( 'KEYWORD' | 'BITMAP' | 'REDBLACK' )
+index_type ::= 'INDEX_TYPE' ( 'LSM' | 'KEYWORD' | 'BITMAP' | 'REDBLACK' )
 table_space ::= 'TABLESPACE' table_space_name
 index_property_list ::= ( 'MAX_LEVEL' | 'PAGE_SIZE' | 'BITMAP_ENCODE' | 'PART_VALUE_COUNT' ) '=' value
 ```
@@ -479,7 +482,9 @@ Index의 Partition에 저장되는 Row 개수를 나타냅니다.
 ```sql
 --예제
 -- c1 컬럼에 index가 적용되었습니다.
-CREATE INDEX index1 on table1 ( c1 )
+CREATE INDEX index1 on table1 ( c1 );
+-- LSM 인덱스를 명시적으로 적용합니다.
+CREATE INDEX index_lsm on table1 ( c1 ) INDEX_TYPE LSM;
 -- varchar type의 var_column에 keyword index가 적용되고 page_size의 단위는 100000가 되었습니다.
 CREATE INDEX index2 on table1 (var_column) INDEX_TYPE KEYWORD PAGE_SIZE=100000;
 ```
@@ -851,7 +856,7 @@ ALTER ROLLUP _rollup_tag_value_sec WAKEUP;
 ALTER ROLLUP _rollup_tag_value_sec FORCE;
 
 -- wakeup 주기 단축(롤업 주기의 약수만 허용)
-ALTER ROLLUP _rollup_tag_value_sec SET WAKEUP INTERVAL 5 SEC;
+ALTER ROLLUP _rollup_tag_value_sec SET WAKEUP INTERVAL 1 SEC;
 ```
 
 규칙

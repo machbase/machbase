@@ -36,7 +36,7 @@ time_duration에는 백업 데이터의 시작 시간과 종료 시간을 설정
 BACKUP DATABASE INTO DISK = 'backup_dir_name';
 
 -- 증분 백업
-BACKUP DATABASE INTO DISK = 'previous_backup_dir' INTO DISK = 'path/backup_name';
+BACKUP DATABASE AFTER 'previous_backup_dir' INTO DISK = 'path/backup_name';
 
 -- 시간 범위 백업
 BACKUP DATABASE FROM TO_DATE('2015-07-14 00:00:00','YYYY-MM-DD HH24:MI:SS')

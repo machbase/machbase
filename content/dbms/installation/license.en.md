@@ -14,13 +14,13 @@ The MACHBASE license is managed in the license.dat file. Licenses purchased for 
 ```bash
 mach@localhost:~$ cat license.dat 
  
-\#Company\#ID-ProjectName: test\#0-Machbase 
- \#License Policy: SIZE4DAY 
- \#License Type \(Version 2\): OFFICIAL 
- \#Issue DATE: 20160216 
- \#Expiry DATE: 20160319 
- \#Tag Count Limit: 0
- VBz5h4TC-d3+Bf3Efkpdp/Tx873PpZA-78LRSdrxbPY-xhGf4355/iXaY5/jfnn+Jdpjn+N+ef4l2mOf4355/iXaY5/jfnn+Jdpjn+N+ef4l2mOf4355/iXaY5/jfnn+Jdpjn+N+ef4l2mOf4355/iXaY5/jfnn+Jdpjn+
+\#License ID: 00000001
+\#Issue DATE: 20991231
+\#License Type\(Version 3\): FOGUNLIMITED
+\#Company: MACHBASE
+\#Project\(Product\): NONE
+\#Country Code: KR
+ dXlIm7cdJjV1eUibtx0mNQ-GMxH+xLveLI-ewu63w8qMx33l77I+Ot0hY9sBCI...
 ```
 
 
@@ -44,7 +44,7 @@ CREATE TABLESPACE tbs1 DATADISK disk1 (disk_path="tbs1_disk1"), disk2 (disk_path
 
 The MACHBASE license must be installed in $MACHBASE_HOME/conf, and the default name is license.dat .
 
-Copyt the lincense file to `$MACHBASE_HOME/conf`
+Copy the license file to `$MACHBASE_HOME/conf`.
 
 At this time, the name of the license file issued must be changed to **license.dat** and copied. Then, when the server is started, it will determine if the license is appropriate and begin the installation.
 
@@ -62,22 +62,22 @@ Installing as a query: This is a way to install a license using a query statemen
 If the license file is installed, the following is displayed in machbase.trc after the server is started.
 
 ```bash
-[2016-02-17 14:51:00 P-20913 T-140709874054912][INFO] LICENSE [License Type (Version 2)][OFFICIAL]
-[2016-02-17 14:51:00 P-20913 T-140709874054912][INFO] LICENSE [License Policy] [CORE]
-[2016-02-17 14:51:00 P-20913 T-140709874054912][INFO] LICENSE [Host ID] [FFFFFFFFFFFFFFF]
-[2016-02-17 14:51:00 P-20913 T-140709874054912][INFO] LICENSE [Expiry DATE] [25300318]
-[2016-02-17 14:51:00 P-20913 T-140709874054912][INFO] Machbase Logs Signature! : OFFICIAL:CORE:FFFFFFFFFFFFFFF:25300318-3.5.0.826b8f2.official-LINUX-X86-64-release
+[2026-04-16 22:22:08 P-101180 T-135618783719296][INFO] LICENSE [License ID] [00000001]
+[2026-04-16 22:22:08 P-101180 T-135618783719296][INFO] LICENSE [Issue DATE] [20991231]
+[2026-04-16 22:22:08 P-101180 T-135618783719296][INFO] LICENSE [License Type(Version 3)] [FOGUNLIMITED]
+[2026-04-16 22:22:08 P-101180 T-135618783719296][INFO] LICENSE [Company] [MACHBASE]
+[2026-04-16 22:22:08 P-101180 T-135618783719296][INFO] LICENSE [Project(Product)] [NONE]
+[2026-04-16 22:22:08 P-101180 T-135618783719296][INFO] LICENSE [Country Code] [KR]
 ```
 
 You can also use the machadmin -f command.
 
 ### License Not Installed
 
-If the license file is not installed or if an abnormal file is used, the following output is displayed.
+If the license file is not installed or an invalid file is used, check the license status with `machadmin -f` or `V$LICENSE_INFO`. In Standard 8.5, the same Version 3 fields are used, and violation details are exposed through the `VIOLATE_STATUS` and `VIOLATE_MSG` columns of `V$LICENSE_INFO`.
 
-```bash
-[2016-02-17 14:49:54 P-6620 T-140539052701440][INFO] LICENSE [License Type(Version 2)][Only for evaluation (No license)]
-[2016-02-17 14:49:54 P-6620 T-140539052701440][INFO] LICENSE [License Policy] [None]
-[2016-02-17 14:49:54 P-6620 T-140539052701440][INFO] LICENSE [Host ID] [Unknown]
-[2016-02-17 14:49:54 P-6620 T-140539052701440][INFO] LICENSE [Expiry DATE] [N/A]
+```sql
+SELECT ID, ISSUE_DATE, TYPE, CUSTOMER, PROJECT, COUNTRY_CODE,
+       INSTALL_DATE, VIOLATE_STATUS, VIOLATE_MSG
+FROM V$LICENSE_INFO;
 ```

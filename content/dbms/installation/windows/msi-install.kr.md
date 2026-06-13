@@ -35,6 +35,6 @@ weight: 20
 ![machbase_icon](/dbms/installation/windows/machbase_icon.png)
 
 3. Machbase 서버를 관리하는 윈도우 인터페이스 화면입니다.
-    메뉴를 클릭하여 Machbase 서버와 MWA 웹 서버를 제어할 수 있습니다.
+    메뉴를 클릭하여 Machbase 서버와 HTTP REST 서비스를 제어할 수 있습니다.
 
 ![machbase_winui](/dbms/installation/windows/machbase_winui.png)

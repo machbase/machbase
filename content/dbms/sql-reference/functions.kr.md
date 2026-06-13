@@ -1416,6 +1416,22 @@ Thomas
 Johnathan
 ```
 
+## NEXTVAL
+
+`NEXTVAL(sequence_column)`은 Lookup 테이블의 Sequence 컬럼에 대해 다음 값을 반환합니다.
+
+```sql
+NEXTVAL(sequence_column)
+```
+
+- `NEXTVAL`은 `INSERT` 문에서만 사용할 수 있습니다.
+- 인자는 `PROPERTY(SEQUENCE=...)`로 설정된 컬럼이어야 합니다.
+- Sequence 컬럼 생성과 예제는 [Sequence Column](../ddl/#sequence-column)을 참고하십시오.
+
+```sql
+INSERT INTO seq_lookup (id, name) VALUES (NEXTVAL(id), 'sensor-a');
+```
+
 
 ## ROUND
 
@@ -2228,6 +2244,19 @@ TO_HEX(id10)                                                                    
 ```
 
 
+## TO_INET_STR
+
+`TO_INET_STR(ipv4_value)`는 `IPV4` 값을 점으로 구분된 십진 문자열로 변환합니다.
+
+```sql
+TO_INET_STR(ipv4_value)
+```
+
+```sql
+SELECT TO_INET_STR(TO_IPV4('192.168.0.1'));
+```
+
+
 ## TO_IPV4 / TO_IPV4_SAFE
 
 주어진 문자열을 IPv4 타입으로 변환합니다. 문자열을 숫자 값으로 변환할 수 없으면 TO_IPV4()는 오류를 반환하고 작업을 중단합니다.
@@ -2672,6 +2701,9 @@ ISNAN(number)
 ISINF(number)
 ```
 
+다음 예제는 테이블에 이미 `NaN` 및 `Inf` 값이 들어 있는 경우를 가정합니다.
+SQL `INSERT` 문에서 `nan` 또는 `inf` 토큰을 값으로 직접 입력할 수는 없습니다.
+
 ```sql
 Mach> SELECT * FROM test;
 I1                          I2                          I3    
@@ -3095,6 +3127,84 @@ same_seed   diff_seed   diff_default
 
 `RAND(seed)`는 같은 시드면 동일한 값이 나오며, `RAND()`는 세션 내부 상태를 기반으로 `[0,1)` 범위의 값을 생성합니다.
 
+## REGEXP_LIKE
+
+`REGEXP_LIKE`는 문자열이 정규식 패턴과 일치하는지 검사합니다. Boolean 값을 반환하며
+주로 `WHERE` 절에서 사용합니다.
+
+```sql
+REGEXP_LIKE(source, pattern)
+REGEXP_LIKE(source, pattern, match_param)
+```
+
+- `source`는 `VARCHAR`여야 합니다.
+- `pattern`은 상수 `VARCHAR` 정규식이어야 합니다.
+- `match_param`은 선택 항목이며 상수 `VARCHAR`여야 합니다. `c`는 대소문자를
+  구분하고, `i`는 대소문자를 구분하지 않습니다. 기본값은 `c`입니다.
+
+```sql
+SELECT *
+FROM sensor_text
+WHERE REGEXP_LIKE(message, 'error|warn', 'i');
+```
+
+## REGEXP_INSTR
+
+`REGEXP_INSTR`는 정규식과 일치하는 위치를 1부터 시작하는 값으로 반환합니다. 일치하는
+값이 없으면 `0`을 반환합니다.
+
+```sql
+REGEXP_INSTR(source, pattern[, position[, occurrence[, return_pos[, match_param]]]])
+```
+
+- `source`는 `VARCHAR`여야 합니다.
+- `pattern`은 상수 `VARCHAR` 정규식이어야 합니다.
+- `position`과 `occurrence`는 `1` 이상의 상수 정수입니다.
+- `return_pos`는 상수 정수입니다. `0`은 시작 위치를 반환하고, `1`은 일치한 문자열
+  다음 위치를 반환합니다.
+- `match_param`은 `c` 또는 `i`를 사용할 수 있습니다. 기본값은 `c`입니다.
+
+```sql
+SELECT REGEXP_INSTR('TechOnTheNet', 'The', 1, 1, 1, 'i');
+```
+
+## REGEXP_SUBSTR
+
+`REGEXP_SUBSTR`는 정규식과 일치하는 부분 문자열을 반환합니다.
+
+```sql
+REGEXP_SUBSTR(source, pattern[, position[, occurrence[, match_param]]])
+```
+
+- `source`는 `VARCHAR`여야 합니다.
+- `pattern`은 상수 `VARCHAR` 정규식이어야 합니다.
+- `position`과 `occurrence`는 `1` 이상의 상수 정수입니다.
+- `match_param`은 `c` 또는 `i`를 사용할 수 있습니다. 기본값은 `c`입니다.
+
+```sql
+SELECT REGEXP_SUBSTR('TechOnTheNet', 'a|e|i|o|u', 1, 2, 'i');
+```
+
+## REGEXP_REPLACE
+
+`REGEXP_REPLACE`는 정규식과 일치하는 문자열을 치환합니다.
+
+```sql
+REGEXP_REPLACE(source, pattern[, replacement[, position[, occurrence[, match_param]]]])
+```
+
+- `source`는 `VARCHAR`여야 합니다.
+- `pattern`과 `replacement`는 상수 `VARCHAR` 값이어야 합니다.
+- `replacement`를 생략하면 일치하는 문자열을 제거합니다.
+- `position`은 `1` 이상의 상수 정수입니다.
+- `occurrence`는 상수 정수입니다. `0`은 모든 일치 항목을 치환하고, `0`보다 큰 값은
+  해당 번째 일치 항목만 치환합니다.
+- `match_param`은 `c` 또는 `i`를 사용할 수 있습니다. 기본값은 `c`입니다.
+
+```sql
+SELECT REGEXP_REPLACE('TechOnTheNet', 'a|e|i|o|u', 'Z', 1, 2, 'i');
+```
+
 <a id="support-type-of-built-in-function"></a>
 ## 내장 함수 지원 타입
 
@@ -3128,6 +3238,10 @@ same_seed   diff_seed   diff_default
 |P05 / P10 / P90 / P95|o|o|o|o|o|x|x|x|x|x|x|
 |PERCENTILE_CONT / PERCENTILE_DISC|o|o|o|o|o|x|x|x|x|x|x|
 |QUANTILE|o|o|o|o|o|x|x|x|x|x|x|
+|REGEXP_LIKE|x|x|x|x|x|o|x|x|x|x|x|
+|REGEXP_INSTR|x|x|x|x|x|o|x|x|x|x|x|
+|REGEXP_SUBSTR|x|x|x|x|x|o|x|x|x|x|x|
+|REGEXP_REPLACE|x|x|x|x|x|o|x|x|x|x|x|
 |SLOPE|o|o|o|o|o|x|x|x|x|x|x|
 |TOP_K|o|o|o|o|o|x|x|x|x|x|x|
 |ROUND|o|o|o|o|o|x|x|x|x|x|x|
@@ -3141,6 +3255,7 @@ same_seed   diff_seed   diff_default
 |TO_CHAR|o|o|o|o|o|o|x|o|o|o|x|
 |TO_DATE / TO_DATE_SAFE|x|x|x|x|x|o|x|x|x|x|x|
 |TO_HEX|o|o|o|o|o|o|o|o|o|o|o|
+|TO_INET_STR|x|x|x|x|x|x|x|o|x|x|x|
 |TO_IPV4 / TO_IPV4_SAFE|x|x|x|x|x|o|x|x|x|x|x|
 |TO_IPV6 / TO_IPV6_SAFE|x|x|x|x|x|o|x|x|x|x|x|
 |TO_NUMBER / TO_NUMBER_SAFE|x|x|x|x|x|o|x|x|x|x|x|

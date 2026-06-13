@@ -146,7 +146,8 @@ SELECT * FROM V$STORAGE;
 # Listen only on a specific interface.
 BIND_IP_ADDRESS = 192.168.1.100
 
-# Block remote access and bind listeners to loopback.
+# Block native DB remote access. Set BIND_IP_ADDRESS=127.0.0.1 to
+# limit HTTP to loopback as well.
 GRANT_REMOTE_ACCESS = 0
 ```
 

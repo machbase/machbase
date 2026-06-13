@@ -109,9 +109,9 @@ Machbase는 **추가 전용** 데이터에 최적화되어 있습니다:
 - 더 빠른 분석 쿼리
 - 절감된 스토리지 비용
 
-### 자동 Rollup (Tag 테이블)
+### Rollup 테이블 (Tag 테이블)
 
-통계가 자동으로 생성됩니다:
+rollup이 구성된 경우 통계를 사용할 수 있습니다:
 - 초, 분, 시간 단위 요약
 - MIN, MAX, AVG, SUM, COUNT, SUMSQ
 - 수동 집계 불필요
@@ -166,7 +166,8 @@ SELECT * FROM logs DURATION 1 HOUR;
 
 -- 덜 최적: 수동 시간 필터링
 SELECT * FROM logs
-WHERE _arrival_time >= NOW - INTERVAL '1' HOUR;
+WHERE _arrival_time BETWEEN TO_DATE('2025-10-10 14:00:00', 'YYYY-MM-DD HH24:MI:SS')
+                        AND TO_DATE('2025-10-10 15:00:00', 'YYYY-MM-DD HH24:MI:SS');
 ```
 
 ### 3. 데이터 보존 구현
@@ -174,7 +175,7 @@ WHERE _arrival_time >= NOW - INTERVAL '1' HOUR;
 데이터가 무한정 증가하지 않도록 하세요:
 ```sql
 -- 일일 정리
-DELETE FROM logs EXCEPT 30 DAYS;
+DELETE FROM logs EXCEPT 30 DAY;
 ```
 
 ### 4. 분석에 Rollup 사용
@@ -182,7 +183,9 @@ DELETE FROM logs EXCEPT 30 DAYS;
 사전 집계된 데이터를 쿼리하세요:
 ```sql
 -- 빠름: Rollup 사용
-SELECT * FROM sensors WHERE rollup = hour;
+SELECT rollup('hour', 1, time) AS hour_time, AVG(value)
+FROM sensors
+GROUP BY hour_time;
 
 -- 느림: 원시 데이터 집계
 SELECT sensor_id, AVG(value) FROM sensors GROUP BY sensor_id;

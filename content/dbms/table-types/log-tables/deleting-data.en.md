@@ -30,13 +30,13 @@ mach>DELETE FROM devices;
  
 -- Delete oldest 5.
 mach>DELETE FROM devices OLDEST 5 ROWS;
-10 row(s) deleted.
+5 row(s) deleted.
  
 -- Delete all except last 5.
 mach>DELETE FROM devices EXCEPT 5 ROWS;
 15 row(s) deleted.
  
--- Delete all data from before June 1, 2018.
+-- Delete all data from before or on June 1, 2018.
 mach>DELETE FROM devices BEFORE TO_DATE('2018-06-01', 'YYYY-MM-DD');
 50 row(s) deleted.
 ```

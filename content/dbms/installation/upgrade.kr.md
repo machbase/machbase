@@ -65,7 +65,7 @@ $MACH_DEPLOYER_HOME에 있는 dbs/ 및 conf/ 디렉토리를 백업합니다.
 
 #### Deployer 업그레이드
 
-* Deployer가 설치된 호스트에서 MWA를 실행하거나 Collector를 실행하지 않는 경우 경량 패키지로 진행할 수 있습니다.
+* Deployer가 설치된 호스트에서 MWA 또는 Collector를 실행하지 않는 경우 경량 패키지로 진행할 수 있습니다.
 
 패키지를 $MACH_DEPLOYER_HOME에 압축 해제하여 덮어씁니다.
 

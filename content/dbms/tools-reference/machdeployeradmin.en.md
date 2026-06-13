@@ -8,7 +8,7 @@ You can check the status of the Deployer, or directly issue the Deployer's start
 
 Normally the fastest way to issue the commands is through machcoordinatoradmin, but if not possible, you must do the following.
 
-Only exits in Cluster Edition Package.
+Only exists in Cluster Edition Package.
 
 ## Options and Features
 
@@ -26,7 +26,7 @@ mach@localhost:~$ machdeployeradmin -h
 |-k, --kill | Stops Deployer process|
 |-c, --createdb | Creates Deployer meta|
 |-d, --destroydb | Deletes Deployer meta|
-|-i, --silence | Runs without output|
+|-i, --silent | Mutes the banner|
 |-e, --check | Checks to see if Deployer process is running|
 
 

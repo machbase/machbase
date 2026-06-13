@@ -46,7 +46,7 @@ weight: 75
 | `d`    | 일               | `7d`    | 7일                 |
 | `w`    | 주               | `2w`    | 14일                |
 
-> **참고**: 월과 연은 길이가 일정하지 않아 지원하지 않습니다. 지원하지 않는 접미사(`1y`, `1mo` 등)를 사용하면 `ERR_QP_TIME_FORMAT` 오류가 발생합니다.
+> **참고**: 월과 연은 길이가 일정하지 않아 지원하지 않습니다. 지원하지 않는 접미사(`1y`, `1mo` 등)를 사용하면 invalid time expression 오류(`ERR-02034`)가 발생합니다.
 
 ## 복합 리터럴 작성
 
@@ -100,15 +100,20 @@ SELECT a.ts, a.value AS raw_value, b.value AS calibrated
     ON b.ts BETWEEN a.ts - 500ms AND a.ts + 500ms;
 ```
 
-### 문자열 리터럴과 캐스팅
+### DATETIME 값과 캐스팅
 
 ```sql
-SELECT to_char('2024-05-01' + 3d, 'YYYY-MM-DD');           -- 2024-05-04
-SELECT to_char('2024-05-01 08:00:00' - 4h15m,
+SELECT to_char(to_date('2024-05-01', 'YYYY-MM-DD') + 3d,
+               'YYYY-MM-DD');                              -- 2024-05-04
+SELECT to_char(to_date('2024-05-01 08:00:00',
+                       'YYYY-MM-DD HH24:MI:SS') - 4h15m,
                'YYYY-MM-DD HH24:MI:SS');                   -- 2024-05-01 03:45:00
-SELECT to_char('2024-05-01'::datetime + 2h30m45s250ms,
+SELECT to_char(to_date('2024-05-01', 'YYYY-MM-DD') + 2h30m45s250ms,
                'YYYY-MM-DD HH24:MI:SS mmm');               -- 2024-05-01 02:30:45 250
 ```
+
+문자열 리터럴은 interval 산술에서 `DATETIME`으로 암시적 변환되지 않습니다. 먼저
+`TO_DATE`로 변환해야 합니다.
 
 ### 순수 숫자와 혼합
 
@@ -133,10 +138,10 @@ SELECT event_time - 250 AS event_time_minus_250ns
 
 | 시나리오                                | 오류 코드                 | 해결 방법                                     |
 |----------------------------------------|---------------------------|----------------------------------------------|
-| 지원하지 않는 접미사(`1y`, `5mo`)      | `ERR_QP_TIME_FORMAT`      | 지원 단위(`30d` 등)로 교체합니다.             |
+| 지원하지 않는 접미사(`1y`, `5mo`)      | `ERR-02034` invalid time expression | 지원 단위(`30d` 등)로 교체합니다.             |
 | 단위 누락(`now + 10`)                   | 나노초로 해석됨            | 분/초 등을 의도했다면 명시적으로 접미사를 붙입니다. |
 | 값이 너무 큰 리터럴(`1000000d`)        | `ERR_OVERFLOW_INTERVAL`   | 크기를 줄이거나 반복 처리로 로직을 나눕니다. |
-| 숫자가 아닌 문자가 포함됨(`1h3xm`)     | `ERR_QP_TIME_FORMAT`      | 오탈자를 수정합니다(`1h3m`).                  |
+| 숫자가 아닌 문자가 포함됨(`1h3xm`)     | Invalid time expression   | 오탈자를 수정합니다(`1h3m`).                  |
 
 ## 모범 사례
 
@@ -165,7 +170,7 @@ SELECT event_time - 250 AS event_time_minus_250ns
 now - 5m        정확히 5분 전 시각
 sysdate + 1d    시스템 시간 기준 24시간 후(내일)
 col_ts + 90s    컬럼 값을 90초 뒤로 이동
-'2024-01-01' + 2w  리터럴 날짜에 14일을 더함
+TO_DATE('2024-01-01','YYYY-MM-DD') + 2w  날짜 값에 14일을 더함
 value + 250     `value`에 250나노초를 더함
 ```
 

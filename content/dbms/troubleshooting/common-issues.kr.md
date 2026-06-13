@@ -30,7 +30,7 @@ ps -ef | grep machbase
 machadmin -s
 
 # 서버가 실행 중이 아니면 시작
-machbase
+machadmin -u
 
 # machbase.conf에서 포트 구성 확인
 grep PORT_NO $MACHBASE_HOME/conf/machbase.conf
@@ -42,7 +42,7 @@ grep PORT_NO $MACHBASE_HOME/conf/machbase.conf
 
 **해결 방법**:
 - 네트워크 연결 확인
-- machbase.conf에서 MACHBASE_PORT_NO 확인
+- `machbase.conf`에서 `PORT_NO` 확인
 - 포트를 차단하는 방화벽이 없는지 확인
 - 최대 연결 수 제한에 도달했는지 확인
 

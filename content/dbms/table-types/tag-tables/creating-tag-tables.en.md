@@ -8,7 +8,7 @@ weight: 10
 
 Tag tables are the foundation for storing axis-based sensor data in Machbase. This guide covers how to create, configure, and drop both time-axis and distance-axis tag tables.
 
-> **Version**: Distance-axis columns (`BASE DISTANCE`, `BASEDISTANCE`) are supported in Neo v8.0.75+.
+> **Version**: Distance-axis columns (`BASE DISTANCE`, `BASEDISTANCE`) are supported in Machbase 8.0.75+.
 
 ## Axis Rules
 
@@ -32,7 +32,7 @@ The most common time-axis tag table requires three essential elements:
 ```sql
 -- This will fail - missing required keywords
 Mach> CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME, value DOUBLE);
-[ERR-02253: Mandatory column definition (PRIMARY KEY / BASETIME) is missing.]
+[ERR-02253: Mandatory column definition (PRIMARY KEY / BASE TIME) is missing.]
 
 -- Correct way - with required BASETIME keyword
 Mach> CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE);

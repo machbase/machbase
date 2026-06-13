@@ -44,7 +44,7 @@ $MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --startup-lookup
 |--node-type|Specifies the node type.<br>There are five types: coordinator, deployer, lookup, broker, and warehouse.|lookup|
 |--deployer|Register the deployer node information of the server to be installed.|192.168.0.84:5201|
 |--lookup-type|Specify the lookup type<br>There are three types: master, slave, monitor.|master|
-|--home-path|Specifies the path to install.<br>Specifies /home/machbase/lookup in machbase account.|/home/machabse/lookup|
+|--home-path|Specifies the path to install.<br>Specifies /home/machbase/lookup in machbase account.|/home/machbase/lookup|
 
 ### Installation Conditions
 
@@ -62,7 +62,7 @@ There are 3 types of Lookup node, Master, Slave, and Monitor, and it must be ins
 
 ## Delete Lookup
 
-Remove the broker node from the Coordinator node.
+Remove the lookup node from the Coordinator node.
 
 ```bash
 # Delete lookup node
@@ -108,17 +108,17 @@ The first registered node becomes the leader broker, and the additional register
 
 ```bash
 # Add broker node.                                
-$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --add-node="192.168.0.84:5301"  \
+$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --add-node="192.168.0.84:5401"  \
         --node-type=broker --deployer="192.168.0.84:5201" --port-no="5656"          \
         --home-path="/home/machbase/broker" --package-name=machbase
   
 # Run broker node.
-$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --startup-node="192.168.0.84:5301"
+$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --startup-node="192.168.0.84:5401"
 ```
 
 |Option items|Description|Example|
 |--|--|--|
-|--add-node|Specifies the node name to be added as "IP: PORT".<br>The PORT value is set to the CLUSTER_LINK_PORT_NO value.|192.168.0.84:5301|
+|--add-node|Specifies the node name to be added as "IP: PORT".<br>The PORT value is set to the CLUSTER_LINK_PORT_NO value.|192.168.0.84:5401|
 |--node-type|Specifies the node type.<br>There are five types: coordinator, deployer, lookup, broker, and warehouse.|broker|
 |--deployer|Register the deployer node information of the server to be installed.|192.168.0.84:5201|
 |--port-no|Specifies 'machbased' port.<br>The Broker specifies a default value of 5656.<br>This port is used when connecting to client and machsql.|5656|
@@ -132,7 +132,7 @@ Remove the broker node from the Coordinator node.
 
 ```bash
 # Delete broker node.
-$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --remove-node="192.168.0.84:5301"
+$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --remove-node="192.168.0.84:5401"
 ```
 
 
@@ -142,10 +142,10 @@ There is a way to shut down / kill the broker node on the Coordinator node.
 
 ```bash
 # Terminate broker node.
-$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --shutdown-node="192.168.0.84:5301"
+$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --shutdown-node="192.168.0.84:5401"
   
 # Stop broker node.
-$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --kill-node="192.168.0.84:5301"
+$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --kill-node="192.168.0.84:5401"
 ```
 
 Alternatively, you can shut down / kill the process directly from the server where the broker is installed.
@@ -171,24 +171,24 @@ Install the first Warehouse Group1 node.
 
 ```bash
 # Install group1 warehouse.                         
-$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --add-node="192.168.0.83:5401"  \
-        --node-type=warehouse --deployer="192.168.0.83:5201" --port-no="5400"       \
+$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --add-node="192.168.0.83:5501"  \
+        --node-type=warehouse --deployer="192.168.0.83:5201" --port-no="5500"       \
         --home-path="/home/machbase/warehouse_g1" --package-name=machbase           \
-        --replication="192.168.0.83:5402"  --group="group1" --no-replicate
+        --replication="192.168.0.83:5502"  --group="group1" --no-replicate
   
 # Run installed node.
-$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --startup-node="192.168.0.84:5401"
+$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --startup-node="192.168.0.83:5501"
 ```
 
 |Option items|Description|Example|
 |--|--|--|
-|--add-node|Specifies the node name to be added as "IP: PORT".<br>The PORT value is set to the CLUSTER_LINK_PORT_NO value.|192.168.0.84:5401|
+|--add-node|Specifies the node name to be added as "IP: PORT".<br>The PORT value is set to the CLUSTER_LINK_PORT_NO value.|192.168.0.83:5501|
 |--node-type|Specifies the node type.<br>There are five types: coordinator, deployer, lookup, broker, and warehouse.|warehouse|
-|--deployer|Registers the deployer node information of the server to be installed.|192.168.0.84:5201|
-|--port-no|	Specifies the working port of 'machbased'.<br>Since the value was set to 5656 on the Broker, a different port must be specified if it is installed on the same server. The warehouse port number is set as 5400.<br>This port is used when connecting to client and machsql.|5400|
+|--deployer|Registers the deployer node information of the server to be installed.|192.168.0.83:5201|
+|--port-no|Specifies the working port of 'machbased'.<br>Since the value was set to 5656 on the Broker, a different port must be specified if it is installed on the same server. The warehouse port number is set as 5500.<br>This port is used when connecting to client and machsql.|5500|
 |--home-path|Specifies the path to install. To distinguish the groups, set them in order of warehouse_g1, g2, g3.|/home/machbase/warehouse_g1|
 |--package-name|Sets the package name specified when adding the package.|machbase|
-|--replication|Specifies the node in charge of replication as "IP: PORT".<br>The port value is set to the warehouse port number 5402.|192.168.0.84:5402|
+|--replication|Specifies the warehouse replication manager as "IP: PORT".<br>The port value is the warehouse service port + 2.|192.168.0.83:5502|
 |--no-replicate|Specifies whether to replicate data when adding a node if there is warehouse data in the group.| |
 |--set-group-state|Specifies the state of the group as normal and readonly.<br>Normal is read, write / readonly is read only| |
 
@@ -198,24 +198,24 @@ Add another node to Warehouse Group1.
 
 ```bash
 # Add warehouse node to group1.              
-$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --add-node="192.168.0.84:5401"  \
-        --node-type=warehouse --deployer="192.168.0.84:5201" --port-no="5400"       \
+$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --add-node="192.168.0.84:5501"  \
+        --node-type=warehouse --deployer="192.168.0.84:5201" --port-no="5500"       \
         --home-path="/home/machbase/warehouse_g1" --package-name=machbase           \
-        --replication="192.168.0.84:5402" --group="group1" --no-replicate
+        --replication="192.168.0.84:5502" --group="group1" --no-replicate
   
 # Run installed node.
-$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --startup-node="192.168.0.84:5401"
+$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --startup-node="192.168.0.84:5501"
 ```
 
 |Option items|Description|Example|
 |--|--|--|
-|--add-node|Specifies the node name to be added as "IP: PORT".<br>The PORT value is set to the CLUSTER_LINK_PORT_NO value.|192.168.0.84:5401|
+|--add-node|Specifies the node name to be added as "IP: PORT".<br>The PORT value is set to the CLUSTER_LINK_PORT_NO value.|192.168.0.84:5501|
 |--node-type|Specifies the node type.<br>There are five types: coordinator, deployer, lookup, broker, and warehouse.|warehouse|
 |--deployer|Registers the deployer node information of the server to be installed.|192.168.0.84:5201|
-|--port-no|Specifies the working port  of 'machbased'.<br>Since the value was set to 5656 on the Broker, a different port must be specified if it is installed on the same server. The warehouse port number is set as 5400.<br>This port is used when connecting to client and machsql.|5400|
-|--home-path|Specifies the path to install. To distinguish the groups, set them in order of warehouse_g1, g2, g3.|/home/machabse/warehouse_g1|
+|--port-no|Specifies the working port of 'machbased'.<br>Since the value was set to 5656 on the Broker, a different port must be specified if it is installed on the same server. The warehouse port number is set as 5500.<br>This port is used when connecting to client and machsql.|5500|
+|--home-path|Specifies the path to install. To distinguish the groups, set them in order of warehouse_g1, g2, g3.|/home/machbase/warehouse_g1|
 |--package-name|Sets the package name specified when adding the package.|machbase|
-|--replication|Specify the node in charge of replication as "IP: PORT".<br>The port value is set to the warehouse port number 5402.|192.168.0.84:5402|
+|--replication|Specifies the warehouse replication manager as "IP: PORT".<br>The port value is the warehouse service port + 2.|192.168.0.84:5502|
 |--group|Specifies the Group name.|group1|
 |--no-replicate|Specifies whether to replicate data when adding a node if there is warehouse data in the group.| |
 |--set-group-state|Specifies the state of the group as normal and readonly.<br>Normal is read, write / readonly is read only| |
@@ -226,25 +226,25 @@ Install the second Warehouse Group2 node.
 
 ```bash
 # Install group1 warehouse.                         
-$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --add-node="192.168.0.84:5411"  \
-        --node-type=warehouse --deployer="192.168.0.84:5201" --port-no="5410"       \
+$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --add-node="192.168.0.84:5511"  \
+        --node-type=warehouse --deployer="192.168.0.84:5201" --port-no="5510"       \
         --home-path="/home/machbase/warehouse_g2" --package-name=machbase           \
-        --replication="192.168.0.84:5412"  --group="group2" --no-replicate
+        --replication="192.168.0.84:5512"  --group="group2" --no-replicate
   
 # Run installed node.
-$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --startup-node="192.168.0.84:5411"
+$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --startup-node="192.168.0.84:5511"
 ```
 
 |Option items|Description|Example|
 |--|--|--|
-|--add-node|Specifies the node name to be added as "IP: PORT".<br>The PORT value is set to the CLUSTER_LINK_PORT_NO value.|192.168.0.84:5411|
+|--add-node|Specifies the node name to be added as "IP: PORT".<br>The PORT value is set to the CLUSTER_LINK_PORT_NO value.|192.168.0.84:5511|
 |--node-type|Specifies the node type.<br>There are five types: coordinator, deployer, lookup, broker, and warehouse.|warehouse|
 |--deployer|Registers the deployer node information of the server to be installed.|192.168.0.84:5201|
-|--port-no|Specifies the working port  of 'machbased'.<br>Since the value was set to 5656 on the Broker, a different port must be specified if it is installed on the same server. The warehouse port number is set as 5410.<br>This port is used when connecting to client and machsql.|5410|
-|--home-path|Specifies the path to install. To distinguish the groups, set them in order of warehouse_g1, g2, g3.|/home/machbase/warehouse_g2
+|--port-no|Specifies the working port of 'machbased'.<br>Since the value was set to 5656 on the Broker, a different port must be specified if it is installed on the same server. The warehouse port number is set as 5510.<br>This port is used when connecting to client and machsql.|5510|
+|--home-path|Specifies the path to install. To distinguish the groups, set them in order of warehouse_g1, g2, g3.|/home/machbase/warehouse_g2|
 |--package-name|Sets the package name specified when adding the package.|machbase|
-|--replication|Specifies the node in charge of replication as "IP: PORT".<br>The port value is set to the warehouse port number 5412.|192.168.0.84:5412|
-|--group|Specifies the Group name.|group|
+|--replication|Specifies the warehouse replication manager as "IP: PORT".<br>The port value is the warehouse service port + 2.|192.168.0.84:5512|
+|--group|Specifies the Group name.|group2|
 |--no-replicate|Specifies whether to replicate data when adding a node if there is warehouse data in the group.| |
 |--set-group-state|Specifies the state of the group as normal and readonly.<br>Normal is read, write / readonly is read only| |
 
@@ -254,24 +254,24 @@ Add another node to Warehouse Group2.
 
 ```bash
 # Add warehouse node to group1.              
-$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --add-node="192.168.0.83:5411"  \
-        --node-type=warehouse --deployer="192.168.0.83:5201" --port-no="5410"       \
+$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --add-node="192.168.0.83:5511"  \
+        --node-type=warehouse --deployer="192.168.0.83:5201" --port-no="5510"       \
         --home-path="/home/machbase/warehouse_g2" --package-name=machbase           \
-        --replication="192.168.0.83:5412" --group="group2" --no-replicate
+        --replication="192.168.0.83:5512" --group="group2" --no-replicate
   
 # Run installed node.
-$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --startup-node="192.168.0.83:5411"
+$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --startup-node="192.168.0.83:5511"
 ```
 
 |Option items|Description|Example|
 |--|--|--|
-|--add-node|Specifies the node name to be added as "IP: PORT".<br>The PORT value is set to the CLUSTER_LINK_PORT_NO value.|192.168.0.83:5411|
+|--add-node|Specifies the node name to be added as "IP: PORT".<br>The PORT value is set to the CLUSTER_LINK_PORT_NO value.|192.168.0.83:5511|
 |--node-type|Specifies the node type.<br>There are five types: coordinator, deployer, lookup, broker, and warehouse.|warehouse|
 |--deployer|Registers the deployer node information of the server to be installed.|192.168.0.83:5201|
-|--port-no|Specifies the working port of 'machbased'.<br>Since the value was set to 5656 on the Broker, a different port must be specified if it is installed on the same server. The warehouse port number is set as 5400.<br>This port is used when connecting to client and machsql.|5410|
+|--port-no|Specifies the working port of 'machbased'.<br>Since the value was set to 5656 on the Broker, a different port must be specified if it is installed on the same server. The warehouse port number is set as 5510.<br>This port is used when connecting to client and machsql.|5510|
 |--home-path|Specifies the path to install. To distinguish the groups, set them in order of warehouse_g1, g2, g3.|/home/machbase/warehouse_g2|
 |--package-name|Sets the package name specified when adding the package.|machbase|
-|--replication|Specifies the node in charge of replication as "IP: PORT".<br>The port value is set to the warehouse port number 5412.|192.168.0.83:5412|
+|--replication|Specifies the warehouse replication manager as "IP: PORT".<br>The port value is the warehouse service port + 2.|192.168.0.83:5512|
 |--group|Specifies the Group name.|group2|
 |--no-replicate|Specifies whether to replicate data when adding a node if there is warehouse data in the group.| |
 |--set-group-state|Specifies the state of the group as normal and readonly.<br>Normal is read, write / readonly is read only| |
@@ -283,7 +283,7 @@ Delete the warehouse node from the Coordinator node.
 
 ```bash
 # Delete warehouse node.
-$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --remove-node="192.168.0.83:5401"
+$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --remove-node="192.168.0.83:5501"
 ```
 
 
@@ -293,10 +293,10 @@ There is a way to shut down / kill the warehouse node at the Coordinator node.
 
 ```bash
 # Terminate warehouse node.
-$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --shutdown-node="192.168.0.83:5401"
+$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --shutdown-node="192.168.0.83:5501"
   
 # Stop warehouse node.
-$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --kill-node="192.168.0.83:5401"
+$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --kill-node="192.168.0.83:5501"
 ```
 
 Otherwise, the process can be shut down / killed directly from the server where the warehouse is installed.

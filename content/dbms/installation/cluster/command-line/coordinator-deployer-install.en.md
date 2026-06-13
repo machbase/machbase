@@ -65,10 +65,10 @@ $MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --add-node="192.168.0.83:510
 $MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --cluster-status
 ```
 
-| Optianl     | Description                                                                                             | Example           |
+| Optional    | Description                                                                                             | Example           |
 | ----------- | ------------------------------------------------------------------------------------------------------- | ----------------- |
 | --add-node  | Specifies the node name to be added as "IP: PORT".<br>The PORT value is the CLUSTER_LINK_PORT_NO value. | 192.168.0.83:5101 |
-| --node-type | Specifies the node type.<br>There are four types: coordinator / deployer / broker / warehouse.          | coordinator       |
+| --node-type | Specifies the node type.<br>There are five types: coordinator / deployer / lookup / broker / warehouse. | coordinator       |
 
 ## Delete Coordinator
 
@@ -76,7 +76,7 @@ Connect to the server where the Coordinator is installed, terminate the Coordina
 
 ```bash
 # Terminate coordinator and delete directory.
-process$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin -s
+$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin -s
 rm -rf $MACHBASE_COORDINATOR_HOME
 ```
 
@@ -144,7 +144,7 @@ After removing the Secondary Coordinator registered in the Primary Coordinator, 
 
 ```bash
 # Delete node.
-$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --remove-node="192.168.0.83:5101"
+$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --remove-node="192.168.0.83:5111"
 
 # Terminate secondary coordinator and delete directory.
 $MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin -s
@@ -156,7 +156,7 @@ $MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --cluster-status
 
 | Optional      | Description                                                                                                      | Example           |
 | ------------- | ---------------------------------------------------------------------------------------------------------------- | ----------------- |
-| --remove-node | Specifies the name of the node to be deleted as "IP: PORT".<br>The PORT value is the CLUSTER_LINK_PORT_NO value. | 192.168.0.84:5201 |
+| --remove-node | Specifies the name of the node to be deleted as "IP: PORT".<br>The PORT value is the CLUSTER_LINK_PORT_NO value. | 192.168.0.83:5111 |
 
 ## Deployer Installation
 
@@ -225,7 +225,7 @@ $MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --cluster-status
 | Optional    | Description                                                                                             | Example           |
 | ----------- | ------------------------------------------------------------------------------------------------------- | ----------------- |
 | --add-node  | Specifies the node name to be added as "IP: PORT".<br>The PORT value is the CLUSTER_LINK_PORT_NO value. | 192.168.0.84:5201 |
-| --node-type | Specifies the node type.<br>There are four types: coordinator / deployer / broker / warehouse.          | deployer          |
+| --node-type | Specifies the node type.<br>There are five types: coordinator / deployer / lookup / broker / warehouse. | deployer          |
 
 ## Delete Deployer
 
@@ -236,7 +236,7 @@ You must delete the Deployer node from the Coordinator node and properly termina
 $MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --remove-node="192.168.0.84:5201"
 
 # Terminate deployer and delete directory.
-$MACHBASE_DEPLOYER_HOME/bin/machdeployeradmin -d
+$MACHBASE_DEPLOYER_HOME/bin/machdeployeradmin -s
 rm -rf $MACHBASE_DEPLOYER_HOME
 
 # Check node.
@@ -256,7 +256,7 @@ $MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --add-package=machbase \
 | Optional      | Description                                                                                                                                                                               | Example                                                                         |
 | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
 | --add-package | Specifies the package name to be added.                                                                                                                                                   | machbase                                                                        |
-| --file-name   | Specifies the full path and file name of the package file.<br>Specifies a lightweight package that excludes MWA files, since this package is for broker and warehouse installations only. | /home/machbase/machbase-ent-5.0.0.official-LINUX-X86-64-release-lightweight.tgz |
+| --file-name   | Specifies the full path and file name of the package file.<br>Specifies a lightweight package that excludes MWA files, since this package is for broker and warehouse installations only. | /home/machbase/machbase-ent-x.y.z.official-LINUX-X86-64-release-lightweight.tgz |
 
 ## Delete Package
 

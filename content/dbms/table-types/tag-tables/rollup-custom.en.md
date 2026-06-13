@@ -41,7 +41,7 @@ SELECT code,
 ### Create Custom Rollup
 
 ```sql
-CREATE ROLLUP <rollup_name>
+CREATE ROLLUP [IF NOT EXISTS] <rollup_name>
 INTO (<dest_tag_table>)
 AS (
   SELECT ...
@@ -58,6 +58,7 @@ INTERVAL <n> (SEC | MIN | HOUR)
 ```sql
 ALTER ROLLUP <rollup_name> START;
 ALTER ROLLUP <rollup_name> STOP;
+ALTER ROLLUP <rollup_name> WAKEUP;
 ALTER ROLLUP <rollup_name> FORCE;
 DROP ROLLUP <rollup_name>;
 ```
@@ -199,18 +200,21 @@ INTERVAL 10 MIN;
 ## Metadata Check
 
 ```sql
-SELECT rollup_table,
+SELECT rollup_name,
+       rollup_table,
        source_table,
        ext_type,
        enabled,
-       frequency,
+       interval_time,
        wakeup_interval,
        predicate
   FROM v$rollup
- WHERE rollup_table = 'ROLLUP_STOCK_1M';
+ WHERE rollup_name = 'ROLLUP_STOCK_1M';
 ```
 
 - `ext_type = 2`: Custom Rollup
+- `rollup_table`: destination TAG table for a Custom Rollup
+- `interval_time` and `wakeup_interval`: interval values in milliseconds
 - `predicate`: Custom `SELECT` text
 
 ## Operational Notes

@@ -101,7 +101,8 @@ scp -i /home/machbase/.ssh/id_rsa /etc/hosts machbase@192.168.0.11:/home/machbas
 | `-f`, `--file` | 사용할 YAML 파일. 기본값은 `./cluster.yaml` |
 | `--dry-run` | 실제 변경 없이 검사와 실행 계획만 출력 |
 | `-y`, `--yes` | 확인 질문 없이 실행 |
-| `-v`, `--verbose` | 상세 로그 출력 |
+| `-v`, `--verbose` | 호환성을 위해 허용됩니다. 실행 명령은 기본적으로 진행 로그를 출력합니다. |
+| `-s`, `--silent` | 진행 로그를 억제합니다. `-v`/`--verbose`보다 우선합니다. |
 | `--coordinator` | YAML 없이 실행하는 `status`, `start`, `stop`, `connect`, `export`에서 사용할 primary coordinator home |
 
 ## 5. YAML 검증

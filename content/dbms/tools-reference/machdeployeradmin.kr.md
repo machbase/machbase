@@ -26,7 +26,7 @@ mach@localhost:~$ machdeployeradmin -h
 |-k, --kill | Deployer 프로세스 중지|
 |-c, --createdb | Deployer 메타 생성|
 |-d, --destroydb | Deployer 메타 삭제|
-|-i, --silence | 출력 없이 실행|
+|-i, --silent | 배너 출력 없이 실행|
 |-e, --check | Deployer 프로세스 실행 여부 확인|
 
 

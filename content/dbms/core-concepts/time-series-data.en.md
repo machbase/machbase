@@ -110,7 +110,8 @@ Traditional databases struggle because:
 - No pre-computed statistics
 - Slow for large datasets
 
-**Machbase solution**: Automatic rollup tables with pre-computed statistics.
+**Machbase solution**: Rollup tables with pre-computed statistics when rollups are
+defined.
 
 ## Why Traditional Databases Fail
 
@@ -223,15 +224,16 @@ LSM (Log-Structured Merge) indexes:
 
 ### 5. Automatic Statistics (Rollup)
 
-Tag tables generate statistics automatically:
+Tag tables generate statistics when rollups are enabled:
 
 ```sql
 -- Raw data: millions of rows
 INSERT INTO sensors VALUES ('sensor01', NOW, 25.3);
 
--- Automatic rollup: per-second, per-minute, per-hour
-SELECT * FROM sensors WHERE rollup = hour;
--- Returns: MIN, MAX, AVG, SUM, COUNT, SUMSQ
+-- Rollup expression: per-second, per-minute, per-hour buckets
+SELECT rollup('hour', 1, time) AS hour_time, AVG(value), COUNT(value)
+FROM sensors
+GROUP BY hour_time;
 ```
 
 **Benefits**:
@@ -263,14 +265,14 @@ Frequency: 10 readings/second
 Data Volume: 864,000 readings/day
 ```
 
-**Best for**: Tag table with SUMMARIZED columns
+**Best for**: Tag table with a SUMMARIZED column
 
 ```sql
-CREATE TAGDATA TABLE sensors (
+CREATE TAG TABLE sensors (
     sensor_id VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
     value DOUBLE SUMMARIZED
-);
+) WITH ROLLUP;
 ```
 
 ### Pattern 2: Event Streams
@@ -324,7 +326,7 @@ Persistence: Required
 
 ```sql
 CREATE LOOKUP TABLE devices (
-    device_id INTEGER,
+    device_id INTEGER PRIMARY KEY,
     name VARCHAR(100),
     location VARCHAR(200)
 );
@@ -342,8 +344,10 @@ CREATE LOOKUP TABLE devices (
 - Time-based retention
 
 ```sql
--- Keep only 30 days
-DELETE FROM sensors EXCEPT 30 DAYS;
+-- Delete old data for one tag
+DELETE FROM sensors
+WHERE sensor_id = 'sensor01'
+  AND time < TO_DATE('2025-01-01', 'YYYY-MM-DD');
 ```
 
 ### Challenge 2: Query Performance
@@ -351,13 +355,15 @@ DELETE FROM sensors EXCEPT 30 DAYS;
 **Problem**: Analyzing millions of rows is slow
 
 **Machbase solution**:
-- Automatic rollup statistics
+- Rollup statistics when rollups are defined
 - Time-based partitioning
 - Columnar storage
 
 ```sql
--- Fast: Query pre-aggregated data
-SELECT * FROM sensors WHERE rollup = hour;
+-- Fast: Query hourly buckets
+SELECT rollup('hour', 1, time) AS hour_time, AVG(value)
+FROM sensors
+GROUP BY hour_time;
 ```
 
 ### Challenge 3: Late-Arriving Data
@@ -398,7 +404,7 @@ Don't keep data forever:
 
 ```sql
 -- Daily cleanup job
-DELETE FROM logs EXCEPT 90 DAYS;
+DELETE FROM logs EXCEPT 90 DAY;
 ```
 
 ### 3. Use DURATION for Time Queries
@@ -410,7 +416,9 @@ Optimized syntax for time ranges:
 SELECT * FROM logs DURATION 1 HOUR;
 
 -- Less optimal
-SELECT * FROM logs WHERE _arrival_time >= NOW - INTERVAL '1' HOUR;
+SELECT * FROM logs
+WHERE _arrival_time BETWEEN TO_DATE('2025-10-10 14:00:00', 'YYYY-MM-DD HH24:MI:SS')
+                        AND TO_DATE('2025-10-10 15:00:00', 'YYYY-MM-DD HH24:MI:SS');
 ```
 
 ### 4. Batch Writes When Possible
@@ -426,7 +434,9 @@ For analytics, use pre-aggregated data:
 
 ```sql
 -- Fast: Rollup
-SELECT AVG(avg_temperature) FROM sensors WHERE rollup = hour;
+SELECT rollup('hour', 1, time) AS hour_time, AVG(temperature)
+FROM sensors
+GROUP BY hour_time;
 
 -- Slow: Raw data
 SELECT AVG(temperature) FROM sensors;
@@ -447,7 +457,7 @@ Now that you understand time-series data:
 3. Machbase uses **append-only** architecture
 4. **Columnar storage** enables high compression
 5. **Time-based partitioning** optimizes queries
-6. **Automatic rollup** provides instant analytics
+6. **Rollup tables** provide instant analytics when configured
 7. Choose the **right table type** for your data pattern
 
 ---

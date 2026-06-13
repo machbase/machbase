@@ -12,7 +12,7 @@ Machbase의 완전한 SQL 구문 레퍼런스입니다. 이 섹션은 모든 SQL
 ### 데이터 정의 언어 (DDL)
 
 - `CREATE TABLE` - LOG 테이블 생성
-- `CREATE TAGDATA TABLE` - TAG 테이블 생성
+- `CREATE TAG TABLE` - TAG 테이블 생성
 - `CREATE VOLATILE TABLE` - VOLATILE 테이블 생성
 - `CREATE LOOKUP TABLE` - LOOKUP 테이블 생성
 - `CREATE VIEW` - 저장 VIEW 생성
@@ -107,14 +107,18 @@ SELECT * FROM table WHERE column SEARCH 'keyword';
 ### Rollup 쿼리
 
 ```sql
-SELECT * FROM tag_table WHERE rollup = sec|min|hour;
+-- WITH ROLLUP으로 생성한 TAG 테이블에서 사용합니다.
+SELECT ROLLUP('hour', 1, time) AS rtime, AVG(value)
+FROM tag_table
+WHERE name = 'sensor-1'
+GROUP BY rtime;
 ```
 
 ### 시간 기반 삭제
 
 ```sql
 DELETE FROM table OLDEST n ROWS;
-DELETE FROM table EXCEPT n ROWS|DAYS;
+DELETE FROM table EXCEPT n ROWS|DAY;
 DELETE FROM table BEFORE datetime;
 ```
 
@@ -128,12 +132,12 @@ DELETE FROM table BEFORE datetime;
 ### 테이블 생성
 
 ```sql
--- TAG 테이블
-CREATE TAGDATA TABLE sensors (
+-- built-in rollup을 포함한 TAG 테이블
+CREATE TAG TABLE sensors (
     sensor_id VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
     value DOUBLE SUMMARIZED
-);
+) WITH ROLLUP;
 
 -- LOG 테이블
 CREATE TABLE logs (
@@ -149,7 +153,7 @@ CREATE VOLATILE TABLE cache (
 
 -- LOOKUP 테이블
 CREATE LOOKUP TABLE devices (
-    device_id INTEGER,
+    device_id INTEGER PRIMARY KEY,
     name VARCHAR(100)
 );
 
@@ -163,17 +167,23 @@ FROM devices;
 
 ```sql
 -- 최근 데이터
-SELECT * FROM sensors DURATION 1 HOUR;
+SELECT * FROM sensors
+WHERE time BETWEEN now - 1h AND now;
 
 -- 조건과 함께
 SELECT * FROM logs WHERE level = 'ERROR' DURATION 1 DAY;
 
 -- 집계
 SELECT sensor_id, AVG(value) FROM sensors
-DURATION 1 DAY GROUP BY sensor_id;
+WHERE time BETWEEN now - 1d AND now
+GROUP BY sensor_id;
 
 -- Rollup 쿼리
-SELECT * FROM sensors WHERE rollup = hour DURATION 7 DAY;
+SELECT ROLLUP('hour', 1, time) AS rtime, AVG(value)
+FROM sensors
+WHERE sensor_id = 'sensor-1'
+  AND time BETWEEN now - 7d AND now
+GROUP BY rtime;
 ```
 
 ### 사용자 관리

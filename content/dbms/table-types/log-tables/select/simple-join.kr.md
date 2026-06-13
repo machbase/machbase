@@ -134,7 +134,7 @@ FROM    TABLE_1 [INNER|LEFT OUTER|RIGHT OUTER]  JOIN    TABLE_2 ON  expression
 ```
 
 ```sql
-SELECT t1.i1 t2.i1 FROM t1 LEFT OUTER JOIN t2 ON (t1.i1 = t2.i1) WHERE t2.i2 = 1;
+SELECT t1.i1, t2.i1 FROM t1 LEFT OUTER JOIN t2 ON (t1.i1 = t2.i1) WHERE t2.i2 = 1;
 ```
 
 위 쿼리는 where 절의 t2.i2 = 1 조건에 의해 Inner Join으로 변경됩니다.

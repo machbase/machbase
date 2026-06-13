@@ -45,8 +45,11 @@ insert into tag values('TAG_0002', '2018-02-07 07:00:00 000:000:000', 17);
 insert into tag values('TAG_0002', '2018-02-08 08:00:00 000:000:000', 18);
 insert into tag values('TAG_0002', '2018-02-09 09:00:00 000:000:000', 19);
 insert into tag values('TAG_0002', '2018-02-10 10:00:00 000:000:000', 20);
+
+exec table_flush(tag);
 ```
 
+같은 세션에서 바로 검증 조회를 실행하려면 먼저 테이블을 flush합니다.
 
 ## 모든 TAG 데이터 추출
 
@@ -147,6 +150,8 @@ INSERT INTO trip_tag VALUES('ODO_A', 1000, 12.3, 102);
 INSERT INTO trip_tag VALUES('ODO_B', 1000.1, 21.5, 100);
 INSERT INTO trip_tag VALUES('ODO_B', 1500, 22.1, 101);
 INSERT INTO trip_tag VALUES('ODO_B', 2000, 22.9, 102);
+
+EXEC TABLE_FLUSH(trip_tag);
 ```
 
 ## 거리 구간 조회
@@ -356,7 +361,13 @@ machbase.conf
 
 ```
 HTTP_ENABLE = 1
-HTTP_PORT_NO = 5678
+HTTP_PORT_NO = 5657
+```
+
+활성 HTTP 포트는 `V$HTTP_STATUS`에서 확인할 수 있습니다.
+
+```sql
+SELECT HTTP_PORT FROM V$HTTP_STATUS;
 ```
 
 RESTful API 호출 규칙
@@ -364,37 +375,22 @@ RESTful API 호출 규칙
 **SELECT 형식**
 
 ```bash
-{MWA URL}/machiot-rest-api/datapoints/raw/{TagName}/{Start}/{End}/{Direction}/{Count}/{Offset}/
+http://{host}:{http_port}/machiot-rest-api/datapoints/raw/{Table}/{TagName}/{Start}/{End}/{Direction}/{Count}/{Offset}/
 
-TagName    : Tag 이름. 여러 tag 사용 가능 (','로 구분)
-Start, End : 범위, YYYY-MM-DD HH24:MI:SS 또는 YYYY-MM-DD 또는 YYYY-MM-DD HH24:MI:SS,mmm (mmm: 밀리초, 생략시 start는 000, End는 999, micro와 nano는 999)
-실제 문자열을 사용할 때는 공백을 제거하기 위해 날짜와 시간 사이에 'T'를 넣습니다.
-Direction  : 0(오름차순), 향후 지원 예정 (시간 증가)
-Count      : LIMIT, 0이면 전체
-Offset     : 오프셋 (기본값 = 0)
+Table      : Tag 테이블 이름
+TagName    : Tag 이름. 여러 tag는 쉼표로 구분합니다.
+Start, End : 범위. YYYY-MM-DD, YYYY-MM-DDTHH24:MI:SS, YYYY-MM-DDTHH24:MI:SS,mmm 형식을 사용할 수 있습니다.
+Direction  : 0은 시간 오름차순입니다.
+Count      : LIMIT. 0이면 전체 행을 조회합니다.
+Offset     : 오프셋. 오프셋이 필요 없으면 0을 지정합니다.
 ```
 
 ### CURL을 사용한 단일 tag 데이터 조회 샘플
 
-192.168.0.148에 설치된 machbase에 대해 다음과 같이 호출하면 웹에서 데이터를 조회할 수 있습니다.
-
 **단일 Tag**
 
 ```bash
-$ curl -G "http://192.168.0.148:5001/machiot-rest-api/v1/datapoints/raw/TAG_0001/2018-01-01T00:00:00/2018-01-06T00:00:00"
-
-{"ErrorCode": 0,
- "ErrorMessage": "",
- "Data": [{"DataType": "DOUBLE",
- "ErrorCode": 0,
- "TagName": "TAG_0001",
- "CalculationMode": "raw",
- "Samples": [{"TimeStamp": "2018-01-01 01:00:00 000:000:000", "Value": 1.0, "Quality": 1},
-             {"TimeStamp": "2018-01-02 02:00:00 000:000:000", "Value": 2.0, "Quality": 1},
-             {"TimeStamp": "2018-01-03 03:00:00 000:000:000", "Value": 3.0, "Quality": 1},
-             {"TimeStamp": "2018-01-04 04:00:00 000:000:000", "Value": 4.0, "Quality": 1},
-             {"TimeStamp": "2018-01-05 05:00:00 000:000:000", "Value": 5.0, "Quality": 1}]}]
-}
+$ curl "http://127.0.0.1:5657/machiot-rest-api/datapoints/raw/TAG/TAG_0001/2018-01-01T00:00:00/2018-01-06T00:00:00/0/0/0"
 ```
 
 ### CURL을 사용한 다중 tag 데이터 조회
@@ -402,24 +398,7 @@ $ curl -G "http://192.168.0.148:5001/machiot-rest-api/v1/datapoints/raw/TAG_0001
 다음은 두 개의 tag 값을 조회하는 샘플입니다.
 
 ```bash
-$ curl -G "http://192.168.0.148:5001/machiot-rest-api/datapoints/raw/TAG_0001,TAG_0002/2018-01-05T00:00:00/2018-02-05T00:00:00"
-{"ErrorCode": 0,
- "ErrorMessage": "",
- "Data": [{"DataType": "DOUBLE",
-           "ErrorCode": 0,
-           "TagName": "TAG_0001,TAG_0002",
-           "CalculationMode": "raw",
-           "Samples": [{"TimeStamp": "2018-01-05 05:00:00 000:000:000", "Value": 5.0, "Quality": 1},
-                       {"TimeStamp": "2018-01-06 06:00:00 000:000:000", "Value": 6.0, "Quality": 1},
-                       {"TimeStamp": "2018-01-07 07:00:00 000:000:000", "Value": 7.0, "Quality": 1},
-                       {"TimeStamp": "2018-01-08 08:00:00 000:000:000", "Value": 8.0, "Quality": 1},
-                       {"TimeStamp": "2018-01-09 09:00:00 000:000:000", "Value": 9.0, "Quality": 1},
-                       {"TimeStamp": "2018-01-10 10:00:00 000:000:000", "Value": 10.0, "Quality": 1},
-                       {"TimeStamp": "2018-02-01 01:00:00 000:000:000", "Value": 11.0, "Quality": 1},
-                       {"TimeStamp": "2018-02-02 02:00:00 000:000:000", "Value": 12.0, "Quality": 1},
-                       {"TimeStamp": "2018-02-03 03:00:00 000:000:000", "Value": 13.0, "Quality": 1},
-                       {"TimeStamp": "2018-02-04 04:00:00 000:000:000", "Value": 14.0, "Quality": 1}
-]}]}
+$ curl "http://127.0.0.1:5657/machiot-rest-api/datapoints/raw/TAG/TAG_0001,TAG_0002/2018-01-05T00:00:00/2018-02-05T00:00:00/0/0/0"
 ```
 
 

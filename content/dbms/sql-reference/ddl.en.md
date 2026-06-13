@@ -140,7 +140,7 @@ Specifies NOT NULL if the column value does not allow NULL, and omit it if it is
 You can change the constraint with the ALTER TABLE MODIFY COLUMN command to drop or add this constraint defined after the creation of the table.
 
 ```sql
-## Column c1 is not null and c2 is created without not null constraint.
+-- Column c1 is not null and c2 is created without not null constraint.
 CREATE TABLE t1(c1 INTEGER NOT NULL, c2 VARCHAR(200));
 ```
 
@@ -231,7 +231,10 @@ Mach>
 
 ### Primary Key
 
-This is a constraint that can be assigned to a Volatile/Lookup table column. The Volatile / Lookup table does not always need to have a primary key, but you can not use the INSERT ON DUPLICATE KEY UPDATE statement without a primary key.
+This is a constraint that can be assigned to a Volatile/Lookup table column. A
+Lookup table must have a primary key. A Volatile table can omit the primary key,
+but `INSERT ... ON DUPLICATE KEY UPDATE` can be used only when the target table
+has a primary key.
 
 When a primary key is assigned, a red-black tree index corresponding to the primary key is generated.
 
@@ -407,7 +410,7 @@ DROP TABLESPACE TablespaceName;
 
 ```sql
 create_index_stmt ::= 'CREATE' 'INDEX' index_name 'ON' table_name '(' column_name ')' index_type? table_space? index_property_list?
-index_type ::= 'INDEX_TYPE' ( 'KEYWORD' | 'BITMAP' | 'REDBLACK' )
+index_type ::= 'INDEX_TYPE' ( 'LSM' | 'KEYWORD' | 'BITMAP' | 'REDBLACK' )
 table_space ::= 'TABLESPACE' table_space_name
 index_property_list ::= ( 'MAX_LEVEL' | 'PAGE_SIZE' | 'BITMAP_ENCODE' | 'PART_VALUE_COUNT' ) '=' value
 ```
@@ -462,7 +465,9 @@ Indicates the number of rows stored in the Partition of Index.
 ```sql
 -- Example
 -- Index applied to c1 column.
-CREATE INDEX index1 on table1 ( c1 )
+CREATE INDEX index1 on table1 ( c1 );
+-- LSM index applied explicitly.
+CREATE INDEX index_lsm on table1 ( c1 ) INDEX_TYPE LSM;
 -- Keyword index applied to var_column of varchar type, and page_size unit is 100000.
 CREATE INDEX index2 on table1 (var_column) INDEX_TYPE KEYWORD PAGE_SIZE=100000;
 ```
@@ -879,7 +884,7 @@ ALTER ROLLUP _rollup_tag_value_sec WAKEUP;
 ALTER ROLLUP _rollup_tag_value_sec FORCE;
 
 -- Tighten the wakeup interval (must divide the rollup interval)
-ALTER ROLLUP _rollup_tag_value_sec SET WAKEUP INTERVAL 5 SEC;
+ALTER ROLLUP _rollup_tag_value_sec SET WAKEUP INTERVAL 1 SEC;
 ```
 
 Rules

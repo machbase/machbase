@@ -17,52 +17,52 @@ After setting the password,  log in as 'machbase' account.
 
 ## Package Installation
 
-Create a directory called 'macbase_home' and download and install the package from the Machbase download site.
+Create a directory called `machbase_home` and download and install the standard package from the Machbase download site.
 
 ```bash
-[machbase@localhost ~]$ wget http://machbase.com/dist/machbase-fog-x.x.x.official-LINUX-X86-64-release.tgz
+[machbase@localhost ~]$ wget http://machbase.com/dist/machbase-standard-x.x.x.official-LINUX-X86-64-release.tgz
 [machbase@localhost ~]$ mkdir machbase_home
-[machbase@localhost ~]$ mv machbase-fog-x.x.x.official-LINUX-X86-64-release.tgz machbase_home/
+[machbase@localhost ~]$ mv machbase-standard-x.x.x.official-LINUX-X86-64-release.tgz machbase_home/
 [machbase@localhost ~]$ cd machbase_home/
-[machbase@localhost machbase_home]$ tar zxf machbase-fog-x.x.x.official-LINUX-X86-64-release.tgz
+[machbase@localhost machbase_home]$ tar zxf machbase-standard-x.x.x.official-LINUX-X86-64-release.tgz
  
-[machbase@loclahost machbase_home]$ ls -l
+[machbase@localhost machbase_home]$ ls -l
 drwxrwxr-x  5 machbase machbase        64 Oct 30 16:10 3rd-party
 drwxrwxr-x  2 machbase machbase      4096 Oct 30 16:10 bin
 drwxrwxr-x  2 machbase machbase       306 Jan  2 11:36 conf
 drwxrwxr-x  2 machbase machbase       136 Jan  2 11:37 dbs
 drwxrwxr-x  3 machbase machbase        22 Oct 30 16:10 doc
+drwxrwxr-x  4 machbase machbase        30 Oct 30 16:10 http
 drwxrwxr-x  2 machbase machbase        96 Oct 30 16:10 include
 drwxrwxr-x  2 machbase machbase        29 Oct 30 16:10 install
 drwxrwxr-x  2 machbase machbase       283 Oct 30 16:10 lib
--rw-rw-r--  1 machbase machbase 139888377 Dec 20 11:33 machbase-fog-x.x.x.official-LINUX-X86-64-release.tgz
-drwxrwxr-x  2 machbase machbase        22 Dec 21 15:43 msg
- 
 drwxrwxr-x  2 machbase machbase         6 Oct 30 16:10 package
 drwxrwxr-x 12 machbase machbase       140 Oct 30 16:10 sample
 drwxrwxr-x  2 machbase machbase      4096 Jan  2 09:37 trc
 drwxrwxr-x 10 machbase machbase       160 Oct 30 16:10 tutorials
-drwxrwxr-x  3 machbase machbase        19 Oct 30 16:10 webadmin
+drwxrwxr-x  3 machbase machbase        44 Oct 30 16:10 utility
+-rw-rw-r--  1 machbase machbase 139888377 Dec 20 11:33 machbase-standard-x.x.x.official-LINUX-X86-64-release.tgz
  
-[machbase@loclahost machbase_home]$
+[machbase@localhost machbase_home]$
 ```
 
 The directory descriptions installed are as follows.
 
-|Direcotry|Description|
+|Directory|Description|
 |--|--|
 |bin|Executable files|
 |conf|Configuration files|
 |dbs|Data storage space|
 |doc|License files|
+|http|REST API/web resources|
 |include|Various header files for the CLI program|
 |install|mk files for Makefile|
 |lib|Various libraries|
-|msg|Machbase server error messages|
 |package|(Cluster edition) Path to save the added package|
 |sample|Various example files|
 |trc|Machbase server logs and trace contents|
-|webadmin|MWA Web Server Files|
+|tutorials|Tutorial files|
+|utility|Utility files|
 |3rd-party|Grafana plug-in files|
 
 
@@ -83,14 +83,15 @@ source .bashrc
 
 ## Set Machbase Property
 
-The $MACHBASE_HOME/conf directory contains the file macbase.conf.sample.
+The `$MACHBASE_HOME/conf` directory contains standard and edition-specific sample configuration files.
 
 ```bash
 
 [machbase@localhost ~]$ cd $MACHBASE_HOME/conf
 [machbase@localhost conf]$ ls -l
--rw-rw-r-- 1 machbase machbase   106 Oct 30 16:10 machtag.sql.sample
--rw-rw-r-- 1 machbase machbase 17556 Oct 30 16:10 machbase.conf.sample
+-rw-rw-r-- 1 machbase machbase 20914 Oct 30 16:10 machbase.conf.sample.standard
+-rw-rw-r-- 1 machbase machbase 21363 Oct 30 16:10 machbase.conf.sample.edge
+-rw-rw-r-- 1 machbase machbase   407 Oct 30 16:10 machloader.conf.sample
  
 [machbase@localhost conf]$
 ```
@@ -123,13 +124,14 @@ To create the database, use the machadmin utility. You can see the command with 
   -c, --createdb                        Create Machbase database.
   -d, --destroydb                       Destroy Machbase database.
   -k, --kill                            Terminate Machbase server.
-  -i, --silence                         Produce less output.
+  -i, --silent                          Produce less output.
   -r, --restore                         Restore Machbase database.
   -x, --extract                         Extract BackupFile to BackupDirectory.
   -w, --viewimage                       Display information of BackupImageFile.
   -e, --check                           Check whether Machbase Server is running.
   -t, --licinstall                      Install the license file.
   -f, --licinfo                         Display information of installed license file.
+      --home-path=path                  Specify the home path
  
 [machbase@localhost machbase_home]$
 ```
@@ -193,7 +195,7 @@ The administrator account SYS is ready and the password is set to MANAGER.
 Machbase server address (Default:127.0.0.1) :
 Machbase user ID  (Default:SYS)
 Machbase User Password :
-MACHBASE_CONNECT_MODE=INET, PORT=5656
+MACHBASE_CONNECT_MODE=INET, PORT=5656 EDITION=STANDARD
 Type 'help' to display a list of available commands.
 Mach>
 ```
@@ -270,6 +272,6 @@ Delete the database with the -d option.
      All Rights Reserved
 -----------------------------------------------------------------
 Destroy Machbase database. Are you sure?(y/N) y
-Database destoryed successfully.
+Database destroyed successfully.
 [machbase@localhost machbase_home]$
 ```

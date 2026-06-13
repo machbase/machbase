@@ -13,9 +13,9 @@ Continuously storing a large amount of data in order to analyze the data greatly
 * Increased disk cost by storing a large volume of data
 * Running into equipment disk limits for data analysis
 
-To solve the problem, it is necessary to back up old data and periodically delete it. If you need to read old data later and you perform data recovery to read the backed up database, it will not only take a long time to recover, but it will also take a long time to convert the database to offline, There is a problem that requires separate equipment to continue the service. Machase supports the MOUNT command to solve this problem.
+To solve the problem, it is necessary to back up old data and periodically delete it. If you need to read old data later and you perform data recovery to read the backed up database, it will not only take a long time to recover, but it will also take a long time to convert the database to offline, There is a problem that requires separate equipment to continue the service. Machbase supports the MOUNT command to solve this problem.
 
-The MOUNT command reads the backed up data while the database is in service and creates a new database independent of the currently running database. One server can add multiple backed-up databases to retrieve data at the same time, but the mounted database is read-only and can not add or delete data.
+The MOUNT command reads the backed up data while the database is in service and creates a new database independent of the currently running database. One server can add multiple backed-up databases to retrieve data at the same time, but the mounted database is read-only and cannot add or delete data.
 
 The Database MOUNT command allows you to read both the backup data and the main database contents simultaneously. Therefore, the mounted database can retrieve data in the same way as the existing data retrieval method.
 
@@ -23,7 +23,7 @@ The Database MOUNT command allows you to read both the backup data and the main 
 
 To execute the MOUNT instruction, the following conditions must be met.
 * The backup database version and the metadata version must be compatible.
-* You can not create tables, create/delete indexes, or add/delete data to a mounted backup database.
+* You cannot create tables, create/delete indexes, or add/delete data to a mounted backup database.
 
 Information about mounted databases can be obtained from the V$STORAGE_MOUNT_DATABASES meta table.
 
@@ -47,7 +47,7 @@ MOUNT DATABASE '/home/machbase/backup' TO mountdb;
 
 ## Unmount 
 
-If the mounded database data no longer needs to be read, use the UNMOUNT command to release the mounted state.
+If the mounted database data no longer needs to be read, use the UNMOUNT command to release the mounted state.
 
 Syntax:
 

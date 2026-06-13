@@ -20,11 +20,11 @@ Download and extract Machbase:
 
 ```bash
 # Download package (replace x.x.x with actual version)
-wget http://machbase.com/dist/machbase-fog-x.x.x.official-LINUX-X86-64-release.tgz
+wget http://machbase.com/dist/machbase-standard-x.x.x.official-LINUX-X86-64-release.tgz
 
 # Create directory and extract
 mkdir machbase_home
-tar zxf machbase-fog-x.x.x.official-LINUX-X86-64-release.tgz -C machbase_home
+tar zxf machbase-standard-x.x.x.official-LINUX-X86-64-release.tgz -C machbase_home
 
 # Set environment variables
 export MACHBASE_HOME=$(pwd)/machbase_home

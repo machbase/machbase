@@ -25,7 +25,7 @@ mach@localhost:~$ machcoordinatoradmin -h
 |-c, --createdb | Creates Coordinator meta|
 |-d, --destroydb| Removes Coordinator meta, Deletes the package files in $MACHBASE_COORDINATOR_HOME/package|
 |-e, --check | Checks that the Coordinator process is running|
-|-i, --silence | Runs without output|
+|-i, --silent | Mutes the banner|
 |--configuration[=name] | Outputs keys and values in configuration settings (only certain keys can be output)|
 |--configure | Lists the system properties |
 |--activate | Switches Cluster status to Service|

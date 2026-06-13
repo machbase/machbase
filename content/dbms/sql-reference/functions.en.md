@@ -1419,6 +1419,22 @@ Thomas
 Johnathan
 ```
 
+## NEXTVAL
+
+`NEXTVAL(sequence_column)` returns the next value for a Lookup table sequence column.
+
+```sql
+NEXTVAL(sequence_column)
+```
+
+- `NEXTVAL` can be used only in an `INSERT` statement.
+- The argument must be a column configured with `PROPERTY(SEQUENCE=...)`.
+- For sequence column creation and examples, see [Sequence Column](../ddl/#sequence-column).
+
+```sql
+INSERT INTO seq_lookup (id, name) VALUES (NEXTVAL(id), 'sensor-a');
+```
+
 
 ## ROUND
 
@@ -2231,6 +2247,19 @@ TO_HEX(id10)                                                                    
 ```
 
 
+## TO_INET_STR
+
+`TO_INET_STR(ipv4_value)` converts an `IPV4` value to dotted-decimal text.
+
+```sql
+TO_INET_STR(ipv4_value)
+```
+
+```sql
+SELECT TO_INET_STR(TO_IPV4('192.168.0.1'));
+```
+
+
 ## TO_IPV4 / TO_IPV4_SAFE
 
 This function converts a given string to an IP version 4 type. If the string can not be converted to a numeric value, the TO_IPV4 () function returns an error and terminates the operation.
@@ -2675,6 +2704,9 @@ ISNAN(number)
 ISINF(number)
 ```
 
+The following example assumes that the table already contains `NaN` and `Inf` values.
+Bare `nan` or `inf` tokens are not valid values for a SQL `INSERT` statement.
+
 ```sql
 Mach> SELECT * FROM test;
 I1                          I2                          I3    
@@ -3098,6 +3130,84 @@ same_seed   diff_seed   diff_default
 
 `RAND(seed)` is deterministic for the same `seed`. `RAND()` without a seed uses session internal state and generates values in `[0,1)`.
 
+## REGEXP_LIKE
+
+`REGEXP_LIKE` tests whether a string matches a regular expression pattern. It returns a
+boolean value and is commonly used in a `WHERE` clause.
+
+```sql
+REGEXP_LIKE(source, pattern)
+REGEXP_LIKE(source, pattern, match_param)
+```
+
+- `source` must be `VARCHAR`.
+- `pattern` must be a constant `VARCHAR` regular expression.
+- `match_param` is optional and must be a constant `VARCHAR`: `c` for case-sensitive
+  matching or `i` for case-insensitive matching. The default is `c`.
+
+```sql
+SELECT *
+FROM sensor_text
+WHERE REGEXP_LIKE(message, 'error|warn', 'i');
+```
+
+## REGEXP_INSTR
+
+`REGEXP_INSTR` returns the 1-based position of a regular expression match. If no match is
+found, it returns `0`.
+
+```sql
+REGEXP_INSTR(source, pattern[, position[, occurrence[, return_pos[, match_param]]]])
+```
+
+- `source` must be `VARCHAR`.
+- `pattern` must be a constant `VARCHAR` regular expression.
+- `position` and `occurrence` are constant integers starting from `1`.
+- `return_pos` is a constant integer: `0` returns the start position and `1` returns the
+  position after the match.
+- `match_param` accepts `c` or `i`. The default is `c`.
+
+```sql
+SELECT REGEXP_INSTR('TechOnTheNet', 'The', 1, 1, 1, 'i');
+```
+
+## REGEXP_SUBSTR
+
+`REGEXP_SUBSTR` returns the substring that matches a regular expression.
+
+```sql
+REGEXP_SUBSTR(source, pattern[, position[, occurrence[, match_param]]])
+```
+
+- `source` must be `VARCHAR`.
+- `pattern` must be a constant `VARCHAR` regular expression.
+- `position` and `occurrence` are constant integers starting from `1`.
+- `match_param` accepts `c` or `i`. The default is `c`.
+
+```sql
+SELECT REGEXP_SUBSTR('TechOnTheNet', 'a|e|i|o|u', 1, 2, 'i');
+```
+
+## REGEXP_REPLACE
+
+`REGEXP_REPLACE` replaces text that matches a regular expression.
+
+```sql
+REGEXP_REPLACE(source, pattern[, replacement[, position[, occurrence[, match_param]]]])
+```
+
+- `source` must be `VARCHAR`.
+- `pattern` and `replacement` must be constant `VARCHAR` values.
+- If `replacement` is omitted, matching text is removed.
+- `position` is a constant integer starting from `1`.
+- `occurrence` is a constant integer. `0` replaces all matches; values greater than `0`
+  replace only that occurrence.
+- `match_param` accepts `c` or `i`. The default is `c`.
+
+```sql
+SELECT REGEXP_REPLACE('TechOnTheNet', 'a|e|i|o|u', 'Z', 1, 2, 'i');
+```
+
 ## Support Type of Built-In Function 
 
 | |Short|Integer|Long|Float|Double|Varchar|Text|Ipv4|Ipv6|Datetime|Binary|
@@ -3130,6 +3240,10 @@ same_seed   diff_seed   diff_default
 |P05 / P10 / P90 / P95|o|o|o|o|o|x|x|x|x|x|x|
 |PERCENTILE_CONT / PERCENTILE_DISC|o|o|o|o|o|x|x|x|x|x|x|
 |QUANTILE|o|o|o|o|o|x|x|x|x|x|x|
+|REGEXP_LIKE|x|x|x|x|x|o|x|x|x|x|x|
+|REGEXP_INSTR|x|x|x|x|x|o|x|x|x|x|x|
+|REGEXP_SUBSTR|x|x|x|x|x|o|x|x|x|x|x|
+|REGEXP_REPLACE|x|x|x|x|x|o|x|x|x|x|x|
 |SLOPE|o|o|o|o|o|x|x|x|x|x|x|
 |TOP_K|o|o|o|o|o|x|x|x|x|x|x|
 |ROUND|o|o|o|o|o|x|x|x|x|x|x|
@@ -3143,6 +3257,7 @@ same_seed   diff_seed   diff_default
 |TO_CHAR|o|o|o|o|o|o|x|o|o|o|x|
 |TO_DATE / TO_DATE_SAFE|x|x|x|x|x|o|x|x|x|x|x|
 |TO_HEX|o|o|o|o|o|o|o|o|o|o|o|
+|TO_INET_STR|x|x|x|x|x|x|x|o|x|x|x|
 |TO_IPV4 / TO_IPV4_SAFE|x|x|x|x|x|o|x|x|x|x|x|
 |TO_IPV6 / TO_IPV6_SAFE|x|x|x|x|x|o|x|x|x|x|x|
 |TO_NUMBER / TO_NUMBER_SAFE|x|x|x|x|x|o|x|x|x|x|x|

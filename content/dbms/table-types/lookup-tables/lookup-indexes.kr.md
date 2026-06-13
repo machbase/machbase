@@ -4,4 +4,11 @@ type: docs
 weight: 50
 ---
 
-Volatile 테이블과 마찬가지로 RED-BLACK 인덱스가 기본으로 제공되며, 사용 방법은 Volatile 테이블과 동일합니다. Volatile 테이블처럼 RED-BLACK 인덱스를 생성할 수 있으며, keyword 및 LSM 인덱스는 생성할 수 없습니다.
+Lookup 테이블은 RED-BLACK 인덱스를 지원합니다. Lookup 테이블에
+`INDEX_TYPE LSM`을 지정해도 Machbase는 RED-BLACK 인덱스를 생성합니다.
+`KEYWORD` 인덱스는 LOG 테이블에서만 사용할 수 있습니다.
+
+```sql
+CREATE LOOKUP TABLE lookup_table (code INTEGER PRIMARY KEY, name VARCHAR(20));
+CREATE INDEX idx_lookup_name ON lookup_table(name) INDEX_TYPE REDBLACK;
+```

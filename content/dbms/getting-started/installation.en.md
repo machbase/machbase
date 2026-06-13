@@ -31,15 +31,15 @@ su - machbase
 
 ```bash
 # Download package
-wget http://machbase.com/dist/machbase-fog-x.x.x.official-LINUX-X86-64-release.tgz
+wget http://machbase.com/dist/machbase-standard-x.x.x.official-LINUX-X86-64-release.tgz
 
 # Create directory
 mkdir machbase_home
-mv machbase-fog-x.x.x.official-LINUX-X86-64-release.tgz machbase_home/
+mv machbase-standard-x.x.x.official-LINUX-X86-64-release.tgz machbase_home/
 cd machbase_home/
 
 # Extract
-tar zxf machbase-fog-x.x.x.official-LINUX-X86-64-release.tgz
+tar zxf machbase-standard-x.x.x.official-LINUX-X86-64-release.tgz
 ```
 
 #### 3. Set Environment Variables

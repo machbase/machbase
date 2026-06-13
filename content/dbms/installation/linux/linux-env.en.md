@@ -73,7 +73,7 @@ The operating system port to be used by Machbase must be reserved so that it can
 If you set a reserved port with the command below, the operating system does not allocate the port to other programs, avoiding port conflicts.
 
 ```bash
-[machbase@localhost ~] sudo echo reserved port range~reserved port range > /proc/sys/net/ipv4/ip_local_reserved_ports
+[machbase@localhost ~] echo 5656-5657 | sudo tee /proc/sys/net/ipv4/ip_local_reserved_ports
 ```
 
 The above method is a temporary method. To set it permanently, you need to edit the /etc/sysctl.conf file.
@@ -81,6 +81,9 @@ The above method is a temporary method. To set it permanently, you need to edit 
 ```bash
 [machbase@localhost ~] sudo vim /etc/sysctl.conf
 
-# add text below
-net.ipv4.ip_local_reserved_ports = reserved port range-reserved port range
+# add text below for the Standard default native and HTTP REST ports.
+net.ipv4.ip_local_reserved_ports = 5656-5657
 ```
+
+For Cluster Edition deployments, include all configured cluster link, admin, service,
+replication, and HTTP ports in the reserved port range.

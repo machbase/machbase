@@ -6,25 +6,25 @@ weight: 20
 
 ## Installation
 
-1. Download the installation file from the Markbase download site and run it.  
+1. Download the installation file from the Machbase download site and run it.
    When the installation start screen is displayed, click the Next button.
 
-![msi1](../msi1.png)
+![msi1](/dbms/installation/windows/msi1.png)
 
 2. On the screen to select the directory folder, the default is usually "C:\Machbase-5.1\". 
    If you want to install to a different directory, you can change the path. 
    After choosing the directory, click the Next button.
     
-![msi2](../msi2.png)
+![msi2](/dbms/installation/windows/msi2.png)
 
 
 3. The installation progress screen is displayed. When the installation is complete, the Next button is activated. Click this button.
     
-![msi3](../msi3.png)
+![msi3](/dbms/installation/windows/msi3.png)
 
 4. The installation completion screen is displayed. Click the Close button.
     
-![msi4](../msi4.png)
+![msi4](/dbms/installation/windows/msi4.png)
 
 
 ## Launch Machbase
@@ -32,9 +32,9 @@ weight: 20
 1. When the Machbase installation is completed, the Machbase shortcut icon is displayed on the desktop.
     Double-click to run the Machbase server.
        
-![machbase_icon](../machbase_icon.png)
+![machbase_icon](/dbms/installation/windows/machbase_icon.png)
 
-3. This is the window interface screen for managing the Machbase server. 
-    You can control the Machbase server and the MWA Web server by clicking the menu.
+3. This is the window interface screen for managing the Machbase server.
+    You can control the Machbase server and HTTP REST service by clicking the menu.
     
-![machbase_winui](../machbase_winui.png)
+![machbase_winui](/dbms/installation/windows/machbase_winui.png)

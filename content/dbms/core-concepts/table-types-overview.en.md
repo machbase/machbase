@@ -86,12 +86,12 @@ Perfect for:
 
 ```sql
 -- Time axis
-CREATE TAGDATA TABLE sensors (
+CREATE TAG TABLE sensors (
     sensor_id VARCHAR(20) PRIMARY KEY,    -- Tag name (sensor identifier)
     time DATETIME BASETIME,               -- Timestamp
-    value DOUBLE SUMMARIZED,              -- Measured value(s)
-    other_value DOUBLE SUMMARIZED
-);
+    value DOUBLE SUMMARIZED,              -- Rollup target value
+    other_value DOUBLE                    -- Additional measured value
+) WITH ROLLUP;
 
 -- Distance axis
 CREATE TAG TABLE conveyor_profile (
@@ -104,17 +104,20 @@ CREATE TAG TABLE conveyor_profile (
 
 ### Key Features
 
-**Automatic Rollup Statistics (Time Axis Only)**:
+**Rollup Statistics (Time Axis Only)**:
 ```sql
 -- Raw data
 INSERT INTO sensors VALUES ('sensor01', NOW, 25.3);
 
--- Automatic statistics (no manual work!)
-SELECT * FROM sensors WHERE rollup = hour;
--- Returns: min_value, max_value, avg_value, sum_value, count, sumsq_value
+-- Hourly statistics through the rollup expression
+SELECT rollup('hour', 1, time) AS hour_time, AVG(value), COUNT(value)
+FROM sensors
+GROUP BY hour_time;
 ```
 
-Distance-axis tag tables use range queries and bucket aggregations instead of rollups.
+Create the table with `WITH ROLLUP` or define rollups with `CREATE ROLLUP` before using
+the rollup expression. Distance-axis tag tables use range queries and bucket aggregations
+instead of rollups.
 
 **Metadata Layer**:
 ```sql
@@ -135,7 +138,7 @@ UPDATE sensors._META SET location = 'Building A' WHERE name = 'sensor01';
 
 **DO**:
 - Use for multi-sensor data (1000s of sensors in one table)
-- Mark analytical columns as SUMMARIZED
+- Mark the rollup target column as SUMMARIZED
 - Query rollup tables for statistics on time-axis tables
 - Use metadata table for sensor info
 
@@ -148,23 +151,23 @@ UPDATE sensors._META SET location = 'Building A' WHERE name = 'sensor01';
 
 ```sql
 -- Manufacturing: Equipment sensors
-CREATE TAGDATA TABLE equipment_telemetry (
+CREATE TAG TABLE equipment_telemetry (
     equipment_id VARCHAR(50) PRIMARY KEY,
     time DATETIME BASETIME,
     temperature DOUBLE SUMMARIZED,
-    vibration DOUBLE SUMMARIZED,
-    rpm DOUBLE SUMMARIZED,
-    power_consumption DOUBLE SUMMARIZED
+    vibration DOUBLE,
+    rpm DOUBLE,
+    power_consumption DOUBLE
 );
 
 -- Smart City: Environmental monitoring
-CREATE TAGDATA TABLE air_quality (
+CREATE TAG TABLE air_quality (
     station_id VARCHAR(30) PRIMARY KEY,
     time DATETIME BASETIME,
     pm25 DOUBLE SUMMARIZED,
-    pm10 DOUBLE SUMMARIZED,
-    co2 DOUBLE SUMMARIZED,
-    temperature DOUBLE SUMMARIZED
+    pm10 DOUBLE,
+    co2 DOUBLE,
+    temperature DOUBLE
 );
 
 -- Distance axis: Conveyor or route profile
@@ -213,6 +216,9 @@ INSERT INTO app_logs VALUES ('ERROR', 'DB', 'Connection timeout', 123, '192.168.
 
 **Full-Text Search**:
 ```sql
+-- Create a keyword index before using SEARCH
+CREATE INDEX idx_app_logs_message ON app_logs(message) INDEX_TYPE KEYWORD;
+
 -- Fast text search
 SELECT * FROM app_logs
 WHERE message SEARCH 'timeout'
@@ -381,7 +387,7 @@ Perfect for:
 
 ```sql
 CREATE LOOKUP TABLE devices (
-    device_id INTEGER,
+    device_id VARCHAR(20) PRIMARY KEY,
     device_name VARCHAR(100),
     location VARCHAR(200),
     device_type VARCHAR(50),
@@ -394,13 +400,13 @@ CREATE LOOKUP TABLE devices (
 **Full CRUD Support**:
 ```sql
 -- Insert
-INSERT INTO devices VALUES (101, 'Sensor A', 'Building 1', 'Temperature', 'Facilities');
+INSERT INTO devices VALUES ('sensor01', 'Sensor A', 'Building 1', 'Temperature', 'Facilities');
 
 -- Update
-UPDATE devices SET location = 'Building 2' WHERE device_id = 101;
+UPDATE devices SET location = 'Building 2' WHERE device_id = 'sensor01';
 
 -- Delete
-DELETE FROM devices WHERE device_id = 101;
+DELETE FROM devices WHERE device_id = 'sensor01';
 
 -- Select
 SELECT * FROM devices WHERE device_type = 'Temperature';
@@ -412,7 +418,8 @@ SELECT * FROM devices WHERE device_type = 'Temperature';
 SELECT s.*, d.device_name, d.location
 FROM sensors s
 JOIN devices d ON s.sensor_id = d.device_id
-DURATION 1 HOUR;
+WHERE s.time BETWEEN TO_DATE('2025-10-10 14:00:00', 'YYYY-MM-DD HH24:MI:SS')
+                 AND TO_DATE('2025-10-10 15:00:00', 'YYYY-MM-DD HH24:MI:SS');
 ```
 
 **Performance**:
@@ -438,7 +445,7 @@ DURATION 1 HOUR;
 ```sql
 -- Device registry
 CREATE LOOKUP TABLE device_registry (
-    device_id VARCHAR(50),
+    device_id VARCHAR(50) PRIMARY KEY,
     device_name VARCHAR(100),
     device_type VARCHAR(50),
     location VARCHAR(200),
@@ -448,7 +455,7 @@ CREATE LOOKUP TABLE device_registry (
 
 -- Configuration management
 CREATE LOOKUP TABLE system_config (
-    config_key VARCHAR(100),
+    config_key VARCHAR(100) PRIMARY KEY,
     config_value VARCHAR(500),
     config_category VARCHAR(50),
     description VARCHAR(500)
@@ -456,7 +463,7 @@ CREATE LOOKUP TABLE system_config (
 
 -- User management
 CREATE LOOKUP TABLE users (
-    user_id INTEGER,
+    user_id INTEGER PRIMARY KEY,
     username VARCHAR(100),
     email VARCHAR(200),
     role VARCHAR(50),
@@ -499,7 +506,7 @@ CREATE LOOKUP TABLE users (
 
 ```sql
 -- Tag: Sensor readings
-CREATE TAGDATA TABLE sensor_data (...);
+CREATE TAG TABLE sensor_data (...);
 
 -- Lookup: Device registry
 CREATE LOOKUP TABLE devices (...);
@@ -531,7 +538,7 @@ CREATE LOOKUP TABLE users (...);
 
 ```sql
 -- Tag: Equipment sensors
-CREATE TAGDATA TABLE equipment_telemetry (...);
+CREATE TAG TABLE equipment_telemetry (...);
 
 -- Log: Production events
 CREATE TABLE production_log (...);
@@ -555,7 +562,7 @@ CREATE TABLE sensors (sensor_id VARCHAR(20), value DOUBLE);
 
 **Good**: Use Tag table
 ```sql
-CREATE TAGDATA TABLE sensors (
+CREATE TAG TABLE sensors (
     sensor_id VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
     value DOUBLE SUMMARIZED
@@ -566,14 +573,14 @@ CREATE TAGDATA TABLE sensors (
 
 **Bad**: Creating 1000 tables for 1000 sensors
 ```sql
-CREATE TAGDATA TABLE sensor001 (...);
-CREATE TAGDATA TABLE sensor002 (...);
+CREATE TAG TABLE sensor001 (...);
+CREATE TAG TABLE sensor002 (...);
 -- ... 998 more tables
 ```
 
 **Good**: One table for all sensors
 ```sql
-CREATE TAGDATA TABLE all_sensors (
+CREATE TAG TABLE all_sensors (
     sensor_id VARCHAR(20) PRIMARY KEY,
     ...
 );
@@ -602,7 +609,7 @@ CREATE LOOKUP TABLE sensor_readings (...);
 
 **Good**: Use Tag or Log table
 ```sql
-CREATE TAGDATA TABLE sensor_readings (...);
+CREATE TAG TABLE sensor_readings (...);
 ```
 
 ## Migration Guide
@@ -618,7 +625,7 @@ CREATE TAGDATA TABLE sensor_readings (...);
 **From InfluxDB**:
 - Measurements → Tag tables
 - Tags → Tag primary key + metadata
-- Fields → SUMMARIZED columns
+- Fields → a SUMMARIZED value column plus regular value columns
 
 **From MongoDB**:
 - Time-series collections → Tag/Log tables
@@ -636,7 +643,7 @@ CREATE TAGDATA TABLE sensor_readings (...);
 | **DELETE** | Time-based | Time-based | By key | By key |
 | **Storage** | Disk | Disk | Memory | Disk |
 | **Persistence** | Yes | Yes | No | Yes |
-| **Rollup** | Auto | No | No | No |
+| **Rollup** | When configured | No | No | No |
 | **Best Query** | ID + time | Time | Key | Any |
 | **Compression** | Very high | High | None | Moderate |
 
@@ -648,7 +655,7 @@ CREATE TAGDATA TABLE sensor_readings (...);
 
 ## Key Takeaways
 
-1. **Tag tables** for sensor/device data with automatic rollup
+1. **Tag tables** for sensor/device data with rollup support
 2. **Log tables** for flexible event streams and logs
 3. **Volatile tables** for in-memory, update-able data
 4. **Lookup tables** for reference and master data

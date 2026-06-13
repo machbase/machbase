@@ -16,17 +16,20 @@ mach@localhost:~$ machadmin -h
 
 | 옵션 | 설명 |
 |--|--|
-|-u, --startup/ --recovery[=simple,complex,reset]|Machbase 서버 시작/복구 모드 (기본값: simple)
-|-s, --shutdown | |Machbase 서버 정상 종료 |
+|-u, --startup|Machbase 서버 시작 |
+|--recovery[=simple,complex,reset]|시작 시 사용하는 복구 모드 (기본값: simple) |
+|-s, --shutdown |Machbase 서버 정상 종료 |
 |-c, --createdb |Machbase 데이터베이스 생성 |
 | -d, --destroydb| Machbase 데이터베이스 삭제 |
 | -k, --kill| Machbase 서버 강제 종료 |
-| -i, --silence| 출력 없이 실행 |
-| -r, --restore |백업으로부터 데이터베이스 복구
+| -i, --silent| 출력을 줄여 실행 |
+| -r, --restore |백업으로부터 데이터베이스 복구 |
 | -x, --extract| 백업 파일을 백업 디렉토리로 변환 |
+| -w, --viewimage| 백업 이미지 파일 정보 출력 |
 |-e, --check| Machbase 서버 실행 상태 확인 |
 |-t, --licinstall| 라이선스 파일 설치 |
 |-f, --licinfo| 설치된 라이선스 정보 출력|
+|--home-path=path|Machbase 홈 경로 지정 |
 
 ## 복구 모드
 
@@ -51,7 +54,7 @@ mach@localhost:~$ machadmin -s
  
 -----------------------------------------------------------------
      Machbase Administration Tool
-     Release Version - 5.1.9.community
+     Release Version - 8.5.4.develop
      Copyright 2014, MACHBASE Corp. or its subsidiaries
      All Rights Reserved
 -----------------------------------------------------------------
@@ -67,7 +70,7 @@ Server shut down successfully.
 mach@localhost:~$ machadmin -c
 -----------------------------------------------------------------
      Machbase Administration Tool
-     Release Version - 5.1.9.community
+     Release Version - 8.5.4.develop
      Copyright 2014, MACHBASE Corp. or its subsidiaries
      All Rights Reserved
 -----------------------------------------------------------------
@@ -82,7 +85,7 @@ Database created successfully.
 mach@localhost:~$ machadmin -d
 -----------------------------------------------------------------
      Machbase Administration Tool
-     Release Version - 5.1.9.community
+     Release Version - 8.5.4.develop
      Copyright 2014, MACHBASE Corp. or its subsidiaries
      All Rights Reserved
 -----------------------------------------------------------------
@@ -104,7 +107,7 @@ machadmin -k
 mach@localhost:~$ machadmin -k
 -----------------------------------------------------------------
      Machbase Administration Tool
-     Release Version - 5.1.9.community
+     Release Version - 8.5.4.develop
      Copyright 2014, MACHBASE Corp. or its subsidiaries
      All Rights Reserved
 -----------------------------------------------------------------
@@ -136,7 +139,7 @@ machadmin -r backup_database_path
 mach@localhost:~$ machadmin -r 'backup'
 -----------------------------------------------------------------
      Machbase Administration Tool
-     Release Version - 5.1.9.community
+     Release Version - 8.5.4.develop
      Copyright 2014, MACHBASE Corp. or its subsidiaries
      All Rights Reserved
 -----------------------------------------------------------------
@@ -158,7 +161,7 @@ machadmin -e
 mach@localhost:~$ machadmin -e
 -----------------------------------------------------------------
      Machbase Administration Tool
-     Release Version - 5.1.9.community
+     Release Version - 8.5.4.develop
      Copyright 2014, MACHBASE Corp. or its subsidiaries
      All Rights Reserved
 -----------------------------------------------------------------
@@ -172,7 +175,7 @@ mach@localhost:~$ machadmin -e
 mach@localhost:~$ machadmin -e
 -----------------------------------------------------------------
      Machbase Administration Tool
-     Release Version - 5.1.9.community
+     Release Version - 8.5.4.develop
      Copyright 2014, MACHBASE Corp. or its subsidiaries
      All Rights Reserved
 -----------------------------------------------------------------
@@ -194,7 +197,7 @@ machadmin -t license_file
 mach@localhost:~$ machadmin -t license.dat
 -----------------------------------------------------------------
      Machbase Administration Tool
-     Release Version - 5.1.9.community
+     Release Version - 8.5.4.develop
      Copyright 2014, MACHBASE Corp. or its subsidiaries
      All Rights Reserved
 -----------------------------------------------------------------
@@ -209,30 +212,20 @@ License installed successfully.
 mach@localhost:~$ machadmin -f
 -----------------------------------------------------------------
      Machbase Administration Tool
-     Release Version - 5.1.9.community
+     Release Version - 8.5.4.develop
      Copyright 2014, MACHBASE Corp. or its subsidiaries
      All Rights Reserved
 -----------------------------------------------------------------
-                   INFORMATION
-Install Date                      : 2018-12-20 11:34:43
-Company#ID-ProjectName            : machbase
-License Policy                    : CORE
-License Type(Version 2)           : OFFICIAL
-Host ID                           : FFFFFFFFFFFFFFF
-Issue Date                        : 2013-03-25
-Expiry Date                       : 2037-03-18
-Max Data Size For a Day(GB)       : 0
-Percentage Of Data Addendum(%)    : 0
-Overflow Action                   : 0
-Overflow Count to Stop Per Month  : 0
-Stop Action                       : 0
-Reset Flag                        : 0
+	                   INFORMATION
+ID                                : 00000001
+Issue Date                        : 2099-12-31
+License Type(Version 3)           : FOGUNLIMITED
+Company                           : MACHBASE
+Project(Product)                  : NONE
+Country Code                      : KR
+Install Date                      : 2026-06-13 15:08:00
 -----------------------------------------------------------------
-                   STATUS
-Usage Of Data(GB)                 : 0.000000
-Previous Checked Date             : 2018-12-22
-Violation Count                   : 0
-Stop Enabled                      : 0
+License information displayed successfully.
 -----------------------------------------------------------------
 License information displayed successfully.
 ```

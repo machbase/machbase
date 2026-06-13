@@ -27,7 +27,9 @@ INSERT INTO table_name VALUES (value1, value2, value3, ...);
 ```
 
 ```sql
-INSERT INTO sensor_data VALUES('sensor1', 10.1); INSERT INTO sensor_data VALUES('sensor2', 20.2); INSERT INTO sensor_data VALUES('sensor3', 30.3);
+INSERT INTO sensor_data VALUES('sensor1', 10.1);
+INSERT INTO sensor_data VALUES('sensor2', 20.2);
+INSERT INTO sensor_data VALUES('sensor3', 30.3);
 ```
 
 

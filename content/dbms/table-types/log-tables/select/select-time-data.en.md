@@ -14,8 +14,8 @@ Machbase outputs data in the reverse order of the input order. In other words, t
 ## Syntax
 
 ```sql
-DURATION    time_expression [BEFORE time_expression | TO_DATE(time) ];
-DURATION    time_expression [AFTER TO_DATE(time)]; 
+DURATION    time_expression [BEFORE time_expression];
+DURATION    time_expression [AFTER time_expression];
 time_expression
  -  ALL
  -  n   year
@@ -164,8 +164,8 @@ When the user tries to retrieve data based on two absolute times, a conditional 
 
 A and B are absolute times and are expressed using the TO_DATE function. A and B can be set differently according to the user's intention. E.g,
 
-* When A comes after B, the search direction outputs the data in order of latest to oldest just as it is used for BEFORE.
-* When B comes before A, the search direction outputs the data in order of oldest to latest just as it is used for AFTER.
+* When A comes before B, the search direction outputs the data in order of oldest to latest just as it is used for AFTER.
+* When B comes after A, the search direction outputs the data in order of latest to oldest just as it is used for BEFORE.
 
 The following example shows how the data is output.
 

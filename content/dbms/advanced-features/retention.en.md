@@ -12,14 +12,15 @@ You can create a retention policy that specifies the retention period and deleti
 
 Create a RETENTION POLICY by specifying the retention period and deletion cycle.
 
-The retention period can be specified in units of months and days, and the deletion cycle can be specified in units of days and hours.
+The retention period can be specified in units of months, days, hours, minutes, and seconds.
+The deletion cycle can be specified in units of days, hours, minutes, and seconds.
 
 POLICY information can be checked by querying the **M$RETENTION** table.
 
 **Syntax:**
 
 ```sql
-CREATE RETENTION policy_name DURATION duration {MONTH|DAY} INTERVAL interval {DAY|HOUR}
+CREATE RETENTION policy_name DURATION duration {MONTH|DAY|HOUR|MIN|SEC} INTERVAL interval {DAY|HOUR|MIN|SEC}
 ```
 
 * policy_name : Policy name to create
@@ -37,12 +38,17 @@ Executed successfully.
 Mach> CREATE RETENTION policy_1m_3d DURATION 1 MONTH INTERVAL 3 DAY;
 Executed successfully.
 
+-- Short intervals are also valid.
+Mach> CREATE RETENTION policy_30s_3s DURATION 30 SEC INTERVAL 3 SEC;
+Executed successfully.
+
 Mach> SELECT * FROM M$RETENTION;
-USER_ID     POLICY_NAME                               DURATION             INTERVAL             
+USER_ID     POLICY_NAME                               DURATION             INTERVAL
 -----------------------------------------------------------------------------------------------------
-1           POLICY_1D_1H                              86400                3600                 
-1           POLICY_1M_3D                              2592000              259200               
-[2] row(s) selected.
+1           POLICY_1D_1H                              86400                3600
+1           POLICY_1M_3D                              2592000              259200
+1           POLICY_30S_3S                             30                   3
+[3] row(s) selected.
 ```
 
 ## Apply Retention Policy
@@ -72,12 +78,12 @@ Mach> ALTER TABLE tag ADD RETENTION policy_1d_1h;
 Altered successfully.
 
 Mach> SELECT * FROM V$RETENTION_JOB;
-USER_NAME                                                                         TABLE_NAME                                                                        
+USER_NAME                                                                         TABLE_NAME
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-POLICY_NAME                                                                       STATE                                                                             LAST_DELETED_TIME               
+POLICY_NAME                                                                       STATE                                                                             LAST_DELETED_TIME
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-SYS                                                                               TAG                                                                               
-POLICY_1D_1H                                                                      WAITING                                                                           NULL                            
+SYS                                                                               TAG
+POLICY_1D_1H                                                                      WAITING                                                                           NULL
 [1] row(s) selected.
 
 ```

@@ -24,6 +24,9 @@ Virtual Table은 읽기 전용으로 사용자가 추가하거나 삭제, 갱신
   * [V$SYSTIME](#vsystime)
   * [V$STMT](#vstmt)
   * [V$VERSION](#vversion)
+  * [V$HTTP\_STATUS](#vhttp_status)
+  * [V$NEO\_SESSION](#vneo_session)
+  * [V$NEO\_STMT](#vneo_stmt)
 * [Result Cache](#result-cache)
   * [V$RS\_CACHE\_LIST](#vrs_cache_list)
   * [V$RS\_CACHE\_STAT](#vrs_cache_stat)
@@ -59,6 +62,7 @@ Virtual Table은 읽기 전용으로 사용자가 추가하거나 삭제, 갱신
 * [Tag Table](#tag-table)
   * [V$STORAGE\_TAG\_TABLES](#vstorage_tag_tables)
   * [V$STORAGE\_TAG\_CACHE](#vstorage_tag_cache)
+  * [V$STORAGE\_TAG\_CACHE\_BASE](#vstorage_tag_cache_base)
   * [V$STORAGE\_TAG\_CACHE\_OBJECTS](#vstorage_tag_cache_objects)
   * [V$STORAGE\_TAG\_TABLE\_FILES](#vstorage_tag_table_files)
   * [V$STORAGE\_TAG\_INDEX](#vstorage_tag_index)
@@ -68,7 +72,6 @@ Virtual Table은 읽기 전용으로 사용자가 추가하거나 삭제, 갱신
   * [V$STREAMS](#vstreams)
 * [License](#license)
   * [V$LICENSE\_INFO](#vlicense_info)
-  * [V$LICENSE\_STATUS](#vlicense_status)
 * [Mutex](#mutex)
   * [V$MUTEX](#vmutex)
   * [V$MUTEX\_WAIT\_STAT](#vmutex_wait_stat)
@@ -88,6 +91,7 @@ Virtual Table은 읽기 전용으로 사용자가 추가하거나 삭제, 갱신
   * [V$TABLES](#vtables)
   * [V$COLUMNS](#vcolumns)
   * [V$RETENTION\_JOB](#vretention_job)
+  * [V$USER\_AUTH\_KEYS](#vuser_auth_keys)
 
 ## Session/System
 ### V$PROPERTY
@@ -240,6 +244,50 @@ MACHBASE 의 버전에 대한 정보를 표시합니다.
 | FILE_CM_MINOR_VERSION     | File Client (Communication Level) 마이너 버전 |
 | FILE_CREATE_TIME          | 파일 생성 시각                                 |
 | EDITION                   | MACHBASE 유형                              |
+
+### V$HTTP_STATUS
+---
+
+임베디드 HTTP 엔드포인트의 HTTP 서비스 상태를 표시합니다.
+
+| 컬럼 이름 | 설명 |
+| -- | -- |
+| DOC_ROOT | HTTP 문서 루트 |
+| HTTP_PORT | HTTP 서비스 포트 |
+| THREAD_COUNT | HTTP 작업 스레드 수 |
+| CONNECT_COUNT | 접속 수 |
+| SERVICE_SUCCESS_COUNT | 성공한 서비스 수 |
+| SERVICE_FAILURE_COUNT | 실패한 서비스 수 |
+| TOTAL_SERVICE_COUNT | 전체 서비스 수 |
+| CURRENT_SERVICE_COUNT | 현재 서비스 수 |
+| MAX_HTTP_MEM | 최대 HTTP 메모리 크기 |
+
+### V$NEO_SESSION
+---
+
+Neo 프로토콜 클라이언트의 세션 상태를 표시합니다.
+
+| 컬럼 이름 | 설명 |
+| -- | -- |
+| ID | 세션 식별자 |
+| USER_ID | 사용자 식별자 |
+| USER_NAME | 사용자 이름 |
+| STMT_COUNT | 세션의 statement 수 |
+| DISCONN_FLAG | 연결 해제 플래그 |
+
+### V$NEO_STMT
+---
+
+Neo 프로토콜 클라이언트의 statement 상태를 표시합니다.
+
+| 컬럼 이름 | 설명 |
+| -- | -- |
+| ID | statement 식별자 |
+| SESS_ID | 세션 식별자 |
+| STATE | statement 상태 |
+| QUERY | statement 텍스트 |
+| APPEND_SUCCESS_CNT | append 성공 건수 |
+| APPEND_FAILURE_CNT | append 실패 건수 |
 
 ## Result Cache
 ### V$RS_CACHE_LIST
@@ -734,6 +782,18 @@ Tagdata Table 의 파티션 테이블에서 사용하는 캐시 정보를 표시
 | MEMORY_WAIT | 데이터 메모리가 캐시 충돌로 대기한 횟수   |
 | IO_WAIT     | 데이터 읽기 연산 대기 횟수          |
 
+### V$STORAGE_TAG_CACHE_BASE
+---
+
+태그 캐시 풀의 집계 정보를 표시합니다.
+
+| 컬럼 이름 | 설명 |
+| -- | -- |
+| POOL_ID | 캐시 풀 식별자 |
+| TOTAL_CACHE_MEMORY | 전체 캐시 메모리 |
+| TOTAL_OBJECT_COUNT | 전체 캐시 객체 수 |
+| TOTAL_LRU_LOOP_COUNT | 전체 LRU 루프 수 |
+
 ### V$STORAGE_TAG_CACHE_OBJECTS
 ---
 
@@ -837,31 +897,18 @@ Stream 정보를 표시합니다.
 
 | 컬럼 이름            | 설명                     |
 | ---------------- | ---------------------- |
-| INSTALL_DATE     | 설치일                    |
-| TYPE             | 라이선스 유형                |
-| POLICY           | 라이선스 정책 유형             |
-| CUSTOMER         | 고객사 이름                 |
+| ID               | 라이선스 ID               |
 | ISSUE_DATE       | 발행일                    |
-| ID               | 호스트 ID                 |
-| EXPIRY_DATE      | 만료일                    |
-| SIZE_LIMIT       | 일 입력제한량                |
-| ADDENDUM         | 추가 데이터 비율              |
-| VIOLATION_ACTION | 위반 시 행동                |
-| VIOLATION_LIMIT  | 서비스가 중단될 위반 횟수 (매월 갱신) |
-| STOP_ACTION      | 중단 행동                  |
-| RESET_FLAG       | (서버 내부 사용)             |
+| TYPE             | 라이선스 유형                |
+| CUSTOMER         | 고객사 이름                 |
+| PROJECT          | 프로젝트 이름                |
+| COUNTRY_CODE     | 국가 코드                  |
+| INSTALL_DATE     | 설치일                    |
+| VIOLATE_STATUS   | 라이선스 위반 상태             |
+| VIOLATE_MSG      | 라이선스 위반 메시지            |
 
-### V$LICENSE_STATUS
----
-
-라이선스 상태를 표시합니다.
-
-| 컬럼 이름               | 설명                   |
-| ------------------- | -------------------- |
-| USER_DATA_PER_DAY   | 하루에 입력할 수 있는 데이터 제한량 |
-| PREVIOUS_CHECK_DATE | 직전 라이선스 검사일          |
-| VIOLATION_COUNT     | 라이선스 위반 횟수           |
-| STOP_ENABLED        | (제거됨)                |
+`V$LICENSE_STATUS`는 Standard 8.5.4 서버에서 노출되지 않습니다. Standard 에디션에서
+조회 가능한 라이선스 필드는 `V$LICENSE_INFO`를 사용하십시오.
 
 ## Mutex
 ### V$MUTEX
@@ -897,6 +944,9 @@ Stream 정보를 표시합니다.
 | SYMBOL    | 뮤텍스 획득을 호출한 함수의 심볼  | TRACE_MUTEX_WAIT_STACK=1일 때에만 수집 |
 
 ## Cluster
+
+다음 가상 테이블은 클러스터 에디션용이며 Standard 서버에서는 노출되지 않습니다.
+실행 중인 에디션에서 조회 가능한지 `V$TABLES`로 확인한 뒤 사용하십시오.
 
 ### V$NODE_STATUS
 ---
@@ -1066,7 +1116,7 @@ V$로 시작하는 모든 Virtual Table 을 표시합니다.
 | TYPE        | 테이블 유형       |
 | DATABASE_ID | 데이터베이스 식별자   |
 | ID          | 테이블 식별자      |
-| USER ID     | 테이블을 생성한 사용자 |
+| USER_ID     | 테이블을 생성한 사용자 |
 | COLCOUNT    | 컬럼의 갯수       |
 
 ### V$COLUMNS
@@ -1100,3 +1150,21 @@ RETENTION POLICY가 적용된 테이블 정보를 표시합니다.
 | POLICY_NAME       | 적용되어 있는 POLICY 이름                |
 | STATE             | RETENTION 상태 (RUNNING/WAITING/STOPPED) |
 | LAST_DELETED_TIME | 마지막으로 삭제된 시간                   |
+
+### V$USER_AUTH_KEYS
+---
+
+Challenge 인증에 등록된 공개 키 정보를 표시합니다.
+
+| 컬럼 이름 | 설명 |
+| -- | -- |
+| KEY_ID | 키 식별자 |
+| USER_ID | 사용자 식별자 |
+| USER_NAME | 사용자 이름 |
+| KEY_ALGO | 키 알고리즘 |
+| KEY_PARAM | 키 파라미터 |
+| PUBKEY | 공개 키 텍스트 |
+| ACTIVATED | 키 활성화 여부 |
+| VALID_AFTER | 키 유효 시작일 |
+| VALID_BEFORE | 키 유효 종료일 |
+| COMMENT | 키 설명 |

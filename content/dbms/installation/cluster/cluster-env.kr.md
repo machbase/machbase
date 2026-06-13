@@ -27,7 +27,7 @@ sudo shutdown -r now
 3. 결과를 확인합니다. 출력값이 65535이면 성공적으로 변경된 것입니다.
 
 ```bash
-unlimit -Sn
+ulimit -Sn
 ```
 
 
@@ -62,35 +62,35 @@ date
 1. 현재 설정값을 확인합니다.
 
 ```bash
-다음 명령으로 확인합니다.
+# 다음 명령으로 확인합니다.
 sysctl -a | egrep 'mem_(max|default)|tcp_.*mem'
 ```
 
 2. 다음 명령으로 설정값을 변경합니다 (64GB 메모리 기준).
 
 ```bash
-sysctl -w net.core.rmem_default = "33554432"     # 32MB
-sysctl -w net.core.wmem_default = "33554432"
-sysctl -w net.core.rmem_max     = "268435456"    # 256MB
-sysctl -w net.core.wmem_max     = "268435456"
-sysctl -w net.ipv4.tcp_rmem     = "262144 33554432 268435456"
-sysctl -w net.ipv4.tcp_wmem     = "262144 33554432 268435456"
+sudo sysctl -w net.core.rmem_default=33554432     # 32MB
+sudo sysctl -w net.core.wmem_default=33554432
+sudo sysctl -w net.core.rmem_max=268435456        # 256MB
+sudo sysctl -w net.core.wmem_max=268435456
+sudo sysctl -w 'net.ipv4.tcp_rmem=262144 33554432 268435456'
+sudo sysctl -w 'net.ipv4.tcp_wmem=262144 33554432 268435456'
 
 # 8388608 페이지 * 4KB = 32GB
-sysctl -w net.ipv4.tcp_mem      = "8388608 8388608 8388608"
+sudo sysctl -w 'net.ipv4.tcp_mem=8388608 8388608 8388608'
 ```
 
 3. 변경 사항을 유지하려면 /etc/sysctl.conf 파일에 추가하고 호스트 OS를 재시작합니다.
 
 ```bash
 # /etc/sysctl.conf 파일을 수정합니다.
-net.core.rmem_default = "33554432"
-net.core.wmem_default = "33554432"
-net.core.rmem_max     = "268435456"
-net.core.wmem_max     = "268435456"
-net.ipv4.tcp_rmem     = "262144 33554432 268435456"
-net.ipv4.tcp_wmem     = "262144 33554432 268435456"
-net.ipv4.tcp_mem      = "8388608 8388608 8388608"
+net.core.rmem_default = 33554432
+net.core.wmem_default = 33554432
+net.core.rmem_max     = 268435456
+net.core.wmem_max     = 268435456
+net.ipv4.tcp_rmem     = 262144 33554432 268435456
+net.ipv4.tcp_wmem     = 262144 33554432 268435456
+net.ipv4.tcp_mem      = 8388608 8388608 8388608
 ```
 
 ## 사용자 생성

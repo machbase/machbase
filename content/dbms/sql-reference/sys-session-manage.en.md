@@ -50,7 +50,7 @@ Terminates a specific session with a SessionID.
 Example
 ```sql
 -- As SYS
-SELECT id, user_id, program FROM v$session;
+SELECT id, user_id, client_type FROM v$session;
 ALTER SYSTEM KILL SESSION 12;
 ```
 
@@ -74,7 +74,7 @@ Cancels a specific session with a SessionID.
 Example
 ```sql
 -- Session A: find target SID
-SELECT id, user_id, program, sql_text FROM v$session;
+SELECT id, user_id, client_type FROM v$session;
 
 -- Session B (same user or SYS): cancel the running statement on SID 6
 ALTER SYSTEM CANCEL SESSION 6;

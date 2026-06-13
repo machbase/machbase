@@ -45,8 +45,11 @@ insert into tag values('TAG_0002', '2018-02-07 07:00:00 000:000:000', 17);
 insert into tag values('TAG_0002', '2018-02-08 08:00:00 000:000:000', 18);
 insert into tag values('TAG_0002', '2018-02-09 09:00:00 000:000:000', 19);
 insert into tag values('TAG_0002', '2018-02-10 10:00:00 000:000:000', 20);
+
+exec table_flush(tag);
 ```
 
+Flush the table before running immediate verification queries in the same session.
 
 ## Extract all TAG data
 
@@ -147,6 +150,8 @@ INSERT INTO trip_tag VALUES('ODO_A', 1000, 12.3, 102);
 INSERT INTO trip_tag VALUES('ODO_B', 1000.1, 21.5, 100);
 INSERT INTO trip_tag VALUES('ODO_B', 1500, 22.1, 101);
 INSERT INTO trip_tag VALUES('ODO_B', 2000, 22.9, 102);
+
+EXEC TABLE_FLUSH(trip_tag);
 ```
 
 ## Query a Distance Range
@@ -350,76 +355,50 @@ NULL                            NULL                        NULL                
 
 ### Prepare for RESTful API
 
-Specify the values of the properties blow and start the server.
+Specify the values of the properties below and start the server.
 
 machbase.conf
 
 ```
 HTTP_ENABLE = 1
-HTTP_PORT_NO = 5678
+HTTP_PORT_NO = 5657
 ```
 
-RESTful API calling convention 
+Use `V$HTTP_STATUS` to check the active HTTP port.
+
+```sql
+SELECT HTTP_PORT FROM V$HTTP_STATUS;
+```
+
+RESTful API calling convention:
 
 **SELECT FORM**
 
 ```bash
-{MWA URL}/machiot-rest-api/datapoints/raw/{TagName}/{Start}/{End}/{Direction}/{Count}/{Offset}/ 
+http://{host}:{http_port}/machiot-rest-api/datapoints/raw/{Table}/{TagName}/{Start}/{End}/{Direction}/{Count}/{Offset}/
  
-TagName    : Tag Name. multiple tag available(Seperated by ',')
-Start, End : range, YYYY-MM-DD HH24:MI:SS or YYYY-MM-DD or YYYY-MM-DD HH24:MI:SS,mmm (mmm: millisecond, When omitted start is 000, End is 999, micro and nano is 999)
-When using real string, put 'T' between time and date to remove blank.
-Direction  : 0(ascending), support in future (time increase)
-Count      : LIMIT, whole if 0
-Offset     : offset (default = 0)
+Table      : Tag table name
+TagName    : Tag name. Multiple tags can be separated by commas.
+Start, End : Range. Use YYYY-MM-DD, YYYY-MM-DDTHH24:MI:SS, or YYYY-MM-DDTHH24:MI:SS,mmm.
+Direction  : 0 for ascending time order
+Count      : LIMIT. Use 0 for all rows.
+Offset     : Offset. Use 0 when no offset is needed.
 ```
 
 ### Sample for Fetching single tag data by using CURL 
 
-Call for machbase installed in 192.168.0.148 as follow, the data can be retrieved from the web.
-
 **Single Tag**
 
 ```bash
-$ curl -G "http://192.168.0.148:5001/machiot-rest-api/v1/datapoints/raw/TAG_0001/2018-01-01T00:00:00/2018-01-06T00:00:00"
- 
-{"ErrorCode": 0,
- "ErrorMessage": "",
- "Data": [{"DataType": "DOUBLE",
- "ErrorCode": 0,
- "TagName": "TAG_0001",
- "CalculationMode": "raw",
- "Samples": [{"TimeStamp": "2018-01-01 01:00:00 000:000:000", "Value": 1.0, "Quality": 1},
-             {"TimeStamp": "2018-01-02 02:00:00 000:000:000", "Value": 2.0, "Quality": 1},
-             {"TimeStamp": "2018-01-03 03:00:00 000:000:000", "Value": 3.0, "Quality": 1},
-             {"TimeStamp": "2018-01-04 04:00:00 000:000:000", "Value": 4.0, "Quality": 1},
-             {"TimeStamp": "2018-01-05 05:00:00 000:000:000", "Value": 5.0, "Quality": 1}]}]
-}
+$ curl "http://127.0.0.1:5657/machiot-rest-api/datapoints/raw/TAG/TAG_0001/2018-01-01T00:00:00/2018-01-06T00:00:00/0/0/0"
 ```
 
 ### fetching multi tag data by using CURL
 
-Follow is sample for fetching two tag values.
+The following example fetches two tag values.
 
 ```bash
-$ curl -G "http://192.168.0.148:5001/machiot-rest-api/datapoints/raw/TAG_0001,TAG_0002/2018-01-05T00:00:00/2018-02-05T00:00:00"
-{"ErrorCode": 0,
- "ErrorMessage": "",
- "Data": [{"DataType": "DOUBLE",
-           "ErrorCode": 0,
-           "TagName": "TAG_0001,TAG_0002",
-           "CalculationMode": "raw",
-           "Samples": [{"TimeStamp": "2018-01-05 05:00:00 000:000:000", "Value": 5.0, "Quality": 1},
-                       {"TimeStamp": "2018-01-06 06:00:00 000:000:000", "Value": 6.0, "Quality": 1},
-                       {"TimeStamp": "2018-01-07 07:00:00 000:000:000", "Value": 7.0, "Quality": 1},
-                       {"TimeStamp": "2018-01-08 08:00:00 000:000:000", "Value": 8.0, "Quality": 1},
-                       {"TimeStamp": "2018-01-09 09:00:00 000:000:000", "Value": 9.0, "Quality": 1},
-                       {"TimeStamp": "2018-01-10 10:00:00 000:000:000", "Value": 10.0, "Quality": 1},
-                       {"TimeStamp": "2018-02-01 01:00:00 000:000:000", "Value": 11.0, "Quality": 1},
-                       {"TimeStamp": "2018-02-02 02:00:00 000:000:000", "Value": 12.0, "Quality": 1},
-                       {"TimeStamp": "2018-02-03 03:00:00 000:000:000", "Value": 13.0, "Quality": 1},
-                       {"TimeStamp": "2018-02-04 04:00:00 000:000:000", "Value": 14.0, "Quality": 1}
-]}]}
+$ curl "http://127.0.0.1:5657/machiot-rest-api/datapoints/raw/TAG/TAG_0001,TAG_0002/2018-01-05T00:00:00/2018-02-05T00:00:00/0/0/0"
 ```
 
 

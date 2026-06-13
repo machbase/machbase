@@ -6,6 +6,8 @@ weight: 10
 
 ## The Concept of BACKUP/MOUNT
 
+> **Edition note**: This page describes Standard Edition backup and mount behavior. Cluster Edition may reject `BACKUP`, `MOUNT`, and `UMOUNT` statements.
+
 To ensure the permanence of the database, the data stored in memory is stored on the disk as soon as possible. In case of a general failure such as Process Failure, Restart Recovery makes the database consistent. However, in case of power failure or hardware damage caused by fire, database recovery is impossible. In order to solve this problem, the database backup and recovery function saves data to another disk or hardware periodically in another area and recovers the data using the corresponding data in case of an emergency.
 
 Database backups are divided into two types depending on when they are performed.

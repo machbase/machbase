@@ -6,7 +6,7 @@ weight: 20
 
 ##  Stream Startup
 
-Executes the registered stream using the stored procedure. Once executed, the stream is continuously executed. Even if the server is restarted, the continuous stream query is executed for the data inputted after the last execution.
+Executes the registered stream using the stored procedure. Once executed, the stream is continuously executed. Even if the server is restarted, the continuous stream query is executed for the data inserted after the last execution.
 
 ```sql
 EXEC STREAM_START(stream_name);

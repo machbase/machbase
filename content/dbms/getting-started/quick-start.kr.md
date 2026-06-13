@@ -20,11 +20,11 @@ Machbase 다운로드 및 압축 해제:
 
 ```bash
 # 패키지 다운로드 (x.x.x를 실제 버전으로 바꾸세요)
-wget http://machbase.com/dist/machbase-fog-x.x.x.official-LINUX-X86-64-release.tgz
+wget http://machbase.com/dist/machbase-standard-x.x.x.official-LINUX-X86-64-release.tgz
 
 # 디렉토리 생성 및 압축 해제
 mkdir machbase_home
-tar zxf machbase-fog-x.x.x.official-LINUX-X86-64-release.tgz -C machbase_home
+tar zxf machbase-standard-x.x.x.official-LINUX-X86-64-release.tgz -C machbase_home
 
 # 환경 변수 설정
 export MACHBASE_HOME=$(pwd)/machbase_home

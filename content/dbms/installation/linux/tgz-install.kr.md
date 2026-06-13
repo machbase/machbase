@@ -16,34 +16,33 @@ sudo useradd machbase
 
 ## 패키지 설치
 
-`machbase_home` 디렉터리를 만든 후 Machbase 다운로드 사이트에서 패키지를 내려받아 설치합니다.
+`machbase_home` 디렉터리를 만든 후 Machbase 다운로드 사이트에서 standard 패키지를 내려받아 설치합니다.
 
 ```bash
-[machbase@localhost ~]$ wget http://machbase.com/dist/machbase-fog-x.x.x.official-LINUX-X86-64-release.tgz
+[machbase@localhost ~]$ wget http://machbase.com/dist/machbase-standard-x.x.x.official-LINUX-X86-64-release.tgz
 [machbase@localhost ~]$ mkdir machbase_home
-[machbase@localhost ~]$ mv machbase-fog-x.x.x.official-LINUX-X86-64-release.tgz machbase_home/
+[machbase@localhost ~]$ mv machbase-standard-x.x.x.official-LINUX-X86-64-release.tgz machbase_home/
 [machbase@localhost ~]$ cd machbase_home/
-[machbase@localhost machbase_home]$ tar zxf machbase-fog-x.x.x.official-LINUX-X86-64-release.tgz
+[machbase@localhost machbase_home]$ tar zxf machbase-standard-x.x.x.official-LINUX-X86-64-release.tgz
 
-[machbase@loclahost machbase_home]$ ls -l
+[machbase@localhost machbase_home]$ ls -l
 drwxrwxr-x  5 machbase machbase        64 Oct 30 16:10 3rd-party
 drwxrwxr-x  2 machbase machbase      4096 Oct 30 16:10 bin
 drwxrwxr-x  2 machbase machbase       306 Jan  2 11:36 conf
 drwxrwxr-x  2 machbase machbase       136 Jan  2 11:37 dbs
 drwxrwxr-x  3 machbase machbase        22 Oct 30 16:10 doc
+drwxrwxr-x  4 machbase machbase        30 Oct 30 16:10 http
 drwxrwxr-x  2 machbase machbase        96 Oct 30 16:10 include
 drwxrwxr-x  2 machbase machbase        29 Oct 30 16:10 install
 drwxrwxr-x  2 machbase machbase       283 Oct 30 16:10 lib
--rw-rw-r--  1 machbase machbase 139888377 Dec 20 11:33 machbase-fog-x.x.x.official-LINUX-X86-64-release.tgz
-drwxrwxr-x  2 machbase machbase        22 Dec 21 15:43 msg
-
 drwxrwxr-x  2 machbase machbase         6 Oct 30 16:10 package
 drwxrwxr-x 12 machbase machbase       140 Oct 30 16:10 sample
 drwxrwxr-x  2 machbase machbase      4096 Jan  2 09:37 trc
 drwxrwxr-x 10 machbase machbase       160 Oct 30 16:10 tutorials
-drwxrwxr-x  3 machbase machbase        19 Oct 30 16:10 webadmin
+drwxrwxr-x  3 machbase machbase        44 Oct 30 16:10 utility
+-rw-rw-r--  1 machbase machbase 139888377 Dec 20 11:33 machbase-standard-x.x.x.official-LINUX-X86-64-release.tgz
 
-[machbase@loclahost machbase_home]$
+[machbase@localhost machbase_home]$
 ```
 
 설치된 디렉터리의 용도는 다음과 같습니다.
@@ -54,14 +53,15 @@ drwxrwxr-x  3 machbase machbase        19 Oct 30 16:10 webadmin
 |conf|설정 파일|
 |dbs|데이터 저장 공간|
 |doc|라이선스 파일|
+|http|REST API/web 리소스|
 |include|CLI 프로그램용 헤더 파일|
 |install|Makefile 용 mk 파일|
 |lib|각종 라이브러리|
-|msg|Machbase 서버 오류 메시지|
 |package|추가 패키지 저장 경로(클러스터 에디션)|
 |sample|다양한 예제 파일|
 |trc|Machbase 서버 로그와 추적 정보|
-|webadmin|MWA 웹 서버 파일|
+|tutorials|튜토리얼 파일|
+|utility|유틸리티 파일|
 |3rd-party|Grafana 플러그인 파일|
 
 ## 환경 변수 설정
@@ -80,14 +80,15 @@ source .bashrc
 
 ## Machbase 속성 설정
 
-`$MACHBASE_HOME/conf` 디렉터리에는 `machbase.conf.sample` 파일이 포함되어 있습니다.
+`$MACHBASE_HOME/conf` 디렉터리에는 standard 및 edition별 샘플 설정 파일이 포함되어 있습니다.
 
 ```bash
 
 [machbase@localhost ~]$ cd $MACHBASE_HOME/conf
 [machbase@localhost conf]$ ls -l
--rw-rw-r-- 1 machbase machbase   106 Oct 30 16:10 machtag.sql.sample
--rw-rw-r-- 1 machbase machbase 17556 Oct 30 16:10 machbase.conf.sample
+-rw-rw-r-- 1 machbase machbase 20914 Oct 30 16:10 machbase.conf.sample.standard
+-rw-rw-r-- 1 machbase machbase 21363 Oct 30 16:10 machbase.conf.sample.edge
+-rw-rw-r-- 1 machbase machbase   407 Oct 30 16:10 machloader.conf.sample
 
 [machbase@localhost conf]$
 ```
@@ -119,13 +120,14 @@ export MACHBASE_PORT_NO=7878
   -c, --createdb                        Create Machbase database.
   -d, --destroydb                       Destroy Machbase database.
   -k, --kill                            Terminate Machbase server.
-  -i, --silence                         Produce less output.
+  -i, --silent                          Produce less output.
   -r, --restore                         Restore Machbase database.
   -x, --extract                         Extract BackupFile to BackupDirectory.
   -w, --viewimage                       Display information of BackupImageFile.
   -e, --check                           Check whether Machbase Server is running.
   -t, --licinstall                      Install the license file.
   -f, --licinfo                         Display information of installed license file.
+      --home-path=path                  Specify the home path
 
 [machbase@localhost machbase_home]$
 ```
@@ -189,7 +191,7 @@ machbase 11276  9867  0 11:26 pts/1    00:00:00 grep --color=auto machbased
 Machbase server address (Default:127.0.0.1) :
 Machbase user ID  (Default:SYS)
 Machbase User Password :
-MACHBASE_CONNECT_MODE=INET, PORT=5656
+MACHBASE_CONNECT_MODE=INET, PORT=5656 EDITION=STANDARD
 Type 'help' to display a list of available commands.
 Mach>
 ```
@@ -264,6 +266,6 @@ Machbase server shut down successfully.
      All Rights Reserved
 -----------------------------------------------------------------
 Destroy Machbase database. Are you sure?(y/N) y
-Database destoryed successfully.
+Database destroyed successfully.
 [machbase@localhost machbase_home]$
 ```

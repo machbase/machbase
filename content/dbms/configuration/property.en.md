@@ -38,14 +38,21 @@ These values are set when the Machbase server starts and are used continuously d
 - [DISK_TABLESPACE_DIRECT_IO_FSYNC](#disk_tablespace_direct_io_fsync)
 - [DISK_TABLESPACE_DIRECT_IO_READ](#disk_tablespace_direct_io_read)
 - [DISK_TABLESPACE_DIRECT_IO_WRITE](#disk_tablespace_direct_io_write)
+- [DISK_TABLESPACE_SYNCHRONOUS](#disk_tablespace_synchronous)
 - [DUMP_APPEND_ERROR](#dump_append_error)
 - [DUMP_TRACE_INFO](#dump_trace_info)
 - [DURATION_BEGIN](#duration_begin)
 - [DURATION_GAP](#duration_gap)
 - [ENABLE_CASE_SENSITIVE_PASSWORD](#enable_case_sensitive_password)
 - [FEEDBACK_APPEND_ERROR](#feedback_append_error)
+- [GEN_CALLSTACK_FOR_ABORT_ERROR](#gen_callstack_for_abort_error)
+- [GEN_CORE_FILE](#gen_core_file)
 - [GRANT_REMOTE_ACCESS](#grant_remote_access)
 - [BIND_IP_ADDRESS](#bind_ip_address)
+- [HTTP_AUTH](#http_auth)
+- [HTTP_ENABLE](#http_enable)
+- [HTTP_MAX_MEM](#http_max_mem)
+- [HTTP_PORT_NO](#http_port_no)
 - [HTTP_THREAD_COUNT](#http_thread_count)
 - [INDEX_BUILD_MAX_ROW_COUNT_PER_THREAD](#index_build_max_row_count_per_thread)
 - [INDEX_BUILD_THREAD_COUNT](#index_build_thread_count)
@@ -91,6 +98,7 @@ These values are set when the Machbase server starts and are used continuously d
 - [TRACE_LOGFILE_COUNT](#trace_logfile_count)
 - [TRACE_LOGFILE_PATH](#trace_logfile_path)
 - [TRACE_LOGFILE_SIZE](#trace_logfile_size)
+- [TRACE_LOG_LEVEL](#trace_log_level)
 - [UNIX_PATH](#unix_path)
 - [VOLATILE_TABLESPACE_MEMORY_MAX_SIZE](#volatile_tablespace_memory_max_size)
 
@@ -807,6 +815,24 @@ Sets whether to use DIRECT I/O for data write operation. If DIRECT I/O is not su
 |Default|    1|
 
 
+## DISK_TABLESPACE_SYNCHRONOUS
+
+Sets the synchronization policy for disk tablespace files.
+
+|Value|Mode|Description|
+|--|--|--|
+|0|OFF|No synchronization|
+|1|NORMAL|Synchronize on double-write file writes and backup|
+|2|FULL|Synchronize on disk file close and end-RID adjustment, including NORMAL|
+|3|EXTRA|Synchronize on every write, including FULL|
+
+||Value|
+|-|----|
+|Minimum| 0|
+|Maximum| 3|
+|Default| 1|
+
+
 ## DUMP_APPEND_ERROR
 If this value is set to 1, the $MACHBASE_HOME/trc/machbase.trc file will record the error if the Append API fails.
 In this situation, the append performance is very low, so it is recommended to use for testing purposes only.
@@ -975,6 +1001,27 @@ Sets whether to send error data to the client when an Append API error occurs. I
   </tbody>
 </table>
 
+## GEN_CALLSTACK_FOR_ABORT_ERROR
+
+Sets whether to record call stacks after an abnormal server shutdown.
+
+||Value|
+|-|----|
+|Minimum| 0|
+|Maximum| 1|
+|Default| 0|
+
+
+## GEN_CORE_FILE
+
+Sets whether to record core files after an abnormal server shutdown.
+
+||Value|
+|-|----|
+|Minimum| 0|
+|Maximum| 1|
+|Default| 1|
+
 
 ## GRANT_REMOTE_ACCESS
 
@@ -1004,7 +1051,7 @@ Determines whether the database can be accessed remotely. If 0, the remote conne
 
 ## BIND_IP_ADDRESS
 
-Specifies the bind IP address for INET/HTTP listeners. When `GRANT_REMOTE_ACCESS=1`, the server binds to this address. When `GRANT_REMOTE_ACCESS=0`, it binds only to loopback.
+Specifies the bind IP address for INET/HTTP listeners. The native INET listener uses this address only when `GRANT_REMOTE_ACCESS=1`; when `GRANT_REMOTE_ACCESS=0`, the native INET listener binds to loopback. The HTTP listener always uses `BIND_IP_ADDRESS`, so set this value to `127.0.0.1` if HTTP must be limited to loopback.
 
 <table>
   <thead>
@@ -1018,6 +1065,50 @@ Specifies the bind IP address for INET/HTTP listeners. When `GRANT_REMOTE_ACCESS
     </tr>
   </tbody>
 </table>
+
+
+## HTTP_AUTH
+
+Sets whether Basic Authentication is enabled for the REST API service.
+
+||Value|
+|-|----|
+|Minimum| 0|
+|Maximum| 1|
+|Default| 0|
+
+
+## HTTP_ENABLE
+
+Sets whether the REST API service is enabled.
+
+||Value|
+|-|----|
+|Minimum| 0|
+|Maximum| 1|
+|Default| 1|
+
+
+## HTTP_MAX_MEM
+
+Sets the maximum memory per web session.
+
+||Value|
+|-|----|
+|Minimum| 1 * 1024 * 1024|
+|Maximum| 2^64 - 1|
+|Default| 536870912 (512MB)|
+
+
+## HTTP_PORT_NO
+
+Sets the REST API port number.
+
+||Value|
+|-|----|
+|Minimum| 1024|
+|Maximum| 65535|
+|Default| 5657|
 
 
 ## HTTP_THREAD_COUNT
@@ -2006,6 +2097,17 @@ Sets the maximum size of the log trace file. If it is necessary to record more d
     </tr>
   </tbody>
 </table>
+
+
+## TRACE_LOG_LEVEL
+
+Sets the trace log detail level. Higher values write more detailed logs.
+
+||Value|
+|-|----|
+|Minimum| 0|
+|Maximum| 2^32 - 1|
+|Default| 277|
 
 
 ## UNIX_PATH

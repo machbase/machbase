@@ -50,7 +50,7 @@ machbase/machbase   latest              dfb90844e7da        2 months ago        
 
 ```bash
 # Machbase 이미지를 실행합니다.
-$ docker run -it machbase/machbase
+$ docker run -it -p 5656:5656 -p 5657:5657 machbase/machbase
 -----------------------------------------------------------------
      Machbase Administration Tool
      Release Version - x.x.x.community
@@ -68,6 +68,7 @@ Waiting for Machbase server start.
 Machbase server started successfully.
 SERVER HAS BEEN RESET
 SERVER STARTED, PID : 56
-     Connection URL : http://172.17.0.2:5001
+     Native port    : 5656
+     HTTP REST URL  : http://127.0.0.1:5657
 machbase@5ba45a22d140:~$
 ```

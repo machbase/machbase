@@ -60,17 +60,17 @@ Is it reference/master data that changes rarely?
 
 **Key features**:
 - Millions of records per second
-- Automatic statistics generation (rollup)
+- Rollup statistics when rollup is enabled
 - Ultra-fast queries by sensor ID + time range
 - Deduplication support
 
 **Example**:
 ```sql
-CREATE TAGDATA TABLE sensors (
+CREATE TAG TABLE sensors (
     sensor_name VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
     temperature DOUBLE SUMMARIZED,
-    humidity DOUBLE SUMMARIZED
+    humidity DOUBLE
 );
 ```
 
@@ -91,7 +91,7 @@ CREATE TAGDATA TABLE sensors (
 - Millions of records per second
 - Automatic `_arrival_time` column (nanosecond precision)
 - Newest data returned first
-- Full-text search with SEARCH keyword
+- Full-text search with `SEARCH` after creating a KEYWORD index
 - Flexible schema
 
 **Example**:
@@ -142,7 +142,7 @@ CREATE VOLATILE TABLE live_status (
 - Category/dimension tables
 - Master data
 
-**Structure**: Any schema
+**Structure**: Any schema with a `PRIMARY KEY`
 
 **Key features**:
 - Fast SELECT performance
@@ -153,7 +153,7 @@ CREATE VOLATILE TABLE live_status (
 **Example**:
 ```sql
 CREATE LOOKUP TABLE devices (
-    device_id INTEGER,
+    device_id INTEGER PRIMARY KEY,
     name VARCHAR(50),
     location VARCHAR(100),
     type VARCHAR(20)
@@ -181,12 +181,14 @@ Every Log table record automatically gets a timestamp:
 
 ```sql
 -- You insert this
-INSERT INTO app_logs VALUES ('ERROR', 'Connection failed');
+INSERT INTO app_logs VALUES ('ERROR', 1001, 'Connection failed', '192.168.1.10');
 
 -- Machbase stores this
 -- _arrival_time: 2025-10-10 14:23:45 123:456:789
 -- level: ERROR
+-- user_id: 1001
 -- message: Connection failed
+-- ip_addr: 192.168.1.10
 ```
 
 Access it with:
@@ -218,7 +220,8 @@ SELECT * FROM app_logs DURATION 10 MINUTE;
 
 -- Instead of:
 -- SELECT * FROM app_logs
--- WHERE _arrival_time >= NOW() - INTERVAL '10' MINUTE;
+-- WHERE _arrival_time BETWEEN TO_DATE('2025-10-10 14:00:00', 'YYYY-MM-DD HH24:MI:SS')
+--                         AND TO_DATE('2025-10-10 14:10:00', 'YYYY-MM-DD HH24:MI:SS');
 ```
 
 More examples:
@@ -262,7 +265,7 @@ DELETE FROM app_logs OLDEST 1000 ROWS;
 DELETE FROM app_logs EXCEPT 10000 ROWS;
 
 -- Keep only last 7 days
-DELETE FROM app_logs EXCEPT 7 DAYS;
+DELETE FROM app_logs EXCEPT 7 DAY;
 
 -- Delete data before specific date
 DELETE FROM app_logs
@@ -282,19 +285,21 @@ Most users don't need to manage indexes manually!
 
 ## Rollup Tables (Tag Tables Only)
 
-Tag tables automatically generate statistics:
+Tag tables generate statistics when you create them with `WITH ROLLUP` or define rollups
+with `CREATE ROLLUP`:
 
 ```sql
 -- Create tag table with SUMMARIZED columns
-CREATE TAGDATA TABLE sensors (
+CREATE TAG TABLE sensors (
     sensor_name VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
     temperature DOUBLE SUMMARIZED
-);
+) WITH ROLLUP;
 
--- Query hourly statistics automatically
-SELECT * FROM sensors WHERE rollup = hour;
--- Returns: MIN, MAX, AVG, SUM, COUNT, SUMSQ
+-- Query hourly statistics through the rollup expression
+SELECT rollup('hour', 1, time) AS hour_time, AVG(temperature), COUNT(temperature)
+FROM sensors
+GROUP BY hour_time;
 ```
 
 Three automatic rollup levels:
@@ -340,7 +345,8 @@ SELECT * FROM logs DURATION 1 HOUR;
 
 -- Less optimal
 SELECT * FROM logs
-WHERE _arrival_time >= NOW() - INTERVAL '1' HOUR;
+WHERE _arrival_time BETWEEN TO_DATE('2025-10-10 14:00:00', 'YYYY-MM-DD HH24:MI:SS')
+                        AND TO_DATE('2025-10-10 15:00:00', 'YYYY-MM-DD HH24:MI:SS');
 ```
 
 ### 3. Implement Data Retention
@@ -349,7 +355,7 @@ Set up automated cleanup:
 
 ```sql
 -- Keep only 30 days of data
-DELETE FROM app_logs EXCEPT 30 DAYS;
+DELETE FROM app_logs EXCEPT 30 DAY;
 ```
 
 Consider setting up a cron job for this.
@@ -360,7 +366,7 @@ If you have 1000 sensors, don't create 1000 tables!
 
 ```sql
 -- Good: One Tag table for all sensors
-CREATE TAGDATA TABLE all_sensors (
+CREATE TAG TABLE all_sensors (
     sensor_id VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
     value DOUBLE SUMMARIZED
@@ -378,11 +384,11 @@ AND time BETWEEN ... AND ...;
 
 ```sql
 -- Tag table for sensor data
-CREATE TAGDATA TABLE sensors (...);
+CREATE TAG TABLE sensors (...);
 
 -- Lookup table for sensor metadata
 CREATE LOOKUP TABLE sensor_info (
-    sensor_id VARCHAR(20),
+    sensor_id VARCHAR(20) PRIMARY KEY,
     location VARCHAR(100),
     type VARCHAR(50)
 );
@@ -405,7 +411,7 @@ CREATE VOLATILE TABLE active_sessions (...);
 
 ```sql
 -- Tag table for equipment sensors
-CREATE TAGDATA TABLE equipment_sensors (...);
+CREATE TAG TABLE equipment_sensors (...);
 
 -- Log table for production events
 CREATE TABLE production_events (...);
@@ -426,7 +432,7 @@ Now that you understand the core concepts:
 
 ```sql
 -- TAG TABLE (sensor data)
-CREATE TAGDATA TABLE t (
+CREATE TAG TABLE t (
     name VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
     value DOUBLE SUMMARIZED
@@ -447,7 +453,7 @@ CREATE VOLATILE TABLE t (
 
 -- LOOKUP TABLE (reference data)
 CREATE LOOKUP TABLE t (
-    id INTEGER,
+    id INTEGER PRIMARY KEY,
     name VARCHAR(100)
 );
 ```

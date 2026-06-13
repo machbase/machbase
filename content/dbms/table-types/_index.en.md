@@ -17,7 +17,7 @@ Detailed reference documentation for all four Machbase table types. Each section
 
 | Type | Create Syntax | Best For |
 |------|--------------|----------|
-| Tag | `CREATE TAGDATA TABLE` | Sensor data (ID, time, value) |
+| Tag | `CREATE TAG TABLE` | Sensor data (ID, time, value) |
 | Log | `CREATE TABLE` | Events, logs, flexible schema |
 | Volatile | `CREATE VOLATILE TABLE` | Real-time cache, sessions |
 | Lookup | `CREATE LOOKUP TABLE` | Device registry, config |

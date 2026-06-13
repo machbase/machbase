@@ -46,7 +46,7 @@ Relative time expressions let you describe offsets from a known timestamp direct
 | `d`    | days             | `7d`    | 7 days              |
 | `w`    | weeks            | `2w`    | 14 days             |
 
-> **Note**: Months and years are not supported because their length is not constant. Using unsupported suffixes (for example, `1y`, `1mo`) raises `ERR_QP_TIME_FORMAT`.
+> **Note**: Months and years are not supported because their length is not constant. Using unsupported suffixes (for example, `1y`, `1mo`) raises an invalid time expression error (`ERR-02034`).
 
 ## Building Compound Literals
 
@@ -100,15 +100,20 @@ SELECT a.ts, a.value AS raw_value, b.value AS calibrated
     ON b.ts BETWEEN a.ts - 500ms AND a.ts + 500ms;
 ```
 
-### String Literals and Casting
+### DATETIME Values and Casting
 
 ```sql
-SELECT to_char('2024-05-01' + 3d, 'YYYY-MM-DD');           -- 2024-05-04
-SELECT to_char('2024-05-01 08:00:00' - 4h15m,
+SELECT to_char(to_date('2024-05-01', 'YYYY-MM-DD') + 3d,
+               'YYYY-MM-DD');                              -- 2024-05-04
+SELECT to_char(to_date('2024-05-01 08:00:00',
+                       'YYYY-MM-DD HH24:MI:SS') - 4h15m,
                'YYYY-MM-DD HH24:MI:SS');                   -- 2024-05-01 03:45:00
-SELECT to_char('2024-05-01'::datetime + 2h30m45s250ms,
+SELECT to_char(to_date('2024-05-01', 'YYYY-MM-DD') + 2h30m45s250ms,
                'YYYY-MM-DD HH24:MI:SS mmm');               -- 2024-05-01 02:30:45 250
 ```
+
+String literals are not implicitly cast to `DATETIME` for interval arithmetic. Convert
+them with `TO_DATE` first.
 
 ### Mixing with Plain Numbers
 
@@ -133,10 +138,10 @@ SELECT event_time - 250 AS event_time_minus_250ns
 
 | Scenario                               | Error Code                | Resolution                                   |
 |----------------------------------------|---------------------------|----------------------------------------------|
-| Unsupported suffix (`1y`, `5mo`)       | `ERR_QP_TIME_FORMAT`      | Replace with supported units (`30d`, etc.).  |
+| Unsupported suffix (`1y`, `5mo`)       | `ERR-02034` invalid time expression | Replace with supported units (`30d`, etc.).  |
 | Missing unit (`now + 10`)              | Interpreted as nanoseconds | Add explicit suffix if minutes or seconds intended. |
 | Overflowing literal (`1000000d`)       | `ERR_OVERFLOW_INTERVAL`   | Reduce magnitude or break the logic into loops. |
-| Non-numeric characters (`1h3xm`)       | `ERR_QP_TIME_FORMAT`      | Fix the typo (`1h3m`).                       |
+| Non-numeric characters (`1h3xm`)       | Invalid time expression   | Fix the typo (`1h3m`).                       |
 
 ## Best Practices
 
@@ -165,7 +170,7 @@ Pattern          Meaning
 now - 5m        Timestamp exactly five minutes ago
 sysdate + 1d    Tomorrow (24 hours after system timestamp)
 col_ts + 90s    Column value shifted by 90 seconds
-'2024-01-01' + 2w  Adds 14 days to the literal date
+TO_DATE('2024-01-01','YYYY-MM-DD') + 2w  Adds 14 days to the date value
 value + 250     Adds 250 nanoseconds to `value`
 ```
 

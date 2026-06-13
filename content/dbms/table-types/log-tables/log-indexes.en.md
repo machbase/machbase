@@ -4,12 +4,13 @@ type: docs
 weight: 50
 ---
 
-Two index types can be created in the Machbase log table. 
+Three index type keywords can be used in the Machbase log table.
 
 For more information, refer to the DDL page CREATE INDEX section of the SQL Reference  .
 
-* BITMAP Index: bitmap index can be created in every column except Text, Binary type.
-* KEYWORD Index: Used to search strings as it can be generated only for Varchar and Text column.
+* LSM Index: used for range and equality predicates.
+* BITMAP Index: can be created on LOG table columns and is displayed as `LSM` by `DESC`.
+* KEYWORD Index: used to search strings; it can be created only for Varchar and Text columns.
 
 
 ##  Create Index
@@ -18,28 +19,29 @@ Create an index on a specific column using the CREATE INDEX statement.
 
 ```sql
 CREATE INDEX index_name ON table_name (column_name) [index_type] [tablespace] [index_prop_list]
-    index_type ::= INDEX_TYPE { LSM | KEYWORD }
-    tablespace ::= TABLESPACE tablesapce_name
+    index_type ::= INDEX_TYPE { LSM | BITMAP | KEYWORD }
+    tablespace ::= TABLESPACE tablespace_name
     index_prop_list ::= value_pair, value_pair, ...
     value_pair ::= property_name = property_value
 ```
 
 ```sql
-Mach> CREATE INDEX id_index ON log_data(id) INDEX_TYPE LSM TABLESPACE tbs_data MAX_LEVEL=3;
+Mach> CREATE INDEX id_index ON log_data(id) INDEX_TYPE LSM MAX_LEVEL=3;
 Created successfully.
 ```
 
 
-##  Change Index
+##  Index Properties
 
-Change the index attribute using the ALTER INDEX statement.
+Index properties are specified when the index is created.
 
 ```sql
-ALTER INDEX index_name SET KEY_COMPRESS = { 0 | 1 }
+CREATE BITMAP INDEX value_bitmap_idx ON log_data(value) KEY_COMPRESS=1;
 ```
 
 ```sql
-Mach> ALTER INDEX id_index SET KEY_COMPRESS = 1;
+Mach> CREATE BITMAP INDEX value_bitmap_idx ON log_data(value) KEY_COMPRESS=1;
+Created successfully.
 ```
 
 

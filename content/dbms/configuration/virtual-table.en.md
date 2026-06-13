@@ -25,6 +25,9 @@ Virtual Tables are read-only and can not be added / deleted / updated by the use
   - [V$SYSTIME](#vsystime)
   - [V$STMT](#vstmt)
   - [V$VERSION](#vversion)
+  - [V$HTTP\_STATUS](#vhttp_status)
+  - [V$NEO\_SESSION](#vneo_session)
+  - [V$NEO\_STMT](#vneo_stmt)
 - [Result Cache](#result-cache)
   - [V$RS\_CACHE\_LIST](#vrs_cache_list)
   - [V$RS\_CACHE\_STAT](#vrs_cache_stat)
@@ -60,6 +63,7 @@ Virtual Tables are read-only and can not be added / deleted / updated by the use
 - [Tag Table](#tag-table)
   - [V$STORAGE\_TAG\_TABLES](#vstorage_tag_tables)
   - [V$STORAGE\_TAG\_CACHE](#vstorage_tag_cache)
+  - [V$STORAGE\_TAG\_CACHE\_BASE](#vstorage_tag_cache_base)
   - [V$STORAGE\_TAG\_CACHE\_OBJECTS](#vstorage_tag_cache_objects)
   - [V$STORAGE\_TAG\_TABLE\_FILES](#vstorage_tag_table_files)
   - [V$STORAGE\_TAG\_INDEX](#vstorage_tag_index)
@@ -69,7 +73,6 @@ Virtual Tables are read-only and can not be added / deleted / updated by the use
   - [V$STREAMS](#vstreams)
 - [License](#license)
   - [V$LICENSE\_INFO](#vlicense_info)
-  - [V$LICENSE\_STATUS](#vlicense_status)
 - [Mutex](#mutex)
   - [V$MUTEX](#vmutex)
   - [V$MUTEX\_WAIT\_STAT](#vmutex_wait_stat)
@@ -89,6 +92,7 @@ Virtual Tables are read-only and can not be added / deleted / updated by the use
   - [V$TABLES](#vtables)
   - [V$COLUMNS](#vcolumns)
   - [V$RETENTION\_JOB](#vretention_job)
+  - [V$USER\_AUTH\_KEYS](#vuser_auth_keys)
 
 
 
@@ -251,6 +255,50 @@ Displays information about Machbase version.
 |FILE_CM_MINOR_VERSION|File Client (Communication Level) minor version|
 |FILE_CREATE_TIME|File creation time|
 |EDITION|Machbase type|
+
+### V$HTTP_STATUS
+---
+
+Displays HTTP service status for the embedded HTTP endpoint.
+
+|Column Name|Description|
+|--|--|
+|DOC_ROOT|HTTP document root|
+|HTTP_PORT|HTTP service port|
+|THREAD_COUNT|HTTP worker thread count|
+|CONNECT_COUNT|Accepted connection count|
+|SERVICE_SUCCESS_COUNT|Successful service count|
+|SERVICE_FAILURE_COUNT|Failed service count|
+|TOTAL_SERVICE_COUNT|Total service count|
+|CURRENT_SERVICE_COUNT|Current service count|
+|MAX_HTTP_MEM|Maximum HTTP memory size|
+
+### V$NEO_SESSION
+---
+
+Displays session status for Neo protocol clients.
+
+|Column Name|Description|
+|--|--|
+|ID|Session identifier|
+|USER_ID|User identifier|
+|USER_NAME|User name|
+|STMT_COUNT|Statement count in the session|
+|DISCONN_FLAG|Disconnect flag|
+
+### V$NEO_STMT
+---
+
+Displays statement status for Neo protocol clients.
+
+|Column Name|Description|
+|--|--|
+|ID|Statement identifier|
+|SESS_ID|Session identifier|
+|STATE|Statement state|
+|QUERY|Statement text|
+|APPEND_SUCCESS_CNT|Append success count|
+|APPEND_FAILURE_CNT|Append failure count|
 
 
 ## Result Cache
@@ -782,6 +830,18 @@ Displays the cache information used in the partition table of the Tagdata Table.
 |MEMORY_WAIT|Number of times data memory waited for cache crash|
 |IO_WAIT|Data read operation wait count|
 
+### V$STORAGE_TAG_CACHE_BASE
+---
+
+Displays aggregate tag cache pool information.
+
+|Column Name|Description|
+|--|--|
+|POOL_ID|Cache pool identifier|
+|TOTAL_CACHE_MEMORY|Total cache memory|
+|TOTAL_OBJECT_COUNT|Total cached object count|
+|TOTAL_LRU_LOOP_COUNT|Total LRU loop count|
+
 ### V$STORAGE_TAG_CACHE_OBJECTS
 ---
 
@@ -894,32 +954,18 @@ Displays license information.
 
 |Column Name|Description|
 |--|--|
-|INSTALL_DATE|Installation date|
-|TYPE|License type|
-|POLICY|License policy type|
-|CUSTOMER|Customer name|
+|ID|License ID|
 |ISSUE_DATE|Issue date|
-|ID|Host ID|
-|EXPIRY_DATE|Expiration date|
-|SIZE_LIMIT|Work input limit|
-|ADDENDUM|Additional data rate|
-|VIOLATION_ACTION|Indicates license violation|
-|VIOLATION_LIMIT|Number of violations to suspend service (monthly update)|
-|STOP_ACTION|Indicates database is terminated in the event of license violation|
-|RESET_FLAG|(Internal server use)|
+|TYPE|License type|
+|CUSTOMER|Customer name|
+|PROJECT|Project name|
+|COUNTRY_CODE|Country code|
+|INSTALL_DATE|Installation date|
+|VIOLATE_STATUS|License violation status|
+|VIOLATE_MSG|License violation message|
 
-### V$LICENSE_STATUS
----
-
-
-Displays the license status.
-
-|Column Name|Description|
-|--|--|
-|USER_DATA_PER_DAY|Amount of data that can be entered per day|
-|PREVIOUS_CHECK_DATE|Previous license check date|
-|VIOLATION_COUNT|License violation count|
-|STOP_ENABLED|Display whether license restrictions are enabled or not.|
+`V$LICENSE_STATUS` is not exposed by the Standard 8.5.4 server. Use
+`V$LICENSE_INFO` for the license fields available in Standard edition.
 
 
 ## Mutex
@@ -960,6 +1006,9 @@ Shows the call stack of the currently waiting mutex.
 
 
 ## Cluster
+
+The following virtual tables are cluster edition tables and are not exposed by the
+Standard server. Check `V$TABLES` on the running edition before querying them.
 
 ### V$NODE_STATUS
 ---
@@ -1143,7 +1192,7 @@ Displays all Virtual Tables that start with "V$".
 |TYPE|Table type|
 |DATABASE_ID|Database identifier|
 |ID|Table identifier|
-|USER ID|User who created table|
+|USER_ID|User who created table|
 |COLCOUNT|Column count|
 
 
@@ -1178,3 +1227,21 @@ Displays table information to which RETENTION POLICY is applied.
 | POLICY_NAME       | applied policy name                |
 | STATE             | RETENTION state (RUNNING/WAITING/STOPPED) |
 | LAST_DELETED_TIME | most recently deleted time                 |
+
+### V$USER_AUTH_KEYS
+---
+
+Displays public keys registered for challenge authentication.
+
+|Column Name|Description|
+|--|--|
+|KEY_ID|Key identifier|
+|USER_ID|User identifier|
+|USER_NAME|User name|
+|KEY_ALGO|Key algorithm|
+|KEY_PARAM|Key parameter|
+|PUBKEY|Public key text|
+|ACTIVATED|Whether the key is active|
+|VALID_AFTER|Start date of key validity|
+|VALID_BEFORE|End date of key validity|
+|COMMENT|Key comment|

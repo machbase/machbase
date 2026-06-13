@@ -13,15 +13,15 @@ Complete reference for Machbase command-line tools and utilities. This section c
 Database server administration:
 - Start/stop server
 - Create/delete database
-- Backup/restore
+- Restore/extract backup images
 - Server status
 
 ```bash
 machadmin -u          # Start server
 machadmin -s          # Stop server
 machadmin -c          # Create database
-machadmin -b path     # Backup
 machadmin -r path     # Restore
+machadmin -w path     # View backup image information
 ```
 
 [Complete Reference](./machadmin/)
@@ -50,7 +50,7 @@ Bulk data import tool:
 - Error handling
 
 ```bash
-machloader -t table -d csv -i data.csv
+machloader -i -t table -d data.csv
 ```
 
 [Complete Reference](./machloader/)
@@ -77,9 +77,10 @@ Cluster deployer management (cluster edition):
 
 | Tool | Purpose | Common Use |
 |------|---------|------------|
-| machadmin | Server admin | Start/stop, backup |
+| machadmin | Server admin | Start/stop, restore |
 | machsql | SQL client | Queries, scripts |
 | machloader | Data import | CSV loading |
+| csvimport/csvexport | CSV wrapper | Simple import/export |
 | machcoordinatoradmin | Cluster coordinator | Cluster management |
 | machdeployeradmin | Cluster deployer | Cluster deployment |
 
@@ -114,20 +115,23 @@ machsql
 machsql -f setup.sql
 
 # Import CSV
-machloader -t sensors -d csv -i data.csv
+machloader -i -t sensors -d data.csv
 
 # Export query results
 machsql -f query.sql -o results.csv -r csv
 ```
 
-### Backup and Restore
+### Backup Image Operations
 
 ```bash
-# Backup
-machadmin -b /backup/machbase_backup
-
 # Restore
 machadmin -r /backup/machbase_backup
+
+# Extract a backup file to a backup directory
+machadmin -x /backup/machbase_backup
+
+# View backup image information
+machadmin -w /backup/machbase_backup
 ```
 
 ## Environment Variables
@@ -150,8 +154,9 @@ $MACHBASE_HOME/conf/machbase.conf
 
 Key parameters:
 - `PORT_NO` - Server port (default: 5656)
-- `BUFFER_POOL_SIZE` - Memory buffer size
-- `CHECKPOINT_INTERVAL_SEC` - Checkpoint interval
+- `PROCESS_MAX_SIZE` - Maximum memory size of the server process
+- `DISK_COLUMNAR_TABLE_CHECKPOINT_INTERVAL_SEC` - Table checkpoint interval
+- `DISK_COLUMNAR_INDEX_CHECKPOINT_INTERVAL_SEC` - Index checkpoint interval
 
 [Complete Configuration Reference](../configuration/)
 
@@ -159,13 +164,13 @@ Key parameters:
 
 ```bash
 # Server logs
-$MACHBASE_HOME/trc/machbase.log
+$MACHBASE_HOME/trc/machbase.trc
 
 # SQL client logs
-$MACHBASE_HOME/trc/machsql.log
+$MACHBASE_HOME/trc/machsql.trc
 
 # Loader logs
-$MACHBASE_HOME/trc/machloader.log
+$MACHBASE_HOME/trc/machloader.trc
 ```
 
 ## Troubleshooting
@@ -177,7 +182,7 @@ $MACHBASE_HOME/trc/machloader.log
 netstat -an | grep 5656
 
 # Check logs
-tail -50 $MACHBASE_HOME/trc/machbase.log
+tail -50 $MACHBASE_HOME/trc/machbase.trc
 
 # Verify database created
 ls -la $MACHBASE_HOME/dbs/
@@ -200,7 +205,7 @@ machsql -s localhost -u SYS -p MANAGER
 head -10 data.csv
 
 # View loader logs
-cat $MACHBASE_HOME/trc/machloader.log
+cat $MACHBASE_HOME/trc/machloader.trc
 ```
 
 ## Best Practices
@@ -208,7 +213,7 @@ cat $MACHBASE_HOME/trc/machloader.log
 1. **Always use environment variables** - Set MACHBASE_HOME correctly
 2. **Check server status** - Use `machadmin -e` before operations
 3. **Review logs** - Check logs for errors and warnings
-4. **Regular backups** - Use `machadmin -b` for backups
+4. **Validate maintenance inputs** - Check backup image paths before restore/extract operations
 5. **Test scripts** - Validate SQL scripts before production use
 
 ## Related Documentation
@@ -234,7 +239,7 @@ machadmin -u
 machsql
 
 # 5. Import data
-machloader -t mytable -d csv -i data.csv
+machloader -i -t mytable -d data.csv
 ```
 
-For detailed tool documentation, see the [Tools Reference](../../dbms/tools-reference/) in the original documentation.
+For detailed tool documentation, see each tool page in this section.

@@ -86,12 +86,12 @@ Machbase는 각각 다른 워크로드에 최적화된 4가지 특화 테이블 
 
 ```sql
 -- Time axis
-CREATE TAGDATA TABLE sensors (
+CREATE TAG TABLE sensors (
     sensor_id VARCHAR(20) PRIMARY KEY,    -- 태그 이름 (센서 식별자)
     time DATETIME BASETIME,               -- 타임스탬프
-    value DOUBLE SUMMARIZED,              -- 측정값
-    other_value DOUBLE SUMMARIZED
-);
+    value DOUBLE SUMMARIZED,              -- Rollup 대상 측정값
+    other_value DOUBLE                    -- 추가 측정값
+) WITH ROLLUP;
 
 -- Distance axis
 CREATE TAG TABLE conveyor_profile (
@@ -104,17 +104,20 @@ CREATE TAG TABLE conveyor_profile (
 
 ### 주요 기능
 
-**자동 Rollup 통계 (시간축 전용)**:
+**Rollup 통계 (시간축 전용)**:
 ```sql
 -- 원시 데이터
 INSERT INTO sensors VALUES ('sensor01', NOW, 25.3);
 
--- 자동 통계 (수동 작업 불필요!)
-SELECT * FROM sensors WHERE rollup = hour;
--- 반환: min_value, max_value, avg_value, sum_value, count, sumsq_value
+-- rollup 표현식으로 시간별 통계 쿼리
+SELECT rollup('hour', 1, time) AS hour_time, AVG(value), COUNT(value)
+FROM sensors
+GROUP BY hour_time;
 ```
 
-거리축 Tag 테이블은 rollup 대신 거리 범위 조회와 버킷 집계를 사용합니다.
+rollup 표현식은 `WITH ROLLUP`으로 테이블을 생성하거나 `CREATE ROLLUP`으로 rollup을
+정의한 뒤 사용합니다. 거리축 Tag 테이블은 rollup 대신 거리 범위 조회와 버킷 집계를
+사용합니다.
 
 **메타데이터 계층**:
 ```sql
@@ -135,7 +138,7 @@ UPDATE sensors._META SET location = 'Building A' WHERE name = 'sensor01';
 
 **DO (해야 할 것)**:
 - 다중 센서 데이터에 사용 (하나의 테이블에 수천 개의 센서)
-- 분석 컬럼을 SUMMARIZED로 표시
+- Rollup 대상 컬럼을 SUMMARIZED로 표시
 - 시간축 테이블의 통계를 위해 Rollup 테이블 쿼리
 - 센서 정보를 위해 메타데이터 테이블 사용
 
@@ -148,23 +151,23 @@ UPDATE sensors._META SET location = 'Building A' WHERE name = 'sensor01';
 
 ```sql
 -- 제조: 장비 센서
-CREATE TAGDATA TABLE equipment_telemetry (
+CREATE TAG TABLE equipment_telemetry (
     equipment_id VARCHAR(50) PRIMARY KEY,
     time DATETIME BASETIME,
     temperature DOUBLE SUMMARIZED,
-    vibration DOUBLE SUMMARIZED,
-    rpm DOUBLE SUMMARIZED,
-    power_consumption DOUBLE SUMMARIZED
+    vibration DOUBLE,
+    rpm DOUBLE,
+    power_consumption DOUBLE
 );
 
 -- 스마트 시티: 환경 모니터링
-CREATE TAGDATA TABLE air_quality (
+CREATE TAG TABLE air_quality (
     station_id VARCHAR(30) PRIMARY KEY,
     time DATETIME BASETIME,
     pm25 DOUBLE SUMMARIZED,
-    pm10 DOUBLE SUMMARIZED,
-    co2 DOUBLE SUMMARIZED,
-    temperature DOUBLE SUMMARIZED
+    pm10 DOUBLE,
+    co2 DOUBLE,
+    temperature DOUBLE
 );
 
 -- 거리축: 컨베이어/주행거리 프로파일
@@ -213,6 +216,9 @@ INSERT INTO app_logs VALUES ('ERROR', 'DB', 'Connection timeout', 123, '192.168.
 
 **전문 검색**:
 ```sql
+-- SEARCH 사용 전 KEYWORD 인덱스 생성
+CREATE INDEX idx_app_logs_message ON app_logs(message) INDEX_TYPE KEYWORD;
+
 -- 빠른 텍스트 검색
 SELECT * FROM app_logs
 WHERE message SEARCH 'timeout'
@@ -381,7 +387,7 @@ CREATE VOLATILE TABLE monitoring_cache (
 
 ```sql
 CREATE LOOKUP TABLE devices (
-    device_id INTEGER,
+    device_id VARCHAR(20) PRIMARY KEY,
     device_name VARCHAR(100),
     location VARCHAR(200),
     device_type VARCHAR(50),
@@ -394,13 +400,13 @@ CREATE LOOKUP TABLE devices (
 **완전한 CRUD 지원**:
 ```sql
 -- Insert
-INSERT INTO devices VALUES (101, 'Sensor A', 'Building 1', 'Temperature', 'Facilities');
+INSERT INTO devices VALUES ('sensor01', 'Sensor A', 'Building 1', 'Temperature', 'Facilities');
 
 -- Update
-UPDATE devices SET location = 'Building 2' WHERE device_id = 101;
+UPDATE devices SET location = 'Building 2' WHERE device_id = 'sensor01';
 
 -- Delete
-DELETE FROM devices WHERE device_id = 101;
+DELETE FROM devices WHERE device_id = 'sensor01';
 
 -- Select
 SELECT * FROM devices WHERE device_type = 'Temperature';
@@ -412,7 +418,8 @@ SELECT * FROM devices WHERE device_type = 'Temperature';
 SELECT s.*, d.device_name, d.location
 FROM sensors s
 JOIN devices d ON s.sensor_id = d.device_id
-DURATION 1 HOUR;
+WHERE s.time BETWEEN TO_DATE('2025-10-10 14:00:00', 'YYYY-MM-DD HH24:MI:SS')
+                 AND TO_DATE('2025-10-10 15:00:00', 'YYYY-MM-DD HH24:MI:SS');
 ```
 
 **성능**:
@@ -438,7 +445,7 @@ DURATION 1 HOUR;
 ```sql
 -- 장치 레지스트리
 CREATE LOOKUP TABLE device_registry (
-    device_id VARCHAR(50),
+    device_id VARCHAR(50) PRIMARY KEY,
     device_name VARCHAR(100),
     device_type VARCHAR(50),
     location VARCHAR(200),
@@ -448,7 +455,7 @@ CREATE LOOKUP TABLE device_registry (
 
 -- 구성 관리
 CREATE LOOKUP TABLE system_config (
-    config_key VARCHAR(100),
+    config_key VARCHAR(100) PRIMARY KEY,
     config_value VARCHAR(500),
     config_category VARCHAR(50),
     description VARCHAR(500)
@@ -456,7 +463,7 @@ CREATE LOOKUP TABLE system_config (
 
 -- 사용자 관리
 CREATE LOOKUP TABLE users (
-    user_id INTEGER,
+    user_id INTEGER PRIMARY KEY,
     username VARCHAR(100),
     email VARCHAR(200),
     role VARCHAR(50),
@@ -499,7 +506,7 @@ CREATE LOOKUP TABLE users (
 
 ```sql
 -- Tag: 센서 측정값
-CREATE TAGDATA TABLE sensor_data (...);
+CREATE TAG TABLE sensor_data (...);
 
 -- Lookup: 장치 레지스트리
 CREATE LOOKUP TABLE devices (...);
@@ -531,7 +538,7 @@ CREATE LOOKUP TABLE users (...);
 
 ```sql
 -- Tag: 장비 센서
-CREATE TAGDATA TABLE equipment_telemetry (...);
+CREATE TAG TABLE equipment_telemetry (...);
 
 -- Log: 생산 이벤트
 CREATE TABLE production_log (...);
@@ -555,7 +562,7 @@ CREATE TABLE sensors (sensor_id VARCHAR(20), value DOUBLE);
 
 **좋음**: Tag 테이블 사용
 ```sql
-CREATE TAGDATA TABLE sensors (
+CREATE TAG TABLE sensors (
     sensor_id VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
     value DOUBLE SUMMARIZED
@@ -566,14 +573,14 @@ CREATE TAGDATA TABLE sensors (
 
 **나쁨**: 1000개 센서를 위한 1000개 테이블 생성
 ```sql
-CREATE TAGDATA TABLE sensor001 (...);
-CREATE TAGDATA TABLE sensor002 (...);
+CREATE TAG TABLE sensor001 (...);
+CREATE TAG TABLE sensor002 (...);
 -- ... 998개의 테이블 더
 ```
 
 **좋음**: 모든 센서를 위한 하나의 테이블
 ```sql
-CREATE TAGDATA TABLE all_sensors (
+CREATE TAG TABLE all_sensors (
     sensor_id VARCHAR(20) PRIMARY KEY,
     ...
 );
@@ -602,7 +609,7 @@ CREATE LOOKUP TABLE sensor_readings (...);
 
 **좋음**: Tag 또는 Log 테이블 사용
 ```sql
-CREATE TAGDATA TABLE sensor_readings (...);
+CREATE TAG TABLE sensor_readings (...);
 ```
 
 ## 마이그레이션 가이드
@@ -618,7 +625,7 @@ CREATE TAGDATA TABLE sensor_readings (...);
 **InfluxDB에서**:
 - Measurements → Tag 테이블
 - Tags → Tag primary key + 메타데이터
-- Fields → SUMMARIZED 컬럼
+- Fields → SUMMARIZED 값 컬럼 하나와 일반 값 컬럼
 
 **MongoDB에서**:
 - 시계열 컬렉션 → Tag/Log 테이블
@@ -636,7 +643,7 @@ CREATE TAGDATA TABLE sensor_readings (...);
 | **DELETE** | 시간 기반 | 시간 기반 | 키로 | 키로 |
 | **스토리지** | 디스크 | 디스크 | 메모리 | 디스크 |
 | **지속성** | 예 | 예 | 아니오 | 예 |
-| **Rollup** | 자동 | 불가 | 불가 | 불가 |
+| **Rollup** | 설정 시 | 불가 | 불가 | 불가 |
 | **최적 쿼리** | ID + time | 시간 | 키 | 모두 |
 | **압축** | 매우 높음 | 높음 | 없음 | 보통 |
 
@@ -648,7 +655,7 @@ CREATE TAGDATA TABLE sensor_readings (...);
 
 ## 핵심 요점
 
-1. **Tag 테이블**은 자동 Rollup이 있는 센서/장치 데이터용
+1. **Tag 테이블**은 Rollup을 지원하는 센서/장치 데이터용
 2. **Log 테이블**은 유연한 이벤트 스트림 및 로그용
 3. **Volatile 테이블**은 인메모리, 업데이트 가능한 데이터용
 4. **Lookup 테이블**은 참조 및 마스터 데이터용

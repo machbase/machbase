@@ -64,7 +64,7 @@ PLAN
 You can also create path indexes on JSON columns in `TAG METADATA`.
 
 ```sql
-CREATE TAGDATA TABLE ships (
+CREATE TAG TABLE ships (
     name VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
     value DOUBLE
@@ -81,7 +81,7 @@ ON ships METADATA (info->'$.owner');
 You can also declare frequently used paths when creating the table.
 
 ```sql
-CREATE TAGDATA TABLE ships (
+CREATE TAG TABLE ships (
     name VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
     value DOUBLE

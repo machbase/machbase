@@ -31,15 +31,15 @@ su - machbase
 
 ```bash
 # 패키지 다운로드
-wget http://machbase.com/dist/machbase-fog-x.x.x.official-LINUX-X86-64-release.tgz
+wget http://machbase.com/dist/machbase-standard-x.x.x.official-LINUX-X86-64-release.tgz
 
 # 디렉토리 생성
 mkdir machbase_home
-mv machbase-fog-x.x.x.official-LINUX-X86-64-release.tgz machbase_home/
+mv machbase-standard-x.x.x.official-LINUX-X86-64-release.tgz machbase_home/
 cd machbase_home/
 
 # 압축 해제
-tar zxf machbase-fog-x.x.x.official-LINUX-X86-64-release.tgz
+tar zxf machbase-standard-x.x.x.official-LINUX-X86-64-release.tgz
 ```
 
 #### 3. 환경 변수 설정

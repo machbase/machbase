@@ -12,7 +12,7 @@ Complete SQL syntax reference for Machbase. This section provides detailed docum
 ### Data Definition Language (DDL)
 
 - `CREATE TABLE` - Create log tables
-- `CREATE TAGDATA TABLE` - Create tag tables
+- `CREATE TAG TABLE` - Create tag tables
 - `CREATE VOLATILE TABLE` - Create volatile tables
 - `CREATE LOOKUP TABLE` - Create lookup tables
 - `CREATE VIEW` - Create stored VIEWs
@@ -107,14 +107,18 @@ SELECT * FROM table WHERE column SEARCH 'keyword';
 ### Rollup Queries
 
 ```sql
-SELECT * FROM tag_table WHERE rollup = sec|min|hour;
+-- On a TAG table created WITH ROLLUP.
+SELECT ROLLUP('hour', 1, time) AS rtime, AVG(value)
+FROM tag_table
+WHERE name = 'sensor-1'
+GROUP BY rtime;
 ```
 
 ### Time-Based Deletion
 
 ```sql
 DELETE FROM table OLDEST n ROWS;
-DELETE FROM table EXCEPT n ROWS|DAYS;
+DELETE FROM table EXCEPT n ROWS|DAY;
 DELETE FROM table BEFORE datetime;
 ```
 
@@ -128,12 +132,12 @@ For complete SQL syntax documentation, see:
 ### Create Tables
 
 ```sql
--- Tag table
-CREATE TAGDATA TABLE sensors (
+-- Tag table with built-in rollup
+CREATE TAG TABLE sensors (
     sensor_id VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
     value DOUBLE SUMMARIZED
-);
+) WITH ROLLUP;
 
 -- Log table
 CREATE TABLE logs (
@@ -149,7 +153,7 @@ CREATE VOLATILE TABLE cache (
 
 -- Lookup table
 CREATE LOOKUP TABLE devices (
-    device_id INTEGER,
+    device_id INTEGER PRIMARY KEY,
     name VARCHAR(100)
 );
 
@@ -163,17 +167,23 @@ FROM devices;
 
 ```sql
 -- Recent data
-SELECT * FROM sensors DURATION 1 HOUR;
+SELECT * FROM sensors
+WHERE time BETWEEN now - 1h AND now;
 
 -- With conditions
 SELECT * FROM logs WHERE level = 'ERROR' DURATION 1 DAY;
 
 -- Aggregations
 SELECT sensor_id, AVG(value) FROM sensors
-DURATION 1 DAY GROUP BY sensor_id;
+WHERE time BETWEEN now - 1d AND now
+GROUP BY sensor_id;
 
 -- Rollup query
-SELECT * FROM sensors WHERE rollup = hour DURATION 7 DAY;
+SELECT ROLLUP('hour', 1, time) AS rtime, AVG(value)
+FROM sensors
+WHERE sensor_id = 'sensor-1'
+  AND time BETWEEN now - 7d AND now
+GROUP BY rtime;
 ```
 
 ### Manage Users

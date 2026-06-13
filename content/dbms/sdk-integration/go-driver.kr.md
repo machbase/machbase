@@ -5,7 +5,7 @@ weight: 110
 ---
 
 ## 개요
-`github.com/machbase/neo-client` 패키지는 Machbase Neo용 표준 Go `database/sql` 드라이버를 제공합니다.
+`github.com/machbase/neo-client` 패키지는 Machbase용 표준 Go `database/sql` 드라이버를 제공합니다.
 이 드라이버는 네이티브 TCP 클라이언트를 기반으로 하며, 네이티브 포트(기본 `5656`)를 사용합니다.
 
 애플리케이션이나 프레임워크가 Go의 `database/sql` 인터페이스를 요구한다면 이 드라이버를 사용하세요.
@@ -13,7 +13,7 @@ weight: 110
 
 ### 사전 요구사항
 
-- **Machbase Neo Server**: 네이티브 포트로 접근 가능한 실행 중인 서버
+- **Machbase server**: native port로 접근 가능한 실행 중인 DBMS 또는 Neo 서버
 - **Go 1.22+**: `github.com/machbase/neo-client`에서 요구
 - **계정 정보**: 유효한 Machbase 사용자 계정
 

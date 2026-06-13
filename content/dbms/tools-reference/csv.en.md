@@ -12,6 +12,20 @@ In addition to the options described below, all options available in machloader 
 
 For supported date/time formatting tokens, see [TO_CHAR](../../sql-reference/functions/#to_char).
 
+## Common Wrapper Options
+
+The CSV wrappers expose the following frequently used machloader options:
+
+|Option|Applies to|Description|
+|--|--|--|
+|-P, --port=PORT|csvimport, csvexport|Server port number (default: 5656)|
+|-l, --log=LOG_FILE|csvimport, csvexport|Execution log file|
+|-b, --bad=BAD_FILE|csvimport|Bad-data file for rows that fail during import|
+|-m, --mode=MODE|csvimport|Import mode (`append` or `replace`; default: `append`)|
+|-a, --atime|csvimport, csvexport|Include the `_ARRIVAL_TIME` column|
+|-I, --silent|csvimport, csvexport|Produce less output|
+|-F, --dateformat=DATEFORMAT|csvimport, csvexport|Date format for columns, such as `_arrival_time YYYY-MM-DD HH24:MI:SS`|
+
 ## csvimport 
 
 CSV files can be easily entered into the server using csvimport.
@@ -43,7 +57,7 @@ Use the following option to enter the CSV file except for the header at the time
 Options:
 
 ```
--H: Will not recognize the first line of the csv file as a header.
+-H: Treats the first line of the CSV file as a header and excludes it from imported data.
 ```
 
 Example:

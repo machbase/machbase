@@ -584,9 +584,9 @@ weight: 10
 |2238|This type of join is not allowed.|이런 타입의 조인은 허용되지 않습니다.|
 |2239|Invalid use of aggregation function.|잘못된 aggregation 함수 사용입니다.|
 |2240|Cannot fetch column with type (%s).|이 타입의 칼럼을 fetch할 수 없습니다.|
-|2241|Join between LOG table and fixed table is not supported in Cluster Edition.|Cluster edtion 에서는 LOG 테이블과 fixed 테이블 간의 조인이 지원되지 않습니다.|
-|2242|Only equal predicate for joining LOG tables is available in Cluster Edition.|cluster edtion 에서는 LOG 테이블을 조인할 때 오직 equal predicate 만 사용할 수 있습니다.|
-|2243|DELETE statement with the number of rows is not supported in Cluster Edition.|rOW 수와 함께하는 DELETE statement는 cluster edtion 에서 지원되지 않습니다.|
+|2241|Join between LOG table and fixed table is not supported in Cluster Edition.|Cluster edition에서는 LOG 테이블과 fixed 테이블 간의 조인이 지원되지 않습니다.|
+|2242|Only equal predicate for joining LOG tables is available in Cluster Edition.|Cluster edition에서는 LOG 테이블을 조인할 때 오직 equal predicate만 사용할 수 있습니다.|
+|2243|DELETE statement with the number of rows is not supported in Cluster Edition.|row 수와 함께 사용하는 DELETE statement는 Cluster edition에서 지원되지 않습니다.|
 |2244|Allocate collector columns meta failure.|Collector 칼럼 meta 할당에 실패했습니다.|
 |2245|Allocate collector column target failure.|Collector 칼럼 target 할당에 실패했습니다.|
 |2246|Identifier %.*s is too long.|너무긴 식별자입니다.|

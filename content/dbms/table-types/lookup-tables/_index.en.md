@@ -16,7 +16,7 @@ Lookup tables are disk-based tables optimized for reference data that changes ra
 - **Persistent disk storage**
 - **Fast reads**
 - **JOIN with time-series tables**
-- **Optional LSM indexing**
+- **Optional RED-BLACK indexing**
 
 ## Basic Syntax
 

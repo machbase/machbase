@@ -37,10 +37,11 @@ The options for machloader can be seen with the following command:
 |-l, --log=LOG_FILE|Specifies a machloader execution log file|
 |-b, --bad=BAD_FILE|Records the data in which the input error occurred and specifies the file name that records the error description when executing -i option.|
 |-m, --mode=MODE|Indicates import method when executing -i option. The append or replace option is available. Append enters the data after the existing data and replace deletes the existing data and enters the data.|
-|-D, –delimiter=DELIMITER|Sets each field delimiter. The default value is ','.|
+|-D, --delimiter=DELIMITER|Sets each field delimiter. The default value is ','.|
 |-n, --newline=NEWLINE|Sets each record separator. The default is '\n'.|
 |-e, --enclosure=ENCLOSURE|Sets the enclosing delimiter for each field.|
 |-r, --format=FORMAT|Specifies the format for file input/output. (default: csv)|
+|--first=FIRST_ROW|Sets the first row number to process.|
 |-a, --atime|Determines whether to use the built-in column `_ARRIVAL_TIME`. The default value is to not use the column.|
 |-z, --timezone|Set timezone ex) +0900 -1230|
 |-I, --silent| Does not display copyright-related output and import/export status information.|
@@ -49,6 +50,7 @@ The options for machloader can be seen with the following command:
 |-E, --encoding=CHARACTER_SET| Sets the encoding of input/output files. Supported encodings are UTF8 (default), ASCII, MS949, KSC5601, EUCJP, SHIFTJIS, BIG5, GB231280, and UTF16.|
 |-C, --create| Creates a table if one does not exist upon import.|
 |-H, --header|Sets whether header information is present upon import/export. The default value is unset.|
+|--summary|Prints the selected option values and exits without importing or exporting data.|
 |-S, --slash|Specifies the backslash delimiter.|
 
 The detailed usages are as follows.
@@ -97,7 +99,7 @@ Option:
 
 ```
 -i -H: Upon import, the first line of the csv file is recognized as a header. Therefore, the first line is excluded from input.
--o -H: Upon export, generates the csv header as the column name of the table.e
+-o -H: Upon export, generates the csv header as the column name of the table.
 ```
 
 Example:
@@ -254,7 +256,7 @@ datetest.csv
 machloader -i -f datetest.fmt -d datetest.csv
 -----------------------------------------------------------------
 Machbase Data Import/Export Utility.
-Release Version 5.1.9.community
+Release Version 8.5.4.develop
 Copyright 2014, MACHBASE Corporation or its subsidiaries.
 All Rights Reserved.
 -----------------------------------------------------------------
@@ -297,13 +299,13 @@ ignoretest.csv
 machloader -i -f ignoretest.fmt -d ignoretest.csv
 -----------------------------------------------------------------
 Machbase Data Import/Export Utility.
-Release Version 5.1.9.community
+Release Version 8.5.4.develop
 Copyright 2014, MACHBASE Corporation or its subsidiaries.
 All Rights Reserved.
 -----------------------------------------------------------------
 NLS : US7ASCII EXECUTE MODE : IMPORT
-SCHMEA FILE : ignoretest.fmt DATA FILE : ignoretest.csv
-IMPORT_MODE : APPEND FILED TERM : ,
+SCHEMA FILE : ignoretest.fmt DATA FILE : ignoretest.csv
+IMPORT_MODE : APPEND FIELD TERM : ,
 ROW TERM : \n ENCLOSURE : "
 ARRIVAL_TIME : FALSE ENCODING : NONE
 HEADER : FALSE CREATE TABLE : FALSE

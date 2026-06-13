@@ -30,7 +30,7 @@ ps -ef | grep machbase
 machadmin -s
 
 # Start server if not running
-machbase
+machadmin -u
 
 # Verify port configuration in machbase.conf
 grep PORT_NO $MACHBASE_HOME/conf/machbase.conf
@@ -42,7 +42,7 @@ grep PORT_NO $MACHBASE_HOME/conf/machbase.conf
 
 **Solution**:
 - Check network connectivity
-- Verify MACHBASE_PORT_NO in machbase.conf
+- Verify `PORT_NO` in `machbase.conf`
 - Ensure no firewall blocking the port
 - Check if max connections limit is reached
 

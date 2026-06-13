@@ -10,7 +10,7 @@ Download sample data by following guide.
 
 ```bash
 ## ##  1. Clone the sample data from MACHBASE git repository.
-$ git clone https://www.github.com/MACHBASE/TagTutorial.git MyTutorial
+$ git clone https://github.com/MACHBASE/TagTutorial.git MyTutorial
  
 ## ##  2. Unzip the data you need.
 $ cd MyTutorial/
@@ -110,13 +110,13 @@ Since STREAM works regardless of the input method, it will automatically insert 
 
 ```bash
 $ cat 5_plc_tag_load.sh
-machloader  -t plc_tag_table -i -d 5_plc_tag.csv -F "tm YYYY-MM-DD HH24:MI:SS mmm:uuu:nnn"
+machloader -i -t plc_tag_table -d 5_plc_tag.csv -F "tm YYYY-MM-DD HH24:MI:SS mmm:uuu:nnn"
  
 $ sh 5_plc_tag_load.sh
 -----------------------------------------------------------------
      Machbase Data Import/Export Utility.
-     Release Version 6.5.1.official
-     Copyright 2014, MACHBASE Corporation or its subsidiaries.
+     Release Version 8.5.4.develop
+     Copyright 2014 MACHBASE Corporation or its subsidiaries.
      All Rights Reserved.
 -----------------------------------------------------------------
 NLS            : US7ASCII            EXECUTE MODE   : IMPORT
@@ -125,7 +125,7 @@ IMPORT MODE    : APPEND              FIELD TERM     : ,
 ROW TERM       : \n                  ENCLOSURE      : "
 ESCAPE         : \                   ARRIVAL_TIME   : FALSE
 ENCODING       : NONE                HEADER         : FALSE
-CREATE TABLE   : FALSE
+CREATE TABLE   : FALSE              CREATE TABLESPACE: FALSE
  
  Progress bar                       Imported records        Error records
                                                80000                    0

@@ -25,7 +25,7 @@ weight: 30
 
 ### 요구 사항
 
-- `pip`을 사용할 수 있는 Python 3.8 이상
+- `pip`을 사용할 수 있는 Python 3.6 이상
 - 접속 가능한 Machbase 서버와 계정 정보(기본 계정 `SYS/MANAGER`, 포트 `5656`)
 - 2.3은 네이티브 라이브러리 의존성이 없습니다.
 
@@ -136,7 +136,7 @@ if __name__ == '__main__':
 | `machbase` | `close()` | 현재 세션을 종료합니다. | `1` 또는 `0` |
 | `machbase` | `isOpened()` | 핸들이 열려 있는지 확인합니다. | `1` 또는 `0` |
 | `machbase` | `isConnected()` | 서버와의 연결 상태를 확인합니다. | `1` 또는 `0` |
-| `machbase` | `execute(sql, type=0)` | `UPDATE`를 제외한 SQL 문을 실행합니다. | `1` 또는 `0` |
+| `machbase` | `execute(sql)` | SQL을 직접 실행합니다. `SELECT`, `WITH`, `DESC`, `DESCRIBE`, `SHOW`는 `select()`로 처리하고, 그 외 SQL은 `exec_direct()`로 실행합니다. | `1` 또는 `0` |
 | `machbase` | `schema(sql)` | 스키마 관련 명령을 실행합니다. | `1` 또는 `0` |
 | `machbase` | `tables()` | 모든 테이블의 메타데이터를 조회합니다. | `1` 또는 `0` |
 | `machbase` | `columns(table_name)` | 특정 테이블의 컬럼 메타데이터를 조회합니다. | `1` 또는 `0` |
@@ -147,18 +147,18 @@ if __name__ == '__main__':
 | `machbase` | `selectClose()` | 열린 결과 집합 커서를 닫습니다. | `1` 또는 `0` |
 | `machbase` | `result()` | 최신 JSON 페이로드를 반환합니다. | JSON 문자열 |
 | `machbase` | `appendOpen(table_name, types=None)` | 컬럼 타입 코드를 지정하여 Append 프로토콜을 시작합니다. 생략 시 서버 메타데이터로 타입을 사용할 수 있습니다. | `1` 또는 `0` |
-| `machbase` | `appendData(table_name, aTypes=None, values=None, format='YYYY-MM-DD HH24:MI:SS', on_ack=None)` | 활성 Append 세션으로 행을 추가합니다. 2.1 이후에는 `aTypes`를 생략하고 두 번째 인자로 행을 바로 전달할 수 있습니다. 호출 시 데이터 패킷을 즉시 전송합니다. | `1` 또는 `0` |
-| `machbase` | `appendDataByTime(table_name, aTypes=None, values=None, format='YYYY-MM-DD HH24:MI:SS', times=None, on_ack=None)` | 명시적 타임스탬프로 행을 추가합니다. 2.1 이후에는 `aTypes`를 생략하고 두 번째 인자로 행을 바로 전달할 수 있습니다. 호출 시 데이터 패킷을 즉시 전송합니다. | `1` 또는 `0` |
+| `machbase` | `appendData(table_name, rows_or_types, values=None, format='YYYY-MM-DD HH24:MI:SS', on_ack=None)` | 활성 Append 세션으로 행을 추가합니다. 타입 리스트를 생략하려면 두 번째 인자로 rows를 전달합니다. 호출 시 데이터 패킷을 즉시 전송합니다. | `1` 또는 `0` |
+| `machbase` | `appendDataByTime(table_name, rows_or_types, values=None, format='YYYY-MM-DD HH24:MI:SS', aTimes=None, on_ack=None)` | 명시적 타임스탬프로 행을 추가합니다. 타입 리스트를 생략하려면 두 번째 인자로 rows를 전달하고 `aTimes`로 타임스탬프를 지정합니다. 호출 시 데이터 패킷을 즉시 전송합니다. | `1` 또는 `0` |
 | `machbase` | `appendFlush()` | 이미 전송된 Append 데이터의 pending response를 확인하는 동기화 지점입니다. 전송 지연 버퍼를 비우는 API가 아닙니다. | `1` 또는 `0` |
 | `machbase` | `appendClose()` | Append 세션을 종료합니다. | `1` 또는 `0` |
-| `machbase` | `append(table_name, aTypes=None, aValues=None, format='YYYY-MM-DD HH24:MI:SS')` | 열기·추가·닫기를 한 번에 처리하는 편의 함수입니다. 2.1 이후에는 `aTypes`를 생략하고 `aValues`를 두 번째 인자로 바로 전달할 수 있습니다. | `1` 또는 `0` |
-| `machbase` | `appendByTime(table_name, aTypes=None, aValues=None, format='YYYY-MM-DD HH24:MI:SS', times=None)` | 타임스탬프 인지 Append를 위한 편의 함수입니다. 2.1 이후에는 `aTypes`를 생략하고 `aValues`를 두 번째 인자로 바로 전달할 수 있습니다. | `1` 또는 `0` |
+| `machbase` | `append(table_name, rows_or_types, aValues=None, format='YYYY-MM-DD HH24:MI:SS')` | 열기·추가·닫기를 한 번에 처리하는 편의 함수입니다. 타입 리스트를 생략하려면 두 번째 인자로 rows를 전달합니다. | `1` 또는 `0` |
+| `machbase` | `appendByTime(table_name, rows_or_types, aValues=None, format='YYYY-MM-DD HH24:MI:SS', aTimes=None)` | 타임스탬프 인지 Append를 위한 편의 함수입니다. 타입 리스트를 생략하려면 두 번째 인자로 rows를 전달하고 `aTimes`로 타임스탬프를 지정합니다. | `1` 또는 `0` |
 
 ## DB-API 스타일 API (2.3)
 
 | API | 설명 | 반환 |
 | -- | -- | -- |
-| `connect(host, port, user, password, ...)` | DB-API 연결 생성 | `MachbaseConnection` |
+| `connect(**kwargs)` | DB-API 연결 생성. `host`, `port`, `user`, `password` 등은 키워드 인자로 전달합니다. | `MachbaseConnection` |
 | `cursor(dictionary=True)` | 커서 생성 (`True`: dict, `False`: tuple) | `MachbaseCursor` |
 | `cursor.execute(sql, params=None)` | SQL 실행 | `cursor` |
 | `cursor.fetchone()` | 한 건 조회 | `tuple | dict | None` |
@@ -216,7 +216,10 @@ from machbaseAPI import connect
 conn = connect(host='127.0.0.1', port=5656, user='SYS', password='MANAGER')
 cur = conn.cursor()
 
-cur.execute('drop table py_append_null')
+try:
+    cur.execute('drop table py_append_null')
+except Exception:
+    pass
 cur.execute('create table py_append_null(ts datetime, name varchar(20), value double, note varchar(40))')
 
 conn.append('PY_APPEND_NULL', [
@@ -241,7 +244,10 @@ from machbaseAPI import connect
 conn = connect(host='127.0.0.1', port=5656, user='SYS', password='MANAGER')
 cur = conn.cursor()
 
-cur.execute('drop table py_tag_append_null')
+try:
+    cur.execute('drop table py_tag_append_null')
+except Exception:
+    pass
 cur.execute('''
     create tag table py_tag_append_null (
         name varchar(40) primary key,
@@ -265,15 +271,17 @@ conn.close()
 
 위 예제에서 `status`, `site`, `line`은 모두 `NULL`로 저장됩니다. 반대로 `value`를 생략한 TAG append는 오류로 처리됩니다.
 
-## API 참고 및 샘플 (레거시 1.x 기준)
+## API 참고 및 샘플 (legacy-style `machbase` class)
 
-아래 예제는 기존 레거시 버전 기준 정리입니다. 2.3 순수 Python에서는 `getSessionId()`, `count()`, `checkBit()`와 같은 API가 제공되지 않습니다. 필요 시 2.3 DB-API 예제를 참고하세요.
+아래 예제는 2.3 패키지에서도 유지되는 legacy-style `machbase` 클래스를 사용합니다.
+`getSessionId()`, `count()`, `checkBit()`와 같은 API는 예전 native 패키지에는 있었지만
+현재 pure-Python 구현에서는 제공되지 않습니다. 필요 시 2.3 DB-API 예제를 참고하세요.
 
 각 스크립트에서 호스트·포트·계정 정보를 환경에 맞게 수정하세요. 모든 예제는 독립 실행이 가능하며 `python3 script.py` 형태로 실행할 수 있습니다.
 
 ### 연결 관리
 
-#### machbase.open(), machbase.isOpened(), machbase.isConnected(), machbase.getSessionId(), machbase.close()
+#### machbase.open(), machbase.isOpened(), machbase.isConnected(), machbase.close()
 
 ```python
 #!/usr/bin/env python3
@@ -287,7 +295,6 @@ def main():
     if db.open('127.0.0.1', 'SYS', 'MANAGER', 5656) == 0:
         raise SystemExit(db.result())
 
-    print('session id:', db.getSessionId())
     print('isOpened after open:', db.isOpened())
     print('isConnected after open:', db.isConnected())
 
@@ -312,7 +319,7 @@ def main():
     conn_str = 'APP_NAME=python-demo'
     if db.openEx('127.0.0.1', 'SYS', 'MANAGER', 5656, conn_str) == 0:
         raise SystemExit(db.result())
-    print('connected with openEx, session id:', db.getSessionId())
+    print('connected with openEx:', db.isConnected())
     if db.close() == 0:
         raise SystemExit(db.result())
 
@@ -322,7 +329,7 @@ if __name__ == '__main__':
 
 ### DML과 결과 버퍼
 
-#### machbase.execute(), machbase.result(), machbase.count()
+#### machbase.execute(), machbase.result()
 
 ```python
 #!/usr/bin/env python3
@@ -356,7 +363,7 @@ def main():
         print('select payload:', payload)
         rows = json.loads(payload)
         print('decoded rows:', rows)
-        print('row count via count():', db.count())
+        print('row count:', len(rows))
     finally:
         if db.close() == 0:
             raise SystemExit(db.result())
@@ -398,12 +405,14 @@ def main():
         if db.select('select id, value from py_select_demo order by id') == 0:
             raise SystemExit(db.result())
 
-        print('buffered rows:', db.count())
+        fetched = 0
         while True:
             rc, payload = db.fetch()
             if rc == 0:
                 break
             print('fetched row:', json.loads(payload))
+            fetched += 1
+        print('fetched rows:', fetched)
 
         db.selectClose()
     finally:
@@ -594,12 +603,12 @@ def main():
 
         if db.appendOpen('PY_APPEND_TIME') == 0:
             raise SystemExit(db.result())
-        if db.appendDataByTime('PY_APPEND_TIME', rows, 'YYYY-MM-DD HH24:MI:SS', epoch_times) == 0:
+        if db.appendDataByTime('PY_APPEND_TIME', rows, aTimes=epoch_times) == 0:
             raise SystemExit(db.result())
         print('appendDataByTime result:', db.result())
         db.appendClose()
 
-        if db.appendByTime('PY_APPEND_TIME', rows, 'YYYY-MM-DD HH24:MI:SS', epoch_times) == 0:
+        if db.appendByTime('PY_APPEND_TIME', rows, aTimes=epoch_times) == 0:
             raise SystemExit(db.result())
         print('appendByTime result:', db.result())
     finally:

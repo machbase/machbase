@@ -40,16 +40,16 @@ Tag tables automatically create a sophisticated indexing system:
 ### How It Works
 
 ```sql
-CREATE TAGDATA TABLE sensors (
+CREATE TAG TABLE sensors (
     sensor_id VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
     temperature DOUBLE SUMMARIZED
-);
+) WITH ROLLUP;
 
 -- Behind the scenes, Machbase creates:
 -- 1. Index on sensor_id (tag name)
 -- 2. Time-based partitions
--- 3. Indexes on temperature within each partition
+-- 3. Rollup/index structures for the summarized column
 ```
 
 ### Query Optimization
@@ -68,7 +68,8 @@ WHERE sensor_id = 'sensor01'
 -- Uses sensor_id + time partition
 SELECT * FROM sensors
 WHERE sensor_id = 'sensor01'
-DURATION 1 HOUR;
+  AND time BETWEEN TO_DATE('2025-10-10 14:00:00', 'YYYY-MM-DD HH24:MI:SS')
+               AND TO_DATE('2025-10-10 15:00:00', 'YYYY-MM-DD HH24:MI:SS');
 ```
 
 **Slow Queries** (full scan):
@@ -80,23 +81,23 @@ WHERE temperature > 30.0;
 
 ### Rollup Table Indexes
 
-Rollup tables are automatically indexed:
+Rollup tables are indexed when they exist:
 
 ```sql
 -- Query rollup (very fast, pre-aggregated data)
-SELECT * FROM sensors
+SELECT rollup('hour', 1, time) AS hour_time, AVG(temperature), COUNT(temperature)
+FROM sensors
 WHERE sensor_id = 'sensor01'
-  AND rollup = hour
-DURATION 7 DAY;
+GROUP BY hour_time;
 
--- Available rollup levels: sec, min, hour
+-- Common rollup levels: sec, min, hour
 ```
 
 ### Best Practices
 
 **DO**:
 - Always include sensor_id in WHERE clause
-- Use time filters (DURATION or time range)
+- Use time filters (`DURATION` for Log tables, BASETIME ranges for Tag tables)
 - Query rollup tables for statistics
 - Let Machbase manage indexes automatically
 
@@ -171,9 +172,11 @@ WHERE level = 'ERROR'
 DURATION 1 HOUR;
 ```
 
-**Without Index**:
+**Keyword Index Required**:
 ```sql
--- Slower: Full scan, but still uses time partitioning
+-- SEARCH requires a KEYWORD index
+CREATE INDEX idx_message ON app_logs(message) INDEX_TYPE KEYWORD;
+
 SELECT * FROM app_logs
 WHERE message SEARCH 'timeout'
 DURATION 1 HOUR;
@@ -224,13 +227,12 @@ SELECT * FROM device_status WHERE status = 'ERROR';
 
 ```sql
 CREATE LOOKUP TABLE devices (
-    device_id INTEGER,
+    device_id INTEGER PRIMARY KEY,
     device_name VARCHAR(100),
     location VARCHAR(200)
 );
 
 -- Create indexes on frequently queried columns
-CREATE INDEX idx_device_id ON devices(device_id);
 CREATE INDEX idx_location ON devices(location);
 ```
 
@@ -240,7 +242,8 @@ Same principles as Log table indexing.
 
 ### Automatic Partitioning
 
-All disk-based tables (Tag, Log, Lookup) use time-based partitioning:
+Tag and Log tables use time-aware storage for efficient range queries. Lookup tables are
+persistent reference tables and are optimized through primary keys and optional indexes.
 
 ```
 Partition Structure:
@@ -303,7 +306,8 @@ SELECT * FROM sensors WHERE sensor_id = 'sensor01';
 ```sql
 SELECT * FROM sensors
 WHERE sensor_id = 'sensor01'
-DURATION 1 HOUR;
+  AND time BETWEEN TO_DATE('2025-10-10 14:00:00', 'YYYY-MM-DD HH24:MI:SS')
+               AND TO_DATE('2025-10-10 15:00:00', 'YYYY-MM-DD HH24:MI:SS');
 ```
 
 ### 2. Use DURATION Keyword
@@ -316,17 +320,23 @@ SELECT * FROM logs DURATION 1 HOUR;
 **Less Optimal** (manual time filter):
 ```sql
 SELECT * FROM logs
-WHERE _arrival_time >= NOW - INTERVAL '1' HOUR;
+WHERE _arrival_time BETWEEN TO_DATE('2025-10-10 14:00:00', 'YYYY-MM-DD HH24:MI:SS')
+                        AND TO_DATE('2025-10-10 15:00:00', 'YYYY-MM-DD HH24:MI:SS');
 ```
 
 ### 3. Query Rollup, Not Raw Data
 
-**Good** (instant results):
+**Good** (instant results when matching rollups exist):
 ```sql
 SELECT * FROM sensors
 WHERE sensor_id = 'sensor01'
-  AND rollup = hour
-DURATION 7 DAY;
+  AND time BETWEEN TO_DATE('2025-10-01', 'YYYY-MM-DD')
+               AND TO_DATE('2025-10-08', 'YYYY-MM-DD');
+
+SELECT rollup('hour', 1, time) AS hour_time, AVG(temperature)
+FROM sensors
+WHERE sensor_id = 'sensor01'
+GROUP BY hour_time;
 ```
 
 **Slow** (millions of rows):
@@ -334,7 +344,8 @@ DURATION 7 DAY;
 SELECT sensor_id, AVG(temperature)
 FROM sensors
 WHERE sensor_id = 'sensor01'
-DURATION 7 DAY
+  AND time BETWEEN TO_DATE('2025-10-01', 'YYYY-MM-DD')
+               AND TO_DATE('2025-10-08', 'YYYY-MM-DD')
 GROUP BY sensor_id;
 ```
 
@@ -444,16 +455,17 @@ Key parameters (in machbase.conf):
 
 ```properties
 # Memory settings
-BUFFER_POOL_SIZE = 2G          # Shared buffer cache
-VOLATILE_TABLESPACE_SIZE = 1G  # Volatile table memory
+PROCESS_MAX_SIZE = 8G                         # Process memory limit
+VOLATILE_TABLESPACE_MEMORY_MAX_SIZE = 1G      # Volatile table memory
+DISK_COLUMNAR_TABLESPACE_MEMORY_MAX_SIZE = 2G # Disk table memory
 
 # Write performance
-CHECKPOINT_INTERVAL_SEC = 600  # Checkpoint frequency
-LOG_BUFFER_SIZE = 64M          # Write buffer size
+DISK_COLUMNAR_TABLE_CHECKPOINT_INTERVAL_SEC = 600
+DISK_COLUMNAR_INDEX_CHECKPOINT_INTERVAL_SEC = 600
 
 # Query performance
 MAX_QPX_MEM = 512M             # Per-query memory limit
-QUERY_TIMEOUT = 60             # Query timeout (seconds)
+SESSION_QUERY_TIMEOUT_SEC = 60 # Query timeout, 0 disables timeout
 ```
 
 ### Application Optimization
@@ -493,22 +505,28 @@ SELECT * FROM sensors WHERE sensor_id = 'sensor01';
 ```sql
 SELECT * FROM sensors
 WHERE sensor_id = 'sensor01'
-DURATION 1 HOUR;  -- Fast: scans 1 partition
+  AND time BETWEEN TO_DATE('2025-10-10 14:00:00', 'YYYY-MM-DD HH24:MI:SS')
+               AND TO_DATE('2025-10-10 15:00:00', 'YYYY-MM-DD HH24:MI:SS');
 ```
 
 ### Issue 2: Querying Raw Data for Analytics
 
 **Problem**:
 ```sql
-SELECT AVG(temperature) FROM sensors DURATION 7 DAY;
+SELECT AVG(temperature)
+FROM sensors
+WHERE time BETWEEN TO_DATE('2025-10-01', 'YYYY-MM-DD')
+               AND TO_DATE('2025-10-08', 'YYYY-MM-DD');
 -- Slow: aggregates millions of rows
 ```
 
 **Solution**:
 ```sql
-SELECT AVG(avg_temperature) FROM sensors
-WHERE rollup = hour
-DURATION 7 DAY;  -- Fast: aggregates pre-computed data
+SELECT rollup('hour', 1, time) AS hour_time, AVG(temperature)
+FROM sensors
+WHERE time BETWEEN TO_DATE('2025-10-01', 'YYYY-MM-DD')
+               AND TO_DATE('2025-10-08', 'YYYY-MM-DD')
+GROUP BY hour_time;  -- Fast when matching rollups exist
 ```
 
 ### Issue 3: Missing Indexes on Log Tables

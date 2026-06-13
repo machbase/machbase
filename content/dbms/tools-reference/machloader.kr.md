@@ -37,10 +37,11 @@ machloader의 옵션은 다음 명령으로 확인할 수 있습니다:
 |-l, --log=LOG_FILE|machloader 실행 로그 파일 지정|
 |-b, --bad=BAD_FILE|-i 옵션 실행 시 입력 오류가 발생한 데이터를 기록하고 오류 설명을 기록하는 파일 이름 지정|
 |-m, --mode=MODE|-i 옵션 실행 시 가져오기 방법 표시. append 또는 replace 옵션을 사용할 수 있습니다. Append는 기존 데이터 뒤에 데이터를 입력하고, replace는 기존 데이터를 삭제한 후 데이터를 입력합니다.|
-|-D, –delimiter=DELIMITER|각 필드 구분자 설정. 기본값은 ','입니다.|
+|-D, --delimiter=DELIMITER|각 필드 구분자 설정. 기본값은 ','입니다.|
 |-n, --newline=NEWLINE|각 레코드 구분자 설정. 기본값은 '\n'입니다.|
 |-e, --enclosure=ENCLOSURE|각 필드의 둘러싸는 구분자 설정|
 |-r, --format=FORMAT|파일 입출력 형식 지정 (기본값: csv)|
+|--first=FIRST_ROW|처리할 첫 번째 행 번호 설정|
 |-a, --atime|내장 컬럼 `_ARRIVAL_TIME` 사용 여부 결정. 기본값은 컬럼을 사용하지 않습니다|
 |-z, --timezone|타임존 설정 예) +0900 -1230|
 |-I, --silent| 저작권 관련 출력 및 가져오기/내보내기 상태 정보를 표시하지 않습니다|
@@ -49,6 +50,7 @@ machloader의 옵션은 다음 명령으로 확인할 수 있습니다:
 |-E, --encoding=CHARACTER_SET| 입출력 파일의 인코딩 설정. 지원되는 인코딩은 UTF8(기본값), ASCII, MS949, KSC5601, EUCJP, SHIFTJIS, BIG5, GB231280, UTF16입니다.|
 |-C, --create| 가져오기 시 테이블이 없으면 테이블을 생성합니다.|
 |-H, --header|가져오기/내보내기 시 헤더 정보 존재 여부 설정. 기본값은 설정되지 않습니다|
+|--summary|선택된 옵션 값을 출력하고, 데이터를 가져오거나 내보내지 않고 종료합니다.|
 |-S, --slash|백슬래시 구분자 지정|
 
 자세한 사용법은 다음과 같습니다.
@@ -60,47 +62,47 @@ CSV 파일을 Machbase 서버로 가져옵니다.
 옵션:
 
 ```
--i: import specification options
--d: data file naming options
--t: table name specification option
+-i: 가져오기 지정 옵션
+-d: 데이터 파일 이름 지정 옵션
+-t: 테이블 이름 지정 옵션
 ```
 
-Example:
+예제:
 
 ```
 machloader -i -d data.csv -t table_name
 ```
 
-## CSV File Export
+## CSV 파일 내보내기
 
-Writes data to a CSV file.
+데이터를 CSV 파일에 씁니다.
 
-Option:
+옵션:
 
 ```
--o: export specification options
--d: data file naming options
--t: table name specification option
+-o: 내보내기 지정 옵션
+-d: 데이터 파일 이름 지정 옵션
+-t: 테이블 이름 지정 옵션
 ```
 
-Example:
+예제:
 
 ```
 machloader -o -d data.csv -t table_name
 ```
 
-## Use CSV File Header
+## CSV 파일 헤더 사용
 
-The header-related setting of the CSV file.
+CSV 파일의 헤더 관련 설정입니다.
 
-Option:
+옵션:
 
 ```
--i -H: Upon import, the first line of the csv file is recognized as a header. Therefore, the first line is excluded from input.
--o -H: Upon export, generates the csv header as the column name of the table.e
+-i -H: 가져오기 시 CSV 파일의 첫 줄을 헤더로 인식하여 입력에서 제외합니다.
+-o -H: 내보내기 시 테이블 컬럼명을 CSV 헤더로 생성합니다.
 ```
 
-Example:
+예제:
 
 ```
 machloader -i -d data.csv -t table_name -H
@@ -108,18 +110,18 @@ machloader -o -d data.csv -t table_name -H
 ```
 
 
-## Automatic Table Creation
+## 자동 테이블 생성
 
-Regards automatic table creation.
+자동 테이블 생성 관련 옵션입니다.
 
-Option:
+옵션:
 
 ```
--C: Automatically generates the table when importing. The column names are automatically generated as c0, c1, .... The generated column is varchar (32767) type.
--H: Generates column names with csv header name when importing.
+-C: 가져오기 시 테이블을 자동 생성합니다. 컬럼명은 c0, c1, ... 순서로 생성되며 타입은 varchar(32767)입니다.
+-H: 가져오기 시 CSV 헤더명을 컬럼명으로 사용합니다.
 ```
 
-Example:
+예제:
 
 ```
 machloader -i -d data.csv -t table_name -C
@@ -127,116 +129,119 @@ machloader -i -d data.csv -t table_name -C -H
 ```
 
 
-## Files Not CSV Format
+## CSV가 아닌 파일 형식
 
-Sets delimiter for files that are not in CSV format.
+CSV 형식이 아닌 파일에 사용할 구분자를 설정합니다.
 
-Option:
+옵션:
 
 ```
--D: Delimiter option for each field
--n: Specifies each record delimiter option
--e: Specifies the enclosing character for each field.
+-D: 각 필드 구분자 지정
+-n: 각 레코드 구분자 지정
+-e: 각 필드의 enclosing 문자 지정
 ```
 
-Example:
+예제:
 
 ```
 machloader -i -d data.txt -t table_name -D '^' -n '\n' -e '"'
 machloader -o -d data.txt -t table_name -D '^' -n '\n' -e '"'
 ```
 
-## Specify Input Mode
+## 입력 모드 지정
 
-When importing (with -i option), there are two modes, REPLACE and APPEND. APPEND is the default. Use REPLACE mode with caution because it deletes existing data.
+가져오기(`-i`) 시 `replace`와 `append` 두 모드를 사용할 수 있습니다. 기본값은
+`append`입니다. `replace` 모드는 기존 데이터를 삭제하므로 주의해서 사용해야 합니다.
 
-Option:
+옵션:
 
 ```
--m: Specifies import mode
+-m: 가져오기 모드 지정
 ```
 
-Example:
+예제:
 
 ```
 machloader -i -d data.csv -t table_name -m replace
 ```
 
-## Specify Connection Information
+## 접속 정보 지정
 
-Specifies server IP, user, and password separately.
+서버 IP, 사용자, 비밀번호를 별도로 지정합니다.
 
-Option:
+옵션:
 
 ```
--s: Specifies server IP address (default: 127.0.0.1)
--P: Specifies server port number (default: 5656)
--u: Specifies the connecting user name (default: SYS)
--p: Specifies the password of the connecting user (default: MANAGER)
+-s: 서버 IP 주소 지정 (기본값: 127.0.0.1)
+-P: 서버 포트 번호 지정 (기본값: 5656)
+-u: 접속 사용자 이름 지정 (기본값: SYS)
+-p: 접속 사용자 비밀번호 지정 (기본값: MANAGER)
 ```
 
-Example:
+예제:
 
 ```
 machloader -i -s 192.168.0.10 -P 5656 -u mach -p machbase -d data.csv -t table_name
 ```
 
-## Create Log File
+## 로그 파일 생성
 
-Creates the execution log file for machloader.
+machloader 실행 로그와 bad-data 파일을 생성합니다.
 
-Option:
+옵션:
 
 ```
--b: Sets the name of the log file to generate the data that is not input when importing.
--l: Sets the name of the log file to generate the data and error message that were not input when importing.
+-b: 가져오기 실패 행을 기록할 bad-data 파일 이름 지정
+-l: 가져오기 실패 행과 오류 메시지를 기록할 실행 로그 파일 이름 지정
 ```
 
-Example:
+예제:
 
 ```
 machloader -i -d data.csv -t table_name -b table_name.bad -l table_name.log
 ```
 
-## Create Schema File
+## 스키마 파일 생성
 
-The machloader schema file can be created. Import/export is possible even if the data type format is changed using a schema file or the number of columns in the table and data file is different.
+machloader 스키마 파일을 생성할 수 있습니다. 스키마 파일을 사용하면 데이터 타입
+형식을 변경하거나 테이블과 데이터 파일의 컬럼 수가 다른 경우에도 가져오기/내보내기를
+수행할 수 있습니다.
 
-Option:
+옵션:
 
 ```
--c: schema file creation options
--t: table name specification option
--f: created schema file name specification option
+-c: 스키마 파일 생성 옵션
+-t: 테이블 이름 지정 옵션
+-f: 생성할 스키마 파일 이름 지정 옵션
 ```
 
-Example:
+예제:
 
 ```
 machloader -c -t table_name -f table_name.fmt
 machloader -c -t table_name -f table_name.fmt -a
 ```
 
-## Set datetime Format in Schema File
+## 스키마 파일에서 datetime 형식 설정
 
-The date format can be set to preference with the DATEFORMAT option.
+`DATEFORMAT` 옵션으로 날짜 형식을 지정할 수 있습니다.
 
-Syntax:
+구문:
 
 ```
-## Set for all datetime columns.
+## 모든 datetime 컬럼에 설정
 DATEFORMAT <dateformat>
 ```
-## Set for individual datetime column.
+## 개별 datetime 컬럼에 설정
 
 ```
 DATEFORMAT <column_name> <format>
 ```
 
-Example:
+예제:
 
 ```
--- Set dateformat for each field in datetest.csv file in the schema file (datetest.fmt).
+-- 스키마 파일(datetest.fmt)에서 datetest.csv 각 필드의 dateformat을 설정합니다.
 datetest.fmt
 table datetest
 {
@@ -250,11 +255,11 @@ datetest.csv
 2017/02/20 11:05:23,2017 20 02 11:05:23
 2017/02/20 11:06:34,2017 20 02 11:06:34
  
--- Import datetest.csv file and check input data.
+-- datetest.csv 파일을 가져오고 입력 데이터를 확인합니다.
 machloader -i -f datetest.fmt -d datetest.csv
 -----------------------------------------------------------------
 Machbase Data Import/Export Utility.
-Release Version 5.1.9.community
+Release Version 8.5.4.develop
 Copyright 2014, MACHBASE Corporation or its subsidiaries.
 All Rights Reserved.
 -----------------------------------------------------------------
@@ -273,13 +278,14 @@ Elapsed time: 0.000
 
 ## IGNORE
 
-When you do not want to enter a specific field in the CSV file, you can set the IGNORE option in the fmt file.
-The ignoretest.csv file has three fields, but if the last field is not needed, specify IGNORE in the column that is not needed in the fmt file.
+CSV 파일의 특정 필드를 입력하지 않으려면 fmt 파일에서 `IGNORE` 옵션을 설정할 수
+있습니다. `ignoretest.csv` 파일에는 필드가 3개 있지만 마지막 필드가 필요 없다면,
+fmt 파일에서 해당 컬럼에 `IGNORE`를 지정합니다.
 
-Example:
+예제:
 
 ```
--- Set ignore option for last field in ignoretest.fmt file.
+-- ignoretest.fmt 파일의 마지막 필드에 IGNORE 옵션을 설정합니다.
 ignoretest.fmt
 table ignoretest
 {
@@ -293,17 +299,17 @@ ignoretest.csv
 2, "msg2", 4
  
  
--- Import ignoretest.csv file and check input data.
+-- ignoretest.csv 파일을 가져오고 입력 데이터를 확인합니다.
 machloader -i -f ignoretest.fmt -d ignoretest.csv
 -----------------------------------------------------------------
 Machbase Data Import/Export Utility.
-Release Version 5.1.9.community
+Release Version 8.5.4.develop
 Copyright 2014, MACHBASE Corporation or its subsidiaries.
 All Rights Reserved.
 -----------------------------------------------------------------
 NLS : US7ASCII EXECUTE MODE : IMPORT
-SCHMEA FILE : ignoretest.fmt DATA FILE : ignoretest.csv
-IMPORT_MODE : APPEND FILED TERM : ,
+SCHEMA FILE : ignoretest.fmt DATA FILE : ignoretest.csv
+IMPORT_MODE : APPEND FIELD TERM : ,
 ROW TERM : \n ENCLOSURE : "
 ARRIVAL_TIME : FALSE ENCODING : NONE
 HEADER : FALSE CREATE TABLE : FALSE
@@ -325,18 +331,20 @@ ID MSG
 Elapsed time: 0.000
 ```
 
-## If Number of Columns Is More Than Number of Fields
+## 컬럼 수가 필드 수보다 많은 경우
 
-If the number of columns in the table is greater than the number of fields in the data file, only the columns specified in the schema file are entered, and the other columns are entered as NULL.
+테이블의 컬럼 수가 데이터 파일의 필드 수보다 많으면, 스키마 파일에 지정한 컬럼만
+입력되고 나머지 컬럼은 `NULL`로 입력됩니다.
 
-## If Number of Columns Is Less Than Number of Fields
+## 컬럼 수가 필드 수보다 적은 경우
 
-If the number of columns in the table is less than the number of fields in the data file, fields not in the table must be excluded with the IGNORE option
+테이블의 컬럼 수가 데이터 파일의 필드 수보다 적으면, 테이블에 없는 필드는 `IGNORE`
+옵션으로 제외해야 합니다.
 
-Example:
+예제:
 
 ```
--- Import ignoretest.csv file and exclude input data by setting ignore option for last field.
+-- 마지막 필드에 IGNORE 옵션을 설정하여 해당 입력 데이터를 제외합니다.
 loader_test.fmt
 table loader_test
 {

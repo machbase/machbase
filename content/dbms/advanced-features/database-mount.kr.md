@@ -10,6 +10,8 @@ weight: 30
 
 데이터를 분석하기 위해 대량의 데이터를 지속적으로 저장하면 데이터 볼륨이 크게 증가하여 다음과 같은 문제가 발생합니다:
 
+> **에디션 참고**: 이 페이지는 Standard Edition의 MOUNT/UNMOUNT 동작을 설명합니다. Cluster Edition에서는 `MOUNT` 및 `UMOUNT` statement가 거부될 수 있습니다.
+
 * 대용량 데이터 저장으로 인한 디스크 비용 증가
 * 데이터 분석을 위한 장비 디스크 한계에 도달
 

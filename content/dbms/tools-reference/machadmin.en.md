@@ -16,17 +16,20 @@ mach@localhost:~$ machadmin -h
 
 | Options| Describe |
 |--|--|
-|-u, --startup/ --recovery[=simple,complex,reset]|Machbase server startup/recovery mode (default: simple)
-|-s, --shutdown | |Machbase server shuts down  normally |
+|-u, --startup|Starts the Machbase server |
+|--recovery[=simple,complex,reset]|Recovery mode used with startup (default: simple) |
+|-s, --shutdown |Machbase server shuts down normally |
 |-c, --createdb |Creates Machbase database |
 | -d, --destroydb| Deletes Machbase database |
 | -k, --kill| Force quits Machbase server |
-| -i, --silence| Runs without output |
-| -r, --restore |Recovers database from backup
+| -i, --silent| Runs with less output |
+| -r, --restore |Restores database from backup |
 | -x, --extract| Converts backup files to backup directory |
+| -w, --viewimage| Displays information of a backup image file |
 |-e, --check| Checks Machbase server run status |
 |-t, --licinstall| Installs license file |
 |-f, --licinfo| Outputs installed license information|
+|--home-path=path|Specifies the Machbase home path |
 
 ## Recovery Mode
 
@@ -51,7 +54,7 @@ mach@localhost:~$ machadmin -s
  
 -----------------------------------------------------------------
      Machbase Administration Tool
-     Release Version - 5.1.9.community
+     Release Version - 8.5.4.develop
      Copyright 2014, MACHBASE Corp. or its subsidiaries
      All Rights Reserved
 -----------------------------------------------------------------
@@ -67,7 +70,7 @@ Example:
 mach@localhost:~$ machadmin -c
 -----------------------------------------------------------------
      Machbase Administration Tool
-     Release Version - 5.1.9.community
+     Release Version - 8.5.4.develop
      Copyright 2014, MACHBASE Corp. or its subsidiaries
      All Rights Reserved
 -----------------------------------------------------------------
@@ -82,7 +85,7 @@ Example:
 mach@localhost:~$ machadmin -d
 -----------------------------------------------------------------
      Machbase Administration Tool
-     Release Version - 5.1.9.community
+     Release Version - 8.5.4.develop
      Copyright 2014, MACHBASE Corp. or its subsidiaries
      All Rights Reserved
 -----------------------------------------------------------------
@@ -104,7 +107,7 @@ Example:
 mach@localhost:~$ machadmin -k
 -----------------------------------------------------------------
      Machbase Administration Tool
-     Release Version - 5.1.9.community
+     Release Version - 8.5.4.develop
      Copyright 2014, MACHBASE Corp. or its subsidiaries
      All Rights Reserved
 -----------------------------------------------------------------
@@ -136,7 +139,7 @@ Example:
 mach@localhost:~$ machadmin -r 'backup'
 -----------------------------------------------------------------
      Machbase Administration Tool
-     Release Version - 5.1.9.community
+     Release Version - 8.5.4.develop
      Copyright 2014, MACHBASE Corp. or its subsidiaries
      All Rights Reserved
 -----------------------------------------------------------------
@@ -158,7 +161,7 @@ Example when server is not running:
 mach@localhost:~$ machadmin -e
 -----------------------------------------------------------------
      Machbase Administration Tool
-     Release Version - 5.1.9.community
+     Release Version - 8.5.4.develop
      Copyright 2014, MACHBASE Corp. or its subsidiaries
      All Rights Reserved
 -----------------------------------------------------------------
@@ -172,7 +175,7 @@ Example when server is running:
 mach@localhost:~$ machadmin -e
 -----------------------------------------------------------------
      Machbase Administration Tool
-     Release Version - 5.1.9.community
+     Release Version - 8.5.4.develop
      Copyright 2014, MACHBASE Corp. or its subsidiaries
      All Rights Reserved
 -----------------------------------------------------------------
@@ -194,7 +197,7 @@ Example:
 mach@localhost:~$ machadmin -t license.dat
 -----------------------------------------------------------------
      Machbase Administration Tool
-     Release Version - 5.1.9.community
+     Release Version - 8.5.4.develop
      Copyright 2014, MACHBASE Corp. or its subsidiaries
      All Rights Reserved
 -----------------------------------------------------------------
@@ -209,30 +212,20 @@ Example:
 mach@localhost:~$ machadmin -f
 -----------------------------------------------------------------
      Machbase Administration Tool
-     Release Version - 5.1.9.community
+     Release Version - 8.5.4.develop
      Copyright 2014, MACHBASE Corp. or its subsidiaries
      All Rights Reserved
 -----------------------------------------------------------------
-                   INFORMATION
-Install Date                      : 2018-12-20 11:34:43
-Company#ID-ProjectName            : machbase
-License Policy                    : CORE
-License Type(Version 2)           : OFFICIAL
-Host ID                           : FFFFFFFFFFFFFFF
-Issue Date                        : 2013-03-25
-Expiry Date                       : 2037-03-18
-Max Data Size For a Day(GB)       : 0
-Percentage Of Data Addendum(%)    : 0
-Overflow Action                   : 0
-Overflow Count to Stop Per Month  : 0
-Stop Action                       : 0
-Reset Flag                        : 0
+	                   INFORMATION
+ID                                : 00000001
+Issue Date                        : 2099-12-31
+License Type(Version 3)           : FOGUNLIMITED
+Company                           : MACHBASE
+Project(Product)                  : NONE
+Country Code                      : KR
+Install Date                      : 2026-06-13 15:08:00
 -----------------------------------------------------------------
-                   STATUS
-Usage Of Data(GB)                 : 0.000000
-Previous Checked Date             : 2018-12-22
-Violation Count                   : 0
-Stop Enabled                      : 0
+License information displayed successfully.
 -----------------------------------------------------------------
 License information displayed successfully.
 ```

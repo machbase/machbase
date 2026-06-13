@@ -38,8 +38,7 @@ Using the sample file, you can do the following.
 ```bash
 [mach@localhost ~]$ cd $MACHBASE_HOME/sample/quickstart
 [mach@localhost ~]$ ls -l load_sample.csv
--rw-r
---r--- 1 root root 2827 2017-02-23 15:01 load_sample.csv
+-rw-r--r-- 1 mach mach 2373 Jun 13 15:07 load_sample.csv
  
 [mach@localhost ~]$ machsql
 =================================================================
@@ -51,10 +50,10 @@ Using the sample file, you can do the following.
 Machbase server address (Default:127.0.0.1) :
 Machbase user ID  (Default:SYS)
 Machbase User Password :
-MACH_CONNECT_MODE=INET, PORT=5656
+MACHBASE_CONNECT_MODE=INET, PORT=5656 EDITION=STANDARD
  
 Mach> LOAD DATA INFILE 'sample/quickstart/load_sample.csv' INTO TABLE load_sample AUTO HEADUSE;
-50 row(s) loaded. Failed to load 0 row(s).
+50 row(s) loaded.
 Mach> DESC load_sample;
 ----------------------------------------------------------------
 NAME                          TYPE                LENGTH

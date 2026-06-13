@@ -30,7 +30,7 @@ kill $(lsof -t -i:5656)
 ls -la $MACHBASE_HOME/dbs/
 
 # 로그 확인
-tail -50 $MACHBASE_HOME/trc/machbase.log
+tail -50 $MACHBASE_HOME/trc/machbase.trc
 
 # 다시 시작 시도
 machadmin -u
@@ -46,14 +46,14 @@ machadmin -u
 **해결 방법**:
 ```bash
 # 로그 확인
-tail -100 $MACHBASE_HOME/trc/machbase.log
+tail -100 $MACHBASE_HOME/trc/machbase.trc
 
 # 시스템 리소스 확인
 free -h
 df -h
 
 # 메모리 사용량 줄이기 (machbase.conf에서)
-BUFFER_POOL_SIZE = 1G
+PROCESS_MAX_SIZE = 1073741824 # 1GB
 
 # 디스크 공간 확인
 du -sh $MACHBASE_HOME/dbs/
@@ -119,7 +119,10 @@ SELECT * FROM table DURATION 1 HOUR;  -- 이것을 추가하세요!
 SELECT * FROM table LIMIT 1000;
 
 -- 원시 데이터 대신 롤업 조회
-SELECT * FROM sensors WHERE rollup = hour;
+SELECT ROLLUP('hour', 1, time) AS rtime, AVG(value)
+FROM sensors
+WHERE name = 'sensor-1'
+GROUP BY rtime;
 
 -- 인덱스 생성
 CREATE INDEX idx_column ON table(column);
@@ -167,14 +170,14 @@ SHOW TABLE tablename;
 EOF
 
 # 에러 로그 확인
-cat $MACHBASE_HOME/trc/machloader.log
+cat $MACHBASE_HOME/trc/machloader.trc
 
 # 데이터 타입 검증
 # CSV 컬럼이 테이블 스키마와 일치하는지 확인
 
 # 먼저 작은 배치로 시도
 head -100 data.csv > test.csv
-machloader -t table -d csv -i test.csv
+machloader -i -t table -d test.csv
 ```
 
 #### 데이터 누락
@@ -237,9 +240,12 @@ DURATION 1 HOUR;
 SELECT AVG(value) FROM sensors DURATION 7 DAY;
 
 -- 빠름
-SELECT AVG(avg_value) FROM sensors
-WHERE rollup = hour
-DURATION 7 DAY;
+-- sensors는 WITH ROLLUP으로 생성한 TAG 테이블이어야 합니다.
+SELECT ROLLUP('hour', 1, time) AS rtime, AVG(value)
+FROM sensors
+WHERE name = 'sensor-1'
+  AND time BETWEEN now - 7d AND now
+GROUP BY rtime;
 ```
 
 3. **인덱스 생성**
@@ -256,13 +262,13 @@ SELECT * FROM logs DURATION 1 DAY LIMIT 1000;
 
 ```properties
 # 메모리 최적화
-BUFFER_POOL_SIZE = 4G       # RAM의 50-70%
-MAX_QPX_MEM = 1G            # 쿼리당 메모리
-LOG_BUFFER_SIZE = 128M      # 쓰기 버퍼
+PROCESS_MAX_SIZE = 4294967296 # 4GB
+MAX_QPX_MEM = 1073741824      # 쿼리당 메모리
 
 # 성능 튜닝
-CHECKPOINT_INTERVAL_SEC = 900
-MAX_PARALLEL_QUERY = 8
+DISK_COLUMNAR_TABLE_CHECKPOINT_INTERVAL_SEC = 900
+DISK_COLUMNAR_INDEX_CHECKPOINT_INTERVAL_SEC = 900
+QUERY_PARALLEL_FACTOR = 8
 ```
 
 ### 데이터 관리
@@ -309,13 +315,13 @@ EOF
 
 ```bash
 # 서버 로그
-tail -50 $MACHBASE_HOME/trc/machbase.log
+tail -50 $MACHBASE_HOME/trc/machbase.trc
 
 # 에러 로그
-grep -i error $MACHBASE_HOME/trc/machbase.log
+grep -i error $MACHBASE_HOME/trc/machbase.trc
 
 # 최근 활동
-tail -100 $MACHBASE_HOME/trc/machbase.log
+tail -100 $MACHBASE_HOME/trc/machbase.trc
 ```
 
 ### 시스템 정보
@@ -344,7 +350,7 @@ SHOW LICENSE;
 문제를 보고할 때 다음 정보를 수집하세요:
 
 1. **에러 메시지** (정확한 텍스트)
-2. **서버 로그** ($MACHBASE_HOME/trc/machbase.log)
+2. **서버 로그** ($MACHBASE_HOME/trc/machbase.trc)
 3. **Machbase 버전** (`machadmin -v`)
 4. **운영 체제** (`uname -a`)
 5. **재현 단계**
@@ -378,7 +384,7 @@ df -h
 free -h
 
 # 최근 에러 보기
-grep -i error $MACHBASE_HOME/trc/machbase.log | tail -20
+grep -i error $MACHBASE_HOME/trc/machbase.trc | tail -20
 
 # 연결 테스트
 machsql -s localhost -u SYS -p MANAGER -f - <<EOF

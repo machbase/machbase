@@ -65,7 +65,7 @@ Back up the dbs/ and conf/ directories located in $MACH_DEPLOYER_HOME.
 
 #### Deployer Upgrade
 
-* If you are running MWA or not running Collector on the Host the Deployer is installed, you can proceed with the lightweight package.
+* If you are not running MWA or Collector on the host where Deployer is installed, you can proceed with the lightweight package.
 
 Unzip and overwrite the package to $MACH_DEPLOYER_HOME.
 

@@ -14,8 +14,8 @@ Machbase는 데이터를 입력 순서의 역순으로 출력합니다. 즉, 가
 ## 구문
 
 ```sql
-DURATION    time_expression [BEFORE time_expression | TO_DATE(time) ];
-DURATION    time_expression [AFTER TO_DATE(time)]; 
+DURATION    time_expression [BEFORE time_expression];
+DURATION    time_expression [AFTER time_expression];
 time_expression
  -  ALL
  -  n   year
@@ -164,8 +164,8 @@ _arrival_time                   ID
 
 A와 B는 절대 시간이며 TO_DATE 함수를 사용하여 표현됩니다. A와 B는 사용자의 의도에 따라 다르게 설정할 수 있습니다. 예를 들어,
 
-* A가 B보다 나중일 때, 검색 방향은 BEFORE에서 사용하는 것처럼 최신에서 가장 오래된 순서로 데이터를 출력합니다.
-* B가 A보다 이전일 때, 검색 방향은 AFTER에서 사용하는 것처럼 가장 오래된 것에서 최신 순서로 데이터를 출력합니다.
+* A가 B보다 이전일 때, 검색 방향은 AFTER에서 사용하는 것처럼 가장 오래된 것에서 최신 순서로 데이터를 출력합니다.
+* B가 A보다 이후일 때, 검색 방향은 BEFORE에서 사용하는 것처럼 최신에서 가장 오래된 순서로 데이터를 출력합니다.
 
 다음 예제는 데이터가 어떻게 출력되는지 보여줍니다.
 

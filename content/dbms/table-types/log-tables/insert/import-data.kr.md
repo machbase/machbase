@@ -73,8 +73,9 @@ Mach> quit
 
 ```bash
 [mach@localhost ~]$ cd $MACHBASE_HOME/sample/quickstart
+[mach@localhost ~]$ tar -xzf sample_data.tar.gz
 [mach@localhost ~]$ ls -l sample_data.csv
--rw-r--r--- 1 mach mach 110477124 2017-02-23 15:18 sample_data.csv
+-rw-r--r-- 1 mach mach 110477124 Nov  9  2022 sample_data.csv
  
 [mach@localhost ~]$ machloader -i -t import_sample -d sample_data.csv
 -----------------------------------------------------------------
@@ -86,9 +87,9 @@ Mach> quit
 NLS            : US7ASCII            EXECUTE MODE   : IMPORT
 TARGET TABLE   : import_sample
 DATA FILE      : sample_data.csv
-IMPORT_MODE    : APPEND
-FILED TERM     : ,                   ROW TERM       : \n
-ENCLOSURE      : "                   ARRIVAL_TIME   : FALSE
+IMPORT MODE    : APPEND              FIELD TERM     : ,
+ROW TERM       : \n                  ENCLOSURE      : "
+ESCAPE         : \                   ARRIVAL_TIME   : FALSE
 ENCODING       : NONE                HEADER         : FALSE
 CREATE TABLE   : FALSE
  Progress bar                       Imported records        Error records

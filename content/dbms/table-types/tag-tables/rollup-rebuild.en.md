@@ -16,8 +16,8 @@ In Machbase, the currently documented rebuild paths are:
 1. Python script
    - built-in rollup only
    - for standard rollup / rollup extension
-   - rebuilds by time range (`begintime ~ endtime`)
-   - uses the Machbase Neo REST API
+   - rebuilds the second, minute, and hour buckets that contain one target time
+   - uses the Machbase HTTP REST API
 2. Built-in server procedure `EXEC ROLLUP_REBUILD(...)`
    - supports built-in rollup, rollup extension, and custom rollup
    - callable directly from SQL
@@ -39,7 +39,7 @@ The currently documented rebuild paths have the following limitations.
 
 ### Scope
 
-The `test/regress/issue-all/173/rollup_rebuild_timerange.py` family of Python scripts is intended for built-in rollups only.
+The `test/regress/issue-all/173/rollup_rebuild.py` Python script is intended for built-in rollups only.
 
 Assumptions:
 
@@ -63,37 +63,33 @@ Reasons:
 ### Example
 
 ```bash
-python3 rollup_rebuild_timerange.py \
-  --server http://127.0.0.1:5654 \
+python3 rollup_rebuild.py \
+  --server http://127.0.0.1:5657 \
   --tablename TAG \
   --tagname tag-0 \
-  --begintime '2000-01-01 00:00:00' \
-  --endtime   '2000-01-01 00:00:11'
+  --time '2000-01-01 00:00:00'
 ```
 
 Meaning:
 
 - for `tag-0`
-- rebuild the second, minute, and hour rollup buckets affected by anomalous raw data
-- in the range from `2000-01-01 00:00:00` to `2000-01-01 00:00:11`
+- rebuild the second, minute, and hour rollup buckets that contain `2000-01-01 00:00:00`
 
 ### Parameters
 
 1. `--server`
-   - Machbase Neo REST API address
-   - default example: `http://127.0.0.1:5654`
+   - Machbase HTTP REST API address
+   - example: `http://127.0.0.1:5657`
+   - check the running server's HTTP port with `SELECT HTTP_PORT FROM V$HTTP_STATUS`
 2. `--tablename`
    - TAG table name
    - case-sensitive
 3. `--tagname`
    - identifier of the anomalous data
    - the first key-column value defined as `PRIMARY KEY` when the TAG table was created
-4. `--begintime`
-   - start time of the error/deletion range
-   - safer to align it to the bucket boundary
-5. `--endtime`
-   - end time of the error/deletion range
-   - likewise safer to align it to the bucket boundary
+4. `--time`
+   - one error/deletion timestamp
+   - the script rebuilds the affected second, minute, and hour buckets that contain this timestamp
 
 ### Execution Model
 
@@ -273,7 +269,7 @@ If you rebuild the upper stage first, it will read lower-stage results that have
 
 1. Confirm the affected bucket range before rebuilding custom rollups.
 2. Check dependencies with `v$rollup` before and after operational changes.
-3. If one error time range spans multiple buckets, rebuild every affected bucket.
+3. If one error time range spans multiple buckets, call the Python script for each affected bucket time or use `EXEC ROLLUP_REBUILD(...)` with the full range.
 4. Custom rollup destination tables accumulate append-only results, so rebuild must use delete followed by insert.
 5. In rollup-on-rollup pipelines, always rebuild from lower stages first and then rebuild upper stages.
 6. For large built-in time-range recovery, the Python tool is more convenient. For custom or mixed extension/custom environments, use `EXEC ROLLUP_REBUILD(...)`.
