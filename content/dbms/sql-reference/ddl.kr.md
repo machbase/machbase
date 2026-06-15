@@ -489,6 +489,49 @@ CREATE INDEX index_lsm on table1 ( c1 ) INDEX_TYPE LSM;
 CREATE INDEX index2 on table1 (var_column) INDEX_TYPE KEYWORD PAGE_SIZE=100000;
 ```
 
+##### JSON path 인덱스
+
+JSON 컬럼의 특정 멤버에 인덱스를 만들 때는 기존 JSONPath arrow 문법과 JSON dot 축약 문법을 모두 사용할 수 있습니다.
+
+```sql
+CREATE TAG TABLE tag_log (
+    name  VARCHAR(40) PRIMARY KEY,
+    time  DATETIME BASETIME,
+    value JSON
+);
+
+-- JSON dot 축약 문법
+CREATE INDEX tag_log_sensor_idx ON tag_log (value.sensor.name);
+
+-- 기존 JSONPath arrow 문법
+CREATE INDEX tag_log_metric_idx ON tag_log (value->'$.metric');
+
+-- 배열 index와 double quoted key
+CREATE INDEX tag_log_item_idx ON tag_log (value.items[0]."product-id");
+```
+
+JSON 컬럼 이름이 double quote로 생성되었거나 keyword 컬럼 이름을 사용하는 경우에도 기존 arrow DDL을 사용할 수 있습니다.
+
+```sql
+CREATE TAG TABLE tag_log_q (
+    name    VARCHAR(40) PRIMARY KEY,
+    time    DATETIME BASETIME,
+    "value" JSON
+);
+
+CREATE INDEX tag_log_q_idx ON tag_log_q ("value"->'$.sensor.name');
+
+CREATE TAG TABLE tag_log_kw (
+    name   VARCHAR(40) PRIMARY KEY,
+    time   DATETIME BASETIME,
+    "LEFT" JSON
+);
+
+CREATE INDEX tag_log_kw_idx ON tag_log_kw (left->'$.sensor.name');
+```
+
+문자열 비교 조건은 JSON path 인덱스를 사용할 수 있습니다. 숫자 또는 boolean 의미의 비교 조건은 문자열 정렬과 숫자 정렬이 다를 수 있으므로 JSON path 인덱스 range 조건으로 사용하지 않습니다.
+
 TAGDATA 메타데이터의 JSON path 인덱스 사용법은 [Tag 메타데이터](../../table-types/tag-tables/tag-metadata) 및 [Tag 테이블 인덱스](../../table-types/tag-tables/tag-indexes) 문서를 참고하십시오.
 
 
@@ -764,6 +807,55 @@ create_rollup_stmt ::= 'CREATE ROLLUP' rollup_name 'ON' src_table_name '('src_ta
 -- tag table의 value 칼럼을 대상으로 rollup을 생성합니다.
 Mach> CREATE ROLLUP _rollup_tag_value_sec ON tag(value) INTERVAL 1 SEC;
 Executed successfully
+```
+
+JSON 컬럼의 멤버 값을 rollup 기준 값으로 사용할 때는 기존 JSONPath arrow 문법과 JSON dot 축약 문법을 모두 사용할 수 있습니다.
+
+```sql
+CREATE TAG TABLE tag_json (
+    name  VARCHAR(40) PRIMARY KEY,
+    time  DATETIME BASETIME,
+    value JSON
+);
+
+-- JSON dot 축약 문법
+CREATE ROLLUP tag_json_metric_ru
+ON tag_json (value.metric)
+INTERVAL 1 SEC;
+
+-- 기존 JSONPath arrow 문법
+CREATE ROLLUP tag_json_metric_arrow_ru
+ON tag_json (value->'$.metric')
+INTERVAL 1 SEC;
+
+-- 배열 index와 double quoted key
+CREATE ROLLUP tag_json_item_ru
+ON tag_json (value.items[0]."metric-id")
+INTERVAL 1 SEC;
+```
+
+기존 arrow 문법의 quoted 컬럼 이름과 keyword 컬럼 이름도 계속 사용할 수 있습니다.
+
+```sql
+CREATE TAG TABLE tag_json_q (
+    name    VARCHAR(40) PRIMARY KEY,
+    time    DATETIME BASETIME,
+    "value" JSON
+);
+
+CREATE ROLLUP tag_json_q_ru
+ON tag_json_q ("value"->'$.metric')
+INTERVAL 1 SEC;
+
+CREATE TAG TABLE tag_json_kw (
+    name   VARCHAR(40) PRIMARY KEY,
+    time   DATETIME BASETIME,
+    "LEFT" JSON
+);
+
+CREATE ROLLUP tag_json_kw_ru
+ON tag_json_kw (left->'$.metric')
+INTERVAL 1 SEC;
 ```
 
 > Rollup 생성 후 원본 이상 데이터 보정에 따라 기존 집계 결과를 다시 만들어야 하는 경우에는 [Rollup Rebuild 사용자 가이드](../../table-types/tag-tables/rollup-rebuild/)를 참고하십시오.
