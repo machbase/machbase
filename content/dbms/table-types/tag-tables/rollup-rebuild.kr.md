@@ -10,100 +10,21 @@ toc: true
 이상 데이터가 수집되면 원본 데이터는 삭제 후 정상 데이터로 다시 넣을 수 있지만, 이미 생성된 rollup 통계는 자동으로 되감기지 않습니다.
 이 경우 영향 버킷의 rollup 데이터를 다시 만들어야 합니다.
 
-Machbase 환경에서 현재 정리된 rebuild 방법은 아래 두 가지입니다.
+Machbase 환경에서는 서버 내장 Procedure `EXEC ROLLUP_REBUILD(...)`로 rollup을 재구성합니다.
 
-1. Python 스크립트
-   - built-in rollup 전용
-   - 일반 rollup / rollup extension 대상
-   - 대상 시각 하나가 포함된 초, 분, 시간 버킷을 재구성
-   - Machbase HTTP REST API 사용
-2. 서버 내장 Procedure `EXEC ROLLUP_REBUILD(...)`
-   - built-in rollup + rollup extension + custom rollup 대상
-   - SQL에서 직접 호출 가능
-   - custom rollup dependency tree를 따라 stop/rebuild/start 수행
+- built-in rollup + rollup extension + custom rollup 대상
+- SQL에서 직접 호출 가능
+- custom rollup dependency tree를 따라 stop/rebuild/start 수행
 
 ## 제약사항
 
-현재 정리된 rebuild 경로에는 아래 제약이 있습니다.
+`EXEC ROLLUP_REBUILD(...)`에는 아래 제약이 있습니다.
 
-1. Python 기반 rebuild 도구는 built-in rollup 전용입니다.
-2. Python 기반 rebuild 도구는 `WITH ROLLUP` 또는 `WITH ROLLUP EXTENSION` 테이블만 대상으로 합니다.
-3. Python 기반 rebuild 도구는 내부 built-in rollup table(`_<table>_ROLLUP_SEC`, `_<table>_ROLLUP_MIN`, `_<table>_ROLLUP_HOUR`)와 고정 집계 스키마를 전제로 합니다.
-4. custom rollup은 Python 기반 rebuild 도구로 직접 복구할 수 없습니다.
-5. `EXEC ROLLUP_REBUILD(...)`는 standard edition에서 지원하며, **cluster edition에서는 지원하지 않습니다.**
-6. `EXEC ROLLUP_REBUILD(...)`는 `table_name`, `tag_name`, `begin_time`, `end_time` 기준의 단일 tag rebuild만 지원합니다.
-7. rebuild 대상 구간은 부분 시간이 아니라 영향 버킷 전체를 기준으로 delete 후 insert 해야 합니다.
+1. standard edition에서 지원하며, **cluster edition에서는 지원하지 않습니다.**
+2. `table_name`, `tag_name`, `begin_time`, `end_time` 기준의 단일 tag rebuild만 지원합니다.
+3. rebuild 대상 구간은 부분 시간이 아니라 영향 버킷 전체를 기준으로 delete 후 insert 해야 합니다.
 
-## Python 기반 Rollup Rebuild 사용법
-
-### 적용 범위
-
-`test/regress/issue-all/173/rollup_rebuild.py` Python 스크립트는 기존 built-in rollup 전용입니다.
-
-전제 조건:
-
-- source 테이블이 `WITH ROLLUP` 또는 `WITH ROLLUP EXTENSION`
-- 내부 rollup table 이름이 아래 형식
-  - `_<table>_ROLLUP_SEC`
-  - `_<table>_ROLLUP_MIN`
-  - `_<table>_ROLLUP_HOUR`
-- 내부 집계 컬럼 구조가 built-in rollup 고정 스키마
-- `_ID` 기준으로 삭제/재삽입이 가능
-
-custom rollup에는 그대로 적용할 수 없습니다.
-
-이유:
-
-- destination table 이름이 사용자 정의
-- destination schema가 자유 형식
-- 집계 식이 `AS (SELECT ...)`에 따라 다름
-- rollup-on-rollup 구조에서는 재구성 순서가 dependency에 따라 달라짐
-
-### 실행 예
-
-```bash
-python3 rollup_rebuild.py \
-  --server http://127.0.0.1:5657 \
-  --tablename TAG \
-  --tagname tag-0 \
-  --time '2000-01-01 00:00:00'
-```
-
-의미:
-
-- `tag-0`에 대해
-- `2000-01-01 00:00:00`이 포함된 초, 분, 시간 rollup 버킷을 다시 구성합니다.
-
-### 매개변수 설명
-
-1. `--server`
-   - Machbase HTTP REST API 주소
-   - 예: `http://127.0.0.1:5657`
-   - 실행 중인 서버의 HTTP 포트는 `SELECT HTTP_PORT FROM V$HTTP_STATUS`로 확인합니다.
-2. `--tablename`
-   - TAG 테이블 이름
-   - 대소문자 구분
-3. `--tagname`
-   - 이상 데이터 식별 값
-   - TAG TABLE 생성 시 `PRIMARY KEY`로 지정한 첫 번째 key 컬럼 값
-4. `--time`
-   - 오류/삭제가 발생한 단일 시각
-   - 이 시각이 포함된 초, 분, 시간 버킷을 재구성합니다.
-
-### Python 도구의 동작 개념
-
-이 스크립트는 각 단계에서 실제 수행 SQL을 출력하면서 다음 순서로 built-in rollup을 복원합니다.
-
-1. source flush
-2. 필요 시 freeze
-3. second rollup force / stop / delete / insert / start / flush
-4. minute rollup force / stop / delete / insert / start / flush
-5. hour rollup force / stop / delete / insert / start
-6. 필요 시 unfreeze
-
-중간에 끊겨도 다시 실행하면 같은 버킷을 다시 delete 후 insert 하는 방식이라 일반적으로 안전하게 재실행할 수 있습니다.
-
-## `EXEC ROLLUP_REBUILD(...)` 프로시저 사용법
+## Rollup Rebuild 프로시저 사용법
 
 ### 호출 문법
 
@@ -173,7 +94,7 @@ custom rollup은 아래가 모두 사용자 정의입니다.
 
 ### 수동 rebuild 절차
 
-CLI를 쓰지 않고 수동으로 하려면 아래 절차를 따라야 합니다.
+프로시저를 사용하지 않고 수동으로 하려면 아래 절차를 따라야 합니다.
 
 1. 영향 받는 모든 custom rollup stop
 2. source 이상 데이터 수정 또는 재적재
@@ -266,10 +187,9 @@ rebuild 순서는 반드시 하위부터입니다.
 
 1. custom rollup rebuild 전에는 먼저 영향 버킷 범위를 확인합니다.
 2. 운영 적용 전후에 `v$rollup`으로 dependency를 확인합니다.
-3. 하나의 오류 시간대가 여러 버킷에 걸치면 각 버킷을 모두 재구성합니다.
-4. custom rollup destination table은 append-only 결과가 누적되므로 rebuild 시 반드시 delete 후 insert 합니다.
-5. rollup-on-rollup 구조에서는 반드시 하위부터 rebuild 하고, 이후 상위를 재구성합니다.
-6. 오류 구간이 여러 버킷에 걸치면 Python 스크립트를 각 버킷 시각마다 호출하거나, 전체 범위를 지정할 수 있는 `EXEC ROLLUP_REBUILD(...)` 경로를 사용합니다.
+3. custom rollup destination table은 append-only 결과가 누적되므로 rebuild 시 반드시 delete 후 insert 합니다.
+4. rollup-on-rollup 구조에서는 반드시 하위부터 rebuild 하고, 이후 상위를 재구성합니다.
+5. 오류 구간이 여러 버킷에 걸치면 전체 범위를 지정해서 `EXEC ROLLUP_REBUILD(...)`를 호출합니다.
 
 ## 최신 데이터를 포함한 효율적인 Rollup 질의 정리
 
