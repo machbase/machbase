@@ -12,6 +12,7 @@ With the current feature set, you can use the following directly through `TAG ME
 
 - Metadata-only queries
 - Metadata predicate based `UPDATE` and `DELETE`
+- Last update time queries for metadata rows
 - `JSON` metadata columns
 - JSON path queries and JSON path indexes
 - Partial updates for JSON documents
@@ -62,6 +63,7 @@ Notes:
 - In `VALUES (...)`, the order is always `NAME` followed by metadata columns in declaration order.
 - Unspecified metadata columns are stored as `NULL`.
 - The row identity of tag metadata is always `NAME`.
+- When a metadata row is created, `_LAST_UPDATE_TIME` is recorded automatically with the server time.
 
 ## Query Metadata
 
@@ -84,6 +86,134 @@ SELECT *
 ```
 
 `SELECT *` and `table_alias.*` return only `NAME` and user-defined metadata columns.
+
+System-managed columns such as `_LAST_UPDATE_TIME` are not included in `SELECT *`. Specify the column name explicitly when you need it.
+
+### Query Last Update Time
+
+TAG metadata provides the system-managed `_LAST_UPDATE_TIME` column, which stores the last changed time of each metadata row.
+
+`_LAST_UPDATE_TIME` is not the last insert time of a tag data row. It is the time when the tag metadata row was created or when its metadata value actually changed.
+
+#### Query Syntax
+
+Specify `_LAST_UPDATE_TIME` explicitly in the select list.
+
+```sql
+SELECT name, _last_update_time
+  FROM sensors METADATA;
+```
+
+You can query it together with user-defined metadata columns or use it in predicates.
+
+```sql
+SELECT name, location, status, _last_update_time
+  FROM sensors METADATA
+ WHERE name = 'TEMP_001';
+```
+
+`SELECT *` and `table_alias.*` do not include `_LAST_UPDATE_TIME`.
+
+#### Automatic Recording and Update Rules
+
+When a metadata row is created, `_LAST_UPDATE_TIME` is recorded automatically.
+
+```sql
+INSERT INTO sensors METADATA(name, location, status)
+VALUES('TEMP_003', 'Building-A/F3', 'READY');
+```
+
+When a user-defined metadata value actually changes, `_LAST_UPDATE_TIME` is updated.
+
+```sql
+UPDATE sensors METADATA
+   SET status = 'DONE'
+ WHERE name = 'TEMP_003';
+```
+
+An update that does not change the stored value, such as setting the same value again, is treated as a no-op. In that case, `_LAST_UPDATE_TIME` is preserved.
+
+```sql
+UPDATE sensors METADATA
+   SET status = 'DONE'
+ WHERE name = 'TEMP_003';
+```
+
+For a table with a JSON metadata column named `info`, removing a missing path is also treated as a no-op if the stored value does not change.
+
+```sql
+UPDATE sensors METADATA
+   SET info = JSON_REMOVE(info, '$.missing')
+ WHERE name = 'TEMP_003';
+```
+
+#### Direct Write Restrictions
+
+`_LAST_UPDATE_TIME` is managed by the server. You cannot insert or update it directly.
+
+The following statements are not allowed.
+
+```sql
+INSERT INTO sensors METADATA(name, location, status, _last_update_time)
+VALUES('TEMP_004', 'Building-A/F4', 'READY', now);
+```
+
+```sql
+UPDATE sensors METADATA
+   SET _last_update_time = now
+ WHERE name = 'TEMP_003';
+```
+
+You also cannot use `_LAST_UPDATE_TIME` as the TAG name column, a user-defined TAG metadata column, or a target column name for `ALTER TABLE ... METADATA ADD COLUMN`. You cannot drop `_LAST_UPDATE_TIME` with `ALTER TABLE ... METADATA DROP COLUMN` either.
+
+```sql
+CREATE TAG TABLE invalid_sensor (
+    _last_update_time VARCHAR(128) PRIMARY KEY,
+    time              DATETIME BASETIME,
+    value             DOUBLE
+);
+```
+
+```sql
+CREATE TAG TABLE invalid_sensor_meta (
+    name  VARCHAR(128) PRIMARY KEY,
+    time  DATETIME BASETIME,
+    value DOUBLE
+)
+METADATA (
+    _last_update_time DATETIME
+);
+```
+
+Names that only share the prefix, such as `_LAST_UPDATE_TIME2`, can be used as normal user-defined columns.
+
+#### Time Predicate Queries and Automatic Index
+
+An index for time predicate queries is provided automatically on `_LAST_UPDATE_TIME`.
+
+```sql
+SELECT name, location, _last_update_time
+  FROM sensors METADATA
+ WHERE _last_update_time >= TO_DATE('2026-06-08 00:00:00')
+ ORDER BY _last_update_time;
+```
+
+You do not need to create a duplicate user index on the same column.
+
+#### Notes for machloader / tagmetaimport
+
+When importing TAG metadata, input files and form files should include only `NAME` and user-defined metadata columns. Internal columns such as `_ID` and the system-managed `_LAST_UPDATE_TIME` are not input targets.
+
+If the metadata columns are `location` and `status`, use input data like this.
+
+```text
+TEMP_001,Building-A/F1,READY
+TEMP_002,Building-A/F2,STOP
+```
+
+`_LAST_UPDATE_TIME` is filled automatically by the server during import.
+
+If a user defines a column named `_LAST_UPDATE_TIME` in a normal LOG, LOOKUP, or VOLATILE table, it behaves as a normal user-defined column. The reserved behavior applies only to the TAG metadata system column.
 
 ### Query Data with Metadata Filters
 
@@ -128,6 +258,7 @@ Notes:
 - Only `NAME` and metadata columns can be updated.
 - Data columns such as `TIME` and `VALUE` cannot be updated through `UPDATE ... METADATA`.
 - Internal columns cannot be updated.
+- `_LAST_UPDATE_TIME` is updated only when the stored metadata value actually changes.
 
 ## Delete Metadata
 
@@ -399,5 +530,7 @@ DROP INDEX idx_ship_owner;
 - Use `FROM TAG` for time-series data queries
 - Use `UPDATE/DELETE ... METADATA` for metadata changes
 - Use `INFO JSON` for JSON metadata
+- `_LAST_UPDATE_TIME` stores the last changed time of a metadata row and can be queried explicitly
 - Use `INFO JSON INDEX(...)` or `CREATE INDEX ... ON TAG METADATA (...)` for JSON path indexes
 - Use `JSON_SET`, `JSON_SET_JSON`, and `JSON_REMOVE` for partial JSON updates
+- `_LAST_UPDATE_TIME` is managed automatically by the server and behaves the same in standard and cluster environments

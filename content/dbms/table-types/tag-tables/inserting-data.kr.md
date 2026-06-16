@@ -48,6 +48,46 @@ TAG_0001              2018-12-19 17:41:43 812:782:202 2
 
 > **사용 시기**: 테스트, 저용량 삽입, 대화형 데이터 입력
 
+### TAG metadata와 `_LAST_UPDATE_TIME`
+
+metadata 컬럼이 없는 TAG 테이블은 기존처럼 `name`, `time`, `value` 세 값만 입력할 수 있습니다.
+
+```sql
+CREATE TAG TABLE sensor (
+    name  VARCHAR(128) PRIMARY KEY,
+    time  DATETIME BASETIME,
+    value DOUBLE
+);
+
+INSERT INTO sensor VALUES('tag1', now, 1);
+```
+
+사용자 metadata 컬럼이 있는 TAG 테이블에서 column list 없이 신규 tag를 입력하려면 data 값과 사용자 metadata 값을 함께 제공합니다. `_LAST_UPDATE_TIME` 은 시스템이 관리하는 metadata 변경 시각이므로 입력 값에 포함하지 않습니다.
+
+```sql
+CREATE TAG TABLE sensor_meta (
+    name  VARCHAR(128) PRIMARY KEY,
+    time  DATETIME BASETIME,
+    value DOUBLE
+)
+METADATA (
+    site   VARCHAR(32),
+    status INTEGER
+);
+
+INSERT INTO sensor_meta
+VALUES('tag1', now, 1, 'seoul', 1);
+```
+
+column list를 사용하는 경우에도 필요한 사용자 컬럼만 지정하고 `_LAST_UPDATE_TIME` 은 지정하지 않습니다.
+
+```sql
+INSERT INTO sensor_meta(name, time, value, site, status)
+VALUES('tag2', now, 1, 'busan', 1);
+```
+
+기존 tag의 metadata row가 이미 존재하는 경우 data-only insert는 metadata 값을 변경하지 않습니다. 따라서 `_LAST_UPDATE_TIME` 도 변경되지 않습니다.
+
 ### 거리축 INSERT 예제
 
 거리축 Tag 테이블도 동일하게 `INSERT`를 사용하지만, 축 컬럼에는 숫자 값을 넣습니다.
@@ -212,7 +252,7 @@ INSERT INTO sensors VALUES (
 
 ## 모범 사례
 
-1. **필요한 경우 태그 메타데이터 등록**: 없는 태그 이름은 자동 등록됩니다. 메타데이터 값을 명시해야 할 때 먼저 등록합니다
+1. **필요한 경우 태그 메타데이터 등록**: 없는 태그 이름은 자동 등록됩니다. 메타데이터 값을 명시해야 할 때 먼저 등록합니다. `_LAST_UPDATE_TIME` 은 서버가 자동 관리하므로 직접 입력하지 않습니다
 2. **배치 작업 사용**: 대규모 데이터셋의 경우 CSV 임포트 또는 배치 API 호출을 사용합니다
 3. **에러 처리**: 항상 반환 값을 확인하고 에러를 로그에 기록합니다
 4. **시간 정밀도**: 데이터 전체에서 타임스탬프 정밀도를 일관되게 유지합니다
