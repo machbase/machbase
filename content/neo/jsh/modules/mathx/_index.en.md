@@ -164,6 +164,39 @@ for (let i = 0; i < gen.length; i++) {
 }
 ```
 
+## fft()
+
+The `fft` function performs a Fast Fourier Transform (FFT) on a given dataset. 
+FFT is used to analyze the frequency components of a signal, making it useful in signal processing and data analysis.
+
+```js
+fft(times, amplitudes) // time array and amplitude array
+fft(times_and_amplitudes) // array of [time, amplitude]
+```
+
+The length of times and amplitudes should be equal.
+
+**Usage example**
+
+```js
+const m = require("mathx");
+const gen = m.oscillator({
+    components: [
+        {amplitude: 1.0, frequencyHz: 15},
+        {amplitude: 1.5, frequencyHz: 24},
+    ],
+    timeRange: {from: 'now', to: 'now+10s'},
+    sample: "1000Hz",
+});
+// gen is array of tuple (time, amplitude)
+// ffp() accepts array of (time, amplitude) 
+// and returns array of (frequency, amplitude)
+const result = m.fft(gen);
+for(i=0; i < result.length; i++) {
+    console.println(i, result[i][0], result[i][1]);
+}
+```
+
 ## sort()
 
 The `sort` function sorts the elements of an array in ascending order.
@@ -512,14 +545,3 @@ result = m.linearRegression(x, y);
 console.log(result.slope.toFixed(4));     // 2.0000
 console.log(result.intercept.toFixed(4)); // 0.0000
 ```
-
-## fft()
-
-The `fft` function performs a Fast Fourier Transform (FFT) on a given dataset. 
-FFT is used to analyze the frequency components of a signal, making it useful in signal processing and data analysis.
-
-```js
-fft(times, amplitudes)
-```
-
-The length of times and amplitudes should be equal.

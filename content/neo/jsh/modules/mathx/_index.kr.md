@@ -165,6 +165,38 @@ for (let i = 0; i < gen.length; i++) {
 }
 ```
 
+## fft()
+
+고속 푸리에 변환(FFT)을 수행하여 주파수 성분을 분석합니다.
+
+```js
+fft(times, amplitudes) // time array and amplitude array
+fft(times_and_amplitudes) // array of [time, amplitude]
+```
+
+`times`와 `amplitudes` 길이는 동일해야 합니다.
+
+**사용 예시**
+
+```js
+const m = require("mathx");
+const gen = m.oscillator({
+    components: [
+        {amplitude: 1.0, frequencyHz: 15},
+        {amplitude: 1.5, frequencyHz: 24},
+    ],
+    timeRange: {from: 'now', to: 'now+10s'},
+    sample: "1000Hz",
+});
+// gen is array of tuple (time, amplitude)
+// ffp() accepts array of (time, amplitude) 
+// and returns array of (frequency, amplitude)
+const result = m.fft(gen);
+for(i=0; i < result.length; i++) {
+    console.println(i, result[i][0], result[i][1]);
+}
+```
+
 ## sort()
 
 배열을 오름차순으로 정렬합니다.
@@ -474,13 +506,3 @@ result = m.linearRegression(x, y);
 console.log(result.slope.toFixed(4));     // 2.0000
 console.log(result.intercept.toFixed(4)); // 0.0000
 ```
-
-## fft()
-
-빠른 푸리에 변환(FFT)을 수행하여 주파수 성분을 분석합니다.
-
-```js
-fft(times, amplitudes)
-```
-
-`times`와 `amplitudes` 길이는 동일해야 합니다.

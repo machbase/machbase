@@ -124,8 +124,8 @@ SCRIPT({
 },{
     const mx = require("mathx");
     result = mx.fft(times, values);
-    for(i = 0; i < result.x.length; i++) {
-        $.yield(result.x[i], result.y[i]);
+    for(i = 0; i < result.length; i++) {
+        $.yield(...result[i]);
     }
 })
 CHART_LINE(

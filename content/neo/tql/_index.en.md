@@ -39,7 +39,6 @@ SCRIPT({
         $.yield(gen[i][0], gen[i][1])
     }
 })
-
 INSERT('time', 'value', table('example'), tag('signal'))
 ```
 {{</ tab >}}
