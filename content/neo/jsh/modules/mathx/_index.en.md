@@ -138,6 +138,9 @@ oscillator(options)
 - `options.sample` `Number|String` Optional.
     - Number: interpreted as sample count.
     - String with `Hz`/`hz` suffix: interpreted as sample rate (for example `"2Hz"`).
+- `options.noise` `Number|Object` Optional.
+    - Number: interpreted as noise amplitude.
+    - Object: `{ amplitude, seed? }` where `amplitude` is the noise strength and `seed` makes the noise deterministic.
 
 <h6>Return value</h6>
 
@@ -155,6 +158,7 @@ const gen = oscillator({
         ],
         timeRange: { from: '0s', to: '10s' },
         sample: '2Hz',
+        noise: { amplitude: 0.1, seed: 123 },
 });
 
 for (let i = 0; i < gen.length; i++) {

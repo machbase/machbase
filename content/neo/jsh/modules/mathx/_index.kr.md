@@ -139,6 +139,9 @@ oscillator(options)
 - `options.sample` `Number|String` 선택
     - 숫자: 샘플 개수로 해석
     - `Hz`/`hz` 접미사 문자열: 샘플링 주파수로 해석 (예: `"2Hz"`)
+- `options.noise` `Number|Object` 선택
+    - 숫자: 노이즈 진폭으로 해석
+    - 객체: `{ amplitude, seed? }` 형식이며 `amplitude`는 노이즈 세기, `seed`는 재현 가능한 노이즈를 위한 시드입니다.
 
 <h6>반환값</h6>
 
@@ -156,6 +159,7 @@ const gen = oscillator({
         ],
         timeRange: { from: '0s', to: '10s' },
         sample: '2Hz',
+        noise: { amplitude: 0.1, seed: 123 },
 });
 
 for (let i = 0; i < gen.length; i++) {
