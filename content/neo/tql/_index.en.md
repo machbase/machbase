@@ -11,6 +11,9 @@ And also read and send data from database to other systems in demanded format.
 
 First, generate sample data for the examples below.
 
+{{< tabs >}}
+{{< tab name="FAKE" >}}
+
 ```js
 FAKE(
   oscillator(
@@ -20,6 +23,27 @@ FAKE(
 )
 INSERT( 'time', 'value', table('example'), tag('signal') )
 ```
+{{</ tab >}}
+{{< tab name="SCRIPT" >}}
+```js
+SCRIPT({
+    gen = require("mathx").oscillator({
+        components: [
+            {amplitude: 1.0, frequencyHz: 15},
+            {amplitude: 1.5, frequencyHz: 24},
+        ],
+        timeRange: {from: 'now', to: 'now+10s'},
+        sample: "1000Hz",
+    });
+    for(i=0; i < gen.length; i++) {
+        $.yield(gen[i][0], gen[i][1])
+    }
+})
+
+INSERT('time', 'value', table('example'), tag('signal'))
+```
+{{</ tab >}}
+{{</ tabs >}}
 
 ### Output format independent
 

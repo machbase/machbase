@@ -12,6 +12,10 @@ TQL은 이러한 데이터를 쉽고 유연하게 가공하실 수 있도록 제
 
 아래 예제들을 위해 먼저 샘플 데이터를 생성합니다.
 
+
+{{< tabs >}}
+{{< tab name="FAKE" >}}
+
 ```js
 FAKE(
   oscillator(
@@ -21,6 +25,27 @@ FAKE(
 )
 INSERT( 'time', 'value', table('example'), tag('signal') )
 ```
+{{</ tab >}}
+{{< tab name="SCRIPT" >}}
+```js
+SCRIPT({
+    gen = require("mathx").oscillator({
+        components: [
+            {amplitude: 1.0, frequencyHz: 15},
+            {amplitude: 1.5, frequencyHz: 24},
+        ],
+        timeRange: {from: 'now', to: 'now+10s'},
+        sample: "1000Hz",
+    });
+    for(i=0; i < gen.length; i++) {
+        $.yield(gen[i][0], gen[i][1])
+    }
+})
+
+INSERT('time', 'value', table('example'), tag('signal'))
+```
+{{</ tab >}}
+{{</ tabs >}}
 
 ### 출력 형식과 무관하게 사용
 
