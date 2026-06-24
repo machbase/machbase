@@ -4,16 +4,17 @@ title: '테이블 타입: 완전 가이드'
 weight: 20
 ---
 
-데이터에 적합한 테이블 타입을 선택하는 기술을 마스터하세요. 이 포괄적인 가이드는 의사 결정 프레임워크, 성능 특성 및 실제 예제와 함께 4가지 Machbase 테이블 타입을 모두 비교합니다.
+데이터에 적합한 테이블 타입을 선택합니다. 이 가이드는 의사 결정 프레임워크, 성능 특성 및 실제 예제와 함께 Machbase 테이블 타입을 비교합니다.
 
-## 4가지 테이블 타입
+## 5가지 테이블 타입
 
-Machbase는 각각 다른 워크로드에 최적화된 4가지 특화 테이블 타입을 제공합니다:
+Machbase는 각각 다른 워크로드에 최적화된 특화 테이블 타입을 제공합니다:
 
 1. **Tag 테이블** - 센서/장치 축 기반 데이터 (시간 또는 거리)
 2. **Log 테이블** - 이벤트 스트림 및 로그
-3. **Volatile 테이블** - 인메모리 실시간 데이터
-4. **Lookup 테이블** - 참조 및 마스터 데이터
+3. **Volatile 테이블** - 단일 primary-key 인덱스를 사용하는 비영구 메모리 테이블
+4. **Lookup 테이블** - 단일 primary-key 메모리 인덱스를 사용하는 영구 참조 테이블
+5. **RDB 테이블** - 선택적 primary key와 보조 인덱스를 지원하는 범용 디스크 row 테이블
 
 ## 빠른 결정 가이드
 
@@ -52,9 +53,22 @@ Machbase는 각각 다른 워크로드에 최적화된 4가지 특화 테이블 
        예     아니오
         │        │
         ▼        ▼
-      Log     Lookup
-      테이블    테이블
+      Log     단일 primary-key
+      테이블   참조 데이터?
+                  │
+              ┌───┴────┐
+              │        │
+             예     아니오
+              │        │
+              ▼        ▼
+           Lookup    RDB
+            테이블    테이블
 ```
+
+데이터가 영구 참조 데이터이고 모든 접근 경로가 하나의 primary key를 중심으로
+설계된다면 Lookup 테이블을 선택합니다. 범용 디스크 row 스키마, 선택적 primary key,
+보조 인덱스, JSON path 인덱스, 일반적인 인덱스 predicate가 필요하면 RDB 테이블을
+선택합니다.
 
 ### 결정 표
 
@@ -63,12 +77,14 @@ Machbase는 각각 다른 워크로드에 최적화된 4가지 특화 테이블 
 | 1000개 장치의 온도 센서 | **Tag 테이블** | 다중 센서, 시계열 값 |
 | 애플리케이션 에러 로그 | **Log 테이블** | 이벤트 스트림, 유연한 스키마 |
 | 라이브 사용자 세션 | **Volatile 테이블** | UPDATE 필요, 임시 |
-| 장치 메타데이터/레지스트리 | **Lookup 테이블** | 참조 데이터, 드문 업데이트 |
+| 장치 메타데이터/레지스트리 | **Lookup 테이블** | primary key 기반 영구 참조 데이터 |
 | 주식 시장 틱 | **Tag 테이블** | 심볼을 태그로, 가격을 값으로 |
 | 컨베이어 위치별 진동 데이터 | **Tag 테이블** | 거리축 기반 측정값 |
 | HTTP 액세스 로그 | **Log 테이블** | 이벤트 기반, 많은 컬럼 |
 | 장바구니 내용 | **Volatile 테이블** | 빈번한 업데이트, 세션 기반 |
-| 제품 카탈로그 | **Lookup 테이블** | 마스터 데이터, 드문 변경 |
+| 제품 ID 기준 제품 카탈로그 | **Lookup 테이블** | 하나의 primary key로 접근하는 영구 참조 데이터 |
+| 현재 알람 상태 | **RDB 테이블** | UPDATE/DELETE가 필요한 범용 디스크 row |
+| 작업 큐 | **RDB 테이블** | row 변경과 인덱스 predicate |
 
 ## Tag 테이블 심층 분석
 
@@ -294,7 +310,7 @@ CREATE TABLE transactions (
 - 세션 관리
 - 라이브 상태 보드
 - 캐싱 계층
-- UPDATE/DELETE가 필요한 모든 데이터
+- primary key 기반 UPDATE/DELETE가 필요한 임시 데이터
 
 ### 구조
 
@@ -320,8 +336,9 @@ WHERE device_id = 101;
 DELETE FROM live_status WHERE device_id = 101;
 ```
 
-**인메모리 스토리지**:
+**비영구 메모리 primary-key 테이블**:
 - 모든 데이터가 RAM에 상주
+- 단일 primary-key 메모리 인덱스 사용
 - 매우 빠른 읽기/쓰기
 - 초당 수만 건의 작업
 
@@ -381,7 +398,7 @@ CREATE VOLATILE TABLE monitoring_cache (
 - 구성 테이블
 - 카테고리/차원 테이블
 - 마스터 데이터
-- 드물게 변경되는 참조 데이터
+- 하나의 primary key로 접근하는 영구 참조 데이터
 
 ### 구조
 
@@ -397,7 +414,7 @@ CREATE LOOKUP TABLE devices (
 
 ### 주요 기능
 
-**완전한 CRUD 지원**:
+**primary key 기반 전체 CRUD 지원**:
 ```sql
 -- Insert
 INSERT INTO devices VALUES ('sensor01', 'Sensor A', 'Building 1', 'Temperature', 'Facilities');
@@ -409,7 +426,7 @@ UPDATE devices SET location = 'Building 2' WHERE device_id = 'sensor01';
 DELETE FROM devices WHERE device_id = 'sensor01';
 
 -- Select
-SELECT * FROM devices WHERE device_type = 'Temperature';
+SELECT * FROM devices WHERE device_id = 'sensor01';
 ```
 
 **시계열과의 JOIN**:
@@ -422,17 +439,17 @@ WHERE s.time BETWEEN TO_DATE('2025-10-10 14:00:00', 'YYYY-MM-DD HH24:MI:SS')
                  AND TO_DATE('2025-10-10 15:00:00', 'YYYY-MM-DD HH24:MI:SS');
 ```
 
-**성능**:
-- 빠른 읽기
-- 느린 쓰기 (초당 수백 건)
-- 영구 디스크 스토리지
+**영구 데이터와 메모리 primary-key 인덱스**:
+- 데이터는 재시작 후에도 유지
+- 단일 primary-key 메모리 인덱스로 빠른 key 접근 지원
+- 전체 DML은 primary-key predicate 중심으로 사용
 
 ### 모범 사례
 
 **DO (해야 할 것)**:
 - 참조/마스터 데이터에 사용
 - Tag/Log 테이블과 JOIN
-- 자주 쿼리되는 컬럼 인덱스
+- 접근 경로를 primary key 중심으로 설계
 - 데이터 볼륨을 적절하게 유지 (<1M 행 이상적)
 
 **DON'T (하지 말아야 할 것)**:
@@ -471,6 +488,68 @@ CREATE LOOKUP TABLE users (
 );
 ```
 
+## RDB 테이블 심층 분석
+
+### 사용 시기
+
+다음에 적합합니다:
+- 장비 마스터 데이터
+- 알람 룰 및 현재 알람 상태
+- 작업 큐
+- Tag 또는 Log 데이터와 조인하는 차원 테이블
+- 영구 저장과 인덱스 predicate가 필요한 범용 디스크 row 데이터
+
+### 구조
+
+```sql
+CREATE RDB TABLE device_master (
+    id         INTEGER PRIMARY KEY,
+    name       VARCHAR(64) NOT NULL,
+    site       VARCHAR(32) DEFAULT 'SEOUL',
+    state      VARCHAR(16),
+    info       JSON,
+    updated_at DATETIME
+);
+```
+
+### 주요 기능
+
+**디스크 row 대상 전체 DML 지원**:
+```sql
+INSERT INTO device_master(id, name, state) VALUES (1, 'pump-01', 'READY');
+
+UPDATE device_master
+   SET state = 'RUNNING'
+ WHERE id = 1;
+
+DELETE FROM device_master
+ WHERE id = 1;
+```
+
+**인덱스와 제약**:
+```sql
+CREATE INDEX idx_device_site ON device_master(site);
+CREATE UNIQUE INDEX uidx_device_name ON device_master(name);
+CREATE PRIMARY KEY INDEX pk_device_id ON device_master(id);
+CREATE INDEX idx_device_owner ON device_master(info->'$.owner');
+```
+
+**Backup 및 Mount 통합**:
+RDB 테이블 데이터는 database backup과 table backup image에 포함됩니다. Mounted database에서는 RDB 테이블과 view를 조회할 수 있지만 mounted RDB 객체는 read-only입니다.
+
+### 모범 사례
+
+**DO (해야 할 것)**:
+- row 단위로 변경되는 영구 운영 상태에 사용
+- 자주 사용하는 조회 조건에 인덱스 추가
+- Tag 및 Log 데이터와 조인하는 차원 테이블로 사용
+- Lookup의 단일 primary-key 모델이 부족할 때 사용
+
+**DON'T (하지 말아야 할 것)**:
+- 고속 센서 수집에 사용 (대신 Tag 또는 Log 테이블 사용)
+- cluster edition에서 사용
+- backend native SQL passthrough 기대
+
 ## 성능 비교
 
 ### 쓰기 성능
@@ -481,15 +560,17 @@ CREATE LOOKUP TABLE users (
 | Log | 수백만 건 | 불가 | 시간 기반 |
 | Volatile | 수만 건 | PRIMARY KEY로 | PRIMARY KEY로 |
 | Lookup | 수백 건 | 가능 | 가능 |
+| RDB | 워크로드에 따라 다름 | 가능 | 가능 |
 
 ### 읽기 성능
 
 | 테이블 타입 | 읽기 속도 | 최적 | 인덱스 타입 |
 |-----------|-----------|----------|------------|
 | Tag | 매우 빠름 | sensor_id + time | 3단계 파티션 |
-| Log | 빠름 | 시간 범위 | LSM (선택) |
+| Log | 빠름 | 시간 범위 | 선택적 log 인덱스 |
 | Volatile | 매우 빠름 | PRIMARY KEY | Red-black 트리 |
-| Lookup | 빠름 | 모든 컬럼 | LSM (선택) |
+| Lookup | 빠름 | PRIMARY KEY | 메모리 primary-key 인덱스 |
+| RDB | 빠름 | 인덱스 predicate | RDB 인덱스 |
 
 ### 스토리지
 
@@ -498,7 +579,8 @@ CREATE LOOKUP TABLE users (
 | Tag | 디스크 | 10-100배 | 예 |
 | Log | 디스크 | 10-100배 | 예 |
 | Volatile | 메모리 | 없음 | 아니오 |
-| Lookup | 디스크 | 보통 | 예 |
+| Lookup | 영구 데이터 + 메모리 인덱스 | 보통 | 예 |
+| RDB | 디스크 | backend에 따라 다름 | 예 |
 
 ## 테이블 타입 결합
 
@@ -510,6 +592,9 @@ CREATE TAG TABLE sensor_data (...);
 
 -- Lookup: 장치 레지스트리
 CREATE LOOKUP TABLE devices (...);
+
+-- RDB: 현재 장치 상태와 작업 큐
+CREATE RDB TABLE device_state (...);
 
 -- Volatile: 라이브 상태
 CREATE VOLATILE TABLE device_status (...);
@@ -532,6 +617,9 @@ CREATE VOLATILE TABLE sessions (...);
 
 -- Lookup: 사용자 계정
 CREATE LOOKUP TABLE users (...);
+
+-- RDB: 주문 및 workflow 상태
+CREATE RDB TABLE orders (...);
 ```
 
 ### 패턴: 제조
@@ -548,6 +636,9 @@ CREATE VOLATILE TABLE line_status (...);
 
 -- Lookup: 장비 카탈로그
 CREATE LOOKUP TABLE equipment_catalog (...);
+
+-- RDB: 알람 룰 및 활성 알람 상태
+CREATE RDB TABLE alarm_state (...);
 ```
 
 ## 피해야 할 안티패턴
@@ -617,7 +708,8 @@ CREATE TAG TABLE sensor_readings (...);
 ### 다른 데이터베이스에서
 
 **PostgreSQL/MySQL에서**:
-- 일반 테이블 → Log 테이블
+- 이벤트 테이블 → Log 테이블
+- 운영 row 테이블 → RDB 테이블
 - 시계열 테이블 → Tag 테이블
 - 임시 테이블 → Volatile 테이블
 - 차원 테이블 → Lookup 테이블
@@ -634,18 +726,18 @@ CREATE TAG TABLE sensor_readings (...);
 
 ## 요약 매트릭스
 
-| 기능 | Tag | Log | Volatile | Lookup |
-|---------|-----|-----|----------|--------|
-| **주요 용도** | 센서 | 이벤트 | 캐시 | 참조 |
-| **스키마** | 고정 패턴 | 유연 | 유연 | 유연 |
-| **초당 쓰기** | 수백만 | 수백만 | 수만 | 수백 |
-| **UPDATE** | 메타데이터 | 불가 | 가능 | 가능 |
-| **DELETE** | 시간 기반 | 시간 기반 | 키로 | 키로 |
-| **스토리지** | 디스크 | 디스크 | 메모리 | 디스크 |
-| **지속성** | 예 | 예 | 아니오 | 예 |
-| **Rollup** | 설정 시 | 불가 | 불가 | 불가 |
-| **최적 쿼리** | ID + time | 시간 | 키 | 모두 |
-| **압축** | 매우 높음 | 높음 | 없음 | 보통 |
+| 기능 | Tag | Log | Volatile | Lookup | RDB |
+|---------|-----|-----|----------|--------|-----|
+| **주요 용도** | 센서 | 이벤트 | 캐시 | 참조 | row 상태 |
+| **스키마** | 고정 패턴 | 유연 | 유연 | 유연 | 유연 |
+| **초당 쓰기** | 수백만 | 수백만 | 수만 | 수백 | 워크로드에 따라 다름 |
+| **UPDATE** | 메타데이터 | 불가 | 가능 | 가능 | 가능 |
+| **DELETE** | 시간 기반 | 시간 기반 | 키로 | 키로 | 가능 |
+| **스토리지** | 디스크 | 디스크 | 메모리 | 디스크 | 디스크 |
+| **지속성** | 예 | 예 | 아니오 | 예 | 예 |
+| **Rollup** | 설정 시 | 불가 | 불가 | 불가 | 불가 |
+| **최적 쿼리** | ID + time | 시간 | 키 | primary key | 인덱스 predicate |
+| **압축** | 매우 높음 | 높음 | 없음 | 보통 | backend에 따라 다름 |
 
 ## 다음 단계
 
@@ -658,9 +750,10 @@ CREATE TAG TABLE sensor_readings (...);
 1. **Tag 테이블**은 Rollup을 지원하는 센서/장치 데이터용
 2. **Log 테이블**은 유연한 이벤트 스트림 및 로그용
 3. **Volatile 테이블**은 인메모리, 업데이트 가능한 데이터용
-4. **Lookup 테이블**은 참조 및 마스터 데이터용
-5. 완전한 솔루션을 위해 **타입 결합**
-6. **현명하게 선택** - 테이블 타입이 성능 결정
+4. **Lookup 테이블**은 영구 primary-key 참조 데이터용
+5. **RDB 테이블**은 범용 디스크 row 데이터용
+6. 완전한 솔루션을 위해 **타입 결합**
+7. **현명하게 선택** - 테이블 타입이 성능 결정
 
 ---
 

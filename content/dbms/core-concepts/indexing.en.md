@@ -13,11 +13,14 @@ Machbase uses different indexing strategies for each table type, all designed fo
 | Table Type | Index Type | Management | Purpose |
 |-----------|-----------|------------|---------|
 | Tag | 3-level Partitioned | Automatic | Fast sensor_id + time queries |
-| Log | LSM (optional) | Manual | Fast column lookups |
+| Log | Optional log indexes | Manual | Fast log column lookups |
 | Volatile | Red-Black Tree | Automatic | Fast PRIMARY KEY access |
-| Lookup | LSM (optional) | Manual | Fast column lookups |
+| Lookup | Memory primary-key index | Automatic | Fast PRIMARY KEY access |
+| RDB | Normal, unique, primary key, JSON path indexes | Manual | General indexed predicates |
 
-**Key insight**: Most users never need to manually create indexes!
+**Key insight**: Index management depends on the table type. Tag, Volatile, and
+Lookup tables have built-in access models, while Log and RDB tables can use
+explicit indexes for selected predicates.
 
 ## Tag Table Indexing
 
@@ -223,7 +226,7 @@ SELECT * FROM device_status WHERE status = 'ERROR';
 
 ## Lookup Table Indexing
 
-### LSM Index (Same as Log Table)
+### Memory Primary-Key Index
 
 ```sql
 CREATE LOOKUP TABLE devices (
@@ -232,18 +235,22 @@ CREATE LOOKUP TABLE devices (
     location VARCHAR(200)
 );
 
--- Create indexes on frequently queried columns
-CREATE INDEX idx_location ON devices(location);
+SELECT * FROM devices WHERE device_id = 101;
+UPDATE devices SET location = 'Building 2' WHERE device_id = 101;
 ```
 
-Same principles as Log table indexing.
+Lookup tables are persistent reference tables with a single primary-key memory
+index. Use RDB tables when the data needs secondary indexes, unique indexes, JSON
+path indexes, or predicates that are not centered on the Lookup primary key.
 
 ## Time-Based Partitioning
 
 ### Automatic Partitioning
 
-Tag and Log tables use time-aware storage for efficient range queries. Lookup tables are
-persistent reference tables and are optimized through primary keys and optional indexes.
+Tag and Log tables use time-aware storage for efficient range queries. Lookup
+tables are persistent reference tables optimized through one primary-key memory
+index. RDB tables are generalized disk row tables optimized through explicit disk
+table indexes.
 
 ```
 Partition Structure:
@@ -566,10 +573,10 @@ SELECT * FROM logs DURATION 30 DAY LIMIT 1000;
 
 1. **Always use time filters** (DURATION or time range)
 2. **Query rollup for analytics** (Tag tables)
-3. **Create indexes on frequently queried columns** (Log/Lookup tables)
+3. **Create indexes on frequently queried columns** (Log/RDB tables)
 4. **Limit result sets** (use LIMIT clause)
 5. **Use batch writes** (APPEND protocol)
-6. **Let Machbase manage indexes** (Tag/Volatile tables)
+6. **Let Machbase manage built-in indexes** (Tag/Volatile/Lookup tables)
 7. **Monitor query performance** (SHOW STATEMENTS)
 8. **Implement data retention** (DELETE old data)
 
@@ -582,12 +589,12 @@ SELECT * FROM logs DURATION 30 DAY LIMIT 1000;
 ## Key Takeaways
 
 1. **Tag tables** use automatic 3-level partitioned indexes
-2. **Log/Lookup tables** can use optional LSM indexes
-3. **Volatile tables** use automatic in-memory indexes
-4. **Time-based partitioning** is automatic and essential
-5. **Always filter by time** for optimal performance
-6. **Query rollup, not raw data** for analytics
-7. **Most users never create manual indexes** - it's automatic!
+2. **Log tables** can use optional log indexes
+3. **Volatile and Lookup tables** use primary-key memory indexes
+4. **RDB tables** use explicit disk table indexes
+5. **Time-based partitioning** is automatic and essential for Tag/Log workloads
+6. **Always filter by time** for optimal Tag/Log performance
+7. **Query rollup, not raw data** for analytics
 
 ---
 
