@@ -107,6 +107,63 @@ for(i=0; i < gen.length; i++) {
 // [3,5]
 ```
 
+## oscillator()
+
+{{< neo_since ver="8.5.5" />}}
+
+Generates synthetic oscillator samples as `[time, value]` tuples.
+
+<h6>Syntax</h6>
+
+```js
+oscillator(options)
+```
+
+<h6>Parameters</h6>
+
+- `options` `Object`
+- `options.components` `Object[]` Required. Oscillator components to sum.
+    - `amplitude` `Number` Required. Signal amplitude.
+    - `frequencyHz` `Number` Required. Frequency in Hz.
+    - `phaseRad` `Number` Optional. Phase offset in radians. Default is `0`.
+    - `bias` `Number` Optional. DC offset. Default is `0`.
+- `options.timeRange` `Object` Required. Time range object.
+    - `from` `Any` Required.
+    - `to` `Any` Required.
+    - Supported time literals:
+        - epoch nanoseconds as number (for example `0`, `10000000000`)
+        - epoch strings with suffix: `s`, `ms`, `us`, `ns` (for example `"10s"`, `"10000ms"`)
+        - string time expressions such as `"now"`, `"now-10s"`
+        - RFC3339/RFC3339Nano time strings
+- `options.sample` `Number|String` Optional.
+    - Number: interpreted as sample count.
+    - String with `Hz`/`hz` suffix: interpreted as sample rate (for example `"2Hz"`).
+
+<h6>Return value</h6>
+
+`Array<[time, Number]>` generated samples.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1}
+const { oscillator } = require('mathx');
+
+const gen = oscillator({
+        components: [
+                { amplitude: 1.0, frequencyHz: 0.1, phaseRad: 0 },
+                { amplitude: 0.5, frequencyHz: 0.05 },
+        ],
+        timeRange: { from: '0s', to: '10s' },
+        sample: '2Hz',
+});
+
+for (let i = 0; i < gen.length; i++) {
+        const t = gen[i][0];
+        const v = gen[i][1];
+        console.log(t, v.toFixed(2));
+}
+```
+
 ## sort()
 
 The `sort` function sorts the elements of an array in ascending order.

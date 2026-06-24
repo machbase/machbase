@@ -108,6 +108,63 @@ for(i=0; i < gen.length; i++) {
 // [3,5]
 ```
 
+## oscillator()
+
+{{< neo_since ver="8.5.5" />}}
+
+`[time, value]` 튜플 형태의 진동 샘플 데이터를 생성합니다.
+
+<h6>사용 형식</h6>
+
+```js
+oscillator(options)
+```
+
+<h6>매개변수</h6>
+
+- `options` `Object`
+- `options.components` `Object[]` 필수. 합성할 진동 성분 목록
+    - `amplitude` `Number` 필수. 진폭
+    - `frequencyHz` `Number` 필수. 주파수(Hz)
+    - `phaseRad` `Number` 선택. 위상 오프셋(라디안), 기본값 `0`
+    - `bias` `Number` 선택. DC 오프셋, 기본값 `0`
+- `options.timeRange` `Object` 필수. 시간 범위
+    - `from` `Any` 필수
+    - `to` `Any` 필수
+    - 지원 시간 표현:
+        - 숫자 epoch ns (예: `0`, `10000000000`)
+        - 접미사 epoch 문자열: `s`, `ms`, `us`, `ns` (예: `"10s"`, `"10000ms"`)
+        - 문자열 시간 표현: `"now"`, `"now-10s"`
+        - RFC3339/RFC3339Nano 문자열
+- `options.sample` `Number|String` 선택
+    - 숫자: 샘플 개수로 해석
+    - `Hz`/`hz` 접미사 문자열: 샘플링 주파수로 해석 (예: `"2Hz"`)
+
+<h6>반환값</h6>
+
+`Array<[time, Number]>` 생성된 샘플 배열.
+
+<h6>사용 예시</h6>
+
+```js {linenos=table,linenostart=1}
+const { oscillator } = require('mathx');
+
+const gen = oscillator({
+        components: [
+                { amplitude: 1.0, frequencyHz: 0.1, phaseRad: 0 },
+                { amplitude: 0.5, frequencyHz: 0.05 },
+        ],
+        timeRange: { from: '0s', to: '10s' },
+        sample: '2Hz',
+});
+
+for (let i = 0; i < gen.length; i++) {
+        const t = gen[i][0];
+        const v = gen[i][1];
+        console.log(t, v.toFixed(2));
+}
+```
+
 ## sort()
 
 배열을 오름차순으로 정렬합니다.
