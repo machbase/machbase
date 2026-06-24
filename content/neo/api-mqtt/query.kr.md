@@ -49,7 +49,7 @@ MQTT에서 데이터베이스 쿼리를 실행하려면 `db/query` 토픽으로 
 
 ### JSH 앱
 
-{{< neo_since ver="8.0.52" />}}
+{{< neo_since ver="8.5.0" />}}
 
 이 예제에서는 응답 토픽을 구독하고 SQL 쿼리를 발행한 뒤 MQTT를 통해 결과를 받는 과정을 살펴봅니다.
 
@@ -62,42 +62,68 @@ MQTT에서 데이터베이스 쿼리를 실행하려면 `db/query` 토픽으로 
 3. **응답 수신 및 처리**  
    서버가 쿼리를 처리하면 지정한 응답 토픽으로 결과를 전송합니다. 클라이언트는 메시지를 받아 결과를 출력합니다.
 
-Below is the complete code example:
+JSH 예시 코드:
 
-```js {linenos=table,linenostart=1,hl_lines=["9-11","13-17","20-24"]}
-const process = require("@jsh/process");
-const mqtt = require("@jsh/mqtt");
+```js {linenos=table,linenostart=1,hl_lines=["7-9",18,28]}
+const process = require("process");
+const mqtt = require("mqtt");
 
 const topicReply = "db/reply/my_query";
 const topicQuery = "db/query";
-try {
-    var conf = { serverUrls: ["tcp://127.0.0.1:5653"] };
-    var client = new mqtt.Client(conf);
-    client.onConnect = () => {
-        client.subscribe({subscriptions:[{topic:topicReply, qos: 1}]})
-    }
-    var received = false
-    client.onMessage = (msg) => {
-        console.log('---- reply ----')
-        console.log(msg.payload.string());
-        received = true
-    }
+const queryRequest = {
+    q: `select name,time,value from example limit 5`,
+    format: 'csv',
+    reply: topicReply,
+};
 
-    client.connect( {timeout: 1000} );
-    client.publish({topic:topicQuery, qos: 1}, JSON.stringify({
-        q: `select name,time,value from example limit 5`,
-        format: 'csv',
-        reply: topicReply,
-    }))
-    do {
-        process.sleep(100);
-    } while(!received)
-    client.unsubscribe({topics:[topicReply]})
-    client.disconnect({timeout:1000});
-} catch (e) {
-    console.error("Error:", e.message);
-}
+var client = new mqtt.Client({
+    servers: ["tcp://127.0.0.1:5653"],
+    keepAlive: 10,
+});
+client.on('open', () => {
+    console.println('---- subscribe:', topicReply);
+    client.subscribe(topicReply, {qos:0})
+});
+client.on('error', (err) => {
+    console.println('MQTT ERROR:', err.message);
+});
+client.on('close', () => {
+    console.println('---- disconnected');
+});
+client.on('subscribed', (topic, reason) => {
+    console.println('---- publish:', topicQuery);
+    client.publish(topicQuery, JSON.stringify(queryRequest));
+});
+client.on('message', (msg) => {
+    console.println('---- reply')
+    console.println(msg.payload);
+    client.unsubscribe(msg.topic);
+});
+client.on('unsubscribed', (topic, reason) => {
+    console.println('---- unsubscribed:', topic, 'reason:', reason);
+    setTimeout(()=>{
+        client.close();
+    }, 500)
+});
 ```
+
+실행과 결과 출력:
+
+```sh
+/work > ./mqtt_query.js
+---- subscribe: db/reply/my_query ----
+---- publish: db/query ----
+---- reply ----
+name,time,value
+my-car,1782260468085501458,1.2345
+my-car,1782260474814668541,1.35795
+my-car,1782260474827077041,1.4814
+my-car,1782260474839257291,1.60485
+
+---- unsubscribed: db/reply/my_query reason: 0 ----
+---- disconnected ----
+```
+
 
 ### Node.js 클라이언트
 
