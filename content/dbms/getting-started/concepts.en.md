@@ -21,9 +21,9 @@ Unlike traditional databases, Machbase is built specifically for:
 - **Time-based** queries (recent data, time ranges)
 - **Append-only** data (rarely updated or deleted)
 
-## The Four Table Types
+## The Five Table Types
 
-Machbase provides four different table types. **Choosing the right one is important!**
+Machbase provides different table types. **Choosing the right one is important!**
 
 ### Quick Decision Guide
 
@@ -41,6 +41,9 @@ Do you need to UPDATE or DELETE specific records by key?
 
 Is it reference/master data that changes rarely?
     YES → Use LOOKUP TABLE
+
+Do you need persistent row UPDATE/DELETE and indexed lookup?
+    YES → Use RDB TABLE
 ```
 
 ### 1. Tag Table - For Sensor Data
@@ -160,18 +163,46 @@ CREATE LOOKUP TABLE devices (
 );
 ```
 
+### 5. RDB Table - For Persistent Row State
+
+**Use when**: Storing persistent operational state that needs `INSERT`, `UPDATE`, `DELETE`, and indexed `SELECT`
+
+**Best for**:
+- Equipment master data
+- Alarm rules and current alarm state
+- Work queues
+- Dimension tables joined with Tag or Log data
+
+**Structure**: Flexible schema with optional `PRIMARY KEY`
+
+**Key features**:
+- Full DML support
+- Persistent storage
+- Normal, unique, primary key, and JSON path indexes
+- Joins with time-series tables
+
+**Example**:
+```sql
+CREATE RDB TABLE device_state (
+    device_id INTEGER PRIMARY KEY,
+    name VARCHAR(50),
+    state VARCHAR(20),
+    updated_at DATETIME
+);
+```
+
 ## Comparison Table
 
-| Feature | Tag Table | Log Table | Volatile Table | Lookup Table |
-|---------|-----------|-----------|----------------|--------------|
-| **Purpose** | Sensor data | Log/event data | In-memory cache | Master data |
-| **Insert Speed** | Millions/sec | Millions/sec | 10,000s/sec | 100s/sec |
-| **UPDATE Support** | No* | No | Yes | Yes |
-| **DELETE Support** | Time-based | Time-based | By key | By key |
-| **Storage** | Disk | Disk | Memory | Disk |
-| **Schema** | Fixed pattern | Flexible | Flexible | Flexible |
-| **Best Query** | By ID + time | Time-based | By key | Any |
-| **Data Persistence** | Yes | Yes | **No** | Yes |
+| Feature | Tag Table | Log Table | Volatile Table | Lookup Table | RDB Table |
+|---------|-----------|-----------|----------------|--------------|-----------|
+| **Purpose** | Sensor data | Log/event data | In-memory cache | Master data | Row state |
+| **Insert Speed** | Millions/sec | Millions/sec | 10,000s/sec | 100s/sec | Workload-dependent |
+| **UPDATE Support** | No* | No | Yes | Yes | Yes |
+| **DELETE Support** | Time-based | Time-based | By key | By key | Yes |
+| **Storage** | Disk | Disk | Memory | Disk | Disk |
+| **Schema** | Fixed pattern | Flexible | Flexible | Flexible | Flexible |
+| **Best Query** | By ID + time | Time-based | By key | Any | Indexed predicates |
+| **Data Persistence** | Yes | Yes | **No** | Yes | Yes |
 
 *Tag table metadata columns can be updated
 
@@ -252,6 +283,7 @@ Machbase is designed for **append-only** data:
 **When you need UPDATE/DELETE:**
 - Use Volatile table for in-memory data
 - Use Lookup table for persistent reference data
+- Use RDB table for persistent operational row state
 
 ## Time-Based Deletion
 
@@ -280,6 +312,7 @@ Machbase automatically creates indexes optimally:
 - **Log table**: LSM index (optional, created with CREATE INDEX)
 - **Volatile table**: Red-black tree index (for PRIMARY KEY)
 - **Lookup table**: LSM index (optional)
+- **RDB table**: RDB indexes for normal, unique, primary key, and JSON path lookup
 
 Most users don't need to manage indexes manually!
 
@@ -336,6 +369,7 @@ You don't need to configure anything - it just works!
 - **Application logs, events** → Log table
 - **Real-time updates needed** → Volatile table
 - **Configuration, reference data** → Lookup table
+- **Persistent row state and workflow data** → RDB table
 
 ### 2. Use DURATION for Time Queries
 
@@ -392,6 +426,13 @@ CREATE LOOKUP TABLE sensor_info (
     location VARCHAR(100),
     type VARCHAR(50)
 );
+
+-- RDB table for current device state
+CREATE RDB TABLE sensor_state (
+    sensor_id INTEGER PRIMARY KEY,
+    state VARCHAR(20),
+    updated_at DATETIME
+);
 ```
 
 ### Pattern 2: Application Monitoring
@@ -418,6 +459,9 @@ CREATE TABLE production_events (...);
 
 -- Lookup table for equipment registry
 CREATE LOOKUP TABLE equipment_list (...);
+
+-- RDB table for active alarms
+CREATE RDB TABLE alarm_state (...);
 ```
 
 ## What's Next?
@@ -455,5 +499,12 @@ CREATE VOLATILE TABLE t (
 CREATE LOOKUP TABLE t (
     id INTEGER PRIMARY KEY,
     name VARCHAR(100)
+);
+
+-- RDB TABLE (persistent row state)
+CREATE RDB TABLE t (
+    id INTEGER PRIMARY KEY,
+    state VARCHAR(20),
+    updated_at DATETIME
 );
 ```
