@@ -12,9 +12,9 @@ Machbase provides specialized table types, each optimized for different workload
 
 1. **Tag Table** - Sensor/device axis-based data (time or distance)
 2. **Log Table** - Event streams and logs
-3. **Volatile Table** - In-memory real-time data
-4. **Lookup Table** - Reference and master data
-5. **RDB Table** - Persistent row data for transactional state, dimensions, and queues
+3. **Volatile Table** - Non-persistent memory table with a single primary-key index
+4. **Lookup Table** - Persistent reference table with a single primary-key memory index
+5. **RDB Table** - Generalized disk row table with optional primary key and secondary indexes
 
 ## Quick Decision Guide
 
@@ -53,11 +53,23 @@ Answer these questions to find your table type:
        YES      NO
         │        │
         ▼        ▼
-      Log     Lookup/RDB
-      Table     Table
+      Log     Need single
+      Table    primary-key
+               reference?
+                  │
+              ┌───┴────┐
+              │        │
+             YES      NO
+              │        │
+              ▼        ▼
+           Lookup    RDB
+            Table    Table
 ```
 
-If the data is persistent, mutable, and needs general `UPDATE`, `DELETE`, and indexed row lookup behavior, choose an RDB table. If it is read-mostly reference data with simpler key-based access, a Lookup table can still be a better fit.
+If the data is persistent reference data and every access path is centered on one
+primary key, choose a Lookup table. If it needs a generalized disk row schema,
+optional primary key, secondary indexes, JSON path indexes, or general indexed
+predicates, choose an RDB table.
 
 ### Decision Table
 
@@ -66,14 +78,14 @@ If the data is persistent, mutable, and needs general `UPDATE`, `DELETE`, and in
 | Temperature sensors from 1000 devices | **Tag Table** | Multiple sensors, time-series values |
 | Application error logs | **Log Table** | Event stream, flexible schema |
 | Live user sessions | **Volatile Table** | Needs UPDATE, temporary |
-| Device metadata/registry | **Lookup Table** | Reference data, rare updates |
+| Device metadata/registry | **Lookup Table** | Persistent reference data by primary key |
 | Stock market ticks | **Tag Table** | Symbol as tag, price as value |
 | Conveyor vibration by position | **Tag Table** | Distance-axis measurements |
 | HTTP access logs | **Log Table** | Event-based, many columns |
 | Shopping cart contents | **Volatile Table** | Frequent updates, session-based |
-| Product catalog | **Lookup Table** | Master data, infrequent changes |
-| Current alarm state | **RDB Table** | Persistent row state with UPDATE/DELETE |
-| Work queue | **RDB Table** | Transactional row changes and indexed lookup |
+| Product catalog keyed by product ID | **Lookup Table** | Persistent reference data by one primary key |
+| Current alarm state | **RDB Table** | Generalized disk rows with UPDATE/DELETE |
+| Work queue | **RDB Table** | Row changes and indexed predicates |
 
 ## Tag Table Deep Dive
 
@@ -299,7 +311,7 @@ Perfect for:
 - Session management
 - Live status boards
 - Caching layer
-- Any data requiring UPDATE/DELETE
+- Temporary data requiring UPDATE/DELETE by primary key
 
 ### Structure
 
@@ -325,8 +337,9 @@ WHERE device_id = 101;
 DELETE FROM live_status WHERE device_id = 101;
 ```
 
-**In-Memory Storage**:
+**Non-Persistent Memory Primary-Key Table**:
 - All data in RAM
+- A single primary-key memory index
 - Extremely fast reads/writes
 - 10,000s of operations per second
 
@@ -386,7 +399,7 @@ Perfect for:
 - Configuration tables
 - Category/dimension tables
 - Master data
-- Reference data that changes rarely
+- Persistent reference data accessed by one primary key
 
 ### Structure
 
@@ -402,7 +415,7 @@ CREATE LOOKUP TABLE devices (
 
 ### Key Features
 
-**Full CRUD Support**:
+**Full CRUD Support by Primary Key**:
 ```sql
 -- Insert
 INSERT INTO devices VALUES ('sensor01', 'Sensor A', 'Building 1', 'Temperature', 'Facilities');
@@ -414,7 +427,7 @@ UPDATE devices SET location = 'Building 2' WHERE device_id = 'sensor01';
 DELETE FROM devices WHERE device_id = 'sensor01';
 
 -- Select
-SELECT * FROM devices WHERE device_type = 'Temperature';
+SELECT * FROM devices WHERE device_id = 'sensor01';
 ```
 
 **JOIN with Time-Series**:
@@ -427,17 +440,17 @@ WHERE s.time BETWEEN TO_DATE('2025-10-10 14:00:00', 'YYYY-MM-DD HH24:MI:SS')
                  AND TO_DATE('2025-10-10 15:00:00', 'YYYY-MM-DD HH24:MI:SS');
 ```
 
-**Performance**:
-- Fast reads
-- Slower writes (100s per second)
-- Persistent disk storage
+**Persistent Data with a Memory Primary-Key Index**:
+- Data persists across restart
+- A single primary-key memory index supports fast key access
+- Full DML is designed around primary-key predicates
 
 ### Best Practices
 
 **DO**:
 - Use for reference/master data
 - JOIN with Tag/Log tables
-- Index frequently queried columns
+- Design access around the primary key
 - Keep data volume reasonable (<1M rows ideal)
 
 **DON'T**:
@@ -485,7 +498,7 @@ Perfect for:
 - Alarm rules and current alarm state
 - Work queues
 - Dimension tables joined with Tag or Log data
-- Operational state that must persist and support `UPDATE` and `DELETE`
+- Generalized disk row data that must persist and support indexed predicates
 
 ### Structure
 
@@ -502,7 +515,7 @@ CREATE RDB TABLE device_master (
 
 ### Key Features
 
-**Full DML support**:
+**Full DML support on disk rows**:
 ```sql
 INSERT INTO device_master(id, name, state) VALUES (1, 'pump-01', 'READY');
 
@@ -531,6 +544,7 @@ RDB table data is included in database and table backup images. Mounted database
 - Use for persistent operational state that changes by row
 - Add indexes for frequent lookup predicates
 - Use RDB tables as dimensions in joins with Tag and Log data
+- Use when Lookup's single primary-key model is too narrow
 
 **DON'T**:
 - Use for high-volume sensor ingestion (use Tag or Log instead)
@@ -554,10 +568,10 @@ RDB table data is included in database and table backup images. Mounted database
 | Table Type | Read Speed | Best For | Index Type |
 |-----------|-----------|----------|------------|
 | Tag | Very Fast | sensor_id + time | 3-level partitioned |
-| Log | Fast | Time range | LSM (optional) |
+| Log | Fast | Time range | Optional log indexes |
 | Volatile | Very Fast | PRIMARY KEY | Red-black tree |
-| Lookup | Fast | Any column | LSM (optional) |
-| RDB | Fast | Indexed row lookup | RDB index |
+| Lookup | Fast | PRIMARY KEY | Memory primary-key index |
+| RDB | Fast | Indexed predicates | RDB indexes |
 
 ### Storage
 
@@ -566,7 +580,7 @@ RDB table data is included in database and table backup images. Mounted database
 | Tag | Disk | 10-100x | Yes |
 | Log | Disk | 10-100x | Yes |
 | Volatile | Memory | None | No |
-| Lookup | Disk | Moderate | Yes |
+| Lookup | Persistent + memory index | Moderate | Yes |
 | RDB | Disk | Backend-dependent | Yes |
 
 ## Combining Table Types
@@ -723,7 +737,7 @@ CREATE TAG TABLE sensor_readings (...);
 | **Storage** | Disk | Disk | Memory | Disk | Disk |
 | **Persistence** | Yes | Yes | No | Yes | Yes |
 | **Rollup** | When configured | No | No | No | No |
-| **Best Query** | ID + time | Time | Key | Any | Indexed predicates |
+| **Best Query** | ID + time | Time | Key | Primary key | Indexed predicates |
 | **Compression** | Very high | High | None | Moderate | Backend-dependent |
 
 ## Next Steps
@@ -737,8 +751,8 @@ CREATE TAG TABLE sensor_readings (...);
 1. **Tag tables** for sensor/device data with rollup support
 2. **Log tables** for flexible event streams and logs
 3. **Volatile tables** for in-memory, update-able data
-4. **Lookup tables** for reference and master data
-5. **RDB tables** for persistent row state and transactional reference data
+4. **Lookup tables** for persistent primary-key reference data
+5. **RDB tables** for generalized disk row data
 6. **Combine types** for complete solutions
 7. **Choose wisely** - table type determines performance
 

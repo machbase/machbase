@@ -20,7 +20,7 @@ Learn what makes time-series data special and why traditional databases struggle
 
 Complete guide to choosing the right table type:
 - Detailed comparison of Machbase table types
-- RDB tables for persistent row state and transactional reference data
+- RDB tables for generalized disk row data
 - Decision flowchart and selection guide
 - Performance characteristics
 - Common use cases and anti-patterns
@@ -69,13 +69,13 @@ Is it sensor data (ID, time, value)?
 Is it log/event data?
     YES → Log Table
 
-Need UPDATE/DELETE in memory?
+Need UPDATE/DELETE in non-persistent memory?
     YES → Volatile Table
 
-Is it reference/master data?
+Is it persistent reference data by one primary key?
     YES → Lookup Table
 
-Need persistent row UPDATE/DELETE and indexed lookup?
+Need generalized disk rows with indexed predicates?
     YES → RDB Table
 ```
 
@@ -86,7 +86,7 @@ Need persistent row UPDATE/DELETE and indexed lookup?
 | Tag       | Millions/sec | Very Fast | No* | Disk |
 | Log       | Millions/sec | Fast | Time-based | Disk |
 | Volatile  | 10,000s/sec | Very Fast | By Key | Memory |
-| Lookup    | 100s/sec | Fast | By Key | Disk |
+| Lookup    | 100s/sec | Fast | By Key | Persistent + memory index |
 | RDB       | Workload-dependent | Fast | Yes | Disk |
 
 *Tag table metadata can be updated
@@ -161,7 +161,7 @@ Don't force a table type for the wrong use case:
 - Log table for event streams
 - Volatile table for real-time cache
 - Lookup table for reference data
-- RDB table for persistent row state
+- RDB table for generalized disk row data
 
 ### 2. Leverage Time-Based Features
 

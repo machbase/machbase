@@ -4,25 +4,27 @@ title: 'Lookup Tables'
 weight: 40
 ---
 
-Complete reference for Lookup tables - Machbase's table type for reference data, master data, and dimension tables.
+Complete reference for Lookup tables - Machbase's persistent primary-key table type for reference data.
 
 ## Overview
 
-Lookup tables are disk-based tables optimized for reference data that changes rarely but is frequently read. They support full CRUD operations and are ideal for device registries and configuration.
+Lookup tables store persistent reference data and maintain a single primary-key
+memory index. They support full CRUD operations, but queries and row changes should
+be designed around the primary key.
 
 ## Key Features
 
 - **Full CRUD support** (INSERT, UPDATE, DELETE, SELECT)
-- **Persistent disk storage**
-- **Fast reads**
+- **Persistent data**
+- **Single primary-key memory index**
+- **Fast primary-key reads**
 - **JOIN with time-series tables**
-- **Optional RED-BLACK indexing**
 
 ## Basic Syntax
 
 ```sql
 CREATE LOOKUP TABLE table_name (
-    column1 data_type,
+    key_column data_type PRIMARY KEY,
     column2 data_type,
     ...
 );
@@ -34,13 +36,14 @@ CREATE LOOKUP TABLE table_name (
 - Configuration tables
 - Category/dimension tables
 - Master data
-- Reference data that changes rarely
+- Reference data accessed by one primary key
 
 ## When NOT to Use
 
 - High-frequency inserts (use Tag/Log instead)
 - Time-series data
 - Data requiring millions of writes/second
+- Workloads that need multiple secondary indexes or general predicates (use RDB instead)
 
 ## Related Documentation
 

@@ -4,17 +4,23 @@ title: 'RDB Tables'
 weight: 50
 ---
 
-RDB tables are persistent row tables for transactional state, dimension data, and reference data that must support `INSERT`, `UPDATE`, `DELETE`, and indexed `SELECT` in Machbase DBMS.
+RDB tables are generalized disk row tables for Machbase DBMS workloads that need
+`INSERT`, `UPDATE`, `DELETE`, and indexed `SELECT` beyond the single primary-key
+model of Lookup tables.
 
 ## Overview
 
-Use an RDB table when a Machbase application needs a small or medium-sized operational table next to high-volume `TAG` or `LOG` data. Typical examples are equipment master data, alarm rules, current alarm state, work queues, device registries, and dimension tables used in joins.
+Use an RDB table when a Machbase application needs a generalized disk table next
+to high-volume `TAG` or `LOG` data. Typical examples are equipment master data,
+alarm rules, current alarm state, work queues, and dimension tables used in joins.
+Use a Lookup table instead when the data is persistent reference data and all row
+access is centered on one primary key.
 
 RDB tables are created explicitly with `CREATE RDB TABLE`. The existing `CREATE TABLE` syntax continues to create a `LOG` table.
 
 ## Key Features
 
-- **Persistent row storage**
+- **Generalized disk row storage**
 - **Full DML support**: `INSERT`, `UPDATE`, `DELETE`, and `SELECT`
 - **Optional primary key** at create time or later with `CREATE PRIMARY KEY INDEX`
 - **Normal, unique, and JSON path indexes**

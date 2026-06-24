@@ -4,25 +4,27 @@ title: 'Lookup 테이블'
 weight: 40
 ---
 
-참조 데이터, 마스터 데이터 및 차원 테이블을 위한 Machbase의 테이블 타입인 Lookup 테이블에 대한 완전한 레퍼런스입니다.
+참조 데이터를 위한 Machbase의 영구 primary-key 테이블 타입인 Lookup 테이블에 대한 완전한 레퍼런스입니다.
 
 ## 개요
 
-Lookup 테이블은 드물게 변경되지만 자주 읽히는 참조 데이터에 최적화된 디스크 기반 테이블입니다. 전체 CRUD 작업을 지원하며 디바이스 레지스트리 및 설정 정보에 이상적입니다.
+Lookup 테이블은 영구 참조 데이터를 저장하고 단일 primary-key 메모리 인덱스를
+유지합니다. 전체 CRUD 작업을 지원하지만 쿼리와 row 변경은 primary key 중심으로
+설계해야 합니다.
 
 ## 주요 기능
 
 - **전체 CRUD 지원** (INSERT, UPDATE, DELETE, SELECT)
-- **영구 디스크 스토리지**
-- **빠른 읽기 성능**
+- **영구 데이터**
+- **단일 primary-key 메모리 인덱스**
+- **빠른 primary-key 읽기**
 - **시계열 테이블과의 JOIN**
-- **선택적 RED-BLACK 인덱싱**
 
 ## 기본 구문
 
 ```sql
 CREATE LOOKUP TABLE table_name (
-    column1 data_type,
+    key_column data_type PRIMARY KEY,
     column2 data_type,
     ...
 );
@@ -34,13 +36,14 @@ CREATE LOOKUP TABLE table_name (
 - 설정 테이블
 - 카테고리/차원 테이블
 - 마스터 데이터
-- 드물게 변경되는 참조 데이터
+- 하나의 primary key로 접근하는 참조 데이터
 
 ## 사용하지 말아야 할 경우
 
 - 고빈도 삽입 (Tag/Log 테이블 사용)
 - 시계열 데이터
 - 초당 수백만 건의 쓰기가 필요한 데이터
+- 여러 보조 인덱스 또는 일반 predicate가 필요한 워크로드 (RDB 사용)
 
 ## 관련 문서
 

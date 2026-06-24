@@ -4,15 +4,19 @@ title: 'Volatile Tables'
 weight: 30
 ---
 
-Complete reference for Volatile tables - Machbase's in-memory table type for real-time, frequently-updated data.
+Complete reference for Volatile tables - Machbase's non-persistent memory primary-key table type.
 
 ## Overview
 
-Volatile tables store all data in memory for maximum speed. They support UPDATE and DELETE operations by primary key, making them ideal for real-time dashboards and session management.
+Volatile tables store all data in memory and do not persist rows across server restart.
+Each Volatile table has a single primary-key memory index, and `UPDATE`, `DELETE`,
+and point lookup operations are designed around that primary key.
 
 ## Key Features
 
 - **100% in-memory** storage
+- **Non-persistent** rows
+- **Single primary-key memory index**
 - **UPDATE and DELETE** by PRIMARY KEY
 - **10,000s of operations** per second
 - **Fast key-based lookups** (O(log n))
@@ -36,6 +40,7 @@ CREATE VOLATILE TABLE table_name (
 - Live status boards
 - Caching layer
 - Temporary calculations
+- Non-persistent key-value style state
 
 ## When NOT to Use
 

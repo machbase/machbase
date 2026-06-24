@@ -36,13 +36,13 @@ Do you have sensor data (ID, timestamp, value)?
 Is it log data or mixed data types?
     YES → Use LOG TABLE
 
-Do you need to UPDATE or DELETE specific records by key?
-    YES → Use VOLATILE TABLE (in-memory)
+Do you need to UPDATE or DELETE specific records?
+    YES → In-memory and non-persistent by key? Use VOLATILE TABLE
 
-Is it reference/master data that changes rarely?
+Is it persistent reference/master data accessed by one primary key?
     YES → Use LOOKUP TABLE
 
-Do you need persistent row UPDATE/DELETE and indexed lookup?
+Do you need a disk row table with general indexes or optional primary key?
     YES → Use RDB TABLE
 ```
 
@@ -107,9 +107,9 @@ CREATE TABLE app_logs (
 );
 ```
 
-### 3. Volatile Table - For In-Memory Data
+### 3. Volatile Table - For Non-Persistent Memory Data
 
-**Use when**: You need fast INSERT/UPDATE/DELETE in memory
+**Use when**: You need fast INSERT/UPDATE/DELETE in memory and can lose the data on restart
 
 **Best for**:
 - Real-time dashboards
@@ -118,11 +118,12 @@ CREATE TABLE app_logs (
 - Key-value caching
 - Live monitoring displays
 
-**Structure**: Any schema, supports PRIMARY KEY
+**Structure**: Flexible schema with one required `PRIMARY KEY`
 
 **Key features**:
 - Tens of thousands of ops per second
 - Supports UPDATE and DELETE by primary key
+- Uses a single primary-key memory index
 - All data in memory (very fast)
 - **Data lost on shutdown!**
 
@@ -137,7 +138,7 @@ CREATE VOLATILE TABLE live_status (
 
 ### 4. Lookup Table - For Reference Data
 
-**Use when**: Storing reference/master data that changes rarely
+**Use when**: Storing persistent reference/master data accessed by one primary key
 
 **Best for**:
 - Device registry
@@ -145,13 +146,13 @@ CREATE VOLATILE TABLE live_status (
 - Category/dimension tables
 - Master data
 
-**Structure**: Any schema with a `PRIMARY KEY`
+**Structure**: Flexible schema with one required `PRIMARY KEY`
 
 **Key features**:
-- Fast SELECT performance
-- Persistent storage
-- Slower INSERT/UPDATE (disk-based)
-- Standard database operations
+- Persistent data
+- Single primary-key memory index
+- Full DML by primary-key predicate
+- Joins with time-series tables
 
 **Example**:
 ```sql
@@ -163,17 +164,18 @@ CREATE LOOKUP TABLE devices (
 );
 ```
 
-### 5. RDB Table - For Persistent Row State
+### 5. RDB Table - For Generalized Disk Rows
 
-**Use when**: Storing persistent operational state that needs `INSERT`, `UPDATE`, `DELETE`, and indexed `SELECT`
+**Use when**: Storing disk-based row data that needs `INSERT`, `UPDATE`, `DELETE`, and indexed `SELECT`
 
 **Best for**:
+- General row schemas that do not fit the single-key Lookup model
 - Equipment master data
 - Alarm rules and current alarm state
 - Work queues
 - Dimension tables joined with Tag or Log data
 
-**Structure**: Flexible schema with optional `PRIMARY KEY`
+**Structure**: Flexible disk row schema with optional `PRIMARY KEY`
 
 **Key features**:
 - Full DML support
@@ -195,13 +197,13 @@ CREATE RDB TABLE device_state (
 
 | Feature | Tag Table | Log Table | Volatile Table | Lookup Table | RDB Table |
 |---------|-----------|-----------|----------------|--------------|-----------|
-| **Purpose** | Sensor data | Log/event data | In-memory cache | Master data | Row state |
+| **Purpose** | Sensor data | Log/event data | Non-persistent memory state | Primary-key reference data | General disk rows |
 | **Insert Speed** | Millions/sec | Millions/sec | 10,000s/sec | 100s/sec | Workload-dependent |
 | **UPDATE Support** | No* | No | Yes | Yes | Yes |
 | **DELETE Support** | Time-based | Time-based | By key | By key | Yes |
-| **Storage** | Disk | Disk | Memory | Disk | Disk |
+| **Storage** | Disk | Disk | Memory | Persistent + memory index | Disk |
 | **Schema** | Fixed pattern | Flexible | Flexible | Flexible | Flexible |
-| **Best Query** | By ID + time | Time-based | By key | Any | Indexed predicates |
+| **Best Query** | By ID + time | Time-based | By key | By primary key | Indexed predicates |
 | **Data Persistence** | Yes | Yes | **No** | Yes | Yes |
 
 *Tag table metadata columns can be updated
@@ -281,9 +283,9 @@ Machbase is designed for **append-only** data:
 - Simplified architecture
 
 **When you need UPDATE/DELETE:**
-- Use Volatile table for in-memory data
-- Use Lookup table for persistent reference data
-- Use RDB table for persistent operational row state
+- Use Volatile table for non-persistent in-memory data with primary-key access
+- Use Lookup table for persistent reference data with one primary-key access path
+- Use RDB table for disk row data that needs multiple indexes or general predicates
 
 ## Time-Based Deletion
 
@@ -311,8 +313,8 @@ Machbase automatically creates indexes optimally:
 - **Tag table**: 3-level partitioned index (automatic)
 - **Log table**: LSM index (optional, created with CREATE INDEX)
 - **Volatile table**: Red-black tree index (for PRIMARY KEY)
-- **Lookup table**: LSM index (optional)
-- **RDB table**: RDB indexes for normal, unique, primary key, and JSON path lookup
+- **Lookup table**: memory primary-key index
+- **RDB table**: disk table indexes for normal, unique, primary key, and JSON path lookup
 
 Most users don't need to manage indexes manually!
 
@@ -367,9 +369,9 @@ You don't need to configure anything - it just works!
 
 - **High-volume sensors with many IDs** → Tag table
 - **Application logs, events** → Log table
-- **Real-time updates needed** → Volatile table
-- **Configuration, reference data** → Lookup table
-- **Persistent row state and workflow data** → RDB table
+- **Non-persistent real-time updates by key** → Volatile table
+- **Persistent reference data by one primary key** → Lookup table
+- **Generalized disk row data and workflow data** → RDB table
 
 ### 2. Use DURATION for Time Queries
 
@@ -501,7 +503,7 @@ CREATE LOOKUP TABLE t (
     name VARCHAR(100)
 );
 
--- RDB TABLE (persistent row state)
+-- RDB TABLE (generalized disk row table)
 CREATE RDB TABLE t (
     id INTEGER PRIMARY KEY,
     state VARCHAR(20),

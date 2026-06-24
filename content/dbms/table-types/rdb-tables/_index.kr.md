@@ -4,17 +4,22 @@ title: 'RDB 테이블'
 weight: 50
 ---
 
-RDB 테이블은 Machbase DBMS에서 `INSERT`, `UPDATE`, `DELETE`, 인덱스 기반 `SELECT`가 필요한 트랜잭션 상태, 차원 데이터, 참조 데이터를 저장하는 영구 row 테이블입니다.
+RDB 테이블은 Lookup 테이블의 단일 primary-key 모델을 넘어 `INSERT`, `UPDATE`,
+`DELETE`, 인덱스 기반 `SELECT`가 필요한 워크로드를 위한 Machbase DBMS의 범용
+디스크 row 테이블입니다.
 
 ## 개요
 
-RDB 테이블은 대량 `TAG` 또는 `LOG` 데이터 옆에서 작은 규모 또는 중간 규모의 운영 테이블이 필요할 때 사용합니다. 장비 마스터, 알람 룰, 현재 알람 상태, 작업 큐, 장치 레지스트리, 조인에 사용하는 차원 테이블이 대표적인 예입니다.
+RDB 테이블은 대량 `TAG` 또는 `LOG` 데이터 옆에서 범용 디스크 테이블이 필요할 때
+사용합니다. 장비 마스터, 알람 룰, 현재 알람 상태, 작업 큐, 조인에 사용하는 차원
+테이블이 대표적인 예입니다. 데이터가 영구 참조 데이터이고 모든 row 접근이 하나의
+primary key를 중심으로 동작한다면 Lookup 테이블을 사용합니다.
 
 RDB 테이블은 `CREATE RDB TABLE`로 명시적으로 생성합니다. 기존 `CREATE TABLE` 구문은 계속 `LOG` 테이블을 생성합니다.
 
 ## 주요 기능
 
-- **영구 row 저장소**
+- **범용 디스크 row 저장소**
 - **전체 DML 지원**: `INSERT`, `UPDATE`, `DELETE`, `SELECT`
 - **선택적 primary key**: 생성 시 선언하거나 `CREATE PRIMARY KEY INDEX`로 나중에 추가
 - **일반, unique, JSON path 인덱스**

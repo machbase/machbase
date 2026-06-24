@@ -23,7 +23,7 @@ Start with the table type guides for common data patterns:
 * [Log Tables](./table-types/log-tables/) - Handle log data efficiently
 * [Volatile Tables](./table-types/volatile-tables/) - Work with real-time data
 * [Lookup Tables](./table-types/lookup-tables/) - Manage reference data
-* [RDB Tables](./table-types/rdb-tables/) - Manage persistent row state and transactional reference data
+* [RDB Tables](./table-types/rdb-tables/) - Manage generalized disk row data
 
 
 ## Core Documentation

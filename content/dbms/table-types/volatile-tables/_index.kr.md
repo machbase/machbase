@@ -4,15 +4,19 @@ title: 'Volatile 테이블'
 weight: 30
 ---
 
-Volatile 테이블에 대한 완전한 참조 - 실시간, 빈번하게 업데이트되는 데이터를 위한 Machbase의 인메모리 테이블 유형입니다.
+Volatile 테이블에 대한 완전한 참조입니다. Volatile 테이블은 Machbase의 비영구 메모리 primary-key 테이블 타입입니다.
 
 ## 개요
 
-Volatile 테이블은 최대 속도를 위해 모든 데이터를 메모리에 저장합니다. PRIMARY KEY로 UPDATE 및 DELETE 작업을 지원하여 실시간 대시보드와 세션 관리에 이상적입니다.
+Volatile 테이블은 모든 데이터를 메모리에 저장하며 서버 재시작 후 row를 보존하지
+않습니다. 각 Volatile 테이블은 단일 primary-key 메모리 인덱스를 가지며 `UPDATE`,
+`DELETE`, point lookup은 이 primary key를 중심으로 사용합니다.
 
 ## 주요 기능
 
 - **100% 인메모리** 저장소
+- **비영구** row
+- **단일 primary-key 메모리 인덱스**
 - PRIMARY KEY로 **UPDATE 및 DELETE** 지원
 - 초당 **수만 건의 작업** 처리
 - **빠른 키 기반 조회** (O(log n))
@@ -36,6 +40,7 @@ CREATE VOLATILE TABLE table_name (
 - 실시간 상태 보드
 - 캐싱 레이어
 - 임시 계산
+- 비영구 key-value 형태의 상태
 
 ## 사용하지 말아야 할 때
 

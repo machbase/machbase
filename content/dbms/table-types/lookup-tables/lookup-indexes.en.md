@@ -4,11 +4,14 @@ type: docs
 weight: 50
 ---
 
-Lookup tables support RED-BLACK indexes. If `INDEX_TYPE LSM` is specified on a
-Lookup table, Machbase creates a RED-BLACK index. `KEYWORD` indexes are only
-available for LOG tables.
+Lookup tables use a single memory index on the primary key. Design lookup queries,
+updates, and deletes around the primary-key predicate. `KEYWORD` indexes are only
+available for LOG tables; use RDB tables when a persistent row table needs multiple
+secondary indexes or JSON path indexes.
 
 ```sql
 CREATE LOOKUP TABLE lookup_table (code INTEGER PRIMARY KEY, name VARCHAR(20));
-CREATE INDEX idx_lookup_name ON lookup_table(name) INDEX_TYPE REDBLACK;
+
+SELECT name FROM lookup_table WHERE code = 100;
+UPDATE lookup_table SET name = 'sensor-a' WHERE code = 100;
 ```
