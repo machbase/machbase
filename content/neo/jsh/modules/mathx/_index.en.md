@@ -169,12 +169,25 @@ for (let i = 0; i < gen.length; i++) {
 The `fft` function performs a Fast Fourier Transform (FFT) on a given dataset. 
 FFT is used to analyze the frequency components of a signal, making it useful in signal processing and data analysis.
 
+It accepts input in two forms and returns an array of `[frequency, amplitude]` pairs.
+
+<h6>Syntax</h6>
+
 ```js
 fft(times, amplitudes) // time array and amplitude array
-fft(times_and_amplitudes) // array of [time, amplitude]
+fft(timesAndAmplitudes) // array of [time, amplitude]
 ```
 
-The length of times and amplitudes should be equal.
+- `fft(times, amplitudes)`
+    Passes the time values and amplitude values as two separate arrays.
+- `fft(timesAndAmplitudes)`
+    Passes an array of `[time, amplitude]` pairs.
+
+When `times` and `amplitudes` are provided separately, the two arrays must have the same length.
+
+<h6>Return value</h6>
+
+`Array<[frequency, amplitude]>` array of frequency and amplitude pairs.
 
 **Usage example**
 

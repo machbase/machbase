@@ -169,12 +169,25 @@ for (let i = 0; i < gen.length; i++) {
 
 고속 푸리에 변환(FFT)을 수행하여 주파수 성분을 분석합니다.
 
+입력은 두 가지 형식을 지원하며, 결과는 `[frequency, amplitude]` 형태의 배열로 반환됩니다.
+
+<h6>사용 형식</h6>
+
 ```js
-fft(times, amplitudes) // time array and amplitude array
-fft(times_and_amplitudes) // array of [time, amplitude]
+fft(times, amplitudes) // 시간 배열과 진폭 배열
+fft(timesAndAmplitudes) // [time, amplitude] 배열
 ```
 
-`times`와 `amplitudes` 길이는 동일해야 합니다.
+- `fft(times, amplitudes)`
+    `times`와 `amplitudes`를 각각 별도의 배열로 전달합니다.
+- `fft(timesAndAmplitudes)`
+    `[time, amplitude]` 쌍으로 이루어진 배열을 전달합니다.
+
+`times`와 `amplitudes`를 별도 배열로 전달하는 경우, 두 배열의 길이는 반드시 같아야 합니다.
+
+<h6>반환 값</h6>
+
+`Array<[frequency, amplitude]>` 주파수와 진폭 쌍의 배열.
 
 **사용 예시**
 
