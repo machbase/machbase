@@ -169,6 +169,106 @@ for (let i = 0; i < gen.length; i++) {
 }
 ```
 
+## series()
+
+{{< neo_since ver="8.5.5" />}}
+
+`[time, value]` 튜플 샘플 배열을 시간 배열과 값 배열로 분리합니다.
+
+<h6>사용 형식</h6>
+
+```js
+series(samples, options)
+```
+
+<h6>매개변수</h6>
+
+- `samples` `Array<[time, Number]>` 튜플 샘플 배열
+- `options` `Object` 선택
+    - `xKey` `String` x축 배열 키 이름, 기본값 `"time"`
+    - `yKey` `String` y축 배열 키 이름, 기본값 `"value"`
+
+<h6>반환값</h6>
+
+두 개의 배열을 담은 `Object`를 반환합니다. 기본 형태는 `{ time, value }`입니다.
+
+<h6>사용 예시</h6>
+
+```js
+const m = require("mathx");
+const gen = m.oscillator({
+    components: [{ amplitude: 1.0, frequencyHz: 0.1 }],
+    timeRange: { from: "0s", to: "10s" },
+    sample: 5,
+});
+
+const s = m.series(gen);
+console.log(s.time.length);  // 5
+console.log(s.value.length); // 5
+
+const custom = m.series(gen, { xKey: "ts", yKey: "amp" });
+console.log(custom.ts.length);  // 5
+console.log(custom.amp.length); // 5
+```
+
+## unzip()
+
+{{< neo_since ver="8.5.5" />}}
+
+튜플 샘플 배열을 두 개의 배열로 분리합니다.
+
+<h6>사용 형식</h6>
+
+```js
+unzip(samples)
+```
+
+<h6>매개변수</h6>
+
+- `samples` `Array<[x, y]>` 튜플 샘플 배열
+
+<h6>반환값</h6>
+
+`[Array<x>, Array<y>]`
+
+<h6>사용 예시</h6>
+
+```js
+const m = require("mathx");
+const [x, y] = m.unzip([[1, 10], [2, 20], [3, 30]]);
+console.log(x); // [1, 2, 3]
+console.log(y); // [10, 20, 30]
+```
+
+## zip()
+
+{{< neo_since ver="8.5.5" />}}
+
+두 개의 배열을 튜플 샘플 배열로 합칩니다.
+
+<h6>사용 형식</h6>
+
+```js
+zip(x, y)
+```
+
+<h6>매개변수</h6>
+
+- `x` `Array<any>` x축 데이터 배열
+- `y` `Array<any>` y축 데이터 배열 (`x`와 길이가 같아야 함)
+
+<h6>반환값</h6>
+
+`Array<[x, y]>`
+
+<h6>사용 예시</h6>
+
+```js
+const m = require("mathx");
+const samples = m.zip([1, 2, 3], [10, 20, 30]);
+console.log(samples[0]); // [1, 10]
+```
+
 ## fft()
 
 고속 푸리에 변환(FFT)을 수행하여 주파수 성분을 분석합니다.

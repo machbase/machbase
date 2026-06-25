@@ -168,6 +168,106 @@ for (let i = 0; i < gen.length; i++) {
 }
 ```
 
+## series()
+
+{{< neo_since ver="8.5.5" />}}
+
+Converts tuple samples into separate time/value arrays.
+
+<h6>Syntax</h6>
+
+```js
+series(samples, options)
+```
+
+<h6>Parameters</h6>
+
+- `samples` `Array<[time, Number]>` tuple samples.
+- `options` `Object` Optional.
+    - `xKey` `String` key name for x-axis array. Default is `"time"`.
+    - `yKey` `String` key name for y-axis array. Default is `"value"`.
+
+<h6>Return value</h6>
+
+`Object` containing two arrays. Default shape is `{ time, value }`.
+
+<h6>Usage example</h6>
+
+```js
+const m = require("mathx");
+const gen = m.oscillator({
+    components: [{ amplitude: 1.0, frequencyHz: 0.1 }],
+    timeRange: { from: "0s", to: "10s" },
+    sample: 5,
+});
+
+const s = m.series(gen);
+console.log(s.time.length);  // 5
+console.log(s.value.length); // 5
+
+const custom = m.series(gen, { xKey: "ts", yKey: "amp" });
+console.log(custom.ts.length);  // 5
+console.log(custom.amp.length); // 5
+```
+
+## unzip()
+
+{{< neo_since ver="8.5.5" />}}
+
+Splits tuple samples into two arrays.
+
+<h6>Syntax</h6>
+
+```js
+unzip(samples)
+```
+
+<h6>Parameters</h6>
+
+- `samples` `Array<[x, y]>` tuple samples.
+
+<h6>Return value</h6>
+
+`[Array<x>, Array<y>]`
+
+<h6>Usage example</h6>
+
+```js
+const m = require("mathx");
+const [x, y] = m.unzip([[1, 10], [2, 20], [3, 30]]);
+console.log(x); // [1, 2, 3]
+console.log(y); // [10, 20, 30]
+```
+
+## zip()
+
+{{< neo_since ver="8.5.5" />}}
+
+Combines two arrays into tuple samples.
+
+<h6>Syntax</h6>
+
+```js
+zip(x, y)
+```
+
+<h6>Parameters</h6>
+
+- `x` `Array<any>` x-axis data array.
+- `y` `Array<any>` y-axis data array. Must have the same length as `x`.
+
+<h6>Return value</h6>
+
+`Array<[x, y]>`
+
+<h6>Usage example</h6>
+
+```js
+const m = require("mathx");
+const samples = m.zip([1, 2, 3], [10, 20, 30]);
+console.log(samples[0]); // [1, 10]
+```
+
 ## fft()
 
 The `fft` function performs a Fast Fourier Transform (FFT) on a given dataset. 
