@@ -24,7 +24,7 @@ arrange(start, end, step)
 
 <h6>Return value</h6>
 
-`Number[]` generated numbers in an array.
+`Array<Number>` generated numbers in an array.
 
 <h6>Usage example</h6>
 
@@ -55,7 +55,7 @@ linspace(start, end, count)
 
 <h6>Return value</h6>
 
-`Number[]` generated numbers in an array.
+`Array<Number>` generated numbers in an array.
 
 <h6>Usage example</h6>
 
@@ -81,12 +81,12 @@ meshgrid(arr1, arr2)
 
 <h6>Parameters</h6>
 
-- `arr1` `Number[]`
-- `arr2` `Number[]`
+- `arr1` `Array<Number>`
+- `arr2` `Array<Number>`
 
 <h6>Return value</h6>
 
-`Number[][]` generated numbers in an array of numbers.
+``Array<Array<Number>>` generated numbers in an array of numbers.
 
 <h6>Usage example</h6>
 
@@ -353,8 +353,8 @@ cdf(q, x, weights)
 ```
 
 - `q` `Number`
-- `x` `Number[]` The `x` data must be sorted in increasing order.
-- `weights` `Number[]` If weights is not specified then all of the weights are 1. If weights is specified, then length of `x` must equal length of `weights`.
+- `x` `Array<Number>` The `x` data must be sorted in increasing order.
+- `weights` `Array<Number>` If weights is not specified then all of the weights are 1. If weights is specified, then length of `x` must equal length of `weights`.
 
 **Usage example**
 
@@ -521,8 +521,8 @@ quantile(p, x, weights)
 ```
 
 - `p` `Number`
-- `x` `Number[]` The `x` data must be sorted in increasing order.
-- `weights` `Number[]` If weights is not specified then all of the weights are 1. If weights is specified, then length of `x` must equal length of `weights`.
+- `x` `Array<Number>` The `x` data must be sorted in increasing order.
+- `weights` `Array<Number>` If weights is not specified then all of the weights are 1. If weights is specified, then length of `x` must equal length of `weights`.
 
 **Usage example**
 
@@ -545,8 +545,8 @@ quantileInterp(p, x, weights)
 ```
 
 - `p` `Number`
-- `x` `Number[]` The `x` data must be sorted in increasing order.
-- `weights` `Number[]` If weights is not specified then all of the weights are 1. If weights is specified, then length of `x` must equal length of `weights`.
+- `x` `Array<Number>` The `x` data must be sorted in increasing order.
+- `weights` `Array<Number>` If weights is not specified then all of the weights are 1. If weights is specified, then length of `x` must equal length of `weights`.
 
 **Usage example**
 
@@ -588,8 +588,8 @@ It returns `{value: number, count: number}`.
 mode(x, weights)
 ```
 
-- `x` `Number[]` The `x` data must be sorted in increasing order.
-- `weights` `Number[]` If weights is not specified then all of the weights are 1. If weights is specified, then length of `x` must equal length of `weights`.
+- `x` `Array<Number>` The `x` data must be sorted in increasing order.
+- `weights` `Array<Number>` If weights is not specified then all of the weights are 1. If weights is specified, then length of `x` must equal length of `weights`.
 
 **Usage example**
 

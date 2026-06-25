@@ -25,7 +25,7 @@ arrange(start, end, step)
 
 <h6>반환값</h6>
 
-`Number[]` 생성된 숫자 배열.
+`Array<Number>` 생성된 숫자 배열.
 
 <h6>사용 예시</h6>
 
@@ -56,7 +56,7 @@ linspace(start, end, count)
 
 <h6>반환값</h6>
 
-`Number[]` 생성된 숫자 배열.
+`Array<Number>` 생성된 숫자 배열.
 
 <h6>사용 예시</h6>
 
@@ -82,12 +82,12 @@ meshgrid(arr1, arr2)
 
 <h6>매개변수</h6>
 
-- `arr1` `Number[]` 첫 번째 배열
-- `arr2` `Number[]` 두 번째 배열
+- `arr1` `Array<Number>` 첫 번째 배열
+- `arr2` `Array<Number>` 두 번째 배열
 
 <h6>반환값</h6>
 
-`Number[][]` 숫자 쌍으로 구성된 배열.
+``Array<Array<Number>>` 숫자 쌍으로 구성된 배열.
 
 <h6>사용 예시</h6>
 
@@ -348,8 +348,8 @@ cdf(q, x, weights)
 ```
 
 - `q` `Number` 기준 값
-- `x` `Number[]` 오름차순으로 정렬된 데이터
-- `weights` `Number[]` 가중치 배열(생략 시 모두 1, 지정 시 `x`와 길이가 같아야 합니다.)
+- `x` `Array<Number>` 오름차순으로 정렬된 데이터
+- `weights` `Array<Number>` 가중치 배열(생략 시 모두 1, 지정 시 `x`와 길이가 같아야 합니다.)
 
 **사용 예시**
 
@@ -497,8 +497,8 @@ quantile(p, x, weights)
 ```
 
 - `p` `Number`
-- `x` `Number[]` The `x` data must be sorted in increasing order.
-- `weights` `Number[]` If weights is not specified then all of the weights are 1. If weights is specified, then length of `x` must equal length of `weights`.
+- `x` `Array<Number>` The `x` data must be sorted in increasing order.
+- `weights` `Array<Number>` If weights is not specified then all of the weights are 1. If weights is specified, then length of `x` must equal length of `weights`.
 
 **사용 예시**
 
@@ -521,8 +521,8 @@ quantileInterp(p, x, weights)
 ```
 
 - `p` `Number` 백분위 비율
-- `x` `Number[]` 정렬된 데이터
-- `weights` `Number[]` 가중치 배열(선택)
+- `x` `Array<Number>` 정렬된 데이터
+- `weights` `Array<Number>` 가중치 배열(선택)
 
 **사용 예시**
 
@@ -558,8 +558,8 @@ console.log(result.stdDev.toFixed(2)); // 1.58
 mode(x, weights)
 ```
 
-- `x` `Number[]` 정렬된 데이터
-- `weights` `Number[]` 가중치 배열(선택)
+- `x` `Array<Number>` 정렬된 데이터
+- `weights` `Array<Number>` 가중치 배열(선택)
 
 **사용 예시**
 
