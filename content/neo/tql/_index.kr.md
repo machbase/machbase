@@ -14,8 +14,25 @@ TQL은 이러한 데이터를 쉽고 유연하게 가공하실 수 있도록 제
 
 
 {{< tabs >}}
+{{< tab name="SCRIPT" >}}
+```js
+SCRIPT({
+    const m = require('mathx');
+    const gen = m.oscillator({
+        components: [
+            {frequencyHz: 15, amplitude: 1.0},
+            {frequencyHz: 24, amplitude: 1.5},
+        ],
+        timeRange: {from: 'now', to: 'now+10s'},
+        sample: "1000Hz",
+    });
+    gen.forEach((g)=>{ $.yield(g[0], g[1]) });
+})
+SQL(`insert into example(name,time,value) values('signal',?,?)`, 
+    value(0), value(1))
+```
+{{</ tab >}}
 {{< tab name="FAKE" >}}
-
 ```js
 FAKE(
   oscillator(
@@ -23,25 +40,8 @@ FAKE(
     range('now', '10s', '1ms')
   )
 )
-INSERT( 'time', 'value', table('example'), tag('signal') )
-```
-{{</ tab >}}
-{{< tab name="SCRIPT" >}}
-```js
-SCRIPT({
-    gen = require("mathx").oscillator({
-        components: [
-            {amplitude: 1.0, frequencyHz: 15},
-            {amplitude: 1.5, frequencyHz: 24},
-        ],
-        timeRange: {from: 'now', to: 'now+10s'},
-        sample: "1000Hz",
-    });
-    for(i=0; i < gen.length; i++) {
-        $.yield(gen[i][0], gen[i][1])
-    }
-})
-INSERT('time', 'value', table('example'), tag('signal'))
+SQL(`insert into example(name,time,value) values('signal',?,?)`, 
+    value(0), value(1))
 ```
 {{</ tab >}}
 {{</ tabs >}}

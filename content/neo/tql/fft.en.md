@@ -51,7 +51,7 @@ FAKE(
 // |    0      1
 // +--> time   magnitude
 // |
-INSERT( 'time', 'value', table('example'), tag('signal') )
+SQL('insert into example values(?,?,?)','signal',value(0),value(1))
 ```
 
 It will show "10000 rows inserted." message in the "Result" pane.

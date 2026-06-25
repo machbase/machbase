@@ -51,7 +51,7 @@ FAKE(
 // |    0      1
 // +--> time   magnitude
 // |
-INSERT( 'time', 'value', table('example'), tag('signal') )
+SQL('insert into example values(?,?,?)','signal',value(0),value(1))
 ```
 
 실행 결과 창에는 "10000 rows inserted." 메시지가 표시됩니다.
