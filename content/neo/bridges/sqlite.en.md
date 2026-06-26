@@ -87,17 +87,16 @@ DELETE from mem_example;
 
 ## *TQL* writing on the SQLite
 
-```js {linenos=table,hl_lines=["10"],linenostart=1}
+```js {linenos=table,hl_lines=["8-10"],linenostart=1}
 FAKE( json({
     ["COMPANY", "EMPLOYEE"],
     ["NovaWave", 10],
     ["Sunflower", 20]
 }))
-
 DROP(1) // skip header
-MAPVALUE(2, time("now"))
-
-INSERT(bridge("mem"), table("mem_example"), "company", "employee", "created_on")
+SQL(bridge("mem"), 
+    `insert into mem_example (company, employee, created_on) values(?, ?, ?)`,
+    value(0), value(1), time('now'))
 ```
 
 ```
@@ -161,7 +160,9 @@ and then writes the data into the SQLite database using the `INSERT()` function 
 
 ```js
 SQL(`select name, time, value from example where name = 'my-car'`)
-INSERT(bridge("sqlite"), "name", "time", "value", table("example"))
+SQL(bridge("sqlite"), 
+    `insert into example values(?,?,?)`,
+    value(0), value(1), value(2))
 ```
 
 **SQL**

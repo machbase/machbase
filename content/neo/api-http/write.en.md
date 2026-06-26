@@ -91,7 +91,17 @@ Content-Type: application/json
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE \
   -H "Content-Type: application/json" \
-  --data-binary "@post-data.json"
+  --data-binary @- << 'EOF'
+{
+    "data": {
+        "columns":["name", "time", "value"],
+        "rows": [
+            [ "json-data", 1670380342000000000, 1.0001 ],
+            [ "json-data", 1670380343000000000, 2.0002 ]
+        ]
+    }
+}
+EOF
 ```
 {{< /tab >}}
 {{< tab name="Python" >}}
@@ -325,14 +335,11 @@ Content-Type: application/json
 {{< /tab >}}
 {{< tab name="cURL" >}}
 ```sh
-curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=DEFAULT&tz=Asia/Seoul' \
+curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE?'\
+'timeformat=DEFAULT&'\
+'tz=Asia/Seoul' \
   -H "Content-Type: application/json" \
-  --data-binary "@post-data.json"
-```
-
-- `post-data.json`
-
-```json
+  --data-binary @- << 'EOF'
 {
   "data": {
     "columns":["name", "time", "value"],
@@ -342,6 +349,7 @@ curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=DEFAULT&tz=Asia/
     ]
   }
 }
+EOF
 ```
 {{< /tab >}}
 {{< tab name="Python" >}}
@@ -455,7 +463,10 @@ Content-Type: application/x-ndjson
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE \
   -H "Content-Type: application/x-ndjson" \
-  --data-binary "@post-data.json"
+  --data-binary @- << 'EOF'
+{"NAME":"ndjson-data", "TIME":1670380342000000000, "VALUE":1.001}
+{"NAME":"ndjson-data", "TIME":1670380343000000000, "VALUE":2.002}
+EOF
 ```
 {{< /tab >}}
 {{< tab name="Python" >}}
@@ -550,7 +561,10 @@ Content-Type: application/x-ndjson
 ```sh
 curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=Default&tz=Local' \
   -H "Content-Type: application/x-ndjson" \
-  --data-binary "@post-data.json"
+  --data-binary @- << 'EOF'
+{"NAME":"ndjson-data", "TIME":"2022-12-07 02:33:22", "VALUE":1.001}
+{"NAME":"ndjson-data", "TIME":"2022-12-07 02:33:23", "VALUE":2.002}
+EOF
 ```
 {{< /tab >}}
 {{< tab name="Python" >}}
@@ -670,7 +684,11 @@ csv-data,1670380343000000000,2.0002
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE?header=skip \
   -H "Content-Type: text/csv" \
-  --data-binary "@post-data.csv"
+  --data-binary @- << 'EOF'
+NAME,TIME,VALUE
+csv-data,1670380342000000000,1.0001
+csv-data,1670380343000000000,2.0002
+EOF
 ```
 {{< /tab >}}
 {{< tab name="Python" >}}
@@ -763,7 +781,11 @@ TIME,NAME,VALUE
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE?header=columns \
   -H "Content-Type: text/csv" \
-  --data-binary "@post-data.csv"
+  --data-binary @- << 'EOF'
+TIME,NAME,VALUE
+1670380342000000000,csv-data,1.0001
+1670380343000000000,csv-data,2.0002
+EOF
 ```
 {{< /tab >}}
 {{< tab name="Python" >}}

@@ -296,3 +296,224 @@ GEOMAP()
 ```
 
 {{< figure src="/neo/tql/img/geomap-marker-tooltip.png" width="500" >}}
+
+## 예제
+
+CSV 파일에서 테스트 데이터를 불러와 "TRIP" 테이블에 입력합니다.
+이 TQL은 지정된 URL에서 CSV 파일을 내려받아,
+CSV 문자열을 적절한 데이터 타입으로 변환한 뒤,
+TRIP 테이블에 레코드를 입력합니다.
+
+```js {{linenos=table,hl_lines=["6-12",30,35]}}
+// CSV Format: TIME, LAT, LON
+CSV(file("https://docs.machbase.com/assets/example/data-trajectory-firenze.csv"))
+DROP(1) // skip header
+SCRIPT({
+    // create trip table, if not exists
+    $.db().exec("CREATE TAG TABLE IF NOT EXISTS TRIP ("+
+        "name varchar(100) primary key, "+
+        "time datetime basetime, "+
+        "value double summarized, "+
+        "lat double, "+
+        "lon double "+
+    ")")
+    // parse time form csv string '23-04-21 16:53:21:123000'
+    function parseTime(str) { 
+        y = "20"+str.substr(0,2);
+        m = str.substr(3,2) - 1;
+        d = str.substr(6,2);
+        hours = str.substr(9, 2);
+        mins = str.substr(12,2);
+        secs = str.substr(15, 2);
+        milli = str.substr(18, 3)
+        var D = new Date(y, m, d, hours, mins, secs, milli);
+        return (D.getFullYear() == y && D.getMonth() == m && D.getDate() == d) ? D : 'invalid date';
+    }
+}, {
+    var ts = parseTime($.values[0]).getTime(); // epoch mills
+    var lat = parseFloat($.values[1]);
+    var lon = parseFloat($.values[2]);
+    // yield name, time, value, lat, lon
+    $.yield("firenze", ts, 0, lat, lon)
+})
+// epoch from milli to nano and to datetime type
+MAPVALUE(1, time(value(1)*1000000))
+// insert into trip table
+SQL(`INSERT INTO TRIP (name, time, value, lat, lon) values(?,?,?,?,?)`, 
+    value(0), value(1), value(2), value(3), value(4))
+```
+
+### 궤적
+
+{{< tabs >}}
+{{< tab name="SQL" >}}
+```js {{linenos=table,hl_lines=[5,7]}}
+SQL(`SELECT time, lat, lon FROM TRIP
+     WHERE name = 'firenze' ORDER BY time`)
+SCRIPT({
+    // time to epoch nanos to Date (javascript)
+    var timestamp = new Date($.values[0].unixNano()/1000000); 
+    // coordinate [lat, lon]
+    var coord = [$.values[1], $.values[2]]; 
+    $.yield({
+        type:"circle",
+        coordinates: coord,
+        properties: {
+            radius: 15,
+            tooltip: {
+                content: ""+timestamp
+            }
+        }
+    });
+})
+GEOMAP()
+```
+{{< /tab >}}
+{{< tab name="CSV" >}}
+```js {{linenos=table,hl_lines=["8-11"]}}
+// CSV Format: TIME, LAT, LON
+CSV(file("https://docs.machbase.com/assets/example/data-trajectory-firenze.csv"))
+
+DROP(1) // skip header
+
+SCRIPT({
+    var timestamp = $.values[0];
+    var coord = [
+        parseFloat($.values[1]), 
+        parseFloat($.values[2])
+    ];
+    $.yield({
+        type:"circle",
+        coordinates: coord,
+        properties: {
+            radius: 15,
+            tooltip: {
+                content: timestamp
+            }
+        }
+    });
+})
+
+GEOMAP()
+```
+{{< /tab >}}
+{{< /tabs >}}
+
+{{< figure src="./img/trajectory-firenze.png" width="600" >}}
+
+### 거리와 속도
+
+Haversine 공식을 사용해 두 지점 사이의 이동 거리를 미터 단위로 계산하고,
+두 지점의 시간 차이를 기준으로 이동 속도를 시속(km/h)으로 계산합니다.
+
+{{< tabs >}}
+{{< tab name="SQL" >}}
+```js {{linenos=table,hl_lines=[7,"22-23",28]}}
+SQL(`SELECT time, lat, lon FROM TRIP
+     WHERE name = 'firenze' ORDER BY time`)
+// calculate the distance and speed
+SCRIPT({
+    var EarthRadius = 6378137.0; // meters
+    function degreesToRadians(d) { return d * Math.PI / 180; }
+    function distance(p1, p2) {  // haversine distance
+        lat1 = degreesToRadians(p1[0]);
+        lon1 = degreesToRadians(p1[1]);
+        lat2 = degreesToRadians(p2[0]);
+        lon2 = degreesToRadians(p2[1]);
+        diffLat = lat2 - lat1;
+        diffLon = lon2 - lon1;
+        a = Math.pow(Math.sin(diffLat/2), 2) + Math.cos(lat1)*Math.cos(lat2)*Math.pow(Math.sin(diffLon/2), 2);
+        c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return c * EarthRadius;
+    }
+    var prevLoc, prevTs, dist;
+},{
+    var ts = $.values[0].unix(); // unix epoch sec.
+    var coord = [$.values[1], $.values[2]];
+    dist = prevLoc === undefined ? 0 : distance(prevLoc, coord);
+    speed = prevTs === undefined ? 0 : dist*3.600 / (ts - prevTs);
+    prevLoc = coord;
+    prevTs = ts;
+    $.yield({
+        type:"circleMarker",
+        coordinates: coord,
+        properties: {
+            radius: 4,
+            tooltip: {
+                content: "speed: "+speed.toFixed(0)+" KM/H<br/>"+
+                         "dist: "+dist.toFixed(0)+" m",
+            }
+        }
+    });
+})
+GEOMAP()
+```
+{{< /tab >}}
+{{< tab name="CSV" >}}
+```js {{linenos=table,hl_lines=["20-22",30,51,"45-46"]}}
+// CSV Format: TIME("23-04-21 16:53:21:568000"), LAT, LON
+CSV(file("https://docs.machbase.com/assets/example/data-trajectory-firenze.csv"))
+
+// skip header, the first line
+DROP(1) 
+
+// parse time, and coordinates from strings
+SCRIPT({
+    function parseTime(str) { // parse '23-04-21 16:53:21'
+        y = str.substr(0,2)+2000;
+        m = str.substr(3,2) - 1;
+        d = str.substr(6,2);
+        hours = str.substr(9, 2);
+        mins = str.substr(12,2);
+        secs = str.substr(15, 2);
+        var D = new Date(y, m, d,hours, mins, secs);
+        return (D.getFullYear() == y && D.getMonth() == m && D.getDate() == d) ? D : 'invalid date';
+    }
+},{ 
+    var ts = parseTime($.values[0]).getTime()/1000; // epoch seconds
+    var lat = parseFloat($.values[1]);
+    var lon = parseFloat($.values[2]);
+    $.yield(ts, lat, lon);
+})
+
+// calculate the distance and speed
+SCRIPT({
+    var EarthRadius = 6378137.0; // meters
+    function degreesToRadians(d) { return d * Math.PI / 180; }
+    function distance(p1, p2) {  // haversine distance
+        lat1 = degreesToRadians(p1[0]);
+        lon1 = degreesToRadians(p1[1]);
+        lat2 = degreesToRadians(p2[0]);
+        lon2 = degreesToRadians(p2[1]);
+        diffLat = lat2 - lat1;
+        diffLon = lon2 - lon1;
+        a = Math.pow(Math.sin(diffLat/2), 2) + Math.cos(lat1)*Math.cos(lat2)*Math.pow(Math.sin(diffLon/2), 2);
+        c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return c * EarthRadius;
+    }
+    var prevLoc, prevTs, dist;
+},{
+    var ts = $.values[0];
+    var coord = [$.values[1], $.values[2]];
+    dist = prevLoc === undefined ? 0 : distance(prevLoc, coord);
+    speed = prevTs === undefined ? 0 : dist*3.600 / (ts - prevTs);
+    prevLoc = coord;
+    prevTs = ts;
+    $.yield({
+        type:"circleMarker",
+        coordinates: coord,
+        properties: {
+            radius: 4,
+            tooltip: {
+                content: "speed: "+speed.toFixed(0)+" KM/H<br/>"+
+                         "dist: "+dist.toFixed(0)+" m",
+            }
+        }
+    });
+})
+GEOMAP()
+```
+{{< /tab >}}
+{{< /tabs >}}
+
+{{< figure src="./img/trajectory-firenze-speed.png" width="600" >}}
