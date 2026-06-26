@@ -58,22 +58,14 @@ The payload format in the example below is an array of tuples (an array of array
 It appends multiple records to the table through a single MQTT message.
 It is also possible to publish a single tuple, as shown below. Machbase Neo accepts both types of payloads via MQTT.
 
-- mqtt-data.json
-
-```json
+```bash
+mosquitto_pub -h 127.0.0.1 -p 5653 -t db/append/EXAMPLE -s << 'EOF'
 [
     [ "my-car", 1670380342000000000, 32.1 ],
     [ "my-car", 1670380343000000000, 65.4 ],
     [ "my-car", 1670380344000000000, 76.5 ]
 ]
-```
-
-- mosquitto_pub
-
-```sh
-mosquitto_pub -h 127.0.0.1 -p 5653 \
-    -t db/append/EXAMPLE \
-    -f ./mqtt-data.json
+EOF
 ```
 
 - JSH app
@@ -118,16 +110,10 @@ client.on('published', ()=>{
 
 **PUBLISH single record**
 
-- mqtt-data.json
-
-```json
-[ "my-car", 1670380345000000000, 87.6 ]
-```
-
 ```sh
-mosquitto_pub -h 127.0.0.1 -p 5653 \
-    -t db/append/EXAMPLE \
-    -f ./mqtt-data.json
+mosquitto_pub -h 127.0.0.1 -p 5653 -t db/append/EXAMPLE -s << 'EOF'
+  [ "my-car", 1670380345000000000, 87.6 ]
+EOF
 ```
 
 **PUBLISH gzip JSON**
@@ -145,17 +131,11 @@ mosquitto_pub -h 127.0.0.1 -p 5653 \
 NDJSON (Newline Delimited JSON) is a format for streaming JSON data where each line is a valid JSON object. This is useful for processing large datasets or streaming data.
 Each line should be a complete JSON object where all field names match the columns of the table.
 
-- mqtt-nd.json
-
-```json
+```sh
+mosquitto_pub -h 127.0.0.1 -p 5653 -t db/append/EXAMPLE:ndjson -s << 'EOF'
 {"NAME":"ndjson-data", "TIME":1670380342000000000, "VALUE":1.001}
 {"NAME":"ndjson-data", "TIME":1670380343000000000, "VALUE":2.002}
-```
-
-```sh
-mosquitto_pub -h 127.0.0.1 -p 5653 \
-    -t db/append/EXAMPLE:ndjson \
-    -f mqtt-nd.json
+EOF
 ```
 
 ### CSV
@@ -163,29 +143,17 @@ mosquitto_pub -h 127.0.0.1 -p 5653 \
 In MQTT v3.1, there is no mechanism to indicate whether the first line is a header or data.
 Therefore, the payload must not include a header, and all fields should match the column order in the table.
 
-- mqtt-data.csv
-
-```
+```sh
+mosquitto_pub -h 127.0.0.1 -p 5653 -t db/append/EXAMPLE:csv -s << 'EOF'
 my-car,1670380346000000000,87.7
 my-car,1670380347000000000,98.6
 my-car,1670380348000000000,99.9
-```
-
-```sh
-mosquitto_pub -h 127.0.0.1 -p 5653 \
-    -t db/append/EXAMPLE:csv \
-    -f mqtt-data.csv
+EOF
 ```
 
 **PUBLISH gzip CSV**
 
 Topic = Table + `:csv:gzip`
-
-```csv
-my-car,1670380346,87.7
-my-car,1670380347,98.6
-my-car,1670380348,99.9
-```
 
 ```sh
 mosquitto_pub -h 127.0.0.1 -p 5653 \
@@ -203,11 +171,12 @@ use the `insert` method instead of the default `append` method.
 
 ### JSON
 
-Since `db/write` works in `INSERT INTO table(...) VALUE(...)` SQL statement, it is required the columns in json payload.
-The example of `data-write.json` is below.
+Topic `db/write/{table}` is for `INSERT`.
+Since `db/write` works in `INSERT INTO table(...) VALUE(...)` SQL statement,
+it is required the columns in json payload.
 
-- mqtt-data.json
-```json {linenos=table,hl_lines=[3]}
+```sh
+mosquitto_pub -h 127.0.0.1 -p 5653 -t db/write/EXAMPLE -s << 'EOF'
 {
   "data": {
     "columns": ["name", "time", "value"],
@@ -217,14 +186,7 @@ The example of `data-write.json` is below.
     ]
   }
 }
-```
-
-Topic `db/write/{table}` is for `INSERT`.
-
-```sh
-mosquitto_pub -h 127.0.0.1 -p 5653 \
-    -t db/write/EXAMPLE \
-    -f mqtt-data.json
+EOF
 ```
 
 ### NDJSON
@@ -233,35 +195,25 @@ mosquitto_pub -h 127.0.0.1 -p 5653 \
 
 This request message is equivalent that consists INSERT SQL statement as `INSERT into {table} (columns...) values (values...)`
 
-- mqtt-nd.json
-
-```json
-{"NAME":"ndjson-data", "TIME":1670380342000000000, "VALUE":1.001}
-{"NAME":"ndjson-data", "TIME":1670380343000000000, "VALUE":2.002}
-```
-
 Topic `db/write/{table}:ndjson` is for `INSERT`.
 
 ```sh
-mosquitto_pub -h 127.0.0.1 -p 5653 \
-    -t db/append/EXAMPLE:ndjson \
-    -f mqtt-nd.json
+mosquitto_pub -h 127.0.0.1 -p 5653 -t db/write/EXAMPLE:ndjson -s << 'EOF'
+{"NAME":"ndjson-data", "TIME":1670380342000000000, "VALUE":1.001}
+{"NAME":"ndjson-data", "TIME":1670380343000000000, "VALUE":2.002}
+EOF
 ```
 
 ### CSV
 
 Insert methods with CSV data that has a different number or order of fields compared to the table columns is supported only in MQTT v5 using custom properties.
 
-```csv
+```sh
+mosquitto_pub -h 127.0.0.1 -p 5653 -t db/write/EXAMPLE:csv -s << 'EOF'
 my-car,1670380346000000000,87.7
 my-car,1670380347000000000,98.6
 my-car,1670380348000000000,99.9
-```
-
-```sh
-mosquitto_pub -h 127.0.0.1 -p 5653 \
-    -t db/write/EXAMPLE:csv \
-    -f mqtt-data.csv
+EOF
 ```
 
 ## TQL
