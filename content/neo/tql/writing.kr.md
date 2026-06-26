@@ -30,7 +30,7 @@ CSV(payload(),
     field(2, floatType(), 'value'),
     header(false)
 )
-INSERT("name", "time", "value", table("example"))
+SQL(`insert into example values(?,?,?)`, value(0), value(1), value(2))
 ```
 
 ### 2. HTTP POST
@@ -68,6 +68,19 @@ curl -X POST http://127.0.0.1:5654/db/tql/input-csv.tql \
 {{< /tab >}}
 {{< /tabs >}}
 
+**Response:**
+
+```json
+{
+  "data": {
+    "message": "2 rows inserted."
+  },
+  "elapse": "10ms",
+  "reason": "success",
+  "success": true
+}
+```
+
 ### 3. MQTT PUBLISH
 
 `input-csv.csv` 파일을 아래처럼 준비해 주십시오.
@@ -76,6 +89,8 @@ curl -X POST http://127.0.0.1:5654/db/tql/input-csv.tql \
 TAG1,1628866800000000000,12
 TAG1,1628953200000000000,13
 ```
+
+아래 예시처럼 `db/tql/{tql_path}` 토픽으로 PUBLISH 합니다.
 
 ```sh
 mosquitto_pub -h 127.0.0.1 -p 5653 \
@@ -161,7 +176,7 @@ SCRIPT({
     obj = JSON.parse($.payload)
     obj.data.rows.forEach(r => $.yield(...r))
 })
-INSERT("name", "time", "value", table("example"))
+SQL(`insert into example values(?,?,?)`, value(0), value(1), value(2))
 ```
 
 ### 2. HTTP POST
@@ -247,6 +262,26 @@ mosquitto_pub -h 127.0.0.1 -p 5653 \
 다음 예시는 여러 줄의 텍스트 데이터를 가공해 테이블에 쓰는 방법을 보여 줍니다.
 
 {{< tabs >}}
+{{< tab name="SCRIPT" >}}
+```js {linenos=table,hl_lines=[11,12],linenostart=1}
+SCRIPT({
+    content = $.payload;
+    if (!content || content === '') {
+        content = "12345\n 23456\n 78901\n 89012\n 90123";
+    }
+    lines = content
+        .split(/\r?\n/)
+        .map(line => line.trim())     // 공백 제거
+        .filter(line => line !== ""); // 빈 줄 제거
+    lines.forEach((line, idx) => {
+        part = line.substring(0, 2);  // 앞 두 글자만 사용
+        $.yield('text_'+idx, (new Date()), parseInt(part));
+    });
+})
+CSV(timeformat('default'))
+// SQL(`insert into example values(?,?,?)`, value(0), value(1), value(2))
+```
+{{< /tab >}}
 {{< tab name="MAP" >}}
 MAP 함수를 사용한 변환 예시입니다.
 
@@ -269,32 +304,7 @@ MAPVALUE(2, strSub( value(2), 0, 2 ) )
 // 테스트 시 CSV 출력
 CSV( timeformat("DEFAULT") )
 // 실사용 시 아래 주석을 해제하십시오.
-// APPEND(table('example'))
-```
-{{< /tab >}}
-{{< tab name="SCRIPT" >}}
-`SCRIPT()`를 이용한 대안입니다.
-
-```js {linenos=table,hl_lines=["13-18"],linenostart=1}
-// payload()는 HTTP POST 또는 MQTT로 전달된 데이터를 반환합니다.
-// ?? 연산자는 내용이 없을 때 오른쪽 값을 사용합니다.
-// 웹 UI 편집기에서 테스트할 때 유용합니다.
-STRING( payload() ?? ` 12345
-                     23456
-                     78901
-                     89012
-                     90123
-                  `, separator('\n'), trimspace(true) )
-FILTER( len(value(0)) > 0) // 빈 줄 제거
-// 데이터 변환
-SCRIPT({
-  str = $.values[0].trim();   // 공백 제거
-  str = str.substring(0, 2);  // 앞 두 글자만 사용
-  ts = (new Date()).getTime() * 1000000 // ms → ns
-  $.yieldKey("text_"+$.key, ts, parseInt(str))
-})
-CSV()
-// APPEND(table('example'))
+// SQL(`insert into example values(?,?,?)`, value(0), value(1), value(2))
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -302,53 +312,85 @@ CSV()
 **결과 예시**
 
 ```csv
-text_1,2023-12-02 11:03:36.054,12
-text_2,2023-12-02 11:03:36.054,23
-text_3,2023-12-02 11:03:36.054,78
-text_4,2023-12-02 11:03:36.054,89
-text_5,2023-12-02 11:03:36.054,90
+text_0,2023-12-02 11:03:36.054,12
+text_1,2023-12-02 11:03:36.054,23
+text_2,2023-12-02 11:03:36.054,78
+text_3,2023-12-02 11:03:36.054,89
+text_4,2023-12-02 11:03:36.054,90
 ```
 
-위 코드를 실행해 문제가 없다면 마지막 줄의 `CSV()`를 `APPEND(table('example'))`로 바꾸어 배포해 주십시오.
+위 코드를 실행해 문제가 없다면 마지막 줄의 `CSV()`를 `SQL(...)`로 바꾸어 배포해 주십시오.
 
 스크립트를 `script-post-lines.tql`로 저장하고, 테스트 데이터를 `db/tql/script-post-lines.tql` 토픽으로 전송합니다.
-
-- `lines.txt` 예시
-
-```
-110000
-221111
-332222
-442222
-```
 
 ### 2. HTTP POST
 
 동일한 TQL 파일은 HTTP POST 요청과 함께 사용할 수도 있습니다.
 
+{{< tabs >}}
+{{< tab name="HTTP" >}}
+~~~
+```http
+POST http://127.0.0.1:5654/db/tql/script-post-lines.tql
+Content-Type: text/plain
+
+110000
+221111
+332222
+442222
+```
+~~~
+{{</ tab >}}
+{{< tab name="cURL" >}}
 ```sh
-curl -H "Content-Type: text/plain" \
-    --data-binary @lines.txt \
-    http://127.0.0.1:5654/db/tql/script-post-lines.tql
+curl http://127.0.0.1:5654/db/tql/script-post-lines.tql \
+  -H "Content-Type: text/plain" \
+  -d @- << 'EOF'
+110000
+221111
+332222
+442222
+EOF
+```
+{{</ tab >}}
+{{</ tabs >}}
+
+**Response:**
+
+```json
+{
+  "data": {
+    "message": "4 rows inserted."
+  },
+  "elapse": "15.80275ms",
+  "reason": "success",
+  "success": true
+}
 ```
 
 ### 3. MQTT PUBLISH
 
 ```sh
 mosquitto_pub -h 127.0.0.1 -p 5653 \
-    -t db/tql/script-post-lines.tql \
-    -f lines.txt
+    -t db/tql/script-post-lines.tql -s << 'EOF'
+110000
+221111
+332222
+442222
+EOF
 ```
 
 이후 데이터가 정상적으로 변환·저장되었는지 확인합니다.
 
 ```sh
 $ machbase-neo shell "select * from example where name like 'text_%'"
- ROW\NUM  NAME    TIME(LOCAL)              VALUE     
-────────────────────────────────────────────────────
-      1  text_3  2023-07-14 08:51:10.926  44.000000 
-      2  text_0  2023-07-14 08:51:10.925  11.000000 
-      3  text_1  2023-07-14 08:51:10.926  22.000000 
-      4  text_2  2023-07-14 08:51:10.926  33.000000 
-4 rows fetched.
+┌────────┬────────┬─────────────────────────┬───────┐
+│ ROWNUM │ NAME   │ TIME                    │ VALUE │
+├────────┼────────┼─────────────────────────┼───────┤
+│      1 │ text_0 │ 2026-06-26 09:25:57.535 │    11 │
+│      2 │ text_1 │ 2026-06-26 09:25:57.535 │    22 │
+│      3 │ text_2 │ 2026-06-26 09:25:57.544 │    33 │
+│      4 │ text_3 │ 2026-06-26 09:25:57.545 │    44 │
+└────────┴────────┴─────────────────────────┴───────┘
+4 rows selected.
 ```

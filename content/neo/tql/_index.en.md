@@ -163,11 +163,12 @@ CSV()
 The purpose of *TQL* is transforming data format.
 This chapter shows how to do this without developing additional applications.
 
-### N:M transforming
+<!-- ### N:M transforming
 
 {{< figure src="/images/tql-concept.png" caption="TQL Concept" >}}
+-->
 
-### Iris
+### Iris Demo
 
 The example tql code below gives a brief idea of what is TQL for.
 

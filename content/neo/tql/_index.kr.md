@@ -165,11 +165,12 @@ CSV()
 *TQL*의 목적은 데이터를 손쉽게 변환하는 것입니다.
 추가 애플리케이션 개발 없이도 다양한 형태로 데이터를 가공할 수 있는 방법을 이 장에서 소개합니다.
 
-### N:M 변환
+<!-- ### N:M 변환
 
 {{< figure src="/images/tql-concept.png" caption="TQL Concept" >}}
+-->
 
-### Iris
+### Iris Demo
 
 아래 Iris 데이터 예제를 통해 TQL이 어떤 용도로 사용되는지 간단히 살펴볼 수 있습니다.
 
