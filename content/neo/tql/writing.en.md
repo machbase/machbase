@@ -27,8 +27,8 @@ When you save a TQL script, the editor will display a link icon <img src="/image
 ```js {linenos=table,hl_lines=["7"]}
 CSV(payload(), 
     field(0, stringType(), 'name'),
-    field(1, timeType('ns'), 'time'),
-    field(2, floatType(), 'value'),
+    field(1, datetimeType('ns'), 'time'),
+    field(2, doubleType(), 'value'),
     header(false)
 )
 SQL(`insert into example values(?,?,?)`, value(0), value(1), value(2))
@@ -52,19 +52,12 @@ TAG0,1628953200000000000,13
 {{< /tab >}}
 {{< tab name="cURL" >}}
 
-Prepare data file as `input-csv.csv`
-
-```csv
-TAG0,1628866800000000000,12
-TAG0,1628953200000000000,13
-```
-
-Invoke `input-csv.tql` with the data file with `curl` command
-
 ```sh
 curl -X POST http://127.0.0.1:5654/db/tql/input-csv.tql \
     -H "Content-Type: text/csv" \
-    --data-binary "@input-csv.csv"
+    --data-binary @- << 'EOF'
+TAG0,1628866800000000000,12
+TAG0,1628953200000000000,13
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -84,19 +77,13 @@ curl -X POST http://127.0.0.1:5654/db/tql/input-csv.tql \
 
 ### 3. MQTT PUBLISH
 
-Prepare data file as `input-csv.csv`
-
-```csv
-TAG1,1628866800000000000,12
-TAG1,1628953200000000000,13
-```
-
 Publish to the topic `db/tql/{tql_path}` as shown in the example below.
 
 ```sh
-mosquitto_pub -h 127.0.0.1 -p 5653 \
-    -t db/tql/input-csv.tql \
-    -f input-csv.csv
+mosquitto_pub -h 127.0.0.1 -p 5653 -t db/tql/input-csv.tql -s << 'EOF'
+TAG1,1628866800000000000,12
+TAG1,1628953200000000000,13
+EOF
 ```
 
 ## `APPEND` CSV
@@ -134,35 +121,24 @@ TAG0,1628953200000000000,13
 {{< /tab >}}
 {{< tab name="cURL" >}}
 
-Prepare data file as `append-csv.csv`
-
-```csv
-TAG2,1628866800000000000,12
-TAG2,1628953200000000000,13
-```
-
-Invoke `append-csv.tql` with the data file with `curl` command
-```
+```sh
 curl -X POST http://127.0.0.1:5654/db/tql/append-csv.tql \
     -H "Content-Type: text/csv" \
-    --data-binary "@append-csv.csv"
+    --data-binary @- << 'EOF'
+TAG2,1628866800000000000,12
+TAG2,1628953200000000000,13
+EOF
 ```
 {{< /tab >}}
 {{< /tabs >}}
 
 ### 3. MQTT PUBLISH
 
-Prepare data file as `append-csv.csv`
-
-```csv
+```sh
+mosquitto_pub -h 127.0.0.1 -p 5653 -t db/tql/input-csv.tql -s << 'EOF'
 TAG3,1628866800000000000,12
 TAG3,1628953200000000000,13
-```
-
-```sh
-mosquitto_pub -h 127.0.0.1 -p 5653 \
-    -t db/tql/input-csv.tql \
-    -f append-csv.csv
+EOF
 ```
 
 
@@ -208,9 +184,10 @@ Content-Type: application/json
 {{< /tab >}}
 {{< tab name="cURL" >}}
 
-Prepare data file as `input-json.json`
-
-```json
+```sh
+curl -X POST http://127.0.0.1:5654/db/tql/input-json.tql \
+    -H "Content-Type: application/json" \
+    --data-binary @- << 'EOF'
 {
   "data": {
     "columns": [ "NAME", "TIME", "VALUE" ],
@@ -221,23 +198,15 @@ Prepare data file as `input-json.json`
     ]
   }
 }
-```
-
-Invoke `input-csv.tql` with the data file with `curl` command
-
-```sh
-curl -X POST http://127.0.0.1:5654/db/tql/input-json.tql \
-    -H "Content-Type: application/json" \
-    --data-binary "@input-json.json"
+EOF
 ```
 {{< /tab >}}
 {{< /tabs >}}
 
 ### 3. MQTT PUBLISH
 
-Prepare data file as `input-json.json`
-
-```json
+```sh
+mosquitto_pub -h 127.0.0.1 -p 5653 -t db/tql/input-json.tql -s << 'EOF'
 {
   "data": {
     "columns": [ "NAME", "TIME", "VALUE" ],
@@ -248,12 +217,7 @@ Prepare data file as `input-json.json`
     ]
   }
 }
-```
-
-```sh
-mosquitto_pub -h 127.0.0.1 -p 5653 \
-    -t db/tql/input-json.tql \
-    -f input-json.json
+EOF
 ```
 
 ## Custom Text
@@ -281,7 +245,7 @@ SCRIPT({
         $.yield('text_'+idx, (new Date()), parseInt(part))
     });
 })
-CSV()
+CSV(timeformat('default'))
 // SQL(`insert into example values(?,?,?)`, value(0), value(1), value(2))
 ```
 {{</ tab >}}
@@ -350,7 +314,7 @@ Content-Type: text/plain
 ```sh
 curl http://127.0.0.1:5654/db/tql/script-post-lines.tql \
   -H "Content-Type: text/plain" \
-  -d @- << 'EOF'
+  --data-binary @- << 'EOF'
 110000
 221111
 332222

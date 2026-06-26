@@ -26,8 +26,8 @@ TQL 스크립트를 저장하면 편집기 우측 상단에 <img src="/images/co
 ```js {linenos=table,hl_lines=["7"]}
 CSV(payload(), 
     field(0, stringType(), 'name'),
-    field(1, timeType('ns'), 'time'),
-    field(2, floatType(), 'value'),
+    field(1, datetimeType('ns'), 'time'),
+    field(2, doubleType(), 'value'),
     header(false)
 )
 SQL(`insert into example values(?,?,?)`, value(0), value(1), value(2))
@@ -51,19 +51,13 @@ TAG0,1628953200000000000,13
 {{< /tab >}}
 {{< tab name="cURL" >}}
 
-`input-csv.csv` 파일을 준비해 주십시오.
-
-```csv
-TAG0,1628866800000000000,12
-TAG0,1628953200000000000,13
-```
-
-이후 `curl`로 `input-csv.tql`을 호출합니다.
-
 ```sh
 curl -X POST http://127.0.0.1:5654/db/tql/input-csv.tql \
     -H "Content-Type: text/csv" \
-    --data-binary "@input-csv.csv"
+    --data-binary @- << 'EOF'
+TAG0,1628866800000000000,12
+TAG0,1628953200000000000,13
+EOF
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -83,19 +77,13 @@ curl -X POST http://127.0.0.1:5654/db/tql/input-csv.tql \
 
 ### 3. MQTT PUBLISH
 
-`input-csv.csv` 파일을 아래처럼 준비해 주십시오.
-
-```csv
-TAG1,1628866800000000000,12
-TAG1,1628953200000000000,13
-```
-
 아래 예시처럼 `db/tql/{tql_path}` 토픽으로 PUBLISH 합니다.
 
 ```sh
-mosquitto_pub -h 127.0.0.1 -p 5653 \
-    -t db/tql/input-csv.tql \
-    -f input-csv.csv
+mosquitto_pub -h 127.0.0.1 -p 5653 -t db/tql/input-csv.tql -s << 'EOF'
+TAG1,1628866800000000000,12
+TAG1,1628953200000000000,13
+EOF
 ```
 
 ## `APPEND` CSV
@@ -132,36 +120,24 @@ TAG0,1628953200000000000,13
 {{< /tab >}}
 {{< tab name="cURL" >}}
 
-`append-csv.csv` 파일을 준비해 주십시오.
-
-```csv
-TAG2,1628866800000000000,12
-TAG2,1628953200000000000,13
-```
-
-`curl`로 `append-csv.tql`을 호출합니다.
-
 ```sh
 curl -X POST http://127.0.0.1:5654/db/tql/append-csv.tql \
     -H "Content-Type: text/csv" \
-    --data-binary "@append-csv.csv"
+    --data-binary @- << 'EOF'
+TAG2,1628866800000000000,12
+TAG2,1628953200000000000,13
+EOF
 ```
 {{< /tab >}}
 {{< /tabs >}}
 
 ### 3. MQTT PUBLISH
 
-`append-csv.csv` 파일을 아래처럼 준비해 주십시오.
-
-```csv
+```sh
+mosquitto_pub -h 127.0.0.1 -p 5653 -t db/tql/input-csv.tql -s << 'EOF'
 TAG3,1628866800000000000,12
 TAG3,1628953200000000000,13
-```
-
-```sh
-mosquitto_pub -h 127.0.0.1 -p 5653 \
-    -t db/tql/input-csv.tql \
-    -f append-csv.csv
+EOF
 ```
 
 ## 커스텀 JSON
@@ -204,10 +180,10 @@ Content-Type: application/json
 
 {{< /tab >}}
 {{< tab name="cURL" >}}
-
-`input-json.json` 파일을 준비해 주십시오.
-
-```json
+```sh
+curl -X POST http://127.0.0.1:5654/db/tql/input-json.tql \
+    -H "Content-Type: application/json" \
+    --data-binary @- << 'EOF'
 {
   "data": {
     "columns": [ "NAME", "TIME", "VALUE" ],
@@ -218,14 +194,7 @@ Content-Type: application/json
     ]
   }
 }
-```
-
-다음 명령으로 업로드합니다.
-
-```sh
-curl -X POST http://127.0.0.1:5654/db/tql/input-json.tql \
-    -H "Content-Type: application/json" \
-    --data-binary "@input-json.json"
+EOF
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -345,7 +314,7 @@ Content-Type: text/plain
 ```sh
 curl http://127.0.0.1:5654/db/tql/script-post-lines.tql \
   -H "Content-Type: text/plain" \
-  -d @- << 'EOF'
+  --data-binary @- << 'EOF'
 110000
 221111
 332222
