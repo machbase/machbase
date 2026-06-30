@@ -35,7 +35,6 @@ The default value of `PrefDir` is `prefDir("machbase")` which is `$HOME/.config/
 | SSH Shell                 | Shell.Listeners           | `tcp://127.0.0.1:5652`  |
 | MQTT                      | Mqtt.Listeners            | `tcp://127.0.0.1:5653` <br/> `unix://${tempDir()}/machbase-neo-mqtt.sock`  |
 | HTTP                      | Http.Listeners            | `tcp://127.0.0.1:5654` <br/> `unix://${tempDir()}/machbase-neo.sock`  |
-| gRPC                      | Grpc.Listeners            | `tcp://127.0.0.1:5655` <br/> `unix://${execDir()}/mach-grpc.sock` |
 | Machbase native           | Machbase.PORT_NO          | `5656`                  |
 |                           | Machbase.BIND_IP_ADDRESS  | `127.0.0.1`             |
 
@@ -83,8 +82,6 @@ define DEF {
     SHELL_PORT        = flag("--shell-port", "5652")
     MQTT_PORT         = flag("--mqtt-port", "5653")
     HTTP_PORT         = flag("--http-port", "5654")
-    GRPC_PORT         = flag("--grpc-port", "5655")
-    GRPC_SOCK         = flag("--grpc-sock", "${execDir()}/mach-grpc.sock")
     MACH_PORT         = flag("--mach-port", "5656")
 }
 ```
@@ -103,9 +100,6 @@ define VARS {
     MACH_LISTEN_PORT      = flag("--mach-listen-port", DEF_MACH_PORT)
     SHELL_LISTEN_HOST     = flag("--shell-listen-host", DEF_LISTEN_HOST)
     SHELL_LISTEN_PORT     = flag("--shell-listen-port", DEF_SHELL_PORT)
-    GRPC_LISTEN_HOST      = flag("--grpc-listen-host", DEF_LISTEN_HOST)
-    GRPC_LISTEN_PORT      = flag("--grpc-listen-port", DEF_GRPC_PORT)
-    GRPC_LISTEN_SOCK      = flag("--grpc-listen-sock", DEF_GRPC_SOCK)
     HTTP_LISTEN_HOST      = flag("--http-listen-host", DEF_LISTEN_HOST)
     HTTP_LISTEN_PORT      = flag("--http-listen-port", DEF_HTTP_PORT)
     MQTT_LISTEN_HOST      = flag("--mqtt-listen-host", DEF_LISTEN_HOST)
@@ -208,16 +202,6 @@ Before allow remote access, it is strongly recommended to change `SYS`'s default
 | IdleTimeout                 | duration           | server will close the ssh connection if there is no activity for the specified time |
 
 
-#### Grpc
-
-machbase-neo's gRPC listening address and size limit of messages are configured.
-
-| Key                         | Type               | Desc                                                     |
-|:----------------------------|:-------------------|----------------------------------------------------------|
-| Listeners                   | array of string    | listening addresses                                       |
-| MaxRecvMsgSize              | int                | maximum message size in MB that server can receive       |
-| MaxSendMsgSize              | int                | maximum message size in MB                               |
-
 #### Http
 
 server's HTTP listener config.
@@ -256,14 +240,6 @@ module "machbase.com/neo-server" {
         Shell = {
             Listeners        = [ "tcp://${VARS_SHELL_LISTEN_HOST}:${VARS_SHELL_LISTEN_PORT}" ]
             IdleTimeout      = "5m"
-        }
-        Grpc = {
-            Listeners        = [ 
-                "unix://${VARS_GRPC_LISTEN_SOCK}",
-                "tcp://${VARS_GRPC_LISTEN_HOST}:${VARS_GRPC_LISTEN_PORT}",
-            ]
-            MaxRecvMsgSize   = 4
-            MaxSendMsgSize   = 4
         }
         Http = {
             Listeners        = [ "tcp://${VARS_HTTP_LISTEN_HOST}:${VARS_HTTP_LISTEN_PORT}" ]
