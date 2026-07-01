@@ -472,6 +472,49 @@ CREATE INDEX index_lsm on table1 ( c1 ) INDEX_TYPE LSM;
 CREATE INDEX index2 on table1 (var_column) INDEX_TYPE KEYWORD PAGE_SIZE=100000;
 ```
 
+##### JSON path indexes
+
+When creating an index on a member of a JSON column, you can use both the existing JSONPath arrow syntax and JSON dot shorthand.
+
+```sql
+CREATE TAG TABLE tag_log (
+    name  VARCHAR(40) PRIMARY KEY,
+    time  DATETIME BASETIME,
+    value JSON
+);
+
+-- JSON dot shorthand
+CREATE INDEX tag_log_sensor_idx ON tag_log (value.sensor.name);
+
+-- Existing JSONPath arrow syntax
+CREATE INDEX tag_log_metric_idx ON tag_log (value->'$.metric');
+
+-- Array index and double quoted key
+CREATE INDEX tag_log_item_idx ON tag_log (value.items[0]."product-id");
+```
+
+The existing arrow DDL syntax also remains available when the JSON column name is double quoted or is a keyword column name.
+
+```sql
+CREATE TAG TABLE tag_log_q (
+    name    VARCHAR(40) PRIMARY KEY,
+    time    DATETIME BASETIME,
+    "value" JSON
+);
+
+CREATE INDEX tag_log_q_idx ON tag_log_q ("value"->'$.sensor.name');
+
+CREATE TAG TABLE tag_log_kw (
+    name   VARCHAR(40) PRIMARY KEY,
+    time   DATETIME BASETIME,
+    "LEFT" JSON
+);
+
+CREATE INDEX tag_log_kw_idx ON tag_log_kw (left->'$.sensor.name');
+```
+
+String comparison predicates can use JSON path indexes. Predicates with numeric or boolean meaning are not used as JSON path index range predicates because string ordering and numeric ordering can differ.
+
 For TAGDATA metadata JSON path indexes, see [Tag Metadata](../../table-types/tag-tables/tag-metadata) and [Tag Table Indexes](../../table-types/tag-tables/tag-indexes).
 
 ## DROP INDEX
@@ -792,6 +835,55 @@ create_rollup_stmt ::= 'CREATE ROLLUP' rollup_name 'ON' src_table_name '('src_ta
 -- Creates a rollup targeting the value column of the tag table.
 Mach> CREATE ROLLUP _rollup_tag_value_sec ON tag(value) INTERVAL 1 SEC;
 Executed successfully
+```
+
+When using a member of a JSON column as the rollup target value, you can use both the existing JSONPath arrow syntax and JSON dot shorthand.
+
+```sql
+CREATE TAG TABLE tag_json (
+    name  VARCHAR(40) PRIMARY KEY,
+    time  DATETIME BASETIME,
+    value JSON
+);
+
+-- JSON dot shorthand
+CREATE ROLLUP tag_json_metric_ru
+ON tag_json (value.metric)
+INTERVAL 1 SEC;
+
+-- Existing JSONPath arrow syntax
+CREATE ROLLUP tag_json_metric_arrow_ru
+ON tag_json (value->'$.metric')
+INTERVAL 1 SEC;
+
+-- Array index and double quoted key
+CREATE ROLLUP tag_json_item_ru
+ON tag_json (value.items[0]."metric-id")
+INTERVAL 1 SEC;
+```
+
+Quoted column names and keyword column names are also still supported with the existing arrow syntax.
+
+```sql
+CREATE TAG TABLE tag_json_q (
+    name    VARCHAR(40) PRIMARY KEY,
+    time    DATETIME BASETIME,
+    "value" JSON
+);
+
+CREATE ROLLUP tag_json_q_ru
+ON tag_json_q ("value"->'$.metric')
+INTERVAL 1 SEC;
+
+CREATE TAG TABLE tag_json_kw (
+    name   VARCHAR(40) PRIMARY KEY,
+    time   DATETIME BASETIME,
+    "LEFT" JSON
+);
+
+CREATE ROLLUP tag_json_kw_ru
+ON tag_json_kw (left->'$.metric')
+INTERVAL 1 SEC;
 ```
 
 > If corrected source data requires existing rollup results to be rebuilt, see [Rollup Rebuild Guide](../../table-types/tag-tables/rollup-rebuild/).

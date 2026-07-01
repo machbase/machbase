@@ -3333,13 +3333,25 @@ name1                 String
 
 ## JSON Operator
 
-'->' operator is used for accessing an object of JSON data.
+The `->` operator is used for accessing an object of JSON data.
 
 Returns the same results as JSON_EXTRACT_STRING function.
 
 ```sql
 json_col -> 'json path'
 ```
+
+JSON member values can be accessed with the JSONPath-based `->` operator or with JSON dot shorthand.
+
+```sql
+-- JSONPath arrow syntax
+jval->'$.sensor.temperature'
+
+-- JSON dot shorthand
+jval.sensor.temperature
+```
+
+Both expressions access the same JSON value. The existing `->` operator remains supported, and dot shorthand is an additional syntax for writing the same access path more concisely.
 
 ```sql
 Mach> SELECT name, jval->'$.name' FROM jsontbl;
@@ -3369,6 +3381,147 @@ name2                 NULL
 name1                 NULL                                                                             
 [4] row(s) selected
 ```
+
+### JSONPath arrow syntax
+
+The arrow syntax uses a JSONPath string.
+
+```sql
+jval->'$.name'
+jval->'$.sensor.temperature'
+jval->'$.items[0].name'
+```
+
+You can also use bracket syntax to specify a JSON key directly. Use bracket syntax when a key name contains a dot (`.`).
+
+```sql
+-- Key name is a.b
+jval->'$["a.b"]'
+jval->'$[a.b]'
+
+-- Multiple key levels with brackets
+jval->'$[Plant1][Line1][Temperature]'
+
+-- One key name containing dots
+jval->'$[Plant1.Line1.Temperature]'
+```
+
+`$[Plant1.Line1.Temperature]` looks for a single key named `Plant1.Line1.Temperature`. To access `Plant1`, `Line1`, and `Temperature` as separate nested keys, use `$[Plant1][Line1][Temperature]` or `$.Plant1.Line1.Temperature`.
+
+When a key name contains special characters or dots, quoted bracket syntax is recommended.
+
+```sql
+jval->'$["a.b"]["c.d"]["e.f"]'
+```
+
+The following syntax is not supported.
+
+```sql
+jval->'$."a.b"'
+```
+
+### JSON dot shorthand
+
+You can access a JSON value by appending member names after a JSON column.
+
+```sql
+-- Single member
+jval.name
+
+-- Nested member
+jval.sensor.temperature
+
+-- Array index
+jval.items[0].name
+
+-- Key containing special characters
+jval.items[0]."product-id"
+```
+
+A key enclosed in double quotes keeps its case and special characters.
+
+```sql
+SELECT name, jval."Camel-Key", jval.items[0]."product-id"
+  FROM jsontbl
+ ORDER BY name;
+```
+
+### Type comparison in WHERE
+
+JSON member access results are displayed like strings in query output. However, when they are compared with numeric SQL values in a `WHERE` clause, the JSON value is parsed and compared numerically.
+
+```sql
+SELECT name
+  FROM jsontbl
+ WHERE jval->'$.value' > 100
+ ORDER BY name;
+
+SELECT name
+  FROM jsontbl
+ WHERE jval.value BETWEEN 10 AND 30
+ ORDER BY name;
+
+SELECT name
+  FROM jsontbl
+ WHERE jval.value IN (10, 20, 30)
+ ORDER BY name;
+```
+
+Supported comparisons are:
+
+- JSON integer values compared with SQL integer values
+- JSON real/double values compared with SQL numeric values
+- JSON numeric strings compared with SQL numeric values
+- JSON boolean values compared with string literals `'true'` and `'false'`
+- `=`, `<>`, `<`, `<=`, `>`, `>=`, `BETWEEN`, and literal `IN (...)`
+
+When compared with a SQL integer value, a JSON integer is compared as an integer. Values beyond double precision, such as `9007199254740992` and `9007199254740993`, can therefore be compared as distinct values.
+
+When compared with a character value, the existing string comparison behavior is used.
+
+```sql
+SELECT name
+  FROM jsontbl
+ WHERE jval->'$.name' = 'test1'
+ ORDER BY name;
+```
+
+If a JSON value cannot be parsed as a number during a numeric comparison, the predicate does not match and no error is raised. The comparison policy for ordinary `VARCHAR` columns is unchanged; automatic numeric comparison applies only to JSON member access expressions.
+
+### Name resolution
+
+Normal SQL column-name resolution takes precedence over JSON dot resolution.
+
+```sql
+SELECT t.jval.name
+  FROM jsontbl t;
+```
+
+Machbase first tries to resolve the expression as ordinary column names. If it cannot be resolved as a normal column reference and `jval` is a JSON column, `jval.name` is treated as JSON member access.
+
+JSON dot access can be used only from a JSON column.
+
+```sql
+-- Not supported
+(jval->'$.sensor').temperature
+name.member
+```
+
+### Limitations
+
+The following syntax is not supported.
+
+- Wildcard: `jval.items[*].name`
+- Recursive descent: `jval..name`
+- Filter expression: `jval.items[?(@.price > 10)]`
+- Negative array index: `jval.items[-1]`
+- Single quoted key: `jval.'product-id'`
+- Mixed dot and arrow syntax: `jval.items->'$.name'`
+- Dot access on a non-JSON column: `name.member`
+- Dot access after an arbitrary expression: `(jval->'$.sensor').temperature`
+- Quoted member arrow path: `jval->'$."a.b"'`
+
+Numeric automatic comparison for JSON member values is not supported for subquery `IN` predicates in the form `IN (SELECT ...)`. Use literal `IN (...)` instead.
 
 ## WINDOW FUNCTION
 

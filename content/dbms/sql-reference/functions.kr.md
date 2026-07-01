@@ -3333,13 +3333,25 @@ name1                 String
 <a id="json-operator"></a>
 ## JSON 연산자
 
-'->' 연산자는 JSON 데이터의 객체에 접근할 때 사용합니다.
+`->` 연산자는 JSON 데이터의 객체에 접근할 때 사용합니다.
 
 JSON_EXTRACT_STRING 함수와 동일한 결과를 반환합니다.
 
 ```sql
 json_col -> 'json path'
 ```
+
+JSON 컬럼의 멤버 값은 JSONPath를 사용하는 `->` 연산자와 dot 축약 문법으로 접근할 수 있습니다.
+
+```sql
+-- JSONPath arrow 문법
+jval->'$.sensor.temperature'
+
+-- JSON dot 축약 문법
+jval.sensor.temperature
+```
+
+두 표현식은 같은 JSON 값을 조회합니다. 기존 `->` 연산자는 계속 사용할 수 있으며, dot 문법은 같은 값을 더 짧게 표현하기 위한 추가 문법입니다.
 
 ```sql
 Mach> SELECT name, jval->'$.name' FROM jsontbl;
@@ -3369,6 +3381,147 @@ name2                 NULL
 name1                 NULL                                                                             
 [4] row(s) selected
 ```
+
+### JSONPath arrow 문법
+
+arrow 문법은 JSONPath 문자열을 사용합니다.
+
+```sql
+jval->'$.name'
+jval->'$.sensor.temperature'
+jval->'$.items[0].name'
+```
+
+대괄호를 사용해 JSON key를 직접 지정할 수도 있습니다. key 이름에 점(`.`)이 포함된 경우에는 대괄호 문법을 사용합니다.
+
+```sql
+-- key 이름이 a.b인 경우
+jval->'$["a.b"]'
+jval->'$[a.b]'
+
+-- 여러 단계 key를 대괄호로 지정
+jval->'$[Plant1][Line1][Temperature]'
+
+-- 점이 포함된 하나의 key 이름
+jval->'$[Plant1.Line1.Temperature]'
+```
+
+`$[Plant1.Line1.Temperature]`는 `Plant1.Line1.Temperature`라는 하나의 key를 찾습니다. `Plant1`, `Line1`, `Temperature`를 단계별 key로 찾으려면 `$[Plant1][Line1][Temperature]` 또는 `$.Plant1.Line1.Temperature`를 사용합니다.
+
+key 이름에 특수 문자나 점이 포함된 경우에는 다음처럼 따옴표가 있는 bracket 문법을 권장합니다.
+
+```sql
+jval->'$["a.b"]["c.d"]["e.f"]'
+```
+
+다음 문법은 지원하지 않습니다.
+
+```sql
+jval->'$."a.b"'
+```
+
+### JSON dot 축약 문법
+
+JSON 컬럼 뒤에 멤버 이름을 붙여 JSON 값을 조회할 수 있습니다.
+
+```sql
+-- 단일 멤버
+jval.name
+
+-- 중첩 멤버
+jval.sensor.temperature
+
+-- 배열 index
+jval.items[0].name
+
+-- 특수 문자가 포함된 key
+jval.items[0]."product-id"
+```
+
+dot 문법에서 double quote로 감싼 key는 대소문자와 특수 문자를 그대로 사용합니다.
+
+```sql
+SELECT name, jval."Camel-Key", jval.items[0]."product-id"
+  FROM jsontbl
+ ORDER BY name;
+```
+
+### WHERE 절 타입 비교
+
+JSON 멤버 접근 결과는 조회할 때 문자열처럼 표시됩니다. 그러나 `WHERE` 절에서 숫자 타입 값과 비교하면 JSON 값을 숫자로 파싱해 숫자 비교를 수행합니다.
+
+```sql
+SELECT name
+  FROM jsontbl
+ WHERE jval->'$.value' > 100
+ ORDER BY name;
+
+SELECT name
+  FROM jsontbl
+ WHERE jval.value BETWEEN 10 AND 30
+ ORDER BY name;
+
+SELECT name
+  FROM jsontbl
+ WHERE jval.value IN (10, 20, 30)
+ ORDER BY name;
+```
+
+지원되는 비교는 다음과 같습니다.
+
+- JSON integer 값과 SQL integer 값 비교
+- JSON real/double 값과 SQL numeric 값 비교
+- JSON 숫자 문자열과 SQL numeric 값 비교
+- JSON boolean 값과 문자열 `'true'`, `'false'` 비교
+- `=`, `<>`, `<`, `<=`, `>`, `>=`, `BETWEEN`, literal `IN (...)`
+
+SQL integer 값과 비교하는 경우 JSON integer는 정수로 비교하므로 `9007199254740992`와 `9007199254740993`처럼 double 정밀도 범위를 넘는 값도 서로 다른 값으로 비교할 수 있습니다.
+
+문자 타입 값과 비교하면 기존처럼 문자열 비교를 수행합니다.
+
+```sql
+SELECT name
+  FROM jsontbl
+ WHERE jval->'$.name' = 'test1'
+ ORDER BY name;
+```
+
+숫자 비교에서 JSON 값이 숫자로 해석될 수 없으면 조건에 매칭되지 않습니다. 오류로 처리하지 않습니다. 일반 `VARCHAR` 컬럼과 숫자 값의 비교 정책은 변경되지 않으며, 숫자 자동 비교는 JSON 멤버 접근식에만 적용됩니다.
+
+### 이름 해석 규칙
+
+일반 SQL의 컬럼 이름 해석이 JSON dot 해석보다 우선합니다.
+
+```sql
+SELECT t.jval.name
+  FROM jsontbl t;
+```
+
+위 표현식은 먼저 일반 컬럼 이름으로 해석을 시도합니다. 일반 컬럼으로 해석되지 않고 `jval`이 JSON 컬럼이면 `jval.name`을 JSON 멤버 접근으로 처리합니다.
+
+JSON dot 접근은 JSON 컬럼을 기준으로만 사용할 수 있습니다.
+
+```sql
+-- 지원하지 않음
+(jval->'$.sensor').temperature
+name.member
+```
+
+### 제한 사항
+
+다음 문법은 지원하지 않습니다.
+
+- wildcard: `jval.items[*].name`
+- recursive descent: `jval..name`
+- filter expression: `jval.items[?(@.price > 10)]`
+- negative array index: `jval.items[-1]`
+- single quoted key: `jval.'product-id'`
+- dot 문법과 arrow 문법 혼합: `jval.items->'$.name'`
+- JSON 컬럼이 아닌 컬럼의 dot 접근: `name.member`
+- 임의 expression 뒤의 dot 접근: `(jval->'$.sensor').temperature`
+- quoted member arrow path: `jval->'$."a.b"'`
+
+`IN (SELECT ...)` 형태의 subquery `IN`에서는 JSON 멤버 값의 숫자 자동 비교를 지원하지 않습니다. literal `IN (...)`을 사용합니다.
 
 <a id="window-function"></a>
 ## 윈도우 함수
