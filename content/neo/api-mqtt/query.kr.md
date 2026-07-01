@@ -18,8 +18,6 @@ MQTT에서 데이터베이스 쿼리를 실행하려면 `db/query` 토픽으로 
 | tz          | UTC     | 시간대: UTC, Local, 지역 지정                           |
 | compress    | _no compression_ | 압축 방식: gzip                                  |
 | rownum      | false   | 행 번호 포함 여부: true, false                          |
-| heading     | true    | 헤더 표시 여부: true, false                              |
-| precision   | -1      | 부동소수점 자릿수: -1은 반올림 없음, 0은 정수             |
 
 **`format=json`에서 사용 가능한 추가 매개변수** {{< neo_since ver="8.0.12" />}}
 
@@ -31,6 +29,12 @@ MQTT에서 데이터베이스 쿼리를 실행하려면 `db/query` 토픽으로 
 | rowsFlatten | false   | JSON 객체의 `rows` 필드 차원을 한 단계 줄입니다.                          |
 | rowsArray   | false   | 각 레코드를 객체 배열로 구성한 JSON을 생성합니다.                         |
 
+**`format=csv`에서 사용 가능한 매개변수**
+
+| param       | default | description                                                              |
+|:----------- |---------|:--------------------------------------------------------------------------|
+| header      |         | `skip`을 지정하면 헤더를 포함하지 않습니다. |
+| precision   | -1      | 부동소수점 자릿수: -1은 반올림 없음, 0은 정수             |
 
 기본 예시는 클라이언트가 `db/reply/#`를 구독한 뒤 `reply` 필드를 `db/reply/my_query`로 지정해 `db/query` 토픽으로 쿼리를 발행하고, 여러 메시지 중 자신의 응답만 구분하는 방법을 보여 줍니다. `?` bind placeholder를 사용할 때는 `p` 필드에 JSON 배열을 지정합니다.
 

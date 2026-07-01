@@ -11,6 +11,26 @@ And also read and send data from database to other systems in demanded format.
 
 First, generate sample data for the examples below.
 
+{{< tabs >}}
+{{< tab name="SCRIPT" >}}
+```js
+SCRIPT({
+    const m = require('mathx');
+    const gen = m.oscillator({
+        components: [
+            {frequencyHz: 15, amplitude: 1.0},
+            {frequencyHz: 24, amplitude: 1.5},
+        ],
+        timeRange: {from: 'now', to: 'now+10s'},
+        sample: "1000Hz",
+    });
+    gen.forEach((g)=>{ $.yield(g[0], g[1]) });
+})
+SQL(`insert into example(name,time,value) values('signal',?,?)`, 
+    value(0), value(1))
+```
+{{</ tab >}}
+{{< tab name="FAKE" >}}
 ```js
 FAKE(
   oscillator(
@@ -18,8 +38,11 @@ FAKE(
     range('now', '10s', '1ms')
   )
 )
-INSERT( 'time', 'value', table('example'), tag('signal') )
+SQL(`insert into example(name,time,value) values('signal',?,?)`, 
+    value(0), value(1))
 ```
+{{</ tab >}}
+{{</ tabs >}}
 
 ### Output format independent
 
@@ -140,11 +163,12 @@ CSV()
 The purpose of *TQL* is transforming data format.
 This chapter shows how to do this without developing additional applications.
 
-### N:M transforming
+<!-- ### N:M transforming
 
 {{< figure src="/images/tql-concept.png" caption="TQL Concept" >}}
+-->
 
-### Iris
+### Iris Demo
 
 The example tql code below gives a brief idea of what is TQL for.
 

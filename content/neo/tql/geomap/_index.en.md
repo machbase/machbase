@@ -440,7 +440,8 @@ SCRIPT({
 // epoch from milli to nano and to datetime type
 MAPVALUE(1, time(value(1)*1000000))
 // insert into trip table
-INSERT("name", "time", "value", "lat", "lon", table("TRIP"))
+SQL(`INSERT INTO TRIP (name, time, value, lat, lon) values(?,?,?,?,?)`, 
+    value(0), value(1), value(2), value(3), value(4))
 ```
 
 ### Trajectory
@@ -452,7 +453,7 @@ SQL(`SELECT time, lat, lon FROM TRIP
      WHERE name = 'firenze' ORDER BY time`)
 SCRIPT({
     // time to epoch nanos to Date (javascript)
-    var timestamp = new Date($.values[0].UnixNano()/1000000); 
+    var timestamp = new Date($.values[0].unixNano()/1000000); 
     // coordinate [lat, lon]
     var coord = [$.values[1], $.values[2]]; 
     $.yield({
@@ -528,7 +529,7 @@ SCRIPT({
     }
     var prevLoc, prevTs, dist;
 },{
-    var ts = $.values[0].Unix(); // unix epoch sec.
+    var ts = $.values[0].unix(); // unix epoch sec.
     var coord = [$.values[1], $.values[2]];
     dist = prevLoc === undefined ? 0 : distance(prevLoc, coord);
     speed = prevTs === undefined ? 0 : dist*3.600 / (ts - prevTs);

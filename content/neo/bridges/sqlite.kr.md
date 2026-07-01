@@ -88,7 +88,7 @@ DELETE from mem_example;
 
 ## SQLite에 TQL로 쓰기
 
-```js {linenos=table,hl_lines=["10"],linenostart=1}
+```js {linenos=table,hl_lines=["8-10"],linenostart=1}
 FAKE( json({
     ["COMPANY", "EMPLOYEE"],
     ["NovaWave", 10],
@@ -96,9 +96,9 @@ FAKE( json({
 }))
 
 DROP(1) // skip header
-MAPVALUE(2, time("now"))
-
-INSERT(bridge("mem"), table("mem_example"), "company", "employee", "created_on")
+SQL(bridge("mem"), 
+    `insert into mem_example (company, employee, created_on) values(?, ?, ?)`,
+    value(0), value(1), time('now'))
 ```
 
 ```
@@ -161,7 +161,9 @@ CREATE TABLE IF NOT EXISTS example (
 
 ```js
 SQL(`select name, time, value from example where name = 'my-car'`)
-INSERT(bridge("sqlite"), "name", "time", "value", table("example"))
+SQL(bridge("sqlite"), 
+    `insert into example values(?,?,?)`,
+    value(0), value(1), value(2))
 ```
 
 **SQL**

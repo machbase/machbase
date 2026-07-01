@@ -25,41 +25,14 @@ Start machbase-neo server process.
 
 **Database Sessions flags**
 
-Conceptually, if we divide machbase-neo into the API part (http, mqtt, etc.) that includes tql 
-and the DBMS part, there have been no restrictions on traffic between the API and DBMS so far.
-
-If 100 MQTT clients and 100 HTTP clients, a total of 200 clients, execute a db query "simultaneously",
-200 sessions will be executed in the DBMS.
-If there is a tool that can control the traffic flow delivered to the DBMS, it would be possible
-to configure flexibly depending on the situation.
-Therefore, new flags that can be used in `machbase-neo serve` have been added. {{< neo_since ver="8.0.44" />}}
+{{< neo_since ver="8.5.5" />}}
 
 | flag                     | desc                                                              |
 |:-------------------------|:----------------------------------------------------------------- |
-| `--max-open-conn`        | `< 0` : unlimited (default) <br/> `0` : `= CPU_count * factor`<br/>  `> 0` : specified max open connections |
-| `--max-open-conn-factor` | used to calculate the number of the max open connections when `--max-open-conn` is 0. (default `2`). |
-| `--max-open-query`       | `< 0` : unlimited<br/> `0` (default) : `= CPU_count * factor`<br/> `> 0` : specified max open query iterations |
-| `--max-open-query-factor`| used to calculate the number of the max open query iterations when `--max-open-query` is 0. (default `2`) |
-
-- *--mach-open-conn* controls the number of connections (=sessions) that can be OPENED "simultaneously"
-between the API and DBMS. If this number is exceeded, it will wait at the API level.
-  - `< 0` If a negative number (e.g., -1) is set, it operates without restrictions as in previous versions.
-  - `0` If no settings are made by default, it is calculated as `the number of CPU cores * max-open-conn-factor`. The default max-open-conn-factor is 1.5.
-  - `> 0` If a positive number is set, it operates according to the set value.
-
-This setting value can be checked as a command `session limit` within `machbase-neo shell` 
-and can be changed with `session limit --set=<num>`.
-Since the change is maintained only while the process is running,
-the startup script must be modified to change it permanently.
-
-- *--mach-open-conn-factor* sets the factor value to calculate as `the number of CPU cores * factor` when `--mach-open-conn` described above is 0 (default).
-This value must be 0 or higher, and if it is 0 or negative, the default `2.0` is applied.
-
-As example,
-if the number of CPU cores is 8 and the factor is 2.0, the open limit becomes 16,
-and if it is 0.5, the open limit becomes 4.
-If none of the two options described above are given, the default factor 2.0 is applied,
-and the open limit becomes 16.
+| `--max-open-conn`        | the maximum number of <br/>open connections to the database. <br/>(default `-1` unlimited) |
+| `--max-idle-conn`        | the maximum number of <br/>connections in the idle connection pool.<br/> if `<=0`, no idle connections are retained.<br/> (default is 2) |
+| `--conn-max-lifetime`    | the maximum amount of <br/>time a connection many be reused.<br/> Expired connections may be closed lazily before reuse.<br/> if `<= 0`, connections are not closed due to a connection's age.<br/>(default is `10m`) |
+| `--conn-max-idletime`    | the maximum amount of <br/>time a connection may be idle.<br/> Expired connections may be closed lazily before resuse.<br/> if `<= 0`, connections are not closed due to a connection's idle time.<br/>(default is `1m`) |
 
 **Http flags**
 

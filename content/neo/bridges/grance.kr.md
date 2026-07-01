@@ -104,11 +104,11 @@ CREATE TABLE IF NOT EXISTS example (
 
 **TQL**
 
-아래 TQL 스크립트는 `SQL()`로 데이터를 조회한 뒤, `INSERT()`에 `bridge("sqlite")`를 지정해 SQLite 데이터베이스로 적재합니다.
+아래 TQL 스크립트는 `SQL()`로 데이터를 조회한 뒤, `bridge("sqlite")`를 지정해 SQLite 데이터베이스로 적재합니다.
 
 ~~~js
 SQL(`select name, time, value from example where name = 'my-car'`)
-INSERT(bridge("sqlite"), "name", "time", "value", table("example"))
+SQL(bridge('sqlite'), `insert into example values(?,?,?)`, value(0), value(1), value(2))
 ~~~
 
 ## 구독자

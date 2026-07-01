@@ -25,7 +25,7 @@ arrange(start, end, step)
 
 <h6>반환값</h6>
 
-`Number[]` 생성된 숫자 배열.
+`Array<Number>` 생성된 숫자 배열.
 
 <h6>사용 예시</h6>
 
@@ -56,7 +56,7 @@ linspace(start, end, count)
 
 <h6>반환값</h6>
 
-`Number[]` 생성된 숫자 배열.
+`Array<Number>` 생성된 숫자 배열.
 
 <h6>사용 예시</h6>
 
@@ -82,12 +82,12 @@ meshgrid(arr1, arr2)
 
 <h6>매개변수</h6>
 
-- `arr1` `Number[]` 첫 번째 배열
-- `arr2` `Number[]` 두 번째 배열
+- `arr1` `Array<Number>` 첫 번째 배열
+- `arr2` `Array<Number>` 두 번째 배열
 
 <h6>반환값</h6>
 
-`Number[][]` 숫자 쌍으로 구성된 배열.
+``Array<Array<Number>>` 숫자 쌍으로 구성된 배열.
 
 <h6>사용 예시</h6>
 
@@ -106,6 +106,212 @@ for(i=0; i < gen.length; i++) {
 // [2,5]
 // [3,4]
 // [3,5]
+```
+
+## oscillator()
+
+{{< neo_since ver="8.5.5" />}}
+
+`[time, value]` 튜플 형태의 진동 샘플 데이터를 생성합니다.
+
+<h6>사용 형식</h6>
+
+```js
+oscillator(options)
+```
+
+<h6>매개변수</h6>
+
+- `options` `Object`
+- `options.components` `Object[]` 필수. 합성할 진동 성분 목록
+    - `amplitude` `Number` 필수. 진폭
+    - `frequencyHz` `Number` 필수. 주파수(Hz)
+    - `phaseRad` `Number` 선택. 위상 오프셋(라디안), 기본값 `0`
+    - `bias` `Number` 선택. DC 오프셋, 기본값 `0`
+- `options.timeRange` `Object` 필수. 시간 범위
+    - `from` `Any` 필수
+    - `to` `Any` 필수
+    - 지원 시간 표현:
+        - 숫자 epoch ns (예: `0`, `10000000000`)
+        - 접미사 epoch 문자열: `s`, `ms`, `us`, `ns` (예: `"10s"`, `"10000ms"`)
+        - 문자열 시간 표현: `"now"`, `"now-10s"`
+        - RFC3339/RFC3339Nano 문자열
+- `options.sample` `Number|String` 선택
+    - 숫자: 샘플 개수로 해석
+    - `Hz`/`hz` 접미사 문자열: 샘플링 주파수로 해석 (예: `"2Hz"`)
+- `options.noise` `Number|Object` 선택
+    - 숫자: 노이즈 진폭으로 해석
+    - 객체: `{ amplitude, seed? }` 형식이며 `amplitude`는 노이즈 세기, `seed`는 재현 가능한 노이즈를 위한 시드입니다.
+
+<h6>반환값</h6>
+
+`Array<[time, Number]>` 생성된 샘플 배열.
+
+<h6>사용 예시</h6>
+
+```js {linenos=table,linenostart=1}
+const { oscillator } = require('mathx');
+
+const gen = oscillator({
+        components: [
+                { amplitude: 1.0, frequencyHz: 0.1, phaseRad: 0 },
+                { amplitude: 0.5, frequencyHz: 0.05 },
+        ],
+        timeRange: { from: '0s', to: '10s' },
+        sample: '2Hz',
+        noise: { amplitude: 0.1, seed: 123 },
+});
+
+for (let i = 0; i < gen.length; i++) {
+        const t = gen[i][0];
+        const v = gen[i][1];
+        console.log(t, v.toFixed(2));
+}
+```
+
+## series()
+
+{{< neo_since ver="8.5.5" />}}
+
+`[time, value]` 튜플 샘플 배열을 시간 배열과 값 배열로 분리합니다.
+
+<h6>사용 형식</h6>
+
+```js
+series(samples, options)
+```
+
+<h6>매개변수</h6>
+
+- `samples` `Array<[time, Number]>` 튜플 샘플 배열
+- `options` `Object` 선택
+    - `xKey` `String` x축 배열 키 이름, 기본값 `"time"`
+    - `yKey` `String` y축 배열 키 이름, 기본값 `"value"`
+
+<h6>반환값</h6>
+
+두 개의 배열을 담은 `Object`를 반환합니다. 기본 형태는 `{ time, value }`입니다.
+
+<h6>사용 예시</h6>
+
+```js
+const m = require("mathx");
+const gen = m.oscillator({
+    components: [{ amplitude: 1.0, frequencyHz: 0.1 }],
+    timeRange: { from: "0s", to: "10s" },
+    sample: 5,
+});
+
+const s = m.series(gen);
+console.log(s.time.length);  // 5
+console.log(s.value.length); // 5
+
+const custom = m.series(gen, { xKey: "ts", yKey: "amp" });
+console.log(custom.ts.length);  // 5
+console.log(custom.amp.length); // 5
+```
+
+## unzip()
+
+{{< neo_since ver="8.5.5" />}}
+
+튜플 샘플 배열을 두 개의 배열로 분리합니다.
+
+<h6>사용 형식</h6>
+
+```js
+unzip(samples)
+```
+
+<h6>매개변수</h6>
+
+- `samples` `Array<[x, y]>` 튜플 샘플 배열
+
+<h6>반환값</h6>
+
+`[Array<x>, Array<y>]`
+
+<h6>사용 예시</h6>
+
+```js
+const m = require("mathx");
+const [x, y] = m.unzip([[1, 10], [2, 20], [3, 30]]);
+console.log(x); // [1, 2, 3]
+console.log(y); // [10, 20, 30]
+```
+
+## zip()
+
+{{< neo_since ver="8.5.5" />}}
+
+두 개의 배열을 튜플 샘플 배열로 합칩니다.
+
+<h6>사용 형식</h6>
+
+```js
+zip(x, y)
+```
+
+<h6>매개변수</h6>
+
+- `x` `Array<any>` x축 데이터 배열
+- `y` `Array<any>` y축 데이터 배열 (`x`와 길이가 같아야 함)
+
+<h6>반환값</h6>
+
+`Array<[x, y]>`
+
+<h6>사용 예시</h6>
+
+```js
+const m = require("mathx");
+const samples = m.zip([1, 2, 3], [10, 20, 30]);
+console.log(samples[0]); // [1, 10]
+```
+
+## fft()
+
+고속 푸리에 변환(FFT)을 수행하여 주파수 성분을 분석합니다.
+
+입력은 두 가지 형식을 지원하며, 결과는 `[frequency, amplitude]` 형태의 배열로 반환됩니다.
+
+<h6>사용 형식</h6>
+
+```js
+fft(times, amplitudes) // 시간 배열과 진폭 배열
+fft(timesAndAmplitudes) // [time, amplitude] 배열
+```
+
+- `fft(times, amplitudes)`
+    `times`와 `amplitudes`를 각각 별도의 배열로 전달합니다.
+- `fft(timesAndAmplitudes)`
+    `[time, amplitude]` 쌍으로 이루어진 배열을 전달합니다.
+
+`times`와 `amplitudes`를 별도 배열로 전달하는 경우, 두 배열의 길이는 반드시 같아야 합니다.
+
+<h6>반환 값</h6>
+
+`Array<[frequency, amplitude]>` 주파수와 진폭 쌍의 배열.
+
+**사용 예시**
+
+```js
+const m = require("mathx");
+const gen = m.oscillator({
+    components: [
+        {amplitude: 1.0, frequencyHz: 15},
+        {amplitude: 1.5, frequencyHz: 24},
+    ],
+    timeRange: {from: 'now', to: 'now+10s'},
+    sample: "1000Hz",
+});
+// gen is array of tuple (time, amplitude)
+// ffp() accepts array of (time, amplitude) 
+// and returns array of (frequency, amplitude)
+const result = m.fft(gen);
+for(i=0; i < result.length; i++) {
+    console.println(i, result[i][0], result[i][1]);
+}
 ```
 
 ## sort()
@@ -142,8 +348,8 @@ cdf(q, x, weights)
 ```
 
 - `q` `Number` 기준 값
-- `x` `Number[]` 오름차순으로 정렬된 데이터
-- `weights` `Number[]` 가중치 배열(생략 시 모두 1, 지정 시 `x`와 길이가 같아야 합니다.)
+- `x` `Array<Number>` 오름차순으로 정렬된 데이터
+- `weights` `Array<Number>` 가중치 배열(생략 시 모두 1, 지정 시 `x`와 길이가 같아야 합니다.)
 
 **사용 예시**
 
@@ -291,8 +497,8 @@ quantile(p, x, weights)
 ```
 
 - `p` `Number`
-- `x` `Number[]` The `x` data must be sorted in increasing order.
-- `weights` `Number[]` If weights is not specified then all of the weights are 1. If weights is specified, then length of `x` must equal length of `weights`.
+- `x` `Array<Number>` The `x` data must be sorted in increasing order.
+- `weights` `Array<Number>` If weights is not specified then all of the weights are 1. If weights is specified, then length of `x` must equal length of `weights`.
 
 **사용 예시**
 
@@ -315,8 +521,8 @@ quantileInterp(p, x, weights)
 ```
 
 - `p` `Number` 백분위 비율
-- `x` `Number[]` 정렬된 데이터
-- `weights` `Number[]` 가중치 배열(선택)
+- `x` `Array<Number>` 정렬된 데이터
+- `weights` `Array<Number>` 가중치 배열(선택)
 
 **사용 예시**
 
@@ -352,8 +558,8 @@ console.log(result.stdDev.toFixed(2)); // 1.58
 mode(x, weights)
 ```
 
-- `x` `Number[]` 정렬된 데이터
-- `weights` `Number[]` 가중치 배열(선택)
+- `x` `Array<Number>` 정렬된 데이터
+- `weights` `Array<Number>` 가중치 배열(선택)
 
 **사용 예시**
 
@@ -417,13 +623,3 @@ result = m.linearRegression(x, y);
 console.log(result.slope.toFixed(4));     // 2.0000
 console.log(result.intercept.toFixed(4)); // 0.0000
 ```
-
-## fft()
-
-빠른 푸리에 변환(FFT)을 수행하여 주파수 성분을 분석합니다.
-
-```js
-fft(times, amplitudes)
-```
-
-`times`와 `amplitudes` 길이는 동일해야 합니다.

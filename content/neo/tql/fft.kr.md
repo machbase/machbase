@@ -25,6 +25,32 @@ CREATE TAG TABLE IF NOT EXISTS EXAMPLE (
 이 예시에서는 `oscillator()`가 15Hz 1.0과 24Hz 1.5를 합성한 파형을 생성합니다.
 또한 `CHART_SCATTER()`에는 x축 하단에 슬라이더를 제공하는 `dataZoom()` 옵션 함수가 포함되어 있습니다.
 
+{{< tabs >}}
+{{< tab name="SCRIPT" >}}
+```js {linenos=table,hl_lines=["3-11"],linenostart=1}
+SCRIPT({
+    const m = require('mathx');
+    const data = m.oscillator({
+        components: [
+            { frequencyHz:15, amplitude:1.0 },
+            { frequencyHz:24, amplitude:1.5 },
+        ],
+        timeRange: { from:"now", to:"now+10s"},
+        sample:"1000Hz",
+        noise: { amplitude: 0.3 },
+    });
+    const s = m.series(data, {xKey:"ts", yKey:"amp"})
+    $.yield({
+        xAxis:{ data: s.ts },
+        yAxis: {},
+        series: [ { type:"scatter", data: s.amp } ],
+        dataZoom: { type: 'slider', start: 95, end: 100 },
+    })
+})
+CHART( size("600px", "350px") )
+```
+{{</ tab >}}
+{{< tab name="FAKE" >}}
 ```js {linenos=table,hl_lines=["2-5"],linenostart=1}
 FAKE( 
   oscillator(
@@ -34,6 +60,8 @@ FAKE(
 )
 CHART_SCATTER( size("600px", "350px"), dataZoom('slider', 95, 100) )
 ```
+{{</ tab >}}
+{{</ tabs >}}
 
 {{< figure src="/images/web-fft-tql-fake.png" width="500" >}}
 
@@ -41,6 +69,28 @@ CHART_SCATTER( size("600px", "350px"), dataZoom('slider', 95, 100) )
 
 생성된 데이터를 'signal' 태그 이름으로 데이터베이스에 저장해 주십시오.
 
+{{< tabs >}}
+{{< tab name="SCRIPT" >}}
+```js {linenos=table,hl_lines=[13,16]}
+SCRIPT({
+    const m = require('mathx');
+    const data = m.oscillator({
+        components: [
+            { frequencyHz:15, amplitude:1.0 },
+            { frequencyHz:24, amplitude:1.5 },
+        ],
+        timeRange: { from:"now", to:"now+10s"},
+        sample:"1000Hz",
+        noise: { amplitude: 0.3 },
+    });
+    for( d of data ) {
+        $.yield(d[0], d[1]);
+    }
+})
+SQL('insert into example values(?,?,?)','signal',value(0),value(1))
+```
+{{</ tab >}}
+{{< tab name="FAKE" >}}
 ```js {linenos=table,hl_lines=["10"],linenostart=1}
 FAKE(
   oscillator(
@@ -51,14 +101,38 @@ FAKE(
 // |    0      1
 // +--> time   magnitude
 // |
-INSERT( 'time', 'value', table('example'), tag('signal') )
+SQL('insert into example values(?,?,?)','signal',value(0),value(1))
 ```
+{{</ tab >}}
+{{</ tabs >}}
 
 실행 결과 창에는 "10000 rows inserted." 메시지가 표시됩니다.
 
 참고로 테스트 머신(Apple Mac mini M1)에서는 약 270ms가 소요되었으며, 아래 예시처럼 `APPEND()` 방식을 사용하면 약 65ms(약 4배 빠르게)로 단축할 수 있습니다.
 
-```js {linenos=table,hl_lines=["14"],linenostart=1}
+{{< tabs >}}
+{{< tab name="SCRIPT" >}}
+```js {linenos=table,hl_lines=[13,16]}
+SCRIPT({
+    const m = require('mathx');
+    const data = m.oscillator({
+        components: [
+            { frequencyHz:15, amplitude:1.0 },
+            { frequencyHz:24, amplitude:1.5 },
+        ],
+        timeRange: { from:"now", to:"now+10s"},
+        sample:"1000Hz",
+        noise: { amplitude: 0.3 },
+    });
+    for( d of data ) {
+        $.yield('signal', d[0], d[1]);
+    }
+})
+APPEND( table('example') )
+```
+{{</ tab >}}
+{{< tab name="FAKE" >}}
+```js {linenos=table,hl_lines=[10,14]}
 FAKE(
   oscillator(
     freq(15, 1.0), freq(24, 1.5),
@@ -74,6 +148,8 @@ PUSHVALUE(0,'signal')
 // |
 APPEND( table('example') )
 ```
+{{</ tab >}}
+{{</ tabs >}}
 
 {{< callout type="warning" >}}
 `APPEND`는 입력 레코드의 필드가 테이블 컬럼과 순서 및 타입까지 정확히 일치할 때만 동작합니다.
@@ -83,10 +159,28 @@ APPEND( table('example') )
 
 아래 코드는 'example' 테이블에서 저장된 데이터를 읽어옵니다.
 
+{{< tabs >}}
+{{< tab name="SQL">}}
+```js
+SQL(`select time, value from example where name = 'signal' order by time`)
+CHART(
+    size("600px", "350px"), 
+    chartOption({
+        xAxis:{ data: column(0) },
+        yAxis:{},
+        series:[ {type:"line", data: column(1), showAllSymbol:true } ],
+        dataZoom:{type:"slider", start:95, end: 100},
+    })
+)
+```
+{{</ tab >}}
+{{< tab name="SQL_SELECT">}}
 ```js
 SQL_SELECT('time', 'value', from('example', 'signal'), between('last-10s', 'last'))
 CHART_LINE( size("600px", "350px"), dataZoom('slider', 95, 100))
 ```
+{{</ tab >}}
+{{</ tabs >}}
 
 {{< figure src="/images/web-fft-tql-query.png" width="500" >}}
 
@@ -97,7 +191,7 @@ CHART_LINE( size("600px", "350px"), dataZoom('slider', 95, 100))
 {{< tabs >}}
 {{< tab name="GROUPBYKEY" >}}
 ```js {linenos=table,hl_lines=["2-4"],linenostart=1}
-SQL_SELECT('time', 'value', from('example', 'signal'), between('last-10s', 'last'))
+SQL(`select time, value from example where name = 'signal' order by time`)
 MAPKEY('sample')
 GROUPBYKEY()
 FFT()
@@ -109,10 +203,35 @@ CHART_LINE(
 )
 ```
 {{< /tab >}}
-{{< tab name="SCRIPT" >}}
-
+{{< tab name="SCRIPT-1" >}}
+```js {linenos=table,hl_lines=12}
+SQL(`select time, value from example where name = 'signal' order by time`)
+SCRIPT({
+    var times = [];
+    var values = [];
+},{
+    ts = $.values[0];
+    val = $.values[1];
+    times.push(ts);
+    values.push(val);
+},{
+    const mx = require("mathx");
+    const result = mx.fft(times, values);
+    const s = mx.series(result, {xKey:"freq", yKey:"amp"});
+    $.yield({
+        xAxis:{ name: "Hz", data: s.freq, axisLabel:{ }},
+        yAxis:{ name: "Amplitude" },
+        series:[ { type:"line", data: s.amp} ],
+        dataZoom: { type:"slider", start: 0, end: 10 },
+        tooltip:{ trigger: "axis" },
+    });
+})
+CHART(size("600px", "350px"))
+```
+{{</ tab >}}
+{{< tab name="SCRIPT-2" >}}
 ```js {linenos=table,hl_lines=[11,12],linenostart=1}
-SQL_SELECT('time', 'value', from('example', 'signal'), between('last-10s', 'last'))
+SQL(`select time, value from example where name = 'signal' order by time`)
 SCRIPT({
     var times = [];
     var values = [];
@@ -124,8 +243,8 @@ SCRIPT({
 },{
     const mx = require("mathx");
     result = mx.fft(times, values);
-    for(i = 0; i < result.x.length; i++) {
-        $.yield(result.x[i], result.y[i]);
+    for(i = 0; i < result.length; i++) {
+        $.yield(...result[i]);
     }
 })
 CHART_LINE(
@@ -163,7 +282,7 @@ CHART_LINE(
 다음 예시는 시간 축을 추가하여 주파수 변환 결과를 시계열 형태로 시각화합니다.
 
 ```js {linenos=table,hl_lines=["3-7"],linenostart=1}
-SQL_SELECT( 'time', 'value', from('example', 'signal'), between('last-10s', 'last'))
+SQL(`select time, value from example where name = 'signal' order by time`)
 
 MAPKEY( roundTime(value(0), '500ms') )
 GROUPBYKEY()

@@ -18,10 +18,8 @@ The database query topic for MQTT is `db/query`. Send a query request to this to
 | tz          | UTC     | Time Zone: UTC, Local and location spec |
 | compress    | _no compression_   | compression method: gzip      |
 | rownum      | false   | including rownum: true, false |
-| heading     | true    | showing heading: true, false  |
-| precision   | -1      | precision of float value, -1 for no round, 0 for int |
 
-**More Parameters in `format=json`** {{< neo_since ver="8.0.12" />}}
+**Available parameters with `format=json`** {{< neo_since ver="8.0.12" />}}
 
 Those options are available only when `format=json`
 
@@ -30,6 +28,13 @@ Those options are available only when `format=json`
 | transpose   | false   | produce cols array instead of rows. |
 | rowsFlatten | false   | reduce the array dimension of the *rows* field in the JSON object. |
 | rowsArray   | false   | produce JSON that contains only array of object for each record.  |
+
+**Available parameters with `format=csv**
+
+| param       | default | description                                                              |
+|:----------- |---------|:--------------------------------------------------------------------------|
+| header      |         | `skip` do not include header line |
+| precision   | -1      | precision of float value, -1 for no round, 0 for int |
 
 
 A basic query example shows the client subscribe to `db/reply/#` and publish a query request to `db/query` with *reply* field `db/reply/my_query` so that it can identify the individual reply from multiple messages. To use `?` bind placeholders, provide a JSON array in the `p` field.

@@ -24,7 +24,7 @@ arrange(start, end, step)
 
 <h6>Return value</h6>
 
-`Number[]` generated numbers in an array.
+`Array<Number>` generated numbers in an array.
 
 <h6>Usage example</h6>
 
@@ -55,7 +55,7 @@ linspace(start, end, count)
 
 <h6>Return value</h6>
 
-`Number[]` generated numbers in an array.
+`Array<Number>` generated numbers in an array.
 
 <h6>Usage example</h6>
 
@@ -81,12 +81,12 @@ meshgrid(arr1, arr2)
 
 <h6>Parameters</h6>
 
-- `arr1` `Number[]`
-- `arr2` `Number[]`
+- `arr1` `Array<Number>`
+- `arr2` `Array<Number>`
 
 <h6>Return value</h6>
 
-`Number[][]` generated numbers in an array of numbers.
+``Array<Array<Number>>` generated numbers in an array of numbers.
 
 <h6>Usage example</h6>
 
@@ -105,6 +105,213 @@ for(i=0; i < gen.length; i++) {
 // [2,5]
 // [3,4]
 // [3,5]
+```
+
+## oscillator()
+
+{{< neo_since ver="8.5.5" />}}
+
+Generates synthetic oscillator samples as `[time, value]` tuples.
+
+<h6>Syntax</h6>
+
+```js
+oscillator(options)
+```
+
+<h6>Parameters</h6>
+
+- `options` `Object`
+- `options.components` `Object[]` Required. Oscillator components to sum.
+    - `amplitude` `Number` Required. Signal amplitude.
+    - `frequencyHz` `Number` Required. Frequency in Hz.
+    - `phaseRad` `Number` Optional. Phase offset in radians. Default is `0`.
+    - `bias` `Number` Optional. DC offset. Default is `0`.
+- `options.timeRange` `Object` Required. Time range object.
+    - `from` `Any` Required.
+    - `to` `Any` Required.
+    - Supported time literals:
+        - epoch nanoseconds as number (for example `0`, `10000000000`)
+        - epoch strings with suffix: `s`, `ms`, `us`, `ns` (for example `"10s"`, `"10000ms"`)
+        - string time expressions such as `"now"`, `"now-10s"`
+        - RFC3339/RFC3339Nano time strings
+- `options.sample` `Number|String` Optional.
+    - Number: interpreted as sample count.
+    - String with `Hz`/`hz` suffix: interpreted as sample rate (for example `"2Hz"`).
+- `options.noise` `Number|Object` Optional.
+    - Number: interpreted as noise amplitude.
+    - Object: `{ amplitude, seed? }` where `amplitude` is the noise strength and `seed` makes the noise deterministic.
+
+<h6>Return value</h6>
+
+`Array<[time, Number]>` generated samples.
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1}
+const { oscillator } = require('mathx');
+
+const gen = oscillator({
+        components: [
+                { amplitude: 1.0, frequencyHz: 0.1, phaseRad: 0 },
+                { amplitude: 0.5, frequencyHz: 0.05 },
+        ],
+        timeRange: { from: '0s', to: '10s' },
+        sample: '2Hz',
+        noise: { amplitude: 0.1, seed: 123 },
+});
+
+for (let i = 0; i < gen.length; i++) {
+        const t = gen[i][0];
+        const v = gen[i][1];
+        console.log(t, v.toFixed(2));
+}
+```
+
+## series()
+
+{{< neo_since ver="8.5.5" />}}
+
+Converts tuple samples into separate time/value arrays.
+
+<h6>Syntax</h6>
+
+```js
+series(samples, options)
+```
+
+<h6>Parameters</h6>
+
+- `samples` `Array<[time, Number]>` tuple samples.
+- `options` `Object` Optional.
+    - `xKey` `String` key name for x-axis array. Default is `"time"`.
+    - `yKey` `String` key name for y-axis array. Default is `"value"`.
+
+<h6>Return value</h6>
+
+`Object` containing two arrays. Default shape is `{ time, value }`.
+
+<h6>Usage example</h6>
+
+```js
+const m = require("mathx");
+const gen = m.oscillator({
+    components: [{ amplitude: 1.0, frequencyHz: 0.1 }],
+    timeRange: { from: "0s", to: "10s" },
+    sample: 5,
+});
+
+const s = m.series(gen);
+console.log(s.time.length);  // 5
+console.log(s.value.length); // 5
+
+const custom = m.series(gen, { xKey: "ts", yKey: "amp" });
+console.log(custom.ts.length);  // 5
+console.log(custom.amp.length); // 5
+```
+
+## unzip()
+
+{{< neo_since ver="8.5.5" />}}
+
+Splits tuple samples into two arrays.
+
+<h6>Syntax</h6>
+
+```js
+unzip(samples)
+```
+
+<h6>Parameters</h6>
+
+- `samples` `Array<[x, y]>` tuple samples.
+
+<h6>Return value</h6>
+
+`[Array<x>, Array<y>]`
+
+<h6>Usage example</h6>
+
+```js
+const m = require("mathx");
+const [x, y] = m.unzip([[1, 10], [2, 20], [3, 30]]);
+console.log(x); // [1, 2, 3]
+console.log(y); // [10, 20, 30]
+```
+
+## zip()
+
+{{< neo_since ver="8.5.5" />}}
+
+Combines two arrays into tuple samples.
+
+<h6>Syntax</h6>
+
+```js
+zip(x, y)
+```
+
+<h6>Parameters</h6>
+
+- `x` `Array<any>` x-axis data array.
+- `y` `Array<any>` y-axis data array. Must have the same length as `x`.
+
+<h6>Return value</h6>
+
+`Array<[x, y]>`
+
+<h6>Usage example</h6>
+
+```js
+const m = require("mathx");
+const samples = m.zip([1, 2, 3], [10, 20, 30]);
+console.log(samples[0]); // [1, 10]
+```
+
+## fft()
+
+The `fft` function performs a Fast Fourier Transform (FFT) on a given dataset. 
+FFT is used to analyze the frequency components of a signal, making it useful in signal processing and data analysis.
+
+It accepts input in two forms and returns an array of `[frequency, amplitude]` pairs.
+
+<h6>Syntax</h6>
+
+```js
+fft(times, amplitudes) // time array and amplitude array
+fft(timesAndAmplitudes) // array of [time, amplitude]
+```
+
+- `fft(times, amplitudes)`
+    Passes the time values and amplitude values as two separate arrays.
+- `fft(timesAndAmplitudes)`
+    Passes an array of `[time, amplitude]` pairs.
+
+When `times` and `amplitudes` are provided separately, the two arrays must have the same length.
+
+<h6>Return value</h6>
+
+`Array<[frequency, amplitude]>` array of frequency and amplitude pairs.
+
+**Usage example**
+
+```js
+const m = require("mathx");
+const gen = m.oscillator({
+    components: [
+        {amplitude: 1.0, frequencyHz: 15},
+        {amplitude: 1.5, frequencyHz: 24},
+    ],
+    timeRange: {from: 'now', to: 'now+10s'},
+    sample: "1000Hz",
+});
+// gen is array of tuple (time, amplitude)
+// ffp() accepts array of (time, amplitude) 
+// and returns array of (frequency, amplitude)
+const result = m.fft(gen);
+for(i=0; i < result.length; i++) {
+    console.println(i, result[i][0], result[i][1]);
+}
 ```
 
 ## sort()
@@ -146,8 +353,8 @@ cdf(q, x, weights)
 ```
 
 - `q` `Number`
-- `x` `Number[]` The `x` data must be sorted in increasing order.
-- `weights` `Number[]` If weights is not specified then all of the weights are 1. If weights is specified, then length of `x` must equal length of `weights`.
+- `x` `Array<Number>` The `x` data must be sorted in increasing order.
+- `weights` `Array<Number>` If weights is not specified then all of the weights are 1. If weights is specified, then length of `x` must equal length of `weights`.
 
 **Usage example**
 
@@ -314,8 +521,8 @@ quantile(p, x, weights)
 ```
 
 - `p` `Number`
-- `x` `Number[]` The `x` data must be sorted in increasing order.
-- `weights` `Number[]` If weights is not specified then all of the weights are 1. If weights is specified, then length of `x` must equal length of `weights`.
+- `x` `Array<Number>` The `x` data must be sorted in increasing order.
+- `weights` `Array<Number>` If weights is not specified then all of the weights are 1. If weights is specified, then length of `x` must equal length of `weights`.
 
 **Usage example**
 
@@ -338,8 +545,8 @@ quantileInterp(p, x, weights)
 ```
 
 - `p` `Number`
-- `x` `Number[]` The `x` data must be sorted in increasing order.
-- `weights` `Number[]` If weights is not specified then all of the weights are 1. If weights is specified, then length of `x` must equal length of `weights`.
+- `x` `Array<Number>` The `x` data must be sorted in increasing order.
+- `weights` `Array<Number>` If weights is not specified then all of the weights are 1. If weights is specified, then length of `x` must equal length of `weights`.
 
 **Usage example**
 
@@ -381,8 +588,8 @@ It returns `{value: number, count: number}`.
 mode(x, weights)
 ```
 
-- `x` `Number[]` The `x` data must be sorted in increasing order.
-- `weights` `Number[]` If weights is not specified then all of the weights are 1. If weights is specified, then length of `x` must equal length of `weights`.
+- `x` `Array<Number>` The `x` data must be sorted in increasing order.
+- `weights` `Array<Number>` If weights is not specified then all of the weights are 1. If weights is specified, then length of `x` must equal length of `weights`.
 
 **Usage example**
 
@@ -455,14 +662,3 @@ result = m.linearRegression(x, y);
 console.log(result.slope.toFixed(4));     // 2.0000
 console.log(result.intercept.toFixed(4)); // 0.0000
 ```
-
-## fft()
-
-The `fft` function performs a Fast Fourier Transform (FFT) on a given dataset. 
-FFT is used to analyze the frequency components of a signal, making it useful in signal processing and data analysis.
-
-```js
-fft(times, amplitudes)
-```
-
-The length of times and amplitudes should be equal.

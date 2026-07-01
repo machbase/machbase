@@ -12,6 +12,27 @@ TQL은 이러한 데이터를 쉽고 유연하게 가공하실 수 있도록 제
 
 아래 예제들을 위해 먼저 샘플 데이터를 생성합니다.
 
+
+{{< tabs >}}
+{{< tab name="SCRIPT" >}}
+```js
+SCRIPT({
+    const m = require('mathx');
+    const gen = m.oscillator({
+        components: [
+            {frequencyHz: 15, amplitude: 1.0},
+            {frequencyHz: 24, amplitude: 1.5},
+        ],
+        timeRange: {from: 'now', to: 'now+10s'},
+        sample: "1000Hz",
+    });
+    gen.forEach((g)=>{ $.yield(g[0], g[1]) });
+})
+SQL(`insert into example(name,time,value) values('signal',?,?)`, 
+    value(0), value(1))
+```
+{{</ tab >}}
+{{< tab name="FAKE" >}}
 ```js
 FAKE(
   oscillator(
@@ -19,8 +40,11 @@ FAKE(
     range('now', '10s', '1ms')
   )
 )
-INSERT( 'time', 'value', table('example'), tag('signal') )
+SQL(`insert into example(name,time,value) values('signal',?,?)`, 
+    value(0), value(1))
 ```
+{{</ tab >}}
+{{</ tabs >}}
 
 ### 출력 형식과 무관하게 사용
 
@@ -141,11 +165,12 @@ CSV()
 *TQL*의 목적은 데이터를 손쉽게 변환하는 것입니다.
 추가 애플리케이션 개발 없이도 다양한 형태로 데이터를 가공할 수 있는 방법을 이 장에서 소개합니다.
 
-### N:M 변환
+<!-- ### N:M 변환
 
 {{< figure src="/images/tql-concept.png" caption="TQL Concept" >}}
+-->
 
-### Iris
+### Iris Demo
 
 아래 Iris 데이터 예제를 통해 TQL이 어떤 용도로 사용되는지 간단히 살펴볼 수 있습니다.
 

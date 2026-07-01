@@ -254,7 +254,7 @@ Delete the shell of the given id
 
 ### Event channel
 
-**`ws:/web/api/console/:console_id/data`**
+**`ws://127.0.0.1:5654/web/api/console/{console_id}/data?token={jwt_token}`**
 
 Web socket for the bi-directional messages
 
@@ -1686,11 +1686,12 @@ The `session` field is an identifier that the UI client can use to route the res
 
 #### markdown.render
 
-`markdown.render(markdown, darkMode)`
+`markdown.render(markdown, darkMode, referer)`
 
 *Params*
 - `markdown` *string*
 - `darkMode` *bool*
+- `referer` *string* - the referer URL
 
 *Return*
 
@@ -1711,7 +1712,8 @@ The `session` field is an identifier that the UI client can use to route the res
         "method": "markdown.render",
         "params": [
             "string",
-            false
+            false,
+            "string"
         ]
     }
 }
@@ -1875,6 +1877,149 @@ The `session` field is an identifier that the UI client can use to route the res
         "jsonrpc": "2.0",
         "id": 20,
         "result": {}
+    }
+}
+```
+
+</details>
+
+#### server.info.statz
+
+`server.info.statz(names)`
+
+*Params*
+- `names` *array<string>* - metric names
+
+*Return*
+
+- `object<ServerStatzResponse>|error` - visualization specifications grouped by name
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "server.info.statz",
+        "params": [
+            []
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {}
+    }
+}
+```
+
+</details>
+
+#### server.info.query
+
+`server.info.query(maxRows, pattern)`
+
+*Params*
+- `maxRows` *int* - maximum row count
+- `pattern` *array<string>* - wildcard filters for metric keys
+
+*Return*
+
+- `object<StatzQueryResult>|error` - tabular metric query result
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "server.info.query",
+        "params": [
+            0,
+            []
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {}
+    }
+}
+```
+
+</details>
+
+#### server.info.keys
+
+`server.info.keys(pattern)`
+
+*Params*
+- `pattern` *array<string>* - wildcard filters for metric keys
+
+*Return*
+
+- `array<string>|error` - sorted metric key names
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "server.info.keys",
+        "params": [
+            []
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": []
     }
 }
 ```
@@ -3039,14 +3184,26 @@ mgmt server implements
 
 #### key.generate
 
-`key.generate(id)`
+`key.generate(id, typ, notBefore, notAfter, store)`
 
 *Params*
 - `id` *string*
+- `typ` *string* - the type of key to generate, must be RSA or ECDSA
+- `notBefore` *int64* - the start time of the key's validity period in Unix timestamp (sec.)
+    if not specified or 0, the current time will be used
+- `notAfter` *int64* - the end time of the key's validity period in Unix timestamp (sec.)
+    if not specified or 0, the default period of 10 years will be used
+- `store` *bool* - whether to store the key pair in the server's key store
 
 *Return*
 
-- `any|error`
+- `any|error` - the generated key information
+    - `id`: the identifier of the key pair
+    - `certificate`: the certificate of the key pair
+    - `key`: the private key of the key pair
+    - `token`: the token associated with the key pair
+    - `serverKey`: the server's certificate (if store is true)
+    - `zip`: a zip archive containing the key pair and server certificate (if store is true)
 
 <details>
 <summary>Request/Response JSON</summary>
@@ -3062,7 +3219,11 @@ mgmt server implements
         "id": 20,
         "method": "key.generate",
         "params": [
-            "string"
+            "string",
+            "string",
+            0,
+            0,
+            false
         ]
     }
 }
@@ -3439,7 +3600,7 @@ mgmt server implements
 `http.debug.set(m)`
 
 *Params*
-- `m` *object*
+- `m` *object* - debug setting map with enable and logLatency keys
 
 *Return*
 
@@ -3475,6 +3636,53 @@ mgmt server implements
         "jsonrpc": "2.0",
         "id": 20,
         "result": {}
+    }
+}
+```
+
+</details>
+
+#### http.split
+
+`http.split(content)`
+
+*Params*
+- `content` *string* - HTTP script text
+
+*Return*
+
+- `array<object<util.HttpStatement>>|error` - parsed HTTP statements array
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "http.split",
+        "params": [
+            "string"
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": []
     }
 }
 ```

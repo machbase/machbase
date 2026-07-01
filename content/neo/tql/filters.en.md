@@ -17,26 +17,24 @@ Data without any noise, in a purely theoretical sense, can only be mathematicall
 
 {{< /tab >}}
 {{< tab name="SCRIPT" >}}
-```js {{linenos=table,hl_lines=[5]}}
+```js {{linenos=table,hl_lines=[6]}}
 SCRIPT({
-    $.result = { columns: ["val", "sig"], types: ["double", "double"] }
+    x = []; y = [];
     for (i = 1.0; i <= 5.0; i+=0.03) {
         val = Math.round(i*100)/100;
-        sig = Math.sin( 1.2*2*Math.PI*val );
-        $.yield( val, sig );
+        x.push( val );
+        y.push( Math.sin( 1.2*2*Math.PI*val ) );
     }
-})
-CHART(
-    size("600px", "400px"),
-    chartOption({
-        xAxis:{ type: "category", data: column(0)},
+    $.yield({
+        xAxis:{ type: "category", data: x},
         yAxis:{ max:1.5, min:-1.5 },
         series:[
-            { type: "line", data: column(1), name:"value" },
+            { type: "line", data: y, name:"value" },
         ],
         legend: { bottom: 10 },
-    })
-)
+    });
+})
+CHART(size("600px", "400px"))
 ```
 {{< /tab >}}
 {{< tab name="SET-MAP" >}}
@@ -72,29 +70,27 @@ Generally, noise tends to be higher frequency than the data we intend to observe
 
 {{< /tab >}}
 {{< tab name="SCRIPT" >}}
-```js {{linenos=table,hl_lines=[6,7]}}
+```js {{linenos=table,hl_lines=[4,7,8]}}
 SCRIPT({
-    $.result = { columns: ["val", "sig", "noise"], types: ["double", "double", "double"] }
+    x = []; y = []; z = [];
     for (i = 1.0; i <= 5.0; i+=0.03) {
         val = Math.round(i*100)/100;
-        sig = Math.sin( 1.2*2*Math.PI*val );
-        noise = 0.09 * Math.cos(9*2*Math.PI*val) + 
-                0.15 * Math.sin(12*2*Math.PI*val);
-        $.yield( val, sig, noise );
+        x.push( val );
+        y.push( Math.sin( 1.2*2*Math.PI*val ) );
+        z.push( 0.09 * Math.cos(9*2*Math.PI*val) +
+                0.15 * Math.sin(12*2*Math.PI*val) );
     }
-})
-CHART(
-    size("600px", "400px"),
-    chartOption({
-        xAxis:{ type: "category", data: column(0)},
+    $.yield({
+        xAxis:{ type: "category", data: x},
         yAxis:{ max:1.5, min:-1.5 },
         series:[
-            { type: "line", data: column(1), name:"value" },
-            { type: "line", data: column(2), name:"noise" },
+            { type: "line", data: y, name:"value" },
+            { type: "line", data: z, name:"noise" },
         ],
         legend: { bottom: 10 },
-    })
-)
+    });
+})
+CHART(size("600px", "400px"))
 ```
 {{< /tab >}}
 {{< tab name="SET-MAP" >}}
@@ -136,26 +132,25 @@ In databases, the stored values are a blend of the aforementioned noise, and dur
 {{< tab name="SCRIPT" >}}
 ```js {{linenos=table,hl_lines=[6,7,17]}}
 SCRIPT({
-    $.result = { columns: ["val", "sig"], types: ["double", "double"] }
+    x = []; y = [];
     for (i = 1.0; i <= 5.0; i+=0.03) {
         val = Math.round(i*100)/100;
         sig = Math.sin( 1.2*2*Math.PI*val );
-        noise = 0.09 * Math.cos(9*2*Math.PI*val) + 
+        noise = 0.09 * Math.cos(9*2*Math.PI*val) +
                 0.15 * Math.sin(12*2*Math.PI*val);
-        $.yield( val, sig + noise );
+        x.push( val );
+        y.push( sig+noise );
     }
-})
-CHART(
-    size("600px", "400px"),
-    chartOption({
-        xAxis:{ type: "category", data: column(0)},
+    $.yield({
+        xAxis:{ type: "category", data: x},
         yAxis:{ max:1.5, min:-1.5 },
         series:[
-            { type: "line", data: column(1), name:"value+noise" },
+            { type: "line", data: y, name:"value+noise" },
         ],
         legend: { bottom: 10 },
-    })
-)
+    });
+})
+CHART(size("600px", "400px"))
 ```
 {{< /tab >}}
 {{< tab name="SET-MAP" >}}
@@ -191,32 +186,32 @@ Imagine the zero-point calibration process for sensors. When we accumulate conse
 
 {{< /tab >}}
 {{< tab name="SCRIPT" >}}
-```js {{linenos=table,hl_lines=[4,11]}}
+```js {{linenos=table,hl_lines=[4,13]}}
 SCRIPT({
     const filter = require("mathx/filter")
     const { arrange } = require("mathx");
     const avg = new filter.Avg();
-}, {
+    x = []; y = []; z = [];
     for( val of arrange(1, 5, 0.03)) {
         val = Math.round(val*100)/100;
         sig = Math.sin( 1.2*2*Math.PI*val );
         noise = 0.09 * Math.cos(9*2*Math.PI*val) + 
                 0.15 * Math.sin(12*2*Math.PI*val);
-        $.yield( val, sig + noise, avg.eval(sig+noise) );
+        x.push( val );
+        y.push( sig );
+        z.push( avg.eval(sig+noise) );
     }
-})
-CHART(
-    size("600px", "400px"),
-    chartOption({
-        xAxis:{ type: "category", data: column(0)},
+    $.yield({
+        xAxis:{ type: "category", data: x},
         yAxis:{ max:1.5, min:-1.5 },
         series:[
-            { type: "line", data: column(1), name:"value+noise" },
-            { type: "line", data: column(2), name:"AVG" },
+            { type: "line", data: y, name:"value+noise" },
+            { type: "line", data: z, name:"AVG" },
         ],
         legend: { bottom: 10 },
-    })
-)
+    });
+})
+CHART(size("600px", "400px"))
 ```
 {{< /tab >}}
 {{< tab name="SET-MAP" >}}
@@ -254,33 +249,32 @@ Instead of calculating the average for the entire accumulated sample, we use a f
 
 {{< /tab >}}
 {{< tab name="SCRIPT" >}}
-```js {{linenos=table,hl_lines=[4,12]}}
+```js {{linenos=table,hl_lines=[4,13]}}
 SCRIPT({
-    const { arrange } = require("mathx");
     const filter = require("mathx/filter")
+    const { arrange } = require("mathx");
     const movavg = new filter.MovAvg(10);
-    $.result = { columns: ["val", "sig", "ma10"], types: ["double", "double", "double"] }
-}, {
+    x = []; y = []; z = [];
     for( val of arrange(1, 5, 0.03)) {
         val = Math.round(val*100)/100;
         sig = Math.sin( 1.2*2*Math.PI*val );
         noise = 0.09 * Math.cos(9*2*Math.PI*val) + 
                 0.15 * Math.sin(12*2*Math.PI*val);
-        $.yield( val, sig + noise, movavg.eval(sig+noise) );
+        x.push( val );
+        y.push( sig );
+        z.push( movavg.eval(sig+noise) );
     }
-})
-CHART(
-    size("600px", "400px"),
-    chartOption({
-        xAxis:{ type: "category", data: column(0)},
+    $.yield({
+        xAxis:{ type: "category", data: x},
         yAxis:{ max:1.5, min:-1.5 },
         series:[
-            { type: "line", data: column(1), name:"value+noise" },
-            { type: "line", data: column(2), name:"MA(10)" },
+            { type: "line", data: y, name:"value+noise" },
+            { type: "line", data: z, name:"MA(10)" },
         ],
         legend: { bottom: 10 },
-    })
-)
+    });
+})
+CHART(size("600px", "400px"))
 ```
 {{< /tab >}}
 {{< tab name="SET-MAP" >}}
@@ -322,33 +316,32 @@ To address this, a common practice is to apply different weights to the most rec
 
 {{< /tab >}}
 {{< tab name="SCRIPT" >}}
-```js {{linenos=table,hl_lines=[4,12]}}
+```js {{linenos=table,hl_lines=[4,13]}}
 SCRIPT({
-    const { arrange } = require("mathx");
     const filter = require("mathx/filter")
+    const { arrange } = require("mathx");
     const lowpass = new filter.Lowpass(0.40);
-    $.result = { columns: ["val", "sig", "lpf"], types: ["double", "double", "double"] }
-}, {
+    x = []; y = []; z = [];
     for( val of arrange(1, 5, 0.03)) {
         val = Math.round(val*100)/100;
         sig = Math.sin( 1.2*2*Math.PI*val );
         noise = 0.09 * Math.cos(9*2*Math.PI*val) + 
                 0.15 * Math.sin(12*2*Math.PI*val);
-        $.yield( val, sig + noise, lowpass.eval(sig+noise) );
+        x.push( val );
+        y.push( sig );
+        z.push( lowpass.eval(sig+noise) );
     }
-})
-CHART(
-    size("600px", "400px"),
-    chartOption({
-        xAxis:{ type: "category", data: column(0)},
+    $.yield({
+        xAxis:{ type: "category", data: x},
         yAxis:{ max:1.5, min:-1.5 },
         series:[
-            { type: "line", data: column(1), name:"value+noise" },
-            { type: "line", data: column(2), name:"lpf" },
+            { type: "line", data: y, name:"value+noise" },
+            { type: "line", data: z, name:"lpf" },
         ],
         legend: { bottom: 10 },
-    })
-)
+    });
+})
+CHART(size("600px", "400px"))
 ```
 {{< /tab >}}
 {{< tab name="SET-MAP" >}}
@@ -390,33 +383,34 @@ Feel free to experiment with different model values and observe how the graph re
 
 {{< /tab >}}
 {{< tab name="SCRIPT" >}}
-```js {{linenos=table,hl_lines=[4,12]}}
+```js {{linenos=table,hl_lines=[4,15]}}
 SCRIPT({
-    const { arrange } = require("mathx");
     const filter = require("mathx/filter")
+    const { arrange } = require("mathx");
     const kalman = new filter.Kalman(0.1, 0.5, 1.0);
-    $.result = { columns: ["val", "sig", "kalman"], types: ["double", "double", "double"] }
-}, {
+    x = []; y = []; z = [];
+    ts = new Date();
     for( val of arrange(1, 5, 0.03)) {
         val = Math.round(val*100)/100;
         sig = Math.sin( 1.2*2*Math.PI*val );
         noise = 0.09 * Math.cos(9*2*Math.PI*val) + 
                 0.15 * Math.sin(12*2*Math.PI*val);
-        $.yield( val, sig+noise, kalman.eval(new Date(), sig+noise) );
+        ts.setSeconds(ts.getSeconds() + 1);
+        x.push( val );
+        y.push( sig );
+        z.push( kalman.eval(ts, sig+noise) );
     }
-})
-CHART(
-    size("600px", "400px"),
-    chartOption({
-        xAxis:{ type: "category", data: column(0)},
+    $.yield({
+        xAxis:{ type: "category", data: x},
         yAxis:{ max:1.5, min:-1.5 },
         series:[
-            { type: "line", data: column(1), name:"value+noise" },
-            { type: "line", data: column(2), name:"kalman" },
+            { type: "line", data: y, name:"value+noise" },
+            { type: "line", data: z, name:"kalman" },
         ],
         legend: { bottom: 10 },
-    })
-)
+    });
+})
+CHART(size("600px", "400px"))
 ```
 {{< /tab >}}
 {{< tab name="SET-MAP" >}}

@@ -25,6 +25,32 @@ Open a new *tql* editor on the web ui and copy the code below and run it.
 In this example, `oscillator()` generates a composite wave of 15Hz 1.0 + 24Hz 1.5.
 And `CHART_SCATTER()` has `dataZoom()` option function that provides an slider under the x-Axis.
 
+{{< tabs >}}
+{{< tab name="SCRIPT" >}}
+```js {linenos=table,hl_lines=["3-11"],linenostart=1}
+SCRIPT({
+    const m = require('mathx');
+    const data = m.oscillator({
+        components: [
+            { frequencyHz:15, amplitude:1.0 },
+            { frequencyHz:24, amplitude:1.5 },
+        ],
+        timeRange: { from:"now", to:"now+10s"},
+        sample:"1000Hz",
+        noise: { amplitude: 0.3 },
+    });
+    const s = m.series(data, {xKey:"ts", yKey:"amp"})
+    $.yield({
+        xAxis:{ data: s.ts },
+        yAxis: {},
+        series: [ { type:"scatter", data: s.amp } ],
+        dataZoom: { type: 'slider', start: 95, end: 100 },
+    })
+})
+CHART( size("600px", "350px") )
+```
+{{</ tab >}}
+{{< tab name="FAKE" >}}
 ```js {linenos=table,hl_lines=["2-5"],linenostart=1}
 FAKE( 
   oscillator(
@@ -34,6 +60,8 @@ FAKE(
 )
 CHART_SCATTER( size("600px", "350px"), dataZoom('slider', 95, 100) )
 ```
+{{</ tab >}}
+{{</ tabs >}}
 
 {{< figure src="/images/web-fft-tql-fake.png" width="500" >}}
 
@@ -41,6 +69,28 @@ CHART_SCATTER( size("600px", "350px"), dataZoom('slider', 95, 100) )
 
 Store the generated data into the database with the tag name 'signal'.
 
+{{< tabs >}}
+{{< tab name="SCRIPT" >}}
+```js {linenos=table,hl_lines=[13,16]}
+SCRIPT({
+    const m = require('mathx');
+    const data = m.oscillator({
+        components: [
+            { frequencyHz:15, amplitude:1.0 },
+            { frequencyHz:24, amplitude:1.5 },
+        ],
+        timeRange: { from:"now", to:"now+10s"},
+        sample:"1000Hz",
+        noise: { amplitude: 0.3 },
+    });
+    for( d of data ) {
+        $.yield(d[0], d[1]);
+    }
+})
+SQL('insert into example values(?,?,?)','signal',value(0),value(1))
+```
+{{</ tab >}}
+{{< tab name="FAKE" >}}
 ```js {linenos=table,hl_lines=["10"],linenostart=1}
 FAKE(
   oscillator(
@@ -51,14 +101,38 @@ FAKE(
 // |    0      1
 // +--> time   magnitude
 // |
-INSERT( 'time', 'value', table('example'), tag('signal') )
+SQL('insert into example values(?,?,?)','signal',value(0),value(1))
 ```
+{{</ tab >}}
+{{</ tabs >}}
 
 It will show "10000 rows inserted." message in the "Result" pane.
 
 For a comment, it took about *270ms* in a test machine (Apple mac mini M1), but using `APPEND()` method in the example below, took *65ms* (x4 faster).
 
-```js {linenos=table,hl_lines=["14"],linenostart=1}
+{{< tabs >}}
+{{< tab name="SCRIPT" >}}
+```js {linenos=table,hl_lines=[13,16]}
+SCRIPT({
+    const m = require('mathx');
+    const data = m.oscillator({
+        components: [
+            { frequencyHz:15, amplitude:1.0 },
+            { frequencyHz:24, amplitude:1.5 },
+        ],
+        timeRange: { from:"now", to:"now+10s"},
+        sample:"1000Hz",
+        noise: { amplitude: 0.3 },
+    });
+    for( d of data ) {
+        $.yield('signal', d[0], d[1]);
+    }
+})
+APPEND( table('example') )
+```
+{{</ tab >}}
+{{< tab name="FAKE" >}}
+```js {linenos=table,hl_lines=[10,14]}
 FAKE(
   oscillator(
     freq(15, 1.0), freq(24, 1.5),
@@ -74,6 +148,8 @@ PUSHVALUE(0,'signal')
 // |
 APPEND( table('example') )
 ```
+{{</ tab >}}
+{{</ tabs >}}
 
 {{< callout type="warning" >}}
 The 'APPEND' works only when fields of input records exactly match with columns of the table in order and types.
@@ -83,10 +159,28 @@ The 'APPEND' works only when fields of input records exactly match with columns 
 
 The code below reads the stored data from the 'example' table.
 
+{{< tabs >}}
+{{< tab name="SQL">}}
+```js
+SQL(`select time, value from example where name = 'signal' order by time`)
+CHART(
+    size("600px", "350px"), 
+    chartOption({
+        xAxis:{ data: column(0) },
+        yAxis:{},
+        series:[ {type:"line", data: column(1), showAllSymbol:true } ],
+        dataZoom:{type:"slider", start:95, end: 100},
+    })
+)
+```
+{{</ tab >}}
+{{< tab name="SQL_SELECT">}}
 ```js
 SQL_SELECT('time', 'value', from('example', 'signal'), between('last-10s', 'last'))
 CHART_LINE( size("600px", "350px"), dataZoom('slider', 95, 100))
 ```
+{{</ tab >}}
+{{</ tabs >}}
 
 {{< figure src="/images/web-fft-tql-query.png" width="500" >}}
 
@@ -95,9 +189,38 @@ CHART_LINE( size("600px", "350px"), dataZoom('slider', 95, 100))
 Add few data manipulation function between `SQL_SELECT()` source and `CHART_LINE()` sink.
 
 {{< tabs >}}
+{{< tab name="SQL">}}
+```js
+SQL(`select time, value from example where name = 'signal' order by time`)
+CHART(
+    size("600px", "350px"), 
+    chartOption({
+        xAxis:{ data: column(0) },
+        yAxis:{},
+        series:[ {type:"line", data: column(1), showAllSymbol:true } ],
+        dataZoom:{type:"slider", start:95, end: 100},
+    })
+)
+```
+{{</ tab >}}
+{{< tab name="SQL_SELECT">}}
+```js
+SQL_SELECT('time', 'value', from('example', 'signal'), between('last-10s', 'last'))
+CHART_LINE( size("600px", "350px"), dataZoom('slider', 95, 100))
+```
+{{</ tab >}}
+{{</ tabs >}}
+
+{{< figure src="/images/web-fft-tql-query.png" width="500" >}}
+
+## 고속 푸리에 변환 수행
+
+`SQL_SELECT()` 소스와 `CHART_LINE()` 싱크 사이에 몇 가지 데이터 변환 함수를 추가합니다.
+
+{{< tabs >}}
 {{< tab name="GROUPBYKEY" >}}
 ```js {linenos=table,hl_lines=["2-4"],linenostart=1}
-SQL_SELECT('time', 'value', from('example', 'signal'), between('last-10s', 'last'))
+SQL(`select time, value from example where name = 'signal' order by time`)
 MAPKEY('sample')
 GROUPBYKEY()
 FFT()
@@ -109,10 +232,35 @@ CHART_LINE(
 )
 ```
 {{< /tab >}}
-{{< tab name="SCRIPT" >}}
-
+{{< tab name="SCRIPT-1" >}}
+```js {linenos=table,hl_lines=12}
+SQL(`select time, value from example where name = 'signal' order by time`)
+SCRIPT({
+    var times = [];
+    var values = [];
+},{
+    ts = $.values[0];
+    val = $.values[1];
+    times.push(ts);
+    values.push(val);
+},{
+    const mx = require("mathx");
+    const result = mx.fft(times, values);
+    const s = mx.series(result, {xKey:"freq", yKey:"amp"});
+    $.yield({
+        xAxis:{ name: "Hz", data: s.freq, axisLabel:{ }},
+        yAxis:{ name: "Amplitude" },
+        series:[ { type:"line", data: s.amp} ],
+        dataZoom: { type:"slider", start: 0, end: 10 },
+        tooltip:{ trigger: "axis" },
+    });
+})
+CHART(size("600px", "350px"))
+```
+{{</ tab >}}
+{{< tab name="SCRIPT-2" >}}
 ```js {linenos=table,hl_lines=[11,12],linenostart=1}
-SQL_SELECT('time', 'value', from('example', 'signal'), between('last-10s', 'last'))
+SQL(`select time, value from example where name = 'signal' order by time`)
 SCRIPT({
     var times = [];
     var values = [];
@@ -124,8 +272,8 @@ SCRIPT({
 },{
     const mx = require("mathx");
     result = mx.fft(times, values);
-    for(i = 0; i < result.x.length; i++) {
-        $.yield(result.x[i], result.y[i]);
+    for(i = 0; i < result.length; i++) {
+        $.yield(...result[i]);
     }
 })
 CHART_LINE(
