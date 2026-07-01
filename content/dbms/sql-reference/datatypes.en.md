@@ -92,14 +92,16 @@ documents. Up to 64 megabytes can be stored (same as TEXT). Lookup and Volatile
 tables do not accept `BINARY` columns.
 
 Tag-table `BINARY(n)` is a fixed-length variant for sensor frames.
-Valid sizes are 1 to 32K-1 (32767) bytes. Inputs must be hex strings (0x prefix
-optional); odd-length inputs pad the leading nibble with 0, and shorter values
-pad with 0x00 to the declared length. Over-length or non-hex input raises
+Valid sizes are 1 to 32K-1 (32767) bytes. SQL accepts `X'...'`, `B'...'`, and
+`O'...'` binary literals, including lowercase prefixes. String input in the
+legacy form `'0x...'` is still supported for compatibility. If the input exceeds
+the target `BINARY(n)` length, insertion fails regardless of the source kind with
 `[ERR-02233: Error occurred at column (n): (Invalid insert value.)]`.
 Metadata reports the declared byte length, while SQL `LENGTH(binary_col)` and
 machsql text output exclude trailing zero padding added for shorter inputs.
 machsql displays uppercase hex without the `0x` prefix. This fixed-length
-`BINARY(n)` is accepted only in Tag tables.
+`BINARY(n)` is accepted only in Tag tables. For detailed input formats, see
+[Binary Columns](../../table-types/tag-tables/binary-columns/).
 
 ### json
 

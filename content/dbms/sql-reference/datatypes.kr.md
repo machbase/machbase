@@ -92,14 +92,16 @@ VARCHAR 크기를 초과하는 텍스트나 문서를 저장하기 위한 데이
 Lookup 및 Volatile 테이블은 `BINARY` 컬럼을 허용하지 않습니다.
 
 Tag 테이블의 `BINARY(n)`은 센서 프레임용 고정 길이 변형입니다.
-유효 길이는 1~32K-1(32767)바이트이며, 입력은 헥스 문자열(0x 접두 선택)만
-허용합니다. 홀수 자릿수는 상위 니블을 0으로, 선언 길이보다 짧으면 0x00으로
-패딩합니다. 길이 초과나 비-헥스 문자는
+유효 길이는 1~32K-1(32767)바이트입니다. SQL에서는 `X'...'`, `B'...'`,
+`O'...'` binary literal을 사용할 수 있으며, 소문자 prefix도 지원합니다.
+기존 호환성을 위해 문자열 형태의 `'0x...'` 입력도 계속 사용할 수 있습니다.
+대상 `BINARY(n)` 길이를 초과하는 입력은 source 종류와 무관하게
 `[ERR-02233: Error occurred at column (n): (Invalid insert value.)]` 오류를 냅니다.
 메타데이터는 선언된 바이트 길이를 반환하지만, SQL `LENGTH(binary_col)`와
 machsql 텍스트 출력은 짧은 입력값에 붙은 뒤쪽 0 패딩을 제외합니다.
 machsql은 `0x` 없는 대문자 헥스로 출력합니다. 이 고정 길이 `BINARY(n)`은
-Tag 테이블에서만 지원됩니다.
+Tag 테이블에서만 지원됩니다. 자세한 입력 형식은
+[Binary 컬럼](../../table-types/tag-tables/binary-columns/)을 참고하십시오.
 
 ### json
 
