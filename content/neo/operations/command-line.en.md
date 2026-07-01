@@ -53,13 +53,13 @@ Start machbase-neo server process.
 |:------------------------|:------------|:------------------------------------------------------------------------- |
 | `--log-filename`        | `-` (stdout)| log file path<br/> ex) `--log-filename /data/logs/machbase-neo.log`       |
 | `--log-level`           | `INFO`      | log level. TRACE, DEBUG, INFO, WARN, ERROR<br/> ex) `--log-level INFO`    |
-| `--log-append`          | `true`      | append existing log file.               {{< neo_since ver="8.0.13" />}}   |
-| `--log-rotate-schedule` | `@midnight` | time scheduled log file rotation        {{< neo_since ver="8.0.13" />}}   |
-| `--log-max-size`        | `10`        | file max size in MB                     {{< neo_since ver="8.0.13" />}}   |
-| `--log-max-backups`     | `1`         | maximum log file backups                {{< neo_since ver="8.0.13" />}}   |
-| `--log-max-age`         | `7`         | maximum days in backup files            {{< neo_since ver="8.0.13" />}}   | 
-| `--log-compress`        | `false`     | gzip compress the backup files          {{< neo_since ver="8.0.13" />}}   |
-| `--log-time-utc`        | `false`     | use UTC time for logging                {{< neo_since ver="8.0.13" />}}   |
+| `--log-append`          | `true`      | append existing log file.                                                 |
+| `--log-rotate-schedule` | `@midnight` | time scheduled log file rotation                                          |
+| `--log-max-size`        | `10`        | file max size in MB                                                       |
+| `--log-max-backups`     | `1`         | maximum log file backups                                                  |
+| `--log-max-age`         | `7`         | maximum days in backup files                                              | 
+| `--log-compress`        | `false`     | gzip compress the backup files                                            |
+| `--log-time-utc`        | `false`     | use UTC time for logging                                                  |
 
 **Listener flags**
 
@@ -67,9 +67,9 @@ Start machbase-neo server process.
 |:-----------------|:----------|-------------------------------- |
 | `--shell-port`   | `5652`    | ssh listen port                 |
 | `--mqtt-port`    | `5653`    | mqtt listen port                |
-| `--mqtt-sock`    | `/tmp/machbase-neo-mqtt-5653.sock`| mqtt unix socket {{< neo_since ver="8.0.36" />}}|
+| `--mqtt-sock`    | `/tmp/machbase-neo-mqtt-5653.sock`| mqtt unix socket |
 | `--http-port`    | `5654`    | http listen port                |
-| `--http-sock`    | `/tmp/machbase-neo-http-5654.sock` | http unix socket {{< neo_since ver="8.0.36" />}}|
+| `--http-sock`    | `/tmp/machbase-neo-http-5654.sock` | http unix socket |
 | `--mach-port`    | `5656`    | machbase native listen port     |
 
 {{< callout type="info" emoji="📌">}}

@@ -49,17 +49,17 @@ machbase-neo 서버 프로세스를 시작합니다.
 
 **로그 플래그**
 
-| flag                    | default     | desc                                                                      |
-|:------------------------|:------------|:------------------------------------------------------------------------- |
+| flag                    | default     | desc                                                                   |
+|:------------------------|:------------|:---------------------------------------------------------------------- |
 | `--log-filename`        | `-` (stdout)| 로그 파일 경로<br/> 예) `--log-filename /data/logs/machbase-neo.log`       |
 | `--log-level`           | `INFO`      | 로그 레벨: TRACE, DEBUG, INFO, WARN, ERROR<br/> 예) `--log-level INFO`    |
-| `--log-append`          | `true`      | 기존 로그 파일에 이어쓰기 {{< neo_since ver="8.0.13" />}}                |
-| `--log-rotate-schedule` | `@midnight` | 로그 롤링 스케줄 {{< neo_since ver="8.0.13" />}}                          |
-| `--log-max-size`        | `10`        | 로그 파일 최대 크기(MB) {{< neo_since ver="8.0.13" />}}                  |
-| `--log-max-backups`     | `1`         | 백업 로그 파일 최대 개수 {{< neo_since ver="8.0.13" />}}                 |
-| `--log-max-age`         | `7`         | 백업 파일 보관 일수 {{< neo_since ver="8.0.13" />}}                      |
-| `--log-compress`        | `false`     | 백업 파일 gzip 압축 {{< neo_since ver="8.0.13" />}}                      |
-| `--log-time-utc`        | `false`     | 로그 타임스탬프를 UTC로 기록 {{< neo_since ver="8.0.13" />}}              |
+| `--log-append`          | `true`      | 기존 로그 파일에 이어쓰기                                                    |
+| `--log-rotate-schedule` | `@midnight` | 로그 롤링 스케줄                                                           |
+| `--log-max-size`        | `10`        | 로그 파일 최대 크기(MB)                                                    |
+| `--log-max-backups`     | `1`         | 백업 로그 파일 최대 개수                                                    |
+| `--log-max-age`         | `7`         | 백업 파일 보관 일수                                                        |
+| `--log-compress`        | `false`     | 백업 파일 gzip 압축                                                       |
+| `--log-time-utc`        | `false`     | 로그 타임스탬프를 UTC로 기록                                                 |
 
 **리스너 플래그**
 
@@ -67,9 +67,9 @@ machbase-neo 서버 프로세스를 시작합니다.
 |:-----------------|:----------|-------------------------------------------|
 | `--shell-port`   | `5652`    | SSH 수신 포트                              |
 | `--mqtt-port`    | `5653`    | MQTT 수신 포트                             |
-| `--mqtt-sock`    | `/tmp/machbase-neo-mqtt-5653.sock`| MQTT 유닉스 소켓 {{< neo_since ver="8.0.36" />}}|
+| `--mqtt-sock`    | `/tmp/machbase-neo-mqtt-5653.sock`| MQTT 유닉스 소켓    |
 | `--http-port`    | `5654`    | HTTP 수신 포트                             |
-| `--http-sock`    | `/tmp/machbase-neo-http-5654.sock` | HTTP 유닉스 소켓 {{< neo_since ver="8.0.36" />}}|
+| `--http-sock`    | `/tmp/machbase-neo-http-5654.sock` | HTTP 유닉스 소켓   |
 | `--mach-port`    | `5656`    | Machbase 네이티브 수신 포트                |
 
 {{< callout type="info" emoji="📌">}}
