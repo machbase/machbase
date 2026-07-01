@@ -201,13 +201,13 @@ GET http://127.0.0.1:5654/db/query
 ```json
 {
   "data": {
-  "columns": [ "NAME", "TIME", "VALUE" ],
-  "types": [ "string", "datetime", "double" ],
-  "rows": [
-    [ "wave.sin", 1705381958775759000, 0.8563571936170834 ],
-    [ "wave.sin", 1705381958785759000, 0.9011510331449053 ],
-    [ "wave.sin", 1705381958795759000, 0.9379488170706388 ]
-  ]
+    "columns": [ "NAME", "TIME", "VALUE" ],
+    "types": [ "string", "datetime", "double" ],
+    "rows": [
+      [ "wave.sin", 1705381958775759000, 0.8563571936170834 ],
+      [ "wave.sin", 1705381958785759000, 0.9011510331449053 ],
+      [ "wave.sin", 1705381958795759000, 0.9379488170706388 ]
+    ]
   },
   "success": true,
   "reason": "success",
@@ -227,13 +227,13 @@ GET http://127.0.0.1:5654/db/query
 ```json
 {
   "data": {
-  "columns": [ "NAME", "TIME", "VALUE" ],
-  "types": [ "string", "datetime", "double" ],
-  "cols": [
-    [ "wave.sin", "wave.sin", "wave.sin" ],
-    [ 1705381958775759000, 1705381958785759000, 1705381958795759000 ],
-    [ 0.8563571936170834, 0.9011510331449053, 0.9379488170706388 ]
-  ]
+    "columns": [ "NAME", "TIME", "VALUE" ],
+    "types": [ "string", "datetime", "double" ],
+    "cols": [
+      [ "wave.sin", "wave.sin", "wave.sin" ],
+      [ 1705381958775759000, 1705381958785759000, 1705381958795759000 ],
+      [ 0.8563571936170834, 0.9011510331449053, 0.9379488170706388 ]
+    ]
   },
   "success": true,
   "reason": "success",
@@ -253,13 +253,13 @@ GET http://127.0.0.1:5654/db/query
 ```json
 {
   "data": {
-  "columns": [ "NAME", "TIME", "VALUE" ],
-  "types": [ "string", "datetime", "double" ],
-  "rows": [
-    "wave.sin", 1705381958775759000, 0.8563571936170834,
-    "wave.sin", 1705381958785759000, 0.9011510331449053,
-    "wave.sin", 1705381958795759000, 0.9379488170706388
-  ]
+    "columns": [ "NAME", "TIME", "VALUE" ],
+    "types": [ "string", "datetime", "double" ],
+    "rows": [
+      "wave.sin", 1705381958775759000, 0.8563571936170834,
+      "wave.sin", 1705381958785759000, 0.9011510331449053,
+      "wave.sin", 1705381958795759000, 0.9379488170706388
+    ]
   },
   "success": true,
   "reason": "success",
@@ -279,13 +279,13 @@ GET http://127.0.0.1:5654/db/query
 ```json
 {
   "data": {
-  "columns": [ "NAME", "TIME", "VALUE" ],
-  "types": [ "string", "datetime", "double" ],
-  "rows": [
-    { "NAME": "wave.sin", "TIME": 1705381958775759000, "VALUE": 0.8563571936170834 },
-    { "NAME": "wave.sin", "TIME": 1705381958785759000, "VALUE": 0.9011510331449053 },
-    { "NAME": "wave.sin", "TIME": 1705381958795759000, "VALUE": 0.9379488170706388 }
-  ]
+    "columns": [ "NAME", "TIME", "VALUE" ],
+    "types": [ "string", "datetime", "double" ],
+    "rows": [
+      { "NAME": "wave.sin", "TIME": 1705381958775759000, "VALUE": 0.8563571936170834 },
+      { "NAME": "wave.sin", "TIME": 1705381958785759000, "VALUE": 0.9011510331449053 },
+      { "NAME": "wave.sin", "TIME": 1705381958795759000, "VALUE": 0.9379488170706388 }
+    ]
   },
   "success": true,
   "reason": "success",
@@ -621,7 +621,12 @@ Content-Type: application/json
 ```sh
 curl -o - -X POST http://127.0.0.1:5654/db/query \
     -H 'Content-Type: application/json' \
-    -d '{ "q":"select * from EXAMPLE limit ?", "p":[2] }'
+    --data-binary @- << 'EOF'
+{
+  "q": "select * from EXAMPLE limit ?",
+  "p": [2]
+}
+EOF
 ```
 {{< /tab >}}
 {{< tab name="Python" >}}
