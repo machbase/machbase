@@ -29,16 +29,16 @@ Machbase는 influxdb와 스키마가 다르기 때문에 일부 항목은 자동
 {{< tab name="HTTP" >}}
 ~~~
 ```http
-POST http://127.0.0.1:5654/metrics/write?db=tagdata
+POST http://127.0.0.1:5654/metrics/write?db=example&precision=ms
 
-my-car speed=87.6 167038034500000
+my-car speed=87.6 1782878977000
 ```
 ~~~
 {{< /tab >}}
 {{< tab name="cURL" >}}
 ```sh
-curl -o - -X POST "http://127.0.0.1:5654/metrics/write?db=tagdata" \
-  --data-binary 'my-car speed=87.6 167038034500000'
+curl -o - -X POST "http://127.0.0.1:5654/metrics/write?db=example&precision=ms" \
+  --data-binary 'my-car speed=87.6 1782878977000'
 ```
 {{< /tab >}}
 {{< tab name="Python" >}}
@@ -47,8 +47,8 @@ import requests
 
 response = requests.post(
   "http://127.0.0.1:5654/metrics/write",
-  params={"db": "tagdata"},
-  data="my-car speed=87.6 167038034500000",
+  params={"db": "example", "precision":"ms"},
+  data="my-car speed=87.6 1782878977000",
 )
 print(response.text)
 ```
@@ -56,9 +56,9 @@ print(response.text)
 {{< tab name="Javascript" >}}
 ```javascript
 async function writeLineProtocol() {
-  const response = await fetch("http://127.0.0.1:5654/metrics/write?db=tagdata", {
+  const response = await fetch("http://127.0.0.1:5654/metrics/write?db=example&precision=ms", {
     method: "POST",
-    body: "my-car speed=87.6 167038034500000",
+    body: "my-car speed=87.6 1782878977000",
   });
 
   console.log(await response.text());
@@ -73,16 +73,16 @@ using System.Net.Http;
 using System.Text;
 
 using var client = new HttpClient();
-using var content = new StringContent("my-car speed=87.6 167038034500000", Encoding.UTF8);
+using var content = new StringContent("my-car speed=87.6 1782878977000", Encoding.UTF8);
 
-var response = await client.PostAsync("http://127.0.0.1:5654/metrics/write?db=tagdata", content);
+var response = await client.PostAsync("http://127.0.0.1:5654/metrics/write?db=example&precision=ms", content);
 response.EnsureSuccessStatusCode();
 Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```
 {{< /tab >}}
 {{< /tabs >}}
 
-위 예시는 `name`=`my-car.speed`, `value`=87.6, `time`=167038034500000 값을 `tagdata` 테이블에 삽입합니다.
+위 예시는 `name`=`my-car.speed`, `value`=87.6, `time`=1782878977000 값을 `example` 테이블에 삽입합니다.
 
 **telegraf.conf 예시**
 
@@ -91,7 +91,7 @@ telegraf의 출력 설정을 Machbase Neo의 HTTP 포트로 지정하면,
 
 ```
 [[outputs.http]]
-url = "http://127.0.0.1:5654/metrics/write?db=tagdata"
+url = "http://127.0.0.1:5654/metrics/write?db=example"
 data_format = "influx"
 content_encoding = "gzip"
 ```
