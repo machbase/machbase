@@ -22,14 +22,13 @@ The file content will be stored in the directory with a generated unique name in
 
 ## Upload file
 
-This demo assumes the `EXAMPLE` table has already been created:
+This demo assumes the `STASH` table has already been created:
 
-```sql {hl_lines=[5]}
-CREATE TAG TABLE EXAMPLE(
+```sql {hl_lines=[4]}
+CREATE TAG TABLE STASH(
     NAME     VARCHAR(80)  primary key,
     TIME     DATETIME basetime,
-    VALUE    DOUBLE,
-    EXTDATA  JSON
+    DATA     JSON
 )
 ```
 
@@ -39,7 +38,7 @@ This example uses Visual Studio Code's REST Client extension.
 
 ~~~
 ```http
-POST http://127.0.0.1:5654/db/write/EXAMPLE
+POST http://127.0.0.1:5654/db/write/STASH
 Content-Type: multipart/form-data; boundary=----Boundary7MA4YWxkTrZu0gW
 
 ------Boundary7MA4YWxkTrZu0gW
@@ -51,15 +50,14 @@ Content-Disposition: form-data; name="TIME"
 
 now
 ------Boundary7MA4YWxkTrZu0gW
-Content-Disposition: form-data; name="VALUE"
-
-0
-------Boundary7MA4YWxkTrZu0gW
-Content-Disposition: form-data; name="EXTDATA"; filename="image_file.png"
+Content-Disposition: form-data; name="DATA"; filename="image_file.svg"
 X-Store-Dir: /tmp/store
-Content-Type: image/png
+Content-Type: image/svg
 
-< /data/image_file.png
+<svg xmlns="http://w3.org" width="100" height="100" viewBox="0 0 100 100">
+  <rect width="100" height="100" fill="red" />
+  <circle cx="50" cy="50" r="40" fill="blue" />
+</svg>
 ------Boundary7MA4YWxkTrZu0gW--
 ```
 ~~~
@@ -67,12 +65,16 @@ Content-Type: image/png
 {{< tab name="cURL" >}}
 This example uses `curl` with the `-F` option to make a POST request in *multipart/form-data* encoding.
 
-```sh {hl_lines=[5]}
-curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE' \
+```sh {hl_lines=[4]}
+curl -X POST 'http://127.0.0.1:5654/db/write/STASH' \
   -F 'NAME=camera-1' \
   -F 'TIME=now' \
-  -F 'VALUE=0' \
-  -F 'EXTDATA=@./data/image_file.png;headers="X-Store-Dir: /tmp/store"'
+  -F 'DATA=@-;filename=image_file.svg;headers="X-Store-Dir: /tmp/store"' << 'EOF'
+<svg xmlns="http://w3.org" width="100" height="100" viewBox="0 0 100 100">
+  <rect width="100" height="100" fill="red" />
+  <circle cx="50" cy="50" r="40" fill="blue" />
+</svg>
+EOF
 ```
 {{< /tab >}}
 {{< tab name="Python" >}}
@@ -81,13 +83,13 @@ curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE' \
   ```python
   import requests
 
-  url = "http://127.0.0.1:5654/db/write/EXAMPLE"
+  url = "http://127.0.0.1:5654/db/write/STASH"
 
-  with open("./data/image_file.png", "rb") as image_file:
+  with open("./data/image_file.svg", "rb") as image_file:
     response = requests.post(
       url,
-      data={"NAME": "camera-1", "TIME": "now", "VALUE": "0"},
-      files={"EXTDATA": ("image_file.png", image_file, "image/png")},
+      data={"NAME": "camera-1", "TIME": "now"},
+      files={"DATA": ("image_file.svg", image_file, "image/svg")},
       headers={"X-Store-Dir": "/tmp/store"},
     )
 
@@ -107,10 +109,9 @@ async function uploadFile(file) {
   const formData = new FormData();
   formData.append("NAME", "camera-1");
   formData.append("TIME", "now");
-  formData.append("VALUE", "0");
-  formData.append("EXTDATA", file, file.name);
+  formData.append("DATA", file, file.name);
 
-  const response = await fetch("http://127.0.0.1:5654/db/write/EXAMPLE", {
+  const response = await fetch("http://127.0.0.1:5654/db/write/STASH", {
     method: "POST",
     headers: { "X-Store-Dir": "/tmp/store" },
     body: formData,
@@ -137,14 +138,13 @@ using var form = new MultipartFormDataContent();
 
 form.Add(new StringContent("camera-1"), "NAME");
 form.Add(new StringContent("now"), "TIME");
-form.Add(new StringContent("0"), "VALUE");
 
-using var fileStream = File.OpenRead("./data/image_file.png");
+using var fileStream = File.OpenRead("./data/image_file.svg");
 using var fileContent = new StreamContent(fileStream);
-fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
-form.Add(fileContent, "EXTDATA", "image_file.png");
+fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/svg");
+form.Add(fileContent, "DATA", "image_file.svg");
 
-using var request = new HttpRequestMessage(HttpMethod.Post, "http://127.0.0.1:5654/db/write/EXAMPLE")
+using var request = new HttpRequestMessage(HttpMethod.Post, "http://127.0.0.1:5654/db/write/STASH")
 {
   Content = form,
 };
@@ -180,54 +180,58 @@ Once the file is successfully uploaded, the server responds with the stored file
 
 ```json
 {
-  "success": true,
-  "reason": "success, 1 record(s) inserted",
-  "elapse": "3.772042ms",
-  "data": {
-    "files": {
-      "EXTDATA": {
-        "ID": "1ef8a87f-96bd-6576-9ff5-972fa7638db8",
-        "FN": "image_file.png",
-        "SZ": 12692,
-        "CT": "image/png",
-        "SD": "/tmp/store"
+  "success":true,
+  "reason":"success, 1 record(s) inserted",
+  "elapse":"10.611208ms",
+  "data":{
+    "files":{
+      "DATA":{
+        "ID":"1f174fd2-cbd9-6d0e-b8a7-23fa7e810e6d",
+        "FN":"image_file.svg",
+        "SZ":177,
+        "CT":"image/svg+xml",
+        "SD":"/tmp/store"
       }
     }
   }
 }
 ```
 
-The `EXTDATA` column in the above example can be accessed as a normal JSON format "string" data 
+### Metadata
+
+The `DATA` column in the above example can be accessed as a normal JSON format "string" data 
 which contains the meta information of the uploaded file.
 
 ```sql
-SELECT EXTDATA FROM EXAMPLE
-WHERE NAME = 'camera-1' 
+SELECT DATA FROM STASH
+WHERE NAME = 'camera-1';
 ```
 
 Or, use JSON path:
 
 ```sql
-SELECT EXTDATA FROM EXAMPLE
+SELECT DATA FROM STASH
 WHERE NAME = 'camera-1'
-AND EXTDATA->'$.FN' = 'image_file.png';
+AND DATA->'$.FN' = 'image_file.svg';
 ```
 
-The examples that use the SELECT query with the `/db/query` API:
+### `/db/query` Query
+
+The following is an example of running a SELECT query with the `/db/query` API:
 
 {{< tabs >}}
 {{< tab name="HTTP" >}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
-  ?q=select EXTDATA from EXAMPLE where NAME = 'camera-1'
+  ?q=select DATA from STASH where NAME = 'camera-1'
 ```
 ~~~
 {{< /tab >}}
 {{< tab name="cURL" >}}
 ```sh
 curl -o - 'http://127.0.0.1:5654/db/query' \
-  --data-urlencode "q=select EXTDATA from EXAMPLE\
+  --data-urlencode "q=select DATA from STASH\
   where NAME = 'camera-1'"
 ```
 {{< /tab >}}
@@ -237,7 +241,7 @@ import requests
 
 response = requests.get(
   "http://127.0.0.1:5654/db/query",
-  params={"q": "select EXTDATA from EXAMPLE where NAME = 'camera-1'"},
+  params={"q": "select DATA from STASH where NAME = 'camera-1'"},
 )
 print(response.text)
 ```
@@ -246,7 +250,7 @@ print(response.text)
 ```javascript
 async function runQuery() {
   const params = new URLSearchParams({
-    q: "select EXTDATA from EXAMPLE where NAME = 'camera-1'",
+    q: "select DATA from STASH where NAME = 'camera-1'",
   });
 
   const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
@@ -261,7 +265,7 @@ runQuery();
 using System.Net.Http;
 
 using var client = new HttpClient();
-var sql = Uri.EscapeDataString("select EXTDATA from EXAMPLE where NAME = 'camera-1'");
+var sql = Uri.EscapeDataString("select DATA from STASH where NAME = 'camera-1'");
 
 var response = await client.GetAsync($"http://127.0.0.1:5654/db/query?q={sql}");
 response.EnsureSuccessStatusCode();
@@ -270,23 +274,23 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 {{< /tab >}}
 {{< /tabs >}}
 
-Using json path condition with `->` notation.
+**JSON Path Query: `->` Notation**
 
 {{< tabs >}}
 {{< tab name="HTTP" >}}
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query
-  ?q=select EXTDATA from EXAMPLE where NAME = 'camera-1' and EXTDATA->'$.FN' = 'image_file.png'
+  ?q=select DATA from STASH where NAME = 'camera-1' and DATA->'$.FN' = 'image_file.svg'
 ```
 ~~~
 {{< /tab >}}
 {{< tab name="cURL" >}}
 ```sh
 curl -o - 'http://127.0.0.1:5654/db/query' \
-  --data-urlencode "q=select EXTDATA from EXAMPLE\
+  --data-urlencode "q=select DATA from STASH\
   where NAME = 'camera-1' \
-  and EXTDATA->'$.FN' = 'image_file.png'"
+  and DATA->'$.FN' = 'image_file.svg'"
 ```
 {{< /tab >}}
 {{< tab name="Python" >}}
@@ -297,9 +301,9 @@ response = requests.get(
   "http://127.0.0.1:5654/db/query",
   params={
     "q": (
-      "select EXTDATA from EXAMPLE "
+      "select DATA from STASH "
       "where NAME = 'camera-1' "
-      "and EXTDATA->'$.FN' = 'image_file.png'"
+      "and DATA->'$.FN' = 'image_file.svg'"
     )
   },
 )
@@ -310,7 +314,7 @@ print(response.text)
 ```javascript
 async function runQuery() {
   const params = new URLSearchParams({
-    q: "select EXTDATA from EXAMPLE where NAME = 'camera-1' and EXTDATA->'$.FN' = 'image_file.png'",
+    q: "select DATA from STASH where NAME = 'camera-1' and DATA->'$.FN' = 'image_file.svg'",
   });
 
   const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
@@ -326,7 +330,7 @@ using System.Net.Http;
 
 using var client = new HttpClient();
 var sql = Uri.EscapeDataString(
-  "select EXTDATA from EXAMPLE where NAME = 'camera-1' and EXTDATA->'$.FN' = 'image_file.png'"
+  "select DATA from STASH where NAME = 'camera-1' and DATA->'$.FN' = 'image_file.svg'"
 );
 
 var response = await client.GetAsync($"http://127.0.0.1:5654/db/query?q={sql}");
@@ -336,16 +340,16 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 {{< /tab >}}
 {{< /tabs >}}
 
-The `EXTDATA` column contains the file information as shown below.
+The `DATA` column contains the file information as shown below.
 
 ```json
 {
   "data": {
-    "columns": [ "EXTDATA" ],
+    "columns": [ "DATA" ],
     "types": [ "string" ],
     "rows": [
       [
-        "{\"ID\":\"1ef8a87f-96bd-6576-9ff5-972fa7638db8\",\"FN\":\"image_file.png\",\"SZ\":12692,\"CT\":\"image/png\",\"SD\":\"/tmp/store\"}"
+        "{\"ID\":\"1ef8a87f-96bd-6576-9ff5-972fa7638db8\",\"FN\":\"image_file.svg\",\"SZ\":177,\"CT\":\"image/svg+xml\",\"SD\":\"/tmp/store\"}"
       ]
     ]
   },
@@ -363,7 +367,7 @@ Use JSON path to extract specific fields from the JSON type column:
 ```http
 GET http://127.0.0.1:5654/db/query
     ?format=ndjson
-    &q=SELECT NAME, TIME, EXTDATA->'$.ID' as FID  FROM EXAMPLE WHERE NAME = 'camera-1'
+    &q=SELECT NAME, TIME, DATA->'$.ID' as FID  FROM STASH WHERE NAME = 'camera-1'
 ```
 ~~~
 {{< /tab >}}
@@ -371,8 +375,8 @@ GET http://127.0.0.1:5654/db/query
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
   --data-urlencode "format=ndjson"   \
-  --data-urlencode "q=SELECT NAME, TIME, EXTDATA->'$.ID' as FID  \
-  FROM EXAMPLE WHERE NAME = 'camera-1'"
+  --data-urlencode "q=SELECT NAME, TIME, DATA->'$.ID' as FID  \
+  FROM STASH WHERE NAME = 'camera-1'"
 ```
 {{< /tab >}}
 {{< tab name="Python" >}}
@@ -383,7 +387,7 @@ response = requests.get(
   "http://127.0.0.1:5654/db/query",
   params={
   "format": "ndjson",
-  "q": "SELECT NAME, TIME, EXTDATA->'$.ID' as FID FROM EXAMPLE WHERE NAME = 'camera-1'",
+  "q": "SELECT NAME, TIME, DATA->'$.ID' as FID FROM STASH WHERE NAME = 'camera-1'",
   },
 )
 print(response.text)
@@ -394,7 +398,7 @@ print(response.text)
 async function runQuery() {
   const params = new URLSearchParams({
     format: "ndjson",
-    q: "SELECT NAME, TIME, EXTDATA->'$.ID' as FID FROM EXAMPLE WHERE NAME = 'camera-1'",
+    q: "SELECT NAME, TIME, DATA->'$.ID' as FID FROM STASH WHERE NAME = 'camera-1'",
   });
 
   const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
@@ -410,7 +414,7 @@ using System.Net.Http;
 
 using var client = new HttpClient();
 var sql = Uri.EscapeDataString(
-  "SELECT NAME, TIME, EXTDATA->'$.ID' as FID FROM EXAMPLE WHERE NAME = 'camera-1'"
+  "SELECT NAME, TIME, DATA->'$.ID' as FID FROM STASH WHERE NAME = 'camera-1'"
 );
 
 var response = await client.GetAsync(
@@ -448,14 +452,14 @@ Note that the timestamp in the `ID` is *NOT* exactly the same as the base time o
 {{< tab name="HTTP" >}}
 ~~~
 ```http
-GET http://127.0.0.1:5654/db/query/file/EXAMPLE/EXTDATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8
+GET http://127.0.0.1:5654/db/query/file/STASH/DATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8
 ```
 ~~~
 {{< /tab >}}
 {{< tab name="cURL" >}}
 ```sh
-curl -o ./img-download.png \
-  http://127.0.0.1:5654/db/query/file/EXAMPLE/EXTDATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8
+curl -o ./img-download.svg \
+  http://127.0.0.1:5654/db/query/file/STASH/DATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8
 ```
 {{< /tab >}}
 {{< tab name="Python" >}}
@@ -463,10 +467,10 @@ curl -o ./img-download.png \
 import requests
 
 response = requests.get(
-  "http://127.0.0.1:5654/db/query/file/EXAMPLE/EXTDATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8"
+  "http://127.0.0.1:5654/db/query/file/STASH/DATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8"
 )
 response.raise_for_status()
-with open("./img-download.png", "wb") as output_file:
+with open("./img-download.svg", "wb") as output_file:
   output_file.write(response.content)
 ```
 {{< /tab >}}
@@ -474,7 +478,7 @@ with open("./img-download.png", "wb") as output_file:
 ```javascript
 async function downloadFile() {
   const response = await fetch(
-  "http://127.0.0.1:5654/db/query/file/EXAMPLE/EXTDATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8"
+  "http://127.0.0.1:5654/db/query/file/STASH/DATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8"
   );
 
   if (!response.ok) {
@@ -485,7 +489,7 @@ async function downloadFile() {
 
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
-  link.download = "img-download.png";
+  link.download = "img-download.svg";
   link.click();
   URL.revokeObjectURL(link.href);
 }
@@ -499,10 +503,10 @@ using System.Net.Http;
 
 using var client = new HttpClient();
 var bytes = await client.GetByteArrayAsync(
-  "http://127.0.0.1:5654/db/query/file/EXAMPLE/EXTDATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8"
+  "http://127.0.0.1:5654/db/query/file/STASH/DATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8"
 );
 
-await File.WriteAllBytesAsync("./img-download.png", bytes);
+await File.WriteAllBytesAsync("./img-download.svg", bytes);
 ```
 {{< /tab >}}
 {{< /tabs >}}
@@ -512,7 +516,7 @@ await File.WriteAllBytesAsync("./img-download.png", bytes);
 ```html
 <html>
 <body>
-<img src="http://127.0.0.1:5654/db/query/file/EXAMPLE/EXTDATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8"/>
+<img src="http://127.0.0.1:5654/db/query/file/STASH/DATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8"/>
 </body>
 </html>
 ```
@@ -522,7 +526,7 @@ If the table is a TAG table and the tag name is known, use the `tag` query param
 ```html
 <html>
 <body>
-<img src="http://127.0.0.1:5654/db/query/file/EXAMPLE/EXTDATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8?tag=camera-1"/>
+<img src="http://127.0.0.1:5654/db/query/file/STASH/DATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8?tag=camera-1"/>
 </body>
 </html>
 ```
@@ -539,13 +543,12 @@ const fs = require('fs');
 
 let req = {
     method: 'POST',
-    url: 'http://127.0.0.1:5654/db/write/EXAMPLE',
+    url: 'http://127.0.0.1:5654/db/write/STASH',
     headers: {"X-Store-Dir": "/tmp/store"},
     formData: {
         NAME: 'camera-1',
         TIME: 'now',
-        VALUE: 0,
-        EXTDATA:  fs.createReadStream('./image_file.png'), 
+        DATA:  fs.createReadStream('./image_file.svg'), 
     },
 };
 
@@ -564,15 +567,15 @@ from pathlib import Path
 
 import requests
 
-url = "http://127.0.0.1:5654/db/write/EXAMPLE"
-file_path = Path("./image_file.png")
+url = "http://127.0.0.1:5654/db/write/STASH"
+file_path = Path("./image_file.svg")
 
 with file_path.open("rb") as image_file:
   response = requests.post(
     url,
     headers={"X-Store-Dir": "/tmp/store"},
-    data={"NAME": "camera-1", "TIME": "now", "VALUE": "0"},
-    files={"EXTDATA": (file_path.name, image_file, "image/png")},
+    data={"NAME": "camera-1", "TIME": "now"},
+    files={"DATA": (file_path.name, image_file, "image/svg")},
   )
 
 response.raise_for_status()
