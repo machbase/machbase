@@ -12,6 +12,7 @@ Tag 메타데이터는 태그의 정적 속성을 저장하는 영역입니다. 
 
 - 메타데이터 전용 조회
 - 메타데이터 조건 기반 `UPDATE` / `DELETE`
+- metadata row 마지막 변경 시각 조회
 - `JSON` 타입 메타데이터 컬럼 선언
 - JSON path 조회와 JSON path 인덱스
 - JSON 문서 일부만 수정하는 부분 갱신
@@ -62,6 +63,7 @@ VALUES ('TEMP_002', 'STOP', '192.168.0.12', 'Building-A/F2');
 - `VALUES (...)` 의 순서는 항상 `NAME` 다음에 메타데이터 정의 순서를 따릅니다.
 - 지정하지 않은 메타데이터 컬럼은 `NULL` 로 저장됩니다.
 - 메타데이터 행의 식별자는 항상 `NAME` 입니다.
+- 메타데이터 행이 생성되면 `_LAST_UPDATE_TIME` 이 서버 시각으로 자동 기록됩니다.
 
 ## 메타데이터 조회
 
@@ -84,6 +86,134 @@ SELECT *
 ```
 
 `SELECT *` 와 `table_alias.*` 는 `NAME` 과 메타데이터 컬럼만 반환합니다.
+
+`_LAST_UPDATE_TIME` 같은 시스템 관리 컬럼은 `SELECT *` 결과에 표시되지 않습니다. 필요한 경우 컬럼명을 명시합니다.
+
+### 마지막 변경 시각 조회
+
+TAG metadata에는 각 metadata row의 마지막 변경 시각을 나타내는 시스템 관리 컬럼 `_LAST_UPDATE_TIME` 이 있습니다.
+
+`_LAST_UPDATE_TIME` 은 tag data row의 마지막 입력 시각이 아니라, tag metadata row가 생성되거나 실제 metadata 값이 변경된 시각입니다.
+
+#### 조회 방법
+
+`_LAST_UPDATE_TIME` 은 명시적으로 컬럼명을 지정해서 조회합니다.
+
+```sql
+SELECT name, _last_update_time
+  FROM sensors METADATA;
+```
+
+다른 metadata 컬럼과 함께 조회하거나 조건에 사용할 수 있습니다.
+
+```sql
+SELECT name, location, status, _last_update_time
+  FROM sensors METADATA
+ WHERE name = 'TEMP_001';
+```
+
+`SELECT *` 와 `table_alias.*` 결과에는 `_LAST_UPDATE_TIME` 이 표시되지 않습니다.
+
+#### 자동 기록 및 갱신 규칙
+
+metadata row가 새로 생성되면 `_LAST_UPDATE_TIME` 이 자동으로 기록됩니다.
+
+```sql
+INSERT INTO sensors METADATA(name, location, status)
+VALUES('TEMP_003', 'Building-A/F3', 'READY');
+```
+
+사용자 metadata 값이 실제로 변경되면 `_LAST_UPDATE_TIME` 이 갱신됩니다.
+
+```sql
+UPDATE sensors METADATA
+   SET status = 'DONE'
+ WHERE name = 'TEMP_003';
+```
+
+같은 값으로 update하거나 JSON missing path 제거처럼 저장 결과가 바뀌지 않는 update는 실제 변경으로 보지 않습니다. 이 경우 `_LAST_UPDATE_TIME` 은 유지됩니다.
+
+```sql
+UPDATE sensors METADATA
+   SET status = 'DONE'
+ WHERE name = 'TEMP_003';
+```
+
+JSON metadata 컬럼 `info` 가 있는 테이블에서는 존재하지 않는 경로 제거도 저장값을 바꾸지 않으면 no-op으로 처리됩니다.
+
+```sql
+UPDATE sensors METADATA
+   SET info = JSON_REMOVE(info, '$.missing')
+ WHERE name = 'TEMP_003';
+```
+
+#### 직접 입력 및 수정 제한
+
+`_LAST_UPDATE_TIME` 은 시스템 관리 컬럼이므로 사용자가 직접 값을 넣거나 수정할 수 없습니다.
+
+다음 문장은 허용되지 않습니다.
+
+```sql
+INSERT INTO sensors METADATA(name, location, status, _last_update_time)
+VALUES('TEMP_004', 'Building-A/F4', 'READY', now);
+```
+
+```sql
+UPDATE sensors METADATA
+   SET _last_update_time = now
+ WHERE name = 'TEMP_003';
+```
+
+또한 TAG name 컬럼명, TAG metadata 컬럼명, `ALTER TABLE ... METADATA ADD COLUMN` 대상 컬럼명으로 `_LAST_UPDATE_TIME` 을 사용할 수 없습니다. `ALTER TABLE ... METADATA DROP COLUMN` 으로 `_LAST_UPDATE_TIME` 을 삭제할 수도 없습니다.
+
+```sql
+CREATE TAG TABLE invalid_sensor (
+    _last_update_time VARCHAR(128) PRIMARY KEY,
+    time              DATETIME BASETIME,
+    value             DOUBLE
+);
+```
+
+```sql
+CREATE TAG TABLE invalid_sensor_meta (
+    name  VARCHAR(128) PRIMARY KEY,
+    time  DATETIME BASETIME,
+    value DOUBLE
+)
+METADATA (
+    _last_update_time DATETIME
+);
+```
+
+`_LAST_UPDATE_TIME2` 처럼 prefix만 같은 이름은 별도 사용자 컬럼으로 사용할 수 있습니다.
+
+#### 시간 조건 조회 및 자동 인덱스
+
+`_LAST_UPDATE_TIME` 에는 시간 조건 조회를 위한 인덱스가 자동으로 제공됩니다.
+
+```sql
+SELECT name, location, _last_update_time
+  FROM sensors METADATA
+ WHERE _last_update_time >= TO_DATE('2026-06-08 00:00:00')
+ ORDER BY _last_update_time;
+```
+
+따라서 같은 컬럼에 사용자가 별도 인덱스를 중복 생성할 필요가 없습니다.
+
+#### machloader / tagmetaimport 사용 시 주의사항
+
+TAG metadata를 import할 때 입력 파일이나 form 파일에는 `NAME` 과 사용자 metadata 컬럼만 포함합니다. 내부 컬럼인 `_ID` 와 시스템 관리 컬럼 `_LAST_UPDATE_TIME` 은 입력 대상이 아닙니다.
+
+metadata가 `location`, `status` 인 경우 입력 데이터는 다음 형태를 사용합니다.
+
+```text
+TEMP_001,Building-A/F1,READY
+TEMP_002,Building-A/F2,STOP
+```
+
+`_LAST_UPDATE_TIME` 은 import 시 서버가 자동으로 채웁니다.
+
+일반 LOG, LOOKUP, VOLATILE 테이블에서 사용자가 `_LAST_UPDATE_TIME` 이라는 이름의 컬럼을 정의한 경우에는 일반 사용자 컬럼으로 동작합니다. 예약 동작은 TAG metadata 시스템 컬럼에만 적용됩니다.
 
 ### 데이터와 함께 조회
 
@@ -128,6 +258,7 @@ UPDATE sensors METADATA
 - 수정 대상은 `NAME` 과 메타데이터 컬럼입니다.
 - `TIME`, `VALUE` 같은 데이터 컬럼은 `UPDATE ... METADATA` 에서 수정할 수 없습니다.
 - 내부 컬럼은 수정할 수 없습니다.
+- 실제 metadata 값이 바뀐 경우에만 `_LAST_UPDATE_TIME` 이 갱신됩니다.
 
 ## 메타데이터 삭제
 
@@ -398,5 +529,7 @@ DROP INDEX idx_ship_owner;
 - 데이터 조회는 `FROM TAG`
 - 메타데이터 수정/삭제는 `UPDATE/DELETE ... METADATA`
 - JSON 메타데이터는 `INFO JSON`
+- `_LAST_UPDATE_TIME` 은 metadata row의 마지막 변경 시각이며 명시적으로 조회할 수 있습니다
 - JSON path 인덱스는 `INFO JSON INDEX(...)` 또는 `CREATE INDEX ... ON TAG METADATA (...)`
 - JSON 부분 갱신은 `JSON_SET`, `JSON_SET_JSON`, `JSON_REMOVE`
+- `_LAST_UPDATE_TIME` 은 서버가 자동 관리하며 standard와 cluster 환경에서 동일하게 동작합니다

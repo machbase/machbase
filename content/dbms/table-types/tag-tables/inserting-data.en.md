@@ -48,6 +48,46 @@ queries and statistic views in interactive examples.
 
 > **When to use**: Testing, low-volume inserts, interactive data entry
 
+### TAG Metadata and `_LAST_UPDATE_TIME`
+
+For a TAG table without metadata columns, you can continue to insert only the three values `name`, `time`, and `value`.
+
+```sql
+CREATE TAG TABLE sensor (
+    name  VARCHAR(128) PRIMARY KEY,
+    time  DATETIME BASETIME,
+    value DOUBLE
+);
+
+INSERT INTO sensor VALUES('tag1', now, 1);
+```
+
+For a TAG table with user-defined metadata columns, when you insert a new tag without a column list, provide the data values and the user-defined metadata values together. Do not include `_LAST_UPDATE_TIME`; it is the system-managed metadata changed time.
+
+```sql
+CREATE TAG TABLE sensor_meta (
+    name  VARCHAR(128) PRIMARY KEY,
+    time  DATETIME BASETIME,
+    value DOUBLE
+)
+METADATA (
+    site   VARCHAR(32),
+    status INTEGER
+);
+
+INSERT INTO sensor_meta
+VALUES('tag1', now, 1, 'seoul', 1);
+```
+
+When you use a column list, specify only the required user-defined columns. Do not specify `_LAST_UPDATE_TIME`.
+
+```sql
+INSERT INTO sensor_meta(name, time, value, site, status)
+VALUES('tag2', now, 1, 'busan', 1);
+```
+
+If the metadata row for the tag already exists, a data-only insert does not change metadata values. Therefore, `_LAST_UPDATE_TIME` is not changed.
+
 ### Distance-Axis INSERT Example
 
 Distance-axis tag tables use the same `INSERT` syntax, but the axis column stores numeric distance values.
@@ -212,7 +252,7 @@ INSERT INTO sensors VALUES (
 
 ## Best Practices
 
-1. **Register Tag Metadata When Needed**: Missing tag names are auto-registered; insert metadata first when you need explicit metadata values
+1. **Register Tag Metadata When Needed**: Missing tag names are auto-registered; insert metadata first when you need explicit metadata values. `_LAST_UPDATE_TIME` is managed automatically by the server, so do not enter it directly
 2. **Use Batch Operations**: For large datasets, use CSV import or batch API calls
 3. **Handle Errors**: Always check return values and log errors
 4. **Time Precision**: Be consistent with timestamp precision across your data
