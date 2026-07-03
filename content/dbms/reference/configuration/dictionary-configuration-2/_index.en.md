@@ -1,0 +1,5 @@
+---
+type: docs
+title: '클러스터 설정 프로퍼티 사전'
+weight: 20
+---

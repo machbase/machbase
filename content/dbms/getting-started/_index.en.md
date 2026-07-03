@@ -1,47 +1,67 @@
 ---
 type: docs
-title: 'Getting Started'
+title: '1. Getting Started'
 weight: 10
+toc: true
 ---
 
-Welcome to Machbase! This section will help you get up and running quickly.
+Machbase is an innovative time-series database designed to process time-series data
+such as industrial IoT data and financial tick data as quickly and conveniently as
+possible. This is the starting point for chapter 1. Understanding Machbase means
+understanding how rapidly accumulating time-series data is received, stored, and
+analyzed again.
 
-## What is Machbase?
+In a time-series database, time is not just another column. It is the primary axis of
+the data. A sensor value loses much of its meaning without the time it was measured,
+and a financial tick is useful only when its order and interval are preserved.
+Therefore, time-series systems place high-ingest writes, time-range queries,
+aggregation, downsampling, retention, and compression near the center of the design.
 
-Machbase is a high-performance time-series database designed to handle massive amounts of sensor data, IoT device data, and application logs at exceptional speeds.
+This chapter helps a first-time Machbase DBMS user verify server connectivity, run SQL
+through `machsql`, create the first table, insert rows, and query them back.
 
-**Key Capabilities:**
-- Store millions of records per second
-- Query billions of records in real-time
-- Compress data up to 100x
-- Run on edge devices, servers, or clusters
+The examples assume that Machbase DBMS is running on `127.0.0.1:5656` and that
+`machsql` is available in `PATH`. Every SQL example can be run as user `SYS` with
+password `MANAGER`.
+If you need to prepare the server first, start from
+[Installation, Deployment, and Upgrade](/dbms/installation-deployment-upgrade/) and
+[Linux Standard Edition installation](/dbms/installation-deployment-upgrade/standard-edition/linux/).
 
-## Who Should Use Machbase?
+## Verify the Prerequisites
 
-Machbase is ideal for:
+- Machbase DBMS is running on `127.0.0.1:5656`.
+- The `machsql` command is available.
+- The SQL files used in the examples are already saved under `/tmp`.
 
-- **IoT Applications**: Collecting data from thousands of sensors
-- **Industrial Monitoring**: Manufacturing equipment, PLCs, SCADA systems
-- **Application Logging**: High-volume application and system logs
-- **Real-time Analytics**: Financial data, network monitoring, user behavior
+If a sample that creates a table fails at `CREATE TABLE` because the table already
+exists, the previous run did not reach its final `DROP TABLE`. Run that sample's final
+`DROP TABLE table_name;` once, then start again. The server used to verify this chapter
+does not support `DROP TABLE IF EXISTS`.
 
-## Quick Start Path
+## What You Will Check
 
-Follow these steps to start using Machbase:
+1. How Machbase DBMS is designed for time-series data such as industrial IoT and financial tick data.
+2. How to connect to port 5656 with `machsql`.
+3. The two common shapes of time-series data: event-like records and measurements.
+4. The first rule of thumb: LOG for event-like data, TAG for tag-based measurements.
+5. How to create a table, insert rows, and query them.
+6. Which document to read next for your workload.
 
-1. [**Quick Start**](./quick-start/) - Install and run your first query in 5 minutes
-2. [**Installation Guide**](./installation/) - Detailed installation instructions
-3. [**First Steps with machsql**](./first-steps/) - Learn the command-line interface
-4. [**Basic Concepts**](./concepts/) - Understand core concepts
+## First Check
 
-## What You'll Learn
+The first SQL statement is like a handshake. Whether the source is an industrial
+sensor stream or financial ticks, processing begins only after the database session
+can communicate with the server. The following SQL checks how many tables are
+registered in the current database.
 
-By the end of this section, you'll be able to:
+```sql
+SELECT COUNT(*) AS TABLE_COUNT FROM M$SYS_TABLES;
+```
 
-- Install Machbase on your system
-- Connect to the database
-- Create your first table
-- Insert and query data
-- Understand the different table types
+Assuming the SQL above is saved as `/tmp/dbms_gs_check.sql`, run the following command.
 
-Ready to begin? Start with the [Quick Start](./quick-start/) guide!
+```bash
+machsql -s 127.0.0.1 -P 5656 -u SYS -p MANAGER -f /tmp/dbms_gs_check.sql
+```
+
+A successful run prints one row with the `TABLE_COUNT` value.
