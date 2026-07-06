@@ -3,3 +3,61 @@ type: docs
 title: '노드 상태 확인'
 weight: 40
 ---
+
+클러스터 구성 완료 후 모든 노드의 상태를 확인합니다.
+
+## 전체 클러스터 상태 조회
+
+```bash
+machcoordinatoradmin --cluster-status
+```
+
+정상 클러스터 출력 예시:
+
+```
++-------------+-----------------+-----------+---------------------------+
+|  Node Type  |    Node Name    |   Group   |   Desired & Actual State  |
++-------------+-----------------+-----------+---------------------------+
+| coordinator | 192.168.1.10:5101 | Coordinator | primary  | primary  |
+| deployer    | 192.168.1.10:5201 | Deployer    | normal   | normal   |
+| broker      | 192.168.1.11:5301 | Broker      | leader   | leader   |
+| broker      | 192.168.1.12:5301 | Broker      | normal   | normal   |
+| warehouse   | 192.168.1.13:5401 | group1      | normal   | normal   |
+| warehouse   | 192.168.1.14:5401 | group1      | normal   | normal   |
++-------------+-----------------+-----------+---------------------------+
+```
+
+## 개별 노드 관리 명령
+
+| 명령 | 설명 |
+|------|------|
+| `machcoordinatoradmin --startup-node=IP:PORT` | 특정 노드 시작 |
+| `machcoordinatoradmin --shutdown-node=IP:PORT` | 특정 노드 종료 |
+| `machcoordinatoradmin --cluster-status` | 전체 상태 조회 |
+| `machcoordinatoradmin --configuration` | Coordinator 설정 조회 |
+
+## 상태값 설명
+
+| 상태 | 의미 |
+|------|------|
+| `normal` | 정상 동작 |
+| `primary` | Coordinator Primary |
+| `leader` | Broker Leader (쿼리 수신 담당) |
+| `scrapped` | 장애 감지, 복구 필요 |
+| `unknown` | 통신 불가, 노드 다운 의심 |
+
+## 클라이언트 접속 테스트
+
+Broker 포트로 접속하여 쿼리를 실행합니다.
+
+```bash
+machsql -s 192.168.1.11 -u SYS -p MANAGER
+Mach> SELECT * FROM M$SYS_NODES;
+```
+
+`M$SYS_NODES` 뷰에서 등록된 노드 목록과 상태를 확인할 수 있습니다.
+
+---
+
+**다음 읽을 내용**
+- [설치 검증 체크리스트](/dbms/installation-deployment-upgrade/validation-checklist/)
