@@ -56,7 +56,7 @@ CREATE TAG TABLE sensor_data (
 CREATE LOOKUP TABLE order_history_wrong (
     order_id LONG PRIMARY KEY,
     customer VARCHAR(64)
-    -- LOOKUP은 소규모 전용
+    -- LOOKUP은 소규모 전용, 대용량에서 성능 저하
 );
 ```
 
@@ -67,10 +67,13 @@ CREATE RDB TABLE order_history (
     order_id  LONG,
     customer  VARCHAR(64),
     item_id   INTEGER,
-    amount    DOUBLE
+    amount    DOUBLE,
+    status    VARCHAR(16)
 );
+-- UPDATE/DELETE/SELECT 모두 지원
+UPDATE order_history SET status = 'SHIPPED' WHERE order_id = 1001;
 ```
 
 ## 안티패턴 4: 시계열 데이터를 RDB에 저장
 
-시계열 데이터(센서값)를 RDB 테이블에 저장하면 시간 범위 쿼리 성능이 나쁘고, Append API도 사용할 수 없습니다. 자세한 내용은 [시계열 데이터 RDB 오용](/dbms/data-modeling-table-design/table-types-patterns-type-anti/time-series-storage-misuse-rdb/) 항목을 참고하십시오.
+시계열 데이터(센서값)를 RDB 테이블에 저장하면 시간 범위 쿼리 성능이 나쁘고, Append API의 고속 버퍼 최적화도 사용할 수 없습니다. 자세한 내용은 [시계열 데이터 RDB 오용](/dbms/data-modeling-table-design/table-types-patterns-type-anti/time-series-storage-misuse-rdb/) 항목을 참고하십시오.

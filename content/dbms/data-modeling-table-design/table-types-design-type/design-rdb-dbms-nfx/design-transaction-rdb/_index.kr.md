@@ -4,29 +4,41 @@ title: '트랜잭션 설계'
 weight: 50
 ---
 
-RDB 테이블은 트랜잭션을 지원합니다. `BEGIN`, `COMMIT`, `ROLLBACK` 문을 사용하여 데이터 일관성을 보장합니다.
+RDB 테이블은 트랜잭션을 지원합니다. `BEGIN`, `COMMIT`, `ROLLBACK` 문을 사용하여 INSERT·UPDATE·DELETE를 원자적으로 처리합니다.
 
 ## 기본 트랜잭션
 
 ```sql
 BEGIN;
-INSERT INTO order_history VALUES (1001, 'CUST-001', 5, 49.99, NOW, 'PENDING');
-INSERT INTO order_history VALUES (1002, 'CUST-001', 3, 29.99, NOW, 'PENDING');
+INSERT INTO orders VALUES (1001, 'CUST-001', 5, 49.99, 'PENDING');
+INSERT INTO orders VALUES (1002, 'CUST-001', 3, 29.99, 'PENDING');
+COMMIT;
+```
+
+## INSERT + UPDATE + DELETE 혼합
+
+```sql
+BEGIN;
+-- 새 주문 생성
+INSERT INTO orders VALUES (1003, 'CUST-002', 1, 9.99, 'PENDING');
+-- 재고 차감
+UPDATE inventory SET qty = qty - 1 WHERE item_id = 1003;
+-- 오래된 임시 예약 삭제
+DELETE FROM reservations WHERE order_id = 1003;
 COMMIT;
 ```
 
 ## 롤백
 
+오류 발생 시 ROLLBACK으로 트랜잭션 전체를 취소합니다.
+
 ```sql
 BEGIN;
-INSERT INTO order_history VALUES (1003, 'CUST-002', 1, 9.99, NOW, 'PENDING');
+UPDATE inventory SET qty = qty - 10 WHERE item_id = 42;
 -- 오류 발생 시
 ROLLBACK;
+-- inventory는 변경 전 상태로 복원됨
 ```
-
-## 트랜잭션 격리 수준
-
-Machbase RDB 테이블은 기본적으로 READ COMMITTED 격리 수준을 사용합니다.
 
 ## 대량 INSERT 최적화
 
@@ -35,9 +47,8 @@ Machbase RDB 테이블은 기본적으로 READ COMMITTED 격리 수준을 사용
 ```sql
 -- 배치 INSERT (트랜잭션당 1,000건)
 BEGIN;
-INSERT INTO order_history VALUES (...);
-INSERT INTO order_history VALUES (...);
--- ... 1,000건
+INSERT INTO orders VALUES (...);
+-- ... 1,000건 반복
 COMMIT;
 ```
 

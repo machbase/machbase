@@ -37,7 +37,7 @@ CREATE TABLE sys_log (
 
 ## RDB 테이블
 
-관계형 구조의 업무 데이터를 저장합니다. Machbase 8.6에서 도입된 타입으로, Key-Value 기반 스토리지를 사용합니다.
+관계형 구조의 업무 데이터를 저장합니다. Machbase 8.6에서 도입된 타입으로, 일반적인 관계형 테이블처럼 SELECT·INSERT·UPDATE·DELETE를 모두 지원합니다.
 
 ```sql
 CREATE RDB TABLE product (
@@ -48,10 +48,10 @@ CREATE RDB TABLE product (
 );
 ```
 
-- 최소 4개 컬럼 필요
-- SELECT, INSERT, DELETE 지원
-- UPDATE 미지원
-- KV Secondary Index 생성 가능
+- SELECT, INSERT, UPDATE, DELETE 모두 지원
+- UPDATE는 WHERE 조건 유무 모두 지원
+- PRIMARY KEY 인덱스 및 보조 인덱스 생성 가능
+- Standard Edition 전용
 
 ## VOLATILE 테이블
 
@@ -80,5 +80,5 @@ CREATE LOOKUP TABLE code_master (
 ```
 
 - `PRIMARY KEY` 필수
-- UPDATE·DELETE by key 지원
+- PRIMARY KEY 기준 UPDATE·DELETE 지원
 - 디스크에 영속 저장

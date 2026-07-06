@@ -10,22 +10,20 @@ weight: 20
 CREATE RDB TABLE table_name (
     col1 type1,
     col2 type2,
-    col3 type3,
-    col4 type4
-    [, ...]
+    ...
 );
 ```
 
-## 최소 컬럼 수 제약
+## 컬럼 수 제약
 
-RDB 테이블은 **최소 4개** 컬럼이 필요합니다. 4개 미만으로 생성하면 오류가 발생합니다.
+RDB 테이블은 **최소 1개** 이상의 컬럼이 필요합니다.
 
 ```sql
--- 오류: 컬럼 수 부족
-CREATE RDB TABLE t1 (id INTEGER, name VARCHAR(64));  -- ERROR
+-- 정상: 컬럼 1개
+CREATE RDB TABLE t1 (id INTEGER);
 
--- 정상: 4개 이상
-CREATE RDB TABLE t1 (id INTEGER, name VARCHAR(64), cat VARCHAR(32), val DOUBLE);
+-- 정상: 컬럼 여러 개
+CREATE RDB TABLE t2 (id INTEGER, name VARCHAR(64), cat VARCHAR(32), val DOUBLE);
 ```
 
 ## 지원 데이터 타입
@@ -37,14 +35,14 @@ CREATE RDB TABLE t1 (id INTEGER, name VARCHAR(64), cat VARCHAR(32), val DOUBLE);
 | `SHORT` | 16비트 정수 |
 | `FLOAT` | 32비트 부동소수점 |
 | `DOUBLE` | 64비트 부동소수점 |
-| `VARCHAR(n)` | 가변 문자열 (최대 n) |
+| `VARCHAR(n)` | 가변 문자열 |
 | `DATETIME` | 날짜·시간 (나노초) |
 | `IPV4` / `IPV6` | 네트워크 주소 |
 | `JSON` | JSON 문서 |
 
 ## 설계 예시
 
-### 제품 카탈로그 (대규모)
+### 제품 카탈로그
 
 ```sql
 CREATE RDB TABLE product_catalog (
@@ -55,6 +53,9 @@ CREATE RDB TABLE product_catalog (
 );
 
 CREATE INDEX idx_prod_cat ON product_catalog(category);
+
+-- 가격 변경
+UPDATE product_catalog SET price = 19900 WHERE product_id = 42;
 ```
 
 ### 트랜잭션 이력
@@ -71,9 +72,28 @@ CREATE RDB TABLE tx_history (
 
 CREATE INDEX idx_tx_account ON tx_history(account_id);
 CREATE INDEX idx_tx_time    ON tx_history(tx_time);
+
+-- 상태 업데이트
+UPDATE tx_history SET status = 'SETTLED' WHERE tx_id = 9999;
+```
+
+## PRIMARY KEY 지정
+
+RDB 테이블에서 PRIMARY KEY는 DDL 절 대신 `CREATE INDEX` 문으로 지정합니다. PK 인덱스는 Red-Black Tree를 사용합니다.
+
+```sql
+CREATE RDB TABLE product_catalog (
+    product_id LONG,
+    name       VARCHAR(256),
+    price      DOUBLE
+);
+
+-- PRIMARY KEY 인덱스 생성 (자세한 내용은 다음 섹션 참고)
+CREATE INDEX idx_pk_product ON product_catalog(product_id);
 ```
 
 ## 주의사항
 
 - `METADATA` 절은 TAG 테이블 전용으로, RDB 테이블에서는 사용할 수 없습니다.
-- PRIMARY KEY 제약은 인덱스 형태로 지정합니다 (별도 `CREATE INDEX` 필요 — 다음 섹션 참고).
+- `BASETIME`, `BASE DISTANCE` 키워드는 사용할 수 없습니다.
+- Cluster Edition에서는 RDB 테이블을 생성할 수 없습니다.

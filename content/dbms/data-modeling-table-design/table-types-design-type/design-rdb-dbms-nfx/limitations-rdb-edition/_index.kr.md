@@ -20,20 +20,25 @@ RDB 테이블은 Machbase Standard Edition 전용 기능입니다.
 
 Cluster Edition 환경에서 RDB 테이블이 필요한 경우:
 
-1. **LOOKUP 테이블**: 소규모 데이터 + UPDATE 필요 시
-2. **외부 RDBMS 연동**: 대규모 관계형 데이터는 별도 RDBMS(PostgreSQL 등)에서 관리하고 Machbase와 조합
-3. **LOG 테이블**: UPDATE 불필요한 추가 전용 이력 데이터
+1. **LOOKUP 테이블**: 소규모 데이터 + PRIMARY KEY 기반 UPDATE/DELETE 시
+2. **LOG 테이블**: UPDATE 불필요한 추가 전용 이력 데이터
+3. **외부 RDBMS 연동**: 대규모 관계형 데이터는 별도 RDBMS(PostgreSQL 등)에서 관리
 
-## 제약 요약
+## 기능 요약
 
 | 항목 | 상태 |
 |------|------|
 | Cluster Edition 지원 | X |
-| UPDATE | X |
-| Append API | X |
+| SELECT | O |
+| INSERT | O |
+| UPDATE (WHERE 포함) | O |
+| UPDATE (WHERE 없음, 전체 행) | O |
+| DELETE | O |
+| Append API | O (트랜잭션 기반) |
+| PRIMARY KEY 인덱스 | O (Red-Black Tree) |
+| 보조 인덱스 | O |
 | METADATA 절 | X (TAG 전용) |
-| 최소 컬럼 수 | 4개 |
-| PRIMARY KEY 강제 | X (인덱스로 대체) |
+| 최소 컬럼 수 | 1개 |
 
 ---
 
