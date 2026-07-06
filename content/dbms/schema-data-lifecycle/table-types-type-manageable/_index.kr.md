@@ -13,10 +13,11 @@ Machbase의 각 테이블 타입은 DDL 및 DML 작업에 대한 지원 범위�
 | CREATE TABLE | O | O | O | O | O |
 | DROP TABLE | O | O | O | O | O |
 | TRUNCATE TABLE | X | O | O | X | X |
-| ALTER TABLE (컬럼 추가) | X | O | O | O | O |
-| ALTER TABLE (컬럼 삭제) | X | O | O | O | O |
-| ALTER TABLE (컬럼 이름 변경) | O | O | O | X | X |
-| ALTER TABLE (테이블 이름 변경) | X | O | O | X | X |
+| ALTER TABLE (컬럼 추가) | O (METADATA만) | O | O | O | O |
+| ALTER TABLE (컬럼 삭제) | O (METADATA만) | O | O | O | O |
+| ALTER TABLE (컬럼 이름 변경) | O (일반 컬럼) | X | O | X | X |
+| ALTER TABLE (컬럼 속성 변경) | O (일반 컬럼) | O | X | X | X |
+| ALTER TABLE (테이블 이름 변경) | X | X | O | X | X |
 | ALTER TABLE ADD RETENTION | O | O | X | X | X |
 | ALTER TABLE DROP RETENTION | O | O | X | X | X |
 | CREATE INDEX | O (메타데이터) | O | X | X | X |
