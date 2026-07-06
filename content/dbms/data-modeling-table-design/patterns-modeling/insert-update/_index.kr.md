@@ -14,7 +14,7 @@ Machbase 테이블 타입별로 데이터를 삽입·수정하는 패턴을 정�
 | LOG | INSERT / Append API | X | X | X |
 | RDB | INSERT / Append API | O (WHERE 유무 모두) | O | DELETE+INSERT |
 | LOOKUP | INSERT | O (by PK) | O (by PK) | DELETE+INSERT |
-| VOLATILE | INSERT | X | O | ON DUPLICATE KEY UPDATE |
+| VOLATILE | INSERT | O (by PK) | O | ON DUPLICATE KEY UPDATE |
 
 ## TAG/LOG: Append API 패턴 (고속 버퍼)
 
@@ -42,9 +42,15 @@ UPDATE inventory SET qty = qty - 5 WHERE item_id = 42;
 UPDATE product_catalog SET discount = 0;
 ```
 
-## VOLATILE: ON DUPLICATE KEY UPDATE 패턴
+## VOLATILE: UPDATE 패턴
+
+VOLATILE 테이블은 일반 UPDATE와 ON DUPLICATE KEY UPDATE를 모두 지원합니다.
 
 ```sql
+-- 일반 UPDATE (WHERE 조건)
+UPDATE device_status SET status = 'NORMAL', value = 23.5 WHERE device_id = 'DEV-01';
+
+-- UPSERT: ON DUPLICATE KEY UPDATE (PK 중복 시 자동 UPDATE)
 INSERT INTO device_status VALUES ('DEV-01', 'ALARM', 95.3, NOW)
 ON DUPLICATE KEY UPDATE status = 'ALARM', value = 95.3, updated_at = NOW;
 ```

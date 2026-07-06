@@ -14,7 +14,7 @@ weight: 30
 | 주 용도 | 센서·계측값 | 이벤트·로그 | 관계형 업무 | 임시 집계 | 코드·기준 |
 | INSERT | O | O | O | O | O |
 | APPEND API | O | O | O (트랜잭션) | X | X |
-| UPDATE | X | X | O | O (ON DUPLICATE KEY) | O (by PK) |
+| UPDATE | X | X | O | O (일반 UPDATE + ON DUPLICATE KEY) | O (by PK) |
 | DELETE | X | X | O | O | O |
 | PRIMARY KEY | 필수 | X | 선택 | 필수 | 필수 |
 | BASETIME | 필수 (시간축) | X | X | X | X |
