@@ -22,9 +22,9 @@ sql = f"SELECT * FROM tag_table WHERE name = '{sensor_id}'"
 Prepared statement를 사용하면 파라미터 값은 항상 데이터로만 처리됩니다.
 
 ```python
-# 안전한 코드: Prepared statement
-sql = "SELECT * FROM tag_table WHERE name = ?"
-cur.execute(sql, ('sensor_id_value',))
+# Python machbaseAPI: %s 파라미터 렌더링 사용
+sql = "SELECT * FROM tag_table WHERE name = %s"
+cur.execute(sql, ['sensor_id_value'])
 ```
 
 ### 반복 실행 성능
@@ -55,14 +55,16 @@ Machbase는 LOG, TAG, RDB 테이블 모두에서 Prepared statement를 지원합
 
 ### INSERT (Python)
 
+Python `machbaseAPI`의 DB-API 스타일 커서는 서버 prepared statement가 아니라 `%s`
+자리 표시자를 클라이언트에서 렌더링하는 방식입니다.
+
 ```python
 from machbaseAPI import connect
 
 conn = connect(host='127.0.0.1', port=5656, user='SYS', password='MANAGER')
 cur = conn.cursor()
 
-# Prepared statement: SQL은 한 번만 파싱
-sql = "INSERT INTO tag_table (name, time, value) VALUES (?, ?, ?)"
+sql = "INSERT INTO tag_table (name, time, value) VALUES (%s, %s, %s)"
 
 sensor_data = [
     ('sensor_01', 1720000000000000000, 23.5),
@@ -80,9 +82,10 @@ conn.close()
 ### SELECT (Python)
 
 ```python
-sql = "SELECT name, time, value FROM tag_table WHERE name = ? AND time >= ?"
-
-cur.execute(sql, ('sensor_01', 1720000000000000000))
+cur.execute(
+    "SELECT name, time, value FROM tag_table WHERE name = %s AND time >= %s",
+    ['sensor_01', 1720000000000000000],
+)
 
 for row in cur.fetchall():
     print(row)

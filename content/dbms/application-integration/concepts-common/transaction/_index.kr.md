@@ -68,8 +68,8 @@ conn = machbaseapi.connect(host, port, user, password)
 
 cursor = conn.cursor()
 try:
-    cursor.execute("INSERT INTO orders (order_id, amount) VALUES (?, ?)", (1001, 50000))
-    cursor.execute("INSERT INTO orders (order_id, amount) VALUES (?, ?)", (1002, 30000))
+    cursor.execute("INSERT INTO orders (order_id, amount) VALUES (%s, %s)", [1001, 50000])
+    cursor.execute("INSERT INTO orders (order_id, amount) VALUES (%s, %s)", [1002, 30000])
     conn.commit()
 except Exception as e:
     conn.rollback()
@@ -99,7 +99,7 @@ TAG/LOG 테이블에서 잘못 삽입된 데이터를 제거하려면 [DELETE �
 | JDBC | O | conn.commit() / conn.rollback() |
 | Python | O | conn.commit() / conn.rollback() |
 | .NET | O | MachTransaction 클래스 |
-| Go (database/sql) | O | db.Begin() / tx.Commit() |
+| Go (database/sql) | X | 현재 Go SQL 드라이버는 `Begin` / `BeginTx` 미지원 |
 | Go (native client) | X | Append-only API 중심 |
 | Node.js | X | 현재 미지원 |
 | REST API | X | 단일 요청 단위 처리 |

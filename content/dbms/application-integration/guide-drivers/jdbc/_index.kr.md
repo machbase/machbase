@@ -358,7 +358,11 @@ public class FullExample {
 
             // 테이블 생성
             try (Statement stmt = conn.createStatement()) {
-                stmt.execute("DROP TABLE IF EXISTS ex_sensor");
+                try {
+                    stmt.execute("DROP TABLE ex_sensor");
+                } catch (SQLException ignored) {
+                    // 테이블이 없으면 무시하고 생성합니다.
+                }
                 stmt.execute(
                     "CREATE TABLE ex_sensor (" +
                     "  ts DATETIME, tag VARCHAR(40), value DOUBLE)");

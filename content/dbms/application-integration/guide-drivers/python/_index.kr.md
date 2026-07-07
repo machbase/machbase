@@ -56,8 +56,8 @@ cur.execute('''
 ''')
 
 # 데이터 삽입
-cur.execute("INSERT INTO py_sensor VALUES (now(), 'sensor-1', 23.5)")
-cur.execute("INSERT INTO py_sensor VALUES (now(), 'sensor-2', 24.1)")
+cur.execute("INSERT INTO py_sensor VALUES (NOW, 'sensor-1', 23.5)")
+cur.execute("INSERT INTO py_sensor VALUES (NOW, 'sensor-2', 24.1)")
 
 # 데이터 조회
 cur.execute("SELECT to_char(ts,'YYYY-MM-DD HH24:MI:SS') as ts, device, value FROM py_sensor ORDER BY ts")
@@ -82,7 +82,8 @@ if db.open('127.0.0.1', 'SYS', 'MANAGER', 5656) == 0:
 
 try:
     # 테이블 생성
-    db.execute('DROP TABLE IF EXISTS py_quick')
+    db.execute('DROP TABLE py_quick')
+    db.result()  # 테이블이 없어도 다음 CREATE를 계속 진행
     db.execute('CREATE TABLE py_quick(ts DATETIME, device VARCHAR(40), value DOUBLE)')
 
     # 데이터 삽입
@@ -259,7 +260,10 @@ from machbaseAPI import connect
 conn = connect(host='127.0.0.1', port=5656, user='SYS', password='MANAGER')
 cur = conn.cursor()
 
-cur.execute('DROP TABLE IF EXISTS py_append_demo')
+try:
+    cur.execute('DROP TABLE py_append_demo')
+except Exception:
+    pass
 cur.execute('CREATE TABLE py_append_demo(ts DATETIME, device VARCHAR(32), value DOUBLE)')
 
 rows = [
@@ -278,9 +282,10 @@ cur.close()
 conn.close()
 ```
 
-### Trailing NULL padding (2.3 이상)
+### Append 행 길이와 기본값
 
-행의 마지막 일부 컬럼을 생략하면 자동으로 `NULL`로 저장됩니다.
+Append 입력 행은 테이블 컬럼 수와 같은 개수의 값을 가져야 합니다. 마지막 컬럼도
+생략하지 말고 명시적으로 값을 전달합니다.
 
 ```python
 from machbaseAPI import connect
@@ -288,25 +293,31 @@ from machbaseAPI import connect
 conn = connect(host='127.0.0.1', port=5656, user='SYS', password='MANAGER')
 cur = conn.cursor()
 
-cur.execute('DROP TABLE IF EXISTS py_append_null')
+try:
+    cur.execute('DROP TABLE py_append_defaults')
+except Exception:
+    pass
 cur.execute(
-    'CREATE TABLE py_append_null('
+    'CREATE TABLE py_append_defaults('
     '  ts DATETIME, name VARCHAR(20), value DOUBLE, note VARCHAR(40))'
 )
 
-# note 컬럼을 생략 → NULL로 저장
-# value 위치에 None 명시 → value가 NULL로 저장
-conn.append('PY_APPEND_NULL', [
-    ['2024-01-01 10:00:00', 'sensor-1', 12.3],          # note 생략 → NULL
-    ['2024-01-01 10:00:01', 'sensor-2', None, 'manual'], # value → NULL
+# 모든 행은 4개 컬럼 값을 전달합니다.
+conn.append('PY_APPEND_DEFAULTS', [
+    ['2024-01-01 10:00:00', 'sensor-1', 12.3, 'auto'],
+    ['2024-01-01 10:00:01', 'sensor-2', 13.4, 'manual'],
 ])
 
-cur.execute('SELECT ts, name, value, note FROM py_append_null ORDER BY ts')
+cur.execute('SELECT ts, name, value, note FROM py_append_defaults ORDER BY ts')
 print(cur.fetchall())
 
 cur.close()
 conn.close()
 ```
+
+Append에서 컬럼을 생략하면 `Append row length does not match append metadata` 오류가
+발생합니다. NULL 입력이 필요한 경우에는 `INSERT`와 파라미터 바인딩을 사용하고,
+컬럼 타입별 조회 표현을 확인합니다.
 
 ### 레거시 방식 Append
 
@@ -318,7 +329,8 @@ if db.open('127.0.0.1', 'SYS', 'MANAGER', 5656) == 0:
     raise SystemExit(db.result())
 
 try:
-    db.execute('DROP TABLE IF EXISTS py_legacy_append')
+    db.execute('DROP TABLE py_legacy_append')
+    db.result()
     db.execute('CREATE TABLE py_legacy_append(ts DATETIME, tag VARCHAR(16), reading DOUBLE)')
 
     # appendOpen → appendData → appendFlush → appendClose
@@ -348,7 +360,7 @@ finally:
     db.close()
 ```
 
-### appendByTime() - 명시적 타임스탬프
+### appendByTime() - LOG 테이블 arrival time 지정
 
 ```python
 from machbaseAPI import machbase
@@ -358,14 +370,18 @@ if db.open('127.0.0.1', 'SYS', 'MANAGER', 5656) == 0:
     raise SystemExit(db.result())
 
 try:
-    db.execute('DROP TABLE IF EXISTS py_append_time')
-    db.execute('CREATE TABLE py_append_time(ts DATETIME, tag VARCHAR(16), reading DOUBLE)')
+    db.execute('DROP TABLE py_append_time')
+    db.result()
+    db.execute('CREATE LOG TABLE py_append_time(tag VARCHAR(16), reading DOUBLE)')
 
     rows = [
-        ['2024-01-01 11:00:00', 'node-2', 40.1],
-        ['2024-01-01 11:01:00', 'node-2', 40.7],
+        ['node-2', 40.1],
+        ['node-2', 40.7],
     ]
-    epoch_times = [1704106800, 1704106860]  # Unix epoch (초 단위)
+    epoch_times = [
+        1704106800_000_000_000,
+        1704106860_000_000_000,
+    ]  # Unix epoch (나노초 단위)
 
     if db.appendByTime('PY_APPEND_TIME', rows, aTimes=epoch_times) == 0:
         raise SystemExit(db.result())
@@ -374,9 +390,13 @@ finally:
     db.close()
 ```
 
+`aTimes`는 LOG 테이블의 `_ARRIVAL_TIME` 값으로 사용됩니다. 일반 컬럼에 저장할
+시각 값은 행 데이터에 직접 포함합니다.
+
 ## TAG 테이블 Append
 
-TAG 테이블은 `name`, `time`, `value`까지 필수이며, 이후 컬럼은 생략 시 `NULL`로 저장됩니다.
+TAG 테이블 Append도 테이블 정의의 컬럼 순서에 맞춰 값을 전달해야 합니다. 추가 컬럼과
+메타데이터 컬럼을 정의했다면 해당 값도 행 배열에 포함합니다.
 
 ```python
 from machbaseAPI import connect
@@ -384,7 +404,10 @@ from machbaseAPI import connect
 conn = connect(host='127.0.0.1', port=5656, user='SYS', password='MANAGER')
 cur = conn.cursor()
 
-cur.execute('DROP TABLE IF EXISTS py_tag_demo')
+try:
+    cur.execute('DROP TABLE py_tag_demo')
+except Exception:
+    pass
 cur.execute('''
     CREATE TAG TABLE py_tag_demo (
         name VARCHAR(40) PRIMARY KEY,
@@ -397,10 +420,10 @@ cur.execute('''
     )
 ''')
 
-# status, site, line 생략 → NULL로 저장
+# name, time, value, status, site, line 순서로 값을 전달
 conn.append('PY_TAG_DEMO', [
-    ['tag-1', '2024-01-01 10:00:00', 12.3],
-    ['tag-2', '2024-01-01 10:01:00', 13.7],
+    ['tag-1', '2024-01-01 10:00:00', 12.3, 'ok', 'seoul', 1],
+    ['tag-2', '2024-01-01 10:01:00', 13.7, 'ok', 'busan', 2],
 ])
 
 cur.execute('SELECT name, time, value, status FROM py_tag_demo ORDER BY time')
@@ -445,6 +468,6 @@ finally:
 
 - `machbase` 클래스 메서드는 성공 시 `1`, 실패 시 `0`을 반환합니다. 반드시 반환 코드를 확인하세요.
 - 트랜잭션은 RDB 테이블 작업에서 사용합니다. LOG/TAG 테이블 Append성 입력은 롤백 대상이 아니므로 테이블 타입별 지원 범위를 확인합니다.
-- 중간 컬럼을 `NULL`로 입력하려면 해당 위치에 `None`을 명시합니다. Positional 스킵은 지원하지 않습니다.
+- Append 행은 테이블 컬럼 수와 순서를 맞춰야 합니다. 컬럼 생략은 지원하지 않습니다.
 - 커넥션 풀 옵션(`pool_name`, `pool_size`)은 현재 미지원입니다.
 - `getSessionId()`, `count()`, `checkBit()` 등 기존 네이티브 기반 API는 2.3 이상 순수 Python 패키지에서 제공되지 않습니다.

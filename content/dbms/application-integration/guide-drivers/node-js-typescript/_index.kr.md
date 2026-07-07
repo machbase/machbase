@@ -379,7 +379,7 @@ const { createConnection } = require('@machbase/ts-client');
 
     try {
         // 1. 테이블 생성
-        await conn.execute('DROP TABLE IF EXISTS ex_sensor');
+        await conn.execute('DROP TABLE ex_sensor').catch(() => {});
         await conn.execute(
             'CREATE LOG TABLE ex_sensor (ID INTEGER, DEVICE VARCHAR(40), VALUE DOUBLE)'
         );

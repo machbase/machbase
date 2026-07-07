@@ -146,7 +146,7 @@ pstmt.close();
 conn = connect(host='127.0.0.1', port=5656, user='SYS', password='MANAGER')
 cur = conn.cursor()
 
-sql = "INSERT INTO rdb_table (id, value, ts) VALUES (?, ?, ?)"
+sql = "INSERT INTO rdb_table (id, value, ts) VALUES (%s, %s, %s)"
 
 rows = [
     ('sensor_01', 23.5, 1720000000000000000),

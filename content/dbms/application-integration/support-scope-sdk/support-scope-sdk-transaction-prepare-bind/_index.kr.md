@@ -14,9 +14,9 @@ weight: 30
 |-----|:---:|:---:|:---:|------|
 | **ODBC/CLI** | O | O | O | SQLEndTran, SQLPrepare, SQLBindParameter |
 | **JDBC** | O | O | O | conn.setAutoCommit(false), PreparedStatement |
-| **Python** | O | O | O | conn.commit(), cursor.execute(sql, params) |
+| **Python** | O | X | O | 서버 prepare 없음, `%s`/`%(name)s` 클라이언트 렌더링 |
 | **.NET Connector** | O | O | O | MachTransaction, MachCommand.Parameters |
-| **Go (database/sql)** | O | O | O | db.Begin(), db.Prepare(), Named/Positional |
+| **Go (database/sql)** | X | O | O | `Begin`/`BeginTx` 미지원, `db.Prepare()`와 `?` 바인딩 |
 | **Go (native client)** | X | △ | O | Append 중심, SELECT에 파라미터 제한적 |
 | **Node.js** | X | O | O | transaction 미지원, prepare/bind는 지원 |
 | **REST API** | X | X | X | 단일 요청 단위, 서버사이드 파라미터 없음 |
@@ -60,12 +60,15 @@ try {
 
 반복 실행할 쿼리를 미리 파싱·컴파일하여 성능을 향상시킵니다. SQL 인젝션 방지 효과도 있습니다.
 
+Python `machbaseAPI` DB-API 스타일 커서는 별도 `prepare()` 메서드를 제공하지 않습니다.
+반복 실행은 같은 SQL 문자열과 `%s` 파라미터를 반복해서 호출합니다.
+
 ```python
 # Python
 cursor = conn.cursor()
-cursor.prepare("INSERT INTO sensor_log (name, time, value) VALUES (?, ?, ?)")
+sql = "INSERT INTO sensor_log (name, time, value) VALUES (%s, %s, %s)"
 for name, ts, val in data_list:
-    cursor.execute(None, (name, ts, val))  # 파라미터만 변경하여 재실행
+    cursor.execute(sql, [name, ts, val])
 ```
 
 ```go
@@ -116,7 +119,7 @@ SQLExecute(stmt);
 | SDK | NULL 바인딩 방법 |
 |-----|----------------|
 | JDBC | `ps.setNull(idx, java.sql.Types.INTEGER)` |
-| Python | 파라미터 값에 `None` 전달 |
+| Python | `%s` 파라미터에 `None` 전달. 타입별 조회 표현은 확인 필요 |
 | .NET | `DBNull.Value` |
 | Go | `sql.NullString{Valid: false}` 등 Null 타입 |
 | ODBC/CLI | indicator를 `SQL_NULL_DATA`로 설정 |

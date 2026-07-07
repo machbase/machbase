@@ -63,8 +63,8 @@ for (int i = 1; i <= maxAttempts; i++) {
 ```python
 cursor = conn.cursor()
 try:
-    cursor.execute("INSERT INTO sensor_log (name, time, value) VALUES (?, ?, ?)",
-                   ('sensor-01', time_ns, 23.5))
+    cursor.execute("INSERT INTO sensor_log (name, time, value) VALUES (%s, %s, %s)",
+                   ['sensor-01', time_ns, 23.5])
     conn.commit()
 except Exception as e:
     # 오류 코드 확인 후 처리
@@ -80,12 +80,9 @@ finally:
 Append API는 버퍼에 누적 후 flush 시점에 오류가 발생합니다. flush 실패 시 재시도 또는 대체 INSERT로 전환합니다.
 
 ```python
-appender = conn.cursor()
 try:
-    appender.execute("EXEC MACHBASE_APPEND_OPEN('sensor_log')")
-    for row in data_batch:
-        appender.execute("EXEC MACHBASE_APPEND_DATA(?, ?, ?)", row)
-    appender.execute("EXEC MACHBASE_APPEND_CLOSE()")
+    appended = conn.append('SENSOR_LOG', data_batch)
+    print(f"Append rows: {appended}")
 except Exception as e:
     print(f"Append 오류: {e}")
     # flush 실패 시 누적된 데이터를 INSERT로 재시도

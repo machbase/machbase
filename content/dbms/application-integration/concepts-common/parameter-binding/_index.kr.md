@@ -4,11 +4,14 @@ title: 'Parameter binding'
 weight: 40
 ---
 
-Parameter binding은 SQL 문의 `?` 자리에 값을 채워 넣는 메커니즘입니다. Machbase는 위치 기반(positional) 바인딩을 사용합니다.
+Parameter binding은 SQL 문에 값을 안전하게 전달하는 메커니즘입니다. ODBC, JDBC,
+.NET, Go, Node.js 드라이버는 일반적으로 `?` 위치 바인딩을 사용합니다. Python
+`machbaseAPI`의 DB-API 스타일 커서는 `%s` 또는 `%(name)s` 자리 표시자를 클라이언트에서
+렌더링합니다.
 
 ## 위치 기반 바인딩 (Positional Binding)
 
-Machbase의 모든 드라이버는 `?`를 파라미터 자리 표시자로 사용합니다.
+대부분의 드라이버는 `?`를 파라미터 자리 표시자로 사용합니다.
 
 ```sql
 INSERT INTO tag_table (name, time, value) VALUES (?, ?, ?)
@@ -17,7 +20,8 @@ INSERT INTO tag_table (name, time, value) VALUES (?, ?, ?)
 
 파라미터는 왼쪽부터 순서대로 1번이며, 각 드라이버에서 이 위치 순서에 따라 값을 바인딩합니다.
 
-> Machbase는 `:name` 형식의 named binding을 지원하지 않습니다. 항상 `?`와 위치 순서를 사용합니다.
+> Machbase 서버 프로토콜의 기본 바인딩은 위치 기반입니다. Python `machbaseAPI`의
+> `%(name)s` 형식은 Python 클라이언트가 SQL 문자열을 렌더링하는 편의 기능입니다.
 
 ## DATETIME 타입 바인딩
 
@@ -37,7 +41,7 @@ Python의 `time.time()`은 초(float) 단위입니다.
 ```python
 import time
 now_nano = int(time.time() * 1_000_000_000)
-cur.execute(sql, ('sensor_01', now_nano, 23.5))
+cur.execute(sql, ['sensor_01', now_nano, 23.5])
 ```
 
 ### ODBC (C/C++)
@@ -72,24 +76,26 @@ import time
 
 # nanosecond 정수 (권장)
 now_ns = int(time.time_ns())  # Python 3.7+
-cur.execute("INSERT INTO tag_table VALUES (?, ?, ?)", ('sensor_01', now_ns, 23.5))
+cur.execute("INSERT INTO tag_table VALUES (%s, %s, %s)", ['sensor_01', now_ns, 23.5])
 
 # datetime 객체 사용 (microsecond 해상도)
 from datetime import datetime, timezone
 now = datetime.now(timezone.utc)
-cur.execute("INSERT INTO tag_table VALUES (?, ?, ?)", ('sensor_01', now, 23.5))
+cur.execute("INSERT INTO tag_table VALUES (%s, %s, %s)", ['sensor_01', now, 23.5])
 ```
 
 ## NULL 값 처리
 
 ### Python
 
-Python에서는 `None`으로 NULL을 표현합니다.
+Python DB-API 스타일 커서는 `%s` 자리 표시자에 `None`을 전달하면 SQL `NULL`로
+렌더링합니다. 타입별 NULL 조회 표현은 Machbase 타입 규칙을 따르므로, 애플리케이션에서
+필요한 컬럼 타입별 결과를 확인합니다.
 
 ```python
 # value 컬럼에 NULL 삽입
-cur.execute("INSERT INTO tag_table (name, time, value) VALUES (?, ?, ?)",
-            ('sensor_01', now_ns, None))
+cur.execute("INSERT INTO tag_table (name, time, value) VALUES (%s, %s, %s)",
+            ['sensor_01', now_ns, None])
 ```
 
 ### Java
@@ -156,22 +162,20 @@ pstmt.setFloat(5, 23.5f);           // FLOAT
 pstmt.setShort(6, (short)10);       // SMALLINT
 ```
 
-### Python (튜플로 전달)
+### Python (`%s` 또는 `%(name)s`)
 
 ```python
-# 파라미터는 execute()의 두 번째 인자로 튜플 또는 리스트
+# 위치 파라미터는 %s를 사용합니다.
 cur.execute(
-    "INSERT INTO tag_table (name, time, value) VALUES (?, ?, ?)",
-    ('sensor_01', now_ns, 23.5)
+    "INSERT INTO tag_table (name, time, value) VALUES (%s, %s, %s)",
+    ['sensor_01', now_ns, 23.5]
 )
 
-# executemany(): 리스트 of 튜플
-cur.executemany(
-    "INSERT INTO tag_table (name, time, value) VALUES (?, ?, ?)",
-    [
-        ('sensor_01', now_ns,           23.5),
-        ('sensor_02', now_ns + 1000000, 18.2),
-    ]
+# 이름 파라미터는 %(name)s를 사용합니다.
+cur.execute(
+    "INSERT INTO tag_table (name, time, value) "
+    "VALUES (%(name)s, %(time)s, %(value)s)",
+    {"name": "sensor_01", "time": now_ns, "value": 23.5}
 )
 ```
 
