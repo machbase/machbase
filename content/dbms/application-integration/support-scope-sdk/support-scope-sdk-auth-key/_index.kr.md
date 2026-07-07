@@ -4,195 +4,136 @@ title: 'SDK별 AUTH KEY 지원 범위 안내'
 weight: 20
 ---
 
-Machbase Neo는 사용자 이름/비밀번호 방식 외에 **AUTH KEY** 기반 인증을 지원합니다. AUTH KEY는 challenge-response 메커니즘을 사용하여 네트워크에 비밀번호를 평문으로 전송하지 않도록 설계된 인증 방식입니다.
+Machbase는 사용자 이름/비밀번호 방식 외에 **AUTH KEY challenge 인증**을 지원합니다.
+서버에는 사용자의 공개키를 등록하고, 클라이언트는 개인키 파일로 서버 challenge에
+서명합니다. 비밀번호를 연결 문자열에 넣지 않고 키 기반으로 접속할 때 사용합니다.
 
 ## AUTH KEY 인증 방식 개요
 
-AUTH KEY 인증의 동작 원리는 다음과 같습니다.
+1. 서버 사용자에 공개키를 AUTH KEY로 등록합니다.
+2. 클라이언트가 `AUTH_MODE=CHALLENGE`로 연결을 요청합니다.
+3. 서버가 challenge 값을 보냅니다.
+4. 클라이언트가 `AUTH_KEY_FILE` 개인키로 challenge에 서명합니다.
+5. 서버가 등록된 공개키로 서명을 검증하고 연결을 허용합니다.
 
-1. 클라이언트가 서버에 연결을 요청합니다.
-2. 서버가 랜덤 **challenge** 값을 클라이언트에 전송합니다.
-3. 클라이언트는 AUTH KEY와 challenge를 조합하여 **HMAC-SHA256** 서명을 생성합니다.
-4. 서버가 서명을 검증하여 연결을 허용합니다.
+지원되는 서명 방식은 `ECDSA`, `RSA_PKCS1_V15`, `RSA_PSS`입니다. 키 파일만으로 방식을
+추론할 수 있는 경우에는 `AUTH_SIG_SCHEME`을 생략할 수 있습니다.
 
-이 방식은 비밀번호가 네트워크에 노출되지 않으므로 일반 TCP 연결 환경에서도 높은 보안을 제공합니다.
+## AUTH KEY 등록과 조회
 
-## AUTH KEY 발급
+사용자를 생성할 때 공개키를 함께 등록할 수 있습니다.
 
-Machbase Neo 서버에서 계정별 AUTH KEY를 발급합니다.
-
-```sql
--- SYS 계정으로 접속 후 AUTH KEY 발급
-ALTER USER SYS SET AUTHKEY ON;
-
--- 발급된 AUTH KEY 확인
-SELECT AUTHKEY FROM V$USER WHERE NAME = 'SYS';
+```text
+CREATE USER app_auth_key
+WITH AUTH KEY (
+    KEY='-----BEGIN RSA PUBLIC KEY-----\n...\n-----END RSA PUBLIC KEY-----\n',
+    VALID_BEFORE='2047-12-31',
+    COMMENT='key only user'
+);
 ```
 
-발급된 AUTH KEY는 Base64로 인코딩된 문자열로 반환됩니다.
+기존 사용자에 AUTH KEY를 추가할 수도 있습니다.
+
+```text
+ALTER USER app_auth_key ADD AUTH KEY (
+    KEY='-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----\n',
+    VALID_BEFORE='2047-12-31',
+    COMMENT='second key'
+);
+```
+
+등록된 키는 `V$USER_AUTH_KEYS`에서 확인합니다.
+
+```sql
+SELECT key_id, user_name, key_algo, key_param, activated, valid_before, comment
+FROM v$user_auth_keys
+WHERE user_name = 'APP_AUTH_KEY'
+ORDER BY key_id;
+```
+
+키를 비활성화, 활성화, 삭제할 때는 `key_id`를 지정합니다.
+
+```text
+ALTER USER app_auth_key DEACTIVATE AUTH KEY ID 3;
+ALTER USER app_auth_key ACTIVATE AUTH KEY ID 3;
+ALTER USER app_auth_key DROP AUTH KEY ID 3;
+```
 
 ## SDK별 AUTH KEY 인증 지원 현황
 
-| SDK | AUTH KEY 지원 | 지원 버전 | 설정 방법 |
-|-----|:------------:|-----------|-----------|
-| **JDBC** | O | Machbase 8.0 이상 | JDBC URL 파라미터 또는 Properties |
-| **ODBC / CLI** | O | Machbase 8.0 이상 | `SQLConnect` 파라미터 |
-| **Python** | O | Machbase 8.0 이상 | `connect()` 파라미터 |
-| **.NET** | O | Machbase 8.0 이상 | 연결 문자열 파라미터 |
-| **Go (native)** | O | Machbase 8.0 이상 | `Open()` 옵션 |
-| **Go (database/sql)** | O | Machbase 8.0 이상 | DSN 파라미터 |
-| **Node.js** | △ | 버전 확인 필요 | 연결 옵션 |
-| **REST API** | O | Machbase 8.0 이상 | `Authorization` 헤더 |
+| SDK | AUTH KEY 지원 | 설정 방법 |
+|-----|:------------:|-----------|
+| **machsql** | O | `-K <private-key-file>`, `--auth-sig-scheme` |
+| **ODBC / CLI** | O | 연결 문자열 `AUTH_MODE`, `AUTH_KEY_FILE`, `AUTH_SIG_SCHEME` |
+| **JDBC** | O | JDBC Properties 또는 URL 속성 |
+| **Go / Python / .NET** | 버전별 확인 필요 | 드라이버가 challenge 옵션을 제공하는지 확인 |
+| **REST API** | 별도 방식 | `HTTP_AUTH` 기반 Basic Authentication 설정 사용 |
 
-## JDBC: AUTH KEY 인증 설정
+## machsql 예제
 
-### URL 파라미터 방식
-
-```java
-// JDBC URL에 authkey 파라미터 추가
-String url = "jdbc:machbase://127.0.0.1:5656/MACHBASE?authkey=<BASE64_AUTH_KEY>";
-
-Connection conn = DriverManager.getConnection(url, "SYS", "");
+```bash
+machsql -s 127.0.0.1 -P 5656 \
+  -u app_auth_key \
+  -K ./auth_ecdsa_p256.pem \
+  --auth-sig-scheme=ECDSA \
+  -i -q "SELECT COUNT(*) FROM v$tables;"
 ```
 
-### Properties 방식
+RSA 키를 사용할 때는 서명 방식을 지정합니다.
+
+```bash
+machsql -s 127.0.0.1 -P 5656 \
+  -u app_auth_key \
+  -K ./auth_rsa_2048.pem \
+  --auth-sig-scheme=RSA_PSS \
+  -i -q "SELECT COUNT(*) FROM v$tables;"
+```
+
+## ODBC / CLI 연결 문자열
+
+```ini
+SERVER=127.0.0.1;
+UID=APP_AUTH_KEY;
+CONNTYPE=1;
+PORT_NO=5656;
+NLS_USE=UTF8;
+TIMEZONE=+0900;
+AUTH_MODE=CHALLENGE;
+AUTH_KEY_FILE=./auth_ecdsa_p256.pem;
+AUTH_SIG_SCHEME=ECDSA;
+```
+
+`AUTH_MODE=CHALLENGE`를 지정하면 `AUTH_KEY_FILE`이 필수입니다. 잘못된 파일 경로,
+키와 맞지 않는 `AUTH_SIG_SCHEME`, 등록되지 않은 사용자 키는 연결 실패로 처리됩니다.
+
+## JDBC 예제
 
 ```java
 Properties props = new Properties();
-props.setProperty("user", "SYS");
-props.setProperty("authkey", "<BASE64_AUTH_KEY>");
+props.setProperty("user", "app_auth_key");
+props.setProperty("AUTH_MODE", "CHALLENGE");
+props.setProperty("AUTH_KEY_FILE", "/path/to/auth_ecdsa_p256.pem");
+props.setProperty("AUTH_SIG_SCHEME", "ECDSA");
 
-String url = "jdbc:machbase://127.0.0.1:5656/MACHBASE";
+String url = "jdbc:machbase://127.0.0.1:5656/machbasedb";
 Connection conn = DriverManager.getConnection(url, props);
 ```
 
-> **주의**: AUTH KEY 방식 사용 시 `password` 파라미터는 무시됩니다. 비밀번호 대신 AUTH KEY가 인증에 사용됩니다.
+키 알고리즘으로 서명 방식을 추론할 수 있는 경우에는 `AUTH_SIG_SCHEME`을 생략할 수
+있습니다.
 
-## ODBC / CLI: AUTH KEY 인증 설정
+## REST API와 AUTH KEY
 
-ODBC 연결 문자열에 `AUTHKEY` 속성을 추가합니다.
-
-```c
-// SQLDriverConnect 방식
-SQLCHAR connStr[] = 
-    "DSN=Machbase;UID=SYS;AUTHKEY=<BASE64_AUTH_KEY>;";
-
-SQLDriverConnect(conn, NULL, connStr, SQL_NTS, NULL, 0, NULL, SQL_DRIVER_NOPROMPT);
-```
-
-또는 `odbc.ini` / `odbcinst.ini` 에 설정합니다.
-
-```ini
-[Machbase]
-Driver   = /usr/local/machbase/lib/libmachbase_odbc.so
-Server   = 127.0.0.1
-Port     = 5656
-Database = MACHBASE
-UID      = SYS
-AuthKey  = <BASE64_AUTH_KEY>
-```
-
-## Python: AUTH KEY 인증 설정
-
-```python
-from machbaseAPI import connect
-
-conn = connect(
-    host='127.0.0.1',
-    port=5656,
-    user='SYS',
-    authkey='<BASE64_AUTH_KEY>'
-)
-
-cur = conn.cursor()
-cur.execute("SELECT COUNT(*) FROM sensor_data")
-print(cur.fetchone())
-conn.close()
-```
-
-## .NET: AUTH KEY 인증 설정
-
-연결 문자열에 `AuthKey` 파라미터를 추가합니다.
-
-```csharp
-using Mach.Data.MachClient;
-
-string connString = "SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;" +
-                    "AUTHKEY=<BASE64_AUTH_KEY>;PROTOCOL=4.0-full";
-
-using var conn = new MachConnection(connString);
-conn.Open();
-```
-
-## Go (native): AUTH KEY 인증 설정
-
-```go
-package main
-
-import (
-    mach "github.com/machbase/neo-client/machrpc"
-)
-
-func main() {
-    db, err := mach.Open(
-        "127.0.0.1:5656",
-        "SYS",
-        "",
-        mach.WithAuthKey("<BASE64_AUTH_KEY>"),
-    )
-    if err != nil {
-        panic(err)
-    }
-    defer db.Close()
-}
-```
-
-## REST API: AUTH KEY 인증 설정
-
-REST API는 먼저 AUTH KEY를 사용하여 JWT 토큰을 발급받고, 이후 요청에 토큰을 사용합니다.
-
-### 토큰 발급
-
-```bash
-# AUTH KEY로 로그인하여 JWT 토큰 발급
-curl -X POST "http://localhost:5657/web/api/login" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "loginName": "SYS",
-    "authKey": "<BASE64_AUTH_KEY>"
-  }'
-```
-
-응답 예시:
-
-```json
-{
-  "success": true,
-  "accessToken": "eyJhbGciOiJIUzI1NiIs...",
-  "refreshToken": "eyJhbGciOiJIUzI1NiIs..."
-}
-```
-
-### 토큰을 이용한 API 호출
-
-```bash
-# Authorization 헤더에 Bearer 토큰 포함
-curl -G "http://localhost:5657/db/query" \
-  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIs..." \
-  --data-urlencode "q=SELECT COUNT(*) FROM sensor_data"
-```
+이 페이지의 AUTH KEY challenge 인증은 DB 포트(기본 5656)에 접속하는 드라이버/CLI
+인증 방식입니다. REST API(기본 5657)는 `/db/login` 또는 Bearer 토큰으로 AUTH KEY를
+교환하지 않습니다. REST API 인증은 `machbase.conf`의 `HTTP_AUTH` 설정에 따라 Basic
+Authentication을 사용합니다.
 
 ## 보안 권장 사항
 
-1. **AUTH KEY는 파일로 안전하게 보관**하고 코드에 하드코딩하지 마세요. 환경 변수나 시크릿 관리 도구(HashiCorp Vault, AWS Secrets Manager 등)를 사용하세요.
-2. **TLS/SSL 연결**과 병행하면 더욱 강력한 보안을 제공합니다.
-3. AUTH KEY는 **주기적으로 갱신**하고, 사용하지 않는 계정의 AUTH KEY는 비활성화합니다.
-
-```bash
-# 환경 변수에서 AUTH KEY 읽기 예시 (Python)
-import os
-from machbaseAPI import connect
-
-auth_key = os.environ.get('MACHBASE_AUTH_KEY')
-conn = connect(host='127.0.0.1', port=5656, user='SYS', authkey=auth_key)
-```
+1. 개인키 파일은 파일 권한을 제한하고 애플리케이션 설정 또는 시크릿 관리 도구로
+   배포합니다.
+2. 공개키는 사용자별로 등록하고, 사용하지 않는 키는 `DEACTIVATE` 또는 `DROP`합니다.
+3. `VALID_BEFORE`를 설정해 키 만료 시점을 운영 정책에 맞게 관리합니다.
+4. 네트워크 구간 보호가 필요한 환경에서는 TLS/SSL 터널 또는 보안 네트워크와 함께
+   사용합니다.

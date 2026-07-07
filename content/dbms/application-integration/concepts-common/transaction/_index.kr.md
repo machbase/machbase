@@ -82,7 +82,7 @@ finally:
 
 TAG와 LOG 테이블에 대해 COMMIT/ROLLBACK을 호출해도 무시되거나 오류가 반환됩니다. **삽입 즉시 영구 저장**됩니다.
 
-```sql
+```text
 -- 이 패턴은 TAG 테이블에서 동작하지 않습니다
 BEGIN;
 INSERT INTO sensor_tag (name, time, value) VALUES ('s01', NOW, 25.0);

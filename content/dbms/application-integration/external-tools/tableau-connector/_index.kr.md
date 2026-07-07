@@ -109,21 +109,21 @@ Machbase Neo ODBC 드라이버를 설치하고 **ODBC 데이터 원본 관리자
 
 ```sql
 SELECT
-    DATE_TRUNC('hour', TO_TIMESTAMP(time)) AS hour_bucket,
+    DATE_TRUNC('hour', time, 1) AS hour_bucket,
     name AS sensor_name,
     AVG(value) AS avg_value,
     MAX(value) AS max_value,
     MIN(value) AS min_value,
     COUNT(*) AS sample_count
 FROM sensor_data
-WHERE time >= TO_TIMESTAMP(SYSDATE - 7 * 24 * 3600 * 1000000000)
-GROUP BY 1, 2
-ORDER BY 1 ASC
+WHERE time >= SYSDATE - 7 * 24 * 3600 * 1000000000
+GROUP BY hour_bucket, sensor_name
+ORDER BY hour_bucket ASC
 ```
 
 ### 날짜/시간 필드 설정
 
-Machbase의 `DATETIME` 타입은 Tableau에서 자동으로 날짜 타입으로 인식됩니다. 나노초 BIGINT 컬럼을 사용하는 경우 `TO_TIMESTAMP()` 로 변환하거나 Tableau의 **계산된 필드**를 활용합니다.
+Machbase의 `DATETIME` 타입은 Tableau에서 날짜 타입으로 사용할 수 있습니다. TAG 테이블의 `DATETIME BASETIME` 컬럼은 그대로 조회하고, 나노초 BIGINT 컬럼을 별도로 저장한 경우에만 애플리케이션 또는 계산 필드에서 변환합니다.
 
 ## Tableau Server 배포
 

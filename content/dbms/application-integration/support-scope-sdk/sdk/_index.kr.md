@@ -65,8 +65,8 @@ JavaScript / TypeScript 환경에서 사용합니다.
 HTTP 기반으로 언어·프레임워크에 독립적입니다. Machbase Neo의 HTTP 서버(포트 5657)에 직접 요청을 보냅니다.
 
 - JSON 요청·응답
-- `/db/query` (SELECT), `/db/exec` (DDL/DML), `/db/append/{table}` (Append)
-- 인증: JWT 토큰 또는 Basic Auth
+- `/machbase?q=<SQL>` (SQL 실행), `/machbase` POST (Append)
+- 인증: `HTTP_AUTH` 활성화 시 Basic Authentication
 
 ## 기능별 지원 범위 상세
 

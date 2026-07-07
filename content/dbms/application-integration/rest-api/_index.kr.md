@@ -4,57 +4,60 @@ title: 'REST API 연동'
 weight: 40
 ---
 
-Machbase는 HTTP 기반의 REST API를 제공하여 특정 드라이버나 SDK 없이 모든 언어와 환경에서 데이터베이스에 접근할 수 있습니다. curl, wget, Python requests, JavaScript fetch 등 HTTP를 지원하는 모든 도구에서 바로 사용할 수 있습니다.
+Machbase는 HTTP 기반 REST API를 제공합니다. 별도 드라이버를 설치하지 않고 `curl`,
+Python `requests`, JavaScript `fetch` 등 HTTP 클라이언트에서 SQL 실행과 Append 삽입을
+수행할 수 있습니다.
 
 ## REST API 포트
 
-REST API는 DB 연결 포트(5656)와 **별도의 포트(5657)**를 사용합니다.
+REST API는 DB 연결 포트와 별도의 HTTP 포트를 사용합니다.
 
 | 포트 | 용도 |
 |------|------|
 | 5656 | ODBC/JDBC/네이티브 드라이버 연결 |
-| **5657** | **REST API (HTTP)** |
+| 5657 | REST API (HTTP) |
 
-기본 URL 구조는 다음과 같습니다.
+기본 URL은 다음과 같습니다.
 
+```text
+http://<host>:5657
 ```
-http://<host>:5657/<endpoint>
-```
 
-예를 들어 로컬 서버에 접속하는 경우 기본 URL은 `http://127.0.0.1:5657`입니다.
+로컬 서버에 접속하는 경우 기본 URL은 `http://127.0.0.1:5657`입니다.
 
 ## 주요 API 엔드포인트
 
-Machbase REST API는 세 가지 주요 엔드포인트로 구성됩니다.
+현재 Machbase REST 샘플과 서버에서 확인되는 기본 엔드포인트는 다음과 같습니다.
 
 | 엔드포인트 | 메서드 | 설명 |
 |-----------|--------|------|
-| `/db/query` | POST | SQL 실행 및 결과 반환 (SELECT, INSERT, DDL 모두 지원) |
-| `/db/append/{table_name}` | POST | 대용량 데이터 고속 삽입 (Append 프로토콜) |
-| `/machiot/tags` | GET | TAG 테이블 전용 고수준 데이터 조회 API |
+| `/machbase?q=<SQL>` | GET | SQL 실행 및 결과 반환 |
+| `/machbase` | POST | JSON 본문으로 여러 행 Append 삽입 |
+| `/machbase/tables` | GET | 테이블 목록 조회 |
+| `/machbase/columns/<table>` | GET | 지정한 테이블의 컬럼 정보 조회 |
 
 ## 빠른 시작 예제
 
-다음은 REST API를 사용해 간단한 SQL을 실행하는 예제입니다.
+다음은 REST API를 사용해 SQL을 실행하는 예제입니다.
 
 ```bash
-curl -X POST http://127.0.0.1:5657/db/query \
-  -H "Content-Type: application/json" \
-  -d '{"q": "SELECT 1 + 1"}'
+curl -G "http://127.0.0.1:5657/machbase" \
+  --data-urlencode "q=SELECT 1"
 ```
 
 응답 예시:
 
 ```json
 {
-  "data": {
-    "columns": ["1 + 1"],
-    "types": ["int32"],
-    "rows": [[2]]
-  },
-  "success": true,
-  "reason": "success",
-  "elapse": "1.234ms"
+  "error_code": 0,
+  "error_message": "",
+  "columns": [
+    {"name": "1", "type": 8, "length": 11}
+  ],
+  "data": [
+    {"1": 1}
+  ],
+  "timezone": "+0900"
 }
 ```
 
@@ -62,29 +65,22 @@ curl -X POST http://127.0.0.1:5657/db/query \
 
 | 문서 | 내용 |
 |------|------|
-| [공통 인증과 타임존](common-authentication-timezone-rest-api/) | Bearer token 인증, X-Timezone 헤더, Content-Type 설정 |
-| [SQL REST API](machbase-sql-rest-api/) | `/db/query` 엔드포인트 상세: SELECT, INSERT, DDL, format 옵션 |
-| [Append REST API](machbase-append-rest-api/) | `/db/append` 엔드포인트 상세: 대용량 고속 삽입 |
-| [TAG REST API](machiot-tags-tag-rest-api/) | `/machiot/tags` 엔드포인트 상세: TAG 전용 고수준 조회 |
-| [오류 처리](error-handling-rest-api/) | HTTP 상태 코드, 오류 응답 형식, 재시도 전략 |
+| [공통 설정](common-authentication-timezone-rest-api/) | HTTP 포트, 인증 설정, 요청 헤더 |
+| [SQL REST API](machbase-sql-rest-api/) | `/machbase` GET SQL 실행 |
+| [Append REST API](machbase-append-rest-api/) | `/machbase` POST Append 삽입 |
+| [TAG 조회](machiot-tags-tag-rest-api/) | TAG 테이블을 SQL REST API로 조회하는 방법 |
+| [오류 처리](error-handling-rest-api/) | `error_code`, HTTP 상태 코드, 재시도 전략 |
 
 ## REST API vs 드라이버 연결
-
-REST API는 설치 없이 바로 사용할 수 있다는 장점이 있으나, 드라이버 연결 대비 다음과 같은 차이점이 있습니다.
 
 | 항목 | REST API | 드라이버 (ODBC/JDBC 등) |
 |------|----------|-------------------------|
 | 설치 | 불필요 | 드라이버 설치 필요 |
 | 언어 | 모든 언어 | 해당 언어/런타임 |
-| 연결 방식 | HTTP (상태 없음) | TCP 영구 연결 |
-| 대용량 삽입 | `/db/append` (chunked) | Append API (네이티브) |
-| 트랜잭션 | SQL API로 제한적 지원 | 완전 지원 |
-| 오버헤드 | HTTP 헤더 오버헤드 있음 | 낮음 |
+| 연결 방식 | HTTP 요청 | TCP 연결 |
+| SQL 실행 | `/machbase?q=<SQL>` | 드라이버 API |
+| 대량 삽입 | `/machbase` POST Append | 네이티브 Append API |
+| 트랜잭션 | HTTP 요청 단위 실행 | RDB 테이블에서 트랜잭션 사용 가능 |
 
-일반적으로 **웹 프론트엔드, 마이크로서비스, 언어 독립 환경, 간단한 통합** 시나리오에서 REST API가 적합합니다. 초고성능 시계열 수집이 필요한 경우에는 네이티브 드라이버의 Append API 사용을 권장합니다.
-
-## 레퍼런스
-
-REST API의 전체 엔드포인트 목록과 파라미터 명세는 **14장 레퍼런스**를 참조하십시오.
-
-- [REST API 레퍼런스](../../reference/rest-api/)
+REST API는 간단한 통합, 웹 서비스, 언어 독립 환경에 적합합니다. 초고성능 수집이나
+세밀한 연결 제어가 필요한 경우에는 네이티브 드라이버의 Append API를 사용합니다.

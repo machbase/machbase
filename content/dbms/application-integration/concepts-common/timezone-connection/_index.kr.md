@@ -10,10 +10,10 @@ Machbase는 모든 시간 데이터를 내부적으로 UTC nanosecond 정수로 
 
 ```
 저장: UTC 기준 nanosecond 정수 (예: 1720000000000000000)
-표시: 연결 timezone에 따라 변환 (기본값: UTC)
+표시: 서버 또는 연결 timezone에 따라 변환
 ```
 
-timezone 설정 없이 조회하면 UTC 시각으로 표시됩니다. 한국 표준시(KST, UTC+9)로 표시하려면 연결 시 또는 쿼리 내에서 timezone을 지정해야 합니다.
+timezone 설정 없이 조회하면 서버 또는 세션의 기본 timezone으로 표시됩니다. 한국 표준시(KST, UTC+9)처럼 특정 timezone으로 표시하려면 연결 시 timezone을 지정하거나 애플리케이션에서 변환합니다.
 
 ## 연결 시 timezone 설정
 
@@ -66,29 +66,28 @@ char connStr[] = "SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;PWD=MANAGER;"
 // TIMEZONE 값: UTC offset (시간 단위), 예: KST = 9
 ```
 
-## 쿼리에서 timezone 변환
+## 쿼리에서 시간 문자열 처리
 
-연결 시 timezone을 설정하지 않아도 SQL 함수로 timezone 변환이 가능합니다.
+연결 timezone은 드라이버/세션 설정을 따릅니다. SQL에서는 `TO_CHAR`로 `DATETIME`
+값을 문자열로 만들고, `TO_DATE`로 문자열을 `DATETIME` 값으로 변환합니다.
 
-### TO_CHAR로 포맷과 timezone 지정
+### TO_CHAR로 포맷 지정
 
 ```sql
--- UTC 시각을 KST로 변환하여 문자열로 출력
 SELECT name,
-       TO_CHAR(time, 'YYYY-MM-DD HH24:MI:SS', 'Asia/Seoul') AS time_kst,
+       TO_CHAR(time, 'YYYY-MM-DD HH24:MI:SS') AS time_text,
        value
 FROM tag_table
 WHERE name = 'sensor_01'
 LIMIT 10;
 ```
 
-### TO_DATE로 timezone 포함 파싱
+### TO_DATE로 문자열 파싱
 
 ```sql
--- KST 문자열을 내부 UTC 값으로 변환하여 비교
 SELECT *
 FROM tag_table
-WHERE time >= TO_DATE('2024-07-03 09:00:00', 'YYYY-MM-DD HH24:MI:SS', 'Asia/Seoul');
+WHERE time >= TO_DATE('2024-07-03 09:00:00', 'YYYY-MM-DD HH24:MI:SS');
 ```
 
 ### 연결 timezone과 쿼리 timezone의 관계
@@ -100,7 +99,7 @@ WHERE time >= TO_DATE('2024-07-03 09:00:00', 'YYYY-MM-DD HH24:MI:SS', 'Asia/Seou
 SELECT TO_CHAR(time, 'YYYY-MM-DD HH24:MI:SS') FROM tag_table;
 -- → KST로 표시됨
 
--- 연결 timezone이 UTC(기본)일 때
+-- 연결 timezone이 UTC일 때
 SELECT TO_CHAR(time, 'YYYY-MM-DD HH24:MI:SS') FROM tag_table;
 -- → UTC로 표시됨
 ```
@@ -112,7 +111,7 @@ Machbase에서 현재 시각을 나타내는 두 가지 표현이 있습니다.
 | 표현 | 반환값 | 용도 |
 |------|--------|------|
 | `SYSDATE` | 현재 시각 (UTC nanosecond) | WHERE 조건, 기본값 |
-| `NOW()` | 현재 시각 (UTC nanosecond) | `SYSDATE`와 동일 |
+| `NOW` | 현재 시각 | `SYSDATE`와 동일 |
 
 두 표현은 동일한 값을 반환합니다. `SYSDATE`가 더 일반적으로 사용됩니다.
 
@@ -121,15 +120,16 @@ Machbase에서 현재 시각을 나타내는 두 가지 표현이 있습니다.
 SELECT * FROM tag_table WHERE time >= SYSDATE - 3600000000000;
 -- 3600000000000 = 1시간을 nanosecond로 표현 (3600 * 10^9)
 
--- DURATION 절을 사용하면 더 간결
-SELECT * FROM tag_table DURATION 1 HOUR;
+SELECT * FROM tag_table
+WHERE name = 'sensor_01'
+  AND time >= SYSDATE - 3600000000000;
 ```
 
 ### SYSDATE 연산
 
 SYSDATE에 nanosecond 정수를 더하거나 빼는 방식으로 시간 범위를 계산합니다.
 
-```sql
+```text
 -- 1시간 전
 SYSDATE - 3600000000000
 

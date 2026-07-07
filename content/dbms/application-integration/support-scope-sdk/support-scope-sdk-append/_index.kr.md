@@ -17,7 +17,7 @@ Machbase Neo의 **Append API**는 대량 데이터를 고속으로 삽입하기 
 | **Go (native)** | O | `AppendWriter` | `conn.Appender(ctx, tableName)` |
 | **Go (database/sql)** | △ | 제한적 | native 드라이버의 `Appender` 직접 사용 권장 |
 | **Node.js** | △ | 부분 지원 | 버전에 따라 상이 |
-| **REST API** | O | `POST /db/append/{table}` | HTTP multipart 스트리밍 |
+| **REST API** | O | `POST /machbase` | HTTP JSON Append |
 
 - **O**: 완전 지원
 - **△**: 제한적 지원 (별도 확인 필요)
@@ -140,25 +140,25 @@ func main() {
 }
 ```
 
-## REST API: POST /db/append/{table}
+## REST API: POST /machbase
 
-REST API를 통한 Append는 HTTP multipart 스트리밍 방식을 사용합니다.
+REST API를 통한 Append는 JSON 본문에 테이블 이름과 행 배열을 전달합니다.
 
 ```bash
-# CSV 형식으로 Append
-curl -X POST "http://localhost:5657/db/append/sensor_data" \
-  -H "Content-Type: text/csv" \
-  -H "Authorization: Bearer <TOKEN>" \
-  --data-binary $'sensor01,1720000000000000000,25.3\nsensor02,1720000000000000001,30.1\n'
+curl -X POST "http://localhost:5657/machbase" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"sensor_data","values":[["sensor01",1720000000000000000,25.3],["sensor02",1720000000000000001,30.1]]}'
 ```
 
-JSON 형식으로도 Append할 수 있습니다.
+성공 시 Append 결과 건수를 반환합니다.
 
-```bash
-curl -X POST "http://localhost:5657/db/append/sensor_data" \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <TOKEN>" \
-  -d '{"data":{"columns":["name","time","value"],"rows":[["sensor01",1720000000000000000,25.3],["sensor02",1720000000000000001,30.1]]}}'
+```json
+{
+  "error_code": 0,
+  "error_message": "",
+  "append_success": 2,
+  "append_failure": 0
+}
 ```
 
 ## Append API 성능 특성

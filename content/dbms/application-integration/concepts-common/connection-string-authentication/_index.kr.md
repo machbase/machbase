@@ -25,16 +25,20 @@ Machbase에 연결하기 위한 기본 정보와 각 드라이버별 연결 문�
 
 ### AUTH KEY 인증 (Machbase 8.0 이상)
 
-비밀번호 대신 사전에 발급된 AUTH KEY를 사용하는 인증 방식입니다. 비밀번호를 소스코드나 설정 파일에 직접 기록하지 않아도 됩니다. JDBC, Python SDK, REST API에서 지원합니다.
+비밀번호 대신 서버에 등록된 공개키와 클라이언트 개인키 파일로 challenge 인증을 수행하는 방식입니다. 비밀번호를 소스코드나 설정 파일에 직접 기록하지 않아도 됩니다. machsql, ODBC/CLI, JDBC 등 challenge 인증을 구현한 클라이언트에서 사용합니다.
 
-AUTH KEY는 Machbase 관리자 콘솔 또는 SQL로 발급합니다.
+AUTH KEY는 사용자 생성 또는 변경 SQL로 공개키를 등록합니다.
 
-```sql
--- AUTH KEY 발급 (관리자 권한 필요)
-ALTER USER reporter ADD AUTH_KEY 'my-secret-key-string';
+```text
+CREATE USER reporter
+WITH AUTH KEY (
+    KEY='-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----\n',
+    VALID_BEFORE='2047-12-31',
+    COMMENT='reporter key'
+);
 ```
 
-AUTH KEY를 사용한 연결은 드라이버별 설정이 다릅니다. 상세 방법은 14장 레퍼런스의 각 드라이버 문서를 참조하세요.
+AUTH KEY를 사용한 연결은 드라이버별 설정이 다릅니다. 자세한 설정은 [SDK별 AUTH KEY 지원 범위 안내](../../support-scope-sdk/support-scope-sdk-auth-key/)를 참조하세요.
 
 ## 드라이버별 연결 문자열 예시
 
@@ -118,13 +122,14 @@ db, err := sql.Open("machbase", "SYS:MANAGER@127.0.0.1:5656/MACHBASE")
 REST API는 별도 드라이버 없이 HTTP로 연결합니다. 포트는 기본 `5657`입니다.
 
 ```bash
-# 기본 인증 (비밀번호)
-curl -u SYS:MANAGER \
-     "http://127.0.0.1:5657/db/query?q=SELECT+1"
+# 인증 비활성화 기본 설정
+curl -G "http://127.0.0.1:5657/machbase" \
+     --data-urlencode "q=SELECT 1"
 
-# AUTH KEY 인증
-curl -H "Authorization: Bearer my-secret-key-string" \
-     "http://127.0.0.1:5657/db/query?q=SELECT+1"
+# HTTP_AUTH 활성화 시 Basic Authentication 사용
+curl -u SYS:MANAGER \
+     -G "http://127.0.0.1:5657/machbase" \
+     --data-urlencode "q=SELECT 1"
 ```
 
 ## Connection Pool 권장 설정

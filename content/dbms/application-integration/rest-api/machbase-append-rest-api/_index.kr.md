@@ -4,196 +4,144 @@ title: '/machbase append REST API'
 weight: 30
 ---
 
-`/db/append/{table_name}` 엔드포인트는 대용량 시계열 데이터를 HTTP로 고속 삽입하기 위한 API입니다. 일반 INSERT SQL 대비 훨씬 높은 처리량을 제공하며, TAG 테이블과 LOG 테이블 모두에 사용할 수 있습니다.
+`/machbase` Append REST API는 HTTP POST 요청으로 여러 행을 한 번에 삽입합니다. 요청
+본문에는 대상 테이블 이름과 행 배열을 JSON으로 전달합니다.
 
 ## 엔드포인트
 
+```text
+POST /machbase
 ```
-POST /db/append/{table_name}
-```
-
-`{table_name}` 자리에 데이터를 삽입할 테이블 이름을 입력합니다.
 
 ## 요청 형식
 
-Append API는 요청 본문에 CSV 또는 JSON 배열 형식으로 여러 행을 한 번에 전송합니다.
-
-### CSV 형식
-
-```
-Content-Type: text/csv
-```
-
-각 행을 쉼표로 구분하여 전송합니다. 첫 번째 줄에 헤더를 포함하거나 생략할 수 있습니다.
-
-```
-NAME,TIME,VALUE
-sensor-01,2024-01-15T10:00:00Z,23.5
-sensor-01,2024-01-15T10:01:00Z,23.7
-sensor-02,2024-01-15T10:00:00Z,18.3
-```
-
-### JSON 형식
-
-```
-Content-Type: application/json
-```
-
-컬럼 이름 목록(`columns`)과 데이터 행 배열(`rows`)로 구성합니다.
+요청 본문은 `application/json` 형식입니다.
 
 ```json
 {
-  "columns": ["NAME", "TIME", "VALUE"],
-  "rows": [
-    ["sensor-01", "2024-01-15T10:00:00Z", 23.5],
-    ["sensor-01", "2024-01-15T10:01:00Z", 23.7],
-    ["sensor-02", "2024-01-15T10:00:00Z", 18.3]
+  "name": "curl_sample",
+  "values": [
+    [1, "aaa"],
+    [2, "bbb"]
   ]
 }
 ```
 
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| `name` | string | 데이터를 삽입할 테이블 이름 |
+| `values` | array | 삽입할 행 배열. 각 행은 테이블 컬럼 순서와 같은 배열 |
+
+컬럼 이름은 요청에 포함하지 않습니다. `values`의 각 행은 테이블 정의의 컬럼 순서와
+일치해야 합니다.
+
 ## 응답 형식
 
-성공 시 삽입된 행 수를 반환합니다.
+삽입 성공 시 다음과 같이 Append 성공/실패 건수를 반환합니다.
 
 ```json
 {
-  "success": true,
-  "reason": "success",
-  "elapse": "5.432ms",
-  "data": {
-    "affectedRows": 3
-  }
+  "error_code": 0,
+  "error_message": "No Error",
+  "timezone": "+0900",
+  "data": [],
+  "append_success": 2,
+  "append_failure": 0
 }
 ```
+
+| 필드 | 설명 |
+|------|------|
+| `error_code` | `0`이면 요청 처리 성공 |
+| `error_message` | 오류 메시지. 성공 시 빈 문자열 |
+| `append_success` | 성공적으로 삽입된 행 수 |
+| `append_failure` | 삽입에 실패한 행 수 |
 
 ## curl 예제
 
-### CSV 데이터 삽입
+먼저 SQL REST API로 예제 테이블을 생성합니다.
 
 ```bash
-curl -X POST http://127.0.0.1:5657/db/append/sensor_data \
-  -H "Content-Type: text/csv" \
-  -H "Authorization: Bearer <token>" \
-  --data-binary $'NAME,TIME,VALUE\nsensor-01,2024-01-15T10:00:00Z,23.5\nsensor-01,2024-01-15T10:01:00Z,23.7\nsensor-02,2024-01-15T10:00:00Z,18.3'
+curl -G "http://127.0.0.1:5657/machbase" \
+  --data-urlencode "q=CREATE TABLE curl_sample (c1 INT, c2 VARCHAR(20))"
 ```
 
-### CSV 파일 전송
-
-데이터가 파일로 준비되어 있는 경우 파일을 직접 전송합니다.
+다음 요청은 두 행을 Append로 삽입합니다.
 
 ```bash
-curl -X POST http://127.0.0.1:5657/db/append/sensor_data \
-  -H "Content-Type: text/csv" \
-  -H "Authorization: Bearer <token>" \
-  --data-binary @sensor_data.csv
-```
-
-### JSON 데이터 삽입
-
-```bash
-curl -X POST http://127.0.0.1:5657/db/append/sensor_data \
+curl -X POST "http://127.0.0.1:5657/machbase" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <token>" \
-  -d '{
-    "columns": ["NAME", "TIME", "VALUE"],
-    "rows": [
-      ["sensor-01", "2024-01-15T10:00:00Z", 23.5],
-      ["sensor-01", "2024-01-15T10:01:00Z", 23.7]
-    ]
-  }'
+  -d '{"name":"curl_sample","values":[[1,"aaa"],[2,"bbb"]]}'
 ```
 
-### Chunked Transfer (대용량 스트리밍)
-
-데이터가 매우 클 경우 HTTP chunked transfer encoding을 사용하여 스트리밍 방식으로 전송할 수 있습니다. 이 방식은 데이터를 메모리에 모두 올리지 않고 실시간으로 생성하면서 전송할 때 유용합니다.
+삽입 결과를 확인합니다.
 
 ```bash
-# 스크립트로 데이터를 생성하면서 chunked 전송
-generate_csv() {
-  echo "NAME,TIME,VALUE"
-  for i in $(seq 1 10000); do
-    echo "sensor-01,2024-01-15T10:00:${i}Z,$(echo "scale=1; $RANDOM / 1000" | bc)"
-  done
+curl -G "http://127.0.0.1:5657/machbase" \
+  --data-urlencode "q=SELECT * FROM curl_sample ORDER BY c1"
+```
+
+## JavaScript 예제
+
+```javascript
+async function appendRows(rows) {
+  const resp = await fetch("http://127.0.0.1:5657/machbase", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      name: "curl_sample",
+      values: rows,
+    }),
+  });
+
+  const result = await resp.json();
+  if (result.error_code !== 0 || result.append_failure > 0) {
+    throw new Error(result.error_message || "append failed");
+  }
+  return result.append_success;
 }
 
-generate_csv | curl -X POST http://127.0.0.1:5657/db/append/sensor_data \
-  -H "Content-Type: text/csv" \
-  -H "Authorization: Bearer <token>" \
-  -H "Transfer-Encoding: chunked" \
-  --data-binary @-
+appendRows([[1, "aaa"], [2, "bbb"]]).then(console.log);
 ```
 
 ## Python 예제
 
 ```python
 import requests
-import csv
-import io
 
 BASE_URL = "http://127.0.0.1:5657"
 
-def get_token():
-    resp = requests.post(f"{BASE_URL}/db/login",
-                         json={"loginName": "SYS", "password": "MANAGER"})
-    return resp.json()["token"]
-
-def append_csv(table, rows, token):
-    """CSV 형식으로 Append API 호출"""
-    buf = io.StringIO()
-    writer = csv.writer(buf)
-    writer.writerows(rows)
-    csv_data = buf.getvalue()
-
-    headers = {
-        "Content-Type": "text/csv",
-        "Authorization": f"Bearer {token}",
-    }
+def append_rows(table, rows):
     resp = requests.post(
-        f"{BASE_URL}/db/append/{table}",
-        headers=headers,
-        data=csv_data.encode("utf-8")
+        f"{BASE_URL}/machbase",
+        json={"name": table, "values": rows},
+        timeout=10,
     )
     resp.raise_for_status()
-    return resp.json()
+    result = resp.json()
+    if result.get("error_code") != 0:
+        raise RuntimeError(result.get("error_message"))
+    if result.get("append_failure", 0) != 0:
+        raise RuntimeError(f"append failure: {result['append_failure']}")
+    return result["append_success"]
 
-# 사용 예
-token = get_token()
-
-data = [
-    ["NAME", "TIME", "VALUE"],  # 헤더 행
-    ["sensor-01", "2024-01-15T10:00:00Z", 23.5],
-    ["sensor-01", "2024-01-15T10:01:00Z", 23.7],
-    ["sensor-02", "2024-01-15T10:00:00Z", 18.3],
-]
-
-result = append_csv("sensor_data", data, token)
-print(f"삽입된 행 수: {result['data']['affectedRows']}")
+count = append_rows("curl_sample", [[1, "aaa"], [2, "bbb"]])
+print(f"inserted rows: {count}")
 ```
 
-## INSERT와의 성능 비교
-
-Append API는 내부적으로 네이티브 Append 프로토콜을 사용하기 때문에 SQL INSERT보다 훨씬 높은 처리량을 제공합니다.
+## INSERT와의 비교
 
 | 방법 | 특징 |
 |------|------|
-| SQL INSERT (`/db/query`) | 건당 실행, 트랜잭션 지원, 소량 삽입에 적합 |
-| Append API (`/db/append`) | 다건 배치 처리, 비트랜잭션, 대용량 수집에 최적 |
+| SQL `INSERT` (`GET /machbase?q=...`) | 소량 데이터, SQL 문 단위 실행 |
+| Append (`POST /machbase`) | 여러 행을 한 요청으로 삽입, 수집성 데이터에 적합 |
 
-일반적으로 초당 수천 건 이상의 데이터를 삽입해야 하는 경우 Append API를 사용하십시오.
+초당 많은 행을 수집하는 애플리케이션에서는 SQL `INSERT`를 반복 실행하기보다 Append API나
+네이티브 드라이버의 Append API를 사용합니다.
 
-## 시간 형식
+## 주의 사항
 
-`TIME` 컬럼(DATETIME BASETIME)에 입력할 시각은 다음 형식을 지원합니다.
-
-| 형식 | 예시 |
-|------|------|
-| RFC3339 (권장) | `2024-01-15T10:00:00Z` |
-| RFC3339 with timezone | `2024-01-15T19:00:00+09:00` |
-| Unix 나노초 (정수) | `1705312800000000000` |
-
-## 레퍼런스
-
-전체 파라미터와 고급 옵션은 14장 레퍼런스를 참조하십시오.
-
-- [/machbase append API 레퍼런스](../../../reference/rest-api/machbase-append-api/)
+- 요청 본문은 JSON이어야 하며 `Content-Type: application/json`을 지정합니다.
+- `values`의 컬럼 순서와 타입은 테이블 정의와 일치해야 합니다.
+- SQL 실행 오류와 마찬가지로 HTTP 상태 코드와 함께 `error_code`, `append_failure`를
+  확인합니다.

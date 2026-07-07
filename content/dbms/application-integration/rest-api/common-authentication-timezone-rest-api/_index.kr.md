@@ -1,150 +1,110 @@
 ---
 type: docs
-title: 'REST API 공통 인증과 타임존'
+title: 'REST API 공통 설정'
 weight: 10
 ---
 
-Machbase REST API를 사용할 때 모든 엔드포인트에 공통으로 적용되는 인증 방법과 타임존 설정을 설명합니다.
+Machbase REST API를 사용할 때 공통으로 확인해야 할 HTTP 포트, 인증 설정, 요청 헤더를
+설명합니다.
+
+## HTTP 포트
+
+REST API는 `machbase.conf`의 HTTP 설정을 사용합니다. 기본 샘플 설정에서는 다음 값을
+사용합니다.
+
+```text
+HTTP_ENABLE = 1
+HTTP_PORT_NO = 5657
+HTTP_AUTH = 0
+```
+
+`HTTP_ENABLE`이 `1`이면 REST API 서비스가 활성화됩니다. `HTTP_PORT_NO`는 REST API가
+수신하는 포트입니다.
 
 ## 인증
 
-Machbase REST API는 두 가지 인증 방식을 지원합니다.
-
-### Bearer Token 인증
-
-로그인 API(`/db/login`)로 토큰을 발급받은 후 `Authorization` 헤더에 포함합니다.
-
-**토큰 발급:**
+기본 샘플 설정의 `HTTP_AUTH = 0` 상태에서는 REST API 요청에 별도 인증 헤더가 필요하지
+않습니다.
 
 ```bash
-curl -X POST http://127.0.0.1:5657/db/login \
-  -H "Content-Type: application/json" \
-  -d '{"loginName": "SYS", "password": "MANAGER"}'
+curl -G "http://127.0.0.1:5657/machbase" \
+  --data-urlencode "q=SELECT 1"
 ```
 
-응답 예시:
-
-```json
-{
-  "success": true,
-  "reason": "success",
-  "elapse": "0.512ms",
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-}
-```
-
-**토큰 사용:**
-
-발급받은 토큰을 이후 요청의 `Authorization` 헤더에 `Bearer` 접두사와 함께 포함합니다.
+`machbase.conf` 샘플 파일에는 `HTTP_AUTH`가 “REST API 서비스의 Basic Authentication
+활성화” 항목으로 제공됩니다. 운영 환경에서 HTTP 인증을 활성화하는 경우 배포 환경의
+인증 정책에 맞게 Basic Authentication 설정과 계정을 확인한 뒤 클라이언트에
+`Authorization` 헤더를 추가합니다.
 
 ```bash
-curl -X POST http://127.0.0.1:5657/db/query \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
-  -d '{"q": "SELECT * FROM example LIMIT 5"}'
+curl -u "SYS:MANAGER" \
+  -G "http://127.0.0.1:5657/machbase" \
+  --data-urlencode "q=SELECT 1"
 ```
 
-### AUTH KEY 인증
-
-서버 설정에서 미리 지정한 AUTH KEY를 `Authorization` 헤더에 직접 사용합니다. 토큰 발급 과정 없이 정적 키로 인증할 때 사용합니다.
-
-```bash
-curl -X POST http://127.0.0.1:5657/db/query \
-  -H "Content-Type: application/json" \
-  -H "Authorization: <AUTH_KEY>" \
-  -d '{"q": "SELECT COUNT(*) FROM example"}'
-```
-
-> AUTH KEY는 `machbase.conf`의 `HTTP_AUTH_KEY` 항목에서 설정합니다.
-
-### 인증 없는 접근 (개발 환경)
-
-서버가 인증을 요구하지 않도록 설정된 경우(개발 환경 등) `Authorization` 헤더를 생략할 수 있습니다. 운영 환경에서는 반드시 인증을 활성화하십시오.
+현재 REST 샘플과 서버 검증 기준으로 `/db/login` 토큰 발급 API와 Bearer 토큰 방식은
+사용하지 않습니다.
 
 ## Content-Type
 
-요청 본문(body)이 있는 경우 반드시 `Content-Type: application/json` 헤더를 포함해야 합니다.
-
-```
-Content-Type: application/json
-```
-
-누락 시 서버가 요청 본문을 올바르게 파싱하지 못해 오류가 발생합니다.
-
-## 타임존 설정
-
-Machbase는 내부적으로 모든 시각을 UTC로 저장합니다. REST API를 통해 데이터를 조회하거나 삽입할 때 타임존을 지정하면 서버가 해당 타임존으로 변환하여 반환합니다.
-
-타임존은 다음 두 가지 방법으로 지정할 수 있습니다.
-
-### X-Timezone 헤더
-
-요청 헤더에 `X-Timezone`을 포함합니다. IANA 타임존 이름 형식을 사용합니다.
+요청 본문이 있는 Append 요청은 JSON 본문을 사용하므로 `Content-Type:
+application/json` 헤더를 지정합니다.
 
 ```bash
-curl -X POST http://127.0.0.1:5657/db/query \
+curl -X POST "http://127.0.0.1:5657/machbase" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <token>" \
-  -H "X-Timezone: Asia/Seoul" \
-  -d '{"q": "SELECT name, time FROM example LIMIT 3"}'
+  -d '{"name":"curl_sample","values":[[1,"aaa"]]}'
 ```
 
-### Query Parameter
+SQL 실행처럼 본문이 없는 GET 요청에는 `Content-Type` 헤더가 필요하지 않습니다.
 
-URL 파라미터로 `tz`를 지정합니다.
+## 타임존
+
+REST SQL 응답에는 `timezone` 필드가 포함됩니다.
+
+```json
+{
+  "error_code": 0,
+  "error_message": "",
+  "data": [
+    {"NOW": "2026-07-07 12:00:00 000:000:000"}
+  ],
+  "timezone": "+0000"
+}
+```
+
+시간 조건을 작성할 때는 Machbase SQL의 `DATETIME`, `NOW`, `SYSDATE`,
+`TO_DATE`, `TO_CHAR` 함수와 나노초 단위 시간 연산을 사용합니다.
 
 ```bash
-curl -X POST "http://127.0.0.1:5657/db/query?tz=Asia/Seoul" \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <token>" \
-  -d '{"q": "SELECT name, time FROM example LIMIT 3"}'
+curl -G "http://127.0.0.1:5657/machbase" \
+  --data-urlencode "q=SELECT TO_CHAR(NOW, 'YYYY-MM-DD HH24:MI:SS') AS now_text"
 ```
 
-### 지원되는 타임존 값
-
-| 값 | 설명 |
-|----|------|
-| `UTC` | 협정 세계시 (기본값) |
-| `Asia/Seoul` | 한국 표준시 (KST, UTC+9) |
-| `America/New_York` | 미국 동부 시간 |
-| `Europe/London` | 영국 표준시 |
-
-IANA Time Zone Database에 등록된 모든 타임존 이름을 사용할 수 있습니다.
+클라이언트가 특정 지역 시간 문자열을 사용자에게 보여야 하는 경우에는 SQL에서
+`TO_CHAR`로 원하는 문자열을 만들거나 애플리케이션에서 응답 값을 변환합니다.
 
 ## 공통 헤더 요약
 
-| 헤더 | 필수 여부 | 예시 값 |
-|------|-----------|---------|
-| `Content-Type` | 필수 (본문이 있는 경우) | `application/json` |
-| `Authorization` | 인증 활성화 시 필수 | `Bearer <token>` 또는 `<AUTH_KEY>` |
-| `X-Timezone` | 선택 | `Asia/Seoul` |
+| 헤더 | 필수 여부 | 설명 |
+|------|-----------|------|
+| `Content-Type: application/json` | POST Append 요청에서 필수 | JSON 본문 파싱 |
+| `Authorization` | `HTTP_AUTH` 활성화 시 필요 | Basic Authentication 설정에 맞게 지정 |
 
 ## Python 예제
-
-Python `requests` 라이브러리를 사용한 인증 및 타임존 설정 예제입니다.
 
 ```python
 import requests
 
-# 1. 토큰 발급
-login_resp = requests.post(
-    "http://127.0.0.1:5657/db/login",
-    json={"loginName": "SYS", "password": "MANAGER"}
-)
-token = login_resp.json()["token"]
+BASE_URL = "http://127.0.0.1:5657"
 
-# 2. 공통 헤더 구성
-headers = {
-    "Content-Type": "application/json",
-    "Authorization": f"Bearer {token}",
-    "X-Timezone": "Asia/Seoul",
-}
+def query(sql):
+    resp = requests.get(f"{BASE_URL}/machbase", params={"q": sql}, timeout=10)
+    resp.raise_for_status()
+    result = resp.json()
+    if result.get("error_code") != 0:
+        raise RuntimeError(result.get("error_message"))
+    return result
 
-# 3. 쿼리 실행
-resp = requests.post(
-    "http://127.0.0.1:5657/db/query",
-    headers=headers,
-    json={"q": "SELECT * FROM example LIMIT 5"}
-)
-print(resp.json())
+print(query("SELECT 1"))
 ```

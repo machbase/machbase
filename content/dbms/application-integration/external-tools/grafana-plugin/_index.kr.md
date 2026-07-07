@@ -82,7 +82,7 @@ Machbase Neo는 Grafana의 시간 범위 변수(`$__timeFrom()`, `$__timeTo()`)�
 
 ```sql
 SELECT
-    TO_TIMESTAMP(time) AS time,
+    time AS time,
     value
 FROM sensor_data
 WHERE name = 'temperature'
@@ -94,7 +94,7 @@ ORDER BY time ASC
 
 ```sql
 SELECT
-    TO_TIMESTAMP(time) AS time,
+    time AS time,
     name,
     value
 FROM sensor_data
@@ -106,28 +106,28 @@ ORDER BY time ASC
 
 ```sql
 SELECT
-    DATE_TRUNC('minute', TO_TIMESTAMP(time)) AS time,
+    DATE_TRUNC('min', time, 1) AS time,
     name,
     AVG(value) AS avg_value,
     MAX(value) AS max_value,
     MIN(value) AS min_value
 FROM sensor_data
 WHERE time BETWEEN $__timeFrom() AND $__timeTo()
-GROUP BY 1, name
-ORDER BY 1 ASC
-```
-
-**DURATION 문법 활용 (Machbase 고유 문법):**
-
-```sql
-SELECT TO_TIMESTAMP(time) AS time, value
-FROM sensor_data
-WHERE name = 'pressure'
-DURATION 1 HOUR
+GROUP BY time, name
 ORDER BY time ASC
 ```
 
-> **time 컬럼 규칙**: Grafana 시계열 패널은 결과의 첫 번째 컬럼이 `time` 이라는 이름의 타임스탬프여야 합니다. `TO_TIMESTAMP()` 함수를 사용하여 나노초 값을 변환합니다.
+**최근 1시간 조회:**
+
+```sql
+SELECT time AS time, value
+FROM sensor_data
+WHERE name = 'pressure'
+  AND time >= SYSDATE - 3600000000000
+ORDER BY time ASC
+```
+
+> **time 컬럼 규칙**: Grafana 시계열 패널은 결과의 첫 번째 컬럼이 `time` 이라는 이름의 타임스탬프여야 합니다. TAG 테이블의 `DATETIME BASETIME` 컬럼은 `time AS time`처럼 그대로 별칭을 지정합니다.
 
 ### 변수(Variable) 활용
 
@@ -145,7 +145,7 @@ ORDER BY time ASC
 3. 패널 쿼리에서 변수를 사용합니다.
 
 ```sql
-SELECT TO_TIMESTAMP(time) AS time, value
+SELECT time AS time, value
 FROM sensor_data
 WHERE name = '$sensor_name'
   AND time BETWEEN $__timeFrom() AND $__timeTo()
@@ -174,7 +174,7 @@ Grafana Alerting을 사용하여 임계값 초과 시 알림을 받을 수 있�
 
 ```sql
 -- 온도가 80도를 초과할 때 알림
-SELECT TO_TIMESTAMP(time) AS time, value
+SELECT time AS time, value
 FROM sensor_data
 WHERE name = 'temperature'
   AND time BETWEEN $__timeFrom() AND $__timeTo()
@@ -186,6 +186,6 @@ ORDER BY time ASC
 | 증상 | 원인 | 해결 방법 |
 |------|------|-----------|
 | `Data source connection failed` | URL 또는 포트 오류 | Machbase Neo HTTP 포트(5657) 접근 가능 여부 확인 |
-| 데이터가 표시되지 않음 | 시간 범위 또는 쿼리 오류 | `TO_TIMESTAMP()` 변환 및 시간 필터 조건 확인 |
+| 데이터가 표시되지 않음 | 시간 범위 또는 쿼리 오류 | `time` 별칭과 시간 필터 조건 확인 |
 | 플러그인이 목록에 없음 | 설치 또는 서명 오류 | `grafana.ini` 에서 unsigned plugin 허용 설정 확인 |
 | 쿼리가 느림 | 인덱스 미사용 | TAG 테이블 사용, `name` 조건과 시간 범위 필터 명시 |

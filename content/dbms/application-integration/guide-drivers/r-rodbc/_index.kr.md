@@ -173,14 +173,14 @@ print(agg)
 
 ```r
 # 단건 삽입
-sqlQuery(ch, "INSERT INTO sensor_data VALUES ('sensor-r', NOW(), 3.14)")
+sqlQuery(ch, "INSERT INTO sensor_data VALUES ('sensor-r', NOW, 3.14)")
 
 # R 변수를 사용한 삽입 (sprintf로 SQL 조합)
 name  <- "sensor-r"
 value <- 2.71
 
 sql <- sprintf(
-  "INSERT INTO sensor_data VALUES ('%s', NOW(), %f)",
+  "INSERT INTO sensor_data VALUES ('%s', NOW, %f)",
   name, value
 )
 sqlQuery(ch, sql)

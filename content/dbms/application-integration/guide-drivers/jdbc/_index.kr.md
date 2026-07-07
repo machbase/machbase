@@ -399,7 +399,7 @@ public class FullExample {
 
 ## 주의 사항
 
-- Machbase는 트랜잭션(`BEGIN`, `COMMIT`, `ROLLBACK`)을 지원하지 않습니다. 모든 명령은 자동 커밋됩니다.
+- 트랜잭션은 RDB 테이블 작업에서 사용합니다. LOG/TAG 테이블 Append성 입력은 롤백 대상이 아니므로 테이블 타입별 지원 범위를 확인합니다.
 - LOG 테이블과 TAG 테이블에는 `UPDATE`를 사용할 수 없습니다.
 - `_arrival_time` 컬럼은 기본적으로 숨겨져 있습니다. 표시하려면 URL에 `show_hidden_cols=1`을 추가합니다.
 - Append에서 DATETIME 값은 반드시 나노초 단위 `long`으로 전달해야 합니다.
