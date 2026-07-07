@@ -59,9 +59,13 @@ Machbase에서 사용 가능한 컬럼 데이터 타입을 설명합니다.
 `DATETIME`은 1970년 1월 1일 자정 이후 경과된 시간을 나노초 단위로 저장합니다.
 
 ```sql
+CREATE VOLATILE TABLE t1 (
+    ts DATETIME
+);
+
 -- 문자열로 삽입
 INSERT INTO t1 VALUES ('2024-01-01 12:00:00');
-INSERT INTO t1 VALUES ('2024-01-01 12:00:00.123456789');  -- 나노초
+INSERT INTO t1 VALUES ('2024-01-01 12:00:00 123:456:789');  -- 나노초
 
 -- NOW 함수
 INSERT INTO t1 VALUES (NOW);

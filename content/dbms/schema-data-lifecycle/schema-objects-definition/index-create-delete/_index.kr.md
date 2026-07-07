@@ -28,12 +28,8 @@ CREATE BITMAP INDEX idx_status ON sensor_log (status);
 CREATE KEYWORD INDEX idx_msg ON event_log (message);
 ```
 
-### 복합 인덱스
-
-```sql
--- 복합 LSM 인덱스
-CREATE INDEX idx_composite ON sensor_log (sensor_id, status);
-```
+> 현재 빌드에서는 복합 인덱스를 생성할 수 없습니다. 여러 조건을 자주 함께 사용하더라도
+> 인덱스는 단일 컬럼 단위로 생성합니다.
 
 ## TAG 테이블 인덱스
 
@@ -56,7 +52,8 @@ CREATE INDEX idx_location ON tag METADATA (location);
 
 ## LOOKUP/VOLATILE/RDB 테이블 인덱스
 
-PRIMARY KEY를 지정하면 레드-블랙 트리 인덱스가 자동으로 생성됩니다. 별도의 `CREATE INDEX` 구문은 지원되지 않습니다.
+PRIMARY KEY를 지정하면 레드-블랙 트리 인덱스가 자동으로 생성됩니다. LOOKUP과 RDB는
+필요한 컬럼에 보조 인덱스를 추가할 수 있고, VOLATILE은 PRIMARY KEY 인덱스를 중심으로 사용합니다.
 
 ```sql
 -- LOOKUP: PK 지정 시 REDBLACK 인덱스 자동 생성
@@ -71,6 +68,9 @@ CREATE RDB TABLE orders (
     order_id INTEGER PRIMARY KEY,
     product  VARCHAR(100)
 );
+
+-- RDB 보조 인덱스
+CREATE INDEX idx_orders_product ON orders(product);
 ```
 
 ## 인덱스 삭제
@@ -78,7 +78,7 @@ CREATE RDB TABLE orders (
 ```sql
 DROP INDEX idx_sensor_id;
 DROP INDEX idx_status;
-DROP KEYWORD INDEX idx_msg;
+DROP INDEX idx_msg;
 ```
 
 PRIMARY KEY에 의해 자동 생성된 인덱스는 별도로 삭제할 수 없으며, 테이블 삭제 시 함께 제거됩니다.
@@ -97,5 +97,6 @@ SELECT * FROM M$SYS_INDEX_COLUMNS WHERE INDEX_NAME = 'IDX_SENSOR_ID';
 
 - **LOG 테이블**: 쿼리 빈도가 높은 컬럼에만 선별적으로 생성. 상태값·등급 등 저카디널리티 컬럼은 BITMAP 고려
 - **TAG 테이블**: 메타데이터 필터 조회가 잦은 경우 해당 컬럼에 인덱스 추가
-- **LOOKUP/VOLATILE**: PK 인덱스만 지원; PK 설계가 곧 인덱스 설계
+- **LOOKUP/RDB**: PK 인덱스와 필요한 보조 인덱스 사용
+- **VOLATILE**: PK 인덱스 중심으로 설계
 - **과도한 인덱스**: 대량 INSERT 성능 저하의 원인이 되므로 반드시 필요한 경우에만 생성

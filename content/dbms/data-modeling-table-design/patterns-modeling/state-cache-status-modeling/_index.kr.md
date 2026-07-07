@@ -37,7 +37,7 @@ INSERT INTO device_status_history VALUES ('DEV-01', NOW, 78.5, 'WARNING');
 
 -- 2. VOLATILE 캐시 업데이트 (ON DUPLICATE KEY UPDATE)
 INSERT INTO device_status VALUES ('DEV-01', 'WARNING', 78.5, NOW)
-ON DUPLICATE KEY UPDATE status = 'WARNING', value = 78.5, updated_at = NOW;
+ON DUPLICATE KEY UPDATE SET status = 'WARNING', value = 78.5, updated_at = NOW;
 ```
 
 ## 대시보드 조회 패턴

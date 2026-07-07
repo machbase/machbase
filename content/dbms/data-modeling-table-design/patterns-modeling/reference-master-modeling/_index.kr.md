@@ -66,7 +66,7 @@ SELECT s.name AS sensor_id,
        s.time,
        s.value
 FROM sensor_data s
-JOIN equipment e     ON s.name LIKE e.equip_id || '%'
+JOIN equipment e     ON s.name = e.equip_id
 JOIN production_line l ON e.line_id = l.line_id
 JOIN factory f       ON l.factory_id = f.factory_id
 WHERE f.factory_id = 'F01'

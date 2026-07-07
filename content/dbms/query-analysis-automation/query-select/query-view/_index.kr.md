@@ -41,13 +41,13 @@ CREATE VIEW sensor_with_meta AS
 -- VIEW 조회
 SELECT name, time, value, location
 FROM sensor_with_meta
-WHERE time >= DATEADD('h', -1, NOW)
+WHERE time >= NOW - 3600000000000
   AND location = 'zone-1';
 
 -- VIEW에 집계 적용
 SELECT location, AVG(value) AS avg_temp
 FROM sensor_with_meta
-WHERE time >= DATEADD('h', -24, NOW)
+WHERE time >= NOW - 86400000000000
 GROUP BY location
 ORDER BY avg_temp DESC;
 ```

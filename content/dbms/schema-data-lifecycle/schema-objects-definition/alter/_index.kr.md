@@ -27,7 +27,7 @@ ALTER TABLE table_name ADD COLUMN (column_name type [DEFAULT value]);
 ```sql
 -- LOG 테이블에 컬럼 추가
 ALTER TABLE web_access ADD COLUMN (region VARCHAR(32));
-ALTER TABLE web_access ADD COLUMN (resp_time DOUBLE DEFAULT 0.0);
+ALTER TABLE web_access ADD COLUMN (resp_time DOUBLE);
 
 -- LOOKUP 테이블에 컬럼 추가
 ALTER TABLE country_code ADD COLUMN (capital VARCHAR(64));

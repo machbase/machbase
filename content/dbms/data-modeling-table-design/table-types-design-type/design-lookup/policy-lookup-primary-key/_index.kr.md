@@ -25,16 +25,15 @@ CREATE LOOKUP TABLE country (
 
 ### 대리키 (Surrogate Key)
 
-시퀀스나 UUID처럼 의미 없는 값을 PRIMARY KEY로 사용합니다.
+SEQUENCE 컬럼이나 UUID처럼 의미 없는 값을 PRIMARY KEY로 사용합니다.
 
 ```sql
 -- 설비 마스터: 대리키
 CREATE LOOKUP TABLE equipment (
-    equip_id  INTEGER PRIMARY KEY,  -- 시퀀스
+    equip_id  LONG PROPERTY(SEQUENCE=1) PRIMARY KEY,
     code      VARCHAR(32),          -- 비즈니스 키
     name      VARCHAR(128)
 );
-CREATE SEQUENCE equip_seq START 1;
 CREATE INDEX idx_equip_code ON equipment(code);
 ```
 
@@ -50,11 +49,12 @@ PRIMARY KEY 값은 변경하지 않는 것을 원칙으로 합니다. 변경이 
 -- UPDATE는 PK 변경 불가
 
 -- 올바른 패턴
-BEGIN;
 DELETE FROM country WHERE iso_code = 'OLD';
 INSERT INTO country VALUES ('NEW', '새 국가명');
-COMMIT;
 ```
+
+LOOKUP 테이블 DML은 개별 문장 단위로 실행합니다. 현재 빌드에서는 `BEGIN`/`COMMIT`으로 묶은
+트랜잭션 안에서 LOOKUP DML을 실행할 수 없습니다.
 
 ## 복합 PRIMARY KEY 주의사항
 

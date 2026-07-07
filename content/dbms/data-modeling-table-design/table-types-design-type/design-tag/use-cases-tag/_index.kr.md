@@ -60,5 +60,5 @@ CREATE TAG TABLE vehicle_track (
 ## 부적합한 경우
 
 - 태그 이름이 매 레코드마다 달라지는 경우 (태그 수 폭발)
-- UPDATE가 필요한 경우 (TAG 테이블은 UPDATE 불가)
+- 기존 시계열 값을 직접 UPDATE해야 하는 경우 (TAG 테이블은 실제 데이터 UPDATE 불가)
 - 단순 이벤트 로그 (LOG 테이블 권장)

@@ -8,8 +8,9 @@ weight: 120
 
 | 기능 | 상태 |
 |------|------|
-| UPDATE | 미지원 |
-| DELETE | 미지원 |
+| 실제 시계열 데이터 UPDATE | 미지원 |
+| 메타데이터 UPDATE | 지원 (`UPDATE ... METADATA`) |
+| DELETE | 지원 (`BEFORE` 또는 태그/축 조건) |
 | 다중 PRIMARY KEY | 미지원 (단일 컬럼만) |
 | BASETIME과 BASE DISTANCE 동시 사용 | 미지원 |
 | ALTER TABLE (컬럼 삭제/변경) | 미지원 |
@@ -34,8 +35,8 @@ TAG 테이블은 Cluster Edition에서 지원됩니다.
 ```
 TAG 테이블 = 센서 이름 (PK) + 시간/거리 축 + 계측값
 - INSERT/APPEND: O
-- UPDATE: X
-- DELETE: X
+- UPDATE: 실제 데이터 X, METADATA O
+- DELETE: O (BEFORE 또는 태그/축 조건)
 - METADATA: O (별도 속성 저장, UPDATE 가능)
 ```
 

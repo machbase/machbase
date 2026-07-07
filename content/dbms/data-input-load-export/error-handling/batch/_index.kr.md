@@ -11,7 +11,6 @@ weight: 10
 | 방법 | 권장 배치 크기 | 설명 |
 |------|--------------|------|
 | SQL INSERT (개별) | N/A | 건별 처리 |
-| SQL INSERT (다건) | 1,000~10,000건 | VALUES 다건 삽입 |
 | Append API | 10,000~100,000건 버퍼 | 내부 버퍼 자동 관리 |
 | LOAD DATA INFILE | 제한 없음 | 파일 단위 처리 |
 | machloader | 제한 없음 | 파일 단위 처리 |
@@ -52,18 +51,18 @@ wg.Wait()
 
 ## SQL INSERT 배치 전략
 
-단건 INSERT 반복보다 트랜잭션 묶음으로 처리하는 것이 유리합니다.
+SQL INSERT는 행 단위로 실행합니다. 대량 입력에는 Append API나 파일 적재 방식을 사용합니다.
 
 ```sql
--- 비권장: 건별 개별 INSERT
-INSERT INTO orders VALUES (1, 'Widget', 10);
-INSERT INTO orders VALUES (2, 'Gadget', 5);
+CREATE VOLATILE TABLE batch_orders (
+    order_id INTEGER PRIMARY KEY,
+    product  VARCHAR(64),
+    qty      INTEGER
+);
 
--- 권장: 다건 한 번에 삽입
-INSERT INTO orders VALUES
-    (1, 'Widget', 10),
-    (2, 'Gadget', 5),
-    (3, 'Doohickey', 20);
+INSERT INTO batch_orders VALUES (1, 'Widget', 10);
+INSERT INTO batch_orders VALUES (2, 'Gadget', 5);
+INSERT INTO batch_orders VALUES (3, 'Doohickey', 20);
 ```
 
 ## machloader 배치 파일 분할

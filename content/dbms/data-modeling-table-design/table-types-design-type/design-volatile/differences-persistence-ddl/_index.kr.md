@@ -38,7 +38,7 @@ CREATE VOLATILE TABLE table_name (
 ```
 
 - `PRIMARY KEY` 필수
-- 다중 PRIMARY KEY 지원
+- PRIMARY KEY 컬럼은 하나만 지정
 
 ## 삭제
 

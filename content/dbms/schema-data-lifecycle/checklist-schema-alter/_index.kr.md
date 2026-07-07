@@ -51,7 +51,7 @@ SELECT * FROM V$RETENTION_JOB WHERE TABLE_NAME = 'TARGET_TABLE';
 - [ ] 컬럼명 중복 여부 확인
 
 ```sql
-ALTER TABLE sensor_log ADD COLUMN new_col DOUBLE;
+ALTER TABLE sensor_log ADD COLUMN (new_col DOUBLE);
 ```
 
 ---
@@ -63,7 +63,7 @@ ALTER TABLE sensor_log ADD COLUMN new_col DOUBLE;
 - [ ] 컬럼 삭제 후 데이터는 복구 불가
 
 ```sql
-ALTER TABLE sensor_log DROP COLUMN old_col;
+ALTER TABLE sensor_log DROP COLUMN (old_col);
 ```
 
 ---

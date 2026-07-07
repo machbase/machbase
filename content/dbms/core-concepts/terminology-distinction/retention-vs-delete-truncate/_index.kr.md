@@ -11,11 +11,11 @@ Machbase에서 데이터를 삭제하는 방법은 세 가지입니다. 각각 �
 | 항목 | Retention Policy | DELETE | TRUNCATE |
 | --- | --- | --- | --- |
 | 실행 방식 | 자동 (배경 스레드) | 수동 (SQL 실행 시) | 수동 (SQL 실행 시) |
-| 삭제 범위 | 보관 기간 초과 데이터 자동 판단 | WHERE 조건 기반 (시간 범위만 가능) | 테이블 전체 데이터 |
+| 삭제 범위 | 보관 기간 초과 데이터 자동 판단 | 테이블 타입별 DELETE 조건 기반 | 테이블 전체 데이터 |
 | 지속성 | 지속적 (설정 후 계속 자동 실행) | 일회성 | 일회성 |
 | 대상 테이블 | LOG, TAG | LOG, TAG (시간 범위), LOOKUP, VOLATILE | 모든 테이블 |
 | 운영 중 실행 | 가능 (무중단) | 가능 | 가능 |
-| 설정 방법 | `CREATE RETENTION` + `ALTER TABLE` | `DELETE FROM ... WHERE` | `TRUNCATE TABLE` |
+| 설정 방법 | `CREATE RETENTION` + `ALTER TABLE` | `DELETE FROM ...` | `TRUNCATE TABLE` |
 
 ## Retention Policy: 자동 기간 기반 삭제
 
@@ -23,7 +23,7 @@ Retention Policy는 보관 기간을 정책으로 설정하면 이후 자동으�
 
 ```sql
 -- 60일 보관 정책 생성 및 적용
-CREATE RETENTION keep_60days DURATION 60 DAY;
+CREATE RETENTION keep_60days DURATION 60 DAY INTERVAL 1 DAY;
 ALTER TABLE device_log ADD RETENTION keep_60days;
 
 -- 정책 해제
@@ -37,13 +37,11 @@ DROP RETENTION keep_60days;
 
 ## DELETE: 조건 기반 수동 삭제
 
-DELETE는 SQL 문장을 직접 실행해 특정 조건에 맞는 데이터를 즉시 삭제합니다. LOG와 TAG 테이블에서는 시간 범위 조건만 사용할 수 있습니다.
+DELETE는 SQL 문장을 직접 실행해 특정 조건에 맞는 데이터를 즉시 삭제합니다. LOG 테이블은 `BEFORE`, `OLDEST`, `EXCEPT` 같은 로그 보존형 DELETE를 사용하고, TAG 테이블은 태그 이름과 축 조건 또는 `BEFORE` 조건을 사용할 수 있습니다.
 
 ```sql
--- LOG 테이블에서 특정 시간 범위 삭제
-DELETE FROM device_log
-WHERE _arrival_time >= TO_DATE('2026-01-01', 'YYYY-MM-DD')
-  AND _arrival_time <  TO_DATE('2026-02-01', 'YYYY-MM-DD');
+-- LOG 테이블에서 특정 시각 이전 삭제
+DELETE FROM device_log BEFORE TO_DATE('2026-01-01', 'YYYY-MM-DD');
 
 -- TAG 테이블에서 특정 태그의 특정 시간 범위 삭제
 DELETE FROM sensor_values

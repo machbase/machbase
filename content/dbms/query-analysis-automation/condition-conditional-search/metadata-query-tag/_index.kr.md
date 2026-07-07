@@ -65,8 +65,8 @@ VALUES ('sensor3', 'factory1', 'building-A', 'celsius');
 운영 중에 메타데이터 컬럼을 추가할 수 있습니다.
 
 ```sql
-ALTER TABLE tag METADATA ADD COLUMN install_date DATETIME;
-ALTER TABLE tag METADATA ADD COLUMN manufacturer VARCHAR(100);
+ALTER TABLE tag METADATA ADD COLUMN (install_date DATETIME);
+ALTER TABLE tag METADATA ADD COLUMN (manufacturer VARCHAR(100));
 ```
 
 > 메타데이터 컬럼 추가는 즉시 반영되며, 기존 행의 신규 컬럼 값은 NULL로 설정됩니다.
@@ -83,7 +83,7 @@ SELECT
     m.factory
 FROM tag t, tag_meta m
 WHERE t.name = m.name
-  AND t.time >= DATEADD('h', -1, NOW)
+  AND t.time >= NOW - 3600000000000
 ORDER BY t.time DESC;
 ```
 
@@ -96,13 +96,13 @@ FROM tag t
 WHERE t.name IN (
     SELECT name FROM tag_meta WHERE factory = 'factory1'
 )
-AND t.time >= DATEADD('h', -24, NOW);
+AND t.time >= NOW - 86400000000000;
 
 -- 특정 위치의 센서 평균값 집계
 SELECT m.location, AVG(t.value) AS avg_value
 FROM tag t, tag_meta m
 WHERE t.name = m.name
-  AND t.time >= DATEADD('h', -1, NOW)
+  AND t.time >= NOW - 3600000000000
 GROUP BY m.location;
 ```
 

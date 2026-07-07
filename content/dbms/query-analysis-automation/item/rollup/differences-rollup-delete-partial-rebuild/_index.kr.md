@@ -41,7 +41,9 @@ ALTER ROLLUP _tag_ru_1h FORCE;
 
 ```sql
 -- 특정 기간의 롤업 재계산
-EXEC ROLLUP_REBUILD('_tag_ru_1s', '2024-01-01 00:00:00', '2024-01-02 00:00:00');
+EXEC ROLLUP_REBUILD(tag, 'TEMP-01',
+                    TO_DATE('2024-01-01 00:00:00'),
+                    TO_DATE('2024-01-02 00:00:00'));
 ```
 
 > Rollup Rebuild는 Built-in ROLLUP(ON/FROM 방식)에서만 지원됩니다. Custom Rollup은 대상 테이블을 직접 관리해야 합니다.

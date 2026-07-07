@@ -11,6 +11,6 @@ Machbase의 스키마 객체(테이블, 인덱스, 뷰)를 생성·변경·삭�
 - **[컬럼과 데이터 타입 선택](/dbms/schema-data-lifecycle/schema-objects-definition/selection-type-column-data-types/)**
 - **[제약 조건과 기본값](/dbms/schema-data-lifecycle/schema-objects-definition/constraints-defaults-condition/)**
 - **[LOOKUP SEQUENCE 컬럼 정의](/dbms/schema-data-lifecycle/schema-objects-definition/definition-column-lookup-sequence/)**
-- **[LOOKUP JSON 컬럼 정의](/dbms/schema-data-lifecycle/schema-objects-definition/definition-column-lookup-json/)**
+- **[LOOKUP JSON 컬럼 정의](/dbms/schema-data-lifecycle/schema-objects-definition/definition-column-lookup-json/)**: 현재 빌드의 미지원 범위와 문자열 저장 대안
 - **[인덱스 생성과 삭제](/dbms/schema-data-lifecycle/schema-objects-definition/index-create-delete/)**
 - **[VIEW 생성과 관리](/dbms/schema-data-lifecycle/schema-objects-definition/create-view/)**

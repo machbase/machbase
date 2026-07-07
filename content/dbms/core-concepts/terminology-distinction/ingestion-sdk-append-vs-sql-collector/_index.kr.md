@@ -40,7 +40,7 @@ appender.Append("temp_sensor_02", time.Now(), 21.0)
 
 ```sql
 INSERT INTO sensor_values (name, time, value)
-VALUES ('temp_sensor_01', NOW(), 23.5);
+VALUES ('temp_sensor_01', NOW, 23.5);
 ```
 
 데이터 입력 빈도가 낮거나(초당 수천 건 이하), 별도 SDK 통합 없이 기존 애플리케이션에서 데이터를 입력해야 할 때 적합합니다. 테스트나 운영 도중 소량의 데이터를 수동으로 넣을 때도 SQL INSERT를 사용합니다.

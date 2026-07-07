@@ -1,14 +1,15 @@
 ---
 type: docs
-title: 'LOOKUP 일반 조건식 UPDATE (planned: dbms-nfx#3696)'
+title: 'LOOKUP non-PK UPDATE 미지원'
 weight: 50
 ---
 
-> **계획된 기능**: LOOKUP 테이블의 일반 조건식(non-PK 컬럼 기준) UPDATE는 dbms-nfx#3696에서 개발 중입니다. 현재 버전(8.6)에서는 PRIMARY KEY 기준 UPDATE만 지원됩니다.
+LOOKUP 테이블의 일반 조건식(non-PK 컬럼 기준) UPDATE는 현재 빌드에서 지원되지 않습니다.
+PRIMARY KEY equality 조건만 사용할 수 있습니다.
 
 ## 현재 지원 범위
 
-현재 LOOKUP 테이블의 UPDATE는 WHERE 조건에 관계없이 구문적으로는 실행되나, PRIMARY KEY 컬럼 기준 조건을 사용하는 것이 안전합니다.
+현재 LOOKUP 테이블의 UPDATE는 PRIMARY KEY equality 조건만 허용합니다. Primary key가 아닌 컬럼 조건을 사용하면 `Invalid UPDATE/DELETE condition` 오류가 발생합니다.
 
 ```sql
 -- 현재 권장: PK 기준 UPDATE
@@ -16,18 +17,18 @@ UPDATE alarm_threshold SET high_limit = 90.0
 WHERE sensor_id = 'TEMP-01';  -- sensor_id = PK
 ```
 
-## 향후 지원 예정 (dbms-nfx#3696)
+## 지원하지 않는 조건식
 
-일반 조건식이 지원되면 PK가 아닌 컬럼 기준으로도 UPDATE가 가능해집니다.
+다음 구문은 현재 실행할 수 없습니다.
 
 ```sql
--- 향후 지원 예정: 특정 설비 유형의 임계값 일괄 변경
 UPDATE alarm_threshold SET high_limit = 85.0
 WHERE device_type = 'MOTOR';  -- device_type = non-PK 컬럼
+-- [ERR-02190: Invalid UPDATE/DELETE condition. Specify it as (primary key column) = (value)]
 
--- 범위 조건
 UPDATE device_config SET active = 0
-WHERE last_seen < DATEADD('d', -30, NOW);
+WHERE last_seen < NOW - 2592000000000000;
+-- [ERR-02190: Invalid UPDATE/DELETE condition. Specify it as (primary key column) = (value)]
 ```
 
 ## 현재 대안
@@ -45,6 +46,6 @@ UPDATE alarm_threshold SET high_limit = 85.0 WHERE sensor_id = 'TEMP-02';
 ...
 ```
 
-2. **VOLATILE 테이블 활용**: 빈번한 일괄 UPDATE가 필요하다면 LOOKUP 대신 VOLATILE 테이블 고려
+2. **RDB 테이블 활용**: non-PK 조건 UPDATE/DELETE가 핵심이면 LOOKUP 대신 RDB 테이블 고려
 
-> LOOKUP JSON 컬럼 지원도 같은 이슈(#3696)에 포함되어 있습니다.
+> LOOKUP 테이블의 JSON 타입 컬럼도 현재 빌드에서 지원되지 않습니다.

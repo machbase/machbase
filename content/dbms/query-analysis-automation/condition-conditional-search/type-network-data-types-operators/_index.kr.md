@@ -32,10 +32,10 @@ CREATE TABLE network_log (
 SELECT * FROM network_log WHERE src_ip ISNULL;
 
 -- NULL이 아닌 행 조회
-SELECT * FROM network_log WHERE src_ip ISNOTNULL;
+SELECT * FROM network_log WHERE src_ip IS NOT NULL;
 ```
 
-> `IS NULL` / `IS NOT NULL` 대신 `ISNULL` / `ISNOTNULL` 키워드를 사용합니다.
+> `ISNULL` 키워드와 표준 `IS NOT NULL` 조건을 사용할 수 있습니다.
 
 ## 문자열 리터럴과의 비교
 
@@ -48,7 +48,7 @@ WHERE src_ip = '192.168.1.10';
 
 -- 특정 IP가 아닌 행 조회
 SELECT * FROM network_log
-WHERE src_ip != '10.0.0.1';
+WHERE src_ip <> '10.0.0.1';
 ```
 
 ## BETWEEN을 이용한 IP 범위 조회
@@ -105,7 +105,7 @@ WHERE TO_CHAR(src_ip) LIKE '192.168.%';
 -- 출발지 IP별 접속 횟수 집계
 SELECT src_ip, COUNT(*) AS access_count
 FROM network_log
-WHERE ts >= DATEADD('h', -24, NOW)
+WHERE ts >= NOW - 86400000000000
 GROUP BY src_ip
 ORDER BY access_count DESC
 LIMIT 10;

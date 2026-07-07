@@ -27,7 +27,7 @@ CREATE VOLATILE TABLE sensor_latest (
 
 -- 최신 값 업데이트 (ON DUPLICATE KEY UPDATE 사용)
 INSERT INTO sensor_latest VALUES ('TEMP-01', 25.3, NOW)
-ON DUPLICATE KEY UPDATE value = 25.3, updated_at = NOW;
+ON DUPLICATE KEY UPDATE SET value = 25.3, updated_at = NOW;
 
 -- 현재 모든 센서 최신값 조회
 SELECT sensor_id, value, updated_at FROM sensor_latest;
@@ -36,21 +36,24 @@ SELECT sensor_id, value, updated_at FROM sensor_latest;
 ## 예시: 실시간 집계 캐시
 
 ```sql
-CREATE VOLATILE TABLE hourly_summary (
-    sensor_id VARCHAR(64) PRIMARY KEY,
-    hour_ts   DATETIME    PRIMARY KEY,
+CREATE VOLATILE TABLE recent_summary (
+    key_id    VARCHAR(64) PRIMARY KEY,
+    sensor_id VARCHAR(64),
+    base_ts   DATETIME,
     avg_val   DOUBLE,
     max_val   DOUBLE,
     count     INTEGER
 );
 
 -- 1시간마다 집계 갱신
-INSERT INTO hourly_summary
-SELECT name, DATE_TRUNC('hour', time), AVG(value), MAX(value), COUNT(*)
+DELETE FROM recent_summary;
+
+INSERT INTO recent_summary
+SELECT name,
+       name, MAX(DATE_TRUNC('hour', time, 1)), AVG(value), MAX(value), COUNT(*)
 FROM sensor_data
 WHERE time >= NOW - 3600000000000
-GROUP BY name, DATE_TRUNC('hour', time)
-ON DUPLICATE KEY UPDATE avg_val = VALUES(avg_val), max_val = VALUES(max_val), count = VALUES(count);
+GROUP BY name;
 ```
 
 ## 부적합한 경우

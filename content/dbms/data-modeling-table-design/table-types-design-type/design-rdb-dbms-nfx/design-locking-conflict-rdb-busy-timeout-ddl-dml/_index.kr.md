@@ -21,7 +21,7 @@ RDB 테이블에 동시에 여러 세션이 접근하면 잠금 충돌이 발생
 
 ```sql
 -- 세션별 타임아웃 설정 (밀리초 단위)
-SET BUSY_TIMEOUT = 5000;  -- 5초 대기 후 오류 반환
+ALTER SESSION SET RDB_BUSY_TIMEOUT_MS = 5000;  -- 5초 대기 후 오류 반환
 ```
 
 ## DDL 잠금 충돌 방지

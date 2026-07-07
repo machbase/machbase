@@ -18,7 +18,7 @@ Retention Policy를 생성하고 테이블에 연결하는 방법은 두 단계�
 
 ```sql
 -- 1. Retention Policy 생성 (30일 보관)
-CREATE RETENTION keep_30days DURATION 30 DAY;
+CREATE RETENTION keep_30days DURATION 30 DAY INTERVAL 1 DAY;
 
 -- 2. 테이블에 적용
 ALTER TABLE device_log ADD RETENTION keep_30days;

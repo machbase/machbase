@@ -52,7 +52,7 @@ UPDATE device_status SET status = 'NORMAL', value = 23.5 WHERE device_id = 'DEV-
 
 -- UPSERT: ON DUPLICATE KEY UPDATE (PK 중복 시 자동 UPDATE)
 INSERT INTO device_status VALUES ('DEV-01', 'ALARM', 95.3, NOW)
-ON DUPLICATE KEY UPDATE status = 'ALARM', value = 95.3, updated_at = NOW;
+ON DUPLICATE KEY UPDATE SET status = 'ALARM', value = 95.3, updated_at = NOW;
 ```
 
 ## LOOKUP: UPDATE 패턴

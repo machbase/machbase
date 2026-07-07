@@ -27,7 +27,7 @@ CREATE TAG TABLE power_meter (
 ```sql
 -- 1시간 단위 평균 전력 (최근 24시간)
 SELECT meter_id,
-       TIME_BUCKET('1h', time) AS hour,
+       DATE_TRUNC('hour', time, 1) AS hour,
        AVG(kwh) AS avg_kwh,
        MAX(kwh) AS peak_kwh
 FROM power_meter
@@ -50,8 +50,9 @@ CREATE TAG TABLE power_raw (
 
 -- 1분 집계 (VOLATILE 또는 별도 TAG로 캐싱)
 CREATE VOLATILE TABLE power_1min (
-    meter_id VARCHAR(32) PRIMARY KEY,
-    ts       DATETIME    PRIMARY KEY,
+    key_id   VARCHAR(80) PRIMARY KEY,
+    meter_id VARCHAR(32),
+    ts       DATETIME,
     avg_kwh  DOUBLE,
     max_kwh  DOUBLE
 );
@@ -64,7 +65,7 @@ Machbase는 UTC 기준으로 시각을 저장합니다. 표시 시 타임존 변
 ```sql
 -- UTC → KST 변환 (UTC+9)
 SELECT meter_id,
-       DATEADD('hour', 9, time) AS time_kst,
+       time + 32400000000000 AS time_kst,
        kwh
 FROM power_meter
 WHERE meter_id = 'MTR-001'

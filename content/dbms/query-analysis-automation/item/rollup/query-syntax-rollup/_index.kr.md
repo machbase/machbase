@@ -8,7 +8,7 @@ ROLLUP 테이블 데이터를 조회할 때는 `rollup()` 함수를 SELECT 절�
 
 ## rollup() 함수
 
-```sql
+```text
 rollup(time_unit, period, basetime_column [, origin])
 ```
 

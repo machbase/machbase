@@ -9,12 +9,12 @@ weight: 10
 ## 문법
 
 ```sql
-LAG(컬럼, 오프셋, 기본값) OVER (
+LAG(컬럼, 오프셋) OVER (
     [PARTITION BY 파티션_컬럼]
     ORDER BY 정렬_컬럼
 )
 
-LEAD(컬럼, 오프셋, 기본값) OVER (
+LEAD(컬럼, 오프셋) OVER (
     [PARTITION BY 파티션_컬럼]
     ORDER BY 정렬_컬럼
 )
@@ -24,7 +24,6 @@ LEAD(컬럼, 오프셋, 기본값) OVER (
 |------|------|
 | `컬럼` | 참조할 컬럼 이름 |
 | `오프셋` | 현재 행으로부터 몇 행 앞/뒤를 참조할지 지정 (기본값: 1) |
-| `기본값` | 참조할 행이 없을 때 반환할 값 (기본값: NULL) |
 
 - **LAG**: 현재 행 기준 `오프셋`만큼 **이전** 행의 값을 반환합니다.
 - **LEAD**: 현재 행 기준 `오프셋`만큼 **이후** 행의 값을 반환합니다.
@@ -42,11 +41,11 @@ SELECT
     time,
     sensor_id,
     value,
-    LAG(value, 1, 0) OVER (
+    LAG(value, 1) OVER (
         PARTITION BY sensor_id
         ORDER BY time
     ) AS prev_value,
-    value - LAG(value, 1, 0) OVER (
+    value - LAG(value, 1) OVER (
         PARTITION BY sensor_id
         ORDER BY time
     ) AS delta
@@ -61,7 +60,7 @@ SELECT
     time,
     tag_name,
     value AS current_value,
-    LAG(value, 1, NULL) OVER (
+    LAG(value, 1) OVER (
         PARTITION BY tag_name
         ORDER BY time
     ) AS prev_1min_value
@@ -76,7 +75,7 @@ SELECT
     time,
     sensor_id,
     value,
-    LEAD(value, 1, NULL) OVER (
+    LEAD(value, 1) OVER (
         PARTITION BY sensor_id
         ORDER BY time
     ) AS next_value
@@ -94,7 +93,7 @@ FROM (
         time,
         sensor_id,
         value,
-        LAG(value, 1, NULL) OVER (
+        LAG(value, 1) OVER (
             PARTITION BY sensor_id
             ORDER BY time
         ) AS prev_value
@@ -107,12 +106,9 @@ WHERE prev_value IS NOT NULL
 
 ## NULL 처리
 
-오프셋이 범위를 벗어나는 경우(예: 첫 번째 행에서 LAG를 사용할 때) `기본값` 인자에 지정한 값이 반환됩니다. 기본값을 지정하지 않으면 `NULL`이 반환됩니다.
+오프셋이 범위를 벗어나는 경우(예: 첫 번째 행에서 LAG를 사용할 때) `NULL`이 반환됩니다.
 
-```sql
--- 첫 번째 행의 prev_value는 NULL이 아닌 0으로 반환됨
-LAG(value, 1, 0) OVER (ORDER BY time)
-
+```text
 -- 첫 번째 행의 prev_value는 NULL로 반환됨
 LAG(value, 1) OVER (ORDER BY time)
 ```

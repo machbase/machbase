@@ -28,12 +28,14 @@ append-only 원칙은 테이블 유형마다 다르게 적용됩니다.
 
 | 테이블 유형 | INSERT | UPDATE | DELETE |
 | --- | --- | --- | --- |
-| LOG | 가능 | 불가 | 시간 범위로만 가능 |
-| TAG | 가능 | 메타데이터 컬럼만 가능 | 시간 범위로만 가능 |
-| LOOKUP | 가능 | Primary key 기반 가능 | 가능 |
-| VOLATILE | 가능 | Primary key 기반 가능 | 가능 |
+| LOG | 가능 | 불가 | `BEFORE`, `OLDEST`, `EXCEPT` 등 시간/보존 조건 기반 |
+| TAG | 가능 | 메타데이터만 가능 | `BEFORE` 또는 태그/축 조건 기반 |
+| LOOKUP | 가능 | Primary key 조건 기반 | Primary key 조건 기반 |
+| VOLATILE | 가능 | Primary key 조건 기반 | Primary key 조건 기반 |
 
-LOG와 TAG 테이블이 append-only의 핵심입니다. LOOKUP과 VOLATILE은 기준 정보와 세션성 데이터를 위해 완전한 DML을 허용하지만, 고속 대량 입력보다는 소규모 참조 데이터 관리에 사용합니다.
+LOG와 TAG 테이블이 append-only의 핵심입니다. LOOKUP과 VOLATILE은 기준 정보와 세션성 데이터를 위해
+UPDATE/DELETE를 지원하지만, 현재 UPDATE/DELETE 조건은 Primary key equality 형태로 제한됩니다.
+고속 대량 입력보다는 소규모 참조 데이터 관리에 사용합니다.
 
 ## 쓰기 경로: INSERT vs APPEND
 
@@ -59,7 +61,7 @@ append-only 모델은 성능상 이점이 크지만, 설계 시 염두에 두어
 
 **잘못 입력된 데이터를 수정할 수 없다**
 
-LOG 테이블에 잘못된 값을 넣으면 해당 행을 수정하는 것이 아니라, 보정 이벤트를 추가하거나 시간 범위로 삭제한 뒤 재입력해야 합니다. TAG 테이블의 경우 데이터 정정 기능이 제한적으로 지원됩니다([TAG 데이터 정정](/dbms/data-modeling-table-design/table-types-design-type/design-tag/) 참고).
+LOG 테이블에 잘못된 값을 넣으면 해당 행을 수정하는 것이 아니라, 보정 이벤트를 추가하거나 시간 범위로 삭제한 뒤 재입력해야 합니다. TAG 테이블의 실제 시계열 값도 현재 UPDATE할 수 없으므로 보정 컬럼, 보정 이력 테이블, 삭제 후 재입력 패턴을 사용합니다([TAG 데이터 보정 설계](/dbms/data-modeling-table-design/table-types-design-type/design-tag/design-correction-tag/) 참고).
 
 **스키마 변경이 제한된다**
 

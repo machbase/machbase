@@ -13,7 +13,7 @@ weight: 10
 | SQL INSERT | O | O | O | O | O |
 | INSERT SELECT | O | O | O | O | O |
 | INSERT ON DUPLICATE KEY UPDATE | X | X | X | O (PK 필요) | X |
-| Append API | O | O | O (트랜잭션 기반) | X | X |
+| Append API | O | O | X | X | X |
 | LOAD DATA INFILE | O | O | O | O | O |
 | machloader | O | O | O | O | O |
 | csvimport | O | O | O | O | O |

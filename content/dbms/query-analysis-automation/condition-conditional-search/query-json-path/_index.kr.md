@@ -8,7 +8,7 @@ Machbase의 JSON 컬럼은 구조가 유동적인 데이터를 저장할 때 사
 
 ## 이 절에서 다루는 내용
 
-- **[LOOKUP 테이블 JSON 조회](./condition-query-lookup-json/)**: LOOKUP 테이블 JSON 컬럼 조회
+- **[LOOKUP 테이블 JSON 조회 제한](./condition-query-lookup-json/)**: LOOKUP 테이블의 JSON 타입 미지원 범위와 대안
 
 ## JSON 컬럼 접근 방법
 
@@ -16,13 +16,13 @@ Machbase는 두 가지 JSONPath 접근 문법을 지원합니다.
 
 ### 화살표 연산자 (`->`)
 
-```sql
+```text
 column->'$.path'
 ```
 
 ### 점 표기법 (dot shorthand)
 
-```sql
+```text
 column.path
 ```
 
@@ -48,7 +48,7 @@ WHERE name = 'sensor1';
 -- 중첩 객체 접근
 SELECT name, value->'$.location.building' AS building
 FROM tag
-WHERE ts >= DATEADD('h', -1, NOW);
+WHERE ts >= NOW - 3600000000000;
 
 -- 중첩 예: {"device": {"id": "A1", "type": "temp"}}
 SELECT name, value->'$.device.id' AS device_id
@@ -82,20 +82,20 @@ WHERE value->'$.status' = 'active';
 SELECT name, value->'$.temperature' AS temp
 FROM tag
 WHERE value->'$.temperature' > 80.0
-  AND ts >= DATEADD('h', -1, NOW);
+  AND ts >= NOW - 3600000000000;
 ```
 
-### ISNULL / ISNOTNULL
+### ISNULL / IS NOT NULL
 
 ```sql
 -- JSON 필드가 없거나 null인 행 조회
 SELECT * FROM tag
-WHERE value->'$.error_code' ISNOTNULL;
+WHERE value->'$.error_code' IS NOT NULL;
 
 -- JSON 필드가 존재하는 행만 조회
 SELECT name, value->'$.unit'
 FROM tag
-WHERE value->'$.unit' ISNOTNULL;
+WHERE value->'$.unit' IS NOT NULL;
 ```
 
 ### LIKE 패턴 매칭

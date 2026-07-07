@@ -19,8 +19,8 @@ Machbase는 네트워크 데이터를 효율적으로 저장하기 위한 전용
 CREATE TABLE network_flow (
     src_ip    IPV4,
     dst_ip    IPV4,
-    src_port  SHORT,
-    dst_port  SHORT,
+    src_port  INTEGER,
+    dst_port  INTEGER,
     protocol  SHORT,
     bytes     INTEGER,
     packets   INTEGER

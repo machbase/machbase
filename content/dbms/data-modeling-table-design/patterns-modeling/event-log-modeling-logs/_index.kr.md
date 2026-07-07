@@ -26,6 +26,8 @@ CREATE TABLE audit_log (
     detail     TEXT,           -- 상세 내용 (전문 검색 대상)
     result     VARCHAR(8)      -- SUCCESS, FAILURE
 );
+
+CREATE KEYWORD INDEX idx_audit_detail ON audit_log(detail);
 ```
 
 ## 알람 집계 패턴
@@ -65,6 +67,6 @@ LIMIT 100;
 -- 특정 키워드를 포함하는 감사 로그 조회
 SELECT _arrival_time, user_id, action, target
 FROM audit_log
-WHERE SEARCH(detail, 'password')
+WHERE detail SEARCH 'password'
   AND _arrival_time >= NOW - 86400000000000;
 ```

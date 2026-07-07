@@ -13,9 +13,9 @@ weight: 30
 | DDL | `CREATE TAG TABLE` | `CREATE TABLE` | `CREATE RDB TABLE` | `CREATE VOLATILE TABLE` | `CREATE LOOKUP TABLE` |
 | 주 용도 | 센서·계측값 | 이벤트·로그 | 관계형 업무 | 임시 집계 | 코드·기준 |
 | INSERT | O | O | O | O | O |
-| APPEND API | O | O | O (트랜잭션) | X | X |
-| UPDATE | X | X | O | O (일반 UPDATE + ON DUPLICATE KEY) | O (by PK) |
-| DELETE | X | X | O | O | O |
+| APPEND API | O | O | X | X | X |
+| UPDATE | 메타데이터만 O | X | O | O (PK equality) | O (PK equality) |
+| DELETE | O (BEFORE/조건) | O (BEFORE/OLDEST/EXCEPT) | O | O (PK equality) | O (PK equality) |
 | PRIMARY KEY | 필수 | X | 선택 | 필수 | 필수 |
 | BASETIME | 필수 (시간축) | X | X | X | X |
 | _arrival_time | X | 자동 추가 | X | X | X |

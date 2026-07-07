@@ -8,16 +8,13 @@ weight: 50
 
 ## 지원 함수
 
-Machbase Neo는 다음 윈도우 함수를 지원합니다.
+현재 빌드에서 SQL `OVER` 절과 함께 사용할 수 있는 함수는 다음과 같습니다.
 
 | 함수 | 설명 |
 |------|------|
-| `LAG(col, n, default)` | 현재 행 기준 n행 이전의 값을 반환 |
-| `LEAD(col, n, default)` | 현재 행 기준 n행 이후의 값을 반환 |
+| `LAG(col, n)` | 현재 행 기준 n행 이전의 값을 반환 |
+| `LEAD(col, n)` | 현재 행 기준 n행 이후의 값을 반환 |
 | `NTILE(n)` | 결과 집합을 n개의 동등한 버킷으로 나누고 버킷 번호를 반환 |
-| `ROW_NUMBER()` | 각 파티션 내에서 고유한 순번을 반환 |
-| `RANK()` | 동일 값에 같은 순위를 부여하며, 다음 순위는 건너뜀 |
-| `DENSE_RANK()` | 동일 값에 같은 순위를 부여하며, 다음 순위는 연속으로 이어짐 |
 
 ## 기본 문법
 
@@ -29,7 +26,7 @@ Machbase Neo는 다음 윈도우 함수를 지원합니다.
 ```
 
 - **PARTITION BY**: 윈도우 계산을 수행할 데이터 그룹을 정의합니다. 생략하면 전체 결과 집합이 하나의 윈도우가 됩니다.
-- **ORDER BY**: 윈도우 내에서 행의 순서를 결정합니다. `LAG`, `LEAD`, `RANK` 등 순서가 중요한 함수에서는 필수입니다.
+- **ORDER BY**: 윈도우 내에서 행의 순서를 결정합니다. `LAG`, `LEAD`, `NTILE`처럼 순서가 중요한 함수에서 사용합니다.
 
 ## 사용 예시
 
@@ -39,16 +36,16 @@ Machbase Neo는 다음 윈도우 함수를 지원합니다.
 SELECT
     time,
     value,
-    LAG(value, 1, 0) OVER (PARTITION BY sensor_id ORDER BY time) AS prev_value,
-    value - LAG(value, 1, 0) OVER (PARTITION BY sensor_id ORDER BY time) AS delta
+    LAG(value, 1) OVER (PARTITION BY sensor_id ORDER BY time) AS prev_value,
+    value - LAG(value, 1) OVER (PARTITION BY sensor_id ORDER BY time) AS delta
 FROM sensor_data;
 ```
 
-### 행 번호 부여 (ROW_NUMBER)
+### 버킷 번호 부여 (NTILE)
 
 ```sql
 SELECT
-    ROW_NUMBER() OVER (PARTITION BY tag_name ORDER BY time DESC) AS rn,
+    NTILE(4) OVER (PARTITION BY tag_name ORDER BY value) AS bucket_no,
     tag_name,
     time,
     value
@@ -56,19 +53,15 @@ FROM tag_data
 WHERE time BETWEEN TO_DATE('2024-01-01') AND TO_DATE('2024-01-02');
 ```
 
-### 순위 계산 (RANK, DENSE_RANK)
+### 다음 행 참조 (LEAD)
 
 ```sql
 SELECT
     sensor_id,
-    avg_value,
-    RANK()       OVER (ORDER BY avg_value DESC) AS rank,
-    DENSE_RANK() OVER (ORDER BY avg_value DESC) AS dense_rank
-FROM (
-    SELECT sensor_id, AVG(value) AS avg_value
-    FROM sensor_data
-    GROUP BY sensor_id
-);
+    time,
+    value,
+    LEAD(value, 1) OVER (PARTITION BY sensor_id ORDER BY time) AS next_value
+FROM sensor_data;
 ```
 
 ## 지원 테이블 유형
@@ -90,16 +83,16 @@ FROM (
 ```sql
 -- 잘못된 예시 (오류 발생)
 SELECT * FROM sensor_data
-WHERE ROW_NUMBER() OVER (ORDER BY time) <= 10;
+WHERE LAG(value, 1) OVER (ORDER BY time) IS NOT NULL;
 
 -- 올바른 예시 (서브쿼리 사용)
 SELECT * FROM (
     SELECT
         time, value,
-        ROW_NUMBER() OVER (ORDER BY time) AS rn
+        LAG(value, 1) OVER (ORDER BY time) AS prev_value
     FROM sensor_data
 )
-WHERE rn <= 10;
+WHERE prev_value IS NOT NULL;
 ```
 
 > **성능 고려사항**: 윈도우 함수는 내부적으로 정렬을 수행하므로 대용량 데이터에서는 적절한 시간 범위 조건을 함께 사용하는 것을 권장합니다.

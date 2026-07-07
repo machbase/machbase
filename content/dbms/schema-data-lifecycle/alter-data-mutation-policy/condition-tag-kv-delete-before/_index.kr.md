@@ -4,11 +4,11 @@ title: 'TAG/KV DELETE 허용 조건과 BEFORE 조건'
 weight: 30
 ---
 
-TAG와 LOG(KV 포함) 테이블의 DELETE는 **BEFORE 조건이 반드시 필요**합니다. 특정 시점 이전의 데이터를 일괄 삭제하는 방식으로만 동작하며, 임의의 WHERE 조건으로 개별 행을 삭제할 수 없습니다.
+TAG와 LOG(KV 포함) 테이블은 `BEFORE` 조건으로 특정 시점 이전 데이터를 일괄 삭제할 수 있습니다. LOG 테이블은 `OLDEST`, `EXCEPT`, `BEFORE` 등 로그 보존형 DELETE를 사용하고, TAG/KV 테이블은 `BEFORE` 외에도 태그 이름과 축 조건을 사용한 `WHERE` 삭제를 지원합니다.
 
-## BEFORE 조건 필수 이유
+## BEFORE 조건의 역할
 
-TAG와 LOG 테이블은 시계열 데이터를 파티션 단위로 관리합니다. 파티션 내부에서 특정 행만을 선택적으로 삭제하는 것은 구조적으로 지원되지 않으며, BEFORE 조건으로 파티션 단위 삭제를 수행합니다.
+`BEFORE` 조건은 오래된 데이터를 빠르게 정리할 때 사용하는 보존형 삭제 조건입니다. 지정한 시각은 현재 시각보다 과거여야 하며, 미래 시각을 지정하면 오류가 발생합니다.
 
 ## TAG 테이블 DELETE
 
@@ -20,29 +20,28 @@ DELETE FROM tag BEFORE TO_DATE('2024-01-01', 'YYYY-MM-DD');
 DELETE FROM tag BEFORE '2024-01-01 00:00:00 000:000:000';
 
 -- NOW 기준 상대 시간
-DELETE FROM tag BEFORE DATEADD('d', -90, NOW);  -- 90일 이전 삭제
+DELETE FROM tag BEFORE NOW - 7776000000000000;  -- 90일 이전 삭제
 ```
 
 ## LOG 테이블 DELETE
 
 ```sql
 -- 30일 이전 데이터 삭제
-DELETE FROM sensor_log BEFORE DATEADD('d', -30, NOW);
+DELETE FROM sensor_log BEFORE NOW - 2592000000000000;
 
 -- 특정 날짜 이전 삭제
 DELETE FROM event_log BEFORE TO_DATE('2023-12-31', 'YYYY-MM-DD');
 ```
 
-## BEFORE 없이 DELETE 시도 시
+## WHERE 조건 삭제와 구분
 
-BEFORE 조건 없이 DELETE를 실행하면 오류가 발생합니다.
+TAG/KV 테이블에서는 태그 이름 또는 축 조건으로 `WHERE` 삭제도 사용할 수 있습니다. 반면 LOG 테이블에서는 임의의 일반 `WHERE` 조건 삭제가 아니라 로그 전용 삭제 구문을 사용합니다.
 
 ```sql
--- 오류: BEFORE 조건 없음
+-- TAG: tag name 기준 삭제 가능
 DELETE FROM tag WHERE name = 'TEMP-01';
--- → 오류 발생
 
--- 오류: 일반 WHERE 조건
+-- LOG: 일반 WHERE 조건 삭제는 사용하지 않음
 DELETE FROM sensor_log WHERE value > 100.0;
 -- → 오류 발생
 ```

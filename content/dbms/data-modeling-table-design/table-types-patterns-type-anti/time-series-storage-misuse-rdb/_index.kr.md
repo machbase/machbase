@@ -27,7 +27,7 @@ CREATE RDB TABLE sensor_timeseries (
 | Append API 고속 버퍼 미적용 | RDB의 Append는 트랜잭션 기반으로, TAG·LOG의 초고속 버퍼 최적화가 없음 |
 | 시계열 최적화 없음 | 시간 범위 집계 성능이 TAG 테이블 대비 저하 |
 | 시계열 압축 없음 | TAG 테이블의 시계열 압축 알고리즘 미적용 |
-| 시계열 분석 함수 미지원 | TIME_BUCKET, FIRST, LAST 등 시계열 함수 미지원 |
+| 시계열 분석 기능 미흡 | TAG 전용 ROLLUP, FIRST, LAST 등 시계열 최적화 미지원 |
 
 ## 올바른 패턴
 
@@ -43,8 +43,8 @@ CREATE TAG TABLE sensor_data (
 );
 
 -- Append API 고속 버퍼로 대량 입력 가능
--- 시계열 집계 함수 활용 가능
-SELECT name, TIME_BUCKET('1h', time) AS hour, AVG(value), MAX(value)
+-- 시간 단위 집계와 TAG 전용 최적화 활용 가능
+SELECT name, DATE_TRUNC('hour', time, 1) AS hour, AVG(value), MAX(value)
 FROM sensor_data
 WHERE time >= NOW - 86400000000000
 GROUP BY name, hour;

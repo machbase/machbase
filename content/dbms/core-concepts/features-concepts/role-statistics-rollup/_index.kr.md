@@ -27,7 +27,7 @@ SEC 집계가 축적되면 MIN으로, MIN이 축적되면 HOUR로 순차적으�
 TAG 테이블 생성 시 `WITH ROLLUP` 절을 추가하면 ROLLUP이 활성화됩니다.
 
 ```sql
-CREATE TAG TABLE sensor_values (
+CREATE TAG TABLE rollup_sensor_values (
     name  VARCHAR(128) PRIMARY KEY,
     time  DATETIME BASETIME,
     value DOUBLE SUMMARIZED
@@ -42,12 +42,13 @@ ROLLUP 집계 데이터를 조회할 때는 `rollup()` 함수를 사용합니다
 
 ```sql
 -- 분 단위 평균값 조회
-SELECT rollup('MIN', avg, time, value) AS avg_value, time
-FROM sensor_values
+SELECT rollup('min', 1, time) AS mtime, AVG(value) AS avg_value
+FROM rollup_sensor_values
 WHERE name = 'temp_sensor_01'
   AND time BETWEEN TO_DATE('2026-07-01', 'YYYY-MM-DD')
                AND TO_DATE('2026-07-03', 'YYYY-MM-DD')
-ORDER BY time;
+GROUP BY mtime
+ORDER BY mtime;
 ```
 
 `rollup()` 함수는 내부적으로 `_TAG_ROLLUP_MIN` 테이블에서 이미 계산된 집계를 읽어 반환합니다. 원시 데이터를 스캔하지 않으므로 조회 성능이 수십 배에서 수백 배까지 향상될 수 있습니다.

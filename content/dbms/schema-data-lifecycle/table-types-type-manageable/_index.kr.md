@@ -20,8 +20,8 @@ Machbase의 각 테이블 타입은 DDL 및 DML 작업에 대한 지원 범위�
 | ALTER TABLE (테이블 이름 변경) | X | X | O | X | X |
 | ALTER TABLE ADD RETENTION | O | O | X | X | X |
 | ALTER TABLE DROP RETENTION | O | O | X | X | X |
-| CREATE INDEX | O (메타데이터) | O | X | X | X |
-| DROP INDEX | O | O | X | X | X |
+| CREATE INDEX | O (메타데이터) | O | O | X | X |
+| DROP INDEX | O | O | O | X | X |
 | CREATE VIEW | - (참조 가능) | - | - | - | - |
 
 > ALTER TABLE 지원 범위는 소스 코드(`qpvAlterTable.c`) 기준입니다.
@@ -31,9 +31,9 @@ Machbase의 각 테이블 타입은 DDL 및 DML 작업에 대한 지원 범위�
 | DML 작업 | TAG | LOG | RDB | VOLATILE | LOOKUP |
 |---------|-----|-----|-----|---------|--------|
 | INSERT | O | O | O | O | O |
-| Append API | O | O | O (트랜잭션 기반) | X | X |
-| UPDATE | X (계획 중) | X | O | O | O (PK 기준) |
-| DELETE | O (BEFORE 조건 필수) | O (BEFORE 조건 필수) | O | O | O (PK 기준 권장) |
+| Append API | O | O | X | X | X |
+| UPDATE | 메타데이터만 O | X | O | O (PK equality) | O (PK equality) |
+| DELETE | O (BEFORE/조건) | O (BEFORE/OLDEST/EXCEPT) | O | O (PK equality) | O (PK equality) |
 | ON DUPLICATE KEY UPDATE | X | X | X | O | X |
 
 ## Retention Policy 지원
@@ -49,14 +49,14 @@ Machbase의 각 테이블 타입은 DDL 및 DML 작업에 대한 지원 범위�
 | LSM | O | O | X | X | X |
 | BITMAP | X | O | X | X | X |
 | KEYWORD | X | O | X | X | X |
-| REDBLACK (PK) | O (name) | X | O | O | O |
+| REDBLACK (PK/인덱스) | O (name) | X | O | O | O |
 
 ## Edition별 제약
 
 | 기능 | Standard | Cluster |
 |------|---------|---------|
 | RDB 테이블 | O | X |
-| TAG 데이터 UPDATE (계획 중) | O (예정) | X (예정) |
+| TAG 실제 데이터 UPDATE | X | X |
 | Retention Policy | O | O |
 | Cluster 전용 기능 | X | O |
 

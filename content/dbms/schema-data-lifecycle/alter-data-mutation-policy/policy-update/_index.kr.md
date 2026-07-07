@@ -10,11 +10,11 @@ weight: 10
 
 | 테이블 타입 | UPDATE 지원 | 조건 |
 |------------|------------|------|
-| TAG | X | 계획 중 (dbms-nfx#3733) |
+| TAG | 메타데이터만 O | 실제 시계열 데이터 UPDATE는 미지원 |
 | LOG | X | 미지원 |
 | RDB | O | WHERE 유무 모두 가능 |
-| VOLATILE | O | WHERE 조건 자유. ON DUPLICATE KEY UPDATE도 지원 |
-| LOOKUP | O | PK 기준 권장. 일반 조건식은 계획 중 (#3696) |
+| VOLATILE | O | Primary key equality 조건. ON DUPLICATE KEY UPDATE도 지원 |
+| LOOKUP | O | Primary key equality 조건. non-PK 조건식은 현재 미지원 |
 
 ## RDB 테이블 UPDATE
 
@@ -39,16 +39,16 @@ VOLATILE 테이블은 일반 UPDATE와 ON DUPLICATE KEY UPDATE(UPSERT)를 모두
 ```sql
 -- 일반 UPDATE
 UPDATE device_status SET status = 'ALARM', value = 95.3
-WHERE device_id = 'DEV-01';
+WHERE device_id = 'DEV-01';  -- device_id = PRIMARY KEY
 
 -- UPSERT: PK 중복 시 자동 UPDATE
 INSERT INTO device_status VALUES ('DEV-01', 'ALARM', 95.3, NOW)
-ON DUPLICATE KEY UPDATE status = 'ALARM', value = 95.3, updated_at = NOW;
+ON DUPLICATE KEY UPDATE SET status = 'ALARM', value = 95.3, updated_at = NOW;
 ```
 
 ## LOOKUP 테이블 UPDATE
 
-현재 버전에서는 PRIMARY KEY 기준 UPDATE를 권장합니다.
+현재 빌드에서는 PRIMARY KEY equality 조건의 UPDATE만 지원합니다. Primary key가 아닌 컬럼 조건을 사용하면 오류가 발생합니다.
 
 ```sql
 -- PK 기준 직접 UPDATE
@@ -56,14 +56,14 @@ UPDATE alarm_threshold SET high_limit = 90.0, updated_at = NOW
 WHERE sensor_id = 'TEMP-01';
 ```
 
-> 일반 조건식(non-PK 컬럼 기준) UPDATE는 dbms-nfx#3696에서 계획 중입니다.
+> 일반 조건식(non-PK 컬럼 기준) UPDATE는 현재 지원되지 않습니다.
 
 ## TAG/LOG 테이블 UPDATE
 
 TAG 데이터(실제 시계열 값)와 TAG 메타데이터 UPDATE는 구분해야 합니다.
 
 - **TAG 메타데이터 UPDATE**: `UPDATE ... METADATA SET ...` 구문으로 가능 (현재 지원)
-- **TAG 실제 데이터(value) UPDATE**: 계획 중 (dbms-nfx#3733)
+- **TAG 실제 데이터(value) UPDATE**: 현재 미지원
 - **LOG 테이블 UPDATE**: 미지원
 
 상세 내용은 하위 페이지를 참고하세요.

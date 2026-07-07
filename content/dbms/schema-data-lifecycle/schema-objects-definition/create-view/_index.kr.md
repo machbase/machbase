@@ -46,7 +46,7 @@ SELECT * FROM active_alarms WHERE sensor_id = 'TEMP-01';
 
 SELECT location, AVG(avg_value)
 FROM hourly_avg
-WHERE hour > DATEADD('h', -24, NOW)
+WHERE hour > NOW - 86400000000000
 GROUP BY location;
 ```
 

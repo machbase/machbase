@@ -34,6 +34,8 @@ EXEC TABLE_FLUSH(tag);
 SELECT * FROM tag WHERE name = 'tag1';
 ```
 
+`INSERT` 직후 같은 세션에서 태그 이름 조건으로 결과를 확인할 때는 `EXEC TABLE_FLUSH`를 먼저 실행합니다. Flush 전에는 전체 조회에서는 보이더라도 태그 이름 조건 조회가 아직 인덱스에 반영되지 않을 수 있습니다.
+
 ## 설정 변경
 
 생성 후에도 변경할 수 있습니다.

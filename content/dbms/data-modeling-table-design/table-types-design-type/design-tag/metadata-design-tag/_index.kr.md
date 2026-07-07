@@ -9,7 +9,7 @@ TAG 테이블은 `METADATA` 절을 사용하여 태그(센서)의 속성 정보�
 ## METADATA 절 문법
 
 ```sql
-CREATE TAG TABLE sensor_data (
+CREATE TAG TABLE sensor_meta_data (
     name   VARCHAR(64) PRIMARY KEY,
     time   DATETIME    BASETIME,
     value  DOUBLE
@@ -25,13 +25,13 @@ CREATE TAG TABLE sensor_data (
 ```sql
 -- 태그와 메타데이터 함께 조회
 SELECT name, time, value, location, unit
-FROM sensor_data
+FROM sensor_meta_data
 WHERE name = 'sensor-01'
   AND time >= NOW - 3600000000000;
 
 -- 메타데이터 조건으로 필터링
 SELECT name, time, value
-FROM sensor_data
+FROM sensor_meta_data
 WHERE location = 'Building-A'
   AND time >= NOW - 86400000000000;
 ```
@@ -40,20 +40,20 @@ WHERE location = 'Building-A'
 
 ```sql
 -- 메타데이터 변경 (태그 속성 갱신)
-UPDATE sensor_data METADATA SET unit = 'Celsius' WHERE name = 'sensor-01';
-UPDATE sensor_data METADATA SET threshold = 80.0 WHERE location = 'Building-A';
+UPDATE sensor_meta_data METADATA SET unit = 'Celsius' WHERE name = 'sensor-01';
+UPDATE sensor_meta_data METADATA SET threshold = 80.0 WHERE location = 'Building-A';
 ```
 
 ## METADATA 삽입
 
 ```sql
 -- 태그 데이터 삽입 시 메타데이터 함께 지정
-INSERT INTO sensor_data (name, time, value, location, unit, threshold)
+INSERT INTO sensor_meta_data (name, time, value, location, unit, threshold)
 VALUES ('sensor-01', NOW, 23.5, 'Building-A', 'Celsius', 80.0);
 
 -- 또는 메타데이터 별도 삽입
-INSERT INTO sensor_data METADATA (name, location, unit, threshold)
-VALUES ('sensor-01', 'Building-A', 'Celsius', 80.0);
+INSERT INTO sensor_meta_data METADATA (name, location, unit, threshold)
+VALUES ('sensor-02', 'Building-B', 'Celsius', 75.0);
 ```
 
 ## 설계 지침

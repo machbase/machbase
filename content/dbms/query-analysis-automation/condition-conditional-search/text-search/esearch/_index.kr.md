@@ -8,7 +8,7 @@ weight: 20
 
 ## ESEARCH 패턴
 
-```sql
+```text
 col ESEARCH 'pattern%'    -- pattern으로 시작하거나 포함하는 단어
 col ESEARCH '%pattern%'   -- pattern을 포함하는 단어
 ```

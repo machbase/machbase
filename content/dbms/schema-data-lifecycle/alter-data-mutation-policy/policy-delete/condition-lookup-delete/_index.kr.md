@@ -1,28 +1,29 @@
 ---
 type: docs
-title: 'LOOKUP 일반 조건식 DELETE (planned: dbms-nfx#3696)'
+title: 'LOOKUP non-PK DELETE 미지원'
 weight: 10
 ---
 
-> **계획된 기능**: LOOKUP 테이블의 일반 조건식(non-PK 컬럼 기준) DELETE는 dbms-nfx#3696에서 개발 중입니다. 현재 버전(8.6)에서는 PRIMARY KEY 기준 DELETE를 사용하세요.
+LOOKUP 테이블의 일반 조건식(non-PK 컬럼 기준) DELETE는 현재 빌드에서 지원되지 않습니다.
+PRIMARY KEY equality 조건만 사용할 수 있습니다.
 
 ## 현재 지원 범위
 
-현재 LOOKUP 테이블의 DELETE는 PK 기준 조건을 사용하는 것이 안전합니다.
+현재 LOOKUP 테이블의 DELETE는 PK 기준 조건만 허용합니다.
 
 ```sql
 -- 현재 권장: PK 기준 삭제
 DELETE FROM alarm_threshold WHERE sensor_id = 'TEMP-01';
 ```
 
-## 향후 지원 예정 (dbms-nfx#3696)
+## 지원하지 않는 조건식
 
 ```sql
--- 향후 지원 예정: 비활성 장치 설정 일괄 삭제
 DELETE FROM device_config WHERE active = 0;
+-- [ERR-02190: Invalid UPDATE/DELETE condition. Specify it as (primary key column) = (value)]
 
--- 기간 조건 삭제
-DELETE FROM alarm_history WHERE occurred_at < DATEADD('d', -90, NOW);
+DELETE FROM alarm_history WHERE occurred_at < NOW - 7776000000000000;
+-- [ERR-02190: Invalid UPDATE/DELETE condition. Specify it as (primary key column) = (value)]
 ```
 
 ## 현재 대안
@@ -41,4 +42,4 @@ DELETE FROM alarm_threshold WHERE sensor_id = 'FLOW-88';
 
 2. **전체 재구성**: 필요한 행만 SELECT하여 새 테이블에 저장하고 기존 테이블 재생성
 
-> LOOKUP JSON 컬럼 및 일반 조건 UPDATE/DELETE는 모두 dbms-nfx#3696에서 함께 구현 예정입니다.
+> LOOKUP 테이블의 JSON 타입 컬럼도 현재 빌드에서 지원되지 않습니다.

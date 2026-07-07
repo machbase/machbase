@@ -8,7 +8,7 @@ weight: 30
 
 ### 기본 구문
 
-```sql
+```text
 CREATE ROLLUP [IF NOT EXISTS] rollup_name
   ON source_table(column_name)
   INTERVAL n (SEC|MIN|HOUR)
@@ -19,7 +19,7 @@ CREATE ROLLUP [IF NOT EXISTS] rollup_name
 
 상위 롤업(롤업을 소스로 쓰는 경우):
 
-```sql
+```text
 CREATE ROLLUP [IF NOT EXISTS] rollup_name
   FROM source_rollup_table
   INTERVAL n (SEC|MIN|HOUR)

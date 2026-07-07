@@ -16,7 +16,7 @@ LOOKUP 테이블의 일반 컬럼 설계와 자동 증가 번호(시퀀스) 활�
 | `VARCHAR(n)` | 가변 문자열 |
 | `DATETIME` | 날짜·시각 |
 | `IPV4` / `IPV6` | 네트워크 주소 |
-| `JSON` | JSON 문서 |
+| `JSON` | 지원하지 않음 |
 
 ## 기본 스키마 예시
 
@@ -33,18 +33,24 @@ CREATE LOOKUP TABLE equipment_master (
 
 ## 시퀀스(자동 증가) 활용
 
-Machbase는 시퀀스 객체를 통해 자동 증가 번호를 생성합니다.
+LOOKUP 테이블에서 자동 증가 번호가 필요하면 `LONG PROPERTY(SEQUENCE=1)` 컬럼과
+`NEXTVAL()` 함수를 사용합니다. 별도의 `CREATE SEQUENCE` 객체는 사용하지 않습니다.
 
 ```sql
--- 시퀀스 생성
-CREATE SEQUENCE equip_seq START 1 INCREMENT 1;
+CREATE LOOKUP TABLE equipment_master_seq (
+    equip_id   LONG PROPERTY(SEQUENCE=1) PRIMARY KEY,
+    equip_name VARCHAR(128),
+    location   VARCHAR(64),
+    dept       VARCHAR(64),
+    status     VARCHAR(16),
+    created_at DATETIME
+);
 
--- 시퀀스를 사용한 INSERT
-INSERT INTO equipment_master
-VALUES (NEXT VALUE FOR equip_seq, 'Motor-A', 'Line-1', 'Mfg', 'ACTIVE', NOW);
+INSERT INTO equipment_master_seq
+VALUES (NEXTVAL(equip_id), 'Motor-A', 'Line-1', 'Mfg', 'ACTIVE', NOW);
 
-INSERT INTO equipment_master
-VALUES (NEXT VALUE FOR equip_seq, 'Pump-B', 'Line-2', 'Mfg', 'ACTIVE', NOW);
+INSERT INTO equipment_master_seq
+VALUES (NEXTVAL(equip_id), 'Pump-B', 'Line-2', 'Mfg', 'ACTIVE', NOW);
 ```
 
 ## 타임스탬프 관리 컬럼

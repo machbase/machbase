@@ -4,7 +4,7 @@ title: 'REGEXP_LIKE 함수'
 weight: 30
 ---
 
-`REGEXP_LIKE`는 정규 표현식 매칭 결과를 **숫자값(1/0)**으로 반환하는 함수입니다. `REGEXP` 연산자가 WHERE 조건 전용인 것과 달리, `REGEXP_LIKE`는 SELECT 목록, CASE 표현식 등 값이 필요한 모든 위치에서 사용할 수 있습니다.
+`REGEXP_LIKE`는 정규 표현식 매칭 결과를 **숫자값(1/0)**으로 반환하는 함수입니다. `REGEXP` 연산자가 WHERE 조건 전용인 것과 달리, `REGEXP_LIKE`는 SELECT 목록, CASE 표현식, WHERE 조건에서 사용할 수 있습니다.
 
 ## 구문
 
@@ -62,7 +62,7 @@ FROM sensor_log;
 ```sql
 -- WHERE에서도 사용 가능 (REGEXP 연산자와 동일한 효과)
 SELECT * FROM sensor_log
-WHERE REGEXP_LIKE(sensor_id, 'TEMP[0-9]+') = 1;
+WHERE REGEXP_LIKE(sensor_id, 'TEMP[0-9]+');
 
 -- 위 쿼리는 아래와 결과가 같음
 SELECT * FROM sensor_log
@@ -74,11 +74,11 @@ WHERE sensor_id REGEXP 'TEMP[0-9]+';
 ```sql
 -- 패턴별 행 수 집계
 SELECT
-    SUM(REGEXP_LIKE(sensor_id, '^TEMP')) AS temp_count,
-    SUM(REGEXP_LIKE(sensor_id, '^PRESS')) AS press_count,
-    SUM(REGEXP_LIKE(sensor_id, '^FLOW')) AS flow_count
+    SUM(CASE WHEN REGEXP_LIKE(sensor_id, '^TEMP') THEN 1 ELSE 0 END) AS temp_count,
+    SUM(CASE WHEN REGEXP_LIKE(sensor_id, '^PRESS') THEN 1 ELSE 0 END) AS press_count,
+    SUM(CASE WHEN REGEXP_LIKE(sensor_id, '^FLOW') THEN 1 ELSE 0 END) AS flow_count
 FROM sensor_log
-WHERE ts >= DATEADD('h', -1, NOW);
+WHERE ts >= NOW - 3600000000000;
 ```
 
 ## 지원 정규식 문법
@@ -109,5 +109,5 @@ SELECT
     sensor_id,
     REGEXP_LIKE(sensor_id, '^TEMP') AS is_temp
 FROM sensor_log
-WHERE ts >= DATEADD('h', -1, NOW);   -- 인덱스 활용
+WHERE ts >= NOW - 3600000000000;   -- 인덱스 활용
 ```

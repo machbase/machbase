@@ -14,8 +14,8 @@ ROLLUP과 STREAM은 모두 데이터를 자동으로 처리해 다른 형태로 
 | 집계 단위 | SEC / MIN / HOUR 고정 | 사용자가 SQL로 자유롭게 정의 |
 | 변환 로직 | 고정 (SUM, COUNT, MIN, MAX, FIRST, LAST) | 임의 SQL (조인, 조건 필터, 문자열 변환 등) |
 | 결과 저장 위치 | `_TAG_ROLLUP_SEC`, `_TAG_ROLLUP_MIN`, `_TAG_ROLLUP_HOUR` | 사용자가 지정한 대상 테이블 |
-| 설정 방법 | `WITH ROLLUP` 절로 테이블 생성 시 지정 | `CREATE STREAM` 문으로 별도 생성 |
-| 트리거 방식 | 데이터 입력 시 자동 | 일정 주기(INTERVAL) 자동 실행 |
+| 설정 방법 | `WITH ROLLUP` 절로 테이블 생성 시 지정 | `EXEC STREAM_CREATE`로 별도 생성 |
+| 트리거 방식 | 데이터 입력 시 자동 | 스트림 시작 후 입력 흐름에 따라 자동 실행 |
 | Cluster Edition 지원 | 지원 | 제한적 지원 |
 | 조회 방법 | `rollup()` 함수 사용 | 대상 테이블에 직접 SELECT |
 
@@ -27,16 +27,17 @@ ROLLUP과 STREAM은 모두 데이터를 자동으로 처리해 다른 형태로 
 
 ```sql
 -- ROLLUP 활성화
-CREATE TAG TABLE sensor_values (
+CREATE TAG TABLE rollup_sensor_values_cmp (
     name  VARCHAR(128) PRIMARY KEY,
     time  DATETIME BASETIME,
     value DOUBLE SUMMARIZED
 ) WITH ROLLUP (SEC);
 
 -- 분 단위 평균 조회
-SELECT rollup('MIN', avg, time, value), time
-FROM sensor_values
-WHERE name = 'temp_01';
+SELECT rollup('min', 1, time) AS mtime, AVG(value) AS avg_value
+FROM rollup_sensor_values_cmp
+WHERE name = 'temp_01'
+GROUP BY mtime;
 ```
 
 ## 어떤 상황에 STREAM을 선택하는가
@@ -48,15 +49,10 @@ WHERE name = 'temp_01';
 
 ```sql
 -- LOG → TAG 변환 STREAM 예시
-CREATE STREAM error_count_stream
-ON SCHEDULE AT START + INTERVAL 1 MIN
-INSERT INTO error_stats (name, time, value)
-SELECT 'ERROR_PER_MIN', TO_DATE(TRUNC(_arrival_time, 'MI'), 'YYYY-MM-DD HH24:MI:SS'), COUNT(*)
-FROM device_log
-WHERE _arrival_time > RECENT 1 MIN
-  AND severity = 'ERROR';
+EXEC STREAM_CREATE(error_count_stream,
+    'INSERT INTO error_stats SELECT ''ERROR_EVENT'', _arrival_time, value FROM device_log WHERE severity = ''ERROR''');
 
-START STREAM error_count_stream;
+EXEC STREAM_START(error_count_stream);
 ```
 
 ## 두 기능을 함께 사용하는 패턴

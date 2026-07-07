@@ -8,7 +8,7 @@ weight: 10
 
 ## 구문
 
-```sql
+```text
 column REGEXP 'pattern'
 column NOT REGEXP 'pattern'
 ```
@@ -51,7 +51,7 @@ WHERE message SEARCH 'error'    -- 인덱스 사용
 2. **시간 범위 먼저 지정**:
 ```sql
 SELECT * FROM event_log
-WHERE ts >= DATEADD('h', -1, NOW)    -- 시간 조건으로 범위 축소
+WHERE ts >= NOW - 3600000000000    -- 시간 조건으로 범위 축소
   AND message REGEXP 'CRITICAL.*timeout';
 ```
 

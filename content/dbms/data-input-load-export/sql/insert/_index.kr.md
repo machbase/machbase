@@ -75,22 +75,26 @@ PRIMARY KEY가 지정된 VOLATILE 테이블에서 PK 중복 시 자동 UPDATE되
 ```sql
 -- PK 중복 없으면 INSERT, 있으면 UPDATE
 INSERT INTO device_status VALUES ('DEV-01', 'ALARM', 95.3, NOW)
-ON DUPLICATE KEY UPDATE status = 'ALARM', value = 95.3, updated_at = NOW;
+ON DUPLICATE KEY UPDATE SET status = 'ALARM', value = 95.3, updated_at = NOW;
 
 -- SET 절로 삽입값과 다른 값 업데이트
 INSERT INTO device_status VALUES ('DEV-02', 'NORMAL', 23.5, NOW)
-ON DUPLICATE KEY UPDATE SET value = value + 1;
+ON DUPLICATE KEY UPDATE SET status = 'NORMAL', value = 24.0, updated_at = NOW;
 ```
 
-## 다건 INSERT (일부 방언)
+`SET` 절에는 갱신할 값을 명시합니다. 현재 빌드에서는 `value = value + 1`처럼 기존 값을
+참조해 계산하는 UPSERT 표현식을 사용할 수 없습니다.
+
+## 다건 입력
 
 ```sql
--- 다건 한 번에 삽입 (Machbase 지원)
-INSERT INTO sensor_log VALUES
-    ('TEMP-01', NOW, 25.3),
-    ('TEMP-02', NOW, 27.1),
-    ('TEMP-03', NOW, 22.8);
+-- SQL INSERT는 행 단위로 실행합니다.
+INSERT INTO sensor_log VALUES ('TEMP-01', NOW, 25.3);
+INSERT INTO sensor_log VALUES ('TEMP-02', NOW, 27.1);
+INSERT INTO sensor_log VALUES ('TEMP-03', NOW, 22.8);
 ```
+
+대량 입력에는 Append API, machloader, `LOAD DATA INFILE`을 사용합니다.
 
 ## machsql에서 사용
 

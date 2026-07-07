@@ -8,7 +8,7 @@ weight: 20
 
 ## 구문
 
-```sql
+```text
 SAVE DATA INTO 'file_path'
 [HEADER ON|OFF]
 [(FIELDS | COLUMNS) [TERMINATED BY 'char'] [ENCLOSED BY 'char']]

@@ -13,7 +13,7 @@ SELECT *
 FROM (서브쿼리)
 PIVOT (
     집계함수(값_컬럼)
-    FOR 피벗_컬럼 IN ('값1' AS 별칭1, '값2' AS 별칭2, ...)
+    FOR 피벗_컬럼 IN ('값1' "alias1", '값2' "alias2", ...)
 );
 ```
 
@@ -42,9 +42,9 @@ FROM (
 PIVOT (
     AVG(value)
     FOR name IN (
-        'temp_01'      AS 온도센서1,
-        'temp_02'      AS 온도센서2,
-        'pressure_01'  AS 압력센서1
+        'temp_01'     "temp_01",
+        'temp_02'     "temp_02",
+        'pressure_01' "pressure_01"
     )
 )
 ORDER BY hour;
@@ -52,7 +52,7 @@ ORDER BY hour;
 
 결과 예시:
 
-| hour | 온도센서1 | 온도센서2 | 압력센서1 |
+| hour | temp_01 | temp_02 | pressure_01 |
 |------|-----------|-----------|-----------|
 | 2024-01-01 00:00 | 22.5 | 23.1 | 101.3 |
 | 2024-01-01 01:00 | 22.8 | 23.4 | 101.5 |
@@ -73,11 +73,11 @@ FROM (
 PIVOT (
     MAX(value)
     FOR name IN (
-        'sensor_A' AS A_최대,
-        'sensor_B' AS B_최대,
-        'sensor_C' AS C_최대,
-        'sensor_D' AS D_최대,
-        'sensor_E' AS E_최대
+        'sensor_A' "A_MAX",
+        'sensor_B' "B_MAX",
+        'sensor_C' "C_MAX",
+        'sensor_D' "D_MAX",
+        'sensor_E' "E_MAX"
     )
 );
 ```
@@ -96,10 +96,10 @@ FROM (
 PIVOT (
     COUNT(*)
     FOR status_code IN (
-        '0' AS 정상,
-        '1' AS 경고,
-        '2' AS 오류,
-        '3' AS 심각
+        '0' "NORMAL",
+        '1' "WARNING",
+        '2' "ERROR",
+        '3' "CRITICAL"
     )
 )
 ORDER BY factory;
@@ -124,9 +124,9 @@ FROM (
 PIVOT (
     AVG(avg_val)
     FOR name IN (
-        'inlet_temp'  AS 유입온도,
-        'outlet_temp' AS 유출온도,
-        'flow_rate'   AS 유량
+        'inlet_temp'  "inlet_temp",
+        'outlet_temp' "outlet_temp",
+        'flow_rate'   "flow_rate"
     )
 )
 ORDER BY hour;

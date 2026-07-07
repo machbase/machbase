@@ -40,8 +40,8 @@ CREATE TAG TABLE sensor_data (
 
 ```sql
 -- 구조화된 태그 이름: {site}/{building}/{floor}/{sensor_id}
-INSERT INTO sensor_data VALUES ('HQ/A-BLDG/3F/TEMP-01', NOW, 23.5, NULL, NULL);
-INSERT INTO sensor_data VALUES ('HQ/A-BLDG/3F/TEMP-02', NOW, 24.1, NULL, NULL);
+INSERT INTO sensor_data VALUES ('HQ/A-BLDG/3F/TEMP-01', NOW, 'NORMAL', '3F temperature sensor 01');
+INSERT INTO sensor_data VALUES ('HQ/A-BLDG/3F/TEMP-02', NOW, 'NORMAL', '3F temperature sensor 02');
 
 -- 같은 건물의 센서 조회
 SELECT name, time, status

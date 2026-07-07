@@ -4,28 +4,25 @@ title: 'STREAM 처리 모델'
 weight: 20
 ---
 
-STREAM은 Machbase DBMS에서 데이터를 자동으로 변환하거나 집계해 다른 테이블에 저장하는 처리 객체입니다. 주기적으로 사용자가 정의한 SELECT 쿼리를 실행하고, 그 결과를 대상 테이블에 INSERT합니다.
+STREAM은 Machbase DBMS에서 입력 데이터를 자동으로 변환하거나 집계해 다른 테이블에 저장하는 처리 객체입니다. 사용자가 정의한 `INSERT ... SELECT ...` 쿼리를 서버 내부 스트림으로 등록하고, 시작(START)한 뒤 중지(STOP)하거나 삭제(DROP)할 때까지 동작합니다.
 
 ## STREAM이란
 
-STREAM을 한 문장으로 정의하면 "일정 주기마다 지정한 SELECT를 실행해 결과를 다른 테이블에 INSERT하는 자동화 객체"입니다. 데이터베이스 서버 내부에서 배경 스레드로 동작하므로, 한 번 생성하고 시작(START)하면 중지(STOP)하거나 삭제(DROP)할 때까지 계속 실행됩니다.
+STREAM을 한 문장으로 정의하면 "지정한 `INSERT ... SELECT ...` 변환 쿼리를 서버 내부에 등록해 자동 실행하는 객체"입니다. 데이터베이스 서버 내부에서 배경 스레드로 동작하므로, 한 번 생성하고 시작하면 중지하거나 삭제할 때까지 계속 실행됩니다.
 
 ```sql
 -- STREAM 생성 예시: LOG 테이블의 이상 이벤트를 TAG 테이블로 변환
-CREATE STREAM alarm_to_tag
-ON SCHEDULE AT START + INTERVAL 10 SEC
-INSERT INTO sensor_alerts (name, time, value)
-SELECT 'ALARM_COUNT', _arrival_time, COUNT(*)
-FROM device_log
-WHERE _arrival_time > RECENT 10 SEC
-  AND severity = 'CRITICAL'
-GROUP BY _arrival_time;
+EXEC STREAM_CREATE(alarm_to_tag,
+    'INSERT INTO sensor_alerts SELECT ''ALARM_COUNT'', _arrival_time, value FROM device_log WHERE severity = ''CRITICAL''');
 
 -- 시작
-START STREAM alarm_to_tag;
+EXEC STREAM_START(alarm_to_tag);
 
 -- 중지
-STOP STREAM alarm_to_tag;
+EXEC STREAM_STOP(alarm_to_tag);
+
+-- 삭제
+EXEC STREAM_DROP(alarm_to_tag);
 ```
 
 ## ROLLUP과의 차이
@@ -38,7 +35,7 @@ ROLLUP과 STREAM은 모두 데이터를 가공해 다른 형태로 저장한다�
 | 집계 단위 | SEC / MIN / HOUR 고정 | 사용자가 SQL로 자유롭게 정의 |
 | 결과 저장 위치 | 내부 ROLLUP 테이블 | 사용자가 지정한 대상 테이블 |
 | 변환 로직 | 고정 (SUM, COUNT, MIN, MAX, FIRST, LAST) | 임의 SQL (JOIN, 조건 필터, 문자열 변환 등) |
-| 설정 방법 | `WITH ROLLUP` 절로 테이블 생성 시 지정 | `CREATE STREAM` 문으로 별도 생성 |
+| 설정 방법 | `WITH ROLLUP` 절로 테이블 생성 시 지정 | `EXEC STREAM_CREATE`로 별도 생성 |
 
 ## 주요 사용 사례
 

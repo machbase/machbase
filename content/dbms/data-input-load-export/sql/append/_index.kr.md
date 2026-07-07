@@ -91,4 +91,4 @@ REST API를 통한 Append도 동일한 고속 경로를 사용합니다. 상세�
 
 - `Close()` 를 반드시 호출해야 내부 버퍼가 플러시됩니다. 호출하지 않으면 데이터 유실이 발생합니다.
 - 대량 Append 중 서버 재시작 등의 이유로 연결이 끊기면 버퍼에 남은 데이터는 손실될 수 있습니다.
-- VOLATILE, LOOKUP 테이블은 Append API를 지원하지 않습니다. SQL INSERT를 사용하세요.
+- RDB, VOLATILE, LOOKUP 테이블은 Append API를 지원하지 않습니다. SQL INSERT를 사용하세요.

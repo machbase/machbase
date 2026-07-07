@@ -54,15 +54,19 @@ TAG, VOLATILE, LOOKUP 테이블은 NOT NULL 제약을 별도로 선언하지 않
 
 ## DEFAULT
 
-LOG 및 RDB 테이블에서 컬럼에 기본값을 지정할 수 있습니다. INSERT 시 해당 컬럼 값을 생략하면 DEFAULT 값이 사용됩니다.
+현재 빌드에서는 `CREATE TABLE`에서 컬럼 `DEFAULT` 절을 지정할 수 없습니다. 기본값이
+필요하면 INSERT 문이나 애플리케이션 입력 단계에서 값을 명시합니다.
 
 ```sql
-CREATE TABLE orders (
+CREATE RDB TABLE orders_default_example (
     order_id INTEGER,
-    status   VARCHAR(20) DEFAULT 'PENDING',
-    discount DOUBLE DEFAULT 0.0,
-    created_at DATETIME DEFAULT NOW
+    status   VARCHAR(20),
+    discount DOUBLE,
+    created_at DATETIME
 );
+
+INSERT INTO orders_default_example
+VALUES (1, 'PENDING', 0.0, NOW);
 ```
 
 ## 시스템 자동 생성 컬럼
@@ -79,7 +83,7 @@ CREATE TABLE orders (
 SELECT * FROM sensor_log WHERE _RID = 1234;
 
 -- _ARRIVAL_TIME으로 최근 1시간 데이터 조회
-SELECT * FROM sensor_log WHERE _ARRIVAL_TIME > DATEADD('h', -1, NOW);
+SELECT * FROM sensor_log WHERE _ARRIVAL_TIME > NOW - 3600000000000;
 ```
 
 ## 테이블 타입별 제약 조건 지원 범위
@@ -88,7 +92,7 @@ SELECT * FROM sensor_log WHERE _ARRIVAL_TIME > DATEADD('h', -1, NOW);
 |-----------|-----|-----|-----|---------|--------|
 | PRIMARY KEY | O (name 컬럼) | X | O (선택) | O (선택) | O (필수) |
 | NOT NULL | X | O | O | X | X |
-| DEFAULT | X | O | O | X | X |
+| DEFAULT | X | X | X | X | X |
 | UNIQUE | X | X | X | X | X |
 | FOREIGN KEY | X | X | X | X | X |
 
