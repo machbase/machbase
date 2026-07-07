@@ -17,6 +17,11 @@ and a financial tick is useful only when its order and interval are preserved.
 Therefore, time-series systems place high-ingest writes, time-range queries,
 aggregation, downsampling, retention, and compression near the center of the design.
 
+High-volume ingest performance comes from the append-oriented structure of TAG/LOG
+tables and the Append API. The `INSERT` samples in this chapter are for practice and
+small-input checks; production ingest paths are covered in the data ingestion
+documents.
+
 This chapter helps a first-time Machbase DBMS user verify server connectivity, run SQL
 through `machsql`, create the first table, insert rows, and query them back.
 

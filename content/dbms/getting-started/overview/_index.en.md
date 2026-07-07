@@ -26,7 +26,13 @@ arrive rapidly, while receive status and processing delays remain as events.
 | LOG | Append-heavy events, logs, and histories | Use it for high-volume records such as industrial equipment events or financial tick receive histories that are frequently queried by time. |
 | TAG | Sensor, equipment, and measurement values with tag names and time | Use it when queries are centered on tag-based time series and aggregation. |
 | LOOKUP | Codes, equipment metadata, and mapping data | Use it for small reference data that must be joined or looked up quickly. |
+| RDB | Relational business data, state data, and larger reference or dimension data | Create it with `CREATE RDB TABLE`; it supports row-level `INSERT`, `UPDATE`, `DELETE`, and joins with other table types. |
 | VOLATILE | Temporary session data | Use it for in-memory data that may disappear when the server stops. |
+
+LOG and TAG are append-oriented tables for high-volume time-series ingest. They do
+not support general `UPDATE`, and deletion must follow each table type's supported
+conditions, such as `BEFORE`, `OLDEST`, `EXCEPT`, or tag/time predicates. If row-level
+updates are central to the workload, read the RDB, LOOKUP, or VOLATILE documents first.
 
 Table types are like different shelves in the same warehouse. A LOG table receives
 records that keep piling up, while a TAG table organizes values by tag name and time

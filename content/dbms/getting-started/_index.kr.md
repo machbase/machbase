@@ -9,6 +9,8 @@ Machbase DBMS는 산업 IoT 센서 데이터와 금융 틱 데이터처럼 시�
 
 시계열 데이터베이스에서 시간은 단순한 속성 컬럼이 아닙니다. 측정 시각이 빠진 센서 값은 맥락을 잃고, 발생 순서와 간격이 무너진 금융 틱은 분석의 단서를 잃습니다. 그러므로 시계열 DBMS는 일반적인 트랜잭션 처리 대신 고속 입력, 시간 범위 조회, 집계, 다운샘플링, 보관 정책, 압축을 핵심 설계 목표로 삼습니다. Machbase의 테이블 구조와 SQL 문법도 이 맥락에서 바라보면 훨씬 자연스럽게 이해됩니다.
 
+대량 수집 성능은 TAG/LOG 테이블의 append 중심 구조와 Append API를 사용할 때 발휘됩니다. 이 장의 `INSERT` 예제는 실습과 소량 입력 확인용이며, 운영 수집 경로는 이후 데이터 입력 문서에서 별도로 다룹니다.
+
 이 장은 Machbase DBMS를 처음 접하는 독자를 위한 안내서입니다. 서버 접속부터 SQL 실행, 테이블 생성, 데이터 입력과 조회까지 가장 짧은 경로로 핵심 흐름을 익힙니다. 예제는 모두 `127.0.0.1:5656`에서 구동 중인 Machbase 서버와 `machsql` 클라이언트를 전제로 작성했으며, `SYS` 계정과 `MANAGER` 비밀번호로 실행할 수 있습니다. 서버가 아직 준비되지 않았다면 [설치, 배포, 업그레이드](/dbms/installation-deployment-upgrade/)와 [Linux Standard Edition 설치](/dbms/installation-deployment-upgrade/standard-edition/linux/)를 먼저 참고하십시오.
 
 ## 실행 전제

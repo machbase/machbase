@@ -33,4 +33,4 @@ SHOW TABLES;
 machsql -s 127.0.0.1 -P 5656 -u SYS -p MANAGER -f /tmp/dbms_gs_show_tables.sql
 ```
 
-정상적으로 실행되면 `USER_NAME`, `DB_NAME`, `TABLE_NAME`, `TABLE_TYPE` 컬럼이 출력됩니다. `_TAG_DATA_`처럼 밑줄로 시작하는 `KEYVALUE` 테이블은 TAG 테이블을 위해 DBMS가 내부적으로 관리하는 테이블이므로 첫 설계 대상에서 제외합니다.
+테이블이 하나 이상 있으면 `USER_NAME`, `DB_NAME`, `TABLE_NAME`, `TABLE_TYPE` 컬럼과 테이블 행이 출력됩니다. 새로 생성한 빈 데이터베이스에서는 사용자 테이블이 없어 행이 없을 수 있습니다. `_TAG_DATA_`처럼 밑줄로 시작하는 `KEYVALUE` 테이블은 TAG 테이블을 위해 DBMS가 내부적으로 관리하는 테이블이므로 첫 설계 대상에서 제외합니다.

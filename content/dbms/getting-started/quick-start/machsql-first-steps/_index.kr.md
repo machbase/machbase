@@ -31,4 +31,4 @@ SHOW TABLES;
 machsql -s 127.0.0.1 -P 5656 -u SYS -p MANAGER -f /tmp/dbms_gs_machsql.sql
 ```
 
-결과의 `TABLE_TYPE` 컬럼을 확인하면 현재 데이터베이스에 어떤 유형의 테이블이 있는지 파악할 수 있습니다. 처음에는 테이블 이름보다 유형을 함께 확인하는 습관이 중요합니다. 같은 데이터베이스 안에서도 LOG, TAG, LOOKUP은 서로 다른 역할을 맡기 때문입니다.
+테이블이 하나 이상 있으면 결과의 `TABLE_TYPE` 컬럼에서 현재 데이터베이스의 테이블 유형을 확인할 수 있습니다. 빈 데이터베이스에서는 행이 없을 수 있으므로 접속 확인만 필요하면 `SELECT COUNT(*) AS TABLE_COUNT FROM M$SYS_TABLES;`를 사용합니다. 처음에는 테이블 이름보다 유형을 함께 확인하는 습관이 중요합니다. 같은 데이터베이스 안에서도 LOG, TAG, LOOKUP은 서로 다른 역할을 맡기 때문입니다.

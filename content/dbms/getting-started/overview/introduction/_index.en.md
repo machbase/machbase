@@ -46,6 +46,8 @@ Assuming the SQL above is saved as `/tmp/dbms_gs_show_tables.sql`, run the follo
 machsql -s 127.0.0.1 -P 5656 -u SYS -p MANAGER -f /tmp/dbms_gs_show_tables.sql
 ```
 
-A successful run prints columns such as `USER_NAME`, `DB_NAME`, `TABLE_NAME`, and
-`TABLE_TYPE`. `KEYVALUE` tables whose names start with `_TAG_DATA_` are internal tables
-managed by the DBMS for TAG tables, so they are not a first design choice.
+If at least one table exists, the result prints columns such as `USER_NAME`, `DB_NAME`,
+`TABLE_NAME`, and `TABLE_TYPE` with table rows. In a freshly created empty database,
+there may be no user-table rows. `KEYVALUE` tables whose names start with `_TAG_DATA_`
+are internal tables managed by the DBMS for TAG tables, so they are not a first design
+choice.

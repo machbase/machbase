@@ -31,4 +31,7 @@ Assuming the SQL above is saved as `/tmp/dbms_gs_machsql.sql`, run the following
 machsql -s 127.0.0.1 -P 5656 -u SYS -p MANAGER -f /tmp/dbms_gs_machsql.sql
 ```
 
-The `TABLE_TYPE` column shows which table types currently exist in the database.
+If at least one table exists, the `TABLE_TYPE` column shows which table types
+currently exist in the database. An empty database may return no rows, so use
+`SELECT COUNT(*) AS TABLE_COUNT FROM M$SYS_TABLES;` when you only need to verify the
+connection.
