@@ -63,3 +63,50 @@ VOLATILE 테이블은 메모리 기반 테이블로, PRIMARY KEY 컬럼에 자�
 - [컬럼형 저장과 압축](../storage-columnar-compression-column/) — 인덱스가 동작하는 저장 구조
 - [Cache와 실행 계획 개념](../execution-concepts-plan-cache/) — 인덱스를 활용하는 실행 계획 최적화
 - [Machbase 아키텍처 개요](../architecture-machbase/) — 인덱스와 저장 관리자의 관계
+
+## Min-Max Cache
+
+### 개념
+
+Machbase는 시계열 데이터를 시간순으로 파티션된 구조로 저장합니다. 특정 값을 인덱스로 검색할 때, 이 파티션 파일들을 순차적으로 열어 검색해야 합니다. 파티션이 1,000개라면 최악의 경우 1,000번의 파일 I/O가 발생합니다.
+
+**Min-Max Cache**는 이 문제를 해결하는 메모리 구조입니다. 각 파티션의 특정 컬럼에 대해 최솟값·최댓값을 메모리에 유지하여, 검색 대상 값이 해당 파티션의 범위를 벗어나면 파티션 자체를 건너뜁니다.
+
+```
+[파티션 1] MIN=10, MAX=50  →  검색값 85 → 건너뜀
+[파티션 2] MIN=60, MAX=80  →  검색값 85 → 건너뜀
+[파티션 3] MIN=80, MAX=95  →  검색값 85 → 스캔 ✓
+[파티션 4] MIN=20, MAX=40  →  검색값 85 → 건너뜀
+[파티션 5] MIN=75, MAX=90  →  검색값 85 → 스캔 ✓
+```
+
+### 설정
+
+컬럼별 Min-Max Cache 크기는 `PROPERTY(MINMAX_CACHE_SIZE = n)` 옵션으로 지정합니다.
+
+```sql
+-- id 컬럼에 Min-Max Cache 적용 (20KB)
+CREATE TABLE ctest (
+    id   INTEGER PROPERTY(MINMAX_CACHE_SIZE = 20480),
+    name VARCHAR(100) PROPERTY(MINMAX_CACHE_SIZE = 0)  -- VARCHAR는 0만 허용
+);
+```
+
+### 기본값과 규칙
+
+| 항목 | 기본값 |
+|------|--------|
+| 일반 컬럼 MINMAX_CACHE_SIZE | 10KB (10240 bytes) |
+| `_ARRIVAL_TIME` (숨김 컬럼) | 100MB (자동 적용) |
+| VARCHAR 컬럼 | 0 고정 (캐시 미지원) |
+
+- Min-Max Cache는 명시적으로 인덱스를 생성하지 않아도 동작합니다.
+- `ALTER TABLE ... MODIFY COLUMN ... SET MINMAX_CACHE_SIZE = n`으로 생성 후 변경 가능합니다.
+- 레코드가 없는 테이블은 Min-Max Cache 메모리를 할당하지 않습니다.
+- 파티션 수가 증가할수록 설정된 크기만큼 메모리가 점진적으로 증가합니다.
+- VARCHAR 타입에 MINMAX_CACHE_SIZE를 0 이외의 값으로 설정하면 오류가 발생합니다.
+
+```sql
+-- 생성 후 캐시 크기 변경
+ALTER TABLE ctest MODIFY COLUMN id SET MINMAX_CACHE_SIZE = 20480;
+```

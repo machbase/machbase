@@ -18,3 +18,4 @@ TAG 테이블은 센서·IoT 기기의 계측값을 저장하는 시계열 전�
 - **[데이터 보정 설계](/dbms/data-modeling-table-design/table-types-design-type/design-tag/design-correction-tag/)**
 - **[LSL·USL 설계](/dbms/data-modeling-table-design/table-types-design-type/design-tag/lsl-usl/)**
 - **[제약 및 주의사항](/dbms/data-modeling-table-design/table-types-design-type/design-tag/limitations-tag/)**
+- **[자동 중복 제거](/dbms/data-modeling-table-design/table-types-design-type/design-tag/duplication-removal/)**

@@ -63,8 +63,10 @@ SELECT _arrival_time, sensor_id, ts, value FROM sensor_log;
 ### INSERT SELECT 주의사항
 
 - `_ARRIVAL_TIME` 컬럼을 명시하지 않으면 INSERT 실행 시점의 시각이 자동 부여됩니다.
+- `_ARRIVAL_TIME`을 명시한 경우, 지정값이 테이블에 이미 존재하는 가장 최신 `_ARRIVAL_TIME`보다 이전이면 해당 행은 입력되지 않습니다.
 - 수행 중 오류가 발생해도 ROLLBACK되지 않습니다 (부분 성공 가능).
-- VARCHAR 컬럼에 최대 길이 초과 값이 있으면 자동으로 잘립니다.
+- VARCHAR 컬럼의 최대 길이를 초과하는 값은 자동으로 잘립니다.
+- 형 변환이 필요한 경우 묵시적 변환이 적용됩니다. 변환 불가 시 해당 행은 건너뜁니다.
 
 ## INSERT ON DUPLICATE KEY UPDATE (UPSERT)
 

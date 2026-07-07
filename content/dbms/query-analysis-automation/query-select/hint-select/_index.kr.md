@@ -73,3 +73,19 @@ SELECT /*+ SCAN_FORWARD(sensor_log) */ * FROM sensor_log LIMIT 100;
 -- 최신 데이터부터 역방향 스캔 (기본값과 동일)
 SELECT /*+ SCAN_BACKWARD(sensor_log) */ * FROM sensor_log LIMIT 100;
 ```
+
+### RID_RANGE
+
+특정 RID(Row ID) 범위의 데이터를 직접 조회합니다. 내부 디버깅이나 특정 구간 데이터 추출에 사용됩니다.
+
+```sql
+SELECT /*+ RID_RANGE(table_name, start_rid, end_rid) */ _RID, *
+FROM table_name;
+```
+
+```sql
+-- RID 45부터 50까지 데이터 조회
+SELECT /*+ RID_RANGE(TEST, 45, 50) */ _RID, * FROM TEST;
+```
+
+> `_RID`는 Machbase 내부 행 식별자입니다. 일반적인 운영 쿼리에서는 사용하지 않으며, RID_RANGE 힌트도 디버깅 목적으로만 사용합니다.
