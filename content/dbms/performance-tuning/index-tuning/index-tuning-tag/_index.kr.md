@@ -4,7 +4,7 @@ title: 'TAG 인덱스 튜닝'
 weight: 10
 ---
 
-TAG 테이블은 `CREATE INDEX`를 실행하지 않아도 자동으로 인덱스가 구성됩니다. 이 페이지에서는 TAG 테이블의 자동 인덱스 구조를 이해하고, 추가로 활용할 수 있는 최적화 옵션을 설명합니다.
+TAG 테이블은 태그명과 시간 축을 기준으로 자동 인덱스가 구성됩니다. 이 페이지에서는 TAG 테이블의 자동 인덱스 구조를 이해하고, 값 컬럼에 추가로 생성할 수 있는 LSM 인덱스 활용 기준을 설명합니다.
 
 ## 자동 3단계 파티션 인덱스
 
@@ -20,7 +20,7 @@ TAG 테이블에 데이터를 삽입하면 Machbase는 내부적으로 다음과
 |-----|------|---------|
 | 1단계: 태그명 인덱스 | 특정 태그(센서)를 O(log n)으로 검색 | 자동 |
 | 2단계: 시간 파티션 | 시간 범위에 해당하는 파티션만 스캔 | 자동 |
-| 3단계: 파티션 내 값 인덱스 | SUMMARIZED 컬럼의 범위 조회 가속 | 자동 |
+| 3단계: 파티션 내 값 통계 | SUMMARIZED 컬럼의 집계·범위 조회 보조 | 자동 |
 
 ### 인덱스를 최대한 활용하는 쿼리 패턴
 
@@ -42,25 +42,27 @@ WHERE name = 'sensor_A'
 SELECT * FROM sensor_tag WHERE value > 80.0;
 ```
 
-## METADATA 컬럼에 LSM 인덱스 생성
+## METADATA 컬럼 인덱스
 
-TAG 테이블에서 메타데이터 속성(예: 센서 유형, 설치 위치, 담당 팀 등)으로 태그를 필터링하는 경우, METADATA 컬럼에 LSM 인덱스를 생성하면 검색 속도를 높일 수 있습니다.
+TAG 테이블에서 메타데이터 속성(예: 센서 유형, 설치 위치, 담당 팀 등)으로 태그를 필터링하는 경우, METADATA 컬럼을 사용합니다. 검증한 빌드에서는 TAG 테이블 생성 시 METADATA 컬럼에 인덱스가 자동 생성되므로, 같은 컬럼에 `CREATE INDEX`를 다시 실행하면 이미 인덱스가 있다는 오류가 반환됩니다.
 
 ```sql
 -- TAG 테이블 생성 예시 (METADATA 컬럼 포함)
 CREATE TAG TABLE sensor_tag (
     name     VARCHAR(64) PRIMARY KEY,
     time     DATETIME BASETIME,
-    value    DOUBLE SUMMARIZED,
-    sensor_type   VARCHAR(32) METADATA,
-    install_loc   VARCHAR(128) METADATA,
-    team_name     VARCHAR(64) METADATA
+    value    DOUBLE SUMMARIZED
+) METADATA (
+    sensor_type   VARCHAR(32),
+    install_loc   VARCHAR(128),
+    team_name     VARCHAR(64)
 );
 ```
 
 ```sql
--- sensor_type으로 자주 필터링하는 경우 인덱스 생성
+-- sensor_type에는 이미 인덱스가 있으므로 다시 생성하지 않음
 CREATE INDEX idx_type ON sensor_tag METADATA (sensor_type);
+-- [ERR-02174: The index already exists in the column(SENSOR_TYPE).]
 ```
 
 ```sql
@@ -72,7 +74,7 @@ WHERE sensor_type = 'temperature'
                AND TO_DATE('2026-07-08', 'YYYY-MM-DD');
 ```
 
-> METADATA 컬럼에 인덱스를 생성해도 시계열 데이터 삽입 성능에는 거의 영향을 미치지 않습니다. METADATA는 태그 속성 정보로, 시계열 데이터 Append와 독립적인 경로로 처리됩니다.
+> METADATA는 태그 속성 정보로, 시계열 데이터 Append와 독립적인 경로로 처리됩니다. 태그 속성으로 자주 필터링해야 한다면 TAG 테이블 생성 시 METADATA 컬럼으로 정의합니다.
 
 ## Min-Max Cache
 
@@ -98,15 +100,23 @@ WHERE  name = 'TEMP-01'
 
 LOG 테이블 컬럼의 `MINMAX_CACHE_SIZE` 조정은 [메모리 설정 튜닝](../../cache-tuning-memory/tuning-memory-configuration/)을 참조하세요.
 
-## 시계열 데이터 컬럼에 별도 인덱스는 불필요
+## 값 컬럼 LSM 인덱스
 
-TAG 테이블의 시계열 데이터 컬럼(`value`, `temperature` 등)에 `CREATE INDEX`로 추가 인덱스를 생성하는 것은 지원되지 않습니다. 값 조건 조회는 태그명과 시간 범위로 스캔 범위를 먼저 줄이고, 반복 집계는 ROLLUP으로 처리합니다.
-
-**피해야 할 패턴**:
+TAG 테이블의 시계열 값 컬럼(`value`, `temperature` 등)에는 LSM 인덱스를 생성할 수 있습니다. 값 조건을 단독으로 자주 사용하거나, 태그명과 시간 범위로 좁힌 뒤 값 조건을 추가로 적용하는 조회가 많을 때 검토합니다.
 
 ```sql
--- TAG 테이블의 시계열 컬럼에 별도 인덱스는 불필요하며 지원되지 않음
-CREATE INDEX idx_value ON sensor_tag (value);  -- 지원되지 않음
+-- 값 컬럼 LSM 인덱스 생성
+CREATE INDEX idx_value ON sensor_tag (value);
+```
+
+단, TAG 테이블의 기본 최적 경로는 여전히 `name`과 `time` 조건입니다. 값 컬럼 LSM 인덱스는 조회 조건을 보조하지만, 넓은 시간 범위 전체를 자주 조회하는 집계 워크로드는 ROLLUP으로 처리하는 편이 적합합니다.
+
+**생성할 수 없는 패턴**:
+
+```sql
+-- TAG 테이블의 시간 축 컬럼에는 별도 LSM 인덱스를 생성할 수 없음
+CREATE INDEX idx_time ON sensor_tag (time) INDEX_TYPE LSM;
+-- [ERR-02332: Unable to create an index on the column (TIME).]
 ```
 
 ## 핵심 정리
@@ -114,6 +124,6 @@ CREATE INDEX idx_value ON sensor_tag (value);  -- 지원되지 않음
 | 최적화 항목 | 권장 사항 |
 |------------|---------|
 | 자동 파티션 인덱스 | 별도 생성 불필요, 태그명 + 시간 범위를 항상 WHERE에 포함 |
-| METADATA 필터링 | 자주 사용하는 METADATA 컬럼에 LSM 인덱스 생성 |
+| METADATA 필터링 | TAG 테이블 생성 시 METADATA 컬럼으로 정의, 인덱스는 자동 생성 |
 | 값 범위 조회 | `name`과 `time` 범위를 먼저 좁히고, 반복 집계는 ROLLUP 사용 |
-| 시계열 컬럼 인덱스 | 추가 인덱스 생성 불필요 (자동 구조가 처리) |
+| 값 컬럼 인덱스 | 필요한 경우 `CREATE INDEX ... ON tag_table(value)`로 LSM 인덱스 생성 |
