@@ -67,7 +67,7 @@ FileUsage   = 1
 Description = Machbase Database
 Driver      = MachbaseODBC
 SERVER      = 127.0.0.1
-PORT        = 5656
+PORT_NO     = 5656
 UID         = SYS
 PWD         = MANAGER
 ```
@@ -110,7 +110,7 @@ cat("Machbase에 연결되었습니다.\n")
 library(RODBC)
 
 ch <- odbcDriverConnect(
-  "DRIVER=MachbaseODBC;SERVER=127.0.0.1;PORT=5656;UID=SYS;PWD=MANAGER"
+  "DRIVER=MachbaseODBC;SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;PWD=MANAGER"
 )
 ```
 

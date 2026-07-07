@@ -4,39 +4,26 @@ title: 'Grafana plugin'
 weight: 20
 ---
 
-Grafana는 오픈소스 관측성 플랫폼으로, Machbase Neo 전용 데이터소스 플러그인을 통해 시계열 데이터를 실시간으로 시각화하고 대시보드를 구성할 수 있습니다.
+Grafana는 오픈소스 관측성 플랫폼으로, Machbase 데이터소스 플러그인을 통해
+Machbase Web Admin(MWA)이 제공하는 Grafana용 REST 엔드포인트를 호출해 시계열
+데이터를 시각화할 수 있습니다.
 
 ## 사전 요구 사항
 
-- Grafana 9.0 이상 (Grafana 10.x 권장)
-- Machbase Neo 8.0 이상
-- Machbase Neo HTTP 포트 접근 가능 (기본값: `5657`)
+- Grafana 4.5.x 호환 환경
+- Machbase Web Admin(MWA) 실행
+- MWA HTTP 포트 접근 가능 (기본값: `5001`)
+- Machbase 배포 디렉터리의 Grafana 플러그인 패키지
+  (`$MACHBASE_HOME/3rd-party/grafana/machbase.tgz`)
 
 ## 플러그인 설치
 
-### 방법 1: Grafana CLI (권장)
+Machbase 배포 패키지에 포함된 플러그인을 Grafana 플러그인 디렉터리에 압축 해제합니다.
 
 ```bash
-grafana-cli plugins install machbase-neo-datasource
-```
-
-설치 후 Grafana를 재시작합니다.
-
-```bash
-# Linux (systemd)
-sudo systemctl restart grafana-server
-
-# macOS (Homebrew)
-brew services restart grafana
-```
-
-### 방법 2: 수동 설치
-
-1. [Grafana 플러그인 마켓플레이스](https://grafana.com/grafana/plugins/machbase-neo-datasource/)에서 플러그인 ZIP 파일을 내려받습니다.
-2. 압축을 해제하여 Grafana 플러그인 디렉터리에 복사합니다.
-
-```bash
-unzip machbase-neo-datasource-*.zip -d /var/lib/grafana/plugins/
+sudo mkdir -p /var/lib/grafana/plugins/machbase
+sudo tar -xzf $MACHBASE_HOME/3rd-party/grafana/machbase.tgz \
+    -C /var/lib/grafana/plugins/machbase
 sudo systemctl restart grafana-server
 ```
 
@@ -47,36 +34,35 @@ sudo systemctl restart grafana-server
 ```ini
 # /etc/grafana/grafana.ini
 [plugins]
-allow_loading_unsigned_plugins = machbase-neo-datasource
+allow_loading_unsigned_plugins = machbase
 ```
 
 ## 데이터소스 연결 설정
 
 1. Grafana 사이드바에서 **Configuration → Data Sources** 로 이동합니다.
-2. **Add data source** 를 클릭하고 `Machbase Neo` 를 검색하여 선택합니다.
+2. **Add data source** 를 클릭하고 `Machbase` 를 검색하여 선택합니다.
 3. 아래 항목을 입력합니다.
 
 | 항목 | 값 | 설명 |
 |------|----|------|
-| **URL** | `http://MACHBASE_HOST:5657` | Machbase Neo HTTP 서버 주소 |
-| **User** | `SYS` | 접속 계정 (기본값) |
-| **Password** | `MANAGER` | 접속 비밀번호 (기본값) |
+| **URL** | `http://MWA_HOST:5001/machbase` | MWA의 Grafana REST 엔드포인트 |
 
 4. **Save & Test** 를 클릭하여 연결을 확인합니다.
 
-> **주의**: Grafana가 도커 컨테이너에서 실행 중이고 Machbase가 호스트에서 실행 중이라면 `MACHBASE_HOST` 를 `host.docker.internal` (macOS/Windows) 또는 호스트 IP로 설정합니다.
+> **주의**: Grafana가 도커 컨테이너에서 실행 중이고 MWA가 호스트에서 실행 중이라면
+> `MWA_HOST` 를 `host.docker.internal` (macOS/Windows) 또는 호스트 IP로 설정합니다.
 
 ## 패널 설정 및 쿼리 작성
 
 ### 시계열 패널 기본 구성
 
 1. 대시보드에서 **Add panel → Time series** 를 선택합니다.
-2. 데이터소스로 `Machbase Neo` 를 선택합니다.
+2. 데이터소스로 `Machbase` 를 선택합니다.
 3. 쿼리 편집기에 SQL을 입력합니다.
 
 ### SQL 쿼리 작성 팁
 
-Machbase Neo는 Grafana의 시간 범위 변수(`$__timeFrom()`, `$__timeTo()`)를 지원합니다.
+쿼리 편집기에서 시간 범위 조건을 명시해 조회 범위를 제한합니다.
 
 **기본 시계열 쿼리:**
 
@@ -86,7 +72,8 @@ SELECT
     value
 FROM sensor_data
 WHERE name = 'temperature'
-  AND time BETWEEN $__timeFrom() AND $__timeTo()
+  AND time BETWEEN TO_DATE('2024-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+               AND TO_DATE('2024-01-02 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
 ORDER BY time ASC
 ```
 
@@ -98,7 +85,8 @@ SELECT
     name,
     value
 FROM sensor_data
-WHERE time BETWEEN $__timeFrom() AND $__timeTo()
+WHERE time BETWEEN TO_DATE('2024-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+               AND TO_DATE('2024-01-02 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
 ORDER BY time ASC
 ```
 
@@ -112,7 +100,8 @@ SELECT
     MAX(value) AS max_value,
     MIN(value) AS min_value
 FROM sensor_data
-WHERE time BETWEEN $__timeFrom() AND $__timeTo()
+WHERE time BETWEEN TO_DATE('2024-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+               AND TO_DATE('2024-01-02 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
 GROUP BY time, name
 ORDER BY time ASC
 ```
@@ -139,7 +128,7 @@ ORDER BY time ASC
 | 항목 | 값 |
 |------|----|
 | **Type** | Query |
-| **Data source** | Machbase Neo |
+| **Data source** | Machbase |
 | **Query** | `SELECT DISTINCT name FROM sensor_data` |
 
 3. 패널 쿼리에서 변수를 사용합니다.
@@ -148,7 +137,8 @@ ORDER BY time ASC
 SELECT time AS time, value
 FROM sensor_data
 WHERE name = '$sensor_name'
-  AND time BETWEEN $__timeFrom() AND $__timeTo()
+  AND time BETWEEN TO_DATE('2024-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+               AND TO_DATE('2024-01-02 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
 ORDER BY time ASC
 ```
 
@@ -177,7 +167,8 @@ Grafana Alerting을 사용하여 임계값 초과 시 알림을 받을 수 있�
 SELECT time AS time, value
 FROM sensor_data
 WHERE name = 'temperature'
-  AND time BETWEEN $__timeFrom() AND $__timeTo()
+  AND time BETWEEN TO_DATE('2024-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+               AND TO_DATE('2024-01-02 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
 ORDER BY time ASC
 ```
 
@@ -185,7 +176,7 @@ ORDER BY time ASC
 
 | 증상 | 원인 | 해결 방법 |
 |------|------|-----------|
-| `Data source connection failed` | URL 또는 포트 오류 | Machbase Neo HTTP 포트(5657) 접근 가능 여부 확인 |
+| `Data source connection failed` | URL 또는 포트 오류 | MWA 포트(기본 5001)와 `/machbase` 경로 접근 가능 여부 확인 |
 | 데이터가 표시되지 않음 | 시간 범위 또는 쿼리 오류 | `time` 별칭과 시간 필터 조건 확인 |
 | 플러그인이 목록에 없음 | 설치 또는 서명 오류 | `grafana.ini` 에서 unsigned plugin 허용 설정 확인 |
 | 쿼리가 느림 | 인덱스 미사용 | TAG 테이블 사용, `name` 조건과 시간 범위 필터 명시 |

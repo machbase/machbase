@@ -55,7 +55,7 @@ import com.machbase.jdbc.MachConnection;
 import com.machbase.jdbc.MachAppendWriter;
 
 MachConnection conn = (MachConnection) DriverManager.getConnection(
-    "jdbc:machbase://127.0.0.1:5656/MACHBASE", "SYS", "MANAGER"
+    "jdbc:machbase://127.0.0.1:5656/machbasedb", "SYS", "MANAGER"
 );
 
 // AppendWriter 생성

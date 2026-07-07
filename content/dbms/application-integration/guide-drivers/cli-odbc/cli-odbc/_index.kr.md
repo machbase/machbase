@@ -19,8 +19,8 @@ $MACHBASE_HOME/
 ├── include/
 │   └── machbase_sqlcli.h    # CLI API 헤더 파일
 ├── lib/
-│   ├── libmachbasecli.so    # 공유 라이브러리 (Linux)
-│   └── libmachbasecli.a     # 정적 라이브러리
+│   ├── libmachbasecli.a     # 정적 라이브러리
+│   └── libmachbasecli_dll.so # 공유 라이브러리 (Linux)
 └── install/
     └── machbase_env.mk      # Makefile 환경 변수
 ```
@@ -34,7 +34,7 @@ include:
 
 lib:
 -rw-rw-r--  libmachbasecli.a
--rw-rw-r--  libmachbasecli.so
+-rwxrwxr-x  libmachbasecli_dll.so
 ```
 
 ### Makefile 예제
@@ -56,6 +56,9 @@ myapp.o : myapp.c
 clean :
     rm -f myapp
 ```
+
+공유 라이브러리로 링크해야 하는 경우에는 `$(LIB_OPT)machbasecli_dll$(LIB_AFT)`를
+사용합니다.
 
 ## 핸들(HANDLE) 종류
 

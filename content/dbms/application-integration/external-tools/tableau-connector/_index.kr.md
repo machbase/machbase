@@ -10,14 +10,14 @@ Tableau는 대표적인 비즈니스 인텔리전스(BI) 도구로, Machbase Neo
 
 - Tableau Desktop 2021.4 이상 또는 Tableau Server
 - Machbase Neo 8.0 이상
-- Machbase JDBC 드라이버 (`machbase-jdbc-*.jar`) 또는 ODBC 드라이버
+- Machbase JDBC 드라이버 (`machbase.jar`) 또는 ODBC 드라이버
 - Java Runtime Environment 11 이상 (JDBC 방식 사용 시)
 
 ## 방법 1: JDBC 드라이버 연결 (권장)
 
 ### 1단계: JDBC 드라이버 설치
 
-Machbase Neo 설치 디렉터리 또는 [Machbase 다운로드 센터](https://machbase.com/download)에서 JDBC 드라이버를 받습니다.
+Machbase 설치 디렉터리의 `lib/machbase.jar` 파일을 사용합니다.
 
 드라이버를 Tableau의 JDBC 드라이버 디렉터리에 복사합니다.
 
@@ -29,7 +29,7 @@ Machbase Neo 설치 디렉터리 또는 [Machbase 다운로드 센터](https://m
 
 ```bash
 # macOS 예시
-cp machbase-jdbc-8.6.0.jar ~/Library/Tableau/Drivers/
+cp $MACHBASE_HOME/lib/machbase.jar ~/Library/Tableau/Drivers/
 ```
 
 ### 2단계: Tableau Desktop에서 연결
@@ -41,7 +41,7 @@ cp machbase-jdbc-8.6.0.jar ~/Library/Tableau/Drivers/
 
 | 항목 | 값 |
 |------|----|
-| **URL** | `jdbc:machbase://MACHBASE_HOST:5656/MACHBASE` |
+| **URL** | `jdbc:machbase://MACHBASE_HOST:5656/machbasedb` |
 | **Dialect** | SQL92 |
 | **Username** | `SYS` |
 | **Password** | `MANAGER` |
@@ -58,13 +58,13 @@ jdbc:machbase://<호스트>:<포트>/<데이터베이스>
 
 ```
 # 기본 연결
-jdbc:machbase://127.0.0.1:5656/MACHBASE
+jdbc:machbase://127.0.0.1:5656/machbasedb
 
 # AUTH KEY 인증 사용
-jdbc:machbase://127.0.0.1:5656/MACHBASE?authkey=<BASE64_ENCODED_KEY>
+jdbc:machbase://127.0.0.1:5656/machbasedb?AUTH_MODE=CHALLENGE&AUTH_SIG_SCHEME=ECDSA&AUTH_KEY_FILE=/opt/machbase/keys/app_user_ecdsa.pem
 
 # 타임아웃 설정
-jdbc:machbase://127.0.0.1:5656/MACHBASE?connectTimeout=10000&queryTimeout=60000
+jdbc:machbase://127.0.0.1:5656/machbasedb?CONNECTION_TIMEOUT=10&SOCKET_TIMEOUT=60
 ```
 
 ## 방법 2: ODBC 드라이버 연결
@@ -85,7 +85,7 @@ Machbase Neo ODBC 드라이버를 설치하고 **ODBC 데이터 원본 관리자
 | **Data Source Name** | `Machbase` |
 | **Host** | `127.0.0.1` |
 | **Port** | `5656` |
-| **Database** | `MACHBASE` |
+| **Database** | `machbasedb` |
 | **UID** | `SYS` |
 | **PWD** | `MANAGER` |
 
@@ -101,7 +101,7 @@ Machbase Neo ODBC 드라이버를 설치하고 **ODBC 데이터 원본 관리자
 
 연결 후 **Data Source** 탭에서 스키마를 탐색합니다.
 
-- 왼쪽 패널에서 **Database** → **Schema** (보통 `MACHBASE`) 를 선택합니다.
+- 왼쪽 패널에서 **Database** → **Schema** 를 선택합니다.
 - 분석할 테이블을 캔버스로 드래그합니다.
 - 필요에 따라 **Custom SQL** 탭에서 직접 SQL을 작성할 수 있습니다.
 
@@ -131,7 +131,7 @@ Tableau Server에서 Machbase 데이터를 사용하려면 서버 노드 각각�
 
 ```bash
 # Tableau Server (Linux)
-sudo cp machbase-jdbc-8.6.0.jar /opt/tableau/tableau_driver/jdbc/
+sudo cp $MACHBASE_HOME/lib/machbase.jar /opt/tableau/tableau_driver/jdbc/
 
 # 드라이버 적용을 위해 Tableau Server 재시작
 tsm restart

@@ -21,16 +21,16 @@ timezone 설정 없이 조회하면 서버 또는 세션의 기본 timezone으�
 
 ```java
 // timezone 파라미터를 URL에 포함
-String url = "jdbc:machbase://127.0.0.1:5656/MACHBASE?timezone=Asia/Seoul";
+String url = "jdbc:machbase://127.0.0.1:5656/machbasedb?TIMEZONE=+0900";
 Connection conn = DriverManager.getConnection(url, "SYS", "MANAGER");
 
 // 또는 Properties 사용
 Properties props = new Properties();
 props.setProperty("user", "SYS");
 props.setProperty("password", "MANAGER");
-props.setProperty("timezone", "Asia/Seoul");
+props.setProperty("TIMEZONE", "+0900");
 Connection conn = DriverManager.getConnection(
-    "jdbc:machbase://127.0.0.1:5656/MACHBASE", props);
+    "jdbc:machbase://127.0.0.1:5656/machbasedb", props);
 ```
 
 ### Python

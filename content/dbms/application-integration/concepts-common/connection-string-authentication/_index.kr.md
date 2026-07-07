@@ -46,11 +46,11 @@ AUTH KEY를 사용한 연결은 드라이버별 설정이 다릅니다. 자세�
 
 ```java
 // 기본 연결
-String url = "jdbc:machbase://127.0.0.1:5656/MACHBASE";
+String url = "jdbc:machbase://127.0.0.1:5656/machbasedb";
 Connection conn = DriverManager.getConnection(url, "SYS", "MANAGER");
 
 // timezone 포함 연결
-String url = "jdbc:machbase://127.0.0.1:5656/MACHBASE?timezone=Asia/Seoul";
+String url = "jdbc:machbase://127.0.0.1:5656/machbasedb?TIMEZONE=+0900";
 Connection conn = DriverManager.getConnection(url, "SYS", "MANAGER");
 ```
 
@@ -82,11 +82,11 @@ SQLDriverConnect(conn, NULL, (SQLCHAR*)connStr, SQL_NTS,
 
 ```ini
 [machbase_dsn]
-Driver      = /usr/local/machbase/lib/libmachbasecli_odbc.so
-Server      = 127.0.0.1
-Port        = 5656
-User        = SYS
-Password    = MANAGER
+Driver      = /usr/local/machbase/lib/libmachbaseodbc.so
+SERVER      = 127.0.0.1
+PORT_NO     = 5656
+UID         = SYS
+PWD         = MANAGER
 ```
 
 DSN 정의 후 연결:
@@ -111,10 +111,10 @@ conn.Open();
 ```go
 import (
     "database/sql"
-    _ "github.com/machbase/neo-gomach"
+    _ "github.com/machbase/neo-client"
 )
 
-db, err := sql.Open("machbase", "SYS:MANAGER@127.0.0.1:5656/MACHBASE")
+db, err := sql.Open("machbase", "server=tcp://sys:manager@127.0.0.1:5656;fetch_rows=1000")
 ```
 
 ### REST API
@@ -140,7 +140,7 @@ curl -u SYS:MANAGER \
 
 ```java
 HikariConfig config = new HikariConfig();
-config.setJdbcUrl("jdbc:machbase://127.0.0.1:5656/MACHBASE");
+config.setJdbcUrl("jdbc:machbase://127.0.0.1:5656/machbasedb");
 config.setUsername("SYS");
 config.setPassword("MANAGER");
 
@@ -202,7 +202,7 @@ conn = connect(
 
 ```java
 // 환경 변수에서 연결 정보 읽기
-String url = String.format("jdbc:machbase://%s:%s/MACHBASE",
+String url = String.format("jdbc:machbase://%s:%s/machbasedb",
     System.getenv("MACHBASE_HOST"),
     System.getenv("MACHBASE_PORT")
 );

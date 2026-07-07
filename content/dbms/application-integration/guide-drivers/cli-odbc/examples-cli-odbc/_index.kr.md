@@ -4,7 +4,7 @@ title: 'CLI/ODBC 예제'
 weight: 20
 ---
 
-이 페이지는 Machbase CLI를 사용하는 C 프로그램의 대표적인 예제를 제공합니다. 모든 예제는 `machbase_sqlcli.h`를 포함하고 `libmachbasecli` 라이브러리와 링크하여 컴파일합니다.
+이 페이지는 Machbase CLI를 사용하는 C 프로그램의 대표적인 예제를 제공합니다. 모든 예제는 `machbase_sqlcli.h`를 포함하고 정적 라이브러리는 `libmachbasecli`, 공유 라이브러리는 `libmachbasecli_dll`과 링크하여 컴파일합니다.
 
 ## 개발 환경 준비
 
@@ -20,7 +20,7 @@ include:
 
 lib:
   libmachbasecli.a
-  libmachbasecli.so
+  libmachbasecli_dll.so
 ```
 
 ### Makefile 작성
