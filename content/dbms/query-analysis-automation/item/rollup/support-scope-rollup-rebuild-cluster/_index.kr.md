@@ -1,5 +1,56 @@
 ---
 type: docs
-title: 'ROLLUP Rebuild (Standard Edition 중심, TODO(verify): Cluster 지원 범위)'
-weight: 150
+title: 'ROLLUP 지원 범위'
+weight: 140
 ---
+
+## Edition별 지원
+
+| 기능 | Standard Edition | Cluster Edition |
+|------|:---:|:---:|
+| CREATE/DROP ROLLUP | O | O |
+| ALTER ROLLUP (START/STOP/FORCE/WAKEUP) | O | O |
+| WITH ROLLUP 자동 생성 | O | O |
+| ROLLUP 조회 (`rollup()` 함수) | O | O |
+| Custom Rollup (INTO...AS) | O | O |
+| 조건 ROLLUP (WHERE) | O | O |
+| 확장 ROLLUP (EXTENSION) | O | O |
+| Rollup Rebuild (`EXEC ROLLUP_REBUILD`) | O | O |
+
+> Cluster Edition에서는 ROLLUP 스레드가 각 노드에서 독립적으로 동작합니다. 분산 환경의 ROLLUP 동작은 Cluster 운영 가이드를 참조하세요.
+
+## 테이블 타입별 ROLLUP 지원
+
+| 테이블 타입 | ROLLUP 지원 |
+|------------|:---:|
+| TAG (시간축) | O |
+| TAG (거리축) | X |
+| LOG | X |
+| RDB | X |
+| VOLATILE | X |
+| LOOKUP | X |
+
+> ROLLUP은 시간축(BASETIME) TAG 테이블 전용 기능입니다.
+
+## 집계 함수 지원 범위
+
+| 함수 | 기본 ROLLUP | 확장 ROLLUP |
+|------|:---:|:---:|
+| MIN | O | O |
+| MAX | O | O |
+| SUM | O | O |
+| COUNT | O | O |
+| AVG | O | O |
+| SUMSQ | O | O |
+| FIRST | X | O |
+| LAST | X | O |
+
+## ROLLUP 관련 권한
+
+```sql
+-- ROLLUP 생성/삭제 권한 (예시)
+GRANT CREATE ROLLUP ON *.* TO rollup_user;
+GRANT DROP ROLLUP ON *.* TO rollup_user;
+```
+
+권한 체계는 [사용자 관리](../../../schema-data-lifecycle/schema-objects-definition/) 섹션을 참조하세요.
