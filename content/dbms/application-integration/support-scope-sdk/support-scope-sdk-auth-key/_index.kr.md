@@ -72,11 +72,15 @@ ALTER USER app_auth_key DROP AUTH KEY ID 3;
 ## machsql 예제
 
 ```bash
+cat > /tmp/auth_key_check.sql <<'SQL'
+SELECT COUNT(*) FROM v$tables;
+SQL
+
 machsql -s 127.0.0.1 -P 5656 \
   -u app_auth_key \
   -K ./auth_ecdsa_p256.pem \
   --auth-sig-scheme=ECDSA \
-  -i -q "SELECT COUNT(*) FROM v$tables;"
+  -i -f /tmp/auth_key_check.sql
 ```
 
 RSA 키를 사용할 때는 서명 방식을 지정합니다.
@@ -86,7 +90,7 @@ machsql -s 127.0.0.1 -P 5656 \
   -u app_auth_key \
   -K ./auth_rsa_2048.pem \
   --auth-sig-scheme=RSA_PSS \
-  -i -q "SELECT COUNT(*) FROM v$tables;"
+  -i -f /tmp/auth_key_check.sql
 ```
 
 ## ODBC / CLI 연결 문자열
@@ -125,9 +129,9 @@ Connection conn = DriverManager.getConnection(url, props);
 ## REST API와 AUTH KEY
 
 이 페이지의 AUTH KEY challenge 인증은 DB 포트(기본 5656)에 접속하는 드라이버/CLI
-인증 방식입니다. REST API(기본 5657)는 `/db/login` 또는 Bearer 토큰으로 AUTH KEY를
-교환하지 않습니다. REST API 인증은 `machbase.conf`의 `HTTP_AUTH` 설정에 따라 Basic
-Authentication을 사용합니다.
+인증 방식입니다. REST API(기본 5657)는 별도의 로그인 토큰 발급 엔드포인트나 Bearer
+토큰 교환 방식으로 AUTH KEY를 처리하지 않습니다. REST API 인증은 `machbase.conf`의
+`HTTP_AUTH` 설정에 따라 Basic Authentication을 사용합니다.
 
 ## 보안 권장 사항
 

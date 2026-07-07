@@ -17,7 +17,7 @@ Machbase REST API 클라이언트는 HTTP 상태 코드와 응답 JSON의 `error
 | `404 Not Found` | 엔드포인트 없음 | 존재하지 않는 URL 요청 |
 | `500 Internal Server Error` | 서버 오류 | 서버 내부 처리 오류 |
 
-존재하지 않는 엔드포인트를 호출하면 HTTP `404`가 반환됩니다.
+잘못된 REST API URL을 호출하면 HTTP `404`가 반환됩니다.
 
 ```bash
 curl -i "http://127.0.0.1:5657/db/query"

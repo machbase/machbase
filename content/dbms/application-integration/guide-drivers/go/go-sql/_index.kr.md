@@ -38,10 +38,10 @@ import (
 세미콜론(`;`)으로 구분된 키=값 쌍을 DSN으로 사용합니다.
 
 ```text
-server=tcp://sys:manager@127.0.0.1:5656
+server=tcp://sys:manager@127.0.0.1:5656;fetch_rows=1000
 ```
 
-옵션을 추가하는 경우:
+Statement 캐시를 추가하는 경우:
 
 ```text
 server=tcp://sys:manager@127.0.0.1:5656;fetch_rows=1000;statement_cache=auto
@@ -55,7 +55,7 @@ server=tcp://sys:manager@127.0.0.1:5656;fetch_rows=1000;statement_cache=auto
 | `host`, `port` | 호스트와 포트를 별도로 지정 | `host=127.0.0.1;port=5656` |
 | `user` | 로그인 사용자 | `user=sys` |
 | `password` | 로그인 비밀번호 | `password=manager` |
-| `fetch_rows` | 한 번의 round trip에서 가져올 행 수 | `fetch_rows=2000` |
+| `fetch_rows` | 한 번의 round trip에서 가져올 행 수. 현재 드라이버에서는 명시 필요 | `fetch_rows=2000` |
 | `statement_cache` | Statement 캐시 모드: `auto`, `on`, `off` | `statement_cache=auto` |
 | `io_metrics` | I/O metrics 활성화: `true`, `false` | `io_metrics=true` |
 | `alternative_servers` | 대체 서버 주소 | `alternative_servers=127.0.0.2:5656` |
@@ -163,6 +163,7 @@ import (
 func main() {
     dsn := strings.Join([]string{
         "server=tcp://sys:manager@127.0.0.1:5656",
+        "fetch_rows=1000",
     }, ";")
 
     db, err := sql.Open("machbase", dsn)
@@ -222,6 +223,10 @@ for i := 0; i < 100; i++ {
 ## 단일 행 조회 (`QueryRow`) {#queryrow}
 
 ```go
+if _, err := db.ExecContext(ctx, `EXEC TABLE_FLUSH(example)`); err != nil {
+    log.Fatal(err)
+}
+
 var name  string
 var tm    time.Time
 var value float64

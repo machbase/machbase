@@ -42,7 +42,7 @@ curl -u "SYS:MANAGER" \
   --data-urlencode "q=SELECT 1"
 ```
 
-현재 REST 샘플과 서버 검증 기준으로 `/db/login` 토큰 발급 API와 Bearer 토큰 방식은
+현재 REST 샘플과 서버 검증 기준으로 별도 로그인 토큰 발급 API나 Bearer 토큰 방식은
 사용하지 않습니다.
 
 ## Content-Type

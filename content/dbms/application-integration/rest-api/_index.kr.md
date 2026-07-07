@@ -33,8 +33,9 @@ http://<host>:5657
 |-----------|--------|------|
 | `/machbase?q=<SQL>` | GET | SQL 실행 및 결과 반환 |
 | `/machbase` | POST | JSON 본문으로 여러 행 Append 삽입 |
-| `/machbase/tables` | GET | 테이블 목록 조회 |
-| `/machbase/columns/<table>` | GET | 지정한 테이블의 컬럼 정보 조회 |
+
+컬럼 목록과 TAG 데이터 조회는 별도 REST 엔드포인트가 아니라 `/machbase` SQL 실행
+API로 `DESC <table>` 또는 TAG 테이블 조회 SQL을 실행합니다.
 
 ## 빠른 시작 예제
 
