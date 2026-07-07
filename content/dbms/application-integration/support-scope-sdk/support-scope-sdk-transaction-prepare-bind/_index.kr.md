@@ -17,12 +17,11 @@ weight: 30
 | **Python** | O | X | O | 서버 prepare 없음, `%s`/`%(name)s` 클라이언트 렌더링 |
 | **.NET Connector** | O | O | O | MachTransaction, MachCommand.Parameters |
 | **Go (database/sql)** | X | O | O | `Begin`/`BeginTx` 미지원, `db.Prepare()`와 `?` 바인딩 |
-| **Go (native client)** | X | △ | O | Append 중심, SELECT에 파라미터 제한적 |
+| **Go (native client)** | X | O | O | `Prepare(ctx, sql)`과 `Exec`/`Query` 파라미터 지원 |
 | **Node.js** | X | O | O | transaction 미지원, prepare/bind는 지원 |
 | **REST API** | X | X | X | 단일 요청 단위, 서버사이드 파라미터 없음 |
 
 - O: 지원
-- △: 부분 지원 (제한 있음)
 - X: 미지원
 
 ## 트랜잭션 (Transaction)

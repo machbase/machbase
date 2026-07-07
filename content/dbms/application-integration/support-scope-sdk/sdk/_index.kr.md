@@ -59,7 +59,7 @@ ADO.NET 인터페이스를 구현하여 .NET 애플리케이션에서 표준적�
 JavaScript / TypeScript 환경에서 사용합니다.
 
 - Promise 기반 비동기 API
-- Append API 부분 지원
+- `appendBatch` / `appendOpen`을 통한 LOG/TAG Append API 지원
 
 ### REST API
 HTTP 기반으로 언어·프레임워크에 독립적입니다. Machbase Neo의 HTTP 서버(포트 5657)에 직접 요청을 보냅니다.
