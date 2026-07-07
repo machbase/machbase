@@ -32,7 +32,7 @@ ORDER BY hit_count DESC;
 
 ## V$RS_CACHE_STAT
 
-세션 수준의 Result Cache 통계 정보를 보여줍니다.
+서버 전역 Result Cache 통계 정보를 보여줍니다.
 
 | 컬럼 이름 | 설명 |
 |---------|------|
@@ -50,7 +50,7 @@ FROM v$rs_cache_stat;
 
 ## 히트율 해석 및 조치
 
-**히트율 계산**: `CACHE_HIT / (CACHE_HIT + 캐시 미스)` 비율로 효율을 판단합니다. `CACHE_HIT`가 `CACHE_COUNT`에 비해 낮으면 캐시가 잘 활용되지 않는 것입니다.
+`V$RS_CACHE_STAT`에는 캐시 미스 컬럼이 없으므로 이 뷰만으로 정확한 히트율을 계산할 수 없습니다. `CACHE_HIT` 증가 추세, `CACHE_COUNT`, `CACHE_REPLACED`, 애플리케이션의 전체 쿼리 실행 횟수를 함께 보며 효율을 판단합니다.
 
 | 증상 | 원인 | 조치 |
 |-----|------|------|

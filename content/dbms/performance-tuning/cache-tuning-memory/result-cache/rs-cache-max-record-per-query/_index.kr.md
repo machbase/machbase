@@ -4,7 +4,7 @@ title: 'RS_CACHE_MAX_RECORD_PER_QUERY'
 weight: 30
 ---
 
-`RS_CACHE_MAX_RECORD_PER_QUERY`는 Result Cache에 저장할 수 있는 쿼리 결과의 최대 레코드 수를 지정합니다. 결과 레코드 수가 이 값 이상이면 해당 쿼리는 캐시되지 않습니다.
+`RS_CACHE_MAX_RECORD_PER_QUERY`는 Result Cache에 저장할 수 있는 쿼리 결과의 최대 레코드 수를 지정합니다. 결과 레코드 수가 이 값을 초과하면 해당 쿼리는 캐시되지 않습니다.
 
 ## 프로퍼티 정보
 
@@ -12,8 +12,9 @@ weight: 30
 |-----|---|
 | 최솟값 | 1 |
 | 최댓값 | 2^64 - 1 |
-| 기본값 | 50000 |
-| 런타임 변경 | 가능 (`ALTER SYSTEM SET`) |
+| 기본값 | 10000 |
+| 표준 샘플 설정값 | 50000 |
+| 런타임 변경 | 세션 단위 가능 (`ALTER SESSION SET`) |
 
 ## 설정 방법
 
@@ -23,14 +24,14 @@ weight: 30
 RS_CACHE_MAX_RECORD_PER_QUERY = 50000
 ```
 
-### ALTER SYSTEM SET
+### ALTER SESSION SET
 
 ```sql
 -- 결과 1,000건 이하 쿼리만 캐시
-ALTER SYSTEM SET RS_CACHE_MAX_RECORD_PER_QUERY = 1000;
+ALTER SESSION SET RS_CACHE_MAX_RECORD_PER_QUERY = 1000;
 
 -- 결과 50,000건 이하 쿼리까지 캐시
-ALTER SYSTEM SET RS_CACHE_MAX_RECORD_PER_QUERY = 50000;
+ALTER SESSION SET RS_CACHE_MAX_RECORD_PER_QUERY = 50000;
 ```
 
 ## 동작 원리
@@ -43,7 +44,7 @@ ALTER SYSTEM SET RS_CACHE_MAX_RECORD_PER_QUERY = 50000;
 
 | 워크로드 | 권장 설정 | 이유 |
 |---------|---------|------|
-| 대시보드용 집계 (수십~수백 건 반환) | 기본값 50000으로 충분 | 결과셋이 작아 메모리 부담 없음 |
+| 대시보드용 집계 (수십~수백 건 반환) | 기본값 10000 또는 표준 샘플 50000으로 충분 | 결과셋이 작아 메모리 부담 없음 |
 | 롤업 테이블 조회 (수천 건) | 10000~50000 | 적절한 메모리 사용 |
 | 원시 데이터 대량 조회 (수만 건 이상) | 캐시 대상에서 제외 권장 | 메모리 낭비, LRU 교체 빈발 |
 

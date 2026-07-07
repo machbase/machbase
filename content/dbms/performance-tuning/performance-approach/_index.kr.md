@@ -69,12 +69,13 @@ WHERE sensor_id = 'PUMP_01'
 PLAN
 -----
  PROJECT
-  FILTER
-   RANGE SCAN (sensor_log, _ARRIVAL_TIME DESC)
-    KEY RANGE [2025-01-01 00:00:00.000000000 ~ 2025-01-02 00:00:00.000000000]
+  INDEX SCAN (SENSOR_LOG)
+   *BITMAP RANGE (table id:1, column id:0, index id:0)
+   [KEY RANGE]
+    * _arrival_time BETWEEN TO_DATE('2025-01-01') AND TO_DATE('2025-01-02')
 ```
 
-`RANGE SCAN`이 나타나면 `_ARRIVAL_TIME` 기반으로 시간 범위를 인덱스처럼 활용하고 있습니다. LOG 테이블은 `_ARRIVAL_TIME` 컬럼에 항상 MINMAX 캐시가 적용되어 범위 검색이 빠릅니다.
+`INDEX SCAN`과 `_ARRIVAL_TIME`의 `BITMAP RANGE`가 나타나면 시간 범위 조건을 스캔 범위 축소에 활용하고 있습니다. LOG 테이블은 `_ARRIVAL_TIME` 컬럼에 기본 Min-Max Cache가 적용되어 범위 검색을 보조합니다.
 
 **FULL SCAN (느림)**
 
@@ -82,8 +83,7 @@ PLAN
 PLAN
 -----
  PROJECT
-  FILTER
-   FULL SCAN (sensor_log)
+  FULL SCAN (SENSOR_LOG)
 ```
 
 `FULL SCAN`이 나타나면 조건절이 `_ARRIVAL_TIME` 범위를 포함하지 않거나, 별도 인덱스가 없는 컬럼을 단독 조건으로 사용한 것입니다.
@@ -101,11 +101,16 @@ WHERE name = 'PUMP_01'
 PLAN
 -----
  PROJECT
-  TAG SCAN (tag_data)
-   KEY RANGE [name='PUMP_01', 2025-01-01 ~ 2025-01-02]
+  TAG READ (RAW)
+   KEYVALUE INDEX SCAN (_TAG_DATA_0)
+    [KEY RANGE]
+     * time BETWEEN TO_DATE('2025-01-01') AND TO_DATE('2025-01-02')
+   VOLATILE INDEX SCAN (_TAG_META)
+    [KEY RANGE]
+     * name='PUMP_01'
 ```
 
-`TAG SCAN`은 TAG 테이블 전용 스캔으로, 태그 이름과 시간 범위를 3단계 파티션 인덱스로 처리합니다. 이 경우가 TAG 테이블에서 가장 빠른 실행 계획입니다.
+`TAG READ (RAW)` 아래의 `KEYVALUE INDEX SCAN`과 `VOLATILE INDEX SCAN`은 TAG 데이터와 메타데이터 경로를 사용하고 있음을 의미합니다. 태그 이름과 시간 범위를 함께 지정하는 것이 TAG 테이블의 기본 최적 조회 패턴입니다.
 
 ### 실행 계획 개선 방법
 
@@ -114,7 +119,7 @@ PLAN
 | FULL SCAN (LOG) | `_ARRIVAL_TIME` 조건 없음 | WHERE 절에 시간 범위 추가 |
 | FULL SCAN (LOG) | 다른 컬럼 단독 조건 | 해당 컬럼에 LSM 인덱스 생성 |
 | FULL SCAN (TAG) | `name` 조건 없음 | WHERE 절에 태그 이름 조건 추가 |
-| TAG SCAN (느림) | 시간 범위가 너무 넓음 | 조회 범위를 좁히거나 ROLLUP 사용 |
+| TAG READ가 느림 | 시간 범위가 너무 넓음 | 조회 범위를 좁히거나 ROLLUP 사용 |
 
 ## 3단계: V$STMT, V$SESSION으로 현재 실행 쿼리 확인
 

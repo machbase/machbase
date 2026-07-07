@@ -10,11 +10,11 @@ Machbase는 테이블 유형에 따라 서로 다른 인덱스 구조를 채택�
 
 | 테이블 유형 | 기본 인덱스 | 추가 생성 가능 | 주요 용도 |
 |------------|------------|--------------|---------|
-| TAG | 태그명·시간 파티션·METADATA 인덱스 (자동) | 값 컬럼에 LSM 가능 | 태그명 + 시간 범위 고속 조회, 값 조건 보조 |
+| TAG | 태그명·시간 파티션·METADATA 인덱스 (자동) | 값 컬럼에 TAG/KV 인덱스 가능 | 태그명 + 시간 범위 고속 조회, 값 조건 보조 |
 | LOG | 없음 (시간 기반 파티션 pruning) | LSM, BITMAP, KEYWORD | 특정 컬럼 조건 조회 |
-| LOOKUP | B-Tree (PK 자동) | 제한적 | PK 기반 기준 정보 조회 |
-| VOLATILE | Red-Black 트리 (PK 자동) | 불가 | 인메모리 상태 테이블 |
-| RDB | B-Tree (PK 자동) | 제한적 | RDBMS 방식 관계형 데이터 |
+| LOOKUP | Red-Black 트리 (PK 자동) | Red-Black 보조 인덱스 | PK 기반 기준 정보 조회 |
+| VOLATILE | Red-Black 트리 (PK 자동) | Red-Black 보조 인덱스 | 인메모리 상태 테이블 |
+| RDB | B-Tree (PK 자동) | 단일/복합 B-Tree 인덱스 | RDBMS 방식 관계형 데이터 |
 
 ## 인덱스가 성능에 미치는 양면
 
@@ -46,8 +46,8 @@ LSM 인덱스 3개:  Append ~75~85만 건/초
 ## 현재 인덱스 확인
 
 ```sql
--- 특정 테이블의 인덱스 목록
-SHOW INDEX FROM device_log;
+-- 전체 인덱스 목록
+SHOW INDEXES;
 
 -- 인덱스 구축 진행 상황 (백그라운드 빌드 중일 때)
 SHOW INDEXGAP;

@@ -13,7 +13,7 @@ weight: 20
 | 최솟값 | 0 |
 | 최댓값 | 2^64 - 1 (ms) |
 | 기본값 | 1000 (1초) |
-| 런타임 변경 | 가능 (`ALTER SYSTEM SET`) |
+| 런타임 변경 | 세션 단위 가능 (`ALTER SESSION SET`) |
 
 ## 설정 방법
 
@@ -23,14 +23,14 @@ weight: 20
 RS_CACHE_TIME_BOUND_MSEC = 1000
 ```
 
-### ALTER SYSTEM SET
+### ALTER SESSION SET
 
 ```sql
 -- 500ms 이상 걸린 쿼리만 캐시
-ALTER SYSTEM SET RS_CACHE_TIME_BOUND_MSEC = 500;
+ALTER SESSION SET RS_CACHE_TIME_BOUND_MSEC = 500;
 
 -- 모든 쿼리 결과를 캐시 (0 = 제한 없음)
-ALTER SYSTEM SET RS_CACHE_TIME_BOUND_MSEC = 0;
+ALTER SESSION SET RS_CACHE_TIME_BOUND_MSEC = 0;
 ```
 
 ## 동작 원리
@@ -56,6 +56,6 @@ ALTER SYSTEM SET RS_CACHE_TIME_BOUND_MSEC = 0;
    - 예: 평균 2초짜리 집계 쿼리 → `RS_CACHE_TIME_BOUND_MSEC = 1000`
    - 예: 평균 500ms짜리 집계 쿼리 → `RS_CACHE_TIME_BOUND_MSEC = 250`
 
-4. `V$RS_CACHE_STAT`의 `CACHE_HIT`와 `CACHE_COUNT` 비율로 히트율을 확인하고, 히트율이 낮으면 임곗값을 낮추는 방향으로 조정합니다.
+4. `V$RS_CACHE_STAT`의 `CACHE_HIT` 증가 추세와 `V$RS_CACHE_LIST`의 반복 조회 쿼리를 확인하고, 캐시 대상 쿼리가 부족하면 임곗값을 낮추는 방향으로 조정합니다.
 
 > **주의**: 임곗값을 너무 낮게 설정하면 짧은 쿼리까지 캐시되어 `RS_CACHE_MAX_MEMORY_SIZE` 한도에 빠르게 도달하고 LRU 교체가 빈번해질 수 있습니다.

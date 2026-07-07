@@ -36,6 +36,7 @@ RDB 테이블의 일반 컬럼에는 `CREATE INDEX`로 추가 인덱스를 만�
 ```sql
 CREATE INDEX idx_product_name ON product(product_name);
 CREATE INDEX idx_product_category ON product(category);
+CREATE INDEX idx_product_category_name ON product(category, name);
 ```
 
 추가 인덱스는 조회를 빠르게 하지만, INSERT/UPDATE/DELETE 시 인덱스 갱신 비용을 늘립니다. 실제로 자주 사용하는 조건 컬럼에만 생성합니다.
@@ -74,8 +75,13 @@ CREATE INDEX idx_product_category ON product(category);
 -- PK 조회
 SELECT * FROM product WHERE product_id = 1001;
 
--- 보조 인덱스 조회
+-- 단일 컬럼 보조 인덱스 조회
 SELECT * FROM product WHERE category = 'electronics';
+
+-- 복합 보조 인덱스 조회
+SELECT * FROM product
+WHERE category = 'electronics'
+  AND name = 'Widget A';
 ```
 
 ### WHERE 조건과 PK 설계 원칙
@@ -85,7 +91,7 @@ SELECT * FROM product WHERE category = 'electronics';
 | 단일 키로 조회 (`WHERE id = ?`) | 해당 컬럼을 단일 PK |
 | 특정 컬럼으로 자주 조회 (`WHERE category = ?`) | 해당 컬럼에 추가 인덱스 생성 |
 | PK와 보조 조건을 함께 조회 (`WHERE id = ? AND status = ?`) | PK로 먼저 레코드를 좁히고 보조 조건을 필터링 |
-| 여러 non-PK 조건이 빈번함 | 필요한 컬럼별 인덱스 생성 여부를 실제 쿼리 빈도와 쓰기 비용으로 판단 |
+| 여러 non-PK 조건이 빈번함 | 복합 보조 인덱스 또는 컬럼별 인덱스를 실제 쿼리 빈도와 쓰기 비용으로 판단 |
 
 ## 조회 성능 최적화 패턴
 
@@ -108,6 +114,17 @@ CREATE INDEX idx_product_name ON product(product_name);
 SELECT * FROM product WHERE product_name = 'Widget A';
 ```
 
+여러 컬럼 조합을 반복 조회한다면 복합 보조 인덱스를 사용할 수 있습니다. 복합 인덱스는 선두 컬럼부터 조건에 포함될 때 효과가 큽니다.
+
+```sql
+CREATE INDEX idx_product_category_name ON product(category, product_name);
+
+-- 선두 컬럼(category)을 포함: 복합 인덱스 활용 가능
+SELECT * FROM product
+WHERE category = 'electronics'
+  AND product_name = 'Widget A';
+```
+
 드물게 실행하는 조건까지 모두 인덱스로 만들면 쓰기 비용과 저장 공간이 증가합니다. 운영 쿼리 로그나 애플리케이션 호출 빈도를 기준으로 인덱스 대상을 제한합니다.
 
 ### 결과 집합 크기 제한
@@ -127,7 +144,7 @@ GROUP BY category;
 | 항목 | 권장 사항 |
 |------|---------|
 | PK 인덱스 | B-Tree 자동 생성, 별도 조치 불필요 |
-| 추가 인덱스 | `CREATE INDEX index_name ON table(column)` 사용 |
+| 추가 인덱스 | `CREATE INDEX index_name ON table(column)` 또는 복합 보조 인덱스 사용 |
 | PK 설계 | 단일 키 조회가 많은 컬럼을 PRIMARY KEY로 배치 |
 | WHERE 조건 | PK 또는 인덱스 컬럼 포함 권장 |
 | non-PK 조건 조회 | 반복 조회 컬럼에 추가 인덱스 생성 검토 |

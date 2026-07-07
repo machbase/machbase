@@ -134,11 +134,12 @@ TAG 테이블의 METADATA 컬럼은 태그 이름에 연결된 정적 속성을 
 CREATE TAG TABLE factory_sensor (
     name        VARCHAR(64)  PRIMARY KEY,
     time        DATETIME     BASETIME,
-    value       DOUBLE       SUMMARIZED,
-    -- METADATA 컬럼: 센서 속성 (한 번 등록, 자주 필터링)
-    plant_id    VARCHAR(32)  METADATA,
-    line_id     VARCHAR(32)  METADATA,
-    sensor_type VARCHAR(16)  METADATA
+    value       DOUBLE       SUMMARIZED
+) METADATA (
+    -- 센서 속성 (한 번 등록, 자주 필터링)
+    plant_id    VARCHAR(32),
+    line_id     VARCHAR(32),
+    sensor_type VARCHAR(16)
 );
 
 -- 메타데이터 기반 필터링 (빠름: 데이터 파티션 스캔 전에 태그 필터링)

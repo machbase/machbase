@@ -4,13 +4,13 @@ title: 'append invalidation'
 weight: 60
 ---
 
-Machbase의 Result Cache는 테이블에 Append가 발생하면 해당 테이블과 관련된 캐시 항목을 전부 무효화합니다. 이 동작은 오래된 결과가 반환되는 것을 방지하는 핵심 일관성 보장 메커니즘입니다.
+Machbase의 Result Cache는 캐시 생성 시점의 테이블 상태를 함께 기록합니다. 테이블에 Append 또는 Insert가 발생하면 다음 캐시 조회 시 테이블 상태 차이를 감지해 기존 엔트리를 재사용하지 않고 실제 쿼리를 다시 실행합니다.
 
 ## 무효화 동작
 
-- TAG 테이블 또는 LOG 테이블에 `APPEND` 또는 `INSERT`가 발생하면, 해당 테이블을 참조하는 모든 캐시 항목이 즉시 무효화됩니다.
-- 무효화된 항목은 다음 조회 시 실제 쿼리가 실행되고, 결과가 다시 캐시됩니다.
-- 무효화는 테이블 단위로 이루어집니다. 쿼리가 여러 테이블을 조인하는 경우, 그 중 하나의 테이블에 Append가 발생해도 해당 쿼리의 캐시가 무효화됩니다.
+- TAG 테이블 또는 LOG 테이블에 `APPEND` 또는 `INSERT`가 발생하면, 해당 테이블을 참조하는 기존 캐시 엔트리는 다음 조회에서 재사용되지 않습니다.
+- 재사용할 수 없는 엔트리는 실제 쿼리 실행 후 조건을 만족하면 새 결과로 다시 캐시됩니다.
+- 캐시 엔트리를 즉시 제거해야 하는 운영 작업에는 `ALTER SYSTEM FLUSH RESULT_CACHE`를 사용합니다.
 
 ## 워크로드별 캐시 효과
 
@@ -21,7 +21,7 @@ Machbase의 Result Cache는 테이블에 Append가 발생하면 해당 테이블
 ```
 시각  T=0   T=1   T=2   T=3
       Append Append Append Append
-      캐시 무효화 반복 → 캐시 효과 없음
+      기존 캐시 재사용 실패 반복 → 캐시 효과 낮음
 ```
 
 이런 환경에서는 `RS_CACHE_ENABLE = 0`으로 비활성화하거나, 롤업(Rollup) 테이블을 별도로 구성하여 집계 결과를 롤업 테이블에서 조회하는 방식을 권장합니다.
@@ -33,26 +33,15 @@ Machbase의 Result Cache는 테이블에 Append가 발생하면 해당 테이블
 ```
 시각  T=0      T=30분    T=60분
       배치 적재  → 조회만  → 배치 적재  → 조회만
-      캐시 무효화  캐시 히트  캐시 무효화   캐시 히트
+      캐시 재생성  캐시 히트  캐시 재생성   캐시 히트
 ```
 
 배치 적재 직후에는 캐시가 재구성되므로 첫 번째 조회는 실제 실행되지만, 이후 동일한 쿼리는 캐시에서 즉시 반환됩니다.
 
-## 근사 결과 모드 (RS_CACHE_APPROXIMATE_RESULT_ENABLE)
-
-`RS_CACHE_APPROXIMATE_RESULT_ENABLE = 1`로 설정하면 Append로 무효화된 이후에도 이전 캐시 결과를 즉시 반환합니다. 속도는 빠르지만 결과가 최신 데이터를 반영하지 않을 수 있습니다.
+## 명시적 캐시 비우기
 
 ```sql
--- 근사 결과 모드 활성화 (매우 빠르지만 데이터가 최신이 아닐 수 있음)
-ALTER SYSTEM SET RS_CACHE_APPROXIMATE_RESULT_ENABLE = 1;
-
--- 정확한 결과 모드 (기본값)
-ALTER SYSTEM SET RS_CACHE_APPROXIMATE_RESULT_ENABLE = 0;
+ALTER SYSTEM FLUSH RESULT_CACHE;
 ```
 
-| 설정값 | 동작 | 적합한 상황 |
-|------|------|-----------|
-| 0 (기본) | Append 시 캐시 무효화, 정확한 결과 반환 | 데이터 정확성이 중요한 운영 대시보드 |
-| 1 | Append 후에도 기존 캐시 결과 반환 가능 | 약간의 지연을 허용하는 모니터링 화면 |
-
-> **주의**: 근사 결과 모드에서는 최신 Append 데이터가 반영되지 않은 결과가 반환될 수 있습니다. 정확한 데이터가 필요한 환경에서는 기본값(0)을 유지하십시오.
+`RS_CACHE_APPROXIMATE_RESULT_ENABLE`은 설정 파일에서 지정하는 프로퍼티입니다. 이 빌드에서는 `ALTER SYSTEM SET` 또는 `ALTER SESSION SET`으로 런타임 변경할 수 없습니다.

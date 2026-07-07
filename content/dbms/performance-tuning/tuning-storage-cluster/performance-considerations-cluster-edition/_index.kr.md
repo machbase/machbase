@@ -8,7 +8,7 @@ Machbase Cluster Edition은 여러 노드에 데이터를 분산 저장하여 �
 
 ## 클러스터 노드 구조
 
-Machbase Cluster Edition은 세 가지 역할의 노드로 구성됩니다.
+Machbase Cluster Edition은 Coordinator, Deployer, Broker, Warehouse, Lookup 역할로 구성됩니다. 성능 튜닝에서 입력 경로와 저장 처리를 볼 때는 주로 Broker와 Warehouse를 확인합니다.
 
 ```
 클라이언트
@@ -17,7 +17,7 @@ Machbase Cluster Edition은 세 가지 역할의 노드로 구성됩니다.
 [Broker 노드]   ← 라우팅 담당, 클라이언트 접속 수신
     │
     ▼
-[Active 노드]   ← 실제 데이터 저장 및 Append 처리 (여러 개)
+[Warehouse 노드] ← 실제 데이터 저장 및 Append 처리 (여러 개)
     │
     ▼
 [Lookup 노드]   ← 태그 메타데이터 및 인덱스 조회
@@ -25,39 +25,30 @@ Machbase Cluster Edition은 세 가지 역할의 노드로 구성됩니다.
 
 ### Broker 노드
 
-- 클라이언트 요청을 받아 적절한 Active 노드로 라우팅합니다.
+- 클라이언트 요청을 받아 적절한 Warehouse 경로로 라우팅합니다.
 - 데이터를 직접 저장하지 않으므로 CPU 부하가 낮습니다.
 - 대신 많은 클라이언트 연결을 동시에 수용해야 하므로 메모리를 충분히 확보해야 합니다.
 - Broker 노드가 병목이 되는 경우는 드물지만, 연결 수가 매우 많은 환경에서는 `MAX_SESSION_COUNT`와 `CLUSTER_LINK_MAX_LISTEN`을 조정하십시오.
 
-### Active 노드
+### Warehouse 노드
 
 - Append 처리와 실제 데이터 파일 저장을 담당합니다.
-- Append 처리량은 Active 노드 수에 비례해 증가합니다 (이론상 N개 Active = N배 처리량).
-- **SSD와 충분한 RAM**이 Active 노드 성능의 핵심입니다.
-- 각 Active 노드는 독립적으로 체크포인트와 flush를 수행합니다.
+- Append 처리량은 Warehouse 노드 수와 Broker 라우팅, 네트워크, 스토리지 성능에 영향을 받습니다.
+- **SSD와 충분한 RAM**이 Warehouse 노드 성능의 핵심입니다.
+- 각 Warehouse 노드는 독립적으로 체크포인트와 flush를 수행합니다.
 
 ### Lookup 노드
 
-- 태그 메타데이터와 인덱스를 유지하여 쿼리 시 Active 노드 위치를 안내합니다.
+- 태그 메타데이터와 인덱스를 유지하여 쿼리 시 Warehouse 데이터 위치를 안내합니다.
 - Lookup 노드 장애 시 조회가 전면 불가능해지므로 고가용성 구성(이중화)을 권장합니다.
 
 ## 데이터 분산과 병렬 처리
 
-Active 노드가 N개일 때 Append 처리량은 이론상 단일 노드 대비 N배입니다. 실제로는 네트워크 오버헤드와 Broker 라우팅 비용이 있으므로 완전한 선형 확장은 어렵지만, 3~4개 Active 노드 구성에서 2.5~3.5배 이상의 처리량 개선을 기대할 수 있습니다.
+Warehouse 노드가 여러 개이면 Append 처리를 분산할 수 있습니다. 실제 처리량은 네트워크 오버헤드, Broker 라우팅, Warehouse 그룹 구성, 스토리지 성능에 따라 달라지므로 실측으로 병목을 확인해야 합니다.
 
-데이터는 태그명의 해시 값에 따라 Active 노드에 분산됩니다. 분산이 고르지 않으면 일부 Active 노드에 부하가 집중됩니다.
+Broker는 입력 데이터를 Warehouse 그룹으로 분배합니다. 분산이 고르지 않으면 일부 Warehouse 노드에 부하가 집중될 수 있습니다.
 
-**불균등 분포 확인 방법**
-
-```sql
--- 각 Active 노드별 저장된 데이터 건수 비교
-SELECT warehouse_id, count(*) 
-FROM v$table_stat 
-GROUP BY warehouse_id;
-```
-
-특정 노드에 데이터가 집중된다면 태그 이름 설계 또는 파티션 수(`TAG_PARTITION_COUNT`) 조정을 검토하십시오.
+특정 노드에 데이터가 집중된다면 태그 이름/키 분포, Warehouse 그룹 구성, Broker 라우팅 설정, `INSERT_RECORD_COUNT_PER_NODE`에 따른 전송 단위를 함께 점검합니다. `TAG_PARTITION_COUNT`는 TAG 테이블 내부 파티션 수 설정이며, 클러스터 노드 분산을 직접 조정하는 값으로 사용하지 않습니다.
 
 ### INSERT_RECORD_COUNT_PER_NODE
 
@@ -69,7 +60,7 @@ GROUP BY warehouse_id;
 | 최댓값 | 2^32 - 1 |
 | 기본값 | 1000 |
 
-이 값을 높이면 한 번에 같은 Active 노드에 더 많은 데이터를 전송하여 네트워크 왕복 횟수를 줄입니다. 대규모 배치 입력 환경에서는 5,000~10,000으로 상향 조정을 고려하십시오.
+이 값을 높이면 Broker가 Warehouse 그룹을 전환하기 전 한 그룹에 더 많은 레코드를 전송합니다. 대규모 배치 입력 환경에서는 5,000~10,000으로 상향 조정을 고려하십시오.
 
 ```ini
 # machbase.conf (Broker 노드)
@@ -94,7 +85,7 @@ INSERT_BULK_DATA_MAX_SIZE = 4194304   # 4MB
 
 ## 네트워크 대역폭 튜닝
 
-클러스터 환경에서는 네트워크가 핵심 병목입니다. 클라이언트 → Broker → Active 노드 경로에서 패킷이 이동하므로, 클러스터 내부 통신에는 **10GbE 이상** 네트워크를 권장합니다.
+클러스터 환경에서는 네트워크가 핵심 병목입니다. 클라이언트 → Broker → Warehouse 경로에서 패킷이 이동하므로, 클러스터 내부 통신에는 **10GbE 이상** 네트워크를 권장합니다.
 
 ### CLUSTER_LINK_BUFFER_SIZE
 
@@ -146,7 +137,7 @@ Coordinator는 클러스터 전체의 노드 상태를 관리하고 장애를 �
 
 ### COORDINATOR_DISK_FULL_UPPER_BOUND_RATIO / LOWER_BOUND_RATIO
 
-Active 노드의 디스크 사용률이 `UPPER_BOUND_RATIO`를 초과하면 해당 노드에 새 데이터 입력을 중단하고, `LOWER_BOUND_RATIO` 이하로 회복되면 재개합니다.
+Warehouse 노드의 디스크 사용률이 `UPPER_BOUND_RATIO`를 초과하면 해당 노드에 새 데이터 입력을 중단하고, `LOWER_BOUND_RATIO` 이하로 회복되면 재개합니다.
 
 ```ini
 COORDINATOR_DISK_FULL_UPPER_BOUND_RATIO = 90   # 90% 이상 시 입력 중단

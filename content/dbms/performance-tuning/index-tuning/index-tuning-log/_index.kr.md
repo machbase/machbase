@@ -74,7 +74,7 @@ WHERE level IN ('ERROR', 'WARN')
 DURATION 6 HOUR;
 ```
 
-> `SHOW INDEX FROM device_log`에서 BITMAP 인덱스는 `LSM`으로 표시됩니다. 이는 내부 구현 방식에 따른 표시로, 정상적인 동작입니다.
+> `SHOW INDEXES`에서 BITMAP 인덱스가 내부 구현 방식에 따라 다른 타입명으로 표시될 수 있습니다. 생성 구문과 실행 계획을 함께 확인하십시오.
 
 ## KEYWORD 인덱스: 긴 텍스트 컬럼
 
@@ -125,9 +125,6 @@ LSM + BITMAP 각 1개 : Append 약 80~88%
 ## 인덱스 관리 명령어
 
 ```sql
--- 현재 인덱스 목록 확인
-SHOW INDEX FROM device_log;
-
 -- 전체 인덱스 현황
 SHOW INDEXES;
 

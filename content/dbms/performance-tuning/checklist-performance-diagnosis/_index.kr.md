@@ -47,16 +47,17 @@ WHERE device_id = 'dev-01'
 |--------------|------|------|
 | `FULL SCAN` | 전체 테이블 스캔 | 인덱스 생성, 시간 범위 조건 추가 |
 | `INDEX SCAN` | 인덱스 활용 중 | 정상 (인덱스 선택도 추가 확인) |
-| `PARTITION PRUNE` | 파티션 스킵 동작 중 | 정상 (MINMAX 캐시 활용) |
+| `_ARRIVAL_TIME` 또는 `TIME`의 `BITMAP RANGE` | 시간 범위 조건 활용 중 | 정상 (조회 범위 적정성 확인) |
 
 ## 3단계: 인덱스 현황 확인
 
 ```sql
 -- 특정 테이블의 인덱스 목록 확인
-SHOW INDEX FROM sensor_log;
-
--- 모든 사용자 인덱스 확인
-SELECT * FROM m$sys_indexes WHERE database_id > 0;
+SELECT i.name, i.type, t.name AS table_name, i.colcount, i.key_compress, i.max_level
+FROM m$sys_indexes i, m$sys_tables t
+WHERE i.table_id = t.id
+  AND t.name = 'SENSOR_LOG'
+ORDER BY i.name;
 ```
 
 확인 포인트:
@@ -96,25 +97,27 @@ WHERE name LIKE 'RS_CACHE%';
 테이블 파티션이 과도하게 많거나 상태가 비정상이면 조회 성능과 체크포인트 성능이 저하됩니다.
 
 ```sql
--- 특정 테이블의 파티션/통계 확인
-SELECT * FROM v$table_stat WHERE table_name = 'SENSOR_LOG';
+-- TAG 테이블의 기본 파티션 설정 확인
+SELECT name, value
+FROM v$property
+WHERE name IN ('TAG_PARTITION_COUNT', 'TAG_DATA_PART_SIZE');
 
--- TAG 테이블의 파티션 수 확인
-SELECT table_name, partition_count 
-FROM m$sys_tables 
-WHERE table_name = 'SENSOR_LOG';
+-- TAG 테이블별 파티션 설정 확인
+SELECT id, name, value
+FROM m$sys_table_property
+WHERE name = 'TAG_PARTITION_COUNT';
+
+-- 특정 TAG 테이블의 내부 데이터 테이블 수 확인
+SELECT COUNT(*) AS tag_data_table_count
+FROM m$sys_tables
+WHERE name LIKE '_SENSOR_TAG_DATA_%';
 ```
 
 확인 포인트:
 - 파티션 수가 예상보다 많은가? (오래된 파티션 정리 필요)
 - 데이터가 특정 파티션에만 집중되어 있지 않은가?
 
-오래된 파티션 정리:
-
-```sql
--- 특정 시점 이전 파티션 삭제
-ALTER TABLE sensor_log DROP PARTITION BEFORE TO_DATE('2024-01-01', 'YYYY-MM-DD');
-```
+오래된 데이터를 정리해야 한다면 테이블 타입별로 지원되는 DML과 보존 정책을 먼저 확인합니다. 이 빌드에서는 `ALTER TABLE ... DROP PARTITION BEFORE ...` 문법을 사용할 수 없습니다.
 
 ## 6단계: 시스템 리소스 확인
 
@@ -193,10 +196,14 @@ WHERE name IN (
   'DISK_IO_THREAD_COUNT'
 );
 
--- 5. 테이블별 파티션 현황
-SELECT table_name, partition_count
-FROM m$sys_tables
-ORDER BY partition_count DESC;
+-- 5. TAG 파티션 관련 기본 설정 확인
+SELECT name, value
+FROM v$property
+WHERE name IN ('TAG_PARTITION_COUNT', 'TAG_DATA_PART_SIZE');
+
+SELECT id, name, value
+FROM m$sys_table_property
+WHERE name = 'TAG_PARTITION_COUNT';
 ```
 
 ## 진단 순서 요약
@@ -213,7 +220,7 @@ ORDER BY partition_count DESC;
       ├─ FULL SCAN 있음 → 인덱스 생성 또는 쿼리 수정
       │
       ▼
-3단계: SHOW INDEX → 인덱스 과다/부족 확인
+3단계: M$SYS_INDEXES → 인덱스 과다/부족 확인
       │
       ▼
 4단계: v$rs_cache_stat → Result Cache 히트율 확인

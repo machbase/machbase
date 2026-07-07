@@ -49,7 +49,7 @@ WHERE  name = 'TEMP-01'
   AND  time BETWEEN '2025-06-01 00:00:00' AND '2025-06-01 01:00:00';
 ```
 
-시간 범위를 생략하면 EXPLAIN 결과에 PARTITION PRUNING이 나타나지 않고 전체 파티션 스캔이 발생합니다.
+시간 범위를 생략하면 스캔 범위를 좁히기 어렵고 전체 데이터 범위를 읽을 가능성이 커집니다. `EXPLAIN`에서는 `_arrival_time` 또는 `time` 조건이 `BITMAP RANGE`/TAG READ의 key range에 반영되는지 확인합니다.
 
 ## SELECT * 대신 필요한 컬럼만 조회
 
@@ -83,7 +83,7 @@ LIMIT  50;
 
 ## EXPLAIN 결과 해석
 
-`EXPLAIN` 명령으로 실행 계획을 확인합니다. INDEX SCAN, FULL SCAN, PARTITION PRUNING의 차이를 파악해 최적화 방향을 결정합니다.
+`EXPLAIN` 명령으로 실행 계획을 확인합니다. `INDEX SCAN`, `FULL SCAN`, TAG 테이블의 `TAG READ (RAW)` 같은 실제 스캔 노드를 기준으로 최적화 방향을 결정합니다.
 
 ### INDEX SCAN (권장)
 
@@ -99,11 +99,13 @@ Mach> EXPLAIN SELECT _arrival_time, host, value
 PLAN
 ------------------------------------------------------------------------------------
  PROJECT
-  INDEX SCAN
+  INDEX SCAN (MACHINE_LOG)
    *BITMAP RANGE (table id:3, column id:2, index id:4)
    [KEY RANGE]
     * severity = 'ERROR'
-   [FILTER]
+   *BITMAP RANGE (table id:3, column id:0, index id:0)
+   [KEY RANGE]
+    * severity = 'ERROR'
     * _arrival_time >= '2025-06-01 00:00:00'
     * _arrival_time < '2025-06-02 00:00:00'
 ```
@@ -128,7 +130,7 @@ PLAN
 ------------------------------------------------------------------------------------
  PROJECT
   GROUP AGGREGATE
-   PARALLEL INDEX SCAN
+   PARALLEL INDEX SCAN (MACHINE_LOG)
     *BITMAP RANGE (table id:3, column id:1, index id:5)
     [KEY RANGE]
      * _arrival_time >= '2025-06-01 00:00:00'
@@ -145,14 +147,14 @@ Mach> EXPLAIN SELECT * FROM machine_log WHERE value > 100.0;
 PLAN
 ------------------------------------------------------------------------------------
  PROJECT
-  FULL SCAN
+  FULL SCAN (MACHINE_LOG)
 ```
 
 `value` 컬럼에 인덱스가 없거나, 함수로 감싼 컬럼을 조건에 사용한 경우 FULL SCAN이 발생합니다.
 
-## 파티션 Pruning 활성화 조건
+## 시간 범위 스캔 활성화 조건
 
-파티션 Pruning은 시간 컬럼에 범위 조건(`>=`, `<=`, `BETWEEN`, `<`, `>`)이 있을 때 자동으로 활성화됩니다.
+시간 컬럼에 범위 조건(`>=`, `<=`, `BETWEEN`, `<`, `>`)이 있으면 스캔 범위를 줄일 수 있습니다. 이 빌드의 `EXPLAIN`에는 `PARTITION PRUNING`이라는 별도 문자열이 출력되지 않으므로, 시간 컬럼 조건이 `BITMAP RANGE`나 TAG READ의 key range에 포함되는지 확인합니다.
 
 ```sql
 -- Pruning 활성화: 명시적 범위
@@ -168,7 +170,7 @@ WHERE DATE_TRUNC('day', _arrival_time) = '2025-06-01'  -- Pruning 미동작
 WHERE _arrival_time >= NOW() - INTERVAL '1' HOUR       -- 일부 버전에서 미동작
 ```
 
-파티션 Pruning이 동작하는지 확인하려면 EXPLAIN 결과의 스캔 노드에 파티션 범위가 명시되는지, 또는 실행 시간 차이를 비교해 판단합니다.
+시간 범위 조건이 효과적인지 확인하려면 `EXPLAIN` 결과의 스캔 노드와 key range를 확인하고, 조건 유무에 따른 실행 시간 차이를 비교합니다.
 
 ## 요약: 체크리스트
 
@@ -178,4 +180,4 @@ WHERE _arrival_time >= NOW() - INTERVAL '1' HOUR       -- 일부 버전에서 �
 | 시간 조건 | LOG는 `_arrival_time`, TAG는 `time` 범위를 명시했는가 |
 | 컬럼 선택 | `SELECT *` 대신 필요한 컬럼만 지정했는가 |
 | 결과 제한 | 전체 집계가 아닌 경우 `LIMIT`을 사용했는가 |
-| 실행 계획 | `EXPLAIN`으로 INDEX SCAN 또는 PARTITION PRUNING 확인 |
+| 실행 계획 | `EXPLAIN`으로 INDEX SCAN, FULL SCAN, TAG READ 및 key range 확인 |

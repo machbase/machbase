@@ -9,10 +9,10 @@ PVO(Partition Value Object) Statement Cache는 SQL 실행 계획(Plan)을 메모
 ## 동작 원리
 
 1. SQL이 처음 실행되면 파싱 및 최적화를 거쳐 실행 계획(Plan)을 생성합니다.
-2. 생성된 Plan을 SQL 텍스트를 키로 하여 PVO Cache에 저장합니다.
+2. 생성된 Plan을 SQL 텍스트와 사용자, 기본 날짜 포맷, 시간대, 숨김 컬럼 표시 여부, 쿼리 병렬도 같은 세션 속성을 키로 하여 PVO Cache에 저장합니다.
 3. 동일한 SQL이 다시 실행되면 캐시에서 Plan을 재사용하여 파싱·최적화 단계를 건너뜁니다.
 
-파라미터 값이 달라도 SQL 텍스트가 같으면 동일 엔트리로 처리됩니다. (바인드 변수 활용 시 효과가 높음)
+바인드 변수를 사용하면 SQL 텍스트가 같게 유지되어 파싱·최적화 비용을 줄이는 데 유리합니다. 다만 위 세션 속성이 다르면 서로 다른 캐시 엔트리로 처리될 수 있습니다.
 
 ## 주요 프로퍼티
 
@@ -60,11 +60,17 @@ SELECT * FROM v$pvo_cache_stat;
 | CACHE_HANDLE_COUNT | 캐시된 플랜(핸들) 총 수 |
 | CACHE_MEMORY_USAGE | 현재 사용 중인 캐시 메모리 크기 |
 | CACHE_MAX_MEMORY_SIZE | 설정된 캐시 메모리 한도 |
+| CACHE_MAX_PLANS_PER_SQL | SQL당 최대 플랜 수 |
+| CACHE_MAX_SQL_ENTRIES | 최대 SQL 엔트리 수 |
+| CACHE_SHARD_COUNT | 캐시 샤드 수 |
 | CACHE_HIT | 캐시 히트 횟수 |
 | CACHE_MISS | 캐시 미스 횟수 |
+| SINGLEFLIGHT_WAIT | 동일 SQL 동시 빌드 대기 횟수 |
 | BUILD_COUNT | 플랜 빌드 시도 횟수 |
+| BUILD_FAIL | 플랜 빌드 실패 횟수 |
 | INVALIDATE_COUNT | 무효화된 플랜 수 |
 | EVICT_COUNT | 메모리 한도 초과로 캐시 축출된 횟수 |
+| FLUSH_COUNT | 명시적 flush 횟수 |
 
 ## V$PVO_CACHE_LIST로 SQL별 상세 확인
 

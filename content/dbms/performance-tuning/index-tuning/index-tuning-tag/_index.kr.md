@@ -4,7 +4,7 @@ title: 'TAG 인덱스 튜닝'
 weight: 10
 ---
 
-TAG 테이블은 태그명과 시간 축을 기준으로 자동 인덱스가 구성됩니다. 이 페이지에서는 TAG 테이블의 자동 인덱스 구조를 이해하고, 값 컬럼에 추가로 생성할 수 있는 LSM 인덱스 활용 기준을 설명합니다.
+TAG 테이블은 태그명과 시간 축을 기준으로 자동 인덱스가 구성됩니다. 이 페이지에서는 TAG 테이블의 자동 인덱스 구조를 이해하고, 값 컬럼에 추가로 생성할 수 있는 TAG/KV secondary index 활용 기준을 설명합니다.
 
 ## 자동 3단계 파티션 인덱스
 
@@ -100,21 +100,23 @@ WHERE  name = 'TEMP-01'
 
 LOG 테이블 컬럼의 `MINMAX_CACHE_SIZE` 조정은 [메모리 설정 튜닝](../../cache-tuning-memory/tuning-memory-configuration/)을 참조하세요.
 
-## 값 컬럼 LSM 인덱스
+## 값 컬럼 TAG/KV 인덱스
 
-TAG 테이블의 시계열 값 컬럼(`value`, `temperature` 등)에는 LSM 인덱스를 생성할 수 있습니다. 값 조건을 단독으로 자주 사용하거나, 태그명과 시간 범위로 좁힌 뒤 값 조건을 추가로 적용하는 조회가 많을 때 검토합니다.
+TAG 테이블의 시계열 값 컬럼(`value`, `temperature` 등)에는 TAG/KV secondary index를 생성할 수 있습니다. 값 조건을 단독으로 자주 사용하거나, 태그명과 시간 범위로 좁힌 뒤 값 조건을 추가로 적용하는 조회가 많을 때 검토합니다.
 
 ```sql
--- 값 컬럼 LSM 인덱스 생성
-CREATE INDEX idx_value ON sensor_tag (value);
+-- 값 컬럼 TAG/KV 인덱스 생성
+CREATE INDEX idx_value ON sensor_tag (value) INDEX_TYPE KV;
 ```
 
-단, TAG 테이블의 기본 최적 경로는 여전히 `name`과 `time` 조건입니다. 값 컬럼 LSM 인덱스는 조회 조건을 보조하지만, 넓은 시간 범위 전체를 자주 조회하는 집계 워크로드는 ROLLUP으로 처리하는 편이 적합합니다.
+검증한 빌드에서 생성된 값 컬럼 인덱스는 `SHOW INDEXES` 결과의 `INDEX_TYPE`에 `TAG`로 표시됩니다. LOG 테이블에서 사용하는 `LSM` 인덱스와 같은 종류로 설명하지 않습니다.
+
+단, TAG 테이블의 기본 최적 경로는 여전히 `name`과 `time` 조건입니다. 값 컬럼 TAG/KV 인덱스는 조회 조건을 보조하지만, 넓은 시간 범위 전체를 자주 조회하는 집계 워크로드는 ROLLUP으로 처리하는 편이 적합합니다.
 
 **생성할 수 없는 패턴**:
 
 ```sql
--- TAG 테이블의 시간 축 컬럼에는 별도 LSM 인덱스를 생성할 수 없음
+-- TAG 테이블의 시간 축 컬럼에는 별도 인덱스를 생성할 수 없음
 CREATE INDEX idx_time ON sensor_tag (time) INDEX_TYPE LSM;
 -- [ERR-02332: Unable to create an index on the column (TIME).]
 ```
@@ -126,4 +128,4 @@ CREATE INDEX idx_time ON sensor_tag (time) INDEX_TYPE LSM;
 | 자동 파티션 인덱스 | 별도 생성 불필요, 태그명 + 시간 범위를 항상 WHERE에 포함 |
 | METADATA 필터링 | TAG 테이블 생성 시 METADATA 컬럼으로 정의, 인덱스는 자동 생성 |
 | 값 범위 조회 | `name`과 `time` 범위를 먼저 좁히고, 반복 집계는 ROLLUP 사용 |
-| 값 컬럼 인덱스 | 필요한 경우 `CREATE INDEX ... ON tag_table(value)`로 LSM 인덱스 생성 |
+| 값 컬럼 인덱스 | 필요한 경우 `CREATE INDEX ... ON tag_table(value) INDEX_TYPE KV`로 TAG/KV 인덱스 생성 |

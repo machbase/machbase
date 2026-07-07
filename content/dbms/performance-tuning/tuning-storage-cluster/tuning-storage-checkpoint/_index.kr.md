@@ -164,15 +164,14 @@ NVMe SSD처럼 병렬 I/O 성능이 우수한 스토리지를 사용하는 경�
 DISK_IO_THREAD_COUNT = 4   # NVMe SSD 사용 시
 ```
 
-## WAL 디렉터리 분리
+## DBS_PATH 배치
 
-Machbase는 데이터 파일과 WAL(Write-Ahead Log) 파일을 모두 `DBS_PATH`에 저장합니다. 쓰기 처리량이 매우 높은 환경에서는 데이터 파일 디렉터리와 WAL 파일을 별도의 물리 디스크에 분리하면 I/O 경합을 줄일 수 있습니다.
+Machbase 데이터 파일은 `DBS_PATH` 아래에 저장됩니다. 쓰기 처리량이 높은 환경에서는 `DBS_PATH`를 지연 시간이 낮고 쓰기 성능이 높은 SSD/NVMe 장치에 배치합니다. 이 빌드에서 사용자 설정으로 분리 가능한 별도 WAL/redo 경로는 확인되지 않습니다.
 
-**모범 사례: 디스크 분리 예시**
+**모범 사례: 빠른 스토리지 배치 예시**
 
 ```
-/nvme0/machbase/dbs/       ← 데이터 파일 (NVMe SSD)
-/nvme1/machbase/wal/       ← WAL 및 redo 로그 (별도 NVMe SSD)
+/nvme0/machbase/dbs/       ← DBS_PATH (NVMe SSD)
 ```
 
 `machbase.conf`에서 경로 변경:
@@ -181,21 +180,34 @@ Machbase는 데이터 파일과 WAL(Write-Ahead Log) 파일을 모두 `DBS_PATH`
 DBS_PATH = /nvme0/machbase/dbs
 ```
 
-WAL 경로 설정은 서버 초기 설치 시 결정해야 하며, 운영 중 변경 시에는 반드시 정상 종료 후 파일을 이동하고 경로를 수정해야 합니다.
+DBS 경로는 서버 초기 설치 시 결정하는 것이 안전합니다. 운영 중 변경해야 한다면 반드시 정상 종료 후 파일 이동과 설정 변경 절차를 검증해야 합니다.
 
-## 오래된 파티션 정리
+## 데이터 보존 정책 점검
 
-TAG 테이블에 데이터를 장기간 적재하면 파티션 파일이 계속 늘어납니다. 더 이상 조회하지 않는 오래된 파티션은 `DROP TABLE PARTITION` 명령으로 정리하면 디스크 공간과 체크포인트 부하를 줄일 수 있습니다.
+LOG/TAG 테이블에 데이터를 장기간 적재하면 데이터 파일이 계속 늘어납니다. 보존 기간을 정하고 오래된 데이터를 삭제해야 디스크 공간과 체크포인트 부하를 제어할 수 있습니다.
 
 ```sql
--- 파티션 목록 확인
-SELECT * FROM v$table_stat WHERE table_name = 'SENSOR_LOG';
+-- TAG 테이블의 기본 파티션 설정 확인
+SELECT name, value
+FROM v$property
+WHERE name IN ('TAG_PARTITION_COUNT', 'TAG_DATA_PART_SIZE');
 
--- 특정 시점 이전 파티션 삭제 (예: 2024-01-01 이전 데이터)
-ALTER TABLE sensor_log DROP PARTITION BEFORE TO_DATE('2024-01-01', 'YYYY-MM-DD');
+-- TAG 테이블별 파티션 설정 확인
+SELECT id, name, value
+FROM m$sys_table_property
+WHERE name = 'TAG_PARTITION_COUNT';
+
+-- 특정 TAG 테이블의 내부 데이터 테이블 수 확인
+SELECT COUNT(*) AS tag_data_table_count
+FROM m$sys_tables
+WHERE name LIKE '_SENSOR_TAG_DATA_%';
+
+-- 특정 시점 이전 데이터 삭제
+DELETE FROM sensor_log BEFORE TO_DATE('2024-01-01', 'YYYY-MM-DD');
+DELETE FROM sensor_tag BEFORE TO_DATE('2024-01-01', 'YYYY-MM-DD');
 ```
 
-파티션 삭제는 즉시 디스크 공간을 반환하며 체크포인트 대상에서도 제외됩니다. 보존 정책(데이터 보관 기간)에 맞춰 정기적으로 수행하는 것을 권장합니다.
+이 빌드에서는 `ALTER TABLE ... DROP PARTITION BEFORE ...` 문법을 사용할 수 없습니다. 보존 정책을 자동화할 때는 `DELETE FROM ... BEFORE ...`와 백업 정책을 기준으로 설계합니다.
 
 ## 권장 설정 요약
 

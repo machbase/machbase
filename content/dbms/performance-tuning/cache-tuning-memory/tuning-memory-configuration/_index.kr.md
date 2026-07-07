@@ -30,12 +30,7 @@ Machbase 서버의 안정적인 운영을 위해서는 캐시, 처리 공간, OS
 | 최솟값 | 32 KB |
 | 최댓값 | 2^64 - 1 바이트 |
 | 기본값 | 512 MB |
-| 런타임 변경 | 가능 (`ALTER SYSTEM SET`) |
-
-```sql
--- Result Cache 메모리 한도를 2GB로 설정
-ALTER SYSTEM SET RS_CACHE_MAX_MEMORY_SIZE = 2147483648;
-```
+| 런타임 변경 | 불가 (설정 파일 변경 후 재시작) |
 
 ```
 # machbase.conf
@@ -103,6 +98,6 @@ FROM v$rs_cache_stat;
 ## 설정 변경 순서 권장 사항
 
 1. `free -h` 및 `V$RS_CACHE_STAT`으로 현재 상태 파악
-2. 필요한 캐시 크기 계산 후 `RS_CACHE_MAX_MEMORY_SIZE` 조정 (`ALTER SYSTEM SET`으로 런타임 적용)
+2. 필요한 캐시 크기 계산 후 `machbase.conf`의 `RS_CACHE_MAX_MEMORY_SIZE` 조정 및 서버 재시작
 3. Min-Max Cache 조정이 필요하면 `machbase.conf` 수정 후 서버 재시작
 4. 변경 후 일정 시간 모니터링하여 `CACHE_REPLACED`, swap 사용량 등 재확인

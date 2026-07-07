@@ -98,10 +98,10 @@ ROLLUP은 계층 구조로 설계합니다. 하위 ROLLUP이 상위 ROLLUP의 �
 CREATE ROLLUP _tag_ru_1s ON sensor_tag(value) INTERVAL 1 SEC;
 
 -- 2. 1분 단위 집계 (1초 ROLLUP → 1분 버킷)
-CREATE ROLLUP _tag_ru_1m ON _tag_ru_1s(value) INTERVAL 1 MIN;
+CREATE ROLLUP _tag_ru_1m FROM _tag_ru_1s INTERVAL 1 MIN;
 
 -- 3. 1시간 단위 집계 (1분 ROLLUP → 1시간 버킷)
-CREATE ROLLUP _tag_ru_1h ON _tag_ru_1m(value) INTERVAL 1 HOUR;
+CREATE ROLLUP _tag_ru_1h FROM _tag_ru_1m INTERVAL 1 HOUR;
 ```
 
 **계층 설계 기준:**
@@ -111,7 +111,7 @@ CREATE ROLLUP _tag_ru_1h ON _tag_ru_1m(value) INTERVAL 1 HOUR;
 | 초 단위 | 1초 ROLLUP | ~2,592,000 건 |
 | 분 단위 | 1분 ROLLUP | ~43,200 건 |
 | 시간 단위 | 1시간 ROLLUP | ~720 건 |
-| 일 단위 | 1시간 또는 1일 ROLLUP | ~30 건 |
+| 일 단위 | 1시간 ROLLUP을 조회 시 `rollup('day', 1, ...)`로 재집계하거나 24시간 간격 ROLLUP 사용 | ~30 건 |
 
 자주 조회하는 시간 단위에 대응하는 ROLLUP을 미리 준비해 두면 대시보드와 리포트 응답 시간을 안정적으로 유지할 수 있습니다.
 

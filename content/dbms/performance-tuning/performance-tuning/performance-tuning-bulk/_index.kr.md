@@ -42,20 +42,30 @@ stmt.executeAppendClose();
 
 ```python
 # Python - Append API
-from machbaseAPI import connect
+import json
+import re
+from machbaseAPI.machbaseAPI import machbase
 
-conn = connect(host=host, port=port, user=user, password=password)
+db = machbase()
+db.open(host, user, password, port)
 
-batch = []
+table_name = "sensor_log"
+db.columns(table_name)
+columns = db.result()
+types = [json.loads(item).get("type") for item in re.findall(r"{[^}]+}", columns)]
+
+values = []
 batch_size = 5000
 for i, row in enumerate(data_source):
-    batch.append(row)
-    if len(batch) >= batch_size:
-        conn.append("sensor_log", batch)
-        batch.clear()
+    values.append(row)
+    if len(values) >= batch_size:
+        db.append(table_name, types, values, "YYYY-MM-DD HH24:MI:SS")
+        values.clear()
 
-if batch:
-    conn.append("sensor_log", batch)  # 나머지 처리
+if values:
+    db.append(table_name, types, values, "YYYY-MM-DD HH24:MI:SS")
+
+db.close()
 ```
 
 ## 병렬 Append
@@ -66,9 +76,10 @@ if batch:
 import threading
 
 def append_worker(thread_id, data_chunk):
-    conn = connect(host=host, port=port, user=user, password=password)
-    conn.append("sensor_log", data_chunk)
-    conn.close()
+    db = machbase()
+    db.open(host, user, password, port)
+    db.append("sensor_log", types, data_chunk, "YYYY-MM-DD HH24:MI:SS")
+    db.close()
 
 # 4개 스레드로 병렬 Append
 threads = []
@@ -82,7 +93,7 @@ for t in threads:
     t.join()
 ```
 
-> Cluster Edition에서는 병렬 Append 시 각 스레드가 다른 Active 노드에 연결하면 추가 성능 향상이 가능합니다.
+> Cluster Edition에서는 병렬 Append 시 Broker와 Warehouse 구성을 고려해 입력 경로를 분산하면 추가 성능 향상을 기대할 수 있습니다.
 
 ## 네트워크 병목 최소화
 

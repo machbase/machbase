@@ -13,14 +13,14 @@ Result Cache는 메모리 한도에 도달했을 때 LRU(Least Recently Used) �
 - `V$RS_CACHE_STAT`의 `CACHE_REPLACED` 값이 지속적으로 증가하면 LRU 교체가 빈번하게 발생하고 있다는 신호입니다.
 - 교체가 빈발하면 새로 추가된 캐시가 히트되기 전에 제거되는 악순환이 생길 수 있습니다.
 
-**대응**: `RS_CACHE_MAX_MEMORY_SIZE`를 늘리거나, `RS_CACHE_MAX_RECORD_PER_QUERY`를 낮춰 개별 엔트리 크기를 제한합니다.
+**대응**: 설정 파일에서 `RS_CACHE_MAX_MEMORY_SIZE`를 늘린 뒤 재시작하거나, 세션 단위 `RS_CACHE_MAX_RECORD_PER_QUERY`를 낮춰 개별 엔트리 크기를 제한합니다.
 
 ```sql
 -- 교체 횟수 확인
 SELECT cache_replaced FROM v$rs_cache_stat;
 
--- 메모리 한도 증설 예시 (1GB로 설정)
-ALTER SYSTEM SET RS_CACHE_MAX_MEMORY_SIZE = 1073741824;
+-- 큰 캐시 엔트리를 줄이기 위한 세션 설정 예시
+ALTER SESSION SET RS_CACHE_MAX_RECORD_PER_QUERY = 1000;
 ```
 
 ## 동시성 처리

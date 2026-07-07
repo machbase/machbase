@@ -13,7 +13,7 @@ Collector는 외부 데이터 소스(센서, 장비, 시스템 로그 등)에서
 | 수집 주기 | 짧을수록 실시간성 높음, 오버헤드 증가 | 데이터 특성에 맞게 설정 |
 | 배치 크기 | 클수록 처리량 높음, 메모리 사용량 증가 | 1,000~10,000건 권장 |
 | 네트워크 레이턴시 | 높을수록 지연 증가 | 로컬 또는 LAN 환경 권장 |
-| 병렬 스레드 수 | 많을수록 처리량 증가, CPU 경쟁 발생 | Active 노드 수 × 1~2배 |
+| 병렬 스레드 수 | 많을수록 처리량 증가, CPU 경쟁 발생 | Warehouse 노드 수 × 1~2배 |
 | Append 버퍼 크기 | 클수록 flush 횟수 감소 | 메모리와 내구성 균형 |
 
 ## 권장 수집 파이프라인 설계
@@ -21,14 +21,14 @@ Collector는 외부 데이터 소스(센서, 장비, 시스템 로그 등)에서
 **단일 소스 파이프라인**
 
 ```
-[Sensor/Device] → [Collector Thread] → [Machbase Active Node]
+[Sensor/Device] → [Collector Thread] → [Machbase Broker/Warehouse]
 ```
 
 **다중 소스 병렬 파이프라인 (권장)**
 
 ```
 [Source 1] → [Collector Thread 1] ─┐
-[Source 2] → [Collector Thread 2] ─┼→ [Machbase Active 노드들]
+[Source 2] → [Collector Thread 2] ─┼→ [Machbase Warehouse 노드들]
 [Source 3] → [Collector Thread 3] ─┘
 ```
 
@@ -43,11 +43,11 @@ Collector는 외부 데이터 소스(센서, 장비, 시스템 로그 등)에서
 
 ## 병렬 스레드 수 설정
 
-Cluster Edition에서는 Active 노드 수에 맞게 병렬 스레드를 설정합니다.
+Cluster Edition에서는 Warehouse 노드 수에 맞게 병렬 스레드를 설정합니다.
 
 ```
-권장 스레드 수 = Active 노드 수 × 1~2
-예: Active 4노드 → 4~8개 Collector 스레드
+권장 스레드 수 = Warehouse 노드 수 × 1~2
+예: Warehouse 4노드 → 4~8개 Collector 스레드
 ```
 
 Standard Edition에서는 CPU 코어 수를 기준으로 합니다.
@@ -84,7 +84,7 @@ Collector가 처리하지 못한 데이터가 큐에 쌓이는지 모니터링�
 
 ```bash
 # Collector 로그에서 지연 또는 큐 관련 메시지 확인
-grep -i "queue\|delay\|overflow\|slow" /var/log/machbase/collector.log | tail -50
+grep -i "queue\|delay\|overflow\|slow" "$MACHBASE_HOME/trc/<collector-name>.trc" | tail -50
 ```
 
 큐가 지속적으로 증가한다면:

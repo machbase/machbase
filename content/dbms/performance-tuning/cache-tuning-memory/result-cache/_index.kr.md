@@ -12,7 +12,7 @@ Result Cache는 동일한 SELECT 쿼리가 반복 실행될 때 이전에 계산
 2. 동일한 쿼리가 이미 캐시되어 있고 유효한 상태이면 저장된 결과를 즉시 반환합니다.
 3. 캐시가 없거나 무효화된 경우 쿼리를 실제로 실행하고, 조건(`RS_CACHE_TIME_BOUND_MSEC`, `RS_CACHE_MAX_RECORD_PER_QUERY` 등)을 충족하면 결과를 캐시에 저장합니다.
 
-쿼리 텍스트가 완전히 동일해야 캐시 히트가 발생합니다. 공백, 대소문자, 파라미터 값이 하나라도 다르면 별도의 캐시 엔트리로 처리됩니다.
+쿼리 텍스트가 완전히 동일해야 캐시 히트가 발생합니다. 리터럴 값, 공백, 대소문자가 달라져 SQL 텍스트가 바뀌면 별도의 캐시 엔트리로 처리됩니다. 바인드 실행은 Result Cache 대상이 아니므로, 반복 조회를 캐시하려면 실제 실행되는 SELECT 텍스트가 동일한지 확인합니다.
 
 ## 적합한 워크로드
 
@@ -30,7 +30,7 @@ Result Cache는 동일한 SELECT 쿼리가 반복 실행될 때 이전에 계산
 |--------|------|------|
 | [`RS_CACHE_ENABLE`](rs-cache-enable/) | 1 | Result Cache 활성화 여부 |
 | [`RS_CACHE_TIME_BOUND_MSEC`](rs-cache-time-bound-msec/) | 1000 ms | 이 시간보다 빠른 쿼리는 캐시하지 않음 |
-| [`RS_CACHE_MAX_RECORD_PER_QUERY`](rs-cache-max-record-per-query/) | 50000 | 결과 레코드 수 상한 (초과 시 캐시 안 함) |
+| [`RS_CACHE_MAX_RECORD_PER_QUERY`](rs-cache-max-record-per-query/) | 기본값 10000, 표준 샘플 50000 | 결과 레코드 수 상한 (초과 시 캐시 안 함) |
 | `RS_CACHE_MAX_MEMORY_PER_QUERY` | 16 MB | 쿼리당 최대 캐시 메모리 |
 | `RS_CACHE_MAX_MEMORY_SIZE` | 512 MB | 전체 Result Cache 최대 메모리 |
 | `RS_CACHE_APPROXIMATE_RESULT_ENABLE` | 0 | 근사 결과 허용 여부 (1이면 더 빠르지만 부정확할 수 있음) |
