@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'TAG data UPDATE 대상 범위와 대량 정정 성능 고려사항 (planned: dbms-nfx#3733)'
+title: 'TAG data UPDATE 대상 범위와 대량 정정 성능 고려사항'
 weight: 40
 ---
 
@@ -13,12 +13,10 @@ TAG 테이블에 UPDATE를 시도하면 오류가 발생합니다.
 ```sql
 -- 오류: TAG 테이블은 UPDATE 미지원
 UPDATE sensor_tag SET value = 99.5 WHERE name = 'TEMP-01' AND time = '2025-06-01 12:00:00';
--- [ERR-02068: UPDATE is not supported for TAG table]
+-- [ERR-02278: UPDATE statement is not allowed for SENSOR_TAG.]
 ```
 
 이 제약은 TAG 테이블의 LSM 기반 불변 저장 구조에서 비롯됩니다. 한번 기록된 레코드는 덮어쓰지 않고, 정정 시 삭제 후 재삽입 방식을 사용합니다.
-
-> **계획된 기능 (dbms-nfx#3733)**: Standard Edition에서 TAG 테이블 UPDATE 기능이 개발 예정입니다. 지원 버전과 범위는 릴리스 노트를 참고하세요.
 
 ## 기본 정정 패턴: DELETE → INSERT
 
@@ -57,7 +55,7 @@ WHERE  name = 'TEMP-01'
 -- 결과: 0
 
 -- 정정 데이터 재삽입 (machloader 또는 Append API 사용 권장)
--- machloader -t sensor_tag -i corrected_data.csv
+-- machloader -i -t sensor_tag -d corrected_data.csv
 ```
 
 ### 대량 정정 성능 고려사항

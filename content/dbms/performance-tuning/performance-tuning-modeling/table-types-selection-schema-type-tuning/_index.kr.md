@@ -168,14 +168,14 @@ LOG 테이블의 각 컬럼에는 MINMAX 캐시를 설정할 수 있습니다. M
 
 ```
 # machbase.conf
-DISK_COLUMNAR_TABLE_COLUMN_MINMAX_CACHE_SIZE = 200*1024*1024  # 200MB
+DISK_COLUMNAR_TABLE_COLUMN_MINMAX_CACHE_SIZE = 209715200  # 200MB
 ```
 
-시간 범위 조회가 매우 잦고 테이블 크기가 큰 경우, 이 값을 200~500 MB로 늘리면 시간 범위 스캔 성능이 향상됩니다.
+시간 범위 조회가 매우 잦고 파티션 수가 많은 경우, 이 값을 200~500 MB로 늘리면 시간 범위 스캔 성능이 향상될 수 있습니다.
 
 **특정 컬럼에 MINMAX 캐시 지정**
 
-테이블 생성 시 자주 범위 조건으로 사용하는 컬럼에 MINMAX 캐시를 지정할 수 있습니다.
+LOG 테이블 생성 시 자주 범위 조건으로 사용하는 컬럼에 MINMAX 캐시를 지정할 수 있습니다.
 
 ```sql
 -- value 컬럼에 32MB MINMAX 캐시 지정
@@ -183,18 +183,18 @@ CREATE TABLE sensor_log (
     sensor_id   VARCHAR(64),
     value       DOUBLE,
     quality     SHORT
-) PROPERTY (
-    'MINMAX_CACHE_SIZE' = '33554432'  -- 32MB
 );
+
+ALTER TABLE sensor_log MODIFY COLUMN value SET MINMAX_CACHE_SIZE = 33554432;
 ```
 
 **MINMAX 캐시 크기 결정 기준**
 
 | 조건 | 권장 캐시 크기 |
 |------|---------------|
-| 테이블 크기 소규모 (수 GB 이하) | 기본값(100 MB) 유지 |
-| 테이블 크기 중규모, 시간 범위 조회 잦음 | 200~300 MB |
-| 테이블 크기 대규모, 시간 범위 조회 매우 잦음 | 500 MB 이상 |
+| 시간 범위 조회 위주 | `_ARRIVAL_TIME` 기본값(100 MB) 유지 |
+| LOG 일반 컬럼 범위 조회 잦음 | 컬럼별 100 KB 이상부터 검토 |
+| 파티션 수가 많고 컬럼 범위 조회 매우 잦음 | 컬럼별 1 MB 이상 검토 |
 
 메모리 여유가 충분하지 않다면 캐시를 무작정 늘리는 것보다 RS Cache(결과 캐시)와 함께 균형 있게 설정하는 것이 좋습니다. RS Cache 설정은 **[캐시·메모리 튜닝](../../cache-tuning-memory/)** 을 참고하십시오.
 

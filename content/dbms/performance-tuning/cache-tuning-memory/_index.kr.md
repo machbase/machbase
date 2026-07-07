@@ -26,7 +26,7 @@ Machbase 서버의 메모리 예산을 배분할 때는 다음 원칙을 참고�
 ```
 
 - **Result Cache**(`RS_CACHE_MAX_MEMORY_SIZE`)와 **PVO Cache**(`PVO_CACHE_MAX_MEMORY_SIZE`)의 합이 전체 메모리의 40%를 넘지 않도록 설정합니다.
-- Min-Max Cache는 파티션 수에 비례하여 메모리를 사용하므로, 대규모 TAG 테이블 환경에서는 `DISK_COLUMNAR_TABLE_COLUMN_MINMAX_CACHE_SIZE` 값을 충분히 늘려야 파티션 프루닝 효과를 얻을 수 있습니다.
+- Min-Max Cache는 파티션 수에 비례하여 메모리를 사용하므로, 대규모 LOG 테이블 환경에서는 `_ARRIVAL_TIME` 기본값과 필요한 LOG 일반 컬럼의 `MINMAX_CACHE_SIZE`를 함께 검토합니다.
 - 메모리 부족(OOM killer 발생, swap 급증)이 감지되면 캐시 상한을 낮추고 `PROCESS_MAX_SIZE`로 프로세스 최대 메모리를 제한하십시오.
 
 ## 이 섹션의 구성

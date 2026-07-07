@@ -140,14 +140,14 @@ Machbase는 LOG 테이블에 두 가지 인덱스 유형을 지원합니다.
 | 범위 검색 | 우수 | 보통 |
 | 동등 검색 | 우수 | 우수 |
 | 복합 AND | 제한적 | 비트 AND 연산으로 매우 빠름 |
-| 생성 구문 | `CREATE INDEX ... TYPE LSM` | `CREATE INDEX ...` (기본값) |
+| 생성 구문 | `CREATE INDEX ... INDEX_TYPE LSM` | `CREATE BITMAP INDEX ...` 또는 `CREATE INDEX ... INDEX_TYPE BITMAP` |
 
 ```sql
--- BITMAP 인덱스 생성 (기본값, 문자열·저카디널리티 컬럼에 적합)
-CREATE INDEX idx_severity ON machine_log (severity);
+-- BITMAP 인덱스 생성 (문자열·저카디널리티 컬럼에 적합)
+CREATE BITMAP INDEX idx_severity ON machine_log (severity);
 
 -- LSM 인덱스 생성 (숫자형 범위 검색에 적합)
-CREATE INDEX idx_ts ON machine_log (event_time) TYPE LSM;
+CREATE INDEX idx_ts ON machine_log (event_time) INDEX_TYPE LSM;
 ```
 
 **선택 기준 요약:**

@@ -11,15 +11,19 @@ weight: 80
 가장 먼저 지금 서버에서 무슨 일이 일어나고 있는지 파악합니다.
 
 ```sql
--- 현재 IDLE 상태가 아닌 모든 Statement 확인
-SELECT * FROM v$stmt WHERE state != 'IDLE';
+-- 현재 Statement 상태 확인
+SELECT sess_id, id AS stmt_id, state, record_size, query
+FROM v$stmt
+ORDER BY sess_id, id;
 
--- 현재 RUNNING 상태인 세션 확인
-SELECT * FROM v$session WHERE state = 'RUNNING';
+-- 현재 연결된 세션 확인
+SELECT id, user_name, user_ip, login_time, client_type
+FROM v$session
+ORDER BY login_time DESC;
 ```
 
 확인 포인트:
-- 장시간 실행 중인 쿼리가 있는가? (`execute_count`가 낮은데 오래 걸리는 경우)
+- Statement 상태가 Fetch/Execute 계열로 오래 남아 있는 쿼리가 있는가?
 - Append 세션이 비정상적으로 많이 쌓여 있는가?
 - 동시 세션 수가 `MAX_SESSION_COUNT` 한계에 근접했는가?
 
@@ -162,9 +166,10 @@ free -h
 
 ```sql
 -- 1. 현재 실행 중인 쿼리 전체 확인
-SELECT s.id, s.state, st.query, st.execute_count
-FROM v$session s JOIN v$stmt st ON s.id = st.sess_id
-WHERE s.state = 'RUNNING';
+SELECT s.id AS session_id, s.user_name, st.id AS stmt_id, st.state, st.query
+FROM v$session s, v$stmt st
+WHERE s.id = st.sess_id
+ORDER BY s.id, st.id;
 
 -- 2. Append 현황 확인
 SELECT count(*) AS append_session_count 

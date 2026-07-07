@@ -124,34 +124,36 @@ PLAN
 
 ```sql
 -- 현재 연결된 세션 목록
-SELECT id, login_name, created, elapsed_time_msec
+SELECT id, user_name, user_ip, login_time, client_type
 FROM v$session
-ORDER BY elapsed_time_msec DESC;
+ORDER BY login_time DESC;
 ```
 
 | 컬럼 | 설명 |
 |------|------|
 | `id` | 세션 ID |
-| `login_name` | 접속 계정 |
-| `created` | 세션 생성 시각 |
-| `elapsed_time_msec` | 세션 유지 시간 (ms) |
+| `user_name` | 접속 계정 |
+| `user_ip` | 클라이언트 IP |
+| `login_time` | 로그인 시각 |
+| `client_type` | 클라이언트 종류 |
 
 **현재 실행 중인 쿼리 확인**
 
 ```sql
--- 실행 시간이 긴 쿼리 상위 5개
-SELECT session_id, query, elapsed_time_msec, state
+-- 현재 Statement 상태 확인
+SELECT sess_id, id AS stmt_id, state, record_size, query
 FROM v$stmt
-ORDER BY elapsed_time_msec DESC
+ORDER BY sess_id, id
 LIMIT 5;
 ```
 
 | 컬럼 | 설명 |
 |------|------|
-| `session_id` | 세션 ID |
-| `query` | 실행 중인 SQL 텍스트 |
-| `elapsed_time_msec` | 실행 경과 시간 (ms) |
-| `state` | 실행 상태 (RUNNING, FETCH 등) |
+| `sess_id` | 세션 ID |
+| `stmt_id` | Statement ID |
+| `state` | Statement 상태 |
+| `record_size` | 결과 레코드 크기 |
+| `query` | SQL 텍스트 |
 
 **특정 세션 강제 종료**
 
@@ -177,14 +179,24 @@ EXPLAIN SELECT * FROM sensor_log WHERE sensor_id = 'PUMP_01';
 **캐시 관련 조정**
 
 ```sql
--- MINMAX 캐시 크기 확인 (컬럼별 캐시 사용량)
-SELECT * FROM v$column_index_cache;
+-- 전역 MINMAX 기본값 확인
+SELECT name, value
+FROM v$property
+WHERE name = 'DISK_COLUMNAR_TABLE_COLUMN_MINMAX_CACHE_SIZE';
+
+-- LOG 테이블 컬럼별 MINMAX 설정 확인
+SELECT name, minmax_cache_size
+FROM m$sys_columns
+WHERE table_id = (
+  SELECT id FROM m$sys_tables WHERE name = 'SENSOR_LOG'
+)
+ORDER BY id;
 ```
 
-`machbase.conf`에서 MINMAX 캐시 크기를 늘리면 시간 범위 스캔이 빨라집니다.
+`machbase.conf`에서 LOG 테이블 `_ARRIVAL_TIME`의 기본 MINMAX 캐시 크기를 늘리면 시간 범위 스캔의 파티션 프루닝 효율을 높일 수 있습니다.
 
 ```
-DISK_COLUMNAR_TABLE_COLUMN_MINMAX_CACHE_SIZE = 200*1024*1024  # 200MB
+DISK_COLUMNAR_TABLE_COLUMN_MINMAX_CACHE_SIZE = 209715200  # 200MB
 ```
 
 **프로퍼티 조정**
@@ -194,7 +206,7 @@ DISK_COLUMNAR_TABLE_COLUMN_MINMAX_CACHE_SIZE = 200*1024*1024  # 200MB
 QUERY_PARALLEL_FACTOR = 4
 
 # 입력 버퍼 최대 메모리 (물리 메모리의 50~80%)
-DISK_COLUMNAR_TABLESPACE_MEMORY_MAX_SIZE = 16*1024*1024*1024
+DISK_COLUMNAR_TABLESPACE_MEMORY_MAX_SIZE = 17179869184
 ```
 
 ## 5단계: 모델 재설계 (최후 수단)

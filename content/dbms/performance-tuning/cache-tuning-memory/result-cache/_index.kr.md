@@ -30,7 +30,7 @@ Result Cache는 동일한 SELECT 쿼리가 반복 실행될 때 이전에 계산
 |--------|------|------|
 | [`RS_CACHE_ENABLE`](rs-cache-enable/) | 1 | Result Cache 활성화 여부 |
 | [`RS_CACHE_TIME_BOUND_MSEC`](rs-cache-time-bound-msec/) | 1000 ms | 이 시간보다 빠른 쿼리는 캐시하지 않음 |
-| [`RS_CACHE_MAX_RECORD_PER_QUERY`](rs-cache-max-record-per-query/) | 10000 | 결과 레코드 수 상한 (초과 시 캐시 안 함) |
+| [`RS_CACHE_MAX_RECORD_PER_QUERY`](rs-cache-max-record-per-query/) | 50000 | 결과 레코드 수 상한 (초과 시 캐시 안 함) |
 | `RS_CACHE_MAX_MEMORY_PER_QUERY` | 16 MB | 쿼리당 최대 캐시 메모리 |
 | `RS_CACHE_MAX_MEMORY_SIZE` | 512 MB | 전체 Result Cache 최대 메모리 |
 | `RS_CACHE_APPROXIMATE_RESULT_ENABLE` | 0 | 근사 결과 허용 여부 (1이면 더 빠르지만 부정확할 수 있음) |

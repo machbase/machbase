@@ -50,20 +50,20 @@ Min-Max Cache는 컬럼의 파티션별 최솟값·최댓값 정보를 메모리
 
 | 항목 | 값 |
 |-----|---|
-| 기본값 | 약 10 KB |
+| 기본값 | 104857600 bytes (100 MB) |
 | 런타임 변경 | 불가 (서버 재시작 필요) |
 
-**파티션 수가 많을수록 Min-Max Cache에 필요한 메모리가 증가**합니다. 파티션이 수천 개 이상인 대규모 TAG 테이블에서는 기본값이 부족할 수 있습니다.
+이 프로퍼티는 LOG 테이블의 `_ARRIVAL_TIME` 숨김 컬럼에 적용되는 기본 Min-Max Cache 크기입니다. 일반 사용자 컬럼의 `MINMAX_CACHE_SIZE` 기본값은 0이며, 필요한 LOG 컬럼에는 테이블 생성 시 `PROPERTY(MINMAX_CACHE_SIZE = ...)`를 지정하거나 `ALTER TABLE ... MODIFY COLUMN ... SET MINMAX_CACHE_SIZE`로 변경합니다.
 
 | 환경 | 권장 MINMAX_CACHE_SIZE |
 |-----|----------------------|
-| 소규모 (파티션 수백 개 이하) | 기본값 유지 |
-| 중규모 (파티션 수천 개) | 100 KB |
-| 대규모 TAG 테이블 (파티션 수만 개) | 1 MB 이상 |
+| `_ARRIVAL_TIME` 시간 범위 조회 위주 | 기본값 100 MB 유지 |
+| LOG 일반 컬럼 범위 조회 | 컬럼별 100 KB 이상부터 검토 |
+| 파티션 수가 많고 특정 컬럼 범위 조회가 잦음 | 컬럼별 1 MB 이상 검토 |
 
 ```
 # machbase.conf (서버 재시작 필요)
-DISK_COLUMNAR_TABLE_COLUMN_MINMAX_CACHE_SIZE = 1048576
+DISK_COLUMNAR_TABLE_COLUMN_MINMAX_CACHE_SIZE = 104857600
 ```
 
 ## PROCESS_MAX_SIZE로 프로세스 메모리 상한 설정

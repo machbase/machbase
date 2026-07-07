@@ -63,10 +63,10 @@ Standard Edition에서는 CPU 코어 수를 기준으로 합니다.
 
 ```sql
 -- 현재 실행 중인 Append 관련 문장 확인
-SELECT user_id, query, state, elapsed_time
+SELECT sess_id, id AS stmt_id, state, record_size, query
   FROM v$stmt
  WHERE query LIKE '%APPEND%'
-   AND state != 'IDLE';
+ ORDER BY sess_id, id;
 ```
 
 **Append 병목 징후:**

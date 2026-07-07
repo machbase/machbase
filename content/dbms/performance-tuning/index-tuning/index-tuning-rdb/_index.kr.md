@@ -1,19 +1,17 @@
 ---
 type: docs
-title: 'RDB 인덱스 튜닝 (TODO(verify))'
+title: 'RDB 인덱스 튜닝'
 weight: 40
 ---
 
-> **TODO(verify)**: 이 페이지의 내용은 Machbase Standard Edition의 RDB 테이블 인덱스 동작에 대한 현재 파악된 내용을 기반으로 작성되었습니다. 일부 세부 동작은 버전에 따라 다를 수 있으며, 공식 소스로 검증이 필요합니다.
-
-RDB 테이블은 Machbase Standard Edition에서 제공하는 관계형 데이터 테이블입니다. 일반적인 RDBMS와 유사하게 B-Tree 기반 인덱스를 사용합니다.
+RDB 테이블은 Machbase Standard Edition에서 제공하는 관계형 데이터 테이블입니다. `CREATE RDB TABLE`로 생성하며, PRIMARY KEY와 일반 컬럼 인덱스를 조회 패턴에 맞게 설계합니다.
 
 ## PK 자동 B-Tree 인덱스
 
-RDB 테이블을 생성하면 PRIMARY KEY 컬럼에 B-Tree 인덱스가 자동으로 생성됩니다.
+RDB 테이블에서 PRIMARY KEY를 선언하면 해당 컬럼을 기준으로 키 조회를 수행할 수 있습니다. RDB 테이블은 일반 `CREATE TABLE`이 아니라 `CREATE RDB TABLE`로 생성해야 합니다.
 
 ```sql
-CREATE TABLE product (
+CREATE RDB TABLE product (
     product_id   INTEGER PRIMARY KEY,  -- B-Tree 인덱스 자동 생성
     product_name VARCHAR(128),
     category     VARCHAR(64),
@@ -31,13 +29,20 @@ SELECT * FROM product
 WHERE product_id BETWEEN 1000 AND 2000;
 ```
 
-## 추가 인덱스 생성 (TODO(verify))
+## 추가 인덱스 생성
 
-RDB 테이블의 일반 컬럼에 대한 추가 인덱스 생성은 현재 제한적입니다. 지원 여부와 지원하는 인덱스 유형은 Machbase 버전 및 에디션에 따라 다를 수 있으므로, 실제 운영 환경 적용 전에 공식 문서 또는 지원팀을 통해 확인하시기 바랍니다.
+RDB 테이블의 일반 컬럼에는 `CREATE INDEX`로 추가 인덱스를 만들 수 있습니다. PK가 아닌 컬럼을 반복 조회한다면 해당 컬럼에 인덱스를 생성합니다.
+
+```sql
+CREATE INDEX idx_product_name ON product(product_name);
+CREATE INDEX idx_product_category ON product(category);
+```
+
+추가 인덱스는 조회를 빠르게 하지만, INSERT/UPDATE/DELETE 시 인덱스 갱신 비용을 늘립니다. 실제로 자주 사용하는 조건 컬럼에만 생성합니다.
 
 ## PK 설계에 조회 패턴 반영
 
-추가 인덱스 생성이 제한적인 환경에서는 **PK 설계 단계에서 주요 조회 패턴을 반영**하는 것이 가장 효과적인 튜닝 전략입니다.
+PK와 추가 인덱스 설계 단계에서 주요 조회 패턴을 반영하는 것이 가장 효과적인 튜닝 전략입니다.
 
 ### 단일 컬럼 PK
 
@@ -45,35 +50,32 @@ RDB 테이블의 일반 컬럼에 대한 추가 인덱스 생성은 현재 제�
 
 ```sql
 -- product_id로 주로 조회하는 경우
-CREATE TABLE product (
+CREATE RDB TABLE product (
     product_id INTEGER PRIMARY KEY,
     product_name VARCHAR(128),
     price DOUBLE
 );
 ```
 
-### 복합 PK (Composite Primary Key)
+### 여러 조회 조건이 있는 경우
 
-여러 컬럼의 조합으로 조회하는 경우 복합 PK를 활용합니다. B-Tree 인덱스는 선두 컬럼부터 순서대로 활용됩니다.
+현재 검증한 빌드에서는 RDB 테이블 생성 시 테이블 제약 형태의 복합 PRIMARY KEY 구문을 사용할 수 없습니다. 여러 컬럼 조합으로 자주 조회한다면 단일 PK와 보조 인덱스를 조합합니다.
 
 ```sql
--- category + product_id 조합으로 자주 조회하는 경우
-CREATE TABLE product (
+CREATE RDB TABLE product (
+    product_id INTEGER PRIMARY KEY,
     category   VARCHAR(64),
-    product_id INTEGER,
     name       VARCHAR(128),
-    price      DOUBLE,
-    PRIMARY KEY (category, product_id)  -- 복합 PK
+    price      DOUBLE
 );
-```
 
-```sql
--- PK 선두 컬럼(category) 사용: 인덱스 효과적으로 활용
-SELECT * FROM product WHERE category = 'electronics' AND product_id = 1001;
-SELECT * FROM product WHERE category = 'electronics';
+CREATE INDEX idx_product_category ON product(category);
 
--- PK 선두 컬럼 미포함: 전체 스캔 가능성
+-- PK 조회
 SELECT * FROM product WHERE product_id = 1001;
+
+-- 보조 인덱스 조회
+SELECT * FROM product WHERE category = 'electronics';
 ```
 
 ### WHERE 조건과 PK 설계 원칙
@@ -81,9 +83,9 @@ SELECT * FROM product WHERE product_id = 1001;
 | 조회 패턴 | 권장 PK 설계 |
 |----------|------------|
 | 단일 키로 조회 (`WHERE id = ?`) | 해당 컬럼을 단일 PK |
-| 두 컬럼 조합으로 조회 (`WHERE a = ? AND b = ?`) | (a, b) 복합 PK |
-| 범위 + 등가 혼합 (`WHERE type = ? AND id > ?`) | (type, id) 복합 PK (등가 조건을 선두에) |
-| 선두 컬럼만으로도 조회 | 복합 PK 선두에 해당 컬럼 배치 |
+| 특정 컬럼으로 자주 조회 (`WHERE category = ?`) | 해당 컬럼에 추가 인덱스 생성 |
+| PK와 보조 조건을 함께 조회 (`WHERE id = ? AND status = ?`) | PK로 먼저 레코드를 좁히고 보조 조건을 필터링 |
+| 여러 non-PK 조건이 빈번함 | 필요한 컬럼별 인덱스 생성 여부를 실제 쿼리 빈도와 쓰기 비용으로 판단 |
 
 ## 조회 성능 최적화 패턴
 
@@ -97,20 +99,16 @@ SELECT * FROM product WHERE product_id = 1001;
 SELECT * FROM product WHERE product_name = 'Widget A';
 ```
 
-### 복합 PK에서 선두 컬럼 우선 사용
-
-B-Tree 인덱스는 선두 컬럼부터 순서대로 활용됩니다. 복합 PK `(a, b, c)`가 있을 때:
+### non-PK 컬럼에는 필요한 인덱스 생성
 
 ```sql
--- 인덱스 활용: 선두 컬럼(a) 포함
-SELECT * FROM t WHERE a = 1;
-SELECT * FROM t WHERE a = 1 AND b = 2;
-SELECT * FROM t WHERE a = 1 AND b = 2 AND c = 3;
+-- 반복 조회하는 non-PK 컬럼
+CREATE INDEX idx_product_name ON product(product_name);
 
--- 인덱스 미활용: 선두 컬럼(a) 미포함
-SELECT * FROM t WHERE b = 2;
-SELECT * FROM t WHERE c = 3;
+SELECT * FROM product WHERE product_name = 'Widget A';
 ```
+
+드물게 실행하는 조건까지 모두 인덱스로 만들면 쓰기 비용과 저장 공간이 증가합니다. 운영 쿼리 로그나 애플리케이션 호출 빈도를 기준으로 인덱스 대상을 제한합니다.
 
 ### 결과 집합 크기 제한
 
@@ -129,7 +127,7 @@ GROUP BY category;
 | 항목 | 권장 사항 |
 |------|---------|
 | PK 인덱스 | B-Tree 자동 생성, 별도 조치 불필요 |
-| 추가 인덱스 | TODO(verify): 지원 여부 공식 확인 필요 |
-| PK 설계 | 주요 조회 패턴의 컬럼을 PK 또는 복합 PK 선두에 배치 |
-| WHERE 조건 | PK 또는 PK 선두 컬럼 포함 권장 |
-| non-PK 조건 조회 | 데이터 크기를 작게 유지하거나 PK 재설계 검토 |
+| 추가 인덱스 | `CREATE INDEX index_name ON table(column)` 사용 |
+| PK 설계 | 단일 키 조회가 많은 컬럼을 PRIMARY KEY로 배치 |
+| WHERE 조건 | PK 또는 인덱스 컬럼 포함 권장 |
+| non-PK 조건 조회 | 반복 조회 컬럼에 추가 인덱스 생성 검토 |

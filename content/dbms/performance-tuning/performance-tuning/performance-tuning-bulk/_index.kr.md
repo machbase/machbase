@@ -20,41 +20,42 @@ weight: 10
 
 ```java
 // JDBC - Append API로 대량 삽입
-MachConnection conn = (MachConnection) DriverManager.getConnection(url, props);
-MachAppendWriter appender = conn.getAppendWriter("sensor_log",
-    MachAppendWriter.RETURN_SUCC);
+Connection conn = DriverManager.getConnection(url, props);
+MachStatement stmt = (MachStatement) conn.createStatement();
+ResultSet rs = stmt.executeAppendOpen("sensor_log", 100);
+ResultSetMetaData rsmd = rs.getMetaData();
 
 int batchSize = 10000;
 for (int i = 0; i < totalRows; i++) {
-    Object[] row = new Object[]{
-        "sensor-" + (i % 100),                    // name
-        System.currentTimeMillis() * 1_000_000L,   // time (ns)
-        Math.random() * 100                         // value
-    };
-    appender.append(row);
+    ArrayList<Object> row = new ArrayList<>();
+    row.add("sensor-" + (i % 100));                 // name
+    row.add(System.currentTimeMillis() * 1_000_000L); // time (ns)
+    row.add(Math.random() * 100);                   // value
+    stmt.executeAppendData(rsmd, row);
 
     if ((i + 1) % batchSize == 0) {
-        appender.flush();  // 명시적 flush
+        stmt.executeAppendFlush();
     }
 }
-appender.close();
+stmt.executeAppendClose();
 ```
 
 ```python
 # Python - Append API
-conn = machbaseapi.connect(host, port, user, password)
-cursor = conn.cursor()
+from machbaseAPI import connect
+
+conn = connect(host=host, port=port, user=user, password=password)
 
 batch = []
 batch_size = 5000
 for i, row in enumerate(data_source):
     batch.append(row)
     if len(batch) >= batch_size:
-        cursor.append("sensor_log", batch)
+        conn.append("sensor_log", batch)
         batch.clear()
 
 if batch:
-    cursor.append("sensor_log", batch)  # 나머지 처리
+    conn.append("sensor_log", batch)  # 나머지 처리
 ```
 
 ## 병렬 Append
@@ -65,9 +66,8 @@ if batch:
 import threading
 
 def append_worker(thread_id, data_chunk):
-    conn = machbaseapi.connect(host, port, user, password)
-    cursor = conn.cursor()
-    cursor.append("sensor_log", data_chunk)
+    conn = connect(host=host, port=port, user=user, password=password)
+    conn.append("sensor_log", data_chunk)
     conn.close()
 
 # 4개 스레드로 병렬 Append
@@ -100,29 +100,36 @@ for t in threads:
 
 ```bash
 # CSV 파일을 sensor_log 테이블에 적재
-machloader -i -t sensor_log -f /data/sensor_log_20240101.csv -d ,
+machloader -i -t sensor_log -d /data/sensor_log_20240101.csv
 
 # 헤더 행이 있는 CSV
-machloader -i -t sensor_log -f /data/sensor_with_header.csv -d , -H
+machloader -i -t sensor_log -d /data/sensor_with_header.csv -H
 
 # 인코딩 지정
-machloader -i -t sensor_log -f /data/utf8_data.csv -d , -e utf8
+machloader -i -t sensor_log -d /data/utf8_data.csv -E UTF-8
+
+# 구분자 지정
+machloader -i -t sensor_log -d /data/sensor_pipe.txt -D '|'
 ```
 
 machloader는 내부적으로 Append API를 사용하므로 INSERT보다 훨씬 빠릅니다.
 
 ## `_ARRIVAL_TIME` 역순 입력 주의
 
-LOG 테이블에 INSERT 또는 Append 시 데이터는 반드시 **시간 순서대로** 입력해야 합니다.
+LOG 테이블에 `_ARRIVAL_TIME`을 명시해 과거 데이터를 입력할 때는 시간 역전이 과도하게 발생하지 않도록 입력 순서를 관리합니다.
 
 ```sql
 -- 잘못된 패턴: 역순 삽입
-INSERT INTO device_log (ts, value) VALUES ('2024-01-02 00:00:00', 10);
-INSERT INTO device_log (ts, value) VALUES ('2024-01-01 00:00:00', 20); -- 역순! 오류 또는 성능 저하
+INSERT INTO device_log (_arrival_time, value)
+VALUES (TO_DATE('2024-01-02 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), 10);
+INSERT INTO device_log (_arrival_time, value)
+VALUES (TO_DATE('2024-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), 20); -- 역순
 
 -- 올바른 패턴: 시간 순서대로 삽입
-INSERT INTO device_log (ts, value) VALUES ('2024-01-01 00:00:00', 10);
-INSERT INTO device_log (ts, value) VALUES ('2024-01-02 00:00:00', 20); -- 정순
+INSERT INTO device_log (_arrival_time, value)
+VALUES (TO_DATE('2024-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), 10);
+INSERT INTO device_log (_arrival_time, value)
+VALUES (TO_DATE('2024-01-02 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), 20); -- 정순
 ```
 
 과거 데이터를 소급 입력해야 하는 경우에는 machloader를 이용한 전용 적재 프로세스를 분리 운영하는 것을 권장합니다.

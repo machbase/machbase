@@ -74,9 +74,9 @@ WHERE sensor_type = 'temperature'
 
 > METADATA 컬럼에 인덱스를 생성해도 시계열 데이터 삽입 성능에는 거의 영향을 미치지 않습니다. METADATA는 태그 속성 정보로, 시계열 데이터 Append와 독립적인 경로로 처리됩니다.
 
-## Min-Max Cache 조정
+## Min-Max Cache
 
-Machbase는 각 파티션의 특정 컬럼에 대해 최솟값·최댓값을 메모리에 유지하는 **Min-Max Cache**를 제공합니다. 이 캐시 덕분에 검색 대상 값이 파티션의 범위를 벗어나면 해당 파티션 전체를 건너뛸 수 있습니다.
+Machbase는 LOG 테이블의 `_ARRIVAL_TIME`과 LOG 일반 컬럼에 대해 Min-Max Cache를 제공합니다. TAG 테이블의 값 컬럼에는 이 페이지의 검증 대상 빌드에서 `MINMAX_CACHE_SIZE`를 직접 지정할 수 없습니다. TAG 조회 성능은 태그명, 시간 범위, METADATA 인덱스, ROLLUP 설계로 조정합니다.
 
 ```
 [파티션 1] MIN=10.0, MAX=50.0 → 검색값 85.0 → 건너뜀
@@ -84,36 +84,23 @@ Machbase는 각 파티션의 특정 컬럼에 대해 최솟값·최댓값을 메
 [파티션 3] MIN=80.0, MAX=95.0 → 검색값 85.0 → 스캔 ✓
 ```
 
-### MINMAX_CACHE_SIZE 설정
+### TAG 값 범위 조회 시 조정 방향
 
-`value` 컬럼처럼 범위 조회가 잦은 컬럼은 캐시 크기를 늘려 더 많은 파티션 정보를 메모리에 유지합니다.
-
-```sql
--- 테이블 생성 시 캐시 크기 지정 (단위: bytes)
-CREATE TAG TABLE sensor_tag (
-    name  VARCHAR(64) PRIMARY KEY,
-    time  DATETIME BASETIME,
-    value DOUBLE SUMMARIZED PROPERTY(MINMAX_CACHE_SIZE = 102400)  -- 100KB
-);
-```
+`value > 80.0` 같은 값 조건만으로 넓은 기간을 조회하면 많은 데이터 파티션을 확인해야 합니다. TAG 테이블에서는 먼저 `name`과 `time` 범위를 최대한 좁히고, 반복 집계 쿼리는 ROLLUP을 사용합니다.
 
 ```sql
--- 기존 테이블 컬럼의 캐시 크기 변경
-ALTER TABLE sensor_tag MODIFY COLUMN value SET MINMAX_CACHE_SIZE = 102400;
+SELECT name, time, value
+FROM   sensor_tag
+WHERE  name = 'TEMP-01'
+  AND  time BETWEEN '2026-07-07 10:00:00' AND '2026-07-07 11:00:00'
+  AND  value > 80.0;
 ```
 
-| 항목 | 기본값 |
-|------|--------|
-| 일반 컬럼 MINMAX_CACHE_SIZE | 10KB (10240 bytes) |
-| `_ARRIVAL_TIME` 숨김 컬럼 | 100MB (자동 적용) |
-| VARCHAR 컬럼 | 0 고정 (캐시 미지원) |
-
-- 파티션 수가 증가할수록 설정된 크기만큼 메모리 사용량이 점진적으로 늘어납니다.
-- 조회 빈도가 낮은 컬럼은 기본값(10KB)을 유지하거나 0으로 설정해 메모리를 절약합니다.
+LOG 테이블 컬럼의 `MINMAX_CACHE_SIZE` 조정은 [메모리 설정 튜닝](../../cache-tuning-memory/tuning-memory-configuration/)을 참조하세요.
 
 ## 시계열 데이터 컬럼에 별도 인덱스는 불필요
 
-TAG 테이블의 시계열 데이터 컬럼(`value`, `temperature` 등)에 `CREATE INDEX`로 추가 인덱스를 생성하는 것은 지원되지 않으며, 이미 자동 파티션 인덱스와 Min-Max Cache가 값 범위 조회를 효율적으로 처리합니다.
+TAG 테이블의 시계열 데이터 컬럼(`value`, `temperature` 등)에 `CREATE INDEX`로 추가 인덱스를 생성하는 것은 지원되지 않습니다. 값 조건 조회는 태그명과 시간 범위로 스캔 범위를 먼저 줄이고, 반복 집계는 ROLLUP으로 처리합니다.
 
 **피해야 할 패턴**:
 
@@ -128,5 +115,5 @@ CREATE INDEX idx_value ON sensor_tag (value);  -- 지원되지 않음
 |------------|---------|
 | 자동 파티션 인덱스 | 별도 생성 불필요, 태그명 + 시간 범위를 항상 WHERE에 포함 |
 | METADATA 필터링 | 자주 사용하는 METADATA 컬럼에 LSM 인덱스 생성 |
-| Min-Max Cache | 값 범위 조회가 잦은 컬럼의 MINMAX_CACHE_SIZE 증가 |
+| 값 범위 조회 | `name`과 `time` 범위를 먼저 좁히고, 반복 집계는 ROLLUP 사용 |
 | 시계열 컬럼 인덱스 | 추가 인덱스 생성 불필요 (자동 구조가 처리) |
