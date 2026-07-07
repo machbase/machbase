@@ -30,10 +30,10 @@ CLI/ODBC의 Append API를 권장합니다. C/C++로 구현된 수집 에이전�
 
 ### 고속 입력 (초당 수천~수만 건)
 
-JDBC 또는 Python SDK의 Append API를 활용합니다. Java 기반 Spring Boot 수집 서비스, Python 기반 데이터 파이프라인에 적합합니다.
+JDBC, Python SDK, .NET, Go native, Node.js 드라이버의 Append API를 활용합니다. Java 기반 Spring Boot 수집 서비스, Python 기반 데이터 파이프라인, Go/Node.js 기반 수집 에이전트에 적합합니다.
 
 ```
-IoT 게이트웨이 → Java/Python 수집 서비스 (Append API) → Machbase
+IoT 게이트웨이 → Java/Python/Go/Node.js 수집 서비스 (Append API) → Machbase
 ```
 
 ### 일반 트랜잭션 처리 (초당 수백~수천 건)
@@ -52,8 +52,8 @@ REST API도 충분합니다. 별도 드라이버 설치 없이 HTTP 요청으로
 | Windows 산업용 PC | ODBC 또는 .NET | Windows 생태계 호환 |
 | Kubernetes / 컨테이너 | JDBC, Python, Go | 언어별 드라이버 경량 배포 |
 | 방화벽으로 5656 차단 | REST API (HTTP 5657) | HTTP만 허용되는 환경 |
-| Grafana 연동 | REST API 또는 JDBC (Grafana 플러그인) | 시각화 도구 직접 연결 |
-| Kafka 파이프라인 | Kafka Connect + JDBC | 스트림 수집 |
+| Grafana 연동 | Grafana 플러그인(MWA 5001 경유) | 시각화 도구 직접 연결 |
+| 로그 수집 파이프라인 | Fluentd 플러그인 | 이벤트·로그 수집 |
 
 ## 결정 트리
 
@@ -87,19 +87,18 @@ Node.js 또는 HTTP 환경인가?
 
 | 기능 | CLI/ODBC | JDBC | Python | .NET | Go | Node.js | REST API |
 |------|----------|------|--------|------|----|---------|----------|
-| Append API | O | O | O | O | O | - | - |
+| Append API | O | O | O | O | Go native만 O | O | O |
 | Prepared statement | O | O | O | O | O | O | - |
 | Connection pool | 수동 구현 | O (HikariCP 등) | O | O | O | O | - |
-| AUTH KEY 인증 | O | O | O | O | - | - | O |
-| SSL/TLS | O | O | O | O | O | O | O |
+| AUTH KEY 인증 | O | O | - | - | - | - | 별도 방식 |
 | Pandas 통합 | - | - | O | - | - | - | - |
 | ADO.NET 호환 | - | - | - | O | - | - | - |
 
-> `-` 는 미지원 또는 해당 없음을 의미합니다. 각 드라이버의 최신 지원 현황은 14장 레퍼런스를 참조하세요.
+> `-` 는 미지원 또는 해당 없음을 의미합니다. REST API 인증은 DB 포트의 AUTH KEY challenge가 아니라 `HTTP_AUTH` 기반 Basic Authentication을 사용합니다. 각 드라이버의 최신 지원 현황은 14장 레퍼런스를 참조하세요.
 
 ## Append API 지원 여부가 중요한 이유
 
-Machbase는 시계열 데이터베이스이므로 대부분의 운영 환경에서 **초당 수천 건 이상의 쓰기**가 발생합니다. Append API는 트랜잭션 없이 버퍼에 데이터를 누적한 뒤 한 번에 flush하는 방식으로, 일반 INSERT 대비 수십 배의 쓰기 처리량을 제공합니다.
+Machbase는 시계열 데이터베이스이므로 대부분의 운영 환경에서 **초당 수천 건 이상의 쓰기**가 발생합니다. Append API는 트랜잭션 없이 전용 세션이나 요청 형식으로 데이터를 입력하므로, 일반 INSERT 반복 실행 대비 높은 쓰기 처리량을 제공합니다.
 
 대용량 수집이 요구사항에 포함된다면 Append API를 지원하는 드라이버를 반드시 선택하세요.
 

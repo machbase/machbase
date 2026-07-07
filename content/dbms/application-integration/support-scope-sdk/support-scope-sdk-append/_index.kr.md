@@ -11,9 +11,9 @@ Machbase Neo의 **Append API**는 대량 데이터를 고속으로 삽입하기 
 | SDK | Append 지원 | API / 메서드 | 비고 |
 |-----|:-----------:|--------------|------|
 | **ODBC / CLI** | O | `SQLAppendOpen` / `SQLAppendData` / `SQLAppendClose` | 전체 지원, 최고 성능 |
-| **JDBC** | O | `MachAppendWriter` | `conn.createAppendWriter(tableName)` |
+| **JDBC** | O | `MachStatement` Append 메서드 | `executeAppendOpen` / `executeAppendData` / `executeAppendFlush` |
 | **Python** | O | `conn.append(table, rows)` | `machbaseAPI` 패키지 |
-| **.NET** | O | `MachAppendWriter` | `conn.CreateAppendWriter(tableName)` |
+| **.NET** | O | `MachCommand` + `MachAppendWriter` | `MachCommand.AppendOpen(tableName)` |
 | **Go (native)** | O | `AppendWriter` | `conn.Appender(ctx, tableName)` |
 | **Go (database/sql)** | X | 없음 | Append는 `machgo` 네이티브 클라이언트 사용 |
 | **Node.js** | O | `appendBatch` / `appendOpen` | LOG/TAG Append 지원 |
@@ -48,27 +48,32 @@ SQLAppendClose(stmt, NULL, NULL);
 SQLFreeStmt(stmt, SQL_DROP);
 ```
 
-## JDBC: MachAppendWriter 사용 예시
+## JDBC: MachStatement Append 사용 예시
 
 ```java
-import com.machbase.jdbc.MachConnection;
-import com.machbase.jdbc.MachAppendWriter;
+import java.sql.*;
+import java.util.*;
+import com.machbase.jdbc.MachStatement;
 
-MachConnection conn = (MachConnection) DriverManager.getConnection(
+Connection conn = DriverManager.getConnection(
     "jdbc:machbase://127.0.0.1:5656/machbasedb", "SYS", "MANAGER"
 );
+MachStatement stmt = (MachStatement) conn.createStatement();
 
-// AppendWriter 생성
-MachAppendWriter writer = conn.createAppendWriter("sensor_data");
-writer.open();
+// Append 세션 시작
+ResultSet rs = stmt.executeAppendOpen("sensor_data", 100);
+ResultSetMetaData rsmd = rs.getMetaData();
 
-// 행 추가 (컬럼 순서대로 Object 배열)
-Object[] row = { "sensor01", new java.sql.Timestamp(System.currentTimeMillis()), 25.3 };
-writer.append(row);
+// 행 추가 (컬럼 순서대로 값 추가)
+ArrayList<Object> row = new ArrayList<>();
+row.add("sensor01");
+row.add(System.currentTimeMillis() * 1_000_000L);
+row.add(25.3);
+stmt.executeAppendData(rsmd, row);
 
-// 버퍼 플러시 및 종료
-writer.flush();
-writer.close();
+// pending 응답 확인 및 종료
+stmt.executeAppendFlush();
+stmt.executeAppendClose();
 conn.close();
 ```
 
@@ -94,23 +99,23 @@ conn.close()
 ## .NET: MachAppendWriter 사용 예시
 
 ```csharp
+using System.Collections.Generic;
 using Mach.Data.MachClient;
 
 string connString = "SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;PWD=MANAGER;PROTOCOL=4.0-full";
 using var conn = new MachConnection(connString);
 conn.Open();
 
-// AppendWriter 생성
-using var writer = conn.CreateAppendWriter("sensor_data");
-writer.Open();
+using var appendCmd = new MachCommand(conn);
+var writer = appendCmd.AppendOpen("sensor_data");
 
 // 행 추가
-var row = new object[] { "sensor01", DateTime.UtcNow, 25.3 };
-writer.Append(row);
+var row = new List<object> { "sensor01", DateTime.UtcNow, 25.3 };
+appendCmd.AppendData(writer, row);
 
 // 완료
-writer.Flush();
-writer.Close();
+appendCmd.AppendFlush(writer);
+appendCmd.AppendClose(writer);
 ```
 
 ## Go (native): Appender 사용 예시

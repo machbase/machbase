@@ -12,20 +12,20 @@ Machbase에 데이터를 입력하는 방법은 크게 세 가지입니다. 각 
 |------|----------|-----------|-------------|
 | **단건 INSERT** | 지원 (RDB) | 행 단위 즉시 처리 | 건별 처리, 낮은 빈도 |
 | **Batch INSERT** | 지원 (RDB) | 여러 행을 한 번에 전송 | 수십~수백 건 묶음 처리 |
-| **Append API** | 미지원 | 버퍼 누적 후 flush | 초당 수천~수십만 건 |
+| **Append API** | 미지원 | 전용 Append 세션/요청으로 고속 전송 | 초당 수천~수십만 건 |
 
 ## Append API
 
 ### 동작 원리
 
-Append API는 행을 즉시 서버로 전송하지 않고 클라이언트 버퍼에 누적합니다. 버퍼가 가득 차거나 명시적으로 `flush`를 호출하면 누적된 데이터를 한 번에 서버로 전송합니다.
+Append API는 일반 SQL `INSERT` 대신 Append 전용 세션이나 요청 형식으로 행 데이터를 전송합니다. 드라이버에 따라 내부 버퍼링, pending 응답 확인, 자동 오류 확인 시점이 다르므로 `flush`와 `close`의 정확한 의미는 각 드라이버 문서를 함께 확인해야 합니다.
 
 ```
 애플리케이션
-  ↓ AppendData() × N 번 호출 (버퍼에 누적)
-클라이언트 버퍼
-  ↓ flush (자동 또는 수동)
-Machbase 서버 (버퍼 전체를 한 번에 저장)
+  ↓ AppendOpen / appendBatch / POST /machbase
+Append 전용 프로토콜 또는 요청
+  ↓ flush / close / 응답 확인
+Machbase 서버
 ```
 
 이 방식은 네트워크 왕복 횟수를 대폭 줄여 일반 INSERT 대비 수십 배의 쓰기 처리량을 제공합니다.
@@ -34,20 +34,20 @@ Machbase 서버 (버퍼 전체를 한 번에 저장)
 
 - **비트랜잭션**: TAG/LOG 테이블에서만 사용합니다. RDB 테이블의 Append는 지원하지 않습니다.
 - **순서 보장 없음**: flush 단위 내에서 행 삽입 순서는 보장되지 않습니다.
-- **자동 flush**: 내부 버퍼가 일정 크기에 도달하면 자동으로 flush됩니다. 드라이버마다 기본 버퍼 크기가 다릅니다.
-- **명시적 flush 권장**: 애플리케이션 종료 전, 또는 일정 주기마다 반드시 명시적으로 flush를 호출하세요.
+- **드라이버별 flush 의미**: 일부 드라이버는 미전송 데이터를 전송하고, 일부 드라이버는 이미 보낸 Append 데이터의 pending 응답을 확인합니다.
+- **명시적 종료 권장**: 애플리케이션 종료 전, 또는 일정 주기마다 드라이버가 제공하는 `flush`/`close` 절차를 호출하세요.
 
 ### SDK별 Append API 지원 현황
 
 | SDK | 지원 여부 | 비고 |
 |-----|-----------|------|
 | CLI/ODBC | O | `SQLAppendOpen`, `SQLAppendData`, `SQLAppendFlush` |
-| JDBC | O | `appendOpen`, `appendData`, `appendFlush` |
+| JDBC | O | `MachStatement.executeAppendOpen`, `executeAppendData`, `executeAppendFlush` |
 | Python SDK | O | `conn.append(table, rows)` |
-| .NET (MachClient) | O | `MachAppendCommand` |
+| .NET (MachClient) | O | `MachCommand.AppendOpen`, `AppendData`, `AppendFlush` |
 | Go 드라이버 | O | `Appender` 인터페이스 |
-| Node.js 드라이버 | - | REST API를 통한 bulk insert로 대체 |
-| REST API | - | 단건 또는 배열 형태의 bulk insert |
+| Node.js 드라이버 | O | `appendBatch`, `appendOpen` |
+| REST API | O | `POST /machbase` |
 
 상세 API는 14장 레퍼런스의 각 드라이버 문서를 참조하세요.
 
@@ -87,23 +87,30 @@ conn.close()
 ### Append API 사용 예 (Java)
 
 ```java
-import com.machbase.jdbc.MachConnection;
-import com.machbase.jdbc.MachAppendWriter;
+import java.sql.*;
+import java.util.*;
+import com.machbase.jdbc.MachStatement;
 
-MachConnection conn = (MachConnection) DriverManager.getConnection(url, "SYS", "MANAGER");
+String url = "jdbc:machbase://127.0.0.1:5656/machbasedb";
+Connection conn = DriverManager.getConnection(url, "SYS", "MANAGER");
+MachStatement stmt = (MachStatement) conn.createStatement();
 
 // Append 세션 열기
-MachAppendWriter writer = conn.appendOpen("tag_table");
+ResultSet rs = stmt.executeAppendOpen("tag_table", 100);
+ResultSetMetaData rsmd = rs.getMetaData();
 
 // 행 단위로 버퍼에 추가
-Object[] row = {"sensor_01", 1720000000000000000L, 23.5};
-writer.append(row);
+ArrayList<Object> row = new ArrayList<>();
+row.add("sensor_01");
+row.add(1720000000000000000L);
+row.add(23.5);
+stmt.executeAppendData(rsmd, row);
 
 // 명시적 flush
-writer.flush();
+stmt.executeAppendFlush();
 
 // Append 세션 닫기 (내부적으로 flush 포함)
-writer.close();
+stmt.executeAppendClose();
 conn.close();
 ```
 

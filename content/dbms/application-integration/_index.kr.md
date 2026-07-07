@@ -17,11 +17,11 @@ Machbase는 다양한 프로그래밍 언어와 프로토콜을 통해 애플리
 | **Go** | Go | 고성능 수집 에이전트, 클라우드 네이티브 마이크로서비스 |
 | **Node.js** | JavaScript/TypeScript | 실시간 웹 대시보드, IoT 게이트웨이 |
 | **REST API** | 언어 독립 | 웹 프론트엔드, 마이크로서비스, HTTP 전용 환경 |
-| **외부 도구** | Grafana, Kafka 등 | 시각화, 스트리밍 파이프라인 연동 |
+| **외부 도구** | Grafana, Fluentd, Tableau | 시각화, 로그 수집, BI 도구 연동 |
 
 ## 하위 섹션
 
-이 장은 두 개의 주요 섹션으로 구성됩니다.
+이 장은 연동 방식 선택, 공통 개념, 드라이버별 가이드, REST API, 외부 도구 연동으로 구성됩니다.
 
 ### 연동 방식 선택
 
@@ -45,6 +45,20 @@ Machbase는 다양한 프로그래밍 언어와 프로토콜을 통해 애플리
 | [트랜잭션 처리](concepts-common/transaction/) | RDB: ACID 완전 지원, TAG/LOG: append-only 비트랜잭션 |
 | [Append API와 Batch INSERT](concepts-common/append-api-batch/) | 고속 비트랜잭션 입력 vs 트랜잭션 기반 배치 INSERT |
 | [오류 처리와 재시도](concepts-common/error-handling-retry/) | 오류 코드, exponential backoff, connection pool 격리 |
+
+### 드라이버별 가이드와 REST API
+
+| 문서 | 내용 |
+|------|------|
+| [드라이버별 가이드](guide-drivers/) | CLI/ODBC, JDBC, Python, .NET, Go, Node.js, R/RODBC 사용 패턴 |
+| [REST API](rest-api/) | `/machbase` SQL 실행과 POST Append, 인증 및 오류 처리 |
+| [SDK별 지원 범위 안내](support-scope-sdk/) | Append, AUTH KEY, Transaction/Prepare/Bind 지원 범위 |
+
+### 외부 도구 연동
+
+| 문서 | 내용 |
+|------|------|
+| [외부 도구](external-tools/) | Grafana 플러그인, Fluentd 플러그인, Tableau JDBC/ODBC 연결 |
 
 ## 각 드라이버의 완전한 API 명세 위치
 

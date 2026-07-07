@@ -32,7 +32,7 @@ weight: 40
 표준 JDBC 4.x 인터페이스를 구현하여 Spring, Hibernate, MyBatis 등 Java 생태계 프레임워크와 호환됩니다.
 
 - HikariCP 등 커넥션 풀링 지원
-- `MachAppendWriter`를 통한 Append API 지원
+- `MachStatement.executeAppendOpen()` 계열 메서드를 통한 Append API 지원
 - AUTH KEY challenge 인증 지원 (Machbase 8.0 이상)
 
 ### Python
@@ -46,7 +46,7 @@ Python DB-API 2.0(PEP 249) 인터페이스를 제공합니다.
 ADO.NET 인터페이스를 구현하여 .NET 애플리케이션에서 표준적으로 사용할 수 있습니다.
 
 - `Mach.Data.MachClient` 네임스페이스
-- `MachAppendWriter`를 통한 Append API 지원
+- `MachCommand.AppendOpen()`과 `MachAppendWriter`를 통한 Append API 지원
 - Entity Framework 연동 가능
 
 ### Go

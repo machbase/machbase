@@ -32,4 +32,4 @@ Machbase는 모든 시간 데이터를 UTC 기준 nanosecond 정수로 저장합
 
 **대용량 입력에는 Append API 사용**
 
-일반 INSERT는 행 단위로 처리되어 대용량 입력에 적합하지 않습니다. Machbase는 버퍼에 데이터를 누적한 뒤 한 번에 전송하는 Append API를 제공합니다. 초당 수천 건 이상의 쓰기가 예상된다면 Append API를 사용하세요.
+일반 INSERT는 행 단위로 처리되어 대용량 입력에 적합하지 않습니다. Machbase는 TAG/LOG 테이블 대량 입력을 위한 Append API를 제공합니다. 초당 수천 건 이상의 쓰기가 예상된다면 Append API를 사용하세요.

@@ -37,14 +37,13 @@ Machbase 문서는 역할에 따라 두 곳으로 나뉩니다.
 
 ## 외부 도구의 문서 위치
 
-Machbase와 연동하는 외부 도구는 별도 섹션에서 다룹니다.
+Machbase와 연동하는 외부 도구는 8장의 외부 도구 섹션에서 다룹니다.
 
 | 도구 | 문서 위치 |
 |------|-----------|
-| Grafana | 14장 레퍼런스 > Grafana 플러그인 |
-| Kafka Connect | 14장 레퍼런스 > Kafka 연동 |
-| Telegraf | 14장 레퍼런스 > Telegraf 플러그인 |
-| MQTT 브로커 연동 | 14장 레퍼런스 > MQTT 연동 |
+| Grafana | 8장 > 외부 도구 > Grafana plugin |
+| Fluentd | 8장 > 외부 도구 > Fluentd plugin |
+| Tableau | 8장 > 외부 도구 > Tableau connector |
 
 > 외부 도구 자체의 상세 사용법은 각 도구의 공식 문서를 참조하세요. Machbase 문서에서는 Machbase와의 연동 설정에만 집중합니다.
 

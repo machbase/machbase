@@ -11,11 +11,11 @@ weight: 30
 | 드라이버 / SDK | 언어 | 연결 방식 | Append 지원 | 특징 |
 |----------------|------|-----------|:-----------:|------|
 | [CLI/ODBC](./cli-odbc/) | C / C++ | 네이티브 라이브러리 | 지원 | 가장 낮은 수준의 직접 연결. 최고 성능의 Append API 제공 |
-| JDBC | Java | TCP/IP | 미지원 | 표준 JDBC 인터페이스. Java 애플리케이션과 통합 용이 |
-| Python | Python | TCP/IP | 지원 | machbasedb 패키지 제공. 데이터 분석 환경에 적합 |
-| Go | Go | TCP/IP | 지원 | database/sql 인터페이스 호환. 고성능 서비스 개발에 적합 |
-| Node.js | JavaScript | TCP/IP | 미지원 | machbase-neo-client 패키지 제공 |
-| RESTful API | 모든 언어 | HTTP | 미지원 | 별도 드라이버 불필요. 간단한 통합에 적합 |
+| JDBC | Java | TCP/IP | 지원 | 표준 JDBC 인터페이스. `MachStatement` Append API 제공 |
+| Python | Python | TCP/IP | 지원 | `machbaseAPI` 패키지 제공. 데이터 분석 환경에 적합 |
+| Go | Go | TCP/IP | 지원 | 네이티브 `machgo` Appender 제공. `database/sql`은 표준 SQL 인터페이스용 |
+| Node.js | JavaScript / TypeScript | TCP/IP | 지원 | `@machbase/ts-client` 패키지 제공 |
+| REST API | 모든 언어 | HTTP | 지원 | `/machbase` POST Append 지원. 별도 드라이버 불필요 |
 
 ## 드라이버 선택 가이드
 
@@ -29,7 +29,7 @@ weight: 30
 
 ### 데이터 분석 및 빠른 개발이 목적인 경우
 
-**Python 패키지** 또는 **RESTful API**를 사용하면 별도의 컴파일 없이 빠르게 프로토타입을 작성하고 분석 결과를 확인할 수 있습니다.
+**Python 패키지** 또는 **REST API**를 사용하면 별도의 컴파일 없이 빠르게 프로토타입을 작성하고 분석 결과를 확인할 수 있습니다.
 
 ## 공통 연결 정보
 
