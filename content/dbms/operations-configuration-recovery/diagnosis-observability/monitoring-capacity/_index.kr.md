@@ -34,8 +34,12 @@ SELECT count(*) AS session_count FROM v$session WHERE closed = 0;
 -- 디스크 사용량 요약
 SELECT used_ratio, ratio_cap FROM v$storage_usage;
 
--- 실행 중인 쿼리 (IDLE 제외)
-SELECT sess_id, state, query FROM v$stmt WHERE state != 'IDLE';
+-- 실행 중인 쿼리
+SELECT sess_id, state, query
+  FROM v$stmt
+ WHERE state LIKE 'Execute in progress%'
+    OR state LIKE 'Fetch in progress%'
+    OR state LIKE 'Append in progress%';
 ```
 
 ## 이 섹션의 구성

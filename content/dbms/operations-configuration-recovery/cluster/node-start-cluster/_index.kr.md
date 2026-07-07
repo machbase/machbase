@@ -79,7 +79,7 @@ machcoordinatoradmin -e    # 실행 여부 확인
 # 1. 노드 종료
 machcoordinatoradmin --shutdown-node=warehouse-a1
 
-# 2. 클러스터 상태 확인 (DISCONNECTED 상태로 전환 확인)
+# 2. 클러스터 상태 확인 (inactive 또는 **unknown** 상태 확인)
 machcoordinatoradmin --cluster-status
 
 # 3. 노드 시작

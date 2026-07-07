@@ -39,7 +39,7 @@ grep -i 'disk full\|errno=28\|No space left' $MACHBASE_HOME/trc/machbase.trc | t
 
 1. 오래된 트레이스 로그 삭제: `find $MACHBASE_HOME/trc/ -name "*.trc.*" -mtime +30 -delete`
 2. 오래된 데이터 삭제: `DELETE FROM <table> BEFORE TO_DATE('...', 'YYYY-MM-DD');`
-3. `DISK_FULL_RATIO` 임시 상향 (실제 공간 확보 병행 필수)
+3. `DISK_FULL_RATIO` 설정 검토 (실제 공간 확보 병행 필수)
 
 ---
 
@@ -113,7 +113,7 @@ SELECT id, user_name, user_ip, login_time
 ### 즉각 조치
 
 1. 불필요한 세션 정리: `ALTER SYSTEM KILL SESSION <id>;`
-2. `MAX_SESSION_COUNT` 값 검토 및 상향 (재시작 필요)
+2. `MAX_SESSION_COUNT` 값 검토 및 상향
 3. 클라이언트 애플리케이션의 커넥션 풀 설정 점검
 
 ---
@@ -132,15 +132,17 @@ SELECT id, user_name, user_ip, login_time
 -- 현재 실행 중인 쿼리 확인
 SELECT id, sess_id, state, query
   FROM v$stmt
- WHERE state != 'IDLE';
+ WHERE state LIKE 'Execute in progress%'
+    OR state LIKE 'Fetch in progress%'
+    OR state LIKE 'Append in progress%';
 
 -- 세션별 누적 실행 시간 확인 (큰 순서)
 SELECT st.sid, s.user_name,
-       st.accum_tick, st.max_tick
+       st.accum_msec, st.max_msec
   FROM v$sestime st
   JOIN v$session s ON st.sid = s.id
  WHERE s.closed = 0
- ORDER BY st.accum_tick DESC
+ ORDER BY st.accum_msec DESC
  LIMIT 10;
 ```
 
@@ -155,7 +157,7 @@ SELECT name, value
 
 1. 오래 실행 중인 쿼리의 세션 강제 종료
 2. 쿼리 실행 계획 확인 (인덱스 누락 여부)
-3. `TRACE_LOG_LEVEL = 7`로 일시적으로 높여 상세 로그 수집
+3. 필요한 모듈 비트를 추가해 `TRACE_LOG_LEVEL`을 일시적으로 높여 상세 로그 수집
 
 ---
 
@@ -183,13 +185,13 @@ SELECT name, state, error_msg
 
 | 단계 | 확인 항목 | 명령/쿼리 |
 |------|---------|---------|
-| 1 | 서버 프로세스 실행 여부 | `machadmin -c` |
+| 1 | 서버 프로세스 실행 여부 | `machadmin -e` |
 | 2 | 서버 로그 오류 확인 | `tail -100 $MACHBASE_HOME/trc/machbase.trc` |
 | 3 | 디스크 사용률 | `df -h` 및 `SELECT used_ratio FROM v$storage_usage` |
 | 4 | 메모리 여유 | `free -h` |
 | 5 | OOM 발생 여부 | `dmesg \| grep -i oom` |
 | 6 | 세션 과다 여부 | `SELECT count(*) FROM v$session WHERE closed = 0` |
-| 7 | 실행 중인 쿼리 | `SELECT * FROM v$stmt WHERE state != 'IDLE'` |
+| 7 | 실행 중인 쿼리 | `SELECT * FROM v$stmt WHERE state LIKE 'Execute in progress%'` |
 | 8 | 라이선스 위반 | `SELECT violate_status FROM v$license_info` |
 
 체크리스트 점검 후 원인이 파악되면 해당 섹션의 조치 지침을 따릅니다. 원인이 불명확하면 `TRACE_LOG_LEVEL`을 높여 상세 로그를 수집한 뒤 Machbase 지원팀에 로그를 제공하십시오.

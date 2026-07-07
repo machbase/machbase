@@ -4,14 +4,14 @@ title: 'Warehouse 상태 복구'
 weight: 70
 ---
 
-Warehouse 노드에 장애가 발생하면 해당 노드의 상태가 `scrapped` 또는 `DISCONNECTED`로 전환됩니다. 장애 유형에 따라 자동 복구 또는 수동 복구를 수행합니다.
+Warehouse 노드에 장애가 발생하면 해당 노드의 상태가 `scrapped`, `inactive`, `**unknown**` 등으로 전환될 수 있습니다. 장애 유형에 따라 자동 복구 또는 수동 복구를 수행합니다.
 
 ## 장애 유형과 복구 방법
 
 | 장애 유형 | 증상 | 복구 방법 |
 |-----------|------|-----------|
-| 일시적 네트워크 단절 | DISCONNECTED | 네트워크 복구 후 자동 재연결 |
-| 프로세스 비정상 종료 | DISCONNECTED | 노드 재시작 |
+| 일시적 네트워크 단절 | `**unknown**` 또는 `inactive` | 네트워크 복구 후 자동 재연결 |
+| 프로세스 비정상 종료 | `**unknown**` 또는 `inactive` | 노드 재시작 |
 | 데이터 손상 | scrapped | Snapshot 복구 또는 강제 복구 |
 | 디스크 장애 | scrapped | 디스크 교체 후 데이터 복구 |
 
@@ -24,7 +24,7 @@ Warehouse 노드에 장애가 발생하면 해당 노드의 상태가 `scrapped`
 machcoordinatoradmin --cluster-status
 ```
 
-`RECOVERING` 상태에서 `normal` 상태로 전환될 때까지 대기합니다.
+`sync-standby`, `sync-active`, `ddl-recovering` 등의 전환 상태가 `normal` 상태로 돌아올 때까지 대기합니다.
 
 ## 수동 복구: 노드 재시작
 

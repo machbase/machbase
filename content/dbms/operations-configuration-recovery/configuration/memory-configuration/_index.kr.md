@@ -16,13 +16,18 @@ Machbase의 메모리 설정은 서버 전체 프로세스 한도, 로그 테이
 |------|----|
 | 기본값 | 8GB (8,589,934,592 bytes) |
 | 최솟값 | 32MB |
-| 재시작 필요 | 예 |
+| 재시작 필요 | 아니오 |
 
 이 한도를 초과하면 서버는 데이터 입력을 중단하거나 오류로 처리하고, 인덱스 빌드 속도를 낮춰 메모리 사용량을 줄이려 시도합니다. 성능이 크게 저하되므로, 메모리 사용 원인을 파악하고 충분한 값으로 설정합니다.
 
 ```ini
 # machbase.conf
 PROCESS_MAX_SIZE = 17179869184   # 16GB
+```
+
+```sql
+-- 런타임 변경
+ALTER SYSTEM SET PROCESS_MAX_SIZE = 17179869184;
 ```
 
 **권장**: 시스템 전체 RAM의 60~70% 수준으로 설정합니다. 운영 체제와 다른 프로세스가 사용하는 메모리를 고려해야 합니다.
@@ -70,10 +75,11 @@ Result Cache 전체가 사용할 수 있는 최대 메모리입니다.
 | 항목 | 값 |
 |------|----|
 | 기본값 | 512MB |
-| 재시작 필요 | 아니오 |
+| 재시작 필요 | 예 |
 
-```sql
-ALTER SYSTEM SET RS_CACHE_MAX_MEMORY_SIZE = 1073741824;  -- 1GB
+```ini
+# machbase.conf
+RS_CACHE_MAX_MEMORY_SIZE = 1073741824   # 1GB
 ```
 
 ### RS_CACHE_MAX_MEMORY_PER_QUERY
@@ -83,10 +89,11 @@ ALTER SYSTEM SET RS_CACHE_MAX_MEMORY_SIZE = 1073741824;  -- 1GB
 | 항목 | 값 |
 |------|----|
 | 기본값 | 16MB |
-| 재시작 필요 | 아니오 |
+| 재시작 필요 | 예 |
 
-```sql
-ALTER SYSTEM SET RS_CACHE_MAX_MEMORY_PER_QUERY = 33554432;  -- 32MB
+```ini
+# machbase.conf
+RS_CACHE_MAX_MEMORY_PER_QUERY = 33554432   # 32MB
 ```
 
 ### RS_CACHE_MAX_RECORD_PER_QUERY
@@ -95,11 +102,12 @@ ALTER SYSTEM SET RS_CACHE_MAX_MEMORY_PER_QUERY = 33554432;  -- 32MB
 
 | 항목 | 값 |
 |------|----|
-| 기본값 | 10,000 |
-| 재시작 필요 | 아니오 |
+| 기본값 | 10,000 (배포 설정 파일에서는 50,000으로 설정될 수 있음) |
+| 재시작 필요 | 예 |
 
-```sql
-ALTER SYSTEM SET RS_CACHE_MAX_RECORD_PER_QUERY = 50000;
+```ini
+# machbase.conf
+RS_CACHE_MAX_RECORD_PER_QUERY = 50000
 ```
 
 ## Volatile·Lookup 테이블 메모리

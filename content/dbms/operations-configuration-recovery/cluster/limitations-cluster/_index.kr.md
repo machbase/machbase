@@ -38,6 +38,16 @@ Cluster Edition에서는 일부 `ALTER TABLE` 명령이 제한됩니다.
 
 ALTER TABLE 실행 전 반드시 테스트 환경에서 검증합니다.
 
+## 백업, 마운트, Stream 제한
+
+Cluster Edition에서는 일부 Standard Edition SQL 기능이 제한되거나 거부될 수 있습니다.
+
+| 기능 | Cluster Edition 참고 |
+|------|----------------------|
+| `BACKUP DATABASE`, `BACKUP TABLE` | 클러스터 구성과 운영 절차에 따라 제한될 수 있음 |
+| `MOUNT DATABASE`, `UMOUNT DATABASE` | 거부될 수 있음 |
+| Stream/CQL 문 | Standard Edition 중심 기능으로, Cluster Edition에서 거부될 수 있음 |
+
 ## 고가용성 제한
 
 ### 단일 Broker 구성
@@ -71,6 +81,8 @@ Primary Coordinator에 장애가 발생하면 클러스터 메타 변경이 불�
 | RDB 테이블 | 미지원 |
 | Custom ROLLUP | 미지원 |
 | ROLLUP_REBUILD | 미지원 |
+| MOUNT/UMOUNT | 제한 또는 거부 가능 |
+| Stream/CQL | 제한 또는 거부 가능 |
 | 일부 ALTER TABLE | 제한 또는 동작 차이 |
 | 단일 Broker | HA 미구성 시 단일 장애점(SPOF) |
 | 단일 Coordinator | Secondary 미구성 시 단일 장애점(SPOF) |

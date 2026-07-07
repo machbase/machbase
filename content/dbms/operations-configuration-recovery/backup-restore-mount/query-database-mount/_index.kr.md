@@ -46,8 +46,10 @@ SELECT * FROM v$storage_mount_databases;
 |------|------|
 | `NAME` | 마운트 이름 |
 | `PATH` | 백업 디렉터리 경로 |
-| `REFCOUNT` | 현재 마운트를 참조 중인 세션 수 |
-| `STATE` | 마운트 상태 |
+| `MOUNTDB` | 마운트 이름 |
+| `PATH` | 백업 디렉터리 경로 |
+| `BACKUP_BEGIN_TIME`, `BACKUP_END_TIME` | 백업 수행 시간 |
+| `DB_BEGIN_TIME`, `DB_END_TIME` | 백업에 포함된 데이터 시간 범위 |
 
 ## 조회 시 제약사항
 
@@ -76,8 +78,12 @@ INSERT INTO sensor_log (name, time, value)
 
 ## 접근 권한
 
-기본적으로 SYS 사용자만 마운트된 데이터를 읽을 수 있습니다. 일반 사용자에게는 `GRANT MOUNT` 권한을 부여해야 합니다.
+`GRANT MOUNT` 권한은 `MOUNT DATABASE`와 `UNMOUNT DATABASE` 실행 권한입니다. 마운트된 테이블을 읽는 일반 사용자에게는 대상 마운트 DB의 테이블에 대한 `SELECT` 권한도 필요합니다.
 
 ```sql
+-- 마운트/언마운트 실행 권한
 GRANT MOUNT ON machbasedb TO analyst_user;
+
+-- 마운트된 테이블 조회 권한
+GRANT SELECT ON backup_db.sys.sensor_log TO analyst_user;
 ```

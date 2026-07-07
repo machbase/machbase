@@ -33,7 +33,8 @@ du -sh $MACHBASE_HOME/dbs/
 ```sql
 -- Machbase SQL로 디스크 사용량 확인
 ALTER SYSTEM CHECK DISK_USAGE;
-SELECT * FROM v$storage;
+SELECT total_space, used_space, used_ratio, ratio_cap
+  FROM v$storage_usage;
 ```
 
 디스크 사용량이 80% 이상이면 즉시 데이터 정리 또는 용량 증설을 검토합니다.
@@ -42,9 +43,12 @@ SELECT * FROM v$storage;
 
 ```sql
 -- 장시간 실행 중인 SQL 세션 확인
-SELECT SESSION_ID, USER_NAME, QUERY, EXECUTE_TIME
-FROM v$stmt
-ORDER BY EXECUTE_TIME DESC;
+SELECT s.id AS session_id, s.user_name, st.id AS stmt_id, st.state, st.query
+  FROM v$session s
+  JOIN v$stmt st ON s.id = st.sess_id
+ WHERE st.state LIKE 'Execute in progress%'
+    OR st.state LIKE 'Fetch in progress%'
+    OR st.state LIKE 'Append in progress%';
 ```
 
 비정상적으로 오래 실행 중인 세션은 원인을 파악하고 필요 시 종료합니다.
@@ -53,10 +57,10 @@ ORDER BY EXECUTE_TIME DESC;
 
 ```bash
 # 전체 Collector 상태 확인
-machcollectoradmin -a list
+machcollectoradmin --list
 
 # ERROR 상태 Collector 로그 확인
-tail -50 $MACHBASE_HOME/trc/collector_<이름>.trc
+tail -50 $MACHBASE_COLLECTOR_HOME/trc/<이름>.trc
 ```
 
 ### Cluster 상태 (Cluster Edition)
@@ -66,7 +70,7 @@ tail -50 $MACHBASE_HOME/trc/collector_<이름>.trc
 machcoordinatoradmin --cluster-status
 ```
 
-비정상 노드(DISCONNECTED, scrapped)가 있으면 즉시 [Warehouse 상태 복구](../cluster/recovery-state-status-warehouse/) 절차를 진행합니다.
+비정상 노드(`**unknown**`, `inactive`, `scrapped`)가 있으면 즉시 [Warehouse 상태 복구](../cluster/recovery-state-status-warehouse/) 절차를 진행합니다.
 
 ---
 
@@ -131,40 +135,32 @@ du -sh $MACHBASE_HOME/dbs/ >> /var/log/machbase_capacity.log
 
 ```sql
 -- 테이블별 레코드 수 집계
-SELECT TABLE_NAME, ROW_COUNT
-FROM v$table_stat
-ORDER BY ROW_COUNT DESC;
+SELECT mt.name AS table_name,
+       st.storage_usage
+  FROM v$storage_tables st
+  JOIN m$sys_tables mt ON st.id = mt.id
+ ORDER BY st.storage_usage DESC;
 ```
 
 ### 인덱스 점검
 
 ```sql
 -- 전체 인덱스 목록 확인
-SHOW INDEX;
-
--- 인덱스 상태 확인
-SELECT * FROM v$index_stat;
+SHOW INDEXES;
 ```
 
 사용되지 않거나 중복된 인덱스는 제거하여 쓰기 성능을 개선합니다.
 
-### 보안 감사 로그 검토
+### 권한과 접속 정책 검토
 
 ```sql
--- 최근 1개월 로그인 실패 이력
-SELECT * FROM v$sys_audit_log
-WHERE EVENT_TYPE = 'LOGIN_FAIL'
-  AND EVENTTIME >= SYSDATE - INTERVAL '30' DAY;
+-- 사용자 목록 확인
+SELECT user_id, name, valid_before
+  FROM m$sys_users
+ ORDER BY user_id;
 ```
 
-비정상적인 접속 시도 패턴이 있으면 보안 정책을 강화합니다.
-
-### 통계 업데이트
-
-```sql
--- 통계 정보 갱신 (쿼리 최적화 성능 향상)
-ALTER SYSTEM REFRESH STATISTICS;
-```
+불필요한 계정이나 만료 정책이 없는 계정이 있으면 보안 정책을 강화합니다.
 
 ---
 
@@ -177,7 +173,7 @@ ALTER SYSTEM REFRESH STATISTICS;
 | 서버 응답 없음 | `machadmin -e` | 재시작(`machadmin -u`) 또는 강제 종료 후 재시작 |
 | 디스크 풀 | `df -h` | 오래된 데이터·로그 정리, 보관 데이터 외부 이동 |
 | 메모리 부족 | `free -h` | 캐시 크기 조정, 장기 실행 세션 종료 |
-| 수집 중단 | `machcollectoradmin -a list` / Collector 로그 | Collector 재시작 |
+| 수집 중단 | `machcollectoradmin --list` / Collector 로그 | Collector 재시작 |
 | 쿼리 느림 | `EXPLAIN <쿼리>` | 인덱스 추가, ROLLUP 활용, 쿼리 튜닝 |
 | 클러스터 노드 이탈 | `machcoordinatoradmin --cluster-status` | 노드 재시작 또는 [Warehouse 복구](../cluster/recovery-state-status-warehouse/) |
 | 클라이언트 연결 불가 | `machadmin -e` / Broker 상태 | Broker 재시작, 포트·방화벽 확인 |

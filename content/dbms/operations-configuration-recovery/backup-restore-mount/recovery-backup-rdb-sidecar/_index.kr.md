@@ -68,7 +68,7 @@ UNMOUNT DATABASE backup_db;
 | 항목 | 내용 |
 |------|------|
 | 지원 에디션 | Standard Edition 전용 |
-| 백업 방식 | DISK 및 IBFILE 모두 지원 |
+| 백업 방식 | DISK 방식 기준 |
 | sidecar 자동 포함 | BACKUP DATABASE 실행 시 자동 포함 |
 | 복원 | machadmin -r 명령으로 sidecar 포함 복원 |
 | 마운트 조회 | 읽기 전용으로 지원 |

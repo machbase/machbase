@@ -18,7 +18,7 @@ CSV 파일에 포함된 DATETIME 값을 지정한 타임존으로 해석하여 U
 
 ```bash
 # KST(UTC+9) 기준 DATETIME이 담긴 CSV 파일을 로드
-machloader -i -t sensor_data -f data.csv -z +0900
+machloader -i -t sensor_data -d data.csv -z +0900
 ```
 
 위 명령어는 `data.csv`의 DATETIME 컬럼 값을 KST 시각으로 간주하고, UTC로 변환하여 `sensor_data` 테이블에 저장합니다.
@@ -31,7 +31,7 @@ machloader -i -t sensor_data -f data.csv -z +0900
 
 ```bash
 # 테이블 데이터를 KST 기준으로 CSV 파일에 내보내기
-machloader -o -t sensor_data -f output.csv -z +0900
+machloader -o -t sensor_data -d output.csv -z +0900
 ```
 
 내보낸 CSV 파일의 DATETIME 값이 지정된 타임존 기준으로 변환되어 출력됩니다.

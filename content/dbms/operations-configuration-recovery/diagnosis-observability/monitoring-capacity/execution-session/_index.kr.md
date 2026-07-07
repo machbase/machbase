@@ -43,10 +43,12 @@ SELECT count(*) AS active_session_count
 `V$STMT` 가상 테이블에서 현재 서버에서 처리 중인 SQL 문을 조회합니다.
 
 ```sql
--- IDLE 상태가 아닌 쿼리 조회
+-- 실행/Fetch/Append 진행 중인 쿼리 조회
 SELECT id, sess_id, state, query
   FROM v$stmt
- WHERE state != 'IDLE';
+ WHERE state LIKE 'Execute in progress%'
+    OR state LIKE 'Fetch in progress%'
+    OR state LIKE 'Append in progress%';
 ```
 
 ```sql
@@ -59,7 +61,9 @@ SELECT s.id        AS session_id,
        st.query
   FROM v$session s
   JOIN v$stmt    st ON s.id = st.sess_id
- WHERE st.state != 'IDLE'
+ WHERE st.state LIKE 'Execute in progress%'
+    OR st.state LIKE 'Fetch in progress%'
+    OR st.state LIKE 'Append in progress%'
  ORDER BY s.login_time;
 ```
 
@@ -73,8 +77,8 @@ SELECT s.id        AS session_id,
 -- 세션별 누적 실행 시간 확인
 SELECT st.sid, s.user_name, s.user_ip,
        st.id      AS time_unit_id,
-       st.accum_tick,
-       st.max_tick
+       st.accum_msec,
+       st.max_msec
   FROM v$sestime st
   JOIN v$session s ON st.sid = s.id
  WHERE s.closed = 0
@@ -142,8 +146,8 @@ SELECT (SELECT value FROM v$property WHERE name = 'MAX_SESSION_COUNT') AS max_se
 
 ```sql
 -- 현재 세션의 쿼리 타임아웃 설정 (단위: 초)
-SET QUERY_TIMEOUT = 300;
+ALTER SESSION SET QUERY_TIMEOUT = 300;
 
 -- 현재 세션의 유휴 타임아웃 설정 (단위: 초, 0 = 무제한)
-SET IDLE_TIMEOUT = 1800;
+ALTER SESSION SET IDLE_TIMEOUT = 1800;
 ```

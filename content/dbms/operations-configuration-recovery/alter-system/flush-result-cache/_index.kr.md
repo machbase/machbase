@@ -12,7 +12,7 @@ Result Cache(쿼리 결과 캐시)에 저장된 모든 캐시 항목을 초기�
 
 ## Result Cache란
 
-Machbase의 Result Cache는 자주 실행되는 SELECT 쿼리의 결과를 메모리에 저장하여, 동일한 쿼리가 다시 요청될 때 실제 연산 없이 캐시된 결과를 반환하는 기능입니다. Result Cache 사용 여부는 세션 단위(`ALTER SESSION SET RC_CACHE_ENABLE`)로 제어할 수 있습니다.
+Machbase의 Result Cache는 자주 실행되는 SELECT 쿼리의 결과를 메모리에 저장하여, 동일한 쿼리가 다시 요청될 때 실제 연산 없이 캐시된 결과를 반환하는 기능입니다. Result Cache 사용 여부는 세션 단위(`ALTER SESSION SET RS_CACHE_ENABLE`)로 제어할 수 있습니다.
 
 `FLUSH RESULT_CACHE`를 실행하면 모든 세션에 걸쳐 캐시된 결과가 즉시 삭제됩니다.
 
@@ -31,7 +31,7 @@ Machbase의 Result Cache는 자주 실행되는 SELECT 쿼리의 결과를 메�
 ALTER SYSTEM FLUSH RESULT_CACHE;
 
 -- 세션별 Result Cache 제어 (비활성화)
-ALTER SESSION SET RC_CACHE_ENABLE = 0;
+ALTER SESSION SET RS_CACHE_ENABLE = 0;
 
 -- 캐시 상태 확인
 SELECT name, value FROM v$property WHERE name LIKE '%CACHE%';
@@ -41,7 +41,7 @@ SELECT name, value FROM v$property WHERE name LIKE '%CACHE%';
 
 | 속성 | 설명 |
 |---|---|
-| `RC_CACHE_ENABLE` | 세션의 Result Cache 사용 여부 (0=비활성, 1=활성) |
+| `RS_CACHE_ENABLE` | 세션의 Result Cache 사용 여부 (0=비활성, 1=활성) |
 | `RS_CACHE_TIME_BOUND_MSEC` | 캐시 유효 시간 (밀리초) |
 | `RS_CACHE_MAX_MEMORY_PER_QUERY` | 쿼리당 최대 캐시 메모리 |
 | `RS_CACHE_MAX_RECORD_PER_QUERY` | 쿼리당 최대 캐시 레코드 수 |

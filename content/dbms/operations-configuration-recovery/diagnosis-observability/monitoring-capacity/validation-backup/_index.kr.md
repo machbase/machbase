@@ -35,7 +35,7 @@ du -sh /backup/20240115/
 ls -lh /backup/20240115/
 
 # 최소한의 필수 파일 존재 여부
-ls /backup/20240115/meta/ /backup/20240115/data/ 2>/dev/null
+ls /backup/20240115/backup.dat /backup/20240115/meta.dbs-* 2>/dev/null
 ```
 
 ## Mount를 이용한 백업 검증
@@ -62,16 +62,16 @@ SELECT name, path, backup_begin_time, backup_end_time,
 
 ```sql
 -- 마운트된 테이블 조회 (testdb 접두어 사용)
-SELECT count(*) FROM testdb.sensor_log;
+SELECT count(*) FROM testdb.sys.sensor_log;
 
 -- 데이터 범위 확인
 SELECT min(_arrival_time) AS earliest,
        max(_arrival_time) AS latest,
        count(*)           AS total_rows
-  FROM testdb.sensor_log;
+  FROM testdb.sys.sensor_log;
 
 -- 일부 레코드 샘플 확인
-SELECT * FROM testdb.sensor_log LIMIT 10;
+SELECT * FROM testdb.sys.sensor_log LIMIT 10;
 ```
 
 ### 4단계: 마운트 해제
@@ -110,10 +110,12 @@ DB_PASS="manager"
 DB_HOST="127.0.0.1"
 
 # 1. 백업 실행
-machsql -u $DB_USER -p $DB_PASS -s $DB_HOST \
-  -q "BACKUP DATABASE INTO DISK = '${BACKUP_PATH}';" > /tmp/backup.log 2>&1
+cat > /tmp/backup.sql <<SQL
+BACKUP DATABASE INTO DISK = '${BACKUP_PATH}';
+SQL
+machsql -u $DB_USER -p $DB_PASS -s $DB_HOST -f /tmp/backup.sql > /tmp/backup.log 2>&1
 
-if grep -q 'completed' /tmp/backup.log; then
+if [ $? -eq 0 ]; then
     echo "[OK] Backup completed: $BACKUP_PATH"
 else
     echo "[FAIL] Backup failed. Check /tmp/backup.log"
@@ -125,11 +127,13 @@ find $BACKUP_PATH -type f | sort | xargs md5sum > ${BACKUP_PATH}.md5
 echo "[OK] Checksum created: ${BACKUP_PATH}.md5"
 
 # 3. 마운트 검증
-ROW_COUNT=$(machsql -u $DB_USER -p $DB_PASS -s $DB_HOST -q "
+cat > /tmp/verify_backup.sql <<SQL
 MOUNT DATABASE '${BACKUP_PATH}' TO verify_db;
-SELECT count(*) FROM verify_db.sensor_log;
+SELECT count(*) FROM verify_db.sys.sensor_log;
 UNMOUNT DATABASE verify_db;
-" 2>/dev/null | grep -E '^[0-9]+$')
+SQL
+ROW_COUNT=$(machsql -u $DB_USER -p $DB_PASS -s $DB_HOST -f /tmp/verify_backup.sql \
+  2>/dev/null | awk '/^[[:space:]]*[0-9]+[[:space:]]*$/ {print $1; exit}')
 
 if [ -n "$ROW_COUNT" ] && [ "$ROW_COUNT" -gt 0 ]; then
     echo "[OK] Backup verified. Row count: $ROW_COUNT"

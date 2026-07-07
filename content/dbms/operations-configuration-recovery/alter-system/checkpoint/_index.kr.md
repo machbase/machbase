@@ -12,7 +12,7 @@ ALTER SYSTEM CHECKPOINT;
 
 ## 동작 설명
 
-Machbase는 성능을 위해 쓰기 작업을 메모리 버퍼에 먼저 기록하고 주기적으로 디스크에 동기화합니다. 이 주기적인 동기화를 체크포인트(Checkpoint)라고 합니다. 체크포인트 주기는 `CHECKPOINT_INTERVAL_SEC` 파라미터로 제어됩니다.
+Machbase는 성능을 위해 쓰기 작업을 메모리 버퍼에 먼저 기록하고 주기적으로 디스크에 동기화합니다. 이 주기적인 동기화를 체크포인트(Checkpoint)라고 합니다. 체크포인트 주기는 `DISK_COLUMNAR_TABLE_CHECKPOINT_INTERVAL_SEC`와 `DISK_COLUMNAR_INDEX_CHECKPOINT_INTERVAL_SEC` 파라미터로 제어됩니다.
 
 `ALTER SYSTEM CHECKPOINT`를 실행하면 예약된 주기를 기다리지 않고 즉시 체크포인트를 수행합니다. 체크포인트가 완료되면 명령이 반환됩니다.
 

@@ -70,13 +70,15 @@ SELECT id, user_name, user_ip, client_type, login_time
 | QUERY | 쿼리 구문 |
 
 ```sql
--- 실행 중인 쿼리 확인 (IDLE 제외)
+-- 실행 중인 쿼리 확인
 SELECT id, sess_id, state, query
   FROM v$stmt
- WHERE state != 'IDLE';
+ WHERE state LIKE 'Execute in progress%'
+    OR state LIKE 'Fetch in progress%'
+    OR state LIKE 'Append in progress%';
 ```
 
-> **참고**: `V$STMT`에는 `elapsed_time` 컬럼이 없습니다. 장시간 실행 쿼리를 추적하려면 `V$SESTIME`의 `ACCUM_TICK` 값과 결합하여 분석하십시오.
+> **참고**: `V$STMT`에는 `elapsed_time` 컬럼이 없습니다. 장시간 실행 쿼리를 추적하려면 `V$SESTIME`의 `ACCUM_MSEC` 값과 결합하여 분석하십시오.
 
 ---
 

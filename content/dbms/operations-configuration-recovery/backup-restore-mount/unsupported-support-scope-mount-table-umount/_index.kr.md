@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'MOUNT TABLE / UMOUNT TABLE 비공개 또는 미지원 범위 (TODO(verify))'
+title: 'MOUNT TABLE / UMOUNT TABLE 비공개 또는 미지원 범위'
 weight: 120
 ---
 
@@ -8,10 +8,10 @@ weight: 120
 
 ## 테이블 단위 마운트 미지원
 
-Machbase는 테이블 단위의 마운트(`MOUNT TABLE`) 명령을 공개 API로 제공하지 않습니다. 따라서 특정 테이블만 선택적으로 마운트하는 기능은 사용할 수 없습니다.
+Machbase는 테이블 단위의 마운트(`MOUNT TABLE`)를 운영 절차용 공개 API로 제공하지 않습니다. 검증 대상 빌드에서 일부 내부 문법은 성공을 반환할 수 있지만, 활성 테이블을 백업 시점으로 노출하거나 일반적인 테이블 단위 복구 경로로 동작하지 않습니다.
 
-- `MOUNT TABLE table_name ...` 문법은 지원되지 않거나 공개되지 않은 상태입니다.
-- `UMOUNT TABLE table_name` 역시 동일하게 공개되지 않은 상태입니다.
+- `MOUNT TABLE table_name IN DATABASE 'path'`는 운영 문서의 권장 경로가 아닙니다.
+- `UMOUNT TABLE table_name IN DATABASE 'path'` 역시 일반 운영 절차로 사용하지 않습니다.
 
 ## 권장 대안: MOUNT DATABASE
 

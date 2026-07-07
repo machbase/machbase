@@ -137,16 +137,13 @@ SELECT id, storage_usage FROM v$storage_tables
  ORDER BY storage_usage DESC;
 ```
 
-### 3. RATIO_CAP 임시 조정
+### 3. RATIO_CAP 조정
 
-긴급 상황에서 데이터 입력이 중단되지 않도록 한계값을 일시 상향합니다. 그러나 실제 디스크 공간 확보 없이 이 설정만 높이면 OS 레벨에서 실제 디스크가 가득 찰 수 있으므로 주의합니다.
+`DISK_FULL_RATIO`는 설정 파일에서 관리합니다. 실제 디스크 공간 확보 없이 이 설정만 높이면 OS 레벨에서 실제 디스크가 가득 찰 수 있으므로 주의합니다.
 
 ```sql
 -- 현재 DISK_FULL_RATIO 설정 확인
 SELECT name, value FROM v$property WHERE name = 'DISK_FULL_RATIO';
-
--- 런타임 임시 조정 (95% → 운영 환경 최대 권장값)
-ALTER SYSTEM SET DISK_FULL_RATIO = 95;
 ```
 
 ## 주기적 모니터링 스크립트 예시
@@ -157,9 +154,12 @@ ALTER SYSTEM SET DISK_FULL_RATIO = 95;
 
 THRESHOLD=80
 
-USED=$(machsql -u sys -p manager -s 127.0.0.1 \
-  -q "SELECT used_ratio FROM v$storage_usage" \
-  2>/dev/null | tail -1 | tr -d ' ')
+cat > /tmp/check_disk.sql <<'SQL'
+SELECT used_ratio FROM v$storage_usage;
+SQL
+
+USED=$(machsql -u sys -p manager -s 127.0.0.1 -f /tmp/check_disk.sql \
+  2>/dev/null | awk '/^[[:space:]]*[0-9]+(\\.[0-9]+)?[[:space:]]*$/ {print int($1); exit}')
 
 if [ "$USED" -gt "$THRESHOLD" ]; then
     echo "[WARN] Machbase disk usage: ${USED}% (threshold: ${THRESHOLD}%)"

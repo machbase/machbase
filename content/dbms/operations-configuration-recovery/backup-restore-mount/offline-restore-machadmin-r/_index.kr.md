@@ -18,16 +18,22 @@ weight: 70
 ## 복원 절차
 
 ```bash
-# 1. 서버 종료
+# 1. (권장) 현재 데이터 백업 - 복원 후 현재 데이터는 사라짐
+cat > /tmp/backup_before_restore.sql <<'SQL'
+BACKUP DATABASE INTO DISK = '/backup/machbase_before_restore';
+SQL
+machsql -u sys -p manager -s 127.0.0.1 -f /tmp/backup_before_restore.sql
+
+# 2. 서버 종료
 machadmin -s
 
-# 2. (권장) 현재 데이터 백업 - 복원 후 현재 데이터는 사라짐
-BACKUP DATABASE INTO DISK = '/backup/machbase_before_restore';
+# 3. 기존 데이터베이스 삭제
+machadmin -d
 
-# 3. 백업 데이터로 복원
+# 4. 백업 데이터로 복원
 machadmin -r /backup/machbase_20240101
 
-# 4. 서버 시작
+# 5. 서버 시작
 machadmin -u
 ```
 
@@ -35,19 +41,16 @@ machadmin -u
 
 ## 증분 백업 복원
 
-증분 백업이 있는 경우 전체 백업부터 시작하여 각 증분 백업을 순서대로 적용합니다.
+증분 백업으로 복원할 때는 복원하려는 최종 증분 백업 디렉터리를 한 번 지정합니다. 증분 백업 디렉터리는 체인 정보를 포함하므로 전체 백업과 각 증분 백업을 `machadmin -r`로 반복 적용하지 않습니다.
 
 ```bash
 # 서버 종료
 machadmin -s
 
-# 전체 백업 복원
-machadmin -r /backup/machbase_base_20240101
+# 기존 데이터베이스 삭제
+machadmin -d
 
-# 증분 백업 1 적용
-machadmin -r /backup/machbase_incr_20240102
-
-# 증분 백업 2 적용
+# 복원하려는 최종 증분 백업 경로 지정
 machadmin -r /backup/machbase_incr_20240103
 
 # 서버 시작
@@ -61,7 +64,7 @@ machadmin -u
 | `-s` (`--shutdown`) | 서버 정상 종료 |
 | `-k` (`--kill`) | 서버 강제 종료 |
 | `-u` (`--startup`) | 서버 시작 |
-| `-d` (`--destroy`) | 현재 데이터베이스 삭제 |
+| `-d` (`--destroydb`) | 현재 데이터베이스 삭제 |
 | `-r path` (`--restore`) | 지정한 백업 경로로 복원 |
 
 ## 복원 실패 시 확인 사항
@@ -77,6 +80,6 @@ machadmin -u
 
 ## 주의 사항
 
-- `machadmin -r` 명령은 `$MACHBASE_HOME/dbs` 디렉터리의 내용을 백업 데이터로 교체합니다.
-- 복원 전 현재 데이터베이스를 삭제(`machadmin -d`)할 필요는 없습니다. 복원 명령이 내부적으로 처리합니다.
+- `machadmin -r` 명령은 데이터베이스가 없는 상태에서 실행합니다.
+- 복원 전 서버를 종료하고 현재 데이터베이스를 `machadmin -d`로 삭제해야 합니다.
 - TAG 테이블은 기간 백업 복원이 지원되지 않습니다. 전체 백업 또는 증분 백업으로 복원하세요.

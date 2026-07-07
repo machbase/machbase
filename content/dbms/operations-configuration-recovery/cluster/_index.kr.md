@@ -13,7 +13,7 @@ Machbase Cluster Edition은 대규모 시계열 데이터를 여러 노드에 �
 | **Coordinator** | 클러스터 전체 메타데이터·토폴로지 관리, 노드 상태 감시 | 클러스터당 1~2개 (Primary/Secondary) |
 | **Deployer** | 패키지 배포, 노드 설치·업그레이드 자동화 | 호스트당 1개 |
 | **Broker** | 클라이언트 연결 수신, 쿼리 라우팅 | 1개 이상 (HA 시 복수) |
-| **Warehouse (Active)** | 실제 데이터 저장·처리 노드 | 그룹 단위로 복수 배치 |
+| **Warehouse** | 실제 데이터 저장·처리 노드 | 그룹 단위로 복수 배치 |
 | **Lookup** | 참조 데이터(룩업 테이블) 저장 | 선택적 구성 |
 
 ## 주요 운영 도구
@@ -44,6 +44,7 @@ Cluster Edition에서는 다음 기능이 지원되지 않습니다.
 - **RDB 테이블** 미지원
 - **Custom ROLLUP** 미지원
 - **ROLLUP_REBUILD** 미지원
+- `MOUNT`/`UMOUNT`, Stream/CQL 등 일부 Standard Edition 기능 제한
 - 일부 `ALTER TABLE` 기능 제한
 
 자세한 내용은 [Cluster 운영 제한사항](./limitations-cluster/)을 참조하십시오.

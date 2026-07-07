@@ -79,12 +79,14 @@ SELECT * FROM v$warehouse_node_status;
 |------|------|
 | `normal` | 정상 동작 중 |
 | `primary` | Coordinator Primary 상태 |
-| `secondary` | Coordinator Secondary 상태 |
 | `leader` | Broker Leader 상태 |
 | `readonly` | 읽기 전용 상태 (그룹 상태) |
+| `sync-standby` | 동기화 대기 상태 |
+| `sync-active` | 동기화 진행 상태 |
 | `scrapped` | 데이터 손상 또는 복구 필요 상태 |
-| `DISCONNECTED` | 연결 끊김 |
-| `RECOVERING` | 복구 중 |
+| `inactive` | 비활성 상태 |
+| `**unknown**` | 상태 미확인 또는 연결 불가 |
+| `ddl-recovering` | DDL 복구 중 |
 
 ## 클러스터 상태 값 (Cluster Status)
 
@@ -124,8 +126,8 @@ machcoordinatoradmin --host-resource-disable
 OUTPUT=$(machcoordinatoradmin --cluster-status 2>&1)
 echo "$OUTPUT"
 
-# DISCONNECTED 또는 scrapped 상태 노드 감지
-if echo "$OUTPUT" | grep -qE 'DISCONNECTED|scrapped'; then
+# unknown 또는 scrapped 상태 노드 감지
+if echo "$OUTPUT" | grep -qE '\\*\\*unknown\\*\\*|scrapped'; then
   echo "[경고] 비정상 노드가 감지되었습니다. 즉시 확인하십시오."
 fi
 ```

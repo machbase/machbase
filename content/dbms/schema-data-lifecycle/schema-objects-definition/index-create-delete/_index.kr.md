@@ -10,10 +10,11 @@ Machbase는 테이블 타입에 따라 지원되는 인덱스 종류가 다릅�
 
 | 인덱스 유형 | 대상 테이블 | 특징 |
 |------------|------------|------|
-| LSM (Log-Structured Merge) | LOG, TAG | 시계열 대량 입력에 최적화된 기본 인덱스 |
+| LSM (Log-Structured Merge) | LOG | 시계열 대량 입력에 최적화된 LOG 컬럼 인덱스 |
 | BITMAP | LOG | 카디널리티가 낮은 컬럼에 유효. 복합 조건 쿼리 성능 향상 |
 | REDBLACK | LOOKUP, VOLATILE, RDB | PRIMARY KEY 지정 시 자동 생성. 정확한 값 검색에 최적화 |
 | KEYWORD | LOG | TEXT 컬럼 전문 검색용 |
+| TAG/KV | TAG | TAG 값 컬럼 조건 조회를 보조하는 secondary index |
 
 ## LOG 테이블 인덱스 생성
 
@@ -33,7 +34,8 @@ CREATE KEYWORD INDEX idx_msg ON event_log (message);
 
 ## TAG 테이블 인덱스
 
-TAG 테이블의 메타데이터 컬럼에 JSON 인덱스를 생성할 수 있습니다.
+TAG 테이블은 태그명과 시간 축에 대한 내부 인덱스를 자동으로 관리합니다. 추가로
+METADATA 컬럼 인덱스와 값 컬럼 TAG/KV secondary index를 사용할 수 있습니다.
 
 ```sql
 -- TAG 메타데이터 JSON 컬럼 인덱스
@@ -48,6 +50,9 @@ CREATE TAG TABLE tag (
 
 -- 메타데이터 컬럼에 인덱스 생성
 CREATE INDEX idx_location ON tag METADATA (location);
+
+-- 값 컬럼 TAG/KV 인덱스 생성
+CREATE INDEX idx_value ON tag (value) INDEX_TYPE TAG;
 ```
 
 ## LOOKUP/VOLATILE/RDB 테이블 인덱스
@@ -86,17 +91,29 @@ PRIMARY KEY에 의해 자동 생성된 인덱스는 별도로 삭제할 수 없�
 ## 인덱스 정보 조회
 
 ```sql
--- 테이블의 인덱스 목록 조회
-SELECT * FROM M$SYS_INDEXES WHERE TABLE_NAME = 'SENSOR_LOG';
+-- 인덱스 목록 조회
+SHOW INDEXES;
 
--- 특정 인덱스 정보
-SELECT * FROM M$SYS_INDEX_COLUMNS WHERE INDEX_NAME = 'IDX_SENSOR_ID';
+-- 테이블/컬럼과 조합해 상세 조회
+SELECT t.name AS table_name,
+       c.name AS column_name,
+       i.name AS index_name,
+       i.type AS index_type
+  FROM m$sys_indexes i,
+       m$sys_index_columns ic,
+       m$sys_tables t,
+       m$sys_columns c
+ WHERE i.id = ic.index_id
+   AND i.table_id = t.id
+   AND ic.table_id = c.table_id
+   AND ic.col_id = c.id
+   AND t.name = 'SENSOR_LOG';
 ```
 
 ## 인덱스 설계 원칙
 
 - **LOG 테이블**: 쿼리 빈도가 높은 컬럼에만 선별적으로 생성. 상태값·등급 등 저카디널리티 컬럼은 BITMAP 고려
-- **TAG 테이블**: 메타데이터 필터 조회가 잦은 경우 해당 컬럼에 인덱스 추가
+- **TAG 테이블**: 태그명·시간 조건을 기본으로 사용하고, 메타데이터 필터나 값 조건이 잦은 경우 해당 인덱스 추가
 - **LOOKUP/RDB**: PK 인덱스와 필요한 보조 인덱스 사용
 - **VOLATILE**: PK 인덱스 중심으로 설계
 - **과도한 인덱스**: 대량 INSERT 성능 저하의 원인이 되므로 반드시 필요한 경우에만 생성

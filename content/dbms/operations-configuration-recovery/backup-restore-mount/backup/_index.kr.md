@@ -6,15 +6,9 @@ weight: 10
 
 Machbase 백업은 운영 서버를 중단하지 않고 실행할 수 있는 온라인(Online) 백업입니다. 백업 중에도 데이터 입력과 조회가 정상적으로 이루어집니다.
 
-## 저장 방식 비교: DISK vs IBFILE
+## 저장 방식
 
-| 항목 | DISK 백업 | IBFILE 백업 |
-|------|-----------|-------------|
-| 저장 형태 | 디렉터리 (여러 파일) | 단일 `.ibf` 파일 |
-| 경로 지정 | `INTO DISK = '/path/dir'` | `INTO IBFILE = 'backup.ibf'` |
-| 마운트 지원 | O | X |
-| 이식성 | 디렉터리 전체 복사 필요 | 파일 하나만 전달 |
-| 권장 용도 | 운영 백업, 마운트 기반 복구 | 소규모 이전, 단기 보관 |
+검증 대상 빌드에서는 운영 백업과 마운트 검증에 `DISK` 방식을 사용합니다.
 
 > 마운트(`MOUNT DATABASE`) 기능을 사용하려면 DISK 방식으로 백업해야 합니다.
 
@@ -61,10 +55,14 @@ Machbase 백업은 운영 서버를 중단하지 않고 실행할 수 있는 온
 ## 기본 문법 구조
 
 ```sql
+-- 전체 또는 테이블 백업
 BACKUP [ DATABASE | TABLE table_name ]
-  [ AFTER 'previous_backup_path' ]
   [ FROM start_time TO end_time ]
-  INTO [ DISK | IBFILE ] = 'path_or_filename';
+  INTO DISK = 'backup_path';
+
+-- 증분 백업
+BACKUP DATABASE AFTER 'previous_backup_path'
+  INTO DISK = 'incremental_backup_path';
 ```
 
 - `DATABASE`: 전체 데이터베이스 백업
@@ -72,6 +70,5 @@ BACKUP [ DATABASE | TABLE table_name ]
 - `AFTER 'path'`: 지정한 백업 이후의 데이터만 증분 백업
 - `FROM ... TO ...`: 시간 범위 지정 (기간 백업)
 - `DISK = 'path'`: 디렉터리로 저장 (절대/상대 경로 모두 가능)
-- `IBFILE = 'file'`: 단일 파일로 저장
 
 상대 경로를 지정하면 `$MACHBASE_HOME/dbs` 하위에 생성됩니다.

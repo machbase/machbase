@@ -11,10 +11,10 @@ Machbase는 서버 동작 전반과 각 도구의 실행 이력을 로그 파일
 | 로그 파일 | 기본 위치 | 생성 주체 |
 |---------|---------|---------|
 | `machbase.trc` | `$MACHBASE_HOME/trc/` | Machbase 서버 |
-| machsql 이력 | `~/.machsql_history` | machsql 클라이언트 |
+| machsql 이력 | `$MACHBASE_HOME/trc/machsql.history` | machsql 클라이언트 |
 | `machloader.log` | 실행 디렉터리 | machloader |
 | `machloader.err` | 실행 디렉터리 | machloader |
-| Collector 로그 | `$MACHBASE_HOME/trc/` | Collector 프로세스 |
+| Collector 로그 | `$MACHBASE_COLLECTOR_HOME/trc/` | Collector 프로세스 |
 
 ## 로그 디렉터리
 

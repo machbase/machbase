@@ -21,11 +21,11 @@ Collector가 ERROR 상태이거나 수집이 중단된 경우 다음 절차에 �
 
 ```bash
 # 1. 현재 상태 확인
-machcollectoradmin -a list
-machcollectoradmin -a status -n my_collector
+machcollectoradmin --list
+machcollectoradmin --status=my_collector
 
 # 2. 오류 로그 확인
-tail -100 $MACHBASE_HOME/trc/collector_my_collector.trc
+tail -100 $MACHBASE_COLLECTOR_HOME/trc/my_collector.trc
 
 # 3. 원인 제거 (네트워크 복구, 소스 서버 재시작 등)
 
@@ -33,11 +33,11 @@ tail -100 $MACHBASE_HOME/trc/collector_my_collector.trc
 machadmin -e
 
 # 5. Collector 재시작
-machcollectoradmin -a stop -n my_collector
-machcollectoradmin -a start -n my_collector
+machcollectoradmin --stop-collector=my_collector
+machcollectoradmin --start-collector=my_collector
 
 # 6. 상태 확인
-machcollectoradmin -a status -n my_collector
+machcollectoradmin --status=my_collector
 ```
 
 ## Machbase 재시작 후 복구
@@ -49,8 +49,8 @@ Machbase 서버가 재시작되면 Collector가 연결을 잃고 ERROR 상태가
 machadmin -e
 
 # 모든 Collector 재시작
-machcollectoradmin -a list | awk 'NR>2 {print $1}' | \
-  xargs -I{} sh -c 'machcollectoradmin -a stop -n {} ; machcollectoradmin -a start -n {}'
+machcollectoradmin --list | awk 'NR>2 {print $1}' | \
+  xargs -I{} sh -c 'machcollectoradmin --stop-collector={} ; machcollectoradmin --start-collector={}'
 ```
 
 ## 데이터 유실 방지
@@ -76,27 +76,27 @@ Collector는 내부 버퍼를 이용해 Machbase 연결이 일시적으로 끊�
 
 ```bash
 # 1. Collector 중지 및 삭제
-machcollectoradmin -a stop -n my_collector
-machcollectoradmin -a delete -n my_collector
+machcollectoradmin --stop-collector=my_collector
+machcollectoradmin --drop-collector=my_collector
 
 # 2. 설정 파일 수정
 vi /path/to/collector_config.xml
 
 # 3. 새 설정으로 재생성 및 시작
-machcollectoradmin -a create -n my_collector -f /path/to/collector_config.xml
-machcollectoradmin -a start -n my_collector
+machcollectoradmin --create-collector=my_collector --template=/path/to/collector_config.xml
+machcollectoradmin --start-collector=my_collector
 ```
 
-## collectormanager 재시작
+## Collector Manager 재시작
 
-개별 Collector 재시작으로 해결되지 않는 경우, collectormanager 자체를 재시작합니다.
+개별 Collector 재시작으로 해결되지 않는 경우, Collector Manager 자체를 재시작합니다.
 
 ```bash
-collectormanager stop
-collectormanager start
+machcollectoradmin --shutdown
+machcollectoradmin --startup
 
 # 각 Collector 수동 시작
-machcollectoradmin -a start -n my_collector
+machcollectoradmin --start-collector=my_collector
 ```
 
-> collectormanager를 재시작하면 모든 Collector 인스턴스가 중지됩니다. 재시작 후 필요한 Collector를 수동으로 시작해야 합니다.
+> Collector Manager를 재시작하면 모든 Collector 인스턴스가 중지됩니다. 재시작 후 필요한 Collector를 수동으로 시작해야 합니다.

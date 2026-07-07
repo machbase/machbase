@@ -24,9 +24,6 @@ BACKUP DATABASE INTO DISK = '/backup/machbase_20240101';
 
 -- 상대 경로 (MACHBASE_HOME/dbs/backup_20240101 에 생성됨)
 BACKUP DATABASE INTO DISK = 'backup_20240101';
-
--- IBFILE 방식으로 전체 백업
-BACKUP DATABASE INTO IBFILE = '/backup/machbase_20240101.ibf';
 ```
 
 ## 동작 방식
@@ -41,12 +38,13 @@ BACKUP DATABASE INTO IBFILE = '/backup/machbase_20240101.ibf';
 
 ```
 /backup/machbase_20240101/
-├── backup.manifest       # 백업 메타 정보
-├── dbs/                  # 데이터 파일
-│   ├── *.tbs
-│   └── ...
-└── meta/                 # 메타데이터
-    └── ...
+├── backup.dat
+├── backup.trc
+├── meta.dbs-0
+├── meta.dbs-1
+├── ...
+└── rdb/                  # RDB 테이블이 포함된 경우
+    └── __rdbt_<table_id>.db
 ```
 
 ## 백업 완료 후 검증

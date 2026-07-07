@@ -10,14 +10,14 @@ Machbase 서버의 실행 여부와 기본 상태를 확인하는 방법을 설�
 
 ### machadmin으로 확인
 
-`machadmin -c` 명령은 서버 프로세스의 실행 상태를 간단히 확인합니다.
+`machadmin -e` 명령은 서버 프로세스의 실행 상태를 간단히 확인합니다.
 
 ```bash
 # 서버 상태 확인
-machadmin -c
+machadmin -e
 
 # 출력 예시 (실행 중)
-Machbase server is running. (PID: 12345)
+Machbase server is running with PID(12345).
 
 # 출력 예시 (중지됨)
 Machbase server is not running.
@@ -74,8 +74,8 @@ SELECT name, value
    'PORT_NO',
    'MAX_SESSION_COUNT',
    'TRACE_LOG_LEVEL',
-   'DISK_FULL_RATIO',
-   'CHECKPOINT_INTERVAL_FTIME'
+   'DISK_COLUMNAR_TABLE_CHECKPOINT_INTERVAL_SEC',
+   'DISK_COLUMNAR_INDEX_CHECKPOINT_INTERVAL_SEC'
  )
  ORDER BY name;
 
@@ -129,7 +129,7 @@ grep 'SIGKILL\|Killed\|ABNORMAL' $MACHBASE_HOME/trc/machbase.trc
 
 | 항목 | 명령/쿼리 | 정상 상태 |
 |------|----------|---------|
-| 프로세스 실행 | `machadmin -c` | `running` |
+| 프로세스 실행 | `machadmin -e` | `running` |
 | 포트 Listen | `ss -tlnp \| grep 5656` | 5656 포트 확인 |
 | 버전 확인 | `SELECT * FROM v$version` | 예상 버전 일치 |
 | 라이선스 | `SELECT violate_status FROM v$license_info` | 0 (정상) |

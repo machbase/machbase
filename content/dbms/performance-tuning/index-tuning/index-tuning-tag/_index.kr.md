@@ -106,10 +106,12 @@ TAG 테이블의 시계열 값 컬럼(`value`, `temperature` 등)에는 TAG/KV s
 
 ```sql
 -- 값 컬럼 TAG/KV 인덱스 생성
-CREATE INDEX idx_value ON sensor_tag (value) INDEX_TYPE KV;
+CREATE INDEX idx_value ON sensor_tag (value) INDEX_TYPE TAG;
 ```
 
-검증한 빌드에서 생성된 값 컬럼 인덱스는 `SHOW INDEXES` 결과의 `INDEX_TYPE`에 `TAG`로 표시됩니다. LOG 테이블에서 사용하는 `LSM` 인덱스와 같은 종류로 설명하지 않습니다.
+검증한 빌드에서 생성된 값 컬럼 인덱스는 `SHOW INDEXES` 결과의 `INDEX_TYPE`에
+`TAG`로 표시됩니다. `INDEX_TYPE LSM`을 지정해도 TAG 테이블에서는 LOG 테이블의
+LSM 인덱스가 아니라 TAG/KV secondary index로 생성됩니다.
 
 단, TAG 테이블의 기본 최적 경로는 여전히 `name`과 `time` 조건입니다. 값 컬럼 TAG/KV 인덱스는 조회 조건을 보조하지만, 넓은 시간 범위 전체를 자주 조회하는 집계 워크로드는 ROLLUP으로 처리하는 편이 적합합니다.
 
@@ -128,4 +130,4 @@ CREATE INDEX idx_time ON sensor_tag (time) INDEX_TYPE LSM;
 | 자동 파티션 인덱스 | 별도 생성 불필요, 태그명 + 시간 범위를 항상 WHERE에 포함 |
 | METADATA 필터링 | TAG 테이블 생성 시 METADATA 컬럼으로 정의, 인덱스는 자동 생성 |
 | 값 범위 조회 | `name`과 `time` 범위를 먼저 좁히고, 반복 집계는 ROLLUP 사용 |
-| 값 컬럼 인덱스 | 필요한 경우 `CREATE INDEX ... ON tag_table(value) INDEX_TYPE KV`로 TAG/KV 인덱스 생성 |
+| 값 컬럼 인덱스 | 필요한 경우 `CREATE INDEX ... ON tag_table(value) INDEX_TYPE TAG`로 TAG/KV 인덱스 생성 |

@@ -31,9 +31,6 @@ BACKUP TABLE sensor_log
   FROM TO_DATE('20240101','YYYYMMDD')
   TO   TO_DATE('20240131','YYYYMMDD')
   INTO DISK = '/backup/sensor_log_202401';
-
--- IBFILE 방식으로 테이블 백업
-BACKUP TABLE sensor_log INTO IBFILE = '/backup/sensor_log_20240101.ibf';
 ```
 
 ## 지원 테이블 타입

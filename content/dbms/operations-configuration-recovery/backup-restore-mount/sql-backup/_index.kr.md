@@ -18,15 +18,9 @@ SQL `BACKUP` 문의 지원 범위를 에디션, 저장 방식, 테이블 타입�
 
 > Cluster Edition에서 `MOUNT` 및 `UNMOUNT` 문은 거부될 수 있습니다. 클러스터 환경에서는 각 노드의 데이터를 개별적으로 관리하므로 마운트 방식의 조회가 제한됩니다.
 
-## 저장 방식 비교: DISK vs IBFILE
+## 저장 방식
 
-| 항목 | DISK | IBFILE |
-|------|:----:|:------:|
-| 저장 형태 | 디렉터리 | 단일 `.ibf` 파일 |
-| 마운트 지원 | O | X |
-| 증분 백업 지원 | O | X |
-| 이식성 | 낮음 | 높음 |
-| 용도 | 운영 백업, 복구 | 단기 이전, 소규모 보관 |
+검증 대상 빌드의 운영 절차는 `DISK` 백업을 기준으로 작성합니다. `DISK` 백업은 디렉터리 형태로 생성되며, `MOUNT DATABASE`로 검증하거나 읽기 전용 조회에 사용할 수 있습니다.
 
 ## 테이블 타입별 BACKUP 지원
 
@@ -42,9 +36,11 @@ SQL `BACKUP` 문의 지원 범위를 에디션, 저장 방식, 테이블 타입�
 
 ```sql
 BACKUP [ DATABASE | TABLE table_name ]
-  [ AFTER 'previous_backup_path' ]
   [ FROM start_time TO end_time ]
-  INTO { DISK = 'directory_path' | IBFILE = 'file_path' };
+  INTO DISK = 'directory_path';
+
+BACKUP DATABASE AFTER 'previous_backup_path'
+  INTO DISK = 'incremental_backup_path';
 ```
 
 ## 백업 권한

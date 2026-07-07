@@ -12,22 +12,22 @@ machsql을 대화형 모드로 실행하면 입력한 모든 SQL 명령이 히�
 
 **기본 위치**:
 ```
-~/.machsql_history
+$MACHBASE_HOME/trc/machsql.history
 ```
 
-이 파일은 현재 OS 사용자의 홈 디렉터리에 생성됩니다.
+이 파일은 Machbase 홈의 `trc` 디렉터리에 생성됩니다.
 
 ## 히스토리 파일 확인
 
 ```bash
 # 최근 실행 이력 확인
-cat ~/.machsql_history
+cat $MACHBASE_HOME/trc/machsql.history
 
 # 최근 50개 이력만 확인
-tail -50 ~/.machsql_history
+tail -50 $MACHBASE_HOME/trc/machsql.history
 
 # 특정 키워드를 포함한 이력 검색
-grep -i 'sensor_log' ~/.machsql_history
+grep -i 'sensor_log' $MACHBASE_HOME/trc/machsql.history
 ```
 
 ## machsql 내에서 이력 조회
@@ -50,9 +50,9 @@ Mach> SELECT * FROM sensor_log LIMIT 10;  -- 실행 후 히스토리에 저장�
 # SQL 파일 실행 결과를 파일로 저장
 machsql -u sys -p manager -s 127.0.0.1 -f query.sql > result.log 2>&1
 
-# 인라인 SQL 실행 결과 저장
-machsql -u sys -p manager -s 127.0.0.1 \
-  -q "SELECT count(*) FROM sensor_log" > count.log
+# 단일 SQL을 임시 스크립트로 실행
+echo "SELECT count(*) FROM sensor_log;" > /tmp/count.sql
+machsql -u sys -p manager -s 127.0.0.1 -f /tmp/count.sql > count.log
 ```
 
 ## 비대화형 모드에서의 오류 출력
@@ -80,7 +80,6 @@ fi
 | `-u <USER>` | 사용자 이름 |
 | `-p <PASS>` | 패스워드 |
 | `-f <FILE>` | SQL 스크립트 파일 실행 |
-| `-q <SQL>` | 단일 SQL 문 실행 후 종료 |
 | `-o <FILE>` | 결과 출력 파일 지정 |
 
-> **참고**: machsql 이력 파일(`~/.machsql_history`)은 접속 사용자의 홈 디렉터리에 생성되므로, 서버 로그 디렉터리(`$MACHBASE_HOME/trc/`)와는 위치가 다릅니다.
+> **참고**: machsql 이력 파일은 `$MACHBASE_HOME/trc/machsql.history`에 저장됩니다.

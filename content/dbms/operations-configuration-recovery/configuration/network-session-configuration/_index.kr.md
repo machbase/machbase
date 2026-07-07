@@ -114,11 +114,11 @@ ALTER SYSTEM SET SESSION_IDLE_TIMEOUT_SEC = 1800;
 | 항목 | 값 |
 |------|----|
 | 기본값 | 0 (무제한) |
-| 재시작 필요 | 아니오 |
+| 재시작 필요 | 예 |
 
 ```sql
--- 쿼리 타임아웃 60초 설정
-ALTER SYSTEM SET SESSION_QUERY_TIMEOUT_SEC = 60;
+-- 현재 세션의 쿼리 타임아웃 60초 설정
+ALTER SESSION SET SESSION_QUERY_TIMEOUT = 60;
 ```
 
 ## 현재 세션 확인
@@ -133,9 +133,12 @@ SELECT * FROM v$session;
 SELECT COUNT(*) FROM v$session;
 
 -- 활성 쿼리가 있는 세션
-SELECT id, user_name, query, state
-  FROM v$session
- WHERE state != 'IDLE';
+SELECT s.id AS session_id, s.user_name, st.query, st.state
+  FROM v$session s
+  JOIN v$stmt st ON s.id = st.sess_id
+ WHERE st.state LIKE 'Execute in progress%'
+    OR st.state LIKE 'Fetch in progress%'
+    OR st.state LIKE 'Append in progress%';
 ```
 
 ## 설정 확인

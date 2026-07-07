@@ -61,7 +61,7 @@ SELECT cache_count,
   FROM v$rs_cache_stat;
 ```
 
-`cache_replaced` 값이 지속적으로 증가하면 캐시 메모리가 부족하여 캐시가 자주 교체되고 있는 것입니다. `RS_CACHE_MAX_MEMORY_SIZE` 파라미터로 캐시 메모리 한도를 늘릴 수 있습니다.
+`cache_replaced` 값이 지속적으로 증가하면 캐시 메모리가 부족하여 캐시가 자주 교체되고 있는 것입니다. 전역 Result Cache 메모리 한도는 `machbase.conf`의 `RS_CACHE_MAX_MEMORY_SIZE` 파라미터로 조정한 뒤 재시작하여 적용합니다.
 
 ## Page Cache 상태
 
@@ -134,9 +134,9 @@ SELECT name, value, deflt
 [ERROR] [QUERY] Query aborted due to memory limit. sess_id=5
 ```
 
-```sql
--- MAX_QPX_MEM 런타임 조정 (세션당 512MB)
-ALTER SYSTEM SET MAX_QPX_MEM = 536870912;
+```ini
+# machbase.conf
+MAX_QPX_MEM = 536870912   # 세션당 512MB
 ```
 
 ### 시스템 메모리 부족

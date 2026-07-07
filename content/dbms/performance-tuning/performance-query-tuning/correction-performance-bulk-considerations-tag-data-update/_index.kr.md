@@ -16,7 +16,7 @@ UPDATE sensor_tag SET value = 99.5 WHERE name = 'TEMP-01' AND time = '2025-06-01
 -- [ERR-02278: UPDATE statement is not allowed for SENSOR_TAG.]
 ```
 
-이 제약은 TAG 테이블의 LSM 기반 불변 저장 구조에서 비롯됩니다. 한번 기록된 레코드는 덮어쓰지 않고, 정정 시 삭제 후 재삽입 방식을 사용합니다.
+이 제약은 TAG 테이블의 append 중심 불변 저장 구조에서 비롯됩니다. 한번 기록된 레코드는 덮어쓰지 않고, 정정 시 삭제 후 재삽입 방식을 사용합니다.
 
 ## 기본 정정 패턴: DELETE → INSERT
 

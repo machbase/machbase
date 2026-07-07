@@ -11,7 +11,7 @@ Machbase 서버의 상태를 파악하고 문제를 진단하기 위해 두 가�
 | 카테고리 | 테이블 이름 | 주요 용도 |
 |---------|-----------|---------|
 | 세션/시스템 | V$SESSION | 현재 접속 세션 목록과 상태 |
-| 세션/시스템 | V$STMT | 실행 중인 SQL 문과 경과 시간 |
+| 세션/시스템 | V$STMT | 실행 중인 SQL 문과 상태 |
 | 세션/시스템 | V$PROPERTY | 현재 서버 설정값 조회 |
 | 세션/시스템 | V$SYSMEM | 시스템 메모리 사용량 |
 | 세션/시스템 | V$SYSSTAT | 시스템 통계 정보 |
@@ -28,10 +28,10 @@ Machbase 서버의 상태를 파악하고 문제를 진단하기 위해 두 가�
 | 로그 파일 | 위치 | 용도 |
 |---------|------|------|
 | 서버 메인 로그 | `$MACHBASE_HOME/trc/machbase.trc` | 서버 동작 전반, 오류 기록 |
-| machsql 이력 | `~/.machsql_history` | 대화형 SQL 실행 이력 |
+| machsql 이력 | `$MACHBASE_HOME/trc/machsql.history` | 대화형 SQL 실행 이력 |
 | machloader 오류 | 실행 디렉터리 `machloader.err` | 적재 실패 레코드 |
 | machloader 통계 | 실행 디렉터리 `machloader.log` | 처리 건수, 오류 건수 |
-| Collector 로그 | `$MACHBASE_HOME/trc/` | Collector 수집 상태 |
+| Collector 로그 | `$MACHBASE_COLLECTOR_HOME/trc/` | Collector 수집 상태 |
 
 모든 로그 파일은 기본적으로 `$MACHBASE_HOME/trc/` 디렉터리에 위치합니다. Trace Log 레벨은 `machbase.conf`의 `TRACE_LOG_LEVEL` 파라미터로 조정합니다.
 

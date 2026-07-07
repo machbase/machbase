@@ -9,10 +9,10 @@ weight: 20
 ## 클러스터 접속
 
 ```bash
-machclusterctl connect
+machclusterctl connect broker-1
 ```
 
-Broker를 통해 machsql 클라이언트로 클러스터에 접속합니다. Broker 노드의 접속 정보(호스트·포트·사용자)를 자동으로 사용하므로 별도로 접속 정보를 입력하지 않아도 됩니다.
+지정한 Broker 또는 Warehouse alias를 통해 machsql 클라이언트로 클러스터에 접속합니다. alias는 클러스터 YAML 또는 Coordinator 메타에 등록된 이름을 사용합니다.
 
 접속 후 일반 machsql과 동일하게 SQL을 실행할 수 있습니다.
 
@@ -22,10 +22,13 @@ Mach> SELECT * FROM v$cluster_node_status;
 Mach> EXIT
 ```
 
-Broker가 여러 개인 경우 설정 파일에 등록된 첫 번째 활성 Broker에 접속합니다. 특정 Broker로 직접 접속하려면 machsql을 직접 사용합니다.
+특정 Broker로 직접 접속하려면 해당 Broker alias를 지정하거나 machsql을 직접 사용합니다.
 
 ```bash
-# 특정 Broker로 직접 접속
+# 특정 Broker alias로 접속
+machclusterctl connect broker-2
+
+# 호스트와 포트를 직접 지정해 접속
 machsql -s <broker_host> -P <broker_port> -u SYS -p MANAGER
 ```
 
@@ -51,22 +54,25 @@ machclusterctl export -o cluster_config.yaml
 출력 파일 예:
 
 ```yaml
-cluster:
-  coordinator:
-    - host: 192.168.0.32
-      port: 5101
-  deployer:
-    - host: 192.168.0.32
-      port: 5201
-  broker:
-    - host: 192.168.0.32
-      port: 5301
-      service-port: 5757
-  warehouse:
-    - group: Group1
-      nodes:
-        - host: 192.168.0.32
-          port: 5401
+coordinators:
+  - alias: coordinator-1
+    host: 192.168.0.32
+    port: 5101
+deployers:
+  - alias: deployer-1
+    host: 192.168.0.32
+    port: 5201
+brokers:
+  - alias: broker-1
+    host: 192.168.0.32
+    port: 5301
+    service_port: 5757
+warehouse_groups:
+  - name: Group1
+    warehouses:
+      - alias: warehouse-group1-1
+        host: 192.168.0.32
+        port: 5401
 ```
 
-> 내보낸 YAML 파일을 그대로 import하는 명령은 별도로 없습니다. 클러스터 재구성 시에는 `machcoordinatoradmin`의 `--add-node` 명령을 사용합니다.
+> YAML 기반 구성 변경은 `machclusterctl apply -f <파일>` 흐름을 사용합니다. 개별 노드의 세부 운영이 필요한 경우에만 `machcoordinatoradmin`을 사용합니다.
