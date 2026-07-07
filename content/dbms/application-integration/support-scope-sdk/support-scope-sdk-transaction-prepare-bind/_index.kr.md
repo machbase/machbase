@@ -119,7 +119,7 @@ SQLExecute(stmt);
 | SDK | NULL 바인딩 방법 |
 |-----|----------------|
 | JDBC | `ps.setNull(idx, java.sql.Types.INTEGER)` |
-| Python | `%s` 파라미터에 `None` 전달. 타입별 조회 표현은 확인 필요 |
+| Python | `%s` 또는 `%(name)s` 파라미터에 `None` 전달 (`NULL`로 렌더링) |
 | .NET | `DBNull.Value` |
 | Go | `sql.NullString{Valid: false}` 등 Null 타입 |
 | ODBC/CLI | indicator를 `SQL_NULL_DATA`로 설정 |

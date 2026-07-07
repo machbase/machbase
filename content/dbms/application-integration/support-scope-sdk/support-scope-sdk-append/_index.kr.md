@@ -15,12 +15,12 @@ Machbase Neo의 **Append API**는 대량 데이터를 고속으로 삽입하기 
 | **Python** | O | `conn.append(table, rows)` | `machbaseAPI` 패키지 |
 | **.NET** | O | `MachAppendWriter` | `conn.CreateAppendWriter(tableName)` |
 | **Go (native)** | O | `AppendWriter` | `conn.Appender(ctx, tableName)` |
-| **Go (database/sql)** | △ | 제한적 | native 드라이버의 `Appender` 직접 사용 권장 |
-| **Node.js** | △ | 부분 지원 | 버전에 따라 상이 |
+| **Go (database/sql)** | X | 없음 | Append는 `machgo` 네이티브 클라이언트 사용 |
+| **Node.js** | O | `appendBatch` / `appendOpen` | LOG/TAG Append 지원 |
 | **REST API** | O | `POST /machbase` | HTTP JSON Append |
 
 - **O**: 완전 지원
-- **△**: 제한적 지원 (별도 확인 필요)
+- **X**: 미지원
 
 ## ODBC / CLI: Append 사용 예시
 
@@ -34,17 +34,17 @@ SQLAllocStmt(conn, &stmt);
 SQLAppendOpen(stmt, "sensor_data", 0);
 
 // 데이터 행 추가
-MACHBASE_APPEND_PARAM param[3];
+SQL_APPEND_PARAM param[3];
 // name, time(나노초), value 순으로 바인딩
-param[0].mVar1.mLength = strlen("sensor01");
-strcpy(param[0].mVar1.mData, "sensor01");
-param[1].mDatetime.mTime = 1720000000000000000LL; // 나노초 타임스탬프
+param[0].mVarchar.mLength = strlen("sensor01");
+strcpy(param[0].mVarchar.mData, "sensor01");
+param[1].mDateTime.mTime = 1720000000000000000LL; // 나노초 타임스탬프
 param[2].mDouble          = 25.3;
 
-SQLAppendData(stmt, param);
+SQLAppendDataV2(stmt, param);
 
 // Append 세션 종료 및 커밋
-SQLAppendClose(stmt, NULL);
+SQLAppendClose(stmt, NULL, NULL);
 SQLFreeStmt(stmt, SQL_DROP);
 ```
 
@@ -120,23 +120,38 @@ package main
 
 import (
     "context"
+    "log"
     "time"
-    mach "github.com/machbase/neo-client/machrpc"
+
+    "github.com/machbase/neo-client/api"
+    "github.com/machbase/neo-client/machgo"
 )
 
 func main() {
-    db, _ := mach.Open("127.0.0.1:5656", "SYS", "MANAGER")
-    defer db.Close()
-
     ctx := context.Background()
+    mdb, err := machgo.NewDatabase(&machgo.Config{
+        Host: "127.0.0.1",
+        Port: 5656,
+    })
+    if err != nil {
+        log.Fatal(err)
+    }
 
-    // Appender 생성
-    appender, _ := db.Appender(ctx, "sensor_data")
+    conn, err := mdb.Connect(ctx, api.WithPassword("SYS", "MANAGER"))
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer conn.Close()
+
+    appender, err := conn.Appender(ctx, "sensor_data")
+    if err != nil {
+        log.Fatal(err)
+    }
     defer appender.Close()
 
-    // 행 추가
-    appender.Append("sensor01", time.Now(), 25.3)
-    appender.Append("sensor02", time.Now(), 30.1)
+    if err := appender.Append("sensor01", time.Now(), 25.3); err != nil {
+        log.Fatal(err)
+    }
 }
 ```
 

@@ -66,7 +66,7 @@ ALTER USER app_auth_key DROP AUTH KEY ID 3;
 | **machsql** | O | `-K <private-key-file>`, `--auth-sig-scheme` |
 | **ODBC / CLI** | O | 연결 문자열 `AUTH_MODE`, `AUTH_KEY_FILE`, `AUTH_SIG_SCHEME` |
 | **JDBC** | O | JDBC Properties 또는 URL 속성 |
-| **Go / Python / .NET** | 버전별 확인 필요 | 드라이버가 challenge 옵션을 제공하는지 확인 |
+| **Go / Python / Node.js / .NET** | X | 현재 드라이버 연결 옵션에 challenge 인증 설정 없음 |
 | **REST API** | 별도 방식 | `HTTP_AUTH` 기반 Basic Authentication 설정 사용 |
 
 ## machsql 예제
