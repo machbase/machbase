@@ -10,8 +10,8 @@ weight: 50
 
 | 제약 항목 | 내용 | 비고 |
 |-----------|------|------|
-| UPDATE WHERE 조건 | `WHERE name = ?` (PK 컬럼) 조건만 지원 | planned: #3733 |
-| UPDATE SET 대상 | SUMMARIZED 또는 METADATA 속성 컬럼만 허용 | |
+| UPDATE WHERE 조건 | 태그 선택 조건(`name =`, `name IN`, `name LIKE`)과 BASETIME 조건 필수 | `OR`, 서브쿼리, 집계 조건 불가 |
+| UPDATE SET 대상 | 실제 데이터 컬럼 허용. 메타데이터는 `UPDATE ... METADATA` 사용 | |
 | PK(name) 컬럼 UPDATE | 불가 | |
 | BASETIME 컬럼 UPDATE | 불가 | |
 | DELETE | `BEFORE`, `WHERE`, `METADATA`, `ROLLUP` 등 제한된 형태로 지원 | 일반 RDB DELETE와 동일하게 가정하지 않음 |

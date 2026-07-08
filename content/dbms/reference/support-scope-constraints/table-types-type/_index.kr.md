@@ -52,16 +52,23 @@ Machbase는 용도에 따라 다섯 가지 테이블 유형을 제공합니다. 
 
 TAG 테이블의 UPDATE는 다음 조건을 모두 만족해야 합니다.
 
-- `WHERE` 절에 반드시 `name` (TAGNAME, PK 컬럼) 조건 포함
-- SET 대상은 SUMMARIZED 속성 컬럼만 가능
-- `time` (BASETIME) 컬럼과 `name` 컬럼은 UPDATE 불가
+- `WHERE` 절에 태그 선택 조건(`name =`, `name IN`, `name LIKE`) 포함
+- `WHERE` 절에 BASETIME 컬럼 조건 포함
+- SET 대상은 실제 데이터 컬럼
+- `time` (BASETIME) 컬럼과 `name` 컬럼, 메타데이터 컬럼은 data UPDATE로 수정 불가
 
 ```sql
--- 가능: SUMMARIZED 컬럼을 name 조건으로 업데이트
-UPDATE sensor_data SET min_value = 0.0 WHERE name = 'sensor01';
+-- 가능: 태그 조건과 시간 조건으로 데이터 컬럼 업데이트
+UPDATE sensor_data
+   SET value = value + 1
+ WHERE name = 'sensor01'
+   AND time >= TO_DATE('2026-07-01', 'YYYY-MM-DD');
 
 -- 불가: BASETIME 컬럼 업데이트
-UPDATE sensor_data SET time = NOW() WHERE name = 'sensor01';
+UPDATE sensor_data
+   SET time = NOW()
+ WHERE name = 'sensor01'
+   AND time >= TO_DATE('2026-07-01', 'YYYY-MM-DD');
 ```
 
 상세 내용은 [TAG data UPDATE 지원표](../tag-data-update/)를 참고하세요.

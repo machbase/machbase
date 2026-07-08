@@ -32,7 +32,7 @@ Machbase의 각 테이블 타입은 DDL 및 DML 작업에 대한 지원 범위�
 |---------|-----|-----|-----|---------|--------|
 | INSERT | O | O | O | O | O |
 | Append API | O | O | X | X | X |
-| UPDATE | 메타데이터만 O | X | O | O (PK equality) | O (PK equality) |
+| UPDATE | O (조건부) | X | O | O (PK equality) | O (PK equality) |
 | DELETE | O (BEFORE/조건) | O (BEFORE/OLDEST/EXCEPT) | O | O (PK equality) | O (PK equality) |
 | ON DUPLICATE KEY UPDATE | X | X | X | O | X |
 
@@ -46,7 +46,7 @@ Machbase의 각 테이블 타입은 DDL 및 DML 작업에 대한 지원 범위�
 
 | 인덱스 유형 | TAG | LOG | RDB | VOLATILE | LOOKUP |
 |-----------|-----|-----|-----|---------|--------|
-| LSM | O | O | X | X | X |
+| LSM | X | O | X | X | X |
 | BITMAP | X | O | X | X | X |
 | KEYWORD | X | O | X | X | X |
 | REDBLACK (PK/인덱스) | O (name) | X | O | O | O |
@@ -56,7 +56,7 @@ Machbase의 각 테이블 타입은 DDL 및 DML 작업에 대한 지원 범위�
 | 기능 | Standard | Cluster |
 |------|---------|---------|
 | RDB 테이블 | O | X |
-| TAG 실제 데이터 UPDATE | X | X |
+| TAG data UPDATE | O | 확인 필요 |
 | Retention Policy | O | O |
 | Cluster 전용 기능 | X | O |
 

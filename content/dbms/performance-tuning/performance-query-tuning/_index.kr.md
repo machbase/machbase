@@ -34,5 +34,5 @@ LOG 테이블은 `_arrival_time`, TAG 테이블은 `time` 컬럼을 기준으로
 | [검색 연산자 성능 튜닝](./performance-operators-tuning/) | 인덱스 활용 가능·불가 연산자, BITMAP vs LSM 선택 |
 | [윈도우 함수와 PIVOT 성능 고려사항](./performance-window-functions-considerations-pivot/) | 메모리 주의사항, 서브쿼리 선처리 패턴 |
 | [ROLLUP 활용 튜닝](./tuning-rollup/) | ROLLUP 조회 패턴, 계층 설계, WAKEUP INTERVAL |
-| [TAG 데이터 대량 정정 성능 고려사항](./correction-performance-bulk-considerations-tag-data-update/) | DELETE + INSERT 패턴, 임시 대안 |
+| [TAG 데이터 대량 정정 성능 고려사항](./correction-performance-bulk-considerations-tag-data-update/) | TAG data UPDATE 대상 범위와 롤업 재구성 |
 | [LOOKUP 일반 predicate DML 성능 고려사항](./performance-considerations-lookup-predicate-dml/) | non-PK UPDATE/DELETE 대상 범위 확인과 JSON 조건 비용 |

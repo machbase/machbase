@@ -32,7 +32,7 @@ weight: 40
 |------|:---:|:---:|:------:|:--------:|:---:|
 | INSERT (SQL) | O | O | O | O | O |
 | Append API | O | O | O | X | X |
-| UPDATE | 제한적¹ | X | O | O | O |
+| UPDATE | 조건부¹ | X | O | O | O |
 | DELETE | 제한적 | O | O | O | O |
 | Transaction (COMMIT/ROLLBACK) | X | X | O | O | O |
 | ROLLUP 대상 | O | X | X | X | X |
@@ -41,7 +41,9 @@ weight: 40
 | PRIMARY KEY | O (name) | X | O | O | O |
 | BASETIME 컬럼 | O | - | - | - | - |
 
-> ¹ TAG 테이블 UPDATE: `WHERE name = ?` 조건(PK)만 허용, SET 대상은 SUMMARIZED/METADATA 컬럼만 가능. PK(name) 및 BASETIME 컬럼은 UPDATE 불가.
+> ¹ TAG 테이블 UPDATE: data UPDATE는 태그 선택 조건(`name =`, `name IN`, `name LIKE`)과
+> BASETIME 조건이 모두 필요하다. SET 대상은 실제 데이터 컬럼이며, PK(`name`), BASETIME,
+> 메타데이터 컬럼은 data UPDATE로 수정할 수 없다. 메타데이터는 `UPDATE ... METADATA`를 사용한다.
 
 ## SDK × 주요 기능 지원표
 

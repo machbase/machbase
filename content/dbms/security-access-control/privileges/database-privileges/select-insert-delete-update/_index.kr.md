@@ -78,11 +78,13 @@ REVOKE UPDATE ON sys.device_config FROM ops_user;
 | 테이블 유형 | UPDATE 지원 여부 |
 |---|---|
 | LOG | 미지원 |
-| TAG | 미지원 |
+| TAG | 지원 (태그/시간 조건 필요) |
 | VOLATILE | 지원 (기본키 기반 WHERE 조건 필요) |
 | LOOKUP | 지원 (기본키 기반 WHERE 조건 필요) |
 
-UPDATE 권한을 부여하더라도 LOG, TAG 테이블에서는 UPDATE를 실행할 수 없습니다. 이는 권한의 문제가 아니라 테이블 유형의 설계 제약입니다.
+UPDATE 권한을 부여하더라도 LOG 테이블에서는 UPDATE를 실행할 수 없습니다. TAG 테이블의
+data UPDATE는 태그 선택 조건과 시간 조건을 만족해야 하며, `name`, `time`, 메타데이터 컬럼은
+data UPDATE의 SET 대상이 아닙니다.
 
 ## 복합 DML 권한 부여
 

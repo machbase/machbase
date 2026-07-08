@@ -123,9 +123,23 @@ WHERE site = 'SEOUL'
   AND status = 'READY';
 ```
 
+### TAG data UPDATE
+
+TAG 테이블의 실제 시계열 데이터는 태그 선택 조건과 BASETIME 조건을 함께 지정해 수정합니다.
+
+```sql
+UPDATE sensors
+   SET value = value + 1,
+       status = 1
+ WHERE name = 'sensor-01'
+   AND time >= TO_DATE('2026-07-01', 'YYYY-MM-DD');
+```
+
+`name`(PRIMARY KEY), `time`(BASETIME), 메타데이터 컬럼은 data UPDATE의 SET 대상이 아닙니다.
+
 ### UPDATE METADATA (TAG 테이블)
 
-TAG 테이블의 메타데이터 컬럼만 수정할 수 있습니다. 데이터 컬럼(time, value 등)은 수정할 수 없습니다.
+TAG 테이블의 메타데이터 컬럼은 별도 `UPDATE ... METADATA` 구문으로 수정합니다.
 
 ```sql
 -- 메타데이터 조건으로 여러 행 수정

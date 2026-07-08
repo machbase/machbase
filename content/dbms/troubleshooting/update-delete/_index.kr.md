@@ -1,27 +1,12 @@
 ---
 type: docs
-title: 'UPDATE/DELETE 문제'
-weight: 50
+title: 'UPDATE/DELETE 문제 해결'
+weight: 30
 ---
 
-TAG 테이블과 LOOKUP 테이블의 UPDATE/DELETE는 LOG 테이블과 달리 여러 가지 제약이 있습니다. 이 섹션은 테이블 유형별 UPDATE/DELETE 제약과 그에 따른 일반적인 오류 상황을 다룹니다.
+UPDATE/DELETE 실행 중 발생하는 대표 오류와 진단 방법을 정리합니다.
 
-{{< callout type="info" >}}
-**테이블 유형별 UPDATE/DELETE 지원 현황**
-
-| 테이블 유형 | UPDATE | DELETE |
-|-------------|--------|--------|
-| LOG 테이블 | 미지원 | 제한적 지원 (파티션 삭제) |
-| TAG 테이블 | 미지원 | tag 이름 조건 기반 지원 |
-| LOOKUP 테이블 | PK/일반 predicate 지원 | PK/일반 predicate 지원 |
-| Volatile 테이블 | 지원 | 지원 |
-{{< /callout >}}
-
-## 이 섹션의 구성
-
-| 페이지 | 내용 |
-|--------|------|
-| [TAG data UPDATE가 거부될 때](./rejected-condition-tag-data-update-where/) | TAG 테이블 UPDATE 미지원과 대체 방법 |
-| [TAG data UPDATE SET 대상 컬럼 오류](./column-error-tag-data-update-set/) | TAG 테이블 UPDATE 미지원과 컬럼별 제약 |
-| [LOOKUP 일반 predicate UPDATE/DELETE 범위가 클 때](./too-many-lookup-predicate-update-delete-row/) | 비-PK 조건 사용 시 대상 범위 확인 |
-| [LOOKUP JSON primary key 오류](./error-lookup-json-path-primary-key/) | JSON 컬럼의 primary key 제약 |
+| 문서 | 설명 |
+|------|------|
+| [TAG data UPDATE WHERE 조건 오류](./rejected-condition-tag-data-update-where/) | TAG data UPDATE에 필요한 태그/시간 조건과 거부되는 조건 |
+| [TAG data UPDATE SET 대상 컬럼 오류](./column-error-tag-data-update-set/) | TAG data UPDATE의 SET 대상 컬럼 제약 |

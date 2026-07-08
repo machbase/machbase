@@ -10,7 +10,9 @@ Machbase는 시계열 데이터의 특성에 맞추어 처음부터 설계된 �
 
 RDBMS는 행 단위로 데이터를 삽입(Create), 조회(Read), 수정(Update), 삭제(Delete)하는 CRUD 모델을 기반으로 합니다. 주문 정보를 수정하고 재고를 실시간으로 차감하는 업무 애플리케이션에 최적화된 구조입니다.
 
-Machbase의 LOG 테이블과 TAG 테이블은 append-only 모델을 따릅니다. 데이터는 오직 추가(append)되며, 이미 기록된 행은 수정할 수 없습니다. 이 단순한 원칙 덕분에 행 단위 잠금을 제거하고 초당 수백만 건 이상의 입력 성능을 달성합니다.
+Machbase의 LOG 테이블과 TAG 테이블은 append 중심 모델을 따릅니다. 데이터는 고속 append에
+맞게 저장되며, TAG 테이블은 태그 선택 조건과 시간 조건을 명시한 범위에서 실제 시계열
+데이터 UPDATE를 지원합니다. LOG 테이블은 UPDATE를 지원하지 않습니다.
 
 ## 시간의 역할
 
@@ -38,9 +40,12 @@ Machbase는 LOG/LOOKUP 테이블에 LSM(Log-Structured Merge-tree) 계열 인덱
 
 ## UPDATE / DELETE 제한
 
-LOG 테이블과 TAG 테이블은 UPDATE를 지원하지 않습니다. DELETE는 시간 범위 기반으로만 가능합니다. 잘못 입력된 데이터를 수정해야 한다면, 해당 시간 구간을 삭제하고 재입력하는 방식을 사용합니다.
+LOG 테이블은 UPDATE를 지원하지 않습니다. TAG 테이블은 `WHERE name ... AND time ...` 조건으로
+대상 범위를 한정한 data UPDATE를 지원하지만, `name`(PRIMARY KEY)과 `time`(BASETIME)은 변경할
+수 없습니다. 메타데이터는 `UPDATE ... METADATA` 구문으로 별도 수정합니다.
 
-이 제약은 설계상의 결함이 아니라 고속 입력 성능을 위한 의도적인 트레이드오프입니다. 운영 데이터를 자주 수정해야 하는 업무라면 LOOKUP 또는 VOLATILE 테이블을 활용합니다.
+자주 수정되는 운영 상태 데이터라면 LOOKUP 또는 VOLATILE 테이블을 활용하고, 계측값 정정은
+TAG data UPDATE와 롤업 재구성 절차를 함께 계획합니다.
 
 ## 사용 사례 비교
 

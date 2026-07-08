@@ -29,7 +29,7 @@ append-only 원칙은 테이블 유형마다 다르게 적용됩니다.
 | 테이블 유형 | INSERT | UPDATE | DELETE |
 | --- | --- | --- | --- |
 | LOG | 가능 | 불가 | `BEFORE`, `OLDEST`, `EXCEPT` 등 시간/보존 조건 기반 |
-| TAG | 가능 | 메타데이터만 가능 | `BEFORE` 또는 태그/축 조건 기반 |
+| TAG | 가능 | 가능 (태그/시간 조건 필요) | `BEFORE` 또는 태그/축 조건 기반 |
 | LOOKUP | 가능 | Primary key 조건 기반 | Primary key 조건 기반 |
 | VOLATILE | 가능 | Primary key 조건 기반 | Primary key 조건 기반 |
 
@@ -59,9 +59,12 @@ Machbase 전용 APPEND 프로토콜로 여러 행을 배치로 전송합니다. 
 
 append-only 모델은 성능상 이점이 크지만, 설계 시 염두에 두어야 할 제약이 있습니다.
 
-**잘못 입력된 데이터를 수정할 수 없다**
+**잘못 입력된 데이터를 수정할 때 대상 범위를 제한해야 한다**
 
-LOG 테이블에 잘못된 값을 넣으면 해당 행을 수정하는 것이 아니라, 보정 이벤트를 추가하거나 시간 범위로 삭제한 뒤 재입력해야 합니다. TAG 테이블의 실제 시계열 값도 현재 UPDATE할 수 없으므로 보정 컬럼, 보정 이력 테이블, 삭제 후 재입력 패턴을 사용합니다([TAG 데이터 보정 설계](/dbms/data-modeling-table-design/table-types-design-type/design-tag/design-correction-tag/) 참고).
+LOG 테이블에 잘못된 값을 넣으면 해당 행을 수정하는 것이 아니라, 보정 이벤트를 추가하거나
+시간 범위로 삭제한 뒤 재입력해야 합니다. TAG 테이블의 실제 시계열 값은 `UPDATE`로 정정할
+수 있지만, 태그 선택 조건과 시간 조건이 필요합니다. 이력 보존이 필요하면 보정 컬럼이나
+보정 이력 테이블을 함께 사용합니다([TAG 데이터 보정 설계](/dbms/data-modeling-table-design/table-types-design-type/design-tag/design-correction-tag/) 참고).
 
 **스키마 변경이 제한된다**
 

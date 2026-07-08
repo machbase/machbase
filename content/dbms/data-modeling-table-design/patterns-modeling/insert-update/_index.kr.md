@@ -10,13 +10,13 @@ Machbase 테이블 타입별로 데이터를 삽입·수정하는 패턴을 정�
 
 | 테이블 타입 | INSERT | UPDATE | DELETE | UPSERT |
 |-----------|--------|--------|--------|--------|
-| TAG | INSERT / Append API | X | X | X |
+| TAG | INSERT / Append API | O (태그/시간 조건) | O | X |
 | LOG | INSERT / Append API | X | X | X |
 | RDB | INSERT / Append API | O (WHERE 유무 모두) | O | DELETE+INSERT |
 | LOOKUP | INSERT | O (by PK) | O (by PK) | DELETE+INSERT |
 | VOLATILE | INSERT | O (by PK) | O | ON DUPLICATE KEY UPDATE |
 
-## TAG/LOG: Append API 패턴 (고속 버퍼)
+## TAG/LOG: Append API 패턴 (고속 입력)
 
 ```go
 // Go SDK - Append API (초고속 대량 입력)
@@ -25,6 +25,17 @@ for _, row := range rows {
     appender.Append(row.Name, row.Time, row.Value)
 }
 appender.Close()
+```
+
+## TAG: UPDATE 패턴
+
+TAG data UPDATE는 태그 선택 조건과 BASETIME 조건을 함께 사용합니다.
+
+```sql
+UPDATE sensor_data
+   SET value = value + 1
+ WHERE name = 'sensor-01'
+   AND time >= TO_DATE('2026-07-01', 'YYYY-MM-DD');
 ```
 
 ## RDB: UPDATE 패턴

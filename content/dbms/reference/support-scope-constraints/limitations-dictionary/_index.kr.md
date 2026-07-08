@@ -10,8 +10,8 @@ Machbase의 주요 제한 사항을 테이블 유형별, Edition별, 일반 시�
 
 | 항목 | 제한 내용 |
 |------|----------|
-| UPDATE 조건 | `WHERE name = '...'` (TAGNAME PK 컬럼) 조건 필수 |
-| UPDATE 대상 | SUMMARIZED 속성 컬럼만 가능 |
+| UPDATE 조건 | 태그 선택 조건(`name =`, `name IN`, `name LIKE`)과 BASETIME 조건 필수 |
+| UPDATE 대상 | 실제 데이터 컬럼 가능. 메타데이터는 `UPDATE ... METADATA` 사용 |
 | UPDATE 불가 컬럼 | `name` (TAGNAME), `time` (BASETIME) |
 | DELETE 방식 | 범위 삭제 지원; 개별 행 삭제는 DELETE 정책 설정 필요 |
 | Transaction | 미지원 (Append-only 구조, 즉시 커밋) |
@@ -81,11 +81,3 @@ Machbase의 주요 제한 사항을 테이블 유형별, Edition별, 일반 시�
 | 테이블 이름 최대 길이 | 40자 | |
 | 컬럼 이름 최대 길이 | 40자 | |
 | 동시 접속 세션 수 | 설정값 `MAX_SESSION_COUNT` | 기본값 512 |
-
-## 계획 중인 기능 (Planned)
-
-아래 항목은 현재 미지원이나 향후 업데이트 예정입니다.
-
-| 항목 | 이슈 |
-|------|------|
-| TAG UPDATE WHERE time BETWEEN | dbms-nfx#3733 |

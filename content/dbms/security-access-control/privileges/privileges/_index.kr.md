@@ -50,7 +50,7 @@ SYS 계정은 모든 권한을 기본으로 보유하므로 별도로 GRANT를 �
 | `SELECT` | 해당 테이블 조회 | 모든 테이블 유형 지원 |
 | `INSERT` | 해당 테이블에 행 삽입 | 모든 테이블 유형 지원 |
 | `DELETE` | 해당 테이블에서 행 삭제 | 모든 테이블 유형 지원 |
-| `UPDATE` | 해당 테이블의 행 수정 | VOLATILE, LOOKUP, RDB 전용 (LOG/TAG 미지원) |
+| `UPDATE` | 해당 테이블의 행 수정 | TAG는 태그/시간 조건 필요. LOG 미지원 |
 | `ALL` | SELECT + INSERT + DELETE + UPDATE 일괄 부여 | |
 
 ## ALL의 의미
@@ -84,7 +84,8 @@ BACKUP, ALTER 권한 비트를 일괄 부여하고, 특정 테이블이면 해�
 
 권한이 있어도 테이블 유형이 지원하지 않는 DML은 실행할 수 없습니다.
 
-- `LOG`, `TAG` 테이블은 `UPDATE`를 지원하지 않습니다.
+- `LOG` 테이블은 `UPDATE`를 지원하지 않습니다.
+- `TAG` 테이블의 data UPDATE는 태그 선택 조건과 BASETIME 조건이 필요합니다.
 - `VOLATILE`, `LOOKUP` 테이블의 `DELETE`/`UPDATE`는 기본키 기반 `WHERE` 조건이 필요합니다.
 
 권한을 부여한다고 해서 지원하지 않는 DML이 허용되는 것은 아닙니다.

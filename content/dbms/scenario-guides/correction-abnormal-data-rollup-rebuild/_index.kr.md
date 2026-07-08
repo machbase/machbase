@@ -8,11 +8,11 @@ weight: 100
 
 잘못 입력된 센서 데이터를 삭제 또는 정정하고, 영향받은 ROLLUP 집계를 재구성하는 운영 절차입니다.
 
-센서 오작동, 수집기 버그, 단위 변환 오류 등으로 비정상적인 값이 TAG 테이블에 삽입되면 ROLLUP 집계(최솟값, 최댓값, 평균 등)가 오염됩니다. 이 시나리오는 이상 데이터를 탐지·삭제·재입력한 뒤 `ROLLUP_REBUILD`로 집계를 재계산하는 전체 절차를 다룹니다.
+센서 오작동, 수집기 버그, 단위 변환 오류 등으로 비정상적인 값이 TAG 테이블에 삽입되면 ROLLUP 집계(최솟값, 최댓값, 평균 등)가 오염됩니다. 이 시나리오는 이상 데이터를 탐지하고 TAG data UPDATE로 정정한 뒤 `ROLLUP_REBUILD`로 집계를 재계산하는 전체 절차를 다룹니다.
 
 > **주의**: Cluster Edition에서는 `ROLLUP_REBUILD`가 지원되지 않습니다. 이 시나리오는 Standard Edition을 대상으로 합니다.
 
-> **권장**: 데이터 삭제 전 반드시 해당 기간의 백업을 수행하십시오. 삭제된 TAG 데이터는 복구할 수 없습니다.
+> **권장**: 대량 정정 전 반드시 해당 기간의 백업을 수행하십시오. `name` 또는 `time` 자체를 바꿔야 해서 삭제/재입력이 필요한 경우 삭제된 TAG 데이터는 복구할 수 없습니다.
 
 ## 1단계: 이상 데이터 탐지
 
@@ -49,10 +49,10 @@ SELECT
 
 ### 이상 데이터 샘플 조회
 
-삭제 전 이상 데이터의 실제 내용을 확인합니다.
+정정 전 이상 데이터의 실제 내용을 확인합니다.
 
 ```sql
--- 이상 데이터 미리보기 (삭제 전 확인용)
+-- 이상 데이터 미리보기 (정정 전 확인용)
 SELECT name, time, value
   FROM sensor_tag
  WHERE name = 'sensor-01'
@@ -64,7 +64,7 @@ SELECT name, time, value
 
 ## 2단계: 데이터 백업 (권장)
 
-삭제 전 해당 기간 데이터를 백업합니다.
+대량 UPDATE 전 해당 기간 데이터를 백업합니다.
 
 ```sql
 -- 이상 데이터가 포함된 기간을 기간 백업
@@ -76,52 +76,56 @@ BACKUP DATABASE
 
 백업이 완료된 후 다음 단계를 진행합니다.
 
-## 3단계: 이상 데이터 삭제
+## 3단계: 이상 데이터 정정
 
-TAG 테이블에서 이상 데이터를 삭제합니다. 삭제 조건을 정확히 지정하여 정상 데이터가 삭제되지 않도록 주의합니다.
+TAG 테이블에서 이상 데이터를 직접 정정합니다. UPDATE 조건을 정확히 지정하여 정상 데이터가 수정되지 않도록 주의합니다.
 
 ```sql
--- 특정 센서의 특정 기간 데이터 삭제
-DELETE FROM sensor_tag
+-- 특정 센서의 특정 기간 값을 정정
+UPDATE sensor_tag
+   SET value = 25.3
  WHERE name = 'sensor-01'
    AND time BETWEEN TO_DATE('2024-01-01') AND TO_DATE('2024-01-02');
 ```
 
-범위 이탈 값만 선택적으로 삭제하려면:
+범위 이탈 값만 선택적으로 정정하려면:
 
 ```sql
--- 이상 값만 선택 삭제 (값 조건 포함)
-DELETE FROM sensor_tag
+-- 이상 값만 선택 정정 (값 조건 포함)
+UPDATE sensor_tag
+   SET value = 25.3
  WHERE name = 'sensor-01'
    AND time BETWEEN TO_DATE('2024-01-01') AND TO_DATE('2024-01-02')
    AND value > 200;
 ```
 
-삭제 후 남은 데이터를 확인합니다.
+정정 후 결과를 확인합니다.
 
 ```sql
--- 삭제 결과 확인
-SELECT COUNT(*) AS remaining
+-- 정정 결과 확인
+SELECT COUNT(*) AS corrected
   FROM sensor_tag
  WHERE name = 'sensor-01'
-   AND time BETWEEN TO_DATE('2024-01-01') AND TO_DATE('2024-01-02');
+   AND time BETWEEN TO_DATE('2024-01-01') AND TO_DATE('2024-01-02')
+   AND value = 25.3;
 ```
 
-## 4단계: 정정 데이터 재입력
+## 4단계: 삭제/재입력이 필요한 경우
 
-올바른 데이터를 재입력합니다. 데이터 소스에 따라 방법을 선택합니다.
+`name` 또는 `time` 값을 바꿔야 하는 경우에는 TAG data UPDATE로 처리할 수 없습니다. 새
+`name`/`time` 값으로 정정 데이터를 입력하고, 운영 정책에 따라 기존 데이터를 삭제합니다.
 
 ### machsql로 직접 삽입
 
 ```sql
--- 정정된 값으로 직접 삽입
+-- 정정된 name/time 값으로 직접 삽입
 INSERT INTO sensor_tag VALUES ('sensor-01', TO_DATE('2024-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), 25.3);
 INSERT INTO sensor_tag VALUES ('sensor-01', TO_DATE('2024-01-01 00:01:00', 'YYYY-MM-DD HH24:MI:SS'), 25.5);
 ```
 
 ### CSV 파일로 대량 재입력
 
-정정된 데이터를 CSV 파일로 준비한 뒤 machloader로 적재합니다.
+정정된 데이터를 CSV 파일로 준비한 뒤 machloader로 적재할 수도 있습니다.
 
 ```bash
 # CSV 파일 형식: name,time,value
@@ -254,8 +258,8 @@ HAVING COUNT(*) > 60   -- 1시간에 60건 이상이면 의심
 |------|------|
 | 1 | 범위 이탈·이상값 탐지 쿼리 실행 |
 | 2 | 이상 데이터 포함 기간 백업 |
-| 3 | `DELETE FROM sensor_tag WHERE ...` 이상 데이터 삭제 |
-| 4 | 정정 데이터 재입력 (INSERT 또는 machloader) |
+| 3 | `UPDATE sensor_tag SET ... WHERE name ... AND time ...` 이상 데이터 정정 |
+| 4 | name/time 변경이 필요한 경우에만 정정 데이터 재입력 후 기존 데이터 삭제 |
 | 5 | `EXEC ROLLUP_REBUILD(...)` ROLLUP 재계산 |
 | 6 | `v$rollup`으로 Rebuild 완료 확인 |
 | 7 | 원시 데이터 집계와 ROLLUP 집계 비교 검증 |

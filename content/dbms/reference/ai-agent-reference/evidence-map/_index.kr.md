@@ -47,6 +47,6 @@ weight: 60
 
 | 사실 | 근거 (소스) | 비고 |
 |------|------------|------|
-| TAG UPDATE WHERE는 PK(name) 조건만 허용 | Machbase 엔진 제약 (planned: #3733) | |
-| TAG UPDATE SET은 SUMMARIZED/METADATA 컬럼만 허용 | Machbase 엔진 제약 | |
+| TAG data UPDATE WHERE는 태그 선택 조건과 BASETIME 조건을 요구하며 `name IN`, `name LIKE`, 시간 범위, 데이터 컬럼 predicate를 지원 | NFX #3733 회귀 테스트 및 5656 서버 실 SQL 검증 | |
+| TAG data UPDATE SET은 실제 데이터 컬럼을 허용하고 PK(name), BASETIME, 메타데이터 컬럼은 거부 | NFX #3733 회귀 테스트 및 5656 서버 실 SQL 검증 | |
 | TAG 테이블 DELETE는 BEFORE/WHERE/METADATA/ROLLUP 등 제한된 형태로 지원 | Machbase 8.5 DML 문서와 8.6 SQL 파서/실행 경로 | 일반 RDB DELETE와 동일한 범위로 가정하지 않음 |

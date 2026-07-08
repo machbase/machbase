@@ -45,7 +45,7 @@ weight: 30
 | 백업 데이터 마운트 | `MOUNT DATABASE '/path' TO mount_name` | [MOUNT](../../../operations-configuration-recovery/backup-restore-mount/mount/) |
 | 느린 쿼리 중지 | `v$stmt` 확인 후 `ALTER SYSTEM KILL SESSION` | [operations-checklist](../operations-checklist/) |
 | 서버 상태 확인 | `machadmin -c` 또는 `SELECT * FROM v$session` | [operations-checklist](../operations-checklist/) |
-| 이상 데이터 정정 | LOOKUP: UPDATE/DELETE, TAG: 재입력(Append) | [제약 사항](../constraints-index/) |
+| 이상 데이터 정정 | LOOKUP: UPDATE/DELETE, TAG: data UPDATE 후 필요 시 ROLLUP_REBUILD | [제약 사항](../constraints-index/) |
 | 디스크 사용량 확인 | `SELECT * FROM v$tablespace` | [operations-checklist](../operations-checklist/) |
 
 ## 자동화
@@ -53,7 +53,7 @@ weight: 30
 | 태스크 | 수행 방법 | 참조 문서 |
 |--------|-----------|-----------|
 | 집계 자동화 (ROLLUP) | `CREATE ROLLUP` 후 자동 실행 | [ROLLUP](../../../core-concepts/rollup/) |
-| ROLLUP 수동 재구성 | `EXEC ROLLUP_REBUILD(name, start, end)` (Standard Edition) | [ROLLUP](../../../core-concepts/rollup/) |
+| ROLLUP 수동 재구성 | `EXEC ROLLUP_REBUILD(table_name, tag_name, start_time, end_time)` (Standard Edition) | [ROLLUP](../../../core-concepts/rollup/) |
 | 이벤트 기반 처리 | `CREATE STREAM` + 처리 쿼리 정의 | [STREAM](../../../core-concepts/stream/) |
 | 데이터 보존 정책 | RETENTION 설정 (LOG 테이블) | [LOG 테이블](../../../core-concepts/log-table/) |
 | STREAM 시작/중지 | `EXEC STREAM_START(name)` / `EXEC STREAM_STOP(name)` | [STREAM](../../../core-concepts/stream/) |

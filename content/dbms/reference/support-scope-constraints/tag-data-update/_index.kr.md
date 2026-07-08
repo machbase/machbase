@@ -4,66 +4,93 @@ title: 'TAG data UPDATE 지원표'
 weight: 40
 ---
 
-이 페이지는 TAG 테이블의 UPDATE 기능 현재 지원 현황과 계획 중인 기능을 정리합니다.
+TAG 테이블의 실제 시계열 데이터는 `UPDATE table_name SET ... WHERE ...` 구문으로
+수정할 수 있습니다. 이 페이지는 TAG data UPDATE에서 허용되는 WHERE 조건과 SET 대상을
+정리합니다. 메타데이터 수정은 별도의 `UPDATE ... METADATA` 구문을 사용합니다.
 
 ## WHERE 조건별 지원 현황
 
-| WHERE 조건 | 현재 지원 | 계획 중 | 비고 |
-|-----------|:---------:|:-------:|------|
-| `WHERE name = '...'` (PK 단일 조건) | O | — | 현재 유일하게 완전 지원 |
-| `WHERE name IN ('a', 'b', ...)` | X | O | planned: dbms-nfx#3733 |
-| `WHERE name LIKE '...'` | X | O | planned: dbms-nfx#3733 |
-| `WHERE time BETWEEN ... AND ...` | X | O | planned: dbms-nfx#3733 |
-| `WHERE time >= ... AND time <= ...` | X | O | planned: dbms-nfx#3733 |
-| 조건 없이 전체 UPDATE | X | X | 미지원, 계획 없음 |
+TAG data UPDATE에는 태그 선택 조건과 시간 축 조건이 모두 필요합니다.
+
+| WHERE 조건 | 지원 | 비고 |
+|-----------|:---:|------|
+| `name = 'tag-01'` | O | 단일 태그 선택 |
+| `name IN ('tag-01', 'tag-02')` | O | 리터럴/바인드 값 목록 지원, 서브쿼리 `IN`은 미지원 |
+| `name LIKE 'tag-%'` | O | 패턴에 맞는 태그를 대상으로 확장 |
+| `time = t1` | O | BASETIME 컬럼 등치 조건 |
+| `time BETWEEN t1 AND t2` | O | 양 끝 포함 |
+| `time >= t1 AND time < t2` | O | `>`, `>=`, `<`, `<=` 조합 지원 |
+| 한쪽 시간 조건 | O | 예: `time >= t1` |
+| 데이터 컬럼 predicate | O | 예: `value > 100`, 태그/시간 조건과 함께 사용 |
+| 조건 없는 UPDATE | X | 전체 TAG data UPDATE는 허용하지 않음 |
+| 태그 선택 없는 시간 조건만 사용 | X | 대상 태그를 지정해야 함 |
+| 시간 조건 없는 태그 조건만 사용 | X | BASETIME 범위를 지정해야 함 |
+| `OR` 조건 | X | TAG data UPDATE 조건에서는 허용하지 않음 |
+| 서브쿼리/집계/비결정 predicate | X | UPDATE 대상 결정 조건으로 사용할 수 없음 |
 
 ## SET 대상 컬럼별 지원 현황
 
-| SET 대상 | 현재 지원 | 비고 |
-|---------|:---------:|------|
-| SUMMARIZED 속성 컬럼 | O | 사용자 정의 집계 컬럼 |
-| 일반 메타 컬럼 | O | TAG 스키마 정의에 따라 다름 |
-| `name` (TAGNAME, PK) | X | PK 컬럼 변경 불가 |
-| `time` (BASETIME) | X | 시간 컬럼 변경 불가 |
-| `value` (기본 측정값 컬럼) | X | 불가 |
+| SET 대상 | 지원 | 비고 |
+|---------|:---:|------|
+| 데이터 컬럼 | O | `value`, 보조 컬럼 등 사용자 데이터 컬럼 |
+| `SUMMARIZED` 데이터 컬럼 | O | 원본 TAG 데이터가 갱신됨 |
+| 여러 데이터 컬럼 | O | 같은 UPDATE 문에서 함께 지정 가능 |
+| `name` (PRIMARY KEY) | X | 태그 이름은 변경할 수 없음 |
+| `time` (BASETIME) | X | 시간 축 컬럼은 변경할 수 없음 |
+| 메타데이터 컬럼 | X | `UPDATE table_name METADATA SET ...` 사용 |
+| 숨김/시스템 컬럼 | X | 내부 컬럼은 UPDATE 대상이 아님 |
 
-## 현재 지원되는 UPDATE 예시
+SET 표현식에는 상수, 기존 행의 컬럼 참조, 산술식, `CASE` 표현식, 문자열 연결, NULL
+값(컬럼 제약이 허용하는 경우)을 사용할 수 있습니다. 같은 UPDATE 문에서 여러 컬럼을
+수정할 때 RHS 표현식은 기존 행 값을 기준으로 평가됩니다.
+
+## 지원되는 UPDATE 예시
 
 ```sql
--- 가능: name 조건으로 SUMMARIZED 컬럼 업데이트
 UPDATE sensor_data
-SET min_value = 0.0, max_value = 100.0
-WHERE name = 'sensor01';
+   SET value = value + 10,
+       status = status + 1
+ WHERE name = 'TEMP-01'
+   AND time >= TO_DATE('2026-07-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+   AND time <  TO_DATE('2026-07-02 00:00:00', 'YYYY-MM-DD HH24:MI:SS');
 
+UPDATE sensor_data
+   SET note = 'checked'
+ WHERE name IN ('TEMP-01', 'TEMP-02')
+   AND time BETWEEN TO_DATE('2026-07-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+                AND TO_DATE('2026-07-01 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+   AND value > 100;
+
+UPDATE sensor_data
+   SET status = 7
+ WHERE name LIKE 'TEMP-%'
+   AND time >= TO_DATE('2026-07-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS');
 ```
 
-## 현재 불가능한 UPDATE 예시
+## 거부되는 UPDATE 예시
 
 ```sql
--- 불가: time 컬럼 조건
-UPDATE sensor_data SET min_value = 0.0
-WHERE name = 'sensor01' AND time >= TO_DATE('2024-01-01');  -- 오류
+-- 태그 선택 조건 없음
+UPDATE sensor_data SET value = 0
+WHERE time >= TO_DATE('2026-07-01', 'YYYY-MM-DD');
 
--- 불가: BASETIME 컬럼 업데이트
-UPDATE sensor_data SET time = NOW() WHERE name = 'sensor01';  -- 오류
+-- 시간 조건 없음
+UPDATE sensor_data SET value = 0
+WHERE name = 'TEMP-01';
 
--- 불가: TAGNAME 컬럼 업데이트
-UPDATE sensor_data SET name = 'new_sensor' WHERE name = 'sensor01';  -- 오류
+-- PRIMARY KEY/BASETIME/메타데이터 컬럼은 data UPDATE에서 SET 불가
+UPDATE sensor_data SET name = 'TEMP-02'
+WHERE name = 'TEMP-01' AND time >= TO_DATE('2026-07-01', 'YYYY-MM-DD');
+
+UPDATE sensor_data SET time = NOW
+WHERE name = 'TEMP-01' AND time >= TO_DATE('2026-07-01', 'YYYY-MM-DD');
 ```
 
-## 계획 중인 기능 (planned: dbms-nfx#3733)
+## 운영 시 주의사항
 
-다음 기능은 현재 미지원이며, 향후 업데이트에서 제공될 예정입니다.
-
-- **시간 범위 조건**: `WHERE name = '...' AND time BETWEEN ... AND ...`
-- **LIKE 조건**: `WHERE name LIKE 'sensor%'`
-- **복합 조건 UPDATE**: 여러 조건을 결합한 UPDATE
-
-## 현재 제약 우회 방법
-
-| 필요 기능 | 현재 우회 방법 |
-|----------|--------------|
-| 시간 범위 내 데이터 수정 | 해당 범위 데이터를 DELETE 후 재삽입 |
-| 여러 태그 일괄 업데이트 | 태그별로 `WHERE name = '...'` 조건으로 반복 UPDATE |
-
-> **주의**: TAG 테이블에서 DELETE 후 재삽입은 ROLLUP 데이터에 영향을 줄 수 있습니다. 중요 데이터는 변경 전 백업을 권장합니다.
+- 대량 UPDATE 전에는 같은 WHERE 조건으로 `SELECT COUNT(*)`를 실행해 대상 범위를 확인합니다.
+- `LIKE`와 `IN`은 여러 태그로 확장될 수 있으므로 시간 조건을 함께 좁게 지정합니다.
+- INSERT 직후의 append 데이터는 내부 반영 지연이 있을 수 있으므로 UPDATE 전 대상 행이
+  조회되는지 확인합니다.
+- 원본 TAG 데이터가 수정되면 이미 생성된 롤업 데이터는 즉시 재계산되지 않을 수 있습니다.
+  정정 구간을 조회에 사용한다면 `ROLLUP_REBUILD`로 필요한 롤업을 재구성합니다.
