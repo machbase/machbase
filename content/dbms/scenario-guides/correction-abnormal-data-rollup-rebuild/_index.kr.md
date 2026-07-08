@@ -138,30 +138,28 @@ machloader -i -t sensor_tag -d corrected_data.csv \
 
 ```sql
 -- ROLLUP 재계산
--- ROLLUP_REBUILD(테이블명, ROLLUP명, 시작시간, 종료시간)
-EXEC ROLLUP_REBUILD(sensor_tag, rollup_1min,
+-- ROLLUP_REBUILD(테이블명, 태그명, 시작시간, 종료시간)
+EXEC ROLLUP_REBUILD(sensor_tag, 'sensor-01',
     TO_DATE('2024-01-01', 'YYYY-MM-DD'),
     TO_DATE('2024-01-02', 'YYYY-MM-DD'));
 ```
 
-ROLLUP이 여러 단계(1분, 1시간, 1일 등)로 설정된 경우 각각 Rebuild합니다.
+ROLLUP이 여러 단계(1분, 1시간 등)로 설정되어 있어도 두 번째 인자는 ROLLUP 이름이 아니라
+재계산할 tag 이름입니다.
 
 ```sql
--- 1분 ROLLUP Rebuild
-EXEC ROLLUP_REBUILD(sensor_tag, rollup_1min,
-    TO_DATE('2024-01-01', 'YYYY-MM-DD'),
-    TO_DATE('2024-01-02', 'YYYY-MM-DD'));
-
--- 1시간 ROLLUP Rebuild
-EXEC ROLLUP_REBUILD(sensor_tag, rollup_1hour,
+EXEC ROLLUP_REBUILD(sensor_tag, 'sensor-02',
     TO_DATE('2024-01-01', 'YYYY-MM-DD'),
     TO_DATE('2024-01-02', 'YYYY-MM-DD'));
 ```
 
-> **ROLLUP 이름 확인**: 테이블에 설정된 ROLLUP 이름은 다음 쿼리로 확인합니다.
+> **ROLLUP 상태 확인**: 테이블에 설정된 ROLLUP은 다음 쿼리로 확인합니다.
 
 ```sql
-SELECT * FROM v$rollup WHERE table_name = 'SENSOR_TAG';
+SELECT rollup_name, source_table, rollup_table, enabled, run_state
+  FROM v$rollup
+ WHERE source_table = 'SENSOR_TAG'
+    OR root_table = 'SENSOR_TAG';
 ```
 
 ## 6단계: Rebuild 진행 상황 확인
@@ -171,19 +169,22 @@ SELECT * FROM v$rollup WHERE table_name = 'SENSOR_TAG';
 ```sql
 -- ROLLUP 상태 확인
 SELECT
-    table_name,
-    name,
-    state,
-    last_rebuild_time
+    rollup_name,
+    source_table,
+    enabled,
+    run_state,
+    last_wakeup_time,
+    last_elapsed_msec
   FROM v$rollup
- WHERE table_name = 'SENSOR_TAG';
+ WHERE source_table = 'SENSOR_TAG'
+    OR root_table = 'SENSOR_TAG';
 ```
 
 | 상태 값 | 의미 |
 |---------|------|
-| `NORMAL` | 정상 동작 중 |
-| `REBUILDING` | Rebuild 진행 중 |
-| `STOPPED` | 중지 상태 |
+| `ENABLED` | ROLLUP 활성화 여부 |
+| `RUN_STATE` | 현재 실행 상태 |
+| `LAST_ELAPSED_MSEC` | 마지막 실행 소요 시간 |
 
 ## 7단계: 정정 전후 비교 검증
 
@@ -204,14 +205,12 @@ SELECT
 ```
 
 ```sql
--- ROLLUP 집계 값 확인 (1분 단위)
-SELECT
-    MIN(min_value) AS rollup_min,
-    MAX(max_value) AS rollup_max,
-    SUM(sum_value) / SUM(count) AS rollup_avg
-  FROM sensor_tag_rollup_1min
+-- ROLLUP 힌트로 집계 값 확인 (1분 평균)
+SELECT /*+ ROLLUP(sensor_tag, min, AVG) */ time, value
+  FROM sensor_tag
  WHERE name = 'sensor-01'
-   AND time BETWEEN TO_DATE('2024-01-01') AND TO_DATE('2024-01-02');
+   AND time BETWEEN TO_DATE('2024-01-01') AND TO_DATE('2024-01-02')
+ ORDER BY time;
 ```
 
 원시 데이터 집계와 ROLLUP 집계가 일치하면 정정이 완료된 것입니다.

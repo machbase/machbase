@@ -296,23 +296,24 @@ LIMIT 20;
 
 ## 7단계: 로그 보관 정책 설정 (DURATION)
 
-오래된 로그 데이터를 자동으로 삭제해 디스크 공간을 관리합니다. `ALTER TABLE` 명령으로 보관 기간을 설정합니다.
+오래된 로그 데이터를 자동으로 삭제해 디스크 공간을 관리합니다. 리텐션 정책을 만들고
+테이블에 연결합니다.
 
 ```sql
 -- 30일 보관 정책 설정
-ALTER TABLE app_log SET DURATION = 30 DAY;
+CREATE RETENTION app_log_30d DURATION 30 DAY INTERVAL 1 DAY;
+ALTER TABLE app_log ADD RETENTION app_log_30d;
 ```
 
 ```sql
 -- 보관 정책 확인
-SELECT table_name, duration_sec
-FROM M$SYS_TABLES
-WHERE table_name = 'APP_LOG';
+SELECT * FROM m$retention;
+SELECT * FROM v$retention_job;
 ```
 
 ```sql
 -- 보관 정책 해제 (무기한 보관)
-ALTER TABLE app_log SET DURATION = 0;
+ALTER TABLE app_log DROP RETENTION;
 ```
 
 > **주의**: DURATION을 설정하면 기간이 지난 데이터는 자동으로 삭제됩니다. 삭제 전 필요한 데이터는 별도 백업을 권장합니다.

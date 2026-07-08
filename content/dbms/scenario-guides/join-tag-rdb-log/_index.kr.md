@@ -10,7 +10,7 @@ Machbase는 TAG(시계열), RDB(관계형), LOG(이벤트) 세 가지 테이블 
 
 ```
 [센서 데이터]  → TAG 테이블   (sensor_tag)     ─┐
-[장비 마스터]  → LOOKUP 테이블(equipment)       ─┼→ 통합 대시보드 쿼리
+[장비 마스터]  → RDB 테이블   (equipment)       ─┼→ 통합 대시보드 쿼리
 [시스템 이벤트] → LOG 테이블  (system_event_log) ─┘
 ```
 
@@ -26,9 +26,9 @@ CREATE TAG TABLE sensor_tag (
     value DOUBLE SUMMARIZED
 );
 
--- 2. LOOKUP 테이블: 장비 마스터 (정적 참조 데이터)
-CREATE LOOKUP TABLE equipment (
-    eq_id      VARCHAR(32) PRIMARY KEY,
+-- 2. RDB 테이블: 장비 마스터 (관계형 참조 데이터)
+CREATE RDB TABLE equipment (
+    eq_id      VARCHAR(32),
     eq_name    VARCHAR(128),
     location   VARCHAR(64),
     threshold  DOUBLE,
@@ -45,7 +45,7 @@ CREATE TABLE system_event_log (
 
 ## 장비 마스터 데이터 등록
 
-LOOKUP 테이블에 장비 기준 정보를 등록합니다.
+RDB 테이블에 장비 기준 정보를 등록합니다.
 
 ```sql
 INSERT INTO equipment VALUES ('EQ-001', '압축기 #1', 'A동 3층', 85.0, '홍길동');
@@ -53,7 +53,7 @@ INSERT INTO equipment VALUES ('EQ-002', '펌프 #2',   'B동 1층', 72.0, '이�
 INSERT INTO equipment VALUES ('EQ-003', '모터 #3',   'C동 2층', 90.0, '박철수');
 ```
 
-## TAG + LOOKUP 조인: 현재 센서값 + 장비 정보
+## TAG + RDB 조인: 현재 센서값 + 장비 정보
 
 각 태그의 최신값과 장비 마스터를 조인해 상태 현황을 조회합니다.
 
@@ -74,7 +74,7 @@ SELECT
 FROM equipment e
 JOIN (
     SELECT name, RECENT(time, 1) AS latest_time, RECENT(value, 1) AS latest_value
-    FROM TAG TABLE sensor_tag
+    FROM sensor_tag
     GROUP BY name
 ) RECENT_ROW ON e.eq_id = RECENT_ROW.name;
 ```
@@ -90,15 +90,14 @@ SELECT
     t.time AS sensor_time,
     t.value,
     l.message AS event_message,
-    l._arrival_time AS event_time,
-    DATEDIFF(SECOND, t.time, l._arrival_time) AS diff_sec
-FROM TAG TABLE sensor_tag t
+    l._arrival_time AS event_time
+FROM sensor_tag t
 JOIN system_event_log l
   ON t.name = l.eq_id
- AND l._arrival_time BETWEEN DATEADD(SECOND, -600, t.time)
-                         AND DATEADD(SECOND, 600, t.time)
+ AND l._arrival_time BETWEEN ADD_TIME(t.time, '0/0/0 0:-10:0')
+                         AND ADD_TIME(t.time, '0/0/0 0:10:0')
 WHERE t.value > 80
-  AND t.time > DATEADD(HOUR, -24, NOW)
+  AND t.time > ADD_TIME(SYSDATE, '0/0/-1 0:0:0')
 ORDER BY t.time;
 ```
 
@@ -117,11 +116,11 @@ SELECT
     COUNT(t.value) AS sample_count,
     (SELECT COUNT(*) FROM system_event_log l
       WHERE l.eq_id = e.eq_id
-        AND l._arrival_time > DATEADD(HOUR, -1, NOW)) AS event_count_1h
+        AND l._arrival_time > ADD_TIME(SYSDATE, '0/0/0 -1:0:0')) AS event_count_1h
 FROM equipment e
-JOIN TAG TABLE sensor_tag t
+JOIN sensor_tag t
   ON e.eq_id = t.name
-WHERE t.time > DATEADD(HOUR, -1, NOW)
+WHERE t.time > ADD_TIME(SYSDATE, '0/0/0 -1:0:0')
 GROUP BY e.eq_id, e.eq_name, e.location
 ORDER BY avg_1h DESC;
 ```
@@ -141,7 +140,7 @@ SELECT
 FROM equipment e
 JOIN (
     SELECT name, RECENT(value, 1) AS latest_value
-    FROM TAG TABLE sensor_tag
+    FROM sensor_tag
     GROUP BY name
 ) RECENT_ROW ON e.eq_id = RECENT_ROW.name
 WHERE RECENT_ROW.latest_value > e.threshold
@@ -153,7 +152,7 @@ ORDER BY pct DESC;
 | 항목 | 권장 사항 |
 |------|-----------|
 | TAG RECENT 조회 | 태그 수가 많을 경우 GROUP BY name으로 그룹화 |
-| LOOKUP JOIN | LOOKUP 테이블은 메모리 캐시되므로 JOIN 비용 낮음 |
+| RDB JOIN | 장비 마스터처럼 관계형 참조 데이터와 조인 |
 | LOG 기간 필터 | `_arrival_time` 조건을 반드시 포함해 스캔 범위 제한 |
 | 복합 조인 | 서브쿼리 또는 CTE로 단계 분리 시 가독성·성능 향상 |
 

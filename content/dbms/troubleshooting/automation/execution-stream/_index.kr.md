@@ -22,8 +22,10 @@ SELECT * FROM v$streams;
 |------|------|
 | `name` | STREAM 이름 |
 | `state` | 현재 상태 (`RUNNING`, `STOPPED`, `ERROR` 등) |
-| `query` | STREAM에 등록된 쿼리 |
-| `last_run_time` | 마지막 실행 시각 |
+| `table_name` | 대상 테이블 이름 |
+| `query_txt` | STREAM에 등록된 쿼리 |
+| `last_ex_time` | 마지막 실행 시각 |
+| `error_msg` | 최근 오류 메시지 |
 
 ## 원인별 진단
 
@@ -52,10 +54,10 @@ STREAM 쿼리에서 참조하는 테이블이 삭제되었거나 이름이 변�
 
 ```sql
 -- STREAM 쿼리 확인
-SELECT name, query FROM v$streams;
+SELECT name, table_name, query_txt, error_msg FROM v$streams;
 
 -- 쿼리에서 참조하는 테이블 존재 여부 확인
-SELECT name, type FROM v$table WHERE name IN ('SOURCE_LOG', 'DEST_TAG');
+SELECT name, type FROM m$sys_tables WHERE name IN ('SOURCE_LOG', 'DEST_TAG');
 ```
 
 테이블이 없다면 테이블을 먼저 생성하고 STREAM을 재시작합니다.
@@ -78,7 +80,7 @@ STREAM을 삭제하고 올바른 쿼리로 재생성합니다.
 ```sql
 -- 기존 STREAM 중지 및 삭제
 EXEC STREAM_STOP(stream_name);
-EXEC STREAM_DESTROY(stream_name);
+EXEC STREAM_DROP(stream_name);
 
 -- 올바른 쿼리로 재생성
 EXEC STREAM_CREATE(stream_name,
@@ -98,7 +100,7 @@ STREAM은 서버 재시작 시 자동으로 재시작되지 않습니다. 서버
 
 ```sql
 -- 중지된 STREAM 목록 확인
-SELECT name FROM v$streams WHERE state != 'RUNNING';
+SELECT name FROM v$streams WHERE state <> 'RUNNING';
 
 -- 각 STREAM 시작
 EXEC STREAM_START(stream_name);
@@ -115,7 +117,7 @@ STREAM에 문제가 있어 완전히 재생성해야 하는 경우 다음 순서
 EXEC STREAM_STOP(stream_name);
 
 -- 2. STREAM 삭제
-EXEC STREAM_DESTROY(stream_name);
+EXEC STREAM_DROP(stream_name);
 
 -- 3. 새 쿼리로 STREAM 재생성
 EXEC STREAM_CREATE(stream_name,

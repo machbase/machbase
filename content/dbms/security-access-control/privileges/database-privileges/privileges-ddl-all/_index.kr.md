@@ -28,8 +28,9 @@ REVOKE DDL ON machbasedb FROM deploy_user;
 
 ## ALL 합성 권한
 
-`ALL`은 데이터베이스 대상에서 사용할 수 있는 모든 권한을 일괄 부여합니다.  
-`MACHBASEDB`에 대한 `ALL`은 `CREATE`, `DROP`, `ALTER`, `BACKUP`, `MOUNT`를 모두 포함합니다.
+`ALL`은 데이터베이스 대상에서 사용할 수 있는 권한 비트를 일괄 부여합니다.
+`MACHBASEDB`에 대한 `ALL`은 `SELECT`, `INSERT`, `DELETE`, `UPDATE`, `CREATE`,
+`DROP`, `MOUNT`, `ALTER`, `BACKUP`을 모두 포함합니다.
 
 ```sql
 -- 모든 데이터베이스 권한 일괄 부여
@@ -45,7 +46,7 @@ REVOKE ALL ON machbasedb FROM admin_user;
 
 | 대상 | ALL의 의미 |
 |---|---|
-| `MACHBASEDB` | CREATE, DROP, ALTER, BACKUP, MOUNT (데이터베이스 관리 권한 전체) |
+| `MACHBASEDB` | SELECT, INSERT, DELETE, UPDATE, CREATE, DROP, MOUNT, ALTER, BACKUP |
 | 특정 테이블 | SELECT, INSERT, DELETE, UPDATE (DML 권한 전체) |
 
 ```sql
@@ -55,6 +56,10 @@ GRANT ALL ON machbasedb TO admin_user;
 -- 특정 테이블의 DML 권한 전체 부여
 GRANT ALL ON sys.sensor_log TO app_user;
 ```
+
+`GRANT ALL ON MACHBASEDB`가 DML 권한 비트를 포함하더라도,
+`GRANT SELECT ON MACHBASEDB`처럼 DML 권한을 개별로 DB 대상에 부여하는 구문은
+지원되지 않습니다. 다른 사용자 소유 테이블 접근은 테이블 대상 `GRANT`로 제어합니다.
 
 ## SYS 계정의 권한
 

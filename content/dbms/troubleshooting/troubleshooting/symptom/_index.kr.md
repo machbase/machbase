@@ -18,7 +18,7 @@ weight: 10
 | 입력 속도 저하 | `v$stmt`로 실행 중인 쿼리 확인 | [쿼리 성능 문제](../../performance/slow/) |
 | 메모리 부족 오류 | `v$sysmem`으로 메모리 현황 확인 | [메모리 부족](../../performance/memory-out-of/) |
 | 데이터 입력 실패 | 오류 코드, 테이블 스키마 확인 | [데이터 입력 실패](../../item/failure/) |
-| CSV 임포트 오류 | `machloader.err` 파일 확인 | [CSV 임포트 실패](../../item/failure-csv-import/) |
+| CSV 임포트 오류 | `machloader -b`로 지정한 bad file 확인 | [CSV 임포트 실패](../../item/failure-csv-import/) |
 | UPDATE/DELETE 오류 | 테이블 타입, WHERE 조건 확인 | [UPDATE/DELETE 문제](../../update-delete/) |
 | ROLLUP 결과 이상 | `v$rollup`으로 ROLLUP 상태 확인 | [ROLLUP 문제](../../automation/rollup/) |
 | STREAM 쿼리 미실행 | `v$streams`으로 STREAM 상태 확인 | [STREAM 문제](../../automation/execution-stream/) |
@@ -32,7 +32,7 @@ weight: 10
 
 ```bash
 # 서버 프로세스 상태 확인
-machadmin -c
+machadmin -e
 ```
 
 정상 상태에서는 아래와 같이 출력됩니다.
@@ -60,12 +60,12 @@ netstat -tlnp | grep 5656
 SELECT COUNT(*) FROM v$session;
 
 -- 세션 목록
-SELECT sess_id, login_time, user_name, task_state FROM v$session;
+SELECT id, login_time, user_name, user_ip, closed FROM v$session;
 ```
 
 세션 수가 비정상적으로 많으면 연결 풀 설정이나 최대 연결 수를 확인합니다. 실행 중인 쿼리가 있으면 다음으로 확인합니다.
 
 ```sql
 -- 실행 중인 쿼리 확인
-SELECT sess_id, id, state, query FROM v$stmt WHERE state != 'IDLE';
+SELECT sess_id, id, state, record_size, query FROM v$stmt;
 ```

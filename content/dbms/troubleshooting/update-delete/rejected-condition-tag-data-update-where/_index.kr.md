@@ -1,15 +1,16 @@
 ---
 type: docs
-title: 'TAG data UPDATE WHERE 조건이 거부될 때 (planned: dbms-nfx#3733)'
+title: 'TAG data UPDATE가 거부될 때'
 weight: 10
 ---
 
-TAG 테이블의 UPDATE 문에서 WHERE 절에 `name` 이외의 컬럼 조건을 사용하면 오류가 발생하거나 예상치 못한 동작이 발생할 수 있습니다.
+TAG 테이블에 `UPDATE` 문을 실행하면 오류가 발생합니다.
 
 {{< callout type="warning" >}}
-**현재 제약사항 (planned: dbms-nfx#3733)**
+**현재 제약사항**
 
-TAG 테이블의 UPDATE WHERE 조건은 현재 PRIMARY KEY(`name`) 기반 조건만 지원합니다. 이 기능은 향후 업데이트될 예정이며, 최신 릴리스 노트를 확인하세요.
+현재 Machbase 8.6 빌드에서 TAG 테이블은 `UPDATE` 문을 지원하지 않습니다.
+TAG 값을 정정해야 할 때는 새 행을 삽입한 뒤, 필요하면 기존 tag 데이터를 `DELETE`로 제거합니다.
 {{< /callout >}}
 
 ## 증상
@@ -17,56 +18,65 @@ TAG 테이블의 UPDATE WHERE 조건은 현재 PRIMARY KEY(`name`) 기반 조건
 TAG 테이블에 UPDATE를 실행할 때 다음과 같은 오류가 발생합니다.
 
 ```
-[ERR-02XXX]: WHERE condition is not supported for TAG table UPDATE
+[ERR-02278: UPDATE statement is not allowed for SENSOR_TAG.]
 ```
 
-또는 WHERE 절에 `time`, `value` 등의 컬럼 조건을 포함한 UPDATE가 거부됩니다.
+`UPDATE TAG TABLE ...` 형태의 구문도 지원되지 않습니다.
+
+```
+[ERR-02010: Syntax error: near token (TABLE ...).]
+```
 
 ## 원인
 
-TAG 테이블의 내부 구조는 시계열 데이터를 효율적으로 저장하도록 설계되어 있으며, PRIMARY KEY(`name`) 기반으로 데이터를 식별합니다. 현재 버전에서 UPDATE는 다음 조건만 지원합니다.
+TAG 테이블은 append 중심의 시계열 저장 구조입니다. 현재 버전에서는 `WHERE name = ...`
+조건을 사용하더라도 `UPDATE` 문 자체가 허용되지 않습니다.
 
-- **지원**: `WHERE name = '...'` — PRIMARY KEY 기반 단건 조건
-- **미지원**: `WHERE time >= ... AND time <= ...` — 시간 범위 조건
-- **미지원**: `WHERE value > ...` — 값 조건
-- **미지원**: `WHERE name LIKE '...'` — 패턴 조건
+- **미지원**: `UPDATE sensor_tag SET value = ... WHERE name = ...`
+- **미지원**: `UPDATE sensor_tag SET value = ... WHERE name = ... AND time = ...`
+- **미지원**: `UPDATE TAG TABLE sensor_tag SET value = ... WHERE name = ...`
 
 ## 진단
 
 현재 실행하려는 UPDATE 문의 WHERE 절을 확인합니다.
 
 ```sql
--- 오류: time 컬럼 조건 사용 (현재 미지원)
-UPDATE TAG TABLE sensor_tag SET value = 99.9
-WHERE name = 'sensor-01' AND time = TO_DATE('2024-01-01 12:00:00');
+-- 오류: TAG 테이블 UPDATE는 지원되지 않음
+UPDATE sensor_tag SET value = 99.9
+WHERE name = 'sensor-01';
 
--- 오류: 범위 조건 사용 (현재 미지원)
+-- 오류: UPDATE TAG TABLE 구문은 지원되지 않음
 UPDATE TAG TABLE sensor_tag SET value = 99.9
-WHERE time >= TO_DATE('2024-01-01') AND time < TO_DATE('2024-01-02');
+WHERE name = 'sensor-01';
 ```
 
 ## 임시 해결 방법
 
-PRIMARY KEY(`name`) 조건만으로 UPDATE를 분리하여 실행합니다.
+기존 값을 직접 수정하지 말고, 정정 데이터를 새로 입력한 뒤 필요하면 기존 tag 데이터를 삭제합니다.
 
-**1단계: 업데이트 대상 name 목록 조회**
-
-```sql
--- 조건에 해당하는 name 목록을 먼저 확인
-SELECT DISTINCT name FROM sensor_tag
-WHERE time >= TO_DATE('2024-01-01') AND time < TO_DATE('2024-01-02');
-```
-
-**2단계: name별로 UPDATE 실행**
+**1단계: 정정 대상 데이터 확인**
 
 ```sql
--- 조회된 name에 대해 개별적으로 UPDATE
-UPDATE TAG TABLE sensor_tag SET value = 99.9 WHERE name = 'sensor-01';
-UPDATE TAG TABLE sensor_tag SET value = 99.9 WHERE name = 'sensor-02';
+SELECT name, time, value
+  FROM sensor_tag
+ WHERE name = 'sensor-01'
+ ORDER BY time;
 ```
 
-애플리케이션에서 여러 건을 처리해야 한다면 1단계 결과를 순회하여 2단계 UPDATE를 반복 실행합니다.
+**2단계: 정정 데이터 재입력**
 
-## 향후 지원 예정
+```sql
+INSERT INTO sensor_tag
+VALUES ('sensor-01',
+        TO_DATE('2024-01-01 12:00:00', 'YYYY-MM-DD HH24:MI:SS'),
+        99.9);
+```
 
-time, value 등 다양한 컬럼 조건을 WHERE 절에서 사용하는 TAG UPDATE 기능은 `planned: dbms-nfx#3733`으로 계획 중입니다. 최신 릴리스 노트를 확인하여 지원 여부를 확인하십시오.
+**3단계: 기존 tag 데이터를 제거해야 하는 경우**
+
+```sql
+DELETE FROM sensor_tag WHERE name = 'sensor-01';
+```
+
+`DELETE FROM tag_table WHERE name = ...`는 해당 tag 이름의 데이터를 제거합니다. 일부 시간대만
+삭제해야 하는 경우에는 운영 절차상 백업, 재적재, 테이블 교체 방식을 함께 검토합니다.

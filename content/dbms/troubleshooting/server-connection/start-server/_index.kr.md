@@ -4,7 +4,7 @@ title: '서버가 시작되지 않을 때'
 weight: 10
 ---
 
-`machadmin -s` 실행 후 서버가 정상적으로 시작되지 않는 경우, 아래 체크리스트를 순서대로 확인합니다.
+`machadmin -u` 실행 후 서버가 정상적으로 시작되지 않는 경우, 아래 체크리스트를 순서대로 확인합니다.
 
 ## 로그에서 원인 먼저 확인
 
@@ -56,8 +56,8 @@ chown -R machbase:machbase $MACHBASE_HOME/dbs/
 # 라이선스 파일 존재 여부 확인
 ls -la $MACHBASE_HOME/conf/license.dat
 
-# 라이선스 정보 확인 (서버 실행 중이면)
-machadmin -L
+# 설치된 라이선스 정보 확인
+machadmin -f
 ```
 
 라이선스 파일이 없거나 만료된 경우 Machbase 영업팀에 새 라이선스를 요청합니다.
@@ -106,10 +106,10 @@ kill -9 <PID>
 machadmin -k
 
 # 2. 잠깐 대기 후 재시작
-machadmin -s
+machadmin -u
 
 # 3. 시작 확인
-machadmin -c
+machadmin -e
 ```
 
 {{< callout type="warning" >}}

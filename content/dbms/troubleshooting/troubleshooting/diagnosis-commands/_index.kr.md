@@ -15,10 +15,10 @@ weight: 20
 SELECT * FROM v$version;
 
 -- 현재 세션 목록
-SELECT sess_id, login_time, user_name, task_state FROM v$session;
+SELECT id, login_time, user_name, user_ip, closed FROM v$session;
 
--- 실행 중인 쿼리 (IDLE 제외)
-SELECT sess_id, id, state, query FROM v$stmt WHERE state != 'IDLE';
+-- 실행 중인 statement 확인
+SELECT sess_id, id, state, record_size, query FROM v$stmt;
 ```
 
 ### 스토리지
@@ -77,15 +77,15 @@ SELECT name FROM m$sys_users;
 ## machadmin 명령 모음
 
 ```bash
-machadmin -c      # 서버 상태 확인
-machadmin -s      # 서버 시작 (start)
-machadmin -u      # 서버 정상 종료 (shutdown)
+machadmin -e      # 서버 실행 상태 확인
+machadmin -u      # 서버 시작
+machadmin -s      # 서버 정상 종료
 machadmin -k      # 서버 강제 종료 (kill)
-machadmin -v      # 버전 확인
+machadmin -f      # 설치된 라이선스 정보 확인
 ```
 
 {{< callout type="warning" >}}
-`machadmin -k`는 강제 종료 명령입니다. 정상 종료(`-u`)가 응답하지 않을 때만 사용합니다. 강제 종료 후에는 서버 재시작 시 복구 절차가 실행될 수 있습니다.
+`machadmin -k`는 강제 종료 명령입니다. 정상 종료(`-s`)가 응답하지 않을 때만 사용합니다. 강제 종료 후에는 서버 재시작 시 복구 절차가 실행될 수 있습니다.
 {{< /callout >}}
 
 ## 로그 파일 위치
@@ -94,8 +94,8 @@ machadmin -v      # 버전 확인
 |------|------|
 | `$MACHBASE_HOME/trc/machbase.trc` | 서버 메인 로그 (오류, 경고, 운영 이벤트) |
 | `$MACHBASE_HOME/trc/machsql.history` | machsql 대화형 세션의 SQL 실행 이력 |
-| 실행 디렉터리의 `machloader.err` | machloader 적재 실패 레코드 |
-| 실행 디렉터리의 `machloader.log` | machloader 처리 건수와 오류 통계 |
+| `machloader -b`로 지정한 bad file | machloader 적재 실패 레코드 |
+| `machloader -l`로 지정한 log file | machloader 처리 건수와 오류 통계 |
 | `$MACHBASE_COLLECTOR_HOME/trc/` | Collector 수집 상태 로그 |
 
 ## 빠른 진단 순서
@@ -104,7 +104,7 @@ machadmin -v      # 버전 확인
 
 ```bash
 # 1. 서버 상태
-machadmin -c
+machadmin -e
 
 # 2. 최근 오류 로그
 tail -50 $MACHBASE_HOME/trc/machbase.trc | grep -i "error\|warn"
@@ -115,7 +115,7 @@ tail -50 $MACHBASE_HOME/trc/machbase.trc | grep -i "error\|warn"
 SELECT COUNT(*) AS session_count FROM v$session;
 
 -- 4. 실행 중인 쿼리
-SELECT sess_id, id, state, query FROM v$stmt WHERE state != 'IDLE';
+SELECT sess_id, id, state, record_size, query FROM v$stmt;
 
 -- 5. 스토리지 현황
 SELECT * FROM v$storage_usage;

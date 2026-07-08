@@ -8,11 +8,16 @@ machloader를 사용한 CSV 파일 가져오기가 실패하는 경우 대부분
 
 ## 오류 로그 확인
 
-machloader 실행 후 현재 디렉토리에 오류 파일이 생성됩니다.
+오류 레코드를 파일로 남기려면 `-b` 옵션으로 bad file 경로를 지정합니다. 처리 로그는
+`-l` 옵션으로 남깁니다.
 
 ```bash
-# machloader 실행 후 오류 파일 확인
-cat machloader_error.txt
+machloader -i -t sensor_log -d data.csv \
+           -b sensor_log.bad \
+           -l sensor_log.log
+
+# 실패 레코드 확인
+cat sensor_log.bad
 ```
 
 오류 메시지에 행 번호와 오류 원인이 기록되어 있습니다. 이 정보를 단서로 삼아 아래 항목 중 해당하는 원인을 찾으십시오.
@@ -48,7 +53,8 @@ CSV 파일의 컬럼 수가 테이블의 컬럼 수와 맞지 않을 때 발생�
 head -1 /data/import/sensor_log.csv
 
 # 테이블 컬럼 확인
-machsql -e "DESC sensor_log"
+echo "DESC sensor_log;" > desc_sensor_log.sql
+machsql -s 127.0.0.1 -u SYS -p MANAGER -f desc_sensor_log.sql
 ```
 
 CSV에 헤더 행이 포함되어 있다면 `-H` 옵션을 추가합니다.
@@ -100,14 +106,14 @@ machloader -i -t sensor_log -d data.csv -D ';'
 ERR: invalid datetime format at line 3
 ```
 
-타임스탬프 컬럼의 값 형식이 machloader가 기대하는 형식과 다를 때 발생합니다. `-f` 옵션으로 시간 포맷을 직접 지정합니다.
+타임스탬프 컬럼의 값 형식이 machloader가 기대하는 형식과 다를 때 발생합니다. `-F` 옵션으로 시간 포맷을 직접 지정합니다.
 
 ```bash
 # ISO 8601 형식 (예: 2024-01-15 09:30:00)
-machloader -i -t sensor_log -d data.csv -f "YYYY-MM-DD HH24:MI:SS"
+machloader -i -t sensor_log -d data.csv -F "YYYY-MM-DD HH24:MI:SS"
 
 # 밀리초 포함 형식 (예: 2024-01-15 09:30:00.123)
-machloader -i -t sensor_log -d data.csv -f "YYYY-MM-DD HH24:MI:SS.mmm"
+machloader -i -t sensor_log -d data.csv -F "YYYY-MM-DD HH24:MI:SS.mmm"
 ```
 
 ## 자주 쓰는 옵션 조합
@@ -127,19 +133,19 @@ machloader -i -t sensor_log -d data.csv -E UTF-8 -D '|'
 ### 날짜 형식과 헤더 함께 지정
 
 ```bash
-machloader -i -t sensor_log -d data.csv -H -f "YYYY-MM-DD HH24:MI:SS"
+machloader -i -t sensor_log -d data.csv -H -F "YYYY-MM-DD HH24:MI:SS"
 ```
 
 ## 부분 적재 후 재시작
 
-대용량 파일 가져오기 도중 중단된 경우 처음부터 다시 시작하면 중복 데이터가 입력됩니다. `-S` 옵션으로 시작 행을 지정해 이미 입력된 행을 건너뜁니다.
+대용량 파일 가져오기 도중 중단된 경우 처음부터 다시 시작하면 중복 데이터가 입력됩니다. `--first` 옵션으로 시작 행을 지정해 이미 입력된 행을 건너뜁니다.
 
 ```bash
 # 1001번째 행부터 재시작 (헤더 제외 1000행 완료 가정)
-machloader -i -t sensor_log -d data.csv -H -S 1001
+machloader -i -t sensor_log -d data.csv -H --first=1001
 ```
 
-오류 파일(`machloader_error.txt`)에 기록된 마지막 성공 행 번호를 `-S` 값으로 사용하십시오.
+로그 파일에 기록된 마지막 성공 행 번호를 `--first` 값으로 사용하십시오.
 
 ## machloader 주요 옵션 요약
 
@@ -151,5 +157,7 @@ machloader -i -t sensor_log -d data.csv -H -S 1001
 | `-H` | 첫 번째 행을 헤더로 처리 | `-H` |
 | `-E` | 파일 인코딩 | `-E UTF-8` |
 | `-D` | 구분자 | `-D '|'` |
-| `-f` | 날짜 포맷 | `-f "YYYY-MM-DD HH24:MI:SS"` |
-| `-S` | 시작 행 번호 | `-S 1001` |
+| `-F` | 날짜 포맷 | `-F "YYYY-MM-DD HH24:MI:SS"` |
+| `--first` | 시작 행 번호 | `--first=1001` |
+| `-b` | 실패 레코드 저장 파일 | `-b sensor_log.bad` |
+| `-l` | 처리 로그 파일 | `-l sensor_log.log` |

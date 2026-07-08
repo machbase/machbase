@@ -18,13 +18,14 @@ machclusterctl status
 또는 Coordinator를 통해 상세 상태를 조회합니다.
 
 ```bash
-machcoordinatoradmin --cluster-status
+machcoordinatoradmin --cluster-status-full
 ```
 
 SQL로도 노드 상태를 조회할 수 있습니다.
 
 ```sql
-SELECT node_name, node_type, status FROM v$node_info;
+SELECT host, nodetype, state, coord_host, coord_http_admin_port
+  FROM v$node_status;
 ```
 
 ## 비정상 상태 유형과 조치
@@ -42,7 +43,7 @@ Warehouse 노드가 `STOPPED` 상태인 경우 해당 노드에서 직접 재기
 
 ```bash
 # 1. 장애 노드 확인
-machcoordinatoradmin --cluster-status
+machcoordinatoradmin --cluster-status-full
 
 # 2. Coordinator에서 노드 시작 (Coordinator가 접근 가능한 경우)
 machcoordinatoradmin --startup-node=warehouse-a1
@@ -52,7 +53,7 @@ export MACHBASE_HOME=/home/machbase/warehouse_a1
 machadmin -u
 
 # 4. 상태 복귀 확인
-machcoordinatoradmin --cluster-status
+machcoordinatoradmin --cluster-status-full
 ```
 
 ## Broker 노드 확인
@@ -61,7 +62,7 @@ Broker 노드에 이상이 있으면 클라이언트 연결 전체가 영향을 
 
 ```bash
 # Broker 상태 확인
-machcoordinatoradmin --cluster-status | grep -i broker
+machcoordinatoradmin --cluster-status-full | grep -i broker
 ```
 
 Broker가 응답하지 않으면 해당 Broker 호스트에서 프로세스를 확인하고 재기동합니다.
@@ -72,7 +73,7 @@ Coordinator가 비정상이면 클러스터 메타 변경 및 장애 조치가 �
 
 ```bash
 # Coordinator 상태 확인
-machcoordinatoradmin --status
+machcoordinatoradmin --cluster-status-full
 ```
 
 Primary Coordinator에 장애가 발생했고 Secondary Coordinator가 구성되어 있다면, Secondary가 자동으로 Primary로 승격됩니다. Secondary가 없다면 Primary를 수동으로 재기동해야 합니다.

@@ -11,7 +11,7 @@ weight: 20
 접속 문제를 진단하기 전에 서버가 실제로 실행 중인지 확인합니다.
 
 ```bash
-machadmin -c
+machadmin -e
 ```
 
 서버가 실행 중이 아니면 [서버가 시작되지 않을 때](../start-server/)를 먼저 참조합니다.
@@ -101,10 +101,9 @@ SELECT name, value FROM v$property WHERE name = 'MAX_SESSION_COUNT';
 - `machbase.conf`에서 `MAX_SESSION_COUNT` 값을 늘립니다.
 
 ```sql
--- 유휴 세션 확인 (task_state가 WAITING인 세션)
-SELECT sess_id, login_time, user_name, task_state
+-- 세션 목록 확인
+SELECT id, login_time, user_name, user_ip, closed
 FROM v$session
-WHERE task_state = 'WAITING'
 ORDER BY login_time;
 ```
 

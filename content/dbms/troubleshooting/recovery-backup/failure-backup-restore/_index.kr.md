@@ -69,7 +69,7 @@ grep -i "backup\|error" $MACHBASE_HOME/trc/machbase.trc | tail -50
 
 ```bash
 # 1. 서버 상태 확인
-machadmin -c
+machadmin -e
 
 # 2. 서버 종료
 machadmin -s
@@ -99,7 +99,8 @@ machadmin -u
 
 ```bash
 # 현재 설치 버전 확인
-machadmin --version
+printf "SELECT * FROM v\\$version;\\n" > version_check.sql
+machsql -s 127.0.0.1 -u SYS -p MANAGER -f version_check.sql
 ```
 
 ### 복원 로그 확인

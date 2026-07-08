@@ -8,17 +8,20 @@ Machbase Collector를 통한 데이터 수집이 멈추거나 지연되는 경�
 
 ## 트레이스 로그 확인
 
-Collector는 `$MACHBASE_HOME/trc/` 디렉토리에 Collector 이름으로 로그 파일을 생성합니다.
+Collector 기본 로그는 `$MACHBASE_COLLECTOR_HOME/trc/machcollector.trc`에 기록됩니다.
+Collector별 trace 설정을 별도로 사용한 경우에는 해당 collector 이름의 로그를 함께 확인합니다.
 
 ```bash
 # 최근 100줄 확인
-tail -100 $MACHBASE_HOME/trc/<collector-name>.trc
+tail -100 $MACHBASE_COLLECTOR_HOME/trc/machcollector.trc
 
 # 오류/경고 메시지만 필터링
-grep -i "error\|fail\|queue\|overflow" $MACHBASE_HOME/trc/<collector-name>.trc | tail -50
+grep -i "error\|fail\|queue\|overflow" \
+  $MACHBASE_COLLECTOR_HOME/trc/machcollector.trc | tail -50
 ```
 
-`<collector-name>`을 실제 Collector 이름으로 바꾸십시오.
+`MACHBASE_COLLECTOR_HOME`을 별도로 지정하지 않았다면 Collector 실행 환경의 trace 경로를
+확인하십시오.
 
 ## 원인별 진단
 
@@ -62,7 +65,8 @@ telnet 192.168.1.100 1234
 **큐 상태 모니터링**
 
 ```bash
-grep -i "queue\|delay\|overflow\|slow" $MACHBASE_HOME/trc/<collector-name>.trc | tail -50
+grep -i "queue\|delay\|overflow\|slow" \
+  $MACHBASE_COLLECTOR_HOME/trc/machcollector.trc | tail -50
 ```
 
 **해결 방법**
@@ -86,10 +90,10 @@ Collector가 Machbase에 연결하지 못하는 경우입니다.
 
 ```bash
 # Machbase 서버 상태 확인
-machadmin -c
+machadmin -e
 
 # 서버가 중지된 경우 시작
-machadmin -s
+machadmin -u
 ```
 
 - Machbase가 정상 실행 중이라면 Collector 설정 파일의 접속 정보(호스트, 포트, 사용자, 비밀번호)를 확인합니다.
@@ -119,24 +123,24 @@ machadmin -s
 **1단계: 로그 확인 및 원인 파악**
 
 ```bash
-grep -i "error\|fail" $MACHBASE_HOME/trc/<collector-name>.trc | tail -30
+grep -i "error\|fail" $MACHBASE_COLLECTOR_HOME/trc/machcollector.trc | tail -30
 ```
 
 **2단계: Collector 재시작**
 
 ```bash
 # Collector 중지
-machadmin --collector-stop <collector-name>
+machcollectoradmin --stop-collector=<collector-name>
 
 # 잠시 대기 후 시작
-machadmin --collector-start <collector-name>
+machcollectoradmin --start-collector=<collector-name>
 ```
 
 **3단계: 수집 재개 확인**
 
 ```bash
 # 로그에서 정상 수집 여부 확인
-tail -f $MACHBASE_HOME/trc/<collector-name>.trc
+tail -f $MACHBASE_COLLECTOR_HOME/trc/machcollector.trc
 ```
 
 `[INFO] collected N records` 메시지가 주기적으로 출력되면 정상입니다.

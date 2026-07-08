@@ -36,16 +36,16 @@ SELECT sess_id, state, query FROM v$stmt WHERE state = 'WAIT';
 ### 전체 세션 상태 확인
 
 ```sql
-SELECT s.sess_id, s.login_time, s.user_name, s.task_state,
+SELECT s.id AS session_id, s.login_time, s.user_name, s.user_ip,
        st.id AS stmt_id, st.state AS stmt_state, st.query
 FROM v$session s
-LEFT JOIN v$stmt st ON s.sess_id = st.sess_id
-ORDER BY s.sess_id;
+LEFT JOIN v$stmt st ON s.id = st.sess_id
+ORDER BY s.id;
 ```
 
 ## 장시간 트랜잭션 강제 종료
 
-잠금을 오래 보유한 세션의 `sess_id`를 확인한 뒤 강제로 종료합니다.
+잠금을 오래 보유한 세션의 session id를 확인한 뒤 강제로 종료합니다.
 
 ```sql
 -- 잠금 보유 세션 확인

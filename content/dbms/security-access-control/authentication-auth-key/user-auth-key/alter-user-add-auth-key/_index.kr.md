@@ -35,8 +35,11 @@ ALTER USER app_user ADD AUTH KEY (
 | 파라미터 | 필수 여부 | 설명 |
 |---------|---------|------|
 | `key` | 필수 | PEM 형식 공개키 문자열 (줄바꿈을 `\n`으로 이스케이프) |
-| `valid_before` | 선택 | 키 만료일 (`YYYY-MM-DD` 형식). 생략 시 만료 없음 |
+| `valid_before` | 필수 | 키 만료일 (`YYYY-MM-DD` 형식) |
 | `comment` | 필수 | 키 식별 메모 |
+
+`key`, `valid_before`, `comment`는 현재 AUTH KEY 구문에서 모두 필수입니다.
+`valid_before`는 생략하거나 NULL/무제한으로 둘 수 없습니다.
 
 ## 공개키 변환 및 SQL 파일 생성
 

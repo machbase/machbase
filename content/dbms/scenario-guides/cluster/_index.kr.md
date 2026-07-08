@@ -33,11 +33,14 @@ Machbase Cluster Edition은 대용량 시계열 데이터를 여러 노드에 �
 `machclusterctl`로 클러스터 전체를 관리합니다.
 
 ```bash
-# 클러스터 초기화 (최초 1회)
-machclusterctl init
+# 설정 검증
+machclusterctl validate -f cluster.yaml
+
+# 클러스터 설치
+machclusterctl install -f cluster.yaml --yes
 
 # 클러스터 전체 시작
-machclusterctl start
+machclusterctl start -f cluster.yaml
 
 # 전체 상태 확인
 machclusterctl status
@@ -60,7 +63,8 @@ Broker 주소로 접속합니다. Standard Edition과 동일한 연결 방식을
 machsql -s host-a -P 5656 -u SYS -p MANAGER
 
 # 클러스터 토폴로지 확인
-SELECT * FROM v$node_info;
+SELECT host, nodetype, state, coord_host, coord_http_admin_port
+  FROM v$node_status;
 ```
 
 ## Warehouse 노드 추가 (수평 확장)
@@ -80,7 +84,9 @@ machadmin -u
 
 ```bash
 # Coordinator가 실행 중인 노드에서
-machcoordinatoradmin --add-warehouse=host-c:5300
+machcoordinatoradmin --add-node=host-c:5300 --node-type=warehouse \
+  --deployer=<deployer> --package-name=<package> --home-path=<path> \
+  --port-no=<service-port> --replication=<replication-port> --group=<group>
 ```
 
 ### 3단계: 노드 상태 확인
@@ -89,7 +95,7 @@ machcoordinatoradmin --add-warehouse=host-c:5300
 machclusterctl status
 
 # 또는 SQL로 확인
-SELECT node_name, node_type, status FROM v$node_info;
+SELECT host, nodetype, state FROM v$node_status;
 ```
 
 새 Warehouse 노드가 `RUNNING` 상태가 되면 자동으로 데이터 분산이 시작됩니다.
@@ -99,11 +105,8 @@ SELECT node_name, node_type, status FROM v$node_info;
 운영 중 특정 Warehouse 노드를 제거할 때는 데이터 재배치 후 제거합니다.
 
 ```bash
-# 노드 상태를 DISCONNECT로 변경
-machcoordinatoradmin --alter-warehouse-status=host-b:5300,DISCONNECT
-
 # 상태 확인 후 제거
-machcoordinatoradmin --remove-warehouse=host-b:5300
+machcoordinatoradmin --remove-node=<warehouse-node-name-or-host:cluster-port>
 ```
 
 > **주의:** 노드 제거 전에 해당 노드의 데이터 복사본이 다른 노드에 있는지 확인하세요. 단일 복제본인 경우 데이터 손실이 발생할 수 있습니다.

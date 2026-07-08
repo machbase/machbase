@@ -11,26 +11,34 @@ TAG 테이블에 설정된 ROLLUP의 집계값이 예상과 다르거나 최신 
 ROLLUP이 정상적으로 동작하는지 먼저 상태를 확인합니다.
 
 ```sql
-SELECT name, table_name, status, last_run_time FROM v$rollup;
+SELECT rollup_name, source_table, rollup_table, enabled, run_state,
+       last_wakeup_time, next_wakeup_time
+  FROM v$rollup;
 ```
 
 | 컬럼 | 설명 |
 |------|------|
-| `name` | ROLLUP 이름 |
-| `table_name` | 대상 TAG 테이블 이름 |
-| `status` | 현재 상태 (`RUNNING`, `STOPPED`, `ERROR` 등) |
-| `last_run_time` | 마지막 실행 시각 |
+| `ROLLUP_NAME` | ROLLUP 이름 |
+| `SOURCE_TABLE` | 원본 TAG 테이블 이름 |
+| `ROLLUP_TABLE` | 내부 ROLLUP 테이블 이름 |
+| `ENABLED` | ROLLUP 활성화 여부 |
+| `RUN_STATE` | 현재 실행 상태 |
+| `LAST_WAKEUP_TIME` | 마지막 wakeup 시각 |
+| `NEXT_WAKEUP_TIME` | 다음 wakeup 예정 시각 |
 
 ## 원인별 진단
 
 ### 1. ROLLUP이 실행되지 않음
 
-`status`가 `STOPPED` 또는 `ERROR`인 경우 ROLLUP이 중지된 상태입니다.
+`ENABLED`가 꺼져 있거나 `RUN_STATE`가 비정상 상태로 유지되면 ROLLUP 상태를 확인해야 합니다.
 
 **확인 방법**
 
 ```sql
-SELECT name, status, last_run_time FROM v$rollup WHERE status != 'RUNNING';
+SELECT rollup_name, source_table, enabled, run_state
+  FROM v$rollup
+ WHERE enabled = 0
+    OR run_state <> 'IDLE';
 ```
 
 **해결 방법**
@@ -65,11 +73,13 @@ WHERE name = 'sensor-01'
 GROUP BY ts
 ORDER BY ts;
 
--- ROLLUP 집계값 조회
-SELECT * FROM sensor_tag ROLLUP(1 MINUTE)
-WHERE name = 'sensor-01'
-  AND time >= TO_DATE('2024-01-01 12:00:00')
-  AND time <  TO_DATE('2024-01-01 12:10:00');
+-- ROLLUP 힌트를 사용한 집계값 조회
+SELECT /*+ ROLLUP(sensor_tag, min, AVG) */ time, value
+  FROM sensor_tag
+ WHERE name = 'sensor-01'
+   AND time >= TO_DATE('2024-01-01 12:00:00')
+   AND time <  TO_DATE('2024-01-01 12:10:00')
+ ORDER BY time;
 ```
 
 두 결과가 다르다면 ROLLUP이 아직 갱신되지 않은 것입니다. `FLUSH ROLLUP` 후 다시 비교합니다.
@@ -89,14 +99,14 @@ ALTER SYSTEM FLUSH ROLLUP;
 이미 저장된 ROLLUP 값이 잘못되었다면 특정 시간 범위의 ROLLUP을 재계산할 수 있습니다. 이 기능은 **Standard Edition 전용**입니다.
 
 ```sql
-EXEC ROLLUP_REBUILD(sensor_tag, rollup_1min,
+EXEC ROLLUP_REBUILD(sensor_tag, 'sensor-01',
     TO_DATE('2024-01-01'), TO_DATE('2024-01-02'));
 ```
 
 | 인수 | 설명 |
 |------|------|
 | `sensor_tag` | 대상 TAG 테이블 이름 |
-| `rollup_1min` | 재계산할 ROLLUP 이름 |
+| `'sensor-01'` | 재계산할 tag 이름 |
 | 세 번째 인수 | 재계산 시작 시각 |
 | 네 번째 인수 | 재계산 종료 시각 |
 
@@ -111,7 +121,8 @@ EXEC ROLLUP_REBUILD(sensor_tag, rollup_1min,
 ROLLUP이 얼마나 자주 실행되는지 확인합니다.
 
 ```sql
-SELECT name, interval FROM v$rollup;
+SELECT rollup_name, wakeup_interval
+  FROM v$rollup;
 ```
 
 주기가 너무 길어서 최신 데이터 반영이 늦다면, ROLLUP 설정을 재검토하거나 `FLUSH ROLLUP`을 필요 시 수동으로 실행합니다.

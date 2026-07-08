@@ -11,7 +11,7 @@ Machbase 8.5부터 사용자별로 비밀번호 강도 정책을 지정할 수 �
 | 정책 | 최소 길이 | 조합 규칙 | 비밀번호 재사용 제한 | 만료(`VALID_BEFORE`) |
 |------|----------|-----------|---------------------|----------------------|
 | `NONE` | 없음 | 없음 | 없음 | NULL (만료 없음) |
-| `LOW` | 10자 이상 | 대문자 + 소문자 + 특수문자 포함 | 없음 | NULL (만료 없음) |
+| `LOW` | 10자 이상 | 영문자 + 특수문자 포함 | 없음 | NULL (만료 없음) |
 | `HIGH` | 10자 이상 | LOW 규칙 모두 적용 | 최근 24개 비밀번호 재사용 불가 | 설정 시점 기준 90일 후 자동 설정 |
 
 ### NONE
@@ -23,7 +23,8 @@ Machbase 8.5부터 사용자별로 비밀번호 강도 정책을 지정할 수 �
 다음 요건을 모두 충족해야 합니다.
 
 - 최소 10자 이상
-- 대문자, 소문자, 특수문자를 포함
+- 기본값인 `ENABLE_CASE_SENSITIVE_PASSWORD=0`에서는 대문자/소문자를 구분하지 않고 영문자 1자 이상과 특수문자 1자 이상을 포함
+- `ENABLE_CASE_SENSITIVE_PASSWORD=1`에서는 대문자, 소문자, 특수문자를 모두 포함
 - 5자리 이상 연속 숫자 사용 불가 (예: `12345`)
 - 증가/감소 숫자 연번 사용 불가 (예: `123456`, `654321`)
 - 키보드 연속 문자열 사용 불가 (예: `qwerty`)
@@ -43,7 +44,7 @@ LOW의 모든 규칙을 적용하고 다음을 추가합니다.
 -- 정책 없음 (기본값)
 CREATE USER user1 IDENTIFIED BY 'password' PASSWORD POLICY NONE;
 
--- LOW 정책: 대소문자 + 특수문자 + 10자 이상
+-- LOW 정책: 영문자 + 특수문자 + 10자 이상
 CREATE USER user2 IDENTIFIED BY 'Aa!StrongPwd1' PASSWORD POLICY LOW;
 
 -- HIGH 정책: LOW 규칙 + 재사용 제한 + 90일 만료
@@ -70,6 +71,8 @@ ALTER USER user3 IDENTIFIED BY 'simplePwd' PASSWORD POLICY NONE;
 - `ALTER USER ... IDENTIFIED BY ... PASSWORD POLICY ...`(정책 지정): 지정한 새 정책으로 새 비밀번호를 검증합니다.
 - 정책을 `HIGH`로 설정하거나 `HIGH` 사용자의 비밀번호를 변경하면 `VALID_BEFORE`가 현재 시각 기준 90일 후로 갱신됩니다.
 - 정책을 `LOW` 또는 `NONE`으로 변경하면 `VALID_BEFORE`는 `NULL`로 초기화됩니다.
+- `ENABLE_CASE_SENSITIVE_PASSWORD=1`일 때만 LOW/HIGH 정책에서 대문자와 소문자를
+  각각 요구합니다. 기본값 `0`에서는 대소문자 구분 없이 영문자와 특수문자 조합을 검사합니다.
 
 ## 정책 현황 조회
 

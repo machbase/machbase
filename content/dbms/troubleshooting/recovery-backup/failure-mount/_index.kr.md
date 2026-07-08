@@ -26,7 +26,7 @@ weight: 30
 
 ```sql
 -- 현재 마운트된 데이터베이스 목록
-SELECT * FROM v$mount_databases;
+SELECT * FROM v$storage_mount_databases;
 ```
 
 동일한 이름으로 이미 마운트되어 있거나 동시 마운트 수가 한도에 달했는지 확인합니다.
@@ -76,7 +76,7 @@ MOUNT DATABASE '/backup/machbase_20240101' TO backup_20240101;
 
 ```sql
 -- 모든 마운트 목록 확인
-SELECT name, path FROM v$mount_databases;
+SELECT name, path FROM v$storage_mount_databases;
 
 -- 불필요한 마운트 해제
 UNMOUNT DATABASE old_backup_name;

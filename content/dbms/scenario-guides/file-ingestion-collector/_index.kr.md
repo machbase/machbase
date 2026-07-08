@@ -59,23 +59,26 @@ CREATE TABLE file_sensor_log (
 );
 ```
 
-### Collector 설정 파일 예시 (파일 소스)
+### Collector 템플릿 예시 (파일 소스)
 
-`$MACHBASE_HOME/conf/collector/file_collector.conf`:
+Collector는 `machcollectoradmin --startup`으로 manager를 기동한 뒤, SQL의
+`CREATE COLLECTOR`/`ALTER COLLECTOR` 구문으로 생성하고 제어합니다.
+템플릿 파일은 운영 환경에 맞는 경로에 저장합니다.
 
 ```ini
 ########################################
-# Machbase Collector - 파일 수집 설정
+# Machbase Collector - 파일 수집 템플릿 예시
 ########################################
 
 # Machbase 연결 정보
-COLLECTOR_SERVER_HOST     = localhost
-COLLECTOR_SERVER_PORT     = 5656
-COLLECTOR_SERVER_USER     = SYS
-COLLECTOR_SERVER_PASSWORD = MANAGER
+DB_ADDR       = 127.0.0.1
+DB_PORT       = 5656
+DB_USER       = SYS
+DB_PASSWORD   = MANAGER
+DB_TABLE_NAME = file_sensor_log
 
 # 수집 소스 유형: FILE
-COLLECTOR_SOURCE_TYPE     = FILE
+LOG_SOURCE    = FILE
 
 # 감시할 디렉터리와 파일 패턴
 COLLECTOR_FILE_WATCH_DIR  = /data/sensors/incoming
@@ -252,13 +255,19 @@ COLLECTOR_WORKER_THREADS  = 4
 COLLECTOR_WORKER_THREADS  = 8
 ```
 
-다중 소스를 수집할 때는 소스별로 별도 Collector 인스턴스를 실행하거나, 단일 인스턴스 내에서 소스별 스레드를 분리 설정합니다.
+다중 소스를 수집할 때는 소스별 템플릿을 준비하고 Collector를 별도로 생성합니다.
 
+```bash
+# Collector manager 기동
+machcollectoradmin --startup
 ```
-# 권장: 소스별 독립 Collector 인스턴스
 
-machcollector -c /conf/collector/file_collector.conf &
-machcollector -c /conf/collector/tcp_collector.conf  &
+```sql
+CREATE COLLECTOR localhost.file_sensor
+FROM "$MACHBASE_HOME/collector/file_sensor.tpl";
+
+ALTER COLLECTOR localhost.file_sensor START;
+ALTER COLLECTOR localhost.file_sensor STOP;
 ```
 
 ---
@@ -270,12 +279,12 @@ Collector의 내부 큐 상태를 트레이스 로그로 모니터링합니다.
 ```bash
 # Collector 트레이스 로그에서 큐 지연·오버플로우 확인
 grep -i "queue\|delay\|overflow\|slow" \
-    "$MACHBASE_HOME/trc/file_collector.trc" | tail -50
+    "$MACHBASE_COLLECTOR_HOME/trc/machcollector.trc" | tail -50
 ```
 
 ```bash
 # 실시간 로그 모니터링
-tail -f "$MACHBASE_HOME/trc/tcp_collector.trc" | grep -i "queue\|error\|flush"
+tail -f "$MACHBASE_COLLECTOR_HOME/trc/machcollector.trc" | grep -i "queue\|error\|flush"
 ```
 
 로그에서 확인할 주요 메시지:
@@ -331,11 +340,11 @@ COLLECTOR_OFFLINE_BUFFER_SIZE   = 1024   # MB
 
 ```bash
 # Collector를 중지하고 position 파일 삭제 후 재시작
-machcollector stop -c /conf/collector/file_collector.conf
+machcollectoradmin --stop-collector=localhost.file_sensor
 
 rm -f "$MACHBASE_HOME/var/collector/file_collector.pos"
 
-machcollector start -c /conf/collector/file_collector.conf
+machcollectoradmin --start-collector=localhost.file_sensor
 ```
 
 ---
@@ -344,13 +353,13 @@ machcollector start -c /conf/collector/file_collector.conf
 
 ```bash
 # Collector 시작
-machcollector start -c "$MACHBASE_HOME/conf/collector/file_collector.conf"
+machcollectoradmin --start-collector=localhost.file_sensor
 
 # Collector 상태 확인
-machcollector status -c "$MACHBASE_HOME/conf/collector/file_collector.conf"
+machcollectoradmin --status-collector=localhost.file_sensor
 
 # Collector 중지
-machcollector stop -c "$MACHBASE_HOME/conf/collector/file_collector.conf"
+machcollectoradmin --stop-collector=localhost.file_sensor
 
 # 서버 부팅 시 자동 시작 등록 (systemd)
 # /etc/systemd/system/machcollector-file.service 에 등록

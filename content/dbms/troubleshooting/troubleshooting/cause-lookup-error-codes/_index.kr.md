@@ -6,17 +6,13 @@ weight: 40
 
 Machbase의 오류 메시지는 `ERR-XXXXX: 메시지` 형식으로 출력됩니다. 오류 코드로 원인과 해결 방법을 빠르게 찾을 수 있습니다.
 
-## machsql에서 오류 확인 방법
+## 오류 확인 방법
 
-```sql
--- machsql에서 마지막 오류 메시지 확인
-SELECT * FROM v$error;
-```
-
-명령줄에서는 오류 발생 시 즉시 메시지가 출력됩니다.
+명령줄에서는 오류 발생 시 즉시 메시지가 출력됩니다. 별도의 `V$ERROR` fixed table은
+제공되지 않으므로, 클라이언트 출력과 `$MACHBASE_HOME/trc/machbase.trc`를 함께 확인합니다.
 
 ```
-[ERR-02058: Table 'MY_TABLE' does not exist.]
+[ERR-02025: Table MY_TABLE does not exist.]
 ```
 
 ## 자주 발생하는 오류 코드
@@ -25,25 +21,22 @@ SELECT * FROM v$error;
 
 | 오류 코드 | 메시지 | 원인 | 해결 방법 |
 |---------|--------|------|----------|
-| ERR-02100 | Connection failed | 서버 미실행 또는 포트 차단 | 서버 상태 확인, 방화벽 규칙 검토 |
-| ERR-02101 | Authentication failed | 잘못된 사용자명 또는 비밀번호 | 사용자명/비밀번호 확인. SYS 기본 비밀번호는 MANAGER |
-| ERR-02102 | Max session count exceeded | 동시 접속 수 초과 | `MAX_SESSION_COUNT` 증가 또는 유휴 세션 정리 |
-| ERR-02103 | Remote access is not allowed | 원격 접속 비허용 설정 | `GRANT_REMOTE_ACCESS = 1` 설정 후 재시작 |
+| ERR-02081 | Invalid username/password | 잘못된 사용자명 또는 비밀번호 | 사용자명/비밀번호 확인. SYS 기본 비밀번호는 MANAGER |
 
 ### 권한 오류
 
-| 오류 코드 | 메시지 | 원인 | 해결 방법 |
-|---------|--------|------|----------|
-| ERR-02186 | Insufficient privileges | 해당 작업에 대한 권한 없음 | SYS 계정으로 접속 후 `GRANT` 실행 |
-| ERR-02187 | Object not accessible | 다른 사용자 객체에 접근 불가 | 객체 소유자에게 권한 요청 또는 SYS로 접속 |
+권한 오류는 실행한 DDL/DML과 대상 객체에 따라 메시지가 달라질 수 있습니다. 오류 메시지에
+`privilege`, `permission`, `not accessible` 등이 포함되면 SYS 계정 또는 권한 있는
+계정으로 필요한 `GRANT`를 확인합니다.
 
 ### 객체 오류
 
 | 오류 코드 | 메시지 | 원인 | 해결 방법 |
 |---------|--------|------|----------|
-| ERR-02058 | Table does not exist | 존재하지 않는 테이블명 사용 | `SELECT name FROM m$sys_tables;`로 테이블명 확인 |
-| ERR-02059 | Column does not exist | 존재하지 않는 컬럼명 사용 | `SELECT name FROM m$sys_columns WHERE table_name='T';`로 확인 |
-| ERR-02060 | Object already exists | 이미 존재하는 이름으로 생성 시도 | 다른 이름 사용 또는 기존 객체 삭제 후 재생성 |
+| ERR-02024 | Table already exists | 이미 존재하는 테이블명으로 생성 시도 | 다른 이름 사용 또는 기존 테이블 삭제 후 재생성 |
+| ERR-02025 | Table does not exist | 존재하지 않는 테이블명 사용 | `SELECT name FROM m$sys_tables;`로 테이블명 확인 |
+| ERR-02056 | Column name not found | 존재하지 않는 컬럼명 사용 | `DESC table_name;`으로 컬럼명 확인 |
+| ERR-02186 | Invalid database name | 잘못된 database 이름 | MOUNT/UNMOUNT 이름과 경로 확인 |
 
 ### 데이터 오류
 

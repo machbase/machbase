@@ -15,7 +15,7 @@ Machbase에서 문제가 발생했을 때 무작정 설정을 바꾸거나 서�
 서버 프로세스가 정상 실행 중인지, 연결이 가능한지 먼저 확인합니다.
 
 ```bash
-machadmin -c
+machadmin -e
 ```
 
 **3단계: 로그 파일 분석**
@@ -29,8 +29,8 @@ tail -100 $MACHBASE_HOME/trc/machbase.trc | grep -i "error\|warn"
 V$ 가상 테이블과 진단 명령으로 현재 서버 상태를 수집합니다.
 
 ```sql
-SELECT sess_id, login_time, user_name, task_state FROM v$session;
-SELECT sess_id, id, state, query FROM v$stmt WHERE state != 'IDLE';
+SELECT id, login_time, user_name, user_ip, closed FROM v$session;
+SELECT sess_id, id, state, record_size, query FROM v$stmt;
 ```
 
 **5단계: 해당 섹션의 해결 방법 적용**

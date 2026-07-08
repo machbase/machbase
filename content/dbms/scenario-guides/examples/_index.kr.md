@@ -35,7 +35,7 @@ values = [
 db.append(table_name, types, values, 'YYYY-MM-DD HH24:MI:SS')
 
 # 조회
-db.execute('SELECT name, time, value FROM TAG TABLE sensor_tag RECENT 5')
+db.execute('SELECT name, time, value FROM sensor_tag ORDER BY time DESC LIMIT 5')
 print(db.result())
 
 db.close()
@@ -115,7 +115,7 @@ func main() {
 
     // 조회
     rows, err := db.Query(ctx,
-        "SELECT name, time, value FROM TAG TABLE sensor_tag RECENT 5")
+        "SELECT name, time, value FROM sensor_tag ORDER BY time DESC LIMIT 5")
     if err != nil {
         panic(err)
     }
@@ -138,16 +138,14 @@ func main() {
 
 ```bash
 # 조회
-curl -s -G 'http://localhost:5654/db/query' \
-  --data-urlencode "q=SELECT name, time, value FROM TAG TABLE sensor_tag RECENT 5" \
+curl -s -G 'http://localhost:5657/machbase' \
+  --data-urlencode "q=SELECT name, time, value FROM sensor_tag ORDER BY time DESC LIMIT 5" \
   -u SYS:MANAGER
 
-# Append (JSON)
-curl -s -X POST 'http://localhost:5654/db/append/sensor_tag' \
-  -H 'Content-Type: application/json' \
-  -u SYS:MANAGER \
-  -d '{"data":{"columns":["name","time","value"],
-       "rows":[["sensor-01",1700000000000000000,23.5]]}}'
+# INSERT도 SQL endpoint로 실행할 수 있습니다.
+curl -s -G 'http://localhost:5657/machbase' \
+  --data-urlencode "q=INSERT INTO sensor_tag VALUES ('sensor-01', TO_DATE('2024-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), 23.5)" \
+  -u SYS:MANAGER
 ```
 
 상세 내용: [REST API 가이드](../application-integration/rest-api/)
@@ -170,7 +168,7 @@ await client.connect();
 
 // 조회
 const result = await client.query(
-    'SELECT name, time, value FROM TAG TABLE sensor_tag RECENT 5'
+    'SELECT name, time, value FROM sensor_tag ORDER BY time DESC LIMIT 5'
 );
 console.log(result.data.rows);
 
@@ -198,7 +196,7 @@ cmd.Parameters.Add(new MachParameter { Value = 23.5 });
 cmd.ExecuteNonQuery();
 
 // 조회
-cmd.CommandText = "SELECT name, time, value FROM TAG TABLE sensor_tag RECENT 5";
+cmd.CommandText = "SELECT name, time, value FROM sensor_tag ORDER BY time DESC LIMIT 5";
 using var reader = cmd.ExecuteReader();
 while (reader.Read())
     Console.WriteLine($"{reader[0]} {reader[1]} {reader[2]}");

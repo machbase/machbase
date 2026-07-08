@@ -126,14 +126,14 @@ ROLLUP 테이블은 실시간으로 갱신되지 않습니다. 가장 최근에 
 SELECT name, AVG(value)
 FROM sensor_tag
 WHERE name = 'sensor-01'
-  AND time > DATEADD(HOUR, -1, NOW)
+  AND time > ADD_TIME(SYSDATE, '0/0/0 -1:0:0')
 GROUP BY name;
 
 -- ROLLUP 테이블의 집계
 SELECT name, AVG(avg_value)
 FROM sensor_tag_rollup_1min
 WHERE name = 'sensor-01'
-  AND time > DATEADD(HOUR, -1, NOW)
+  AND time > ADD_TIME(SYSDATE, '0/0/0 -1:0:0')
 GROUP BY name;
 ```
 

@@ -26,7 +26,7 @@ Machbase Standard Edition에서 RDB 테이블은 내부적으로 SQLite 기반�
 
 ```bash
 # sidecar DB 파일 확인
-ls -la $MACHBASE_HOME/dbs/rdb/
+ls -la $MACHBASE_HOME/dbs/__rdbt_*.db
 ```
 
 파일이 없거나 크기가 0이면 누락 또는 손상된 것입니다.
@@ -43,7 +43,7 @@ grep -i "rdb\|sidecar\|sqlite\|error" $MACHBASE_HOME/trc/machbase.trc | tail -30
 
 ```sql
 -- RDB 테이블 목록 조회 (시스템 테이블 이용)
-SELECT name FROM m$sys_tables WHERE type = 0;
+SELECT name FROM m$sys_tables WHERE type = 8;
 ```
 
 ## 복구 방법
@@ -73,14 +73,15 @@ machadmin -u
 
 ```bash
 # 손상된 sidecar 파일 백업 (혹시 복구 가능할 경우를 대비)
-cp -r $MACHBASE_HOME/dbs/rdb/ /tmp/rdb_backup/
+mkdir -p /tmp/rdb_backup
+cp $MACHBASE_HOME/dbs/__rdbt_*.db /tmp/rdb_backup/
 ```
 
 애플리케이션의 DDL 스크립트를 이용하거나 직접 CREATE TABLE을 실행하여 RDB 테이블을 재생성합니다.
 
 ```sql
 -- RDB 테이블 재생성 예시
-CREATE TABLE rdb_config (
+CREATE RDB TABLE rdb_config (
     config_key   VARCHAR(128) PRIMARY KEY,
     config_value VARCHAR(4096),
     updated_at   DATETIME
@@ -93,7 +94,7 @@ RDB 테이블 구조와 데이터를 주기적으로 별도 백업해 두면 복
 
 ```sql
 -- RDB 테이블 목록 및 정의 확인
-SELECT name FROM m$sys_tables WHERE type = 0;
+SELECT name FROM m$sys_tables WHERE type = 8;
 
 -- 개별 RDB 테이블 백업
 BACKUP TABLE rdb_config INTO DISK = '/backup/rdb_config_20240101';

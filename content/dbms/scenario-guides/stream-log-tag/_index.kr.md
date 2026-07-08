@@ -201,7 +201,7 @@ STREAM이 불필요해지면 삭제합니다. STREAM을 삭제하기 전에 먼�
 
 ```sql
 EXEC STREAM_STOP(stream_v0);
-EXEC STREAM_DESTROY(stream_v0);
+EXEC STREAM_DROP(stream_v0);
 ```
 
 ## 요약
@@ -213,7 +213,7 @@ EXEC STREAM_DESTROY(stream_v0);
 | 3 | STREAM 시작 | `EXEC STREAM_START(이름)` |
 | 4 | 상태 확인 | `SELECT * FROM v$streams` |
 | 5 | STREAM 중지 | `EXEC STREAM_STOP(이름)` |
-| 6 | STREAM 삭제 | `EXEC STREAM_DESTROY(이름)` |
+| 6 | STREAM 삭제 | `EXEC STREAM_DROP(이름)` |
 
 ## 관련 문서
 

@@ -8,25 +8,28 @@ weight: 10
 
 ## 느린 쿼리 탐지
 
-현재 실행 중인 쿼리와 경과 시간을 확인합니다.
+현재 statement 상태를 확인합니다. `V$STMT`에는 시작 시각 컬럼이 없으므로,
+오래 실행되는 쿼리는 같은 조회를 반복해 `state`와 `query`가 계속 유지되는지 확인합니다.
 
 ```sql
--- 오래 실행 중인 쿼리 확인
-SELECT sess_id, id, state, query,
-       DATEDIFF(SECOND, start_time, NOW) AS elapsed_sec
+-- statement 상태 확인
+SELECT sess_id, id, state, record_size, query
 FROM v$stmt
-WHERE state != 'IDLE'
-ORDER BY elapsed_sec DESC;
+ORDER BY sess_id, id;
 ```
 
-`elapsed_sec`이 비정상적으로 큰 쿼리가 있다면 해당 `sess_id`와 `query`를 기록해 두십시오.
+동일한 `sess_id`, `id`, `query`가 계속 남아 있고 `state`가 진행 중 상태로 유지되면
+해당 `sess_id`와 `query`를 기록해 두십시오.
 
 ## EXPLAIN 활용
 
 `EXPLAIN`으로 쿼리 실행 계획을 확인하면 어느 단계에서 병목이 발생하는지 파악할 수 있습니다.
 
 ```sql
-EXPLAIN SELECT * FROM sensor_tag WHERE name = 'sensor-01' AND time > DATEADD(HOUR, -1, NOW);
+EXPLAIN SELECT *
+  FROM sensor_tag
+ WHERE name = 'sensor-01'
+   AND time > ADD_TIME(SYSDATE, '0/0/0 -1:0:0');
 ```
 
 출력 결과에서 다음을 확인합니다.
@@ -123,11 +126,9 @@ WHERE _ARRIVAL_TIME BETWEEN TO_DATE('2024-01-15', 'YYYY-MM-DD')
 
 ```sql
 -- 쿼리 실행 중인 세션 확인
-SELECT sess_id, id, state, query,
-       DATEDIFF(SECOND, start_time, NOW) AS elapsed_sec
+SELECT sess_id, id, state, record_size, query
 FROM v$stmt
-WHERE state != 'IDLE'
-ORDER BY elapsed_sec DESC;
+ORDER BY sess_id, id;
 
 -- 해당 세션의 쿼리 취소
 ALTER SYSTEM CANCEL SESSION <sess_id>;

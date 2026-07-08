@@ -9,7 +9,7 @@ weight: 130
 {{< callout type="info" >}}
 **먼저 확인할 것**
 
-1. **서버 상태**: `machadmin -c` 명령으로 프로세스가 실행 중인지 확인합니다.
+1. **서버 상태**: `machadmin -e` 명령으로 프로세스가 실행 중인지 확인합니다.
 2. **로그 파일**: `$MACHBASE_HOME/trc/machbase.trc`에서 최근 오류 메시지를 확인합니다.
 3. **오류 코드**: 오류 메시지의 `ERR-XXXXX` 코드로 원인과 해결 방법을 찾습니다.
 {{< /callout >}}

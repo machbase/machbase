@@ -165,50 +165,43 @@ CREATE ROLLUP _sensor_rollup_min
 CREATE ROLLUP _sensor_rollup_hour
     FROM _sensor_rollup_min
     INTERVAL 1 HOUR;
-
--- 1일 ROLLUP (1시간 ROLLUP으로부터 파생)
-CREATE ROLLUP _sensor_rollup_day
-    FROM _sensor_rollup_hour
-    INTERVAL 1 DAY;
 ```
+
+`CREATE ROLLUP`의 interval 단위는 `SEC`, `MIN`, `HOUR`를 사용합니다. 1일 단위 값은
+시간 단위 ROLLUP 결과 또는 원본 TAG 테이블을 쿼리에서 집계해 계산합니다.
 
 생성된 ROLLUP 테이블을 확인합니다.
 
 ```sql
-SELECT rollup_name, source_name, interval_type, interval_value
-FROM M$SYS_ROLLUPS;
+SELECT rollup_name, source_table, rollup_table, interval_time, wakeup_interval
+  FROM v$rollup;
 ```
 
 ```
-ROLLUP_NAME              SOURCE_NAME              INTERVAL_TYPE  INTERVAL_VALUE
---------------------------------------------------------------------------------
-_sensor_rollup_min       sensor_tag               MIN            1
-_sensor_rollup_hour      _sensor_rollup_min       HOUR           1
-_sensor_rollup_day       _sensor_rollup_hour      DAY            1
-[3] row(s) selected.
+ROLLUP_NAME              SOURCE_TABLE            ROLLUP_TABLE            INTERVAL_TIME
+-------------------------------------------------------------------------------------
+_sensor_rollup_min       SENSOR_TAG              _SENSOR_ROLLUP_MIN      60
+_sensor_rollup_hour      _SENSOR_ROLLUP_MIN      _SENSOR_ROLLUP_HOUR     3600
+[2] row(s) selected.
 ```
 
 ---
 
 ## 5단계: ROLLUP 집계 쿼리
 
-ROLLUP 테이블에서 직접 집계 결과를 조회합니다. 각 ROLLUP 테이블에는 `avg_value`, `min_value`, `max_value`, `cnt` 컬럼이 자동으로 생성됩니다.
+ROLLUP 결과는 원본 TAG 테이블에 ROLLUP 힌트를 지정해 조회합니다. 내부 ROLLUP 테이블의
+물리 컬럼명에 의존하지 않습니다.
 
 ### 1분 ROLLUP 조회 — 기본 집계
 
 ```sql
--- PUMP_01.TEMP 태그의 1분 평균·최소·최대·건수 조회
-SELECT
-    time,
-    avg_value,
-    min_value,
-    max_value,
-    cnt
-FROM _sensor_rollup_min
-WHERE name = 'PUMP_01.TEMP'
-  AND time BETWEEN TO_DATE('2024-01-15 10:00:00', 'YYYY-MM-DD HH24:MI:SS')
+-- PUMP_01.TEMP 태그의 1분 평균 조회
+SELECT /*+ ROLLUP(sensor_tag, min, AVG) */ time, value
+  FROM sensor_tag
+ WHERE name = 'PUMP_01.TEMP'
+   AND time BETWEEN TO_DATE('2024-01-15 10:00:00', 'YYYY-MM-DD HH24:MI:SS')
                 AND TO_DATE('2024-01-15 11:00:00', 'YYYY-MM-DD HH24:MI:SS')
-ORDER BY time;
+ ORDER BY time;
 ```
 
 ### 1시간 ROLLUP 조회 — 여러 태그 비교

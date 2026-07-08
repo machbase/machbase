@@ -72,7 +72,7 @@ CREATE TABLE system_log (
 );
 
 -- 인덱스 설정 (전문 검색용)
-CREATE FULL TEXT INDEX idx_syslog_msg ON system_log (message);
+CREATE INDEX idx_syslog_msg ON system_log (message) INDEX_TYPE KEYWORD;
 CREATE INDEX idx_syslog_host    ON system_log (host);
 CREATE INDEX idx_syslog_service ON system_log (service);
 CREATE INDEX idx_syslog_level   ON system_log (level);
@@ -167,13 +167,16 @@ CREATE INDEX idx_syslog_level   ON system_log (level);
 # 3. Output: Machbase로 전송
 ##############################################
 <match **>
-  @type machbase
+  type machbase
   host     localhost
   port     5656
-  database machbasedb
-  username SYS
-  password MANAGER
-  table    system_log
+  uid      SYS
+  pwd      MANAGER
+  tablename system_log
+  arrivaltime true
+  include_time_key true
+  localtime true
+  time_format %Y-%m-%d %H:%M:%S
 
   # 컬럼 매핑 (로그 레코드 필드 → 테이블 컬럼)
   columns host, service, level, tag, message
@@ -343,10 +346,11 @@ SELECT service,
  ORDER BY error_count DESC
  LIMIT 20;
 
--- 전문 검색: 특정 키워드 포함 로그 (SEARCH 함수)
+-- 전문 검색: 특정 키워드 포함 로그
 SELECT _arrival_time, host, service, message
   FROM system_log
- WHERE SEARCH(message, 'OutOfMemory OR connection refused')
+ WHERE (message SEARCH 'OutOfMemory'
+        OR message SEARCH 'connection refused')
    AND _arrival_time >= TO_DATE('2024-01-15', 'YYYY-MM-DD')
  LIMIT 100;
 ```
@@ -422,7 +426,7 @@ fluent-plugin-machbase가 없는 Fluent Bit 환경에서는 HTTP output을 사�
     Match           *
     Host            localhost
     Port            5657
-    URI             /db/query
+    URI             /machbase
     Format          json
     Header          Content-Type application/json
     Retry_Limit     5
@@ -434,11 +438,8 @@ REST API로 LOG 테이블에 INSERT하는 방식:
 # Fluent Bit HTTP output이 전송하는 데이터를 처리하는
 # 중간 서버(예: Python Flask) 또는 직접 REST API 사용 예시
 
-curl -X POST "http://localhost:5657/db/query" \
-     -H "Content-Type: application/json" \
-     -d '{
-       "q": "INSERT INTO system_log (host, service, level, message) VALUES ('\''web-01'\'', '\''nginx'\'', '\''ERROR'\'', '\''connection refused'\'')"
-     }'
+curl -G "http://localhost:5657/machbase" \
+     --data-urlencode "q=INSERT INTO system_log (host, service, level, message) VALUES ('web-01', 'nginx', 'ERROR', 'connection refused')"
 ```
 
 ---

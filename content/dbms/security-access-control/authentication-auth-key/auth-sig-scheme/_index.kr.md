@@ -39,18 +39,13 @@ RSA-PSS를 사용하려면 반드시 `AUTH_SIG_SCHEME=RSA_PSS`를 명시해야 �
 jdbc:machbase://localhost:5656/machbasedb?AUTH_MODE=CHALLENGE&AUTH_KEY_FILE=/home/app/.machbase/app_user.key&AUTH_SIG_SCHEME=RSA_PSS
 ```
 
-### Python
+### machsql
 
-```python
-conn = mach.connect(
-    host='localhost',
-    port=5656,
-    user='app_user',
-    password='',
-    auth_mode='CHALLENGE',
-    auth_key_file='/home/app/.machbase/app_user_rsa.key',
-    auth_sig_scheme='RSA_PSS'
-)
+```bash
+machsql -s 127.0.0.1 -u app_user \
+  -c "AUTH_MODE=CHALLENGE" \
+  -K /home/app/.machbase/app_user_rsa.key \
+  --auth-sig-scheme=RSA_PSS
 ```
 
 ## 주의 사항

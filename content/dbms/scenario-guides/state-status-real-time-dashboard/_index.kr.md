@@ -25,9 +25,9 @@ CREATE TAG TABLE sensor_tag (
 테스트 데이터 삽입:
 
 ```sql
-INSERT INTO tag metadata VALUES ('TEMP_01');
-INSERT INTO tag metadata VALUES ('TEMP_02');
-INSERT INTO tag metadata VALUES ('PRESS_01');
+INSERT INTO sensor_tag METADATA VALUES ('TEMP_01');
+INSERT INTO sensor_tag METADATA VALUES ('TEMP_02');
+INSERT INTO sensor_tag METADATA VALUES ('PRESS_01');
 
 INSERT INTO sensor_tag VALUES ('TEMP_01',  NOW(), 72.3);
 INSERT INTO sensor_tag VALUES ('TEMP_02',  NOW(), 88.1);
@@ -165,7 +165,7 @@ SELECT t.name,
 
 ## 4단계: REST API로 대시보드 연동
 
-Machbase의 HTTP REST API(`GET /db/query`)를 사용하면 별도의 미들웨어 없이 대시보드에서 직접 쿼리를 실행할 수 있습니다.
+Machbase의 HTTP REST API(`/machbase?q=...`)를 사용하면 별도의 미들웨어 없이 대시보드에서 직접 쿼리를 실행할 수 있습니다.
 
 ```bash
 # machbase.conf에서 HTTP 활성화
@@ -175,7 +175,7 @@ HTTP_PORT_NO = 5657
 
 ```bash
 # curl로 최신값 조회
-curl -G "http://localhost:5657/db/query" \
+curl -G "http://localhost:5657/machbase" \
      --data-urlencode "q=SELECT /*+ SCAN_BACKWARD(sensor_tag) */ name, time, value FROM sensor_tag WHERE name='TEMP_01' LIMIT 1"
 ```
 
@@ -202,7 +202,7 @@ async function fetchLatestValues() {
     const tags = ['TEMP_01', 'TEMP_02', 'PRESS_01'];
     const results = await Promise.all(
         tags.map(tag =>
-            fetch(`/db/query?q=${encodeURIComponent(
+            fetch(`/machbase?q=${encodeURIComponent(
                 `SELECT /*+ SCAN_BACKWARD(sensor_tag) */ name, time, value
                    FROM sensor_tag WHERE name='${tag}' LIMIT 1`
             )}`).then(r => r.json())
@@ -232,7 +232,7 @@ setInterval(fetchLatestValues, 2000);
 import requests
 import time
 
-MACHBASE_URL = "http://localhost:5657/db/query"
+MACHBASE_URL = "http://localhost:5657/machbase"
 
 def get_dashboard_data():
     query = """

@@ -92,9 +92,9 @@ _arrival_time,device_id,sensor_type,value,quality
 | `-H` | 첫 번째 행을 헤더로 처리 | |
 | `-E` | 파일 인코딩 | `-E UTF-8` |
 | `-D` | 필드 구분자 (기본: 쉼표) | `-D '|'` |
-| `-n` | 오류 발생 시 건너뛸 행 수 | `-n 10` |
-| `-e` | 오류 행을 저장할 파일 | `-e /tmp/err.csv` |
-| `-b` | 배치 크기 (기본: 10000) | `-b 50000` |
+| `-b` | 오류 레코드 저장 파일 | `-b /tmp/sensor.bad` |
+| `-l` | 처리 로그 파일 | `-l /tmp/sensor.log` |
+| `-n` | 레코드 구분자 | `-n '\\n'` |
 
 ### 배치 적재 자동화 스크립트
 
@@ -112,7 +112,8 @@ mkdir -p "$LOG_DIR"
 for FILE in "$DATA_DIR"/sensor_${DATE}_*.csv; do
     BASENAME=$(basename "$FILE" .csv)
     machloader -i -t "$TABLE" -d "$FILE" -H -E UTF-8 \
-               -e "$LOG_DIR/${BASENAME}_err.csv" \
+               -b "$LOG_DIR/${BASENAME}.bad" \
+               -l "$LOG_DIR/${BASENAME}.log" \
                >> "$LOG_DIR/${BASENAME}.log" 2>&1
 
     if [ $? -eq 0 ]; then
@@ -252,7 +253,7 @@ all_rows = [...]  # 적재할 데이터 목록
 parallel_append(all_rows)
 ```
 
-> **Cluster Edition 고려사항:** Cluster Edition에서는 Broker 노드와 Warehouse 노드가 분리됩니다. 병렬 Append 시 각 스레드가 서로 다른 Warehouse 노드에 직접 연결하도록 구성하면 추가 성능 향상을 기대할 수 있습니다. 자세한 내용은 [../../cluster](../../cluster) 시나리오를 참고하세요.
+> **Cluster Edition 고려사항:** Cluster Edition에서는 Broker 노드와 Warehouse 노드가 분리됩니다. machloader/Append 클라이언트는 Broker 서비스 포트로 연결합니다. Warehouse 노드 직접 Append는 지원하지 않습니다. 자세한 내용은 [../../cluster](../../cluster) 시나리오를 참고하세요.
 
 ---
 
@@ -274,11 +275,11 @@ SELECT sess_id,
 
 ```sql
 -- 세션별 네트워크·쿼리 통계
-SELECT id        AS sess_id,
-       user_name,
+SELECT id,
        login_time,
-       query_count,
-       execute_count
+       user_name,
+       user_ip,
+       closed
   FROM v$session
  ORDER BY login_time DESC;
 ```
@@ -435,9 +436,9 @@ SELECT name,
 
 | 항목 | Standard Edition | Cluster Edition |
 |------|-----------------|-----------------|
-| 적재 대상 | Machbase 단일 노드 | Broker 또는 Warehouse 직접 연결 |
+| 적재 대상 | Machbase 단일 노드 | Broker 서비스 포트 |
 | 병렬 스레드 | CPU 코어 수 기준 | Warehouse 노드 수 × 1~2 |
-| machloader | 단일 프로세스 | Warehouse별 분산 실행 가능 |
+| machloader | 단일 프로세스 | Broker 포트로 연결 |
 | 오류 처리 | 단순 재시도 | 노드 장애 시 다른 노드로 재연결 |
 
 Cluster Edition에서 machloader를 사용할 때는 Broker 포트로 연결합니다.

@@ -10,10 +10,11 @@ SYS는 Machbase의 관리자 계정입니다. SYS 계정의 AUTH KEY 인증 사�
 
 ## SYS 계정 인증 특성
 
-SYS 계정은 서버 관리 목적으로 사용되며, 인증 방식 사용에 다음과 같은 제약이 있습니다.
+SYS 계정은 서버 관리 목적으로 사용되며, 인증 방식 사용에 다음과 같은 사항을 이해해야 합니다.
 
-- `AUTH_MODE=CHALLENGE`로 서버 전체를 설정해도, SYS 계정에 AUTH KEY가 등록되어 있지 않으면 SYS는 비밀번호 인증으로 접속해야 합니다.
-- CHALLENGE 전용 모드에서 SYS AUTH KEY 미등록 시 SYS 접속이 불가능해질 수 있으므로, CHALLENGE 모드 전환 전 SYS에도 AUTH KEY를 등록하거나, 서버 직접 접속 수단을 별도로 확보해야 합니다.
+- `AUTH_MODE=CHALLENGE`는 서버 전역 설정이 아니라 클라이언트 연결 옵션입니다.
+- SYS 계정으로 CHALLENGE 인증을 사용하려면 SYS 계정에도 AUTH KEY를 등록해야 합니다.
+- SYS 계정에 AUTH KEY가 없으면 PASSWORD 방식 연결을 사용합니다.
 
 ## SYS 계정 AUTH KEY 등록
 
@@ -61,12 +62,8 @@ ALTER USER app_user ADD AUTH KEY (
 );
 ```
 
-## CHALLENGE 모드 전환 시 SYS 접속 보장
+## SYS 계정 CHALLENGE 인증 사용
 
-서버를 `AUTH_MODE=CHALLENGE`로 전환하기 전에 SYS 계정 접속 수단을 보장해야 합니다.
-
-**옵션 1**: SYS 계정에 AUTH KEY 등록 후 CHALLENGE 모드 전환
-
-**옵션 2**: 서버 로컬 접속 방법 확보 (유닉스 도메인 소켓 등)
-
-어떤 계정도 접속할 수 없는 상태가 되면 `machbase.conf`를 직접 수정하고 서버를 재시작하여 `AUTH_MODE=PASSWORD`로 복구해야 합니다.
+SYS 계정으로 CHALLENGE 인증을 사용해야 한다면 먼저 SYS 계정에 AUTH KEY를 등록하고,
+클라이언트 연결 옵션에 `AUTH_MODE=CHALLENGE`, `AUTH_KEY_FILE`,
+`AUTH_SIG_SCHEME`을 지정합니다.

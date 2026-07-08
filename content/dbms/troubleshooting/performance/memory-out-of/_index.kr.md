@@ -18,16 +18,18 @@ Machbase 서버가 OOM(Out of Memory) 오류를 내거나 갑자기 종료되는
 ### Machbase 내부 메모리 통계
 
 ```sql
-SELECT * FROM v$sys_stat WHERE name LIKE '%MEMORY%';
+SELECT name, usage, max_usage
+  FROM v$sysmem
+ ORDER BY usage DESC;
 ```
 
 각 항목의 의미는 다음과 같습니다.
 
 | 항목 | 설명 |
 |------|------|
-| `MEMORY_USED` | 현재 Machbase가 사용 중인 전체 메모리 |
-| `RS_CACHE_MEMORY_USED` | 결과 캐시가 사용 중인 메모리 |
-| `TAG_CACHE_MEMORY_USED` | TAG 캐시가 사용 중인 메모리 |
+| `NAME` | 메모리 통계 항목 이름 |
+| `USAGE` | 현재 사용량 |
+| `MAX_USAGE` | 관측된 최대 사용량 |
 
 ### OS 레벨 메모리 확인
 
@@ -78,11 +80,9 @@ RS_CACHE_MAX_MEMORY_SIZE = 268435456   # 256MB로 축소 (기본값 512MB)
 
 ```sql
 -- 현재 실행 중인 쿼리 목록
-SELECT sess_id, id, state, query,
-       DATEDIFF(SECOND, start_time, NOW) AS elapsed_sec
+SELECT sess_id, id, state, record_size, query
 FROM v$stmt
-WHERE state != 'IDLE'
-ORDER BY elapsed_sec DESC;
+ORDER BY sess_id, id;
 ```
 
 **해결**

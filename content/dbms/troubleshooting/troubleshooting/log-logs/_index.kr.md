@@ -12,8 +12,8 @@ Machbase는 서버 동작과 오류를 `$MACHBASE_HOME/trc/` 디렉터리의 로
 |------|------|
 | `$MACHBASE_HOME/trc/machbase.trc` | 서버 메인 로그. 시작/종료, 오류, 경고, 운영 이벤트 기록 |
 | `$MACHBASE_HOME/trc/machsql.history` | machsql 대화형 세션의 SQL 실행 이력 |
-| 실행 디렉터리의 `machloader.err` | machloader 적재 실패 레코드 (행 단위) |
-| 실행 디렉터리의 `machloader.log` | machloader 처리 건수, 오류 건수 통계 |
+| `machloader -b`로 지정한 bad file | machloader 적재 실패 레코드 (행 단위) |
+| `machloader -l`로 지정한 log file | machloader 처리 건수, 오류 건수 통계 |
 | `$MACHBASE_COLLECTOR_HOME/trc/` | Collector 에이전트 수집 상태 로그 |
 
 ## 서버 메인 로그 확인 방법

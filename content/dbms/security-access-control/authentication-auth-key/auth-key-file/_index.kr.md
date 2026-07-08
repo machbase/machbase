@@ -75,24 +75,15 @@ chmod 600 ~/.machbase/app_user.key
 jdbc:machbase://localhost:5656/machbasedb?AUTH_MODE=CHALLENGE&AUTH_KEY_FILE=/home/app/.machbase/app_user.key
 ```
 
-### Python
+### machsql
 
-```python
-conn = mach.connect(
-    host='localhost',
-    port=5656,
-    user='app_user',
-    password='',
-    auth_mode='CHALLENGE',
-    auth_key_file='/home/app/.machbase/app_user.key'
-)
+```bash
+machsql -s 127.0.0.1 -u app_user \
+  -c "AUTH_MODE=CHALLENGE" \
+  -K /home/app/.machbase/app_user.key
 ```
 
-### Go
-
-```go
-dsn := "app_user:@localhost:5656/machbasedb?AUTH_MODE=CHALLENGE&AUTH_KEY_FILE=/home/app/.machbase/app_user.key"
-```
+C/ODBC 클라이언트도 연결 속성으로 `AUTH_MODE=CHALLENGE`와 `AUTH_KEY_FILE`을 지정합니다.
 
 ## 주의 사항
 

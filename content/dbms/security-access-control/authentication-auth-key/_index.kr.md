@@ -31,9 +31,12 @@ AUTH KEY는 공개키 기반 챌린지-응답(challenge-response) 인증 방식�
 
 | 설정 항목 | 역할 | 위치 |
 |-----------|------|------|
-| `AUTH_MODE` | 인증 방식 선택 (`PASSWORD` / `CHALLENGE`) | machbase.conf 또는 연결 옵션 |
+| `AUTH_MODE` | 인증 방식 선택 (`PASSWORD` / `CHALLENGE`) | 연결 옵션 |
 | `AUTH_KEY_FILE` | 클라이언트 개인키 파일 경로 | 연결 옵션 |
 | `AUTH_SIG_SCHEME` | 서명 스킴 (`ECDSA`, `RSA_PKCS1_V15`, `RSA_PSS`) | 연결 옵션 |
+
+`AUTH_MODE`는 서버 `machbase.conf` 속성이 아니라 클라이언트 연결 옵션입니다.
+서버 전체를 PASSWORD/CHALLENGE 모드로 전환하는 절차는 현재 nfx 기준으로 제공되지 않습니다.
 
 ## 이 섹션의 구성
 

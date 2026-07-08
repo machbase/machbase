@@ -22,7 +22,9 @@ Append 세션이 현재 어떤 상태인지 먼저 확인합니다.
 
 ```sql
 -- Append 세션 확인
-SELECT sess_id, id, state, query FROM v$stmt WHERE query LIKE '%APPEND%';
+SELECT sess_id, id, state, record_size, query
+  FROM v$stmt
+ WHERE query LIKE '%APPEND%';
 ```
 
 `state`가 `APPEND` 또는 `FETCH`로 고정되어 있다면 해당 세션이 중단된 것입니다. `sess_id`를 기억해 두고 아래 해결 방법을 적용하십시오.
@@ -46,7 +48,7 @@ Append 도중 네트워크가 단절되거나 서버가 과부하 상태에 빠�
 
 ```bash
 # 서버 상태 확인
-machadmin -c
+machadmin -e
 
 # 트레이스 로그에서 연결 관련 오류 확인
 grep -i "reset\|disconnect\|abort" $MACHBASE_HOME/trc/machbase.trc | tail -20
@@ -68,7 +70,7 @@ grep -i "reset\|disconnect\|abort" $MACHBASE_HOME/trc/machbase.trc | tail -20
 
 ```sql
 -- 테이블 존재 여부 확인
-SELECT name, type FROM v$table WHERE name = 'SENSOR_LOG';
+SELECT name, type FROM m$sys_tables WHERE name = 'SENSOR_LOG';
 ```
 
 결과가 없으면 테이블이 존재하지 않는 것입니다.

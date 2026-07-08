@@ -96,18 +96,14 @@ BIND_IP_ADDRESS = 10.0.0.5   # 내부 네트워크 인터페이스
 
 ### REST API 인증 활성화
 
-REST API를 사용 중이라면 인증을 활성화하고 HTTPS를 적용합니다.
+REST API를 사용 중이라면 인증을 활성화하고, HTTPS가 필요할 때는 외부 reverse proxy 또는
+TLS terminator에서 처리합니다.
 
 ```sql
 ALTER SYSTEM SET HTTP_AUTH = 1;
 ```
 
-```ini
-# machbase.conf - HTTPS 설정
-HTTP_ENABLE_TLS  = 1
-HTTP_TLS_CERT_FILE = /etc/machbase/tls/server.crt
-HTTP_TLS_KEY_FILE  = /etc/machbase/tls/server.key
-```
+내장 HTTP 서버의 nfx 기준 설정 항목은 `HTTP_ENABLE`, `HTTP_PORT_NO`, `HTTP_AUTH`입니다.
 
 ## AUTH KEY 인증 도입 검토
 

@@ -4,7 +4,8 @@ title: '데이터베이스 권한'
 weight: 30
 ---
 
-데이터베이스 권한은 `MACHBASEDB` 전체 범위에 적용되는 권한으로, 주로 DDL(데이터 정의 언어)과 관리 작업을 제어합니다.
+데이터베이스 권한은 `MACHBASEDB` 전체 범위에 적용되는 권한입니다. 개별 DML 권한은
+테이블 대상으로 부여하지만, `ALL ON MACHBASEDB`는 DML 권한 비트까지 함께 포함합니다.
 
 ## 데이터베이스 권한 목록
 
@@ -16,7 +17,7 @@ weight: 30
 | `BACKUP` | `BACKUP DATABASE` 실행 | 아니오 |
 | `MOUNT` | `MOUNT DATABASE` / `UNMOUNT DATABASE` 실행 | 아니오 |
 | `DDL` | CREATE + DROP 묶음 | — |
-| `ALL` | 모든 데이터베이스 권한 일괄 부여 | — |
+| `ALL` | SELECT, INSERT, DELETE, UPDATE, CREATE, DROP, ALTER, BACKUP, MOUNT 일괄 부여 | — |
 
 "기본 보유"가 "예"인 권한은 `CREATE USER`로 생성된 사용자가 별도 GRANT 없이 보유합니다.  
 나머지 권한은 SYS 계정이 명시적으로 부여해야 합니다.
