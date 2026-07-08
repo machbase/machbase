@@ -3,3 +3,50 @@ type: docs
 title: 'evidence-map'
 weight: 60
 ---
+
+이 페이지는 Machbase에 관한 기술적 사실의 근거(소스)를 매핑합니다. AI 에이전트가 사실에 근거한 답변을 생성하거나, 답변의 출처를 명시할 때 참조합니다.
+
+## 인증 / 보안
+
+| 사실 | 근거 (소스) | 비고 |
+|------|------------|------|
+| `AUTH_SIG_SCHEME` 허용값: `ECDSA`, `RSA_PKCS1_V15`, `RSA_PSS` | `/home/sjkim/work/nfx/pm/src/include/pmuAuth.h` | 서명 알고리즘 열거형 정의 |
+| `AUTH_MODE` 허용값: `PASSWORD`, `CHALLENGE` | `/home/sjkim/work/nfx/pm/src/include/pmuAuth.h` | 인증 모드 열거형 정의 |
+| AUTH KEY는 공개키 기반 인증 — 비밀번호 대신 사용 가능 | Machbase 8.6 매뉴얼 보안 섹션 | [AUTH KEY 문서](../../../security-access-control/authentication-auth-key/) |
+
+## Python SDK
+
+| 사실 | 근거 (소스) | 비고 |
+|------|------------|------|
+| Python machbaseAPI 파라미터 바인딩 스타일: `%s` 또는 `%(name)s` | machbaseAPI 드라이버 소스, Machbase 8.6 매뉴얼 ch8 | `?` 플레이스홀더 사용 불가 |
+| Python machbaseAPI는 Server Prepared Statement 미지원 | machbaseAPI 구현 방식 (클라이언트 렌더링) | 쿼리 문자열을 클라이언트에서 완성 후 서버에 전송 |
+
+## Go SDK
+
+| 사실 | 근거 (소스) | 비고 |
+|------|------------|------|
+| Go `database/sql` 드라이버: `Begin()` / `BeginTx()` 미구현 | Go 드라이버 소스 코드 | Transaction 시작 불가 |
+| Go `machcli` (native): Append API 지원, Transaction 미지원 | machcli 드라이버 문서 | [Go 드라이버 가이드](../../../application-integration/guide-drivers/go/) |
+
+## Cluster Edition
+
+| 사실 | 근거 (소스) | 비고 |
+|------|------------|------|
+| Cluster Edition: RDB 테이블 미지원 | Machbase 공식 제한사항 문서 | [지원 범위와 제약](../../../reference/support-scope-constraints/) |
+| Cluster Edition: VOLATILE 테이블 미지원 | Machbase 공식 제한사항 문서 | |
+| Cluster Edition: STREAM, MOUNT, Custom ROLLUP, ROLLUP_REBUILD 미지원 | Machbase 공식 제한사항 문서 | |
+
+## 성능
+
+| 사실 | 근거 (소스) | 비고 |
+|------|------------|------|
+| TAG 테이블 Append가 SQL INSERT보다 빠름 | Append 전용 이진 프로토콜 사용 (SQL 파싱 오버헤드 없음) | [Append 개념](../../../application-integration/concepts-common/append/) |
+| ROLLUP은 집계를 사전 계산하여 조회 속도 향상 | ROLLUP 설계 문서 | [ROLLUP](../../../core-concepts/rollup/) |
+
+## TAG 테이블 DML 제약
+
+| 사실 | 근거 (소스) | 비고 |
+|------|------------|------|
+| TAG UPDATE WHERE는 PK(name) 조건만 허용 | Machbase 엔진 제약 (planned: #3733) | |
+| TAG UPDATE SET은 SUMMARIZED/METADATA 컬럼만 허용 | Machbase 엔진 제약 | |
+| TAG 테이블 DELETE 미지원 | Machbase 엔진 설계 (Append-only 구조) | |
