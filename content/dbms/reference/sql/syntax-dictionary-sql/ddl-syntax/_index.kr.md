@@ -360,13 +360,13 @@ DROP TABLESPACE tbs1;
 -- 기본 롤업
 create_rollup_stmt ::=
     'CREATE ROLLUP' rollup_name
-    'ON' src_table_name '(' src_column ')'
+    'ON' src_table_name '(' src_column [ '->' json_path ] ')'
     'INTERVAL' number ( 'SEC' | 'MIN' | 'HOUR' )
 
 -- 조건부 롤업
 create_conditional_rollup_stmt ::=
     'CREATE ROLLUP' rollup_name
-    ( 'ON' src_table_name '(' src_column ')'
+    ( 'ON' src_table_name '(' src_column [ '->' json_path ] ')'
     | 'FROM' src_rollup_name )
     'INTERVAL' number ( 'SEC' | 'MIN' | 'HOUR' )
     'WHERE' predicate
@@ -388,7 +388,7 @@ CREATE ROLLUP _rollup_tag_value_sec ON tag(value) INTERVAL 1 SEC;
 CREATE ROLLUP _rollup_tag_good ON tag(value) INTERVAL 1 MIN WHERE quality = 1;
 
 -- JSON 컬럼 멤버 롤업
-CREATE ROLLUP tag_metric_ru ON tag (value.metric) INTERVAL 1 MIN;
+CREATE ROLLUP tag_metric_ru ON tag (value->'$.metric') INTERVAL 1 MIN;
 ```
 
 ---
