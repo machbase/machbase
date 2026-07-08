@@ -13,7 +13,7 @@ Machbase REST API는 HTTP 요청으로 SQL 실행, 데이터 입력, TAG 데이�
 | 기본 URL | `http://host:5657` |
 | 포트 설정 | `machbase.conf`의 `HTTP_PORT_NO` |
 | 서비스 활성화 | `machbase.conf`의 `HTTP_ENABLE = 1` |
-| 응답 형식 | `application/json` |
+| 응답 형식 | JSON (`Content-Type: text/json`) |
 
 ## 인증
 
@@ -48,8 +48,14 @@ curl -u "SYS:MANAGER" \
 |--------|-----|------|
 | `GET` | `/machbase?q=<SQL>` | SQL 실행 (SELECT, DDL, DML) |
 | `POST` | `/machbase` | 다수 행 Append 삽입 |
+| `GET` | `/machiot/tags/list[/<table>[/<tag_names>]]` | TAG 목록 조회 |
+| `GET` | `/machiot/tags/range[/<table>[/<tag_names>]]` | TAG 시간 범위 조회 |
+| `GET` | `/machiot/tags/min|max|count[/<table>[/<tag_names>]]` | TAG 통계 조회 |
+| `GET` | `/machiot/v1/datapoints/raw/...` | TAG raw datapoint 조회 |
+| `GET` | `/machiot/v1/datapoints/calculated/...` | TAG calculated datapoint 조회 |
+| `DELETE` | `/machiot/v1/datapoints/raw/...` | TAG raw datapoint 삭제 |
 
-> 현재 빌드에서 `/machiot/tags` 엔드포인트는 지원되지 않습니다. TAG 데이터 조회는 `/machbase?q=<SQL>`을 사용합니다.
+`/machiot-rest-api`는 `/machiot`의 호환 alias로 등록되어 있습니다.
 
 ## HTTP 상태 코드
 
@@ -66,4 +72,4 @@ curl -u "SYS:MANAGER" \
 |------|------|
 | [/machbase SQL API](./machbase-sql-api/) | GET /machbase - SQL 실행 엔드포인트 상세 |
 | [/machbase append API](./machbase-append-api/) | POST /machbase - 다수 행 삽입 엔드포인트 상세 |
-| [TAG 데이터 조회](./machiot-tags-api/) | TAG 테이블 데이터 SQL 조회 패턴 |
+| [TAG 데이터 조회](./machiot-tags-api/) | `/machiot` TAG/Datapoints 엔드포인트와 SQL 조회 패턴 |

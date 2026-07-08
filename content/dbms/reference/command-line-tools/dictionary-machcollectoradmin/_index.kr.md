@@ -17,9 +17,19 @@ machcollectoradmin -h
 | `-u`, `--startup` | Collector 프로세스 시작 |
 | `-s`, `--shutdown` | Collector 프로세스 정상 종료 |
 | `-k`, `--kill` | Collector 프로세스 강제 중지 |
-| `-e`, `--check` | Collector 프로세스 실행 여부 확인 |
+| `-d`, `--destroy` | Collector 메타데이터 삭제 |
+| `--status-collector=collector_name` | 지정 collector 상태 확인. `all`, `run`, `stop`, `error` 지정 가능 |
+| `--status[=collector_name]` | `--status-collector` alias |
+| `--status-send-fail=collector_name` | 전송 실패 목록 확인. `all` 지정 가능 |
+| `--list` | collector 목록 출력 |
+| `--create-collector=collector_name` | collector 생성. `--template` 필요 |
+| `--drop-collector=collector_name` | collector 삭제 |
+| `--start-collector=collector_name` | collector 시작. `all` 지정 가능 |
+| `--stop-collector=collector_name` | collector 중지. `all` 지정 가능 |
+| `--kill-collector=collector_name` | collector 강제 종료. `all` 지정 가능 |
+| `-m`, `--template=template_path` | collector 생성 시 템플릿 파일 경로 지정 |
+| `-t`, `--trace=0~7` | collector 시작 시 trace 옵션 지정 |
 | `-i`, `--silent` | 배너 출력 없이 실행 |
-| `--home-path=path` | Machbase Collector 홈 경로 지정 |
 
 ## 프로세스 관리
 
@@ -44,7 +54,8 @@ machcollectoradmin -k
 ### 실행 상태 확인
 
 ```bash
-machcollectoradmin -e
+machcollectoradmin --status
+machcollectoradmin --list
 ```
 
 실행 중이면 PID를 출력합니다.
@@ -78,11 +89,12 @@ Collector의 동작은 `$MACHBASE_COLLECTOR_HOME/conf/` 디렉토리의 설정 �
 machcollectoradmin -u
 
 # 상태 확인
-machcollectoradmin -e
+machcollectoradmin --status
+
+# 템플릿으로 collector 생성 후 시작
+machcollectoradmin --create-collector sensor_file --template /opt/machbase/collector/sensor.tpl
+machcollectoradmin --start-collector sensor_file
 
 # 정상 종료
 machcollectoradmin -s
-
-# 홈 경로를 직접 지정하여 시작
-machcollectoradmin -u --home-path=/opt/machbase/collector
 ```

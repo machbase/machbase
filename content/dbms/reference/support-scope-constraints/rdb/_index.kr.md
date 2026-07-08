@@ -81,5 +81,5 @@ RDB 테이블은 TAG, LOG, LOOKUP 테이블과 JOIN이 가능합니다.
 SELECT s.name, s.time, s.value, o.customer
 FROM sensor_data s
 JOIN orders o ON s.name = o.sensor_name
-WHERE s.time >= DATEADD(HOUR, -1, NOW());
+WHERE s.time >= now - 1h;
 ```

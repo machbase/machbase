@@ -111,7 +111,7 @@ SELECT payload -> 'role' AS role
 RDB 테이블은 JSON 타입을 완전히 지원합니다. 관계형 특성(트랜잭션, 인덱스 등)과 JSON 경로 접근을 함께 사용할 수 있습니다.
 
 ```sql
-CREATE TABLE metadata (
+CREATE RDB TABLE metadata (
     id   INTEGER PRIMARY KEY,
     info JSON
 );

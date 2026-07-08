@@ -48,17 +48,17 @@ ts_nano = int(time.time() * 1_000_000_000)  # 현재 시각을 나노초로
 cursor.execute("INSERT INTO sensor_data VALUES (%s, %s, %s)", ('temp_01', ts_nano, 25.3))
 ```
 
-### 규칙 5: 상대 시간 계산은 `DATEADD` 사용
+### 규칙 5: 상대 시간 계산은 상대 시간 리터럴 또는 `ADD_TIME` 사용
 
 ```sql
 -- 최근 1시간 데이터 조회
 SELECT * FROM TAG TABLE sensor_data
 WHERE name = 'temp_01'
-  AND time BETWEEN DATEADD('hour', -1, NOW) AND NOW;
+  AND time BETWEEN now - 1h AND now;
 
--- SYSDATE 사용 예
+-- ADD_TIME 사용 예
 SELECT * FROM TAG TABLE sensor_data
-WHERE time > DATEADD('minute', -30, SYSDATE);
+WHERE time > ADD_TIME(sysdate, '0/0/0 0:-30:0');
 ```
 
 ## SDK별 파라미터 바인딩 스타일

@@ -27,7 +27,6 @@ weight: 20
 | 태그 Rollup | `V$ROLLUP` | Rollup 작업 상태 |
 | 스트림 | `V$STREAMS` | Stream 쿼리 실행 상태 |
 | 라이선스 | `V$LICENSE_INFO` | 라이선스 정보 |
-| 인덱스 | `V$INDEX_NODE_STATUS` | 인덱스 상태 |
 | 잠금 | `V$MUTEX` | 잠금 현황 |
 
 ## V$VERSION

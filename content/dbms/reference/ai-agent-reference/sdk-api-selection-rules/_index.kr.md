@@ -15,8 +15,8 @@ weight: 90
 | Append 필요 + Go | **machcli** (native client) | `database/sql`은 Append 미지원 |
 | Append 필요 + .NET | **MachConnector** (`MachAppendWriter`) | [.NET 가이드](../../../application-integration/guide-drivers/.net/) |
 | Append 필요 + Node.js | **machbase-node** | [Node.js 가이드](../../../application-integration/guide-drivers/node/) |
-| AUTH KEY 인증 필요 | **JDBC**, **Python(machbaseAPI)**, **.NET**, **ODBC/CLI** | Node.js는 현재 AUTH KEY 미지원 |
-| RDB 테이블 트랜잭션 필요 | **JDBC**, **Python(machbaseAPI)**, **.NET**, **ODBC/CLI** | Go는 Transaction 미지원 |
+| AUTH KEY 인증 필요 | **JDBC**, **.NET**, **ODBC/CLI** | Python/Go/Node.js는 현재 지원 근거가 확인되지 않음 |
+| RDB 테이블 트랜잭션 필요 | **JDBC**, **.NET**, **ODBC/CLI** | Python/Go/Node.js는 Transaction 미지원 |
 | Go 언어 선호 + Append 필요 | **machcli** (native) | [Go 가이드](../../../application-integration/guide-drivers/go/) |
 | Go 언어 선호 + 표준 인터페이스 | **database/sql** 드라이버 | Append 불필요한 경우 |
 | 브라우저 / 웹 / 스크립트 | **REST API** (포트 5657, `/machbase` 엔드포인트) | [REST API 가이드](../../../application-integration/guide-drivers/rest-api/) |
@@ -34,7 +34,7 @@ weight: 90
 | Node.js | machbase-node | machbase-node | 미지원 |
 | C / C++ | ODBC/CLI | ODBC/CLI | ODBC/CLI |
 | R | RODBC | 미지원 | 미지원 |
-| 웹 / curl / HTTP | REST API | 미지원 | 미지원 |
+| 웹 / curl / HTTP | REST API | REST API (`POST /machbase`) | 미지원 |
 
 ## 피해야 할 조합
 
@@ -43,8 +43,7 @@ weight: 90
 | Go `database/sql` + Append | Append 미지원 | `machcli` (native) 사용 |
 | Go + Transaction (BEGIN/COMMIT) | `Begin()` / `BeginTx()` 미구현 | ODBC 또는 JDBC 사용 |
 | REST API + Transaction | REST API는 단일 요청 기반, Transaction 미지원 | JDBC / .NET 사용 |
-| REST API + Append | Append 프로토콜은 HTTP 미지원 | JDBC / Python / Go(machcli) 사용 |
-| Node.js + AUTH KEY | 현재 Node.js 드라이버 AUTH KEY 미지원 | JDBC / Python / .NET 사용 |
+| Node.js + AUTH KEY | 현재 Node.js 드라이버 AUTH KEY 미지원 | JDBC / .NET 사용 |
 | Python `%s` → `?` 플레이스홀더 | machbaseAPI는 `%s` 방식 전용 | `%s` 또는 `%(name)s` 사용 |
 
 ## SDK별 주요 특징 요약
@@ -59,21 +58,21 @@ weight: 90
 ### Python (machbaseAPI)
 
 - Append: `conn.append(table, cols, data)` 또는 `machbase()` 클래스
-- AUTH KEY: 지원
-- Transaction: 지원 (RDB/LOOKUP 테이블)
+- AUTH KEY: 미지원
+- Transaction: 미지원
 - 파라미터: `%s` 또는 `%(name)s` (서버 Prepared Statement 미지원, 클라이언트 렌더링)
 
 ### Go (machcli / native)
 
 - Append: `stmt.AppendOpen()` → `stmt.AppendData()` → `stmt.AppendClose()`
-- AUTH KEY: 지원
+- AUTH KEY: 미지원
 - Transaction: 미지원 (`Begin()` 미구현)
 - 파라미터: `?` 플레이스홀더
 
 ### Go (database/sql)
 
 - Append: 미지원
-- AUTH KEY: 지원
+- AUTH KEY: 미지원
 - Transaction: 미지원
 - 파라미터: `?` 플레이스홀더
 - 적합한 용도: 단순 SELECT, INSERT (TAG 테이블 소량), 시스템 뷰 조회
@@ -88,8 +87,9 @@ weight: 90
 ### REST API
 
 - 엔드포인트: `http://host:5657/machbase`
-- Append / Transaction / Prepared Statement: 모두 미지원
-- 적합한 용도: 단순 쿼리 실행, 웹 애플리케이션, 스크립팅
+- Append: `POST /machbase` 지원
+- Transaction / Prepared Statement: 미지원
+- 적합한 용도: 단순 쿼리 실행, 웹 애플리케이션, 스크립팅, HTTP JSON Append
 
 ## 참조
 

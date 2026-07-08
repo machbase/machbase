@@ -19,7 +19,9 @@ tagmetaimport -h
 | `-u`, `--user=USER` | 사용자 이름 (기본값: SYS) |
 | `-p`, `--password=PASSWORD` | 사용자 비밀번호 (기본값: MANAGER) |
 | `-t`, `--table=TABLE_NAME` | 대상 TAG 테이블 이름 |
-| `-f`, `--file=FILE` | 메타데이터 CSV 파일 경로 |
+| `-d`, `--data=DATA_FILE` | 메타데이터 CSV 파일 경로 |
+| `-l`, `--log=LOG_FILE` | 로그 파일 경로 |
+| `-b`, `--bad=BAD_FILE` | 입력 실패 레코드 저장 파일 경로 |
 | `-H`, `--header` | CSV 파일의 첫 번째 행을 헤더로 인식 |
 | `-D`, `--delimiter=DELIMITER` | 필드 구분자 (기본값: `,`) |
 | `-E`, `--encoding=CHARSET` | 파일 인코딩 (기본값: UTF8) |
@@ -65,35 +67,35 @@ sensor_002,celsius,Building-A Floor-2
 
 ```bash
 tagmetaimport -s 127.0.0.1 -P 5656 -u SYS -p MANAGER \
-    -t sensor_tag -f tag_meta.csv
+    -t sensor_tag -d tag_meta.csv
 ```
 
 ### 헤더가 있는 CSV 파일 가져오기
 
 ```bash
 tagmetaimport -s 127.0.0.1 -P 5656 -u SYS -p MANAGER \
-    -t sensor_tag -f tag_meta.csv -H
+    -t sensor_tag -d tag_meta.csv -H
 ```
 
 ### 원격 서버에 가져오기
 
 ```bash
 tagmetaimport -s 192.168.0.10 -P 5656 -u SYS -p MANAGER \
-    -t sensor_tag -f tag_meta.csv -H
+    -t sensor_tag -d tag_meta.csv -H
 ```
 
 ### 탭 구분자 파일
 
 ```bash
 tagmetaimport -s 127.0.0.1 -P 5656 -u SYS -p MANAGER \
-    -t sensor_tag -f tag_meta.tsv -D '\t' -H
+    -t sensor_tag -d tag_meta.tsv -D '\t' -H
 ```
 
 ### EUC-KR 인코딩 파일
 
 ```bash
 tagmetaimport -s 127.0.0.1 -P 5656 -u SYS -p MANAGER \
-    -t sensor_tag -f tag_meta_kr.csv -E MS949 -H
+    -t sensor_tag -d tag_meta_kr.csv -E MS949 -H
 ```
 
 ## 동작 방식

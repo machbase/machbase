@@ -33,7 +33,7 @@ weight: 40
 | INSERT (SQL) | O | O | O | O | O |
 | Append API | O | O | X | X | X |
 | UPDATE | 제한적¹ | X | O | O | O |
-| DELETE | X | X | O | O | O |
+| DELETE | 제한적 | X | O | O | O |
 | Transaction (COMMIT/ROLLBACK) | X | X | O | O | O |
 | ROLLUP 대상 | O | X | X | X | X |
 | 전문 검색 (TEXT INDEX) | X | O | X | X | X |
@@ -48,12 +48,12 @@ weight: 40
 | SDK | Append | AUTH KEY 인증 | Transaction | Server Prepared Statement |
 |-----|:------:|:-------------:|:-----------:|:-------------------------:|
 | JDBC | O | O | O | O |
-| Python (machbaseAPI) | O | O | O | X² |
-| Go (machcli / native) | O | O | X³ | O |
-| Go (database/sql) | X | O | X³ | O |
+| Python (machbaseAPI) | O | X | X | X² |
+| Go (machcli / native) | O | X | X³ | O |
+| Go (database/sql) | X | X | X³ | O |
 | .NET (MachConnector) | O | O | O | O |
-| Node.js | O | X⁴ | X | X |
-| REST API | X | X | X | X |
+| Node.js | O | X⁴ | X | O |
+| REST API | O | X | X | X |
 | ODBC/CLI | O | O | O | O |
 | R (RODBC) | X | X | X | X |
 

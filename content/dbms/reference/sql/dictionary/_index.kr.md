@@ -14,6 +14,7 @@ Machbase SQL에서 사용할 수 있는 내장 함수를 카테고리별로 정�
 | [JSON 함수와 `->` 연산자](operators-json/) | JSON 데이터 추출·조작 함수 및 경로 연산자 |
 | [정규식 함수](regex/) | REGEXP_LIKE, REGEXP_SUBSTR 등 정규식 기반 검색·변환 함수 |
 | [NEXTVAL 함수](nextval/) | Lookup 테이블 Sequence 컬럼용 자동 증가값 생성 함수 |
+| [전체 함수 레퍼런스](functions-full/) | 8.5 원본 함수 레퍼런스의 전체 함수 항목과 예제 |
 
 ## 공통 규칙
 

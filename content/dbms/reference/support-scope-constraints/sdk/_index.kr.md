@@ -11,11 +11,11 @@ Machbase는 다양한 프로그래밍 언어와 프로토콜을 위한 SDK를 �
 | SDK | Append | AUTH KEY | Transaction | Prepared Statement | 비고 |
 |-----|:------:|:--------:|:-----------:|:-----------------:|------|
 | **JDBC** | O | O | O | O | Java 표준 JDBC 4.2 |
-| **Python** | O | X | O | X | `%s` 클라이언트 렌더링 |
+| **Python** | O | X | X | X | `%s` 클라이언트 렌더링, 서버 Prepared Statement 미지원 |
 | **Go (native)** | O | X | X | O | `machgo` 네이티브 클라이언트 |
 | **Go (database/sql)** | X | X | X | O | 표준 `database/sql` 인터페이스 |
 | **.NET** | O | O | O | O | `MachConnection` / `MachCommand` |
-| **Node.js** | O | X | X | O | |
+| **Node.js** | O | X | X | O | `prepare`, `appendBatch`, `appendOpen` 지원 |
 | **REST API** | O | X | X | X | HTTP JSON, 단일 요청 단위 |
 | **ODBC/CLI** | O | O | O | O | C 언어 네이티브, 최고 성능 |
 
@@ -56,7 +56,7 @@ Go `database/sql` 드라이버와 Go native 클라이언트 모두 `Begin`/`Begi
 |----------|---------|
 | 최고 성능 대량 쓰기 (Append) | ODBC/CLI, JDBC, Go (native), Python |
 | AUTH KEY 키 기반 인증 | JDBC, ODBC/CLI, .NET |
-| RDB 테이블 트랜잭션 | JDBC, Python, .NET, ODBC/CLI |
+| RDB 테이블 트랜잭션 | JDBC, .NET, ODBC/CLI |
 | 웹 서비스/마이크로서비스 통합 | REST API |
 | Go 표준 인터페이스 | Go (database/sql) |
 | 브라우저/스크립트 연동 | Node.js, REST API |

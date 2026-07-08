@@ -35,3 +35,4 @@ SELECT name FROM v$tables WHERE name LIKE 'V$%' ORDER BY name;
 | [V$ROLLUP 사전](./dictionary-vrollup/) | Rollup 작업 상태 뷰 컬럼 상세 |
 | [V$RS_CACHE_* 사전](./dictionary-vrs-cache/) | Result Cache 통계 뷰 컬럼 상세 |
 | [V$STORAGE_MOUNT_* 사전](./dictionary-vstorage-mount/) | 마운트된 백업 데이터베이스 뷰 컬럼 상세 |
+| [전체 가상 테이블 레퍼런스](./virtual-table-full/) | 8.5 원본 가상 테이블 레퍼런스의 전체 항목 |

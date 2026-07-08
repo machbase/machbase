@@ -14,7 +14,7 @@ RS(Result Set) Cache는 쿼리 결과를 메모리에 캐시하여 동일하거�
 | `RS_CACHE_TIME_BOUND_MSEC` | 1000 | 0~2^64-1 | 가능 | 캐시 저장 최소 실행 시간(ms). 이보다 빨리 완료된 쿼리는 캐시하지 않음 |
 | `RS_CACHE_MAX_MEMORY_SIZE` | 536870912 | 32KB~2^64-1 | 가능 | RS Cache 전체 최대 메모리(바이트). 기본 512MB |
 | `RS_CACHE_MAX_MEMORY_PER_QUERY` | 16777216 | 1024~2^64-1 | 가능 | 쿼리 1개 결과의 최대 캐시 메모리(바이트). 기본 16MB |
-| `RS_CACHE_MAX_RECORD_PER_QUERY` | 10000 | 1~2^64-1 | 가능 | 캐시되는 쿼리 결과의 최대 레코드 수 |
+| `RS_CACHE_MAX_RECORD_PER_QUERY` | 10000 | 1~2^64-1 | 가능 | 캐시되는 쿼리 결과의 최대 레코드 수. 배포 샘플은 `50000`으로 설정되어 있을 수 있음 |
 | `RS_CACHE_APPROXIMATE_RESULT_ENABLE` | 0 | 0~1 | 가능 | 추측 모드 활성화. 1이면 약간 부정확하지만 매우 빠른 결과 반환 |
 
 ## 프로퍼티 상세

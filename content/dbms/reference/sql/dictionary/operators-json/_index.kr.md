@@ -11,9 +11,15 @@ Machbase는 `JSON` 타입 컬럼에 저장된 데이터를 조작·조회하기 
 | 함수/연산자 | 문법 | 설명 |
 |-------------|------|------|
 | `->` | `col -> 'key'` | JSON 객체에서 최상위 키 값 추출 |
-| JSON_SET | `JSON_SET(doc, path, scalar)` | JSON 경로에 스칼라 값 설정 |
-| JSON_SET_JSON | `JSON_SET_JSON(doc, path, json_text)` | JSON 경로에 JSON 서브트리 설정 |
-| JSON_REMOVE | `JSON_REMOVE(doc, path)` | JSON 경로의 멤버 제거 |
+| `JSON_EXTRACT` | `JSON_EXTRACT(doc, path)` | JSON 경로의 값을 JSON 문자열로 추출 |
+| `JSON_EXTRACT_STRING` | `JSON_EXTRACT_STRING(doc, path)` | JSON 경로의 값을 문자열로 추출 |
+| `JSON_EXTRACT_INTEGER` | `JSON_EXTRACT_INTEGER(doc, path)` | JSON 경로의 값을 정수로 추출 |
+| `JSON_EXTRACT_DOUBLE` | `JSON_EXTRACT_DOUBLE(doc, path)` | JSON 경로의 값을 실수로 추출 |
+| `JSON_TYPEOF` | `JSON_TYPEOF(doc)` 또는 `JSON_TYPEOF(doc, path)` | JSON 값의 타입 확인 |
+| `JSON_IS_VALID` | `JSON_IS_VALID(json_text)` | JSON 문자열 유효성 확인 |
+| `JSON_SET` | `JSON_SET(doc, path, scalar)` | JSON 경로에 스칼라 값 설정 |
+| `JSON_SET_JSON` | `JSON_SET_JSON(doc, path, json_text)` | JSON 경로에 JSON 서브트리 설정 |
+| `JSON_REMOVE` | `JSON_REMOVE(doc, path)` | JSON 경로의 멤버 제거 |
 
 ---
 

@@ -13,7 +13,7 @@ Coordinator는 클러스터 전체 메타데이터와 노드 상태를 관리합
 | 프로퍼티 | 기본값 | 설명 |
 |----------|--------|------|
 | `CLUSTER_LINK_HOST` | - | Coordinator가 바인드할 IP 주소 |
-| `CLUSTER_LINK_PORT_NO` | 36110 | 클러스터 내부 통신 포트 |
+| `CLUSTER_LINK_PORT_NO` | 3868 | 클러스터 내부 통신 포트 |
 | `CLUSTER_LINK_THREAD_COUNT` | 16 | 클러스터 링크 처리 스레드 수 |
 | `CLUSTER_LINK_MAX_LISTEN` | 512 | 클러스터 링크 최대 listen 연결 수 |
 | `CLUSTER_LINK_MAX_POLL` | 4096 | 클러스터 링크 최대 poll 이벤트 수 |
@@ -30,8 +30,8 @@ Coordinator는 클러스터 전체 메타데이터와 노드 상태를 관리합
 | `CLUSTER_LINK_CONNECT_RETRY_TIMEOUT` | 60000000 | 연결 재시도 최대 시간 (60초) |
 | `CLUSTER_LINK_CONNECT_TIMEOUT` | 5000000 | 연결 타임아웃 (5초) |
 | `CLUSTER_LINK_HANDSHAKE_TIMEOUT` | 5000000 | 핸드셰이크 타임아웃 (5초) |
-| `CLUSTER_LINK_RECEIVE_TIMEOUT` | 5000000 | 수신 타임아웃 (5초) |
-| `CLUSTER_LINK_SEND_TIMEOUT` | 5000000 | 송신 타임아웃 (5초) |
+| `CLUSTER_LINK_RECEIVE_TIMEOUT` | 30000000 | 수신 타임아웃 (30초) |
+| `CLUSTER_LINK_SEND_TIMEOUT` | 30000000 | 송신 타임아웃 (30초) |
 | `CLUSTER_LINK_REQUEST_TIMEOUT` | 60000000 | 요청 타임아웃 (60초) |
 | `CLUSTER_LINK_SESSION_TIMEOUT` | 3600000000 | 세션 타임아웃 (1시간) |
 | `CLUSTER_LINK_LONG_WAIT_INTERVAL` | 1000000 | 장시간 대기 간격 (1초) |

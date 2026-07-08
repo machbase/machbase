@@ -83,9 +83,9 @@ tail -100 $MACHBASE_HOME/trc/machbase.trc | grep -i ERROR
 -- 특정 세션 강제 종료
 ALTER SYSTEM KILL SESSION 12345;
 
--- 오래된 세션 일괄 정리 (예: 1시간 이상 유휴 세션)
+-- IDLE 세션 확인
 SELECT sess_id FROM v$session
-WHERE state = 'IDLE' AND DATEDIFF('minute', login_time, NOW) > 60;
+WHERE state = 'IDLE';
 -- 위 결과를 기반으로 개별 KILL SESSION 실행
 ```
 

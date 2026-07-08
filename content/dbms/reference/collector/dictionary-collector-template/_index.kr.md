@@ -4,229 +4,99 @@ title: 'Collector template 사전'
 weight: 10
 ---
 
-Collector template은 수집한 원시 데이터를 Machbase 테이블 컬럼에 매핑하는 파싱 방식을 정의합니다. 설정 파일의 `template` 섹션에서 지정합니다.
+Collector template은 JSON이 아니라 키-값 형식의 `.tpl` 파일입니다. 수집 대상 파일,
+파싱 방식, Machbase 접속 정보, 테이블 생성 동작을 이 파일에 정의합니다.
 
-## 지원 템플릿 타입
+## 템플릿 기본 구조
 
-| 타입 | 설명 |
-|------|------|
-| `CSV` | 구분자로 분리된 텍스트 파싱 |
-| `JSON` | JSON 형식 데이터 파싱 |
-| `REGEX` | 정규식 캡처 그룹으로 파싱 |
+```ini
+LOG_SOURCE=/var/log/sensor/sensor.log
+REGEX_PATH=/opt/machbase/collector/regex/sensor.rgx
+PARSE_TYPE=CSV
 
----
+DB_TABLE_NAME = "sensor_log"
+DB_ADDR       = "127.0.0.1"
+DB_PORT       = 5656
+DB_USER       = "SYS"
+DB_PASS       = "MANAGER"
 
-## CSV 템플릿
-
-쉼표(`,`) 또는 지정한 구분자로 분리된 텍스트 데이터를 파싱합니다.
-
-### 파라미터
-
-| 파라미터 | 필수 | 타입 | 설명 |
-|---------|------|------|------|
-| `type` | 필수 | string | `"CSV"` |
-| `separator` | 선택 | string | 구분자 (기본값: `","`) |
-| `columns` | 필수 | array | 컬럼 매핑 정의 배열 |
-| `columns[].name` | 필수 | string | 대상 테이블 컬럼 이름 |
-| `columns[].type` | 필수 | string | 컬럼 데이터 타입 |
-| `columns[].index` | 필수 | integer | CSV 필드 인덱스 (0부터 시작) |
-| `columns[].format` | 선택 | string | 시간 파싱 포맷 (DATETIME 타입인 경우) |
-| `skip_header` | 선택 | integer | 건너뛸 헤더 행 수 (기본값: `0`) |
-
-### 예시
-
-입력 데이터:
-```text
-sensor-01,2024-01-01 10:00:00,23.5
-sensor-02,2024-01-01 10:00:00,45.1
+CREATE_TABLE_MODE=2
 ```
 
-설정:
-```json
-{
-  "template": {
-    "type": "CSV",
-    "separator": ",",
-    "columns": [
-      {"name": "name",  "type": "VARCHAR",  "index": 0},
-      {"name": "time",  "type": "DATETIME", "index": 1, "format": "YYYY-MM-DD HH24:MI:SS"},
-      {"name": "value", "type": "DOUBLE",   "index": 2}
-    ]
-  }
-}
+## 주요 템플릿 키
+
+| 키 | 설명 |
+|----|------|
+| `COLLECT_TYPE` | 수집 타입. 현재 확인되는 값은 `FILE`, `SFTP`입니다. 생략 시 샘플에 따라 파일 수집으로 사용합니다. |
+| `LOG_SOURCE` | 수집할 원본 파일 경로입니다. |
+| `PARSE_TYPE` | 파싱 타입. `CSV`, `REGEX`, `JSON`, `JSON_PIVOT`을 사용합니다. |
+| `REGEX_PATH` | `REGEX` 또는 `CSV` 파싱에 사용하는 `.rgx` 규칙 파일 경로입니다. |
+| `PIVOT_JSON_KEY` | `JSON_PIVOT` 파싱에서 pivot 기준으로 사용할 JSON 키입니다. |
+| `DB_TABLE_NAME` | 데이터를 입력할 Machbase 테이블 이름입니다. |
+| `DB_ADDR` | Machbase 서버 주소입니다. |
+| `DB_PORT` | Machbase 서버 포트입니다. |
+| `DB_USER` | 접속 사용자입니다. |
+| `DB_PASS` | 접속 비밀번호입니다. |
+| `CREATE_TABLE_MODE` | 테이블 생성 동작입니다. `0`=생성 안 함, `1`=truncate, `2`=없으면 생성, `3`=drop 후 생성. |
+| `SLEEP_TIME` | 파일 변경 확인 또는 반복 수집 대기 시간입니다. |
+| `AUTO_ADD_COLUMN` | 입력 데이터에 맞춰 컬럼 자동 추가를 허용할지 여부입니다. |
+| `FILE_BACKUP_PATH` | 수집 완료 파일을 이동할 백업 경로입니다. |
+| `RULE_FILE` | 추가 파싱/처리 규칙 파일 경로입니다. |
+| `PER_FILE_QUERY_IF` | 파일 단위 조건 쿼리입니다. |
+| `PER_FILE_QUERY_TRUE` | `PER_FILE_QUERY_IF`가 참일 때 실행할 쿼리입니다. |
+| `PER_FILE_QUERY_FALSE` | `PER_FILE_QUERY_IF`가 거짓일 때 실행할 쿼리입니다. |
+
+## 파싱 타입
+
+| `PARSE_TYPE` | 설명 | 관련 파일/키 |
+|--------------|------|--------------|
+| `CSV` | 구분자 기반 텍스트 파싱 | `REGEX_PATH`의 CSV 규칙 |
+| `REGEX` | 정규식 캡처 기반 파싱 | `REGEX_PATH`의 `.rgx` 규칙 |
+| `JSON` | JSON 필드 파싱 | JSON 규칙 파일 또는 템플릿 키 |
+| `JSON_PIVOT` | JSON 배열/객체를 pivot 형태로 전개 | `PIVOT_JSON_KEY` |
+
+## CSV 예시
+
+템플릿 파일:
+
+```ini
+LOG_SOURCE=/opt/machbase/collector/log/simple.log
+REGEX_PATH=/opt/machbase/collector/regex/simple.rgx
+PARSE_TYPE=CSV
+
+DB_TABLE_NAME = "csv_simple"
+DB_ADDR       = "127.0.0.1"
+DB_PORT       = 5656
+DB_USER       = "SYS"
+DB_PASS       = "MANAGER"
+
+CREATE_TABLE_MODE=2
 ```
 
-탭 구분자 사용:
-```json
-{
-  "template": {
-    "type": "CSV",
-    "separator": "\t",
-    "skip_header": 1,
-    "columns": [
-      {"name": "name",  "type": "VARCHAR",  "index": 0},
-      {"name": "time",  "type": "DATETIME", "index": 1, "format": "YYYY-MM-DD HH24:MI:SS"},
-      {"name": "value", "type": "DOUBLE",   "index": 2}
-    ]
-  }
-}
+정규식/CSV 규칙 파일(`.rgx`)은 입력 필드를 테이블 컬럼으로 매핑합니다. 실제 문법은
+배포 샘플의 `.rgx` 파일과 함께 확인합니다.
+
+## JSON_PIVOT 예시
+
+```ini
+COLLECT_TYPE=FILE
+LOG_SOURCE=/opt/machbase/collector/log/pivot.json
+PARSE_TYPE=JSON_PIVOT
+PIVOT_JSON_KEY=data
+
+DB_TABLE_NAME = "sensor_pivot"
+DB_ADDR       = "127.0.0.1"
+DB_PORT       = 5656
+DB_USER       = "SYS"
+DB_PASS       = "MANAGER"
+CREATE_TABLE_MODE=2
 ```
 
----
+## 주의 사항
 
-## JSON 템플릿
-
-JSON 형식 데이터를 파싱하고 JSON path로 컬럼 값을 추출합니다.
-
-### 파라미터
-
-| 파라미터 | 필수 | 타입 | 설명 |
-|---------|------|------|------|
-| `type` | 필수 | string | `"JSON"` |
-| `columns` | 필수 | array | 컬럼 매핑 정의 배열 |
-| `columns[].name` | 필수 | string | 대상 테이블 컬럼 이름 |
-| `columns[].type` | 필수 | string | 컬럼 데이터 타입 |
-| `columns[].path` | 필수 | string | JSON 필드 경로 (점 표기법) |
-| `columns[].format` | 선택 | string | 시간 파싱 포맷 (DATETIME 타입인 경우) |
-| `root` | 선택 | string | 반복 데이터의 루트 경로 |
-
-### 예시
-
-입력 데이터:
-```json
-{"sensor": "sensor-01", "ts": "2024-01-01T10:00:00Z", "temp": 23.5}
-```
-
-설정:
-```json
-{
-  "template": {
-    "type": "JSON",
-    "columns": [
-      {"name": "name",  "type": "VARCHAR",  "path": "sensor"},
-      {"name": "time",  "type": "DATETIME", "path": "ts", "format": "YYYY-MM-DDTHH24:MI:SSZ"},
-      {"name": "value", "type": "DOUBLE",   "path": "temp"}
-    ]
-  }
-}
-```
-
-중첩 JSON 구조:
-```json
-{"device": {"id": "sensor-01"}, "reading": {"time": "2024-01-01 10:00:00", "value": 23.5}}
-```
-
-```json
-{
-  "template": {
-    "type": "JSON",
-    "columns": [
-      {"name": "name",  "type": "VARCHAR",  "path": "device.id"},
-      {"name": "time",  "type": "DATETIME", "path": "reading.time", "format": "YYYY-MM-DD HH24:MI:SS"},
-      {"name": "value", "type": "DOUBLE",   "path": "reading.value"}
-    ]
-  }
-}
-```
-
-배열 루트 사용:
-```json
-{"data": [{"name": "s1", "time": "2024-01-01 10:00:00", "value": 23.5}]}
-```
-
-```json
-{
-  "template": {
-    "type": "JSON",
-    "root": "data",
-    "columns": [
-      {"name": "name",  "type": "VARCHAR",  "path": "name"},
-      {"name": "time",  "type": "DATETIME", "path": "time", "format": "YYYY-MM-DD HH24:MI:SS"},
-      {"name": "value", "type": "DOUBLE",   "path": "value"}
-    ]
-  }
-}
-```
-
----
-
-## REGEX 템플릿
-
-정규식 캡처 그룹으로 텍스트 데이터를 파싱합니다. 로그 파일 등 비정형 텍스트 수집에 적합합니다.
-
-### 파라미터
-
-| 파라미터 | 필수 | 타입 | 설명 |
-|---------|------|------|------|
-| `type` | 필수 | string | `"REGEX"` |
-| `pattern` | 필수 | string | 정규식 패턴 (캡처 그룹 포함) |
-| `columns` | 필수 | array | 컬럼 매핑 정의 배열 |
-| `columns[].name` | 필수 | string | 대상 테이블 컬럼 이름 |
-| `columns[].type` | 필수 | string | 컬럼 데이터 타입 |
-| `columns[].group` | 필수 | integer 또는 string | 캡처 그룹 번호 또는 이름 |
-| `columns[].format` | 선택 | string | 시간 파싱 포맷 |
-
-### 예시
-
-입력 데이터:
-```text
-[2024-01-01 10:00:00] sensor-01 23.5 OK
-```
-
-설정 (그룹 번호 사용):
-```json
-{
-  "template": {
-    "type": "REGEX",
-    "pattern": "\\[(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2})\\] (\\S+) ([\\d.]+)",
-    "columns": [
-      {"name": "time",  "type": "DATETIME", "group": 1, "format": "YYYY-MM-DD HH24:MI:SS"},
-      {"name": "name",  "type": "VARCHAR",  "group": 2},
-      {"name": "value", "type": "DOUBLE",   "group": 3}
-    ]
-  }
-}
-```
-
-이름 있는 캡처 그룹 사용:
-```json
-{
-  "template": {
-    "type": "REGEX",
-    "pattern": "\\[(?P<ts>\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2})\\] (?P<sensor>\\S+) (?P<val>[\\d.]+)",
-    "columns": [
-      {"name": "time",  "type": "DATETIME", "group": "ts",     "format": "YYYY-MM-DD HH24:MI:SS"},
-      {"name": "name",  "type": "VARCHAR",  "group": "sensor"},
-      {"name": "value", "type": "DOUBLE",   "group": "val"}
-    ]
-  }
-}
-```
-
-## 컬럼 데이터 타입 값
-
-| 값 | Machbase 타입 |
-|----|--------------|
-| `"VARCHAR"` | VARCHAR |
-| `"INTEGER"` | INTEGER |
-| `"LONG"` | BIGINT |
-| `"DOUBLE"` | DOUBLE |
-| `"FLOAT"` | FLOAT |
-| `"DATETIME"` | DATETIME |
-| `"IPV4"` | IPV4 |
-| `"IPV6"` | IPV6 |
-| `"TEXT"` | TEXT |
-
-## DATETIME 포맷 문자열
-
-| 포맷 | 의미 |
-|------|------|
-| `YYYY` | 4자리 연도 |
-| `MM` | 2자리 월 |
-| `DD` | 2자리 일 |
-| `HH24` | 24시간제 시 |
-| `MI` | 분 |
-| `SS` | 초 |
-| `FF3` | 밀리초 |
-| `FF6` | 마이크로초 |
-| `FF9` | 나노초 |
+- 이 파일은 JSON 문서가 아니므로 중괄호 기반 `source.type` 또는 `template.columns`
+  형식으로 작성하지 않습니다.
+- 지원 수집 타입과 파싱 타입은 `ad/src/include/admiDef.h` 및
+  `ad/src/adc/adcTemplate.c`의 정의와 배포 샘플 템플릿을 기준으로 확인합니다.
+- 운영 환경에 배포하기 전 `machcollectoradmin --create-collector`로 템플릿을 등록하고
+  `--status-collector` 또는 `--status`로 상태를 확인합니다.
