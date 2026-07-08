@@ -9,7 +9,19 @@ ROLLUP은 TAG 테이블의 시계열 데이터를 지정한 시간 단위로 자
 ## ROLLUP 생성
 
 ```sql
-CREATE ROLLUP rollup_name ON table_name (column_name) INTERVAL number { SEC | MIN | HOUR }
+CREATE ROLLUP [IF NOT EXISTS] rollup_name
+    ON table_name [(column_name | column_name -> 'json_path')]
+    INTERVAL number { SEC | MIN | HOUR }
+    [WAKEUP INTERVAL number { SEC | MIN | HOUR }]
+    [EXTENSION extension_name]
+    [WHERE predicate]
+
+CREATE ROLLUP [IF NOT EXISTS] rollup_name
+    FROM source_rollup_table
+    INTERVAL number { SEC | MIN | HOUR }
+    [WAKEUP INTERVAL number { SEC | MIN | HOUR }]
+    [EXTENSION extension_name]
+    [WHERE predicate]
 ```
 
 ```sql
@@ -38,7 +50,10 @@ CREATE ROLLUP _rollup_tag_value_hour ON tag (value) INTERVAL 1 HOUR;
 특정 조건을 만족하는 데이터만 집계하는 조건부 ROLLUP을 생성할 수 있습니다.
 
 ```sql
-CREATE ROLLUP rollup_name ON table_name (column_name) INTERVAL number { SEC | MIN | HOUR } WHERE predicate
+CREATE ROLLUP rollup_name
+    ON table_name (column_name)
+    INTERVAL number { SEC | MIN | HOUR }
+    WHERE predicate
 ```
 
 ```sql
@@ -80,8 +95,7 @@ CREATE ROLLUP rollup_stock_1m
 JSON 컬럼의 특정 멤버를 ROLLUP 대상 값으로 사용할 수 있습니다.
 
 ```sql
-CREATE ROLLUP tag_json_metric_ru ON tag_json (value.metric) INTERVAL 1 SEC;
-CREATE ROLLUP tag_json_arrow_ru  ON tag_json (value->'$.metric') INTERVAL 1 SEC;
+CREATE ROLLUP tag_json_metric_ru ON tag_json (value->'$.metric') INTERVAL 1 SEC;
 ```
 
 ## ROLLUP 삭제

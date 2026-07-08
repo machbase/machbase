@@ -58,17 +58,7 @@ machcollectoradmin --status
 machcollectoradmin --list
 ```
 
-실행 중이면 PID를 출력합니다.
-
-```
-Machbase Collector is running with pid(12345)!
-```
-
-실행 중이 아니면 오류를 출력합니다.
-
-```
-[ERR] Machbase Collector is not running.
-```
+`--status`는 `--status-collector`의 alias이며, collector 이름 또는 `all`, `run`, `stop`, `error` 필터를 지정해 collector 상태를 출력합니다.
 
 ## 환경 변수
 

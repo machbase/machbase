@@ -10,7 +10,6 @@ weight: 10
 
 ```sql
 select_stmt ::=
-    [ 'WITH' cte_list ]
     'SELECT' [ hint_clause ] target_list
     [ 'FROM' table_reference_list ]
     [ 'WHERE' condition_expr ]
@@ -20,8 +19,8 @@ select_stmt ::=
     [ 'LIMIT' [ offset ',' ] row_count ]
     [ 'DURATION' duration_expr ]
 
--- 집합 연산자 (UNION ALL만 지원)
-select_stmt 'UNION ALL' select_stmt
+-- 집합 연산자
+select_stmt { 'UNION' | 'UNION ALL' | 'INTERSECT' | 'EXCEPT' } select_stmt
 ```
 
 ### 대상 목록 (target_list)

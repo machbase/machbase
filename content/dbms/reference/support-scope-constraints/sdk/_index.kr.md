@@ -48,7 +48,7 @@ AUTH KEY challenge 인증은 DB 포트(기본 5656)에 접속하는 드라이버
 
 ### Go: Transaction 미지원
 
-Go `database/sql` 드라이버와 Go native 클라이언트 모두 `Begin`/`BeginTx` 트랜잭션이 구현되어 있지 않습니다. RDB 테이블 트랜잭션이 필요한 경우 JDBC, Python, .NET, ODBC를 사용하세요.
+Go `database/sql` 드라이버와 Go native 클라이언트 모두 `Begin`/`BeginTx` 트랜잭션이 구현되어 있지 않습니다. Python `machbaseAPI`도 `begin`/`commit`/`rollback`을 지원하지 않습니다. RDB 테이블 트랜잭션이 필요한 경우 JDBC, .NET, ODBC/CLI를 사용하세요.
 
 ## SDK 선택 가이드
 

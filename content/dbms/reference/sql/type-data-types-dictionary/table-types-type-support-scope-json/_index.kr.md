@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'JSON 타입의 테이블 타입별 지원 범위 (LOOKUP planned: dbms-nfx#3696)'
+title: 'JSON 타입의 테이블 타입별 지원 범위'
 weight: 10
 ---
 
@@ -10,25 +10,34 @@ JSON 타입 컬럼을 각 테이블 타입에서 사용할 때의 지원 범위�
 
 | 테이블 타입 | JSON 컬럼 생성 | JSON path query | JSON PK | 비고 |
 |------------|:-------------:|:---------------:|:-------:|------|
-| TAG | X | X | X | JSON 미지원 |
+| TAG | O | O | X | JSON 컬럼과 JSON 함수 지원, PK는 미지원 |
 | LOG | O | O | X | 완전 지원 |
-| LOOKUP | O (일부) | 계획 중 | 계획 중 | dbms-nfx#3696 참고 |
-| VOLATILE | O | O | X | 완전 지원 |
+| LOOKUP | X | X | X | JSON 컬럼 생성 불가 |
+| VOLATILE | X | X | X | JSON 컬럼 생성 불가 |
 | RDB | O | O | X | 완전 지원 |
 
 ---
 
 ## TAG 테이블
 
-TAG 테이블은 JSON 타입 컬럼을 지원하지 않습니다. TAG 테이블은 시계열 센서 값 저장에 최적화되어 있으며, 구조화된 수치 데이터 타입(SHORT, INTEGER, LONG, FLOAT, DOUBLE 등)을 사용해야 합니다.
+TAG 테이블은 JSON 타입 컬럼을 지원합니다. JSON 컬럼은 일반 TAG 데이터 컬럼으로 사용할 수
+있지만, TAGNAME/PRIMARY KEY 컬럼으로는 사용할 수 없습니다.
 
 ```sql
--- TAG 테이블에 JSON 컬럼 추가 시 오류 발생
 CREATE TAG TABLE tag_data (
     name   VARCHAR(100) PRIMARY KEY,
     time   DATETIME BASETIME,
-    data   JSON   -- 오류: TAG 테이블에서 JSON 미지원
+    value  DOUBLE SUMMARIZED,
+    data   JSON
 );
+
+INSERT INTO tag_data VALUES
+    ('sensor-1', TO_DATE('2024-01-01', 'YYYY-MM-DD'), 23.5,
+     '{"device":"sensor-1","status":"ok"}');
+
+SELECT JSON_EXTRACT_STRING(data, '$.status')
+  FROM tag_data
+ WHERE name = 'sensor-1';
 ```
 
 ---
@@ -60,48 +69,28 @@ SELECT JSON_SET(data, '$.status', 'error') FROM device_log;
 
 ## LOOKUP 테이블
 
-LOOKUP 테이블의 JSON 지원은 현재 일부만 제공됩니다.
-
-- **JSON 컬럼 생성**: 지원 (단순 삽입/조회 가능)
-- **JSON path query (`->` 연산자, `JSON_SET` 등)**: 계획 중 (dbms-nfx#3696)
-- **JSON 컬럼을 Primary Key로 사용**: 계획 중
+LOOKUP 테이블은 JSON 타입 컬럼 생성을 지원하지 않습니다.
 
 ```sql
--- JSON 컬럼 생성은 가능
 CREATE TABLE config_lookup (
     key    VARCHAR(64) PRIMARY KEY,
     config JSON
 ) TABLE_TYPE=LOOKUP;
-
--- 단순 삽입/조회는 가능
-INSERT INTO config_lookup VALUES ('app1', '{"timeout":30,"retry":3}');
-SELECT config FROM config_lookup WHERE key = 'app1';
-
--- JSON path query는 현재 미지원 (계획 중)
--- SELECT config -> 'timeout' FROM config_lookup;  -- 미지원
+-- 오류: JSON 타입은 VOLATILE / LOOKUP 테이블에서 사용할 수 없음
 ```
-
-{{< callout type="info" >}}
-LOOKUP 테이블의 JSON path query 기능은 **dbms-nfx#3696** 이슈에서 추적 중이며, 향후 버전에서 지원될 예정입니다.
-{{< /callout >}}
 
 ---
 
 ## VOLATILE 테이블
 
-VOLATILE 테이블은 JSON 타입을 완전히 지원합니다. 인메모리 임시 데이터 저장에 사용되며 서버 재시작 시 데이터가 소멸합니다.
+VOLATILE 테이블은 JSON 타입 컬럼 생성을 지원하지 않습니다.
 
 ```sql
 CREATE VOLATILE TABLE session_data (
     session_id VARCHAR(64) PRIMARY KEY,
     payload    JSON
 );
-
-INSERT INTO session_data VALUES ('sess-001', '{"user":"admin","role":"superuser"}');
-
-SELECT payload -> 'role' AS role
-  FROM session_data
- WHERE session_id = 'sess-001';
+-- 오류: JSON 타입은 VOLATILE / LOOKUP 테이블에서 사용할 수 없음
 ```
 
 ---
@@ -134,7 +123,10 @@ UPDATE metadata
 
 | 함수/연산자 | TAG | LOG | LOOKUP | VOLATILE | RDB |
 |-------------|:---:|:---:|:------:|:--------:|:---:|
-| `->` 연산자 | X | O | 계획 중 | O | O |
-| `JSON_SET` | X | O | 계획 중 | O | O |
-| `JSON_SET_JSON` | X | O | 계획 중 | O | O |
-| `JSON_REMOVE` | X | O | 계획 중 | O | O |
+| `->` 연산자 | O | O | X | X | O |
+| `JSON_EXTRACT*` | O | O | X | X | O |
+| `JSON_TYPEOF` | O | O | X | X | O |
+| `JSON_IS_VALID` | O | O | O | O | O |
+| `JSON_SET` | O | O | X | X | O |
+| `JSON_SET_JSON` | O | O | X | X | O |
+| `JSON_REMOVE` | O | O | X | X | O |

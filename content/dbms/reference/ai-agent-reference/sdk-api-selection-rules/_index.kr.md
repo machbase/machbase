@@ -13,25 +13,25 @@ weight: 90
 | Append 필요 + Java | **JDBC** (`MachStatement.executeAppendOpen()`) | [JDBC 가이드](../../../application-integration/guide-drivers/jdbc/) |
 | Append 필요 + Python | **machbaseAPI** (`machbase()` 클래스의 `append()`) | [Python 가이드](../../../application-integration/guide-drivers/python/) |
 | Append 필요 + Go | **machcli** (native client) | `database/sql`은 Append 미지원 |
-| Append 필요 + .NET | **MachConnector** (`MachAppendWriter`) | [.NET 가이드](../../../application-integration/guide-drivers/.net/) |
-| Append 필요 + Node.js | **machbase-node** | [Node.js 가이드](../../../application-integration/guide-drivers/node/) |
-| AUTH KEY 인증 필요 | **JDBC**, **.NET**, **ODBC/CLI** | Python/Go/Node.js는 현재 지원 근거가 확인되지 않음 |
+| Append 필요 + .NET | **MachConnector** (`MachAppendWriter`) | [.NET 가이드](../../../application-integration/guide-drivers/net-connector/) |
+| Append 필요 + Node.js | **@machbase/ts-client** | [Node.js 가이드](../../../application-integration/guide-drivers/node-js-typescript/) |
+| AUTH KEY 인증 필요 | **JDBC**, **.NET**, **ODBC/CLI** | Python/Go/Node.js는 AUTH KEY 미지원 |
 | RDB 테이블 트랜잭션 필요 | **JDBC**, **.NET**, **ODBC/CLI** | Python/Go/Node.js는 Transaction 미지원 |
 | Go 언어 선호 + Append 필요 | **machcli** (native) | [Go 가이드](../../../application-integration/guide-drivers/go/) |
 | Go 언어 선호 + 표준 인터페이스 | **database/sql** 드라이버 | Append 불필요한 경우 |
-| 브라우저 / 웹 / 스크립트 | **REST API** (포트 5657, `/machbase` 엔드포인트) | [REST API 가이드](../../../application-integration/guide-drivers/rest-api/) |
+| 브라우저 / 웹 / 스크립트 | **REST API** (포트 5657, `/machbase` 엔드포인트) | [REST API 가이드](../../../application-integration/rest-api/) |
 | 데이터 탐색 / 보고 | **R + RODBC** | 통계 분석에 적합 |
-| C/C++ 애플리케이션 | **ODBC/CLI** | [ODBC 가이드](../../../application-integration/guide-drivers/odbc-cli/) |
+| C/C++ 애플리케이션 | **ODBC/CLI** | [ODBC 가이드](../../../application-integration/guide-drivers/cli-odbc/) |
 
 ## 언어별 권장 SDK 요약
 
 | 언어 | 기본 권장 | Append 필요 시 | Transaction 필요 시 |
 |------|----------|---------------|---------------------|
 | Java | JDBC | JDBC (executeAppendOpen) | JDBC |
-| Python | machbaseAPI | machbaseAPI (append()) | machbaseAPI |
+| Python | machbaseAPI | machbaseAPI (append()) | 미지원 (JDBC/.NET/ODBC 고려) |
 | Go | database/sql | machcli (native) | 미지원 (다른 SDK 고려) |
 | C# / .NET | MachConnector | MachConnector (MachAppendWriter) | MachConnector |
-| Node.js | machbase-node | machbase-node | 미지원 |
+| Node.js | @machbase/ts-client | @machbase/ts-client | 미지원 |
 | C / C++ | ODBC/CLI | ODBC/CLI | ODBC/CLI |
 | R | RODBC | 미지원 | 미지원 |
 | 웹 / curl / HTTP | REST API | REST API (`POST /machbase`) | 미지원 |

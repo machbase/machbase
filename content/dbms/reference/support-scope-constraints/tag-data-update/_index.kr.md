@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'TAG data UPDATE 지원표 (planned: dbms-nfx#3733)'
+title: 'TAG data UPDATE 지원표'
 weight: 40
 ---
 
@@ -11,7 +11,7 @@ weight: 40
 | WHERE 조건 | 현재 지원 | 계획 중 | 비고 |
 |-----------|:---------:|:-------:|------|
 | `WHERE name = '...'` (PK 단일 조건) | O | — | 현재 유일하게 완전 지원 |
-| `WHERE name IN ('a', 'b', ...)` | △ | — | 제한적 지원, 동작 확인 필요 |
+| `WHERE name IN ('a', 'b', ...)` | X | O | planned: dbms-nfx#3733 |
 | `WHERE name LIKE '...'` | X | O | planned: dbms-nfx#3733 |
 | `WHERE time BETWEEN ... AND ...` | X | O | planned: dbms-nfx#3733 |
 | `WHERE time >= ... AND time <= ...` | X | O | planned: dbms-nfx#3733 |
@@ -35,10 +35,6 @@ UPDATE sensor_data
 SET min_value = 0.0, max_value = 100.0
 WHERE name = 'sensor01';
 
--- 가능: 여러 태그를 IN으로 업데이트 (제한적 지원)
-UPDATE sensor_data
-SET min_value = 0.0
-WHERE name IN ('sensor01', 'sensor02');
 ```
 
 ## 현재 불가능한 UPDATE 예시

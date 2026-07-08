@@ -15,8 +15,9 @@ LOAD DATA INFILE 'file_path' INTO TABLE table_name
     [TABLESPACE tablespace_name]
     [AUTO { BULKLOAD | HEADUSE | HEADUSE_ESCAPE }]
     [{ FIELDS | COLUMNS } [TERMINATED BY 'char'] [ENCLOSED BY 'char']]
+    [LINES TERMINATED BY 'char']
     [TRIM { ON | OFF }]
-    [IGNORE number { LINES | ROWS }]
+    [IGNORE number LINES]
     [MAX_LINE_LENGTH number]
     [ENCODED BY coding_name]
     [ON ERROR { STOP | IGNORE }]
@@ -31,11 +32,12 @@ LOAD DATA INFILE 'file_path' INTO TABLE table_name
 | `AUTO HEADUSE_ESCAPE` | `HEADUSE`와 동일하나 예약어, 특수문자를 `_`로 치환 |
 | `TERMINATED BY 'char'` | 필드 구분자 (기본값: `,`) |
 | `ENCLOSED BY 'char'` | 필드 인용 문자 (기본값: `"`) |
+| `LINES TERMINATED BY 'char'` | 레코드 구분자 |
 | `TRIM { ON \| OFF }` | 컬럼 앞뒤 공백 제거 여부 (기본값: ON) |
-| `IGNORE number LINES\|ROWS` | 첫 N줄 무시 (헤더 스킵 등) |
+| `IGNORE number LINES` | 첫 N줄 무시 (헤더 스킵 등) |
 | `MAX_LINE_LENGTH number` | 한 줄 최대 길이 (기본값: 512KB) |
 | `ENCODED BY coding_name` | 파일 인코딩 (기본값: UTF8) |
-| `ON ERROR STOP\|IGNORE` | 오류 발생 시 중단 또는 무시 (기본값: IGNORE) |
+| `ON ERROR STOP\|IGNORE` | 오류 발생 시 중단 또는 무시 (기본값: STOP) |
 
 지원 인코딩: `UTF8`, `MS949`, `KSC5601`, `EUCJP`, `SHIFTJIS`, `BIG5`, `GB231280`
 

@@ -15,6 +15,7 @@ Machbase 서버는 `$MACHBASE_HOME/conf/machbase.conf` 파일에 정의된 프�
 | [RS Cache 프로퍼티 사전](./dictionary-rs-cache/) | 쿼리 결과 캐시(Result Set Cache) 관련 프로퍼티 |
 | [PVO Cache 프로퍼티 사전](./dictionary-pvo-cache/) | SQL 실행 계획 캐시(PVO Statement Cache) 관련 프로퍼티 |
 | [Timezone 설정 사전](./dictionary-configuration-timezone/) | 타임존 프로퍼티 및 클라이언트별 타임존 설정 방법 |
+| [8.5 전체 설정 레퍼런스](./original-8-5-full/) | 8.5 원본 설정/메타/가상 테이블 레퍼런스의 전체 항목 보존본 |
 
 ## 프로퍼티 확인 방법
 

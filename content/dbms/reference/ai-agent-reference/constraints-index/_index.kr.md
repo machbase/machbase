@@ -14,7 +14,7 @@ weight: 50
 | UPDATE SET 대상 | SUMMARIZED 또는 METADATA 속성 컬럼만 허용 | |
 | PK(name) 컬럼 UPDATE | 불가 | |
 | BASETIME 컬럼 UPDATE | 불가 | |
-| DELETE | 미지원 (행 단위 삭제 불가) | |
+| DELETE | `BEFORE`, `WHERE`, `METADATA`, `ROLLUP` 등 제한된 형태로 지원 | 일반 RDB DELETE와 동일하게 가정하지 않음 |
 | TRANSACTION | 없음 (Append-only, COMMIT/ROLLBACK 불가) | |
 | INSERT vs Append | SQL INSERT 가능하나 Append API 대비 성능 낮음 | |
 
@@ -23,8 +23,9 @@ weight: 50
 | 제약 항목 | 내용 | 비고 |
 |-----------|------|------|
 | 비-PK predicate UPDATE/DELETE | 비-PK 조건으로 UPDATE/DELETE 시 예상보다 많은 행에 적용될 수 있음 | planned: #3696 |
-| JSON path query | 계획 중 (미지원) | planned |
-| JSON PK | JSON 타입 컬럼을 PK로 사용 불가 | planned |
+| JSON 타입 컬럼 | 미지원 | |
+| JSON path query | JSON 타입 컬럼 미지원으로 사용할 수 없음 | |
+| JSON PK | JSON 타입 컬럼 미지원으로 사용할 수 없음 | |
 
 ## Cluster Edition 제약
 
@@ -57,7 +58,7 @@ weight: 50
 | TRANSACTION | LOG 테이블 | Append-only 구조로 TRANSACTION 없음 |
 | ROLLUP_REBUILD | Cluster Edition | 미지원 |
 | 텍스트 전문 검색 | TAG/LOOKUP/VOLATILE/RDB | 미지원 (LOG 테이블만 지원) |
-| JSON 컬럼 | TAG/VOLATILE | 미지원 |
+| JSON 컬럼 | LOOKUP/VOLATILE | 미지원 |
 
 ## 참조
 

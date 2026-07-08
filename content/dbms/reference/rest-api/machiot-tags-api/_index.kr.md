@@ -4,8 +4,8 @@ title: '/machiot TAG/Datapoints API'
 weight: 30
 ---
 
-`/machiot` 엔드포인트는 TAG 테이블의 태그 목록, 시간 범위, 집계 통계,
-raw/calculated datapoint 조회를 제공합니다. `/machiot-rest-api`는 같은 handler로
+`/machiot` 엔드포인트는 TAG 테이블의 태그 메타데이터, 시간 범위, 집계 통계,
+raw/calculated datapoint 조회와 raw datapoint append/delete를 제공합니다. `/machiot-rest-api`는 같은 handler로
 등록된 호환 alias입니다.
 
 ## TAG 테이블 준비
@@ -30,6 +30,26 @@ curl "http://127.0.0.1:5657/machiot/tags/list/tag"
 curl "http://127.0.0.1:5657/machiot/tags/list?Table=tag"
 curl "http://127.0.0.1:5657/machiot/tags/list/tag/tag-1"
 curl "http://127.0.0.1:5657/machiot/tags/list?Table=tag&TagNames=tag-1"
+```
+
+## TAG 메타데이터 쓰기
+
+`/machiot/tags/list` 계열은 조회뿐 아니라 TAG 메타데이터 insert/update/delete에도 사용합니다.
+
+| 메서드 | 동작 |
+|--------|------|
+| `POST` | TAG 메타데이터 삽입 |
+| `PUT` / `PATCH` | TAG 메타데이터 갱신 |
+| `DELETE` | TAG 메타데이터 삭제 |
+
+요청 본문은 대상 TAG 테이블의 메타데이터 컬럼 구조에 맞는 JSON 객체 또는 배열을 사용합니다.
+
+```bash
+curl -X POST "http://127.0.0.1:5657/machiot/tags/list/tag" \
+  -H "Content-Type: application/json" \
+  -d '{"values":[{"name":"tag-2"}]}'
+
+curl -X DELETE "http://127.0.0.1:5657/machiot/tags/list/tag/tag-2"
 ```
 
 ## TAG 시간 범위 조회
@@ -73,6 +93,16 @@ curl "http://127.0.0.1:5657/machiot/v1/datapoints/raw?Table=tag&TagNames=tag-1&S
 ```
 
 `DELETE /machiot/v1/datapoints/raw/...` 형식으로 raw datapoint 삭제도 지원합니다.
+
+## Raw datapoints Append
+
+`POST /machiot/v1/datapoints/raw/<table>` 형식으로 TAG raw datapoint를 append할 수 있습니다.
+
+```bash
+curl -X POST "http://127.0.0.1:5657/machiot/v1/datapoints/raw/tag" \
+  -H "Content-Type: application/json" \
+  -d '{"values":[["tag-1","2001-09-09 00:02:00",3],["tag-1","2001-09-09 00:03:00",4]]}'
+```
 
 ## Calculated datapoints 조회
 

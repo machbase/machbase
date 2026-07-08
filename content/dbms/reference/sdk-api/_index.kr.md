@@ -43,7 +43,7 @@ jdbc:machbase://<host>:<port>/machbase
 
 ## Python (machbaseAPI)
 
-`machbaseAPI` 패키지를 사용한 Python 클라이언트입니다.
+`machbaseapi` 패키지를 설치하고 `machbaseAPI` 모듈을 import하는 Python 클라이언트입니다.
 
 | API | 설명 |
 |-----|------|
@@ -52,13 +52,17 @@ jdbc:machbase://<host>:<port>/machbase
 | `.close()` | 연결 종료 |
 | `.execute(sql)` | SQL 실행 |
 | `.result()` | 실행 결과 반환 |
-| `.append(table, types, values, format)` | 고성능 Append 삽입 |
+| `.appendOpen(table, types)` | Append 세션 열기 |
+| `.appendData(values, date_format)` | Append 세션에 행 추가 |
+| `.appendFlush()` | Append 버퍼 플러시 |
+| `.appendClose()` | Append 세션 닫기 |
+| `.append(table, types, values, format)` | 단일 호출 Append |
 | `.tables()` | 테이블 목록 조회 |
 
 **설치:**
 
 ```bash
-pip install machbaseAPI
+pip install machbaseapi
 ```
 
 **드라이버 가이드:** [Python 드라이버](../../application-integration/guide-drivers/python/)
@@ -89,13 +93,14 @@ server=<host>;port=<port>;uid=<user>;pwd=<password>
 
 | API | 설명 |
 |-----|------|
-| `machgo.New(host, port, user, password, timeout)` | 클라이언트 생성 |
-| `client.Exec(ctx, sql)` | SQL 실행 |
-| `client.Query(ctx, sql)` | SELECT 실행 |
-| `client.Appender(ctx, table)` | Append 세션 생성 |
+| `machgo.NewDatabase(config)` | 데이터베이스 인스턴스 생성 |
+| `mdb.Connect(ctx, api.WithPassword(user, password))` | 연결 생성 |
+| `conn.Exec(ctx, sql)` | SQL 실행 |
+| `conn.Query(ctx, sql)` | SELECT 실행 |
+| `conn.Appender(ctx, table, columns...)` | Append 세션 생성 |
 | `appender.Append(values...)` | 행 데이터 추가 |
 | `appender.Close()` | Append 완료 |
-| `client.Close()` | 클라이언트 종료 |
+| `conn.Close()` | 연결 종료 |
 
 **드라이버 가이드:** [Go 드라이버](../../application-integration/guide-drivers/go/)
 
@@ -133,14 +138,16 @@ Node.js 및 TypeScript 환경에서 사용합니다.
 
 | API | 설명 |
 |-----|------|
-| `new Client(options)` | 클라이언트 인스턴스 생성 |
-| `client.connect()` | 서버 연결 |
-| `client.query(sql, params)` | SQL 실행, 결과 반환 |
-| `client.exec(sql, params)` | DDL/DML 실행 |
-| `client.appender(table)` | Append 세션 생성 |
-| `appender.append(values)` | 행 데이터 추가 |
-| `appender.close()` | Append 완료 |
-| `client.disconnect()` | 연결 종료 |
+| `createConnection(config)` | 연결 객체 생성 |
+| `conn.connect()` | 서버 연결 |
+| `conn.query(sql, params)` | SQL 실행, 결과 반환 |
+| `conn.execute(sql, params)` | DDL/DML 실행 |
+| `conn.prepare(sql)` | Prepared Statement 생성 |
+| `conn.appendBatch(table, columns, rows, options)` | 배치 Append |
+| `conn.appendOpen(table, columns, options)` | 스트리밍 Append 세션 생성 |
+| `appender.append(rows)` | Append 세션에 행 추가 |
+| `appender.end()` | Append 세션 종료 |
+| `conn.end()` | 연결 종료 |
 
 **설치:**
 
@@ -182,3 +189,9 @@ C/C++ 네이티브 환경에서 가장 높은 성능을 제공합니다. Machbas
 | `POST` | `/machbase` | 다수 행 Append 삽입 |
 
 **레퍼런스:** [REST API 레퍼런스](../rest-api/)
+
+---
+
+## 8.5 전체 SDK 레퍼런스
+
+8.5 원본 SDK 레퍼런스의 전체 항목은 [8.5 전체 SDK 레퍼런스](./original-8-5-full/)에서 확인할 수 있습니다.

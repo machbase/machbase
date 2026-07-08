@@ -23,7 +23,7 @@ machsql -h
 | `-f` | `--script` | - | 실행할 SQL 스크립트 파일 |
 | `-o` | `--output` | - | 쿼리 결과를 저장할 파일 이름 |
 | `-r` | `--format` | csv | 출력 파일 포맷 (`csv`, `json` 등) |
-| `-z` | `--timezone` | - | 타임존 설정. 예: `+0900`, `Asia/Seoul` |
+| `-z` | `--timezone` | - | 타임존 설정. 예: `+0900`, `-1230` |
 | `-n` | `--nls` | - | NLS 설정 |
 | `-c` | `--connstr` | - | 추가 연결 매개변수 문자열 (6.1 이상) |
 | `-i` | `--silent` | - | 저작권 배너 없이 실행 |
@@ -56,7 +56,7 @@ machsql -s 127.0.0.1 -u SYS -p MANAGER -f create_tables.sql
 
 ```bash
 machsql -s 127.0.0.1 -u SYS -p MANAGER -z +0900
-machsql -s 127.0.0.1 -u SYS -p MANAGER -z Asia/Seoul
+machsql -s 127.0.0.1 -u SYS -p MANAGER -z -1230
 ```
 
 결과를 파일로 저장:

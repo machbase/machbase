@@ -32,7 +32,7 @@ machloader -h
 | `-r`, `--format=FORMAT` | 파일 포맷 (기본값: csv) |
 | `-E`, `--encoding=CHARSET` | 파일 인코딩. UTF8(기본값), ASCII, MS949, KSC5601, EUCJP, SHIFTJIS, BIG5, GB231280, UTF16 |
 | `-F`, `--dateformat=DATEFORMAT` | datetime 컬럼 날짜 형식. `unixtimestamp` 또는 `nanotimestamp` 지정 가능 |
-| `-z`, `--timezone` | 타임존 설정. 예: `+0900`, `Asia/Seoul` |
+| `-z`, `--timezone` | 타임존 설정. 예: `+0900`, `-1230` |
 | `-a`, `--atime` | `_ARRIVAL_TIME` 컬럼 포함 여부 (기본값: 미포함) |
 | `-C`, `--create` | 가져오기 시 테이블이 없으면 자동 생성 |
 | `-l`, `--log=LOG_FILE` | 실행 로그 파일 |
@@ -108,7 +108,7 @@ machloader -o -d data.txt -t table_name -D '|'
 
 ```bash
 machloader -i -d data.csv -t sensor_data -z +0900
-machloader -i -d data.csv -t sensor_data -z Asia/Seoul
+machloader -i -d data.csv -t sensor_data -z -1230
 ```
 
 ## datetime 형식 지정
@@ -199,7 +199,7 @@ machloader -i -d data.csv -t sensor_data --summary
 
 # 대용량 파일 가져오기 (로그 및 bad 파일 지정)
 machloader -i -d bigdata.csv -t sensor_data \
-    -H -z Asia/Seoul \
+    -H -z +0900 \
     -l import_20240101.log -b import_20240101.bad
 
 # 전체 테이블 내보내기

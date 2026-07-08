@@ -49,9 +49,11 @@ curl -u "SYS:MANAGER" \
 | `GET` | `/machbase?q=<SQL>` | SQL 실행 (SELECT, DDL, DML) |
 | `POST` | `/machbase` | 다수 행 Append 삽입 |
 | `GET` | `/machiot/tags/list[/<table>[/<tag_names>]]` | TAG 목록 조회 |
+| `POST`/`PUT`/`PATCH`/`DELETE` | `/machiot/tags/list[/<table>[/<tag_names>]]` | TAG 메타데이터 삽입/갱신/삭제 |
 | `GET` | `/machiot/tags/range[/<table>[/<tag_names>]]` | TAG 시간 범위 조회 |
 | `GET` | `/machiot/tags/min|max|count[/<table>[/<tag_names>]]` | TAG 통계 조회 |
 | `GET` | `/machiot/v1/datapoints/raw/...` | TAG raw datapoint 조회 |
+| `POST` | `/machiot/v1/datapoints/raw/<table>` | TAG raw datapoint append |
 | `GET` | `/machiot/v1/datapoints/calculated/...` | TAG calculated datapoint 조회 |
 | `DELETE` | `/machiot/v1/datapoints/raw/...` | TAG raw datapoint 삭제 |
 

@@ -170,9 +170,8 @@ JSON 문서를 저장하는 타입입니다. "Key-Value" 쌍으로 구성된 JSO
 
 - 데이터 최대 크기: 32,768 bytes (VARCHAR와 동일)
 - JSON path 최대 길이: 512 bytes
-- LOG, VOLATILE, RDB 테이블에서 지원
-- TAG 테이블에서는 미지원
-- LOOKUP 테이블의 JSON 지원은 일부 제한 있음 (계획: dbms-nfx#3696)
+- TAG, LOG, RDB 테이블에서 지원
+- LOOKUP, VOLATILE 테이블에서는 JSON 컬럼 생성 불가
 
 ```sql
 CREATE TABLE sensor_data (
@@ -228,5 +227,6 @@ Machbase 데이터 타입과 SQL 표준 타입 및 C 타입의 대응 관계입�
 | IPV4 | O | O | O | O | O |
 | IPV6 | O | O | O | O | O |
 | TEXT | X | O | X | X | X |
+| JSON | O | O | X | X | O |
 | BINARY | O (고정 길이) | O | X | X | X |
 | JSON | X | O | O (일부) | O | O |

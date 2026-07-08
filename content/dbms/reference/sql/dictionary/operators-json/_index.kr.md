@@ -134,10 +134,10 @@ SELECT ts, data -> 'temperature' AS temp
 
 | 테이블 타입 | JSON 컬럼 | JSON path query | 비고 |
 |------------|:---------:|:---------------:|------|
-| TAG | X | X | JSON 컬럼 미지원 |
+| TAG | O | O | JSON 컬럼과 JSON 함수 지원, JSON PK는 미지원 |
 | LOG | O | O | 완전 지원 |
-| LOOKUP | O (일부) | 계획 중 | dbms-nfx#3696 참고 |
-| VOLATILE | O | O | 완전 지원 |
+| LOOKUP | X | X | JSON 컬럼 생성 불가 |
+| VOLATILE | X | X | JSON 컬럼 생성 불가 |
 | RDB | O | O | 완전 지원 |
 
 자세한 내용은 [JSON 타입의 테이블 타입별 지원 범위](../../../type-data-types-dictionary/table-types-type-support-scope-json/)를 참고하십시오.

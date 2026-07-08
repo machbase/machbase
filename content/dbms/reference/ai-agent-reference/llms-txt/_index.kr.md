@@ -21,32 +21,32 @@ Machbase 공식 문서 기준 (`/dbms/` 경로 아래):
 | 섹션 | URL |
 |------|-----|
 | 빠른 시작 | `/dbms/getting-started/` |
-| 설치 | `/dbms/getting-started/install/` |
-| 첫 번째 쿼리 | `/dbms/getting-started/first-query/` |
+| 설치/준비 | `/dbms/getting-started/quick-start/` |
+| 개요 | `/dbms/getting-started/overview/` |
 
 ### 핵심 개념
 
 | 섹션 | URL |
 |------|-----|
 | 데이터 모델 개요 | `/dbms/core-concepts/` |
-| TAG 테이블 | `/dbms/core-concepts/tag-table/` |
-| LOG 테이블 | `/dbms/core-concepts/log-table/` |
-| LOOKUP 테이블 | `/dbms/core-concepts/lookup-table/` |
-| RDB 테이블 | `/dbms/core-concepts/rdb-table/` |
-| ROLLUP | `/dbms/core-concepts/rollup/` |
+| TAG 테이블 | `/dbms/data-modeling-table-design/table-types-design-type/design-tag/` |
+| LOG 테이블 | `/dbms/data-modeling-table-design/table-types-design-type/design-log/` |
+| LOOKUP 테이블 | `/dbms/data-modeling-table-design/table-types-design-type/design-lookup/` |
+| RDB 테이블 | `/dbms/data-modeling-table-design/table-types-design-type/design-rdb-dbms-nfx/` |
+| ROLLUP | `/dbms/core-concepts/features-concepts/role-statistics-rollup/` |
 
 ### 애플리케이션 연동
 
 | 섹션 | URL |
 |------|-----|
-| Append API 개념 | `/dbms/application-integration/concepts-common/append/` |
+| Append API 개념 | `/dbms/application-integration/concepts-common/append-api-batch/` |
 | SDK 지원 범위 | `/dbms/application-integration/support-scope-sdk/` |
 | JDBC | `/dbms/application-integration/guide-drivers/jdbc/` |
 | Python | `/dbms/application-integration/guide-drivers/python/` |
 | Go | `/dbms/application-integration/guide-drivers/go/` |
-| .NET | `/dbms/application-integration/guide-drivers/.net/` |
-| Node.js | `/dbms/application-integration/guide-drivers/node/` |
-| ODBC/CLI | `/dbms/application-integration/guide-drivers/odbc-cli/` |
+| .NET | `/dbms/application-integration/guide-drivers/net-connector/` |
+| Node.js | `/dbms/application-integration/guide-drivers/node-js-typescript/` |
+| ODBC/CLI | `/dbms/application-integration/guide-drivers/cli-odbc/` |
 
 ### 보안
 

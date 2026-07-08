@@ -4,7 +4,7 @@ title: '설정 프로퍼티 사전'
 weight: 10
 ---
 
-`$MACHBASE_HOME/conf/machbase.conf` 파일에서 설정하는 Standard Edition 프로퍼티 전체 목록입니다. 별도 표시가 없는 한 서버 재시작이 필요합니다.
+`$MACHBASE_HOME/conf/machbase.conf` 파일에서 설정하는 Standard Edition 주요 프로퍼티 사전입니다. 별도 표시가 없는 한 서버 재시작이 필요합니다. 8.5 원본의 전체 프로퍼티 항목은 [8.5 전체 설정 레퍼런스](../original-8-5-full/)를 함께 참고하십시오.
 
 ## 서버 기본 설정
 
@@ -47,6 +47,8 @@ weight: 10
 | `DISK_COLUMNAR_TABLESPACE_MEMORY_MAX_SIZE` | 8GB | 256MB~2^64-1 | 로그 테이블 최대 메모리. 물리 메모리의 50~80% 권장 |
 | `DISK_COLUMNAR_TABLESPACE_MEMORY_MIN_SIZE` | 100MB | 1MB~2^64-1 | 서버 시작 시 사전 확보 메모리 |
 | `DISK_COLUMNAR_TABLESPACE_MEMORY_EXT_SIZE` | 2MB | 1MB~2^64-1 | 컬럼 파티션 메모리 블록 크기 |
+| `DISK_COLUMNAR_TABLESPACE_DWFILE_INT_SIZE` | 2MB | 1MB~2^32-1 | 데이터 일관성/복구용 double write 파일 초기 크기 |
+| `DISK_COLUMNAR_TABLESPACE_DWFILE_EXT_SIZE` | 1MB | 1MB~2^32-1 | double write 파일 확장 크기 |
 | `DISK_COLUMNAR_PAGE_CACHE_MAX_SIZE` | 2GB | 0~2^64-1 | 페이지 캐시 최대 크기(바이트) |
 | `VOLATILE_TABLESPACE_MEMORY_MAX_SIZE` | 2GB | 0~2^64-1 | Volatile/Lookup 테이블 전체 메모리 한도 |
 | `MAX_QPX_MEM` | 1GB | 1MB~2^64-1 | GROUP BY/ORDER BY 등 쿼리 처리기 최대 메모리 |
@@ -114,6 +116,14 @@ weight: 10
 | `DURATION_GAP` | 0 | 0~2^31-1 | `DURATION` 미지정 SELECT의 기본 기간(초) |
 | `LOOKUP_APPEND_UPDATE_ON_DUPKEY` | 0 | 0~1 | Lookup 테이블 Append 시 중복 키 처리. 0=실패, 1=UPDATE |
 | `LIN_HASH_BIT_SIZE` | 7 | 1~31 | 내부 선형 해시 초기 버킷 비트 수 |
+
+## RDB 설정
+
+| 프로퍼티 | 기본값 | 범위 | 설명 |
+|----------|--------|------|------|
+| `RDB_BUSY_TIMEOUT_MS` | 30000 | -1~2^32-1 | RDB 테이블 sidecar 파일이 busy일 때 대기할 시간(ms). -1은 무기한 대기, 0은 즉시 반환 |
+| `RDB_SYNCHRONOUS` | 2 | 1~2 | RDB sidecar SQLite synchronous 모드. 1=NORMAL, 2=FULL |
+| `RDB_JOURNAL_MODE` | 4 | 0~4 | RDB sidecar SQLite journal 모드. 0=DELETE, 4=WAL |
 
 ## 로그 / 진단 설정
 

@@ -14,7 +14,7 @@ weight: 40
 |------|:----------------:|:---------------:|
 | TAG 테이블 | O | O |
 | LOG 테이블 | O | O |
-| LOOKUP 테이블 | O | X |
+| LOOKUP 테이블 | O | O |
 | VOLATILE 테이블 | O | X |
 | RDB 테이블 | O | X |
 | ROLLUP | O | O |
@@ -31,13 +31,13 @@ weight: 40
 | 기능 | TAG | LOG | LOOKUP | VOLATILE | RDB |
 |------|:---:|:---:|:------:|:--------:|:---:|
 | INSERT (SQL) | O | O | O | O | O |
-| Append API | O | O | X | X | X |
+| Append API | O | O | O | X | X |
 | UPDATE | 제한적¹ | X | O | O | O |
-| DELETE | 제한적 | X | O | O | O |
+| DELETE | 제한적 | O | O | O | O |
 | Transaction (COMMIT/ROLLBACK) | X | X | O | O | O |
 | ROLLUP 대상 | O | X | X | X | X |
 | 전문 검색 (TEXT INDEX) | X | O | X | X | X |
-| JSON 컬럼 저장 | X | O | O | X | O |
+| JSON 컬럼 저장 | O | O | X | X | O |
 | PRIMARY KEY | O (name) | X | O | O | O |
 | BASETIME 컬럼 | O | - | - | - | - |
 

@@ -1,10 +1,10 @@
 ---
 type: docs
-title: 'LOOKUP SQL/JSON 지원표 (planned: dbms-nfx#3696)'
+title: 'LOOKUP SQL/JSON 지원표'
 weight: 50
 ---
 
-이 페이지는 LOOKUP 테이블의 SQL 및 JSON 기능 현재 지원 현황과 계획 중인 기능을 정리합니다.
+이 페이지는 LOOKUP 테이블의 SQL 기능과 JSON 관련 제약을 정리합니다.
 
 ## 현재 지원 현황
 
@@ -18,10 +18,10 @@ weight: 50
 | UPDATE (비-PK 조건) | X | O | planned: dbms-nfx#3696 |
 | DELETE (비-PK 조건) | X | O | planned: dbms-nfx#3696 |
 | **JSON 기능** | | | |
-| JSON 컬럼 저장 | O | — | VARCHAR/TEXT 컬럼에 JSON 문자열 저장 |
-| JSON path query (`$.key`) | X | O | planned: dbms-nfx#3696 |
-| JSON PK | X | O | planned: dbms-nfx#3696 |
-| JSON 컬럼 인덱스 | X | O | planned: dbms-nfx#3696 |
+| JSON 타입 컬럼 | X | — | JSON 컬럼 생성 불가 |
+| JSON path query (`$.key`) | X | — | JSON 타입 컬럼 미지원 |
+| JSON PK | X | — | JSON 타입 컬럼 미지원 |
+| JSON 컬럼 인덱스 | X | — | JSON 타입 컬럼 미지원 |
 | **기타** | | | |
 | Transaction | △ | — | 개별 DML 지원, 복합 트랜잭션 제한 |
 | Prepared Statement | O | — | |
@@ -29,9 +29,9 @@ weight: 50
 
 ## 현재 사용 가능한 방식
 
-### JSON 컬럼 저장 (현재 지원)
+### JSON 문자열 저장
 
-JSON 데이터는 VARCHAR 또는 TEXT 컬럼에 문자열로 저장합니다.
+JSON 타입 컬럼은 사용할 수 없습니다. JSON 문서를 LOOKUP 테이블에 보관해야 하면 `VARCHAR` 컬럼에 문자열로 저장하고 애플리케이션에서 파싱합니다.
 
 ```sql
 CREATE TABLE meta_table (
@@ -60,8 +60,6 @@ DELETE FROM meta_table WHERE id = 1;
 
 다음 기능은 현재 미지원이며, 향후 업데이트에서 제공될 예정입니다.
 
-- **JSON path query**: `WHERE config->'$.type' = 'sensor'` 형태의 JSON 경로 조건 검색
-- **JSON PK**: JSON 타입 컬럼을 기본 키로 사용
 - **비-PK UPDATE/DELETE**: PK 외 컬럼 조건으로 UPDATE/DELETE 수행
 
 이 기능이 필요한 경우 구현 일정은 Machbase 릴리스 노트를 확인하세요.
@@ -70,6 +68,6 @@ DELETE FROM meta_table WHERE id = 1;
 
 | 필요 기능 | 현재 우회 방법 |
 |----------|--------------|
-| JSON path 검색 | 애플리케이션에서 JSON 파싱 후 조건 적용 |
+| JSON path 검색 | `VARCHAR` 문자열을 애플리케이션에서 JSON 파싱 후 조건 적용 |
 | 비-PK UPDATE | PK를 먼저 조회한 후 PK 조건으로 UPDATE |
 | JSON 인덱스 | JSON 내 자주 검색하는 필드를 별도 컬럼으로 추출 |

@@ -1,10 +1,8 @@
 ---
 type: docs
-title: 'TAG data UPDATE WHERE/SET constraints (TODO(verify))'
+title: 'TAG data UPDATE WHERE/SET constraints'
 weight: 20
 ---
-
-> **확인 중 (TODO(verify))**: 이 문서의 일부 내용은 추가 검증이 필요합니다. 확인 중인 항목은 별도 표시합니다.
 
 TAG 테이블의 UPDATE 문에서 사용할 수 있는 WHERE 절 조건과 SET 절 컬럼에는 제약이 있습니다.
 
@@ -12,7 +10,7 @@ TAG 테이블의 UPDATE 문에서 사용할 수 있는 WHERE 절 조건과 SET �
 
 | 컬럼 역할 | SET 가능 여부 |
 |-----------|:------------:|
-| 데이터 컬럼 (일반 VALUE) | 확인 중 |
+| 데이터 컬럼 (일반 VALUE) | X |
 | SUMMARIZED 속성 컬럼 | O |
 | BASETIME 컬럼 (time 축) | X |
 | PRIMARY KEY 컬럼 (name) | X |
@@ -22,8 +20,6 @@ TAG 테이블의 UPDATE 문에서 사용할 수 있는 WHERE 절 조건과 SET �
 - `SUMMARIZED` 속성이 있는 컬럼: SET 가능
 - `BASETIME` 컬럼: SET 불가
 - `PRIMARY KEY` 컬럼(`name`): SET 불가
-
-> 일반 VALUE 컬럼(SUMMARIZED 속성 없음)의 SET 가능 여부는 현재 검증 중입니다.
 
 ## WHERE 절 제약
 
@@ -38,7 +34,7 @@ UPDATE TAG TABLE table_name
 | WHERE 조건 | 지원 여부 |
 |-----------|:---------:|
 | `name = '...'` (PK 등치 조건) | O |
-| `name IN (...)` | 확인 중 |
+| `name IN (...)` | X |
 | `time BETWEEN t1 AND t2` | X (계획 중: dbms-nfx#3733) |
 | 일반 predicate (value 조건 등) | X (계획 중: dbms-nfx#3733) |
 
