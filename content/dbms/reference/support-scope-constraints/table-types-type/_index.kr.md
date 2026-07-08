@@ -32,8 +32,8 @@ Machbase는 용도에 따라 다섯 가지 테이블 유형을 제공합니다. 
 | ROLLUP | O | X | X | X | X |
 | 텍스트 검색 (KEYWORD INDEX) | X | O | X | X | X |
 | **JSON** | | | | | |
-| JSON 컬럼 | O | O | X | X | O |
-| JSON path query | O | O | X | X | O |
+| JSON 컬럼 | O | O | O | X | O |
+| JSON path query | O | O | O | X | O |
 | **인덱스** | | | | | |
 | 기본 인덱스 | O | O | O | O | O |
 | LSM 인덱스 | X | O | X | X | X |
@@ -68,11 +68,11 @@ UPDATE sensor_data SET time = NOW() WHERE name = 'sensor01';
 
 ### LOOKUP 테이블 Transaction 제약 (△)
 
-LOOKUP 테이블은 개별 DML(INSERT/UPDATE/DELETE)에 대해 트랜잭션이 지원되지만, 복합 트랜잭션(여러 DML을 하나의 트랜잭션으로 묶기)은 제한적입니다. PK 기반 조작을 권장합니다.
+LOOKUP 테이블은 개별 DML(INSERT/UPDATE/DELETE)에 대해 트랜잭션이 지원되지만, 복합 트랜잭션(여러 DML을 하나의 트랜잭션으로 묶기)은 제한적입니다. 단건 조작은 PK 조건을, 일괄 조작은 일반 predicate와 사전 대상 범위 확인을 함께 사용하는 것을 권장합니다.
 
 ### JSON 컬럼 지원 범위
 
-JSON 컬럼은 TAG, LOG, RDB 테이블에서 지원합니다. LOOKUP, VOLATILE 테이블은 JSON 타입 컬럼 생성을 지원하지 않습니다. 상세 내용은 [JSON 타입의 테이블 타입별 지원 범위](../../sql/type-data-types-dictionary/table-types-type-support-scope-json/)를 참고하세요.
+JSON 컬럼은 TAG, LOG, LOOKUP, RDB 테이블에서 지원합니다. VOLATILE 테이블은 JSON 타입 컬럼 생성을 지원하지 않습니다. LOOKUP 테이블의 JSON 컬럼은 일반 컬럼으로 사용할 수 있지만 primary key로는 사용할 수 없습니다. 상세 내용은 [JSON 타입의 테이블 타입별 지원 범위](../../sql/type-data-types-dictionary/table-types-type-support-scope-json/)를 참고하세요.
 
 ### Append API 대상 테이블
 

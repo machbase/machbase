@@ -8,7 +8,7 @@ Machbase의 JSON 컬럼은 구조가 유동적인 데이터를 저장할 때 사
 
 ## 이 절에서 다루는 내용
 
-- **[LOOKUP 테이블 JSON 조회 제한](./condition-query-lookup-json/)**: LOOKUP 테이블의 JSON 타입 미지원 범위와 대안
+- **[LOOKUP JSON 조건 조회](./condition-query-lookup-json/)**: LOOKUP 테이블 JSON 컬럼의 path 조건 조회와 주의사항
 
 ## JSON 컬럼 접근 방법
 

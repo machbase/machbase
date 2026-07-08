@@ -22,7 +22,7 @@ weight: 80
 | [제한사항 사전](./limitations-dictionary/) | 테이블 유형별, Edition별 주요 제한사항 종합 |
 | [버전 및 호환성](./compatibility-version/) | 업그레이드 시 주의사항, 지원 OS/플랫폼 |
 | [XMA 프로토콜 호환성](./compatibility-xma-protocol/) | 서버-클라이언트 프로토콜 버전 호환 범위 |
-| [LOOKUP SQL/JSON 지원표](./lookup-sql-json/) | LOOKUP 테이블 SQL/JSON 기능 현황 및 계획 (planned: dbms-nfx#3696) |
+| [LOOKUP SQL/JSON 지원표](./lookup-sql-json/) | LOOKUP 테이블 SQL/JSON 기능 지원 현황과 제약 |
 | [TAG data UPDATE 지원표](./tag-data-update/) | TAG UPDATE 조건 및 대상 컬럼 지원 현황 (planned: dbms-nfx#3733) |
 
 ## 표기 규칙

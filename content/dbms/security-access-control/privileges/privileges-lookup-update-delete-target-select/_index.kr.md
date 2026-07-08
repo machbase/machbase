@@ -4,50 +4,40 @@ title: 'LOOKUP UPDATE/DELETE 권한'
 weight: 50
 ---
 
-## 기본키 기반 DELETE / UPDATE
+LOOKUP 테이블의 `UPDATE`와 `DELETE`는 primary key 조건과 일반 predicate 조건을 모두
+지원합니다. 권한 검사는 사용자가 실행한 DML 권한을 기준으로 수행합니다.
 
-현재 Machbase에서 LOOKUP 테이블의 `DELETE`와 `UPDATE`는 기본키(Primary Key) 기반 `WHERE` 조건만 지원합니다.
+## 권한 기준
 
-기본키 기반 조건에서는 해당 테이블에 대한 `DELETE` 또는 `UPDATE` 권한이 필요합니다.
+| 작업 | 필요한 권한 |
+|------|-------------|
+| SELECT | `SELECT` |
+| UPDATE | `UPDATE` |
+| DELETE | `DELETE` |
 
-```sql
--- PK 기반 DELETE: SELECT 권한 불필요
-DELETE FROM device_config WHERE device_id = 'DEVICE-001';
-
--- PK 기반 UPDATE: SELECT 권한 불필요
-UPDATE device_config SET config_value = 'new_value' WHERE device_id = 'DEVICE-001';
-```
-
-```sql
-GRANT DELETE ON sys.device_config TO ops_user;
-GRANT UPDATE ON sys.device_config TO ops_user;
-```
-
-## non-PK 조건은 지원되지 않음
+일반 predicate `UPDATE`/`DELETE` 실행 중 내부적으로 대상 row를 찾더라도, 사용자에게 별도
+`SELECT` 권한을 추가로 요구하지 않습니다.
 
 ```sql
--- 오류: non-PK 조건 DELETE
-DELETE FROM device_config WHERE region = 'ASIA';
+-- UPDATE 권한이 있으면 일반 predicate UPDATE 가능
+UPDATE device_config
+SET status = 'inactive'
+WHERE region = 'ASIA';
 
--- 오류: non-PK 조건 UPDATE
-UPDATE device_config SET status = 'inactive' WHERE last_seen < '2025-01-01';
-```
-
-비-PK 조건을 사용하면 권한 검사 단계 이전 또는 실행 단계에서 다음 오류가 발생합니다.
-
-```
-[ERR-02190: Invalid UPDATE/DELETE condition. Specify it as (primary key column) = (value)]
+-- DELETE 권한이 있으면 일반 predicate DELETE 가능
+DELETE FROM device_config
+WHERE last_seen < TO_DATE('2026-01-01 00:00:00');
 ```
 
 ## 권한 설정 예
 
 ```sql
--- DELETE만 허용
-GRANT DELETE ON sys.device_config TO ops_user;
-
--- UPDATE만 허용
 GRANT UPDATE ON sys.device_config TO ops_user;
+GRANT DELETE ON sys.device_config TO ops_user;
+```
 
--- UPDATE/DELETE 대상 확인용 조회도 허용해야 한다면 별도로 SELECT 부여
+대상 범위를 사용자가 직접 확인하도록 하려면 `SELECT` 권한을 별도로 부여합니다.
+
+```sql
 GRANT SELECT ON sys.device_config TO ops_user;
 ```

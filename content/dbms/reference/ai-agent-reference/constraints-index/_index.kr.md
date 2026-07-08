@@ -22,10 +22,10 @@ weight: 50
 
 | 제약 항목 | 내용 | 비고 |
 |-----------|------|------|
-| 비-PK predicate UPDATE/DELETE | 비-PK 조건으로 UPDATE/DELETE 시 예상보다 많은 행에 적용될 수 있음 | planned: #3696 |
-| JSON 타입 컬럼 | 미지원 | |
-| JSON path query | JSON 타입 컬럼 미지원으로 사용할 수 없음 | |
-| JSON PK | JSON 타입 컬럼 미지원으로 사용할 수 없음 | |
+| 비-PK predicate UPDATE/DELETE | 지원; 조건에 맞는 모든 row에 적용되므로 대상 범위 확인 필요 | |
+| JSON 타입 컬럼 | 일반 컬럼으로 지원 | |
+| JSON path query | 지원; JSON path별 전용 인덱스는 미지원 | |
+| JSON PK | 미지원 | |
 
 ## Cluster Edition 제약
 
@@ -58,7 +58,7 @@ weight: 50
 | TRANSACTION | LOG 테이블 | Append-only 구조로 TRANSACTION 없음 |
 | ROLLUP_REBUILD | Cluster Edition | 미지원 |
 | 텍스트 전문 검색 | TAG/LOOKUP/VOLATILE/RDB | 미지원 (LOG 테이블만 지원) |
-| JSON 컬럼 | LOOKUP/VOLATILE | 미지원 |
+| JSON 컬럼 | VOLATILE | 미지원 |
 
 ## 참조
 

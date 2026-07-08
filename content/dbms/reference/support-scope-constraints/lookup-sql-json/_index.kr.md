@@ -4,70 +4,97 @@ title: 'LOOKUP SQL/JSON 지원표'
 weight: 50
 ---
 
-이 페이지는 LOOKUP 테이블의 SQL 기능과 JSON 관련 제약을 정리합니다.
+이 페이지는 LOOKUP 테이블의 SQL 기능과 JSON 관련 제약을 정리합니다. 내용은
+NFX main trunk 빌드에 5656 포트로 접속해 대표 SQL을 실행하여 확인했습니다.
 
-## 현재 지원 현황
+## 지원 현황
 
-| 기능 | 현재 지원 | 계획 중 | 비고 |
-|------|:---------:|:-------:|------|
-| **기본 CRUD** | | | |
-| INSERT | O | — | |
-| SELECT | O | — | |
-| UPDATE (PK 조건) | O | — | PK 컬럼 WHERE 조건 권장 |
-| DELETE (PK 조건) | O | — | PK 컬럼 WHERE 조건 권장 |
-| UPDATE (비-PK 조건) | X | O | planned: dbms-nfx#3696 |
-| DELETE (비-PK 조건) | X | O | planned: dbms-nfx#3696 |
-| **JSON 기능** | | | |
-| JSON 타입 컬럼 | X | — | JSON 컬럼 생성 불가 |
-| JSON path query (`$.key`) | X | — | JSON 타입 컬럼 미지원 |
-| JSON PK | X | — | JSON 타입 컬럼 미지원 |
-| JSON 컬럼 인덱스 | X | — | JSON 타입 컬럼 미지원 |
-| **기타** | | | |
-| Transaction | △ | — | 개별 DML 지원, 복합 트랜잭션 제한 |
-| Prepared Statement | O | — | |
-| Append API | X | — | 일반 INSERT 사용 |
+| 기능 | 지원 | 비고 |
+|------|:---:|------|
+| **기본 CRUD** | | |
+| INSERT | O | 일반 INSERT 사용 |
+| SELECT | O | PK 조건과 일반 predicate 모두 사용 가능 |
+| UPDATE (PK 조건) | O | PK 해시 인덱스를 직접 사용 |
+| DELETE (PK 조건) | O | PK 해시 인덱스를 직접 사용 |
+| UPDATE (비-PK 조건) | O | 조건에 맞는 모든 row를 갱신 |
+| DELETE (비-PK 조건) | O | 조건에 맞는 모든 row를 삭제 |
+| **JSON 기능** | | |
+| JSON 타입 컬럼 | O | 일반 컬럼으로 생성, 저장, 조회, 갱신 가능 |
+| JSON path query (`$.key`) | O | `->`, `JSON_EXTRACT_*`, `JSON_TYPEOF`, `JSON_IS_VALID` 사용 가능 |
+| JSON PK | X | JSON 컬럼은 primary key로 선언할 수 없음 |
+| JSON path index | X | 별도 JSON path index는 지원하지 않음 |
+| **기타** | | |
+| Transaction | △ | 개별 DML 중심으로 사용 |
+| Prepared Statement | O | non-PK predicate UPDATE도 bind/self-reference 동작 확인 |
+| Append API | △ | 일반 SQL INSERT가 기본이며, Append는 별도 LOOKUP append 정책을 따름 |
 
-## 현재 사용 가능한 방식
-
-### JSON 문자열 저장
-
-JSON 타입 컬럼은 사용할 수 없습니다. JSON 문서를 LOOKUP 테이블에 보관해야 하면 `VARCHAR` 컬럼에 문자열로 저장하고 애플리케이션에서 파싱합니다.
+## LOOKUP JSON 컬럼 예
 
 ```sql
-CREATE TABLE meta_table (
-    id      INTEGER,
-    name    VARCHAR(100),
-    config  VARCHAR(4096),  -- JSON 문자열 저장
-    PRIMARY KEY (id)
-) ENGINE=LOOKUP;
+CREATE LOOKUP TABLE device_lookup
+(
+    id          VARCHAR(32) PRIMARY KEY,
+    site        VARCHAR(32),
+    status      VARCHAR(16),
+    score       INTEGER,
+    updated_at  DATETIME,
+    meta        JSON
+);
 
-INSERT INTO meta_table VALUES (1, 'device_a', '{"type":"sensor","unit":"celsius"}');
+INSERT INTO device_lookup VALUES
+(
+    'dev-001',
+    'SEOUL',
+    'READY',
+    30,
+    TO_DATE('2026-06-01 10:00:00'),
+    '{"region":"kr","level":3,"tags":["edge","main"]}'
+);
 ```
 
-JSON 값을 조건으로 검색하려면 현재는 애플리케이션 레이어에서 처리해야 합니다.
-
-### UPDATE/DELETE (PK 조건, 현재 지원)
+JSON 컬럼은 조회 조건과 갱신 대상에 모두 사용할 수 있습니다.
 
 ```sql
--- PK 기반 UPDATE (권장)
-UPDATE meta_table SET config = '{"type":"actuator"}' WHERE id = 1;
+SELECT id, status
+FROM device_lookup
+WHERE meta->'$.region' = 'kr'
+  AND JSON_EXTRACT_INTEGER(meta, '$.level') >= 3;
 
--- PK 기반 DELETE (권장)
-DELETE FROM meta_table WHERE id = 1;
+UPDATE device_lookup
+SET meta = JSON_SET(meta, '$.status', 'active')
+WHERE meta->'$.region' = 'kr';
 ```
 
-## 계획 중인 기능 (planned: dbms-nfx#3696)
+## 일반 조건식 UPDATE/DELETE
 
-다음 기능은 현재 미지원이며, 향후 업데이트에서 제공될 예정입니다.
+LOOKUP 테이블의 `UPDATE`와 `DELETE`는 PK equality 조건뿐 아니라 일반 컬럼 조건,
+범위 조건, 문자열 조건, 날짜 조건, JSON path 조건을 사용할 수 있습니다.
 
-- **비-PK UPDATE/DELETE**: PK 외 컬럼 조건으로 UPDATE/DELETE 수행
+```sql
+UPDATE device_lookup
+SET status = 'ACTIVE',
+    score = score + 10,
+    meta = JSON_SET(meta, '$.state', 'active')
+WHERE site = 'SEOUL'
+  AND status = 'READY'
+  AND score BETWEEN 10 AND 80
+  AND meta->'$.region' = 'kr';
 
-이 기능이 필요한 경우 구현 일정은 Machbase 릴리스 노트를 확인하세요.
+DELETE FROM device_lookup
+WHERE status = 'EXPIRED'
+   OR updated_at < TO_DATE('2026-01-01 00:00:00')
+   OR JSON_EXTRACT_INTEGER(meta, '$.level') < 2;
+```
 
-## 현재 제약 우회 방법
+`SET` 절에서는 현재 row의 컬럼 값을 참조할 수 있습니다. 단, primary key 컬럼 자체는
+`SET` 절에서 변경할 수 없습니다.
 
-| 필요 기능 | 현재 우회 방법 |
-|----------|--------------|
-| JSON path 검색 | `VARCHAR` 문자열을 애플리케이션에서 JSON 파싱 후 조건 적용 |
-| 비-PK UPDATE | PK를 먼저 조회한 후 PK 조건으로 UPDATE |
-| JSON 인덱스 | JSON 내 자주 검색하는 필드를 별도 컬럼으로 추출 |
+## 제약과 주의사항
+
+| 항목 | 내용 |
+|------|------|
+| JSON primary key | `JSON` 컬럼은 primary key로 사용할 수 없음 |
+| JSON path index | JSON path별 전용 인덱스는 지원하지 않음 |
+| JSON path 문자열 | 작은따옴표(`'$.key'`)를 사용해야 하며 큰따옴표는 식별자로 해석됨 |
+| 숫자 비교 | `->` 대신 `JSON_EXTRACT_INTEGER`, `JSON_EXTRACT_DOUBLE` 등 타입별 함수를 권장 |
+| non-PK DML | 조건에 맞는 모든 row에 적용되므로 실행 전 같은 조건으로 대상 범위 확인 권장 |

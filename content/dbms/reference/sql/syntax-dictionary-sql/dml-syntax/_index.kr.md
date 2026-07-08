@@ -101,12 +101,12 @@ SELECT _arrival_time, id, name, value FROM sensor_log;
 update_stmt ::=
     'UPDATE' table_name [ 'METADATA' ]
     'SET' update_expr_list
-    'WHERE' primary_key_column '=' value
+    'WHERE' predicate
 
 update_expr_list ::= column_name '=' value ( ',' column_name '=' value )*
 ```
 
-PRIMARY KEY가 지정된 LOOKUP/VOLATILE 테이블에서만 사용 가능합니다. WHERE 절에는 기본 키 일치 조건만 허용됩니다.
+LOOKUP 테이블은 기본 키 일치 조건과 일반 predicate 조건을 모두 지원합니다. VOLATILE 테이블은 기본 키 일치 조건을 사용합니다.
 
 ```sql
 -- LOOKUP 테이블 레코드 수정
@@ -114,6 +114,13 @@ UPDATE devices SET status = 'OFFLINE' WHERE device_id = 'dev-001';
 
 -- 여러 컬럼 동시 수정
 UPDATE devices SET ip = '10.0.0.1', status = 'ONLINE' WHERE device_id = 'dev-002';
+
+-- LOOKUP 일반 predicate UPDATE
+UPDATE devices
+SET status = 'ACTIVE',
+    score = score + 1
+WHERE site = 'SEOUL'
+  AND status = 'READY';
 ```
 
 ### UPDATE METADATA (TAG 테이블)
@@ -171,13 +178,18 @@ DELETE FROM sensor_log BEFORE TO_DATE('2024-01-01', 'YYYY-MM-DD');
 
 ```sql
 delete_where_stmt ::=
-    'DELETE FROM' table_name 'WHERE' column_name '=' value
+    'DELETE FROM' table_name 'WHERE' predicate
 ```
 
-기본 키가 있는 LOOKUP/VOLATILE 테이블에서 기본 키 일치 조건으로 삭제합니다.
+LOOKUP 테이블은 기본 키 일치 조건과 일반 predicate 조건을 모두 지원합니다. VOLATILE 테이블은 기본 키 일치 조건을 사용합니다.
 
 ```sql
 DELETE FROM devices WHERE device_id = 'dev-001';
+
+-- LOOKUP 일반 predicate DELETE
+DELETE FROM devices
+WHERE status = 'EXPIRED'
+   OR updated_at < TO_DATE('2026-01-01 00:00:00');
 ```
 
 ### DELETE (TAG 테이블)

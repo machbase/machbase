@@ -4,57 +4,46 @@ title: 'UPDATE·DELETE 조건 설계'
 weight: 80
 ---
 
-LOOKUP 테이블은 PRIMARY KEY 기준 UPDATE와 DELETE를 지원합니다.
+LOOKUP 테이블은 primary key 조건과 일반 조건식 기반 `UPDATE`/`DELETE`를 지원합니다.
 
 ## UPDATE
 
 ```sql
--- PK 기준 업데이트
-UPDATE country_code SET name = 'Korea' WHERE code = 'KR';
-
--- 여러 컬럼 동시 업데이트
 UPDATE equipment_master
-SET location = 'Line-3', status = 'ACTIVE', updated_at = NOW
-WHERE equip_id = 42;
+SET location = 'Line-3',
+    status = 'ACTIVE',
+    score = score + 10,
+    updated_at = NOW
+WHERE site = 'SEOUL'
+  AND status = 'READY';
+```
 
--- 복합 PK 기준
-UPDATE product_region_price SET price = 99.0
-WHERE product_id = 'PROD-01' AND region = 'KR';
+JSON 컬럼 조건과 갱신도 함께 사용할 수 있습니다.
+
+```sql
+UPDATE equipment_master
+SET meta = JSON_SET(meta, '$.state', 'active')
+WHERE meta->'$.region' = 'kr'
+  AND JSON_EXTRACT_INTEGER(meta, '$.level') >= 3;
 ```
 
 ## DELETE
 
 ```sql
--- PK 기준 삭제
-DELETE FROM country_code WHERE code = 'XX';
-
--- PK 기준 삭제
-DELETE FROM equipment_master WHERE equip_id = 42;
-
--- 전체 삭제
-DELETE FROM session_cache;
+DELETE FROM equipment_master
+WHERE status = 'RETIRED'
+   OR updated_at < TO_DATE('2026-01-01 00:00:00');
 ```
 
-## UPDATE 조건 설계 지침
+## 조건 설계 지침
 
-1. **PK 조건 필수**: UPDATE/DELETE WHERE 절에는 Primary key equality 조건을 사용합니다.
-2. **Non-PK 조건 불가**: 일반 컬럼 조건이나 범위 조건은 현재 빌드에서 오류가 발생합니다.
-3. **트랜잭션 제한**: LOOKUP 테이블 DML 예제는 개별 문장 단위로 실행합니다. 현재 빌드에서는
-   `BEGIN`/`COMMIT`으로 LOOKUP DML을 묶어 실행할 수 없습니다.
-
-```sql
--- 연관 상태 변경을 순차 실행
-UPDATE equipment_master SET status = 'RETIRED' WHERE equip_id = 42;
-INSERT INTO equipment_history VALUES (42, 'RETIRED', NOW, 'maintenance');
-```
-
-## UPSERT 패턴
-
-존재하면 UPDATE, 없으면 INSERT하는 패턴이 필요한 경우:
+1. **단건 변경은 PK 조건 사용**: 가장 명확하고 빠른 경로입니다.
+2. **일괄 변경은 대상 범위 확인**: 일반 조건식은 조건에 맞는 모든 row에 적용됩니다.
+3. **자주 쓰는 조건은 별도 컬럼화**: JSON path 전용 인덱스는 없으므로 고빈도 조건은 일반 컬럼으로 분리합니다.
+4. **PK 컬럼은 변경하지 않음**: primary key 컬럼은 `UPDATE SET` 대상이 될 수 없습니다.
 
 ```sql
--- INSERT 시도 후 PK 충돌이면 UPDATE
--- (LOOKUP은 ON DUPLICATE KEY UPDATE 미지원 — DELETE + INSERT 패턴 사용)
-DELETE FROM threshold_config WHERE sensor_name = 'TEMP-01';
-INSERT INTO threshold_config VALUES ('TEMP-01', 0.0, 80.0, 2);
+SELECT COUNT(*)
+FROM equipment_master
+WHERE status = 'RETIRED';
 ```

@@ -136,7 +136,7 @@ SELECT ts, data -> 'temperature' AS temp
 |------------|:---------:|:---------------:|------|
 | TAG | O | O | JSON 컬럼과 JSON 함수 지원, JSON PK는 미지원 |
 | LOG | O | O | 완전 지원 |
-| LOOKUP | X | X | JSON 컬럼 생성 불가 |
+| LOOKUP | O | O | 일반 컬럼으로 지원, JSON path index는 미지원 |
 | VOLATILE | X | X | JSON 컬럼 생성 불가 |
 | RDB | O | O | 완전 지원 |
 

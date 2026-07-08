@@ -14,7 +14,7 @@ weight: 20
 | LOG | O | BEFORE/OLDEST/EXCEPT 또는 전체 삭제 |
 | RDB | O | 일반 WHERE 조건 자유 |
 | VOLATILE | O | Primary key equality 조건 |
-| LOOKUP | O | Primary key equality 조건. non-PK 조건식은 현재 미지원 |
+| LOOKUP | O | Primary key equality 조건과 일반 predicate 조건 지원 |
 
 ## RDB 테이블 DELETE
 
@@ -49,17 +49,20 @@ DELETE FROM device_status WHERE device_id = 'DEV-01';
 
 ## LOOKUP 테이블 DELETE
 
-DELETE WHERE는 기본 키(PK)가 지정된 LOOKUP 테이블에서만 허용됩니다.
-
-- WHERE 절에는 (기본 키 컬럼) = (값) 조건만 허용됩니다.
-- 기본 키가 아닌 컬럼을 WHERE 조건으로 사용할 수 없습니다.
+LOOKUP 테이블은 PRIMARY KEY equality 조건과 일반 predicate 조건의 DELETE를 모두 지원합니다.
+조건에 맞는 모든 row가 삭제됩니다.
 
 ```sql
 -- PK 기준 삭제 (권장)
 DELETE FROM alarm_threshold WHERE sensor_id = 'TEMP-01';
+
+-- 일반 조건식 DELETE
+DELETE FROM alarm_threshold
+WHERE active = 0
+   OR updated_at < TO_DATE('2026-01-01 00:00:00');
 ```
 
-> 일반 조건식(non-PK) DELETE는 현재 지원되지 않습니다.
+> 일반 조건식 DELETE는 여러 row에 적용될 수 있으므로 실행 전에 같은 조건으로 대상 범위를 확인합니다.
 
 ## LOG 테이블 DELETE
 
@@ -123,5 +126,5 @@ DELETE FROM tag ROLLUP WHERE tag_time BETWEEN TO_DATE('2021-07-01', 'YYYY-MM-DD'
 
 ## 하위 페이지
 
-- [LOOKUP non-PK DELETE 미지원](./condition-lookup-delete/): 현재 지원 범위와 대안
+- [LOOKUP 일반 조건식 DELETE](./condition-lookup-delete/): 일반 predicate DELETE 지원 범위와 주의사항
 - [TAG 메타데이터 삭제](./delete-tag-metadata/): TAG 테이블 메타데이터 삭제 구문

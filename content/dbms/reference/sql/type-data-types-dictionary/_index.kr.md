@@ -170,8 +170,9 @@ JSON 문서를 저장하는 타입입니다. "Key-Value" 쌍으로 구성된 JSO
 
 - 데이터 최대 크기: 32,768 bytes (VARCHAR와 동일)
 - JSON path 최대 길이: 512 bytes
-- TAG, LOG, RDB 테이블에서 지원
-- LOOKUP, VOLATILE 테이블에서는 JSON 컬럼 생성 불가
+- TAG, LOG, LOOKUP, RDB 테이블에서 지원
+- VOLATILE 테이블에서는 JSON 컬럼 생성 불가
+- LOOKUP 테이블의 JSON 컬럼은 primary key로 사용할 수 없음
 
 ```sql
 CREATE TABLE sensor_data (

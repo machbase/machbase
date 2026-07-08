@@ -35,4 +35,4 @@ LOG 테이블은 `_arrival_time`, TAG 테이블은 `time` 컬럼을 기준으로
 | [윈도우 함수와 PIVOT 성능 고려사항](./performance-window-functions-considerations-pivot/) | 메모리 주의사항, 서브쿼리 선처리 패턴 |
 | [ROLLUP 활용 튜닝](./tuning-rollup/) | ROLLUP 조회 패턴, 계층 설계, WAKEUP INTERVAL |
 | [TAG 데이터 대량 정정 성능 고려사항](./correction-performance-bulk-considerations-tag-data-update/) | DELETE + INSERT 패턴, 임시 대안 |
-| [LOOKUP 일반 predicate DML 성능 고려사항](./performance-considerations-lookup-predicate-dml/) | non-PK DELETE 제약, PK 기준 분할 삭제 |
+| [LOOKUP 일반 predicate DML 성능 고려사항](./performance-considerations-lookup-predicate-dml/) | non-PK UPDATE/DELETE 대상 범위 확인과 JSON 조건 비용 |

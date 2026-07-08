@@ -34,8 +34,8 @@ Machbase의 주요 제한 사항을 테이블 유형별, Edition별, 일반 시�
 | 항목 | 제한 내용 |
 |------|----------|
 | UPDATE/DELETE | PK 기반 권장; 비-PK 조건은 예상치 못한 범위 적용 가능 |
-| JSON 타입 컬럼 | 미지원 |
-| JSON path query | JSON 타입 컬럼 미지원으로 사용할 수 없음 |
+| JSON 타입 컬럼 | 지원; primary key로는 사용할 수 없음 |
+| JSON path query | 지원; JSON path별 전용 인덱스는 미지원 |
 | JSON PK | 미지원 |
 | Append API | 지원, 중복 키 처리 정책(`LOOKUP_APPEND_UPDATE_ON_DUPKEY`)에 따라 중복 키 처리 방식이 달라짐 |
 
@@ -89,4 +89,3 @@ Machbase의 주요 제한 사항을 테이블 유형별, Edition별, 일반 시�
 | 항목 | 이슈 |
 |------|------|
 | TAG UPDATE WHERE time BETWEEN | dbms-nfx#3733 |
-| LOOKUP 비-PK UPDATE/DELETE | dbms-nfx#3696 |

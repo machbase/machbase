@@ -14,7 +14,7 @@ weight: 10
 | LOG | X | 미지원 |
 | RDB | O | WHERE 유무 모두 가능 |
 | VOLATILE | O | Primary key equality 조건. ON DUPLICATE KEY UPDATE도 지원 |
-| LOOKUP | O | Primary key equality 조건. non-PK 조건식은 현재 미지원 |
+| LOOKUP | O | Primary key equality 조건과 일반 predicate 조건 지원 |
 
 ## RDB 테이블 UPDATE
 
@@ -48,15 +48,22 @@ ON DUPLICATE KEY UPDATE SET status = 'ALARM', value = 95.3, updated_at = NOW;
 
 ## LOOKUP 테이블 UPDATE
 
-현재 빌드에서는 PRIMARY KEY equality 조건의 UPDATE만 지원합니다. Primary key가 아닌 컬럼 조건을 사용하면 오류가 발생합니다.
+LOOKUP 테이블은 PRIMARY KEY equality 조건과 일반 predicate 조건의 UPDATE를 모두 지원합니다.
+조건에 맞는 모든 row가 갱신됩니다.
 
 ```sql
 -- PK 기준 직접 UPDATE
 UPDATE alarm_threshold SET high_limit = 90.0, updated_at = NOW
 WHERE sensor_id = 'TEMP-01';
+
+-- 일반 조건식 UPDATE
+UPDATE alarm_threshold
+SET high_limit = high_limit + 5.0
+WHERE device_type = 'MOTOR'
+  AND active = 1;
 ```
 
-> 일반 조건식(non-PK 컬럼 기준) UPDATE는 현재 지원되지 않습니다.
+> 일반 조건식 UPDATE는 여러 row에 적용될 수 있으므로 실행 전에 같은 조건으로 대상 범위를 확인합니다.
 
 ## TAG/LOG 테이블 UPDATE
 
