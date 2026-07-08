@@ -3,3 +3,230 @@ type: docs
 title: '데이터 타입 사전'
 weight: 20
 ---
+
+Machbase에서 지원하는 SQL 데이터 타입을 설명합니다.
+
+## 데이터 타입 요약
+
+| 타입 | 크기 | 값 범위 | NULL 값 |
+|------|------|---------|---------|
+| `SHORT` | 2 bytes | -32,767 ~ 32,767 | -32,768 |
+| `USHORT` | 2 bytes | 0 ~ 65,534 | 65,535 |
+| `INTEGER` | 4 bytes | -2,147,483,647 ~ 2,147,483,647 | -2,147,483,648 |
+| `UINTEGER` | 4 bytes | 0 ~ 4,294,967,294 | 4,294,967,295 |
+| `LONG` | 8 bytes | -9,223,372,036,854,775,807 ~ 9,223,372,036,854,775,807 | -9,223,372,036,854,775,808 |
+| `ULONG` | 8 bytes | 0 ~ 18,446,744,073,709,551,614 | 18,446,744,073,709,551,615 |
+| `FLOAT` | 4 bytes | 32비트 단정밀도 부동소수점 | 양수 최대값 |
+| `DOUBLE` | 8 bytes | 64비트 배정밀도 부동소수점 | 양수 최대값 |
+| `DATETIME` | 8 bytes | 1970-01-01 ~ 2262-04-11 (나노초 정밀도) | - |
+| `VARCHAR(n)` | 가변 | 최대 n 바이트 (1 ~ 32,768) | - |
+| `IPV4` | 4 bytes | 0.0.0.0 ~ 255.255.255.255 | - |
+| `IPV6` | 16 bytes | 0000:...:0000 ~ FFFF:...:FFFF | - |
+| `TEXT` | 가변 | 0 ~ 64MB (전문 검색 인덱스 지원) | - |
+| `BINARY` | 가변 | LOG: 0~64MB / TAG: 1~32,767 bytes (고정 길이) | - |
+| `JSON` | 가변 | JSON 문서: 1~32,768 bytes / path: 1~512 bytes | - |
+
+---
+
+## 정수 타입
+
+### SHORT
+
+C 언어의 16비트 부호 있는 정수(`int16_t`)와 동일합니다. 최소 음수 값(-32,768)은 NULL로 인식됩니다. `int16`으로도 표시할 수 있습니다.
+
+```sql
+CREATE TABLE t (c1 SHORT);
+INSERT INTO t VALUES (-32767);  -- 유효한 최솟값
+INSERT INTO t VALUES (-32768);  -- NULL로 처리됨
+```
+
+### USHORT
+
+16비트 부호 없는 정수(`uint16_t`). 최대값(65,535)은 NULL로 인식됩니다.
+
+### INTEGER
+
+C 언어의 32비트 부호 있는 정수(`int32_t`)와 동일합니다. `int32` 또는 `int`로도 표시할 수 있습니다.
+
+### UINTEGER
+
+32비트 부호 없는 정수(`uint32_t`).
+
+### LONG
+
+C 언어의 64비트 부호 있는 정수(`int64_t`)와 동일합니다. `int64`로도 표시할 수 있습니다.
+
+### ULONG
+
+64비트 부호 없는 정수(`uint64_t`).
+
+---
+
+## 부동소수점 타입
+
+### FLOAT
+
+C 언어의 32비트 부동소수점 타입 `float`와 동일합니다. 양수 최대값은 NULL로 인식됩니다.
+
+### DOUBLE
+
+C 언어의 64비트 부동소수점 타입 `double`과 동일합니다. 양수 최대값은 NULL로 인식됩니다.
+
+---
+
+## 날짜/시간 타입
+
+### DATETIME
+
+1970년 1월 1일 자정 이후 경과된 시간의 나노초 값을 내부적으로 저장합니다. 표현 범위는 1970-01-01 00:00:00 000:000:000 ~ 2262-04-11 23:47:16.854:775:807입니다.
+
+- 나노초 단위까지 처리 가능
+- 내부 표현: 8바이트 정수 (nanoseconds since epoch)
+- 문자열 표현: `YYYY-MM-DD HH24:MI:SS mmm:uuu:nnn`
+
+```sql
+-- 문자열에서 DATETIME으로 변환
+SELECT TO_DATE('2024-01-15 10:30:00 000:000:000');
+
+-- DATETIME에서 문자열로 변환
+SELECT TO_CHAR(ts, 'YYYY-MM-DD HH24:MI:SS') FROM t;
+```
+
+---
+
+## 문자열 타입
+
+### VARCHAR(n)
+
+가변 길이 문자열 타입입니다. `n`은 1 ~ 32,768 바이트 범위이며, UTF-8 인코딩을 사용합니다. 영문 기준 바이트 수이므로 한글 등 멀티바이트 문자 사용 시 적절한 크기를 설정해야 합니다.
+
+```sql
+CREATE TABLE t (name VARCHAR(100), description VARCHAR(1000));
+```
+
+### TEXT
+
+VARCHAR 크기를 초과하는 대용량 텍스트를 저장하기 위한 타입입니다. 최대 64MB를 저장할 수 있으며 키워드 인덱스를 통한 전문 검색(Full-Text Search)을 지원합니다.
+
+- LOG 테이블에서 지원
+- `SEARCH` 절과 함께 키워드 검색 가능
+- TAG, LOOKUP, VOLATILE 테이블에서는 지원하지 않음
+
+```sql
+CREATE TABLE log_table (ts DATETIME, message TEXT);
+-- 키워드 인덱스 생성
+CREATE INDEX idx_msg ON log_table (message) INDEX_TYPE KEYWORD;
+```
+
+---
+
+## 바이너리 타입
+
+### BINARY
+
+이미지, 문서 등 비정형 바이너리 데이터를 저장하는 타입입니다.
+
+- **LOG 테이블**: 가변 길이, 최대 64MB
+- **TAG 테이블**: `BINARY(n)` 형식의 고정 길이 변형, 1 ~ 32,767 bytes
+- LOOKUP, VOLATILE 테이블에서는 지원하지 않음
+
+TAG 테이블의 `BINARY(n)`:
+- `X'...'`, `B'...'`, `O'...'` 리터럴 지원 (소문자 prefix도 지원)
+- 기존 호환성을 위해 `'0x...'` 형식도 지원
+- 선언된 길이를 초과하면 `ERR-02233` 오류 발생
+
+---
+
+## 네트워크 주소 타입
+
+### IPV4
+
+IPv4 주소를 저장하는 타입입니다. 내부적으로 4바이트를 사용하며 `"0.0.0.0"` ~ `"255.255.255.255"` 범위를 표현합니다.
+
+```sql
+CREATE TABLE access_log (ts DATETIME, src_ip IPV4, dst_ip IPV4);
+INSERT INTO access_log VALUES (NOW, '192.168.0.1', '10.0.0.1');
+SELECT * FROM access_log WHERE src_ip = TO_IPV4('192.168.0.1');
+```
+
+### IPV6
+
+IPv6 주소를 저장하는 타입입니다. 내부적으로 16바이트를 사용합니다. 축약 표기도 지원합니다.
+
+- `"::FFFF:1232"` — 선행 0 생략
+- `"::FFFF:192.168.0.3"` — IPv4 호환 표기
+- `"::192.168.3.1"` — IPv4 호환 표기 (deprecated)
+
+```sql
+CREATE TABLE v6_log (ts DATETIME, src_ip IPV6);
+INSERT INTO v6_log VALUES (NOW, '21DA:D3:0:2F3B:2AA:FF:FE28:9C5A');
+```
+
+---
+
+## JSON 타입
+
+JSON 문서를 저장하는 타입입니다. "Key-Value" 쌍으로 구성된 JSON 데이터를 텍스트 형식으로 저장합니다.
+
+- 데이터 최대 크기: 32,768 bytes (VARCHAR와 동일)
+- JSON path 최대 길이: 512 bytes
+- LOG, VOLATILE, RDB 테이블에서 지원
+- TAG 테이블에서는 미지원
+- LOOKUP 테이블의 JSON 지원은 일부 제한 있음 (계획: dbms-nfx#3696)
+
+```sql
+CREATE TABLE sensor_data (
+    ts   DATETIME,
+    data JSON
+);
+INSERT INTO sensor_data VALUES (NOW, '{"temp":23.5,"hum":60}');
+SELECT data -> 'temp' AS temperature FROM sensor_data;
+```
+
+자세한 테이블 타입별 JSON 지원 범위는 [JSON 타입의 테이블 타입별 지원 범위](table-types-type-support-scope-json/)를 참고하십시오.
+
+---
+
+## SQL 데이터 타입 매핑
+
+Machbase 데이터 타입과 SQL 표준 타입 및 C 타입의 대응 관계입니다.
+
+| Machbase 타입 | Machbase CLI 타입 | SQL 타입 | C 타입 | C 기본 타입 |
+|--------------|------------------|----------|--------|------------|
+| `short` | SQL_SMALLINT | SQL_SMALLINT | SQL_C_SSHORT | `int16_t` |
+| `ushort` | SQL_USMALLINT | SQL_SMALLINT | SQL_C_USHORT | `uint16_t` |
+| `integer` | SQL_INTEGER | SQL_INTEGER | SQL_C_SLONG | `int32_t` |
+| `uinteger` | SQL_UINTEGER | SQL_INTEGER | SQL_C_ULONG | `uint32_t` |
+| `long` | SQL_BIGINT | SQL_BIGINT | SQL_C_SBIGINT | `int64_t` |
+| `ulong` | SQL_UBIGINT | SQL_BIGINT | SQL_C_UBIGINT | `uint64_t` |
+| `float` | SQL_FLOAT | SQL_REAL | SQL_C_FLOAT | `float` |
+| `double` | SQL_DOUBLE | SQL_FLOAT, SQL_DOUBLE | SQL_C_DOUBLE | `double` |
+| `datetime` | SQL_TIMESTAMP | SQL_TYPE_TIMESTAMP | SQL_C_TYPE_TIMESTAMP | `char *` (YYYY-MM-DD ...) |
+| `varchar` | SQL_VARCHAR | SQL_VARCHAR | SQL_C_CHAR | `char *` |
+| `ipv4` | SQL_IPV4 | SQL_VARCHAR | SQL_C_CHAR | `char *` (IP 문자열) |
+| `ipv6` | SQL_IPV6 | SQL_VARCHAR | SQL_C_CHAR | `char *` (IP 문자열) |
+| `text` | SQL_TEXT | SQL_LONGVARCHAR | SQL_C_CHAR | `char *` |
+| `binary` | SQL_BINARY | SQL_BINARY | SQL_C_BINARY | `char *` |
+| `json` | SQL_JSON | SQL_JSON | SQL_C_CHAR | `json_t` |
+
+---
+
+## 테이블 타입별 지원 데이터 타입
+
+| 타입 | TAG | LOG | LOOKUP | VOLATILE | RDB |
+|------|:---:|:---:|:------:|:--------:|:---:|
+| SHORT | O | O | O | O | O |
+| USHORT | O | O | O | O | O |
+| INTEGER | O | O | O | O | O |
+| UINTEGER | O | O | O | O | O |
+| LONG | O | O | O | O | O |
+| ULONG | O | O | O | O | O |
+| FLOAT | O | O | O | O | O |
+| DOUBLE | O | O | O | O | O |
+| DATETIME | O | O | O | O | O |
+| VARCHAR | O | O | O | O | O |
+| IPV4 | O | O | O | O | O |
+| IPV6 | O | O | O | O | O |
+| TEXT | X | O | X | X | X |
+| BINARY | O (고정 길이) | O | X | X | X |
+| JSON | X | O | O (일부) | O | O |
