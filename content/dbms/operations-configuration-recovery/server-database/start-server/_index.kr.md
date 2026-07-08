@@ -99,7 +99,7 @@ mach@localhost:~$ machadmin -e
      Copyright 2014, MACHBASE Corp. or its subsidiaries
      All Rights Reserved
 -----------------------------------------------------------------
-[ERR] Server is not running.
+[Error] Machbase server is not running.
 ```
 
 서버가 실행 중인 경우:
@@ -112,7 +112,7 @@ mach@localhost:~$ machadmin -e
      Copyright 2014, MACHBASE Corp. or its subsidiaries
      All Rights Reserved
 -----------------------------------------------------------------
-Machbase server is already running with PID (14098).
+Machbase server is running with PID(14098).
 ```
 
 ## 시작 실패 시 확인 사항

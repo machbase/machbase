@@ -1,10 +1,10 @@
 ---
 type: docs
-title: 'mounted DB read-only/refcount/active same-name isolation'
+title: 'mounted DB read-only/active reference/same-name isolation'
 weight: 100
 ---
 
-마운트된 데이터베이스의 동작 특성인 읽기 전용 속성, refcount, 동일 이름 충돌 방지에 대해 설명합니다.
+마운트된 데이터베이스의 동작 특성인 읽기 전용 속성, 활성 참조, 동일 이름 충돌 방지에 대해 설명합니다.
 
 ## 읽기 전용 (Read-Only)
 
@@ -23,23 +23,24 @@ INSERT INTO backup_db.sys.sensor_log VALUES (...);  -- 오류: 읽기 전용
 UPDATE backup_db.sys.sensor_log SET value = 0;      -- 오류: 읽기 전용
 ```
 
-## refcount (참조 카운트)
+## 활성 참조
 
-refcount는 특정 마운트 데이터베이스를 현재 활성 세션에서 참조하고 있는 수를 나타냅니다.
+열린 커서나 실행 중인 문장이 마운트 DB를 참조하면 `UNMOUNT DATABASE`가 실패할 수 있습니다. 참조가 종료된 뒤 다시 실행하면 언마운트할 수 있습니다. 현재 빌드의 `V$STORAGE_MOUNT_DATABASES`는 내부 참조 카운트를 컬럼으로 노출하지 않습니다.
 
 ```sql
--- 현재 마운트 목록과 refcount 확인
-SELECT name, path, refcount FROM v$storage_mount_databases;
+-- 현재 마운트 목록 확인
+SELECT name, path, mountdb, backup_tbsid, backup_scn, flag
+  FROM v$storage_mount_databases;
 ```
 
-**refcount의 역할:**
+**활성 참조의 역할:**
 
 - 마운트 DB를 사용 중인 세션이 있을 때 강제 언마운트를 방지합니다.
-- `UNMOUNT DATABASE` 명령은 `refcount = 0`일 때 즉시 실행됩니다.
-- `refcount > 0`인 상태에서 `UNMOUNT DATABASE`를 실행하면, 모든 참조 세션이 종료될 때까지 언마운트가 지연되거나 오류가 반환될 수 있습니다.
+- `UNMOUNT DATABASE` 명령은 열린 커서나 실행 중인 문장이 마운트 DB를 참조하지 않을 때 즉시 실행됩니다.
+- 마운트 DB를 참조 중인 상태에서 `UNMOUNT DATABASE`를 실행하면 오류가 반환될 수 있습니다.
 
 ```sql
--- refcount가 0이 될 때까지 대기 후 언마운트
+-- 활성 쿼리가 완료된 후 언마운트
 -- (활성 쿼리가 완료된 후 실행)
 UNMOUNT DATABASE backup_db;
 ```
@@ -89,7 +90,7 @@ UNMOUNT DATABASE archive_202403;
 
 | 상태 | 설명 |
 |------|------|
-| 마운트 직후 | refcount = 0, 읽기 전용 |
-| 쿼리 실행 중 | refcount > 0, 읽기 전용 |
-| 쿼리 완료 후 | refcount = 0, 언마운트 가능 |
+| 마운트 직후 | 읽기 전용, 언마운트 가능 |
+| 쿼리 실행 중 | 활성 참조 존재, 언마운트 실패 가능 |
+| 쿼리 완료 후 | 활성 참조 종료, 언마운트 가능 |
 | 언마운트 후 | 목록에서 제거됨 |

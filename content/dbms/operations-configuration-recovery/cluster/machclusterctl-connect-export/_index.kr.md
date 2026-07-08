@@ -28,8 +28,8 @@ Mach> EXIT
 # 특정 Broker alias로 접속
 machclusterctl connect broker-2
 
-# 호스트와 포트를 직접 지정해 접속
-machsql -s <broker_host> -P <broker_port> -u SYS -p MANAGER
+# 호스트와 서비스 포트를 직접 지정해 접속
+machsql -s <broker_host> -P <service_port>
 ```
 
 ## 클러스터 설정 내보내기
@@ -54,25 +54,38 @@ machclusterctl export -o cluster_config.yaml
 출력 파일 예:
 
 ```yaml
-coordinators:
-  - alias: coordinator-1
-    host: 192.168.0.32
-    port: 5101
-deployers:
-  - alias: deployer-1
-    host: 192.168.0.32
-    port: 5201
-brokers:
-  - alias: broker-1
-    host: 192.168.0.32
-    port: 5301
-    service_port: 5757
-warehouse_groups:
-  - name: Group1
-    warehouses:
-      - alias: warehouse-group1-1
-        host: 192.168.0.32
-        port: 5401
+version: "1"
+cluster:
+  coordinators:
+    - alias: coordinator-1
+      host: 192.168.0.32
+      cluster_link_port: 5101
+      http_admin_port: 5102
+      home_path: /home/machbase/coordinator-1
+  deployers:
+    - alias: deployer-1
+      host: 192.168.0.32
+      cluster_link_port: 5201
+      http_admin_port: 5202
+      home_path: /home/machbase/deployer-1
+  brokers:
+    - alias: broker-1
+      host: 192.168.0.32
+      deployer: deployer-1
+      cluster_link_port: 5301
+      http_port_no: 5302
+      service_port: 5757
+      home_path: /home/machbase/broker-1
+  warehouse_groups:
+    - name: Group1
+      nodes:
+        - alias: warehouse-group1-1
+          host: 192.168.0.32
+          deployer: deployer-1
+          cluster_link_port: 5401
+          service_port: 5656
+          home_path: /home/machbase/warehouse-group1-1
+          dbs_path: /home/machbase/warehouse-group1-1/dbs
 ```
 
 > YAML 기반 구성 변경은 `machclusterctl apply -f <파일>` 흐름을 사용합니다. 개별 노드의 세부 운영이 필요한 경우에만 `machcoordinatoradmin`을 사용합니다.

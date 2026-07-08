@@ -17,7 +17,7 @@ Machbase 운영 환경에서 정기적으로 수행해야 하는 점검 항목�
 machadmin -e
 
 # 서버가 응답하지 않는 경우
-machadmin -c   # 서버가 아닌 DB 상태 확인 (machadmin -e 대체 불가 시)
+pgrep -la machbased   # OS 레벨에서 서버 프로세스 확인
 ```
 
 ### 디스크 사용량
@@ -60,7 +60,7 @@ SELECT s.id AS session_id, s.user_name, st.id AS stmt_id, st.state, st.query
 machcollectoradmin --list
 
 # ERROR 상태 Collector 로그 확인
-tail -50 $MACHBASE_COLLECTOR_HOME/trc/<이름>.trc
+tail -50 $MACHBASE_COLLECTOR_HOME/trc/machcollector.trc
 ```
 
 ### Cluster 상태 (Cluster Edition)

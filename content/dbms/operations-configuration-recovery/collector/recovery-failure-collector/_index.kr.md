@@ -25,7 +25,7 @@ machcollectoradmin --list
 machcollectoradmin --status=my_collector
 
 # 2. 오류 로그 확인
-tail -100 $MACHBASE_COLLECTOR_HOME/trc/my_collector.trc
+tail -100 $MACHBASE_COLLECTOR_HOME/trc/machcollector.trc
 
 # 3. 원인 제거 (네트워크 복구, 소스 서버 재시작 등)
 

@@ -42,6 +42,6 @@ SELECT name, value FROM v$property WHERE name LIKE '%CACHE%';
 | 속성 | 설명 |
 |---|---|
 | `RS_CACHE_ENABLE` | 세션의 Result Cache 사용 여부 (0=비활성, 1=활성) |
-| `RS_CACHE_TIME_BOUND_MSEC` | 캐시 유효 시간 (밀리초) |
+| `RS_CACHE_TIME_BOUND_MSEC` | 캐시 저장 기준 실행 시간 (밀리초, 0이면 모든 쿼리 결과 저장 대상) |
 | `RS_CACHE_MAX_MEMORY_PER_QUERY` | 쿼리당 최대 캐시 메모리 |
 | `RS_CACHE_MAX_RECORD_PER_QUERY` | 쿼리당 최대 캐시 레코드 수 |

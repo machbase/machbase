@@ -21,8 +21,8 @@ SELECT total_space,
 
 | 컬럼 | 설명 |
 |------|------|
-| TOTAL_SPACE | 스토리지 전체 용량 (바이트) |
-| USED_SPACE | 사용 중인 용량 (바이트) |
+| TOTAL_SPACE | 스토리지 전체 용량 (MiB) |
+| USED_SPACE | 사용 중인 용량 (MiB) |
 | USED_RATIO | 사용률 (%) |
 | RATIO_CAP | 허용 최대 사용률 (%). 이 값 초과 시 데이터 입력 중단 |
 
@@ -139,11 +139,11 @@ SELECT id, storage_usage FROM v$storage_tables
 
 ### 3. RATIO_CAP 조정
 
-`DISK_FULL_RATIO`는 설정 파일에서 관리합니다. 실제 디스크 공간 확보 없이 이 설정만 높이면 OS 레벨에서 실제 디스크가 가득 찰 수 있으므로 주의합니다.
+`DISK_USED_RATIO_CAP`은 설정 파일에서 관리합니다. 실제 디스크 공간 확보 없이 이 설정만 높이면 OS 레벨에서 실제 디스크가 가득 찰 수 있으므로 주의합니다.
 
 ```sql
--- 현재 DISK_FULL_RATIO 설정 확인
-SELECT name, value FROM v$property WHERE name = 'DISK_FULL_RATIO';
+-- 현재 DISK_USED_RATIO_CAP 설정 확인
+SELECT name, value FROM v$property WHERE name = 'DISK_USED_RATIO_CAP';
 ```
 
 ## 주기적 모니터링 스크립트 예시

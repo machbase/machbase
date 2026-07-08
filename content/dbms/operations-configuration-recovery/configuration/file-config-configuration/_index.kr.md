@@ -54,7 +54,7 @@ machadmin -u
 
 ### 런타임 즉시 적용 설정
 
-`RS_CACHE_ENABLE`, `MAX_SESSION_COUNT` 등 일부 파라미터는 `ALTER SYSTEM SET` 명령어로 서버를 재시작하지 않고 즉시 변경할 수 있습니다. 자세한 내용은 [Runtime 변경 가능 설정](../alter-start-restart-configuration-runtime/)을 참고합니다.
+`MAX_SESSION_COUNT`, `PROCESS_MAX_SIZE`, `PVO_CACHE_ENABLE` 등 일부 파라미터는 `ALTER SYSTEM SET` 명령어로 서버를 재시작하지 않고 즉시 변경할 수 있습니다. Result Cache의 `RS_CACHE_*` 전역 기본값은 설정 파일을 수정하고 재시작하여 적용하며, 현재 세션의 Result Cache 동작은 `ALTER SESSION SET RS_CACHE_ENABLE = ...`처럼 세션 단위로 변경합니다. 자세한 내용은 [Runtime 변경 가능 설정](../alter-start-restart-configuration-runtime/)을 참고합니다.
 
 ## 설정 파일 백업
 

@@ -51,13 +51,13 @@ Last Active : 2026-07-07 10:32:15
 
 ## 로그 파일 위치
 
-Collector 인스턴스별 로그는 `$MACHBASE_COLLECTOR_HOME/trc/` 디렉터리에 저장됩니다.
+기본 Collector 로그는 `$MACHBASE_COLLECTOR_HOME/trc/machcollector.trc`에 기록됩니다. Collector별 trace 로그를 활성화한 경우에는 `$MACHBASE_COLLECTOR_HOME/trc/<collector>.trc` 파일도 생성될 수 있습니다.
 
 ```bash
-# 전체 Collector 로그 파일 목록
-ls $MACHBASE_COLLECTOR_HOME/trc/machcollector*.trc
+# 기본 Collector 로그 확인
+tail -f $MACHBASE_COLLECTOR_HOME/trc/machcollector.trc
 
-# 특정 Collector 로그 실시간 확인
+# Collector별 trace 로그를 활성화한 경우
 tail -f $MACHBASE_COLLECTOR_HOME/trc/my_collector.trc
 ```
 
@@ -66,7 +66,7 @@ tail -f $MACHBASE_COLLECTOR_HOME/trc/my_collector.trc
 ERROR 상태인 Collector가 있으면 다음 순서로 원인을 파악합니다.
 
 1. **상태 조회**: `machcollectoradmin --status=<이름>`으로 오류 개수와 마지막 활동 시간 확인
-2. **로그 확인**: `$MACHBASE_COLLECTOR_HOME/trc/<이름>.trc` 또는 `$MACHBASE_COLLECTOR_HOME/trc/machcollector.trc`에서 오류 메시지 확인
+2. **로그 확인**: 기본적으로 `$MACHBASE_COLLECTOR_HOME/trc/machcollector.trc`에서 오류 메시지 확인. Collector별 trace 로그를 활성화했다면 `$MACHBASE_COLLECTOR_HOME/trc/<이름>.trc`도 함께 확인
 3. **Machbase 연결 확인**: Machbase 서버가 정상 실행 중인지 `machadmin -e`로 확인
 4. **소스 연결 확인**: 데이터 소스(파일 경로, 소켓 포트, MQ 서버 등)가 유효한지 확인
 

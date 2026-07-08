@@ -67,7 +67,7 @@ SELECT s.id        AS session_id,
  ORDER BY s.login_time;
 ```
 
-> **참고**: `V$STMT`에는 `elapsed_time` 컬럼이 없습니다. 실행 시간 통계가 필요한 경우 `V$SESTIME`의 `ACCUM_TICK` 값을 참조하십시오.
+> **참고**: `V$STMT`에는 `elapsed_time` 컬럼이 없습니다. 실행 시간 통계가 필요한 경우 `V$SESTIME`의 `ACCUM_MSEC` 값을 참조하십시오.
 
 ## 세션별 시간 통계
 
@@ -82,7 +82,7 @@ SELECT st.sid, s.user_name, s.user_ip,
   FROM v$sestime st
   JOIN v$session s ON st.sid = s.id
  WHERE s.closed = 0
- ORDER BY st.accum_tick DESC;
+ ORDER BY st.accum_msec DESC;
 ```
 
 ## 특정 세션 강제 종료

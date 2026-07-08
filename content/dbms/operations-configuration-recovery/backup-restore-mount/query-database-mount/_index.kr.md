@@ -44,12 +44,14 @@ SELECT * FROM v$storage_mount_databases;
 
 | 컬럼 | 설명 |
 |------|------|
-| `NAME` | 마운트 이름 |
+| `NAME` | 백업 데이터베이스 내부 이름 |
 | `PATH` | 백업 디렉터리 경로 |
+| `BACKUP_TBSID` | 백업 테이블스페이스 ID |
+| `BACKUP_SCN` | 백업 SCN |
 | `MOUNTDB` | 마운트 이름 |
-| `PATH` | 백업 디렉터리 경로 |
 | `BACKUP_BEGIN_TIME`, `BACKUP_END_TIME` | 백업 수행 시간 |
 | `DB_BEGIN_TIME`, `DB_END_TIME` | 백업에 포함된 데이터 시간 범위 |
+| `FLAG` | 마운트 상태 플래그 |
 
 ## 조회 시 제약사항
 

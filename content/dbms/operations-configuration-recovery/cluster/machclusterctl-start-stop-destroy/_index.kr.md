@@ -58,14 +58,14 @@ machclusterctl destroy
 
 ## 개별 노드 제어
 
-클러스터 전체가 아닌 특정 노드만 시작·종료하려면 `machcoordinatoradmin`을 사용합니다.
+클러스터 전체가 아닌 특정 노드만 시작·종료하려면 `machclusterctl`의 `--node` 옵션에 노드 alias를 지정합니다. `machcoordinatoradmin`은 저수준 수동 운영이 필요한 경우에만 사용합니다.
 
 ```bash
 # 특정 노드 시작
-machcoordinatoradmin --startup-node=192.168.0.32:5401
+machclusterctl start --node=warehouse-group1-1
 
 # 특정 노드 종료
-machcoordinatoradmin --shutdown-node=192.168.0.32:5401
+machclusterctl stop --node=warehouse-group1-1
 ```
 
 자세한 내용은 [Cluster 노드 시작과 종료](../node-start-cluster/)를 참조하십시오.

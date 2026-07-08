@@ -15,8 +15,7 @@ RDB 테이블은 Machbase 엔진 내부에서 별도의 sidecar 데이터베이�
 ```
 $MACHBASE_HOME/dbs/
 ├── ...                    # Machbase 일반 데이터 파일
-└── rdb/                   # RDB sidecar 데이터 파일
-    └── *.db               # SQLite 또는 sidecar DB 파일
+└── __rdbt_<table_id>.db   # RDB sidecar 데이터 파일
 ```
 
 ## 백업 시 동작
@@ -37,15 +36,16 @@ BACKUP TABLE rdb_table_name INTO DISK = '/backup/rdb_table_20240101';
 
 ## 복원 시 주의사항
 
-`machadmin -r` 명령으로 복원할 때 RDB sidecar 파일도 자동으로 복원됩니다. 단, 다음 사항을 확인해야 합니다.
+`machadmin -r` 명령으로 복원할 때 백업 이미지의 `rdb/__rdbt_*.db` 파일이 현재 `$MACHBASE_HOME/dbs/`로 복사됩니다. 단, 다음 사항을 확인해야 합니다.
 
-1. **sidecar 파일 경로 일치**: 복원 대상 서버의 파일 경로 구조가 백업 시와 동일해야 합니다.
+1. **기존 DB 삭제**: 복원 전에 서버를 종료하고 현재 데이터베이스를 삭제해야 합니다.
 2. **sidecar 버전 호환성**: RDB sidecar DB의 버전이 현재 Machbase와 호환되어야 합니다.
 3. **잠금 상태 확인**: 복원 전에 sidecar DB 파일이 다른 프로세스에 의해 잠겨 있지 않아야 합니다.
 
 ```bash
 # 복원 절차 (RDB 포함)
 machadmin -s                                    # 서버 종료
+machadmin -d                                    # 현재 DB 삭제
 machadmin -r /backup/machbase_20240101          # 복원 (RDB sidecar 포함)
 machadmin -u                                    # 서버 시작
 ```

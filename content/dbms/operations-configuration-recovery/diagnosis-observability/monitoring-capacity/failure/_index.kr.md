@@ -39,7 +39,7 @@ grep -i 'disk full\|errno=28\|No space left' $MACHBASE_HOME/trc/machbase.trc | t
 
 1. 오래된 트레이스 로그 삭제: `find $MACHBASE_HOME/trc/ -name "*.trc.*" -mtime +30 -delete`
 2. 오래된 데이터 삭제: `DELETE FROM <table> BEFORE TO_DATE('...', 'YYYY-MM-DD');`
-3. `DISK_FULL_RATIO` 설정 검토 (실제 공간 확보 병행 필수)
+3. `DISK_USED_RATIO_CAP` 설정 검토 (실제 공간 확보 병행 필수)
 
 ---
 

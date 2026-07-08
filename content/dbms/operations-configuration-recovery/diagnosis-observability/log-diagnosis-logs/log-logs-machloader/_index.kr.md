@@ -19,10 +19,10 @@ machloader는 실행 시 현재 작업 디렉터리에 두 개의 로그 파일�
 
 ```bash
 # 기본 로그 파일명 사용
-machloader -i -t sensor_log -d data.csv -f csv
+machloader -i -t sensor_log -d data.csv -r csv
 
 # 사용자 지정 로그 파일명
-machloader -i -t sensor_log -d data.csv -f csv -l /logs/load_20240115
+machloader -i -t sensor_log -d data.csv -r csv -l /logs/load_20240115
 # /logs/load_20240115.log, /logs/load_20240115.err 생성
 ```
 
@@ -73,7 +73,7 @@ grep -v '^\[' machloader.err > error_records.csv
 grep 'Error=' machloader.err | sort | uniq -c | sort -rn
 
 # 3단계: 데이터 수정 후 재적재
-machloader -i -t sensor_log -d error_records_fixed.csv -f csv
+machloader -i -t sensor_log -d error_records_fixed.csv -r csv
 ```
 
 ## 오류 허용 설정
@@ -82,10 +82,10 @@ machloader -i -t sensor_log -d error_records_fixed.csv -f csv
 
 ```bash
 # 오류 100건까지 허용하고 계속 진행
-machloader -i -t sensor_log -d data.csv -f csv -e 100
+machloader -i -t sensor_log -d data.csv -r csv -e 100
 
 # 오류 건수 제한 없이 계속 진행 (0 = 무제한)
-machloader -i -t sensor_log -d data.csv -f csv -e 0
+machloader -i -t sensor_log -d data.csv -r csv -e 0
 ```
 
 ## 주요 적재 오류 유형

@@ -43,7 +43,7 @@ weight: 60
 | [Offline restore with machadmin -r](./offline-restore-machadmin-r/) | 오프라인 복원 절차 |
 | [데이터베이스 마운트](./database-mount/) | MOUNT / UNMOUNT 사용법 |
 | [마운트된 데이터베이스 조회](./query-database-mount/) | 마운트 DB에서 SELECT |
-| [마운트 DB 동작 특성](./mounted-db-read-only-refcount-active-same-name/) | 읽기 전용, refcount, 이름 충돌 |
+| [마운트 DB 동작 특성](./mounted-db-read-only-refcount-active-same-name/) | 읽기 전용, 활성 참조, 이름 충돌 |
 | [RDB sidecar 백업/복구 제약](./recovery-backup-rdb-sidecar/) | Standard Edition RDB 처리 |
 | [MOUNT TABLE 미지원 범위](./unsupported-support-scope-mount-table-umount/) | 테이블 단위 마운트 제약 |
 

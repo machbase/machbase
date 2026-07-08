@@ -23,20 +23,10 @@ Collector Manager가 실행되면 설정 파일(`$MACHBASE_COLLECTOR_HOME/conf/m
 ## 상태 확인
 
 ```bash
-machcollectoradmin --check
+machcollectoradmin --status-collector=all
 ```
 
-실행 중일 때 출력 예:
-
-```
-Collector Manager is running (pid: 12345).
-```
-
-중지 상태일 때 출력 예:
-
-```
-Collector Manager is not running.
-```
+Collector Manager에는 별도의 `--check` 옵션이 없습니다. 전체 Collector 상태 조회 명령으로 Collector Manager와 Collector 동작 상태를 함께 확인합니다.
 
 ## 종료
 

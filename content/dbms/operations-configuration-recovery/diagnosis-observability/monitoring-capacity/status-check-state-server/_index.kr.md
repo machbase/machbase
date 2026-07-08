@@ -20,7 +20,7 @@ machadmin -e
 Machbase server is running with PID(12345).
 
 # 출력 예시 (중지됨)
-Machbase server is not running.
+[Error] Machbase server is not running.
 ```
 
 ### 프로세스 직접 확인
