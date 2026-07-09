@@ -11,11 +11,11 @@ weight: 20
 | 개념 | 정규 URL |
 |------|----------|
 | 데이터 모델 개요 | `/dbms/core-concepts/` |
-| TAG 테이블 | `/dbms/data-modeling-table-design/table-types-design-type/design-tag/` |
-| LOG 테이블 | `/dbms/data-modeling-table-design/table-types-design-type/design-log/` |
-| LOOKUP 테이블 | `/dbms/data-modeling-table-design/table-types-design-type/design-lookup/` |
-| VOLATILE 테이블 | `/dbms/data-modeling-table-design/table-types-design-type/design-volatile/` |
-| RDB 테이블 | `/dbms/data-modeling-table-design/table-types-design-type/design-rdb-dbms-nfx/` |
+| TAG 테이블 | `/dbms/tag-table-usage/` |
+| LOG 테이블 | `/dbms/log-table-usage/` |
+| LOOKUP 테이블 | `/dbms/lookup-table-usage/` |
+| VOLATILE 테이블 | `/dbms/volatile-table-usage/` |
+| RDB 테이블 | `/dbms/rdb-table-usage/` |
 | ROLLUP | `/dbms/core-concepts/features-concepts/role-statistics-rollup/` |
 | STREAM | `/dbms/core-concepts/features-concepts/processing-model-stream/` |
 | Append (개념) | `/dbms/application-integration/concepts-common/append-api-batch/` |
@@ -53,7 +53,7 @@ weight: 20
 | MOUNT / UNMOUNT | `/dbms/operations-configuration-recovery/backup-restore-mount/database-mount/` |
 | ALTER SYSTEM | `/dbms/reference/sql/syntax-dictionary-sql/system-session-alter-syntax/` |
 | 설정 레퍼런스 | `/dbms/reference/configuration/` |
-| ROLLUP 운영 | `/dbms/query-analysis-automation/item/rollup/` |
+| ROLLUP 운영 | `/dbms/tag-rollup-usage/` |
 | STREAM 운영 | `/dbms/query-analysis-automation/automation/stream/` |
 
 ## 보안

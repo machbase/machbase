@@ -29,10 +29,10 @@ Machbase 공식 문서 기준 (`/dbms/` 경로 아래):
 | 섹션 | URL |
 |------|-----|
 | 데이터 모델 개요 | `/dbms/core-concepts/` |
-| TAG 테이블 | `/dbms/data-modeling-table-design/table-types-design-type/design-tag/` |
-| LOG 테이블 | `/dbms/data-modeling-table-design/table-types-design-type/design-log/` |
-| LOOKUP 테이블 | `/dbms/data-modeling-table-design/table-types-design-type/design-lookup/` |
-| RDB 테이블 | `/dbms/data-modeling-table-design/table-types-design-type/design-rdb-dbms-nfx/` |
+| TAG 테이블 | `/dbms/tag-table-usage/` |
+| LOG 테이블 | `/dbms/log-table-usage/` |
+| LOOKUP 테이블 | `/dbms/lookup-table-usage/` |
+| RDB 테이블 | `/dbms/rdb-table-usage/` |
 | ROLLUP | `/dbms/core-concepts/features-concepts/role-statistics-rollup/` |
 
 ### 애플리케이션 연동

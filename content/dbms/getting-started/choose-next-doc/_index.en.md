@@ -19,9 +19,9 @@ feature area to study first.
 
 | What you need to do | Next document |
 | --- | --- |
-| Store industrial IoT sensor, equipment, or measurement values | [TAG table design](/dbms/data-modeling-table-design/table-types-design-type/design-tag/) |
-| Store logs, events, or financial tick receive histories | [LOG table design](/dbms/data-modeling-table-design/table-types-design-type/design-log/) |
-| Manage equipment names, codes, or mapping data | [LOOKUP design](/dbms/data-modeling-table-design/table-types-design-type/design-lookup/), and in RDB-supporting versions, [RDB design](/dbms/data-modeling-table-design/table-types-design-type/design-rdb-dbms-nfx/) and [LOOKUP vs RDB](/dbms/data-modeling-table-design/table-types-selection-type/comparison-rdb-vs-lookup/) |
+| Store industrial IoT sensor, equipment, or measurement values | [TAG table design](/dbms/tag-table-usage/) |
+| Store logs, events, or financial tick receive histories | [LOG table design](/dbms/log-table-usage/) |
+| Manage equipment names, codes, or mapping data | [LOOKUP design](/dbms/lookup-table-usage/), and in RDB-supporting versions, [RDB design](/dbms/rdb-table-usage/) and [LOOKUP vs RDB](/dbms/data-modeling-table-design/table-types-selection-type/comparison-rdb-vs-lookup/) |
 | Check SQL syntax | [SQL reference](/dbms/reference/sql/), [SQL ingestion](/dbms/data-input-load-export/sql/) |
 | Connect applications | [Application integration](/dbms/application-integration/), [Driver guide](/dbms/application-integration/guide-drivers/) |
 | Change operational settings | [Operations, configuration, and recovery](/dbms/operations-configuration-recovery/) |

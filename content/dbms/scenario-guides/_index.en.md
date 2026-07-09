@@ -1,5 +1,5 @@
 ---
 type: docs
-title: '12. 시나리오 가이드'
-weight: 120
+title: '15. Scenario Guides'
+weight: 150
 ---

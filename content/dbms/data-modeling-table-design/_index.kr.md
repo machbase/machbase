@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '4. 데이터 모델링과 테이블 설계'
+title: '4. 테이블 타입 개념과 선택'
 weight: 40
 ---
 
@@ -17,6 +17,5 @@ Machbase에는 다섯 가지 테이블 타입이 있으며, 저장할 데이터�
 ## 이 장의 구성
 
 - **[테이블 타입 선택](/dbms/data-modeling-table-design/table-types-selection-type/)** — 각 타입의 특성과 선택 기준
-- **[테이블 타입별 설계](/dbms/data-modeling-table-design/table-types-design-type/)** — TAG, LOG, RDB, VOLATILE, LOOKUP 상세 설계
 - **[안티패턴](/dbms/data-modeling-table-design/table-types-patterns-type-anti/)** — 피해야 할 설계 사례
 - **[모델링 패턴](/dbms/data-modeling-table-design/patterns-modeling/)** — 시계열·상태·이벤트·마스터 데이터 설계 패턴

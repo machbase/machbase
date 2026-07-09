@@ -185,4 +185,4 @@ SELECT /*+ ROLLUP_TABLE(rollup_table_name) */
 ## 관련 문서
 
 - [ROLLUP_REBUILD syntax](../rollup-rebuild-syntax/) — 집계 재계산
-- [ROLLUP 운영 가이드](/dbms/query-analysis-automation/item/rollup/) — 상태 확인 및 운영 패턴
+- [ROLLUP 운영 가이드](/dbms/tag-rollup-usage/) — 상태 확인 및 운영 패턴

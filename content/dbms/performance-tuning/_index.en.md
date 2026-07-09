@@ -1,5 +1,5 @@
 ---
 type: docs
-title: '9. 성능 튜닝'
-weight: 90
+title: '12. Performance Tuning'
+weight: 120
 ---

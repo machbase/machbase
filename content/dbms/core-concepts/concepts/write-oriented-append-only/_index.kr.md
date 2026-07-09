@@ -67,7 +67,7 @@ LOG 테이블에 잘못된 값을 넣으면 해당 행을 수정하는 것이 �
 시간 범위로 삭제한 뒤 재입력해야 합니다. TAG 테이블의 실제 시계열 값은 `UPDATE`로 정정할
 수 있지만, 태그 선택자(`=`, `IN`, `LIKE`)와 최소 한쪽 이상의 시간축 조건이 필요하며 태그명,
 시간축 컬럼, hidden/system 컬럼, metadata 컬럼은 data UPDATE로 변경할 수 없습니다.
-이력 보존이 필요하면 보정 컬럼이나 보정 이력 테이블을 함께 사용합니다([TAG 데이터 보정 설계](/dbms/data-modeling-table-design/table-types-design-type/design-tag/design-correction-tag/) 참고).
+이력 보존이 필요하면 보정 컬럼이나 보정 이력 테이블을 함께 사용합니다([TAG 데이터 보정 설계](/dbms/tag-table-usage/tag-data-update-correction/design-correction-tag/) 참고).
 
 **스키마 변경이 제한된다**
 

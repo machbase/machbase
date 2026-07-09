@@ -1,5 +1,5 @@
 ---
 type: docs
-title: '13. 문제 해결'
-weight: 130
+title: '16. Troubleshooting'
+weight: 160
 ---

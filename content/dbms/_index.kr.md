@@ -4,7 +4,7 @@ title: 'Machbase DBMS 매뉴얼'
 weight: 30
 ---
 
-Machbase DBMS 매뉴얼에 오신 것을 환영합니다. 이 문서는 Machbase 8.6을 기준으로 작성되었으며, 설치부터 운영, 애플리케이션 연동, 성능 튜닝, 보안, 레퍼런스까지 Machbase의 모든 기능을 다룹니다.
+Machbase DBMS 매뉴얼에 오신 것을 환영합니다. 이 문서는 Machbase 8.6을 기준으로 작성되었으며, 설치부터 테이블 타입별 활용, 운영, 애플리케이션 연동, 성능 튜닝, 보안, 레퍼런스까지 Machbase의 기능을 다룹니다.
 
 ## 매뉴얼 구성
 
@@ -13,14 +13,17 @@ Machbase DBMS 매뉴얼에 오신 것을 환영합니다. 이 문서는 Machbase
 | 1 | [처음 시작하기](./getting-started/) | 개요, 접속 확인, 빠른 시작, 기본 명령 |
 | 2 | [핵심 개념](./core-concepts/) | 테이블 유형, 시간 모델, ROLLUP, STREAM |
 | 3 | [설치, 배포, 업그레이드](./installation-deployment-upgrade/) | 설치 준비, Standard Edition, Cluster Edition, 업그레이드 |
-| 4 | [데이터 모델링과 테이블 설계](./data-modeling-table-design/) | 테이블 유형 선택, LOG/TAG/LOOKUP/RDB/VOLATILE 설계 |
-| 5 | [스키마와 데이터 생명주기](./schema-data-lifecycle/) | 스키마 객체, 보관 정책, UPDATE/DELETE 정책 |
-| 6 | [데이터 입력, 적재, 반출](./data-input-load-export/) | Append API, machloader, Collector, 내보내기 |
-| 7 | [쿼리, 분석, 자동 처리](./query-analysis-automation/) | SELECT, 조건 검색, 조인, 집계, STREAM |
-| 8 | [애플리케이션 연동](./application-integration/) | JDBC, Python, Go, .NET, REST API |
-| 9 | [성능 튜닝](./performance-tuning/) | 쿼리 성능, 수집 성능, 캐시 튜닝 |
-| 10 | [운영, 설정, 복구](./operations-configuration-recovery/) | 서버 관리, 백업, Cluster 운영 |
-| 11 | [보안과 접근 제어](./security-access-control/) | 계정, 권한, AUTH KEY |
-| 12 | [시나리오 가이드](./scenario-guides/) | 실전 시나리오별 단계별 가이드 |
-| 13 | [문제 해결](./troubleshooting/) | 오류 진단 및 해결 방법 |
-| 14 | [레퍼런스](./reference/) | SQL 문법, 함수, 설정, API 사전 |
+| 4 | [테이블 타입 개념과 선택](./data-modeling-table-design/) | 테이블 타입 비교, 선택 기준, 모델링 패턴과 안티패턴 |
+| 5 | [TAG 테이블 활용](./tag-table-usage/) | TAG 구조, 메타데이터, 입력, 조회, 보정, 운영 |
+| 6 | [TAG 테이블을 위한 ROLLUP 활용](./tag-rollup-usage/) | ROLLUP 설계, 생성, 조회, 재구성, 운영, 성능 튜닝 |
+| 7 | [LOG 테이블 활용](./log-table-usage/) | LOG 구조, 입력, 텍스트 검색, Collector, Fluentd, STREAM |
+| 8 | [RDB 테이블 활용](./rdb-table-usage/) | RDB 스키마, DML, 트랜잭션, JOIN, 백업 제약 |
+| 9 | [LOOKUP 테이블 활용](./lookup-table-usage/) | 기준 정보, PRIMARY KEY, SEQUENCE, JSON, predicate DML |
+| 10 | [VOLATILE 테이블 활용](./volatile-table-usage/) | 메모리 테이블, UPSERT, 상태 캐시, 재시작과 데이터 소실 |
+| 11 | [애플리케이션 연동](./application-integration/) | JDBC, Python, Go, .NET, REST API |
+| 12 | [성능 튜닝](./performance-tuning/) | 쿼리 성능, 수집 성능, 캐시 튜닝 |
+| 13 | [운영, 설정, 복구](./operations-configuration-recovery/) | 서버 관리, 백업, Cluster 운영 |
+| 14 | [보안과 접근 제어](./security-access-control/) | 계정, 권한, AUTH KEY |
+| 15 | [시나리오 가이드](./scenario-guides/) | 실전 시나리오별 단계별 가이드 |
+| 16 | [문제 해결](./troubleshooting/) | 오류 진단 및 해결 방법 |
+| 17 | [레퍼런스](./reference/) | SQL 문법, 함수, 설정, API 사전 |

@@ -94,5 +94,5 @@ LOOKUP, VOLATILE, RDB 테이블의 DATETIME 컬럼은 일반 컬럼입니다. �
 ## 다음 읽을 내용
 
 - [시계열 데이터 이해하기](../time-series/) — 시계열 데이터의 본질
-- [LOG 테이블 설계](/dbms/data-modeling-table-design/table-types-design-type/design-log/) — `_arrival_time`을 활용한 이벤트 테이블 설계
-- [TAG 테이블 설계](/dbms/data-modeling-table-design/table-types-design-type/design-tag/) — BASETIME을 활용한 계측값 테이블 설계
+- [LOG 테이블 설계](/dbms/log-table-usage/) — `_arrival_time`을 활용한 이벤트 테이블 설계
+- [TAG 테이블 설계](/dbms/tag-table-usage/) — BASETIME을 활용한 계측값 테이블 설계

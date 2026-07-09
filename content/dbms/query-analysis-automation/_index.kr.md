@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '7. 쿼리, 분석, 자동 처리'
-weight: 70
+title: '공통 쿼리와 자동 처리 참고'
+weight: 970
 ---
 
 Machbase는 시계열 데이터에 최적화된 다양한 조회·분석 구문을 제공합니다. 일반 SQL에 더해 DURATION, PIVOT, ROLLUP, SERIES BY, 보간, 윈도우 함수 등 시계열 분석에 특화된 확장 문법을 갖추고 있습니다.

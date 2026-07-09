@@ -1,5 +1,5 @@
 ---
 type: docs
-title: '7. 쿼리, 분석, 자동 처리'
-weight: 70
+title: 'Common Query and Automation Reference'
+weight: 970
 ---

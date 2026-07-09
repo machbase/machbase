@@ -71,4 +71,4 @@ ORDER BY mtime;
 
 - [STREAM 처리 모델](../processing-model-stream/) — 임의 SQL 기반의 자동 변환/집계 처리
 - [ROLLUP vs STREAM](/dbms/core-concepts/terminology-distinction/rollup-vs-stream/) — 두 기능의 차이와 선택 기준
-- [TAG 테이블 설계](/dbms/data-modeling-table-design/table-types-design-type/design-tag/) — ROLLUP 활성화를 포함한 TAG 테이블 상세 설계
+- [TAG 테이블 설계](/dbms/tag-table-usage/) — ROLLUP 활성화를 포함한 TAG 테이블 상세 설계

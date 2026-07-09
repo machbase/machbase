@@ -1,5 +1,5 @@
 ---
 type: docs
-title: '10. 운영, 설정, 복구'
-weight: 100
+title: '13. Operations, Configuration, and Recovery'
+weight: 130
 ---

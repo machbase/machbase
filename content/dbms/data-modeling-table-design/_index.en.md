@@ -1,5 +1,5 @@
 ---
 type: docs
-title: '4. 데이터 모델링과 테이블 설계'
+title: '4. Table Type Concepts and Selection'
 weight: 40
 ---

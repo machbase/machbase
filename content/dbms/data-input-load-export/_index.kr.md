@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '6. 데이터 입력, 적재, 반출'
-weight: 60
+title: '공통 데이터 입력과 반출 참고'
+weight: 960
 ---
 
 Machbase에 데이터를 입력하는 방법은 여러 가지입니다. SQL INSERT, Append API, 파일 적재(machloader, csvimport), SQL 기반 파일 직접 로드까지 상황에 따라 선택할 수 있습니다. 반출도 동일한 도구를 내보내기 방향으로 사용합니다.
