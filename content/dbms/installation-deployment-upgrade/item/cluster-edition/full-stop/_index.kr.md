@@ -4,7 +4,9 @@ title: '전체 중지 업그레이드'
 weight: 20
 ---
 
-전체 중지 업그레이드는 클러스터를 완전히 종료한 후 모든 노드를 일괄 업그레이드하는 방식입니다. Major 버전 간 업그레이드나 DB 파일 형식 변경이 수반되는 경우에 사용합니다.
+전체 중지 업그레이드는 클러스터를 완전히 종료한 후 모든 노드를 일괄 업그레이드하는 방식입니다.
+Coordinator, Deployer, Lookup까지 포함해 전체 바이너리를 교체해야 하거나 DB 파일 형식 변경이
+수반되는 경우에 사용합니다.
 
 ## 업그레이드 절차
 
@@ -12,23 +14,39 @@ weight: 20
 
 모든 INSERT·APPEND·SELECT 작업이 완료되었는지 확인합니다.
 
-### 2. 클러스터 전체 종료
+### 2. cluster.yaml의 패키지 변경
+
+`cluster.package.name`과 `cluster.package.path`를 새 패키지로 변경합니다. 업그레이드 전에는 노드
+추가, 삭제, 포트 변경 같은 토폴로지 변경이 없어야 합니다. 토폴로지 변경이 있으면 먼저 `apply`로
+반영한 뒤 업그레이드를 수행합니다.
+
+### 3. 실행 계획 확인
 
 ```bash
-# machclusterctl을 사용하는 경우
-machclusterctl stop -f cluster.yaml
+machclusterctl upgrade -f cluster.yaml --full-stop --dry-run --verbose
+```
 
-# 수동 배포의 경우
+### 4. 전체 중지 업그레이드 실행
+
+```bash
+machclusterctl upgrade -f cluster.yaml --full-stop --yes --verbose
+```
+
+`machclusterctl`은 전체 클러스터 중단을 전제로 패키지를 staging 경로에 해제한 뒤 노드 홈에 교체
+반영합니다.
+
+## 수동 배포 참고
+
+수동 배포 환경에서 직접 교체해야 하는 경우 Warehouse → Broker → Deployer → Coordinator 순으로
+종료합니다.
+
+```bash
 machcoordinatoradmin --shutdown-node=192.168.1.13:5401
 machcoordinatoradmin --shutdown-node=192.168.1.14:5401
 machcoordinatoradmin --shutdown-node=192.168.1.11:5301
 machdeployeradmin --shutdown
 machcoordinatoradmin --shutdown
 ```
-
-Warehouse → Broker → Deployer → Coordinator 순으로 종료합니다.
-
-### 3. 각 노드 패키지 업그레이드
 
 모든 노드에서 새 패키지를 압축 해제합니다. **`dbs/` 디렉터리는 건드리지 않습니다.**
 
@@ -44,13 +62,9 @@ tar zxf machbase-cluster-8.6.0.official-LINUX-X86-64-release-lightweight.tgz -C 
 tar zxf machbase-cluster-8.6.0.official-LINUX-X86-64-release-lightweight.tgz -C ~/warehouse
 ```
 
-### 4. 클러스터 시작
+Coordinator → Deployer → Broker → Warehouse 순으로 시작합니다.
 
 ```bash
-# machclusterctl을 사용하는 경우
-machclusterctl start -f cluster.yaml
-
-# 수동 배포의 경우
 machcoordinatoradmin --startup
 machdeployeradmin --startup
 machcoordinatoradmin --startup-node=192.168.1.11:5301
@@ -58,12 +72,10 @@ machcoordinatoradmin --startup-node=192.168.1.13:5401
 machcoordinatoradmin --startup-node=192.168.1.14:5401
 ```
 
-Coordinator → Deployer → Broker → Warehouse 순으로 시작합니다.
-
 ### 5. 상태 확인
 
 ```bash
-machcoordinatoradmin --cluster-status
+machclusterctl status
 ```
 
 모든 노드가 `normal` 상태이면 업그레이드가 완료된 것입니다.

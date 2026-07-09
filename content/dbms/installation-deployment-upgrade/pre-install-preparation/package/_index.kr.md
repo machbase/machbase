@@ -60,7 +60,8 @@ $MACHBASE_HOME/
 | `csvexport` | CSV 파일 내보내기 |
 | `tagmetaimport` | TAG 메타 데이터 일괄 등록 |
 
-Cluster Edition에는 `machcoordinatoradmin`, `machdeployeradmin` 등의 관리 도구가 추가됩니다.
+Cluster Edition에는 `machclusterctl`, `machcoordinatoradmin`, `machdeployeradmin` 등의 관리 도구가
+추가됩니다.
 
 ## 설정 파일
 
@@ -69,6 +70,7 @@ Cluster Edition에는 `machcoordinatoradmin`, `machdeployeradmin` 등의 관리 
 ```bash
 ls $MACHBASE_HOME/conf/
 # machbase.conf.sample.standard
+# machbase.conf.sample.cluster
 # machbase.conf.sample.edge
 # machloader.conf.sample
 ```

@@ -4,7 +4,8 @@ title: 'Package 등록'
 weight: 20
 ---
 
-Cluster Edition 수동 배포의 첫 번째 단계입니다. 각 노드에 Machbase 패키지를 배포합니다.
+Cluster Edition 수동 배포의 첫 번째 단계입니다. 각 노드에 Machbase 패키지를 배포하고,
+Broker와 Warehouse 설치에 사용할 경량 패키지를 Coordinator에 등록합니다.
 
 ## 패키지 종류
 
@@ -36,6 +37,7 @@ tar zxf machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz -C ~/coordinato
 
 ```bash
 mkdir -p ~/deployer
+scp machbase@배포서버:/path/to/machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz ~/
 tar zxf machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz -C ~/deployer
 ```
 
@@ -46,12 +48,26 @@ tar zxf machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz -C ~/deployer
 ```bash
 # Broker 노드에서
 mkdir -p ~/broker
+scp machbase@배포서버:/path/to/machbase-cluster-8.6.0.official-LINUX-X86-64-release-lightweight.tgz ~/
 tar zxf machbase-cluster-8.6.0.official-LINUX-X86-64-release-lightweight.tgz -C ~/broker
 
 # Warehouse 노드에서
 mkdir -p ~/warehouse
+scp machbase@배포서버:/path/to/machbase-cluster-8.6.0.official-LINUX-X86-64-release-lightweight.tgz ~/
 tar zxf machbase-cluster-8.6.0.official-LINUX-X86-64-release-lightweight.tgz -C ~/warehouse
 ```
+
+## Coordinator에 패키지 등록
+
+Broker와 Warehouse를 Coordinator에서 기동하려면 경량 패키지를 Coordinator에 등록해야 합니다.
+Coordinator 노드에서 다음 명령을 실행합니다.
+
+```bash
+$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --add-package=machbase \
+  --file-name="/home/machbase/machbase-cluster-8.6.0.official-LINUX-X86-64-release-lightweight.tgz"
+```
+
+등록된 패키지는 이후 Broker와 Warehouse를 `--add-node`로 등록할 때 `--package-name=machbase`로 참조합니다.
 
 ## 환경 변수 설정
 

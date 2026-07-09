@@ -4,14 +4,20 @@ title: '최초 설치'
 weight: 30
 ---
 
-`cluster.yaml` 작성과 유효성 검사가 완료되면 클러스터를 설치하고 시작합니다.
+`cluster.yaml` 작성과 유효성 검사가 완료되면 설치 계획을 먼저 확인한 뒤 클러스터를 설치합니다.
 
 ## 1. 클러스터 설치
 
-패키지를 각 노드에 배포하고 초기화합니다.
+패키지를 각 노드에 배포하고 초기화하기 전에 실행 계획과 사전 점검 결과를 확인합니다.
 
 ```bash
-machclusterctl install -f cluster.yaml
+machclusterctl install -f cluster.yaml --dry-run --verbose
+```
+
+문제가 없으면 실제 설치를 실행합니다.
+
+```bash
+machclusterctl install -f cluster.yaml --yes --verbose
 ```
 
 이 명령은 다음을 자동으로 처리합니다.
@@ -23,16 +29,24 @@ machclusterctl install -f cluster.yaml
 
 ## 2. 클러스터 시작
 
-```bash
-machclusterctl start -f cluster.yaml
-```
+`install`은 Coordinator, Deployer, Lookup, Broker, Warehouse를 준비하고 기동합니다. 설치 후 전체
+클러스터를 다시 시작해야 할 때만 다음 명령을 사용합니다.
 
-시작 순서: Coordinator → Deployer → Broker → Warehouse 순으로 자동 진행됩니다.
+```bash
+machclusterctl start
+```
 
 ## 3. 상태 확인
 
 ```bash
-machclusterctl status -f cluster.yaml
+export MACHBASE_COORDINATOR_HOME=/home/machbase/coordinator
+machclusterctl status
+```
+
+한 서버에서 여러 Coordinator 홈을 번갈아 확인할 때는 직접 지정할 수 있습니다.
+
+```bash
+machclusterctl status --coordinator /home/machbase/coordinator
 ```
 
 모든 노드의 상태가 `normal`이어야 합니다.
@@ -62,7 +76,7 @@ machsql -s 192.168.1.11 -u SYS -p MANAGER
 ## 클러스터 종료
 
 ```bash
-machclusterctl stop -f cluster.yaml
+machclusterctl stop
 ```
 
 ---

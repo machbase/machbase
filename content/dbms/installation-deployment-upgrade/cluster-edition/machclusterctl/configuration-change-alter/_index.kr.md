@@ -13,19 +13,26 @@ weight: 40
 필요한 변경사항을 `cluster.yaml`에 반영합니다. 예를 들어 Warehouse 노드를 추가하려면 해당 항목을 추가합니다.
 
 ```yaml
-warehouse:
-  - group: group1
-    nodes:
-      - host: 192.168.1.13
-        ...
-      - host: 192.168.1.14
-        ...
-      # 새로 추가할 노드
-      - host: 192.168.1.17
-        user: machbase
-        home: /home/machbase/warehouse
-        port: 5656
-        cluster_link_port: 5401
+cluster:
+  warehouse_groups:
+    - name: group1
+      nodes:
+        - alias: warehouse-group1-1
+          host: node2
+          deployer: deployer-2
+          ...
+        - alias: warehouse-group1-2
+          host: node3
+          deployer: deployer-3
+          ...
+        # 새로 추가할 노드
+        - alias: warehouse-group1-3
+          host: node4
+          deployer: deployer-4
+          home_path: /home/machbase/warehouse-group1-3
+          cluster_link_port: 5511
+          http_admin_port: 5512
+          service_port: 5510
 ```
 
 ### 2. 유효성 검사
@@ -34,17 +41,25 @@ warehouse:
 machclusterctl validate -f cluster.yaml
 ```
 
-### 3. 변경 적용
+### 3. 실행 계획 확인
 
 ```bash
-machclusterctl apply -f cluster.yaml
+machclusterctl apply -f cluster.yaml --dry-run --verbose
+```
+
+### 4. 변경 적용
+
+```bash
+machclusterctl apply -f cluster.yaml --yes --verbose
+machclusterctl status
 ```
 
 `apply` 명령은 현재 클러스터 상태와 `cluster.yaml`의 차이를 계산하여 필요한 작업만 수행합니다.
 
 ## 노드 제거
 
-`cluster.yaml`에서 해당 노드 항목을 삭제하고 `apply`를 실행합니다. 단, Warehouse 노드 제거 전에 해당 노드에 있는 데이터가 다른 노드에 충분히 복제되어 있는지 확인해야 합니다.
+`cluster.yaml`에서 해당 노드 항목을 삭제하고 `apply`를 실행합니다. 단, Warehouse 노드 제거 전에
+해당 노드에 있는 데이터가 다른 노드에 충분히 복제되어 있는지 확인해야 합니다.
 
 ## 주의사항
 

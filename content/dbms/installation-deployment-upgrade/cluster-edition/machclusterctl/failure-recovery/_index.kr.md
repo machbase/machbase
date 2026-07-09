@@ -11,7 +11,7 @@ weight: 60
 설치 도중 일부 노드에서 실패한 경우 원인을 해결한 후 동일한 명령을 다시 실행합니다. `machclusterctl`은 이미 완료된 노드는 건너뛰고 실패한 노드부터 재개합니다.
 
 ```bash
-machclusterctl install -f cluster.yaml
+machclusterctl install -f cluster.yaml --yes --verbose
 ```
 
 ## 클러스터 전체 초기화 후 재설치
@@ -20,17 +20,17 @@ machclusterctl install -f cluster.yaml
 
 ```bash
 # 클러스터 전체 종료
-machclusterctl stop -f cluster.yaml
+machclusterctl stop
 
 # 클러스터 제거 (데이터 포함)
-machclusterctl uninstall -f cluster.yaml
+machclusterctl destroy -f cluster.yaml --yes
 
 # 재설치
-machclusterctl install -f cluster.yaml
-machclusterctl start -f cluster.yaml
+machclusterctl install -f cluster.yaml --yes --verbose
 ```
 
-`uninstall`은 각 노드의 데이터 디렉터리를 포함하여 삭제합니다. **데이터 복구가 불가능하므로 주의하십시오.**
+`destroy`는 각 노드의 데이터 디렉터리를 포함하여 설치 흔적을 삭제합니다.
+**데이터 복구가 불가능하므로 주의하십시오.**
 
 ## Warehouse 노드 장애 복구
 

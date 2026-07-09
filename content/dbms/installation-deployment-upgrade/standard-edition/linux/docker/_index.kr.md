@@ -21,7 +21,7 @@ docker run -d \
   --name machbase \
   -p 5656:5656 \
   -p 5657:5657 \
-  -v /data/machbase:/home/machbase/machbase_home/dbs \
+  -v /data/machbase:/home/machbase/machbase/dbs \
   machbase/machbase
 ```
 
@@ -71,7 +71,7 @@ docker start machbase
 컨테이너 실행 후 라이선스를 설치하려면 파일을 컨테이너 내부로 복사합니다.
 
 ```bash
-docker cp license.dat machbase:/home/machbase/machbase_home/conf/license.dat
+docker cp license.dat machbase:/home/machbase/machbase/conf/license.dat
 docker restart machbase
 ```
 

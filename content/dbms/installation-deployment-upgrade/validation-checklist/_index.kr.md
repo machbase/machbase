@@ -90,10 +90,12 @@ Warehouse 그룹 내 복제가 정상 동작하는지 간단한 INSERT로 확인
 
 ```sql
 -- Broker를 통해 데이터 입력
-INSERT INTO check_test VALUES (1, NOW);
+CREATE TABLE cluster_check_test (id INTEGER, ts DATETIME);
+INSERT INTO cluster_check_test VALUES (1, NOW);
 
 -- 각 Warehouse 노드에 직접 접속하여 데이터 존재 여부 확인
-SELECT COUNT(*) FROM check_test;
+SELECT COUNT(*) FROM cluster_check_test;
+DROP TABLE cluster_check_test;
 ```
 
 ---

@@ -96,7 +96,9 @@ INSERT INTO test VALUES (1, 3.14);
 SELECT * FROM test;
 ```
 
-## 7. 서버 종료
+## 서버 종료
+
+설치 확인이 끝난 뒤 서버를 중지해야 할 때만 실행합니다.
 
 ```bash
 machadmin -s

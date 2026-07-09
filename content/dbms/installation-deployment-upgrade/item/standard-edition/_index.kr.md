@@ -14,7 +14,7 @@ Standard Edition 업그레이드는 서버를 종료하고 패키지를 교체�
 
 3. **현재 버전 확인**:
    ```bash
-   machadmin --version
+   machbased -v
    ```
 
 ## 업그레이드 절차
@@ -55,7 +55,7 @@ machadmin -u
 ### 5. 버전 확인
 
 ```bash
-machadmin --version
+machbased -v
 
 # machsql에서 확인
 machsql -u SYS -p MANAGER

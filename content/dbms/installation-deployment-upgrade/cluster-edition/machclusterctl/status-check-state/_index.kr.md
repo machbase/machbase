@@ -9,10 +9,16 @@ weight: 50
 ## 상태 조회
 
 ```bash
-machclusterctl status -f cluster.yaml
+machclusterctl status
 ```
 
-또는 Coordinator에 직접 조회합니다.
+`MACHBASE_COORDINATOR_HOME`을 사용하지 않는 환경에서는 Primary Coordinator 홈을 직접 지정합니다.
+
+```bash
+machclusterctl status --coordinator /home/machbase/coordinator
+```
+
+또는 Coordinator 관리 도구로 직접 조회합니다.
 
 ```bash
 machcoordinatoradmin --cluster-status
@@ -52,7 +58,7 @@ machcoordinatoradmin --cluster-status
 
 ## 서버 로그 확인
 
-각 노드의 로그는 해당 노드의 `$MACHBASE_HOME/trc/` 아래에 있습니다.
+각 노드의 로그는 해당 노드의 홈 디렉터리 아래 `trc/`에 있습니다.
 
 ```bash
 tail -f $MACHBASE_HOME/trc/machbase.trc
