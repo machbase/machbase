@@ -43,7 +43,7 @@ TEMP_002,Building-A/F2,STOP
 ## tagmetaimport 사용법
 
 ```bash
-# 기본 사용법
+# sensors TAG 테이블의 메타데이터 로드
 tagmetaimport -d metadata.csv
 
 # 헤더 있는 CSV
@@ -75,6 +75,8 @@ machloader -i -d metadata.csv -t _tag_meta -I
 ```
 
 `tagmetaimport`는 내부적으로 `_tag_meta` 대상 지정과 silent 옵션을 자동으로 처리합니다.
+예제의 논리 TAG 테이블명은 `sensors`이지만, `tagmetaimport` 명령에는 `-t sensors`를
+추가하지 않습니다.
 
 ## SQL INSERT로 대체
 
