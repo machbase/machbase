@@ -10,18 +10,18 @@ weight: 90
 
 | 요구사항 | 권장 SDK | 비고 |
 |----------|----------|------|
-| Append 필요 + Java | **JDBC** (`MachStatement.executeAppendOpen()`) | [JDBC 가이드](../../../application-integration/guide-drivers/jdbc/) |
-| Append 필요 + Python | **machbaseAPI** (`machbase()` 클래스의 `append()`) | [Python 가이드](../../../application-integration/guide-drivers/python/) |
+| Append 필요 + Java | **JDBC** (`MachStatement.executeAppendOpen()`) | [JDBC 가이드](/dbms/application-integration/guide-drivers/#jdbc) |
+| Append 필요 + Python | **machbaseAPI** (`machbase()` 클래스의 `append()`) | [Python 가이드](/dbms/application-integration/guide-drivers/#python) |
 | Append 필요 + Go | **machcli** (native client) | `database/sql`은 Append 미지원 |
-| Append 필요 + .NET | **MachConnector** (`MachAppendWriter`) | [.NET 가이드](../../../application-integration/guide-drivers/net-connector/) |
-| Append 필요 + Node.js | **@machbase/ts-client** | [Node.js 가이드](../../../application-integration/guide-drivers/node-js-typescript/) |
+| Append 필요 + .NET | **MachConnector** (`MachAppendWriter`) | [.NET 가이드](/dbms/application-integration/guide-drivers/#net-connector) |
+| Append 필요 + Node.js | **@machbase/ts-client** | [Node.js 가이드](/dbms/application-integration/guide-drivers/#node-js-typescript) |
 | AUTH KEY 인증 필요 | **JDBC**, **.NET**, **ODBC/CLI** | Python/Go/Node.js는 AUTH KEY 미지원 |
 | RDB 테이블 트랜잭션 필요 | **JDBC**, **.NET**, **ODBC/CLI** | Python/Go/Node.js는 Transaction 미지원 |
-| Go 언어 선호 + Append 필요 | **machcli** (native) | [Go 가이드](../../../application-integration/guide-drivers/go/) |
+| Go 언어 선호 + Append 필요 | **machcli** (native) | [Go 가이드](/dbms/application-integration/guide-drivers/#go) |
 | Go 언어 선호 + 표준 인터페이스 | **database/sql** 드라이버 | Append 불필요한 경우 |
-| 브라우저 / 웹 / 스크립트 | **REST API** (포트 5657, `/machbase` 엔드포인트) | [REST API 가이드](../../../application-integration/rest-api/) |
+| 브라우저 / 웹 / 스크립트 | **REST API** (포트 5657, `/machbase` 엔드포인트) | [REST API 가이드](/dbms/application-integration/rest-api/) |
 | 데이터 탐색 / 보고 | **R + RODBC** | 통계 분석에 적합 |
-| C/C++ 애플리케이션 | **ODBC/CLI** | [ODBC 가이드](../../../application-integration/guide-drivers/cli-odbc/) |
+| C/C++ 애플리케이션 | **ODBC/CLI** | [ODBC 가이드](/dbms/application-integration/guide-drivers/#cli-odbc) |
 
 ## 언어별 권장 SDK 요약
 
@@ -93,6 +93,6 @@ weight: 90
 
 ## 참조
 
-- SDK 지원 범위 전체: [지원 범위 (SDK)](../../../application-integration/support-scope-sdk/)
+- SDK 지원 범위 전체: [지원 범위 (SDK)](/dbms/application-integration/support-scope-sdk/)
 - 기능 지원 매트릭스: [support-matrix](../support-matrix/)
 - 제약 사항: [constraints-index](../constraints-index/)

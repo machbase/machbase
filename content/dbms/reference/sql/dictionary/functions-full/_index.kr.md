@@ -1426,7 +1426,7 @@ NEXTVAL(sequence_column)
 
 - `NEXTVAL`은 `INSERT` 문에서만 사용할 수 있습니다.
 - 인자는 `PROPERTY(SEQUENCE=...)`로 설정된 컬럼이어야 합니다.
-- Sequence 컬럼 생성과 예제는 [Sequence Column](../ddl/#sequence-column)을 참고하십시오.
+- Sequence 컬럼 생성과 예제는 [Sequence Column](/dbms/reference/sql/#sequence-column)을 참고하십시오.
 
 ```sql
 INSERT INTO seq_lookup (id, name) VALUES (NEXTVAL(id), 'sensor-a');

@@ -58,4 +58,4 @@ SELECT rollup_table, interval_time, last_elapsed_msec,
 
 - `INTERVAL_TIME`보다 `LAST_ELAPSED_MSEC`가 크게 나타나면 Rollup이 이전 실행을 마치기 전에 다음 주기가 시작되는 상황일 수 있습니다. 집계 대상 데이터 양 또는 집계 주기를 조정합니다.
 - `ENABLED = 0`이면 Rollup이 비활성화된 상태입니다. `ALTER ROLLUP ... ENABLE` 명령으로 다시 활성화합니다.
-- Rollup 생성과 관리는 [TAG 테이블과 Rollup](../../../core-concepts/tag-time-series/rollup/) 섹션을 참고하십시오.
+- Rollup 생성과 관리는 [TAG 테이블과 Rollup](/dbms/tag-rollup-usage/overview-use-criteria/#rollup) 섹션을 참고하십시오.

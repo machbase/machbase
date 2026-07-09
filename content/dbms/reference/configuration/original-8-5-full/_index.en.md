@@ -2161,7 +2161,7 @@ Sets the total amount of memory usage for all volatile and lookup tables in the 
 
 
 
-Separate from [Property](../property), Property (Cluster) organizes the Property only available in Cluster Edition.
+Separate from [Property](/dbms/reference/configuration/#property), Property (Cluster) organizes the Property only available in Cluster Edition.
 
 # Index
 
@@ -3756,8 +3756,8 @@ In general, a time zone is specified as a string representing a specific time.
 ```
 "YYYY-MM-DD HH24:MI:SS ZZZ(Timezone String)"
 
-Example) 
-"12:06:56.568+01:00"  
+Example)
+"12:06:56.568+01:00"
 "2006.07.10 at 15:08:56 -05:00"
 "09  AM, GMT+09:00"
 ```

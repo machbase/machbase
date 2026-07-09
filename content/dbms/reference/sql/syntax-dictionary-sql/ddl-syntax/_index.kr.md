@@ -456,6 +456,6 @@ DROP RETENTION policy_1d_1h;
 
 ## 관련 문서
 
-- [테이블 유형](../../../table-types/) - LOG, TAG, LOOKUP, VOLATILE, RDB 테이블 특성 및 사용 가이드
-- [TAG 테이블 롤업](../../../table-types/tag-tables/) - 롤업 생성 및 운영 가이드
+- [테이블 유형](/dbms/data-modeling-table-design/) - LOG, TAG, LOOKUP, VOLATILE, RDB 테이블 특성 및 사용 가이드
+- [TAG 테이블 롤업](/dbms/tag-table-usage/create-alter-drop/#original-85-creating-tag-tables) - 롤업 생성 및 운영 가이드
 - [GRANT/REVOKE](../user-auth-syntax/#grant-revoke) - DDL 실행에 필요한 권한 부여

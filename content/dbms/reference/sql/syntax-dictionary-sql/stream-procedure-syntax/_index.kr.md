@@ -119,5 +119,5 @@ SELECT * FROM v$stream;
 
 ## 관련 문서
 
-- [STREAM 처리 모델](/dbms/core-concepts/features-concepts/processing-model-stream/) — 개념 및 사용 사례
+- [STREAM 처리 모델](/dbms/core-concepts/features-concepts/#processing-model-stream) — 개념 및 사용 사례
 - [ROLLUP syntax](../rollup-syntax/) — 자동 집계 메커니즘

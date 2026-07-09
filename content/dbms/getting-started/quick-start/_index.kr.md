@@ -17,7 +17,7 @@ LOG 테이블을 사용합니다. TAG, LOOKUP, RDB 같은 다른 테이블 유�
 - `SYS` 계정과 `MANAGER` 비밀번호로 접속합니다.
 
 서버가 아직 준비되지 않았다면 [설치, 배포, 업그레이드](/dbms/installation-deployment-upgrade/)와
-[Linux Standard Edition 설치](/dbms/installation-deployment-upgrade/standard-edition/linux/)를 먼저
+[Linux Standard Edition 설치](/dbms/installation-deployment-upgrade/standard-edition/#linux)를 먼저
 참고하십시오.
 
 ## 대표 실행 예제

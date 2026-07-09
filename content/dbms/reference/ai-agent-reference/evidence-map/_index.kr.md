@@ -26,7 +26,7 @@ weight: 60
 | 사실 | 근거 (소스) | 비고 |
 |------|------------|------|
 | Go `database/sql` 드라이버: `Begin()` / `BeginTx()` 미구현 | Go 드라이버 소스 코드 | Transaction 시작 불가 |
-| Go `machcli` (native): Append API 지원, Transaction 미지원 | machcli 드라이버 문서 | [Go 드라이버 가이드](../../../application-integration/guide-drivers/go/) |
+| Go `machcli` (native): Append API 지원, Transaction 미지원 | machcli 드라이버 문서 | [Go 드라이버 가이드](/dbms/application-integration/guide-drivers/#go) |
 
 ## Cluster Edition
 
@@ -40,8 +40,8 @@ weight: 60
 
 | 사실 | 근거 (소스) | 비고 |
 |------|------------|------|
-| TAG 테이블 Append가 SQL INSERT보다 빠름 | Append 전용 이진 프로토콜 사용 (SQL 파싱 오버헤드 없음) | [Append 개념](../../../application-integration/concepts-common/append/) |
-| ROLLUP은 집계를 사전 계산하여 조회 속도 향상 | ROLLUP 설계 문서 | [ROLLUP](../../../core-concepts/rollup/) |
+| TAG 테이블 Append가 SQL INSERT보다 빠름 | Append 전용 이진 프로토콜 사용 (SQL 파싱 오버헤드 없음) | [Append 개념](/dbms/application-integration/concepts-common/#append) |
+| ROLLUP은 집계를 사전 계산하여 조회 속도 향상 | ROLLUP 설계 문서 | [ROLLUP](/dbms/tag-rollup-usage/overview-use-criteria/#rollup) |
 
 ## TAG 테이블 DML 제약
 

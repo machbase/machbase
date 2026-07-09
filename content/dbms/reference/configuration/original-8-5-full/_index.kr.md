@@ -1106,7 +1106,7 @@ Unix domain socket 이름을 설정합니다.
 ## property-cl
 
 
-[Property](../property)와 별개로, Cluster Edition 에서만 사용 가능한 Property 를 정리합니다.
+[Property](/dbms/reference/configuration/#property)와 별개로, Cluster Edition 에서만 사용 가능한 Property 를 정리합니다.
 
 # 목차
 - [목차](#목차)

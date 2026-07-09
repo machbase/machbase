@@ -41,5 +41,5 @@ Machbase DBMS에서 성능 문제는 대부분 하나의 공통된 원인에서 
 | [인덱스 튜닝](index-tuning/) | 테이블 타입별 인덱스 전략 |
 | [캐시·메모리 튜닝](cache-tuning-memory/) | RS Cache, PVO Cache, 메모리 설정 |
 | [스토리지·클러스터 튜닝](tuning-storage-cluster/) | 체크포인트, Direct I/O, Cluster Edition |
-| [Collector 수집 성능 튜닝](ingestion-performance-tuning-collector/) | 배치 크기, flush 주기, 병렬 스레드, 수집 모니터링 |
+| [Collector 수집 성능 튜닝](/dbms/performance-tuning/performance-tuning/#ingestion-performance-tuning-collector) | 배치 크기, flush 주기, 병렬 스레드, 수집 모니터링 |
 | [성능 진단 체크리스트](checklist-performance-diagnosis/) | 운영 환경 점검 항목 |

@@ -106,7 +106,7 @@ Tag 테이블의 `BINARY(n)`은 센서 프레임용 고정 길이 변형입니�
 machsql 텍스트 출력은 짧은 입력값에 붙은 뒤쪽 0 패딩을 제외합니다.
 machsql은 `0x` 없는 대문자 헥스로 출력합니다. 이 고정 길이 `BINARY(n)`은
 Tag 테이블에서만 지원됩니다. 자세한 입력 형식은
-[Binary 컬럼](../../table-types/tag-tables/binary-columns/)을 참고하십시오.
+[Binary 컬럼](/dbms/tag-table-usage/table-structure-schema/#original-85-binary-columns)을 참고하십시오.
 
 ### json
 
@@ -142,7 +142,7 @@ Json은 "Key-Value" 쌍으로 구성된 데이터 객체를 텍스트 형식으�
 ## ddl
 
 
-> **참고**: Machbase 8.5 이상에서는 일반 사용자가 이 문서의 `CREATE`/`DROP` 계열 구문을 실행할 때 `MACHBASEDB`에 대한 데이터베이스 권한이 필요할 수 있습니다. 자세한 권한 부여 방법은 [사용자 관리](../user-manage/#grantrevoke)의 `GRANT/REVOKE`를 참고하세요.
+> **참고**: Machbase 8.5 이상에서는 일반 사용자가 이 문서의 `CREATE`/`DROP` 계열 구문을 실행할 때 `MACHBASEDB`에 대한 데이터베이스 권한이 필요할 수 있습니다. 자세한 권한 부여 방법은 [사용자 관리](/dbms/reference/sql/#grantrevoke)의 `GRANT/REVOKE`를 참고하세요.
 
 ## CREATE TABLE
 
@@ -192,7 +192,7 @@ CREATE TAG TABLE tag_distance_meta (name VARCHAR(20) PRIMARY KEY, distance_m LON
 ```
 
 거리축 컬럼은 `DOUBLE`, `LONG`, `ULONG`만 허용합니다. `WITH ROLLUP`은 시간축 Tag 테이블에서만 사용할 수 있습니다.
-TAG 메타데이터의 `JSON` 컬럼과 `JSON INDEX(...)` 선언은 [Tag 메타데이터](../../table-types/tag-tables/tag-metadata) 문서를 참고하십시오.
+TAG 메타데이터의 `JSON` 컬럼과 `JSON INDEX(...)` 선언은 [Tag 메타데이터](/dbms/tag-table-usage/tag-metadata/#original-85-tag-metadata) 문서를 참고하십시오.
 
 #### 테이블 및 컬럼 이름
 
@@ -455,7 +455,7 @@ DROP VIEW v_example;
 ```
 
 `CREATE OR REPLACE VIEW`, `DROP VIEW IF EXISTS`, `SHOW VIEWS`, `M$SYS_VIEWS`,
-성능/제한, Tag / `BINARY` 예제까지 포함한 전체 설명은 [VIEW](../view) 문서를
+성능/제한, Tag / `BINARY` 예제까지 포함한 전체 설명은 [VIEW](/dbms/reference/sql/#view) 문서를
 참조하세요.
 
 ## DROP TABLE
@@ -669,7 +669,7 @@ CREATE INDEX tag_log_kw_idx ON tag_log_kw (left->'$.sensor.name');
 
 문자열 비교 조건은 JSON path 인덱스를 사용할 수 있습니다. 숫자 또는 boolean 의미의 비교 조건은 문자열 정렬과 숫자 정렬이 다를 수 있으므로 JSON path 인덱스 range 조건으로 사용하지 않습니다.
 
-TAGDATA 메타데이터의 JSON path 인덱스 사용법은 [Tag 메타데이터](../../table-types/tag-tables/tag-metadata) 및 [Tag 테이블 인덱스](../../table-types/tag-tables/tag-indexes) 문서를 참고하십시오.
+TAGDATA 메타데이터의 JSON path 인덱스 사용법은 [Tag 메타데이터](/dbms/tag-table-usage/tag-metadata/#original-85-tag-metadata) 및 [Tag 테이블 인덱스](/dbms/tag-table-usage/index-performance/#original-85-tag-indexes) 문서를 참고하십시오.
 
 
 ## DROP INDEX
@@ -995,7 +995,7 @@ ON tag_json_kw (left->'$.metric')
 INTERVAL 1 SEC;
 ```
 
-> Rollup 생성 후 원본 이상 데이터 보정에 따라 기존 집계 결과를 다시 만들어야 하는 경우에는 [Rollup Rebuild 사용자 가이드](../../table-types/tag-tables/rollup-rebuild/)를 참고하십시오.
+> Rollup 생성 후 원본 이상 데이터 보정에 따라 기존 집계 결과를 다시 만들어야 하는 경우에는 [Rollup Rebuild 사용자 가이드](/dbms/tag-rollup-usage/rollup-rebuild/#original-85-rollup-rebuild)를 참고하십시오.
 
 ```sql
 create_conditional_rollup_stmt ::= 'CREATE ROLLUP' rollup_name
@@ -1042,7 +1042,7 @@ Executed successfully
 - 조건부 rollup의 `WHERE`는 `ON/FROM` 문법에서 사용합니다.
 - Custom Rollup의 `WHERE`는 `SELECT` 내부에서만 사용합니다.
 - `INTERVAL ... WHERE ...` 형태의 외부 WHERE는 Custom 문법에서 지원하지 않는다.
-- 자세한 제약/운영 패턴은 [Custom Rollup: 사용자 정의 집계](../../table-types/tag-tables/rollup-custom/)를 참고합니다.
+- 자세한 제약/운영 패턴은 [Custom Rollup: 사용자 정의 집계](/dbms/tag-rollup-usage/custom-rollup/#original-85-rollup-custom)를 참고합니다.
 
 
 ## DROP ROLLUP
@@ -1633,7 +1633,7 @@ FROM v_customer
 WHERE id = 100;
 ```
 
-저장 VIEW의 생성, 삭제, 메타 조회, 성능/제약, Tag / `BINARY` 예제는 [VIEW](../view)
+저장 VIEW의 생성, 삭제, 메타 조회, 성능/제약, Tag / `BINARY` 예제는 [VIEW](/dbms/reference/sql/#view)
 문서를 참조하세요.
 
 ### 조인(INNER JOIN)
@@ -3387,7 +3387,7 @@ Dropped successfully.
 
 시스템 전역 자원을 관리하거나 설정을 변경할 때 사용하는 구문입니다.
 
-> **참고**: Machbase 8.5 이상에서는 일반 사용자가 `ALTER SYSTEM`을 실행하려면 `GRANT ALTER ON machbasedb TO user_name;` 형태의 권한이 필요합니다. 자세한 내용은 [사용자 관리](../user-manage/#grantrevoke)의 `GRANT/REVOKE`를 참고하세요.
+> **참고**: Machbase 8.5 이상에서는 일반 사용자가 `ALTER SYSTEM`을 실행하려면 `GRANT ALTER ON machbasedb TO user_name;` 형태의 권한이 필요합니다. 자세한 내용은 [사용자 관리](/dbms/reference/sql/#grantrevoke)의 `GRANT/REVOKE`를 참고하세요.
 
 ### KILL SESSION
 
@@ -4295,8 +4295,8 @@ DROP TABLE v_customer;
 
 ## 관련 문서
 
-* [DDL](../ddl)
-* [SELECT](../select)
+* [DDL](/dbms/reference/sql/#ddl)
+* [SELECT](/dbms/reference/sql/#select)
 
 ## functions
 
@@ -5722,7 +5722,7 @@ NEXTVAL(sequence_column)
 
 - `NEXTVAL`은 `INSERT` 문에서만 사용할 수 있습니다.
 - 인자는 `PROPERTY(SEQUENCE=...)`로 설정된 컬럼이어야 합니다.
-- Sequence 컬럼 생성과 예제는 [Sequence Column](../ddl/#sequence-column)을 참고하십시오.
+- Sequence 컬럼 생성과 예제는 [Sequence Column](/dbms/reference/sql/#sequence-column)을 참고하십시오.
 
 ```sql
 INSERT INTO seq_lookup (id, name) VALUES (NEXTVAL(id), 'sensor-a');

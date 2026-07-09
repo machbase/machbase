@@ -106,7 +106,7 @@ Metadata reports the declared byte length, while SQL `LENGTH(binary_col)` and
 machsql text output exclude trailing zero padding added for shorter inputs.
 machsql displays uppercase hex without the `0x` prefix. This fixed-length
 `BINARY(n)` is accepted only in Tag tables. For detailed input formats, see
-[Binary Columns](../../table-types/tag-tables/binary-columns/).
+[Binary Columns](/dbms/tag-table-usage/table-structure-schema/#original-85-binary-columns).
 
 ### json
 
@@ -142,7 +142,7 @@ The following table shows the SQL data types and C data types corresponding to t
 ## ddl
 
 
-> **Note**: From Machbase 8.5 or later, a normal user may need database-scoped privileges on `MACHBASEDB` to run the `CREATE` and `DROP` statements described on this page. For privilege details, see [User Management](../user-manage/#grantrevoke).
+> **Note**: From Machbase 8.5 or later, a normal user may need database-scoped privileges on `MACHBASEDB` to run the `CREATE` and `DROP` statements described on this page. For privilege details, see [User Management](/dbms/reference/sql/#grantrevoke).
 
 ## CREATE TABLE
 
@@ -195,7 +195,7 @@ CREATE TAG TABLE tag_distance_meta (name VARCHAR(20) PRIMARY KEY, distance_m LON
 ```
 
 Distance-axis columns allow only `DOUBLE`, `LONG`, and `ULONG`. `WITH ROLLUP` is available only for time-axis tag tables.
-For `JSON` metadata columns and `JSON INDEX(...)` declarations in TAG metadata, see [Tag Metadata](../../table-types/tag-tables/tag-metadata).
+For `JSON` metadata columns and `JSON INDEX(...)` declarations in TAG metadata, see [Tag Metadata](/dbms/tag-table-usage/tag-metadata/#original-85-tag-metadata).
 
 #### Rules for naming tables or columns
 
@@ -439,7 +439,7 @@ DROP VIEW v_example;
 
 For the full description including `CREATE OR REPLACE VIEW`, `DROP VIEW IF EXISTS`,
 `SHOW VIEWS`, `M$SYS_VIEWS`, performance/limits, and Tag / `BINARY` examples,
-see [VIEW](../view).
+see [VIEW](/dbms/reference/sql/#view).
 
 ## DROP TABLE
 
@@ -652,7 +652,7 @@ CREATE INDEX tag_log_kw_idx ON tag_log_kw (left->'$.sensor.name');
 
 String comparison predicates can use JSON path indexes. Predicates with numeric or boolean meaning are not used as JSON path index range predicates because string ordering and numeric ordering can differ.
 
-For TAGDATA metadata JSON path indexes, see [Tag Metadata](../../table-types/tag-tables/tag-metadata) and [Tag Table Indexes](../../table-types/tag-tables/tag-indexes).
+For TAGDATA metadata JSON path indexes, see [Tag Metadata](/dbms/tag-table-usage/tag-metadata/#original-85-tag-metadata) and [Tag Table Indexes](/dbms/tag-table-usage/index-performance/#original-85-tag-indexes).
 
 ## DROP INDEX
 
@@ -1023,7 +1023,7 @@ ON tag_json_kw (left->'$.metric')
 INTERVAL 1 SEC;
 ```
 
-> If corrected source data requires existing rollup results to be rebuilt, see [Rollup Rebuild Guide](../../table-types/tag-tables/rollup-rebuild/).
+> If corrected source data requires existing rollup results to be rebuilt, see [Rollup Rebuild Guide](/dbms/tag-rollup-usage/rollup-rebuild/#original-85-rollup-rebuild).
 
 ```sql
 create_conditional_rollup_stmt ::= 'CREATE ROLLUP' rollup_name
@@ -1070,7 +1070,7 @@ Notes
 - Use conditional rollup `WHERE` with the `ON/FROM` rollup syntax.
 - For Custom Rollup, use `WHERE` only inside the `SELECT`.
 - External `INTERVAL ... WHERE ...` is not supported for Custom Rollup syntax.
-- For full constraints and query patterns, see [Custom Rollup: User-Defined Aggregation](../../table-types/tag-tables/rollup-custom/).
+- For full constraints and query patterns, see [Custom Rollup: User-Defined Aggregation](/dbms/tag-rollup-usage/custom-rollup/#original-85-rollup-custom).
 
 
 ## DROP ROLLUP
@@ -1664,7 +1664,7 @@ WHERE id = 100;
 ```
 
 For creation, deletion, metadata, performance/limits, and Tag / `BINARY` examples,
-see [VIEW](../view).
+see [VIEW](/dbms/reference/sql/#view).
 
 ### JOIN(INNER JOIN)
 
@@ -3424,7 +3424,7 @@ Dropped successfully.
 
 This statement is the syntax for managing system-wide resources or changing settings.
 
-> **Note**: From Machbase 8.5 or later, a normal user must have `ALTER` privilege on `MACHBASEDB` to run `ALTER SYSTEM`. See [User Management](../user-manage/#grantrevoke) for the `GRANT/REVOKE` details.
+> **Note**: From Machbase 8.5 or later, a normal user must have `ALTER` privilege on `MACHBASEDB` to run `ALTER SYSTEM`. See [User Management](/dbms/reference/sql/#grantrevoke) for the `GRANT/REVOKE` details.
 
 ### KILL SESSION
 
@@ -4328,8 +4328,8 @@ In this case the VIEW is not removed and an error is returned.
 
 ## Related Documents
 
-* [DDL](../ddl)
-* [SELECT](../select)
+* [DDL](/dbms/reference/sql/#ddl)
+* [SELECT](/dbms/reference/sql/#select)
 
 ## functions
 
@@ -5758,7 +5758,7 @@ NEXTVAL(sequence_column)
 
 - `NEXTVAL` can be used only in an `INSERT` statement.
 - The argument must be a column configured with `PROPERTY(SEQUENCE=...)`.
-- For sequence column creation and examples, see [Sequence Column](../ddl/#sequence-column).
+- For sequence column creation and examples, see [Sequence Column](/dbms/reference/sql/#sequence-column).
 
 ```sql
 INSERT INTO seq_lookup (id, name) VALUES (NEXTVAL(id), 'sensor-a');

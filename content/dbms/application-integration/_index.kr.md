@@ -29,8 +29,8 @@ Machbase는 다양한 프로그래밍 언어와 프로토콜을 통해 애플리
 
 | 문서 | 내용 |
 |------|------|
-| [연동 방식 선택 가이드](selection-integration-method/selection-guide-integration-method/) | 사용 목적, 언어, 성능 요구사항별 선택 매트릭스 |
-| [SDK/API canonical owner 구분](selection-integration-method/distinction-sdk-api-canonical-owner/) | 각 SDK의 완전한 API 명세가 어느 장에 있는지 안내 |
+| [연동 방식 선택 가이드](/dbms/application-integration/selection-integration-method/#selection-guide-integration-method) | 사용 목적, 언어, 성능 요구사항별 선택 매트릭스 |
+| [SDK/API canonical owner 구분](/dbms/application-integration/selection-integration-method/#distinction-sdk-api-canonical-owner) | 각 SDK의 완전한 API 명세가 어느 장에 있는지 안내 |
 
 ### 공통 연동 개념
 
@@ -38,13 +38,13 @@ Machbase는 다양한 프로그래밍 언어와 프로토콜을 통해 애플리
 
 | 문서 | 내용 |
 |------|------|
-| [연결 문자열과 인증](concepts-common/connection-string-authentication/) | HOST:PORT, SYS/MANAGER, AUTH KEY, connection pool |
-| [타임존 연결 옵션](concepts-common/timezone-connection/) | UTC 내부 저장, 연결 시 timezone 설정, SYSDATE vs NOW |
-| [Prepared statement](concepts-common/prepared-statement/) | SQL 인젝션 방지, 재사용 성능, TAG/LOG 테이블 지원 |
-| [Parameter binding](concepts-common/parameter-binding/) | 위치 바인딩, DATETIME nanosecond 처리, NULL 값 |
-| [트랜잭션 처리](concepts-common/transaction/) | RDB: ACID 완전 지원, TAG/LOG: append-only 비트랜잭션 |
-| [Append API와 Batch INSERT](concepts-common/append-api-batch/) | 고속 비트랜잭션 입력 vs 트랜잭션 기반 배치 INSERT |
-| [오류 처리와 재시도](concepts-common/error-handling-retry/) | 오류 코드, exponential backoff, connection pool 격리 |
+| [연결 문자열과 인증](/dbms/application-integration/concepts-common/#connection-string-authentication) | HOST:PORT, SYS/MANAGER, AUTH KEY, connection pool |
+| [타임존 연결 옵션](/dbms/application-integration/concepts-common/#timezone-connection) | UTC 내부 저장, 연결 시 timezone 설정, SYSDATE vs NOW |
+| [Prepared statement](/dbms/application-integration/concepts-common/#prepared-statement) | SQL 인젝션 방지, 재사용 성능, TAG/LOG 테이블 지원 |
+| [Parameter binding](/dbms/application-integration/concepts-common/#parameter-binding) | 위치 바인딩, DATETIME nanosecond 처리, NULL 값 |
+| [트랜잭션 처리](/dbms/application-integration/concepts-common/#transaction) | RDB: ACID 완전 지원, TAG/LOG: append-only 비트랜잭션 |
+| [Append API와 Batch INSERT](/dbms/application-integration/concepts-common/#append-api-batch) | 고속 비트랜잭션 입력 vs 트랜잭션 기반 배치 INSERT |
+| [오류 처리와 재시도](/dbms/application-integration/concepts-common/#error-handling-retry) | 오류 코드, exponential backoff, connection pool 격리 |
 
 ### 드라이버별 가이드와 REST API
 
@@ -73,7 +73,7 @@ Machbase는 다양한 프로그래밍 언어와 프로토콜을 통해 애플리
 
 처음 연동을 시도한다면 다음 순서를 권장합니다.
 
-1. [연동 방식 선택 가이드](selection-integration-method/selection-guide-integration-method/)에서 환경에 맞는 드라이버를 결정합니다.
-2. [연결 문자열과 인증](concepts-common/connection-string-authentication/)에서 기본 연결 방법을 확인합니다.
-3. 사용 패턴에 따라 [Append API](concepts-common/append-api-batch/) 또는 [Prepared statement](concepts-common/prepared-statement/)를 선택합니다.
+1. [연동 방식 선택 가이드](/dbms/application-integration/selection-integration-method/#selection-guide-integration-method)에서 환경에 맞는 드라이버를 결정합니다.
+2. [연결 문자열과 인증](/dbms/application-integration/concepts-common/#connection-string-authentication)에서 기본 연결 방법을 확인합니다.
+3. 사용 패턴에 따라 [Append API](/dbms/application-integration/concepts-common/#append-api-batch) 또는 [Prepared statement](/dbms/application-integration/concepts-common/#prepared-statement)를 선택합니다.
 4. 14장 레퍼런스에서 해당 드라이버의 상세 API를 참조합니다.

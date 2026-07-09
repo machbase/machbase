@@ -6,8 +6,8 @@ weight: 30
 
 산업 현장에서는 수백~수천 개의 장비가 각기 다른 임계값과 운영 정책을 갖습니다. 이 시나리오는 LOOKUP 테이블로 장비 마스터를 관리하고, TAG 테이블의 센서 데이터와 결합해 임계값 초과 알람을 실시간으로 감지하고 이력을 기록하는 패턴을 안내합니다.
 
-**난이도**: 중급  
-**소요 시간**: 45~60분  
+**난이도**: 중급
+**소요 시간**: 45~60분
 **주요 기능**: LOOKUP 테이블, TAG 테이블, LOG 테이블, JOIN, 임계값 알람
 
 ---
@@ -354,5 +354,5 @@ ORDER BY alarmed_equipment DESC;
 ## 다음 단계
 
 - TAG, LOG, RDB를 함께 조인하는 복합 대시보드는 [TAG + RDB + LOG 조인 대시보드](../join-tag-rdb-log/)를 참고합니다.
-- STREAM으로 알람 감지를 자동화하려면 [STREAM으로 LOG를 TAG로 자동 적재](../stream-log-tag/)를 참고합니다.
+- STREAM으로 알람 감지를 자동화하려면 [STREAM으로 LOG를 TAG로 자동 적재](/dbms/log-table-usage/stream-log-processing/#stream-log-tag)를 참고합니다.
 - 실시간 상태판 구성은 [실시간 상태판 만들기](../state-status-real-time-dashboard/)를 참고합니다.

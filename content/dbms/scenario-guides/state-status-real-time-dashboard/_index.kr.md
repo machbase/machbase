@@ -304,4 +304,4 @@ MAX_SESSION_COUNT = 100
 
 - TAG 테이블 조회 패턴: [../../../core-concepts/data-model](../../../core-concepts/data-model)
 - 통계 가상 테이블(`v$<table>_stat`) 활용은 대량 태그 환경에서 최신값 조회 성능을 크게 향상시킵니다.
-- 상태 알람 자동화는 [../stream-log-tag](../stream-log-tag) 시나리오를 참고하세요.
+- 상태 알람 자동화는 [../stream-log-tag](/dbms/log-table-usage/stream-log-processing/#stream-log-tag) 시나리오를 참고하세요.

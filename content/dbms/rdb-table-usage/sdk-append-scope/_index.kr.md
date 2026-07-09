@@ -3,10 +3,149 @@ title: '8.15 Append API 미지원과 SDK 사용 범위'
 weight: 150
 toc: true
 ---
-
 Append API 미지원과 SDK 사용 범위에 해당하는 세부 문서를 모았습니다.
 
-## 세부 문서
 
-- [SDK 지원 범위](./support-scope-rdb-sdk/)
-- [Append API](./unsupported-rejected-rdb-append-api/)
+<a id="unsupported-rejected-rdb-append-api"></a>
+
+## Append API
+
+RDB 테이블은 Append API를 지원합니다. 단, TAG·LOG 테이블의 Append API와 내부 동작 방식이 다릅니다.
+
+### 지원 현황
+
+| 입력 방식 | RDB 테이블 지원 여부 |
+|---------|-----------------|
+| `INSERT` SQL 문 | O |
+| SDK INSERT (Go/Python/C) | O |
+| **Append API** | **O (트랜잭션 기반)** |
+| machloader CSV 가져오기 | O |
+
+### TAG·LOG Append API와의 차이
+
+| 항목 | TAG·LOG Append | RDB Append |
+|------|---------------|-----------|
+| 내부 구현 | 대용량 최적화 버퍼 | 트랜잭션 기반 |
+| 처리량 | 매우 높음 | 일반 INSERT 수준 |
+| 적합한 용도 | 초고빈도 계측값 | 배치 데이터 로드 |
+
+RDB 테이블의 Append API는 내부적으로 트랜잭션(`qrdBeginStmtTx` / `qrdCommitStmtTx`)으로 처리됩니다. 따라서 TAG·LOG 테이블의 초고속 버퍼 Append와 달리 일반 INSERT와 유사한 성능을 제공합니다.
+
+### SDK Append 예시
+
+```go
+// Go SDK - Append API 사용
+appender, err := conn.Appender(ctx, "orders")
+if err != nil { ... }
+
+appender.Append(1001, "CUST-001", 5, 49.99, "PENDING")
+appender.Append(1002, "CUST-002", 2, 19.99, "PENDING")
+appender.Close()
+```
+
+### 대량 입력 권장 방법
+
+RDB 테이블에 대량 데이터를 삽입할 때는 **배치 INSERT(트랜잭션 활용)**가 더 직관적입니다.
+
+```go
+tx, _ := db.Begin()
+stmt, _ := tx.Prepare("INSERT INTO orders VALUES (?, ?, ?, ?, ?)")
+for _, row := range rows {
+    stmt.Exec(row.OrderID, row.Customer, row.Qty, row.Amount, row.Status)
+}
+tx.Commit()
+```
+
+### machloader 사용
+
+```bash
+# CSV 파일로 대량 삽입
+machloader -i -d orders -f orders.csv
+```
+
+<a id="support-scope-rdb-sdk"></a>
+
+## SDK 지원 범위
+
+RDB 테이블은 Machbase SDK를 통해 다양한 언어에서 접근할 수 있습니다.
+
+### 지원 SDK
+
+| SDK | SELECT | INSERT | UPDATE | DELETE | 트랜잭션 |
+|-----|--------|--------|--------|--------|---------|
+| Go SDK | O | O | O | O | O |
+| Python SDK | O | O | O | O | O |
+| C/C++ SDK | O | O | O | O | O |
+| JDBC | O | O | O | O | O |
+| ODBC | O | O | O | O | O |
+| REST API | O | O | O | O | 제한적 |
+
+### Go SDK 예시
+
+```go
+package main
+
+import (
+    "database/sql"
+    _ "github.com/machbase/neo-client/driver"
+)
+
+func main() {
+    db, _ := sql.Open("machbase", "machbase://SYS:MANAGER@127.0.0.1:5656")
+    defer db.Close()
+
+    // INSERT
+    db.Exec(`INSERT INTO orders VALUES (1001, 'CUST-001', 5, 49.99, 'PENDING')`)
+
+    // UPDATE
+    db.Exec(`UPDATE orders SET status = 'SHIPPED' WHERE order_id = ?`, 1001)
+
+    // SELECT
+    rows, _ := db.Query(`SELECT order_id, customer, amount FROM orders WHERE customer = ?`, "CUST-001")
+    defer rows.Close()
+
+    // DELETE
+    db.Exec(`DELETE FROM orders WHERE order_id = ?`, 1001)
+}
+```
+
+### Python SDK 예시
+
+```python
+import machbase_neo
+
+conn = machbase_neo.connect(host='127.0.0.1', port=5656, user='SYS', password='MANAGER')
+cursor = conn.cursor()
+
+# INSERT
+cursor.execute("INSERT INTO orders VALUES (?, ?, ?, ?, ?)",
+               (1001, 'CUST-001', 5, 49.99, 'PENDING'))
+conn.commit()
+
+# UPDATE
+cursor.execute("UPDATE orders SET status = ? WHERE order_id = ?", ('SHIPPED', 1001))
+conn.commit()
+
+# SELECT
+cursor.execute("SELECT order_id, customer, amount FROM orders WHERE customer = ?", ('CUST-001',))
+rows = cursor.fetchall()
+
+# DELETE
+cursor.execute("DELETE FROM orders WHERE order_id = ?", (1001,))
+conn.commit()
+
+cursor.close()
+conn.close()
+```
+
+### REST API 예시
+
+```bash
+# UPDATE via REST
+curl -X POST http://127.0.0.1:5657/api/v1/query \
+  -H "Content-Type: application/json" \
+  -d '{"q": "UPDATE orders SET status='\''SHIPPED'\'' WHERE order_id=1001"}'
+
+# SELECT via REST
+curl "http://127.0.0.1:5657/api/v1/query?q=SELECT+order_id,customer+FROM+orders+WHERE+customer='\''CUST-001'\''"
+```

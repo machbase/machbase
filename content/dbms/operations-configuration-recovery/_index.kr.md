@@ -23,18 +23,18 @@ weight: 130
 
 서버 프로세스의 생명 주기를 관리합니다. `machadmin` 명령어로 서버를 시작하고 종료하며, 데이터베이스를 생성하거나 삭제합니다. 라이선스 설치와 갱신 절차도 여기에서 설명합니다.
 
-- [서버 시작과 종료](./server-database/start-server/)
-- [데이터베이스 생성과 삭제](./server-database/create-delete-database/)
-- [라이선스 설치와 확인](./server-database/license/)
+- [서버 시작과 종료](/dbms/operations-configuration-recovery/server-database/#start-server)
+- [데이터베이스 생성과 삭제](/dbms/operations-configuration-recovery/server-database/#create-delete-database)
+- [라이선스 설치와 확인](/dbms/operations-configuration-recovery/server-database/#license)
 
 ### 10.2 설정 운영
 
 `$MACHBASE_HOME/conf/machbase.conf` 파일의 구조와 각 파라미터의 의미를 설명합니다. 재시작 없이 즉시 적용할 수 있는 런타임 설정과 재시작이 필요한 정적 설정을 구분하고, 메모리·네트워크·스토리지 튜닝 지침과 타임존 설정 방법을 다룹니다.
 
-- [설정 파일 위치와 적용 절차](./configuration/file-config-configuration/)
-- [Runtime 변경 가능 설정과 재시작 필요 설정](./configuration/alter-start-restart-configuration-runtime/)
-- [주요 설정 파라미터](./configuration/parameters-configuration/)
-- [메모리 설정](./configuration/memory-configuration/)
-- [세션과 네트워크 설정](./configuration/network-session-configuration/)
-- [스토리지와 체크포인트 설정](./configuration/storage-checkpoint-configuration/)
-- [타임존](./configuration/timezone/)
+- [설정 파일 위치와 적용 절차](/dbms/operations-configuration-recovery/configuration/#file-config-configuration)
+- [Runtime 변경 가능 설정과 재시작 필요 설정](/dbms/operations-configuration-recovery/configuration/#alter-start-restart-configuration-runtime)
+- [주요 설정 파라미터](/dbms/operations-configuration-recovery/configuration/#parameters-configuration)
+- [메모리 설정](/dbms/operations-configuration-recovery/configuration/#memory-configuration)
+- [세션과 네트워크 설정](/dbms/operations-configuration-recovery/configuration/#network-session-configuration)
+- [스토리지와 체크포인트 설정](/dbms/operations-configuration-recovery/configuration/#storage-checkpoint-configuration)
+- [타임존](/dbms/operations-configuration-recovery/configuration/#timezone)

@@ -15,8 +15,8 @@ toc: true
 | --- | --- |
 | 산업 IoT 센서, 설비, 계측값 저장 | [TAG 테이블 설계](/dbms/tag-table-usage/) |
 | 로그, 이벤트, 금융 틱 수신 이력 저장 | [LOG 테이블 설계](/dbms/log-table-usage/) |
-| 장비명, 코드, 매핑 정보 관리 | [LOOKUP 설계](/dbms/lookup-table-usage/), RDB 지원 버전에서는 [RDB 설계](/dbms/rdb-table-usage/)와 [LOOKUP과 RDB 비교](/dbms/data-modeling-table-design/table-types-selection-type/comparison-rdb-vs-lookup/) |
-| SQL 문법 확인 | [SQL 레퍼런스](/dbms/reference/sql/), [SQL 입력](/dbms/data-input-load-export/sql/) |
+| 장비명, 코드, 매핑 정보 관리 | [LOOKUP 설계](/dbms/lookup-table-usage/), RDB 지원 버전에서는 [RDB 설계](/dbms/rdb-table-usage/)와 [LOOKUP과 RDB 비교](/dbms/data-modeling-table-design/table-types-selection-type/#comparison-rdb-vs-lookup) |
+| SQL 문법 확인 | [SQL 레퍼런스](/dbms/reference/sql/), [SQL 입력](/dbms/application-integration/data-input-load-export/#sql) |
 | 애플리케이션 연결 | [애플리케이션 연동](/dbms/application-integration/), [드라이버 가이드](/dbms/application-integration/guide-drivers/) |
 | 운영 설정 변경 | [운영, 설정, 복구](/dbms/operations-configuration-recovery/) |
 

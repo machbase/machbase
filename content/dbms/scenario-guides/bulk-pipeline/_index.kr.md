@@ -253,7 +253,7 @@ all_rows = [...]  # 적재할 데이터 목록
 parallel_append(all_rows)
 ```
 
-> **Cluster Edition 고려사항:** Cluster Edition에서는 Broker 노드와 Warehouse 노드가 분리됩니다. machloader/Append 클라이언트는 Broker 서비스 포트로 연결합니다. Warehouse 노드 직접 Append는 지원하지 않습니다. 자세한 내용은 [../../cluster](../../cluster) 시나리오를 참고하세요.
+> **Cluster Edition 고려사항:** Cluster Edition에서는 Broker 노드와 Warehouse 노드가 분리됩니다. machloader/Append 클라이언트는 Broker 서비스 포트로 연결합니다. Warehouse 노드 직접 Append는 지원하지 않습니다. 자세한 내용은 [/dbms/operations-configuration-recovery/cluster/](/dbms/operations-configuration-recovery/cluster/) 시나리오를 참고하세요.
 
 ---
 
@@ -453,6 +453,6 @@ machloader -i -t sensor_log -d /data/sensor.csv -H \
 
 ## 참고
 
-- `_ARRIVAL_TIME` 역순 입력 주의사항: [../../performance-tuning/performance-tuning/performance-tuning-bulk](../../performance-tuning/performance-tuning/performance-tuning-bulk)
-- 대량 입력 성능 튜닝: [../../performance-tuning/performance-tuning/performance-tuning-bulk](../../performance-tuning/performance-tuning/performance-tuning-bulk)
-- Collector를 이용한 파일 수집: [../file-ingestion-collector](../file-ingestion-collector)
+- `_ARRIVAL_TIME` 역순 입력 주의사항: [../../performance-tuning/performance-tuning/performance-tuning-bulk](/dbms/performance-tuning/performance-tuning/#performance-tuning-bulk)
+- 대량 입력 성능 튜닝: [../../performance-tuning/performance-tuning/performance-tuning-bulk](/dbms/performance-tuning/performance-tuning/#performance-tuning-bulk)
+- Collector를 이용한 파일 수집: [/dbms/scenario-guides/file-ingestion-collector/](/dbms/scenario-guides/file-ingestion-collector/)

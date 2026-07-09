@@ -108,4 +108,4 @@ DROP RETENTION ret_1d;
 
 ## 관련 문서
 
-- [Retention Policy 역할](/dbms/core-concepts/features-concepts/role-retention-policy/) — 자동 데이터 삭제 정책 개념
+- [Retention Policy 역할](/dbms/core-concepts/features-concepts/#role-retention-policy) — 자동 데이터 삭제 정책 개념

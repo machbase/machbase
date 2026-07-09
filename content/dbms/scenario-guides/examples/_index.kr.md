@@ -41,7 +41,7 @@ print(db.result())
 db.close()
 ```
 
-상세 내용: [Python 드라이버 가이드](../application-integration/guide-drivers/python/)
+상세 내용: [Python 드라이버 가이드](/dbms/application-integration/guide-drivers/#python)
 
 ## Java (JDBC + Append API)
 
@@ -76,7 +76,7 @@ stmt.executeAppendClose();
 conn.close();
 ```
 
-상세 내용: [JDBC 드라이버 가이드](../application-integration/guide-drivers/jdbc/)
+상세 내용: [JDBC 드라이버 가이드](/dbms/application-integration/guide-drivers/#jdbc)
 
 ## Go (native client)
 
@@ -130,7 +130,7 @@ func main() {
 }
 ```
 
-상세 내용: [Go native client 가이드](../application-integration/guide-drivers/go/go/)
+상세 내용: [Go native client 가이드](/dbms/application-integration/guide-drivers/#go-go)
 
 ## REST API (curl)
 
@@ -148,7 +148,7 @@ curl -s -G 'http://localhost:5657/machbase' \
   -u SYS:MANAGER
 ```
 
-상세 내용: [REST API 가이드](../application-integration/rest-api/)
+상세 내용: [REST API 가이드](/dbms/application-integration/rest-api/)
 
 ## Node.js / TypeScript
 
@@ -175,7 +175,7 @@ console.log(result.data.rows);
 await client.disconnect();
 ```
 
-상세 내용: [Node.js/TypeScript 드라이버 가이드](../application-integration/guide-drivers/node-js-typescript/)
+상세 내용: [Node.js/TypeScript 드라이버 가이드](/dbms/application-integration/guide-drivers/#node-js-typescript)
 
 ## .NET
 
@@ -204,7 +204,7 @@ while (reader.Read())
 conn.Close();
 ```
 
-상세 내용: [.NET Connector 드라이버 가이드](../application-integration/guide-drivers/net-connector/)
+상세 내용: [.NET Connector 드라이버 가이드](/dbms/application-integration/guide-drivers/#net-connector)
 
 ## 언어별 드라이버 선택 가이드
 
@@ -218,4 +218,4 @@ conn.Close();
 | .NET | `MachConnector` | O | O |
 | REST API | HTTP | O | X |
 
-전체 SDK 지원 범위: [SDK별 Append/AUTH KEY/Transaction/Prepare 지원 범위](../application-integration/support-scope-sdk/)
+전체 SDK 지원 범위: [SDK별 Append/AUTH KEY/Transaction/Prepare 지원 범위](/dbms/application-integration/support-scope-sdk/)

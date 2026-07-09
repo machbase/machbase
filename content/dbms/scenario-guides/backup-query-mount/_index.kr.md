@@ -208,6 +208,6 @@ SELECT * FROM v$storage_mount_databases;
 ## 관련 문서
 
 - [백업, 복원, 마운트](../../operations-configuration-recovery/backup-restore-mount/)
-- [데이터베이스 마운트](../../operations-configuration-recovery/backup-restore-mount/database-mount/)
-- [마운트된 데이터베이스 조회](../../operations-configuration-recovery/backup-restore-mount/query-database-mount/)
-- [이상 데이터 정정 후 ROLLUP Rebuild](../correction-abnormal-data-rollup-rebuild/)
+- [데이터베이스 마운트](/dbms/operations-configuration-recovery/backup-restore-mount/#database-mount)
+- [마운트된 데이터베이스 조회](/dbms/operations-configuration-recovery/backup-restore-mount/#query-database-mount)
+- [이상 데이터 정정 후 ROLLUP Rebuild](/dbms/tag-rollup-usage/rollup-rebuild/#correction-abnormal-data-rollup-rebuild)

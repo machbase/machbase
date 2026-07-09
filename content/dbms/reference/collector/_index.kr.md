@@ -46,4 +46,4 @@ Collector 설정은 JSON 형식 파일로 관리합니다. 기본 구조는 다�
 | `target.table` | target | 데이터를 입력할 Machbase 테이블 이름 |
 | `target.server` | target | Machbase 서버 접속 정보 |
 
-Collector 기능의 개념과 운영 가이드는 [데이터 수집](../../data-ingestion/) 섹션을 참고하십시오.
+Collector 기능의 개념과 운영 가이드는 [데이터 수집](/dbms/operations-configuration-recovery/collector/) 섹션을 참고하십시오.

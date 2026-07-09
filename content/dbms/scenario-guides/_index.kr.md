@@ -12,16 +12,16 @@ weight: 150
 
 | # | 시나리오 | 난이도 | 핵심 기능 |
 |---|----------|--------|-----------|
-| 1 | [센서 데이터 저장과 ROLLUP 분석](storage-sensor-data-rollup/) | 초급 | TAG 테이블, ROLLUP |
-| 2 | [로그 데이터 저장과 텍스트 검색](storage-log-text-search-logs/) | 초급 | LOG 테이블, SEARCH |
+| 1 | [센서 데이터 저장과 ROLLUP 분석](/dbms/tag-rollup-usage/patterns-scenarios/#storage-sensor-data-rollup) | 초급 | TAG 테이블, ROLLUP |
+| 2 | [로그 데이터 저장과 텍스트 검색](/dbms/log-table-usage/patterns-scenarios/#storage-log-text-search-logs) | 초급 | LOG 테이블, SEARCH |
 | 3 | [장비 마스터 데이터와 알람 상태 관리](state-master-status-equipment-alarm/) | 중급 | LOOKUP 테이블, JOIN |
 | 4 | [TAG + RDB + LOG 조인 대시보드](join-tag-rdb-log/) | 중급 | 복합 JOIN, 집계 |
 | 5 | [실시간 상태판 만들기](state-status-real-time-dashboard/) | 중급 | STREAM, LOOKUP |
 | 6 | [대량 데이터 적재 파이프라인](bulk-pipeline/) | 중급 | Append API, 배치 |
 | 7 | [Collector로 파일/소켓 데이터 수집하기](file-ingestion-collector/) | 중급 | Collector |
-| 8 | [Fluentd로 로그 파이프라인 연결하기](log-logs-pipeline-connection-fluentd/) | 중급 | Fluentd 플러그인 |
-| 9 | [STREAM으로 LOG를 TAG로 자동 적재](stream-log-tag/) | 고급 | STREAM, 자동화 |
-| 10 | [이상 데이터 정정 후 ROLLUP Rebuild](correction-abnormal-data-rollup-rebuild/) | 고급 | ROLLUP Rebuild |
+| 8 | [Fluentd로 로그 파이프라인 연결하기](/dbms/log-table-usage/fluentd-pipeline/#log-logs-pipeline-connection-fluentd) | 중급 | Fluentd 플러그인 |
+| 9 | [STREAM으로 LOG를 TAG로 자동 적재](/dbms/log-table-usage/stream-log-processing/#stream-log-tag) | 고급 | STREAM, 자동화 |
+| 10 | [이상 데이터 정정 후 ROLLUP Rebuild](/dbms/tag-rollup-usage/rollup-rebuild/#correction-abnormal-data-rollup-rebuild) | 고급 | ROLLUP Rebuild |
 | 11 | [백업 데이터 마운트 후 조회](backup-query-mount/) | 고급 | Backup, Mount |
 | 12 | [Cluster 설치와 확장](cluster/) | 고급 | Cluster Edition |
 | 13 | [애플리케이션 연동 예제](examples/) | 초급~중급 | SDK, REST API |

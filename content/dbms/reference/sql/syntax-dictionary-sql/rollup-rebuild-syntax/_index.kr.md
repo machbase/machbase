@@ -78,4 +78,4 @@ EXEC ROLLUP_REBUILD(
 ## 관련 문서
 
 - [ROLLUP syntax](../rollup-syntax/) — ROLLUP 생성 및 조회 문법
-- [Cluster Edition 제한사항](/dbms/operations-configuration-recovery/cluster/limitations-cluster/) — 에디션별 기능 차이
+- [Cluster Edition 제한사항](/dbms/operations-configuration-recovery/cluster/#limitations-cluster) — 에디션별 기능 차이

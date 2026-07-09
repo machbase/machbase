@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '12.8 성능 진단 체크리스트'
+title: '12.9 성능 진단 체크리스트'
 weight: 80
 ---
 
@@ -36,8 +36,8 @@ ORDER BY login_time DESC;
 EXPLAIN SELECT * FROM sensor_log WHERE device_id = 'dev-01';
 
 -- 시간 범위 조건을 포함한 쿼리 실행 계획
-EXPLAIN SELECT * FROM sensor_log 
-WHERE device_id = 'dev-01' 
+EXPLAIN SELECT * FROM sensor_log
+WHERE device_id = 'dev-01'
   AND _ARRIVAL_TIME BETWEEN TO_DATE('2024-01-01') AND TO_DATE('2024-01-02');
 ```
 
@@ -88,7 +88,7 @@ SELECT cache_count, cache_hit, cache_replaced FROM v$rs_cache_stat;
 
 ```sql
 -- 현재 Result Cache 설정 확인
-SELECT name, value FROM v$property 
+SELECT name, value FROM v$property
 WHERE name LIKE 'RS_CACHE%';
 ```
 
@@ -175,11 +175,11 @@ WHERE s.id = st.sess_id
 ORDER BY s.id, st.id;
 
 -- 2. Append 현황 확인
-SELECT count(*) AS append_session_count 
+SELECT count(*) AS append_session_count
 FROM v$stmt WHERE query LIKE '%APPEND%';
 
 -- 3. Result Cache 히트율 계산
-SELECT 
+SELECT
   cache_count,
   cache_hit,
   cache_replaced,
@@ -187,7 +187,7 @@ SELECT
 FROM v$rs_cache_stat;
 
 -- 4. 프로퍼티 설정 일괄 확인 (체크포인트/캐시 관련)
-SELECT name, value FROM v$property 
+SELECT name, value FROM v$property
 WHERE name IN (
   'DISK_COLUMNAR_TABLE_CHECKPOINT_INTERVAL_SEC',
   'DISK_COLUMNAR_INDEX_CHECKPOINT_INTERVAL_SEC',

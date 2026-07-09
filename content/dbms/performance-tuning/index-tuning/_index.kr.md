@@ -55,7 +55,7 @@ SHOW INDEXGAP;
 
 ## 다음 읽을 내용
 
-- [TAG 인덱스 튜닝](./index-tuning-tag/) — 자동 파티션 인덱스와 METADATA 컬럼 최적화
-- [LOG 인덱스 튜닝](./index-tuning-log/) — LSM, BITMAP, KEYWORD 인덱스 활용 전략
-- [LOOKUP/VOLATILE 인덱스 튜닝](./index-tuning-lookup-volatile/) — PK 기반 인덱스 특성과 한계
-- [RDB 인덱스 튜닝](./index-tuning-rdb/) — B-Tree 인덱스와 PK 설계 패턴
+- [TAG 인덱스 튜닝](/dbms/performance-tuning/index-tuning/#index-tuning-tag) — 자동 파티션 인덱스와 METADATA 컬럼 최적화
+- [LOG 인덱스 튜닝](/dbms/performance-tuning/index-tuning/#index-tuning-log) — LSM, BITMAP, KEYWORD 인덱스 활용 전략
+- [LOOKUP/VOLATILE 인덱스 튜닝](/dbms/performance-tuning/index-tuning/#index-tuning-lookup-volatile) — PK 기반 인덱스 특성과 한계
+- [RDB 인덱스 튜닝](/dbms/performance-tuning/index-tuning/#index-tuning-rdb) — B-Tree 인덱스와 PK 설계 패턴

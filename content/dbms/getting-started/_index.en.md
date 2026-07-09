@@ -32,7 +32,7 @@ and that `machsql` is available in `PATH`. It can be run as user `SYS` with pass
 `MANAGER`.
 If you need to prepare the server first, start from
 [Installation, Deployment, and Upgrade](/dbms/installation-deployment-upgrade/) and
-[Linux Standard Edition installation](/dbms/installation-deployment-upgrade/standard-edition/linux/).
+[Linux Standard Edition installation](/dbms/installation-deployment-upgrade/standard-edition/#linux).
 
 ## Verify the Prerequisites
 

@@ -1,5 +1,0 @@
----
-type: docs
-title: '6.19.2 ROLLUP을 사용해야 하는 경우'
-weight: 10
----

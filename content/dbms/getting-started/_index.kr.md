@@ -11,7 +11,7 @@ Machbase DBMS는 산업 IoT 센서 데이터와 금융 틱 데이터처럼 시�
 
 대량 수집 성능은 TAG/LOG 테이블의 추가 중심(append 중심) 구조와 Append API를 사용할 때 발휘됩니다. 여기서 append는 기존 행을 자주 고치는 방식이 아니라 새 행을 계속 덧붙이는 방식을 뜻합니다. 이 장의 대표 실행 예제는 실습과 소량 입력 확인용이며, 운영 수집 경로는 이후 데이터 입력 문서에서 별도로 다룹니다.
 
-이 장은 Machbase DBMS를 처음 접하는 독자를 위한 안내서입니다. 먼저 Machbase가 어떤 문제를 해결하는지 이해하고, 그다음 `machsql`로 대표 예제 하나를 실행해 서버 접속, 테이블 생성, 데이터 입력, 조회, 정리 흐름을 확인합니다. 대표 예제는 `127.0.0.1:5656`에서 구동 중인 Machbase 서버와 `machsql` 클라이언트를 전제로 작성했으며, `SYS` 계정과 `MANAGER` 비밀번호로 실행할 수 있습니다. 서버가 아직 준비되지 않았다면 [설치, 배포, 업그레이드](/dbms/installation-deployment-upgrade/)와 [Linux Standard Edition 설치](/dbms/installation-deployment-upgrade/standard-edition/linux/)를 먼저 참고하십시오.
+이 장은 Machbase DBMS를 처음 접하는 독자를 위한 안내서입니다. 먼저 Machbase가 어떤 문제를 해결하는지 이해하고, 그다음 `machsql`로 대표 예제 하나를 실행해 서버 접속, 테이블 생성, 데이터 입력, 조회, 정리 흐름을 확인합니다. 대표 예제는 `127.0.0.1:5656`에서 구동 중인 Machbase 서버와 `machsql` 클라이언트를 전제로 작성했으며, `SYS` 계정과 `MANAGER` 비밀번호로 실행할 수 있습니다. 서버가 아직 준비되지 않았다면 [설치, 배포, 업그레이드](/dbms/installation-deployment-upgrade/)와 [Linux Standard Edition 설치](/dbms/installation-deployment-upgrade/standard-edition/#linux)를 먼저 참고하십시오.
 
 ## 실행 전제
 

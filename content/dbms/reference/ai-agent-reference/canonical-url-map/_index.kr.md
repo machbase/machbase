@@ -26,8 +26,8 @@ weight: 20
 | 방법 | 정규 URL |
 |------|----------|
 | Append API (공통 개념) | `/dbms/application-integration/concepts-common/append-api-batch/` |
-| machloader (CSV/파일 입력) | `/dbms/data-input-load-export/file/import-machloader/` |
-| Collector | `/dbms/data-input-load-export/ingestion-collector/` |
+| machloader (CSV/파일 입력) | `/dbms/application-integration/data-input-load-export/#file-import-machloader` |
+| Collector | `/dbms/operations-configuration-recovery/collector/` |
 | Fluentd 플러그인 | `/dbms/application-integration/external-tools/fluentd-plugin/` |
 
 ## 드라이버 가이드
@@ -54,7 +54,7 @@ weight: 20
 | ALTER SYSTEM | `/dbms/reference/sql/syntax-dictionary-sql/system-session-alter-syntax/` |
 | 설정 레퍼런스 | `/dbms/reference/configuration/` |
 | ROLLUP 운영 | `/dbms/tag-rollup-usage/` |
-| STREAM 운영 | `/dbms/query-analysis-automation/automation/stream/` |
+| STREAM 운영 | `/dbms/operations-configuration-recovery/automation-stream/#stream` |
 
 ## 보안
 

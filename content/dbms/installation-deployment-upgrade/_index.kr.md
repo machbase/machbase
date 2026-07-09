@@ -16,7 +16,7 @@ Machbase는 두 가지 에디션을 제공합니다.
 | **Standard Edition** | 단일 노드 | 설치가 간단하며 개발·소규모 운영에 적합 |
 | **Cluster Edition** | 다중 노드 | Coordinator·Deployer·Lookup·Broker·Warehouse 노드로 구성, 대규모 데이터 수집에 적합 |
 
-에디션 선택 기준은 [에디션 차이점](/dbms/core-concepts/concepts-edition/differences-standard-edition-cluster/)을 참고하십시오.
+에디션 선택 기준은 [에디션 차이점](/dbms/core-concepts/concepts-edition/#differences-standard-edition-cluster)을 참고하십시오.
 
 ## 설치 순서
 

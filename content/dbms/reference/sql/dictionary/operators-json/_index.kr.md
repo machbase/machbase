@@ -140,4 +140,4 @@ SELECT ts, data -> 'temperature' AS temp
 | VOLATILE | X | X | JSON 컬럼 생성 불가 |
 | RDB | O | O | 완전 지원 |
 
-자세한 내용은 [JSON 타입의 테이블 타입별 지원 범위](../../../type-data-types-dictionary/table-types-type-support-scope-json/)를 참고하십시오.
+자세한 내용은 [JSON 타입의 테이블 타입별 지원 범위](/dbms/lookup-table-usage/json-column-query/)를 참고하십시오.

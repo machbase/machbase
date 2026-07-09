@@ -59,6 +59,6 @@ weight: 40
 | ODBC/CLI | O | O | O | O |
 | R (RODBC) | X | X | X | X |
 
-> ² Python machbaseAPI는 `%s` 클라이언트 렌더링 방식 사용. 서버 Prepared Statement 미지원.  
-> ³ Go driver (machcli, database/sql 모두): `Begin()` / `BeginTx()` 미구현.  
+> ² Python machbaseAPI는 `%s` 클라이언트 렌더링 방식 사용. 서버 Prepared Statement 미지원.
+> ³ Go driver (machcli, database/sql 모두): `Begin()` / `BeginTx()` 미구현.
 > ⁴ Node.js AUTH KEY: 현재 미지원.

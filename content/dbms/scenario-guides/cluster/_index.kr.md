@@ -126,7 +126,7 @@ machadmin -u  # 장애 노드에서 실행
 machclusterctl status
 ```
 
-자세한 Warehouse 장애 복구 절차는 [Warehouse 상태 복구](../../operations-configuration-recovery/cluster/recovery-state-status-warehouse/)를 참고하세요.
+자세한 Warehouse 장애 복구 절차는 [Warehouse 상태 복구](/dbms/operations-configuration-recovery/cluster/#recovery-state-status-warehouse)를 참고하세요.
 
 ## Cluster Edition 제약사항
 
@@ -140,4 +140,4 @@ Cluster Edition에서는 다음 기능이 지원되지 않습니다.
 | MOUNT / UNMOUNT | X |
 | STREAM / CQL | X |
 
-전체 제한사항 목록은 [Cluster 운영 제한사항](../../operations-configuration-recovery/cluster/limitations-cluster/)을 참고하세요.
+전체 제한사항 목록은 [Cluster 운영 제한사항](/dbms/operations-configuration-recovery/cluster/#limitations-cluster)을 참고하세요.

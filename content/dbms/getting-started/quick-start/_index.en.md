@@ -18,7 +18,7 @@ covered in the table-design chapter.
 
 If the server is not ready yet, start with
 [Installation, Deployment, and Upgrade](/dbms/installation-deployment-upgrade/) and
-[Linux Standard Edition installation](/dbms/installation-deployment-upgrade/standard-edition/linux/).
+[Linux Standard Edition installation](/dbms/installation-deployment-upgrade/standard-edition/#linux).
 
 ## Representative Sample
 

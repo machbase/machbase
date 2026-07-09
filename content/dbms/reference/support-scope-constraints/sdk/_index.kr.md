@@ -27,9 +27,9 @@ Machbase는 다양한 프로그래밍 언어와 프로토콜을 위한 SDK를 �
 
 | 기능 | 참조 페이지 |
 |------|-----------|
-| Append API | [SDK별 APPEND 지원 범위 안내](/dbms/application-integration/support-scope-sdk/support-scope-sdk-append/) |
-| AUTH KEY 인증 | [SDK별 AUTH KEY 지원 범위 안내](/dbms/application-integration/support-scope-sdk/support-scope-sdk-auth-key/) |
-| Transaction / Prepared Statement | [SDK별 transaction / prepare / bind 지원 범위 안내](/dbms/application-integration/support-scope-sdk/support-scope-sdk-transaction-prepare-bind/) |
+| Append API | [SDK별 APPEND 지원 범위 안내](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-append) |
+| AUTH KEY 인증 | [SDK별 AUTH KEY 지원 범위 안내](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-auth-key) |
+| Transaction / Prepared Statement | [SDK별 transaction / prepare / bind 지원 범위 안내](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-transaction-prepare-bind) |
 
 ## 주요 제약 사항
 

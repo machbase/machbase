@@ -1429,7 +1429,7 @@ NEXTVAL(sequence_column)
 
 - `NEXTVAL` can be used only in an `INSERT` statement.
 - The argument must be a column configured with `PROPERTY(SEQUENCE=...)`.
-- For sequence column creation and examples, see [Sequence Column](../ddl/#sequence-column).
+- For sequence column creation and examples, see [Sequence Column](/dbms/reference/sql/#sequence-column).
 
 ```sql
 INSERT INTO seq_lookup (id, name) VALUES (NEXTVAL(id), 'sensor-a');

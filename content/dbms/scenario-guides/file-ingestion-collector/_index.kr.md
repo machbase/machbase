@@ -369,6 +369,6 @@ machcollectoradmin --stop-collector=localhost.file_sensor
 
 ## 참고
 
-- Collector 수집 성능 튜닝: [../../performance-tuning/performance-tuning/ingestion-performance-tuning-collector](../../performance-tuning/performance-tuning/ingestion-performance-tuning-collector)
-- 대량 적재 파이프라인: [../bulk-pipeline](../bulk-pipeline)
-- Fluentd 로그 파이프라인: [../log-logs-pipeline-connection-fluentd](../log-logs-pipeline-connection-fluentd)
+- Collector 수집 성능 튜닝: [../../performance-tuning/performance-tuning/ingestion-performance-tuning-collector](/dbms/performance-tuning/performance-tuning/#ingestion-performance-tuning-collector)
+- 대량 적재 파이프라인: [/dbms/scenario-guides/bulk-pipeline/](/dbms/scenario-guides/bulk-pipeline/)
+- Fluentd 로그 파이프라인: [../log-logs-pipeline-connection-fluentd](/dbms/log-table-usage/fluentd-pipeline/#log-logs-pipeline-connection-fluentd)

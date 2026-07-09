@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '13.8 운영 체크리스트'
+title: '13.11 운영 체크리스트'
 weight: 80
 ---
 
@@ -70,7 +70,7 @@ tail -50 $MACHBASE_COLLECTOR_HOME/trc/machcollector.trc
 machcoordinatoradmin --cluster-status
 ```
 
-비정상 노드(`**unknown**`, `inactive`, `scrapped`)가 있으면 즉시 [Warehouse 상태 복구](../cluster/recovery-state-status-warehouse/) 절차를 진행합니다.
+비정상 노드(`**unknown**`, `inactive`, `scrapped`)가 있으면 즉시 [Warehouse 상태 복구](/dbms/operations-configuration-recovery/cluster/#recovery-state-status-warehouse) 절차를 진행합니다.
 
 ---
 
@@ -175,7 +175,7 @@ SELECT user_id, name, valid_before
 | 메모리 부족 | `free -h` | 캐시 크기 조정, 장기 실행 세션 종료 |
 | 수집 중단 | `machcollectoradmin --list` / Collector 로그 | Collector 재시작 |
 | 쿼리 느림 | `EXPLAIN <쿼리>` | 인덱스 추가, ROLLUP 활용, 쿼리 튜닝 |
-| 클러스터 노드 이탈 | `machcoordinatoradmin --cluster-status` | 노드 재시작 또는 [Warehouse 복구](../cluster/recovery-state-status-warehouse/) |
+| 클러스터 노드 이탈 | `machcoordinatoradmin --cluster-status` | 노드 재시작 또는 [Warehouse 복구](/dbms/operations-configuration-recovery/cluster/#recovery-state-status-warehouse) |
 | 클라이언트 연결 불가 | `machadmin -e` / Broker 상태 | Broker 재시작, 포트·방화벽 확인 |
 | 라이선스 만료 | `SELECT * FROM v$license_info` | 라이선스 갱신 후 서버 재시작 |
 

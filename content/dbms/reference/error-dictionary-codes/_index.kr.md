@@ -51,7 +51,7 @@ Machbase 오류는 machsql, REST API 응답, 드라이버 예외 메시지, 서�
 | `3126` | The requested URL for the REST API is not valid | 유효하지 않은 REST API 엔드포인트 요청 |
 | `3127` | The requested URL for the REST API is not supported | 지원하지 않는 REST API 요청 |
 
-HTTP 상태 코드와 REST API `error_code` 관계는 [REST API 오류 처리](../../application-integration/rest-api/error-handling-rest-api/)를 참고하십시오.
+HTTP 상태 코드와 REST API `error_code` 관계는 [REST API 오류 처리](/dbms/application-integration/rest-api/#error-handling-rest-api)를 참고하십시오.
 
 ## 오류 코드 확인 방법
 
@@ -66,4 +66,4 @@ SELECT name, state, error_msg
  WHERE error_msg IS NOT NULL AND error_msg != '';
 ```
 
-오류 발생 후 원인을 파악하기 어렵다면 [서버 로그 분석](../../operations-configuration-recovery/diagnosis-observability/log-diagnosis-logs/log-server-logs/)과 [장애 징후 확인](../../operations-configuration-recovery/diagnosis-observability/monitoring-capacity/failure/) 섹션을 참고하십시오.
+오류 발생 후 원인을 파악하기 어렵다면 [서버 로그 분석](/dbms/operations-configuration-recovery/diagnosis-observability/#log-diagnosis-logs-log-server-logs)과 [장애 징후 확인](/dbms/operations-configuration-recovery/diagnosis-observability/#monitoring-capacity-failure) 섹션을 참고하십시오.

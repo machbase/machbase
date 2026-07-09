@@ -3,12 +3,793 @@ title: '5.10 TAG 메타데이터'
 weight: 100
 toc: true
 ---
-
 TAG 메타데이터에 해당하는 세부 문서를 모았습니다.
 
-## 세부 문서
 
-- [JSON METADATA 설계](./metadata-design-json/)
-- [METADATA 설계](./metadata-design-tag/)
-- [TAG 테이블 메타데이터 조회](./metadata-query-tag/)
-- [Tag 메타데이터](./original-85-tag-metadata/)
+<a id="original-85-tag-metadata"></a>
+
+## Tag 메타데이터
+
+> **8.5 원문 보강 자료**: 이 문서는 기존 8.5 매뉴얼의 내용을 새 장 구조에 맞춰 보존한 것입니다. Machbase 8.6 기준과 표현이 다른 부분은 같은 절의 최신 리뉴얼 문서를 우선합니다.
+
+### 개요
+
+Tag 메타데이터는 태그의 정적 속성을 저장하는 영역입니다. 센서 위치, 장비 상태, 설치 정보, 외부 식별자, JSON 문서형 속성을 메타데이터에 둘 수 있습니다.
+
+이번 기능으로 다음 작업을 `TAG METADATA` 문법으로 직접 처리할 수 있습니다.
+
+- 메타데이터 전용 조회
+- 메타데이터 조건 기반 `UPDATE` / `DELETE`
+- metadata row 마지막 변경 시각 조회
+- `JSON` 타입 메타데이터 컬럼 선언
+- JSON path 조회와 JSON path 인덱스
+- JSON 문서 일부만 수정하는 부분 갱신
+
+사용자는 내부 저장 테이블을 직접 다룰 필요 없이 `TAG METADATA` 문법만 사용하면 됩니다.
+
+### 메타데이터 컬럼 정의
+
+메타데이터 컬럼은 `CREATE TAG TABLE` 의 `METADATA (...)` 절에서 정의합니다.
+
+```sql
+CREATE TAG TABLE sensors (
+    name VARCHAR(20) PRIMARY KEY,
+    time DATETIME BASETIME,
+    value DOUBLE
+)
+METADATA (
+    location VARCHAR(100),
+    status VARCHAR(20),
+    srcip IPV4
+);
+```
+
+메타데이터 컬럼은 태그 이름별로 1행만 저장됩니다.
+
+### 메타데이터 입력
+
+메타데이터는 `INSERT INTO ... METADATA` 로 입력합니다.
+
+```sql
+INSERT INTO sensors METADATA VALUES (
+    'TEMP_001',
+    'Building-A/F1',
+    'READY',
+    '192.168.0.11'
+);
+```
+
+컬럼 목록을 지정할 수도 있습니다.
+
+```sql
+INSERT INTO sensors METADATA (name, status, srcip, location)
+VALUES ('TEMP_002', 'STOP', '192.168.0.12', 'Building-A/F2');
+```
+
+주의사항:
+
+- `VALUES (...)` 의 순서는 항상 `NAME` 다음에 메타데이터 정의 순서를 따릅니다.
+- 지정하지 않은 메타데이터 컬럼은 `NULL` 로 저장됩니다.
+- 메타데이터 행의 식별자는 항상 `NAME` 입니다.
+- 메타데이터 행이 생성되면 `_LAST_UPDATE_TIME` 이 서버 시각으로 자동 기록됩니다.
+
+### 메타데이터 조회
+
+#### 메타데이터만 조회
+
+메타데이터 전용 조회는 `FROM TAG METADATA` 를 사용합니다.
+
+```sql
+SELECT name, location, status, srcip
+  FROM sensors METADATA
+ ORDER BY name;
+```
+
+이 조회는 태그 이름당 1행을 반환합니다.
+
+```sql
+SELECT *
+  FROM sensors METADATA
+ ORDER BY name;
+```
+
+`SELECT *` 와 `table_alias.*` 는 `NAME` 과 메타데이터 컬럼만 반환합니다.
+
+`_LAST_UPDATE_TIME` 같은 시스템 관리 컬럼은 `SELECT *` 결과에 표시되지 않습니다. 필요한 경우 컬럼명을 명시합니다.
+
+#### 마지막 변경 시각 조회
+
+TAG metadata에는 각 metadata row의 마지막 변경 시각을 나타내는 시스템 관리 컬럼 `_LAST_UPDATE_TIME` 이 있습니다.
+
+`_LAST_UPDATE_TIME` 은 tag data row의 마지막 입력 시각이 아니라, tag metadata row가 생성되거나 실제 metadata 값이 변경된 시각입니다.
+
+##### 조회 방법
+
+`_LAST_UPDATE_TIME` 은 명시적으로 컬럼명을 지정해서 조회합니다.
+
+```sql
+SELECT name, _last_update_time
+  FROM sensors METADATA;
+```
+
+다른 metadata 컬럼과 함께 조회하거나 조건에 사용할 수 있습니다.
+
+```sql
+SELECT name, location, status, _last_update_time
+  FROM sensors METADATA
+ WHERE name = 'TEMP_001';
+```
+
+`SELECT *` 와 `table_alias.*` 결과에는 `_LAST_UPDATE_TIME` 이 표시되지 않습니다.
+
+##### 자동 기록 및 갱신 규칙
+
+metadata row가 새로 생성되면 `_LAST_UPDATE_TIME` 이 자동으로 기록됩니다.
+
+```sql
+INSERT INTO sensors METADATA(name, location, status)
+VALUES('TEMP_003', 'Building-A/F3', 'READY');
+```
+
+사용자 metadata 값이 실제로 변경되면 `_LAST_UPDATE_TIME` 이 갱신됩니다.
+
+```sql
+UPDATE sensors METADATA
+   SET status = 'DONE'
+ WHERE name = 'TEMP_003';
+```
+
+같은 값으로 update하거나 JSON missing path 제거처럼 저장 결과가 바뀌지 않는 update는 실제 변경으로 보지 않습니다. 이 경우 `_LAST_UPDATE_TIME` 은 유지됩니다.
+
+```sql
+UPDATE sensors METADATA
+   SET status = 'DONE'
+ WHERE name = 'TEMP_003';
+```
+
+JSON metadata 컬럼 `info` 가 있는 테이블에서는 존재하지 않는 경로 제거도 저장값을 바꾸지 않으면 no-op으로 처리됩니다.
+
+```sql
+UPDATE sensors METADATA
+   SET info = JSON_REMOVE(info, '$.missing')
+ WHERE name = 'TEMP_003';
+```
+
+##### 직접 입력 및 수정 제한
+
+`_LAST_UPDATE_TIME` 은 시스템 관리 컬럼이므로 사용자가 직접 값을 넣거나 수정할 수 없습니다.
+
+다음 문장은 허용되지 않습니다.
+
+```sql
+INSERT INTO sensors METADATA(name, location, status, _last_update_time)
+VALUES('TEMP_004', 'Building-A/F4', 'READY', now);
+```
+
+```sql
+UPDATE sensors METADATA
+   SET _last_update_time = now
+ WHERE name = 'TEMP_003';
+```
+
+또한 TAG name 컬럼명, TAG metadata 컬럼명, `ALTER TABLE ... METADATA ADD COLUMN` 대상 컬럼명으로 `_LAST_UPDATE_TIME` 을 사용할 수 없습니다. `ALTER TABLE ... METADATA DROP COLUMN` 으로 `_LAST_UPDATE_TIME` 을 삭제할 수도 없습니다.
+
+```sql
+CREATE TAG TABLE invalid_sensor (
+    _last_update_time VARCHAR(128) PRIMARY KEY,
+    time              DATETIME BASETIME,
+    value             DOUBLE
+);
+```
+
+```sql
+CREATE TAG TABLE invalid_sensor_meta (
+    name  VARCHAR(128) PRIMARY KEY,
+    time  DATETIME BASETIME,
+    value DOUBLE
+)
+METADATA (
+    _last_update_time DATETIME
+);
+```
+
+`_LAST_UPDATE_TIME2` 처럼 prefix만 같은 이름은 별도 사용자 컬럼으로 사용할 수 있습니다.
+
+##### 시간 조건 조회 및 자동 인덱스
+
+`_LAST_UPDATE_TIME` 에는 시간 조건 조회를 위한 인덱스가 자동으로 제공됩니다.
+
+```sql
+SELECT name, location, _last_update_time
+  FROM sensors METADATA
+ WHERE _last_update_time >= TO_DATE('2026-06-08 00:00:00')
+ ORDER BY _last_update_time;
+```
+
+따라서 같은 컬럼에 사용자가 별도 인덱스를 중복 생성할 필요가 없습니다.
+
+##### machloader / tagmetaimport 사용 시 주의사항
+
+TAG metadata를 import할 때 입력 파일이나 form 파일에는 `NAME` 과 사용자 metadata 컬럼만 포함합니다. 내부 컬럼인 `_ID` 와 시스템 관리 컬럼 `_LAST_UPDATE_TIME` 은 입력 대상이 아닙니다.
+
+metadata가 `location`, `status` 인 경우 입력 데이터는 다음 형태를 사용합니다.
+
+```text
+TEMP_001,Building-A/F1,READY
+TEMP_002,Building-A/F2,STOP
+```
+
+`_LAST_UPDATE_TIME` 은 import 시 서버가 자동으로 채웁니다.
+
+일반 LOG, LOOKUP, VOLATILE 테이블에서 사용자가 `_LAST_UPDATE_TIME` 이라는 이름의 컬럼을 정의한 경우에는 일반 사용자 컬럼으로 동작합니다. 예약 동작은 TAG metadata 시스템 컬럼에만 적용됩니다.
+
+#### 데이터와 함께 조회
+
+메타데이터 조건으로 시계열 데이터를 조회할 때는 일반 `FROM TAG` 를 사용합니다.
+
+```sql
+SELECT name, status, time, value
+  FROM sensors
+ WHERE status = 'READY'
+ ORDER BY name, time;
+```
+
+이 조회는 데이터 row 기준으로 반환되므로, 같은 tag의 메타데이터 값은 각 데이터 row마다 반복됩니다.
+
+주의사항:
+
+- `FROM TAG METADATA` 에서는 `TIME`, `VALUE` 같은 데이터 컬럼을 조회할 수 없습니다.
+- `FROM TAG` 는 데이터 조회 모드이고, `FROM TAG METADATA` 는 메타데이터 조회 모드입니다.
+- `TAG METADATA` 에서는 내부 컬럼 `_ID`, `_RID` 를 사용할 수 없습니다.
+
+### 메타데이터 수정
+
+메타데이터 수정은 `UPDATE TAG METADATA` 를 사용합니다.
+
+```sql
+UPDATE sensors METADATA
+   SET status = 'DONE',
+       srcip = '10.0.0.20'
+ WHERE name = 'TEMP_001';
+```
+
+메타데이터 조건으로 여러 태그를 한 번에 수정할 수도 있습니다.
+
+```sql
+UPDATE sensors METADATA
+   SET status = 'DONE'
+ WHERE status = 'READY';
+```
+
+주의사항:
+
+- 수정 대상은 `NAME` 과 메타데이터 컬럼입니다.
+- `TIME`, `VALUE` 같은 데이터 컬럼은 `UPDATE ... METADATA` 에서 수정할 수 없습니다.
+- 내부 컬럼은 수정할 수 없습니다.
+- 실제 metadata 값이 바뀐 경우에만 `_LAST_UPDATE_TIME` 이 갱신됩니다.
+
+### 메타데이터 삭제
+
+메타데이터 삭제는 `DELETE FROM TAG METADATA` 를 사용합니다.
+
+특정 태그의 메타데이터를 삭제하려면 `WHERE` 절에서 tag name 조건을 지정합니다.
+
+```sql
+DELETE FROM sensors METADATA
+ WHERE name = 'TEMP_002';
+```
+
+메타데이터 조건으로 여러 태그를 한 번에 삭제할 수도 있습니다.
+
+```sql
+DELETE FROM sensors METADATA
+ WHERE status = 'STOP';
+```
+
+`WHERE` 절을 생략하면 해당 TAG 테이블의 모든 메타데이터를 삭제합니다.
+
+```sql
+DELETE FROM sensors METADATA;
+```
+
+주의사항:
+
+- 삭제 대상 중 하나라도 실제 데이터 row를 가지고 있으면 문장 전체가 실패합니다.
+- 즉, 사용 중인 tag의 메타데이터는 삭제할 수 없습니다.
+- 전체 삭제 시에도 사용 중인 tag가 하나라도 있으면 일부만 삭제하지 않고 문장 전체가 실패합니다.
+
+사용 중인 tag의 메타데이터를 삭제하려면 먼저 해당 tag의 데이터 row를 삭제한 뒤
+메타데이터 삭제를 다시 수행합니다.
+
+```sql
+DELETE FROM sensors
+ WHERE name = 'TEMP_001';
+
+DELETE FROM sensors METADATA;
+```
+
+### JSON 메타데이터 컬럼
+
+메타데이터에 `JSON` 컬럼을 선언할 수 있습니다.
+
+```sql
+CREATE TAG TABLE ships (
+    name VARCHAR(20) PRIMARY KEY,
+    time DATETIME BASETIME,
+    value DOUBLE
+)
+METADATA (
+    status VARCHAR(20),
+    info JSON
+);
+```
+
+JSON 메타데이터 입력 예:
+
+```sql
+INSERT INTO ships METADATA VALUES (
+    'SHIP_001',
+    'READY',
+    '{"name":"alpha","ship":{"status":"READY"}}'
+);
+```
+
+주의사항:
+
+- `JSON` 메타데이터 컬럼은 길이를 지정하지 않습니다.
+- 유효하지 않은 JSON 문자열은 오류가 발생합니다.
+- raw JSON 컬럼 자체에는 자동 인덱스가 생성되지 않습니다.
+
+### JSON path 조회
+
+JSON 메타데이터는 `->` 연산자로 조회할 수 있습니다.
+
+```sql
+SELECT name,
+       info->'$.name',
+       info->'$.ship.status'
+  FROM ships METADATA
+ WHERE info->'$.ship.status' = 'READY'
+ ORDER BY name;
+```
+
+데이터 조회에서도 같은 방식으로 사용할 수 있습니다.
+
+```sql
+SELECT name, time, value
+  FROM ships
+ WHERE info->'$.ship.status' = 'READY'
+ ORDER BY name, time;
+```
+
+#### 경로 표기 규칙
+
+조회와 부분 갱신에서 사용하는 path는 full JSONPath를 사용합니다.
+
+- 일반 key: `$.name`
+- 중첩 key: `$.ship.status`
+- key 이름에 `.` 또는 `-` 가 포함되면 bracket 표기 사용
+
+```sql
+SELECT info->'$[''ship.owner'']'
+  FROM ships METADATA;
+
+SELECT info->'$[''ship-owner'']'
+  FROM ships METADATA;
+```
+
+### JSON path 인덱스
+
+#### 테이블 생성 시 함께 선언
+
+자주 조회하는 JSON path는 메타데이터 정의 시 함께 인덱싱할 수 있습니다.
+
+```sql
+CREATE TAG TABLE ships (
+    name VARCHAR(20) PRIMARY KEY,
+    time DATETIME BASETIME,
+    value DOUBLE
+)
+METADATA (
+    status VARCHAR(20),
+    info JSON INDEX('name', 'ship.status')
+);
+```
+
+`INDEX(...)` 안의 문자열은 다음 규칙으로 해석합니다.
+
+- `'name'` 은 `$.name`
+- `'ship.status'` 는 `$.ship.status`
+- 특수 문자가 있는 key나 복잡한 경로는 full JSONPath를 직접 사용
+
+```sql
+INFO JSON INDEX('$[''ship.owner'']')
+```
+
+#### 생성 후 인덱스 추가
+
+테이블 생성 후에도 JSON path 인덱스를 추가할 수 있습니다.
+
+```sql
+CREATE INDEX idx_ship_owner
+ON ships METADATA (info->'$.owner');
+```
+
+#### 인덱스 삭제
+
+인덱스 이름만으로 삭제합니다.
+
+```sql
+DROP INDEX idx_ship_owner;
+```
+
+생성 시 `INFO JSON INDEX(...)` 로 자동 생성된 인덱스 이름은 `SHOW INDEX` 로 확인하는 것이 가장 안전합니다.
+
+```sql
+SHOW INDEX idx_ship_owner;
+```
+
+#### 인덱스 사용 시 주의사항
+
+현재 JSON path 인덱스는 문자열 비교 중심으로 동작합니다.
+
+```sql
+SELECT name
+  FROM ships METADATA
+ WHERE info->'$.status' = 'READY';
+```
+
+문자열 literal 비교는 인덱스를 사용할 수 있습니다. 반면 숫자 literal 비교는 full scan으로 처리될 수 있습니다.
+
+예:
+
+- `info->'$.num' = '10'` : 인덱스 사용 가능
+- `info->'$.num' = 10` : full scan 가능
+
+### JSON 부분 갱신
+
+JSON 메타데이터는 문서 전체를 다시 쓰지 않고 일부만 갱신할 수 있습니다.
+
+#### JSON_SET
+
+SQL scalar 값을 JSON scalar로 저장합니다.
+
+```sql
+UPDATE ships METADATA
+   SET info = JSON_SET(info, '$.ship.status', 'DONE')
+ WHERE name = 'SHIP_001';
+```
+
+#### JSON_SET_JSON
+
+입력 문자열을 JSON으로 해석해 object 또는 array를 저장합니다.
+
+```sql
+UPDATE ships METADATA
+   SET info = JSON_SET_JSON(info, '$.owner', '{"name":"machbase","team":"db"}')
+ WHERE name = 'SHIP_001';
+```
+
+#### JSON_REMOVE
+
+특정 멤버 또는 하위 경로를 삭제합니다.
+
+```sql
+UPDATE ships METADATA
+   SET info = JSON_REMOVE(info, '$.owner.team')
+ WHERE name = 'SHIP_001';
+```
+
+#### 부분 갱신 규칙
+
+- `JSON_SET(..., path, NULL)` 은 JSON `null` 을 저장합니다.
+- `JSON_SET_JSON(..., path, NULL)` 의 결과는 SQL `NULL` 입니다.
+- JSON 문서 인자가 `NULL` 이면 함수 결과는 SQL `NULL` 입니다.
+- path 가 `NULL` 이거나 빈 문자열이면 오류가 발생합니다.
+- 존재하지 않는 경로에 대한 `JSON_REMOVE` 는 오류가 아니라 no-op 입니다.
+- `JSON_REMOVE(..., '$')` 는 허용되지 않습니다.
+- 부분 갱신은 object 경로 중심으로 지원합니다.
+- array element 경로 갱신 예: `$.items[0]` 는 지원하지 않습니다.
+
+### 전체 예제
+
+```sql
+CREATE TAG TABLE ships (
+    name VARCHAR(20) PRIMARY KEY,
+    time DATETIME BASETIME,
+    value DOUBLE
+)
+METADATA (
+    status VARCHAR(20),
+    srcip IPV4,
+    info JSON INDEX('name', 'ship.status')
+);
+
+INSERT INTO ships METADATA VALUES (
+    'SHIP_001',
+    'READY',
+    '192.168.0.11',
+    '{"name":"alpha","ship":{"status":"READY"}}'
+);
+
+INSERT INTO ships VALUES ('SHIP_001', '2026-04-01 00:00:00', 10.5);
+
+SELECT name, status, info
+  FROM ships METADATA;
+
+SELECT name, time, value
+  FROM ships
+ WHERE info->'$.ship.status' = 'READY';
+
+CREATE INDEX idx_ship_owner
+ON ships METADATA (info->'$.owner');
+
+UPDATE ships METADATA
+   SET info = JSON_SET(info, '$.ship.status', 'DONE')
+ WHERE name = 'SHIP_001';
+
+DROP INDEX idx_ship_owner;
+```
+
+### 요약
+
+- 메타데이터 전용 조회는 `FROM TAG METADATA`
+- 데이터 조회는 `FROM TAG`
+- 메타데이터 수정/삭제는 `UPDATE/DELETE ... METADATA`
+- JSON 메타데이터는 `INFO JSON`
+- `_LAST_UPDATE_TIME` 은 metadata row의 마지막 변경 시각이며 명시적으로 조회할 수 있습니다
+- JSON path 인덱스는 `INFO JSON INDEX(...)` 또는 `CREATE INDEX ... ON TAG METADATA (...)`
+- JSON 부분 갱신은 `JSON_SET`, `JSON_SET_JSON`, `JSON_REMOVE`
+- `_LAST_UPDATE_TIME` 은 서버가 자동 관리하며 standard와 cluster 환경에서 동일하게 동작합니다
+
+<a id="metadata-design-tag"></a>
+
+## METADATA 설계
+
+TAG 테이블은 `METADATA` 절을 사용하여 태그(센서)의 속성 정보를 함께 저장할 수 있습니다. METADATA 컬럼은 태그 이름(`PRIMARY KEY`) 기준으로 관리되며, LOOKUP 테이블처럼 UPDATE/DELETE가 가능합니다.
+
+### METADATA 절 문법
+
+```sql
+CREATE TAG TABLE sensor_meta_data (
+    name   VARCHAR(64) PRIMARY KEY,
+    time   DATETIME    BASETIME,
+    value  DOUBLE
+) METADATA (
+    location  VARCHAR(128),
+    unit      VARCHAR(16),
+    threshold DOUBLE
+);
+```
+
+### METADATA 조회
+
+```sql
+-- 태그와 메타데이터 함께 조회
+SELECT name, time, value, location, unit
+FROM sensor_meta_data
+WHERE name = 'sensor-01'
+  AND time >= NOW - 3600000000000;
+
+-- 메타데이터 조건으로 필터링
+SELECT name, time, value
+FROM sensor_meta_data
+WHERE location = 'Building-A'
+  AND time >= NOW - 86400000000000;
+```
+
+### METADATA 업데이트
+
+```sql
+-- 메타데이터 변경 (태그 속성 갱신)
+UPDATE sensor_meta_data METADATA SET unit = 'Celsius' WHERE name = 'sensor-01';
+UPDATE sensor_meta_data METADATA SET threshold = 80.0 WHERE location = 'Building-A';
+```
+
+### METADATA 삽입
+
+```sql
+-- 태그 데이터 삽입 시 메타데이터 함께 지정
+INSERT INTO sensor_meta_data (name, time, value, location, unit, threshold)
+VALUES ('sensor-01', NOW, 23.5, 'Building-A', 'Celsius', 80.0);
+
+-- 또는 메타데이터 별도 삽입
+INSERT INTO sensor_meta_data METADATA (name, location, unit, threshold)
+VALUES ('sensor-02', 'Building-B', 'Celsius', 75.0);
+```
+
+### 설계 지침
+
+- METADATA 컬럼에는 자주 변경되지 않는 태그 속성(위치, 단위, 임계값 등)을 저장합니다.
+- 계측값(시간에 따라 변하는 값)은 반드시 일반 컬럼에 저장합니다.
+- METADATA 컬럼 수는 10개 내외로 유지하는 것이 권장됩니다.
+
+<a id="metadata-design-json"></a>
+
+## JSON METADATA 설계
+
+METADATA 컬럼이 복잡하거나 유연한 속성 구조가 필요한 경우, JSON 형태로 메타데이터를 저장할 수 있습니다.
+
+### JSON 컬럼 사용
+
+```sql
+CREATE TAG TABLE sensor_json_meta (
+    name   VARCHAR(64) PRIMARY KEY,
+    time   DATETIME    BASETIME,
+    value  DOUBLE
+) METADATA (
+    attributes JSON     -- 유연한 속성 저장
+);
+```
+
+### JSON 삽입
+
+```sql
+INSERT INTO sensor_json_meta METADATA (name, attributes)
+VALUES ('sensor-01', '{"location":"Building-A","floor":3,"unit":"Celsius","dept":"Mfg"}');
+```
+
+### JSON 조회
+
+```sql
+-- JSON 필드 추출
+SELECT name, attributes->'$.location' AS location
+FROM sensor_json_meta METADATA
+WHERE name = 'sensor-01';
+
+-- JSON 조건 필터
+SELECT name
+FROM sensor_json_meta METADATA
+WHERE JSON_EXTRACT_INTEGER(attributes, '$.floor') = 3;
+```
+
+### 일반 METADATA vs JSON METADATA
+
+| 항목 | 일반 METADATA | JSON METADATA |
+|------|--------------|---------------|
+| 스키마 유연성 | 고정 컬럼 | 동적 속성 |
+| 쿼리 편의성 | 컬럼 직접 참조 | `->` 연산자 또는 JSON_EXTRACT 계열 함수 사용 |
+| 성능 | 빠름 | 약간 느림 |
+| 적합한 경우 | 속성이 고정적 | 속성이 가변적 |
+
+### 주의사항
+
+- 자주 조회하는 JSON path에는 METADATA JSON path 인덱스를 생성할 수 있습니다.
+- JSON 필드를 매우 자주 필터링 조건으로 사용한다면, 해당 필드를 별도 METADATA 컬럼으로 분리하는 것도 고려합니다.
+
+<a id="metadata-query-tag"></a>
+
+## TAG 테이블 메타데이터 조회
+
+TAG 테이블은 시계열 데이터를 저장하는 태그 테이블 본체와 별도로 **메타데이터 테이블**을 가집니다. 메타데이터 테이블은 내부적으로 `_tablename_META`라는 이름의 LOOKUP 테이블로 관리되며, 각 태그(센서)에 대한 부가 정보를 저장합니다.
+
+### 메타데이터 테이블 구조
+
+TAG 테이블 생성 시 `METADATA` 절로 메타데이터 컬럼을 정의합니다.
+
+```sql
+CREATE TAG TABLE tag (
+    name     VARCHAR(80) PRIMARY KEY,
+    time     DATETIME BASETIME,
+    value    DOUBLE SUMMARIZED
+) METADATA (
+    location VARCHAR(200),
+    factory  VARCHAR(100),
+    unit     VARCHAR(20)
+);
+```
+
+위 예시에서 메타데이터 테이블은 `tag_meta`(`_TAG_META`)로 자동 생성됩니다.
+
+### 메타데이터 조회
+
+```sql
+-- 전체 태그 메타데이터 조회
+SELECT * FROM tag_meta;
+
+-- 특정 조건으로 필터링
+SELECT name, location, factory
+FROM tag_meta
+WHERE factory = 'factory1';
+
+-- 전체 태그 이름 목록 조회
+SELECT name FROM tag_meta;
+```
+
+### 메타데이터 삽입 및 관리
+
+#### 태그 데이터와 함께 메타데이터 등록
+
+```sql
+-- METADATA 키워드로 태그 삽입 시 메타데이터 동시 등록
+INSERT INTO tag METADATA VALUES ('sensor1', 'factory1', 'building-A', 'celsius');
+INSERT INTO tag METADATA VALUES ('sensor2', 'factory2', 'building-B', 'kPa');
+```
+
+#### 메타데이터만 별도 수정
+
+```sql
+-- 기존 태그의 메타데이터 업데이트
+UPDATE tag_meta SET location = 'building-C' WHERE name = 'sensor1';
+
+-- 메타데이터 직접 삽입
+INSERT INTO tag_meta (name, location, factory, unit)
+VALUES ('sensor3', 'factory1', 'building-A', 'celsius');
+```
+
+### 메타데이터 컬럼 추가
+
+운영 중에 메타데이터 컬럼을 추가할 수 있습니다.
+
+```sql
+ALTER TABLE tag METADATA ADD COLUMN (install_date DATETIME);
+ALTER TABLE tag METADATA ADD COLUMN (manufacturer VARCHAR(100));
+```
+
+> 메타데이터 컬럼 추가는 즉시 반영되며, 기존 행의 신규 컬럼 값은 NULL로 설정됩니다.
+
+### TAG 데이터와 메타데이터 JOIN
+
+```sql
+-- 시계열 데이터에 메타데이터를 결합하여 조회
+SELECT
+    t.time,
+    t.name,
+    t.value,
+    m.location,
+    m.factory
+FROM tag t, tag_meta m
+WHERE t.name = m.name
+  AND t.time >= NOW - 3600000000000
+ORDER BY t.time DESC;
+```
+
+### 메타데이터 조건으로 TAG 데이터 필터링
+
+```sql
+-- 특정 공장의 센서 데이터만 조회
+SELECT t.time, t.name, t.value
+FROM tag t
+WHERE t.name IN (
+    SELECT name FROM tag_meta WHERE factory = 'factory1'
+)
+AND t.time >= NOW - 86400000000000;
+
+-- 특정 위치의 센서 평균값 집계
+SELECT m.location, AVG(t.value) AS avg_value
+FROM tag t, tag_meta m
+WHERE t.name = m.name
+  AND t.time >= NOW - 3600000000000
+GROUP BY m.location;
+```
+
+### 태그 수 및 통계 조회
+
+```sql
+-- 전체 태그(센서) 수
+SELECT COUNT(*) FROM tag_meta;
+
+-- 공장별 센서 수
+SELECT factory, COUNT(*) AS sensor_count
+FROM tag_meta
+GROUP BY factory;
+
+-- 특정 조건에 해당하는 태그 이름 목록
+SELECT name FROM tag_meta
+WHERE location LIKE 'building-A%'
+ORDER BY name;
+```
+
+### 메타데이터 테이블 직접 접근
+
+메타데이터 테이블은 일반 LOOKUP 테이블처럼 직접 접근할 수 있습니다.
+
+```sql
+-- _META 접미사 이름으로 직접 조회 (내부 이름)
+SELECT * FROM _TAG_META;
+
+-- 또는 별칭 이름으로 조회
+SELECT * FROM tag_meta;
+```
+
+> `tag_meta`와 `_TAG_META`는 동일한 테이블을 가리킵니다. 가독성을 위해 `tag_meta` 형식을 사용하는 것을 권장합니다.
