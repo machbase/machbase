@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'SDK 지원 범위'
+title: '8.15.2 SDK 지원 범위'
 weight: 120
 ---
 

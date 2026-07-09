@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '복합 타입 조합 패턴'
+title: '4.3.9 복합 타입 조합 패턴'
 weight: 90
 ---
 

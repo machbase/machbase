@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'JSON Column Limitation'
+title: '9.12.2 JSON Column Limitation'
 weight: 40
 ---
 

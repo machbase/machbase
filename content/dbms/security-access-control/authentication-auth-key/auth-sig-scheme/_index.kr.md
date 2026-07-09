@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'AUTH_SIG_SCHEME'
+title: '14.4.6 AUTH_SIG_SCHEME'
 weight: 60
 ---
 

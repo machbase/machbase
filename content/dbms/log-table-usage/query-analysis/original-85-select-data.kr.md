@@ -1,5 +1,5 @@
 ---
-title : 데이터 검색
+title: '7.5.1 데이터 검색'
 type: docs
 weight: 10
 ---

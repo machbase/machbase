@@ -1,5 +1,5 @@
 ---
-title: 'JOIN과 관계형 조회 설계'
+title: '8.13 JOIN과 관계형 조회 설계'
 weight: 130
 toc: true
 ---

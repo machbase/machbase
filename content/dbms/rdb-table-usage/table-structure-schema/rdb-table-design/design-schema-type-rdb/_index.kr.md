@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '스키마 설계'
+title: '8.2.1.1 스키마 설계'
 weight: 20
 ---
 

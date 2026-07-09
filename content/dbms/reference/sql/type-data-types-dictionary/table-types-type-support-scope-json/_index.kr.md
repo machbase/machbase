@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'JSON 타입의 테이블 타입별 지원 범위'
+title: '17.1.2.1 JSON 타입의 테이블 타입별 지원 범위'
 weight: 10
 ---
 

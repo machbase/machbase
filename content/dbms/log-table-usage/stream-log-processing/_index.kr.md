@@ -1,5 +1,5 @@
 ---
-title: 'STREAM으로 LOG 데이터 처리'
+title: '7.15 STREAM으로 LOG 데이터 처리'
 weight: 150
 toc: true
 ---

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'RDB 테이블 설계'
+title: '8.2.1 RDB 테이블 설계'
 weight: 30
 ---
 

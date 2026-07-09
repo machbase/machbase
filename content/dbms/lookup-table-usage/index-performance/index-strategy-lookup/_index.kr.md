@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '인덱스 전략'
+title: '9.6.3 인덱스 전략'
 weight: 60
 ---
 

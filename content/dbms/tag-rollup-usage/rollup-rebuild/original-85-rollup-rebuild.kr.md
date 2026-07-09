@@ -1,5 +1,5 @@
 ---
-title: 'Rollup Rebuild 사용자 가이드'
+title: '6.15.2 Rollup Rebuild 사용자 가이드'
 type: docs
 weight: 63
 toc: true

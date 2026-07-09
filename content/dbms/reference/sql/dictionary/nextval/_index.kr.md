@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'NEXTVAL 함수'
+title: '17.1.3.6 NEXTVAL 함수'
 weight: 60
 ---
 

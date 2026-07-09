@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'LOOKUP JSON 조건 조회'
+title: '9.12.1 LOOKUP JSON 조건 조회'
 weight: 10
 ---
 

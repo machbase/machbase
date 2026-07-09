@@ -1,5 +1,5 @@
 ---
 type: docs
-title: 'Retention Policy의 역할'
+title: '2.3.3 Retention Policy의 역할'
 weight: 30
 ---

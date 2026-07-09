@@ -1,5 +1,5 @@
 ---
 type: docs
-title: 'Automatic Duplicate Removal'
+title: '5.2.1.5 Automatic Duplicate Removal'
 weight: 90
 ---

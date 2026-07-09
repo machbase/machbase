@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '전체 가상 테이블 레퍼런스'
+title: '17.3.6 전체 가상 테이블 레퍼런스'
 weight: 80
 tocSort: true
 ---

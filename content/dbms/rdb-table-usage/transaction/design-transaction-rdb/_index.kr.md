@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '트랜잭션 설계'
+title: '8.10.1 트랜잭션 설계'
 weight: 50
 ---
 

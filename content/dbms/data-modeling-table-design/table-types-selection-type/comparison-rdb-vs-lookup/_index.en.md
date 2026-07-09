@@ -1,5 +1,5 @@
 ---
 type: docs
-title: 'RDB vs LOOKUP 비교'
+title: '4.1.4 RDB vs LOOKUP 비교'
 weight: 40
 ---

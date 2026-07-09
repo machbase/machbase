@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'YAML 검증'
+title: '3.3.3.2 YAML 검증'
 weight: 20
 toc: true
 ---

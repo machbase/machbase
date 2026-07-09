@@ -1,5 +1,5 @@
 ---
-title: 'Data Input and Mutation'
+title: '9.4 Data Input and Mutation'
 weight: 40
 toc: true
 ---

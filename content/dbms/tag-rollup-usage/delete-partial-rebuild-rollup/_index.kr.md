@@ -1,5 +1,5 @@
 ---
-title: 'ROLLUP 삭제와 부분 재구성'
+title: '6.14 ROLLUP 삭제와 부분 재구성'
 weight: 130
 toc: true
 ---

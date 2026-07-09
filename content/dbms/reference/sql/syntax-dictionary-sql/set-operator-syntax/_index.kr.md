@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'set operator syntax'
+title: '17.1.1.4 set operator syntax'
 weight: 40
 ---
 

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '타입 비교표'
+title: '4.1.3 타입 비교표'
 weight: 30
 ---
 

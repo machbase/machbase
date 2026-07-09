@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'CHECK DISK_USAGE'
+title: '13.3.2 CHECK DISK_USAGE'
 weight: 20
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: 'Fluentd 입력 파이프라인'
+title: '7.14 Fluentd 입력 파이프라인'
 weight: 140
 toc: true
 ---

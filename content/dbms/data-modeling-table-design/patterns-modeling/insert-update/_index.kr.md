@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'INSERT·UPDATE 패턴'
+title: '4.3.7 INSERT·UPDATE 패턴'
 weight: 70
 ---
 

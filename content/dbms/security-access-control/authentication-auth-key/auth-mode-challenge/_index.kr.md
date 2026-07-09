@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'AUTH_MODE=CHALLENGE'
+title: '14.4.4 AUTH_MODE=CHALLENGE'
 weight: 40
 ---
 

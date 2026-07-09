@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'LOOKUP SQL/JSON Support'
+title: '17.8.5 LOOKUP SQL/JSON Support'
 weight: 50
 ---
 

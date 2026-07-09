@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '활용 사례'
+title: '7.9.1 활용 사례'
 weight: 10
 ---
 

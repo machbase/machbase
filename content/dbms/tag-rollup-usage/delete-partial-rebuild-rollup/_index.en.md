@@ -1,5 +1,5 @@
 ---
-title: 'ROLLUP Delete and Partial Rebuild'
+title: '6.14 ROLLUP Delete and Partial Rebuild'
 weight: 130
 toc: true
 ---

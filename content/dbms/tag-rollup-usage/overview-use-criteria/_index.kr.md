@@ -1,5 +1,5 @@
 ---
-title: 'ROLLUP 개요와 사용 기준'
+title: '6.1 ROLLUP 개요와 사용 기준'
 weight: 10
 toc: true
 ---

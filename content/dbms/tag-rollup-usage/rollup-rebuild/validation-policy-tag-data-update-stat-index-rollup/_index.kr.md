@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'TAG data UPDATE와 통계/롤업 영향'
+title: '6.15.1 TAG data UPDATE와 통계/롤업 영향'
 weight: 40
 ---
 

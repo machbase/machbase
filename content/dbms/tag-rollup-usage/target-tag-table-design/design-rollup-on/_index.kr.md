@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'ROLLUP 설계 가이드'
+title: '6.3.1 ROLLUP 설계 가이드'
 weight: 110
 ---
 

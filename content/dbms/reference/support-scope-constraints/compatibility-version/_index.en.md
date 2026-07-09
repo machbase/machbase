@@ -1,5 +1,5 @@
 ---
 type: docs
-title: '버전 및 호환성'
+title: '17.8.11 버전 및 호환성'
 weight: 110
 ---

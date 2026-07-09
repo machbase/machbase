@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '센서별 테이블 생성'
+title: '4.2.2 센서별 테이블 생성'
 weight: 20
 ---
 

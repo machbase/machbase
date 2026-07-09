@@ -1,5 +1,5 @@
 ---
-title: '생성, 변경, 삭제'
+title: '7.3 생성, 변경, 삭제'
 weight: 30
 toc: true
 ---

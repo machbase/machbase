@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'LOOKUP JSON primary key 오류'
+title: '9.8.2 LOOKUP JSON primary key 오류'
 weight: 40
 ---
 

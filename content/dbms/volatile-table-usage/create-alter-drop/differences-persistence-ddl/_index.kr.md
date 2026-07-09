@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '영속성 차이·DDL'
+title: '10.3.2 영속성 차이·DDL'
 weight: 20
 ---
 

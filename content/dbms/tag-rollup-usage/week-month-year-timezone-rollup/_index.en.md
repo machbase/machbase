@@ -1,5 +1,5 @@
 ---
-title: 'Week, Month, Year, and Time Zone Queries'
+title: '6.11 Week, Month, Year, and Time Zone Queries'
 weight: 100
 toc: true
 ---

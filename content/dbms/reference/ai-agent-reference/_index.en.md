@@ -1,5 +1,5 @@
 ---
 type: docs
-title: 'AI Agent Reference'
+title: '17.10 AI Agent Reference'
 weight: 100
 ---

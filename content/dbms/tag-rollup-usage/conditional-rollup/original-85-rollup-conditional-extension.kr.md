@@ -1,5 +1,5 @@
 ---
-title: 'extension.tc 샘플 SQL'
+title: '6.6.2 extension.tc 샘플 SQL'
 type: docs
 weight: 62
 ---

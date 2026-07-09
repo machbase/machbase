@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '장애 징후 확인'
+title: '13.4.4.6 장애 징후 확인'
 weight: 60
 ---
 

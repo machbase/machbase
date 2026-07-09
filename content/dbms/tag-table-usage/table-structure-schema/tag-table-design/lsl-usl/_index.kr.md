@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'LSL·USL 설계'
+title: '5.2.1.6 LSL·USL 설계'
 weight: 110
 ---
 

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '메모리 설정'
+title: '13.2.4 메모리 설정'
 weight: 40
 ---
 

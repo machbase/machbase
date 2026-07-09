@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'JDBC'
+title: '17.7.2 JDBC'
 weight: 20
 toc: true
 ---

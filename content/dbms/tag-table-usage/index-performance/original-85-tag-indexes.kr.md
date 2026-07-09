@@ -1,5 +1,5 @@
 ---
-title: 'Tag 테이블 인덱스'
+title: '5.6.2 Tag 테이블 인덱스'
 type: docs
 weight: 70
 ---

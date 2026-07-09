@@ -1,5 +1,5 @@
 ---
-title: 'Original 8.5 LOG network type'
+title: '7.12.3 Original 8.5 LOG network type'
 type: docs
 weight: 900
 toc: true

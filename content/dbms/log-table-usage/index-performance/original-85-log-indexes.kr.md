@@ -1,5 +1,5 @@
 ---
-title : Log 테이블의 인덱스
+title: '7.6.2 Log 테이블의 인덱스'
 type: docs
 weight: 50
 ---

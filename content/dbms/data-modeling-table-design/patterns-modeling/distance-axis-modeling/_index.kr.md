@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '거리축 모델링'
+title: '4.3.2 거리축 모델링'
 weight: 20
 ---
 

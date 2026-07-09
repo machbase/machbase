@@ -1,5 +1,5 @@
 ---
-title: 'Indexes and Performance'
+title: '7.6 Indexes and Performance'
 weight: 60
 toc: true
 ---

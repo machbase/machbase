@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'LOOKUP 일반 predicate DML 성능 고려사항'
+title: '9.15.2 LOOKUP 일반 predicate DML 성능 고려사항'
 weight: 50
 ---
 

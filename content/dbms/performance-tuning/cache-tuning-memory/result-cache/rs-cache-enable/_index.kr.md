@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'RS_CACHE_ENABLE'
+title: '12.6.1.1 RS_CACHE_ENABLE'
 weight: 10
 ---
 

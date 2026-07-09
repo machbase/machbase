@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '8.5 전체 설정 레퍼런스'
+title: '17.2.6 전체 설정 레퍼런스'
 weight: 95
 tocSort: true
 ---

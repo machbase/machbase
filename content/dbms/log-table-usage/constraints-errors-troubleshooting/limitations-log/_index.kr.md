@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '제약 및 주의사항'
+title: '7.8.1 제약 및 주의사항'
 weight: 60
 ---
 

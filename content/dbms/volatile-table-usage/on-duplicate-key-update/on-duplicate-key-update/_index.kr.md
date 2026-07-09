@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'UPDATE와 ON DUPLICATE KEY UPDATE'
+title: '10.13.1 UPDATE와 ON DUPLICATE KEY UPDATE'
 weight: 60
 ---
 

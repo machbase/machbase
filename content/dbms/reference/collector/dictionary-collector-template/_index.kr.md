@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'Collector template 사전'
+title: '17.5.1 Collector template 사전'
 weight: 10
 ---
 

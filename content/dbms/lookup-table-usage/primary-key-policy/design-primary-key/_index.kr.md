@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'PRIMARY KEY 설계'
+title: '9.10.1 PRIMARY KEY 설계'
 weight: 20
 ---
 

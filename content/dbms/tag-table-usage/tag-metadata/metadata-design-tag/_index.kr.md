@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'METADATA 설계'
+title: '5.10.2 METADATA 설계'
 weight: 40
 ---
 

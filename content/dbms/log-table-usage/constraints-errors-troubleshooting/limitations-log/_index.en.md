@@ -1,5 +1,5 @@
 ---
 type: docs
-title: 'LOG 제한사항'
+title: '7.8.1 LOG 제한사항'
 weight: 60
 ---

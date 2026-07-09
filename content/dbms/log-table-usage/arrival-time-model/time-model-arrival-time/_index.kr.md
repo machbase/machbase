@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '_arrival_time 시간 모델'
+title: '7.10.1 _arrival_time 시간 모델'
 weight: 20
 ---
 

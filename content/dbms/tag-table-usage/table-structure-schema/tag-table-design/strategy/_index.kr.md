@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '스토리지 전략'
+title: '5.2.1.4 스토리지 전략'
 weight: 90
 ---
 

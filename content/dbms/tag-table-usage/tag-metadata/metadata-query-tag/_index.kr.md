@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'TAG 테이블 메타데이터 조회'
+title: '5.10.4 TAG 테이블 메타데이터 조회'
 weight: 60
 ---
 

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'LOOKUP Predicate DELETE'
+title: '9.13.1 LOOKUP Predicate DELETE'
 weight: 10
 ---
 

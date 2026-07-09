@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '다음에 읽을 문서 선택하기'
+title: '1.4 다음에 읽을 문서 선택하기'
 weight: 40
 toc: true
 ---

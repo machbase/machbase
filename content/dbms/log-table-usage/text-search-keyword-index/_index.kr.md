@@ -1,5 +1,5 @@
 ---
-title: '텍스트 검색과 KEYWORD 인덱스'
+title: '7.11 텍스트 검색과 KEYWORD 인덱스'
 weight: 110
 toc: true
 ---

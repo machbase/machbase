@@ -1,5 +1,5 @@
 ---
-title: '활용 패턴과 시나리오'
+title: '7.9 활용 패턴과 시나리오'
 weight: 90
 toc: true
 ---

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'FLUSH RESULT_CACHE'
+title: '13.3.7 FLUSH RESULT_CACHE'
 weight: 70
 ---
 

@@ -1,5 +1,5 @@
 ---
 type: docs
-title: 'RDB 트랜잭션/잠금 충돌'
+title: '8.11.1 RDB 트랜잭션/잠금 충돌'
 weight: 40
 ---

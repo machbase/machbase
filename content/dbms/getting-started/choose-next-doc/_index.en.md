@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'Choose the Next Document'
+title: '1.4 Choose the Next Document'
 weight: 40
 toc: true
 ---

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '함수 사전'
+title: '17.1.3 함수 사전'
 weight: 30
 ---
 

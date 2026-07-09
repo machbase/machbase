@@ -1,5 +1,5 @@
 ---
-title: 'RDB 인덱스와 JSON path 인덱스'
+title: '8.12 RDB 인덱스와 JSON path 인덱스'
 weight: 120
 toc: true
 ---

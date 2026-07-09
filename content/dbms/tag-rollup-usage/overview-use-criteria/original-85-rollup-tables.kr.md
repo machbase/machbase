@@ -1,5 +1,5 @@
 ---
-title : '집계용 롤업 테이블'
+title: '6.1.2 집계용 롤업 테이블'
 type: docs
 weight: 60
 description: '태그 테이블과 롤업 테이블의 생성, 조회, JSON SUMMARIZED 집계, FIRST/LAST, 시간 단위별 그룹핑 방법을 설명합니다.'

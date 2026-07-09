@@ -1,5 +1,5 @@
 ---
-title: 'RDB Indexes and JSON Path Indexes'
+title: '8.12 RDB Indexes and JSON Path Indexes'
 weight: 120
 toc: true
 ---

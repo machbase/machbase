@@ -1,5 +1,5 @@
 ---
-title: '잠금, 충돌, busy timeout'
+title: '8.11 잠금, 충돌, busy timeout'
 weight: 110
 toc: true
 ---

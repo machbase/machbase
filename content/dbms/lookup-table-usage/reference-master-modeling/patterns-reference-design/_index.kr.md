@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '참조 설계 패턴'
+title: '9.14.1 참조 설계 패턴'
 weight: 50
 ---
 

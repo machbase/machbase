@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'ROLLUP 삭제·부분 재구성 차이'
+title: '6.14.1 ROLLUP 삭제·부분 재구성 차이'
 weight: 130
 ---
 

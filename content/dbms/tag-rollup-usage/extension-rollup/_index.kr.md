@@ -1,5 +1,5 @@
 ---
-title: '확장 ROLLUP'
+title: '6.8 확장 ROLLUP'
 weight: 70
 toc: true
 ---

@@ -1,5 +1,5 @@
 ---
-title: 'VARCHAR 저장소 최적화'
+title: '5.2.4 VARCHAR 저장소 최적화'
 type: docs
 weight: 100
 ---

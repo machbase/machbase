@@ -1,5 +1,5 @@
 ---
-title: 'Table Structure and Schema'
+title: '8.2 Table Structure and Schema'
 weight: 20
 toc: true
 ---

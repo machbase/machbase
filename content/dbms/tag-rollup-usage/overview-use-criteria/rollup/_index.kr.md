@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'ROLLUP 개념'
+title: '6.1.1 ROLLUP 개념'
 weight: 10
 ---
 

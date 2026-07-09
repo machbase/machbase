@@ -1,5 +1,5 @@
 ---
 type: docs
-title: 'STREAM procedure syntax'
+title: '17.1.1.18 STREAM procedure syntax'
 weight: 180
 ---

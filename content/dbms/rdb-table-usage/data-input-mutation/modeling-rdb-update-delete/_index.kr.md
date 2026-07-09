@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'UPDATE·DELETE 설계'
+title: '8.4.1 UPDATE·DELETE 설계'
 weight: 60
 ---
 

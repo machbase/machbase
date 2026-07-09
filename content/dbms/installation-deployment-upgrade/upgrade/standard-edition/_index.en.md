@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'Standard Edition Upgrade'
+title: '3.4.1 Standard Edition Upgrade'
 weight: 10
 toc: true
 draft: true

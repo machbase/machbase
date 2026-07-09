@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'REST API 연동'
+title: '11.4 REST API 연동'
 weight: 40
 ---
 

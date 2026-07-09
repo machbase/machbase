@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'Coordinator / Deployer 설치'
+title: '3.3.4.2 Coordinator / Deployer 설치'
 weight: 20
 toc: true
 draft: true

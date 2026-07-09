@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '권한 진단 체크리스트'
+title: '14.3.6 권한 진단 체크리스트'
 weight: 70
 ---
 

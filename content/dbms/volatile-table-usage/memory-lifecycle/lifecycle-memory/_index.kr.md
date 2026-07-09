@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '메모리 생명주기'
+title: '10.10.1 메모리 생명주기'
 weight: 30
 ---
 

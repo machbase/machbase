@@ -1,5 +1,5 @@
 ---
-title: '메모리 생명주기'
+title: '10.10 메모리 생명주기'
 weight: 100
 toc: true
 ---

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'SELECT 힌트 사전'
+title: '17.1.5 SELECT 힌트 사전'
 weight: 50
 ---
 

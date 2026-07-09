@@ -1,5 +1,5 @@
 ---
-title: '개요와 사용 기준'
+title: '7.1 개요와 사용 기준'
 weight: 10
 toc: true
 ---

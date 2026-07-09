@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '기본 명령 치트시트'
+title: '1.3 기본 명령 치트시트'
 weight: 30
 toc: true
 ---

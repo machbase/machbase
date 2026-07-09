@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'JSON METADATA 설계'
+title: '5.10.3 JSON METADATA 설계'
 weight: 50
 ---
 

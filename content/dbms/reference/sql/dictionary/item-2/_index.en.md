@@ -1,5 +1,5 @@
 ---
 type: docs
-title: '날짜/시간 함수'
+title: '17.1.3.5 날짜/시간 함수'
 weight: 50
 ---

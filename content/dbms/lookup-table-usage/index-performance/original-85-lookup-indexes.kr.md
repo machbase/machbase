@@ -1,5 +1,5 @@
 ---
-title : Lookup 인덱스 생성 및 관리
+title: '9.6.2 Lookup 인덱스 생성 및 관리'
 type: docs
 weight: 50
 ---

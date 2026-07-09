@@ -1,5 +1,5 @@
 ---
-title: 'ROLLUP Query Syntax'
+title: '6.5 ROLLUP Query Syntax'
 weight: 40
 toc: true
 ---

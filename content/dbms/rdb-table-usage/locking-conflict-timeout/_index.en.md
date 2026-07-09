@@ -1,5 +1,5 @@
 ---
-title: 'Locks, Conflicts, and Busy Timeout'
+title: '8.11 Locks, Conflicts, and Busy Timeout'
 weight: 110
 toc: true
 ---

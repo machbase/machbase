@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'PRIMARY KEY·보조 인덱스 전략'
+title: '8.12.1 PRIMARY KEY·보조 인덱스 전략'
 weight: 30
 ---
 

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '.NET Connector'
+title: '17.7.5 .NET Connector'
 weight: 50
 toc: true
 ---

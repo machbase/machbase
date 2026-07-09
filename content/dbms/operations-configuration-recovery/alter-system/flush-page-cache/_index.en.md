@@ -1,5 +1,5 @@
 ---
 type: docs
-title: 'FLUSH PAGE_CACHE'
+title: '13.3.10 FLUSH PAGE_CACHE'
 weight: 100
 ---

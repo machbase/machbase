@@ -1,5 +1,5 @@
 ---
-title : 간단한 Join
+title: '7.5.3 간단한 Join'
 type: docs
 weight: 40
 ---

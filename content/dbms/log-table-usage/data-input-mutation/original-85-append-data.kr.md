@@ -1,5 +1,5 @@
 ---
-title : Append
+title: '7.4.2 Append'
 type: docs
 weight: 20
 ---

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'Complete Virtual Table Reference'
+title: '17.3.6 Complete Virtual Table Reference'
 weight: 80
 tocSort: true
 ---

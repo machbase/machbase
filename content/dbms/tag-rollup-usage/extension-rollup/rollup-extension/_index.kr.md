@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '확장 ROLLUP (EXTENSION)'
+title: '6.8.1 확장 ROLLUP (EXTENSION)'
 weight: 20
 ---
 

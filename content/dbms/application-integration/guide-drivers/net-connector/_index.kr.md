@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '.NET Connector'
+title: '11.3.5 .NET Connector'
 weight: 50
 ---
 

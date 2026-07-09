@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'ALTER'
+title: '14.3.3.3 ALTER'
 weight: 30
 ---
 

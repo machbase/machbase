@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '10-Minute Quick Start'
+title: '1.2 10-Minute Quick Start'
 weight: 20
 toc: true
 ---

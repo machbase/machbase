@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '시계열 데이터 RDB 오용'
+title: '4.2.5 시계열 데이터 RDB 오용'
 weight: 50
 ---
 

@@ -1,5 +1,5 @@
 ---
 type: docs
-title: '타임존 연결 옵션'
+title: '11.2.2 타임존 연결 옵션'
 weight: 20
 ---

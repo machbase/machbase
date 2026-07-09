@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'RDB 기능 지원표'
+title: '17.8.3 RDB 기능 지원표'
 weight: 30
 ---
 

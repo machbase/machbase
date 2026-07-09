@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'ROLLUP 활용 튜닝'
+title: '6.17.1 ROLLUP 활용 튜닝'
 weight: 60
 ---
 

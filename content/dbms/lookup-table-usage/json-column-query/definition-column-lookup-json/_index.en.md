@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'LOOKUP JSON Column Limitation'
+title: '9.12.3 LOOKUP JSON Column Limitation'
 weight: 60
 ---
 

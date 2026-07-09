@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'RDB 인덱스 튜닝'
+title: '8.6.1 RDB 인덱스 튜닝'
 weight: 40
 ---
 

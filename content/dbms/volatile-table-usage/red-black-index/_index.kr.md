@@ -1,5 +1,5 @@
 ---
-title: 'Red-Black 트리 인덱스'
+title: '10.12 Red-Black 트리 인덱스'
 weight: 120
 toc: true
 ---

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '운영 주의사항'
+title: '6.16.1 운영 주의사항'
 weight: 150
 ---
 

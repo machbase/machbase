@@ -1,5 +1,5 @@
 ---
 type: docs
-title: 'Collector regex/options 사전'
+title: '17.5.3 Collector regex/options 사전'
 weight: 30
 ---

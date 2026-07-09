@@ -1,5 +1,5 @@
 ---
-title: 'Custom Rollup: 사용자 정의 집계'
+title: '6.7.1 Custom Rollup: 사용자 정의 집계'
 type: docs
 weight: 62
 ---

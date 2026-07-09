@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '데이터 손실 위험'
+title: '10.11.1 데이터 손실 위험'
 weight: 70
 ---
 

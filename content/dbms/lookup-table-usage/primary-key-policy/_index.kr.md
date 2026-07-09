@@ -1,5 +1,5 @@
 ---
-title: 'PRIMARY KEY 정책'
+title: '9.10 PRIMARY KEY 정책'
 weight: 100
 toc: true
 ---

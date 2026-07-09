@@ -1,5 +1,5 @@
 ---
-title : Volatile 인덱스 생성 및 관리
+title: '10.6.1 Volatile 인덱스 생성 및 관리'
 type : docs
 weight: 50
 ---

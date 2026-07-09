@@ -1,5 +1,5 @@
 ---
-title: 'LOOKUP 권한과 predicate DML 성능'
+title: '9.15 LOOKUP 권한과 predicate DML 성능'
 weight: 150
 toc: true
 ---

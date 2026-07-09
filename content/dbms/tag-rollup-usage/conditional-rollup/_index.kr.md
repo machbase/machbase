@@ -1,5 +1,5 @@
 ---
-title: '조건 ROLLUP'
+title: '6.6 조건 ROLLUP'
 weight: 50
 toc: true
 ---

@@ -1,5 +1,5 @@
 ---
-title : Lookup 데이터 조회
+title: '9.5.1 Lookup 데이터 조회'
 type: docs
 weight: 30
 ---

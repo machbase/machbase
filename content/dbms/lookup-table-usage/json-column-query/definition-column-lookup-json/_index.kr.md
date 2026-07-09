@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'LOOKUP JSON 컬럼 제약'
+title: '9.12.3 LOOKUP JSON 컬럼 제약'
 weight: 60
 ---
 

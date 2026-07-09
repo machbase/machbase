@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '전체 함수 레퍼런스'
+title: '17.1.3.7 전체 함수 레퍼런스'
 weight: 70
 tocSort: true
 ---

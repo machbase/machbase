@@ -1,5 +1,5 @@
 ---
 type: docs
-title: '/machbase append API'
+title: '17.6.2 /machbase append API'
 weight: 20
 ---

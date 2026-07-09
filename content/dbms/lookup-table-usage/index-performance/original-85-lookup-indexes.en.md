@@ -1,5 +1,5 @@
 ---
-title: 'Original 8.5 LOOKUP indexes'
+title: '9.6.2 Original 8.5 LOOKUP indexes'
 type: docs
 weight: 900
 toc: true

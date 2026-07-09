@@ -1,5 +1,5 @@
 ---
-title: 'Binary 컬럼'
+title: '5.2.3 Binary 컬럼'
 type: docs
 weight: 95
 toc: true

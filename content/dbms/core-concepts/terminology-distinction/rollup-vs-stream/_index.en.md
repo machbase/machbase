@@ -1,5 +1,5 @@
 ---
 type: docs
-title: 'ROLLUP vs STREAM'
+title: '2.5.1 ROLLUP vs STREAM'
 weight: 10
 ---

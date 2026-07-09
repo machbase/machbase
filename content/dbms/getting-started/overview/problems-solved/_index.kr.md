@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'Machbase가 해결하는 문제'
+title: '1.1.2 Machbase가 해결하는 문제'
 weight: 20
 toc: true
 ---

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'JOIN·메타데이터 설계'
+title: '4.3.8 JOIN·메타데이터 설계'
 weight: 80
 ---
 

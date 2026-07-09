@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '전문 검색 설계'
+title: '7.11.3 전문 검색 설계'
 weight: 40
 ---
 

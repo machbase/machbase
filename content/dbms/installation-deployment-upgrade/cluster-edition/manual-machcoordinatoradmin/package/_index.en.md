@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'Package 준비와 등록'
+title: '3.3.4.1 Package 준비와 등록'
 weight: 10
 toc: true
 draft: true

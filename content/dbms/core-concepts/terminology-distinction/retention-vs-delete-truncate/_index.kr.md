@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'Retention vs DELETE / TRUNCATE'
+title: '2.5.2 Retention vs DELETE / TRUNCATE'
 weight: 20
 ---
 

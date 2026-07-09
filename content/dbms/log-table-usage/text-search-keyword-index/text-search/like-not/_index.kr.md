@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'LIKE / NOT LIKE'
+title: '7.11.1.3 LIKE / NOT LIKE'
 weight: 30
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: 'JSON SUMMARIZED ROLLUP'
+title: '6.9 JSON SUMMARIZED ROLLUP'
 weight: 80
 toc: true
 ---

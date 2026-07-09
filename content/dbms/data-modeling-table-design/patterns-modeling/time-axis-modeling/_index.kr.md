@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '시간축 모델링'
+title: '4.3.1 시간축 모델링'
 weight: 10
 ---
 

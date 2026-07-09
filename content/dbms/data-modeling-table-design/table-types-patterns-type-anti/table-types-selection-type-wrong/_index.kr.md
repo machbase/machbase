@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '잘못된 타입 선택'
+title: '4.2.3 잘못된 타입 선택'
 weight: 30
 ---
 

@@ -1,5 +1,5 @@
 ---
 type: docs
-title: 'Cluster 운영'
+title: '13.7 Cluster 운영'
 weight: 70
 ---

@@ -1,6 +1,6 @@
 ---
 type: docs
-title : Log 테이블 생성 및 관리
+title: '7.3.1 Log 테이블 생성 및 관리'
 weight: 10
 ---
 

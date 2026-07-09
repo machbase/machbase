@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'UPDATE·DELETE 조건 설계'
+title: '9.13.3 UPDATE·DELETE 조건 설계'
 weight: 80
 ---
 

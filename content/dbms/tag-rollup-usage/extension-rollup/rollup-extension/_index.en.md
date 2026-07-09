@@ -1,5 +1,5 @@
 ---
 type: docs
-title: 'WITH ROLLUP EXTENSION'
+title: '6.8.1 WITH ROLLUP EXTENSION'
 weight: 30
 ---

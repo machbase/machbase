@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'MOUNT TABLE / UMOUNT TABLE 비공개 또는 미지원 범위'
+title: '13.6.11 MOUNT TABLE / UMOUNT TABLE 비공개 또는 미지원 범위'
 weight: 120
 ---
 

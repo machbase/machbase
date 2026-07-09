@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'Windows 패키지 설치'
+title: '3.2.2.2 Windows 패키지 설치'
 weight: 20
 toc: true
 draft: true

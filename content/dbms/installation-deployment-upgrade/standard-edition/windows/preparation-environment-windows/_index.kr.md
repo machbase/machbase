@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'Windows 환경 준비'
+title: '3.2.2.1 Windows 환경 준비'
 weight: 10
 toc: true
 ---

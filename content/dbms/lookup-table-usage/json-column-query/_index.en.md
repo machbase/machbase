@@ -1,5 +1,5 @@
 ---
-title: 'JSON Column Constraints and Queries'
+title: '9.12 JSON Column Constraints and Queries'
 weight: 120
 toc: true
 ---

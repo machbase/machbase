@@ -1,5 +1,5 @@
 ---
-title : Log 데이터 삭제
+title: '7.7.1 Log 데이터 삭제'
 type: docs
 weight: 40
 ---

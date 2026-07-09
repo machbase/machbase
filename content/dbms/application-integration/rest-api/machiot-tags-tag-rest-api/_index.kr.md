@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'TAG 테이블 REST 조회'
+title: '11.4.4 TAG 테이블 REST 조회'
 weight: 40
 ---
 

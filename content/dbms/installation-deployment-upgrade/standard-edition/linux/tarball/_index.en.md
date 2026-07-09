@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'Tarball 설치'
+title: '3.2.1.2 Tarball 설치'
 weight: 20
 toc: true
 draft: true

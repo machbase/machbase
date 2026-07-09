@@ -1,5 +1,5 @@
 ---
-title: 'FIRST / LAST 함수'
+title: '6.10 FIRST / LAST 함수'
 weight: 90
 toc: true
 ---

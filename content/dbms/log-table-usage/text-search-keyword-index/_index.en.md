@@ -1,5 +1,5 @@
 ---
-title: 'Text Search and KEYWORD Index'
+title: '7.11 Text Search and KEYWORD Index'
 weight: 110
 toc: true
 ---

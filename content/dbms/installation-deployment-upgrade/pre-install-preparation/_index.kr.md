@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '설치 전 준비'
+title: '3.1 설치 전 준비'
 weight: 10
 toc: true
 ---

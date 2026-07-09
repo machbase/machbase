@@ -1,5 +1,5 @@
 ---
-title : 시계열 데이터 검색
+title: '7.5.2 시계열 데이터 검색'
 type: docs
 weight: 20
 ---

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'Parameter binding'
+title: '11.2.4 Parameter binding'
 weight: 40
 ---
 

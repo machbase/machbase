@@ -1,5 +1,5 @@
 ---
-title: 'Red-Black Tree Index'
+title: '10.12 Red-Black Tree Index'
 weight: 120
 toc: true
 ---

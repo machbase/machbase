@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'Standard Edition 업그레이드'
+title: '3.4.1 Standard Edition 업그레이드'
 weight: 10
 toc: true
 ---

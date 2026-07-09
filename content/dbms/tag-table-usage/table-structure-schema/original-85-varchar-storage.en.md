@@ -1,5 +1,5 @@
 ---
-title: 'Original 8.5 TAG varchar storage'
+title: '5.2.4 Original 8.5 TAG varchar storage'
 type: docs
 weight: 900
 toc: true

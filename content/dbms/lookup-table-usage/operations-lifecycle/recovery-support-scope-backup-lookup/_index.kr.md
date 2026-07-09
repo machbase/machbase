@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '백업·복구 지원 범위'
+title: '9.7.1 백업·복구 지원 범위'
 weight: 90
 ---
 

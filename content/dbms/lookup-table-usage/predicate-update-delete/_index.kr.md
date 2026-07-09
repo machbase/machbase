@@ -1,5 +1,5 @@
 ---
-title: '일반 predicate UPDATE/DELETE'
+title: '9.13 일반 predicate UPDATE/DELETE'
 weight: 130
 toc: true
 ---

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'REGEXP / NOT REGEXP'
+title: '7.12.1.1 REGEXP / NOT REGEXP'
 weight: 10
 ---
 

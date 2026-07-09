@@ -1,5 +1,5 @@
 ---
-title: 'ROLLUP 제약과 Cluster Edition 지원 범위'
+title: '6.18 ROLLUP 제약과 Cluster Edition 지원 범위'
 weight: 170
 toc: true
 ---

@@ -1,5 +1,5 @@
 ---
-title: '데이터 입력과 변경'
+title: '9.4 데이터 입력과 변경'
 weight: 40
 toc: true
 ---

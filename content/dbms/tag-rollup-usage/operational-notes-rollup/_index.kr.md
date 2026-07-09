@@ -1,5 +1,5 @@
 ---
-title: 'ROLLUP 운영 주의사항'
+title: '6.16 ROLLUP 운영 주의사항'
 weight: 150
 toc: true
 ---

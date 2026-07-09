@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'RS Cache 프로퍼티 사전'
+title: '17.2.3 RS Cache 프로퍼티 사전'
 weight: 30
 ---
 

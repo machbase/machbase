@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'LOOKUP 일반 predicate UPDATE/DELETE 범위가 클 때'
+title: '9.8.1 LOOKUP 일반 predicate UPDATE/DELETE 범위가 클 때'
 weight: 30
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: 'Original 8.5 LOG indexes'
+title: '7.6.2 Original 8.5 LOG indexes'
 type: docs
 weight: 900
 toc: true

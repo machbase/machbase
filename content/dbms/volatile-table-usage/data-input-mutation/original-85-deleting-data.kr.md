@@ -1,5 +1,5 @@
 ---
-title : Volatile 데이터 삭제
+title: '10.4.2 Volatile 데이터 삭제'
 type : docs
 weight: 40
 ---

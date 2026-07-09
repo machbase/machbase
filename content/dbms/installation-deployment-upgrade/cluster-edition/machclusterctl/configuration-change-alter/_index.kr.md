@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '구성 변경 적용'
+title: '3.3.3.5 구성 변경 적용'
 weight: 50
 toc: true
 ---

@@ -1,5 +1,5 @@
 ---
-title: 'Memory Lifecycle'
+title: '10.10 Memory Lifecycle'
 weight: 100
 toc: true
 ---

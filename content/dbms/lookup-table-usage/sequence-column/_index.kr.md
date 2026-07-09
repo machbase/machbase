@@ -1,5 +1,5 @@
 ---
-title: 'SEQUENCE 컬럼'
+title: '9.11 SEQUENCE 컬럼'
 weight: 110
 toc: true
 ---

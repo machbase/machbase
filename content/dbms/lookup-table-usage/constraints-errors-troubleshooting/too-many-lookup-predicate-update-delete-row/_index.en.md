@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'Large LOOKUP Predicate UPDATE/DELETE Range'
+title: '9.8.1 Large LOOKUP Predicate UPDATE/DELETE Range'
 weight: 30
 ---
 

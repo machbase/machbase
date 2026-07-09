@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'Problems Machbase Solves'
+title: '1.1.2 Problems Machbase Solves'
 weight: 20
 toc: true
 ---

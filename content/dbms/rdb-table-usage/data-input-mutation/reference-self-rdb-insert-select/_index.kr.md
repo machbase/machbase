@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '자기 참조·INSERT SELECT'
+title: '8.4.2 자기 참조·INSERT SELECT'
 weight: 80
 ---
 

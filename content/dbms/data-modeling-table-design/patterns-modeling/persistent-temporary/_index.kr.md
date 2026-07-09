@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '영속·임시 혼합 패턴'
+title: '4.3.6 영속·임시 혼합 패턴'
 weight: 60
 ---
 

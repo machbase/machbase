@@ -1,5 +1,5 @@
 ---
 type: docs
-title: '계정 관리'
+title: '14.2 계정 관리'
 weight: 20
 ---

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'Go'
+title: '17.7.6 Go'
 weight: 60
 toc: true
 ---

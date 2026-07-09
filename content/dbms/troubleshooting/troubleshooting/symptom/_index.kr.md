@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '증상 확인'
+title: '16.1.1 증상 확인'
 weight: 10
 ---
 

@@ -1,5 +1,5 @@
 ---
 type: docs
-title: 'REGEXP_LIKE'
+title: '7.12.1.2 REGEXP_LIKE'
 weight: 20
 ---

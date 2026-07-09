@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'LOOKUP 일반 조건식 DELETE'
+title: '9.13.1 LOOKUP 일반 조건식 DELETE'
 weight: 10
 ---
 

@@ -1,5 +1,5 @@
 ---
 type: docs
-title: '타임존'
+title: '13.2.7 타임존'
 weight: 70
 ---

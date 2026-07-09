@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'LOOKUP Predicate DML Performance Considerations'
+title: '9.15.2 LOOKUP Predicate DML Performance Considerations'
 weight: 50
 ---
 

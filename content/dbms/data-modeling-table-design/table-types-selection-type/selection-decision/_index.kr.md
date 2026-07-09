@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '타입 선택 결정 가이드'
+title: '4.1.2 타입 선택 결정 가이드'
 weight: 20
 ---
 

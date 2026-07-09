@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'UPDATE and DELETE Predicate Design'
+title: '9.13.3 UPDATE and DELETE Predicate Design'
 weight: 80
 ---
 

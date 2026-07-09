@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'LOOKUP Predicate UPDATE'
+title: '9.13.2 LOOKUP Predicate UPDATE'
 weight: 50
 ---
 

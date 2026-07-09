@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'Append API와 Batch API'
+title: '11.2.6 Append API와 Batch API'
 weight: 60
 ---
 

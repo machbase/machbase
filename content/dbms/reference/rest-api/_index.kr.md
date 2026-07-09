@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'REST API 레퍼런스'
+title: '17.6 REST API 레퍼런스'
 weight: 60
 ---
 

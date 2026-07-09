@@ -1,5 +1,5 @@
 ---
-title: '트랜잭션'
+title: '8.10 트랜잭션'
 weight: 100
 toc: true
 ---

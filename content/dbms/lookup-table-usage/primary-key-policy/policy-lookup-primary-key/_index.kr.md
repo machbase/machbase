@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'PRIMARY KEY 정책'
+title: '9.10.2 PRIMARY KEY 정책'
 weight: 70
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: '자동 중복 제거'
+title: '5.7.2 자동 중복 제거'
 type: docs
 weight: 90
 ---

@@ -1,5 +1,5 @@
 ---
-title: 'Operations and Data Lifecycle'
+title: '10.7 Operations and Data Lifecycle'
 weight: 70
 toc: true
 ---

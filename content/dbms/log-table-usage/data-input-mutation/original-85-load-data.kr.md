@@ -1,5 +1,5 @@
 ---
-title : SQL로 로드
+title: '7.4.4 SQL로 로드'
 type: docs
 weight: 40
 ---

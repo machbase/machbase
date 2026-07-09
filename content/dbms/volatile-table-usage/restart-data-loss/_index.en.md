@@ -1,5 +1,5 @@
 ---
-title: 'Restart and Data Loss'
+title: '10.11 Restart and Data Loss'
 weight: 110
 toc: true
 ---

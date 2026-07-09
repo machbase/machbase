@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'ROLLUP 활용 사례'
+title: '6.19.2 ROLLUP 활용 사례'
 weight: 160
 ---
 

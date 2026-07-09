@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'JOIN 설계'
+title: '8.13.1 JOIN 설계'
 weight: 90
 ---
 

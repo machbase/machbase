@@ -1,5 +1,5 @@
 ---
 type: docs
-title: 'TAG / LOG / RDB / VOLATILE / LOOKUP 비교'
+title: '4.1.3 TAG / LOG / RDB / VOLATILE / LOOKUP 비교'
 weight: 30
 ---

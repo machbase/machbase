@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'ROLLUP 지원 범위'
+title: '6.18.1 ROLLUP 지원 범위'
 weight: 140
 ---
 

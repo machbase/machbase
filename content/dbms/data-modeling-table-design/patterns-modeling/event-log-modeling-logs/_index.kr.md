@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '이벤트·로그 모델링'
+title: '4.3.4 이벤트·로그 모델링'
 weight: 40
 ---
 

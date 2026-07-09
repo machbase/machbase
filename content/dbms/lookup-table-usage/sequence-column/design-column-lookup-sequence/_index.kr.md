@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '컬럼 및 시퀀스 설계'
+title: '9.11.1 컬럼 및 시퀀스 설계'
 weight: 30
 ---
 

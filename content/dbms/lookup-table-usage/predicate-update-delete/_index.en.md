@@ -1,5 +1,5 @@
 ---
-title: 'Predicate UPDATE/DELETE'
+title: '9.13 Predicate UPDATE/DELETE'
 weight: 130
 toc: true
 ---

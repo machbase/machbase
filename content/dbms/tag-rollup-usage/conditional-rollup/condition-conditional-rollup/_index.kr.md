@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '조건 ROLLUP'
+title: '6.6.3 조건 ROLLUP'
 weight: 80
 ---
 

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '고빈도 LOOKUP 조회'
+title: '4.2.1 고빈도 LOOKUP 조회'
 weight: 10
 ---
 

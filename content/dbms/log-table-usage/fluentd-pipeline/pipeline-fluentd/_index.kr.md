@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'Fluentd 입력 파이프라인 안내'
+title: '7.14.1 Fluentd 입력 파이프라인 안내'
 weight: 40
 ---
 

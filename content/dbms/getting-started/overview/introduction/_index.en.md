@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'Introduction to Machbase DBMS'
+title: '1.1.1 Introduction to Machbase DBMS'
 weight: 10
 toc: true
 ---

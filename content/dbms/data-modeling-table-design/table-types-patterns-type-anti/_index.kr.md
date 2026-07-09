@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '안티패턴'
+title: '4.2 안티패턴'
 weight: 30
 ---
 

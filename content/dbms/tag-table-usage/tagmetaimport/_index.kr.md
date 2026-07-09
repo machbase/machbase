@@ -1,5 +1,5 @@
 ---
-title: 'tagmetaimport와 메타데이터 일괄 등록'
+title: '5.13 tagmetaimport와 메타데이터 일괄 등록'
 weight: 130
 toc: true
 ---

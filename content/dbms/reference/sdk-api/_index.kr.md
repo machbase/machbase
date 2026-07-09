@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'SDK API 레퍼런스'
+title: '17.7 SDK API 레퍼런스'
 weight: 70
 toc: true
 ---

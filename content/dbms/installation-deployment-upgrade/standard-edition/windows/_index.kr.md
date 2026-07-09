@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'Windows 설치'
+title: '3.2.2 Windows 설치'
 weight: 20
 toc: true
 ---

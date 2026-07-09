@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '8.5 Complete SQL Reference'
+title: '17.1.6 Complete SQL Reference'
 weight: 95
 tocSort: true
 ---

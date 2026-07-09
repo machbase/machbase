@@ -1,5 +1,5 @@
 ---
-title: 'JSON 컬럼 제약과 JSON 조회'
+title: '9.12 JSON 컬럼 제약과 JSON 조회'
 weight: 120
 toc: true
 ---

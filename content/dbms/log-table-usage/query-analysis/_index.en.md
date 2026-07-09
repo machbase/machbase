@@ -1,5 +1,5 @@
 ---
-title: 'Query and Analysis'
+title: '7.5 Query and Analysis'
 weight: 50
 toc: true
 ---

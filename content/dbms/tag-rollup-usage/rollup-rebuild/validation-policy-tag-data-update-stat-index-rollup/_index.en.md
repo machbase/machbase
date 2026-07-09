@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'TAG data UPDATE impact on statistics, indexes, and rollups'
+title: '6.15.1 TAG data UPDATE impact on statistics, indexes, and rollups'
 weight: 40
 ---
 

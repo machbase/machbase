@@ -1,5 +1,5 @@
 ---
 type: docs
-title: '가상 테이블 사전'
+title: '17.3.2 가상 테이블 사전'
 weight: 20
 ---

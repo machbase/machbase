@@ -1,5 +1,5 @@
 ---
-title: 'Create, Alter, and Drop'
+title: '8.3 Create, Alter, and Drop'
 weight: 30
 toc: true
 ---

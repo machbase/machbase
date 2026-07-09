@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'Red-Black 트리 인덱스'
+title: '10.12.1 Red-Black 트리 인덱스'
 weight: 50
 ---
 

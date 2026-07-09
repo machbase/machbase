@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '10분 빠른 시작'
+title: '1.2 10분 빠른 시작'
 weight: 20
 toc: true
 ---

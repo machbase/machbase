@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '사용자 정의 ROLLUP (Custom Rollup)'
+title: '6.7.2 사용자 정의 ROLLUP (Custom Rollup)'
 weight: 90
 ---
 

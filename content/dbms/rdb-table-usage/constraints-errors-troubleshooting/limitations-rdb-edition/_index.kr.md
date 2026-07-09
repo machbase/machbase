@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'Edition 제한'
+title: '8.8.1 Edition 제한'
 weight: 130
 ---
 

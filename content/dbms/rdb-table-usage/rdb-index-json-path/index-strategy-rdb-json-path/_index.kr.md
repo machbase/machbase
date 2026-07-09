@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'JSON 경로 인덱스'
+title: '8.12.2 JSON 경로 인덱스'
 weight: 40
 ---
 

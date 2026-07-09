@@ -1,5 +1,5 @@
 ---
-title: 'LSL/USL을 통한 데이터 품질 관리'
+title: '5.2.2 LSL/USL을 통한 데이터 품질 관리'
 type: docs
 weight: 80
 ---

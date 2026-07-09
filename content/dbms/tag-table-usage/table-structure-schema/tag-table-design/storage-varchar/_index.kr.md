@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'VARCHAR 스토리지 최적화'
+title: '5.2.1.3 VARCHAR 스토리지 최적화'
 weight: 80
 ---
 

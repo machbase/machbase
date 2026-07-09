@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'REGEXP_LIKE 함수'
+title: '7.12.1.2 REGEXP_LIKE 함수'
 weight: 30
 ---
 

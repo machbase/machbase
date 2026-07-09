@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'VOLATILE 영속 저장 오용'
+title: '4.2.4 VOLATILE 영속 저장 오용'
 weight: 40
 ---
 

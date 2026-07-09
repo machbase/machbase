@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'JSON 컬럼 제약'
+title: '9.12.2 JSON 컬럼 제약'
 weight: 40
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: '인덱스와 성능'
+title: '7.6 인덱스와 성능'
 weight: 60
 toc: true
 ---

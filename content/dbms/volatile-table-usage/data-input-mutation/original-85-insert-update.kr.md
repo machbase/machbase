@@ -1,5 +1,5 @@
 ---
-title : Volatile 데이터 삽입 및 업데이트
+title: '10.4.1 Volatile 데이터 삽입 및 업데이트'
 type : docs
 weight: 30
 ---

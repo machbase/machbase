@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '백업·마운트'
+title: '8.14.2 백업·마운트'
 weight: 100
 ---
 

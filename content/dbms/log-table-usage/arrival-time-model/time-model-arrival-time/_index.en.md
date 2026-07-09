@@ -1,5 +1,5 @@
 ---
 type: docs
-title: '_arrival_time과 시간 모델'
+title: '7.10.1 _arrival_time과 시간 모델'
 weight: 30
 ---

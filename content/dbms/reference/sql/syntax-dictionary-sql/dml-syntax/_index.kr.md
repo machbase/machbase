@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'DML syntax'
+title: '17.1.1.10 DML syntax'
 weight: 100
 ---
 

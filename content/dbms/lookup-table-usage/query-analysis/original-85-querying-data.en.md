@@ -1,5 +1,5 @@
 ---
-title: 'Original 8.5 LOOKUP query'
+title: '9.5.1 Original 8.5 LOOKUP query'
 type: docs
 weight: 900
 toc: true

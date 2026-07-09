@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '8.5 Complete Configuration Reference'
+title: '17.2.6 Complete Configuration Reference'
 weight: 95
 tocSort: true
 ---

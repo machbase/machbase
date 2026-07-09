@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'Basic Command Cheatsheet'
+title: '1.3 Basic Command Cheatsheet'
 weight: 30
 toc: true
 ---

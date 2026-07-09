@@ -1,5 +1,5 @@
 ---
-title : Lookup 데이터 입력
+title: '9.4.1 Lookup 데이터 입력'
 type: docs
 weight: 20
 ---

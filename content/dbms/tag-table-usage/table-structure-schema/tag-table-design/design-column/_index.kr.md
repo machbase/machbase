@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '값 컬럼 설계'
+title: '5.2.1.1 값 컬럼 설계'
 weight: 60
 ---
 

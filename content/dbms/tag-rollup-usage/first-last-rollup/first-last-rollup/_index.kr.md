@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'FIRST / LAST 함수'
+title: '6.10.1 FIRST / LAST 함수'
 weight: 100
 ---
 

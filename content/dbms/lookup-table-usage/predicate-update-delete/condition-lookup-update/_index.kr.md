@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'LOOKUP 일반 조건식 UPDATE'
+title: '9.13.2 LOOKUP 일반 조건식 UPDATE'
 weight: 50
 ---
 

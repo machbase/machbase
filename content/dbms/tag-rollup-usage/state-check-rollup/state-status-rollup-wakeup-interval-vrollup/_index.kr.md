@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '상태 확인 (V$ROLLUP)'
+title: '6.13.1 상태 확인 (V$ROLLUP)'
 weight: 50
 ---
 

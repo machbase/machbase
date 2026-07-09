@@ -1,5 +1,5 @@
 ---
-title: 'Fluentd Input Pipeline'
+title: '7.14 Fluentd Input Pipeline'
 weight: 140
 toc: true
 ---

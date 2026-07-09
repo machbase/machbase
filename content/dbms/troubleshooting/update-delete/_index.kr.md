@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'UPDATE/DELETE 문제 해결'
+title: '16.3 UPDATE/DELETE 문제 해결'
 weight: 30
 ---
 

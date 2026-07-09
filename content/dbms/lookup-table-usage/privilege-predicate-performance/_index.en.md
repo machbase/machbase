@@ -1,5 +1,5 @@
 ---
-title: 'LOOKUP Privileges and Predicate DML Performance'
+title: '9.15 LOOKUP Privileges and Predicate DML Performance'
 weight: 150
 toc: true
 ---

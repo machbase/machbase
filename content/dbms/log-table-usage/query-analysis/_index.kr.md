@@ -1,5 +1,5 @@
 ---
-title: '조회와 분석'
+title: '7.5 조회와 분석'
 weight: 50
 toc: true
 ---

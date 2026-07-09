@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'CLI/ODBC 예제'
+title: '11.3.1.2 CLI/ODBC 예제'
 weight: 20
 ---
 

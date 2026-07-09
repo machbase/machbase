@@ -1,5 +1,5 @@
 ---
-title: 'ROLLUP 상태 확인'
+title: '6.13 ROLLUP 상태 확인'
 weight: 120
 toc: true
 ---

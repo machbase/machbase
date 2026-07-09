@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '데이터 보정 설계'
+title: '5.12.2 데이터 보정 설계'
 weight: 100
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: 'Collector-based Ingestion'
+title: '7.13 Collector-based Ingestion'
 weight: 130
 toc: true
 ---

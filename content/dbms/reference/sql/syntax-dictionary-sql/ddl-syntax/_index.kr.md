@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'DDL syntax'
+title: '17.1.1.9 DDL syntax'
 weight: 90
 ---
 

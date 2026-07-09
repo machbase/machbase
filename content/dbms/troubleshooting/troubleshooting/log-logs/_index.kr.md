@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '로그 확인'
+title: '16.1.3 로그 확인'
 weight: 30
 ---
 

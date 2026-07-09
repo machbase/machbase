@@ -1,5 +1,5 @@
 ---
-title: 'Collector 기반 수집'
+title: '7.13 Collector 기반 수집'
 weight: 130
 toc: true
 ---
