@@ -2,6 +2,7 @@
 type: docs
 title: 'Standard Edition 설치'
 weight: 20
+toc: true
 ---
 
 Standard Edition은 단일 노드에 설치하는 구성입니다. 개발 환경, 소규모 운영, 엣지 디바이스 등에 적합합니다.

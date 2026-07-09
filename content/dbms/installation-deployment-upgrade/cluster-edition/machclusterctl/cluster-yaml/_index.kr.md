@@ -2,6 +2,7 @@
 type: docs
 title: 'cluster.yaml 작성'
 weight: 10
+toc: true
 ---
 
 `cluster.yaml`은 `machclusterctl`이 클러스터를 배포하는 데 사용하는 선언적 설정 파일입니다.

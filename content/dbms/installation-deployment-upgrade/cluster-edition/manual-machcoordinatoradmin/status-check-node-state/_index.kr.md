@@ -2,6 +2,7 @@
 type: docs
 title: '노드 상태 확인'
 weight: 40
+toc: true
 ---
 
 클러스터 구성 완료 후 모든 노드의 상태를 확인합니다.

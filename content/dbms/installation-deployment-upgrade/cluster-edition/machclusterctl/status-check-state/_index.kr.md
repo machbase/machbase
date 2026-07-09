@@ -2,6 +2,7 @@
 type: docs
 title: '상태 확인'
 weight: 50
+toc: true
 ---
 
 클러스터 전체 노드의 상태를 한 번에 조회합니다.

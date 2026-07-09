@@ -2,6 +2,7 @@
 type: docs
 title: 'Windows 설치'
 weight: 20
+toc: true
 ---
 
 Windows에서 Standard Edition을 설치하는 방법입니다.

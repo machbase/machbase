@@ -2,9 +2,11 @@
 type: docs
 title: 'Cluster Edition 구성 개요'
 weight: 10
+toc: true
 ---
 
-Cluster Edition은 역할이 분리된 4종류의 노드로 구성됩니다. 각 노드의 역할과 상호 관계를 이해한 후 배포 계획을 세우십시오.
+Cluster Edition은 역할이 분리된 Coordinator, Deployer, Lookup, Broker, Warehouse 노드로 구성됩니다.
+각 노드의 역할과 상호 관계를 이해한 후 배포 계획을 세우십시오.
 
 ## 노드 역할 상세
 
@@ -21,6 +23,10 @@ Cluster Edition은 역할이 분리된 4종류의 노드로 구성됩니다. 각
 Coordinator의 지시에 따라 각 노드에 패키지를 배포하고 초기화를 중계합니다. 각 노드 호스트에 하나씩 배치하거나, 별도 배포 서버로 운영할 수 있습니다.
 
 - 관리 도구: `machdeployeradmin`
+
+### Lookup
+
+참조 데이터와 조회 처리를 위한 노드입니다. 구성에 따라 master, monitor, slave 역할을 지정합니다.
 
 ### Broker
 
@@ -46,6 +52,8 @@ Coordinator의 지시에 따라 각 노드에 패키지를 배포하고 초기�
 [Coordinator Primary] ◄──HA──► [Coordinator Secondary]
      │ (메타 관리, 노드 감시)
 [Deployer]
+     │
+[Lookup master / monitor]
 ```
 
 ## 에디션 비교

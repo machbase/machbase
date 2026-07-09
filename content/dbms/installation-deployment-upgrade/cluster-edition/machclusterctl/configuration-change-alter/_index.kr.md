@@ -2,6 +2,7 @@
 type: docs
 title: '구성 변경 적용'
 weight: 40
+toc: true
 ---
 
 클러스터 구성(노드 추가, 포트 변경 등)을 변경하려면 `cluster.yaml`을 수정한 후 적용합니다.

@@ -2,6 +2,7 @@
 type: docs
 title: 'Docker 설치'
 weight: 30
+toc: true
 ---
 
 Machbase 공식 Docker 이미지를 사용하면 별도의 환경 준비 없이 빠르게 구동할 수 있습니다. 개발·테스트 환경에 적합합니다.

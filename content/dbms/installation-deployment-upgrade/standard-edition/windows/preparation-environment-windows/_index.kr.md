@@ -2,6 +2,7 @@
 type: docs
 title: 'Windows 환경 준비'
 weight: 10
+toc: true
 ---
 
 Windows에 Machbase를 설치하기 전에 방화벽 설정을 확인합니다.

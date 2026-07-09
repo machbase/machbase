@@ -2,6 +2,7 @@
 type: docs
 title: '패키지 구성 이해'
 weight: 20
+toc: true
 ---
 
 ## 패키지 파일 명명 규칙

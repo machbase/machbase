@@ -2,6 +2,7 @@
 type: docs
 title: '라이선스 설치'
 weight: 30
+toc: true
 ---
 
 라이선스 설치는 Machbase 설치 완료 후 수행합니다. 라이선스 파일이 없어도 서버는 구동되지만 기능 제한이 있습니다.

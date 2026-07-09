@@ -2,6 +2,7 @@
 type: docs
 title: '업그레이드'
 weight: 40
+toc: true
 ---
 
 운영 중인 Machbase를 새 버전으로 업그레이드하는 절차를 설명합니다. 에디션과 업그레이드 방식에 따라 절차가 다릅니다.
@@ -16,13 +17,13 @@ weight: 40
 
 | 에디션 | 방식 | 링크 |
 |--------|------|------|
-| Standard Edition | 서버 종료 후 패키지 교체 | [Standard Edition 업그레이드](/dbms/installation-deployment-upgrade/item/standard-edition/) |
-| Cluster Edition | 온라인 (무중단) | [온라인 업그레이드](/dbms/installation-deployment-upgrade/item/cluster-edition/online/) |
-| Cluster Edition | 전체 중지 | [전체 중지 업그레이드](/dbms/installation-deployment-upgrade/item/cluster-edition/full-stop/) |
+| Standard Edition | 서버 종료 후 패키지 교체 | [Standard Edition 업그레이드](/dbms/installation-deployment-upgrade/upgrade/standard-edition/) |
+| Cluster Edition | Broker/Warehouse 순차 업그레이드 | [온라인 업그레이드](/dbms/installation-deployment-upgrade/upgrade/cluster-edition/online/) |
+| Cluster Edition | 전체 중지 | [전체 중지 업그레이드](/dbms/installation-deployment-upgrade/upgrade/cluster-edition/full-stop/) |
 
 Cluster Edition의 경우 데이터 가용성 요구사항에 따라 온라인 또는 전체 중지 방식을 선택합니다.
 
 ---
 
 **다음 읽을 내용**
-- [Standard Edition 업그레이드](/dbms/installation-deployment-upgrade/item/standard-edition/)
+- [Standard Edition 업그레이드](/dbms/installation-deployment-upgrade/upgrade/standard-edition/)

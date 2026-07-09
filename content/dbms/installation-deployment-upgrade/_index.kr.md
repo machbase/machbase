@@ -2,6 +2,7 @@
 type: docs
 title: '3. 설치, 배포, 업그레이드'
 weight: 30
+toc: true
 ---
 
 Machbase를 운영 환경에 배포하려면 에디션 선택부터 설치 준비, 설치, 검증까지 단계를 순서대로 진행해야 합니다. 이 장은 그 전체 흐름을 다룹니다.
@@ -13,7 +14,7 @@ Machbase는 두 가지 에디션을 제공합니다.
 | 에디션 | 대상 환경 | 특징 |
 |--------|-----------|------|
 | **Standard Edition** | 단일 노드 | 설치가 간단하며 개발·소규모 운영에 적합 |
-| **Cluster Edition** | 다중 노드 | Coordinator·Deployer·Broker·Warehouse 노드로 구성, 대규모 데이터 수집에 적합 |
+| **Cluster Edition** | 다중 노드 | Coordinator·Deployer·Lookup·Broker·Warehouse 노드로 구성, 대규모 데이터 수집에 적합 |
 
 에디션 선택 기준은 [에디션 차이점](/dbms/core-concepts/concepts-edition/differences-standard-edition-cluster/)을 참고하십시오.
 
@@ -42,7 +43,7 @@ Machbase는 두 가지 에디션을 제공합니다.
 
 ## 업그레이드
 
-기존 운영 중인 시스템을 새 버전으로 업그레이드하는 절차는 [업그레이드](/dbms/installation-deployment-upgrade/item/) 섹션을 참고하십시오.
+기존 운영 중인 시스템을 새 버전으로 업그레이드하는 절차는 [업그레이드](/dbms/installation-deployment-upgrade/upgrade/) 섹션을 참고하십시오.
 
 ---
 

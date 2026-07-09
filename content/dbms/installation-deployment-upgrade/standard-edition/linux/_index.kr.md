@@ -2,6 +2,7 @@
 type: docs
 title: 'Linux 설치'
 weight: 10
+toc: true
 ---
 
 Linux에서 Standard Edition을 설치하는 방법은 두 가지입니다.

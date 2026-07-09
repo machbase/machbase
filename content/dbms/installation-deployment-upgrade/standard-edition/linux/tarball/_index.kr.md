@@ -2,6 +2,7 @@
 type: docs
 title: 'Tarball 설치'
 weight: 20
+toc: true
 ---
 
 Linux 환경에 tarball(.tgz)을 압축 해제하여 Machbase Standard Edition을 설치하는 절차입니다.

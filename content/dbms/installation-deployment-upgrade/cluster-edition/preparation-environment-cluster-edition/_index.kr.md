@@ -2,6 +2,7 @@
 type: docs
 title: 'Cluster Edition 설치 환경 준비'
 weight: 20
+toc: true
 ---
 
 Cluster Edition을 배포하기 전에 모든 노드에 다음 환경을 준비해야 합니다.

@@ -2,6 +2,7 @@
 type: docs
 title: 'Package 등록'
 weight: 20
+toc: true
 ---
 
 Cluster Edition 수동 배포의 첫 번째 단계입니다. 각 노드에 Machbase 패키지를 배포하고,

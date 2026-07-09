@@ -2,6 +2,7 @@
 type: docs
 title: 'YAML 검증'
 weight: 20
+toc: true
 ---
 
 `cluster.yaml`을 실제 설치에 사용하기 전에 유효성 검사를 수행합니다. `validate`는 YAML 문법과

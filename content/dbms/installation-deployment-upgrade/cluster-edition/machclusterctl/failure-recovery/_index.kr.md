@@ -2,6 +2,7 @@
 type: docs
 title: '배포 실패 시 복구'
 weight: 60
+toc: true
 ---
 
 `machclusterctl install` 또는 `apply` 실행 중 오류가 발생한 경우 복구 방법을 설명합니다.

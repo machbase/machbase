@@ -2,6 +2,7 @@
 type: docs
 title: 'Lookup / Broker / Warehouse 설치'
 weight: 30
+toc: true
 ---
 
 Coordinator와 Deployer가 준비된 후 Lookup, Broker, Warehouse 노드를 Coordinator에 등록하고 시작합니다.

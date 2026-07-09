@@ -2,6 +2,7 @@
 type: docs
 title: 'machclusterctl 기반 배포'
 weight: 30
+toc: true
 ---
 
 `machclusterctl`은 `cluster.yaml` 파일 하나로 전체 클러스터를 자동으로 배포하고 관리하는 도구입니다. SSH를 통해 각 노드에 원격 접속하여 패키지 배포, 초기화, 시작·종료를 일괄 처리합니다.

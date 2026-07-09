@@ -2,6 +2,7 @@
 type: docs
 title: 'Linux 환경 준비'
 weight: 10
+toc: true
 ---
 
 Machbase를 Linux에 설치하기 전에 파일 디스크립터 한도, 시간 설정, 포트 예약을 확인하고 조정합니다.

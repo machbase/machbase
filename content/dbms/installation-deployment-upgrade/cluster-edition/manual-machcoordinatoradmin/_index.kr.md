@@ -2,6 +2,7 @@
 type: docs
 title: 'machcoordinatoradmin 기반 수동 배포'
 weight: 40
+toc: true
 ---
 
 `machclusterctl`을 사용할 수 없거나 각 노드를 직접 제어해야 하는 경우 수동으로 클러스터를 구성합니다. 각 노드에 직접 SSH 접속하여 패키지 배포, 설정, 시작을 수행합니다.

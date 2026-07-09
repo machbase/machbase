@@ -2,6 +2,7 @@
 type: docs
 title: 'Standard Edition 업그레이드'
 weight: 10
+toc: true
 ---
 
 Standard Edition 업그레이드는 서버를 종료하고 패키지를 교체한 후 재시작하는 방식입니다.

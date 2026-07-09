@@ -2,6 +2,7 @@
 type: docs
 title: 'Cluster Edition 설치와 배포'
 weight: 30
+toc: true
 ---
 
 Cluster Edition은 여러 노드에 Machbase를 분산 배포하는 구성입니다. 대용량 시계열 데이터 수집이 필요한 산업 IoT·금융 tick 환경에 적합합니다.
@@ -12,10 +13,11 @@ Cluster Edition은 여러 노드에 Machbase를 분산 배포하는 구성입니
 |------|------|
 | **Coordinator** | 클러스터 메타 정보 관리, 노드 상태 감시 |
 | **Deployer** | 패키지 배포 및 노드 초기화 중계 |
+| **Lookup** | 참조 데이터와 조회 처리 |
 | **Broker** | SQL 파싱 및 쿼리 분배, 클라이언트 접점 |
 | **Warehouse** | 실제 데이터 저장 및 쿼리 실행 |
 
-최소 구성은 Coordinator 1, Deployer 1, Broker 1, Warehouse 2(그룹당 2노드로 복제) 입니다.
+최소 구성은 Coordinator 1, Deployer 1, Lookup 1, Broker 1, Warehouse 2(그룹당 2노드로 복제) 입니다.
 
 ## 배포 방식
 
@@ -26,7 +28,7 @@ Cluster Edition은 여러 노드에 Machbase를 분산 배포하는 구성입니
 
 ## 설치 순서
 
-1. [Cluster Edition 구성 개요](/dbms/installation-deployment-upgrade/cluster-edition/cluster-edition/) 숙지
+1. [Cluster Edition 구성 개요](/dbms/installation-deployment-upgrade/cluster-edition/overview/) 숙지
 2. [환경 준비](/dbms/installation-deployment-upgrade/cluster-edition/preparation-environment-cluster-edition/) (SSH 키, 커널 파라미터, NTP)
 3. 배포 방식 선택 후 설치 진행
 4. [라이선스 설치](/dbms/installation-deployment-upgrade/pre-install-preparation/license/)
@@ -35,4 +37,4 @@ Cluster Edition은 여러 노드에 Machbase를 분산 배포하는 구성입니
 ---
 
 **다음 읽을 내용**
-- [Cluster Edition 구성 개요](/dbms/installation-deployment-upgrade/cluster-edition/cluster-edition/)
+- [Cluster Edition 구성 개요](/dbms/installation-deployment-upgrade/cluster-edition/overview/)

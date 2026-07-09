@@ -2,6 +2,7 @@
 type: docs
 title: 'MSI 설치'
 weight: 20
+toc: true
 ---
 
 Machbase Windows 버전은 MSI 설치 패키지로 제공됩니다. 설치 마법사를 통해 진행하며 서비스 등록까지 자동으로 처리됩니다.

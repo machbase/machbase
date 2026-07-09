@@ -2,6 +2,7 @@
 type: docs
 title: '최초 설치'
 weight: 30
+toc: true
 ---
 
 `cluster.yaml` 작성과 유효성 검사가 완료되면 설치 계획을 먼저 확인한 뒤 클러스터를 설치합니다.

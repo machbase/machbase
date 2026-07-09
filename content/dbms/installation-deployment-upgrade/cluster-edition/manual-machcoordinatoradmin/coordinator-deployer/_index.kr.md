@@ -2,6 +2,7 @@
 type: docs
 title: 'Coordinator / Deployer 설치'
 weight: 10
+toc: true
 ---
 
 패키지 배포가 완료되면 Coordinator를 먼저 설치·시작한 후 Deployer를 등록합니다.
