@@ -60,7 +60,7 @@ machbased -v
 
 # machsql에서 확인
 machsql -u SYS -p MANAGER
-Mach> SELECT VERSION FROM V$VERSION;
+Mach> SELECT EDITION, BINARY_DB_MAJOR_VERSION, BINARY_DB_MINOR_VERSION FROM V$VERSION;
 ```
 
 ## 주의사항

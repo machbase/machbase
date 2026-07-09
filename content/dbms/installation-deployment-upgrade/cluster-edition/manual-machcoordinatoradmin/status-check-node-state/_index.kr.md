@@ -64,7 +64,8 @@ machsql -s 192.168.1.11 -u SYS -p MANAGER
 Mach> SELECT * FROM V$NODE_STATUS;
 ```
 
-`V$NODE_STATUS` 뷰에서 등록된 노드 목록과 상태를 확인할 수 있습니다.
+`V$NODE_STATUS` 뷰는 접속한 노드의 타입, 상태, 호스트, Coordinator 연결 정보 등을 반환합니다.
+등록된 전체 노드 목록은 `machcoordinatoradmin --cluster-status` 출력에서 확인합니다.
 
 ---
 
