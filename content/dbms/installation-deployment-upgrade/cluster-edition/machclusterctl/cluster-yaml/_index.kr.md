@@ -130,7 +130,7 @@ cluster:
 - Deployer: 1개 이상
 - Lookup: master 1개, monitor 1개 이상
 - Broker: 2개 이상 (부하 분산)
-- Warehouse 그룹: 그룹당 2개 이상 (복제를 통한 고가용성)
+- Warehouse 그룹: 그룹당 2개 (복제를 통한 고가용성)
 
 같은 서버에 같은 타입의 노드를 2개 이상 배치할 때는 두 번째 노드부터 `home_path`와 포트를
 명시적으로 지정하여 충돌을 피합니다.
@@ -138,8 +138,9 @@ cluster:
 기존 `cluster.package.path`는 하위 호환 입력으로 사용할 수 있지만, 새로 작성하는 YAML에서는
 `origin_path`를 사용합니다.
 
-이전 빌드에서 내보낸 YAML에 Broker HTTP 포트가 `http_port_no`로 기록되어 있을 수 있습니다. 새로
-작성하는 YAML에서는 `http_admin_port`를 사용합니다.
+Tag update가 반영된 빌드에서는 Lookup, Broker, Warehouse의 HTTP 관리 포트도 `http_admin_port`로
+작성합니다. `main` 또는 RDB 구현 브랜치 기반 빌드에서는 Broker HTTP 포트가 `http_port_no`로
+기록될 수 있고, Warehouse의 `http_admin_port` 입력을 지원하지 않을 수 있습니다.
 
 작성이 완료되면 유효성을 검사합니다.
 

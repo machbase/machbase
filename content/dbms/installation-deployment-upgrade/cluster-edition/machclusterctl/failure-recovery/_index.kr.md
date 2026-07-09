@@ -34,8 +34,9 @@ machclusterctl destroy -f cluster.yaml --yes
 machclusterctl install -f cluster.yaml --yes --verbose
 ```
 
-`destroy`는 각 노드의 데이터 디렉터리를 포함하여 설치 흔적을 삭제합니다.
-**데이터 복구가 불가능하므로 주의하십시오.**
+`destroy`는 각 노드의 설치 흔적과 관리 대상 데이터 경로를 삭제할 수 있습니다. 외부 `dbs_path`
+처리 범위는 버전에 따라 다를 수 있으므로, 데이터 보존 목적으로 `destroy`를 사용하지 마십시오.
+**삭제된 데이터는 복구할 수 없으므로 주의하십시오.**
 
 ## Warehouse 노드 장애 복구
 

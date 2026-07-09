@@ -66,8 +66,9 @@ machclusterctl status
 
 ## 노드 제거
 
-`cluster.yaml`에서 해당 노드 항목을 삭제하고 `apply`를 실행합니다. 단, Warehouse 노드 제거 전에
-해당 노드에 있는 데이터가 다른 노드에 충분히 복제되어 있는지 확인해야 합니다.
+`cluster.yaml`에서 해당 노드 항목을 삭제하고 `apply`를 실행합니다. 단, Coordinator 제거는
+지원하지 않습니다. Warehouse 노드를 제거하기 전에는 해당 노드에 있는 데이터가 다른 노드에 충분히
+복제되어 있는지 확인해야 합니다.
 
 ## 주의사항
 

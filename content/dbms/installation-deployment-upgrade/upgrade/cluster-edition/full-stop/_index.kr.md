@@ -42,8 +42,14 @@ machclusterctl upgrade -f cluster.yaml --full-stop --yes --verbose
 
 ## 수동 배포 참고
 
-수동 배포 환경에서 직접 교체해야 하는 경우 Warehouse → Broker → Lookup → Deployer → Coordinator
-순으로 종료합니다.
+수동 배포 환경에서 직접 교체해야 하는 경우 먼저 Coordinator에 새 패키지를 등록합니다.
+
+```bash
+machcoordinatoradmin --add-package=machbase-v8.6.0 \
+  --file-name=/home/machbase/packages/machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz
+```
+
+그 다음 Warehouse → Broker → Lookup → Deployer → Coordinator 순으로 종료합니다.
 
 ```bash
 machcoordinatoradmin --shutdown-node=192.168.1.13:5501
@@ -54,20 +60,9 @@ machdeployeradmin --shutdown
 machcoordinatoradmin --shutdown
 ```
 
-모든 노드에서 새 패키지를 압축 해제합니다. **`dbs/` 디렉터리는 건드리지 않습니다.**
-
-```bash
-# Coordinator 노드에서
-tar zxf machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz -C $MACHBASE_COORDINATOR_HOME
-
-# Deployer 노드에서
-tar zxf machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz -C $MACHBASE_DEPLOYER_HOME
-
-# Lookup / Broker / Warehouse 노드에서
-tar zxf machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz -C ~/lookup
-tar zxf machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz -C ~/broker
-tar zxf machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz -C ~/warehouse
-```
+각 노드 홈을 새 패키지로 교체할 때는 기존 `conf/machbase.conf`, `dbs/`, `meta/`, `package/`
+디렉터리를 보존합니다. 기존 홈 위에 단순히 압축을 해제하지 말고, staging 경로에 새 패키지를
+해제한 뒤 보존 대상 경로를 제외하고 교체합니다.
 
 Coordinator → Deployer → Lookup → Broker → Warehouse 순으로 시작합니다.
 
@@ -78,6 +73,14 @@ machcoordinatoradmin --startup-node=192.168.1.10:5301
 machcoordinatoradmin --startup-node=192.168.1.11:5401
 machcoordinatoradmin --startup-node=192.168.1.13:5501
 machcoordinatoradmin --startup-node=192.168.1.14:5501
+```
+
+재시작 후 Broker와 Warehouse의 패키지 메타데이터를 새 패키지 이름으로 동기화합니다.
+
+```bash
+machcoordinatoradmin --upgrade-node=192.168.1.11:5401 --package-name=machbase-v8.6.0
+machcoordinatoradmin --upgrade-node=192.168.1.13:5501 --package-name=machbase-v8.6.0
+machcoordinatoradmin --upgrade-node=192.168.1.14:5501 --package-name=machbase-v8.6.0
 ```
 
 ### 5. 상태 확인
@@ -91,7 +94,7 @@ machclusterctl status
 ## 주의사항
 
 - Major 버전 업그레이드는 DB 파일 형식이 변경될 수 있습니다. 반드시 릴리스 노트를 확인하고, 업그레이드 전 백업을 수행하십시오.
-- `dbs/` 디렉터리를 절대 삭제하거나 초기화하지 마십시오.
+- `conf/machbase.conf`, `dbs/`, `meta/`, `package/` 경로를 절대 삭제하거나 초기화하지 마십시오.
 
 ---
 
