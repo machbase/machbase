@@ -5,7 +5,9 @@ weight: 50
 toc: true
 ---
 
-클러스터 구성(노드 추가, 포트 변경 등)을 변경하려면 `cluster.yaml`을 수정한 후 적용합니다.
+클러스터 구성(노드 추가, 일반 노드 포트 변경 등)을 변경하려면 `cluster.yaml`을 수정한 후
+적용합니다. Primary Coordinator 교체, 제거, identity 또는 포트 변경은 `apply`에서 지원하지
+않습니다.
 
 ## 구성 변경 절차
 
@@ -66,9 +68,9 @@ machclusterctl status
 
 ## 노드 제거
 
-`cluster.yaml`에서 해당 노드 항목을 삭제하고 `apply`를 실행합니다. 단, Coordinator 제거는
-지원하지 않습니다. Warehouse 노드를 제거하기 전에는 해당 노드에 있는 데이터가 다른 노드에 충분히
-복제되어 있는지 확인해야 합니다.
+`cluster.yaml`에서 해당 노드 항목을 삭제하고 `apply`를 실행합니다. 단, Coordinator 제거와
+Primary Coordinator 변경은 지원하지 않습니다. Warehouse 노드를 제거하기 전에는 해당 노드에 있는
+데이터가 다른 노드에 충분히 복제되어 있는지 확인해야 합니다.
 
 ## 주의사항
 

@@ -33,7 +33,9 @@ toc: true
 | **5656** | SQL 클라이언트 접속 (Native TCP) |
 | **5657** | HTTP REST API |
 
-포트를 변경하려면 `$MACHBASE_HOME/conf/machbase.conf`의 `PORT_NO` 항목을 수정합니다. 환경 변수 `MACHBASE_PORT_NO`를 설정해도 동일하게 적용됩니다.
+SQL 클라이언트 포트를 변경하려면 `$MACHBASE_HOME/conf/machbase.conf`의 `PORT_NO` 항목을
+수정합니다. 환경 변수 `MACHBASE_PORT_NO`를 설정해도 동일하게 적용됩니다. HTTP REST API 포트는
+`HTTP_PORT_NO` 또는 환경 변수 `MACHBASE_HTTP_PORT_NO`로 변경합니다.
 
 방화벽이 있는 환경에서는 위 포트를 인바운드 허용으로 열어야 합니다. Cluster Edition은 Coordinator
 link/admin 포트와 Broker, Warehouse, Deployer 포트도 추가로 열어야 합니다.

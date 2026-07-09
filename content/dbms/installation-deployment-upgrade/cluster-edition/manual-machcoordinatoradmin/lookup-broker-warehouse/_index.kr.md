@@ -31,6 +31,7 @@ machcoordinatoradmin --add-node="192.168.1.11:5401" \
   --deployer="192.168.1.10:5201" \
   --package-name=machbase \
   --home-path="/home/machbase/broker" \
+  --dbs-path="/data/machbase/broker_dbs" \
   --port-no=5656 \
   --http-port-no=5402
 ```
@@ -42,6 +43,7 @@ machcoordinatoradmin --add-node="192.168.1.11:5401" \
 | `--deployer` | 해당 노드를 설치하고 제어할 Deployer의 IP:CLUSTER_LINK_PORT_NO |
 | `--package-name` | Coordinator에 등록한 패키지 이름 |
 | `--home-path` | 노드 홈 디렉터리 |
+| `--dbs-path` | Broker/Warehouse의 데이터 파일 경로. 생략하면 기본 `DBS_PATH`를 사용 |
 | `--port-no` | 클라이언트 또는 노드 서비스 포트 |
 | `--http-port-no` | Broker HTTP 포트입니다. Warehouse HTTP 포트를 사용하는 버전에서는 Warehouse에도 지정합니다. |
 | `--replication` | Warehouse replication manager 주소입니다. `host:port` 형식을 사용합니다. |
@@ -61,7 +63,7 @@ Warehouse 노드는 그룹 단위로 구성합니다. 같은 그룹의 노드끼
 ### 1. 등록 파라미터 확인
 
 Warehouse 설정 파일은 `--add-node` 실행 때 생성되어 Deployer를 통해 대상 노드에 배포됩니다. 등록
-전에 cluster link 포트, 서비스 포트, HTTP 포트, replication manager 주소를 확정합니다.
+전에 cluster link 포트, 서비스 포트, replication manager 주소를 확정합니다.
 
 ```
 CLUSTER_LINK_HOST    = 192.168.1.13
@@ -77,8 +79,8 @@ machcoordinatoradmin --add-node="192.168.1.13:5501" \
   --deployer="192.168.1.10:5201" \
   --package-name=machbase \
   --home-path="/home/machbase/warehouse_g1_1" \
+  --dbs-path="/data/machbase/warehouse_g1_1_dbs" \
   --port-no=5500 \
-  --http-port-no=5503 \
   --replication=192.168.1.13:5502 \
   --group=group1 \
   --no-replicate
@@ -88,14 +90,18 @@ machcoordinatoradmin --add-node="192.168.1.14:5501" \
   --deployer="192.168.1.10:5201" \
   --package-name=machbase \
   --home-path="/home/machbase/warehouse_g1_2" \
+  --dbs-path="/data/machbase/warehouse_g1_2_dbs" \
   --port-no=5500 \
-  --http-port-no=5503 \
   --replication=192.168.1.14:5502 \
   --group=group1
 ```
 
 별도 `--add-group` 명령은 사용하지 않습니다. Warehouse 그룹 이름은 각 Warehouse 노드를 등록할 때
 `--group`으로 지정합니다.
+
+Tag update가 반영된 빌드에서 Warehouse HTTP 포트를 별도로 지정해야 하는 경우에는 Warehouse
+`--add-node`에 `--http-port-no`를 추가합니다. `main` 또는 RDB 구현 브랜치 기반 빌드에서는
+Warehouse 설정 생성 시 `HTTP_PORT_NO`를 기록하지 않습니다.
 
 ### 3. 노드 시작
 

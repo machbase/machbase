@@ -33,10 +33,13 @@ state, RP state, 디스크 사용률, ping 값은 `--cluster-status-full`에서 
 
 | 명령 | 설명 |
 |------|------|
-| `machcoordinatoradmin --startup-node=IP:PORT` | 특정 노드 시작 |
-| `machcoordinatoradmin --shutdown-node=IP:PORT` | 특정 노드 종료 |
+| `machcoordinatoradmin --startup-node=IP:PORT` | Lookup/Broker/Warehouse 노드 시작 |
+| `machcoordinatoradmin --shutdown-node=IP:PORT` | Lookup/Broker/Warehouse 노드 종료 |
 | `machcoordinatoradmin --cluster-status` | 전체 상태 조회 |
 | `machcoordinatoradmin --configuration` | Coordinator 설정 조회 |
+
+Coordinator와 Deployer 프로세스는 각 노드에서 `machcoordinatoradmin -u/-s`,
+`machdeployeradmin -u/-s` 같은 서비스 명령으로 시작하거나 종료합니다.
 
 ## 상태값 설명
 

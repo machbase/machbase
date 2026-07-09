@@ -17,7 +17,7 @@ Machbase Windows 버전은 ZIP 패키지 또는 설치 실행 파일로 제공�
 
    ```cmd
    mkdir C:\machbase
-   tar -xf machbase-8.6.0.official-WINDOWS-X86-64-release.zip -C C:\machbase
+   tar -xf machbase-SDK-8.6.0.official-WINDOWS-X86-64-release.zip -C C:\machbase
    ```
 
 3. 설치 실행 파일이 제공된 경우 파일을 실행합니다. 설치 시작 화면이 표시되면 **Next**를 클릭합니다.

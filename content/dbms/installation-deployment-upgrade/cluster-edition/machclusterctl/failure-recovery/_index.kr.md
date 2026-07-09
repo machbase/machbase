@@ -51,15 +51,17 @@ machcoordinatoradmin --set-group-state=readonly --group=group1
 # 3. 스냅샷 기반 복구 (Snapshot Failover)
 machcoordinatoradmin --snapshot-recover=192.168.1.13:5501
 
-# 4. 복구된 Warehouse 상태를 normal로 전환
-machcoordinatoradmin --set-warehouse-state=normal --node=192.168.1.13:5501
+# 4. 복구 대상 Warehouse 동기화 실행
+machcoordinatoradmin --exec-sync=192.168.1.13:5501
 
-# 5. 그룹 상태를 normal로 복원
+# 5. Warehouse 상태가 sync-standby를 거쳐 normal로 전환되는지 확인한 뒤 그룹 상태 복원
+machcoordinatoradmin --cluster-status-full --verbose
 machcoordinatoradmin --set-group-state=normal --group=group1
 ```
 
-`--exec-sync`는 별도 동기화가 필요한 `scrapped` Warehouse에 대해 사용합니다. Snapshot 복구 뒤에
-항상 연속 실행하는 명령은 아닙니다.
+스냅샷 복구는 대상 Warehouse가 `scrapped`, Warehouse 그룹이 `readonly` 상태일 때 수행합니다.
+복구 명령 뒤에는 `--exec-sync`를 실행하고, Warehouse가 `sync-standby`를 거쳐 `normal` 상태가
+되는지 확인합니다.
 
 ## 로그 확인
 

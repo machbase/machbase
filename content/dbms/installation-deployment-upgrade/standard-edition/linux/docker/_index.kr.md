@@ -8,14 +8,15 @@ toc: true
 Machbase Docker 이미지를 사용하면 별도의 환경 준비 없이 빠르게 구동할 수 있습니다. 개발·테스트
 환경에 적합합니다.
 
-Docker 설치가 사전에 완료되어 있어야 합니다. 아래 예시는 로컬 또는 사내 레지스트리에
-`machbase:latest` 이미지가 준비되어 있는 경우를 기준으로 합니다. 사용하는 이미지 이름은 배포
-환경에 맞게 바꾸십시오.
+Docker 설치가 사전에 완료되어 있어야 합니다. 배포 튜토리얼은 `machbase/machbase` 이미지를
+사용합니다. 소스에서 Docker 이미지를 직접 빌드한 경우에는 로컬 이미지 이름(`machbase:latest`
+등)으로 바꾸십시오.
 
 ## 이미지 확인
 
 ```bash
-docker image ls machbase
+docker pull machbase/machbase
+docker image ls machbase/machbase
 ```
 
 ## 컨테이너 실행
@@ -27,7 +28,7 @@ docker run -d \
   -p 5656:5656 \
   -p 5657:5657 \
   -v /data/machbase:/home/machbase/machbase/dbs \
-  machbase:latest
+  machbase/machbase
 ```
 
 | 옵션 | 설명 |

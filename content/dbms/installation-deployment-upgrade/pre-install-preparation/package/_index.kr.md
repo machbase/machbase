@@ -74,12 +74,15 @@ Cluster Edition 패키지에는 `machcoordinatoradmin`, `machdeployeradmin` 등�
 
 ```bash
 ls $MACHBASE_HOME/conf/
+# machbase.conf
 # machbase.conf.sample.standard
 # machbase.conf.sample.edge
 # machloader.conf.sample
 ```
 
-실제 사용 파일은 `machbase.conf`이며, 샘플 파일을 복사하여 수정합니다.
+실제 사용 파일은 `machbase.conf`입니다. Standard full 패키지는 빌드 과정에서
+`machbase.conf.sample.standard`를 복사해 `machbase.conf`를 포함합니다. 실제 파일이 없는
+패키지에서는 에디션에 맞는 샘플 파일을 복사하여 수정합니다.
 
 RDB 테이블 기능이 포함된 빌드의 Standard/Edge 샘플에는 RDB 테이블 sidecar 파일 동작을 제어하는
 `RDB_BUSY_TIMEOUT_MS`, `RDB_SYNCHRONOUS`, `RDB_JOURNAL_MODE` 설정이 포함될 수 있습니다. 해당

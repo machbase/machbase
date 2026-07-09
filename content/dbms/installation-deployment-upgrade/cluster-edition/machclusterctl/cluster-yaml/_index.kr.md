@@ -87,6 +87,7 @@ cluster:
     - alias: broker-1
       host: node1
       deployer: deployer-1
+      dbs_path: /data/machbase/broker-1/dbs
 
     - alias: broker-2
       host: node2
@@ -98,10 +99,12 @@ cluster:
         - alias: warehouse-group1-1
           host: node2
           deployer: deployer-2
+          dbs_path: /data/machbase/warehouse-group1-1/dbs
 
         - alias: warehouse-group1-2
           host: node3
           deployer: deployer-3
+          dbs_path: /data/machbase/warehouse-group1-2/dbs
 ```
 
 ## 주요 항목 설명
@@ -135,6 +138,10 @@ cluster:
 
 Coordinator와 Deployer의 HTTP 관리 포트는 `http_admin_port`, Broker의 HTTP 포트는
 `http_port_no`를 사용합니다.
+
+Broker와 Warehouse 노드에는 선택적으로 `dbs_path`를 지정할 수 있습니다. `dbs_path`는 노드가
+설치되는 서버 기준의 데이터 파일 경로이며, 생략하면 `machcoordinatoradmin --add-node`의 기본
+`DBS_PATH` 동작을 사용합니다.
 
 기존 `cluster.package.path`는 하위 호환 입력으로 사용할 수 있지만, 새로 작성하는 YAML에서는
 `origin_path`를 사용합니다.

@@ -22,7 +22,7 @@ machclusterctl status --coordinator /home/machbase/coordinator
 또는 Coordinator 관리 도구로 직접 조회합니다.
 
 ```bash
-machcoordinatoradmin --cluster-status
+machcoordinatoradmin --cluster-status-full --verbose
 ```
 
 ## 출력 해석

@@ -35,7 +35,9 @@ machcoordinatoradmin -u
 ### 3. 자기 자신을 Coordinator 노드로 등록
 
 ```bash
-machcoordinatoradmin --add-node="192.168.1.10:5101" --node-type=coordinator
+machcoordinatoradmin --add-node="192.168.1.10:5101" \
+  --node-type=coordinator \
+  --http-port-no=5102
 ```
 
 ### 4. 등록 확인
@@ -52,7 +54,9 @@ Secondary 노드에서 패키지를 배포하고 `machbase.conf`를 설정한 �
 
 ```bash
 # Primary Coordinator에서 먼저 등록
-machcoordinatoradmin --add-node="192.168.1.20:5101" --node-type=coordinator
+machcoordinatoradmin --add-node="192.168.1.20:5101" \
+  --node-type=coordinator \
+  --http-port-no=5102
 
 # 그 다음 Secondary 노드에서 시작 (--primary 옵션으로 Primary 지정)
 machcoordinatoradmin -u --primary=192.168.1.10:5101
@@ -80,7 +84,9 @@ machdeployeradmin -u
 ### 3. Coordinator에 Deployer 노드 등록
 
 ```bash
-machcoordinatoradmin --add-node="192.168.1.10:5201" --node-type=deployer
+machcoordinatoradmin --add-node="192.168.1.10:5201" \
+  --node-type=deployer \
+  --http-port-no=5202
 ```
 
 ---
