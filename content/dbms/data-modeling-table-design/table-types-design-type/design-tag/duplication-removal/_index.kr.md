@@ -38,7 +38,7 @@ SELECT * FROM tag WHERE name = 'tag1';
 
 ## 설정 변경
 
-생성 후에도 변경할 수 있습니다.
+Standard Edition에서는 생성 후 변경할 수 있습니다. Cluster Edition에서는 중복 제거 기간을 0이 아닌 값으로 생성하거나 `ALTER TABLE`로 변경하는 구성이 제한될 수 있습니다.
 
 ```sql
 ALTER TABLE tag SET TAG_DUPLICATE_CHECK_DURATION = 2880;  -- 48시간으로 변경

@@ -18,27 +18,27 @@ LOOKUP 테이블은 디스크에 영속 저장되며 데이터베이스 백업�
 
 ## 백업
 
-```bash
-# LOOKUP 테이블 데이터는 전체 백업에 자동 포함
-machadmin --backup-database=/backup/machbase_$(date +%Y%m%d)
+```sql
+-- LOOKUP 테이블 데이터는 전체 백업에 자동 포함
+BACKUP DATABASE INTO DISK = '/backup/machbase_20240101';
 ```
 
 ## 복구
 
 ```bash
 # 데이터베이스 복원 시 LOOKUP 테이블 데이터도 함께 복원
-machadmin --restore-database=/backup/machbase_20240101
+machadmin -r '/backup/machbase_20240101'
 ```
 
 ## 마운트를 통한 조회
 
 ```sql
 -- 백업을 마운트하여 LOOKUP 테이블 데이터 조회
-MOUNT DATABASE '/backup/machbase_20240101' TO 'old_db';
+MOUNT DATABASE '/backup/machbase_20240101' TO old_db;
 
 SELECT * FROM old_db.country_code;
 
-UNMOUNT DATABASE 'old_db';
+UMOUNT DATABASE old_db;
 ```
 
 ## 주의사항

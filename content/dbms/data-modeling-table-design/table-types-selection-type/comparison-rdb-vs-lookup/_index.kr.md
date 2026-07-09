@@ -13,10 +13,10 @@ RDB 테이블과 LOOKUP 테이블은 모두 관계형 데이터를 저장하지�
 | DDL | `CREATE RDB TABLE` | `CREATE LOOKUP TABLE` |
 | PRIMARY KEY | 선택 | 필수 |
 | INSERT | O | O |
-| UPDATE (WHERE 포함) | O | O (by PK) |
+| UPDATE (WHERE 포함) | O | O |
 | UPDATE (WHERE 없음) | O (전체 행) | X |
-| DELETE | O | O (by PK) |
-| 인덱스 | RB-Tree PK + 보조 인덱스 | B-Tree |
+| DELETE | O | O |
+| 인덱스 | BTREE PK + 보조 인덱스 | Red-Black |
 | 대용량 | 대규모 가능 | 수백만 건 이하 권장 |
 | JOIN 대상 | O | O |
 | Cluster Edition | X | O |

@@ -11,7 +11,7 @@ weight: 20
 ```sql
 CREATE TAG TABLE pipeline_thickness (
     pipe_id   VARCHAR(32) PRIMARY KEY,
-    distance  DOUBLE      BASE DISTANCE,   -- 단위: 미터
+    distance  DOUBLE      BASEDISTANCE,    -- 단위: 미터
     thickness DOUBLE,
     temp      DOUBLE
 );

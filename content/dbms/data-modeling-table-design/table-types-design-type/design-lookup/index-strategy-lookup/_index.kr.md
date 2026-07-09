@@ -4,7 +4,7 @@ title: '인덱스 전략'
 weight: 60
 ---
 
-LOOKUP 테이블은 PRIMARY KEY에 자동으로 B-Tree 인덱스가 생성됩니다. 추가 조회 조건이 있는 경우 보조 인덱스를 생성합니다.
+LOOKUP 테이블은 PRIMARY KEY에 자동으로 Red-Black Tree 인덱스가 생성됩니다. 추가 조회 조건이 있는 경우 보조 인덱스를 생성합니다.
 
 ## 자동 PRIMARY KEY 인덱스
 

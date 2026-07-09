@@ -9,9 +9,9 @@ weight: 100
 | 항목 | 상태 |
 |------|------|
 | PRIMARY KEY | 필수 |
-| Append API | 미지원 |
+| Append API | 지원 |
 | 대용량 (수천만 건 이상) | 미권장 |
-| BASETIME / BASE DISTANCE | 미지원 |
+| BASETIME / BASEDISTANCE | 미지원 |
 
 ## 규모 제한
 
@@ -23,11 +23,10 @@ LOOKUP 테이블은 소규모 참조 데이터에 최적화되어 있습니다. 
 | 수백만~수천만 건 | 경계 — 성능 테스트 필요 |
 | 수천만 건 이상 | RDB 테이블 |
 
-## Append API 미지원
+## Append API
 
 ```bash
-# LOOKUP 테이블에는 Append API 사용 불가
-# INSERT 문 또는 SDK INSERT 사용
+# LOOKUP 테이블에는 INSERT 문 또는 SDK Append API 사용
 ```
 
 ## 주의사항

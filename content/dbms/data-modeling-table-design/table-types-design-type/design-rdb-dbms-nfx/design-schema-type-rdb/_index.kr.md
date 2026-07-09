@@ -79,21 +79,30 @@ UPDATE tx_history SET status = 'SETTLED' WHERE tx_id = 9999;
 
 ## PRIMARY KEY 지정
 
-RDB 테이블에서 PRIMARY KEY는 DDL 절 대신 `CREATE INDEX` 문으로 지정합니다. PK 인덱스는 Red-Black Tree를 사용합니다.
+RDB 테이블에서 PRIMARY KEY는 컬럼 정의에 직접 지정하거나 `CREATE PRIMARY KEY INDEX` 문으로 사후 생성합니다. RDB 인덱스는 BTREE로 표시됩니다.
 
 ```sql
+-- 컬럼 정의에서 PRIMARY KEY 지정
+CREATE RDB TABLE product_catalog (
+    product_id LONG PRIMARY KEY,
+    name       VARCHAR(256),
+    price      DOUBLE
+);
+```
+
+```sql
+-- 또는 PRIMARY KEY 인덱스 사후 생성
 CREATE RDB TABLE product_catalog (
     product_id LONG,
     name       VARCHAR(256),
     price      DOUBLE
 );
 
--- PRIMARY KEY 인덱스 생성 (자세한 내용은 다음 섹션 참고)
-CREATE INDEX idx_pk_product ON product_catalog(product_id);
+CREATE PRIMARY KEY INDEX idx_pk_product ON product_catalog(product_id);
 ```
 
 ## 주의사항
 
 - `METADATA` 절은 TAG 테이블 전용으로, RDB 테이블에서는 사용할 수 없습니다.
-- `BASETIME`, `BASE DISTANCE` 키워드는 사용할 수 없습니다.
+- `BASETIME`, `BASEDISTANCE` 키워드는 사용할 수 없습니다.
 - Cluster Edition에서는 RDB 테이블을 생성할 수 없습니다.

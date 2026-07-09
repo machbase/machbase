@@ -18,14 +18,8 @@ WHERE site = 'SEOUL'
   AND status = 'READY';
 ```
 
-JSON 컬럼 조건과 갱신도 함께 사용할 수 있습니다.
-
-```sql
-UPDATE equipment_master
-SET meta = JSON_SET(meta, '$.state', 'active')
-WHERE meta->'$.region' = 'kr'
-  AND JSON_EXTRACT_INTEGER(meta, '$.level') >= 3;
-```
+LOOKUP 테이블은 JSON 컬럼을 지원하지 않습니다. 유동 속성을 조건으로 자주 사용한다면 해당 값을
+일반 컬럼으로 분리한 뒤 UPDATE 조건에 사용합니다.
 
 ## DELETE
 
@@ -39,7 +33,7 @@ WHERE status = 'RETIRED'
 
 1. **단건 변경은 PK 조건 사용**: 가장 명확하고 빠른 경로입니다.
 2. **일괄 변경은 대상 범위 확인**: 일반 조건식은 조건에 맞는 모든 row에 적용됩니다.
-3. **자주 쓰는 조건은 별도 컬럼화**: JSON path 전용 인덱스는 없으므로 고빈도 조건은 일반 컬럼으로 분리합니다.
+3. **자주 쓰는 조건은 별도 컬럼화**: LOOKUP 테이블은 JSON 컬럼을 지원하지 않으므로 고빈도 조건은 일반 컬럼으로 분리합니다.
 4. **PK 컬럼은 변경하지 않음**: primary key 컬럼은 `UPDATE SET` 대상이 될 수 없습니다.
 
 ```sql

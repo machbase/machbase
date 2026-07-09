@@ -4,11 +4,11 @@ title: 'PRIMARY KEY·보조 인덱스 전략'
 weight: 30
 ---
 
-RDB 테이블은 Red-Black Tree 기반 PRIMARY KEY 인덱스와 보조 인덱스를 지원합니다. `CREATE INDEX` 문으로 인덱스를 생성합니다.
+RDB 테이블은 BTREE 기반 PRIMARY KEY 인덱스와 보조 인덱스를 지원합니다. 보조 인덱스는 `CREATE INDEX`, PRIMARY KEY 인덱스는 `CREATE PRIMARY KEY INDEX` 문으로 생성합니다.
 
 ## PRIMARY KEY 인덱스
 
-RDB 테이블의 PRIMARY KEY 인덱스는 Red-Black Tree 구조를 사용합니다.
+RDB 테이블의 PRIMARY KEY 인덱스는 BTREE 구조로 표시됩니다.
 
 ```sql
 CREATE RDB TABLE orders (
@@ -20,7 +20,7 @@ CREATE RDB TABLE orders (
 );
 
 -- PRIMARY KEY 인덱스 생성
-CREATE INDEX idx_pk_order ON orders(order_id);
+CREATE PRIMARY KEY INDEX idx_pk_order ON orders(order_id);
 ```
 
 ## 보조 인덱스

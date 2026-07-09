@@ -13,13 +13,13 @@ weight: 30
 | DDL | `CREATE TAG TABLE` | `CREATE TABLE` | `CREATE RDB TABLE` | `CREATE VOLATILE TABLE` | `CREATE LOOKUP TABLE` |
 | 주 용도 | 센서·계측값 | 이벤트·로그 | 관계형 업무 | 임시 집계 | 코드·기준 |
 | INSERT | O | O | O | O | O |
-| APPEND API | O | O | X | X | X |
-| UPDATE | 메타데이터만 O | X | O | O (PK equality) | O (PK equality) |
+| APPEND API | O | O | O (SDK) | X | O |
+| UPDATE | O (태그/축 조건) | X | O | O | O |
 | DELETE | O (BEFORE/조건) | O (BEFORE/OLDEST/EXCEPT) | O | O (PK equality) | O (PK equality) |
-| PRIMARY KEY | 필수 | X | 선택 | 필수 | 필수 |
+| PRIMARY KEY | 필수 | X | 선택 | 선택 | 필수 |
 | BASETIME | 필수 (시간축) | X | X | X | X |
 | _arrival_time | X | 자동 추가 | X | X | X |
-| 인덱스 | 태그 인덱스 | 없음 | RB-Tree PK + 보조 인덱스 | Red-Black | B-Tree |
+| 인덱스 | 태그 인덱스 | BITMAP/KEYWORD | BTREE PK + 보조 인덱스 | Red-Black | Red-Black |
 | 영속성 | O | O | O | X (메모리) | O |
 | Cluster Edition | O | O | X | O | O |
 

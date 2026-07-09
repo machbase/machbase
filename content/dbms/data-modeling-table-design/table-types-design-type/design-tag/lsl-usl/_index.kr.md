@@ -8,16 +8,17 @@ weight: 110
 
 ## METADATA에 LSL·USL 저장
 
-태그별로 고정된 규격값은 METADATA 컬럼에 저장합니다.
+태그별로 고정된 규격값은 `LOWER LIMIT`과 `UPPER LIMIT` METADATA 컬럼에 저장합니다. 이
+제약은 `SUMMARIZED` 값 컬럼에 적용됩니다.
 
 ```sql
 CREATE TAG TABLE quality_sensor (
     name    VARCHAR(64) PRIMARY KEY,
     time    DATETIME    BASETIME,
-    value   DOUBLE
+    value   DOUBLE SUMMARIZED
 ) METADATA (
-    lsl     DOUBLE,   -- 하한 규격값
-    usl     DOUBLE,   -- 상한 규격값
+    lsl     DOUBLE LOWER LIMIT,   -- 하한 규격값
+    usl     DOUBLE UPPER LIMIT,   -- 상한 규격값
     target  DOUBLE    -- 목표값
 );
 

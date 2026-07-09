@@ -28,15 +28,15 @@ VALUES ('sensor-01', '{"location":"Building-A","floor":3,"unit":"Celsius","dept"
 ## JSON 조회
 
 ```sql
--- JSON 필드 추출 (json_value 함수)
-SELECT name, json_value(attributes, '$.location') AS location
+-- JSON 필드 추출
+SELECT name, attributes->'$.location' AS location
 FROM sensor_json_meta METADATA
 WHERE name = 'sensor-01';
 
 -- JSON 조건 필터
 SELECT name
 FROM sensor_json_meta METADATA
-WHERE json_value(attributes, '$.floor') = '3';
+WHERE JSON_EXTRACT_INTEGER(attributes, '$.floor') = 3;
 ```
 
 ## 일반 METADATA vs JSON METADATA
@@ -44,11 +44,11 @@ WHERE json_value(attributes, '$.floor') = '3';
 | 항목 | 일반 METADATA | JSON METADATA |
 |------|--------------|---------------|
 | 스키마 유연성 | 고정 컬럼 | 동적 속성 |
-| 쿼리 편의성 | 컬럼 직접 참조 | json_value() 필요 |
+| 쿼리 편의성 | 컬럼 직접 참조 | `->` 연산자 또는 JSON_EXTRACT 계열 함수 사용 |
 | 성능 | 빠름 | 약간 느림 |
 | 적합한 경우 | 속성이 고정적 | 속성이 가변적 |
 
 ## 주의사항
 
-- JSON 컬럼에 인덱스를 직접 생성할 수 없습니다.
-- JSON 필드를 자주 필터링 조건으로 사용한다면, 해당 필드를 별도 METADATA 컬럼으로 분리하는 것을 권장합니다.
+- 자주 조회하는 JSON path에는 METADATA JSON path 인덱스를 생성할 수 있습니다.
+- JSON 필드를 매우 자주 필터링 조건으로 사용한다면, 해당 필드를 별도 METADATA 컬럼으로 분리하는 것도 고려합니다.

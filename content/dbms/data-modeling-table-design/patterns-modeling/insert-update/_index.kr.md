@@ -11,9 +11,9 @@ Machbase 테이블 타입별로 데이터를 삽입·수정하는 패턴을 정�
 | 테이블 타입 | INSERT | UPDATE | DELETE | UPSERT |
 |-----------|--------|--------|--------|--------|
 | TAG | INSERT / Append API | O (태그/시간 조건) | O | X |
-| LOG | INSERT / Append API | X | X | X |
-| RDB | INSERT / Append API | O (WHERE 유무 모두) | O | DELETE+INSERT |
-| LOOKUP | INSERT | O (by PK) | O (by PK) | DELETE+INSERT |
+| LOG | INSERT / Append API | X | O (BEFORE/OLDEST/EXCEPT) | X |
+| RDB | INSERT / SDK Append API | O (WHERE 유무 모두) | O | DELETE+INSERT |
+| LOOKUP | INSERT / Append API | O (by PK) | O (by PK) | DELETE+INSERT |
 | VOLATILE | INSERT | O (by PK) | O | ON DUPLICATE KEY UPDATE |
 
 ## TAG/LOG: Append API 패턴 (고속 입력)

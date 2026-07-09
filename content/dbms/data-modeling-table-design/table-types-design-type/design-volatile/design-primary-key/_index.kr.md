@@ -4,7 +4,7 @@ title: 'PRIMARY KEY 설계'
 weight: 40
 ---
 
-VOLATILE 테이블은 PRIMARY KEY가 필수입니다. `ON DUPLICATE KEY UPDATE` 구문을 위해서도 PRIMARY KEY가 필요합니다.
+VOLATILE 테이블은 PRIMARY KEY 없이도 생성할 수 있습니다. 단, PK 기반 조회나 `ON DUPLICATE KEY UPDATE` 구문을 사용하려면 PRIMARY KEY가 필요합니다.
 
 ## 단일 PRIMARY KEY
 
@@ -48,6 +48,6 @@ ON DUPLICATE KEY UPDATE SET state = 'ONLINE', updated_at = NOW;
 
 ## 주의사항
 
-- VOLATILE 테이블에 PRIMARY KEY를 지정하지 않으면 `CREATE` 오류가 발생합니다.
+- VOLATILE 테이블은 PRIMARY KEY 없이 생성할 수 있지만, PK 기반 동작을 사용할 수 없습니다.
 - PRIMARY KEY 값은 중복될 수 없습니다 (ON DUPLICATE KEY UPDATE 사용 시 제외).
 - PRIMARY KEY 컬럼은 하나만 지정합니다.

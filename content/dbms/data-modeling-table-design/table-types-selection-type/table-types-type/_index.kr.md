@@ -6,7 +6,7 @@ weight: 10
 
 ## TAG 테이블
 
-센서·IoT 기기에서 수집되는 계측값을 저장하는 타입입니다. 시간축(BASETIME) 또는 거리축(BASE DISTANCE)을 기준으로 다수의 태그(센서 이름)를 하나의 테이블에서 관리합니다.
+센서·IoT 기기에서 수집되는 계측값을 저장하는 타입입니다. 시간축(BASETIME) 또는 거리축(BASEDISTANCE)을 기준으로 다수의 태그(센서 이름)를 하나의 테이블에서 관리합니다.
 
 ```sql
 CREATE TAG TABLE sensor_data (
@@ -33,7 +33,7 @@ CREATE TABLE sys_log (
 ```
 
 - `_arrival_time` 컬럼이 자동 추가됩니다 (나노초 DATETIME).
-- UPDATE·DELETE 불가, INSERT/APPEND만 가능합니다.
+- UPDATE와 일반 조건 DELETE는 지원하지 않습니다. 보존/정리 목적의 `BEFORE`, `OLDEST`, `EXCEPT` DELETE를 사용할 수 있습니다.
 
 ## RDB 테이블
 
@@ -64,7 +64,7 @@ CREATE VOLATILE TABLE session_cache (
 );
 ```
 
-- `PRIMARY KEY` 필수
+- `PRIMARY KEY` 선택. `ON DUPLICATE KEY UPDATE`나 PK 기반 조회를 사용하려면 지정합니다.
 - `ON DUPLICATE KEY UPDATE` 지원
 - 세션 간 공유 가능 (서버 수준)
 

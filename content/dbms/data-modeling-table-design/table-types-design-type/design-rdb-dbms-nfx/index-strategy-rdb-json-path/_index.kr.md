@@ -4,7 +4,7 @@ title: 'JSON 경로 인덱스'
 weight: 40
 ---
 
-RDB 테이블에 `JSON` 타입 컬럼이 있는 경우, JSON 경로에 대해 인덱스를 생성하여 JSON 필드 기반 조회 성능을 향상시킬 수 있습니다.
+RDB 테이블에 `JSON` 타입 컬럼이 있는 경우, JSON 경로 인덱스 DDL과 카탈로그 등록을 사용할 수 있습니다. 단, 현재 JSON path 조건은 일반 컬럼 인덱스처럼 쿼리 경로에 푸시다운되지 않을 수 있으므로 실행 계획을 확인해야 합니다.
 
 ## JSON 컬럼 스키마
 
@@ -27,7 +27,7 @@ CREATE INDEX idx_state_status ON device_state(state->'$.status');
 CREATE INDEX idx_state_code ON device_state(state->'$.code');
 ```
 
-## JSON 경로 인덱스를 활용하는 쿼리
+## JSON 경로 조건 쿼리
 
 ```sql
 -- state.status 값이 'ALARM'인 디바이스 조회
@@ -44,8 +44,8 @@ WHERE region = 'KR'
 
 ## 주의사항
 
-- JSON 경로 인덱스는 해당 경로의 값이 문자열 또는 숫자인 경우에 효과적입니다.
-- 중첩 구조가 복잡한 JSON 경로는 인덱스 선택도가 낮을 수 있습니다.
+- JSON path 조건이 인덱스 경로로 처리되는지 실행 계획을 확인합니다.
+- 중첩 구조가 복잡한 JSON 경로는 선택도가 낮을 수 있습니다.
 - 자주 조회하는 JSON 필드는 별도 컬럼으로 추출하여 일반 인덱스를 사용하는 것이 더 효율적인 경우가 많습니다.
 
 ```sql

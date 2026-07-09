@@ -11,7 +11,7 @@ weight: 20
 ```
 데이터가 센서/기기 계측값인가?
   ├── YES → 시간축인가?    YES → TAG TABLE (BASETIME)
-  │            거리축인가?  YES → TAG TABLE (BASE DISTANCE)
+  │            거리축인가?  YES → TAG TABLE (BASEDISTANCE)
   └── NO  ↓
 
 데이터가 이벤트/로그/패킷인가? (추가 전용)
@@ -43,6 +43,6 @@ weight: 20
 ## 주의사항
 
 - TAG 테이블에 이벤트 로그를 저장하면 태그 수 폭발로 성능이 저하됩니다.
-- LOG 테이블은 UPDATE/DELETE 불가이므로 수정 가능성이 있는 데이터에는 부적합합니다.
+- LOG 테이블은 UPDATE와 일반 조건 DELETE가 불가하므로 수정 가능성이 있는 데이터에는 부적합합니다. 보존/정리 목적의 `BEFORE`, `OLDEST`, `EXCEPT` DELETE만 사용합니다.
 - RDB 테이블은 Standard Edition 전용입니다. Cluster Edition 환경에서는 LOOKUP(소규모) 또는 외부 RDBMS를 활용합니다.
 - VOLATILE 테이블은 서버 재시작 시 데이터가 소멸됩니다.

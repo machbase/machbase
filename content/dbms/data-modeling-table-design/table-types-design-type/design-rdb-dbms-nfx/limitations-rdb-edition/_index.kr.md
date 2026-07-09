@@ -35,7 +35,7 @@ Cluster Edition 환경에서 RDB 테이블이 필요한 경우:
 | UPDATE (WHERE 없음, 전체 행) | O |
 | DELETE | O |
 | Append API | O (트랜잭션 기반) |
-| PRIMARY KEY 인덱스 | O (Red-Black Tree) |
+| PRIMARY KEY 인덱스 | O (BTREE) |
 | 보조 인덱스 | O |
 | METADATA 절 | X (TAG 전용) |
 | 최소 컬럼 수 | 1개 |

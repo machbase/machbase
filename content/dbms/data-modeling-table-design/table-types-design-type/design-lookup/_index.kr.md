@@ -9,7 +9,7 @@ LOOKUP 테이블은 코드 테이블, 기준 정보, 소규모 참조 데이터�
 - **[활용 사례](/dbms/data-modeling-table-design/table-types-design-type/design-lookup/use-cases-lookup/)**
 - **[PRIMARY KEY 설계](/dbms/data-modeling-table-design/table-types-design-type/design-lookup/design-primary-key/)**
 - **[컬럼 및 시퀀스 설계](/dbms/data-modeling-table-design/table-types-design-type/design-lookup/design-column-lookup-sequence/)**
-- **[JSON 컬럼 설계](/dbms/data-modeling-table-design/table-types-design-type/design-lookup/design-column-lookup-json/)**
+- **[JSON 컬럼 제약](/dbms/data-modeling-table-design/table-types-design-type/design-lookup/design-column-lookup-json/)**
 - **[참조 설계 패턴](/dbms/data-modeling-table-design/table-types-design-type/design-lookup/patterns-reference-design/)**
 - **[인덱스 전략](/dbms/data-modeling-table-design/table-types-design-type/design-lookup/index-strategy-lookup/)**
 - **[PRIMARY KEY 정책](/dbms/data-modeling-table-design/table-types-design-type/design-lookup/policy-lookup-primary-key/)**

@@ -31,13 +31,13 @@ CREATE VOLATILE TABLE sensor_latest (
 
 ```sql
 CREATE VOLATILE TABLE table_name (
-    pk_col  type  PRIMARY KEY,
+    pk_col  type  PRIMARY KEY,  -- PK 기반 동작이 필요할 때 지정
     col2    type,
     ...
 );
 ```
 
-- `PRIMARY KEY` 필수
+- `PRIMARY KEY` 선택
 - PRIMARY KEY 컬럼은 하나만 지정
 
 ## 삭제

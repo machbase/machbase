@@ -4,7 +4,7 @@ title: '값 컬럼 설계'
 weight: 60
 ---
 
-TAG 테이블의 값 컬럼(BASETIME 또는 BASE DISTANCE 이외의 컬럼)은 계측값을 저장합니다.
+TAG 테이블의 값 컬럼(BASETIME 또는 BASEDISTANCE 이외의 컬럼)은 계측값을 저장합니다.
 
 ## 지원 타입
 

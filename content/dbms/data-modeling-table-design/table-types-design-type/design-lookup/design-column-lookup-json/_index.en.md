@@ -1,16 +1,18 @@
 ---
 type: docs
-title: 'JSON Column Design'
+title: 'JSON Column Limitation'
 weight: 40
 ---
 
-LOOKUP tables can store flexible reference-data attributes in `JSON` columns.
-Use regular columns for values that are searched frequently, and JSON columns
-for attributes that vary by device or item.
+LOOKUP tables do not support `JSON` columns. For flexible reference-data
+attributes, split frequently queried values into regular columns, serialize
+rarely queried attributes into a string, or consider JSON columns in RDB/TAG
+tables.
 
 ## Design Example
 
 ```sql
+-- Fails: LOOKUP tables cannot contain JSON columns.
 CREATE LOOKUP TABLE sensor_config (
     sensor_id VARCHAR(64) PRIMARY KEY,
     site      VARCHAR(32),
@@ -20,11 +22,13 @@ CREATE LOOKUP TABLE sensor_config (
 ```
 
 ```sql
-INSERT INTO sensor_config VALUES (
-    'TEMP-01',
-    'SEOUL',
-    'READY',
-    '{"unit":"Celsius","range":{"min":-40,"max":150},"level":3}'
+-- Alternative: split frequently queried attributes into regular columns.
+CREATE LOOKUP TABLE sensor_config (
+    sensor_id VARCHAR(64) PRIMARY KEY,
+    site      VARCHAR(32),
+    status    VARCHAR(16),
+    unit      VARCHAR(16),
+    level     INTEGER
 );
 ```
 
@@ -34,11 +38,11 @@ INSERT INTO sensor_config VALUES (
 SELECT sensor_id
 FROM sensor_config
 WHERE site = 'SEOUL'
-  AND config->'$.unit' = 'Celsius'
-  AND JSON_EXTRACT_INTEGER(config, '$.level') >= 3;
+  AND unit = 'Celsius'
+  AND level >= 3;
 
 UPDATE sensor_config
-SET config = JSON_SET(config, '$.status', 'active')
+SET status = 'ACTIVE'
 WHERE sensor_id = 'TEMP-01';
 ```
 
@@ -47,13 +51,12 @@ WHERE sensor_id = 'TEMP-01';
 | Situation | Recommended approach |
 |-----------|----------------------|
 | Frequently searched or joined value | Regular column |
-| Flexible attributes per device | JSON column |
-| Numeric JSON predicate | `JSON_EXTRACT_INTEGER` or `JSON_EXTRACT_DOUBLE` |
-| Primary key | Stable non-JSON identifier column |
+| Flexible attributes per device | Serialized string or RDB/TAG JSON column |
+| Numeric predicate | Regular numeric column |
+| Primary key | Stable identifier column |
 | High-frequency path search | Extract the value into a regular column |
 
 ## Notes
 
-- A JSON column can be used as a regular column, but not as the primary key.
-- Dedicated JSON path indexes are not supported.
-- Write JSON path literals with single quotes, such as `'$.key'`.
+- JSON columns cannot be created in LOOKUP/VOLATILE tables.
+- If JSON path predicates or JSON path indexes are required, consider RDB/TAG tables.
