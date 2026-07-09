@@ -19,8 +19,8 @@ machcoordinatoradmin --cluster-status
 +-------------+-------------------+-------------------+-------------------+--------------+
 |  Node Type  |     Node Name     |    Group Name     |    Group State    |     State    |
 +-------------+-------------------+-------------------+-------------------+--------------+
-| coordinator | 192.168.1.10:5101 | coordinator       | normal            | primary      |
-| broker      | 192.168.1.11:5401 | broker            | normal            | normal       |
+| coordinator | 192.168.1.10:5101 | Coordinator       | normal            | primary      |
+| broker      | 192.168.1.11:5401 | Broker            | normal            | normal       |
 | warehouse   | 192.168.1.13:5501 | group1            | normal            | normal       |
 | warehouse   | 192.168.1.14:5501 | group1            | normal            | normal       |
 +-------------+-------------------+-------------------+-------------------+--------------+

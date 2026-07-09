@@ -43,14 +43,16 @@ cluster:
     lookup:
       home_path: /home/machbase/lookup
       cluster_link_port: 5301
+      http_admin_port: 5302
     broker:
       home_path: /home/machbase/broker
       cluster_link_port: 5401
-      http_port_no: 5402
+      http_admin_port: 5402
       service_port: 5656
     warehouse:
       home_path: /home/machbase/warehouse
       cluster_link_port: 5501
+      http_admin_port: 5503
       service_port: 5500
 
   coordinators:
@@ -115,7 +117,7 @@ cluster:
 | `cluster.package.origin_path` | `install`, `apply`, `upgrade` 실행 때 입력으로 사용할 패키지 archive 경로입니다. |
 | `cluster.package.registered_path` | `export`가 기록하는 Coordinator package repository의 관찰 경로입니다. 실행 입력으로 사용하지 않습니다. |
 | `cluster.ssh.key_file` | 대상 서버 접속에 사용할 private key 경로입니다. 비밀번호 필드는 사용하지 않습니다. |
-| `cluster.defaults` | 노드 타입별 `home_path`, `cluster_link_port`, `service_port` 기본값입니다. Coordinator와 Deployer는 `http_admin_port`, Broker는 `http_port_no`를 사용합니다. |
+| `cluster.defaults` | 노드 타입별 `home_path`, `cluster_link_port`, `service_port` 기본값입니다. HTTP 관리 포트는 `http_admin_port`를 사용합니다. |
 | `cluster.coordinators` | Coordinator 노드 목록입니다. `role`은 `primary` 또는 `secondary`를 사용합니다. |
 | `cluster.deployers` | Deployer 노드 목록입니다. |
 | `cluster.lookup` | Lookup 노드 목록입니다. `type`은 `master`, `monitor`, `slave`를 사용합니다. |
@@ -135,6 +137,9 @@ cluster:
 
 기존 `cluster.package.path`는 하위 호환 입력으로 사용할 수 있지만, 새로 작성하는 YAML에서는
 `origin_path`를 사용합니다.
+
+이전 빌드에서 내보낸 YAML에 Broker HTTP 포트가 `http_port_no`로 기록되어 있을 수 있습니다. 새로
+작성하는 YAML에서는 `http_admin_port`를 사용합니다.
 
 작성이 완료되면 유효성을 검사합니다.
 

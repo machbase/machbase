@@ -67,7 +67,7 @@ Mach> SELECT VERSION FROM V$VERSION;
 
 - `dbs/` 디렉터리를 절대 삭제하거나 초기화(`machadmin -d`)하지 마십시오.
 - Minor 버전 간 업그레이드는 DB 파일 마이그레이션이 필요할 수 있습니다. 릴리스 노트를 반드시 확인하십시오.
-- Windows 환경에서는 MSI 설치 관리자를 실행하기 전에 Machbase 서비스를 중지합니다.
+- Windows 환경에서는 새 패키지 또는 설치 실행 파일을 적용하기 전에 Machbase 서비스를 중지합니다.
 
 ---
 

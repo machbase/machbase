@@ -1,20 +1,22 @@
 ---
 type: docs
-title: 'MSI 설치'
+title: 'Windows 패키지 설치'
 weight: 20
 toc: true
 ---
 
-Machbase Windows 버전은 MSI 설치 패키지로 제공됩니다. 설치 마법사를 통해 진행하며,
-`MACHBASE_HOME`, `MACHBASE_PORT_NO`, `PATH` 환경 변수와 실행 바로가기를 생성합니다.
+Machbase Windows 버전은 ZIP 패키지 또는 설치 실행 파일로 제공됩니다. 설치 실행 파일을 사용하는
+경우 설치 마법사를 통해 진행하며, `MACHBASE_HOME`, `MACHBASE_PORT_NO`, `PATH` 환경 변수와 실행
+바로가기를 생성합니다.
 
 ## 설치 절차
 
-1. Machbase 공식 배포 사이트에서 MSI 파일을 다운로드합니다.
+1. Machbase Windows 배포 패키지를 다운로드합니다.
 
-2. MSI 파일을 실행합니다. 설치 시작 화면이 표시되면 **Next**를 클릭합니다.
+2. 설치 실행 파일이 제공된 경우 파일을 실행합니다. 설치 시작 화면이 표시되면 **Next**를 클릭합니다.
 
-3. 설치 경로를 선택합니다. 기본값은 `C:\machbase-<short_version>\` 형식입니다. 변경이 필요하면 경로를 수정한 후 **Next**를 클릭합니다.
+3. 설치 경로를 선택합니다. 기본값은 `C:\machbase-<short_version>\` 형식입니다. 변경이 필요하면
+   경로를 수정한 후 **Next**를 클릭합니다.
 
 4. 설치가 진행됩니다. 완료되면 **Next** → **Close**를 클릭합니다.
 

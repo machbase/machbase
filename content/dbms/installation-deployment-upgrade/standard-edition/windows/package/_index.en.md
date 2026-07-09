@@ -1,6 +1,6 @@
 ---
 type: docs
-title: 'MSI 설치'
+title: 'Windows 패키지 설치'
 weight: 20
 toc: true
 draft: true

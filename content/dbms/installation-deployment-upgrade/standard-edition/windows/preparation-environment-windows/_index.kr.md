@@ -43,9 +43,10 @@ New-NetFirewallRule -DisplayName "Machbase HTTP" -Direction Inbound -Protocol TC
 
 ## Visual C++ 재배포 패키지
 
-Machbase 실행에 Visual C++ Redistributable이 필요합니다. MSI 설치 시 자동으로 처리되지만, 문제가 발생하면 Microsoft 공식 사이트에서 최신 버전을 수동으로 설치하십시오.
+Machbase 실행에 Visual C++ Redistributable이 필요합니다. 설치 실행 파일을 사용하는 경우 자동으로
+처리될 수 있지만, 문제가 발생하면 Microsoft 공식 사이트에서 최신 버전을 수동으로 설치하십시오.
 
 ---
 
 **다음 읽을 내용**
-- [MSI 설치](/kr/dbms/installation-deployment-upgrade/standard-edition/windows/msi/)
+- [Windows 패키지 설치](/kr/dbms/installation-deployment-upgrade/standard-edition/windows/package/)

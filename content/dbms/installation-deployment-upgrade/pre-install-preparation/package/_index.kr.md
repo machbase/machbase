@@ -21,7 +21,7 @@ machbase-EDITION-VERSION-OS-CPU-BIT-MODE.EXT
 | CPU | CPU 아키텍처 | `X86` |
 | BIT | 아키텍처 비트 수 | `64` |
 | MODE | 빌드 모드 | `release` |
-| EXT | 확장자 | `tgz` (Linux), `msi` (Windows) |
+| EXT | 확장자 | `tgz` (Linux), `zip` 또는 설치 실행 파일 (Windows) |
 
 Standard Edition Linux tarball은 `machbase-SDK-...tgz` 이름으로 생성됩니다.
 
@@ -57,7 +57,7 @@ $MACHBASE_HOME/
 
 | 실행 파일 | 설명 |
 |-----------|------|
-| `machbase` | 서버 데몬 (`machbased`로 실행됨) |
+| `machbased` | 서버 데몬 |
 | `machadmin` | 서버 관리 (시작·종료·DB 생성) |
 | `machsql` | CLI 쿼리 도구 |
 | `machloader` | 대용량 파일 적재·추출 도구 |
@@ -75,7 +75,6 @@ Cluster Edition에는 `machclusterctl`, `machcoordinatoradmin`, `machdeployeradm
 ```bash
 ls $MACHBASE_HOME/conf/
 # machbase.conf.sample.standard
-# machbase.conf.sample.cluster
 # machbase.conf.sample.edge
 # machloader.conf.sample
 ```

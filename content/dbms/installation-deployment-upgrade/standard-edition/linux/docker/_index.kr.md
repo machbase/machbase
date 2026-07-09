@@ -5,14 +5,17 @@ weight: 30
 toc: true
 ---
 
-Machbase 공식 Docker 이미지를 사용하면 별도의 환경 준비 없이 빠르게 구동할 수 있습니다. 개발·테스트 환경에 적합합니다.
+Machbase Docker 이미지를 사용하면 별도의 환경 준비 없이 빠르게 구동할 수 있습니다. 개발·테스트
+환경에 적합합니다.
 
-Docker 설치가 사전에 완료되어 있어야 합니다. Machbase Docker 이미지는 [Docker Hub](https://hub.docker.com/r/machbase/machbase)에서 제공됩니다.
+Docker 설치가 사전에 완료되어 있어야 합니다. 아래 예시는 로컬 또는 사내 레지스트리에
+`machbase:latest` 이미지가 준비되어 있는 경우를 기준으로 합니다. 사용하는 이미지 이름은 배포
+환경에 맞게 바꾸십시오.
 
-## 이미지 내려받기
+## 이미지 확인
 
 ```bash
-docker pull machbase/machbase
+docker image ls machbase
 ```
 
 ## 컨테이너 실행
@@ -20,16 +23,18 @@ docker pull machbase/machbase
 ```bash
 docker run -d \
   --name machbase \
+  --ulimit nofile=65535 \
   -p 5656:5656 \
   -p 5657:5657 \
   -v /data/machbase:/home/machbase/machbase/dbs \
-  machbase/machbase
+  machbase:latest
 ```
 
 | 옵션 | 설명 |
 |------|------|
 | `-p 5656:5656` | SQL 클라이언트 포트 매핑 |
 | `-p 5657:5657` | HTTP REST API 포트 매핑 |
+| `--ulimit nofile=65535` | 컨테이너 안에서 서버가 사용할 파일 디스크립터 한도 |
 | `-v /data/machbase:...` | 데이터 디렉터리 볼륨 마운트 (데이터 영속성 보장) |
 
 볼륨 마운트를 생략하면 컨테이너 삭제 시 데이터가 함께 제거됩니다.

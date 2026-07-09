@@ -13,7 +13,7 @@ toc: true
 | Ubuntu | 18.04 LTS 이상 |
 | Windows | 10, Server 2019 이상 |
 
-Machbase는 64비트 환경만 지원합니다. 32비트 OS에는 설치할 수 없습니다.
+운영체제 아키텍처는 설치할 Machbase 패키지의 비트 수와 일치해야 합니다.
 
 ## 하드웨어 최소 요구사항
 

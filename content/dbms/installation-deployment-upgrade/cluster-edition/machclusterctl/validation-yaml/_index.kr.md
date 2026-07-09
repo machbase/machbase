@@ -35,14 +35,15 @@ Validation passed.
 
 ## 설치 전 실행 계획 확인
 
-SSH 접속, 패키지 파일 존재 여부, 원격 디렉터리 권한 같은 실행 전 점검은 `install` 또는 `apply`의
-`--dry-run --verbose` 단계에서 확인합니다.
+신규 설치 전에 SSH 접속, 패키지 파일 존재 여부, 원격 디렉터리 권한 같은 실행 전 점검까지 확인하려면
+`install --dry-run --verbose`를 사용합니다.
 
 ```bash
 machclusterctl install -f cluster.yaml --dry-run --verbose
 ```
 
-설치 후 구성 변경을 검증할 때는 다음 명령을 사용합니다.
+설치 후 구성 변경을 검증할 때는 다음 명령을 사용합니다. `apply --dry-run`은 현재 클러스터 상태와
+YAML의 차이를 계산해 실행 계획을 보여주며, 실제 원격 변경 작업은 수행하지 않습니다.
 
 ```bash
 machclusterctl apply -f cluster.yaml --dry-run --verbose

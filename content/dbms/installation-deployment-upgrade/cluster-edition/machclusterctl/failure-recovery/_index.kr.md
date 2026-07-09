@@ -9,8 +9,11 @@ toc: true
 
 ## 설치 실패 시 재시도
 
-설치 도중 오류가 발생하면 `machclusterctl`은 이미 수행한 bootstrap과 노드 등록 작업을 rollback합니다.
-먼저 로그에서 원인을 해결한 뒤 동일한 명령을 다시 실행합니다.
+설치 도중 오류가 발생하면 `machclusterctl install`은 이미 수행한 bootstrap과 노드 등록 작업을
+rollback합니다. 먼저 로그에서 원인을 해결한 뒤 동일한 명령을 다시 실행합니다.
+
+`machclusterctl apply` 중 오류가 발생한 경우에는 현재 상태를 먼저 확인합니다. 일부 노드 추가나 시작이
+진행된 뒤 실패했을 수 있으므로, 상태에 맞게 `apply`를 재실행하거나 필요한 노드를 수동으로 정리합니다.
 
 ```bash
 machclusterctl install -f cluster.yaml --yes --verbose
@@ -45,14 +48,17 @@ machcoordinatoradmin --set-group-state=readonly --group=group1
 # 2. 장애 노드 재시작 또는 복구
 
 # 3. 스냅샷 기반 복구 (Snapshot Failover)
-machcoordinatoradmin --snapshot-recover=192.168.1.13:5401
+machcoordinatoradmin --snapshot-recover=192.168.1.13:5501
 
-# 4. 스냅샷 이후 데이터 복제 동기화
-machcoordinatoradmin --exec-sync=192.168.1.13:5401
+# 4. 복구된 Warehouse 상태를 normal로 전환
+machcoordinatoradmin --set-warehouse-state=normal --node=192.168.1.13:5501
 
 # 5. 그룹 상태를 normal로 복원
 machcoordinatoradmin --set-group-state=normal --group=group1
 ```
+
+`--exec-sync`는 별도 동기화가 필요한 `scrapped` Warehouse에 대해 사용합니다. Snapshot 복구 뒤에
+항상 연속 실행하는 명령은 아닙니다.
 
 ## 로그 확인
 

@@ -15,7 +15,7 @@ Standard Edition은 단일 노드에 설치하는 구성입니다. 개발 환경
 |----|-----------|------|
 | Linux | Tarball (.tgz) | [Tarball 설치](/kr/dbms/installation-deployment-upgrade/standard-edition/linux/tarball/) |
 | Linux | Docker 컨테이너 | [Docker 설치](/kr/dbms/installation-deployment-upgrade/standard-edition/linux/docker/) |
-| Windows | MSI 설치 패키지 | [MSI 설치](/kr/dbms/installation-deployment-upgrade/standard-edition/windows/msi/) |
+| Windows | ZIP 또는 설치 실행 파일 | [Windows 패키지 설치](/kr/dbms/installation-deployment-upgrade/standard-edition/windows/package/) |
 
 설치 전에 [Linux 환경 준비](/kr/dbms/installation-deployment-upgrade/standard-edition/linux/preparation-environment-linux/) 또는 [Windows 환경 준비](/kr/dbms/installation-deployment-upgrade/standard-edition/windows/preparation-environment-windows/)를 먼저 확인하십시오.
 

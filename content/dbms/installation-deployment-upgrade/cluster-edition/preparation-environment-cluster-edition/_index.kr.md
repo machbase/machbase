@@ -93,13 +93,13 @@ sudo date -s "2025-01-02 12:34:56"
 
 ```bash
 current=$(cat /proc/sys/net/ipv4/ip_local_reserved_ports)
-ports=5101-5110,5201-5202,5301,5401-5402,5500-5502,5656-5657
+ports=5101-5110,5201-5202,5301-5302,5401-5402,5500-5503,5656-5657
 sudo sysctl -w net.ipv4.ip_local_reserved_ports="${current:+$current,}$ports"
 ```
 
 기존 예약 포트가 있으면 덮어쓰지 말고 쉼표로 구분해 병합합니다. 클러스터 구성에 따라 포트
-범위를 조정하십시오. Cluster link, admin, service, Broker HTTP, Warehouse replication manager
-포트 등을 모두 포함해야 합니다.
+범위를 조정하십시오. Cluster link, admin, service, Broker/Warehouse HTTP 관리 포트, Warehouse
+replication manager 포트 등을 모두 포함해야 합니다.
 
 ---
 

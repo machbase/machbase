@@ -27,7 +27,7 @@ Machbase는 두 가지 에디션을 제공합니다.
 3. OS 환경에 맞는 설치 진행
    - [Linux — Tarball 설치](/kr/dbms/installation-deployment-upgrade/standard-edition/linux/tarball/)
    - [Linux — Docker 설치](/kr/dbms/installation-deployment-upgrade/standard-edition/linux/docker/)
-   - [Windows — MSI 설치](/kr/dbms/installation-deployment-upgrade/standard-edition/windows/msi/)
+   - [Windows — 패키지 설치](/kr/dbms/installation-deployment-upgrade/standard-edition/windows/package/)
 4. [라이선스 설치](/kr/dbms/installation-deployment-upgrade/pre-install-preparation/license/)
 5. [설치 검증 체크리스트](/kr/dbms/installation-deployment-upgrade/validation-checklist/)
 

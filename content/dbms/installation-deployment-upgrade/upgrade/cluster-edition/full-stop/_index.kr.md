@@ -42,13 +42,14 @@ machclusterctl upgrade -f cluster.yaml --full-stop --yes --verbose
 
 ## 수동 배포 참고
 
-수동 배포 환경에서 직접 교체해야 하는 경우 Warehouse → Broker → Deployer → Coordinator 순으로
-종료합니다.
+수동 배포 환경에서 직접 교체해야 하는 경우 Warehouse → Broker → Lookup → Deployer → Coordinator
+순으로 종료합니다.
 
 ```bash
 machcoordinatoradmin --shutdown-node=192.168.1.13:5501
 machcoordinatoradmin --shutdown-node=192.168.1.14:5501
 machcoordinatoradmin --shutdown-node=192.168.1.11:5401
+machcoordinatoradmin --shutdown-node=192.168.1.10:5301
 machdeployeradmin --shutdown
 machcoordinatoradmin --shutdown
 ```
@@ -62,16 +63,18 @@ tar zxf machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz -C $MACHBASE_CO
 # Deployer 노드에서
 tar zxf machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz -C $MACHBASE_DEPLOYER_HOME
 
-# Broker / Warehouse 노드에서 (경량 패키지)
-tar zxf machbase-cluster-8.6.0.official-LINUX-X86-64-release-lightweight.tgz -C ~/broker
-tar zxf machbase-cluster-8.6.0.official-LINUX-X86-64-release-lightweight.tgz -C ~/warehouse
+# Lookup / Broker / Warehouse 노드에서
+tar zxf machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz -C ~/lookup
+tar zxf machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz -C ~/broker
+tar zxf machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz -C ~/warehouse
 ```
 
-Coordinator → Deployer → Broker → Warehouse 순으로 시작합니다.
+Coordinator → Deployer → Lookup → Broker → Warehouse 순으로 시작합니다.
 
 ```bash
 machcoordinatoradmin --startup
 machdeployeradmin --startup
+machcoordinatoradmin --startup-node=192.168.1.10:5301
 machcoordinatoradmin --startup-node=192.168.1.11:5401
 machcoordinatoradmin --startup-node=192.168.1.13:5501
 machcoordinatoradmin --startup-node=192.168.1.14:5501
@@ -83,7 +86,7 @@ machcoordinatoradmin --startup-node=192.168.1.14:5501
 machclusterctl status
 ```
 
-모든 노드가 `normal` 상태이면 업그레이드가 완료된 것입니다.
+모든 노드가 각 역할에 맞는 정상 상태이면 업그레이드가 완료된 것입니다.
 
 ## 주의사항
 

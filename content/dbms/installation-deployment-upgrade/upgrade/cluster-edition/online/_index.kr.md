@@ -49,11 +49,17 @@ machclusterctl status
 
 ## 수동 업그레이드 참고
 
-`machcoordinatoradmin --upgrade-node`를 직접 사용하는 경우에도 온라인 대상은 Broker와 Warehouse로
-제한합니다. Broker가 하나만 남아 있을 때 해당 Broker를 업그레이드하면 그 시간 동안 클라이언트
-접속이 끊길 수 있습니다.
+`machcoordinatoradmin --upgrade-node`를 직접 사용하는 경우에는 대상 노드와 패키지 이름을 함께
+지정합니다.
 
-모든 대상 노드가 `normal` 상태이고 새 패키지로 동작하면 업그레이드 완료입니다.
+```bash
+machcoordinatoradmin --upgrade-node=192.168.1.11:5401 --package-name=machbase-v8.6.0
+```
+
+온라인 대상은 Broker와 Warehouse로 제한합니다. Broker가 하나만 남아 있을 때 해당 Broker를
+업그레이드하면 그 시간 동안 클라이언트 접속이 끊길 수 있습니다.
+
+모든 대상 노드가 각 역할에 맞는 정상 상태이고 새 패키지로 동작하면 업그레이드 완료입니다.
 
 ---
 

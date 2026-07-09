@@ -10,9 +10,10 @@ Broker와 Warehouse를 등록하기 전에 경량 패키지를 Coordinator에 `-
 
 ## Broker 설치
 
-### 1. machbase.conf 설정
+### 1. 등록 파라미터 확인
 
-각 Broker 노드의 `machbase.conf`를 편집합니다.
+Broker 설정 파일은 `--add-node` 실행 때 생성되어 Deployer를 통해 대상 노드에 배포됩니다. 등록 전에
+사용할 cluster link 포트, 서비스 포트, HTTP 포트를 확정합니다.
 
 ```
 CLUSTER_LINK_HOST    = 192.168.1.11   # Broker 노드 IP
@@ -57,7 +58,10 @@ machcoordinatoradmin --startup-node="192.168.1.11:5401"
 
 Warehouse 노드는 그룹 단위로 구성합니다. 같은 그룹의 노드끼리 데이터를 복제합니다.
 
-### 1. machbase.conf 설정
+### 1. 등록 파라미터 확인
+
+Warehouse 설정 파일은 `--add-node` 실행 때 생성되어 Deployer를 통해 대상 노드에 배포됩니다. 등록
+전에 cluster link 포트, 서비스 포트, HTTP 포트, replication manager 주소를 확정합니다.
 
 ```
 CLUSTER_LINK_HOST    = 192.168.1.13
@@ -120,7 +124,9 @@ machcoordinatoradmin --add-node="192.168.1.30:5301" \
 machcoordinatoradmin --cluster-status
 ```
 
-모든 노드가 `normal` 상태이면 클러스터가 정상 구동 중입니다.
+Coordinator, Lookup, Broker, Warehouse가 각 역할에 맞는 정상 상태로 표시되면 클러스터가 정상
+구동 중입니다. Coordinator는 `primary`, Broker는 `leader`, Warehouse는 `normal`,
+`sync-active`, `sync-standby` 등으로 표시될 수 있습니다.
 
 ---
 
