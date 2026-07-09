@@ -10,7 +10,7 @@ weight: 70
 
 | 입력 경로 | 최대 처리량 | 지연 | 주요 특징 |
 |----------|-----------|------|---------|
-| SDK Append API | 수백만 건/초 | 최소 | 내부 Append 버퍼, 비트랜잭션 |
+| SDK Append API | TAG/LOG에서 수백만 건/초 | 최소 | 내부 Append 버퍼. RDB는 client appendBatch/stream 경로 |
 | REST API (JSON) | 수만~수십만 건/초 | 낮음 | HTTP 오버헤드, 범용성 |
 | machloader | 수십만~수백만 건/초 | 파일 기반 | 배치 적재, 병렬 실행 가능 |
 | LOAD DATA INFILE | 수십만~수백만 건/초 | 파일 기반 | 서버 직접 읽기, 네트워크 무관 |

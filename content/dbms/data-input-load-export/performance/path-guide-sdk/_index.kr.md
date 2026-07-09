@@ -10,7 +10,7 @@ Machbase SDK(Go, Python, C 등)를 사용하면 애플리케이션에서 직접 
 
 ### Append API (고속 대량 입력)
 
-Append API는 비트랜잭션 버퍼 기반으로 수백만 건/초 처리량을 달성합니다. TAG/LOG 테이블의 시계열 데이터 수집에 최적입니다.
+Append API는 TAG/LOG 테이블에서 비트랜잭션 버퍼 기반으로 높은 처리량을 달성합니다. 시계열 데이터 수집에 최적입니다.
 
 ```go
 // Go SDK Append API
@@ -30,7 +30,7 @@ with conn.appender("sensor_log") as app:
 
 ### SQL INSERT (소량·범용)
 
-VOLATILE, LOOKUP, RDB 테이블 또는 소량 데이터 입력에는 SQL INSERT를 사용합니다.
+소량 입력, 행 단위 오류 확인, 명시적 트랜잭션이 필요한 작업에는 SQL INSERT를 사용합니다. RDB 대량 입력은 지원되는 client API의 appendBatch 또는 append stream 경로를 사용할 수 있습니다.
 
 ```go
 // Go SDK SQL INSERT

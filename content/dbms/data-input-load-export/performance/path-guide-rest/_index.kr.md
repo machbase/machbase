@@ -12,9 +12,9 @@ REST API는 HTTP JSON 기반으로 동작합니다. SDK나 별도 드라이버 �
 
 ```bash
 # REST API로 데이터 삽입 예시
-curl -X POST http://127.0.0.1:5657/api/v1/write/sensor_log \
+curl -X POST http://127.0.0.1:5657/machbase \
     -H "Content-Type: application/json" \
-    -d '{"rows":[["TEMP-01","2024-01-15T10:00:00",25.3]]}'
+    -d '{"name":"sensor_log","date_format":"YYYY-MM-DD HH24:MI:SS","values":[["TEMP-01","2024-01-15 10:00:00",25.3]]}'
 ```
 
 ## 성능 특성

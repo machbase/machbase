@@ -145,8 +145,9 @@ INTO TABLE table_name
 [TABLESPACE tbs_name]
 [AUTO (BULKLOAD | HEADUSE | HEADUSE_ESCAPE)]
 [(FIELDS | COLUMNS) [TERMINATED BY 'char'] [ENCLOSED BY 'char']]
+[LINES TERMINATED BY 'char']
 [TRIM (ON | OFF)]
-[IGNORE number (LINES | ROWS)]
+[IGNORE number LINES]
 [MAX_LINE_LENGTH number]
 [ENCODED BY coding_name]
 [ON ERROR (STOP | IGNORE)];
@@ -161,11 +162,12 @@ INTO TABLE table_name
 | `AUTO HEADUSE_ESCAPE` | HEADUSE와 동일하나 예약어 충돌을 피하기 위해 컬럼명 앞뒤에 `_` 추가, 특수문자는 `_`로 치환 |
 | `FIELDS TERMINATED BY 'char'` | 필드 구분자 지정 (기본값: `,`) |
 | `ENCLOSED BY 'char'` | 필드 감싸기 문자 지정 (기본값: `"`) |
+| `LINES TERMINATED BY 'char'` | 줄 구분자 지정 |
 | `TRIM (ON\|OFF)` | 공백 제거 여부. 기본값 ON |
-| `IGNORE n LINES\|ROWS` | 처음 n줄 무시 (헤더 건너뛰기에 사용) |
+| `IGNORE n LINES` | 처음 n줄 무시 (헤더 건너뛰기에 사용) |
 | `MAX_LINE_LENGTH n` | 한 줄의 최대 길이 지정. 기본값 512K |
 | `ENCODED BY` | 파일 인코딩 지정: UTF8(기본), MS949, KSC5601, EUCJP, SHIFTJIS, BIG5, GB231280 |
-| `ON ERROR STOP\|IGNORE` | 오류 발생 시 중단(STOP) 또는 해당 줄 건너뛰기(IGNORE). 기본값 IGNORE |
+| `ON ERROR STOP\|IGNORE` | 오류 발생 시 중단(STOP) 또는 해당 줄 건너뛰기(IGNORE). 기본값 STOP |
 
 ### 예시
 

@@ -17,7 +17,8 @@ weight: 20
 │
 ├── 애플리케이션/SDK
 │   ├── 대량 시계열 (수만 건/초 이상) → Append API
-│   └── 소량 또는 RDB/LOOKUP/VOLATILE → SQL INSERT
+│   ├── RDB 대량 batch 입력 → client appendBatch/append stream
+│   └── 소량 또는 일반 트랜잭션 처리 → SQL INSERT
 │
 ├── HTTP/REST
 │   └── 외부 시스템, IoT → REST API (8장 참고)
@@ -31,7 +32,7 @@ weight: 20
 | 처리량 목표 | 권장 방법 |
 |-----------|---------|
 | 수백만 건/초 (TAG/LOG) | Append API (SDK) |
-| 수십만 건/초 | Append API 또는 machloader 병렬 |
+| 수십만 건/초 | Append API, client appendBatch 또는 machloader 병렬 |
 | 수천~수만 건/초 | LOAD DATA INFILE 또는 machloader |
 | 수백 건/초 이하 | SQL INSERT |
 

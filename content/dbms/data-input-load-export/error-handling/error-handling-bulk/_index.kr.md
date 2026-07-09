@@ -24,7 +24,7 @@ machloader -i -d data.csv -t sensor_log \
     -l sensor_log.log
 ```
 
-- **bad 파일 (`-b`)**: 입력 실패한 원본 행을 기록
+- **bad 파일 (`-b`)**: 실패 행과 진단 정보를 기록
 - **로그 파일 (`-l`)**: 실패 행의 오류 메시지를 기록
 
 ```bash
@@ -33,19 +33,19 @@ machloader -i -d data.csv -t sensor_log \
 # Row 15: Type mismatch on column 'value'
 # Row 42: NULL value in NOT NULL column 'sensor_id'
 
-# bad 파일로 실패 데이터 확인 및 수정 후 재시도
+# bad 파일에서 실패 원인과 원본 행을 확인한 뒤 데이터만 추출/수정해 재시도
 vi sensor_log.bad
-machloader -i -d sensor_log.bad -t sensor_log
+machloader -i -d sensor_log_fixed.csv -t sensor_log
 ```
 
 ## LOAD DATA INFILE: ON ERROR 옵션
 
 ```sql
--- 오류 발생 시 중단 (기본: IGNORE)
+-- 오류 발생 시 중단 (기본값)
 LOAD DATA INFILE '/data/sensor.csv' INTO TABLE sensor_log
 ON ERROR STOP;
 
--- 오류 발생 시 해당 행 건너뛰고 계속 진행 (기본값)
+-- 오류 발생 시 해당 행 건너뛰고 계속 진행
 LOAD DATA INFILE '/data/sensor.csv' INTO TABLE sensor_log
 ON ERROR IGNORE;
 ```
@@ -82,8 +82,9 @@ SELECT COUNT(*) FROM archive_log;
 # 1. bad 파일 검토
 head -20 sensor_log.bad
 
-# 2. 문제 있는 행 수정 (sed, awk 등 활용)
-sed 's/incorrect_value/correct_value/' sensor_log.bad > sensor_log_fixed.csv
+# 2. 진단 텍스트를 제외하고 원본 데이터 행만 추출한 뒤 수정
+awk '/^[^:]+,[^:]+/ { print }' sensor_log.bad > sensor_log_retry.csv
+sed 's/incorrect_value/correct_value/' sensor_log_retry.csv > sensor_log_fixed.csv
 
 # 3. 수정된 파일 재시도
 machloader -i -d sensor_log_fixed.csv -t sensor_log \

@@ -13,8 +13,9 @@ LOAD DATA INFILE 'file_path'
 INTO TABLE table_name
 [AUTO {BULKLOAD | HEADUSE | HEADUSE_ESCAPE}]
 [(FIELDS | COLUMNS) [TERMINATED BY 'char'] [ENCLOSED BY 'char']]
+[LINES TERMINATED BY 'char']
 [TRIM {ON | OFF}]
-[IGNORE number {LINES | ROWS}]
+[IGNORE number LINES]
 [MAX_LINE_LENGTH number]
 [ENCODED BY coding_name]
 [ON ERROR {STOP | IGNORE}];
@@ -29,11 +30,12 @@ INTO TABLE table_name
 | `AUTO HEADUSE_ESCAPE` | HEADUSE와 동일하나, 예약어·특수문자 컬럼명에 `_` 처리 |
 | `FIELDS TERMINATED BY` | 필드 구분자 (기본값: `,`) |
 | `ENCLOSED BY` | 필드 감싸는 문자 (기본값: `"`) |
+| `LINES TERMINATED BY` | 줄 구분자 |
 | `TRIM ON/OFF` | 공백 제거 여부 (기본값: ON) |
 | `IGNORE N LINES` | 첫 N줄 무시 (헤더 건너뛰기) |
 | `MAX_LINE_LENGTH` | 한 줄 최대 길이 (기본값: 512KB) |
 | `ENCODED BY` | 파일 인코딩 (기본값: UTF8) |
-| `ON ERROR STOP/IGNORE` | 오류 시 중단 또는 건너뜀 (기본값: IGNORE) |
+| `ON ERROR STOP/IGNORE` | 오류 시 중단 또는 건너뜀 (기본값: STOP) |
 
 ## 예시
 

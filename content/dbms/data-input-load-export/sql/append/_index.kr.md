@@ -4,13 +4,13 @@ title: 'Append API'
 weight: 20
 ---
 
-Append API는 Machbase SDK가 제공하는 초고속 대량 입력 인터페이스입니다. SQL INSERT와 달리 내부 버퍼에 데이터를 모아 배치 전송하므로, TAG/LOG 테이블에 수백만 건/초의 처리량을 달성할 수 있습니다.
+Append API는 Machbase SDK가 제공하는 대량 입력 인터페이스입니다. SQL INSERT와 달리 내부 버퍼에 데이터를 모아 배치 전송하므로, TAG/LOG 테이블의 시계열 데이터 입력에서 높은 처리량을 달성할 수 있습니다.
 
 ## Append API 특징
 
-- **비트랜잭션**: 트랜잭션 커밋/롤백 없이 동작. 실패한 행은 개별 처리
+- **고속 입력 경로**: TAG/LOG 테이블에서 비트랜잭션 버퍼 기반으로 동작
 - **버퍼 기반**: 내부 버퍼에 데이터를 누적하다가 `Close()` 또는 버퍼 플러시 시 서버로 전송
-- **태이블 타입**: TAG, LOG, RDB(트랜잭션 기반으로 내부 처리)에서 사용 가능. VOLATILE/LOOKUP은 미지원
+- **테이블 타입**: TAG, LOG, VOLATILE, LOOKUP에서 사용 가능. RDB는 지원되는 client API의 appendBatch 또는 append stream 경로로 사용
 - **열 순서 고정**: 테이블 컬럼 순서대로 값을 전달
 
 ## Go SDK 예시
@@ -77,10 +77,10 @@ MCHCloseAppender(appender, &successCnt, &failCnt);
 
 | 항목 | Append API | SQL INSERT |
 |------|-----------|-----------|
-| 처리량 | 수백만 건/초 | 수천~수만 건/초 |
-| 트랜잭션 | X (비트랜잭션) | O |
+| 처리량 | TAG/LOG에서 수백만 건/초 수준 | 수천~수만 건/초 |
+| 트랜잭션 | TAG/LOG는 비트랜잭션, RDB는 batch 실행 구간에서 트랜잭션 처리 | O |
 | 오류 처리 | 실패 행 건너뜀 | 행별 오류 반환 |
-| 사용 테이블 | TAG, LOG, RDB | 모든 테이블 |
+| 사용 테이블 | TAG, LOG, VOLATILE, LOOKUP, RDB(client append API) | 모든 테이블 |
 | 사용 방법 | SDK 필요 | SQL 클라이언트 |
 
 ## REST API Append
@@ -91,4 +91,4 @@ REST API를 통한 Append도 동일한 고속 경로를 사용합니다. 상세�
 
 - `Close()` 를 반드시 호출해야 내부 버퍼가 플러시됩니다. 호출하지 않으면 데이터 유실이 발생합니다.
 - 대량 Append 중 서버 재시작 등의 이유로 연결이 끊기면 버퍼에 남은 데이터는 손실될 수 있습니다.
-- RDB, VOLATILE, LOOKUP 테이블은 Append API를 지원하지 않습니다. SQL INSERT를 사용하세요.
+- RDB 테이블에는 일반 SQL `APPEND INTO` 문법을 사용하지 않습니다. RDB 대량 입력은 지원되는 client API의 appendBatch 또는 append stream 경로를 사용합니다.

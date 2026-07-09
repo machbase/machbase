@@ -11,7 +11,7 @@ Machbase에 데이터를 입력하는 방법은 사용 목적과 데이터 볼�
 | 입력 방법 | 특징 | 주요 사용 사례 |
 |----------|------|--------------|
 | SQL INSERT | 단건·소량. 트랜잭션 지원 | 설정값 등록, 테스트 |
-| Append API | 초고속 대량 입력. 비트랜잭션 버퍼 | TAG/LOG 시계열 대량 수집 |
+| Append API | SDK 기반 대량 입력. TAG/LOG는 비트랜잭션 버퍼 경로 | TAG/LOG 시계열 대량 수집, client API 기반 RDB batch 입력 |
 | LOAD DATA INFILE | SQL로 서버 측 파일 직접 로드 | 서버에 위치한 대용량 파일 일괄 적재 |
 | machloader | CLI 도구. 유연한 스키마 매핑 | 정기 배치, 마이그레이션 |
 | csvimport | machloader 래퍼. 간편 CSV 입력 | 빠른 파일 적재 |

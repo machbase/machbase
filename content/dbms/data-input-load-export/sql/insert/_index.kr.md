@@ -70,7 +70,7 @@ SELECT _arrival_time, sensor_id, ts, value FROM sensor_log;
 
 ## INSERT ON DUPLICATE KEY UPDATE (UPSERT)
 
-PRIMARY KEY가 지정된 VOLATILE 테이블에서 PK 중복 시 자동 UPDATE되는 구문입니다.
+PRIMARY KEY가 지정된 VOLATILE 또는 LOOKUP 테이블에서 PK 중복 시 자동 UPDATE되는 구문입니다.
 
 ```sql
 -- PK 중복 없으면 INSERT, 있으면 UPDATE
@@ -80,6 +80,10 @@ ON DUPLICATE KEY UPDATE SET status = 'ALARM', value = 95.3, updated_at = NOW;
 -- SET 절로 삽입값과 다른 값 업데이트
 INSERT INTO device_status VALUES ('DEV-02', 'NORMAL', 23.5, NOW)
 ON DUPLICATE KEY UPDATE SET status = 'NORMAL', value = 24.0, updated_at = NOW;
+
+-- LOOKUP 테이블에서도 PK 기준으로 UPSERT 가능
+INSERT INTO alarm_threshold VALUES ('TEMP-01', 85.0, 5.0)
+ON DUPLICATE KEY UPDATE SET high_limit = 85.0, low_limit = 5.0;
 ```
 
 `SET` 절에는 갱신할 값을 명시합니다. 현재 빌드에서는 `value = value + 1`처럼 기존 값을

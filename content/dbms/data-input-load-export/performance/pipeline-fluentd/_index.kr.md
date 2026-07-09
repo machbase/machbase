@@ -9,13 +9,13 @@ Fluentd는 오픈소스 데이터 수집 에이전트로, 다양한 소스에서
 ## Fluentd + Machbase 구성 개요
 
 ```
-[로그 소스] → [Fluentd Agent] → [Machbase REST API / JDBC Output Plugin]
+[로그 소스] → [Fluentd Agent] → [Machbase Fluentd Output Plugin]
   - 애플리케이션 로그
   - 시스템 메트릭
   - 네트워크 장비 로그
 ```
 
-Fluentd는 Machbase Output Plugin 또는 HTTP Output Plugin을 통해 Machbase REST API로 데이터를 전송합니다.
+Fluentd는 Machbase Output Plugin을 통해 Machbase 서버에 접속하고 append 세션으로 데이터를 전송합니다.
 
 ## 주요 사용 사례
 
@@ -26,18 +26,18 @@ Fluentd는 Machbase Output Plugin 또는 HTTP Output Plugin을 통해 Machbase R
 ## 기본 설정 예시
 
 ```xml
-<!-- Fluentd HTTP Output → Machbase REST API -->
+<!-- Fluentd Machbase Output Plugin -->
 <match machbase.**>
-  @type http
-  endpoint http://127.0.0.1:5657/api/v1/write/sensor_log
-  content_type application/json
-  <format>
-    @type json
-  </format>
-  <buffer>
-    chunk_limit_size 10MB
-    flush_interval 5s
-  </buffer>
+  type machbase
+
+  host 127.0.0.1
+  port 5656
+  uid SYS
+  pwd MANAGER
+
+  tablename apache_access_log
+  hostname webserver
+  arrivaltime true
 </match>
 ```
 

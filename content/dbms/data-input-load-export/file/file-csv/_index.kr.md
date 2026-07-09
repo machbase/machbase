@@ -64,6 +64,8 @@ machloader -i -d data.pipe -t sensor_log -D '|'
 
 ## 지원 인코딩
 
+`machloader`와 `csvimport`/`csvexport` 래퍼는 다음 인코딩을 사용할 수 있습니다.
+
 | 코드 | 설명 |
 |------|------|
 | `UTF8` | UTF-8 (기본값) |
@@ -75,3 +77,6 @@ machloader -i -d data.pipe -t sensor_log -D '|'
 | `BIG5` | Big5 (중국어 번체) |
 | `GB231280` | GB2312 (중국어 간체) |
 | `UTF16` | UTF-16 |
+
+SQL `LOAD DATA INFILE`과 `SAVE DATA INTO`의 `ENCODED BY`는 `UTF8`, `MS949`, `KSC5601`,
+`EUCJP`, `SHIFTJIS`, `BIG5`, `GB231280`을 지원합니다. SQL 구문에서는 `UTF16`을 지정하지 않습니다.

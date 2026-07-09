@@ -63,13 +63,12 @@ AS SELECT * FROM sensor_log WHERE value > 100;
 machsql -s 127.0.0.1 -u SYS -p MANAGER
 Mach> SAVE DATA INTO '/data/export/result.csv' HEADER ON
    2> AS SELECT sensor_id, ts, value FROM sensor_log LIMIT 10000;
-Saving data into /data/export/result.csv
-10000 rows saved.
+10000 row(s) saved.
 ```
 
 ## 주의사항
 
 - 파일 경로는 **서버 파일시스템** 기준입니다. 클라이언트 로컬 경로가 아닙니다.
-- 기존 파일이 있으면 덮어씁니다.
+- 기존 파일이 있으면 오류가 발생합니다. 새 파일 경로를 지정하거나 기존 파일을 먼저 삭제하세요.
 - 서버 프로세스 계정에 해당 디렉터리 쓰기 권한이 필요합니다.
 - 대용량 반출 시 디스크 여유 공간을 미리 확인하세요.

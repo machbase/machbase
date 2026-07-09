@@ -12,24 +12,15 @@ weight: 10
 |------|-----------|
 | 애플리케이션이 직접 Machbase에 쓸 수 있음 | Append API (JDBC/Python/Go 등) |
 | 외부 장치나 파일에서 자동 수집이 필요함 | Collector |
-| 다양한 프로토콜을 지원해야 함 (TCP, UDP, 시리얼 등) | Collector |
+| 로컬 파일 또는 SFTP 파일을 자동 수집해야 함 | Collector |
 | 수신 데이터의 형식 변환이나 파싱이 필요함 | Collector (템플릿 활용) |
 | 네트워크 중단 시 데이터 손실 없이 버퍼링이 필요함 | Collector |
-| 외부 DB(Oracle, MySQL 등)에서 데이터를 동기화함 | Collector (ODBC 소스) |
 | 원격 서버의 파일을 주기적으로 가져와야 함 | Collector (SFTP 소스) |
 | 단일 애플리케이션에서 실시간으로 대량 적재 | Append API (직접 연결이 더 효율적) |
 
 ## Collector가 적합한 구체적 사용 사례
 
-### 1. 산업 IoT 센서 데이터 수집
-
-PLC, RTU, 계측 장비 등이 시리얼(RS-232/RS-485) 또는 TCP/UDP로 데이터를 전송하는 환경에 적합합니다. 장비는 Machbase를 인식하지 못하고 단순히 포트로 데이터를 내보내므로, Collector가 중간에서 수신하여 적재합니다.
-
-```
-[PLC/RTU] ──시리얼/TCP──→ [Collector] ──Append──→ [Machbase]
-```
-
-### 2. 로그 파일 모니터링
+### 1. 로그 파일 모니터링
 
 애플리케이션이나 시스템이 생성하는 로그 파일을 실시간으로 감시하고 분석 가능한 형태로 적재합니다. 파일 회전(rotation)이 발생해도 새 파일을 자동으로 감지합니다.
 
@@ -37,15 +28,7 @@ PLC, RTU, 계측 장비 등이 시리얼(RS-232/RS-485) 또는 TCP/UDP로 데이
 [App Log File] ──파일 감시──→ [Collector (파일 소스)] ──→ [Machbase]
 ```
 
-### 3. SCADA/OPC-DA 데이터 수집
-
-SCADA 시스템이나 OPC-DA 서버가 ODBC를 통해 데이터를 제공하는 경우, Collector의 ODBC 소스를 통해 주기적으로 쿼리하여 Machbase에 동기화합니다.
-
-```
-[SCADA/OPC DB] ──ODBC 쿼리──→ [Collector (ODBC 소스)] ──→ [Machbase]
-```
-
-### 4. 원격 서버 파일 수집
+### 2. 원격 서버 파일 수집
 
 원격 장비나 서버에서 주기적으로 생성되는 CSV 파일을 SFTP로 수집합니다. 파일 다운로드, 파싱, 적재, 처리 완료 후 파일 관리까지 자동화됩니다.
 
@@ -53,9 +36,9 @@ SCADA 시스템이나 OPC-DA 서버가 ODBC를 통해 데이터를 제공하는 
 [원격 서버 /data/*.csv] ──SFTP──→ [Collector (SFTP 소스)] ──→ [Machbase]
 ```
 
-### 5. 기존 시스템의 DB 데이터 마이그레이션
+### 3. 기존 시스템의 DB 데이터 마이그레이션
 
-Oracle, MySQL, MSSQL 등의 기존 RDB에 축적된 센서/로그 데이터를 Machbase로 이전할 때 ODBC Collector를 활용합니다. 증분 쿼리(마지막 처리 시간 이후 데이터만 조회)를 통해 지속적인 동기화도 가능합니다.
+Oracle, MySQL, MSSQL 등의 기존 RDB에 축적된 센서/로그 데이터를 Machbase로 이전할 때는 외부 DB에서 CSV로 반출한 뒤 `machloader` 또는 `LOAD DATA INFILE`로 적재합니다. 애플리케이션 레벨에서 주기적으로 조회한 뒤 SDK나 SQL INSERT로 입력하는 방식도 사용할 수 있습니다.
 
 ## Collector가 적합하지 않은 경우
 
@@ -69,7 +52,7 @@ Oracle, MySQL, MSSQL 등의 기존 RDB에 축적된 센서/로그 데이터를 M
 
 Collector 도입을 결정하기 전에 다음 항목을 확인합니다.
 
-1. **데이터 소스 프로토콜:** 소스가 FILE, TCP, UDP, SFTP, ODBC 중 어떤 방식으로 데이터를 제공하는가?
+1. **데이터 소스 프로토콜:** 소스가 FILE 또는 SFTP 파일로 제공되는가?
 2. **데이터 형식:** 원시 데이터가 CSV, JSON, 고정 너비, 로그 텍스트 등 어떤 형식인가?
 3. **수집 주기:** 실시간 연속 수집인가, 아니면 주기적인 배치 수집인가?
 4. **네트워크 안정성:** 소스와 Machbase 사이의 연결이 불안정할 수 있는가?
@@ -78,6 +61,4 @@ Collector 도입을 결정하기 전에 다음 항목을 확인합니다.
 ## 참고
 
 - 파일 수집 설정: [../file-collector](../file-collector)
-- 소켓 수집 설정: [../socket-collector](../socket-collector)
 - SFTP 수집 설정: [../sftp-collector](../sftp-collector)
-- ODBC 수집 설정: [../odbc-collector](../odbc-collector)

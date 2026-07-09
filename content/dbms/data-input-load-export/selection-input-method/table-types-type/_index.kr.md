@@ -12,8 +12,8 @@ weight: 10
 |----------|-----|-----|-----|---------|--------|
 | SQL INSERT | O | O | O | O | O |
 | INSERT SELECT | O | O | O | O | O |
-| INSERT ON DUPLICATE KEY UPDATE | X | X | X | O (PK 필요) | X |
-| Append API | O | O | X | X | X |
+| INSERT ON DUPLICATE KEY UPDATE | X | X | X | O (PK 필요) | O (PK 필요) |
+| Append API | O | O | O (client API) | O | O |
 | LOAD DATA INFILE | O | O | O | O | O |
 | machloader | O | O | O | O | O |
 | csvimport | O | O | O | O | O |
@@ -37,10 +37,11 @@ weight: 10
 
 - **초기 데이터 로드**: machloader 또는 SQL INSERT
 - **애플리케이션 연동**: SQL INSERT/UPDATE/DELETE (JDBC, ODBC, SDK)
+- **대량 입력**: 지원되는 client API의 appendBatch 또는 append stream
 - **파일 적재**: csvimport
 
 ### VOLATILE / LOOKUP 테이블
 
 - **참조 데이터 초기 로드**: SQL INSERT 또는 machloader
-- **UPSERT**: INSERT ON DUPLICATE KEY UPDATE (VOLATILE, PK 있는 경우)
+- **UPSERT**: INSERT ON DUPLICATE KEY UPDATE (PK 있는 VOLATILE/LOOKUP)
 - **설정 업데이트**: SQL UPDATE (PK 기준)
