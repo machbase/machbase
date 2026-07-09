@@ -1,5 +1,5 @@
 ---
 type: docs
-title: 'Machbase DBMS Reference'
+title: 'Machbase DBMS Manual'
 weight: 30
 ---

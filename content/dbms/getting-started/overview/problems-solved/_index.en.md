@@ -35,38 +35,7 @@ appended quickly, tag measurements can be found by tag name and time, and refere
 data can be used for joins and interpretation. The value of a time-series system
 appears when these parts work together.
 
-## Problem Sample
-
-The following sample stores event-like data in a LOG table and queries it by time. In
-an industrial IoT system, this can represent equipment status. In a financial system,
-the same pattern can represent an event that a tick was received.
-
-```sql
-CREATE TABLE DBMS_GS_EVENTS (
-  EVENT_TIME DATETIME,
-  DEVICE_ID VARCHAR(20),
-  STATUS VARCHAR(20)
-);
-
-INSERT INTO DBMS_GS_EVENTS
-VALUES (TO_DATE('2026-07-02 09:00:00', 'YYYY-MM-DD HH24:MI:SS'), 'pump01', 'OK');
-
-SELECT DEVICE_ID, STATUS
-FROM DBMS_GS_EVENTS
-WHERE EVENT_TIME >= TO_DATE('2026-07-02 00:00:00', 'YYYY-MM-DD HH24:MI:SS');
-
-DROP TABLE DBMS_GS_EVENTS;
-```
-
-Assuming the SQL above is saved as `/tmp/dbms_gs_events.sql`, run the following command.
-
-```bash
-machsql -s 127.0.0.1 -P 5656 -u SYS -p MANAGER -f /tmp/dbms_gs_events.sql
-```
-
-If the result contains `pump01` and `OK`, event storage and time filtering worked.
-This pattern is a starting point for data where you need to answer "what happened
-when," such as failure histories, service state changes, security events, or tick
-receive histories.
-If a rerun fails because `DBMS_GS_EVENTS` already exists, run
-`DROP TABLE DBMS_GS_EVENTS;` and start again.
+The representative sample in this chapter checks only the smallest version of the
+problem: store one event and read it back. Real designs start by deciding whether the
+data is an event, a tag-based measurement, or reference data, then moving to the
+corresponding table-type document.

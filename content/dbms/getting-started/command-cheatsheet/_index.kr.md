@@ -17,25 +17,4 @@ toc: true
 | 데이터 조회 | `SELECT ... FROM table_name;` |
 | 테이블 삭제 | `DROP TABLE table_name;` |
 
-## 치트시트 검증 예제
-
-```sql
-CREATE TABLE DBMS_GS_CHEATSHEET (
-  ID INTEGER,
-  MESSAGE VARCHAR(40)
-);
-
-INSERT INTO DBMS_GS_CHEATSHEET VALUES (1, 'hello machbase');
-
-SELECT ID, MESSAGE FROM DBMS_GS_CHEATSHEET;
-
-DROP TABLE DBMS_GS_CHEATSHEET;
-```
-
-위 SQL이 `/tmp/dbms_gs_cheatsheet.sql` 파일에 저장되어 있다고 가정하고 다음 명령을 실행합니다.
-
-```bash
-machsql -s 127.0.0.1 -P 5656 -u SYS -p MANAGER -f /tmp/dbms_gs_cheatsheet.sql
-```
-
-`hello machbase`가 출력되면 치트시트의 기본 명령 조합이 정상적으로 동작한 것입니다. 이후 더 긴 SQL을 실행하다 문제가 생기면, 이처럼 간단한 예제로 돌아와 접속과 기본 실행 환경이 정상인지 먼저 점검하십시오. 재실행 중 `DBMS_GS_CHEATSHEET`이 이미 존재한다는 오류가 나면 `DROP TABLE DBMS_GS_CHEATSHEET;`를 실행한 뒤 다시 시작합니다.
+대표 실행 예제는 위 명령을 한 번씩 조합해 사용합니다. 치트시트에서는 별도 검증 절차를 반복하지 않고, 명령의 역할만 빠르게 확인합니다.

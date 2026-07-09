@@ -24,7 +24,8 @@ change during the last 10 minutes," "how many ticks arrived near market close," 
 - Start with a TAG table when the data clearly has tag name, time, and value columns.
 - Start with LOOKUP for small, read-heavy reference data.
 - Read the RDB-oriented documents for relational business entities and reference data
-  where updates and relationships matter.
+  where updates and relationships matter. In Standard Edition versions that support
+  RDB, create RDB tables with `CREATE RDB TABLE`.
 - Use VOLATILE tables for temporary working data.
 
 This point of view matters when learning Machbase. The basic unit is not only "one
@@ -32,22 +33,8 @@ current value," but a flow of values over time. When designing a schema, conside
 ingest rate, time predicates, aggregation interval, retention period, and reference
 data relationships together.
 
-## Introduction Sample
-
-The following sample verifies that the SQL session can list tables in Machbase DBMS.
-
-```sql
-SHOW TABLES;
-```
-
-Assuming the SQL above is saved as `/tmp/dbms_gs_show_tables.sql`, run the following command.
-
-```bash
-machsql -s 127.0.0.1 -P 5656 -u SYS -p MANAGER -f /tmp/dbms_gs_show_tables.sql
-```
-
-If at least one table exists, the result prints columns such as `USER_NAME`, `DB_NAME`,
-`TABLE_NAME`, and `TABLE_TYPE` with table rows. In a freshly created empty database,
-there may be no user-table rows. `KEYVALUE` tables whose names start with `_TAG_DATA_`
-are internal tables managed by the DBMS for TAG tables, so they are not a first design
-choice.
+You do not need to create every table type at the beginning. Run the LOG-table sample
+in [10-Minute Quick Start](../../quick-start/) first, then move to the TAG, LOOKUP,
+RDB, or VOLATILE documents according to your data. If `SHOW TABLES` later displays
+`KEYVALUE` tables whose names start with `_TAG_DATA_`, treat them as DBMS-managed
+internal tables for TAG data, not as a first design choice.

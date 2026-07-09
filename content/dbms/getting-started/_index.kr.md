@@ -9,17 +9,17 @@ Machbase DBMS는 산업 IoT 센서 데이터와 금융 틱 데이터처럼 시�
 
 시계열 데이터베이스에서 시간은 단순한 속성 컬럼이 아닙니다. 측정 시각이 빠진 센서 값은 맥락을 잃고, 발생 순서와 간격이 무너진 금융 틱은 분석의 단서를 잃습니다. 그러므로 시계열 DBMS는 일반적인 트랜잭션 처리 대신 고속 입력, 시간 범위 조회, 집계, 다운샘플링, 보관 정책, 압축을 핵심 설계 목표로 삼습니다. Machbase의 테이블 구조와 SQL 문법도 이 맥락에서 바라보면 훨씬 자연스럽게 이해됩니다.
 
-대량 수집 성능은 TAG/LOG 테이블의 append 중심 구조와 Append API를 사용할 때 발휘됩니다. 이 장의 `INSERT` 예제는 실습과 소량 입력 확인용이며, 운영 수집 경로는 이후 데이터 입력 문서에서 별도로 다룹니다.
+대량 수집 성능은 TAG/LOG 테이블의 추가 중심(append 중심) 구조와 Append API를 사용할 때 발휘됩니다. 여기서 append는 기존 행을 자주 고치는 방식이 아니라 새 행을 계속 덧붙이는 방식을 뜻합니다. 이 장의 대표 실행 예제는 실습과 소량 입력 확인용이며, 운영 수집 경로는 이후 데이터 입력 문서에서 별도로 다룹니다.
 
-이 장은 Machbase DBMS를 처음 접하는 독자를 위한 안내서입니다. 서버 접속부터 SQL 실행, 테이블 생성, 데이터 입력과 조회까지 가장 짧은 경로로 핵심 흐름을 익힙니다. 예제는 모두 `127.0.0.1:5656`에서 구동 중인 Machbase 서버와 `machsql` 클라이언트를 전제로 작성했으며, `SYS` 계정과 `MANAGER` 비밀번호로 실행할 수 있습니다. 서버가 아직 준비되지 않았다면 [설치, 배포, 업그레이드](/dbms/installation-deployment-upgrade/)와 [Linux Standard Edition 설치](/dbms/installation-deployment-upgrade/standard-edition/linux/)를 먼저 참고하십시오.
+이 장은 Machbase DBMS를 처음 접하는 독자를 위한 안내서입니다. 먼저 Machbase가 어떤 문제를 해결하는지 이해하고, 그다음 `machsql`로 대표 예제 하나를 실행해 서버 접속, 테이블 생성, 데이터 입력, 조회, 정리 흐름을 확인합니다. 대표 예제는 `127.0.0.1:5656`에서 구동 중인 Machbase 서버와 `machsql` 클라이언트를 전제로 작성했으며, `SYS` 계정과 `MANAGER` 비밀번호로 실행할 수 있습니다. 서버가 아직 준비되지 않았다면 [설치, 배포, 업그레이드](/dbms/installation-deployment-upgrade/)와 [Linux Standard Edition 설치](/dbms/installation-deployment-upgrade/standard-edition/linux/)를 먼저 참고하십시오.
 
 ## 실행 전제
 
 - Machbase DBMS 서버가 `127.0.0.1:5656`에서 실행 중입니다.
 - `machsql` 명령을 사용할 수 있습니다.
-- 예제 SQL 파일은 `/tmp` 디렉터리에 저장되어 있다고 가정합니다.
+- 대표 예제 SQL 파일을 `/tmp` 디렉터리에 저장할 수 있습니다.
 
-예제를 재실행하다 `CREATE TABLE` 단계에서 이미 존재한다는 오류가 발생하면, 이전 실행이 `DROP TABLE` 단계에 도달하지 못한 것입니다. 해당 예제 마지막의 `DROP TABLE table_name;`을 먼저 실행한 뒤 다시 시작하십시오. 이 장에서 검증한 Machbase 서버는 `DROP TABLE IF EXISTS` 구문을 지원하지 않습니다.
+대표 예제를 재실행하다 `CREATE TABLE` 단계에서 이미 존재한다는 오류가 발생하면, 이전 실행이 `DROP TABLE` 단계에 도달하지 못한 것입니다. 대표 예제 마지막의 `DROP TABLE DBMS_GS_QUICK;`을 먼저 실행한 뒤 다시 시작하십시오. 이 장에서 검증한 Machbase 서버는 `DROP TABLE IF EXISTS` 구문을 지원하지 않습니다.
 
 ## 이 장에서 확인할 것
 
@@ -30,18 +30,11 @@ Machbase DBMS는 산업 IoT 센서 데이터와 금융 틱 데이터처럼 시�
 5. 직접 테이블을 생성하고 데이터를 입력한 뒤 조회합니다.
 6. 다음에 읽을 문서를 사용 목적에 맞게 선택합니다.
 
-## 첫 확인 예제
+## 읽는 순서
 
-첫 SQL 실행은 악수와 같습니다. 산업 설비의 센서 값이든 주식·선물의 틱 데이터든, 모든 작업은 데이터베이스와 정상적으로 통신할 수 있어야 시작됩니다. 다음 SQL은 현재 데이터베이스에 등록된 테이블 개수를 조회합니다.
+1. [Machbase DBMS 개요](./overview/)에서 시계열 데이터와 테이블 유형을 먼저 구분합니다.
+2. [10분 빠른 시작](./quick-start/)에서 `machsql` 접속, 테이블 생성, 입력, 조회를 확인합니다.
+3. [기본 명령 치트시트](./command-cheatsheet/)에서 자주 쓰는 명령을 한 번에 정리합니다.
+4. [다음에 읽을 문서 선택하기](./choose-next-doc/)에서 TAG, LOG, LOOKUP, RDB 중 다음 학습 경로를 고릅니다.
 
-```sql
-SELECT COUNT(*) AS TABLE_COUNT FROM M$SYS_TABLES;
-```
-
-위 SQL이 `/tmp/dbms_gs_check.sql` 파일에 저장되어 있다고 가정하고 다음 명령을 실행합니다.
-
-```bash
-machsql -s 127.0.0.1 -P 5656 -u SYS -p MANAGER -f /tmp/dbms_gs_check.sql
-```
-
-`TABLE_COUNT` 값이 한 행으로 출력되면 Machbase DBMS와 SQL로 대화할 준비가 된 것입니다.
+이 장에서 직접 실행하는 SQL은 [10분 빠른 시작](./quick-start/)의 대표 예제 하나입니다. 다른 페이지는 같은 SQL 패턴을 반복하지 않고, 대표 예제를 이해하는 데 필요한 개념과 다음 학습 경로를 설명합니다.

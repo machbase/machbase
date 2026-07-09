@@ -5,48 +5,70 @@ weight: 20
 toc: true
 ---
 
-The quick start is a short test run. Just as you power on new equipment and check the
-controls before using it in production, this page verifies create, insert, query, and
-cleanup in one `machsql` run. Machbase's focus on industrial IoT and financial tick
-data also starts from this same basic SQL workflow. Start with a LOG table to confirm
-the SQL workflow, then preview TAG table behavior from the next-document page.
-
-In production, this flow repeats very quickly: a collector receives data, writes it to
-the DBMS, and users query recent values or aggregate them by time interval. The quick
-start reduces that entire loop to the smallest useful example.
+The quick start contains the only SQL sample you run directly in chapter 1. It verifies
+server connection, table creation, insert, query, and cleanup in one flow. This page
+uses a LOG table, the default table type. TAG, LOOKUP, RDB, and other table types are
+covered in the table-design chapter.
 
 ## Prerequisites
 
-- Machbase DBMS server: `127.0.0.1:5656`
-- User: `SYS`
-- Password: `MANAGER`
-- Client: `machsql`
+- Machbase DBMS is running on `127.0.0.1:5656`.
+- The `machsql` command is available.
+- You connect as user `SYS` with password `MANAGER`.
 
-## Quick Start Sample
+If the server is not ready yet, start with
+[Installation, Deployment, and Upgrade](/dbms/installation-deployment-upgrade/) and
+[Linux Standard Edition installation](/dbms/installation-deployment-upgrade/standard-edition/linux/).
 
-This sample records one event saying that a service has started. A LOG table is the
-basic container for events that keep arriving over time, such as equipment events,
-collector status records, or tick receive histories.
+## Representative Sample
 
-```sql
+This sample records one service-start event in a LOG table. When no table type keyword
+is specified, `CREATE TABLE` creates a LOG table. LOG tables automatically include
+`_arrival_time`, the time when the server receives each row.
+
+Save the SQL file and run it with the following commands.
+
+```bash
+cat > /tmp/dbms_gs_quick.sql <<'SQL'
 CREATE TABLE DBMS_GS_QUICK (
   EVENT_ID INTEGER,
+  EVENT_TIME DATETIME,
+  LEVEL VARCHAR(10),
   MESSAGE VARCHAR(40)
 );
 
-INSERT INTO DBMS_GS_QUICK VALUES (1, 'service started');
+INSERT INTO DBMS_GS_QUICK
+VALUES (
+  1,
+  TO_DATE('2026-07-02 09:00:00', 'YYYY-MM-DD HH24:MI:SS'),
+  'INFO',
+  'service started'
+);
 
-SELECT EVENT_ID, MESSAGE FROM DBMS_GS_QUICK;
+SELECT _arrival_time, EVENT_ID, EVENT_TIME, LEVEL, MESSAGE
+FROM DBMS_GS_QUICK
+ORDER BY EVENT_ID;
 
 DROP TABLE DBMS_GS_QUICK;
-```
+SQL
 
-Assuming the SQL above is saved as `/tmp/dbms_gs_quick.sql`, run the following command.
-
-```bash
 machsql -s 127.0.0.1 -P 5656 -u SYS -p MANAGER -f /tmp/dbms_gs_quick.sql
 ```
 
-If `service started` is printed, the basic SQL workflow is working.
-If a rerun fails because `DBMS_GS_QUICK` already exists, run
-`DROP TABLE DBMS_GS_QUICK;` and start again.
+If `service started` is printed, the basic SQL flow is working. `EVENT_TIME` is the
+actual event time stored by the application, while `_arrival_time` is the server
+receive time automatically recorded by the DBMS.
+
+If a rerun fails because `DBMS_GS_QUICK` already exists, the previous run did not reach
+the `DROP TABLE` step. Run `DROP TABLE DBMS_GS_QUICK;` once, then start again.
+
+## What This Sample Checks
+
+| Item | What it verifies |
+| --- | --- |
+| Server connection | `machsql` connects to `127.0.0.1:5656`. |
+| Table creation | Bare `CREATE TABLE` creates a LOG table. |
+| Data insert | `INSERT` and `TO_DATE` store event data. |
+| Data query | `SELECT` and `ORDER BY` verify the inserted row. |
+| Automatic column | LOG table `_arrival_time` is recorded by the server. |
+| Cleanup | `DROP TABLE` removes the practice table. |
