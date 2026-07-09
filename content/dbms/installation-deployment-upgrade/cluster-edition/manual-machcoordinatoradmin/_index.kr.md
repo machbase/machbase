@@ -11,10 +11,11 @@ toc: true
 
 ## 수동 배포 순서
 
-1. [Package 등록](/dbms/installation-deployment-upgrade/cluster-edition/manual-machcoordinatoradmin/package/) — 전체 패키지 설치 및 경량 패키지 등록
-2. [Coordinator / Deployer 설치](/dbms/installation-deployment-upgrade/cluster-edition/manual-machcoordinatoradmin/coordinator-deployer/) — 핵심 관리 노드 구동
-3. [Lookup / Broker / Warehouse 설치](/dbms/installation-deployment-upgrade/cluster-edition/manual-machcoordinatoradmin/lookup-broker-warehouse/) — 데이터 처리 노드 등록 및 구동
-4. [노드 상태 확인](/dbms/installation-deployment-upgrade/cluster-edition/manual-machcoordinatoradmin/status-check-node-state/) — 클러스터 정상 동작 검증
+1. [Package 준비와 등록](/kr/dbms/installation-deployment-upgrade/cluster-edition/manual-machcoordinatoradmin/package/) — 전체 패키지 설치와 경량 패키지 등록 준비
+2. [Coordinator / Deployer 설치](/kr/dbms/installation-deployment-upgrade/cluster-edition/manual-machcoordinatoradmin/coordinator-deployer/) — 핵심 관리 노드 구동
+3. [Package 등록](/kr/dbms/installation-deployment-upgrade/cluster-edition/manual-machcoordinatoradmin/package/) — 실행 중인 Coordinator에 경량 패키지 등록
+4. [Lookup / Broker / Warehouse 설치](/kr/dbms/installation-deployment-upgrade/cluster-edition/manual-machcoordinatoradmin/lookup-broker-warehouse/) — 데이터 처리 노드 등록 및 구동
+5. [노드 상태 확인](/kr/dbms/installation-deployment-upgrade/cluster-edition/manual-machcoordinatoradmin/status-check-node-state/) — 클러스터 정상 동작 검증
 
 ## machclusterctl 대비 차이점
 
@@ -30,4 +31,4 @@ toc: true
 ---
 
 **다음 읽을 내용**
-- [Package 등록](/dbms/installation-deployment-upgrade/cluster-edition/manual-machcoordinatoradmin/package/)
+- [Package 등록](/kr/dbms/installation-deployment-upgrade/cluster-edition/manual-machcoordinatoradmin/package/)

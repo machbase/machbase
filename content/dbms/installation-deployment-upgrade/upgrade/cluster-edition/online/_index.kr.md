@@ -7,7 +7,7 @@ toc: true
 
 온라인 업그레이드는 실행 중인 클러스터에서 Broker와 Warehouse를 순차적으로 업그레이드하는
 방식입니다. Coordinator, Deployer, Lookup까지 포함한 전체 바이너리 교체가 필요하면
-[전체 중지 업그레이드](/dbms/installation-deployment-upgrade/upgrade/cluster-edition/full-stop/)를 사용합니다.
+[전체 중지 업그레이드](/kr/dbms/installation-deployment-upgrade/upgrade/cluster-edition/full-stop/)를 사용합니다.
 
 ## 업그레이드 절차
 
@@ -58,4 +58,4 @@ machclusterctl status
 ---
 
 **다음 읽을 내용**
-- [설치 검증 체크리스트](/dbms/installation-deployment-upgrade/validation-checklist/)
+- [설치 검증 체크리스트](/kr/dbms/installation-deployment-upgrade/validation-checklist/)

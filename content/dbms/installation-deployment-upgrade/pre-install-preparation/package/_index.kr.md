@@ -90,4 +90,4 @@ Standard/Edge 샘플에는 RDB 테이블 sidecar 파일 동작을 제어하는 `
 ---
 
 **다음 읽을 내용**
-- [라이선스 설치](/dbms/installation-deployment-upgrade/pre-install-preparation/license/)
+- [라이선스 설치](/kr/dbms/installation-deployment-upgrade/pre-install-preparation/license/)

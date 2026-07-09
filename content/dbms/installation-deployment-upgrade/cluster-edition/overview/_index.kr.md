@@ -16,7 +16,11 @@ Cluster Edition은 역할이 분리된 Coordinator, Deployer, Lookup, Broker, Wa
 
 - 설정 파일: `$MACHBASE_COORDINATOR_HOME/conf/machbase.conf`
 - 관리 도구: `machcoordinatoradmin`
-- 주요 포트: `CLUSTER_LINK_PORT_NO` (기본 5101), `HTTP_ADMIN_PORT` (기본 5102)
+- 주요 포트: `CLUSTER_LINK_PORT_NO`, `HTTP_ADMIN_PORT`
+
+설정하지 않았을 때의 기본값은 `CLUSTER_LINK_PORT_NO=3868`, `HTTP_ADMIN_PORT=5779`입니다. 이 장의
+예제에서는 운영 중 포트 충돌을 피하기 위해 Coordinator link/admin 포트로 `5101`/`5102`를
+명시합니다.
 
 ### Deployer
 
@@ -63,4 +67,4 @@ Standard Edition과의 상세 비교는 [에디션 차이점](/dbms/core-concept
 ---
 
 **다음 읽을 내용**
-- [Cluster Edition 설치 환경 준비](/dbms/installation-deployment-upgrade/cluster-edition/preparation-environment-cluster-edition/)
+- [Cluster Edition 설치 환경 준비](/kr/dbms/installation-deployment-upgrade/cluster-edition/preparation-environment-cluster-edition/)

@@ -35,7 +35,8 @@ Machbase는 64비트 환경만 지원합니다. 32비트 OS에는 설치할 수 
 
 포트를 변경하려면 `$MACHBASE_HOME/conf/machbase.conf`의 `PORT_NO` 항목을 수정합니다. 환경 변수 `MACHBASE_PORT_NO`를 설정해도 동일하게 적용됩니다.
 
-방화벽이 있는 환경에서는 위 포트를 인바운드 허용으로 열어야 합니다. Cluster Edition은 클러스터 링크 포트(기본 5101 등)도 추가로 열어야 합니다.
+방화벽이 있는 환경에서는 위 포트를 인바운드 허용으로 열어야 합니다. Cluster Edition은 Coordinator
+link/admin 포트와 Broker, Warehouse, Deployer 포트도 추가로 열어야 합니다.
 
 ## 시스템 커널 파라미터 (Linux)
 
@@ -94,4 +95,4 @@ date
 ---
 
 **다음 읽을 내용**
-- [패키지 구성 이해](/dbms/installation-deployment-upgrade/pre-install-preparation/package/)
+- [패키지 구성 이해](/kr/dbms/installation-deployment-upgrade/pre-install-preparation/package/)

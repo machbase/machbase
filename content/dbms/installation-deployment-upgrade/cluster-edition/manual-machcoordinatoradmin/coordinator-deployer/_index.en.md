@@ -1,7 +1,7 @@
 ---
 type: docs
 title: 'Coordinator / Deployer 설치'
-weight: 10
+weight: 20
 toc: true
 draft: true
 build:

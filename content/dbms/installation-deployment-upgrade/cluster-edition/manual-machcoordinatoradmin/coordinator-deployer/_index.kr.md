@@ -1,7 +1,7 @@
 ---
 type: docs
 title: 'Coordinator / Deployer 설치'
-weight: 10
+weight: 20
 toc: true
 ---
 
@@ -86,4 +86,4 @@ machcoordinatoradmin --add-node="192.168.1.10:5201" --node-type=deployer
 ---
 
 **다음 읽을 내용**
-- [Lookup / Broker / Warehouse 설치](/dbms/installation-deployment-upgrade/cluster-edition/manual-machcoordinatoradmin/lookup-broker-warehouse/)
+- [Lookup / Broker / Warehouse 설치](/kr/dbms/installation-deployment-upgrade/cluster-edition/manual-machcoordinatoradmin/lookup-broker-warehouse/)

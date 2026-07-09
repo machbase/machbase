@@ -1,12 +1,13 @@
 ---
 type: docs
-title: 'Package 등록'
-weight: 20
+title: 'Package 준비와 등록'
+weight: 10
 toc: true
 ---
 
-Cluster Edition 수동 배포의 첫 번째 단계입니다. Coordinator와 Deployer에는 전체 패키지를
-설치하고, Broker와 Warehouse 배포에 사용할 경량 패키지를 Coordinator에 등록합니다.
+Cluster Edition 수동 배포의 패키지 준비와 등록 절차입니다. 먼저 Coordinator와 Deployer에는 전체
+패키지를 설치하고 환경 변수를 설정합니다. Broker와 Warehouse 배포에 사용할 경량 패키지는
+Coordinator가 기동된 후 Coordinator에 등록합니다.
 
 ## 패키지 종류
 
@@ -49,7 +50,7 @@ Coordinator에 등록하면, 이후 `--add-node`로 지정한 Deployer가 대상
 ## Coordinator에 패키지 등록
 
 Broker와 Warehouse를 Coordinator에서 기동하려면 경량 패키지를 Coordinator에 등록해야 합니다.
-Coordinator 노드에서 다음 명령을 실행합니다.
+Coordinator와 Deployer를 설치하고 Coordinator가 실행 중인 상태에서 다음 명령을 실행합니다.
 
 ```bash
 $MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --add-package=machbase \
@@ -79,4 +80,4 @@ export MACHBASE_HOME=$MACHBASE_DEPLOYER_HOME
 ---
 
 **다음 읽을 내용**
-- [Coordinator / Deployer 설치](/dbms/installation-deployment-upgrade/cluster-edition/manual-machcoordinatoradmin/coordinator-deployer/)
+- [Coordinator / Deployer 설치](/kr/dbms/installation-deployment-upgrade/cluster-edition/manual-machcoordinatoradmin/coordinator-deployer/)

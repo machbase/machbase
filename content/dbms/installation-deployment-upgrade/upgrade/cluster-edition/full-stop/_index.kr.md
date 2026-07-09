@@ -46,9 +46,9 @@ machclusterctl upgrade -f cluster.yaml --full-stop --yes --verbose
 종료합니다.
 
 ```bash
-machcoordinatoradmin --shutdown-node=192.168.1.13:5401
-machcoordinatoradmin --shutdown-node=192.168.1.14:5401
-machcoordinatoradmin --shutdown-node=192.168.1.11:5301
+machcoordinatoradmin --shutdown-node=192.168.1.13:5501
+machcoordinatoradmin --shutdown-node=192.168.1.14:5501
+machcoordinatoradmin --shutdown-node=192.168.1.11:5401
 machdeployeradmin --shutdown
 machcoordinatoradmin --shutdown
 ```
@@ -72,9 +72,9 @@ Coordinator → Deployer → Broker → Warehouse 순으로 시작합니다.
 ```bash
 machcoordinatoradmin --startup
 machdeployeradmin --startup
-machcoordinatoradmin --startup-node=192.168.1.11:5301
-machcoordinatoradmin --startup-node=192.168.1.13:5401
-machcoordinatoradmin --startup-node=192.168.1.14:5401
+machcoordinatoradmin --startup-node=192.168.1.11:5401
+machcoordinatoradmin --startup-node=192.168.1.13:5501
+machcoordinatoradmin --startup-node=192.168.1.14:5501
 ```
 
 ### 5. 상태 확인
@@ -93,4 +93,4 @@ machclusterctl status
 ---
 
 **다음 읽을 내용**
-- [설치 검증 체크리스트](/dbms/installation-deployment-upgrade/validation-checklist/)
+- [설치 검증 체크리스트](/kr/dbms/installation-deployment-upgrade/validation-checklist/)

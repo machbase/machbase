@@ -40,10 +40,10 @@ machsql -s 127.0.0.1 -u SYS -p MANAGER
 ## 설치 경로 구조
 
 설치 경로 아래의 `machbase_home\`에 `bin\`, `conf\`, `dbs\`, `trc\` 등이 생성됩니다.
-[패키지 구성](/dbms/installation-deployment-upgrade/pre-install-preparation/package/) 참고.
+[패키지 구성](/kr/dbms/installation-deployment-upgrade/pre-install-preparation/package/) 참고.
 
 ---
 
 **다음 읽을 내용**
-- [라이선스 설치](/dbms/installation-deployment-upgrade/pre-install-preparation/license/)
-- [설치 검증 체크리스트](/dbms/installation-deployment-upgrade/validation-checklist/)
+- [라이선스 설치](/kr/dbms/installation-deployment-upgrade/pre-install-preparation/license/)
+- [설치 검증 체크리스트](/kr/dbms/installation-deployment-upgrade/validation-checklist/)

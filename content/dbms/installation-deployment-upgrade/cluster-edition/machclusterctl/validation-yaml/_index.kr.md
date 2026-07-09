@@ -61,4 +61,4 @@ machclusterctl apply -f cluster.yaml --dry-run --verbose
 ---
 
 **다음 읽을 내용**
-- [최초 설치](/dbms/installation-deployment-upgrade/cluster-edition/machclusterctl/initial/)
+- [최초 설치](/kr/dbms/installation-deployment-upgrade/cluster-edition/machclusterctl/initial/)

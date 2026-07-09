@@ -102,5 +102,5 @@ sudo iptables -A INPUT -p tcp --dport 5657 -j ACCEPT
 ---
 
 **다음 읽을 내용**
-- [Tarball 설치](/dbms/installation-deployment-upgrade/standard-edition/linux/tarball/)
-- [Docker 설치](/dbms/installation-deployment-upgrade/standard-edition/linux/docker/)
+- [Tarball 설치](/kr/dbms/installation-deployment-upgrade/standard-edition/linux/tarball/)
+- [Docker 설치](/kr/dbms/installation-deployment-upgrade/standard-edition/linux/docker/)

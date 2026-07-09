@@ -42,8 +42,8 @@ machcoordinatoradmin --add-node="192.168.1.11:5401" \
 | `--package-name` | Coordinator에 등록한 패키지 이름 |
 | `--home-path` | 노드 홈 디렉터리 |
 | `--port-no` | 클라이언트 또는 노드 서비스 포트 |
-| `--http-port-no` | Broker HTTP 관리 포트 |
-| `--replication` | Warehouse replication manager 포트 |
+| `--http-port-no` | Broker HTTP 포트입니다. Warehouse HTTP 포트를 사용하는 버전에서는 Warehouse에도 지정합니다. |
+| `--replication` | Warehouse replication manager 주소입니다. `host:port` 형식을 사용합니다. |
 
 ### 3. 노드 시작
 
@@ -74,7 +74,8 @@ machcoordinatoradmin --add-node="192.168.1.13:5501" \
   --package-name=machbase \
   --home-path="/home/machbase/warehouse_g1_1" \
   --port-no=5500 \
-  --replication=5502 \
+  --http-port-no=5503 \
+  --replication=192.168.1.13:5502 \
   --group=group1 \
   --no-replicate
 
@@ -84,9 +85,9 @@ machcoordinatoradmin --add-node="192.168.1.14:5501" \
   --package-name=machbase \
   --home-path="/home/machbase/warehouse_g1_2" \
   --port-no=5500 \
-  --replication=5502 \
-  --group=group1 \
-  --no-replicate
+  --http-port-no=5503 \
+  --replication=192.168.1.14:5502 \
+  --group=group1
 ```
 
 별도 `--add-group` 명령은 사용하지 않습니다. Warehouse 그룹 이름은 각 Warehouse 노드를 등록할 때
@@ -124,4 +125,4 @@ machcoordinatoradmin --cluster-status
 ---
 
 **다음 읽을 내용**
-- [노드 상태 확인](/dbms/installation-deployment-upgrade/cluster-edition/manual-machcoordinatoradmin/status-check-node-state/)
+- [노드 상태 확인](/kr/dbms/installation-deployment-upgrade/cluster-edition/manual-machcoordinatoradmin/status-check-node-state/)

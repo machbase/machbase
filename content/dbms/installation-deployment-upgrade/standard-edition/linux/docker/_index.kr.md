@@ -83,5 +83,5 @@ docker restart machbase
 ---
 
 **다음 읽을 내용**
-- [라이선스 설치](/dbms/installation-deployment-upgrade/pre-install-preparation/license/)
-- [설치 검증 체크리스트](/dbms/installation-deployment-upgrade/validation-checklist/)
+- [라이선스 설치](/kr/dbms/installation-deployment-upgrade/pre-install-preparation/license/)
+- [설치 검증 체크리스트](/kr/dbms/installation-deployment-upgrade/validation-checklist/)

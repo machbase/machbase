@@ -83,7 +83,7 @@ machcoordinatoradmin --cluster-status
 
 ```bash
 machsql -s <Broker IP> -u SYS -p MANAGER
-Mach> SELECT * FROM M$SYS_NODES;
+Mach> SELECT * FROM V$NODE_STATUS;
 ```
 
 ### 10. 데이터 복제 확인

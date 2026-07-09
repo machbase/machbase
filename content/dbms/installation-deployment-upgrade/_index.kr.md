@@ -22,30 +22,30 @@ Machbase는 두 가지 에디션을 제공합니다.
 
 ### Standard Edition
 
-1. [설치 전 요구사항](/dbms/installation-deployment-upgrade/pre-install-preparation/pre-install-requirements/) 확인
-2. [패키지 구성 이해](/dbms/installation-deployment-upgrade/pre-install-preparation/package/)
+1. [설치 전 요구사항](/kr/dbms/installation-deployment-upgrade/pre-install-preparation/pre-install-requirements/) 확인
+2. [패키지 구성 이해](/kr/dbms/installation-deployment-upgrade/pre-install-preparation/package/)
 3. OS 환경에 맞는 설치 진행
-   - [Linux — Tarball 설치](/dbms/installation-deployment-upgrade/standard-edition/linux/tarball/)
-   - [Linux — Docker 설치](/dbms/installation-deployment-upgrade/standard-edition/linux/docker/)
-   - [Windows — MSI 설치](/dbms/installation-deployment-upgrade/standard-edition/windows/msi/)
-4. [라이선스 설치](/dbms/installation-deployment-upgrade/pre-install-preparation/license/)
-5. [설치 검증 체크리스트](/dbms/installation-deployment-upgrade/validation-checklist/)
+   - [Linux — Tarball 설치](/kr/dbms/installation-deployment-upgrade/standard-edition/linux/tarball/)
+   - [Linux — Docker 설치](/kr/dbms/installation-deployment-upgrade/standard-edition/linux/docker/)
+   - [Windows — MSI 설치](/kr/dbms/installation-deployment-upgrade/standard-edition/windows/msi/)
+4. [라이선스 설치](/kr/dbms/installation-deployment-upgrade/pre-install-preparation/license/)
+5. [설치 검증 체크리스트](/kr/dbms/installation-deployment-upgrade/validation-checklist/)
 
 ### Cluster Edition
 
-1. [설치 전 요구사항](/dbms/installation-deployment-upgrade/pre-install-preparation/pre-install-requirements/) 확인
-2. [클러스터 환경 준비](/dbms/installation-deployment-upgrade/cluster-edition/preparation-environment-cluster-edition/)
+1. [설치 전 요구사항](/kr/dbms/installation-deployment-upgrade/pre-install-preparation/pre-install-requirements/) 확인
+2. [클러스터 환경 준비](/kr/dbms/installation-deployment-upgrade/cluster-edition/preparation-environment-cluster-edition/)
 3. 배포 방식 선택
-   - [machclusterctl 자동 배포](/dbms/installation-deployment-upgrade/cluster-edition/machclusterctl/) — 권장
-   - [수동 설치 (machcoordinatoradmin)](/dbms/installation-deployment-upgrade/cluster-edition/manual-machcoordinatoradmin/)
-4. [라이선스 설치](/dbms/installation-deployment-upgrade/pre-install-preparation/license/)
-5. [설치 검증 체크리스트](/dbms/installation-deployment-upgrade/validation-checklist/)
+   - [machclusterctl 자동 배포](/kr/dbms/installation-deployment-upgrade/cluster-edition/machclusterctl/) — 권장
+   - [수동 설치 (machcoordinatoradmin)](/kr/dbms/installation-deployment-upgrade/cluster-edition/manual-machcoordinatoradmin/)
+4. [라이선스 설치](/kr/dbms/installation-deployment-upgrade/pre-install-preparation/license/)
+5. [설치 검증 체크리스트](/kr/dbms/installation-deployment-upgrade/validation-checklist/)
 
 ## 업그레이드
 
-기존 운영 중인 시스템을 새 버전으로 업그레이드하는 절차는 [업그레이드](/dbms/installation-deployment-upgrade/upgrade/) 섹션을 참고하십시오.
+기존 운영 중인 시스템을 새 버전으로 업그레이드하는 절차는 [업그레이드](/kr/dbms/installation-deployment-upgrade/upgrade/) 섹션을 참고하십시오.
 
 ---
 
 **다음 읽을 내용**
-- [설치 전 준비](/dbms/installation-deployment-upgrade/pre-install-preparation/)
+- [설치 전 준비](/kr/dbms/installation-deployment-upgrade/pre-install-preparation/)

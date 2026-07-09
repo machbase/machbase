@@ -83,5 +83,5 @@ machclusterctl stop
 ---
 
 **다음 읽을 내용**
-- [라이선스 설치](/dbms/installation-deployment-upgrade/pre-install-preparation/license/)
-- [상태 확인](/dbms/installation-deployment-upgrade/cluster-edition/machclusterctl/status-check-state/)
+- [라이선스 설치](/kr/dbms/installation-deployment-upgrade/pre-install-preparation/license/)
+- [상태 확인](/kr/dbms/installation-deployment-upgrade/cluster-edition/machclusterctl/status-check-state/)

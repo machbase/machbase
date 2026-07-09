@@ -9,8 +9,8 @@ Cluster Edition 업그레이드는 서비스 중단 여부에 따라 두 가지 
 
 | 방식 | 서비스 중단 | 적합한 상황 |
 |------|-----------|------------|
-| [온라인 업그레이드](/dbms/installation-deployment-upgrade/upgrade/cluster-edition/online/) | Broker/Warehouse 순차 재기동 | Broker와 Warehouse만 교체하는 운영 환경 |
-| [전체 중지 업그레이드](/dbms/installation-deployment-upgrade/upgrade/cluster-edition/full-stop/) | 있음 | 유지보수 창이 허용되는 경우, Major 버전 변경 |
+| [온라인 업그레이드](/kr/dbms/installation-deployment-upgrade/upgrade/cluster-edition/online/) | Broker/Warehouse 순차 재기동 | Broker와 Warehouse만 교체하는 운영 환경 |
+| [전체 중지 업그레이드](/kr/dbms/installation-deployment-upgrade/upgrade/cluster-edition/full-stop/) | 있음 | 유지보수 창이 허용되는 경우, Major 버전 변경 |
 
 ## 업그레이드 전 공통 주의사항
 
@@ -22,5 +22,5 @@ Cluster Edition 업그레이드는 서비스 중단 여부에 따라 두 가지 
 ---
 
 **다음 읽을 내용**
-- [온라인 업그레이드](/dbms/installation-deployment-upgrade/upgrade/cluster-edition/online/)
-- [전체 중지 업그레이드](/dbms/installation-deployment-upgrade/upgrade/cluster-edition/full-stop/)
+- [온라인 업그레이드](/kr/dbms/installation-deployment-upgrade/upgrade/cluster-edition/online/)
+- [전체 중지 업그레이드](/kr/dbms/installation-deployment-upgrade/upgrade/cluster-edition/full-stop/)

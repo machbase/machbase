@@ -65,5 +65,5 @@ ssh machbase@<node-ip> 'tail -100 /home/machbase/coordinator/trc/machbase.trc'
 ---
 
 **다음 읽을 내용**
-- [노드 상태 확인](/dbms/installation-deployment-upgrade/cluster-edition/machclusterctl/status-check-state/)
-- [설치 검증 체크리스트](/dbms/installation-deployment-upgrade/validation-checklist/)
+- [노드 상태 확인](/kr/dbms/installation-deployment-upgrade/cluster-edition/machclusterctl/status-check-state/)
+- [설치 검증 체크리스트](/kr/dbms/installation-deployment-upgrade/validation-checklist/)

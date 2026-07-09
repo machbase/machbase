@@ -141,4 +141,4 @@ cluster:
 ---
 
 **다음 읽을 내용**
-- [YAML 검증](/dbms/installation-deployment-upgrade/cluster-edition/machclusterctl/validation-yaml/)
+- [YAML 검증](/kr/dbms/installation-deployment-upgrade/cluster-edition/machclusterctl/validation-yaml/)

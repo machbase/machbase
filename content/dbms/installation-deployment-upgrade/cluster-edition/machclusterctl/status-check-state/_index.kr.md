@@ -1,7 +1,7 @@
 ---
 type: docs
 title: '상태 확인'
-weight: 50
+weight: 40
 toc: true
 ---
 
@@ -38,14 +38,20 @@ machcoordinatoradmin --cluster-status
 +-------------+--------------------------------+--------------------------------+--------------------------------+-------------------------------+-------------+-----------------+----------+
 ```
 
-| 상태 | 의미 |
-|------|------|
-| `normal` | 정상 동작 중 |
-| `primary` | Coordinator Primary 역할 |
-| `leader` | Broker Leader 역할 |
-| `scrapped` | 장애 감지됨, 복구 필요 |
-| `unknown` | 통신 불가, 노드 다운 의심 |
-| `sync-standby` | 복제 수신 중 (동기화 진행 중) |
+| 값 | 의미 |
+|----|------|
+| `normal` | 정상 동작 |
+| `primary` | Coordinator Primary |
+| `sync-active` | 복제 송신 역할 |
+| `sync-standby` | 복제 수신 역할 |
+| `inactive` | 비활성 상태 |
+| `scrapped` | 장애 감지, 복구 필요 |
+| `ddl-incompl` | DDL 처리 미완료 상태 |
+| `ddl-recov` | DDL 복구 진행 상태 |
+| `**unknown**` | 통신 불가, 노드 다운 의심 |
+
+`leader`처럼 Broker 역할을 나타내는 값은 Desired/Actual state나 그룹 상태 영역에 표시될 수
+있습니다.
 
 ## Desired vs Actual State
 
@@ -65,4 +71,4 @@ tail -f $MACHBASE_HOME/trc/machbase.trc
 ---
 
 **다음 읽을 내용**
-- [구성 변경 적용](/dbms/installation-deployment-upgrade/cluster-edition/machclusterctl/configuration-change-alter/)
+- [구성 변경 적용](/kr/dbms/installation-deployment-upgrade/cluster-edition/machclusterctl/configuration-change-alter/)

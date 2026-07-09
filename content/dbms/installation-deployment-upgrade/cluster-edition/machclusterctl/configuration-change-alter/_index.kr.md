@@ -1,7 +1,7 @@
 ---
 type: docs
 title: '구성 변경 적용'
-weight: 40
+weight: 50
 toc: true
 ---
 
@@ -78,4 +78,4 @@ machclusterctl status
 ---
 
 **다음 읽을 내용**
-- [상태 확인](/dbms/installation-deployment-upgrade/cluster-edition/machclusterctl/status-check-state/)
+- [상태 확인](/kr/dbms/installation-deployment-upgrade/cluster-edition/machclusterctl/status-check-state/)

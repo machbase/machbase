@@ -104,4 +104,4 @@ sudo sysctl -w net.ipv4.ip_local_reserved_ports="${current:+$current,}$ports"
 ---
 
 **다음 읽을 내용**
-- [machclusterctl 기반 배포](/dbms/installation-deployment-upgrade/cluster-edition/machclusterctl/)
+- [machclusterctl 기반 배포](/kr/dbms/installation-deployment-upgrade/cluster-edition/machclusterctl/)

@@ -24,18 +24,18 @@ Warehouse 2(그룹당 2노드로 복제) 입니다.
 
 | 방식 | 설명 | 적합한 경우 |
 |------|------|------------|
-| [machclusterctl](/dbms/installation-deployment-upgrade/cluster-edition/machclusterctl/) | cluster.yaml 기반 자동 배포 | 권장. 신규 구축 |
-| [수동 (machcoordinatoradmin)](/dbms/installation-deployment-upgrade/cluster-edition/manual-machcoordinatoradmin/) | Coordinator 명령 기반 노드 등록·배포 | 세밀한 제어가 필요한 경우 |
+| [machclusterctl](/kr/dbms/installation-deployment-upgrade/cluster-edition/machclusterctl/) | cluster.yaml 기반 자동 배포 | 권장. 신규 구축 |
+| [수동 (machcoordinatoradmin)](/kr/dbms/installation-deployment-upgrade/cluster-edition/manual-machcoordinatoradmin/) | Coordinator 명령 기반 노드 등록·배포 | 세밀한 제어가 필요한 경우 |
 
 ## 설치 순서
 
-1. [Cluster Edition 구성 개요](/dbms/installation-deployment-upgrade/cluster-edition/overview/) 숙지
-2. [환경 준비](/dbms/installation-deployment-upgrade/cluster-edition/preparation-environment-cluster-edition/) (SSH 키, 커널 파라미터, NTP)
+1. [Cluster Edition 구성 개요](/kr/dbms/installation-deployment-upgrade/cluster-edition/overview/) 숙지
+2. [환경 준비](/kr/dbms/installation-deployment-upgrade/cluster-edition/preparation-environment-cluster-edition/) (SSH 키, 커널 파라미터, NTP)
 3. 배포 방식 선택 후 설치 진행
-4. [라이선스 설치](/dbms/installation-deployment-upgrade/pre-install-preparation/license/)
-5. [설치 검증](/dbms/installation-deployment-upgrade/validation-checklist/)
+4. [라이선스 설치](/kr/dbms/installation-deployment-upgrade/pre-install-preparation/license/)
+5. [설치 검증](/kr/dbms/installation-deployment-upgrade/validation-checklist/)
 
 ---
 
 **다음 읽을 내용**
-- [Cluster Edition 구성 개요](/dbms/installation-deployment-upgrade/cluster-edition/overview/)
+- [Cluster Edition 구성 개요](/kr/dbms/installation-deployment-upgrade/cluster-edition/overview/)

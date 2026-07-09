@@ -11,7 +11,9 @@ toc: true
 
 라이선스가 설치되지 않으면 다음 제한이 적용됩니다.
 
-1. **Append 입력 제한**: 한 세션에서 1억 건 이상 Append 입력 시 경고 메시지와 함께 입력이 중단됩니다. 제한은 서버 재시작 시에만 해제됩니다.
+1. **Append 사용량 제한**: Append 입력 건수는 라이선스 사용량으로 집계됩니다. 라이선스가 없거나
+   허용 범위를 초과하면 Append 사용에 제한이 적용될 수 있으며, 기본 제한 기준에는 1억 건 Append
+   카운트가 사용됩니다.
 2. **다중 디스크 테이블스페이스 불가**: 테이블스페이스에 두 개 이상의 디스크 경로를 지정할 수 없습니다. 병렬 I/O를 사용하는 고성능 구성에 영향을 줍니다.
 
 ## 라이선스 파일 구조
@@ -92,5 +94,5 @@ SHOW LICENSE;
 ---
 
 **다음 읽을 내용**
-- [Standard Edition 설치](/dbms/installation-deployment-upgrade/standard-edition/)
-- [Cluster Edition 설치](/dbms/installation-deployment-upgrade/cluster-edition/)
+- [Standard Edition 설치](/kr/dbms/installation-deployment-upgrade/standard-edition/)
+- [Cluster Edition 설치](/kr/dbms/installation-deployment-upgrade/cluster-edition/)

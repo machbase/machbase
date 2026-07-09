@@ -48,4 +48,4 @@ Machbase 실행에 Visual C++ Redistributable이 필요합니다. MSI 설치 시
 ---
 
 **다음 읽을 내용**
-- [MSI 설치](/dbms/installation-deployment-upgrade/standard-edition/windows/msi/)
+- [MSI 설치](/kr/dbms/installation-deployment-upgrade/standard-edition/windows/msi/)
