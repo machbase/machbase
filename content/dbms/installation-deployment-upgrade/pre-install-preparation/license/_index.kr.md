@@ -40,7 +40,8 @@ cp license.dat $MACHBASE_HOME/conf/license.dat
 
 ### 방법 2: machadmin 명령
 
-서버를 시작하기 전에 `machadmin`으로 설치합니다.
+`machadmin`으로 라이선스 파일을 검증하고 설치합니다. 서버가 실행 중이면 라이선스 reload 요청을
+함께 보냅니다.
 
 ```bash
 machadmin -t /path/to/license.dat
@@ -51,7 +52,7 @@ machadmin -t /path/to/license.dat
 서버가 이미 실행 중인 경우 machsql에서 쿼리로 설치할 수 있습니다.
 
 ```sql
-INSTALL LICENSE '/path/to/license.dat';
+ALTER SYSTEM INSTALL LICENSE = '/path/to/license.dat';
 ```
 
 ## 설치 확인
@@ -81,6 +82,12 @@ FROM V$LICENSE_INFO;
 ```
 
 `VIOLATE_STATUS`가 0이면 정상입니다.
+
+machsql에서는 다음 명령으로도 라이선스 정보를 확인할 수 있습니다.
+
+```sql
+SHOW LICENSE;
+```
 
 ---
 
