@@ -37,13 +37,23 @@ LSM 인덱스는 삽입 시 메모리 내 구조에 먼저 기록되고, 배경 
 CREATE INDEX idx_msg ON device_log (message) INDEX_TYPE KEYWORD;
 ```
 
-## LOOKUP 테이블: B-Tree 인덱스
+## LOOKUP 테이블: Red-Black 트리 인덱스
 
-LOOKUP 테이블은 RDBMS와 유사하게 PRIMARY KEY에 B-Tree 인덱스가 자동으로 생성됩니다. 소규모 기준 정보를 키로 빠르게 조회하는 패턴에 최적화되어 있습니다.
+LOOKUP 테이블은 PRIMARY KEY 컬럼에 Red-Black 트리 인덱스가 생성됩니다. 소규모 기준 정보를
+키로 빠르게 조회하는 패턴에 최적화되어 있습니다.
 
 ## VOLATILE 테이블: Red-Black 트리 인덱스
 
 VOLATILE 테이블은 메모리 기반 테이블로, PRIMARY KEY 컬럼에 자동으로 Red-Black 트리 인덱스가 생성됩니다. 메모리에서 동작하므로 삽입과 조회 모두 매우 빠르지만, 서버 재시작 시 데이터가 사라집니다.
+
+## RDB 테이블: 일반/Unique/Primary Key 인덱스
+
+RDB 테이블은 관계형 row 데이터를 위한 테이블입니다. `CREATE RDB TABLE`로 생성하며, 일반 인덱스,
+Unique 인덱스, Primary Key 인덱스를 사용할 수 있습니다. Primary key 없이 테이블을 만든 뒤
+`CREATE PRIMARY KEY INDEX`로 사후 추가할 수도 있습니다.
+
+RDB 인덱스는 LOG/TAG의 시간 파티션이나 append-only 입력 경로와 별개로 동작합니다. 단건 키
+조회, 업무 기준 정보 조회, 관계형 조인에 필요한 컬럼에 인덱스를 생성합니다.
 
 ## 인덱스를 만들어야 할 때와 만들지 말아야 할 때
 
@@ -57,12 +67,6 @@ VOLATILE 테이블은 메모리 기반 테이블로, PRIMARY KEY 컬럼에 자�
 - 입력 속도가 최우선이고 조회 빈도가 낮은 경우 (인덱스 유지 오버헤드 발생)
 - 카디널리티가 낮은 컬럼 (예: TRUE/FALSE 구분값) — 인덱스 효과가 없음
 - TAG 테이블 — 이미 자동 파티션 인덱스가 있으므로 추가 인덱스는 불필요
-
-## 다음 읽을 내용
-
-- [컬럼형 저장과 압축](../storage-columnar-compression-column/) — 인덱스가 동작하는 저장 구조
-- [Cache와 실행 계획 개념](../execution-concepts-plan-cache/) — 인덱스를 활용하는 실행 계획 최적화
-- [Machbase 아키텍처 개요](../architecture-machbase/) — 인덱스와 저장 관리자의 관계
 
 ## Min-Max Cache
 
@@ -110,3 +114,9 @@ CREATE TABLE ctest (
 -- 생성 후 캐시 크기 변경
 ALTER TABLE ctest MODIFY COLUMN id SET MINMAX_CACHE_SIZE = 20480;
 ```
+
+## 다음 읽을 내용
+
+- [컬럼형 저장과 압축](../storage-columnar-compression-column/) — 인덱스가 동작하는 저장 구조
+- [Cache와 실행 계획 개념](../execution-concepts-plan-cache/) — 인덱스를 활용하는 실행 계획 최적화
+- [Machbase 아키텍처 개요](../architecture-machbase/) — 인덱스와 저장 관리자의 관계

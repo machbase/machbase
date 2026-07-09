@@ -12,6 +12,10 @@ Backup은 현재 운영 중인 데이터베이스를 멈추지 않고, 데이터
 
 Backup 작업은 세 가지 상태를 거칩니다: `LAUNCHED` → `PROGRESS` → `FINISHED` (실패 시 `ERROR`).
 
+RDB 테이블을 사용하는 데이터베이스의 Backup에는 RDB row/index 저장 파일을 보존하기 위한 sidecar
+데이터가 함께 포함됩니다. Backup, Restore, Mount 작업을 수동 파일 복사로 대체하면 이 sidecar가
+누락될 수 있으므로 반드시 Machbase가 제공하는 Backup/Restore/Mount 절차를 사용해야 합니다.
+
 지원하는 Backup 유형은 다음과 같습니다.
 
 | 유형 | 설명 |
@@ -56,6 +60,10 @@ UNMOUNT DATABASE MOUNTDB;
 ```
 
 Mount는 Restore와 달리 데이터를 원래 위치에 복사하지 않습니다. 백업본 디렉터리를 그대로 참조하는 방식이므로, 과거 특정 시점의 데이터를 조회하거나 검증하는 데 적합합니다.
+
+Mount된 데이터베이스는 읽기 전용입니다. RDB 테이블도 `MOUNT DATABASE`로 연결한 백업본에서는
+SELECT만 허용되며, mounted RDB 테이블에 대한 INSERT/UPDATE/DELETE나 `MOUNT TABLE` 방식의 RDB
+테이블 단독 Mount는 지원하지 않습니다.
 
 ## 세 개념의 관계
 
