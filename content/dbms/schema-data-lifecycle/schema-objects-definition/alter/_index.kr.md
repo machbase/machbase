@@ -18,6 +18,8 @@ weight: 20
 | ADD RETENTION | O | O | X | X | X |
 | DROP RETENTION | O | O | X | X | X |
 
+KV 테이블도 `ADD RETENTION`과 `DROP RETENTION`을 지원합니다.
+
 ## ADD COLUMN
 
 ```sql

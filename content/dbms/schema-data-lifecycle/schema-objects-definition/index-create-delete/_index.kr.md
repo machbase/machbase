@@ -12,7 +12,8 @@ Machbase는 테이블 타입에 따라 지원되는 인덱스 종류가 다릅�
 |------------|------------|------|
 | LSM (Log-Structured Merge) | LOG | 시계열 대량 입력에 최적화된 LOG 컬럼 인덱스 |
 | BITMAP | LOG | 카디널리티가 낮은 컬럼에 유효. 복합 조건 쿼리 성능 향상 |
-| REDBLACK | LOOKUP, VOLATILE, RDB | PRIMARY KEY 지정 시 자동 생성. 정확한 값 검색에 최적화 |
+| REDBLACK | LOOKUP, VOLATILE, TAG 메타데이터 | 정확한 값 검색에 최적화 |
+| BTREE | RDB | PRIMARY KEY 및 보조 인덱스에 사용 |
 | KEYWORD | LOG | TEXT 컬럼 전문 검색용 |
 | TAG/KV | TAG | TAG 값 컬럼 조건 조회를 보조하는 secondary index |
 
@@ -29,8 +30,8 @@ CREATE BITMAP INDEX idx_status ON sensor_log (status);
 CREATE KEYWORD INDEX idx_msg ON event_log (message);
 ```
 
-> 현재 빌드에서는 복합 인덱스를 생성할 수 없습니다. 여러 조건을 자주 함께 사용하더라도
-> 인덱스는 단일 컬럼 단위로 생성합니다.
+> LOG/TAG/LOOKUP/VOLATILE 인덱스는 단일 컬럼 중심으로 설계합니다. RDB 테이블은 일반 복합
+> 인덱스를 지원하지만, 복합 JSON path 인덱스와 복합 PRIMARY KEY 인덱스는 지원하지 않습니다.
 
 ## TAG 테이블 인덱스
 
@@ -57,8 +58,8 @@ CREATE INDEX idx_value ON tag (value) INDEX_TYPE TAG;
 
 ## LOOKUP/VOLATILE/RDB 테이블 인덱스
 
-PRIMARY KEY를 지정하면 레드-블랙 트리 인덱스가 자동으로 생성됩니다. LOOKUP과 RDB는
-필요한 컬럼에 보조 인덱스를 추가할 수 있고, VOLATILE은 PRIMARY KEY 인덱스를 중심으로 사용합니다.
+LOOKUP과 VOLATILE은 Red-Black Tree 인덱스를 사용합니다. RDB는 BTREE로 표시되는 PRIMARY
+KEY 인덱스와 보조 인덱스를 사용합니다.
 
 ```sql
 -- LOOKUP: PK 지정 시 REDBLACK 인덱스 자동 생성
@@ -68,14 +69,28 @@ CREATE LOOKUP TABLE alarm_threshold (
 );
 -- → sensor_id에 REDBLACK 인덱스 자동 생성됨
 
--- RDB: PK 지정 시 REDBLACK 인덱스 자동 생성
+-- RDB: PK 지정 시 BTREE 인덱스로 표시
 CREATE RDB TABLE orders (
     order_id INTEGER PRIMARY KEY,
-    product  VARCHAR(100)
+    product  VARCHAR(100),
+    status   VARCHAR(16)
 );
 
 -- RDB 보조 인덱스
 CREATE INDEX idx_orders_product ON orders(product);
+
+-- RDB 복합 보조 인덱스
+CREATE INDEX idx_orders_product_status ON orders(product, status);
+```
+
+```sql
+-- RDB PRIMARY KEY 인덱스 사후 생성
+CREATE RDB TABLE order_work (
+    order_id INTEGER,
+    product  VARCHAR(100)
+);
+
+CREATE PRIMARY KEY INDEX pk_order_work ON order_work(order_id);
 ```
 
 ## 인덱스 삭제
@@ -114,6 +129,6 @@ SELECT t.name AS table_name,
 
 - **LOG 테이블**: 쿼리 빈도가 높은 컬럼에만 선별적으로 생성. 상태값·등급 등 저카디널리티 컬럼은 BITMAP 고려
 - **TAG 테이블**: 태그명·시간 조건을 기본으로 사용하고, 메타데이터 필터나 값 조건이 잦은 경우 해당 인덱스 추가
-- **LOOKUP/RDB**: PK 인덱스와 필요한 보조 인덱스 사용
+- **LOOKUP/RDB**: PK 인덱스와 필요한 보조 인덱스 사용. RDB는 복합 보조 인덱스도 가능
 - **VOLATILE**: PK 인덱스 중심으로 설계
 - **과도한 인덱스**: 대량 INSERT 성능 저하의 원인이 되므로 반드시 필요한 경우에만 생성

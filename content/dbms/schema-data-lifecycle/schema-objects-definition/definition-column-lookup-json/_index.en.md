@@ -1,15 +1,18 @@
 ---
 type: docs
-title: 'LOOKUP JSON Column Definition'
+title: 'LOOKUP JSON Column Limitation'
 weight: 60
 ---
 
-LOOKUP tables can use `JSON` as a regular column type. JSON columns can be
-created, stored, queried, filtered, and updated.
+LOOKUP tables do not support `JSON` columns. For flexible reference-data
+attributes, split frequently queried values into regular columns, serialize
+rarely queried attributes into a string, or consider JSON columns in RDB/TAG
+tables.
 
 ## Column Definition
 
 ```sql
+-- Fails: LOOKUP tables cannot contain JSON columns.
 CREATE LOOKUP TABLE device_config (
     device_id VARCHAR(40) PRIMARY KEY,
     site      VARCHAR(32),
@@ -18,41 +21,38 @@ CREATE LOOKUP TABLE device_config (
 );
 ```
 
-## Insert and Query
+## Alternative Schema and Query
 
 ```sql
-INSERT INTO device_config VALUES (
-    'DEV-01',
-    'SEOUL',
-    'READY',
-    '{"region":"kr","level":3,"limits":{"high":85.0,"low":5.0}}'
+CREATE LOOKUP TABLE device_config (
+    device_id VARCHAR(40) PRIMARY KEY,
+    site      VARCHAR(32),
+    status    VARCHAR(16),
+    region    VARCHAR(16),
+    level     INTEGER,
+    limits    VARCHAR(512)
 );
 
-SELECT device_id, config
+SELECT device_id, limits
 FROM device_config
-WHERE config->'$.region' = 'kr'
-  AND JSON_EXTRACT_INTEGER(config, '$.level') >= 3;
+WHERE region = 'kr'
+  AND level >= 3;
 ```
 
-## Update JSON Values
+## Update Values
 
 ```sql
 UPDATE device_config
-SET config = JSON_SET(config, '$.status', 'active')
+SET status = 'ACTIVE'
 WHERE site = 'SEOUL';
 
 UPDATE device_config
-SET config = JSON_SET_JSON(config, '$.extra', '{"verified":1}')
-WHERE device_id = 'DEV-01';
-
-UPDATE device_config
-SET config = JSON_REMOVE(config, '$.extra')
+SET limits = '{"high":85.0,"low":5.0,"verified":1}'
 WHERE device_id = 'DEV-01';
 ```
 
 ## Constraints
 
-- A `JSON` column can be used as a regular LOOKUP column.
-- A `JSON` column cannot be declared as the primary key.
-- Write JSON path literals with single quotes, such as `'$.key'`.
-- Dedicated JSON path indexes are not supported. For frequently searched values, consider extracting them into regular columns.
+- JSON columns cannot be created in LOOKUP/VOLATILE tables.
+- If JSON path predicates or JSON path indexes are required, consider RDB/TAG tables.
+- Extract frequently searched values into regular LOOKUP columns.

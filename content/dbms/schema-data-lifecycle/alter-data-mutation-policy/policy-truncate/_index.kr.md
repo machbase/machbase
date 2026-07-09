@@ -40,12 +40,12 @@ RDB 테이블의 TRUNCATE는 내부적으로 `DELETE FROM` 전체 행 삭제(`qr
 |------|---------|---------------|
 | 처리 방식 | DDL (단번에 처리) | DML (행 단위 처리) |
 | 속도 | 빠름 | 느림 (대용량 시) |
-| 롤백 | 불가 | 가능 (트랜잭션 내) |
+| 롤백 | RDB는 트랜잭션 내 롤백 가능 | 가능 (트랜잭션 내) |
 | WHERE 조건 | 불가 | 가능 |
 | 트리거 발생 | X | X |
 
 ## 주의 사항
 
-- TRUNCATE는 되돌릴 수 없습니다. 실행 전 데이터 백업 여부를 반드시 확인하세요.
+- LOG TRUNCATE는 실행 전 데이터 백업 여부를 반드시 확인하세요. RDB TRUNCATE는 명시적 트랜잭션 안에서 롤백할 수 있습니다.
 - TAG, VOLATILE, LOOKUP 테이블에 TRUNCATE를 실행하면 오류가 발생합니다. 이 경우 `DELETE FROM ... BEFORE NOW` (TAG/LOG) 또는 조건 없는 DELETE를 사용하세요.
 - VOLATILE 테이블 전체 삭제: `DELETE FROM device_status;` (WHERE 없이 삭제 가능)

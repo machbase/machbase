@@ -13,11 +13,12 @@ Machbase는 시계열 데이터의 자동 삭제 기능인 **Retention Policy**�
 
 ## 지원 테이블 타입
 
-Retention Policy는 **TAG와 LOG 테이블에서만** 사용할 수 있습니다.
+Retention Policy는 **TAG, KV, LOG 테이블**에 사용할 수 있습니다.
 
 | 테이블 타입 | Retention Policy 적용 |
 |------------|---------------------|
 | TAG | O |
+| KV | O |
 | LOG | O |
 | RDB | X |
 | VOLATILE | X |

@@ -41,7 +41,7 @@ CREATE TAG TABLE tag_name (
   [TAG_DATA_PART_SIZE  = n];
 ```
 
-거리축 TAG 테이블은 `BASETIME` 대신 `BASE DISTANCE`를 사용합니다.
+거리축 TAG 테이블은 `BASETIME` 대신 `BASEDISTANCE`를 사용합니다.
 
 ```sql
 -- 시간축
@@ -54,7 +54,7 @@ CREATE TAG TABLE sensor_data (
 -- 거리축
 CREATE TAG TABLE pipeline_data (
     name      VARCHAR(32) PRIMARY KEY,
-    distance  DOUBLE      BASE DISTANCE,
+    distance  DOUBLE      BASEDISTANCE,
     thickness DOUBLE
 );
 ```
@@ -82,7 +82,7 @@ CREATE RDB TABLE orders (
 
 ```sql
 CREATE VOLATILE TABLE table_name (
-    pk_col  TYPE  PRIMARY KEY,
+    pk_col  TYPE  PRIMARY KEY,  -- PK 기반 동작이 필요할 때 지정
     col2    TYPE,
     ...
 );

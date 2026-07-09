@@ -4,7 +4,7 @@ title: 'Retention Policy'
 weight: 10
 ---
 
-Retention Policy는 TAG 또는 LOG 테이블에 보존 기간을 설정하여 오래된 데이터를 자동으로 삭제하는 기능입니다.
+Retention Policy는 TAG, KV, LOG 테이블에 보존 기간을 설정하여 오래된 데이터를 자동으로 삭제하는 기능입니다.
 
 ## 전체 흐름
 
@@ -28,6 +28,6 @@ SELECT * FROM V$RETENTION_JOB;
 
 ## 권한
 
-Retention Policy 생성·삭제·적용은 **SYS 계정 권한**이 필요합니다. 일반 사용자가 정책을 관리하려면 SYS 권한 부여가 필요합니다.
+Retention Policy 생성·삭제는 **SYS 계정 권한**이 필요합니다. 정책 적용·해제는 테이블 소유자가 자신의 테이블에 대해 수행할 수 있습니다.
 
 > 상세 권한 요건은 [Retention 적용 가능 테이블과 SYS 권한 제약](./applicable-privileges-retention-sys/)을 참고하세요.

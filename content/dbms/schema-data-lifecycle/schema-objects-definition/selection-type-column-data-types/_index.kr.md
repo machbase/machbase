@@ -157,7 +157,7 @@ SELECT _rid, sensor_id, value FROM sensor_log WHERE _rid = 1000;
 |--------|---------|
 | 온도, 전압, 유량 등 센서값 | `DOUBLE` |
 | IP 주소 | `IPV4` / `IPV6` |
-| 포트 번호 (0~65535) | `SHORT` |
+| 포트 번호 (0~65535) | `USHORT` |
 | 상태 코드, 플래그 | `SHORT` 또는 `INTEGER` |
 | 태그/센서 이름 | `VARCHAR(64~256)` |
 | 긴 설명 텍스트 | `TEXT` |
@@ -170,6 +170,6 @@ SELECT _rid, sensor_id, value FROM sensor_log WHERE _rid = 1000;
 |---------|------|
 | TAG PRIMARY KEY | `VARCHAR(n)` 필수 |
 | TAG BASETIME | `DATETIME` 필수 |
-| TAG BASE DISTANCE | `DOUBLE`, `LONG`, `ULONG` 중 하나 |
-| LOOKUP/VOLATILE PRIMARY KEY | 모든 타입 가능 |
+| TAG BASEDISTANCE | `DOUBLE` |
+| LOOKUP/VOLATILE PRIMARY KEY | 해당 테이블에서 허용되는 일반 스칼라 타입 |
 | LOOKUP SEQUENCE | `LONG` 필수 |

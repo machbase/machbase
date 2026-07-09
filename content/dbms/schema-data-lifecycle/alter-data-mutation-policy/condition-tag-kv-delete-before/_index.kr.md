@@ -4,7 +4,7 @@ title: 'TAG/KV DELETE 허용 조건과 BEFORE 조건'
 weight: 30
 ---
 
-TAG와 LOG(KV 포함) 테이블은 `BEFORE` 조건으로 특정 시점 이전 데이터를 일괄 삭제할 수 있습니다. LOG 테이블은 `OLDEST`, `EXCEPT`, `BEFORE` 등 로그 보존형 DELETE를 사용하고, TAG/KV 테이블은 `BEFORE` 외에도 태그 이름과 축 조건을 사용한 `WHERE` 삭제를 지원합니다.
+TAG, KV, LOG 테이블은 `BEFORE` 조건으로 특정 시점 이전 데이터를 일괄 삭제할 수 있습니다. LOG 테이블은 `OLDEST`, `EXCEPT`, `BEFORE` 등 로그 보존형 DELETE를 사용하고, TAG/KV 테이블은 `BEFORE` 외에도 태그 이름과 축 조건을 사용한 `WHERE` 삭제를 지원합니다.
 
 ## BEFORE 조건의 역할
 

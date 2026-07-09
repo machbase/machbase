@@ -18,7 +18,7 @@ USER_NAME   TABLE_NAME    POLICY_NAME    STATE     LAST_DELETED_TIME
 --------------------------------------------------------------------
 SYS         SENSOR_TAG    POLICY_30D     WAITING   2024-01-15 03:00:00
 SYS         EVENT_LOG     POLICY_7D      RUNNING   2024-01-15 02:00:00
-SYS         RAW_DATA      POLICY_30D     DONE      2024-01-15 01:00:00
+SYS         RAW_DATA      POLICY_30D     STOPPED   2024-01-15 01:00:00
 ```
 
 ## STATE 값 의미
@@ -27,11 +27,12 @@ SYS         RAW_DATA      POLICY_30D     DONE      2024-01-15 01:00:00
 |-------|------|
 | `WAITING` | 다음 INTERVAL을 기다리는 상태 |
 | `RUNNING` | 현재 삭제 작업 실행 중 |
-| `DONE` | 마지막 실행 완료 |
+| `STOPPED` | 작업 중지 상태 |
 
 ## LAST_DELETED_TIME
 
-마지막으로 삭제 작업이 완료된 시각입니다. `NULL`이면 아직 한 번도 실행되지 않은 것입니다.
+마지막 삭제 작업에 사용한 `DELETE ... BEFORE` 기준 시각입니다. 벽시계 기준의 작업 완료 시각이
+아닙니다. `NULL`이면 아직 기준 시각이 기록되지 않은 것입니다.
 
 ## 적용 정책 전체 확인
 
@@ -54,16 +55,15 @@ POLICY_1H_10M  0               0
 ## 모니터링 쿼리 패턴
 
 ```sql
--- 오랫동안 실행되지 않은 정책 확인 (예: 24시간 이상)
-SELECT TABLE_NAME, POLICY_NAME, STATE, LAST_DELETED_TIME
-FROM V$RETENTION_JOB
-WHERE LAST_DELETED_TIME < NOW - 86400000000000
-   OR LAST_DELETED_TIME IS NULL;
-
 -- 현재 실행 중인 정책
 SELECT TABLE_NAME, POLICY_NAME
 FROM V$RETENTION_JOB
 WHERE STATE = 'RUNNING';
+
+-- 중지 상태인 정책 확인
+SELECT TABLE_NAME, POLICY_NAME, STATE, LAST_DELETED_TIME
+FROM V$RETENTION_JOB
+WHERE STATE = 'STOPPED';
 ```
 
 ## 삭제 실행 여부 확인
