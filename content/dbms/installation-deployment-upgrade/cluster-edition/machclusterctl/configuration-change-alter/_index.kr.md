@@ -32,7 +32,6 @@ cluster:
           deployer: deployer-4
           home_path: /home/machbase/warehouse-group1-3
           cluster_link_port: 5511
-          http_admin_port: 5512
           service_port: 5510
 ```
 

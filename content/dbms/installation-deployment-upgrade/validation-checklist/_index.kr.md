@@ -13,7 +13,7 @@ toc: true
 
 ```bash
 machadmin -e
-# Machbase is running.
+# Machbase server is running with PID(<pid>).
 ```
 
 또는 프로세스를 직접 확인합니다.
@@ -63,9 +63,10 @@ DROP TABLE check_test;
 ### 7. HTTP REST API 확인
 
 ```bash
-curl http://127.0.0.1:5657/api/v1/check
-# {"success":true,"reason":"success","data":{"engine":"Machbase",...}}
+curl -G "http://127.0.0.1:5657/machbase" --data-urlencode "q=SELECT 1"
 ```
+
+JSON 형식의 쿼리 결과가 반환되면 HTTP REST API가 응답하는 상태입니다.
 
 ---
 

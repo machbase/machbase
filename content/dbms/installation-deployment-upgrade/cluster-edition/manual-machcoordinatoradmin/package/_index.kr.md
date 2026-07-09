@@ -5,8 +5,8 @@ weight: 20
 toc: true
 ---
 
-Cluster Edition 수동 배포의 첫 번째 단계입니다. 각 노드에 Machbase 패키지를 배포하고,
-Broker와 Warehouse 설치에 사용할 경량 패키지를 Coordinator에 등록합니다.
+Cluster Edition 수동 배포의 첫 번째 단계입니다. Coordinator와 Deployer에는 전체 패키지를
+설치하고, Broker와 Warehouse 배포에 사용할 경량 패키지를 Coordinator에 등록합니다.
 
 ## 패키지 종류
 
@@ -21,9 +21,9 @@ Cluster Edition에는 두 가지 패키지가 있습니다.
 - 전체: `machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz`
 - 경량: `machbase-cluster-8.6.0.official-LINUX-X86-64-release-lightweight.tgz`
 
-## 각 노드에 패키지 배포
+## Coordinator와 Deployer에 패키지 배포
 
-패키지 파일을 각 노드에 복사하고 압축 해제합니다.
+전체 패키지 파일을 Coordinator와 Deployer 노드에 복사하고 압축 해제합니다.
 
 ### Coordinator 노드
 
@@ -42,21 +42,9 @@ scp machbase@배포서버:/path/to/machbase-cluster-8.6.0.official-LINUX-X86-64-
 tar zxf machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz -C ~/deployer
 ```
 
-### Broker / Warehouse 노드
-
-경량 패키지를 사용합니다.
-
-```bash
-# Broker 노드에서
-mkdir -p ~/broker
-scp machbase@배포서버:/path/to/machbase-cluster-8.6.0.official-LINUX-X86-64-release-lightweight.tgz ~/
-tar zxf machbase-cluster-8.6.0.official-LINUX-X86-64-release-lightweight.tgz -C ~/broker
-
-# Warehouse 노드에서
-mkdir -p ~/warehouse
-scp machbase@배포서버:/path/to/machbase-cluster-8.6.0.official-LINUX-X86-64-release-lightweight.tgz ~/
-tar zxf machbase-cluster-8.6.0.official-LINUX-X86-64-release-lightweight.tgz -C ~/warehouse
-```
+Broker와 Warehouse 노드에는 이 단계에서 경량 패키지를 직접 압축 해제하지 않습니다. 경량 패키지를
+Coordinator에 등록하면, 이후 `--add-node`로 지정한 Deployer가 대상 노드의 `--home-path`에
+패키지를 배포합니다.
 
 ## Coordinator에 패키지 등록
 
@@ -72,7 +60,7 @@ $MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --add-package=machbase \
 
 ## 환경 변수 설정
 
-각 노드의 `~/.bashrc`에 해당 역할에 맞는 HOME 경로를 설정합니다.
+Coordinator와 Deployer 운영 계정의 `~/.bashrc`에 해당 역할에 맞는 HOME 경로를 설정합니다.
 
 ```bash
 # Coordinator 노드

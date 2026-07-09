@@ -18,7 +18,7 @@ Windows에서 Standard Edition을 설치하는 방법입니다.
 
 | 방식 | 설명 |
 |------|------|
-| [MSI 설치](/dbms/installation-deployment-upgrade/standard-edition/windows/msi/) | 설치 마법사를 통한 GUI 설치. 서비스 등록 자동화 |
+| [MSI 설치](/dbms/installation-deployment-upgrade/standard-edition/windows/msi/) | 설치 마법사를 통한 설치. 환경 변수와 바로가기 생성 |
 
 ---
 

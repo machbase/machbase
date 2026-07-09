@@ -69,10 +69,13 @@ ulimit -Sn
 운영체제가 Machbase 포트를 다른 프로세스에 할당하는 것을 방지하려면 포트를 예약합니다.
 
 ```bash
-echo 5656-5657 | sudo tee /proc/sys/net/ipv4/ip_local_reserved_ports
+current=$(cat /proc/sys/net/ipv4/ip_local_reserved_ports)
+ports=5656-5657
+sudo sysctl -w net.ipv4.ip_local_reserved_ports="${current:+$current,}$ports"
 ```
 
-영구 적용은 `/etc/sysctl.conf`에 다음을 추가합니다.
+기존 예약 포트가 있으면 덮어쓰지 말고 쉼표로 구분해 병합합니다. 영구 적용은
+`/etc/sysctl.conf`의 `net.ipv4.ip_local_reserved_ports` 항목을 다음 값과 병합합니다.
 
 ```
 net.ipv4.ip_local_reserved_ports = 5656-5657

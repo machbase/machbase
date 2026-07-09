@@ -92,10 +92,13 @@ sudo date -s "2025-01-02 12:34:56"
 각 노드에서 Machbase가 사용할 포트를 예약합니다.
 
 ```bash
-echo 5101-5110,5656-5657 | sudo tee /proc/sys/net/ipv4/ip_local_reserved_ports
+current=$(cat /proc/sys/net/ipv4/ip_local_reserved_ports)
+ports=5101-5110,5656-5657
+sudo sysctl -w net.ipv4.ip_local_reserved_ports="${current:+$current,}$ports"
 ```
 
-클러스터 구성에 따라 포트 범위를 조정하십시오. Coordinator link, admin, 복제 포트 등을 모두 포함해야 합니다.
+기존 예약 포트가 있으면 덮어쓰지 말고 쉼표로 구분해 병합합니다. 클러스터 구성에 따라 포트
+범위를 조정하십시오. Coordinator link, admin, 복제 포트 등을 모두 포함해야 합니다.
 
 ---
 

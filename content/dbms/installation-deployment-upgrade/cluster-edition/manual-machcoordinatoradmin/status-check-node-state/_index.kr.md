@@ -16,17 +16,18 @@ machcoordinatoradmin --cluster-status
 정상 클러스터 출력 예시:
 
 ```
-+-------------+-----------------+-----------+---------------------------+
-|  Node Type  |    Node Name    |   Group   |   Desired & Actual State  |
-+-------------+-----------------+-----------+---------------------------+
-| coordinator | 192.168.1.10:5101 | Coordinator | primary  | primary  |
-| deployer    | 192.168.1.10:5201 | Deployer    | normal   | normal   |
-| broker      | 192.168.1.11:5301 | Broker      | leader   | leader   |
-| broker      | 192.168.1.12:5301 | Broker      | normal   | normal   |
-| warehouse   | 192.168.1.13:5401 | group1      | normal   | normal   |
-| warehouse   | 192.168.1.14:5401 | group1      | normal   | normal   |
-+-------------+-----------------+-----------+---------------------------+
++-------------+-------------------+-------------------+-------------------+--------------+
+|  Node Type  |     Node Name     |    Group Name     |    Group State    |     State    |
++-------------+-------------------+-------------------+-------------------+--------------+
+| coordinator | 192.168.1.10:5101 | coordinator       | normal            | primary      |
+| broker      | 192.168.1.11:5401 | broker            | normal            | normal       |
+| warehouse   | 192.168.1.13:5501 | group1            | normal            | normal       |
+| warehouse   | 192.168.1.14:5501 | group1            | normal            | normal       |
++-------------+-------------------+-------------------+-------------------+--------------+
 ```
+
+Deployer 상태까지 함께 보려면 `--cluster-status --verbose`를 사용합니다. Desired/Actual
+state, RP state, 디스크 사용률, ping 값은 `--cluster-status-full`에서 확인합니다.
 
 ## 개별 노드 관리 명령
 

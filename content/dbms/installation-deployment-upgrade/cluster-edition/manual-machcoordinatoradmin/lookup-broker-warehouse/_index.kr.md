@@ -107,10 +107,7 @@ machcoordinatoradmin --add-node="192.168.1.30:5301" \
   --node-type=lookup \
   --lookup-type=master \
   --deployer="192.168.1.10:5201" \
-  --package-name=machbase \
-  --home-path="/home/machbase/lookup" \
-  --port-no=5300 \
-  --http-port-no=5302
+  --home-path="/home/machbase/lookup"
 ```
 
 ## 전체 상태 확인
