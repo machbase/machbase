@@ -17,9 +17,13 @@ Coordinator, Deployer, Lookup까지 포함해 전체 바이너리를 교체해�
 
 ### 2. cluster.yaml의 패키지 변경
 
-`cluster.package.name`과 `cluster.package.path`를 새 패키지로 변경합니다. 업그레이드 전에는 노드
+`cluster.package.name`과 `cluster.package.origin_path`를 새 패키지로 변경합니다. 업그레이드 전에는 노드
 추가, 삭제, 포트 변경 같은 토폴로지 변경이 없어야 합니다. 토폴로지 변경이 있으면 먼저 `apply`로
 반영한 뒤 업그레이드를 수행합니다.
+
+`machclusterctl upgrade --full-stop`은 Coordinator와 Deployer를 포함한 모든 노드 홈에 같은
+archive를 교체 반영합니다. 따라서 `origin_path`에는 `machcoordinatoradmin`과
+`machdeployeradmin`이 포함된 전체 Cluster 패키지를 지정합니다.
 
 ### 3. 실행 계획 확인
 

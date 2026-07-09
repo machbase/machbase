@@ -17,14 +17,15 @@ Cluster Edition은 여러 노드에 Machbase를 분산 배포하는 구성입니
 | **Broker** | SQL 파싱 및 쿼리 분배, 클라이언트 접점 |
 | **Warehouse** | 실제 데이터 저장 및 쿼리 실행 |
 
-최소 구성은 Coordinator 1, Deployer 1, Lookup 1, Broker 1, Warehouse 2(그룹당 2노드로 복제) 입니다.
+최소 구성은 Coordinator 1, Deployer 1, Lookup 2(master 1, monitor 1), Broker 1,
+Warehouse 2(그룹당 2노드로 복제) 입니다.
 
 ## 배포 방식
 
 | 방식 | 설명 | 적합한 경우 |
 |------|------|------------|
 | [machclusterctl](/dbms/installation-deployment-upgrade/cluster-edition/machclusterctl/) | cluster.yaml 기반 자동 배포 | 권장. 신규 구축 |
-| [수동 (machcoordinatoradmin)](/dbms/installation-deployment-upgrade/cluster-edition/manual-machcoordinatoradmin/) | 각 노드에 직접 패키지 배포 | 세밀한 제어가 필요한 경우 |
+| [수동 (machcoordinatoradmin)](/dbms/installation-deployment-upgrade/cluster-edition/manual-machcoordinatoradmin/) | Coordinator 명령 기반 노드 등록·배포 | 세밀한 제어가 필요한 경우 |
 
 ## 설치 순서
 

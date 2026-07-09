@@ -9,7 +9,8 @@ toc: true
 
 ## 설치 실패 시 재시도
 
-설치 도중 일부 노드에서 실패한 경우 원인을 해결한 후 동일한 명령을 다시 실행합니다. `machclusterctl`은 이미 완료된 노드는 건너뛰고 실패한 노드부터 재개합니다.
+설치 도중 오류가 발생하면 `machclusterctl`은 이미 수행한 bootstrap과 노드 등록 작업을 rollback합니다.
+먼저 로그에서 원인을 해결한 뒤 동일한 명령을 다시 실행합니다.
 
 ```bash
 machclusterctl install -f cluster.yaml --yes --verbose

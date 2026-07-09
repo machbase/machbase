@@ -11,7 +11,8 @@ toc: true
 
 ### 1. cluster.yaml 수정
 
-필요한 변경사항을 `cluster.yaml`에 반영합니다. 예를 들어 Warehouse 노드를 추가하려면 해당 항목을 추가합니다.
+필요한 변경사항을 `cluster.yaml`에 반영합니다. 예를 들어 새 Warehouse 그룹을 추가하려면 해당
+항목을 추가합니다.
 
 ```yaml
 cluster:
@@ -26,13 +27,20 @@ cluster:
           host: node3
           deployer: deployer-3
           ...
-        # 새로 추가할 노드
-        - alias: warehouse-group1-3
+    - name: group2
+      nodes:
+        - alias: warehouse-group2-1
           host: node4
           deployer: deployer-4
-          home_path: /home/machbase/warehouse-group1-3
+          home_path: /home/machbase/warehouse-group2-1
           cluster_link_port: 5511
           service_port: 5510
+        - alias: warehouse-group2-2
+          host: node5
+          deployer: deployer-5
+          home_path: /home/machbase/warehouse-group2-2
+          cluster_link_port: 5521
+          service_port: 5520
 ```
 
 ### 2. 유효성 검사

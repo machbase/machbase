@@ -13,15 +13,18 @@ toc: true
 
 ### 1. cluster.yaml의 패키지 변경
 
-`cluster.package.name`과 `cluster.package.path`를 새 패키지로 변경합니다. 패키지 내용이 바뀌면
+`cluster.package.name`과 `cluster.package.origin_path`를 새 패키지로 변경합니다. 패키지 내용이 바뀌면
 패키지 이름과 archive 파일 이름도 함께 고유하게 바꿉니다.
 
 ```yaml
 cluster:
   package:
     name: machbase-v8.6.0
-    path: /home/machbase/packages/machbase-cluster-8.6.0.official-LINUX-X86-64-release-lightweight.tgz
+    origin_path: /home/machbase/packages/machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz
 ```
+
+`registered_path`는 `machclusterctl export`가 기록하는 Coordinator package repository 경로입니다.
+업그레이드 입력 archive를 지정할 때는 `origin_path`를 사용합니다.
 
 ### 2. 실행 계획 확인
 

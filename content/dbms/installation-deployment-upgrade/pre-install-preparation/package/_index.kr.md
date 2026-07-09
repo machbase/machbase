@@ -7,7 +7,7 @@ toc: true
 
 ## 패키지 파일 명명 규칙
 
-Machbase 패키지 파일 이름은 다음 형식을 따릅니다.
+Machbase 패키지 파일 이름은 에디션에 따라 다음 형식을 따릅니다.
 
 ```
 machbase-EDITION-VERSION-OS-CPU-BIT-MODE.EXT
@@ -15,7 +15,7 @@ machbase-EDITION-VERSION-OS-CPU-BIT-MODE.EXT
 
 | 항목 | 설명 | 예시 |
 |------|------|------|
-| EDITION | 에디션 구분 | `standard`, `cluster` |
+| EDITION | 에디션 구분 | `SDK`, `cluster` |
 | VERSION | 버전 (Major.Minor.Fix.AUX) | `8.6.0.official` |
 | OS | 운영체제 | `LINUX`, `WINDOWS` |
 | CPU | CPU 아키텍처 | `X86` |
@@ -23,7 +23,11 @@ machbase-EDITION-VERSION-OS-CPU-BIT-MODE.EXT
 | MODE | 빌드 모드 | `release` |
 | EXT | 확장자 | `tgz` (Linux), `msi` (Windows) |
 
-예시: `machbase-standard-8.6.0.official-LINUX-X86-64-release.tgz`
+Standard Edition Linux tarball은 `machbase-SDK-...tgz` 이름으로 생성됩니다.
+
+예시:
+- Standard Edition: `machbase-SDK-8.6.0.official-LINUX-X86-64-release.tgz`
+- Cluster Edition: `machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz`
 
 버전에서 Minor 버전이 다른 경우 DB 파일 및 프로토콜 호환이 보장되지 않습니다. Fix 버전 변경은 호환성이 유지됩니다.
 

@@ -58,7 +58,11 @@ docker exec -it machbase machsql
 machsql -s 127.0.0.1 -u SYS -p MANAGER
 ```
 
-HTTP REST API는 `http://127.0.0.1:5657`로 접근합니다.
+HTTP REST API 쿼리는 `/machbase` 경로로 요청합니다.
+
+```bash
+curl -G "http://127.0.0.1:5657/machbase" --data-urlencode "q=SELECT 1"
+```
 
 ## 컨테이너 종료 및 재시작
 

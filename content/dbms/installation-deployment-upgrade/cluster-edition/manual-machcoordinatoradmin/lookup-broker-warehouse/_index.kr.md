@@ -42,7 +42,8 @@ machcoordinatoradmin --add-node="192.168.1.11:5401" \
 | `--package-name` | Coordinator에 등록한 패키지 이름 |
 | `--home-path` | 노드 홈 디렉터리 |
 | `--port-no` | 클라이언트 또는 노드 서비스 포트 |
-| `--http-port-no` | HTTP 관리 포트 |
+| `--http-port-no` | Broker HTTP 관리 포트 |
+| `--replication` | Warehouse replication manager 포트 |
 
 ### 3. 노드 시작
 
@@ -73,7 +74,7 @@ machcoordinatoradmin --add-node="192.168.1.13:5501" \
   --package-name=machbase \
   --home-path="/home/machbase/warehouse_g1_1" \
   --port-no=5500 \
-  --http-port-no=5502 \
+  --replication=5502 \
   --group=group1 \
   --no-replicate
 
@@ -83,7 +84,7 @@ machcoordinatoradmin --add-node="192.168.1.14:5501" \
   --package-name=machbase \
   --home-path="/home/machbase/warehouse_g1_2" \
   --port-no=5500 \
-  --http-port-no=5502 \
+  --replication=5502 \
   --group=group1 \
   --no-replicate
 ```

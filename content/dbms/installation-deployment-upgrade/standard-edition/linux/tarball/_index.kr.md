@@ -27,7 +27,7 @@ mkdir ~/machbase_home
 cd ~/machbase_home
 
 # 다운로드한 패키지 파일 압축 해제
-tar zxf machbase-standard-8.6.0.official-LINUX-X86-64-release.tgz
+tar zxf machbase-SDK-8.6.0.official-LINUX-X86-64-release.tgz
 ```
 
 압축 해제 후 디렉터리 구조를 확인합니다.

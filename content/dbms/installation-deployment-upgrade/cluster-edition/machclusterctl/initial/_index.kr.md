@@ -50,19 +50,19 @@ machclusterctl status
 machclusterctl status --coordinator /home/machbase/coordinator
 ```
 
-모든 노드의 상태가 `normal`이어야 합니다.
+출력은 `machcoordinatoradmin --cluster-status-full --verbose` 형식입니다. Coordinator와 Broker는
+`primary`, `leader` 같은 역할 상태가 표시될 수 있으며, Desired/Actual state가 서로 맞는지
+확인합니다.
 
 ```
-+-------------+-----------------+-----------+----------+
-|  Node Type  |    Node Name    |   Group   |  State   |
-+-------------+-----------------+-----------+----------+
-| coordinator | 192.168.1.10:5101 | Coordinator | normal |
-| deployer    | 192.168.1.10:5201 | Deployer  | normal  |
-| broker      | 192.168.1.11:5301 | Broker    | leader  |
-| broker      | 192.168.1.12:5301 | Broker    | normal  |
-| warehouse   | 192.168.1.13:5401 | group1    | normal  |
-| warehouse   | 192.168.1.14:5401 | group1    | normal  |
-+-------------+-----------------+-----------+----------+
++-------------+--------------------------------+--------------------------------+--------------------------------+-------------------------------+-------------+-----------------+----------+
+|  Node Type  |           Node Name            |           Group Name           |           Group State          |    Desired & Actual State     |  RP State   | Disk(%) (00/00) | Ping(μs) |
++-------------+--------------------------------+--------------------------------+--------------------------------+-------------------------------+-------------+-----------------+----------+
+| coordinator | coord-1(192.168.1.10:5101)     | Coordinator                    | normal                         | primary       | primary       | ----------- | --------------- |      214 |
+| deployer    | deployer-1(192.168.1.10:5201)  | Deployer                       | normal                         | running       | running       | ----------- | --------------- |      100 |
+| broker      | broker-1(192.168.1.11:5401)    | Broker                         | normal                         | leader        | leader        | ----------- | --------------- |      100 |
+| warehouse   | wh-g1-1(192.168.1.13:5501)     | group1                         | normal                         | normal        | normal        | running     | 26.9            |      100 |
++-------------+--------------------------------+--------------------------------+--------------------------------+-------------------------------+-------------+-----------------+----------+
 ```
 
 ## 4. 클라이언트 접속 테스트

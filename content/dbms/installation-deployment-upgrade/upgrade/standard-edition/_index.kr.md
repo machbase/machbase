@@ -41,7 +41,7 @@ cp -a $MACHBASE_HOME/lib $MACHBASE_HOME/lib.bak
 ### 3. 새 패키지 압축 해제
 
 ```bash
-tar zxf machbase-standard-8.6.0.official-LINUX-X86-64-release.tgz -C $MACHBASE_HOME
+tar zxf machbase-SDK-8.6.0.official-LINUX-X86-64-release.tgz -C $MACHBASE_HOME
 ```
 
 압축 해제 시 `bin/`, `lib/`, `include/` 등이 덮어씌워지고 `dbs/`는 변경되지 않습니다.
