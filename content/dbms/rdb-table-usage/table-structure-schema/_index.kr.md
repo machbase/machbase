@@ -36,7 +36,7 @@ DELETE FROM order_history WHERE order_id = 1001;
 - **[잠금·충돌·타임아웃 설계](/dbms/rdb-table-usage/locking-conflict-timeout/#design-locking-conflict-rdb-busy-timeout-ddl-dml)**
 - **[자기 참조·INSERT SELECT](/dbms/rdb-table-usage/data-input-mutation/#reference-self-rdb-insert-select)**
 - **[JOIN 설계](/dbms/rdb-table-usage/join-relational-query/#join-design-rdb)**
-- **[백업·마운트](/dbms/rdb-table-usage/backup-mount-sidecar/#design-backup-mount-rdb)**
+- **[백업·복원·마운트](/dbms/rdb-table-usage/backup-restore-mount/#design-backup-mount-rdb)**
 - **[Append API](/dbms/rdb-table-usage/sdk-append-scope/#unsupported-rejected-rdb-append-api)**
 - **[SDK 지원 범위](/dbms/rdb-table-usage/sdk-append-scope/#support-scope-rdb-sdk)**
 - **[Edition 제한](/dbms/rdb-table-usage/constraints-errors-troubleshooting/#limitations-rdb-edition)**

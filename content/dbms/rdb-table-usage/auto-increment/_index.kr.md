@@ -245,8 +245,8 @@ JDBC `DatabaseMetaData.getColumns()`는 이 flag를 기준으로 `IS_AUTOINCREME
 응용 프로그램은 catalog query로 확인합니다.
 
 `AUTO_INCREMENT` 속성은 system catalog에 저장되므로 정상 shutdown/startup 후에도
-유지됩니다. RDB `ALTER TABLE ... DROP COLUMN` 과정에서 RDB 부속 DB 파일(sidecar)의 테이블이
-재구성되어도 `AUTO_INCREMENT` 속성과 다음 자동값은 유지됩니다.
+유지됩니다. RDB `ALTER TABLE ... DROP COLUMN`으로 스키마가 재구성되어도 `AUTO_INCREMENT`
+속성과 다음 자동값은 유지됩니다.
 
 ```sql
 CREATE RDB TABLE maintenance_ticket (

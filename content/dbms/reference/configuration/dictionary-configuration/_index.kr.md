@@ -122,9 +122,9 @@ toc: true
 
 | 프로퍼티 | 기본값 | 범위 | 설명 |
 |----------|--------|------|------|
-| `RDB_BUSY_TIMEOUT_MS` | 30000 | -1~2147483647 | RDB 보조 데이터 파일(sidecar)이 busy일 때 대기할 시간(ms). -1은 무기한 대기, 0은 즉시 반환 |
-| `RDB_SYNCHRONOUS` | 2 | 1~2 | RDB 보조 파일의 SQLite synchronous 모드. 1=NORMAL, 2=FULL |
-| `RDB_JOURNAL_MODE` | 4 | 0~4 | RDB 보조 파일의 SQLite journal 모드. 0=DELETE, 4=WAL |
+| `RDB_BUSY_TIMEOUT_MS` | 30000 | -1~2147483647 | RDB 쓰기 충돌 시 대기할 시간(ms). -1은 무기한 대기, 0은 즉시 반환 |
+| `RDB_SYNCHRONOUS` | 2 | 1~2 | RDB 트랜잭션 내구성 수준. 1=NORMAL, 2=FULL |
+| `RDB_JOURNAL_MODE` | 4 | 0~4 | RDB 저널 모드. 0=DELETE, 4=WAL |
 
 ## 로그 / 진단 설정
 

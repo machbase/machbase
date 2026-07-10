@@ -25,5 +25,5 @@ Machbase 운영 중 발생하는 일반적인 오류와 문제 상황을 **증�
 | [쿼리와 성능 문제](./performance/) | 느린 쿼리, 검색 결과 없음, 메모리 부족, 트랜잭션 충돌 |
 | [UPDATE/DELETE 문제](./update-delete/) | 태그 데이터 수정 제한, WHERE 조건 오류, JSON 경로 오류 |
 | [자동 처리 문제](./automation/) | ROLLUP 실행 이상, STREAM 쿼리 오류 |
-| [백업과 복구 문제](./recovery-backup/) | 백업 실패, MOUNT/UMOUNT 오류, RDB 보조 데이터 파일(sidecar) 연동 오류 |
+| [백업과 복구 문제](./recovery-backup/) | 백업 실패, MOUNT/UMOUNT 오류, RDB 복원 확인 |
 | [Cluster 문제](./cluster/) | 노드 상태 이상, Cluster Edition 오류 |

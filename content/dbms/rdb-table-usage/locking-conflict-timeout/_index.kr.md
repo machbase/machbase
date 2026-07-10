@@ -10,9 +10,8 @@ RDB 테이블의 동시 접근 방식과 쓰기 충돌, busy timeout 처리 방�
 
 ## RDB 동시성과 잠금 범위
 
-각 RDB 테이블의 행과 인덱스는 테이블 ID별 RDB 부속 DB 파일(sidecar)에 저장됩니다. 읽기
-트랜잭션은 커밋된 스냅샷을 조회하고, 쓰기 트랜잭션은 해당 RDB 보조 파일에서 쓰기 잠금을
-획득합니다. 따라서 다른 세션이 같은 RDB 테이블에 쓰기 트랜잭션을 열어 둔 상태에서
+RDB 읽기 트랜잭션은 커밋된 스냅샷을 조회합니다. 다른 세션이 같은 RDB 테이블에 쓰기
+트랜잭션을 열어 둔 상태에서
 `INSERT`, `UPDATE`, `DELETE`를 실행하면 대기하거나 `Resource busy (RDB_TRANSACTION)` 오류가
 발생할 수 있습니다.
 
@@ -28,13 +27,12 @@ RDB 테이블에 대한 동시 쓰기는 충돌할 수 있습니다. 반면 다�
 | 활성 RDB 트랜잭션 중 같은 테이블 DDL | `Resource busy` 오류로 차단됩니다. |
 | 열린 RDB 커서가 있는 세션의 `COMMIT`/`ROLLBACK` | 커서를 닫을 때까지 차단됩니다. |
 
-TAG와 LOG 테이블의 입력 경로는 RDB 보조 파일 트랜잭션을 사용하지 않습니다. 활성 RDB
-트랜잭션 안에서는 RDB 테이블의 DML과 SELECT만 수행하고, LOG/TAG/LOOKUP/VOLATILE 쓰기와
-DDL을 함께 실행하지 않습니다.
+RDB 트랜잭션 안에서는 RDB 테이블의 DML과 SELECT만 수행합니다. LOG, TAG, LOOKUP,
+VOLATILE 테이블 쓰기와 DDL은 같은 RDB 트랜잭션에 포함할 수 없습니다.
 
 ## busy timeout 설정
 
-`RDB_BUSY_TIMEOUT_MS`는 RDB 보조 파일이 busy일 때 세션이 기다리는 시간을 밀리초 단위로
+`RDB_BUSY_TIMEOUT_MS`는 RDB 쓰기 충돌이 발생했을 때 세션이 기다리는 시간을 밀리초 단위로
 지정합니다. 서버 설정의 기본값은 `30000`이며, 새 세션은 이 값을 복사합니다.
 
 | 값 | 동작 |
@@ -65,8 +63,8 @@ SELECT id, user_name, user_ip, rdb_busy_timeout_ms
 
 ## 충돌 진단
 
-RDB 보조 파일의 쓰기 잠금 소유자는 `V$MUTEX`에 행 잠금으로 표시되지 않습니다. `V$MUTEX`는
-서버 내부 뮤텍스 통계이므로 RDB 트랜잭션 잠금 소유자를 식별하는 용도로 사용하지 않습니다.
+RDB 쓰기 충돌은 `V$MUTEX`에 행 잠금으로 표시되지 않습니다. `V$MUTEX`는 서버 내부 뮤텍스
+통계이므로 RDB 트랜잭션 잠금 소유자를 식별하는 용도로 사용하지 않습니다.
 
 대기 중인 SQL과 접속 세션은 `V$STMT`, `V$SESSION`에서 확인합니다.
 

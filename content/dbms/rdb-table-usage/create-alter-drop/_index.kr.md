@@ -143,4 +143,4 @@ DROP TABLE product_catalog;
 - 열린 RDB 결과 커서가 있으면 관련 DDL이 실패할 수 있으므로 커서를 닫은 뒤 실행합니다.
 - RDB 테이블은 Standard Edition 전용입니다.
 - RDB 테이블에는 TAG 전용 `METADATA`, `BASETIME`, `BASEDISTANCE` 절을 사용할 수 없습니다.
-- 백업·복구 정책에는 RDB 보조 데이터 파일(sidecar) 포함 여부를 함께 확인합니다.
+- DDL 변경 후에는 RDB 테이블의 백업 및 복원 검증 절차도 갱신합니다.

@@ -42,7 +42,7 @@ toc: true
 | [데이터베이스 마운트](/dbms/operations-configuration-recovery/backup-restore-mount/#database-mount) | MOUNT / UMOUNT 사용법 |
 | [마운트된 데이터베이스 조회](/dbms/operations-configuration-recovery/backup-restore-mount/#query-database-mount) | 마운트 DB에서 SELECT |
 | [마운트 DB 동작 특성](/dbms/operations-configuration-recovery/backup-restore-mount/#mounted-db-read-only-refcount-active-same-name) | 읽기 전용, 활성 참조, 이름 충돌 |
-| [RDB 보조 데이터 파일(sidecar) 백업/복구 제약](/dbms/rdb-table-usage/backup-mount-sidecar/#recovery-backup-rdb-sidecar) | Standard Edition RDB 처리 |
+| [RDB 백업·복원·마운트](/dbms/rdb-table-usage/backup-restore-mount/) | Standard Edition RDB 절차 |
 | [MOUNT TABLE 미지원 범위](/dbms/operations-configuration-recovery/backup-restore-mount/#unsupported-support-scope-mount-table-umount) | 테이블 단위 마운트 제약 |
 
 ## 권한 요구 사항
@@ -173,9 +173,7 @@ BACKUP DATABASE INTO DISK = 'backup_20240101';
 ├── backup.trc
 ├── meta.dbs-0
 ├── meta.dbs-1
-├── ...
-└── rdb/                  # RDB 테이블이 포함된 경우
-    └── __rdbt_<table_id>.db
+└── ...
 ```
 
 ### 백업 완료 후 검증
@@ -958,11 +956,11 @@ Machbase의 테이블 타입마다 백업과 마운트에 대한 지원 범위�
 | **LOG** | O | O | O | |
 | **LOOKUP** | O | O | O | |
 | **VOLATILE** | X | X | X | 메모리 기반, 재시작 시 소멸 |
-| **RDB** | △ | △ | △ | Standard Edition 전용, RDB 보조 데이터 파일 처리 필요 |
+| **RDB** | O | O | △ | Standard Edition 전용 |
 
 - **O**: 지원
 - **X**: 미지원
-- **△**: 조건부 지원 (에디션 또는 추가 처리 필요)
+- **△**: 기능별 조건 확인 필요
 
 ### 각 타입별 상세 설명
 
@@ -994,9 +992,9 @@ UMOUNT DATABASE tag_backup;
 
 #### RDB 테이블
 
-Standard Edition에서만 사용 가능한 테이블 타입입니다. 내부적으로 SQLite 기반 RDB 부속 DB
-파일에 저장될 수 있으며, 백업과 복원 시 이 파일도 함께 처리해야
-합니다. 자세한 내용은 [RDB 보조 데이터 파일 백업/복구 제약](/dbms/rdb-table-usage/backup-mount-sidecar/#recovery-backup-rdb-sidecar)을 참고하세요.
+Standard Edition에서만 사용 가능한 테이블 타입입니다. `BACKUP DATABASE`와 `BACKUP TABLE`의
+대상에 포함되며, 백업본을 마운트하면 읽기 전용으로 조회할 수 있습니다. 자세한 내용은
+[RDB 백업·복원·마운트](/dbms/rdb-table-usage/backup-restore-mount/)를 참고하세요.
 
 ### BACKUP DATABASE 실행 시 포함 범위
 

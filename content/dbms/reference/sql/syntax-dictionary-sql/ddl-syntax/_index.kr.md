@@ -58,7 +58,7 @@ table_property_list ::=
 | `TAG` | **TAG 테이블** - 태그 이름/시간/값 구조의 시계열 데이터. BASETIME 컬럼 필수 |
 | `LOOKUP` | **LOOKUP 테이블** - 메모리 상주. PRIMARY KEY 필수. DML 전체 지원 |
 | `VOLATILE` | **VOLATILE 테이블** - 메모리 상주. 서버 재시작 시 데이터 소멸. PRIMARY KEY 선택 |
-| `RDB` | **RDB 테이블** - SQLite 기반 관계형 테이블. 트랜잭션 지원 |
+| `RDB` | **RDB 테이블** - 관계형 데이터와 트랜잭션 지원 |
 
 ### 예시
 

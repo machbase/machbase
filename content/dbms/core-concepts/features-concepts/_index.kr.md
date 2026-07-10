@@ -206,9 +206,8 @@ Backup, Restore, Mount는 데이터 보호와 복구를 담당하는 세 가지 
 
 Backup 작업은 `LAUNCHED` -> `PROGRESS` -> `FINISHED` (실패 시 `ERROR`) 순으로 진행됩니다.
 
-RDB 테이블을 사용하는 데이터베이스에서는 row와 index를 저장하는 RDB 보조 데이터
-파일(sidecar)이 함께 포함됩니다. 수동 파일 복사로 대체하면 이 RDB 보조 파일이
-누락될 수 있으므로 반드시 Machbase가 제공하는 Backup/Restore/Mount 절차를 사용해야 합니다.
+RDB 테이블도 데이터베이스 백업에 자동으로 포함됩니다. 데이터베이스 디렉터리를 수동으로
+복사하지 말고 Machbase가 제공하는 Backup/Restore/Mount 절차를 사용해야 합니다.
 
 | 유형 | 설명 |
 | --- | --- |

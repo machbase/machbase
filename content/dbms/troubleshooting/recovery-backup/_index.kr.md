@@ -11,7 +11,7 @@ toc: true
 | 페이지 | 내용 |
 |--------|------|
 | [백업과 복원이 실패할 때](/dbms/troubleshooting/recovery-backup/#failure-backup-restore) | 백업/복원 실패 원인 진단 및 해결 방법 |
-| [RDB 보조 데이터 파일(sidecar) 누락/손상 오류](/dbms/rdb-table-usage/backup-mount-sidecar/#error-rdb-sidecar) | Standard Edition RDB 보조 파일 복구 방법 |
+| [RDB 백업·복원·마운트 확인](/dbms/rdb-table-usage/backup-restore-mount/#troubleshooting-backup-rdb) | Standard Edition RDB 백업과 복원 점검 방법 |
 | [마운트가 실패할 때](/dbms/troubleshooting/recovery-backup/#failure-mount) | MOUNT 실패 원인 진단 및 해결 방법 |
 
 

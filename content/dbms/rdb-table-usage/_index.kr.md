@@ -20,10 +20,10 @@ RDB 테이블은 관계형 업무 데이터와 트랜잭션 처리가 필요한 
 | [제약, 오류, 문제 해결](./constraints-errors-troubleshooting/) | Edition 제한, 기능 제약, 오류 대응 |
 | [활용 패턴과 시나리오](./patterns-scenarios/) | 주문 관리, 재고, 설비 이력 등 실무 예시 |
 | [트랜잭션](./transaction/) | BEGIN/COMMIT/ROLLBACK, 배치 INSERT |
-| [잠금, 충돌, busy timeout](./locking-conflict-timeout/) | RDB 보조 데이터 파일(sidecar) 쓰기 충돌, 세션 timeout, 진단과 재시도 |
+| [잠금, 충돌, busy timeout](./locking-conflict-timeout/) | 동시 쓰기 충돌, 세션 timeout, 진단과 재시도 |
 | [RDB 인덱스와 JSON path 인덱스](./rdb-index-json-path/) | PRIMARY KEY·보조 인덱스 전략, JSON 경로 인덱스 |
 | [JOIN과 관계형 조회 설계](./join-relational-query/) | RDB-LOOKUP, RDB-TAG, RDB-RDB JOIN |
-| [RDB 백업, 마운트, 보조 데이터 파일](./backup-mount-sidecar/) | 백업/복원 절차, RDB 보조 파일 구조와 복구 |
+| [RDB 백업, 복원, 마운트](./backup-restore-mount/) | 전체·테이블 백업, 복원, 읽기 전용 마운트 |
 | [Append API 지원과 SDK 사용 범위](./sdk-append-scope/) | Append API 동작 방식, SDK별 지원 현황 |
 | [AUTO_INCREMENT](./auto-increment/) | RDB PRIMARY KEY 자동 번호 생성 |
 | [INSERT ON DUPLICATE KEY UPDATE](./insert-on-duplicate-key-update/) | RDB upsert 문법과 충돌 처리 |
