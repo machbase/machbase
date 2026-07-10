@@ -346,6 +346,27 @@ destination/path는 자동으로 전달되는 편의 래퍼입니다.
 | args | `any[]` | 메서드 인자 |
 | flags | `number` | D-Bus 호출 플래그 |
 
+`args` 타입 지정 규칙:
+
+- JavaScript 숫자는 호출 경로에서 정수형 구분(`uint16`, `int32` 등)이 모호할 수 있습니다.
+- 정밀한 D-Bus 타입이 필요한 경우, 인자를 `"type:value"` 문자열로 전달할 수 있습니다.
+- 예: `"uint16:123"`, `"int32:-7"`, `"bool:true"`, `"objectpath:/org/freedesktop/DBus"`
+
+지원 타입(`type:value`):
+
+- `byte`, `uint8`, `uint16`, `uint32`, `uint64`
+- `int16`, `int32`, `int64`
+- `float32`, `float64`, `double`
+- `bool`, `string`
+- `objectpath`, `path`
+- `signature`
+
+동작 참고:
+
+- 타입 접두사가 없는 문자열은 일반 문자열로 전달됩니다.
+- 알 수 없는 타입 접두사(예: `"custom:123"`)는 변환하지 않고 문자열 그대로 전달됩니다.
+- 값 파싱이 실패하면 호출 시 예외가 발생합니다.
+
 ## CallResult
 
 | 프로퍼티 | 타입 | 설명 |

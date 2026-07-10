@@ -346,6 +346,27 @@ These are convenience wrappers that pass destination/path automatically.
 | args | `any[]` | Method arguments |
 | flags | `number` | D-Bus call flags |
 
+`args` type hint format:
+
+- JavaScript numbers can be ambiguous for strict integer D-Bus types (`uint16`, `int32`, and so on).
+- When an exact D-Bus type is required, pass the argument as a `"type:value"` string.
+- Examples: `"uint16:123"`, `"int32:-7"`, `"bool:true"`, `"objectpath:/org/freedesktop/DBus"`
+
+Supported `type:value` hints:
+
+- `byte`, `uint8`, `uint16`, `uint32`, `uint64`
+- `int16`, `int32`, `int64`
+- `float32`, `float64`, `double`
+- `bool`, `string`
+- `objectpath`, `path`
+- `signature`
+
+Behavior notes:
+
+- Strings without a type prefix are passed as plain strings.
+- Unknown type prefixes (for example, `"custom:123"`) are not converted and are passed as-is.
+- If parsing fails for a recognized type, the call throws an error.
+
 ## CallResult
 
 | Property | Type | Description |
