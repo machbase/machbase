@@ -114,7 +114,8 @@ DURATION 6 HOUR;
 
 ### 인덱스 남발 금지: Append 성능 영향
 
-각 인덱스는 데이터 삽입 시마다 갱신 비용이 발생합니다. LOG 테이블에서 인덱스 1개 추가 시 **Append 처리량이 약 5~10% 감소**합니다.
+각 인덱스는 데이터 삽입 시마다 갱신 비용이 발생합니다. 인덱스 추가 전후에 같은 입력
+워크로드로 Append 처리량과 지연을 측정합니다.
 
 ```
 인덱스 없음        : Append 기준 성능 100%
@@ -171,7 +172,7 @@ CREATE INDEX idx_msg      ON device_log (message) INDEX_TYPE KEYWORD; -- KEYWORD
 | device_id, user_id 등 | LSM 인덱스 생성 |
 | level, status, type 등 | BITMAP 인덱스 생성 |
 | message, description 등 | KEYWORD 인덱스 생성 |
-| 인덱스 수 | 최소화 (각 인덱스는 Append 5~10% 감소) |
+| 인덱스 수 | 실제 조회 조건에 필요한 인덱스만 유지 |
 
 <a id="original-85-log-indexes"></a>
 

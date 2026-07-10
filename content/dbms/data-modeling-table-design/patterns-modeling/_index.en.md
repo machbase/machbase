@@ -1,7 +1,7 @@
 ---
 type: docs
 title: '4.5 모델링 패턴'
-weight: 20
+weight: 50
 ---
 
 

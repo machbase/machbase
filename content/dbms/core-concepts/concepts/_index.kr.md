@@ -41,7 +41,8 @@ Machbase DBMS가 시계열 데이터를 다루는 방식은 일반적인 관계�
 
 **집계로 의미가 만들어진다**
 
-원시 측정값 하나가 아니라 일정 시간 구간의 평균·최대·최소·합계가 실제 분석의 재료입니다. 수억 건의 원시 데이터를 매번 집계하는 대신, Rollup이 미리 계산된 통계를 유지합니다.
+원시 측정값 하나가 아니라 일정 시간 구간의 평균·최대·최소·합계가 실제 분석의 재료입니다.
+장기간의 원시 데이터를 매번 집계하는 대신 ROLLUP이 미리 계산된 통계를 유지합니다.
 
 ### 시계열 데이터의 두 가지 형태
 
@@ -63,7 +64,7 @@ Machbase DBMS가 시계열 데이터를 다루는 방식은 일반적인 관계�
 | 시간의 역할 | 일반 컬럼 | 데이터의 주축 |
 | 인덱스 구조 | B-Tree (랜덤 액세스 최적화) | 시간 파티션/시계열 인덱스 기반 |
 | 저장 방식 | 행 지향 | 컬럼 지향 |
-| 압축률 | 낮음 (2~5배) | 높음 (10~100배) |
+| 압축 | 행 단위 데이터 특성에 따라 결정 | 컬럼별 반복 패턴을 활용 |
 | 보관 정책 | 수동 관리 | Retention Policy / Rollup |
 
 전통적인 RDBMS에서 시계열 워크로드를 처리하면 행 단위 잠금과 트랜잭션 오버헤드가 누적되어 입력 성능이 급격히 저하됩니다. Machbase는 "한 번 쓰고 시간 범위로 읽는" 특성에 맞추어 잠금 없는 append-only 구조를 채택했습니다.
@@ -77,7 +78,8 @@ Machbase DBMS가 시계열 데이터를 다루는 방식은 일반적인 관계�
 
 ## 쓰기 중심 워크로드와 append-only 모델
 
-Machbase DBMS가 초당 수백만 건의 시계열 입력을 처리하는 근거는 LOG/TAG 테이블의 append 중심 모델에 있습니다. 데이터를 빠르게 추가하고, 과거 행의 임의 갱신 경로를 제한해 행 단위 잠금과 트랜잭션 롤백 오버헤드를 줄이는 구조입니다.
+Machbase DBMS의 LOG/TAG 테이블은 시계열 입력을 위해 append 중심 모델을 사용합니다. 새 행을
+연속해서 추가하고 과거 행의 임의 갱신 경로를 제한하여 동시 입력의 경합을 줄입니다.
 
 ### append-only 모델이란
 
@@ -85,15 +87,17 @@ append 중심 모델에서는 새로운 이벤트나 측정값을 기존 행의 
 
 **행 단위 잠금이 없다**
 
-전통적인 RDBMS에서 `UPDATE`는 해당 행에 잠금을 걸고, 다른 세션이 같은 행에 접근하면 대기가 발생합니다. LOG/TAG 입력 경로는 과거 행을 일반적인 CRUD 방식으로 갱신하지 않으므로, 수천 개의 쓰기 스레드가 낮은 경합으로 동시에 동작합니다.
+전통적인 RDBMS의 `UPDATE`는 잠금 경합이 발생할 수 있습니다. LOG/TAG 입력 경로는 과거 행을
+일반적인 CRUD 방식으로 갱신하지 않으므로 동시 입력 간 경합을 줄일 수 있습니다.
 
 **순차 쓰기에 최적화된다**
 
-새 데이터는 항상 파티션의 끝에 추가됩니다. 디스크 쓰기가 랜덤 I/O 없이 연속으로 이루어지고, 컬럼 지향 압축도 더 높은 비율로 적용됩니다.
+새 데이터는 append 경로로 추가됩니다. 이 방식은 순차 입력과 컬럼 지향 압축에 적합합니다.
 
 **롤백 로그가 줄어든다**
 
-일반적인 트랜잭션 업데이트 경로를 타지 않으므로 undo 로그가 최소화됩니다. 실패 시 정리해야 할 상태가 단순합니다.
+LOG/TAG 입력은 일반적인 행 갱신 트랜잭션과 다른 경로를 사용합니다. 완료된 Append 요청은
+RDB 트랜잭션의 `ROLLBACK` 대상으로 취급하지 않습니다.
 
 ### 테이블 유형별 쓰기 제약
 
@@ -103,14 +107,14 @@ append-only 원칙은 테이블 유형마다 다르게 적용됩니다.
 | --- | --- | --- | --- |
 | LOG | 가능 | 불가 | `BEFORE`, `OLDEST`, `EXCEPT` 등 시간/보존 조건 기반 |
 | TAG | 가능 | 가능 (Standard Edition, 태그 선택자와 시간축 조건 필요) | `BEFORE` 또는 태그/축 조건 기반 |
-| LOOKUP | 가능 | Primary key 조건 기반 | Primary key 조건 기반 |
+| LOOKUP | 가능 | Primary key 또는 일반 조건 | Primary key 또는 일반 조건 |
 | VOLATILE | 가능 | Primary key 조건 기반 | Primary key 조건 기반 |
 | RDB | 가능 | 일반 WHERE 조건 기반 | 일반 WHERE 조건 기반 |
 
-LOG와 TAG 테이블이 append 중심 모델의 핵심입니다. LOOKUP과 VOLATILE은 기준 정보와 서버 상태 데이터를 위해
-UPDATE/DELETE를 지원하지만, 현재 UPDATE/DELETE 조건은 Primary key equality 형태로 제한됩니다.
-고속 대량 입력보다는 소규모 참조 데이터 관리에 사용합니다. RDB 테이블은 관계형 업무 데이터를
-Machbase 안에서 다루기 위한 행 지향 테이블이며, append-only 설계 대상이 아닙니다.
+LOG와 TAG 테이블이 append 중심 모델의 핵심입니다. LOOKUP은 기준 정보에 대한 일반 조건
+UPDATE/DELETE를 지원하고, VOLATILE은 Primary key equality 조건으로 상태 데이터를 변경합니다.
+RDB 테이블은 관계형 업무 데이터를 Machbase 안에서 다루는 테이블이며 append-only 설계 대상이
+아닙니다.
 
 ### 쓰기 경로: INSERT vs APPEND
 
@@ -126,7 +130,8 @@ INSERT INTO sensor_log VALUES (TO_DATE('2026-07-03 09:00:00', 'YYYY-MM-DD HH24:M
 
 **SDK APPEND**
 
-Machbase 전용 APPEND 프로토콜로 여러 행을 배치로 전송합니다. 네트워크 왕복을 최소화하고 서버 측 파싱 비용을 줄여, 같은 양의 데이터를 `INSERT`보다 수십 배 빠르게 입력합니다. 실시간 수집기나 데이터 파이프라인에서는 APPEND를 기본으로 사용합니다.
+Machbase 전용 APPEND 프로토콜로 여러 행을 배치 전송합니다. 반복 `INSERT`보다 네트워크 왕복과
+SQL 파싱 횟수를 줄일 수 있어 지속적인 시계열 수집에 적합합니다.
 
 고속 입력이 필요한 환경에서는 `INSERT` 대신 APPEND 프로토콜을 먼저 검토하십시오. 자세한 내용은 [데이터 입력 방식 선택](/dbms/application-integration/data-input-load-export/)을 참고합니다.
 
@@ -173,7 +178,7 @@ CREATE TABLE device_events (
     status    VARCHAR(20)
 );
 
--- _arrival_time은 자동으로 추가되어 세 컬럼이 존재한다
+-- _arrival_time은 자동으로 추가되어 세 컬럼이 존재합니다
 -- SHOW CREATE TABLE device_events;
 -- => device_id VARCHAR(20), status VARCHAR(20), _arrival_time DATETIME
 ```

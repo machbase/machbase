@@ -1,7 +1,7 @@
 ---
 type: docs
 title: '12.10 Query and Analysis'
-weight: 970
+weight: 100
 ---
 
 

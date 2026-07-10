@@ -1,7 +1,7 @@
 ---
 type: docs
 title: '4.3 데이터 변경 정책'
-weight: 20
+weight: 30
 toc: true
 ---
 테이블 타입에 따라 UPDATE, DELETE, TRUNCATE 지원 범위가 명확히 구분됩니다. 시계열 특성상 대부분의 테이블은 삽입 후 변경을 제한하며, VOLATILE·LOOKUP·RDB처럼 수정·삭제가 필요한 데이터만 해당 타입에 저장합니다.

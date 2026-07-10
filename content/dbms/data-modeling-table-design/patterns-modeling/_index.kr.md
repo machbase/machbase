@@ -1,7 +1,7 @@
 ---
 type: docs
 title: '4.5 모델링 패턴'
-weight: 40
+weight: 50
 toc: true
 ---
 실제 운영 환경에서 자주 쓰이는 데이터 모델링 패턴을 다룹니다.

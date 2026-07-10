@@ -598,7 +598,7 @@ T1                                        ID                                    
 Mach> CREATE TABLESPACE tbs1 DATADISK disk1 (DISK_PATH="tbs1_disk1"), disk2 (DISK_PATH="tbs1_disk2"), disk3 (DISK_PATH="tbs1_disk3");
 Created successfully.
 
--- 데이터를 입력한다
+-- 데이터를 입력합니다
 ...
 ...
 

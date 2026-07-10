@@ -1,7 +1,7 @@
 ---
 type: docs
 title: '12.8 Input Performance and Integration Paths'
-weight: 70
+weight: 80
 ---
 
 

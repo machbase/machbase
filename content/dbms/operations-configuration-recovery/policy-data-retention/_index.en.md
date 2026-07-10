@@ -1,7 +1,7 @@
 ---
 type: docs
 title: '13.4 Data Retention Policy'
-weight: 30
+weight: 40
 ---
 
 

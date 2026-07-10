@@ -1,7 +1,7 @@
 ---
 type: docs
 title: '13.10 Cluster 운영'
-weight: 70
+weight: 100
 ---
 
 

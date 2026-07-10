@@ -1,7 +1,7 @@
 ---
 type: docs
 title: '16.4 입력과 적재 문제'
-weight: 30
+weight: 40
 ---
 데이터가 Machbase에 정상적으로 들어오지 않을 때, 원인은 크게 세 경로로 나뉩니다: Append API 직접 입력 실패, machloader CSV 가져오기 실패, Collector 수집 파이프라인 오류. 오류가 발생하는 위치와 증상이 다르므로 해당 섹션에서 진단을 시작하십시오.
 

@@ -64,7 +64,7 @@ LOOKUP 테이블은 PRIMARY KEY 컬럼을 하나만 지정할 수 있습니다. 
 ### 주의사항
 
 - PRIMARY KEY 값은 중복될 수 없습니다.
-- PRIMARY KEY 값은 변경할 수 없다 (변경 시 DELETE + INSERT).
+- PRIMARY KEY 값은 변경할 수 없습니다 (변경 시 DELETE + INSERT).
 - PRIMARY KEY 컬럼에는 인덱스가 자동 생성됩니다.
 - PRIMARY KEY 컬럼은 하나만 지정합니다.
 
@@ -121,8 +121,8 @@ DELETE FROM country WHERE iso_code = 'OLD';
 INSERT INTO country VALUES ('NEW', '새 국가명');
 ```
 
-LOOKUP 테이블 DML은 개별 문장 단위로 실행합니다. 현재 빌드에서는 `BEGIN`/`COMMIT`으로 묶은
-트랜잭션 안에서 LOOKUP DML을 실행할 수 없습니다.
+LOOKUP 테이블 DML은 개별 문장 단위로 실행합니다. `BEGIN`/`COMMIT`으로 묶는 RDB
+트랜잭션에는 LOOKUP DML을 포함할 수 없습니다.
 
 ### 복합 PRIMARY KEY 주의사항
 

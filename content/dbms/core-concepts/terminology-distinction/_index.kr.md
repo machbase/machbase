@@ -10,7 +10,7 @@ toc: true
 - **[Retention vs DELETE / TRUNCATE](/dbms/core-concepts/terminology-distinction/#retention-vs-delete-truncate)** -- 자동 정책과 수동 삭제 명령의 차이
 - **[Backup vs Restore vs Mount](/dbms/core-concepts/terminology-distinction/#backup-vs-restore-mount)** -- 데이터 복사, 복원, 읽기 전용 연결의 차이
 - **[machloader vs csvimport / csvexport vs tagmetaimport](/dbms/core-concepts/terminology-distinction/#machloader-vs-csvimport-csvexport-tagmetaimport)** -- 파일 기반 입출력 도구들의 차이
-- **[LOAD DATA INFILE vs fastload](/dbms/core-concepts/terminology-distinction/#load-data-infile-vs-fastload)** -- SQL 기반 파일 적재와 고속 CSV 적재의 차이
+- **[LOAD DATA INFILE vs machloader](/dbms/core-concepts/terminology-distinction/#load-data-infile-vs-machloader)** -- 서버 파일 SQL 적재와 클라이언트 파일 도구의 차이
 - **[SDK append vs SQL APPEND vs Collector 수집](/dbms/core-concepts/terminology-distinction/#ingestion-sdk-append-vs-sql-collector)** -- 실시간 데이터 수집 경로별 특성과 선택 기준
 
 
@@ -35,7 +35,7 @@ ROLLUP과 STREAM은 모두 데이터를 자동으로 변환한다는 점에서 �
 
 ### ROLLUP을 선택하는 경우
 
-- TAG 테이블에 수억 건 이상의 계측값이 있고, SEC/MIN/HOUR 단위 집계를 빠르게 조회해야 하는 경우
+- 장기간의 TAG 계측값에서 SEC/MIN/HOUR 단위 집계를 반복 조회하는 경우
 - 대시보드나 모니터링 화면에서 최솟값/최댓값/평균/합계를 실시간 표시해야 하는 경우
 - 설정이 단순하고 추가 관리 부담 없이 자동 집계를 원하는 경우
 
@@ -306,65 +306,72 @@ tagmetaimport -t sensor_values -d /data/tag_list.csv
 
 ### 다음 읽을 내용
 
-- [LOAD DATA INFILE vs fastload](/dbms/core-concepts/terminology-distinction/#load-data-infile-vs-fastload) -- SQL 기반 파일 적재 방법 비교
+- [LOAD DATA INFILE vs machloader](/dbms/core-concepts/terminology-distinction/#load-data-infile-vs-machloader) -- 파일 위치와 실행 주체에 따른 적재 방법 비교
 - [SDK append vs SQL APPEND vs Collector 수집](/dbms/core-concepts/terminology-distinction/#ingestion-sdk-append-vs-sql-collector) -- 실시간 수집 경로 비교
 
-<a id="load-data-infile-vs-fastload"></a>
+<a id="load-data-infile-vs-machloader"></a>
 
-## LOAD DATA INFILE vs fastload
+## LOAD DATA INFILE vs machloader
 
-파일에서 직접 데이터를 적재하는 방법 중 `LOAD DATA INFILE`과 `fastload`는 모두 CSV 파일을 처리하지만, 실행 주체와 사용 목적이 다릅니다.
+`LOAD DATA INFILE`과 `machloader`는 모두 CSV 형식의 데이터를 입력하지만 파일을 읽는 위치와
+실행 인터페이스가 다릅니다.
 
 ### 비교 표
 
-| 항목 | LOAD DATA INFILE | fastload |
+| 항목 | LOAD DATA INFILE | machloader |
 | --- | --- | --- |
-| 실행 방식 | SQL 문장 | machsql 클라이언트 옵션 (`-f`) |
-| 파일 위치 | 서버 측 파일 경로 | 클라이언트 측 파일 경로 |
-| 대상 테이블 | LOG, LOOKUP | LOG, TAG |
-| 적합한 데이터 규모 | 소~중규모 | 대용량 |
-| 속도 | 보통 | 고속 (APPEND 프로토콜 사용) |
-| 설정 복잡도 | 낮음 (SQL 한 줄) | 낮음 (명령행 옵션) |
+| 실행 방식 | SQL 문장 | `machloader` 명령행 도구 |
+| 파일 위치 | Machbase 서버가 접근할 수 있는 경로 | `machloader`를 실행하는 클라이언트 경로 |
+| 연결 방식 | 서버가 파일을 직접 읽음 | 클라이언트가 서버에 접속해 데이터를 전송 |
+| 형식 설정 | SQL 절로 구분자, 인코딩, 오류 정책 지정 | `-f`, `-D`, `-F`, `-E` 등의 옵션 사용 |
+| 오류 확인 | SQL 오류와 `ON ERROR` 정책 | `-b` bad 파일과 `-l` 로그 파일 |
+| 주요 용도 | 서버에 배치된 파일을 SQL 작업으로 적재 | 클라이언트 파일 가져오기와 내보내기 |
 
 ### LOAD DATA INFILE
 
-SQL 문장 형태로, 서버가 직접 지정된 파일 경로를 읽어 테이블에 적재합니다. 파일은 서버가 접근할 수 있는 경로에 있어야 합니다.
+서버가 지정된 파일 경로를 직접 읽어 테이블에 적재합니다. 파일은 Machbase 서버가 접근할 수
+있는 경로에 있어야 합니다.
 
 ```sql
 LOAD DATA INFILE '/data/device_events.csv'
 INTO TABLE device_log
 FIELDS TERMINATED BY ','
-LINES TERMINATED BY '\n'
-IGNORE 1 LINES;
+IGNORE 1 LINES
+ON ERROR STOP;
 ```
 
-machsql이나 ODBC/JDBC 클라이언트에서 일반 SQL처럼 실행하므로 사용이 단순합니다. 서버 로컬 경로에 파일이 있어야 하므로, 클라이언트와 서버가 분리된 환경에서는 파일을 서버로 먼저 전송해야 합니다.
+SQL 클라이언트에서 일반 SQL처럼 실행할 수 있습니다. 클라이언트에만 있는 파일은 먼저 서버로
+전송하거나 `machloader`를 사용합니다.
 
-### fastload
+### machloader
 
-`machsql` 클라이언트에서 `-f` 옵션으로 실행하는 대용량 CSV 고속 적재 기능입니다. 클라이언트 측 파일을 읽어 APPEND 프로토콜로 서버에 전송합니다. SQL INSERT보다 파싱 오버헤드가 훨씬 적어 같은 데이터 양을 훨씬 빠르게 처리합니다.
+`machloader`는 클라이언트의 텍스트 파일을 Machbase 테이블로 가져오거나 테이블 데이터를
+파일로 내보내는 명령행 도구입니다.
 
 ```bash
-# machsql fastload 예시
-machsql -u sys -p manager -s localhost \
-        -f /data/sensor_data.csv \
-        -t sensor_values
+machloader -i -s 127.0.0.1 -P 5656 \
+  -u SYS -p MANAGER \
+  -t sensor_values \
+  -d /data/sensor_data.csv \
+  -b /data/sensor_data.bad \
+  -l /data/sensor_data.log
 ```
 
-클라이언트 측 파일을 그대로 사용하므로 파일을 서버로 먼저 복사할 필요가 없습니다. 수억 건 이상의 대용량 데이터를 일괄 적재할 때 권장합니다.
+가져오기 전 소량의 샘플로 컬럼 순서, 데이터 타입과 날짜 형식을 확인합니다.
 
 ### 선택 기준
 
 **LOAD DATA INFILE이 적합한 경우**
 
-- 서버 로컬에 파일이 있고, 수백만 건 이하의 소~중규모 데이터를 적재하는 경우
-- SQL 스크립트 형태로 적재 작업을 자동화하고 싶은 경우
-- ODBC/JDBC 클라이언트에서 SQL로 처리해야 하는 경우
+- 서버가 접근할 수 있는 경로에 입력 파일이 있는 경우
+- 파일 적재를 SQL 작업으로 실행해야 하는 경우
+- SQL의 형식·인코딩·오류 처리 절을 사용하려는 경우
 
-**fastload가 적합한 경우**
+**machloader가 적합한 경우**
 
-- 클라이언트에 파일이 있고, 수억 건 이상의 대용량 데이터를 빠르게 적재해야 하는 경우
-- 초기 데이터 마이그레이션이나 대규모 히스토리 데이터 일괄 적재
+- 클라이언트 파일을 서버 파일 시스템으로 복사하지 않고 적재하는 경우
+- bad 파일과 실행 로그를 남겨 실패 행을 분리해야 하는 경우
+- 가져오기와 내보내기를 같은 도구로 자동화하는 경우
 
 ### 다음 읽을 내용
 
@@ -382,7 +389,7 @@ machsql -u sys -p manager -s localhost \
 | 항목 | SDK APPEND | SQL INSERT | Collector |
 | --- | --- | --- | --- |
 | 수집 방식 | 언어별 SDK로 APPEND 프로토콜 직접 사용 | 표준 SQL INSERT 문장 | Machbase 내장 수집기, 별도 설정 파일 |
-| 성능 | 최고 (배치 전송, 최소 오버헤드) | 낮음 (행 단위, SQL 파싱 오버헤드) | 높음 (내부 최적화) |
+| 입력 특성 | 배치 전송, SQL 파싱 없음 | 행 단위 SQL 실행 | 설정 기반 버퍼링 |
 | 지원 언어/환경 | Go, Python, .NET, C 등 | ODBC, JDBC, machsql 등 모든 SQL 클라이언트 | 파일, 소켓, ODBC, SFTP 등 소스 기반 |
 | 개발 필요성 | 높음 (SDK API 구현 필요) | 낮음 (SQL 지식만으로 구현 가능) | 낮음 (설정 파일 작성) |
 | 배치 처리 | 가능 (여러 행을 한 번에 전송) | 가능하나 비효율적 | 가능 (내부 버퍼링) |
@@ -391,7 +398,8 @@ machsql -u sys -p manager -s localhost \
 
 ### SDK APPEND
 
-Go, Python, .NET 등 언어별 SDK를 사용해 APPEND 프로토콜로 데이터를 전송합니다. SQL 파싱 단계를 거치지 않고 저장 계층에 직접 데이터를 전달하므로, SQL INSERT보다 수십 배 빠르게 처리합니다.
+Go, Python, .NET 등 언어별 SDK를 사용해 APPEND 프로토콜로 데이터를 전송합니다. 여러 행을
+배치로 전달하므로 반복 SQL INSERT보다 네트워크 왕복과 파싱 횟수를 줄일 수 있습니다.
 
 ```go
 // Go SDK APPEND 예시 (개념)
@@ -403,7 +411,7 @@ appender.Append("temp_sensor_02", time.Now(), 21.0)
 // Flush 시 배치로 전송
 ```
 
-초당 수십만 건 이상을 처리해야 하는 고성능 수집 파이프라인의 기본 선택입니다. SDK를 사용하는 코드를 직접 작성해야 합니다.
+지속적인 대량 수집 파이프라인에 적합하며 SDK를 사용하는 코드를 직접 작성해야 합니다.
 
 ### SQL INSERT
 
@@ -414,7 +422,8 @@ INSERT INTO sensor_values (name, time, value)
 VALUES ('temp_sensor_01', NOW, 23.5);
 ```
 
-입력 빈도가 낮거나(초당 수천 건 이하), 별도 SDK 통합 없이 기존 애플리케이션에서 데이터를 입력할 때 적합합니다. 테스트나 운영 중 소량 데이터를 수동으로 넣을 때도 사용합니다.
+입력 빈도가 낮거나 별도 SDK 통합 없이 기존 애플리케이션에서 데이터를 입력할 때 적합합니다.
+테스트나 운영 중 소량 데이터를 수동으로 넣을 때도 사용합니다.
 
 ### Collector
 
@@ -436,7 +445,7 @@ table = device_log
 
 | 상황 | 권장 방법 |
 | --- | --- |
-| 초당 수십만 건 이상의 고성능 수집 | SDK APPEND |
+| 지속적인 대량 시계열 수집 | SDK APPEND |
 | 기존 애플리케이션에서 소량 입력 | SQL INSERT |
 | SDK 통합 없이 범용 SQL 클라이언트 사용 | SQL INSERT |
 | 파일, 소켓 등 외부 소스에서 자동 수집 | Collector |
@@ -444,6 +453,6 @@ table = device_log
 
 ### 다음 읽을 내용
 
-- [LOAD DATA INFILE vs fastload](/dbms/core-concepts/terminology-distinction/#load-data-infile-vs-fastload) -- 파일 기반 일괄 적재 방법 비교
+- [LOAD DATA INFILE vs machloader](/dbms/core-concepts/terminology-distinction/#load-data-infile-vs-machloader) -- 파일 기반 일괄 적재 방법 비교
 - [machloader vs csvimport / csvexport vs tagmetaimport](/dbms/core-concepts/terminology-distinction/#machloader-vs-csvimport-csvexport-tagmetaimport) -- 파일 기반 입출력 도구 비교
 - [쓰기 중심 워크로드와 append-only 모델](/dbms/core-concepts/concepts/#write-oriented-append-only) -- APPEND 모델의 설계 원칙

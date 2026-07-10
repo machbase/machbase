@@ -1,19 +1,19 @@
 ---
 type: docs
 title: '12.8 입력 성능과 연동 경로'
-weight: 70
+weight: 80
 ---
 입력 경로에 따라 처리량과 지연 특성이 크게 달라집니다. 워크로드에 맞는 경로를 선택하는 것이 입력 성능의 출발점입니다.
 
 ## 입력 경로별 성능 비교
 
-| 입력 경로 | 최대 처리량 | 지연 | 주요 특징 |
-|----------|-----------|------|---------|
-| SDK Append API | TAG/LOG에서 수백만 건/초 | 최소 | 내부 Append 버퍼. RDB는 client appendBatch/stream 경로 |
-| REST API (JSON) | 수만~수십만 건/초 | 낮음 | HTTP 오버헤드, 범용성 |
-| machloader | 수십만~수백만 건/초 | 파일 기반 | 배치 적재, 병렬 실행 가능 |
-| LOAD DATA INFILE | 수십만~수백만 건/초 | 파일 기반 | 서버 직접 읽기, 네트워크 무관 |
-| SQL INSERT | 수천~수만 건/초 | 트랜잭션 포함 | 단건/소량, 모든 테이블 타입 |
+| 입력 경로 | 전송 방식 | 응답 특성 | 주요 용도 |
+|----------|-----------|-----------|----------|
+| SDK Append API | 클라이언트 버퍼와 batch/stream | flush·close 시점에 결과 확인 | 지속적인 수집, RDB client batch 입력 |
+| REST API (JSON) | HTTP 요청 단위 JSON 전송 | 요청 단위 응답 | 범용 HTTP 연동 |
+| machloader | 클라이언트 파일 전송 | 파일 작업 완료 후 결과 확인 | CSV 가져오기·내보내기, 마이그레이션 |
+| LOAD DATA INFILE | 서버가 파일을 직접 읽음 | SQL 문장 완료 시 결과 확인 | 서버 배치 파일 적재 |
+| SQL INSERT | SQL 문장 단위 전송 | 문장별 결과 확인 | 소량 입력과 관계형 DML |
 
 ## 이 절에서 다루는 내용
 
@@ -33,8 +33,8 @@ weight: 70
 
 TAG/LOG 테이블의 대량 입력에는 SQL INSERT 대신 **Append API**를 사용합니다.
 
-- Append API: 내부 버퍼 → 배치 전송 → 수백만 건/초
-- SQL INSERT: 건별 처리 → 수천~수만 건/초
+- Append API: 내부 버퍼 → 배치 전송 → flush 또는 close에서 완료 확인
+- SQL INSERT: 문장 실행 → 서버 응답 확인
 
 ```go
 // Append API 사용
@@ -119,7 +119,7 @@ curl -X POST http://127.0.0.1:5657/machbase \
 ### 성능 특성
 
 - SQL INSERT 대비 빠르나, SDK Append API보다는 낮은 처리량
-- HTTP 오버헤드가 있으므로 초당 수십만 건 이하의 적재에 적합
+- HTTP와 JSON 처리 비용을 포함하여 요청 크기와 동시 요청 수를 측정
 - 배치(bulk) 전송으로 처리량 향상 가능
 
 ### 주요 사용 사례

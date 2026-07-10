@@ -1,5 +1,5 @@
 ---
 type: docs
 title: '16.3 UPDATE/DELETE 문제'
-weight: 50
+weight: 30
 ---

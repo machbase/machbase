@@ -5,25 +5,24 @@ weight: 160
 toc: true
 ---
 
-Machbase 운영 중 발생하는 일반적인 오류와 문제 상황을 **증상 → 원인 → 해결** 순서로 안내합니다. 증상을 확인하고 진단 명령으로 원인을 좁힌 뒤 해당 섹션의 해결 방법을 적용하면 대부분의 문제를 빠르게 해결할 수 있습니다.
+Machbase 운영 중 발생하는 문제를 증상 확인, 원인 진단, 해결, 재발 방지 순서로 다룹니다.
 
 {{< callout type="info" >}}
-**먼저 확인할 것**
-
-1. **서버 상태**: `machadmin -e` 명령으로 프로세스가 실행 중인지 확인합니다.
-2. **로그 파일**: `$MACHBASE_HOME/trc/machbase.trc`에서 최근 오류 메시지를 확인합니다.
-3. **오류 코드**: 오류 메시지의 `ERR-XXXXX` 코드로 원인과 해결 방법을 찾습니다.
+문제를 분류하기 전에 `machadmin -e`로 서버 상태를 확인하고,
+`$MACHBASE_HOME/trc/machbase.trc`의 최근 오류와 클라이언트의 `ERR-XXXXX` 코드를 기록합니다.
 {{< /callout >}}
 
 ## 이 장의 구성
 
-| 섹션 | 내용 |
-|------|------|
-| [문제 해결 접근법](./troubleshooting/) | 체계적인 5단계 진단 절차, 증상 확인, 진단 명령, 로그 분석, 오류 코드 조회 |
-| [서버와 연결 문제](./server-connection/) | 서버 시작 실패, 원격 접속 불가, 인증 오류 |
-| [입력과 적재 문제](./item/) | 데이터 입력 실패, CSV 임포트 오류, Collector 연동 문제 |
-| [쿼리와 성능 문제](./performance/) | 느린 쿼리, 검색 결과 없음, 메모리 부족, 트랜잭션 충돌 |
-| [UPDATE/DELETE 문제](./update-delete/) | 태그 데이터 수정 제한, WHERE 조건 오류, JSON 경로 오류 |
-| [자동 처리 문제](./automation/) | ROLLUP 실행 이상, STREAM 쿼리 오류 |
-| [백업과 복구 문제](./recovery-backup/) | 백업 실패, MOUNT/UMOUNT 오류, RDB 복원 확인 |
-| [Cluster 문제](./cluster/) | 노드 상태 이상, Cluster Edition 오류 |
+| 순서 | 섹션 | 내용 |
+|-----:|------|------|
+| 16.1 | [문제 해결 접근법](./troubleshooting/) | 증상 수집, 진단 명령, 로그와 오류 코드 분석 |
+| 16.2 | [서버와 연결 문제](./server-connection/) | 서버 시작, 원격 접속, 인증 오류 |
+| 16.3 | [UPDATE/DELETE 문제](./update-delete/) | 테이블 타입별 변경 조건과 JSON 경로 오류 |
+| 16.4 | [입력과 적재 문제](./item/) | Append, CSV 가져오기, Collector 오류 |
+| 16.5 | [쿼리와 성능 문제](./performance/) | 느린 쿼리, 빈 결과, 메모리, 트랜잭션 충돌 |
+| 16.6 | [자동 처리 문제](./automation/) | ROLLUP과 STREAM 실행 오류 |
+| 16.7 | [백업과 복구 문제](./recovery-backup/) | BACKUP, RESTORE, MOUNT, UMOUNT 오류 |
+| 16.8 | [Cluster 문제](./cluster/) | 노드 상태와 Cluster Edition 오류 |
+
+문제를 해결한 뒤에는 원인, 조치, 확인 쿼리와 재발 방지 항목을 운영 기록에 남깁니다.

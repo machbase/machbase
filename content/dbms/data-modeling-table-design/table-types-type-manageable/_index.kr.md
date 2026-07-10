@@ -1,7 +1,7 @@
 ---
 type: docs
 title: '4.6 테이블 타입별 관리 가능 범위'
-weight: 40
+weight: 60
 toc: true
 ---
 

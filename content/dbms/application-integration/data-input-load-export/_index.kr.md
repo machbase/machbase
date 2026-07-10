@@ -133,7 +133,7 @@ SQL INSERT, Append API, 파일 적재(machloader, csvimport), SQL 기반 파일 
 
 - **[INSERT 구문](/dbms/application-integration/data-input-load-export/#insert)**: 단건·다건·INSERT SELECT 패턴
 - **[Append API](/dbms/application-integration/data-input-load-export/#append)**: SDK 기반 초고속 대량 입력
-- **[LOAD DATA INFILE / FAST LOAD](/dbms/application-integration/data-input-load-export/#load-data-infile-fastload)**: SQL로 서버 측 파일 직접 로드
+- **[LOAD DATA INFILE](/dbms/application-integration/data-input-load-export/#load-data-infile)**: SQL로 서버 측 파일 직접 로드
 
 <a id="insert"></a>
 <a id="sql-insert"></a>
@@ -345,8 +345,8 @@ REST API를 통한 Append도 동일한 고속 경로를 사용합니다. 상세�
 - 대량 Append 중 서버 재시작 등의 이유로 연결이 끊기면 버퍼에 남은 데이터는 손실될 수 있습니다.
 - RDB 테이블에는 일반 SQL `APPEND INTO` 문법을 사용하지 않습니다. RDB 대량 입력은 지원되는 client API의 appendBatch 또는 append stream 경로를 사용합니다.
 
-<a id="load-data-infile-fastload"></a>
-<a id="sql-load-data-infile-fastload"></a>
+<a id="load-data-infile"></a>
+<a id="sql-load-data-infile"></a>
 
 ### LOAD DATA INFILE
 

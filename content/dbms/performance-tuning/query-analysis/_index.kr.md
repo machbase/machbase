@@ -1,7 +1,7 @@
 ---
 type: docs
 title: '12.10 쿼리와 분석'
-weight: 970
+weight: 100
 ---
 일반 SQL에 더해 DURATION, PIVOT, ROLLUP, SERIES BY, 보간, 윈도우 함수 등 시계열 분석에 특화된 확장 문법을 제공합니다.
 
@@ -1433,7 +1433,7 @@ ORDER BY hour;
 
 #### 지원 함수
 
-현재 빌드에서 SQL `OVER` 절과 함께 사용할 수 있는 함수는 다음과 같습니다.
+SQL `OVER` 절과 함께 사용할 수 있는 함수는 다음과 같습니다.
 
 | 함수 | 설명 |
 |------|------|
