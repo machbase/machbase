@@ -4,14 +4,14 @@ weight: 80
 toc: true
 ---
 
-RDB 테이블의 Edition 제한과 기능 제약 사항을 정리한다.
+RDB 테이블의 Edition 제한과 기능 제약 사항을 정리합니다.
 
 
 <a id="limitations-rdb-edition"></a>
 
 ## Edition 제한
 
-RDB 테이블은 Standard Edition 전용 기능이다.
+RDB 테이블은 Standard Edition 전용 기능입니다.
 
 ### Edition별 지원 현황
 
@@ -25,7 +25,7 @@ RDB 테이블은 Standard Edition 전용 기능이다.
 
 ### Cluster Edition에서의 대안
 
-Cluster Edition 환경에서 RDB 테이블과 유사한 기능이 필요한 경우 다음을 고려한다.
+Cluster Edition 환경에서 RDB 테이블과 유사한 기능이 필요한 경우 다음을 고려합니다.
 
 1. **LOOKUP 테이블**: 소규모 데이터 + PRIMARY KEY 기반 UPDATE/DELETE 시
 2. **LOG 테이블**: UPDATE 불필요한 추가 전용 이력 데이터

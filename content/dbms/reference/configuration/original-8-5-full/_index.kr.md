@@ -331,7 +331,7 @@ Table 24. Range of values
 
 ## DISK_COLUMNAR_TABLESPACE_MEMORY_SLOWDOWN_HIGH_LIMIT_PCT
 
-컬럼 데이터 파일을 위한 메모리 사용량이 제한 값을 이 값을 다음과 같이 이용하여 계산하고, 초과한 경우 입력 성능을 저하시킨다.
+컬럼 데이터 파일을 위한 메모리 사용량이 제한 값을 이 값을 다음과 같이 이용하여 계산하고, 초과한 경우 입력 성능을 저하시킵니다.
 
 ```sql
 DISK_COLUMNAR_TABLESPACE_MEMORY_MAX_SIZE * (DISK_COLUMNAR_TABLESPACE_MEMORY_SLOWDOWN_HIGH_LIMIT_PCT / 100)
@@ -366,7 +366,7 @@ DISK_COLUMNAR_TABLESPACE_MEMORY_MAX_SIZE * (DISK_COLUMNAR_TABLESPACE_MEMORY_SLOW
 
 ## DISK_TABLESPACE_DIRECT_IO_FSYNC
 
-Direct I/O를 실행할 경우, 데이터 파일에 대해서 fsync는 불필요하다. Direct I/O 를 사용할 경우 fsync를 사용하지 않도록 하면 데이터 I/O 성능을 향상시킬 수 있습니다 (0으로 설정).
+Direct I/O를 실행할 경우, 데이터 파일에 대해서 fsync는 불필요합니다. Direct I/O 를 사용할 경우 fsync를 사용하지 않도록 하면 데이터 I/O 성능을 향상시킬 수 있습니다 (0으로 설정).
 Fsync를 수행하지 않아도 일반적 상황에서는 데이터 유실이 없으나 전원이 꺼지는 등의 장애 상황이 발생할 수 있는 경우에는 fsync를 수행하도록 설정해야 합니다.
 
 ||Value|
@@ -431,7 +431,7 @@ Fsync를 수행하지 않아도 일반적 상황에서는 데이터 유실이 �
 ## DUMP_TRACE_INFO
 
 서버는 일정한 주기로 DBMS 시스템 상태 정보를 machbase.trc 파일에 주기적으로 기록하는데, 이 주기를 설정합니다.
-0으로 설정하면 기록하지 않는다.
+0으로 설정하면 기록하지 않습니다.
 
 ||Value|
 |-|----|
@@ -570,7 +570,7 @@ REST API 포트 번호를 설정합니다.
 
 ## HTTP_THREAD_COUNT
 
-마크베이스의 웹 서버가 사용할 스레드의 개수를 설정 가능하다.
+마크베이스의 웹 서버가 사용할 스레드의 개수를 설정 가능합니다.
 
 ||Value|
 |-|----|
@@ -590,7 +590,7 @@ REST API 포트 번호를 설정합니다.
 
 ## INDEX_BUILD_THREAD_COUNT
 
-인덱스 생성 스레드의 수를 지정합니다. 0으로 설정되면 인덱스를 생성하지 않는다.
+인덱스 생성 스레드의 수를 지정합니다. 0으로 설정되면 인덱스를 생성하지 않습니다.
 
 ||Value|
 |-|----|
@@ -701,7 +701,7 @@ GROUP BY, DISTINCT, ORDER BY 절을 수행하기 위해서 질의처리기가  �
 
 ## SESSION_IDLE_TIMEOUT_SEC
 
-세션 유휴(idle) 상태의 최대 시간을 초 단위로 지정합니다. 설정된 시간을 넘기면 세션 연결을 종료합니다. 0이면 사용하지 않는다.
+세션 유휴(idle) 상태의 최대 시간을 초 단위로 지정합니다. 설정된 시간을 넘기면 세션 연결을 종료합니다. 0이면 사용하지 않습니다.
 
 ||Value|
 |--|----|
@@ -711,7 +711,7 @@ GROUP BY, DISTINCT, ORDER BY 절을 수행하기 위해서 질의처리기가  �
 
 ## SESSION_QUERY_TIMEOUT_SEC
 
-쿼리 실행 최대 시간을 초 단위로 지정합니다. 설정된 시간을 넘기면 해당 쿼리를 취소합니다. 0이면 사용하지 않는다.
+쿼리 실행 최대 시간을 초 단위로 지정합니다. 설정된 시간을 넘기면 해당 쿼리를 취소합니다. 0이면 사용하지 않습니다.
 
 ||Value|
 |--|----|
@@ -756,7 +756,7 @@ Volatile table및 lookup 테이블을 위한 임시 테이블 스페이스의 �
 
 ## PROCESS_MAX_SIZE
 
-마크베이스 서버 프로세스인 machbased 프로그램이 사용하는 최대 메모리 사이즈를 지정합니다. 이 제한값 이상의 메모리를 사용하려고 하면 서버는 다음과 같이 동작하여 메모리의 사용량을 줄이려고 시도합니다. 메모리 제한을 초과한 경우, 다음의 방법으로 메모리 사용량을 줄인다.
+마크베이스 서버 프로세스인 machbased 프로그램이 사용하는 최대 메모리 사이즈를 지정합니다. 이 제한값 이상의 메모리를 사용하려고 하면 서버는 다음과 같이 동작하여 메모리의 사용량을 줄이려고 시도합니다. 메모리 제한을 초과한 경우, 다음의 방법으로 메모리 사용량을 줄입니다.
 
 데이터 입력을 중지하거나 오류로 처리
 인덱스 생성 속도를 떨어뜨림
@@ -780,7 +780,7 @@ Volatile table및 lookup 테이블을 위한 임시 테이블 스페이스의 �
 
 ## PVO_CACHE_SHARD_COUNT
 
-PVO Statement Cache의 샤드 수를 설정합니다. 초기화 시점에만 적용되므로 변경 시 서버 재시작이 필요하며 런타임 변경은 불가능하다.
+PVO Statement Cache의 샤드 수를 설정합니다. 초기화 시점에만 적용되므로 변경 시 서버 재시작이 필요하며 런타임 변경은 불가능합니다.
 
 ||Value|
 |-|----|
@@ -790,7 +790,7 @@ PVO Statement Cache의 샤드 수를 설정합니다. 초기화 시점에만 적
 
 ## PVO_CACHE_MAX_MEMORY_SIZE
 
-PVO Statement Cache 전체가 사용할 최대 메모리 크기(바이트)를 설정합니다. 설정된 값은 샤드 수에 따라 균등 분배되어 적용됩니다. 런타임 변경이 가능하다.
+PVO Statement Cache 전체가 사용할 최대 메모리 크기(바이트)를 설정합니다. 설정된 값은 샤드 수에 따라 균등 분배되어 적용됩니다. 런타임 변경이 가능합니다.
 
 ||Value|
 |-|----|
@@ -800,7 +800,7 @@ PVO Statement Cache 전체가 사용할 최대 메모리 크기(바이트)를 �
 
 ## PVO_CACHE_MAX_PLANS_PER_SQL
 
-하나의 SQL에 대해 보관할 수 있는 최대 플랜(핸들) 수를 설정합니다. 런타임 변경이 가능하다.
+하나의 SQL에 대해 보관할 수 있는 최대 플랜(핸들) 수를 설정합니다. 런타임 변경이 가능합니다.
 
 ||Value|
 |-|----|
@@ -842,7 +842,7 @@ PVO Statement Cache에 보관할 수 있는 SQL 엔트리의 최대 개수를 �
 
 ## RS_CACHE_APPROXIMATE_RESULT_ENABLE
 
-결과값 캐쉬의 추측 모드(approximate result mode)를 사용할지의 여부를 결정합니다. 이 값이 1이면 결과값 캐쉬를 사용할 때, 추측 값을 얻고(매우 빠르지만 데이터가 부정확할 수 있습니다.) 0 이면 정확한 값을 얻는다.
+결과값 캐쉬의 추측 모드(approximate result mode)를 사용할지의 여부를 결정합니다. 이 값이 1이면 결과값 캐쉬를 사용할 때, 추측 값을 얻고(매우 빠르지만 데이터가 부정확할 수 있습니다.) 0 이면 정확한 값을 얻습니다.
 
 ||Value|
 |-|----|
@@ -862,7 +862,7 @@ PVO Statement Cache에 보관할 수 있는 SQL 엔트리의 최대 개수를 �
 
 ## RS_CACHE_MAX_MEMORY_PER_QUERY
 
-결과값 캐쉬가 사용할 메모리의 양을 설정합니다. 특정 질의 결과의 메모리 사용량이 이 값을 초과하면, 해당 질의의 결과는 결과값 캐쉬에 저장되지 않는다.
+결과값 캐쉬가 사용할 메모리의 양을 설정합니다. 특정 질의 결과의 메모리 사용량이 이 값을 초과하면, 해당 질의의 결과는 결과값 캐쉬에 저장되지 않습니다.
 
 ||Value|
 |-|----|
@@ -882,7 +882,7 @@ PVO Statement Cache에 보관할 수 있는 SQL 엔트리의 최대 개수를 �
 
 ## RS_CACHE_MAX_RECORD_PER_QUERY
 
-결과값 캐쉬에 저장되는 최대 레코드 갯수입니다. 만약 질의의 결과 레코드의 수가 이 값 이상이면 해당 질의 결과값은 캐쉬에 저장하지 않는다.
+결과값 캐쉬에 저장되는 최대 레코드 갯수입니다. 만약 질의의 결과 레코드의 수가 이 값 이상이면 해당 질의 결과값은 캐쉬에 저장하지 않습니다.
 
 ||Value|
 |-|----|
@@ -892,7 +892,7 @@ PVO Statement Cache에 보관할 수 있는 SQL 엔트리의 최대 개수를 �
 
 ## RS_CACHE_TIME_BOUND_MSEC
 
-특정 질의가 매우 빠르게 실행된 경우에는 그 결과값을 결과값 캐쉬에 저장하지 않는 것이 메모리 사용량을 줄일 수 있으므로 캐쉬에 저장하지 않는것이 좋다.
+특정 질의가 매우 빠르게 실행된 경우에는 그 결과값을 결과값 캐쉬에 저장하지 않는 것이 메모리 사용량을 줄일 수 있으므로 캐쉬에 저장하지 않는것이 좋습니다.
 
 이 값은 어느 정도 빨리 실행된 질의를 캐쉬에 저장하지 않을지를 결정합니다. 0으로 설정된 경우에는 모든 질의결과를 결과집합캐쉬에 저장합니다.
 
@@ -904,7 +904,7 @@ PVO Statement Cache에 보관할 수 있는 SQL 엔트리의 최대 개수를 �
 
 ## SHOW_HIDDEN_COLS
 
-_ARRIVAL_TIME 컬럼은 기본 설정으로는 SELECT * FROM 질의에 의해서 표시되지 않는다. 그러나 이 값이 1로 설정된 경우에는 해당 컬럼을 표시합니다.
+_ARRIVAL_TIME 컬럼은 기본 설정으로는 SELECT * FROM 질의에 의해서 표시되지 않습니다. 그러나 이 값이 1로 설정된 경우에는 해당 컬럼을 표시합니다.
 
 ||Value|
 |-|----|
@@ -1190,7 +1190,7 @@ Timeout 이후까지 수신에 실패하면, 해당 연결은 실패합니다.
 특정 Node와 연결된 Socket들을 검사하는, Timeout Thread의 검사 주기.
 
 RECEIVE_TIMEOUT, SESSION_TIMEOUT 을 검사하는 Timeout Thread가 존재합니다.
-주기를 짧게 할 수록, 자주 검사하지만 Timeout 판단은 아래의 값에 따라 이루어진다.
+주기를 짧게 할 수록, 자주 검사하지만 Timeout 판단은 아래의 값에 따라 이루어집니다.
 
 기본값은 1초.
 
@@ -1246,7 +1246,7 @@ Cluster 간 통신 중 발생하는 에러 메시지에, 오류가 발생한 호
 
 특정 Node와 Cluster Socket으로 연결된 상태에서, Handshake 메시지를 수신할 때까지의 Timeout
 
-연결이 막 완료된 두 Node는, 연결 상태를 점검하는 차원에서 작은 크기의 Handshake 메시지를 주고 받는다.
+연결이 막 완료된 두 Node는, 연결 상태를 점검하는 차원에서 작은 크기의 Handshake 메시지를 주고 받습니다.
 Accept한 Node가 Handshake 메시지를 먼저 보내는데, 그 응답을 기다리는 시간을 여기서 설정합니다.
 
 기본값은 5초.
@@ -1270,7 +1270,7 @@ Accept한 Node가 Handshake 메시지를 먼저 보내는데, 그 응답을 기�
 Cluster Socket 으로 수신 되는 메시지를 처리할 Receive Callback 이 수행한 시간을 Long-Term Callback 으로 인식할 시간
 
 수신 Thread의 개수가 제한적이므로, 가급적이면 Receive Callback은 오랜 시간 동안 메시지를 처리하고 있으면 안 됩니다.
-이 시간이 지나도록 Receive Callback이 메시지를 처리하고 있다면, Long-Term Callback 으로 인식하고 Trace Log에 그 기록을 남긴다.
+이 시간이 지나도록 Receive Callback이 메시지를 처리하고 있다면, Long-Term Callback 으로 인식하고 Trace Log에 그 기록을 남깁니다.
 
 기본값은 1초.
 
@@ -1285,7 +1285,7 @@ Cluster Socket 으로 수신 되는 메시지를 처리할 Receive Callback 이 
 Cluster Socket 으로 수신 되는 메시지가 도착할 때 까지의 시간을 Long-Wait Message 로 인식할 시간
 
 수신 시작~수신 종료 까지의 시간이 길면 네트워크 환경의 문제로 볼 수 있습니다.
-이 시간이 지나도록 수신 메시지가 도착하지 않는다면, Long-Wait Message 로 인식하고 Trace Log에 그 기록을 남긴다.
+이 시간이 지나도록 수신 메시지가 도착하지 않는다면, Long-Wait Message 로 인식하고 Trace Log에 그 기록을 남깁니다.
 
 기본값은 1초.
 
@@ -1330,7 +1330,7 @@ Cluster Socket 으로 수신 되는 메시지가 도착할 때 까지의 시간�
 Timeout Thread가, 마지막 수신 이후로 연결이 끊긴 것을 판단할 때 까지의 Timeout
 
 Cluster Node 간 연결은, 수신이 완료되면 종료되기 때문에 '연결 리스트' 에 존재하는 연결들은 지속적으로 수신을 받고 있어야 합니다.
-이 시간이 지나도록 마지막 수신 시각이 갱신되지 않으면, Timeout Thread는 Trace Log에 기록을 남기고 해당 Socket을 닫는다.
+이 시간이 지나도록 마지막 수신 시각이 갱신되지 않으면, Timeout Thread는 Trace Log에 기록을 남기고 해당 Socket을 닫습니다.
 
 |(usec)|	Value|
 |------|---------|
@@ -1343,9 +1343,9 @@ Cluster Node 간 연결은, 수신이 완료되면 종료되기 때문에 '연�
 Cluster Socket에서 요청 메시지를 보냈을 때, 요청에 대한 응답이 올 때 까지의 Timeout
 
 특정 메시지의 경우 Request 이후 Answer 전송까지 대기할 수 있는 시간을 따로 지정합니다.
-이 시간이 지나도록 응답 메시지가 도착하지 않으면, Trace Log에 기록을 남기고 해당 Socket을 닫는다.
+이 시간이 지나도록 응답 메시지가 도착하지 않으면, Trace Log에 기록을 남기고 해당 Socket을 닫습니다.
 
-기본값은 60초. 메시지 종류와 수신 처리가 어떻게 될지 모르므로, Timeout이 길다.
+기본값은 60초. 메시지 종류와 수신 처리가 어떻게 될지 모르므로, Timeout이 깁니다.
 
 |(usec)|	Value|
 |------|---------|
@@ -1372,7 +1372,7 @@ Cluster Socket에서 요청 메시지를 보냈을 때, 요청에 대한 응답�
 Cluster Socket을 통해 메시지를 송신할 때 설정하는 Timeout
 
 송신할 때 해당 Timeout 을 설정하며,
-Timeout 까지 송신이 완료되지 않으면 Trace Log에 그 기록을 남긴다.
+Timeout 까지 송신이 완료되지 않으면 Trace Log에 그 기록을 남깁니다.
 
 |(usec)|	Value|
 |------|---------|
@@ -1385,7 +1385,7 @@ Timeout 까지 송신이 완료되지 않으면 Trace Log에 그 기록을 남�
 Timeout Thread가, 특정 세션에서 마지막 수신 이후로 연결이 끊긴 것을 판단할 때 까지의 Timeout
 
 Cluster 연결은, 내부적으로 모든 메시지의 세션을 관리하고 있습니다. 갑자기 세션 정리를 하지 못하게 된 상황에서 필요한 Property 입니다.
-이 시간이 지나도록 해당 세션에 대한 마지막 수신 시각이 갱신되지 않으면, Timeout Thread는 Trace Log에 기록을 남기고 해당 세션을 닫는다.
+이 시간이 지나도록 해당 세션에 대한 마지막 수신 시각이 갱신되지 않으면, Timeout Thread는 Trace Log에 기록을 남기고 해당 세션을 닫습니다.
 
 기본값은 1시간.
 
@@ -1447,7 +1447,7 @@ Warehouse 에 직접 DML 을 수행할 경우 Broker 를 통한 것보다 성능
 기본값은 0입니다.
 
 {{< callout type="info" >}}
-해당 Property 를 켠 채로 Group 내 Warehouse 간의 데이터 차이가 발생하더라도, Coordinator 는 데이터 불일치 여부를 별도로 검사하지 않는다.
+해당 Property 를 켠 채로 Group 내 Warehouse 간의 데이터 차이가 발생하더라도, Coordinator 는 데이터 불일치 여부를 별도로 검사하지 않습니다.
 {{< /callout >}}
 
 |(boolean)|	Value|
@@ -1498,7 +1498,7 @@ Broker가 Coordinator에게 DDL 수행을 요청한 후 대기할 때 까지의 
 
 Coordinator가 상태 변경을 요청하고 실제로 반영할 때 까지의 Timeout.
 
-이 시간이 지나도록 실제로 상태가 변경되지 않는 경우, Cluster 상태를 비활성화시킨다.
+이 시간이 지나도록 실제로 상태가 변경되지 않는 경우, Cluster 상태를 비활성화시킵니다.
 만약 Warehouse Active의 상태가 변경되지 않았는데 연결된 Standby가 존재하는 경우, Fail-Over 작업을 시작합니다.
 
 |(usec)|	Value|
@@ -1584,7 +1584,7 @@ Coordinator가 Node의 장애를 판단하기 까지 기다릴 시간.
 Coordinator 시작 직후 Decision Thread를 작동시킬 때 까지의 유예 시간.
 
 Cluster 전체 구동에 오랜 시간이 소요되는 경우, 해당 값을 크게 설정해서 Coordinator의 Node 제어를 더욱 늦게 시작할 수 있습니다.
-전체 구동도 하기 전에 Decision Thread가 작동하는 경우, Coordinator가 오판할 가능성이 높아진다.
+전체 구동도 하기 전에 Decision Thread가 작동하는 경우, Coordinator가 오판할 가능성이 높아집니다.
 
 |(usec)|	Value|
 |------|---------|
@@ -1619,7 +1619,7 @@ Coordinator가 Node들에게 상태 조회 요청을 한 이후 대기할 시간
 ## COORDINATOR_DISK_FULL_UPPER_BOUND_RATIO
 
 Cluster 로 구성중인 일부 서버의 디스크 사용량이 프로퍼티 값을 넘어가면 해당 host 가 속한 group 이 DISKFULL 상태로 전환됩니다.
-DISKFULL 상태의 group 에 대해서는 입력이 제한되고 조회 및 삭제만 가능하다.
+DISKFULL 상태의 group 에 대해서는 입력이 제한되고 조회 및 삭제만 가능합니다.
 
 프로퍼티 값이 0 인 경우 해당 기능이 disable 됩니다.
 
@@ -2450,7 +2450,7 @@ Standard 에디션에서만 제공되는 글로벌 PVO Statement Cache 상태를
 ### V$PVO_CACHE_STAT
 ---
 
-PVO Statement Cache의 전체 통계를 보여준다.
+PVO Statement Cache의 전체 통계를 보여줍니다.
 
 | 컬럼 이름 | 설명 |
 | -- | -- |
@@ -2473,7 +2473,7 @@ PVO Statement Cache의 전체 통계를 보여준다.
 ### V$PVO_CACHE_LIST
 ---
 
-PVO Statement Cache에 저장된 SQL별 상세 정보를 보여준다.
+PVO Statement Cache에 저장된 SQL별 상세 정보를 보여줍니다.
 
 | 컬럼 이름 | 설명 |
 | -- | -- |

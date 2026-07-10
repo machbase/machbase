@@ -3,7 +3,7 @@ type: docs
 title: '4.1 스키마 객체 정의'
 weight: 10
 ---
-스키마 객체(테이블, 인덱스, 뷰)의 생성·변경·삭제 방법을 다룬다.
+스키마 객체(테이블, 인덱스, 뷰)의 생성·변경·삭제 방법을 다룹니다.
 
 - **[테이블 생성과 삭제](/dbms/data-modeling-table-design/schema-objects-definition/#create-delete)**
 - **[테이블 변경](/dbms/data-modeling-table-design/schema-objects-definition/#alter)**
@@ -31,7 +31,7 @@ CREATE TABLE log_name (
 );
 ```
 
-LOG 테이블은 아무 키워드 없이 `CREATE TABLE`을 사용한다. `_arrival_time` 컬럼이 자동으로 추가된다.
+LOG 테이블은 아무 키워드 없이 `CREATE TABLE`을 사용합니다. `_arrival_time` 컬럼이 자동으로 추가됩니다.
 
 ```sql
 -- 예시: 웹 액세스 로그
@@ -56,7 +56,7 @@ CREATE TAG TABLE tag_name (
   [TAG_DATA_PART_SIZE  = n];
 ```
 
-거리축 TAG 테이블은 `BASETIME` 대신 `BASEDISTANCE`를 사용한다.
+거리축 TAG 테이블은 `BASETIME` 대신 `BASEDISTANCE`를 사용합니다.
 
 ```sql
 -- 시간축
@@ -115,7 +115,7 @@ CREATE LOOKUP TABLE table_name (
 
 #### IF NOT EXISTS
 
-동일한 이름의 테이블이 이미 존재해도 오류가 발생하지 않는다.
+동일한 이름의 테이블이 이미 존재해도 오류가 발생하지 않습니다.
 
 ```sql
 CREATE TABLE IF NOT EXISTS web_access (...);
@@ -127,7 +127,7 @@ CREATE TABLE IF NOT EXISTS web_access (...);
 DROP TABLE table_name;
 ```
 
-테이블을 조회 중인 세션이 있으면 오류가 발생한다. 조회를 종료한 후 삭제한다.
+테이블을 조회 중인 세션이 있으면 오류가 발생합니다. 조회를 종료한 후 삭제합니다.
 
 ```sql
 DROP TABLE orders;
@@ -147,7 +147,7 @@ CREATE TABLE "my-table" (id INTEGER);
 
 ## 테이블 변경
 
-`ALTER TABLE` 문으로 컬럼을 추가하거나 속성을 변경한다. 지원 범위는 테이블 타입에 따라 다르다.
+`ALTER TABLE` 문으로 컬럼을 추가하거나 속성을 변경합니다. 지원 범위는 테이블 타입에 따라 다릅니다.
 
 ### 테이블 타입별 지원 범위
 
@@ -161,7 +161,7 @@ CREATE TABLE "my-table" (id INTEGER);
 | ADD RETENTION | O | O | X | X | X |
 | DROP RETENTION | O | O | X | X | X |
 
-KV 테이블도 `ADD RETENTION`과 `DROP RETENTION`을 지원한다.
+KV 테이블도 `ADD RETENTION`과 `DROP RETENTION`을 지원합니다.
 
 ### ADD COLUMN
 
@@ -199,7 +199,7 @@ ALTER TABLE sensor_data METADATA DROP COLUMN (unit);
 
 ### RENAME COLUMN
 
-TAG 일반 컬럼과 RDB 테이블에서만 지원된다. LOG, VOLATILE, LOOKUP 테이블은 지원하지 않는다.
+TAG 일반 컬럼과 RDB 테이블에서만 지원됩니다. LOG, VOLATILE, LOOKUP 테이블은 지원하지 않습니다.
 
 ```sql
 ALTER TABLE table_name RENAME COLUMN old_name TO new_name;
@@ -215,7 +215,7 @@ ALTER TABLE orders RENAME COLUMN note TO memo;
 
 ### MODIFY COLUMN
 
-LOG 테이블과 TAG 테이블의 일반 컬럼에서 지원된다. RDB, VOLATILE, LOOKUP 테이블은 지원하지 않는다.
+LOG 테이블과 TAG 테이블의 일반 컬럼에서 지원됩니다. RDB, VOLATILE, LOOKUP 테이블은 지원하지 않습니다.
 
 ```sql
 -- VARCHAR 크기 확장 (줄이기는 불가)
@@ -230,7 +230,7 @@ ALTER TABLE web_access MODIFY COLUMN status SET MINMAX_CACHE_SIZE = 20480;
 
 ### RENAME TABLE
 
-RDB 테이블에서만 지원된다.
+RDB 테이블에서만 지원됩니다.
 
 ```sql
 ALTER TABLE old_name RENAME TO new_name;
@@ -243,15 +243,15 @@ ALTER TABLE orders RENAME TO order_history;
 
 ### 주의사항
 
-- LOG 테이블에 추가된 컬럼은 기존 레코드에서 NULL로 읽힌다.
-- TAG 테이블의 일반 데이터 컬럼(PRIMARY KEY, BASETIME)은 변경할 수 없다.
-- VOLATILE 테이블 변경 사항은 서버 재시작 후 초기화 스크립트로 재적용해야 한다.
+- LOG 테이블에 추가된 컬럼은 기존 레코드에서 NULL로 읽힙니다.
+- TAG 테이블의 일반 데이터 컬럼(PRIMARY KEY, BASETIME)은 변경할 수 없습니다.
+- VOLATILE 테이블 변경 사항은 서버 재시작 후 초기화 스크립트로 재적용해야 합니다.
 
 <a id="selection-type-column-data-types"></a>
 
 ## 컬럼과 데이터 타입 선택
 
-사용 가능한 컬럼 데이터 타입은 다음과 같다.
+사용 가능한 컬럼 데이터 타입은 다음과 같습니다.
 
 ### 데이터 타입 전체 목록
 
@@ -286,7 +286,7 @@ ALTER TABLE orders RENAME TO order_history;
 | `FLOAT` | 4바이트 | 7자리 정밀도 | 저정밀도 실수 |
 | `DOUBLE` | 8바이트 | 15자리 정밀도 | 계측값, 금액 |
 
-각 부호 있는 정수 타입(`SHORT`, `INTEGER`, `LONG`)은 C 언어의 해당 정수형과 동일하며, 최소 음수 값을 NULL로 인식한다. 부동 소수점 타입(`FLOAT`, `DOUBLE`)은 양수 최대값을 NULL로 인식한다. `SHORT`는 `int16`, `INTEGER`는 `int32` 또는 `int`, `LONG`은 `int64`로도 표시된다.
+각 부호 있는 정수 타입(`SHORT`, `INTEGER`, `LONG`)은 C 언어의 해당 정수형과 동일하며, 최소 음수 값을 NULL로 인식합니다. 부동 소수점 타입(`FLOAT`, `DOUBLE`)은 양수 최대값을 NULL로 인식합니다. `SHORT`는 `int16`, `INTEGER`는 `int32` 또는 `int`, `LONG`은 `int64`로도 표시됩니다.
 
 ### 문자형
 
@@ -295,7 +295,7 @@ ALTER TABLE orders RENAME TO order_history;
 | `VARCHAR(n)` | 32,767바이트 | 일반 문자열, 태그 이름, 코드 |
 | `TEXT` | 64MB | 전문 검색(SEARCH) 대상 긴 텍스트 |
 
-`VARCHAR`는 실제 저장 데이터 크기만큼만 공간을 사용한다. 길이 기준은 바이트 단위이므로 UTF-8 멀티바이트 문자에서는 실제 문자 수와 다를 수 있다. `TEXT`는 키워드 인덱스를 통해 검색할 수 있으며, 대용량 텍스트를 별도 컬럼으로 저장·검색하는 데 쓰인다.
+`VARCHAR`는 실제 저장 데이터 크기만큼만 공간을 사용합니다. 길이 기준은 바이트 단위이므로 UTF-8 멀티바이트 문자에서는 실제 문자 수와 다를 수 있습니다. `TEXT`는 키워드 인덱스를 통해 검색할 수 있으며, 대용량 텍스트를 별도 컬럼으로 저장·검색하는 데 쓰입니다.
 
 ### 날짜·시간
 
@@ -303,7 +303,7 @@ ALTER TABLE orders RENAME TO order_history;
 |------|------|------|
 | `DATETIME` | 8바이트 | 나노초 정밀도 날짜·시각 |
 
-`DATETIME`은 1970년 1월 1일 자정 이후 경과 시간을 나노초 단위로 저장한다.
+`DATETIME`은 1970년 1월 1일 자정 이후 경과 시간을 나노초 단위로 저장합니다.
 
 ```sql
 CREATE VOLATILE TABLE t1 (
@@ -325,7 +325,7 @@ INSERT INTO t1 VALUES (NOW);
 | `IPV4` | 4바이트 | IPv4 주소 (`'192.168.1.1'`) |
 | `IPV6` | 16바이트 | IPv6 주소 (`'2001:db8::1'`) |
 
-문자열 비교 대비 저장 효율이 높고 범위 비교가 빠르다. IPv6는 `:` 기호를 사용하는 축약 표기도 지원한다 (예: `"::FFFF:1232"`, `"::FFFF:192.168.0.3"`).
+문자열 비교 대비 저장 효율이 높고 범위 비교가 빠릅니다. IPv6는 `:` 기호를 사용하는 축약 표기도 지원한다 (예: `"::FFFF:1232"`, `"::FFFF:192.168.0.3"`).
 
 ### 이진·JSON
 
@@ -336,15 +336,15 @@ INSERT INTO t1 VALUES (NOW);
 
 #### BINARY 타입: LOG vs TAG 차이
 
-- **LOG 테이블**: 이미지나 문서 같은 비정형 데이터를 저장하는 일반 타입으로, 최대 64MB까지 저장할 수 있다.
-- **TAG 테이블**: `BINARY(n)` 형태의 고정 길이 변형으로, 유효 길이는 1 ~ 32767바이트이다. SQL에서 `X'...'`, `B'...'`, `O'...'` binary literal을 쓸 수 있으며(소문자 prefix도 지원), 기존 호환성을 위해 `'0x...'` 형태의 문자열 입력도 가능하다. 선언된 길이를 초과하면 오류가 발생한다.
-- **LOOKUP / VOLATILE 테이블**: `BINARY` 컬럼을 허용하지 않는다.
+- **LOG 테이블**: 이미지나 문서 같은 비정형 데이터를 저장하는 일반 타입으로, 최대 64MB까지 저장할 수 있습니다.
+- **TAG 테이블**: `BINARY(n)` 형태의 고정 길이 변형으로, 유효 길이는 1 ~ 32767바이트입니다. SQL에서 `X'...'`, `B'...'`, `O'...'` binary literal을 쓸 수 있으며(소문자 prefix도 지원), 기존 호환성을 위해 `'0x...'` 형태의 문자열 입력도 가능합니다. 선언된 길이를 초과하면 오류가 발생합니다.
+- **LOOKUP / VOLATILE 테이블**: `BINARY` 컬럼을 허용하지 않습니다.
 
 자세한 입력 형식은 [Binary 컬럼](/dbms/tag-table-usage/table-structure-schema/#original-85-binary-columns)을 참고하십시오.
 
 ### SQL DataType 매핑
 
-다음 표는 데이터 타입별 SQL 타입과 C 타입 매핑이다.
+다음 표는 데이터 타입별 SQL 타입과 C 타입 매핑입니다.
 
 | Machbase 타입 | Machbase CLI 타입 | SQL 타입 | C 타입 | C 기본 타입 |
 |--------------|------------------|---------|--------|------------|
@@ -366,16 +366,16 @@ INSERT INTO t1 VALUES (NOW);
 
 ### 사전 정의 시스템 컬럼
 
-사용자가 직접 정의하지 않아도 내부적으로 관리되는 시스템 컬럼이 있다.
+사용자가 직접 정의하지 않아도 내부적으로 관리되는 시스템 컬럼이 있습니다.
 
 #### _ARRIVAL_TIME
 
-LOG 테이블의 모든 행에 자동으로 부여되는 수신 시각 컬럼이다.
+LOG 테이블의 모든 행에 자동으로 부여되는 수신 시각 컬럼입니다.
 
 - 타입: `DATETIME` (나노초 정밀도)
-- INSERT 시 명시하지 않으면 실행 시점의 서버 시각이 자동 부여된다.
-- `_ARRIVAL_TIME`을 명시하여 삽입할 경우, 지정값이 테이블에 이미 존재하는 가장 최신 `_ARRIVAL_TIME`보다 이전이면 해당 행은 입력되지 않는다.
-- SELECT 쿼리에서 명시적으로 조회하거나 WHERE 조건에 사용할 수 있다.
+- INSERT 시 명시하지 않으면 실행 시점의 서버 시각이 자동 부여됩니다.
+- `_ARRIVAL_TIME`을 명시하여 삽입할 경우, 지정값이 테이블에 이미 존재하는 가장 최신 `_ARRIVAL_TIME`보다 이전이면 해당 행은 입력되지 않습니다.
+- SELECT 쿼리에서 명시적으로 조회하거나 WHERE 조건에 사용할 수 있습니다.
 
 ```sql
 -- 명시적 삽입
@@ -388,11 +388,11 @@ SELECT _arrival_time, sensor_id, value FROM sensor_log;
 
 #### _RID
 
-각 행에 고유하게 부여되는 내부 행 식별자(Row ID)이다.
+각 행에 고유하게 부여되는 내부 행 식별자(Row ID)입니다.
 
 - 타입: `LONG` (자동 증가)
-- SELECT 시 명시적으로 조회할 수 있다.
-- WHERE 조건에서 특정 행을 지정하는 데 사용할 수 있다.
+- SELECT 시 명시적으로 조회할 수 있습니다.
+- WHERE 조건에서 특정 행을 지정하는 데 사용할 수 있습니다.
 
 ```sql
 SELECT _rid, sensor_id, value FROM sensor_log WHERE _rid = 1000;
@@ -425,11 +425,11 @@ SELECT _rid, sensor_id, value FROM sensor_log WHERE _rid = 1000;
 
 ## 제약 조건과 기본값
 
-테이블에서 사용할 수 있는 컬럼 제약 조건과 기본값 설정이다.
+테이블에서 사용할 수 있는 컬럼 제약 조건과 기본값 설정입니다.
 
 ### PRIMARY KEY
 
-VOLATILE, LOOKUP, RDB 테이블의 컬럼에 지정한다. PRIMARY KEY로 지정된 컬럼은 값 중복을 허용하지 않는다. LOOKUP/VOLATILE은 Red-Black Tree 인덱스를 사용하고, RDB는 BTREE 인덱스로 표시된다.
+VOLATILE, LOOKUP, RDB 테이블의 컬럼에 지정합니다. PRIMARY KEY로 지정된 컬럼은 값 중복을 허용하지 않습니다. LOOKUP/VOLATILE은 Red-Black Tree 인덱스를 사용하고, RDB는 BTREE 인덱스로 표시됩니다.
 
 - **LOOKUP**: PRIMARY KEY 필수 (PK 없이 생성 불가)
 - **VOLATILE**: PRIMARY KEY 선택적. 단, `INSERT ... ON DUPLICATE KEY UPDATE` 구문 사용 시 필수
@@ -461,7 +461,7 @@ CREATE RDB TABLE orders (
 
 ### NOT NULL
 
-LOG 테이블 컬럼에 사용한다. 해당 컬럼에 NULL 삽입을 금지한다.
+LOG 테이블 컬럼에 사용합니다. 해당 컬럼에 NULL 삽입을 금지합니다.
 
 ```sql
 CREATE TABLE sensor_log (
@@ -471,13 +471,13 @@ CREATE TABLE sensor_log (
 );
 ```
 
-TAG, VOLATILE, LOOKUP 테이블은 NOT NULL 제약을 별도로 선언하지 않아도 PK 컬럼에 자동으로 NOT NULL이 적용된다.
+TAG, VOLATILE, LOOKUP 테이블은 NOT NULL 제약을 별도로 선언하지 않아도 PK 컬럼에 자동으로 NOT NULL이 적용됩니다.
 
 ### DEFAULT
 
-일반 `CREATE TABLE` 경로에서는 제한적으로 `DATETIME DEFAULT SYSDATE`를 사용할 수 있다.
-RDB 테이블은 컬럼 생성 및 `ALTER TABLE ... ADD COLUMN`에서 DEFAULT를 사용할 수 있다.
-그 외 기본값이 필요하면 INSERT 문이나 애플리케이션 입력 단계에서 값을 명시한다.
+일반 `CREATE TABLE` 경로에서는 제한적으로 `DATETIME DEFAULT SYSDATE`를 사용할 수 있습니다.
+RDB 테이블은 컬럼 생성 및 `ALTER TABLE ... ADD COLUMN`에서 DEFAULT를 사용할 수 있습니다.
+그 외 기본값이 필요하면 INSERT 문이나 애플리케이션 입력 단계에서 값을 명시합니다.
 
 ```sql
 CREATE RDB TABLE orders_default_example (
@@ -497,9 +497,9 @@ ALTER TABLE orders_default_example ADD COLUMN (score INTEGER DEFAULT 7);
 
 ### 시스템 자동 생성 컬럼
 
-LOG 테이블에는 `_ARRIVAL_TIME`과 `_RID` 시스템 컬럼이 자동으로 추가된다. TAG, VOLATILE,
-LOOKUP 테이블에는 `_RID`이 내부 행 식별자로 추가된다. RDB 테이블에는 `_ARRIVAL_TIME`이
-자동 추가되지 않는다.
+LOG 테이블에는 `_ARRIVAL_TIME`과 `_RID` 시스템 컬럼이 자동으로 추가됩니다. TAG, VOLATILE,
+LOOKUP 테이블에는 `_RID`이 내부 행 식별자로 추가됩니다. RDB 테이블에는 `_ARRIVAL_TIME`이
+자동 추가되지 않습니다.
 
 | 컬럼명 | 타입 | 설명 |
 |--------|------|------|
@@ -524,13 +524,13 @@ SELECT * FROM sensor_log WHERE _ARRIVAL_TIME > NOW - 3600000000000;
 | UNIQUE | X | X | O (UNIQUE INDEX) | X | X |
 | FOREIGN KEY | X | X | X | X | X |
 
-> FOREIGN KEY 제약은 지원하지 않는다. 참조 무결성은 애플리케이션 레이어에서 관리해야 한다.
+> FOREIGN KEY 제약은 지원하지 않습니다. 참조 무결성은 애플리케이션 레이어에서 관리해야 합니다.
 
 <a id="index-create-delete"></a>
 
 ## 인덱스 생성과 삭제
 
-테이블 타입에 따라 지원되는 인덱스 종류가 다르다. 인덱스는 조회 성능을 높이기 위해 사용하며, 불필요한 인덱스는 INSERT 성능에 영향을 준다.
+테이블 타입에 따라 지원되는 인덱스 종류가 다릅니다. 인덱스는 조회 성능을 높이기 위해 사용하며, 불필요한 인덱스는 INSERT 성능에 영향을 줍니다.
 
 ### 인덱스 종류
 
@@ -556,13 +556,13 @@ CREATE BITMAP INDEX idx_status ON sensor_log (status);
 CREATE KEYWORD INDEX idx_msg ON event_log (message);
 ```
 
-> LOG/TAG/LOOKUP/VOLATILE 인덱스는 단일 컬럼 중심으로 설계한다. RDB 테이블은 일반 복합
-> 인덱스를 지원하지만, 복합 JSON path 인덱스와 복합 PRIMARY KEY 인덱스는 지원하지 않는다.
+> LOG/TAG/LOOKUP/VOLATILE 인덱스는 단일 컬럼 중심으로 설계합니다. RDB 테이블은 일반 복합
+> 인덱스를 지원하지만, 복합 JSON path 인덱스와 복합 PRIMARY KEY 인덱스는 지원하지 않습니다.
 
 ### TAG 테이블 인덱스
 
-TAG 테이블은 태그명과 시간 축에 대한 내부 인덱스를 자동으로 관리한다. 추가로
-METADATA 컬럼 인덱스와 값 컬럼 TAG/KV secondary index를 사용할 수 있다.
+TAG 테이블은 태그명과 시간 축에 대한 내부 인덱스를 자동으로 관리합니다. 추가로
+METADATA 컬럼 인덱스와 값 컬럼 TAG/KV secondary index를 사용할 수 있습니다.
 
 ```sql
 -- TAG 메타데이터 JSON 컬럼 인덱스
@@ -584,8 +584,8 @@ CREATE INDEX idx_value ON tag (value) INDEX_TYPE TAG;
 
 ### LOOKUP/VOLATILE/RDB 테이블 인덱스
 
-LOOKUP과 VOLATILE은 Red-Black Tree 인덱스를 사용한다. RDB는 BTREE로 표시되는 PRIMARY
-KEY 인덱스와 보조 인덱스를 사용한다.
+LOOKUP과 VOLATILE은 Red-Black Tree 인덱스를 사용합니다. RDB는 BTREE로 표시되는 PRIMARY
+KEY 인덱스와 보조 인덱스를 사용합니다.
 
 ```sql
 -- LOOKUP: PK 지정 시 REDBLACK 인덱스 자동 생성
@@ -627,7 +627,7 @@ DROP INDEX idx_status;
 DROP INDEX idx_msg;
 ```
 
-PRIMARY KEY에 의해 자동 생성된 인덱스는 별도로 삭제할 수 없으며, 테이블 삭제 시 함께 제거된다.
+PRIMARY KEY에 의해 자동 생성된 인덱스는 별도로 삭제할 수 없으며, 테이블 삭제 시 함께 제거됩니다.
 
 ### 인덱스 정보 조회
 
@@ -663,7 +663,7 @@ SELECT t.name AS table_name,
 
 ## VIEW 생성과 관리
 
-VIEW는 하나 이상의 테이블에 대한 SELECT 쿼리를 저장해 두고 테이블처럼 조회할 수 있게 하는 논리적 객체이다.
+VIEW는 하나 이상의 테이블에 대한 SELECT 쿼리를 저장해 두고 테이블처럼 조회할 수 있게 하는 논리적 객체입니다.
 
 ### VIEW 생성
 
@@ -698,7 +698,7 @@ CREATE VIEW hourly_avg AS
 
 ### VIEW 조회
 
-VIEW는 일반 테이블처럼 SELECT 문에서 사용한다.
+VIEW는 일반 테이블처럼 SELECT 문에서 사용합니다.
 
 ```sql
 SELECT * FROM active_alarms WHERE sensor_id = 'TEMP-01';
@@ -732,10 +732,10 @@ WHERE VIEW_NAME = 'ACTIVE_ALARMS';
 
 ### VIEW 특성과 제한
 
-- VIEW는 데이터를 물리적으로 저장하지 않는다. 조회할 때마다 정의된 쿼리를 실행한다.
-- VIEW에 대한 INSERT/UPDATE/DELETE는 지원하지 않는다. 읽기 전용이다.
+- VIEW는 데이터를 물리적으로 저장하지 않습니다. 조회할 때마다 정의된 쿼리를 실행합니다.
+- VIEW에 대한 INSERT/UPDATE/DELETE는 지원하지 않습니다. 읽기 전용입니다.
 - VIEW는 다른 VIEW를 참조할 수 있다 (중첩 VIEW).
-- TAG, LOG, RDB, VOLATILE, LOOKUP 테이블 모두 VIEW 정의에 포함할 수 있다.
+- TAG, LOG, RDB, VOLATILE, LOOKUP 테이블 모두 VIEW 정의에 포함할 수 있습니다.
 
 ### 활용 패턴
 

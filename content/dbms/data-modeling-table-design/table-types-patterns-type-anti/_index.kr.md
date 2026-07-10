@@ -3,7 +3,7 @@ type: docs
 title: '4.4 안티패턴'
 weight: 30
 ---
-테이블 설계에서 피해야 할 대표적인 안티패턴을 다룬다. 아래 패턴은 성능 저하, 운영 복잡도 증가, 데이터 손실로 이어질 수 있다.
+테이블 설계에서 피해야 할 대표적인 안티패턴을 다룹니다. 아래 패턴은 성능 저하, 운영 복잡도 증가, 데이터 손실로 이어질 수 있습니다.
 
 - **[고빈도 LOOKUP 조회](/dbms/data-modeling-table-design/table-types-patterns-type-anti/#high-frequency-lookup)**
 - **[센서별 테이블 생성](/dbms/data-modeling-table-design/table-types-patterns-type-anti/#per-sensor-create)**
@@ -18,7 +18,7 @@ weight: 30
 
 ### 문제
 
-LOOKUP 테이블을 초고빈도 시계열 데이터 조회에 사용하는 패턴이다. LOOKUP 테이블은 소규모 참조 데이터에 최적화되어 있어 대량 시계열 데이터의 고속 조회에는 부적합하다.
+LOOKUP 테이블을 초고빈도 시계열 데이터 조회에 사용하는 패턴입니다. LOOKUP 테이블은 소규모 참조 데이터에 최적화되어 있어 대량 시계열 데이터의 고속 조회에는 부적합합니다.
 
 ### 안티패턴 예시
 
@@ -38,7 +38,7 @@ INSERT INTO sensor_data_wrong VALUES ('TEMP-01', 25.5, NOW);  -- PK 중복 오�
 
 ### 올바른 패턴
 
-시계열 계측값은 TAG 테이블에 저장한다. 최신 값만 필요하면 VOLATILE 테이블을 캐시로 쓴다.
+시계열 계측값은 TAG 테이블에 저장합니다. 최신 값만 필요하면 VOLATILE 테이블을 캐시로 씁니다.
 
 ```sql
 -- 올바른 설계: 이력은 TAG 테이블
@@ -70,7 +70,7 @@ CREATE VOLATILE TABLE sensor_latest (
 
 ### 문제
 
-센서(태그)마다 별도 테이블을 생성하는 패턴이다. 센서 수가 늘어날수록 테이블 수가 폭발적으로 증가해 관리가 불가능해진다.
+센서(태그)마다 별도 테이블을 생성하는 패턴입니다. 센서 수가 늘어날수록 테이블 수가 폭발적으로 증가해 관리가 불가능해집니다.
 
 ### 안티패턴 예시
 
@@ -93,7 +93,7 @@ CREATE TAG TABLE sensor_temp_03 (...);
 
 ### 올바른 패턴
 
-센서 이름을 PRIMARY KEY로 하는 하나의 TAG 테이블에 모든 센서 데이터를 저장한다.
+센서 이름을 PRIMARY KEY로 하는 하나의 TAG 테이블에 모든 센서 데이터를 저장합니다.
 
 ```sql
 -- 올바른 설계: 모든 온도 센서를 하나의 테이블로
@@ -119,7 +119,7 @@ INSERT INTO temperature_sensor VALUES ('TEMP-10000', NOW, 22.9);
 
 ## 잘못된 타입 선택
 
-데이터 특성에 맞지 않는 테이블 타입을 선택하는 대표적인 안티패턴이다.
+데이터 특성에 맞지 않는 테이블 타입을 선택하는 대표적인 안티패턴입니다.
 
 ### 안티패턴 1: 이벤트 로그를 TAG 테이블에 저장
 
@@ -191,7 +191,7 @@ UPDATE order_history SET status = 'SHIPPED' WHERE order_id = 1001;
 
 ### 안티패턴 4: 시계열 데이터를 RDB에 저장
 
-시계열 데이터(센서값)를 RDB 테이블에 저장하면 시간 범위 쿼리 성능이 떨어지고, Append API의 고속 버퍼 최적화도 쓸 수 없다. 자세한 내용은 [시계열 데이터 RDB 오용](/dbms/data-modeling-table-design/table-types-patterns-type-anti/#time-series-storage-misuse-rdb) 항목을 참고한다.
+시계열 데이터(센서값)를 RDB 테이블에 저장하면 시간 범위 쿼리 성능이 떨어지고, Append API의 고속 버퍼 최적화도 쓸 수 없습니다. 자세한 내용은 [시계열 데이터 RDB 오용](/dbms/data-modeling-table-design/table-types-patterns-type-anti/#time-series-storage-misuse-rdb) 항목을 참고합니다.
 
 <a id="storage-persistent-volatile"></a>
 
@@ -199,7 +199,7 @@ UPDATE order_history SET status = 'SHIPPED' WHERE order_id = 1001;
 
 ### 문제
 
-VOLATILE 테이블에 영구 보존이 필요한 데이터를 저장하는 패턴이다.
+VOLATILE 테이블에 영구 보존이 필요한 데이터를 저장하는 패턴입니다.
 
 ### 안티패턴 예시
 
@@ -217,12 +217,12 @@ INSERT INTO critical_config VALUES ('max_connections', '1000');
 
 ### 문제점
 
-- 서버 재시작, 장애, OOM 등 어떤 상황에서도 데이터가 소멸된다.
-- 운영 중 데이터 소멸로 서비스 장애가 발생한다.
+- 서버 재시작, 장애, OOM 등 어떤 상황에서도 데이터가 소멸됩니다.
+- 운영 중 데이터 소멸로 서비스 장애가 발생합니다.
 
 ### 올바른 패턴
 
-영구 보존이 필요한 데이터는 LOOKUP 또는 RDB 테이블에 저장한다.
+영구 보존이 필요한 데이터는 LOOKUP 또는 RDB 테이블에 저장합니다.
 
 ```sql
 -- 올바름: 설정은 LOOKUP 테이블
@@ -237,7 +237,7 @@ INSERT INTO app_config VALUES ('max_connections', '1000');
 
 ### VOLATILE의 올바른 용도
 
-VOLATILE 테이블은 **재생성 가능한 캐시 데이터**에만 사용한다.
+VOLATILE 테이블은 **재생성 가능한 캐시 데이터**에만 사용합니다.
 
 | 적합 | 부적합 |
 |------|--------|
@@ -252,7 +252,7 @@ VOLATILE 테이블은 **재생성 가능한 캐시 데이터**에만 사용한�
 
 ### 문제
 
-센서·IoT 계측값 같은 대량 시계열 데이터를 RDB 테이블에 저장하는 패턴이다. RDB 테이블은 UPDATE/DELETE를 포함한 일반 관계형 워크로드에 최적화되어 있어 초고빈도 시계열 수집에는 부적합하다.
+센서·IoT 계측값 같은 대량 시계열 데이터를 RDB 테이블에 저장하는 패턴입니다. RDB 테이블은 UPDATE/DELETE를 포함한 일반 관계형 워크로드에 최적화되어 있어 초고빈도 시계열 수집에는 부적합합니다.
 
 ### 안티패턴 예시
 
@@ -277,7 +277,7 @@ CREATE RDB TABLE sensor_timeseries (
 
 ### 올바른 패턴
 
-센서 계측값은 TAG 테이블에 저장한다.
+센서 계측값은 TAG 테이블에 저장합니다.
 
 ```sql
 -- 올바름: TAG 테이블 사용
@@ -298,4 +298,4 @@ GROUP BY name, hour;
 
 ### RDB 테이블이 적합한 경우
 
-RDB 테이블은 관계형 구조의 업무 데이터(주문, 재고, 설비 이력 등)에 쓴다. 시간 컬럼이 있더라도 UPDATE/DELETE가 필요한 업무 이력이라면 RDB를, 수정 없이 계속 쌓이는 고빈도 계측값이라면 TAG를 선택한다.
+RDB 테이블은 관계형 구조의 업무 데이터(주문, 재고, 설비 이력 등)에 씁니다. 시간 컬럼이 있더라도 UPDATE/DELETE가 필요한 업무 이력이라면 RDB를, 수정 없이 계속 쌓이는 고빈도 계측값이라면 TAG를 선택합니다.

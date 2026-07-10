@@ -4,14 +4,14 @@ weight: 150
 toc: true
 ---
 
-RDB 테이블의 Append API 동작 방식과 SDK별 지원 범위를 정리한다.
+RDB 테이블의 Append API 동작 방식과 SDK별 지원 범위를 정리합니다.
 
 
 <a id="unsupported-rejected-rdb-append-api"></a>
 
 ## Append API
 
-RDB 테이블도 Append API를 지원한다. 단, TAG·LOG 테이블의 Append와 내부 동작 방식이 다르다.
+RDB 테이블도 Append API를 지원합니다. 단, TAG·LOG 테이블의 Append와 내부 동작 방식이 다릅니다.
 
 ## 지원 현황
 
@@ -30,9 +30,9 @@ RDB 테이블도 Append API를 지원한다. 단, TAG·LOG 테이블의 Append�
 | 처리량 | 매우 높음 | 일반 INSERT 수준 |
 | 적합한 용도 | 초고빈도 계측값 | 배치 데이터 로드 |
 
-RDB 테이블의 Append API는 내부적으로 트랜잭션(`qrdBeginStmtTx` / `qrdCommitStmtTx`)으로 처리된다. TAG·LOG 테이블의 초고속 버퍼 Append와 달리 일반 INSERT와 유사한 성능을 보인다.
+RDB 테이블의 Append API는 내부적으로 트랜잭션(`qrdBeginStmtTx` / `qrdCommitStmtTx`)으로 처리됩니다. TAG·LOG 테이블의 초고속 버퍼 Append와 달리 일반 INSERT와 유사한 성능을 보입니다.
 
-`AUTO_INCREMENT` 컬럼이 있는 RDB 테이블에 `SQLAppendBatch`를 사용할 때는 auto 컬럼을 생략할 수 없다. auto 컬럼을 포함하고 `SQL_APPEND_TYPE_INT64`와 `SQL_APPEND_LONG_NULL` 조합으로 자동값 생성을 요청한다. 자세한 예시는 [AUTO_INCREMENT](/dbms/rdb-table-usage/auto-increment/#sqlappendbatch-사용-시-주의-사항)를 참고한다.
+`AUTO_INCREMENT` 컬럼이 있는 RDB 테이블에 `SQLAppendBatch`를 사용할 때는 auto 컬럼을 생략할 수 없습니다. auto 컬럼을 포함하고 `SQL_APPEND_TYPE_INT64`와 `SQL_APPEND_LONG_NULL` 조합으로 자동값 생성을 요청합니다. 자세한 예시는 [AUTO_INCREMENT](/dbms/rdb-table-usage/auto-increment/#sqlappendbatch-사용-시-주의-사항)를 참고합니다.
 
 ## SDK Append 예시
 
@@ -48,7 +48,7 @@ appender.Close()
 
 ## 대량 입력 권장 방법
 
-대량 데이터를 삽입할 때는 **배치 INSERT(트랜잭션 활용)**가 더 직관적이다.
+대량 데이터를 삽입할 때는 **배치 INSERT(트랜잭션 활용)**가 더 직관적입니다.
 
 ```go
 tx, _ := db.Begin()
@@ -70,7 +70,7 @@ machloader -i -d orders -f orders.csv
 
 ## SDK 지원 범위
 
-RDB 테이블은 다양한 언어의 Machbase SDK를 통해 접근할 수 있다.
+RDB 테이블은 다양한 언어의 Machbase SDK를 통해 접근할 수 있습니다.
 
 ## 지원 SDK
 

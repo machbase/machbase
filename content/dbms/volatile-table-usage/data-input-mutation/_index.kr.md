@@ -4,7 +4,7 @@ weight: 40
 toc: true
 ---
 
-VOLATILE 테이블의 INSERT, Append, ON DUPLICATE KEY UPDATE, DELETE 사용법을 다룬다.
+VOLATILE 테이블의 INSERT, Append, ON DUPLICATE KEY UPDATE, DELETE 사용법을 다룹니다.
 
 
 <a id="original-85-insert-update"></a>

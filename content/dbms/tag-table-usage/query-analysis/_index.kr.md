@@ -4,7 +4,7 @@ weight: 50
 toc: true
 ---
 
-TAG 테이블에서 시계열 데이터를 조회하는 주요 패턴을 다룬다. 시간축·거리축 범위 조회, 다중 태그 검색, 통계 뷰 활용, RESTful API 추출까지 포함한다.
+TAG 테이블에서 시계열 데이터를 조회하는 주요 패턴을 다룹니다. 시간축·거리축 범위 조회, 다중 태그 검색, 통계 뷰 활용, RESTful API 추출까지 포함합니다.
 
 <a id="original-85-querying-data"></a>
 
@@ -79,12 +79,12 @@ TAG_0002 2018-02-10 10:00:00 000:000:000 20
 [20] row(s) selected.
 ```
 
-조건이 없으면 각 tag별로 시간 순서로 정렬된 데이터가 반환된다.
+조건이 없으면 각 tag별로 시간 순서로 정렬된 데이터가 반환됩니다.
 
 
 ### 특정 tag 이름으로 데이터 추출
 
-TAG 이름이 TAG_0002인 데이터를 조회하는 예제다.
+TAG 이름이 TAG_0002인 데이터를 조회하는 예제입니다.
 
 ```sql
 Mach> select * from tag where name='TAG_0002';
@@ -106,7 +106,7 @@ TAG_0002              2018-02-10 10:00:00 000:000:000 20
 
 ### 시간 범위 조회
 
-TAG_0002에 대해 시간 범위를 지정해 데이터를 조회하는 예제다.
+TAG_0002에 대해 시간 범위를 지정해 데이터를 조회하는 예제입니다.
 
 > between 절을 사용하여 시간 범위를 지정하는 것이 일반적입니다. 물론 '<' 또는 '>'를 사용하여 시간 범위를 지정해도 동일한 결과를 얻을 수 있습니다.
 
@@ -132,7 +132,7 @@ TAG_0002              2018-02-04 04:00:00 000:000:000 14
 
 ### 거리축 샘플 스키마
 
-거리축(`BASE DISTANCE`) Tag 테이블 기준의 예제다.
+거리축(`BASE DISTANCE`) Tag 테이블 기준의 예제입니다.
 
 ```sql
 CREATE TAG TABLE trip_tag (
@@ -179,7 +179,7 @@ SELECT name, distance_m, value, quality
 
 ### 거리축 실행 계획 확인
 
-대용량 거리축 조회에서는 `EXPLAIN`으로 거리 조건이 key range로 들어가는지 확인한다.
+대용량 거리축 조회에서는 `EXPLAIN`으로 거리 조건이 key range로 들어가는지 확인합니다.
 
 ```sql
 EXPLAIN
@@ -197,7 +197,7 @@ SELECT name, distance_m, value
 
 ### 거리 버킷 집계
 
-거리축 집계는 `TRUNC(..., 0)`로 버킷을 나누는 방식이 안전하다.
+거리축 집계는 `TRUNC(..., 0)`로 버킷을 나누는 방식이 안전합니다.
 
 ```sql
 SELECT TRUNC(distance_m / 500, 0) * 500 AS dist_bucket,
@@ -215,7 +215,7 @@ SELECT TRUNC(distance_m / 500, 0) * 500 AS dist_bucket,
 
 ### 다중 tag에 대한 시간 범위 검색
 
-두 개 이상의 tag에 대해 동일한 시간 범위의 데이터를 조회하는 예제다. 많은 수의 tag를 동시에 빠르게 조회하려면 `IN` 절을 사용한다.
+두 개 이상의 tag에 대해 동일한 시간 범위의 데이터를 조회하는 예제입니다. 많은 수의 tag를 동시에 빠르게 조회하려면 `IN` 절을 사용합니다.
 
 ```bash
 Mach> select * from tag where name in ('TAG_0002', 'TAG_0001') and time between to_date('2018-01-05') and to_date('2018-02-05');
@@ -236,7 +236,7 @@ TAG_0002              2018-02-04 04:00:00 000:000:000 14
 
 ### 특정 값 이상의 데이터 검색
 
-tag 값에 대한 조건도 지정할 수 있다. TAG_0002의 값 중 12보다 크고 15보다 작은 값에 대해 필터링한 결과다.
+tag 값에 대한 조건도 지정할 수 있습니다. TAG_0002의 값 중 12보다 크고 15보다 작은 값에 대해 필터링한 결과입니다.
 
 ```bash
 Mach> select * from tag where name = 'TAG_0002' and value > 12 and value < 15 and time between to_date('2018-02-01') and to_date('2018-02-05');
@@ -249,7 +249,7 @@ TAG_0002              2018-02-04 04:00:00 000:000:000 14
 
 ### 특정 Tag ID별 통계 정보 표시
 
-tag 테이블을 생성하면, tag ID별 통계 정보를 집계하는 가상 테이블이 자동으로 만들어진다. 이 가상 테이블의 이름은 v${tag 테이블 이름}_stat이다.
+tag 테이블을 생성하면, tag ID별 통계 정보를 집계하는 가상 테이블이 자동으로 만들어집니다. 이 가상 테이블의 이름은 v${tag 테이블 이름}_stat입니다.
 
 통계 정보 대상 컬럼은 자동으로 세 번째 컬럼으로 지정됩니다.
 
@@ -386,7 +386,7 @@ $ curl "http://127.0.0.1:5657/machiot-rest-api/datapoints/raw/TAG/TAG_0001/2018-
 
 #### CURL을 사용한 다중 tag 데이터 조회
 
-두 개의 tag 값을 조회하는 예제다.
+두 개의 tag 값을 조회하는 예제입니다.
 
 ```bash
 $ curl "http://127.0.0.1:5657/machiot-rest-api/datapoints/raw/TAG/TAG_0001,TAG_0002/2018-01-05T00:00:00/2018-02-05T00:00:00/0/0/0"
@@ -395,11 +395,11 @@ $ curl "http://127.0.0.1:5657/machiot-rest-api/datapoints/raw/TAG/TAG_0001,TAG_0
 
 ### 힌트를 사용하여 검색 방향 지정
 
-tag 테이블은 기본적으로 가장 오래된 레코드부터 반환한다. 가장 최근 레코드부터 검색하려면 힌트로 검색 방향을 제어할 수 있다.
+tag 테이블은 기본적으로 가장 오래된 레코드부터 반환합니다. 가장 최근 레코드부터 검색하려면 힌트로 검색 방향을 제어할 수 있습니다.
 
 #### 정방향 검색
 
-기본 동작이며, '/*+ SCAN_FORWARD(table_name) */' 힌트로 명시할 수도 있다.
+기본 동작이며, '/*+ SCAN_FORWARD(table_name) */' 힌트로 명시할 수도 있습니다.
 
 ```bash
 Mach> SELECT * FROM tag WHERE t_name='TAG_99' LIMIT 10;
@@ -438,7 +438,7 @@ Mach>
 
 #### 역방향 검색
 
-'/*+ SCAN_BACKWARD(table_name) */' 힌트를 사용한다.
+'/*+ SCAN_BACKWARD(table_name) */' 힌트를 사용합니다.
 
 ```bash
 Mach> SELECT /*+ SCAN_BACKWARD(tag) */ * FROM tag WHERE t_name='TAG_99' LIMIT 10;

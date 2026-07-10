@@ -4,13 +4,13 @@ weight: 20
 toc: true
 ---
 
-RDB 테이블의 스키마 설계 방법과 컬럼 타입, PRIMARY KEY 지정 방식을 설명한다.
+RDB 테이블의 스키마 설계 방법과 컬럼 타입, PRIMARY KEY 지정 방식을 설명합니다.
 
 <a id="rdb-table-design"></a>
 
 ## RDB 테이블 설계
 
-RDB 테이블은 Machbase 8.6에서 도입된 관계형 테이블로, SELECT·INSERT·UPDATE·DELETE를 모두 지원한다. PRIMARY KEY 인덱스와 보조 인덱스를 함께 활용할 수 있다.
+RDB 테이블은 Machbase 8.6에서 도입된 관계형 테이블로, SELECT·INSERT·UPDATE·DELETE를 모두 지원합니다. PRIMARY KEY 인덱스와 보조 인덱스를 함께 활용할 수 있습니다.
 
 ```sql
 CREATE RDB TABLE order_history (
@@ -57,7 +57,7 @@ CREATE RDB TABLE table_name (
 
 #### 컬럼 수 제약
 
-최소 1개 이상의 컬럼이 필요하다.
+최소 1개 이상의 컬럼이 필요합니다.
 
 ```sql
 -- 정상: 컬럼 1개
@@ -120,7 +120,7 @@ UPDATE tx_history SET status = 'SETTLED' WHERE tx_id = 9999;
 
 #### PRIMARY KEY 지정
 
-컬럼 정의에 직접 `PRIMARY KEY`를 지정하거나, `CREATE PRIMARY KEY INDEX` 문으로 사후 생성할 수 있다. RDB 인덱스는 BTREE로 표시된다.
+컬럼 정의에 직접 `PRIMARY KEY`를 지정하거나, `CREATE PRIMARY KEY INDEX` 문으로 사후 생성할 수 있습니다. RDB 인덱스는 BTREE로 표시됩니다.
 
 ```sql
 -- 컬럼 정의에서 PRIMARY KEY 지정
@@ -142,7 +142,7 @@ CREATE RDB TABLE product_catalog (
 CREATE PRIMARY KEY INDEX idx_pk_product ON product_catalog(product_id);
 ```
 
-자동 번호가 필요한 단일 64비트 정수 PRIMARY KEY에는 `AUTO_INCREMENT`를 사용할 수 있다.
+자동 번호가 필요한 단일 64비트 정수 PRIMARY KEY에는 `AUTO_INCREMENT`를 사용할 수 있습니다.
 
 ```sql
 CREATE RDB TABLE device_master (
@@ -152,10 +152,10 @@ CREATE RDB TABLE device_master (
 );
 ```
 
-`AUTO_INCREMENT`의 지원 타입, INSERT 방식, catalog 확인 방법은 [AUTO_INCREMENT](/dbms/rdb-table-usage/auto-increment/)를 참고한다.
+`AUTO_INCREMENT`의 지원 타입, INSERT 방식, catalog 확인 방법은 [AUTO_INCREMENT](/dbms/rdb-table-usage/auto-increment/)를 참고합니다.
 
 #### 주의사항
 
-- `METADATA` 절은 TAG 테이블 전용이므로 RDB 테이블에서는 사용할 수 없다.
-- `BASETIME`, `BASEDISTANCE` 키워드도 사용할 수 없다.
-- Cluster Edition에서는 RDB 테이블을 생성할 수 없다.
+- `METADATA` 절은 TAG 테이블 전용이므로 RDB 테이블에서는 사용할 수 없습니다.
+- `BASETIME`, `BASEDISTANCE` 키워드도 사용할 수 없습니다.
+- Cluster Edition에서는 RDB 테이블을 생성할 수 없습니다.

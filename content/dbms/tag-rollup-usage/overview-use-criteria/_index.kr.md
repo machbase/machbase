@@ -98,7 +98,7 @@ CREATE TAG TABLE trip_rollup_test (
 
 ### ROLLUP 테이블 생성
 
-Tag Table 생성시 Rollup이 기본으로 생성되지 않고, 사용자가 직접 생성하는 방식으로 변경되었으며 문법은 아래와 같다.
+Tag Table 생성시 Rollup이 기본으로 생성되지 않고, 사용자가 직접 생성하는 방식으로 변경되었으며 문법은 아래와 같습니다.
 
 ![create-rollup](/dbms/table-types/tag-tables/create-rollup.png)
 
@@ -139,7 +139,7 @@ CREATE ROLLUP [IF NOT EXISTS] rollup_name
     ex) 1시간 단위 집계 : 1 hour <br>
 
 * 제약조건
-    * 집계할 source table은 tag table 또는 rollup table만 지정 가능하다.
+    * 집계할 source table은 tag table 또는 rollup table만 지정 가능합니다.
     * 집계할 source table이 rollup table일 경우 생성될 rollup table의 시간은 source table의 시간보다 크며, 배수어야 합니다.
 
 롤업 테이블 생성 예시
@@ -181,7 +181,7 @@ time_unit := {SEC|MIN|HOUR}
 CREATE TAG TABLE tagtbl (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED) WITH ROLLUP
 ```
 
-자동으로 생성되는 rollup 의 이름은 다음과 같은 형식으로 생성됩니다. (`tagtbl` 에 tag tabe name 이 들어간다.)
+자동으로 생성되는 rollup 의 이름은 다음과 같은 형식으로 생성됩니다. (`tagtbl` 에 tag tabe name 이 들어갑니다.)
 * _`tagtbl`_ROLLUP_SEC
 * _`tagtbl`_ROLLUP_MIN
 * _`tagtbl`_ROLLUP_HOUR
@@ -206,7 +206,7 @@ Elapsed time: 0.001
 Mach>
 ```
 
-time_unit 에 들어간 기준을 가장 작은 기준으로 보고 상위 time unit 까지 자동으로 생성해준다.
+time_unit 에 들어간 기준을 가장 작은 기준으로 보고 상위 time unit 까지 자동으로 생성해줍니다.
 
 > 롤업 테이블 이름 충돌이 발생할시 롤업 테이블 생성은 모두 실패하고 태그 테이블만 생성됩니다.
 
@@ -242,7 +242,7 @@ CREATE ROLLUP <rollup_name>
   INTERVAL <n> <SEC|MIN|HOUR>
   WHERE <predicate>;
 ```
-- WHERE 조건은 집계 전에 원본 행에 적용되며, 조건에 사용한 컬럼은 롤업 테이블에 저장되지 않는다.
+- WHERE 조건은 집계 전에 원본 행에 적용되며, 조건에 사용한 컬럼은 롤업 테이블에 저장되지 않습니다.
 - 허용: 일반 스칼라 표현식(AND/OR/NOT, 비교, BETWEEN, IN, LIKE, CASE, 비집계 함수)과 존재하는 컬럼 사용. `value2`, `status` 같은 비요약 컬럼도 자유롭게 조건으로 사용할 수 있습니다.
 - 금지: 서브쿼리, 집계 함수, 존재하지 않는 컬럼, 태그 테이블의 태그명(PK) 컬럼 조건(내부적으로 숫자 ID이므로 문자열 비교가 무의미).
 - `CREATE ROLLUP` 시점에 위반 사항이 있으면 에러로 생성이 거부됩니다.
@@ -250,7 +250,7 @@ CREATE ROLLUP <rollup_name>
 #### 조건부 롤업과 Custom Rollup의 WHERE 차이
 - 조건부 롤업은 `ON/FROM` 문법의 외부 `WHERE`를 사용합니다.
 - Custom Rollup(`INTO ... AS (SELECT ...)`)은 `SELECT` 내부 `WHERE`만 지원합니다.
-- 즉, `CREATE ROLLUP ... INTO (...) AS (...) INTERVAL ... WHERE ...` 형태는 허용되지 않는다.
+- 즉, `CREATE ROLLUP ... INTO (...) AS (...) INTERVAL ... WHERE ...` 형태는 허용되지 않습니다.
 - 자세한 Custom 문법은 [Custom Rollup: 사용자 정의 집계](/dbms/tag-rollup-usage/custom-rollup/#original-85-rollup-custom), SQL 문법은 [DDL: CREATE ROLLUP](../../../sql-reference/ddl/#create-rollup)을 참고합니다.
 
 #### 자동 선택 우선순위(힌트 없을 때)
@@ -260,8 +260,8 @@ CREATE ROLLUP <rollup_name>
 4. 남은 후보가 여러 개면 기존 규칙 유지: 요청 주기를 나누는 가장 큰 주기 → 같은 주기면 먼저 등록된 롤업을 그대로 사용.
 
 #### 빠른 사용 예(회귀 테스트 시나리오 기반)
-1) `value`(SUMMARIZED) 외에 `value2`, `status` 같은 필터용 컬럼이 있는 태그 테이블을 만든다.
-2) 조건 유무가 다른 롤업을 함께 만든다.
+1) `value`(SUMMARIZED) 외에 `value2`, `status` 같은 필터용 컬럼이 있는 태그 테이블을 만듭니다.
+2) 조건 유무가 다른 롤업을 함께 만듭니다.
 ```sql
 CREATE ROLLUP _tag_rollup_plain_1s     ON tag_bulk(value) INTERVAL 1 SEC;
 CREATE ROLLUP _tag_rollup_plain_1m     FROM _tag_rollup_plain_1s INTERVAL 1 MIN;
@@ -329,7 +329,7 @@ ALTER ROLLUP <rollup_name> SET WAKEUP INTERVAL <N> (SEC|MIN|HOUR);
   - 변환된 wakeup 주기가 롤업 주기보다 크면 안 됩니다.
   - 롤업 주기가 wakeup 주기의 정수배가 아니면 에러가 발생합니다.
   - 값을 변경하면 즉시 한 번 깨운 뒤 새 스케줄로 재정렬합니다.
-- 관찰 포인트: `V$ROLLUP`에서 `WAKEUP_INTERVAL`, `LAST_WAKEUP_TIME`, `NEXT_WAKEUP_TIME`, `RUN_STATE`(INIT/SLEEPING/RUNNING)을 확인할 수 있고, `show rollupgap`도 마지막/다음 wakeup과 상태를 보여준다.
+- 관찰 포인트: `V$ROLLUP`에서 `WAKEUP_INTERVAL`, `LAST_WAKEUP_TIME`, `NEXT_WAKEUP_TIME`, `RUN_STATE`(INIT/SLEEPING/RUNNING)을 확인할 수 있고, `show rollupgap`도 마지막/다음 wakeup과 상태를 보여줍니다.
 
 ### ROLLUP 테이블 즉시 수집
 
@@ -371,7 +371,7 @@ mach> create rollup _tag_rollup_1 on tag(value) interval 1 sec;
 mach> create rollup _tag_rollup_2 on _tag_rollup_1 interval 1 min;
 mach> create rollup _tag_rollup_3 on _tag_rollup_2 interval 1 hour;
 
-위와 같이 생성했을 경우 참조 순서는 아래와 같다.
+위와 같이 생성했을 경우 참조 순서는 아래와 같습니다.
 
 tag -> _tag_rollup_1 -> _tag_rollup_2 -> _tag_rollup_3
 
@@ -430,7 +430,7 @@ rollup_expr := ROLLUP(time_unit, period, basetime_column [, origin])
 SELECT ROLLUP('MIN', 30, time, '1970-01-01'), MIN(value), MAX(value), AVG(value) FROM tag ..
 ```
 
-위와 같이 ROLLUP 키워드를 사용할 경우, 해당하는 롤업 테이블에서 데이터를 가져온다.
+위와 같이 ROLLUP 키워드를 사용할 경우, 해당하는 롤업 테이블에서 데이터를 가져옵니다.
 
 * time_unit: `DATE_BIN` 함수에서 사용 가능한 시간단위
 * period: `DATE_BIN` 함수에서 사용 가능한 시간단위
@@ -449,7 +449,7 @@ SELECT ROLLUP('MIN', 30, time, '1970-01-01'), MIN(value), MAX(value), AVG(value)
 
 위와 같이 BASETIME 속성으로 지정된 Datetime 형 컬럼 뒤에 ROLLUP 절을 붙여 지정하면 롤업 테이블 조회가 됩니다.
 
-TIME_UNIT 의 선택에 따라, 조회되는 롤업 테이블이 달라진다.
+TIME_UNIT 의 선택에 따라, 조회되는 롤업 테이블이 달라집니다.
 
 |시간 단위(축약어)| 조회 대상 롤업 테이블|
 |--|--|
@@ -519,7 +519,7 @@ insert into tag values('TAG_0001', '2018-01-01 03:02:01 000:000:000', 5);
 insert into tag values('TAG_0001', '2018-01-01 03:02:02 000:000:000', 6);
 ```
 
-태그 하나에 대해서 3시간 동안 초단위의 각기 다른 값을 입력해 놓았다.
+태그 하나에 대해서 3시간 동안 초단위의 각기 다른 값을 입력해 놓았습니다.
 
 
 ### ROLLUP 평균값 얻기

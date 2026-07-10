@@ -4,18 +4,18 @@ weight: 60
 toc: true
 ---
 
-RDB 테이블의 인덱스 설계와 조회 성능 최적화 방법을 다룬다.
+RDB 테이블의 인덱스 설계와 조회 성능 최적화 방법을 다룹니다.
 
 
 <a id="index-tuning-rdb"></a>
 
 ## RDB 인덱스 튜닝
 
-`CREATE RDB TABLE`로 생성하는 RDB 테이블은 PRIMARY KEY와 보조 인덱스를 조회 패턴에 맞게 설계해야 최적의 성능을 얻을 수 있다.
+`CREATE RDB TABLE`로 생성하는 RDB 테이블은 PRIMARY KEY와 보조 인덱스를 조회 패턴에 맞게 설계해야 최적의 성능을 얻을 수 있습니다.
 
 ### PK 자동 B-Tree 인덱스
 
-PRIMARY KEY를 선언하면 해당 컬럼에 B-Tree 인덱스가 자동 생성된다.
+PRIMARY KEY를 선언하면 해당 컬럼에 B-Tree 인덱스가 자동 생성됩니다.
 
 ```sql
 CREATE RDB TABLE product (
@@ -38,7 +38,7 @@ WHERE product_id BETWEEN 1000 AND 2000;
 
 ### 추가 인덱스 생성
 
-일반 컬럼에 `CREATE INDEX`로 보조 인덱스를 만들 수 있다. PK가 아닌 컬럼을 반복 조회한다면 인덱스 생성을 검토한다.
+일반 컬럼에 `CREATE INDEX`로 보조 인덱스를 만들 수 있습니다. PK가 아닌 컬럼을 반복 조회한다면 인덱스 생성을 검토합니다.
 
 ```sql
 CREATE INDEX idx_product_name ON product(product_name);
@@ -46,15 +46,15 @@ CREATE INDEX idx_product_category ON product(category);
 CREATE INDEX idx_product_category_name ON product(category, name);
 ```
 
-보조 인덱스는 조회 속도를 높이지만 INSERT/UPDATE/DELETE 시 인덱스 갱신 비용이 늘어난다. 실제로 자주 사용하는 조건 컬럼에만 생성한다.
+보조 인덱스는 조회 속도를 높이지만 INSERT/UPDATE/DELETE 시 인덱스 갱신 비용이 늘어납니다. 실제로 자주 사용하는 조건 컬럼에만 생성합니다.
 
 ### PK 설계에 조회 패턴 반영
 
-PK와 보조 인덱스를 설계할 때 주요 조회 패턴을 반영하는 것이 가장 효과적인 튜닝 전략이다.
+PK와 보조 인덱스를 설계할 때 주요 조회 패턴을 반영하는 것이 가장 효과적인 튜닝 전략입니다.
 
 #### 단일 컬럼 PK
 
-가장 빈번한 조회 조건이 하나의 컬럼이라면 해당 컬럼을 PK로 지정한다.
+가장 빈번한 조회 조건이 하나의 컬럼이라면 해당 컬럼을 PK로 지정합니다.
 
 ```sql
 -- product_id로 주로 조회하는 경우
@@ -67,7 +67,7 @@ CREATE RDB TABLE product (
 
 #### 여러 조회 조건이 있는 경우
 
-현재 빌드에서는 테이블 제약 형태의 복합 PRIMARY KEY 구문을 사용할 수 없다. 여러 컬럼 조합으로 자주 조회한다면 단일 PK와 보조 인덱스를 조합한다.
+현재 빌드에서는 테이블 제약 형태의 복합 PRIMARY KEY 구문을 사용할 수 없습니다. 여러 컬럼 조합으로 자주 조회한다면 단일 PK와 보조 인덱스를 조합합니다.
 
 ```sql
 CREATE RDB TABLE product (
@@ -121,7 +121,7 @@ CREATE INDEX idx_product_name ON product(product_name);
 SELECT * FROM product WHERE product_name = 'Widget A';
 ```
 
-여러 컬럼 조합을 반복 조회한다면 복합 보조 인덱스를 활용한다. 복합 인덱스는 선두 컬럼부터 조건에 포함될 때 효과가 크다.
+여러 컬럼 조합을 반복 조회한다면 복합 보조 인덱스를 활용합니다. 복합 인덱스는 선두 컬럼부터 조건에 포함될 때 효과가 큽니다.
 
 ```sql
 CREATE INDEX idx_product_category_name ON product(category, product_name);
@@ -132,7 +132,7 @@ WHERE category = 'electronics'
   AND product_name = 'Widget A';
 ```
 
-드물게 실행하는 조건까지 모두 인덱스로 만들면 쓰기 비용과 저장 공간이 증가한다. 운영 쿼리 로그나 애플리케이션 호출 빈도를 기준으로 인덱스 대상을 선정한다.
+드물게 실행하는 조건까지 모두 인덱스로 만들면 쓰기 비용과 저장 공간이 증가합니다. 운영 쿼리 로그나 애플리케이션 호출 빈도를 기준으로 인덱스 대상을 선정합니다.
 
 #### 결과 집합 크기 제한
 

@@ -4,13 +4,13 @@ weight: 10
 toc: true
 ---
 
-VOLATILE 테이블은 데이터를 메모리에 저장하는 임시 테이블이다. 서버가 재시작되면 데이터가 소멸하므로, 재생성 가능한 최신 상태, 임시 집계, 세션 간 공유 캐시 용도로 사용한다.
+VOLATILE 테이블은 데이터를 메모리에 저장하는 임시 테이블입니다. 서버가 재시작되면 데이터가 소멸하므로, 재생성 가능한 최신 상태, 임시 집계, 세션 간 공유 캐시 용도로 사용합니다.
 
 <a id="overview-volatile-characteristics"></a>
 
 ## VOLATILE 테이블의 특성
 
-VOLATILE 테이블은 `CREATE VOLATILE TABLE` 문으로 생성한다.
+VOLATILE 테이블은 `CREATE VOLATILE TABLE` 문으로 생성합니다.
 
 ```sql
 CREATE VOLATILE TABLE sensor_latest (
@@ -20,7 +20,7 @@ CREATE VOLATILE TABLE sensor_latest (
 );
 ```
 
-VOLATILE 테이블의 주요 특성은 다음과 같다.
+VOLATILE 테이블의 주요 특성은 다음과 같습니다.
 
 | 항목 | 내용 |
 |------|------|
@@ -36,15 +36,15 @@ VOLATILE 테이블의 주요 특성은 다음과 같다.
 
 ## 사용 기준
 
-다음 조건에 해당하면 VOLATILE 테이블을 사용한다.
+다음 조건에 해당하면 VOLATILE 테이블을 사용합니다.
 
-- 서버 재시작 후 데이터가 없어져도 된다.
-- 원본 데이터에서 언제든 다시 계산하거나 재구성할 수 있다.
-- 최신 상태, 최근 집계, 임시 작업 결과를 빠르게 조회해야 한다.
-- 여러 세션에서 같은 임시 상태를 공유해야 한다.
-- 디스크 영속성보다 메모리 기반 응답 시간이 중요하다.
+- 서버 재시작 후 데이터가 없어져도 됩니다.
+- 원본 데이터에서 언제든 다시 계산하거나 재구성할 수 있습니다.
+- 최신 상태, 최근 집계, 임시 작업 결과를 빠르게 조회해야 합니다.
+- 여러 세션에서 같은 임시 상태를 공유해야 합니다.
+- 디스크 영속성보다 메모리 기반 응답 시간이 중요합니다.
 
-최신 센서 상태를 유지하는 예시는 다음과 같다.
+최신 센서 상태를 유지하는 예시는 다음과 같습니다.
 
 ```sql
 INSERT INTO sensor_latest VALUES ('TEMP-01', 23.5, NOW)
@@ -59,7 +59,7 @@ WHERE sensor_id = 'TEMP-01';
 
 ## 다른 테이블을 검토할 경우
 
-다음 요구사항에는 다른 테이블 타입을 사용한다.
+다음 요구사항에는 다른 테이블 타입을 사용합니다.
 
 | 요구사항 | 권장 테이블 |
 |----------|-------------|
@@ -68,18 +68,18 @@ WHERE sensor_id = 'TEMP-01';
 | 트랜잭션과 관계형 갱신이 필요한 업무 데이터 | RDB |
 | 장기 분석 대상 시계열 데이터 | TAG |
 
-VOLATILE 테이블에만 저장된 데이터는 서버 종료 시 복구할 수 없다. 중요한 데이터는 TAG, LOG, LOOKUP, RDB 중 적합한 영속 테이블에 저장하고, VOLATILE 테이블은 캐시나 중간 결과로 사용한다.
+VOLATILE 테이블에만 저장된 데이터는 서버 종료 시 복구할 수 없습니다. 중요한 데이터는 TAG, LOG, LOOKUP, RDB 중 적합한 영속 테이블에 저장하고, VOLATILE 테이블은 캐시나 중간 결과로 사용합니다.
 
 <a id="overview-volatile-design-flow"></a>
 
 ## 설계 순서
 
-VOLATILE 테이블 설계 시 다음 순서로 결정한다.
+VOLATILE 테이블 설계 시 다음 순서로 결정합니다.
 
-1. 데이터가 재생성 가능한지 확인한다.
-2. PRIMARY KEY가 필요한지 결정한다.
-3. 예상 행 수와 메모리 사용량을 산정한다.
-4. 재시작 후 테이블 생성과 초기 적재 절차를 준비한다.
-5. 중요 데이터는 주기적으로 영속 테이블에 플러시한다.
+1. 데이터가 재생성 가능한지 확인합니다.
+2. PRIMARY KEY가 필요한지 결정합니다.
+3. 예상 행 수와 메모리 사용량을 산정합니다.
+4. 재시작 후 테이블 생성과 초기 적재 절차를 준비합니다.
+5. 중요 데이터는 주기적으로 영속 테이블에 플러시합니다.
 
-스키마와 PRIMARY KEY 설계는 [테이블 구조와 스키마](/dbms/volatile-table-usage/table-structure-schema/)에서, 재시작 대응은 [재시작과 데이터 소실](/dbms/volatile-table-usage/restart-data-loss/)에서 다룬다.
+스키마와 PRIMARY KEY 설계는 [테이블 구조와 스키마](/dbms/volatile-table-usage/table-structure-schema/)에서, 재시작 대응은 [재시작과 데이터 소실](/dbms/volatile-table-usage/restart-data-loss/)에서 다룹니다.

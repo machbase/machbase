@@ -3,14 +3,14 @@ title: '9.9 활용 패턴과 시나리오'
 weight: 90
 toc: true
 ---
-LOOKUP 테이블의 활용 패턴과 시나리오를 다룬다.
+LOOKUP 테이블의 활용 패턴과 시나리오를 다룹니다.
 
 
 <a id="use-cases-lookup"></a>
 
 ## 활용 사례
 
-LOOKUP 테이블은 다음과 같은 데이터를 저장하는 데 적합하다.
+LOOKUP 테이블은 다음과 같은 데이터를 저장하는 데 적합합니다.
 
 <a id="lookup-pattern-data-types"></a>
 
@@ -39,7 +39,7 @@ INSERT INTO country_code VALUES ('US', '미국', 'America');
 UPDATE country_code SET name = 'United States' WHERE code = 'US';
 ```
 
-상태 코드나 알람 코드도 같은 방식으로 관리한다.
+상태 코드나 알람 코드도 같은 방식으로 관리합니다.
 
 ```sql
 CREATE LOOKUP TABLE status_code (
@@ -67,7 +67,7 @@ CREATE LOOKUP TABLE equipment_master (
 );
 ```
 
-TAG 테이블의 센서 데이터와 JOIN하면 위치, 부서, 단위 같은 기준 정보를 함께 조회할 수 있다.
+TAG 테이블의 센서 데이터와 JOIN하면 위치, 부서, 단위 같은 기준 정보를 함께 조회할 수 있습니다.
 
 ```sql
 SELECT d.name, m.location, m.dept, d.time, d.value
@@ -93,7 +93,7 @@ CREATE LOOKUP TABLE threshold_config (
 UPDATE threshold_config SET high_limit = 85.0 WHERE sensor_name = 'TEMP-01';
 ```
 
-임계값 테이블은 TAG 데이터와 결합해 알람 조건을 판단하는 데 사용한다.
+임계값 테이블은 TAG 데이터와 결합해 알람 조건을 판단하는 데 사용합니다.
 
 ```sql
 SELECT s.name, s.time, s.value, t.high_limit
@@ -107,7 +107,7 @@ WHERE s.time >= NOW - 60000000000
 
 ## SEQUENCE 기반 이력 번호
 
-작은 규모의 관리 이력이나 운영 이벤트에 순번이 필요하면 SEQUENCE 컬럼을 사용할 수 있다.
+작은 규모의 관리 이력이나 운영 이벤트에 순번이 필요하면 SEQUENCE 컬럼을 사용할 수 있습니다.
 
 ```sql
 CREATE LOOKUP TABLE operation_note (
@@ -121,7 +121,7 @@ INSERT INTO operation_note
 VALUES (NEXTVAL(seq), 'TEMP-01', 'threshold changed', NOW);
 ```
 
-대량 원본 이력은 LOOKUP보다 LOG 테이블에 저장한다.
+대량 원본 이력은 LOOKUP보다 LOG 테이블에 저장합니다.
 
 <a id="lookup-pattern-not-suitable"></a>
 

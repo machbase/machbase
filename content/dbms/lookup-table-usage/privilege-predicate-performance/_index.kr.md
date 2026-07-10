@@ -3,7 +3,7 @@ title: '9.15 LOOKUP 권한과 predicate DML 성능'
 weight: 150
 toc: true
 ---
-LOOKUP 테이블의 권한 모델과 predicate DML 성능 특성을 다룬다.
+LOOKUP 테이블의 권한 모델과 predicate DML 성능 특성을 다룹니다.
 
 
 <a id="privileges-lookup-update-delete-target-select"></a>
@@ -11,7 +11,7 @@ LOOKUP 테이블의 권한 모델과 predicate DML 성능 특성을 다룬다.
 ## LOOKUP UPDATE/DELETE 권한
 
 LOOKUP 테이블의 `UPDATE`와 `DELETE`는 primary key 조건과 일반 predicate 조건을 모두
-지원한다. 권한 검사는 사용자가 실행한 DML 종류를 기준으로 수행한다.
+지원합니다. 권한 검사는 사용자가 실행한 DML 종류를 기준으로 수행합니다.
 
 ### 권한 기준
 
@@ -22,7 +22,7 @@ LOOKUP 테이블의 `UPDATE`와 `DELETE`는 primary key 조건과 일반 predica
 | DELETE | `DELETE` |
 
 일반 predicate `UPDATE`/`DELETE` 실행 중 내부적으로 대상 row를 찾더라도 별도
-`SELECT` 권한을 추가로 요구하지 않는다.
+`SELECT` 권한을 추가로 요구하지 않습니다.
 
 ```sql
 -- UPDATE 권한이 있으면 일반 predicate UPDATE 가능
@@ -42,7 +42,7 @@ GRANT UPDATE ON sys.device_config TO ops_user;
 GRANT DELETE ON sys.device_config TO ops_user;
 ```
 
-대상 범위를 사용자가 직접 확인하도록 하려면 `SELECT` 권한을 별도로 부여한다.
+대상 범위를 사용자가 직접 확인하도록 하려면 `SELECT` 권한을 별도로 부여합니다.
 
 ```sql
 GRANT SELECT ON sys.device_config TO ops_user;
@@ -52,9 +52,9 @@ GRANT SELECT ON sys.device_config TO ops_user;
 
 ## LOOKUP 일반 predicate DML 성능 고려사항
 
-Primary key 조건 `UPDATE`/`DELETE`는 PK 해시 경로를 사용한다. 일반
+Primary key 조건 `UPDATE`/`DELETE`는 PK 해시 경로를 사용합니다. 일반
 predicate `UPDATE`/`DELETE`는 조건에 맞는 대상 row를 찾은 뒤 변경을 적용하므로, 범위가
-넓으면 PK 단건 처리보다 비용이 커질 수 있다.
+넓으면 PK 단건 처리보다 비용이 커질 수 있습니다.
 
 ### 권장 패턴
 
@@ -93,7 +93,7 @@ WHERE meta->'$.region' = 'kr'
 ```
 
 숫자 비교에는 `->`보다 `JSON_EXTRACT_INTEGER`, `JSON_EXTRACT_DOUBLE` 같은 타입별 함수를
-사용한다.
+사용합니다.
 
 ### 성능 요약
 
@@ -103,4 +103,4 @@ WHERE meta->'$.region' = 'kr'
 | non-PK predicate UPDATE/DELETE | 조건에 맞는 row를 찾아 적용 | 소규모/중간 규모 일괄 변경, 사전 count 권장 |
 | JSON path 조건 DML | JSON path 평가 비용 포함 | 자주 쓰는 조건은 별도 컬럼화 |
 
-참조 데이터 용도에 맞게 작고 명확한 범위로 유지하는 것이 좋다.
+참조 데이터 용도에 맞게 작고 명확한 범위로 유지하는 것이 좋습니다.

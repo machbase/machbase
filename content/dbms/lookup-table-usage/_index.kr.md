@@ -4,7 +4,7 @@ weight: 90
 toc: true
 ---
 
-LOOKUP 테이블은 소규모 기준 정보와 마스터 데이터를 빠르게 참조하기 위한 테이블이다. PRIMARY KEY 기반 구조, JSON/SEQUENCE, predicate DML, JOIN 활용을 다룬다.
+LOOKUP 테이블은 소규모 기준 정보와 마스터 데이터를 빠르게 참조하기 위한 테이블입니다. PRIMARY KEY 기반 구조, JSON/SEQUENCE, predicate DML, JOIN 활용을 다룹니다.
 
 ## 이 장의 구성
 

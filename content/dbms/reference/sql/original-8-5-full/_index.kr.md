@@ -1041,7 +1041,7 @@ Executed successfully
 주의사항
 - 조건부 rollup의 `WHERE`는 `ON/FROM` 문법에서 사용합니다.
 - Custom Rollup의 `WHERE`는 `SELECT` 내부에서만 사용합니다.
-- `INTERVAL ... WHERE ...` 형태의 외부 WHERE는 Custom 문법에서 지원하지 않는다.
+- `INTERVAL ... WHERE ...` 형태의 외부 WHERE는 Custom 문법에서 지원하지 않습니다.
 - 자세한 제약/운영 패턴은 [Custom Rollup: 사용자 정의 집계](/dbms/tag-rollup-usage/custom-rollup/#original-85-rollup-custom)를 참고합니다.
 
 

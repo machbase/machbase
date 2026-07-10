@@ -323,7 +323,7 @@ Standard 에디션에서만 제공되는 글로벌 PVO Statement Cache 상태를
 ### V$PVO_CACHE_STAT
 ---
 
-PVO Statement Cache의 전체 통계를 보여준다.
+PVO Statement Cache의 전체 통계를 보여줍니다.
 
 | 컬럼 이름 | 설명 |
 | -- | -- |
@@ -346,7 +346,7 @@ PVO Statement Cache의 전체 통계를 보여준다.
 ### V$PVO_CACHE_LIST
 ---
 
-PVO Statement Cache에 저장된 SQL별 상세 정보를 보여준다.
+PVO Statement Cache에 저장된 SQL별 상세 정보를 보여줍니다.
 
 | 컬럼 이름 | 설명 |
 | -- | -- |

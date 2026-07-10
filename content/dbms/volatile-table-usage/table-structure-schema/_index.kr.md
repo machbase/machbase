@@ -4,14 +4,14 @@ weight: 20
 toc: true
 ---
 
-VOLATILE 테이블의 PRIMARY KEY 설계와 스키마 구성 방법을 다룬다.
+VOLATILE 테이블의 PRIMARY KEY 설계와 스키마 구성 방법을 다룹니다.
 
 
 <a id="primary-key-design-primary-key"></a>
 
 ### PRIMARY KEY 설계
 
-VOLATILE 테이블은 PRIMARY KEY 없이도 생성할 수 있다. 단, PK 기반 조회나 `ON DUPLICATE KEY UPDATE`를 사용하려면 PRIMARY KEY가 필요하다.
+VOLATILE 테이블은 PRIMARY KEY 없이도 생성할 수 있습니다. 단, PK 기반 조회나 `ON DUPLICATE KEY UPDATE`를 사용하려면 PRIMARY KEY가 필요합니다.
 
 #### 단일 PRIMARY KEY
 
@@ -25,7 +25,7 @@ CREATE VOLATILE TABLE volatile_device_state (
 
 #### 복합 키가 필요한 경우
 
-여러 컬럼 조합으로 행을 고유하게 식별해야 하면 조합 키를 별도 PRIMARY KEY 컬럼으로 둔다.
+여러 컬럼 조합으로 행을 고유하게 식별해야 하면 조합 키를 별도 PRIMARY KEY 컬럼으로 둡니다.
 
 ```sql
 CREATE VOLATILE TABLE hourly_avg (
@@ -55,15 +55,15 @@ ON DUPLICATE KEY UPDATE SET state = 'ONLINE', updated_at = NOW;
 
 #### 주의사항
 
-- PRIMARY KEY 없이 생성할 수 있지만, PK 기반 동작(UPSERT, PK 조회 등)은 사용할 수 없다.
+- PRIMARY KEY 없이 생성할 수 있지만, PK 기반 동작(UPSERT, PK 조회 등)은 사용할 수 없습니다.
 - PRIMARY KEY 값은 중복 불가다 (ON DUPLICATE KEY UPDATE 사용 시 제외).
-- PRIMARY KEY 컬럼은 하나만 지정한다.
+- PRIMARY KEY 컬럼은 하나만 지정합니다.
 
 <a id="volatile-table-design"></a>
 
 ## VOLATILE 테이블 설계
 
-VOLATILE 테이블은 메모리에만 존재하며, 서버 재시작 시 데이터가 소멸된다. 세션 내 임시 집계나 캐시 용도로 활용한다.
+VOLATILE 테이블은 메모리에만 존재하며, 서버 재시작 시 데이터가 소멸됩니다. 세션 내 임시 집계나 캐시 용도로 활용합니다.
 
 - **[활용 사례](/dbms/volatile-table-usage/patterns-scenarios/#use-cases-volatile)**
 - **[영속성 차이·DDL](/dbms/volatile-table-usage/create-alter-drop/#differences-persistence-ddl)**

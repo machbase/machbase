@@ -1370,7 +1370,7 @@ File Size    : 64630670 bytes
 
 ## 노드 추가, Alias, DBS_PATH
 
-Broker 또는 Warehouse 노드를 추가할 때는 `--node-type`, `--deployer`, `--package-name`, `--home-path`, `--port-no`를 함께 지정한다. HTTP 관리 포트가 필요한 경우 `--http-port-no`를 지정한다.
+Broker 또는 Warehouse 노드를 추가할 때는 `--node-type`, `--deployer`, `--package-name`, `--home-path`, `--port-no`를 함께 지정합니다. HTTP 관리 포트가 필요한 경우 `--http-port-no`를 지정합니다.
 
 예제:
 
@@ -1388,7 +1388,7 @@ machcoordinatoradmin \
   --dbs-path=/data/machbase/warehouse_a1_dbs
 ```
 
-Lookup 노드를 추가하거나 연결할 때는 `--node-type=lookup`과 `--lookup-type`을 함께 지정한다.
+Lookup 노드를 추가하거나 연결할 때는 `--node-type=lookup`과 `--lookup-type`을 함께 지정합니다.
 
 예제:
 
@@ -1403,7 +1403,7 @@ machcoordinatoradmin \
   --alias=lookup-master-1
 ```
 
-기존 노드를 클러스터 메타에 연결할 때는 `--attach-node`를 사용한다. `--attach-node`도 `--alias`를 사용할 수 있지만 `--dbs-path`는 사용할 수 없다.
+기존 노드를 클러스터 메타에 연결할 때는 `--attach-node`를 사용합니다. `--attach-node`도 `--alias`를 사용할 수 있지만 `--dbs-path`는 사용할 수 없습니다.
 
 ```
 machcoordinatoradmin \
@@ -1416,19 +1416,19 @@ machcoordinatoradmin \
   --alias=warehouse-a1
 ```
 
-`--alias`는 `--add-node`와 `--attach-node`에서 지정할 수 있다. 지정하지 않으면 노드 유형에 따라 `coordinator-N`, `deployer-N`, `broker-N`, `warehouse-N`, `lookup-N` 형식으로 자동 생성된다.
+`--alias`는 `--add-node`와 `--attach-node`에서 지정할 수 있습니다. 지정하지 않으면 노드 유형에 따라 `coordinator-N`, `deployer-N`, `broker-N`, `warehouse-N`, `lookup-N` 형식으로 자동 생성됩니다.
 
-Alias 이름은 1자 이상이어야 하며 영문자, 숫자, `-`, `_`, `.`만 사용할 수 있다. Alias는 클러스터 전체에서 유일해야 하고 실제 노드 이름과도 충돌하면 안 된다.
+Alias 이름은 1자 이상이어야 하며 영문자, 숫자, `-`, `_`, `.`만 사용할 수 있습니다. Alias는 클러스터 전체에서 유일해야 하고 실제 노드 이름과도 충돌하면 안 됩니다.
 
-등록 후 alias만 변경하는 별도 명령은 없다.
+등록 후 alias만 변경하는 별도 명령은 없습니다.
 
-명령 대상 노드는 실제 노드 이름을 먼저 찾고, 없으면 alias를 찾는다. 따라서 `--startup-node`, `--shutdown-node`, `--kill-node`, `--remove-node`, `--detach-node`, `--upgrade-node`, `--set-lookup-master`, `--set-warehouse-state`, `--force-restore-warehouse`, `--snapshot-recover`, `--exec-sync`에서 alias를 사용할 수 있다. 상태 출력에서는 alias가 있으면 `alias(real-node-name)` 형식으로 표시될 수 있다.
+명령 대상 노드는 실제 노드 이름을 먼저 찾고, 없으면 alias를 찾습니다. 따라서 `--startup-node`, `--shutdown-node`, `--kill-node`, `--remove-node`, `--detach-node`, `--upgrade-node`, `--set-lookup-master`, `--set-warehouse-state`, `--force-restore-warehouse`, `--snapshot-recover`, `--exec-sync`에서 alias를 사용할 수 있습니다. 상태 출력에서는 alias가 있으면 `alias(real-node-name)` 형식으로 표시될 수 있습니다.
 
-`--dbs-path`는 `--add-node`로 Broker 또는 Warehouse를 추가할 때만 사용할 수 있다. Lookup, Coordinator, Deployer 노드에는 사용할 수 없고 `--attach-node`, `--upgrade-node` 같은 다른 명령과 함께 사용할 수도 없다.
+`--dbs-path`는 `--add-node`로 Broker 또는 Warehouse를 추가할 때만 사용할 수 있습니다. Lookup, Coordinator, Deployer 노드에는 사용할 수 없고 `--attach-node`, `--upgrade-node` 같은 다른 명령과 함께 사용할 수도 없습니다.
 
-`--dbs-path` 값은 `/` 또는 `?`로 시작해야 한다. 줄바꿈, 탭, 끝 공백은 허용되지 않는다. `/`, `/etc`, `/usr`, `/home`, `/bin`처럼 시스템 경로 자체를 직접 지정하는 값은 거부된다. `/home/machbase/warehouse_a1_dbs`처럼 시스템 경로 아래의 실제 데이터 디렉터리는 별도 디렉터리로 지정할 수 있다.
+`--dbs-path` 값은 `/` 또는 `?`로 시작해야 합니다. 줄바꿈, 탭, 끝 공백은 허용되지 않습니다. `/`, `/etc`, `/usr`, `/home`, `/bin`처럼 시스템 경로 자체를 직접 지정하는 값은 거부됩니다. `/home/machbase/warehouse_a1_dbs`처럼 시스템 경로 아래의 실제 데이터 디렉터리는 별도 디렉터리로 지정할 수 있습니다.
 
-절대 경로를 custom `DBS_PATH`로 지정하면 노드 추가 시점에 해당 디렉터리가 존재하지 않아야 한다. Deployer가 `machadmin -c` 실행 전에 디렉터리를 생성한다. 이미 존재하면 `DBS_PATH already exists` 오류로 노드 추가가 실패한다. `--dbs-path`를 생략하면 Broker/Warehouse 설정에는 기본값 `DBS_PATH = ?/dbs`가 기록된다. Broker/Warehouse를 `--remove-node`로 삭제할 때 명시적인 절대 경로 `DBS_PATH`는 노드 home 경로와 별도로 정리된다.
+절대 경로를 custom `DBS_PATH`로 지정하면 노드 추가 시점에 해당 디렉터리가 존재하지 않아야 합니다. Deployer가 `machadmin -c` 실행 전에 디렉터리를 생성합니다. 이미 존재하면 `DBS_PATH already exists` 오류로 노드 추가가 실패합니다. `--dbs-path`를 생략하면 Broker/Warehouse 설정에는 기본값 `DBS_PATH = ?/dbs`가 기록됩니다. Broker/Warehouse를 `--remove-node`로 삭제할 때 명시적인 절대 경로 `DBS_PATH`는 노드 home 경로와 별도로 정리됩니다.
 
 
 ## 노드 정보 목록 출력

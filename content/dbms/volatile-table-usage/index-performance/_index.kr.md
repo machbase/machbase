@@ -4,7 +4,7 @@ weight: 60
 toc: true
 ---
 
-VOLATILE 테이블의 인덱스 생성 방법과 지원되는 인덱스 유형을 정리한다.
+VOLATILE 테이블의 인덱스 생성 방법과 지원되는 인덱스 유형을 정리합니다.
 
 
 <a id="original-85-volatile-indexes"></a>

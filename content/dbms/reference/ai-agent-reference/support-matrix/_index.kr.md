@@ -42,8 +42,8 @@ weight: 40
 | BASETIME 컬럼 | O | - | - | - | - |
 
 > ¹ TAG 테이블 UPDATE: data UPDATE는 태그 선택 조건(`name =`, `name IN`, `name LIKE`)과
-> BASETIME 조건이 모두 필요하다. SET 대상은 실제 데이터 컬럼이며, PK(`name`), BASETIME,
-> 메타데이터 컬럼은 data UPDATE로 수정할 수 없다. 메타데이터는 `UPDATE ... METADATA`를 사용한다.
+> BASETIME 조건이 모두 필요합니다. SET 대상은 실제 데이터 컬럼이며, PK(`name`), BASETIME,
+> 메타데이터 컬럼은 data UPDATE로 수정할 수 없습니다. 메타데이터는 `UPDATE ... METADATA`를 사용합니다.
 
 ## SDK × 주요 기능 지원표
 
