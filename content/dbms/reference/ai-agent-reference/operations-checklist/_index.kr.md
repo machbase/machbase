@@ -2,6 +2,7 @@
 type: docs
 title: '17.10.10 operations-checklist'
 weight: 100
+toc: true
 ---
 
 이 페이지는 AI 에이전트가 Machbase 운영 상태를 진단하거나 운영 관련 질문에 답할 때 참조하는 체크리스트입니다.

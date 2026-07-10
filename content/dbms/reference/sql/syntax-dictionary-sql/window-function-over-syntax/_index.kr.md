@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.1.6 window function / OVER syntax'
 weight: 60
+toc: true
 ---
 
 윈도우 함수(Window Function)는 결과 행을 그룹으로 축소하지 않고 각 행에 대해 집계 또는 순위 계산을 수행하는 함수입니다. `OVER()` 절을 사용해 계산 범위(윈도우)를 정의합니다.

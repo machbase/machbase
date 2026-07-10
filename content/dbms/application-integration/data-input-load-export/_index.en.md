@@ -1,7 +1,8 @@
 ---
 type: docs
 title: '11.7 Data Input and Export'
-weight: 960
+weight: 70
+toc: true
 ---
 
 
@@ -30,9 +31,9 @@ weight: 960
 
 ### APPEND
 
-<a id="sql-load-data-infile-fastload"></a>
+<a id="sql-load-data-infile"></a>
 
-### LOAD DATA INFILE / fastload
+### LOAD DATA INFILE
 
 <a id="file"></a>
 

@@ -80,4 +80,4 @@ SELECT * FROM m$sys_grant_tables WHERE grantee = 'APP_USER';
 
 ## 상세 레퍼런스
 
-권한 모델 전체 설명과 예제는 [권한 관리](/dbms/security-access-control/privileges/) 섹션을 참고하세요.
+권한 모델 전체 설명과 예제는 [권한 관리](/dbms/security-access-control/privileges/) 섹션을 참고하십시오.

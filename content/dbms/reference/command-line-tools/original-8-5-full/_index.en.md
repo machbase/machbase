@@ -2,6 +2,7 @@
 type: docs
 title: '17.4.10 Complete Command-Line Tools Reference'
 weight: 95
+toc: true
 tocSort: true
 ---
 
@@ -720,7 +721,8 @@ The features of machloader are as follows.
 * machloader supports APPEND mode by default.
 * machloader does not use the `_ARRIVAL_TIME` column by default. You must use the "-a" option to import/export the corresponding column data.
 
-For supported date/time formatting tokens, see [TO_CHAR](/dbms/reference/sql/dictionary/#to_char).
+For supported date/time formatting tokens, see
+[TO_CHAR](/dbms/reference/sql/dictionary/functions-full/#to_char).
 
 The options for machloader can be seen with the following command:
 
@@ -1063,7 +1065,8 @@ The options have been simplified for simpler use of the CSV file using the machl
 
 In addition to the options described below, all options available in machloader are available.
 
-For supported date/time formatting tokens, see [TO_CHAR](/dbms/reference/sql/dictionary/#to_char).
+For supported date/time formatting tokens, see
+[TO_CHAR](/dbms/reference/sql/dictionary/functions-full/#to_char).
 
 ## Common Wrapper Options
 

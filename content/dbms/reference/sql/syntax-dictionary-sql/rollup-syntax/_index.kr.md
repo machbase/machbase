@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.1.16 ROLLUP syntax'
 weight: 160
+toc: true
 ---
 
 ROLLUP은 TAG 테이블의 시계열 데이터를 지정한 시간 단위로 자동 집계하는 기능입니다. 백그라운드 스레드가 주기적으로 집계를 수행하며, 결과는 내부 ROLLUP 테이블에 저장됩니다.

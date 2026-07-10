@@ -2,6 +2,7 @@
 type: docs
 title: '13.5 STREAM 자동 처리'
 weight: 50
+toc: true
 ---
 STREAM은 데이터 변환·이동·처리를 자동화하는 기능입니다. 원본 테이블에 새로 입력된 데이터를 감지해 사전 정의된 쿼리를 자동 실행하고, 결과를 대상 테이블에 저장합니다.
 
@@ -543,7 +544,7 @@ STREAM의 소스(`FROM` 대상)는 반드시 LOG 테이블이어야 합니다.
 
 #### 동시 실행 STREAM 수
 
-서버당 동시에 실행 가능한 STREAM 수는 시스템 설정에 따라 달라집니다. 운영 중 STREAM이 많아지면 각 STREAM의 `LAST_ELAPSED_MSEC`를 모니터링해 부하를 확인하세요.
+서버당 동시에 실행 가능한 STREAM 수는 시스템 설정에 따라 달라집니다. 운영 중 STREAM이 많아지면 각 STREAM의 `LAST_ELAPSED_MSEC`를 모니터링해 부하를 확인하십시오.
 
 #### STREAM과 ROLLUP 비교
 

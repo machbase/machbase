@@ -45,7 +45,7 @@ JDBC/ODBC 등 지원 드라이버를 통해 접근합니다.
 
 `AUTO_INCREMENT` 사용법은 [AUTO_INCREMENT](/dbms/rdb-table-usage/auto-increment/), upsert는
 [INSERT ON DUPLICATE KEY UPDATE](/dbms/rdb-table-usage/insert-on-duplicate-key-update/), Append
-동작은 [Append API 지원 범위](/dbms/rdb-table-usage/sdk-append-scope/)를 참고하세요.
+동작은 [Append API 지원 범위](/dbms/rdb-table-usage/sdk-append-scope/)를 참고하십시오.
 
 ## RDB 테이블 생성 예시
 
@@ -82,7 +82,7 @@ Cluster Edition에서 RDB 테이블 생성 시 오류가 발생합니다.
 [Error] RDB table is not supported in Cluster Edition.
 ```
 
-RDB 테이블이 필요한 경우 Standard Edition을 사용하거나, 트랜잭션 데이터를 외부 RDBMS(PostgreSQL, MySQL 등)에 저장하고 Machbase에서 JOIN 또는 REST API로 연동하는 방식을 검토하세요.
+RDB 테이블이 필요한 경우 Standard Edition을 사용하거나, 트랜잭션 데이터를 외부 RDBMS(PostgreSQL, MySQL 등)에 저장하고 Machbase에서 JOIN 또는 REST API로 연동하는 방식을 검토하십시오.
 
 ## 다른 테이블 유형과 JOIN
 

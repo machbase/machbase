@@ -9,7 +9,7 @@ toc: true
 ## machgo
 
 
-## 개요
+## machgo 개요
 
 `machgo` 패키지는 Machbase 네이티브 프로토콜에 접근하기 위한 순수 Go 클라이언트입니다.
 `machcli`와 동일한 API 스타일을 제공하면서 CGo 의존성이 없습니다.
@@ -28,7 +28,7 @@ toc: true
 - **Go 1.22+**: 최신 Go 버전 권장
 - **네트워크 접근**: 네이티브 포트(기본 `5656`) 접근 가능
 
-## 시작하기
+## machgo 시작하기
 
 ### 설치
 
@@ -154,7 +154,7 @@ defer connB.Close()
 기본값은 `1000`입니다.
 
 {{< callout type="warning" >}}
-워크로드 검증 없이 `FetchRows` 값을 과도하게 크게 또는 작게 설정하지 마세요.
+워크로드 검증 없이 `FetchRows` 값을 과도하게 크게 또는 작게 설정하지 마십시오.
 네트워크 레이턴시와 쿼리 특성에 따라 부적절한 값은 급격한 성능 저하와 메모리 소비 증가를 유발할 수 있습니다.
 {{< /callout >}}
 
@@ -172,7 +172,7 @@ defer connC.Close()
 ```
 
 {{< callout type="warning" >}}
-리소스 해제를 위해 연결에는 항상 `Close()`를 호출하세요.
+리소스 해제를 위해 연결에는 항상 `Close()`를 호출하십시오.
 {{< /callout >}}
 
 ## 데이터베이스 작업
@@ -298,8 +298,8 @@ if flusher, ok := apd.(api.Flusher); ok {
 ```
 
 {{< callout type="warning" >}}
-활성 appender를 사용하는 연결에서 일반 쿼리를 함께 실행하지 마세요.
-append 워크로드에는 별도 연결을 사용하세요.
+활성 appender를 사용하는 연결에서 일반 쿼리를 함께 실행하지 마십시오.
+append 워크로드에는 별도 연결을 사용하십시오.
 {{< /callout >}}
 
 ## 전체 예제
@@ -393,11 +393,11 @@ func main() {
 ## Go database/sql 드라이버
 
 
-## 개요
+## database/sql 개요
 `github.com/machbase/neo-client` 패키지는 Machbase용 표준 Go `database/sql` 드라이버를 제공합니다.
 이 드라이버는 네이티브 TCP 클라이언트를 기반으로 하며, 네이티브 포트(기본 `5656`)를 사용합니다.
 
-애플리케이션이나 프레임워크가 Go의 `database/sql` 인터페이스를 요구한다면 이 드라이버를 사용하세요.
+애플리케이션이나 프레임워크가 Go의 `database/sql` 인터페이스를 요구한다면 이 드라이버를 사용하십시오.
 `database/sql` 호환이 필요 없는 신규 코드라면 일반적으로 `machgo`가 더 적합합니다.
 
 ### 사전 요구사항
@@ -406,7 +406,7 @@ func main() {
 - **Go 1.22+**: `github.com/machbase/neo-client`에서 요구
 - **계정 정보**: 유효한 Machbase 사용자 계정
 
-## 시작하기
+## database/sql 시작하기
 
 ### 설치
 

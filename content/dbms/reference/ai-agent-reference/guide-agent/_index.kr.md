@@ -2,6 +2,7 @@
 type: docs
 title: '17.10.1 Agent 사용 가이드'
 weight: 10
+toc: true
 ---
 
 이 가이드는 AI 에이전트가 Machbase AI Agent Reference를 활용하여 사용자 질문에 정확하게 답변하는 방법을 안내합니다.
@@ -38,11 +39,11 @@ weight: 10
 - Machbase "Append"는 SQL INSERT와 다른 전용 API입니다. [terminology-disambiguation](../terminology-disambiguation/) 참고.
 - Machbase "ROLLUP"은 SQL `GROUP BY ROLLUP`이 아닌 시계열 집계 기능입니다.
 - TAG 테이블 조회 시 `FROM TAG TABLE` 문법이 필요합니다.
-- 계획 중인 기능(planned)은 현재 미지원임을 사용자에게 명시하세요.
+- 계획 중인 기능(planned)은 현재 미지원임을 사용자에게 명시하십시오.
 
 ## 불확실한 경우
 
-답변이 불확실한 경우 아래 공식 레퍼런스를 안내하세요.
+답변이 불확실한 경우 아래 공식 레퍼런스를 안내하십시오.
 
 - 공식 문서: `/dbms/` 경로 하위 각 섹션
 - SQL 레퍼런스: `/dbms/reference/sql/`

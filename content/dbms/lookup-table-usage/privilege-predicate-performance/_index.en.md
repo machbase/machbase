@@ -1,69 +1,19 @@
 ---
-title: '9.15 LOOKUP Privileges and Predicate DML Performance'
-weight: 150
+title: '9.14 LOOKUP Privileges and DML Performance'
+weight: 140
 toc: true
 ---
-English structure placeholder. Korean content is authoritative for this restructuring pass.
 
+This page mirrors the Korean chapter structure. Detailed English content will be aligned after the Korean
+manual is finalized.
 
 <a id="privileges-lookup-update-delete-target-select"></a>
 
-## LOOKUP UPDATE/DELETE 권한
+## LOOKUP UPDATE and DELETE Privileges
 
 <a id="performance-considerations-lookup-predicate-dml"></a>
 
-## LOOKUP Predicate DML Performance Considerations
+## DML Performance Considerations
 
-LOOKUP `UPDATE`/`DELETE` with a primary-key condition uses the primary-key hash
-path. General-predicate `UPDATE`/`DELETE` first identifies matching rows and
-then applies the change, so wide predicates can cost more than single-row
-primary-key operations.
-
-### Recommended Patterns
-
-#### 1. Use the primary key for single-row changes
-
-```sql
-UPDATE device_meta
-SET status = 'ACTIVE'
-WHERE device_id = 'DEV-001';
-
-DELETE FROM device_meta
-WHERE device_id = 'DEV-001';
-```
-
-#### 2. Check the target range before bulk changes
-
-```sql
-SELECT COUNT(*)
-FROM device_meta
-WHERE location = 'Building-A'
-  AND status = 'INACTIVE';
-
-UPDATE device_meta
-SET status = 'RETIRED'
-WHERE location = 'Building-A'
-  AND status = 'INACTIVE';
-```
-
-#### 3. Use typed functions for JSON predicates
-
-```sql
-UPDATE device_meta
-SET meta = JSON_SET(meta, '$.state', 'active')
-WHERE meta->'$.region' = 'kr'
-  AND JSON_EXTRACT_INTEGER(meta, '$.level') >= 3;
-```
-
-For numeric comparisons, prefer typed functions such as `JSON_EXTRACT_INTEGER`
-and `JSON_EXTRACT_DOUBLE` instead of `->`.
-
-### Summary
-
-| DML type | Behavior | Recommended use |
-|----------|----------|-----------------|
-| Primary-key UPDATE/DELETE | Primary-key hash path | Single-row or clearly identified rows |
-| Non-PK predicate UPDATE/DELETE | Finds matching rows and applies the change | Small or medium batch changes; count first |
-| JSON path predicate DML | Includes JSON path evaluation cost | Extract frequently searched values into regular columns |
-
-Keep LOOKUP tables small and scoped to reference-data use cases.
+LOOKUP UPDATE and conditional DELETE use a primary-key equality predicate. A DELETE statement without a
+WHERE clause removes all rows.

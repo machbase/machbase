@@ -2,6 +2,7 @@
 type: docs
 title: '13.5 STREAM Automation'
 weight: 50
+toc: true
 ---
 
 

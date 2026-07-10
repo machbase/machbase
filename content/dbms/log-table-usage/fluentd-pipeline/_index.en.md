@@ -8,7 +8,7 @@ English structure placeholder. Korean content is authoritative for this restruct
 
 <a id="pipeline-fluentd"></a>
 
-## Fluentd 입력 파이프라인 안내 (상세는 8장으로 연결)
+## Fluentd 입력 파이프라인 안내 (상세는 11장으로 연결)
 
 <a id="log-logs-pipeline-connection-fluentd"></a>
 

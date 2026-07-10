@@ -2,6 +2,7 @@
 type: docs
 title: '17.2.6 Complete Configuration Reference'
 weight: 95
+toc: true
 tocSort: true
 ---
 
@@ -2161,7 +2162,8 @@ Sets the total amount of memory usage for all volatile and lookup tables in the 
 
 
 
-Separate from [Property](/dbms/reference/configuration/#property), Property (Cluster) organizes the Property only available in Cluster Edition.
+Separate from the [Standard Edition property dictionary](/dbms/reference/configuration/dictionary-configuration/),
+Property (Cluster) organizes properties available only in Cluster Edition.
 
 # Index
 

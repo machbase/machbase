@@ -2,6 +2,7 @@
 type: docs
 title: '12.7 스토리지와 Cluster 튜닝'
 weight: 70
+toc: true
 ---
 입력과 대용량 범위 조회에서는 디스크 I/O가 병목이 될 수 있습니다. 스토리지 지연과 처리량을
 측정하고 Cluster Edition의 노드별 I/O 부하를 확인하는 방법을 다룹니다.
@@ -25,7 +26,7 @@ Machbase는 컬럼형 스토리지 구조를 사용합니다. Append된 데이�
 
 **SSD를 우선 검토하는 경우**
 
-- 초당 10만 건 이상 Append가 발생하는 환경
+- 지속적인 Append와 범위 조회가 동시에 발생하는 환경
 - 여러 테이블을 동시에 쓰고 읽는 혼합 워크로드
 - Cluster Edition에서 Warehouse 역할을 담당하는 호스트
 

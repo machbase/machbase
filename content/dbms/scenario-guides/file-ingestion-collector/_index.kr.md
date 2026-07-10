@@ -2,6 +2,7 @@
 type: docs
 title: '15.5 Collector로 파일/소켓 데이터 수집하기'
 weight: 70
+toc: true
 ---
 
 ## 시나리오 개요
@@ -328,7 +329,7 @@ COLLECTOR_OFFLINE_BUFFER_SIZE   = 1024   # MB
 
 큐가 지속적으로 가득 차는 경우 단계별로 조치합니다.
 
-1. **배치 크기 증가:** `COLLECTOR_BATCH_SIZE`를 2~5배 늘립니다.
+1. **배치 크기 조정:** `COLLECTOR_BATCH_SIZE`를 한 단계씩 늘리고 메모리와 flush 지연을 확인합니다.
 2. **병렬 스레드 추가:** `COLLECTOR_WORKER_THREADS`를 단계적으로 늘립니다.
 3. **flush 주기 조정:** 가능하면 `COLLECTOR_FLUSH_INTERVAL`을 늘려 I/O 횟수를 줄입니다.
 4. **소스 전송 속도 제한:** 데이터 소스 측에서 전송 속도를 제한합니다.

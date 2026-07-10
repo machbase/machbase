@@ -74,4 +74,4 @@ curl -u SYS:MANAGER \
 
 ## 상세 레퍼런스
 
-REST API 전체 엔드포인트 목록, 요청/응답 형식, 에러 코드는 [REST API 레퍼런스](/dbms/reference/rest-api/)를 참고하세요.
+REST API 전체 엔드포인트 목록, 요청/응답 형식, 에러 코드는 [REST API 레퍼런스](/dbms/reference/rest-api/)를 참고하십시오.

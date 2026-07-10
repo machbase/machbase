@@ -7,7 +7,7 @@ toc: true
 
 DDL(Data Definition Language)은 테이블, 인덱스, 뷰, 롤업 등 데이터베이스 객체를 생성·수정·삭제하는 구문입니다.
 
-> **권한**: 일반 사용자가 DDL을 실행하려면 `GRANT DDL ON machbasedb TO user_name;` 또는 `GRANT CREATE ON machbasedb TO user_name;`이 필요합니다. 자세한 내용은 [GRANT/REVOKE](../user-auth-syntax/#grant-revoke)를 참고하세요.
+> **권한**: 일반 사용자가 DDL을 실행하려면 `GRANT DDL ON machbasedb TO user_name;` 또는 `GRANT CREATE ON machbasedb TO user_name;`이 필요합니다. 자세한 내용은 [GRANT/REVOKE](../user-auth-syntax/#grant-revoke)를 참고하십시오.
 
 ## CREATE TABLE
 

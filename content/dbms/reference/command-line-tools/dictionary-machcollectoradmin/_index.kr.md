@@ -2,6 +2,7 @@
 type: docs
 title: '17.4.6 machcollectoradmin 명령/옵션 사전'
 weight: 60
+toc: true
 ---
 
 `machcollectoradmin`은 Machbase Collector 프로세스를 관리하는 도구입니다. Collector는 외부 데이터 소스에서 Machbase로 데이터를 수집하는 역할을 합니다.
@@ -70,7 +71,7 @@ machcollectoradmin --list
 
 Collector의 동작은 `$MACHBASE_COLLECTOR_HOME/conf/` 디렉토리의 설정 파일로 제어합니다. 소스 플러그인 설정에 따라 수집 대상과 방식이 결정됩니다.
 
-설정 파일에 대한 자세한 내용은 [Collector 레퍼런스](../../collector/)를 참고하세요.
+설정 파일에 대한 자세한 내용은 [Collector 레퍼런스](../../collector/)를 참고하십시오.
 
 ## 사용 예시
 

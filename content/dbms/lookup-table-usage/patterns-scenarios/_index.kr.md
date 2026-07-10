@@ -127,7 +127,7 @@ VALUES (NEXTVAL(seq), 'TEMP-01', 'threshold changed', NOW);
 
 ## 부적합한 경우
 
-- 건수가 수백만 건을 초과하는 대용량 데이터 → RDB 테이블 권장
+- 명시적 트랜잭션과 일반 관계형 DML이 필요한 데이터 → RDB 테이블 권장
 - UPDATE 불필요한 추가 전용 이력 → LOG 테이블 권장
 - 센서 계측값 → TAG 테이블 권장
 - 재시작 후 사라져도 되는 최신 상태 캐시 → VOLATILE 테이블 권장

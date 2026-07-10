@@ -160,7 +160,8 @@ UPDATE sensor_tag METADATA
 ### 태그 수 제한
 
 - 단일 TAG 테이블에 생성 가능한 태그 수는 시스템 설정에 따라 제한됩니다.
-- 태그 수가 수십만 개를 초과하면 조회 성능이 저하됩니다.
+- 태그 수가 늘면 태그 인덱스와 메타데이터의 메모리 사용량도 증가하므로 운영 규모의 데이터로
+  조회와 입력 성능을 측정합니다.
 - 태그 이름이 레코드마다 고유한 값이 되도록 설계하면 안 됩니다 (안티패턴 — [센서별 테이블 생성](/dbms/data-modeling-table-design/table-types-patterns-type-anti/#per-sensor-create) 참고).
 
 ### 시간 역삽입 제한

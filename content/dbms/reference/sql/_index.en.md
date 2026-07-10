@@ -2,6 +2,7 @@
 type: docs
 title: '17.1 SQL 레퍼런스'
 weight: 10
+toc: true
 ---
 
 Machbase SQL reference covers syntax, functions, data types, query hints, and

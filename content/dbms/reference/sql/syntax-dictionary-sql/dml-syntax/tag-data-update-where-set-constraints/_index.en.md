@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.1.10.2 TAG data UPDATE WHERE/SET constraints'
 weight: 20
+toc: true
 ---
 
 TAG data UPDATE must have a clear target range. The WHERE clause requires both a

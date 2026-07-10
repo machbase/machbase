@@ -97,7 +97,7 @@ Executed successfully.
 - `SHORT`
 - `USHORT`
 
-> **제한 사항**: 거리축 Tag 테이블은 `WITH ROLLUP`을 지원하지 않습니다. 자세한 내용은 [집계용 롤업 테이블](/dbms/tag-rollup-usage/overview-use-criteria/#original-85-rollup-tables)을 참고하세요.
+> **제한 사항**: 거리축 Tag 테이블은 `WITH ROLLUP`을 지원하지 않습니다. 자세한 내용은 [집계용 롤업 테이블](/dbms/tag-rollup-usage/overview-use-criteria/#original-85-rollup-tables)을 참고하십시오.
 
 ### 추가 센서 컬럼 추가
 

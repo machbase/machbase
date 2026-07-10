@@ -2,6 +2,7 @@
 type: docs
 title: '17.6.3 /machiot TAG/Datapoints API'
 weight: 30
+toc: true
 ---
 
 `/machiot` 엔드포인트는 TAG 테이블의 태그 메타데이터, 시간 범위, 집계 통계,

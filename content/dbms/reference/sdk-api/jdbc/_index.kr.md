@@ -779,7 +779,7 @@ name: id-1, text: name-1, bin: aabbccddeeff, hexbin: 616162626363646465656666, v
 
 마크베이스 JDBC 드라이버는 대량 데이터를 빠르게 입력하기 위한 Append 프로토콜을 지원합니다.
 
-이전 예제의 sample_table을 그대로 사용합니다. 소스 파일명은 Sample4Append.java이며, data.txt의 내용을 sample_table에 입력합니다. 실행 전에 `make_data_file` target으로 data.txt를 생성하세요.
+이전 예제의 sample_table을 그대로 사용합니다. 소스 파일명은 Sample4Append.java이며, data.txt의 내용을 sample_table에 입력합니다. 실행 전에 `make_data_file` target으로 data.txt를 생성하십시오.
 
 ```java
 import java.util.*;

@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.3.7 전체 함수 레퍼런스'
 weight: 70
+toc: true
 tocSort: true
 ---
 
@@ -1345,7 +1346,8 @@ MAX(c)
 
 ## MEDIAN {#median}
 
-`MEDIAN(value)`는 숫자식의 정확한 중앙값을 반환합니다. 현재 구현에서는 `PERCENTILE_CONT(value, 0.5)`와 같은 방식으로 동작합니다.
+`MEDIAN(value)`는 숫자식의 정확한 중앙값을 반환하며 `PERCENTILE_CONT(value, 0.5)`와 같은
+방식으로 동작합니다.
 
 ```sql
 MEDIAN(value)
@@ -1504,7 +1506,7 @@ INNER_RANK           NAME
 
 **정렬로 인한 결과 번호 변화**
 
-SELECT에 ORDER BY 절이 있으면 Target List의 ROWNUM() 결과가 순차적으로 부여되지 않을 수 있습니다. 이는 ROWNUM()이 ORDER BY보다 먼저 처리되기 때문입니다. 순차 번호가 필요하면 ORDER BY를 포함한 쿼리를 인라인 뷰로 만든 뒤, 외부 SELECT에서 ROWNUM()을 호출하세요.
+SELECT에 ORDER BY 절이 있으면 Target List의 ROWNUM() 결과가 순차적으로 부여되지 않을 수 있습니다. 이는 ROWNUM()이 ORDER BY보다 먼저 처리되기 때문입니다. 순차 번호가 필요하면 ORDER BY를 포함한 쿼리를 인라인 뷰로 만든 뒤, 외부 SELECT에서 ROWNUM()을 호출하십시오.
 
 ```sql
 Mach> CREATE TABLE rownum_table(c1 INTEGER, c2 DOUBLE, c3 VARCHAR(10));
@@ -1959,7 +1961,7 @@ format_string을 생략하면 기본값은 "YYYY-MM-DD HH24: MI: SS mmm: uuu: nn
 |MON|월을 3자리 영문 약어로 변환합니다. (예: JAN, FEB, MAY, ...)|
 |DD|일을 2자리 숫자로 변환합니다.|
 |DAY|요일을 3자리 영문 약어로 변환합니다. (예: SUN, MON, ...)|
-|IW|ISO 8601 규칙에 따라 특정 연도의 주차를 1~53으로 변환합니다(요일 고려).<br> - 한 주의 시작은 월요일입니다.<br> - 첫 주는 전년도 마지막 주로 간주될 수 있습니다. 마찬가지로 마지막 주는 다음 해의 첫 주로 간주될 수 있습니다.<br>    자세한 내용은 ISO 8601을 참고하세요.|
+|IW|ISO 8601 규칙에 따라 특정 연도의 주차를 1~53으로 변환합니다(요일 고려).<br> - 한 주의 시작은 월요일입니다.<br> - 첫 주는 전년도 마지막 주로 간주될 수 있습니다. 마찬가지로 마지막 주는 다음 해의 첫 주로 간주될 수 있습니다.<br>    자세한 내용은 ISO 8601을 참고하십시오.|
 |WW|요일을 고려하지 않고 특정 연도의 주차를 1~53으로 변환합니다.<br>즉, 1월 1일~1월 7일은 1로 변환됩니다.|
 |W|요일을 고려하지 않고 특정 월의 주차를 1~5로 변환합니다.<br>즉, 3월 1일~3월 7일은 1로 변환됩니다.|
 |HH|시간을 2자리 숫자로 변환합니다.|
@@ -2525,7 +2527,7 @@ TRUNC(i1, 2)                TRUNC(i1, -2)
 특정 컬럼 값의 변경 횟수를 구하는 집계 함수입니다.
 
 입력 데이터가 시간순으로 입력된다는 것을 보장할 수 없으므로 1) Join 또는 2) Inline view와 함께 사용할 수 없습니다.
-현재 버전은 varchar를 제외한 타입만 지원합니다.
+VARCHAR 타입은 지원하지 않습니다.
 
 * **Cluster Edition에서는 사용할 수 없습니다.**
 
@@ -3037,7 +3039,7 @@ MODE(value)
 - `value`는 숫자형이어야 합니다.
 - `NULL` 값은 무시합니다.
 - 최빈값이 여러 개면 더 작은 값을 반환합니다.
-- 현재 구현의 반환 타입은 `DOUBLE`입니다.
+- 반환 타입은 `DOUBLE`입니다.
 
 ```sql
 SELECT MODE(alarm_code)
@@ -3082,7 +3084,7 @@ PERCENTILE_DISC(value, ratio)
 - `ratio`는 `0.0` 이상 `1.0` 이하의 상수여야 합니다.
 - `PERCENTILE_CONT`는 필요하면 인접한 정렬 값 사이를 보간합니다.
 - `PERCENTILE_DISC`는 목표 순위에 해당하는 실제 관측값 중 하나를 선택합니다.
-- 현재 구현에서 두 함수 모두 반환 타입은 `DOUBLE`입니다.
+- 두 함수 모두 반환 타입은 `DOUBLE`입니다.
 
 ```sql
 SELECT PERCENTILE_CONT(latency_ms, 0.95) AS pcont95,
@@ -3101,7 +3103,7 @@ QUANTILE(value, ratio)
 - `value`는 숫자형이어야 합니다.
 - `ratio`는 `0.0` 이상 `1.0` 이하의 상수여야 합니다.
 - 반환 타입은 `DOUBLE`입니다.
-- 현재 구현에서는 `PERCENTILE_CONT`와 같은 연속 분위수 계열에 속합니다.
+- `PERCENTILE_CONT`와 같은 연속 분위수 의미를 사용합니다.
 
 ```sql
 SELECT QUANTILE(cpu_usage, 0.75)

@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.2.1 JSON Type Support by Table Type'
 weight: 10
+toc: true
 ---
 
 This page summarizes JSON type support by table type.

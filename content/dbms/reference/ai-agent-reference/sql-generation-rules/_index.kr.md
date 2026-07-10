@@ -36,11 +36,11 @@ ORDER BY time DESC LIMIT 1;
 
 ### 규칙 3: TAG 테이블 대량 삽입은 Append API 권장
 
-TAG 테이블에 데이터를 삽입할 때 SQL INSERT보다 Append API가 훨씬 빠릅니다. SDK별 Append 방법은 [sdk-api-selection-rules](../sdk-api-selection-rules/)를 참조하세요.
+TAG 테이블에 데이터를 삽입할 때 SQL INSERT보다 Append API가 훨씬 빠릅니다. SDK별 Append 방법은 [sdk-api-selection-rules](../sdk-api-selection-rules/)를 참조하십시오.
 
 ### 규칙 4: DATETIME 바인딩은 나노초 정수 사용
 
-Machbase의 `datetime` 타입은 내부적으로 나노초 단위 `int64`로 저장됩니다. 파라미터 바인딩 시 나노초 정수를 사용하세요.
+Machbase의 `datetime` 타입은 내부적으로 나노초 단위 `int64`로 저장됩니다. 파라미터 바인딩 시 나노초 정수를 사용하십시오.
 
 ```python
 # Python 예시: 나노초 타임스탬프 바인딩
@@ -74,7 +74,7 @@ WHERE time > ADD_TIME(sysdate, '0/0/0 0:-30:0');
 | ODBC/CLI | `?` | `SQLBindParameter(...)` |
 | REST API | 해당 없음 | URL 파라미터 또는 JSON body로 값 직접 포함 |
 
-> **주의**: Python machbaseAPI에서 `?`를 사용하면 오류가 발생합니다. 반드시 `%s` 또는 `%(name)s`를 사용하세요.
+> **주의**: Python machbaseAPI에서 `?`를 사용하면 오류가 발생합니다. 반드시 `%s` 또는 `%(name)s`를 사용하십시오.
 
 ## ROLLUP 조회 규칙
 

@@ -58,20 +58,8 @@ SET status = 'INACTIVE',
 WHERE sensor_id = 'TEMP-01';
 ```
 
-LOOKUP 테이블은 일반 조건식 기반 UPDATE도 사용할 수 있습니다. 조건에 맞는 모든 행이 변경되므로, 실행 전에 같은 조건으로 대상 건수를 확인합니다.
-
-```sql
-SELECT COUNT(*)
-FROM sensor_master
-WHERE site = 'SEOUL'
-  AND status = 'READY';
-
-UPDATE sensor_master
-SET status = 'ACTIVE',
-    updated_at = NOW
-WHERE site = 'SEOUL'
-  AND status = 'READY';
-```
+WHERE 절에는 Primary key equality 조건을 사용합니다. non-PK 조건이나 범위 조건을 사용하면
+`ERR-02190` 오류가 발생합니다.
 
 PRIMARY KEY 컬럼 자체는 변경하지 않는 것이 원칙입니다. 키를 바꿔야 하면 기존 행을 삭제하고 새 키로 다시 입력합니다.
 
@@ -118,15 +106,11 @@ DELETE FROM sensor_master
 WHERE sensor_id = 'TEMP-01';
 ```
 
-LOOKUP 테이블은 일반 조건식 기반 DELETE도 사용할 수 있습니다. 일괄 삭제 전에는 대상 건수를 먼저 확인합니다.
+WHERE 절이 있는 DELETE에는 Primary key equality 조건을 사용합니다. 모든 행을 삭제하려면
+WHERE 절을 생략합니다.
 
 ```sql
-SELECT COUNT(*)
-FROM sensor_master
-WHERE status = 'RETIRED';
-
-DELETE FROM sensor_master
-WHERE status = 'RETIRED';
+DELETE FROM sensor_master;
 ```
 
 <a id="mutation-lookup-checklist"></a>
@@ -134,7 +118,7 @@ WHERE status = 'RETIRED';
 ## 변경 작업 체크리스트
 
 - 단건 변경은 PRIMARY KEY 조건을 사용합니다.
-- 일괄 UPDATE/DELETE 전에는 `SELECT COUNT(*)`로 대상 범위를 확인합니다.
+- 모든 행을 삭제하기 전에는 백업 또는 재입력 원본을 확인합니다.
 - PRIMARY KEY 값 변경은 DELETE 후 INSERT로 처리합니다.
 - Append 중복 키 처리는 `LOOKUP_APPEND_UPDATE_ON_DUPKEY` 설정을 확인합니다.
 - 대량 변경 후 필요하면 `EXEC TABLE_REFRESH(table_name)`으로 참조 데이터를 갱신합니다.

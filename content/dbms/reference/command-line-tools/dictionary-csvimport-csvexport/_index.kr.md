@@ -2,6 +2,7 @@
 type: docs
 title: '17.4.4 csvimport / csvexport 명령/옵션 사전'
 weight: 40
+toc: true
 ---
 
 `csvimport`와 `csvexport`는 CSV 파일 전용 간편 가져오기/내보내기 래퍼 도구입니다. `machloader`의 CSV 관련 옵션을 단순화하여 제공하며, 아래에서 명시되지 않은 옵션은 `machloader`와 동일하게 사용할 수 있습니다.

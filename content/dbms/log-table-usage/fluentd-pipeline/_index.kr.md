@@ -49,13 +49,13 @@ Fluentd는 오픈소스 데이터 수집 에이전트로, 다양한 소스에서
 
 - Fluentd의 buffer 설정을 통해 배치 전송으로 성능을 높일 수 있습니다
 - `flush_interval`을 낮출수록 실시간성이 높아지지만 처리량이 감소할 수 있습니다
-- 고처리량이 필요하다면 여러 Fluentd worker를 병렬로 구성하세요
+- 고처리량이 필요하다면 여러 Fluentd worker를 병렬로 구성하십시오
 
 ### 상세 문서
 
-Fluentd Output Plugin 설치, 설정, 튜닝 방법은 다음 문서를 참고하세요.
+Fluentd Output Plugin 설치, 설정, 튜닝 방법은 다음 문서를 참고하십시오.
 
-> **[8장 애플리케이션 연동 → Fluentd](/dbms/application-integration/)** 에서 상세 내용을 다룹니다.
+> **[11장 애플리케이션 연동 → Fluentd](/dbms/application-integration/)** 에서 상세 내용을 다룹니다.
 
 <a id="log-logs-pipeline-connection-fluentd"></a>
 

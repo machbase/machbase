@@ -2,6 +2,7 @@
 type: docs
 title: '13.8 스키마 변경 체크리스트'
 weight: 80
+toc: true
 ---
 
 운영 중 스키마 변경 전에 아래 항목을 순서대로 확인합니다.
@@ -40,7 +41,7 @@ SELECT COUNT(*) FROM target_table;
 SELECT * FROM V$RETENTION_JOB WHERE TABLE_NAME = 'TARGET_TABLE';
 ```
 
-스키마 변경 전 Retention Policy가 실행 중이라면 완료 후 작업하세요.
+스키마 변경 전 Retention Policy가 실행 중이라면 완료 후 작업하십시오.
 
 ---
 

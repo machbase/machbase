@@ -20,7 +20,7 @@ toc: true
 
 ## 핵심 특성
 
-연동 코드를 작성하기 전에 아래 세 가지를 반드시 숙지하세요.
+연동 코드를 작성하기 전에 아래 세 가지를 반드시 숙지하십시오.
 
 **테이블 타입에 따른 트랜잭션 지원 차이**
 
@@ -29,11 +29,12 @@ UPDATE는 RDB 트랜잭션에 참여하지 않습니다.
 
 **시간 데이터는 내부적으로 UTC nanosecond**
 
-모든 시간 데이터는 UTC 기준 nanosecond 정수로 저장됩니다. 연결 시 timezone을 설정하지 않으면 조회 결과가 UTC로 표시되므로, 배포 지역에 맞는 timezone을 연결 옵션에서 지정하세요.
+모든 시간 데이터는 UTC 기준 nanosecond 정수로 저장됩니다. 연결 시 timezone을 설정하지 않으면 조회 결과가 UTC로 표시되므로, 배포 지역에 맞는 timezone을 연결 옵션에서 지정하십시오.
 
 **대용량 입력에는 Append API 사용**
 
-일반 INSERT는 행 단위 처리라 대용량 입력에 적합하지 않습니다. 초당 수천 건 이상의 쓰기가 예상된다면 Append API를 사용하세요.
+일반 INSERT를 반복하면 문장별 네트워크 왕복과 SQL 파싱 비용이 누적됩니다. 지속적인 대량 입력에는
+여러 행을 버퍼링하는 Append API를 우선 검토합니다.
 
 
 <a id="connection-string-authentication"></a>
@@ -51,7 +52,7 @@ UPDATE는 RDB 트랜잭션에 참여하지 않습니다.
 | 기본 사용자 | `SYS` | 관리자 계정 |
 | 기본 비밀번호 | `MANAGER` | 관리자 계정 초기 비밀번호 |
 
-> 운영 환경에서는 반드시 기본 비밀번호를 변경하고, 목적에 맞는 전용 계정을 생성해 사용하세요.
+> 운영 환경에서는 반드시 기본 비밀번호를 변경하고, 목적에 맞는 전용 계정을 생성해 사용하십시오.
 
 ### 인증 방식
 
@@ -74,7 +75,7 @@ WITH AUTH KEY (
 );
 ```
 
-AUTH KEY를 사용한 연결은 드라이버별 설정이 다릅니다. 자세한 설정은 [SDK별 AUTH KEY 지원 범위 안내](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-auth-key)를 참조하세요.
+AUTH KEY를 사용한 연결은 드라이버별 설정이 다릅니다. 자세한 설정은 [SDK별 AUTH KEY 지원 범위 안내](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-auth-key)를 참조하십시오.
 
 ### 드라이버별 연결 문자열 예시
 
@@ -170,7 +171,7 @@ curl -u SYS:MANAGER \
 
 ### Connection Pool 권장 설정
 
-단발성 연결을 반복하면 연결 수립 비용이 누적됩니다. 애플리케이션 서버에서는 반드시 connection pool을 사용하세요.
+단발성 연결을 반복하면 연결 수립 비용이 누적됩니다. 애플리케이션 서버에서는 반드시 connection pool을 사용하십시오.
 
 #### HikariCP (Java)
 
@@ -222,7 +223,7 @@ engine = create_engine(url, pool_pre_ping=True)
 
 ### 보안 권장사항
 
-비밀번호를 소스코드에 직접 기록하지 마세요. 환경 변수나 시크릿 관리 도구를 사용합니다.
+비밀번호를 소스코드에 직접 기록하지 마십시오. 환경 변수나 시크릿 관리 도구를 사용합니다.
 
 ```python
 import os
@@ -307,7 +308,7 @@ conn.Open();
 #### ODBC
 
 ODBC 연결 문자열에서 timezone을 설정할 수 있습니다. 드라이버별 옵션은 17장 레퍼런스를
-확인하세요.
+확인하십시오.
 
 ```c
 char connStr[] = "SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;PWD=MANAGER;"
@@ -563,11 +564,11 @@ SQLFreeStmt(stmt, SQL_DROP);
 
 ### Prepared statement 재사용 시 주의사항
 
-- `close()`를 너무 빨리 호출하지 마세요. 반복 실행이 끝난 후 닫습니다.
-- connection pool 환경에서는 connection이 반환될 때 statement도 함께 닫히는지 확인하세요. statement leak은 서버 리소스를 소진시킵니다.
+- `close()`를 너무 빨리 호출하지 마십시오. 반복 실행이 끝난 후 닫습니다.
+- connection pool 환경에서는 connection이 반환될 때 statement도 함께 닫히는지 확인하십시오. statement leak은 서버 리소스를 소진시킵니다.
 - TAG 테이블에 많은 양의 데이터를 입력할 때는 Prepared statement보다 [Append API](#append-api-batch)가 훨씬 효율적입니다.
 
-파라미터 바인딩의 상세 방법(DATETIME 타입, NULL 처리 등)은 [Parameter binding](/dbms/application-integration/concepts-common/#parameter-binding)을 참조하세요.
+파라미터 바인딩의 상세 방법(DATETIME 타입, NULL 처리 등)은 [Parameter binding](/dbms/application-integration/concepts-common/#parameter-binding)을 참조하십시오.
 
 <a id="parameter-binding"></a>
 
@@ -625,7 +626,7 @@ SQLBindParameter(stmt, 2, SQL_PARAM_INPUT,
 
 #### JDBC
 
-JDBC에서는 `setLong()`으로 nanosecond 정수를 직접 바인딩하거나, `setTimestamp()`로 `java.sql.Timestamp`를 사용할 수 있습니다. `setTimestamp()`는 millisecond 해상도이므로 nanosecond 정밀도가 필요하면 `setLong()`을 사용하세요.
+JDBC에서는 `setLong()`으로 nanosecond 정수를 직접 바인딩하거나, `setTimestamp()`로 `java.sql.Timestamp`를 사용할 수 있습니다. `setTimestamp()`는 millisecond 해상도이므로 nanosecond 정밀도가 필요하면 `setLong()`을 사용하십시오.
 
 ```java
 // nanosecond 정수로 바인딩 (권장: 정밀도 손실 없음)
@@ -760,7 +761,7 @@ cmd.ExecuteNonQuery();
 
 ### 타입 변환 주의사항
 
-타입 불일치 시 암묵적 변환을 시도하지만 정밀도 손실이 발생할 수 있습니다. 특히 다음 경우에 주의하세요.
+타입 불일치 시 암묵적 변환을 시도하지만 정밀도 손실이 발생할 수 있습니다. 특히 다음 경우에 주의하십시오.
 
 | 상황 | 권장 처리 |
 |------|-----------|
@@ -768,13 +769,13 @@ cmd.ExecuteNonQuery();
 | VARCHAR → BIGINT 자동 변환 | 명시적으로 올바른 타입을 사용할 것 |
 | DOUBLE → FLOAT 바인딩 | 정밀도 손실 가능, DOUBLE로 바인딩 권장 |
 
-타임존 관련 처리는 [타임존 연결 옵션](/dbms/application-integration/concepts-common/#timezone-connection)을 참조하세요.
+타임존 관련 처리는 [타임존 연결 옵션](/dbms/application-integration/concepts-common/#timezone-connection)을 참조하십시오.
 
 <a id="transaction"></a>
 
 ## 트랜잭션 처리 (RDB 및 SDK별 지원 범위 분리)
 
-테이블 유형에 따라 트랜잭션 지원 범위가 다릅니다. 애플리케이션 설계 시 반드시 확인하세요.
+테이블 유형에 따라 트랜잭션 지원 범위가 다릅니다. 애플리케이션 설계 시 반드시 확인하십시오.
 
 ### 테이블 유형별 트랜잭션 지원
 
@@ -845,7 +846,7 @@ INSERT INTO sensor_tag (name, time, value) VALUES ('s01', NOW, 25.0);
 ROLLBACK;
 ```
 
-TAG/LOG 테이블에서 잘못 삽입된 데이터를 제거하려면 [DELETE 정책](/dbms/data-modeling-table-design/alter-data-mutation-policy/#policy-delete)을 참고하세요.
+TAG/LOG 테이블에서 잘못 삽입된 데이터를 제거하려면 [DELETE 정책](/dbms/data-modeling-table-design/alter-data-mutation-policy/#policy-delete)을 참고하십시오.
 
 ### SDK별 트랜잭션 지원 요약
 
@@ -864,7 +865,7 @@ TAG/LOG 테이블에서 잘못 삽입된 데이터를 제거하려면 [DELETE �
 임의 SQL을 연속 실행할 수 있는 SDK는 Node.js 예제처럼 `BEGIN`/`COMMIT`/`ROLLBACK`을 직접
 전송할 수 있습니다. 연결 풀이나 요청마다 연결이 바뀌는 API에서는 이 방식을 사용하지 않습니다.
 
-상세 SDK별 지원 범위는 [SDK별 transaction/prepare/bind 지원 범위](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-transaction-prepare-bind)를 참고하세요.
+상세 SDK별 지원 범위는 [SDK별 transaction/prepare/bind 지원 범위](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-transaction-prepare-bind)를 참고하십시오.
 
 <a id="append-api-batch"></a>
 
@@ -884,7 +885,7 @@ TAG/LOG 테이블에서 잘못 삽입된 데이터를 제거하려면 [DELETE �
 
 #### 동작 원리
 
-일반 SQL INSERT 대신 Append 전용 세션으로 행 데이터를 전송합니다. 내부 버퍼링, pending 응답 확인, 오류 확인 시점은 드라이버마다 다르므로 `flush`와 `close`의 정확한 의미는 각 드라이버 문서를 함께 확인하세요.
+일반 SQL INSERT 대신 Append 전용 세션으로 행 데이터를 전송합니다. 내부 버퍼링, pending 응답 확인, 오류 확인 시점은 드라이버마다 다르므로 `flush`와 `close`의 정확한 의미는 각 드라이버 문서를 함께 확인하십시오.
 
 ```
 애플리케이션
@@ -905,7 +906,7 @@ Machbase 서버
   처리되므로 batch 중 constraint 오류가 발생하면 해당 batch 전체를 롤백합니다.
 - **순서 보장 없음**: flush 단위 내에서 행 삽입 순서는 보장되지 않습니다.
 - **드라이버별 flush 의미**: 일부 드라이버는 미전송 데이터를 전송하고, 일부 드라이버는 이미 보낸 Append 데이터의 pending 응답을 확인합니다.
-- **명시적 종료 권장**: 애플리케이션 종료 전, 또는 일정 주기마다 드라이버가 제공하는 `flush`/`close` 절차를 호출하세요.
+- **명시적 종료 권장**: 애플리케이션 종료 전, 또는 일정 주기마다 드라이버가 제공하는 `flush`/`close` 절차를 호출하십시오.
 
 #### SDK별 Append API 지원 현황
 
@@ -923,15 +924,15 @@ Machbase 서버
 
 #### 언제 Append API를 써야 하는가
 
-아래 조건 중 하나라도 해당하면 Append API를 사용하세요.
+아래 조건 중 하나라도 해당하면 Append API를 우선 검토합니다.
 
-- 초당 1,000건 이상의 데이터를 입력해야 하는 경우
+- 지속적인 데이터 수집으로 반복 INSERT의 왕복과 파싱 비용이 누적되는 경우
 - 센서, 장비, IoT 디바이스에서 연속적으로 데이터가 수집되는 경우
 - 쓰기 성능이 병목이 되어 애플리케이션 전체 처리량이 저하되는 경우
 
-반대로 다음 경우에는 일반 INSERT를 사용하세요.
+반대로 다음 경우에는 일반 INSERT를 검토합니다.
 
-- 입력 빈도가 낮고 (초당 수십 건 이하) 데이터 무결성이 중요한 경우
+- 입력 빈도가 낮고 각 문장의 결과를 즉시 확인해야 하는 경우
 - 여러 RDB DML을 명시적 트랜잭션으로 묶어야 하는 경우
 - 에러 발생 시 어느 행에서 실패했는지 정확히 추적해야 하는 경우
 
@@ -1027,7 +1028,7 @@ pstmt.close();
 ### 요약: 입력 방법 선택 기준
 
 ```
-초당 1,000건 이상 or TAG/LOG 테이블 대량 입력
+지속적인 TAG/LOG 대량 입력
   → Append API
 
 RDB 여러 문 트랜잭션 필요

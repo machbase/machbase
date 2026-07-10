@@ -78,7 +78,7 @@ ROLLUP 조회에서 사용할 수 있는 집계 함수는 롤업 테이블에 �
 | min | 분(MIN) ROLLUP |
 | hour, day, week, month, year | 시(HOUR) ROLLUP |
 
-> time_unit이 `'day'`, `'week'`, `'month'`, `'year'`여도 HOUR ROLLUP에서 읽습니다. 원하는 단위로 클라이언트에서 추가 집계하거나, `DATE_TRUNC` 함수를 함께 사용하세요.
+> time_unit이 `'day'`, `'week'`, `'month'`, `'year'`여도 HOUR ROLLUP에서 읽습니다. 원하는 단위로 클라이언트에서 추가 집계하거나, `DATE_TRUNC` 함수를 함께 사용하십시오.
 
 ### 힌트: 특정 ROLLUP 강제 사용
 

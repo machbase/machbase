@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.1.10 DML syntax'
 weight: 100
+toc: true
 ---
 
 DML(Data Manipulation Language)은 테이블에 데이터를 삽입·수정·삭제하는 구문입니다.
@@ -12,12 +13,12 @@ DML(Data Manipulation Language)은 테이블에 데이터를 삽입·수정·삭
 |------|:---:|:---:|:------:|:--------:|:---:|
 | INSERT | O | O | O | O | O |
 | INSERT SELECT | O | - | O | O | O |
-| UPDATE | - | 메타만 | O | O | O |
-| DELETE | O(시간 범위) | O(시간/이름 조건) | O(PK 조건) | O(PK 조건) | O |
-| DELETE WHERE | - | O | O | O | O |
-| TRUNCATE | O | O | O | O | O |
+| UPDATE | - | O(태그/축 조건 또는 메타데이터) | O(PK 조건) | O(PK 조건) | O |
+| DELETE | O(보존 조건/전체) | O(시간/이름 조건) | O(PK 조건/전체) | O(PK 조건) | O |
+| DELETE WHERE | - | O(태그/축 조건) | O(PK equality) | O(PK equality) | O |
+| TRUNCATE | O | - | - | - | O |
 
-> LOG 테이블의 UPDATE는 지원하지 않습니다. 데이터 수정이 필요하면 LOOKUP 또는 VOLATILE 테이블을 사용하거나 RDB 테이블을 선택하세요.
+> LOG 테이블의 UPDATE는 지원하지 않습니다. 데이터 수정이 필요하면 LOOKUP 또는 VOLATILE 테이블을 사용하거나 RDB 테이블을 선택하십시오.
 
 ---
 
@@ -91,7 +92,7 @@ SELECT _arrival_time, id, name, value FROM sensor_log;
 주의사항:
 - `_ARRIVAL_TIME`을 명시하지 않으면 INSERT 실행 시점의 시간이 자동 입력됩니다.
 - VARCHAR 컬럼에서 삽입 값이 최대 길이를 초과하면 자동으로 잘라서 입력됩니다.
-- 실행 중 오류가 발생해도 롤백되지 않습니다.
+- LOG/TAG 입력은 RDB 트랜잭션의 ROLLBACK 대상이 아닙니다.
 
 ---
 
@@ -101,12 +102,13 @@ SELECT _arrival_time, id, name, value FROM sensor_log;
 update_stmt ::=
     'UPDATE' table_name [ 'METADATA' ]
     'SET' update_expr_list
-    'WHERE' predicate
+    [ 'WHERE' predicate ]
 
 update_expr_list ::= column_name '=' value ( ',' column_name '=' value )*
 ```
 
-LOOKUP 테이블은 기본 키 일치 조건과 일반 predicate 조건을 모두 지원합니다. VOLATILE 테이블은 기본 키 일치 조건을 사용합니다.
+RDB 테이블은 WHERE 절을 생략하면 모든 행을 수정합니다. LOOKUP과 VOLATILE 테이블은 기본 키
+일치 조건을 사용하고, TAG data UPDATE는 태그 선택자와 시간축 조건을 함께 사용합니다.
 
 ```sql
 -- LOOKUP 테이블 레코드 수정
@@ -115,12 +117,6 @@ UPDATE devices SET status = 'OFFLINE' WHERE device_id = 'dev-001';
 -- 여러 컬럼 동시 수정
 UPDATE devices SET ip = '10.0.0.1', status = 'ONLINE' WHERE device_id = 'dev-002';
 
--- LOOKUP 일반 predicate UPDATE
-UPDATE devices
-SET status = 'ACTIVE',
-    score = score + 1
-WHERE site = 'SEOUL'
-  AND status = 'READY';
 ```
 
 ### TAG data UPDATE
@@ -195,15 +191,14 @@ delete_where_stmt ::=
     'DELETE FROM' table_name 'WHERE' predicate
 ```
 
-LOOKUP 테이블은 기본 키 일치 조건과 일반 predicate 조건을 모두 지원합니다. VOLATILE 테이블은 기본 키 일치 조건을 사용합니다.
+LOOKUP과 VOLATILE 테이블은 기본 키 일치 조건을 사용합니다. LOOKUP 테이블은 WHERE 절을
+생략하여 모든 행을 삭제할 수도 있습니다.
 
 ```sql
 DELETE FROM devices WHERE device_id = 'dev-001';
 
--- LOOKUP 일반 predicate DELETE
-DELETE FROM devices
-WHERE status = 'EXPIRED'
-   OR updated_at < TO_DATE('2026-01-01 00:00:00');
+-- LOOKUP 전체 삭제
+DELETE FROM devices;
 ```
 
 ### DELETE (TAG 테이블)

@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.1.12 VIEW syntax'
 weight: 120
+toc: true
 ---
 
 VIEW는 `SELECT` 결과를 이름 있는 논리 객체로 저장해 재사용하는 기능입니다. 데이터를 별도로 저장하지 않으며, 조회 시 저장된 정의 SQL이 내부적으로 다시 전개되어 실행됩니다.

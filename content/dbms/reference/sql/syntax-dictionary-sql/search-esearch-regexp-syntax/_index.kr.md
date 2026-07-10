@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.1.3 SEARCH / ESEARCH / REGEXP syntax'
 weight: 30
+toc: true
 ---
 
 Machbase는 텍스트 데이터 검색을 위해 `SEARCH`, `ESEARCH`, `REGEXP` 세 가지 WHERE 절 연산자를 제공합니다. `SEARCH`와 `ESEARCH`는 KEYWORD 인덱스를 활용해 빠른 검색을 수행하고, `REGEXP`는 정규 표현식 기반의 패턴 매칭을 지원합니다.

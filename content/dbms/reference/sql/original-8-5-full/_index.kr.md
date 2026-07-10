@@ -143,7 +143,7 @@ Json은 "Key-Value" 쌍으로 구성된 데이터 객체를 텍스트 형식으�
 ## ddl
 
 
-> **참고**: Machbase 8.5 이상에서는 일반 사용자가 이 문서의 `CREATE`/`DROP` 계열 구문을 실행할 때 `MACHBASEDB`에 대한 데이터베이스 권한이 필요할 수 있습니다. 자세한 권한 부여 방법은 [사용자 관리](/dbms/reference/sql/syntax-dictionary-sql/user-auth-syntax/#grant-revoke)의 `GRANT/REVOKE`를 참고하세요.
+> **참고**: Machbase 8.5 이상에서는 일반 사용자가 이 문서의 `CREATE`/`DROP` 계열 구문을 실행할 때 `MACHBASEDB`에 대한 데이터베이스 권한이 필요할 수 있습니다. 자세한 권한 부여 방법은 [사용자 관리](/dbms/reference/sql/syntax-dictionary-sql/user-auth-syntax/#grant-revoke)의 `GRANT/REVOKE`를 참고하십시오.
 
 ## CREATE TABLE
 
@@ -457,7 +457,7 @@ DROP VIEW v_example;
 
 `CREATE OR REPLACE VIEW`, `DROP VIEW IF EXISTS`, `SHOW VIEWS`, `M$SYS_VIEWS`,
 성능/제한, Tag / `BINARY` 예제까지 포함한 전체 설명은 [VIEW](/dbms/reference/sql/syntax-dictionary-sql/view-syntax/) 문서를
-참조하세요.
+참조하십시오.
 
 ## DROP TABLE
 
@@ -770,7 +770,8 @@ alter table atest2 rename column id7 to id7_rename;
 alter_table_modify_stmt ::= 'ALTER TABLE' table_name 'MODIFY COLUMN' ( '(' column_name 'VARCHAR' '(' new_size ')' ')' | column_name ( 'NOT'? 'NULL' | 'SET' 'MINMAX_CACHE_SIZE' '=' value ) )
 ```
 
-이 구문은 테이블의 특정 컬럼의 속성을 변경하는 것입니다. 현재는 VARCHAR 타입의 컬럼 길이와 그외 타입에 대한 MINMAX CACHE 속성과 NOT NULL 제약조건을 수정하는 것이 가능합니다.
+이 구문은 테이블의 특정 컬럼 속성을 변경합니다. VARCHAR 컬럼 길이, MINMAX CACHE 속성과
+NOT NULL 제약조건을 수정할 수 있습니다.
 
 **VARCHAR SIZE**
 
@@ -1639,7 +1640,7 @@ WHERE id = 100;
 ```
 
 저장 VIEW의 생성, 삭제, 메타 조회, 성능/제약, Tag / `BINARY` 예제는 [VIEW](/dbms/reference/sql/syntax-dictionary-sql/view-syntax/)
-문서를 참조하세요.
+문서를 참조하십시오.
 
 ### 조인(INNER JOIN)
 
@@ -2629,7 +2630,7 @@ SELECT event_time - 250 AS event_time_minus_250ns
 ## 동작 및 제한 사항
 
 - 정밀도는 나노초까지 지원합니다. 64비트 범위를 넘으면 오버플로가 발생합니다.
-- 산술 연산은 일반 우선순위를 따릅니다. 괄호 → 곱셈/나눗셈 → 덧셈/뺄셈 순이며, 연산이 길어질 때는 괄호를 사용하세요.
+- 산술 연산은 일반 우선순위를 따릅니다. 괄호 → 곱셈/나눗셈 → 덧셈/뺄셈 순이며, 연산이 길어질 때는 괄호를 사용하십시오.
 - 인터벌 비교는 최종 `DATETIME` 값을 기준으로 이루어집니다. 인터벌 자체는 `ORDER BY` 절에서 사용할 수 없습니다.
 - 이 기능은 스탠더드 에디션에서 제공되며, 구버전 지원 여부는 릴리스 노트를 확인하십시오.
 
@@ -2644,7 +2645,7 @@ SELECT event_time - 250 AS event_time_minus_250ns
 
 ## 모범 사례
 
-- 팀 전체가 소문자 접미사를 사용하도록 표준화하세요.
+- 팀 전체가 소문자 접미사를 사용하도록 표준화하십시오.
 - 자주 쓰는 오프셋은 구성 테이블에 저장해 재사용과 감사에 활용합니다.
 - 복잡한 표현식에는 유지보수를 돕는 주석을 남깁니다(`-- subtract 1 business week`).
 - 리터럴을 동적으로 생성할 때는 잘못된 접미사가 주입되지 않도록 입력 값을 검증합니다.
@@ -2658,8 +2659,8 @@ SELECT event_time - 250 AS event_time_minus_250ns
 ## 자주 묻는 질문
 
 - **`ADD_TIME`과 함께 사용할 수 있나요?** 가능합니다. `ADD_TIME(now, '0/0/0 0:15:0') + 30s`처럼 함수와 리터럴을 연결할 수 있습니다.
-- **리터럴을 변수에 저장할 수 있나요?** 상대 시간 리터럴은 쿼리 실행 시 평가되므로 변수에 저장할 수 없습니다. 대신 반복해서 사용할 쿼리에 직접 포함시키세요.
-- **영업일 기준으로 계산하려면?** 상대 리터럴은 절대 시간 간격만 처리합니다. 영업일 계산은 애플리케이션 로직이나 캘린더 테이블을 활용하세요.
+- **리터럴을 변수에 저장할 수 있나요?** 상대 시간 리터럴은 쿼리 실행 시 평가되므로 변수에 저장할 수 없습니다. 대신 반복해서 사용할 쿼리에 직접 포함시키십시오.
+- **영업일 기준으로 계산하려면?** 상대 리터럴은 절대 시간 간격만 처리합니다. 영업일 계산은 애플리케이션 로직이나 캘린더 테이블을 활용하십시오.
 
 ## 참고 치트시트
 
@@ -2673,7 +2674,7 @@ TO_DATE('2024-01-01','YYYY-MM-DD') + 2w  날짜 값에 14일을 더함
 value + 250     `value`에 250나노초를 더함
 ```
 
-상대 시간 표현은 보조 함수 없이도 정밀하고 읽기 쉬운 시간 연산을 제공합니다. `WHERE` 절, 계산 컬럼, Projection, 프로시저 코드 등 표현식을 사용할 수 있는 어디에서나 활용해 Machbase 분석을 간결하고 유지보수하기 쉽게 만드세요.
+상대 시간 표현은 보조 함수 없이도 정밀하고 읽기 쉬운 시간 연산을 제공합니다. `WHERE` 절, 계산 컬럼, Projection, 프로시저 코드 등 표현식을 사용할 수 있는 어디에서나 활용해 Machbase 분석을 간결하고 유지보수하기 쉽게 만드십시오.
 
 ## user-manage
 
@@ -3393,7 +3394,7 @@ Dropped successfully.
 
 시스템 전역 자원을 관리하거나 설정을 변경할 때 사용하는 구문입니다.
 
-> **참고**: Machbase 8.5 이상에서는 일반 사용자가 `ALTER SYSTEM`을 실행하려면 `GRANT ALTER ON machbasedb TO user_name;` 형태의 권한이 필요합니다. 자세한 내용은 [사용자 관리](/dbms/reference/sql/syntax-dictionary-sql/user-auth-syntax/#grant-revoke)의 `GRANT/REVOKE`를 참고하세요.
+> **참고**: Machbase 8.5 이상에서는 일반 사용자가 `ALTER SYSTEM`을 실행하려면 `GRANT ALTER ON machbasedb TO user_name;` 형태의 권한이 필요합니다. 자세한 내용은 [사용자 관리](/dbms/reference/sql/syntax-dictionary-sql/user-auth-syntax/#grant-revoke)의 `GRANT/REVOKE`를 참고하십시오.
 
 ### KILL SESSION
 
@@ -4017,7 +4018,7 @@ SELECT id FROM t2;
 
 ## 지원되는 VIEW 형태
 
-현재 검증된 VIEW 형태는 다음과 같습니다.
+지원하는 VIEW 형태는 다음과 같습니다.
 
 * 단순 projection과 predicate
 * expression, 함수, 상수, `CASE`
@@ -4028,7 +4029,7 @@ SELECT id FROM t2;
 * `DISTINCT`
 * `UNION ALL`
 
-예를 들면 다음과 같은 VIEW가 모두 현재 구현 범위에서 검증되었습니다.
+예를 들면 다음과 같은 VIEW를 생성할 수 있습니다.
 
 ```sql
 CREATE VIEW v_expr_case AS
@@ -5648,7 +5649,8 @@ MAX(c)
 
 ## MEDIAN {#median}
 
-`MEDIAN(value)`는 숫자식의 정확한 중앙값을 반환합니다. 현재 구현에서는 `PERCENTILE_CONT(value, 0.5)`와 같은 방식으로 동작합니다.
+`MEDIAN(value)`는 숫자식의 정확한 중앙값을 반환하며 `PERCENTILE_CONT(value, 0.5)`와 같은
+방식으로 동작합니다.
 
 ```sql
 MEDIAN(value)
@@ -5807,7 +5809,7 @@ INNER_RANK           NAME
 
 **정렬로 인한 결과 번호 변화**
 
-SELECT에 ORDER BY 절이 있으면 Target List의 ROWNUM() 결과가 순차적으로 부여되지 않을 수 있습니다. 이는 ROWNUM()이 ORDER BY보다 먼저 처리되기 때문입니다. 순차 번호가 필요하면 ORDER BY를 포함한 쿼리를 인라인 뷰로 만든 뒤, 외부 SELECT에서 ROWNUM()을 호출하세요.
+SELECT에 ORDER BY 절이 있으면 Target List의 ROWNUM() 결과가 순차적으로 부여되지 않을 수 있습니다. 이는 ROWNUM()이 ORDER BY보다 먼저 처리되기 때문입니다. 순차 번호가 필요하면 ORDER BY를 포함한 쿼리를 인라인 뷰로 만든 뒤, 외부 SELECT에서 ROWNUM()을 호출하십시오.
 
 ```sql
 Mach> CREATE TABLE rownum_table(c1 INTEGER, c2 DOUBLE, c3 VARCHAR(10));
@@ -6262,7 +6264,7 @@ format_string을 생략하면 기본값은 "YYYY-MM-DD HH24: MI: SS mmm: uuu: nn
 |MON|월을 3자리 영문 약어로 변환합니다. (예: JAN, FEB, MAY, ...)|
 |DD|일을 2자리 숫자로 변환합니다.|
 |DAY|요일을 3자리 영문 약어로 변환합니다. (예: SUN, MON, ...)|
-|IW|ISO 8601 규칙에 따라 특정 연도의 주차를 1~53으로 변환합니다(요일 고려).<br> - 한 주의 시작은 월요일입니다.<br> - 첫 주는 전년도 마지막 주로 간주될 수 있습니다. 마찬가지로 마지막 주는 다음 해의 첫 주로 간주될 수 있습니다.<br>    자세한 내용은 ISO 8601을 참고하세요.|
+|IW|ISO 8601 규칙에 따라 특정 연도의 주차를 1~53으로 변환합니다(요일 고려).<br> - 한 주의 시작은 월요일입니다.<br> - 첫 주는 전년도 마지막 주로 간주될 수 있습니다. 마찬가지로 마지막 주는 다음 해의 첫 주로 간주될 수 있습니다.<br>    자세한 내용은 ISO 8601을 참고하십시오.|
 |WW|요일을 고려하지 않고 특정 연도의 주차를 1~53으로 변환합니다.<br>즉, 1월 1일~1월 7일은 1로 변환됩니다.|
 |W|요일을 고려하지 않고 특정 월의 주차를 1~5로 변환합니다.<br>즉, 3월 1일~3월 7일은 1로 변환됩니다.|
 |HH|시간을 2자리 숫자로 변환합니다.|
@@ -6828,7 +6830,7 @@ TRUNC(i1, 2)                TRUNC(i1, -2)
 특정 컬럼 값의 변경 횟수를 구하는 집계 함수입니다.
 
 입력 데이터가 시간순으로 입력된다는 것을 보장할 수 없으므로 1) Join 또는 2) Inline view와 함께 사용할 수 없습니다.
-현재 버전은 varchar를 제외한 타입만 지원합니다.
+VARCHAR 타입은 지원하지 않습니다.
 
 * **이 함수는 Cluster Edition에서 사용할 수 없습니다.**
 
@@ -7340,7 +7342,7 @@ MODE(value)
 - `value`는 숫자형이어야 합니다.
 - `NULL` 값은 무시합니다.
 - 최빈값이 여러 개면 더 작은 값을 반환합니다.
-- 현재 구현의 반환 타입은 `DOUBLE`입니다.
+- 반환 타입은 `DOUBLE`입니다.
 
 ```sql
 SELECT MODE(alarm_code)
@@ -7385,7 +7387,7 @@ PERCENTILE_DISC(value, ratio)
 - `ratio`는 `0.0` 이상 `1.0` 이하의 상수여야 합니다.
 - `PERCENTILE_CONT`는 필요하면 인접한 정렬 값 사이를 보간합니다.
 - `PERCENTILE_DISC`는 목표 순위에 해당하는 실제 관측값 중 하나를 선택합니다.
-- 현재 구현에서 두 함수 모두 반환 타입은 `DOUBLE`입니다.
+- 두 함수 모두 반환 타입은 `DOUBLE`입니다.
 
 ```sql
 SELECT PERCENTILE_CONT(latency_ms, 0.95) AS pcont95,
@@ -7404,7 +7406,7 @@ QUANTILE(value, ratio)
 - `value`는 숫자형이어야 합니다.
 - `ratio`는 `0.0` 이상 `1.0` 이하의 상수여야 합니다.
 - 반환 타입은 `DOUBLE`입니다.
-- 현재 구현에서는 `PERCENTILE_CONT`와 같은 연속 분위수 계열에 속합니다.
+- `PERCENTILE_CONT`와 같은 연속 분위수 의미를 사용합니다.
 
 ```sql
 SELECT QUANTILE(cpu_usage, 0.75)

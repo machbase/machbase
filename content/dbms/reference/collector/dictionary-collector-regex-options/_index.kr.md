@@ -2,6 +2,7 @@
 type: docs
 title: '17.5.3 Collector regex/options 사전'
 weight: 30
+toc: true
 ---
 
 Collector의 REGEX 템플릿에서 사용하는 정규식 패턴 옵션과 자주 쓰는 패턴 예시를 정리합니다.

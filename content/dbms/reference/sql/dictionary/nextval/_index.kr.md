@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.3.6 NEXTVAL 함수'
 weight: 60
+toc: true
 ---
 
 `NEXTVAL`은 Lookup 테이블의 Sequence 컬럼에 대해 다음 자동 증가값을 반환합니다. `INSERT` 문에서만 사용할 수 있습니다.

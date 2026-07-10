@@ -45,7 +45,7 @@ toc: true
 | 프로퍼티 | 기본값 | 범위 | 설명 |
 |----------|--------|------|------|
 | `PROCESS_MAX_SIZE` | 8GB | 1GB~2^64-1 | 서버 프로세스 최대 메모리(바이트). 배포 샘플은 `16GB`로 설정되어 있을 수 있음 |
-| `DISK_COLUMNAR_TABLESPACE_MEMORY_MAX_SIZE` | 8GB | 256MB~2^64-1 | 로그 테이블 최대 메모리. 물리 메모리의 50~80% 권장 |
+| `DISK_COLUMNAR_TABLESPACE_MEMORY_MAX_SIZE` | 8GB | 256MB~2^64-1 | 로그 테이블 입력 버퍼 상한. 전체 메모리 예산 안에서 조정 |
 | `DISK_COLUMNAR_TABLESPACE_MEMORY_MIN_SIZE` | 100MB | 1MB~2^64-1 | 서버 시작 시 사전 확보 메모리 |
 | `DISK_COLUMNAR_TABLESPACE_MEMORY_EXT_SIZE` | 2MB | 1MB~2^64-1 | 컬럼 파티션 메모리 블록 크기 |
 | `DISK_COLUMNAR_TABLESPACE_DWFILE_INT_SIZE` | 2MB | 1MB~2^32-1 | 데이터 일관성/복구용 double write 파일 초기 크기 |

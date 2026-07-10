@@ -2,6 +2,7 @@
 type: docs
 title: '17.4.2 machsql 명령/옵션 사전'
 weight: 20
+toc: true
 ---
 
 `machsql`은 터미널에서 SQL 쿼리를 대화형으로 실행하는 클라이언트 도구입니다. SQL 스크립트 파일 실행, 결과 파일 저장, 공개키 인증도 지원합니다.

@@ -67,7 +67,7 @@ SELECT * FROM V$RETENTION_JOB;
 
 Retention Policy 생성·삭제는 **SYS 계정 권한**이 필요합니다. 정책 적용·해제는 테이블 소유자가 자신의 테이블에 대해 수행할 수 있습니다.
 
-> 상세 권한 요건은 [Retention 적용 가능 테이블과 SYS 권한 제약](/dbms/operations-configuration-recovery/policy-data-retention/#applicable-privileges-retention-sys)을 참고하세요.
+> 상세 권한 요건은 [Retention 적용 가능 테이블과 SYS 권한 제약](/dbms/operations-configuration-recovery/policy-data-retention/#applicable-privileges-retention-sys)을 참고하십시오.
 
 <a id="create-retention-policy"></a>
 <a id="retention-policy-create-retention-policy"></a>

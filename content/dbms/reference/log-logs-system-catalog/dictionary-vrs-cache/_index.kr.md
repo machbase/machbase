@@ -2,6 +2,7 @@
 type: docs
 title: '17.3.4 V$RS_CACHE_* 사전'
 weight: 40
+toc: true
 ---
 
 Result Cache 관련 가상 테이블은 쿼리 결과를 캐시하는 기능의 상태와 통계를 제공합니다. `V$RS_CACHE_LIST`와 `V$RS_CACHE_STAT` 두 테이블로 구성됩니다.

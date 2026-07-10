@@ -107,12 +107,13 @@ append-only 원칙은 테이블 유형마다 다르게 적용됩니다.
 | --- | --- | --- | --- |
 | LOG | 가능 | 불가 | `BEFORE`, `OLDEST`, `EXCEPT` 등 시간/보존 조건 기반 |
 | TAG | 가능 | 가능 (Standard Edition, 태그 선택자와 시간축 조건 필요) | `BEFORE` 또는 태그/축 조건 기반 |
-| LOOKUP | 가능 | Primary key 또는 일반 조건 | Primary key 또는 일반 조건 |
+| LOOKUP | 가능 | Primary key equality 조건 | Primary key equality 조건 또는 조건 없는 전체 삭제 |
 | VOLATILE | 가능 | Primary key 조건 기반 | Primary key 조건 기반 |
 | RDB | 가능 | 일반 WHERE 조건 기반 | 일반 WHERE 조건 기반 |
 
-LOG와 TAG 테이블이 append 중심 모델의 핵심입니다. LOOKUP은 기준 정보에 대한 일반 조건
-UPDATE/DELETE를 지원하고, VOLATILE은 Primary key equality 조건으로 상태 데이터를 변경합니다.
+LOG와 TAG 테이블이 append 중심 모델의 핵심입니다. LOOKUP과 VOLATILE은 Primary key equality
+조건으로 기준 정보와 상태 데이터를 변경합니다. LOOKUP의 조건 없는 DELETE는 모든 행을
+삭제합니다.
 RDB 테이블은 관계형 업무 데이터를 Machbase 안에서 다루는 테이블이며 append-only 설계 대상이
 아닙니다.
 

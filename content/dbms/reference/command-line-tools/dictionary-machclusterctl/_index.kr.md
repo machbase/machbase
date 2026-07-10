@@ -2,6 +2,7 @@
 type: docs
 title: '17.4.7 machclusterctl 명령/옵션 사전'
 weight: 70
+toc: true
 ---
 
 `machclusterctl`은 Machbase Cluster Edition의 클러스터 전체를 단일 명령으로 관리하는 도구입니다. YAML 설정 파일을 검증하고, 신규 설치, 실행 중 구성 반영, 업그레이드, 시작/종료, 상태 확인 등을 수행합니다.

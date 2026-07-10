@@ -2,6 +2,7 @@
 type: docs
 title: '4.5 모델링 패턴'
 weight: 50
+toc: true
 ---
 
 

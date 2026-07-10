@@ -2,6 +2,7 @@
 type: docs
 title: '17.4.9 machdeployeradmin 명령/옵션 사전'
 weight: 90
+toc: true
 ---
 
 `machdeployeradmin`은 Machbase Cluster Edition의 Deployer 노드를 직접 관리하는 도구입니다. Deployer는 Coordinator의 지시에 따라 각 노드에 패키지를 배포하고 설치 작업을 수행합니다.
@@ -102,4 +103,4 @@ machdeployeradmin -k
 
 클러스터 구성 및 노드 관리의 대부분은 `machcoordinatoradmin`을 통해 수행합니다. `machdeployeradmin`은 Coordinator와의 통신이 불가능하거나 Deployer 자체에 문제가 있을 때 직접 개입하는 용도로 사용합니다.
 
-자세한 클러스터 관리 방법은 [machcoordinatoradmin](../dictionary-machcoordinatoradmin/)을 참고하세요.
+자세한 클러스터 관리 방법은 [machcoordinatoradmin](../dictionary-machcoordinatoradmin/)을 참고하십시오.

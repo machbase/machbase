@@ -2,6 +2,7 @@
 type: docs
 title: '12.8 입력 성능과 연동 경로'
 weight: 80
+toc: true
 ---
 입력 경로에 따라 처리량과 지연 특성이 크게 달라집니다. 워크로드에 맞는 경로를 선택하는 것이 입력 성능의 출발점입니다.
 
@@ -18,9 +19,9 @@ weight: 80
 ## 이 절에서 다루는 내용
 
 - **[입력 성능 기본 원칙](/dbms/performance-tuning/data-input-performance/#performance-principles)**: 처리량을 높이는 핵심 원칙
-- **[REST 입력 경로 안내](/dbms/performance-tuning/data-input-performance/#path-guide-rest)**: REST API 연동 개요 (상세는 8장)
-- **[SDK 입력 경로 안내](/dbms/performance-tuning/data-input-performance/#path-guide-sdk)**: SDK Append/INSERT 개요 (상세는 8장)
-- **[Fluentd 파이프라인](/dbms/log-table-usage/fluentd-pipeline/#pipeline-fluentd)**: Fluentd 기반 파이프라인 개요 (상세는 8장)
+- **[REST 입력 경로 안내](/dbms/performance-tuning/data-input-performance/#path-guide-rest)**: REST API 연동 개요 (상세는 11장)
+- **[SDK 입력 경로 안내](/dbms/performance-tuning/data-input-performance/#path-guide-sdk)**: SDK Append/INSERT 개요 (상세는 11장)
+- **[Fluentd 파이프라인](/dbms/log-table-usage/fluentd-pipeline/#pipeline-fluentd)**: Fluentd 기반 파이프라인 개요 (상세는 11장)
 
 
 <a id="performance-principles"></a>
@@ -71,7 +72,7 @@ wait
 
 ### 4. 배치 크기 최적화
 
-- **Append API**: TAG/LOG 입력에서 너무 자주 Close()를 호출하면 처리량 감소. 최소 10,000건 이상 누적 후 Close 권장
+- **Append API**: Close 빈도와 버퍼 크기를 바꾸어 처리량, flush 지연과 실패 시 재전송 범위를 비교
 - **SQL INSERT**: 다건 삽입으로 왕복 횟수 최소화
 
 ### 5. 네트워크 지연 최소화
@@ -130,9 +131,9 @@ curl -X POST http://127.0.0.1:5657/machbase \
 
 ### 상세 문서
 
-REST API의 인증, 엔드포인트, 요청/응답 형식, 배치 전송 방법은 다음 문서를 참고하세요.
+REST API의 인증, 엔드포인트, 요청/응답 형식, 배치 전송 방법은 다음 문서를 참고하십시오.
 
-> **[8장 애플리케이션 연동 → REST API](/dbms/application-integration/)** 에서 상세 내용을 다룹니다.
+> **[11장 애플리케이션 연동 → REST API](/dbms/application-integration/)** 에서 상세 내용을 다룹니다.
 
 <a id="path-guide-sdk"></a>
 
@@ -184,6 +185,6 @@ db.ExecContext(ctx, "INSERT INTO orders VALUES (?, ?, ?)",
 
 ### 상세 문서
 
-SDK 설치, 연결 설정, Append API 사용법, 샘플 코드는 다음 문서를 참고하세요.
+SDK 설치, 연결 설정, Append API 사용법, 샘플 코드는 다음 문서를 참고하십시오.
 
-> **[8장 애플리케이션 연동 → SDK](/dbms/application-integration/)** 에서 상세 내용을 다룹니다.
+> **[11장 애플리케이션 연동 → SDK](/dbms/application-integration/)** 에서 상세 내용을 다룹니다.

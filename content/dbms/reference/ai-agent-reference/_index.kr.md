@@ -2,6 +2,7 @@
 type: docs
 title: '17.10 AI Agent Reference'
 weight: 100
+toc: true
 ---
 
 이 섹션은 AI 에이전트(LLM)가 Machbase 관련 질문에 정확하게 답변하기 위한 구조화된 참조 데이터 모음입니다.

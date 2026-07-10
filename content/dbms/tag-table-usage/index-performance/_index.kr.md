@@ -7,6 +7,7 @@ toc: true
 TAG 테이블의 인덱스 구조와 성능 최적화 기법을 다룹니다. 자동으로 구성되는 3단계 파티션 인덱스, METADATA 컬럼 인덱스, 그리고 값 컬럼에 생성할 수 있는 TAG/KV secondary index까지 포함합니다.
 
 <a id="index-tuning-tag"></a>
+<a id="original-85-tag-indexes"></a>
 
 ## TAG 인덱스 튜닝
 
@@ -108,7 +109,7 @@ WHERE  name = 'TEMP-01'
   AND  value > 80.0;
 ```
 
-LOG 테이블 컬럼의 `MINMAX_CACHE_SIZE` 조정은 [메모리 설정 튜닝](/dbms/performance-tuning/cache-tuning-memory/#tuning-memory-configuration)을 참조하세요.
+LOG 테이블 컬럼의 `MINMAX_CACHE_SIZE` 조정은 [메모리 설정 튜닝](/dbms/performance-tuning/cache-tuning-memory/#tuning-memory-configuration)을 참조하십시오.
 
 ### 값 컬럼 TAG/KV 인덱스
 
@@ -142,39 +143,13 @@ CREATE INDEX idx_time ON sensor_tag (time) INDEX_TYPE LSM;
 | 값 범위 조회 | `name`과 `time` 범위를 먼저 좁히고, 반복 집계는 ROLLUP 사용 |
 | 값 컬럼 인덱스 | 필요한 경우 `CREATE INDEX ... ON tag_table(value) INDEX_TYPE TAG`로 TAG/KV 인덱스 생성 |
 
-<a id="original-85-tag-indexes"></a>
+### JSON path 인덱스
 
-## Tag 테이블 인덱스
-
-
-### TAG 인덱스란?
-
-TAG 테이블에 TAG 인덱스 유형을 생성할 수 있습니다. 추가 컬럼이나 JSON 경로로 검색할 때 쿼리 성능이 크게 향상됩니다.
-
-자세한 내용은 SQL 참조의 DDL 섹션을 참조하세요.
-
-* TAG Index: TAG 인덱스는 TAG 테이블의 추가 컬럼에 생성할 수 있습니다.
-
-
-### 인덱스 생성
-
-CREATE INDEX 문을 사용하여 특정 컬럼에 인덱스를 생성합니다.
-
-```sql
-CREATE INDEX index_name ON table_name (column_name) [index_type]
-    index_type ::= INDEX_TYPE { TAG }
-```
-
-```bash
-Mach> CREATE INDEX id_index ON tag (id) INDEX_TYPE TAG;
-Created successfully.
-```
-
-버전 7.5부터는 tag 테이블에서만 json 타입 컬럼에 대해 각 json 경로마다 인덱스를 생성할 수 있습니다.
+TAG 테이블의 JSON 컬럼에는 경로별 인덱스를 생성할 수 있습니다.
 
 기존 인덱스 생성 구문에 연산자로 json 경로를 연결하기만 하면 됩니다.
 
-json 연산자의 반환 타입은 VARCHAR이므로 VARCHAR를 비교할 때만 인덱스가 사용됩니다.
+JSON 연산자의 반환 타입은 VARCHAR이므로 문자열 조건과 실행 계획을 함께 확인합니다.
 
 ```bash
 Mach> CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, jval JSON);

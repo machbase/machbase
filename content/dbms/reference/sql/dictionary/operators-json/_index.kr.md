@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.3.4 JSON 함수와 `->` 연산자'
 weight: 40
+toc: true
 ---
 
 Machbase는 `JSON` 타입 컬럼에 저장된 데이터를 조작·조회하기 위한 함수와 연산자를 제공합니다.

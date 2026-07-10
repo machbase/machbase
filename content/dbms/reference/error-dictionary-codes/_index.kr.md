@@ -2,6 +2,7 @@
 type: docs
 title: '17.9 오류 코드 사전'
 weight: 90
+toc: true
 ---
 
 Machbase 오류는 machsql, REST API 응답, 드라이버 예외 메시지, 서버 trace 로그에

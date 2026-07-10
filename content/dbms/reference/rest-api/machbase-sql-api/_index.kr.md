@@ -2,6 +2,7 @@
 type: docs
 title: '17.6.1 /machbase SQL API'
 weight: 10
+toc: true
 ---
 
 `GET /machbase` 엔드포인트는 `q` 파라미터로 SQL 문을 전달하고 실행 결과를 JSON으로 반환합니다. `SELECT`, `INSERT`, `CREATE TABLE`, `DROP TABLE` 등 Machbase에서 지원하는 모든 SQL을 실행할 수 있습니다.

@@ -2,6 +2,7 @@
 type: docs
 title: '16.4 입력과 적재 문제'
 weight: 40
+toc: true
 ---
 데이터가 Machbase에 정상적으로 들어오지 않을 때, 원인은 크게 세 경로로 나뉩니다: Append API 직접 입력 실패, machloader CSV 가져오기 실패, Collector 수집 파이프라인 오류. 오류가 발생하는 위치와 증상이 다르므로 해당 섹션에서 진단을 시작하십시오.
 
@@ -469,4 +470,5 @@ tail -f $MACHBASE_COLLECTOR_HOME/trc/machcollector.trc
 
 **4단계: 배치 크기 조정 (큐 오버플로우인 경우)**
 
-Collector 설정 파일을 열어 배치 크기를 기존 값의 2배로 늘린 뒤 재시작합니다. 변경 후 큐 딜레이 로그가 줄어드는지 확인합니다.
+Collector 설정 파일에서 배치 크기를 한 단계 늘린 뒤 재시작합니다. 변경 후 메모리 사용량,
+flush 지연과 큐 딜레이 로그를 함께 비교합니다.

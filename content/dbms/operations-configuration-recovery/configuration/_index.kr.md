@@ -2,6 +2,7 @@
 type: docs
 title: '13.2 설정 운영'
 weight: 20
+toc: true
 ---
 Machbase의 설정 파일 구조와 주요 파라미터를 다룹니다. 환경에 맞게 조정하면 성능과 안정성을 크게 향상시킬 수 있습니다.
 
@@ -314,7 +315,9 @@ PROCESS_MAX_SIZE = 17179869184   # 16GB
 ALTER SYSTEM SET PROCESS_MAX_SIZE = 17179869184;
 ```
 
-**권장**: 시스템 전체 RAM의 60~70% 수준으로 설정합니다. 운영 체제와 다른 프로세스가 사용하는 메모리를 고려해야 합니다.
+**설정 기준**: 운영 체제와 함께 실행하는 프로세스의 예약분을 제외하고, 입력 버퍼·캐시·인덱스
+빌드·쿼리 처리의 최대 사용량을 합산하여 설정합니다. 변경 전후의 프로세스 RSS, swap과 OOM
+로그를 확인합니다.
 
 ### 로그 테이블 버퍼 메모리
 
@@ -335,7 +338,8 @@ ALTER SYSTEM SET PROCESS_MAX_SIZE = 17179869184;
 DISK_COLUMNAR_TABLESPACE_MEMORY_MAX_SIZE = 8589934592   # 8GB
 ```
 
-**권장**: 물리적 RAM의 50~80%로 설정합니다.
+**설정 기준**: `PROCESS_MAX_SIZE`와 다른 캐시 상한 안에서 입력 대기와 프로세스 RSS를 함께
+관찰하며 단계적으로 조정합니다. 물리 메모리만을 기준으로 고정 비율을 적용하지 않습니다.
 
 #### DISK_COLUMNAR_TABLESPACE_MEMORY_MIN_SIZE
 

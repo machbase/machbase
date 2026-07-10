@@ -2,6 +2,7 @@
 type: docs
 title: '12.10 쿼리와 분석'
 weight: 100
+toc: true
 ---
 일반 SQL에 더해 DURATION, PIVOT, ROLLUP, SERIES BY, 보간, 윈도우 함수 등 시계열 분석에 특화된 확장 문법을 제공합니다.
 
@@ -26,7 +27,7 @@ weight: 100
 | 설정값·상태 JOIN | LOG/TAG ↔ LOOKUP/VOLATILE JOIN |
 | 실시간 변환·적재 | STREAM |
 
-하위 페이지에서 테이블 타입별 조회 제약과 선택 가이드를 확인하세요.
+하위 페이지에서 테이블 타입별 조회 제약과 선택 가이드를 확인하십시오.
 
 <a id="selection-query-method-selection-guide-query-method"></a>
 
@@ -88,7 +89,7 @@ WHERE t.time BETWEEN '2024-01-15 00:00:00' AND '2024-01-15 12:00:00';
 
 ##### 실시간 변환·적재 자동화
 
-STREAM을 사용하면 데이터가 삽입될 때마다 자동으로 쿼리가 실행되어 다른 테이블로 적재합니다. 상세는 [STREAM](/dbms/operations-configuration-recovery/automation-stream/#stream)을 참고하세요.
+STREAM을 사용하면 데이터가 삽입될 때마다 자동으로 쿼리가 실행되어 다른 테이블로 적재합니다. 상세는 [STREAM](/dbms/operations-configuration-recovery/automation-stream/#stream)을 참고하십시오.
 
 <a id="selection-query-method-table-types-type-query"></a>
 
@@ -302,7 +303,7 @@ SELECT * FROM sensor_log ORDER BY ts DESC;
 SELECT * FROM sensor_log ORDER BY sensor_id, ts DESC;
 ```
 
-TAG/LOG 테이블은 최신 데이터가 먼저 반환되는 경향이 있습니다. 명시적 정렬이 필요하면 ORDER BY를 지정하세요.
+TAG/LOG 테이블은 최신 데이터가 먼저 반환되는 경향이 있습니다. 명시적 정렬이 필요하면 ORDER BY를 지정하십시오.
 
 #### LIMIT
 
@@ -633,7 +634,7 @@ ORDER BY avg_temp DESC;
 - VIEW는 다른 VIEW를 참조할 수 있습니다.
 - TAG, LOG, RDB, VOLATILE, LOOKUP 모든 테이블 타입을 VIEW 정의에 포함할 수 있습니다.
 
-> VIEW 생성·삭제 방법은 [5장 스키마·데이터 생명주기](/dbms/data-modeling-table-design/schema-objects-definition/#create-view)를 참고하세요.
+> VIEW 생성·삭제 방법은 [4장 테이블 타입 개념과 선택](/dbms/data-modeling-table-design/schema-objects-definition/#create-view)를 참고하십시오.
 
 <a id="set-operators-union-intersect-except"></a>
 <a id="query-select-set-operators-union-intersect-except"></a>
@@ -685,7 +686,7 @@ SELECT 'zone-2' AS zone, AVG(value) FROM tag WHERE name LIKE 'ZONE2%' DURATION 1
 
 #### UNION (DISTINCT) 미지원
 
-Machbase는 `UNION ALL`만 지원하며, 중복 제거가 필요한 `UNION` (DISTINCT)은 지원하지 않습니다. 중복 제거가 필요하면 서브쿼리나 애플리케이션 레이어에서 처리하세요.
+Machbase는 `UNION ALL`만 지원하며, 중복 제거가 필요한 `UNION` (DISTINCT)은 지원하지 않습니다. 중복 제거가 필요하면 서브쿼리나 애플리케이션 레이어에서 처리하십시오.
 
 ```sql
 -- 미지원
@@ -835,7 +836,7 @@ WHERE name = 'TEMP-01' DURATION 1 DAY;
 | 정확도 | 샘플 (근사치) | 정확한 집계 |
 | 대시보드 활용 | 전체 추세 파악 | 정확한 통계 |
 
-**팁**: 실시간 대시보드에서 빠른 렌더링이 필요하면 SAMPLING, 정확한 집계 값이 필요하면 ROLLUP을 사용하세요.
+**팁**: 실시간 대시보드에서 빠른 렌더링이 필요하면 SAMPLING, 정확한 집계 값이 필요하면 ROLLUP을 사용하십시오.
 
 <a id="hint-interpolation"></a>
 <a id="query-select-hint-select-hint-interpolation"></a>
@@ -958,9 +959,9 @@ PLAN
 
 #### 활용 팁
 
-- `FULL SCAN`이 나타나면 WHERE 조건에 인덱스가 없는 것입니다. 인덱스를 추가하거나 힌트로 스캔 방향을 조정하세요.
+- `FULL SCAN`이 나타나면 WHERE 조건에 인덱스가 없는 것입니다. 인덱스를 추가하거나 힌트로 스캔 방향을 조정하십시오.
 - `DURATION`을 사용하면 `_ARRIVAL_TIME` 기준 파티션 가지치기가 적용되어 스캔 범위가 줄어듭니다.
-- 대용량 테이블에서 느린 쿼리는 `EXPLAIN` 결과를 먼저 확인하세요.
+- 대용량 테이블에서 느린 쿼리는 `EXPLAIN` 결과를 먼저 확인하십시오.
 
 <a id="item"></a>
 
@@ -2003,7 +2004,7 @@ WHERE time BETWEEN TO_DATE('2024-01-01 00:00:00') AND TO_DATE('2024-01-01 01:00:
   AND sensor_id = 'TEMP_001';
 ```
 
-> **시간 단위**: Machbase의 시간 간격은 나노초(ns) 단위입니다. 자주 사용하는 단위 변환은 다음을 참고하세요.
+> **시간 단위**: Machbase의 시간 간격은 나노초(ns) 단위입니다. 자주 사용하는 단위 변환은 다음을 참고하십시오.
 > - 1초 = 1,000,000,000 ns
 > - 1분 = 60,000,000,000 ns
 > - 1시간 = 3,600,000,000,000 ns
@@ -2187,7 +2188,7 @@ CREATE TAG TABLE tag_json (
 
 #### 성능 주의사항
 
-> JSON 필드 조건은 인덱스를 사용하지 않습니다. `name`(기본키)과 `time`(BASETIME) 조건을 함께 지정하여 스캔 범위를 최소화하세요.
+> JSON 필드 조건은 인덱스를 사용하지 않습니다. `name`(기본키)과 `time`(BASETIME) 조건을 함께 지정하여 스캔 범위를 최소화하십시오.
 
 ```sql
 -- 권장 패턴: name과 시간 조건으로 범위 축소 후 JSON 필드 필터링

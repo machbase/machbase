@@ -2,6 +2,7 @@
 type: docs
 title: '11.5 외부 도구 연동'
 weight: 50
+toc: true
 ---
 Machbase Neo는 다양한 외부 도구와 연동하여 데이터 수집, 시각화, 분석 워크플로우를 구성할 수 있습니다. 현장에서 자주 쓰이는 외부 도구별 연동 방법을 다룹니다.
 
@@ -169,7 +170,7 @@ CREATE TABLE apache_access_log (
 
 #### 고처리량 환경 설정
 
-초당 수만 건 이상의 이벤트를 처리해야 하는 경우:
+이벤트가 지속적으로 유입되고 flush 비용을 줄여야 하는 경우:
 
 ```conf
 <match app.log>

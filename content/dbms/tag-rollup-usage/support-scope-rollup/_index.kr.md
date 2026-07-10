@@ -61,4 +61,4 @@ GRANT CREATE ROLLUP ON *.* TO rollup_user;
 GRANT DROP ROLLUP ON *.* TO rollup_user;
 ```
 
-권한 체계는 [사용자 관리](/dbms/data-modeling-table-design/schema-objects-definition/) 섹션을 참조하세요.
+권한 체계는 [사용자 관리](/dbms/data-modeling-table-design/schema-objects-definition/) 섹션을 참조하십시오.

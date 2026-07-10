@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.1.14 RETENTION syntax'
 weight: 140
+toc: true
 ---
 
 RETENTION 정책은 테이블에서 오래된 데이터를 자동으로 삭제하는 기능입니다. 지정한 보존 기간이 지난 데이터를 주기적으로 삭제해 스토리지를 관리합니다.

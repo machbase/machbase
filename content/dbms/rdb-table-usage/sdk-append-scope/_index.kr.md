@@ -62,9 +62,15 @@ tx.Commit()
 ## machloader 사용
 
 ```bash
-# CSV 파일로 대량 삽입
-machloader -i -d orders -f orders.csv
+# RDB 사용자 컬럼의 스키마 파일 생성
+machloader -c -t orders -f orders.fmt
+
+# 스키마 파일로 CSV 컬럼을 매핑하여 입력
+machloader -i -f orders.fmt -d orders.csv
 ```
+
+RDB 테이블에는 사용자 컬럼을 명시적으로 매핑할 수 있도록 `-t`와 `-d`만 지정한 자동 매핑
+대신 `-f` 스키마 파일을 사용합니다. `csvimport`도 같은 스키마 파일 옵션으로 입력할 수 있습니다.
 
 <a id="support-scope-rdb-sdk"></a>
 

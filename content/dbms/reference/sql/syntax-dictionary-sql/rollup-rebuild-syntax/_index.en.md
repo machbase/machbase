@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.1.17 ROLLUP_REBUILD syntax'
 weight: 170
+toc: true
 ---
 
 `ROLLUP_REBUILD` recalculates rollup data for a tag and time range after the raw

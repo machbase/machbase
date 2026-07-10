@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.3.7 Complete Function Reference'
 weight: 70
+toc: true
 tocSort: true
 ---
 
@@ -1429,7 +1430,8 @@ NEXTVAL(sequence_column)
 
 - `NEXTVAL` can be used only in an `INSERT` statement.
 - The argument must be a column configured with `PROPERTY(SEQUENCE=...)`.
-- For sequence column creation and examples, see [Sequence Column](/dbms/reference/sql/#sequence-column).
+- For sequence column creation and examples, see
+  [LOOKUP Sequence Columns](/dbms/lookup-table-usage/sequence-column/).
 
 ```sql
 INSERT INTO seq_lookup (id, name) VALUES (NEXTVAL(id), 'sensor-a');

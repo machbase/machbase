@@ -10,7 +10,7 @@ Machbase에 연결하기 위한 각 드라이버 및 SDK의 사용 방법을 다
 
 | 드라이버 / SDK | 언어 | 연결 방식 | Append 지원 | 특징 |
 |----------------|------|-----------|:-----------:|------|
-| [CLI/ODBC](/dbms/application-integration/guide-drivers/#cli-odbc) | C / C++ | 네이티브 라이브러리 | 지원 | 가장 낮은 수준의 직접 연결. 최고 성능의 Append API 제공 |
+| [CLI/ODBC](/dbms/application-integration/guide-drivers/#cli-odbc) | C / C++ | 네이티브 라이브러리 | 지원 | 직접 연결과 Append API 제공 |
 | JDBC | Java | TCP/IP | 지원 | 표준 JDBC 인터페이스. `MachStatement` Append API 제공 |
 | Python | Python | TCP/IP | 지원 | `machbaseAPI` 패키지 제공. 데이터 분석 환경에 적합 |
 | Go | Go | TCP/IP | 지원 | 네이티브 `machgo` Appender 제공. `database/sql`은 표준 SQL 인터페이스용 |
@@ -21,7 +21,9 @@ Machbase에 연결하기 위한 각 드라이버 및 SDK의 사용 방법을 다
 
 ### 고성능 시계열 데이터 수집이 목적인 경우
 
-초당 수만 건 이상의 대용량 시계열 데이터를 입력해야 한다면 **CLI/ODBC의 Append API** 사용을 권장합니다. Append 프로토콜은 비동기 버퍼링 방식으로 동작하여 일반 INSERT 대비 수십 배 이상의 입력 성능을 제공합니다.
+지속적인 대량 시계열 데이터를 입력하고 버퍼와 flush 시점을 직접 제어해야 한다면
+**CLI/ODBC의 Append API**를 검토합니다. Append 프로토콜은 여러 행을 버퍼링하여 반복 INSERT의
+네트워크 왕복과 SQL 파싱 횟수를 줄입니다.
 
 ### 기존 Java 애플리케이션과 통합하는 경우
 
@@ -59,7 +61,7 @@ CLI(Call Level Interface)는 [ISO](https://en.wikipedia.org/wiki/International_O
 ### CLI/ODBC의 특징
 
 - **네이티브 성능**: 별도의 미들웨어 없이 Machbase 서버와 직접 통신
-- **Append API**: 초당 수십만 건의 시계열 데이터를 고속으로 삽입하는 전용 프로토콜
+- **Append API**: 여러 시계열 행을 버퍼링하여 전송하는 전용 입력 프로토콜
 - **표준 호환**: ODBC 3.52 표준을 기반으로 설계되어 익숙한 SQL CLI 패턴 적용 가능
 - **C/C++ 지원**: `machbase_sqlcli.h` 헤더와 `libmachbasecli.a` 또는
   `libmachbasecli_dll.so` 라이브러리 제공
@@ -363,7 +365,8 @@ void outError(const char *aMsg, SQLHSTMT aStmt)
 
 #### 확장 CLI 함수 (Append API)
 
-Append API는 Machbase 전용 고속 데이터 입력 프로토콜입니다. 비동기 버퍼링 방식으로 동작하여 일반 INSERT보다 수십 배 이상 높은 처리량을 제공합니다.
+Append API는 Machbase 전용 데이터 입력 프로토콜입니다. 여러 행을 통신 버퍼에 모아 전송하여
+반복 INSERT의 네트워크 왕복과 SQL 파싱 횟수를 줄입니다.
 
 ##### Append 프로토콜의 동작 방식
 
@@ -371,7 +374,7 @@ Append 프로토콜은 **비동기(Asynchronous)** 방식으로 동작합니다.
 
 - 클라이언트가 `SQLAppendDataV2()`를 호출해도 즉시 서버로 전송되지 않습니다.
 - 내부 통신 버퍼가 가득 찰 때까지 데이터를 누적하다가 한꺼번에 전송합니다.
-- 이 방식은 초당 수만~수십만 건의 레코드 입력을 가정하여 설계되었습니다.
+- 처리량과 flush 지연은 행 크기, 버퍼 크기, 네트워크와 서버 자원으로 측정합니다.
 
 에러는 다음 세 시점에만 검출됩니다.
 
@@ -1355,7 +1358,7 @@ success: 8, failure: 0
 
 #### 예제 5: 대량 데이터 고속 삽입 (루프 패턴)
 
-실제 시계열 데이터 수집 시나리오에서 초당 수만 건을 입력하는 패턴입니다.
+지속적인 시계열 데이터 수집에서 행을 반복 Append하는 패턴입니다.
 
 ```c
 #include <stdio.h>
@@ -1525,7 +1528,7 @@ java  -classpath ".:$MACHBASE_HOME/lib/machbase.jar" MyApp
 </dependency>
 ```
 
-최신 버전은 [Maven Central](https://mvnrepository.com/artifact/com.machbase/machjdbc)에서 확인하세요.
+최신 버전은 [Maven Central](https://mvnrepository.com/artifact/com.machbase/machjdbc)에서 확인하십시오.
 
 #### Gradle
 
@@ -2358,7 +2361,7 @@ finally:
 
 ### 주의 사항
 
-- `machbase` 클래스 메서드는 성공 시 `1`, 실패 시 `0`을 반환합니다. 반드시 반환 코드를 확인하세요.
+- `machbase` 클래스 메서드는 성공 시 `1`, 실패 시 `0`을 반환합니다. 반드시 반환 코드를 확인하십시오.
 - 트랜잭션은 RDB 테이블 작업에서 사용합니다. LOG/TAG 테이블 Append성 입력은 롤백 대상이 아니므로 테이블 타입별 지원 범위를 확인합니다.
 - Append 행은 테이블 컬럼 수와 순서를 맞춰야 합니다. 컬럼 생략은 지원하지 않습니다.
 - 커넥션 풀 옵션(`pool_name`, `pool_size`)은 현재 미지원입니다.
@@ -2722,7 +2725,7 @@ const { createConnection } = require('@machbase/ts-client');
 })();
 ```
 
-> **팁**: 로그 테이블 Append에는 `appendBatch()`를, TAG 테이블이나 점진적 유입에는 `appendOpen()`을 사용하세요.
+> **팁**: 로그 테이블 Append에는 `appendBatch()`를, TAG 테이블이나 점진적 유입에는 `appendOpen()`을 사용하십시오.
 > `MACHBASE_NATIVE_APPEND=0` 환경 변수를 설정하면 네이티브 Append를 비활성화하고 Prepared Statement 방식으로 전환합니다.
 
 ### 전체 예제: INSERT / SELECT / Append
@@ -2865,7 +2868,7 @@ await conn.execute('COMMIT');
 
 #### 결과 버퍼링
 
-`query()` 메서드는 전체 결과를 메모리에 버퍼링합니다. 대용량 테이블에서는 `LIMIT`나 키 범위를 이용해 페이지를 나누세요.
+`query()` 메서드는 전체 결과를 메모리에 버퍼링합니다. 대용량 테이블에서는 `LIMIT`나 키 범위를 이용해 페이지를 나누십시오.
 
 ```javascript
 // 페이지 단위로 조회
@@ -3291,7 +3294,7 @@ adapter.Update(table);
 ```
 
 {{< callout type="info" >}}
-로그 테이블과 태그 테이블은 UPDATE를 지원하지 않습니다. UPDATE/DELETE가 필요한 경우에는 Lookup 또는 Volatile 테이블을 사용하세요.
+로그 테이블과 태그 테이블은 UPDATE를 지원하지 않습니다. UPDATE/DELETE가 필요한 경우에는 Lookup 또는 Volatile 테이블을 사용하십시오.
 {{< /callout >}}
 
 ### Entity Framework / LINQ {#ef-linq}
@@ -3315,12 +3318,12 @@ Go 애플리케이션을 위해 두 가지 연결 방식을 제공합니다.
 
 ### 어느 방식을 선택해야 하나요?
 
-**Go 클라이언트 (`machgo`)를 선택하세요:**
+**Go 클라이언트 (`machgo`)를 선택하십시오:**
 - 최대 성능이 필요한 경우 (Append API로 고속 대량 삽입)
 - Machbase 고유 기능(세밀한 연결 튜닝, FetchRows 제어 등)을 활용하고 싶은 경우
 - 신규 프로젝트에서 Machbase 전용 코드로 작성하는 경우
 
-**Go SQL 드라이버를 선택하세요:**
+**Go SQL 드라이버를 선택하십시오:**
 - 기존 코드가 `database/sql` 인터페이스를 사용하는 경우
 - GORM, sqlx 등 `database/sql` 기반 라이브러리와 함께 사용하는 경우
 - 여러 데이터베이스를 추상화된 인터페이스로 다루는 경우
@@ -3413,7 +3416,7 @@ defer conn.Close()
 ```
 
 {{< callout type="warning" >}}
-리소스 해제를 위해 연결에는 항상 `Close()`를 호출하세요. `defer conn.Close()` 패턴을 권장합니다.
+리소스 해제를 위해 연결에는 항상 `Close()`를 호출하십시오. `defer conn.Close()` 패턴을 권장합니다.
 {{< /callout >}}
 
 ##### 연결별 튜닝 옵션
@@ -3508,7 +3511,7 @@ fmt.Println("RowsAffected:", result.RowsAffected())
 `Appender`는 대용량 시계열 데이터를 고처리량으로 적재하기 위한 전용 인터페이스입니다. 데이터를 버퍼에 쌓아 두었다가 임계값에 도달하면 서버로 일괄 전송합니다.
 
 {{< callout type="warning" >}}
-Appender를 사용하는 연결에서는 일반 쿼리를 함께 실행하지 마세요. Append 워크로드에는 반드시 별도 연결을 사용하세요.
+Appender를 사용하는 연결에서는 일반 쿼리를 함께 실행하지 마십시오. Append 워크로드에는 반드시 별도 연결을 사용하십시오.
 {{< /callout >}}
 
 ##### 기본 사용법
@@ -3682,7 +3685,7 @@ func main() {
 
 `github.com/machbase/neo-client` 패키지는 Go 표준 `database/sql` 인터페이스를 통해 Machbase에 연결하는 드라이버를 제공합니다. 네이티브 TCP 클라이언트를 기반으로 하며, 네이티브 포트(기본 `5656`)를 사용합니다.
 
-기존 코드가 `database/sql` 인터페이스를 사용하거나, GORM·sqlx 같은 `database/sql` 기반 라이브러리와 함께 사용할 때 적합합니다. Machbase 고유 기능(Append API 등)이 필요하다면 [Go 클라이언트](#go)를 검토하세요.
+기존 코드가 `database/sql` 인터페이스를 사용하거나, GORM·sqlx 같은 `database/sql` 기반 라이브러리와 함께 사용할 때 적합합니다. Machbase 고유 기능(Append API 등)이 필요하다면 [Go 클라이언트](#go)를 검토하십시오.
 
 #### 설치 {#install}
 
@@ -4117,7 +4120,7 @@ sqlQuery(ch, sql)
 ```
 
 {{< callout type="warning" >}}
-문자열 값을 직접 SQL에 삽입할 때는 SQL 인젝션에 주의하세요. 신뢰할 수 없는 입력값은 반드시 이스케이프 처리 후 사용하세요.
+문자열 값을 직접 SQL에 삽입할 때는 SQL 인젝션에 주의하십시오. 신뢰할 수 없는 입력값은 반드시 이스케이프 처리 후 사용하십시오.
 {{< /callout >}}
 
 #### sqlSave로 data.frame 일괄 삽입

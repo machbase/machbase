@@ -8,14 +8,15 @@ toc: true
 
 ## ROLLUP 활용 튜닝
 
-ROLLUP은 백그라운드에서 미리 계산된 집계값을 사용해 시계열 집계 쿼리의 응답 시간을 수십~수백 배 단축합니다.
+ROLLUP은 백그라운드에서 미리 계산한 집계값을 사용하여 반복 집계 시 원시 데이터 스캔 범위를
+줄입니다. 개선 폭은 원시 데이터 양, 조회 기간, 집계 간격과 스토리지 성능에 따라 달라집니다.
 
 ### ROLLUP 없을 때의 집계 성능
 
 ROLLUP 없이 1개월치 원시 데이터를 시간 단위로 집계하는 경우입니다.
 
 ```sql
--- ROLLUP 미사용: 수천만 건을 직접 스캔하여 GROUP BY 집계
+-- ROLLUP 미사용: 조회 기간의 원시 데이터를 직접 GROUP BY 집계
 SELECT DATE_TRUNC('hour', time) AS hour_bucket,
        AVG(value)               AS avg_val,
        MAX(value)               AS max_val,
@@ -25,7 +26,7 @@ WHERE  name = 'TEMP-01'
   AND  time BETWEEN '2025-06-01' AND '2025-07-01'
 GROUP BY hour_bucket
 ORDER BY hour_bucket;
--- 수천만 건 스캔 → 수 초~수십 초 소요
+-- 실행 계획과 응답 시간을 기준값으로 기록
 ```
 
 ROLLUP을 활용하면 미리 집계된 값만 읽으므로 훨씬 빠릅니다.
@@ -41,7 +42,7 @@ WHERE  name = 'TEMP-01'
   AND  time BETWEEN '2025-06-01' AND '2025-07-01'
 GROUP BY hour_bucket
 ORDER BY hour_bucket;
--- 수십~수백 배 빠름
+-- 같은 조건으로 실행 계획, 스캔 행 수와 응답 시간을 비교
 ```
 
 ### rollup() 함수로 사전 집계 결과 조회
@@ -212,15 +213,17 @@ ALTER ROLLUP _tag_ru_1h FORCE;
 ALTER ROLLUP _tag_ru_1s WAKEUP;
 ```
 
-### ROLLUP 조회 vs GROUP BY 성능 비교
+### ROLLUP 조회와 원시 GROUP BY 비교
 
-| 방식 | 스캔 대상 | 1개월 기준 예상 응답 시간 |
-|------|-----------|--------------------------|
-| 원시 데이터 GROUP BY | 수천만 건 원시 레코드 | 수 초 ~ 수십 초 |
-| 1분 ROLLUP 조회 | ~43,200 건 집계 레코드 | 밀리초 수준 |
-| 1시간 ROLLUP 조회 | ~720 건 집계 레코드 | 밀리초 이하 |
+| 방식 | 주요 처리 대상 | 확인 항목 |
+|------|---------------|-----------|
+| 원시 데이터 GROUP BY | 조회 기간의 원시 레코드 | 원시 스캔 행 수, 집계 시간 |
+| 1분 ROLLUP 조회 | 분 단위 사전 집계 레코드 | 선택한 ROLLUP, 후속 재집계 행 수 |
+| 1시간 ROLLUP 조회 | 시간 단위 사전 집계 레코드 | 조회 간격 적합성, 응답 시간 |
 
-ROLLUP이 준비된 시간 단위로 쿼리를 작성하면 응답 시간을 밀리초 수준으로 유지할 수 있습니다.
+동일한 태그, 기간과 집계 함수를 사용해 원시 쿼리와 ROLLUP 쿼리의 실행 계획과 응답 시간을
+비교합니다. 운영 목표를 충족하는 가장 거친 ROLLUP 간격을 선택하면 읽는 집계 레코드를 줄일 수
+있습니다.
 
 ### 관련 페이지
 

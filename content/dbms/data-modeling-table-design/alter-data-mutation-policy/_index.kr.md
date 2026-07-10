@@ -14,7 +14,7 @@ toc: true
 | LOG | X | O (BEFORE/OLDEST/EXCEPT/전체 삭제) | O |
 | RDB | O (WHERE 유무 모두) | O | O |
 | VOLATILE | O (by PK) | O | X |
-| LOOKUP | O (by PK/일반 조건) | O (by PK/일반 조건) | X |
+| LOOKUP | O (by PK) | O (by PK 또는 조건 없는 전체 삭제) | X |
 
 > TRUNCATE는 LOG와 RDB 테이블에서만 지원됩니다. TAG, VOLATILE, LOOKUP 테이블에 TRUNCATE를 실행하면 오류가 발생합니다.
 
@@ -42,7 +42,7 @@ LOG 테이블은 시계열 데이터의 **불변성(immutability)** 원칙을 �
 | LOG | X | 미지원 |
 | RDB | O | WHERE 유무 모두 가능 |
 | VOLATILE | O | Primary key equality 조건. ON DUPLICATE KEY UPDATE도 지원 |
-| LOOKUP | O | Primary key equality 조건과 일반 predicate 조건 지원 |
+| LOOKUP | O | Primary key equality 조건 |
 
 ### RDB 테이블 UPDATE
 
@@ -71,20 +71,14 @@ ON DUPLICATE KEY UPDATE SET status = 'ALARM', value = 95.3, updated_at = NOW;
 
 ### LOOKUP 테이블 UPDATE
 
-PRIMARY KEY equality 조건과 일반 predicate 조건의 UPDATE를 모두 지원합니다.
-조건에 맞는 모든 row가 갱신됩니다.
+PRIMARY KEY equality 조건의 UPDATE를 지원합니다. non-PK 조건이나 범위 조건을 사용하면
+`ERR-02190` 오류가 발생합니다.
 
 ```sql
 UPDATE alarm_threshold SET high_limit = 90.0, updated_at = NOW
 WHERE sensor_id = 'TEMP-01';
 
-UPDATE alarm_threshold
-SET high_limit = high_limit + 5.0
-WHERE device_type = 'MOTOR'
-  AND active = 1;
 ```
-
-> 일반 조건식 UPDATE는 여러 row에 적용될 수 있으므로 실행 전에 같은 조건으로 대상 범위를 확인합니다.
 
 ### TAG/LOG 테이블 UPDATE
 
@@ -96,7 +90,7 @@ TAG 데이터(실제 시계열 값)와 TAG 메타데이터 UPDATE는 구문이 �
 - **LOG 테이블 UPDATE**: 미지원
 
 TAG data UPDATE는 태그 선택 조건과 BASETIME 조건이 모두 필요하며, `name`과 `time` 컬럼은
-SET 대상으로 사용할 수 없습니다. 상세 내용은 하위 페이지를 참고하세요.
+SET 대상으로 사용할 수 없습니다. 상세 내용은 하위 페이지를 참고하십시오.
 
 <a id="policy-update-policy-tag-data-update"></a>
 
@@ -275,7 +269,7 @@ WHERE name = 'TEMP-01';
 | LOG | O | BEFORE/OLDEST/EXCEPT 또는 전체 삭제 |
 | RDB | O | 일반 WHERE 조건 자유 |
 | VOLATILE | O | Primary key equality 조건 |
-| LOOKUP | O | Primary key equality 조건과 일반 predicate 조건 지원 |
+| LOOKUP | O | Primary key equality 조건 또는 조건 없는 전체 삭제 |
 
 ### RDB 테이블 DELETE
 
@@ -310,20 +304,18 @@ DELETE FROM device_status WHERE device_id = 'DEV-01';
 
 ### LOOKUP 테이블 DELETE
 
-PRIMARY KEY equality 조건과 일반 predicate 조건의 DELETE를 모두 지원합니다.
-조건에 맞는 모든 row가 삭제됩니다.
+조건이 있는 DELETE에는 PRIMARY KEY equality 조건을 사용합니다. `WHERE` 절을 생략하면 모든
+row가 삭제됩니다.
 
 ```sql
 -- PK 기준 삭제 (권장)
 DELETE FROM alarm_threshold WHERE sensor_id = 'TEMP-01';
 
--- 일반 조건식 DELETE
-DELETE FROM alarm_threshold
-WHERE active = 0
-   OR updated_at < TO_DATE('2026-01-01 00:00:00');
+-- 전체 삭제
+DELETE FROM alarm_threshold;
 ```
 
-> 일반 조건식 DELETE는 여러 row에 적용될 수 있으므로 실행 전에 같은 조건으로 대상 범위를 확인합니다.
+> 전체 삭제는 복구할 수 있도록 작업 전에 백업 또는 재입력 원본을 확인합니다.
 
 ### LOG 테이블 DELETE
 
@@ -351,7 +343,7 @@ DELETE FROM tag BEFORE TO_DATE('2024-01-01', 'YYYY-MM-DD');
 DELETE FROM sensor_log BEFORE '2024-01-01 00:00:00 000:000:000';
 ```
 
-> `BEFORE` 시각은 현재 시각보다 과거여야 합니다. 미래 시각을 지정하면 오류가 발생합니다. 상세 내용은 [TAG/KV DELETE 허용 조건](/dbms/data-modeling-table-design/alter-data-mutation-policy/#condition-tag-kv-delete-before) 페이지를 참고하세요.
+> `BEFORE` 시각은 현재 시각보다 과거여야 합니다. 미래 시각을 지정하면 오류가 발생합니다. 상세 내용은 [TAG/KV DELETE 허용 조건](/dbms/data-modeling-table-design/alter-data-mutation-policy/#condition-tag-kv-delete-before) 페이지를 참고하십시오.
 
 #### TAG 테이블 DELETE WHERE (조건부 삭제)
 
@@ -387,7 +379,7 @@ DELETE FROM tag ROLLUP WHERE tag_time BETWEEN TO_DATE('2021-07-01', 'YYYY-MM-DD'
 
 ### 하위 페이지
 
-- [LOOKUP 일반 조건식 DELETE](/dbms/lookup-table-usage/predicate-update-delete/#condition-lookup-delete): 일반 predicate DELETE 지원 범위와 주의사항
+- [LOOKUP 데이터 입력과 변경](/dbms/lookup-table-usage/data-input-mutation/#original-85-deleting-data): Primary key 조건과 전체 삭제
 - [TAG 메타데이터 삭제](/dbms/data-modeling-table-design/alter-data-mutation-policy/#delete-tag-metadata): TAG 테이블 메타데이터 삭제 구문
 
 <a id="delete-tag-metadata"></a>
@@ -525,14 +517,16 @@ RDB 테이블의 TRUNCATE는 내부적으로 `DELETE FROM` 전체 행 삭제(`qr
 
 | 항목 | TRUNCATE | DELETE (전체) |
 |------|---------|---------------|
-| 처리 방식 | DDL (단번에 처리) | DML (행 단위 처리) |
-| 속도 | 빠름 | 느림 (대용량 시) |
-| 롤백 | RDB는 트랜잭션 내 롤백 가능 | 가능 (트랜잭션 내) |
+| 처리 방식 | DDL | 테이블 타입별 DML 경로 |
+| 대상 지정 | 테이블 전체 | 전체 또는 지원되는 조건 |
+| 롤백 | RDB는 명시적 트랜잭션에서 가능 | RDB DML만 명시적 트랜잭션에서 가능 |
 | WHERE 조건 | 불가 | 가능 |
 | 트리거 발생 | X | X |
 
 ### 주의 사항
 
-- LOG TRUNCATE는 실행 전 데이터 백업 여부를 반드시 확인하세요. RDB TRUNCATE는 명시적 트랜잭션 안에서 롤백할 수 있습니다.
-- TAG, VOLATILE, LOOKUP 테이블에 TRUNCATE를 실행하면 오류가 발생합니다. 이 경우 `DELETE FROM ... BEFORE NOW` (TAG/LOG) 또는 조건 없는 DELETE를 사용하세요.
+- LOG TRUNCATE는 실행 전 데이터 백업 여부를 반드시 확인하십시오. RDB TRUNCATE는 명시적 트랜잭션 안에서 롤백할 수 있습니다.
+- TAG, VOLATILE, LOOKUP 테이블에 TRUNCATE를 실행하면 오류가 발생합니다. TAG는 지원되는
+  `BEFORE` 또는 태그/축 조건을 사용하고, VOLATILE과 LOOKUP의 전체 삭제는 조건 없는 DELETE를
+  사용합니다.
 - VOLATILE 테이블 전체 삭제: `DELETE FROM device_status;` (WHERE 없이 삭제 가능)

@@ -2,6 +2,7 @@
 type: docs
 title: 'Machbase DBMS Manual'
 weight: 30
+toc: true
 ---
 
 This manual is being reorganized around table-type usage. Korean content is authoritative during this restructuring pass; English pages keep the same chapter structure.
@@ -18,7 +19,7 @@ This manual is being reorganized around table-type usage. Korean content is auth
 | 6 | [ROLLUP for TAG Tables](./tag-rollup-usage/) | ROLLUP design, creation, query, rebuild, operations |
 | 7 | [LOG Table Usage](./log-table-usage/) | LOG structure, input, text search, Collector, Fluentd, STREAM |
 | 8 | [RDB Table Usage](./rdb-table-usage/) | RDB schema, DML, transactions, JOIN, backup constraints |
-| 9 | [LOOKUP Table Usage](./lookup-table-usage/) | Reference data, primary keys, sequence, JSON, predicate DML |
+| 9 | [LOOKUP Table Usage](./lookup-table-usage/) | Reference data, primary keys, sequence, JSON, and joins |
 | 10 | [VOLATILE Table Usage](./volatile-table-usage/) | Memory tables, UPSERT, state cache, restart behavior |
 | 11 | [Application Integration](./application-integration/) | Drivers and REST API |
 | 12 | [Performance Tuning](./performance-tuning/) | Query, ingestion, and cache tuning |

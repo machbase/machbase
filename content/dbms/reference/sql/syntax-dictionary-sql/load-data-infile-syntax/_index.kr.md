@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.1.11 LOAD DATA INFILE syntax'
 weight: 110
+toc: true
 ---
 
 `LOAD DATA INFILE`은 CSV 포맷 데이터 파일을 서버에서 직접 읽어 테이블에 입력하는 구문입니다.

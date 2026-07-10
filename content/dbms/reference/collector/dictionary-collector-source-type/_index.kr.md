@@ -2,6 +2,7 @@
 type: docs
 title: '17.5.2 Collector source type 사전'
 weight: 20
+toc: true
 ---
 
 Collector의 입력 소스는 템플릿(`.tpl`) 파일의 `COLLECT_TYPE`으로 지정합니다.

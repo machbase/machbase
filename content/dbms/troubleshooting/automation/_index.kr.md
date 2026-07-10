@@ -2,6 +2,7 @@
 type: docs
 title: '16.6 자동 처리 문제'
 weight: 60
+toc: true
 ---
 ROLLUP(TAG 데이터 자동 집계)과 STREAM(쿼리 결과 자동 적재) 기능이 정상 동작하지 않을 때 원인을 진단하고 복구하는 방법을 다룹니다.
 

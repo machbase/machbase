@@ -25,7 +25,7 @@ toc: true
 | DROP INDEX | O | O | O | O | O |
 | CREATE VIEW | - (참조 가능) | - | - | - | - |
 
-세부 문법과 제약은 [테이블 정의와 스키마 객체](../schema-objects-definition/)를 참고하세요.
+세부 문법과 제약은 [테이블 정의와 스키마 객체](../schema-objects-definition/)를 참고하십시오.
 
 ## DML 지원 범위
 
@@ -33,8 +33,8 @@ toc: true
 |---------|-----|-----|-----|---------|--------|
 | INSERT | O | O | O | O | O |
 | Append API | O | O | O (SDK) | X | O |
-| UPDATE | O (태그/축 조건) | X | O | O (PK equality) | O (PK/일반 조건) |
-| DELETE | O (BEFORE/조건) | O (BEFORE/OLDEST/EXCEPT) | O | O (PK equality) | O (PK/일반 조건) |
+| UPDATE | O (태그/축 조건) | X | O | O (PK equality) | O (PK equality) |
+| DELETE | O (BEFORE/조건) | O (BEFORE/OLDEST/EXCEPT) | O | O (PK equality) | O (PK equality/전체) |
 | ON DUPLICATE KEY UPDATE | X | X | O | O | O |
 
 ## Retention Policy 지원

@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.1.17 ROLLUP_REBUILD syntax'
 weight: 170
+toc: true
 ---
 
 `ROLLUP_REBUILD`는 TAG 테이블의 원본 데이터가 수정된 경우, 지정한 시간 범위의 ROLLUP 집계를 재계산하는 명령입니다.

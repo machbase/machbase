@@ -1,7 +1,7 @@
 ---
 type: docs
 title: '11.7 데이터 입력과 반출'
-weight: 960
+weight: 70
 toc: true
 ---
 SQL INSERT, Append API, 파일 적재(machloader, csvimport), SQL 기반 파일 직접 로드 등 상황에 맞는 입력 방법을 선택할 수 있습니다. 반출도 동일한 도구를 내보내기 방향으로 사용합니다.
@@ -26,7 +26,7 @@ SQL INSERT, Append API, 파일 적재(machloader, csvimport), SQL 기반 파일 
 | REST API | HTTP 기반. 범용 연동 | 외부 시스템, IoT 디바이스 |
 | SDK (Go/Python/C) | 내장 Append/INSERT | 애플리케이션 직접 연동 |
 
-상세 선택 가이드는 하위 페이지를 참고하세요.
+상세 선택 가이드는 하위 페이지를 참고하십시오.
 
 <a id="selection-input-method-table-types-type"></a>
 
@@ -43,8 +43,8 @@ SQL INSERT, Append API, 파일 적재(machloader, csvimport), SQL 기반 파일 
 | INSERT ON DUPLICATE KEY UPDATE | X | X | O (PK 또는 UNIQUE 필요) | O (PK 필요) | O (PK 필요) |
 | Append API | O | O | O (client API) | X | O |
 | LOAD DATA INFILE | O | O | O | O | O |
-| machloader | O | O | O | O | O |
-| csvimport | O | O | O | O | O |
+| machloader | O | O | O (스키마 파일 사용) | O | O |
+| csvimport | O | O | O (스키마 파일 사용) | O | O |
 | tagmetaimport | O (메타데이터만) | X | X | X | X |
 
 #### 테이블 타입별 권장 입력 방식
@@ -63,10 +63,10 @@ SQL INSERT, Append API, 파일 적재(machloader, csvimport), SQL 기반 파일 
 
 ##### RDB 테이블
 
-- **초기 데이터 로드**: machloader 또는 SQL INSERT
+- **초기 데이터 로드**: 스키마 파일을 지정한 machloader/csvimport 또는 SQL INSERT
 - **애플리케이션 연동**: SQL INSERT/UPDATE/DELETE (JDBC, ODBC, SDK)
 - **대량 입력**: 지원되는 client API의 appendBatch 또는 append stream
-- **파일 적재**: csvimport
+- **파일 적재**: RDB 사용자 컬럼을 매핑한 스키마 파일과 machloader/csvimport
 
 ##### VOLATILE / LOOKUP 테이블
 
@@ -90,25 +90,26 @@ SQL INSERT, Append API, 파일 적재(machloader, csvimport), SQL 기반 파일 
 │   └── 단순 CSV → csvimport
 │
 ├── 애플리케이션/SDK
-│   ├── 대량 시계열 (수만 건/초 이상) → Append API
+│   ├── 지속적인 대량 시계열 입력 → Append API
 │   ├── RDB 대량 batch 입력 → client appendBatch/append stream
 │   └── 소량 또는 일반 트랜잭션 처리 → SQL INSERT
 │
 ├── HTTP/REST
-│   └── 외부 시스템, IoT → REST API (8장 참고)
+│   └── 외부 시스템, IoT → REST API (11장 참고)
 │
 └── TAG 메타데이터
     └── 초기 로드 또는 일괄 업데이트 → tagmetaimport
 ```
 
-#### 성능 기준 선택
+#### 전송 특성 기준 선택
 
-| 처리량 목표 | 권장 방법 |
-|-----------|---------|
-| 수백만 건/초 (TAG/LOG) | Append API (SDK) |
-| 수십만 건/초 | Append API, client appendBatch 또는 machloader 병렬 |
-| 수천~수만 건/초 | LOAD DATA INFILE 또는 machloader |
-| 수백 건/초 이하 | SQL INSERT |
+| 입력 특성 | 우선 검토할 방법 |
+|-----------|------------------|
+| 지속적인 TAG/LOG 스트림 | SDK Append API |
+| 애플리케이션의 RDB 대량 입력 | 지원 client의 append batch 또는 append stream |
+| 클라이언트에 있는 파일 | machloader 또는 csvimport |
+| 서버가 직접 읽을 수 있는 파일 | LOAD DATA INFILE |
+| 소량 입력 또는 명시적 RDB 트랜잭션 | SQL INSERT |
 
 #### 실시간 vs 배치
 
@@ -120,8 +121,8 @@ SQL INSERT, Append API, 파일 적재(machloader, csvimport), SQL 기반 파일 
 
 #### 연동 경로 요약
 
-- **REST API 상세**: [8장 애플리케이션 연동](/dbms/application-integration/) 참고
-- **SDK (Go/Python/C) 상세**: [8장 애플리케이션 연동](/dbms/application-integration/) 참고
+- **REST API 상세**: [11장 애플리케이션 연동](/dbms/application-integration/) 참고
+- **SDK (Go/Python/C) 상세**: [11장 애플리케이션 연동](/dbms/application-integration/) 참고
 
 <a id="sql"></a>
 
@@ -329,7 +330,7 @@ MCHCloseAppender(appender, &successCnt, &failCnt);
 
 | 항목 | Append API | SQL INSERT |
 |------|-----------|-----------|
-| 처리량 | TAG/LOG에서 수백만 건/초 수준 | 수천~수만 건/초 |
+| 전송 방식 | 여러 행을 버퍼링하여 전송 | SQL 문장 단위로 실행 |
 | 트랜잭션 | TAG/LOG는 비트랜잭션, RDB는 batch 실행 구간에서 트랜잭션 처리 | O |
 | 오류 처리 | 실패 행 건너뜀 | 행별 오류 반환 |
 | 사용 테이블 | TAG, LOG, LOOKUP, RDB(client append API) | 모든 테이블 |
@@ -337,7 +338,8 @@ MCHCloseAppender(appender, &successCnt, &failCnt);
 
 #### REST API Append
 
-REST API를 통한 Append도 동일한 고속 경로를 사용합니다. 상세는 [8장 애플리케이션 연동](/dbms/application-integration/)을 참고하세요.
+REST API를 통한 Append도 요청 안의 여러 행을 한 번에 입력할 수 있습니다. 상세는
+[11장 애플리케이션 연동](/dbms/application-integration/)을 참고하십시오.
 
 #### 주의사항
 
@@ -544,6 +546,10 @@ SQL `LOAD DATA INFILE`과 `SAVE DATA INTO`의 `ENCODED BY`는 `UTF8`, `MS949`, `
 ### machloader로 가져오기
 
 CSV 파일을 Machbase 서버로 가져오거나 내보내는 범용 CLI 도구입니다. 스키마 파일로 컬럼 매핑, 날짜 형식, 특정 컬럼 무시 등을 세밀하게 제어할 수 있습니다.
+
+RDB 테이블은 `machloader -c -t table_name -f table_name.fmt`로 스키마 파일을 만든 뒤
+`machloader -i -f table_name.fmt -d data.csv`로 입력합니다. 이 방식은 RDB 사용자 컬럼과 CSV
+필드를 명시적으로 매핑합니다.
 
 #### 기본 가져오기
 
@@ -937,9 +943,9 @@ Mach> SAVE DATA INTO '/data/export/result.csv' HEADER ON
 #### 주의사항
 
 - 파일 경로는 **서버 파일시스템** 기준입니다. 클라이언트 로컬 경로가 아닙니다.
-- 기존 파일이 있으면 오류가 발생합니다. 새 파일 경로를 지정하거나 기존 파일을 먼저 삭제하세요.
+- 기존 파일이 있으면 오류가 발생합니다. 새 파일 경로를 지정하거나 기존 파일을 먼저 삭제하십시오.
 - 서버 프로세스 계정에 해당 디렉터리 쓰기 권한이 필요합니다.
-- 대용량 반출 시 디스크 여유 공간을 미리 확인하세요.
+- 대용량 반출 시 디스크 여유 공간을 미리 확인하십시오.
 
 <a id="export-machloader"></a>
 <a id="export-export-machloader"></a>
@@ -1252,7 +1258,7 @@ if fail > 0 {
 }
 ```
 
-Append API는 실패한 개별 행에 대한 상세 오류 정보를 반환하지 않습니다. 실패 건수가 많을 경우 배치 크기를 줄이거나 SQL INSERT로 전환하여 오류를 추적하세요.
+Append API는 실패한 개별 행에 대한 상세 오류 정보를 반환하지 않습니다. 실패 건수가 많을 경우 배치 크기를 줄이거나 SQL INSERT로 전환하여 오류를 추적하십시오.
 
 #### INSERT SELECT 오류 처리
 
@@ -1285,7 +1291,7 @@ machloader -i -d sensor_log_fixed.csv -t sensor_log \
 
 #### 입력 검증 권장 사항
 
-- 대량 입력 전에 소량 샘플로 테스트 입력을 수행하세요.
-- DATETIME 형식은 `-F` 옵션 또는 스키마 파일로 명시적으로 지정하세요.
-- VARCHAR 컬럼 길이를 사전에 확인하고 데이터를 전처리하세요.
-- bad 파일을 반드시 지정하여 실패 데이터를 보존하세요.
+- 대량 입력 전에 소량 샘플로 테스트 입력을 수행하십시오.
+- DATETIME 형식은 `-F` 옵션 또는 스키마 파일로 명시적으로 지정하십시오.
+- VARCHAR 컬럼 길이를 사전에 확인하고 데이터를 전처리하십시오.
+- bad 파일을 반드시 지정하여 실패 데이터를 보존하십시오.

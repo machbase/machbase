@@ -2,6 +2,7 @@
 type: docs
 title: '17.5 Collector 레퍼런스'
 weight: 50
+toc: true
 ---
 
 Machbase Collector는 다양한 소스(파일, 네트워크, 시리얼 포트 등)에서 데이터를 수집하여 Machbase 테이블에 입력하는 에이전트입니다. 이 섹션은 Collector 설정 파라미터의 빠른 참조 레퍼런스입니다.

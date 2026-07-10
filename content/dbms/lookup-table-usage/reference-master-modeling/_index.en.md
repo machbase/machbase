@@ -1,6 +1,6 @@
 ---
-title: '9.14 Reference and Master Data Modeling'
-weight: 140
+title: '9.13 Reference and Master Data Modeling'
+weight: 130
 toc: true
 ---
 English structure placeholder. Korean content is authoritative for this restructuring pass.

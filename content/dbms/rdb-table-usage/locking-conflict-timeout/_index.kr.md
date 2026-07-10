@@ -7,6 +7,7 @@ toc: true
 RDB 테이블의 동시 접근 방식과 쓰기 충돌, busy timeout 처리 방법을 설명합니다.
 
 <a id="transaction-locking-conflict-rdb"></a>
+<a id="design-locking-conflict-rdb-busy-timeout-ddl-dml"></a>
 
 ## RDB 동시성과 잠금 범위
 

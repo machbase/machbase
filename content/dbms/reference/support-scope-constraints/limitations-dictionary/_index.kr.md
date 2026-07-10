@@ -5,7 +5,7 @@ weight: 120
 toc: true
 ---
 
-Machbase의 주요 제한 사항을 테이블 유형별, Edition별, 일반 시스템 제한으로 정리합니다. 특정 기능을 사용하기 전에 해당 제한 사항을 먼저 확인하세요.
+Machbase의 주요 제한 사항을 테이블 유형별, Edition별, 일반 시스템 제한으로 정리합니다. 특정 기능을 사용하기 전에 해당 제한 사항을 먼저 확인하십시오.
 
 ## TAG 테이블 제한
 
@@ -19,7 +19,7 @@ Machbase의 주요 제한 사항을 테이블 유형별, Edition별, 일반 시�
 | Append 대상 | TAG/LOG 고속 경로와 RDB client batch/stream 경로 지원 |
 | ROLLUP 재구축 | `ROLLUP_REBUILD`: Standard Edition만 지원 |
 
-상세 내용은 [TAG data UPDATE 지원표](../tag-data-update/)를 참고하세요.
+상세 내용은 [TAG data UPDATE 지원표](../tag-data-update/)를 참고하십시오.
 
 ## LOG 테이블 제한
 
@@ -40,7 +40,7 @@ Machbase의 주요 제한 사항을 테이블 유형별, Edition별, 일반 시�
 | JSON PK | 미지원 |
 | Append API | 지원, 중복 키 처리 정책(`LOOKUP_APPEND_UPDATE_ON_DUPKEY`)에 따라 중복 키 처리 방식이 달라짐 |
 
-상세 내용은 [LOOKUP SQL/JSON 지원표](../lookup-sql-json/)를 참고하세요.
+상세 내용은 [LOOKUP SQL/JSON 지원표](../lookup-sql-json/)를 참고하십시오.
 
 ## VOLATILE 테이블 제한
 

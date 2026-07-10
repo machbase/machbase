@@ -8,48 +8,39 @@ LOOKUP 테이블의 제약 사항, 발생 가능한 오류, 문제 해결 방법
 
 <a id="too-many-lookup-predicate-update-delete-row"></a>
 
-## LOOKUP 일반 predicate UPDATE/DELETE 범위가 클 때
+## LOOKUP UPDATE/DELETE 조건 오류
 
-LOOKUP 테이블의 일반 predicate `UPDATE`/`DELETE`는 조건에 맞는 모든
-row에 적용됩니다. 의도보다 많은 row가 변경·삭제되지 않도록 대상 범위를 먼저 확인합니다.
+LOOKUP 테이블의 UPDATE와 조건이 있는 DELETE는 Primary key equality 조건만 허용합니다.
 
 ### 증상
 
-- UPDATE/DELETE가 성공했지만 예상보다 많은 row가 변경됨
-- JSON path 또는 범위 조건이 넓어 다수 row가 대상이 됨
+non-PK 조건, 범위 조건 또는 JSON path 조건으로 UPDATE/DELETE를 실행하면 다음 오류가
+발생합니다.
 
-### 진단
-
-실행 전 같은 조건으로 대상 row 수를 확인합니다.
-
-```sql
-SELECT COUNT(*)
-FROM equipment
-WHERE location = 'A동'
-  AND status = 'inactive';
-```
-
-필요하면 대상 key를 함께 확인합니다.
-
-```sql
-SELECT eq_id, location, status
-FROM equipment
-WHERE location = 'A동'
-  AND status = 'inactive';
+```text
+ERR-02190: Invalid UPDATE/DELETE condition.
+Specify it as (primary key column) = (value)
 ```
 
 ### 해결 방법
 
-- 단건 변경은 primary key 조건을 사용합니다.
-- 일괄 변경은 조건을 더 좁히고 변경 전후 count를 확인합니다.
-- JSON 숫자 조건은 타입별 함수를 사용합니다.
+변경할 행의 Primary key를 먼저 조회한 뒤 키별로 UPDATE/DELETE를 실행합니다.
 
 ```sql
-UPDATE equipment
-SET status = 'retired'
+SELECT eq_id
+FROM equipment
 WHERE location = 'A동'
-  AND status = 'inactive'
-  AND JSON_EXTRACT_INTEGER(meta, '$.level') < 2;
+  AND status = 'INACTIVE';
+
+UPDATE equipment
+SET status = 'RETIRED'
+WHERE eq_id = 'EQ-001';
+```
+
+모든 행을 삭제하려면 WHERE 절을 생략할 수 있습니다.
+
+```sql
+DELETE FROM equipment;
 ```
 
 <a id="error-lookup-json-path-primary-key"></a>
@@ -114,18 +105,14 @@ WHERE config->'$.status' = 'active';
 |------|------|
 | PRIMARY KEY | 필수 |
 | Append API | 지원 |
-| 대용량 (수천만 건 이상) | 미권장 |
+| 규모 판단 | 메모리, 인덱스와 갱신 부하를 실제 워크로드로 검증 |
 | BASETIME / BASEDISTANCE | 미지원 |
 
-### 규모 제한
+### 규모 판단
 
-LOOKUP 테이블은 소규모 참조 데이터에 최적화되어 있습니다. 건수가 수백만 건을 넘으면 성능이 저하될 수 있으므로 RDB 테이블을 고려합니다.
-
-| 규모 | 권장 타입 |
-|------|---------|
-| 수십만 건 이하 | LOOKUP |
-| 수백만~수천만 건 | 경계 — 성능 테스트 필요 |
-| 수천만 건 이상 | RDB 테이블 |
+LOOKUP 테이블은 기준 정보의 반복 조회와 갱신에 적합합니다. 행 수만으로 한계를 정하지 말고
+Primary key와 보조 인덱스의 메모리 사용량, 입력·갱신 빈도와 조회 조건을 실제 데이터로
+측정합니다. 명시적 트랜잭션이나 관계형 DML이 필요하면 RDB 테이블을 선택합니다.
 
 ### Append API
 
@@ -137,7 +124,8 @@ LOOKUP 테이블은 소규모 참조 데이터에 최적화되어 있습니다. 
 
 - LOOKUP 테이블에 시계열 데이터를 저장하지 않습니다. 계측값은 TAG 테이블을 사용합니다.
 - PRIMARY KEY 중복 삽입 시 오류가 발생합니다.
-- 테이블 전체를 교체해야 하면 DELETE 후 INSERT 또는 TRUNCATE + INSERT 패턴을 사용합니다.
+- 테이블 전체를 교체해야 하면 조건 없는 DELETE 후 INSERT 패턴을 사용합니다. LOOKUP 테이블은
+  TRUNCATE를 지원하지 않습니다.
 
 ---
 

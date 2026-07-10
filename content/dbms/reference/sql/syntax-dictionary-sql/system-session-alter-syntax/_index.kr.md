@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.1.20 SYSTEM/SESSION/ALTER SYSTEM syntax'
 weight: 200
+toc: true
 ---
 
 `ALTER SYSTEM`은 서버 전역 자원을 관리하는 구문입니다. `ALTER SESSION`은 현재 세션에만 적용되는 파라미터를 설정합니다.

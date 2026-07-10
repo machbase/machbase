@@ -355,7 +355,7 @@ SELECT key_id, user_name, key_algo, activated, valid_before, comment
 #### 주의 사항
 
 - 한 사용자의 모든 AUTH KEY가 비활성화되면 해당 사용자는 AUTH KEY 인증을 사용할 수 없습니다. `AUTH_MODE=PASSWORD`로 접속하거나, SYS 계정에서 키를 재활성화해야 합니다.
-- 비활성화와 달리 삭제(`DROP AUTH KEY`)는 복구할 수 없습니다. 일시적 차단에는 비활성화를 사용하세요.
+- 비활성화와 달리 삭제(`DROP AUTH KEY`)는 복구할 수 없습니다. 일시적 차단에는 비활성화를 사용하십시오.
 
 <a id="alter-expiration-auth-key"></a>
 <a id="user-auth-key-alter-expiration-auth-key"></a>
@@ -683,7 +683,7 @@ jdbc:machbase://localhost:5656/machbasedb?AUTH_MODE=CHALLENGE&AUTH_KEY_FILE=/hom
 
 ### CHALLENGE 모드 주의 사항
 
-CHALLENGE 연결을 사용하기 전 다음 사항을 확인하세요.
+CHALLENGE 연결을 사용하기 전 다음 사항을 확인하십시오.
 
 **전환 전 체크리스트**
 
@@ -854,7 +854,7 @@ machsql -s 127.0.0.1 -u app_user \
 - 등록된 공개키 타입과 클라이언트의 `AUTH_SIG_SCHEME`이 일치하지 않으면 인증이 실패합니다.
   예: ECDSA 공개키를 등록하고 `AUTH_SIG_SCHEME=RSA_PKCS1_V15`로 접속하면 실패합니다.
 - RSA 키로 `AUTH_SIG_SCHEME=RSA_PSS`를 사용하는 경우와 `RSA_PKCS1_V15`를 사용하는 경우는 동일한 RSA 공개키를 공유할 수 있습니다. 서명 스킴만 다를 뿐 키 자체는 같습니다.
-- 알고리즘 선택 권장 사항은 [RSA / ECDSA / RSA_PSS 지원 범위](/dbms/security-access-control/authentication-auth-key/#support-scope-rsa-ecdsa-rsa-pss) 페이지를 참고하세요.
+- 알고리즘 선택 권장 사항은 [RSA / ECDSA / RSA_PSS 지원 범위](/dbms/security-access-control/authentication-auth-key/#support-scope-rsa-ecdsa-rsa-pss) 페이지를 참고하십시오.
 
 <a id="support-scope-rsa-ecdsa-rsa-pss"></a>
 

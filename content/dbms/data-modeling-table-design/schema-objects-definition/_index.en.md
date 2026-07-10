@@ -2,6 +2,7 @@
 type: docs
 title: '4.1 Schema Object Definition'
 weight: 10
+toc: true
 ---
 
 

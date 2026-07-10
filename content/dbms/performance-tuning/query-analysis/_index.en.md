@@ -2,6 +2,7 @@
 type: docs
 title: '12.10 Query and Analysis'
 weight: 100
+toc: true
 ---
 
 

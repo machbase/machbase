@@ -2,10 +2,10 @@
 type: docs
 title: '17.8.5 LOOKUP SQL/JSON Support'
 weight: 50
+toc: true
 ---
 
-This page summarizes SQL and JSON support for LOOKUP tables. The examples were
-verified against the prepared NFX main trunk build through port 5656.
+This page summarizes SQL and JSON support for LOOKUP tables.
 
 ## Support Matrix
 
@@ -16,8 +16,8 @@ verified against the prepared NFX main trunk build through port 5656.
 | SELECT | O | Primary-key and general predicates are supported |
 | UPDATE with primary-key condition | O | Uses the primary-key hash path |
 | DELETE with primary-key condition | O | Uses the primary-key hash path |
-| UPDATE with non-primary-key predicate | O | Updates all rows that match the predicate |
-| DELETE with non-primary-key predicate | O | Deletes all rows that match the predicate |
+| UPDATE with non-primary-key predicate | X | Returns `ERR-02190` |
+| DELETE with non-primary-key predicate | X | Returns `ERR-02190`; DELETE without WHERE removes all rows |
 | **JSON** | | |
 | JSON column | O | Can be created, stored, queried, and updated |
 | JSON path query (`$.key`) | O | Supports `->`, `JSON_EXTRACT_*`, `JSON_TYPEOF`, and `JSON_IS_VALID` |
@@ -25,7 +25,7 @@ verified against the prepared NFX main trunk build through port 5656.
 | JSON path index | X | Dedicated JSON path indexes are not supported |
 | **Other** | | |
 | Transaction | △ | Use LOOKUP DML as individual statements |
-| Prepared Statement | O | Predicate UPDATE with bind/self-reference is supported |
+| Prepared Statement | O | Binding is supported with a primary-key equality predicate |
 | Append API | △ | Regular SQL INSERT is the default; LOOKUP append follows its own duplicate-key policy |
 
 ## JSON Column Example
@@ -52,7 +52,8 @@ INSERT INTO device_lookup VALUES
 );
 ```
 
-JSON columns can be used in both predicates and update expressions.
+JSON paths can be used in SELECT predicates. UPDATE uses a primary-key equality
+predicate in the WHERE clause.
 
 ```sql
 SELECT id, status
@@ -62,29 +63,25 @@ WHERE meta->'$.region' = 'kr'
 
 UPDATE device_lookup
 SET meta = JSON_SET(meta, '$.status', 'active')
-WHERE meta->'$.region' = 'kr';
+WHERE id = 'dev-001';
 ```
 
-## Predicate UPDATE and DELETE
+## UPDATE and DELETE Predicates
 
-LOOKUP `UPDATE` and `DELETE` support primary-key equality as well as general
-column predicates, range predicates, string predicates, date predicates, and
-JSON path predicates.
+LOOKUP UPDATE and conditional DELETE require a primary-key equality predicate.
+A DELETE statement without a WHERE clause removes all rows.
 
 ```sql
 UPDATE device_lookup
 SET status = 'ACTIVE',
     score = score + 10,
     meta = JSON_SET(meta, '$.state', 'active')
-WHERE site = 'SEOUL'
-  AND status = 'READY'
-  AND score BETWEEN 10 AND 80
-  AND meta->'$.region' = 'kr';
+WHERE id = 'dev-001';
 
 DELETE FROM device_lookup
-WHERE status = 'EXPIRED'
-   OR updated_at < TO_DATE('2026-01-01 00:00:00')
-   OR JSON_EXTRACT_INTEGER(meta, '$.level') < 2;
+WHERE id = 'dev-001';
+
+DELETE FROM device_lookup;
 ```
 
 The right side of the `SET` clause can reference the current row. The primary
@@ -98,4 +95,4 @@ key column itself cannot be updated.
 | JSON path index | Dedicated JSON path indexes are not supported |
 | JSON path literal | Use single quotes (`'$.key'`); double quotes are parsed as identifiers |
 | Numeric comparison | Prefer `JSON_EXTRACT_INTEGER` or `JSON_EXTRACT_DOUBLE` instead of `->` |
-| Non-PK DML | The statement applies to every matching row; check the target range first |
+| Non-PK DML | Query the primary keys first, then execute the DML for each key |

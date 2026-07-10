@@ -2,6 +2,7 @@
 type: docs
 title: '17.3.3 V$ROLLUP 사전'
 weight: 30
+toc: true
 ---
 
 `V$ROLLUP`은 Tag 데이터의 Rollup 작업 상태를 실시간으로 표시하는 가상 테이블입니다. Rollup이 정상 작동하는지 확인하거나 실행 주기와 소요 시간을 모니터링할 때 사용합니다.

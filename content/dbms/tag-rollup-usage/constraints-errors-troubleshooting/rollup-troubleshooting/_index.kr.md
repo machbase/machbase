@@ -2,6 +2,7 @@
 type: docs
 title: '6.2 ROLLUP 결과가 예상과 다를 때'
 weight: 10
+toc: true
 ---
 
 ROLLUP 집계값이 예상과 다르거나 최신 데이터가 반영되지 않을 때의 진단 및 해결 방법입니다.

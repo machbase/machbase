@@ -2,6 +2,7 @@
 type: docs
 title: '17.8.4 TAG data UPDATE support matrix'
 weight: 40
+toc: true
 ---
 
 TAG time-series rows can be updated with `UPDATE table_name SET ... WHERE ...`.

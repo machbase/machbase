@@ -72,7 +72,7 @@ UPDATE sensor_data
    AND time >= TO_DATE('2026-07-01', 'YYYY-MM-DD');
 ```
 
-상세 내용은 [TAG data UPDATE 지원표](../tag-data-update/)를 참고하세요.
+상세 내용은 [TAG data UPDATE 지원표](../tag-data-update/)를 참고하십시오.
 
 ### LOOKUP과 VOLATILE의 트랜잭션 범위
 
@@ -81,7 +81,7 @@ LOOKUP과 VOLATILE 테이블의 각 DML은 statement 단위로 반영됩니다. 
 
 ### JSON 컬럼 지원 범위
 
-JSON 컬럼은 TAG, LOG, LOOKUP, RDB 테이블에서 지원합니다. VOLATILE 테이블은 JSON 타입 컬럼 생성을 지원하지 않습니다. LOOKUP 테이블의 JSON 컬럼은 일반 컬럼으로 사용할 수 있지만 primary key로는 사용할 수 없습니다. 상세 내용은 [JSON 타입의 테이블 타입별 지원 범위](../../sql/type-data-types-dictionary/table-types-type-support-scope-json/)를 참고하세요.
+JSON 컬럼은 TAG, LOG, LOOKUP, RDB 테이블에서 지원합니다. VOLATILE 테이블은 JSON 타입 컬럼 생성을 지원하지 않습니다. LOOKUP 테이블의 JSON 컬럼은 일반 컬럼으로 사용할 수 있지만 primary key로는 사용할 수 없습니다. 상세 내용은 [JSON 타입의 테이블 타입별 지원 범위](../../sql/type-data-types-dictionary/table-types-type-support-scope-json/)를 참고하십시오.
 
 ### Append API 대상 테이블
 

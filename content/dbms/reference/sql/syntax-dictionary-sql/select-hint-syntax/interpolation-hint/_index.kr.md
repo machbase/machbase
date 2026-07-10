@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.1.2.2 INTERPOLATION hint'
 weight: 20
+toc: true
 ---
 
 `INTERPOLATION` 힌트는 TAG 테이블의 시계열 데이터에서 누락된 시간 구간을 수학적으로 보간해 채워 반환합니다. 센서 오류, 네트워크 장애 등으로 빠진 데이터 구간을 연속적인 시계열로 처리할 때 사용합니다.

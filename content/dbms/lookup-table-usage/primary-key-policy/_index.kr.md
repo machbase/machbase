@@ -10,7 +10,9 @@ LOOKUP 테이블의 PRIMARY KEY 설계 원칙과 정책을 다룹니다.
 
 ## PRIMARY KEY 설계
 
-LOOKUP 테이블은 `PRIMARY KEY`가 필수입니다. PRIMARY KEY는 행을 고유하게 식별하며, UPDATE/DELETE 연산의 기준이 됩니다.
+LOOKUP 테이블은 `PRIMARY KEY`가 필수입니다. PRIMARY KEY는 행을 고유하게 식별하고 중복 입력을
+제어합니다. UPDATE와 조건이 있는 DELETE의 `WHERE` 절에는 Primary key equality 조건을
+사용하며 Primary key 컬럼 자체는 UPDATE할 수 없습니다.
 
 ### 기본 문법
 

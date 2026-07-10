@@ -2,6 +2,7 @@
 type: docs
 title: '17.6.2 /machbase append API'
 weight: 20
+toc: true
 ---
 
 `POST /machbase` 엔드포인트는 여러 행을 한 번에 삽입합니다. 요청 본문에 테이블 이름과 행 배열을 JSON으로 전달하며, 수집성 고빈도 데이터 입력에 적합합니다.

@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.1.8 SAVE DATA INTO syntax'
 weight: 80
+toc: true
 ---
 
 `SAVE DATA INTO`는 `SELECT` 쿼리 결과를 CSV 파일로 저장하는 구문입니다.

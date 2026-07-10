@@ -8,50 +8,12 @@ English structure placeholder. Korean content is authoritative for this restruct
 
 <a id="too-many-lookup-predicate-update-delete-row"></a>
 
-## Large LOOKUP Predicate UPDATE/DELETE Range
+## LOOKUP UPDATE/DELETE Predicate Error
 
-LOOKUP predicate `UPDATE` and `DELETE` are supported. Because the statement
-applies to every matching row, check the target range before changing
-production data.
-
-### Symptoms
-
-- The statement succeeds, but more rows than expected are updated or deleted.
-- A wide range predicate or JSON path predicate matches many rows.
-
-### Diagnosis
-
-Run the same predicate with `SELECT COUNT(*)` first.
-
-```sql
-SELECT COUNT(*)
-FROM equipment
-WHERE location = 'Building-A'
-  AND status = 'inactive';
-```
-
-If needed, inspect the target keys.
-
-```sql
-SELECT eq_id, location, status
-FROM equipment
-WHERE location = 'Building-A'
-  AND status = 'inactive';
-```
-
-### Resolution
-
-- Use the primary key for single-row changes.
-- Narrow bulk predicates and verify row counts before and after the DML.
-- Use typed JSON functions for numeric JSON predicates.
-
-```sql
-UPDATE equipment
-SET status = 'retired'
-WHERE location = 'Building-A'
-  AND status = 'inactive'
-  AND JSON_EXTRACT_INTEGER(meta, '$.level') < 2;
-```
+LOOKUP UPDATE and conditional DELETE require a primary-key equality predicate.
+Non-PK, range, and JSON-path predicates return `ERR-02190`. Query the target
+primary keys first and execute the DML for each key. A DELETE statement without
+a WHERE clause removes all rows.
 
 <a id="error-lookup-json-path-primary-key"></a>
 

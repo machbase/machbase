@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.2.1 JSON 타입의 테이블 타입별 지원 범위'
 weight: 10
+toc: true
 ---
 
 JSON 타입 컬럼을 각 테이블 타입에서 사용할 때의 지원 범위를 정리합니다.

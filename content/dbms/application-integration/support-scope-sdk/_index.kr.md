@@ -19,7 +19,7 @@ toc: true
 
 애플리케이션 특성에 따라 아래를 참고합니다.
 
-- **최고 성능의 대량 쓰기**가 필요하면 → ODBC/CLI, JDBC, Go native 등 Append API 지원 드라이버 사용
+- **지속적인 대량 쓰기**가 필요하면 → ODBC/CLI, JDBC, Go native 등 Append API 지원 드라이버 사용
 - **표준 SQL 인터페이스**가 필요하면 → JDBC, Python(DB-API 2.0), Go(`database/sql`)
 - **웹 서비스·마이크로서비스 통합**이라면 → REST API
 - **트랜잭션이 필요한 RDB 작업**이라면 → ODBC/CLI 또는 JDBC에서 SQL `BEGIN` 직접 실행
@@ -41,7 +41,7 @@ toc: true
 
 | SDK | Append 지원 | API / 메서드 | 비고 |
 |-----|:-----------:|--------------|------|
-| **ODBC / CLI** | O | `SQLAppendOpen` / `SQLAppendData` / `SQLAppendClose` | 전체 지원, 최고 성능 |
+| **ODBC / CLI** | O | `SQLAppendOpen` / `SQLAppendData` / `SQLAppendClose` | 버퍼와 flush 직접 제어 |
 | **JDBC** | O | `MachStatement` Append 메서드 | `executeAppendOpen` / `executeAppendData` / `executeAppendFlush` |
 | **Python** | O | `conn.append(table, rows)` | `machbaseAPI` 패키지 |
 | **.NET** | O | `MachCommand` + `MachAppendWriter` | `MachCommand.AppendOpen(tableName)` |

@@ -2,6 +2,7 @@
 type: docs
 title: '17.2 설정 레퍼런스'
 weight: 20
+toc: true
 ---
 
 Machbase 서버는 `$MACHBASE_HOME/conf/machbase.conf` 파일에 정의된 프로퍼티를 통해 동작을 제어합니다. 이 섹션은 각 프로퍼티의 허용 범위와 기본값을 빠르게 찾아볼 수 있는 레퍼런스입니다.

@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.1.2 SELECT hint syntax'
 weight: 20
+toc: true
 ---
 
 SELECT 힌트는 `/*+ ... */` 형식의 주석 블록으로 옵티마이저 동작을 제어하거나 TAG 테이블 전용 기능(보간, 샘플링)을 활성화합니다.

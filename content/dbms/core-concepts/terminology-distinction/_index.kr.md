@@ -115,7 +115,10 @@ DROP RETENTION keep_60days;
 
 ### DELETE: 조건 기반 수동 삭제
 
-SQL 문장을 직접 실행해 특정 조건에 맞는 데이터를 즉시 삭제합니다. LOG 테이블은 `BEFORE`, `OLDEST`, `EXCEPT` 같은 로그 보존형 DELETE를, TAG 테이블은 태그 이름과 축 조건 또는 `BEFORE` 조건을, LOOKUP/VOLATILE은 Primary key 조건을, RDB 테이블은 일반 WHERE 조건 기반 DELETE를 사용합니다.
+SQL 문장을 직접 실행해 특정 조건에 맞는 데이터를 즉시 삭제합니다. LOG 테이블은 `BEFORE`,
+`OLDEST`, `EXCEPT` 같은 로그 보존형 DELETE를, TAG 테이블은 태그 이름과 축 조건 또는 `BEFORE`
+조건을 사용합니다. LOOKUP과 VOLATILE 테이블은 Primary key equality 조건을, RDB 테이블은
+일반 `WHERE` 조건을 사용합니다. LOOKUP의 조건 없는 DELETE는 모든 행을 삭제합니다.
 
 ```sql
 -- LOG 테이블에서 특정 시각 이전 삭제
@@ -257,7 +260,9 @@ Restore와 달리 데이터를 원래 위치에 복원하지 않습니다. 백�
 
 ### machloader
 
-LOG 테이블과 LOOKUP 테이블을 대상으로 파일에서 데이터를 적재하거나 반출하는 범용 도구입니다. CSV뿐 아니라 다양한 파일 형식을 지원하며, 설정 파일(`.mach`)로 컬럼 매핑, 구분자, 날짜 포맷 등을 세밀하게 제어합니다.
+테이블 데이터를 파일에서 적재하거나 반출하는 범용 도구입니다. CSV뿐 아니라 다양한 구분자
+형식을 지원하며, 스키마 파일로 컬럼 매핑, 구분자와 날짜 형식을 제어합니다. RDB 테이블은
+사용자 컬럼을 명시한 스키마 파일을 사용합니다.
 
 ```bash
 # 적재 예시

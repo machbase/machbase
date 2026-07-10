@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.3 함수 사전'
 weight: 30
+toc: true
 ---
 
 Machbase SQL built-in functions are organized by category.

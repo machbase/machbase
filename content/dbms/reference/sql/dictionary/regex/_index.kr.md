@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.3.3 정규식 함수'
 weight: 30
+toc: true
 ---
 
 Machbase는 PCRE(Perl Compatible Regular Expressions) 기반의 정규식 함수를 제공합니다. 모든 정규식 함수는 `VARCHAR` 타입 컬럼에서만 동작합니다.

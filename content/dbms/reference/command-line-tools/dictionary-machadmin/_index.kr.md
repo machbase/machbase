@@ -2,6 +2,7 @@
 type: docs
 title: '17.4.1 machadmin 명령/옵션 사전'
 weight: 10
+toc: true
 ---
 
 `machadmin`은 Machbase 서버를 시작하거나 종료하고 데이터베이스 생성, 삭제 및 실행 상태를 확인하는 관리 도구입니다.

@@ -27,9 +27,9 @@ RDB 테이블은 Standard Edition 전용 기능입니다.
 
 Cluster Edition 환경에서 RDB 테이블과 유사한 기능이 필요한 경우 다음을 고려합니다.
 
-1. **LOOKUP 테이블**: 소규모 데이터 + PRIMARY KEY 기반 UPDATE/DELETE 시
+1. **LOOKUP 테이블**: 기준 정보에 Primary key 식별과 단건 UPDATE/DELETE가 필요할 때
 2. **LOG 테이블**: UPDATE 불필요한 추가 전용 이력 데이터
-3. **외부 RDBMS 연동**: 대규모 관계형 데이터는 별도 RDBMS(PostgreSQL 등)에서 관리
+3. **외부 RDBMS 연동**: Cluster에서 관계형 트랜잭션을 처리해야 할 때 별도 RDBMS 사용
 
 ### 기능 요약
 

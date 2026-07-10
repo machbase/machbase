@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.1.10.1 TAG data UPDATE syntax'
 weight: 10
+toc: true
 ---
 
 TAG time-series rows are updated with the normal `UPDATE` statement. There is no

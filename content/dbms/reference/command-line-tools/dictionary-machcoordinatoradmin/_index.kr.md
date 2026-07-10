@@ -2,6 +2,7 @@
 type: docs
 title: '17.4.8 machcoordinatoradmin 명령/옵션 사전'
 weight: 80
+toc: true
 ---
 
 `machcoordinatoradmin`은 Machbase Cluster Edition의 Coordinator 노드를 관리하고 클러스터 구성을 제어하는 도구입니다. Cluster Edition 패키지에만 포함됩니다.

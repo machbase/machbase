@@ -2,6 +2,7 @@
 type: docs
 title: '4.3 Data Mutation Policy'
 weight: 30
+toc: true
 ---
 
 

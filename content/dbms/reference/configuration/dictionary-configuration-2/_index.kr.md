@@ -2,6 +2,7 @@
 type: docs
 title: '17.2.2 클러스터 설정 프로퍼티 사전'
 weight: 20
+toc: true
 ---
 
 Cluster Edition에서는 `$MACHBASE_COORDINATOR_HOME/conf/`, `$MACHBASE_BROKER_HOME/conf/`, `$MACHBASE_WAREHOUSE_HOME/conf/` 각 노드의 설정 파일을 통해 클러스터 동작을 제어합니다.

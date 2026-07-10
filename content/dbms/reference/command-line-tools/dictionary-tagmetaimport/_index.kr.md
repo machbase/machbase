@@ -2,6 +2,7 @@
 type: docs
 title: '17.4.5 tagmetaimport 명령/옵션 사전'
 weight: 50
+toc: true
 ---
 
 `tagmetaimport`는 TAG 테이블의 메타데이터를 CSV 파일에서 일괄 가져오는 도구입니다. 대량의 TAG 이름과 메타데이터를 한 번에 등록할 때 사용합니다.

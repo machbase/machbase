@@ -48,7 +48,7 @@ node -e "const { createConnection } = require('@machbase/ts-client'); console.lo
 > **참고**: 이 클라이언트는 Node.js에서 TCP 소켓을 사용하며, 브라우저용 라이브러리(웹소켓 전송)를 제공하지 않습니다.
 > DBMS standard 소스의 패키지 버전은 `@machbase/ts-client` 1.0.0입니다.
 >
-> 이 문서의 기본 계정(`SYS`/`MANAGER`)은 로컬 테스트용 예시입니다. 운영 환경에서는 전용 계정과 비밀번호를 사용하세요.
+> 이 문서의 기본 계정(`SYS`/`MANAGER`)은 로컬 테스트용 예시입니다. 운영 환경에서는 전용 계정과 비밀번호를 사용하십시오.
 
 ## 빠르게 시작하기
 
@@ -138,8 +138,8 @@ bootstrap().catch(console.error);
 
 ## 자주 발생하는 문제
 
-- **ECONNREFUSED** – 서버가 실행 중인지(`machadmin -u`), 호스트와 포트가 맞는지, 방화벽이 리스너 포트(기본 5656)의 TCP 연결을 허용하는지 확인하세요.
-- **Authentication failed** – 사용자/비밀번호를 다시 확인하고 대상 데이터베이스가 생성되어 있는지(`machadmin -c`) 점검하세요.
+- **ECONNREFUSED** – 서버가 실행 중인지(`machadmin -u`), 호스트와 포트가 맞는지, 방화벽이 리스너 포트(기본 5656)의 TCP 연결을 허용하는지 확인하십시오.
+- **Authentication failed** – 사용자/비밀번호를 다시 확인하고 대상 데이터베이스가 생성되어 있는지(`machadmin -c`) 점검하십시오.
 
 ## API 참조
 
@@ -300,7 +300,7 @@ console.log('Appended rows:', appendResult.rowsAppended);
 
 반환값은 `{ table, rowsAppended, rowsFailed, message }` 형태입니다.
 
-> **팁**: "column count does not match" 오류는 대상 테이블이 로그 테이블이 아니거나, 컬럼 순서가 스키마와 일치하지 않을 때 발생합니다. TAG 테이블에는 `appendOpen()`을 사용하세요.
+> **팁**: "column count does not match" 오류는 대상 테이블이 로그 테이블이 아니거나, 컬럼 순서가 스키마와 일치하지 않을 때 발생합니다. TAG 테이블에는 `appendOpen()`을 사용하십시오.
 
 #### appendOpen(table, columns, options?)
 
@@ -322,9 +322,9 @@ await stream.append({ values: [3, 'charlie', 2.5] });
 await stream.close();
 ```
 
-네이티브 Append를 끄고 Prepared Statement 기반으로 강제하려면 `MACHBASE_NATIVE_APPEND=0`을 설정하세요. 서버가 특정 테이블 타입이나 세션에서 네이티브 Append를 지원하지 않으면 페이사드가 자동으로 Prepared Statement 방식으로 폴백합니다.
+네이티브 Append를 끄고 Prepared Statement 기반으로 강제하려면 `MACHBASE_NATIVE_APPEND=0`을 설정하십시오. 서버가 특정 테이블 타입이나 세션에서 네이티브 Append를 지원하지 않으면 페이사드가 자동으로 Prepared Statement 방식으로 폴백합니다.
 
-TAG 테이블의 `DATETIME` 컬럼에는 `Date` 객체 또는 `bigint` epoch 값을 전달하세요.
+TAG 테이블의 `DATETIME` 컬럼에는 `Date` 객체 또는 `bigint` epoch 값을 전달하십시오.
 
 #### append(rows) on an append stream
 
@@ -508,7 +508,7 @@ const { createConnection } = require('@machbase/ts-client');
 })();
 ```
 
-> 네이티브 모드는 기본 활성화입니다. 비활성화하려면 `MACHBASE_NATIVE_APPEND=0`을 설정하세요. 성공 시 청크별 응답은 생략되고, 오류만 실패 응답으로 전달됩니다.
+> 네이티브 모드는 기본 활성화입니다. 비활성화하려면 `MACHBASE_NATIVE_APPEND=0`을 설정하십시오. 성공 시 청크별 응답은 생략되고, 오류만 실패 응답으로 전달됩니다.
 
 ### Promise 래퍼와 Ping
 
@@ -545,11 +545,11 @@ await conn.execute('COMMIT');
 
 ### 결과 버퍼링 및 페이지네이션
 
-래퍼의 `query` 메서드는 전체 결과 집합을 버퍼링한 뒤 반환합니다. 대용량 테이블에서는 `ORDER BY … LIMIT` 쿼리나 기본 키 범위를 이용해 직접 페이지를 나누세요.
+래퍼의 `query` 메서드는 전체 결과 집합을 버퍼링한 뒤 반환합니다. 대용량 테이블에서는 `ORDER BY … LIMIT` 쿼리나 기본 키 범위를 이용해 직접 페이지를 나누십시오.
 
 ### 파라미터 바인딩
 
-지원 타입은 `int32`, `int64`, `float64`, `varchar` 등 범용 스칼라 타입입니다. `null`을 전달할 경우 명시적 타입을 함께 지정하세요.
+지원 타입은 `int32`, `int64`, `float64`, `varchar` 등 범용 스칼라 타입입니다. `null`을 전달할 경우 명시적 타입을 함께 지정하십시오.
 
 ```javascript
 { value: null, type: 'varchar' }
@@ -557,11 +557,11 @@ await conn.execute('COMMIT');
 
 ### Append 프로토콜
 
-로그 테이블에는 `appendBatch`를, 점진적 유입이 필요한 경우 스트리밍 도우미(`appendOpen`/`append`)를 사용하세요. 특정 테이블 타입(예: TAG 테이블)에서 스트리밍을 지원하지 않으면 준비된 문 반복 방식으로 자동 대체됩니다. 운영 시에는 데이터를 청크로 나누고 `rowsFailed`를 확인하는 패턴이 안전합니다.
+로그 테이블에는 `appendBatch`를, 점진적 유입이 필요한 경우 스트리밍 도우미(`appendOpen`/`append`)를 사용하십시오. 특정 테이블 타입(예: TAG 테이블)에서 스트리밍을 지원하지 않으면 준비된 문 반복 방식으로 자동 대체됩니다. 운영 시에는 데이터를 청크로 나누고 `rowsFailed`를 확인하는 패턴이 안전합니다.
 
 ### 오류 처리
 
-오류는 기본 `Error` 객체(래퍼 사용 시 `QueryError`)로 전달됩니다. 문제를 진단하려면 `error.message` 또는 `QueryError`의 `code`, `sql` 필드를 확인하세요. 통합 테스트는 존재하지 않는 테이블 조회와 지원하지 않는 `UPDATE`를 일부러 실행해 오류 메시지가 충분히 설명적인지 확인합니다.
+오류는 기본 `Error` 객체(래퍼 사용 시 `QueryError`)로 전달됩니다. 문제를 진단하려면 `error.message` 또는 `QueryError`의 `code`, `sql` 필드를 확인하십시오. 통합 테스트는 존재하지 않는 테이블 조회와 지원하지 않는 `UPDATE`를 일부러 실행해 오류 메시지가 충분히 설명적인지 확인합니다.
 
 ### 테이블 타입별 SQL 유의사항
 
@@ -572,12 +572,12 @@ await conn.execute('COMMIT');
 
 ## 모범 사례
 
-1. **항상 연결을 닫기**: `try...finally` 블록으로 `conn.end()`가 호출되도록 보장하세요.
+1. **항상 연결을 닫기**: `try...finally` 블록으로 `conn.end()`가 호출되도록 보장하십시오.
 2. **Prepared Statement 재사용**: 한 번 생성한 후 여러 번 실행하면 성능이 향상됩니다.
-3. **배치 입력 활용**: 단건 INSERT 대신 `appendBatch`나 `appendOpen`으로 대량 적재를 수행하세요.
+3. **배치 입력 활용**: 단건 INSERT 대신 `appendBatch`나 `appendOpen`으로 대량 적재를 수행하십시오.
 4. **오류 처리**: DB 작업을 `try...catch`로 감싸고 적절히 로깅합니다.
-5. **커넥션 풀 사용**: 운영 환경에서는 커넥션 풀을 도입해 동시 요청을 안정적으로 처리하세요.
-6. **쿼리 파라미터화**: SQL 인젝션을 방지하려면 문자열 결합 대신 바인딩(`?` 플레이스홀더)을 사용하세요.
+5. **커넥션 풀 사용**: 운영 환경에서는 커넥션 풀을 도입해 동시 요청을 안정적으로 처리하십시오.
+6. **쿼리 파라미터화**: SQL 인젝션을 방지하려면 문자열 결합 대신 바인딩(`?` 플레이스홀더)을 사용하십시오.
 
 ## 변경 이력
 

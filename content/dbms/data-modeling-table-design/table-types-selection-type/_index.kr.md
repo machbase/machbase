@@ -113,8 +113,8 @@ CREATE LOOKUP TABLE code_master (
   ├── YES → LOG TABLE
   └── NO  ↓
 
-데이터가 코드 테이블/기준 정보인가? (소규모, PK 기반 UPDATE)
-  ├── YES, 건수 < 수백만 → LOOKUP TABLE
+데이터가 코드 테이블/기준 정보인가? (반복 조회·갱신)
+  ├── YES → LOOKUP TABLE
   └── NO  ↓
 
 데이터가 서버 재시작 시 폐기 가능한 인메모리 상태/캐시인가?
@@ -131,7 +131,7 @@ CREATE LOOKUP TABLE code_master (
 |------|------|
 | 시간 또는 거리 기반 계측값인가? | TAG |
 | 추가만 하고 수정·삭제 불필요? | LOG |
-| PRIMARY KEY 기준 UPDATE/DELETE 필요? 소규모? | LOOKUP |
+| PRIMARY KEY가 필요한 기준 정보이며 반복 조회·갱신하는가? | LOOKUP |
 | 서버 재시작 시 데이터가 사라져도 되는가? | VOLATILE |
 | 일반 관계형 업무 (INSERT/UPDATE/DELETE/SELECT)? | RDB |
 
@@ -155,7 +155,7 @@ CREATE LOOKUP TABLE code_master (
 | INSERT | O | O | O | O | O |
 | APPEND API | O | O | O (SDK) | X | O |
 | UPDATE | O (태그/축 조건) | X | O | O | O |
-| DELETE | O (BEFORE/조건) | O (BEFORE/OLDEST/EXCEPT) | O | O (PK equality) | O (PK equality) |
+| DELETE | O (BEFORE/조건) | O (BEFORE/OLDEST/EXCEPT) | O | O (PK equality) | O (PK equality/전체 삭제) |
 | PRIMARY KEY | 필수 | X | 선택 | 선택 | 필수 |
 | BASETIME | 필수 (시간축) | X | X | X | X |
 | _arrival_time | X | 자동 추가 | X | X | X |
@@ -173,7 +173,7 @@ CREATE LOOKUP TABLE code_master (
 
 ### RDB 테이블 제약
 
-RDB 테이블(8.6 신규)은 다음 제약이 있습니다.
+RDB 테이블은 다음 제약이 있습니다.
 
 - **Cluster Edition 미지원**: Standard Edition 전용
 - **최소 컬럼 수**: 1개 이상
@@ -195,28 +195,28 @@ RDB 테이블과 LOOKUP 테이블은 모두 관계형 데이터를 저장하지�
 | UPDATE (WHERE 없음) | O (전체 행) | X |
 | DELETE | O | O |
 | 인덱스 | BTREE PK + 보조 인덱스 | Red-Black |
-| 대용량 | 대규모 가능 | 수백만 건 이하 권장 |
+| 데이터 규모 | 디스크 용량과 트랜잭션 부하로 검증 | 참조 데이터 조회·갱신 부하로 검증 |
 | JOIN 대상 | O | O |
 | Cluster Edition | X | O |
 
 ### 선택 가이드
 
 **RDB 테이블을 선택하는 경우**
-- 대량 데이터 (수천만 건 이상)
+- 명시적 트랜잭션과 관계형 DML이 필요한 데이터
 - UPDATE·DELETE·INSERT·SELECT가 모두 필요한 일반 관계형 워크로드
 - PRIMARY KEY 없이 다양한 컬럼 조합으로 조회하는 경우
 - Standard Edition 환경
 
 **LOOKUP 테이블을 선택하는 경우**
-- 코드 테이블, 기준 정보 (수백만 건 이하)
-- PRIMARY KEY 기준 UPDATE/DELETE 위주
+- 코드 테이블과 기준 정보
+- PRIMARY KEY 조회와 단건 UPDATE/DELETE가 필요한 경우
 - Cluster Edition 환경에서도 사용해야 하는 경우
 - 실시간 기준 정보 갱신이 필요한 경우
 
 ### 예시
 
 ```sql
--- LOOKUP: 국가 코드 테이블 (소규모, PK 기반 UPDATE)
+-- LOOKUP: 국가 코드 테이블 (PK 조회와 조건 기반 UPDATE)
 CREATE LOOKUP TABLE country_code (
     code   VARCHAR(4)   PRIMARY KEY,
     name   VARCHAR(64)

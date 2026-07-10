@@ -2,6 +2,7 @@
 type: docs
 title: '2.5 용어 구분'
 weight: 50
+toc: true
 ---
 
 
@@ -22,9 +23,9 @@ weight: 50
 
 ## machloader vs csvimport / csvexport vs tagmetaimport
 
-<a id="load-data-infile-vs-fastload"></a>
+<a id="load-data-infile-vs-machloader"></a>
 
-## LOAD DATA INFILE vs fastload
+## LOAD DATA INFILE vs machloader
 
 <a id="ingestion-sdk-append-vs-sql-collector"></a>
 

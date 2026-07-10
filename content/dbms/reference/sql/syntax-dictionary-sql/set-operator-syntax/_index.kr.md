@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.1.4 set operator syntax'
 weight: 40
+toc: true
 ---
 
 집합 연산자는 두 개 이상의 `SELECT` 쿼리 결과를 합치거나 교집합/차집합을 구하는 연산자입니다.

@@ -75,6 +75,6 @@ Machbase 공식 문서 기준 (`/dbms/` 경로 아래):
 ## 문서 업데이트 정책
 
 - 이 문서는 Machbase 8.6 버전 기준입니다.
-- 각 섹션의 정규 URL은 [canonical-url-map](../canonical-url-map/)을 참고하세요.
-- 버전별 변경 사항은 릴리스 노트를 확인하세요.
-- llms-full.txt (RAG용 전체 청크 인덱스)는 [llms-full.txt / chunk index](../llms-full-txt-chunk-index/)를 참고하세요.
+- 각 섹션의 정규 URL은 [canonical-url-map](../canonical-url-map/)을 참고하십시오.
+- 버전별 변경 사항은 릴리스 노트를 확인하십시오.
+- llms-full.txt (RAG용 전체 청크 인덱스)는 [llms-full.txt / chunk index](../llms-full-txt-chunk-index/)를 참고하십시오.

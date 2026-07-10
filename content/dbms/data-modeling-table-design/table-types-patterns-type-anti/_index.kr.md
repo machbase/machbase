@@ -2,6 +2,7 @@
 type: docs
 title: '4.4 안티패턴'
 weight: 40
+toc: true
 ---
 테이블 설계에서 피해야 할 대표적인 안티패턴을 다룹니다. 아래 패턴은 성능 저하, 운영 복잡도 증가, 데이터 손실로 이어질 수 있습니다.
 
@@ -167,7 +168,7 @@ CREATE TAG TABLE sensor_data (
 ### 안티패턴 3: 대용량 이력을 LOOKUP에 저장
 
 ```sql
--- 잘못됨: 수천만 건 주문 이력을 LOOKUP에
+-- 잘못됨: 관계형 트랜잭션이 필요한 주문 이력을 LOOKUP에 저장
 CREATE LOOKUP TABLE order_history_wrong (
     order_id LONG PRIMARY KEY,
     customer VARCHAR(64)

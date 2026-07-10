@@ -11,6 +11,7 @@ ROLLUP은 TAG 테이블의 시계열 데이터를 시간 단위로 집계해 조
 | 절 | 내용 |
 |----|------|
 | [ROLLUP 개요와 사용 기준](./overview-use-criteria/) | ROLLUP 동작 원리와 도입 판단 기준 |
+| [ROLLUP 결과가 예상과 다를 때](./constraints-errors-troubleshooting/rollup-troubleshooting/) | 집계 지연과 결과 불일치 진단 |
 | [ROLLUP 대상 TAG 테이블 설계](./target-tag-table-design/) | 계층 설계, ON/FROM 선택, 스토리지 예측 |
 | [ROLLUP 생성과 삭제](./create-delete-rollup/) | CREATE ROLLUP / DROP ROLLUP 구문과 예시 |
 | [ROLLUP 조회 문법](./query-syntax-rollup/) | rollup() 함수, 집계 함수, 힌트 사용법 |

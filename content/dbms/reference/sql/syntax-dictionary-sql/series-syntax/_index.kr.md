@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.1.7 SERIES BY syntax'
 weight: 70
+toc: true
 ---
 
 `SERIES BY` 절은 정렬된 결과 집합에서 특정 조건을 만족하는 연속적인 행의 구간(series)을 추출합니다. 연속된 구간에서 시작/종료 시각과 패턴을 분석할 때 사용합니다.

@@ -16,8 +16,8 @@ toc: true
 | SELECT | O | PK 조건과 일반 predicate 모두 사용 가능 |
 | UPDATE (PK 조건) | O | PK 해시 인덱스를 직접 사용 |
 | DELETE (PK 조건) | O | PK 해시 인덱스를 직접 사용 |
-| UPDATE (비-PK 조건) | O | 조건에 맞는 모든 row를 갱신 |
-| DELETE (비-PK 조건) | O | 조건에 맞는 모든 row를 삭제 |
+| UPDATE (비-PK 조건) | X | `ERR-02190`; Primary key equality 조건 필요 |
+| DELETE (비-PK 조건) | X | `ERR-02190`; 조건 없는 전체 삭제는 지원 |
 | **JSON 기능** | | |
 | JSON 타입 컬럼 | O | 일반 컬럼으로 생성, 저장, 조회, 갱신 가능 |
 | JSON path query (`$.key`) | O | `->`, `JSON_EXTRACT_*`, `JSON_TYPEOF`, `JSON_IS_VALID` 사용 가능 |
@@ -25,7 +25,7 @@ toc: true
 | JSON path index | X | 별도 JSON path index는 지원하지 않음 |
 | **기타** | | |
 | Transaction | △ | 개별 DML 중심으로 사용 |
-| Prepared Statement | O | non-PK predicate UPDATE도 bind/self-reference 동작 확인 |
+| Prepared Statement | O | Primary key equality 조건의 bind 지원 |
 | Append API | △ | 일반 SQL INSERT가 기본이며, Append는 별도 LOOKUP append 정책을 따름 |
 
 ## LOOKUP JSON 컬럼 예
@@ -52,7 +52,8 @@ INSERT INTO device_lookup VALUES
 );
 ```
 
-JSON 컬럼은 조회 조건과 갱신 대상에 모두 사용할 수 있습니다.
+JSON path는 SELECT 조건에 사용할 수 있고, JSON 컬럼 갱신 시 WHERE 절에는 Primary key equality
+조건을 사용합니다.
 
 ```sql
 SELECT id, status
@@ -62,28 +63,25 @@ WHERE meta->'$.region' = 'kr'
 
 UPDATE device_lookup
 SET meta = JSON_SET(meta, '$.status', 'active')
-WHERE meta->'$.region' = 'kr';
+WHERE id = 'dev-001';
 ```
 
-## 일반 조건식 UPDATE/DELETE
+## UPDATE/DELETE 조건
 
-LOOKUP 테이블의 `UPDATE`와 `DELETE`는 PK equality 조건뿐 아니라 일반 컬럼 조건,
-범위 조건, 문자열 조건, 날짜 조건, JSON path 조건을 사용할 수 있습니다.
+LOOKUP 테이블의 UPDATE와 조건이 있는 DELETE는 Primary key equality 조건만 허용합니다.
+WHERE 절을 생략한 DELETE는 모든 row를 삭제합니다.
 
 ```sql
 UPDATE device_lookup
 SET status = 'ACTIVE',
     score = score + 10,
     meta = JSON_SET(meta, '$.state', 'active')
-WHERE site = 'SEOUL'
-  AND status = 'READY'
-  AND score BETWEEN 10 AND 80
-  AND meta->'$.region' = 'kr';
+WHERE id = 'dev-001';
 
 DELETE FROM device_lookup
-WHERE status = 'EXPIRED'
-   OR updated_at < TO_DATE('2026-01-01 00:00:00')
-   OR JSON_EXTRACT_INTEGER(meta, '$.level') < 2;
+WHERE id = 'dev-001';
+
+DELETE FROM device_lookup;
 ```
 
 `SET` 절에서는 현재 row의 컬럼 값을 참조할 수 있습니다. 단, primary key 컬럼 자체는
@@ -97,4 +95,4 @@ WHERE status = 'EXPIRED'
 | JSON path index | JSON path별 전용 인덱스는 지원하지 않음 |
 | JSON path 문자열 | 작은따옴표(`'$.key'`)를 사용해야 하며 큰따옴표는 식별자로 해석됨 |
 | 숫자 비교 | `->` 대신 `JSON_EXTRACT_INTEGER`, `JSON_EXTRACT_DOUBLE` 등 타입별 함수를 권장 |
-| non-PK DML | 조건에 맞는 모든 row에 적용되므로 실행 전 같은 조건으로 대상 범위 확인 권장 |
+| non-PK DML | UPDATE/DELETE 조건으로 사용할 수 없음; 먼저 Primary key를 조회한 뒤 키별 실행 |

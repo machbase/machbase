@@ -35,7 +35,7 @@ BACKUP DATABASE INTO DISK = '/backup/machbase_20240101';
 BACKUP DATABASE INTO DISK = 'backup_20240101';
 ```
 
-- `backup_path`가 이미 존재하면 오류가 발생합니다. 날짜 등을 포함한 고유한 이름을 사용하세요.
+- `backup_path`가 이미 존재하면 오류가 발생합니다. 날짜 등을 포함한 고유한 이름을 사용하십시오.
 - 백업이 완료될 때까지 명령이 블로킹됩니다.
 
 ### 증분 백업
@@ -181,7 +181,7 @@ umount_database_stmt ::=
 UMOUNT DATABASE backup_db;
 ```
 
-마운트 DB를 참조 중인 열린 커서나 실행 중인 쿼리가 있으면 언마운트가 실패합니다. 해당 세션을 종료한 뒤 다시 실행하세요.
+마운트 DB를 참조 중인 열린 커서나 실행 중인 쿼리가 있으면 언마운트가 실패합니다. 해당 세션을 종료한 뒤 다시 실행하십시오.
 
 ---
 

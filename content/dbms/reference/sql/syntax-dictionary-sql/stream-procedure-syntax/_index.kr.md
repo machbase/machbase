@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.1.18 STREAM procedure syntax'
 weight: 180
+toc: true
 ---
 
 STREAM은 사용자가 정의한 `INSERT ... SELECT ...` 쿼리를 서버 내부에 등록해 자동 실행하는 처리 객체입니다. 한 번 생성하고 시작하면 중지하거나 삭제할 때까지 백그라운드에서 계속 실행됩니다.

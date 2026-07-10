@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.3 함수 사전'
 weight: 30
+toc: true
 ---
 
 내장 함수를 카테고리별로 정리합니다.

@@ -2,6 +2,7 @@
 type: docs
 title: '17.2.3 RS Cache 프로퍼티 사전'
 weight: 30
+toc: true
 ---
 
 RS(Result Set) Cache는 쿼리 결과를 메모리에 캐시하여 동일하거나 유사한 쿼리의 응답 속도를 높입니다. 시계열 데이터의 집계 쿼리에 특히 효과적입니다.

@@ -2,6 +2,7 @@
 type: docs
 title: '17.8.4 TAG data UPDATE 지원표'
 weight: 40
+toc: true
 ---
 
 TAG 테이블의 실제 시계열 데이터는 `UPDATE table_name SET ... WHERE ...` 구문으로

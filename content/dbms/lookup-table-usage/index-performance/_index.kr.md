@@ -7,6 +7,8 @@ LOOKUP/VOLATILE 테이블의 인덱스 구조와 성능 튜닝을 다룹니다.
 
 
 <a id="index-tuning-lookup-volatile"></a>
+<a id="original-85-lookup-indexes"></a>
+<a id="index-strategy-lookup"></a>
 
 ## LOOKUP/VOLATILE 인덱스 튜닝
 
@@ -56,18 +58,16 @@ SELECT * FROM device_master WHERE category = 'temperature';
 
 #### LOOKUP 테이블 사용 가이드라인
 
-```
-권장 데이터 규모: 수천 ~ 수만 건
-PK 조회 응답 시간: O(log n), 매우 빠름
-non-PK 조회 응답 시간: 보조 인덱스가 있으면 O(log n), 없으면 O(n)
-```
+Primary key와 Red-Black 보조 인덱스의 조회 비용은 트리 크기에 따라 증가하고, 인덱스가 없는
+조건은 전체 스캔합니다. 행 수만으로 사용 한계를 정하지 말고 데이터 크기, 인덱스 수, 조회와
+갱신 비율을 같은 워크로드로 측정합니다.
 
 | 사용 패턴 | 적합성 |
 |----------|-------|
 | device_id로 장치 정보 조회 | 적합 (PK 사용) |
 | location으로 장치 목록 검색 | 보조 인덱스 생성 시 적합 |
 | 소수의 기준 코드 테이블 | 적합 |
-| 수십만 건 이상의 기준 정보 | 부적합 → LOG 테이블 + 인덱스 검토 |
+| 관계형 트랜잭션이 필요한 기준 정보 | RDB 테이블 검토 |
 
 ### VOLATILE 테이블 인덱스
 
@@ -116,13 +116,13 @@ VOLATILE 테이블은 **현재 상태를 보관하는 소규모 인메모리 테
 | PK 조회 복잡도 | O(log n) |
 | non-PK 조회 | 보조 인덱스 또는 전체 메모리 스캔 |
 | 추가 인덱스 | Red-Black 보조 인덱스 생성 가능 |
-| 적합한 규모 | 수만 건 이하 |
+| 규모 판단 | 메모리 사용량과 재시작 시 재구성 비용 측정 |
 
 ### 대용량 기준 정보가 필요한 경우
 
 LOOKUP 테이블의 크기와 보조 인덱스 갱신 비용 때문에 다음 시나리오에서는 대안을 고려합니다.
 
-**시나리오**: 수십만 건의 장치 기준 정보를 저장하고, 여러 컬럼으로 필터링해야 하는 경우
+**시나리오**: 장치 기준 정보를 여러 컬럼으로 필터링하고 변경 이력도 함께 보존해야 하는 경우
 
 ```sql
 -- 대안: LOG 테이블 + LSM/BITMAP 인덱스
@@ -149,75 +149,5 @@ CREATE INDEX idx_category ON device_master_log (category) INDEX_TYPE BITMAP;
 | 추가 인덱스 생성 | Red-Black 보조 인덱스 가능 | Red-Black 보조 인덱스 가능 |
 | non-PK 조회 | 보조 인덱스 또는 전체 스캔 | 보조 인덱스 또는 전체 메모리 스캔 |
 | 데이터 지속성 | 영구 | 재시작 시 소멸 |
-| 권장 규모 | 수만 건 이하 | 수만 건 이하 |
+| 규모 판단 | 인덱스와 갱신 부하 측정 | 메모리와 재구성 비용 측정 |
 | 최적화 방향 | PK와 반복 조회 컬럼에만 인덱스 설계 | 소규모 유지, 반복 조회 컬럼에만 인덱스 설계 |
-
-<a id="original-85-lookup-indexes"></a>
-
-## Lookup 인덱스 생성 및 관리
-
-
-Lookup 테이블은 RED-BLACK 인덱스를 지원합니다. `INDEX_TYPE LSM`을
-지정해도 RED-BLACK 인덱스가 생성됩니다. `KEYWORD` 인덱스는 LOG 테이블에서만 사용할 수 있습니다.
-
-```sql
-CREATE LOOKUP TABLE lookup_table (code INTEGER PRIMARY KEY, name VARCHAR(20));
-CREATE INDEX idx_lookup_name ON lookup_table(name) INDEX_TYPE REDBLACK;
-```
-
-<a id="index-strategy-lookup"></a>
-
-## 인덱스 전략
-
-LOOKUP 테이블은 PRIMARY KEY에 Red-Black Tree 인덱스가 자동 생성됩니다. 추가 조회 조건이 있으면 보조 인덱스를 생성합니다.
-
-### 자동 PRIMARY KEY 인덱스
-
-PRIMARY KEY 컬럼에는 인덱스가 자동 생성됩니다. 별도 `CREATE INDEX`가 필요 없습니다.
-
-```sql
-CREATE LOOKUP TABLE country_code (
-    code   VARCHAR(4)  PRIMARY KEY,  -- 자동 인덱스
-    name   VARCHAR(64),
-    region VARCHAR(32)
-);
-
--- PK 기반 조회 (인덱스 사용)
-SELECT name FROM country_code WHERE code = 'KR';
-```
-
-### 보조 인덱스
-
-PRIMARY KEY 외의 컬럼으로 자주 조회하면 보조 인덱스를 생성합니다.
-
-```sql
-CREATE LOOKUP TABLE equipment_master (
-    equip_id   INTEGER     PRIMARY KEY,
-    equip_name VARCHAR(128),
-    location   VARCHAR(64),
-    dept       VARCHAR(64),
-    status     VARCHAR(16)
-);
-
--- 부서별 조회용 인덱스
-CREATE INDEX idx_equip_dept ON equipment_master(dept);
-
--- 상태 필터용 인덱스
-CREATE INDEX idx_equip_status ON equipment_master(status);
-```
-
-### 인덱스 조회 예시
-
-```sql
--- PK 조회 (자동 인덱스)
-SELECT * FROM equipment_master WHERE equip_id = 42;
-
--- 보조 인덱스 활용
-SELECT equip_id, equip_name FROM equipment_master WHERE dept = '생산팀';
-SELECT equip_id, location FROM equipment_master WHERE status = 'ACTIVE';
-```
-
-### 주의사항
-
-- 수만 건 이하의 소규모 테이블은 인덱스 없이도 빠르게 조회할 수 있습니다.
-- 인덱스는 INSERT/UPDATE 성능에 영향을 줄 수 있으므로 필요한 것만 생성합니다.

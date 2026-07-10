@@ -2,6 +2,7 @@
 type: docs
 title: '13.10 Cluster 운영'
 weight: 100
+toc: true
 ---
 Cluster Edition은 대규모 시계열 데이터를 여러 노드에 분산 저장·처리하는 아키텍처입니다. 클러스터 구성 요소의 역할, 운영 도구, 장애 복구 절차를 다룹니다.
 

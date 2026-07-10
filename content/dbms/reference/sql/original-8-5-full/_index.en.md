@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.6 Complete SQL Reference'
 weight: 95
+toc: true
 tocSort: true
 ---
 
@@ -142,7 +143,7 @@ The following table shows the SQL data types and C data types corresponding to t
 ## ddl
 
 
-> **Note**: From Machbase 8.5 or later, a normal user may need database-scoped privileges on `MACHBASEDB` to run the `CREATE` and `DROP` statements described on this page. For privilege details, see [User Management](/dbms/reference/sql/#grantrevoke).
+> **Note**: From Machbase 8.5 or later, a normal user may need database-scoped privileges on `MACHBASEDB` to run the `CREATE` and `DROP` statements described on this page. For privilege details, see [GRANT/REVOKE](#grantrevoke).
 
 ## CREATE TABLE
 
@@ -439,7 +440,7 @@ DROP VIEW v_example;
 
 For the full description including `CREATE OR REPLACE VIEW`, `DROP VIEW IF EXISTS`,
 `SHOW VIEWS`, `M$SYS_VIEWS`, performance/limits, and Tag / `BINARY` examples,
-see [VIEW](/dbms/reference/sql/#view).
+see [VIEW](#view).
 
 ## DROP TABLE
 
@@ -1664,7 +1665,7 @@ WHERE id = 100;
 ```
 
 For creation, deletion, metadata, performance/limits, and Tag / `BINARY` examples,
-see [VIEW](/dbms/reference/sql/#view).
+see [VIEW](#view).
 
 ### JOIN(INNER JOIN)
 
@@ -2241,7 +2242,7 @@ SAVE DATA INTO '/tmp/ccc.csv' HEADER ON FIELDS TERMINATED BY ';' ENCLOSED BY '\'
 
 # Index
 
-* [Introduction](#introduction)
+* [Introduction](#overview)
 * [PARALLEL](#parallel)
 * [NOPARALLEL](#noparallel)
 * [FULL](#full)
@@ -3424,7 +3425,7 @@ Dropped successfully.
 
 This statement is the syntax for managing system-wide resources or changing settings.
 
-> **Note**: From Machbase 8.5 or later, a normal user must have `ALTER` privilege on `MACHBASEDB` to run `ALTER SYSTEM`. See [User Management](/dbms/reference/sql/#grantrevoke) for the `GRANT/REVOKE` details.
+> **Note**: From Machbase 8.5 or later, a normal user must have `ALTER` privilege on `MACHBASEDB` to run `ALTER SYSTEM`. See [GRANT/REVOKE](#grantrevoke) for details.
 
 ### KILL SESSION
 
@@ -4328,8 +4329,8 @@ In this case the VIEW is not removed and an error is returned.
 
 ## Related Documents
 
-* [DDL](/dbms/reference/sql/#ddl)
-* [SELECT](/dbms/reference/sql/#select)
+* [DDL](#ddl)
+* [SELECT](#select)
 
 ## functions
 
@@ -5758,7 +5759,7 @@ NEXTVAL(sequence_column)
 
 - `NEXTVAL` can be used only in an `INSERT` statement.
 - The argument must be a column configured with `PROPERTY(SEQUENCE=...)`.
-- For sequence column creation and examples, see [Sequence Column](/dbms/reference/sql/#sequence-column).
+- For sequence column creation and examples, see [Sequence Column](#sequence-column).
 
 ```sql
 INSERT INTO seq_lookup (id, name) VALUES (NEXTVAL(id), 'sensor-a');

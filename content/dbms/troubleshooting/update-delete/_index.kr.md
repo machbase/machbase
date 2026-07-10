@@ -2,6 +2,7 @@
 type: docs
 title: '16.3 UPDATE/DELETE 문제 해결'
 weight: 30
+toc: true
 ---
 
 UPDATE/DELETE 실행 중 발생하는 대표 오류와 진단 방법입니다.

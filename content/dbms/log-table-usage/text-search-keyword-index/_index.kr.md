@@ -5,10 +5,11 @@ toc: true
 ---
 
 <a id="text-search"></a>
+<a id="original-85-text-search"></a>
 
 ## 텍스트 검색
 
-KEYWORD 인덱스를 활용하면 VARCHAR/TEXT 컬럼에서 고속 텍스트 검색이 가능합니다.
+KEYWORD 인덱스를 활용하면 VARCHAR/TEXT 컬럼에서 단어 기반 텍스트 검색을 수행할 수 있습니다.
 
 ### 이 절에서 다루는 내용
 
@@ -60,7 +61,14 @@ SELECT * FROM event_log WHERE message NOT SEARCH 'timeout';
 | 성능 | 고속 (인덱스 활용) | 느림 (전체 스캔) |
 | 용도 | 영문·숫자 단어 단위 검색 | 부분 문자열 패턴 |
 
-**팁**: 대용량 VARCHAR/TEXT 컬럼의 키워드 검색에는 반드시 KEYWORD 인덱스를 생성하고 SEARCH를 사용하세요. LIKE는 인덱스를 활용하지 못해 전체 스캔이 발생합니다.
+반복적인 단어 검색에는 KEYWORD 인덱스와 SEARCH를 사용합니다. LIKE는 KEYWORD 인덱스를
+사용하지 않으므로 시간 조건 등으로 검색 범위를 먼저 줄입니다.
+
+#### 다국어 검색
+
+KEYWORD 인덱스는 UTF-8 문자열을 검색할 수 있습니다. 공백으로 단어 경계가 명확하지 않은
+한국어와 일본어 문자열은 2-gram 단위로 색인되므로 연속된 문자열 일부를 SEARCH 조건으로
+지정할 수 있습니다. 실제 분리 결과는 대표 데이터로 확인합니다.
 
 <a id="text-search-esearch"></a>
 
@@ -106,7 +114,7 @@ SELECT * FROM event_log WHERE error_code ESEARCH 'ERR-10%';
 | 패턴 앞 `%` | 지원 (`%pattern`) | 지원 (인덱스 미사용) |
 | 대소문자 | 대소문자 구분 | 대소문자 구분 |
 
-> `NOT ESEARCH`는 지원하지 않습니다. 반대 패턴이 필요하면 `NOT SEARCH`나 `NOT LIKE`를 사용하세요.
+> `NOT ESEARCH`는 지원하지 않습니다. 반대 패턴이 필요하면 `NOT SEARCH`나 `NOT LIKE`를 사용하십시오.
 
 <a id="like-not"></a>
 <a id="text-search-like-not"></a>
@@ -149,290 +157,7 @@ SELECT * FROM sensor_log WHERE sensor_id NOT LIKE 'TEMP%';
 
 - `LIKE '%pattern'` 또는 `LIKE '%pattern%'`처럼 앞에 `%`가 오면 인덱스를 사용할 수 없어 전체 스캔이 발생합니다.
 - 대용량 LOG/TAG 테이블의 VARCHAR 컬럼에 자주 검색한다면 KEYWORD 인덱스를 생성하고 `SEARCH` 또는 `ESEARCH`를 사용하는 것이 성능상 유리합니다.
-- 앞쪽이 고정된 패턴(`LIKE 'prefix%'`)이라면 인덱스가 있을 경우 활용될 수 있습니다.
 
-<a id="original-85-text-search"></a>
-
-## 텍스트 검색
-
-
-키워드 인덱스를 사용한 텍스트 검색을 다룹니다.
-
-텍스트 검색은 "역인덱스"라는 특수 인덱스를 사용하므로 LIKE 검색보다 빠릅니다. 키워드 인덱스는 varchar 및 text 타입 컬럼에만 생성할 수 있으며, 검색 대상 문자열은 정확히 일치해야 합니다. 특수 문자나 형태소 분석 기반의 키워드 분해는 수행하지 않습니다.
-
-### SEARCH
-
-```sql
-SELECT  column_name(s)
-FROM    table_name
-WHERE   column_name
-SEARCH  pattern;
-```
-
-```sql
-Mach> CREATE TABLE search_table (id INTEGER, name VARCHAR(20));
-Created successfully.
-
-Mach> INSERT INTO search_table VALUES(1, 'time flys');
-1 row(s) inserted.
-
-Mach> INSERT INTO search_table VALUES(1, 'time runs');
-1 row(s) inserted.
-
-Mach> CREATE INDEX idx_SEARCH ON search_table (name) INDEX_TYPE KEYWORD;
-Created successfully.
-
-Mach> SELECT * FROM search_table WHERE name SEARCH 'time' OR name SEARCH 'runs2' ;
-ID          NAME
--------------------------------------
-1           time runs
-1           time flys
-[2] row(s) selected.
-
-Mach> SELECT * FROM search_table WHERE name SEARCH 'time' AND name SEARCH 'runs2' ;
-ID          NAME
--------------------------------------
-[0] row(s) selected.
-
-Mach> SELECT * FROM search_table WHERE name SEARCH 'flys' OR name SEARCH 'runs2' ;
-ID          NAME
--------------------------------------
-1           time flys
-[1] row(s) selected.
-```
-
-
-### 다국어 검색
-
-ASCII 및 UTF-8로 저장된 다양한 언어의 가변 길이 문자열을 검색할 수 있습니다. 한국어나 일본어처럼 공백 구분이 명확하지 않은 언어에서는 2-gram 기법으로 문장 일부를 검색합니다.
-
-```sql
-SELECT  column_name(s)
-FROM    table_name
-WHERE   column_name
-SEARCH  pattern;
-```
-
-```sql
-Mach> CREATE TABLE multi_table (message varchar(100));
-Created successfully.
-
-Mach> INSERT INTO multi_table VALUES("Machbase is the combination of ideal solutions");
-1 row(s) inserted.
-
-Mach> INSERT INTO multi_table VALUES("Machbase is a columnar DBMS");
-1 row(s) inserted.
-
-Mach> INSERT INTO multi_table VALUES("Machbaseは理想的なソリューションの組み合わせです");
-1 row(s) inserted.
-
-Mach> INSERT INTO multi_table VALUES("Machbaseは円柱状のDBMSです");
-1 row(s) inserted.
-
-Mach> CREATE INDEX idx_multi ON multi_table(message) INDEX_TYPE KEYWORD;
-Created successfully.
-
-Mach>  SELECT * from multi_table WHERE message SEARCH 'Machbase DBMS';
-MESSAGE
-------------------------------------------------------------------------------------
-Machbaseは円柱状のDBMSです
-Machbase is a columnar DBMS
-[2] row(s) selected.
-
-Mach> SELECT * from multi_table WHERE message SEARCH 'DBMS is';
-MESSAGE
-------------------------------------------------------------------------------------
-Machbase is a columnar DBMS
-[1] row(s) selected.
-
-Mach> SELECT * from multi_table WHERE message SEARCH 'DBMS' OR message SEARCH 'ideal';
-MESSAGE
-------------------------------------------------------------------------------------
-Machbaseは円柱状のDBMSです
-Machbase is a columnar DBMS
-Machbase is the combination of ideal solutions
-[3] row(s) selected.
-
-Mach> SELECT * from multi_table WHERE message SEARCH '組み合わせ';
-MESSAGE
-------------------------------------------------------------------------------------
-Machbaseは理想的なソリューションの組み合わせです
-[1] row(s) selected.
-Elapsed time: 0.001
-Mach> SELECT * from multi_table WHERE message SEARCH '円柱';
-MESSAGE
-------------------------------------------------------------------------------------
-Machbaseは円柱状のDBMSです
-[1] row(s) selected.
-```
-
-입력 데이터가 "대한민국"일 때, "대한," "한민," "민국" 세 단어가 인덱스에 기록됩니다. 따라서 "대한" 또는 "민국" 키워드로 "대한민국"을 검색할 수 있습니다.
-
-기본적으로 검색 문에 입력된 키워드는 AND 조건으로 검색되므로 세 단어만 입력해도 결과가 매우 정확하게 표시됩니다. 예를 들어, 검색 대상 키워드가 "컴퓨터 활용 가이드"인 경우 "컴퓨터", "활용", "가이드" 세 단어가 AND 조건으로 설정됩니다.
-
-### ESEARCH
-
-ESEARCH 연산자는 `%` 와일드카드를 사용하여 검색 키워드를 확장합니다. 검색 대상은 ASCII여야 합니다. `%`로 시작하는 패턴이라도 키워드 인덱스의 단어 목록을 대상으로 검색하므로 LIKE보다 빠릅니다. 오류 코드나 영문 메시지를 부분 일치로 찾을 때 유용합니다.
-
-```sql
-SELECT  column_name(s)
-FROM    table_name
-WHERE   column_name
-ESEARCH pattern;
-```
-
-```sql
-Mach> CREATE TABLE esearch_table(id INTEGER, name VARCHAR(20), data VARCHAR(40));
-Created successfully.
-
-Mach> INSERT INTO esearch_table VALUES(1, 'machbase', 'Real-time search technology');
-1 row(s) inserted.
-
-Mach> INSERT INTO esearch_table VALUES(2, 'mach2flux', 'Real-time data compression');
-1 row(s) inserted.
-
-Mach> INSERT INTO esearch_table VALUES(3, 'DB MS', 'Memory cache technology');
-1 row(s) inserted.
-
-Mach> INSERT INTO esearch_table VALUES(4, 'ファ ッションアドバイザー、', 'errors');
-1 row(s) inserted.
-
-Mach> INSERT INTO esearch_table VALUES(5, '인피 니 플럭스', 'socket232');
-1 row(s) inserted.
-
-Mach> CREATE INDEX idx1 ON esearch_table(name) INDEX_TYPE KEYWORD;
-Created successfully.
-
-Mach> CREATE INDEX idx2 ON esearch_table(data) INDEX_TYPE KEYWORD;
-Created successfully.
-
-Mach> SELECT * FROM esearch_table where name ESEARCH '%base';
-ID          NAME                  DATA
---------------------------------------------------------------------------------
-1           machbase            Real-time search technology
-[1] row(s) selected.
-Elapsed time: 0.001
-Mach> SELECT * FROM esearch_table where data ESEARCH '%echn%';
-ID          NAME                  DATA
---------------------------------------------------------------------------------
-3           DB MS                 Memory cache technology
-1           machbase            Real-time search technology
-[2] row(s) selected.
-
-Mach> SELECT * FROM esearch_table where name ESEARCH '%피니%럭스';
-ID          NAME                  DATA
---------------------------------------------------------------------------------
-[0] row(s) selected.
-
-Mach> SELECT * FROM esearch_table where data ESEARCH '%232';
-ID          NAME                  DATA
---------------------------------------------------------------------------------
-5           인피 니 플럭스  socket232
-[1] row(s) selected.
-```
-
-
-### REGEXP
-
-REGEXP 연산자는 정규 표현식으로 텍스트를 검색합니다. 인덱스를 사용할 수 없어 성능이 저하될 수 있으므로, AND 조건으로 인덱스를 활용하는 다른 검색 조건을 함께 지정하는 것이 좋습니다.
-
-SEARCH나 ESEARCH로 먼저 결과 집합을 줄인 뒤 REGEXP를 적용하면 성능을 크게 개선할 수 있습니다.
-
-```sql
-Mach> CREATE TABLE regexp_table(id INTEGER, name VARCHAR(20), data VARCHAR(40));
-Created successfully.
-
-Mach> INSERT INTO regexp_table VALUES(1, 'machbase', 'Real-time search technology');
-1 row(s) inserted.
-
-Mach> INSERT INTO regexp_table VALUES(2, 'mach2base', 'Real-time data compression');
-1 row(s) inserted.
-
-Mach> INSERT INTO regexp_table VALUES(3, 'DBMS', 'Memory cache technology');
-1 row(s) inserted.
-
-Mach> INSERT INTO regexp_table VALUES(4, 'ファ ッショ', 'errors');
-1 row(s) inserted.
-
-Mach> INSERT INTO regexp_table VALUES(5, '인피니플럭스', 'socket232');
-1 row(s) inserted.
-
-Mach> SELECT * FROM regexp_table WHERE name REGEXP 'mach';
-ID          NAME                  DATA
---------------------------------------------------------------------------------
-2           mach2base           Real-time data compression
-1           machbase            Real-time search technology
-[2] row(s) selected.
-
-Mach> SELECT * FROM regexp_table WHERE data REGEXP 'mach[1]';
-ID          NAME                  DATA
---------------------------------------------------------------------------------
-[0] row(s) selected.
-
-Mach> SELECT * FROM regexp_table WHERE data REGEXP '[A-Za-z]';
-ID          NAME                  DATA
---------------------------------------------------------------------------------
-5           인피니플럭스  socket232
-4           ファ ッショ      errors
-3           DBMS                  Memory cache technology
-2           mach2base           Real-time data compression
-1           machbase            Real-time search technology
-[5] row(s) selected.
-```
-
-
-### LIKE
-
-SQL 표준 LIKE 연산자도 지원합니다. 한국어, 일본어, 중국어에서도 사용할 수 있습니다.
-
-```sql
-SELECT  column_name(s)
-FROM    table_name
-WHERE   column_name
-LIKE    pattern;
-```
-
-예제:
-
-```sql
-Mach> CREATE TABLE like_table (id INTEGER, name VARCHAR(20), data VARCHAR(40));
-Created successfully.
-
-Mach> INSERT INTO like_table VALUES(1, 'machbase', 'Real-time search technology');
-1 row(s) inserted.
-
-Mach> INSERT INTO like_table VALUES(2, 'mach2base', 'Real-time data compression');
-1 row(s) inserted.
-
-Mach> INSERT INTO like_table VALUES(3, 'DBMS', 'Memory cache technology');
-1 row(s) inserted.
-
-Mach> INSERT INTO like_table VALUES(4, 'ファ ッションアドバイザー、', 'errors');
-1 row(s) inserted.
-
-Mach> INSERT INTO like_table VALUES(5, '인피 니 플럭스', 'socket232');
-1 row(s) inserted.
-
-Mach> SELECT * FROM like_table WHERE name LIKE 'mach%';
-ID          NAME                  DATA
---------------------------------------------------------------------------------
-2           mach2base           Real-time data compression
-1           machbase            Real-time search technology
-[2] row(s) selected.
-
-Mach> SELECT * FROM like_table WHERE name LIKE '%니%';
-ID          NAME                  DATA
---------------------------------------------------------------------------------
-5           인피 니 플럭스  socket232
-[1] row(s) selected.
-
-Mach> SELECT * FROM like_table WHERE data LIKE '%technology';
-ID          NAME                  DATA
---------------------------------------------------------------------------------
-3           DBMS                  Memory cache technology
-1           machbase            Real-time search technology
-[2] row(s) selected.
-```
 
 <a id="design-text-search"></a>
 

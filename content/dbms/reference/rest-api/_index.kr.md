@@ -2,6 +2,7 @@
 type: docs
 title: '17.6 REST API 레퍼런스'
 weight: 60
+toc: true
 ---
 
 Machbase REST API는 HTTP 요청으로 SQL 실행, 데이터 입력, TAG 데이터 조회를 수행합니다. 이 섹션은 각 엔드포인트의 URL, 메서드, 파라미터, 응답 형식을 빠르게 참조할 수 있도록 정리한 레퍼런스입니다.

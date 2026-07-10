@@ -2,6 +2,7 @@
 type: docs
 title: '17.8.10 호환성 및 XMA protocol compatibility'
 weight: 100
+toc: true
 ---
 
 XMA(eXtended Machbase Architecture) 프로토콜은 Machbase 서버와 클라이언트 드라이버(JDBC, ODBC, Python, Go 등) 사이의 통신 프로토콜입니다. 프로토콜 버전이 맞지 않으면 연결 실패나 기능 제한이 발생할 수 있습니다.
@@ -25,7 +26,7 @@ XMA(eXtended Machbase Architecture) 프로토콜은 Machbase 서버와 클라이
 
 - 지원 서명 방식: `ECDSA`, `RSA_PKCS1_V15`, `RSA_PSS`
 - 8.5 이하 드라이버는 신규 서명 방식(`RSA_PSS`)을 지원하지 않을 수 있습니다.
-- AUTH KEY 인증을 사용하는 경우 드라이버를 8.6으로 업데이트하세요.
+- AUTH KEY 인증을 사용하는 경우 드라이버를 8.6으로 업데이트하십시오.
 
 ```text
 -- AUTH KEY 등록 (서버)
@@ -65,6 +66,6 @@ SQLGetInfo(conn, SQL_DRIVER_VER, buf, sizeof(buf), NULL);
 
 ## 업그레이드 권장 사항
 
-1. 서버와 드라이버를 같은 메이저 버전(8.6)으로 함께 업그레이드하세요.
-2. 드라이버를 순차적으로 업그레이드하는 경우, 업그레이드 기간 동안 8.5 드라이버가 8.6 서버에 제한적으로 연결될 수 있음을 인지하세요.
-3. AUTH KEY 인증을 사용하는 경우 드라이버를 가장 먼저 업그레이드하세요.
+1. 서버와 드라이버를 같은 메이저 버전(8.6)으로 함께 업그레이드하십시오.
+2. 드라이버를 순차적으로 업그레이드하는 경우, 업그레이드 기간 동안 8.5 드라이버가 8.6 서버에 제한적으로 연결될 수 있음을 인지하십시오.
+3. AUTH KEY 인증을 사용하는 경우 드라이버를 가장 먼저 업그레이드하십시오.

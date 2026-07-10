@@ -61,11 +61,11 @@ machadmin -r /data/backup/machbase_backup
 
 ## 운영 권장 사항
 
-- 정기 백업은 `BACKUP DATABASE`를 사용하고 외부 스토리지에 보관하세요.
+- 정기 백업은 `BACKUP DATABASE`를 사용하고 외부 스토리지에 보관하십시오.
 - MOUNT는 이전 데이터 조회 또는 마이그레이션 목적으로 활용할 수 있습니다.
-- VOLATILE 테이블 데이터는 백업되지 않으므로, 중요 데이터는 다른 테이블 유형을 사용하세요.
-- Cluster Edition의 복구 절차는 Cluster Edition 운영 가이드를 참고하세요.
+- VOLATILE 테이블 데이터는 백업되지 않으므로, 중요 데이터는 다른 테이블 유형을 사용하십시오.
+- Cluster Edition의 복구 절차는 Cluster Edition 운영 가이드를 참고하십시오.
 
 ## 상세 레퍼런스
 
-[백업/복구/마운트](/dbms/operations-configuration-recovery/backup-restore-mount/) 섹션을 참고하세요.
+[백업/복구/마운트](/dbms/operations-configuration-recovery/backup-restore-mount/) 섹션을 참고하십시오.

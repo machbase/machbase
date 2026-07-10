@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.2 데이터 타입 사전'
 weight: 20
+toc: true
 ---
 
 Machbase에서 지원하는 SQL 데이터 타입을 설명합니다.

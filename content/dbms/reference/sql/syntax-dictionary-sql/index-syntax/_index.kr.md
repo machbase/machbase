@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.1.13 INDEX syntax'
 weight: 130
+toc: true
 ---
 
 Machbase에서 인덱스는 데이터 검색 성능을 높이기 위해 사용합니다. 테이블 타입에 따라 사용 가능한 인덱스 타입이 다릅니다.

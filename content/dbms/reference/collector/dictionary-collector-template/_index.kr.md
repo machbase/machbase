@@ -2,6 +2,7 @@
 type: docs
 title: '17.5.1 Collector template 사전'
 weight: 10
+toc: true
 ---
 
 Collector template은 JSON이 아니라 키-값 형식의 `.tpl` 파일입니다. 수집 대상 파일,

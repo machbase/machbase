@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.1.5 PIVOT syntax'
 weight: 50
+toc: true
 ---
 
 `PIVOT`은 행(row) 방향 데이터를 열(column) 방향으로 변환하는 구문입니다. GROUP BY 집계 결과를 컬럼으로 재배열해 가독성 높은 리포트 형태로 표현할 때 사용합니다.

@@ -24,7 +24,7 @@ Machbase는 다양한 프로그래밍 언어와 프로토콜을 위한 SDK를 �
 
 ## 기능별 상세 안내
 
-각 기능의 SDK별 상세 지원 내용은 11장 SDK별 지원 범위 안내에서 확인하세요.
+각 기능의 SDK별 상세 지원 내용은 11장 SDK별 지원 범위 안내에서 확인하십시오.
 
 | 기능 | 참조 페이지 |
 |------|-----------|
@@ -58,11 +58,11 @@ Go `database/sql` 드라이버와 Go native 클라이언트 모두 `Begin`/`Begi
 
 | 요구 사항 | 권장 SDK |
 |----------|---------|
-| 최고 성능 대량 쓰기 (Append) | ODBC/CLI, JDBC, Go (native), Python |
+| 지속적인 대량 쓰기 (Append) | ODBC/CLI, JDBC, Go (native), Python |
 | AUTH KEY 키 기반 인증 | JDBC, ODBC/CLI, machsql |
 | RDB 테이블 트랜잭션 | JDBC, ODBC/CLI (SQL `BEGIN` 직접 실행) |
 | 웹 서비스/마이크로서비스 통합 | REST API |
 | Go 표준 인터페이스 | Go (database/sql) |
 | 브라우저/스크립트 연동 | Node.js, REST API |
 
-상세 선택 규칙은 [AI Agent Reference: SDK/API 선택 규칙](/dbms/reference/ai-agent-reference/sdk-api-selection-rules/)을 참고하세요.
+상세 선택 규칙은 [AI Agent Reference: SDK/API 선택 규칙](/dbms/reference/ai-agent-reference/sdk-api-selection-rules/)을 참고하십시오.

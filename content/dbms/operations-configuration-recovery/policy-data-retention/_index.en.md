@@ -2,6 +2,7 @@
 type: docs
 title: '13.4 Data Retention Policy'
 weight: 40
+toc: true
 ---
 
 

@@ -2,6 +2,7 @@
 type: docs
 title: '17.4.3 machloader 명령/옵션 사전'
 weight: 30
+toc: true
 ---
 
 `machloader`는 텍스트 파일(CSV 등)과 Machbase 서버 간에 데이터를 가져오거나 내보내는 범용 데이터 로딩 도구입니다. APPEND 모드를 기본으로 지원하며 스키마 파일을 통해 복잡한 변환도 처리할 수 있습니다.

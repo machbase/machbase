@@ -2,6 +2,7 @@
 type: docs
 title: '15.4 대량 데이터 적재 파이프라인'
 weight: 60
+toc: true
 ---
 
 ## 시나리오 개요
@@ -22,7 +23,9 @@ CSV 파일, 외부 데이터베이스, 메모리 내 데이터 구조 등에서 
 | **INSERT** | 소량 데이터, 트랜잭션 필요 시 | 낮음 | 대량 적재에는 부적합 |
 | **REST API** | 외부 시스템에서 HTTP로 적재 | 중간 | 건수가 적을 때 |
 
-> **원칙:** 대량 적재에는 반드시 Append API 또는 machloader를 사용하세요. INSERT는 Machbase의 컬럼 스토리지 구조에 최적화되어 있지 않아 대량 처리 시 성능이 크게 저하됩니다.
+> **원칙:** 지속적인 애플리케이션 입력은 Append API를, 클라이언트 파일 적재는 machloader를
+> 우선 검토합니다. SQL INSERT와 비교할 때는 같은 데이터, 동시성, 인덱스 조건으로 처리량과
+> 지연을 측정합니다.
 
 ### 적재 대상 테이블 생성
 
@@ -253,7 +256,7 @@ all_rows = [...]  # 적재할 데이터 목록
 parallel_append(all_rows)
 ```
 
-> **Cluster Edition 고려사항:** Cluster Edition에서는 Broker 노드와 Warehouse 노드가 분리됩니다. machloader/Append 클라이언트는 Broker 서비스 포트로 연결합니다. Warehouse 노드 직접 Append는 지원하지 않습니다. 자세한 내용은 [/dbms/operations-configuration-recovery/cluster/](/dbms/operations-configuration-recovery/cluster/) 시나리오를 참고하세요.
+> **Cluster Edition 고려사항:** Cluster Edition에서는 Broker 노드와 Warehouse 노드가 분리됩니다. machloader/Append 클라이언트는 Broker 서비스 포트로 연결합니다. Warehouse 노드 직접 Append는 지원하지 않습니다. 자세한 내용은 [/dbms/operations-configuration-recovery/cluster/](/dbms/operations-configuration-recovery/cluster/) 시나리오를 참고하십시오.
 
 ---
 

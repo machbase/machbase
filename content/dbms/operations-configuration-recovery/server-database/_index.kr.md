@@ -2,6 +2,7 @@
 type: docs
 title: '13.1 서버와 데이터베이스 운영'
 weight: 10
+toc: true
 ---
 `machadmin`은 Machbase의 핵심 관리 도구입니다. 서버 시작·종료, 데이터베이스 생성·삭제, 라이선스 설치, 실행 상태 확인 등 대부분의 운영 작업을 이 명령어 하나로 수행합니다. `$MACHBASE_HOME/bin/` 디렉터리에 위치합니다.
 
