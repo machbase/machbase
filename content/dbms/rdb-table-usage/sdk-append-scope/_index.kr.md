@@ -1,5 +1,5 @@
 ---
-title: '8.15 Append API 미지원과 SDK 사용 범위'
+title: '8.15 Append API 지원과 SDK 사용 범위'
 weight: 150
 toc: true
 ---
@@ -13,7 +13,7 @@ RDB 테이블의 Append API 동작 방식과 SDK별 지원 범위를 정리한�
 
 RDB 테이블도 Append API를 지원한다. 단, TAG·LOG 테이블의 Append와 내부 동작 방식이 다르다.
 
-### 지원 현황
+## 지원 현황
 
 | 입력 방식 | RDB 테이블 지원 여부 |
 |---------|-----------------|
@@ -22,7 +22,7 @@ RDB 테이블도 Append API를 지원한다. 단, TAG·LOG 테이블의 Append�
 | **Append API** | **O (트랜잭션 기반)** |
 | machloader CSV 가져오기 | O |
 
-### TAG·LOG Append API와의 차이
+## TAG·LOG Append API와의 차이
 
 | 항목 | TAG·LOG Append | RDB Append |
 |------|---------------|-----------|
@@ -34,7 +34,7 @@ RDB 테이블의 Append API는 내부적으로 트랜잭션(`qrdBeginStmtTx` / `
 
 `AUTO_INCREMENT` 컬럼이 있는 RDB 테이블에 `SQLAppendBatch`를 사용할 때는 auto 컬럼을 생략할 수 없다. auto 컬럼을 포함하고 `SQL_APPEND_TYPE_INT64`와 `SQL_APPEND_LONG_NULL` 조합으로 자동값 생성을 요청한다. 자세한 예시는 [AUTO_INCREMENT](/dbms/rdb-table-usage/auto-increment/#sqlappendbatch-사용-시-주의-사항)를 참고한다.
 
-### SDK Append 예시
+## SDK Append 예시
 
 ```go
 // Go SDK - Append API 사용
@@ -46,7 +46,7 @@ appender.Append(1002, "CUST-002", 2, 19.99, "PENDING")
 appender.Close()
 ```
 
-### 대량 입력 권장 방법
+## 대량 입력 권장 방법
 
 대량 데이터를 삽입할 때는 **배치 INSERT(트랜잭션 활용)**가 더 직관적이다.
 
@@ -59,7 +59,7 @@ for _, row := range rows {
 tx.Commit()
 ```
 
-### machloader 사용
+## machloader 사용
 
 ```bash
 # CSV 파일로 대량 삽입
@@ -72,7 +72,7 @@ machloader -i -d orders -f orders.csv
 
 RDB 테이블은 다양한 언어의 Machbase SDK를 통해 접근할 수 있다.
 
-### 지원 SDK
+## 지원 SDK
 
 | SDK | SELECT | INSERT | UPDATE | DELETE | 트랜잭션 |
 |-----|--------|--------|--------|--------|---------|
@@ -83,7 +83,7 @@ RDB 테이블은 다양한 언어의 Machbase SDK를 통해 접근할 수 있다
 | ODBC | O | O | O | O | O |
 | REST API | O | O | O | O | 제한적 |
 
-### Go SDK 예시
+## Go SDK 예시
 
 ```go
 package main
@@ -112,7 +112,7 @@ func main() {
 }
 ```
 
-### Python SDK 예시
+## Python SDK 예시
 
 ```python
 import machbase_neo
@@ -141,7 +141,7 @@ cursor.close()
 conn.close()
 ```
 
-### REST API 예시
+## REST API 예시
 
 ```bash
 # UPDATE via REST

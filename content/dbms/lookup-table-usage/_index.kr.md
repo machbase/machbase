@@ -21,7 +21,7 @@ LOOKUP 테이블은 소규모 기준 정보와 마스터 데이터를 빠르게 
 | [활용 패턴과 시나리오](./patterns-scenarios/) | 코드 테이블, 기준 정보, 임계값 관리 |
 | [PRIMARY KEY 정책](./primary-key-policy/) | 자연키 vs 대리키, PK 불변 원칙 |
 | [SEQUENCE 컬럼](./sequence-column/) | 자동 증가 번호 설정과 NEXTVAL 사용법 |
-| [JSON 컬럼 제약과 JSON 조회](./json-column-query/) | JSON 컬럼 제한, path 조건 조회, 대안 설계 |
+| [JSON 컬럼과 JSON 조회](./json-column-query/) | JSON 컬럼 지원 범위, path 조건 조회, primary key 제약 |
 | [일반 predicate UPDATE/DELETE](./predicate-update-delete/) | non-PK 조건 기반 UPDATE/DELETE |
 | [참조·마스터 데이터 모델링](./reference-master-modeling/) | 코드 참조, 메타데이터, 임계값 JOIN 패턴 |
 | [LOOKUP 권한과 predicate DML 성능](./privilege-predicate-performance/) | 권한 설정, DML 성능 고려사항 |

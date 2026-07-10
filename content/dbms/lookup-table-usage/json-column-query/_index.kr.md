@@ -1,18 +1,16 @@
 ---
-title: '9.12 JSON 컬럼 제약과 JSON 조회'
+title: '9.12 JSON 컬럼과 JSON 조회'
 weight: 120
 toc: true
 ---
-LOOKUP 테이블의 JSON 컬럼 제약과 JSON 조건 조회를 다룬다.
+LOOKUP 테이블의 JSON 컬럼 지원 범위와 JSON 조건 조회를 다룬다.
 
 
 <a id="condition-query-lookup-json"></a>
 
 ## LOOKUP JSON 조건 조회
 
-LOOKUP 테이블의 `JSON` 컬럼은 JSON path 조건 조회에 사용할 수 있다.
-
-### 기본 조회
+LOOKUP 테이블은 `JSON` 컬럼을 일반 컬럼으로 지원한다. JSON 컬럼은 유동적인 속성 값을 참조 데이터와 함께 저장할 때 사용할 수 있다.
 
 ```sql
 CREATE LOOKUP TABLE sensor_config (
@@ -32,7 +30,9 @@ FROM sensor_config
 WHERE config->'$.unit' = 'celsius';
 ```
 
-### 타입별 추출 함수
+<a id="design-column-lookup-json"></a>
+
+## 타입별 JSON 조건
 
 숫자 값을 숫자로 비교할 때는 타입별 JSON 추출 함수를 사용한다.
 
@@ -43,7 +43,7 @@ WHERE JSON_EXTRACT_INTEGER(config, '$.level') >= 3
   AND JSON_EXTRACT_DOUBLE(config, '$.threshold.high') > 80.0;
 ```
 
-### JSON 상태 확인
+JSON 구조 자체를 확인할 수도 있다.
 
 ```sql
 SELECT sensor_id
@@ -52,124 +52,75 @@ WHERE JSON_IS_VALID(config) = 1
   AND JSON_TYPEOF(config, '$.threshold') = 'Object';
 ```
 
-### 주의사항
+<a id="lookup-json-serialized-string"></a>
 
-- JSON path 문자열은 작은따옴표(`'$.unit'`)로 작성한다. 큰따옴표는 SQL 식별자로 해석된다.
-- `->` 연산자는 path 값을 문자열처럼 비교할 때 사용한다.
-- JSON path별 전용 인덱스는 지원하지 않는다. 대량 LOOKUP 테이블에서 자주 검색하는 JSON 값은 별도 컬럼으로 분리한다.
+## PRIMARY KEY 제약
 
-<a id="design-column-lookup-json"></a>
-
-## JSON 컬럼 제약
-
-LOOKUP 테이블은 `JSON` 컬럼을 지원하지 않는다. 참조 데이터에 유연한 속성이 필요하면
-자주 조회하는 값은 별도 컬럼으로 분리하고, 유동적인 속성은 문자열로 직렬화하거나 RDB/TAG
-테이블의 JSON 컬럼을 검토한다.
-
-### 설계 예
+LOOKUP 테이블은 JSON 컬럼을 저장할 수 있지만, JSON 컬럼을 `PRIMARY KEY`로 사용할 수 없다. 행 식별자는 `INTEGER`, `LONG`, `VARCHAR` 등 안정적인 일반 타입으로 둔다.
 
 ```sql
--- 실패: LOOKUP 테이블에는 JSON 컬럼을 만들 수 없음
-CREATE LOOKUP TABLE sensor_config (
-    sensor_id VARCHAR(64) PRIMARY KEY,
-    site      VARCHAR(32),
-    status    VARCHAR(16),
-    config    JSON
+-- 실패: JSON 컬럼은 primary key로 사용하지 않는다.
+CREATE LOOKUP TABLE sensor_config_bad (
+    config JSON PRIMARY KEY,
+    note   VARCHAR(80)
 );
 ```
 
 ```sql
--- 대안: 자주 조회하는 속성을 일반 컬럼으로 분리
-CREATE LOOKUP TABLE sensor_config (
-    sensor_id VARCHAR(64) PRIMARY KEY,
-    site      VARCHAR(32),
-    status    VARCHAR(16),
-    unit      VARCHAR(16),
-    level     INTEGER
+-- 권장: 별도 식별자를 primary key로 사용한다.
+CREATE LOOKUP TABLE sensor_config_ok (
+    sensor_id VARCHAR(80) PRIMARY KEY,
+    config    JSON,
+    note      VARCHAR(80)
 );
 ```
 
-### 조회와 갱신
+<a id="lookup-json-design-criteria"></a>
 
-```sql
-SELECT sensor_id
-FROM sensor_config
-WHERE site = 'SEOUL'
-  AND unit = 'Celsius'
-  AND level >= 3;
-
-UPDATE sensor_config
-SET status = 'ACTIVE'
-WHERE sensor_id = 'TEMP-01';
-```
-
-### 설계 기준
+## 설계 기준
 
 | 상황 | 권장 접근 |
 |------|----------|
 | 조인/검색에 자주 쓰는 값 | 별도 컬럼 |
-| 장비별로 다른 유동 속성 | 문자열 직렬화 또는 RDB/TAG JSON 컬럼 검토 |
+| 장비별로 다른 유동 속성 | JSON 컬럼 |
 | 숫자 조건 검색 | 일반 숫자 컬럼으로 분리 |
 | primary key | 안정적인 식별자 컬럼 사용 |
 | 고빈도 path 검색 | 별도 컬럼으로 추출 |
 
-### 주의사항
-
-- LOOKUP/VOLATILE 테이블에는 JSON 컬럼을 생성할 수 없다.
-- JSON path 조건이나 JSON path 인덱스가 필요하면 RDB/TAG 테이블을 검토한다.
-
-<a id="definition-column-lookup-json"></a>
-
-## LOOKUP JSON 컬럼 제약
-
-LOOKUP 테이블은 `JSON` 컬럼을 지원하지 않는다. 유연한 속성이 필요한 참조 데이터는
-자주 조회하는 값을 일반 컬럼으로 분리하고, 유동적인 속성은 문자열로 직렬화하거나 RDB/TAG
-테이블의 JSON 컬럼을 검토한다.
-
-### 컬럼 정의
+JSON path별 전용 인덱스는 지원하지 않는다. 고빈도 검색 조건은 별도 컬럼으로 분리하고, 해당 컬럼에 인덱스를 적용하는 설계를 우선 검토한다.
 
 ```sql
--- 실패: LOOKUP 테이블에는 JSON 컬럼을 만들 수 없음
-CREATE LOOKUP TABLE device_config (
-    device_id VARCHAR(40) PRIMARY KEY,
-    site      VARCHAR(32),
-    status    VARCHAR(16),
+CREATE LOOKUP TABLE sensor_config_fast (
+    sensor_id VARCHAR(80) PRIMARY KEY,
+    unit      VARCHAR(16),
+    level     INTEGER,
     config    JSON
 );
+
+CREATE INDEX idx_sensor_config_unit ON sensor_config_fast(unit);
 ```
 
-### 대안 스키마와 조회
+<a id="lookup-json-update-delete"></a>
+
+## UPDATE·DELETE 조건
 
 ```sql
-CREATE LOOKUP TABLE device_config (
-    device_id VARCHAR(40) PRIMARY KEY,
-    site      VARCHAR(32),
-    status    VARCHAR(16),
-    region    VARCHAR(16),
-    level     INTEGER,
-    limits    VARCHAR(512)
-);
+UPDATE sensor_config
+SET location = 'factory2'
+WHERE config->'$.unit' = 'celsius';
 
-SELECT device_id, limits
-FROM device_config
-WHERE region = 'kr'
-  AND level >= 3;
+DELETE FROM sensor_config
+WHERE JSON_EXTRACT_INTEGER(config, '$.level') < 2;
 ```
 
-### 값 갱신
+대상 범위가 넓을 수 있으므로 UPDATE/DELETE 전에는 같은 조건으로 건수를 확인한다.
 
-```sql
-UPDATE device_config
-SET status = 'ACTIVE'
-WHERE site = 'SEOUL';
+<a id="lookup-json-limitations"></a>
 
-UPDATE device_config
-SET limits = '{"high":85.0,"low":5.0,"verified":1}'
-WHERE device_id = 'DEV-01';
-```
+## 주의사항
 
-### 제약 사항
-
-- LOOKUP/VOLATILE 테이블에는 JSON 컬럼을 생성할 수 없다.
-- JSON path 조건이나 JSON path 인덱스가 필요하면 RDB/TAG 테이블을 검토한다.
+- LOOKUP 테이블은 JSON 컬럼을 일반 컬럼으로 지원한다.
+- JSON 컬럼은 primary key로 사용할 수 없다.
+- JSON path별 전용 인덱스는 지원하지 않는다.
 - 자주 검색하는 값은 LOOKUP 일반 컬럼으로 분리한다.
+- JSON path 인덱스가 필요하면 RDB 또는 TAG 테이블을 검토한다.
