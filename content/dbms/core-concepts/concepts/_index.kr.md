@@ -2,6 +2,7 @@
 type: docs
 title: '2.1 데이터 모델 개념'
 weight: 10
+toc: true
 ---
 Machbase DBMS가 시계열 데이터를 다루는 방식은 일반적인 관계형 데이터베이스와 근본적으로 다릅니다. 시계열 데이터의 특성을 먼저 이해해야 테이블 구조, 입력 방식, 조회 전략을 적절히 선택할 수 있습니다.
 
@@ -106,7 +107,7 @@ append-only 원칙은 테이블 유형마다 다르게 적용됩니다.
 | VOLATILE | 가능 | Primary key 조건 기반 | Primary key 조건 기반 |
 | RDB | 가능 | 일반 WHERE 조건 기반 | 일반 WHERE 조건 기반 |
 
-LOG와 TAG 테이블이 append-only의 핵심입니다. LOOKUP과 VOLATILE은 기준 정보와 세션성 데이터를 위해
+LOG와 TAG 테이블이 append 중심 모델의 핵심입니다. LOOKUP과 VOLATILE은 기준 정보와 서버 상태 데이터를 위해
 UPDATE/DELETE를 지원하지만, 현재 UPDATE/DELETE 조건은 Primary key equality 형태로 제한됩니다.
 고속 대량 입력보다는 소규모 참조 데이터 관리에 사용합니다. RDB 테이블은 관계형 업무 데이터를
 Machbase 안에서 다루기 위한 행 지향 테이블이며, append-only 설계 대상이 아닙니다.

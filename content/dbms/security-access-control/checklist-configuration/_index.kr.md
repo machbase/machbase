@@ -2,6 +2,7 @@
 type: docs
 title: '14.6 보안 설정 체크리스트'
 weight: 60
+toc: true
 ---
 
 운영 환경 배포 전 점검 항목입니다. 환경에 따라 선택적으로 적용할 수 있습니다.
@@ -103,7 +104,7 @@ TLS terminator에서 처리합니다.
 ALTER SYSTEM SET HTTP_AUTH = 1;
 ```
 
-내장 HTTP 서버의 nfx 기준 설정 항목은 `HTTP_ENABLE`, `HTTP_PORT_NO`, `HTTP_AUTH`입니다.
+내장 HTTP 서버의 설정 항목은 `HTTP_ENABLE`, `HTTP_PORT_NO`, `HTTP_AUTH`입니다.
 
 ## AUTH KEY 인증 도입 검토
 

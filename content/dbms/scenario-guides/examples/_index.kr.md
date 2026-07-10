@@ -2,6 +2,7 @@
 type: docs
 title: '15.8 애플리케이션 연동 예제'
 weight: 130
+toc: true
 ---
 
 주요 언어별 Machbase 연동 최소 예제 모음입니다. 각 예제는 연결, 데이터 삽입(Append), 조회의 3단계로 구성됩니다.
@@ -210,12 +211,12 @@ conn.Close();
 
 | 언어 | 패키지 | Append API | 트랜잭션(RDB) |
 |------|--------|:---:|:---:|
-| Python | `machbaseAPI` | O | O |
+| Python | `machbaseAPI` | O | X |
 | Java | JDBC (`machbase-jdbc`) | O | O |
 | Go | `machcli` (native) | O | X |
 | Go | `database/sql` | X | X |
 | Node.js | `@machbase/ts-client` | O | X |
-| .NET | `MachConnector` | O | O |
+| .NET | `MachConnector` | O | X |
 | REST API | HTTP | O | X |
 
 전체 SDK 지원 범위: [SDK별 Append/AUTH KEY/Transaction/Prepare 지원 범위](/dbms/application-integration/support-scope-sdk/)

@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.1.10.1 TAG data UPDATE syntax'
 weight: 10
+toc: true
 ---
 
 TAG 테이블의 시계열 데이터는 일반 `UPDATE` 문으로 수정합니다. `UPDATE TAG TABLE`이라는
@@ -85,8 +86,8 @@ UPDATE sensor_tag METADATA
 - `OR`, 서브쿼리, 집계식, 비결정 predicate는 UPDATE 대상 조건으로 사용할 수 없습니다.
 - `name`(PRIMARY KEY), `time`(BASETIME), 메타데이터 컬럼, 숨김/시스템 컬럼은 data UPDATE의
   SET 대상이 될 수 없습니다.
-- 대량 정정 후 롤업 조회가 필요하면 영향을 받은 구간의 롤업을 `ROLLUP_REBUILD`로
-  재구성합니다.
+- UPDATE는 이미 구체화된 롤업 row를 자동으로 보정하지 않습니다. 롤업 조회 전에 영향을
+  받은 구간을 `ROLLUP_REBUILD`로 재구성합니다.
 
 ## Related
 

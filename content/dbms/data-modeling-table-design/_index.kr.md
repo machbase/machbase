@@ -2,6 +2,7 @@
 type: docs
 title: '4. 테이블 타입 개념과 선택'
 weight: 40
+toc: true
 ---
 
 다섯 가지 테이블 타입 중 저장할 데이터의 성격과 접근 패턴에 맞는 타입을 선택합니다.
@@ -11,7 +12,7 @@ weight: 40
 | TAG | `CREATE TAG TABLE` | 센서·IoT 계측값 (시계열·거리축) |
 | LOG | `CREATE TABLE` (기본) | 이벤트·로그 (추가 전용) |
 | RDB | `CREATE RDB TABLE` | 관계형 업무 데이터, DELETE·조회 필요 시 |
-| VOLATILE | `CREATE VOLATILE TABLE` | 세션 내 임시 집계·조회 |
+| VOLATILE | `CREATE VOLATILE TABLE` | 서버 재시작 시 폐기 가능한 인메모리 상태·캐시 |
 | LOOKUP | `CREATE LOOKUP TABLE` | 소규모 코드 테이블·기준 정보 |
 
 ## 이 장의 구성

@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.1.19 USER/AUTH syntax'
 weight: 190
+toc: true
 ---
 
 사용자 생성·삭제·비밀번호 변경, 권한 부여·회수, 공개키 기반 AUTH KEY 관리 구문입니다.
@@ -155,7 +156,7 @@ REVOKE BACKUP ON machbasedb FROM backup_user;
 | CREATE/DROP TABLE, VIEW, INDEX, ROLLUP, TABLESPACE, RETENTION | `CREATE`, `DROP`, 또는 `DDL` |
 | ALTER SYSTEM | `ALTER` |
 | BACKUP DATABASE | `BACKUP` |
-| MOUNT/UNMOUNT DATABASE | `MOUNT` |
+| MOUNT/UMOUNT DATABASE | `MOUNT` |
 
 ### 사용자 생성 시 기본 권한
 

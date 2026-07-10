@@ -2,6 +2,7 @@
 type: docs
 title: '13.4 데이터 보존 정책'
 weight: 30
+toc: true
 ---
 **Retention Policy**는 시계열 데이터의 자동 삭제 기능입니다. 보존 기간과 삭제 주기를 정의한 정책을 대상 테이블에 적용하면 지정된 주기마다 오래된 데이터가 자동 삭제됩니다.
 
@@ -299,7 +300,8 @@ SELECT * FROM M$RETENTION;
 
 #### 적용 가능 테이블
 
-Retention Policy는 **TAG, KV, LOG 테이블**에 적용할 수 있습니다. 소스 코드(`qpvRetention.c`) 기준으로, TAG_TABLE, KEYVALUE_TABLE, LOG_TABLE 이외의 테이블 타입에 Retention Policy를 적용하면 오류가 발생합니다.
+Retention Policy는 **TAG, KV, LOG 테이블**에 적용할 수 있습니다. 다른 테이블 타입에
+Retention Policy를 적용하면 오류가 발생합니다.
 
 | 테이블 타입 | Retention Policy 적용 |
 |------------|---------------------|

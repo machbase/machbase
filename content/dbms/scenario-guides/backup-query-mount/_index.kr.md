@@ -2,6 +2,7 @@
 type: docs
 title: '15.6 백업 데이터 마운트 후 조회'
 weight: 110
+toc: true
 ---
 
 ## 시나리오 개요
@@ -17,7 +18,7 @@ weight: 110
 - 아카이브된 오래된 데이터에서 일부 레코드를 추출해야 할 때
 - 백업 데이터를 복원하지 않고 신속하게 조회가 필요할 때
 
-> **에디션 참고**: MOUNT/UNMOUNT는 Standard Edition 전용 기능입니다. Cluster Edition에서는 지원되지 않습니다.
+> **에디션 참고**: MOUNT/UMOUNT는 Standard Edition 전용 기능입니다. Cluster Edition에서는 지원되지 않습니다.
 
 > **권한 요구사항**: 일반 사용자가 MOUNT를 실행하려면 `GRANT MOUNT ON machbasedb TO user_name;` 권한이 필요합니다.
 
@@ -158,12 +159,12 @@ SELECT
  ORDER BY src, hour_bucket;
 ```
 
-## 5단계: UNMOUNT
+## 5단계: UMOUNT
 
 조회가 완료되면 마운트를 해제합니다.
 
 ```sql
-UNMOUNT DATABASE backup_20240101;
+UMOUNT DATABASE backup_20240101;
 ```
 
 마운트 해제 후 해당 이름으로는 더 이상 접근할 수 없습니다. 언마운트는 해당 마운트 DB를 참조 중인 활성 세션이 없을 때 즉시 실행됩니다.
@@ -203,7 +204,7 @@ SELECT * FROM v$storage_mount_databases;
 | 마운트 DB 조회 | `SELECT ... FROM 이름.sys.테이블` |
 | 현재 vs 백업 비교 | `UNION ALL`로 두 쿼리 결합 |
 | 마운트 목록 확인 | `SELECT * FROM v$storage_mount_databases` |
-| 언마운트 | `UNMOUNT DATABASE 이름` |
+| 언마운트 | `UMOUNT DATABASE 이름` |
 
 ## 관련 문서
 

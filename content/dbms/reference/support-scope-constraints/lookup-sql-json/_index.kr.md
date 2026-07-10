@@ -2,10 +2,10 @@
 type: docs
 title: '17.8.5 LOOKUP SQL/JSON 지원표'
 weight: 50
+toc: true
 ---
 
-이 페이지는 LOOKUP 테이블의 SQL 기능과 JSON 관련 제약을 정리합니다. 내용은
-NFX main trunk 빌드에 5656 포트로 접속해 대표 SQL을 실행하여 확인했습니다.
+이 페이지는 LOOKUP 테이블의 SQL 기능과 JSON 관련 제약을 정리합니다.
 
 ## 지원 현황
 

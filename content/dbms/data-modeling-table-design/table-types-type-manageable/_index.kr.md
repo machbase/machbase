@@ -2,6 +2,7 @@
 type: docs
 title: '4.6 테이블 타입별 관리 가능 범위'
 weight: 40
+toc: true
 ---
 
 각 테이블 타입은 DDL 및 DML 작업에 대한 지원 범위가 다릅니다. 설계와 운영 단계에서 테이블 타입별 제약을 미리 파악해 두면 예상치 못한 오류를 방지할 수 있습니다.
@@ -24,7 +25,7 @@ weight: 40
 | DROP INDEX | O | O | O | O | O |
 | CREATE VIEW | - (참조 가능) | - | - | - | - |
 
-> ALTER TABLE 지원 범위는 소스 코드(`qpvAlterTable.c`) 기준입니다.
+세부 문법과 제약은 [테이블 정의와 스키마 객체](../schema-objects-definition/)를 참고하세요.
 
 ## DML 지원 범위
 
@@ -34,7 +35,7 @@ weight: 40
 | Append API | O | O | O (SDK) | X | O |
 | UPDATE | O (태그/축 조건) | X | O | O (PK equality) | O (PK/일반 조건) |
 | DELETE | O (BEFORE/조건) | O (BEFORE/OLDEST/EXCEPT) | O | O (PK equality) | O (PK/일반 조건) |
-| ON DUPLICATE KEY UPDATE | X | X | X | O | X |
+| ON DUPLICATE KEY UPDATE | X | X | O | O | O |
 
 ## Retention Policy 지원
 

@@ -4,7 +4,7 @@ weight: 70
 toc: true
 ---
 
-RDB 테이블의 운영 절차와 데이터 관리 방법을 다룹니다. RDB 테이블은 영속 데이터를 저장하므로 트랜잭션, 잠금, 백업, 복구 절차를 함께 설계해야 합니다.
+RDB 테이블의 운영 절차와 데이터 관리 방법을 다룹니다. RDB 테이블은 영속 데이터를 저장하므로 트랜잭션, 쓰기 충돌, 백업, 복구 절차를 함께 설계해야 합니다.
 
 <a id="operations-rdb-lifecycle"></a>
 
@@ -44,7 +44,9 @@ UPDATE inventory SET qty = qty - 10 WHERE item_id = 42;
 ROLLBACK;
 ```
 
-장시간 열린 트랜잭션은 잠금 충돌을 유발할 수 있으므로, 배치 작업은 적절한 단위로 나누어 실행합니다.
+장시간 열린 트랜잭션은 같은 RDB 테이블의 다른 쓰기를 대기시킬 수 있으므로, 배치 작업은
+적절한 단위로 나누어 실행합니다. 활성 RDB 트랜잭션에는 비 RDB 테이블 쓰기나 DDL을 포함하지
+않습니다.
 
 <a id="operations-rdb-cleanup"></a>
 
@@ -69,7 +71,8 @@ WHERE status = 'CANCELLED'
 
 ## 백업과 복구
 
-RDB 테이블은 데이터베이스 백업 대상에 포함됩니다. RDB 테이블은 내부적으로 sidecar 파일을 사용하므로 백업·복구 절차에서 해당 파일이 함께 처리되는지 확인합니다.
+RDB 테이블은 데이터베이스 백업 대상에 포함됩니다. 내부적으로 RDB 보조 데이터
+파일(sidecar)을 사용하므로 백업·복구 절차에서 해당 파일이 함께 처리되는지 확인합니다.
 
 ```sql
 BACKUP DATABASE INTO DISK = '/backup/machbase_backup_20260101';
@@ -87,7 +90,7 @@ WHERE order_time >= '2026-01-01 00:00:00';
 UMOUNT DATABASE backup_db;
 ```
 
-RDB sidecar 파일의 누락 또는 손상에 대한 대응은 [RDB 백업, 마운트, sidecar](/dbms/rdb-table-usage/backup-mount-sidecar/)에서 다룹니다.
+RDB 보조 파일의 누락 또는 손상에 대한 대응은 [RDB 백업, 마운트, 보조 데이터 파일](/dbms/rdb-table-usage/backup-mount-sidecar/)에서 다룹니다.
 
 <a id="operations-rdb-checklist"></a>
 
@@ -96,5 +99,5 @@ RDB sidecar 파일의 누락 또는 손상에 대한 대응은 [RDB 백업, 마�
 - PRIMARY KEY와 주요 WHERE 조건 컬럼에 인덱스가 있는지 확인합니다.
 - 장시간 트랜잭션을 피하고, 배치 작업은 적절한 단위로 나눕니다.
 - DDL 작업은 DML이 많은 시간대를 피해서 수행합니다.
-- 정기 백업에 RDB 테이블과 sidecar 파일이 포함되는지 확인합니다.
+- 정기 백업에 RDB 테이블과 RDB 보조 파일이 포함되는지 확인합니다.
 - 복구 절차를 운영 환경과 동일한 버전에서 주기적으로 점검합니다.

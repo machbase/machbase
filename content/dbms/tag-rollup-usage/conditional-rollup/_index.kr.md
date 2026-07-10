@@ -12,10 +12,8 @@ toc: true
 ### 개요
 
 시계열 데이터에는 정상값과 이상치가 섞이기 마련입니다. **조건부 롤업**(필터 롤업)을 사용하면 특정 조건을 만족하는 데이터만 집계해 정제된 통계를 얻을 수 있습니다.
-아래에서는 회귀 테스트 시나리오를 기반으로, 조건부 롤업 생성부터 데이터 적재, 결과 검증, 운영 적용까지의 흐름을 설명합니다.
-
-> SQL 예제는 회귀 테스트에 사용하는 `extension.tc`의 내용을 그대로 활용합니다.
-> 전체 SQL은 [extension.tc 샘플 SQL](#rollup-conditional-extension-tc)에서 확인할 수 있습니다.
+아래에서는 조건부 롤업 생성부터 데이터 적재, 결과 검증, 운영 적용까지의 흐름을 설명합니다.
+전체 SQL은 [조건부 롤업 전체 예제](#rollup-conditional-extension-tc)에서 확인할 수 있습니다.
 
 ### 언제 조건부 롤업이 유용한가
 
@@ -63,7 +61,7 @@ CREATE ROLLUP _tag_rollup_custom_3 ON tag(value) INTERVAL 1 MIN EXTENSION WHERE 
 
 ### 3) 샘플 데이터(이상치 포함)
 
-`value2=1`인 행을 섞어 두어, 조건부 롤업 효과를 확인합니다. 아래는 `extension.tc`의 입력 데이터를 그대로 사용한 예입니다.
+`value2=1`인 행을 섞어 두어 조건부 롤업 효과를 확인합니다.
 
 ```sql
 INSERT INTO tag VALUES('APPL', '2020-01-01 00:00:00', 100,  0);
@@ -93,9 +91,9 @@ INSERT INTO tag VALUES('APPL', '2020-01-01 00:02:50', 180, 0);
 
 ---
 
-### 4) 롤업 강제 수행(테스트 시점 고정)
+### 4) 롤업 강제 수행
 
-테스트 환경에서는 타이밍을 확실히 맞추기 위해 롤업을 강제로 수행합니다.
+데이터 적재 직후 결과를 확인하려면 롤업을 강제로 수행합니다.
 
 ```sql
 EXEC ROLLUP_FORCE(_tag_rollup_custom_1);
@@ -144,7 +142,7 @@ SELECT /*+ ROLLUP_TABLE(_tag_rollup_custom_3) */
 
 ### 7) 예시 결과 요약(이상치 포함 vs 조건부)
 
-`extension.tc` 데이터 기준 분 단위 집계 결과입니다.
+위 예제 데이터의 분 단위 집계 결과입니다.
 
 | 분(rollup) | 원본 COUNT | 원본 MIN | 원본 MAX | 조건부 COUNT | 조건부 MIN | 조건부 MAX |
 |---|---:|---:|---:|---:|---:|---:|
@@ -209,13 +207,14 @@ SELECT /*+ ROLLUP_TABLE(_tag_rollup_custom_3) */
 <a id="rollup-conditional-extension-tc"></a>
 <a id="original-85-rollup-conditional-extension"></a>
 
-## extension.tc 샘플 SQL
+## 조건부 롤업 전체 예제
 
 
-회귀 테스트에 사용하는 `extension.tc` 내용입니다. 조건부 롤업 검증을 위한 전체 시나리오가 포함되어 있습니다.
+조건부 롤업 생성, 데이터 입력, 결과 조회를 한 번에 실행하는 예제입니다.
 
 ```sql
-*- drop table tag cascade;
+-- 같은 이름의 테스트 테이블이 있으면 먼저 삭제합니다.
+DROP TABLE tag CASCADE;
 create tag table tag (name varchar(20) primary key, time datetime basetime, value double summarized, value2 double);
 
 # value1

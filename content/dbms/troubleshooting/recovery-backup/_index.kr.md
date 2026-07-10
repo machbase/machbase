@@ -2,6 +2,7 @@
 type: docs
 title: '16.7 백업과 복구 문제'
 weight: 70
+toc: true
 ---
 백업 실패, 복원 오류, 마운트 오류의 원인 진단과 해결 방법입니다. 백업·복구 기능의 일반적인 사용법은 [백업, 복원, 마운트](/dbms/operations-configuration-recovery/backup-restore-mount/)를 참고하십시오.
 
@@ -10,7 +11,7 @@ weight: 70
 | 페이지 | 내용 |
 |--------|------|
 | [백업과 복원이 실패할 때](/dbms/troubleshooting/recovery-backup/#failure-backup-restore) | 백업/복원 실패 원인 진단 및 해결 방법 |
-| [RDB sidecar 누락/손상 오류](/dbms/rdb-table-usage/backup-mount-sidecar/#error-rdb-sidecar) | Standard Edition RDB sidecar 복구 방법 |
+| [RDB 보조 데이터 파일(sidecar) 누락/손상 오류](/dbms/rdb-table-usage/backup-mount-sidecar/#error-rdb-sidecar) | Standard Edition RDB 보조 파일 복구 방법 |
 | [마운트가 실패할 때](/dbms/troubleshooting/recovery-backup/#failure-mount) | MOUNT 실패 원인 진단 및 해결 방법 |
 
 
@@ -139,7 +140,7 @@ MOUNT DATABASE '/backup/machbase_20240101' TO backup_check;
 SELECT COUNT(*) FROM backup_check.sys.sensor_tag;
 
 -- 확인 후 마운트 해제
-UNMOUNT DATABASE backup_check;
+UMOUNT DATABASE backup_check;
 ```
 
 마운트가 실패하면 백업 파일이 손상되었거나 불완전한 것입니다. 이전 백업 파일을 사용하거나 새로 백업을 실행해야 합니다.
@@ -199,7 +200,7 @@ grep -i "mount\|error" $MACHBASE_HOME/trc/machbase.trc | tail -30
 
 ```sql
 -- 기존 마운트 해제
-UNMOUNT DATABASE backup_20240101;
+UMOUNT DATABASE backup_20240101;
 
 -- 재마운트
 MOUNT DATABASE '/backup/machbase_20240101' TO backup_20240101;
@@ -223,7 +224,7 @@ MOUNT DATABASE '/backup/machbase_20240101' TO backup_20240101;
 SELECT name, path FROM v$storage_mount_databases;
 
 -- 불필요한 마운트 해제
-UNMOUNT DATABASE old_backup_name;
+UMOUNT DATABASE old_backup_name;
 
 -- 이후 마운트 재시도
 MOUNT DATABASE '/backup/machbase_20240101' TO backup_20240101;
@@ -257,7 +258,7 @@ LIMIT 10;
 조회가 완료된 후 마운트를 해제합니다.
 
 ```sql
-UNMOUNT DATABASE backup_20240101;
+UMOUNT DATABASE backup_20240101;
 ```
 
 마운트와 관련된 상세 동작(읽기 전용 특성, 동시 마운트 수 제한 등)은 [마운트 DB 동작 특성](/dbms/operations-configuration-recovery/backup-restore-mount/#mounted-db-read-only-refcount-active-same-name)을 참고하십시오.

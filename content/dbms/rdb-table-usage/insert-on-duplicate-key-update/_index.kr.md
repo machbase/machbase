@@ -117,7 +117,7 @@ PRIMARY KEY 컬럼만 있는 테이블에서 중복 row에 `SET` 없는 upsert�
 
 ## UNIQUE INDEX 중복 처리
 
-PRIMARY KEY뿐 아니라 UNIQUE INDEX 충돌도 update branch를 실행합니다.
+PRIMARY KEY뿐 아니라 UNIQUE INDEX 충돌도 갱신 경로를 실행합니다.
 
 ```sql
 CREATE RDB TABLE account_profile (
@@ -177,7 +177,7 @@ VALUES (3, 101, '2026-07-11', 1, 'NORMAL')
 
 첫 번째 upsert는 `(device_id, summary_day) = (101, '2026-07-10')` row를 UPDATE합니다. 두 번째 upsert는 날짜가 다르므로 새 row를 INSERT합니다.
 
-참고: UNIQUE KEY에 `NULL`이 포함된 경우에는 현재 RDB UNIQUE INDEX 정책을 따릅니다. 검증된 동작에서는 `NULL`이 포함된 unique key row끼리는 duplicate로 보지 않습니다.
+UNIQUE KEY에 `NULL`이 포함된 row끼리는 duplicate로 처리하지 않습니다.
 
 ## 활용 예제
 
@@ -333,7 +333,8 @@ FROM device_json_state
 WHERE device_id = 1;
 ```
 
-제한: JSON path UNIQUE INDEX는 duplicate trigger 후보에서 제외됩니다. JSON path UNIQUE INDEX 충돌은 upsert update branch로 전환되지 않고 unique constraint 오류로 처리됩니다.
+제한: JSON path UNIQUE INDEX는 duplicate trigger 후보에서 제외됩니다. JSON path UNIQUE INDEX
+충돌은 upsert 갱신 경로로 전환되지 않고 unique constraint 오류로 처리됩니다.
 
 ## 트랜잭션과 권한
 
@@ -365,11 +366,12 @@ FROM tx_device_state
 ORDER BY id;
 ```
 
-위 예에서는 insert branch와 update branch가 모두 ROLLBACK됩니다.
+위 예에서는 삽입 경로와 갱신 경로가 모두 ROLLBACK됩니다.
 
 실패한 duplicate update statement가 있어도 explicit transaction 자체는 유지됩니다. 응용 프로그램은 오류를 확인한 뒤 같은 transaction에서 후속 SQL을 실행하거나 ROLLBACK할 수 있습니다.
 
-RDB upsert statement에는 `INSERT` 권한과 `UPDATE` 권한이 모두 필요합니다. 실제 실행 결과가 insert branch가 되더라도 statement가 update branch를 포함하므로 두 권한을 모두 부여해야 합니다.
+RDB upsert statement에는 `INSERT` 권한과 `UPDATE` 권한이 모두 필요합니다. 실제 실행 결과가
+삽입 경로가 되더라도 statement에 갱신 경로가 포함되므로 두 권한을 모두 부여해야 합니다.
 
 ```sql
 GRANT INSERT ON SYS.DEVICE_STATE TO app_user;
@@ -390,9 +392,10 @@ GRANT UPDATE ON SYS.DEVICE_STATE TO app_user;
 | 문자열/LOB | `VARCHAR`, `TEXT`, `CLOB`, `BINARY`, `BLOB` |
 | 기타 | `DATETIME`, `IPV4`, `IPV6`, `JSON` |
 
-duplicate trigger가 되는 key/index 타입은 현재 RDB PRIMARY KEY 및 UNIQUE INDEX가 지원하는 타입 정책을 따릅니다. 이 기능은 key 타입에 대한 새로운 보증을 추가하지 않습니다.
+duplicate trigger가 되는 key/index 타입은 RDB PRIMARY KEY 및 UNIQUE INDEX의 타입 정책을
+따릅니다. 이 기능은 key 타입의 지원 범위를 확장하지 않습니다.
 
-다음은 현재 지원 범위가 아닙니다.
+다음 구문은 지원하지 않습니다.
 
 ```sql
 -- INSERT SELECT와 ON DUPLICATE KEY UPDATE 결합은 지원하지 않습니다.
@@ -440,7 +443,7 @@ INSERT INTO user_contact VALUES (1, 'a@example.com', '010-0000-0001', 'user-a');
 INSERT INTO user_contact VALUES (2, 'b@example.com', '010-0000-0002', 'user-b');
 
 -- email은 id=1과 충돌하고 phone은 id=2와 충돌합니다.
--- 서로 다른 row와 충돌하므로 update branch를 선택하지 않고 실패합니다.
+-- 서로 다른 row와 충돌하므로 갱신 경로를 선택하지 않고 실패합니다.
 INSERT INTO user_contact VALUES (3, 'a@example.com', '010-0000-0002', 'ambiguous')
 ON DUPLICATE KEY UPDATE SET note = 'updated';
 ```

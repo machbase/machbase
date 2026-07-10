@@ -11,7 +11,8 @@ RDB 테이블의 트랜잭션 사용법과 설계 지침을 다룹니다.
 
 ## 트랜잭션 설계
 
-RDB 테이블은 `BEGIN`, `COMMIT`, `ROLLBACK`으로 INSERT·UPDATE·DELETE를 원자적으로 처리할 수 있습니다.
+RDB 테이블은 `BEGIN`, `COMMIT`, `ROLLBACK`으로 INSERT·UPDATE·DELETE를 하나의 트랜잭션으로
+처리할 수 있습니다. `BEGIN RDB` 같은 별도 구문은 사용하지 않습니다.
 
 ### 기본 트랜잭션
 
@@ -47,7 +48,20 @@ ROLLBACK;
 -- inventory는 변경 전 상태로 복원됨
 ```
 
-### 대량 INSERT 최적화
+### 트랜잭션 경계
+
+- 활성 트랜잭션에서는 RDB 테이블의 DML과 SELECT를 수행합니다.
+- LOG, TAG, LOOKUP, VOLATILE 테이블에 대한 쓰기와 DDL은 활성 RDB 트랜잭션 안에서
+  차단됩니다. 비 RDB 테이블의 SELECT는 수행할 수 있습니다.
+- 중첩 `BEGIN`은 지원하지 않습니다.
+- 트랜잭션이 없는 상태의 `COMMIT`과 `ROLLBACK`은 변경 없이 성공합니다.
+- 일반적인 constraint 오류는 실패한 statement만 되돌리고 트랜잭션은 유지합니다. 오류를
+  확인한 뒤 후속 문을 실행하거나 명시적으로 `ROLLBACK`합니다.
+- 연결이 종료되면 해당 세션의 활성 RDB 트랜잭션은 롤백됩니다.
+- 같은 세션에 열린 RDB 결과 커서가 있으면 `COMMIT`과 `ROLLBACK`이
+  `Resource busy (RDB_TRANSACTION)`로 실패합니다. 결과 집합을 닫은 뒤 다시 실행합니다.
+
+### 대량 INSERT 처리
 
 대량 데이터 삽입 시 트랜잭션 단위를 적절히 조절합니다.
 
@@ -65,3 +79,7 @@ COMMIT;
 - 트랜잭션 중 DDL 실행은 피합니다.
 - 네트워크 오류 등으로 트랜잭션이 종료되면 자동으로 롤백됩니다.
 - AUTO COMMIT 모드에서는 각 DML이 개별 트랜잭션으로 처리됩니다.
+- Savepoint와 중첩 트랜잭션은 지원하지 않습니다.
+- SDK의 `setAutoCommit(false)`, `BeginTransaction()` 같은 편의 API 지원 여부는 드라이버마다
+  다릅니다. [SDK별 지원 범위](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-transaction-prepare-bind)를
+  확인합니다.

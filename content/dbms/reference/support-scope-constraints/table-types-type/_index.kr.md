@@ -2,6 +2,7 @@
 type: docs
 title: '17.8.2 테이블 타입별 기능 지원표'
 weight: 20
+toc: true
 ---
 
 Machbase는 용도에 따라 다섯 가지 테이블 유형을 제공합니다. 각 테이블 유형은 설계 목적에 따라 지원하는 기능 범위가 다릅니다.
@@ -13,7 +14,7 @@ Machbase는 용도에 따라 다섯 가지 테이블 유형을 제공합니다. 
 | **TAG** | 시계열 센서 데이터 고속 수집 및 집계 (ROLLUP) |
 | **LOG** | 비정형 로그/이벤트 데이터 순차 저장, 텍스트 검색 |
 | **LOOKUP** | 메타데이터, 코드 테이블, 참조 데이터 (UPDATE/DELETE 지원) |
-| **VOLATILE** | 메모리 기반 임시 데이터, 세션 내 캐시 |
+| **VOLATILE** | 메모리 기반 서버 상태·캐시, 재시작 시 데이터 소멸 |
 | **RDB** | 트랜잭션이 필요한 일반 관계형 데이터 |
 
 ## 테이블 유형별 기능 지원 종합 표
@@ -22,12 +23,12 @@ Machbase는 용도에 따라 다섯 가지 테이블 유형을 제공합니다. 
 |------|:---:|:---:|:------:|:--------:|:---:|
 | **쓰기** | | | | | |
 | INSERT (SQL) | O | O | O | O | O |
-| Append API | O | O | O | X | X |
+| Append API | O | O | O | X | O |
 | **수정/삭제** | | | | | |
 | UPDATE | △ | X | O | O | O |
 | DELETE | O | O | O | O | O |
 | **트랜잭션** | | | | | |
-| Transaction (COMMIT/ROLLBACK) | X | X | △ | O | O |
+| Transaction (COMMIT/ROLLBACK) | X | X | X | X | O |
 | **집계 및 검색** | | | | | |
 | ROLLUP | O | X | X | X | X |
 | 텍스트 검색 (KEYWORD INDEX) | X | O | X | X | X |
@@ -73,9 +74,10 @@ UPDATE sensor_data
 
 상세 내용은 [TAG data UPDATE 지원표](../tag-data-update/)를 참고하세요.
 
-### LOOKUP 테이블 Transaction 제약 (△)
+### LOOKUP과 VOLATILE의 트랜잭션 범위
 
-LOOKUP 테이블은 개별 DML(INSERT/UPDATE/DELETE)에 대해 트랜잭션이 지원되지만, 복합 트랜잭션(여러 DML을 하나의 트랜잭션으로 묶기)은 제한적입니다. 단건 조작은 PK 조건을, 일괄 조작은 일반 predicate와 사전 대상 범위 확인을 함께 사용하는 것을 권장합니다.
+LOOKUP과 VOLATILE 테이블의 각 DML은 statement 단위로 반영됩니다. 여러 DML을 `BEGIN`과
+`COMMIT`/`ROLLBACK`으로 묶는 RDB 트랜잭션에는 참여하지 않습니다.
 
 ### JSON 컬럼 지원 범위
 
@@ -83,7 +85,10 @@ JSON 컬럼은 TAG, LOG, LOOKUP, RDB 테이블에서 지원합니다. VOLATILE �
 
 ### Append API 대상 테이블
 
-Append API는 TAG, LOG, LOOKUP 테이블에 사용할 수 있습니다. LOOKUP 테이블은 중복 키 처리 정책(`LOOKUP_APPEND_UPDATE_ON_DUPKEY`)을 함께 확인하세요. VOLATILE, RDB 테이블에는 일반 `INSERT` SQL을 사용하세요.
+Append API는 TAG, LOG, LOOKUP 테이블에 사용할 수 있습니다. LOOKUP 테이블은 중복 키 처리
+정책(`LOOKUP_APPEND_UPDATE_ON_DUPKEY`)을 함께 확인하십시오. RDB 테이블은 지원되는 client의
+appendBatch 또는 append stream 경로를 사용하며, VOLATILE 테이블에는 일반 `INSERT` SQL을
+사용합니다.
 
 ## TAG 테이블 시간 범위 조회
 

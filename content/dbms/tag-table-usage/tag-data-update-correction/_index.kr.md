@@ -67,8 +67,8 @@ SELECT COUNT(*)
 
 ### 롤업 재구성
 
-원본 row UPDATE 후 이미 생성된 롤업 row는 즉시 갱신되지 않을 수 있습니다. 정정 구간을
-롤업 기반 조회에 사용한다면 필요한 롤업을 재구성합니다.
+원본 row를 UPDATE해도 이미 구체화된 롤업 row는 자동으로 갱신되지 않습니다. 정정 구간을
+롤업 기반 조회에 사용하기 전에 필요한 롤업을 재구성합니다.
 
 ```sql
 EXEC ROLLUP_REBUILD(sensor_tag, 'TEMP-01',
@@ -146,5 +146,5 @@ CREATE TABLE correction_log (
 ### 주의사항
 
 - 대량 UPDATE 전 동일 WHERE 조건으로 대상 row 수를 확인합니다.
-- 이미 계산된 롤업을 사용하는 경우 UPDATE 후 `ROLLUP_REBUILD`를 계획합니다.
+- 이미 계산된 롤업을 사용하는 경우 UPDATE 후 `ROLLUP_REBUILD`를 실행합니다.
 - 보정이 매우 빈번하고 이력 보존이 필수라면 보정 컬럼 또는 보정 이력 테이블을 함께 설계합니다.

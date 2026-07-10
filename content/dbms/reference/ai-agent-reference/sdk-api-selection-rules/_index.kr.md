@@ -2,6 +2,7 @@
 type: docs
 title: '17.10.9 sdk-api-selection-rules'
 weight: 90
+toc: true
 ---
 
 이 페이지는 사용자의 요구사항과 언어에 따라 적합한 Machbase SDK를 선택하는 규칙을 정의합니다.
@@ -15,8 +16,8 @@ weight: 90
 | Append 필요 + Go | **machcli** (native client) | `database/sql`은 Append 미지원 |
 | Append 필요 + .NET | **MachConnector** (`MachAppendWriter`) | [.NET 가이드](/dbms/application-integration/guide-drivers/#net-connector) |
 | Append 필요 + Node.js | **@machbase/ts-client** | [Node.js 가이드](/dbms/application-integration/guide-drivers/#node-js-typescript) |
-| AUTH KEY 인증 필요 | **JDBC**, **.NET**, **ODBC/CLI** | Python/Go/Node.js는 AUTH KEY 미지원 |
-| RDB 테이블 트랜잭션 필요 | **JDBC**, **.NET**, **ODBC/CLI** | Python/Go/Node.js는 Transaction 미지원 |
+| AUTH KEY 인증 필요 | **JDBC**, **ODBC/CLI**, **machsql** | Python/Go/.NET/Node.js는 AUTH KEY 미지원 |
+| RDB 테이블 트랜잭션 필요 | **JDBC**, **ODBC/CLI** | SQL `BEGIN`을 직접 실행해야 함 |
 | Go 언어 선호 + Append 필요 | **machcli** (native) | [Go 가이드](/dbms/application-integration/guide-drivers/#go) |
 | Go 언어 선호 + 표준 인터페이스 | **database/sql** 드라이버 | Append 불필요한 경우 |
 | 브라우저 / 웹 / 스크립트 | **REST API** (포트 5657, `/machbase` 엔드포인트) | [REST API 가이드](/dbms/application-integration/rest-api/) |
@@ -30,7 +31,7 @@ weight: 90
 | Java | JDBC | JDBC (executeAppendOpen) | JDBC |
 | Python | machbaseAPI | machbaseAPI (append()) | 미지원 (JDBC/.NET/ODBC 고려) |
 | Go | database/sql | machcli (native) | 미지원 (다른 SDK 고려) |
-| C# / .NET | MachConnector | MachConnector (MachAppendWriter) | MachConnector |
+| C# / .NET | MachConnector | MachConnector (MachAppendWriter) | 미지원 (`MachTransaction` 미구현) |
 | Node.js | @machbase/ts-client | @machbase/ts-client | 미지원 |
 | C / C++ | ODBC/CLI | ODBC/CLI | ODBC/CLI |
 | R | RODBC | 미지원 | 미지원 |
@@ -42,8 +43,8 @@ weight: 90
 |------|------|------|
 | Go `database/sql` + Append | Append 미지원 | `machcli` (native) 사용 |
 | Go + Transaction (BEGIN/COMMIT) | `Begin()` / `BeginTx()` 미구현 | ODBC 또는 JDBC 사용 |
-| REST API + Transaction | REST API는 단일 요청 기반, Transaction 미지원 | JDBC / .NET 사용 |
-| Node.js + AUTH KEY | 현재 Node.js 드라이버 AUTH KEY 미지원 | JDBC / .NET 사용 |
+| REST API + Transaction | REST API는 단일 요청 기반, Transaction 미지원 | JDBC / ODBC 사용 |
+| Node.js + AUTH KEY | Node.js 드라이버 AUTH KEY 미지원 | JDBC / ODBC 사용 |
 | Python `%s` → `?` 플레이스홀더 | machbaseAPI는 `%s` 방식 전용 | `%s` 또는 `%(name)s` 사용 |
 
 ## SDK별 주요 특징 요약
@@ -52,7 +53,7 @@ weight: 90
 
 - Append: `MachStatement.executeAppendOpen()` → `executeAppendData()` → `executeAppendClose()`
 - AUTH KEY: 지원 (`connectURL`에 키 파일 경로 지정)
-- Transaction: 지원 (RDB/LOOKUP 테이블)
+- Transaction: SQL `BEGIN` 직접 실행 후 SQL 또는 `commit()`/`rollback()`으로 종료
 - 파라미터: `?` 플레이스홀더
 
 ### Python (machbaseAPI)
@@ -80,8 +81,8 @@ weight: 90
 ### .NET (MachConnector)
 
 - Append: `MachAppendWriter` 클래스 사용
-- AUTH KEY: 지원
-- Transaction: 지원
+- AUTH KEY: 미지원
+- Transaction: 미지원 (`MachTransaction` 미구현)
 - 파라미터: `?` 플레이스홀더
 
 ### REST API

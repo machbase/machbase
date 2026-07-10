@@ -2,6 +2,7 @@
 type: docs
 title: '4.2 테이블 타입 선택'
 weight: 10
+toc: true
 ---
 잘못된 타입 선택은 성능 저하와 기능 제한으로 이어지므로, 설계 초기에 데이터 성격에 맞는 타입을 결정해야 합니다.
 
@@ -116,7 +117,7 @@ CREATE LOOKUP TABLE code_master (
   ├── YES, 건수 < 수백만 → LOOKUP TABLE
   └── NO  ↓
 
-데이터가 세션 내 임시 집계/캐시인가?
+데이터가 서버 재시작 시 폐기 가능한 인메모리 상태/캐시인가?
   ├── YES → VOLATILE TABLE
   └── NO  ↓
 

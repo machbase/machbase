@@ -2,6 +2,7 @@
 type: docs
 title: '17.8.9 REST API 지원표'
 weight: 90
+toc: true
 ---
 
 Machbase REST API는 HTTP를 통해 SQL 실행, Append 쓰기, 태그 데이터 조회 등을 제공합니다. 별도 드라이버 설치 없이 웹 서비스, 마이크로서비스, 스크립트 환경에서 사용할 수 있습니다.
@@ -42,7 +43,7 @@ REST API 인증은 `machbase.conf`의 `HTTP_AUTH` 값으로 제어합니다.
 | 인증 없음 | `HTTP_AUTH=0` | 기본 설정 |
 | Basic Authentication | `HTTP_AUTH=1` | `Authorization: Basic ...` |
 
-Bearer Token 로그인 엔드포인트는 현재 소스 기준으로 확인되지 않습니다.
+Bearer Token 로그인 엔드포인트는 제공하지 않습니다.
 
 ## 사용 예시
 

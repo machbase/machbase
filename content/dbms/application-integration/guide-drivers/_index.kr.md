@@ -2,6 +2,7 @@
 type: docs
 title: '11.3 드라이버별 가이드'
 weight: 30
+toc: true
 ---
 Machbase에 연결하기 위한 각 드라이버 및 SDK의 사용 방법을 다룹니다. C/C++ 네이티브 환경부터 Java, Python, Go 등 다양한 언어별 연결 방식을 제공합니다.
 
@@ -2838,17 +2839,19 @@ const { createConnection } = require('@machbase/ts-client');
 
 ### 동작 특성과 한계
 
-#### 트랜잭션 미지원
+#### 트랜잭션 편의 메서드 미지원
 
-Machbase는 모든 명령을 자동 커밋합니다. `BEGIN`, `COMMIT`, `ROLLBACK`은 항상 오류를 반환합니다.
+서버는 RDB 테이블에 plain `BEGIN`, `COMMIT`, `ROLLBACK` SQL을 지원합니다. Node.js
+클라이언트의 `beginTransaction`, `commit`, `rollback` 편의 메서드는 구현되어 있지 않으므로
+동일한 연결에서 `execute()`로 SQL을 직접 실행합니다.
 
 ```javascript
-try {
-    await conn.execute('COMMIT');
-} catch (err) {
-    console.log('Expected:', err.message);
-    // Error: Machbase does not support transactions
-}
+await conn.execute('BEGIN');
+await conn.execute(
+    'UPDATE orders SET status = ? WHERE order_id = ?',
+    ['DONE', 1001]
+);
+await conn.execute('COMMIT');
 ```
 
 #### 테이블 타입별 SQL 제약

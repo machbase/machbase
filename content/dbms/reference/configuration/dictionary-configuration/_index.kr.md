@@ -2,6 +2,7 @@
 type: docs
 title: '17.2.1 설정 프로퍼티 사전'
 weight: 10
+toc: true
 ---
 
 `$MACHBASE_HOME/conf/machbase.conf` 파일에서 설정하는 Standard Edition 주요 프로퍼티 사전입니다. 별도 표시가 없는 한 서버 재시작이 필요합니다. 8.5 원본의 전체 프로퍼티 항목은 [8.5 전체 설정 레퍼런스](../original-8-5-full/)를 함께 참고하십시오.
@@ -121,9 +122,9 @@ weight: 10
 
 | 프로퍼티 | 기본값 | 범위 | 설명 |
 |----------|--------|------|------|
-| `RDB_BUSY_TIMEOUT_MS` | 30000 | -1~2^32-1 | RDB 테이블 sidecar 파일이 busy일 때 대기할 시간(ms). -1은 무기한 대기, 0은 즉시 반환 |
-| `RDB_SYNCHRONOUS` | 2 | 1~2 | RDB sidecar SQLite synchronous 모드. 1=NORMAL, 2=FULL |
-| `RDB_JOURNAL_MODE` | 4 | 0~4 | RDB sidecar SQLite journal 모드. 0=DELETE, 4=WAL |
+| `RDB_BUSY_TIMEOUT_MS` | 30000 | -1~2147483647 | RDB 보조 데이터 파일(sidecar)이 busy일 때 대기할 시간(ms). -1은 무기한 대기, 0은 즉시 반환 |
+| `RDB_SYNCHRONOUS` | 2 | 1~2 | RDB 보조 파일의 SQLite synchronous 모드. 1=NORMAL, 2=FULL |
+| `RDB_JOURNAL_MODE` | 4 | 0~4 | RDB 보조 파일의 SQLite journal 모드. 0=DELETE, 4=WAL |
 
 ## 로그 / 진단 설정
 

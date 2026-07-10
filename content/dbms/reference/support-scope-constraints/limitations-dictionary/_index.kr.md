@@ -2,6 +2,7 @@
 type: docs
 title: '17.8.12 제한사항 사전'
 weight: 120
+toc: true
 ---
 
 Machbase의 주요 제한 사항을 테이블 유형별, Edition별, 일반 시스템 제한으로 정리합니다. 특정 기능을 사용하기 전에 해당 제한 사항을 먼저 확인하세요.
@@ -15,7 +16,7 @@ Machbase의 주요 제한 사항을 테이블 유형별, Edition별, 일반 시�
 | UPDATE 불가 컬럼 | `name` (TAGNAME), `time` (BASETIME) |
 | DELETE 방식 | 범위 삭제 지원; 개별 행 삭제는 DELETE 정책 설정 필요 |
 | Transaction | 미지원 (Append-only 구조, 즉시 커밋) |
-| Append 대상 | TAG, LOG 테이블만 가능 |
+| Append 대상 | TAG/LOG 고속 경로와 RDB client batch/stream 경로 지원 |
 | ROLLUP 재구축 | `ROLLUP_REBUILD`: Standard Edition만 지원 |
 
 상세 내용은 [TAG data UPDATE 지원표](../tag-data-update/)를 참고하세요.
@@ -56,7 +57,7 @@ Machbase의 주요 제한 사항을 테이블 유형별, Edition별, 일반 시�
 |------|----------|
 | RDB 테이블 | 미지원 |
 | VOLATILE 테이블 | 미지원 |
-| MOUNT / UNMOUNT | 미지원 |
+| MOUNT / UMOUNT | 미지원 |
 | STREAM | 미지원 |
 | Custom ROLLUP | 미지원 |
 | ROLLUP_REBUILD | 미지원 |
@@ -66,10 +67,11 @@ Machbase의 주요 제한 사항을 테이블 유형별, Edition별, 일반 시�
 
 | SDK | 제한 내용 |
 |-----|---------|
-| Python | Prepared Statement 미지원 (클라이언트 렌더링) |
+| Python | Transaction API와 Prepared Statement 미지원 (클라이언트 렌더링) |
 | Go (database/sql) | Transaction 미지원 |
 | Go (native) | Transaction 미지원, AUTH KEY 미지원 |
-| Node.js | Transaction 미지원, AUTH KEY 미지원 |
+| .NET | Transaction API와 AUTH KEY 미지원 |
+| Node.js | Transaction 편의 API와 AUTH KEY 미지원. 같은 연결에서 SQL 직접 실행 가능 |
 | REST API | Transaction 미지원, Prepared Statement 미지원, AUTH KEY 미지원 |
 
 ## 일반 시스템 제한

@@ -2,11 +2,12 @@
 type: docs
 title: '17.10.4 support-matrix'
 weight: 40
+toc: true
 ---
 
 이 페이지는 Machbase의 핵심 기능 지원 여부를 요약한 매트릭스입니다. AI 에이전트가 "X Edition에서 Y 기능이 지원되나요?" 유형의 질문에 답할 때 참조합니다.
 
-범례: O = 지원, X = 미지원, - = 해당 없음
+범례: O = 지원, △ = 제한적 지원, X = 미지원, - = 해당 없음
 
 ## 에디션 × 기능 지원표
 
@@ -20,7 +21,7 @@ weight: 40
 | ROLLUP | O | O |
 | ROLLUP_REBUILD | O | X |
 | STREAM | O | X |
-| MOUNT / UNMOUNT | O | X |
+| MOUNT / UMOUNT | O | X |
 | 수평 확장 (Scale-out) | X | O |
 | HA (고가용성) | X | O |
 | Broker 노드 | X | O |
@@ -31,13 +32,13 @@ weight: 40
 | 기능 | TAG | LOG | LOOKUP | VOLATILE | RDB |
 |------|:---:|:---:|:------:|:--------:|:---:|
 | INSERT (SQL) | O | O | O | O | O |
-| Append API | O | O | O | X | X |
+| Append API | O | O | O | X | O |
 | UPDATE | 조건부¹ | X | O | O | O |
 | DELETE | 제한적 | O | O | O | O |
-| Transaction (COMMIT/ROLLBACK) | X | X | O | O | O |
+| Transaction (COMMIT/ROLLBACK) | X | X | X | X | O |
 | ROLLUP 대상 | O | X | X | X | X |
 | 전문 검색 (TEXT INDEX) | X | O | X | X | X |
-| JSON 컬럼 저장 | O | O | X | X | O |
+| JSON 컬럼 저장 | O | O | O | X | O |
 | PRIMARY KEY | O (name) | X | O | O | O |
 | BASETIME 컬럼 | O | - | - | - | - |
 
@@ -47,18 +48,21 @@ weight: 40
 
 ## SDK × 주요 기능 지원표
 
-| SDK | Append | AUTH KEY 인증 | Transaction | Server Prepared Statement |
+| SDK | Append | AUTH KEY 인증 | Transaction API | Server Prepared Statement |
 |-----|:------:|:-------------:|:-----------:|:-------------------------:|
-| JDBC | O | O | O | O |
+| JDBC | O | O | △ | O |
 | Python (machbaseAPI) | O | X | X | X² |
 | Go (machcli / native) | O | X | X³ | O |
 | Go (database/sql) | X | X | X³ | O |
-| .NET (MachConnector) | O | O | O | O |
+| .NET (MachConnector) | O | X | X | O |
 | Node.js | O | X⁴ | X | O |
 | REST API | O | X | X | X |
-| ODBC/CLI | O | O | O | O |
+| ODBC/CLI | O | O | △ | O |
 | R (RODBC) | X | X | X | X |
 
 > ² Python machbaseAPI는 `%s` 클라이언트 렌더링 방식 사용. 서버 Prepared Statement 미지원.
 > ³ Go driver (machcli, database/sql 모두): `Begin()` / `BeginTx()` 미구현.
 > ⁴ Node.js AUTH KEY: 현재 미지원.
+> JDBC와 ODBC/CLI 트랜잭션은 SQL `BEGIN`을 직접 실행해야 합니다. JDBC
+> `setAutoCommit(false)`는 시작 문을 보내지 않으며, ODBC autocommit 속성도 서버 트랜잭션을
+> 자동으로 시작하지 않습니다.

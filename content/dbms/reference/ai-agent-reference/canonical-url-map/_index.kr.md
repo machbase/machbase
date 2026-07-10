@@ -2,6 +2,7 @@
 type: docs
 title: '17.10.2 canonical-url-map'
 weight: 20
+toc: true
 ---
 
 이 페이지는 Machbase의 주요 기능과 개념별 정규 URL 맵입니다. AI 에이전트가 문서 링크를 생성하거나 RAG 시스템이 문서를 참조할 때 사용합니다.
@@ -16,31 +17,31 @@ weight: 20
 | LOOKUP 테이블 | `/dbms/lookup-table-usage/` |
 | VOLATILE 테이블 | `/dbms/volatile-table-usage/` |
 | RDB 테이블 | `/dbms/rdb-table-usage/` |
-| ROLLUP | `/dbms/core-concepts/features-concepts/role-statistics-rollup/` |
-| STREAM | `/dbms/core-concepts/features-concepts/processing-model-stream/` |
-| Append (개념) | `/dbms/application-integration/concepts-common/append-api-batch/` |
+| ROLLUP | `/dbms/core-concepts/features-concepts/#role-statistics-rollup` |
+| STREAM | `/dbms/core-concepts/features-concepts/#processing-model-stream` |
+| Append (개념) | `/dbms/application-integration/concepts-common/#append-api-batch` |
 | AUTH KEY | `/dbms/security-access-control/authentication-auth-key/` |
 
 ## 데이터 입력
 
 | 방법 | 정규 URL |
 |------|----------|
-| Append API (공통 개념) | `/dbms/application-integration/concepts-common/append-api-batch/` |
+| Append API (공통 개념) | `/dbms/application-integration/concepts-common/#append-api-batch` |
 | machloader (CSV/파일 입력) | `/dbms/application-integration/data-input-load-export/#file-import-machloader` |
 | Collector | `/dbms/operations-configuration-recovery/collector/` |
-| Fluentd 플러그인 | `/dbms/application-integration/external-tools/fluentd-plugin/` |
+| Fluentd 플러그인 | `/dbms/application-integration/external-tools/#fluentd-plugin` |
 
 ## 드라이버 가이드
 
 | SDK | 정규 URL |
 |-----|----------|
-| JDBC | `/dbms/application-integration/guide-drivers/jdbc/` |
-| Python (machbaseAPI) | `/dbms/application-integration/guide-drivers/python/` |
-| Go (native / machcli) | `/dbms/application-integration/guide-drivers/go/` |
-| Go (database/sql) | `/dbms/application-integration/guide-drivers/go/` |
-| .NET (MachConnector) | `/dbms/application-integration/guide-drivers/net-connector/` |
-| Node.js | `/dbms/application-integration/guide-drivers/node-js-typescript/` |
-| ODBC/CLI | `/dbms/application-integration/guide-drivers/cli-odbc/` |
+| JDBC | `/dbms/application-integration/guide-drivers/#jdbc` |
+| Python (machbaseAPI) | `/dbms/application-integration/guide-drivers/#python` |
+| Go (native / machcli) | `/dbms/application-integration/guide-drivers/#go` |
+| Go (database/sql) | `/dbms/application-integration/guide-drivers/#go-go-sql` |
+| .NET (MachConnector) | `/dbms/application-integration/guide-drivers/#net-connector` |
+| Node.js | `/dbms/application-integration/guide-drivers/#node-js-typescript` |
+| ODBC/CLI | `/dbms/application-integration/guide-drivers/#cli-odbc` |
 | REST API | `/dbms/application-integration/rest-api/` |
 | SDK 지원 범위 전체 | `/dbms/application-integration/support-scope-sdk/` |
 
@@ -50,7 +51,7 @@ weight: 20
 |------|----------|
 | 서버 시작/중지 | `/dbms/operations-configuration-recovery/server-database/` |
 | BACKUP / RESTORE | `/dbms/operations-configuration-recovery/backup-restore-mount/` |
-| MOUNT / UNMOUNT | `/dbms/operations-configuration-recovery/backup-restore-mount/database-mount/` |
+| MOUNT / UMOUNT | `/dbms/operations-configuration-recovery/backup-restore-mount/#database-mount` |
 | ALTER SYSTEM | `/dbms/reference/sql/syntax-dictionary-sql/system-session-alter-syntax/` |
 | 설정 레퍼런스 | `/dbms/reference/configuration/` |
 | ROLLUP 운영 | `/dbms/tag-rollup-usage/` |
@@ -60,10 +61,10 @@ weight: 20
 
 | 항목 | 정규 URL |
 |------|----------|
-| 계정 관리 (CREATE/ALTER/DROP USER) | `/dbms/security-access-control/account/create-delete-user/` |
-| 권한 관리 (GRANT/REVOKE) | `/dbms/security-access-control/privileges/grant-revoke/` |
+| 계정 관리 (CREATE/ALTER/DROP USER) | `/dbms/security-access-control/account/#create-delete-user` |
+| 권한 관리 (GRANT/REVOKE) | `/dbms/security-access-control/privileges/#grant-revoke` |
 | AUTH KEY 설정 | `/dbms/security-access-control/authentication-auth-key/` |
-| 원격 접속 설정 | `/dbms/security-access-control/access-control/remote-access-configuration/` |
+| 원격 접속 설정 | `/dbms/security-access-control/access-control/#remote-access-configuration` |
 
 ## SQL 레퍼런스
 

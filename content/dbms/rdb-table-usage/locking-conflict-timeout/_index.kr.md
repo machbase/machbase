@@ -4,180 +4,114 @@ weight: 110
 toc: true
 ---
 
-RDB 테이블의 트랜잭션 잠금 동작과 충돌 대응 방법을 정리합니다.
-
+RDB 테이블의 동시 접근 방식과 쓰기 충돌, busy timeout 처리 방법을 설명합니다.
 
 <a id="transaction-locking-conflict-rdb"></a>
 
-## RDB 트랜잭션/잠금 충돌
+## RDB 동시성과 잠금 범위
 
-RDB 테이블은 표준 RDBMS와 마찬가지로 트랜잭션과 잠금(lock)을 지원합니다. 여러 세션이 같은 행에 동시에 쓰기 작업을 시도하거나, 트랜잭션을 오랫동안 완료하지 않으면 잠금 충돌이 발생하여 다른 세션이 대기 상태에 빠질 수 있습니다.
+각 RDB 테이블의 행과 인덱스는 테이블 ID별 RDB 부속 DB 파일(sidecar)에 저장됩니다. 읽기
+트랜잭션은 커밋된 스냅샷을 조회하고, 쓰기 트랜잭션은 해당 RDB 보조 파일에서 쓰기 잠금을
+획득합니다. 따라서 다른 세션이 같은 RDB 테이블에 쓰기 트랜잭션을 열어 둔 상태에서
+`INSERT`, `UPDATE`, `DELETE`를 실행하면 대기하거나 `Resource busy (RDB_TRANSACTION)` 오류가
+발생할 수 있습니다.
 
-> **참고:** TAG 테이블과 LOG 테이블은 Append 전용 구조로 트랜잭션 잠금이 없습니다. 잠금 충돌은 RDB 테이블에서만 발생합니다.
+RDB 잠금을 일반적인 행 단위 잠금으로 해석하면 안 됩니다. 서로 다른 행을 수정하더라도 같은
+RDB 테이블에 대한 동시 쓰기는 충돌할 수 있습니다. 반면 다른 세션의 미커밋 쓰기가 있어도
+읽기 트랜잭션은 커밋된 스냅샷을 조회할 수 있습니다.
 
-### 잠금 충돌이 발생하는 상황
+| 상황 | 동작 |
+|------|------|
+| 같은 RDB 테이블의 동시 읽기 | 커밋된 스냅샷을 각각 조회합니다. |
+| 다른 세션의 미커밋 쓰기 중 읽기 | 미커밋 행을 제외한 커밋 스냅샷을 조회합니다. |
+| 같은 RDB 테이블의 동시 쓰기 | `RDB_BUSY_TIMEOUT_MS` 정책에 따라 대기하거나 실패합니다. |
+| 활성 RDB 트랜잭션 중 같은 테이블 DDL | `Resource busy` 오류로 차단됩니다. |
+| 열린 RDB 커서가 있는 세션의 `COMMIT`/`ROLLBACK` | 커서를 닫을 때까지 차단됩니다. |
 
-- 여러 세션이 같은 RDB 테이블의 동일 행에 동시에 `UPDATE` 또는 `DELETE` 실행
-- `BEGIN TRANSACTION` 이후 `COMMIT`이나 `ROLLBACK` 없이 장시간 방치
-- 배치 작업이 대용량 `UPDATE`를 실행하는 동안 다른 세션이 같은 테이블에 접근
-- 클라이언트 프로그램 오류로 트랜잭션이 열린 채 연결이 끊어진 경우
+TAG와 LOG 테이블의 입력 경로는 RDB 보조 파일 트랜잭션을 사용하지 않습니다. 활성 RDB
+트랜잭션 안에서는 RDB 테이블의 DML과 SELECT만 수행하고, LOG/TAG/LOOKUP/VOLATILE 쓰기와
+DDL을 함께 실행하지 않습니다.
 
-### 잠금 현황 확인
+## busy timeout 설정
 
-#### 잠금을 보유한 세션 확인
+`RDB_BUSY_TIMEOUT_MS`는 RDB 보조 파일이 busy일 때 세션이 기다리는 시간을 밀리초 단위로
+지정합니다. 서버 설정의 기본값은 `30000`이며, 새 세션은 이 값을 복사합니다.
 
-```sql
-SELECT * FROM v$mutex;
-```
+| 값 | 동작 |
+|---:|------|
+| `-1` | 세션 취소 또는 잠금 해제까지 계속 기다립니다. |
+| `0` | 기다리지 않고 즉시 `Resource busy` 오류를 반환합니다. |
+| 양수 | 지정한 밀리초 동안 기다린 뒤 오류를 반환합니다. |
 
-`v$mutex`에 항목이 있으면 현재 잠금을 보유 중인 세션이 존재합니다.
-
-#### 대기 중인 세션 확인
-
-```sql
-SELECT sess_id, state, query FROM v$stmt WHERE state = 'WAIT';
-```
-
-`state`가 `WAIT`인 세션은 다른 세션의 잠금 해제를 기다리고 있습니다.
-
-#### 전체 세션 상태 확인
-
-```sql
-SELECT s.id AS session_id, s.login_time, s.user_name, s.user_ip,
-       st.id AS stmt_id, st.state AS stmt_state, st.query
-FROM v$session s
-LEFT JOIN v$stmt st ON s.id = st.sess_id
-ORDER BY s.id;
-```
-
-### 장시간 트랜잭션 강제 종료
-
-잠금을 오래 보유한 세션의 session id를 확인한 뒤 강제로 종료합니다.
+현재 접속의 값을 변경하려면 다음 문을 실행합니다.
 
 ```sql
--- 잠금 보유 세션 확인
-SELECT * FROM v$mutex;
-
--- 해당 세션 강제 종료
-ALTER SYSTEM KILL SESSION <sess_id>;
+ALTER SESSION SET RDB_BUSY_TIMEOUT_MS = 5000;
 ```
 
-`KILL SESSION`은 실행 중인 트랜잭션을 자동으로 롤백하고 세션을 종료합니다. 이후 대기 중이던 세션이 잠금을 획득하여 작업을 재개합니다.
-
-### 예방 방법
-
-#### 1. 트랜잭션 범위 최소화
-
-트랜잭션 내 작업을 최소화하고, 완료 즉시 `COMMIT`합니다.
+설정 결과는 `V$SESSION`에서 확인합니다. SQL에서 현재 세션 ID를 반환하는 별도 함수는
+제공하지 않으므로, 접속 사용자·클라이언트 주소·세션 ID를 함께 확인합니다.
 
 ```sql
--- 나쁜 예: 트랜잭션 내에서 오랜 처리
-BEGIN TRANSACTION;
--- 복잡한 계산이나 외부 API 호출...
-UPDATE sensor_meta SET status = 'done' WHERE id = 1;
-COMMIT;
-
--- 좋은 예: 계산은 트랜잭션 밖에서, 쓰기만 트랜잭션 내에서
--- (복잡한 계산 먼저 수행)
-BEGIN TRANSACTION;
-UPDATE sensor_meta SET status = 'done' WHERE id = 1;
-COMMIT;
+SELECT id, user_name, user_ip, rdb_busy_timeout_ms
+  FROM v$session
+ WHERE closed = 0
+ ORDER BY id;
 ```
 
-#### 2. 적절한 autocommit 설정
+장애를 빠르게 감지해야 하는 온라인 요청은 짧은 양수를 사용하고, 순차 배치처럼 선행
+트랜잭션이 끝날 때까지 기다려도 되는 작업은 더 긴 값을 사용합니다. `-1`은 무기한 대기로
+이어질 수 있으므로 취소와 상위 요청 timeout을 함께 구성합니다.
 
-autocommit을 활성화하면 각 DML 문이 자동으로 커밋됩니다. 명시적 트랜잭션이 필요한 경우에만 `BEGIN TRANSACTION`을 사용합니다.
+## 충돌 진단
 
-#### 3. 동시 업데이트 피하기
+RDB 보조 파일의 쓰기 잠금 소유자는 `V$MUTEX`에 행 잠금으로 표시되지 않습니다. `V$MUTEX`는
+서버 내부 뮤텍스 통계이므로 RDB 트랜잭션 잠금 소유자를 식별하는 용도로 사용하지 않습니다.
 
-여러 스레드나 프로세스가 같은 행을 동시에 갱신하는 설계를 피합니다.
-
-- 갱신 대상 행이 겹치지 않도록 파티셔닝합니다.
-- 큐(queue) 구조를 활용해 순차적으로 처리합니다.
-
-#### 4. 클라이언트 예외 처리
-
-예외 발생 시 반드시 `ROLLBACK` 또는 연결 종료 처리를 하여 열린 트랜잭션이 남지 않도록 합니다.
-
-```python
-# Python 예시
-try:
-    conn.execute("BEGIN TRANSACTION")
-    conn.execute("UPDATE sensor_meta SET status = 'done' WHERE id = 1")
-    conn.execute("COMMIT")
-except Exception as e:
-    conn.execute("ROLLBACK")  # 반드시 롤백 처리
-    raise
-```
-
-### TAG/LOG 테이블과의 차이
-
-| 항목 | RDB 테이블 | TAG/LOG 테이블 |
-|------|-----------|----------------|
-| 트랜잭션 지원 | O | X |
-| 잠금(Lock) | O | X |
-| UPDATE/DELETE | O | 제한적 |
-| 잠금 충돌 가능성 | O | X |
-
-TAG·LOG 테이블은 Append 구조로 설계되어 잠금 충돌이 발생하지 않습니다. 대량 시계열 데이터를 빠르게 입력해야 하는 경우 TAG 또는 LOG 테이블 사용을 권장합니다.
-
-<a id="design-locking-conflict-rdb-busy-timeout-ddl-dml"></a>
-
-## 잠금·충돌·타임아웃 설계
-
-여러 세션이 RDB 테이블에 동시 접근하면 잠금 충돌이 발생할 수 있습니다. 아래 내용을 참고하여 동시성을 설계합니다.
-
-### 잠금 동작
-
-| 작업 | 잠금 유형 |
-|------|---------|
-| SELECT | 공유 잠금 (읽기 가능) |
-| INSERT | 배타 잠금 (해당 행) |
-| DELETE | 배타 잠금 (해당 행) |
-| DDL (CREATE INDEX, DROP TABLE 등) | 테이블 잠금 |
-
-### BUSY TIMEOUT 설정
-
-잠금 대기 시간을 설정하여 데드락을 방지합니다.
+대기 중인 SQL과 접속 세션은 `V$STMT`, `V$SESSION`에서 확인합니다.
 
 ```sql
--- 세션별 타임아웃 설정 (밀리초 단위)
-ALTER SESSION SET RDB_BUSY_TIMEOUT_MS = 5000;  -- 5초 대기 후 오류 반환
+SELECT id, sess_id, state, query
+  FROM v$stmt
+ WHERE state LIKE 'Execute in progress%'
+    OR state LIKE 'Fetch in progress%';
 ```
-
-### DDL 잠금 충돌 방지
-
-인덱스 생성 등 DDL 작업은 테이블 잠금을 걸기 때문에, DML 트래픽이 낮은 시간대에 실행합니다.
 
 ```sql
--- 인덱스 생성 (운영 시간 외 권장)
-CREATE INDEX idx_order_time ON order_history(order_time);
+SELECT id, user_name, user_ip, login_time, rdb_busy_timeout_ms
+  FROM v$session
+ WHERE closed = 0
+ ORDER BY login_time;
 ```
 
-### 동시성 설계 지침
+위 조회만으로 잠금 소유 세션을 직접 매핑할 수는 없습니다. 애플리케이션 로그의 트랜잭션
+시작 시각과 세션 ID, 서버 trace의 `RDB_TRANSACTION` busy 오류를 함께 확인합니다.
 
-1. **트랜잭션 범위 최소화**: 필요한 DML만 포함하여 잠금 보유 시간을 줄입니다.
-2. **배치 작업 분리**: 대량 INSERT/DELETE는 별도 세션이나 오프피크 시간에 실행합니다.
-3. **DDL과 DML 분리**: 인덱스 생성, 컬럼 추가 등 DDL은 트래픽이 낮은 시간에 실행합니다.
-4. **BUSY_TIMEOUT 설정**: 애플리케이션 로직에 따라 적절한 대기 시간을 설정합니다.
+## 충돌 예방과 복구
 
-### 오류 처리
-
-잠금 충돌 오류 발생 시 애플리케이션에서 재시도 로직을 구현합니다.
+1. `BEGIN` 후 필요한 RDB DML만 실행하고 즉시 `COMMIT` 또는 `ROLLBACK`합니다.
+2. 외부 API 호출이나 긴 계산은 트랜잭션 밖에서 수행합니다.
+3. 대량 UPDATE/DELETE는 대상 범위를 나누고 각 배치 사이에 커밋합니다.
+4. 같은 RDB 테이블을 갱신하는 작업은 큐나 작업 분할 규칙으로 직렬화합니다.
+5. `Resource busy (RDB_TRANSACTION)`는 제한된 횟수만 지수 백오프로 재시도합니다.
+6. 연결이 비정상 종료되면 서버가 활성 RDB 트랜잭션을 롤백하지만, 클라이언트는 새 연결에서
+   결과를 다시 조회해 반영 여부를 확인합니다.
 
 ```python
 import time
 
-def insert_with_retry(conn, sql, max_retries=3):
+def execute_with_retry(cursor, sql, max_retries=3):
     for attempt in range(max_retries):
         try:
-            conn.execute(sql)
-            conn.commit()
-            return True
-        except Exception as e:
-            if 'BUSY' in str(e) and attempt < max_retries - 1:
-                time.sleep(0.1 * (attempt + 1))
-                continue
-            raise
-    return False
+            cursor.execute(sql)
+            return
+        except Exception as exc:
+            if "RDB_TRANSACTION" not in str(exc) or attempt == max_retries - 1:
+                raise
+            time.sleep(0.1 * (2 ** attempt))
 ```
+
+열린 커서 때문에 `COMMIT` 또는 `ROLLBACK`이 실패한 경우에는 해당 결과 집합과 statement를
+먼저 닫은 뒤 트랜잭션 종료 문을 다시 실행합니다. 장시간 실행 세션을 종료해야 하면
+`V$SESSION.ID`를 확인한 뒤 `ALTER SYSTEM KILL SESSION <session_id>`를 사용합니다. 강제 종료는
+해당 세션의 미커밋 RDB 변경을 롤백하므로, 업무 영향과 대상 세션을 먼저 확인합니다.

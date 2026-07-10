@@ -240,9 +240,13 @@ ORDER BY C.ID;
 
 `AUTO_INCREMENT_FLAG`가 `1048576`이면 해당 컬럼이 `AUTO_INCREMENT` 컬럼입니다.
 
-JDBC `DatabaseMetaData.getColumns()`는 이 flag를 기준으로 `IS_AUTOINCREMENT`를 `YES`로 반환합니다. ODBC descriptor의 `SQL_DESC_AUTO_UNIQUE_VALUE`는 현재 지원 범위에 포함되지 않습니다. ODBC 응용 프로그램은 catalog query를 사용해 확인합니다.
+JDBC `DatabaseMetaData.getColumns()`는 이 flag를 기준으로 `IS_AUTOINCREMENT`를 `YES`로
+반환합니다. ODBC descriptor의 `SQL_DESC_AUTO_UNIQUE_VALUE`는 지원하지 않으므로 ODBC
+응용 프로그램은 catalog query로 확인합니다.
 
-`AUTO_INCREMENT` 속성은 system catalog에 저장되므로 정상 shutdown/startup 후에도 유지됩니다. RDB `ALTER TABLE ... DROP COLUMN` 과정에서 sidecar table이 rebuild되어도 `AUTO_INCREMENT` 속성과 다음 자동값은 유지됩니다.
+`AUTO_INCREMENT` 속성은 system catalog에 저장되므로 정상 shutdown/startup 후에도
+유지됩니다. RDB `ALTER TABLE ... DROP COLUMN` 과정에서 RDB 부속 DB 파일(sidecar)의 테이블이
+재구성되어도 `AUTO_INCREMENT` 속성과 다음 자동값은 유지됩니다.
 
 ```sql
 CREATE RDB TABLE maintenance_ticket (

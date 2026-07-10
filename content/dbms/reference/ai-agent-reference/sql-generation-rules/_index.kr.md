@@ -2,6 +2,7 @@
 type: docs
 title: '17.10.8 sql-generation-rules'
 weight: 80
+toc: true
 ---
 
 이 페이지는 AI 에이전트가 Machbase SQL 및 코드를 생성할 때 따라야 할 규칙을 정의합니다.
@@ -96,11 +97,11 @@ WHERE name = 'temp_01'
 
 | 패턴 | 문제 | 올바른 방법 |
 |------|------|------------|
-| TAG 테이블에 `COMMIT` / `ROLLBACK` | Append-only 구조라 TRANSACTION 없음 → 오류 | COMMIT/ROLLBACK 제거 |
+| TAG 쓰기를 `BEGIN` 안에서 실행 | 활성 RDB 트랜잭션에는 TAG 쓰기를 포함할 수 없음 | TAG 쓰기는 트랜잭션 밖에서 실행 |
 | Go `database/sql`에서 `db.Begin()` | `Begin()` / `BeginTx()` 미구현 → 오류 | Transaction이 필요하면 RDB 테이블 + ODBC/JDBC 사용 |
 | Python에서 `?` 플레이스홀더 | machbaseAPI는 `%s` 방식 → 오류 | `%s` 또는 `%(name)s` 사용 |
 | ROLLUP 집계에 `AVG()` 직접 사용 | ROLLUP 결과 컬럼 구조와 불일치 | `STAT(avg)` 형식 사용 |
-| TAG 테이블 `FROM table_name` | `FROM TAG TABLE table_name` 필요 | `FROM TAG TABLE` 추가 |
+| TAG 테이블에 일반 `FROM table_name` 사용 | 정상 문법 | 태그 선택자와 시간 조건을 WHERE에 작성 |
 | LOG 테이블 `UPDATE` | LOG 테이블은 Append-only → 미지원 | 수정 불필요한 설계 권장 |
 
 ## 유용한 시스템 뷰 쿼리

@@ -2,6 +2,7 @@
 type: docs
 title: '11.4 REST API 연동'
 weight: 40
+toc: true
 ---
 별도 드라이버 설치 없이 `curl`, Python `requests`, JavaScript `fetch` 등 HTTP 클라이언트만으로 SQL 실행과 Append 삽입을 수행할 수 있습니다.
 
@@ -486,8 +487,8 @@ print(f"inserted rows: {count}")
 
 ## TAG 테이블 REST 조회
 
-TAG 테이블 데이터는 `/machbase` SQL REST API로 조회합니다. 현재 빌드에서 고수준
-`/machiot/tags` 엔드포인트는 유효한 REST API로 동작하지 않습니다. TAG 이름 목록, 시간
+TAG 테이블 데이터는 `/machbase` SQL REST API로 조회합니다. 고수준 `/machiot/tags`
+엔드포인트는 제공하지 않습니다. TAG 이름 목록, 시간
 범위 조회, 최신값 조회는 SQL을 작성해 `/machbase?q=<SQL>`로 실행합니다.
 
 ### TAG 테이블 준비
@@ -609,8 +610,7 @@ for row in rows:
 
 ### `/machiot/tags` 요청이 실패하는 경우
 
-현재 빌드에서 `/machiot/tags`를 호출하면 다음과 같은 REST API URL 오류가 반환될 수
-있습니다.
+`/machiot/tags`를 호출하면 다음과 같은 REST API URL 오류가 반환됩니다.
 
 ```json
 {

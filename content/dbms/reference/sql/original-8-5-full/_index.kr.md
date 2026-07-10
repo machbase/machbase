@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.6 전체 SQL 레퍼런스'
 weight: 95
+toc: true
 tocSort: true
 ---
 
@@ -693,7 +694,10 @@ DROP INDEX IndexName;
 
 ##  ALTER TABLE
 
-ALTER TABLE 구문은 지정된 테이블의 스키마 정보를 변경시키기 위한 용도로 사용되며 Log Table 만 사용 가능합니다.
+ALTER TABLE 구문은 지정된 테이블의 스키마 정보를 변경합니다. 지원되는 하위 구문은 테이블
+타입에 따라 다릅니다. RDB 테이블은 컬럼 추가·삭제, 컬럼 이름 변경, 테이블 이름 변경을
+지원합니다. TAG 메타데이터 컬럼은 `METADATA ADD COLUMN`과 `METADATA DROP COLUMN`을
+사용합니다.
 
 ### ALTER TABLE SET
 
@@ -855,7 +859,8 @@ alter_table_rename_stmt ::= 'ALTER TABLE' table_name 'RENAME TO' new_name
 
 테이블의 이름을 변경합니다.
 
-메타 테이블들은 이름을 변경할 수 없고, 변경될 이름에 $문자는 사용할 수 없습니다. 테이블 이름 변경은 Log 테이블에 대해서만 가능합니다.
+메타 테이블의 이름은 변경할 수 없고, 변경할 이름에 `$` 문자를 사용할 수 없습니다. RDB
+테이블은 `RENAME TO`로 이름을 변경할 수 있습니다.
 
 ```sql
 -- worker 테이블의 이름을 employee로 변경합니다.
@@ -3163,7 +3168,7 @@ GRANT BACKUP ON typo TO backup_user;
 - `CREATE RETENTION`, `DROP RETENTION`
 - `ALTER SYSTEM`
 - `BACKUP DATABASE`
-- `MOUNT DATABASE`, `UNMOUNT DATABASE`
+- `MOUNT DATABASE`, `UMOUNT DATABASE`
 
 예를 들어 일반 사용자가 `CREATE VIEW`를 실행하려면 다음과 같이 `CREATE` 권한을 부여해야 합니다.
 

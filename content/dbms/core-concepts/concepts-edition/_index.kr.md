@@ -2,6 +2,7 @@
 type: docs
 title: '2.4 Edition 개념'
 weight: 40
+toc: true
 ---
 Machbase DBMS는 PostgreSQL이나 MySQL 같은 범용 RDBMS와 설계 철학부터 다릅니다. 그 차이를 명확히 이해하고 운영 규모에 따라 올바른 Edition을 선택하는 데 필요한 개념을 다룹니다.
 
@@ -45,19 +46,19 @@ Machbase DBMS는 PostgreSQL이나 MySQL 같은 범용 RDBMS와 설계 철학부�
 
 | 기능 | Standard Edition | Cluster Edition |
 | --- | --- | --- |
-| LOG/TAG/LOOKUP/VOLATILE 테이블 | 모두 지원 | 모두 지원 |
+| LOG/TAG/LOOKUP 테이블 | 모두 지원 | 모두 지원 |
+| VOLATILE 테이블 | 지원 | 미지원 |
 | RDB 테이블 | 지원 | 미지원 |
 | ROLLUP | 지원 | 지원 |
-| STREAM | 지원 | 제한적 지원 (일부 SQL 패턴 제약) |
+| STREAM | 지원 | 미지원 |
 | Retention Policy | 지원 | 지원 |
-| Backup / Restore / Mount | 지원 | 지원 (노드별 독립 실행) |
+| Backup | 지원 | 지원 |
+| Restore / Mount | 지원 | 미지원 |
 | 수평 확장 (노드 추가) | 불가 | 가능 |
 | 자동 장애 조치 | 불가 | Coordinator가 감시 |
 
-STREAM은 Cluster Edition에서도 생성·실행이 가능하지만, 복잡한 조인이나 서브쿼리가 포함된 SQL은 동작하지 않을 수 있습니다. 운영 전에 대상 SQL을 Cluster 환경에서 검증하십시오.
-
-RDB 테이블은 Standard Edition 전용 기능입니다. Cluster Edition에서는 `CREATE RDB TABLE`과 RDB
-관련 DDL/DML/SELECT가 거부됩니다.
+RDB와 VOLATILE 테이블, STREAM, Restore/Mount는 Standard Edition 전용 기능입니다. Cluster
+Edition에서는 관련 구문이 거부됩니다.
 
 ### 선택 기준
 

@@ -2,6 +2,7 @@
 type: docs
 title: '17.10.11 error-resolution-map'
 weight: 110
+toc: true
 ---
 
 이 페이지는 Machbase 사용 중 발생하는 주요 오류 상황별 원인과 해결 방법을 매핑합니다.
@@ -25,9 +26,9 @@ weight: 110
 
 | 오류 상황 | 오류 내용 | 원인 | 조치 |
 |-----------|-----------|------|------|
-| Go `Begin()` 호출 실패 | `not supported` 또는 panic | Go 드라이버에 Transaction 미구현 | Transaction 제거 또는 JDBC/.NET 사용 |
+| Go `Begin()` 호출 실패 | `not supported` 또는 panic | Go 드라이버에 Transaction 미구현 | Transaction 제거 또는 JDBC/ODBC 사용 |
 | Python `?` 플레이스홀더 오류 | `Syntax error` / 바인딩 실패 | machbaseAPI는 `%s` 방식만 지원 | `?` → `%s` 또는 `%(name)s` 로 변경 |
-| TAG 테이블 COMMIT 오류 | `COMMIT not supported` | TAG 테이블은 Append-only, TRANSACTION 없음 | COMMIT/ROLLBACK 문 제거 |
+| 활성 RDB 트랜잭션 안의 TAG 쓰기 실패 | `not supported` | RDB 트랜잭션에 비 RDB 쓰기를 포함함 | RDB 트랜잭션 종료 후 TAG 쓰기 실행 |
 | Append 후 데이터 미반영 | 즉시 SELECT 결과 없음 | Append 버퍼 미플러시 | `executeAppendClose()` / `flush()` 호출 확인 |
 | REST API HTTPS 오류 | `SSL certificate error` | 인증서 미설정 또는 자체 서명 인증서 | `-k` 옵션(curl) 또는 인증서 등록 |
 

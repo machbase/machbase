@@ -50,7 +50,9 @@ SELECT * FROM sensor_tag WHERE value > 80.0;
 
 ### METADATA 컬럼 인덱스
 
-센서 유형, 설치 위치, 담당 팀 등의 메타데이터 속성으로 태그를 필터링하는 경우 METADATA 컬럼을 활용합니다. 현재 빌드에서는 TAG 테이블 생성 시 METADATA 컬럼에 인덱스가 자동 생성되므로, 같은 컬럼에 `CREATE INDEX`를 다시 실행하면 이미 인덱스가 있다는 오류가 반환됩니다.
+센서 유형, 설치 위치, 담당 팀 등의 메타데이터 속성으로 태그를 필터링하는 경우 METADATA
+컬럼을 활용합니다. TAG 테이블 생성 시 METADATA 컬럼에는 인덱스가 자동 생성되므로 같은
+컬럼에 `CREATE INDEX`를 다시 실행하면 이미 인덱스가 있다는 오류가 반환됩니다.
 
 ```sql
 -- TAG 테이블 생성 예시 (METADATA 컬럼 포함)
@@ -84,7 +86,9 @@ WHERE sensor_type = 'temperature'
 
 ### Min-Max Cache
 
-LOG 테이블의 `_ARRIVAL_TIME`과 일반 컬럼에는 Min-Max Cache가 제공됩니다. TAG 테이블의 값 컬럼에는 현재 빌드에서 `MINMAX_CACHE_SIZE`를 직접 지정할 수 없습니다. TAG 조회 성능은 태그명, 시간 범위, METADATA 인덱스, ROLLUP 설계로 조정합니다.
+LOG 테이블의 `_ARRIVAL_TIME`과 일반 컬럼에는 Min-Max Cache가 제공됩니다. TAG 테이블의 값
+컬럼에는 `MINMAX_CACHE_SIZE`를 직접 지정할 수 없습니다. TAG 조회 성능은 태그명, 시간 범위,
+METADATA 인덱스, ROLLUP 설계로 조정합니다.
 
 ```
 [파티션 1] MIN=10.0, MAX=50.0 → 검색값 85.0 → 건너뜀

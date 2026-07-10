@@ -2,6 +2,7 @@
 type: docs
 title: '4.3 데이터 변경 정책'
 weight: 20
+toc: true
 ---
 테이블 타입에 따라 UPDATE, DELETE, TRUNCATE 지원 범위가 명확히 구분됩니다. 시계열 특성상 대부분의 테이블은 삽입 후 변경을 제한하며, VOLATILE·LOOKUP·RDB처럼 수정·삭제가 필요한 데이터만 해당 타입에 저장합니다.
 
@@ -147,8 +148,8 @@ UPDATE tag
 #### 운영 고려사항
 
 - 대량 UPDATE 전 같은 WHERE 조건으로 대상 row 수를 확인합니다.
-- UPDATE 직후 원본 row는 변경되지만, 이미 만들어진 롤업은 즉시 갱신되지 않을 수 있습니다.
-  필요한 롤업은 `ROLLUP_REBUILD`로 재구성합니다.
+- UPDATE 직후 원본 row는 변경되지만, 이미 구체화된 롤업 row는 자동으로 갱신되지
+  않습니다. 변경 구간의 롤업은 `ROLLUP_REBUILD`로 재구성합니다.
 - 수집 직후 데이터를 수정해야 한다면 SELECT로 대상 row가 조회되는지 확인한 뒤 진행합니다.
 
 <a id="policy-update-distinction-tag-data-update-metadata"></a>
@@ -493,7 +494,8 @@ TRUNCATE는 테이블의 모든 데이터를 빠르게 삭제하는 DDL 명령�
 
 ### 지원 테이블 확인
 
-소스 코드(`qpvTruncateTable.c`) 기준으로 TRUNCATE는 LOG와 RDB 테이블에서만 허용됩니다. 다른 테이블 타입에 TRUNCATE를 실행하면 오류(`ERR_QP_TRUNCATE_NON_LOG_TABLE`)가 발생합니다.
+TRUNCATE는 LOG와 RDB 테이블에서만 허용됩니다. 다른 테이블 타입에 TRUNCATE를 실행하면
+`ERR_QP_TRUNCATE_NON_LOG_TABLE` 오류가 발생합니다.
 
 | 테이블 타입 | TRUNCATE 지원 |
 |------------|--------------|

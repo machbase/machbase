@@ -65,4 +65,5 @@ CREATE TABLE security_event (
 
 - LOG 테이블에는 PRIMARY KEY, UNIQUE 제약을 지정할 수 없습니다.
 - UPDATE와 일반 조건 DELETE가 불가능하므로 잘못 입력된 데이터는 수정할 수 없습니다. 보존/정리 목적의 `BEFORE`, `OLDEST`, `EXCEPT` DELETE는 별도로 사용합니다.
-- 컬럼 추가(`ALTER TABLE ... ADD COLUMN`)는 지원하지만, 컬럼 삭제·변경은 지원하지 않습니다.
+- 컬럼 추가·삭제·이름 변경과 일부 속성 변경을 지원합니다. 인덱스 컬럼은 인덱스를 먼저
+  삭제한 뒤 변경합니다.

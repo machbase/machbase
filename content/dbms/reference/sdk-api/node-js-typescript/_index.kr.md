@@ -95,7 +95,9 @@ async function main() {
 main().catch(err => console.error('Unexpected failure:', err));
 ```
 
-> **트랜잭션 안내:** Machbase는 모든 명령을 자동 커밋합니다. `BEGIN`, `COMMIT`, `ROLLBACK` 같은 명령은 항상 에러를 반환하므로, 트랜잭션을 지원하지 않음을 확인하는 용도로만 사용하십시오.
+> **트랜잭션 안내:** 서버는 RDB 테이블에 plain `BEGIN`, `COMMIT`, `ROLLBACK` SQL을
+> 지원합니다. 이 클라이언트의 `beginTransaction`, `commit`, `rollback` 편의 메서드는
+> 구현되어 있지 않으므로 `execute()`로 SQL을 직접 실행해야 합니다.
 
 ### Machbase 페이사드
 
@@ -129,7 +131,10 @@ bootstrap().catch(console.error);
 
 페이사드는 콜백과 `.promise()`를 모두 지원하고, 실패 시 `QueryError`를 반환하며, 서버 메시지를 그대로 전달합니다.
 
-> **페이사드 제약:** `beginTransaction`, `commit`, `rollback`은 Machbase가 SQL 트랜잭션을 지원하지 않으므로 즉시 `QueryError`를 반환합니다. LOG/TAG 테이블에 대한 `UPDATE`도 서버 오류로 바로 실패합니다.
+> **페이사드 제약:** `beginTransaction`, `commit`, `rollback` 편의 메서드는 즉시
+> `QueryError`를 반환합니다. RDB 트랜잭션은 `execute('BEGIN')`과
+> `execute('COMMIT')`/`execute('ROLLBACK')`으로 제어합니다. LOG 테이블 UPDATE는 지원하지
+> 않으며, TAG data UPDATE는 태그 선택 조건과 BASETIME 조건을 모두 만족해야 합니다.
 
 ## 자주 발생하는 문제
 
@@ -187,27 +192,13 @@ await conn.end();
 결과 집합을 반환하지 않을 수도 있는 명령을 실행합니다. DDL(`CREATE`, `ALTER`, `DROP`)이나 DML(`INSERT`, `UPDATE`, `DELETE`)에 사용하십시오.
 
 ```javascript
-const [create] = await conn.execute('CREATE TABLE demo (ID INTEGER, NAME VARCHAR(32))');
+const [create] = await conn.execute('CREATE RDB TABLE demo (ID INTEGER, NAME VARCHAR(32))');
 console.log('Rows affected:', create.affectedRows); // -> 0 for DDL
 
+await conn.execute('BEGIN');
 const [insert] = await conn.execute("INSERT INTO demo VALUES (1, 'alpha')");
 console.log('Rows affected:', insert.affectedRows); // -> 1
-
-await expectTransactionUnsupported(conn, 'COMMIT');
-```
-
-통합 테스트에서 사용하는 보조 함수:
-
-```javascript
-async function expectTransactionUnsupported(conn, sql) {
-  try {
-    await conn.execute(sql);
-    throw new Error(`Expected ${sql} to fail because Machbase does not support transactions.`);
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
-    console.log(`${sql} expected failure:`, msg);
-  }
-}
+await conn.execute('COMMIT');
 ```
 
 #### query(sql, values?)
@@ -390,13 +381,13 @@ const safeValue = conn.escape('user input');
   2. 샘플 데이터 INSERT/SELECT
   3. 자리기반 바인딩 준비문 시연
   4. append 부하 테스트(기본: 5배치 x 200행) 및 건수 검증
-  5. 각 단계에서 `COMMIT`을 호출하여 트랜잭션 미지원 동작 확인
+  5. RDB 테이블에서 직접 SQL `BEGIN`/`ROLLBACK`/`COMMIT` 동작 확인
   6. Machbase 페이사드와 `UPDATE` 제한 동작 검증
 
 샘플 출력:
 
 ```text
-COMMIT expected failure: Expected COMMIT to fail because Machbase does not support transactions.
+RDB transaction commit returned 1 row.
 machbase-facade-basic callback query returned 3 rows.
 machbase-facade-update-log-fails message: UPDATE is not supported for LOG tables.
 append-batch progress: batch 4/5 { table: 'TS_CLIENT_IT_...', rowsAppended: 200, rowsFailed: 0 }
@@ -543,15 +534,13 @@ const { createConnection } = require('@machbase/ts-client');
 
 ### 트랜잭션
 
-Machbase는 모든 명령을 자동 커밋합니다. `BEGIN`, `COMMIT`, `ROLLBACK` 같은 트랜잭션 키워드는 항상 실패하며, 래퍼도 `QueryError`(`ERR_MACHBASE_NO_TX`)를 통해 동일하게 알립니다.
+서버 SQL 트랜잭션은 RDB 테이블에서 동작하지만, 페이사드의 트랜잭션 편의 메서드는
+구현되어 있지 않습니다. 동일한 연결에서 SQL을 직접 실행합니다.
 
 ```javascript
-try {
-  await conn.execute('COMMIT');
-} catch (err) {
-  console.log('Expected error:', err.message);
-  // Error: Machbase does not support transactions
-}
+await conn.execute('BEGIN');
+await conn.execute('UPDATE orders SET status = ? WHERE order_id = ?', ['DONE', 1001]);
+await conn.execute('COMMIT');
 ```
 
 ### 결과 버퍼링 및 페이지네이션
@@ -576,7 +565,9 @@ try {
 
 ### 테이블 타입별 SQL 유의사항
 
-- **LOG/TAG 테이블**은 `SELECT`, `INSERT`, `DELETE`를 지원하며 `UPDATE`는 사용할 수 없습니다.
+- **LOG 테이블**은 `UPDATE`를 지원하지 않습니다.
+- **TAG 테이블**의 data UPDATE에는 태그 선택 조건과 BASETIME 조건이 필요하며, 태그명·시간축·
+  메타데이터 컬럼은 data UPDATE의 SET 대상이 될 수 없습니다.
 - **VOLATILE/LOOKUP 테이블**은 모든 DML을 지원하지만, 인덱스를 올바르게 사용하려면 `WHERE` 절에 기본 키 조건을 포함해야 합니다.
 
 ## 모범 사례
@@ -604,7 +595,7 @@ try {
 ### 2025-10-02
 
 - Machbase 페이사드(`createConnection`, `QueryError`, `.promise()`, 페이사드 준비문)를 도입했습니다.
-- 콜백/프로미스 흐름과 LOG/TAG `UPDATE` 거부 동작에 대한 통합 검증을 확장했습니다.
+- 콜백/프로미스 흐름과 테이블 타입별 `UPDATE` 오류 처리 검증을 확장했습니다.
 
 ### 2025-09-30
 

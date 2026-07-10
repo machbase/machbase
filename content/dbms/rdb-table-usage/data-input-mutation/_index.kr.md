@@ -52,7 +52,7 @@ BEGIN;
 -- 재고 차감
 UPDATE inventory SET qty = qty - 3 WHERE item_id = 42 AND warehouse = 'WH-01';
 -- 출고 이력 기록
-INSERT INTO dispatch_log VALUES (NOW, 42, 'WH-01', 3, 'ORDER-9999');
+INSERT INTO dispatch_history VALUES (NOW, 42, 'WH-01', 3, 'ORDER-9999');
 -- 이미 완료된 이전 예약 삭제
 DELETE FROM reservations WHERE item_id = 42 AND order_id = 'ORDER-9999';
 COMMIT;
@@ -72,7 +72,7 @@ WHERE status = 'PENDING' AND created_at < NOW - 86400000000000;
 
 ### 주의사항
 
-- WHERE 없는 UPDATE는 테이블 전체 행을 수정합니다. 의도치 않은 전체 갱신에 주의할 것.
+- WHERE 없는 UPDATE는 테이블 전체 행을 수정합니다. 실행 전에 대상 범위를 확인합니다.
 - 장시간 열린 트랜잭션은 잠금 충돌을 유발할 수 있습니다.
 - UPDATE/DELETE 시 WHERE 절 컬럼에 인덱스가 있으면 성능이 크게 향상됩니다.
 
@@ -127,6 +127,7 @@ WHERE customer = 'CUST-001'
 
 ### 주의사항
 
-- `INSERT SELECT`는 하나의 트랜잭션으로 처리됩니다. 대량 데이터는 배치로 분할하여 실행합니다.
+- RDB 대상 `INSERT SELECT`는 statement 단위로 처리됩니다. 중간 행에서 constraint 오류가
+  발생하면 해당 statement가 삽입한 행 전체를 롤백합니다. 대량 데이터는 배치로 분할합니다.
 - SELECT 결과의 컬럼 수와 타입이 INSERT 대상 테이블의 컬럼과 일치해야 합니다.
 - `INSERT SELECT`와 `ON DUPLICATE KEY UPDATE`의 결합은 지원하지 않습니다.

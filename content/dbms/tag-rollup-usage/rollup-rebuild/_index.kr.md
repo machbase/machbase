@@ -8,7 +8,9 @@ toc: true
 
 ## TAG data UPDATE와 통계/롤업 영향
 
-TAG data UPDATE는 원본 TAG row를 수정합니다. 통계/인덱스는 UPDATE에 맞게 처리되지만, 이미 만들어진 롤업 데이터는 별도 재구성이 필요할 수 있습니다.
+TAG data UPDATE는 원본 TAG row를 수정합니다. 통계와 인덱스는 변경값에 맞게 처리되지만,
+이미 구체화된 롤업 데이터는 자동으로 보정되지 않습니다. UPDATE한 구간을 롤업 조회에
+사용하려면 `ROLLUP_REBUILD`로 재구성합니다.
 
 ### UPDATE 후 영향을 받는 구조
 
@@ -25,7 +27,7 @@ TAG data UPDATE는 원본 TAG row를 수정합니다. 통계/인덱스는 UPDATE
 #### 롤업
 
 `WITH ROLLUP` 또는 롤업 테이블을 사용하는 환경에서는 이미 계산된 롤업 row가 원본 UPDATE를
-즉시 반영하지 않을 수 있습니다. 정정 구간의 롤업 조회가 필요하면 `ROLLUP_REBUILD`로
+자동으로 반영하지 않습니다. 정정 구간의 롤업 조회가 필요하면 `ROLLUP_REBUILD`로
 해당 롤업을 재구성합니다.
 
 ```sql
@@ -480,9 +482,10 @@ SELECT rollup_name, source_table, rollup_table, enabled, run_state
     OR root_table = 'SENSOR_TAG';
 ```
 
-### 6단계: Rebuild 진행 상황 확인
+### 6단계: Rebuild 완료와 상태 확인
 
-`ROLLUP_REBUILD`는 비동기로 동작할 수 있습니다. 진행 상황을 확인합니다.
+`ROLLUP_REBUILD` 호출은 대상 내장·확장·Custom Rollup의 재구축을 완료한 뒤 반환합니다.
+호출이 성공한 후 ROLLUP이 다시 활성 상태인지 확인합니다.
 
 ```sql
 -- ROLLUP 상태 확인

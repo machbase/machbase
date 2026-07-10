@@ -2,6 +2,7 @@
 type: docs
 title: '13.6 관측과 진단'
 weight: 40
+toc: true
 ---
 서버 상태 파악과 문제 진단에는 두 가지 도구를 사용합니다. `M$` 메타 테이블로 스키마 정의 정보를 조회하고, `V$` 가상 테이블(Virtual Table)로 실시간 운영 상태를 확인합니다. 여기에 서버 **로그 파일** 분석을 더하면 대부분의 운영 상황에 대응할 수 있습니다.
 
@@ -778,6 +779,7 @@ MACHBASE 서버에 접속된 세션의 목록과 상태를 표시합니다.
 | SQL_LOGGING | 해당 세션의 Trace Log 메시지 기록 여부 |
 | IDLE_TIMEOUT | 유휴 상태 세션 종료 시간 (초) |
 | QUERY_TIMEOUT | 쿼리 응답 대기 시간 |
+| RDB_BUSY_TIMEOUT_MS | RDB 보조 데이터 파일(sidecar) 쓰기 충돌 대기 시간 (밀리초) |
 
 ```sql
 -- 현재 접속 세션 목록
@@ -1758,7 +1760,7 @@ SELECT * FROM testdb.sys.sensor_log LIMIT 10;
 검증 완료 후 마운트를 해제합니다.
 
 ```sql
-UNMOUNT DATABASE testdb;
+UMOUNT DATABASE testdb;
 ```
 
 #### 백업 파일 무결성 체크섬 확인
@@ -1809,7 +1811,7 @@ echo "[OK] Checksum created: ${BACKUP_PATH}.md5"
 cat > /tmp/verify_backup.sql <<SQL
 MOUNT DATABASE '${BACKUP_PATH}' TO verify_db;
 SELECT count(*) FROM verify_db.sys.sensor_log;
-UNMOUNT DATABASE verify_db;
+UMOUNT DATABASE verify_db;
 SQL
 ROW_COUNT=$(machsql -u $DB_USER -p $DB_PASS -s $DB_HOST -f /tmp/verify_backup.sql \
   2>/dev/null | awk '/^[[:space:]]*[0-9]+[[:space:]]*$/ {print $1; exit}')

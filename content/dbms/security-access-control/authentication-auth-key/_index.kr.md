@@ -2,6 +2,7 @@
 type: docs
 title: '14.4 인증키 관리'
 weight: 40
+toc: true
 ---
 ## AUTH KEY란
 
@@ -35,7 +36,7 @@ AUTH KEY는 공개키 기반 챌린지-응답(challenge-response) 인증 방식�
 | `AUTH_SIG_SCHEME` | 서명 스킴 (`ECDSA`, `RSA_PKCS1_V15`, `RSA_PSS`) | 연결 옵션 |
 
 `AUTH_MODE`는 서버 `machbase.conf` 속성이 아니라 클라이언트 연결 옵션입니다.
-서버 전체를 PASSWORD/CHALLENGE 모드로 전환하는 절차는 현재 nfx 기준으로 제공되지 않습니다.
+인증 방식은 연결별로 선택하며, 서버 전체를 PASSWORD/CHALLENGE 모드로 전환하지 않습니다.
 
 ## 이 섹션의 구성
 
@@ -896,8 +897,7 @@ RSA Probabilistic Signature Scheme의 약자입니다. PKCS#1 v1.5보다 향상�
 | C/ODBC | P-256, P-384, P-521 | 2048, 3072, 4096 | 2048, 3072, 4096 |
 | machsql/CLI | P-256, P-384, P-521 | 2048, 3072, 4096 | 2048, 3072, 4096 |
 
-Python, Go, .NET, Node.js는 이 저장소의 nfx 소스 기준으로 AUTH KEY 클라이언트 구현
-근거가 확인되지 않았습니다. 각 SDK 저장소에서 별도로 검증한 뒤 기재합니다.
+Python, Go, .NET, Node.js 클라이언트는 AUTH KEY 인증을 지원하지 않습니다.
 
 ### 권장 알고리즘
 

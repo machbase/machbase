@@ -2,6 +2,7 @@
 type: docs
 title: '11.6 SDK별 지원 범위 안내'
 weight: 60
+toc: true
 ---
 각 SDK는 지원하는 기능 범위가 다릅니다. 애플리케이션 요구사항에 맞는 SDK를 선택하려면 아래 기능별 지원 여부를 확인해야 합니다.
 
@@ -9,7 +10,7 @@ weight: 60
 
 | 페이지 | 내용 |
 |--------|------|
-| [전체 SDK 기능 지원표](/dbms/application-integration/support-scope-sdk/#sdk) | 지원 SDK 목록 및 14장 레퍼런스 링크 |
+| [전체 SDK 기능 지원표](/dbms/application-integration/support-scope-sdk/#sdk) | 지원 SDK 목록 및 17장 레퍼런스 링크 |
 | [APPEND API 지원 범위](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-append) | SDK별 고성능 Append 쓰기 지원 여부 |
 | [AUTH KEY 인증 지원](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-auth-key) | SDK별 AUTH KEY 인증 방식 지원 여부 |
 | [Transaction / Prepare / Bind 지원](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-transaction-prepare-bind) | SDK별 트랜잭션·Prepared Statement·파라미터 바인딩 지원 여부 |
@@ -21,16 +22,20 @@ weight: 60
 - **최고 성능의 대량 쓰기**가 필요하면 → ODBC/CLI, JDBC, Go native 등 Append API 지원 드라이버 사용
 - **표준 SQL 인터페이스**가 필요하면 → JDBC, Python(DB-API 2.0), Go(`database/sql`)
 - **웹 서비스·마이크로서비스 통합**이라면 → REST API
-- **트랜잭션이 필요한 RDB 호환 작업**이라면 → ODBC/CLI, JDBC, Python, .NET
+- **트랜잭션이 필요한 RDB 작업**이라면 → ODBC/CLI 또는 JDBC에서 SQL `BEGIN` 직접 실행
 
-> **참고**: TAG 테이블과 LOG 테이블은 Append-only 구조로, 트랜잭션이 필요 없는 고속 스트리밍 쓰기에 최적화되어 있습니다.
+> **참고**: TAG와 LOG 테이블은 append 중심 입력에 최적화되어 있습니다. TAG data UPDATE는
+> 태그 선택자와 시간축 조건으로 범위를 제한한 데이터 보정 기능이며 RDB 트랜잭션에는
+> 참여하지 않습니다.
 
 
 <a id="support-scope-sdk-append"></a>
 
 ## SDK별 APPEND 지원 범위 안내
 
-**Append API**는 대량 데이터를 고속으로 삽입하기 위한 전용 프로토콜입니다. 일반 `INSERT` SQL 대비 수십 배 이상의 처리량을 제공하며, 시계열 데이터 수집에서 핵심적으로 사용됩니다.
+**Append API**는 여러 행을 묶어 입력하기 위한 전용 프로토콜입니다. 반복적인 단건
+`INSERT`보다 네트워크와 문장 처리 오버헤드를 줄일 수 있으며, 시계열 데이터 수집에서
+핵심적으로 사용됩니다.
 
 ### SDK별 Append API 지원 현황
 
@@ -211,13 +216,14 @@ curl -X POST "http://localhost:5657/machbase" \
 
 | 특성 | 설명 |
 |------|------|
-| **원자성** | Append는 트랜잭션 없이 동작 (즉시 커밋) |
-| **대상 테이블** | TAG 테이블, LOG 테이블 지원 |
+| **원자성** | TAG/LOG는 append 응답 단위, RDB batch는 statement transaction 단위 |
+| **대상 테이블** | TAG, LOG와 지원되는 RDB client batch/stream 경로 |
 | **배치 크기** | 1,000 ~ 10,000행 단위로 플러시하는 것을 권장 |
 | **병렬 처리** | 여러 스레드에서 각각 독립적인 Appender 사용 가능 |
-| **롤백 불가** | Append 완료된 데이터는 롤백할 수 없음 |
+| **롤백** | 완료된 TAG/LOG Append는 롤백할 수 없음. RDB batch 실패는 해당 batch 롤백 |
 
-> **참고**: RDB(Lookup) 테이블에 대한 Append API 사용은 지원되지 않습니다. RDB 테이블에는 일반 `INSERT` SQL을 사용합니다.
+> **참고**: RDB 테이블은 지원되는 client의 appendBatch 또는 append stream 경로를 사용합니다.
+> TAG/LOG의 고속 append 버퍼와 내부 경로 및 처리량 특성이 다릅니다.
 
 <a id="support-scope-sdk-auth-key"></a>
 
@@ -367,52 +373,45 @@ AUTH KEY challenge 인증은 DB 포트(기본 5656)에 접속하는 드라이버
 
 각 SDK가 지원하는 트랜잭션, Prepared Statement, Parameter Binding 기능을 정리합니다.
 
-> TAG 및 LOG 테이블은 append-only 구조로 트랜잭션이 필요하지 않습니다. 트랜잭션은 **RDB 테이블**에서만 의미가 있습니다.
+> 서버 SQL 트랜잭션은 RDB 테이블에 적용됩니다. SDK 표준 편의 API의 구현 여부는 별도로
+> 확인해야 합니다.
 
 ### 지원 범위 표
 
-| SDK | Transaction (RDB) | Prepared Statement | Parameter Binding | 비고 |
+| SDK | Transaction API (RDB) | Prepared Statement | Parameter Binding | 비고 |
 |-----|:---:|:---:|:---:|------|
-| **ODBC/CLI** | O | O | O | SQLEndTran, SQLPrepare, SQLBindParameter |
-| **JDBC** | O | O | O | conn.setAutoCommit(false), PreparedStatement |
-| **Python** | O | X | O | 서버 prepare 없음, `%s`/`%(name)s` 클라이언트 렌더링 |
-| **.NET Connector** | O | O | O | MachTransaction, MachCommand.Parameters |
+| **ODBC/CLI** | △ | O | O | SQL로 `BEGIN`, `SQLEndTran`으로 종료 |
+| **JDBC** | △ | O | O | SQL로 `BEGIN` 실행 필요. `setAutoCommit(false)`는 시작 문을 보내지 않음 |
+| **Python** | X | X | O | transaction API 미지원, `%s`/`%(name)s` 클라이언트 렌더링 |
+| **.NET Connector** | X | O | O | `MachTransaction` 미구현 |
 | **Go (database/sql)** | X | O | O | `Begin`/`BeginTx` 미지원, `db.Prepare()`와 `?` 바인딩 |
 | **Go (native client)** | X | O | O | `Prepare(ctx, sql)`과 `Exec`/`Query` 파라미터 지원 |
-| **Node.js** | X | O | O | transaction 미지원, prepare/bind는 지원 |
+| **Node.js** | X | O | O | transaction 편의 API 미지원, prepare/bind는 지원 |
 | **REST API** | X | X | X | 단일 요청 단위, 서버사이드 파라미터 없음 |
 
 - O: 지원
+- △: 서버 SQL을 직접 실행하는 방식으로 제한적 지원
 - X: 미지원
+
+표의 Transaction 열은 SDK가 제공하는 표준 편의 API 기준입니다. 임의 SQL을 같은 물리 연결로
+계속 실행할 수 있는 SDK에서는 SQL `BEGIN`/`COMMIT`/`ROLLBACK`을 직접 전송할 수 있지만,
+연결 유지와 오류 처리를 애플리케이션이 책임져야 합니다.
 
 ### 트랜잭션 (Transaction)
 
-RDB 테이블에서만 COMMIT/ROLLBACK이 유효합니다. 나머지 테이블 유형은 삽입 즉시 영구 저장됩니다.
+RDB 테이블에서만 SQL `BEGIN` 이후의 `COMMIT`/`ROLLBACK`이 유효합니다. 나머지 테이블 유형의
+쓰기는 RDB 트랜잭션에 참여하지 않습니다.
 
 ```java
-// JDBC
-conn.setAutoCommit(false);
+// JDBC: setAutoCommit(false) 대신 서버 SQL BEGIN을 실행합니다.
+Statement tx = conn.createStatement();
+tx.execute("BEGIN");
 try {
     stmt.executeUpdate("INSERT INTO orders VALUES (1, 50000)");
     stmt.executeUpdate("INSERT INTO orders VALUES (2, 30000)");
-    conn.commit();
+    tx.execute("COMMIT");
 } catch (SQLException e) {
-    conn.rollback();
-}
-```
-
-```csharp
-// .NET
-using var tx = conn.BeginTransaction();
-try {
-    var cmd = conn.CreateCommand();
-    cmd.Transaction = tx;
-    cmd.CommandText = "INSERT INTO orders VALUES (1, 50000)";
-    cmd.ExecuteNonQuery();
-    tx.Commit();
-} catch {
-    tx.Rollback();
-    throw;
+    tx.execute("ROLLBACK");
 }
 ```
 
@@ -490,20 +489,21 @@ SQLExecute(stmt);
 
 ## 전체 SDK 기능 지원표 링크 (canonical owner: 14. 레퍼런스)
 
-Machbase Neo가 지원하는 SDK 목록과 각 SDK의 상세 레퍼런스 위치를 안내합니다. 기능별 상세 API 레퍼런스는 **14장 레퍼런스** 섹션을 참고합니다.
+Machbase DBMS가 지원하는 SDK 목록과 각 SDK의 상세 레퍼런스 위치를 안내합니다. 기능별 상세
+API 레퍼런스는 **17장 레퍼런스**를 참고합니다.
 
 ### 지원 SDK 목록
 
 | SDK | 언어 / 환경 | 연결 포트 | 상세 레퍼런스 |
 |-----|------------|-----------|---------------|
-| **ODBC / CLI** | C / C++ | TCP 5656 | 14장 레퍼런스 → ODBC/CLI |
-| **JDBC** | Java | TCP 5656 | 14장 레퍼런스 → JDBC |
-| **Python** | Python 3.7+ | TCP 5656 | 14장 레퍼런스 → Python |
-| **.NET** | C# / VB.NET | TCP 5656 | 14장 레퍼런스 → .NET |
-| **Go (native)** | Go 1.18+ | TCP 5656 | 14장 레퍼런스 → Go |
-| **Go (database/sql)** | Go 1.18+ | TCP 5656 | 14장 레퍼런스 → Go |
-| **Node.js** | JavaScript / TypeScript | TCP 5656 | 14장 레퍼런스 → Node.js |
-| **REST API** | 언어 독립 (HTTP) | TCP 5657 | 14장 레퍼런스 → REST API |
+| **ODBC / CLI** | C / C++ | TCP 5656 | 17장 레퍼런스 → ODBC/CLI |
+| **JDBC** | Java | TCP 5656 | 17장 레퍼런스 → JDBC |
+| **Python** | Python 3.7+ | TCP 5656 | 17장 레퍼런스 → Python |
+| **.NET** | C# / VB.NET | TCP 5656 | 17장 레퍼런스 → .NET |
+| **Go (native)** | Go 1.18+ | TCP 5656 | 17장 레퍼런스 → Go |
+| **Go (database/sql)** | Go 1.18+ | TCP 5656 | 17장 레퍼런스 → Go |
+| **Node.js** | JavaScript / TypeScript | TCP 5656 | 17장 레퍼런스 → Node.js |
+| **REST API** | 언어 독립 (HTTP) | TCP 5657 | 17장 레퍼런스 → REST API |
 
 ### SDK 특성 요약
 

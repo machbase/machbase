@@ -2,6 +2,7 @@
 type: docs
 title: '4.5 모델링 패턴'
 weight: 40
+toc: true
 ---
 실제 운영 환경에서 자주 쓰이는 데이터 모델링 패턴을 다룹니다.
 
@@ -470,8 +471,8 @@ GROUP BY name;
 |-----------|--------|--------|--------|--------|
 | TAG | INSERT / Append API | O (태그/시간 조건) | O | X |
 | LOG | INSERT / Append API | X | O (BEFORE/OLDEST/EXCEPT) | X |
-| RDB | INSERT / SDK Append API | O (WHERE 유무 모두) | O | DELETE+INSERT |
-| LOOKUP | INSERT / Append API | O (by PK) | O (by PK) | DELETE+INSERT |
+| RDB | INSERT / SDK Append API | O (WHERE 유무 모두) | O | ON DUPLICATE KEY UPDATE |
+| LOOKUP | INSERT / Append API | O (by PK) | O (by PK) | ON DUPLICATE KEY UPDATE |
 | VOLATILE | INSERT | O (by PK) | O | ON DUPLICATE KEY UPDATE |
 
 ### TAG/LOG: Append API 패턴 (고속 입력)

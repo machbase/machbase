@@ -67,7 +67,8 @@ CREATE RDB TABLE product (
 
 #### 여러 조회 조건이 있는 경우
 
-현재 빌드에서는 테이블 제약 형태의 복합 PRIMARY KEY 구문을 사용할 수 없습니다. 여러 컬럼 조합으로 자주 조회한다면 단일 PK와 보조 인덱스를 조합합니다.
+테이블 제약 형태의 복합 PRIMARY KEY 구문은 사용할 수 없습니다. 여러 컬럼 조합으로 자주
+조회한다면 단일 PK와 복합 보조 인덱스를 조합합니다.
 
 ```sql
 CREATE RDB TABLE product (

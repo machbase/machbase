@@ -2,6 +2,7 @@
 type: docs
 title: '17.3.5 V$STORAGE_MOUNT_* 사전'
 weight: 50
+toc: true
 ---
 
 `V$STORAGE_MOUNT_DATABASES`는 백업 데이터를 현재 서버에 읽기 전용으로 마운트한 상태를 표시합니다. 마운트된 백업 데이터베이스에서 데이터를 SELECT로 직접 조회할 수 있습니다.
@@ -41,7 +42,7 @@ SELECT mount_name, path, mount_time
 MOUNT DATABASE 'backup_20240101' TO '/data/backup/20240101';
 
 -- 마운트 해제
-UNMOUNT DATABASE 'backup_20240101';
+UMOUNT DATABASE 'backup_20240101';
 ```
 
 마운트 후 마운트 이름을 접두사로 사용하여 데이터를 조회합니다.

@@ -2,6 +2,7 @@
 type: docs
 title: '16.8 Cluster 문제'
 weight: 80
+toc: true
 ---
 Cluster Edition 운영 중 노드 상태 이상이나 에디션 전용 제한 오류가 발생할 때의 진단과 해결 방법입니다. 클러스터 구성과 일반 운영 절차는 [Cluster 운영](/dbms/operations-configuration-recovery/cluster/)을 참고하십시오.
 
@@ -131,7 +132,7 @@ SELECT * FROM v$version;
 | Custom ROLLUP | `Custom rollup is not supported in Cluster Edition` | 기본 자동 ROLLUP 사용 |
 | ROLLUP_REBUILD | `ROLLUP_REBUILD is not supported in Cluster Edition` | 해당 기능 없음 (지원 문의) |
 | MOUNT DATABASE | `MOUNT is not supported in Cluster Edition` | Standard Edition에서 마운트 후 데이터 추출 |
-| UNMOUNT DATABASE | `UNMOUNT is not supported in Cluster Edition` | 해당 기능 없음 |
+| UMOUNT DATABASE | `UMOUNT is not supported in Cluster Edition` | 해당 기능 없음 |
 | STREAM | `STREAM is not supported in Cluster Edition` | CQL 또는 외부 파이프라인 검토 |
 
 ### 기능별 상세 안내
@@ -168,7 +169,7 @@ EXEC ROLLUP_REBUILD(sensor_tag, rollup_1min, TO_DATE('2024-01-01'), TO_DATE('202
 
 **대안**: Cluster Edition에서는 ROLLUP 재계산 기능이 없습니다. ROLLUP 데이터 불일치가 발생하면 기술 지원에 문의하십시오.
 
-#### MOUNT/UNMOUNT DATABASE
+#### MOUNT/UMOUNT DATABASE
 
 Cluster Edition에서는 백업 데이터베이스 마운트가 지원되지 않습니다.
 

@@ -2,6 +2,7 @@
 type: docs
 title: '17.8.8 백업/마운트 지원표'
 weight: 80
+toc: true
 ---
 
 백업은 데이터를 파일로 저장하고, 마운트는 저장된 백업 파일을 데이터베이스에 연결하여 조회하는 기능입니다.
@@ -13,7 +14,7 @@ weight: 80
 | BACKUP DATABASE | O | O | 전체 데이터베이스 백업 |
 | BACKUP TABLE | O | O | 특정 테이블만 백업 |
 | MOUNT DATABASE | O | X | Cluster Edition 미지원 |
-| UNMOUNT DATABASE | O | X | Cluster Edition 미지원 |
+| UMOUNT DATABASE | O | X | Cluster Edition 미지원 |
 | machadmin -r 복구 | O | X | Cluster Edition 미지원 |
 
 ## 테이블 타입별 백업 지원
@@ -36,7 +37,7 @@ BACKUP DATABASE INTO DISK = '/data/backup/machbase_backup';
 BACKUP TABLE sensor_data INTO DISK = '/data/backup/sensor_backup';
 ```
 
-## MOUNT / UNMOUNT 문법
+## MOUNT / UMOUNT 문법
 
 ```sql
 -- 백업 파일 마운트 (읽기 전용 조회 가능)
@@ -46,7 +47,7 @@ MOUNT DATABASE '/data/backup/machbase_backup' TO MOUNTDB;
 SELECT * FROM mountdb!!sensor_data RECENT 10;
 
 -- 마운트 해제
-UNMOUNT DATABASE MOUNTDB;
+UMOUNT DATABASE MOUNTDB;
 ```
 
 ## machadmin을 통한 복구

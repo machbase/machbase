@@ -2,6 +2,7 @@
 type: docs
 title: '17.8.7 권한별 기능 지원표'
 weight: 70
+toc: true
 ---
 
 Machbase 권한은 적용 범위에 따라 **데이터베이스 권한**과 **테이블 권한** 두 가지로 나뉩니다.
@@ -16,7 +17,7 @@ Machbase 권한은 적용 범위에 따라 **데이터베이스 권한**과 **�
 | `DROP` | 테이블, 뷰, 인덱스, 롤업, 테이블스페이스, 리텐션 삭제 | O |
 | `ALTER` | 테이블 구조 변경, `ALTER SYSTEM` 실행 | X |
 | `BACKUP` | `BACKUP DATABASE` 실행 | X |
-| `MOUNT` | `MOUNT DATABASE` / `UNMOUNT DATABASE` 실행 | X |
+| `MOUNT` | `MOUNT DATABASE` / `UMOUNT DATABASE` 실행 | X |
 | `DDL` | CREATE + DROP 묶음 (합성 권한) | — |
 | `ALL` | 모든 데이터베이스 권한 일괄 부여 | — |
 

@@ -58,7 +58,7 @@ LOG 테이블에는 PRIMARY KEY나 UNIQUE 제약을 지정하지 않습니다. �
 LOG 테이블은 운영 중 필요한 컬럼을 추가, 삭제, 이름 변경, 일부 속성 변경할 수 있습니다.
 
 ```sql
-ALTER TABLE security_event ADD COLUMN host_name VARCHAR(128);
+ALTER TABLE security_event ADD COLUMN (host_name VARCHAR(128));
 ```
 
 기존 데이터에는 새 컬럼 값이 없으므로, 새 컬럼을 사용하는 쿼리는 NULL 처리 또는 입력 시점 구분을 고려합니다.

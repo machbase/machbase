@@ -2,6 +2,7 @@
 type: docs
 title: '17.10.6 evidence-map'
 weight: 60
+toc: true
 ---
 
 이 페이지는 Machbase에 관한 기술적 사실의 근거(소스)를 매핑합니다. AI 에이전트가 사실에 근거한 답변을 생성하거나, 답변의 출처를 명시할 때 참조합니다.
@@ -10,15 +11,15 @@ weight: 60
 
 | 사실 | 근거 (소스) | 비고 |
 |------|------------|------|
-| `AUTH_SIG_SCHEME` 허용값: `ECDSA`, `RSA_PKCS1_V15`, `RSA_PSS` | `/home/sjkim/work/nfx/pm/src/include/pmuAuth.h` | 서명 알고리즘 열거형 정의 |
-| `AUTH_MODE` 허용값: `PASSWORD`, `CHALLENGE` | `/home/sjkim/work/nfx/pm/src/include/pmuAuth.h` | 인증 모드 열거형 정의 |
+| `AUTH_SIG_SCHEME` 허용값: `ECDSA`, `RSA_PKCS1_V15`, `RSA_PSS` | AUTH KEY 구성 문서 | [AUTH KEY 문서](../../../security-access-control/authentication-auth-key/) |
+| `AUTH_MODE` 허용값: `PASSWORD`, `CHALLENGE` | AUTH KEY 구성 문서 | [AUTH KEY 문서](../../../security-access-control/authentication-auth-key/) |
 | AUTH KEY는 공개키 기반 인증 — 비밀번호 대신 사용 가능 | Machbase 8.6 매뉴얼 보안 섹션 | [AUTH KEY 문서](../../../security-access-control/authentication-auth-key/) |
 
 ## Python SDK
 
 | 사실 | 근거 (소스) | 비고 |
 |------|------------|------|
-| Python machbaseAPI 파라미터 바인딩 스타일: `%s` 또는 `%(name)s` | machbaseAPI 드라이버 소스, Machbase 8.6 매뉴얼 ch8 | `?` 플레이스홀더 사용 불가 |
+| Python machbaseAPI 파라미터 바인딩 스타일: `%s` 또는 `%(name)s` | Python SDK 가이드 | `?` 플레이스홀더 사용 불가 |
 | Python machbaseAPI는 Server Prepared Statement 미지원 | machbaseAPI 구현 방식 (클라이언트 렌더링) | 쿼리 문자열을 클라이언트에서 완성 후 서버에 전송 |
 
 ## Go SDK
@@ -47,6 +48,6 @@ weight: 60
 
 | 사실 | 근거 (소스) | 비고 |
 |------|------------|------|
-| TAG data UPDATE WHERE는 태그 선택 조건과 BASETIME 조건을 요구하며 `name IN`, `name LIKE`, 시간 범위, 데이터 컬럼 predicate를 지원 | NFX #3733 회귀 테스트 및 5656 서버 실 SQL 검증 | |
-| TAG data UPDATE SET은 실제 데이터 컬럼을 허용하고 PK(name), BASETIME, 메타데이터 컬럼은 거부 | NFX #3733 회귀 테스트 및 5656 서버 실 SQL 검증 | |
-| TAG 테이블 DELETE는 BEFORE/WHERE/METADATA/ROLLUP 등 제한된 형태로 지원 | Machbase 8.5 DML 문서와 8.6 SQL 파서/실행 경로 | 일반 RDB DELETE와 동일한 범위로 가정하지 않음 |
+| TAG data UPDATE WHERE는 태그 선택 조건과 BASETIME 조건을 요구하며 `name IN`, `name LIKE`, 시간 범위, 데이터 컬럼 predicate를 지원 | TAG data UPDATE 구문과 지원 범위 문서 | [TAG data UPDATE](/dbms/reference/support-scope-constraints/tag-data-update/) |
+| TAG data UPDATE SET은 실제 데이터 컬럼을 허용하고 PK(name), BASETIME, 메타데이터 컬럼은 거부 | TAG data UPDATE 구문과 지원 범위 문서 | [TAG data UPDATE 구문](/dbms/reference/sql/syntax-dictionary-sql/dml-syntax/tag-data-update-syntax/) |
+| TAG 테이블 DELETE는 BEFORE/WHERE/METADATA/ROLLUP 등 제한된 형태로 지원 | TAG DELETE 구문과 지원 범위 문서 | 일반 RDB DELETE와 동일한 범위로 가정하지 않음 |

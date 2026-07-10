@@ -2,6 +2,7 @@
 type: docs
 title: '13.9 백업, 복원, 마운트'
 weight: 60
+toc: true
 ---
 운영 환경에서 데이터를 보호하고 필요 시 복구하기 위한 세 가지 핵심 기능 -- 백업, 복원, 마운트 -- 을 다룹니다.
 
@@ -38,10 +39,10 @@ weight: 60
 | [SQL BACKUP 범위](/dbms/operations-configuration-recovery/backup-restore-mount/#sql-backup) | 지원 테이블 타입, 에디션별 차이 |
 | [테이블 타입별 백업/마운트 제약](/dbms/operations-configuration-recovery/backup-restore-mount/#table-types-type-backup-mount) | 타입별 지원 여부 |
 | [Offline restore with machadmin -r](/dbms/operations-configuration-recovery/backup-restore-mount/#offline-restore-machadmin-r) | 오프라인 복원 절차 |
-| [데이터베이스 마운트](/dbms/operations-configuration-recovery/backup-restore-mount/#database-mount) | MOUNT / UNMOUNT 사용법 |
+| [데이터베이스 마운트](/dbms/operations-configuration-recovery/backup-restore-mount/#database-mount) | MOUNT / UMOUNT 사용법 |
 | [마운트된 데이터베이스 조회](/dbms/operations-configuration-recovery/backup-restore-mount/#query-database-mount) | 마운트 DB에서 SELECT |
 | [마운트 DB 동작 특성](/dbms/operations-configuration-recovery/backup-restore-mount/#mounted-db-read-only-refcount-active-same-name) | 읽기 전용, 활성 참조, 이름 충돌 |
-| [RDB sidecar 백업/복구 제약](/dbms/rdb-table-usage/backup-mount-sidecar/#recovery-backup-rdb-sidecar) | Standard Edition RDB 처리 |
+| [RDB 보조 데이터 파일(sidecar) 백업/복구 제약](/dbms/rdb-table-usage/backup-mount-sidecar/#recovery-backup-rdb-sidecar) | Standard Edition RDB 처리 |
 | [MOUNT TABLE 미지원 범위](/dbms/operations-configuration-recovery/backup-restore-mount/#unsupported-support-scope-mount-table-umount) | 테이블 단위 마운트 제약 |
 
 ## 권한 요구 사항
@@ -189,7 +190,7 @@ MOUNT DATABASE '/backup/machbase_20240101' TO verify_db;
 SELECT COUNT(*) FROM verify_db.sys.sensor_log;
 
 -- 마운트 해제
-UNMOUNT DATABASE verify_db;
+UMOUNT DATABASE verify_db;
 ```
 
 ### 자동화 예제 (쉘 스크립트)
@@ -277,7 +278,7 @@ INSERT INTO sensor_log
    WHERE _arrival_time > TO_DATE('20240115','YYYYMMDD');
 
 -- 언마운트
-UNMOUNT DATABASE tbl_backup;
+UMOUNT DATABASE tbl_backup;
 ```
 
 ### 주의 사항
@@ -372,7 +373,7 @@ machsql -u sys -p manager -e \
 ### 주의 사항
 
 - `AFTER` 절에 지정하는 경로는 반드시 존재하는 유효한 백업 디렉터리여야 합니다.
-- 현재 빌드에서는 직전 백업 경로를 기준으로 증분 백업을 생성합니다.
+- 직전 백업 경로를 기준으로 증분 백업을 생성합니다.
 - 증분 백업 체인이 길어질수록 복구 시간이 늘어납니다. 주기적으로 새로운 전체 백업을 기준으로 재설정하는 것을 권장합니다.
 
 <a id="backup-period"></a>
@@ -453,7 +454,7 @@ SELECT * FROM archive_202401.sys.sensor_log
                          AND TO_DATE('20240115','YYYYMMDD');
 
 -- 조회 완료 후 언마운트
-UNMOUNT DATABASE archive_202401;
+UMOUNT DATABASE archive_202401;
 ```
 
 ### 주의 사항
@@ -474,10 +475,10 @@ SQL `BACKUP` 문의 지원 범위를 에디션, 저장 방식, 테이블 타입�
 | `BACKUP DATABASE` | O | O |
 | `BACKUP TABLE` | O | O |
 | `MOUNT DATABASE` | O | 제한적 (거부될 수 있음) |
-| `UNMOUNT DATABASE` | O | 제한적 (거부될 수 있음) |
+| `UMOUNT DATABASE` | O | 제한적 (거부될 수 있음) |
 | RDB 테이블 백업 | O | X |
 
-> Cluster Edition에서 `MOUNT` 및 `UNMOUNT` 문은 거부될 수 있습니다. 클러스터 환경에서는 각 노드의 데이터를 개별적으로 관리하므로 마운트 방식의 조회가 제한됩니다.
+> Cluster Edition에서 `MOUNT` 및 `UMOUNT` 문은 거부될 수 있습니다. 클러스터 환경에서는 각 노드의 데이터를 개별적으로 관리하므로 마운트 방식의 조회가 제한됩니다.
 
 ### 저장 방식
 
@@ -663,17 +664,17 @@ SELECT a.name, a.value AS current_value, b.value AS backup_value
  WHERE a._arrival_time > TO_DATE('20240201','YYYYMMDD');
 ```
 
-### UNMOUNT DATABASE
+### UMOUNT DATABASE
 
 마운트된 데이터베이스가 더 이상 필요 없으면 언마운트합니다.
 
 ```sql
-UNMOUNT DATABASE mount_name;
+UMOUNT DATABASE mount_name;
 ```
 
 ```sql
 -- 예제
-UNMOUNT DATABASE backup_db;
+UMOUNT DATABASE backup_db;
 ```
 
 언마운트는 해당 마운트 DB를 참조 중인 열린 커서나 실행 중인 문장이 없을 때 즉시 실행됩니다. 마운트 DB를 참조 중이면 언마운트가 실패할 수 있으므로, 해당 문장과 세션을 종료한 뒤 다시 실행합니다.
@@ -688,7 +689,7 @@ UNMOUNT DATABASE backup_db;
 
 ### 마운트 권한
 
-일반 사용자가 `MOUNT DATABASE` 또는 `UNMOUNT DATABASE`를 실행하려면 권한이 필요합니다.
+일반 사용자가 `MOUNT DATABASE` 또는 `UMOUNT DATABASE`를 실행하려면 권한이 필요합니다.
 
 ```sql
 -- SYS 사용자가 권한 부여
@@ -697,7 +698,7 @@ GRANT MOUNT ON machbasedb TO user_name;
 
 ### 에디션 참고
 
-Cluster Edition에서는 `MOUNT` 및 `UNMOUNT` 문이 거부될 수 있습니다. 마운트 기능은 주로 Standard Edition 환경에서 사용합니다.
+Cluster Edition에서는 `MOUNT` 및 `UMOUNT` 문이 거부될 수 있습니다. 마운트 기능은 주로 Standard Edition 환경에서 사용합니다.
 
 <a id="query-database-mount"></a>
 
@@ -779,7 +780,7 @@ INSERT INTO sensor_log (name, time, value)
 
 ### 접근 권한
 
-`GRANT MOUNT` 권한은 `MOUNT DATABASE`와 `UNMOUNT DATABASE` 실행 권한입니다. 마운트된 테이블을 읽는 일반 사용자에게는 대상 마운트 DB의 테이블에 대한 `SELECT` 권한도 필요합니다.
+`GRANT MOUNT` 권한은 `MOUNT DATABASE`와 `UMOUNT DATABASE` 실행 권한입니다. 마운트된 테이블을 읽는 일반 사용자에게는 대상 마운트 DB의 테이블에 대한 `SELECT` 권한도 필요합니다.
 
 ```sql
 -- 마운트/언마운트 실행 권한
@@ -814,7 +815,9 @@ UPDATE backup_db.sys.sensor_log SET value = 0;      -- 오류: 읽기 전용
 
 ### 활성 참조
 
-열린 커서나 실행 중인 문장이 마운트 DB를 참조하면 `UNMOUNT DATABASE`가 실패할 수 있습니다. 참조가 종료된 뒤 다시 실행하면 언마운트할 수 있습니다. 현재 빌드의 `V$STORAGE_MOUNT_DATABASES`는 내부 참조 카운트를 컬럼으로 노출하지 않습니다.
+열린 커서나 실행 중인 문장이 마운트 DB를 참조하면 `UMOUNT DATABASE`가 실패할 수 있습니다.
+참조가 종료된 뒤 다시 실행하면 언마운트할 수 있습니다. `V$STORAGE_MOUNT_DATABASES`는 내부
+참조 카운트를 컬럼으로 노출하지 않습니다.
 
 ```sql
 -- 현재 마운트 목록 확인
@@ -825,13 +828,13 @@ SELECT name, path, mountdb, backup_tbsid, backup_scn, flag
 **활성 참조의 역할:**
 
 - 마운트 DB를 사용 중인 세션이 있을 때 강제 언마운트를 방지합니다.
-- `UNMOUNT DATABASE` 명령은 열린 커서나 실행 중인 문장이 마운트 DB를 참조하지 않을 때 즉시 실행됩니다.
-- 마운트 DB를 참조 중인 상태에서 `UNMOUNT DATABASE`를 실행하면 오류가 반환될 수 있습니다.
+- `UMOUNT DATABASE` 명령은 열린 커서나 실행 중인 문장이 마운트 DB를 참조하지 않을 때 즉시 실행됩니다.
+- 마운트 DB를 참조 중인 상태에서 `UMOUNT DATABASE`를 실행하면 오류가 반환될 수 있습니다.
 
 ```sql
 -- 활성 쿼리가 완료된 후 언마운트
 -- (활성 쿼리가 완료된 후 실행)
-UNMOUNT DATABASE backup_db;
+UMOUNT DATABASE backup_db;
 ```
 
 ### 동일 이름 충돌 방지 (Same-Name Isolation)
@@ -850,7 +853,7 @@ MOUNT DATABASE '/backup/machbase_20240201' TO archive_db;  -- 오류: 이미 존
 
 ```sql
 -- 기존 마운트 해제 후 새 마운트
-UNMOUNT DATABASE archive_db;
+UMOUNT DATABASE archive_db;
 MOUNT DATABASE '/backup/machbase_20240201' TO archive_db;
 ```
 
@@ -870,9 +873,9 @@ SELECT COUNT(*) FROM archive_202402.sys.sensor_log;
 SELECT COUNT(*) FROM archive_202403.sys.sensor_log;
 
 -- 정리
-UNMOUNT DATABASE archive_202401;
-UNMOUNT DATABASE archive_202402;
-UNMOUNT DATABASE archive_202403;
+UMOUNT DATABASE archive_202401;
+UMOUNT DATABASE archive_202402;
+UMOUNT DATABASE archive_202403;
 ```
 
 ### 마운트 상태 요약
@@ -913,7 +916,7 @@ SELECT * FROM backup_db.sys.device_info
  WHERE device_id = 'DEV_001';
 
 -- 사용 완료 후 언마운트
-UNMOUNT DATABASE backup_db;
+UMOUNT DATABASE backup_db;
 ```
 
 ### 테이블 백업과의 조합
@@ -927,7 +930,7 @@ BACKUP TABLE sensor_log INTO DISK = '/backup/sensor_log_20240101';
 -- 테이블 백업 파일도 MOUNT DATABASE로 마운트
 MOUNT DATABASE '/backup/sensor_log_20240101' TO tbl_backup;
 SELECT * FROM tbl_backup.sys.sensor_log;
-UNMOUNT DATABASE tbl_backup;
+UMOUNT DATABASE tbl_backup;
 ```
 
 ### 요약
@@ -935,7 +938,7 @@ UNMOUNT DATABASE tbl_backup;
 | 기능 | 지원 여부 |
 |------|:---------:|
 | `MOUNT DATABASE` | O (공식 지원) |
-| `UNMOUNT DATABASE` | O (공식 지원) |
+| `UMOUNT DATABASE` | O (공식 지원) |
 | `MOUNT TABLE` | X (미공개/미지원) |
 | `UMOUNT TABLE` | X (미공개/미지원) |
 
@@ -955,7 +958,7 @@ Machbase의 테이블 타입마다 백업과 마운트에 대한 지원 범위�
 | **LOG** | O | O | O | |
 | **LOOKUP** | O | O | O | |
 | **VOLATILE** | X | X | X | 메모리 기반, 재시작 시 소멸 |
-| **RDB** | △ | △ | △ | Standard Edition 전용, sidecar 처리 필요 |
+| **RDB** | △ | △ | △ | Standard Edition 전용, RDB 보조 데이터 파일 처리 필요 |
 
 - **O**: 지원
 - **X**: 미지원
@@ -974,7 +977,7 @@ BACKUP TABLE tag_table INTO DISK = '/backup/tag_table_20240101';
 -- 마운트 후 조회
 MOUNT DATABASE '/backup/tag_table_20240101' TO tag_backup;
 SELECT * FROM tag_backup.sys.tag_table WHERE name = 'sensor_01';
-UNMOUNT DATABASE tag_backup;
+UMOUNT DATABASE tag_backup;
 ```
 
 #### LOG 테이블
@@ -991,7 +994,9 @@ UNMOUNT DATABASE tag_backup;
 
 #### RDB 테이블
 
-Standard Edition에서만 사용 가능한 테이블 타입입니다. 내부적으로 sidecar 데이터베이스(SQLite 등)에 저장될 수 있으며, 백업과 복원 시 sidecar 파일도 함께 처리해야 합니다. 자세한 내용은 [RDB sidecar 백업/복구 제약](/dbms/rdb-table-usage/backup-mount-sidecar/#recovery-backup-rdb-sidecar)을 참고하세요.
+Standard Edition에서만 사용 가능한 테이블 타입입니다. 내부적으로 SQLite 기반 RDB 부속 DB
+파일에 저장될 수 있으며, 백업과 복원 시 이 파일도 함께 처리해야
+합니다. 자세한 내용은 [RDB 보조 데이터 파일 백업/복구 제약](/dbms/rdb-table-usage/backup-mount-sidecar/#recovery-backup-rdb-sidecar)을 참고하세요.
 
 ### BACKUP DATABASE 실행 시 포함 범위
 

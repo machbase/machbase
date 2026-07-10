@@ -2,6 +2,7 @@
 type: docs
 title: '14.3 권한 관리'
 weight: 30
+toc: true
 ---
 각 사용자가 수행할 수 있는 작업을 제어하는 핵심 보안 기능입니다.
 
@@ -37,7 +38,7 @@ REVOKE SELECT ON sys.sensor_log FROM reader_user;
 - [데이터베이스 권한](/dbms/security-access-control/privileges/#database-privileges) — 데이터베이스 범위 권한 각각의 설명
 - [테이블 권한](/dbms/security-access-control/privileges/#privileges-2) — 특정 테이블 대상 세밀한 권한 제어
 - [기본 부여 권한과 제외 권한](/dbms/security-access-control/privileges/#privileges-grant-exclude) — 신규 사용자의 초기 권한 범위
-- [LOOKUP UPDATE/DELETE 내부 target select 권한 모델](/dbms/lookup-table-usage/privilege-predicate-performance/#privileges-lookup-update-delete-target-select) — 계획 중인 권한 동작
+- [LOOKUP UPDATE/DELETE 내부 target select 권한 모델](/dbms/lookup-table-usage/privilege-predicate-performance/#privileges-lookup-update-delete-target-select) — predicate DML 권한 동작
 - [권한 진단 체크리스트](/dbms/security-access-control/privileges/#checklist-diagnosis-privileges) — 권한 현황 조회 및 감사 방법
 
 
@@ -74,7 +75,7 @@ SYS 계정은 모든 권한을 기본으로 보유하므로 별도로 GRANT를 �
 | `DROP` | 테이블, 뷰, 인덱스, 롤업, 테이블스페이스, 리텐션 삭제 |
 | `ALTER` | 테이블 구조 변경, `ALTER SYSTEM` 실행 |
 | `BACKUP` | `BACKUP DATABASE` 실행 |
-| `MOUNT` | `MOUNT DATABASE` / `UNMOUNT DATABASE` 실행 |
+| `MOUNT` | `MOUNT DATABASE` / `UMOUNT DATABASE` 실행 |
 | `DDL` | CREATE + DROP 묶음 (두 권한 동시 부여) |
 | `ALL` | SELECT, INSERT, DELETE, UPDATE, CREATE, DROP, ALTER, BACKUP, MOUNT 일괄 부여 |
 
@@ -253,7 +254,7 @@ SELECT * FROM m$obj_privileges WHERE obj_name = 'SENSOR_LOG';
 | `DROP` | 테이블, 뷰, 인덱스, 롤업, 테이블스페이스, 리텐션 삭제 | 예 |
 | `ALTER` | 테이블 구조 변경, `ALTER SYSTEM` 실행 | 아니오 |
 | `BACKUP` | `BACKUP DATABASE` 실행 | 아니오 |
-| `MOUNT` | `MOUNT DATABASE` / `UNMOUNT DATABASE` 실행 | 아니오 |
+| `MOUNT` | `MOUNT DATABASE` / `UMOUNT DATABASE` 실행 | 아니오 |
 | `DDL` | CREATE + DROP 묶음 | — |
 | `ALL` | SELECT, INSERT, DELETE, UPDATE, CREATE, DROP, ALTER, BACKUP, MOUNT 일괄 부여 | — |
 
@@ -275,7 +276,7 @@ SELECT * FROM m$obj_privileges WHERE obj_name = 'SENSOR_LOG';
 | `ALTER TABLE` (컬럼 추가/삭제 등) | ALTER |
 | `ALTER SYSTEM` | ALTER |
 | `BACKUP DATABASE` | BACKUP |
-| `MOUNT DATABASE` / `UNMOUNT DATABASE` | MOUNT |
+| `MOUNT DATABASE` / `UMOUNT DATABASE` | MOUNT |
 
 ### 부여 예제
 
@@ -510,10 +511,10 @@ REVOKE ALTER ON machbasedb FROM ops_user;
 
 ```sql
 -- ops_user 세션에서 컬럼 추가 (ALTER 권한 필요)
-ALTER TABLE sensor_log ADD COLUMN location VARCHAR(64);
+ALTER TABLE sensor_log ADD COLUMN (location VARCHAR(64));
 
 -- 컬럼 삭제
-ALTER TABLE sensor_log DROP COLUMN location;
+ALTER TABLE sensor_log DROP COLUMN (location);
 ```
 
 #### SYS 전용 작업
@@ -580,7 +581,7 @@ BACKUP DATABASE INTO DISK = '/backup/test';
 
 ### MOUNT
 
-`MOUNT` 권한은 `MOUNT DATABASE` 및 `UNMOUNT DATABASE` 명령을 실행하는 권한입니다.
+`MOUNT` 권한은 `MOUNT DATABASE` 및 `UMOUNT DATABASE` 명령을 실행하는 권한입니다.
 신규 사용자 생성 시 기본으로 부여되지 않으므로 필요할 때 명시적으로 GRANT해야 합니다.
 
 #### 허용하는 작업
@@ -588,7 +589,7 @@ BACKUP DATABASE INTO DISK = '/backup/test';
 `MOUNT` 권한이 있는 사용자는 다음 명령을 실행할 수 있습니다.
 
 - `MOUNT DATABASE` — 백업 또는 외부 데이터베이스를 읽기 전용으로 마운트
-- `UNMOUNT DATABASE` — 마운트된 데이터베이스를 해제
+- `UMOUNT DATABASE` — 마운트된 데이터베이스를 해제
 
 SYS 계정은 별도 권한 없이 마운트/언마운트를 실행할 수 있습니다.
 
@@ -609,7 +610,7 @@ REVOKE MOUNT ON machbasedb FROM mount_user;
 MOUNT DATABASE '/backup/machbase_backup' TO 'backup_db';
 
 -- 마운트 해제
-UNMOUNT DATABASE 'backup_db';
+UMOUNT DATABASE 'backup_db';
 ```
 
 #### 마운트된 DB 데이터 조회 권한

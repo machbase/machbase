@@ -2,6 +2,7 @@
 type: docs
 title: '16.1 문제 해결 접근법'
 weight: 10
+toc: true
 ---
 문제가 발생했을 때 무작정 설정을 바꾸거나 서버를 재시작하면 원인 파악이 어려워집니다. 아래 5단계 절차를 순서대로 따르면 원인을 빠르게 찾고 재발을 방지할 수 있습니다.
 
@@ -384,7 +385,7 @@ tail -30 $MACHBASE_HOME/trc/machbase.trc
 | ERR-02024 | Table already exists | 이미 존재하는 테이블명으로 생성 시도 | 다른 이름 사용 또는 기존 테이블 삭제 후 재생성 |
 | ERR-02025 | Table does not exist | 존재하지 않는 테이블명 사용 | `SELECT name FROM m$sys_tables;`로 테이블명 확인 |
 | ERR-02056 | Column name not found | 존재하지 않는 컬럼명 사용 | `DESC table_name;`으로 컬럼명 확인 |
-| ERR-02186 | Invalid database name | 잘못된 database 이름 | MOUNT/UNMOUNT 이름과 경로 확인 |
+| ERR-02186 | Invalid database name | 잘못된 database 이름 | MOUNT/UMOUNT 이름과 경로 확인 |
 
 #### 데이터 오류
 

@@ -2,6 +2,7 @@
 type: docs
 title: '11.2 공통 연동 개념'
 weight: 20
+toc: true
 ---
 드라이버나 언어에 관계없이 공통으로 이해해야 할 연동 개념을 설명합니다. 여기서 다루는 내용을 먼저 파악해 두면 각 SDK 문서를 빠르게 이해할 수 있습니다.
 
@@ -13,8 +14,8 @@ weight: 20
 | [타임존 연결 옵션](/dbms/application-integration/concepts-common/#timezone-connection) | UTC 내부 저장, 연결 시 timezone 설정, TO_CHAR/TO_DATE와 timezone, SYSDATE vs NOW |
 | [Prepared statement](/dbms/application-integration/concepts-common/#prepared-statement) | SQL 인젝션 방지, 재사용 성능, TAG/LOG 테이블에서의 사용 |
 | [Parameter binding](/dbms/application-integration/concepts-common/#parameter-binding) | 위치 바인딩(`?`), DATETIME nanosecond 처리, NULL 값, SDK별 바인딩 방법 |
-| [트랜잭션 처리](/dbms/application-integration/concepts-common/#transaction) | RDB 테이블: ACID 완전 지원, TAG/LOG 테이블: append-only, autocommit 동작 |
-| [Append API와 Batch INSERT](/dbms/application-integration/concepts-common/#append-api-batch) | 고속 비트랜잭션 입력 vs 트랜잭션 기반 배치 INSERT, 언제 무엇을 선택할지 |
+| [트랜잭션 처리](/dbms/application-integration/concepts-common/#transaction) | RDB SQL 트랜잭션과 SDK별 제어 API 범위 |
+| [Append API와 Batch INSERT](/dbms/application-integration/concepts-common/#append-api-batch) | TAG/LOG Append와 RDB batch Append의 차이 |
 | [오류 처리와 재시도](/dbms/application-integration/concepts-common/#error-handling-retry) | 연결 오류 코드, exponential backoff, Append flush 실패, connection pool 격리 |
 
 ## 핵심 특성
@@ -23,7 +24,8 @@ weight: 20
 
 **테이블 타입에 따른 트랜잭션 지원 차이**
 
-TAG/LOG 테이블은 트랜잭션을 지원하지 않습니다. ACID 트랜잭션은 RDB 테이블에서만 동작하므로, TAG/LOG에 대한 쓰기에서는 commit/rollback이 의미가 없습니다.
+명시적 `BEGIN`/`COMMIT`/`ROLLBACK`은 RDB 테이블에서 동작합니다. TAG/LOG 입력과 TAG data
+UPDATE는 RDB 트랜잭션에 참여하지 않습니다.
 
 **시간 데이터는 내부적으로 UTC nanosecond**
 
@@ -304,7 +306,8 @@ conn.Open();
 
 #### ODBC
 
-ODBC 연결 문자열에서 timezone을 설정할 수 있습니다. 드라이버 버전에 따라 지원 여부가 다르므로 14장 레퍼런스를 확인하세요.
+ODBC 연결 문자열에서 timezone을 설정할 수 있습니다. 드라이버별 옵션은 17장 레퍼런스를
+확인하세요.
 
 ```c
 char connStr[] = "SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;PWD=MANAGER;"
@@ -777,22 +780,26 @@ cmd.ExecuteNonQuery();
 
 | 테이블 유형 | 트랜잭션 | COMMIT/ROLLBACK | 이유 |
 |-----------|:---:|:---:|------|
-| **RDB** | O | O | 완전한 ACID 지원 |
-| **VOLATILE** | O | O | 메모리 기반, 트랜잭션 지원 |
-| **LOOKUP** | △ | △ | PK 기반 DML에 한해 지원 |
-| **TAG** | X | X | Append-only, 트랜잭션 불필요 |
-| **LOG** | X | X | Append-only, 트랜잭션 불필요 |
+| **RDB** | O | O | `BEGIN` 이후 RDB DML을 커밋하거나 롤백 |
+| **VOLATILE** | X | X | 각 DML 문 단위로 반영 |
+| **LOOKUP** | X | X | 각 DML 문 단위로 반영 |
+| **TAG** | X | X | 입력과 제한적 data UPDATE를 문 단위로 반영 |
+| **LOG** | X | X | append 중심 입력을 문 단위로 반영 |
 
-> TAG와 LOG 테이블은 고속 삽입을 위해 트랜잭션 없이 동작합니다. 삽입된 데이터는 즉시 저장되며 rollback이 불가능합니다.
+> 활성 RDB 트랜잭션 안에서는 LOG, TAG, LOOKUP, VOLATILE 테이블 쓰기와 DDL이 차단됩니다.
+> 여러 테이블 타입의 쓰기를 하나의 트랜잭션으로 묶을 수 없습니다.
 
 ### Autocommit 동작
 
-JDBC 드라이버는 기본적으로 **autocommit이 활성화**되어 있습니다. RDB 테이블에서 트랜잭션을 명시적으로 제어하려면 autocommit을 비활성화합니다.
+서버 SQL에서는 plain `BEGIN`, `COMMIT`, `ROLLBACK`을 사용합니다. `BEGIN RDB` 같은 별도 구문은
+지원하지 않습니다. SDK의 표준 트랜잭션 편의 API가 이 SQL 흐름을 모두 구현한 것은 아니므로,
+아래 지원 표와 각 드라이버 레퍼런스를 함께 확인합니다.
 
 ```java
-// JDBC: 트랜잭션 제어
+// JDBC: 서버 SQL로 트랜잭션 시작 및 종료
 Connection conn = DriverManager.getConnection(url, props);
-conn.setAutoCommit(false);  // autocommit 비활성화
+Statement tx = conn.createStatement();
+tx.execute("BEGIN");
 
 try {
     PreparedStatement ps = conn.prepareStatement(
@@ -805,19 +812,16 @@ try {
     ps.setDouble(2, 30000.0);
     ps.executeUpdate();
 
-    conn.commit();  // 두 행 모두 커밋
+    tx.execute("COMMIT");
 } catch (SQLException e) {
-    conn.rollback();  // 오류 시 전체 롤백
+    tx.execute("ROLLBACK");
     throw e;
-} finally {
-    conn.setAutoCommit(true);
 }
 ```
 
 ```c
 /* C/CLI: 트랜잭션 제어 */
-SQLSetConnectAttr(conn, SQL_ATTR_AUTOCOMMIT,
-                  (SQLPOINTER)SQL_AUTOCOMMIT_OFF, 0);
+SQLExecDirect(stmt, (SQLCHAR *)"BEGIN", SQL_NTS);
 
 /* INSERT 작업 */
 SQLExecDirect(stmt, "INSERT INTO orders VALUES (1001, 50000)", SQL_NTS);
@@ -828,48 +832,37 @@ SQLEndTran(SQL_HANDLE_DBC, conn, SQL_COMMIT);
 /* 오류 시: SQLEndTran(SQL_HANDLE_DBC, conn, SQL_ROLLBACK); */
 ```
 
-```python
-# Python: 트랜잭션 제어
-conn = machbaseapi.connect(host, port, user, password)
-# Python DB-API는 기본적으로 autocommit=False
-
-cursor = conn.cursor()
-try:
-    cursor.execute("INSERT INTO orders (order_id, amount) VALUES (%s, %s)", [1001, 50000])
-    cursor.execute("INSERT INTO orders (order_id, amount) VALUES (%s, %s)", [1002, 30000])
-    conn.commit()
-except Exception as e:
-    conn.rollback()
-    raise
-finally:
-    cursor.close()
-```
-
 ### TAG/LOG 테이블에 대한 트랜잭션 시도
 
-TAG와 LOG 테이블에 대해 COMMIT/ROLLBACK을 호출해도 무시되거나 오류가 반환됩니다. **삽입 즉시 영구 저장**됩니다.
+트랜잭션 밖에서 실행한 TAG/LOG 입력은 해당 문 또는 Append 요청 단위로 반영되며 이후
+`ROLLBACK`으로 취소할 수 없습니다. `BEGIN`은 RDB 트랜잭션을 시작하므로, 그 안에서
+TAG/LOG 쓰기를 실행하면 해당 쓰기가 차단됩니다.
 
 ```text
--- 이 패턴은 TAG 테이블에서 동작하지 않습니다
+-- TAG INSERT가 활성 RDB 트랜잭션 안에서 거부됩니다.
 BEGIN;
 INSERT INTO sensor_tag (name, time, value) VALUES ('s01', NOW, 25.0);
-ROLLBACK;  -- 효과 없음: 데이터가 이미 저장됨
+ROLLBACK;
 ```
 
 TAG/LOG 테이블에서 잘못 삽입된 데이터를 제거하려면 [DELETE 정책](/dbms/data-modeling-table-design/alter-data-mutation-policy/#policy-delete)을 참고하세요.
 
 ### SDK별 트랜잭션 지원 요약
 
-| SDK | RDB 트랜잭션 | 비고 |
+| SDK | 트랜잭션 편의 API | 비고 |
 |-----|:---:|------|
-| ODBC/CLI | O | SQLEndTran(SQL_COMMIT / SQL_ROLLBACK) |
-| JDBC | O | conn.commit() / conn.rollback() |
-| Python | O | conn.commit() / conn.rollback() |
-| .NET | O | MachTransaction 클래스 |
+| ODBC/CLI | △ | SQL로 `BEGIN`, `SQLEndTran`으로 종료 가능 |
+| JDBC | △ | SQL로 `BEGIN` 실행 필요. `setAutoCommit(false)`는 시작 문을 보내지 않음 |
+| Python | X | `begin()`/`commit()`/`rollback()`이 `NotSupportedError` 반환 |
+| .NET | X | `MachTransaction` 미구현 |
 | Go (database/sql) | X | 현재 Go SQL 드라이버는 `Begin` / `BeginTx` 미지원 |
 | Go (native client) | X | Append-only API 중심 |
-| Node.js | X | 현재 미지원 |
+| Node.js | X | transaction 편의 API 미지원 |
 | REST API | X | 단일 요청 단위 처리 |
+
+`X`는 해당 SDK의 표준 트랜잭션 편의 API가 구현되지 않았다는 의미입니다. 같은 물리 연결에서
+임의 SQL을 연속 실행할 수 있는 SDK는 Node.js 예제처럼 `BEGIN`/`COMMIT`/`ROLLBACK`을 직접
+전송할 수 있습니다. 연결 풀이나 요청마다 연결이 바뀌는 API에서는 이 방식을 사용하지 않습니다.
 
 상세 SDK별 지원 범위는 [SDK별 transaction/prepare/bind 지원 범위](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-transaction-prepare-bind)를 참고하세요.
 
@@ -885,7 +878,7 @@ TAG/LOG 테이블에서 잘못 삽입된 데이터를 제거하려면 [DELETE �
 |------|----------|-----------|-------------|
 | **단건 INSERT** | 지원 (RDB) | 행 단위 즉시 처리 | 건별 처리, 낮은 빈도 |
 | **Batch INSERT** | 지원 (RDB) | 여러 행을 한 번에 전송 | 수십~수백 건 묶음 처리 |
-| **Append API** | 미지원 | 전용 Append 세션/요청으로 고속 전송 | 초당 수천~수십만 건 |
+| **Append API** | 테이블 타입별 상이 | 전용 Append 세션/요청으로 묶음 전송 | 연속 수집·배치 적재 |
 
 ### Append API
 
@@ -901,11 +894,15 @@ Append 전용 프로토콜 또는 요청
 Machbase 서버
 ```
 
-네트워크 왕복 횟수를 대폭 줄여 일반 INSERT 대비 수십 배의 쓰기 처리량을 달성합니다.
+여러 행을 묶어 보내므로 반복적인 단건 INSERT보다 네트워크와 문장 처리 오버헤드를 줄일 수
+있습니다. 실제 처리량은 SDK, row 크기, 인덱스와 constraint 구성에 따라 달라집니다.
 
 #### 주요 특성
 
-- **비트랜잭션**: TAG/LOG 테이블에서만 사용합니다. RDB 테이블의 Append는 지원하지 않습니다.
+- **TAG/LOG**: append 최적화 입력 경로를 사용하며, 이미 성공한 행을 RDB 트랜잭션으로
+  롤백할 수 없습니다.
+- **RDB**: Append open/close와 batch 입력을 지원합니다. RDB batch는 statement transaction으로
+  처리되므로 batch 중 constraint 오류가 발생하면 해당 batch 전체를 롤백합니다.
 - **순서 보장 없음**: flush 단위 내에서 행 삽입 순서는 보장되지 않습니다.
 - **드라이버별 flush 의미**: 일부 드라이버는 미전송 데이터를 전송하고, 일부 드라이버는 이미 보낸 Append 데이터의 pending 응답을 확인합니다.
 - **명시적 종료 권장**: 애플리케이션 종료 전, 또는 일정 주기마다 드라이버가 제공하는 `flush`/`close` 절차를 호출하세요.
@@ -922,7 +919,7 @@ Machbase 서버
 | Node.js 드라이버 | O | `appendBatch`, `appendOpen` |
 | REST API | O | `POST /machbase` |
 
-상세 API는 14장 레퍼런스의 각 드라이버 문서를 참조하세요.
+상세 API는 17장 레퍼런스의 각 드라이버 문서를 참조하십시오.
 
 #### 언제 Append API를 써야 하는가
 
@@ -935,7 +932,7 @@ Machbase 서버
 반대로 다음 경우에는 일반 INSERT를 사용하세요.
 
 - 입력 빈도가 낮고 (초당 수십 건 이하) 데이터 무결성이 중요한 경우
-- RDB 테이블에 데이터를 저장하고 rollback이 필요한 경우
+- 여러 RDB DML을 명시적 트랜잭션으로 묶어야 하는 경우
 - 에러 발생 시 어느 행에서 실패했는지 정확히 추적해야 하는 경우
 
 #### Append API 사용 예 (Python)
@@ -991,7 +988,10 @@ conn.close();
 
 #### 동작 원리
 
-Prepared statement를 활용하여 여러 행의 파라미터를 한 번의 네트워크 요청으로 전송합니다. 트랜잭션 내에서 동작하므로 전체 성공 또는 전체 실패가 보장됩니다.
+Prepared statement의 파라미터를 바꾸어 여러 행을 입력합니다. RDB에서 전체 성공 또는 전체
+실패가 필요하면 서버 SQL 트랜잭션을 명시적으로 시작하거나, batch 원자성을 보장하는 RDB
+Append batch를 사용합니다. SDK의 `executeBatch`/`executemany`가 자동으로 명시적
+트랜잭션을 시작한다고 가정하지 않습니다.
 
 #### 언제 Batch INSERT를 사용하는가
 
@@ -1002,7 +1002,9 @@ Prepared statement를 활용하여 여러 행의 파라미터를 한 번의 네�
 #### Batch INSERT 사용 예 (Java)
 
 ```java
-conn.setAutoCommit(false);
+try (Statement tx = conn.createStatement()) {
+    tx.execute("BEGIN");
+}
 
 String sql = "INSERT INTO rdb_table (id, value, ts) VALUES (?, ?, ?)";
 PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -1015,28 +1017,11 @@ for (DataRow row : dataList) {
 }
 
 pstmt.executeBatch();  // 한 번에 전송
-conn.commit();
+try (Statement tx = conn.createStatement()) {
+    tx.execute("COMMIT");
+}
 
 pstmt.close();
-```
-
-#### Batch INSERT 사용 예 (Python)
-
-```python
-conn = connect(host='127.0.0.1', port=5656, user='SYS', password='MANAGER')
-cur = conn.cursor()
-
-sql = "INSERT INTO rdb_table (id, value, ts) VALUES (%s, %s, %s)"
-
-rows = [
-    ('sensor_01', 23.5, 1720000000000000000),
-    ('sensor_02', 18.2, 1720000001000000000),
-]
-
-cur.executemany(sql, rows)  # 배치로 실행
-conn.commit()
-cur.close()
-conn.close()
 ```
 
 ### 요약: 입력 방법 선택 기준
@@ -1045,8 +1030,11 @@ conn.close()
 초당 1,000건 이상 or TAG/LOG 테이블 대량 입력
   → Append API
 
-트랜잭션 필요 or RDB 테이블 or 수십~수백 건 묶음
-  → Batch INSERT (executemany / addBatch)
+RDB 여러 문 트랜잭션 필요
+  → BEGIN/COMMIT을 지원하는 SQL/SDK 경로
+
+RDB 여러 행 묶음 입력
+  → RDB Append batch 또는 검증된 SDK batch 경로
 
 단건, 낮은 빈도, 간단한 작업
   → 단건 INSERT
@@ -1117,11 +1105,9 @@ cursor = conn.cursor()
 try:
     cursor.execute("INSERT INTO sensor_log (name, time, value) VALUES (%s, %s, %s)",
                    ['sensor-01', time_ns, 23.5])
-    conn.commit()
 except Exception as e:
     # 오류 코드 확인 후 처리
     print(f"쿼리 오류: {e}")
-    conn.rollback()  # RDB 테이블인 경우
     raise
 finally:
     cursor.close()

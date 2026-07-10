@@ -2,6 +2,7 @@
 type: docs
 title: '14.1 보안 모델 개요'
 weight: 10
+toc: true
 ---
 
 Machbase의 보안 모델은 **사용자 계정**, **권한(GRANT/REVOKE)**, **접속 제어(IP/인증)** 세 요소가 계층적으로 결합된 구조입니다.
@@ -81,7 +82,7 @@ GRANT SELECT, INSERT ON sys.sensor_log TO writer_user;
 | `DDL` | CREATE + DROP 묶음 |
 | `ALTER` | ALTER SYSTEM |
 | `BACKUP` | BACKUP DATABASE |
-| `MOUNT` | MOUNT/UNMOUNT DATABASE |
+| `MOUNT` | MOUNT/UMOUNT DATABASE |
 | `ALL` | 위 모든 데이터베이스 권한 |
 
 ```sql

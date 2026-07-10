@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.1.15 BACKUP / RESTORE / MOUNT syntax'
 weight: 150
+toc: true
 ---
 
 Machbase의 백업·복원·마운트 구문은 데이터를 안전하게 보호하고 필요 시 복구하거나 과거 데이터를 조회할 때 사용합니다.
@@ -167,17 +168,17 @@ SELECT a.name, a.value AS current_val, b.value AS backup_val
 
 ---
 
-## UNMOUNT DATABASE
+## UMOUNT DATABASE
 
 ```sql
-unmount_database_stmt ::=
-    'UNMOUNT DATABASE' mount_name
+umount_database_stmt ::=
+    'UMOUNT DATABASE' mount_name
 ```
 
 마운트된 데이터베이스를 해제합니다.
 
 ```sql
-UNMOUNT DATABASE backup_db;
+UMOUNT DATABASE backup_db;
 ```
 
 마운트 DB를 참조 중인 열린 커서나 실행 중인 쿼리가 있으면 언마운트가 실패합니다. 해당 세션을 종료한 뒤 다시 실행하세요.
@@ -192,7 +193,7 @@ UNMOUNT DATABASE backup_db;
 | IBFILE 방식 백업 마운트 | 불가 (DISK 방식만 마운트 가능) |
 | 버전 호환성 | 백업 DB와 현재 서버의 메타 버전이 호환되어야 함 |
 | TAG 테이블 기간 복원 | 미지원 (전체 백업 또는 증분 백업으로만 복원 가능) |
-| Cluster Edition | MOUNT/UNMOUNT 제한될 수 있음 |
+| Cluster Edition | MOUNT/UMOUNT 제한될 수 있음 |
 
 ---
 

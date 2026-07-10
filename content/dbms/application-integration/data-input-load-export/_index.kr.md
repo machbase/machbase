@@ -2,6 +2,7 @@
 type: docs
 title: '11.7 데이터 입력과 반출'
 weight: 960
+toc: true
 ---
 SQL INSERT, Append API, 파일 적재(machloader, csvimport), SQL 기반 파일 직접 로드 등 상황에 맞는 입력 방법을 선택할 수 있습니다. 반출도 동일한 도구를 내보내기 방향으로 사용합니다.
 
@@ -39,8 +40,8 @@ SQL INSERT, Append API, 파일 적재(machloader, csvimport), SQL 기반 파일 
 |----------|-----|-----|-----|---------|--------|
 | SQL INSERT | O | O | O | O | O |
 | INSERT SELECT | O | O | O | O | O |
-| INSERT ON DUPLICATE KEY UPDATE | X | X | X | O (PK 필요) | O (PK 필요) |
-| Append API | O | O | O (client API) | O | O |
+| INSERT ON DUPLICATE KEY UPDATE | X | X | O (PK 또는 UNIQUE 필요) | O (PK 필요) | O (PK 필요) |
+| Append API | O | O | O (client API) | X | O |
 | LOAD DATA INFILE | O | O | O | O | O |
 | machloader | O | O | O | O | O |
 | csvimport | O | O | O | O | O |
@@ -70,7 +71,7 @@ SQL INSERT, Append API, 파일 적재(machloader, csvimport), SQL 기반 파일 
 ##### VOLATILE / LOOKUP 테이블
 
 - **참조 데이터 초기 로드**: SQL INSERT 또는 machloader
-- **UPSERT**: INSERT ON DUPLICATE KEY UPDATE (PK 있는 VOLATILE/LOOKUP)
+- **UPSERT**: INSERT ON DUPLICATE KEY UPDATE (RDB 또는 PK가 있는 VOLATILE/LOOKUP)
 - **설정 업데이트**: SQL UPDATE (PK 기준)
 
 <a id="selection-input-method-selection-input-method-guide"></a>
@@ -205,10 +206,16 @@ SELECT _arrival_time, sensor_id, ts, value FROM sensor_log;
 
 #### INSERT ON DUPLICATE KEY UPDATE (UPSERT)
 
-PRIMARY KEY가 지정된 VOLATILE 또는 LOOKUP 테이블에서 PK 중복 시 자동 UPDATE되는 구문입니다.
+RDB 테이블은 PRIMARY KEY 또는 UNIQUE 인덱스 충돌을, VOLATILE과 LOOKUP 테이블은 PRIMARY
+KEY 충돌을 `UPDATE`로 처리할 수 있습니다.
 
 ```sql
--- PK 중복 없으면 INSERT, 있으면 UPDATE
+-- RDB: PK 중복 시 기존 값과 삽입 시도 값을 사용해 UPDATE
+INSERT INTO orders VALUES (1001, 'PAID', 3)
+ON DUPLICATE KEY UPDATE
+SET status = EXCLUDED.status, qty = qty + EXCLUDED.qty;
+
+-- VOLATILE: PK 중복 없으면 INSERT, 있으면 UPDATE
 INSERT INTO device_status VALUES ('DEV-01', 'ALARM', 95.3, NOW)
 ON DUPLICATE KEY UPDATE SET status = 'ALARM', value = 95.3, updated_at = NOW;
 
@@ -216,13 +223,14 @@ ON DUPLICATE KEY UPDATE SET status = 'ALARM', value = 95.3, updated_at = NOW;
 INSERT INTO device_status VALUES ('DEV-02', 'NORMAL', 23.5, NOW)
 ON DUPLICATE KEY UPDATE SET status = 'NORMAL', value = 24.0, updated_at = NOW;
 
--- LOOKUP 테이블에서도 PK 기준으로 UPSERT 가능
+-- LOOKUP: PK 중복 시 참조 정보 갱신
 INSERT INTO alarm_threshold VALUES ('TEMP-01', 85.0, 5.0)
 ON DUPLICATE KEY UPDATE SET high_limit = 85.0, low_limit = 5.0;
 ```
 
-`SET` 절에는 갱신할 값을 명시합니다. 현재 빌드에서는 `value = value + 1`처럼 기존 값을
-참조해 계산하는 UPSERT 표현식을 사용할 수 없습니다.
+RDB의 `SET` 절에서는 기존 컬럼과 `EXCLUDED.column_name`을 참조할 수 있습니다. VOLATILE의
+`SET` 절에는 갱신할 값을 명시하며, `value = value + 1`처럼 기존 값을 참조해 계산하는
+표현식은 사용할 수 없습니다.
 
 #### 다건 입력
 
@@ -324,7 +332,7 @@ MCHCloseAppender(appender, &successCnt, &failCnt);
 | 처리량 | TAG/LOG에서 수백만 건/초 수준 | 수천~수만 건/초 |
 | 트랜잭션 | TAG/LOG는 비트랜잭션, RDB는 batch 실행 구간에서 트랜잭션 처리 | O |
 | 오류 처리 | 실패 행 건너뜀 | 행별 오류 반환 |
-| 사용 테이블 | TAG, LOG, VOLATILE, LOOKUP, RDB(client append API) | 모든 테이블 |
+| 사용 테이블 | TAG, LOG, LOOKUP, RDB(client append API) | 모든 테이블 |
 | 사용 방법 | SDK 필요 | SQL 클라이언트 |
 
 #### REST API Append
@@ -1197,7 +1205,7 @@ done
 | 타입 불일치 | CSV 값이 컬럼 타입과 맞지 않음 | bad 파일로 분리, 전처리 후 재시도 |
 | VARCHAR 초과 | 값이 컬럼 최대 길이 초과 | 자동 잘림 또는 오류 기록 |
 | NULL 제약 위반 | NOT NULL 컬럼에 NULL 값 | bad 파일로 분리 |
-| 중복 PK | LOOKUP/VOLATILE에서 PK 중복 | UPSERT 또는 사전 정리 |
+| 중복 PK | RDB/LOOKUP/VOLATILE에서 PK 또는 UNIQUE 키 중복 | UPSERT 또는 사전 정리 |
 | 날짜 형식 오류 | DATETIME 파싱 실패 | `-F` 옵션으로 형식 명시 |
 
 #### machloader: bad 파일과 로그 파일

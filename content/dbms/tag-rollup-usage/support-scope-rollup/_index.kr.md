@@ -21,7 +21,9 @@ toc: true
 | 확장 ROLLUP (EXTENSION) | O | O |
 | Rollup Rebuild (`EXEC ROLLUP_REBUILD`) | O | X |
 
-> **Custom Rollup과 Rollup Rebuild는 Cluster Edition에서 지원하지 않습니다.** 소스 코드(`qpvRollup.c`) 기준으로 Cluster Edition에서 Custom Rollup 생성 시 `ERR_QP_CUSTOM_ROLLUP_NOT_SUPPORTED_IN_CLUSTER` 오류가 반환됩니다.
+> **Custom Rollup과 Rollup Rebuild는 Cluster Edition에서 지원하지 않습니다.** Cluster
+> Edition에서 Custom Rollup을 생성하면 `ERR_QP_CUSTOM_ROLLUP_NOT_SUPPORTED_IN_CLUSTER`
+> 오류가 반환됩니다.
 >
 > 기본 ROLLUP 스레드는 Cluster Edition에서 각 노드에서 독립적으로 동작합니다.
 

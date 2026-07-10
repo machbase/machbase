@@ -29,7 +29,7 @@ RDB 테이블의 주요 특성은 다음과 같습니다.
 | 주요 용도 | 관계형 업무 데이터, 마스터 데이터, 집계 결과, 상태 관리 |
 | 주요 DML | INSERT, SELECT, UPDATE, DELETE |
 | 키와 인덱스 | PRIMARY KEY, UNIQUE, 일반 인덱스 |
-| 트랜잭션 | `BEGIN`, `COMMIT`, `ROLLBACK` 지원 |
+| 트랜잭션 | RDB DML에 `BEGIN`, `COMMIT`, `ROLLBACK` 지원 |
 | 부가 기능 | AUTO_INCREMENT, JSON 경로 인덱스, 백업·마운트 |
 | 에디션 | Standard Edition에서 사용 |
 
@@ -41,7 +41,7 @@ RDB 테이블의 주요 특성은 다음과 같습니다.
 
 - 행 단위 UPDATE와 DELETE가 필요합니다.
 - PRIMARY KEY 또는 인덱스 기반으로 특정 행을 자주 조회합니다.
-- 트랜잭션으로 여러 DML을 하나의 작업 단위로 묶어야 합니다.
+- RDB DML을 트랜잭션으로 하나의 작업 단위로 묶어야 합니다.
 - TAG, LOG 테이블의 원본 데이터를 집계한 결과를 업무 테이블로 관리합니다.
 - JSON 컬럼과 JSON path 인덱스를 관계형 조회와 함께 사용해야 합니다.
 - 백업·마운트 대상에 포함되는 관계형 데이터를 관리합니다.
@@ -78,6 +78,6 @@ RDB 테이블 설계 시 다음 순서로 결정합니다.
 2. 자동 번호가 필요하면 `AUTO_INCREMENT` 사용 여부를 결정합니다.
 3. 조회, UPDATE, DELETE 조건에 맞춰 보조 인덱스를 설계합니다.
 4. 트랜잭션 경계를 정하고 장시간 열린 트랜잭션을 피합니다.
-5. 백업, 마운트, sidecar 복구 절차를 운영 정책에 포함합니다.
+5. 백업, 마운트, RDB 보조 데이터 파일(sidecar) 복구 절차를 운영 정책에 포함합니다.
 
 스키마 설계는 [테이블 구조와 스키마](/dbms/rdb-table-usage/table-structure-schema/)에서, 트랜잭션은 [트랜잭션](/dbms/rdb-table-usage/transaction/)에서 다룹니다.

@@ -78,6 +78,50 @@ CREATE RDB TABLE device_master (
 
 `AUTO_INCREMENT` 컬럼은 단일 64비트 정수 PRIMARY KEY에 사용합니다. INSERT 방식과 catalog 확인 방법은 [AUTO_INCREMENT](/dbms/rdb-table-usage/auto-increment/)에서 다룹니다.
 
+<a id="alter-rdb-table"></a>
+
+## RDB 테이블 변경
+
+RDB 테이블은 컬럼 추가·삭제, 컬럼 이름 변경, 테이블 이름 변경을 지원합니다.
+RDB 테이블에서는 `MODIFY COLUMN`을 사용하지 않습니다.
+
+### 컬럼 추가
+
+`ADD COLUMN`의 컬럼 정의는 괄호로 묶습니다. `DEFAULT`를 지정하면 기존 row에도 기본값이
+적용됩니다.
+
+```sql
+ALTER TABLE product_catalog
+ADD COLUMN (stock_qty INTEGER DEFAULT 0);
+```
+
+### 컬럼 삭제
+
+```sql
+ALTER TABLE product_catalog
+DROP COLUMN (stock_qty);
+```
+
+PRIMARY KEY, UNIQUE INDEX, 일반 인덱스, JSON path 인덱스가 참조하는 컬럼은 바로 삭제할 수
+없습니다. 해당 인덱스를 먼저 삭제한 뒤 컬럼을 삭제합니다. 테이블의 마지막 컬럼은 삭제할 수
+없습니다.
+
+```sql
+DROP INDEX idx_inventory_warehouse;
+ALTER TABLE inventory DROP COLUMN (warehouse);
+```
+
+### 컬럼과 테이블 이름 변경
+
+```sql
+ALTER TABLE product_catalog RENAME COLUMN name TO product_name;
+ALTER TABLE product_catalog RENAME TO product_master;
+```
+
+이름을 변경해도 기존 row와 RDB 인덱스 정의는 유지됩니다. VIEW가 RDB 테이블이나 대상 컬럼을
+참조하고 있으면 VIEW 정의가 깨지지 않도록 관련 `ALTER TABLE`과 `DROP TABLE`이 거부됩니다.
+의존 VIEW를 먼저 삭제하거나 변경한 뒤 DDL을 실행합니다.
+
 <a id="drop-rdb-table"></a>
 
 ## RDB 테이블 삭제
@@ -96,6 +140,7 @@ DROP TABLE product_catalog;
 
 - DDL은 운영 중인 DML과 충돌할 수 있으므로 변경 시간대를 분리합니다.
 - 장시간 열린 트랜잭션이 있으면 DDL이 지연되거나 실패할 수 있습니다.
+- 열린 RDB 결과 커서가 있으면 관련 DDL이 실패할 수 있으므로 커서를 닫은 뒤 실행합니다.
 - RDB 테이블은 Standard Edition 전용입니다.
 - RDB 테이블에는 TAG 전용 `METADATA`, `BASETIME`, `BASEDISTANCE` 절을 사용할 수 없습니다.
-- 백업·복구 정책에는 RDB sidecar 파일 포함 여부를 함께 확인합니다.
+- 백업·복구 정책에는 RDB 보조 데이터 파일(sidecar) 포함 여부를 함께 확인합니다.

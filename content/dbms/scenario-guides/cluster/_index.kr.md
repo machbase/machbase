@@ -2,6 +2,7 @@
 type: docs
 title: '15.7 Cluster 설치와 확장'
 weight: 120
+toc: true
 ---
 
 Machbase Cluster Edition은 대용량 시계열 데이터를 여러 노드에 분산 저장·처리합니다. Cluster 초기 구성부터 운영 중 Warehouse 노드 추가를 통한 수평 확장 절차까지 다룹니다.
@@ -137,7 +138,7 @@ Cluster Edition에서는 다음 기능이 지원되지 않습니다.
 | RDB 테이블 | X |
 | Custom ROLLUP | X |
 | ROLLUP_REBUILD | X |
-| MOUNT / UNMOUNT | X |
+| MOUNT / UMOUNT | X |
 | STREAM / CQL | X |
 
 전체 제한사항 목록은 [Cluster 운영 제한사항](/dbms/operations-configuration-recovery/cluster/#limitations-cluster)을 참고하세요.

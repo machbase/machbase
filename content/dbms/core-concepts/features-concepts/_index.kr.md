@@ -2,6 +2,7 @@
 type: docs
 title: '2.3 주요 기능 개념'
 weight: 30
+toc: true
 ---
 Machbase DBMS의 핵심 기능들이 어떤 역할을 하고 언제 사용하는지를 개념 수준에서 다룹니다. SQL 문법이나 설정 파라미터는 각 기능의 상세 문서를 참고하십시오.
 
@@ -205,8 +206,8 @@ Backup, Restore, Mount는 데이터 보호와 복구를 담당하는 세 가지 
 
 Backup 작업은 `LAUNCHED` -> `PROGRESS` -> `FINISHED` (실패 시 `ERROR`) 순으로 진행됩니다.
 
-RDB 테이블을 사용하는 데이터베이스에서는 RDB row/index 저장 파일을 보존하기 위한 sidecar
-데이터가 함께 포함됩니다. 수동 파일 복사로 대체하면 이 sidecar가
+RDB 테이블을 사용하는 데이터베이스에서는 row와 index를 저장하는 RDB 보조 데이터
+파일(sidecar)이 함께 포함됩니다. 수동 파일 복사로 대체하면 이 RDB 보조 파일이
 누락될 수 있으므로 반드시 Machbase가 제공하는 Backup/Restore/Mount 절차를 사용해야 합니다.
 
 | 유형 | 설명 |
@@ -246,8 +247,8 @@ MOUNT DATABASE '/data/backup/full_20260703' TO MOUNTDB;
 -- Mount된 데이터 조회
 SELECT * FROM MOUNTDB.sensor_values LIMIT 10;
 
--- Unmount
-UNMOUNT DATABASE MOUNTDB;
+-- 마운트 해제
+UMOUNT DATABASE MOUNTDB;
 ```
 
 Restore와 달리 데이터를 원래 위치에 복사하지 않습니다. 백업본 디렉터리를 그대로 참조하므로, 과거 특정 시점의 데이터를 조회하거나 검증하는 데 적합합니다.

@@ -2,9 +2,11 @@
 type: docs
 title: '17.8.3 RDB 기능 지원표'
 weight: 30
+toc: true
 ---
 
-Machbase RDB 테이블은 트랜잭션이 필요한 일반 관계형 데이터를 저장합니다. SQL 표준을 준수하며, JDBC/ODBC 등 표준 드라이버를 통해 접근합니다.
+Machbase RDB 테이블은 트랜잭션이 필요한 일반 관계형 데이터를 저장합니다. Machbase SQL과
+JDBC/ODBC 등 지원 드라이버를 통해 접근합니다.
 
 > **주의**: RDB 테이블은 **Standard Edition에서만 지원**됩니다. Cluster Edition에서는 RDB 테이블을 생성하거나 사용할 수 없습니다.
 
@@ -17,8 +19,10 @@ Machbase RDB 테이블은 트랜잭션이 필요한 일반 관계형 데이터�
 | INSERT | O | |
 | UPDATE | O | |
 | DELETE | O | |
+| INSERT ... ON DUPLICATE KEY UPDATE | O | PRIMARY KEY·UNIQUE INDEX 충돌 시 기존 row 갱신 |
+| Append API | O | CLI/ODBC batch·stream 경로 지원 |
 | **트랜잭션** | | |
-| Transaction (COMMIT/ROLLBACK) | O | `conn.setAutoCommit(false)` |
+| Transaction (COMMIT/ROLLBACK) | O | plain `BEGIN`, `COMMIT`, `ROLLBACK` |
 | Savepoint | X | 미지원 |
 | **쿼리 기능** | | |
 | Prepared Statement | O | |
@@ -28,21 +32,30 @@ Machbase RDB 테이블은 트랜잭션이 필요한 일반 관계형 데이터�
 | VIEW | O | |
 | **객체** | | |
 | SEQUENCE | O | `CREATE SEQUENCE` |
-| INDEX | O | |
+| PRIMARY KEY / UNIQUE INDEX | O | 단일 PRIMARY KEY와 단일·복합 UNIQUE INDEX |
+| 보조 INDEX | O | 단일·복합 BTREE 인덱스 |
+| JSON path INDEX | O | `json_column->'$.path'` |
+| AUTO_INCREMENT | O | `LONG`/`INT64` 컬럼 단위 PRIMARY KEY |
+| ALTER ADD/DROP COLUMN | O | 컬럼 정의에 괄호 사용 |
+| ALTER RENAME COLUMN / RENAME TO | O | 컬럼명·테이블명 변경 |
+| ALTER MODIFY COLUMN | X | 미지원 |
 | Trigger | X | 미지원 |
 | Stored Procedure | X | 미지원 |
 | Foreign Key | X | 미지원 |
 
+`AUTO_INCREMENT` 사용법은 [AUTO_INCREMENT](/dbms/rdb-table-usage/auto-increment/), upsert는
+[INSERT ON DUPLICATE KEY UPDATE](/dbms/rdb-table-usage/insert-on-duplicate-key-update/), Append
+동작은 [Append API 지원 범위](/dbms/rdb-table-usage/sdk-append-scope/)를 참고하세요.
+
 ## RDB 테이블 생성 예시
 
 ```sql
-CREATE TABLE orders (
-    order_id   INTEGER,
+CREATE RDB TABLE orders (
+    order_id   INTEGER PRIMARY KEY,
     customer   VARCHAR(100),
     amount     DOUBLE,
-    order_date DATETIME,
-    PRIMARY KEY (order_id)
-) ENGINE=RDB;
+    order_date DATETIME
+);
 ```
 
 ## 트랜잭션 사용 예시 (JDBC)
@@ -50,15 +63,14 @@ CREATE TABLE orders (
 ```java
 Connection conn = DriverManager.getConnection(
     "jdbc:machbase://127.0.0.1:5656/machbasedb", "SYS", "MANAGER");
-conn.setAutoCommit(false);
-
 try {
     Statement stmt = conn.createStatement();
+    stmt.execute("BEGIN");
     stmt.executeUpdate("INSERT INTO orders VALUES (1, 'customer_a', 50000, NOW())");
     stmt.executeUpdate("INSERT INTO orders VALUES (2, 'customer_b', 30000, NOW())");
-    conn.commit();
+    stmt.execute("COMMIT");
 } catch (SQLException e) {
-    conn.rollback();
+    conn.createStatement().execute("ROLLBACK");
 }
 ```
 

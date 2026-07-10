@@ -2,6 +2,7 @@
 type: docs
 title: '17.1.1.9 DDL syntax'
 weight: 90
+toc: true
 ---
 
 DDL(Data Definition Language)은 테이블, 인덱스, 뷰, 롤업 등 데이터베이스 객체를 생성·수정·삭제하는 구문입니다.
@@ -141,7 +142,10 @@ DROP TABLE sensor_log;
 
 ## ALTER TABLE
 
-`ALTER TABLE`은 테이블의 스키마를 변경합니다. LOG 테이블에서만 사용할 수 있습니다.
+`ALTER TABLE`은 테이블의 스키마를 변경합니다. 사용할 수 있는 하위 구문은 테이블 타입에 따라
+다릅니다. RDB 테이블은 `ADD COLUMN`, `DROP COLUMN`, `RENAME COLUMN`, `RENAME TO`를
+지원합니다. TAG 메타데이터 컬럼은 `METADATA ADD COLUMN`과 `METADATA DROP COLUMN`을
+사용합니다.
 
 ### ADD COLUMN
 
@@ -154,6 +158,9 @@ alter_table_add_stmt ::=
 ```sql
 -- 컬럼 추가
 ALTER TABLE sensor_log ADD COLUMN (quality FLOAT);
+
+-- RDB 컬럼 추가
+ALTER TABLE product_master ADD COLUMN (stock_qty INTEGER DEFAULT 0);
 
 -- 기본값과 함께 추가
 ALTER TABLE sensor_log ADD COLUMN (flag INTEGER DEFAULT 0);
@@ -169,6 +176,7 @@ alter_table_drop_stmt ::=
 
 ```sql
 ALTER TABLE sensor_log DROP COLUMN (quality);
+ALTER TABLE product_master DROP COLUMN (stock_qty);
 ```
 
 ### RENAME COLUMN
@@ -180,6 +188,7 @@ alter_table_column_rename_stmt ::=
 
 ```sql
 ALTER TABLE sensor_log RENAME COLUMN status TO device_status;
+ALTER TABLE product_master RENAME COLUMN name TO product_name;
 ```
 
 ### MODIFY COLUMN
@@ -191,7 +200,9 @@ alter_table_modify_stmt ::=
     | column_name ( 'NOT NULL' | 'NULL' | 'SET' 'MINMAX_CACHE_SIZE' '=' value ) )
 ```
 
-VARCHAR 컬럼의 길이를 늘리거나(줄이기 불가), NOT NULL 제약 조건을 추가·제거하거나, MINMAX_CACHE_SIZE를 변경합니다.
+LOG·TAG 일반 컬럼에서 VARCHAR 컬럼의 길이를 늘리거나(줄이기 불가), NOT NULL 제약 조건을
+추가·제거하거나, MINMAX_CACHE_SIZE를 변경합니다. RDB 테이블은 `MODIFY COLUMN`을
+지원하지 않습니다.
 
 ```sql
 -- VARCHAR 길이 확장 (줄이기 불가)
@@ -215,8 +226,8 @@ alter_table_rename_stmt ::=
 ```
 
 ```sql
--- LOG 테이블에서만 지원
-ALTER TABLE old_table_name RENAME TO new_table_name;
+-- RDB 테이블에서 지원
+ALTER TABLE product_master RENAME TO product_catalog;
 ```
 
 ### ADD / DROP RETENTION

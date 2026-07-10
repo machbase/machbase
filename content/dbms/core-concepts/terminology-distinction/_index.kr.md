@@ -2,6 +2,7 @@
 type: docs
 title: '2.5 용어 구분'
 weight: 50
+toc: true
 ---
 운영에서 자주 혼동되는 개념 쌍들을 비교 표와 함께 구분합니다. 각 항목은 "어떤 상황에 무엇을 선택하는가"에 초점을 맞추었습니다.
 
@@ -131,7 +132,7 @@ WHERE name = 'temp_sensor_01'
 
 ### TRUNCATE: 테이블 전체 즉시 삭제
 
-지원 대상 테이블의 모든 데이터를 즉시 삭제합니다. WHERE 조건 없이 한 줄로 전체 데이터가 제거됩니다. LOG 테이블과 RDB 테이블(지원 버전)에 사용합니다.
+지원 대상 테이블의 모든 데이터를 즉시 삭제합니다. WHERE 조건 없이 한 줄로 전체 데이터가 제거됩니다. LOG 테이블과 RDB 테이블에 사용합니다.
 
 ```sql
 TRUNCATE TABLE device_log;
@@ -216,7 +217,7 @@ WHERE time BETWEEN TO_DATE('2026-07-01', 'YYYY-MM-DD')
                 AND TO_DATE('2026-07-02', 'YYYY-MM-DD');
 
 -- 마운트 해제
-UNMOUNT DATABASE BACKUP_VIEW;
+UMOUNT DATABASE BACKUP_VIEW;
 ```
 
 Restore와 달리 데이터를 원래 위치에 복원하지 않습니다. 백업 디렉터리를 그대로 참조하므로 디스크 공간을 추가로 사용하지 않고 과거 시점 데이터를 확인합니다.

@@ -361,7 +361,8 @@ Broker와 Warehouse 노드에는 선택적으로 `dbs_path`를 지정합니다. 
 
 기존 `cluster.package.path`는 하위 호환 입력으로 사용할 수 있지만, 새로 작성하는 YAML에서는 `origin_path`를 사용합니다.
 
-Tag update가 반영된 빌드에서는 Lookup, Broker, Warehouse의 HTTP 관리 포트도 `http_admin_port`로 작성할 수 있습니다. `main` 또는 RDB 구현 브랜치 기반 빌드에서는 Broker HTTP 포트가 `http_port_no`로 기록되고, Lookup과 Warehouse의 `http_admin_port` 입력을 지원하지 않습니다.
+`http_admin_port`는 Coordinator와 Deployer에만 사용합니다. Broker의 REST/Web API 포트는
+`http_port_no`로 작성합니다. Lookup과 Warehouse에는 HTTP 포트 필드를 지정하지 않습니다.
 
 작성이 완료되면 유효성을 검사합니다.
 
@@ -994,7 +995,8 @@ machcoordinatoradmin --add-node="192.168.1.14:5501" \
 
 별도 `--add-group` 명령은 사용하지 않습니다. Warehouse 그룹 이름은 각 Warehouse 노드를 등록할 때 `--group`으로 지정합니다.
 
-Tag update가 반영된 빌드에서 Warehouse HTTP 포트를 별도로 지정해야 하는 경우에는 Warehouse `--add-node`에 `--http-port-no`를 추가합니다. `main` 또는 RDB 구현 브랜치 기반 빌드에서는 Warehouse 설정 생성 시 `HTTP_PORT_NO`를 기록하지 않습니다.
+Warehouse `--add-node`에는 `--http-port-no`를 지정하지 않습니다. Warehouse는 HTTP listener를
+노출하지 않으며, `HTTP_PORT_NO`는 Broker의 REST/Web API 포트에만 사용합니다.
 
 ##### 3. 노드 시작
 

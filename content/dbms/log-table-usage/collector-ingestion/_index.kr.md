@@ -282,8 +282,8 @@ ALTER COLLECTOR localhost.file_sensor STOP;
 
 ### socket Collector
 
-현재 확인된 Collector `COLLECT_TYPE`은 `FILE`과 `SFTP`입니다. TCP/UDP socket 수집
-설정은 현재 브랜치의 Collector 타입 파서에서 확인되지 않았으므로 설정 예제를 제공하지 않습니다.
+Collector `COLLECT_TYPE`은 `FILE`과 `SFTP`를 지원합니다. TCP/UDP socket 수집 타입은
+지원하지 않으므로 socket Collector 설정 예제를 제공하지 않습니다.
 
 네트워크를 통해 실시간 데이터를 입력해야 하는 경우에는 REST API 또는
 SDK Append API를 직접 호출하는 방식을 우선 검토합니다.
@@ -398,8 +398,8 @@ ALTER COLLECTOR localhost.sftp_sensor START;
 
 ### ODBC Collector
 
-현재 확인된 Collector `COLLECT_TYPE`은 `FILE`과 `SFTP`입니다. ODBC 수집 설정은
-현재 브랜치의 Collector 타입 파서에서 확인되지 않았으므로 설정 예제를 제공하지 않습니다.
+Collector `COLLECT_TYPE`은 `FILE`과 `SFTP`를 지원합니다. ODBC 수집 타입은 지원하지 않으므로
+ODBC Collector 설정 예제를 제공하지 않습니다.
 
 외부 RDBMS 데이터를 Machbase로 이전하거나 주기적으로 적재해야 하는 경우에는 다음 경로를
 검토합니다.

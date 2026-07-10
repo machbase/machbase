@@ -186,7 +186,9 @@ ls $MACHBASE_HOME/conf/
 
 실제 사용 파일은 `machbase.conf`입니다. Standard full 패키지는 빌드 과정에서 `machbase.conf.sample.standard`를 복사해 `machbase.conf`를 포함합니다. 실제 파일이 없는 패키지에서는 에디션에 맞는 샘플 파일을 복사하여 수정합니다.
 
-RDB 테이블 기능이 포함된 빌드의 Standard/Edge 샘플에는 RDB 테이블 sidecar 파일 동작을 제어하는 `RDB_BUSY_TIMEOUT_MS`, `RDB_SYNCHRONOUS`, `RDB_JOURNAL_MODE` 설정이 포함될 수 있습니다. 해당 항목이 없는 패키지에서는 추가하지 말고, RDB 테이블을 사용하는 환경에서만 기본값과 운영 중 busy timeout 또는 SQLite 동기화 정책 조정 필요성을 검토합니다.
+Standard/Edge 샘플에는 RDB 보조 데이터 파일(sidecar)의 동작을 제어하는 `RDB_BUSY_TIMEOUT_MS`,
+`RDB_SYNCHRONOUS`, `RDB_JOURNAL_MODE` 설정이 포함됩니다. RDB 테이블을 사용하는 환경에서는
+기본값을 먼저 사용하고, 쓰기 충돌이나 내구성 요구를 검토한 뒤 값을 조정합니다.
 
 ---
 

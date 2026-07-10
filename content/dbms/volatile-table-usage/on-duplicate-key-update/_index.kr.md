@@ -73,4 +73,4 @@ ON DUPLICATE KEY UPDATE SET cnt = 2, last_seen = NOW;
 - `ON DUPLICATE KEY UPDATE`는 VOLATILE 테이블에서 동작합니다. TAG, LOG 테이블에서는 사용할 수 없습니다.
 - UPDATE 절에서 PRIMARY KEY 컬럼 값을 변경하지 마십시오.
 - `ON DUPLICATE KEY UPDATE SET` 절에는 갱신할 값을 명시합니다. `cnt = cnt + 1`처럼 기존 값을
-  참조해 계산하는 카운터 표현식은 현재 빌드에서 사용할 수 없습니다.
+  참조해 계산하는 카운터 표현식은 사용할 수 없습니다.
