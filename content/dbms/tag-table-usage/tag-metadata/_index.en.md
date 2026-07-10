@@ -8,7 +8,7 @@ English structure placeholder. Korean content is authoritative for this restruct
 
 <a id="original-85-tag-metadata"></a>
 
-## Original 8.5 TAG metadata
+## TAG Metadata
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.
 

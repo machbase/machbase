@@ -8,12 +8,12 @@ English structure placeholder. Korean content is authoritative for this restruct
 
 <a id="original-85-deleting-data"></a>
 
-## Original 8.5 TAG data delete
+## TAG Data Delete
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.
 
 <a id="original-85-duplication-removal"></a>
 
-## Original 8.5 TAG duplication removal
+## TAG Duplication Removal
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.

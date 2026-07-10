@@ -36,18 +36,18 @@ English structure placeholder. Korean content is authoritative for this restruct
 
 <a id="original-85-lsl-usl-limits"></a>
 
-## Original 8.5 TAG LSL USL limits
+## TAG LSL/USL Limits
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.
 
 <a id="original-85-binary-columns"></a>
 
-## Original 8.5 TAG binary columns
+## TAG Binary Columns
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.
 
 <a id="original-85-varchar-storage"></a>
 
-## Original 8.5 TAG varchar storage
+## TAG VARCHAR Storage
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.

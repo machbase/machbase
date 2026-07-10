@@ -24,7 +24,7 @@ English structure placeholder. Korean content is authoritative for this restruct
 
 <a id="original-85-network-type"></a>
 
-## Original 8.5 LOG network type
+## LOG Network Type
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.
 

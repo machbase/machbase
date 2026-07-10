@@ -12,6 +12,6 @@ English structure placeholder. Korean content is authoritative for this restruct
 
 <a id="original-85-log-indexes"></a>
 
-## Original 8.5 LOG indexes
+## LOG Indexes
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.

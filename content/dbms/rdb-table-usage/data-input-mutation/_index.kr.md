@@ -6,6 +6,8 @@ toc: true
 
 RDB 테이블의 INSERT, UPDATE, DELETE 사용법과 INSERT SELECT 패턴을 다룬다.
 
+RDB 테이블에서 "없으면 INSERT, 있으면 UPDATE"가 필요한 경우에는 [INSERT ON DUPLICATE KEY UPDATE](/dbms/rdb-table-usage/insert-on-duplicate-key-update/)를 사용한다. 자동 번호 PRIMARY KEY가 필요한 INSERT 패턴은 [AUTO_INCREMENT](/dbms/rdb-table-usage/auto-increment/)에서 다룬다.
+
 
 <a id="modeling-rdb-update-delete"></a>
 
@@ -127,3 +129,4 @@ WHERE customer = 'CUST-001'
 
 - `INSERT SELECT`는 하나의 트랜잭션으로 처리된다. 대량 데이터는 배치로 분할하여 실행한다.
 - SELECT 결과의 컬럼 수와 타입이 INSERT 대상 테이블의 컬럼과 일치해야 한다.
+- `INSERT SELECT`와 `ON DUPLICATE KEY UPDATE`의 결합은 지원하지 않는다.

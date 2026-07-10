@@ -8,6 +8,6 @@ English structure placeholder. Korean content is authoritative for this restruct
 
 <a id="original-85-creating-lookup-tables"></a>
 
-## Original 8.5 LOOKUP create/drop
+## LOOKUP Create, Alter, and Drop
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.

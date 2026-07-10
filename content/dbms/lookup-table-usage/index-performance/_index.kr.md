@@ -156,7 +156,6 @@ CREATE INDEX idx_category ON device_master_log (category) INDEX_TYPE BITMAP;
 
 ## Lookup 인덱스 생성 및 관리
 
-> **8.5 원문 보강 자료**: 이 문서는 기존 8.5 매뉴얼의 내용을 새 장 구조에 맞춰 보존한 것입니다. Machbase 8.6 기준과 표현이 다른 부분은 같은 절의 최신 리뉴얼 문서를 우선합니다.
 
 Lookup 테이블은 RED-BLACK 인덱스를 지원한다. `INDEX_TYPE LSM`을
 지정해도 RED-BLACK 인덱스가 생성된다. `KEYWORD` 인덱스는 LOG 테이블에서만 사용할 수 있다.

@@ -8,7 +8,7 @@ English structure placeholder. Korean content is authoritative for this restruct
 
 <a id="original-85-creating-volatile-tables"></a>
 
-## Original 8.5 VOLATILE create/drop
+## VOLATILE Create, Alter, and Drop
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.
 

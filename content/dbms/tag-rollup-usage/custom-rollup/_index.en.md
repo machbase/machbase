@@ -8,7 +8,7 @@ English structure placeholder. Korean content is authoritative for this restruct
 
 <a id="original-85-rollup-custom"></a>
 
-## Original 8.5 custom ROLLUP
+## Custom ROLLUP
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.
 

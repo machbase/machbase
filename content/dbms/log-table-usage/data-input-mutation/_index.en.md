@@ -8,24 +8,24 @@ English structure placeholder. Korean content is authoritative for this restruct
 
 <a id="original-85-insert-data"></a>
 
-## Original 8.5 LOG insert
+## LOG INSERT
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.
 
 <a id="original-85-append-data"></a>
 
-## Original 8.5 LOG append
+## LOG Append
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.
 
 <a id="original-85-import-data"></a>
 
-## Original 8.5 LOG import
+## LOG Import
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.
 
 <a id="original-85-load-data"></a>
 
-## Original 8.5 LOG load data
+## LOG Load Data
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.

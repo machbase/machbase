@@ -12,6 +12,6 @@ English structure placeholder. Korean content is authoritative for this restruct
 
 <a id="original-85-rollup-tables"></a>
 
-## Original 8.5 ROLLUP tables
+## ROLLUP Overview
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.

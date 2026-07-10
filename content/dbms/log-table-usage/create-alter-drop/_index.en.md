@@ -8,6 +8,6 @@ English structure placeholder. Korean content is authoritative for this restruct
 
 <a id="original-85-creating-log-tables"></a>
 
-## Original 8.5 LOG create/drop
+## LOG Create, Alter, and Drop
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.

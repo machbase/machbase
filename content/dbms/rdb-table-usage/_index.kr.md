@@ -25,3 +25,5 @@ RDB 테이블은 관계형 업무 데이터와 트랜잭션 처리가 필요한 
 | [JOIN과 관계형 조회 설계](./join-relational-query/) | RDB-LOOKUP, RDB-TAG, RDB-RDB JOIN |
 | [RDB 백업, 마운트, sidecar](./backup-mount-sidecar/) | 백업/복원 절차, sidecar 구조와 복구 |
 | [Append API 미지원과 SDK 사용 범위](./sdk-append-scope/) | Append API 동작 방식, SDK별 지원 현황 |
+| [AUTO_INCREMENT](./auto-increment/) | RDB PRIMARY KEY 자동 번호 생성 |
+| [INSERT ON DUPLICATE KEY UPDATE](./insert-on-duplicate-key-update/) | RDB upsert 문법과 충돌 처리 |

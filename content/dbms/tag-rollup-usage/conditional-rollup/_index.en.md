@@ -8,13 +8,13 @@ English structure placeholder. Korean content is authoritative for this restruct
 
 <a id="original-85-rollup-conditional"></a>
 
-## Original 8.5 conditional ROLLUP
+## Conditional ROLLUP
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.
 
 <a id="original-85-rollup-conditional-extension"></a>
 
-## Original 8.5 conditional ROLLUP extension
+## Conditional ROLLUP Extension
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.
 

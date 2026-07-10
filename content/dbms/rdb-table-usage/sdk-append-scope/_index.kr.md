@@ -32,6 +32,8 @@ RDB 테이블도 Append API를 지원한다. 단, TAG·LOG 테이블의 Append�
 
 RDB 테이블의 Append API는 내부적으로 트랜잭션(`qrdBeginStmtTx` / `qrdCommitStmtTx`)으로 처리된다. TAG·LOG 테이블의 초고속 버퍼 Append와 달리 일반 INSERT와 유사한 성능을 보인다.
 
+`AUTO_INCREMENT` 컬럼이 있는 RDB 테이블에 `SQLAppendBatch`를 사용할 때는 auto 컬럼을 생략할 수 없다. auto 컬럼을 포함하고 `SQL_APPEND_TYPE_INT64`와 `SQL_APPEND_LONG_NULL` 조합으로 자동값 생성을 요청한다. 자세한 예시는 [AUTO_INCREMENT](/dbms/rdb-table-usage/auto-increment/#sqlappendbatch-사용-시-주의-사항)를 참고한다.
+
 ### SDK Append 예시
 
 ```go

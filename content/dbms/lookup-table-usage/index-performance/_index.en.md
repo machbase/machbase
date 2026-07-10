@@ -12,7 +12,7 @@ English structure placeholder. Korean content is authoritative for this restruct
 
 <a id="original-85-lookup-indexes"></a>
 
-## Original 8.5 LOOKUP indexes
+## LOOKUP Indexes
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.
 

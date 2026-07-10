@@ -8,12 +8,12 @@ English structure placeholder. Korean content is authoritative for this restruct
 
 <a id="original-85-insert-update"></a>
 
-## Original 8.5 VOLATILE insert update
+## VOLATILE INSERT and UPDATE
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.
 
 <a id="original-85-deleting-data"></a>
 
-## Original 8.5 VOLATILE delete
+## VOLATILE DELETE
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.

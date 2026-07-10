@@ -24,7 +24,7 @@ English structure placeholder. Korean content is authoritative for this restruct
 
 <a id="original-85-text-search"></a>
 
-## Original 8.5 LOG text search
+## LOG Text Search
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.
 

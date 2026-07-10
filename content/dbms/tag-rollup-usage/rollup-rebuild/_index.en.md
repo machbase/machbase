@@ -45,7 +45,7 @@ EXEC ROLLUP_REBUILD(sensor_tag, 'TEMP-01',
 
 <a id="original-85-rollup-rebuild"></a>
 
-## Original 8.5 ROLLUP rebuild
+## ROLLUP Rebuild
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.
 

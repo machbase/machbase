@@ -29,6 +29,7 @@ DELETE FROM order_history WHERE order_id = 1001;
 - **[활용 사례](/dbms/rdb-table-usage/patterns-scenarios/#use-cases-rdb)**
 - **[스키마 설계](/dbms/rdb-table-usage/table-structure-schema/#rdb-table-design-design-schema-type-rdb)**
 - **[PRIMARY KEY·UNIQUE·일반 인덱스 전략](/dbms/rdb-table-usage/rdb-index-json-path/#index-strategy-rdb-primary-key-unique-normal)**
+- **[AUTO_INCREMENT](/dbms/rdb-table-usage/auto-increment/)**
 - **[JSON 경로 인덱스](/dbms/rdb-table-usage/rdb-index-json-path/#index-strategy-rdb-json-path)**
 - **[트랜잭션 설계](/dbms/rdb-table-usage/transaction/#design-transaction-rdb)**
 - **[UPDATE·DELETE 설계](/dbms/rdb-table-usage/data-input-mutation/#modeling-rdb-update-delete)**
@@ -140,6 +141,18 @@ CREATE RDB TABLE product_catalog (
 
 CREATE PRIMARY KEY INDEX idx_pk_product ON product_catalog(product_id);
 ```
+
+자동 번호가 필요한 단일 64비트 정수 PRIMARY KEY에는 `AUTO_INCREMENT`를 사용할 수 있다.
+
+```sql
+CREATE RDB TABLE device_master (
+    id LONG PRIMARY KEY AUTO_INCREMENT,
+    device_name VARCHAR(80),
+    site_code VARCHAR(32)
+);
+```
+
+`AUTO_INCREMENT`의 지원 타입, INSERT 방식, catalog 확인 방법은 [AUTO_INCREMENT](/dbms/rdb-table-usage/auto-increment/)를 참고한다.
 
 #### 주의사항
 

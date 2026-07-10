@@ -8,12 +8,12 @@ English structure placeholder. Korean content is authoritative for this restruct
 
 <a id="original-85-inserting-data"></a>
 
-## Original 8.5 LOOKUP input
+## LOOKUP Data Input
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.
 
 <a id="original-85-deleting-data"></a>
 
-## Original 8.5 LOOKUP delete
+## LOOKUP Data Delete
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.

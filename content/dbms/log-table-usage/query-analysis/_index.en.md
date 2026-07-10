@@ -8,18 +8,18 @@ English structure placeholder. Korean content is authoritative for this restruct
 
 <a id="original-85-select-data"></a>
 
-## Original 8.5 LOG select
+## LOG SELECT
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.
 
 <a id="original-85-select-time-data"></a>
 
-## Original 8.5 LOG time select
+## LOG Time Range SELECT
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.
 
 <a id="original-85-simple-join"></a>
 
-## Original 8.5 LOG simple join
+## LOG Simple JOIN
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.
