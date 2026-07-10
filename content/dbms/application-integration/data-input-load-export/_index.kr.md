@@ -134,6 +134,7 @@ SQL INSERT, Append API, 파일 적재(machloader, csvimport), SQL 기반 파일 
 - **[Append API](/dbms/application-integration/data-input-load-export/#append)**: SDK 기반 초고속 대량 입력
 - **[LOAD DATA INFILE / FAST LOAD](/dbms/application-integration/data-input-load-export/#load-data-infile-fastload)**: SQL로 서버 측 파일 직접 로드
 
+<a id="insert"></a>
 <a id="sql-insert"></a>
 
 ### INSERT 구문
@@ -242,6 +243,7 @@ Mach> INSERT INTO sensor_log VALUES ('TEMP-01', NOW, 25.3);
 1 row(s) inserted.
 ```
 
+<a id="append"></a>
 <a id="sql-append"></a>
 
 ### Append API
@@ -335,6 +337,7 @@ REST API를 통한 Append도 동일한 고속 경로를 사용합니다. 상세�
 - 대량 Append 중 서버 재시작 등의 이유로 연결이 끊기면 버퍼에 남은 데이터는 손실될 수 있습니다.
 - RDB 테이블에는 일반 SQL `APPEND INTO` 문법을 사용하지 않습니다. RDB 대량 입력은 지원되는 client API의 appendBatch 또는 append stream 경로를 사용합니다.
 
+<a id="load-data-infile-fastload"></a>
 <a id="sql-load-data-infile-fastload"></a>
 
 ### LOAD DATA INFILE
@@ -443,8 +446,9 @@ CSV 파일을 클라이언트에서 서버로 전송하여 적재하는 CLI 도�
 - **[CSV 파일 형식](/dbms/application-integration/data-input-load-export/#file-csv)**: Machbase가 인식하는 CSV 규격
 - **[machloader로 가져오기](/dbms/application-integration/data-input-load-export/#import-machloader)**: 스키마 파일과 다양한 옵션 활용
 - **[csvimport로 가져오기](/dbms/application-integration/data-input-load-export/#import-csvimport)**: 간편한 CSV 적재
-- **[tagmetaimport](/dbms/application-integration/data-input-load-export/#metadata-import-tagmetaimport-tag)**: TAG 메타데이터 전용 임포트
+- **[tagmetaimport](/dbms/tag-table-usage/tagmetaimport/#metadata-import-tagmetaimport-tag)**: TAG 메타데이터 전용 임포트
 
+<a id="file-csv"></a>
 <a id="file-file-csv"></a>
 
 ### CSV 파일 형식
@@ -526,6 +530,7 @@ machloader -i -d data.pipe -t sensor_log -D '|'
 SQL `LOAD DATA INFILE`과 `SAVE DATA INTO`의 `ENCODED BY`는 `UTF8`, `MS949`, `KSC5601`,
 `EUCJP`, `SHIFTJIS`, `BIG5`, `GB231280`을 지원합니다. SQL 구문에서는 `UTF16`을 지정하지 않습니다.
 
+<a id="import-machloader"></a>
 <a id="file-import-machloader"></a>
 
 ### machloader로 가져오기
@@ -719,6 +724,7 @@ ENCODED BY MS949;
 
 > AUTO 옵션을 사용하지 않는 경우, 대상 테이블의 모든 컬럼은 VARCHAR 또는 TEXT 타입으로 생성되어 있어야 합니다.
 
+<a id="import-csvimport"></a>
 <a id="file-import-csvimport"></a>
 
 ### csvimport로 가져오기
@@ -807,6 +813,7 @@ csvimport -t sensor_log -d data.csv -E MS949
 - **[machloader로 내보내기](/dbms/application-integration/data-input-load-export/#export-machloader)**: CLI 기반 반출
 - **[csvexport로 내보내기](/dbms/application-integration/data-input-load-export/#export-csvexport)**: 간편 CSV 반출
 
+<a id="export-ownership"></a>
 <a id="export-export-ownership"></a>
 
 ### 데이터 반출 작업 소유권
@@ -852,6 +859,7 @@ chmod 755 /data/export/
 - 민감한 데이터 반출 시 파일 퍼미션(600 또는 640)을 엄격하게 관리
 - 정기 반출 작업의 경우 전용 서비스 계정을 사용하여 실행
 
+<a id="export-sql-save-data-into"></a>
 <a id="export-export-sql-save-data-into"></a>
 
 ### SQL 기반 반출: SAVE DATA INTO
@@ -925,6 +933,7 @@ Mach> SAVE DATA INTO '/data/export/result.csv' HEADER ON
 - 서버 프로세스 계정에 해당 디렉터리 쓰기 권한이 필요합니다.
 - 대용량 반출 시 디스크 여유 공간을 미리 확인하세요.
 
+<a id="export-machloader"></a>
 <a id="export-export-machloader"></a>
 
 ### machloader로 내보내기
@@ -1009,6 +1018,7 @@ Export success count : 1000000
 - 기존 파일이 있으면 덮어씁니다.
 - 대용량 테이블을 내보낼 때는 `-I` 옵션(silent)으로 진행 출력을 줄일 수 있습니다.
 
+<a id="export-csvexport"></a>
 <a id="export-export-csvexport"></a>
 
 ### csvexport로 내보내기
@@ -1081,6 +1091,7 @@ csvexport -t sensor_log -d export.csv -E MS949
 - **[Batch 입력](/dbms/application-integration/data-input-load-export/#batch)**: 대량 입력 시 배치 크기와 전략
 - **[대량 입력 오류 처리](/dbms/application-integration/data-input-load-export/#error-handling-bulk)**: bad 파일, 오류 로그, 재시도 패턴
 
+<a id="batch"></a>
 <a id="error-handling-batch"></a>
 
 ### Batch 입력
@@ -1172,6 +1183,7 @@ for month in 2024-01 2024-02 2024-03; do
 done
 ```
 
+<a id="error-handling-bulk"></a>
 <a id="error-handling-error-handling-bulk"></a>
 
 ### 대량 입력 오류 처리

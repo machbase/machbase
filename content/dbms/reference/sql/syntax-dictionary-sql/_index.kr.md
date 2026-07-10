@@ -30,7 +30,7 @@ SQL 문법 사전은 Machbase에서 지원하는 모든 SQL 구문의 BNF 표기
 | [SAVE DATA INTO](./save-data-into-syntax/) | SELECT | 조회 결과를 CSV 파일로 저장 |
 | [BACKUP](./backup-restore-mount-syntax/#backup) | 운영 | 데이터베이스 또는 테이블 백업 |
 | [RESTORE (machadmin -r)](./backup-restore-mount-syntax/#restore) | 운영 | 오프라인 복원 |
-| [MOUNT / UNMOUNT DATABASE](./backup-restore-mount-syntax/#mount-unmount) | 운영 | 백업 데이터베이스 마운트/언마운트 |
+| [MOUNT / UNMOUNT DATABASE](./backup-restore-mount-syntax/#mount-database) | 운영 | 백업 데이터베이스 마운트/언마운트 |
 | [CREATE USER / DROP USER / ALTER USER](./user-auth-syntax/#create-drop-alter-user) | 사용자 | 사용자 생성, 삭제, 비밀번호 변경 |
 | [GRANT / REVOKE](./user-auth-syntax/#grant-revoke) | 사용자 | 권한 부여 및 회수 |
 | [AUTH KEY 관리](./user-auth-syntax/#auth-key) | 사용자 | 공개키 기반 인증 키 등록/관리 |

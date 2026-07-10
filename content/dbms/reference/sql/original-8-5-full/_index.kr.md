@@ -142,7 +142,7 @@ Json은 "Key-Value" 쌍으로 구성된 데이터 객체를 텍스트 형식으�
 ## ddl
 
 
-> **참고**: Machbase 8.5 이상에서는 일반 사용자가 이 문서의 `CREATE`/`DROP` 계열 구문을 실행할 때 `MACHBASEDB`에 대한 데이터베이스 권한이 필요할 수 있습니다. 자세한 권한 부여 방법은 [사용자 관리](/dbms/reference/sql/#grantrevoke)의 `GRANT/REVOKE`를 참고하세요.
+> **참고**: Machbase 8.5 이상에서는 일반 사용자가 이 문서의 `CREATE`/`DROP` 계열 구문을 실행할 때 `MACHBASEDB`에 대한 데이터베이스 권한이 필요할 수 있습니다. 자세한 권한 부여 방법은 [사용자 관리](/dbms/reference/sql/syntax-dictionary-sql/user-auth-syntax/#grant-revoke)의 `GRANT/REVOKE`를 참고하세요.
 
 ## CREATE TABLE
 
@@ -455,7 +455,7 @@ DROP VIEW v_example;
 ```
 
 `CREATE OR REPLACE VIEW`, `DROP VIEW IF EXISTS`, `SHOW VIEWS`, `M$SYS_VIEWS`,
-성능/제한, Tag / `BINARY` 예제까지 포함한 전체 설명은 [VIEW](/dbms/reference/sql/#view) 문서를
+성능/제한, Tag / `BINARY` 예제까지 포함한 전체 설명은 [VIEW](/dbms/reference/sql/syntax-dictionary-sql/view-syntax/) 문서를
 참조하세요.
 
 ## DROP TABLE
@@ -1633,7 +1633,7 @@ FROM v_customer
 WHERE id = 100;
 ```
 
-저장 VIEW의 생성, 삭제, 메타 조회, 성능/제약, Tag / `BINARY` 예제는 [VIEW](/dbms/reference/sql/#view)
+저장 VIEW의 생성, 삭제, 메타 조회, 성능/제약, Tag / `BINARY` 예제는 [VIEW](/dbms/reference/sql/syntax-dictionary-sql/view-syntax/)
 문서를 참조하세요.
 
 ### 조인(INNER JOIN)
@@ -2221,6 +2221,7 @@ SAVE DATA INTO '/tmp/ccc.csv' HEADER ON FIELDS TERMINATED BY ';' ENCLOSED BY '\'
 * [SCAN_FORWARD, SCAN_BACKWARD](#scan_forward-scan_backward)
 
 
+<a id="introduction"></a>
 ## 소개
 
 SELECT 문에서 활용 가능한 힌트들을 정리했습니다.
@@ -3387,7 +3388,7 @@ Dropped successfully.
 
 시스템 전역 자원을 관리하거나 설정을 변경할 때 사용하는 구문입니다.
 
-> **참고**: Machbase 8.5 이상에서는 일반 사용자가 `ALTER SYSTEM`을 실행하려면 `GRANT ALTER ON machbasedb TO user_name;` 형태의 권한이 필요합니다. 자세한 내용은 [사용자 관리](/dbms/reference/sql/#grantrevoke)의 `GRANT/REVOKE`를 참고하세요.
+> **참고**: Machbase 8.5 이상에서는 일반 사용자가 `ALTER SYSTEM`을 실행하려면 `GRANT ALTER ON machbasedb TO user_name;` 형태의 권한이 필요합니다. 자세한 내용은 [사용자 관리](/dbms/reference/sql/syntax-dictionary-sql/user-auth-syntax/#grant-revoke)의 `GRANT/REVOKE`를 참고하세요.
 
 ### KILL SESSION
 
@@ -4295,8 +4296,8 @@ DROP TABLE v_customer;
 
 ## 관련 문서
 
-* [DDL](/dbms/reference/sql/#ddl)
-* [SELECT](/dbms/reference/sql/#select)
+* [DDL](/dbms/reference/sql/syntax-dictionary-sql/ddl-syntax/)
+* [SELECT](/dbms/reference/sql/syntax-dictionary-sql/select-syntax/)
 
 ## functions
 
@@ -5722,7 +5723,7 @@ NEXTVAL(sequence_column)
 
 - `NEXTVAL`은 `INSERT` 문에서만 사용할 수 있습니다.
 - 인자는 `PROPERTY(SEQUENCE=...)`로 설정된 컬럼이어야 합니다.
-- Sequence 컬럼 생성과 예제는 [Sequence Column](/dbms/reference/sql/#sequence-column)을 참고하십시오.
+- Sequence 컬럼 생성과 예제는 [Sequence Column](/dbms/lookup-table-usage/sequence-column/)을 참고하십시오.
 
 ```sql
 INSERT INTO seq_lookup (id, name) VALUES (NEXTVAL(id), 'sensor-a');

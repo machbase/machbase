@@ -14,31 +14,31 @@ Windows에 Machbase를 설치하는 경우 Windows 방화벽에서 Machbase가 �
 1. 방화벽에 포트를 등록하려면 제어판 - Windows 방화벽 또는 Windows Defender 방화벽을 선택합니다.
     실행 화면에서 "고급 설정" 메뉴를 클릭합니다.
 
-![winenv1](/dbms/installation/windows/winenv1.png)
+![winenv1](/dbms-8.5/installation/windows/winenv1.png)
 
 2. 고급 설정에서 **인바운드 규칙 - 새 규칙**을 선택하고 클릭합니다.
 
-![winenv2](/dbms/installation/windows/winenv2.png)
+![winenv2](/dbms-8.5/installation/windows/winenv2.png)
 
-![winenv3](/dbms/installation/windows/winenv3.png)
+![winenv3](/dbms-8.5/installation/windows/winenv3.png)
 
 3. 새 규칙 설정 마법사 창이 표시되면 아래와 같이 포트 옵션을 선택하고 다음을 클릭합니다.
 
-![winenv4](/dbms/installation/windows/winenv4.png)
+![winenv4](/dbms-8.5/installation/windows/winenv4.png)
 
 4. **TCP(T)** 옵션을 선택하고, **특정 로컬 포트** 필드에 **5656,5657**을 입력한 후 다음을 클릭합니다.
 
-![winenv5](/dbms/installation/windows/winenv5.png)
+![winenv5](/dbms-8.5/installation/windows/winenv5.png)
 
 5. **연결 허용** 옵션을 선택하고 **다음**을 클릭합니다.
 
-![winenv6](/dbms/installation/windows/winenv6.png)
+![winenv6](/dbms-8.5/installation/windows/winenv6.png)
 
 6. **도메인**, **개인** 및 **공용**을 체크하고 **다음**을 클릭합니다.
 
-![winenv7](/dbms/installation/windows/winenv7.png)
+![winenv7](/dbms-8.5/installation/windows/winenv7.png)
 
 7. **이름**과 **설명** 필드를 작성한 후 **마침**을 클릭합니다.
 
-![winenv8](/dbms/installation/windows/winenv8.png)
+![winenv8](/dbms-8.5/installation/windows/winenv8.png)
     

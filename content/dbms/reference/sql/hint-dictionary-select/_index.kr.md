@@ -47,8 +47,8 @@ SELECT /*+ hint_name(args) */ ...
 - [PARALLEL / NOPARALLEL](/dbms/reference/sql/syntax-dictionary-sql/select-hint-syntax/) — 병렬 처리 제어
 - [FULL / NO_INDEX](/dbms/reference/sql/syntax-dictionary-sql/select-hint-syntax/) — 인덱스 사용 제어
 - [ROLLUP_TABLE](/dbms/reference/sql/syntax-dictionary-sql/select-hint-syntax/) — ROLLUP 테이블 선택
-- [INTERPOLATION hint](/dbms/reference/sql/syntax-dictionary-sql/select-hint-syntax/interpolation-hint/) — 보간 힌트 상세
-- [SAMPLING hint](/dbms/reference/sql/syntax-dictionary-sql/select-hint-syntax/sampling-hint/) — 샘플링 힌트 상세
+- [INTERPOLATION hint](/dbms/reference/sql/syntax-dictionary-sql/select-hint-syntax/) — 보간 힌트 상세
+- [SAMPLING hint](/dbms/reference/sql/syntax-dictionary-sql/select-hint-syntax/) — 샘플링 힌트 상세
 
 ## 예시
 

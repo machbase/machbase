@@ -11,7 +11,7 @@ HTTP `query` API는 `SELECT` 구문뿐 아니라 DDL도 실행할 수 있으므�
 
 ## Create table
 
-자세한 내용은 [태그 테이블](/dbms/feature-table/tag/) 문서를 참고해 주십시오.
+자세한 내용은 [태그 테이블](/dbms/tag-table-usage/) 문서를 참고해 주십시오.
 
 **요청**
 
@@ -212,7 +212,7 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 {{< /tabs >}}
 
 {{< callout emoji="📢" >}}
-**참고** `summarized` 키워드는 해당 태그 테이블에 데이터가 적재될 때 내부 태그 데이터 구조의 통계를 자동으로 생성한다는 의미입니다. 자세한 내용은 [태그 통계](/dbms/feature-table/tag/manipulate/extract/#display-statistical-information-by-specific-tag-id) 문서를 참고해 주십시오.
+**참고** `summarized` 키워드는 해당 태그 테이블에 데이터가 적재될 때 내부 태그 데이터 구조의 통계를 자동으로 생성한다는 의미입니다. 자세한 내용은 [태그 통계](/dbms/tag-table-usage/query-analysis/) 문서를 참고해 주십시오.
 {{< /callout >}}
 
 ## Drop table

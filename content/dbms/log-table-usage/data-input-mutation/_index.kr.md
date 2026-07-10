@@ -41,6 +41,7 @@ INSERT INTO sensor_data VALUES('sensor3', 30.3);
 ```
 
 
+<a id="confirm-data-insert"></a>
 ### 데이터 삽입 확인
 
 ```sql
@@ -52,6 +53,7 @@ SELECT * FROM sensor_data;
 ```
 
 
+<a id="sample-example"></a>
 ### 전체 프로세스
 
 machsql을 사용한 예제는 다음과 같습니다.
@@ -83,8 +85,9 @@ Machbase가 제공하는 고속 실시간 데이터 입력 API입니다.
 
 C, C++, C#, Java, Python, PHP, Javascript로 호출할 수 있습니다.
 
-자세한 내용은 [SDK 및 통합](../../../../sdk-integration/) 가이드를 참조합니다.
+자세한 내용은 [SDK 및 통합](/dbms/application-integration/) 가이드를 참조합니다.
 
+<a id="importing-data"></a>
 <a id="original-85-import-data"></a>
 
 ## Import

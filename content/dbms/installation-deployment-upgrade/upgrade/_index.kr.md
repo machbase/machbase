@@ -16,9 +16,9 @@ toc: true
 
 | 에디션 | 방식 | 링크 |
 |--------|------|------|
-| Standard Edition | 서버 종료 후 패키지 교체 | [Standard Edition 업그레이드](/kr/dbms/installation-deployment-upgrade/upgrade/standard-edition/) |
-| Cluster Edition | Broker/Warehouse 순차 업그레이드 | [온라인 업그레이드](/kr/dbms/installation-deployment-upgrade/upgrade/cluster-edition/online/) |
-| Cluster Edition | 전체 중지 | [전체 중지 업그레이드](/kr/dbms/installation-deployment-upgrade/upgrade/cluster-edition/full-stop/) |
+| Standard Edition | 서버 종료 후 패키지 교체 | [Standard Edition 업그레이드](/dbms/installation-deployment-upgrade/upgrade/#standard-edition) |
+| Cluster Edition | Broker/Warehouse 순차 업그레이드 | [온라인 업그레이드](/dbms/installation-deployment-upgrade/upgrade/#cluster-edition-online) |
+| Cluster Edition | 전체 중지 | [전체 중지 업그레이드](/dbms/installation-deployment-upgrade/upgrade/#cluster-edition-full-stop) |
 
 Cluster Edition의 경우 데이터 가용성 요구사항에 따라 온라인 또는 전체 중지 방식을 선택합니다.
 
@@ -102,8 +102,8 @@ Mach> SELECT EDITION, BINARY_DB_MAJOR_VERSION, BINARY_DB_MINOR_VERSION FROM V$VE
 
 | 방식 | 서비스 중단 | 적합한 상황 |
 |------|-----------|------------|
-| [온라인 업그레이드](/kr/dbms/installation-deployment-upgrade/upgrade/cluster-edition/online/) | Broker/Warehouse 순차 재기동 | Broker와 Warehouse만 교체하는 운영 환경 |
-| [전체 중지 업그레이드](/kr/dbms/installation-deployment-upgrade/upgrade/cluster-edition/full-stop/) | 있음 | 유지보수 창이 허용되는 경우, Major 버전 변경 |
+| [온라인 업그레이드](/dbms/installation-deployment-upgrade/upgrade/#cluster-edition-online) | Broker/Warehouse 순차 재기동 | Broker와 Warehouse만 교체하는 운영 환경 |
+| [전체 중지 업그레이드](/dbms/installation-deployment-upgrade/upgrade/#cluster-edition-full-stop) | 있음 | 유지보수 창이 허용되는 경우, Major 버전 변경 |
 
 ### 업그레이드 전 공통 주의사항
 
@@ -118,7 +118,7 @@ Mach> SELECT EDITION, BINARY_DB_MAJOR_VERSION, BINARY_DB_MINOR_VERSION FROM V$VE
 
 ### 온라인 업그레이드
 
-실행 중인 클러스터에서 Broker와 Warehouse를 순차적으로 업그레이드합니다. Coordinator, Deployer, Lookup까지 포함한 전체 바이너리 교체가 필요하면 [전체 중지 업그레이드](/kr/dbms/installation-deployment-upgrade/upgrade/cluster-edition/full-stop/)를 사용합니다.
+실행 중인 클러스터에서 Broker와 Warehouse를 순차적으로 업그레이드합니다. Coordinator, Deployer, Lookup까지 포함한 전체 바이너리 교체가 필요하면 [전체 중지 업그레이드](/dbms/installation-deployment-upgrade/upgrade/#cluster-edition-full-stop)를 사용합니다.
 
 #### 업그레이드 절차
 

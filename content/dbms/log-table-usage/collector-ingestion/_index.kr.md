@@ -106,6 +106,7 @@ ALTER COLLECTOR localhost.file_sensor STOP;
 - Collector 수집 성능 튜닝: [../../performance-tuning/performance-tuning/ingestion-performance-tuning-collector](/dbms/performance-tuning/performance-tuning/#ingestion-performance-tuning-collector)
 - Collector 레퍼런스: [../../reference/collector](../../reference/collector)
 
+<a id="use-cases-collector"></a>
 <a id="ingestion-collector-use-cases-collector"></a>
 
 ### Collector를 사용해야 하는 경우
@@ -167,6 +168,7 @@ Collector 도입을 결정하기 전에 다음 항목을 확인합니다.
 - 파일 수집 설정: [../file-collector](/dbms/log-table-usage/collector-ingestion/#ingestion-collector-file-collector)
 - SFTP 수집 설정: [../sftp-collector](/dbms/log-table-usage/collector-ingestion/#ingestion-collector-sftp-collector)
 
+<a id="file-collector"></a>
 <a id="ingestion-collector-file-collector"></a>
 
 ### 파일 Collector
@@ -410,6 +412,7 @@ ALTER COLLECTOR localhost.sftp_sensor START;
 | 애플리케이션 레벨 동기화 | JDBC/ODBC 클라이언트에서 조회 후 Machbase SDK 또는 SQL INSERT |
 | 원격 서버에 생성된 CSV 수집 | [SFTP Collector](/dbms/log-table-usage/collector-ingestion/#ingestion-collector-sftp-collector) |
 
+<a id="template-regex-collector"></a>
 <a id="ingestion-collector-template-regex-collector"></a>
 
 ### Collector 템플릿과 정규식
@@ -510,6 +513,7 @@ SIZE=8
 - 파일 Collector 설정: [../file-collector](/dbms/log-table-usage/collector-ingestion/#ingestion-collector-file-collector)
 - SFTP Collector 설정: [../sftp-collector](/dbms/log-table-usage/collector-ingestion/#ingestion-collector-sftp-collector)
 
+<a id="error-handling-collector"></a>
 <a id="ingestion-collector-error-handling-collector"></a>
 
 ### Collector 오류 처리

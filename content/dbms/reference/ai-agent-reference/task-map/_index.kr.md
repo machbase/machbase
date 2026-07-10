@@ -10,7 +10,7 @@ weight: 30
 
 | 태스크 | 수행 방법 | 참조 문서 |
 |--------|-----------|-----------|
-| 센서/시계열 데이터 저장 | TAG 테이블 생성 후 Append API 사용 | [TAG 테이블](/dbms/tag-table-usage/), [Append](/dbms/application-integration/concepts-common/#append) |
+| 센서/시계열 데이터 저장 | TAG 테이블 생성 후 Append API 사용 | [TAG 테이블](/dbms/tag-table-usage/), [Append](/dbms/application-integration/concepts-common/#append-api-batch) |
 | 로그/이벤트 데이터 저장 | LOG 테이블 생성 후 Append API 또는 INSERT 사용 | [LOG 테이블](/dbms/log-table-usage/) |
 | CSV/파일 일괄 입력 | machloader `-i` 옵션으로 파일 로드 | [machloader](/dbms/application-integration/data-input-load-export/#file-import-machloader) |
 | LOOKUP 마스터 데이터 관리 | LOOKUP 테이블 INSERT/UPDATE/DELETE | [LOOKUP 테이블](/dbms/lookup-table-usage/) |
@@ -41,8 +41,8 @@ weight: 30
 
 | 태스크 | 수행 방법 | 참조 문서 |
 |--------|-----------|-----------|
-| 데이터 백업 | `BACKUP DATABASE INTO DISK = '/path'` | [BACKUP/RESTORE](../../../operations-configuration-recovery/backup-restore-mount/) |
-| 백업 데이터 마운트 | `MOUNT DATABASE '/path' TO mount_name` | [MOUNT](/dbms/operations-configuration-recovery/backup-restore-mount/#mount) |
+| 데이터 백업 | `BACKUP DATABASE INTO DISK = '/path'` | [BACKUP/RESTORE](/dbms/operations-configuration-recovery/backup-restore-mount/) |
+| 백업 데이터 마운트 | `MOUNT DATABASE '/path' TO mount_name` | [MOUNT](/dbms/operations-configuration-recovery/backup-restore-mount/#database-mount) |
 | 느린 쿼리 중지 | `v$stmt` 확인 후 `ALTER SYSTEM KILL SESSION` | [operations-checklist](../operations-checklist/) |
 | 서버 상태 확인 | `machadmin -c` 또는 `SELECT * FROM v$session` | [operations-checklist](../operations-checklist/) |
 | 이상 데이터 정정 | LOOKUP: UPDATE/DELETE, TAG: data UPDATE 후 필요 시 ROLLUP_REBUILD | [제약 사항](../constraints-index/) |

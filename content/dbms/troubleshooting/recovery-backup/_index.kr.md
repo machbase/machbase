@@ -3,14 +3,14 @@ type: docs
 title: '16.7 백업과 복구 문제'
 weight: 70
 ---
-백업 실패, 복원 오류, 마운트 오류의 원인 진단과 해결 방법입니다. 백업·복구 기능의 일반적인 사용법은 [백업, 복원, 마운트](../../../operations-configuration-recovery/backup-restore-mount/)를 참고하십시오.
+백업 실패, 복원 오류, 마운트 오류의 원인 진단과 해결 방법입니다. 백업·복구 기능의 일반적인 사용법은 [백업, 복원, 마운트](/dbms/operations-configuration-recovery/backup-restore-mount/)를 참고하십시오.
 
 ## 이 섹션의 구성
 
 | 페이지 | 내용 |
 |--------|------|
 | [백업과 복원이 실패할 때](/dbms/troubleshooting/recovery-backup/#failure-backup-restore) | 백업/복원 실패 원인 진단 및 해결 방법 |
-| [RDB sidecar 누락/손상 오류](/dbms/troubleshooting/recovery-backup/#error-rdb-sidecar) | Standard Edition RDB sidecar 복구 방법 |
+| [RDB sidecar 누락/손상 오류](/dbms/rdb-table-usage/backup-mount-sidecar/#error-rdb-sidecar) | Standard Edition RDB sidecar 복구 방법 |
 | [마운트가 실패할 때](/dbms/troubleshooting/recovery-backup/#failure-mount) | MOUNT 실패 원인 진단 및 해결 방법 |
 
 
@@ -260,4 +260,4 @@ LIMIT 10;
 UNMOUNT DATABASE backup_20240101;
 ```
 
-마운트와 관련된 상세 동작(읽기 전용 특성, 동시 마운트 수 제한 등)은 [마운트 DB 동작 특성](../../../operations-configuration-recovery/backup-restore-mount/mounted-db-read-only-refcount-active-same-name/)을 참고하십시오.
+마운트와 관련된 상세 동작(읽기 전용 특성, 동시 마운트 수 제한 등)은 [마운트 DB 동작 특성](/dbms/operations-configuration-recovery/backup-restore-mount/#mounted-db-read-only-refcount-active-same-name)을 참고하십시오.

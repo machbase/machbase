@@ -79,6 +79,7 @@ Result Cache는 동일한 SELECT 쿼리가 반복 실행될 때 이전에 계산
 - [LRU와 동시성](/dbms/performance-tuning/cache-tuning-memory/#concurrency-lru) — 교체 정책 및 고동시성 환경 고려 사항
 - [Append invalidation](/dbms/performance-tuning/cache-tuning-memory/#append-invalidation) — 캐시 무효화 동작과 워크로드별 적합성
 
+<a id="rs-cache-enable"></a>
 <a id="result-cache-rs-cache-enable"></a>
 
 ### RS_CACHE_ENABLE
@@ -128,6 +129,7 @@ ALTER SESSION SET RS_CACHE_ENABLE = 0;
 
 > **참고**: 기존 캐시 엔트리를 명시적으로 제거해야 하면 `ALTER SYSTEM FLUSH RESULT_CACHE`를 사용합니다.
 
+<a id="rs-cache-time-bound-msec"></a>
 <a id="result-cache-rs-cache-time-bound-msec"></a>
 
 ### RS_CACHE_TIME_BOUND_MSEC
@@ -188,6 +190,7 @@ ALTER SESSION SET RS_CACHE_TIME_BOUND_MSEC = 0;
 
 > **주의**: 임곗값을 너무 낮게 설정하면 짧은 쿼리까지 캐시되어 `RS_CACHE_MAX_MEMORY_SIZE` 한도에 빠르게 도달하고 LRU 교체가 빈번해질 수 있습니다.
 
+<a id="rs-cache-max-record-per-query"></a>
 <a id="result-cache-rs-cache-max-record-per-query"></a>
 
 ### RS_CACHE_MAX_RECORD_PER_QUERY
@@ -249,6 +252,7 @@ ORDER BY record_count DESC;
 - 레코드 수가 많은 쿼리가 캐시를 점유하고 있다면 `RS_CACHE_MAX_RECORD_PER_QUERY`를 낮춰 해당 쿼리를 캐시 대상에서 제외합니다.
 - 캐시 히트율이 낮고 `CACHE_REPLACED` 횟수가 많으면 `RS_CACHE_MAX_MEMORY_SIZE`를 늘리거나 `RS_CACHE_MAX_RECORD_PER_QUERY`를 줄여 캐시 용량을 확보합니다.
 
+<a id="vrs-cache"></a>
 <a id="result-cache-vrs-cache"></a>
 
 ### V$RS_CACHE_* 확인
@@ -326,6 +330,7 @@ SELECT
 FROM v$rs_cache_stat;
 ```
 
+<a id="concurrency-lru"></a>
 <a id="result-cache-concurrency-lru"></a>
 
 ### LRU와 동시성

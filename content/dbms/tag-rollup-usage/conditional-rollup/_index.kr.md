@@ -4,7 +4,7 @@ weight: 50
 toc: true
 ---
 
-<a id=”original-85-rollup-conditional”></a>
+<a id="original-85-rollup-conditional"></a>
 
 ## 조건부 롤업으로 이상치 제외 집계
 
@@ -204,8 +204,9 @@ SELECT /*+ ROLLUP_TABLE(_tag_rollup_custom_3) */
 ### 관련 문서
 
 - [롤업 테이블](/dbms/tag-rollup-usage/overview-use-criteria/#original-85-rollup-tables)
-- [SELECT 힌트: ROLLUP_TABLE](../../../sql-reference/select-hint/)
+- [SELECT 힌트: ROLLUP_TABLE](/dbms/reference/sql/syntax-dictionary-sql/select-hint-syntax/)
 
+<a id="rollup-conditional-extension-tc"></a>
 <a id="original-85-rollup-conditional-extension"></a>
 
 ## extension.tc 샘플 SQL

@@ -32,9 +32,9 @@ LOG 테이블은 `_arrival_time`, TAG 테이블은 `time` 컬럼을 기준으로
 | [SELECT 성능 튜닝](/dbms/performance-tuning/performance-query-tuning/#performance-tuning-select) | WHERE 절 설계, 시간 범위 조건, EXPLAIN 해석 |
 | [검색 연산자 성능 튜닝](/dbms/performance-tuning/performance-query-tuning/#performance-operators-tuning) | 인덱스 활용 가능·불가 연산자, BITMAP vs LSM 선택 |
 | [윈도우 함수와 PIVOT 성능 고려사항](/dbms/performance-tuning/performance-query-tuning/#performance-window-functions-considerations-pivot) | 메모리 주의사항, 서브쿼리 선처리 패턴 |
-| [ROLLUP 활용 튜닝](/dbms/performance-tuning/performance-query-tuning/#tuning-rollup) | ROLLUP 조회 패턴, 계층 설계, WAKEUP INTERVAL |
-| [TAG 데이터 대량 정정 성능 고려사항](/dbms/performance-tuning/performance-query-tuning/#correction-performance-bulk-considerations-tag-data-update) | TAG data UPDATE 대상 범위와 롤업 재구성 |
-| [LOOKUP 일반 predicate DML 성능 고려사항](/dbms/performance-tuning/performance-query-tuning/#performance-considerations-lookup-predicate-dml) | non-PK UPDATE/DELETE 대상 범위 확인과 JSON 조건 비용 |
+| [ROLLUP 활용 튜닝](/dbms/tag-rollup-usage/performance-tuning-rollup/#tuning-rollup) | ROLLUP 조회 패턴, 계층 설계, WAKEUP INTERVAL |
+| [TAG 데이터 대량 정정 성능 고려사항](/dbms/tag-table-usage/tag-data-update-correction/#correction-performance-bulk-considerations-tag-data-update) | TAG data UPDATE 대상 범위와 롤업 재구성 |
+| [LOOKUP 일반 predicate DML 성능 고려사항](/dbms/lookup-table-usage/privilege-predicate-performance/#performance-considerations-lookup-predicate-dml) | non-PK UPDATE/DELETE 대상 범위 확인과 JSON 조건 비용 |
 
 
 <a id="performance-tuning-select"></a>

@@ -23,7 +23,7 @@ weight: 30
 | [`ALTER SYSTEM FLUSH SYS_STAT`](/dbms/operations-configuration-recovery/alter-system/#flush-sys-stat) | 쿼리 최적화기용 시스템 통계 정보 갱신 | 아니요 |
 | [`ALTER SYSTEM FLUSH PVO_CACHE`](/dbms/operations-configuration-recovery/alter-system/#flush-pvo-cache) | PVO(Partition Value Object) Statement 캐시 초기화 | 아니요 |
 | [`ALTER SYSTEM FLUSH PAGE_CACHE`](/dbms/operations-configuration-recovery/alter-system/#flush-page-cache) | OS 페이지 캐시를 Machbase 레벨에서 강제 해제 | 아니요 |
-| [`ALTER SYSTEM FLUSH TAG_CACHE`](/dbms/operations-configuration-recovery/alter-system/#flush-tag-cache) | TAG 테이블 메타데이터 캐시 초기화 | 아니요 |
+| [`ALTER SYSTEM FLUSH TAG_CACHE`](/dbms/tag-table-usage/tag-cache-operations/#flush-tag-cache) | TAG 테이블 메타데이터 캐시 초기화 | 아니요 |
 
 ## 관련 뷰
 

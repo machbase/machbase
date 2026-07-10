@@ -207,4 +207,4 @@ SELECT /*+ ROLLUP_TABLE(_tag_rollup_custom_3) */
 ## 관련 문서
 
 - [롤업 테이블](../rollup-tables/)
-- [SELECT 힌트: ROLLUP_TABLE](../../../sql-reference/select-hint/)
+- [SELECT 힌트: ROLLUP_TABLE](/dbms/reference/sql/syntax-dictionary-sql/select-hint-syntax/)

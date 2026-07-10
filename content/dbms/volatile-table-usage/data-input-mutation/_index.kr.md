@@ -54,7 +54,7 @@ for(int i=0; i<10000; i++)
 
 Cluster Edition Append의 경우, Leader Broker에서 수행해야 합니다.
 
-자세한 내용은 [SDK 및 통합](../../../sdk-integration/) 가이드를 참조하세요.
+자세한 내용은 [SDK 및 통합](/dbms/application-integration/) 가이드를 참조하세요.
 
 
 ###  데이터 업데이트

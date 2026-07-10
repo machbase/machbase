@@ -16,6 +16,7 @@ KEYWORD 인덱스를 활용하면 VARCHAR/TEXT 컬럼에서 고속 텍스트 검
 - **[ESEARCH](/dbms/log-table-usage/text-search-keyword-index/#esearch)**: 패턴(%) 확장 검색
 - **[LIKE / NOT LIKE](/dbms/log-table-usage/text-search-keyword-index/#like-not)**: 일반 패턴 매칭
 
+<a id="search-not"></a>
 <a id="text-search-search-not"></a>
 
 ### SEARCH / NOT SEARCH
@@ -107,6 +108,7 @@ SELECT * FROM event_log WHERE error_code ESEARCH 'ERR-10%';
 
 > `NOT ESEARCH`는 지원하지 않습니다. 반대 패턴이 필요하면 `NOT SEARCH`나 `NOT LIKE`를 사용하세요.
 
+<a id="like-not"></a>
 <a id="text-search-like-not"></a>
 
 ### LIKE / NOT LIKE

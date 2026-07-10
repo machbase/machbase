@@ -6,7 +6,7 @@ weight: 30
 
 Machbase DBMS 8.5 매뉴얼입니다. Machbase는 IoT, 센서 데이터 및 실시간 분석을 위해 설계된 고성능 시계열 데이터베이스입니다.
 
-최신 DBMS 레퍼런스는 [Machbase DBMS Reference](/kr/dbms/)에서 확인합니다.
+최신 DBMS 레퍼런스는 [Machbase DBMS Reference](/dbms/)에서 확인합니다.
 
 ## Machbase가 처음이신가요?
 

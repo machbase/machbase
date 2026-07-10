@@ -386,9 +386,10 @@ DELETE FROM tag ROLLUP WHERE tag_time BETWEEN TO_DATE('2021-07-01', 'YYYY-MM-DD'
 
 ### 하위 페이지
 
-- [LOOKUP 일반 조건식 DELETE](/dbms/data-modeling-table-design/alter-data-mutation-policy/#condition-lookup-delete): 일반 predicate DELETE 지원 범위와 주의사항
+- [LOOKUP 일반 조건식 DELETE](/dbms/lookup-table-usage/predicate-update-delete/#condition-lookup-delete): 일반 predicate DELETE 지원 범위와 주의사항
 - [TAG 메타데이터 삭제](/dbms/data-modeling-table-design/alter-data-mutation-policy/#delete-tag-metadata): TAG 테이블 메타데이터 삭제 구문
 
+<a id="delete-tag-metadata"></a>
 <a id="policy-delete-delete-tag-metadata"></a>
 
 ### TAG 메타데이터 삭제

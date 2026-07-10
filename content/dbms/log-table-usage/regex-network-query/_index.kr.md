@@ -15,6 +15,7 @@ toc: true
 - **[REGEXP / NOT REGEXP](/dbms/log-table-usage/regex-network-query/#regexp-not)**: 정규식 매칭 연산자
 - **[REGEXP_LIKE](/dbms/log-table-usage/regex-network-query/#regexp-like)**: 함수형 정규식 매칭
 
+<a id="regexp-not"></a>
 <a id="regex-regexp-not"></a>
 
 ### REGEXP / NOT REGEXP
@@ -88,6 +89,7 @@ POSIX 확장 정규 표현식(ERE)을 지원합니다.
 | `(abc)` | 그룹 |
 | `a\|b` | a 또는 b |
 
+<a id="regexp-like"></a>
 <a id="regex-regexp-like"></a>
 
 ### REGEXP_LIKE 함수

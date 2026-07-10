@@ -704,6 +704,7 @@ Machbase는 기본적으로 UTF-8 방식으로 문자열을 저장합니다.
 | Windows | Non-Unicode (MBCS) | MBCS ↔ UTF-8 |
 | Linux | UTF-8 | 변환 없음 |
 
+<a id="examples-cli-odbc"></a>
 <a id="cli-odbc-examples-cli-odbc"></a>
 
 ### CLI/ODBC 예제
@@ -3669,6 +3670,7 @@ func main() {
 }
 ```
 
+<a id="go-sql"></a>
 <a id="go-go-sql"></a>
 
 ### Go SQL 드라이버

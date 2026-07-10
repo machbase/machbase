@@ -126,7 +126,7 @@ Machbase Neo 홈 화면에서 “DASHBOARD” 버튼을 클릭하면 새로운 �
 하나의 차트에서 여러 Query를 동시에 사용할 수 있으며, 각 Query에 대해 설정을 개별적으로 지정합니다.
 
 #### 변환 함수
-{{< figure src="/images/web-ui/chart-setting-function.jpg" width="600" >}}
+{{< figure src="/images/web-ui/taz_chart_functions.jpg" width="600" >}}
 - X: 시간/범주 값에 적용할 변환식
 - Y: 값(수치)에 적용할 변환식
 - 전체: X, Y 전체에 적용할 변환식  
@@ -304,7 +304,7 @@ CHART_LINE()
 | Animation | 애니메이션 사용 여부 |
 
 #### Area
-{{< figure src="/images/web-ui/area-chart-setting.jpg" width="600" >}}
+{{< figure src="/images/web-ui/line-chart-setting.jpg" width="600" >}}
 
 - 차트 옵션
 | 옵션 | 설명 |
@@ -314,7 +314,7 @@ CHART_LINE()
 | Animation | 애니메이션 사용 여부 |
 
 #### Column
-{{< figure src="/images/web-ui/column-chart-setting.jpg" width="600" >}}
+{{< figure src="/images/web-ui/bar-chart-setting.jpg" width="600" >}}
 
 - 차트 옵션
 | 옵션 | 설명 |
@@ -324,7 +324,7 @@ CHART_LINE()
 | Animation | 애니메이션 사용 여부 |
 
 #### Column range
-{{< figure src="/images/web-ui/column-range-chart-setting.jpg" width="600" >}}
+{{< figure src="/images/web-ui/bar-chart-setting.jpg" width="600" >}}
 
 - 차트 옵션
 | 옵션 | 설명 |
@@ -341,7 +341,7 @@ Column range는 각 시리즈에 최대값과 최소값 쿼리가 필요합니�
 | Min query | 최소값을 반환하는 Query |
 
 #### Column step
-{{< figure src="/images/web-ui/column-step-chart-setting.jpg" width="600" >}}
+{{< figure src="/images/web-ui/bar-chart-setting.jpg" width="600" >}}
 
 - 차트 옵션
 | 옵션 | 설명 |
@@ -351,7 +351,7 @@ Column range는 각 시리즈에 최대값과 최소값 쿼리가 필요합니�
 | Animation | 애니메이션 사용 여부 |
 
 #### Stacked column
-{{< figure src="/images/web-ui/stacked-column-chart-setting.jpg" width="600" >}}
+{{< figure src="/images/web-ui/bar-chart-setting.jpg" width="600" >}}
 
 - 차트 옵션
 | 옵션 | 설명 |
@@ -367,7 +367,7 @@ Column range는 각 시리즈에 최대값과 최소값 쿼리가 필요합니�
 | Stacked type | 스택 방식 (normal / percent) |
 
 #### XY column
-{{< figure src="/images/web-ui/xy-column-chart-setting.jpg" width="600" >}}
+{{< figure src="/images/web-ui/bar-chart-setting.jpg" width="600" >}}
 
 - 차트 옵션
 | 옵션 | 설명 |
@@ -383,7 +383,7 @@ Column range는 각 시리즈에 최대값과 최소값 쿼리가 필요합니�
 | Category Field | x축 범주로 사용할 컬럼 |
 
 #### Stacked area
-{{< figure src="/images/web-ui/stacked-area-chart-setting.jpg" width="600" >}}
+{{< figure src="/images/web-ui/line-chart-setting.jpg" width="600" >}}
 
 - 차트 옵션
 | 옵션 | 설명 |

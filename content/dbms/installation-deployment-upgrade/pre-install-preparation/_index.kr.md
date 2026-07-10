@@ -8,9 +8,9 @@ toc: true
 
 | 항목 | 설명 |
 |------|------|
-| [설치 전 요구사항](/kr/dbms/installation-deployment-upgrade/pre-install-preparation/pre-install-requirements/) | OS 버전, 하드웨어 최소 사양, 네트워크 포트 |
-| [패키지 구성 이해](/kr/dbms/installation-deployment-upgrade/pre-install-preparation/package/) | 패키지 파일 명명 규칙, 디렉터리 구조, 주요 실행 파일 |
-| [라이선스 설치](/kr/dbms/installation-deployment-upgrade/pre-install-preparation/license/) | license.dat 파일 배치 방법, 라이선스 상태 확인 방법 |
+| [설치 전 요구사항](/dbms/installation-deployment-upgrade/pre-install-preparation/#pre-install-requirements) | OS 버전, 하드웨어 최소 사양, 네트워크 포트 |
+| [패키지 구성 이해](/dbms/installation-deployment-upgrade/pre-install-preparation/#package) | 패키지 파일 명명 규칙, 디렉터리 구조, 주요 실행 파일 |
+| [라이선스 설치](/dbms/installation-deployment-upgrade/pre-install-preparation/#license) | license.dat 파일 배치 방법, 라이선스 상태 확인 방법 |
 
 ---
 

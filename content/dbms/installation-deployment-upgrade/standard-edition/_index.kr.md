@@ -12,11 +12,11 @@ Standard Edition은 단일 노드에 설치하는 구성으로, 개발 환경, �
 
 | OS | 설치 방식 | 링크 |
 |----|-----------|------|
-| Linux | Tarball (.tgz) | [Tarball 설치](/kr/dbms/installation-deployment-upgrade/standard-edition/linux/tarball/) |
-| Linux | Docker 컨테이너 | [Docker 설치](/kr/dbms/installation-deployment-upgrade/standard-edition/linux/docker/) |
-| Windows | ZIP 또는 설치 실행 파일 | [Windows 패키지 설치](/kr/dbms/installation-deployment-upgrade/standard-edition/windows/package/) |
+| Linux | Tarball (.tgz) | [Tarball 설치](/dbms/installation-deployment-upgrade/standard-edition/#linux-tarball) |
+| Linux | Docker 컨테이너 | [Docker 설치](/dbms/installation-deployment-upgrade/standard-edition/#linux-docker) |
+| Windows | ZIP 또는 설치 실행 파일 | [Windows 패키지 설치](/dbms/installation-deployment-upgrade/standard-edition/#windows-package) |
 
-설치 전에 [Linux 환경 준비](/kr/dbms/installation-deployment-upgrade/standard-edition/linux/preparation-environment-linux/) 또는 [Windows 환경 준비](/kr/dbms/installation-deployment-upgrade/standard-edition/windows/preparation-environment-windows/)를 먼저 확인하십시오.
+설치 전에 [Linux 환경 준비](/dbms/installation-deployment-upgrade/standard-edition/#linux-preparation-environment-linux) 또는 [Windows 환경 준비](/dbms/installation-deployment-upgrade/standard-edition/#windows-preparation-environment-windows)를 먼저 확인하십시오.
 
 ---
 
@@ -28,10 +28,10 @@ Linux에서 Standard Edition을 설치하는 방법은 두 가지입니다.
 
 | 방식 | 적합한 상황 |
 |------|------------|
-| [Tarball 설치](/kr/dbms/installation-deployment-upgrade/standard-edition/linux/tarball/) | 실제 서버 환경, 데이터 디렉터리를 직접 관리해야 하는 경우 |
-| [Docker 설치](/kr/dbms/installation-deployment-upgrade/standard-edition/linux/docker/) | 개발·테스트 환경, 빠른 구동이 필요한 경우 |
+| [Tarball 설치](/dbms/installation-deployment-upgrade/standard-edition/#linux-tarball) | 실제 서버 환경, 데이터 디렉터리를 직접 관리해야 하는 경우 |
+| [Docker 설치](/dbms/installation-deployment-upgrade/standard-edition/#linux-docker) | 개발·테스트 환경, 빠른 구동이 필요한 경우 |
 
-Tarball 설치는 [Linux 환경 준비](/kr/dbms/installation-deployment-upgrade/standard-edition/linux/preparation-environment-linux/)를 먼저 완료해야 합니다. Docker 설치는 Docker Engine과 볼륨/포트 권한만 준비하면 별도 OS 튜닝 없이 시작할 수 있습니다.
+Tarball 설치는 [Linux 환경 준비](/dbms/installation-deployment-upgrade/standard-edition/#linux-preparation-environment-linux)를 먼저 완료해야 합니다. Docker 설치는 Docker Engine과 볼륨/포트 권한만 준비하면 별도 OS 튜닝 없이 시작할 수 있습니다.
 
 ---
 
@@ -342,13 +342,13 @@ docker restart machbase
 - **지원 OS**: Windows 10, Windows Server 2019 이상
 - **아키텍처**: 배포 패키지의 비트 수와 운영체제 아키텍처가 일치해야 합니다.
 
-설치 전에 [Windows 환경 준비](/kr/dbms/installation-deployment-upgrade/standard-edition/windows/preparation-environment-windows/)를 먼저 완료하십시오.
+설치 전에 [Windows 환경 준비](/dbms/installation-deployment-upgrade/standard-edition/#windows-preparation-environment-windows)를 먼저 완료하십시오.
 
 ### 설치 방식
 
 | 방식 | 설명 |
 |------|------|
-| [Windows 패키지 설치](/kr/dbms/installation-deployment-upgrade/standard-edition/windows/package/) | 설치 마법사를 통한 설치. 환경 변수와 바로가기 생성 |
+| [Windows 패키지 설치](/dbms/installation-deployment-upgrade/standard-edition/#windows-package) | 설치 마법사를 통한 설치. 환경 변수와 바로가기 생성 |
 
 ---
 
@@ -443,4 +443,4 @@ machsql -s 127.0.0.1 -u SYS -p MANAGER
 
 ZIP 패키지는 압축 해제 경로 바로 아래에 `bin\`, `conf\`, `dbs\`, `trc\` 등을 배치합니다.
 설치 실행 파일은 설치 경로 아래의 `machbase_home\`에 같은 구성을 생성합니다.
-[패키지 구성](/kr/dbms/installation-deployment-upgrade/pre-install-preparation/package/) 참고.
+[패키지 구성](/dbms/installation-deployment-upgrade/pre-install-preparation/#package) 참고.

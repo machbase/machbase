@@ -17,7 +17,7 @@ weight: 110
 | PK 중복 | `Duplicate key (ERR-01003)` | LOOKUP 테이블: `UPDATE` 또는 입력 데이터 중복 확인 | [DML 문법](../../../reference/sql/syntax-dictionary-sql/dml-syntax/) |
 | 디스크 부족 | `Disk full (ERR-00303)` | `df -h` 및 `v$tablespace` 확인 후 불필요 파일 정리 | [메모리/디스크 문제](/dbms/troubleshooting/performance/#memory-out-of) |
 | CSV 입력 실패 | `Type mismatch` / `parse error` | machloader 옵션 확인: `-E`(에러 허용), `-D`(구분자), `-f`(날짜 형식) | [CSV import 실패](/dbms/troubleshooting/item/#failure-csv-import) |
-| ROLLUP 결과 이상 | 집계값이 예상과 다름 | `ALTER SYSTEM FLUSH ROLLUP` 실행 후 재확인, `v$rollup` status 점검 | [ROLLUP 문제](/dbms/troubleshooting/automation/#rollup) |
+| ROLLUP 결과 이상 | 집계값이 예상과 다름 | `ALTER SYSTEM FLUSH ROLLUP` 실행 후 재확인, `v$rollup` status 점검 | [ROLLUP 문제](/dbms/tag-rollup-usage/overview-use-criteria/#rollup) |
 | STREAM 멈춤 | `v$streams` 상태가 STOPPED | `EXEC STREAM_START('stream_name')` 실행, 로그에서 원인 확인 | [STREAM 문제](/dbms/troubleshooting/automation/#execution-stream) |
 | Cluster 노드 이상 | 노드 상태 DISCONNECTED | `machclusterctl status`로 상태 확인 후 해당 노드 재시작 | [Cluster 노드 이상](/dbms/troubleshooting/cluster/#node-state-status-abnormal-cluster) |
 

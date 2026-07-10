@@ -3,7 +3,7 @@ type: docs
 title: '16.8 Cluster 문제'
 weight: 80
 ---
-Cluster Edition 운영 중 노드 상태 이상이나 에디션 전용 제한 오류가 발생할 때의 진단과 해결 방법입니다. 클러스터 구성과 일반 운영 절차는 [Cluster 운영](../../../operations-configuration-recovery/cluster/)을 참고하십시오.
+Cluster Edition 운영 중 노드 상태 이상이나 에디션 전용 제한 오류가 발생할 때의 진단과 해결 방법입니다. 클러스터 구성과 일반 운영 절차는 [Cluster 운영](/dbms/operations-configuration-recovery/cluster/)을 참고하십시오.
 
 ## 이 섹션의 구성
 
@@ -104,14 +104,14 @@ grep -i "error\|fatal\|assert" $MACHBASE_HOME/trc/machbase.trc | tail -50
 
 Warehouse 노드의 데이터 손상(`scrapped` 상태) 복구, Snapshot 활용, 강제 복구 방법에 대한 상세 내용은 다음을 참고하십시오.
 
-- [Warehouse 상태 복구](../../../operations-configuration-recovery/cluster/recovery-state-status-warehouse/)
-- [Cluster 노드 상태와 전환](../../../operations-configuration-recovery/cluster/state-alter-status-cluster/)
+- [Warehouse 상태 복구](/dbms/operations-configuration-recovery/cluster/#recovery-state-status-warehouse)
+- [Cluster 노드 상태와 전환](/dbms/operations-configuration-recovery/cluster/#state-alter-status-cluster)
 
 <a id="error-cluster-edition"></a>
 
 ## Cluster Edition 제한 오류
 
-Cluster Edition은 Standard Edition의 일부 기능을 지원하지 않으며, 미지원 기능 사용 시 오류가 발생합니다. 전반적인 제한사항은 [Cluster 운영 제한사항](../../../operations-configuration-recovery/cluster/limitations-cluster/)을 참고하십시오.
+Cluster Edition은 Standard Edition의 일부 기능을 지원하지 않으며, 미지원 기능 사용 시 오류가 발생합니다. 전반적인 제한사항은 [Cluster 운영 제한사항](/dbms/operations-configuration-recovery/cluster/#limitations-cluster)을 참고하십시오.
 
 ### 에디션 확인
 

@@ -245,7 +245,7 @@ CSV()
 
 - `datetimeType('RC822')`
 
-첫 번째 인자는 `timeformat()` 함수와 동일한 문법을 사용합니다. 자세한 내용은 [timeformat](../utilities/#timeformat)을 참고해 주십시오.
+첫 번째 인자는 `timeformat()` 함수와 동일한 문법을 사용합니다. 자세한 내용은 [timeformat](../utilities/#timeformat-sqltimeformat-ansitimeformat)을 참고해 주십시오.
 
 ### charset()
 

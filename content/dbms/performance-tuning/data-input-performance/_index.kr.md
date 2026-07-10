@@ -20,7 +20,7 @@ weight: 70
 - **[입력 성능 기본 원칙](/dbms/performance-tuning/data-input-performance/#performance-principles)**: 처리량을 높이는 핵심 원칙
 - **[REST 입력 경로 안내](/dbms/performance-tuning/data-input-performance/#path-guide-rest)**: REST API 연동 개요 (상세는 8장)
 - **[SDK 입력 경로 안내](/dbms/performance-tuning/data-input-performance/#path-guide-sdk)**: SDK Append/INSERT 개요 (상세는 8장)
-- **[Fluentd 파이프라인](/dbms/performance-tuning/data-input-performance/#pipeline-fluentd)**: Fluentd 기반 파이프라인 개요 (상세는 8장)
+- **[Fluentd 파이프라인](/dbms/log-table-usage/fluentd-pipeline/#pipeline-fluentd)**: Fluentd 기반 파이프라인 개요 (상세는 8장)
 
 
 <a id="performance-principles"></a>

@@ -12,6 +12,7 @@ Shell 탭을 클릭하면 웹에서 인터랙티브 셸을 실행할 수 있습�
 
 {{< figure src="/images/web-shell-ui.png" width="600" >}}
 
+<a id="remote-access-via-ssh"></a>
 ## SSH를 통한 원격 접속
 
 SSH(Secure Shell)는 원격 시스템에 안전하게 접속하기 위한 프로토콜입니다.

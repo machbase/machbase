@@ -9,7 +9,7 @@ ROLLUP(TAG 데이터 자동 집계)과 STREAM(쿼리 결과 자동 적재) 기�
 
 | 페이지 | 내용 |
 |--------|------|
-| [ROLLUP 결과가 예상과 다를 때](/dbms/troubleshooting/automation/#rollup) | ROLLUP 상태 확인, 즉시 실행, 재계산 방법 |
+| [ROLLUP 결과가 예상과 다를 때](/dbms/tag-rollup-usage/overview-use-criteria/#rollup) | ROLLUP 상태 확인, 즉시 실행, 재계산 방법 |
 | [STREAM이 실행되지 않을 때](/dbms/troubleshooting/automation/#execution-stream) | STREAM 중지 원인 진단 및 재시작 절차 |
 
 

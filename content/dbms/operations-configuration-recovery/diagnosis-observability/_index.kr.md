@@ -81,6 +81,7 @@ $MACHBASE_HOME/trc/
 - [machloader 로그](/dbms/operations-configuration-recovery/diagnosis-observability/#log-logs-machloader) — 데이터 적재 오류와 통계 확인
 - [Collector 로그](/dbms/operations-configuration-recovery/diagnosis-observability/#log-logs-collector) — Collector 수집 상태 진단
 
+<a id="configuration-trace-log"></a>
 <a id="log-diagnosis-logs-configuration-trace-log"></a>
 
 ### Trace Log 설정
@@ -147,6 +148,7 @@ ALTER SYSTEM SET TRACE_LOG_LEVEL = 285;
 
 > **주의**: `TRACE_LOG_LEVEL`이 높으면 로그 파일 크기가 빠르게 증가합니다. 디스크 공간을 정기적으로 확인하고, 진단 완료 후에는 반드시 운영 수준으로 복원하십시오.
 
+<a id="log-server-logs"></a>
 <a id="log-diagnosis-logs-log-server-logs"></a>
 
 ### 서버 로그
@@ -271,6 +273,7 @@ find $MACHBASE_HOME/trc/ -name "machbase.trc.*" -mtime +30
 find $MACHBASE_HOME/trc/ -name "machbase.trc.*" -mtime +30 -delete
 ```
 
+<a id="log-logs-machsql"></a>
 <a id="log-diagnosis-logs-log-logs-machsql"></a>
 
 ### machsql 로그
@@ -355,6 +358,7 @@ fi
 
 > **참고**: machsql 이력 파일은 `$MACHBASE_HOME/trc/machsql.history`에 저장됩니다.
 
+<a id="log-logs-machloader"></a>
 <a id="log-diagnosis-logs-log-logs-machloader"></a>
 
 ### machloader 로그
@@ -466,6 +470,7 @@ tail -f machloader.err
 
 적재 완료 후에는 오류 건수를 반드시 확인하고, 오류 비율이 높으면 소스 데이터 품질을 점검하십시오.
 
+<a id="log-logs-collector"></a>
 <a id="log-diagnosis-logs-log-logs-collector"></a>
 
 ### Collector 로그
@@ -1061,6 +1066,7 @@ SELECT sess_id, state, query
 - [백업 검증](/dbms/operations-configuration-recovery/diagnosis-observability/#validation-backup) — 백업 완료 후 무결성 검증 절차
 - [장애 징후 확인](/dbms/operations-configuration-recovery/diagnosis-observability/#failure) — 디스크 풀, OOM, 느린 쿼리 등 장애 징후와 즉각 조치
 
+<a id="status-check-state-server"></a>
 <a id="monitoring-capacity-status-check-state-server"></a>
 
 ### 서버 상태 확인
@@ -1196,6 +1202,7 @@ grep 'SIGKILL\|Killed\|ABNORMAL' $MACHBASE_HOME/trc/machbase.trc
 | 라이선스 | `SELECT violate_status FROM v$license_info` | 0 (정상) |
 | 디스크 사용률 | `SELECT used_ratio FROM v$storage_usage` | ratio_cap 미만 |
 
+<a id="execution-session"></a>
 <a id="monitoring-capacity-execution-session"></a>
 
 ### 세션과 실행 쿼리 확인
@@ -1348,6 +1355,7 @@ ALTER SESSION SET QUERY_TIMEOUT = 300;
 ALTER SESSION SET IDLE_TIMEOUT = 1800;
 ```
 
+<a id="capacity-disk"></a>
 <a id="monitoring-capacity-capacity-disk"></a>
 
 ### 디스크 사용량 확인
@@ -1515,6 +1523,7 @@ if [ "$USED" -gt "$THRESHOLD" ]; then
 fi
 ```
 
+<a id="memory-capacity"></a>
 <a id="monitoring-capacity-memory-capacity"></a>
 
 ### 메모리 사용량 확인
@@ -1669,6 +1678,7 @@ dmesg | grep -i 'oom\|killed process'
 
 OOM Killer가 `machbased` 프로세스를 종료한 경우, 서버 재시작 후 메모리 설정을 검토합니다.
 
+<a id="validation-backup"></a>
 <a id="monitoring-capacity-validation-backup"></a>
 
 ### 백업 검증
@@ -1828,6 +1838,7 @@ find /backup/ -maxdepth 1 -type d -name "20*" -mtime +7 -exec rm -rf {} \;
 
 > **중요**: 백업 검증은 백업 완료 직후뿐 아니라 정기적으로(최소 월 1회) 수행해야 합니다. 장애 발생 시 검증되지 않은 백업은 복구 실패로 이어질 수 있습니다.
 
+<a id="failure"></a>
 <a id="monitoring-capacity-failure"></a>
 
 ### 장애 징후 확인

@@ -118,5 +118,5 @@ WHERE state = 'IDLE';
 ## 참조
 
 - 오류별 해결 방법: [error-resolution-map](../error-resolution-map/)
-- 백업/복구 절차: [BACKUP/RESTORE/MOUNT](../../../operations-configuration-recovery/backup-restore-mount/)
+- 백업/복구 절차: [BACKUP/RESTORE/MOUNT](/dbms/operations-configuration-recovery/backup-restore-mount/)
 - 문제 해결 전체: [Troubleshooting](../../../troubleshooting/)

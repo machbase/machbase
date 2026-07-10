@@ -6,7 +6,7 @@ weight: 30
 
 machloader 도구를 사용하면 CSV 또는 다른 구분자로 구분된 텍스트 파일을 입력할 수 있습니다.
 
-machloader 도구에 대한 자세한 설명은 [machloader](/dbms/tools-reference/machloader) 문서를 참조하세요.
+machloader 도구에 대한 자세한 설명은 [machloader](/dbms-8.5/tools-reference/machloader/) 문서를 참조하세요.
 
 ## 목차
 
@@ -32,6 +32,7 @@ CREATE TABLE import_sample
 ```
 
 
+<a id="importing-data"></a>
 ## 데이터 가져오기
 
 machloader 도구를 사용하여 csv 파일을 입력합니다.
@@ -41,6 +42,7 @@ machloader  -i  -t  import_sample   -d  sample_data.csv
 ```
 
 
+<a id="confirm-data-insert"></a>
 ## 데이터 입력 확인
 
 입력된 데이터를 확인합니다.
@@ -51,6 +53,7 @@ SELECT  COUNT(*)    FROM    import_sample;
 ```
 
 
+<a id="sample-example"></a>
 ## 샘플 예제
 
 다음은 실제 machloader와 machsql을 사용한 샘플 프로세스입니다.

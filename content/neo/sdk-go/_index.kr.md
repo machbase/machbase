@@ -9,7 +9,7 @@ Machbase-neo는 Go 개발자를 위해 세 가지 유형의 Go 클라이언트 �
 최고의 성능과 크로스 플랫폼 배포를 위해 **`machgo` 사용을 권장**합니다.
 `machcli`는 하위 호환을 위해 현재 유지되고 있지만, 향후 릴리즈에서 deprecated로 표시되고 이후 제거될 수 있습니다.
 
-- `machgo` <span class="badge-new">NEW!</span>(권장)는 *네이티브 포트*(기본 `5656`)용 순수 Go 구현이며, `machcli`와 호환되는 API를 제공합니다. [자세히 보기](/kr/neo/sdk-go/machgo/)
+- `machgo` <span class="badge-new">NEW!</span>(권장)는 *네이티브 포트*(기본 `5656`)용 순수 Go 구현이며, `machcli`와 호환되는 API를 제공합니다. [자세히 보기](/neo/tutorials/cli-go/)
 - `machcli`는 *네이티브 포트*(기본 `5656`)를 사용하는 C 구현 기반 Go 래퍼이며, 하위 호환을 위해 유지됩니다.
 
 {{< callout type="warning" >}}

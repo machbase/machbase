@@ -37,7 +37,7 @@ REVOKE SELECT ON sys.sensor_log FROM reader_user;
 - [데이터베이스 권한](/dbms/security-access-control/privileges/#database-privileges) — 데이터베이스 범위 권한 각각의 설명
 - [테이블 권한](/dbms/security-access-control/privileges/#privileges-2) — 특정 테이블 대상 세밀한 권한 제어
 - [기본 부여 권한과 제외 권한](/dbms/security-access-control/privileges/#privileges-grant-exclude) — 신규 사용자의 초기 권한 범위
-- [LOOKUP UPDATE/DELETE 내부 target select 권한 모델](/dbms/security-access-control/privileges/#privileges-lookup-update-delete-target-select) — 계획 중인 권한 동작
+- [LOOKUP UPDATE/DELETE 내부 target select 권한 모델](/dbms/lookup-table-usage/privilege-predicate-performance/#privileges-lookup-update-delete-target-select) — 계획 중인 권한 동작
 - [권한 진단 체크리스트](/dbms/security-access-control/privileges/#checklist-diagnosis-privileges) — 권한 현황 조회 및 감사 방법
 
 
@@ -304,6 +304,7 @@ GRANT ALL ON machbasedb TO admin_user;
 - [MOUNT](/dbms/security-access-control/privileges/#mount)
 - [DDL / ALL 합성 권한](/dbms/security-access-control/privileges/#privileges-ddl-all)
 
+<a id="select-insert-delete-update"></a>
 <a id="database-privileges-select-insert-delete-update"></a>
 
 ### SELECT / INSERT / DELETE / UPDATE
@@ -405,6 +406,7 @@ GRANT SELECT, INSERT, DELETE ON sys.sensor_log TO app_user;
 GRANT ALL ON sys.sensor_log TO app_user;
 ```
 
+<a id="create-drop"></a>
 <a id="database-privileges-create-drop"></a>
 
 ### CREATE / DROP
@@ -626,6 +628,7 @@ GRANT SELECT ON backup_db.sys.sensor_log TO mount_user;
 - 마운트 전용 계정을 별도로 생성하고 `MOUNT` 권한만 부여하는 것을 권장합니다.
 - 마운트된 데이터베이스는 읽기 전용이므로 데이터 변경 위험 없이 안전하게 조회할 수 있습니다.
 
+<a id="privileges-ddl-all"></a>
 <a id="database-privileges-privileges-ddl-all"></a>
 
 ### DDL / ALL 합성 권한

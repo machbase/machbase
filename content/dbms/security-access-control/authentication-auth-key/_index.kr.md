@@ -106,6 +106,7 @@ SELECT key_id, user_name, pubkey
 4. 이전 키 비활성화 (`ALTER USER ... DEACTIVATE AUTH KEY ID <id>`)
 5. 이전 키 삭제 (`ALTER USER ... DROP AUTH KEY ID <id>`)
 
+<a id="create-user-auth-key"></a>
 <a id="user-auth-key-create-user-auth-key"></a>
 
 ### CREATE USER ... WITH AUTH KEY
@@ -196,6 +197,7 @@ SELECT key_id, user_name, key_algo, key_param, activated, valid_before, comment
  ORDER BY key_id;
 ```
 
+<a id="alter-user-add-auth-key"></a>
 <a id="user-auth-key-alter-user-add-auth-key"></a>
 
 ### ALTER USER ... ADD AUTH KEY
@@ -275,6 +277,7 @@ SELECT key_id, user_name, key_algo, key_param, activated, valid_before, comment
  ORDER BY key_id;
 ```
 
+<a id="enable-disable-auth-key"></a>
 <a id="user-auth-key-enable-disable-auth-key"></a>
 
 ### AUTH KEY 활성화/비활성화
@@ -353,6 +356,7 @@ SELECT key_id, user_name, key_algo, activated, valid_before, comment
 - 한 사용자의 모든 AUTH KEY가 비활성화되면 해당 사용자는 AUTH KEY 인증을 사용할 수 없습니다. `AUTH_MODE=PASSWORD`로 접속하거나, SYS 계정에서 키를 재활성화해야 합니다.
 - 비활성화와 달리 삭제(`DROP AUTH KEY`)는 복구할 수 없습니다. 일시적 차단에는 비활성화를 사용하세요.
 
+<a id="alter-expiration-auth-key"></a>
 <a id="user-auth-key-alter-expiration-auth-key"></a>
 
 ### AUTH KEY 만료 변경
@@ -415,6 +419,7 @@ ALTER USER app_user ALTER AUTH KEY ID 1 VALID_BEFORE='2025-07-31';
 ALTER USER app_user DROP AUTH KEY ID 1;
 ```
 
+<a id="delete-auth-key"></a>
 <a id="user-auth-key-delete-auth-key"></a>
 
 ### AUTH KEY 삭제

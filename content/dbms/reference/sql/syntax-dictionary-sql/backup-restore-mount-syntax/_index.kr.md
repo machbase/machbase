@@ -198,5 +198,5 @@ UNMOUNT DATABASE backup_db;
 
 ## 관련 문서
 
-- [백업, 복원, 마운트 운영 가이드](../../../../operations-configuration-recovery/backup-restore-mount/) - 상세 운영 절차 및 자동화 예시
+- [백업, 복원, 마운트 운영 가이드](/dbms/operations-configuration-recovery/backup-restore-mount/) - 상세 운영 절차 및 자동화 예시
 - [GRANT/REVOKE](../user-auth-syntax/#grant-revoke) - 백업·마운트 권한 부여

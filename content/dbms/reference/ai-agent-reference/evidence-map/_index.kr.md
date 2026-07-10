@@ -40,7 +40,7 @@ weight: 60
 
 | 사실 | 근거 (소스) | 비고 |
 |------|------------|------|
-| TAG 테이블 Append가 SQL INSERT보다 빠름 | Append 전용 이진 프로토콜 사용 (SQL 파싱 오버헤드 없음) | [Append 개념](/dbms/application-integration/concepts-common/#append) |
+| TAG 테이블 Append가 SQL INSERT보다 빠름 | Append 전용 이진 프로토콜 사용 (SQL 파싱 오버헤드 없음) | [Append 개념](/dbms/application-integration/concepts-common/#append-api-batch) |
 | ROLLUP은 집계를 사전 계산하여 조회 속도 향상 | ROLLUP 설계 문서 | [ROLLUP](/dbms/tag-rollup-usage/overview-use-criteria/#rollup) |
 
 ## TAG 테이블 DML 제약

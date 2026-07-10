@@ -642,7 +642,7 @@ machloader의 기능은 다음과 같습니다.
 * machloader는 기본적으로 APPEND 모드를 지원합니다.
 * machloader는 기본적으로 `_ARRIVAL_TIME` 컬럼을 사용하지 않습니다. 해당 컬럼 데이터를 가져오거나 내보내려면 "-a" 옵션을 사용해야 합니다.
 
-지원하는 날짜/시간 포맷 토큰은 [TO_CHAR](/dbms/reference/sql/dictionary/#to_char)을 참고하세요.
+지원하는 날짜/시간 포맷 토큰은 [TO_CHAR](/dbms/reference/sql/dictionary/functions-full/#to_char)을 참고하세요.
 
 machloader의 옵션은 다음 명령으로 확인할 수 있습니다:
 
@@ -991,7 +991,7 @@ machloader를 사용한 CSV 파일의 간편한 사용을 위해 옵션이 단�
 
 아래 설명된 옵션 외에도 machloader에서 사용 가능한 모든 옵션을 사용할 수 있습니다.
 
-지원하는 날짜/시간 포맷 토큰은 [TO_CHAR](/dbms/reference/sql/dictionary/#to_char)을 참고하세요.
+지원하는 날짜/시간 포맷 토큰은 [TO_CHAR](/dbms/reference/sql/dictionary/functions-full/#to_char)을 참고하세요.
 
 ## 공통 래퍼 옵션
 

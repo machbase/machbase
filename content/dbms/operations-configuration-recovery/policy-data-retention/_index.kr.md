@@ -68,6 +68,7 @@ Retention Policy 생성·삭제는 **SYS 계정 권한**이 필요합니다. 정
 
 > 상세 권한 요건은 [Retention 적용 가능 테이블과 SYS 권한 제약](/dbms/operations-configuration-recovery/policy-data-retention/#applicable-privileges-retention-sys)을 참고하세요.
 
+<a id="create-retention-policy"></a>
 <a id="retention-policy-create-retention-policy"></a>
 
 ### Retention Policy 생성
@@ -179,6 +180,7 @@ SYS         EVENT_LOG     POLICY_7D      WAITING   NULL
 - TAG 테이블의 경우 BASETIME 컬럼 기준으로 DURATION이 적용됩니다.
 - LOG 테이블의 경우 `_ARRIVAL_TIME` 컬럼 기준으로 DURATION이 적용됩니다.
 
+<a id="detach-retention-policy"></a>
 <a id="retention-policy-detach-retention-policy"></a>
 
 ### Retention Policy 적용 해제
@@ -230,6 +232,7 @@ ALTER TABLE sensor_tag ADD RETENTION policy_30d;
 - 정책 해제 후 데이터는 `DROP TABLE` 또는 수동 `DELETE ... BEFORE`로만 삭제됩니다.
 - 정책 자체(policy 객체)는 `DROP RETENTION`으로 별도 삭제해야 합니다. `DROP RETENTION`과 `ALTER TABLE DROP RETENTION`은 다른 명령입니다.
 
+<a id="delete-retention-policy"></a>
 <a id="retention-policy-delete-retention-policy"></a>
 
 ### Retention Policy 삭제
@@ -289,6 +292,7 @@ SELECT * FROM M$RETENTION;
 - 정책 삭제는 테이블 데이터에는 영향을 주지 않습니다. 이후에는 자동 삭제만 중단됩니다.
 - 같은 이름의 정책을 재생성하려면 먼저 기존 정책을 삭제해야 합니다.
 
+<a id="applicable-privileges-retention-sys"></a>
 <a id="retention-policy-applicable-privileges-retention-sys"></a>
 
 ### Retention 적용 가능 테이블과 SYS 권한 제약
@@ -348,6 +352,7 @@ SELECT USER_NAME, TABLE_NAME, POLICY_NAME, STATE, LAST_DELETED_TIME
 FROM V$RETENTION_JOB;
 ```
 
+<a id="execution-status-check-state-retention"></a>
 <a id="retention-policy-execution-status-check-state-retention"></a>
 
 ### Retention 실행 상태 확인

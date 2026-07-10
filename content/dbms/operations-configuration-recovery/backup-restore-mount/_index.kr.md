@@ -41,7 +41,7 @@ weight: 60
 | [데이터베이스 마운트](/dbms/operations-configuration-recovery/backup-restore-mount/#database-mount) | MOUNT / UNMOUNT 사용법 |
 | [마운트된 데이터베이스 조회](/dbms/operations-configuration-recovery/backup-restore-mount/#query-database-mount) | 마운트 DB에서 SELECT |
 | [마운트 DB 동작 특성](/dbms/operations-configuration-recovery/backup-restore-mount/#mounted-db-read-only-refcount-active-same-name) | 읽기 전용, 활성 참조, 이름 충돌 |
-| [RDB sidecar 백업/복구 제약](/dbms/operations-configuration-recovery/backup-restore-mount/#recovery-backup-rdb-sidecar) | Standard Edition RDB 처리 |
+| [RDB sidecar 백업/복구 제약](/dbms/rdb-table-usage/backup-mount-sidecar/#recovery-backup-rdb-sidecar) | Standard Edition RDB 처리 |
 | [MOUNT TABLE 미지원 범위](/dbms/operations-configuration-recovery/backup-restore-mount/#unsupported-support-scope-mount-table-umount) | 테이블 단위 마운트 제약 |
 
 ## 권한 요구 사항
@@ -516,7 +516,7 @@ GRANT BACKUP ON machbasedb TO user_name;
 REVOKE BACKUP ON machbasedb FROM user_name;
 ```
 
-권한 관리에 대한 자세한 내용은 [사용자 관리](../../../../../reference/sql-reference/user-manage/) 섹션을 참고하세요.
+권한 관리에 대한 자세한 내용은 [사용자 관리](/dbms/reference/sql/syntax-dictionary-sql/user-auth-syntax/) 섹션을 참고하세요.
 
 ### 백업 진행 상태 확인
 

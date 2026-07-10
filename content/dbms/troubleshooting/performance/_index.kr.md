@@ -14,7 +14,7 @@ weight: 40
 | [쿼리가 느릴 때](/dbms/troubleshooting/performance/#slow) | 느린 쿼리 탐지, EXPLAIN 분석, 인덱스 및 캐시 설정 |
 | [검색 결과가 예상과 다를 때](/dbms/troubleshooting/performance/#search-results) | 빈 결과, 중복 데이터, 집계 오차, 타임존 문제 |
 | [메모리 부족](/dbms/troubleshooting/performance/#memory-out-of) | OOM 증상, 메모리 사용량 확인, 캐시 파라미터 조정 |
-| [RDB 트랜잭션/잠금 충돌](/dbms/troubleshooting/performance/#transaction-locking-conflict-rdb) | 잠금 현황 확인, 장시간 트랜잭션 종료, 예방 방법 |
+| [RDB 트랜잭션/잠금 충돌](/dbms/rdb-table-usage/locking-conflict-timeout/#transaction-locking-conflict-rdb) | 잠금 현황 확인, 장시간 트랜잭션 종료, 예방 방법 |
 
 
 <a id="slow"></a>

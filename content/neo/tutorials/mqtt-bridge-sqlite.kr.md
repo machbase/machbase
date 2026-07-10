@@ -35,7 +35,7 @@ DISCARD()
 - Type: `MQTT`
 - Connection String: `broker=127.0.0.1:1883 cleansession=true`
 
-연결 문자열 옵션에 대한 자세한 내용은 [문서](/neo/bridges/21.mqtt/)를 참고하십시오.
+연결 문자열 옵션에 대한 자세한 내용은 [문서](/neo/bridges/mqtt/)를 참고하십시오.
 
 {{< figure src="/neo/tutorials/img/mqtt-sqlite-bridge-mqtt.png" width="600" >}}
 

@@ -24,7 +24,7 @@ toc: true
 - Machbase Neo 실행 중
 - Go 1.24+
 - 초기 사용자 생성을 위한 `sys` 계정 접근 권한
-- Machbase Go SDK 기본 사용법은 [MachGo SDK](/kr/neo/sdk-go/machgo/) 참고
+- Machbase Go SDK 기본 사용법은 [MachGo SDK](/neo/tutorials/cli-go/) 참고
 
 ## 1) `sys` 계정으로 `stock` 사용자 생성
 
@@ -430,4 +430,4 @@ func main() {
 - 다단계 rollup 테이블 활용
 - 데이터를 stock_tick raw 테이블에만 적재하면 자동으로 rollup 테이블로 누적
 
-Go API 상세 내용은 [MachGo SDK](/kr/neo/sdk-go/machgo/) 및 [Go SDK](/kr/neo/sdk-go/) 문서를 참고하세요.
+Go API 상세 내용은 [MachGo SDK](/neo/tutorials/cli-go/) 및 [Go SDK](/neo/tutorials/cli-go/) 문서를 참고하세요.

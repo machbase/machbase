@@ -16,7 +16,7 @@ ANSI 표준 SQL로 데이터를 검색할 수 있습니다.
 
 아래 예제는 인덱스를 생성하지 않은 상태에서의 검색을 보여줍니다. 마지막에 입력된 데이터가 먼저 출력됩니다.
 
-자세한 내용은 SQL Reference의 [SELECT](../../../../sql-reference/select/) 섹션을 참조합니다.
+자세한 내용은 SQL Reference의 [SELECT](/dbms/reference/sql/syntax-dictionary-sql/select-syntax/) 섹션을 참조합니다.
 
 
 ### 기본 검색
@@ -161,7 +161,7 @@ Elapsed time: 0.001
 
 #### 기본 스캔 방향을 설정하는 프로퍼티
 
-[TABLE_SCAN_DIRECTION](../../../../configuration/property/#table_scan_direction) 프로퍼티를 사용하면 SELECT 문에 힌트가 없을 때 Log 테이블의 스캔 방향을 지정할 수 있습니다.
+[TABLE_SCAN_DIRECTION](/dbms/reference/configuration/original-8-5-full/#table_scan_direction) 프로퍼티를 사용하면 SELECT 문에 힌트가 없을 때 Log 테이블의 스캔 방향을 지정할 수 있습니다.
 
 <a id="original-85-select-time-data"></a>
 

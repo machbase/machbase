@@ -14,7 +14,7 @@ RDB 테이블의 백업·복원 절차와 sidecar 구조의 특성, 복구 방�
 RDB 테이블은 내부적으로 SQLite 기반 sidecar를 통해 관리됩니다. sidecar 파일이 누락되거나 손상되면 RDB 테이블 접근 시 오류가 발생합니다.
 
 {{< callout type="info" >}}
-**참고**: RDB sidecar 관련 제약 및 백업/복구 동작에 대한 상세 내용은 [RDB sidecar 백업/복구 제약](../../../operations-configuration-recovery/backup-restore-mount/recovery-backup-rdb-sidecar/)을 참고하십시오.
+**참고**: RDB sidecar 관련 제약 및 백업/복구 동작에 대한 상세 내용은 [RDB sidecar 백업/복구 제약](/dbms/rdb-table-usage/backup-mount-sidecar/#recovery-backup-rdb-sidecar)을 참고하십시오.
 {{< /callout >}}
 
 {{< callout type="warning" >}}
