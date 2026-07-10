@@ -3,14 +3,14 @@ title: '9.2 테이블 구조와 스키마'
 weight: 20
 toc: true
 ---
-테이블 구조와 스키마에 해당하는 세부 문서를 모았습니다.
+LOOKUP 테이블의 구조와 스키마 설계를 다룬다.
 
 
 <a id="lookup-table-design"></a>
 
 ## LOOKUP 테이블 설계
 
-LOOKUP 테이블은 코드 테이블, 기준 정보, 소규모 참조 데이터를 저장하는 타입입니다. PRIMARY KEY 기준 UPDATE/DELETE를 지원하며 디스크에 영속 저장됩니다.
+LOOKUP 테이블은 코드 테이블, 기준 정보, 소규모 참조 데이터를 저장하는 타입이다. PRIMARY KEY 기준 UPDATE/DELETE를 지원하며 디스크에 영속 저장된다.
 
 - **[활용 사례](/dbms/lookup-table-usage/patterns-scenarios/#use-cases-lookup)**
 - **[PRIMARY KEY 설계](/dbms/lookup-table-usage/primary-key-policy/#design-primary-key)**

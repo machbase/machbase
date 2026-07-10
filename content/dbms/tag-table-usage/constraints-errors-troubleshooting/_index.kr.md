@@ -3,14 +3,13 @@ title: '5.8 제약, 오류, 문제 해결'
 weight: 80
 toc: true
 ---
-제약, 오류, 문제 해결에 해당하는 세부 문서를 모았습니다.
 
 
 <a id="rejected-condition-tag-data-update-where"></a>
 
 ## TAG data UPDATE WHERE 조건 오류
 
-TAG data UPDATE는 지원되지만 WHERE 절에 태그 선택 조건과 BASETIME 조건이 모두 있어야 합니다.
+WHERE 절에 태그 선택 조건과 BASETIME 조건이 모두 있어야 합니다.
 조건이 모호하거나 허용되지 않는 형태이면 UPDATE가 거부됩니다.
 
 {{< callout type="warning" >}}
@@ -41,7 +40,7 @@ WHERE name = 'sensor-01'
 
 ### 원인
 
-TAG data UPDATE는 내부적으로 대상 태그와 시간 범위를 먼저 결정합니다. 대상 범위를 안정적으로
+내부적으로 대상 태그와 시간 범위를 먼저 결정하기 때문에, 대상 범위를 안정적으로
 결정할 수 없는 조건은 거부됩니다.
 
 | 조건 형태 | 지원 여부 |
@@ -78,7 +77,7 @@ UPDATE sensor_tag
 
 ## TAG data UPDATE SET 대상 컬럼 오류
 
-TAG data UPDATE의 SET 절은 실제 데이터 컬럼만 대상으로 합니다. PRIMARY KEY, BASETIME,
+SET 절은 실제 데이터 컬럼만 대상으로 합니다. PRIMARY KEY, BASETIME,
 메타데이터 컬럼을 SET 대상으로 지정하면 오류가 발생합니다.
 
 {{< callout type="warning" >}}
@@ -161,13 +160,13 @@ UPDATE sensor_tag METADATA
 ### 태그 수 제한
 
 - 단일 TAG 테이블에 생성 가능한 태그 수는 시스템 설정에 따라 제한됩니다.
-- 태그 수가 수십만 개를 초과하면 조회 성능이 저하될 수 있습니다.
+- 태그 수가 수십만 개를 초과하면 조회 성능이 저하됩니다.
 - 태그 이름이 레코드마다 고유한 값이 되도록 설계하면 안 됩니다 (안티패턴 — [센서별 테이블 생성](/dbms/data-modeling-table-design/table-types-patterns-type-anti/#per-sensor-create) 참고).
 
 ### 시간 역삽입 제한
 
 - BASETIME 컬럼에는 임의의 과거 시각을 삽입할 수 있습니다.
-- 단, 내부적으로는 BASETIME 기준으로 정렬되어 저장되므로, 과도한 역삽입은 스토리지 단편화를 유발할 수 있습니다.
+- 단, 내부적으로 BASETIME 기준으로 정렬되어 저장되므로, 과도한 역삽입은 스토리지 단편화를 유발합니다.
 
 ### Cluster Edition 지원
 

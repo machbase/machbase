@@ -3,30 +3,28 @@ type: docs
 title: '11.4 REST API 연동'
 weight: 40
 ---
-Machbase는 HTTP 기반 REST API를 제공합니다. 별도 드라이버를 설치하지 않고 `curl`,
-Python `requests`, JavaScript `fetch` 등 HTTP 클라이언트에서 SQL 실행과 Append 삽입을
-수행할 수 있습니다.
+별도 드라이버 설치 없이 `curl`, Python `requests`, JavaScript `fetch` 등 HTTP 클라이언트만으로 SQL 실행과 Append 삽입을 수행할 수 있다.
 
 ## REST API 포트
 
-REST API는 DB 연결 포트와 별도의 HTTP 포트를 사용합니다.
+REST API는 DB 연결 포트와 별도의 HTTP 포트를 사용한다.
 
 | 포트 | 용도 |
 |------|------|
 | 5656 | ODBC/JDBC/네이티브 드라이버 연결 |
 | 5657 | REST API (HTTP) |
 
-기본 URL은 다음과 같습니다.
+기본 URL은 다음과 같다.
 
 ```text
 http://<host>:5657
 ```
 
-로컬 서버에 접속하는 경우 기본 URL은 `http://127.0.0.1:5657`입니다.
+로컬 서버에 접속하는 경우 기본 URL은 `http://127.0.0.1:5657`이다.
 
 ## 주요 API 엔드포인트
 
-현재 Machbase REST 샘플과 서버에서 확인되는 기본 엔드포인트는 다음과 같습니다.
+현재 Machbase REST 샘플과 서버에서 확인되는 기본 엔드포인트는 다음과 같다.
 
 | 엔드포인트 | 메서드 | 설명 |
 |-----------|--------|------|
@@ -34,11 +32,9 @@ http://<host>:5657
 | `/machbase` | POST | JSON 본문으로 여러 행 Append 삽입 |
 
 컬럼 목록과 TAG 데이터 조회는 별도 REST 엔드포인트가 아니라 `/machbase` SQL 실행
-API로 `DESC <table>` 또는 TAG 테이블 조회 SQL을 실행합니다.
+API로 `DESC <table>` 또는 TAG 테이블 조회 SQL을 실행한다.
 
 ## 빠른 시작 예제
-
-다음은 REST API를 사용해 SQL을 실행하는 예제입니다.
 
 ```bash
 curl -G "http://127.0.0.1:5657/machbase" \
@@ -82,21 +78,17 @@ curl -G "http://127.0.0.1:5657/machbase" \
 | 대량 삽입 | `/machbase` POST Append | 네이티브 Append API |
 | 트랜잭션 | HTTP 요청 단위 실행 | RDB 테이블에서 트랜잭션 사용 가능 |
 
-REST API는 간단한 통합, 웹 서비스, 언어 독립 환경에 적합합니다. 초고성능 수집이나
-세밀한 연결 제어가 필요한 경우에는 네이티브 드라이버의 Append API를 사용합니다.
+REST API는 간단한 통합, 웹 서비스, 언어 독립 환경에 적합하다. 초고성능 수집이나
+세밀한 연결 제어가 필요한 경우에는 네이티브 드라이버의 Append API를 사용한다.
 
 
 <a id="common-authentication-timezone-rest-api"></a>
 
 ## REST API 공통 설정
 
-Machbase REST API를 사용할 때 공통으로 확인해야 할 HTTP 포트, 인증 설정, 요청 헤더를
-설명합니다.
-
 ### HTTP 포트
 
-REST API는 `machbase.conf`의 HTTP 설정을 사용합니다. 기본 샘플 설정에서는 다음 값을
-사용합니다.
+REST API는 `machbase.conf`의 HTTP 설정을 사용한다. 기본 샘플 설정의 값은 다음과 같다.
 
 ```text
 HTTP_ENABLE = 1
@@ -104,23 +96,23 @@ HTTP_PORT_NO = 5657
 HTTP_AUTH = 0
 ```
 
-`HTTP_ENABLE`이 `1`이면 REST API 서비스가 활성화됩니다. `HTTP_PORT_NO`는 REST API가
-수신하는 포트입니다.
+`HTTP_ENABLE`이 `1`이면 REST API 서비스가 활성화된다. `HTTP_PORT_NO`는 REST API가
+수신하는 포트다.
 
 ### 인증
 
 기본 샘플 설정의 `HTTP_AUTH = 0` 상태에서는 REST API 요청에 별도 인증 헤더가 필요하지
-않습니다.
+않다.
 
 ```bash
 curl -G "http://127.0.0.1:5657/machbase" \
   --data-urlencode "q=SELECT 1"
 ```
 
-`machbase.conf` 샘플 파일에는 `HTTP_AUTH`가 “REST API 서비스의 Basic Authentication
-활성화” 항목으로 제공됩니다. 운영 환경에서 HTTP 인증을 활성화하는 경우 배포 환경의
+`machbase.conf` 샘플 파일에는 `HTTP_AUTH`가 "REST API 서비스의 Basic Authentication
+활성화" 항목으로 제공된다. 운영 환경에서 HTTP 인증을 활성화하는 경우 배포 환경의
 인증 정책에 맞게 Basic Authentication 설정과 계정을 확인한 뒤 클라이언트에
-`Authorization` 헤더를 추가합니다.
+`Authorization` 헤더를 추가한다.
 
 ```bash
 curl -u "SYS:MANAGER" \
@@ -129,12 +121,12 @@ curl -u "SYS:MANAGER" \
 ```
 
 현재 REST 샘플과 서버 검증 기준으로 별도 로그인 토큰 발급 API나 Bearer 토큰 방식은
-사용하지 않습니다.
+사용하지 않는다.
 
 ### Content-Type
 
 요청 본문이 있는 Append 요청은 JSON 본문을 사용하므로 `Content-Type:
-application/json` 헤더를 지정합니다.
+application/json` 헤더를 지정한다.
 
 ```bash
 curl -X POST "http://127.0.0.1:5657/machbase" \
@@ -142,11 +134,11 @@ curl -X POST "http://127.0.0.1:5657/machbase" \
   -d '{"name":"curl_sample","values":[[1,"aaa"]]}'
 ```
 
-SQL 실행처럼 본문이 없는 GET 요청에는 `Content-Type` 헤더가 필요하지 않습니다.
+SQL 실행처럼 본문이 없는 GET 요청에는 `Content-Type` 헤더가 필요하지 않다.
 
 ### 타임존
 
-REST SQL 응답에는 `timezone` 필드가 포함됩니다.
+REST SQL 응답에는 `timezone` 필드가 포함된다.
 
 ```json
 {
@@ -160,15 +152,15 @@ REST SQL 응답에는 `timezone` 필드가 포함됩니다.
 ```
 
 시간 조건을 작성할 때는 Machbase SQL의 `DATETIME`, `NOW`, `SYSDATE`,
-`TO_DATE`, `TO_CHAR` 함수와 나노초 단위 시간 연산을 사용합니다.
+`TO_DATE`, `TO_CHAR` 함수와 나노초 단위 시간 연산을 사용한다.
 
 ```bash
 curl -G "http://127.0.0.1:5657/machbase" \
   --data-urlencode "q=SELECT TO_CHAR(NOW, 'YYYY-MM-DD HH24:MI:SS') AS now_text"
 ```
 
-클라이언트가 특정 지역 시간 문자열을 사용자에게 보여야 하는 경우에는 SQL에서
-`TO_CHAR`로 원하는 문자열을 만들거나 애플리케이션에서 응답 값을 변환합니다.
+클라이언트가 특정 지역 시간 문자열을 표시해야 하는 경우에는 SQL에서
+`TO_CHAR`로 원하는 문자열을 만들거나 애플리케이션에서 응답 값을 변환한다.
 
 ### 공통 헤더 요약
 
@@ -199,9 +191,9 @@ print(query("SELECT 1"))
 
 ## /machbase SQL REST API
 
-`/machbase` SQL REST API는 HTTP GET 요청의 `q` 파라미터로 SQL 문을 전달하고 실행
-결과를 JSON으로 반환합니다. `SELECT`, `INSERT`, `CREATE TABLE`, `DROP TABLE` 등
-Machbase에서 지원하는 SQL을 요청 단위로 실행할 수 있습니다.
+HTTP GET 요청의 `q` 파라미터로 SQL 문을 전달하면 실행 결과를 JSON으로 받을 수 있다.
+`SELECT`, `INSERT`, `CREATE TABLE`, `DROP TABLE` 등 Machbase에서 지원하는 SQL을
+요청 단위로 실행한다.
 
 ### 엔드포인트
 
@@ -209,8 +201,8 @@ Machbase에서 지원하는 SQL을 요청 단위로 실행할 수 있습니다.
 GET /machbase?q=<SQL>
 ```
 
-SQL은 URL 인코딩해야 합니다. `curl`에서는 `-G`와 `--data-urlencode` 옵션을 사용하면
-공백과 따옴표를 안전하게 전달할 수 있습니다.
+SQL은 URL 인코딩해야 한다. `curl`에서는 `-G`와 `--data-urlencode` 옵션을 사용하면
+공백과 따옴표를 안전하게 전달할 수 있다.
 
 ```bash
 curl -G "http://127.0.0.1:5657/machbase" \
@@ -219,7 +211,7 @@ curl -G "http://127.0.0.1:5657/machbase" \
 
 ### 응답 형식
 
-성공한 `SELECT` 응답은 다음 필드를 포함합니다.
+성공한 `SELECT` 응답은 다음 필드를 포함한다.
 
 ```json
 {
@@ -245,8 +237,8 @@ curl -G "http://127.0.0.1:5657/machbase" \
 | `data` | 결과 행. 각 행은 컬럼명을 키로 갖는 JSON 객체 |
 | `timezone` | 응답에 적용된 타임존 오프셋 |
 
-DDL이나 DML처럼 결과 행이 없는 SQL도 `error_code`가 `0`이면 성공입니다. 이때
-`effect_rows`가 함께 반환될 수 있습니다.
+DDL이나 DML처럼 결과 행이 없는 SQL도 `error_code`가 `0`이면 성공이다. 이때
+`effect_rows`가 함께 반환될 수 있다.
 
 ```json
 {
@@ -290,7 +282,7 @@ curl -G "http://127.0.0.1:5657/machbase" \
   --data-urlencode "q=CREATE TABLE curl_sample (c1 INT, c2 VARCHAR(20))"
 ```
 
-테이블을 삭제할 때도 같은 엔드포인트를 사용합니다.
+테이블을 삭제할 때도 같은 엔드포인트를 사용한다.
 
 ```bash
 curl -G "http://127.0.0.1:5657/machbase" \
@@ -299,7 +291,7 @@ curl -G "http://127.0.0.1:5657/machbase" \
 
 ### INSERT 예제
 
-소량 데이터는 SQL `INSERT`로 입력할 수 있습니다.
+소량 데이터는 SQL `INSERT`로 입력할 수 있다.
 
 ```bash
 curl -G "http://127.0.0.1:5657/machbase" \
@@ -307,7 +299,7 @@ curl -G "http://127.0.0.1:5657/machbase" \
 ```
 
 다건 입력이나 수집성 데이터는 [Append REST API](/dbms/application-integration/rest-api/#machbase-append-rest-api)를
-사용합니다.
+사용한다.
 
 ### Python 예제
 
@@ -334,22 +326,22 @@ for row in result["data"]:
 ```
 
 `DROP TABLE`처럼 대상이 없으면 실패할 수 있는 SQL은 `error_code`를 확인하여 애플리케이션
-로직에 맞게 처리합니다.
+로직에 맞게 처리한다.
 
 ### 주의 사항
 
-- 하나의 요청에는 하나의 SQL 문을 전달합니다.
-- SQL 문은 URL 인코딩해서 전달합니다.
+- 하나의 요청에는 하나의 SQL 문을 전달한다.
+- SQL 문은 URL 인코딩해서 전달한다.
 - HTTP 상태 코드가 `200`이어도 SQL 실행 오류는 `error_code`와 `error_message`로
-  반환될 수 있습니다.
-- 대량 삽입은 `/machbase` POST Append API를 사용합니다.
+  반환될 수 있다.
+- 대량 삽입은 `/machbase` POST Append API를 사용한다.
 
 <a id="machbase-append-rest-api"></a>
 
 ## /machbase append REST API
 
-`/machbase` Append REST API는 HTTP POST 요청으로 여러 행을 한 번에 삽입합니다. 요청
-본문에는 대상 테이블 이름과 행 배열을 JSON으로 전달합니다.
+HTTP POST 요청으로 여러 행을 한 번에 삽입한다. 요청
+본문에는 대상 테이블 이름과 행 배열을 JSON으로 전달한다.
 
 ### 엔드포인트
 
@@ -359,7 +351,7 @@ POST /machbase
 
 ### 요청 형식
 
-요청 본문은 `application/json` 형식입니다.
+요청 본문은 `application/json` 형식이다.
 
 ```json
 {
@@ -376,12 +368,12 @@ POST /machbase
 | `name` | string | 데이터를 삽입할 테이블 이름 |
 | `values` | array | 삽입할 행 배열. 각 행은 테이블 컬럼 순서와 같은 배열 |
 
-컬럼 이름은 요청에 포함하지 않습니다. `values`의 각 행은 테이블 정의의 컬럼 순서와
-일치해야 합니다.
+컬럼 이름은 요청에 포함하지 않는다. `values`의 각 행은 테이블 정의의 컬럼 순서와
+일치해야 한다.
 
 ### 응답 형식
 
-삽입 성공 시 다음과 같이 Append 성공/실패 건수를 반환합니다.
+삽입 성공 시 Append 성공/실패 건수가 반환된다.
 
 ```json
 {
@@ -403,14 +395,14 @@ POST /machbase
 
 ### curl 예제
 
-먼저 SQL REST API로 예제 테이블을 생성합니다.
+먼저 SQL REST API로 예제 테이블을 생성한다.
 
 ```bash
 curl -G "http://127.0.0.1:5657/machbase" \
   --data-urlencode "q=CREATE TABLE curl_sample (c1 INT, c2 VARCHAR(20))"
 ```
 
-다음 요청은 두 행을 Append로 삽입합니다.
+두 행을 Append로 삽입한다.
 
 ```bash
 curl -X POST "http://127.0.0.1:5657/machbase" \
@@ -418,7 +410,7 @@ curl -X POST "http://127.0.0.1:5657/machbase" \
   -d '{"name":"curl_sample","values":[[1,"aaa"],[2,"bbb"]]}'
 ```
 
-삽입 결과를 확인합니다.
+삽입 결과를 확인한다.
 
 ```bash
 curl -G "http://127.0.0.1:5657/machbase" \
@@ -481,33 +473,33 @@ print(f"inserted rows: {count}")
 | Append (`POST /machbase`) | 여러 행을 한 요청으로 삽입, 수집성 데이터에 적합 |
 
 초당 많은 행을 수집하는 애플리케이션에서는 SQL `INSERT`를 반복 실행하기보다 Append API나
-네이티브 드라이버의 Append API를 사용합니다.
+네이티브 드라이버의 Append API를 사용한다.
 
 ### 주의 사항
 
-- 요청 본문은 JSON이어야 하며 `Content-Type: application/json`을 지정합니다.
-- `values`의 컬럼 순서와 타입은 테이블 정의와 일치해야 합니다.
+- 요청 본문은 JSON이어야 하며 `Content-Type: application/json`을 지정한다.
+- `values`의 컬럼 순서와 타입은 테이블 정의와 일치해야 한다.
 - SQL 실행 오류와 마찬가지로 HTTP 상태 코드와 함께 `error_code`, `append_failure`를
-  확인합니다.
+  확인한다.
 
 <a id="machiot-tags-tag-rest-api"></a>
 
 ## TAG 테이블 REST 조회
 
-TAG 테이블 데이터는 `/machbase` SQL REST API로 조회합니다. 현재 빌드에서 고수준
-`/machiot/tags` 엔드포인트는 유효한 REST API로 동작하지 않습니다. TAG 이름 목록, 시간
-범위 조회, 최신값 조회는 SQL을 작성해 `/machbase?q=<SQL>`로 실행합니다.
+TAG 테이블 데이터는 `/machbase` SQL REST API로 조회한다. 현재 빌드에서 고수준
+`/machiot/tags` 엔드포인트는 유효한 REST API로 동작하지 않는다. TAG 이름 목록, 시간
+범위 조회, 최신값 조회는 SQL을 작성해 `/machbase?q=<SQL>`로 실행한다.
 
 ### TAG 테이블 준비
 
-예제에서는 다음 TAG 테이블을 사용합니다.
+예제에서는 다음 TAG 테이블을 사용한다.
 
 ```bash
 curl -G "http://127.0.0.1:5657/machbase" \
   --data-urlencode "q=CREATE TAG TABLE sensor_data (name VARCHAR(64) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED)"
 ```
 
-데이터는 Append REST API로 입력합니다.
+데이터는 Append REST API로 입력한다.
 
 ```bash
 curl -X POST "http://127.0.0.1:5657/machbase" \
@@ -516,7 +508,7 @@ curl -X POST "http://127.0.0.1:5657/machbase" \
 ```
 
 필요하면 조회 전 `EXEC TABLE_FLUSH(sensor_data)`를 실행해 메모리의 Append 데이터를
-조회 가능 상태로 반영합니다.
+조회 가능 상태로 반영한다.
 
 ```bash
 curl -G "http://127.0.0.1:5657/machbase" \
@@ -555,15 +547,15 @@ curl -G "http://127.0.0.1:5657/machbase" \
 
 ### 시간 범위 조회
 
-Machbase 시간 연산은 나노초 단위를 사용합니다. 다음 예제는 최근 1시간 데이터를
-조회합니다.
+Machbase 시간 연산은 나노초 단위를 사용한다. 다음 예제는 최근 1시간 데이터를
+조회한다.
 
 ```bash
 curl -G "http://127.0.0.1:5657/machbase" \
   --data-urlencode "q=SELECT name, time, value FROM sensor_data WHERE name = 'sensor-01' AND time >= SYSDATE - 3600000000000 ORDER BY time DESC LIMIT 100"
 ```
 
-고정된 시간 범위를 사용할 때는 `TO_DATE`로 시각 문자열을 변환합니다.
+고정된 시간 범위를 사용할 때는 `TO_DATE`로 시각 문자열을 변환한다.
 
 ```bash
 curl -G "http://127.0.0.1:5657/machbase" \
@@ -579,8 +571,8 @@ curl -G "http://127.0.0.1:5657/machbase" \
 
 ### 집계 조회
 
-`DATE_TRUNC`로 시간 버킷을 만들고 집계할 수 있습니다. 단위는 `sec`, `min`, `hour`,
-`day` 등을 사용합니다.
+`DATE_TRUNC`로 시간 버킷을 만들어 집계할 수 있다. 단위는 `sec`, `min`, `hour`,
+`day` 등을 사용한다.
 
 ```bash
 curl -G "http://127.0.0.1:5657/machbase" \
@@ -618,7 +610,7 @@ for row in rows:
 ### `/machiot/tags` 요청이 실패하는 경우
 
 현재 빌드에서 `/machiot/tags`를 호출하면 다음과 같은 REST API URL 오류가 반환될 수
-있습니다.
+있다.
 
 ```json
 {
@@ -627,15 +619,15 @@ for row in rows:
 }
 ```
 
-이 경우 `/machbase` SQL REST API로 동일한 조회를 수행합니다.
+이 경우 `/machbase` SQL REST API로 동일한 조회를 수행한다.
 
 <a id="error-handling-rest-api"></a>
 
 ## REST API 오류 처리
 
-Machbase REST API 클라이언트는 HTTP 상태 코드와 응답 JSON의 `error_code`를 함께
-확인해야 합니다. SQL 실행 오류는 HTTP `200 OK`와 함께 `error_code != 0`으로 반환될 수
-있습니다.
+REST API 클라이언트는 HTTP 상태 코드와 응답 JSON의 `error_code`를 함께
+확인해야 한다. SQL 실행 오류는 HTTP `200 OK`와 함께 `error_code != 0`으로 반환될 수
+있다.
 
 ### HTTP 상태 코드
 
@@ -646,7 +638,7 @@ Machbase REST API 클라이언트는 HTTP 상태 코드와 응답 JSON의 `error
 | `404 Not Found` | 엔드포인트 없음 | 존재하지 않는 URL 요청 |
 | `500 Internal Server Error` | 서버 오류 | 서버 내부 처리 오류 |
 
-잘못된 REST API URL을 호출하면 HTTP `404`가 반환됩니다.
+잘못된 REST API URL을 호출하면 HTTP `404`가 반환된다.
 
 ```bash
 curl -i "http://127.0.0.1:5657/db/query"
@@ -654,8 +646,8 @@ curl -i "http://127.0.0.1:5657/db/query"
 
 ### SQL 오류 응답
 
-SQL 실행에 실패해도 HTTP 상태 코드는 `200`일 수 있습니다. 이 경우 `error_code`와
-`error_message`를 확인합니다.
+SQL 실행에 실패해도 HTTP 상태 코드는 `200`일 수 있다. 이때 `error_code`와
+`error_message`를 확인한다.
 
 요청:
 
@@ -683,7 +675,7 @@ curl -G "http://127.0.0.1:5657/machbase" \
 
 ### Append 오류 응답
 
-Append 요청은 전체 요청 처리 결과와 행 단위 성공/실패 수를 함께 확인합니다.
+Append 요청은 전체 요청 처리 결과와 행 단위 성공/실패 수를 함께 확인한다.
 
 ```json
 {
@@ -697,7 +689,7 @@ Append 요청은 전체 요청 처리 결과와 행 단위 성공/실패 수를 
 ```
 
 `error_code`가 `0`이어도 `append_failure`가 `0`보다 크면 일부 행이 삽입되지 않은
-상태로 처리해야 합니다.
+것이므로 적절히 처리해야 한다.
 
 ### 재시도 전략
 
@@ -753,7 +745,7 @@ print(result)
 
 ### 타임아웃 처리
 
-REST API 요청에는 타임아웃을 설정합니다.
+REST API 요청에는 타임아웃을 설정한다.
 
 ```bash
 curl -G "http://127.0.0.1:5657/machbase" \
@@ -762,7 +754,7 @@ curl -G "http://127.0.0.1:5657/machbase" \
   --data-urlencode "q=SELECT COUNT(*) FROM curl_sample"
 ```
 
-Python에서는 다음처럼 연결 타임아웃과 읽기 타임아웃을 지정합니다.
+Python에서는 연결 타임아웃과 읽기 타임아웃을 별도로 지정할 수 있다.
 
 ```python
 resp = requests.get(
@@ -774,11 +766,11 @@ resp = requests.get(
 
 ### 오류 처리 체크리스트
 
-- REST 엔드포인트가 `/machbase`인지 확인합니다.
-- HTTP 상태 코드가 `404` 또는 `500`이면 URL 또는 서버 상태를 먼저 확인합니다.
-- HTTP `200` 응답에서도 `error_code`가 `0`인지 확인합니다.
-- Append 요청은 `append_failure`를 함께 확인합니다.
-- 모든 요청에 타임아웃을 설정합니다.
-- SQL 오류는 재시도보다 SQL 문, 테이블 존재 여부, 컬럼 타입을 수정합니다.
+- REST 엔드포인트가 `/machbase`인지 확인한다.
+- HTTP 상태 코드가 `404` 또는 `500`이면 URL 또는 서버 상태를 먼저 확인한다.
+- HTTP `200` 응답에서도 `error_code`가 `0`인지 확인한다.
+- Append 요청은 `append_failure`를 함께 확인한다.
+- 모든 요청에 타임아웃을 설정한다.
+- SQL 오류는 재시도보다 SQL 문, 테이블 존재 여부, 컬럼 타입을 수정한다.
 
-드라이버와 SDK에 공통으로 적용되는 오류 처리 전략은 [오류 처리와 재시도](/dbms/application-integration/concepts-common/#error-handling-retry)를 참조하십시오.
+드라이버와 SDK에 공통으로 적용되는 오류 처리 전략은 [오류 처리와 재시도](/dbms/application-integration/concepts-common/#error-handling-retry)를 참조한다.

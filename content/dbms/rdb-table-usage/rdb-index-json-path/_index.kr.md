@@ -3,18 +3,19 @@ title: '8.12 RDB 인덱스와 JSON path 인덱스'
 weight: 120
 toc: true
 ---
-RDB 인덱스와 JSON path 인덱스에 해당하는 세부 문서를 모았습니다.
+
+RDB 테이블의 PRIMARY KEY·보조 인덱스 전략과 JSON 경로 인덱스 활용법을 다룬다.
 
 
 <a id="index-strategy-rdb-primary-key-unique-normal"></a>
 
 ## PRIMARY KEY·보조 인덱스 전략
 
-RDB 테이블은 BTREE 기반 PRIMARY KEY 인덱스와 보조 인덱스를 지원합니다. 보조 인덱스는 `CREATE INDEX`, PRIMARY KEY 인덱스는 `CREATE PRIMARY KEY INDEX` 문으로 생성합니다.
+RDB 테이블은 BTREE 기반 PRIMARY KEY 인덱스와 보조 인덱스를 지원한다. PRIMARY KEY는 `CREATE PRIMARY KEY INDEX`, 보조 인덱스는 `CREATE INDEX`로 생성한다.
 
 ### PRIMARY KEY 인덱스
 
-RDB 테이블의 PRIMARY KEY 인덱스는 BTREE 구조로 표시됩니다.
+RDB 테이블의 PRIMARY KEY 인덱스는 BTREE 구조로 표시된다.
 
 ```sql
 CREATE RDB TABLE orders (
@@ -82,16 +83,16 @@ WHERE account_id = 'ACC-001'
 
 ### 주의사항
 
-- 인덱스가 없는 컬럼 조건은 풀스캔이 발생합니다.
-- UPDATE/DELETE 시에도 WHERE 절의 컬럼에 인덱스가 있으면 성능이 향상됩니다.
-- 인덱스를 과도하게 생성하면 INSERT/UPDATE 성능이 저하됩니다.
-- 복합 인덱스는 앞쪽 컬럼 조건이 있을 때 효율적으로 사용됩니다.
+- 인덱스가 없는 컬럼 조건은 풀스캔을 유발한다.
+- UPDATE/DELETE 시에도 WHERE 절 컬럼에 인덱스가 있으면 성능이 향상된다.
+- 인덱스를 과도하게 생성하면 INSERT/UPDATE 성능이 저하된다.
+- 복합 인덱스는 앞쪽 컬럼 조건이 포함될 때 효율적으로 사용된다.
 
 <a id="index-strategy-rdb-json-path"></a>
 
 ## JSON 경로 인덱스
 
-RDB 테이블에 `JSON` 타입 컬럼이 있는 경우, JSON 경로 인덱스 DDL과 카탈로그 등록을 사용할 수 있습니다. 단, 현재 JSON path 조건은 일반 컬럼 인덱스처럼 쿼리 경로에 푸시다운되지 않을 수 있으므로 실행 계획을 확인해야 합니다.
+`JSON` 타입 컬럼이 있는 RDB 테이블에서는 JSON 경로 인덱스를 생성할 수 있다. 다만 현재 JSON path 조건은 일반 컬럼 인덱스처럼 쿼리 경로에 푸시다운되지 않을 수 있으므로, 실행 계획을 반드시 확인해야 한다.
 
 ### JSON 컬럼 스키마
 
@@ -131,9 +132,9 @@ WHERE region = 'KR'
 
 ### 주의사항
 
-- JSON path 조건이 인덱스 경로로 처리되는지 실행 계획을 확인합니다.
-- 중첩 구조가 복잡한 JSON 경로는 선택도가 낮을 수 있습니다.
-- 자주 조회하는 JSON 필드는 별도 컬럼으로 추출하여 일반 인덱스를 사용하는 것이 더 효율적인 경우가 많습니다.
+- JSON path 조건이 인덱스 경로로 처리되는지 실행 계획으로 확인한다.
+- 중첩 구조가 복잡한 JSON 경로는 선택도가 낮을 수 있다.
+- 자주 조회하는 JSON 필드는 별도 컬럼으로 추출하여 일반 인덱스를 적용하는 편이 효율적인 경우가 많다.
 
 ```sql
 -- 더 효율적인 패턴: JSON 필드를 컬럼으로 분리

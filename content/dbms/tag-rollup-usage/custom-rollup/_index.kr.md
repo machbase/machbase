@@ -3,7 +3,6 @@ title: '6.7 Custom ROLLUP'
 weight: 60
 toc: true
 ---
-Custom ROLLUP에 해당하는 세부 문서를 모았습니다.
 
 
 <a id="original-85-rollup-custom"></a>
@@ -14,9 +13,7 @@ Custom ROLLUP에 해당하는 세부 문서를 모았습니다.
 
 ### 개요
 
-Custom Rollup은 사용자가 작성한 `SELECT` 집계식을 주기적으로 실행하여, 지정한 대상 TAG 테이블에 결과를 누적 저장하는 기능입니다.
-
-다중 컬럼 집계, 조건 기반 집계, 그리고 단계형(계층형) 집계 구성에 적합합니다.
+Custom Rollup은 사용자가 작성한 `SELECT` 집계식을 주기적으로 실행해 대상 TAG 테이블에 결과를 누적 저장하는 기능입니다. 다중 컬럼 집계, 조건 기반 집계, 단계형(계층형) 집계 구성에 적합합니다.
 
 ### 기존 Rollup과 차이
 
@@ -253,7 +250,7 @@ DROP TABLE <source_table>;
 
 ## 사용자 정의 ROLLUP (Custom Rollup)
 
-Custom Rollup은 사용자가 직접 SELECT 쿼리를 정의하고, 그 결과를 대상 TAG 테이블에 주기적으로 저장하는 ROLLUP입니다. 기본 ROLLUP이 지원하지 않는 복잡한 집계(멀티 컬럼 GROUP BY, 사용자 정의 계산 등)를 사전 처리할 때 사용합니다.
+Custom Rollup은 사용자가 직접 SELECT 쿼리를 정의하고, 그 결과를 대상 TAG 테이블에 주기적으로 저장합니다. 기본 ROLLUP이 지원하지 않는 복잡한 집계(멀티 컬럼 GROUP BY, 사용자 정의 계산 등)에 사용합니다.
 
 ### 생성 구문
 

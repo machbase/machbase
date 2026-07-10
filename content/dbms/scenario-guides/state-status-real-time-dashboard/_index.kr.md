@@ -6,13 +6,13 @@ weight: 50
 
 ## 시나리오 개요
 
-TAG 테이블에 수집된 최신 센서값을 폴링하여 실시간 상태판(대시보드)을 구성하는 패턴입니다. 각 센서의 현재값, 상태 등급, 임계값 초과 여부를 화면에 표시하고, REST API 또는 외부 시각화 도구와 연동하는 방법을 설명합니다.
+TAG 테이블의 최신 센서값을 폴링하여 실시간 상태판(대시보드)을 구성하는 패턴입니다. 각 센서의 현재값, 상태 등급, 임계값 초과 여부를 표시하고, REST API 또는 외부 시각화 도구와 연동합니다.
 
 ---
 
 ## 사전 준비
 
-다음과 같은 TAG 테이블이 존재한다고 가정합니다.
+아래 TAG 테이블이 존재한다고 가정합니다.
 
 ```sql
 CREATE TAG TABLE sensor_tag (
@@ -127,7 +127,7 @@ SELECT s.name,
  ORDER BY severity DESC, t.name;
 ```
 
-여러 임계값 기준을 테이블로 관리하고 싶다면, LOOKUP 테이블에 임계값 설정을 저장한 뒤 JOIN으로 연결하는 방법을 권장합니다.
+임계값 기준을 테이블로 관리하려면 LOOKUP 테이블에 설정을 저장하고 JOIN으로 연결합니다.
 
 ```sql
 -- 임계값 설정 LOOKUP 테이블 (예시)
@@ -165,7 +165,7 @@ SELECT t.name,
 
 ## 4단계: REST API로 대시보드 연동
 
-Machbase의 HTTP REST API(`/machbase?q=...`)를 사용하면 별도의 미들웨어 없이 대시보드에서 직접 쿼리를 실행할 수 있습니다.
+HTTP REST API(`/machbase?q=...`)를 사용하면 미들웨어 없이 대시보드에서 직접 쿼리를 실행할 수 있습니다.
 
 ```bash
 # machbase.conf에서 HTTP 활성화
@@ -226,7 +226,7 @@ setInterval(fetchLatestValues, 2000);
 | 3~5초 | 일반 상태판, KPI 화면 | 센서 수집 주기보다 짧게 유지 |
 | 10초 이상 | 요약·집계 지표 | 집계 쿼리와 조합 가능 |
 
-폴링 요청을 줄이려면 여러 태그를 단일 쿼리로 묶어 조회하고, 변경된 값만 화면에 업데이트하는 방식을 사용합니다.
+폴링 요청을 줄이려면 여러 태그를 단일 쿼리로 묶어 조회하고, 변경된 값만 화면에 반영합니다.
 
 ```python
 import requests
@@ -261,11 +261,11 @@ while True:
 
 ## 6단계: Grafana 등 외부 도구 연동 시 고려사항
 
-Grafana와 같은 외부 시각화 도구를 연동할 때는 다음 사항을 고려합니다.
+Grafana 같은 외부 시각화 도구를 연동할 때 고려할 사항입니다.
 
 **데이터 소스 설정**
 
-Machbase는 JDBC(또는 ODBC) 드라이버를 통해 Grafana의 Generic JDBC 데이터 소스 플러그인과 연동됩니다.
+JDBC(또는 ODBC) 드라이버를 통해 Grafana의 Generic JDBC 데이터 소스 플러그인과 연동합니다.
 
 ```
 JDBC URL: jdbc:machbase://localhost:5656/machbasedb

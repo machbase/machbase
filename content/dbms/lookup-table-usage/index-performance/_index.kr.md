@@ -3,20 +3,20 @@ title: '9.6 인덱스와 성능'
 weight: 60
 toc: true
 ---
-인덱스와 성능에 해당하는 세부 문서를 모았습니다.
+LOOKUP/VOLATILE 테이블의 인덱스 구조와 성능 튜닝을 다룬다.
 
 
 <a id="index-tuning-lookup-volatile"></a>
 
 ## LOOKUP/VOLATILE 인덱스 튜닝
 
-LOOKUP 테이블과 VOLATILE 테이블은 모두 PRIMARY KEY에 자동으로 Red-Black 트리 인덱스가 생성됩니다. 필요하면 non-PK 컬럼에도 Red-Black 보조 인덱스를 생성할 수 있습니다.
+LOOKUP 테이블과 VOLATILE 테이블은 모두 PRIMARY KEY에 Red-Black 트리 인덱스가 자동 생성된다. 필요하면 non-PK 컬럼에도 Red-Black 보조 인덱스를 추가할 수 있다.
 
 ### LOOKUP 테이블 인덱스
 
 #### PK 자동 Red-Black 트리 인덱스
 
-LOOKUP 테이블을 생성하면 PRIMARY KEY 컬럼에 Red-Black 트리 인덱스가 자동으로 생성됩니다. 소규모 기준 정보를 키로 빠르게 조회하는 패턴에 최적화되어 있습니다.
+LOOKUP 테이블을 생성하면 PRIMARY KEY 컬럼에 Red-Black 트리 인덱스가 자동으로 생성된다. 소규모 기준 정보를 키로 빠르게 조회하는 패턴에 최적화되어 있다.
 
 ```sql
 CREATE LOOKUP TABLE device_master (
@@ -40,7 +40,7 @@ DURATION 1 HOUR;
 
 #### non-PK 컬럼 보조 인덱스
 
-LOOKUP 테이블의 non-PK 컬럼에도 Red-Black 보조 인덱스를 생성할 수 있습니다. 보조 인덱스가 없는 컬럼으로 필터링하면 테이블 전체를 순차 스캔합니다.
+non-PK 컬럼에도 Red-Black 보조 인덱스를 생성할 수 있다. 보조 인덱스가 없는 컬럼으로 필터링하면 테이블 전체를 순차 스캔한다.
 
 ```sql
 -- 자주 필터링하는 non-PK 컬럼에 보조 인덱스 생성
@@ -52,7 +52,7 @@ SELECT * FROM device_master WHERE location = 'Seoul';
 SELECT * FROM device_master WHERE category = 'temperature';
 ```
 
-보조 인덱스는 조회를 빠르게 하지만 갱신 비용과 메모리 사용량을 늘립니다. 자주 사용하는 조건 컬럼에만 생성합니다.
+보조 인덱스는 조회를 빠르게 하지만 갱신 비용과 메모리 사용량이 늘어난다. 자주 사용하는 조건 컬럼에만 생성한다.
 
 #### LOOKUP 테이블 사용 가이드라인
 
@@ -73,7 +73,7 @@ non-PK 조회 응답 시간: 보조 인덱스가 있으면 O(log n), 없으면 O
 
 #### PK 자동 Red-Black 트리 인덱스
 
-VOLATILE 테이블은 메모리 기반 테이블로, PRIMARY KEY 컬럼에 Red-Black 트리 인덱스가 자동으로 생성됩니다. 모든 작업이 메모리에서 수행되므로 삽입, 조회, 수정, 삭제 모두 매우 빠릅니다.
+VOLATILE 테이블은 메모리 기반이며, PRIMARY KEY 컬럼에 Red-Black 트리 인덱스가 자동 생성된다. 모든 작업이 메모리에서 수행되므로 삽입·조회·수정·삭제 모두 매우 빠르다.
 
 ```sql
 CREATE VOLATILE TABLE device_status (
@@ -97,7 +97,7 @@ DELETE FROM device_status WHERE device_id = 101;
 
 #### non-PK 컬럼 보조 인덱스
 
-VOLATILE 테이블도 non-PK 컬럼에 Red-Black 보조 인덱스를 생성할 수 있습니다. 보조 인덱스가 없으면 전체 메모리 스캔이 발생하지만, 데이터가 메모리에 있으므로 디스크 기반 테이블보다 부담이 작습니다.
+VOLATILE 테이블도 non-PK 컬럼에 Red-Black 보조 인덱스를 생성할 수 있다. 보조 인덱스가 없으면 전체 메모리 스캔이 발생하지만, 데이터가 메모리에 있으므로 디스크 기반 테이블보다 부담이 작다.
 
 ```sql
 CREATE INDEX idx_device_status_status ON device_status(status);
@@ -105,7 +105,7 @@ CREATE INDEX idx_device_status_status ON device_status(status);
 SELECT * FROM device_status WHERE status = 'ERROR';
 ```
 
-VOLATILE 테이블은 **현재 상태를 보관하는 소규모 인메모리 테이블**로 사용하는 것이 목적에 맞습니다. 반복 조회하는 non-PK 조건에만 보조 인덱스를 생성합니다.
+VOLATILE 테이블은 **현재 상태를 보관하는 소규모 인메모리 테이블**로 사용하는 것이 목적에 맞다. 반복 조회하는 non-PK 조건에만 보조 인덱스를 생성한다.
 
 #### VOLATILE 테이블 특성 요약
 
@@ -120,7 +120,7 @@ VOLATILE 테이블은 **현재 상태를 보관하는 소규모 인메모리 테
 
 ### 대용량 기준 정보가 필요한 경우
 
-LOOKUP 테이블의 크기와 보조 인덱스 갱신 비용 때문에 다음 시나리오에서는 대안을 고려합니다.
+LOOKUP 테이블의 크기와 보조 인덱스 갱신 비용 때문에 다음 시나리오에서는 대안을 고려한다.
 
 **시나리오**: 수십만 건의 장치 기준 정보를 저장하고, 여러 컬럼으로 필터링해야 하는 경우
 
@@ -139,7 +139,7 @@ CREATE INDEX idx_location ON device_master_log (location);
 CREATE INDEX idx_category ON device_master_log (category) INDEX_TYPE BITMAP;
 ```
 
-단, LOG 테이블은 Append 전용이므로 기준 정보 갱신 패턴에 맞게 설계가 필요합니다.
+단, LOG 테이블은 Append 전용이므로 기준 정보 갱신 패턴에 맞게 설계해야 한다.
 
 ### 핵심 정리
 
@@ -158,9 +158,8 @@ CREATE INDEX idx_category ON device_master_log (category) INDEX_TYPE BITMAP;
 
 > **8.5 원문 보강 자료**: 이 문서는 기존 8.5 매뉴얼의 내용을 새 장 구조에 맞춰 보존한 것입니다. Machbase 8.6 기준과 표현이 다른 부분은 같은 절의 최신 리뉴얼 문서를 우선합니다.
 
-Lookup 테이블은 RED-BLACK 인덱스를 지원합니다. Lookup 테이블에
-`INDEX_TYPE LSM`을 지정해도 Machbase는 RED-BLACK 인덱스를 생성합니다.
-`KEYWORD` 인덱스는 LOG 테이블에서만 사용할 수 있습니다.
+Lookup 테이블은 RED-BLACK 인덱스를 지원한다. `INDEX_TYPE LSM`을
+지정해도 RED-BLACK 인덱스가 생성된다. `KEYWORD` 인덱스는 LOG 테이블에서만 사용할 수 있다.
 
 ```sql
 CREATE LOOKUP TABLE lookup_table (code INTEGER PRIMARY KEY, name VARCHAR(20));
@@ -171,11 +170,11 @@ CREATE INDEX idx_lookup_name ON lookup_table(name) INDEX_TYPE REDBLACK;
 
 ## 인덱스 전략
 
-LOOKUP 테이블은 PRIMARY KEY에 자동으로 Red-Black Tree 인덱스가 생성됩니다. 추가 조회 조건이 있는 경우 보조 인덱스를 생성합니다.
+LOOKUP 테이블은 PRIMARY KEY에 Red-Black Tree 인덱스가 자동 생성된다. 추가 조회 조건이 있으면 보조 인덱스를 생성한다.
 
 ### 자동 PRIMARY KEY 인덱스
 
-PRIMARY KEY 컬럼에는 자동으로 인덱스가 생성됩니다. 별도 `CREATE INDEX`가 필요하지 않습니다.
+PRIMARY KEY 컬럼에는 인덱스가 자동 생성된다. 별도 `CREATE INDEX`가 필요 없다.
 
 ```sql
 CREATE LOOKUP TABLE country_code (
@@ -190,7 +189,7 @@ SELECT name FROM country_code WHERE code = 'KR';
 
 ### 보조 인덱스
 
-PRIMARY KEY 외의 컬럼으로 자주 조회하는 경우 보조 인덱스를 생성합니다.
+PRIMARY KEY 외의 컬럼으로 자주 조회하면 보조 인덱스를 생성한다.
 
 ```sql
 CREATE LOOKUP TABLE equipment_master (
@@ -221,5 +220,5 @@ SELECT equip_id, location FROM equipment_master WHERE status = 'ACTIVE';
 
 ### 주의사항
 
-- 건수가 수만 건 이하의 소규모 테이블은 인덱스 없이도 빠른 조회가 가능합니다.
-- 인덱스는 INSERT/UPDATE 성능에 영향을 줄 수 있으므로 필요한 것만 생성합니다.
+- 수만 건 이하의 소규모 테이블은 인덱스 없이도 빠르게 조회할 수 있다.
+- 인덱스는 INSERT/UPDATE 성능에 영향을 줄 수 있으므로 필요한 것만 생성한다.

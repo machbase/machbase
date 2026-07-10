@@ -3,14 +3,15 @@ title: '8.14 RDB 백업, 마운트, sidecar'
 weight: 140
 toc: true
 ---
-RDB 백업, 마운트, sidecar에 해당하는 세부 문서를 모았습니다.
+
+RDB 테이블의 백업·복원 절차와 sidecar 구조의 특성, 복구 방법을 다룬다.
 
 
 <a id="error-rdb-sidecar"></a>
 
 ## RDB sidecar 누락/손상 오류
 
-Machbase Standard Edition에서 RDB 테이블은 내부적으로 SQLite 기반의 sidecar를 통해 관리됩니다. sidecar 파일이 누락되거나 손상되면 RDB 테이블에 접근할 때 오류가 발생합니다.
+RDB 테이블은 내부적으로 SQLite 기반 sidecar를 통해 관리된다. sidecar 파일이 누락되거나 손상되면 RDB 테이블 접근 시 오류가 발생한다.
 
 {{< callout type="info" >}}
 **참고**: RDB sidecar 관련 제약 및 백업/복구 동작에 대한 상세 내용은 [RDB sidecar 백업/복구 제약](../../../operations-configuration-recovery/backup-restore-mount/recovery-backup-rdb-sidecar/)을 참고하십시오.
@@ -35,7 +36,7 @@ Machbase Standard Edition에서 RDB 테이블은 내부적으로 SQLite 기반�
 ls -la $MACHBASE_HOME/dbs/__rdbt_*.db
 ```
 
-파일이 없거나 크기가 0이면 누락 또는 손상된 것입니다.
+파일이 없거나 크기가 0이면 누락 또는 손상된 것이다.
 
 #### 2. 트레이스 로그 확인
 
@@ -45,7 +46,7 @@ grep -i "rdb\|sidecar\|sqlite\|error" $MACHBASE_HOME/trc/machbase.trc | tail -30
 
 #### 3. RDB 테이블 목록 확인
 
-복구 후 재생성이 필요한 테이블 목록을 파악합니다.
+복구 후 재생성이 필요한 테이블 목록을 파악한다.
 
 ```sql
 -- RDB 테이블 목록 조회 (시스템 테이블 이용)
@@ -56,7 +57,7 @@ SELECT name FROM m$sys_tables WHERE type = 8;
 
 #### 방법 1: 백업에서 sidecar 파일 복원
 
-최근 백업이 있는 경우 백업에서 sidecar 파일을 복원합니다.
+최근 백업이 있다면 백업에서 sidecar 파일을 복원한다.
 
 ```bash
 # 1. 서버 종료
@@ -69,13 +70,13 @@ machadmin -r /backup/machbase_20240101
 machadmin -u
 ```
 
-백업에서 복원하면 sidecar 파일도 자동으로 복원됩니다. 단, 백업 시점 이후의 RDB 데이터는 복원되지 않습니다.
+백업에서 복원하면 sidecar 파일도 함께 복원된다. 단, 백업 시점 이후의 RDB 데이터는 복구되지 않는다.
 
 #### 방법 2: RDB 테이블 재생성
 
-백업이 없거나 백업 복원이 불가능한 경우 RDB 테이블을 재생성합니다. 이 방법은 **기존 RDB 데이터가 손실됩니다.**
+백업이 없거나 복원이 불가능한 경우 RDB 테이블을 재생성한다. **기존 RDB 데이터는 손실된다.**
 
-**재생성 전에 기존 sidecar 파일을 백업합니다.**
+재생성 전에 손상된 sidecar 파일을 별도로 백업해 둔다.
 
 ```bash
 # 손상된 sidecar 파일 백업 (혹시 복구 가능할 경우를 대비)
@@ -83,7 +84,7 @@ mkdir -p /tmp/rdb_backup
 cp $MACHBASE_HOME/dbs/__rdbt_*.db /tmp/rdb_backup/
 ```
 
-애플리케이션의 DDL 스크립트를 이용하거나 직접 CREATE TABLE을 실행하여 RDB 테이블을 재생성합니다.
+애플리케이션의 DDL 스크립트를 이용하거나 직접 CREATE TABLE을 실행하여 재생성한다.
 
 ```sql
 -- RDB 테이블 재생성 예시
@@ -96,7 +97,7 @@ CREATE RDB TABLE rdb_config (
 
 ### RDB 테이블 사전 백업 권장
 
-RDB 테이블 구조와 데이터를 주기적으로 별도 백업해 두면 복구 시 활용할 수 있습니다.
+RDB 테이블 구조와 데이터를 주기적으로 별도 백업해 두면 복구 시 활용할 수 있다.
 
 ```sql
 -- RDB 테이블 목록 및 정의 확인
@@ -106,17 +107,17 @@ SELECT name FROM m$sys_tables WHERE type = 8;
 BACKUP TABLE rdb_config INTO DISK = '/backup/rdb_config_20240101';
 ```
 
-데이터 중요도에 따라 RDB 테이블의 내용을 CSV로 내보내거나 외부 시스템에 복사해 두는 것도 권장합니다.
+데이터 중요도에 따라 CSV 내보내기나 외부 시스템 복사도 고려한다.
 
 <a id="design-backup-mount-rdb"></a>
 
 ## 백업·마운트
 
-RDB 테이블은 Machbase 백업 및 마운트 기능을 통해 데이터를 보호하고 복원할 수 있습니다.
+RDB 테이블은 Machbase 백업 및 마운트 기능으로 데이터를 보호하고 복원할 수 있다.
 
 ### 백업
 
-RDB 테이블은 다른 테이블과 함께 데이터베이스 백업에 포함됩니다.
+RDB 테이블은 다른 테이블과 함께 데이터베이스 백업에 포함된다.
 
 ```sql
 -- 전체 데이터베이스 백업
@@ -128,7 +129,7 @@ BACKUP DATABASE AFTER '/backup/machbase_backup_20240101' INTO DISK = '/backup/ma
 
 ### 마운트
 
-백업된 데이터베이스를 마운트하여 읽기 전용으로 접근할 수 있습니다.
+백업된 데이터베이스를 마운트하여 읽기 전용으로 접근할 수 있다.
 
 ```sql
 -- 백업 마운트
@@ -151,21 +152,21 @@ machadmin -r '/backup/machbase_backup_20240101'
 
 ### 주의사항
 
-- 백업 중 DML은 계속 가능하지만, DDL은 제한될 수 있습니다.
-- RDB 테이블의 데이터 보존 정책은 운영 설정에서 관리합니다.
+- 백업 중 DML은 계속 가능하지만, DDL은 제한될 수 있다.
+- RDB 테이블의 데이터 보존 정책은 운영 설정에서 관리한다.
 - 자세한 백업·복구 절차는 [운영 및 구성](/dbms/operations-configuration-recovery/)을 참고하십시오.
 
 <a id="recovery-backup-rdb-sidecar"></a>
 
 ## RDB sidecar 백업/복구 제약
 
-RDB 테이블은 Machbase Standard Edition에서만 사용 가능한 관계형 테이블 타입입니다. 내부 구현 방식이 LOG/TAG 테이블과 다르기 때문에 백업과 복구 시 추가적인 고려가 필요합니다.
+RDB 테이블은 Standard Edition 전용 관계형 테이블이다. 내부 구현이 LOG/TAG 테이블과 다르므로 백업·복구 시 추가 고려가 필요하다.
 
-> **참고**: RDB 테이블 백업/복구는 Standard Edition에서만 해당됩니다. Cluster Edition에는 적용되지 않습니다.
+> **참고**: RDB 테이블 백업/복구는 Standard Edition에서만 해당된다. Cluster Edition에는 적용되지 않는다.
 
 ### RDB 테이블의 저장 구조
 
-RDB 테이블은 Machbase 엔진 내부에서 별도의 sidecar 데이터베이스(SQLite 등)를 통해 관리됩니다. 이 때문에 데이터 파일이 Machbase의 일반 데이터 파일과 별도로 존재할 수 있습니다.
+RDB 테이블은 엔진 내부에서 별도의 sidecar 데이터베이스(SQLite 등)로 관리된다. 데이터 파일이 Machbase의 일반 데이터 파일과 별도로 존재한다.
 
 ```
 $MACHBASE_HOME/dbs/
@@ -175,14 +176,14 @@ $MACHBASE_HOME/dbs/
 
 ### 백업 시 동작
 
-`BACKUP DATABASE` 명령을 실행하면 RDB 테이블의 sidecar 파일도 백업에 포함됩니다.
+`BACKUP DATABASE` 실행 시 RDB 테이블의 sidecar 파일도 백업에 포함된다.
 
 ```sql
 -- 전체 백업 (RDB 테이블 포함)
 BACKUP DATABASE INTO DISK = '/backup/machbase_20240101';
 ```
 
-RDB 테이블만 개별 백업(`BACKUP TABLE`)하는 경우에도 sidecar 파일이 함께 복사됩니다.
+`BACKUP TABLE`로 개별 백업하는 경우에도 sidecar 파일이 함께 복사된다.
 
 ```sql
 -- RDB 테이블 단위 백업
@@ -191,11 +192,11 @@ BACKUP TABLE rdb_table_name INTO DISK = '/backup/rdb_table_20240101';
 
 ### 복원 시 주의사항
 
-`machadmin -r` 명령으로 복원할 때 백업 이미지의 `rdb/__rdbt_*.db` 파일이 현재 `$MACHBASE_HOME/dbs/`로 복사됩니다. 단, 다음 사항을 확인해야 합니다.
+`machadmin -r`로 복원할 때 백업 이미지의 `rdb/__rdbt_*.db` 파일이 `$MACHBASE_HOME/dbs/`로 복사된다. 다음 사항을 확인해야 한다.
 
-1. **기존 DB 삭제**: 복원 전에 서버를 종료하고 현재 데이터베이스를 삭제해야 합니다.
-2. **sidecar 버전 호환성**: RDB sidecar DB의 버전이 현재 Machbase와 호환되어야 합니다.
-3. **잠금 상태 확인**: 복원 전에 sidecar DB 파일이 다른 프로세스에 의해 잠겨 있지 않아야 합니다.
+1. **기존 DB 삭제**: 복원 전에 서버를 종료하고 현재 데이터베이스를 삭제한다.
+2. **sidecar 버전 호환성**: sidecar DB 버전이 현재 Machbase와 호환되어야 한다.
+3. **잠금 상태 확인**: sidecar DB 파일이 다른 프로세스에 의해 잠겨 있지 않아야 한다.
 
 ```bash
 # 복원 절차 (RDB 포함)
@@ -207,7 +208,7 @@ machadmin -u                                    # 서버 시작
 
 ### 마운트 시 동작
 
-RDB 테이블이 포함된 백업을 마운트할 때도 sidecar 파일이 함께 참조됩니다. 마운트 DB에서 RDB 테이블을 조회하는 방법은 일반 테이블과 동일합니다.
+RDB 테이블이 포함된 백업을 마운트할 때도 sidecar 파일이 함께 참조된다. 마운트 DB에서 RDB 테이블을 조회하는 방법은 일반 테이블과 동일하다.
 
 ```sql
 MOUNT DATABASE '/backup/machbase_20240101' TO backup_db;

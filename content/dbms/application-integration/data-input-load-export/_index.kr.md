@@ -3,14 +3,14 @@ type: docs
 title: '11.7 데이터 입력과 반출'
 weight: 960
 ---
-Machbase에 데이터를 입력하는 방법은 여러 가지입니다. SQL INSERT, Append API, 파일 적재(machloader, csvimport), SQL 기반 파일 직접 로드까지 상황에 따라 선택할 수 있습니다. 반출도 동일한 도구를 내보내기 방향으로 사용합니다.
+SQL INSERT, Append API, 파일 적재(machloader, csvimport), SQL 기반 파일 직접 로드 등 상황에 맞는 입력 방법을 선택할 수 있습니다. 반출도 동일한 도구를 내보내기 방향으로 사용합니다.
 
 
 <a id="selection-input-method"></a>
 
 ## 입력 방식 선택
 
-Machbase에 데이터를 입력하는 방법은 사용 목적과 데이터 볼륨에 따라 선택합니다.
+사용 목적과 데이터 볼륨에 따라 입력 방법을 선택합니다.
 
 ### 입력 방법 개요
 
@@ -77,7 +77,7 @@ Machbase에 데이터를 입력하는 방법은 사용 목적과 데이터 볼�
 
 ### 입력 방식 선택 가이드
 
-상황별로 최적의 입력 방법을 선택하는 기준을 정리합니다.
+상황별 최적 입력 방법 선택 기준입니다.
 
 #### 선택 플로우
 
@@ -126,7 +126,7 @@ Machbase에 데이터를 입력하는 방법은 사용 목적과 데이터 볼�
 
 ## SQL 입력
 
-Machbase는 표준 SQL INSERT 구문과 함께 대량 입력을 위한 Append API, 파일 직접 로드를 위한 LOAD DATA INFILE을 제공합니다.
+표준 SQL INSERT와 함께 대량 입력을 위한 Append API, 파일 직접 로드를 위한 LOAD DATA INFILE을 제공합니다.
 
 ### 이 절에서 다루는 내용
 
@@ -246,7 +246,7 @@ Mach> INSERT INTO sensor_log VALUES ('TEMP-01', NOW, 25.3);
 
 ### Append API
 
-Append API는 Machbase SDK가 제공하는 대량 입력 인터페이스입니다. SQL INSERT와 달리 내부 버퍼에 데이터를 모아 배치 전송하므로, TAG/LOG 테이블의 시계열 데이터 입력에서 높은 처리량을 달성할 수 있습니다.
+Machbase SDK가 제공하는 대량 입력 인터페이스입니다. SQL INSERT와 달리 내부 버퍼에 데이터를 모아 배치 전송하므로, TAG/LOG 테이블에서 높은 처리량을 달성합니다.
 
 #### Append API 특징
 
@@ -339,7 +339,7 @@ REST API를 통한 Append도 동일한 고속 경로를 사용합니다. 상세�
 
 ### LOAD DATA INFILE
 
-`LOAD DATA INFILE`은 **서버에 위치한** CSV 파일을 SQL 한 줄로 직접 적재하는 구문입니다. 클라이언트에서 파일을 전송하는 machloader와 달리, 서버 프로세스가 직접 파일을 읽어 처리합니다.
+**서버에 위치한** CSV 파일을 SQL 한 줄로 직접 적재하는 구문입니다. machloader와 달리 서버 프로세스가 직접 파일을 읽습니다.
 
 #### 기본 구문
 
@@ -427,7 +427,7 @@ Load fail count    : 0
 
 ## 파일 적재
 
-Machbase는 CSV 파일을 클라이언트에서 서버로 전송하여 적재하는 CLI 도구를 제공합니다.
+CSV 파일을 클라이언트에서 서버로 전송하여 적재하는 CLI 도구입니다.
 
 ### 파일 적재 도구
 
@@ -449,7 +449,7 @@ Machbase는 CSV 파일을 클라이언트에서 서버로 전송하여 적재하
 
 ### CSV 파일 형식
 
-machloader, csvimport, LOAD DATA INFILE이 인식하는 CSV 파일 형식을 정리합니다.
+machloader, csvimport, LOAD DATA INFILE이 인식하는 CSV 파일 형식입니다.
 
 #### 기본 형식
 
@@ -530,7 +530,7 @@ SQL `LOAD DATA INFILE`과 `SAVE DATA INTO`의 `ENCODED BY`는 `UTF8`, `MS949`, `
 
 ### machloader로 가져오기
 
-`machloader`는 CSV 파일을 Machbase 서버로 가져오거나 내보내는 범용 CLI 도구입니다. 스키마 파일을 통해 컬럼 매핑, 날짜 형식, 특정 컬럼 무시 등 유연한 설정이 가능합니다.
+CSV 파일을 Machbase 서버로 가져오거나 내보내는 범용 CLI 도구입니다. 스키마 파일로 컬럼 매핑, 날짜 형식, 특정 컬럼 무시 등을 세밀하게 제어할 수 있습니다.
 
 #### 기본 가져오기
 
@@ -723,7 +723,7 @@ ENCODED BY MS949;
 
 ### csvimport로 가져오기
 
-`csvimport`는 machloader를 CSV에 특화하여 래핑한 도구로, 옵션을 간소화하여 빠르게 CSV 파일을 적재할 수 있습니다.
+machloader를 CSV에 특화하여 래핑한 도구로, 옵션을 간소화하여 빠르게 적재할 수 있습니다.
 
 #### 기본 사용법
 
@@ -790,7 +790,7 @@ csvimport -t sensor_log -d data.csv -E MS949
 
 ## 데이터 반출
 
-Machbase 테이블의 데이터를 파일로 내보내는 방법을 정리합니다.
+테이블 데이터를 파일로 내보내는 방법입니다.
 
 ### 반출 방법 개요
 
@@ -811,7 +811,7 @@ Machbase 테이블의 데이터를 파일로 내보내는 방법을 정리합니
 
 ### 데이터 반출 작업 소유권
 
-데이터 반출 시 생성되는 파일의 소유권(ownership)에 대한 내용입니다.
+반출 시 생성되는 파일의 소유권(ownership)에 관한 내용입니다.
 
 #### SAVE DATA INTO 파일 소유권
 
@@ -856,7 +856,7 @@ chmod 755 /data/export/
 
 ### SQL 기반 반출: SAVE DATA INTO
 
-`SAVE DATA INTO`는 SELECT 결과를 **서버 측 파일**로 직접 저장하는 SQL 구문입니다. machsql에서 실행하며 서버 프로세스가 파일을 생성합니다.
+SELECT 결과를 **서버 측 파일**로 직접 저장하는 SQL 구문입니다. machsql에서 실행하며 서버 프로세스가 파일을 생성합니다.
 
 #### 구문
 
@@ -1013,7 +1013,7 @@ Export success count : 1000000
 
 ### csvexport로 내보내기
 
-`csvexport`는 machloader의 CSV 반출 전용 래퍼입니다. 옵션을 간소화하여 테이블 데이터를 빠르게 CSV로 내보낼 수 있습니다.
+machloader의 CSV 반출 전용 래퍼입니다. 옵션을 간소화하여 빠르게 CSV로 내보냅니다.
 
 #### 기본 사용법
 
@@ -1074,7 +1074,7 @@ csvexport -t sensor_log -d export.csv -E MS949
 
 ## 배치와 오류 처리
 
-대량 데이터 입력 시의 배치 전략과 오류 처리 방법을 정리합니다.
+대량 데이터 입력의 배치 전략과 오류 처리 방법입니다.
 
 ### 이 절에서 다루는 내용
 
@@ -1085,7 +1085,7 @@ csvexport -t sensor_log -d export.csv -E MS949
 
 ### Batch 입력
 
-대량 데이터를 효율적으로 입력하기 위한 배치 전략을 정리합니다.
+대량 데이터를 효율적으로 입력하기 위한 배치 전략입니다.
 
 #### 배치 크기 선택
 
@@ -1176,7 +1176,7 @@ done
 
 ### 대량 입력 오류 처리
 
-대량 입력 중 발생할 수 있는 오류 유형과 처리 방법을 정리합니다.
+대량 입력 중 발생할 수 있는 오류 유형과 처리 방법입니다.
 
 #### 오류 유형
 

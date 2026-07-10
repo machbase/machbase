@@ -3,14 +3,12 @@ title: '7.14 Fluentd 입력 파이프라인'
 weight: 140
 toc: true
 ---
-Fluentd 입력 파이프라인에 해당하는 세부 문서를 모았습니다.
-
 
 <a id="pipeline-fluentd"></a>
 
 ## Fluentd 입력 파이프라인 안내
 
-Fluentd는 오픈소스 데이터 수집 에이전트로, 다양한 소스에서 데이터를 수집하여 Machbase로 전달하는 파이프라인을 구성할 수 있습니다.
+Fluentd는 오픈소스 데이터 수집 에이전트로, 다양한 소스에서 데이터를 수집하여 Machbase output plugin을 통해 전달하는 파이프라인을 구성할 수 있습니다.
 
 ### Fluentd + Machbase 구성 개요
 
@@ -21,13 +19,13 @@ Fluentd는 오픈소스 데이터 수집 에이전트로, 다양한 소스에서
   - 네트워크 장비 로그
 ```
 
-Fluentd는 Machbase Output Plugin을 통해 Machbase 서버에 접속하고 append 세션으로 데이터를 전송합니다.
+플러그인이 Machbase 서버에 접속하면 append 세션을 열어 데이터를 전송합니다.
 
 ### 주요 사용 사례
 
-- 서버 로그를 Machbase LOG 테이블로 수집
+- 서버 로그를 LOG 테이블로 수집
 - Prometheus/StatsD 메트릭을 TAG 테이블로 저장
-- Kafka, AWS S3 등 외부 소스에서 Machbase로 ETL
+- Kafka, AWS S3 등 외부 소스에서 ETL
 
 ### 기본 설정 예시
 
@@ -65,7 +63,7 @@ Fluentd Output Plugin 설치, 설정, 튜닝 방법은 다음 문서를 참고�
 
 ### 시나리오 개요
 
-Fluentd(또는 Fluent Bit)를 Machbase output plugin과 연결하여 애플리케이션 로그, 시스템 로그, 컨테이너 로그를 수집·저장하는 파이프라인을 구성합니다. Machbase의 LOG 테이블은 비정형 텍스트 로그를 시계열로 저장하고 전문 검색(Full-Text Search)을 지원하므로, Fluentd와 결합하면 강력한 중앙 집중식 로그 관리 시스템을 구축할 수 있습니다.
+Fluentd(또는 Fluent Bit)와 Machbase output plugin을 결합하여 애플리케이션 로그, 시스템 로그, 컨테이너 로그를 수집·저장하는 파이프라인을 구성합니다. LOG 테이블이 비정형 텍스트를 시계열로 저장하고 전문 검색까지 지원하므로, 중앙 집중식 로그 관리 시스템을 구축하기에 적합합니다.
 
 ---
 
@@ -328,7 +326,7 @@ CREATE INDEX idx_syslog_level   ON system_log (level);
 
 ### 6단계: 전송 보장 - 버퍼 및 재전송 설정
 
-Machbase 서버가 일시적으로 불가용 상태가 되어도 데이터 유실 없이 재전송할 수 있도록 파일 버퍼를 설정합니다.
+서버가 일시적으로 불가용 상태가 되어도 데이터 유실 없이 재전송할 수 있도록 파일 버퍼를 설정합니다.
 
 ```xml
 <match **>
@@ -427,7 +425,7 @@ tail -f /var/log/td-agent/td-agent.log
 curl http://localhost:24220/api/plugins.json | python3 -m json.tool
 ```
 
-Fluentd 설정에 모니터링 에이전트를 추가합니다.
+모니터링 에이전트도 활성화해 둡니다.
 
 ```xml
 # Fluentd HTTP 모니터링 에이전트 활성화
@@ -491,7 +489,7 @@ fluent-plugin-machbase가 없는 Fluent Bit 환경에서는 HTTP output을 사�
     Retry_Limit     5
 ```
 
-REST API로 LOG 테이블에 INSERT하는 방식:
+REST API를 이용한 INSERT 예시:
 
 ```bash
 # Fluent Bit HTTP output이 전송하는 데이터를 처리하는

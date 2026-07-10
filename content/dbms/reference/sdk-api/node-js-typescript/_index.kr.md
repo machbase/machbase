@@ -9,7 +9,7 @@ toc: true
 
 Machbase TypeScript 클라이언트(`@machbase/ts-client`)는 Machbase CMI 프로토콜을 순수 TypeScript로 구현한 라이브러리입니다. Node.js 애플리케이션이 네이티브 바인딩 없이도 Machbase(스탠더드 에디션) 서버에 연결해 SQL 실행, 결과 조회, Prepared Statement 처리, 로그 데이터 Append를 수행할 수 있습니다.
 
-이 문서는 설치 방법, 핵심 API, 실용적인 예제, 테스트 흐름, 주의해야 할 동작 특성을 다룹니다.
+이 문서에서는 설치, 핵심 API, 예제, 테스트 흐름, 동작 특성을 다룹니다.
 
 ## 설치
 

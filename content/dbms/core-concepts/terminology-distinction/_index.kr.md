@@ -3,21 +3,21 @@ type: docs
 title: '2.5 용어 구분'
 weight: 50
 ---
-Machbase DBMS를 처음 접하면 이름이 비슷하거나 역할이 겹쳐 보이는 개념들이 혼동을 일으킬 수 있습니다. 이 섹션은 실제 운영에서 자주 혼동되는 개념 쌍들을 비교 표와 함께 명확하게 구분합니다. 각 문서는 "어떤 상황에 무엇을 선택해야 하는가"에 대한 실용적인 답변을 제공합니다.
+운영에서 자주 혼동되는 개념 쌍들을 비교 표와 함께 구분합니다. 각 항목은 "어떤 상황에 무엇을 선택하는가"에 초점을 맞추었습니다.
 
-- **[ROLLUP vs STREAM](/dbms/core-concepts/terminology-distinction/#rollup-vs-stream)** — 자동 집계와 SQL 기반 변환 처리의 차이
-- **[Retention vs DELETE / TRUNCATE](/dbms/core-concepts/terminology-distinction/#retention-vs-delete-truncate)** — 자동 정책과 수동 삭제 명령의 차이
-- **[Backup vs Restore vs Mount](/dbms/core-concepts/terminology-distinction/#backup-vs-restore-mount)** — 데이터 복사, 복원, 읽기 전용 연결의 차이
-- **[machloader vs csvimport / csvexport vs tagmetaimport](/dbms/core-concepts/terminology-distinction/#machloader-vs-csvimport-csvexport-tagmetaimport)** — 파일 기반 입출력 도구들의 차이
-- **[LOAD DATA INFILE vs fastload](/dbms/core-concepts/terminology-distinction/#load-data-infile-vs-fastload)** — SQL 기반 파일 적재와 고속 CSV 적재의 차이
-- **[SDK append vs SQL APPEND vs Collector 수집](/dbms/core-concepts/terminology-distinction/#ingestion-sdk-append-vs-sql-collector)** — 실시간 데이터 수집 경로별 특성과 선택 기준
+- **[ROLLUP vs STREAM](/dbms/core-concepts/terminology-distinction/#rollup-vs-stream)** -- 자동 집계와 SQL 기반 변환 처리의 차이
+- **[Retention vs DELETE / TRUNCATE](/dbms/core-concepts/terminology-distinction/#retention-vs-delete-truncate)** -- 자동 정책과 수동 삭제 명령의 차이
+- **[Backup vs Restore vs Mount](/dbms/core-concepts/terminology-distinction/#backup-vs-restore-mount)** -- 데이터 복사, 복원, 읽기 전용 연결의 차이
+- **[machloader vs csvimport / csvexport vs tagmetaimport](/dbms/core-concepts/terminology-distinction/#machloader-vs-csvimport-csvexport-tagmetaimport)** -- 파일 기반 입출력 도구들의 차이
+- **[LOAD DATA INFILE vs fastload](/dbms/core-concepts/terminology-distinction/#load-data-infile-vs-fastload)** -- SQL 기반 파일 적재와 고속 CSV 적재의 차이
+- **[SDK append vs SQL APPEND vs Collector 수집](/dbms/core-concepts/terminology-distinction/#ingestion-sdk-append-vs-sql-collector)** -- 실시간 데이터 수집 경로별 특성과 선택 기준
 
 
 <a id="rollup-vs-stream"></a>
 
 ## ROLLUP vs STREAM
 
-ROLLUP과 STREAM은 모두 데이터를 자동으로 처리해 다른 형태로 변환한다는 점에서 비슷해 보입니다. 그러나 적용 대상, 동작 방식, 유연성이 근본적으로 다릅니다.
+ROLLUP과 STREAM은 모두 데이터를 자동으로 변환한다는 점에서 비슷해 보이지만, 적용 대상·동작 방식·유연성이 근본적으로 다릅니다.
 
 ### 비교 표
 
@@ -32,10 +32,10 @@ ROLLUP과 STREAM은 모두 데이터를 자동으로 처리해 다른 형태로 
 | Cluster Edition 지원 | 지원 | 제한적 지원 |
 | 조회 방법 | `rollup()` 함수 사용 | 대상 테이블에 직접 SELECT |
 
-### 어떤 상황에 ROLLUP을 선택하는가
+### ROLLUP을 선택하는 경우
 
 - TAG 테이블에 수억 건 이상의 계측값이 있고, SEC/MIN/HOUR 단위 집계를 빠르게 조회해야 하는 경우
-- 대시보드나 모니터링 화면에서 최솟값/최댓값/평균/합계를 실시간으로 표시해야 하는 경우
+- 대시보드나 모니터링 화면에서 최솟값/최댓값/평균/합계를 실시간 표시해야 하는 경우
 - 설정이 단순하고 추가 관리 부담 없이 자동 집계를 원하는 경우
 
 ```sql
@@ -53,15 +53,15 @@ WHERE name = 'temp_01'
 GROUP BY mtime;
 ```
 
-### 어떤 상황에 STREAM을 선택하는가
+### STREAM을 선택하는 경우
 
 - LOG 테이블의 이벤트를 특정 조건으로 필터링해 TAG 테이블에 계측값 형태로 변환해야 하는 경우
 - SEC/MIN/HOUR가 아닌 사용자 정의 시간 구간(예: 15분, 30분)으로 집계해야 하는 경우
-- 단순 집계가 아닌 조인이나 복잡한 변환 로직이 필요한 경우
-- 특정 임계값 초과 시 알림용 파생 테이블을 자동으로 업데이트해야 하는 경우
+- 조인이나 복잡한 변환 로직이 필요한 경우
+- 특정 임계값 초과 시 알림용 파생 테이블을 자동 업데이트해야 하는 경우
 
 ```sql
--- LOG → TAG 변환 STREAM 예시
+-- LOG -> TAG 변환 STREAM 예시
 EXEC STREAM_CREATE(error_count_stream,
     'INSERT INTO error_stats SELECT ''ERROR_EVENT'', _arrival_time, value FROM device_log WHERE severity = ''ERROR''');
 
@@ -70,18 +70,18 @@ EXEC STREAM_START(error_count_stream);
 
 ### 두 기능을 함께 사용하는 패턴
 
-STREAM으로 LOG 테이블의 이벤트를 TAG 테이블로 변환한 뒤, 해당 TAG 테이블에 ROLLUP을 활성화하는 것도 일반적인 패턴입니다. STREAM이 정제된 데이터를 TAG 테이블에 적재하고, ROLLUP이 해당 데이터를 시간 단위로 자동 집계합니다.
+STREAM으로 LOG 테이블의 이벤트를 TAG 테이블로 변환한 뒤, 해당 TAG 테이블에 ROLLUP을 활성화하는 것도 일반적인 패턴입니다. STREAM이 정제된 데이터를 TAG 테이블에 적재하고, ROLLUP이 시간 단위로 자동 집계합니다.
 
 ### 다음 읽을 내용
 
-- [ROLLUP 통계의 역할](/dbms/core-concepts/features-concepts/#role-statistics-rollup) — ROLLUP 상세 개념
-- [STREAM 처리 모델](/dbms/core-concepts/features-concepts/#processing-model-stream) — STREAM 상세 개념
+- [ROLLUP 통계의 역할](/dbms/core-concepts/features-concepts/#role-statistics-rollup) -- ROLLUP 상세 개념
+- [STREAM 처리 모델](/dbms/core-concepts/features-concepts/#processing-model-stream) -- STREAM 상세 개념
 
 <a id="retention-vs-delete-truncate"></a>
 
 ## Retention vs DELETE / TRUNCATE
 
-Machbase에서 데이터를 삭제하는 방법은 세 가지입니다. 각각 목적과 동작 방식이 다르므로, 상황에 맞는 방법을 선택하는 것이 중요합니다.
+데이터를 삭제하는 방법은 세 가지이며, 각각 목적과 동작 방식이 다릅니다.
 
 ### 비교 표
 
@@ -96,7 +96,7 @@ Machbase에서 데이터를 삭제하는 방법은 세 가지입니다. 각각 �
 
 ### Retention Policy: 자동 기간 기반 삭제
 
-Retention Policy는 보관 기간을 정책으로 설정하면 이후 자동으로 기간이 지난 데이터를 삭제합니다. 운영 중에도 중단 없이 배경에서 실행됩니다.
+보관 기간을 정책으로 설정하면 이후 자동으로 기간이 지난 데이터를 삭제합니다. 운영 중에도 중단 없이 배경에서 실행됩니다.
 
 ```sql
 -- 60일 보관 정책 생성 및 적용
@@ -110,11 +110,11 @@ ALTER TABLE device_log DROP RETENTION;
 DROP RETENTION keep_60days;
 ```
 
-데이터가 계속 쌓이는 운영 시스템에서 저장 공간을 자동으로 관리하고 싶을 때 사용합니다.
+데이터가 계속 쌓이는 운영 시스템에서 저장 공간을 자동 관리할 때 사용합니다.
 
 ### DELETE: 조건 기반 수동 삭제
 
-DELETE는 SQL 문장을 직접 실행해 특정 조건에 맞는 데이터를 즉시 삭제합니다. LOG 테이블은 `BEFORE`, `OLDEST`, `EXCEPT` 같은 로그 보존형 DELETE를 사용하고, TAG 테이블은 태그 이름과 축 조건 또는 `BEFORE` 조건을 사용할 수 있습니다. LOOKUP/VOLATILE은 Primary key 조건 중심으로 사용하고, RDB 테이블은 일반 WHERE 조건 기반 DELETE를 지원합니다.
+SQL 문장을 직접 실행해 특정 조건에 맞는 데이터를 즉시 삭제합니다. LOG 테이블은 `BEFORE`, `OLDEST`, `EXCEPT` 같은 로그 보존형 DELETE를, TAG 테이블은 태그 이름과 축 조건 또는 `BEFORE` 조건을, LOOKUP/VOLATILE은 Primary key 조건을, RDB 테이블은 일반 WHERE 조건 기반 DELETE를 사용합니다.
 
 ```sql
 -- LOG 테이블에서 특정 시각 이전 삭제
@@ -127,17 +127,17 @@ WHERE name = 'temp_sensor_01'
   AND time <  TO_DATE('2026-02-01', 'YYYY-MM-DD');
 ```
 
-잘못 입력된 데이터 구간을 제거하거나, 특정 이유로 오래된 데이터의 일부를 즉시 제거해야 할 때 사용합니다.
+잘못 입력된 데이터 구간 제거나 오래된 데이터의 일부를 즉시 제거할 때 사용합니다.
 
 ### TRUNCATE: 테이블 전체 즉시 삭제
 
-TRUNCATE는 지원 대상 테이블의 모든 데이터를 즉시 삭제합니다. WHERE 조건이 없으므로 단 한 줄로 모든 데이터가 제거됩니다. 현재 공개 버전에서는 LOG 테이블에 사용하고, RDB 테이블을 지원하는 버전에서는 RDB 테이블에도 사용할 수 있습니다.
+지원 대상 테이블의 모든 데이터를 즉시 삭제합니다. WHERE 조건 없이 한 줄로 전체 데이터가 제거됩니다. LOG 테이블과 RDB 테이블(지원 버전)에 사용합니다.
 
 ```sql
 TRUNCATE TABLE device_log;
 ```
 
-개발이나 테스트 환경에서 테이블을 초기 상태로 되돌리거나, 운영 데이터를 전량 폐기해야 할 때 사용합니다. 운영 테이블에서는 실수로 실행하지 않도록 주의해야 합니다.
+개발·테스트 환경에서 테이블을 초기 상태로 되돌리거나, 운영 데이터를 전량 폐기할 때 사용합니다. 운영 테이블에서는 실수로 실행하지 않도록 주의하십시오.
 
 ### 선택 기준 요약
 
@@ -151,14 +151,14 @@ TRUNCATE TABLE device_log;
 
 ### 다음 읽을 내용
 
-- [Retention Policy의 역할](/dbms/core-concepts/features-concepts/#role-retention-policy) — Retention Policy 상세 개념
-- [Backup vs Restore vs Mount](/dbms/core-concepts/terminology-distinction/#backup-vs-restore-mount) — 데이터 보호 수단 비교
+- [Retention Policy의 역할](/dbms/core-concepts/features-concepts/#role-retention-policy) -- Retention Policy 상세 개념
+- [Backup vs Restore vs Mount](/dbms/core-concepts/terminology-distinction/#backup-vs-restore-mount) -- 데이터 보호 수단 비교
 
 <a id="backup-vs-restore-mount"></a>
 
 ## Backup vs Restore vs Mount
 
-Backup, Restore, Mount는 이름이 비슷하지만 목적과 사용 시점이 다릅니다. 간단히 구분하면 Backup은 "복사본 만들기", Restore는 "복사본으로 되돌리기", Mount는 "복사본을 읽기 전용으로 들여다보기"입니다.
+Backup은 "복사본 만들기", Restore는 "복사본으로 되돌리기", Mount는 "복사본을 읽기 전용으로 들여다보기"입니다.
 
 ### 비교 표
 
@@ -183,11 +183,11 @@ BACKUP DATABASE INTO DISK = '/data/backup/full_20260703';
 BACKUP TABLE sensor_values INTO DISK = '/data/backup/sensor_20260703';
 ```
 
-Backup 작업은 `LAUNCHED` → `PROGRESS` → `FINISHED` (실패 시 `ERROR`) 순서로 진행됩니다. `V$BACKUP_JOB` 뷰에서 진행 상황을 확인할 수 있습니다.
+`LAUNCHED` -> `PROGRESS` -> `FINISHED` (실패 시 `ERROR`) 순서로 진행됩니다. `V$BACKUP_JOB` 뷰에서 진행 상황을 확인합니다.
 
 ### Restore
 
-서버를 중지한 후 `machadmin` 명령으로 실행합니다. 복원이 완료되면 서버를 재시작합니다.
+서버를 중지한 후 `machadmin` 명령으로 실행합니다. 복원 완료 후 서버를 재시작합니다.
 
 ```bash
 # 서버 중지
@@ -200,11 +200,11 @@ machadmin -r /data/backup/full_20260703
 machadmin -s start
 ```
 
-Restore는 데이터 손상이나 장애 발생 후 마지막 백업 시점으로 데이터베이스를 되돌릴 때 사용합니다.
+데이터 손상이나 장애 발생 후 마지막 백업 시점으로 되돌릴 때 사용합니다.
 
 ### Mount
 
-운영 중인 서버에서 SQL로 실행합니다. 백업 디렉터리를 현재 서버에 read-only로 연결해 SELECT 쿼리를 실행할 수 있습니다.
+운영 중인 서버에서 SQL로 실행합니다. 백업 디렉터리를 read-only로 연결해 SELECT 쿼리를 실행합니다.
 
 ```sql
 -- 마운트
@@ -219,7 +219,7 @@ WHERE time BETWEEN TO_DATE('2026-07-01', 'YYYY-MM-DD')
 UNMOUNT DATABASE BACKUP_VIEW;
 ```
 
-Mount는 Restore와 달리 데이터를 원래 위치에 복원하지 않습니다. 백업 디렉터리를 그대로 참조하므로, 디스크 공간을 추가로 사용하지 않고 과거 시점의 데이터를 확인할 수 있습니다.
+Restore와 달리 데이터를 원래 위치에 복원하지 않습니다. 백업 디렉터리를 그대로 참조하므로 디스크 공간을 추가로 사용하지 않고 과거 시점 데이터를 확인합니다.
 
 ### 사용 시나리오별 선택 기준
 
@@ -228,20 +228,20 @@ Mount는 Restore와 달리 데이터를 원래 위치에 복원하지 않습니�
 | 정기적인 데이터 보호 | Backup (전체/증분) |
 | 서버 장애, 데이터 손상 복구 | Restore |
 | 과거 특정 시점 데이터 조회 및 검증 | Mount |
-| 운영 서버 마이그레이션 | Backup → 신규 서버에서 Restore |
-| 특정 테이블만 과거 상태 확인 | Backup (테이블) → Mount |
+| 운영 서버 마이그레이션 | Backup -> 신규 서버에서 Restore |
+| 특정 테이블만 과거 상태 확인 | Backup (테이블) -> Mount |
 | 데이터 감사나 포렌식 조회 | Mount (운영 서버 영향 없음) |
 
 ### 다음 읽을 내용
 
-- [Backup / Restore / Mount 개념](/dbms/core-concepts/features-concepts/#concepts-backup-restore-mount) — 세 개념의 상세 설명
-- [Retention vs DELETE / TRUNCATE](/dbms/core-concepts/terminology-distinction/#retention-vs-delete-truncate) — 데이터 삭제 수단 비교
+- [Backup / Restore / Mount 개념](/dbms/core-concepts/features-concepts/#concepts-backup-restore-mount) -- 세 개념의 상세 설명
+- [Retention vs DELETE / TRUNCATE](/dbms/core-concepts/terminology-distinction/#retention-vs-delete-truncate) -- 데이터 삭제 수단 비교
 
 <a id="machloader-vs-csvimport-csvexport-tagmetaimport"></a>
 
 ## machloader vs csvimport / csvexport vs tagmetaimport
 
-Machbase는 파일로 데이터를 적재하거나 내보내는 여러 도구를 제공합니다. 이름이 비슷해 혼동하기 쉽지만, 각 도구가 다루는 대상과 용도가 다릅니다.
+파일로 데이터를 적재하거나 내보내는 여러 도구가 있습니다. 이름이 비슷하지만 각 도구가 다루는 대상과 용도가 다릅니다.
 
 ### 비교 표
 
@@ -256,7 +256,7 @@ Machbase는 파일로 데이터를 적재하거나 내보내는 여러 도구를
 
 ### machloader
 
-machloader는 LOG 테이블과 LOOKUP 테이블을 대상으로 파일에서 데이터를 적재하거나 반출하는 범용 도구입니다. CSV뿐 아니라 다양한 파일 형식을 지원하며, 설정 파일(`.mach`)로 컬럼 매핑, 구분자, 날짜 포맷 등을 세밀하게 제어할 수 있습니다.
+LOG 테이블과 LOOKUP 테이블을 대상으로 파일에서 데이터를 적재하거나 반출하는 범용 도구입니다. CSV뿐 아니라 다양한 파일 형식을 지원하며, 설정 파일(`.mach`)로 컬럼 매핑, 구분자, 날짜 포맷 등을 세밀하게 제어합니다.
 
 ```bash
 # 적재 예시
@@ -266,11 +266,11 @@ machloader -i -t device_log -d /data/device_events.csv -f /conf/device_log.mach
 machloader -o -t device_log -d /data/export.csv -f /conf/device_log.mach
 ```
 
-데이터 양이 많거나 파일 포맷이 복잡할 때, 또는 컬럼 매핑이 필요한 경우 machloader를 사용합니다.
+데이터 양이 많거나 파일 포맷이 복잡할 때, 또는 컬럼 매핑이 필요한 경우에 사용합니다.
 
 ### csvimport / csvexport
 
-csvimport와 csvexport는 단순한 CSV 파일 입출력 도구입니다. machloader보다 옵션이 적고 사용법이 간단합니다.
+단순한 CSV 파일 입출력 도구입니다. machloader보다 옵션이 적고 사용법이 간단합니다.
 
 ```bash
 # CSV 파일 적재
@@ -280,18 +280,18 @@ csvimport -t device_log -d /data/device_events.csv
 csvexport -t device_log -d /data/export.csv
 ```
 
-빠르게 소량의 CSV를 적재하거나 데이터를 확인 목적으로 내보낼 때 적합합니다. 복잡한 컬럼 매핑이나 변환이 필요하면 machloader를 사용합니다.
+소량 CSV를 빠르게 적재하거나 확인 목적으로 데이터를 내보낼 때 적합합니다. 복잡한 컬럼 매핑이나 변환이 필요하면 machloader를 사용하십시오.
 
 ### tagmetaimport
 
-tagmetaimport는 TAG 테이블의 태그 메타데이터(태그 이름과 사용자 정의 속성 컬럼 값)를 CSV 파일로 일괄 등록하는 도구입니다. 계측값 데이터(타임스탬프와 측정값)를 적재하는 것이 아니라, 태그 목록과 그 속성을 등록합니다.
+TAG 테이블의 태그 메타데이터(태그 이름과 사용자 정의 속성 컬럼 값)를 CSV 파일로 일괄 등록하는 도구입니다. 계측값 데이터(타임스탬프와 측정값)가 아니라 태그 목록과 그 속성을 등록합니다.
 
 ```bash
 # TAG 테이블에 태그 메타데이터 일괄 등록
 tagmetaimport -t sensor_values -d /data/tag_list.csv
 ```
 
-수천 개의 센서를 처음 등록하거나, 공정 라인 추가로 새 태그를 대량으로 등록할 때 사용합니다. 개별 태그 등록은 `INSERT INTO sensor_values (name) VALUES ('tag_name')` 으로도 가능하지만, 대량 등록에는 tagmetaimport가 효율적입니다.
+수천 개의 센서를 처음 등록하거나, 공정 라인 추가로 새 태그를 대량 등록할 때 사용합니다. 개별 태그는 `INSERT INTO sensor_values (name) VALUES ('tag_name')`으로도 등록 가능하지만, 대량 등록에는 tagmetaimport가 효율적입니다.
 
 ### 선택 기준 요약
 
@@ -305,8 +305,8 @@ tagmetaimport -t sensor_values -d /data/tag_list.csv
 
 ### 다음 읽을 내용
 
-- [LOAD DATA INFILE vs fastload](/dbms/core-concepts/terminology-distinction/#load-data-infile-vs-fastload) — SQL 기반 파일 적재 방법 비교
-- [SDK append vs SQL APPEND vs Collector 수집](/dbms/core-concepts/terminology-distinction/#ingestion-sdk-append-vs-sql-collector) — 실시간 수집 경로 비교
+- [LOAD DATA INFILE vs fastload](/dbms/core-concepts/terminology-distinction/#load-data-infile-vs-fastload) -- SQL 기반 파일 적재 방법 비교
+- [SDK append vs SQL APPEND vs Collector 수집](/dbms/core-concepts/terminology-distinction/#ingestion-sdk-append-vs-sql-collector) -- 실시간 수집 경로 비교
 
 <a id="load-data-infile-vs-fastload"></a>
 
@@ -327,7 +327,7 @@ tagmetaimport -t sensor_values -d /data/tag_list.csv
 
 ### LOAD DATA INFILE
 
-`LOAD DATA INFILE`은 SQL 문장 형태로, 서버가 직접 지정된 파일 경로를 읽어 테이블에 적재합니다. 파일은 서버가 접근할 수 있는 경로에 있어야 합니다.
+SQL 문장 형태로, 서버가 직접 지정된 파일 경로를 읽어 테이블에 적재합니다. 파일은 서버가 접근할 수 있는 경로에 있어야 합니다.
 
 ```sql
 LOAD DATA INFILE '/data/device_events.csv'
@@ -337,11 +337,11 @@ LINES TERMINATED BY '\n'
 IGNORE 1 LINES;
 ```
 
-machsql이나 ODBC/JDBC 클라이언트에서 일반 SQL처럼 실행할 수 있어 사용이 단순합니다. 서버 로컬 경로에 파일이 있어야 하므로, 클라이언트와 서버가 분리된 환경에서는 파일을 먼저 서버로 전송해야 합니다.
+machsql이나 ODBC/JDBC 클라이언트에서 일반 SQL처럼 실행하므로 사용이 단순합니다. 서버 로컬 경로에 파일이 있어야 하므로, 클라이언트와 서버가 분리된 환경에서는 파일을 서버로 먼저 전송해야 합니다.
 
 ### fastload
 
-fastload는 `machsql` 클라이언트에서 `-f` 옵션으로 실행하는 대용량 CSV 고속 적재 기능입니다. 클라이언트 측 파일을 읽어 Machbase의 APPEND 프로토콜로 서버에 전송합니다. APPEND 프로토콜은 SQL INSERT보다 파싱 오버헤드가 훨씬 적어, 같은 데이터 양을 훨씬 빠르게 처리합니다.
+`machsql` 클라이언트에서 `-f` 옵션으로 실행하는 대용량 CSV 고속 적재 기능입니다. 클라이언트 측 파일을 읽어 APPEND 프로토콜로 서버에 전송합니다. SQL INSERT보다 파싱 오버헤드가 훨씬 적어 같은 데이터 양을 훨씬 빠르게 처리합니다.
 
 ```bash
 # machsql fastload 예시
@@ -350,7 +350,7 @@ machsql -u sys -p manager -s localhost \
         -t sensor_values
 ```
 
-클라이언트 측 파일을 그대로 사용하므로, 파일을 서버로 먼저 복사할 필요가 없습니다. 수억 건 이상의 대용량 데이터를 일괄 적재할 때 권장합니다.
+클라이언트 측 파일을 그대로 사용하므로 파일을 서버로 먼저 복사할 필요가 없습니다. 수억 건 이상의 대용량 데이터를 일괄 적재할 때 권장합니다.
 
 ### 선택 기준
 
@@ -362,19 +362,19 @@ machsql -u sys -p manager -s localhost \
 
 **fastload가 적합한 경우**
 
-- 클라이언트에 파일이 있고, 수억 건 이상의 대용량 데이터를 가능한 빠르게 적재해야 하는 경우
+- 클라이언트에 파일이 있고, 수억 건 이상의 대용량 데이터를 빠르게 적재해야 하는 경우
 - 초기 데이터 마이그레이션이나 대규모 히스토리 데이터 일괄 적재
 
 ### 다음 읽을 내용
 
-- [machloader vs csvimport / csvexport vs tagmetaimport](/dbms/core-concepts/terminology-distinction/#machloader-vs-csvimport-csvexport-tagmetaimport) — 파일 기반 입출력 도구 전체 비교
-- [SDK append vs SQL APPEND vs Collector 수집](/dbms/core-concepts/terminology-distinction/#ingestion-sdk-append-vs-sql-collector) — 실시간 수집 경로 비교
+- [machloader vs csvimport / csvexport vs tagmetaimport](/dbms/core-concepts/terminology-distinction/#machloader-vs-csvimport-csvexport-tagmetaimport) -- 파일 기반 입출력 도구 전체 비교
+- [SDK append vs SQL APPEND vs Collector 수집](/dbms/core-concepts/terminology-distinction/#ingestion-sdk-append-vs-sql-collector) -- 실시간 수집 경로 비교
 
 <a id="ingestion-sdk-append-vs-sql-collector"></a>
 
 ## SDK append vs SQL APPEND vs Collector 수집
 
-실시간으로 데이터를 Machbase에 수집하는 경로는 크게 세 가지입니다. 성능 요구사항, 데이터 소스 유형, 개발 비용에 따라 적합한 방법이 달라집니다.
+실시간 데이터 수집 경로는 크게 세 가지입니다. 성능 요구사항, 데이터 소스 유형, 개발 비용에 따라 적합한 방법이 달라집니다.
 
 ### 비교 표
 
@@ -390,7 +390,7 @@ machsql -u sys -p manager -s localhost \
 
 ### SDK APPEND
 
-SDK APPEND는 Go, Python, .NET 등 언어별 Machbase SDK를 사용해 APPEND 프로토콜로 데이터를 전송하는 방식입니다. SQL 파싱 단계를 거치지 않고 서버의 저장 계층에 직접 데이터를 전달하므로, 같은 양의 데이터를 SQL INSERT보다 수십 배 빠르게 처리할 수 있습니다.
+Go, Python, .NET 등 언어별 SDK를 사용해 APPEND 프로토콜로 데이터를 전송합니다. SQL 파싱 단계를 거치지 않고 저장 계층에 직접 데이터를 전달하므로, SQL INSERT보다 수십 배 빠르게 처리합니다.
 
 ```go
 // Go SDK APPEND 예시 (개념)
@@ -402,22 +402,22 @@ appender.Append("temp_sensor_02", time.Now(), 21.0)
 // Flush 시 배치로 전송
 ```
 
-초당 수십만 건 이상을 처리해야 하는 고성능 수집 파이프라인에서 SDK APPEND를 기본으로 사용합니다. 단, SDK를 사용하는 코드를 직접 작성해야 합니다.
+초당 수십만 건 이상을 처리해야 하는 고성능 수집 파이프라인의 기본 선택입니다. SDK를 사용하는 코드를 직접 작성해야 합니다.
 
 ### SQL INSERT
 
-표준 SQL `INSERT` 문장으로 데이터를 입력합니다. ODBC, JDBC, machsql 등 모든 SQL 클라이언트에서 사용할 수 있어 범용성이 가장 높습니다.
+표준 SQL `INSERT` 문장으로 데이터를 입력합니다. 모든 SQL 클라이언트에서 사용 가능해 범용성이 가장 높습니다.
 
 ```sql
 INSERT INTO sensor_values (name, time, value)
 VALUES ('temp_sensor_01', NOW, 23.5);
 ```
 
-데이터 입력 빈도가 낮거나(초당 수천 건 이하), 별도 SDK 통합 없이 기존 애플리케이션에서 데이터를 입력해야 할 때 적합합니다. 테스트나 운영 도중 소량의 데이터를 수동으로 넣을 때도 SQL INSERT를 사용합니다.
+입력 빈도가 낮거나(초당 수천 건 이하), 별도 SDK 통합 없이 기존 애플리케이션에서 데이터를 입력할 때 적합합니다. 테스트나 운영 중 소량 데이터를 수동으로 넣을 때도 사용합니다.
 
 ### Collector
 
-Collector는 Machbase에 내장된 수집기입니다. 설정 파일을 작성하면 파일, 소켓, ODBC 소스, SFTP 등 외부 시스템에서 데이터를 자동으로 읽어 Machbase 테이블에 적재합니다. 코드를 직접 작성하지 않고도 다양한 소스의 데이터를 수집할 수 있습니다.
+Machbase 내장 수집기입니다. 설정 파일을 작성하면 파일, 소켓, ODBC 소스, SFTP 등 외부 시스템에서 데이터를 자동으로 읽어 테이블에 적재합니다.
 
 ```ini
 # Collector 설정 파일 예시 (개념)
@@ -429,7 +429,7 @@ path = /var/log/sensor/*.log
 table = device_log
 ```
 
-Collector는 외부 파일 시스템에서 로그를 주기적으로 읽거나, 소켓으로 데이터를 수신하는 등 사전 정의된 소스 유형을 처리할 때 유용합니다. 커스텀 변환 로직이 필요하지 않고 소스 형식이 Collector가 지원하는 유형이라면, 개발 비용 없이 데이터 수집을 구성할 수 있습니다.
+외부 파일 시스템에서 로그를 주기적으로 읽거나 소켓으로 데이터를 수신하는 등 사전 정의된 소스 유형을 처리할 때 유용합니다. 소스 형식이 Collector 지원 유형이라면 개발 비용 없이 수집 파이프라인을 구성합니다.
 
 ### 선택 기준
 
@@ -443,6 +443,6 @@ Collector는 외부 파일 시스템에서 로그를 주기적으로 읽거나, 
 
 ### 다음 읽을 내용
 
-- [LOAD DATA INFILE vs fastload](/dbms/core-concepts/terminology-distinction/#load-data-infile-vs-fastload) — 파일 기반 일괄 적재 방법 비교
-- [machloader vs csvimport / csvexport vs tagmetaimport](/dbms/core-concepts/terminology-distinction/#machloader-vs-csvimport-csvexport-tagmetaimport) — 파일 기반 입출력 도구 비교
-- [쓰기 중심 워크로드와 append-only 모델](/dbms/core-concepts/concepts/#write-oriented-append-only) — APPEND 모델의 설계 원칙
+- [LOAD DATA INFILE vs fastload](/dbms/core-concepts/terminology-distinction/#load-data-infile-vs-fastload) -- 파일 기반 일괄 적재 방법 비교
+- [machloader vs csvimport / csvexport vs tagmetaimport](/dbms/core-concepts/terminology-distinction/#machloader-vs-csvimport-csvexport-tagmetaimport) -- 파일 기반 입출력 도구 비교
+- [쓰기 중심 워크로드와 append-only 모델](/dbms/core-concepts/concepts/#write-oriented-append-only) -- APPEND 모델의 설계 원칙

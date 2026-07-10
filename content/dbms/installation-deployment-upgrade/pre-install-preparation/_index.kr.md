@@ -4,9 +4,7 @@ title: '3.1 설치 전 준비'
 weight: 10
 toc: true
 ---
-설치를 시작하기 전에 시스템 요구사항을 확인하고 필요한 환경을 갖춰야 합니다. 사전 준비가 부족하면 설치 후 예기치 않은 오류나 성능 저하가 발생할 수 있습니다.
-
-## 이 섹션에서 다루는 내용
+설치를 시작하기 전에 시스템 요구사항과 환경을 점검해야 합니다. 사전 준비가 부족하면 설치 후 오류나 성능 저하가 발생할 수 있습니다.
 
 | 항목 | 설명 |
 |------|------|
@@ -15,10 +13,6 @@ toc: true
 | [라이선스 설치](/kr/dbms/installation-deployment-upgrade/pre-install-preparation/license/) | license.dat 파일 배치 방법, 라이선스 상태 확인 방법 |
 
 ---
-
-**다음 읽을 내용**
-- [설치 전 요구사항](/kr/dbms/installation-deployment-upgrade/pre-install-preparation/pre-install-requirements/)
-
 
 <a id="pre-install-requirements"></a>
 
@@ -32,7 +26,7 @@ toc: true
 | Ubuntu | 18.04 LTS 이상 |
 | Windows | 10, Server 2019 이상 |
 
-운영체제 아키텍처는 설치할 Machbase 패키지의 비트 수와 일치해야 합니다.
+운영체제 아키텍처는 설치할 패키지의 비트 수와 일치해야 합니다.
 
 ### 하드웨어 최소 요구사항
 
@@ -52,12 +46,9 @@ toc: true
 | **5656** | SQL 클라이언트 접속 (Native TCP) |
 | **5657** | HTTP REST API |
 
-SQL 클라이언트 포트를 변경하려면 `$MACHBASE_HOME/conf/machbase.conf`의 `PORT_NO` 항목을
-수정합니다. 환경 변수 `MACHBASE_PORT_NO`를 설정해도 동일하게 적용됩니다. HTTP REST API 포트는
-`HTTP_PORT_NO` 또는 환경 변수 `MACHBASE_HTTP_PORT_NO`로 변경합니다.
+SQL 클라이언트 포트를 변경하려면 `$MACHBASE_HOME/conf/machbase.conf`의 `PORT_NO` 항목을 수정합니다. 환경 변수 `MACHBASE_PORT_NO`로도 동일하게 적용됩니다. HTTP REST API 포트는 `HTTP_PORT_NO` 또는 환경 변수 `MACHBASE_HTTP_PORT_NO`로 변경합니다.
 
-방화벽이 있는 환경에서는 위 포트를 인바운드 허용으로 열어야 합니다. Cluster Edition은 Coordinator
-link/admin 포트와 Broker, Warehouse, Deployer 포트도 추가로 열어야 합니다.
+방화벽이 있는 환경에서는 위 포트를 인바운드 허용으로 열어야 합니다. Cluster Edition은 Coordinator link/admin 포트와 Broker, Warehouse, Deployer 포트도 추가로 열어야 합니다.
 
 ### 시스템 커널 파라미터 (Linux)
 
@@ -65,7 +56,7 @@ Linux에 설치할 경우 아래 항목을 설치 전에 점검합니다.
 
 #### 파일 디스크립터 한도
 
-Machbase는 다수의 파일을 동시에 열기 때문에 기본값(1024)으로는 부족합니다.
+다수의 파일을 동시에 열기 때문에 기본값(1024)으로는 부족합니다.
 
 ```bash
 # 현재 값 확인
@@ -88,7 +79,7 @@ ulimit -Sn
 
 #### 포트 예약
 
-운영체제가 Machbase 포트를 다른 프로세스에 할당하는 것을 방지하려면 포트를 예약합니다.
+운영체제가 Machbase 포트를 다른 프로세스에 할당하지 않도록 예약합니다.
 
 ```bash
 current=$(cat /proc/sys/net/ipv4/ip_local_reserved_ports)
@@ -96,8 +87,7 @@ ports=5656-5657
 sudo sysctl -w net.ipv4.ip_local_reserved_ports="${current:+$current,}$ports"
 ```
 
-기존 예약 포트가 있으면 덮어쓰지 말고 쉼표로 구분해 병합합니다. 영구 적용은
-`/etc/sysctl.conf`의 `net.ipv4.ip_local_reserved_ports` 항목을 다음 값과 병합합니다.
+기존 예약 포트가 있으면 덮어쓰지 말고 쉼표로 구분해 병합합니다. 영구 적용은 `/etc/sysctl.conf`의 `net.ipv4.ip_local_reserved_ports` 항목을 다음 값과 병합합니다.
 
 ```
 net.ipv4.ip_local_reserved_ports = 5656-5657
@@ -105,7 +95,7 @@ net.ipv4.ip_local_reserved_ports = 5656-5657
 
 ### 시간 동기화
 
-Machbase는 시계열 데이터를 처리하므로 서버의 시간이 정확해야 합니다. NTP 또는 `chrony`로 시스템 시간을 동기화하십시오. Cluster Edition에서는 모든 노드의 시간을 일치시켜야 합니다.
+시계열 데이터를 처리하므로 서버의 시간이 정확해야 합니다. NTP 또는 `chrony`로 시스템 시간을 동기화하십시오. Cluster Edition에서는 모든 노드의 시간을 일치시켜야 합니다.
 
 ```bash
 # 타임존 확인
@@ -115,16 +105,13 @@ date
 
 ---
 
-**다음 읽을 내용**
-- [패키지 구성 이해](/kr/dbms/installation-deployment-upgrade/pre-install-preparation/package/)
-
 <a id="package"></a>
 
 ## 패키지 구성 이해
 
 ### 패키지 파일 명명 규칙
 
-Machbase 패키지 파일 이름은 에디션에 따라 다음 형식을 따릅니다.
+패키지 파일 이름은 에디션에 따라 다음 형식을 따릅니다.
 
 ```
 machbase-EDITION-VERSION-OS-CPU-BIT-MODE.EXT
@@ -146,7 +133,7 @@ Standard Edition Linux tarball은 `machbase-SDK-...tgz` 이름으로 생성됩�
 - Standard Edition: `machbase-SDK-8.6.0.official-LINUX-X86-64-release.tgz`
 - Cluster Edition: `machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz`
 
-버전에서 Minor 버전이 다른 경우 DB 파일 및 프로토콜 호환이 보장되지 않습니다. Fix 버전 변경은 호환성이 유지됩니다.
+Minor 버전이 다른 경우 DB 파일 및 프로토콜 호환이 보장되지 않습니다. Fix 버전 변경은 호환성이 유지됩니다.
 
 ### 설치 디렉터리 구조
 
@@ -197,37 +184,23 @@ ls $MACHBASE_HOME/conf/
 # machloader.conf.sample
 ```
 
-실제 사용 파일은 `machbase.conf`입니다. Standard full 패키지는 빌드 과정에서
-`machbase.conf.sample.standard`를 복사해 `machbase.conf`를 포함합니다. 실제 파일이 없는
-패키지에서는 에디션에 맞는 샘플 파일을 복사하여 수정합니다.
+실제 사용 파일은 `machbase.conf`입니다. Standard full 패키지는 빌드 과정에서 `machbase.conf.sample.standard`를 복사해 `machbase.conf`를 포함합니다. 실제 파일이 없는 패키지에서는 에디션에 맞는 샘플 파일을 복사하여 수정합니다.
 
-RDB 테이블 기능이 포함된 빌드의 Standard/Edge 샘플에는 RDB 테이블 sidecar 파일 동작을 제어하는
-`RDB_BUSY_TIMEOUT_MS`, `RDB_SYNCHRONOUS`, `RDB_JOURNAL_MODE` 설정이 포함될 수 있습니다. 해당
-항목이 없는 패키지에서는 추가하지 말고, RDB 테이블을 사용하는 환경에서만 기본값과 운영 중 busy
-timeout 또는 SQLite 동기화 정책 조정 필요성을 검토합니다.
+RDB 테이블 기능이 포함된 빌드의 Standard/Edge 샘플에는 RDB 테이블 sidecar 파일 동작을 제어하는 `RDB_BUSY_TIMEOUT_MS`, `RDB_SYNCHRONOUS`, `RDB_JOURNAL_MODE` 설정이 포함될 수 있습니다. 해당 항목이 없는 패키지에서는 추가하지 말고, RDB 테이블을 사용하는 환경에서만 기본값과 운영 중 busy timeout 또는 SQLite 동기화 정책 조정 필요성을 검토합니다.
 
 ---
-
-**다음 읽을 내용**
-- [라이선스 설치](/kr/dbms/installation-deployment-upgrade/pre-install-preparation/license/)
 
 <a id="license"></a>
 
 ## 라이선스 설치
 
-라이선스 설치는 Machbase 설치 완료 후 수행합니다. 라이선스 파일이 없어도 서버는 기본
-`COMMUNITY` 라이선스 정보로 구동됩니다.
+라이선스 파일이 없어도 서버는 기본 `COMMUNITY` 라이선스 정보로 구동됩니다.
 
 ### 라이선스 상태와 제한 확인
 
-라이선스 상태는 다음 기준으로 확인합니다.
+설치된 라이선스에 설정된 최대 태그 수나 저장 용량을 초과하면 라이선스 위반 상태가 기록됩니다. `V$LICENSE_INFO`의 `VIOLATE_STATUS`와 `VIOLATE_MSG`로 현재 상태를 확인합니다.
 
-1. **태그 수와 저장 용량 제한**: 설치된 라이선스에 설정된 최대 태그 수나 저장 용량을 초과하면
-   라이선스 위반 상태가 기록됩니다. `V$LICENSE_INFO`의 `VIOLATE_STATUS`와 `VIOLATE_MSG`로
-   현재 상태를 확인합니다.
-
-Append 건수나 테이블스페이스 디스크 경로 개수를 기준으로 한 제한은 8.6.0 소스에서 확인되는
-라이선스 위반 조건이 아닙니다.
+Append 건수나 테이블스페이스 디스크 경로 개수를 기준으로 한 제한은 8.6.0 소스에서 확인되는 라이선스 위반 조건이 아닙니다.
 
 ### 라이선스 파일 구조
 
@@ -255,8 +228,7 @@ cp license.dat $MACHBASE_HOME/conf/license.dat
 
 #### 방법 2: machadmin 명령
 
-`machadmin`으로 라이선스 파일을 검증하고 설치합니다. 서버가 실행 중이면 라이선스 reload 요청을
-함께 보냅니다.
+`machadmin`으로 라이선스 파일을 검증하고 설치합니다. 서버가 실행 중이면 라이선스 reload 요청을 함께 보냅니다.
 
 ```bash
 machadmin -t /path/to/license.dat
@@ -264,7 +236,7 @@ machadmin -t /path/to/license.dat
 
 #### 방법 3: SQL 쿼리 (서버 실행 중)
 
-서버가 이미 실행 중인 경우 machsql에서 쿼리로 설치할 수 있습니다.
+서버가 이미 실행 중인 경우 machsql에서 쿼리로 설치합니다.
 
 ```sql
 ALTER SYSTEM INSTALL LICENSE = '/path/to/license.dat';
@@ -298,14 +270,8 @@ FROM V$LICENSE_INFO;
 
 `VIOLATE_STATUS`가 0이면 정상입니다.
 
-machsql에서는 다음 명령으로도 라이선스 정보를 확인할 수 있습니다.
+machsql에서는 다음 명령으로도 라이선스 정보를 확인합니다.
 
 ```sql
 SHOW LICENSE;
 ```
-
----
-
-**다음 읽을 내용**
-- [Standard Edition 설치](/kr/dbms/installation-deployment-upgrade/standard-edition/)
-- [Cluster Edition 설치](/kr/dbms/installation-deployment-upgrade/cluster-edition/)

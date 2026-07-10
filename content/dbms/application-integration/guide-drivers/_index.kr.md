@@ -3,7 +3,7 @@ type: docs
 title: '11.3 드라이버별 가이드'
 weight: 30
 ---
-이 섹션에서는 Machbase에 연결하기 위한 각 드라이버 및 SDK의 사용 방법을 설명합니다. C/C++ 네이티브 환경부터 Java, Python, Go 등 다양한 언어를 위한 연결 방식을 제공합니다.
+Machbase에 연결하기 위한 각 드라이버 및 SDK의 사용 방법을 다룹니다. C/C++ 네이티브 환경부터 Java, Python, Go 등 다양한 언어별 연결 방식을 제공합니다.
 
 ## 지원 드라이버 목록
 
@@ -46,7 +46,7 @@ weight: 30
 
 ## CLI/ODBC
 
-CLI(Call Level Interface)는 [ISO](https://en.wikipedia.org/wiki/International_Organization_for_Standardization)/[IEC](https://en.wikipedia.org/wiki/International_Electrotechnical_Commission) 9075-3:2003에 정의된 데이터베이스 접속 표준입니다. Machbase는 이 표준을 구현한 네이티브 C 라이브러리를 제공하며, 이를 통해 C/C++ 애플리케이션에서 직접 Machbase에 연결하고 데이터를 처리할 수 있습니다.
+CLI(Call Level Interface)는 [ISO](https://en.wikipedia.org/wiki/International_Organization_for_Standardization)/[IEC](https://en.wikipedia.org/wiki/International_Electrotechnical_Commission) 9075-3:2003에 정의된 데이터베이스 접속 표준입니다. 이 표준을 구현한 네이티브 C 라이브러리를 통해 C/C++ 애플리케이션에서 직접 Machbase에 연결하고 데이터를 처리할 수 있습니다.
 
 ### 이 섹션의 구성
 
@@ -92,7 +92,7 @@ gcc -o myapp myapp.c \
 
 CLI(Call Level Interface)는 ISO/IEC 9075-3:2003에 정의된 소프트웨어 개발 표준으로, 데이터베이스에 SQL을 전달하고 결과를 받는 방법을 함수 및 명세로 정의합니다. 가장 널리 알려진 구현체가 ODBC(Open Database Connectivity)이며, 현재 최신 ODBC API 버전은 3.52입니다.
 
-Machbase는 이 표준을 구현한 네이티브 C 라이브러리를 제공합니다. C/C++ 애플리케이션은 이 라이브러리를 통해 Machbase에 직접 연결하여 SQL을 실행하고, 특히 Append API를 통해 초고속 데이터 삽입을 수행할 수 있습니다.
+이 표준을 구현한 네이티브 C 라이브러리를 제공합니다. C/C++ 애플리케이션은 이 라이브러리를 통해 직접 연결하여 SQL을 실행하고, Append API를 통해 초고속 데이터 삽입을 수행할 수 있습니다.
 
 #### 헤더 파일 및 라이브러리
 
@@ -708,7 +708,7 @@ Machbase는 기본적으로 UTF-8 방식으로 문자열을 저장합니다.
 
 ### CLI/ODBC 예제
 
-이 페이지는 Machbase CLI를 사용하는 C 프로그램의 대표적인 예제를 제공합니다. 모든 예제는 `machbase_sqlcli.h`를 포함하고 정적 라이브러리는 `libmachbasecli`, 공유 라이브러리는 `libmachbasecli_dll`과 링크하여 컴파일합니다.
+Machbase CLI를 사용하는 C 프로그램의 대표적인 예제입니다. 모든 예제는 `machbase_sqlcli.h`를 포함하고 정적 라이브러리는 `libmachbasecli`, 공유 라이브러리는 `libmachbasecli_dll`과 링크하여 컴파일합니다.
 
 #### 개발 환경 준비
 
@@ -2893,7 +2893,7 @@ while (true) {
 
 ### 개요 {#overview}
 
-Machbase는 모든 지원 와이어 프로토콜(2.1~4.0)을 포괄하는 범용 ADO.NET 프로바이더 **UniMachNetConnector**를 제공합니다. 커넥터는 실행 시 커넥션 문자열을 참고해 올바른 프로토콜을 자동으로 협상하므로, 시계열 데이터 수집·질의 워크로드에도 별도 설정 없이 적합한 프로토콜을 선택합니다.
+모든 지원 와이어 프로토콜(2.1~4.0)을 포괄하는 범용 ADO.NET 프로바이더 **UniMachNetConnector**를 제공합니다. 커넥터는 실행 시 커넥션 문자열을 참고해 올바른 프로토콜을 자동으로 협상하므로, 시계열 데이터 수집·질의 워크로드에도 별도 설정 없이 적합한 프로토콜을 선택합니다.
 
 - 현재 통합 패키지: `UniMachNetConnector` 8.0.54
 - 지원 타깃 프레임워크: `net452`, `net5.0`, `net6.0`, `net7.0`, `net8.0`
@@ -3302,7 +3302,7 @@ adapter.Update(table);
 
 ### 개요
 
-Machbase는 Go 애플리케이션을 위해 두 가지 연결 방식을 제공합니다.
+Go 애플리케이션을 위해 두 가지 연결 방식을 제공합니다.
 
 | 방식 | 패키지 | 특징 |
 |------|--------|------|

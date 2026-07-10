@@ -3,14 +3,15 @@ title: '8.4 데이터 입력과 변경'
 weight: 40
 toc: true
 ---
-데이터 입력과 변경에 해당하는 세부 문서를 모았습니다.
+
+RDB 테이블의 INSERT, UPDATE, DELETE 사용법과 INSERT SELECT 패턴을 다룬다.
 
 
 <a id="modeling-rdb-update-delete"></a>
 
 ## UPDATE·DELETE 설계
 
-RDB 테이블은 UPDATE와 DELETE를 모두 지원합니다. WHERE 절 없이도 전체 행을 갱신하거나 삭제할 수 있습니다.
+RDB 테이블은 UPDATE와 DELETE를 모두 지원한다. WHERE 절 없이 전체 행을 대상으로 실행할 수도 있다.
 
 ### UPDATE
 
@@ -69,15 +70,15 @@ WHERE status = 'PENDING' AND created_at < NOW - 86400000000000;
 
 ### 주의사항
 
-- WHERE 없는 UPDATE는 테이블 전체 행을 수정합니다. 의도치 않은 전체 갱신에 주의합니다.
-- 장시간 열린 트랜잭션은 잠금 충돌을 유발할 수 있습니다.
-- UPDATE/DELETE 시 WHERE 절 컬럼에 인덱스가 있으면 성능이 크게 향상됩니다.
+- WHERE 없는 UPDATE는 테이블 전체 행을 수정한다. 의도치 않은 전체 갱신에 주의할 것.
+- 장시간 열린 트랜잭션은 잠금 충돌을 유발할 수 있다.
+- UPDATE/DELETE 시 WHERE 절 컬럼에 인덱스가 있으면 성능이 크게 향상된다.
 
 <a id="reference-self-rdb-insert-select"></a>
 
 ## 자기 참조·INSERT SELECT
 
-RDB 테이블에서 `INSERT INTO ... SELECT ...` 문을 사용하여 다른 테이블의 데이터를 복사하거나 변환하여 삽입할 수 있습니다.
+`INSERT INTO ... SELECT ...` 문으로 다른 테이블의 데이터를 복사하거나 변환하여 삽입할 수 있다.
 
 ### INSERT SELECT 기본
 
@@ -124,5 +125,5 @@ WHERE customer = 'CUST-001'
 
 ### 주의사항
 
-- `INSERT SELECT`는 하나의 트랜잭션으로 처리됩니다. 대량 데이터는 배치로 분할하여 실행합니다.
-- SELECT 결과 컬럼 수와 타입이 INSERT 대상 테이블의 컬럼과 일치해야 합니다.
+- `INSERT SELECT`는 하나의 트랜잭션으로 처리된다. 대량 데이터는 배치로 분할하여 실행한다.
+- SELECT 결과의 컬럼 수와 타입이 INSERT 대상 테이블의 컬럼과 일치해야 한다.

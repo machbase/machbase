@@ -3,16 +3,15 @@ type: docs
 title: '11.5 외부 도구 연동'
 weight: 50
 ---
-Machbase Neo는 다양한 외부 도구와 연동하여 데이터 수집, 시각화, 분석 워크플로우를 구성할 수 있습니다. 이 섹션에서는 현장에서 자주 사용되는 외부 도구들과 Machbase의 연동 방법을 설명합니다.
+Machbase Neo는 다양한 외부 도구와 연동하여 데이터 수집, 시각화, 분석 워크플로우를 구성할 수 있습니다. 현장에서 자주 쓰이는 외부 도구별 연동 방법을 다룹니다.
 
 
 <a id="fluentd-plugin"></a>
 
 ## Fluentd plugin
 
-Fluentd는 오픈소스 데이터 수집 미들웨어로, `fluent-plugin-machbase` 출력
-플러그인을 사용하면 다양한 소스에서 수집한 로그·이벤트 데이터를 Machbase로
-스트리밍할 수 있습니다.
+Fluentd는 오픈소스 데이터 수집 미들웨어입니다. `fluent-plugin-machbase` 출력
+플러그인으로 다양한 소스의 로그·이벤트 데이터를 Machbase로 스트리밍합니다.
 
 ### 사전 요구 사항
 
@@ -113,9 +112,9 @@ Apache access log를 수집하여 Machbase에 적재하는 구성입니다.
 ### 대상 테이블 생성
 
 Fluentd에서 데이터를 받을 Machbase LOG 테이블을 미리 생성합니다. 플러그인은
-Append 프로토콜을 사용하며, `<fields>` 매핑 블록을 지원하지 않습니다. Fluentd
-레코드의 값은 레코드 순서대로 테이블 컬럼에 들어가므로 입력 파서가 생성하는 필드
-순서와 테이블 컬럼 순서를 맞춥니다.
+Append 프로토콜을 사용하며 `<fields>` 매핑 블록을 지원하지 않습니다. Fluentd
+레코드 값이 순서대로 테이블 컬럼에 들어가므로 입력 파서의 필드 순서와 테이블 컬럼
+순서를 맞추어야 합니다.
 
 #### LOG 테이블 (시계열 로그 데이터)
 
@@ -160,7 +159,7 @@ CREATE TABLE apache_access_log (
 
 ### 버퍼(Buffer) 설정 가이드
 
-플러그인 내부 버퍼 설정은 안정성과 처리량에 직접적인 영향을 줍니다.
+내부 버퍼 설정은 안정성과 처리량에 직접 영향을 줍니다.
 
 | 파라미터 | 설명 | 권장값 |
 |----------|------|--------|
@@ -227,9 +226,9 @@ SELECT * FROM log_table LIMIT 10;
 
 ## Grafana plugin
 
-Grafana는 오픈소스 관측성 플랫폼으로, Machbase 데이터소스 플러그인을 통해
-Machbase Web Admin(MWA)이 제공하는 Grafana용 REST 엔드포인트를 호출해 시계열
-데이터를 시각화할 수 있습니다.
+Grafana는 오픈소스 관측성 플랫폼입니다. Machbase 데이터소스 플러그인을 통해
+MWA(Machbase Web Admin)의 Grafana용 REST 엔드포인트를 호출하여 시계열
+데이터를 시각화합니다.
 
 ### 사전 요구 사항
 
@@ -241,7 +240,7 @@ Machbase Web Admin(MWA)이 제공하는 Grafana용 REST 엔드포인트를 호�
 
 ### 플러그인 설치
 
-Machbase 배포 패키지에 포함된 플러그인을 Grafana 플러그인 디렉터리에 압축 해제합니다.
+Machbase 배포 패키지에 포함된 플러그인을 Grafana 플러그인 디렉터리에 압축 해제합니다:
 
 ```bash
 sudo mkdir -p /var/lib/grafana/plugins/machbase
@@ -408,7 +407,7 @@ ORDER BY time ASC
 
 ## Tableau connector
 
-Tableau는 대표적인 비즈니스 인텔리전스(BI) 도구로, Machbase Neo 전용 Tableau Connector가 없는 경우 JDBC 또는 ODBC 드라이버를 통해 연결할 수 있습니다. 이 페이지에서는 두 가지 연결 방법과 유의 사항을 설명합니다.
+Tableau는 대표적인 BI 도구입니다. Machbase Neo 전용 Tableau Connector가 없는 경우 JDBC 또는 ODBC 드라이버로 연결합니다. 두 가지 연결 방법과 유의 사항을 다룹니다.
 
 ### 사전 요구 사항
 
@@ -527,11 +526,11 @@ ORDER BY hour_bucket ASC
 
 #### 날짜/시간 필드 설정
 
-Machbase의 `DATETIME` 타입은 Tableau에서 날짜 타입으로 사용할 수 있습니다. TAG 테이블의 `DATETIME BASETIME` 컬럼은 그대로 조회하고, 나노초 BIGINT 컬럼을 별도로 저장한 경우에만 애플리케이션 또는 계산 필드에서 변환합니다.
+`DATETIME` 타입은 Tableau에서 날짜 타입으로 바로 사용할 수 있습니다. TAG 테이블의 `DATETIME BASETIME` 컬럼은 그대로 조회하고, 나노초 BIGINT 컬럼을 별도로 저장한 경우에만 계산 필드에서 변환합니다.
 
 ### Tableau Server 배포
 
-Tableau Server에서 Machbase 데이터를 사용하려면 서버 노드 각각에 드라이버를 설치해야 합니다.
+Tableau Server에서 Machbase 데이터를 사용하려면 서버 노드 각각에 드라이버를 설치합니다.
 
 ```bash
 # Tableau Server (Linux)
@@ -552,7 +551,7 @@ tsm restart
 
 ### 제한 사항
 
-Machbase Neo 전용 Tableau Connector(`.taco` 파일)가 없는 경우 아래와 같은 제한이 있습니다.
+전용 Tableau Connector(`.taco` 파일)가 없으면 아래 제한이 있습니다.
 
 | 항목 | 제한 내용 |
 |------|-----------|

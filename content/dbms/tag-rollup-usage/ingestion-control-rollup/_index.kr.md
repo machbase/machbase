@@ -3,14 +3,12 @@ title: '6.12 ROLLUP 시작, 중지, 즉시 수집'
 weight: 110
 toc: true
 ---
-ROLLUP 시작, 중지, 즉시 수집에 해당하는 세부 문서를 모았습니다.
-
 
 <a id="ingestion-start-stop-immediate-collect-rollup"></a>
 
 ## 시작·중지와 즉시 수집
 
-ROLLUP 스레드는 생성 시 자동으로 시작되며, 필요에 따라 수동으로 제어할 수 있습니다.
+ROLLUP 스레드는 생성 시 자동으로 시작됩니다. 필요에 따라 수동으로 제어할 수 있습니다.
 
 ### 시작 / 중지
 

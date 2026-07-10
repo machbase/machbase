@@ -3,7 +3,7 @@ type: docs
 title: '13.3 ALTER SYSTEM 운영'
 weight: 30
 ---
-`ALTER SYSTEM`은 Machbase 서버의 전역 자원을 관리하는 SQL 구문입니다. 세션 제어, 라이선스 설치, 캐시 정리, 체크포인트, I/O 동결 등 DBA가 서버를 운영하면서 필요한 작업을 수행합니다.
+`ALTER SYSTEM`은 서버의 전역 자원을 관리하는 SQL 구문입니다. 세션 제어, 라이선스 설치, 캐시 정리, 체크포인트, I/O 동결 등 서버 운영에 필요한 작업을 수행합니다.
 
 > **권한**: `ALTER SYSTEM` 명령은 `SYS` 계정 또는 `GRANT ALTER ON MACHBASEDB TO user_name;`으로 권한을 부여받은 사용자만 실행할 수 있습니다.
 

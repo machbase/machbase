@@ -4,7 +4,7 @@ title: '3.3 Cluster Edition 설치와 배포'
 weight: 30
 toc: true
 ---
-Cluster Edition은 여러 노드에 Machbase를 분산 배포하는 구성입니다. 대용량 시계열 데이터 수집이 필요한 산업 IoT·금융 tick 환경에 적합합니다.
+Cluster Edition은 여러 노드에 분산 배포하는 구성으로, 대용량 시계열 데이터 수집이 필요한 산업 IoT·금융 tick 환경에 적합합니다.
 
 ## 노드 역할
 
@@ -36,34 +36,27 @@ Warehouse 2(그룹당 2노드로 복제) 입니다.
 
 ---
 
-**다음 읽을 내용**
-- [Cluster Edition 구성 개요](/kr/dbms/installation-deployment-upgrade/cluster-edition/overview/)
-
-
 <a id="overview"></a>
 
 ## Cluster Edition 구성 개요
 
-Cluster Edition은 역할이 분리된 Coordinator, Deployer, Lookup, Broker, Warehouse 노드로 구성됩니다.
-각 노드의 역할과 상호 관계를 이해한 후 배포 계획을 세우십시오.
+역할이 분리된 Coordinator, Deployer, Lookup, Broker, Warehouse 노드로 구성됩니다. 각 노드의 역할과 상호 관계를 이해한 후 배포 계획을 세우십시오.
 
 ### 노드 역할 상세
 
 #### Coordinator
 
-클러스터 전체의 메타 정보를 관리합니다. 노드 등록, 상태 감시, 장애 감지를 담당합니다. Primary/Secondary 이중화를 권장합니다. Coordinator가 다운되어도 이미 실행 중인 Broker·Warehouse의 INSERT·SELECT는 중단되지 않습니다.
+클러스터 전체의 메타 정보를 관리하며, 노드 등록, 상태 감시, 장애 감지를 담당합니다. Primary/Secondary 이중화를 권장합니다. Coordinator가 다운되어도 이미 실행 중인 Broker·Warehouse의 INSERT·SELECT는 중단되지 않습니다.
 
 - 설정 파일: `$MACHBASE_COORDINATOR_HOME/conf/machbase.conf`
 - 관리 도구: `machcoordinatoradmin`
 - 주요 포트: `CLUSTER_LINK_PORT_NO`, `HTTP_ADMIN_PORT`
 
-설정하지 않았을 때의 기본값은 `CLUSTER_LINK_PORT_NO=3868`, `HTTP_ADMIN_PORT=5779`입니다. 이 장의
-예제에서는 운영 중 포트 충돌을 피하기 위해 Coordinator link/admin 포트로 `5101`/`5102`를
-명시합니다.
+기본값은 `CLUSTER_LINK_PORT_NO=3868`, `HTTP_ADMIN_PORT=5779`입니다. 이 장의 예제에서는 운영 중 포트 충돌을 피하기 위해 Coordinator link/admin 포트로 `5101`/`5102`를 명시합니다.
 
 #### Deployer
 
-Coordinator의 지시에 따라 각 노드에 패키지를 배포하고 초기화를 중계합니다. 각 노드 호스트에 하나씩 배치하거나, 별도 배포 서버로 운영할 수 있습니다.
+Coordinator의 지시에 따라 각 노드에 패키지를 배포하고 초기화를 중계합니다. 각 노드 호스트에 하나씩 배치하거나, 별도 배포 서버로 운영합니다.
 
 - 관리 도구: `machdeployeradmin`
 
@@ -73,7 +66,7 @@ Coordinator의 지시에 따라 각 노드에 패키지를 배포하고 초기�
 
 #### Broker
 
-클라이언트의 SQL 요청을 받아 파싱하고 적절한 Warehouse로 분배합니다. 애플리케이션은 Broker 주소로만 연결하며, Warehouse와 직접 통신하지 않습니다. Broker도 이중화를 권장합니다.
+클라이언트의 SQL 요청을 받아 파싱하고 적절한 Warehouse로 분배합니다. 애플리케이션은 Broker 주소로만 연결하며, Warehouse와 직접 통신하지 않습니다. 이중화를 권장합니다.
 
 - 클라이언트 접속 포트: 기본 5656
 
@@ -105,14 +98,11 @@ Standard Edition과의 상세 비교는 [에디션 차이점](/dbms/core-concept
 
 ---
 
-**다음 읽을 내용**
-- [Cluster Edition 설치 환경 준비](/kr/dbms/installation-deployment-upgrade/cluster-edition/preparation-environment-cluster-edition/)
-
 <a id="preparation-environment-cluster-edition"></a>
 
 ## Cluster Edition 설치 환경 준비
 
-Cluster Edition을 배포하기 전에 모든 노드에 다음 환경을 준비해야 합니다.
+배포 전에 모든 노드에 다음 환경을 준비합니다.
 
 ### 파일 디스크립터 한도
 
@@ -204,14 +194,9 @@ ports=5101-5110,5201-5202,5301-5302,5401-5402,5500-5503,5656-5657
 sudo sysctl -w net.ipv4.ip_local_reserved_ports="${current:+$current,}$ports"
 ```
 
-기존 예약 포트가 있으면 덮어쓰지 말고 쉼표로 구분해 병합합니다. 클러스터 구성에 따라 포트
-범위를 조정하십시오. Cluster link, admin, service, Broker/Warehouse HTTP 관리 포트, Warehouse
-replication manager 포트 등을 모두 포함해야 합니다.
+기존 예약 포트가 있으면 덮어쓰지 말고 쉼표로 구분해 병합합니다. 클러스터 구성에 따라 포트 범위를 조정하십시오. Cluster link, admin, service, Broker/Warehouse HTTP 관리 포트, Warehouse replication manager 포트 등을 모두 포함해야 합니다.
 
 ---
-
-**다음 읽을 내용**
-- [machclusterctl 기반 배포](/kr/dbms/installation-deployment-upgrade/cluster-edition/machclusterctl/)
 
 <a id="machclusterctl"></a>
 
@@ -237,15 +222,11 @@ replication manager 포트 등을 모두 포함해야 합니다.
 
 ---
 
-**다음 읽을 내용**
-- [cluster.yaml 작성](/kr/dbms/installation-deployment-upgrade/cluster-edition/machclusterctl/cluster-yaml/)
-
 <a id="machclusterctl-cluster-yaml"></a>
 
 ### cluster.yaml 작성
 
-`cluster.yaml`은 `machclusterctl`이 클러스터를 배포하는 데 사용하는 선언적 설정 파일입니다.
-클러스터 이름, 호스트 별칭, 패키지 입력 경로, 노드별 포트와 홈 경로를 정의합니다.
+`cluster.yaml`은 `machclusterctl`이 클러스터를 배포할 때 사용하는 선언적 설정 파일입니다. 클러스터 이름, 호스트 별칭, 패키지 경로, 노드별 포트와 홈 경로를 정의합니다.
 
 #### 파일 구조 예시
 
@@ -372,36 +353,25 @@ cluster:
 - Broker: 2개 이상 (부하 분산)
 - Warehouse 그룹: 그룹당 2개 (복제를 통한 고가용성)
 
-같은 서버에 같은 타입의 노드를 2개 이상 배치할 때는 두 번째 노드부터 `home_path`와 포트를
-명시적으로 지정하여 충돌을 피합니다.
+같은 서버에 같은 타입의 노드를 2개 이상 배치할 때는 두 번째 노드부터 `home_path`와 포트를 명시적으로 지정하여 충돌을 피합니다.
 
-Coordinator와 Deployer의 HTTP 관리 포트는 `http_admin_port`, Broker의 HTTP 포트는
-`http_port_no`를 사용합니다.
+Coordinator와 Deployer의 HTTP 관리 포트는 `http_admin_port`, Broker의 HTTP 포트는 `http_port_no`를 사용합니다.
 
-Broker와 Warehouse 노드에는 선택적으로 `dbs_path`를 지정할 수 있습니다. `dbs_path`는 노드가
-설치되는 서버 기준의 데이터 파일 경로이며, 생략하면 `machcoordinatoradmin --add-node`의 기본
-`DBS_PATH` 동작을 사용합니다.
+Broker와 Warehouse 노드에는 선택적으로 `dbs_path`를 지정합니다. `dbs_path`는 노드가 설치되는 서버 기준의 데이터 파일 경로이며, 생략하면 `machcoordinatoradmin --add-node`의 기본 `DBS_PATH` 동작을 따릅니다.
 
-기존 `cluster.package.path`는 하위 호환 입력으로 사용할 수 있지만, 새로 작성하는 YAML에서는
-`origin_path`를 사용합니다.
+기존 `cluster.package.path`는 하위 호환 입력으로 사용할 수 있지만, 새로 작성하는 YAML에서는 `origin_path`를 사용합니다.
 
-Tag update가 반영된 빌드에서는 Lookup, Broker, Warehouse의 HTTP 관리 포트도 `http_admin_port`로
-작성할 수 있습니다. `main` 또는 RDB 구현 브랜치 기반 빌드에서는 Broker HTTP 포트가
-`http_port_no`로 기록되고, Lookup과 Warehouse의 `http_admin_port` 입력을 지원하지 않습니다.
+Tag update가 반영된 빌드에서는 Lookup, Broker, Warehouse의 HTTP 관리 포트도 `http_admin_port`로 작성할 수 있습니다. `main` 또는 RDB 구현 브랜치 기반 빌드에서는 Broker HTTP 포트가 `http_port_no`로 기록되고, Lookup과 Warehouse의 `http_admin_port` 입력을 지원하지 않습니다.
 
 작성이 완료되면 유효성을 검사합니다.
 
 ---
 
-**다음 읽을 내용**
-- [YAML 검증](/kr/dbms/installation-deployment-upgrade/cluster-edition/machclusterctl/validation-yaml/)
-
 <a id="machclusterctl-validation-yaml"></a>
 
 ### YAML 검증
 
-`cluster.yaml`을 실제 설치에 사용하기 전에 유효성 검사를 수행합니다. `validate`는 YAML 문법과
-필수 값, 별칭, 포트 충돌, 토폴로지 관계를 정적으로 검사합니다.
+`cluster.yaml`을 실제 설치에 사용하기 전에 유효성 검사를 수행합니다. `validate`는 YAML 문법과 필수 값, 별칭, 포트 충돌, 토폴로지 관계를 정적으로 검사합니다.
 
 #### 검증 명령
 
@@ -430,15 +400,13 @@ Validation passed.
 
 #### 설치 전 실행 계획 확인
 
-신규 설치 전에 SSH 접속, 패키지 파일 존재 여부, 원격 디렉터리 권한 같은 실행 전 점검까지 확인하려면
-`install --dry-run --verbose`를 사용합니다.
+신규 설치 전에 SSH 접속, 패키지 파일 존재 여부, 원격 디렉터리 권한까지 확인하려면 `install --dry-run --verbose`를 사용합니다.
 
 ```bash
 machclusterctl install -f cluster.yaml --dry-run --verbose
 ```
 
-설치 후 구성 변경을 검증할 때는 다음 명령을 사용합니다. `apply --dry-run`은 현재 클러스터 상태와
-YAML의 차이를 계산해 실행 계획을 보여주며, 실제 원격 변경 작업은 수행하지 않습니다.
+설치 후 구성 변경을 검증할 때는 `apply --dry-run`을 사용합니다. 현재 클러스터 상태와 YAML의 차이를 계산해 실행 계획을 보여주며, 실제 원격 변경 작업은 수행하지 않습니다.
 
 ```bash
 machclusterctl apply -f cluster.yaml --dry-run --verbose
@@ -456,14 +424,11 @@ machclusterctl apply -f cluster.yaml --dry-run --verbose
 
 ---
 
-**다음 읽을 내용**
-- [최초 설치](/kr/dbms/installation-deployment-upgrade/cluster-edition/machclusterctl/initial/)
-
 <a id="machclusterctl-initial"></a>
 
 ### 최초 설치
 
-`cluster.yaml` 작성과 유효성 검사가 완료되면 설치 계획을 먼저 확인한 뒤 클러스터를 설치합니다.
+`cluster.yaml` 작성과 유효성 검사가 완료되면 설치 계획을 확인한 뒤 클러스터를 설치합니다.
 
 #### 1. 클러스터 설치
 
@@ -488,8 +453,7 @@ machclusterctl install -f cluster.yaml --yes --verbose
 
 #### 2. 클러스터 시작
 
-`install`은 Coordinator, Deployer, Lookup, Broker, Warehouse를 준비하고 기동합니다. 설치 후 전체
-클러스터를 다시 시작해야 할 때만 다음 명령을 사용합니다.
+`install`은 Coordinator, Deployer, Lookup, Broker, Warehouse를 준비하고 기동합니다. 설치 후 전체 클러스터를 다시 시작해야 할 때만 다음 명령을 사용합니다.
 
 ```bash
 machclusterctl start
@@ -502,15 +466,13 @@ export MACHBASE_COORDINATOR_HOME=/home/machbase/coordinator
 machclusterctl status
 ```
 
-한 서버에서 여러 Coordinator 홈을 번갈아 확인할 때는 직접 지정할 수 있습니다.
+한 서버에서 여러 Coordinator 홈을 번갈아 확인할 때는 직접 지정합니다.
 
 ```bash
 machclusterctl status --coordinator /home/machbase/coordinator
 ```
 
-출력은 `machcoordinatoradmin --cluster-status-full --verbose` 형식입니다. Coordinator와 Broker는
-`primary`, `leader` 같은 역할 상태가 표시될 수 있으며, Desired/Actual state가 서로 맞는지
-확인합니다.
+출력은 `machcoordinatoradmin --cluster-status-full --verbose` 형식입니다. Coordinator와 Broker는 `primary`, `leader` 같은 역할 상태가 표시될 수 있으며, Desired/Actual state가 서로 맞는지 확인합니다.
 
 ```
 +-------------+--------------------------------+--------------------------------+--------------------------------+-------------------------------+-------------+-----------------+----------+
@@ -539,10 +501,6 @@ machclusterctl stop
 ```
 
 ---
-
-**다음 읽을 내용**
-- [라이선스 설치](/kr/dbms/installation-deployment-upgrade/pre-install-preparation/license/)
-- [상태 확인](/kr/dbms/installation-deployment-upgrade/cluster-edition/machclusterctl/status-check-state/)
 
 <a id="machclusterctl-status-check-state"></a>
 
@@ -593,8 +551,7 @@ machcoordinatoradmin --cluster-status-full --verbose
 | `ddl-recov` | DDL 복구 진행 상태 |
 | `**unknown**` | 통신 불가, 노드 다운 의심 |
 
-`leader`처럼 Broker 역할을 나타내는 값은 Desired/Actual state나 그룹 상태 영역에 표시될 수
-있습니다.
+`leader`처럼 Broker 역할을 나타내는 값은 Desired/Actual state나 그룹 상태 영역에 표시될 수 있습니다.
 
 #### Desired vs Actual State
 
@@ -613,23 +570,17 @@ tail -f $MACHBASE_HOME/trc/machbase.trc
 
 ---
 
-**다음 읽을 내용**
-- [구성 변경 적용](/kr/dbms/installation-deployment-upgrade/cluster-edition/machclusterctl/configuration-change-alter/)
-
 <a id="machclusterctl-configuration-change-alter"></a>
 
 ### 구성 변경 적용
 
-클러스터 구성(노드 추가, 일반 노드 포트 변경 등)을 변경하려면 `cluster.yaml`을 수정한 후
-적용합니다. Primary Coordinator 교체, 제거, identity 또는 포트 변경은 `apply`에서 지원하지
-않습니다.
+클러스터 구성(노드 추가, 일반 노드 포트 변경 등)을 변경하려면 `cluster.yaml`을 수정한 후 적용합니다. Primary Coordinator 교체, 제거, identity 또는 포트 변경은 `apply`에서 지원하지 않습니다.
 
 #### 구성 변경 절차
 
 ##### 1. cluster.yaml 수정
 
-필요한 변경사항을 `cluster.yaml`에 반영합니다. 예를 들어 새 Warehouse 그룹을 추가하려면 해당
-항목을 추가합니다.
+필요한 변경사항을 `cluster.yaml`에 반영합니다. 예를 들어 새 Warehouse 그룹을 추가하려면 해당 항목을 추가합니다.
 
 ```yaml
 cluster:
@@ -683,9 +634,7 @@ machclusterctl status
 
 #### 노드 제거
 
-`cluster.yaml`에서 해당 노드 항목을 삭제하고 `apply`를 실행합니다. 단, Coordinator 제거와
-Primary Coordinator 변경은 지원하지 않습니다. Warehouse 노드를 제거하기 전에는 해당 노드에 있는
-데이터가 다른 노드에 충분히 복제되어 있는지 확인해야 합니다.
+`cluster.yaml`에서 해당 노드 항목을 삭제하고 `apply`를 실행합니다. 단, Coordinator 제거와 Primary Coordinator 변경은 지원하지 않습니다. Warehouse 노드를 제거하기 전에는 해당 노드에 있는 데이터가 다른 노드에 충분히 복제되어 있는지 확인해야 합니다.
 
 #### 주의사항
 
@@ -695,22 +644,17 @@ Primary Coordinator 변경은 지원하지 않습니다. Warehouse 노드를 제
 
 ---
 
-**다음 읽을 내용**
-- [상태 확인](/kr/dbms/installation-deployment-upgrade/cluster-edition/machclusterctl/status-check-state/)
-
 <a id="machclusterctl-failure-recovery"></a>
 
 ### 배포 실패 시 복구
 
-`machclusterctl install` 또는 `apply` 실행 중 오류가 발생한 경우 복구 방법을 설명합니다.
+`machclusterctl install` 또는 `apply` 실행 중 오류가 발생한 경우의 복구 방법입니다.
 
 #### 설치 실패 시 재시도
 
-설치 도중 오류가 발생하면 `machclusterctl install`은 이미 수행한 bootstrap과 노드 등록 작업을
-rollback합니다. 먼저 로그에서 원인을 해결한 뒤 동일한 명령을 다시 실행합니다.
+설치 도중 오류가 발생하면 `machclusterctl install`은 이미 수행한 bootstrap과 노드 등록 작업을 rollback합니다. 로그에서 원인을 해결한 뒤 동일한 명령을 다시 실행합니다.
 
-`machclusterctl apply` 중 오류가 발생한 경우에는 현재 상태를 먼저 확인합니다. 일부 노드 추가나 시작이
-진행된 뒤 실패했을 수 있으므로, 상태에 맞게 `apply`를 재실행하거나 필요한 노드를 수동으로 정리합니다.
+`machclusterctl apply` 중 오류가 발생한 경우에는 현재 상태를 먼저 확인합니다. 일부 노드 추가나 시작이 진행된 뒤 실패했을 수 있으므로, 상태에 맞게 `apply`를 재실행하거나 필요한 노드를 수동으로 정리합니다.
 
 ```bash
 machclusterctl install -f cluster.yaml --yes --verbose
@@ -731,13 +675,11 @@ machclusterctl destroy -f cluster.yaml --yes
 machclusterctl install -f cluster.yaml --yes --verbose
 ```
 
-`destroy`는 각 노드의 설치 흔적과 관리 대상 데이터 경로를 삭제할 수 있습니다. 외부 `dbs_path`
-처리 범위는 버전에 따라 다를 수 있으므로, 데이터 보존 목적으로 `destroy`를 사용하지 마십시오.
-**삭제된 데이터는 복구할 수 없으므로 주의하십시오.**
+`destroy`는 각 노드의 설치 흔적과 관리 대상 데이터 경로를 삭제합니다. 외부 `dbs_path` 처리 범위는 버전에 따라 다를 수 있으므로, 데이터 보존 목적으로 `destroy`를 사용하지 마십시오. **삭제된 데이터는 복구할 수 없습니다.**
 
 #### Warehouse 노드 장애 복구
 
-특정 Warehouse 노드에 장애가 발생하면 해당 노드의 상태가 `scrapped`로 전환됩니다. 복구 절차는 다음과 같습니다.
+특정 Warehouse 노드에 장애가 발생하면 해당 노드의 상태가 `scrapped`로 전환됩니다.
 
 ```bash
 # 1. 그룹 상태를 readonly로 변경 (추가 데이터 유입 방지)
@@ -756,9 +698,7 @@ machcoordinatoradmin --cluster-status-full --verbose
 machcoordinatoradmin --set-group-state=normal --group=group1
 ```
 
-스냅샷 복구는 대상 Warehouse가 `scrapped`, Warehouse 그룹이 `readonly` 상태일 때 수행합니다.
-복구 명령 뒤에는 `--exec-sync`를 실행하고, Warehouse가 `sync-standby`를 거쳐 `normal` 상태가
-되는지 확인합니다.
+스냅샷 복구는 대상 Warehouse가 `scrapped`, Warehouse 그룹이 `readonly` 상태일 때 수행합니다. 복구 명령 뒤에는 `--exec-sync`를 실행하고, Warehouse가 `sync-standby`를 거쳐 `normal` 상태가 되는지 확인합니다.
 
 #### 로그 확인
 
@@ -770,17 +710,11 @@ ssh machbase@<node-ip> 'tail -100 /home/machbase/coordinator/trc/machbase.trc'
 
 ---
 
-**다음 읽을 내용**
-- [노드 상태 확인](/kr/dbms/installation-deployment-upgrade/cluster-edition/machclusterctl/status-check-state/)
-- [설치 검증 체크리스트](/kr/dbms/installation-deployment-upgrade/validation-checklist/)
-
 <a id="manual-machcoordinatoradmin"></a>
 
 ## machcoordinatoradmin 기반 수동 배포
 
-`machclusterctl`을 사용할 수 없거나 각 단계를 직접 제어해야 하는 경우 수동으로 클러스터를
-구성합니다. Coordinator와 Deployer를 직접 준비한 뒤, `machcoordinatoradmin` 명령으로 패키지
-등록, 노드 등록, 시작을 수행합니다.
+`machclusterctl`을 사용할 수 없거나 각 단계를 직접 제어해야 하는 경우의 수동 클러스터 구성 방법입니다. Coordinator와 Deployer를 직접 준비한 뒤, `machcoordinatoradmin` 명령으로 패키지 등록, 노드 등록, 시작을 수행합니다.
 
 ### 수동 배포 순서
 
@@ -803,16 +737,11 @@ ssh machbase@<node-ip> 'tail -100 /home/machbase/coordinator/trc/machbase.trc'
 
 ---
 
-**다음 읽을 내용**
-- [Package 등록](/kr/dbms/installation-deployment-upgrade/cluster-edition/manual-machcoordinatoradmin/package/)
-
 <a id="manual-machcoordinatoradmin-package"></a>
 
 ### Package 준비와 등록
 
-Cluster Edition 수동 배포의 패키지 준비와 등록 절차입니다. 먼저 Coordinator와 Deployer에는 전체
-패키지를 설치하고 환경 변수를 설정합니다. Broker와 Warehouse 배포에 사용할 경량 패키지는
-Coordinator가 기동된 후 Coordinator에 등록합니다.
+Cluster Edition 수동 배포의 패키지 준비와 등록 절차입니다. Coordinator와 Deployer에는 전체 패키지를 설치하고 환경 변수를 설정합니다. Broker와 Warehouse 배포에 사용할 경량 패키지는 Coordinator가 기동된 후에 등록합니다.
 
 #### 패키지 종류
 
@@ -848,14 +777,11 @@ scp machbase@배포서버:/path/to/machbase-cluster-8.6.0.official-LINUX-X86-64-
 tar zxf machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz -C ~/deployer
 ```
 
-Broker와 Warehouse 노드에는 이 단계에서 경량 패키지를 직접 압축 해제하지 않습니다. 경량 패키지를
-Coordinator에 등록하면, 이후 `--add-node`로 지정한 Deployer가 대상 노드의 `--home-path`에
-패키지를 배포합니다.
+Broker와 Warehouse 노드에는 이 단계에서 경량 패키지를 직접 압축 해제하지 않습니다. 경량 패키지를 Coordinator에 등록하면, 이후 `--add-node`로 지정한 Deployer가 대상 노드의 `--home-path`에 패키지를 배포합니다.
 
 #### Coordinator에 패키지 등록
 
-Broker와 Warehouse를 Coordinator에서 기동하려면 경량 패키지를 Coordinator에 등록해야 합니다.
-Coordinator와 Deployer를 설치하고 Coordinator가 실행 중인 상태에서 다음 명령을 실행합니다.
+Broker와 Warehouse를 Coordinator에서 기동하려면 경량 패키지를 Coordinator에 등록해야 합니다. Coordinator와 Deployer를 설치하고 Coordinator가 실행 중인 상태에서 다음 명령을 실행합니다.
 
 ```bash
 $MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --add-package=machbase \
@@ -883,9 +809,6 @@ export MACHBASE_HOME=$MACHBASE_DEPLOYER_HOME
 ```
 
 ---
-
-**다음 읽을 내용**
-- [Coordinator / Deployer 설치](/kr/dbms/installation-deployment-upgrade/cluster-edition/manual-machcoordinatoradmin/coordinator-deployer/)
 
 <a id="manual-machcoordinatoradmin-coordinator-deployer"></a>
 
@@ -977,22 +900,17 @@ machcoordinatoradmin --add-node="192.168.1.10:5201" \
 
 ---
 
-**다음 읽을 내용**
-- [Lookup / Broker / Warehouse 설치](/kr/dbms/installation-deployment-upgrade/cluster-edition/manual-machcoordinatoradmin/lookup-broker-warehouse/)
-
 <a id="manual-machcoordinatoradmin-lookup-broker-warehouse"></a>
 
 ### Lookup / Broker / Warehouse 설치
 
-Coordinator와 Deployer가 준비된 후 Lookup, Broker, Warehouse 노드를 Coordinator에 등록하고 시작합니다.
-Broker와 Warehouse를 등록하기 전에 경량 패키지를 Coordinator에 `--add-package`로 등록해야 합니다.
+Coordinator와 Deployer가 준비된 후 Lookup, Broker, Warehouse 노드를 Coordinator에 등록하고 시작합니다. Broker와 Warehouse를 등록하기 전에 경량 패키지를 Coordinator에 `--add-package`로 등록해야 합니다.
 
 #### Broker 설치
 
 ##### 1. 등록 파라미터 확인
 
-Broker 설정 파일은 `--add-node` 실행 때 생성되어 Deployer를 통해 대상 노드에 배포됩니다. 등록 전에
-사용할 cluster link 포트, 서비스 포트, HTTP 포트를 확정합니다.
+Broker 설정 파일은 `--add-node` 실행 때 생성되어 Deployer를 통해 대상 노드에 배포됩니다. 등록 전에 cluster link 포트, 서비스 포트, HTTP 포트를 확정합니다.
 
 ```
 CLUSTER_LINK_HOST    = 192.168.1.11   # Broker 노드 IP
@@ -1041,8 +959,7 @@ Warehouse 노드는 그룹 단위로 구성합니다. 같은 그룹의 노드끼
 
 ##### 1. 등록 파라미터 확인
 
-Warehouse 설정 파일은 `--add-node` 실행 때 생성되어 Deployer를 통해 대상 노드에 배포됩니다. 등록
-전에 cluster link 포트, 서비스 포트, replication manager 주소를 확정합니다.
+Warehouse 설정 파일은 `--add-node` 실행 때 생성되어 Deployer를 통해 대상 노드에 배포됩니다. 등록 전에 cluster link 포트, 서비스 포트, replication manager 주소를 확정합니다.
 
 ```
 CLUSTER_LINK_HOST    = 192.168.1.13
@@ -1075,12 +992,9 @@ machcoordinatoradmin --add-node="192.168.1.14:5501" \
   --group=group1
 ```
 
-별도 `--add-group` 명령은 사용하지 않습니다. Warehouse 그룹 이름은 각 Warehouse 노드를 등록할 때
-`--group`으로 지정합니다.
+별도 `--add-group` 명령은 사용하지 않습니다. Warehouse 그룹 이름은 각 Warehouse 노드를 등록할 때 `--group`으로 지정합니다.
 
-Tag update가 반영된 빌드에서 Warehouse HTTP 포트를 별도로 지정해야 하는 경우에는 Warehouse
-`--add-node`에 `--http-port-no`를 추가합니다. `main` 또는 RDB 구현 브랜치 기반 빌드에서는
-Warehouse 설정 생성 시 `HTTP_PORT_NO`를 기록하지 않습니다.
+Tag update가 반영된 빌드에서 Warehouse HTTP 포트를 별도로 지정해야 하는 경우에는 Warehouse `--add-node`에 `--http-port-no`를 추가합니다. `main` 또는 RDB 구현 브랜치 기반 빌드에서는 Warehouse 설정 생성 시 `HTTP_PORT_NO`를 기록하지 않습니다.
 
 ##### 3. 노드 시작
 
@@ -1109,14 +1023,9 @@ machcoordinatoradmin --add-node="192.168.1.30:5301" \
 machcoordinatoradmin --cluster-status
 ```
 
-Coordinator, Lookup, Broker, Warehouse가 각 역할에 맞는 정상 상태로 표시되면 클러스터가 정상
-구동 중입니다. Coordinator는 `primary`, Broker는 `leader`, Warehouse는 `normal`,
-`sync-active`, `sync-standby` 등으로 표시될 수 있습니다.
+Coordinator, Lookup, Broker, Warehouse가 각 역할에 맞는 정상 상태로 표시되면 클러스터가 정상 구동 중입니다. Coordinator는 `primary`, Broker는 `leader`, Warehouse는 `normal`, `sync-active`, `sync-standby` 등으로 표시됩니다.
 
 ---
-
-**다음 읽을 내용**
-- [노드 상태 확인](/kr/dbms/installation-deployment-upgrade/cluster-edition/manual-machcoordinatoradmin/status-check-node-state/)
 
 <a id="manual-machcoordinatoradmin-status-check-node-state"></a>
 
@@ -1143,8 +1052,7 @@ machcoordinatoradmin --cluster-status
 +-------------+-------------------+-------------------+-------------------+--------------+
 ```
 
-Deployer 상태까지 함께 보려면 `--cluster-status --verbose`를 사용합니다. Desired/Actual
-state, RP state, 디스크 사용률, ping 값은 `--cluster-status-full`에서 확인합니다.
+Deployer 상태까지 함께 보려면 `--cluster-status --verbose`를 사용합니다. Desired/Actual state, RP state, 디스크 사용률, ping 값은 `--cluster-status-full`에서 확인합니다.
 
 #### 개별 노드 관리 명령
 
@@ -1155,8 +1063,7 @@ state, RP state, 디스크 사용률, ping 값은 `--cluster-status-full`에서 
 | `machcoordinatoradmin --cluster-status` | 전체 상태 조회 |
 | `machcoordinatoradmin --configuration` | Coordinator 설정 조회 |
 
-Coordinator와 Deployer 프로세스는 각 노드에서 `machcoordinatoradmin -u/-s`,
-`machdeployeradmin -u/-s` 같은 서비스 명령으로 시작하거나 종료합니다.
+Coordinator와 Deployer 프로세스는 각 노드에서 `machcoordinatoradmin -u/-s`, `machdeployeradmin -u/-s` 같은 서비스 명령으로 시작하거나 종료합니다.
 
 #### 상태값 설명
 
@@ -1172,8 +1079,7 @@ Coordinator와 Deployer 프로세스는 각 노드에서 `machcoordinatoradmin -
 | `ddl-recov` | DDL 복구 진행 상태 |
 | `**unknown**` | 통신 불가, 노드 다운 의심 |
 
-`leader`처럼 Broker 역할을 나타내는 값은 상태 출력의 Desired/Actual state나 그룹 상태 영역에
-표시될 수 있습니다.
+`leader`처럼 Broker 역할을 나타내는 값은 상태 출력의 Desired/Actual state나 그룹 상태 영역에 표시될 수 있습니다.
 
 #### 클라이언트 접속 테스트
 
@@ -1184,10 +1090,4 @@ machsql -s 192.168.1.11 -u SYS -p MANAGER
 Mach> SELECT * FROM V$NODE_STATUS;
 ```
 
-`V$NODE_STATUS` 뷰는 접속한 노드의 타입, 상태, 호스트, Coordinator 연결 정보 등을 반환합니다.
-등록된 전체 노드 목록은 `machcoordinatoradmin --cluster-status` 출력에서 확인합니다.
-
----
-
-**다음 읽을 내용**
-- [설치 검증 체크리스트](/kr/dbms/installation-deployment-upgrade/validation-checklist/)
+`V$NODE_STATUS` 뷰는 접속한 노드의 타입, 상태, 호스트, Coordinator 연결 정보 등을 반환합니다. 등록된 전체 노드 목록은 `machcoordinatoradmin --cluster-status` 출력에서 확인합니다.

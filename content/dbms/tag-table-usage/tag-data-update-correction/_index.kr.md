@@ -3,15 +3,13 @@ title: '5.12 TAG data UPDATE와 데이터 보정'
 weight: 120
 toc: true
 ---
-TAG data UPDATE와 데이터 보정에 해당하는 세부 문서를 모았습니다.
 
 
 <a id="correction-performance-bulk-considerations-tag-data-update"></a>
 
 ## TAG data UPDATE 대상 범위와 대량 정정 성능 고려사항
 
-TAG data UPDATE는 잘못 적재된 시계열 값을 직접 정정할 수 있는 기능입니다. 성능과 운영
-위험을 관리하려면 태그 선택 조건과 시간 조건으로 대상 범위를 명확히 제한해야 합니다.
+잘못 적재된 시계열 값을 직접 정정하려면 태그 선택 조건과 시간 조건으로 대상 범위를 명확히 제한해야 합니다.
 
 ### 기본 정정 패턴
 
@@ -32,7 +30,7 @@ UPDATE sensor_tag
    AND time <  TO_DATE('2025-06-01 13:00:00', 'YYYY-MM-DD HH24:MI:SS');
 ```
 
-INSERT 직후의 append 데이터는 내부 반영 지연이 있을 수 있으므로, UPDATE 전 대상 row가
+INSERT 직후의 append 데이터는 내부 반영 지연이 있으므로, UPDATE 전 대상 row가
 조회되는지 확인합니다.
 
 ### 대량 정정 성능 고려사항
@@ -91,9 +89,8 @@ EXEC ROLLUP_REBUILD(sensor_tag, 'TEMP-01',
 
 ## 데이터 보정 설계
 
-TAG 테이블의 실제 시계열 데이터는 `UPDATE`로 정정할 수 있습니다. 보정 이력을 남기거나
-조회 시점의 보정 로직이 필요한 업무에서는 별도 보정 컬럼/이력 테이블 패턴을 함께 사용할
-수 있습니다.
+실제 시계열 데이터를 `UPDATE`로 정정할 때, 보정 이력을 남기거나
+조회 시점에 보정 로직이 필요한 업무에서는 별도 보정 컬럼/이력 테이블 패턴을 함께 사용합니다.
 
 ### 직접 UPDATE 패턴
 
@@ -112,8 +109,8 @@ UPDATE에는 태그 선택 조건과 BASETIME 조건이 필요합니다. `name`�
 
 ### 보정 플래그 패턴
 
-원본 값과 보정 값을 모두 저장하고, 쿼리 시 보정 값을 우선 사용합니다. 원본 변경 이력까지
-보존해야 하는 경우에 적합합니다.
+원본 값과 보정 값을 모두 저장하고, 쿼리 시 보정 값을 우선 사용하는 패턴입니다. 원본 변경 이력까지
+보존해야 할 때 적합합니다.
 
 ```sql
 CREATE TAG TABLE sensor_data (

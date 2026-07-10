@@ -4,7 +4,7 @@ title: '15.1 장비 마스터 데이터와 알람 상태 관리'
 weight: 30
 ---
 
-산업 현장에서는 수백~수천 개의 장비가 각기 다른 임계값과 운영 정책을 갖습니다. 이 시나리오는 LOOKUP 테이블로 장비 마스터를 관리하고, TAG 테이블의 센서 데이터와 결합해 임계값 초과 알람을 실시간으로 감지하고 이력을 기록하는 패턴을 안내합니다.
+산업 현장에서는 수백~수천 개의 장비가 각기 다른 임계값과 운영 정책을 갖습니다. LOOKUP 테이블로 장비 마스터를 관리하고, TAG 테이블의 센서 데이터와 결합해 임계값 초과 알람을 실시간 감지하고 이력을 기록하는 패턴입니다.
 
 **난이도**: 중급
 **소요 시간**: 45~60분
@@ -33,7 +33,7 @@ LOG 테이블 (alarm_log)      ← 알람 이력 기록
 
 ## 1단계: LOOKUP 테이블로 장비 마스터 관리
 
-LOOKUP 테이블은 전체 CRUD(INSERT, UPDATE, DELETE, SELECT)를 지원하며, 자주 변경되지 않는 참조 데이터(마스터 데이터)에 적합합니다. 장비 등록 정보, 설치 위치, 임계값 등을 관리합니다.
+LOOKUP 테이블은 전체 CRUD를 지원하며, 자주 변경되지 않는 참조 데이터(마스터 데이터)에 적합합니다.
 
 ```sql
 CREATE LOOKUP TABLE equipment (
@@ -123,7 +123,7 @@ INSERT INTO sensor_tag VALUES ('CHILLER_01.PRESS',NOW(), 9.3);   -- 임계값 8 
 
 ## 3단계: LOOKUP JOIN으로 장비 정보와 센서값 결합 조회
 
-LOOKUP 테이블과 TAG 테이블을 JOIN해 장비 정보와 실시간 센서값을 한 번에 조회합니다.
+LOOKUP 테이블과 TAG 테이블을 JOIN해 장비 정보와 센서값을 한 번에 조회합니다.
 
 ### 현재 센서값과 장비 정보 조합
 
@@ -172,7 +172,7 @@ ORDER BY e.eq_id;
 
 ## 4단계: 임계값 초과 알람 감지 쿼리
 
-LOOKUP 테이블의 임계값과 TAG 테이블의 실시간 센서값을 비교해 알람 대상 장비를 탐지합니다.
+LOOKUP 테이블의 임계값과 TAG 테이블의 센서값을 비교해 알람 대상 장비를 탐지합니다.
 
 ### 온도 임계값 초과 장비 목록
 
@@ -353,6 +353,6 @@ ORDER BY alarmed_equipment DESC;
 
 ## 다음 단계
 
-- TAG, LOG, RDB를 함께 조인하는 복합 대시보드는 [TAG + RDB + LOG 조인 대시보드](../join-tag-rdb-log/)를 참고합니다.
-- STREAM으로 알람 감지를 자동화하려면 [STREAM으로 LOG를 TAG로 자동 적재](/dbms/log-table-usage/stream-log-processing/#stream-log-tag)를 참고합니다.
-- 실시간 상태판 구성은 [실시간 상태판 만들기](../state-status-real-time-dashboard/)를 참고합니다.
+- TAG, LOG, RDB 복합 조인 대시보드: [TAG + RDB + LOG 조인 대시보드](../join-tag-rdb-log/)
+- STREAM 알람 자동화: [STREAM으로 LOG를 TAG로 자동 적재](/dbms/log-table-usage/stream-log-processing/#stream-log-tag)
+- 실시간 상태판: [실시간 상태판 만들기](../state-status-real-time-dashboard/)

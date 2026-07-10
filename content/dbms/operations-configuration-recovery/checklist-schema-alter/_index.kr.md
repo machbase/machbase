@@ -4,7 +4,7 @@ title: '13.8 스키마 변경 체크리스트'
 weight: 50
 ---
 
-운영 중인 Machbase 인스턴스에서 스키마 변경을 수행하기 전에 아래 항목을 순서대로 확인합니다.
+운영 중 스키마 변경 전에 아래 항목을 순서대로 확인합니다.
 
 ## 변경 전 점검
 
@@ -14,7 +14,7 @@ weight: 50
 SELECT TABLE_NAME, TABLE_TYPE FROM M$SYS_TABLES WHERE TABLE_NAME = 'TARGET_TABLE';
 ```
 
-테이블 타입별 ALTER TABLE 지원 범위가 다릅니다. [테이블 타입별 관리 가능 범위](/dbms/data-modeling-table-design/table-types-type-manageable/)를 미리 확인하세요.
+테이블 타입별 ALTER TABLE 지원 범위가 다릅니다. [테이블 타입별 관리 가능 범위](/dbms/data-modeling-table-design/table-types-type-manageable/)를 미리 확인하십시오.
 
 ### 2. 현재 스키마 확인
 

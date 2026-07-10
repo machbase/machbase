@@ -3,7 +3,8 @@ title: '10.6 인덱스와 성능'
 weight: 60
 toc: true
 ---
-인덱스와 성능에 해당하는 세부 문서를 모았습니다.
+
+VOLATILE 테이블의 인덱스 생성 방법과 지원되는 인덱스 유형을 정리한다.
 
 
 <a id="original-85-volatile-indexes"></a>

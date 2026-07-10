@@ -3,7 +3,8 @@ title: '10.5 조회와 분석'
 weight: 50
 toc: true
 ---
-조회와 분석에 해당하는 세부 문서를 모았습니다.
+
+VOLATILE 테이블의 데이터 조회 방법을 다룬다.
 
 
 <a id="original-85-querying-data"></a>
@@ -14,7 +15,7 @@ toc: true
 
 ### 데이터 조회
 
-다른 테이블 유형과 마찬가지로 데이터 조회는 다음과 같이 수행할 수 있습니다.
+다른 테이블 유형과 동일하게 SELECT 문으로 조회한다.
 
 ```sql
 Mach> create volatile table vtable (id integer primary key, name varchar(20));

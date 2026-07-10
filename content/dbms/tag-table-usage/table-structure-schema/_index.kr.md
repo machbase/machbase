@@ -3,14 +3,13 @@ title: '5.2 테이블 구조와 스키마'
 weight: 20
 toc: true
 ---
-테이블 구조와 스키마에 해당하는 세부 문서를 모았습니다.
 
 
 <a id="tag-table-design"></a>
 
 ## TAG 테이블 설계
 
-TAG 테이블은 센서·IoT 기기의 계측값을 저장하는 시계열 전용 테이블입니다. 태그(센서) 이름을 `PRIMARY KEY`로, 시간 또는 거리 기준 컬럼을 축으로 대량의 시계열 데이터를 효율적으로 저장합니다.
+태그(센서) 이름을 `PRIMARY KEY`로, 시간 또는 거리 기준 컬럼을 축으로 대량의 시계열 데이터를 저장합니다.
 
 - **[시간축 TAG 테이블 설계](/dbms/tag-table-usage/time-distance-axis/#time-axis-design-tag)**
 - **[거리축 TAG 테이블 설계](/dbms/tag-table-usage/time-distance-axis/#distance-axis-design-tag)**
@@ -126,7 +125,7 @@ CREATE TAG TABLE waveform_ref (
 
 ### VARCHAR 스토리지 최적화
 
-TAG 테이블에서 `VARCHAR` 컬럼을 사용할 때는 크기와 성능의 균형을 고려해야 합니다.
+`VARCHAR` 컬럼은 크기와 성능의 균형을 고려해 설정합니다.
 
 #### VARCHAR 크기 설정
 
@@ -153,8 +152,8 @@ CREATE TAG TABLE sensor_data (
 #### 주의사항
 
 - `PRIMARY KEY`(`VARCHAR`) 컬럼은 태그 이름으로 사용됩니다. 너무 짧게 설정하면 실제 센서 이름이 잘릴 수 있습니다.
-- `VARCHAR`는 짧은 값은 내부 영역에 저장하고, 일정 길이를 넘는 값은 외부 영역에 저장합니다.
-- 넉넉한 크기 지정은 스키마 유연성을 높일 수 있지만, 집계 쿼리나 정렬 시 내부 처리 버퍼 크기에 영향을 줄 수 있으므로 과도하게 큰 값은 피합니다.
+- `VARCHAR`는 짧은 값을 내부 영역에, 일정 길이를 넘는 값을 외부 영역에 저장합니다.
+- 넉넉한 크기 지정은 스키마 유연성을 높이지만, 집계 쿼리나 정렬 시 내부 처리 버퍼 크기에 영향을 주므로 과도하게 큰 값은 피합니다.
 
 #### 태그 이름 설계 패턴
 
@@ -176,7 +175,7 @@ WHERE name LIKE 'HQ/A-BLDG/%'
 
 ### 스토리지 전략
 
-TAG 테이블의 데이터는 태그별로 분리된 컬럼 스토리지에 저장됩니다. 데이터 양과 조회 패턴에 따라 적절한 전략을 선택합니다.
+데이터는 태그별로 분리된 컬럼 스토리지에 저장됩니다. 데이터 양과 조회 패턴에 따라 적절한 전략을 선택합니다.
 
 #### 단일 테이블 vs 다중 테이블
 
@@ -222,7 +221,7 @@ CREATE TAG TABLE vibration_sensor (
 
 #### 태그 수 관리
 
-- 태그 수가 수십만 개를 초과하면 쿼리 성능이 저하될 수 있습니다.
+- 태그 수가 수십만 개를 초과하면 쿼리 성능이 저하됩니다.
 - 센서 계층 구조를 태그 이름에 인코딩하여 관리합니다.
 - 태그 이름이 매 레코드마다 고유한 값이 되는 설계는 피합니다 (안티패턴).
 
@@ -234,7 +233,7 @@ Machbase는 `_arrival_time` 또는 `BASETIME` 기준으로 데이터를 내부�
 
 ### 자동 중복 제거
 
-TAG 테이블은 동일한 태그·시간 조합의 데이터가 반복 입력될 때 설정된 시간 창 내에서 중복을 자동으로 제거하는 기능을 제공합니다.
+동일한 태그·시간 조합의 데이터가 반복 입력되면, 설정된 시간 창 내에서 중복이 자동 제거됩니다.
 
 #### 설정: TAG_DUPLICATE_CHECK_DURATION
 
@@ -268,7 +267,7 @@ SELECT * FROM tag WHERE name = 'tag1';
 
 #### 설정 변경
 
-Standard Edition에서는 생성 후 변경할 수 있습니다. Cluster Edition에서는 중복 제거 기간을 0이 아닌 값으로 생성하거나 `ALTER TABLE`로 변경하는 구성이 제한될 수 있습니다.
+Standard Edition에서는 생성 후 변경할 수 있습니다. Cluster Edition에서는 0이 아닌 값으로 생성하거나 `ALTER TABLE`로 변경하는 것이 제한될 수 있습니다.
 
 ```sql
 ALTER TABLE tag SET TAG_DUPLICATE_CHECK_DURATION = 2880;  -- 48시간으로 변경
@@ -386,19 +385,13 @@ WHERE sensor_name = 'QS-MOTOR-01';
 
 > **8.5 원문 보강 자료**: 이 문서는 기존 8.5 매뉴얼의 내용을 새 장 구조에 맞춰 보존한 것입니다. Machbase 8.6 기준과 표현이 다른 부분은 같은 절의 최신 리뉴얼 문서를 우선합니다.
 
-### 개요
-
-LSL (Lower Specification Limit)과 USL (Upper Specification Limit)은 태그 값에 대한 자동 데이터 검증을 제공하여 범위를 벗어난 센서 읽기가 데이터를 손상시키는 것을 방지합니다.
-
 ### LSL/USL 소개
 
-`LSL(Lower Specification Limit)`은 하한 사양 제한을 나타내고, `USL(Upper Specification Limit)`은 상한 사양 제한을 의미합니다.
-Machbase에서 LSL/USL 기능은 Tag 테이블에 종속된 태그 메타데이터 테이블에서만 지원됩니다.
-LSL/USL 기능은 특정 TAG ID에 대한 상한 및 하한 사양 제한을 설정하여 예기치 않은 데이터 입력에 대한 보호 조치로 사용됩니다.
+LSL(Lower Specification Limit)은 하한 규격값, USL(Upper Specification Limit)은 상한 규격값입니다. Tag 테이블에 종속된 메타데이터 테이블에서 이 기능을 지원하며, 특정 TAG ID에 규격 범위를 설정하여 범위 밖 데이터의 입력을 차단합니다.
 
 ### 제약 조건
 
-LSL/USL 설정에는 몇 가지 제약 조건이 있습니다.
+다음 제약 조건이 적용됩니다.
 
 * `CLUSTER EDITION`은 LSL/USL 기능을 지원하지 않습니다.
 * LSL/USL을 설정하려면 Tag 테이블의 세 번째 컬럼인 __Value__가 __SUMMARIZED__로 설정되어야 합니다.
@@ -425,12 +418,7 @@ __Value__ 컬럼 타입과 일치해야 하며, __SUMMARIZED__ 속성과 마찬�
 
 ### LSL/USL 설정 및 사용
 
-LSL/USL 기능을 사용하려면 태그 메타데이터 테이블의 컬럼에 특정 키워드를 설정해야 합니다.
-
-* LSL의 경우 `LOWER LIMIT` 키워드를 사용합니다.
-* USL의 경우 `UPPER LIMIT` 키워드를 사용합니다.
-
-이러한 설정은 Tag 테이블을 생성할 때 또는 메타데이터 컬럼을 추가할 때 할 수 있습니다. 다음은 몇 가지 예제입니다.
+태그 메타데이터 테이블의 컬럼에 `LOWER LIMIT`(LSL) 또는 `UPPER LIMIT`(USL) 키워드를 지정합니다. Tag 테이블 생성 시 또는 메타데이터 컬럼 추가 시 설정할 수 있습니다.
 
 #### CRAETE
 
@@ -445,8 +433,8 @@ METADATA (
 );
 ```
 
-두 컬럼을 함께 사용할 수도 있지만 원하는 경우 하나만 사용할 수도 있습니다.
-LSL만 설정하면 LSL보다 높은 데이터는 검증되지 않습니다. 이는 `USL == NULL`로 설정하는 것과 같습니다.
+두 컬럼을 함께 사용하거나 하나만 사용할 수 있습니다.
+LSL만 설정하면 LSL보다 높은 데이터는 검증하지 않습니다. `USL == NULL`과 동일한 효과입니다.
 
 ```sql
 CREATE TAG TABLE example (
@@ -487,13 +475,13 @@ ALTER TABLE _example_meta ADD COLUMN (usl INTEGER UPPER LIMIT);
 
 #### INSERT
 
-LSL/USL 기능이 설정되고 특정 TAG ID에 대한 LSL/USL이 설정되면 데이터를 입력할 준비가 됩니다.
+특정 TAG ID에 대한 LSL/USL 값을 설정합니다.
 
 ```sql
 INSERT INTO example metadata VALUES ('TAG_01', 100, 200);
 ```
 
-설정 후 태그 데이터를 입력할 때 다음과 같이 작동합니다.
+설정 후 태그 데이터를 입력하면 다음과 같이 동작합니다.
 
 ```sql
 Mach> INSERT INTO example VALUES ('TAG_01', NOW, 95);  -- Failure
@@ -515,7 +503,7 @@ Mach> INSERT INTO example VALUES ('TAG_01', NOW, 205); -- Failure
 [ERR-02341: SUMMARIZED value is greater than UPPER LIMIT.]
 ```
 
-값을 입력한 후 Tag 테이블을 보면 검증된 데이터만 입력되었음을 확인할 수 있습니다.
+Tag 테이블을 조회하면 규격 범위 내 데이터만 입력된 것을 확인할 수 있습니다.
 
 ```sql
 Mach> SELECT * FROM example;
@@ -530,8 +518,7 @@ Elapsed time: 0.001
 
 #### UPDATE
 
-태그 메타 테이블에 설정된 LSL/USL 컬럼의 값을 수정할 수 있습니다.
-태그 데이터 테이블에 이미 입력된 데이터는 검증하지 않으므로 주의해서 사용하십시오.
+LSL/USL 컬럼의 값을 수정합니다. 이미 입력된 데이터에는 소급 적용되지 않으므로 주의가 필요합니다.
 
 ```sql
 Mach> UPDATE example metadata SET lsl = 10, usl = 100 WHERE tag_id = 'TAG_01';
@@ -548,8 +535,7 @@ Elapsed time: 0.001
 
 #### DELETE
 
-태그 메타 테이블은 `DROP COLUMN` 기능을 지원하지 않으므로 LSL/USL 컬럼만 삭제할 수 있는 직접적인 방법이 없습니다.
-컬럼을 삭제할 수는 없지만 LSL/USL 컬럼 값을 NULL로 설정하면 제약 없이 데이터를 입력할 수 있습니다.
+태그 메타 테이블은 `DROP COLUMN`을 지원하지 않으므로 LSL/USL 컬럼 자체를 삭제할 수는 없습니다. 대신 값을 NULL로 설정하면 제약 없이 데이터를 입력할 수 있습니다.
 
 ```sql
 Mach> UPDATE EXAMPLE METADATA SET lsl = NULL, usl = NULL WHERE tag_id = 'TAG_01';
@@ -593,13 +579,11 @@ Elapsed time: 0.001
 
 > **8.5 원문 보강 자료**: 이 문서는 기존 8.5 매뉴얼의 내용을 새 장 구조에 맞춰 보존한 것입니다. Machbase 8.6 기준과 표현이 다른 부분은 같은 절의 최신 리뉴얼 문서를 우선합니다.
 
-### 개요
-
-Tag 테이블에서 `BINARY(n)`은 센서 프레임용 고정 길이 바이너리 값을 저장합니다.
+`BINARY(n)`은 Tag 테이블에서 센서 프레임용 고정 길이 바이너리 값을 저장합니다.
 다른 테이블 타입이나 프로토콜에서는 허용되지 않습니다. 길이는 1~32K-1
 (1~32767)바이트만 유효하며, 인덱스를 생성할 수 없습니다.
 
-Machbase SQL에서는 명시적 binary literal로 `BINARY` 값을 입력할 수 있습니다.
+명시적 binary literal로 `BINARY` 값을 입력합니다.
 
 ### DDL 규칙
 
@@ -634,7 +618,7 @@ o'octal_digits'
 | `B'...'`, `b'...'` | 2진수 literal | bit 8자리 = 1바이트 |
 | `O'...'`, `o'...'` | 8진수 literal | 8진수 3자리 = 1바이트 |
 
-prefix는 대문자와 소문자를 모두 사용할 수 있습니다.
+prefix는 대소문자 모두 허용됩니다.
 
 ```sql
 CREATE TAG TABLE t_bin (
@@ -663,7 +647,7 @@ X'0AFF'
 x'abcdef'
 ```
 
-16진수 문자는 반드시 짝수 개여야 합니다. 두 자리 16진수 문자가 1바이트가 됩니다.
+16진수 문자는 반드시 짝수 개여야 합니다. 두 자리가 1바이트에 해당합니다.
 
 #### 2진수 literal
 
@@ -675,7 +659,7 @@ B'00001010'  -- 0x0A
 b'11111111'  -- 0xFF
 ```
 
-bit 수는 반드시 8의 배수여야 합니다. 8자리 bit가 1바이트가 됩니다.
+bit 수는 반드시 8의 배수여야 합니다. 8자리가 1바이트에 해당합니다.
 
 #### 8진수 literal
 
@@ -692,7 +676,7 @@ o'377'  -- 0xFF
 
 #### 빈 값
 
-작은따옴표 안을 비워 길이 0인 binary 값을 표현할 수 있습니다.
+작은따옴표 안을 비워 길이 0인 binary 값을 표현합니다.
 
 ```sql
 X''
@@ -702,7 +686,7 @@ O''
 
 ### 길이 제한
 
-`BINARY(n)` 컬럼에는 최대 `n`바이트까지만 입력할 수 있습니다.
+`BINARY(n)` 컬럼에는 최대 `n`바이트까지만 입력 가능합니다.
 
 ```sql
 CREATE TAG TABLE t_limit (
@@ -765,13 +749,13 @@ X'0102      -- 닫는 작은따옴표가 없음
 
 ### 기존 문자열 입력과의 차이
 
-기존 호환성을 위해 문자열 형태의 `'0x...'` 입력은 계속 사용할 수 있습니다.
-다만 `'0x...'`는 문자열 literal에서 `BINARY` 컬럼으로 변환되는 방식이고,
-`X'...'`, `B'...'`, `O'...'`는 SQL 문장에서 binary 값임을 명확히 표시하는
+기존 호환성을 위해 문자열 형태의 `'0x...'` 입력도 사용할 수 있습니다.
+`'0x...'`는 문자열에서 `BINARY` 컬럼으로 변환되는 방식이고,
+`X'...'`, `B'...'`, `O'...'`는 SQL에서 binary 값임을 명확히 표시하는
 binary literal입니다.
 
-일반 문자열을 `BINARY(n)` 컬럼에 입력할 수도 있지만, 문자열 byte 길이가 `n`을
-초과하면 실패합니다. 새 SQL을 작성할 때는 의미가 명확한 binary literal 형식을
+일반 문자열을 `BINARY(n)` 컬럼에 입력하는 것도 가능하지만, 문자열 byte 길이가 `n`을
+초과하면 실패합니다. 새 SQL 작성 시에는 의미가 명확한 binary literal 형식을
 권장합니다.
 
 `'0b...'`, `'0o...'`, 따옴표 없는 `0x...`, `0b...`, `0o...` 형식은
@@ -794,14 +778,9 @@ binary literal로 지원하지 않습니다.
 
 > **8.5 원문 보강 자료**: 이 문서는 기존 8.5 매뉴얼의 내용을 새 장 구조에 맞춰 보존한 것입니다. Machbase 8.6 기준과 표현이 다른 부분은 같은 절의 최신 리뉴얼 문서를 우선합니다.
 
-### 개요
-
-고정 영역과 가변 영역에 데이터가 저장되는 시점을 제어하여 VARCHAR 컬럼 저장소를 최적화하고, 성능과 저장 효율성을 모두 향상시킵니다.
-
 ### VARCHAR 저장소 옵션
-varchar 데이터를 고정 영역에 저장할 수 있는 최대 크기입니다.
-이 값보다 긴 varchar 값은 가변 영역에 저장됩니다.
-이 값은 15에서 127까지 지정할 수 있으며, 기본값은 15입니다.
+varchar 데이터를 고정 영역에 저장하는 최대 크기입니다.
+이 값보다 긴 varchar 값은 가변 영역에 저장됩니다. 15에서 127까지 지정 가능하며, 기본값은 15입니다.
 
 ```sql
 -- 입력 VARCHAR 데이터의 크기가 15 이하이면 확장 파일 대신 고정 데이터 파일에 저장됩니다.

@@ -3,14 +3,12 @@ title: '6.5 ROLLUP 조회 문법'
 weight: 40
 toc: true
 ---
-ROLLUP 조회 문법에 해당하는 세부 문서를 모았습니다.
-
 
 <a id="query-syntax-rollup"></a>
 
 ## ROLLUP 조회 문법
 
-ROLLUP 테이블 데이터를 조회할 때는 `rollup()` 함수를 SELECT 절에 사용합니다.
+ROLLUP 테이블 데이터는 `rollup()` 함수를 SELECT 절에 사용해 조회합니다.
 
 ### rollup() 함수
 
@@ -59,7 +57,7 @@ ORDER BY rt;
 
 ### 지원 집계 함수
 
-ROLLUP 조회에서 사용 가능한 집계 함수는 롤업 테이블에 저장된 값에 한정됩니다.
+ROLLUP 조회에서 사용할 수 있는 집계 함수는 롤업 테이블에 저장된 값에 한정됩니다.
 
 | 함수 | 일반 ROLLUP | 확장 ROLLUP |
 |------|-------------|-------------|

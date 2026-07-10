@@ -3,14 +3,12 @@ title: '10.12 Red-Black 트리 인덱스'
 weight: 120
 toc: true
 ---
-Red-Black 트리 인덱스에 해당하는 세부 문서를 모았습니다.
-
 
 <a id="index-strategy-red-black"></a>
 
 ## Red-Black 트리 인덱스
 
-VOLATILE 테이블의 인덱스는 메모리 내 Red-Black 트리를 사용합니다. 디스크 기반 인덱스와 달리 순수 메모리 연산으로 빠른 조회를 지원합니다.
+VOLATILE 테이블의 인덱스는 메모리 내 Red-Black 트리로 구현됩니다. 디스크 I/O 없이 순수 메모리 연산만으로 동작하므로 조회가 빠릅니다.
 
 ### 인덱스 특성
 

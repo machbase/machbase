@@ -3,18 +3,16 @@ title: '5.9 활용 패턴과 시나리오'
 weight: 90
 toc: true
 ---
-활용 패턴과 시나리오에 해당하는 세부 문서를 모았습니다.
 
+TAG 테이블이 적합한 대표 활용 사례를 정리한다.
 
 <a id="use-cases-tag"></a>
 
 ## 활용 사례
 
-TAG 테이블이 적합한 대표적인 활용 사례를 소개합니다.
-
 ### IoT 센서 데이터
 
-공장, 빌딩, 인프라에 설치된 다양한 센서 데이터를 단일 TAG 테이블에서 관리합니다.
+공장, 빌딩, 인프라에 설치된 다양한 센서 데이터를 단일 TAG 테이블에서 관리한다.
 
 ```sql
 CREATE TAG TABLE factory_sensor (
@@ -36,7 +34,7 @@ INSERT INTO factory_sensor VALUES (
 
 ### 에너지 모니터링
 
-전력, 가스, 수도 계량기 데이터를 시간별로 수집합니다.
+전력, 가스, 수도 계량기 데이터를 시간별로 수집한다.
 
 ```sql
 CREATE TAG TABLE energy_meter (
@@ -50,7 +48,7 @@ CREATE TAG TABLE energy_meter (
 
 ### 차량·이동체 추적
 
-GPS 좌표와 속도를 시계열로 기록합니다.
+GPS 좌표와 속도를 시계열로 기록한다.
 
 ```sql
 CREATE TAG TABLE vehicle_track (

@@ -3,14 +3,15 @@ title: '8.9 활용 패턴과 시나리오'
 weight: 90
 toc: true
 ---
-활용 패턴과 시나리오에 해당하는 세부 문서를 모았습니다.
+
+RDB 테이블이 적합한 업무 유형과 실무 스키마 예시를 정리한다.
 
 
 <a id="use-cases-rdb"></a>
 
 ## 활용 사례
 
-RDB 테이블은 INSERT·UPDATE·DELETE·SELECT가 모두 필요한 일반 관계형 업무 데이터에 적합합니다.
+INSERT·UPDATE·DELETE·SELECT가 모두 필요한 관계형 업무 데이터에 RDB 테이블이 적합하다.
 
 ### 적합한 데이터 유형
 
@@ -79,6 +80,6 @@ WHERE equip_id = 'MOTOR-01' AND check_date = '2024-01-15 09:00:00';
 
 ### 부적합한 경우
 
-- **Cluster Edition**: RDB 테이블은 Standard Edition 전용입니다.
-- **센서 계측값**: 시계열 패턴이면 TAG 테이블을 권장합니다.
-- **소규모 코드 테이블**: PRIMARY KEY 기반 UPDATE 위주면 LOOKUP 테이블이 더 적합합니다.
+- **Cluster Edition**: RDB 테이블은 Standard Edition 전용이다.
+- **센서 계측값**: 시계열 패턴이면 TAG 테이블을 권장한다.
+- **소규모 코드 테이블**: PRIMARY KEY 기반 UPDATE 위주면 LOOKUP 테이블이 더 적합하다.

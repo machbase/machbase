@@ -5,8 +5,7 @@ weight: 70
 toc: true
 ---
 
-이 섹션은 Machbase SDK별 API 레퍼런스를 제공합니다. SDK별 설치, 연결, SQL 실행,
-Append, 예제는 각 하위 페이지에서 확인합니다.
+SDK별 API 레퍼런스입니다. 설치, 연결, SQL 실행, Append, 예제는 각 하위 페이지에서 확인합니다.
 
 ## 공통 연결 정보
 

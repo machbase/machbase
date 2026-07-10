@@ -4,7 +4,7 @@ title: '15.7 Cluster 설치와 확장'
 weight: 120
 ---
 
-Machbase Cluster Edition은 대용량 시계열 데이터를 여러 노드에 분산 저장·처리합니다. 이 시나리오는 Cluster를 처음 구성하고 운영 중에 Warehouse 노드를 추가해 수평 확장하는 절차를 설명합니다.
+Machbase Cluster Edition은 대용량 시계열 데이터를 여러 노드에 분산 저장·처리합니다. Cluster 초기 구성부터 운영 중 Warehouse 노드 추가를 통한 수평 확장 절차까지 다룹니다.
 
 ## Cluster 구성 요소
 

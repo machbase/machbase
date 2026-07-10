@@ -3,7 +3,8 @@ title: '10.4 데이터 입력과 변경'
 weight: 40
 toc: true
 ---
-데이터 입력과 변경에 해당하는 세부 문서를 모았습니다.
+
+VOLATILE 테이블의 INSERT, Append, ON DUPLICATE KEY UPDATE, DELETE 사용법을 다룬다.
 
 
 <a id="original-85-insert-update"></a>
@@ -102,7 +103,7 @@ ID          DIRECTION   REFCNT
 
 #### 업데이트할 데이터 값 지정
 
-위와 유사하지만 삽입할 데이터 값과 다른 컬럼 값으로 업데이트해야 하는 경우 ON DUPLICATE KEY UPDATE SET 절을 통해 지정할 수 있습니다. 업데이트할 데이터 값은 SET 절 아래에 지정할 수 있습니다.
+삽입할 데이터 값과 다른 컬럼 값으로 업데이트해야 하는 경우 ON DUPLICATE KEY UPDATE SET 절을 통해 지정할 수 있습니다.
 
 * primary key 중복 데이터가 존재하지 않으면 삽입할 데이터의 내용이 그대로 삽입됩니다.
 * primary key 중복 데이터가 존재하면 기존 데이터는 SET 절에 지정된 업데이트 데이터로만 업데이트됩니다.

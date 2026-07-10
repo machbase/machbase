@@ -3,14 +3,14 @@ title: '9.12 JSON 컬럼 제약과 JSON 조회'
 weight: 120
 toc: true
 ---
-JSON 컬럼 제약과 JSON 조회에 해당하는 세부 문서를 모았습니다.
+LOOKUP 테이블의 JSON 컬럼 제약과 JSON 조건 조회를 다룬다.
 
 
 <a id="condition-query-lookup-json"></a>
 
 ## LOOKUP JSON 조건 조회
 
-LOOKUP 테이블의 `JSON` 컬럼은 JSON path 조건 조회에 사용할 수 있습니다.
+LOOKUP 테이블의 `JSON` 컬럼은 JSON path 조건 조회에 사용할 수 있다.
 
 ### 기본 조회
 
@@ -34,7 +34,7 @@ WHERE config->'$.unit' = 'celsius';
 
 ### 타입별 추출 함수
 
-숫자 값을 숫자로 비교할 때는 타입별 JSON 추출 함수를 사용합니다.
+숫자 값을 숫자로 비교할 때는 타입별 JSON 추출 함수를 사용한다.
 
 ```sql
 SELECT sensor_id
@@ -54,17 +54,17 @@ WHERE JSON_IS_VALID(config) = 1
 
 ### 주의사항
 
-- JSON path 문자열은 작은따옴표(`'$.unit'`)로 작성합니다. 큰따옴표는 SQL 식별자로 해석됩니다.
-- `->` 연산자는 path 값을 문자열처럼 비교할 때 사용합니다.
-- JSON path별 전용 인덱스는 지원하지 않습니다. 대량 LOOKUP 테이블에서 자주 검색하는 JSON 값은 별도 컬럼으로 분리합니다.
+- JSON path 문자열은 작은따옴표(`'$.unit'`)로 작성한다. 큰따옴표는 SQL 식별자로 해석된다.
+- `->` 연산자는 path 값을 문자열처럼 비교할 때 사용한다.
+- JSON path별 전용 인덱스는 지원하지 않는다. 대량 LOOKUP 테이블에서 자주 검색하는 JSON 값은 별도 컬럼으로 분리한다.
 
 <a id="design-column-lookup-json"></a>
 
 ## JSON 컬럼 제약
 
-LOOKUP 테이블은 `JSON` 컬럼을 지원하지 않습니다. 참조 데이터에 유연한 속성이 필요하면
+LOOKUP 테이블은 `JSON` 컬럼을 지원하지 않는다. 참조 데이터에 유연한 속성이 필요하면
 자주 조회하는 값은 별도 컬럼으로 분리하고, 유동적인 속성은 문자열로 직렬화하거나 RDB/TAG
-테이블의 JSON 컬럼 사용을 검토합니다.
+테이블의 JSON 컬럼을 검토한다.
 
 ### 설계 예
 
@@ -115,16 +115,16 @@ WHERE sensor_id = 'TEMP-01';
 
 ### 주의사항
 
-- LOOKUP/VOLATILE 테이블에는 JSON 컬럼을 생성할 수 없습니다.
-- JSON path 조건이나 JSON path 인덱스가 필요하면 RDB/TAG 테이블 사용을 검토합니다.
+- LOOKUP/VOLATILE 테이블에는 JSON 컬럼을 생성할 수 없다.
+- JSON path 조건이나 JSON path 인덱스가 필요하면 RDB/TAG 테이블을 검토한다.
 
 <a id="definition-column-lookup-json"></a>
 
 ## LOOKUP JSON 컬럼 제약
 
-LOOKUP 테이블은 `JSON` 컬럼을 지원하지 않습니다. 유연한 속성이 필요한 참조 데이터는
+LOOKUP 테이블은 `JSON` 컬럼을 지원하지 않는다. 유연한 속성이 필요한 참조 데이터는
 자주 조회하는 값을 일반 컬럼으로 분리하고, 유동적인 속성은 문자열로 직렬화하거나 RDB/TAG
-테이블의 JSON 컬럼 사용을 검토합니다.
+테이블의 JSON 컬럼을 검토한다.
 
 ### 컬럼 정의
 
@@ -170,6 +170,6 @@ WHERE device_id = 'DEV-01';
 
 ### 제약 사항
 
-- LOOKUP/VOLATILE 테이블에는 JSON 컬럼을 생성할 수 없습니다.
-- JSON path 조건이나 JSON path 인덱스가 필요하면 RDB/TAG 테이블 사용을 검토합니다.
-- 자주 검색하는 값은 LOOKUP 일반 컬럼으로 분리합니다.
+- LOOKUP/VOLATILE 테이블에는 JSON 컬럼을 생성할 수 없다.
+- JSON path 조건이나 JSON path 인덱스가 필요하면 RDB/TAG 테이블을 검토한다.
+- 자주 검색하는 값은 LOOKUP 일반 컬럼으로 분리한다.

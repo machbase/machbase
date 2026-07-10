@@ -3,7 +3,7 @@ type: docs
 title: '4.5 모델링 패턴'
 weight: 40
 ---
-실제 운영 환경에서 자주 사용되는 데이터 모델링 패턴을 설명합니다. 각 패턴은 Machbase 테이블 타입의 특성을 최대한 활용하도록 설계되었습니다.
+실제 운영 환경에서 자주 쓰이는 데이터 모델링 패턴을 다룬다.
 
 - **[시간축 모델링](/dbms/data-modeling-table-design/patterns-modeling/#time-axis-modeling)**
 - **[거리축 모델링](/dbms/data-modeling-table-design/patterns-modeling/#distance-axis-modeling)**
@@ -20,7 +20,7 @@ weight: 40
 
 ## 시간축 모델링
 
-시간을 기준 축으로 하는 데이터 모델링 패턴입니다. 센서 계측값, 에너지 모니터링, 환경 데이터 등에 적용합니다.
+시간을 기준 축으로 삼는 패턴으로, 센서 계측값·에너지 모니터링·환경 데이터 등에 적합하다.
 
 ### 기본 패턴: TAG 테이블
 
@@ -54,7 +54,7 @@ ORDER BY meter_id, hour;
 
 ### 다중 해상도 저장 패턴
 
-원시 데이터(고해상도)와 집계 데이터(저해상도)를 별도 테이블에 저장합니다.
+원시 데이터(고해상도)와 집계 데이터(저해상도)를 별도 테이블에 나누어 저장한다.
 
 ```sql
 -- 원시 데이터 (초 단위)
@@ -76,7 +76,7 @@ CREATE VOLATILE TABLE power_1min (
 
 ### 시간대 처리
 
-Machbase는 UTC 기준으로 시각을 저장합니다. 표시 시 타임존 변환을 적용합니다.
+내부적으로 UTC 기준 시각을 저장하므로, 표시할 때 타임존 변환을 적용한다.
 
 ```sql
 -- UTC → KST 변환 (UTC+9)
@@ -92,7 +92,7 @@ WHERE meter_id = 'MTR-001'
 
 ## 거리축 모델링
 
-거리(위치)를 기준 축으로 하는 데이터 모델링 패턴입니다. 파이프라인 검사, 도로 센서, 레이저 스캔 등에 적용합니다.
+거리(위치)를 기준 축으로 삼는 패턴으로, 파이프라인 검사·도로 센서·레이저 스캔 등에 적합하다.
 
 ### 기본 패턴
 
@@ -139,7 +139,7 @@ ORDER BY segment_start;
 
 ### 시간 + 거리 복합 모델링
 
-검사 시각과 위치를 함께 관리해야 하는 경우, 시간축 TAG 테이블에 거리 컬럼을 추가합니다.
+검사 시각과 위치를 함께 관리해야 하면 시간축 TAG 테이블에 거리 컬럼을 추가한다.
 
 ```sql
 -- 시간축 + 위치 정보 함께 저장
@@ -164,11 +164,11 @@ ORDER BY time;
 
 ## 상태·캐시 모델링
 
-디바이스나 센서의 현재 상태를 실시간으로 조회하기 위한 캐시 모델링 패턴입니다.
+디바이스나 센서의 현재 상태를 실시간 조회하기 위한 캐시 모델링 패턴이다.
 
 ### 최신 상태 캐시 패턴
 
-VOLATILE 테이블로 각 디바이스의 현재 상태를 캐싱합니다.
+VOLATILE 테이블로 각 디바이스의 현재 상태를 캐싱한다.
 
 ```sql
 -- 상태 캐시 (VOLATILE)
@@ -217,7 +217,7 @@ WHERE device_id = 'DEV-01';
 
 ### 상태 정의 참조 패턴
 
-상태 코드의 의미는 LOOKUP 테이블에서 관리합니다.
+상태 코드의 의미는 LOOKUP 테이블에서 관리한다.
 
 ```sql
 CREATE LOOKUP TABLE status_definition (
@@ -242,7 +242,7 @@ ORDER BY s.severity DESC;
 
 ## 이벤트·로그 모델링
 
-시스템 이벤트, 알람, 감사 로그를 LOG 테이블로 모델링하는 패턴입니다.
+시스템 이벤트, 알람, 감사 로그를 LOG 테이블로 모델링하는 패턴이다.
 
 ### 계층적 이벤트 모델
 
@@ -313,7 +313,7 @@ WHERE detail SEARCH 'password'
 
 ## 참조·마스터 모델링
 
-코드 테이블, 설비 마스터, 사용자 정보 등 참조 데이터를 LOOKUP 테이블로 모델링하는 패턴입니다.
+코드 테이블, 설비 마스터, 사용자 정보 등 참조 데이터를 LOOKUP 테이블로 모델링하는 패턴이다.
 
 ### 계층적 코드 체계
 
@@ -386,11 +386,11 @@ WHERE f.factory_id = 'F01'
 
 ## 영속·임시 혼합 패턴
 
-영속 테이블(TAG, LOG, RDB, LOOKUP)과 임시 테이블(VOLATILE)을 조합하여 성능과 데이터 무결성을 동시에 달성하는 패턴입니다.
+영속 테이블(TAG, LOG, RDB, LOOKUP)과 임시 테이블(VOLATILE)을 조합해 성능과 데이터 무결성을 함께 확보하는 패턴이다.
 
 ### 원본 + 집계 캐시 패턴
 
-원본 데이터는 영속 테이블에, 집계 결과는 VOLATILE 테이블에 저장합니다.
+원본 데이터는 영속 테이블에, 집계 결과는 VOLATILE 테이블에 저장한다.
 
 ```sql
 -- 원본 데이터 (TAG, 영속)
@@ -429,8 +429,8 @@ WHERE time >= NOW - 3600000000000 * 2  -- 최근 2시간 재계산
 GROUP BY name;
 ```
 
-`INSERT ... SELECT`에는 `ON DUPLICATE KEY UPDATE`를 붙이지 않습니다. 캐시를 재구성할 때는
-기존 캐시를 삭제한 뒤 다시 적재합니다.
+`INSERT ... SELECT`에는 `ON DUPLICATE KEY UPDATE`를 붙이지 않는다. 캐시를 재구성할 때는
+기존 캐시를 삭제한 뒤 다시 적재한다.
 
 ### 대시보드 조회 최적화
 
@@ -444,7 +444,7 @@ ORDER BY sensor_id, base_ts;
 
 ### 장애 복구
 
-서버 재시작 시 VOLATILE 캐시가 소멸되면 원본 TAG 테이블에서 재계산합니다.
+서버 재시작으로 VOLATILE 캐시가 소멸되면 원본 TAG 테이블에서 재계산한다.
 
 ```sql
 -- 캐시 재구성 (서버 재시작 후)
@@ -462,7 +462,7 @@ GROUP BY name;
 
 ## INSERT·UPDATE 패턴
 
-Machbase 테이블 타입별로 데이터를 삽입·수정하는 패턴을 정리합니다.
+테이블 타입별 데이터 삽입·수정 패턴을 정리한다.
 
 ### 테이블 타입별 쓰기 패턴
 
@@ -487,7 +487,7 @@ appender.Close()
 
 ### TAG: UPDATE 패턴
 
-TAG data UPDATE는 태그 선택 조건과 BASETIME 조건을 함께 사용합니다.
+TAG data UPDATE는 태그 선택 조건과 BASETIME 조건을 함께 사용한다.
 
 ```sql
 UPDATE sensor_data
@@ -498,7 +498,7 @@ UPDATE sensor_data
 
 ### RDB: UPDATE 패턴
 
-RDB 테이블은 일반 SQL UPDATE를 지원합니다.
+RDB 테이블은 일반 SQL UPDATE를 지원한다.
 
 ```sql
 -- WHERE 조건 UPDATE
@@ -513,7 +513,7 @@ UPDATE product_catalog SET discount = 0;
 
 ### VOLATILE: UPDATE 패턴
 
-VOLATILE 테이블은 일반 UPDATE와 ON DUPLICATE KEY UPDATE를 모두 지원합니다.
+VOLATILE 테이블은 일반 UPDATE와 ON DUPLICATE KEY UPDATE를 모두 지원한다.
 
 ```sql
 -- 일반 UPDATE (WHERE 조건)
@@ -543,11 +543,11 @@ machloader -i -d table_name -f data.csv
 
 ## JOIN·메타데이터 설계
 
-여러 테이블 타입을 조합하는 JOIN 설계와 TAG 테이블 METADATA 활용 패턴입니다.
+여러 테이블 타입을 조합하는 JOIN 설계와 TAG 테이블 METADATA 활용 패턴이다.
 
 ### 크로스 타입 JOIN 패턴
 
-Machbase는 서로 다른 타입의 테이블을 JOIN할 수 있습니다.
+서로 다른 타입의 테이블도 JOIN할 수 있다.
 
 ```sql
 -- TAG(계측) + LOOKUP(기준) + RDB(이력) 3-way JOIN
@@ -569,7 +569,7 @@ WHERE t.time >= NOW - 3600000000000
 
 ### METADATA JOIN 패턴
 
-TAG 테이블의 METADATA를 이용하면 별도 JOIN 없이 태그 속성을 함께 조회할 수 있습니다.
+TAG 테이블의 METADATA를 이용하면 별도 JOIN 없이 태그 속성을 함께 조회할 수 있다.
 
 ```sql
 -- METADATA와 계측값 동시 조회
@@ -594,9 +594,9 @@ ORDER BY s.value DESC;
 
 ### JOIN 성능 최적화
 
-1. 작은 테이블(LOOKUP)을 드라이빙 테이블 쪽으로 배치합니다.
-2. JOIN 조건 컬럼에 인덱스를 생성합니다.
-3. WHERE 절로 레코드를 최대한 줄인 후 JOIN합니다.
+1. 작은 테이블(LOOKUP)을 드라이빙 테이블 쪽에 배치한다.
+2. JOIN 조건 컬럼에 인덱스를 생성한다.
+3. WHERE 절로 레코드를 최대한 줄인 뒤 JOIN한다.
 
 ```sql
 -- 성능 좋은 패턴: 범위 필터 후 JOIN
@@ -614,7 +614,7 @@ JOIN equipment_master e ON s.name = e.sensor_id;
 
 ## 복합 타입 조합 패턴
 
-실제 운영 시스템에서 여러 테이블 타입을 조합하는 대표적인 설계 패턴을 소개합니다.
+실제 운영 시스템에서 여러 테이블 타입을 조합하는 대표적인 설계 패턴이다.
 
 ### 제조 설비 모니터링 시스템
 
@@ -669,8 +669,6 @@ UPDATE product_master SET price = 19900 WHERE product_id = 42;
 | 실시간 상태 캐시 | VOLATILE | 메모리 속도, UPSERT |
 
 ---
-
-**이 장을 완료했습니다.**
 
 다음으로 읽을 내용:
 - [쿼리와 집계](/dbms/performance-tuning/query-analysis/#item-aggregation-group)

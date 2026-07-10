@@ -3,14 +3,12 @@ title: '6.11 주/월/연 단위 조회와 시간대 기준'
 weight: 100
 toc: true
 ---
-주/월/연 단위 조회와 시간대 기준에 해당하는 세부 문서를 모았습니다.
-
 
 <a id="query-week-month-year-day-timezone-origin-rollup"></a>
 
 ## 주/월/연 단위 조회
 
-ROLLUP의 `time_unit`에 `'day'`, `'week'`, `'month'`, `'year'`를 사용하면 HOUR ROLLUP 테이블에서 데이터를 읽어 해당 단위로 묶어 반환합니다.
+`rollup()` 함수의 `time_unit`에 `'day'`, `'week'`, `'month'`, `'year'`를 사용하면 HOUR ROLLUP 테이블에서 데이터를 읽어 해당 단위로 묶어 반환합니다.
 
 ### 일/주/월/연 조회 예시
 
@@ -71,9 +69,9 @@ ORDER BY rt;
 
 ### 주의사항
 
-- `'day'`, `'week'`, `'month'`, `'year'`는 모두 HOUR ROLLUP을 읽으므로 HOUR 단위 ROLLUP이 반드시 존재해야 합니다.
-- HOUR ROLLUP이 없으면 원시 TAG 데이터를 전체 스캔합니다 (성능 주의).
-- 월·연도는 달력상 길이가 가변적입니다. ROLLUP 결과는 UTC 기준 HOUR 버킷을 다시 묶어 계산하므로, DST(서머타임) 환경에서는 origin을 정확히 설정해야 합니다.
+- `'day'`, `'week'`, `'month'`, `'year'`는 모두 HOUR ROLLUP을 읽으므로 HOUR 단위 ROLLUP이 존재해야 합니다.
+- HOUR ROLLUP이 없으면 원시 TAG 데이터를 전체 스캔합니다.
+- 월/연도는 달력상 길이가 가변적입니다. ROLLUP 결과는 UTC 기준 HOUR 버킷을 다시 묶어 계산하므로 DST(서머타임) 환경에서는 origin을 정확히 설정해야 합니다.
 
 ### DATE_TRUNC과 병행 사용
 

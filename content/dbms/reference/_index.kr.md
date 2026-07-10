@@ -4,9 +4,9 @@ title: '17. 레퍼런스'
 weight: 170
 ---
 
-이 장은 Machbase의 모든 문법, 함수, 설정, API를 빠르게 찾아볼 수 있는 종합 레퍼런스입니다. 기능의 개념이나 사용 예시는 각 기능 장을 참고하고, 정확한 문법·파라미터·반환값을 확인할 때 이 장을 활용하세요.
+문법, 함수, 설정, API의 정확한 정의를 빠르게 찾아보는 종합 레퍼런스입니다. 개념이나 사용 예시는 각 기능 장을 참고하세요.
 
-## 레퍼런스 구성
+## 구성
 
 | 섹션 | 설명 |
 |------|------|
@@ -21,12 +21,12 @@ weight: 170
 | [AI Agent 레퍼런스](./ai-agent-reference/) | Machbase AI Agent API 및 설정 |
 | [Collector](./collector/) | Machbase Collector 설정 및 플러그인 레퍼런스 |
 
-## 레퍼런스 활용 방법
+## 활용 방법
 
-- **문법을 빠르게 확인** → [SQL 문법 사전](./sql/syntax-dictionary-sql/)에서 구문명으로 검색
-- **함수의 인자와 반환값** → [SQL 함수 사전](./sql/dictionary/)에서 확인
-- **데이터 타입 범위와 기본값** → [데이터 타입 사전](./sql/type-data-types-dictionary/)에서 확인
-- **설정값 의미와 허용 범위** → [설정 레퍼런스](./configuration/)에서 확인
-- **에러 발생 시 원인 파악** → [에러 코드](./error-dictionary-codes/)에서 코드 번호로 검색
+- **문법 확인** → [SQL 문법 사전](./sql/syntax-dictionary-sql/)
+- **함수 인자와 반환값** → [SQL 함수 사전](./sql/dictionary/)
+- **데이터 타입 범위와 기본값** → [데이터 타입 사전](./sql/type-data-types-dictionary/)
+- **설정값 의미와 허용 범위** → [설정 레퍼런스](./configuration/)
+- **에러 원인 파악** → [에러 코드](./error-dictionary-codes/)
 
-> 각 섹션은 간결한 문법 정의 중심으로 구성되어 있습니다. 기능의 동작 원리, 선택 기준, 운영 가이드는 해당 기능을 다루는 장을 참고하세요.
+> 동작 원리, 선택 기준, 운영 가이드는 해당 기능을 다루는 장을 참고하세요.

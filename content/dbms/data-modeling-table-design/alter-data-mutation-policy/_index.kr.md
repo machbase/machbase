@@ -3,7 +3,7 @@ type: docs
 title: '4.3 데이터 변경 정책'
 weight: 20
 ---
-Machbase는 테이블 타입에 따라 UPDATE, DELETE, TRUNCATE 지원 범위가 명확하게 구분됩니다. 시계열 특성상 대부분의 테이블은 삽입 후 변경을 제한하며, 일부 테이블만 수정·삭제를 허용합니다.
+테이블 타입에 따라 UPDATE, DELETE, TRUNCATE 지원 범위가 명확히 구분됩니다. 시계열 특성상 대부분의 테이블은 삽입 후 변경을 제한하며, VOLATILE·LOOKUP·RDB처럼 수정·삭제가 필요한 데이터만 해당 타입에 저장합니다.
 
 ## 테이블 타입별 데이터 변경 지원 범위
 
@@ -19,7 +19,7 @@ Machbase는 테이블 타입에 따라 UPDATE, DELETE, TRUNCATE 지원 범위가
 
 ## 변경이 제한되는 이유
 
-LOG 테이블은 시계열 데이터의 **불변성(immutability)** 원칙을 따릅니다. 수집된 이벤트 로그는 원칙적으로 사후에 수정하지 않으며, 이를 통해 저장 구조 최적화와 높은 삽입 처리량을 달성합니다. TAG 테이블은 태그/축 조건으로 대상 범위를 명확히 지정한 경우에만 실제 데이터 UPDATE를 허용합니다. 수정이 빈번한 상태 정보·설정 값은 VOLATILE 또는 LOOKUP 테이블에 저장하는 것이 권장됩니다.
+LOG 테이블은 시계열 데이터의 **불변성(immutability)** 원칙을 따릅니다. 수집된 이벤트 로그는 사후에 수정하지 않으며, 이를 통해 저장 구조 최적화와 높은 삽입 처리량을 달성합니다. TAG 테이블은 태그/축 조건으로 대상 범위를 명확히 지정한 경우에만 데이터 UPDATE를 허용합니다. 수정이 빈번한 상태 정보·설정 값은 VOLATILE 또는 LOOKUP 테이블에 저장하는 것이 적합합니다.
 
 ## 각 정책 상세
 
@@ -33,8 +33,6 @@ LOG 테이블은 시계열 데이터의 **불변성(immutability)** 원칙을 �
 
 ## UPDATE 정책
 
-테이블 타입별 UPDATE 지원 범위와 구문을 정리합니다.
-
 ### 테이블 타입별 UPDATE 지원
 
 | 테이블 타입 | UPDATE 지원 | 조건 |
@@ -47,7 +45,7 @@ LOG 테이블은 시계열 데이터의 **불변성(immutability)** 원칙을 �
 
 ### RDB 테이블 UPDATE
 
-RDB 테이블은 일반 관계형 DB와 동일한 UPDATE 구문을 지원합니다.
+일반 관계형 DB와 동일한 UPDATE 구문을 지원합니다.
 
 ```sql
 UPDATE orders SET status = 'SHIPPED', updated_at = NOW
@@ -60,7 +58,7 @@ UPDATE product_catalog SET discount = 0;
 
 ### VOLATILE 테이블 UPDATE
 
-VOLATILE 테이블은 일반 UPDATE와 ON DUPLICATE KEY UPDATE(UPSERT)를 모두 지원합니다.
+일반 UPDATE와 ON DUPLICATE KEY UPDATE(UPSERT)를 모두 지원합니다.
 
 ```sql
 UPDATE device_status SET status = 'ALARM', value = 95.3
@@ -72,7 +70,7 @@ ON DUPLICATE KEY UPDATE SET status = 'ALARM', value = 95.3, updated_at = NOW;
 
 ### LOOKUP 테이블 UPDATE
 
-LOOKUP 테이블은 PRIMARY KEY equality 조건과 일반 predicate 조건의 UPDATE를 모두 지원합니다.
+PRIMARY KEY equality 조건과 일반 predicate 조건의 UPDATE를 모두 지원합니다.
 조건에 맞는 모든 row가 갱신됩니다.
 
 ```sql
@@ -89,7 +87,7 @@ WHERE device_type = 'MOTOR'
 
 ### TAG/LOG 테이블 UPDATE
 
-TAG 데이터(실제 시계열 값)와 TAG 메타데이터 UPDATE는 구분해야 합니다.
+TAG 데이터(실제 시계열 값)와 TAG 메타데이터 UPDATE는 구문이 다릅니다.
 
 - **TAG data UPDATE**: `UPDATE tag_table SET data_col = ... WHERE name ... AND time ...`
   구문으로 가능
@@ -103,12 +101,10 @@ SET 대상으로 사용할 수 없습니다. 상세 내용은 하위 페이지�
 
 ### TAG data UPDATE 정책
 
-TAG 테이블의 실제 시계열 데이터는 제한된 조건에서 UPDATE할 수 있습니다. UPDATE 대상은
-명확한 태그 범위와 시간 범위로 한정해야 하며, 메타데이터 수정과는 구문을 구분합니다.
+TAG 테이블의 실제 시계열 데이터는 제한된 조건에서만 UPDATE할 수 있습니다. UPDATE 대상은
+명확한 태그 범위와 시간 범위로 한정해야 하며, 메타데이터 수정과는 구문이 다릅니다.
 
 #### 기본 정책
-
-TAG data UPDATE는 다음 원칙을 따릅니다.
 
 1. WHERE 절에 태그 선택 조건(`name =`, `name IN`, `name LIKE`)이 있어야 합니다.
 2. WHERE 절에 BASETIME 컬럼 조건이 있어야 합니다.
@@ -133,7 +129,7 @@ UPDATE tag METADATA
 ```
 
 메타데이터 변경은 태그 속성을 수정하는 작업이며, 이미 적재된 시계열 row의 `value`나
-보조 데이터 컬럼을 변경하지 않습니다.
+보조 데이터 컬럼에는 영향을 주지 않습니다.
 
 #### 지원되는 조건
 
@@ -153,7 +149,7 @@ UPDATE tag
 - 대량 UPDATE 전 같은 WHERE 조건으로 대상 row 수를 확인합니다.
 - UPDATE 직후 원본 row는 변경되지만, 이미 만들어진 롤업은 즉시 갱신되지 않을 수 있습니다.
   필요한 롤업은 `ROLLUP_REBUILD`로 재구성합니다.
-- 수집 직후 데이터를 수정해야 한다면 먼저 SELECT로 대상 row가 조회되는지 확인합니다.
+- 수집 직후 데이터를 수정해야 한다면 SELECT로 대상 row가 조회되는지 확인한 뒤 진행합니다.
 
 <a id="policy-update-distinction-tag-data-update-metadata"></a>
 
@@ -204,7 +200,7 @@ WHERE name = 'TEMP-01';
 ```
 
 메타데이터 변경은 해당 tag name의 속성을 바꾸는 작업이며, 개별 시계열 row의 `value`나
-보조 데이터 컬럼 값을 변경하지 않습니다.
+보조 데이터 컬럼 값에는 영향을 주지 않습니다.
 
 #### 구분 정리
 
@@ -225,8 +221,7 @@ WHERE name = 'TEMP-01';
 
 ### TAG data UPDATE WHERE/SET 지원 범위
 
-TAG data UPDATE는 지원되지만, WHERE/SET 절에는 안전한 대상 범위를 보장하기 위한 제약이
-있습니다.
+TAG data UPDATE의 WHERE/SET 절에는 안전한 대상 범위를 보장하기 위한 제약이 있습니다.
 
 #### 실행 가능한 구문
 
@@ -271,8 +266,6 @@ WHERE name = 'TEMP-01';
 
 ## DELETE 정책
 
-테이블 타입별 DELETE 지원 범위와 조건을 정리합니다.
-
 ### 테이블 타입별 DELETE 지원
 
 | 테이블 타입 | DELETE 지원 | 조건 |
@@ -316,7 +309,7 @@ DELETE FROM device_status WHERE device_id = 'DEV-01';
 
 ### LOOKUP 테이블 DELETE
 
-LOOKUP 테이블은 PRIMARY KEY equality 조건과 일반 predicate 조건의 DELETE를 모두 지원합니다.
+PRIMARY KEY equality 조건과 일반 predicate 조건의 DELETE를 모두 지원합니다.
 조건에 맞는 모든 row가 삭제됩니다.
 
 ```sql
@@ -362,7 +355,7 @@ DELETE FROM sensor_log BEFORE '2024-01-01 00:00:00 000:000:000';
 #### TAG 테이블 DELETE WHERE (조건부 삭제)
 
 Tag 테이블은 tag name, tag name과 시간 조건, 또는 시간 조건만으로 DELETE WHERE를 지원합니다.
-시간 조건에는 `=`, `<`, `<=`, `BETWEEN`을 사용할 수 있습니다.
+시간 조건에는 `=`, `<`, `<=`, `BETWEEN`을 사용합니다.
 
 ```sql
 -- tag name 기준 삭제
@@ -426,16 +419,15 @@ DELETE FROM tag METADATA WHERE status = 'STOP';
 #### 주의사항
 
 - WHERE name = '...' 뿐 아니라 메타데이터 컬럼 조건도 사용할 수 있습니다.
-- 삭제 대상 중 하나라도 실제 데이터 row를 가지고 있으면 문장 전체가 실패합니다.
-- 즉, 실제로 데이터가 입력된 태그의 메타데이터는 삭제할 수 없습니다.
+- 삭제 대상 중 하나라도 실제 데이터 row를 가지고 있으면 문장 전체가 실패합니다. 즉, 데이터가 입력된 태그의 메타데이터는 삭제할 수 없습니다.
 - 전체 삭제 시에도 사용 중인 태그가 하나라도 있으면 일부만 삭제하지 않고 문장 전체가 실패합니다.
-- tag name 컬럼명을 `name` 이 아닌 다른 이름으로 정의한 TAG 테이블에서도 같은 문법을 사용할 수 있습니다.
+- tag name 컬럼명을 `name` 이 아닌 다른 이름으로 정의한 TAG 테이블에서도 같은 문법을 사용합니다.
 
 <a id="condition-tag-kv-delete-before"></a>
 
 ## TAG/KV DELETE 허용 조건과 BEFORE 조건
 
-TAG, KV, LOG 테이블은 `BEFORE` 조건으로 특정 시점 이전 데이터를 일괄 삭제할 수 있습니다. LOG 테이블은 `OLDEST`, `EXCEPT`, `BEFORE` 등 로그 보존형 DELETE를 사용하고, TAG/KV 테이블은 `BEFORE` 외에도 태그 이름과 축 조건을 사용한 `WHERE` 삭제를 지원합니다.
+TAG, KV, LOG 테이블은 `BEFORE` 조건으로 특정 시점 이전 데이터를 일괄 삭제합니다. LOG 테이블은 `OLDEST`, `EXCEPT`, `BEFORE` 등 로그 보존형 DELETE를 사용하고, TAG/KV 테이블은 `BEFORE` 외에도 태그 이름과 축 조건을 사용한 `WHERE` 삭제를 지원합니다.
 
 ### BEFORE 조건의 역할
 
@@ -466,7 +458,7 @@ DELETE FROM event_log BEFORE TO_DATE('2023-12-31', 'YYYY-MM-DD');
 
 ### WHERE 조건 삭제와 구분
 
-TAG/KV 테이블에서는 태그 이름 또는 축 조건으로 `WHERE` 삭제도 사용할 수 있습니다. 반면 LOG 테이블에서는 임의의 일반 `WHERE` 조건 삭제가 아니라 로그 전용 삭제 구문을 사용합니다.
+TAG/KV 테이블에서는 태그 이름 또는 축 조건으로 `WHERE` 삭제도 사용합니다. 반면 LOG 테이블에서는 임의의 일반 `WHERE` 조건 삭제가 아니라 로그 전용 삭제 구문을 사용합니다.
 
 ```sql
 -- TAG: tag name 기준 삭제 가능
@@ -479,7 +471,7 @@ DELETE FROM sensor_log WHERE value > 100.0;
 
 ### Retention Policy와의 관계
 
-BEFORE 조건을 이용한 수동 DELETE 대신, [Retention Policy](/dbms/operations-configuration-recovery/policy-data-retention/)를 사용하면 지정된 주기마다 자동으로 오래된 데이터를 삭제할 수 있습니다. 운영 편의성 측면에서는 Retention Policy 설정이 권장됩니다.
+BEFORE 조건을 이용한 수동 DELETE 대신, [Retention Policy](/dbms/operations-configuration-recovery/policy-data-retention/)를 설정하면 지정된 주기마다 오래된 데이터를 자동으로 삭제합니다. 운영 편의성 측면에서는 Retention Policy가 더 적합합니다.
 
 ```sql
 -- 자동 삭제 정책 적용 (수동 DELETE 불필요)
@@ -496,7 +488,7 @@ ALTER TABLE sensor_log ADD RETENTION policy_30d;
 
 ## TRUNCATE 정책
 
-TRUNCATE는 테이블의 모든 데이터를 빠르게 삭제하는 DDL 명령입니다. Machbase에서는 **LOG와 RDB 테이블에서만** 지원됩니다.
+TRUNCATE는 테이블의 모든 데이터를 빠르게 삭제하는 DDL 명령으로, **LOG와 RDB 테이블에서만** 지원됩니다.
 
 ### 지원 테이블 확인
 

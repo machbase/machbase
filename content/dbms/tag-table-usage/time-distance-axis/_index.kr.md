@@ -3,7 +3,6 @@ title: '5.11 시간축과 거리축 TAG'
 weight: 110
 toc: true
 ---
-시간축과 거리축 TAG에 해당하는 세부 문서를 모았습니다.
 
 
 <a id="time-axis-design-tag"></a>

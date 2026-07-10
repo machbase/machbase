@@ -3,7 +3,6 @@ title: '5.3 생성, 변경, 삭제'
 weight: 30
 toc: true
 ---
-생성, 변경, 삭제에 해당하는 세부 문서를 모았습니다.
 
 
 <a id="original-85-creating-tag-tables"></a>
@@ -14,7 +13,7 @@ toc: true
 
 ### 학습 내용
 
-Tag 테이블은 Machbase에서 축(axis) 기반 센서 데이터를 저장하는 기본 구조입니다. 이 가이드는 시간축과 거리축 Tag 테이블을 생성, 설정 및 삭제하는 방법을 다룹니다.
+시간축과 거리축 Tag 테이블을 생성, 설정 및 삭제하는 방법을 다룹니다.
 
 > **버전**: 거리축(`BASE DISTANCE`, `BASEDISTANCE`)은 Machbase 8.0.75+에서 지원합니다.
 
@@ -64,7 +63,7 @@ VALUE     double          17
 
 ### 거리축 Tag 테이블 생성
 
-거리축 Tag 테이블은 누적 주행거리, 이송거리, 선로 위치처럼 거리값을 따라 데이터를 저장할 때 사용합니다.
+거리축 Tag 테이블은 누적 주행거리, 이송거리, 선로 위치처럼 거리값을 따라 데이터를 저장합니다.
 
 ```sql
 Mach> CREATE TAG TABLE trip_sensor (
@@ -89,7 +88,7 @@ Executed successfully.
 - `LONG`
 - `ULONG`
 
-소수점 거리값이 필요하면 `DOUBLE`, 정수 거리값만 저장하면 `LONG` 또는 `ULONG`을 사용하는 것이 적합합니다.
+소수점 거리값이 필요하면 `DOUBLE`, 정수 거리값만 저장하면 `LONG` 또는 `ULONG`을 사용합니다.
 
 다음 타입은 거리축으로 사용할 수 없습니다.
 
@@ -103,7 +102,7 @@ Executed successfully.
 
 ### 추가 센서 컬럼 추가
 
-실제 센서 데이터는 종종 이름, 축, 값 이상을 필요로 합니다. 시간축/거리축 모두에서 그룹 ID, IP 주소 등과 같은 추가 컬럼을 둘 수 있습니다.
+실제 센서 데이터에는 이름, 축, 값 외에도 그룹 ID, IP 주소 등 추가 컬럼이 필요한 경우가 많습니다.
 
 ```sql
 Mach> create tag table TAG (name varchar(20) primary key, time datetime basetime, value double, grpid short, myip ipv4);
@@ -125,7 +124,7 @@ MYIP             ipv4            15       <=== 추가된 컬럼
 
 ### 메타데이터 컬럼 추가
 
-메타데이터 컬럼은 각 센서 읽기마다 중복으로 저장하지 않고 각 태그 이름에 특정한 정보(예: 방 번호 또는 설명)를 저장합니다.
+메타데이터 컬럼은 태그 이름별로 고유한 정보(예: 방 번호, 설명)를 저장하며, 매 센서 읽기마다 중복 저장하지 않습니다.
 
 ```sql
 Mach> create tag table TAG (name varchar(20) primary key, time datetime basetime, value double)
@@ -154,7 +153,7 @@ temp_001              2019-03-01 09:52:17 000:000:000 25.3
 
 ### 테이블 속성 설정
 
-다음 속성으로 메모리 및 CPU 사용을 제어합니다:
+다음 속성으로 메모리 및 CPU 사용을 제어합니다.
 
 |속성|설명|기본값|범위|
 |--|--|--|--|
@@ -180,7 +179,7 @@ Mach> CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME
 
 ### Tag 테이블 삭제
 
-Tag 테이블을 다시 생성하거나 디스크 공간을 확보해야 할 때 DROP 명령을 사용합니다:
+Tag 테이블을 다시 생성하거나 디스크 공간을 확보하려면 DROP 명령을 사용합니다.
 
 ```sql
 Mach> DROP TABLE tag;
@@ -203,6 +202,6 @@ tag does not exist.
 
 ### 다음 단계
 
-- [Tag 메타데이터 관리](../tag-metadata)에서 태그 이름 생성 및 관리에 대해 학습합니다
-- [Tag 데이터 삽입](/dbms/tag-table-usage/data-input-mutation/#original-85-inserting-data)에서 다양한 데이터 입력 방법을 탐색합니다
-- [Tag 데이터 쿼리](/dbms/tag-table-usage/query-analysis/#original-85-querying-data)에서 효율적인 데이터 검색을 이해합니다
+- [Tag 메타데이터 관리](../tag-metadata) -- 태그 이름 생성 및 관리
+- [Tag 데이터 삽입](/dbms/tag-table-usage/data-input-mutation/#original-85-inserting-data) -- 다양한 데이터 입력 방법
+- [Tag 데이터 쿼리](/dbms/tag-table-usage/query-analysis/#original-85-querying-data) -- 효율적인 데이터 검색

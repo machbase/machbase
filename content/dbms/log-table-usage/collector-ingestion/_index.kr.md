@@ -3,7 +3,8 @@ title: '7.13 Collector 기반 수집'
 weight: 130
 toc: true
 ---
-Collector 기반 수집에 해당하는 세부 문서를 모았습니다.
+
+Machbase Collector를 사용하여 외부 파일을 주기적으로 읽어 테이블에 적재하는 방법을 다룬다.
 
 
 <a id="ingestion-collector"></a>
@@ -11,8 +12,8 @@ Collector 기반 수집에 해당하는 세부 문서를 모았습니다.
 ## Collector 기반 수집
 
 Machbase Collector는 외부 파일 소스를 주기적으로 읽어 Machbase 테이블에 적재하는
-컴포넌트입니다. 현재 확인된 Collector 설정은 JSON이 아니라 `KEY=VALUE` 형식의
-`.tpl` 템플릿 파일과 컬럼 매핑을 정의하는 `.rgx` 파일을 사용합니다.
+컴포넌트다. Collector 설정은 JSON이 아니라 `KEY=VALUE` 형식의
+`.tpl` 템플릿 파일과 컬럼 매핑을 정의하는 `.rgx` 파일을 사용한다.
 
 ### 수집 파이프라인 구조
 
@@ -22,19 +23,19 @@ Machbase Collector는 외부 파일 소스를 주기적으로 읽어 Machbase �
 [SFTP 파일] ──┘        (.tpl + .rgx)
 ```
 
-현재 코드에서 확인되는 `COLLECT_TYPE`은 `FILE`과 `SFTP`입니다. TCP/UDP socket 또는
-ODBC Collector 설정은 이 장에서 예제로 제공하지 않습니다.
+현재 코드에서 확인되는 `COLLECT_TYPE`은 `FILE`과 `SFTP`다. TCP/UDP socket 또는
+ODBC Collector 설정은 이 장에서 예제로 제공하지 않는다.
 
 ### 주요 특징
 
-- **파일 기반 수집:** 로컬 파일 또는 SFTP 원격 파일을 읽어 적재합니다.
-- **템플릿 기반 설정:** 수집 소스와 DB 접속 정보는 `.tpl` 파일에 작성합니다.
-- **컬럼 매핑 분리:** CSV, JSON, REGEX, JSON_PIVOT 파싱 정보는 `.rgx` 파일에 작성합니다.
-- **처리 파일 관리:** `FILE_BACKUP_PATH`로 수집 완료 파일을 보관할 위치를 지정합니다.
+- **파일 기반 수집:** 로컬 파일 또는 SFTP 원격 파일을 읽어 적재한다.
+- **템플릿 기반 설정:** 수집 소스와 DB 접속 정보는 `.tpl` 파일에 작성한다.
+- **컬럼 매핑 분리:** CSV, JSON, REGEX, JSON_PIVOT 파싱 정보는 `.rgx` 파일에 작성한다.
+- **처리 파일 관리:** `FILE_BACKUP_PATH`로 수집 완료 파일을 보관할 위치를 지정한다.
 
 ### 설정 파일 기본 구조
 
-Collector 템플릿은 다음과 같은 형식으로 작성합니다.
+Collector 템플릿은 다음과 같은 형식으로 작성한다.
 
 ```text
 COLLECT_TYPE=FILE
@@ -52,7 +53,7 @@ FILE_BACKUP_PATH=/data/sensors/done
 SLEEP_TIME=1
 ```
 
-컬럼 매핑은 `.rgx` 파일에서 정의합니다.
+컬럼 매핑은 `.rgx` 파일에서 정의한다.
 
 ```text
 COL_LIST=NAME,TIME,VALUE
@@ -109,7 +110,7 @@ ALTER COLLECTOR localhost.file_sensor STOP;
 
 ### Collector를 사용해야 하는 경우
 
-데이터를 Machbase에 입력하는 방법은 여러 가지가 있습니다. Collector를 사용할지, 아니면 애플리케이션에서 직접 API를 호출할지는 데이터 소스의 성격과 운영 환경에 따라 달라집니다. 이 섹션에서는 Collector 도입이 적합한 상황과 그렇지 않은 상황을 구체적으로 설명합니다.
+Machbase에 데이터를 입력하는 방법은 여러 가지다. Collector를 쓸지, 애플리케이션에서 API를 직접 호출할지는 데이터 소스의 성격과 운영 환경에 따라 결정한다.
 
 #### Collector vs 직접 API 선택 기준
 
@@ -127,7 +128,7 @@ ALTER COLLECTOR localhost.file_sensor STOP;
 
 ##### 1. 로그 파일 모니터링
 
-애플리케이션이나 시스템이 생성하는 로그 파일을 실시간으로 감시하고 분석 가능한 형태로 적재합니다. 파일 회전(rotation)이 발생해도 새 파일을 자동으로 감지합니다.
+애플리케이션이나 시스템이 생성하는 로그 파일을 실시간으로 감시하고 분석 가능한 형태로 적재한다. 파일 회전(rotation)이 발생해도 새 파일을 자동으로 감지한다.
 
 ```
 [App Log File] ──파일 감시──→ [Collector (파일 소스)] ──→ [Machbase]
@@ -135,7 +136,7 @@ ALTER COLLECTOR localhost.file_sensor STOP;
 
 ##### 2. 원격 서버 파일 수집
 
-원격 장비나 서버에서 주기적으로 생성되는 CSV 파일을 SFTP로 수집합니다. 파일 다운로드, 파싱, 적재, 처리 완료 후 파일 관리까지 자동화됩니다.
+원격 장비나 서버에서 주기적으로 생성되는 CSV 파일을 SFTP로 수집한다. 파일 다운로드, 파싱, 적재, 처리 완료 후 파일 관리까지 자동화된다.
 
 ```
 [원격 서버 /data/*.csv] ──SFTP──→ [Collector (SFTP 소스)] ──→ [Machbase]
@@ -143,19 +144,17 @@ ALTER COLLECTOR localhost.file_sensor STOP;
 
 ##### 3. 기존 시스템의 DB 데이터 마이그레이션
 
-Oracle, MySQL, MSSQL 등의 기존 RDB에 축적된 센서/로그 데이터를 Machbase로 이전할 때는 외부 DB에서 CSV로 반출한 뒤 `machloader` 또는 `LOAD DATA INFILE`로 적재합니다. 애플리케이션 레벨에서 주기적으로 조회한 뒤 SDK나 SQL INSERT로 입력하는 방식도 사용할 수 있습니다.
+Oracle, MySQL, MSSQL 등의 기존 RDB에 축적된 센서/로그 데이터를 Machbase로 이전할 때는 외부 DB에서 CSV로 반출한 뒤 `machloader` 또는 `LOAD DATA INFILE`로 적재한다. 애플리케이션 레벨에서 주기적으로 조회한 뒤 SDK나 SQL INSERT로 입력하는 방식도 가능하다.
 
 #### Collector가 적합하지 않은 경우
 
-다음 상황에서는 Collector를 사용하지 않는 것이 더 효율적입니다.
-
-- **애플리케이션이 Machbase에 직접 연결 가능한 경우:** JDBC, Python, Go 등의 드라이버를 사용해 Append API를 직접 호출하면 중간 컴포넌트 없이 더 낮은 지연시간으로 적재할 수 있습니다.
-- **단발성 대량 데이터 로드:** CSV 파일을 한 번에 대량으로 적재하는 경우에는 `machloader`나 `LOAD DATA` 구문이 더 적합합니다.
-- **실시간 스트리밍(Kafka, MQTT):** Machbase Neo의 내장 스트리밍 파이프라인이나 Flink/Kafka Connect 커넥터를 사용하는 것이 더 효율적입니다.
+- **애플리케이션이 Machbase에 직접 연결 가능한 경우:** JDBC, Python, Go 등의 드라이버로 Append API를 직접 호출하면 중간 컴포넌트 없이 더 낮은 지연시간으로 적재할 수 있다.
+- **단발성 대량 데이터 로드:** CSV 파일을 한 번에 대량으로 적재하려면 `machloader`나 `LOAD DATA` 구문이 더 적합하다.
+- **실시간 스트리밍(Kafka, MQTT):** Machbase Neo의 내장 스트리밍 파이프라인이나 Flink/Kafka Connect 커넥터가 더 효율적이다.
 
 #### Collector 선택 시 확인 사항
 
-Collector 도입을 결정하기 전에 다음 항목을 확인합니다.
+Collector 도입을 결정하기 전에 다음 항목을 확인한다.
 
 1. **데이터 소스 프로토콜:** 소스가 FILE 또는 SFTP 파일로 제공되는가?
 2. **데이터 형식:** 원시 데이터가 CSV, JSON, 고정 너비, 로그 텍스트 등 어떤 형식인가?
@@ -172,9 +171,9 @@ Collector 도입을 결정하기 전에 다음 항목을 확인합니다.
 
 ### 파일 Collector
 
-파일 Collector는 로컬 파일 시스템의 파일을 읽어 Machbase 테이블에 적재합니다. 설정은
-JSON이 아니라 `COLLECT_TYPE=FILE`을 포함한 `.tpl` 파일로 작성하고, 파싱과 컬럼 매핑은
-별도의 `.rgx` 파일에서 정의합니다.
+파일 Collector는 로컬 파일 시스템의 파일을 읽어 Machbase 테이블에 적재한다. 설정은
+`COLLECT_TYPE=FILE`을 포함한 `.tpl` 파일로 작성하고, 파싱과 컬럼 매핑은
+별도의 `.rgx` 파일에서 정의한다.
 
 #### 동작 원리
 
@@ -236,7 +235,7 @@ TYPE=INTEGER
 SIZE=4
 ```
 
-수집 대상 CSV 파일은 `.rgx`의 컬럼 순서와 맞아야 합니다.
+수집 대상 CSV 파일은 `.rgx`의 컬럼 순서와 맞아야 한다.
 
 ```csv
 DEVICE_A,2024-01-01 10:00:00,72.3,100
@@ -281,12 +280,11 @@ ALTER COLLECTOR localhost.file_sensor STOP;
 
 ### socket Collector
 
-현재 확인된 Collector `COLLECT_TYPE`은 `FILE`과 `SFTP`입니다. TCP/UDP socket 수집
-설정은 현재 브랜치의 Collector 타입 파서에서 확인되지 않았으므로 이 장에서는
-설정 예제를 제공하지 않습니다.
+현재 확인된 Collector `COLLECT_TYPE`은 `FILE`과 `SFTP`다. TCP/UDP socket 수집
+설정은 현재 브랜치의 Collector 타입 파서에서 확인되지 않았으므로 설정 예제를 제공하지 않는다.
 
-네트워크를 통해 실시간 데이터를 입력해야 하는 경우에는 애플리케이션에서 REST API 또는
-SDK Append API를 직접 호출하는 방식을 우선 검토합니다.
+네트워크를 통해 실시간 데이터를 입력해야 하는 경우에는 REST API 또는
+SDK Append API를 직접 호출하는 방식을 우선 검토한다.
 
 #### 대안
 
@@ -301,8 +299,8 @@ SDK Append API를 직접 호출하는 방식을 우선 검토합니다.
 
 ### SFTP Collector
 
-SFTP Collector는 원격 SFTP 서버의 파일을 내려받아 Machbase 테이블에 적재합니다.
-설정은 `COLLECT_TYPE=SFTP`를 포함한 `.tpl` 파일로 작성합니다.
+SFTP Collector는 원격 SFTP 서버의 파일을 내려받아 Machbase 테이블에 적재한다.
+`COLLECT_TYPE=SFTP`를 포함한 `.tpl` 파일로 설정한다.
 
 #### 동작 원리
 
@@ -398,12 +396,11 @@ ALTER COLLECTOR localhost.sftp_sensor START;
 
 ### ODBC Collector
 
-현재 확인된 Collector `COLLECT_TYPE`은 `FILE`과 `SFTP`입니다. ODBC 수집 설정은 현재
-브랜치의 Collector 타입 파서에서 확인되지 않았으므로 이 장에서는 설정 예제를 제공하지
-않습니다.
+현재 확인된 Collector `COLLECT_TYPE`은 `FILE`과 `SFTP`다. ODBC 수집 설정은
+현재 브랜치의 Collector 타입 파서에서 확인되지 않았으므로 설정 예제를 제공하지 않는다.
 
 외부 RDBMS 데이터를 Machbase로 이전하거나 주기적으로 적재해야 하는 경우에는 다음 경로를
-검토합니다.
+검토한다.
 
 #### 대안
 
@@ -418,7 +415,7 @@ ALTER COLLECTOR localhost.sftp_sensor START;
 ### Collector 템플릿과 정규식
 
 Collector 설정은 수집 소스와 DB 접속 정보를 담은 `.tpl` 파일, 컬럼 매핑을 담은
-`.rgx` 파일로 나뉩니다. `.tpl` 파일의 `REGEX_PATH`가 사용할 `.rgx` 파일을 지정합니다.
+`.rgx` 파일로 나뉜다. `.tpl` 파일의 `REGEX_PATH`가 사용할 `.rgx` 파일을 지정한다.
 
 #### 지원 파싱 타입
 
@@ -446,7 +443,7 @@ DB_PASS=MANAGER
 
 #### `.rgx` 컬럼 매핑
 
-`.rgx` 파일에는 대상 컬럼 목록과 각 컬럼의 타입, 크기를 작성합니다.
+`.rgx` 파일에는 대상 컬럼 목록과 각 컬럼의 타입, 크기를 작성한다.
 
 ```text
 COL_LIST=NAME,TIME,VALUE
@@ -467,7 +464,7 @@ SIZE=8
 
 #### CSV 구분자 설정
 
-CSV 파싱에서는 `FIELD_TERM`과 `RECORD_TERM`으로 필드/레코드 구분자를 지정할 수 있습니다.
+CSV 파싱에서는 `FIELD_TERM`과 `RECORD_TERM`으로 필드/레코드 구분자를 지정할 수 있다.
 
 ```text
 COL_LIST=NAME,TIME,VALUE
@@ -504,9 +501,9 @@ SIZE=8
 
 #### 작성 시 주의사항
 
-- JSON 형식의 `template.columns[]` 설정은 Collector 템플릿 형식이 아닙니다.
-- `.tpl` 파일에서 `PARSE_TYPE`을 지정하고, `.rgx` 파일에서 `COL_LIST`와 컬럼 속성을 맞춥니다.
-- 수집 파일의 필드 순서와 `.rgx`의 컬럼 순서가 일치해야 합니다.
+- JSON 형식의 `template.columns[]` 설정은 Collector 템플릿 형식이 아니다.
+- `.tpl` 파일에서 `PARSE_TYPE`을 지정하고, `.rgx` 파일에서 `COL_LIST`와 컬럼 속성을 맞춘다.
+- 수집 파일의 필드 순서와 `.rgx`의 컬럼 순서가 일치해야 한다.
 
 #### 참고
 
@@ -517,8 +514,7 @@ SIZE=8
 
 ### Collector 오류 처리
 
-Collector 운영 중 발생할 수 있는 오류 유형과 점검 절차를 정리합니다. 현재 확인된
-Collector 설정은 `.tpl` 파일과 `.rgx` 컬럼 매핑 파일을 사용합니다.
+Collector 운영 중 발생할 수 있는 오류 유형과 점검 절차를 정리한다.
 
 #### 오류 유형 분류
 
@@ -532,7 +528,7 @@ Collector 설정은 `.tpl` 파일과 `.rgx` 컬럼 매핑 파일을 사용합니
 
 #### 오류 로그 확인
 
-Collector 이벤트와 오류는 트레이스 로그에서 확인합니다.
+Collector 이벤트와 오류는 트레이스 로그에서 확인한다.
 
 ```bash
 # 전체 로그 마지막 100줄 확인
@@ -608,7 +604,7 @@ DB_PASS=MANAGER
 #### 파싱 오류 점검
 
 파싱 오류가 발생하면 `PARSE_TYPE`, `REGEX_PATH`, `.rgx` 컬럼 정의를 원본 데이터와
-비교합니다.
+비교한다.
 
 ```text
 PARSE_TYPE=CSV
@@ -645,15 +641,15 @@ TEMP-02,2024-01-01 10:00:01,25.7
 
 #### 일반적인 복구 절차
 
-1. 로그에서 오류 원인을 확인합니다.
+1. 로그에서 오류 원인을 확인한다.
 
    ```bash
    grep -i "error\|fail\|warn" $MACHBASE_HOME/trc/machcollector.trc | tail -30
    ```
 
-2. `.tpl` 파일의 `COLLECT_TYPE`, `LOG_SOURCE`, `REGEX_PATH`, DB 접속 정보를 확인합니다.
-3. `.rgx` 파일의 `COL_LIST`, 각 컬럼의 `NAME`, `TYPE`, `SIZE`가 대상 테이블과 맞는지 확인합니다.
-4. 설정을 수정한 후 Collector를 재시작합니다.
+2. `.tpl` 파일의 `COLLECT_TYPE`, `LOG_SOURCE`, `REGEX_PATH`, DB 접속 정보를 확인한다.
+3. `.rgx` 파일의 `COL_LIST`, 각 컬럼의 `NAME`, `TYPE`, `SIZE`가 대상 테이블과 맞는지 확인한다.
+4. 설정을 수정한 후 Collector를 재시작한다.
 
    ```bash
    machcollectoradmin --stop-collector=localhost.my_collector

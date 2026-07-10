@@ -7,9 +7,7 @@ toc: true
 
 ## 개요
 
-이 문서는 2.3 패키지를 기준으로 정리했습니다. PyPI 패키지명은 `machbaseapi`(소문자)이고 구현은 순수 Python입니다(네이티브 `.so/.dll/.dylib` 불필요).
-
-기존 `machbase` 사용 흐름은 유지됩니다.
+2.3 패키지 기준입니다. PyPI 패키지명은 `machbaseapi`(소문자)이고, 순수 Python 구현이라 네이티브 바이너리(`.so/.dll/.dylib`)가 필요 없습니다. 기존 `machbase` 사용 흐름은 그대로 유지됩니다.
 
 - 패키지 설치명: `machbaseapi`
 - 기존과 동일하게 `import machbaseAPI` 사용
@@ -126,7 +124,7 @@ if __name__ == '__main__':
 
 ## 결과 처리
 
-대다수 `machbase` 메서드는 성공 시 `1`, 실패 시 `0`을 반환합니다. 호출 직후 `db.result()`를 사용하면 서버에서 반환한 JSON 형식의 페이로드를 확인할 수 있습니다. `select()` 결과를 순회할 때는 `(0, None)`가 반환될 때까지 `db.fetch()`를 반복 호출하고, 마지막에 `db.selectClose()`로 리소스를 해제합니다.
+`machbase` 메서드는 대부분 성공 시 `1`, 실패 시 `0`을 반환합니다. 호출 직후 `db.result()`로 서버가 반환한 JSON 페이로드를 확인할 수 있습니다. `select()` 결과를 순회할 때는 `(0, None)`이 반환될 때까지 `db.fetch()`를 반복 호출하고, 마지막에 `db.selectClose()`로 리소스를 해제합니다.
 
 ## 지원 API 매트릭스
 

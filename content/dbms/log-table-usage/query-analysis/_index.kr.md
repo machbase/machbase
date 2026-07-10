@@ -3,7 +3,8 @@ title: '7.5 조회와 분석'
 weight: 50
 toc: true
 ---
-조회와 분석에 해당하는 세부 문서를 모았습니다.
+
+LOG 테이블 데이터를 SELECT, DURATION, JOIN으로 조회하는 방법을 다룬다.
 
 
 <a id="original-85-select-data"></a>
@@ -12,13 +13,11 @@ toc: true
 
 > **8.5 원문 보강 자료**: 이 문서는 기존 8.5 매뉴얼의 내용을 새 장 구조에 맞춰 보존한 것입니다. Machbase 8.6 기준과 표현이 다른 부분은 같은 절의 최신 리뉴얼 문서를 우선합니다.
 
-ANSI 표준 SQL로 데이터를 검색할 수 있습니다.
+ANSI 표준 SQL로 데이터를 검색할 수 있다.
 
-다음 예제는 인덱스를 생성하지 않은 상태에서의 검색을 보여줍니다.
+아래 예제는 인덱스를 생성하지 않은 상태에서의 검색을 보여준다. 마지막에 입력된 데이터가 먼저 출력된다.
 
-즉, 마지막에 입력된 데이터가 먼저 출력됩니다.
-
-자세한 내용은 SQL Reference의 [SELECT](../../../../sql-reference/select/) 섹션을 참조하세요.
+자세한 내용은 SQL Reference의 [SELECT](../../../../sql-reference/select/) 섹션을 참조한다.
 
 
 ### 기본 검색
@@ -121,7 +120,7 @@ error code = 10
 
 #### 역방향
 
-기본값이며, /*+ SCAN_BACKWARD(table_name) */ 힌트를 추가하여 검색할 수 있습니다.
+기본값이며, /*+ SCAN_BACKWARD(table_name) */ 힌트를 추가하여 검색할 수 있다.
 
 ```sql
 Mach> SELECT * FROM LOG;
@@ -147,7 +146,7 @@ Elapsed time: 0.001
 
 #### 정방향
 
-/*+ SCAN_FORWARD(table_name) */ 힌트를 사용하여 정방향으로 검색합니다.
+/*+ SCAN_FORWARD(table_name) */ 힌트를 사용하여 정방향으로 검색한다.
 
 ```sql
 Mach> SELECT /*+ SCAN_FORWARD(LOG) */ * FROM LOG;
@@ -163,7 +162,7 @@ Elapsed time: 0.001
 
 #### 기본 스캔 방향을 설정하는 프로퍼티
 
-[TABLE_SCAN_DIRECTION](../../../../configuration/property/#table_scan_direction) 프로퍼티를 사용하면 SELECT 문에 힌트가 없을 때 Log 테이블의 스캔 방향을 설정할 수 있습니다.
+[TABLE_SCAN_DIRECTION](../../../../configuration/property/#table_scan_direction) 프로퍼티를 사용하면 SELECT 문에 힌트가 없을 때 Log 테이블의 스캔 방향을 지정할 수 있다.
 
 <a id="original-85-select-time-data"></a>
 
@@ -171,11 +170,11 @@ Elapsed time: 0.001
 
 > **8.5 원문 보강 자료**: 이 문서는 기존 8.5 매뉴얼의 내용을 새 장 구조에 맞춰 보존한 것입니다. Machbase 8.6 기준과 표현이 다른 부분은 같은 절의 최신 리뉴얼 문서를 우선합니다.
 
-SELECT 문의 DURATION 절은 검색할 시간 조건을 정의합니다. DURATION 절을 사용하는 주요 이유는 검색 대상을 줄여서 대량의 데이터를 검색할 때에도 성능을 향상시키기 위함입니다.
+SELECT 문의 DURATION 절은 검색할 시간 범위를 정의한다. 검색 대상을 줄여 대량의 데이터를 검색할 때 성능을 높이기 위한 핵심 절이다.
 
-Machbase는 입력 시간을 기준으로 데이터를 분할하여 저장하기 때문에, 시간 조건을 기반으로 데이터를 쉽게 검색할 수 있습니다. 입력 시간은 사용자 정의 컬럼이 아닌 자동 생성된 '_ARRIVAL_TIME'이라는 컬럼에 저장됩니다. 따라서 Machbase를 가장 효율적으로 사용하려면 추가 시간 컬럼을 지정하지 않고 내장 '_ARRIVAL_TIME' 컬럼을 사용하는 것이 좋습니다.
+Machbase는 입력 시간을 기준으로 데이터를 분할하여 저장하므로, 시간 조건을 기반으로 데이터를 빠르게 검색할 수 있다. 입력 시간은 사용자 정의 컬럼이 아닌 자동 생성된 '_ARRIVAL_TIME' 컬럼에 저장된다. 추가 시간 컬럼을 지정하지 않고 내장 '_ARRIVAL_TIME' 컬럼을 사용하는 것이 가장 효율적이다.
 
-Machbase는 데이터를 입력 순서의 역순으로 출력합니다. 즉, 가장 최신 데이터가 먼저 출력되고, 가장 오래된 데이터가 나중에 출력됩니다. 일반적으로 시계열 데이터를 검색할 때 가장 최근 데이터가 더 중요하고 먼저 얻어야 하는 경우가 많습니다. 또한 모든 DURATION 조건에 의해 출력되는 데이터는 최신에서 마지막 순으로 출력됩니다. 과거에서 최신으로의 역순으로 출력하려면 AFTER 절을 사용해야 합니다. 구문은 다음과 같습니다.
+Machbase는 데이터를 입력 순서의 역순으로 출력한다. 가장 최신 데이터가 먼저, 가장 오래된 데이터가 나중에 나온다. 모든 DURATION 조건의 출력도 최신에서 과거 순이다. 과거에서 최신으로 역순 출력하려면 AFTER 절을 사용한다.
 
 
 ### 구문
@@ -197,9 +196,9 @@ time_expression
 
 ### DURATION...BEFORE
 
-앞서 언급했듯이, BEFORE를 명시적으로 사용하거나 정의하지 않으면(자동으로 BEFORE 적용) 데이터가 최신에서 가장 오래된 순서로 출력됩니다.
+BEFORE를 명시적으로 사용하거나 생략하면(자동 BEFORE 적용) 데이터가 최신에서 과거 순으로 출력된다.
 
-절대 시간 값 또는 상대 시간 값으로 데이터를 쿼리할 수 있습니다.
+절대 시간 값 또는 상대 시간 값으로 데이터를 쿼리할 수 있다.
 
 #### 절대 시간 값 기반 검색
 
@@ -239,7 +238,7 @@ _arrival_time                   ID
 
 #### 상대 시간 값 기반 검색
 
-상대 시간 값 기반 검색은 현재 시간을 기준으로 한 검색으로 볼 수 있습니다.
+현재 시간을 기준으로 한 검색이다.
 
 ```sql
 Mach> CREATE TABLE relative_table(id INTEGER);
@@ -282,9 +281,9 @@ id
 
 ### DURATION...AFTER
 
-AFTER를 적용하면 데이터가 과거에서 최신 순으로 출력됩니다.
+AFTER를 적용하면 데이터가 과거에서 최신 순으로 출력된다.
 
-BEFORE 명령은 과거 출력과 비교하여 입력 시간을 기준으로 데이터를 자동으로 역순으로 출력합니다.
+BEFORE는 입력 시간 기준으로 자동 역순(최신 우선) 출력이고, AFTER는 그 반대다.
 
 ```sql
 Mach> CREATE TABLE after_table (id INTEGER);
@@ -327,14 +326,12 @@ _arrival_time                   ID
 
 ### DURATION...FROM/TO
 
-사용자가 두 개의 절대 시간을 기준으로 데이터를 검색하려고 할 때, "DURATION FROM A TO B" 형태의 조건식을 사용합니다.
+두 개의 절대 시간을 기준으로 데이터를 검색할 때 "DURATION FROM A TO B" 형태를 사용한다.
 
-A와 B는 절대 시간이며 TO_DATE 함수를 사용하여 표현됩니다. A와 B는 사용자의 의도에 따라 다르게 설정할 수 있습니다. 예를 들어,
+A와 B는 절대 시간이며 TO_DATE 함수로 표현한다. A와 B의 순서에 따라 출력 방향이 달라진다.
 
-* A가 B보다 이전일 때, 검색 방향은 AFTER에서 사용하는 것처럼 가장 오래된 것에서 최신 순서로 데이터를 출력합니다.
-* B가 A보다 이후일 때, 검색 방향은 BEFORE에서 사용하는 것처럼 최신에서 가장 오래된 순서로 데이터를 출력합니다.
-
-다음 예제는 데이터가 어떻게 출력되는지 보여줍니다.
+* A가 B보다 이전이면 AFTER와 같은 방향(과거 → 최신)으로 출력된다.
+* B가 A보다 이전이면 BEFORE와 같은 방향(최신 → 과거)으로 출력된다.
 
 ```sql
 Mach> CREATE TABLE from_table (id INTEGER);
@@ -420,7 +417,7 @@ _arrival_time                   ID
 
 > **8.5 원문 보강 자료**: 이 문서는 기존 8.5 매뉴얼의 내용을 새 장 구조에 맞춰 보존한 것입니다. Machbase 8.6 기준과 표현이 다른 부분은 같은 절의 최신 리뉴얼 문서를 우선합니다.
 
-Log 테이블, Volatile 테이블, Lookup 테이블 및 메타 테이블을 Join으로 검색할 수 있습니다.
+Log 테이블, Volatile 테이블, Lookup 테이블 및 메타 테이블을 Join으로 검색할 수 있다.
 
 
 ### 간단한 Join
@@ -471,7 +468,7 @@ Sam                               20
 
 ### Alias를 사용한 Join
 
-Join을 사용할 때 조인 대상 테이블에 대해 alias를 사용할 수 있습니다.
+Join 대상 테이블에 alias를 사용할 수 있다.
 
 ```sql
 SELECT c.name FROM m$sys_tables t, m$sys_columns c WHERE t.id = c.table_id AND t.name = 'T1'
@@ -488,7 +485,7 @@ SRCIP
 
 ### GROUP BY/ORDER BY
 
-GROUP BY, ORDER BY 및 집계 함수도 사용할 수 있습니다.
+GROUP BY, ORDER BY, 집계 함수도 함께 사용할 수 있다.
 
 ```sql
 Mach> SELECT t.name, COUNT(c.name) FROM m$sys_columns c, m$sys_tables t WHERE t.id = c.table_id GROUP BY t.name ORDER BY t.name;
@@ -502,9 +499,9 @@ DURATIONT                                 3
 
 ### JOIN 절이 없는 Join
 
-JOIN 절이 없는 조인 쿼리는 오류를 발생시킵니다. Log 테이블에는 데이터가 매우 많기 때문에 조인 조건 없이 쿼리하는 속도는 예측할 수 없을 정도로 느립니다.
+JOIN 절이 없는 조인 쿼리는 오류를 발생시킨다. Log 테이블에는 데이터가 매우 많기 때문에 조인 조건 없이 쿼리하면 성능을 예측할 수 없다.
 
-또한 두 개의 Log 테이블 조인은 매우 느릴 수 있습니다. 따라서 데이터베이스를 설계할 때는 비정규화를 고려하여 조인이 발생하지 않도록 설계하는 것이 좋습니다.
+두 개의 Log 테이블 조인은 매우 느릴 수 있으므로, 데이터베이스를 설계할 때 비정규화를 고려하여 조인을 최소화하는 것이 좋다.
 
 ```sql
 Mach> CREATE TABLE log_table1(i1 INTEGER);
@@ -543,7 +540,7 @@ i1
 
 ### Inner Join / Outer Join
 
-ANSI 타입의 INNER, LEFT OUTER 또는 RIGHT OUTER 조인을 사용할 수 있지만, FULL OUTER JOIN은 사용할 수 없습니다.
+ANSI 타입의 INNER, LEFT OUTER, RIGHT OUTER 조인을 사용할 수 있다. FULL OUTER JOIN은 지원하지 않는다.
 
 ```sql
 FROM    TABLE_1 [INNER|LEFT OUTER|RIGHT OUTER]  JOIN    TABLE_2 ON  expression
@@ -553,4 +550,4 @@ FROM    TABLE_1 [INNER|LEFT OUTER|RIGHT OUTER]  JOIN    TABLE_2 ON  expression
 SELECT t1.i1, t2.i1 FROM t1 LEFT OUTER JOIN t2 ON (t1.i1 = t2.i1) WHERE t2.i2 = 1;
 ```
 
-위 쿼리는 where 절의 t2.i2 = 1 조건에 의해 Inner Join으로 변경됩니다.
+위 쿼리는 where 절의 t2.i2 = 1 조건에 의해 Inner Join으로 변경된다.

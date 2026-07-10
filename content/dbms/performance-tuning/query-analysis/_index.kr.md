@@ -3,14 +3,14 @@ type: docs
 title: '12.10 쿼리와 분석'
 weight: 970
 ---
-Machbase는 시계열 데이터에 최적화된 다양한 조회·분석 구문을 제공합니다. 일반 SQL에 더해 DURATION, PIVOT, ROLLUP, SERIES BY, 보간, 윈도우 함수 등 시계열 분석에 특화된 확장 문법을 갖추고 있습니다.
+일반 SQL에 더해 DURATION, PIVOT, ROLLUP, SERIES BY, 보간, 윈도우 함수 등 시계열 분석에 특화된 확장 문법을 제공합니다.
 
 
 <a id="selection-query-method"></a>
 
 ## 조회 방식 선택
 
-Machbase에서 데이터를 조회하는 방법은 목적과 테이블 타입에 따라 다릅니다.
+데이터 조회 방법은 목적과 테이블 타입에 따라 다릅니다.
 
 ### 조회 방식 요약
 

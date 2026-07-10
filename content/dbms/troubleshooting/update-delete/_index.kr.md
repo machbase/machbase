@@ -4,7 +4,7 @@ title: '16.3 UPDATE/DELETE 문제 해결'
 weight: 30
 ---
 
-UPDATE/DELETE 실행 중 발생하는 대표 오류와 진단 방법을 정리합니다.
+UPDATE/DELETE 실행 중 발생하는 대표 오류와 진단 방법입니다.
 
 | 문서 | 설명 |
 |------|------|

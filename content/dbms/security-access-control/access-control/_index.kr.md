@@ -3,7 +3,7 @@ type: docs
 title: '14.5 접속 제어'
 weight: 50
 ---
-접속 제어는 어떤 네트워크 경로에서, 어떤 인증 방식으로 Machbase에 연결할 수 있는지를 결정합니다. 계정 인증보다 앞선 레이어에서 동작하므로, 접속 자체를 차단하는 강력한 보안 수단입니다.
+접속 제어는 네트워크 경로와 인증 방식에 따라 연결 가능 여부를 결정합니다. 계정 인증보다 앞선 레이어에서 동작하므로, 접속 자체를 차단하는 강력한 수단입니다.
 
 ## 이 섹션의 구성
 
@@ -103,8 +103,7 @@ BIND_IP_ADDRESS = 192.168.1.100   # 내부 네트워크 인터페이스만 리�
 
 ## HTTP 인증 설정
 
-Machbase는 기본 TCP 연결 외에 REST API를 통한 HTTP 접속을 지원합니다. 현재 내장 HTTP
-서버 기준 인증 방식은 `HTTP_AUTH` 설정에 따른 HTTP Basic Authentication입니다.
+기본 TCP 연결 외에 REST API를 통한 HTTP 접속도 가능합니다. 내장 HTTP 서버의 인증 방식은 `HTTP_AUTH` 설정에 따라 HTTP Basic Authentication을 사용합니다.
 
 ### 관련 설정 항목
 
@@ -173,7 +172,7 @@ reverse proxy/TLS terminator에서 처리하는 구성을 권장합니다.
 
 ## BIND_IP_ADDRESS와 네트워크 노출 제어
 
-`BIND_IP_ADDRESS`는 Machbase 리스너(TCP 포트)가 어느 네트워크 인터페이스에서 연결을 수신할지 지정합니다. 서버에 여러 네트워크 인터페이스(NIC)가 있을 때 특정 인터페이스에만 서비스를 노출할 수 있습니다. REST API를 포함한 모든 Machbase 리스너 포트에 동일하게 적용됩니다.
+`BIND_IP_ADDRESS`는 리스너(TCP 포트)가 연결을 수신할 네트워크 인터페이스를 지정합니다. 서버에 여러 NIC가 있을 때 특정 인터페이스에만 서비스를 노출할 수 있으며, REST API 포트를 포함한 모든 리스너에 동일하게 적용됩니다.
 
 ### 설정값
 

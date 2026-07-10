@@ -3,7 +3,8 @@ title: '10.3 생성, 변경, 삭제'
 weight: 30
 toc: true
 ---
-생성, 변경, 삭제에 해당하는 세부 문서를 모았습니다.
+
+VOLATILE 테이블의 생성·삭제 방법과 다른 테이블 타입과의 영속성 차이를 다룬다.
 
 
 <a id="original-85-creating-volatile-tables"></a>
@@ -31,7 +32,7 @@ drop table vtable;
 
 ## 영속성 차이·DDL
 
-VOLATILE 테이블은 다른 테이블 타입과 달리 메모리에만 존재합니다.
+VOLATILE 테이블은 다른 테이블 타입과 달리 메모리에만 존재한다.
 
 ### 영속성 비교
 
@@ -43,7 +44,7 @@ VOLATILE 테이블은 다른 테이블 타입과 달리 메모리에만 존재�
 
 ### DDL 특성
 
-VOLATILE 테이블은 서버 재시작 시 테이블 자체가 사라집니다. 따라서 서버 시작 시 테이블을 재생성해야 합니다.
+서버 재시작 시 테이블 자체가 사라진다. 따라서 서버 시작 시 재생성이 필요하다.
 
 ```sql
 -- 서버 시작 시 VOLATILE 테이블 생성 (초기화 스크립트 필요)
@@ -64,8 +65,8 @@ CREATE VOLATILE TABLE table_name (
 );
 ```
 
-- `PRIMARY KEY` 선택
-- PRIMARY KEY 컬럼은 하나만 지정
+- `PRIMARY KEY`는 선택 사항이다.
+- PRIMARY KEY 컬럼은 하나만 지정한다.
 
 ### 삭제
 
@@ -75,5 +76,5 @@ DROP TABLE sensor_latest;
 
 ### 주의사항
 
-- VOLATILE 테이블의 DDL(구조 정의)은 데이터베이스에 영구 저장되지 않습니다.
-- 서버 재시작 후 자동으로 재생성되지 않으므로, 초기화 스크립트(예: 시작 시 machsql 실행)를 구성합니다.
+- VOLATILE 테이블의 DDL(구조 정의)은 데이터베이스에 영구 저장되지 않는다.
+- 서버 재시작 후 자동 재생성되지 않으므로, 초기화 스크립트(예: 시작 시 machsql 실행)를 구성해야 한다.

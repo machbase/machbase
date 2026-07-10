@@ -3,14 +3,15 @@ title: '8.8 제약, 오류, 문제 해결'
 weight: 80
 toc: true
 ---
-제약, 오류, 문제 해결에 해당하는 세부 문서를 모았습니다.
+
+RDB 테이블의 Edition 제한과 기능 제약 사항을 정리한다.
 
 
 <a id="limitations-rdb-edition"></a>
 
 ## Edition 제한
 
-RDB 테이블은 Machbase Standard Edition 전용 기능입니다.
+RDB 테이블은 Standard Edition 전용 기능이다.
 
 ### Edition별 지원 현황
 
@@ -24,7 +25,7 @@ RDB 테이블은 Machbase Standard Edition 전용 기능입니다.
 
 ### Cluster Edition에서의 대안
 
-Cluster Edition 환경에서 RDB 테이블이 필요한 경우:
+Cluster Edition 환경에서 RDB 테이블과 유사한 기능이 필요한 경우 다음을 고려한다.
 
 1. **LOOKUP 테이블**: 소규모 데이터 + PRIMARY KEY 기반 UPDATE/DELETE 시
 2. **LOG 테이블**: UPDATE 불필요한 추가 전용 이력 데이터

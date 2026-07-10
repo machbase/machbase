@@ -3,7 +3,7 @@ type: docs
 title: '13.7 Collector 운영'
 weight: 50
 ---
-Collector는 외부 데이터 소스에서 Machbase로 데이터를 수집하는 컴포넌트입니다. 파일, 메시지 큐, 네트워크 스트림 등 다양한 소스에서 데이터를 읽어 Machbase 테이블에 실시간으로 적재합니다.
+Collector는 파일, 메시지 큐, 네트워크 스트림 등 외부 데이터 소스에서 데이터를 읽어 Machbase 테이블에 실시간으로 적재하는 컴포넌트입니다.
 
 ## Collector 아키텍처
 

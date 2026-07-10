@@ -3,7 +3,7 @@ type: docs
 title: '11.2 공통 연동 개념'
 weight: 20
 ---
-드라이버나 언어에 관계없이 Machbase에 연동할 때 공통으로 이해해야 할 개념을 설명합니다. 이 섹션의 내용을 먼저 파악하면 각 SDK의 개별 문서를 빠르게 이해할 수 있습니다.
+드라이버나 언어에 관계없이 공통으로 이해해야 할 연동 개념을 설명합니다. 여기서 다루는 내용을 먼저 파악해 두면 각 SDK 문서를 빠르게 이해할 수 있습니다.
 
 ## 이 섹션의 구성
 
@@ -17,28 +17,28 @@ weight: 20
 | [Append API와 Batch INSERT](/dbms/application-integration/concepts-common/#append-api-batch) | 고속 비트랜잭션 입력 vs 트랜잭션 기반 배치 INSERT, 언제 무엇을 선택할지 |
 | [오류 처리와 재시도](/dbms/application-integration/concepts-common/#error-handling-retry) | 연결 오류 코드, exponential backoff, Append flush 실패, connection pool 격리 |
 
-## Machbase 연동의 핵심 특성
+## 핵심 특성
 
-Machbase는 일반 관계형 데이터베이스와 다른 몇 가지 중요한 특성이 있습니다. 연동 코드를 작성하기 전에 반드시 숙지하세요.
+연동 코드를 작성하기 전에 아래 세 가지를 반드시 숙지하세요.
 
 **테이블 타입에 따른 트랜잭션 지원 차이**
 
-TAG 테이블과 LOG 테이블은 트랜잭션을 지원하지 않습니다. RDB(관계형) 테이블만 완전한 ACID 트랜잭션을 지원합니다. 대부분의 시계열 데이터 수집은 TAG/LOG 테이블을 사용하므로, 이 테이블에 대한 쓰기는 commit/rollback이 의미 없습니다.
+TAG/LOG 테이블은 트랜잭션을 지원하지 않습니다. ACID 트랜잭션은 RDB 테이블에서만 동작하므로, TAG/LOG에 대한 쓰기에서는 commit/rollback이 의미가 없습니다.
 
 **시간 데이터는 내부적으로 UTC nanosecond**
 
-Machbase는 모든 시간 데이터를 UTC 기준 nanosecond 정수로 저장합니다. 연결 시 timezone을 설정하지 않으면 조회 결과가 UTC로 표시됩니다. 애플리케이션 배포 지역에 맞는 timezone 설정을 연결 시 지정하는 것을 권장합니다.
+모든 시간 데이터는 UTC 기준 nanosecond 정수로 저장됩니다. 연결 시 timezone을 설정하지 않으면 조회 결과가 UTC로 표시되므로, 배포 지역에 맞는 timezone을 연결 옵션에서 지정하세요.
 
 **대용량 입력에는 Append API 사용**
 
-일반 INSERT는 행 단위로 처리되어 대용량 입력에 적합하지 않습니다. Machbase는 TAG/LOG 테이블 대량 입력을 위한 Append API를 제공합니다. 초당 수천 건 이상의 쓰기가 예상된다면 Append API를 사용하세요.
+일반 INSERT는 행 단위 처리라 대용량 입력에 적합하지 않습니다. 초당 수천 건 이상의 쓰기가 예상된다면 Append API를 사용하세요.
 
 
 <a id="connection-string-authentication"></a>
 
 ## 연결 문자열과 인증
 
-Machbase에 연결하기 위한 기본 정보와 각 드라이버별 연결 문자열 형식을 설명합니다.
+연결에 필요한 기본 정보와 드라이버별 연결 문자열 형식을 설명합니다.
 
 ### 기본 연결 정보
 
@@ -59,7 +59,7 @@ Machbase에 연결하기 위한 기본 정보와 각 드라이버별 연결 문�
 
 #### AUTH KEY 인증 (Machbase 8.0 이상)
 
-비밀번호 대신 서버에 등록된 공개키와 클라이언트 개인키 파일로 challenge 인증을 수행하는 방식입니다. 비밀번호를 소스코드나 설정 파일에 직접 기록하지 않아도 됩니다. machsql, ODBC/CLI, JDBC 등 challenge 인증을 구현한 클라이언트에서 사용합니다.
+서버에 등록된 공개키와 클라이언트 개인키 파일로 challenge 인증을 수행합니다. 비밀번호를 소스코드나 설정 파일에 기록할 필요가 없습니다. machsql, ODBC/CLI, JDBC 등에서 사용할 수 있습니다.
 
 AUTH KEY는 사용자 생성 또는 변경 SQL로 공개키를 등록합니다.
 
@@ -168,7 +168,7 @@ curl -u SYS:MANAGER \
 
 ### Connection Pool 권장 설정
 
-단발성 연결(연결 → 쿼리 → 해제)을 반복하면 연결 수립 비용이 누적되어 성능이 저하됩니다. 애플리케이션 서버에서는 connection pool을 사용하세요.
+단발성 연결을 반복하면 연결 수립 비용이 누적됩니다. 애플리케이션 서버에서는 반드시 connection pool을 사용하세요.
 
 #### HikariCP (Java)
 
@@ -206,7 +206,7 @@ engine = create_engine(
 
 #### 연결 유효성 검증
 
-Long-running 애플리케이션에서는 pool 내 연결이 끊어질 수 있습니다. connection pool의 validation query를 설정하세요.
+장시간 실행 애플리케이션에서는 pool 내 연결이 끊어질 수 있으므로 validation query를 설정합니다.
 
 ```java
 // HikariCP: 연결 검증 쿼리 설정
@@ -220,7 +220,7 @@ engine = create_engine(url, pool_pre_ping=True)
 
 ### 보안 권장사항
 
-비밀번호를 소스코드에 직접 기록하지 마세요. 환경 변수 또는 시크릿 관리 도구를 사용합니다.
+비밀번호를 소스코드에 직접 기록하지 마세요. 환경 변수나 시크릿 관리 도구를 사용합니다.
 
 ```python
 import os
@@ -250,7 +250,7 @@ Connection conn = DriverManager.getConnection(url,
 
 ## 타임존 연결 옵션
 
-Machbase는 모든 시간 데이터를 내부적으로 UTC nanosecond 정수로 저장합니다. 조회 시 어떤 timezone으로 표시할지는 연결 옵션 또는 SQL 함수로 제어합니다.
+모든 시간 데이터는 내부적으로 UTC nanosecond 정수로 저장됩니다. 조회 시 표시할 timezone은 연결 옵션 또는 SQL 함수로 제어합니다.
 
 ### 내부 저장 방식
 
@@ -259,7 +259,7 @@ Machbase는 모든 시간 데이터를 내부적으로 UTC nanosecond 정수로 
 표시: 서버 또는 연결 timezone에 따라 변환
 ```
 
-timezone 설정 없이 조회하면 서버 또는 세션의 기본 timezone으로 표시됩니다. 한국 표준시(KST, UTC+9)처럼 특정 timezone으로 표시하려면 연결 시 timezone을 지정하거나 애플리케이션에서 변환합니다.
+timezone 설정 없이 조회하면 서버 기본 timezone으로 표시됩니다. KST(UTC+9)처럼 특정 timezone으로 보려면 연결 시 지정하거나 애플리케이션에서 변환합니다.
 
 ### 연결 시 timezone 설정
 
@@ -314,8 +314,7 @@ char connStr[] = "SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;PWD=MANAGER;"
 
 ### 쿼리에서 시간 문자열 처리
 
-연결 timezone은 드라이버/세션 설정을 따릅니다. SQL에서는 `TO_CHAR`로 `DATETIME`
-값을 문자열로 만들고, `TO_DATE`로 문자열을 `DATETIME` 값으로 변환합니다.
+SQL에서는 `TO_CHAR`로 `DATETIME` 값을 문자열로 만들고, `TO_DATE`로 문자열을 `DATETIME` 값으로 변환합니다.
 
 #### TO_CHAR로 포맷 지정
 
@@ -338,7 +337,7 @@ WHERE time >= TO_DATE('2024-07-03 09:00:00', 'YYYY-MM-DD HH24:MI:SS');
 
 #### 연결 timezone과 쿼리 timezone의 관계
 
-연결 시 timezone을 설정하면 `TO_CHAR`에서 timezone 인자를 생략했을 때 연결 timezone이 기본값으로 사용됩니다.
+`TO_CHAR`에서 timezone 인자를 생략하면 연결 timezone이 기본값으로 적용됩니다.
 
 ```sql
 -- 연결 timezone이 Asia/Seoul일 때
@@ -352,14 +351,14 @@ SELECT TO_CHAR(time, 'YYYY-MM-DD HH24:MI:SS') FROM tag_table;
 
 ### SYSDATE vs NOW
 
-Machbase에서 현재 시각을 나타내는 두 가지 표현이 있습니다.
+현재 시각을 나타내는 두 가지 표현이 있습니다.
 
 | 표현 | 반환값 | 용도 |
 |------|--------|------|
 | `SYSDATE` | 현재 시각 (UTC nanosecond) | WHERE 조건, 기본값 |
 | `NOW` | 현재 시각 | `SYSDATE`와 동일 |
 
-두 표현은 동일한 값을 반환합니다. `SYSDATE`가 더 일반적으로 사용됩니다.
+두 표현은 동일한 값을 반환하며, `SYSDATE`가 더 일반적입니다.
 
 ```sql
 -- 최근 1시간 데이터 조회
@@ -405,13 +404,13 @@ SYSDATE + 1800000000000
 
 ## Prepared statement
 
-Prepared statement는 SQL 문을 먼저 파싱·컴파일한 뒤, 파라미터만 바꿔가며 반복 실행하는 방식입니다. SQL 인젝션 방지와 반복 실행 성능 향상이라는 두 가지 이점이 있습니다.
+SQL 문을 먼저 파싱·컴파일한 뒤 파라미터만 바꿔 반복 실행하는 방식입니다. SQL 인젝션 방지와 반복 실행 성능 향상, 두 가지 이점을 동시에 얻을 수 있습니다.
 
 ### 왜 Prepared statement를 사용하는가
 
 #### SQL 인젝션 방지
 
-문자열을 직접 SQL에 연결(concatenate)하면 악의적인 입력값이 SQL 구조를 변경할 수 있습니다.
+문자열을 직접 SQL에 연결하면 악의적인 입력값이 SQL 구조를 변경할 수 있습니다.
 
 ```python
 # 위험한 코드: 문자열 직접 연결
@@ -442,7 +441,7 @@ Prepared statement × 1000번:
 
 ### Machbase에서의 지원 범위
 
-Machbase는 LOG, TAG, RDB 테이블 모두에서 Prepared statement를 지원합니다.
+LOG, TAG, RDB 테이블 모두에서 Prepared statement를 지원합니다.
 
 | 테이블 타입 | INSERT | SELECT |
 |------------|--------|--------|
@@ -450,7 +449,7 @@ Machbase는 LOG, TAG, RDB 테이블 모두에서 Prepared statement를 지원합
 | TAG 테이블 | O | O |
 | RDB 테이블 | O | O |
 
-단, Append API와 Prepared statement는 별개입니다. Append API는 Prepared statement 형태가 아니라 전용 API 호출로 동작합니다. 대용량 입력은 Append API를, 단건 또는 소량 반복 입력은 Prepared statement를 사용합니다.
+Append API와는 별개로, Append는 전용 API 호출로 동작합니다. 대용량 입력에는 Append API를, 단건이나 소량 반복 입력에는 Prepared statement를 사용합니다.
 
 ### 예제
 
@@ -571,10 +570,7 @@ SQLFreeStmt(stmt, SQL_DROP);
 
 ## Parameter binding
 
-Parameter binding은 SQL 문에 값을 안전하게 전달하는 메커니즘입니다. ODBC, JDBC,
-.NET, Go, Node.js 드라이버는 일반적으로 `?` 위치 바인딩을 사용합니다. Python
-`machbaseAPI`의 DB-API 스타일 커서는 `%s` 또는 `%(name)s` 자리 표시자를 클라이언트에서
-렌더링합니다.
+SQL 문에 값을 안전하게 전달하는 메커니즘입니다. ODBC, JDBC, .NET, Go, Node.js 드라이버는 `?` 위치 바인딩을, Python `machbaseAPI`는 `%s` 또는 `%(name)s` 자리 표시자를 사용합니다.
 
 ### 위치 기반 바인딩 (Positional Binding)
 
@@ -592,7 +588,7 @@ INSERT INTO tag_table (name, time, value) VALUES (?, ?, ?)
 
 ### DATETIME 타입 바인딩
 
-Machbase의 시간 값은 내부적으로 **UTC 기준 nanosecond 정수**로 저장됩니다. 드라이버마다 바인딩 방식이 다릅니다.
+시간 값은 내부적으로 **UTC 기준 nanosecond 정수**로 저장되며, 드라이버마다 바인딩 방식이 다릅니다.
 
 #### 주의: nanosecond vs millisecond
 
@@ -761,7 +757,7 @@ cmd.ExecuteNonQuery();
 
 ### 타입 변환 주의사항
 
-Machbase는 타입 불일치 시 암묵적 변환을 시도하지만, 정밀도 손실이 발생할 수 있습니다. 특히 다음 경우에 주의하세요.
+타입 불일치 시 암묵적 변환을 시도하지만 정밀도 손실이 발생할 수 있습니다. 특히 다음 경우에 주의하세요.
 
 | 상황 | 권장 처리 |
 |------|-----------|
@@ -775,7 +771,7 @@ Machbase는 타입 불일치 시 암묵적 변환을 시도하지만, 정밀도 
 
 ## 트랜잭션 처리 (RDB 및 SDK별 지원 범위 분리)
 
-Machbase는 테이블 유형에 따라 트랜잭션 지원 범위가 다릅니다. 애플리케이션 설계 시 반드시 확인해야 합니다.
+테이블 유형에 따라 트랜잭션 지원 범위가 다릅니다. 애플리케이션 설계 시 반드시 확인하세요.
 
 ### 테이블 유형별 트랜잭션 지원
 
@@ -791,7 +787,7 @@ Machbase는 테이블 유형에 따라 트랜잭션 지원 범위가 다릅니�
 
 ### Autocommit 동작
 
-Machbase JDBC 드라이버는 기본적으로 **autocommit이 활성화**되어 있습니다. RDB 테이블에서 트랜잭션을 명시적으로 제어하려면 autocommit을 비활성화합니다.
+JDBC 드라이버는 기본적으로 **autocommit이 활성화**되어 있습니다. RDB 테이블에서 트랜잭션을 명시적으로 제어하려면 autocommit을 비활성화합니다.
 
 ```java
 // JDBC: 트랜잭션 제어
@@ -881,7 +877,7 @@ TAG/LOG 테이블에서 잘못 삽입된 데이터를 제거하려면 [DELETE �
 
 ## Append API와 Batch API
 
-Machbase에 데이터를 입력하는 방법은 크게 세 가지입니다. 각 방법의 특성과 적합한 사용 상황을 설명합니다.
+데이터 입력 방법은 크게 세 가지이며, 각각의 특성과 적합한 상황이 다릅니다.
 
 ### 세 가지 입력 방법 비교
 
@@ -895,7 +891,7 @@ Machbase에 데이터를 입력하는 방법은 크게 세 가지입니다. 각 
 
 #### 동작 원리
 
-Append API는 일반 SQL `INSERT` 대신 Append 전용 세션이나 요청 형식으로 행 데이터를 전송합니다. 드라이버에 따라 내부 버퍼링, pending 응답 확인, 자동 오류 확인 시점이 다르므로 `flush`와 `close`의 정확한 의미는 각 드라이버 문서를 함께 확인해야 합니다.
+일반 SQL INSERT 대신 Append 전용 세션으로 행 데이터를 전송합니다. 내부 버퍼링, pending 응답 확인, 오류 확인 시점은 드라이버마다 다르므로 `flush`와 `close`의 정확한 의미는 각 드라이버 문서를 함께 확인하세요.
 
 ```
 애플리케이션
@@ -905,7 +901,7 @@ Append 전용 프로토콜 또는 요청
 Machbase 서버
 ```
 
-이 방식은 네트워크 왕복 횟수를 대폭 줄여 일반 INSERT 대비 수십 배의 쓰기 처리량을 제공합니다.
+네트워크 왕복 횟수를 대폭 줄여 일반 INSERT 대비 수십 배의 쓰기 처리량을 달성합니다.
 
 #### 주요 특성
 
@@ -995,7 +991,7 @@ conn.close();
 
 #### 동작 원리
 
-Batch INSERT는 Prepared statement를 활용해 여러 행의 파라미터를 한 번의 네트워크 요청으로 전송합니다. 트랜잭션 내에서 동작하므로 전체 성공 또는 전체 실패가 보장됩니다.
+Prepared statement를 활용하여 여러 행의 파라미터를 한 번의 네트워크 요청으로 전송합니다. 트랜잭션 내에서 동작하므로 전체 성공 또는 전체 실패가 보장됩니다.
 
 #### 언제 Batch INSERT를 사용하는가
 
@@ -1060,7 +1056,7 @@ conn.close()
 
 ## 오류 처리와 재시도
 
-애플리케이션의 안정성을 위해 연결 오류, 쿼리 오류, Append 실패를 각각 다르게 처리해야 합니다.
+연결 오류, 쿼리 오류, Append 실패는 각각 다른 전략으로 처리해야 합니다.
 
 ### 오류 유형별 분류
 
@@ -1075,7 +1071,7 @@ conn.close()
 
 ### 연결 오류와 재시도
 
-연결 실패는 일시적인 네트워크 문제나 서버 재시작으로 발생할 수 있습니다. **지수 백오프(exponential backoff)** 전략으로 재시도합니다.
+네트워크 문제나 서버 재시작으로 연결이 실패할 수 있습니다. **지수 백오프(exponential backoff)** 전략으로 재시도합니다.
 
 ```python
 import time
@@ -1114,7 +1110,7 @@ for (int i = 1; i <= maxAttempts; i++) {
 
 ### 쿼리 오류 처리
 
-쿼리 오류는 재시도해도 동일한 결과가 반복되므로, **오류 내용을 로그로 남기고 상위 레이어에 전파**합니다.
+쿼리 오류는 재시도해도 결과가 같으므로 **로그를 남기고 상위 레이어에 전파**합니다.
 
 ```python
 cursor = conn.cursor()
@@ -1158,7 +1154,7 @@ if (SQLAppendFlush(stmt) != SQL_SUCCESS) {
 
 ### Connection Pool 사용 시 오류 격리
 
-Connection pool을 사용할 때 오류가 발생한 연결은 pool에서 제거하고 새 연결로 교체합니다.
+오류가 발생한 연결은 pool에서 제거하고 새 연결로 교체합니다.
 
 ```java
 // HikariCP 설정 예시

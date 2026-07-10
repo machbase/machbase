@@ -9,20 +9,18 @@ toc: true
 ## CLI/ODBC API
 
 
-CLI란 [ISO](https://en.wikipedia.org/wiki/International_Organization_for_Standardization)/[IEC](https://en.wikipedia.org/wiki/International_Electrotechnical_Commission) 9075-3:2003에 정의된 소프트웨어 개발 표준입니다.
+CLI(Call Level Interface)는 [ISO](https://en.wikipedia.org/wiki/International_Organization_for_Standardization)/[IEC](https://en.wikipedia.org/wiki/International_Electrotechnical_Commission) 9075-3:2003에 정의된 소프트웨어 개발 표준으로, SQL 전달과 결과 수신에 관한 함수 명세를 규정합니다. 1990년대 초 C와 COBOL 용으로 개발되었으며 현재까지 스펙이 유지되고 있습니다.
 
-CLI는 데이터베이스에 어떻게 SQL을 전달하고, 결과 값을 어떻게 받고 분석해야 하는지에 대한 함수 및 명세를 정의하고 있습니다. 이 CLI는 1990년 초창기에 개발되었고, C 와 COBOL 언어 만을 위해 개발되었고, 현재까지 그 스펙이 유지되고 있습니다.
-
-현재까지 가장 널리 알려진 표준 인터페이스는 ODBC(Open Database Connectivity)로서 클라이언트 프로그램이 데이터베이스의 종류와 무관하게 데이터베이스 접속할 수 있는 방법을 제시해 주고 있습니다. 현재 최신 ODBC API 버전은 3.52 로서 ISO와 X/Open 표준에 정의되어 있습니다.
+ODBC(Open Database Connectivity)는 CLI 기반의 대표적 표준 인터페이스로, 데이터베이스 종류와 무관하게 접속할 수 있는 방법을 제공합니다. 현재 최신 ODBC API 버전은 3.52이며 ISO와 X/Open 표준에 정의되어 있습니다.
 
 
 ## 표준 CLI 함수
-표준 함수의 사용법에 대해서는 다음과 같은 링크를 참조합니다.
+표준 함수 사용법은 아래 링크를 참고하세요.
 
 * [위키피디아](https://en.wikipedia.org/wiki/Call_Level_Interface)
 * [오픈그룹 문서](https://www2.opengroup.org/ogsys/catalog/c451)
 
-다음의 함수를 참고하면 됩니다.
+지원하는 표준 함수 목록:
 
 | | | | |
 |--|--|--|--|
@@ -39,7 +37,7 @@ CLI는 데이터베이스에 어떻게 SQL을 전달하고, 결과 값을 어떻
 | SQLDescribeCol    | SQLGetData        | SQLNumResultCols | SQLTables         |
 
 ## 접속을 위한 연결 스트링
-CLI를 통해 접속을 하기 위해서는 연결 스트링을 만들어야 하며, 각각의 내용은 다음과 같습니다.
+CLI 접속 시 사용하는 연결 스트링 항목은 다음과 같습니다.
 
 | 연결 스트링 항목명  | 항목 설명 |
 |---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -61,7 +59,7 @@ CLI를 통해 접속을 하기 위해서는 연결 스트링을 만들어야 하
 |   AUTH_SIG_SCHEME   | `AUTH_MODE=CHALLENGE`에서 사용할 서명 스킴입니다. `ECDSA`, `RSA_PKCS1_V15`, `RSA_PSS`를 지정할 수 있습니다. 생략하면 키 파일에서 기본 스킴을 추론합니다. |
 |    AUTH_KEY_FILE    | `AUTH_MODE=CHALLENGE`에서 사용할 로컬 PEM 개인키 파일 경로입니다. challenge 인증에는 필수입니다. |
 
-CLI 접속 예제는 다음과 같습니다.
+CLI 접속 예제:
 
 ```cpp
 sprintf(connStr,"SERVER=127.0.0.1;COMPRESS=512;UID=SYS;PWD=MANAGER;CONNTYPE=1;PORT_NO=%d", MACHBASE_PORT_NO);
@@ -72,18 +70,16 @@ if (SQL_ERROR == SQLDriverConnect( gCon, NULL, (SQLCHAR *)connStr, SQL_NTS, NULL
 ```
 
 ## 확장 CLI 함수 (APPEND)
-CLI 확장 함수는 Machbase 서버에 데이터를 초고속으로 입력하기 위해 제공되는 Append 프로토콜을 구현하기 위한 함수입니다.
-
-이 함수는 크게 4가지의 함수로 구성되어 있는데, 채널의 오픈, 채널에 대한 데이터 입력, 채널의 플러쉬, 채널 클로징입니다.
+Machbase 서버에 초고속 데이터를 입력하기 위한 Append 프로토콜 함수입니다. 채널 오픈, 데이터 입력, 플러시, 클로징의 4가지 함수로 구성됩니다.
 
 ### Append 프로토콜의 이해
-Machbase에서 제공하는 Append 프로토콜은 비동기 방식으로 동작합니다. 비동기라 함은 클라이언트가 서버에게 요청한 특정 작업에 대한 응답이 서로 완전히 동기화되지 않고, 임의의 이벤트가 발생하는 순간에 발생하는 것을 의미합니다. 즉, 클라이언트가 Append를 수행했다고 하더라도, 그 수행에 대한 결과를 바로 얻거나 확인할 수 없으며, 서버에서 준비가 되는 임의의 시점에 그것을 확인할 수 있다는 것입니다. 이런 이유로 Append 프로토콜을 활용해서 응용 프로그램을 개발하는 개발자는 다음과 같은 내부 동작에 대한 이해를 가져야 합니다. 이후의 설명은 클라이언트가 언제 어떻게 서버에서 발생하는 비동기 에러를 검출하고 사용자에게 되돌여주는지에 대한 것입니다.
+Append 프로토콜은 비동기 방식으로 동작합니다. 클라이언트가 Append를 수행해도 그 결과를 즉시 받을 수 없고, 서버 측에서 처리가 완료되는 시점에 확인할 수 있습니다. 따라서 Append 기반 애플리케이션을 개발할 때는 아래에 설명하는 비동기 에러 검출 동작을 이해해야 합니다.
 
 ### Append 데이터의 전송
-SQLExecute 혹은 SQLExecDirect()와 같은 일반적인 호출에서 Machbase는 즉시 그 결과를 클라이언트에게 되돌려주는 동기화 방식을 사용합니다. 그러나, SQLAppendDataV2()는 사용자 데이터가 입력된 이후 즉시 요청을 보내지 않습니다. 대신, 클라이언트 통신 버퍼가 모두 찰 때 까지 대기하고 있다가 모두 차면 그 이후에 한꺼번에 데이터를 클라이언트로 전송하게 됩니다. 이렇게 설계된 이유는 Append를 사용하는 클라이언트의 입력 데이터가 초당 수만에서 수십만 레코드를 가정하였기 때문에 고속의 데이터 전송을 위한 버퍼링 방식을 활용한 것입니다. 이런 이유로 만일 사용자가 임의로 해당 버퍼의 내용을 전송하고자 할 경우에는 SQLAppendFlush() 함수를 호출하여, 명시적으로 데이터를 입력할 수 있습니다.
+SQLExecute나 SQLExecDirect()는 결과를 즉시 반환하는 동기 방식이지만, SQLAppendDataV2()는 다릅니다. 데이터 입력 후 즉시 전송하지 않고, 클라이언트 통신 버퍼가 가득 차면 한꺼번에 서버로 전송합니다. 초당 수만~수십만 레코드 입력을 전제로 설계된 버퍼링 방식입니다. 버퍼 내용을 즉시 전송하려면 SQLAppendFlush()를 호출하세요.
 
 ### Append 데이터의 에러 확인
-앞에서 언급한 바와 같이 Append 프로토콜은 버퍼링되어 비동기로 동작합니다. 특히, 서버에서 에러가 발생하지 않았을 경우에는 아무런 응답을 받지 않고, 에러가 발생했을 경우에만 에러를 검출하는 방식을 취하기 때문에 에러가 언제 어떻게 검출되는지 이해하는 것이 매우 중요합니다. 또한, 에러를 검출하는 비용이 상대적으로 매우 크기 때문에 레코드 입력시마다 매번 검사하는 것이 매우 비효율적으로 판단되어, 현재 Machbase에서는 명시적으로 다음과 같은 경우에만 에러를 검출하도록 되어 있습니다. 에러가 검출될 경우에는 사용자가 설정한 에러 콜백 함수를 매번 호출하게 됩니다.
+Append 프로토콜은 비동기 버퍼링 방식이므로, 서버에서 에러가 없으면 응답이 없고 에러 발생 시에만 검출됩니다. 에러 검출 비용이 크기 때문에 매 레코드마다 검사하지 않고, 다음 세 가지 경우에만 에러를 확인합니다. 에러가 검출되면 사용자가 설정한 에러 콜백 함수를 호출합니다.
 
 1. 전송 버퍼가 모두 차고, 서버에게 명시적으로 데이터를 전송한 이후 검사
 2. SQLAppendFlush() 내부에서 서버에게 명시적으로 데이터를 전송한 이후 검사
@@ -92,10 +88,10 @@ SQLExecute 혹은 SQLExecDirect()와 같은 일반적인 호출에서 Machbase�
 즉, 기본적으로 위의 3가지 경우에만 에러를 검출하도록 되어 있어, I/O의 발생을 최소화하도록 설계되었습니다.
 
 ### 서버 에러 검사를 위한 부가 옵션
-성능을 최대한으로 달성하기 위해 기본적으로 설정된 에러 검출 기법은 사용자가 원하는 경우 좀 더 빈번하게 검사하고, 이를 활용할 수 있습니다. 즉, SQLAppendOpen() 함수의 마지막 인자인 aErrorCheckCount를 조절함으로서 가능합니다. 이 값이 0일 경우에는 별도의 확인 동작을 하지 않고, 기본으로 동작합니다. 그러나, 만일 이 값이 0보다 클 경우에는 SQLAppendData()의 호출 횟수마다 명시적으로 에러를 검사하도록 되어 있습니다. 다시 말해 이 값이 10일 경우에는 10번의 Append 동작마다 에러를 검사하는 비용을 지불합니다. 따라서, 이 값이 작을 경우에는 에러 검출을 위한 시스템 리소스를 많이 사용하기 때문에 적절한 숫자로 조절하여 사용해야 합니다.
+SQLAppendOpen() 함수의 마지막 인자인 aErrorCheckCount로 에러 검사 빈도를 조절할 수 있습니다. `0`이면 기본 동작(위 세 가지 경우에만 검출)이고, `0`보다 큰 값을 지정하면 해당 횟수의 SQLAppendData() 호출마다 에러를 검사합니다. 예를 들어 `10`이면 10번마다 검사합니다. 값이 작을수록 시스템 리소스 사용량이 늘어나므로 적절히 조절하세요.
 
 ### 서버 에러 발생시 Trace 로그 남기기
-만일 에러가 발생한 Append 데이터에 대해서 별도로 Trace 로그를 남기고자 할 경우에는 서버에 준비된 프로퍼티 DUMP_APPEND_ERROR 를 1로 설정합니다. 이렇게 설정하면, mach.trc 파일에 해당 에러를 발생시킨 레코드에 대한 명세가 파일로 기록됩니다. 단, 에러의 횟수가 과도할 경우 시스템 리소스의 사용량이 급격히 늘어나, Machbase의 전체 성능을 떨어뜨릴 수 있으므로 주의하여 사용해야 합니다.
+에러가 발생한 Append 데이터의 Trace 로그를 남기려면 서버 프로퍼티 DUMP_APPEND_ERROR를 1로 설정합니다. mach.trc 파일에 에러를 일으킨 레코드 상세가 기록됩니다. 다만 에러가 빈번하면 시스템 리소스 사용량이 급격히 증가하여 전체 성능이 저하될 수 있으므로 주의하세요.
 
 ### APPEND 함수 설명
 #### SQLAppendOpen
@@ -225,9 +221,7 @@ testAppendFuncWithTime()
 SQLRETURN  SQLAppendDataV2(SQLHSTMT StatementHandle, SQL_APPEND_PARAM *aData);
 ```
 
-이 함수는 Machbase 2.0 부터 새로 도입된 Append 함수로서, 기존의 함수에서 불편했던 입력 방식을 편리하게 대폭 개선한 함수입니다.
-
-특히, 2.0에서 도입된 TEXT와 BINARY 타입의 경우는 SQLAppendDataV2() 함수에서만 입력이 가능합니다.
+Machbase 2.0에서 도입된 Append 함수로, 기존 함수의 입력 방식을 개선했습니다. TEXT와 BINARY 타입은 이 함수에서만 입력 가능합니다.
 
 * 각 타입에 맞는 NULL 입력 가능
 * VARCHAR 입력시 스트링 길이 입력 가능
@@ -489,7 +483,7 @@ IP 타입을 문자열 (STRING) 로 입력할경우 SQLAppendDataV2 이후에 �
 
 **가변 데이터형(문자 및 이진 데이터) 입력**
 
-가변 데이터 형에는 VARCHAR 및 TEXT 그리고, BLOB과 CLOB이 포함됩니다. 기존함수에서는 VARCHAR 만이 지원되었고, 또한 스트링의 길이를 사용자가 입력할 수 있는 방법이 없었습니다. 그런 이유로 매번 strlen() 함수를 통해 길이를 얻어야 했지만, 함수 V2 부터는 사용자가 직접 가변 데이터형에 대한 길이를 지정할 수 있게 되었습니다. 따라서, 만일 사용자가 그 길이를 미리 알고 있다면, 더 빠르게 데이터를 입력할 수 있습니다. 내부적으로는 가변 데이터형이 하나의 구조체로 되어 있지만, 개발 편의를 위해 각 데이터타입에 따라 멤버를 별도로 만들어 놓았습니다.
+가변 데이터형에는 VARCHAR, TEXT, BLOB, CLOB이 포함됩니다. 기존 함수에서는 VARCHAR만 지원하며 strlen()으로 길이를 구해야 했지만, V2부터는 길이를 직접 지정할 수 있어 성능이 향상됩니다. 내부적으로는 하나의 구조체이지만, 개발 편의를 위해 데이터 타입별로 멤버를 분리했습니다.
 
 ```cpp
 typedef struct machbaseAppendVarStruct
@@ -716,7 +710,7 @@ void dumpError(SQLHSTMT    aStmtHandle,
 SQLRETURN SQL_API SQLSetConnectAppendFlush(SQLHDBC hdbc, SQLINTEGER option)
 ```
 
-Append에 의해서 입력된 데이터는 통신 버퍼에 기록되어 전송대기 상태에서 사용자가 SQLAppendFlush 함수를 호출하거나 통신 버퍼가 가득 차게 되면 서버로 전송됩니다. 사용자가 버퍼가 가득 차 있지 않아도 일정 주기로 서버에게 Append에 의한 데이터를 전송하게 하려면 이 함수를 이용하면 됩니다. 이 함수는 매 100ms 주기로 마지막으로 전송한 시간과 현재 시간의 차이를 계산하여 지정된 시간(설정하지 않은 경우에는 1초)가 지난 경우 통신 버퍼의 내용을 서버에 전달합니다.
+Append 데이터는 통신 버퍼에 기록되어, SQLAppendFlush 호출이나 버퍼가 가득 찰 때 서버로 전송됩니다. 이 함수를 사용하면 버퍼가 가득 차지 않아도 주기적으로 전송합니다. 100ms 간격으로 마지막 전송 시간을 확인하여, 지정 시간(기본 1초)이 경과하면 버퍼 내용을 서버에 전달합니다.
 
 매개변수는 다음과 같습니다.
 
@@ -888,9 +882,9 @@ Append관련 함수에서 리턴되는 에러 메시지는 아래와 같습니�
 
 ## 열 형식 매개변수 바인딩
 
-이를 위해서 Machbase 5.5 이후 버전에서는 열 형색 매개변수 바인딩을 지원합니다. (행 형식 매개변수 바인딩은 아직 지원되지 않습니다.)
+Machbase 5.5 이후 버전에서 열 형식 매개변수 바인딩을 지원합니다 (행 형식은 미지원).
 
-함수 SQLSetStmtAttr()의 인자 Attribute에 SQL_ATTR_PARAM_BIND_TYPE을 설정하고 인자 param에 SQL_PARAM_BIND_BY_COLUMN을 설정합니다. 바인드할 각  칼럼에 대해서 매개변수를 배열로 설정하고, 지시자 변수 또한 배열로 설정합니다. 이후 SQLBindParameter()를 이 매개변수를 전달하여 호출합니다.
+SQLSetStmtAttr()에 SQL_ATTR_PARAM_BIND_TYPE / SQL_PARAM_BIND_BY_COLUMN을 설정하고, 각 컬럼의 매개변수와 지시자 변수를 배열로 준비한 뒤 SQLBindParameter()를 호출합니다.
 
 아래 그림은 각 매개변수 배열에 대해 열 형식 바인딩이 동작하는 방식을 보여줍니다.
 
@@ -1016,15 +1010,13 @@ drwxrwxr-x 4 mach mach 4096 Jun 18 19:26 ..
 -rw-rw-r-- 1 mach mach 549 Jun 18 19:26 sample1_connect.c
 -rw-rw-r-- 1 mach mach 8168 Jun 18 20:15 sample1_connect.o
 ```
-필요에 따라 얼마든지 위의 샘플 Makefile을 수정하여 응용 프로그램을 작성할 수 있을 것입니다.
+위의 샘플 Makefile을 수정하여 응용 프로그램을 작성할 수 있습니다.
 
 ## 샘플 프로그램
 
 ### 접속 예제
 
-CLI를 이용하여 접속하는 예제 프로그램을 작성해 보기로 합니다.
-
-샘플 파일명은 sample1_connect.c 로 합니다.
+CLI 접속 예제입니다. 파일명은 sample1_connect.c입니다.
 
 MACHBASE_PORT_NO는 $MACHBASE_HOME/conf/machbase.conf 파일에 있는 PORT_NO 값과 같아야 합니다.
 
@@ -1110,7 +1102,7 @@ int main()
 </div>
 </details>
 
-Makefile에 sample1_connect.c를 등록하고 컴파일하여 실행하면 다음과 같이 나옵니다.
+컴파일 후 실행 결과입니다.
 
 ```bash
 [mach@localhost cli]$ make
@@ -1121,9 +1113,7 @@ connected ...
 
 ### 데이터 입력 및 출력 예제
 
-아래의 예제 소스에서는 CREATE TABLE 구문을 이용하여 테이블을 생성하고, 간단한 데이터 값들을 임의로 생성해서 INSERT 구문을 사용해서 데이터를 입력하고, SELECT 구문을 이용하여 데이터를 출력합니다. 이를 활용하여 직접 값을 입력하고 확인할 때 각 타입별로 어떻게 설정을 해야 하는지 알수 있을 것입니다.
-
-샘플 파일명은 sample2_insert.c 라고 합니다.
+CREATE TABLE로 테이블을 생성하고, INSERT로 데이터를 입력한 뒤 SELECT로 조회하는 예제입니다. 각 타입별 설정 방법을 확인할 수 있습니다. 파일명은 sample2_insert.c입니다.
 
 <details>
 <summary>sample2_insert.c</summary>
@@ -1367,7 +1357,7 @@ int main()
 </details>
 
 
-Makefile에 sample2_insert.c를 등록하고 컴파일하여 실행하면 다음과 같이 나옵니다.
+컴파일 후 실행 결과입니다.
 
 ```bash
 [mach@localhost cli]$ make
@@ -1406,13 +1396,7 @@ seq = 1, score = 2, total = 30000, percentage = 0.00, ratio = 3.3e-05, id = id-1
 
 ### Prepare Execute 예제
 
-데이터를 binding하여 INSERT하는 예제 프로그램을 작성해 보자.
-
-마크베이스에서 데이터를 binding 하는 방식으로 값을 입력할수 있는데 이를 이용할시에는 데이터의 값들의 타입들을 명확히 지정해주고, 긴 문자열 타입들의 경우에는 길이 값을 반드시 지정해줘야 합니다.
-
-아래의 예제를 통해서 각 타입별로 데이터를 binding하는 방법을 알수 있습니다.
-
-파일명은 sample3_prepare.c 라고 합니다.
+파라미터 바인딩으로 INSERT하는 예제입니다. 각 타입의 바인딩 시 데이터 타입을 명확히 지정하고, 문자열 타입은 길이 값을 반드시 설정해야 합니다. 파일명은 sample3_prepare.c입니다.
 
 <details>
 <summary>sample3_prepare.c</summary>
@@ -1839,7 +1823,7 @@ int main()
 </div>
 </details>
 
-Makefile에 sample3_prepare.c를 등록하고 컴파일하여 실행하면 다음과 같이 나옵니다.
+컴파일 후 실행 결과입니다.
 
 ``` bash
 [mach@localhost cli]$ make
@@ -1878,11 +1862,7 @@ seq = 1, score = 2, total = 30000, percentage = 2.00, ratio = 6.66667e-05, id = 
 
 ### 확장 함수 Append 예제
 
-마크베이스에서는 대량의 데이터를 파일로부터 읽어서 고속으로 입력하는 방법으로 Append 프로토콜을 제공하고 있습니다. 이 Append 프로토콜을 이용하는 예제 프로그램을 작성해 보자.
-
-먼저 마크베이스에서 제공하는 다양한 타입별로 append 하는 방식의 예제를 살펴보자. Append 방식은 각 타입별로 편리하게 입력해 줄 수 있도록 각각의 설정값들이 정해져 있습니다. 그러므로 모든 방법별로 사용하는 입력하는 방식에 대한 숙지를 한다면 더욱더 효율적으로 프로그램을 작성할 수 있을 것입니다. 아래쪽에 있는 예제 코드에 그 방법들이 모두 나와 있습니다.
-
-파일명은 sample4_append1.c 라고 합니다.
+Append 프로토콜을 사용한 고속 데이터 입력 예제입니다. 다양한 타입별 Append 설정 방법을 포함합니다. 파일명은 sample4_append1.c입니다.
 
 
 <details>
@@ -2238,7 +2218,7 @@ time_t getTimeStamp()
 </div>
 </details>
 
-Makefile에 sample4_append1.c를 등록하고 컴파일하여 실행하면 다음과 같이 나옵니다.
+컴파일 후 실행 결과입니다.
 
 ```bash
 [mach@localhost cli]$ make sample4_append1
@@ -2319,7 +2299,7 @@ NULL
 [12] row(s) selected.
 ```
 
-이제 파일을 이용해서 고속으로 append하는 방식을 사용해 보자. 실제로 업무에서 사용되는 많은 양의 로그, 패킷등의 값들을 고속으로 입력하는 데 유용한 예제입니다. 파일명은 sample4_append2.c 라고 합니다.
+파일에서 대량의 로그/패킷 데이터를 읽어 고속으로 Append하는 예제입니다. 파일명은 sample4_append2.c입니다.
 
 미리 입력할 데이터를 data.txt에 저장해 두어야 합니다.
 
@@ -2616,7 +2596,7 @@ time_t getTimeStamp()
 </div>
 </details>
 
-Makefile에 sample4_append2.c를 등록하고 컴파일하여 실행하면 다음과 같이 나옵니다.
+컴파일 후 실행 결과입니다.
 
 ```bash
 [mach@localhost cli]$ make
@@ -2840,7 +2820,7 @@ int main()
 </div>
 </details>
 
-위의 파일을 추가하고 make를 실행하면 아래와 같이 원하는 열의 내용들이 나타나는 것을 볼 수 있습니다.
+make를 실행하면 열 정보가 출력됩니다.
 
 ```bash
 [mach@localhost cli]$ make
@@ -2867,9 +2847,7 @@ IMAGE -2 67108864
 
 #### SQLColumns
 
-SQLColumns은 현재 테이블 내에 존재하는 컬럼들의 정보를 알아낼 수 있는 함수입니다. 마크베이스에서도 위와 같은 함수를 지원하고 있으며 이를 이용하여 컬럼 각각의 정보들을 알아낼 수 있습니다.
-
-파일이름은 sample6_columns.c라고 합니다.
+SQLColumns는 테이블의 컬럼 정보를 조회하는 함수입니다. 파일명은 sample6_columns.c입니다.
 
 
 <details>
@@ -3055,7 +3033,7 @@ int main()
 </div>
 </details>
 
-위의 파일을 추가하고 make를 실행합니다. 결과는 다음과 같습니다.
+make를 실행한 결과입니다.
 
 ```bash
 [mach@localhost cli]$ make
@@ -3083,9 +3061,7 @@ IMAGE -2 BINARY 67108864
 
 ## 멀티 쓰레드 append 예제
 
-하나의 프로그램에서 여러 스레드를 이용해 여러 테이블에 append하는 예제입니다.
-
-파일 이름은 sample8_multi_session_multi_table.c로 합니다.
+여러 스레드에서 여러 테이블에 동시에 Append하는 예제입니다. 파일명은 sample8_multi_session_multi_table.c입니다.
 
 
 <details>
@@ -3736,7 +3712,7 @@ int main()
 </div>
 </details>
 
-make 코드를 추가하고 실행 파일을 실행해 봅니다. 쓰레드를 이용하므로 출력 순서가 다를 수 있습니다. 실행 결과는 다음과 같습니다.
+멀티 스레드이므로 출력 순서가 다를 수 있습니다. 실행 결과 예시입니다.
 
 ```bash
 [mach@localhost cli]$ make sample8_multi_session_multi_table

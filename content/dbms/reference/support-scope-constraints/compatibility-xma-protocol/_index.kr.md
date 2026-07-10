@@ -4,7 +4,7 @@ title: '17.8.10 호환성 및 XMA protocol compatibility'
 weight: 100
 ---
 
-XMA(eXtended Machbase Architecture) 프로토콜은 Machbase 서버와 클라이언트 드라이버(JDBC, ODBC, Python, Go 등) 사이의 통신 프로토콜입니다. 서버와 드라이버의 프로토콜 버전이 맞지 않으면 연결이 실패하거나 일부 기능이 동작하지 않을 수 있습니다.
+XMA(eXtended Machbase Architecture) 프로토콜은 Machbase 서버와 클라이언트 드라이버(JDBC, ODBC, Python, Go 등) 사이의 통신 프로토콜입니다. 프로토콜 버전이 맞지 않으면 연결 실패나 기능 제한이 발생할 수 있습니다.
 
 ## 프로토콜 버전 호환 표
 

@@ -4,7 +4,7 @@ title: '3.2 Standard Edition 설치'
 weight: 20
 toc: true
 ---
-Standard Edition은 단일 노드에 설치하는 구성입니다. 개발 환경, 소규모 운영, 엣지 디바이스 등에 적합합니다.
+Standard Edition은 단일 노드에 설치하는 구성으로, 개발 환경, 소규모 운영, 엣지 디바이스 등에 적합합니다.
 
 ## 설치 경로
 
@@ -20,11 +20,6 @@ Standard Edition은 단일 노드에 설치하는 구성입니다. 개발 환경
 
 ---
 
-**다음 읽을 내용**
-- [Linux 환경 준비](/kr/dbms/installation-deployment-upgrade/standard-edition/linux/preparation-environment-linux/)
-- [Windows 환경 준비](/kr/dbms/installation-deployment-upgrade/standard-edition/windows/preparation-environment-windows/)
-
-
 <a id="linux"></a>
 
 ## Linux 설치
@@ -36,24 +31,19 @@ Linux에서 Standard Edition을 설치하는 방법은 두 가지입니다.
 | [Tarball 설치](/kr/dbms/installation-deployment-upgrade/standard-edition/linux/tarball/) | 실제 서버 환경, 데이터 디렉터리를 직접 관리해야 하는 경우 |
 | [Docker 설치](/kr/dbms/installation-deployment-upgrade/standard-edition/linux/docker/) | 개발·테스트 환경, 빠른 구동이 필요한 경우 |
 
-Tarball 설치는 [Linux 환경 준비](/kr/dbms/installation-deployment-upgrade/standard-edition/linux/preparation-environment-linux/)를
-먼저 완료해야 합니다. Docker 설치는 Docker Engine과 볼륨/포트 권한을 준비하면 별도 OS 튜닝 없이
-시작할 수 있습니다.
+Tarball 설치는 [Linux 환경 준비](/kr/dbms/installation-deployment-upgrade/standard-edition/linux/preparation-environment-linux/)를 먼저 완료해야 합니다. Docker 설치는 Docker Engine과 볼륨/포트 권한만 준비하면 별도 OS 튜닝 없이 시작할 수 있습니다.
 
 ---
-
-**다음 읽을 내용**
-- [Linux 환경 준비](/kr/dbms/installation-deployment-upgrade/standard-edition/linux/preparation-environment-linux/)
 
 <a id="linux-preparation-environment-linux"></a>
 
 ### Linux 환경 준비
 
-Machbase를 Linux에 설치하기 전에 파일 디스크립터 한도, 시간 설정, 포트 예약을 확인하고 조정합니다.
+Linux에 설치하기 전에 파일 디스크립터 한도, 시간 설정, 포트 예약을 점검합니다.
 
 #### 파일 디스크립터 한도
 
-Machbase는 내부적으로 많은 수의 파일을 동시에 열기 때문에 OS 기본값(1024)으로는 부족합니다.
+내부적으로 많은 수의 파일을 동시에 열기 때문에 OS 기본값(1024)으로는 부족합니다.
 
 ```bash
 # 현재 soft limit 확인
@@ -90,7 +80,7 @@ ulimit -Sn
 
 #### 서버 시간 확인
 
-Machbase는 시계열 데이터를 처리하므로 서버 시간이 정확해야 합니다.
+시계열 데이터를 처리하므로 서버 시간이 정확해야 합니다.
 
 ```bash
 # 타임존 확인
@@ -119,8 +109,7 @@ ports=5656-5657
 sudo sysctl -w net.ipv4.ip_local_reserved_ports="${current:+$current,}$ports"
 ```
 
-기존 예약 포트가 있으면 덮어쓰지 말고 쉼표로 구분해 병합합니다. 영구 적용은
-`/etc/sysctl.conf`의 `net.ipv4.ip_local_reserved_ports` 항목을 다음 값과 병합합니다.
+기존 예약 포트가 있으면 덮어쓰지 말고 쉼표로 구분해 병합합니다. 영구 적용은 `/etc/sysctl.conf`의 `net.ipv4.ip_local_reserved_ports` 항목을 다음 값과 병합합니다.
 
 ```
 net.ipv4.ip_local_reserved_ports = 5656-5657
@@ -145,15 +134,11 @@ sudo iptables -A INPUT -p tcp --dport 5657 -j ACCEPT
 
 ---
 
-**다음 읽을 내용**
-- [Tarball 설치](/kr/dbms/installation-deployment-upgrade/standard-edition/linux/tarball/)
-- [Docker 설치](/kr/dbms/installation-deployment-upgrade/standard-edition/linux/docker/)
-
 <a id="linux-tarball"></a>
 
 ### Tarball 설치
 
-Linux 환경에 tarball(.tgz)을 압축 해제하여 Machbase Standard Edition을 설치하는 절차입니다.
+Linux 환경에 tarball(.tgz)을 압축 해제하여 Standard Edition을 설치하는 절차입니다.
 
 #### 1. 사용자 생성
 
@@ -187,7 +172,7 @@ ls -l
 
 #### 3. 환경 변수 설정
 
-`~/.bashrc`에 Machbase 환경 변수를 추가합니다.
+`~/.bashrc`에 환경 변수를 추가합니다.
 
 ```bash
 export MACHBASE_HOME=~/machbase_home
@@ -264,20 +249,13 @@ export MACHBASE_PORT_NO=7878
 
 ---
 
-**다음 읽을 내용**
-- [라이선스 설치](/kr/dbms/installation-deployment-upgrade/pre-install-preparation/license/)
-- [설치 검증 체크리스트](/kr/dbms/installation-deployment-upgrade/validation-checklist/)
-
 <a id="linux-docker"></a>
 
 ### Docker 설치
 
-Machbase Docker 이미지를 사용하면 별도의 환경 준비 없이 빠르게 구동할 수 있습니다. 개발·테스트
-환경에 적합합니다.
+Docker 이미지를 사용하면 별도의 환경 준비 없이 빠르게 구동할 수 있습니다. 개발·테스트 환경에 적합합니다.
 
-Docker 설치가 사전에 완료되어 있어야 합니다. 배포 튜토리얼은 `machbase/machbase` 이미지를
-사용합니다. 소스에서 Docker 이미지를 직접 빌드한 경우에는 로컬 이미지 이름(`machbase:latest`
-등)으로 바꾸십시오.
+Docker가 사전에 설치되어 있어야 합니다. 배포 튜토리얼은 `machbase/machbase` 이미지를 사용합니다. 소스에서 Docker 이미지를 직접 빌드한 경우에는 로컬 이미지 이름(`machbase:latest` 등)으로 바꾸십시오.
 
 #### 이미지 확인
 
@@ -355,15 +333,9 @@ docker restart machbase
 
 ---
 
-**다음 읽을 내용**
-- [라이선스 설치](/kr/dbms/installation-deployment-upgrade/pre-install-preparation/license/)
-- [설치 검증 체크리스트](/kr/dbms/installation-deployment-upgrade/validation-checklist/)
-
 <a id="windows"></a>
 
 ## Windows 설치
-
-Windows에서 Standard Edition을 설치하는 방법입니다.
 
 ### 설치 전 확인
 
@@ -380,14 +352,11 @@ Windows에서 Standard Edition을 설치하는 방법입니다.
 
 ---
 
-**다음 읽을 내용**
-- [Windows 환경 준비](/kr/dbms/installation-deployment-upgrade/standard-edition/windows/preparation-environment-windows/)
-
 <a id="windows-preparation-environment-windows"></a>
 
 ### Windows 환경 준비
 
-Windows에 Machbase를 설치하기 전에 방화벽 설정을 확인합니다.
+Windows에 설치하기 전에 방화벽 설정을 확인합니다.
 
 #### 방화벽 포트 열기
 
@@ -416,7 +385,7 @@ Machbase가 사용하는 포트를 Windows 방화벽 인바운드 규칙에 추�
 
 ##### PowerShell로 설정 (관리자 권한)
 
-GUI 대신 PowerShell로 빠르게 설정할 수 있습니다.
+GUI 대신 PowerShell로 빠르게 설정합니다.
 
 ```powershell
 New-NetFirewallRule -DisplayName "Machbase SQL" -Direction Inbound -Protocol TCP -LocalPort 5656 -Action Allow
@@ -425,25 +394,19 @@ New-NetFirewallRule -DisplayName "Machbase HTTP" -Direction Inbound -Protocol TC
 
 #### Visual C++ 재배포 패키지
 
-Machbase 실행에 Visual C++ Redistributable이 필요합니다. 설치 실행 파일을 사용하는 경우 자동으로
-처리될 수 있지만, 문제가 발생하면 Microsoft 공식 사이트에서 최신 버전을 수동으로 설치하십시오.
+실행에 Visual C++ Redistributable이 필요합니다. 설치 실행 파일을 사용하는 경우 자동으로 처리될 수 있지만, 문제가 발생하면 Microsoft 공식 사이트에서 최신 버전을 수동으로 설치하십시오.
 
 ---
-
-**다음 읽을 내용**
-- [Windows 패키지 설치](/kr/dbms/installation-deployment-upgrade/standard-edition/windows/package/)
 
 <a id="windows-package"></a>
 
 ### Windows 패키지 설치
 
-Machbase Windows 버전은 ZIP 패키지 또는 설치 실행 파일로 제공됩니다. ZIP 패키지는 압축 파일
-루트에 `bin\`, `conf\`, `dbs\`, `trc\` 등을 포함하며, 설치 실행 파일은 설치 경로 아래에
-`machbase_home\`을 만들고 환경 변수와 실행 바로가기를 생성합니다.
+Windows 버전은 ZIP 패키지 또는 설치 실행 파일로 제공됩니다. ZIP 패키지는 압축 파일 루트에 `bin\`, `conf\`, `dbs\`, `trc\` 등을 포함하며, 설치 실행 파일은 설치 경로 아래에 `machbase_home\`을 만들고 환경 변수와 실행 바로가기를 생성합니다.
 
 #### 설치 절차
 
-1. Machbase Windows 배포 패키지를 다운로드합니다.
+1. Windows 배포 패키지를 다운로드합니다.
 
 2. ZIP 패키지를 사용하는 경우 원하는 설치 디렉터리에 압축을 해제합니다.
 
@@ -454,14 +417,13 @@ Machbase Windows 버전은 ZIP 패키지 또는 설치 실행 파일로 제공�
 
 3. 설치 실행 파일이 제공된 경우 파일을 실행합니다. 설치 시작 화면이 표시되면 **Next**를 클릭합니다.
 
-4. 설치 경로를 선택합니다. 기본값은 `C:\machbase-<short_version>\` 형식입니다. 변경이 필요하면
-   경로를 수정한 후 **Next**를 클릭합니다.
+4. 설치 경로를 선택합니다. 기본값은 `C:\machbase-<short_version>\` 형식입니다. 변경이 필요하면 경로를 수정한 후 **Next**를 클릭합니다.
 
 5. 설치가 진행됩니다. 완료되면 **Next** → **Close**를 클릭합니다.
 
 #### 서버 시작과 종료
 
-설치 실행 파일을 사용한 경우 바탕화면과 시작 메뉴에 Machbase 바로가기가 생성됩니다.
+설치 실행 파일을 사용한 경우 바탕화면과 시작 메뉴에 바로가기가 생성됩니다.
 
 - **start Machbase**: `machadmin.exe -u`를 실행해 서버를 시작합니다.
 - **stop Machbase**: `machadmin.exe -s`를 실행해 서버를 종료합니다.
@@ -469,9 +431,7 @@ Machbase Windows 버전은 ZIP 패키지 또는 설치 실행 파일로 제공�
 
 #### 명령줄 접속
 
-설치 후 명령 프롬프트에서 `machsql`을 실행하여 서버에 접속할 수 있습니다. 설치 실행 파일을
-사용한 경우 `<설치 경로>\machbase_home\bin`이 시스템 `PATH`에 추가됩니다. ZIP 패키지를 사용한
-경우 압축을 해제한 디렉터리의 `bin\`을 `PATH`에 추가하거나 전체 경로로 실행합니다.
+설치 후 명령 프롬프트에서 `machsql`을 실행하여 서버에 접속합니다. 설치 실행 파일을 사용한 경우 `<설치 경로>\machbase_home\bin`이 시스템 `PATH`에 추가됩니다. ZIP 패키지를 사용한 경우 압축을 해제한 디렉터리의 `bin\`을 `PATH`에 추가하거나 전체 경로로 실행합니다.
 
 ```cmd
 machsql -s 127.0.0.1 -u SYS -p MANAGER
@@ -484,9 +444,3 @@ machsql -s 127.0.0.1 -u SYS -p MANAGER
 ZIP 패키지는 압축 해제 경로 바로 아래에 `bin\`, `conf\`, `dbs\`, `trc\` 등을 배치합니다.
 설치 실행 파일은 설치 경로 아래의 `machbase_home\`에 같은 구성을 생성합니다.
 [패키지 구성](/kr/dbms/installation-deployment-upgrade/pre-install-preparation/package/) 참고.
-
----
-
-**다음 읽을 내용**
-- [라이선스 설치](/kr/dbms/installation-deployment-upgrade/pre-install-preparation/license/)
-- [설치 검증 체크리스트](/kr/dbms/installation-deployment-upgrade/validation-checklist/)

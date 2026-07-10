@@ -16,7 +16,7 @@ tocSort: true
 
 ## ABS
 
-이 함수는 숫자형 컬럼에 대해 동작하며, 값을 양수로 변환하여 실수로 반환합니다.
+숫자형 컬럼의 절댓값을 실수로 반환합니다.
 
 ```sql
 ABS(column_expr)
@@ -48,7 +48,7 @@ ABS(c1)                     ABS(c2)
 
 ## ADD_TIME
 
-이 함수는 주어진 datetime 컬럼에 대해 날짜 및 시간 연산을 수행합니다. 년, 월, 일, 시, 분, 초 단위의 증감 연산을 지원하며, 밀리초, 마이크로초, 나노초에 대한 연산은 지원하지 않습니다. Diff 형식은 "Year/Month/Day Hour:Minute:Second"입니다. 각 항목은 양수 또는 음수 값을 가질 수 있습니다.
+DATETIME 컬럼에 년/월/일/시/분/초 단위의 증감 연산을 수행합니다. 밀리초, 마이크로초, 나노초 단위는 지원하지 않습니다. Diff 형식은 `"Year/Month/Day Hour:Minute:Second"`이며, 각 항목은 양수 또는 음수를 사용할 수 있습니다.
 
 ```sql
 ADD_TIME(column,time_diff_format)
@@ -235,7 +235,7 @@ FROM power_log;
 
 ## AVG
 
-이 함수는 숫자형 컬럼에 대해 동작하는 집계 함수로, 해당 컬럼의 평균 값을 출력합니다.
+숫자형 컬럼의 평균값을 반환하는 집계 함수입니다.
 
 ```sql
 AVG(column_name)
@@ -277,7 +277,7 @@ NULL             4
 
 ## BITAND / BITOR
 
-이 함수는 두 개의 입력 값을 64비트 부호 있는 정수로 변환하고 비트 단위 AND/OR 연산의 결과를 반환합니다. 입력 값은 반드시 정수형이어야 하며, 출력 값은 64비트 부호 있는 정수입니다.
+두 정수 값을 64비트 부호 있는 정수로 변환한 뒤 비트 단위 AND/OR 연산 결과를 반환합니다. 입력은 정수형이어야 하며, 출력도 64비트 부호 있는 정수입니다.
 
 0보다 작은 정수 값의 경우, 플랫폼에 따라 다른 결과가 나올 수 있으므로 uinteger 및 ushort 타입만 사용하는 것을 권장합니다.
 
@@ -369,7 +369,7 @@ BITOR(i1, i6)
 
 ## COUNT
 
-이 함수는 주어진 컬럼의 레코드 개수를 구하는 집계 함수입니다.
+컬럼의 레코드 개수를 구하는 집계 함수입니다.
 
 ```sql
 COUNT(column_name)
@@ -422,7 +422,7 @@ COUNT(id1)
 CUME_DIST(value, threshold)
 ```
 
-- 이 함수는 윈도우 함수가 아니라 집계 함수입니다.
+- 윈도우 함수가 아닌 집계 함수입니다.
 - 두 인자는 모두 숫자형이어야 합니다.
 - `threshold`는 상수여야 합니다.
 - 반환 값은 `0.0` 이상 `1.0` 이하의 `DOUBLE`입니다.
@@ -435,7 +435,7 @@ FROM api_log;
 
 ## DATE_TRUNC
 
-이 함수는 주어진 datetime 값을 '시간 단위'와 '시간 범위'까지만 표시되는 새로운 datetime 값으로 반환합니다.
+DATETIME 값을 지정한 시간 단위로 절사하여 반환합니다.
 
 ```sql
 DATE_TRUNC (field, date_val [, count])
@@ -529,8 +529,7 @@ COUNT(*)             tm
 예를 들어, DATE_TRUNC('second', time, 120)을 입력하면 반환되는 값은 **2분마다** 표시되며, 이는 DATE_TRUNC('minute', time, 2)와 동일합니다.
 
 ## DATE_BIN
-이 함수는 지정한 기준 시각(`origin`)을 기준으로 주어진 datetime 값을 `time unit`과
-`time range`로 구간(bin) 처리합니다.
+지정한 기준 시각(`origin`)을 기준으로 DATETIME 값을 `time unit`과 `time range`로 구간(bin) 처리합니다.
 
 ```sql
 DATE_BIN(field, count, source [, origin])
@@ -631,7 +630,7 @@ ts                              date_bin_3arg                   date_trunc_3arg
 
 ## DAYOFWEEK
 
-이 함수는 주어진 datetime 값의 요일을 나타내는 자연수를 반환합니다.
+DATETIME 값의 요일을 정수로 반환합니다.
 
 [TO_CHAR (time, 'DAY')](#to_char)와 의미적으로 동일하지만, 여기서는 정수를 반환합니다.
 
@@ -654,7 +653,7 @@ DAYOFWEEK(date_val)
 
 ## DECODE
 
-이 함수는 지정한 컬럼 값을 search 값들과 비교하여 일치하면 해당 return 값을 반환합니다. 일치하는 search 값이 없으면 default 값을 반환하며, default를 생략하면 NULL을 반환합니다.
+컬럼 값을 search 값들과 비교하여 일치하면 대응하는 return 값을 반환합니다. 일치하는 search 값이 없으면 default 값을, default를 생략하면 NULL을 반환합니다.
 
 ```sql
 DECODE(column, [search, return],.. default)
@@ -896,10 +895,10 @@ sysdate                         from_timestamp(sysdate-1000000)
 
 ## GROUP_CONCAT
 
-이 함수는 그룹 내 해당 컬럼 값들을 문자열로 이어 붙여 반환하는 집계 함수입니다.
+그룹 내 컬럼 값들을 문자열로 이어 붙여 반환하는 집계 함수입니다.
 
 {{< callout type="warning" >}}
-이 함수는 Cluster Edition에서 사용할 수 없습니다.
+Cluster Edition에서는 사용할 수 없습니다.
 {{< /callout >}}
 
 ```sql
@@ -980,7 +979,7 @@ John,Zara,Jill
 
 ## INSTR
 
-이 함수는 대상 문자열에서 패턴 문자열이 시작하는 위치 인덱스를 반환합니다. 인덱스는 1부터 시작합니다.
+대상 문자열에서 패턴 문자열이 시작하는 위치를 반환합니다. 위치는 1부터 시작합니다.
 
 * 패턴이 없으면 0을 반환합니다.
 * 찾을 패턴의 길이가 0이거나 NULL이면 NULL을 반환합니다.
@@ -1243,7 +1242,7 @@ Antonio***
 
 ## LTRIM / RTRIM
 
-이 함수는 첫 번째 인자에서 패턴 문자열에 포함된 문자를 제거합니다. LTRIM은 왼쪽에서 오른쪽으로, RTRIM은 오른쪽에서 왼쪽으로 패턴에 포함된 문자를 검사하며, 패턴에 없는 문자를 만날 때까지 제거합니다. 모든 문자가 패턴에 포함되어 있으면 NULL을 반환합니다.
+첫 번째 인자에서 패턴 문자열에 포함된 문자를 제거합니다. LTRIM은 왼쪽부터, RTRIM은 오른쪽부터 패턴에 포함된 문자를 검사하며, 패턴에 없는 문자를 만나면 멈춥니다. 모든 문자가 패턴에 포함되어 있으면 NULL을 반환합니다.
 
 패턴을 지정하지 않으면 공백(' ')을 기준으로 공백을 제거합니다.
 
@@ -1471,7 +1470,7 @@ ROWNUM()
 
 **사용 가능한 절**
 
-이 함수는 SELECT의 Target List, GROUP BY, ORDER BY 절에서 사용할 수 있습니다. WHERE와 HAVING 절에서는 사용할 수 없습니다. 결과 번호로 WHERE/HAVING을 제어하려면 인라인 뷰에서 ROWNUM()을 계산한 뒤, 외부 쿼리의 WHERE/HAVING에서 참조해야 합니다.
+SELECT Target List, GROUP BY, ORDER BY 절에서 사용할 수 있습니다. WHERE와 HAVING 절에서는 사용할 수 없습니다. 결과 번호로 WHERE/HAVING을 제어하려면 인라인 뷰에서 ROWNUM()을 계산한 뒤 외부 쿼리에서 참조합니다.
 
 |사용 가능 절|사용 불가 절|
 |--|--|
@@ -1586,7 +1585,7 @@ SERIESNUM() C1 C2
 
 ## STDDEV / STDDEV_POP
 
-이 함수는 입력 컬럼의 표준편차와 모표준편차를 반환하는 집계 함수입니다. 각각 VARIANCE와 VAR_POP 값의 제곱근에 해당합니다.
+입력 컬럼의 표본 표준편차(STDDEV)와 모표준편차(STDDEV_POP)를 반환하는 집계 함수입니다. 각각 VARIANCE, VAR_POP의 제곱근입니다.
 
 ```sql
 STDDEV(column)
@@ -1626,7 +1625,7 @@ c2                          STDDEV_POP(c1)
 
 ## SUBSTR
 
-이 함수는 문자열 컬럼을 START부터 SIZE 길이만큼 잘라 반환합니다.
+문자열 컬럼에서 START 위치부터 SIZE 길이만큼 잘라 반환합니다.
 
 * START는 1부터 시작하며 0이면 NULL을 반환합니다.
 * SIZE가 문자열 길이보다 크면 전체 문자열을 반환합니다.
@@ -2528,7 +2527,7 @@ TRUNC(i1, 2)                TRUNC(i1, -2)
 입력 데이터가 시간순으로 입력된다는 것을 보장할 수 없으므로 1) Join 또는 2) Inline view와 함께 사용할 수 없습니다.
 현재 버전은 varchar를 제외한 타입만 지원합니다.
 
-* **이 함수는 Cluster Edition에서 사용할 수 없습니다.**
+* **Cluster Edition에서는 사용할 수 없습니다.**
 
 ```sql
 TS_CHANGE_COUNT(column)

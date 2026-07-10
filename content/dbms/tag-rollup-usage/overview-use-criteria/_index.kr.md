@@ -3,18 +3,16 @@ title: '6.1 ROLLUP 개요와 사용 기준'
 weight: 10
 toc: true
 ---
-ROLLUP 개요와 사용 기준에 해당하는 세부 문서를 모았습니다.
-
 
 <a id="rollup"></a>
 
 ## ROLLUP 개념
 
-ROLLUP 테이블은 TAG 테이블의 특정 숫자형 컬럼을 시간 단위로 집계한 결과를 저장하는 내부 테이블입니다.
+ROLLUP 테이블은 TAG 테이블의 숫자형 컬럼을 시간 단위로 집계한 결과를 저장하는 내부 테이블입니다.
 
 ### 집계 저장 구조
 
-ROLLUP 테이블 하나는 한 컬럼의 시간 단위 통계를 저장합니다. 각 행은 하나의 (태그명, 시간 구간) 조합에 대해 다음 값을 보유합니다.
+ROLLUP 테이블 하나는 한 컬럼의 시간 단위 통계를 저장합니다. 각 행은 (태그명, 시간 구간) 조합별로 다음 값을 보유합니다.
 
 | 집계 값 | 설명 |
 |---------|------|
@@ -71,17 +69,17 @@ ROLLUP 테이블이 없으면 원시 TAG 데이터를 직접 스캔합니다(성
 
 ### 개요
 
-롤업 테이블은 태그 데이터를 시간 기준으로 자동 집계해 분석과 리포트 쿼리의 성능을 크게 향상시킨다. 수백만 건의 원시 데이터를 스캔하는 대신, 다양한 구간별 통계가 미리 계산되어 저장됩니다.
+롤업 테이블은 태그 데이터를 시간 기준으로 자동 집계해 분석과 리포트 쿼리의 성능을 크게 높입니다. 수백만 건의 원시 데이터를 스캔하는 대신, 구간별 통계가 미리 계산되어 저장됩니다.
 
 ### TIME 축 전용 기능
 
-ROLLUP은 시간축(`BASETIME`, `BASE TIME`) Tag 테이블에서만 사용할 수 있습니다. 거리축(`BASE DISTANCE`, `BASEDISTANCE`) Tag 테이블에서는 아래 기능을 지원하지 않습니다.
+ROLLUP은 시간축(`BASETIME`, `BASE TIME`) Tag 테이블에서만 사용할 수 있습니다. 거리축(`BASE DISTANCE`, `BASEDISTANCE`) Tag 테이블에서는 다음 기능을 지원하지 않습니다.
 
 - `WITH ROLLUP(...)`
 - `CREATE ROLLUP ... ON <distance_tag> ...`
 - `CREATE ROLLUP ... INTO (...) AS (...)`
 
-예를 들어 아래 구문은 실패합니다.
+예를 들어 다음 구문은 실패합니다.
 
 ```sql
 CREATE TAG TABLE trip_rollup_test (
@@ -93,7 +91,7 @@ CREATE TAG TABLE trip_rollup_test (
 [ERR-04999: ROLLUP is not supported on DISTANCE axis TAG table.]
 ```
 
-거리축에서는 다음 방식으로 접근하는 것이 안전합니다.
+거리축에서는 다음 방식으로 접근합니다.
 
 - `BETWEEN a AND b` 조건으로 직접 범위 조회
 - `TRUNC(distance / bucket, 0) * bucket` 형태의 버킷 집계
@@ -237,7 +235,7 @@ CREATE TAG TABLE tagtbl (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, v
 #### 롤업 테이블 선택 로직
 동일한 주기·값 컬럼·JSON PATH를 가진 롤업이 여러 개 있을 때 엔진이 "조건 없음 → 조건 있음" 순서로 자동 선택합니다. 필요하면 힌트로 특정 롤업을 강제로 사용할 수 있고, 생성 시 잘못된 조건은 즉시 차단됩니다.
 
-#### 조건 있는 롤업 생성 방법
+#### 조건 롤업 생성
 ```sql
 CREATE ROLLUP <rollup_name>
   ( ON <table_name>(<value_col>)
@@ -302,10 +300,10 @@ ORDER BY rt;
 ```
 6) `FIRST()`/`LAST()`를 사용할 경우 힌트 대상이 `EXTENSION` 롤업이어야 합니다. 일반 롤업에 힌트를 주면 해당 함수가 없어 에러가 발생합니다.
 
-#### 메타 정보와 업그레이드 안내
+#### 메타 정보와 업그레이드
 - `V$ROLLUP`에 `PREDICATE` 컬럼이 추가되어 롤업 필터를 바로 확인할 수 있습니다.
-- 메타 버전이 10.0으로 올라가며 서버 최초 기동 시 카탈로그가 자동으로 갱신됩니다. 오래된/손상된 메타로 인해 실패하면 서버를 중지한 뒤 새 DB를 생성하고 롤업을 다시 만들어 주세요.
-- 필터 기능은 기존 롤업 제약(주기 배수, 숫자형 대상 등)을 그대로 따른다.
+- 메타 버전이 10.0으로 올라가며 서버 최초 기동 시 카탈로그가 자동 갱신됩니다. 오래된/손상된 메타로 인해 실패하면 서버를 중지한 뒤 새 DB를 생성하고 롤업을 다시 만듭니다.
+- 필터 기능은 기존 롤업 제약(주기 배수, 숫자형 대상 등)을 그대로 따릅니다.
 
 
 ### ROLLUP 테이블 시작/중지
@@ -527,7 +525,7 @@ insert into tag values('TAG_0001', '2018-01-01 03:02:02 000:000:000', 6);
 
 ### ROLLUP 평균값 얻기
 
-아래는 해당 태그에 대해 초, 분, 시 단위의 평균값을 얻는 예제입니다.
+초, 분, 시 단위의 평균값을 얻는 예제입니다.
 
 ```sql
 Mach> SELECT rollup('sec', 1, time) as mtime, avg(value) FROM TAG WHERE name = 'TAG_0001' group by mtime order by mtime;
@@ -578,7 +576,7 @@ mtime                           avg(value)
 
 ### ROLLUP 최소/최대값 얻기
 
-아래는 해당 태그의 시간 범위에 따른 최소/최대값을 얻는 예제를 나타낸다. 이전 예제와 다른 점은, 쿼리 한 번에 최대값과 최소값을 동시에 얻을 수 있다는 것입니다.
+시간 범위에 따른 최소/최대값을 한 쿼리로 동시에 얻을 수 있습니다.
 
 ```sql
 Mach> SELECT rollup('hour', 1, time) as mtime, min(value), max(value) FROM TAG WHERE name = 'TAG_0001' group by mtime order by mtime;
@@ -606,7 +604,7 @@ mtime                           min(value)                  max(value)
 
 ### ROLLUP 합계/개수 얻기
 
-아래는 합계 및 데이터 개수 값을 얻는 예제입니다. 역시 하나의 쿼리에 합계와 개수를 얻을 수 있습니다.
+합계와 데이터 개수를 하나의 쿼리로 얻는 예제입니다.
 
 ```sql
 Mach> SELECT rollup('min', 1, time) as mtime, sum(value), count(value) FROM TAG WHERE name = 'TAG_0001' group by mtime order by mtime;
@@ -626,7 +624,7 @@ mtime                           sum(value)                  count(value)
 
 ### ROLLUP 제곱합 얻기
 
-아래는 제곱합 값을 얻는 예제입니다.
+제곱합 값을 얻는 예제입니다.
 
 ```sql
 Mach> SELECT rollup('sec', 1, time) as mtime, SUMSQ(value) FROM tag GROUP BY mtime ORDER BY mtime;
@@ -669,7 +667,7 @@ mtime                           SUMSQ(value)
 
 ### ROLLUP 시작/종료 값 얻기
 
-아래는 확장 롤업에서 제공하는 시작 및 종료 값을 얻는 예제입니다.
+확장 롤업에서 제공하는 시작 및 종료 값을 얻는 예제입니다.
 
 ```sql
 Mach> SELECT rollup('min', 1, time) as mtime, FIRST(time, value), LAST(time, value) FROM tag GROUP BY mtime ORDER BY mtime;

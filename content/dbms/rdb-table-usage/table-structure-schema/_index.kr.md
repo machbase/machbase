@@ -3,14 +3,14 @@ title: '8.2 테이블 구조와 스키마'
 weight: 20
 toc: true
 ---
-테이블 구조와 스키마에 해당하는 세부 문서를 모았습니다.
 
+RDB 테이블의 스키마 설계 방법과 컬럼 타입, PRIMARY KEY 지정 방식을 설명한다.
 
 <a id="rdb-table-design"></a>
 
 ## RDB 테이블 설계
 
-RDB 테이블은 Machbase 8.6에서 도입된 일반 관계형 테이블입니다. SELECT·INSERT·UPDATE·DELETE를 모두 지원하며, PRIMARY KEY 인덱스와 보조 인덱스를 사용합니다.
+RDB 테이블은 Machbase 8.6에서 도입된 관계형 테이블로, SELECT·INSERT·UPDATE·DELETE를 모두 지원한다. PRIMARY KEY 인덱스와 보조 인덱스를 함께 활용할 수 있다.
 
 ```sql
 CREATE RDB TABLE order_history (
@@ -56,7 +56,7 @@ CREATE RDB TABLE table_name (
 
 #### 컬럼 수 제약
 
-RDB 테이블은 **최소 1개** 이상의 컬럼이 필요합니다.
+최소 1개 이상의 컬럼이 필요하다.
 
 ```sql
 -- 정상: 컬럼 1개
@@ -119,7 +119,7 @@ UPDATE tx_history SET status = 'SETTLED' WHERE tx_id = 9999;
 
 #### PRIMARY KEY 지정
 
-RDB 테이블에서 PRIMARY KEY는 컬럼 정의에 직접 지정하거나 `CREATE PRIMARY KEY INDEX` 문으로 사후 생성합니다. RDB 인덱스는 BTREE로 표시됩니다.
+컬럼 정의에 직접 `PRIMARY KEY`를 지정하거나, `CREATE PRIMARY KEY INDEX` 문으로 사후 생성할 수 있다. RDB 인덱스는 BTREE로 표시된다.
 
 ```sql
 -- 컬럼 정의에서 PRIMARY KEY 지정
@@ -143,6 +143,6 @@ CREATE PRIMARY KEY INDEX idx_pk_product ON product_catalog(product_id);
 
 #### 주의사항
 
-- `METADATA` 절은 TAG 테이블 전용으로, RDB 테이블에서는 사용할 수 없습니다.
-- `BASETIME`, `BASEDISTANCE` 키워드는 사용할 수 없습니다.
-- Cluster Edition에서는 RDB 테이블을 생성할 수 없습니다.
+- `METADATA` 절은 TAG 테이블 전용이므로 RDB 테이블에서는 사용할 수 없다.
+- `BASETIME`, `BASEDISTANCE` 키워드도 사용할 수 없다.
+- Cluster Edition에서는 RDB 테이블을 생성할 수 없다.

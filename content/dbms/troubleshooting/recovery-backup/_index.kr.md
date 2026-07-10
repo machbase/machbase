@@ -3,9 +3,7 @@ type: docs
 title: '16.7 백업과 복구 문제'
 weight: 70
 ---
-데이터 백업에 실패하거나 복원이 정상적으로 완료되지 않을 때, 또는 백업 데이터를 마운트하는 과정에서 오류가 발생할 때 원인을 진단하고 해결하는 방법을 설명합니다.
-
-백업과 복구 기능에 대한 일반적인 개요와 사용법은 [백업, 복원, 마운트](../../../operations-configuration-recovery/backup-restore-mount/)를 참고하십시오.
+백업 실패, 복원 오류, 마운트 오류의 원인 진단과 해결 방법입니다. 백업·복구 기능의 일반적인 사용법은 [백업, 복원, 마운트](../../../operations-configuration-recovery/backup-restore-mount/)를 참고하십시오.
 
 ## 이 섹션의 구성
 
@@ -20,7 +18,7 @@ weight: 70
 
 ## 백업과 복원이 실패할 때
 
-백업 또는 복원이 실패하는 경우 대부분 디렉토리 권한, 디스크 공간, 버전 불일치 중 하나가 원인입니다. 오류 메시지와 로그를 단서로 원인을 좁혀 나가십시오.
+백업이나 복원 실패의 원인은 대부분 디렉토리 권한, 디스크 공간, 버전 불일치 중 하나입니다. 오류 메시지와 로그를 단서로 원인을 좁히십시오.
 
 ### 백업 실패
 
@@ -150,7 +148,7 @@ UNMOUNT DATABASE backup_check;
 
 ## 마운트가 실패할 때
 
-`MOUNT DATABASE` 명령이 실패하는 경우 백업 경로, 마운트 이름 충돌, 한도 초과, 백업 파일 손상 등이 원인일 수 있습니다.
+`MOUNT DATABASE` 실패의 원인은 백업 경로, 마운트 이름 충돌, 한도 초과, 백업 파일 손상 등입니다.
 
 {{< callout type="warning" >}}
 **Cluster Edition 주의**: `MOUNT DATABASE` 명령은 Cluster Edition에서 지원되지 않습니다. Cluster Edition 환경에서 마운트가 필요한 경우 Standard Edition에서 마운트 후 데이터를 추출하는 방법을 검토하십시오.

@@ -3,7 +3,8 @@ title: '7.4 데이터 입력과 변경'
 weight: 40
 toc: true
 ---
-데이터 입력과 변경에 해당하는 세부 문서를 모았습니다.
+
+LOG 테이블에 데이터를 입력하는 방법은 SQL INSERT, Append API, machloader Import, LOAD DATA 네 가지가 있다.
 
 
 <a id="original-85-insert-data"></a>
@@ -12,9 +13,9 @@ toc: true
 
 > **8.5 원문 보강 자료**: 이 문서는 기존 8.5 매뉴얼의 내용을 새 장 구조에 맞춰 보존한 것입니다. Machbase 8.6 기준과 표현이 다른 부분은 같은 절의 최신 리뉴얼 문서를 우선합니다.
 
-다른 상용 RDBMS와 유사하게, 먼저 테이블을 생성하고 INSERT INTO 문을 사용하여 데이터를 입력할 수 있습니다.
+다른 상용 RDBMS와 마찬가지로, 테이블을 먼저 생성한 뒤 INSERT INTO 문으로 데이터를 입력한다.
 
-Machbase는 대화형 쿼리 프로세서로 'machsql' 도구를 제공합니다.
+Machbase는 대화형 쿼리 프로세서로 'machsql' 도구를 제공한다.
 
 
 ### 테이블 생성
@@ -54,7 +55,7 @@ SELECT * FROM sensor_data;
 
 ### 전체 프로세스
 
-다음은 machsql을 사용한 예제입니다.
+machsql을 사용한 예제는 다음과 같다.
 
 ```sql
 Mach> CREATE TABLE sensor_data (id VARCHAR(32), val DOUBLE);
@@ -80,11 +81,11 @@ sensor1 10.1
 
 > **8.5 원문 보강 자료**: 이 문서는 기존 8.5 매뉴얼의 내용을 새 장 구조에 맞춰 보존한 것입니다. Machbase 8.6 기준과 표현이 다른 부분은 같은 절의 최신 리뉴얼 문서를 우선합니다.
 
-Machbase에서 제공하는 빠른 실시간 데이터 입력 API입니다.
+Machbase가 제공하는 고속 실시간 데이터 입력 API다.
 
-C, C++, C#, Java, Python, PHP 또는 Javascript를 사용하여 입력할 수 있습니다.
+C, C++, C#, Java, Python, PHP, Javascript로 호출할 수 있다.
 
-자세한 내용은 [SDK 및 통합](../../../../sdk-integration/) 가이드를 참조하세요.
+자세한 내용은 [SDK 및 통합](../../../../sdk-integration/) 가이드를 참조한다.
 
 <a id="original-85-import-data"></a>
 
@@ -92,9 +93,9 @@ C, C++, C#, Java, Python, PHP 또는 Javascript를 사용하여 입력할 수 �
 
 > **8.5 원문 보강 자료**: 이 문서는 기존 8.5 매뉴얼의 내용을 새 장 구조에 맞춰 보존한 것입니다. Machbase 8.6 기준과 표현이 다른 부분은 같은 절의 최신 리뉴얼 문서를 우선합니다.
 
-machloader 도구를 사용하면 CSV 또는 다른 구분자로 구분된 텍스트 파일을 입력할 수 있습니다.
+machloader 도구를 사용하면 CSV 등 구분자 기반 텍스트 파일을 일괄 입력할 수 있다.
 
-machloader 도구에 대한 자세한 설명은 [machloader](/dbms/application-integration/data-input-load-export/#file-import-machloader) 문서를 참조하세요.
+machloader에 대한 자세한 설명은 [machloader](/dbms/application-integration/data-input-load-export/#file-import-machloader) 문서를 참조한다.
 
 ### 목차
 
@@ -122,7 +123,7 @@ CREATE TABLE import_sample
 
 ### 데이터 가져오기
 
-machloader 도구를 사용하여 csv 파일을 입력합니다.
+machloader로 csv 파일을 입력한다.
 
 ```bash
 machloader  -i  -t  import_sample   -d  sample_data.csv
@@ -131,7 +132,7 @@ machloader  -i  -t  import_sample   -d  sample_data.csv
 
 ### 데이터 입력 확인
 
-입력된 데이터를 확인합니다.
+입력된 데이터를 확인한다.
 
 
 ``` sql
@@ -141,7 +142,7 @@ SELECT  COUNT(*)    FROM    import_sample;
 
 ### 샘플 예제
 
-다음은 실제 machloader와 machsql을 사용한 샘플 프로세스입니다.
+machloader와 machsql을 사용한 전체 프로세스다.
 
 ```sql
 Mach> CREATE TABLE import_sample
@@ -203,18 +204,15 @@ Mach>
 
 > **8.5 원문 보강 자료**: 이 문서는 기존 8.5 매뉴얼의 내용을 새 장 구조에 맞춰 보존한 것입니다. Machbase 8.6 기준과 표현이 다른 부분은 같은 절의 최신 리뉴얼 문서를 우선합니다.
 
-'Load Data' 문은 csv 파일의 데이터를 Machbase에 입력합니다.
+'Load Data' 문은 csv 파일의 데이터를 Machbase에 입력한다.
 
-먼저 데이터를 저장할 테이블을 생성하는데, csv 파일의 첫 번째 줄을 사용하여 컬럼을 생성합니다.
+csv 파일의 첫 번째 줄로 컬럼을 자동 생성하며, 생성되는 컬럼의 데이터 타입은 VARCHAR(32768)이다. 데이터 파일 경로는 $MACHBASE_HOME 기준의 상대 경로이며, 절대 경로도 사용 가능하다.
 
-* 생성된 컬럼의 데이터 타입은 VARCHAR(32768)입니다.
-* 데이터 파일 경로는 $MACHBASE_HOME 기준의 상대 경로입니다. 절대 경로로 설정할 수도 있습니다.
+테이블 데이터를 csv 파일로 저장하려면 SAVE DATA 문을 사용한다.
 
-테이블 데이터를 csv 파일로 저장하려면 SAVE DATA 문을 사용합니다.
+미리 테이블을 생성하는 경우, CSV 파일의 각 필드에 대한 데이터 타입은 VARCHAR 또는 TEXT로 설정해야 한다.
 
-미리 테이블을 생성하는 경우, CSV 파일의 각 필드에 대한 데이터 타입은 VARCHAR 또는 TEXT로 설정해야 합니다.
-
-'load_sample.csv' 파일을 LOAD DATA 문에 입력하면 'load_sample' 테이블이 자동으로 생성됩니다.
+'load_sample.csv' 파일을 LOAD DATA 문에 입력하면 'load_sample' 테이블이 자동으로 생성된다.
 
 
 ### 데이터 로드
@@ -232,7 +230,7 @@ SELECT * FROM load_sample;
 
 ### 샘플 예제
 
-샘플 파일을 사용하여 다음과 같이 수행할 수 있습니다.
+샘플 파일을 사용한 전체 수행 과정이다.
 
 ```bash
 [mach@localhost ~]$ cd $MACHBASE_HOME/sample/quickstart

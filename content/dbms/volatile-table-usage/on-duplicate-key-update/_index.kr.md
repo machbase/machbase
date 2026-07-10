@@ -3,15 +3,12 @@ title: '10.13 ON DUPLICATE KEY UPDATE'
 weight: 130
 toc: true
 ---
-ON DUPLICATE KEY UPDATE에 해당하는 세부 문서를 모았습니다.
-
 
 <a id="on-duplicate-key-update"></a>
 
 ## UPDATE와 ON DUPLICATE KEY UPDATE
 
-VOLATILE 테이블은 PRIMARY KEY 기준의 `UPDATE` 문과 `ON DUPLICATE KEY UPDATE` 구문을
-지원합니다.
+VOLATILE 테이블은 PRIMARY KEY 기준의 `UPDATE`와 `ON DUPLICATE KEY UPDATE`를 지원합니다.
 
 ### 일반 UPDATE
 
@@ -27,12 +24,11 @@ CREATE VOLATILE TABLE device_status (
 UPDATE device_status SET status = 'NORMAL', updated_at = NOW WHERE device_id = 'DEV-01';
 ```
 
-VOLATILE 테이블의 `UPDATE`/`DELETE` 조건은 PRIMARY KEY 동등 조건이어야 합니다. 일반 컬럼
-조건이나 전체 행 갱신은 사용할 수 없습니다.
+`UPDATE`/`DELETE` 조건은 반드시 PRIMARY KEY 동등 조건이어야 합니다. 일반 컬럼 조건이나 전체 행 갱신은 지원하지 않습니다.
 
 ### ON DUPLICATE KEY UPDATE (UPSERT)
 
-PRIMARY KEY가 중복될 때 INSERT 대신 UPDATE를 실행합니다. VOLATILE 테이블의 핵심 UPSERT 패턴입니다.
+PRIMARY KEY가 중복되면 INSERT 대신 UPDATE를 실행하는 UPSERT 패턴입니다.
 
 ```sql
 -- 처음 삽입 (INSERT)
@@ -48,8 +44,7 @@ ON DUPLICATE KEY UPDATE SET status = 'ALARM', value = 95.3, updated_at = NOW;
 
 ### 삽입값으로 갱신
 
-삽입하려던 값으로 기존 행을 갱신하려면 `ON DUPLICATE KEY UPDATE` 뒤에 별도 `SET` 절을
-쓰지 않는 형식을 사용할 수 있습니다.
+삽입하려던 값 그대로 기존 행을 덮어쓰려면 `SET` 절을 생략합니다.
 
 ```sql
 INSERT INTO hourly_summary VALUES ('TEMP-01', '2024-01-01 10:00:00', 23.5, 25.0, 60)

@@ -3,7 +3,7 @@ type: docs
 title: '12.4 입력 성능 튜닝'
 weight: 40
 ---
-데이터 입력 성능은 Machbase 운영에서 가장 중요한 요소 중 하나입니다. 잘못된 입력 방식은 초당 수백만 건을 처리할 수 있는 Machbase의 잠재력을 수십 배 낮출 수 있습니다.
+잘못된 입력 방식은 초당 수백만 건을 처리할 수 있는 Machbase의 성능을 수십 배 낮출 수 있습니다.
 
 ## Append API vs INSERT 비교
 
@@ -195,7 +195,7 @@ DISK_COLUMNAR_TABLE_COLUMN_PART_IO_INTERVAL_MIN_SEC = 3  # 기본값 3초
 
 ## Collector 수집 성능 튜닝
 
-Collector는 외부 데이터 소스(센서, 장비, 시스템 로그 등)에서 데이터를 수집하여 Machbase에 적재하는 컴포넌트입니다. 수집 성능 튜닝은 데이터 유실 없이 최대 처리량을 달성하는 것이 목표입니다.
+Collector는 외부 데이터 소스에서 데이터를 수집하여 Machbase에 적재하는 컴포넌트입니다. 데이터 유실 없이 최대 처리량을 달성하는 것이 목표입니다.
 
 ### 수집 성능 영향 요소
 

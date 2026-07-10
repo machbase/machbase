@@ -3,14 +3,12 @@ title: '6.8 확장 ROLLUP'
 weight: 70
 toc: true
 ---
-확장 ROLLUP에 해당하는 세부 문서를 모았습니다.
-
 
 <a id="rollup-extension"></a>
 
 ## 확장 ROLLUP (EXTENSION)
 
-`EXTENSION` 키워드를 붙여 생성한 확장 ROLLUP은 기본 통계(MIN/MAX/SUM/COUNT) 외에 구간의 첫 번째 값(FIRST)과 마지막 값(LAST)을 추가로 저장합니다.
+`EXTENSION` 키워드를 붙여 생성하면 기본 통계(MIN/MAX/SUM/COUNT) 외에 구간의 첫 번째 값(FIRST)과 마지막 값(LAST)도 저장합니다.
 
 ### 생성
 

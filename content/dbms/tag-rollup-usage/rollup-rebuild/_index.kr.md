@@ -3,15 +3,12 @@ title: '6.15 ROLLUP_REBUILD'
 weight: 140
 toc: true
 ---
-ROLLUP_REBUILD에 해당하는 세부 문서를 모았습니다.
-
 
 <a id="validation-policy-tag-data-update-stat-index-rollup"></a>
 
 ## TAG data UPDATE와 통계/롤업 영향
 
-TAG data UPDATE는 원본 TAG row를 수정합니다. 원본 row와 통계/인덱스는 UPDATE 대상에 맞게
-처리되지만, 이미 만들어진 롤업 데이터는 별도 재구성이 필요할 수 있습니다.
+TAG data UPDATE는 원본 TAG row를 수정합니다. 통계/인덱스는 UPDATE에 맞게 처리되지만, 이미 만들어진 롤업 데이터는 별도 재구성이 필요할 수 있습니다.
 
 ### UPDATE 후 영향을 받는 구조
 
@@ -22,9 +19,8 @@ TAG data UPDATE는 원본 TAG row를 수정합니다. 원본 row와 통계/인�
 
 #### 통계 정보와 인덱스
 
-TAG 테이블의 `SUMMARIZED` 컬럼과 데이터 파티션 인덱스는 UPDATE 대상 row에 맞게 갱신됩니다.
-다만 대량 UPDATE는 내부 정리 비용이 커질 수 있으므로 대상 범위를 태그와 시간 조건으로
-좁게 지정합니다.
+`SUMMARIZED` 컬럼과 데이터 파티션 인덱스는 UPDATE 대상 row에 맞게 갱신됩니다.
+대량 UPDATE는 내부 정리 비용이 커질 수 있으므로 대상 범위를 태그와 시간 조건으로 좁게 지정합니다.
 
 #### 롤업
 
@@ -61,10 +57,9 @@ SELECT COUNT(*), MIN(value), MAX(value)
 
 ### 개요
 
-이상 데이터가 수집되면 원본 데이터는 삭제 후 정상 데이터로 다시 넣을 수 있지만, 이미 생성된 rollup 통계는 자동으로 되감기지 않습니다.
-이 경우 영향 버킷의 rollup 데이터를 다시 만들어야 합니다.
+이상 데이터가 수집되면 원본 데이터는 삭제 후 정상 데이터로 다시 넣을 수 있지만, 이미 생성된 rollup 통계는 자동으로 되감기지 않습니다. 영향 버킷의 rollup 데이터를 다시 만들어야 합니다.
 
-Machbase 환경에서는 서버 내장 Procedure `EXEC ROLLUP_REBUILD(...)`로 rollup을 재구성합니다.
+서버 내장 Procedure `EXEC ROLLUP_REBUILD(...)`로 rollup을 재구성합니다.
 
 - built-in rollup + rollup extension + custom rollup 대상
 - SQL에서 직접 호출 가능
@@ -121,9 +116,9 @@ EXEC ROLLUP_REBUILD(sys.tag,
 
 ### Custom Rollup Rebuild 원리
 
-#### 왜 built-in처럼 고정 SQL로 처리할 수 없는가
+#### built-in처럼 고정 SQL로 처리할 수 없는 이유
 
-custom rollup은 아래가 모두 사용자 정의입니다.
+custom rollup은 다음이 모두 사용자 정의입니다.
 
 - destination table 이름
 - destination 컬럼 수와 타입
@@ -143,12 +138,11 @@ custom rollup은 아래가 모두 사용자 정의입니다.
 - 시작 버킷: `2026-01-27 09:30:00`
 - 종료 버킷: `2026-01-27 09:31:59.999999999`
 
-부분 집계 row가 destination table에 이미 있을 수 있으므로, 삭제 없이 다시 insert만 하면 중복 집계가 발생합니다.
-항상 대상 버킷을 먼저 삭제한 뒤 다시 insert 해야 합니다.
+부분 집계 row가 destination table에 이미 있을 수 있으므로, 삭제 없이 insert만 하면 중복 집계가 발생합니다. 대상 버킷을 먼저 삭제한 뒤 insert 해야 합니다.
 
 #### 수동 rebuild 절차
 
-프로시저를 사용하지 않고 수동으로 하려면 아래 절차를 따라야 합니다.
+프로시저를 사용하지 않고 수동으로 하려면 다음 절차를 따릅니다.
 
 1. 영향 받는 모든 custom rollup stop
 2. source 이상 데이터 수정 또는 재적재
@@ -329,17 +323,17 @@ ORDER BY code, time;
 
 잘못 입력된 센서 데이터를 삭제 또는 정정하고, 영향받은 ROLLUP 집계를 재구성하는 운영 절차입니다.
 
-센서 오작동, 수집기 버그, 단위 변환 오류 등으로 비정상적인 값이 TAG 테이블에 삽입되면 ROLLUP 집계(최솟값, 최댓값, 평균 등)가 오염됩니다. 이 시나리오는 이상 데이터를 탐지하고 TAG data UPDATE로 정정한 뒤 `ROLLUP_REBUILD`로 집계를 재계산하는 전체 절차를 다룹니다.
+센서 오작동, 수집기 버그, 단위 변환 오류 등으로 비정상 값이 삽입되면 ROLLUP 집계(최솟값, 최댓값, 평균 등)가 오염됩니다. 이상 데이터를 탐지하고 TAG data UPDATE로 정정한 뒤 `ROLLUP_REBUILD`로 집계를 재계산하는 절차입니다.
 
-> **주의**: Cluster Edition에서는 `ROLLUP_REBUILD`가 지원되지 않습니다. 이 시나리오는 Standard Edition을 대상으로 합니다.
+> **주의**: Cluster Edition에서는 `ROLLUP_REBUILD`를 지원하지 않습니다. 이 시나리오는 Standard Edition 대상입니다.
 
-> **권장**: 대량 정정 전 반드시 해당 기간의 백업을 수행하십시오. `name` 또는 `time` 자체를 바꿔야 해서 삭제/재입력이 필요한 경우 삭제된 TAG 데이터는 복구할 수 없습니다.
+> **권장**: 대량 정정 전 해당 기간의 백업을 수행하십시오. `name` 또는 `time` 자체를 바꿔야 해서 삭제/재입력이 필요한 경우 삭제된 TAG 데이터는 복구할 수 없습니다.
 
 ### 1단계: 이상 데이터 탐지
 
 #### 범위 이탈 값 확인
 
-정상 범위를 벗어난 값을 쿼리합니다. 예를 들어 온도 센서의 정상 범위가 -40°C ~ 200°C라면:
+정상 범위를 벗어난 값을 쿼리합니다. 온도 센서의 정상 범위가 -40 ~ 200도라면 다음과 같이 확인합니다.
 
 ```sql
 -- 범위 이탈 데이터 확인
@@ -399,7 +393,7 @@ BACKUP DATABASE
 
 ### 3단계: 이상 데이터 정정
 
-TAG 테이블에서 이상 데이터를 직접 정정합니다. UPDATE 조건을 정확히 지정하여 정상 데이터가 수정되지 않도록 주의합니다.
+TAG 테이블에서 이상 데이터를 직접 정정합니다. UPDATE 조건을 정확히 지정해 정상 데이터가 수정되지 않도록 합니다.
 
 ```sql
 -- 특정 센서의 특정 기간 값을 정정
@@ -489,7 +483,7 @@ SELECT rollup_name, source_table, rollup_table, enabled, run_state
 
 ### 6단계: Rebuild 진행 상황 확인
 
-`ROLLUP_REBUILD`는 비동기로 동작할 수 있습니다. 진행 상황은 다음과 같이 확인합니다.
+`ROLLUP_REBUILD`는 비동기로 동작할 수 있습니다. 진행 상황을 확인합니다.
 
 ```sql
 -- ROLLUP 상태 확인
@@ -542,7 +536,7 @@ SELECT /*+ ROLLUP(sensor_tag, min, AVG) */ time, value
 
 ### 정기 데이터 품질 점검 패턴
 
-운영 환경에서 이상 데이터를 조기에 탐지하기 위한 정기 점검 쿼리입니다.
+이상 데이터를 조기에 탐지하기 위한 정기 점검 쿼리입니다.
 
 ```sql
 -- 최근 1시간 내 이상값 탐지 (daily 배치 또는 모니터링 쿼리로 활용)

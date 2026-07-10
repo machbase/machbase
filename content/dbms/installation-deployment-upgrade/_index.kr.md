@@ -5,11 +5,9 @@ weight: 30
 toc: true
 ---
 
-Machbase를 운영 환경에 배포하려면 에디션 선택부터 설치 준비, 설치, 검증까지 단계를 순서대로 진행해야 합니다. 이 장은 그 전체 흐름을 다룹니다.
+Machbase를 운영 환경에 배포하려면 에디션 선택, 설치 준비, 설치, 검증 순서로 진행합니다.
 
 ## 설치 경로 선택
-
-Machbase는 두 가지 에디션을 제공합니다.
 
 | 에디션 | 대상 환경 | 특징 |
 |--------|-----------|------|
@@ -43,9 +41,4 @@ Machbase는 두 가지 에디션을 제공합니다.
 
 ## 업그레이드
 
-기존 운영 중인 시스템을 새 버전으로 업그레이드하는 절차는 [업그레이드](/kr/dbms/installation-deployment-upgrade/upgrade/) 섹션을 참고하십시오.
-
----
-
-**다음 읽을 내용**
-- [설치 전 준비](/kr/dbms/installation-deployment-upgrade/pre-install-preparation/)
+기존 운영 중인 시스템의 업그레이드 절차는 [업그레이드](/kr/dbms/installation-deployment-upgrade/upgrade/)를 참고하십시오.

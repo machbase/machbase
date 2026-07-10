@@ -7,7 +7,7 @@ toc: true
 
 ## JDBC 개요
 
-자바 프로그래밍 언어로 만들어진 데이터베이스 조작 인터페이스의 집합을 JDBC(Java DataBase Connectivity)라고 합니다. 다양한 관계형 데이터베이스를 위해 일관된 인터페이스를 제공하는 API 집합으로서 프로그래머가 SQL 요구를 만드는데 사용할 일련의 객체지향 프로그램의 클래스들을 정의하고 있습니다. 즉, 어떤 데이터베이스를 사용하더라도 JDBC 드라이버만 제공된다면 코드 수정 없이 바로 적용 가능한 장점이 있습니다.
+JDBC(Java DataBase Connectivity)는 자바에서 데이터베이스를 조작하기 위한 표준 API입니다. JDBC 드라이버만 제공되면 어떤 데이터베이스든 코드 수정 없이 접근할 수 있습니다.
 
 ## 표준 JDBC 함수
 
@@ -251,7 +251,7 @@ clean:
 
 ### 컴파일 및 링크
 
-다음과 같이 make 명령어를 수행하여 컴파일 및 링크를 수행합니다.
+make 명령으로 컴파일합니다.
 
 ```bash
 [mach@localhost jdbc]$ make
@@ -287,7 +287,7 @@ import com.machbase.jdbc.*;
 
 ### 접속 예제
 
-마크베이스 JDBC 드라이버를 이용하여 마크베이스 서버에 접속하는 예제 프로그램을 작성해 보기로 합니다. 소스 파일명을 Sample1Connect.java로 합니다.
+마크베이스 서버에 접속하는 예제입니다. 소스 파일명은 Sample1Connect.java입니다.
 
 > [Tips] _arrival_time 컬럼은 디폴트로 표시되지 않습니다.<br>
 > 따라서 _arrival_time 컬럼을 표시하려면, 연결 문자열에 show_hidden_cols=1 을 추가하면 됩니다.<br><br>
@@ -354,7 +354,7 @@ public class Sample1Connect
 }
 ```
 
-이제 소스 코드를 컴파일하고 실행합니다. 이미 작성한 Makefile을 이용합니다.
+컴파일 후 실행합니다.
 
 ```bash
 [mach@localhost jdbc]$ make
@@ -366,12 +366,9 @@ machbase JDBC connected.
 
 ### 데이터 입력 및 출력 예제 (1) 직접 입/출력
 
-마크베이스 JDBC 드라이버를 이용하여 데이터를 입력하고 출력하는 예제를 작성하여 보기로 합니다.
+데이터를 입력하고 출력하는 예제입니다. 소스 파일명은 Sample2Insert.java입니다.
 
-소스 파일명은 Sample2Insert.java 라고 합니다.
-
-먼저, machsql 프로그램을 이용하여 필요한 테이블을 생성하여야 합니다.
-예제에서는 sample_table이라는 테이블을 미리 생성한 뒤에 샘플 코드를 이용하는 방식을 사용했습니다.
+먼저 machsql로 sample_table을 생성해야 합니다.
 
 ```bash
 [mach@localhost jdbc]$ machsql
@@ -522,7 +519,7 @@ public class Sample2Insert
     }
 }
 ```
-이제 소스 코드를 컴파일하고 실행합니다. 이미 작성한 Makefile을 이용합니다.
+컴파일 후 실행합니다.
 
 ```bash
 [mach@localhost jdbc]$ make
@@ -553,9 +550,7 @@ d1: -26208, d2: -1717986912, d3: -3689348814741910320, f1: 1.2345679E-28, f2: 1.
 
 ### 데이터 입력 및 출력 예제 (2) PreparedStatement 이용한 입력
 
-PreparedStatement를 이용하여 데이터를 입력하고 출력하는 예제를 작성하여 보기로 합니다.
-
-소스 파일명은 Sample3PrepareStmt.java 로 합니다.
+PreparedStatement를 이용한 데이터 입출력 예제입니다. 소스 파일명은 Sample3PrepareStmt.java입니다.
 
 ```java
 import java.util.*;
@@ -696,7 +691,7 @@ public class Sample3PrepareStmt
     }
 }
 ```
-이제 소스 코드를 컴파일하고 실행해 봅니다. 이미 작성한 Makefile을 이용합니다.
+컴파일 후 실행합니다.
 
 Sample2Insert.java에서 입력한 데이터가 함께 출력되고 있다는 점에 유의해야 합니다.
 
@@ -782,14 +777,9 @@ name: id-1, text: name-1, bin: aabbccddeeff, hexbin: 616162626363646465656666, v
 
 ### 확장 함수 Append 예제
 
-마크베이스 JDBC 드라이버는 많은 건수의 데이터를 빠르게 업로드하기 위한 Append 프로토콜을 지원합니다.
+마크베이스 JDBC 드라이버는 대량 데이터를 빠르게 입력하기 위한 Append 프로토콜을 지원합니다.
 
-다음은 Append 프로토콜 사용 예제입니다.
-이전 예제에 사용된 sample_table을 그대로 이용합니다.
-
-소스 파일명은 Sample4Append.java 라고 합니다.
-data.txt에 있는 내용을 sample_table에 입력합니다.
-Append 샘플 실행 전에 `make_data_file` target으로 data.txt를 생성합니다.
+이전 예제의 sample_table을 그대로 사용합니다. 소스 파일명은 Sample4Append.java이며, data.txt의 내용을 sample_table에 입력합니다. 실행 전에 `make_data_file` target으로 data.txt를 생성하세요.
 
 ```java
 import java.util.*;

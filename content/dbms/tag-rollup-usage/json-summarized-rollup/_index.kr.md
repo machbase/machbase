@@ -3,14 +3,12 @@ title: '6.9 JSON SUMMARIZED ROLLUP'
 weight: 80
 toc: true
 ---
-JSON SUMMARIZED ROLLUP에 해당하는 세부 문서를 모았습니다.
-
 
 <a id="json-summarized-rollup"></a>
 
 ## JSON SUMMARIZED ROLLUP
 
-JSON 타입 컬럼에 `SUMMARIZED` 속성을 추가하면 JSON 컬럼 내 숫자 필드를 ROLLUP 집계 대상으로 지정할 수 있습니다.
+JSON 타입 컬럼에 `SUMMARIZED` 속성을 추가하면 JSON 내 숫자 필드를 ROLLUP 집계 대상으로 사용할 수 있습니다.
 
 ### JSON SUMMARIZED 컬럼 생성
 
@@ -66,7 +64,7 @@ ORDER BY rt;
 
 ### JSON Whole-Document 집계
 
-JSON SUMMARIZED 컬럼 전체를 대상으로 하는 특수 집계도 지원됩니다. 이 경우 JSON 내 모든 숫자 필드를 한 번에 집계합니다.
+JSON SUMMARIZED 컬럼 전체를 대상으로 하는 특수 집계도 지원됩니다. JSON 내 모든 숫자 필드를 한 번에 집계합니다.
 
 ```sql
 CREATE ROLLUP tag_json_whole_ru

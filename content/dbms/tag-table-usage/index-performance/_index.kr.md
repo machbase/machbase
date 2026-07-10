@@ -3,18 +3,18 @@ title: '5.6 인덱스와 성능'
 weight: 60
 toc: true
 ---
-인덱스와 성능에 해당하는 세부 문서를 모았습니다.
 
+TAG 테이블의 인덱스 구조와 성능 최적화 기법을 다룬다. 자동으로 구성되는 3단계 파티션 인덱스, METADATA 컬럼 인덱스, 그리고 값 컬럼에 생성할 수 있는 TAG/KV secondary index까지 포함한다.
 
 <a id="index-tuning-tag"></a>
 
 ## TAG 인덱스 튜닝
 
-TAG 테이블은 태그명과 시간 축을 기준으로 자동 인덱스가 구성됩니다. 이 페이지에서는 TAG 테이블의 자동 인덱스 구조를 이해하고, 값 컬럼에 추가로 생성할 수 있는 TAG/KV secondary index 활용 기준을 설명합니다.
+TAG 테이블은 태그명과 시간 축을 기준으로 자동 인덱스가 구성된다. 여기서는 자동 인덱스 구조를 이해하고, 값 컬럼에 추가로 생성할 수 있는 TAG/KV secondary index 활용 기준을 설명한다.
 
 ### 자동 3단계 파티션 인덱스
 
-TAG 테이블에 데이터를 삽입하면 Machbase는 내부적으로 다음과 같은 3단계 인덱스 구조를 자동 유지합니다.
+TAG 테이블에 데이터를 삽입하면 내부적으로 다음과 같은 3단계 인덱스 구조가 자동 유지된다.
 
 ```
 태그명 (PRIMARY KEY)
@@ -30,7 +30,7 @@ TAG 테이블에 데이터를 삽입하면 Machbase는 내부적으로 다음과
 
 #### 인덱스를 최대한 활용하는 쿼리 패턴
 
-모든 3단계 인덱스를 사용하는 최적 쿼리입니다.
+모든 3단계 인덱스를 사용하는 최적 쿼리는 다음과 같다.
 
 ```sql
 -- 최적: 태그명 + 시간 범위 + 값 조건 모두 명시
@@ -41,7 +41,7 @@ WHERE name = 'sensor_A'
   AND value > 80.0;
 ```
 
-태그명 없이 값 조건만 사용하면 전체 태그를 순차 스캔합니다.
+태그명 없이 값 조건만 사용하면 전체 태그를 순차 스캔하게 된다.
 
 ```sql
 -- 비효율: 태그명 없음 → 모든 태그 파티션 스캔
@@ -50,7 +50,7 @@ SELECT * FROM sensor_tag WHERE value > 80.0;
 
 ### METADATA 컬럼 인덱스
 
-TAG 테이블에서 메타데이터 속성(예: 센서 유형, 설치 위치, 담당 팀 등)으로 태그를 필터링하는 경우, METADATA 컬럼을 사용합니다. 검증한 빌드에서는 TAG 테이블 생성 시 METADATA 컬럼에 인덱스가 자동 생성되므로, 같은 컬럼에 `CREATE INDEX`를 다시 실행하면 이미 인덱스가 있다는 오류가 반환됩니다.
+센서 유형, 설치 위치, 담당 팀 등의 메타데이터 속성으로 태그를 필터링하는 경우 METADATA 컬럼을 활용한다. 현재 빌드에서는 TAG 테이블 생성 시 METADATA 컬럼에 인덱스가 자동 생성되므로, 같은 컬럼에 `CREATE INDEX`를 다시 실행하면 이미 인덱스가 있다는 오류가 반환된다.
 
 ```sql
 -- TAG 테이블 생성 예시 (METADATA 컬럼 포함)
@@ -84,7 +84,7 @@ WHERE sensor_type = 'temperature'
 
 ### Min-Max Cache
 
-Machbase는 LOG 테이블의 `_ARRIVAL_TIME`과 LOG 일반 컬럼에 대해 Min-Max Cache를 제공합니다. TAG 테이블의 값 컬럼에는 이 페이지의 검증 대상 빌드에서 `MINMAX_CACHE_SIZE`를 직접 지정할 수 없습니다. TAG 조회 성능은 태그명, 시간 범위, METADATA 인덱스, ROLLUP 설계로 조정합니다.
+LOG 테이블의 `_ARRIVAL_TIME`과 일반 컬럼에는 Min-Max Cache가 제공된다. TAG 테이블의 값 컬럼에는 현재 빌드에서 `MINMAX_CACHE_SIZE`를 직접 지정할 수 없다. TAG 조회 성능은 태그명, 시간 범위, METADATA 인덱스, ROLLUP 설계로 조정한다.
 
 ```
 [파티션 1] MIN=10.0, MAX=50.0 → 검색값 85.0 → 건너뜀
@@ -94,7 +94,7 @@ Machbase는 LOG 테이블의 `_ARRIVAL_TIME`과 LOG 일반 컬럼에 대해 Min-
 
 #### TAG 값 범위 조회 시 조정 방향
 
-`value > 80.0` 같은 값 조건만으로 넓은 기간을 조회하면 많은 데이터 파티션을 확인해야 합니다. TAG 테이블에서는 먼저 `name`과 `time` 범위를 최대한 좁히고, 반복 집계 쿼리는 ROLLUP을 사용합니다.
+`value > 80.0` 같은 값 조건만으로 넓은 기간을 조회하면 많은 데이터 파티션을 확인해야 한다. TAG 테이블에서는 `name`과 `time` 범위를 최대한 좁힌 뒤, 반복 집계 쿼리에는 ROLLUP을 사용하는 것이 효과적이다.
 
 ```sql
 SELECT name, time, value
@@ -108,7 +108,7 @@ LOG 테이블 컬럼의 `MINMAX_CACHE_SIZE` 조정은 [메모리 설정 튜닝](
 
 ### 값 컬럼 TAG/KV 인덱스
 
-TAG 테이블의 시계열 값 컬럼(`value`, `temperature` 등)에는 TAG/KV secondary index를 생성할 수 있습니다. 값 조건을 단독으로 자주 사용하거나, 태그명과 시간 범위로 좁힌 뒤 값 조건을 추가로 적용하는 조회가 많을 때 검토합니다.
+TAG 테이블의 시계열 값 컬럼(`value`, `temperature` 등)에 TAG/KV secondary index를 생성할 수 있다. 값 조건을 단독으로 자주 사용하거나, 태그명과 시간 범위로 좁힌 뒤 값 조건을 추가하는 조회가 많을 때 검토한다.
 
 ```sql
 -- 값 컬럼 TAG/KV 인덱스 생성
@@ -119,7 +119,7 @@ CREATE INDEX idx_value ON sensor_tag (value) INDEX_TYPE TAG;
 `TAG`로 표시됩니다. `INDEX_TYPE LSM`을 지정해도 TAG 테이블에서는 LOG 테이블의
 LSM 인덱스가 아니라 TAG/KV secondary index로 생성됩니다.
 
-단, TAG 테이블의 기본 최적 경로는 여전히 `name`과 `time` 조건입니다. 값 컬럼 TAG/KV 인덱스는 조회 조건을 보조하지만, 넓은 시간 범위 전체를 자주 조회하는 집계 워크로드는 ROLLUP으로 처리하는 편이 적합합니다.
+TAG 테이블의 기본 최적 경로는 여전히 `name`과 `time` 조건이다. 값 컬럼 TAG/KV 인덱스는 조회 조건을 보조하지만, 넓은 시간 범위의 집계 워크로드에는 ROLLUP이 더 적합하다.
 
 **생성할 수 없는 패턴**:
 
@@ -144,13 +144,9 @@ CREATE INDEX idx_time ON sensor_tag (time) INDEX_TYPE LSM;
 
 > **8.5 원문 보강 자료**: 이 문서는 기존 8.5 매뉴얼의 내용을 새 장 구조에 맞춰 보존한 것입니다. Machbase 8.6 기준과 표현이 다른 부분은 같은 절의 최신 리뉴얼 문서를 우선합니다.
 
-### 개요
-
-tag 테이블의 인덱스는 추가 컬럼이나 JSON 경로로 검색할 때 쿼리 성능을 크게 향상시킵니다. 이 가이드는 TAG 인덱스를 효과적으로 생성하고 관리하는 방법을 다룹니다.
-
 ### TAG 인덱스란?
 
-Machbase TAG 테이블에 TAG 인덱스 유형을 생성할 수 있습니다.
+TAG 테이블에 TAG 인덱스 유형을 생성할 수 있다. 추가 컬럼이나 JSON 경로로 검색할 때 쿼리 성능이 크게 향상된다.
 
 자세한 내용은 SQL 참조의 DDL 섹션을 참조하세요.
 
@@ -240,7 +236,7 @@ METADATA (
 
 ### 인덱스 삭제
 
-DROP INDEX 문을 사용하여 지정된 인덱스를 삭제합니다. 그러나 테이블을 검색하고 있는 다른 세션이 있으면 오류와 함께 실패합니다.
+DROP INDEX 문으로 인덱스를 삭제한다. 다른 세션이 해당 테이블을 검색 중이면 오류와 함께 실패한다.
 
 ```sql
 DROP INDEX index_name;

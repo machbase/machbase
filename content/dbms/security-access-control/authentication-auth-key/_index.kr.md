@@ -5,7 +5,7 @@ weight: 40
 ---
 ## AUTH KEY란
 
-AUTH KEY는 공개키 기반 챌린지-응답(challenge-response) 인증 방식입니다. 클라이언트가 보유한 개인키로 서버가 보낸 챌린지(nonce)에 서명하고, 서버가 사전에 등록된 공개키로 서명을 검증합니다. 비밀번호를 네트워크로 전송하지 않기 때문에 도청이나 재전송 공격에 강합니다.
+AUTH KEY는 공개키 기반 챌린지-응답(challenge-response) 인증 방식입니다. 클라이언트가 개인키로 서버의 챌린지(nonce)에 서명하면, 서버가 등록된 공개키로 서명을 검증합니다. 비밀번호가 네트워크를 경유하지 않으므로 도청이나 재전송 공격에 강합니다.
 
 ## 비밀번호 인증과 AUTH KEY 인증 비교
 
@@ -54,9 +54,7 @@ AUTH KEY는 공개키 기반 챌린지-응답(challenge-response) 인증 방식�
 
 ### 개요
 
-사용자 AUTH KEY 관리는 Machbase 사용자 계정에 공개키를 등록하고, 키의 상태와 유효 기간을 관리하는 SQL 구문들을 다룹니다.
-
-한 사용자는 여러 AUTH KEY를 보유할 수 있습니다. 이를 활용하면 키 롤오버(교체) 기간 동안 이전 키와 신규 키를 동시에 활성화하여 무중단으로 키를 교체할 수 있습니다.
+사용자 계정에 공개키를 등록하고, 키의 상태와 유효 기간을 관리하는 SQL 구문을 다룹니다. 한 사용자가 여러 AUTH KEY를 보유할 수 있으므로, 롤오버(교체) 기간에 이전 키와 신규 키를 동시에 활성화하여 무중단 교체가 가능합니다.
 
 ### 이 섹션의 구성
 
@@ -112,9 +110,7 @@ SELECT key_id, user_name, pubkey
 
 ### CREATE USER ... WITH AUTH KEY
 
-#### 개요
-
-`CREATE USER ... WITH AUTH KEY` 구문은 사용자를 생성하면서 동시에 공개키를 등록합니다. 사용자 생성 시 등록한 첫 번째 AUTH KEY는 즉시 활성 상태(`ACTIVATED=1`)로 설정됩니다.
+사용자를 생성하면서 공개키를 함께 등록합니다. 첫 번째 AUTH KEY는 즉시 활성 상태(`ACTIVATED=1`)로 설정됩니다.
 
 #### 키 쌍 생성
 
@@ -204,11 +200,7 @@ SELECT key_id, user_name, key_algo, key_param, activated, valid_before, comment
 
 ### ALTER USER ... ADD AUTH KEY
 
-#### 개요
-
-`ALTER USER ... ADD AUTH KEY` 구문은 기존 사용자에게 공개키를 추가합니다. 추가된 AUTH KEY는 즉시 활성 상태(`ACTIVATED=1`)로 등록됩니다.
-
-비밀번호 인증만 사용하던 기존 사용자에게 AUTH KEY를 추가하면 이후 비밀번호 또는 AUTH KEY 두 가지 방식 모두로 인증할 수 있습니다. 실제 어떤 방식을 사용할지는 클라이언트의 `AUTH_MODE` 설정에 따라 결정됩니다.
+기존 사용자에게 공개키를 추가합니다. 추가된 AUTH KEY는 즉시 활성 상태(`ACTIVATED=1`)로 등록됩니다. 비밀번호 인증만 사용하던 사용자에게 AUTH KEY를 추가하면, 이후 클라이언트의 `AUTH_MODE` 설정에 따라 비밀번호 또는 AUTH KEY 중 하나로 인증할 수 있습니다.
 
 #### 구문
 
@@ -287,9 +279,7 @@ SELECT key_id, user_name, key_algo, key_param, activated, valid_before, comment
 
 ### AUTH KEY 활성화/비활성화
 
-#### 개요
-
-등록된 AUTH KEY를 키 삭제 없이 임시로 비활성화하거나 다시 활성화할 수 있습니다. 비활성화된 키는 챌린지 인증에 사용할 수 없습니다.
+등록된 AUTH KEY를 삭제하지 않고 임시로 비활성화하거나 다시 활성화할 수 있습니다. 비활성화된 키는 챌린지 인증에 사용할 수 없습니다.
 
 #### 구문
 
@@ -367,9 +357,7 @@ SELECT key_id, user_name, key_algo, activated, valid_before, comment
 
 ### AUTH KEY 만료 변경
 
-#### 개요
-
-등록된 AUTH KEY의 유효 기간(`valid_before`)을 변경합니다. 만료일이 지난 AUTH KEY는 인증에 사용할 수 없으며, 오류가 반환됩니다.
+등록된 AUTH KEY의 유효 기간(`valid_before`)을 변경합니다. 만료일이 지난 키는 인증에 사용할 수 없으며 오류가 반환됩니다.
 
 #### 구문
 
@@ -431,9 +419,7 @@ ALTER USER app_user DROP AUTH KEY ID 1;
 
 ### AUTH KEY 삭제
 
-#### 개요
-
-`ALTER USER ... DROP AUTH KEY` 구문으로 등록된 AUTH KEY를 영구 삭제합니다. 삭제된 키는 즉시 인증에 사용할 수 없으며 복구할 수 없습니다.
+`ALTER USER ... DROP AUTH KEY` 구문으로 등록된 AUTH KEY를 영구 삭제합니다. 삭제 즉시 해당 키로는 인증할 수 없으며, 복구도 불가합니다.
 
 #### 구문
 
@@ -506,9 +492,7 @@ SELECT key_id, user_name, key_algo, activated, valid_before, comment
 
 ## AUTH KEY challenge 인증
 
-### 개요
-
-AUTH KEY challenge 인증은 공개키 암호화를 기반으로 한 챌린지-응답 방식의 인증 메커니즘입니다. 비밀번호를 네트워크로 전송하지 않고, 서버가 보낸 일회성 챌린지(nonce)에 클라이언트가 개인키로 서명하여 신원을 증명합니다.
+공개키 암호화를 기반으로 한 챌린지-응답 인증 방식입니다. 비밀번호를 네트워크로 전송하지 않고, 서버가 보낸 일회성 nonce에 클라이언트가 개인키로 서명하여 신원을 증명합니다.
 
 ### 인증 흐름
 
@@ -616,13 +600,9 @@ AUTH KEY 인증 실패 시 비밀번호 인증으로 자동 전환되지 않습�
 
 ## SYS AS USER 인증 제약
 
-### 개요
-
-SYS는 Machbase의 관리자 계정입니다. SYS 계정의 AUTH KEY 인증 사용과 관련하여 다음 사항을 이해하고 운영해야 합니다.
+SYS는 관리자 계정입니다. AUTH KEY 인증과 관련하여 다음 사항에 유의하십시오.
 
 ### SYS 계정 인증 특성
-
-SYS 계정은 서버 관리 목적으로 사용되며, 인증 방식 사용에 다음과 같은 사항을 이해해야 합니다.
 
 - `AUTH_MODE=CHALLENGE`는 서버 전역 설정이 아니라 클라이언트 연결 옵션입니다.
 - SYS 계정으로 CHALLENGE 인증을 사용하려면 SYS 계정에도 AUTH KEY를 등록해야 합니다.
@@ -653,13 +633,7 @@ ALTER USER SYS ADD AUTH KEY (
 
 ### 운영 환경 권장 사항
 
-SYS 계정을 일상적인 애플리케이션 접속에 직접 사용하는 것은 권장하지 않습니다.
-
-**권장 운영 방식:**
-
-1. **전용 애플리케이션 계정 사용**: 각 애플리케이션별로 전용 계정을 생성하고 필요한 최소 권한만 부여합니다.
-2. **SYS 계정 직접 사용 최소화**: SYS 계정은 계정 관리, 권한 부여, 유지보수 등 관리 작업에만 사용합니다.
-3. **SYS 비밀번호 보호**: SYS 비밀번호는 안전하게 관리하고 정기적으로 변경합니다.
+SYS 계정을 일상적인 애플리케이션 접속에 직접 사용하지 마십시오. 각 애플리케이션별로 전용 계정을 생성해 최소 권한만 부여하고, SYS는 관리 작업 전용으로 유지합니다. SYS 비밀번호는 정기적으로 변경하십시오.
 
 ```sql
 -- 애플리케이션 전용 계정 생성 예
@@ -684,10 +658,7 @@ SYS 계정으로 CHALLENGE 인증을 사용해야 한다면 먼저 SYS 계정에
 
 ## AUTH_MODE=CHALLENGE
 
-### 개요
-
-`AUTH_MODE`는 클라이언트 접속 시 사용할 인증 방식을 지정하는 연결 옵션입니다.
-서버 `machbase.conf`의 전역 속성이 아닙니다.
+`AUTH_MODE`는 클라이언트 접속 시 인증 방식을 지정하는 연결 옵션입니다. 서버 `machbase.conf`의 전역 속성이 아닙니다.
 
 | 값 | 설명 |
 |----|------|
@@ -741,9 +712,7 @@ AUTH KEY가 없는 사용자는 `key_id` 컬럼이 NULL로 표시됩니다. 이�
 
 ## AUTH_KEY_FILE
 
-### 개요
-
-`AUTH_KEY_FILE`은 AUTH KEY 챌린지 인증 시 클라이언트가 서명에 사용할 개인키 파일의 경로를 지정하는 설정입니다. 개인키는 클라이언트 호스트에만 보관하며 네트워크로 전송되지 않습니다.
+`AUTH_KEY_FILE`은 챌린지 인증 시 클라이언트가 서명에 사용할 개인키 파일 경로를 지정합니다. 개인키는 클라이언트 호스트에만 보관하며 네트워크로 전송되지 않습니다.
 
 ### 파일 형식
 
@@ -832,9 +801,7 @@ C/ODBC 클라이언트도 연결 속성으로 `AUTH_MODE=CHALLENGE`와 `AUTH_KEY
 
 ## AUTH_SIG_SCHEME
 
-### 개요
-
-`AUTH_SIG_SCHEME`은 AUTH KEY 챌린지 인증 시 클라이언트가 nonce에 서명할 때 사용하는 서명 스킴을 지정합니다. 소스 코드(`pmuAuth.h`)에 정의된 지원 값은 다음과 같습니다.
+`AUTH_SIG_SCHEME`은 챌린지 인증 시 nonce 서명에 사용할 스킴을 지정합니다. 지원 값은 다음과 같습니다.
 
 | 값 | 설명 |
 |----|------|

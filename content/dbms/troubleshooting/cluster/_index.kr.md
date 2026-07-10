@@ -3,9 +3,7 @@ type: docs
 title: '16.8 Cluster 문제'
 weight: 80
 ---
-Machbase Cluster Edition 운영 중 노드 상태 이상이나 Cluster Edition 전용 제한 오류가 발생할 때 원인을 진단하고 해결하는 방법을 설명합니다.
-
-클러스터 구성과 일반적인 운영 절차에 대한 상세 내용은 [Cluster 운영](../../../operations-configuration-recovery/cluster/)을 참고하십시오.
+Cluster Edition 운영 중 노드 상태 이상이나 에디션 전용 제한 오류가 발생할 때의 진단과 해결 방법입니다. 클러스터 구성과 일반 운영 절차는 [Cluster 운영](../../../operations-configuration-recovery/cluster/)을 참고하십시오.
 
 ## 이 섹션의 구성
 
@@ -19,7 +17,7 @@ Machbase Cluster Edition 운영 중 노드 상태 이상이나 Cluster Edition �
 
 ## Cluster 노드 상태가 비정상일 때
 
-Cluster Edition에서 특정 노드가 비정상 상태로 전환되면 데이터 입력, 쿼리, 또는 클러스터 전체 기능에 영향을 미칠 수 있습니다. 노드 상태를 확인하고 복구하는 방법을 설명합니다.
+특정 노드가 비정상 상태로 전환되면 데이터 입력, 쿼리, 클러스터 전체 기능에 영향을 줄 수 있습니다.
 
 ### 노드 상태 확인
 
@@ -113,9 +111,7 @@ Warehouse 노드의 데이터 손상(`scrapped` 상태) 복구, Snapshot 활용,
 
 ## Cluster Edition 제한 오류
 
-Machbase Cluster Edition은 Standard Edition의 일부 기능을 지원하지 않습니다. 미지원 기능을 사용하려 하면 오류가 발생합니다. 이 페이지는 주요 제한 기능별 오류 메시지와 대안을 안내합니다.
-
-Cluster Edition의 전반적인 제한사항에 대한 상세 내용은 [Cluster 운영 제한사항](../../../operations-configuration-recovery/cluster/limitations-cluster/)을 참고하십시오.
+Cluster Edition은 Standard Edition의 일부 기능을 지원하지 않으며, 미지원 기능 사용 시 오류가 발생합니다. 전반적인 제한사항은 [Cluster 운영 제한사항](../../../operations-configuration-recovery/cluster/limitations-cluster/)을 참고하십시오.
 
 ### 에디션 확인
 

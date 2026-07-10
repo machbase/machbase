@@ -3,7 +3,7 @@ type: docs
 title: '4.2 테이블 타입 선택'
 weight: 10
 ---
-Machbase는 데이터 성격에 따라 최적화된 다섯 가지 테이블 타입을 제공합니다. 잘못된 타입 선택은 성능 저하와 기능 제한으로 이어지므로, 설계 초기에 올바른 타입을 선택하는 것이 중요합니다.
+잘못된 타입 선택은 성능 저하와 기능 제한으로 이어지므로, 설계 초기에 데이터 성격에 맞는 타입을 결정해야 합니다.
 
 - **[테이블 타입 개요](/dbms/data-modeling-table-design/table-types-selection-type/#table-types-type)**
 - **[타입 선택 결정 가이드](/dbms/data-modeling-table-design/table-types-selection-type/#selection-decision)**
@@ -17,7 +17,7 @@ Machbase는 데이터 성격에 따라 최적화된 다섯 가지 테이블 타�
 
 ### TAG 테이블
 
-센서·IoT 기기에서 수집되는 계측값을 저장하는 타입입니다. 시간축(BASETIME) 또는 거리축(BASEDISTANCE)을 기준으로 다수의 태그(센서 이름)를 하나의 테이블에서 관리합니다.
+센서·IoT 기기에서 수집되는 계측값을 저장하는 타입으로, 시간축(BASETIME) 또는 거리축(BASEDISTANCE)을 기준으로 다수의 태그(센서 이름)를 하나의 테이블에서 관리합니다.
 
 ```sql
 CREATE TAG TABLE sensor_data (
@@ -44,7 +44,7 @@ CREATE TABLE sys_log (
 ```
 
 - `_arrival_time` 컬럼이 자동 추가됩니다 (나노초 DATETIME).
-- UPDATE와 일반 조건 DELETE는 지원하지 않습니다. 보존/정리 목적의 `BEFORE`, `OLDEST`, `EXCEPT` DELETE를 사용할 수 있습니다.
+- UPDATE와 일반 조건 DELETE는 지원하지 않습니다. 보존/정리 목적의 `BEFORE`, `OLDEST`, `EXCEPT` DELETE를 사용합니다.
 
 ### RDB 테이블
 
@@ -81,7 +81,7 @@ CREATE VOLATILE TABLE session_cache (
 
 ### LOOKUP 테이블
 
-소규모 코드 테이블·기준 정보를 저장합니다. 실시간 업데이트가 가능한 참조 데이터에 적합합니다.
+소규모 코드 테이블·기준 정보를 저장하며, 실시간 업데이트가 가능한 참조 데이터에 적합합니다.
 
 ```sql
 CREATE LOOKUP TABLE code_master (
@@ -98,7 +98,7 @@ CREATE LOOKUP TABLE code_master (
 
 ## 타입 선택 결정 가이드
 
-아래 질문에 순서대로 답하여 적합한 테이블 타입을 선택합니다.
+아래 질문에 순서대로 답하면 적합한 테이블 타입을 결정할 수 있습니다.
 
 ### 결정 흐름
 
@@ -145,8 +145,6 @@ CREATE LOOKUP TABLE code_master (
 
 ## 타입 비교표
 
-다섯 가지 테이블 타입의 주요 기능을 한눈에 비교합니다.
-
 ### 기능 비교
 
 | 항목 | TAG | LOG | RDB | VOLATILE | LOOKUP |
@@ -183,7 +181,7 @@ RDB 테이블(8.6 신규)은 다음 제약이 있습니다.
 
 ## RDB vs LOOKUP 비교
 
-RDB 테이블과 LOOKUP 테이블은 모두 관계형 데이터를 저장하지만, 사용 목적과 기능에 차이가 있습니다.
+RDB 테이블과 LOOKUP 테이블은 모두 관계형 데이터를 저장하지만, 대상 규모와 기능에 차이가 있습니다.
 
 ### 비교표
 

@@ -66,7 +66,7 @@ DROP TABLE check_test;
 curl -G "http://127.0.0.1:5657/machbase" --data-urlencode "q=SELECT 1"
 ```
 
-JSON 형식의 쿼리 결과가 반환되면 HTTP REST API가 응답하는 상태입니다.
+JSON 형식의 쿼리 결과가 반환되면 HTTP REST API가 정상 동작하는 상태입니다.
 
 ---
 
@@ -106,11 +106,3 @@ DROP TABLE cluster_check_test;
 
 - 서버 로그: `$MACHBASE_HOME/trc/machbase.trc`
 - [운영·장애 진단](/dbms/operations-configuration-recovery/diagnosis-observability/) 참고
-
----
-
-**이 장의 내용을 모두 완료했습니다.**
-
-다음으로 읽을 내용:
-- [데이터 모델링 및 테이블 설계](/dbms/data-modeling-table-design/)
-- [운영 및 구성](/dbms/operations-configuration-recovery/)

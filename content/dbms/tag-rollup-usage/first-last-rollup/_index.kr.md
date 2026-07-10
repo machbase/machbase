@@ -3,14 +3,12 @@ title: '6.10 FIRST / LAST 함수'
 weight: 90
 toc: true
 ---
-FIRST / LAST 함수에 해당하는 세부 문서를 모았습니다.
-
 
 <a id="first-last-rollup"></a>
 
 ## FIRST / LAST 함수
 
-`FIRST()`와 `LAST()` 함수는 시간 구간 내 첫 번째 값과 마지막 값을 반환합니다. 확장 ROLLUP(EXTENSION)이 있을 때만 사용할 수 있습니다.
+`FIRST()`와 `LAST()`는 시간 구간 내 첫 번째 값과 마지막 값을 반환합니다. 확장 ROLLUP(EXTENSION)이 있어야 사용할 수 있습니다.
 
 ### 구문
 
@@ -36,7 +34,7 @@ ORDER BY rt;
 
 ### OHLC (캔들스틱) 패턴
 
-금융 데이터나 시계열 분석에서 자주 사용하는 OHLC(시가/고가/저가/종가) 조회:
+금융 데이터나 시계열 분석의 OHLC(시가/고가/저가/종가) 조회 예시입니다.
 
 ```sql
 SELECT rollup('min', 5, time) AS rt,

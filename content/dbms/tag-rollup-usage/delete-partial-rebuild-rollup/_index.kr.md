@@ -3,14 +3,12 @@ title: '6.14 ROLLUP 삭제와 부분 재구성'
 weight: 130
 toc: true
 ---
-ROLLUP 삭제와 부분 재구성에 해당하는 세부 문서를 모았습니다.
-
 
 <a id="differences-rollup-delete-partial-rebuild"></a>
 
 ## ROLLUP 삭제·부분 재구성 차이
 
-이상 데이터 보정이나 원본 데이터 재적재 후에는 기존 ROLLUP 집계 결과도 함께 갱신해야 합니다. 상황에 따라 DROP 후 재생성 또는 부분 Rebuild 중 하나를 선택합니다.
+이상 데이터 보정이나 원본 데이터 재적재 후에는 기존 ROLLUP 집계도 갱신해야 합니다. DROP 후 재생성과 부분 Rebuild 중 상황에 맞는 방법을 선택합니다.
 
 ### DROP ROLLUP vs Rebuild
 

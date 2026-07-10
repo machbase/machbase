@@ -18,7 +18,7 @@ toc: true
 
 ## 개요 {#overview}
 
-Machbase는 모든 지원 Machbase 와이어 프로토콜(2.1~4.0)을 포괄하는 범용 ADO.NET 프로바이더 **UniMachNetConnector**를 제공합니다. DBMS standard 소스의 현재 통합 패키지는 `UniMachNetConnector` 8.0.54이며 `net452`, `net5.0`, `net6.0`, `net7.0`, `net8.0` 타깃을 빌드합니다. 커넥터는 실행 시 커넥션 문자열을 참고해 올바른 프로토콜을 자동으로 협상하므로, 시계열 데이터 수집·질의 워크로드에도 별도 설정 없이 적합한 프로토콜을 선택합니다.
+Machbase는 와이어 프로토콜 2.1~4.0을 모두 지원하는 범용 ADO.NET 프로바이더 **UniMachNetConnector**를 제공합니다. 현재 통합 패키지는 `UniMachNetConnector` 8.0.54이며 `net452`, `net5.0`, `net6.0`, `net7.0`, `net8.0` 타깃을 빌드합니다. 커넥터는 실행 시 커넥션 문자열을 참고해 적합한 프로토콜을 자동 협상합니다.
 
 ## 설치 {#install}
 

@@ -4,7 +4,7 @@ title: '17.1 SQL 레퍼런스'
 weight: 10
 ---
 
-Machbase SQL 레퍼런스는 SQL 문법, 함수, 데이터 타입, 쿼리 힌트, 상대 시간 표현의 정확한 정의를 제공합니다.
+SQL 문법, 함수, 데이터 타입, 쿼리 힌트, 상대 시간 표현의 정확한 정의를 제공합니다.
 
 ## 하위 섹션
 
@@ -17,9 +17,9 @@ Machbase SQL 레퍼런스는 SQL 문법, 함수, 데이터 타입, 쿼리 힌트
 | [상대 시간 표현 사전](./relative-time-dictionary/) | DURATION, BEFORE, AFTER, RANGE 등 시간 범위 표현 문법 |
 | [8.5 전체 SQL 레퍼런스](./original-8-5-full/) | 8.5 원본 SQL 레퍼런스의 전체 항목 보존본 |
 
-## Machbase SQL의 특징
+## SQL 특징
 
-Machbase SQL은 표준 ANSI SQL을 기반으로 하며, 시계열 데이터 처리에 최적화된 확장 문법을 제공합니다.
+표준 ANSI SQL을 기반으로 시계열 데이터 처리에 최적화된 확장 문법을 제공합니다.
 
 - **TAG 테이블 전용 문법**: `TAG TABLE` 키워드, `RECENT`, `FIRST`/`LAST`, `SERIES BY`, `ROLLUP`
 - **시간 범위 조회**: `DURATION`, `BEFORE`, `AFTER`, `RANGE` 절

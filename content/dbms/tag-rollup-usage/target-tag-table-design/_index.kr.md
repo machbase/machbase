@@ -3,14 +3,12 @@ title: '6.3 ROLLUP 대상 TAG 테이블 설계'
 weight: 20
 toc: true
 ---
-ROLLUP 대상 TAG 테이블 설계에 해당하는 세부 문서를 모았습니다.
-
 
 <a id="design-rollup-on"></a>
 
 ## ROLLUP 설계 가이드
 
-ROLLUP을 효과적으로 사용하려면 데이터 수집 패턴과 조회 패턴을 고려해 계층을 설계해야 합니다.
+데이터 수집 패턴과 조회 패턴을 고려해 ROLLUP 계층을 설계합니다.
 
 ### ON vs FROM
 

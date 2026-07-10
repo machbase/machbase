@@ -3,14 +3,12 @@ title: '6.13 ROLLUP 상태 확인'
 weight: 120
 toc: true
 ---
-ROLLUP 상태 확인에 해당하는 세부 문서를 모았습니다.
-
 
 <a id="state-status-rollup-wakeup-interval-vrollup"></a>
 
 ## 상태 확인 (V$ROLLUP)
 
-`V$ROLLUP` 가상 테이블에서 등록된 모든 ROLLUP의 현재 상태를 조회할 수 있습니다.
+`V$ROLLUP` 가상 테이블에서 등록된 모든 ROLLUP의 현재 상태를 조회합니다.
 
 ### V$ROLLUP 주요 컬럼
 
@@ -55,7 +53,7 @@ ORDER BY LAST_ELAPSED_MSEC DESC;
 
 ### SHOW ROLLUPGAP
 
-`show rollupgap` 명령으로도 현재 상태를 확인할 수 있습니다.
+`show rollupgap` 명령으로도 상태를 확인할 수 있습니다.
 
 ```sql
 Mach> show rollupgap;

@@ -3,18 +3,19 @@ title: '7.6 인덱스와 성능'
 weight: 60
 toc: true
 ---
-인덱스와 성능에 해당하는 세부 문서를 모았습니다.
+
+LOG 테이블에서 사용할 수 있는 인덱스 유형과 성능 영향을 다룬다.
 
 
 <a id="index-tuning-log"></a>
 
 ## LOG 인덱스 튜닝
 
-LOG 테이블은 기본적으로 `_arrival_time` 기준의 시간 순차 저장 구조를 사용하며, 추가 인덱스는 선택적으로 생성합니다. 이 페이지에서는 어떤 컬럼에 어떤 인덱스를 생성해야 Append 성능 손실을 최소화하면서 조회 성능을 극대화할 수 있는지 설명합니다.
+LOG 테이블은 기본적으로 `_arrival_time` 기준의 시간 순차 저장 구조를 사용하며, 추가 인덱스는 선택적으로 생성한다. 어떤 컬럼에 어떤 인덱스를 생성해야 Append 성능 손실을 최소화하면서 조회 성능을 극대화할 수 있는지 살펴본다.
 
 ### `_arrival_time` 기반 파티션 Pruning (인덱스 불필요)
 
-LOG 테이블은 `_arrival_time`(데이터 도착 시각)을 기준으로 자동 파티셔닝됩니다. `_arrival_time` 또는 `DURATION` 절로 시간 범위를 지정하면 해당 파티션만 스캔합니다. 별도 인덱스 없이 자동으로 동작합니다.
+LOG 테이블은 `_arrival_time`(데이터 도착 시각)을 기준으로 자동 파티셔닝된다. `_arrival_time` 또는 `DURATION` 절로 시간 범위를 지정하면 해당 파티션만 스캔하며, 별도 인덱스 없이 자동으로 동작한다.
 
 ```sql
 -- DURATION 키워드: 최근 N 시간/일/분 데이터만 스캔
@@ -26,11 +27,11 @@ WHERE _arrival_time BETWEEN TO_DATE('2026-07-01 08:00:00', 'YYYY-MM-DD HH24:MI:S
                         AND TO_DATE('2026-07-01 09:00:00', 'YYYY-MM-DD HH24:MI:SS');
 ```
 
-> 시간 필터 없이 조회하면 모든 파티션을 전체 스캔합니다. LOG 테이블 쿼리에는 항상 시간 조건을 포함하세요.
+> 시간 필터 없이 조회하면 모든 파티션을 전체 스캔한다. LOG 테이블 쿼리에는 항상 시간 조건을 포함해야 한다.
 
 ### LSM 인덱스: 등가·범위 조건 컬럼
 
-`device_id`, `event_type`처럼 WHERE 조건에 자주 등장하는 컬럼에는 LSM(Log-Structured Merge-tree) 인덱스를 생성합니다.
+`device_id`, `event_type`처럼 WHERE 조건에 자주 등장하는 컬럼에는 LSM(Log-Structured Merge-tree) 인덱스를 생성한다.
 
 ```sql
 -- 기본 LSM 인덱스 생성
@@ -49,13 +50,13 @@ DURATION 1 DAY;
 
 **LSM 인덱스 특성**:
 
-- 삽입 시 메모리 버퍼에 먼저 기록하고, 배경 스레드가 주기적으로 디스크의 정렬된 파일로 병합합니다.
-- 순차 삽입이 많은 환경에서 B-Tree보다 삽입 성능이 우수합니다.
-- 병합(compaction) 중에 I/O 부하가 일시적으로 증가할 수 있습니다.
+- 삽입 시 메모리 버퍼에 먼저 기록하고, 배경 스레드가 주기적으로 디스크의 정렬된 파일로 병합한다.
+- 순차 삽입이 많은 환경에서 B-Tree보다 삽입 성능이 우수하다.
+- 병합(compaction) 중에 I/O 부하가 일시적으로 증가할 수 있다.
 
 ### BITMAP 인덱스: 카디널리티 낮은 컬럼
 
-`status`, `level`, `type`처럼 가능한 값의 수가 적은(카디널리티 낮은) 컬럼에는 BITMAP 인덱스를 사용합니다. BITMAP 인덱스는 동등 조건과 OR 조합 조건에서 특히 효율적입니다.
+`status`, `level`, `type`처럼 가능한 값의 수가 적은(카디널리티 낮은) 컬럼에는 BITMAP 인덱스를 사용한다. 동등 조건과 OR 조합 조건에서 특히 효율적이다.
 
 ```sql
 -- level 컬럼: ERROR, WARN, INFO, DEBUG 등 소수의 고정값
@@ -80,11 +81,11 @@ WHERE level IN ('ERROR', 'WARN')
 DURATION 6 HOUR;
 ```
 
-> `SHOW INDEXES`에서 BITMAP 인덱스가 내부 구현 방식에 따라 다른 타입명으로 표시될 수 있습니다. 생성 구문과 실행 계획을 함께 확인하십시오.
+> `SHOW INDEXES`에서 BITMAP 인덱스가 내부 구현 방식에 따라 다른 타입명으로 표시될 수 있다. 생성 구문과 실행 계획을 함께 확인할 것.
 
 ### KEYWORD 인덱스: 긴 텍스트 컬럼
 
-`message`, `description`처럼 긴 텍스트에서 특정 단어를 포함하는 행을 검색할 때 KEYWORD 인덱스를 사용합니다. VARCHAR 및 TEXT 컬럼에만 생성할 수 있습니다.
+`message`, `description`처럼 긴 텍스트에서 특정 단어를 포함하는 행을 검색할 때 KEYWORD 인덱스를 사용한다. VARCHAR 및 TEXT 컬럼에만 생성할 수 있다.
 
 ```sql
 -- message 컬럼에 KEYWORD 인덱스 생성
@@ -113,7 +114,7 @@ DURATION 6 HOUR;
 
 ### 인덱스 남발 금지: Append 성능 영향
 
-각 인덱스는 데이터 삽입 시마다 갱신 비용이 발생합니다. LOG 테이블에서 인덱스 1개 추가 시 **Append 처리량이 약 5~10% 감소**합니다.
+각 인덱스는 데이터 삽입 시마다 갱신 비용이 발생한다. LOG 테이블에서 인덱스 1개 추가 시 **Append 처리량이 약 5~10% 감소**한다.
 
 ```
 인덱스 없음        : Append 기준 성능 100%
@@ -124,9 +125,9 @@ LSM + BITMAP 각 1개 : Append 약 80~88%
 
 **권장 원칙**:
 
-- 실제 WHERE 조건에 사용되는 컬럼만 인덱스를 생성합니다.
-- 새 인덱스 생성 전에 해당 컬럼이 쿼리에 실제로 자주 등장하는지 확인합니다.
-- `_arrival_time` 기반 DURATION 필터로 해결되는 경우 추가 인덱스는 불필요합니다.
+- 실제 WHERE 조건에 사용되는 컬럼만 인덱스를 생성한다.
+- 새 인덱스 생성 전에 해당 컬럼이 쿼리에 실제로 자주 등장하는지 확인한다.
+- `_arrival_time` 기반 DURATION 필터로 해결되는 경우 추가 인덱스는 불필요하다.
 
 ### 인덱스 관리 명령어
 
@@ -178,18 +179,18 @@ CREATE INDEX idx_msg      ON device_log (message) INDEX_TYPE KEYWORD; -- KEYWORD
 
 > **8.5 원문 보강 자료**: 이 문서는 기존 8.5 매뉴얼의 내용을 새 장 구조에 맞춰 보존한 것입니다. Machbase 8.6 기준과 표현이 다른 부분은 같은 절의 최신 리뉴얼 문서를 우선합니다.
 
-Machbase Log 테이블에서는 세 가지 인덱스 타입 키워드를 사용할 수 있습니다.
+Log 테이블에서 사용할 수 있는 인덱스 타입 키워드는 세 가지다.
 
-자세한 내용은 SQL Reference의 DDL 페이지 CREATE INDEX 섹션을 참조하세요.
+자세한 내용은 SQL Reference의 DDL 페이지 CREATE INDEX 섹션을 참조한다.
 
-* LSM Index: 범위 조건과 동등 조건 검색에 사용합니다.
-* BITMAP Index: LOG 테이블 컬럼에 생성할 수 있으며 `DESC`에서는 `LSM`으로 표시됩니다.
-* KEYWORD Index: 문자열 검색에 사용되며 Varchar 및 Text 컬럼에만 생성할 수 있습니다.
+* LSM Index: 범위 조건과 동등 조건 검색에 사용한다.
+* BITMAP Index: LOG 테이블 컬럼에 생성할 수 있으며 `DESC`에서는 `LSM`으로 표시된다.
+* KEYWORD Index: 문자열 검색에 사용되며 Varchar 및 Text 컬럼에만 생성할 수 있다.
 
 
 ###  인덱스 생성
 
-CREATE INDEX 문을 사용하여 특정 컬럼에 인덱스를 생성합니다.
+CREATE INDEX 문으로 특정 컬럼에 인덱스를 생성한다.
 
 ```sql
 CREATE INDEX index_name ON table_name (column_name) [index_type] [tablespace] [index_prop_list]
@@ -207,7 +208,7 @@ Created successfully.
 
 ###  인덱스 속성
 
-인덱스 속성은 인덱스를 생성할 때 지정합니다.
+인덱스 속성은 인덱스 생성 시 지정한다.
 
 ```sql
 CREATE BITMAP INDEX value_bitmap_idx ON log_data(value) KEY_COMPRESS=1;
@@ -221,7 +222,7 @@ Created successfully.
 
 ###  인덱스 삭제
 
-DROP INDEX 문을 사용하여 지정된 인덱스를 삭제합니다. 단, 테이블을 검색 중인 다른 세션이 있으면 오류와 함께 실패합니다.
+DROP INDEX 문으로 인덱스를 삭제한다. 테이블을 검색 중인 다른 세션이 있으면 오류와 함께 실패한다.
 
 ```sql
 DROP INDEX index_name;

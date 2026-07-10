@@ -3,7 +3,6 @@ title: '5.10 TAG 메타데이터'
 weight: 100
 toc: true
 ---
-TAG 메타데이터에 해당하는 세부 문서를 모았습니다.
 
 
 <a id="original-85-tag-metadata"></a>

@@ -3,14 +3,14 @@ title: '9.11 SEQUENCE 컬럼'
 weight: 110
 toc: true
 ---
-SEQUENCE 컬럼에 해당하는 세부 문서를 모았습니다.
+LOOKUP 테이블의 SEQUENCE 컬럼 설정과 활용을 다룬다.
 
 
 <a id="design-column-lookup-sequence"></a>
 
 ## 컬럼 및 시퀀스 설계
 
-LOOKUP 테이블의 일반 컬럼 설계와 자동 증가 번호(시퀀스) 활용 방법을 설명합니다.
+일반 컬럼 설계와 자동 증가 번호(시퀀스) 활용 방법이다.
 
 ### 지원 컬럼 타입
 
@@ -39,8 +39,8 @@ CREATE LOOKUP TABLE equipment_master (
 
 ### 시퀀스(자동 증가) 활용
 
-LOOKUP 테이블에서 자동 증가 번호가 필요하면 `LONG PROPERTY(SEQUENCE=1)` 컬럼과
-`NEXTVAL()` 함수를 사용합니다. 별도의 `CREATE SEQUENCE` 객체는 사용하지 않습니다.
+자동 증가 번호가 필요하면 `LONG PROPERTY(SEQUENCE=1)` 컬럼과
+`NEXTVAL()` 함수를 사용한다. 별도의 `CREATE SEQUENCE` 객체는 사용하지 않는다.
 
 ```sql
 CREATE LOOKUP TABLE equipment_master_seq (
@@ -80,15 +80,15 @@ UPDATE code_master SET label = '한국', updated_at = NOW WHERE code = 'KR';
 
 ## LOOKUP SEQUENCE 컬럼 정의
 
-LOOKUP 테이블에서 레코드의 고유 순서를 자동으로 부여하기 위해 SEQUENCE 컬럼을 사용합니다.
+레코드의 고유 순서를 자동으로 부여하기 위해 SEQUENCE 컬럼을 사용한다.
 
 ### SEQUENCE 컬럼이 필요한 이유
 
-LOOKUP 테이블은 이벤트 로그나 알람 이력을 관리할 때 자주 활용됩니다. DATETIME 컬럼으로 레코드 순서를 구분하면 동일 시각에 발생한 여러 레코드를 식별할 수 없습니다. SEQUENCE 컬럼은 자동 증가하는 고유 번호를 부여하여 이 문제를 해결합니다.
+이벤트 로그나 알람 이력을 관리할 때 DATETIME 컬럼만으로는 동일 시각에 발생한 여러 레코드를 구분할 수 없다. SEQUENCE 컬럼은 자동 증가하는 고유 번호를 부여해 이 문제를 해결한다.
 
 ### SEQUENCE 컬럼 선언
 
-SEQUENCE는 `LONG` 타입 컬럼에만 지정할 수 있습니다. PROPERTY 절의 `SEQUENCE` 파라미터로 시작값을 설정합니다.
+SEQUENCE는 `LONG` 타입 컬럼에만 지정할 수 있다. PROPERTY 절의 `SEQUENCE` 파라미터로 시작값을 설정한다.
 
 ```sql
 CREATE LOOKUP TABLE alarm_history (
@@ -105,7 +105,7 @@ CREATE LOOKUP TABLE alarm_history (
 
 ### SEQUENCE 값 삽입: NEXTVAL()
 
-SEQUENCE 기능을 사용하려면 `NEXTVAL()` 함수를 사용해야 합니다. `NEXTVAL()`은 현재 저장된 최댓값 + 1을 자동으로 계산하여 삽입합니다.
+`NEXTVAL()` 함수를 사용하면 현재 저장된 최댓값 + 1을 자동으로 계산해 삽입한다.
 
 ```sql
 -- NEXTVAL()로 자동 증가값 입력
@@ -122,7 +122,7 @@ SELECT * FROM alarm_history ORDER BY seq;
 
 ### 일반 컬럼처럼 직접 값 지정
 
-SEQUENCE 컬럼은 직접 값을 입력하는 것도 허용됩니다. 이 경우 SEQUENCE 자동 증가 카운터에는 영향을 줍니다(내부 최댓값이 갱신됨).
+SEQUENCE 컬럼에 직접 값을 입력하는 것도 허용된다. 이 경우 내부 최댓값이 갱신되므로 자동 증가 카운터에 영향을 준다.
 
 ```sql
 -- 직접 값 지정 (nextval을 쓰지 않아도 됨)
@@ -151,6 +151,6 @@ WHERE seq = 101;
 
 ### 주의 사항
 
-- SEQUENCE 컬럼은 `LONG` 타입만 지원합니다.
-- 시작값은 양수(`SEQUENCE=1` 이상)만 허용됩니다.
-- NEXTVAL()을 쓰지 않고 중복 값을 삽입하는 것도 허용되므로, 고유성 보장이 필요하다면 PRIMARY KEY를 함께 지정하세요.
+- SEQUENCE 컬럼은 `LONG` 타입만 지원한다.
+- 시작값은 양수(`SEQUENCE=1` 이상)만 허용된다.
+- NEXTVAL()을 쓰지 않고 중복 값을 삽입하는 것도 허용되므로, 고유성 보장이 필요하면 PRIMARY KEY를 함께 지정한다.
