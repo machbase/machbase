@@ -216,10 +216,15 @@ LSM 인덱스는 삽입 시 메모리 내 구조에 먼저 기록되고, 배경 
 CREATE INDEX idx_msg ON device_log (message) INDEX_TYPE KEYWORD;
 ```
 
-### LOOKUP 테이블: Red-Black 트리 인덱스
+### LOOKUP 테이블: 영속 저장 + 메모리 Red-Black 인덱스
 
-LOOKUP 테이블은 PRIMARY KEY 컬럼에 Red-Black 트리 인덱스가 생성됩니다. 소규모 기준 정보를
-키로 빠르게 조회하는 패턴에 최적화되어 있습니다.
+LOOKUP 테이블의 데이터는 영속 저장되지만, 서버 기동 시 모든 행을 메모리 row 테이블로
+복원하고 PRIMARY KEY 컬럼의 Red-Black 트리 인덱스를 구성합니다. Primary key를 key, 나머지
+행 값을 value로 보는 조회 특화 구조이며, SQL 조회는 메모리 행과 인덱스를 사용합니다.
+
+따라서 LOOKUP은 재시작 후에도 데이터를 유지하면서 빠른 key 조회를 제공하지만, 전체 행과
+보조 인덱스가 서버 메모리를 사용합니다. 메모리에 상주시킬 수 있는 기준 정보에 사용하고,
+대규모 관계형 데이터에는 RDB 테이블을 검토합니다.
 
 ### VOLATILE 테이블: Red-Black 트리 인덱스
 

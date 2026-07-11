@@ -4,8 +4,9 @@ weight: 90
 toc: true
 ---
 
-LOOKUP 테이블은 기준 정보와 마스터 데이터를 참조하기 위한 테이블입니다. PRIMARY KEY 기반
-구조, JSON/SEQUENCE, JOIN과 일반 조건식 기반 DML을 다룹니다.
+LOOKUP 테이블은 영속 저장된 기준 정보와 마스터 데이터를 서버 기동 시 메모리에 적재하고,
+PRIMARY KEY를 key로 사용해 빠르게 참조하는 테이블입니다. 메모리 상주 구조, JSON/SEQUENCE,
+JOIN과 일반 조건식 기반 DML을 다룹니다.
 
 ## 이 장의 구성
 
