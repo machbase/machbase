@@ -5,7 +5,7 @@ toc: true
 ---
 
 LOOKUP 테이블은 기준 정보와 마스터 데이터를 참조하기 위한 테이블입니다. PRIMARY KEY 기반
-구조, JSON/SEQUENCE, JOIN과 Primary key 기반 DML을 다룹니다.
+구조, JSON/SEQUENCE, JOIN과 일반 조건식 기반 DML을 다룹니다.
 
 ## 이 장의 구성
 
@@ -23,5 +23,6 @@ LOOKUP 테이블은 기준 정보와 마스터 데이터를 참조하기 위한 
 | [PRIMARY KEY 정책](./primary-key-policy/) | 자연키 vs 대리키, PK 불변 원칙 |
 | [SEQUENCE 컬럼](./sequence-column/) | 자동 증가 번호 설정과 NEXTVAL 사용법 |
 | [JSON 컬럼과 JSON 조회](./json-column-query/) | JSON 컬럼 지원 범위, path 조건 조회, primary key 제약 |
+| [일반 predicate UPDATE/DELETE](./predicate-update-delete/) | non-PK, 범위, 문자열, 날짜, JSON path 조건 기반 변경 |
 | [참조·마스터 데이터 모델링](./reference-master-modeling/) | 코드 참조, 메타데이터, 임계값 JOIN 패턴 |
-| [LOOKUP 권한과 DML 성능](./privilege-predicate-performance/) | 권한 설정, Primary key 기반 DML 성능 고려사항 |
+| [LOOKUP 권한과 DML 성능](./privilege-predicate-performance/) | 권한 설정, PK fast path와 일반 predicate DML 고려사항 |

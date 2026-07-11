@@ -8,12 +8,12 @@ English structure placeholder. Korean content is authoritative for this restruct
 
 <a id="too-many-lookup-predicate-update-delete-row"></a>
 
-## LOOKUP UPDATE/DELETE Predicate Error
+## LOOKUP UPDATE/DELETE Predicate Scope
 
-LOOKUP UPDATE and conditional DELETE require a primary-key equality predicate.
-Non-PK, range, and JSON-path predicates return `ERR-02190`. Query the target
-primary keys first and execute the DML for each key. A DELETE statement without
-a WHERE clause removes all rows.
+LOOKUP UPDATE and DELETE support non-primary-key, range, string, date, logical,
+and JSON-path predicates. Every matching row is changed, so check the target
+range with the same predicate before executing bulk DML. The primary-key column
+cannot be updated. A DELETE statement without a WHERE clause removes all rows.
 
 <a id="error-lookup-json-path-primary-key"></a>
 

@@ -19,7 +19,7 @@ Machbase DBMS 매뉴얼에 오신 것을 환영합니다. 이 문서는 Machbase
 | 6 | [TAG 테이블을 위한 ROLLUP 활용](./tag-rollup-usage/) | ROLLUP 설계, 생성, 조회, 재구성, 운영, 성능 튜닝 |
 | 7 | [LOG 테이블 활용](./log-table-usage/) | LOG 구조, 입력, 텍스트 검색, Collector, Fluentd, STREAM |
 | 8 | [RDB 테이블 활용](./rdb-table-usage/) | RDB 스키마, DML, 트랜잭션, JOIN, 백업·복원 |
-| 9 | [LOOKUP 테이블 활용](./lookup-table-usage/) | 기준 정보, PRIMARY KEY, SEQUENCE, JSON, JOIN |
+| 9 | [LOOKUP 테이블 활용](./lookup-table-usage/) | 기준 정보, PRIMARY KEY, JSON, 일반 predicate DML, JOIN |
 | 10 | [VOLATILE 테이블 활용](./volatile-table-usage/) | 메모리 테이블, UPSERT, 상태 캐시, 재시작과 데이터 소실 |
 | 11 | [애플리케이션 연동](./application-integration/) | JDBC, Python, Go, .NET, REST API |
 | 12 | [성능 튜닝](./performance-tuning/) | 쿼리 성능, 수집 성능, 캐시 튜닝 |

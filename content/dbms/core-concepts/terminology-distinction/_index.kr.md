@@ -117,8 +117,9 @@ DROP RETENTION keep_60days;
 
 SQL 문장을 직접 실행해 특정 조건에 맞는 데이터를 즉시 삭제합니다. LOG 테이블은 `BEFORE`,
 `OLDEST`, `EXCEPT` 같은 로그 보존형 DELETE를, TAG 테이블은 태그 이름과 축 조건 또는 `BEFORE`
-조건을 사용합니다. LOOKUP과 VOLATILE 테이블은 Primary key equality 조건을, RDB 테이블은
-일반 `WHERE` 조건을 사용합니다. LOOKUP의 조건 없는 DELETE는 모든 행을 삭제합니다.
+조건을 사용합니다. LOOKUP 테이블은 Primary key 또는 일반 조건식을, VOLATILE 테이블은 Primary
+key equality 조건을, RDB 테이블은 일반 `WHERE` 조건을 사용합니다. LOOKUP의 조건 없는 DELETE는
+모든 행을 삭제합니다.
 
 ```sql
 -- LOG 테이블에서 특정 시각 이전 삭제

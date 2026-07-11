@@ -472,7 +472,7 @@ GROUP BY name;
 | TAG | INSERT / Append API | O (태그/시간 조건) | O | X |
 | LOG | INSERT / Append API | X | O (BEFORE/OLDEST/EXCEPT) | X |
 | RDB | INSERT / SDK Append API | O (WHERE 유무 모두) | O | ON DUPLICATE KEY UPDATE |
-| LOOKUP | INSERT / Append API | O (by PK, PK 변경 제외) | O (by PK 또는 전체 삭제) | ON DUPLICATE KEY UPDATE |
+| LOOKUP | INSERT / Append API | O (일반 조건식, PK 변경 제외) | O (일반 조건식 또는 전체 삭제) | ON DUPLICATE KEY UPDATE |
 | VOLATILE | INSERT | O (by PK) | O | ON DUPLICATE KEY UPDATE |
 
 ### TAG/LOG: Append API 패턴 (고속 입력)
@@ -666,7 +666,7 @@ UPDATE product_master SET price = 19900 WHERE product_id = 42;
 | 고빈도 계측값 이력 | TAG | Append API 고속 버퍼, 시계열 최적화 |
 | 이벤트·알람 로그 | LOG | 추가 전용, 도착 시각 자동 |
 | 관계형 업무 (UPDATE/DELETE) | RDB | SELECT/INSERT/UPDATE/DELETE 모두 지원 |
-| 기준·코드 정보 | LOOKUP | PK 식별과 단건 UPDATE/DELETE, 영속 |
+| 기준·코드 정보 | LOOKUP | PK 식별과 일반 조건식 UPDATE/DELETE, 영속 |
 | 실시간 상태 캐시 | VOLATILE | 메모리 속도, UPSERT |
 
 ---

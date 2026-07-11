@@ -38,7 +38,7 @@ LOG 테이블은 `_arrival_time`, TAG 테이블은 `time` 컬럼을 기준으로
 | [윈도우 함수와 PIVOT 성능 고려사항](/dbms/performance-tuning/performance-query-tuning/#performance-window-functions-considerations-pivot) | 메모리 주의사항, 서브쿼리 선처리 패턴 |
 | [ROLLUP 활용 튜닝](/dbms/tag-rollup-usage/performance-tuning-rollup/#tuning-rollup) | ROLLUP 조회 패턴, 계층 설계, WAKEUP INTERVAL |
 | [TAG 데이터 대량 정정 성능 고려사항](/dbms/tag-table-usage/tag-data-update-correction/#correction-performance-bulk-considerations-tag-data-update) | TAG data UPDATE 대상 범위와 롤업 재구성 |
-| [LOOKUP DML 성능 고려사항](/dbms/lookup-table-usage/privilege-predicate-performance/#performance-considerations-lookup-predicate-dml) | Primary key 기반 변경, 반복 실행과 JSON SET 비용 |
+| [LOOKUP DML 성능 고려사항](/dbms/lookup-table-usage/privilege-predicate-performance/#performance-considerations-lookup-predicate-dml) | PK fast path, 일반 predicate 대상 수집과 JSON SET 비용 |
 
 
 <a id="performance-tuning-select"></a>

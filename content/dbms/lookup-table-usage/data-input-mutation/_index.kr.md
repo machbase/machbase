@@ -58,8 +58,8 @@ SET status = 'INACTIVE',
 WHERE sensor_id = 'TEMP-01';
 ```
 
-WHERE 절에는 Primary key equality 조건을 사용합니다. non-PK 조건이나 범위 조건을 사용하면
-`ERR-02190` 오류가 발생합니다.
+여러 행을 변경할 때는 일반 컬럼, 범위, 문자열, 날짜, JSON path 조건을 사용할 수 있습니다.
+단건 변경은 대상이 명확하고 PK 인덱스를 직접 사용하는 PRIMARY KEY 조건을 권장합니다.
 
 PRIMARY KEY 컬럼 자체는 변경하지 않는 것이 원칙입니다. 키를 바꿔야 하면 기존 행을 삭제하고 새 키로 다시 입력합니다.
 
@@ -106,8 +106,8 @@ DELETE FROM sensor_master
 WHERE sensor_id = 'TEMP-01';
 ```
 
-WHERE 절이 있는 DELETE에는 Primary key equality 조건을 사용합니다. 모든 행을 삭제하려면
-WHERE 절을 생략합니다.
+일반 조건식을 사용하면 조건에 맞는 모든 행을 삭제합니다. 모든 행을 삭제하려면 WHERE 절을
+생략합니다.
 
 ```sql
 DELETE FROM sensor_master;
@@ -118,6 +118,7 @@ DELETE FROM sensor_master;
 ## 변경 작업 체크리스트
 
 - 단건 변경은 PRIMARY KEY 조건을 사용합니다.
+- 일반 조건식으로 일괄 변경하기 전에 같은 조건으로 대상 범위를 조회합니다.
 - 모든 행을 삭제하기 전에는 백업 또는 재입력 원본을 확인합니다.
 - PRIMARY KEY 값 변경은 DELETE 후 INSERT로 처리합니다.
 - Append 중복 키 처리는 `LOOKUP_APPEND_UPDATE_ON_DUPKEY` 설정을 확인합니다.

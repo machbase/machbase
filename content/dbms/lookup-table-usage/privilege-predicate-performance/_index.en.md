@@ -1,6 +1,6 @@
 ---
-title: '9.14 LOOKUP Privileges and DML Performance'
-weight: 140
+title: '9.15 LOOKUP Privileges and DML Performance'
+weight: 150
 toc: true
 ---
 
@@ -15,5 +15,7 @@ manual is finalized.
 
 ## DML Performance Considerations
 
-LOOKUP UPDATE and conditional DELETE use a primary-key equality predicate. A DELETE statement without a
+LOOKUP UPDATE and DELETE support both primary-key and general predicates. A primary-key equality predicate
+uses the fast path; general predicates collect matching primary keys before applying the DML. UPDATE and
+DELETE do not require an additional SELECT privilege for this internal lookup. A DELETE statement without a
 WHERE clause removes all rows.

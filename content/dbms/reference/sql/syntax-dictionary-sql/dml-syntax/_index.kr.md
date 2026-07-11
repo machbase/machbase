@@ -13,9 +13,9 @@ DML(Data Manipulation Language)은 테이블에 데이터를 삽입·수정·삭
 |------|:---:|:---:|:------:|:--------:|:---:|
 | INSERT | O | O | O | O | O |
 | INSERT SELECT | O | - | O | O | O |
-| UPDATE | - | O(태그/축 조건 또는 메타데이터) | O(PK 조건) | O(PK 조건) | O |
-| DELETE | O(보존 조건/전체) | O(시간/이름 조건) | O(PK 조건/전체) | O(PK 조건) | O |
-| DELETE WHERE | - | O(태그/축 조건) | O(PK equality) | O(PK equality) | O |
+| UPDATE | - | O(태그/축 조건 또는 메타데이터) | O(일반 조건식) | O(PK 조건) | O |
+| DELETE | O(보존 조건/전체) | O(시간/이름 조건) | O(일반 조건식/전체) | O(PK 조건) | O |
+| DELETE WHERE | - | O(태그/축 조건) | O(일반 조건식) | O(PK equality) | O |
 | TRUNCATE | O | - | - | - | O |
 
 > LOG 테이블의 UPDATE는 지원하지 않습니다. 데이터 수정이 필요하면 LOOKUP 또는 VOLATILE 테이블을 사용하거나 RDB 테이블을 선택하십시오.
@@ -107,8 +107,9 @@ update_stmt ::=
 update_expr_list ::= column_name '=' value ( ',' column_name '=' value )*
 ```
 
-RDB 테이블은 WHERE 절을 생략하면 모든 행을 수정합니다. LOOKUP과 VOLATILE 테이블은 기본 키
-일치 조건을 사용하고, TAG data UPDATE는 태그 선택자와 시간축 조건을 함께 사용합니다.
+RDB 테이블은 WHERE 절을 생략하면 모든 행을 수정합니다. LOOKUP 테이블은 기본 키 또는 일반
+조건식을 사용하고, VOLATILE 테이블은 기본 키 일치 조건을 사용합니다. TAG data UPDATE는 태그
+선택자와 시간축 조건을 함께 사용합니다.
 
 ```sql
 -- LOOKUP 테이블 레코드 수정
@@ -116,6 +117,9 @@ UPDATE devices SET status = 'OFFLINE' WHERE device_id = 'dev-001';
 
 -- 여러 컬럼 동시 수정
 UPDATE devices SET ip = '10.0.0.1', status = 'ONLINE' WHERE device_id = 'dev-002';
+
+-- LOOKUP 일반 조건식으로 여러 행 수정
+UPDATE devices SET status = 'OFFLINE' WHERE site = 'SEOUL' AND status = 'READY';
 
 ```
 
@@ -191,11 +195,14 @@ delete_where_stmt ::=
     'DELETE FROM' table_name 'WHERE' predicate
 ```
 
-LOOKUP과 VOLATILE 테이블은 기본 키 일치 조건을 사용합니다. LOOKUP 테이블은 WHERE 절을
-생략하여 모든 행을 삭제할 수도 있습니다.
+LOOKUP 테이블은 기본 키 또는 일반 조건식을 사용합니다. VOLATILE 테이블은 기본 키 일치 조건을
+사용합니다. LOOKUP 테이블은 WHERE 절을 생략하여 모든 행을 삭제할 수도 있습니다.
 
 ```sql
 DELETE FROM devices WHERE device_id = 'dev-001';
+
+-- LOOKUP 일반 조건식으로 여러 행 삭제
+DELETE FROM devices WHERE status = 'EXPIRED' OR site = 'RETIRED';
 
 -- LOOKUP 전체 삭제
 DELETE FROM devices;
@@ -248,4 +255,6 @@ DELETE FROM sensors METADATA;  -- 모든 메타데이터 삭제 (실제 데이�
 
 - [DDL 문법 사전](../ddl-syntax/) - 테이블 생성 및 스키마 변경
 - [SELECT 문법 사전](../select-syntax/) - 데이터 조회
+- [LOOKUP predicate UPDATE](./lookup-predicate-update-syntax/) - 일반 조건식 갱신
+- [LOOKUP predicate DELETE](./lookup-predicate-delete-syntax/) - 일반 조건식 삭제
 - [LOAD DATA INFILE](../load-data-infile-syntax/) - CSV 파일 일괄 입력

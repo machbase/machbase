@@ -33,8 +33,8 @@ toc: true
 |---------|-----|-----|-----|---------|--------|
 | INSERT | O | O | O | O | O |
 | Append API | O | O | O (SDK) | X | O |
-| UPDATE | O (태그/축 조건) | X | O | O (PK equality) | O (PK equality) |
-| DELETE | O (BEFORE/조건) | O (BEFORE/OLDEST/EXCEPT) | O | O (PK equality) | O (PK equality/전체) |
+| UPDATE | O (태그/축 조건) | X | O | O (PK equality) | O (일반 조건식) |
+| DELETE | O (BEFORE/조건) | O (BEFORE/OLDEST/EXCEPT) | O | O (PK equality) | O (일반 조건식/전체) |
 | ON DUPLICATE KEY UPDATE | X | X | O | O | O |
 
 ## Retention Policy 지원

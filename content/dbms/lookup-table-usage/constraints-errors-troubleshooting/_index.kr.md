@@ -8,40 +8,26 @@ LOOKUP 테이블의 제약 사항, 발생 가능한 오류, 문제 해결 방법
 
 <a id="too-many-lookup-predicate-update-delete-row"></a>
 
-## LOOKUP UPDATE/DELETE 조건 오류
+## LOOKUP 일반 조건식 UPDATE/DELETE 주의사항
 
-LOOKUP 테이블의 UPDATE와 조건이 있는 DELETE는 Primary key equality 조건만 허용합니다.
-
-### 증상
-
-non-PK 조건, 범위 조건 또는 JSON path 조건으로 UPDATE/DELETE를 실행하면 다음 오류가
-발생합니다.
-
-```text
-ERR-02190: Invalid UPDATE/DELETE condition.
-Specify it as (primary key column) = (value)
-```
-
-### 해결 방법
-
-변경할 행의 Primary key를 먼저 조회한 뒤 키별로 UPDATE/DELETE를 실행합니다.
+LOOKUP 테이블은 non-PK, 범위, 문자열, 날짜, 논리 조합과 JSON path 조건으로 여러 행을
+UPDATE하거나 DELETE할 수 있습니다. 일반 조건식은 조건에 맞는 모든 행에 적용되므로 변경 전에
+동일한 조건으로 대상 범위를 확인합니다.
 
 ```sql
-SELECT eq_id
+SELECT COUNT(*)
 FROM equipment
 WHERE location = 'A동'
   AND status = 'INACTIVE';
 
 UPDATE equipment
 SET status = 'RETIRED'
-WHERE eq_id = 'EQ-001';
+WHERE location = 'A동'
+  AND status = 'INACTIVE';
 ```
 
-모든 행을 삭제하려면 WHERE 절을 생략할 수 있습니다.
-
-```sql
-DELETE FROM equipment;
-```
+Primary key 컬럼 자체는 `SET` 절에서 변경할 수 없습니다. 모든 행을 삭제하려면 WHERE 절을
+생략할 수 있습니다.
 
 <a id="error-lookup-json-path-primary-key"></a>
 

@@ -38,7 +38,7 @@ REVOKE SELECT ON sys.sensor_log FROM reader_user;
 - [데이터베이스 권한](/dbms/security-access-control/privileges/#database-privileges) — 데이터베이스 범위 권한 각각의 설명
 - [테이블 권한](/dbms/security-access-control/privileges/#privileges-2) — 특정 테이블 대상 세밀한 권한 제어
 - [기본 부여 권한과 제외 권한](/dbms/security-access-control/privileges/#privileges-grant-exclude) — 신규 사용자의 초기 권한 범위
-- [LOOKUP UPDATE/DELETE 권한 모델](/dbms/lookup-table-usage/privilege-predicate-performance/#privileges-lookup-update-delete-target-select) — Primary key 기반 DML 권한 동작
+- [LOOKUP UPDATE/DELETE 권한 모델](/dbms/lookup-table-usage/privilege-predicate-performance/#privileges-lookup-update-delete-target-select) — 일반 predicate DML 권한 동작
 - [권한 진단 체크리스트](/dbms/security-access-control/privileges/#checklist-diagnosis-privileges) — 권한 현황 조회 및 감사 방법
 
 
@@ -128,7 +128,8 @@ BACKUP, ALTER 권한 비트를 일괄 부여하고, 특정 테이블이면 해�
 
 - `LOG` 테이블은 `UPDATE`를 지원하지 않습니다.
 - `TAG` 테이블의 data UPDATE는 태그 선택 조건과 BASETIME 조건이 필요합니다.
-- `VOLATILE`, `LOOKUP` 테이블의 `DELETE`/`UPDATE`는 기본키 기반 `WHERE` 조건이 필요합니다.
+- `VOLATILE` 테이블의 `DELETE`/`UPDATE`는 기본키 기반 `WHERE` 조건이 필요합니다. LOOKUP
+  테이블은 기본키 조건과 일반 조건식을 모두 지원합니다.
 
 권한을 부여한다고 해서 지원하지 않는 DML이 허용되는 것은 아닙니다.
 
@@ -386,7 +387,7 @@ REVOKE UPDATE ON sys.device_config FROM ops_user;
 | LOG | 미지원 |
 | TAG | 지원 (태그/시간 조건 필요) |
 | VOLATILE | 지원 (기본키 기반 WHERE 조건 필요) |
-| LOOKUP | 지원 (기본키 기반 WHERE 조건 필요) |
+| LOOKUP | 지원 (기본키 또는 일반 WHERE 조건) |
 
 UPDATE 권한을 부여하더라도 LOG 테이블에서는 UPDATE를 실행할 수 없습니다. TAG 테이블의
 data UPDATE는 태그 선택 조건과 시간 조건을 만족해야 하며, `name`, `time`, 메타데이터 컬럼은
@@ -868,7 +869,8 @@ SELECT * FROM m$obj_privileges WHERE grantee = 'APP_USER';
 - 테이블 소유자는 별도 GRANT 없이 자신의 테이블에 대한 모든 DML을 실행할 수 있습니다.
 - 다른 사용자 소유의 테이블에 접근하려면 반드시 해당 테이블에 대한 권한이 필요합니다.
 - LOG, TAG 테이블에 `UPDATE` 권한을 부여하더라도 테이블 유형 제약으로 인해 UPDATE를 실행할 수 없습니다.
-- VOLATILE, LOOKUP 테이블의 `DELETE`/`UPDATE`는 기본키 기반 `WHERE` 조건이 필요합니다.
+- VOLATILE 테이블의 `DELETE`/`UPDATE`는 기본키 기반 `WHERE` 조건이 필요합니다. LOOKUP
+  테이블은 기본키 조건과 일반 조건식을 모두 지원합니다.
 
 <a id="checklist-diagnosis-privileges"></a>
 

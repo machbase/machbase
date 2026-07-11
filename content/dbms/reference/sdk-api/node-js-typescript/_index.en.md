@@ -577,7 +577,8 @@ Errors propagate as standard `Error` objects (or `QueryError` when using the fac
 ### Table Type SQL Semantics
 
 - **LOG and TAG tables** support `SELECT`, `INSERT`, and `DELETE`, but not `UPDATE`.
-- **VOLATILE and LOOKUP tables** support all DML, but queries must include the primary key in `WHERE` clauses for correct index access and performance.
+- **VOLATILE tables** use primary-key conditions for UPDATE and DELETE. **LOOKUP tables** support both
+  primary-key and general predicates; prefer a primary-key condition for efficient single-row changes.
 
 ## Best Practices
 

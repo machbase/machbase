@@ -14,7 +14,7 @@ toc: true
 | LOG | X | O (BEFORE/OLDEST/EXCEPT/전체 삭제) | O |
 | RDB | O (WHERE 유무 모두) | O | O |
 | VOLATILE | O (by PK) | O | X |
-| LOOKUP | O (by PK) | O (by PK 또는 조건 없는 전체 삭제) | X |
+| LOOKUP | O (일반 조건식, PK 변경 제외) | O (일반 조건식 또는 조건 없는 전체 삭제) | X |
 
 > TRUNCATE는 LOG와 RDB 테이블에서만 지원됩니다. TAG, VOLATILE, LOOKUP 테이블에 TRUNCATE를 실행하면 오류가 발생합니다.
 
@@ -42,7 +42,7 @@ LOG 테이블은 시계열 데이터의 **불변성(immutability)** 원칙을 �
 | LOG | X | 미지원 |
 | RDB | O | WHERE 유무 모두 가능 |
 | VOLATILE | O | Primary key equality 조건. ON DUPLICATE KEY UPDATE도 지원 |
-| LOOKUP | O | Primary key equality 조건 |
+| LOOKUP | O | Primary key 또는 일반 조건식. PK 컬럼 변경은 불가 |
 
 ### RDB 테이블 UPDATE
 
@@ -71,8 +71,8 @@ ON DUPLICATE KEY UPDATE SET status = 'ALARM', value = 95.3, updated_at = NOW;
 
 ### LOOKUP 테이블 UPDATE
 
-PRIMARY KEY equality 조건의 UPDATE를 지원합니다. non-PK 조건이나 범위 조건을 사용하면
-`ERR-02190` 오류가 발생합니다.
+Primary key 조건과 non-PK, 범위, 문자열, 날짜, JSON path 등의 일반 조건식을 지원합니다.
+조건에 맞는 모든 row가 갱신되며 Primary key 컬럼 자체는 변경할 수 없습니다.
 
 ```sql
 UPDATE alarm_threshold SET high_limit = 90.0, updated_at = NOW
@@ -269,7 +269,7 @@ WHERE name = 'TEMP-01';
 | LOG | O | BEFORE/OLDEST/EXCEPT 또는 전체 삭제 |
 | RDB | O | 일반 WHERE 조건 자유 |
 | VOLATILE | O | Primary key equality 조건 |
-| LOOKUP | O | Primary key equality 조건 또는 조건 없는 전체 삭제 |
+| LOOKUP | O | Primary key 또는 일반 조건식, 조건 없는 전체 삭제 |
 
 ### RDB 테이블 DELETE
 
@@ -304,12 +304,15 @@ DELETE FROM device_status WHERE device_id = 'DEV-01';
 
 ### LOOKUP 테이블 DELETE
 
-조건이 있는 DELETE에는 PRIMARY KEY equality 조건을 사용합니다. `WHERE` 절을 생략하면 모든
-row가 삭제됩니다.
+Primary key 조건과 일반 조건식을 사용할 수 있습니다. 일반 조건식은 조건에 맞는 모든 row를
+삭제하며, `WHERE` 절을 생략하면 모든 row가 삭제됩니다.
 
 ```sql
 -- PK 기준 삭제 (권장)
 DELETE FROM alarm_threshold WHERE sensor_id = 'TEMP-01';
+
+-- 일반 조건식으로 일괄 삭제
+DELETE FROM alarm_threshold WHERE active = 0 OR high_limit < 10;
 
 -- 전체 삭제
 DELETE FROM alarm_threshold;
@@ -379,7 +382,7 @@ DELETE FROM tag ROLLUP WHERE tag_time BETWEEN TO_DATE('2021-07-01', 'YYYY-MM-DD'
 
 ### 하위 페이지
 
-- [LOOKUP 데이터 입력과 변경](/dbms/lookup-table-usage/data-input-mutation/#original-85-deleting-data): Primary key 조건과 전체 삭제
+- [LOOKUP 일반 predicate UPDATE/DELETE](/dbms/lookup-table-usage/predicate-update-delete/): 일반 조건식 변경과 전체 삭제
 - [TAG 메타데이터 삭제](/dbms/data-modeling-table-design/alter-data-mutation-policy/#delete-tag-metadata): TAG 테이블 메타데이터 삭제 구문
 
 <a id="delete-tag-metadata"></a>

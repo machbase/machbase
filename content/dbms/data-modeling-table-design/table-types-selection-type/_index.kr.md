@@ -155,7 +155,7 @@ CREATE LOOKUP TABLE code_master (
 | INSERT | O | O | O | O | O |
 | APPEND API | O | O | O (SDK) | X | O |
 | UPDATE | O (태그/축 조건) | X | O | O | O |
-| DELETE | O (BEFORE/조건) | O (BEFORE/OLDEST/EXCEPT) | O | O (PK equality) | O (PK equality/전체 삭제) |
+| DELETE | O (BEFORE/조건) | O (BEFORE/OLDEST/EXCEPT) | O | O (PK equality) | O (일반 조건식/전체 삭제) |
 | PRIMARY KEY | 필수 | X | 선택 | 선택 | 필수 |
 | BASETIME | 필수 (시간축) | X | X | X | X |
 | _arrival_time | X | 자동 추가 | X | X | X |
