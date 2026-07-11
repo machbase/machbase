@@ -76,10 +76,14 @@ CREATE RDB TABLE t2 (id INTEGER, name VARCHAR(64), cat VARCHAR(32), val DOUBLE);
 | `SHORT` | 16비트 정수 |
 | `FLOAT` | 32비트 부동소수점 |
 | `DOUBLE` | 64비트 부동소수점 |
+| `DECIMAL(M,D)` | exact 고정소수점 (`NUMERIC`, `DEC`, `FIXED`, `NUMBER` alias) |
 | `VARCHAR(n)` | 가변 문자열 |
 | `DATETIME` | 날짜·시간 (나노초) |
 | `IPV4` / `IPV6` | 네트워크 주소 |
 | `JSON` | JSON 문서 |
+
+DECIMAL의 precision, scale, 반올림과 클라이언트 매핑은 [DECIMAL과 NUMERIC 고정소수점
+타입](/dbms/reference/sql/type-data-types-dictionary/decimal-numeric-fixed-point/)을 참고하십시오.
 
 #### 설계 예시
 
@@ -90,7 +94,7 @@ CREATE RDB TABLE product_catalog (
     product_id   LONG,
     category     VARCHAR(64),
     name         VARCHAR(256),
-    price        DOUBLE
+    price        DECIMAL(18,2)
 );
 
 CREATE INDEX idx_prod_cat ON product_catalog(category);
@@ -106,7 +110,7 @@ CREATE RDB TABLE tx_history (
     tx_id        LONG,
     account_id   VARCHAR(32),
     tx_type      VARCHAR(16),
-    amount       DOUBLE,
+    amount       DECIMAL(24,4),
     tx_time      DATETIME,
     status       VARCHAR(16)
 );
@@ -127,7 +131,7 @@ UPDATE tx_history SET status = 'SETTLED' WHERE tx_id = 9999;
 CREATE RDB TABLE product_catalog (
     product_id LONG PRIMARY KEY,
     name       VARCHAR(256),
-    price      DOUBLE
+    price      DECIMAL(18,2)
 );
 ```
 
@@ -136,7 +140,7 @@ CREATE RDB TABLE product_catalog (
 CREATE RDB TABLE product_catalog (
     product_id LONG,
     name       VARCHAR(256),
-    price      DOUBLE
+    price      DECIMAL(18,2)
 );
 
 CREATE PRIMARY KEY INDEX idx_pk_product ON product_catalog(product_id);

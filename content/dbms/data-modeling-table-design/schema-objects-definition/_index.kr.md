@@ -266,6 +266,7 @@ ALTER TABLE orders RENAME TO order_history;
 | `ULONG` | 64비트 부호 없는 정수 | 0 ~ 18446744073709551614 | 18446744073709551615 |
 | `FLOAT` | 32비트 부동 소수점 | — | 양수 최대값 |
 | `DOUBLE` | 64비트 부동 소수점 | — | 양수 최대값 |
+| `DECIMAL(M,D)` | exact 고정소수점 | M: 1~65, D: 0~30 | — |
 | `DATETIME` | 날짜·시간 (나노초) | 1970-01-01 00:00:00.000:000:000 ~ 2262-04-11 23:47:16.854:775:807 | — |
 | `VARCHAR(n)` | 가변 길이 문자열 (UTF-8) | 길이 1 ~ 32768 (32K) | — |
 | `IPV4` | IPv4 주소 (4바이트) | "0.0.0.0" ~ "255.255.255.255" | — |
@@ -285,9 +286,14 @@ ALTER TABLE orders RENAME TO order_history;
 | `LONG` | 8바이트 | -9,223,372,036,854,775,807 ~ 9,223,372,036,854,775,807 | 대용량 카운터, ID |
 | `ULONG` | 8바이트 | 0 ~ 18,446,744,073,709,551,614 | 부호 없는 64비트 정수 |
 | `FLOAT` | 4바이트 | 7자리 정밀도 | 저정밀도 실수 |
-| `DOUBLE` | 8바이트 | 15자리 정밀도 | 계측값, 금액 |
+| `DOUBLE` | 8바이트 | 15자리 정밀도 | 근삿값 계측 데이터 |
+| `DECIMAL(M,D)` | precision에 따라 가변 | 최대 65자리, scale 최대 30자리 | 금액, 세율, 정산값 |
 
 각 부호 있는 정수 타입(`SHORT`, `INTEGER`, `LONG`)은 C 언어의 해당 정수형과 동일하며, 최소 음수 값을 NULL로 인식합니다. 부동 소수점 타입(`FLOAT`, `DOUBLE`)은 양수 최대값을 NULL로 인식합니다. `SHORT`는 `int16`, `INTEGER`는 `int32` 또는 `int`, `LONG`은 `int64`로도 표시됩니다.
+
+`DECIMAL`은 exact fixed-point 타입입니다. `NUMERIC`, `DEC`, `FIXED`, `NUMBER`는 alias이며
+표준 표시명은 `DECIMAL`입니다. 자세한 선언과 연산 규칙은 [DECIMAL과 NUMERIC 고정소수점
+타입](/dbms/reference/sql/type-data-types-dictionary/decimal-numeric-fixed-point/)을 참고하십시오.
 
 ### 문자형
 
@@ -357,6 +363,7 @@ INSERT INTO t1 VALUES (NOW);
 | `ulong` | SQL_UBIGINT | SQL_BIGINT | SQL_C_UBIGINT | uint64_t (unsigned long long) |
 | `float` | SQL_FLOAT | SQL_REAL | SQL_C_FLOAT | float |
 | `double` | SQL_DOUBLE | SQL_FLOAT, SQL_DOUBLE | SQL_C_DOUBLE | double |
+| `decimal` | SQL_DECIMAL | SQL_DECIMAL / SQL_NUMERIC | SQL_C_NUMERIC | decimal-preserving value |
 | `datetime` | SQL_TIMESTAMP / SQL_TIME | SQL_TYPE_TIMESTAMP / SQL_BIGINT / SQL_TYPE_TIME | SQL_C_TYPE_TIMESTAMP / SQL_C_UBIGINT / SQL_C_TIME | char * (YYYY-MM-DD HH24:MI:SS) / int64_t (나노초) / struct tm |
 | `varchar` | SQL_VARCHAR | SQL_VARCHAR | SQL_C_CHAR | char * |
 | `ipv4` | SQL_IPV4 | SQL_VARCHAR | SQL_C_CHAR | char * (IP 문자열) / unsigned char[4] |
@@ -404,6 +411,7 @@ SELECT _rid, sensor_id, value FROM sensor_log WHERE _rid = 1000;
 | 데이터 | 권장 타입 |
 |--------|---------|
 | 온도, 전압, 유량 등 센서값 | `DOUBLE` |
+| 금액, 세율, 정산값 | `DECIMAL(M,D)` |
 | IP 주소 | `IPV4` / `IPV6` |
 | 포트 번호 (0~65535) | `USHORT` |
 | 상태 코드, 플래그 | `SHORT` 또는 `INTEGER` |

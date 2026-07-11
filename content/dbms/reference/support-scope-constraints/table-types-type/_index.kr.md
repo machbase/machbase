@@ -35,6 +35,8 @@ Machbase는 용도에 따라 다섯 가지 테이블 유형을 제공합니다. 
 | **JSON** | | | | | |
 | JSON 컬럼 | O | O | O | X | O |
 | JSON path query | O | O | O | X | O |
+| **고정소수점** | | | | | |
+| DECIMAL / NUMERIC 컬럼 | O | O | O | O | O |
 | **인덱스** | | | | | |
 | 기본 인덱스 | O | O | O | O | O |
 | LSM 인덱스 | X | O | X | X | X |
@@ -46,6 +48,11 @@ Machbase는 용도에 따라 다섯 가지 테이블 유형을 제공합니다. 
 | VIEW | O | O | O | O | O |
 
 > 기호: O = 지원, X = 미지원, △ = 일부 지원 또는 제약 있음
+
+DECIMAL은 모든 public 테이블 타입의 공통 exact fixed-point 타입입니다. `NUMERIC`, `DEC`,
+`FIXED`, `NUMBER`는 DECIMAL alias이며, precision은 최대 65, scale은 최대 30입니다. 상세 규칙은
+[DECIMAL과 NUMERIC 고정소수점 타입](../../sql/type-data-types-dictionary/decimal-numeric-fixed-point/)을
+참고하십시오.
 
 ## 주요 제약 상세
 

@@ -31,6 +31,9 @@ column_def ::= column_name column_type
                [ 'DEFAULT' value ]
                [ 'PROPERTY' '(' column_property_list ')' ]
 
+decimal_type ::= ( 'DECIMAL' | 'NUMERIC' | 'DEC' | 'FIXED' | 'NUMBER' )
+                 [ '(' precision [ ',' scale ] ')' ]
+
 column_axis ::= 'BASETIME' | 'BASE TIME' | 'BASE DISTANCE' | 'BASEDISTANCE'
 
 column_property_list ::=
@@ -59,6 +62,10 @@ table_property_list ::=
 | `LOOKUP` | **LOOKUP 테이블** - 메모리 상주. PRIMARY KEY 필수. DML 전체 지원 |
 | `VOLATILE` | **VOLATILE 테이블** - 메모리 상주. 서버 재시작 시 데이터 소멸. PRIMARY KEY 선택 |
 | `RDB` | **RDB 테이블** - 관계형 데이터와 트랜잭션 지원 |
+
+`DECIMAL`은 모든 테이블 유형에서 사용할 수 있습니다. precision은 1~65, scale은 0~30이며
+scale은 precision보다 클 수 없습니다. 자세한 내용은 [DECIMAL과 NUMERIC 고정소수점
+타입](/dbms/reference/sql/type-data-types-dictionary/decimal-numeric-fixed-point/)을 참고하십시오.
 
 ### 예시
 
@@ -99,6 +106,13 @@ CREATE LOOKUP TABLE devices (
 CREATE VOLATILE TABLE cache_data (
     id    INTEGER PRIMARY KEY,
     value DOUBLE
+);
+
+-- RDB 테이블의 exact fixed-point 컬럼
+CREATE RDB TABLE invoice (
+    id      LONG PRIMARY KEY,
+    amount  DECIMAL(18,2),
+    tax     NUMERIC(18,4)
 );
 
 -- IF NOT EXISTS 사용

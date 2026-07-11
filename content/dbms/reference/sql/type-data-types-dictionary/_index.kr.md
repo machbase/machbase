@@ -19,6 +19,7 @@ Machbase에서 지원하는 SQL 데이터 타입을 설명합니다.
 | `ULONG` | 8 bytes | 0 ~ 18,446,744,073,709,551,614 | 18,446,744,073,709,551,615 |
 | `FLOAT` | 4 bytes | 32비트 단정밀도 부동소수점 | 양수 최대값 |
 | `DOUBLE` | 8 bytes | 64비트 배정밀도 부동소수점 | 양수 최대값 |
+| `DECIMAL(M,D)` | precision에 따라 가변 | exact fixed-point, M: 1~65, D: 0~30 | - |
 | `DATETIME` | 8 bytes | 1970-01-01 ~ 2262-04-11 (나노초 정밀도) | - |
 | `VARCHAR(n)` | 가변 | 최대 n 바이트 (1 ~ 32,768) | - |
 | `IPV4` | 4 bytes | 0.0.0.0 ~ 255.255.255.255 | - |
@@ -72,6 +73,27 @@ C 언어의 32비트 부동소수점 타입 `float`와 동일합니다. 양수 �
 ### DOUBLE
 
 C 언어의 64비트 부동소수점 타입 `double`과 동일합니다. 양수 최대값은 NULL로 인식됩니다.
+
+---
+
+## 고정소수점 타입
+
+### DECIMAL / NUMERIC
+
+10진수 값을 오차 없이 저장하는 exact fixed-point 타입입니다. `NUMERIC`, `DEC`, `FIXED`,
+`NUMBER`는 `DECIMAL`의 alias입니다.
+
+```sql
+CREATE RDB TABLE invoice (
+    id     LONG PRIMARY KEY,
+    amount DECIMAL(18,2),
+    rate   NUMERIC(7,4)
+);
+```
+
+`DECIMAL`은 `DECIMAL(10,0)`으로, `DECIMAL(M)`은 `DECIMAL(M,0)`으로 해석합니다. 선언 규칙,
+반올림, 인덱스, 집계 및 클라이언트 매핑은 [DECIMAL과 NUMERIC 고정소수점 타입](decimal-numeric-fixed-point/)을
+참고하십시오.
 
 ---
 
@@ -202,6 +224,7 @@ Machbase 데이터 타입과 SQL 표준 타입 및 C 타입의 대응 관계입�
 | `ulong` | SQL_UBIGINT | SQL_BIGINT | SQL_C_UBIGINT | `uint64_t` |
 | `float` | SQL_FLOAT | SQL_REAL | SQL_C_FLOAT | `float` |
 | `double` | SQL_DOUBLE | SQL_FLOAT, SQL_DOUBLE | SQL_C_DOUBLE | `double` |
+| `decimal` | SQL_DECIMAL | SQL_DECIMAL, SQL_NUMERIC | SQL_C_NUMERIC | decimal-preserving value |
 | `datetime` | SQL_TIMESTAMP | SQL_TYPE_TIMESTAMP | SQL_C_TYPE_TIMESTAMP | `char *` (YYYY-MM-DD ...) |
 | `varchar` | SQL_VARCHAR | SQL_VARCHAR | SQL_C_CHAR | `char *` |
 | `ipv4` | SQL_IPV4 | SQL_VARCHAR | SQL_C_CHAR | `char *` (IP 문자열) |
@@ -224,11 +247,14 @@ Machbase 데이터 타입과 SQL 표준 타입 및 C 타입의 대응 관계입�
 | ULONG | O | O | O | O | O |
 | FLOAT | O | O | O | O | O |
 | DOUBLE | O | O | O | O | O |
+| DECIMAL / NUMERIC | O | O | O | O | O |
 | DATETIME | O | O | O | O | O |
 | VARCHAR | O | O | O | O | O |
 | IPV4 | O | O | O | O | O |
 | IPV6 | O | O | O | O | O |
 | TEXT | X | O | X | X | X |
-| JSON | O | O | X | X | O |
+| JSON | O | O | O | X | O |
 | BINARY | O (고정 길이) | O | X | X | X |
-| JSON | X | O | O (일부) | O | O |
+
+DECIMAL은 모든 public 테이블 타입에서 지원합니다. RDB 테이블 자체는 Standard Edition에서
+사용하며, Cluster Edition에서는 LOG/TAG 테이블의 DECIMAL 컬럼과 DDL 전파를 지원합니다.
