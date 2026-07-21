@@ -1163,8 +1163,9 @@ Challenge 인증에 등록된 공개 키 정보를 표시합니다.
 | USER_NAME | 사용자 이름 |
 | KEY_ALGO | 키 알고리즘 |
 | KEY_PARAM | 키 파라미터 |
-| PUBKEY | 공개 키 텍스트 |
+| PUBKEY | 공개 키 텍스트. X.509 인증서 입력으로 등록한 경우 추출된 공개키가 저장됨 |
 | ACTIVATED | 키 활성화 여부 |
 | VALID_AFTER | 키 유효 시작일 |
 | VALID_BEFORE | 키 유효 종료일 |
+| ADDITIONAL_INFO | 서버가 생성한 AUTH KEY 부가 정보. 예: `type=PUBLIC_KEY`, `type=CERTIFICATE; cert_not_after=YYYY-MM-DD` |
 | COMMENT | 키 설명 |

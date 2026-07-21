@@ -1240,8 +1240,9 @@ Displays public keys registered for challenge authentication.
 |USER_NAME|User name|
 |KEY_ALGO|Key algorithm|
 |KEY_PARAM|Key parameter|
-|PUBKEY|Public key text|
+|PUBKEY|Public key text. If the key is registered from an X.509 certificate, the extracted public key is stored.|
 |ACTIVATED|Whether the key is active|
 |VALID_AFTER|Start date of key validity|
 |VALID_BEFORE|End date of key validity|
+|ADDITIONAL_INFO|Server-generated AUTH KEY metadata. Examples: `type=PUBLIC_KEY`, `type=CERTIFICATE; cert_not_after=YYYY-MM-DD`|
 |COMMENT|Key comment|

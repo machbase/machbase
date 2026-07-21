@@ -195,6 +195,16 @@ openssl rsa -in app_user_rsa.key -pubout -out app_user_rsa.pub
 chmod 600 app_user_rsa.key
 ```
 
+In the example above, `app_user_rsa.pub` is generated in the `-----BEGIN PUBLIC KEY-----`
+format. To generate a PKCS#1 RSA public key in the `-----BEGIN RSA PUBLIC KEY-----`
+format, use the `-RSAPublicKey_out` option.
+
+```bash
+openssl genrsa -out app_user_rsa.key 2048
+openssl rsa -in app_user_rsa.key -RSAPublicKey_out -out app_user_rsa_pkcs1.pub
+chmod 600 app_user_rsa.key
+```
+
 To use a 3072-bit or 4096-bit RSA key, pass `3072` or `4096` as the last argument of
 `openssl genrsa`.
 
@@ -205,7 +215,7 @@ escaped line breaks.
 awk '{printf "%s\\n", $0}' app_user_ecdsa.pub
 ```
 
-Use the command output as the `key` value in `CREATE USER ... WITH AUTH KEY` or
+Use the command output as the `PUBKEY` value in `CREATE USER ... WITH AUTH KEY` or
 `ALTER USER ... ADD AUTH KEY`.
 
 The following example creates a registration SQL file from the generated public key.
@@ -215,11 +225,29 @@ KEY_ESCAPED=$(awk '{printf "%s\\n", $0}' app_user_ecdsa.pub)
 
 cat > add_app_user_key.sql <<EOF
 ALTER USER app_user ADD AUTH KEY (
-    key='${KEY_ESCAPED}',
-    valid_before='2047-12-31',
-    comment='openssl generated ecdsa key'
+    PUBKEY = '${KEY_ESCAPED}',
+    VALID_BEFORE = '2047-12-31',
+    COMMENT = 'openssl generated ecdsa key'
 );
 EOF
+```
+
+To register an X.509 certificate, create a self-signed certificate with the same private
+key and use the certificate PEM as the `PUBKEY` value. During authentication, the client
+still uses the matching private key file, not the certificate file.
+
+```bash
+openssl req -new -x509 \
+    -key app_user_ecdsa.key \
+    -out app_user_ecdsa.crt \
+    -days 3650 \
+    -subj "/CN=app_user"
+```
+
+When embedding the certificate PEM in SQL, escape line breaks with `\n`.
+
+```bash
+CERT_ESCAPED=$(awk '{printf "%s\\n", $0}' app_user_ecdsa.crt)
 ```
 
 ## Create a User with AUTH KEY
@@ -232,25 +260,54 @@ authentication.
 ```sql
 CREATE USER app_user IDENTIFIED BY 'App#1234'
 WITH AUTH KEY (
-    key='-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEshxcrSmtosaqWjhRkOoAw4v3QWqL\ns3OFN2jbJrustEc12uAn/IdtTG94KK69bY7DWl80pzQ48dNL+ENXe8PT3g==\n-----END PUBLIC KEY-----\n',
-    valid_before='2047-12-31',
-    comment='initial key'
+    PUBKEY = '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEshxcrSmtosaqWjhRkOoAw4v3QWqL\ns3OFN2jbJrustEc12uAn/IdtTG94KK69bY7DWl80pzQ48dNL+ENXe8PT3g==\n-----END PUBLIC KEY-----\n',
+    VALID_BEFORE = '2047-12-31',
+    COMMENT = 'initial key'
 );
 ```
 
 Notes:
 
-- `key` must contain a PEM public key.
+- `PUBKEY` must contain a PEM public key or an X.509 certificate.
+- The supported `PUBKEY` input formats are the following three PEM blocks.
+  - `-----BEGIN PUBLIC KEY-----`: ECDSA public key or PKCS#8 RSA public key
+  - `-----BEGIN RSA PUBLIC KEY-----`: PKCS#1 RSA public key
+  - `-----BEGIN CERTIFICATE-----`: X.509 certificate
 - In SQL text, PEM line breaks can be written as `\n`.
-- `valid_before` uses the `YYYY-MM-DD` format.
-- `valid_before` does not accept a datetime value with a time portion such as
+- `VALID_BEFORE` uses the `YYYY-MM-DD` format.
+- `VALID_BEFORE` does not accept a datetime value with a time portion such as
   `YYYY-MM-DD HH24:MI:SS`.
-- `comment` is required by the current AUTH KEY syntax.
+- `COMMENT` is required by the current AUTH KEY syntax.
 - The first key created by `CREATE USER ... WITH AUTH KEY` is registered as active
   (`ACTIVATED=1`).
 - A user may own both a password and one or more AUTH KEY entries. The actual
   authentication method is chosen by the client's `AUTH_MODE`, and there is no automatic
   fallback from one method to the other on failure.
+- Raw OpenSSH public keys such as `ssh-rsa ...` or `ecdsa-sha2-nistp256 ...` cannot be
+  registered directly in `PUBKEY`. Convert an OpenSSH public key to a PEM public key format
+  with a command such as `ssh-keygen -e -m PKCS8` before registration.
+
+The following example registers an X.509 certificate PEM. The certificate body is written
+without omission as a single SQL string.
+
+```sql
+CREATE USER app_x509 IDENTIFIED BY 'App#1234'
+WITH AUTH KEY (
+    PUBKEY = '-----BEGIN CERTIFICATE-----\nMIIBmDCCAT+gAwIBAgIUAOBEtntR9La6sDNPUeW6o4m+oBcwCgYIKoZIzj0EAwIw\nIjEgMB4GA1UEAwwXbWFjaGJhc2UtMzgwNS14NTA5LWF1dGgwHhcNMjYwNzE1MDEw\nMzAxWhcNMzYwNzEyMDEwMzAxWjAiMSAwHgYDVQQDDBdtYWNoYmFzZS0zODA1LXg1\nMDktYXV0aDBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABLIcXK0praLGqlo4UZDq\nAMOL90Fqi7NzhTdo2ya7rLRHNdrgJ/yHbUxveCiuvW2Ow1pfNKc0OPHTS/hDV3vD\n096jUzBRMB0GA1UdDgQWBBQZ2DHpG/e/fq7RI3Cm1Z78N7l4LDAfBgNVHSMEGDAW\ngBQZ2DHpG/e/fq7RI3Cm1Z78N7l4LDAPBgNVHRMBAf8EBTADAQH/MAoGCCqGSM49\nBAMCA0cAMEQCIGSsnhbOFiJkhCCrKsut+cg5O2TVDfHUBgGXFeg7nS/7AiA9wVgn\no1LE0HTkPLZYt99uOXHZ7D3Ygbvo+VwJK1SoRg==\n-----END CERTIFICATE-----\n',
+    VALID_BEFORE = '2036-07-12',
+    COMMENT = 'x509 certificate key'
+);
+```
+
+When an X.509 certificate is registered, Machbase extracts the public key from the
+certificate and stores that public key. It does not perform certificate chain validation or
+CA trust validation; the certificate is used as an input format that carries a public key
+and an expiration date. The input must contain exactly one PEM block. Chain PEM input,
+private key PEM input, raw OpenSSH public keys, unsupported PEM headers, and non-whitespace
+trailing text after a valid PEM block are rejected.
+
+An X.509 certificate has a `notAfter` expiration date. `VALID_BEFORE` cannot be later than
+the certificate `notAfter`; registration or modification fails if this condition is not met.
 
 ## Manage AUTH KEY
 
@@ -258,9 +315,9 @@ Notes:
 
 ```sql
 ALTER USER app_user ADD AUTH KEY (
-    key='-----BEGIN RSA PUBLIC KEY-----\nMIIBCgKCAQEAqO+tddiAQzsT8iajPy5QJPamIlyq2zB01wgHSTs3OOrvw0uKoFQD\ncqKaDzRya73LETXIEev3nwhGCnG4SjedMHj3EH9/rRJphFtv/dzw0OHum/UhVulR\nIXUYzrTbKPTQ+qyjS8UXTteMncf9OOh4AQyS4+iJW+U344fxymR8USRgZ25N9jhf\n2gkKnn5YSPZHf8ZHQGeA7OXANBwPmH5dQwfqghXRa7Nk1hmkIAnQQXCBJW/Lin+x\nwQfqv8DVwNaiziz77voPwaeD5akq1JYWvcPlOnh+NN3tpu5gudke/t/In4NFJ3W9\n4unVcYIfxcdDSoht3AMObGmuDazOjQJFGQIDAQAB\n-----END RSA PUBLIC KEY-----\n',
-    valid_before='2048-01-31',
-    comment='rollover candidate'
+    PUBKEY = '-----BEGIN RSA PUBLIC KEY-----\nMIIBCgKCAQEAqO+tddiAQzsT8iajPy5QJPamIlyq2zB01wgHSTs3OOrvw0uKoFQD\ncqKaDzRya73LETXIEev3nwhGCnG4SjedMHj3EH9/rRJphFtv/dzw0OHum/UhVulR\nIXUYzrTbKPTQ+qyjS8UXTteMncf9OOh4AQyS4+iJW+U344fxymR8USRgZ25N9jhf\n2gkKnn5YSPZHf8ZHQGeA7OXANBwPmH5dQwfqghXRa7Nk1hmkIAnQQXCBJW/Lin+x\nwQfqv8DVwNaiziz77voPwaeD5akq1JYWvcPlOnh+NN3tpu5gudke/t/In4NFJ3W9\n4unVcYIfxcdDSoht3AMObGmuDazOjQJFGQIDAQAB\n-----END RSA PUBLIC KEY-----\n',
+    VALID_BEFORE = '2048-01-31',
+    COMMENT = 'rollover candidate'
 );
 ```
 
@@ -280,12 +337,14 @@ ALTER USER app_user ACTIVATE AUTH KEY ID 3;
 ### Change AUTH KEY Expiration
 
 ```sql
-ALTER USER app_user ALTER AUTH KEY ID 3 VALID_BEFORE='2048-06-30';
+ALTER USER app_user ALTER AUTH KEY ID 3 VALID_BEFORE = '2048-06-30';
 ```
 
 - A key past `VALID_BEFORE` cannot be used for authentication.
 - The input format is `YYYY-MM-DD`, and a datetime value with a time portion is not
   accepted.
+- For a key registered from an X.509 certificate, `VALID_BEFORE` cannot be changed to a date
+  later than the certificate `notAfter`.
 
 ### Drop AUTH KEY
 
@@ -310,11 +369,16 @@ Major columns:
   - EC key: curve name such as `P-256`, `P-384`, `P-521`
 - `ACTIVATED`: whether the key is active
 - `VALID_AFTER`, `VALID_BEFORE`: validity period
+- `ADDITIONAL_INFO`: server-generated AUTH KEY metadata
+  - Public key input: `type=PUBLIC_KEY`
+  - X.509 certificate input: `type=CERTIFICATE; cert_not_after=YYYY-MM-DD`
 - `COMMENT`: user note
-- `PUBKEY`: PEM public key body
+- `PUBKEY`: PEM public key body. When the key is registered from an X.509 certificate, the
+  extracted public key is stored.
 
 ```sql
-SELECT key_id, user_name, key_algo, key_param, activated, valid_before, comment
+SELECT key_id, user_name, key_algo, key_param, activated,
+       valid_before, additional_info, comment
   FROM V$USER_AUTH_KEYS
  WHERE user_name='APP_USER'
  ORDER BY key_id;
