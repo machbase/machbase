@@ -250,6 +250,19 @@ When embedding the certificate PEM in SQL, escape line breaks with `\n`.
 CERT_ESCAPED=$(awk '{printf "%s\\n", $0}' app_user_ecdsa.crt)
 ```
 
+The following example creates a registration SQL file from the generated certificate.
+
+```bash
+cat > create_app_x509.sql <<EOF
+CREATE USER app_x509 IDENTIFIED BY 'App#1234'
+WITH AUTH KEY (
+    PUBKEY = '${CERT_ESCAPED}',
+    VALID_BEFORE = '2036-07-12',
+    COMMENT = 'x509 certificate key'
+);
+EOF
+```
+
 ## Create a User with AUTH KEY
 
 > **Note**: The following behavior is supported from Machbase 8.5 or later.
@@ -270,7 +283,7 @@ Notes:
 
 - `PUBKEY` must contain a PEM public key or an X.509 certificate.
 - The supported `PUBKEY` input formats are the following three PEM blocks.
-  - `-----BEGIN PUBLIC KEY-----`: ECDSA public key or PKCS#8 RSA public key
+  - `-----BEGIN PUBLIC KEY-----`: ECDSA or RSA public key in SubjectPublicKeyInfo (SPKI) format
   - `-----BEGIN RSA PUBLIC KEY-----`: PKCS#1 RSA public key
   - `-----BEGIN CERTIFICATE-----`: X.509 certificate
 - In SQL text, PEM line breaks can be written as `\n`.
@@ -287,8 +300,10 @@ Notes:
   registered directly in `PUBKEY`. Convert an OpenSSH public key to a PEM public key format
   with a command such as `ssh-keygen -e -m PKCS8` before registration.
 
-The following example registers an X.509 certificate PEM. The certificate body is written
-without omission as a single SQL string.
+The following example shows how to enter an X.509 certificate PEM directly. This is a fixed
+example certificate for showing the PEM input format. For actual authentication, the
+registered certificate and the client-side private key must belong to the same key pair, as
+shown in the generated `CERT_ESCAPED` example above.
 
 ```sql
 CREATE USER app_x509 IDENTIFIED BY 'App#1234'

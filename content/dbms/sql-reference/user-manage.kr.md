@@ -248,6 +248,19 @@ openssl req -new -x509 \
 CERT_ESCAPED=$(awk '{printf "%s\\n", $0}' app_user_ecdsa.crt)
 ```
 
+다음 예는 생성한 인증서로 등록 SQL 파일을 만드는 방법입니다.
+
+```bash
+cat > create_app_x509.sql <<EOF
+CREATE USER app_x509 IDENTIFIED BY 'App#1234'
+WITH AUTH KEY (
+    PUBKEY = '${CERT_ESCAPED}',
+    VALID_BEFORE = '2036-07-12',
+    COMMENT = 'x509 certificate key'
+);
+EOF
+```
+
 ## AUTH KEY를 포함한 사용자 생성
 
 > **참고**: 다음 설명은 Machbase 8.5 이상에서 지원됩니다.
@@ -267,7 +280,7 @@ WITH AUTH KEY (
 
 - `PUBKEY`에는 PEM 형식 공개키 또는 X.509 인증서를 넣습니다.
 - 지원되는 `PUBKEY` 입력 형식은 다음 세 가지 PEM 블록입니다.
-  - `-----BEGIN PUBLIC KEY-----`: ECDSA 공개키 또는 PKCS#8 형식 RSA 공개키
+  - `-----BEGIN PUBLIC KEY-----`: SubjectPublicKeyInfo(SPKI) 형식의 ECDSA 또는 RSA 공개키
   - `-----BEGIN RSA PUBLIC KEY-----`: PKCS#1 형식 RSA 공개키
   - `-----BEGIN CERTIFICATE-----`: X.509 인증서
 - SQL 문장 안에서는 PEM 줄바꿈을 `\n`으로 입력할 수 있습니다.
@@ -279,8 +292,9 @@ WITH AUTH KEY (
 - `ssh-rsa ...`, `ecdsa-sha2-nistp256 ...` 같은 OpenSSH 공개키 원문은 `PUBKEY`에 직접 등록할 수 없습니다.
   OpenSSH 공개키를 사용하려면 `ssh-keygen -e -m PKCS8` 등으로 PEM 공개키 형식으로 변환한 뒤 등록합니다.
 
-X.509 인증서 PEM을 등록하는 예는 다음과 같습니다. 인증서 내용은 생략 없이 한 줄 SQL 문자열로
-입력합니다.
+X.509 인증서 PEM을 직접 입력하는 형식은 다음과 같습니다. 아래 인증서는 PEM 입력 형식을
+보여주기 위한 고정 예제입니다. 실제 인증에 사용하려면 앞 절처럼 등록할 인증서와 클라이언트가
+보관한 개인키가 같은 키 쌍이어야 합니다.
 
 ```sql
 CREATE USER app_x509 IDENTIFIED BY 'App#1234'
