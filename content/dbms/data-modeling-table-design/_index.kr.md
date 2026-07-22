@@ -14,8 +14,8 @@ toc: true
 | 타입 | DDL | 주요 용도 |
 |------|-----|----------|
 | TAG | `CREATE TAG TABLE` | 이름과 시간축을 가진 센서·계측 데이터 |
-| LOG | `CREATE TABLE` | 순차적으로 추가되는 이벤트·로그 데이터 |
-| RDB | `CREATE RDB TABLE` | 트랜잭션과 관계형 변경이 필요한 업무 데이터 |
+| LOG | `CREATE LOG TABLE` | 순차적으로 추가되는 이벤트·로그 데이터 |
+| TRANSACTION | `CREATE TRANSACTION TABLE` | 트랜잭션과 관계형 변경이 필요한 업무 데이터 |
 | VOLATILE | `CREATE VOLATILE TABLE` | 재시작 시 폐기 가능한 인메모리 상태·캐시 |
 | LOOKUP | `CREATE LOOKUP TABLE` | 코드, 기준 정보, 참조 데이터 |
 

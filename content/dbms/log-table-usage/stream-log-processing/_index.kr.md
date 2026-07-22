@@ -31,7 +31,7 @@ STREAM을 이용해 LOG 테이블에 삽입되는 데이터를 실시간으로 T
 
 ```sql
 -- PLC 장비 데이터를 수신하는 LOG 테이블
-CREATE TABLE plc_log (
+CREATE LOG TABLE plc_log (
     tm      DATETIME,
     v0      DOUBLE,
     v1      DOUBLE,
@@ -215,7 +215,7 @@ EXEC STREAM_DROP(stream_v0);
 
 | 단계 | 작업 | 명령 |
 |------|------|------|
-| 1 | LOG / TAG 테이블 생성 | `CREATE TABLE`, `CREATE TAG TABLE` |
+| 1 | LOG / TAG 테이블 생성 | `CREATE LOG TABLE`, `CREATE TAG TABLE` |
 | 2 | STREAM 생성 | `EXEC STREAM_CREATE(이름, 쿼리)` |
 | 3 | STREAM 시작 | `EXEC STREAM_START(이름)` |
 | 4 | 상태 확인 | `SELECT * FROM v$streams` |

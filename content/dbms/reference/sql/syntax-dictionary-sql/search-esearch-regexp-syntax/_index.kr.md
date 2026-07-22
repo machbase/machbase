@@ -20,7 +20,7 @@ column_name NOT SEARCH 'search_term'
 - 단어(토큰) 단위로 검색하며, AND 연산으로 여러 조건을 조합할 수 있습니다.
 
 ```sql
-CREATE TABLE app_log (id INTEGER, message VARCHAR(200), detail VARCHAR(200));
+CREATE LOG TABLE app_log (id INTEGER, message VARCHAR(200), detail VARCHAR(200));
 CREATE KEYWORD INDEX idx_msg    ON app_log (message);
 CREATE KEYWORD INDEX idx_detail ON app_log (detail);
 
@@ -53,7 +53,7 @@ column_name ESEARCH '%pattern%'
 - `NOT ESEARCH`는 지원하지 않습니다.
 
 ```sql
-CREATE TABLE realdual (id1 INTEGER, id2 VARCHAR(20), id3 VARCHAR(20));
+CREATE LOG TABLE realdual (id1 INTEGER, id2 VARCHAR(20), id3 VARCHAR(20));
 CREATE KEYWORD INDEX idx_id2 ON realdual (id2);
 CREATE KEYWORD INDEX idx_id3 ON realdual (id3);
 
@@ -81,7 +81,7 @@ column_name NOT REGEXP 'pattern'
 - 먼저 `SEARCH`나 `ESEARCH`로 범위를 좁힌 후 `REGEXP`를 적용하면 효율적입니다.
 
 ```sql
-CREATE TABLE realdual (id1 INTEGER, id2 VARCHAR(20), id3 VARCHAR(20));
+CREATE LOG TABLE realdual (id1 INTEGER, id2 VARCHAR(20), id3 VARCHAR(20));
 
 INSERT INTO realdual VALUES (1, 'time1', 'series1 series21');
 INSERT INTO realdual VALUES (2, 'time2', 'series2 series22');

@@ -119,12 +119,12 @@ DROP INDEX idx_ts;
 
 ```sql
 -- LOG 테이블에 BITMAP 인덱스 생성
-CREATE TABLE sensor_log (ts DATETIME, device VARCHAR(32), value DOUBLE, status INTEGER);
+CREATE LOG TABLE sensor_log (ts DATETIME, device VARCHAR(32), value DOUBLE, status INTEGER);
 CREATE INDEX idx_status ON sensor_log (status) INDEX_TYPE BITMAP;
 CREATE INDEX idx_ts     ON sensor_log (ts);
 
 -- KEYWORD 인덱스를 이용한 텍스트 검색
-CREATE TABLE app_log (ts DATETIME, level VARCHAR(10), message TEXT);
+CREATE LOG TABLE app_log (ts DATETIME, level VARCHAR(10), message TEXT);
 CREATE INDEX idx_msg ON app_log (message) INDEX_TYPE KEYWORD;
 
 SELECT * FROM app_log WHERE message SEARCH 'error AND timeout';

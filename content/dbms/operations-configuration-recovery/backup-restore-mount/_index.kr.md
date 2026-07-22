@@ -42,7 +42,7 @@ toc: true
 | [데이터베이스 마운트](/dbms/operations-configuration-recovery/backup-restore-mount/#database-mount) | MOUNT / UMOUNT 사용법 |
 | [마운트된 데이터베이스 조회](/dbms/operations-configuration-recovery/backup-restore-mount/#query-database-mount) | 마운트 DB에서 SELECT |
 | [마운트 DB 동작 특성](/dbms/operations-configuration-recovery/backup-restore-mount/#mounted-db-read-only-refcount-active-same-name) | 읽기 전용, 활성 참조, 이름 충돌 |
-| [RDB 백업·복원·마운트](/dbms/rdb-table-usage/backup-restore-mount/) | Standard Edition RDB 절차 |
+| [TRANSACTION 백업·복원·마운트](/dbms/rdb-table-usage/backup-restore-mount/) | Standard Edition TRANSACTION 절차 |
 | [MOUNT TABLE 미지원 범위](/dbms/operations-configuration-recovery/backup-restore-mount/#unsupported-support-scope-mount-table-umount) | 테이블 단위 마운트 제약 |
 
 ## 권한 요구 사항
@@ -255,7 +255,7 @@ BACKUP TABLE sensor_log
 | TAG 테이블 | O |
 | LOOKUP 테이블 | O |
 | VOLATILE 테이블 | X (메모리 기반) |
-| RDB 테이블 | △ (Standard Edition 전용) |
+| TRANSACTION 테이블 | △ (Standard Edition 전용) |
 
 VOLATILE 테이블은 메모리에만 존재하므로 백업이 지원되지 않습니다.
 
@@ -474,7 +474,7 @@ SQL `BACKUP` 문의 지원 범위를 에디션, 저장 방식, 테이블 타입�
 | `BACKUP TABLE` | O | O |
 | `MOUNT DATABASE` | O | 제한적 (거부될 수 있음) |
 | `UMOUNT DATABASE` | O | 제한적 (거부될 수 있음) |
-| RDB 테이블 백업 | O | X |
+| TRANSACTION 테이블 백업 | O | X |
 
 > Cluster Edition에서 `MOUNT` 및 `UMOUNT` 문은 거부될 수 있습니다. 클러스터 환경에서는 각 노드의 데이터를 개별적으로 관리하므로 마운트 방식의 조회가 제한됩니다.
 
@@ -490,7 +490,7 @@ SQL `BACKUP` 문의 지원 범위를 에디션, 저장 방식, 테이블 타입�
 | TAG 테이블 | O | O | 기간 복원(machadmin -r) 제한 |
 | LOOKUP 테이블 | O | O | |
 | VOLATILE 테이블 | X | X | 메모리 기반, 백업 불가 |
-| RDB 테이블 | △ | △ | Standard Edition 전용 |
+| TRANSACTION 테이블 | △ | △ | Standard Edition 전용 |
 
 ### BACKUP DATABASE 문법 전체 구조
 
@@ -956,7 +956,7 @@ Machbase의 테이블 타입마다 백업과 마운트에 대한 지원 범위�
 | **LOG** | O | O | O | |
 | **LOOKUP** | O | O | O | |
 | **VOLATILE** | X | X | X | 메모리 기반, 재시작 시 소멸 |
-| **RDB** | O | O | △ | Standard Edition 전용 |
+| **TRANSACTION** | O | O | △ | Standard Edition 전용 |
 
 - **O**: 지원
 - **X**: 미지원
@@ -990,15 +990,15 @@ UMOUNT DATABASE tag_backup;
 
 메모리에만 존재하는 임시 테이블로, 서버가 재시작되면 데이터가 소멸합니다. 백업과 마운트를 모두 지원하지 않습니다. VOLATILE 테이블의 데이터를 영구 보관하려면 LOG 테이블이나 TAG 테이블로 데이터를 이동하거나 `SELECT INTO` 방식으로 내보내야 합니다.
 
-#### RDB 테이블
+#### TRANSACTION 테이블
 
 Standard Edition에서만 사용 가능한 테이블 타입입니다. `BACKUP DATABASE`와 `BACKUP TABLE`의
 대상에 포함되며, 백업본을 마운트하면 읽기 전용으로 조회할 수 있습니다. 자세한 내용은
-[RDB 백업·복원·마운트](/dbms/rdb-table-usage/backup-restore-mount/)를 참고하십시오.
+[TRANSACTION 백업·복원·마운트](/dbms/rdb-table-usage/backup-restore-mount/)를 참고하십시오.
 
 ### BACKUP DATABASE 실행 시 포함 범위
 
-`BACKUP DATABASE` 명령은 VOLATILE 테이블을 제외한 모든 테이블을 백업 대상에 포함합니다. RDB 테이블은 Standard Edition에서만 포함됩니다.
+`BACKUP DATABASE` 명령은 VOLATILE 테이블을 제외한 모든 테이블을 백업 대상에 포함합니다. TRANSACTION 테이블은 Standard Edition에서만 포함됩니다.
 
 ```sql
 -- 전체 백업 실행 시 포함 범위
@@ -1006,6 +1006,6 @@ Standard Edition에서만 사용 가능한 테이블 타입입니다. `BACKUP DA
 -- - TAG 테이블: 포함
 -- - LOOKUP 테이블: 포함
 -- - VOLATILE 테이블: 제외 (메모리 기반)
--- - RDB 테이블: Standard Edition에서만 포함
+-- - TRANSACTION 테이블: Standard Edition에서만 포함
 BACKUP DATABASE INTO DISK = '/backup/machbase_20240101';
 ```

@@ -15,7 +15,7 @@ JSON 타입 컬럼을 각 테이블 타입에서 사용할 때의 지원 범위�
 | LOG | O | O | X | JSON 컬럼과 JSON 함수 지원 |
 | LOOKUP | O | O | X | 일반 컬럼으로 지원, JSON path index는 미지원 |
 | VOLATILE | X | X | X | JSON 컬럼 생성 불가 |
-| RDB | O | O | X | JSON 컬럼과 JSON 함수 지원 |
+| TRANSACTION | O | O | X | JSON 컬럼과 JSON 함수 지원 |
 
 ## LOOKUP 테이블
 
@@ -70,7 +70,7 @@ CREATE VOLATILE TABLE session_data (
 
 ## JSON 관련 함수 테이블 타입별 지원
 
-| 함수/연산자 | TAG | LOG | LOOKUP | VOLATILE | RDB |
+| 함수/연산자 | TAG | LOG | LOOKUP | VOLATILE | TRANSACTION |
 |-------------|:---:|:---:|:------:|:--------:|:---:|
 | `->` 연산자 | O | O | O | X | O |
 | `JSON_EXTRACT*` | O | O | O | X | O |

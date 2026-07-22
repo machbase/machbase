@@ -1,24 +1,24 @@
 ---
-title: '8.12 RDB 인덱스와 JSON path 인덱스'
+title: '8.12 TRANSACTION 인덱스와 JSON path 인덱스'
 weight: 120
 toc: true
 ---
 
-RDB 테이블의 PRIMARY KEY·보조 인덱스 전략과 JSON 경로 인덱스 활용법을 다룹니다.
+TRANSACTION 테이블의 PRIMARY KEY·보조 인덱스 전략과 JSON 경로 인덱스 활용법을 다룹니다.
 
 
 <a id="index-strategy-rdb-primary-key-unique-normal"></a>
 
 ## PRIMARY KEY·보조 인덱스 전략
 
-RDB 테이블은 BTREE 기반 PRIMARY KEY 인덱스와 보조 인덱스를 지원합니다. PRIMARY KEY는 `CREATE PRIMARY KEY INDEX`, 보조 인덱스는 `CREATE INDEX`로 생성합니다.
+TRANSACTION 테이블은 BTREE 기반 PRIMARY KEY 인덱스와 보조 인덱스를 지원합니다. PRIMARY KEY는 `CREATE PRIMARY KEY INDEX`, 보조 인덱스는 `CREATE INDEX`로 생성합니다.
 
 ### PRIMARY KEY 인덱스
 
-RDB 테이블의 PRIMARY KEY 인덱스는 BTREE 구조로 표시됩니다.
+TRANSACTION 테이블의 PRIMARY KEY 인덱스는 BTREE 구조로 표시됩니다.
 
 ```sql
-CREATE RDB TABLE orders (
+CREATE TRANSACTION TABLE orders (
     order_id  LONG,
     customer  VARCHAR(64),
     item_id   INTEGER,
@@ -63,7 +63,7 @@ UPDATE orders SET status = 'SHIPPED' WHERE customer = 'CUST-001' AND status = 'P
 ### 복합 인덱스 설계
 
 ```sql
-CREATE RDB TABLE tx_history (
+CREATE TRANSACTION TABLE tx_history (
     tx_id      LONG,
     account_id VARCHAR(32),
     tx_time    DATETIME,
@@ -92,12 +92,12 @@ WHERE account_id = 'ACC-001'
 
 ## JSON 경로 인덱스
 
-`JSON` 타입 컬럼이 있는 RDB 테이블에서는 JSON 경로 인덱스를 생성할 수 있습니다. 다만 현재 JSON path 조건은 일반 컬럼 인덱스처럼 쿼리 경로에 푸시다운되지 않을 수 있으므로, 실행 계획을 반드시 확인해야 합니다.
+`JSON` 타입 컬럼이 있는 TRANSACTION 테이블에서는 JSON 경로 인덱스를 생성할 수 있습니다. 다만 현재 JSON path 조건은 일반 컬럼 인덱스처럼 쿼리 경로에 푸시다운되지 않을 수 있으므로, 실행 계획을 반드시 확인해야 합니다.
 
 ### JSON 컬럼 스키마
 
 ```sql
-CREATE RDB TABLE device_state (
+CREATE TRANSACTION TABLE device_state (
     device_id VARCHAR(64),
     ts        DATETIME,
     state     JSON,
@@ -138,7 +138,7 @@ WHERE region = 'KR'
 
 ```sql
 -- 더 효율적인 패턴: JSON 필드를 컬럼으로 분리
-CREATE RDB TABLE device_state_v2 (
+CREATE TRANSACTION TABLE device_state_v2 (
     device_id VARCHAR(64),
     ts        DATETIME,
     status    VARCHAR(16),   -- JSON에서 추출한 필드

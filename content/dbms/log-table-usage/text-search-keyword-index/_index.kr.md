@@ -168,7 +168,7 @@ SELECT * FROM sensor_log WHERE sensor_id NOT LIKE 'TEMP%';
 ### TEXT 컬럼 사용
 
 ```sql
-CREATE TABLE app_log (
+CREATE LOG TABLE app_log (
     event_time  DATETIME,
     level       VARCHAR(8),
     message     TEXT        -- 전문 검색 대상

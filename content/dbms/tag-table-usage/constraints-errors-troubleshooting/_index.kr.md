@@ -186,4 +186,4 @@ TAG 테이블 = 센서 이름 (PK) + 시간/거리 축 + 계측값
 ---
 
 **다음 읽을 내용**
-- [RDB 테이블 설계](/dbms/rdb-table-usage/)
+- [TRANSACTION 테이블 설계](/dbms/rdb-table-usage/)

@@ -33,7 +33,7 @@ NUMERIC(precision, scale)
 - `UNSIGNED`와 `ZEROFILL`은 지원하지 않습니다.
 
 ```sql
-CREATE RDB TABLE invoice (
+CREATE TRANSACTION TABLE invoice (
     invoice_id LONG PRIMARY KEY,
     amount     DECIMAL(18,2),
     tax_rate   NUMERIC(7,4)
@@ -46,7 +46,7 @@ CREATE RDB TABLE invoice (
 (round-half-away-from-zero)을 적용합니다.
 
 ```sql
-CREATE RDB TABLE decimal_rounding (
+CREATE TRANSACTION TABLE decimal_rounding (
     id     INTEGER PRIMARY KEY,
     amount DECIMAL(5,2)
 );
@@ -66,10 +66,10 @@ precision을 초과하는 값은 잘라내거나 부동소수점으로 변환하
 | TAG | O | exact 계측값과 집계 대상 데이터 컬럼 |
 | VOLATILE | O | 상태·캐시 값, primary key |
 | LOOKUP | O | 기준 금액·비율, primary key와 보조 인덱스 |
-| RDB | O | 관계형 업무 데이터, PK/UNIQUE/일반 인덱스 |
+| TRANSACTION | O | 관계형 업무 데이터, PK/UNIQUE/일반 인덱스 |
 
 ```sql
-CREATE TABLE payment_log (
+CREATE LOG TABLE payment_log (
     occurred_at DATETIME,
     amount      DECIMAL(18,2)
 );
@@ -91,7 +91,7 @@ CREATE LOOKUP TABLE price_rule (
 );
 ```
 
-Cluster Edition에서는 LOG/TAG 테이블의 DECIMAL 컬럼과 DDL 전파를 지원합니다. RDB 테이블은
+Cluster Edition에서는 LOG/TAG 테이블의 DECIMAL 컬럼과 DDL 전파를 지원합니다. TRANSACTION 테이블은
 DECIMAL 타입과 무관하게 Standard Edition에서 사용합니다.
 
 ## 비교와 인덱스
@@ -104,8 +104,8 @@ DECIMAL 타입과 무관하게 Standard Edition에서 사용합니다.
 SELECT * FROM price_rule WHERE amount = 1.00;
 ```
 
-VOLATILE과 LOOKUP의 primary key 메모리 인덱스, RDB의 일반·UNIQUE·PRIMARY KEY 인덱스에서
-DECIMAL을 사용할 수 있습니다. RDB 인덱스는 equality, range, ordering에 같은 수치 순서를
+VOLATILE과 LOOKUP의 primary key 메모리 인덱스, TRANSACTION 테이블의 일반·UNIQUE·PRIMARY KEY 인덱스에서
+DECIMAL을 사용할 수 있습니다. TRANSACTION 인덱스는 equality, range, ordering에 같은 수치 순서를
 적용합니다.
 
 VIEW의 derived column도 DECIMAL precision과 scale을 유지합니다. `DESC`, `SHOW`,

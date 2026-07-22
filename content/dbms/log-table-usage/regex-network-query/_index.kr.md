@@ -218,7 +218,7 @@ IPv4 및 IPv6 주소를 전용 데이터 타입으로 저장하고 조회할 수
 #### 테이블 생성 예시
 
 ```sql
-CREATE TABLE network_log (
+CREATE LOG TABLE network_log (
     ts       DATETIME,
     src_ip   IPV4,
     dst_ip   IPV4,
@@ -334,7 +334,7 @@ INSERT INTO table_name VALUES (value1,value2,value3,...);
 ```
 
 ```sql
-CREATE TABLE addrtable (addr IPV4);
+CREATE LOG TABLE addrtable (addr IPV4);
 INSERT  INTO addrtable VALUES ('127.0.0.1');
 INSERT  INTO addrtable VALUES ('127.0' || '.0.2');
 INSERT  INTO addrtable VALUES ('127.0.0.3');
@@ -404,7 +404,7 @@ INSERT  INTO    table_name  VALUES  (value1,value2,value3,...);
 ```
 
 ```sql
-CREATE TABLE addrtable6 (addr ipv6);
+CREATE LOG TABLE addrtable6 (addr ipv6);
 INSERT INTO addrtable6 VALUES ('::0.0.0.0');
 INSERT INTO addrtable6 VALUES ('::127.0' || '.0.1');
 INSERT INTO addrtable6 VALUES ('::127.0.0.3');
@@ -498,7 +498,7 @@ SELECT addr FROM addrtable  WHERE addr NOT CONTAINED '192.128.99.0/32';
 네트워크 마스크 타입을 사용한 검색 예제는 다음과 같습니다.
 
 ```sql
-CREATE TABLE ip_table (addr4 IPV4, addr6 IPV6);
+CREATE LOG TABLE ip_table (addr4 IPV4, addr6 IPV6);
 
 INSERT INTO ip_table VALUES ('192.0.0.1','FFFF::192.0.0.1');
 INSERT INTO ip_table VALUES ('192.0.10.1','FFFF::192.0.10.1');
@@ -719,7 +719,7 @@ addr6
 ### IPV4 사용 예시
 
 ```sql
-CREATE TABLE network_flow (
+CREATE LOG TABLE network_flow (
     src_ip    IPV4,
     dst_ip    IPV4,
     src_port  INTEGER,
@@ -747,7 +747,7 @@ WHERE src_ip BETWEEN '10.0.0.0' AND '10.255.255.255';
 ### IPV6 사용 예시
 
 ```sql
-CREATE TABLE ipv6_traffic (
+CREATE LOG TABLE ipv6_traffic (
     src_ip  IPV6,
     dst_ip  IPV6,
     bytes   LONG

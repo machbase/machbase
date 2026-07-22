@@ -16,7 +16,7 @@ toc: true
 | LOG 테이블 | `/dbms/log-table-usage/` |
 | LOOKUP 테이블 | `/dbms/lookup-table-usage/` |
 | VOLATILE 테이블 | `/dbms/volatile-table-usage/` |
-| RDB 테이블 | `/dbms/rdb-table-usage/` |
+| TRANSACTION 테이블 | `/dbms/rdb-table-usage/` |
 | ROLLUP | `/dbms/core-concepts/features-concepts/#role-statistics-rollup` |
 | STREAM | `/dbms/core-concepts/features-concepts/#processing-model-stream` |
 | Append (개념) | `/dbms/application-integration/concepts-common/#append-api-batch` |

@@ -4,16 +4,16 @@ weight: 20
 toc: true
 ---
 
-RDB 테이블의 스키마 설계 방법과 컬럼 타입, PRIMARY KEY 지정 방식을 설명합니다.
+TRANSACTION 테이블의 스키마 설계 방법과 컬럼 타입, PRIMARY KEY 지정 방식을 설명합니다.
 
 <a id="rdb-table-design"></a>
 
-## RDB 테이블 설계
+## TRANSACTION 테이블 설계
 
-RDB 테이블은 Machbase 8.6에서 도입된 관계형 테이블로, SELECT·INSERT·UPDATE·DELETE를 모두 지원합니다. PRIMARY KEY 인덱스와 보조 인덱스를 함께 활용할 수 있습니다.
+TRANSACTION 테이블은 Machbase 8.6에서 도입된 관계형 테이블로, SELECT·INSERT·UPDATE·DELETE를 모두 지원합니다. PRIMARY KEY 인덱스와 보조 인덱스를 함께 활용할 수 있습니다.
 
 ```sql
-CREATE RDB TABLE order_history (
+CREATE TRANSACTION TABLE order_history (
     order_id  LONG,
     item_id   INTEGER,
     qty       INTEGER,
@@ -48,7 +48,7 @@ DELETE FROM order_history WHERE order_id = 1001;
 #### 기본 문법
 
 ```sql
-CREATE RDB TABLE table_name (
+CREATE TRANSACTION TABLE table_name (
     col1 type1,
     col2 type2,
     ...
@@ -61,10 +61,10 @@ CREATE RDB TABLE table_name (
 
 ```sql
 -- 정상: 컬럼 1개
-CREATE RDB TABLE t1 (id INTEGER);
+CREATE TRANSACTION TABLE t1 (id INTEGER);
 
 -- 정상: 컬럼 여러 개
-CREATE RDB TABLE t2 (id INTEGER, name VARCHAR(64), cat VARCHAR(32), val DOUBLE);
+CREATE TRANSACTION TABLE t2 (id INTEGER, name VARCHAR(64), cat VARCHAR(32), val DOUBLE);
 ```
 
 #### 지원 데이터 타입
@@ -90,7 +90,7 @@ DECIMAL의 precision, scale, 반올림과 클라이언트 매핑은 [DECIMAL과 
 ##### 제품 카탈로그
 
 ```sql
-CREATE RDB TABLE product_catalog (
+CREATE TRANSACTION TABLE product_catalog (
     product_id   LONG,
     category     VARCHAR(64),
     name         VARCHAR(256),
@@ -106,7 +106,7 @@ UPDATE product_catalog SET price = 19900 WHERE product_id = 42;
 ##### 트랜잭션 이력
 
 ```sql
-CREATE RDB TABLE tx_history (
+CREATE TRANSACTION TABLE tx_history (
     tx_id        LONG,
     account_id   VARCHAR(32),
     tx_type      VARCHAR(16),
@@ -124,11 +124,11 @@ UPDATE tx_history SET status = 'SETTLED' WHERE tx_id = 9999;
 
 #### PRIMARY KEY 지정
 
-컬럼 정의에 직접 `PRIMARY KEY`를 지정하거나, `CREATE PRIMARY KEY INDEX` 문으로 사후 생성할 수 있습니다. RDB 인덱스는 BTREE로 표시됩니다.
+컬럼 정의에 직접 `PRIMARY KEY`를 지정하거나, `CREATE PRIMARY KEY INDEX` 문으로 사후 생성할 수 있습니다. TRANSACTION 인덱스는 BTREE로 표시됩니다.
 
 ```sql
 -- 컬럼 정의에서 PRIMARY KEY 지정
-CREATE RDB TABLE product_catalog (
+CREATE TRANSACTION TABLE product_catalog (
     product_id LONG PRIMARY KEY,
     name       VARCHAR(256),
     price      DECIMAL(18,2)
@@ -137,7 +137,7 @@ CREATE RDB TABLE product_catalog (
 
 ```sql
 -- 또는 PRIMARY KEY 인덱스 사후 생성
-CREATE RDB TABLE product_catalog (
+CREATE TRANSACTION TABLE product_catalog (
     product_id LONG,
     name       VARCHAR(256),
     price      DECIMAL(18,2)
@@ -149,7 +149,7 @@ CREATE PRIMARY KEY INDEX idx_pk_product ON product_catalog(product_id);
 자동 번호가 필요한 단일 64비트 정수 PRIMARY KEY에는 `AUTO_INCREMENT`를 사용할 수 있습니다.
 
 ```sql
-CREATE RDB TABLE device_master (
+CREATE TRANSACTION TABLE device_master (
     id LONG PRIMARY KEY AUTO_INCREMENT,
     device_name VARCHAR(80),
     site_code VARCHAR(32)
@@ -160,6 +160,6 @@ CREATE RDB TABLE device_master (
 
 #### 주의사항
 
-- `METADATA` 절은 TAG 테이블 전용이므로 RDB 테이블에서는 사용할 수 없습니다.
+- `METADATA` 절은 TAG 테이블 전용이므로 TRANSACTION 테이블에서는 사용할 수 없습니다.
 - `BASETIME`, `BASEDISTANCE` 키워드도 사용할 수 없습니다.
-- Cluster Edition에서는 RDB 테이블을 생성할 수 없습니다.
+- Cluster Edition에서는 TRANSACTION 테이블을 생성할 수 없습니다.

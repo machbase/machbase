@@ -11,17 +11,19 @@ LOG 테이블의 생성과 삭제 방법을 다룹니다.
 
 ## Log 테이블 생성 및 관리
 
-LOG 테이블은 `CREATE TABLE` 문으로 생성합니다. 별도의 테이블 타입 키워드를 붙이지 않으면 LOG 테이블로 생성되며, 입력 시각을 기록하는 `_arrival_time` 컬럼이 자동으로 관리됩니다.
+LOG 테이블은 `CREATE LOG TABLE` 문으로 생성합니다. 테이블 타입을 생략한 `CREATE TABLE`은
+TRANSACTION 테이블을 생성하므로 `LOG` 키워드를 생략하지 않습니다. LOG 테이블에는 입력 시각을
+기록하는 `_arrival_time` 컬럼이 자동으로 관리됩니다.
 
 ```sql
-Mach> CREATE TABLE sensor_data (id VARCHAR(32), val DOUBLE);
+Mach> CREATE LOG TABLE sensor_data (id VARCHAR(32), val DOUBLE);
 Created successfully.
 ```
 
 운영 로그나 이벤트 데이터는 조회 조건에 맞게 컬럼 타입을 정합니다.
 
 ```sql
-CREATE TABLE security_event (
+CREATE LOG TABLE security_event (
     event_time  DATETIME,
     severity    SHORT,
     category    VARCHAR(32),
@@ -49,7 +51,7 @@ LOG 테이블은 append 중심 테이블이므로 입력 후 수정할 수 없�
 | 상태/등급 | `SHORT` 또는 `INTEGER` 사용 |
 | 분석 기준 | 자주 필터링하는 값을 별도 컬럼으로 분리 |
 
-LOG 테이블에는 PRIMARY KEY나 UNIQUE 제약을 지정하지 않습니다. 행 단위 UPDATE가 필요한 데이터는 LOOKUP 또는 RDB 테이블을 검토합니다.
+LOG 테이블에는 PRIMARY KEY나 UNIQUE 제약을 지정하지 않습니다. 행 단위 UPDATE가 필요한 데이터는 LOOKUP 또는 TRANSACTION 테이블을 검토합니다.
 
 <a id="alter-log-table"></a>
 
@@ -116,5 +118,5 @@ Dropped successfully.
 - 실제 이벤트 시각과 도착 시각을 구분할지 결정합니다.
 - 메시지 전문 검색이 필요하면 `TEXT` 컬럼을 사용합니다.
 - 네트워크 주소는 문자열보다 `IPV4`/`IPV6` 타입을 우선 검토합니다.
-- 행 단위 수정이 필요한 정보는 LOG 테이블에 넣지 않고 LOOKUP 또는 RDB로 분리합니다.
+- 행 단위 수정이 필요한 정보는 LOG 테이블에 넣지 않고 LOOKUP 또는 TRANSACTION 테이블로 분리합니다.
 - 보존 기간과 삭제 정책을 테이블 생성 시 함께 정합니다.

@@ -10,7 +10,7 @@ toc: true
 - **[센서별 테이블 생성](/dbms/data-modeling-table-design/table-types-patterns-type-anti/#per-sensor-create)**
 - **[잘못된 타입 선택](/dbms/data-modeling-table-design/table-types-patterns-type-anti/#table-types-selection-type-wrong)**
 - **[VOLATILE 영속 저장 오용](/dbms/data-modeling-table-design/table-types-patterns-type-anti/#storage-persistent-volatile)**
-- **[시계열 데이터 RDB 오용](/dbms/data-modeling-table-design/table-types-patterns-type-anti/#time-series-storage-misuse-rdb)**
+- **[시계열 데이터 TRANSACTION 오용](/dbms/data-modeling-table-design/table-types-patterns-type-anti/#time-series-storage-misuse-rdb)**
 
 
 <a id="high-frequency-lookup"></a>
@@ -137,7 +137,7 @@ CREATE TAG TABLE error_log_wrong (
 **올바른 설계**: LOG 테이블 사용
 
 ```sql
-CREATE TABLE error_log (
+CREATE LOG TABLE error_log (
     level   SHORT,
     msg     VARCHAR(512),
     src     VARCHAR(128)
@@ -148,7 +148,7 @@ CREATE TABLE error_log (
 
 ```sql
 -- 잘못됨: 센서 값을 LOG로 저장
-CREATE TABLE sensor_wrong (
+CREATE LOG TABLE sensor_wrong (
     sensor_id VARCHAR(64),
     value     DOUBLE
     -- 태그별 시간 범위 집계 쿼리가 매우 비효율적
@@ -176,10 +176,10 @@ CREATE LOOKUP TABLE order_history_wrong (
 );
 ```
 
-**올바른 설계**: RDB 테이블 사용
+**올바른 설계**: TRANSACTION 테이블 사용
 
 ```sql
-CREATE RDB TABLE order_history (
+CREATE TRANSACTION TABLE order_history (
     order_id  LONG,
     customer  VARCHAR(64),
     item_id   INTEGER,
@@ -190,9 +190,9 @@ CREATE RDB TABLE order_history (
 UPDATE order_history SET status = 'SHIPPED' WHERE order_id = 1001;
 ```
 
-### 안티패턴 4: 시계열 데이터를 RDB에 저장
+### 안티패턴 4: 시계열 데이터를 TRANSACTION 테이블에 저장
 
-시계열 데이터(센서값)를 RDB 테이블에 저장하면 시간 범위 쿼리 성능이 떨어지고, Append API의 고속 버퍼 최적화도 쓸 수 없습니다. 자세한 내용은 [시계열 데이터 RDB 오용](/dbms/data-modeling-table-design/table-types-patterns-type-anti/#time-series-storage-misuse-rdb) 항목을 참고합니다.
+시계열 데이터(센서값)를 TRANSACTION 테이블에 저장하면 시간 범위 쿼리 성능이 떨어지고, Append API의 고속 버퍼 최적화도 쓸 수 없습니다. 자세한 내용은 [시계열 데이터 TRANSACTION 오용](/dbms/data-modeling-table-design/table-types-patterns-type-anti/#time-series-storage-misuse-rdb) 항목을 참고합니다.
 
 <a id="storage-persistent-volatile"></a>
 
@@ -223,7 +223,7 @@ INSERT INTO critical_config VALUES ('max_connections', '1000');
 
 ### 올바른 패턴
 
-영구 보존이 필요한 데이터는 LOOKUP 또는 RDB 테이블에 저장합니다.
+영구 보존이 필요한 데이터는 LOOKUP 또는 TRANSACTION 테이블에 저장합니다.
 
 ```sql
 -- 올바름: 설정은 LOOKUP 테이블
@@ -249,17 +249,17 @@ VOLATILE 테이블은 **재생성 가능한 캐시 데이터**에만 사용합�
 
 <a id="time-series-storage-misuse-rdb"></a>
 
-## 시계열 데이터 RDB 오용
+## 시계열 데이터 TRANSACTION 오용
 
 ### 문제
 
-센서·IoT 계측값 같은 대량 시계열 데이터를 RDB 테이블에 저장하는 패턴입니다. RDB 테이블은 UPDATE/DELETE를 포함한 일반 관계형 워크로드에 최적화되어 있어 초고빈도 시계열 수집에는 부적합합니다.
+센서·IoT 계측값 같은 대량 시계열 데이터를 TRANSACTION 테이블에 저장하는 패턴입니다. TRANSACTION 테이블은 UPDATE/DELETE를 포함한 일반 관계형 워크로드에 최적화되어 있어 초고빈도 시계열 수집에는 부적합합니다.
 
 ### 안티패턴 예시
 
 ```sql
--- 잘못됨: 센서 시계열 데이터를 RDB에 저장
-CREATE RDB TABLE sensor_timeseries (
+-- 잘못됨: 센서 시계열 데이터를 TRANSACTION 테이블에 저장
+CREATE TRANSACTION TABLE sensor_timeseries (
     sensor_id VARCHAR(64),
     ts        DATETIME,
     value     DOUBLE,
@@ -271,7 +271,7 @@ CREATE RDB TABLE sensor_timeseries (
 
 | 문제 | 설명 |
 |------|------|
-| Append API 고속 버퍼 미적용 | RDB의 Append는 트랜잭션 기반으로, TAG·LOG의 초고속 버퍼 최적화가 없음 |
+| Append API 고속 버퍼 미적용 | TRANSACTION 테이블의 Append는 트랜잭션 기반으로, TAG·LOG의 초고속 버퍼 최적화가 없음 |
 | 시계열 최적화 없음 | 시간 범위 집계 성능이 TAG 테이블 대비 저하 |
 | 시계열 압축 없음 | TAG 테이블의 시계열 압축 알고리즘 미적용 |
 | 시계열 분석 기능 미흡 | TAG 전용 ROLLUP, FIRST, LAST 등 시계열 최적화 미지원 |
@@ -297,6 +297,6 @@ WHERE time >= NOW - 86400000000000
 GROUP BY name, hour;
 ```
 
-### RDB 테이블이 적합한 경우
+### TRANSACTION 테이블이 적합한 경우
 
-RDB 테이블은 관계형 구조의 업무 데이터(주문, 재고, 설비 이력 등)에 씁니다. 시간 컬럼이 있더라도 UPDATE/DELETE가 필요한 업무 이력이라면 RDB를, 수정 없이 계속 쌓이는 고빈도 계측값이라면 TAG를 선택합니다.
+TRANSACTION 테이블은 관계형 구조의 업무 데이터(주문, 재고, 설비 이력 등)에 씁니다. 시간 컬럼이 있더라도 UPDATE/DELETE가 필요한 업무 이력이라면 TRANSACTION 테이블을, 수정 없이 계속 쌓이는 고빈도 계측값이라면 TAG를 선택합니다.

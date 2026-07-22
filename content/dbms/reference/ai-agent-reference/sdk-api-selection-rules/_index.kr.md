@@ -17,7 +17,7 @@ toc: true
 | Append 필요 + .NET | **MachConnector** (`MachAppendWriter`) | [.NET 가이드](/dbms/application-integration/guide-drivers/#net-connector) |
 | Append 필요 + Node.js | **@machbase/ts-client** | [Node.js 가이드](/dbms/application-integration/guide-drivers/#node-js-typescript) |
 | AUTH KEY 인증 필요 | **JDBC**, **ODBC/CLI**, **machsql** | Python/Go/.NET/Node.js는 AUTH KEY 미지원 |
-| RDB 테이블 트랜잭션 필요 | **JDBC**, **ODBC/CLI** | SQL `BEGIN`을 직접 실행해야 함 |
+| TRANSACTION 테이블 트랜잭션 필요 | **JDBC**, **ODBC/CLI** | SQL `BEGIN`을 직접 실행해야 함 |
 | Go 언어 선호 + Append 필요 | **machcli** (native) | [Go 가이드](/dbms/application-integration/guide-drivers/#go) |
 | Go 언어 선호 + 표준 인터페이스 | **database/sql** 드라이버 | Append 불필요한 경우 |
 | 브라우저 / 웹 / 스크립트 | **REST API** (포트 5657, `/machbase` 엔드포인트) | [REST API 가이드](/dbms/application-integration/rest-api/) |

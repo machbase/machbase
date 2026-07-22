@@ -225,7 +225,7 @@ machsql
 간단한 테스트를 수행합니다.
 
 ```sql
-CREATE TABLE test (id INTEGER, val DOUBLE);
+CREATE LOG TABLE test (id INTEGER, val DOUBLE);
 INSERT INTO test VALUES (1, 3.14);
 SELECT * FROM test;
 ```

@@ -4,13 +4,13 @@ weight: 170
 toc: true
 ---
 
-`INSERT ... ON DUPLICATE KEY UPDATE`는 RDB 테이블에 row를 INSERT하다가 PRIMARY KEY 또는 UNIQUE KEY 충돌이 발생하면, INSERT를 실패로 끝내지 않고 기존 row를 UPDATE하는 구문입니다.
+`INSERT ... ON DUPLICATE KEY UPDATE`는 TRANSACTION 테이블에 row를 INSERT하다가 PRIMARY KEY 또는 UNIQUE KEY 충돌이 발생하면, INSERT를 실패로 끝내지 않고 기존 row를 UPDATE하는 구문입니다.
 
 이 구문은 장비 마스터 동기화, 최신 상태 테이블 갱신, 집계 카운터 증가, 외부 시스템 upsert 적재처럼 "없으면 INSERT, 있으면 UPDATE"가 필요한 업무 로직에 사용할 수 있습니다.
 
 ## 지원 문법
 
-RDB 테이블에서는 `INSERT ... VALUES ...` 형태의 upsert를 지원합니다.
+TRANSACTION 테이블에서는 `INSERT ... VALUES ...` 형태의 upsert를 지원합니다.
 
 ```sql
 INSERT INTO table_name VALUES (...)
@@ -30,16 +30,16 @@ VALUES (...)
 
 duplicate key로 인정되는 대상은 다음과 같습니다.
 
-- RDB PRIMARY KEY
-- RDB UNIQUE INDEX
-- RDB 복합 UNIQUE INDEX
+- TRANSACTION PRIMARY KEY
+- TRANSACTION UNIQUE INDEX
+- TRANSACTION 복합 UNIQUE INDEX
 
 ## 기본 동작
 
 중복이 없으면 일반 INSERT와 같이 새 row를 추가합니다.
 
 ```sql
-CREATE RDB TABLE device_state (
+CREATE TRANSACTION TABLE device_state (
     device_id INTEGER PRIMARY KEY,
     status VARCHAR(16),
     alarm_count INTEGER,
@@ -83,7 +83,7 @@ DEVICE_ID  STATUS  ALARM_COUNT  UPDATED_AT
 `ON DUPLICATE KEY UPDATE` 뒤에 `SET` 절을 쓰지 않을 수 있습니다.
 
 ```sql
-CREATE RDB TABLE asset_cache (
+CREATE TRANSACTION TABLE asset_cache (
     asset_id INTEGER PRIMARY KEY,
     asset_name VARCHAR(80),
     location VARCHAR(80),
@@ -120,7 +120,7 @@ PRIMARY KEY 컬럼만 있는 테이블에서 중복 row에 `SET` 없는 upsert�
 PRIMARY KEY뿐 아니라 UNIQUE INDEX 충돌도 갱신 경로를 실행합니다.
 
 ```sql
-CREATE RDB TABLE account_profile (
+CREATE TRANSACTION TABLE account_profile (
     id INTEGER PRIMARY KEY,
     email VARCHAR(120),
     display_name VARCHAR(80),
@@ -149,7 +149,7 @@ ORDER BY id;
 복합 UNIQUE INDEX는 전체 key가 같은 경우 duplicate로 처리됩니다.
 
 ```sql
-CREATE RDB TABLE daily_device_summary (
+CREATE TRANSACTION TABLE daily_device_summary (
     id INTEGER PRIMARY KEY,
     device_id INTEGER,
     summary_day VARCHAR(10),
@@ -181,10 +181,10 @@ UNIQUE KEY에 `NULL`이 포함된 row끼리는 duplicate로 처리하지 않습�
 
 ## 활용 예제
 
-TAG 테이블에는 시간순 측정값이 계속 쌓이고, RDB 테이블에는 장비별 최신 상태만 유지할 수 있습니다.
+TAG 테이블에는 시간순 측정값이 계속 쌓이고, TRANSACTION 테이블에는 장비별 최신 상태만 유지할 수 있습니다.
 
 ```sql
-CREATE RDB TABLE latest_device_status (
+CREATE TRANSACTION TABLE latest_device_status (
     device_name VARCHAR(80) PRIMARY KEY,
     last_value DOUBLE,
     last_state VARCHAR(16),
@@ -214,7 +214,7 @@ VALUES ('compressor-a', 91.2, 'ALARM', 1, TO_DATE('2026-07-10 09:05:00'))
 외부 시스템에서 같은 natural key로 master 데이터를 반복 전송할 때 UNIQUE INDEX를 기준으로 upsert할 수 있습니다.
 
 ```sql
-CREATE RDB TABLE customer_device (
+CREATE TRANSACTION TABLE customer_device (
     id LONG PRIMARY KEY AUTO_INCREMENT,
     external_device_id VARCHAR(64),
     device_name VARCHAR(80),
@@ -245,7 +245,7 @@ VALUES ('ERP-DEV-10001', 'compressor-a-renamed', 'line-2', 1)
 소스 데이터의 컬럼 값을 그대로 최신 cache에 반영하고 싶으면 `SET` 절 없는 upsert를 사용할 수 있습니다.
 
 ```sql
-CREATE RDB TABLE tag_alias_cache (
+CREATE TRANSACTION TABLE tag_alias_cache (
     alias_name VARCHAR(80) PRIMARY KEY,
     tag_name VARCHAR(80),
     unit VARCHAR(16),
@@ -266,7 +266,7 @@ VALUES ('compressor-a-temp', 'comp_a.temperature', 'celsius', 'renamed tag')
 집계 테이블에서 key별 발생 횟수를 누적할 수 있습니다.
 
 ```sql
-CREATE RDB TABLE alarm_counter (
+CREATE TRANSACTION TABLE alarm_counter (
     alarm_code VARCHAR(32) PRIMARY KEY,
     first_seen DATETIME,
     last_seen DATETIME,
@@ -301,7 +301,7 @@ ON DUPLICATE KEY UPDATE SET
 JSON 컬럼도 update 대상 컬럼으로 사용할 수 있습니다.
 
 ```sql
-CREATE RDB TABLE device_json_state (
+CREATE TRANSACTION TABLE device_json_state (
     device_id INTEGER PRIMARY KEY,
     state JSON,
     updated_at DATETIME
@@ -338,10 +338,10 @@ WHERE device_id = 1;
 
 ## 트랜잭션과 권한
 
-RDB upsert는 일반 INSERT/UPDATE와 같이 트랜잭션 안에서 COMMIT 또는 ROLLBACK됩니다.
+TRANSACTION upsert는 일반 INSERT/UPDATE와 같이 트랜잭션 안에서 COMMIT 또는 ROLLBACK됩니다.
 
 ```sql
-CREATE RDB TABLE tx_device_state (
+CREATE TRANSACTION TABLE tx_device_state (
     id INTEGER PRIMARY KEY,
     status VARCHAR(16),
     count_value INTEGER
@@ -370,7 +370,7 @@ ORDER BY id;
 
 실패한 duplicate update statement가 있어도 explicit transaction 자체는 유지됩니다. 응용 프로그램은 오류를 확인한 뒤 같은 transaction에서 후속 SQL을 실행하거나 ROLLBACK할 수 있습니다.
 
-RDB upsert statement에는 `INSERT` 권한과 `UPDATE` 권한이 모두 필요합니다. 실제 실행 결과가
+TRANSACTION upsert statement에는 `INSERT` 권한과 `UPDATE` 권한이 모두 필요합니다. 실제 실행 결과가
 삽입 경로가 되더라도 statement에 갱신 경로가 포함되므로 두 권한을 모두 부여해야 합니다.
 
 ```sql
@@ -378,11 +378,11 @@ GRANT INSERT ON SYS.DEVICE_STATE TO app_user;
 GRANT UPDATE ON SYS.DEVICE_STATE TO app_user;
 ```
 
-`SELECT` 권한은 RDB upsert statement 실행 자체에는 필요하지 않습니다. 단, 응용 프로그램이 결과 확인을 위해 `SELECT`를 실행한다면 별도로 `SELECT` 권한이 필요합니다.
+`SELECT` 권한은 TRANSACTION upsert statement 실행 자체에는 필요하지 않습니다. 단, 응용 프로그램이 결과 확인을 위해 `SELECT`를 실행한다면 별도로 `SELECT` 권한이 필요합니다.
 
 ## 타입과 지원하지 않는 구문
 
-`SET` 절에서 갱신할 수 있는 컬럼 타입은 일반 RDB `UPDATE`와 같은 public 타입 정책을 따릅니다.
+`SET` 절에서 갱신할 수 있는 컬럼 타입은 일반 TRANSACTION `UPDATE`와 같은 public 타입 정책을 따릅니다.
 
 | 분류 | 타입 |
 | --- | --- |
@@ -392,7 +392,7 @@ GRANT UPDATE ON SYS.DEVICE_STATE TO app_user;
 | 문자열/LOB | `VARCHAR`, `TEXT`, `CLOB`, `BINARY`, `BLOB` |
 | 기타 | `DATETIME`, `IPV4`, `IPV6`, `JSON` |
 
-duplicate trigger가 되는 key/index 타입은 RDB PRIMARY KEY 및 UNIQUE INDEX의 타입 정책을
+duplicate trigger가 되는 key/index 타입은 TRANSACTION PRIMARY KEY 및 UNIQUE INDEX의 타입 정책을
 따릅니다. 이 기능은 key 타입의 지원 범위를 확장하지 않습니다.
 
 다음 구문은 지원하지 않습니다.
@@ -419,9 +419,9 @@ ON CONFLICT (device_id) DO UPDATE SET status = 'ALARM';
 
 대상 테이블 제한은 다음과 같습니다.
 
-- RDB 테이블에서만 지원합니다.
+- TRANSACTION 테이블에서만 지원합니다.
 - LOG 테이블과 TAG 테이블에는 지원하지 않습니다.
-- RDB 테이블이라도 PRIMARY KEY 또는 UNIQUE INDEX가 없으면 사용할 수 없습니다.
+- TRANSACTION 테이블이라도 PRIMARY KEY 또는 UNIQUE INDEX가 없으면 사용할 수 없습니다.
 - JSON path UNIQUE INDEX는 duplicate trigger로 사용하지 않습니다.
 
 ## 충돌과 오류 처리
@@ -429,7 +429,7 @@ ON CONFLICT (device_id) DO UPDATE SET status = 'ALARM';
 여러 UNIQUE INDEX가 같은 기존 row를 가리키면 해당 row를 한 번 UPDATE합니다. 그러나 INSERT하려는 row가 여러 UNIQUE INDEX에서 서로 다른 기존 row와 충돌하면 어느 row를 UPDATE해야 하는지 결정할 수 없으므로 statement는 실패합니다.
 
 ```sql
-CREATE RDB TABLE user_contact (
+CREATE TRANSACTION TABLE user_contact (
     id INTEGER PRIMARY KEY,
     email VARCHAR(120),
     phone VARCHAR(40),

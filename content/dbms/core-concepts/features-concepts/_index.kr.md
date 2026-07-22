@@ -156,7 +156,7 @@ STREAM은 Standard Edition 중심으로 설계되었습니다. Cluster Edition�
 
 테이블에 설정한 보관 기간보다 오래된 데이터를 배경 스레드가 자동으로 삭제하는 정책입니다. 운영자가 주기적으로 DELETE를 실행하지 않아도 설정된 기간이 지나면 자동으로 제거됩니다.
 
-LOG 테이블과 TAG 테이블에 적용합니다. LOOKUP, VOLATILE, RDB 테이블의
+LOG 테이블과 TAG 테이블에 적용합니다. LOOKUP, VOLATILE, TRANSACTION 테이블의
 수명 관리는 DELETE 또는 TRUNCATE 같은 명시적 DML로 처리합니다.
 
 ### 적용 방법
@@ -183,13 +183,13 @@ ALTER TABLE device_log DROP RETENTION;
 | 삭제 범위 | 기간 기준 자동 판단 | 테이블 타입별 DELETE 조건 기반 | 테이블 전체 |
 | 지속성 | 지속적 (한 번 설정 후 자동) | 일회성 | 일회성 |
 | 운영 중 실행 | 가능 (무중단) | 가능 (시간 범위 제약) | 가능 |
-| 주요 목적 | 장기 보관 정책 자동화 | 특정 구간 이상 데이터 즉시 제거 | LOG/RDB 테이블 초기화 |
+| 주요 목적 | 장기 보관 정책 자동화 | 특정 구간 이상 데이터 즉시 제거 | LOG/TRANSACTION 테이블 초기화 |
 
 **선택 기준**
 
 - 30일, 90일 등 고정 기간 후 자동 삭제가 필요하면 **Retention Policy**를 사용합니다.
 - 특정 이벤트나 배포 전후 특정 시간 구간의 데이터를 선택적으로 제거하려면 **DELETE**를 사용합니다.
-- LOG 테이블이나 RDB 테이블 내용 전체를 즉시 비워야 하면 **TRUNCATE**를 사용합니다.
+- LOG 테이블이나 TRANSACTION 테이블 내용 전체를 즉시 비워야 하면 **TRUNCATE**를 사용합니다.
 
 ### 다음 읽을 내용
 
@@ -208,7 +208,7 @@ Backup, Restore, Mount는 데이터 보호와 복구를 담당하는 세 가지 
 
 Backup 작업은 `LAUNCHED` -> `PROGRESS` -> `FINISHED` (실패 시 `ERROR`) 순으로 진행됩니다.
 
-RDB 테이블도 데이터베이스 백업에 자동으로 포함됩니다. 데이터베이스 디렉터리를 수동으로
+TRANSACTION 테이블도 데이터베이스 백업에 자동으로 포함됩니다. 데이터베이스 디렉터리를 수동으로
 복사하지 말고 Machbase가 제공하는 Backup/Restore/Mount 절차를 사용해야 합니다.
 
 | 유형 | 설명 |
@@ -254,8 +254,8 @@ UMOUNT DATABASE MOUNTDB;
 
 Restore와 달리 데이터를 원래 위치에 복사하지 않습니다. 백업본 디렉터리를 그대로 참조하므로, 과거 특정 시점의 데이터를 조회하거나 검증하는 데 적합합니다.
 
-Mount된 데이터베이스는 읽기 전용입니다. RDB 테이블도 `MOUNT DATABASE`로 연결한 백업본에서는
-SELECT만 허용되며, mounted RDB 테이블에 대한 INSERT/UPDATE/DELETE나 `MOUNT TABLE` 방식의 RDB
+Mount된 데이터베이스는 읽기 전용입니다. TRANSACTION 테이블도 `MOUNT DATABASE`로 연결한 백업본에서는
+SELECT만 허용되며, mounted TRANSACTION 테이블에 대한 INSERT/UPDATE/DELETE나 `MOUNT TABLE` 방식의 TRANSACTION
 테이블 단독 Mount는 지원하지 않습니다.
 
 ### 세 개념의 관계

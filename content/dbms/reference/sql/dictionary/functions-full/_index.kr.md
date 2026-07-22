@@ -24,7 +24,7 @@ ABS(column_expr)
 ```
 
 ```sql
-Mach> CREATE TABLE abs_table (c1 INTEGER, c2 DOUBLE, c3 VARCHAR(10));
+Mach> CREATE LOG TABLE abs_table (c1 INTEGER, c2 DOUBLE, c3 VARCHAR(10));
 Created successfully.
 
 Mach> INSERT INTO abs_table VALUES(1, 1.0, '');
@@ -56,7 +56,7 @@ ADD_TIME(column,time_diff_format)
 ```
 
 ```sql
-Mach> CREATE TABLE add_time_table (id INTEGER, dt DATETIME);
+Mach> CREATE LOG TABLE add_time_table (id INTEGER, dt DATETIME);
 Created successfully.
 
 Mach> INSERT INTO  add_time_table VALUES(1, TO_DATE('1999-11-11 1:2:3 4:5:6'));
@@ -243,7 +243,7 @@ AVG(column_name)
 ```
 
 ```sql
-Mach> CREATE TABLE avg_table (id1 INTEGER, id2 INTEGER);
+Mach> CREATE LOG TABLE avg_table (id1 INTEGER, id2 INTEGER);
 Created successfully.
 
 Mach> INSERT INTO avg_table VALUES(1, 1);
@@ -288,7 +288,7 @@ BITOR (<expression1>, <expression2>)
 ```
 
 ```sql
-Mach> CREATE TABLE bit_table (i1 INTEGER, i2 UINTEGER, i3 FLOAT, i4 DOUBLE, i5 SHORT, i6 VARCHAR(10));
+Mach> CREATE LOG TABLE bit_table (i1 INTEGER, i2 UINTEGER, i3 FLOAT, i4 DOUBLE, i5 SHORT, i6 VARCHAR(10));
 Created successfully.
 
 Mach> INSERT INTO bit_table VALUES (-1, 1, 1, 1, 2, 'aaa');
@@ -377,7 +377,7 @@ COUNT(column_name)
 ```
 
 ```sql
-Mach> CREATE TABLE count_table (id1 INTEGER, id2 INTEGER);
+Mach> CREATE LOG TABLE count_table (id1 INTEGER, id2 INTEGER);
 Created successfully.
 
 Mach> INSERT INTO count_table VALUES(1, 1);
@@ -443,7 +443,7 @@ DATE_TRUNC (field, date_val [, count])
 ```
 
 ```sql
-Mach> CREATE TABLE trunc_table (i1 INTEGER, i2 DATETIME);
+Mach> CREATE LOG TABLE trunc_table (i1 INTEGER, i2 DATETIME);
 Created successfully.
 
 Mach> INSERT INTO trunc_table VALUES (1, TO_DATE('1999-11-11 1:2:0 4:5:1'));
@@ -549,7 +549,7 @@ DATE_BIN(field, count, source [, origin])
 이제는 `DATE_BIN(field, count, source)`만으로 같은 효과를 얻을 수 있습니다.
 
 ```sql
-Mach> CREATE TABLE log (time DATETIME);
+Mach> CREATE LOG TABLE log (time DATETIME);
 Created successfully.
 
 Mach> INSERT INTO log VALUES (TO_DATE('2000-01-01 00:00:00'));
@@ -581,7 +581,7 @@ TIME                            DATE_BIN('hour', 2, time, TO_DATE('2020-01-01 00
 로컬 타임존 경계를 기준으로 버킷을 계산하는 예는 다음과 같습니다.
 
 ```sql
-Mach> CREATE TABLE t3521 (ts DATETIME);
+Mach> CREATE LOG TABLE t3521 (ts DATETIME);
 Created successfully.
 
 Mach> INSERT INTO t3521 VALUES (TO_DATE('2000-01-01 00:30:00'));
@@ -661,7 +661,7 @@ DECODE(column, [search, return],.. default)
 ```
 
 ```sql
-Mach> CREATE TABLE decode_table (id1 VARCHAR(11));
+Mach> CREATE LOG TABLE decode_table (id1 VARCHAR(11));
 Created successfully.
 
 Mach> INSERT INTO decode_table VALUES('decodetest1');
@@ -922,7 +922,7 @@ GROUP_CONCAT(
 * SEPARATOR에는 문자열 상수만 지정할 수 있으며, 문자열 컬럼은 지정할 수 없습니다.
 
 ```sql
-Mach> CREATE TABLE concat_table(id1 INTEGER, id2 DOUBLE, name VARCHAR(10));
+Mach> CREATE LOG TABLE concat_table(id1 INTEGER, id2 DOUBLE, name VARCHAR(10));
 Created successfully.
 
 Mach> INSERT INTO concat_table VALUES (1, 2, 'John');
@@ -990,7 +990,7 @@ INSTR(target_string, pattern_string)
 ```
 
 ```sql
-Mach> CREATE TABLE string_table(c1 VARCHAR(20));
+Mach> CREATE LOG TABLE string_table(c1 VARCHAR(20));
 Created successfully.
 
 Mach> INSERT INTO string_table VALUES ('abstract');
@@ -1021,7 +1021,7 @@ GREATEST(value_list, value_list,...)
 ```
 
 ```sql
-Mach> CREATE TABLE lgtest_table(c1 INTEGER, c2 LONG, c3 VARCHAR(10), c4 VARCHAR(5));
+Mach> CREATE LOG TABLE lgtest_table(c1 INTEGER, c2 LONG, c3 VARCHAR(10), c4 VARCHAR(5));
 Created successfully.
 
 Mach> INSERT INTO lgtest_table VALUES (1, 2, 'abstract', 'ace');
@@ -1076,7 +1076,7 @@ LENGTH(column_name)
 ```
 
 ```sql
-Mach> CREATE TABLE length_table (id1 INTEGER, id2 DOUBLE, name VARCHAR(15));
+Mach> CREATE LOG TABLE length_table (id1 INTEGER, id2 DOUBLE, name VARCHAR(15));
 Created successfully.
 
 Mach> INSERT INTO length_table VALUES(1, 10, 'Around the Horn');
@@ -1144,7 +1144,7 @@ LOWER(column_name)
 ```
 
 ```sql
-Mach> CREATE TABLE lower_table (name VARCHAR(20));
+Mach> CREATE LOG TABLE lower_table (name VARCHAR(20));
 Created successfully.
 
 Mach> INSERT INTO lower_table VALUES('');
@@ -1187,7 +1187,7 @@ RPAD(str, len, padstr)
 ```
 
 ```sql
-Mach> CREATE TABLE pad_table (c1 integer, c2 varchar(15));
+Mach> CREATE LOG TABLE pad_table (c1 integer, c2 varchar(15));
 Created successfully.
 
 Mach> INSERT INTO pad_table VALUES (1, 'Antonio');
@@ -1253,7 +1253,7 @@ RTRIM(column_name, pattern)
 ```
 
 ```sql
-Mach> CREATE TABLE trim_table1(name VARCHAR(10));
+Mach> CREATE LOG TABLE trim_table1(name VARCHAR(10));
 Created successfully.
 
 Mach> INSERT INTO trim_table1 VALUES ('   smith   ');
@@ -1283,7 +1283,7 @@ rtrim(name, 'h ')
    smit
 [1] row(s) selected.
 
-Mach> CREATE TABLE trim_table2 (name VARCHAR(10));
+Mach> CREATE LOG TABLE trim_table2 (name VARCHAR(10));
 Created successfully.
 
 Mach> INSERT INTO trim_table2 VALUES ('ddckaaadkk');
@@ -1324,7 +1324,7 @@ MAX(column_name)
 ```
 
 ```sql
-Mach> CREATE TABLE max_table (c INTEGER);
+Mach> CREATE LOG TABLE max_table (c INTEGER);
 Created successfully.
 
 Mach> INSERT INTO max_table VALUES(10);
@@ -1372,7 +1372,7 @@ MIN(column_name)
 ```
 
 ```sql
-Mach> CREATE TABLE min_table(c1 INTEGER);
+Mach> CREATE LOG TABLE min_table(c1 INTEGER);
 Created successfully.
 
 Mach> INSERT INTO min_table VALUES(1);
@@ -1401,7 +1401,7 @@ NVL(string1, replace_with)
 ```
 
 ```sql
-Mach> CREATE TABLE nvl_table (c1 varchar(10));
+Mach> CREATE LOG TABLE nvl_table (c1 varchar(10));
 Created successfully.
 
 Mach> INSERT INTO nvl_table VALUES ('Johnathan');
@@ -1443,7 +1443,7 @@ ROUND(column_name, [decimals])
 ```
 
 ```sql
-Mach> CREATE TABLE round_table (c1 DOUBLE);
+Mach> CREATE LOG TABLE round_table (c1 DOUBLE);
 Created successfully.
 
 Mach> INSERT INTO round_table VALUES (1.994);
@@ -1479,7 +1479,7 @@ SELECT Target List, GROUP BY, ORDER BY 절에서 사용할 수 있습니다. WHE
 |Target List / GROUP BY / ORDER BY|WHERE / HAVING|
 
 ```sql
-Mach> CREATE TABLE rownum_table(c1 INTEGER, c2 DOUBLE, c3 VARCHAR(10));
+Mach> CREATE LOG TABLE rownum_table(c1 INTEGER, c2 DOUBLE, c3 VARCHAR(10));
 Created successfully.
 
 Mach> INSERT INTO rownum_table VALUES(1, 1.0, '');
@@ -1509,7 +1509,7 @@ INNER_RANK           NAME
 SELECT에 ORDER BY 절이 있으면 Target List의 ROWNUM() 결과가 순차적으로 부여되지 않을 수 있습니다. 이는 ROWNUM()이 ORDER BY보다 먼저 처리되기 때문입니다. 순차 번호가 필요하면 ORDER BY를 포함한 쿼리를 인라인 뷰로 만든 뒤, 외부 SELECT에서 ROWNUM()을 호출하십시오.
 
 ```sql
-Mach> CREATE TABLE rownum_table(c1 INTEGER, c2 DOUBLE, c3 VARCHAR(10));
+Mach> CREATE LOG TABLE rownum_table(c1 INTEGER, c2 DOUBLE, c3 VARCHAR(10));
 Created successfully.
 
 Mach> INSERT INTO rownum_table VALUES(1, 1.0, '');
@@ -1545,7 +1545,7 @@ SERIESNUM()
 ```
 
 ```sql
-Mach> CREATE TABLE T1 (C1 INTEGER, C2 INTEGER);
+Mach> CREATE LOG TABLE T1 (C1 INTEGER, C2 INTEGER);
 Created successfully.
 
 Mach> INSERT INTO T1 VALUES (0, 1);
@@ -1595,7 +1595,7 @@ STDDEV_POP(column)
 ```
 
 ```sql
-Mach> CREATE TABLE stddev_table(c1 INTEGER, C2 DOUBLE);
+Mach> CREATE LOG TABLE stddev_table(c1 INTEGER, C2 DOUBLE);
 
 Mach> INSERT INTO stddev_table VALUES (1, 1);
 1 row(s) inserted.
@@ -1638,7 +1638,7 @@ SUBSTRING(column_name, start, [length])
 ```
 
 ```sql
-Mach> CREATE TABLE substr_table (c1 VARCHAR(10));
+Mach> CREATE LOG TABLE substr_table (c1 VARCHAR(10));
 Created successfully.
 
 Mach> INSERT INTO substr_table values('ABCDEFG');
@@ -1671,7 +1671,7 @@ BCDEFG
 Mach> drop table substr_table;
 Dropped successfully.
 
-Mach> CREATE TABLE substr_table (c1 VARCHAR(10));
+Mach> CREATE LOG TABLE substr_table (c1 VARCHAR(10));
 Created successfully.
 
 Mach> INSERT INTO substr_table values('ABCDEFG');
@@ -1708,7 +1708,7 @@ SUBSTRING_INDEX(expression, delim, count)
 ```
 
 ```sql
-Mach> CREATE TABLE substring_table (url VARCHAR(30));
+Mach> CREATE LOG TABLE substring_table (url VARCHAR(30));
 Created successfully.
 
 Mach> INSERT INTO substring_table VALUES('www.machbase.com');
@@ -1755,7 +1755,7 @@ SUM(column_name)
 ```
 
 ```sql
-Mach> CREATE TABLE sum_table (c1 INTEGER, c2 INTEGER);
+Mach> CREATE LOG TABLE sum_table (c1 INTEGER, c2 INTEGER);
 Created successfully.
 
 Mach> INSERT INTO sum_table VALUES(1, 1);
@@ -1806,7 +1806,7 @@ SUMSQ(value)
 ```
 
 ```sql
-Mach> CREATE TABLE sumsq_table (c1 INTEGER, c2 INTEGER);
+Mach> CREATE LOG TABLE sumsq_table (c1 INTEGER, c2 INTEGER);
 Created successfully.
 
 Mach> INSERT INTO sumsq_table VALUES (1, 1);
@@ -1866,7 +1866,7 @@ TO_CHAR(column)
 기본 데이터 타입은 아래와 같이 문자열 형태로 변환됩니다.
 
 ```sql
-Mach> CREATE TABLE fixed_table (id1 SHORT, id2 INTEGER, id3 LONG, id4 FLOAT, id5 DOUBLE, id6 IPV4, id7 IPV6, id8 VARCHAR (128));
+Mach> CREATE LOG TABLE fixed_table (id1 SHORT, id2 INTEGER, id3 LONG, id4 FLOAT, id5 DOUBLE, id6 IPV4, id7 IPV6, id8 VARCHAR (128));
 Created successfully.
 
 Mach> INSERT INTO fixed_table values(200, 19234, 1234123412, 3.14, 7.8338, '192.168.0.1', '::127.0.0.1', 'log varchar');
@@ -1978,7 +1978,7 @@ format_string을 생략하면 기본값은 "YYYY-MM-DD HH24: MI: SS mmm: uuu: nn
 |nnn|나노초를 3자리 숫자로 표시합니다.<br><br>값 범위는 0~999입니다.|
 
 ```sql
-Mach> CREATE TABLE datetime_table (id integer, dt datetime);
+Mach> CREATE LOG TABLE datetime_table (id integer, dt datetime);
 Created successfully.
 
 Mach> INSERT INTO  datetime_table values(1, TO_DATE('1999-11-11 1:2:3 4:5:6'));
@@ -2090,7 +2090,7 @@ TO_DATE(date_string [, format_string])
 ```
 
 ```sql
-Mach> CREATE TABLE to_date_table (id INTEGER, dt datetime);
+Mach> CREATE LOG TABLE to_date_table (id INTEGER, dt datetime);
 Created successfully.
 
 Mach> INSERT INTO  to_date_table VALUES(1, TO_DATE('1999-11-11 1:2:3 4:5:6'));
@@ -2193,7 +2193,7 @@ TO_DATE_SAFE(date_string [, format_string])
 ```
 
 ```sql
-Mach> CREATE TABLE date_table (ts DATETIME);
+Mach> CREATE LOG TABLE date_table (ts DATETIME);
 Created successfully.
 
 Mach> INSERT INTO date_table VALUES (TO_DATE_SAFE('2016-01-01', 'YYYY-MM-DD'));
@@ -2222,7 +2222,7 @@ TO_HEX(column)
 ```
 
 ```sql
-Mach> CREATE TABLE hex_table (id1 SHORT, id2 INTEGER, id3 VARCHAR(10), id4 FLOAT, id5 DOUBLE, id6 LONG, id7 IPV4, id8 IPV6, id9 TEXT, id10 BINARY,
+Mach> CREATE LOG TABLE hex_table (id1 SHORT, id2 INTEGER, id3 VARCHAR(10), id4 FLOAT, id5 DOUBLE, id6 LONG, id7 IPV4, id8 IPV6, id9 TEXT, id10 BINARY,
 id11 DATETIME);
 Created successfully.
 
@@ -2270,7 +2270,7 @@ TO_IPV4_SAFE(string_value)
 ```
 
 ```sql
-Mach> CREATE TABLE ipv4_table (c1 varchar(100));
+Mach> CREATE LOG TABLE ipv4_table (c1 varchar(100));
 Created successfully.
 
 Mach> INSERT INTO ipv4_table VALUES('192.168.0.1');
@@ -2330,7 +2330,7 @@ TO_IPV6_SAFE(string_value)
 ```
 
 ```sql
-Mach> CREATE TABLE ipv6_table (id varchar(100));
+Mach> CREATE LOG TABLE ipv6_table (id varchar(100));
 Created successfully.
 
 Mach> INSERT INTO ipv6_table VALUES('::0.0.0.0');
@@ -2402,7 +2402,7 @@ TO_NUMBER_SAFE(string_value)
 ```
 
 ```sql
-Mach> CREATE TABLE number_table (id varchar(100));
+Mach> CREATE LOG TABLE number_table (id varchar(100));
 Created successfully.
 
 Mach> INSERT INTO number_table VALUES('10');
@@ -2422,7 +2422,7 @@ TO_NUMBER(id)
 10
 [3] row(s) selected.
 
-Mach> CREATE TABLE safe_table (id varchar(100));
+Mach> CREATE LOG TABLE safe_table (id varchar(100));
 Created successfully.
 
 Mach> INSERT INTO safe_table VALUES('invalidnumber');
@@ -2502,7 +2502,7 @@ TRUNC(number [, n])
 ```
 
 ```sql
-Mach> CREATE TABLE trunc_table (i1 DOUBLE);
+Mach> CREATE LOG TABLE trunc_table (i1 DOUBLE);
 Created successfully.
 
 Mach> INSERT INTO trunc_table VALUES (158.799);
@@ -2536,7 +2536,7 @@ TS_CHANGE_COUNT(column)
 ```
 
 ```sql
-Mach> CREATE TABLE ipcount_table (id INTEGER, ip IPV4);
+Mach> CREATE LOG TABLE ipcount_table (id INTEGER, ip IPV4);
 Created successfully.
 
 Mach> INSERT INTO ipcount_table VALUES (1, '192.168.0.1');
@@ -2604,7 +2604,7 @@ UPPER(string_value)
 ```
 
 ```sql
-Mach> CREATE TABLE upper_table(id INTEGER,name VARCHAR(10));
+Mach> CREATE LOG TABLE upper_table(id INTEGER,name VARCHAR(10));
 Created successfully.
 
 Mach> INSERT INTO upper_table VALUES(1, '');
@@ -2640,7 +2640,7 @@ VAR_POP(column_name)
 ```
 
 ```sql
-Mach> CREATE TABLE var_table(c1 INTEGER, c2 DOUBLE);
+Mach> CREATE LOG TABLE var_table(c1 INTEGER, c2 DOUBLE);
 Created successfully.
 
 Mach> INSERT INTO var_table VALUES (1, 1);
@@ -2680,7 +2680,7 @@ DAY(datetime_col)
 ```
 
 ```sql
-Mach> CREATE TABLE extract_table(c1 DATETIME, c2 INTEGER);
+Mach> CREATE LOG TABLE extract_table(c1 DATETIME, c2 INTEGER);
 Created successfully.
 
 Mach> INSERT INTO extract_table VALUES (to_date('2001-01-01 12:30:00 000:000:000'), 1);
@@ -3288,7 +3288,7 @@ SELECT REGEXP_REPLACE('TechOnTheNet', 'a|e|i|o|u', 'Z', 1, 2, 'i');
 |JSON_TYPEOF(JSON column name, 'json path')|값의 타입을 반환합니다.| - None : 키가 존재하지 않음<br> - Object : Object 타입<br> - Integer : 정수 타입<br> - Real : 실수 타입<br> - String : 문자열 타입<br> - True/False : Boolean<br> - Array : Array 타입<br> - Null : NULL|
 
 ```sql
-Mach> CREATE TABLE jsontbl (name VARCHAR(20), jval JSON);
+Mach> CREATE LOG TABLE jsontbl (name VARCHAR(20), jval JSON);
 Created successfully.
 
 Mach> INSERT INTO jsontbl VALUES("name1", '{"name":"test1"}');
@@ -3557,7 +3557,7 @@ LAG(column_name, N) OVER ([PARTITION BY column_name] [ORDER BY column_name])
 ```
 
 ```
-Mach> CREATE TABLE lag_table (name varchar(10), dt datetime, value INTEGER);
+Mach> CREATE LOG TABLE lag_table (name varchar(10), dt datetime, value INTEGER);
 Created successfully.
 
 Mach> INSERT INTO lag_table VALUES('name1', TO_DATE('2024-01-01'), 1);
@@ -3591,7 +3591,7 @@ LEAD(column_name, N) OVER ([PARTITION BY column_name] [ORDER BY column_name])
 ```
 
 ```
-Mach> CREATE TABLE lead_table (name varchar(10), dt datetime, value INTEGER);
+Mach> CREATE LOG TABLE lead_table (name varchar(10), dt datetime, value INTEGER);
 Created successfully.
 
 Mach> INSERT INTO lead_table VALUES('name1', TO_DATE('2024-01-01'), 1);

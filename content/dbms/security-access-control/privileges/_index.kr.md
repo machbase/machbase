@@ -758,7 +758,7 @@ GRANT MOUNT ON machbasedb TO mount_user;
 ```sql
 -- app_user가 생성한 테이블은 app_user가 소유자
 -- app_user 세션에서 아래 작업 모두 가능 (별도 GRANT 불필요)
-CREATE TABLE my_data (id INTEGER, val DOUBLE);
+CREATE LOG TABLE my_data (id INTEGER, val DOUBLE);
 INSERT INTO my_data VALUES (1, 3.14);
 SELECT * FROM my_data;
 DROP TABLE my_data;

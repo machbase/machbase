@@ -47,7 +47,7 @@ COUNT(column_name)
 ```
 
 ```sql
-Mach> CREATE TABLE count_table (id1 INTEGER, id2 INTEGER);
+Mach> CREATE LOG TABLE count_table (id1 INTEGER, id2 INTEGER);
 Mach> INSERT INTO count_table VALUES(1, 1);
 Mach> INSERT INTO count_table VALUES(2, 2);
 Mach> INSERT INTO count_table VALUES(null, 4);

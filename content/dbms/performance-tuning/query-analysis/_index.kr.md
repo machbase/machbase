@@ -99,7 +99,7 @@ STREAM을 사용하면 데이터가 삽입될 때마다 자동으로 쿼리가 �
 
 #### 테이블 타입별 조회 지원 범위
 
-| 기능 | TAG | LOG | RDB | VOLATILE | LOOKUP |
+| 기능 | TAG | LOG | TRANSACTION | VOLATILE | LOOKUP |
 |------|-----|-----|-----|---------|--------|
 | SELECT * | O | O | O | O | O |
 | WHERE 시간 조건 | O | O | O | O | O |
@@ -632,7 +632,7 @@ ORDER BY avg_temp DESC;
 - VIEW는 데이터를 물리적으로 저장하지 않습니다. 조회 시마다 정의된 쿼리를 실행합니다.
 - INSERT/UPDATE/DELETE를 지원하지 않습니다. 읽기 전용입니다.
 - VIEW는 다른 VIEW를 참조할 수 있습니다.
-- TAG, LOG, RDB, VOLATILE, LOOKUP 모든 테이블 타입을 VIEW 정의에 포함할 수 있습니다.
+- TAG, LOG, TRANSACTION, VOLATILE, LOOKUP 모든 테이블 타입을 VIEW 정의에 포함할 수 있습니다.
 
 > VIEW 생성·삭제 방법은 [4장 테이블 타입 개념과 선택](/dbms/data-modeling-table-design/schema-objects-definition/#create-view)를 참고하십시오.
 
@@ -1497,7 +1497,7 @@ FROM sensor_data;
 | 테이블 유형 | 지원 여부 |
 |------------|----------|
 | LOG 테이블 | 지원 |
-| RDB 테이블 | 지원 |
+| TRANSACTION 테이블 | 지원 |
 | VOLATILE 테이블 | 지원 |
 | TAG 테이블 | 지원 (시간 범위 조건과 함께 사용 권장) |
 

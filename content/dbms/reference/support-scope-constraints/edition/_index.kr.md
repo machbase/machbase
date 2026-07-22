@@ -15,7 +15,7 @@ Machbase는 단일 서버용 **Standard Edition**과 다중 노드 수평 확장
 | TAG 테이블 | O | O | |
 | LOG 테이블 | O | O | |
 | LOOKUP 테이블 | O | O | |
-| RDB 테이블 | O | X | Cluster Edition 미지원 |
+| TRANSACTION 테이블 | O | X | Cluster Edition 미지원 |
 | VOLATILE 테이블 | O | X | Cluster Edition 미지원 |
 | **데이터 관리** | | | |
 | ROLLUP (기본) | O | O | |
@@ -39,7 +39,7 @@ Machbase는 단일 서버용 **Standard Edition**과 다중 노드 수평 확장
 
 Cluster Edition 미지원 기능은 주로 단일 노드 중심의 로컬 파일 작업과 트랜잭션 기반 기능입니다.
 
-- **RDB 테이블**: 분산 환경에서 ACID 트랜잭션을 보장하는 RDB 테이블은 미지원. 트랜잭션이 필요한 데이터는 외부 RDBMS와 연동하십시오.
+- **TRANSACTION 테이블**: 분산 환경에서 ACID 트랜잭션을 보장하는 TRANSACTION 테이블은 미지원. 트랜잭션이 필요한 데이터는 외부 RDBMS와 연동하십시오.
 - **VOLATILE 테이블**: 메모리 기반 임시 테이블로 노드 간 공유 불가.
 - **MOUNT/UMOUNT**: 로컬 파일 시스템 기반 백업 마운트는 분산 환경에서 미지원.
 - **STREAM**: 단일 노드 실시간 스트림 처리 미지원.
@@ -52,5 +52,5 @@ Cluster Edition 미지원 기능은 주로 단일 노드 중심의 로컬 파일
 | 단일 서버의 처리량과 저장 용량으로 운영 가능한 워크로드 | Standard Edition |
 | 단일 서버 범위를 넘어 수평 확장이 필요한 워크로드 | Cluster Edition |
 | 고가용성 (장애 자동 복구) 필요 | Cluster Edition |
-| RDB 테이블, MOUNT, STREAM 기능 필요 | Standard Edition |
+| TRANSACTION 테이블, MOUNT, STREAM 기능 필요 | Standard Edition |
 | 대규모 실시간 센서 데이터 수집 | Cluster Edition |

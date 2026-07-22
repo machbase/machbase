@@ -67,7 +67,7 @@ Content-Type: application/json
 ```bash
 # 테이블 생성 (SQL API 사용)
 curl -G "http://127.0.0.1:5657/machbase" \
-  --data-urlencode "q=CREATE TABLE sensor_log (c1 INT, c2 VARCHAR(20))"
+  --data-urlencode "q=CREATE LOG TABLE sensor_log (c1 INT, c2 VARCHAR(20))"
 
 # 다수 행 Append 삽입
 curl -X POST "http://127.0.0.1:5657/machbase" \

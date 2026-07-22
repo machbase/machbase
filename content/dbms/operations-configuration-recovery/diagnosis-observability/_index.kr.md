@@ -779,7 +779,7 @@ MACHBASE 서버에 접속된 세션의 목록과 상태를 표시합니다.
 | SQL_LOGGING | 해당 세션의 Trace Log 메시지 기록 여부 |
 | IDLE_TIMEOUT | 유휴 상태 세션 종료 시간 (초) |
 | QUERY_TIMEOUT | 쿼리 응답 대기 시간 |
-| RDB_BUSY_TIMEOUT_MS | RDB 쓰기 충돌 대기 시간 (밀리초) |
+| TRANSACTION_BUSY_TIMEOUT_MS | TRANSACTION 쓰기 충돌 대기 시간 (밀리초) |
 
 ```sql
 -- 현재 접속 세션 목록

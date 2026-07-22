@@ -22,10 +22,10 @@ toc: true
 - **지속적인 대량 쓰기**가 필요하면 → ODBC/CLI, JDBC, Go native 등 Append API 지원 드라이버 사용
 - **표준 SQL 인터페이스**가 필요하면 → JDBC, Python(DB-API 2.0), Go(`database/sql`)
 - **웹 서비스·마이크로서비스 통합**이라면 → REST API
-- **트랜잭션이 필요한 RDB 작업**이라면 → ODBC/CLI 또는 JDBC에서 SQL `BEGIN` 직접 실행
+- **트랜잭션이 필요한 TRANSACTION 작업**이라면 → ODBC/CLI 또는 JDBC에서 SQL `BEGIN` 직접 실행
 
 > **참고**: TAG와 LOG 테이블은 append 중심 입력에 최적화되어 있습니다. TAG data UPDATE는
-> 태그 선택자와 시간축 조건으로 범위를 제한한 데이터 보정 기능이며 RDB 트랜잭션에는
+> 태그 선택자와 시간축 조건으로 범위를 제한한 데이터 보정 기능이며 TRANSACTION 테이블 트랜잭션에는
 > 참여하지 않습니다.
 
 
@@ -216,13 +216,13 @@ curl -X POST "http://localhost:5657/machbase" \
 
 | 특성 | 설명 |
 |------|------|
-| **원자성** | TAG/LOG는 append 응답 단위, RDB batch는 statement transaction 단위 |
-| **대상 테이블** | TAG, LOG와 지원되는 RDB client batch/stream 경로 |
+| **원자성** | TAG/LOG는 append 응답 단위, TRANSACTION batch는 statement transaction 단위 |
+| **대상 테이블** | TAG, LOG와 지원되는 TRANSACTION client batch/stream 경로 |
 | **배치 크기** | 1,000 ~ 10,000행 단위로 플러시하는 것을 권장 |
 | **병렬 처리** | 여러 스레드에서 각각 독립적인 Appender 사용 가능 |
-| **롤백** | 완료된 TAG/LOG Append는 롤백할 수 없음. RDB batch 실패는 해당 batch 롤백 |
+| **롤백** | 완료된 TAG/LOG Append는 롤백할 수 없음. TRANSACTION batch 실패는 해당 batch 롤백 |
 
-> **참고**: RDB 테이블은 지원되는 client의 appendBatch 또는 append stream 경로를 사용합니다.
+> **참고**: TRANSACTION 테이블은 지원되는 client의 appendBatch 또는 append stream 경로를 사용합니다.
 > TAG/LOG의 고속 append 버퍼와 내부 경로 및 처리량 특성이 다릅니다.
 
 <a id="support-scope-sdk-auth-key"></a>
@@ -373,12 +373,12 @@ AUTH KEY challenge 인증은 DB 포트(기본 5656)에 접속하는 드라이버
 
 각 SDK가 지원하는 트랜잭션, Prepared Statement, Parameter Binding 기능을 정리합니다.
 
-> 서버 SQL 트랜잭션은 RDB 테이블에 적용됩니다. SDK 표준 편의 API의 구현 여부는 별도로
+> 서버 SQL 트랜잭션은 TRANSACTION 테이블에 적용됩니다. SDK 표준 편의 API의 구현 여부는 별도로
 > 확인해야 합니다.
 
 ### 지원 범위 표
 
-| SDK | Transaction API (RDB) | Prepared Statement | Parameter Binding | 비고 |
+| SDK | Transaction API (TRANSACTION) | Prepared Statement | Parameter Binding | 비고 |
 |-----|:---:|:---:|:---:|------|
 | **ODBC/CLI** | △ | O | O | SQL로 `BEGIN`, `SQLEndTran`으로 종료 |
 | **JDBC** | △ | O | O | SQL로 `BEGIN` 실행 필요. `setAutoCommit(false)`는 시작 문을 보내지 않음 |
@@ -399,8 +399,8 @@ AUTH KEY challenge 인증은 DB 포트(기본 5656)에 접속하는 드라이버
 
 ### 트랜잭션 (Transaction)
 
-RDB 테이블에서만 SQL `BEGIN` 이후의 `COMMIT`/`ROLLBACK`이 유효합니다. 나머지 테이블 유형의
-쓰기는 RDB 트랜잭션에 참여하지 않습니다.
+TRANSACTION 테이블에서만 SQL `BEGIN` 이후의 `COMMIT`/`ROLLBACK`이 유효합니다. 나머지 테이블 유형의
+쓰기는 TRANSACTION 테이블 트랜잭션에 참여하지 않습니다.
 
 ```java
 // JDBC: setAutoCommit(false) 대신 서버 SQL BEGIN을 실행합니다.

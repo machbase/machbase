@@ -4,7 +4,7 @@ title: '4.3 데이터 변경 정책'
 weight: 30
 toc: true
 ---
-테이블 타입에 따라 UPDATE, DELETE, TRUNCATE 지원 범위가 명확히 구분됩니다. 시계열 특성상 대부분의 테이블은 삽입 후 변경을 제한하며, VOLATILE·LOOKUP·RDB처럼 수정·삭제가 필요한 데이터만 해당 타입에 저장합니다.
+테이블 타입에 따라 UPDATE, DELETE, TRUNCATE 지원 범위가 명확히 구분됩니다. 시계열 특성상 대부분의 테이블은 삽입 후 변경을 제한하며, VOLATILE·LOOKUP·TRANSACTION처럼 수정·삭제가 필요한 데이터만 해당 타입에 저장합니다.
 
 ## 테이블 타입별 데이터 변경 지원 범위
 
@@ -12,11 +12,11 @@ toc: true
 |------------|--------|--------|---------|
 | TAG | O (태그/축 조건) | O (BEFORE 또는 tag/axis 조건) | X |
 | LOG | X | O (BEFORE/OLDEST/EXCEPT/전체 삭제) | O |
-| RDB | O (WHERE 유무 모두) | O | O |
+| TRANSACTION | O (WHERE 유무 모두) | O | O |
 | VOLATILE | O (by PK) | O | X |
 | LOOKUP | O (일반 조건식, PK 변경 제외) | O (일반 조건식 또는 조건 없는 전체 삭제) | X |
 
-> TRUNCATE는 LOG와 RDB 테이블에서만 지원됩니다. TAG, VOLATILE, LOOKUP 테이블에 TRUNCATE를 실행하면 오류가 발생합니다.
+> TRUNCATE는 LOG와 TRANSACTION 테이블에서만 지원됩니다. TAG, VOLATILE, LOOKUP 테이블에 TRUNCATE를 실행하면 오류가 발생합니다.
 
 ## 변경이 제한되는 이유
 
@@ -40,11 +40,11 @@ LOG 테이블은 시계열 데이터의 **불변성(immutability)** 원칙을 �
 |------------|------------|------|
 | TAG | O | 태그 선택 조건과 BASETIME 조건이 필요. 메타데이터는 `UPDATE ... METADATA` 사용 |
 | LOG | X | 미지원 |
-| RDB | O | WHERE 유무 모두 가능 |
+| TRANSACTION | O | WHERE 유무 모두 가능 |
 | VOLATILE | O | Primary key equality 조건. ON DUPLICATE KEY UPDATE도 지원 |
 | LOOKUP | O | Primary key 또는 일반 조건식. PK 컬럼 변경은 불가 |
 
-### RDB 테이블 UPDATE
+### TRANSACTION 테이블 UPDATE
 
 일반 관계형 DB와 동일한 UPDATE 구문을 지원합니다.
 
@@ -267,11 +267,11 @@ WHERE name = 'TEMP-01';
 |------------|------------|------|
 | TAG | O | BEFORE 또는 tag/axis 조건 |
 | LOG | O | BEFORE/OLDEST/EXCEPT 또는 전체 삭제 |
-| RDB | O | 일반 WHERE 조건 자유 |
+| TRANSACTION | O | 일반 WHERE 조건 자유 |
 | VOLATILE | O | Primary key equality 조건 |
 | LOOKUP | O | Primary key 또는 일반 조건식, 조건 없는 전체 삭제 |
 
-### RDB 테이블 DELETE
+### TRANSACTION 테이블 DELETE
 
 일반 관계형 DB와 동일하게 동작합니다.
 
@@ -282,7 +282,7 @@ DELETE FROM orders WHERE order_id = 1001;
 -- 상태 기반 삭제
 DELETE FROM orders WHERE status = 'CANCELLED';
 
--- 전체 삭제 (주의: RDB는 TRUNCATE로 대체 권장)
+-- 전체 삭제 (주의: TRANSACTION 테이블은 TRUNCATE로 대체 권장)
 DELETE FROM temp_data;
 ```
 
@@ -485,18 +485,18 @@ ALTER TABLE sensor_log ADD RETENTION policy_30d;
 
 ## TRUNCATE 정책
 
-TRUNCATE는 테이블의 모든 데이터를 빠르게 삭제하는 DDL 명령으로, **LOG와 RDB 테이블에서만** 지원됩니다.
+TRUNCATE는 테이블의 모든 데이터를 빠르게 삭제하는 DDL 명령으로, **LOG와 TRANSACTION 테이블에서만** 지원됩니다.
 
 ### 지원 테이블 확인
 
-TRUNCATE는 LOG와 RDB 테이블에서만 허용됩니다. 다른 테이블 타입에 TRUNCATE를 실행하면
+TRUNCATE는 LOG와 TRANSACTION 테이블에서만 허용됩니다. 다른 테이블 타입에 TRUNCATE를 실행하면
 `ERR_QP_TRUNCATE_NON_LOG_TABLE` 오류가 발생합니다.
 
 | 테이블 타입 | TRUNCATE 지원 |
 |------------|--------------|
 | TAG | X |
 | LOG | O |
-| RDB | O |
+| TRANSACTION | O |
 | VOLATILE | X |
 | LOOKUP | X |
 
@@ -507,14 +507,14 @@ TRUNCATE TABLE sensor_log;
 -- 테이블 구조는 유지되고 모든 데이터가 삭제됩니다.
 ```
 
-### RDB 테이블 TRUNCATE
+### TRANSACTION 테이블 TRUNCATE
 
 ```sql
 TRUNCATE TABLE orders;
 -- 모든 주문 데이터 삭제. 테이블 스키마는 유지됩니다.
 ```
 
-RDB 테이블의 TRUNCATE는 내부적으로 `DELETE FROM` 전체 행 삭제(`qrdDeleteAllRows`)로 구현됩니다.
+TRANSACTION 테이블의 `TRUNCATE`는 전체 행을 삭제하며 기존 인덱스 정의는 유지합니다.
 
 ### TRUNCATE vs DELETE 비교
 
@@ -522,13 +522,13 @@ RDB 테이블의 TRUNCATE는 내부적으로 `DELETE FROM` 전체 행 삭제(`qr
 |------|---------|---------------|
 | 처리 방식 | DDL | 테이블 타입별 DML 경로 |
 | 대상 지정 | 테이블 전체 | 전체 또는 지원되는 조건 |
-| 롤백 | RDB는 명시적 트랜잭션에서 가능 | RDB DML만 명시적 트랜잭션에서 가능 |
+| 롤백 | TRANSACTION 테이블은 명시적 트랜잭션에서 가능 | TRANSACTION DML만 명시적 트랜잭션에서 가능 |
 | WHERE 조건 | 불가 | 가능 |
 | 트리거 발생 | X | X |
 
 ### 주의 사항
 
-- LOG TRUNCATE는 실행 전 데이터 백업 여부를 반드시 확인하십시오. RDB TRUNCATE는 명시적 트랜잭션 안에서 롤백할 수 있습니다.
+- LOG TRUNCATE는 실행 전 데이터 백업 여부를 반드시 확인하십시오. TRANSACTION TRUNCATE는 명시적 트랜잭션 안에서 롤백할 수 있습니다.
 - TAG, VOLATILE, LOOKUP 테이블에 TRUNCATE를 실행하면 오류가 발생합니다. TAG는 지원되는
   `BEFORE` 또는 태그/축 조건을 사용하고, VOLATILE과 LOOKUP의 전체 삭제는 조건 없는 DELETE를
   사용합니다.

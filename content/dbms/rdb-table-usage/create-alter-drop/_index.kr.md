@@ -4,16 +4,18 @@ weight: 30
 toc: true
 ---
 
-RDB 테이블의 DDL(CREATE, ALTER, DROP) 관련 내용을 다룹니다. RDB 테이블은 관계형 데이터 모델을 사용하므로, 스키마를 만들 때 PRIMARY KEY, 인덱스, AUTO_INCREMENT 사용 여부를 함께 결정합니다.
+TRANSACTION 테이블의 DDL(CREATE, ALTER, DROP) 관련 내용을 다룹니다. TRANSACTION 테이블은 관계형 데이터 모델을 사용하므로, 스키마를 만들 때 PRIMARY KEY, 인덱스, AUTO_INCREMENT 사용 여부를 함께 결정합니다.
 
 <a id="create-rdb-table"></a>
 
-## RDB 테이블 생성
+## TRANSACTION 테이블 생성
 
-RDB 테이블은 `CREATE RDB TABLE` 문으로 생성합니다.
+TRANSACTION 테이블은 무수식 `CREATE TABLE`, 전체 이름을 사용한 `CREATE TRANSACTION TABLE`,
+축약형 `CREATE TXN TABLE`로 생성합니다. 세 문법의 결과는 같습니다. 다음 예제처럼 공개 문서와
+운영 스크립트에서는 테이블 유형을 분명히 드러내는 `CREATE TRANSACTION TABLE` 사용을 권장합니다.
 
 ```sql
-CREATE RDB TABLE product_catalog (
+CREATE TRANSACTION TABLE product_catalog (
     product_id LONG PRIMARY KEY,
     category   VARCHAR(64),
     name       VARCHAR(256),
@@ -25,7 +27,20 @@ CREATE RDB TABLE product_catalog (
 최소 하나 이상의 컬럼이 필요합니다. 업무 데이터처럼 행을 식별해야 하는 경우에는 PRIMARY KEY를 명시합니다.
 
 ```sql
-CREATE RDB TABLE order_history (
+-- 다음 두 문장도 TRANSACTION 테이블을 생성합니다.
+CREATE TABLE customer (id LONG PRIMARY KEY, name VARCHAR(64));
+CREATE TXN TABLE supplier (id LONG PRIMARY KEY, name VARCHAR(64));
+
+-- LOG 테이블은 LOG 유형을 명시합니다.
+CREATE LOG TABLE application_event (event_time DATETIME, message VARCHAR(256));
+```
+
+이전 공개 명칭인 `CREATE RDB TABLE`과 `CREATE TRX TABLE`은 지원하지 않습니다. TRANSACTION
+테이블은 Standard Edition 전용입니다. Cluster Edition은 위 세 TRANSACTION 생성 문법을 모두
+거부하지만 `CREATE LOG TABLE`은 지원합니다.
+
+```sql
+CREATE TRANSACTION TABLE order_history (
     order_id  LONG PRIMARY KEY,
     customer  VARCHAR(64),
     item_id   INTEGER,
@@ -42,7 +57,7 @@ CREATE RDB TABLE order_history (
 PRIMARY KEY는 컬럼 정의에서 지정하거나, 테이블 생성 후 `CREATE PRIMARY KEY INDEX` 문으로 생성합니다.
 
 ```sql
-CREATE RDB TABLE inventory (
+CREATE TRANSACTION TABLE inventory (
     item_id   LONG,
     warehouse VARCHAR(32),
     qty       INTEGER,
@@ -59,7 +74,7 @@ CREATE INDEX idx_inventory_warehouse ON inventory(warehouse);
 CREATE INDEX idx_order_status_time ON order_history(status, order_time);
 ```
 
-인덱스 설계 기준은 [RDB 인덱스와 JSON path 인덱스](/dbms/rdb-table-usage/rdb-index-json-path/)에서 다룹니다.
+인덱스 설계 기준은 [TRANSACTION 인덱스와 JSON path 인덱스](/dbms/rdb-table-usage/rdb-index-json-path/)에서 다룹니다.
 
 <a id="create-rdb-auto-increment"></a>
 
@@ -68,7 +83,7 @@ CREATE INDEX idx_order_status_time ON order_history(status, order_time);
 자동 증가 키가 필요한 경우 `LONG PRIMARY KEY AUTO_INCREMENT`를 사용합니다.
 
 ```sql
-CREATE RDB TABLE device_master (
+CREATE TRANSACTION TABLE device_master (
     id          LONG PRIMARY KEY AUTO_INCREMENT,
     device_name VARCHAR(80),
     site_code   VARCHAR(32),
@@ -80,10 +95,10 @@ CREATE RDB TABLE device_master (
 
 <a id="alter-rdb-table"></a>
 
-## RDB 테이블 변경
+## TRANSACTION 테이블 변경
 
-RDB 테이블은 컬럼 추가·삭제, 컬럼 이름 변경, 테이블 이름 변경을 지원합니다.
-RDB 테이블에서는 `MODIFY COLUMN`을 사용하지 않습니다.
+TRANSACTION 테이블은 컬럼 추가·삭제, 컬럼 이름 변경, 테이블 이름 변경을 지원합니다.
+TRANSACTION 테이블에서는 `MODIFY COLUMN`을 사용하지 않습니다.
 
 ### 컬럼 추가
 
@@ -118,13 +133,13 @@ ALTER TABLE product_catalog RENAME COLUMN name TO product_name;
 ALTER TABLE product_catalog RENAME TO product_master;
 ```
 
-이름을 변경해도 기존 row와 RDB 인덱스 정의는 유지됩니다. VIEW가 RDB 테이블이나 대상 컬럼을
+이름을 변경해도 기존 row와 TRANSACTION 인덱스 정의는 유지됩니다. VIEW가 TRANSACTION 테이블이나 대상 컬럼을
 참조하고 있으면 VIEW 정의가 깨지지 않도록 관련 `ALTER TABLE`과 `DROP TABLE`이 거부됩니다.
 의존 VIEW를 먼저 삭제하거나 변경한 뒤 DDL을 실행합니다.
 
 <a id="drop-rdb-table"></a>
 
-## RDB 테이블 삭제
+## TRANSACTION 테이블 삭제
 
 테이블을 삭제하려면 `DROP TABLE`을 사용합니다.
 
@@ -140,7 +155,24 @@ DROP TABLE product_catalog;
 
 - DDL은 운영 중인 DML과 충돌할 수 있으므로 변경 시간대를 분리합니다.
 - 장시간 열린 트랜잭션이 있으면 DDL이 지연되거나 실패할 수 있습니다.
-- 열린 RDB 결과 커서가 있으면 관련 DDL이 실패할 수 있으므로 커서를 닫은 뒤 실행합니다.
-- RDB 테이블은 Standard Edition 전용입니다.
-- RDB 테이블에는 TAG 전용 `METADATA`, `BASETIME`, `BASEDISTANCE` 절을 사용할 수 없습니다.
-- DDL 변경 후에는 RDB 테이블의 백업 및 복원 검증 절차도 갱신합니다.
+- 열린 TRANSACTION 결과 커서가 있으면 관련 DDL이 실패할 수 있으므로 커서를 닫은 뒤 실행합니다.
+- TRANSACTION 테이블은 Standard Edition 전용입니다.
+- TRANSACTION 테이블에는 TAG 전용 `METADATA`, `BASETIME`, `BASEDISTANCE` 절을 사용할 수 없습니다.
+- DDL 변경 후에는 TRANSACTION 테이블의 백업 및 복원 검증 절차도 갱신합니다.
+
+### 컬럼 DDL 실패 후 복구
+
+`ADD COLUMN`과 `DROP COLUMN`은 catalog와 TRANSACTION 저장소를 함께 변경합니다. 서버 종료,
+디스크 오류 등으로 작업이 중단되면 서버는 재시작 시 남은 DDL 상태를 검사하고 이전 스키마로
+되돌리거나 완료된 변경을 정리합니다. 복구가 끝나기 전에는 같은 테이블의 DDL을 반복 실행하지
+마십시오.
+
+복구 후에는 다음 항목을 확인합니다.
+
+1. `DESC table_name`으로 컬럼 구성을 확인합니다.
+2. `SELECT`와 대표 `INSERT`를 실행해 기존 행과 새 행을 확인합니다.
+3. 컬럼을 참조하는 인덱스와 VIEW가 정상인지 확인합니다.
+4. 서버 로그에 DDL 복구 오류가 남아 있으면 추가 DDL을 중단하고 백업 상태를 점검합니다.
+
+서버가 내부적으로 사용하는 `__rdbt_<table-id>.db.ddl_backup` 파일은 저장 형식 호환성을 위해
+이전 내부 명칭을 유지합니다. 이 파일을 사용자가 직접 이동, 수정, 삭제해서는 안 됩니다.

@@ -9,7 +9,7 @@ DML(Data Manipulation Language)은 테이블에 데이터를 삽입·수정·삭
 
 ## 테이블 유형별 DML 지원
 
-| 구문 | LOG | TAG | LOOKUP | VOLATILE | RDB |
+| 구문 | LOG | TAG | LOOKUP | VOLATILE | TRANSACTION |
 |------|:---:|:---:|:------:|:--------:|:---:|
 | INSERT | O | O | O | O | O |
 | INSERT SELECT | O | - | O | O | O |
@@ -18,7 +18,7 @@ DML(Data Manipulation Language)은 테이블에 데이터를 삽입·수정·삭
 | DELETE WHERE | - | O(태그/축 조건) | O(일반 조건식) | O(PK equality) | O |
 | TRUNCATE | O | - | - | - | O |
 
-> LOG 테이블의 UPDATE는 지원하지 않습니다. 데이터 수정이 필요하면 LOOKUP 또는 VOLATILE 테이블을 사용하거나 RDB 테이블을 선택하십시오.
+> LOG 테이블의 UPDATE는 지원하지 않습니다. 데이터 수정이 필요하면 LOOKUP 또는 VOLATILE 테이블을 사용하거나 TRANSACTION 테이블을 선택하십시오.
 
 ---
 
@@ -92,7 +92,7 @@ SELECT _arrival_time, id, name, value FROM sensor_log;
 주의사항:
 - `_ARRIVAL_TIME`을 명시하지 않으면 INSERT 실행 시점의 시간이 자동 입력됩니다.
 - VARCHAR 컬럼에서 삽입 값이 최대 길이를 초과하면 자동으로 잘라서 입력됩니다.
-- LOG/TAG 입력은 RDB 트랜잭션의 ROLLBACK 대상이 아닙니다.
+- LOG/TAG 입력은 TRANSACTION 테이블 트랜잭션의 ROLLBACK 대상이 아닙니다.
 
 ---
 
@@ -107,7 +107,7 @@ update_stmt ::=
 update_expr_list ::= column_name '=' value ( ',' column_name '=' value )*
 ```
 
-RDB 테이블은 WHERE 절을 생략하면 모든 행을 수정합니다. LOOKUP 테이블은 기본 키 또는 일반
+TRANSACTION 테이블은 WHERE 절을 생략하면 모든 행을 수정합니다. LOOKUP 테이블은 기본 키 또는 일반
 조건식을 사용하고, VOLATILE 테이블은 기본 키 일치 조건을 사용합니다. TAG data UPDATE는 태그
 선택자와 시간축 조건을 함께 사용합니다.
 

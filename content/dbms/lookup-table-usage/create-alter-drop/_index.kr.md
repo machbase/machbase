@@ -114,4 +114,4 @@ DROP TABLE lktable;
 - LOOKUP 테이블은 `PRIMARY KEY`가 필수입니다.
 - `PRIMARY KEY` 컬럼은 하나만 지정합니다.
 - `PRIMARY KEY` 값을 변경해야 하면 기존 행을 삭제한 뒤 새 키로 삽입합니다.
-- 기준 데이터가 커지고 조회·갱신 패턴이 복잡해지면 RDB 테이블을 검토합니다.
+- 기준 데이터가 커지고 조회·갱신 패턴이 복잡해지면 TRANSACTION 테이블을 검토합니다.

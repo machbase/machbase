@@ -41,7 +41,7 @@ Cluster Edition은 대규모 시계열 데이터를 여러 노드에 분산 저�
 
 Cluster Edition에서는 다음 기능이 지원되지 않습니다.
 
-- **RDB 테이블** 미지원
+- **TRANSACTION 테이블** 미지원
 - **Custom ROLLUP** 미지원
 - **ROLLUP_REBUILD** 미지원
 - `MOUNT`/`UMOUNT`, Stream/CQL 등 일부 Standard Edition 기능 제한
@@ -830,9 +830,9 @@ Machbase Cluster Edition은 단일 노드(Standard/Edge Edition) 대비 일부 �
 | Tag 테이블 | 지원 | 지원 |
 | Volatile 테이블 | 지원 | 지원 |
 | Lookup 테이블 | 지원 | 지원 (Lookup 노드 필요) |
-| **RDB 테이블** | 지원 | **미지원** |
+| **TRANSACTION 테이블** | 지원 | **미지원** |
 
-RDB 테이블을 사용하는 애플리케이션은 Cluster Edition으로 이전할 때 대체 방안을 마련해야 합니다.
+TRANSACTION 테이블을 사용하는 애플리케이션은 Cluster Edition으로 이전할 때 대체 방안을 마련해야 합니다.
 
 ### ROLLUP 관련 제한
 
@@ -894,7 +894,7 @@ Primary Coordinator에 장애가 발생하면 클러스터 메타 변경이 불�
 
 | 항목 | 제한 내용 |
 |------|-----------|
-| RDB 테이블 | 미지원 |
+| TRANSACTION 테이블 | 미지원 |
 | Custom ROLLUP | 미지원 |
 | ROLLUP_REBUILD | 미지원 |
 | MOUNT/UMOUNT | 제한 또는 거부 가능 |

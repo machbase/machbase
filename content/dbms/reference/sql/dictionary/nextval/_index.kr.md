@@ -24,7 +24,7 @@ Sequence 컬럼은 Lookup 테이블에서만 지원합니다. `PROPERTY(SEQUENCE
 
 ```sql
 -- Sequence 컬럼을 포함한 Lookup 테이블 생성
-CREATE TABLE seq_lookup (
+CREATE LOG TABLE seq_lookup (
     id   INTEGER PROPERTY(SEQUENCE=1),
     name VARCHAR(64)
 ) TABLE_TYPE=LOOKUP;
@@ -54,6 +54,6 @@ id    name
 ## 주의사항
 
 - `NEXTVAL`은 `INSERT` 문에서만 사용할 수 있습니다.
-- Sequence 컬럼은 **Lookup 테이블**에서만 지원됩니다. TAG, LOG, VOLATILE, RDB 테이블에서는 사용할 수 없습니다.
+- Sequence 컬럼은 **Lookup 테이블**에서만 지원됩니다. TAG, LOG, VOLATILE, TRANSACTION 테이블에서는 사용할 수 없습니다.
 - Sequence 번호는 트랜잭션 롤백이나 오류 발생 시에도 재사용되지 않을 수 있습니다 (gap이 발생할 수 있음).
 - 자세한 DDL 설명은 [DDL - Sequence Column](../../syntax-dictionary-sql/) 문서를 참고하십시오.

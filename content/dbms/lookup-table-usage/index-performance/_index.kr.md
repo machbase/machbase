@@ -73,8 +73,8 @@ Primary key와 Red-Black 보조 인덱스의 조회 비용은 트리 크기에 �
 | device_id로 장치 정보 조회 | 적합 (PK 사용) |
 | location으로 장치 목록 검색 | 보조 인덱스 생성 시 적합 |
 | 소수의 기준 코드 테이블 | 적합 |
-| 전체 행이 서버 메모리에 들어가지 않는 대규모 기준 정보 | RDB 테이블 검토 |
-| 관계형 트랜잭션이 필요한 기준 정보 | RDB 테이블 검토 |
+| 전체 행이 서버 메모리에 들어가지 않는 대규모 기준 정보 | TRANSACTION 테이블 검토 |
+| 관계형 트랜잭션이 필요한 기준 정보 | TRANSACTION 테이블 검토 |
 
 ### VOLATILE 테이블 인덱스
 
@@ -133,7 +133,7 @@ LOOKUP 테이블의 크기와 보조 인덱스 갱신 비용 때문에 다음 �
 
 ```sql
 -- 대안: LOG 테이블 + LSM/BITMAP 인덱스
-CREATE TABLE device_master_log (
+CREATE LOG TABLE device_master_log (
     device_id   VARCHAR(64),
     device_name VARCHAR(128),
     location    VARCHAR(256),

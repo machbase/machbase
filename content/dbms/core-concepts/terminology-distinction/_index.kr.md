@@ -91,7 +91,7 @@ STREAM으로 LOG 테이블의 이벤트를 TAG 테이블로 변환한 뒤, 해�
 | 실행 방식 | 자동 (배경 스레드) | 수동 (SQL 실행 시) | 수동 (SQL 실행 시) |
 | 삭제 범위 | 보관 기간 초과 데이터 자동 판단 | 테이블 타입별 DELETE 조건 기반 | 테이블 전체 데이터 |
 | 지속성 | 지속적 (설정 후 계속 자동 실행) | 일회성 | 일회성 |
-| 대상 테이블 | LOG, TAG | LOG, TAG, LOOKUP, VOLATILE, RDB | LOG, RDB |
+| 대상 테이블 | LOG, TAG | LOG, TAG, LOOKUP, VOLATILE, TRANSACTION | LOG, TRANSACTION |
 | 운영 중 실행 | 가능 (무중단) | 가능 | 가능 |
 | 설정 방법 | `CREATE RETENTION` + `ALTER TABLE` | `DELETE FROM ...` | `TRUNCATE TABLE` |
 
@@ -118,7 +118,7 @@ DROP RETENTION keep_60days;
 SQL 문장을 직접 실행해 특정 조건에 맞는 데이터를 즉시 삭제합니다. LOG 테이블은 `BEFORE`,
 `OLDEST`, `EXCEPT` 같은 로그 보존형 DELETE를, TAG 테이블은 태그 이름과 축 조건 또는 `BEFORE`
 조건을 사용합니다. LOOKUP 테이블은 Primary key 또는 일반 조건식을, VOLATILE 테이블은 Primary
-key equality 조건을, RDB 테이블은 일반 `WHERE` 조건을 사용합니다. LOOKUP의 조건 없는 DELETE는
+key equality 조건을, TRANSACTION 테이블은 일반 `WHERE` 조건을 사용합니다. LOOKUP의 조건 없는 DELETE는
 모든 행을 삭제합니다.
 
 ```sql
@@ -136,7 +136,7 @@ WHERE name = 'temp_sensor_01'
 
 ### TRUNCATE: 테이블 전체 즉시 삭제
 
-지원 대상 테이블의 모든 데이터를 즉시 삭제합니다. WHERE 조건 없이 한 줄로 전체 데이터가 제거됩니다. LOG 테이블과 RDB 테이블에 사용합니다.
+지원 대상 테이블의 모든 데이터를 즉시 삭제합니다. WHERE 조건 없이 한 줄로 전체 데이터가 제거됩니다. LOG 테이블과 TRANSACTION 테이블에 사용합니다.
 
 ```sql
 TRUNCATE TABLE device_log;
@@ -151,8 +151,8 @@ TRUNCATE TABLE device_log;
 | 장기 보관 정책 자동화 (30일, 90일 등) | Retention Policy |
 | 특정 시간 구간 데이터 즉시 제거 | DELETE |
 | 잘못 입력된 데이터 구간 재입력을 위한 삭제 | DELETE |
-| LOG/RDB 테이블 전체 초기화 (개발/테스트) | TRUNCATE |
-| LOG/RDB 테이블 전체 즉시 폐기 | TRUNCATE |
+| LOG/TRANSACTION 테이블 전체 초기화 (개발/테스트) | TRUNCATE |
+| LOG/TRANSACTION 테이블 전체 즉시 폐기 | TRUNCATE |
 
 ### 다음 읽을 내용
 
@@ -262,7 +262,7 @@ Restore와 달리 데이터를 원래 위치에 복원하지 않습니다. 백�
 ### machloader
 
 테이블 데이터를 파일에서 적재하거나 반출하는 범용 도구입니다. CSV뿐 아니라 다양한 구분자
-형식을 지원하며, 스키마 파일로 컬럼 매핑, 구분자와 날짜 형식을 제어합니다. RDB 테이블은
+형식을 지원하며, 스키마 파일로 컬럼 매핑, 구분자와 날짜 형식을 제어합니다. TRANSACTION 테이블은
 사용자 컬럼을 명시한 스키마 파일을 사용합니다.
 
 ```bash

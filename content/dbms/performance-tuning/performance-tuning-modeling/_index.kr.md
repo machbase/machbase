@@ -64,7 +64,7 @@ CREATE TAG TABLE factory_sensor (
 
 ```sql
 -- LOG 테이블 생성 예시 (설비 알람 로그)
-CREATE TABLE alarm_log (
+CREATE LOG TABLE alarm_log (
     alarm_id    VARCHAR(32),
     device_id   VARCHAR(32),
     alarm_code  INTEGER,
@@ -105,7 +105,7 @@ LOG 테이블은 컬럼 수가 입력 성능에 직접 영향을 미칩니다. �
 
 ```sql
 -- 나쁜 예: 불필요한 컬럼이 많은 경우
-CREATE TABLE sensor_log (
+CREATE LOG TABLE sensor_log (
     sensor_id   VARCHAR(64),
     value1      DOUBLE,
     value2      DOUBLE,
@@ -117,7 +117,7 @@ CREATE TABLE sensor_log (
 );
 
 -- 좋은 예: 실제 사용하는 컬럼만 정의
-CREATE TABLE sensor_log (
+CREATE LOG TABLE sensor_log (
     sensor_id   VARCHAR(64),
     value       DOUBLE,
     unit        VARCHAR(16)
@@ -136,13 +136,13 @@ VARCHAR 컬럼의 최대 크기를 실제 데이터보다 훨씬 크게 설정�
 
 ```sql
 -- 나쁜 예: 실제 데이터가 최대 32자인데 크기 과다 설정
-CREATE TABLE event_log (
+CREATE LOG TABLE event_log (
     event_id    VARCHAR(1024),  -- 실제 최대 32자인데 1024 설정
     message     VARCHAR(65535)  -- 실제 최대 512자인데 65535 설정
 );
 
 -- 좋은 예: 실제 데이터 길이에 맞게 설정
-CREATE TABLE event_log (
+CREATE LOG TABLE event_log (
     event_id    VARCHAR(40),    -- UUID + 여유분
     message     VARCHAR(512)    -- 실제 최대 길이 기준
 );
@@ -205,7 +205,7 @@ LOG 테이블 생성 시 자주 범위 조건으로 사용하는 컬럼에 MINMA
 
 ```sql
 -- value 컬럼에 32MB MINMAX 캐시 지정
-CREATE TABLE sensor_log (
+CREATE LOG TABLE sensor_log (
     sensor_id   VARCHAR(64),
     value       DOUBLE,
     quality     SHORT

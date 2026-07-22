@@ -4,14 +4,14 @@ weight: 80
 toc: true
 ---
 
-RDB 테이블의 Edition 제한과 기능 제약 사항을 정리합니다.
+TRANSACTION 테이블의 Edition 제한과 기능 제약 사항을 정리합니다.
 
 
 <a id="limitations-rdb-edition"></a>
 
 ## Edition 제한
 
-RDB 테이블은 Standard Edition 전용 기능입니다.
+TRANSACTION 테이블은 Standard Edition 전용 기능입니다.
 
 ### Edition별 지원 현황
 
@@ -19,13 +19,13 @@ RDB 테이블은 Standard Edition 전용 기능입니다.
 |------|-----------------|-----------------|
 | TAG 테이블 | O | O |
 | LOG 테이블 | O | O |
-| **RDB 테이블** | **O** | **X** |
+| **TRANSACTION 테이블** | **O** | **X** |
 | VOLATILE 테이블 | O | O |
 | LOOKUP 테이블 | O | O |
 
 ### Cluster Edition에서의 대안
 
-Cluster Edition 환경에서 RDB 테이블과 유사한 기능이 필요한 경우 다음을 고려합니다.
+Cluster Edition 환경에서 TRANSACTION 테이블과 유사한 기능이 필요한 경우 다음을 고려합니다.
 
 1. **LOOKUP 테이블**: 기준 정보에 Primary key 식별과 단건 UPDATE/DELETE가 필요할 때
 2. **LOG 테이블**: UPDATE 불필요한 추가 전용 이력 데이터

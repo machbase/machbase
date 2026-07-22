@@ -23,7 +23,7 @@ CREATE LOOKUP TABLE status_code (
 );
 
 -- 이벤트 테이블 (LOG)
-CREATE TABLE event_log (
+CREATE LOG TABLE event_log (
     event_time DATETIME,
     device_id  VARCHAR(32),
     status     VARCHAR(8)  -- status_code.code 참조

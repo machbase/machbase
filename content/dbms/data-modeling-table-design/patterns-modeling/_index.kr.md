@@ -249,7 +249,7 @@ ORDER BY s.severity DESC;
 
 ```sql
 -- 알람 이벤트 LOG 테이블
-CREATE TABLE alarm_event (
+CREATE LOG TABLE alarm_event (
     severity    SHORT,          -- 1=INFO, 2=WARN, 3=ERROR, 4=CRITICAL
     category    VARCHAR(32),    -- 카테고리
     source      VARCHAR(64),    -- 발생 소스
@@ -258,7 +258,7 @@ CREATE TABLE alarm_event (
 );
 
 -- 시스템 감사 LOG 테이블
-CREATE TABLE audit_log (
+CREATE LOG TABLE audit_log (
     user_id    VARCHAR(64),
     action     VARCHAR(32),    -- INSERT, UPDATE, DELETE, LOGIN 등
     target     VARCHAR(128),   -- 대상 테이블/리소스
@@ -387,7 +387,7 @@ WHERE f.factory_id = 'F01'
 
 ## 영속·임시 혼합 패턴
 
-영속 테이블(TAG, LOG, RDB, LOOKUP)과 임시 테이블(VOLATILE)을 조합해 성능과 데이터 무결성을 함께 확보하는 패턴입니다.
+영속 테이블(TAG, LOG, TRANSACTION, LOOKUP)과 임시 테이블(VOLATILE)을 조합해 성능과 데이터 무결성을 함께 확보하는 패턴입니다.
 
 ### 원본 + 집계 캐시 패턴
 
@@ -471,7 +471,7 @@ GROUP BY name;
 |-----------|--------|--------|--------|--------|
 | TAG | INSERT / Append API | O (태그/시간 조건) | O | X |
 | LOG | INSERT / Append API | X | O (BEFORE/OLDEST/EXCEPT) | X |
-| RDB | INSERT / SDK Append API | O (WHERE 유무 모두) | O | ON DUPLICATE KEY UPDATE |
+| TRANSACTION | INSERT / SDK Append API | O (WHERE 유무 모두) | O | ON DUPLICATE KEY UPDATE |
 | LOOKUP | INSERT / Append API | O (일반 조건식, PK 변경 제외) | O (일반 조건식 또는 전체 삭제) | ON DUPLICATE KEY UPDATE |
 | VOLATILE | INSERT | O (by PK) | O | ON DUPLICATE KEY UPDATE |
 
@@ -497,9 +497,9 @@ UPDATE sensor_data
    AND time >= TO_DATE('2026-07-01', 'YYYY-MM-DD');
 ```
 
-### RDB: UPDATE 패턴
+### TRANSACTION: UPDATE 패턴
 
-RDB 테이블은 일반 SQL UPDATE를 지원합니다.
+TRANSACTION 테이블은 일반 SQL UPDATE를 지원합니다.
 
 ```sql
 -- WHERE 조건 UPDATE
@@ -551,7 +551,7 @@ machloader -i -d data.csv -t table_name
 서로 다른 타입의 테이블도 JOIN할 수 있습니다.
 
 ```sql
--- TAG(계측) + LOOKUP(기준) + RDB(이력) 3-way JOIN
+-- TAG(계측) + LOOKUP(기준) + TRANSACTION(이력) 3-way JOIN
 SELECT
     t.name AS sensor_id,
     m.location,
@@ -638,7 +638,7 @@ JOIN equipment_master e ON s.name = e.sensor_id;
 ┌─────────────────────────────────────────────────┐
 │              물류 관리 시스템                     │
 ├──────────────┬──────────────┬───────────────────┤
-│ RDB 테이블   │ LOG 테이블   │ LOOKUP 테이블      │
+│ TRANSACTION 테이블   │ LOG 테이블   │ LOOKUP 테이블      │
 │ orders       │ delivery_log │ product_master     │
 │ (주문 관리)  │ (배송 이벤트) │ (제품 기준 정보)   │
 │ UPDATE/DELETE│              │                   │
@@ -649,7 +649,7 @@ JOIN equipment_master e ON s.name = e.sensor_id;
 ```
 
 ```sql
--- RDB: 주문 상태 UPDATE 가능
+-- TRANSACTION: 주문 상태 UPDATE 가능
 UPDATE orders SET status = 'SHIPPED', shipped_at = NOW WHERE order_id = 1001;
 
 -- LOG: 배송 이벤트 추가 전용
@@ -665,7 +665,7 @@ UPDATE product_master SET price = 19900 WHERE product_id = 42;
 |------|---------|------|
 | 고빈도 계측값 이력 | TAG | Append API 고속 버퍼, 시계열 최적화 |
 | 이벤트·알람 로그 | LOG | 추가 전용, 도착 시각 자동 |
-| 관계형 업무 (UPDATE/DELETE) | RDB | SELECT/INSERT/UPDATE/DELETE 모두 지원 |
+| 관계형 업무 (UPDATE/DELETE) | TRANSACTION | SELECT/INSERT/UPDATE/DELETE 모두 지원 |
 | 기준·코드 정보 | LOOKUP | PK 식별과 일반 조건식 UPDATE/DELETE, 영속 |
 | 실시간 상태 캐시 | VOLATILE | 메모리 속도, UPSERT |
 

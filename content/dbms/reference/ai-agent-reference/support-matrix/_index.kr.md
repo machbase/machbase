@@ -17,7 +17,7 @@ toc: true
 | LOG 테이블 | O | O |
 | LOOKUP 테이블 | O | O |
 | VOLATILE 테이블 | O | X |
-| RDB 테이블 | O | X |
+| TRANSACTION 테이블 | O | X |
 | ROLLUP | O | O |
 | ROLLUP_REBUILD | O | X |
 | STREAM | O | X |
@@ -29,7 +29,7 @@ toc: true
 
 ## 테이블 타입 × 기능 지원표
 
-| 기능 | TAG | LOG | LOOKUP | VOLATILE | RDB |
+| 기능 | TAG | LOG | LOOKUP | VOLATILE | TRANSACTION |
 |------|:---:|:---:|:------:|:--------:|:---:|
 | INSERT (SQL) | O | O | O | O | O |
 | Append API | O | O | O | X | O |

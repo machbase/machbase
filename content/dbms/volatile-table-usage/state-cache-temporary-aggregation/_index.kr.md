@@ -63,7 +63,7 @@ VALUES ('TEMP-01:202601011200', 'TEMP-01', '2026-01-01 12:00:00', 23.5, 24.1, 60
 ON DUPLICATE KEY UPDATE;
 ```
 
-집계 결과를 장기 보관해야 하면 주기적으로 RDB 또는 LOG 테이블에 복사합니다.
+집계 결과를 장기 보관해야 하면 주기적으로 TRANSACTION 또는 LOG 테이블에 복사합니다.
 
 ```sql
 INSERT INTO sensor_summary_history
@@ -89,7 +89,7 @@ INSERT INTO job_state VALUES ('collector-01', 'RUNNING', 35.0, NOW)
 ON DUPLICATE KEY UPDATE SET status = 'RUNNING', progress = 35.0, updated_at = NOW;
 ```
 
-운영 화면은 이 테이블을 조회해 현재 상태를 표시합니다. 작업 이력이나 감사 로그가 필요하면 별도 LOG 또는 RDB 테이블에 기록합니다.
+운영 화면은 이 테이블을 조회해 현재 상태를 표시합니다. 작업 이력이나 감사 로그가 필요하면 별도 LOG 또는 TRANSACTION 테이블에 기록합니다.
 
 <a id="pattern-volatile-rebuild"></a>
 

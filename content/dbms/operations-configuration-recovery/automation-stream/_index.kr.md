@@ -416,7 +416,7 @@ FREQUENCY 값은 나노초(ns) 단위입니다.
 
 ```sql
 -- 알람 대상 테이블
-CREATE TABLE alarm_log (
+CREATE LOG TABLE alarm_log (
     time     DATETIME,
     sensor   VARCHAR(40),
     value    DOUBLE,
@@ -439,7 +439,7 @@ EXEC STREAM_START('stream_alarm');
 매 60초마다 소스 테이블의 신규 데이터를 집계합니다.
 
 ```sql
-CREATE TABLE sensor_1min (
+CREATE LOG TABLE sensor_1min (
     time      DATETIME,
     sensor_id VARCHAR(40),
     avg_val   DOUBLE,
@@ -525,7 +525,7 @@ ORDER BY NAME;
 |----------------|:---:|
 | LOG | O |
 | TAG | X |
-| RDB | X |
+| TRANSACTION | X |
 | VOLATILE | X |
 | LOOKUP | X |
 

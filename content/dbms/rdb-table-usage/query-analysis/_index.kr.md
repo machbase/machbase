@@ -4,13 +4,13 @@ weight: 50
 toc: true
 ---
 
-RDB 테이블의 SELECT, 집계, 필터링 등 조회 관련 내용을 다룹니다. RDB 테이블은 PRIMARY KEY와 보조 인덱스를 기반으로 단건 조회, 범위 조회, JOIN, 집계를 수행합니다.
+TRANSACTION 테이블의 SELECT, 집계, 필터링 등 조회 관련 내용을 다룹니다. TRANSACTION 테이블은 PRIMARY KEY와 보조 인덱스를 기반으로 단건 조회, 범위 조회, JOIN, 집계를 수행합니다.
 
 <a id="query-rdb-basic-select"></a>
 
 ## 기본 SELECT
 
-RDB 테이블은 일반 SQL SELECT 문으로 조회합니다.
+TRANSACTION 테이블은 일반 SQL SELECT 문으로 조회합니다.
 
 ```sql
 SELECT order_id, customer, amount, status
@@ -56,7 +56,7 @@ WHERE status = 'PENDING'
 
 ## JOIN 조회
 
-RDB 테이블은 다른 RDB 테이블이나 TAG/LOG 테이블에서 가공한 결과와 함께 사용할 수 있습니다.
+TRANSACTION 테이블은 다른 TRANSACTION 테이블이나 TAG/LOG 테이블에서 가공한 결과와 함께 사용할 수 있습니다.
 
 ```sql
 SELECT o.order_id, o.customer, p.name, o.amount
@@ -65,7 +65,7 @@ JOIN product_catalog p ON o.item_id = p.product_id
 WHERE o.status = 'ORDERED';
 ```
 
-TAG 또는 LOG 테이블의 원본 데이터를 집계한 뒤 RDB 테이블에 적재하면, 이후 업무 기준 조회와 JOIN을 단순하게 구성할 수 있습니다.
+TAG 또는 LOG 테이블의 원본 데이터를 집계한 뒤 TRANSACTION 테이블에 적재하면, 이후 업무 기준 조회와 JOIN을 단순하게 구성할 수 있습니다.
 
 ```sql
 SELECT s.sensor_id, s.avg_value, m.site, m.unit
@@ -78,7 +78,7 @@ WHERE s.summary_date = '2026-01-01';
 
 ## 집계 조회
 
-RDB 테이블은 업무 상태나 집계 결과를 다시 그룹화할 때 사용합니다.
+TRANSACTION 테이블은 업무 상태나 집계 결과를 다시 그룹화할 때 사용합니다.
 
 ```sql
 SELECT status, COUNT(*) AS cnt, SUM(amount) AS total_amount
@@ -92,10 +92,10 @@ GROUP BY status;
 
 ## JSON 경로 조회
 
-`JSON` 컬럼을 사용하는 RDB 테이블은 JSON path 조건을 조회에 사용할 수 있습니다.
+`JSON` 컬럼을 사용하는 TRANSACTION 테이블은 JSON path 조건을 조회에 사용할 수 있습니다.
 
 ```sql
-CREATE RDB TABLE device_state (
+CREATE TRANSACTION TABLE device_state (
     device_id VARCHAR(64),
     ts        DATETIME,
     state     JSON,
@@ -107,7 +107,7 @@ FROM device_state
 WHERE state->'$.status' = 'ALARM';
 ```
 
-자주 조회하는 JSON 필드는 별도 컬럼으로 분리하거나 JSON path 인덱스 적용 여부를 검토합니다. 자세한 내용은 [RDB 인덱스와 JSON path 인덱스](/dbms/rdb-table-usage/rdb-index-json-path/)를 참고합니다.
+자주 조회하는 JSON 필드는 별도 컬럼으로 분리하거나 JSON path 인덱스 적용 여부를 검토합니다. 자세한 내용은 [TRANSACTION 인덱스와 JSON path 인덱스](/dbms/rdb-table-usage/rdb-index-json-path/)를 참고합니다.
 
 <a id="query-rdb-performance"></a>
 

@@ -15,7 +15,7 @@ toc: true
 | --- | --- |
 | 산업 IoT 센서, 설비, 계측값 저장 | [TAG 테이블 설계](/dbms/tag-table-usage/) |
 | 로그, 이벤트, 금융 틱 수신 이력 저장 | [LOG 테이블 설계](/dbms/log-table-usage/) |
-| 장비명, 코드, 매핑 정보 관리 | [LOOKUP 설계](/dbms/lookup-table-usage/), [RDB 설계](/dbms/rdb-table-usage/), [LOOKUP과 RDB 비교](/dbms/data-modeling-table-design/table-types-selection-type/#comparison-rdb-vs-lookup) |
+| 장비명, 코드, 매핑 정보 관리 | [LOOKUP 설계](/dbms/lookup-table-usage/), [TRANSACTION 설계](/dbms/rdb-table-usage/), [LOOKUP과 TRANSACTION 비교](/dbms/data-modeling-table-design/table-types-selection-type/#comparison-rdb-vs-lookup) |
 | SQL 문법 확인 | [SQL 레퍼런스](/dbms/reference/sql/), [SQL 입력](/dbms/application-integration/data-input-load-export/#sql) |
 | 애플리케이션 연결 | [애플리케이션 연동](/dbms/application-integration/), [드라이버 가이드](/dbms/application-integration/guide-drivers/) |
 | 운영 설정 변경 | [운영, 설정, 복구](/dbms/operations-configuration-recovery/) |
@@ -24,5 +24,5 @@ toc: true
 
 - TAG 문서: `NAME`, `BASETIME`, 값 컬럼을 기준으로 센서 계측값을 모델링하는 방법
 - LOG 문서: 이벤트와 로그를 시간 순서로 계속 추가하는 설계
-- LOOKUP/RDB 문서: 기준 정보, 매핑 정보, 조인 대상 데이터의 분리 방법
+- LOOKUP/TRANSACTION 문서: 기준 정보, 매핑 정보, 조인 대상 데이터의 분리 방법
 - 데이터 입력 문서: 실습용 `INSERT`가 아닌 운영 수집에 사용하는 Append API, machloader, Collector 경로

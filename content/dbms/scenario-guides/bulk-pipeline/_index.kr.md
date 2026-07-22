@@ -31,7 +31,7 @@ CSV 파일, 외부 데이터베이스, 메모리 내 데이터 구조 등에서 
 
 ```sql
 -- LOG 테이블: 시계열 이벤트 로그 적재 예시
-CREATE TABLE sensor_log (
+CREATE LOG TABLE sensor_log (
     _arrival_time DATETIME,
     device_id     VARCHAR(64),
     sensor_type   VARCHAR(32),

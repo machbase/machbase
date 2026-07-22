@@ -77,7 +77,7 @@ curl -G "http://127.0.0.1:5657/machbase" \
 | 연결 방식 | HTTP 요청 | TCP 연결 |
 | SQL 실행 | `/machbase?q=<SQL>` | 드라이버 API |
 | 대량 삽입 | `/machbase` POST Append | 네이티브 Append API |
-| 트랜잭션 | HTTP 요청 단위 실행 | RDB 테이블에서 트랜잭션 사용 가능 |
+| 트랜잭션 | HTTP 요청 단위 실행 | TRANSACTION 테이블에서 트랜잭션 사용 가능 |
 
 REST API는 간단한 통합, 웹 서비스, 언어 독립 환경에 적합합니다. 초고성능 수집이나
 세밀한 연결 제어가 필요한 경우에는 네이티브 드라이버의 Append API를 사용합니다.
@@ -280,7 +280,7 @@ curl -G "http://127.0.0.1:5657/machbase" \
 
 ```bash
 curl -G "http://127.0.0.1:5657/machbase" \
-  --data-urlencode "q=CREATE TABLE curl_sample (c1 INT, c2 VARCHAR(20))"
+  --data-urlencode "q=CREATE LOG TABLE curl_sample (c1 INT, c2 VARCHAR(20))"
 ```
 
 테이블을 삭제할 때도 같은 엔드포인트를 사용합니다.
@@ -318,7 +318,7 @@ def query(sql):
     return result
 
 query("DROP TABLE curl_sample")
-query("CREATE TABLE curl_sample (c1 INT, c2 VARCHAR(20))")
+query("CREATE LOG TABLE curl_sample (c1 INT, c2 VARCHAR(20))")
 query("INSERT INTO curl_sample VALUES (1, 'aaa')")
 
 result = query("SELECT * FROM curl_sample ORDER BY c1")
@@ -400,7 +400,7 @@ POST /machbase
 
 ```bash
 curl -G "http://127.0.0.1:5657/machbase" \
-  --data-urlencode "q=CREATE TABLE curl_sample (c1 INT, c2 VARCHAR(20))"
+  --data-urlencode "q=CREATE LOG TABLE curl_sample (c1 INT, c2 VARCHAR(20))"
 ```
 
 두 행을 Append로 삽입합니다.

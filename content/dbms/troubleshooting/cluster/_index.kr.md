@@ -128,7 +128,7 @@ SELECT * FROM v$version;
 
 | 기능 | 오류 메시지 예시 | 대안 |
 |------|----------------|------|
-| RDB 테이블 생성/사용 | `RDB table is not supported in Cluster Edition` | LOOKUP 테이블 사용 |
+| TRANSACTION 테이블 생성/사용 | `TRANSACTION table is not supported in Cluster Edition` | LOOKUP 테이블 사용 |
 | Custom ROLLUP | `Custom rollup is not supported in Cluster Edition` | 기본 자동 ROLLUP 사용 |
 | ROLLUP_REBUILD | `ROLLUP_REBUILD is not supported in Cluster Edition` | 해당 기능 없음 (지원 문의) |
 | MOUNT DATABASE | `MOUNT is not supported in Cluster Edition` | Standard Edition에서 마운트 후 데이터 추출 |
@@ -137,21 +137,21 @@ SELECT * FROM v$version;
 
 ### 기능별 상세 안내
 
-#### RDB 테이블
+#### TRANSACTION 테이블
 
-Cluster Edition에서는 RDB 테이블을 생성하거나 조회할 수 없습니다.
+Cluster Edition에서는 TRANSACTION 테이블을 생성하거나 조회할 수 없습니다.
 
 ```sql
--- 오류 발생: Cluster Edition에서 RDB 테이블 생성
-CREATE RDB TABLE config_table (key VARCHAR(64), value VARCHAR(256));
--- ERR: RDB table is not supported in Cluster Edition
+-- 오류 발생: Cluster Edition에서 TRANSACTION 테이블 생성
+CREATE TRANSACTION TABLE config_table (key VARCHAR(64), value VARCHAR(256));
+-- ERR: TRANSACTION table is not supported in Cluster Edition
 ```
 
 **대안**: 관계형 데이터 저장이 필요하다면 LOOKUP 테이블을 사용합니다.
 
 ```sql
 -- 대안: LOOKUP 테이블 사용
-CREATE TABLE config_table (
+CREATE LOG TABLE config_table (
     config_key   VARCHAR(64) PRIMARY KEY,
     config_value VARCHAR(256)
 );

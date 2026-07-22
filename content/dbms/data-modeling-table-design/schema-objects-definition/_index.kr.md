@@ -25,18 +25,18 @@ toc: true
 #### LOG 테이블
 
 ```sql
-CREATE TABLE log_name (
+CREATE LOG TABLE log_name (
     col1  TYPE1,
     col2  TYPE2,
     ...
 );
 ```
 
-LOG 테이블은 아무 키워드 없이 `CREATE TABLE`을 사용합니다. `_arrival_time` 컬럼이 자동으로 추가됩니다.
+LOG 테이블은 `CREATE LOG TABLE`을 사용합니다. `_arrival_time` 컬럼이 자동으로 추가됩니다.
 
 ```sql
 -- 예시: 웹 액세스 로그
-CREATE TABLE web_access (
+CREATE LOG TABLE web_access (
     method   VARCHAR(8),
     uri      VARCHAR(1024),
     status   SHORT,
@@ -75,10 +75,13 @@ CREATE TAG TABLE pipeline_data (
 );
 ```
 
-#### RDB 테이블
+#### TRANSACTION 테이블
+
+테이블 유형을 생략한 `CREATE TABLE`, 전체 이름을 명시한 `CREATE TRANSACTION TABLE`, 축약형
+`CREATE TXN TABLE`은 모두 TRANSACTION 테이블을 생성합니다.
 
 ```sql
-CREATE RDB TABLE table_name (
+CREATE TRANSACTION TABLE table_name (
     col1  TYPE1,
     col2  TYPE2,
     ...
@@ -86,13 +89,16 @@ CREATE RDB TABLE table_name (
 ```
 
 ```sql
-CREATE RDB TABLE orders (
+CREATE TRANSACTION TABLE orders (
     order_id LONG,
     customer VARCHAR(64),
     amount   DOUBLE,
     status   VARCHAR(16)
 );
 ```
+
+LOG 테이블은 반드시 `CREATE LOG TABLE`로 유형을 명시합니다. 이전 공개 유형 이름인 `RDB`와
+`TRX`는 지원하지 않습니다.
 
 #### VOLATILE 테이블
 
@@ -119,7 +125,7 @@ CREATE LOOKUP TABLE table_name (
 동일한 이름의 테이블이 이미 존재해도 오류가 발생하지 않습니다.
 
 ```sql
-CREATE TABLE IF NOT EXISTS web_access (...);
+CREATE LOG TABLE IF NOT EXISTS web_access (...);
 ```
 
 ### DROP TABLE
@@ -141,7 +147,7 @@ DROP TABLE orders;
 - 특수문자 사용 시 큰따옴표(`"`)로 감쌉니다
 
 ```sql
-CREATE TABLE "my-table" (id INTEGER);
+CREATE LOG TABLE "my-table" (id INTEGER);
 ```
 
 <a id="alter"></a>
@@ -152,7 +158,7 @@ CREATE TABLE "my-table" (id INTEGER);
 
 ### 테이블 타입별 지원 범위
 
-| 작업 | LOG | TAG | RDB | VOLATILE | LOOKUP |
+| 작업 | LOG | TAG | TRANSACTION | VOLATILE | LOOKUP |
 |------|-----|-----|-----|----------|--------|
 | ADD COLUMN | O | O (METADATA만) | O | O | O |
 | DROP COLUMN | O | O (METADATA만) | O | O | O |
@@ -178,7 +184,7 @@ ALTER TABLE web_access ADD COLUMN (resp_time DOUBLE);
 -- LOOKUP 테이블에 컬럼 추가
 ALTER TABLE country_code ADD COLUMN (capital VARCHAR(64));
 
--- RDB 테이블에 컬럼 추가
+-- TRANSACTION 테이블에 컬럼 추가
 ALTER TABLE orders ADD COLUMN (note VARCHAR(256));
 
 -- TAG 테이블 METADATA에 컬럼 추가
@@ -200,7 +206,7 @@ ALTER TABLE sensor_data METADATA DROP COLUMN (unit);
 
 ### RENAME COLUMN
 
-TAG 일반 컬럼과 RDB 테이블에서만 지원됩니다. LOG, VOLATILE, LOOKUP 테이블은 지원하지 않습니다.
+TAG 일반 컬럼과 TRANSACTION 테이블에서만 지원됩니다. LOG, VOLATILE, LOOKUP 테이블은 지원하지 않습니다.
 
 ```sql
 ALTER TABLE table_name RENAME COLUMN old_name TO new_name;
@@ -210,13 +216,13 @@ ALTER TABLE table_name RENAME COLUMN old_name TO new_name;
 -- TAG 테이블 일반 컬럼 이름 변경
 ALTER TABLE sensor_data RENAME COLUMN value TO temperature;
 
--- RDB 테이블 컬럼 이름 변경
+-- TRANSACTION 테이블 컬럼 이름 변경
 ALTER TABLE orders RENAME COLUMN note TO memo;
 ```
 
 ### MODIFY COLUMN
 
-LOG 테이블과 TAG 테이블의 일반 컬럼에서 지원됩니다. RDB, VOLATILE, LOOKUP 테이블은 지원하지 않습니다.
+LOG 테이블과 TAG 테이블의 일반 컬럼에서 지원됩니다. TRANSACTION, VOLATILE, LOOKUP 테이블은 지원하지 않습니다.
 
 ```sql
 -- VARCHAR 크기 확장 (줄이기는 불가)
@@ -231,14 +237,14 @@ ALTER TABLE web_access MODIFY COLUMN status SET MINMAX_CACHE_SIZE = 20480;
 
 ### RENAME TABLE
 
-RDB 테이블에서만 지원됩니다.
+TRANSACTION 테이블에서만 지원됩니다.
 
 ```sql
 ALTER TABLE old_name RENAME TO new_name;
 ```
 
 ```sql
--- RDB 테이블 이름 변경
+-- TRANSACTION 테이블 이름 변경
 ALTER TABLE orders RENAME TO order_history;
 ```
 
@@ -438,11 +444,11 @@ SELECT _rid, sensor_id, value FROM sensor_log WHERE _rid = 1000;
 
 ### PRIMARY KEY
 
-VOLATILE, LOOKUP, RDB 테이블의 컬럼에 지정합니다. PRIMARY KEY로 지정된 컬럼은 값 중복을 허용하지 않습니다. LOOKUP/VOLATILE은 Red-Black Tree 인덱스를 사용하고, RDB는 BTREE 인덱스로 표시됩니다.
+VOLATILE, LOOKUP, TRANSACTION 테이블의 컬럼에 지정합니다. PRIMARY KEY로 지정된 컬럼은 값 중복을 허용하지 않습니다. LOOKUP/VOLATILE은 Red-Black Tree 인덱스를 사용하고, TRANSACTION 테이블은 BTREE 인덱스로 표시됩니다.
 
 - **LOOKUP**: PRIMARY KEY 필수 (PK 없이 생성 불가)
 - **VOLATILE**: PRIMARY KEY 선택적. 단, `INSERT ... ON DUPLICATE KEY UPDATE` 구문 사용 시 필수
-- **RDB**: PRIMARY KEY 선택적
+- **TRANSACTION**: PRIMARY KEY 선택적
 
 ```sql
 -- LOOKUP: PK 필수
@@ -460,8 +466,8 @@ CREATE VOLATILE TABLE device_status (
     updated_at DATETIME
 );
 
--- RDB: PK 선택 (지정 시 중복 불가)
-CREATE RDB TABLE orders (
+-- TRANSACTION: PK 선택 (지정 시 중복 불가)
+CREATE TRANSACTION TABLE orders (
     order_id INTEGER PRIMARY KEY,
     product  VARCHAR(100),
     qty      INTEGER
@@ -473,7 +479,7 @@ CREATE RDB TABLE orders (
 LOG 테이블 컬럼에 사용합니다. 해당 컬럼에 NULL 삽입을 금지합니다.
 
 ```sql
-CREATE TABLE sensor_log (
+CREATE LOG TABLE sensor_log (
     sensor_id VARCHAR(40) NOT NULL,
     ts        DATETIME,
     value     DOUBLE
@@ -485,11 +491,11 @@ TAG, VOLATILE, LOOKUP 테이블은 NOT NULL 제약을 별도로 선언하지 않
 ### DEFAULT
 
 일반 `CREATE TABLE` 경로에서는 제한적으로 `DATETIME DEFAULT SYSDATE`를 사용할 수 있습니다.
-RDB 테이블은 컬럼 생성 및 `ALTER TABLE ... ADD COLUMN`에서 DEFAULT를 사용할 수 있습니다.
+TRANSACTION 테이블은 컬럼 생성 및 `ALTER TABLE ... ADD COLUMN`에서 DEFAULT를 사용할 수 있습니다.
 그 외 기본값이 필요하면 INSERT 문이나 애플리케이션 입력 단계에서 값을 명시합니다.
 
 ```sql
-CREATE RDB TABLE orders_default_example (
+CREATE TRANSACTION TABLE orders_default_example (
     order_id INTEGER,
     status   VARCHAR(20),
     discount DOUBLE,
@@ -507,13 +513,13 @@ ALTER TABLE orders_default_example ADD COLUMN (score INTEGER DEFAULT 7);
 ### 시스템 자동 생성 컬럼
 
 LOG 테이블에는 `_ARRIVAL_TIME`과 `_RID` 시스템 컬럼이 자동으로 추가됩니다. TAG, VOLATILE,
-LOOKUP 테이블에는 `_RID`이 내부 행 식별자로 추가됩니다. RDB 테이블에는 `_ARRIVAL_TIME`이
+LOOKUP 테이블에는 `_RID`이 내부 행 식별자로 추가됩니다. TRANSACTION 테이블에는 `_ARRIVAL_TIME`이
 자동 추가되지 않습니다.
 
 | 컬럼명 | 타입 | 설명 |
 |--------|------|------|
 | `_ARRIVAL_TIME` | DATETIME | LOG 레코드 삽입 시점의 시스템 시각. Retention과 보존형 DELETE 기준 |
-| `_RID` | LONG | 비-RDB 테이블의 내부 행 식별자. 시스템이 자동 부여하며 사용자 변경 불가 |
+| `_RID` | LONG | 비-TRANSACTION 테이블의 내부 행 식별자. 시스템이 자동 부여하며 사용자 변경 불가 |
 
 ```sql
 -- _RID로 특정 레코드 검색
@@ -525,7 +531,7 @@ SELECT * FROM sensor_log WHERE _ARRIVAL_TIME > NOW - 3600000000000;
 
 ### 테이블 타입별 제약 조건 지원 범위
 
-| 제약 조건 | TAG | LOG | RDB | VOLATILE | LOOKUP |
+| 제약 조건 | TAG | LOG | TRANSACTION | VOLATILE | LOOKUP |
 |-----------|-----|-----|-----|---------|--------|
 | PRIMARY KEY | O (name 컬럼) | X | O (선택) | O (선택) | O (필수) |
 | NOT NULL | X | O | O | X | X |
@@ -548,7 +554,7 @@ SELECT * FROM sensor_log WHERE _ARRIVAL_TIME > NOW - 3600000000000;
 | LSM (Log-Structured Merge) | LOG | 시계열 대량 입력에 최적화된 LOG 컬럼 인덱스 |
 | BITMAP | LOG | 카디널리티가 낮은 컬럼에 유효. 복합 조건 쿼리 성능 향상 |
 | REDBLACK | LOOKUP, VOLATILE, TAG 메타데이터 | 정확한 값 검색에 최적화 |
-| BTREE | RDB | PRIMARY KEY 및 보조 인덱스에 사용 |
+| BTREE | TRANSACTION | PRIMARY KEY 및 보조 인덱스에 사용 |
 | KEYWORD | LOG | TEXT 컬럼 전문 검색용 |
 | TAG/KV | TAG | TAG 값 컬럼 조건 조회를 보조하는 secondary index |
 
@@ -565,7 +571,7 @@ CREATE BITMAP INDEX idx_status ON sensor_log (status);
 CREATE KEYWORD INDEX idx_msg ON event_log (message);
 ```
 
-> LOG/TAG/LOOKUP/VOLATILE 인덱스는 단일 컬럼 중심으로 설계합니다. RDB 테이블은 일반 복합
+> LOG/TAG/LOOKUP/VOLATILE 인덱스는 단일 컬럼 중심으로 설계합니다. TRANSACTION 테이블은 일반 복합
 > 인덱스를 지원하지만, 복합 JSON path 인덱스와 복합 PRIMARY KEY 인덱스는 지원하지 않습니다.
 
 ### TAG 테이블 인덱스
@@ -591,9 +597,9 @@ CREATE INDEX idx_location ON tag METADATA (location);
 CREATE INDEX idx_value ON tag (value) INDEX_TYPE TAG;
 ```
 
-### LOOKUP/VOLATILE/RDB 테이블 인덱스
+### LOOKUP/VOLATILE/TRANSACTION 테이블 인덱스
 
-LOOKUP과 VOLATILE은 Red-Black Tree 인덱스를 사용합니다. RDB는 BTREE로 표시되는 PRIMARY
+LOOKUP과 VOLATILE은 Red-Black Tree 인덱스를 사용합니다. TRANSACTION 테이블은 BTREE로 표시되는 PRIMARY
 KEY 인덱스와 보조 인덱스를 사용합니다.
 
 ```sql
@@ -604,23 +610,23 @@ CREATE LOOKUP TABLE alarm_threshold (
 );
 -- → sensor_id에 REDBLACK 인덱스 자동 생성됨
 
--- RDB: PK 지정 시 BTREE 인덱스로 표시
-CREATE RDB TABLE orders (
+-- TRANSACTION: PK 지정 시 BTREE 인덱스로 표시
+CREATE TRANSACTION TABLE orders (
     order_id INTEGER PRIMARY KEY,
     product  VARCHAR(100),
     status   VARCHAR(16)
 );
 
--- RDB 보조 인덱스
+-- TRANSACTION 보조 인덱스
 CREATE INDEX idx_orders_product ON orders(product);
 
--- RDB 복합 보조 인덱스
+-- TRANSACTION 복합 보조 인덱스
 CREATE INDEX idx_orders_product_status ON orders(product, status);
 ```
 
 ```sql
--- RDB PRIMARY KEY 인덱스 사후 생성
-CREATE RDB TABLE order_work (
+-- TRANSACTION PRIMARY KEY 인덱스 사후 생성
+CREATE TRANSACTION TABLE order_work (
     order_id INTEGER,
     product  VARCHAR(100)
 );
@@ -664,7 +670,7 @@ SELECT t.name AS table_name,
 
 - **LOG 테이블**: 쿼리 빈도가 높은 컬럼에만 선별적으로 생성. 상태값·등급 등 저카디널리티 컬럼은 BITMAP 고려
 - **TAG 테이블**: 태그명·시간 조건을 기본으로 사용하고, 메타데이터 필터나 값 조건이 잦은 경우 해당 인덱스 추가
-- **LOOKUP/RDB**: PK 인덱스와 필요한 보조 인덱스 사용. RDB는 복합 보조 인덱스도 가능
+- **LOOKUP/TRANSACTION**: PK 인덱스와 필요한 보조 인덱스 사용. TRANSACTION 테이블은 복합 보조 인덱스도 가능
 - **VOLATILE**: PK 인덱스 중심으로 설계
 - **과도한 인덱스**: 대량 INSERT 성능 저하의 원인이 되므로 반드시 필요한 경우에만 생성
 
@@ -744,7 +750,7 @@ WHERE VIEW_NAME = 'ACTIVE_ALARMS';
 - VIEW는 데이터를 물리적으로 저장하지 않습니다. 조회할 때마다 정의된 쿼리를 실행합니다.
 - VIEW에 대한 INSERT/UPDATE/DELETE는 지원하지 않습니다. 읽기 전용입니다.
 - VIEW는 다른 VIEW를 참조할 수 있습니다 (중첩 VIEW).
-- TAG, LOG, RDB, VOLATILE, LOOKUP 테이블 모두 VIEW 정의에 포함할 수 있습니다.
+- TAG, LOG, TRANSACTION, VOLATILE, LOOKUP 테이블 모두 VIEW 정의에 포함할 수 있습니다.
 
 ### 활용 패턴
 

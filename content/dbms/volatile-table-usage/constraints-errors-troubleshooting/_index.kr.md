@@ -30,7 +30,7 @@ CREATE VOLATILE TABLE session_state (
 );
 ```
 
-유동 속성이 필요하면 자주 조회하는 값을 일반 컬럼으로 분리하거나, 영속 JSON 컬럼이 필요한 경우 RDB 또는 TAG 테이블을 검토합니다.
+유동 속성이 필요하면 자주 조회하는 값을 일반 컬럼으로 분리하거나, 영속 JSON 컬럼이 필요한 경우 TRANSACTION 또는 TAG 테이블을 검토합니다.
 
 <a id="error-volatile-memory"></a>
 
@@ -99,7 +99,7 @@ PRIMARY KEY 컬럼 자체를 변경하는 UPDATE는 피합니다. 키를 변경�
 1. 서버 재시작 이력이 있는지 확인합니다.
 2. VOLATILE 테이블 생성 스크립트가 실행되었는지 확인합니다.
 3. 초기 적재 쿼리가 정상 실행되었는지 확인합니다.
-4. 원본 TAG/LOG/RDB 테이블에서 캐시를 재구성합니다.
+4. 원본 TAG/LOG/TRANSACTION 테이블에서 캐시를 재구성합니다.
 
 ```sql
 SELECT COUNT(*) FROM sensor_latest;
@@ -115,4 +115,4 @@ SELECT COUNT(*) FROM sensor_latest;
 - PRIMARY KEY가 필요한 작업인지 확인합니다.
 - `COUNT(*)`와 `V$STORAGE_DC_VOLATILE_TABLE`로 규모와 메모리 사용을 확인합니다.
 - 재시작 후에는 생성 SQL과 초기 적재 SQL을 다시 실행합니다.
-- 영속 보존이 필요하면 VOLATILE이 아니라 TAG, LOG, LOOKUP, RDB 테이블을 사용합니다.
+- 영속 보존이 필요하면 VOLATILE이 아니라 TAG, LOG, LOOKUP, TRANSACTION 테이블을 사용합니다.

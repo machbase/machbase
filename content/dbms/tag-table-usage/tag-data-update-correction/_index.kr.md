@@ -130,10 +130,10 @@ WHERE name = 'sensor-01'
 
 ### 보정 이력 테이블 패턴
 
-감사 추적이 필요하면 보정 내용을 별도 LOG/RDB 테이블에 기록합니다.
+감사 추적이 필요하면 보정 내용을 별도 LOG/TRANSACTION 테이블에 기록합니다.
 
 ```sql
-CREATE TABLE correction_log (
+CREATE LOG TABLE correction_log (
     sensor_name  VARCHAR(64),
     target_time  DATETIME,
     old_value    DOUBLE,

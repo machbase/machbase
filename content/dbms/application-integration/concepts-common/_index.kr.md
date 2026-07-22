@@ -14,8 +14,8 @@ toc: true
 | [타임존 연결 옵션](/dbms/application-integration/concepts-common/#timezone-connection) | UTC 내부 저장, 연결 시 timezone 설정, TO_CHAR/TO_DATE와 timezone, SYSDATE vs NOW |
 | [Prepared statement](/dbms/application-integration/concepts-common/#prepared-statement) | SQL 인젝션 방지, 재사용 성능, TAG/LOG 테이블에서의 사용 |
 | [Parameter binding](/dbms/application-integration/concepts-common/#parameter-binding) | 위치 바인딩(`?`), DATETIME nanosecond 처리, NULL 값, SDK별 바인딩 방법 |
-| [트랜잭션 처리](/dbms/application-integration/concepts-common/#transaction) | RDB SQL 트랜잭션과 SDK별 제어 API 범위 |
-| [Append API와 Batch INSERT](/dbms/application-integration/concepts-common/#append-api-batch) | TAG/LOG Append와 RDB batch Append의 차이 |
+| [트랜잭션 처리](/dbms/application-integration/concepts-common/#transaction) | TRANSACTION SQL 트랜잭션과 SDK별 제어 API 범위 |
+| [Append API와 Batch INSERT](/dbms/application-integration/concepts-common/#append-api-batch) | TAG/LOG Append와 TRANSACTION batch Append의 차이 |
 | [오류 처리와 재시도](/dbms/application-integration/concepts-common/#error-handling-retry) | 연결 오류 코드, exponential backoff, Append flush 실패, connection pool 격리 |
 
 ## 핵심 특성
@@ -24,8 +24,8 @@ toc: true
 
 **테이블 타입에 따른 트랜잭션 지원 차이**
 
-명시적 `BEGIN`/`COMMIT`/`ROLLBACK`은 RDB 테이블에서 동작합니다. TAG/LOG 입력과 TAG data
-UPDATE는 RDB 트랜잭션에 참여하지 않습니다.
+명시적 `BEGIN`/`COMMIT`/`ROLLBACK`은 TRANSACTION 테이블에서 동작합니다. TAG/LOG 입력과 TAG data
+UPDATE는 TRANSACTION 테이블 트랜잭션에 참여하지 않습니다.
 
 **시간 데이터는 내부적으로 UTC nanosecond**
 
@@ -445,13 +445,13 @@ Prepared statement × 1000번:
 
 ### Machbase에서의 지원 범위
 
-LOG, TAG, RDB 테이블 모두에서 Prepared statement를 지원합니다.
+LOG, TAG, TRANSACTION 테이블 모두에서 Prepared statement를 지원합니다.
 
 | 테이블 타입 | INSERT | SELECT |
 |------------|--------|--------|
 | LOG 테이블 | O | O |
 | TAG 테이블 | O | O |
-| RDB 테이블 | O | O |
+| TRANSACTION 테이블 | O | O |
 
 Append API와는 별개로, Append는 전용 API 호출로 동작합니다. 대용량 입력에는 Append API를, 단건이나 소량 반복 입력에는 Prepared statement를 사용합니다.
 
@@ -773,7 +773,7 @@ cmd.ExecuteNonQuery();
 
 <a id="transaction"></a>
 
-## 트랜잭션 처리 (RDB 및 SDK별 지원 범위 분리)
+## 트랜잭션 처리 (TRANSACTION 및 SDK별 지원 범위 분리)
 
 테이블 유형에 따라 트랜잭션 지원 범위가 다릅니다. 애플리케이션 설계 시 반드시 확인하십시오.
 
@@ -781,18 +781,18 @@ cmd.ExecuteNonQuery();
 
 | 테이블 유형 | 트랜잭션 | COMMIT/ROLLBACK | 이유 |
 |-----------|:---:|:---:|------|
-| **RDB** | O | O | `BEGIN` 이후 RDB DML을 커밋하거나 롤백 |
+| **TRANSACTION** | O | O | `BEGIN` 이후 TRANSACTION DML을 커밋하거나 롤백 |
 | **VOLATILE** | X | X | 각 DML 문 단위로 반영 |
 | **LOOKUP** | X | X | 각 DML 문 단위로 반영 |
 | **TAG** | X | X | 입력과 제한적 data UPDATE를 문 단위로 반영 |
 | **LOG** | X | X | append 중심 입력을 문 단위로 반영 |
 
-> 활성 RDB 트랜잭션 안에서는 LOG, TAG, LOOKUP, VOLATILE 테이블 쓰기와 DDL이 차단됩니다.
+> 활성 TRANSACTION 테이블 트랜잭션 안에서는 LOG, TAG, LOOKUP, VOLATILE 테이블 쓰기와 DDL이 차단됩니다.
 > 여러 테이블 타입의 쓰기를 하나의 트랜잭션으로 묶을 수 없습니다.
 
 ### Autocommit 동작
 
-서버 SQL에서는 plain `BEGIN`, `COMMIT`, `ROLLBACK`을 사용합니다. `BEGIN RDB` 같은 별도 구문은
+서버 SQL에서는 plain `BEGIN`, `COMMIT`, `ROLLBACK`을 사용합니다. `BEGIN TRANSACTION` 같은 별도 구문은
 지원하지 않습니다. SDK의 표준 트랜잭션 편의 API가 이 SQL 흐름을 모두 구현한 것은 아니므로,
 아래 지원 표와 각 드라이버 레퍼런스를 함께 확인합니다.
 
@@ -836,11 +836,11 @@ SQLEndTran(SQL_HANDLE_DBC, conn, SQL_COMMIT);
 ### TAG/LOG 테이블에 대한 트랜잭션 시도
 
 트랜잭션 밖에서 실행한 TAG/LOG 입력은 해당 문 또는 Append 요청 단위로 반영되며 이후
-`ROLLBACK`으로 취소할 수 없습니다. `BEGIN`은 RDB 트랜잭션을 시작하므로, 그 안에서
+`ROLLBACK`으로 취소할 수 없습니다. `BEGIN`은 TRANSACTION 테이블 트랜잭션을 시작하므로, 그 안에서
 TAG/LOG 쓰기를 실행하면 해당 쓰기가 차단됩니다.
 
 ```text
--- TAG INSERT가 활성 RDB 트랜잭션 안에서 거부됩니다.
+-- TAG INSERT가 활성 TRANSACTION 테이블 트랜잭션 안에서 거부됩니다.
 BEGIN;
 INSERT INTO sensor_tag (name, time, value) VALUES ('s01', NOW, 25.0);
 ROLLBACK;
@@ -877,8 +877,8 @@ TAG/LOG 테이블에서 잘못 삽입된 데이터를 제거하려면 [DELETE �
 
 | 방법 | 트랜잭션 | 처리 방식 | 권장 사용량 |
 |------|----------|-----------|-------------|
-| **단건 INSERT** | 지원 (RDB) | 행 단위 즉시 처리 | 건별 처리, 낮은 빈도 |
-| **Batch INSERT** | 지원 (RDB) | 여러 행을 한 번에 전송 | 수십~수백 건 묶음 처리 |
+| **단건 INSERT** | 지원 (TRANSACTION) | 행 단위 즉시 처리 | 건별 처리, 낮은 빈도 |
+| **Batch INSERT** | 지원 (TRANSACTION) | 여러 행을 한 번에 전송 | 수십~수백 건 묶음 처리 |
 | **Append API** | 테이블 타입별 상이 | 전용 Append 세션/요청으로 묶음 전송 | 연속 수집·배치 적재 |
 
 ### Append API
@@ -900,9 +900,9 @@ Machbase 서버
 
 #### 주요 특성
 
-- **TAG/LOG**: append 최적화 입력 경로를 사용하며, 이미 성공한 행을 RDB 트랜잭션으로
+- **TAG/LOG**: append 최적화 입력 경로를 사용하며, 이미 성공한 행을 TRANSACTION 테이블 트랜잭션으로
   롤백할 수 없습니다.
-- **RDB**: Append open/close와 batch 입력을 지원합니다. RDB batch는 statement transaction으로
+- **TRANSACTION**: Append open/close와 batch 입력을 지원합니다. TRANSACTION batch는 statement transaction으로
   처리되므로 batch 중 constraint 오류가 발생하면 해당 batch 전체를 롤백합니다.
 - **순서 보장 없음**: flush 단위 내에서 행 삽입 순서는 보장되지 않습니다.
 - **드라이버별 flush 의미**: 일부 드라이버는 미전송 데이터를 전송하고, 일부 드라이버는 이미 보낸 Append 데이터의 pending 응답을 확인합니다.
@@ -933,7 +933,7 @@ Machbase 서버
 반대로 다음 경우에는 일반 INSERT를 검토합니다.
 
 - 입력 빈도가 낮고 각 문장의 결과를 즉시 확인해야 하는 경우
-- 여러 RDB DML을 명시적 트랜잭션으로 묶어야 하는 경우
+- 여러 TRANSACTION DML을 명시적 트랜잭션으로 묶어야 하는 경우
 - 에러 발생 시 어느 행에서 실패했는지 정확히 추적해야 하는 경우
 
 #### Append API 사용 예 (Python)
@@ -989,14 +989,14 @@ conn.close();
 
 #### 동작 원리
 
-Prepared statement의 파라미터를 바꾸어 여러 행을 입력합니다. RDB에서 전체 성공 또는 전체
-실패가 필요하면 서버 SQL 트랜잭션을 명시적으로 시작하거나, batch 원자성을 보장하는 RDB
+Prepared statement의 파라미터를 바꾸어 여러 행을 입력합니다. TRANSACTION 테이블에서 전체 성공 또는 전체
+실패가 필요하면 서버 SQL 트랜잭션을 명시적으로 시작하거나, batch 원자성을 보장하는 TRANSACTION
 Append batch를 사용합니다. SDK의 `executeBatch`/`executemany`가 자동으로 명시적
 트랜잭션을 시작한다고 가정하지 않습니다.
 
 #### 언제 Batch INSERT를 사용하는가
 
-- RDB 테이블에 여러 행을 원자적으로 삽입해야 할 때
+- TRANSACTION 테이블에 여러 행을 원자적으로 삽입해야 할 때
 - 데이터 마이그레이션 또는 ETL 처리에서 수십~수백 건을 묶어 처리할 때
 - 실패 시 rollback이 필요한 경우
 
@@ -1031,11 +1031,11 @@ pstmt.close();
 지속적인 TAG/LOG 대량 입력
   → Append API
 
-RDB 여러 문 트랜잭션 필요
+TRANSACTION 여러 문 트랜잭션 필요
   → BEGIN/COMMIT을 지원하는 SQL/SDK 경로
 
-RDB 여러 행 묶음 입력
-  → RDB Append batch 또는 검증된 SDK batch 경로
+TRANSACTION 여러 행 묶음 입력
+  → TRANSACTION Append batch 또는 검증된 SDK batch 경로
 
 단건, 낮은 빈도, 간단한 작업
   → 단건 INSERT

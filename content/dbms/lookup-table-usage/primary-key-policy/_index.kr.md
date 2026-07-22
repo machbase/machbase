@@ -123,7 +123,7 @@ DELETE FROM country WHERE iso_code = 'OLD';
 INSERT INTO country VALUES ('NEW', '새 국가명');
 ```
 
-LOOKUP 테이블 DML은 개별 문장 단위로 실행합니다. `BEGIN`/`COMMIT`으로 묶는 RDB
+LOOKUP 테이블 DML은 개별 문장 단위로 실행합니다. `BEGIN`/`COMMIT`으로 묶는 TRANSACTION
 트랜잭션에는 LOOKUP DML을 포함할 수 없습니다.
 
 ### 복합 PRIMARY KEY 주의사항

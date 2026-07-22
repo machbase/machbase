@@ -11,7 +11,7 @@ LOG 테이블의 내부 구조와 스키마 설계 원칙을 다룹니다.
 
 ## LOG 테이블 설계
 
-LOG 테이블은 이벤트·로그·패킷처럼 추가 전용(append-only) 데이터를 저장하는 기본 테이블 타입입니다. `CREATE TABLE` 문으로 생성하며, `_arrival_time` 컬럼이 자동으로 추가됩니다.
+LOG 테이블은 이벤트·로그·패킷처럼 추가 전용(append-only) 데이터를 저장하는 테이블 타입입니다. `CREATE LOG TABLE` 문으로 생성하며, `_arrival_time` 컬럼이 자동으로 추가됩니다.
 
 - **[활용 사례](/dbms/log-table-usage/patterns-scenarios/#use-cases-log)**
 - **[_arrival_time 시간 모델](/dbms/log-table-usage/arrival-time-model/#time-model-arrival-time)**
@@ -47,7 +47,7 @@ LOG 테이블 스키마 설계의 핵심은 조회 패턴에 맞게 컬럼을 �
 #### 예시: 통합 보안 이벤트 로그
 
 ```sql
-CREATE TABLE security_event (
+CREATE LOG TABLE security_event (
     event_time  DATETIME,        -- 이벤트 발생 시각
     severity    SHORT,           -- 1=INFO, 2=WARN, 3=ERROR, 4=CRITICAL
     category    VARCHAR(32),     -- 이벤트 카테고리

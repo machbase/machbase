@@ -97,7 +97,7 @@ append 중심 모델에서는 새로운 이벤트나 측정값을 기존 행의 
 **롤백 로그가 줄어든다**
 
 LOG/TAG 입력은 일반적인 행 갱신 트랜잭션과 다른 경로를 사용합니다. 완료된 Append 요청은
-RDB 트랜잭션의 `ROLLBACK` 대상으로 취급하지 않습니다.
+TRANSACTION 테이블 트랜잭션의 `ROLLBACK` 대상으로 취급하지 않습니다.
 
 ### 테이블 유형별 쓰기 제약
 
@@ -109,12 +109,12 @@ append-only 원칙은 테이블 유형마다 다르게 적용됩니다.
 | TAG | 가능 | 가능 (Standard Edition, 태그 선택자와 시간축 조건 필요) | `BEFORE` 또는 태그/축 조건 기반 |
 | LOOKUP | 가능 | Primary key 또는 일반 조건식 | Primary key 또는 일반 조건식, 조건 없는 전체 삭제 |
 | VOLATILE | 가능 | Primary key 조건 기반 | Primary key 조건 기반 |
-| RDB | 가능 | 일반 WHERE 조건 기반 | 일반 WHERE 조건 기반 |
+| TRANSACTION | 가능 | 일반 WHERE 조건 기반 | 일반 WHERE 조건 기반 |
 
 LOG와 TAG 테이블이 append 중심 모델의 핵심입니다. LOOKUP은 Primary key fast path와 일반
 조건식으로 기준 정보를 변경하고, VOLATILE은 Primary key 조건으로 상태 데이터를 변경합니다.
 LOOKUP의 조건 없는 DELETE는 모든 행을 삭제합니다.
-RDB 테이블은 관계형 업무 데이터를 Machbase 안에서 다루는 테이블이며 append-only 설계 대상이
+TRANSACTION 테이블은 관계형 업무 데이터를 Machbase 안에서 다루는 테이블이며 append-only 설계 대상이
 아닙니다.
 
 ### 쓰기 경로: INSERT vs APPEND
@@ -166,7 +166,7 @@ LOG 테이블에 잘못된 값을 넣으면 해당 행을 수정하는 것이 �
 
 ## 시간 모델과 _arrival_time
 
-Machbase DBMS에서 시간은 테이블 유형에 따라 다르게 표현됩니다. LOG 테이블은 시스템이 데이터를 수신한 시각을 자동 기록하고, TAG 테이블은 사용자가 명시적으로 정의한 시간 컬럼을 시간 축으로 사용합니다. LOOKUP, VOLATILE, RDB 테이블에는 필수 시간축이 없으며, 필요하면 일반 DATETIME 컬럼을 정의합니다.
+Machbase DBMS에서 시간은 테이블 유형에 따라 다르게 표현됩니다. LOG 테이블은 시스템이 데이터를 수신한 시각을 자동 기록하고, TAG 테이블은 사용자가 명시적으로 정의한 시간 컬럼을 시간 축으로 사용합니다. LOOKUP, VOLATILE, TRANSACTION 테이블에는 필수 시간축이 없으며, 필요하면 일반 DATETIME 컬럼을 정의합니다.
 
 ### LOG 테이블의 `_arrival_time`
 
@@ -174,7 +174,7 @@ LOG 테이블을 생성하면 `_arrival_time`이라는 DATETIME 컬럼이 자동
 
 ```sql
 -- 사용자는 두 컬럼만 정의했지만
-CREATE TABLE device_events (
+CREATE LOG TABLE device_events (
     device_id VARCHAR(20),
     status    VARCHAR(20)
 );
@@ -235,7 +235,7 @@ VALUES ('temp_sensor_01', TO_DATE('2026-07-03 08:55:00', 'YYYY-MM-DD HH24:MI:SS'
 | 늦게 도착한 데이터 | 수신 시각으로 기록됨 | 원래 측정 시각으로 기록 가능 |
 | 조회 기준 | `_arrival_time` 또는 `DURATION` | BASETIME 컬럼 이름으로 조회 |
 
-LOOKUP, VOLATILE, RDB 테이블의 DATETIME 컬럼은 일반 컬럼입니다. 자동 `_arrival_time`이나
+LOOKUP, VOLATILE, TRANSACTION 테이블의 DATETIME 컬럼은 일반 컬럼입니다. 자동 `_arrival_time`이나
 `BASETIME` 의미가 붙지 않으므로, 시간 범위 조회나 보관 정책을 시계열 테이블과 같은 방식으로
 기대하면 안 됩니다.
 

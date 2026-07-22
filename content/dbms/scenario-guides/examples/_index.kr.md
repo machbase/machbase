@@ -209,7 +209,7 @@ conn.Close();
 
 ## 언어별 드라이버 선택 가이드
 
-| 언어 | 패키지 | Append API | 트랜잭션(RDB) |
+| 언어 | 패키지 | Append API | 트랜잭션(TRANSACTION) |
 |------|--------|:---:|:---:|
 | Python | `machbaseAPI` | O | X |
 | Java | JDBC (`machbase-jdbc`) | O | O |

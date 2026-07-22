@@ -51,7 +51,7 @@ $MACHBASE_HOME/trc/                   # 트레이스 로그 디렉터리
 
 ```sql
 -- 파일 수집 대상 테이블 (LOG 테이블)
-CREATE TABLE file_sensor_log (
+CREATE LOG TABLE file_sensor_log (
     _arrival_time DATETIME,
     device_id     VARCHAR(64),
     sensor_type   VARCHAR(32),
@@ -135,7 +135,7 @@ DEVICE_B,HUMID,55.2,100
 
 ```sql
 -- TCP 소켓 수집 대상 테이블
-CREATE TABLE tcp_event_log (
+CREATE LOG TABLE tcp_event_log (
     _arrival_time DATETIME,
     client_ip     VARCHAR(40),
     event_code    INTEGER,

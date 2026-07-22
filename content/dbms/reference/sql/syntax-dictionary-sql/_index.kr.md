@@ -11,7 +11,7 @@ SQL 문법 사전은 Machbase에서 지원하는 모든 SQL 구문의 BNF 표기
 
 | 구문 | 분류 | 설명 |
 |------|------|------|
-| [CREATE TABLE](./ddl-syntax/#create-table) | DDL | 로그/TAG/LOOKUP/VOLATILE/RDB 테이블 생성 |
+| [CREATE TABLE](./ddl-syntax/#create-table) | DDL | 로그/TAG/LOOKUP/VOLATILE/TRANSACTION 테이블 생성 |
 | [DROP TABLE](./ddl-syntax/#drop-table) | DDL | 테이블 삭제 |
 | [ALTER TABLE](./ddl-syntax/#alter-table) | DDL | 테이블 스키마 변경 (컬럼 추가/삭제/수정/이름 변경) |
 | [TRUNCATE TABLE](./ddl-syntax/#truncate-table) | DDL | 테이블 데이터 전체 삭제 |

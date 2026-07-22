@@ -51,7 +51,7 @@ AUTH KEY challenge 인증은 DB 포트(기본 5656)에 접속하는 드라이버
 
 Go `database/sql` 드라이버와 Go native 클라이언트 모두 `Begin`/`BeginTx` 트랜잭션이 구현되어
 있지 않습니다. Python `machbaseAPI`도 `begin`/`commit`/`rollback`을 지원하지 않으며,
-`.NET`의 `MachTransaction`도 구현되어 있지 않습니다. RDB 트랜잭션은 SQL `BEGIN`을 직접
+`.NET`의 `MachTransaction`도 구현되어 있지 않습니다. TRANSACTION 테이블 트랜잭션은 SQL `BEGIN`을 직접
 실행할 수 있는 JDBC 또는 ODBC/CLI 경로를 사용합니다.
 
 ## SDK 선택 가이드
@@ -60,7 +60,7 @@ Go `database/sql` 드라이버와 Go native 클라이언트 모두 `Begin`/`Begi
 |----------|---------|
 | 지속적인 대량 쓰기 (Append) | ODBC/CLI, JDBC, Go (native), Python |
 | AUTH KEY 키 기반 인증 | JDBC, ODBC/CLI, machsql |
-| RDB 테이블 트랜잭션 | JDBC, ODBC/CLI (SQL `BEGIN` 직접 실행) |
+| TRANSACTION 테이블 트랜잭션 | JDBC, ODBC/CLI (SQL `BEGIN` 직접 실행) |
 | 웹 서비스/마이크로서비스 통합 | REST API |
 | Go 표준 인터페이스 | Go (database/sql) |
 | 브라우저/스크립트 연동 | Node.js, REST API |

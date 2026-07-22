@@ -20,11 +20,11 @@ Machbase는 대화형 쿼리 프로세서로 'machsql' 도구를 제공합니다
 ### 테이블 생성
 
 ```sql
-CREATE TABLE table_name ( column1 datatype, column2 datatype, column3 datatype, .... );
+CREATE LOG TABLE table_name ( column1 datatype, column2 datatype, column3 datatype, .... );
 ```
 
 ```sql
-CREATE TABLE sensor_data ( id VARCHAR(32), val DOUBLE );
+CREATE LOG TABLE sensor_data ( id VARCHAR(32), val DOUBLE );
 ```
 
 
@@ -59,7 +59,7 @@ SELECT * FROM sensor_data;
 machsql을 사용한 예제는 다음과 같습니다.
 
 ```sql
-Mach> CREATE TABLE sensor_data (id VARCHAR(32), val DOUBLE);
+Mach> CREATE LOG TABLE sensor_data (id VARCHAR(32), val DOUBLE);
  Created successfully.
 Mach> INSERT INTO sensor_data VALUES('sensor1', 10.1);
  1 row(s) inserted.
@@ -107,7 +107,7 @@ machloader에 대한 자세한 설명은 [machloader](/dbms/application-integrat
 ### 테이블 생성
 
 ```sql
-CREATE TABLE import_sample
+CREATE LOG TABLE import_sample
 (
     srcip     IPV4,
     srcport   INTEGER,
@@ -145,7 +145,7 @@ SELECT  COUNT(*)    FROM    import_sample;
 machloader와 machsql을 사용한 전체 프로세스입니다.
 
 ```sql
-Mach> CREATE TABLE import_sample
+Mach> CREATE LOG TABLE import_sample
      (
          srcip     IPV4,
          srcport   INTEGER,
@@ -180,7 +180,7 @@ IMPORT MODE    : APPEND              FIELD TERM     : ,
 ROW TERM       : \n                  ENCLOSURE      : "
 ESCAPE         : \                   ARRIVAL_TIME   : FALSE
 ENCODING       : NONE                HEADER         : FALSE
-CREATE TABLE   : FALSE
+CREATE LOG TABLE   : FALSE
  Progress bar                       Imported records        Error records
                                              1000000                    0
 Import time         :  0 hour  0 min  2.39 sec

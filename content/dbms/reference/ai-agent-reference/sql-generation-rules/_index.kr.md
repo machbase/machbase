@@ -97,8 +97,8 @@ WHERE name = 'temp_01'
 
 | 패턴 | 문제 | 올바른 방법 |
 |------|------|------------|
-| TAG 쓰기를 `BEGIN` 안에서 실행 | 활성 RDB 트랜잭션에는 TAG 쓰기를 포함할 수 없음 | TAG 쓰기는 트랜잭션 밖에서 실행 |
-| Go `database/sql`에서 `db.Begin()` | `Begin()` / `BeginTx()` 미구현 → 오류 | Transaction이 필요하면 RDB 테이블 + ODBC/JDBC 사용 |
+| TAG 쓰기를 `BEGIN` 안에서 실행 | 활성 TRANSACTION 테이블 트랜잭션에는 TAG 쓰기를 포함할 수 없음 | TAG 쓰기는 트랜잭션 밖에서 실행 |
+| Go `database/sql`에서 `db.Begin()` | `Begin()` / `BeginTx()` 미구현 → 오류 | Transaction이 필요하면 TRANSACTION 테이블 + ODBC/JDBC 사용 |
 | Python에서 `?` 플레이스홀더 | machbaseAPI는 `%s` 방식 → 오류 | `%s` 또는 `%(name)s` 사용 |
 | ROLLUP 집계에 `AVG()` 직접 사용 | ROLLUP 결과 컬럼 구조와 불일치 | `STAT(avg)` 형식 사용 |
 | TAG 테이블에 일반 `FROM table_name` 사용 | 정상 문법 | 태그 선택자와 시간 조건을 WHERE에 작성 |

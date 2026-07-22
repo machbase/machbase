@@ -65,10 +65,10 @@ WHERE sensor_id = 'TEMP-01';
 |----------|-------------|
 | 재시작 후에도 반드시 보존해야 하는 원본 데이터 | TAG 또는 LOG |
 | 기준 코드나 장비 마스터처럼 영속 참조 데이터 | LOOKUP |
-| 트랜잭션과 관계형 갱신이 필요한 업무 데이터 | RDB |
+| 트랜잭션과 관계형 갱신이 필요한 업무 데이터 | TRANSACTION |
 | 장기 분석 대상 시계열 데이터 | TAG |
 
-VOLATILE 테이블에만 저장된 데이터는 서버 종료 시 복구할 수 없습니다. 중요한 데이터는 TAG, LOG, LOOKUP, RDB 중 적합한 영속 테이블에 저장하고, VOLATILE 테이블은 캐시나 중간 결과로 사용합니다.
+VOLATILE 테이블에만 저장된 데이터는 서버 종료 시 복구할 수 없습니다. 중요한 데이터는 TAG, LOG, LOOKUP, TRANSACTION 중 적합한 영속 테이블에 저장하고, VOLATILE 테이블은 캐시나 중간 결과로 사용합니다.
 
 <a id="overview-volatile-design-flow"></a>
 

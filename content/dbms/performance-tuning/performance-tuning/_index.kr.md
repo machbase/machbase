@@ -11,15 +11,15 @@ toc: true
 
 | 방식 | 전송 특성 | 적합한 상황 |
 |------|-----------|-----------|
-| **Append API** | 여러 행을 버퍼링하여 전송 | 지속적인 TAG/LOG 수집, RDB client batch 입력 |
+| **Append API** | 여러 행을 버퍼링하여 전송 | 지속적인 TAG/LOG 수집, TRANSACTION client batch 입력 |
 | **INSERT (단건)** | SQL 문장마다 파싱하고 응답 | 소량 입력, 즉시 결과 확인 |
-| **RDB 트랜잭션 INSERT** | 여러 RDB DML을 한 작업 단위로 처리 | 원자성이 필요한 관계형 업무 처리 |
+| **TRANSACTION 테이블 트랜잭션 INSERT** | 여러 TRANSACTION DML을 한 작업 단위로 처리 | 원자성이 필요한 관계형 업무 처리 |
 
 > TAG와 LOG 테이블의 지속적인 대량 수집에는 Append API를 우선 검토합니다.
 
 ## 핵심 입력 성능 원칙
 
-1. **입력 경로 선택**: TAG/LOG 수집에는 Append API, 관계형 작업에는 RDB DML 사용
+1. **입력 경로 선택**: TAG/LOG 수집에는 Append API, 관계형 작업에는 TRANSACTION DML 사용
 2. **배치 크기 조정**: 너무 작으면 RTT 오버헤드, 너무 크면 flush 지연
 3. **병렬 입력**: 여러 스레드에서 동시에 Append 실행
 4. **인덱스 최소화**: 쓰기 경로에서 실제로 사용하는 인덱스만 유지

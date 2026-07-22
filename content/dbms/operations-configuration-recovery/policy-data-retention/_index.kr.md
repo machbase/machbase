@@ -20,11 +20,11 @@ Retention Policy는 **TAG, KV, LOG 테이블**에 사용할 수 있습니다.
 | TAG | O |
 | KV | O |
 | LOG | O |
-| RDB | X |
+| TRANSACTION | X |
 | VOLATILE | X |
 | LOOKUP | X |
 
-RDB, VOLATILE, LOOKUP 테이블의 주기적 데이터 삭제는 별도의 애플리케이션 배치 로직으로 구현해야 합니다.
+TRANSACTION, VOLATILE, LOOKUP 테이블의 주기적 데이터 삭제는 별도의 애플리케이션 배치 로직으로 구현해야 합니다.
 
 ## 워크플로우
 
@@ -308,12 +308,12 @@ Retention Policy를 적용하면 오류가 발생합니다.
 | TAG | O |
 | KV | O |
 | LOG | O |
-| RDB | X |
+| TRANSACTION | X |
 | VOLATILE | X |
 | LOOKUP | X |
 
 ```sql
--- 오류: RDB 테이블에 적용 시
+-- 오류: TRANSACTION 테이블에 적용 시
 ALTER TABLE orders ADD RETENTION policy_30d;
 -- → ERR_QP_RETENTION_INVALID_TABLE_TYPE (또는 유사한 오류)
 ```

@@ -135,7 +135,7 @@ Cluster Edition에서는 다음 기능이 지원되지 않습니다.
 
 | 기능 | 지원 여부 |
 |------|:---:|
-| RDB 테이블 | X |
+| TRANSACTION 테이블 | X |
 | Custom ROLLUP | X |
 | ROLLUP_REBUILD | X |
 | MOUNT / UMOUNT | X |

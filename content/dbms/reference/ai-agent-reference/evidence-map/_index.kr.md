@@ -33,7 +33,7 @@ toc: true
 
 | 사실 | 근거 (소스) | 비고 |
 |------|------------|------|
-| Cluster Edition: RDB 테이블 미지원 | Machbase 공식 제한사항 문서 | [지원 범위와 제약](../../../reference/support-scope-constraints/) |
+| Cluster Edition: TRANSACTION 테이블 미지원 | Machbase 공식 제한사항 문서 | [지원 범위와 제약](../../../reference/support-scope-constraints/) |
 | Cluster Edition: VOLATILE 테이블 미지원 | Machbase 공식 제한사항 문서 | |
 | Cluster Edition: STREAM, MOUNT, Custom ROLLUP, ROLLUP_REBUILD 미지원 | Machbase 공식 제한사항 문서 | |
 
@@ -50,4 +50,4 @@ toc: true
 |------|------------|------|
 | TAG data UPDATE WHERE는 태그 선택 조건과 BASETIME 조건을 요구하며 `name IN`, `name LIKE`, 시간 범위, 데이터 컬럼 predicate를 지원 | TAG data UPDATE 구문과 지원 범위 문서 | [TAG data UPDATE](/dbms/reference/support-scope-constraints/tag-data-update/) |
 | TAG data UPDATE SET은 실제 데이터 컬럼을 허용하고 PK(name), BASETIME, 메타데이터 컬럼은 거부 | TAG data UPDATE 구문과 지원 범위 문서 | [TAG data UPDATE 구문](/dbms/reference/sql/syntax-dictionary-sql/dml-syntax/tag-data-update-syntax/) |
-| TAG 테이블 DELETE는 BEFORE/WHERE/METADATA/ROLLUP 등 제한된 형태로 지원 | TAG DELETE 구문과 지원 범위 문서 | 일반 RDB DELETE와 동일한 범위로 가정하지 않음 |
+| TAG 테이블 DELETE는 BEFORE/WHERE/METADATA/ROLLUP 등 제한된 형태로 지원 | TAG DELETE 구문과 지원 범위 문서 | 일반 TRANSACTION DELETE와 동일한 범위로 가정하지 않음 |

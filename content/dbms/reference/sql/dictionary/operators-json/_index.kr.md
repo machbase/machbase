@@ -115,7 +115,7 @@ Mach> SELECT JSON_REMOVE('{"a":1,"b":2}', '$.a') FROM dual;
 
 ```sql
 -- JSON 타입 컬럼을 포함한 LOG 테이블
-CREATE TABLE device_log (
+CREATE LOG TABLE device_log (
     ts    DATETIME,
     data  JSON
 );
@@ -139,6 +139,6 @@ SELECT ts, data -> 'temperature' AS temp
 | LOG | O | O | 완전 지원 |
 | LOOKUP | O | O | 일반 컬럼으로 지원, JSON path index는 미지원 |
 | VOLATILE | X | X | JSON 컬럼 생성 불가 |
-| RDB | O | O | 완전 지원 |
+| TRANSACTION | O | O | 완전 지원 |
 
 자세한 내용은 [JSON 타입의 테이블 타입별 지원 범위](/dbms/lookup-table-usage/json-column-query/)를 참고하십시오.

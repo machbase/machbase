@@ -4,21 +4,21 @@ weight: 60
 toc: true
 ---
 
-RDB 테이블의 인덱스 설계와 조회 성능 최적화 방법을 다룹니다.
+TRANSACTION 테이블의 인덱스 설계와 조회 성능 최적화 방법을 다룹니다.
 
 
 <a id="index-tuning-rdb"></a>
 
-## RDB 인덱스 튜닝
+## TRANSACTION 인덱스 튜닝
 
-`CREATE RDB TABLE`로 생성하는 RDB 테이블은 PRIMARY KEY와 보조 인덱스를 조회 패턴에 맞게 설계해야 최적의 성능을 얻을 수 있습니다.
+`CREATE TRANSACTION TABLE`로 생성하는 TRANSACTION 테이블은 PRIMARY KEY와 보조 인덱스를 조회 패턴에 맞게 설계해야 최적의 성능을 얻을 수 있습니다.
 
 ### PK 자동 B-Tree 인덱스
 
 PRIMARY KEY를 선언하면 해당 컬럼에 B-Tree 인덱스가 자동 생성됩니다.
 
 ```sql
-CREATE RDB TABLE product (
+CREATE TRANSACTION TABLE product (
     product_id   INTEGER PRIMARY KEY,  -- B-Tree 인덱스 자동 생성
     product_name VARCHAR(128),
     category     VARCHAR(64),
@@ -58,7 +58,7 @@ PK와 보조 인덱스를 설계할 때 주요 조회 패턴을 반영하는 것
 
 ```sql
 -- product_id로 주로 조회하는 경우
-CREATE RDB TABLE product (
+CREATE TRANSACTION TABLE product (
     product_id INTEGER PRIMARY KEY,
     product_name VARCHAR(128),
     price DOUBLE
@@ -71,7 +71,7 @@ CREATE RDB TABLE product (
 조회한다면 단일 PK와 복합 보조 인덱스를 조합합니다.
 
 ```sql
-CREATE RDB TABLE product (
+CREATE TRANSACTION TABLE product (
     product_id INTEGER PRIMARY KEY,
     category   VARCHAR(64),
     name       VARCHAR(128),

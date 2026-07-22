@@ -1,17 +1,17 @@
 ---
 type: docs
-title: '15.2 TAG + RDB + LOG 조인 대시보드'
+title: '15.2 TAG + TRANSACTION + LOG 조인 대시보드'
 weight: 40
 toc: true
 ---
 
-TAG(시계열), RDB(관계형), LOG(이벤트) 세 가지 테이블 유형을 하나의 SQL로 조인할 수 있습니다. 장비별 최신 센서값, 장비 마스터 정보, 시스템 이벤트 로그를 통합해 운영 대시보드를 구성하는 시나리오입니다.
+TAG(시계열), TRANSACTION(관계형), LOG(이벤트) 세 가지 테이블 유형을 하나의 SQL로 조인할 수 있습니다. 장비별 최신 센서값, 장비 마스터 정보, 시스템 이벤트 로그를 통합해 운영 대시보드를 구성하는 시나리오입니다.
 
 ## 시나리오 구성도
 
 ```
 [센서 데이터]  → TAG 테이블   (sensor_tag)     ─┐
-[장비 마스터]  → RDB 테이블   (equipment)       ─┼→ 통합 대시보드 쿼리
+[장비 마스터]  → TRANSACTION 테이블   (equipment)       ─┼→ 통합 대시보드 쿼리
 [시스템 이벤트] → LOG 테이블  (system_event_log) ─┘
 ```
 
@@ -27,8 +27,8 @@ CREATE TAG TABLE sensor_tag (
     value DOUBLE SUMMARIZED
 );
 
--- 2. RDB 테이블: 장비 마스터 (관계형 참조 데이터)
-CREATE RDB TABLE equipment (
+-- 2. TRANSACTION 테이블: 장비 마스터 (관계형 참조 데이터)
+CREATE TRANSACTION TABLE equipment (
     eq_id      VARCHAR(32),
     eq_name    VARCHAR(128),
     location   VARCHAR(64),
@@ -37,7 +37,7 @@ CREATE RDB TABLE equipment (
 );
 
 -- 3. LOG 테이블: 시스템 이벤트 (시간순 이벤트 기록)
-CREATE TABLE system_event_log (
+CREATE LOG TABLE system_event_log (
     eq_id    VARCHAR(32),
     severity VARCHAR(10),
     message  VARCHAR(1024)
@@ -46,7 +46,7 @@ CREATE TABLE system_event_log (
 
 ## 장비 마스터 데이터 등록
 
-RDB 테이블에 장비 기준 정보를 등록합니다:
+TRANSACTION 테이블에 장비 기준 정보를 등록합니다:
 
 ```sql
 INSERT INTO equipment VALUES ('EQ-001', '압축기 #1', 'A동 3층', 85.0, '홍길동');
@@ -54,7 +54,7 @@ INSERT INTO equipment VALUES ('EQ-002', '펌프 #2',   'B동 1층', 72.0, '이�
 INSERT INTO equipment VALUES ('EQ-003', '모터 #3',   'C동 2층', 90.0, '박철수');
 ```
 
-## TAG + RDB 조인: 현재 센서값 + 장비 정보
+## TAG + TRANSACTION 조인: 현재 센서값 + 장비 정보
 
 각 태그의 최신값과 장비 마스터를 조인해 상태 현황을 조회합니다.
 
@@ -153,7 +153,7 @@ ORDER BY pct DESC;
 | 항목 | 권장 사항 |
 |------|-----------|
 | TAG RECENT 조회 | 태그 수가 많을 경우 GROUP BY name으로 그룹화 |
-| RDB JOIN | 장비 마스터처럼 관계형 참조 데이터와 조인 |
+| TRANSACTION JOIN | 장비 마스터처럼 관계형 참조 데이터와 조인 |
 | LOG 기간 필터 | `_arrival_time` 조건을 반드시 포함해 스캔 범위 제한 |
 | 복합 조인 | 서브쿼리 또는 CTE로 단계 분리 시 가독성·성능 향상 |
 

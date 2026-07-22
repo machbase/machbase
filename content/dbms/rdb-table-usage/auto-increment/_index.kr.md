@@ -4,22 +4,22 @@ weight: 160
 toc: true
 ---
 
-`AUTO_INCREMENT`는 RDB 테이블의 PRIMARY KEY 값을 서버가 자동으로 생성하도록 하는 컬럼 속성입니다. 응용 프로그램이 row마다 고유한 식별자를 직접 계산하지 않아도 되므로, 장비 마스터, 작업 큐, 이벤트 인덱스, 외부 데이터 이관 테이블처럼 단일 숫자 ID가 필요한 RDB 테이블에 사용할 수 있습니다.
+`AUTO_INCREMENT`는 TRANSACTION 테이블의 PRIMARY KEY 값을 서버가 자동으로 생성하도록 하는 컬럼 속성입니다. 응용 프로그램이 row마다 고유한 식별자를 직접 계산하지 않아도 되므로, 장비 마스터, 작업 큐, 이벤트 인덱스, 외부 데이터 이관 테이블처럼 단일 숫자 ID가 필요한 TRANSACTION 테이블에 사용할 수 있습니다.
 
-이 기능은 RDB 테이블 전용입니다. LOOKUP 테이블의 `PROPERTY(SEQUENCE)` 및 `NEXTVAL()`과는 별개의 기능입니다.
+이 기능은 TRANSACTION 테이블 전용입니다. LOOKUP 테이블의 `PROPERTY(SEQUENCE)` 및 `NEXTVAL()`과는 별개의 기능입니다.
 
 ## 지원 범위
 
 `AUTO_INCREMENT`는 컬럼 단위 PRIMARY KEY에만 사용할 수 있습니다.
 
 ```sql
-CREATE RDB TABLE device_master (
+CREATE TRANSACTION TABLE device_master (
     id LONG PRIMARY KEY AUTO_INCREMENT,
     device_name VARCHAR(80),
     site_code VARCHAR(32)
 );
 
-CREATE RDB TABLE work_order (
+CREATE TRANSACTION TABLE work_order (
     id INT64 AUTO_INCREMENT PRIMARY KEY,
     status VARCHAR(16),
     created_at DATETIME
@@ -30,26 +30,26 @@ CREATE RDB TABLE work_order (
 
 | 타입 | 지원 여부 | 설명 |
 | --- | --- | --- |
-| `LONG` | 지원 | RDB `AUTO_INCREMENT` PRIMARY KEY로 사용할 수 있습니다. |
+| `LONG` | 지원 | TRANSACTION `AUTO_INCREMENT` PRIMARY KEY로 사용할 수 있습니다. |
 | `INT64` | 지원 | `LONG`과 같은 64비트 정수 계열로 사용할 수 있습니다. |
 | `SHORT`, `INTEGER`, `ULONG` 등 | 미지원 | `AUTO_INCREMENT` 컬럼으로 사용할 수 없습니다. |
 | `VARCHAR`, `DATETIME`, `TEXT`, `BINARY`, `BLOB`, `CLOB` 등 | 미지원 | 숫자 자동 생성 대상이 아니므로 사용할 수 없습니다. |
 
 제한 사항은 다음과 같습니다.
 
-- RDB 테이블에서만 사용할 수 있습니다.
+- TRANSACTION 테이블에서만 사용할 수 있습니다.
 - `LONG` 또는 `INT64` 컬럼에만 사용할 수 있습니다.
 - 해당 컬럼은 컬럼 단위 `PRIMARY KEY`여야 합니다.
 - 테이블 단위 PRIMARY KEY, 복합 PRIMARY KEY에는 사용할 수 없습니다.
 - LOOKUP 테이블의 `PROPERTY(SEQUENCE)`와 함께 사용할 수 없습니다.
-- `NEXTVAL()`은 RDB `AUTO_INCREMENT` 컬럼에 사용할 수 없습니다.
+- `NEXTVAL()`은 TRANSACTION `AUTO_INCREMENT` 컬럼에 사용할 수 없습니다.
 
 ## 기본 사용법
 
 자동 생성 컬럼을 INSERT 컬럼 목록에서 생략하면 서버가 값을 생성합니다.
 
 ```sql
-CREATE RDB TABLE device_master (
+CREATE TRANSACTION TABLE device_master (
     id LONG PRIMARY KEY AUTO_INCREMENT,
     device_name VARCHAR(80),
     site_code VARCHAR(32)
@@ -108,12 +108,12 @@ VALUES (1000, 'duplicate-device', 'BUSAN-A');
 대상 테이블의 자동 생성 컬럼을 생략하면 `INSERT ... SELECT`에서도 row마다 자동값이 생성됩니다.
 
 ```sql
-CREATE RDB TABLE staging_device (
+CREATE TRANSACTION TABLE staging_device (
     device_name VARCHAR(80),
     site_code VARCHAR(32)
 );
 
-CREATE RDB TABLE device_master (
+CREATE TRANSACTION TABLE device_master (
     id LONG PRIMARY KEY AUTO_INCREMENT,
     device_name VARCHAR(80),
     site_code VARCHAR(32)
@@ -133,18 +133,18 @@ FROM device_master
 ORDER BY id;
 ```
 
-이 패턴은 CSV 또는 외부 시스템에서 임시 테이블로 적재한 데이터를 최종 RDB 마스터 테이블로 옮길 때 사용할 수 있습니다.
+이 패턴은 CSV 또는 외부 시스템에서 임시 테이블로 적재한 데이터를 최종 TRANSACTION 마스터 테이블로 옮길 때 사용할 수 있습니다.
 
 외부 시스템의 key를 보존하면서 Machbase 내부 key를 새로 부여할 수도 있습니다.
 
 ```sql
-CREATE RDB TABLE erp_device_stage (
+CREATE TRANSACTION TABLE erp_device_stage (
     erp_device_id VARCHAR(40),
     device_name VARCHAR(80),
     site_code VARCHAR(32)
 );
 
-CREATE RDB TABLE device_master (
+CREATE TRANSACTION TABLE device_master (
     id LONG PRIMARY KEY AUTO_INCREMENT,
     erp_device_id VARCHAR(40),
     device_name VARCHAR(80),
@@ -164,10 +164,10 @@ ORDER BY erp_device_id;
 
 ## 활용 예제
 
-시계열 TAG 테이블은 장비의 측정값을 저장하고, RDB 테이블은 장비의 업무 속성을 관리하는 데 사용할 수 있습니다. `AUTO_INCREMENT` ID를 내부 식별자로 사용하면 장비 이름이 바뀌어도 내부 참조를 안정적으로 유지할 수 있습니다.
+시계열 TAG 테이블은 장비의 측정값을 저장하고, TRANSACTION 테이블은 장비의 업무 속성을 관리하는 데 사용할 수 있습니다. `AUTO_INCREMENT` ID를 내부 식별자로 사용하면 장비 이름이 바뀌어도 내부 참조를 안정적으로 유지할 수 있습니다.
 
 ```sql
-CREATE RDB TABLE asset_master (
+CREATE TRANSACTION TABLE asset_master (
     asset_id LONG PRIMARY KEY AUTO_INCREMENT,
     asset_name VARCHAR(80),
     tag_name VARCHAR(80),
@@ -189,10 +189,10 @@ ORDER BY asset_id;
 
 응용 프로그램은 `asset_id`를 내부 key로 저장하고, 사용자가 보는 이름이나 태그 매핑은 별도 컬럼으로 관리할 수 있습니다.
 
-RDB 테이블을 작업 큐나 명령 상태 저장소로 사용할 때도 `AUTO_INCREMENT`가 유용합니다.
+TRANSACTION 테이블을 작업 큐나 명령 상태 저장소로 사용할 때도 `AUTO_INCREMENT`가 유용합니다.
 
 ```sql
-CREATE RDB TABLE command_queue (
+CREATE TRANSACTION TABLE command_queue (
     command_id LONG PRIMARY KEY AUTO_INCREMENT,
     asset_id LONG,
     command_type VARCHAR(32),
@@ -245,11 +245,11 @@ JDBC `DatabaseMetaData.getColumns()`는 이 flag를 기준으로 `IS_AUTOINCREME
 응용 프로그램은 catalog query로 확인합니다.
 
 `AUTO_INCREMENT` 속성은 system catalog에 저장되므로 정상 shutdown/startup 후에도
-유지됩니다. RDB `ALTER TABLE ... DROP COLUMN`으로 스키마가 재구성되어도 `AUTO_INCREMENT`
+유지됩니다. TRANSACTION `ALTER TABLE ... DROP COLUMN`으로 스키마가 재구성되어도 `AUTO_INCREMENT`
 속성과 다음 자동값은 유지됩니다.
 
 ```sql
-CREATE RDB TABLE maintenance_ticket (
+CREATE TRANSACTION TABLE maintenance_ticket (
     ticket_id LONG PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(120),
     obsolete_note VARCHAR(120)
@@ -284,7 +284,7 @@ ORDER BY ticket_id;
 ```c
 /*
  * table schema:
- * CREATE RDB TABLE append_device (
+ * CREATE TRANSACTION TABLE append_device (
  *     id LONG PRIMARY KEY AUTO_INCREMENT,
  *     name VARCHAR(32)
  * );
@@ -302,7 +302,7 @@ append_values[1].mVar.mData = "append-device-01";
 /* SQLAppendBatch(...) 실행 */
 ```
 
-`SQL_APPEND_TYPE_NULL`은 지원하지 않습니다. RDB append 경로는 append type metadata와 테이블 컬럼 타입을 먼저 비교하므로, auto 컬럼이라도 append type이 `NULL`이면 column type mismatch로 처리됩니다.
+`SQL_APPEND_TYPE_NULL`은 지원하지 않습니다. TRANSACTION append 경로는 append type metadata와 테이블 컬럼 타입을 먼저 비교하므로, auto 컬럼이라도 append type이 `NULL`이면 column type mismatch로 처리됩니다.
 
 ## 지원하지 않는 예
 
@@ -310,32 +310,32 @@ append_values[1].mVar.mData = "append-device-01";
 
 ```sql
 -- INTEGER는 AUTO_INCREMENT 지원 타입이 아닙니다.
-CREATE RDB TABLE bad_integer (
+CREATE TRANSACTION TABLE bad_integer (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(32)
 );
 
 -- PRIMARY KEY가 아니므로 지원되지 않습니다.
-CREATE RDB TABLE bad_no_pk (
+CREATE TRANSACTION TABLE bad_no_pk (
     id LONG AUTO_INCREMENT,
     name VARCHAR(32)
 );
 
 -- table-level primary key와 결합한 AUTO_INCREMENT는 지원하지 않습니다.
-CREATE RDB TABLE bad_table_pk (
+CREATE TRANSACTION TABLE bad_table_pk (
     id LONG AUTO_INCREMENT,
     name VARCHAR(32),
     PRIMARY KEY(id)
 );
 
--- RDB table이 아니므로 지원되지 않습니다.
-CREATE TABLE bad_log_table (
+-- TRANSACTION table이 아니므로 지원되지 않습니다.
+CREATE LOG TABLE bad_log_table (
     id LONG PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(32)
 );
 
 -- lookup sequence 속성과 혼용하지 않습니다.
-CREATE RDB TABLE bad_sequence_mix (
+CREATE TRANSACTION TABLE bad_sequence_mix (
     id LONG PROPERTY(SEQUENCE=1) PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(32)
 );

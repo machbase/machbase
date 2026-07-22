@@ -12,7 +12,8 @@ toc: true
 | 대화형 접속 | `machsql -s 127.0.0.1 -P 5656 -u SYS -p MANAGER` |
 | SQL 파일 실행 | `machsql -s 127.0.0.1 -P 5656 -u SYS -p MANAGER -f file.sql` |
 | 테이블 목록 | `SHOW TABLES;` |
-| 테이블 생성 | `CREATE TABLE table_name (...);` |
+| TRANSACTION 테이블 생성 | `CREATE TABLE table_name (...);` 또는 `CREATE TRANSACTION TABLE table_name (...);` |
+| LOG 테이블 생성 | `CREATE LOG TABLE table_name (...);` |
 | 데이터 입력 | `INSERT INTO table_name VALUES (...);` |
 | 데이터 조회 | `SELECT ... FROM table_name;` |
 | 테이블 삭제 | `DROP TABLE table_name;` |

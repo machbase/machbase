@@ -54,7 +54,7 @@ SELECT ID, ISSUE_DATE, TYPE, VIOLATE_STATUS FROM V$LICENSE_INFO;
 ### 6. 기본 쿼리 테스트
 
 ```sql
-CREATE TABLE check_test (id INTEGER, ts DATETIME);
+CREATE LOG TABLE check_test (id INTEGER, ts DATETIME);
 INSERT INTO check_test VALUES (1, NOW);
 SELECT * FROM check_test;
 DROP TABLE check_test;
@@ -92,7 +92,7 @@ Warehouse 그룹 내 복제가 정상 동작하는지 간단한 INSERT로 확인
 
 ```sql
 -- Broker를 통해 데이터 입력
-CREATE TABLE cluster_check_test (id INTEGER, ts DATETIME);
+CREATE LOG TABLE cluster_check_test (id INTEGER, ts DATETIME);
 INSERT INTO cluster_check_test VALUES (1, NOW);
 
 -- 각 Warehouse 노드에 직접 접속하여 데이터 존재 여부 확인

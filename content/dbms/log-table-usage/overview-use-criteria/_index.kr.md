@@ -10,10 +10,10 @@ LOG 테이블은 이벤트, 로그, 패킷, 센서 원시 이벤트처럼 계속
 
 ## LOG 테이블의 특성
 
-LOG 테이블은 `CREATE TABLE` 문으로 생성합니다. 사용자가 정의한 컬럼 외에 `_arrival_time` 컬럼이 자동으로 추가되어 데이터가 Machbase에 도착한 시각을 기록합니다.
+LOG 테이블은 `CREATE LOG TABLE` 문으로 생성합니다. 사용자가 정의한 컬럼 외에 `_arrival_time` 컬럼이 자동으로 추가되어 데이터가 Machbase에 도착한 시각을 기록합니다.
 
 ```sql
-CREATE TABLE event_log (
+CREATE LOG TABLE event_log (
     event_time DATETIME,
     device_id  VARCHAR(64),
     level      SHORT,
@@ -63,10 +63,10 @@ WHERE _arrival_time >= NOW - 3600000000000
 |----------|-------------|
 | 센서 이름과 시간축 기준의 계측 데이터 저장 | TAG |
 | 코드, 장비 마스터, 임계값 같은 참조 데이터 관리 | LOOKUP |
-| 행 단위 UPDATE/DELETE와 트랜잭션이 필요한 업무 데이터 | RDB |
+| 행 단위 UPDATE/DELETE와 트랜잭션이 필요한 업무 데이터 | TRANSACTION |
 | 재시작 시 사라져도 되는 최신 상태 캐시 | VOLATILE |
 
-LOG 테이블은 append 중심 구조이므로 잘못 입력된 특정 행을 일반 UPDATE로 수정하는 모델에는 맞지 않습니다. 수정 가능한 기준 정보는 LOOKUP 또는 RDB 테이블에 분리하고, LOG 테이블에는 변경 이력을 append하는 방식으로 설계합니다.
+LOG 테이블은 append 중심 구조이므로 잘못 입력된 특정 행을 일반 UPDATE로 수정하는 모델에는 맞지 않습니다. 수정 가능한 기준 정보는 LOOKUP 또는 TRANSACTION 테이블에 분리하고, LOG 테이블에는 변경 이력을 append하는 방식으로 설계합니다.
 
 <a id="overview-log-design-flow"></a>
 

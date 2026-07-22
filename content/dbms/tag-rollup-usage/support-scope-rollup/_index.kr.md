@@ -34,7 +34,7 @@ toc: true
 | TAG (시간축) | O |
 | TAG (거리축) | X |
 | LOG | X |
-| RDB | X |
+| TRANSACTION | X |
 | VOLATILE | X |
 | LOOKUP | X |
 

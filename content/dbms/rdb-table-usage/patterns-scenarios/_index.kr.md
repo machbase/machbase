@@ -4,14 +4,14 @@ weight: 90
 toc: true
 ---
 
-RDB 테이블이 적합한 업무 유형과 실무 스키마 예시를 정리합니다.
+TRANSACTION 테이블이 적합한 업무 유형과 실무 스키마 예시를 정리합니다.
 
 
 <a id="use-cases-rdb"></a>
 
 ## 활용 사례
 
-INSERT·UPDATE·DELETE·SELECT가 모두 필요한 관계형 업무 데이터에 RDB 테이블이 적합합니다.
+INSERT·UPDATE·DELETE·SELECT가 모두 필요한 관계형 업무 데이터에 TRANSACTION 테이블이 적합합니다.
 
 ### 적합한 데이터 유형
 
@@ -28,7 +28,7 @@ INSERT·UPDATE·DELETE·SELECT가 모두 필요한 관계형 업무 데이터에
 #### 주문 관리
 
 ```sql
-CREATE RDB TABLE orders (
+CREATE TRANSACTION TABLE orders (
     order_id   LONG,
     customer   VARCHAR(64),
     item_id    INTEGER,
@@ -50,7 +50,7 @@ DELETE FROM orders WHERE order_id = 1001;
 #### 재고 관리
 
 ```sql
-CREATE RDB TABLE inventory (
+CREATE TRANSACTION TABLE inventory (
     item_id    INTEGER,
     warehouse  VARCHAR(32),
     qty        INTEGER,
@@ -65,7 +65,7 @@ WHERE item_id = 42 AND warehouse = 'WH-01';
 #### 설비 점검 이력
 
 ```sql
-CREATE RDB TABLE maintenance_log (
+CREATE TRANSACTION TABLE maintenance_log (
     equip_id    VARCHAR(32),
     check_date  DATETIME,
     technician  VARCHAR(64),
@@ -80,6 +80,6 @@ WHERE equip_id = 'MOTOR-01' AND check_date = '2024-01-15 09:00:00';
 
 ### 부적합한 경우
 
-- **Cluster Edition**: RDB 테이블은 Standard Edition 전용입니다.
+- **Cluster Edition**: TRANSACTION 테이블은 Standard Edition 전용입니다.
 - **센서 계측값**: 시계열 패턴이면 TAG 테이블을 권장합니다.
 - **소규모 코드 테이블**: PRIMARY KEY 기반 UPDATE 위주면 LOOKUP 테이블이 더 적합합니다.

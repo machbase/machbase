@@ -5,7 +5,7 @@ weight: 20
 toc: true
 ---
 
-1장에서 유일하게 직접 실행하는 대표 예제입니다. 서버 접속, 테이블 생성, 데이터 입력, 조회, 정리 흐름을 한 번에 확인합니다. 가장 기본 테이블 유형인 LOG 테이블을 사용하며, TAG, LOOKUP, RDB 같은 다른 유형은 이후 테이블 설계 문서에서 다룹니다.
+1장에서 유일하게 직접 실행하는 대표 예제입니다. 서버 접속, 테이블 생성, 데이터 입력, 조회, 정리 흐름을 한 번에 확인합니다. 가장 기본 테이블 유형인 LOG 테이블을 사용하며, TAG, LOOKUP, TRANSACTION 같은 다른 유형은 이후 테이블 설계 문서에서 다룹니다.
 
 ## 실행 전제
 
@@ -19,13 +19,14 @@ toc: true
 
 ## 대표 실행 예제
 
-서비스 시작 이벤트 한 건을 LOG 테이블에 기록합니다. `CREATE TABLE`에 별도 유형을 지정하지 않으면 LOG 테이블이 생성되며, `_arrival_time` 컬럼이 자동으로 추가됩니다.
+서비스 시작 이벤트 한 건을 LOG 테이블에 기록합니다. LOG 테이블은 `CREATE LOG TABLE`로
+명시해서 생성하며, `_arrival_time` 컬럼이 자동으로 추가됩니다.
 
 다음 명령으로 SQL 파일을 저장하고 실행합니다.
 
 ```bash
 cat > /tmp/dbms_gs_quick.sql <<'SQL'
-CREATE TABLE DBMS_GS_QUICK (
+CREATE LOG TABLE DBMS_GS_QUICK (
   EVENT_ID INTEGER,
   EVENT_TIME DATETIME,
   LEVEL VARCHAR(10),
@@ -62,7 +63,7 @@ machsql -s 127.0.0.1 -P 5656 -u SYS -p MANAGER -f /tmp/dbms_gs_quick.sql
 | 항목 | 확인 내용 |
 | --- | --- |
 | 서버 접속 | `machsql`로 `127.0.0.1:5656`에 접속 |
-| 테이블 생성 | `CREATE TABLE`의 기본 결과는 LOG 테이블 |
+| 테이블 생성 | `CREATE LOG TABLE`로 LOG 테이블을 명시적으로 생성 |
 | 데이터 입력 | `INSERT`와 `TO_DATE`로 이벤트 데이터 저장 |
 | 데이터 조회 | `SELECT`와 `ORDER BY`로 입력 결과 확인 |
 | 자동 컬럼 | LOG 테이블의 `_arrival_time`은 서버가 자동 기록 |

@@ -67,7 +67,7 @@ IoT 게이트웨이 → Java/Python/Go/Node.js 수집 서비스 (Append API) →
 
 #### 일반 트랜잭션 처리
 
-RDB DML과 명시적 트랜잭션을 지원하는 드라이버를 선택하고 prepared statement와 connection
+TRANSACTION DML과 명시적 트랜잭션을 지원하는 드라이버를 선택하고 prepared statement와 connection
 pool을 조합합니다. 목표 처리량은 실제 문장과 트랜잭션 크기로 측정합니다.
 
 #### 저빈도 조회 위주 (관리, 대시보드)

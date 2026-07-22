@@ -25,7 +25,7 @@ LOG 테이블은 다음과 같은 데이터에 적합합니다.
 #### 웹 액세스 로그
 
 ```sql
-CREATE TABLE web_access_log (
+CREATE LOG TABLE web_access_log (
     method    VARCHAR(8),
     uri       VARCHAR(1024),
     status    SHORT,
@@ -38,7 +38,7 @@ CREATE TABLE web_access_log (
 #### 방화벽 이벤트 로그
 
 ```sql
-CREATE TABLE fw_event (
+CREATE LOG TABLE fw_event (
     action    VARCHAR(8),
     src_ip    IPV4,
     dst_ip    IPV4,
@@ -84,10 +84,10 @@ LOG 테이블 (app_log)        ← 로그 고속 저장 (_arrival_time 자동 �
 
 ### 1단계: LOG 테이블 스키마 설계
 
-`CREATE TABLE` 구문으로 테이블을 생성합니다. `_arrival_time` 컬럼은 자동으로 추가되며, 데이터가 서버에 도착한 시각을 나노초 정밀도로 기록합니다.
+`CREATE LOG TABLE` 구문으로 테이블을 생성합니다. `_arrival_time` 컬럼은 자동으로 추가되며, 데이터가 서버에 도착한 시각을 나노초 정밀도로 기록합니다.
 
 ```sql
-CREATE TABLE app_log (
+CREATE LOG TABLE app_log (
     host      VARCHAR(64),
     level     VARCHAR(10),
     message   VARCHAR(4096),
@@ -109,7 +109,7 @@ CREATE TABLE app_log (
 더 풍부한 분석을 위해 서비스명, 환경, 요청 ID 등을 추가할 수 있습니다.
 
 ```sql
-CREATE TABLE app_log_detail (
+CREATE LOG TABLE app_log_detail (
     host       VARCHAR(64),
     service    VARCHAR(32),
     env        VARCHAR(16),
@@ -377,7 +377,7 @@ ALTER TABLE app_log DROP RETENTION;
 
 | 항목 | 내용 |
 |------|------|
-| LOG 테이블 생성 | `CREATE TABLE` 구문 사용. `_arrival_time`은 자동 추가 |
+| LOG 테이블 생성 | `CREATE LOG TABLE` 구문 사용. `_arrival_time`은 자동 추가 |
 | 키워드 인덱스 | `CREATE INDEX ... INDEX_TYPE KEYWORD` 로 전문 검색 인덱스 생성 |
 | SEARCH 연산자 | `WHERE message SEARCH '키워드'` 형식으로 역인덱스 검색. AND/OR 복합 가능 |
 | 시간 집계 | `TO_CHAR(_arrival_time, 'YYYY-MM-DD HH24')` 또는 `TRUNC` 함수로 버킷 집계 |

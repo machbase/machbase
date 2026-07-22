@@ -15,11 +15,11 @@ Machbase는 용도에 따라 다섯 가지 테이블 유형을 제공합니다. 
 | **LOG** | 비정형 로그/이벤트 데이터 순차 저장, 텍스트 검색 |
 | **LOOKUP** | 메타데이터, 코드 테이블, 참조 데이터 (UPDATE/DELETE 지원) |
 | **VOLATILE** | 메모리 기반 서버 상태·캐시, 재시작 시 데이터 소멸 |
-| **RDB** | 트랜잭션이 필요한 일반 관계형 데이터 |
+| **TRANSACTION** | 트랜잭션이 필요한 일반 관계형 데이터 |
 
 ## 테이블 유형별 기능 지원 종합 표
 
-| 기능 | TAG | LOG | LOOKUP | VOLATILE | RDB |
+| 기능 | TAG | LOG | LOOKUP | VOLATILE | TRANSACTION |
 |------|:---:|:---:|:------:|:--------:|:---:|
 | **쓰기** | | | | | |
 | INSERT (SQL) | O | O | O | O | O |
@@ -84,16 +84,16 @@ UPDATE sensor_data
 ### LOOKUP과 VOLATILE의 트랜잭션 범위
 
 LOOKUP과 VOLATILE 테이블의 각 DML은 statement 단위로 반영됩니다. 여러 DML을 `BEGIN`과
-`COMMIT`/`ROLLBACK`으로 묶는 RDB 트랜잭션에는 참여하지 않습니다.
+`COMMIT`/`ROLLBACK`으로 묶는 TRANSACTION 테이블 트랜잭션에는 참여하지 않습니다.
 
 ### JSON 컬럼 지원 범위
 
-JSON 컬럼은 TAG, LOG, LOOKUP, RDB 테이블에서 지원합니다. VOLATILE 테이블은 JSON 타입 컬럼 생성을 지원하지 않습니다. LOOKUP 테이블의 JSON 컬럼은 일반 컬럼으로 사용할 수 있지만 primary key로는 사용할 수 없습니다. 상세 내용은 [JSON 타입의 테이블 타입별 지원 범위](../../sql/type-data-types-dictionary/table-types-type-support-scope-json/)를 참고하십시오.
+JSON 컬럼은 TAG, LOG, LOOKUP, TRANSACTION 테이블에서 지원합니다. VOLATILE 테이블은 JSON 타입 컬럼 생성을 지원하지 않습니다. LOOKUP 테이블의 JSON 컬럼은 일반 컬럼으로 사용할 수 있지만 primary key로는 사용할 수 없습니다. 상세 내용은 [JSON 타입의 테이블 타입별 지원 범위](../../sql/type-data-types-dictionary/table-types-type-support-scope-json/)를 참고하십시오.
 
 ### Append API 대상 테이블
 
 Append API는 TAG, LOG, LOOKUP 테이블에 사용할 수 있습니다. LOOKUP 테이블은 중복 키 처리
-정책(`LOOKUP_APPEND_UPDATE_ON_DUPKEY`)을 함께 확인하십시오. RDB 테이블은 지원되는 client의
+정책(`LOOKUP_APPEND_UPDATE_ON_DUPKEY`)을 함께 확인하십시오. TRANSACTION 테이블은 지원되는 client의
 appendBatch 또는 append stream 경로를 사용하며, VOLATILE 테이블에는 일반 `INSERT` SQL을
 사용합니다.
 

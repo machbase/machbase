@@ -24,7 +24,7 @@ toc: true
 | TAG 테이블 | O | O | |
 | LOG 테이블 | O | O | |
 | LOOKUP 테이블 | O | O | |
-| RDB 테이블 | O | O | |
+| TRANSACTION 테이블 | O | O | |
 | VOLATILE 테이블 | X | X | 메모리 기반으로 백업 불가 |
 
 ## BACKUP 문법

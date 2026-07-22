@@ -16,7 +16,7 @@ toc: true
 | 1 | [센서 데이터 저장과 ROLLUP 분석](/dbms/tag-rollup-usage/patterns-scenarios/#storage-sensor-data-rollup) | 초급 | TAG 테이블, ROLLUP |
 | 2 | [로그 데이터 저장과 텍스트 검색](/dbms/log-table-usage/patterns-scenarios/#storage-log-text-search-logs) | 초급 | LOG 테이블, SEARCH |
 | 3 | [장비 마스터 데이터와 알람 상태 관리](state-master-status-equipment-alarm/) | 중급 | LOOKUP 테이블, JOIN |
-| 4 | [TAG + RDB + LOG 조인 대시보드](join-tag-rdb-log/) | 중급 | 복합 JOIN, 집계 |
+| 4 | [TAG + TRANSACTION + LOG 조인 대시보드](join-tag-rdb-log/) | 중급 | 복합 JOIN, 집계 |
 | 5 | [실시간 상태판 만들기](state-status-real-time-dashboard/) | 중급 | STREAM, LOOKUP |
 | 6 | [대량 데이터 적재 파이프라인](bulk-pipeline/) | 중급 | Append API, 배치 |
 | 7 | [Collector로 파일/소켓 데이터 수집하기](file-ingestion-collector/) | 중급 | Collector |
@@ -41,7 +41,7 @@ TAG 테이블과 LOG 테이블의 기본 사용 패턴입니다. 데이터 수�
 
 ### 마스터 데이터와 복합 조회 (3~4번)
 
-LOOKUP 테이블로 장비 마스터를 관리하고, TAG·LOG·RDB 테이블을 조인해 대시보드용 데이터를 구성하는 패턴을 다룹니다.
+LOOKUP 테이블로 장비 마스터를 관리하고, TAG·LOG·TRANSACTION 테이블을 조인해 대시보드용 데이터를 구성하는 패턴을 다룹니다.
 
 ### 실시간 처리와 파이프라인 (5~8번)
 

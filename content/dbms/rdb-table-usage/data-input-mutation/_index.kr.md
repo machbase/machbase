@@ -4,16 +4,16 @@ weight: 40
 toc: true
 ---
 
-RDB 테이블의 INSERT, UPDATE, DELETE 사용법과 INSERT SELECT 패턴을 다룹니다.
+TRANSACTION 테이블의 INSERT, UPDATE, DELETE 사용법과 INSERT SELECT 패턴을 다룹니다.
 
-RDB 테이블에서 "없으면 INSERT, 있으면 UPDATE"가 필요한 경우에는 [INSERT ON DUPLICATE KEY UPDATE](/dbms/rdb-table-usage/insert-on-duplicate-key-update/)를 사용합니다. 자동 번호 PRIMARY KEY가 필요한 INSERT 패턴은 [AUTO_INCREMENT](/dbms/rdb-table-usage/auto-increment/)에서 다룹니다.
+TRANSACTION 테이블에서 "없으면 INSERT, 있으면 UPDATE"가 필요한 경우에는 [INSERT ON DUPLICATE KEY UPDATE](/dbms/rdb-table-usage/insert-on-duplicate-key-update/)를 사용합니다. 자동 번호 PRIMARY KEY가 필요한 INSERT 패턴은 [AUTO_INCREMENT](/dbms/rdb-table-usage/auto-increment/)에서 다룹니다.
 
 
 <a id="modeling-rdb-update-delete"></a>
 
 ## UPDATE·DELETE 설계
 
-RDB 테이블은 UPDATE와 DELETE를 모두 지원합니다. WHERE 절 없이 전체 행을 대상으로 실행할 수도 있습니다.
+TRANSACTION 테이블은 UPDATE와 DELETE를 모두 지원합니다. WHERE 절 없이 전체 행을 대상으로 실행할 수도 있습니다.
 
 ### UPDATE
 
@@ -85,7 +85,7 @@ WHERE status = 'PENDING' AND created_at < NOW - 86400000000000;
 ### INSERT SELECT 기본
 
 ```sql
--- 다른 RDB 테이블에서 데이터 복사
+-- 다른 TRANSACTION 테이블에서 데이터 복사
 INSERT INTO order_archive
 SELECT order_id, customer, item_id, amount, order_time, status
 FROM order_history
@@ -98,10 +98,10 @@ FROM order_history
 WHERE status = 'PENDING';
 ```
 
-### LOG 테이블에서 RDB 테이블로 데이터 이관
+### LOG 테이블에서 TRANSACTION 테이블로 데이터 이관
 
 ```sql
--- LOG 테이블 데이터를 RDB 테이블로 집계하여 삽입
+-- LOG 테이블 데이터를 TRANSACTION 테이블로 집계하여 삽입
 INSERT INTO daily_summary (date, sensor, avg_val, max_val, count, region)
 SELECT
     DATE_TRUNC('day', event_time),
@@ -127,7 +127,7 @@ WHERE customer = 'CUST-001'
 
 ### 주의사항
 
-- RDB 대상 `INSERT SELECT`는 statement 단위로 처리됩니다. 중간 행에서 constraint 오류가
+- TRANSACTION 대상 `INSERT SELECT`는 statement 단위로 처리됩니다. 중간 행에서 constraint 오류가
   발생하면 해당 statement가 삽입한 행 전체를 롤백합니다. 대량 데이터는 배치로 분할합니다.
 - SELECT 결과의 컬럼 수와 타입이 INSERT 대상 테이블의 컬럼과 일치해야 합니다.
 - `INSERT SELECT`와 `ON DUPLICATE KEY UPDATE`의 결합은 지원하지 않습니다.

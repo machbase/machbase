@@ -119,7 +119,7 @@ Fluent Bit를 사용하는 경우, Machbase HTTP output을 통해 연동합니�
 
 ```sql
 -- 범용 시스템 로그 테이블
-CREATE TABLE system_log (
+CREATE LOG TABLE system_log (
     _arrival_time DATETIME,
     host          VARCHAR(128),
     service       VARCHAR(64),

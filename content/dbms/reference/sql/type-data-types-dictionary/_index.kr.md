@@ -37,7 +37,7 @@ Machbase에서 지원하는 SQL 데이터 타입을 설명합니다.
 C 언어의 16비트 부호 있는 정수(`int16_t`)와 동일합니다. 최소 음수 값(-32,768)은 NULL로 인식됩니다. `int16`으로도 표시할 수 있습니다.
 
 ```sql
-CREATE TABLE t (c1 SHORT);
+CREATE LOG TABLE t (c1 SHORT);
 INSERT INTO t VALUES (-32767);  -- 유효한 최솟값
 INSERT INTO t VALUES (-32768);  -- NULL로 처리됨
 ```
@@ -84,7 +84,7 @@ C 언어의 64비트 부동소수점 타입 `double`과 동일합니다. 양수 
 `NUMBER`는 `DECIMAL`의 alias입니다.
 
 ```sql
-CREATE RDB TABLE invoice (
+CREATE TRANSACTION TABLE invoice (
     id     LONG PRIMARY KEY,
     amount DECIMAL(18,2),
     rate   NUMERIC(7,4)
@@ -124,7 +124,7 @@ SELECT TO_CHAR(ts, 'YYYY-MM-DD HH24:MI:SS') FROM t;
 가변 길이 문자열 타입입니다. `n`은 1 ~ 32,768 바이트 범위이며, UTF-8 인코딩을 사용합니다. 영문 기준 바이트 수이므로 한글 등 멀티바이트 문자 사용 시 적절한 크기를 설정해야 합니다.
 
 ```sql
-CREATE TABLE t (name VARCHAR(100), description VARCHAR(1000));
+CREATE LOG TABLE t (name VARCHAR(100), description VARCHAR(1000));
 ```
 
 ### TEXT
@@ -136,7 +136,7 @@ VARCHAR 크기를 초과하는 대용량 텍스트를 저장하기 위한 타입
 - TAG, LOOKUP, VOLATILE 테이블에서는 지원하지 않음
 
 ```sql
-CREATE TABLE log_table (ts DATETIME, message TEXT);
+CREATE LOG TABLE log_table (ts DATETIME, message TEXT);
 -- 키워드 인덱스 생성
 CREATE INDEX idx_msg ON log_table (message) INDEX_TYPE KEYWORD;
 ```
@@ -167,7 +167,7 @@ TAG 테이블의 `BINARY(n)`:
 IPv4 주소를 저장하는 타입입니다. 내부적으로 4바이트를 사용하며 `"0.0.0.0"` ~ `"255.255.255.255"` 범위를 표현합니다.
 
 ```sql
-CREATE TABLE access_log (ts DATETIME, src_ip IPV4, dst_ip IPV4);
+CREATE LOG TABLE access_log (ts DATETIME, src_ip IPV4, dst_ip IPV4);
 INSERT INTO access_log VALUES (NOW, '192.168.0.1', '10.0.0.1');
 SELECT * FROM access_log WHERE src_ip = TO_IPV4('192.168.0.1');
 ```
@@ -181,7 +181,7 @@ IPv6 주소를 저장하는 타입입니다. 내부적으로 16바이트를 사�
 - `"::192.168.3.1"` — IPv4 호환 표기 (deprecated)
 
 ```sql
-CREATE TABLE v6_log (ts DATETIME, src_ip IPV6);
+CREATE LOG TABLE v6_log (ts DATETIME, src_ip IPV6);
 INSERT INTO v6_log VALUES (NOW, '21DA:D3:0:2F3B:2AA:FF:FE28:9C5A');
 ```
 
@@ -193,12 +193,12 @@ JSON 문서를 저장하는 타입입니다. "Key-Value" 쌍으로 구성된 JSO
 
 - 데이터 최대 크기: 32,768 bytes (VARCHAR와 동일)
 - JSON path 최대 길이: 512 bytes
-- TAG, LOG, LOOKUP, RDB 테이블에서 지원
+- TAG, LOG, LOOKUP, TRANSACTION 테이블에서 지원
 - VOLATILE 테이블에서는 JSON 컬럼 생성 불가
 - LOOKUP 테이블의 JSON 컬럼은 primary key로 사용할 수 없음
 
 ```sql
-CREATE TABLE sensor_data (
+CREATE LOG TABLE sensor_data (
     ts   DATETIME,
     data JSON
 );
@@ -237,7 +237,7 @@ Machbase 데이터 타입과 SQL 표준 타입 및 C 타입의 대응 관계입�
 
 ## 테이블 타입별 지원 데이터 타입
 
-| 타입 | TAG | LOG | LOOKUP | VOLATILE | RDB |
+| 타입 | TAG | LOG | LOOKUP | VOLATILE | TRANSACTION |
 |------|:---:|:---:|:------:|:--------:|:---:|
 | SHORT | O | O | O | O | O |
 | USHORT | O | O | O | O | O |
@@ -256,5 +256,5 @@ Machbase 데이터 타입과 SQL 표준 타입 및 C 타입의 대응 관계입�
 | JSON | O | O | O | X | O |
 | BINARY | O (고정 길이) | O | X | X | X |
 
-DECIMAL은 모든 public 테이블 타입에서 지원합니다. RDB 테이블 자체는 Standard Edition에서
+DECIMAL은 모든 public 테이블 타입에서 지원합니다. TRANSACTION 테이블 자체는 Standard Edition에서
 사용하며, Cluster Edition에서는 LOG/TAG 테이블의 DECIMAL 컬럼과 DDL 전파를 지원합니다.

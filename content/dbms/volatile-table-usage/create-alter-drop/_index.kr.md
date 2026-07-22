@@ -35,7 +35,7 @@ VOLATILE 테이블은 다른 테이블 타입과 달리 메모리에만 존재�
 
 ### 영속성 비교
 
-| 항목 | VOLATILE | LOOKUP | RDB | TAG | LOG |
+| 항목 | VOLATILE | LOOKUP | TRANSACTION | TAG | LOG |
 |------|----------|--------|-----|-----|-----|
 | 저장 위치 | 메모리 | 디스크 | 디스크 | 디스크 | 디스크 |
 | 서버 재시작 후 데이터 유지 | X | O | O | O | O |

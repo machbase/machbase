@@ -201,7 +201,7 @@ BEFORE를 명시적으로 사용하거나 생략하면(자동 BEFORE 적용) 데
 #### 절대 시간 값 기반 검색
 
 ```sql
-Mach> CREATE TABLE time_table (id INTEGER);
+Mach> CREATE LOG TABLE time_table (id INTEGER);
 Created successfully.
 
 Mach> INSERT INTO time_table(_arrival_time, id) VALUES(TO_DATE('2014-6-12 10:00:00', 'YYYY-MM-DD HH24:MI:SS'), 1);
@@ -239,7 +239,7 @@ _arrival_time                   ID
 현재 시간을 기준으로 한 검색입니다.
 
 ```sql
-Mach> CREATE TABLE relative_table(id INTEGER);
+Mach> CREATE LOG TABLE relative_table(id INTEGER);
 Created successfully.
 
 Mach> INSERT INTO relative_table values(1);
@@ -284,7 +284,7 @@ AFTER를 적용하면 데이터가 과거에서 최신 순으로 출력됩니다
 BEFORE는 입력 시간 기준으로 자동 역순(최신 우선) 출력이고, AFTER는 그 반대입니다.
 
 ```sql
-Mach> CREATE TABLE after_table (id INTEGER);
+Mach> CREATE LOG TABLE after_table (id INTEGER);
 Created successfully.
 
 Mach> INSERT INTO after_table(_arrival_time, id) VALUES(TO_DATE('2016-6-12 10:00:00', 'YYYY-MM-DD HH24:MI:SS'), 1);
@@ -332,7 +332,7 @@ A와 B는 절대 시간이며 TO_DATE 함수로 표현합니다. A와 B의 순�
 * B가 A보다 이전이면 BEFORE와 같은 방향(최신 → 과거)으로 출력됩니다.
 
 ```sql
-Mach> CREATE TABLE from_table (id INTEGER);
+Mach> CREATE LOG TABLE from_table (id INTEGER);
 Created successfully.
 
 Mach> INSERT INTO from_table(_arrival_time, id) VALUES(TO_DATE('2016-6-12 10:00:00', 'YYYY-MM-DD HH24:MI:SS'), 1);
@@ -420,7 +420,7 @@ Log 테이블, Volatile 테이블, Lookup 테이블 및 메타 테이블을 Join
 ### 간단한 Join
 
 ```sql
-Mach> CREATE TABLE logtable (code INT,value INT);
+Mach> CREATE LOG TABLE logtable (code INT,value INT);
 Created successfully.
 
 Mach> INSERT INTO logtable VALUES(1,20 );
@@ -501,7 +501,7 @@ JOIN 절이 없는 조인 쿼리는 오류를 발생시킵니다. Log 테이블�
 두 개의 Log 테이블 조인은 매우 느릴 수 있으므로, 데이터베이스를 설계할 때 비정규화를 고려하여 조인을 최소화하는 것이 좋습니다.
 
 ```sql
-Mach> CREATE TABLE log_table1(i1 INTEGER);
+Mach> CREATE LOG TABLE log_table1(i1 INTEGER);
 Created successfully.
 Mach> INSERT INTO log_table1 VALUES(1);
 1 row(s) inserted.
@@ -511,7 +511,7 @@ Mach> INSERT INTO log_table1 VALUES(30);
 1 row(s) inserted.
 
 
-Mach>CREATE TABLE log_table2(i1 INTEGER);
+Mach>CREATE LOG TABLE log_table2(i1 INTEGER);
 Created successfully.
 Mach> INSERT INTO log_table2 VALUES(1);
 1 row(s) inserted.

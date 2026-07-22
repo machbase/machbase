@@ -43,7 +43,7 @@ WHERE _arrival_time BETWEEN '2024-01-01 00:00:00' AND '2024-01-02 00:00:00';
 
 ```sql
 -- 이벤트 발생 시각을 별도 컬럼으로 관리하는 패턴
-CREATE TABLE app_log (
+CREATE LOG TABLE app_log (
     event_time DATETIME,   -- 실제 이벤트 발생 시각
     level      VARCHAR(8),
     msg        VARCHAR(1024)

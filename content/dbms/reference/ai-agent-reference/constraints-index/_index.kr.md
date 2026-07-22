@@ -15,7 +15,7 @@ toc: true
 | UPDATE SET 대상 | 실제 데이터 컬럼 허용. 메타데이터는 `UPDATE ... METADATA` 사용 | |
 | PK(name) 컬럼 UPDATE | 불가 | |
 | BASETIME 컬럼 UPDATE | 불가 | |
-| DELETE | `BEFORE`, `WHERE`, `METADATA`, `ROLLUP` 등 제한된 형태로 지원 | 일반 RDB DELETE와 동일하게 가정하지 않음 |
+| DELETE | `BEFORE`, `WHERE`, `METADATA`, `ROLLUP` 등 제한된 형태로 지원 | 일반 TRANSACTION DELETE와 동일하게 가정하지 않음 |
 | TRANSACTION | 없음 (Append-only, COMMIT/ROLLBACK 불가) | |
 | INSERT vs Append | SQL INSERT 가능하나 Append API 대비 성능 낮음 | |
 
@@ -34,7 +34,7 @@ toc: true
 |-----------|------|
 | LOOKUP 테이블 | 미지원 |
 | VOLATILE 테이블 | 미지원 |
-| RDB 테이블 | 미지원 |
+| TRANSACTION 테이블 | 미지원 |
 | MOUNT / UMOUNT | 미지원 |
 | STREAM | 미지원 |
 | Custom ROLLUP | 미지원 |
@@ -61,7 +61,7 @@ toc: true
 | TRANSACTION | TAG 테이블 | Append-only 구조로 TRANSACTION 없음 |
 | TRANSACTION | LOG 테이블 | Append-only 구조로 TRANSACTION 없음 |
 | ROLLUP_REBUILD | Cluster Edition | 미지원 |
-| 텍스트 전문 검색 | TAG/LOOKUP/VOLATILE/RDB | 미지원 (LOG 테이블만 지원) |
+| 텍스트 전문 검색 | TAG/LOOKUP/VOLATILE/TRANSACTION | 미지원 (LOG 테이블만 지원) |
 | JSON 컬럼 | VOLATILE | 미지원 |
 
 ## 참조

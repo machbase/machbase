@@ -682,7 +682,7 @@ using (var connection = new MachConnection(connString))
 {
     connection.Open();
 
-    const string sql = "CREATE TABLE tab1 ( col1 INTEGER, col2 VARCHAR(20) )";
+    const string sql = "CREATE LOG TABLE tab1 ( col1 INTEGER, col2 VARCHAR(20) )";
     using var command = new MachCommand(sql, connection);
     command.ExecuteNonQuery();
 }

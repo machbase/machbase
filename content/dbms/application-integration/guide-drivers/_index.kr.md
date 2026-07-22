@@ -909,7 +909,7 @@ void createTable()
     /* 이미 존재하면 삭제 후 재생성 */
     executeDirectSQL("DROP TABLE CLI_SAMPLE1", 1);
     executeDirectSQL(
-        "CREATE TABLE CLI_SAMPLE1("
+        "CREATE LOG TABLE CLI_SAMPLE1("
         "  seq       SHORT,"
         "  score     INTEGER,"
         "  total     LONG,"
@@ -1223,7 +1223,7 @@ void createTable()
 {
     executeDirectSQL("DROP TABLE CLI_SAMPLE", 1);
     executeDirectSQL(
-        "CREATE TABLE CLI_SAMPLE("
+        "CREATE LOG TABLE CLI_SAMPLE("
         "  short1    SHORT,"
         "  integer1  INTEGER,"
         "  long1     LONG,"
@@ -1427,7 +1427,7 @@ int main()
     /* 테이블 생성 */
     executeDirectSQL("DROP TABLE SENSOR_DATA", 1);
     executeDirectSQL(
-        "CREATE TABLE SENSOR_DATA("
+        "CREATE LOG TABLE SENSOR_DATA("
         "  ts    DATETIME,"
         "  seq   INTEGER,"
         "  value DOUBLE"
@@ -1637,7 +1637,7 @@ public class PreparedStmtSample {
             // 테이블 생성
             try (Statement stmt = conn.createStatement()) {
                 stmt.execute(
-                    "CREATE TABLE IF NOT EXISTS sensor_data (" +
+                    "CREATE LOG TABLE IF NOT EXISTS sensor_data (" +
                     "  ts DATETIME, device VARCHAR(40), value DOUBLE)"
                 );
             }
@@ -1851,7 +1851,7 @@ public class FullExample {
                     // 테이블이 없으면 무시하고 생성합니다.
                 }
                 stmt.execute(
-                    "CREATE TABLE ex_sensor (" +
+                    "CREATE LOG TABLE ex_sensor (" +
                     "  ts DATETIME, tag VARCHAR(40), value DOUBLE)");
             }
 
@@ -1890,7 +1890,7 @@ public class FullExample {
 
 ### 주의 사항
 
-- 트랜잭션은 RDB 테이블 작업에서 사용합니다. LOG/TAG 테이블 Append성 입력은 롤백 대상이 아니므로 테이블 타입별 지원 범위를 확인합니다.
+- 트랜잭션은 TRANSACTION 테이블 작업에서 사용합니다. LOG/TAG 테이블 Append성 입력은 롤백 대상이 아니므로 테이블 타입별 지원 범위를 확인합니다.
 - LOG 테이블과 TAG 테이블에는 `UPDATE`를 사용할 수 없습니다.
 - `_arrival_time` 컬럼은 기본적으로 숨겨져 있습니다. 표시하려면 URL에 `show_hidden_cols=1`을 추가합니다.
 - Append에서 DATETIME 값은 반드시 나노초 단위 `long`으로 전달해야 합니다.
@@ -1943,7 +1943,7 @@ cur = conn.cursor()
 
 # 테이블 생성
 cur.execute('''
-    CREATE TABLE IF NOT EXISTS py_sensor (
+    CREATE LOG TABLE IF NOT EXISTS py_sensor (
         ts DATETIME,
         device VARCHAR(40),
         value DOUBLE
@@ -1979,7 +1979,7 @@ try:
     # 테이블 생성
     db.execute('DROP TABLE py_quick')
     db.result()  # 테이블이 없어도 다음 CREATE를 계속 진행
-    db.execute('CREATE TABLE py_quick(ts DATETIME, device VARCHAR(40), value DOUBLE)')
+    db.execute('CREATE LOG TABLE py_quick(ts DATETIME, device VARCHAR(40), value DOUBLE)')
 
     # 데이터 삽입
     for i in range(3):
@@ -2159,7 +2159,7 @@ try:
     cur.execute('DROP TABLE py_append_demo')
 except Exception:
     pass
-cur.execute('CREATE TABLE py_append_demo(ts DATETIME, device VARCHAR(32), value DOUBLE)')
+cur.execute('CREATE LOG TABLE py_append_demo(ts DATETIME, device VARCHAR(32), value DOUBLE)')
 
 rows = [
     ['2024-01-01 09:00:00', 'sensor-a', 21.5],
@@ -2193,7 +2193,7 @@ try:
 except Exception:
     pass
 cur.execute(
-    'CREATE TABLE py_append_defaults('
+    'CREATE LOG TABLE py_append_defaults('
     '  ts DATETIME, name VARCHAR(20), value DOUBLE, note VARCHAR(40))'
 )
 
@@ -2226,7 +2226,7 @@ if db.open('127.0.0.1', 'SYS', 'MANAGER', 5656) == 0:
 try:
     db.execute('DROP TABLE py_legacy_append')
     db.result()
-    db.execute('CREATE TABLE py_legacy_append(ts DATETIME, tag VARCHAR(16), reading DOUBLE)')
+    db.execute('CREATE LOG TABLE py_legacy_append(ts DATETIME, tag VARCHAR(16), reading DOUBLE)')
 
     # appendOpen → appendData → appendFlush → appendClose
     if db.appendOpen('PY_LEGACY_APPEND') == 0:
@@ -2362,7 +2362,7 @@ finally:
 ### 주의 사항
 
 - `machbase` 클래스 메서드는 성공 시 `1`, 실패 시 `0`을 반환합니다. 반드시 반환 코드를 확인하십시오.
-- 트랜잭션은 RDB 테이블 작업에서 사용합니다. LOG/TAG 테이블 Append성 입력은 롤백 대상이 아니므로 테이블 타입별 지원 범위를 확인합니다.
+- 트랜잭션은 TRANSACTION 테이블 작업에서 사용합니다. LOG/TAG 테이블 Append성 입력은 롤백 대상이 아니므로 테이블 타입별 지원 범위를 확인합니다.
 - Append 행은 테이블 컬럼 수와 순서를 맞춰야 합니다. 컬럼 생략은 지원하지 않습니다.
 - 커넥션 풀 옵션(`pool_name`, `pool_size`)은 현재 미지원입니다.
 - `getSessionId()`, `count()`, `checkBit()` 등 기존 네이티브 기반 API는 2.3 이상 순수 Python 패키지에서 제공되지 않습니다.
@@ -2844,7 +2844,7 @@ const { createConnection } = require('@machbase/ts-client');
 
 #### 트랜잭션 편의 메서드 미지원
 
-서버는 RDB 테이블에 plain `BEGIN`, `COMMIT`, `ROLLBACK` SQL을 지원합니다. Node.js
+서버는 TRANSACTION 테이블에 plain `BEGIN`, `COMMIT`, `ROLLBACK` SQL을 지원합니다. Node.js
 클라이언트의 `beginTransaction`, `commit`, `rollback` 편의 메서드는 구현되어 있지 않으므로
 동일한 연결에서 `execute()`로 SQL을 직접 실행합니다.
 

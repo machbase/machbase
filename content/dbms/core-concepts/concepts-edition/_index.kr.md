@@ -18,12 +18,12 @@ Machbase DBMS는 PostgreSQL이나 MySQL 같은 범용 RDBMS와 설계 철학부�
 
 ### Standard Edition
 
-단일 노드에서 동작하는 구성입니다. 설치와 운영이 단순하며 RDB, VOLATILE, STREAM,
+단일 노드에서 동작하는 구성입니다. 설치와 운영이 단순하며 TRANSACTION, VOLATILE, STREAM,
 Restore/Mount 등 Standard Edition 기능을 함께 사용할 수 있습니다.
 
 - 단일 서버 인스턴스로 SQL 처리와 데이터 저장 기능 제공
 - 별도 분산 코디네이션 없이 즉시 사용 가능
-- ROLLUP, STREAM, Retention Policy, Backup/Mount, RDB 테이블 등 대부분의 기능 지원
+- ROLLUP, STREAM, Retention Policy, Backup/Mount, TRANSACTION 테이블 등 대부분의 기능 지원
 
 ### Cluster Edition
 
@@ -48,7 +48,7 @@ Warehouse, Lookup 노드로 역할을 분리합니다.
 | --- | --- | --- |
 | LOG/TAG/LOOKUP 테이블 | 모두 지원 | 모두 지원 |
 | VOLATILE 테이블 | 지원 | 미지원 |
-| RDB 테이블 | 지원 | 미지원 |
+| TRANSACTION 테이블 | 지원 | 미지원 |
 | ROLLUP | 지원 | 지원 |
 | STREAM | 지원 | 미지원 |
 | Retention Policy | 지원 | 지원 |
@@ -57,7 +57,7 @@ Warehouse, Lookup 노드로 역할을 분리합니다.
 | 수평 확장 (노드 추가) | 불가 | 가능 |
 | 자동 장애 조치 | 불가 | Coordinator가 감시 |
 
-RDB와 VOLATILE 테이블, STREAM, Restore/Mount는 Standard Edition 전용 기능입니다. Cluster
+TRANSACTION 테이블과 VOLATILE 테이블, STREAM, Restore/Mount는 Standard Edition 전용 기능입니다. Cluster
 Edition에서는 관련 구문이 거부됩니다.
 
 ### 선택 기준
@@ -85,7 +85,7 @@ Edition에서는 관련 구문이 거부됩니다.
 
 ## 기존 RDBMS와의 차이
 
-시계열 데이터의 특성에 맞추어 처음부터 설계된 데이터베이스이므로 PostgreSQL, MySQL, Oracle 같은 범용 RDBMS와 구조적으로 다른 점이 많습니다. Standard Edition에는 관계형 기준 데이터를 함께 다루기 위한 RDB 테이블도 제공되므로, "Machbase 전체"와 "LOG/TAG 시계열 테이블"의 특성을 구분해야 합니다.
+시계열 데이터의 특성에 맞추어 처음부터 설계된 데이터베이스이므로 PostgreSQL, MySQL, Oracle 같은 범용 RDBMS와 구조적으로 다른 점이 많습니다. Standard Edition에는 관계형 기준 데이터를 함께 다루기 위한 TRANSACTION 테이블도 제공되므로, "Machbase 전체"와 "LOG/TAG 시계열 테이블"의 특성을 구분해야 합니다.
 
 ### 데이터 모델 차이: CRUD vs Append-Only
 
@@ -99,13 +99,13 @@ Machbase의 LOG 테이블과 TAG 테이블은 append 중심 모델을 따릅니�
 
 RDBMS에서 날짜/시간은 여러 컬럼 중 하나일 뿐입니다. 시간 범위 조회에 B-Tree 인덱스를 사용하지만, 시간이 데이터의 주축으로 설계된 것은 아닙니다.
 
-Machbase의 시계열 테이블에서 시간은 구조의 중심입니다. LOG 테이블은 `_arrival_time`을 자동으로 관리하고, TAG 테이블은 BASETIME 컬럼을 시간 축으로 사용합니다. 파티션도 시간 기준으로 나뉘고, ROLLUP 집계도 시간 단위(SEC/MIN/HOUR)로 수행됩니다. LOOKUP, VOLATILE, RDB 테이블은 업무 기준 정보나 관계형 데이터를 위한 테이블이므로 필수 시간축을 갖지 않습니다.
+Machbase의 시계열 테이블에서 시간은 구조의 중심입니다. LOG 테이블은 `_arrival_time`을 자동으로 관리하고, TAG 테이블은 BASETIME 컬럼을 시간 축으로 사용합니다. 파티션도 시간 기준으로 나뉘고, ROLLUP 집계도 시간 단위(SEC/MIN/HOUR)로 수행됩니다. LOOKUP, VOLATILE, TRANSACTION 테이블은 업무 기준 정보나 관계형 데이터를 위한 테이블이므로 필수 시간축을 갖지 않습니다.
 
 ### 인덱싱 구조
 
 RDBMS의 기본 인덱스는 B-Tree입니다. 특정 키 값을 빠르게 찾는 랜덤 액세스에 강하지만, 대량 순차 삽입에서는 트리 재균형 비용이 발생합니다.
 
-LOG 테이블은 필요할 때 LSM 계열 인덱스를 생성해 순차 입력과 검색을 조합합니다. TAG 테이블은 태그명 -> 시간 파티션 -> 값의 3단계 자동 파티션 인덱스를 사용합니다. LOOKUP/VOLATILE/RDB 테이블은 기준 정보나 관계형 조회를 위해 각각의 키/인덱스 구조를 사용하며, LOG/TAG와 같은 시계열 인덱스 모델과는 별개입니다.
+LOG 테이블은 필요할 때 LSM 계열 인덱스를 생성해 순차 입력과 검색을 조합합니다. TAG 테이블은 태그명 -> 시간 파티션 -> 값의 3단계 자동 파티션 인덱스를 사용합니다. LOOKUP/VOLATILE/TRANSACTION 테이블은 기준 정보나 관계형 조회를 위해 각각의 키/인덱스 구조를 사용하며, LOG/TAG와 같은 시계열 인덱스 모델과는 별개입니다.
 
 ### 저장 방식: 행 지향 vs 컬럼 지향
 
@@ -137,7 +137,7 @@ TAG data UPDATE와 롤업 재구성 절차를 함께 계획합니다.
 | 서버 이벤트 로그, 알람 이력 | Machbase LOG 테이블 |
 | 고객 주문 정보, 재고 관리 | 범용 RDBMS |
 | 제품 마스터, 센서 메타데이터 | Machbase LOOKUP 테이블 |
-| 시계열 데이터 + 관계형 기준 정보 혼합 | Machbase TAG/LOG + RDB 테이블 또는 외부 RDBMS 연계 |
+| 시계열 데이터 + 관계형 기준 정보 혼합 | Machbase TAG/LOG + TRANSACTION 테이블 또는 외부 RDBMS 연계 |
 
 ### 다음 읽을 내용
 

@@ -510,7 +510,7 @@ typedef struct machbaseAppendVarStruct
 다음은 각각의 환경에 대해 실제 값을 입력하는 예제입니다. 하나의 VARCHAR 컬럼이 존재한다고 가정합니다.
 
 ```sql
-CREATE TABLE ttt (name VARCHAR(10));
+CREATE LOG TABLE ttt (name VARCHAR(10));
 ```
 
 ```cpp
@@ -540,7 +540,7 @@ void testAppendVarcharFunc()
 다음은 Text 타입에 대한 입력 예제입니다.
 
 ```sql
-CREATE TABLE ttt (doc TEXT);
+CREATE LOG TABLE ttt (doc TEXT);
 ```
 
 ```cpp
@@ -1246,7 +1246,7 @@ void prepareExecuteSQL(const char *aSQL)
 void createTable()
 {
     executeDirectSQL("DROP TABLE CLI_SAMPLE1", 1);
-    executeDirectSQL("CREATE TABLE CLI_SAMPLE1(seq short, score integer, total long, percentage float, ratio double, id varchar(10), srcip ipv4, dstip ipv6, reg_date datetime, textlog text, image binary)", 0);
+    executeDirectSQL("CREATE LOG TABLE CLI_SAMPLE1(seq short, score integer, total long, percentage float, ratio double, id varchar(10), srcip ipv4, dstip ipv6, reg_date datetime, textlog text, image binary)", 0);
 }
 
 void selectTable()
@@ -1524,7 +1524,7 @@ void executeDirectSQL(const char *aSQL, int aErrIgnore)
 void createTable()
 {
     executeDirectSQL("DROP TABLE CLI_SAMPLE", 1);
-    executeDirectSQL("CREATE TABLE CLI_SAMPLE(seq short, score integer, total long, percentage float, ratio double, id varchar(10), srcip ipv4, dstip ipv6, reg_date datetime, tlog text, image binary)", 0);
+    executeDirectSQL("CREATE LOG TABLE CLI_SAMPLE(seq short, score integer, total long, percentage float, ratio double, id varchar(10), srcip ipv4, dstip ipv6, reg_date datetime, tlog text, image binary)", 0);
 }
 
 void selectTable()
@@ -2031,7 +2031,7 @@ void executeDirectSQL(const char *aSQL, int aErrIgnore)
 void createTable()
 {
     executeDirectSQL("DROP TABLE CLI_SAMPLE", 1);
-    executeDirectSQL("CREATE TABLE CLI_SAMPLE(short1 short, integer1 integer, long1 long, float1 float, double1 double, datetime1 datetime, varchar1 varchar(10), ip ipv4, ip2 ipv6, text1 text, bin1 binary)", 0);
+    executeDirectSQL("CREATE LOG TABLE CLI_SAMPLE(short1 short, integer1 integer, long1 long, float1 float, double1 double, datetime1 datetime, varchar1 varchar(10), ip ipv4, ip2 ipv6, text1 text, bin1 binary)", 0);
 }
 
 void appendOpen()
@@ -2466,7 +2466,7 @@ void executeDirectSQL(const char *aSQL, int aErrIgnore)
 void createTable()
 {
     executeDirectSQL("DROP TABLE CLI_SAMPLE", 1);
-    executeDirectSQL("CREATE TABLE CLI_SAMPLE(seq short, score integer, total long, percentage float, ratio double, id varchar(10), srcip ipv4, dstip ipv6, reg_date datetime, tlog text, image binary)", 0);
+    executeDirectSQL("CREATE LOG TABLE CLI_SAMPLE(seq short, score integer, total long, percentage float, ratio double, id varchar(10), srcip ipv4, dstip ipv6, reg_date datetime, tlog text, image binary)", 0);
 
     printf("table created\n");
 }
@@ -2757,7 +2757,7 @@ void executeDirectSQL(const char *aSQL, int aErrIgnore)
 void createTable()
 {
     executeDirectSQL("DROP TABLE CLI_SAMPLE", 1);
-    executeDirectSQL("CREATE TABLE CLI_SAMPLE(seq short, score integer, total long, percentage float, ratio double, id varchar(10), srcip ipv4, dstip ipv6, reg_date datetime, tlog text, image binary)", 0);
+    executeDirectSQL("CREATE LOG TABLE CLI_SAMPLE(seq short, score integer, total long, percentage float, ratio double, id varchar(10), srcip ipv4, dstip ipv6, reg_date datetime, tlog text, image binary)", 0);
 
 }
 
@@ -2982,7 +2982,7 @@ void executeDirectSQL(const char *aSQL, int aErrIgnore)
 void createTable()
 {
     executeDirectSQL("DROP TABLE CLI_SAMPLE", 1);
-    executeDirectSQL("CREATE TABLE CLI_SAMPLE(seq short, score integer, total long, percentage float, ratio double, id varchar(10), srcip ipv4, dstip ipv6, reg_date datetime, tlog text, image binary)", 0);
+    executeDirectSQL("CREATE LOG TABLE CLI_SAMPLE(seq short, score integer, total long, percentage float, ratio double, id varchar(10), srcip ipv4, dstip ipv6, reg_date datetime, tlog text, image binary)", 0);
 }
 
 int main()
@@ -3301,7 +3301,7 @@ int createTables(SQLHENV aEnv, SQLHDBC aCon)
     for(i = 0; i < LOG_FILE_CNT; i++)
     {
         snprintf(sDropQuery, 256, "DROP TABLE %s", gTableName[i]);
-        snprintf(sCreateQuery, 256, "CREATE TABLE %s ( %s )", gTableName[i], sSchema[i]);
+        snprintf(sCreateQuery, 256, "CREATE LOG TABLE %s ( %s )", gTableName[i], sSchema[i]);
 
         executeDirectSQL(aEnv, aCon, sDropQuery, 1);
         executeDirectSQL(aEnv, aCon, sCreateQuery, 0);

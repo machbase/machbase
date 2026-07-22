@@ -4,16 +4,23 @@ weight: 10
 toc: true
 ---
 
-RDB 테이블은 Machbase에서 관계형 데이터 모델을 사용하기 위한 테이블 타입입니다. INSERT, SELECT, UPDATE, DELETE를 모두 사용하고, PRIMARY KEY와 보조 인덱스를 기반으로 업무 데이터, 마스터 데이터, 집계 결과를 관리합니다.
+TRANSACTION 테이블은 Machbase에서 관계형 데이터 모델을 사용하기 위한 테이블 타입입니다. INSERT, SELECT, UPDATE, DELETE를 모두 사용하고, PRIMARY KEY와 보조 인덱스를 기반으로 업무 데이터, 마스터 데이터, 집계 결과를 관리합니다.
 
 <a id="overview-rdb-characteristics"></a>
 
-## RDB 테이블의 특성
+## TRANSACTION 테이블의 특성
 
-RDB 테이블은 `CREATE RDB TABLE` 문으로 생성합니다.
+TRANSACTION 테이블은 다음 세 문법으로 생성할 수 있습니다.
+
+- `CREATE TABLE`: 테이블 유형을 생략하는 기본 문법
+- `CREATE TRANSACTION TABLE`: 전체 테이블 유형 이름을 명시하는 문법
+- `CREATE TXN TABLE`: 축약형을 사용하는 문법
+
+세 문법은 동일한 TRANSACTION 테이블을 생성합니다. LOG 테이블은 `CREATE LOG TABLE`로
+명시해야 하며, 이전 공개 명칭인 `RDB`와 축약형 `TRX`는 지원하지 않습니다.
 
 ```sql
-CREATE RDB TABLE order_history (
+CREATE TRANSACTION TABLE order_history (
     order_id  LONG PRIMARY KEY,
     item_id   INTEGER,
     qty       INTEGER,
@@ -22,26 +29,26 @@ CREATE RDB TABLE order_history (
 );
 ```
 
-RDB 테이블의 주요 특성은 다음과 같습니다.
+TRANSACTION 테이블의 주요 특성은 다음과 같습니다.
 
 | 항목 | 내용 |
 |------|------|
 | 주요 용도 | 관계형 업무 데이터, 마스터 데이터, 집계 결과, 상태 관리 |
 | 주요 DML | INSERT, SELECT, UPDATE, DELETE |
 | 키와 인덱스 | PRIMARY KEY, UNIQUE, 일반 인덱스 |
-| 트랜잭션 | RDB DML에 `BEGIN`, `COMMIT`, `ROLLBACK` 지원 |
+| 트랜잭션 | TRANSACTION DML에 `BEGIN`, `COMMIT`, `ROLLBACK` 지원 |
 | 부가 기능 | AUTO_INCREMENT, JSON 경로 인덱스, 백업·마운트 |
-| 에디션 | Standard Edition에서 사용 |
+| 에디션 | Standard Edition에서만 사용 |
 
 <a id="overview-rdb-use-criteria"></a>
 
 ## 사용 기준
 
-다음 조건에 해당하면 RDB 테이블을 사용합니다.
+다음 조건에 해당하면 TRANSACTION 테이블을 사용합니다.
 
 - 행 단위 UPDATE와 DELETE가 필요합니다.
 - PRIMARY KEY 또는 인덱스 기반으로 특정 행을 자주 조회합니다.
-- RDB DML을 트랜잭션으로 하나의 작업 단위로 묶어야 합니다.
+- TRANSACTION DML을 트랜잭션으로 하나의 작업 단위로 묶어야 합니다.
 - TAG, LOG 테이블의 원본 데이터를 집계한 결과를 업무 테이블로 관리합니다.
 - JSON 컬럼과 JSON path 인덱스를 관계형 조회와 함께 사용해야 합니다.
 - 백업·마운트 대상에 포함되는 관계형 데이터를 관리합니다.
@@ -66,13 +73,17 @@ COMMIT;
 | 작은 기준 코드와 참조 데이터 | LOOKUP |
 | 재시작 후 사라져도 되는 인메모리 상태 캐시 | VOLATILE |
 
-RDB 테이블은 관계형 갱신과 조회에 적합하지만, 초고속 append 중심 원본 수집에는 LOG 또는 TAG 테이블이 더 적합합니다. 원본은 LOG/TAG에 저장하고, 업무 상태나 집계 결과만 RDB로 관리하는 구성을 우선 검토합니다.
+TRANSACTION 테이블은 관계형 갱신과 조회에 적합하지만, 초고속 append 중심 원본 수집에는 LOG 또는 TAG 테이블이 더 적합합니다. 원본은 LOG/TAG에 저장하고, 업무 상태나 집계 결과만 TRANSACTION 테이블로 관리하는 구성을 우선 검토합니다.
+
+Cluster Edition에서는 무수식 `CREATE TABLE`, `CREATE TRANSACTION TABLE`, `CREATE TXN TABLE`을
+모두 지원하지 않습니다. Cluster Edition에서 LOG 테이블을 만들 때는 `CREATE LOG TABLE`을
+사용합니다.
 
 <a id="overview-rdb-design-flow"></a>
 
 ## 설계 순서
 
-RDB 테이블 설계 시 다음 순서로 결정합니다.
+TRANSACTION 테이블 설계 시 다음 순서로 결정합니다.
 
 1. 행을 식별할 PRIMARY KEY를 정합니다.
 2. 자동 번호가 필요하면 `AUTO_INCREMENT` 사용 여부를 결정합니다.

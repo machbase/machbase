@@ -9,7 +9,7 @@ toc: true
 
 ## DDL 지원 범위
 
-| DDL 작업 | TAG | LOG | RDB | VOLATILE | LOOKUP |
+| DDL 작업 | TAG | LOG | TRANSACTION | VOLATILE | LOOKUP |
 |---------|-----|-----|-----|---------|--------|
 | CREATE TABLE | O | O | O | O | O |
 | DROP TABLE | O | O | O | O | O |
@@ -29,7 +29,7 @@ toc: true
 
 ## DML 지원 범위
 
-| DML 작업 | TAG | LOG | RDB | VOLATILE | LOOKUP |
+| DML 작업 | TAG | LOG | TRANSACTION | VOLATILE | LOOKUP |
 |---------|-----|-----|-----|---------|--------|
 | INSERT | O | O | O | O | O |
 | Append API | O | O | O (SDK) | X | O |
@@ -39,7 +39,7 @@ toc: true
 
 ## Retention Policy 지원
 
-| 기능 | TAG | LOG | RDB | VOLATILE | LOOKUP |
+| 기능 | TAG | LOG | TRANSACTION | VOLATILE | LOOKUP |
 |------|-----|-----|-----|---------|--------|
 | Retention Policy 적용 | O | O | X | X | X |
 
@@ -47,7 +47,7 @@ KV 테이블도 Retention Policy를 적용할 수 있습니다.
 
 ## 인덱스 지원
 
-| 인덱스 유형 | TAG | LOG | RDB | VOLATILE | LOOKUP |
+| 인덱스 유형 | TAG | LOG | TRANSACTION | VOLATILE | LOOKUP |
 |-----------|-----|-----|-----|---------|--------|
 | LSM | X | O | X | X | X |
 | BITMAP | X | O | X | X | X |
@@ -59,7 +59,7 @@ KV 테이블도 Retention Policy를 적용할 수 있습니다.
 
 | 기능 | Standard | Cluster |
 |------|---------|---------|
-| RDB 테이블 | O | X |
+| TRANSACTION 테이블 | O | X |
 | TAG data UPDATE | O | X |
 | Retention Policy | O | O |
 | Cluster 전용 기능 | X | O |
@@ -68,5 +68,5 @@ KV 테이블도 Retention Policy를 적용할 수 있습니다.
 
 - **대량 시계열 수집 + 장기 보존**: TAG, KV 또는 LOG + Retention Policy
 - **수정 가능한 설정·상태 값**: VOLATILE (메모리) 또는 LOOKUP (영구)
-- **일반 관계형 데이터 (업데이트 필요)**: RDB (Standard Edition 전용)
+- **일반 관계형 데이터 (업데이트 필요)**: TRANSACTION (Standard Edition 전용)
 - **빠른 JOIN 참조 테이블**: VOLATILE 또는 LOOKUP

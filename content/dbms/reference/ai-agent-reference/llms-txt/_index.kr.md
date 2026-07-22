@@ -33,7 +33,7 @@ Machbase 공식 문서 기준 (`/dbms/` 경로 아래):
 | TAG 테이블 | `/dbms/tag-table-usage/` |
 | LOG 테이블 | `/dbms/log-table-usage/` |
 | LOOKUP 테이블 | `/dbms/lookup-table-usage/` |
-| RDB 테이블 | `/dbms/rdb-table-usage/` |
+| TRANSACTION 테이블 | `/dbms/rdb-table-usage/` |
 | ROLLUP | `/dbms/core-concepts/features-concepts/#role-statistics-rollup` |
 
 ### 애플리케이션 연동

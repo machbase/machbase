@@ -118,13 +118,13 @@ toc: true
 | `LOOKUP_APPEND_UPDATE_ON_DUPKEY` | 0 | 0~1 | Lookup 테이블 Append 시 중복 키 처리. 0=실패, 1=UPDATE |
 | `LIN_HASH_BIT_SIZE` | 7 | 1~31 | 내부 선형 해시 초기 버킷 비트 수 |
 
-## RDB 설정
+## TRANSACTION 설정
 
 | 프로퍼티 | 기본값 | 범위 | 설명 |
 |----------|--------|------|------|
-| `RDB_BUSY_TIMEOUT_MS` | 30000 | -1~2147483647 | RDB 쓰기 충돌 시 대기할 시간(ms). -1은 무기한 대기, 0은 즉시 반환 |
-| `RDB_SYNCHRONOUS` | 2 | 1~2 | RDB 트랜잭션 내구성 수준. 1=NORMAL, 2=FULL |
-| `RDB_JOURNAL_MODE` | 4 | 0~4 | RDB 저널 모드. 0=DELETE, 4=WAL |
+| `TRANSACTION_BUSY_TIMEOUT_MS` | 30000 | -1~2147483647 | TRANSACTION 쓰기 충돌 시 대기할 시간(ms). -1은 무기한 대기, 0은 즉시 반환 |
+| `TRANSACTION_SYNCHRONOUS` | 2 | 1~2 | TRANSACTION 테이블 트랜잭션 내구성 수준. 1=NORMAL, 2=FULL |
+| `TRANSACTION_JOURNAL_MODE` | 4 | 0~4 | TRANSACTION 저널 모드. 0=DELETE, 4=WAL |
 
 ## 로그 / 진단 설정
 

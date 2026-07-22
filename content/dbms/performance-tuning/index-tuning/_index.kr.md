@@ -15,7 +15,7 @@ toc: true
 | LOG | 없음 (시간 기반 파티션 pruning) | LSM, BITMAP, KEYWORD | 특정 컬럼 조건 조회 |
 | LOOKUP | Red-Black 트리 (PK 자동) | Red-Black 보조 인덱스 | PK 기반 기준 정보 조회 |
 | VOLATILE | Red-Black 트리 (PK 자동) | Red-Black 보조 인덱스 | 인메모리 상태 테이블 |
-| RDB | B-Tree (PK 자동) | 단일/복합 B-Tree 인덱스 | RDBMS 방식 관계형 데이터 |
+| TRANSACTION | B-Tree (PK 자동) | 단일/복합 B-Tree 인덱스 | RDBMS 방식 관계형 데이터 |
 
 ## 인덱스가 성능에 미치는 양면
 
@@ -61,4 +61,4 @@ SHOW INDEXGAP;
 - [TAG 인덱스 튜닝](/dbms/tag-table-usage/index-performance/#index-tuning-tag) — 자동 파티션 인덱스와 METADATA 컬럼 최적화
 - [LOG 인덱스 튜닝](/dbms/log-table-usage/index-performance/#index-tuning-log) — LSM, BITMAP, KEYWORD 인덱스 활용 전략
 - [LOOKUP/VOLATILE 인덱스 튜닝](/dbms/lookup-table-usage/index-performance/#index-tuning-lookup-volatile) — PK 기반 인덱스 특성과 한계
-- [RDB 인덱스 튜닝](/dbms/rdb-table-usage/index-performance/#index-tuning-rdb) — B-Tree 인덱스와 PK 설계 패턴
+- [TRANSACTION 인덱스 튜닝](/dbms/rdb-table-usage/index-performance/#index-tuning-rdb) — B-Tree 인덱스와 PK 설계 패턴

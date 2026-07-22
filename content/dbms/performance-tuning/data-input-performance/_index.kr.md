@@ -10,7 +10,7 @@ toc: true
 
 | 입력 경로 | 전송 방식 | 응답 특성 | 주요 용도 |
 |----------|-----------|-----------|----------|
-| SDK Append API | 클라이언트 버퍼와 batch/stream | flush·close 시점에 결과 확인 | 지속적인 수집, RDB client batch 입력 |
+| SDK Append API | 클라이언트 버퍼와 batch/stream | flush·close 시점에 결과 확인 | 지속적인 수집, TRANSACTION client batch 입력 |
 | REST API (JSON) | HTTP 요청 단위 JSON 전송 | 요청 단위 응답 | 범용 HTTP 연동 |
 | machloader | 클라이언트 파일 전송 | 파일 작업 완료 후 결과 확인 | CSV 가져오기·내보내기, 마이그레이션 |
 | LOAD DATA INFILE | 서버가 파일을 직접 읽음 | SQL 문장 완료 시 결과 확인 | 서버 배치 파일 적재 |
@@ -165,7 +165,7 @@ with conn.appender("sensor_log") as app:
 
 #### SQL INSERT (소량·범용)
 
-소량 입력, 행 단위 오류 확인, 명시적 트랜잭션이 필요한 작업에는 SQL INSERT를 사용합니다. RDB 대량 입력은 지원되는 client API의 appendBatch 또는 append stream 경로를 사용할 수 있습니다.
+소량 입력, 행 단위 오류 확인, 명시적 트랜잭션이 필요한 작업에는 SQL INSERT를 사용합니다. TRANSACTION 대량 입력은 지원되는 client API의 appendBatch 또는 append stream 경로를 사용할 수 있습니다.
 
 ```go
 // Go SDK SQL INSERT

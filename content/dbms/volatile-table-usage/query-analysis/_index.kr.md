@@ -115,7 +115,7 @@ ORDER BY bucket_time DESC
 LIMIT 10;
 ```
 
-집계 결과를 장기 보관해야 하면 VOLATILE 테이블에만 두지 말고 LOG 또는 RDB 테이블로 주기적으로 복사합니다.
+집계 결과를 장기 보관해야 하면 VOLATILE 테이블에만 두지 말고 LOG 또는 TRANSACTION 테이블로 주기적으로 복사합니다.
 
 <a id="query-volatile-limitations"></a>
 
@@ -125,4 +125,4 @@ LIMIT 10;
 - PRIMARY KEY 조회가 중심이면 PRIMARY KEY를 반드시 지정합니다.
 - 범위 조회나 정렬 조건에 자주 쓰는 컬럼은 보조 인덱스를 검토합니다.
 - JSON 컬럼은 VOLATILE 테이블에서 사용할 수 없습니다.
-- 중요한 원본 데이터는 TAG, LOG, LOOKUP, RDB 같은 영속 테이블에 저장하고 VOLATILE은 캐시로 사용합니다.
+- 중요한 원본 데이터는 TAG, LOG, LOOKUP, TRANSACTION 같은 영속 테이블에 저장하고 VOLATILE은 캐시로 사용합니다.

@@ -56,7 +56,7 @@ WHERE sensor_id = 'TEMP-01';
 
 ## 영속 테이블로 플러시
 
-보존이 필요한 데이터는 주기적으로 LOG, TAG, RDB 등 영속 테이블에 복사합니다.
+보존이 필요한 데이터는 주기적으로 LOG, TAG, TRANSACTION 등 영속 테이블에 복사합니다.
 
 ```sql
 INSERT INTO sensor_latest_history

@@ -9,7 +9,7 @@ toc: true
 - **[테이블 타입 개요](/dbms/data-modeling-table-design/table-types-selection-type/#table-types-type)**
 - **[타입 선택 결정 가이드](/dbms/data-modeling-table-design/table-types-selection-type/#selection-decision)**
 - **[타입 비교표](/dbms/data-modeling-table-design/table-types-selection-type/#comparison-tag-log-rdb-volatile-lookup)**
-- **[RDB vs LOOKUP 비교](/dbms/data-modeling-table-design/table-types-selection-type/#comparison-rdb-vs-lookup)**
+- **[TRANSACTION vs LOOKUP 비교](/dbms/data-modeling-table-design/table-types-selection-type/#comparison-rdb-vs-lookup)**
 
 
 <a id="table-types-type"></a>
@@ -34,10 +34,10 @@ CREATE TAG TABLE sensor_data (
 
 ### LOG 테이블
 
-시스템 이벤트, 애플리케이션 로그, 네트워크 패킷 등 추가 전용(append-only) 데이터에 적합합니다. `CREATE TABLE` 기본 문법을 사용합니다.
+시스템 이벤트, 애플리케이션 로그, 네트워크 패킷 등 추가 전용(append-only) 데이터에 적합합니다. `CREATE LOG TABLE` 문법을 사용합니다.
 
 ```sql
-CREATE TABLE sys_log (
+CREATE LOG TABLE sys_log (
     level    SHORT,
     msg      VARCHAR(512),
     src_ip   IPV4
@@ -47,12 +47,15 @@ CREATE TABLE sys_log (
 - `_arrival_time` 컬럼이 자동 추가됩니다 (나노초 DATETIME).
 - UPDATE와 일반 조건 DELETE는 지원하지 않습니다. 보존/정리 목적의 `BEFORE`, `OLDEST`, `EXCEPT` DELETE를 사용합니다.
 
-### RDB 테이블
+### TRANSACTION 테이블
 
 관계형 구조의 업무 데이터를 저장합니다. Machbase 8.6에서 도입된 타입으로, 일반적인 관계형 테이블처럼 SELECT·INSERT·UPDATE·DELETE를 모두 지원합니다.
 
+테이블 유형을 생략한 `CREATE TABLE`과 `CREATE TRANSACTION TABLE`, `CREATE TXN TABLE`은
+모두 TRANSACTION 테이블을 생성합니다.
+
 ```sql
-CREATE RDB TABLE product (
+CREATE TRANSACTION TABLE product (
     id       INTEGER,
     name     VARCHAR(128),
     category VARCHAR(64),
@@ -122,7 +125,7 @@ CREATE LOOKUP TABLE code_master (
   └── NO  ↓
 
 일반 관계형 업무 데이터 (UPDATE/DELETE/SELECT/INSERT 모두 필요)
-  └── RDB TABLE
+  └── TRANSACTION TABLE
 ```
 
 ### 주요 판단 기준
@@ -133,13 +136,13 @@ CREATE LOOKUP TABLE code_master (
 | 추가만 하고 수정·삭제 불필요? | LOG |
 | PRIMARY KEY가 필요한 기준 정보이며 반복 조회·갱신하는가? | LOOKUP |
 | 서버 재시작 시 데이터가 사라져도 되는가? | VOLATILE |
-| 일반 관계형 업무 (INSERT/UPDATE/DELETE/SELECT)? | RDB |
+| 일반 관계형 업무 (INSERT/UPDATE/DELETE/SELECT)? | TRANSACTION |
 
 ### 주의사항
 
 - TAG 테이블에 이벤트 로그를 저장하면 태그 수 폭발로 성능이 저하됩니다.
 - LOG 테이블은 UPDATE와 일반 조건 DELETE가 불가하므로 수정 가능성이 있는 데이터에는 부적합합니다. 보존/정리 목적의 `BEFORE`, `OLDEST`, `EXCEPT` DELETE만 사용합니다.
-- RDB 테이블은 Standard Edition 전용입니다. Cluster Edition 환경에서는 LOOKUP(소규모) 또는 외부 RDBMS를 활용합니다.
+- TRANSACTION 테이블은 Standard Edition 전용입니다. Cluster Edition 환경에서는 LOOKUP(소규모) 또는 외부 RDBMS를 활용합니다.
 - VOLATILE 테이블은 서버 재시작 시 데이터가 소멸됩니다.
 
 <a id="comparison-tag-log-rdb-volatile-lookup"></a>
@@ -148,9 +151,9 @@ CREATE LOOKUP TABLE code_master (
 
 ### 기능 비교
 
-| 항목 | TAG | LOG | RDB | VOLATILE | LOOKUP |
+| 항목 | TAG | LOG | TRANSACTION | VOLATILE | LOOKUP |
 |------|-----|-----|-----|----------|--------|
-| DDL | `CREATE TAG TABLE` | `CREATE TABLE` | `CREATE RDB TABLE` | `CREATE VOLATILE TABLE` | `CREATE LOOKUP TABLE` |
+| DDL | `CREATE TAG TABLE` | `CREATE LOG TABLE` | `CREATE TABLE` / `CREATE TRANSACTION TABLE` / `CREATE TXN TABLE` | `CREATE VOLATILE TABLE` | `CREATE LOOKUP TABLE` |
 | 주 용도 | 센서·계측값 | 이벤트·로그 | 관계형 업무 | 임시 집계 | 코드·기준 |
 | INSERT | O | O | O | O | O |
 | APPEND API | O | O | O (SDK) | X | O |
@@ -165,30 +168,30 @@ CREATE LOOKUP TABLE code_master (
 
 ### 스토리지 특성
 
-| 항목 | TAG | LOG | RDB | VOLATILE | LOOKUP |
+| 항목 | TAG | LOG | TRANSACTION | VOLATILE | LOOKUP |
 |------|-----|-----|-----|----------|--------|
 | 스토리지 | 컬럼형 | 컬럼형 | 행 기반 (관계형) | 메모리 | 행 기반 |
 | 시계열 최적화 | O | 일부 | X | X | X |
 | 대용량 적합 | O | O | O | X | X |
 
-### RDB 테이블 제약
+### TRANSACTION 테이블 제약
 
-RDB 테이블은 다음 제약이 있습니다.
+TRANSACTION 테이블은 다음 제약이 있습니다.
 
 - **Cluster Edition 미지원**: Standard Edition 전용
 - **최소 컬럼 수**: 1개 이상
 
 <a id="comparison-rdb-vs-lookup"></a>
 
-## RDB vs LOOKUP 비교
+## TRANSACTION vs LOOKUP 비교
 
-RDB 테이블과 LOOKUP 테이블은 모두 관계형 데이터를 저장하지만, 대상 규모와 기능에 차이가 있습니다.
+TRANSACTION 테이블과 LOOKUP 테이블은 모두 관계형 데이터를 저장하지만, 대상 규모와 기능에 차이가 있습니다.
 
 ### 비교표
 
-| 항목 | RDB 테이블 | LOOKUP 테이블 |
+| 항목 | TRANSACTION 테이블 | LOOKUP 테이블 |
 |------|-----------|--------------|
-| DDL | `CREATE RDB TABLE` | `CREATE LOOKUP TABLE` |
+| DDL | `CREATE TRANSACTION TABLE` | `CREATE LOOKUP TABLE` |
 | PRIMARY KEY | 선택 | 필수 |
 | INSERT | O | O |
 | UPDATE (WHERE 포함) | O | O |
@@ -201,7 +204,7 @@ RDB 테이블과 LOOKUP 테이블은 모두 관계형 데이터를 저장하지�
 
 ### 선택 가이드
 
-**RDB 테이블을 선택하는 경우**
+**TRANSACTION 테이블을 선택하는 경우**
 - 명시적 트랜잭션과 관계형 DML이 필요한 데이터
 - UPDATE·DELETE·INSERT·SELECT가 모두 필요한 일반 관계형 워크로드
 - PRIMARY KEY 없이 다양한 컬럼 조합으로 조회하는 경우
@@ -223,8 +226,8 @@ CREATE LOOKUP TABLE country_code (
 );
 UPDATE country_code SET name = 'Korea' WHERE code = 'KR';
 
--- RDB: 주문 이력 (대규모, 일반 UPDATE/DELETE 지원)
-CREATE RDB TABLE order_history (
+-- TRANSACTION: 주문 이력 (대규모, 일반 UPDATE/DELETE 지원)
+CREATE TRANSACTION TABLE order_history (
     order_id  LONG,
     item_id   INTEGER,
     qty       INTEGER,

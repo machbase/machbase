@@ -48,7 +48,7 @@ SELECT * FROM V$RETENTION_JOB WHERE TABLE_NAME = 'TARGET_TABLE';
 ## 컬럼 추가 체크리스트
 
 - [ ] 추가할 컬럼의 데이터 타입이 해당 테이블 타입에서 지원되는가?
-- [ ] LOG/RDB 테이블 컬럼 추가 시 기존 데이터의 새 컬럼 값은 NULL로 채워짐을 인지하고 있는가?
+- [ ] LOG/TRANSACTION 테이블 컬럼 추가 시 기존 데이터의 새 컬럼 값은 NULL로 채워짐을 인지하고 있는가?
 - [ ] 컬럼명 중복 여부 확인
 
 ```sql

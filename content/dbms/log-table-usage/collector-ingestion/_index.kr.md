@@ -145,7 +145,7 @@ Machbase에 데이터를 입력하는 방법은 여러 가지입니다. Collecto
 
 ##### 3. 기존 시스템의 DB 데이터 마이그레이션
 
-Oracle, MySQL, MSSQL 등의 기존 RDB에 축적된 센서/로그 데이터를 Machbase로 이전할 때는 외부 DB에서 CSV로 반출한 뒤 `machloader` 또는 `LOAD DATA INFILE`로 적재합니다. 애플리케이션 레벨에서 주기적으로 조회한 뒤 SDK나 SQL INSERT로 입력하는 방식도 가능합니다.
+Oracle, MySQL, MSSQL 등의 기존 RDBMS에 축적된 센서/로그 데이터를 Machbase로 이전할 때는 외부 DB에서 CSV로 반출한 뒤 `machloader` 또는 `LOAD DATA INFILE`로 적재합니다. 애플리케이션 레벨에서 주기적으로 조회한 뒤 SDK나 SQL INSERT로 입력하는 방식도 가능합니다.
 
 #### Collector가 적합하지 않은 경우
 
@@ -188,7 +188,7 @@ Collector 도입을 결정하기 전에 다음 항목을 확인합니다.
 #### 대상 테이블 예시
 
 ```sql
-CREATE TABLE file_sensor_log (
+CREATE LOG TABLE file_sensor_log (
     name    VARCHAR(64),
     time    DATETIME,
     value   DOUBLE,
@@ -313,7 +313,7 @@ SFTP Collector는 원격 SFTP 서버의 파일을 내려받아 Machbase 테이�
 #### 대상 테이블 예시
 
 ```sql
-CREATE TABLE sftp_sensor_log (
+CREATE LOG TABLE sftp_sensor_log (
     name  VARCHAR(64),
     time  DATETIME,
     value DOUBLE

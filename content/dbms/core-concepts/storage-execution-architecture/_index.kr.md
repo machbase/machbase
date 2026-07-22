@@ -30,8 +30,8 @@ Machbase는 세 가지 핵심 구성 요소로 이루어져 있습니다.
 
 실제 데이터의 읽기와 쓰기를 담당합니다. 컬럼 단위로 데이터를 파티션에 저장하고, 인덱스를 관리하며, 압축을 수행합니다. 시계열 데이터의 핵심 성능은 SM의 컬럼형 파티션 구조에서 나옵니다.
 
-RDB 테이블은 관계형 row 데이터를 다루기 위해 별도 RDB 저장 경로를 사용합니다. 사용자는 같은
-Machbase SQL로 접근하지만, LOG/TAG의 컬럼형 시계열 저장 구조와 RDB 테이블의 row/index 저장
+TRANSACTION 테이블은 관계형 row 데이터를 다루기 위해 별도 TRANSACTION 저장 경로를 사용합니다. 사용자는 같은
+Machbase SQL로 접근하지만, LOG/TAG의 컬럼형 시계열 저장 구조와 TRANSACTION 테이블의 row/index 저장
 구조는 구분해서 이해해야 합니다.
 
 **프로세스 관리자 (PM, Process Manager)**
@@ -92,7 +92,7 @@ LOOKUP 테이블 처리를 위한 Lookup 노드도 Cluster Edition 구성에 포
 3. LOG/TAG 테이블이면 SM이 해당 시간 파티션의 컬럼 파일에 데이터를 append
 4. 충분한 데이터가 쌓이면 배경 스레드가 압축 및 인덱스 병합 수행
 
-RDB 테이블의 `INSERT`/`UPDATE`/`DELETE`는 append-only 시계열 경로가 아니라 RDB 저장 경로에서
+TRANSACTION 테이블의 `INSERT`/`UPDATE`/`DELETE`는 append-only 시계열 경로가 아니라 TRANSACTION 저장 경로에서
 행 단위 DML로 처리됩니다.
 
 ### 데이터 흐름: 읽기
@@ -114,7 +114,7 @@ RDB 테이블의 `INSERT`/`UPDATE`/`DELETE`는 append-only 시계열 경로가 �
 
 ## 컬럼형 저장과 압축
 
-LOG/TAG 테이블의 저장 성능과 압축 효율은 컬럼 지향(columnar) 저장 구조에서 비롯됩니다. 시계열 데이터의 특성이 컬럼형 저장과 만날 때 왜 뛰어난 성능이 나오는지를 이해하면, 테이블 설계와 쿼리 최적화 방향을 더 명확하게 잡을 수 있습니다. RDB 테이블은 별도 row/index 저장 구조를 사용하므로 여기서 설명하는 컬럼형 저장을 그대로 적용하지 않습니다.
+LOG/TAG 테이블의 저장 성능과 압축 효율은 컬럼 지향(columnar) 저장 구조에서 비롯됩니다. 시계열 데이터의 특성이 컬럼형 저장과 만날 때 왜 뛰어난 성능이 나오는지를 이해하면, 테이블 설계와 쿼리 최적화 방향을 더 명확하게 잡을 수 있습니다. TRANSACTION 테이블은 별도 row/index 저장 구조를 사용하므로 여기서 설명하는 컬럼형 저장을 그대로 적용하지 않습니다.
 
 ### 행 지향 vs 컬럼 지향
 
@@ -224,19 +224,19 @@ LOOKUP 테이블의 데이터는 영속 저장되지만, 서버 기동 시 모�
 
 따라서 LOOKUP은 재시작 후에도 데이터를 유지하면서 빠른 key 조회를 제공하지만, 전체 행과
 보조 인덱스가 서버 메모리를 사용합니다. 메모리에 상주시킬 수 있는 기준 정보에 사용하고,
-대규모 관계형 데이터에는 RDB 테이블을 검토합니다.
+대규모 관계형 데이터에는 TRANSACTION 테이블을 검토합니다.
 
 ### VOLATILE 테이블: Red-Black 트리 인덱스
 
 VOLATILE 테이블은 메모리 기반이며, PRIMARY KEY 컬럼에 자동으로 Red-Black 트리 인덱스가 생성됩니다. 메모리에서 동작하므로 삽입과 조회 모두 빠르지만, 서버 재시작 시 데이터가 사라집니다.
 
-### RDB 테이블: 일반/Unique/Primary Key 인덱스
+### TRANSACTION 테이블: 일반/Unique/Primary Key 인덱스
 
-RDB 테이블은 관계형 row 데이터를 위한 테이블입니다. `CREATE RDB TABLE`로 생성하며, 일반 인덱스,
+TRANSACTION 테이블은 관계형 row 데이터를 위한 테이블입니다. `CREATE TRANSACTION TABLE`로 생성하며, 일반 인덱스,
 Unique 인덱스, Primary Key 인덱스를 사용합니다. Primary key 없이 테이블을 만든 뒤
 `CREATE PRIMARY KEY INDEX`로 사후 추가할 수도 있습니다.
 
-RDB 인덱스는 LOG/TAG의 시간 파티션이나 append-only 입력 경로와 별개로 동작합니다. 단건 키
+TRANSACTION 인덱스는 LOG/TAG의 시간 파티션이나 append-only 입력 경로와 별개로 동작합니다. 단건 키
 조회, 업무 기준 정보 조회, 관계형 조인에 필요한 컬럼에 인덱스를 생성합니다.
 
 ### 인덱스를 만들어야 할 때와 만들지 말아야 할 때
@@ -274,7 +274,7 @@ Machbase는 시계열 데이터를 시간순으로 파티션된 구조로 저장
 
 ```sql
 -- id 컬럼에 Min-Max Cache 적용 (20KB)
-CREATE TABLE ctest (
+CREATE LOG TABLE ctest (
     id   INTEGER PROPERTY(MINMAX_CACHE_SIZE = 20480),
     name VARCHAR(100) PROPERTY(MINMAX_CACHE_SIZE = 0)  -- VARCHAR는 0만 허용
 );

@@ -4,13 +4,13 @@ weight: 70
 toc: true
 ---
 
-RDB 테이블의 운영 절차와 데이터 관리 방법을 다룹니다. RDB 테이블은 영속 데이터를 저장하므로 트랜잭션, 쓰기 충돌, 백업, 복구 절차를 함께 설계해야 합니다.
+TRANSACTION 테이블의 운영 절차와 데이터 관리 방법을 다룹니다. TRANSACTION 테이블은 영속 데이터를 저장하므로 트랜잭션, 쓰기 충돌, 백업, 복구 절차를 함께 설계해야 합니다.
 
 <a id="operations-rdb-lifecycle"></a>
 
 ## 데이터 생명주기
 
-RDB 테이블의 데이터는 생성, 입력, 갱신, 삭제, 백업, 복구의 흐름으로 관리합니다.
+TRANSACTION 테이블의 데이터는 생성, 입력, 갱신, 삭제, 백업, 복구의 흐름으로 관리합니다.
 
 ```
 테이블 생성
@@ -20,7 +20,7 @@ RDB 테이블의 데이터는 생성, 입력, 갱신, 삭제, 백업, 복구의 
                     └── 백업 / 복구 / 마운트
 ```
 
-원본 수집 데이터는 TAG 또는 LOG 테이블에 저장하고, RDB 테이블에는 업무 상태, 기준 정보, 집계 결과처럼 수정 가능한 데이터를 저장하는 구성이 일반적입니다.
+원본 수집 데이터는 TAG 또는 LOG 테이블에 저장하고, TRANSACTION 테이블에는 업무 상태, 기준 정보, 집계 결과처럼 수정 가능한 데이터를 저장하는 구성이 일반적입니다.
 
 <a id="operations-rdb-transaction"></a>
 
@@ -44,15 +44,15 @@ UPDATE inventory SET qty = qty - 10 WHERE item_id = 42;
 ROLLBACK;
 ```
 
-장시간 열린 트랜잭션은 같은 RDB 테이블의 다른 쓰기를 대기시킬 수 있으므로, 배치 작업은
-적절한 단위로 나누어 실행합니다. 활성 RDB 트랜잭션에는 비 RDB 테이블 쓰기나 DDL을 포함하지
+장시간 열린 트랜잭션은 같은 TRANSACTION 테이블의 다른 쓰기를 대기시킬 수 있으므로, 배치 작업은
+적절한 단위로 나누어 실행합니다. 활성 TRANSACTION 테이블 트랜잭션에는 비 TRANSACTION 테이블 쓰기나 DDL을 포함하지
 않습니다.
 
 <a id="operations-rdb-cleanup"></a>
 
 ## 데이터 정리
 
-RDB 테이블의 정리는 업무 조건에 맞는 `DELETE` 문으로 수행합니다.
+TRANSACTION 테이블의 정리는 업무 조건에 맞는 `DELETE` 문으로 수행합니다.
 
 ```sql
 SELECT COUNT(*)
@@ -71,14 +71,14 @@ WHERE status = 'CANCELLED'
 
 ## 백업과 복구
 
-RDB 테이블은 데이터베이스 백업 대상에 자동으로 포함됩니다. `BACKUP DATABASE` 또는
+TRANSACTION 테이블은 데이터베이스 백업 대상에 자동으로 포함됩니다. `BACKUP DATABASE` 또는
 `BACKUP TABLE`을 사용합니다.
 
 ```sql
 BACKUP DATABASE INTO DISK = '/backup/machbase_backup_20260101';
 ```
 
-마운트된 백업 데이터베이스에서도 RDB 테이블을 읽기 전용으로 조회할 수 있습니다.
+마운트된 백업 데이터베이스에서도 TRANSACTION 테이블을 읽기 전용으로 조회할 수 있습니다.
 
 ```sql
 MOUNT DATABASE '/backup/machbase_backup_20260101' TO backup_db;
@@ -90,7 +90,7 @@ WHERE order_time >= '2026-01-01 00:00:00';
 UMOUNT DATABASE backup_db;
 ```
 
-백업 검증과 복원 절차는 [RDB 백업, 복원, 마운트](/dbms/rdb-table-usage/backup-restore-mount/)에서
+백업 검증과 복원 절차는 [TRANSACTION 백업, 복원, 마운트](/dbms/rdb-table-usage/backup-restore-mount/)에서
 다룹니다.
 
 <a id="operations-rdb-checklist"></a>
@@ -100,5 +100,5 @@ UMOUNT DATABASE backup_db;
 - PRIMARY KEY와 주요 WHERE 조건 컬럼에 인덱스가 있는지 확인합니다.
 - 장시간 트랜잭션을 피하고, 배치 작업은 적절한 단위로 나눕니다.
 - DDL 작업은 DML이 많은 시간대를 피해서 수행합니다.
-- 정기 백업 후 RDB 테이블의 행 수와 주요 데이터를 확인합니다.
+- 정기 백업 후 TRANSACTION 테이블의 행 수와 주요 데이터를 확인합니다.
 - 복구 절차를 운영 환경과 동일한 버전에서 주기적으로 점검합니다.

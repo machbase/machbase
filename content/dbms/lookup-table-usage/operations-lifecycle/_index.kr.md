@@ -20,7 +20,7 @@ LOOKUP 데이터는 생성, 입력, 갱신, 참조, 백업, 복구의 흐름으�
 ```
 테이블 생성
   └── 기준 데이터 입력
-        └── TAG/LOG/RDB 조회에서 JOIN 또는 참조
+        └── TAG/LOG/TRANSACTION 조회에서 JOIN 또는 참조
               └── 운영 중 UPDATE/DELETE
                     └── 백업 / 복구 / 마운트
 ```
@@ -74,7 +74,7 @@ LOOKUP 테이블은 디스크에 영속 저장되며 데이터베이스 백업�
 |-----------|-------------------|
 | TAG | O |
 | LOG | O |
-| RDB | O |
+| TRANSACTION | O |
 | **LOOKUP** | **O** |
 | VOLATILE | X (메모리 전용) |
 

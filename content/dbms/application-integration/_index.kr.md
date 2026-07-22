@@ -41,8 +41,8 @@ Machbase는 C/C++, Java, Python, .NET, Go, Node.js, REST API 등 다양한 프�
 | [타임존 연결 옵션](/dbms/application-integration/concepts-common/#timezone-connection) | UTC 내부 저장, 연결 시 timezone 설정, SYSDATE vs NOW |
 | [Prepared statement](/dbms/application-integration/concepts-common/#prepared-statement) | SQL 인젝션 방지, 재사용 성능, TAG/LOG 테이블 지원 |
 | [Parameter binding](/dbms/application-integration/concepts-common/#parameter-binding) | 위치 바인딩, DATETIME nanosecond 처리, NULL 값 |
-| [트랜잭션 처리](/dbms/application-integration/concepts-common/#transaction) | RDB SQL 트랜잭션과 SDK별 제어 API 범위 |
-| [Append API와 Batch INSERT](/dbms/application-integration/concepts-common/#append-api-batch) | TAG/LOG Append와 RDB batch Append의 차이 |
+| [트랜잭션 처리](/dbms/application-integration/concepts-common/#transaction) | TRANSACTION SQL 트랜잭션과 SDK별 제어 API 범위 |
+| [Append API와 Batch INSERT](/dbms/application-integration/concepts-common/#append-api-batch) | TAG/LOG Append와 TRANSACTION batch Append의 차이 |
 | [오류 처리와 재시도](/dbms/application-integration/concepts-common/#error-handling-retry) | 오류 코드, exponential backoff, connection pool 격리 |
 
 ### 드라이버별 가이드와 REST API

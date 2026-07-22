@@ -20,8 +20,8 @@ create_table_stmt ::=
     [ 'TABLESPACE' tablespace_name ]
     [ 'WITH ROLLUP' rollup_interval_spec ]
 
-table_type ::= 'TAG' | 'VOLATILE' | 'LOOKUP' | 'RDB'
--- table_type을 생략하면 LOG 테이블이 생성됩니다.
+table_type ::= 'LOG' | 'TAG' | 'VOLATILE' | 'LOOKUP' | 'TRANSACTION' | 'TXN'
+-- table_type을 생략하면 TRANSACTION 테이블이 생성됩니다.
 
 column_def ::= column_name column_type
                [ 'PRIMARY KEY' ]
@@ -57,11 +57,17 @@ table_property_list ::=
 
 | 키워드 | 설명 |
 |--------|------|
-| (없음) | **LOG 테이블** - 시계열 로그 데이터. 추가(INSERT) 전용, 수정 불가 |
+| (없음) | **TRANSACTION 테이블** - 관계형 데이터와 트랜잭션 지원 |
+| `LOG` | **LOG 테이블** - 시계열 로그 데이터. 추가(INSERT) 중심, 일반 UPDATE 불가 |
 | `TAG` | **TAG 테이블** - 태그 이름/시간/값 구조의 시계열 데이터. BASETIME 컬럼 필수 |
 | `LOOKUP` | **LOOKUP 테이블** - 메모리 상주. PRIMARY KEY 필수. DML 전체 지원 |
 | `VOLATILE` | **VOLATILE 테이블** - 메모리 상주. 서버 재시작 시 데이터 소멸. PRIMARY KEY 선택 |
-| `RDB` | **RDB 테이블** - 관계형 데이터와 트랜잭션 지원 |
+| `TRANSACTION`, `TXN` | **TRANSACTION 테이블** - 전체 이름과 축약형은 같은 테이블을 생성 |
+
+무수식 `CREATE TABLE`, `CREATE TRANSACTION TABLE`, `CREATE TXN TABLE`은 모두 TRANSACTION
+테이블을 생성합니다. LOG 테이블을 만들 때는 `CREATE LOG TABLE`을 사용합니다. 이전 공개
+명칭인 `RDB`와 `TRX`는 테이블 유형 별칭으로 지원하지 않습니다. TRANSACTION 테이블은 Standard
+Edition 전용이므로 Cluster Edition에서는 세 TRANSACTION 생성 문법이 모두 거부됩니다.
 
 `DECIMAL`은 모든 테이블 유형에서 사용할 수 있습니다. precision은 1~65, scale은 0~30이며
 scale은 precision보다 클 수 없습니다. 자세한 내용은 [DECIMAL과 NUMERIC 고정소수점
@@ -70,8 +76,8 @@ scale은 precision보다 클 수 없습니다. 자세한 내용은 [DECIMAL과 N
 ### 예시
 
 ```sql
--- LOG 테이블 생성
-CREATE TABLE sensor_log (
+-- LOG 테이블 생성: LOG 키워드를 명시합니다.
+CREATE LOG TABLE sensor_log (
     id      INTEGER,
     name    VARCHAR(64),
     value   DOUBLE,
@@ -108,8 +114,8 @@ CREATE VOLATILE TABLE cache_data (
     value DOUBLE
 );
 
--- RDB 테이블의 exact fixed-point 컬럼
-CREATE RDB TABLE invoice (
+-- TRANSACTION 테이블의 exact fixed-point 컬럼
+CREATE TRANSACTION TABLE invoice (
     id      LONG PRIMARY KEY,
     amount  DECIMAL(18,2),
     tax     NUMERIC(18,4)
@@ -157,7 +163,7 @@ DROP TABLE sensor_log;
 ## ALTER TABLE
 
 `ALTER TABLE`은 테이블의 스키마를 변경합니다. 사용할 수 있는 하위 구문은 테이블 타입에 따라
-다릅니다. RDB 테이블은 `ADD COLUMN`, `DROP COLUMN`, `RENAME COLUMN`, `RENAME TO`를
+다릅니다. TRANSACTION 테이블은 `ADD COLUMN`, `DROP COLUMN`, `RENAME COLUMN`, `RENAME TO`를
 지원합니다. TAG 메타데이터 컬럼은 `METADATA ADD COLUMN`과 `METADATA DROP COLUMN`을
 사용합니다.
 
@@ -173,7 +179,7 @@ alter_table_add_stmt ::=
 -- 컬럼 추가
 ALTER TABLE sensor_log ADD COLUMN (quality FLOAT);
 
--- RDB 컬럼 추가
+-- TRANSACTION 컬럼 추가
 ALTER TABLE product_master ADD COLUMN (stock_qty INTEGER DEFAULT 0);
 
 -- 기본값과 함께 추가
@@ -215,7 +221,7 @@ alter_table_modify_stmt ::=
 ```
 
 LOG·TAG 일반 컬럼에서 VARCHAR 컬럼의 길이를 늘리거나(줄이기 불가), NOT NULL 제약 조건을
-추가·제거하거나, MINMAX_CACHE_SIZE를 변경합니다. RDB 테이블은 `MODIFY COLUMN`을
+추가·제거하거나, MINMAX_CACHE_SIZE를 변경합니다. TRANSACTION 테이블은 `MODIFY COLUMN`을
 지원하지 않습니다.
 
 ```sql
@@ -240,7 +246,7 @@ alter_table_rename_stmt ::=
 ```
 
 ```sql
--- RDB 테이블에서 지원
+-- TRANSACTION 테이블에서 지원
 ALTER TABLE product_master RENAME TO product_catalog;
 ```
 
@@ -481,6 +487,6 @@ DROP RETENTION policy_1d_1h;
 
 ## 관련 문서
 
-- [테이블 유형](/dbms/data-modeling-table-design/) - LOG, TAG, LOOKUP, VOLATILE, RDB 테이블 특성 및 사용 가이드
+- [테이블 유형](/dbms/data-modeling-table-design/) - LOG, TAG, LOOKUP, VOLATILE, TRANSACTION 테이블 특성 및 사용 가이드
 - [TAG 테이블 롤업](/dbms/tag-table-usage/create-alter-drop/#original-85-creating-tag-tables) - 롤업 생성 및 운영 가이드
 - [GRANT/REVOKE](../user-auth-syntax/#grant-revoke) - DDL 실행에 필요한 권한 부여

@@ -123,4 +123,4 @@ WHERE JSON_EXTRACT_INTEGER(config, '$.level') < 2;
 - JSON 컬럼은 primary key로 사용할 수 없습니다.
 - JSON path별 전용 인덱스는 지원하지 않습니다.
 - 자주 검색하는 값은 LOOKUP 일반 컬럼으로 분리합니다.
-- JSON path 인덱스가 필요하면 RDB 또는 TAG 테이블을 검토합니다.
+- JSON path 인덱스가 필요하면 TRANSACTION 또는 TAG 테이블을 검토합니다.

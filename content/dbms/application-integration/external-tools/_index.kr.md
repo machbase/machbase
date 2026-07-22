@@ -120,7 +120,7 @@ Append 프로토콜을 사용하며 `<fields>` 매핑 블록을 지원하지 않
 #### LOG 테이블 (시계열 로그 데이터)
 
 ```sql
-CREATE TABLE log_table (
+CREATE LOG TABLE log_table (
     level   VARCHAR(16),
     message VARCHAR(4096),
     source  VARCHAR(256)
@@ -131,7 +131,7 @@ CREATE TABLE log_table (
 이 경우 테이블의 첫 번째 사용자 컬럼을 호스트 이름 컬럼으로 둡니다.
 
 ```sql
-CREATE TABLE apache_access_log (
+CREATE LOG TABLE apache_access_log (
     hostname VARCHAR(256),
     host     VARCHAR(64),
     remote_user VARCHAR(64),

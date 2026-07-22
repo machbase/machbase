@@ -16,7 +16,7 @@ Machbase의 주요 제한 사항을 테이블 유형별, Edition별, 일반 시�
 | UPDATE 불가 컬럼 | `name` (TAGNAME), `time` (BASETIME) |
 | DELETE 방식 | 범위 삭제 지원; 개별 행 삭제는 DELETE 정책 설정 필요 |
 | Transaction | 미지원 (Append-only 구조, 즉시 커밋) |
-| Append 대상 | TAG/LOG 고속 경로와 RDB client batch/stream 경로 지원 |
+| Append 대상 | TAG/LOG 고속 경로와 TRANSACTION client batch/stream 경로 지원 |
 | ROLLUP 재구축 | `ROLLUP_REBUILD`: Standard Edition만 지원 |
 
 상세 내용은 [TAG data UPDATE 지원표](../tag-data-update/)를 참고하십시오.
@@ -55,7 +55,7 @@ Machbase의 주요 제한 사항을 테이블 유형별, Edition별, 일반 시�
 
 | 기능 | 제한 내용 |
 |------|----------|
-| RDB 테이블 | 미지원 |
+| TRANSACTION 테이블 | 미지원 |
 | VOLATILE 테이블 | 미지원 |
 | MOUNT / UMOUNT | 미지원 |
 | STREAM | 미지원 |

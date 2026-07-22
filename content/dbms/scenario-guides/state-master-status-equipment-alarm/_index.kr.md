@@ -223,7 +223,7 @@ ORDER BY alarm_time DESC;
 알람 발생 이력을 LOG 테이블에 기록해 추적 및 분석에 활용합니다.
 
 ```sql
-CREATE TABLE alarm_log (
+CREATE LOG TABLE alarm_log (
     eq_id       VARCHAR(32),
     eq_name     VARCHAR(64),
     alarm_type  VARCHAR(32),
@@ -354,6 +354,6 @@ ORDER BY alarmed_equipment DESC;
 
 ## 다음 단계
 
-- TAG, LOG, RDB 복합 조인 대시보드: [TAG + RDB + LOG 조인 대시보드](../join-tag-rdb-log/)
+- TAG, LOG, TRANSACTION 복합 조인 대시보드: [TAG + TRANSACTION + LOG 조인 대시보드](../join-tag-rdb-log/)
 - STREAM 알람 자동화: [STREAM으로 LOG를 TAG로 자동 적재](/dbms/log-table-usage/stream-log-processing/#stream-log-tag)
 - 실시간 상태판: [실시간 상태판 만들기](../state-status-real-time-dashboard/)

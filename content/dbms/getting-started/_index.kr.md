@@ -19,7 +19,7 @@ Machbase DBMS는 산업 IoT 센서 데이터와 금융 틱 데이터처럼 시�
 - `machsql` 명령을 사용할 수 있습니다.
 - 대표 예제 SQL 파일을 `/tmp` 디렉터리에 저장할 수 있습니다.
 
-대표 예제를 재실행하다 `CREATE TABLE` 단계에서 이미 존재한다는 오류가 발생하면, 이전 실행이 `DROP TABLE` 단계에 도달하지 못한 것입니다. `DROP TABLE DBMS_GS_QUICK;`을 먼저 실행한 뒤 다시 시작하십시오. 이 장에서 검증한 Machbase 서버는 `DROP TABLE IF EXISTS` 구문을 지원하지 않습니다.
+대표 예제를 재실행하다 `CREATE LOG TABLE` 단계에서 이미 존재한다는 오류가 발생하면, 이전 실행이 `DROP TABLE` 단계에 도달하지 못한 것입니다. `DROP TABLE DBMS_GS_QUICK;`을 먼저 실행한 뒤 다시 시작하십시오. 이 장에서 검증한 Machbase 서버는 `DROP TABLE IF EXISTS` 구문을 지원하지 않습니다.
 
 ## 이 장에서 확인할 것
 
@@ -35,6 +35,6 @@ Machbase DBMS는 산업 IoT 센서 데이터와 금융 틱 데이터처럼 시�
 1. [Machbase DBMS 개요](./overview/)에서 시계열 데이터와 테이블 유형을 구분합니다.
 2. [10분 빠른 시작](./quick-start/)에서 `machsql` 접속, 테이블 생성, 입력, 조회를 확인합니다.
 3. [기본 명령 치트시트](./command-cheatsheet/)에서 자주 쓰는 명령을 정리합니다.
-4. [다음에 읽을 문서 선택하기](./choose-next-doc/)에서 TAG, LOG, LOOKUP, RDB 중 다음 학습 경로를 고릅니다.
+4. [다음에 읽을 문서 선택하기](./choose-next-doc/)에서 TAG, LOG, LOOKUP, TRANSACTION 중 다음 학습 경로를 고릅니다.
 
 직접 실행하는 SQL은 [10분 빠른 시작](./quick-start/)의 대표 예제 하나뿐입니다. 나머지 페이지는 같은 SQL 패턴을 반복하지 않고, 대표 예제를 이해하는 데 필요한 개념과 다음 학습 경로를 설명합니다.

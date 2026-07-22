@@ -18,7 +18,7 @@ SQL INSERT, Append API, 파일 적재(machloader, csvimport), SQL 기반 파일 
 | 입력 방법 | 특징 | 주요 사용 사례 |
 |----------|------|--------------|
 | SQL INSERT | 단건·소량. 트랜잭션 지원 | 설정값 등록, 테스트 |
-| Append API | SDK 기반 대량 입력. TAG/LOG는 비트랜잭션 버퍼 경로 | TAG/LOG 시계열 대량 수집, client API 기반 RDB batch 입력 |
+| Append API | SDK 기반 대량 입력. TAG/LOG는 비트랜잭션 버퍼 경로 | TAG/LOG 시계열 대량 수집, client API 기반 TRANSACTION batch 입력 |
 | LOAD DATA INFILE | SQL로 서버 측 파일 직접 로드 | 서버에 위치한 대용량 파일 일괄 적재 |
 | machloader | CLI 도구. 유연한 스키마 매핑 | 정기 배치, 마이그레이션 |
 | csvimport | machloader 래퍼. 간편 CSV 입력 | 빠른 파일 적재 |
@@ -36,7 +36,7 @@ SQL INSERT, Append API, 파일 적재(machloader, csvimport), SQL 기반 파일 
 
 #### 테이블 타입별 지원 입력 방식
 
-| 입력 방식 | TAG | LOG | RDB | VOLATILE | LOOKUP |
+| 입력 방식 | TAG | LOG | TRANSACTION | VOLATILE | LOOKUP |
 |----------|-----|-----|-----|---------|--------|
 | SQL INSERT | O | O | O | O | O |
 | INSERT SELECT | O | O | O | O | O |
@@ -61,17 +61,17 @@ SQL INSERT, Append API, 파일 적재(machloader, csvimport), SQL 기반 파일 
 - **파일 배치 적재**: machloader, csvimport, LOAD DATA INFILE
 - **스트리밍 수집**: REST API 또는 SDK
 
-##### RDB 테이블
+##### TRANSACTION 테이블
 
 - **초기 데이터 로드**: 스키마 파일을 지정한 machloader/csvimport 또는 SQL INSERT
 - **애플리케이션 연동**: SQL INSERT/UPDATE/DELETE (JDBC, ODBC, SDK)
 - **대량 입력**: 지원되는 client API의 appendBatch 또는 append stream
-- **파일 적재**: RDB 사용자 컬럼을 매핑한 스키마 파일과 machloader/csvimport
+- **파일 적재**: TRANSACTION 사용자 컬럼을 매핑한 스키마 파일과 machloader/csvimport
 
 ##### VOLATILE / LOOKUP 테이블
 
 - **참조 데이터 초기 로드**: SQL INSERT 또는 machloader
-- **UPSERT**: INSERT ON DUPLICATE KEY UPDATE (RDB 또는 PK가 있는 VOLATILE/LOOKUP)
+- **UPSERT**: INSERT ON DUPLICATE KEY UPDATE (TRANSACTION 또는 PK가 있는 VOLATILE/LOOKUP)
 - **설정 업데이트**: SQL UPDATE (PK 기준)
 
 <a id="selection-input-method-selection-input-method-guide"></a>
@@ -91,7 +91,7 @@ SQL INSERT, Append API, 파일 적재(machloader, csvimport), SQL 기반 파일 
 │
 ├── 애플리케이션/SDK
 │   ├── 지속적인 대량 시계열 입력 → Append API
-│   ├── RDB 대량 batch 입력 → client appendBatch/append stream
+│   ├── TRANSACTION 대량 batch 입력 → client appendBatch/append stream
 │   └── 소량 또는 일반 트랜잭션 처리 → SQL INSERT
 │
 ├── HTTP/REST
@@ -106,10 +106,10 @@ SQL INSERT, Append API, 파일 적재(machloader, csvimport), SQL 기반 파일 
 | 입력 특성 | 우선 검토할 방법 |
 |-----------|------------------|
 | 지속적인 TAG/LOG 스트림 | SDK Append API |
-| 애플리케이션의 RDB 대량 입력 | 지원 client의 append batch 또는 append stream |
+| 애플리케이션의 TRANSACTION 대량 입력 | 지원 client의 append batch 또는 append stream |
 | 클라이언트에 있는 파일 | machloader 또는 csvimport |
 | 서버가 직접 읽을 수 있는 파일 | LOAD DATA INFILE |
-| 소량 입력 또는 명시적 RDB 트랜잭션 | SQL INSERT |
+| 소량 입력 또는 명시적 TRANSACTION 테이블 트랜잭션 | SQL INSERT |
 
 #### 실시간 vs 배치
 
@@ -162,7 +162,7 @@ INSERT INTO tag VALUES ('TEMP-01', NOW, 25.3);
 -- TAG 메타데이터 삽입
 INSERT INTO tag METADATA VALUES ('TEMP-01', 'zone-1', 'R&D');
 
--- RDB 테이블 삽입
+-- TRANSACTION 테이블 삽입
 INSERT INTO orders (product, qty, status) VALUES ('Widget', 10, 'PENDING');
 
 -- VOLATILE 테이블 삽입
@@ -207,11 +207,11 @@ SELECT _arrival_time, sensor_id, ts, value FROM sensor_log;
 
 #### INSERT ON DUPLICATE KEY UPDATE (UPSERT)
 
-RDB 테이블은 PRIMARY KEY 또는 UNIQUE 인덱스 충돌을, VOLATILE과 LOOKUP 테이블은 PRIMARY
+TRANSACTION 테이블은 PRIMARY KEY 또는 UNIQUE 인덱스 충돌을, VOLATILE과 LOOKUP 테이블은 PRIMARY
 KEY 충돌을 `UPDATE`로 처리할 수 있습니다.
 
 ```sql
--- RDB: PK 중복 시 기존 값과 삽입 시도 값을 사용해 UPDATE
+-- TRANSACTION: PK 중복 시 기존 값과 삽입 시도 값을 사용해 UPDATE
 INSERT INTO orders VALUES (1001, 'PAID', 3)
 ON DUPLICATE KEY UPDATE
 SET status = EXCLUDED.status, qty = qty + EXCLUDED.qty;
@@ -229,7 +229,7 @@ INSERT INTO alarm_threshold VALUES ('TEMP-01', 85.0, 5.0)
 ON DUPLICATE KEY UPDATE SET high_limit = 85.0, low_limit = 5.0;
 ```
 
-RDB의 `SET` 절에서는 기존 컬럼과 `EXCLUDED.column_name`을 참조할 수 있습니다. VOLATILE의
+TRANSACTION 테이블의 `SET` 절에서는 기존 컬럼과 `EXCLUDED.column_name`을 참조할 수 있습니다. VOLATILE의
 `SET` 절에는 갱신할 값을 명시하며, `value = value + 1`처럼 기존 값을 참조해 계산하는
 표현식은 사용할 수 없습니다.
 
@@ -263,7 +263,7 @@ Machbase SDK가 제공하는 대량 입력 인터페이스입니다. SQL INSERT�
 
 - **고속 입력 경로**: TAG/LOG 테이블에서 비트랜잭션 버퍼 기반으로 동작
 - **버퍼 기반**: 내부 버퍼에 데이터를 누적하다가 `Close()` 또는 버퍼 플러시 시 서버로 전송
-- **테이블 타입**: TAG, LOG, VOLATILE, LOOKUP에서 사용 가능. RDB는 지원되는 client API의 appendBatch 또는 append stream 경로로 사용
+- **테이블 타입**: TAG, LOG, VOLATILE, LOOKUP에서 사용 가능. TRANSACTION 테이블은 지원되는 client API의 appendBatch 또는 append stream 경로로 사용
 - **열 순서 고정**: 테이블 컬럼 순서대로 값을 전달
 
 #### Go SDK 예시
@@ -331,9 +331,9 @@ MCHCloseAppender(appender, &successCnt, &failCnt);
 | 항목 | Append API | SQL INSERT |
 |------|-----------|-----------|
 | 전송 방식 | 여러 행을 버퍼링하여 전송 | SQL 문장 단위로 실행 |
-| 트랜잭션 | TAG/LOG는 비트랜잭션, RDB는 batch 실행 구간에서 트랜잭션 처리 | O |
+| 트랜잭션 | TAG/LOG는 비트랜잭션, TRANSACTION 테이블은 batch 실행 구간에서 트랜잭션 처리 | O |
 | 오류 처리 | 실패 행 건너뜀 | 행별 오류 반환 |
-| 사용 테이블 | TAG, LOG, LOOKUP, RDB(client append API) | 모든 테이블 |
+| 사용 테이블 | TAG, LOG, LOOKUP, TRANSACTION(client append API) | 모든 테이블 |
 | 사용 방법 | SDK 필요 | SQL 클라이언트 |
 
 #### REST API Append
@@ -345,7 +345,7 @@ REST API를 통한 Append도 요청 안의 여러 행을 한 번에 입력할 �
 
 - `Close()` 를 반드시 호출해야 내부 버퍼가 플러시됩니다. 호출하지 않으면 데이터 유실이 발생합니다.
 - 대량 Append 중 서버 재시작 등의 이유로 연결이 끊기면 버퍼에 남은 데이터는 손실될 수 있습니다.
-- RDB 테이블에는 일반 SQL `APPEND INTO` 문법을 사용하지 않습니다. RDB 대량 입력은 지원되는 client API의 appendBatch 또는 append stream 경로를 사용합니다.
+- TRANSACTION 테이블에는 일반 SQL `APPEND INTO` 문법을 사용하지 않습니다. TRANSACTION 대량 입력은 지원되는 client API의 appendBatch 또는 append stream 경로를 사용합니다.
 
 <a id="load-data-infile"></a>
 <a id="sql-load-data-infile"></a>
@@ -547,8 +547,8 @@ SQL `LOAD DATA INFILE`과 `SAVE DATA INTO`의 `ENCODED BY`는 `UTF8`, `MS949`, `
 
 CSV 파일을 Machbase 서버로 가져오거나 내보내는 범용 CLI 도구입니다. 스키마 파일로 컬럼 매핑, 날짜 형식, 특정 컬럼 무시 등을 세밀하게 제어할 수 있습니다.
 
-RDB 테이블은 `machloader -c -t table_name -f table_name.fmt`로 스키마 파일을 만든 뒤
-`machloader -i -f table_name.fmt -d data.csv`로 입력합니다. 이 방식은 RDB 사용자 컬럼과 CSV
+TRANSACTION 테이블은 `machloader -c -t table_name -f table_name.fmt`로 스키마 파일을 만든 뒤
+`machloader -i -f table_name.fmt -d data.csv`로 입력합니다. 이 방식은 TRANSACTION 사용자 컬럼과 CSV
 필드를 명시적으로 매핑합니다.
 
 #### 기본 가져오기
@@ -1211,7 +1211,7 @@ done
 | 타입 불일치 | CSV 값이 컬럼 타입과 맞지 않음 | bad 파일로 분리, 전처리 후 재시도 |
 | VARCHAR 초과 | 값이 컬럼 최대 길이 초과 | 자동 잘림 또는 오류 기록 |
 | NULL 제약 위반 | NOT NULL 컬럼에 NULL 값 | bad 파일로 분리 |
-| 중복 PK | RDB/LOOKUP/VOLATILE에서 PK 또는 UNIQUE 키 중복 | UPSERT 또는 사전 정리 |
+| 중복 PK | TRANSACTION/LOOKUP/VOLATILE에서 PK 또는 UNIQUE 키 중복 | UPSERT 또는 사전 정리 |
 | 날짜 형식 오류 | DATETIME 파싱 실패 | `-F` 옵션으로 형식 명시 |
 
 #### machloader: bad 파일과 로그 파일
