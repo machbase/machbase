@@ -10,7 +10,14 @@ TQL은 문자열(`string`), 숫자(`number`), 불리언(`boolean`)과 시간(`ti
 
 ### 문자열(string)
 
-문자열은 작은따옴표('), 큰따옴표("), 백틱(`)으로 감쌀 수 있습니다. 백틱은 여러 줄 문자열이나 따옴표를 포함한 긴 SQL 문을 작성할 때 편리합니다.
+문자열은 작은따옴표('), 큰따옴표("), 백틱, 중괄호로 감쌀 수 있습니다. 백틱은 여러 줄 문자열이나 따옴표를 포함한 긴 SQL 문을 작성할 때 편리합니다.
+
+여러 줄 텍스트에 백틱이나 중괄호(`{`, `}`)가 그대로 포함되어 충돌할 수 있는 경우에는 태그 기반 리터럴을 사용할 수 있습니다.
+
+- 태그 백틱: `` `<<TAG ... TAG` ``
+- 태그 중괄호: `({<<TAG ... TAG})`
+
+두 형식 모두 내부 내용은 raw 텍스트로 취급하며, 종료 줄에서 태그로 닫습니다.
 
 ```js
 SQL( 'select * from example where name=\'temperature\' limit 10' )
@@ -29,6 +36,23 @@ SQL( `select *
       limit 10` )
 CSV()
 ```
+
+```js
+SCRIPT(`<<JS
+// this is a function return '{'
+function a () { return '{' }
+JS`)
+CSV()
+```
+
+~~~js
+MARKDOWN({<<MD
+```mermaid
+erDiagram
+    CUSTOMER ||--o{ ORDER :places
+```
+MD})
+~~~
 
 중괄호 두 개(`{{ }}`)를 사용하면 JSON 문자열을 손쉽게 표현할 수 있어 따옴표 이스케이프가 필요하지 않습니다.
 

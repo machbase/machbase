@@ -10,8 +10,15 @@ TQL has three types for primitive `string`, `number`, `boolean` and `time`.
 
 ### string
 
-Define constant strings as like traditional programming languages with quotation marks, single('), double (") and backtick(`).
+Define constant strings as like traditional programming languages with quotation marks, single('), double (") and backtick.
 The backtick'ed string is useful when you need to define a string in multiple lines including quotation marks inside such as long SQL statement.
+
+When multi-line content contains another backtick or brace characters (`{`, `}`), use tagged raw literals to avoid boundary conflicts.
+
+- Tagged backtick: `` `<<TAG ... TAG` ``
+- Tagged brace block: `{<<TAG ... TAG}`
+
+Both forms treat the body as raw text and close at the tagged closing line.
 
 
 *Example)* Escaping single quote with backslash(`\'`)
@@ -37,6 +44,23 @@ SQL( `select *
       limit 10` )
 CSV()
 ```
+
+```js {linenos=table}
+SCRIPT(`<<JS
+// this is a function return '{'
+function a () { return '{' }
+JS`)
+CSV()
+```
+
+~~~js {linenos=table}
+MARKDOWN({<<MD
+```mermaid
+erDiagram
+    CUSTOMER ||--o{ ORDER :places
+```
+MD})
+~~~
 
 There is a user convenient way specifying JSON string in a TQL script by using double braces.
 It doesn't require quotation marks escaping.
