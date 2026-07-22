@@ -75,6 +75,8 @@ Notes:
   `4096` bits.
 - To use RSA-PSS authentication, specify `--auth-sig-scheme=RSA_PSS`.
 - `-p` is not used for authentication when `AUTH_MODE=CHALLENGE`.
+- Even when the user's AUTH KEY was registered from an X.509 certificate PEM, authentication
+  uses the matching private key file through `-K` or `AUTH_KEY_FILE`.
 - On POSIX systems, restricting the private key file permission to `600` is recommended.
 
 ### Using a Connection String

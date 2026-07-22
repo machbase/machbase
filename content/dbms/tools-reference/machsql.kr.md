@@ -73,6 +73,8 @@ machsql -s 127.0.0.1 -u app_user \
 - 지원 키 파라미터는 ECDSA `P-256`, `P-384`, `P-521` 및 RSA `2048`, `3072`, `4096` bits입니다.
 - RSA-PSS 인증을 사용하려면 `--auth-sig-scheme=RSA_PSS`를 명시합니다.
 - `AUTH_MODE=CHALLENGE`에서는 `-p`를 인증에 사용하지 않습니다.
+- 사용자 AUTH KEY를 X.509 인증서 PEM으로 등록한 경우에도 인증 시에는 해당 인증서에 대응하는
+  개인키 파일을 `-K` 또는 `AUTH_KEY_FILE`로 지정합니다.
 - POSIX 환경에서는 개인키 파일 권한을 `600`으로 제한하는 것을 권장합니다.
 
 ### connection string 사용

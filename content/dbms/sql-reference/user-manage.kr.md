@@ -194,6 +194,16 @@ openssl rsa -in app_user_rsa.key -pubout -out app_user_rsa.pub
 chmod 600 app_user_rsa.key
 ```
 
+위 예제의 `app_user_rsa.pub`는 `-----BEGIN PUBLIC KEY-----` 형식으로 생성됩니다.
+PKCS#1 RSA 공개키인 `-----BEGIN RSA PUBLIC KEY-----` 형식이 필요하면 다음과 같이
+`-RSAPublicKey_out` 옵션을 사용합니다.
+
+```bash
+openssl genrsa -out app_user_rsa.key 2048
+openssl rsa -in app_user_rsa.key -RSAPublicKey_out -out app_user_rsa_pkcs1.pub
+chmod 600 app_user_rsa.key
+```
+
 RSA 3072-bit, 4096-bit 키를 사용하려면 `openssl genrsa`의 마지막 인자를 각각 `3072`, `4096`으로 지정합니다.
 
 공개키를 SQL에 넣을 때는 PEM 파일을 줄바꿈이 `\n`으로 이스케이프된 한 줄 문자열로
@@ -204,7 +214,7 @@ awk '{printf "%s\\n", $0}' app_user_ecdsa.pub
 ```
 
 명령 출력 결과를 `CREATE USER ... WITH AUTH KEY` 또는 `ALTER USER ... ADD AUTH KEY`의
-`key` 값으로 사용합니다.
+`PUBKEY` 값으로 사용합니다.
 
 다음 예는 생성한 공개키로 등록 SQL 파일을 만드는 방법입니다.
 
@@ -213,9 +223,40 @@ KEY_ESCAPED=$(awk '{printf "%s\\n", $0}' app_user_ecdsa.pub)
 
 cat > add_app_user_key.sql <<EOF
 ALTER USER app_user ADD AUTH KEY (
-    key='${KEY_ESCAPED}',
-    valid_before='2047-12-31',
-    comment='openssl generated ecdsa key'
+    PUBKEY = '${KEY_ESCAPED}',
+    VALID_BEFORE = '2047-12-31',
+    COMMENT = 'openssl generated ecdsa key'
+);
+EOF
+```
+
+X.509 인증서로 등록하려면 같은 개인키로 self-signed 인증서를 생성하고, 인증서 PEM을
+`PUBKEY` 값으로 사용합니다. 인증 시 클라이언트는 인증서 파일이 아니라 대응하는 개인키
+파일을 사용합니다.
+
+```bash
+openssl req -new -x509 \
+    -key app_user_ecdsa.key \
+    -out app_user_ecdsa.crt \
+    -days 3650 \
+    -subj "/CN=app_user"
+```
+
+인증서 PEM도 SQL 문자열에 넣을 때는 줄바꿈을 `\n`으로 이스케이프합니다.
+
+```bash
+CERT_ESCAPED=$(awk '{printf "%s\\n", $0}' app_user_ecdsa.crt)
+```
+
+다음 예는 생성한 인증서로 등록 SQL 파일을 만드는 방법입니다.
+
+```bash
+cat > create_app_x509.sql <<EOF
+CREATE USER app_x509 IDENTIFIED BY 'App#1234'
+WITH AUTH KEY (
+    PUBKEY = '${CERT_ESCAPED}',
+    VALID_BEFORE = '2036-07-12',
+    COMMENT = 'x509 certificate key'
 );
 EOF
 ```
@@ -229,21 +270,49 @@ Machbase는 비밀번호 인증과 함께 공개키 기반 challenge 인증용 A
 ```sql
 CREATE USER app_user IDENTIFIED BY 'App#1234'
 WITH AUTH KEY (
-    key='-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEshxcrSmtosaqWjhRkOoAw4v3QWqL\ns3OFN2jbJrustEc12uAn/IdtTG94KK69bY7DWl80pzQ48dNL+ENXe8PT3g==\n-----END PUBLIC KEY-----\n',
-    valid_before='2047-12-31',
-    comment='initial key'
+    PUBKEY = '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEshxcrSmtosaqWjhRkOoAw4v3QWqL\ns3OFN2jbJrustEc12uAn/IdtTG94KK69bY7DWl80pzQ48dNL+ENXe8PT3g==\n-----END PUBLIC KEY-----\n',
+    VALID_BEFORE = '2047-12-31',
+    COMMENT = 'initial key'
 );
 ```
 
 설명:
 
-- `key`에는 PEM 형식 공개키를 넣습니다.
+- `PUBKEY`에는 PEM 형식 공개키 또는 X.509 인증서를 넣습니다.
+- 지원되는 `PUBKEY` 입력 형식은 다음 세 가지 PEM 블록입니다.
+  - `-----BEGIN PUBLIC KEY-----`: SubjectPublicKeyInfo(SPKI) 형식의 ECDSA 또는 RSA 공개키
+  - `-----BEGIN RSA PUBLIC KEY-----`: PKCS#1 형식 RSA 공개키
+  - `-----BEGIN CERTIFICATE-----`: X.509 인증서
 - SQL 문장 안에서는 PEM 줄바꿈을 `\n`으로 입력할 수 있습니다.
-- `valid_before`는 `YYYY-MM-DD` 형식을 사용합니다.
-- `valid_before`에는 시각이 포함된 datetime 형식(`YYYY-MM-DD HH24:MI:SS`)을 사용할 수 없습니다.
-- `comment`는 현재 AUTH KEY 문법에서 필수입니다.
+- `VALID_BEFORE`는 `YYYY-MM-DD` 형식을 사용합니다.
+- `VALID_BEFORE`에는 시각이 포함된 datetime 형식(`YYYY-MM-DD HH24:MI:SS`)을 사용할 수 없습니다.
+- `COMMENT`는 현재 AUTH KEY 문법에서 필수입니다.
 - `CREATE USER ... WITH AUTH KEY`로 생성한 첫 키는 즉시 활성 상태(`ACTIVATED=1`)로 등록됩니다.
 - 사용자는 비밀번호와 AUTH KEY를 동시에 보유할 수 있습니다. 실제 인증은 클라이언트의 `AUTH_MODE` 선택에 따라 비밀번호 또는 challenge 중 하나만 수행되며, 실패 시 다른 방식으로 자동 fallback하지 않습니다.
+- `ssh-rsa ...`, `ecdsa-sha2-nistp256 ...` 같은 OpenSSH 공개키 원문은 `PUBKEY`에 직접 등록할 수 없습니다.
+  OpenSSH 공개키를 사용하려면 `ssh-keygen -e -m PKCS8` 등으로 PEM 공개키 형식으로 변환한 뒤 등록합니다.
+
+X.509 인증서 PEM을 직접 입력하는 형식은 다음과 같습니다. 아래 인증서는 PEM 입력 형식을
+보여주기 위한 고정 예제입니다. 실제 인증에 사용하려면 앞 절처럼 등록할 인증서와 클라이언트가
+보관한 개인키가 같은 키 쌍이어야 합니다.
+
+```sql
+CREATE USER app_x509 IDENTIFIED BY 'App#1234'
+WITH AUTH KEY (
+    PUBKEY = '-----BEGIN CERTIFICATE-----\nMIIBmDCCAT+gAwIBAgIUAOBEtntR9La6sDNPUeW6o4m+oBcwCgYIKoZIzj0EAwIw\nIjEgMB4GA1UEAwwXbWFjaGJhc2UtMzgwNS14NTA5LWF1dGgwHhcNMjYwNzE1MDEw\nMzAxWhcNMzYwNzEyMDEwMzAxWjAiMSAwHgYDVQQDDBdtYWNoYmFzZS0zODA1LXg1\nMDktYXV0aDBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABLIcXK0praLGqlo4UZDq\nAMOL90Fqi7NzhTdo2ya7rLRHNdrgJ/yHbUxveCiuvW2Ow1pfNKc0OPHTS/hDV3vD\n096jUzBRMB0GA1UdDgQWBBQZ2DHpG/e/fq7RI3Cm1Z78N7l4LDAfBgNVHSMEGDAW\ngBQZ2DHpG/e/fq7RI3Cm1Z78N7l4LDAPBgNVHRMBAf8EBTADAQH/MAoGCCqGSM49\nBAMCA0cAMEQCIGSsnhbOFiJkhCCrKsut+cg5O2TVDfHUBgGXFeg7nS/7AiA9wVgn\no1LE0HTkPLZYt99uOXHZ7D3Ygbvo+VwJK1SoRg==\n-----END CERTIFICATE-----\n',
+    VALID_BEFORE = '2036-07-12',
+    COMMENT = 'x509 certificate key'
+);
+```
+
+X.509 인증서로 등록하면 Machbase는 인증서 안의 공개키를 추출해 저장합니다. 인증서 chain
+검증이나 CA trust 검증은 수행하지 않으며, 인증서는 공개키와 만료일 정보를 담는 입력 형식으로
+사용됩니다. 등록 입력은 단일 PEM 블록이어야 하며, 여러 인증서를 이어 붙인 chain PEM, private
+key PEM, OpenSSH 공개키 원형, 지원하지 않는 PEM header, 유효 PEM 뒤에 붙은 임의 텍스트는
+등록되지 않습니다.
+
+X.509 인증서에는 `notAfter` 만료일이 있습니다. `VALID_BEFORE`는 인증서 `notAfter`보다 늦을
+수 없으며, 등록 또는 변경 시 이 조건을 만족하지 않으면 실패합니다.
 
 ## AUTH KEY 관리
 
@@ -251,9 +320,9 @@ WITH AUTH KEY (
 
 ```sql
 ALTER USER app_user ADD AUTH KEY (
-    key='-----BEGIN RSA PUBLIC KEY-----\nMIIBCgKCAQEAqO+tddiAQzsT8iajPy5QJPamIlyq2zB01wgHSTs3OOrvw0uKoFQD\ncqKaDzRya73LETXIEev3nwhGCnG4SjedMHj3EH9/rRJphFtv/dzw0OHum/UhVulR\nIXUYzrTbKPTQ+qyjS8UXTteMncf9OOh4AQyS4+iJW+U344fxymR8USRgZ25N9jhf\n2gkKnn5YSPZHf8ZHQGeA7OXANBwPmH5dQwfqghXRa7Nk1hmkIAnQQXCBJW/Lin+x\nwQfqv8DVwNaiziz77voPwaeD5akq1JYWvcPlOnh+NN3tpu5gudke/t/In4NFJ3W9\n4unVcYIfxcdDSoht3AMObGmuDazOjQJFGQIDAQAB\n-----END RSA PUBLIC KEY-----\n',
-    valid_before='2048-01-31',
-    comment='rollover candidate'
+    PUBKEY = '-----BEGIN RSA PUBLIC KEY-----\nMIIBCgKCAQEAqO+tddiAQzsT8iajPy5QJPamIlyq2zB01wgHSTs3OOrvw0uKoFQD\ncqKaDzRya73LETXIEev3nwhGCnG4SjedMHj3EH9/rRJphFtv/dzw0OHum/UhVulR\nIXUYzrTbKPTQ+qyjS8UXTteMncf9OOh4AQyS4+iJW+U344fxymR8USRgZ25N9jhf\n2gkKnn5YSPZHf8ZHQGeA7OXANBwPmH5dQwfqghXRa7Nk1hmkIAnQQXCBJW/Lin+x\nwQfqv8DVwNaiziz77voPwaeD5akq1JYWvcPlOnh+NN3tpu5gudke/t/In4NFJ3W9\n4unVcYIfxcdDSoht3AMObGmuDazOjQJFGQIDAQAB\n-----END RSA PUBLIC KEY-----\n',
+    VALID_BEFORE = '2048-01-31',
+    COMMENT = 'rollover candidate'
 );
 ```
 
@@ -272,11 +341,12 @@ ALTER USER app_user ACTIVATE AUTH KEY ID 3;
 ### AUTH KEY 유효기간 변경
 
 ```sql
-ALTER USER app_user ALTER AUTH KEY ID 3 VALID_BEFORE='2048-06-30';
+ALTER USER app_user ALTER AUTH KEY ID 3 VALID_BEFORE = '2048-06-30';
 ```
 
 - `VALID_BEFORE`가 지난 키는 인증에 사용할 수 없습니다.
 - 입력 형식은 `YYYY-MM-DD`이며, 시각이 포함된 datetime 형식은 허용되지 않습니다.
+- X.509 인증서로 등록한 키는 인증서 `notAfter`보다 늦은 날짜로 `VALID_BEFORE`를 변경할 수 없습니다.
 
 ### AUTH KEY 삭제
 
@@ -301,11 +371,15 @@ ALTER USER app_user DROP AUTH KEY ID 3;
   - EC 키: 곡선 이름 예) `P-256`, `P-384`, `P-521`
 - `ACTIVATED`: 활성화 여부
 - `VALID_AFTER`, `VALID_BEFORE`: 유효 기간
+- `ADDITIONAL_INFO`: 서버가 생성한 AUTH KEY 부가 정보
+  - 공개키 입력: `type=PUBLIC_KEY`
+  - X.509 인증서 입력: `type=CERTIFICATE; cert_not_after=YYYY-MM-DD`
 - `COMMENT`: 사용자 메모
-- `PUBKEY`: PEM 형식 공개키 본문
+- `PUBKEY`: PEM 형식 공개키 본문. X.509 인증서 입력으로 등록한 경우에도 추출된 공개키가 저장됩니다.
 
 ```sql
-SELECT key_id, user_name, key_algo, key_param, activated, valid_before, comment
+SELECT key_id, user_name, key_algo, key_param, activated,
+       valid_before, additional_info, comment
   FROM V$USER_AUTH_KEYS
  WHERE user_name='APP_USER'
  ORDER BY key_id;
