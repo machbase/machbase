@@ -1,13 +1,14 @@
 ---
 type: docs
-title: '17.1.1.4 set operator syntax'
-weight: 40
+title: '17.1.1.5 set operator syntax'
+weight: 50
 toc: true
 ---
 
 집합 연산자는 두 개 이상의 `SELECT` 쿼리 결과를 합치거나 교집합/차집합을 구하는 연산자입니다.
 
-> Machbase는 현재 `UNION ALL` 집합 연산자만 지원합니다. `UNION` (중복 제거), `INTERSECT`, `MINUS`는 지원하지 않습니다.
+> Machbase는 현재 `UNION ALL` 집합 연산자만 지원합니다. `UNION` (중복 제거),
+> `INTERSECT`, `EXCEPT`는 지원하지 않습니다.
 
 ## UNION ALL
 
@@ -67,6 +68,7 @@ SELECT name, time, value FROM sensor_c WHERE time > TO_DATE('2024-01-01', 'YYYY-
 ## 주의사항
 
 - `UNION ALL`은 중복 행을 제거하지 않습니다. 중복 제거가 필요하면 `UNION ALL` 결과를 서브쿼리로 감싸고 `DISTINCT`나 `GROUP BY`를 적용합니다.
+- `FROM` 절 없는 리터럴 `SELECT`끼리의 `UNION ALL`은 지원하지 않습니다.
 - 결과 행 순서는 보장되지 않습니다. 정렬이 필요하면 전체를 인라인 뷰로 감싸고 외부에서 `ORDER BY`를 적용합니다.
 
 ```sql
@@ -81,4 +83,5 @@ SELECT * FROM (
 ## 관련 문서
 
 - [SELECT syntax](../select-syntax/) — SELECT 기본 문법
+- [WITH / CTE syntax](../cte-syntax/) — CTE에서 UNION ALL 사용
 - [VIEW syntax](../view-syntax/) — UNION ALL을 포함한 VIEW 생성

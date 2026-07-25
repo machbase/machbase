@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '17.1.1.2 SELECT hint syntax'
-weight: 20
+title: '17.1.1.3 SELECT hint syntax'
+weight: 30
 toc: true
 ---
 

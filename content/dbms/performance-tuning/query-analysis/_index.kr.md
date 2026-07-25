@@ -22,6 +22,7 @@ toc: true
 | 태그별 집계 (평균, 최대, 최소) | GROUP BY + 집계 함수 |
 | 분 단위 자동 집계 결과 조회 | ROLLUP |
 | 여러 TAG를 컬럼으로 배열 | PIVOT |
+| 복잡한 SELECT를 단계별로 구성 | WITH / CTE (Standard Edition) |
 | 누락 구간 보간 | INTERPOLATION 힌트 |
 | 텍스트 패턴 검색 | SEARCH / ESEARCH / LIKE |
 | 설정값·상태 JOIN | LOG/TAG ↔ LOOKUP/VOLATILE JOIN |
@@ -114,6 +115,7 @@ STREAM을 사용하면 데이터가 삽입될 때마다 자동으로 쿼리가 �
 | INTERPOLATION 힌트 | O | X | X | X | X |
 | SAMPLING 힌트 | O | X | X | X | X |
 | UNION ALL | O | O | O | O | O |
+| WITH / CTE (Standard Edition) | O | O | O | O | O |
 
 #### 주요 제약
 
@@ -148,6 +150,7 @@ Machbase의 SELECT 문법과 시계열 특화 조회 기능을 정리합니다.
 - **[상대 시간 표현](/dbms/performance-tuning/query-analysis/#relative-time)**: DATEADD, NOW 등 상대 시간 함수
 - **[거리축 범위 조회](/dbms/tag-table-usage/time-distance-axis/#distance-axis-query-range)**: 거리 기반 TAG 테이블 조회
 - **[VIEW 조회](/dbms/performance-tuning/query-analysis/#query-view)**: 저장 VIEW 활용
+- **[WITH / CTE](/dbms/performance-tuning/query-analysis/#query-cte)**: 문장 안에서 SELECT 결과를 단계별로 재사용
 - **[집합 연산: UNION](/dbms/performance-tuning/query-analysis/#set-operators-union-intersect-except)**: UNION ALL
 - **[SELECT 힌트](/dbms/performance-tuning/query-analysis/#hint-select)**: SAMPLING, INTERPOLATION 등 힌트
 - **[EXPLAIN으로 실행 계획 확인](/dbms/performance-tuning/query-analysis/#execution-plan-explain)**: 쿼리 성능 분석
@@ -636,6 +639,35 @@ ORDER BY avg_temp DESC;
 
 > VIEW 생성·삭제 방법은 [4장 테이블 타입 개념과 선택](/dbms/data-modeling-table-design/schema-objects-definition/#create-view)를 참고하십시오.
 
+<a id="query-cte"></a>
+<a id="query-select-query-cte"></a>
+
+### WITH / CTE
+
+Machbase 8.6.0 Standard Edition은 비재귀 CTE(Common Table Expression)를 지원합니다. CTE는
+한 SQL 문 안에서 `SELECT` 결과에 이름을 붙여 복잡한 조회를 단계별로 구성할 때 사용합니다.
+
+```sql
+WITH recent_data AS (
+    SELECT device_id, value
+    FROM sensor_data
+    WHERE time >= NOW - 30m
+),
+device_avg AS (
+    SELECT device_id, AVG(value) AS avg_value
+    FROM recent_data
+    GROUP BY device_id
+)
+SELECT device_id, avg_value
+FROM device_avg
+WHERE avg_value >= 80;
+```
+
+뒤 CTE는 앞 CTE를 참조할 수 있지만 전방 참조와 재귀 참조는 지원하지 않습니다. CTE는
+인라인 뷰로 전개되므로 같은 CTE를 여러 번 참조하면 각 참조가 별도로 실행될 수 있습니다.
+문법, 지원 문맥과 확장 한도는 [WITH / CTE syntax](/dbms/reference/sql/syntax-dictionary-sql/cte-syntax/)를
+참고하십시오.
+
 <a id="set-operators-union-intersect-except"></a>
 <a id="query-select-set-operators-union-intersect-except"></a>
 
@@ -907,6 +939,7 @@ SELECT * FROM (
 
 ```sql
 EXPLAIN SELECT ...;
+EXPLAIN FULL WITH cte_name AS (SELECT ...) SELECT ... FROM cte_name;
 ```
 
 #### 예시
@@ -961,6 +994,7 @@ PLAN
 
 - `FULL SCAN`이 나타나면 WHERE 조건에 인덱스가 없는 것입니다. 인덱스를 추가하거나 힌트로 스캔 방향을 조정하십시오.
 - `DURATION`을 사용하면 `_ARRIVAL_TIME` 기준 파티션 가지치기가 적용되어 스캔 범위가 줄어듭니다.
+- CTE는 각 참조가 인라인 뷰로 전개되므로 반복 참조의 스캔과 JOIN 계획을 각각 확인하십시오.
 - 대용량 테이블에서 느린 쿼리는 `EXPLAIN` 결과를 먼저 확인하십시오.
 
 <a id="item"></a>
@@ -1898,7 +1932,9 @@ FROM equipment_sensor
 WHERE time BETWEEN TO_DATE('2024-06-01') AND TO_DATE('2024-07-01');
 ```
 
-> **팁**: 하나의 `SELECT` 문에서 `OVER` 절이 동일한 윈도우 함수를 여러 번 사용할 경우, 동일한 `OVER` 정의를 반복해서 작성해야 합니다. 쿼리가 복잡해지면 서브쿼리나 CTE(Common Table Expression)로 분리하면 가독성이 높아집니다.
+> **팁**: 하나의 `SELECT` 문에서 `OVER` 절이 동일한 윈도우 함수를 여러 번 사용할 경우,
+> 동일한 `OVER` 정의를 반복해서 작성해야 합니다. 쿼리가 복잡해지면 서브쿼리나 Standard
+> Edition의 CTE(Common Table Expression)로 분리하면 가독성이 높아집니다.
 
 <a id="query-interpolation-series"></a>
 <a id="item-query-interpolation-series"></a>

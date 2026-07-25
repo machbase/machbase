@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '17.1.1.14 RETENTION syntax'
-weight: 140
+title: '17.1.1.15 RETENTION syntax'
+weight: 150
 toc: true
 ---
 

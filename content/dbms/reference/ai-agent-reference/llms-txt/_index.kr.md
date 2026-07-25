@@ -67,6 +67,7 @@ Machbase 공식 문서 기준 (`/dbms/` 경로 아래):
 | 섹션 | URL |
 |------|-----|
 | SQL 레퍼런스 | `/dbms/reference/sql/` |
+| WITH / CTE (Standard Edition) | `/dbms/reference/sql/syntax-dictionary-sql/cte-syntax/` |
 | 설정 레퍼런스 | `/dbms/reference/configuration/` |
 | 에러 코드 | `/dbms/reference/error-dictionary-codes/` |
 | 지원 범위와 제약 | `/dbms/reference/support-scope-constraints/` |

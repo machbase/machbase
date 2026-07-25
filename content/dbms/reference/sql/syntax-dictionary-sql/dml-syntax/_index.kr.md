@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '17.1.1.10 DML syntax'
-weight: 100
+title: '17.1.1.11 DML syntax'
+weight: 110
 toc: true
 ---
 
@@ -12,7 +12,7 @@ DML(Data Manipulation Language)은 테이블에 데이터를 삽입·수정·삭
 | 구문 | LOG | TAG | LOOKUP | VOLATILE | TRANSACTION |
 |------|:---:|:---:|:------:|:--------:|:---:|
 | INSERT | O | O | O | O | O |
-| INSERT SELECT | O | - | O | O | O |
+| INSERT SELECT | O | O | O | O | O |
 | UPDATE | - | O(태그/축 조건 또는 메타데이터) | O(일반 조건식) | O(PK 조건) | O |
 | DELETE | O(보존 조건/전체) | O(시간/이름 조건) | O(일반 조건식/전체) | O(PK 조건) | O |
 | DELETE WHERE | - | O(태그/축 조건) | O(일반 조건식) | O(PK equality) | O |
@@ -75,10 +75,13 @@ ON DUPLICATE KEY UPDATE;
 insert_select_stmt ::=
     'INSERT INTO' table_name
     [ '(' insert_column_list ')' ]
+    [ with_clause ]
     select_stmt
 ```
 
-SELECT 결과를 테이블에 삽입합니다.
+SELECT 결과를 테이블에 삽입합니다. Standard Edition에서는 대상 테이블과 컬럼 목록 뒤에
+`WITH` 절을 둘 수 있습니다. 문장 선두의 `WITH ... INSERT INTO ...` 형식은 지원하지
+않습니다.
 
 ```sql
 -- 조회 결과를 다른 테이블에 복사
@@ -87,6 +90,15 @@ INSERT INTO sensor_log_copy SELECT * FROM sensor_log;
 -- _arrival_time 명시 삽입 (시간 순서 보장 필요)
 INSERT INTO sensor_log_copy (_arrival_time, id, name, value)
 SELECT _arrival_time, id, name, value FROM sensor_log;
+
+-- CTE 결과 삽입
+INSERT INTO sensor_log_copy (id, name, value)
+WITH filtered AS (
+    SELECT id, name, value
+    FROM sensor_log
+    WHERE value >= 80
+)
+SELECT id, name, value FROM filtered;
 ```
 
 주의사항:
@@ -255,6 +267,7 @@ DELETE FROM sensors METADATA;  -- 모든 메타데이터 삭제 (실제 데이�
 
 - [DDL 문법 사전](../ddl-syntax/) - 테이블 생성 및 스키마 변경
 - [SELECT 문법 사전](../select-syntax/) - 데이터 조회
+- [WITH / CTE syntax](../cte-syntax/) - CTE를 사용한 INSERT SELECT
 - [LOOKUP predicate UPDATE](./lookup-predicate-update-syntax/) - 일반 조건식 갱신
 - [LOOKUP predicate DELETE](./lookup-predicate-delete-syntax/) - 일반 조건식 삭제
 - [LOAD DATA INFILE](../load-data-infile-syntax/) - CSV 파일 일괄 입력

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.1.1.2.2 INTERPOLATION hint'
+title: '17.1.1.3.2 INTERPOLATION hint'
 weight: 20
 toc: true
 ---
@@ -52,16 +52,17 @@ SELECT /*+ INTERPOLATION(status_code PREV 60000000000) */
  WHERE name = 'STATUS-01' DURATION 1 HOUR;
 ```
 
-### PIVOT과 조합
+### 인라인 뷰와 CTE 제한
 
-```sql
--- 보간 후 PIVOT으로 태그별 컬럼화
-SELECT * FROM (
-    SELECT /*+ INTERPOLATION(time) */ name, time, value
-      FROM sensor_tag
-     WHERE DURATION 1 HOUR
-) PIVOT (AVG(value) FOR name IN ('TEMP-01', 'TEMP-02', 'PRESS-01'));
+`INTERPOLATION`은 인라인 뷰에 적용할 수 없습니다. CTE도 실행 시 인라인 뷰 형태로
+전개되므로 CTE 본문에서 `INTERPOLATION`을 사용하면 다음 오류가 발생합니다.
+
+```text
+ERR-02304: Interpolation is not applicable on (INLINE-VIEW).
 ```
+
+보간 결과를 PIVOT하거나 여러 단계에서 재사용해야 하면 보간 쿼리를 먼저 실행해 별도
+테이블에 저장한 후 다음 쿼리에서 처리합니다.
 
 ## 보간 방법
 
@@ -86,3 +87,4 @@ SELECT * FROM (
 - [SAMPLING hint](../sampling-hint/) — 시간 구간별 샘플링
 - [SELECT hint syntax](../) — 전체 힌트 목록
 - [SERIES BY syntax](../../series-syntax/) — 연속 구간 추출
+- [WITH / CTE syntax](../../cte-syntax/) — CTE의 인라인 뷰 전개와 제한

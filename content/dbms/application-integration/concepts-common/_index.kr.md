@@ -455,6 +455,28 @@ LOG, TAG, TRANSACTION 테이블 모두에서 Prepared statement를 지원합니�
 
 Append API와는 별개로, Append는 전용 API 호출로 동작합니다. 대용량 입력에는 Append API를, 단건이나 소량 반복 입력에는 Prepared statement를 사용합니다.
 
+### CTE 파라미터 바인딩
+
+Standard Edition에서는 CTE 본문과 주 `SELECT`에 위치 바인드 매개변수를 사용할 수 있습니다.
+
+```sql
+WITH selected_data AS (
+    SELECT device_id, time, value
+    FROM sensor_data
+    WHERE device_id = ?
+)
+SELECT device_id, time, value
+FROM selected_data
+WHERE value >= ?;
+```
+
+매개변수는 SQL 문에 나타나는 순서대로 바인드합니다. 참조하지 않는 CTE에 있는 매개변수도
+문장의 매개변수로 등록되므로 반드시 값을 바인드해야 합니다. 같은 CTE를 여러 번
+참조하더라도 CTE 본문의 매개변수 개수가 참조 횟수만큼 늘어나지는 않습니다.
+
+전체 CTE 문법과 제한은
+[WITH / CTE syntax](/dbms/reference/sql/syntax-dictionary-sql/cte-syntax/)를 참고하십시오.
+
 ### 예제
 
 #### INSERT (Python)

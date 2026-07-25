@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '17.1.1.12 VIEW syntax'
-weight: 120
+title: '17.1.1.13 VIEW syntax'
+weight: 130
 toc: true
 ---
 
@@ -25,6 +25,18 @@ FROM ...;
 CREATE OR REPLACE VIEW view_name AS
 SELECT ...
 FROM ...;
+```
+
+Standard Edition에서는 VIEW 정의의 `SELECT` 앞에 비재귀 CTE를 선언할 수 있습니다.
+
+```sql
+CREATE VIEW view_name AS
+WITH cte_name AS (
+    SELECT ...
+    FROM ...
+)
+SELECT ...
+FROM cte_name;
 ```
 
 - `CREATE OR REPLACE VIEW`는 기존 VIEW 정의를 교체합니다. 교체 대상이 VIEW가 아닌 객체이면 오류를 반환합니다.
@@ -66,6 +78,22 @@ SELECT id, amount * 10 AS amount
 FROM customer
 WHERE id <= 10;
 ```
+
+### CTE를 포함한 VIEW
+
+```sql
+CREATE VIEW v_customer_city_summary AS
+WITH city_summary AS (
+    SELECT city, COUNT(*) AS customer_count, SUM(amount) AS total_amount
+    FROM customer
+    GROUP BY city
+)
+SELECT city, customer_count, total_amount
+FROM city_summary;
+```
+
+VIEW 정의에는 바인드 매개변수(`?`)를 사용할 수 없습니다. 실행할 때마다 달라지는 조건은
+VIEW를 조회하는 `SELECT`에 작성합니다.
 
 ## DROP VIEW
 
@@ -142,3 +170,4 @@ ORDER BY time;
 ## 관련 문서
 
 - [SELECT syntax](../select-syntax/) — FROM 절에서 VIEW 사용
+- [WITH / CTE syntax](../cte-syntax/) — CTE를 포함한 VIEW 정의

@@ -155,6 +155,6 @@ ORDER BY pct DESC;
 | TAG RECENT 조회 | 태그 수가 많을 경우 GROUP BY name으로 그룹화 |
 | TRANSACTION JOIN | 장비 마스터처럼 관계형 참조 데이터와 조인 |
 | LOG 기간 필터 | `_arrival_time` 조건을 반드시 포함해 스캔 범위 제한 |
-| 복합 조인 | 서브쿼리 또는 CTE로 단계 분리 시 가독성·성능 향상 |
+| 복합 조인 | 서브쿼리 또는 Standard Edition의 CTE로 단계 분리 시 가독성·성능 향상 |
 
 > TAG 테이블과 LOG 테이블을 시간 범위로 조인할 때는 검색 범위(`BETWEEN`)를 최대한 좁혀 전체 스캔을 방지하십시오.

@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '17.1.1.7 SERIES BY syntax'
-weight: 70
+title: '17.1.1.8 SERIES BY syntax'
+weight: 80
 toc: true
 ---
 

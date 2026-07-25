@@ -10,6 +10,10 @@ toc: true
 ## SELECT 전체 문법
 
 ```sql
+query_stmt ::=
+    [ with_clause ]
+    select_stmt
+
 select_stmt ::=
     'SELECT' [ hint_clause ] target_list
     [ 'FROM' table_reference_list ]
@@ -21,8 +25,11 @@ select_stmt ::=
     [ 'DURATION' duration_expr ]
 
 -- 집합 연산자
-select_stmt { 'UNION' | 'UNION ALL' | 'INTERSECT' | 'EXCEPT' } select_stmt
+select_stmt 'UNION ALL' select_stmt
 ```
+
+`with_clause`는 Standard Edition에서 비재귀 CTE를 선언합니다. 전체 문법과 제한은
+[WITH / CTE syntax](../cte-syntax/)를 참고하십시오.
 
 ### 대상 목록 (target_list)
 
@@ -353,6 +360,7 @@ SAVE DATA INTO '/tmp/sensor_data.csv' HEADER ON AS SELECT * FROM sensor_log;
 
 ## 관련 문서
 
+- [WITH / CTE syntax](../cte-syntax/) - 비재귀 공통 테이블 표현식
 - [힌트 사전](../select-hint-syntax/) - SELECT 쿼리 성능 최적화 힌트
 - [SERIES BY](../series-syntax/) - 연속 조건 그룹화 상세 설명
 - [PIVOT](../pivot-syntax/) - 행-열 변환 상세 예시

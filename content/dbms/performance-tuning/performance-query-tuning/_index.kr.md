@@ -34,6 +34,7 @@ LOG 테이블은 `_arrival_time`, TAG 테이블은 `time` 컬럼을 기준으로
 | 주제 | 설명 |
 |------|------|
 | [SELECT 성능 튜닝](/dbms/performance-tuning/performance-query-tuning/#performance-tuning-select) | WHERE 절 설계, 시간 범위 조건, EXPLAIN 해석 |
+| [CTE 성능 고려사항](/dbms/performance-tuning/performance-query-tuning/#performance-cte) | 인라인 전개, 반복 참조와 필터 배치 |
 | [검색 연산자 성능 튜닝](/dbms/performance-tuning/performance-query-tuning/#performance-operators-tuning) | 인덱스 활용 가능·불가 연산자, BITMAP vs LSM 선택 |
 | [윈도우 함수와 PIVOT 성능 고려사항](/dbms/performance-tuning/performance-query-tuning/#performance-window-functions-considerations-pivot) | 메모리 주의사항, 서브쿼리 선처리 패턴 |
 | [ROLLUP 활용 튜닝](/dbms/tag-rollup-usage/performance-tuning-rollup/#tuning-rollup) | ROLLUP 조회 패턴, 계층 설계, WAKEUP INTERVAL |
@@ -222,6 +223,39 @@ WHERE _arrival_time >= NOW() - INTERVAL '1' HOUR       -- 일부 버전에서 �
 | 컬럼 선택 | `SELECT *` 대신 필요한 컬럼만 지정했는가 |
 | 결과 제한 | 전체 집계가 아닌 경우 `LIMIT`을 사용했는가 |
 | 실행 계획 | `EXPLAIN`으로 INDEX SCAN, FULL SCAN, TAG READ 및 key range 확인 |
+
+<a id="performance-cte"></a>
+
+## CTE 성능 고려사항
+
+Standard Edition의 CTE는 각 참조를 인라인 뷰 형태로 전개하여 계획합니다. CTE 결과가 임시
+테이블에 구체화되거나 한 번만 평가된다고 보장하지 않습니다. 같은 CTE를 여러 번 참조하면
+원본 테이블의 스캔, 집계 또는 JOIN이 참조마다 실행될 수 있습니다.
+
+```sql
+WITH recent_data AS (
+    SELECT device_id, time, value
+    FROM sensor_data
+    WHERE time >= NOW - 1h
+      AND device_id IN ('device-01', 'device-02')
+)
+SELECT a.device_id, a.value, b.value
+FROM recent_data a
+JOIN recent_data b
+  ON a.device_id = b.device_id
+ AND a.time = b.time;
+```
+
+다음 기준으로 CTE 쿼리를 튜닝합니다.
+
+- 시간 범위, TAG 이름과 키 조건을 CTE 본문에 가능한 한 일찍 적용합니다.
+- 대량 테이블을 읽거나 비용이 큰 집계를 수행하는 CTE는 반복 참조를 피합니다.
+- 반복 사용이 필요하면 실제 테이블이나 VIEW로 분리하는 방안을 검토합니다.
+- `EXPLAIN`, `EXPLAIN FULL`, `EXPLAIN TRACE`로 전개된 각 참조의 계획을 확인합니다.
+- 전개된 `SELECT` 단위가 1,024개를 넘지 않도록 긴 연쇄 참조와 다중 참조를 줄입니다.
+
+`MATERIALIZED`와 `NOT MATERIALIZED`는 지원하지 않습니다. 자세한 문법과 제한은
+[WITH / CTE syntax](/dbms/reference/sql/syntax-dictionary-sql/cte-syntax/)를 참고하십시오.
 
 <a id="performance-operators-tuning"></a>
 

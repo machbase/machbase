@@ -74,6 +74,7 @@ toc: true
 | DDL (CREATE/ALTER/DROP) | `/dbms/reference/sql/syntax-dictionary-sql/ddl-syntax/` |
 | DML (INSERT/UPDATE/DELETE) | `/dbms/reference/sql/syntax-dictionary-sql/dml-syntax/` |
 | SELECT | `/dbms/reference/sql/syntax-dictionary-sql/select-syntax/` |
+| WITH / CTE (Standard Edition) | `/dbms/reference/sql/syntax-dictionary-sql/cte-syntax/` |
 | 내장 함수 | `/dbms/reference/sql/dictionary/` |
 | 데이터 타입 | `/dbms/reference/sql/type-data-types-dictionary/` |
 | 에러 코드 | `/dbms/reference/error-dictionary-codes/` |
