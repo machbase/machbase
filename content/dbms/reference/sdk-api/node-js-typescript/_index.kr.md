@@ -210,6 +210,35 @@ const [rows, fields] = await conn.query('SELECT ID, NAME FROM demo ORDER BY ID')
 console.table(rows);
 ```
 
+`fields`의 각 `ColumnMeta` 객체는 `nullable` 속성을 제공합니다.
+
+```typescript
+import { ColumnNullable } from '@machbase/ts-client';
+
+const [rows, fields] = await conn.query(
+  'SELECT ID, NAME, ID + 1 AS EXPR_VALUE FROM demo ORDER BY ID'
+);
+
+for (const field of fields) {
+  if (field.nullable === ColumnNullable.NoNulls) {
+    console.log(field.name, 'NO_NULLS');
+  } else {
+    console.log(field.name, 'NULL 처리 필요');
+  }
+}
+```
+
+| 열거형 | 숫자 값 | 의미 |
+|--------|:------:|------|
+| `ColumnNullable.NoNulls` | `0` | NULL이 될 수 없음 |
+| `ColumnNullable.Nullable` | `1` | NULL이 될 수 있음 |
+| `ColumnNullable.Unknown` | `2` | 판정할 수 없음 |
+
+`ColumnNullable.Unknown`은 `NOT NULL`을 의미하지 않습니다. NULL이 발생할 수 있는 것으로
+처리합니다. SQL 결과의 판정 규칙은
+[Nullable 메타데이터 지원 범위](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-nullable-metadata)를
+참고합니다.
+
 ### Prepared Statement 사용
 
 #### prepare(sql)
@@ -233,6 +262,15 @@ try {
 - `getLastMessage()` – 최근 서버 메시지를 확인합니다.
 - `getStatementId()` – 내부 Statement ID를 조회합니다.
 - `close()` – 서버 리소스를 정리합니다. 여러 번 호출해도 안전합니다.
+
+`getColumns()`가 반환하는 `ColumnMeta`에도 같은 `nullable` 값이 포함됩니다.
+
+```typescript
+const stmt = await conn.prepare('SELECT ID, NAME FROM demo WHERE ID = ?');
+for (const column of stmt.getColumns()) {
+  console.log(column.name, ColumnNullable[column.nullable]);
+}
+```
 
 #### Prepared Statement Examples
 

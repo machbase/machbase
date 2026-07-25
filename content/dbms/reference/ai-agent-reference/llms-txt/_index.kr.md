@@ -42,6 +42,7 @@ Machbase 공식 문서 기준 (`/dbms/` 경로 아래):
 |------|-----|
 | Append API 개념 | `/dbms/application-integration/concepts-common/#append-api-batch` |
 | SDK 지원 범위 | `/dbms/application-integration/support-scope-sdk/` |
+| Nullable 메타데이터 | `/dbms/application-integration/support-scope-sdk/#support-scope-sdk-nullable-metadata` |
 | JDBC | `/dbms/application-integration/guide-drivers/#jdbc` |
 | Python | `/dbms/application-integration/guide-drivers/#python` |
 | Go | `/dbms/application-integration/guide-drivers/#go` |

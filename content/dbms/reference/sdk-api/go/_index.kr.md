@@ -594,3 +594,7 @@ func main() {
 - 명시적 트랜잭션은 지원하지 않으므로 `Begin`, `BeginTx`는 오류를 반환합니다.
 - `LastInsertId()`는 지원하지 않습니다.
 - 파라미터 타입은 드라이버 구현을 따릅니다. 일반적인 SQL 타입, `time.Time`, `[]byte`, `net.IP`는 지원하지만 `bool` 파라미터는 지원하지 않습니다.
+- Go native와 `database/sql` 드라이버에는 SELECT 결과 컬럼의 Nullable 메타데이터를
+  조회하는 공개 API가 없습니다. 이 정보가 필요한 애플리케이션은
+  [지원되는 SDK](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-nullable-metadata)를
+  사용합니다.

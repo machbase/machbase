@@ -14,6 +14,7 @@ toc: true
 | [APPEND API 지원 범위](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-append) | SDK별 고성능 Append 쓰기 지원 여부 |
 | [AUTH KEY 인증 지원](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-auth-key) | SDK별 AUTH KEY 인증 방식 지원 여부 |
 | [Transaction / Prepare / Bind 지원](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-transaction-prepare-bind) | SDK별 트랜잭션·Prepared Statement·파라미터 바인딩 지원 여부 |
+| [Nullable 메타데이터 지원](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-nullable-metadata) | SELECT 결과 컬럼과 Prepared Parameter의 NULL 가능 여부 |
 
 ## SDK 선택 가이드
 
@@ -23,10 +24,97 @@ toc: true
 - **표준 SQL 인터페이스**가 필요하면 → JDBC, Python(DB-API 2.0), Go(`database/sql`)
 - **웹 서비스·마이크로서비스 통합**이라면 → REST API
 - **트랜잭션이 필요한 TRANSACTION 작업**이라면 → ODBC/CLI 또는 JDBC에서 SQL `BEGIN` 직접 실행
+- **조회 결과의 NULL 가능 여부를 실행 전에 확인**해야 한다면 → Native MachCLI, SQLCLI/ODBC,
+  JDBC, Node.js, Python 또는 .NET 사용
 
 > **참고**: TAG와 LOG 테이블은 append 중심 입력에 최적화되어 있습니다. TAG data UPDATE는
 > 태그 선택자와 시간축 조건으로 범위를 제한한 데이터 보정 기능이며 TRANSACTION 테이블 트랜잭션에는
 > 참여하지 않습니다.
+
+<a id="support-scope-sdk-nullable-metadata"></a>
+
+## SELECT 결과 Nullable 메타데이터 지원
+
+Machbase는 SELECT 결과 컬럼과 Prepared Parameter의 NULL 가능 여부를 메타데이터로
+제공합니다. Standard Edition과 Cluster Edition에서 같은 의미를 사용합니다.
+
+### Nullable 상태
+
+| 상태 | 숫자 값 | 의미 |
+|------|:------:|------|
+| `NO_NULLS` | `0` | 결과가 `NULL`이 될 수 없음 |
+| `NULLABLE` | `1` | 결과가 `NULL`이 될 수 있음 |
+| `UNKNOWN` | `2` | 드라이버가 NULL 가능 여부를 확정할 수 없음 |
+
+`UNKNOWN`은 `NOT NULL`을 의미하지 않습니다. 애플리케이션에서는 `NULLABLE`과
+`UNKNOWN`을 모두 `NULL` 처리 대상으로 가정해야 합니다.
+
+### SQL 결과 판정 규칙
+
+| SELECT 결과 컬럼 | Nullable 상태 |
+|------------------|----------------|
+| `NOT NULL` 또는 `PRIMARY KEY`가 지정된 직접 컬럼 | `NO_NULLS` |
+| TAG 이름, `BASETIME`, `SUMMARIZED` 직접 컬럼 | `NO_NULLS` |
+| NULL을 허용하는 직접 컬럼 | `NULLABLE` |
+| `NULL` 리터럴 | `NULLABLE` |
+| NULL이 아닌 숫자, 문자열, 바이너리 리터럴 | `NO_NULLS` |
+| OUTER JOIN의 NULL 공급 측 컬럼 | 원본 컬럼이 `NOT NULL`이어도 `NULLABLE` |
+| VIEW 또는 집합 연산을 거친 컬럼 | `UNKNOWN` |
+| 산술식, 일반 함수, `CASE`, 집계식, 바인드 값 | `UNKNOWN` |
+| DECIMAL 형변환 결과 | 입력 식의 Nullable 상태 유지 |
+
+Prepared Parameter는 대상 테이블 컬럼을 식별할 수 있으면 해당 컬럼의 Nullable 상태를
+사용합니다. 대상 컬럼을 식별할 수 없으면 `UNKNOWN`을 사용합니다. Append API가 제공하는
+컬럼 메타데이터는 대상 테이블의 실제 컬럼 제약을 사용합니다.
+
+다음 SELECT에서 예상 상태는 `ID=0`, `VALUE=1`, `EXPR_VALUE=2`입니다.
+
+```sql
+CREATE LOG TABLE T_NULL_META (
+    ID INTEGER NOT NULL,
+    VALUE INTEGER
+);
+
+SELECT ID, VALUE, ID + 1 AS EXPR_VALUE
+  FROM T_NULL_META;
+```
+
+테이블 스키마의 NULL 제약은 `DESC` 또는 `DESCRIBE`로 확인할 수 있습니다. SELECT 식이나
+OUTER JOIN으로 생성된 결과 컬럼은 SDK의 결과 메타데이터 API로 확인합니다.
+
+### SDK별 조회 방법
+
+| SDK | API | `NO_NULLS` | `NULLABLE` | `UNKNOWN` |
+|-----|-----|:----------:|:----------:|:---------:|
+| Native MachCLI | `MachCLIDescribeCol()`, `MachCLIDescribeParam()` | `0` | `1` | `2` |
+| SQLCLI/ODBC | `SQLDescribeCol()`, `SQLDescribeParam()`, `SQLColAttribute()`, `SQLGetDescField()` | `SQL_NO_NULLS` | `SQL_NULLABLE` | `SQL_NULLABLE_UNKNOWN` |
+| JDBC | `ResultSetMetaData.isNullable()` | `columnNoNulls` | `columnNullable` | `columnNullableUnknown` |
+| Node.js | `ColumnMeta.nullable` | `ColumnNullable.NoNulls` | `ColumnNullable.Nullable` | `ColumnNullable.Unknown` |
+| Python | `cursor.description[i][6]` | `False` | `True` | `None` |
+| .NET | `GetSchemaTable()["AllowDBNull"]` | `false` | `true` | `DBNull.Value` |
+| Go | 공개 API 없음 | - | - | - |
+| REST API | 결과 메타데이터 API 없음 | - | - | - |
+
+상세 API와 예제는 [CLI/ODBC](/dbms/reference/sdk-api/cli-odbc/),
+[JDBC](/dbms/reference/sdk-api/jdbc/), [Python](/dbms/reference/sdk-api/python/),
+[Node.js](/dbms/reference/sdk-api/node-js-typescript/),
+[.NET](/dbms/reference/sdk-api/net-connector/), [Go](/dbms/reference/sdk-api/go/) 레퍼런스를
+참고합니다.
+
+### 테이블 카탈로그와 PRIMARY KEY 조회
+
+SELECT 결과 메타데이터와 테이블 스키마 카탈로그는 서로 다른 API입니다.
+
+| 조회 대상 | SQLCLI/ODBC | JDBC |
+|----------|-------------|------|
+| 테이블 컬럼의 NULL 제약 | `SQLColumns()`의 `NULLABLE`, `IS_NULLABLE` | `DatabaseMetaData.getColumns()`의 `NULLABLE`, `IS_NULLABLE` |
+| `PRIMARY KEY` | `SQLPrimaryKeys()` | `DatabaseMetaData.getPrimaryKeys()` |
+
+TAG 이름, `BASETIME`, `SUMMARIZED` 컬럼은 카탈로그에서도 NULL을 허용하지 않는 것으로
+반환됩니다. `IS_NULLABLE`의 문자열 값은 API에서 정의한 `YES`와 `NO`를 사용합니다.
+
+Nullable 메타데이터는 컬럼의 NULL 가능 여부만 나타냅니다. `PRIMARY KEY` 여부는 Nullable
+값으로 판단하지 않고 카탈로그 API로 확인해야 합니다.
 
 
 <a id="support-scope-sdk-append"></a>
@@ -561,3 +649,4 @@ HTTP 기반으로 언어·프레임워크에 독립적입니다. Machbase Neo의
 - [APPEND API 지원 범위](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-append)
 - [AUTH KEY 인증 지원](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-auth-key)
 - [Transaction / Prepare / Bind 지원](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-transaction-prepare-bind)
+- [Nullable 메타데이터 지원](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-nullable-metadata)

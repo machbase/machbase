@@ -9,16 +9,16 @@ Machbase는 다양한 프로그래밍 언어와 프로토콜을 위한 SDK를 �
 
 ## SDK별 주요 기능 지원 현황
 
-| SDK | Append | AUTH KEY | Transaction API | Prepared Statement | 비고 |
-|-----|:------:|:--------:|:-----------:|:-----------------:|------|
-| **JDBC** | O | O | △ | O | SQL로 `BEGIN` 실행 필요 |
-| **Python** | O | X | X | X | `%s` 클라이언트 렌더링, 서버 Prepared Statement 미지원 |
-| **Go (native)** | O | X | X | O | `machgo` 네이티브 클라이언트 |
-| **Go (database/sql)** | X | X | X | O | 표준 `database/sql` 인터페이스 |
-| **.NET** | O | X | X | O | AUTH KEY 연결 옵션과 `MachTransaction` 미구현 |
-| **Node.js** | O | X | X | O | `prepare`, `appendBatch`, `appendOpen` 지원 |
-| **REST API** | O | X | X | X | HTTP JSON, 단일 요청 단위 |
-| **ODBC/CLI** | O | O | △ | O | SQL로 `BEGIN`, `SQLEndTran`으로 종료 |
+| SDK | Append | AUTH KEY | Transaction API | Prepared Statement | Nullable 메타데이터 | 비고 |
+|-----|:------:|:--------:|:---------------:|:------------------:|:-------------------:|------|
+| **JDBC** | O | O | △ | O | O | 결과 컬럼 지원, SQL로 `BEGIN` 실행 필요 |
+| **Python** | O | X | X | X | O | DB-API `null_ok`, 서버 Prepared Statement 미지원 |
+| **Go (native)** | O | X | X | O | X | Nullable 공개 API 없음 |
+| **Go (database/sql)** | X | X | X | O | X | Nullable 공개 API 없음 |
+| **.NET** | O | X | X | O | O | `GetSchemaTable().AllowDBNull` |
+| **Node.js** | O | X | X | O | O | `ColumnMeta.nullable` |
+| **REST API** | O | X | X | X | X | 결과 메타데이터 API 없음 |
+| **ODBC/CLI** | O | O | △ | O | O | 결과 컬럼과 Prepared Parameter 지원 |
 
 > 기호: O = 지원, △ = 서버 SQL 직접 실행으로 제한적 지원, X = 미지원
 
@@ -31,6 +31,7 @@ Machbase는 다양한 프로그래밍 언어와 프로토콜을 위한 SDK를 �
 | Append API | [SDK별 APPEND 지원 범위 안내](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-append) |
 | AUTH KEY 인증 | [SDK별 AUTH KEY 지원 범위 안내](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-auth-key) |
 | Transaction / Prepared Statement | [SDK별 transaction / prepare / bind 지원 범위 안내](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-transaction-prepare-bind) |
+| Nullable 메타데이터 | [SELECT 결과 Nullable 메타데이터 지원](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-nullable-metadata) |
 
 ## 주요 제약 사항
 
@@ -54,6 +55,12 @@ Go `database/sql` 드라이버와 Go native 클라이언트 모두 `Begin`/`Begi
 `.NET`의 `MachTransaction`도 구현되어 있지 않습니다. TRANSACTION 테이블 트랜잭션은 SQL `BEGIN`을 직접
 실행할 수 있는 JDBC 또는 ODBC/CLI 경로를 사용합니다.
 
+### Go와 REST API: Nullable 메타데이터 미지원
+
+Go native, Go `database/sql`, REST API에는 SELECT 결과 컬럼의 Nullable 상태를 조회하는
+공개 API가 없습니다. 결과를 읽기 전에 NULL 가능 여부를 확인해야 하는 애플리케이션은
+Native MachCLI, SQLCLI/ODBC, JDBC, Python, Node.js 또는 .NET을 사용합니다.
+
 ## SDK 선택 가이드
 
 | 요구 사항 | 권장 SDK |
@@ -61,6 +68,7 @@ Go `database/sql` 드라이버와 Go native 클라이언트 모두 `Begin`/`Begi
 | 지속적인 대량 쓰기 (Append) | ODBC/CLI, JDBC, Go (native), Python |
 | AUTH KEY 키 기반 인증 | JDBC, ODBC/CLI, machsql |
 | TRANSACTION 테이블 트랜잭션 | JDBC, ODBC/CLI (SQL `BEGIN` 직접 실행) |
+| SELECT 결과의 NULL 가능 여부 확인 | ODBC/CLI, JDBC, Python, Node.js, .NET |
 | 웹 서비스/마이크로서비스 통합 | REST API |
 | Go 표준 인터페이스 | Go (database/sql) |
 | 브라우저/스크립트 연동 | Node.js, REST API |

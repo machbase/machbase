@@ -44,6 +44,7 @@ toc: true
 | ODBC/CLI | `/dbms/application-integration/guide-drivers/#cli-odbc` |
 | REST API | `/dbms/application-integration/rest-api/` |
 | SDK 지원 범위 전체 | `/dbms/application-integration/support-scope-sdk/` |
+| Nullable 메타데이터 지원 | `/dbms/application-integration/support-scope-sdk/#support-scope-sdk-nullable-metadata` |
 
 ## 운영
 

@@ -408,6 +408,57 @@ int GetValues(object[] values)
 
 현재 레코드의 값을 배열에 채워 넣고 채워진 항목 수를 반환합니다.
 
+#### GetSchemaTable
+
+```cs
+DataTable GetSchemaTable()
+```
+
+SELECT 결과 컬럼의 스키마 메타데이터를 반환합니다. `AllowDBNull`로 NULL 가능 여부를
+확인합니다. 이 동작은 MachConnector40과 MachConnector40-full-API에 동일하게
+적용됩니다.
+
+```csharp
+using var reader = command.ExecuteReader();
+DataTable schema = reader.GetSchemaTable();
+
+foreach (DataRow row in schema.Rows)
+{
+    string columnName = Convert.ToString(row["ColumnName"]);
+    object allowDBNull = row["AllowDBNull"];
+
+    if (allowDBNull is bool value && !value)
+    {
+        Console.WriteLine($"{columnName}: NO_NULLS");
+    }
+    else
+    {
+        // true 또는 DBNull.Value: NULL 처리 필요
+        Console.WriteLine($"{columnName}: NULL 처리 필요");
+    }
+}
+```
+
+| `AllowDBNull` | 의미 |
+|---------------|------|
+| `false` | NULL이 될 수 없음 |
+| `true` | NULL이 될 수 있음 |
+| `DBNull.Value` | 판정할 수 없음 |
+
+`DBNull.Value`는 `NOT NULL`을 의미하지 않습니다. NULL이 발생할 수 있는 것으로
+처리합니다. SQL 결과의 판정 규칙은
+[Nullable 메타데이터 지원 범위](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-nullable-metadata)를
+참고합니다.
+
+`GetSchemaTable()`은 `ColumnName`, `ColumnOrdinal`, `ColumnSize`, `NumericPrecision`,
+`NumericScale`, `DataType`, `ProviderType`, `IsLong`, `AllowDBNull`을 제공합니다.
+
+Nullable 메타데이터는 DECIMAL precision `1~65`, scale `0~30`과 실제 값을 변경하지
+않습니다. .NET에서는 precision이 29 이하이고 scale이 28 이하인 DECIMAL을
+`System.Decimal`로 반환합니다. 이 범위를 넘는 DECIMAL은 정밀도 손실을 방지하기 위해
+`System.String`으로 반환합니다. 이때 `GetSchemaTable().DataType`, `GetFieldType()`,
+실제 행 값의 CLR 형식도 모두 `System.String`입니다.
+
 #### Get*XXXX*
 
 ```cs

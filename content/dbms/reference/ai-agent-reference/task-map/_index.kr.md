@@ -28,6 +28,7 @@ toc: true
 | 시계열 보간 / 시리즈 분석 | `SERIES BY` 절 사용 | [SELECT 문법](../../../reference/sql/syntax-dictionary-sql/select-syntax/) |
 | 복수 태그 비교 조회 | `FROM TAG TABLE t WHERE name IN (...)` | [TAG 테이블](/dbms/tag-table-usage/) |
 | 집계 결과 빠른 조회 | ROLLUP 결과 테이블 SELECT | [ROLLUP](/dbms/tag-rollup-usage/overview-use-criteria/#rollup) |
+| SELECT 결과 컬럼의 NULL 가능 여부 확인 | SDK 결과 메타데이터의 `NO_NULLS`, `NULLABLE`, `UNKNOWN` 확인 | [Nullable 메타데이터 지원](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-nullable-metadata) |
 
 ## 사용자 / 보안
 

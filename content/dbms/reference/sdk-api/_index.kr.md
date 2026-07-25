@@ -7,6 +7,10 @@ toc: true
 
 SDK별 API 레퍼런스입니다. 설치, 연결, SQL 실행, Append, 예제는 각 하위 페이지에서 확인합니다.
 
+SELECT 결과 컬럼의 NULL 가능 여부와 SDK별 반환 형식은
+[Nullable 메타데이터 지원 범위](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-nullable-metadata)를
+참고합니다.
+
 ## 공통 연결 정보
 
 | 항목 | 기본값 | 설명 |
@@ -20,11 +24,11 @@ SDK별 API 레퍼런스입니다. 설치, 연결, SQL 실행, Append, 예제는 
 
 | SDK | 설명 |
 |-----|------|
-| [CLI/ODBC](./cli-odbc/) | C/C++ CLI/ODBC API와 예제 |
-| [JDBC](./jdbc/) | Java JDBC API와 Append |
-| [Python](./python/) | `machbaseapi` Python 클라이언트 |
-| [Node.js / TypeScript](./node-js-typescript/) | `@machbase/ts-client` TypeScript 클라이언트 |
-| [.NET Connector](./net-connector/) | UniMachNetConnector 및 ADO.NET API |
-| [Go](./go/) | `machgo` 네이티브 클라이언트와 `database/sql` 드라이버 |
+| [CLI/ODBC](./cli-odbc/) | C/C++ CLI/ODBC API, Append, Nullable 메타데이터 |
+| [JDBC](./jdbc/) | Java JDBC API, Append, Nullable 메타데이터 |
+| [Python](./python/) | `machbaseapi` Python 클라이언트와 DB-API `null_ok` |
+| [Node.js / TypeScript](./node-js-typescript/) | `@machbase/ts-client`와 `ColumnMeta.nullable` |
+| [.NET Connector](./net-connector/) | UniMachNetConnector, ADO.NET, `GetSchemaTable()` |
+| [Go](./go/) | `machgo` 네이티브 클라이언트, `database/sql` 드라이버와 제한 사항 |
 
 REST API는 [REST API 레퍼런스](../rest-api/)에서 별도로 확인합니다.

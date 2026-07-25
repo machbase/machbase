@@ -48,6 +48,30 @@ AUTH_SIG_SCHEME=ECDSA;
 
 8.5 드라이버는 `AUTH_SIG_SCHEME` 파라미터를 무시할 수 있습니다.
 
+### Nullable 메타데이터
+
+8.6 서버와 8.6 클라이언트 SDK를 함께 사용하면 SELECT 결과 컬럼의 NULL 가능 여부를
+`NO_NULLS`, `NULLABLE`, `UNKNOWN`의 세 상태로 확인할 수 있습니다. 정확한 Nullable
+상태를 사용하려면 서버와 클라이언트 SDK가 모두 이 기능을 지원해야 합니다.
+
+한쪽이 구버전이어도 연결과 쿼리는 기존 방식으로 동작하지만 Nullable 값은 다음과 같이
+제한됩니다.
+
+| SDK | 구버전 조합에서의 값 |
+|-----|----------------------|
+| Native MachCLI | 기존 반환값 `0` |
+| SQLCLI/ODBC | `SQLDescribeCol()`과 `SQLColAttribute()`는 `0`, IRD는 `2` |
+| JDBC | 기존 반환값 `0` |
+| Node.js | `ColumnNullable.Unknown` (`2`) |
+| Python | `None` |
+| .NET | `DBNull.Value` |
+
+구버전 조합에서 반환된 `0`은 실제 스키마의 `NOT NULL`을 보장하지 않을 수 있습니다.
+애플리케이션이 Nullable 값에 따라 처리 방식을 결정한다면 서버와 SDK를 함께
+업그레이드합니다. API별 사용법은
+[Nullable 메타데이터 지원 범위](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-nullable-metadata)를
+참고합니다.
+
 ## 드라이버 버전 확인
 
 JDBC:
@@ -69,3 +93,5 @@ SQLGetInfo(conn, SQL_DRIVER_VER, buf, sizeof(buf), NULL);
 1. 서버와 드라이버를 같은 메이저 버전(8.6)으로 함께 업그레이드하십시오.
 2. 드라이버를 순차적으로 업그레이드하는 경우, 업그레이드 기간 동안 8.5 드라이버가 8.6 서버에 제한적으로 연결될 수 있음을 인지하십시오.
 3. AUTH KEY 인증을 사용하는 경우 드라이버를 가장 먼저 업그레이드하십시오.
+4. Nullable 메타데이터를 애플리케이션 로직에 사용하는 경우 서버와 SDK를 모두 8.6으로
+   업그레이드하십시오.

@@ -126,6 +126,31 @@ if __name__ == '__main__':
 
 `machbase` 메서드는 대부분 성공 시 `1`, 실패 시 `0`을 반환합니다. 호출 직후 `db.result()`로 서버가 반환한 JSON 페이로드를 확인할 수 있습니다. `select()` 결과를 순회할 때는 `(0, None)`이 반환될 때까지 `db.fetch()`를 반복 호출하고, 마지막에 `db.selectClose()`로 리소스를 해제합니다.
 
+### DB-API 결과의 Nullable 메타데이터
+
+DB-API 커서에서는 `cursor.description[i][6]`의 `null_ok` 값으로 SELECT 결과 컬럼의
+NULL 가능 여부를 확인합니다.
+
+```python
+cursor.execute(sql)
+
+for column in cursor.description:
+    name = column[0]
+    null_ok = column[6]
+    print(name, null_ok)
+```
+
+| `null_ok` | 의미 |
+|-----------|------|
+| `False` | NULL이 될 수 없음 |
+| `True` | NULL이 될 수 있음 |
+| `None` | 판정할 수 없음 |
+
+`None`은 `NOT NULL`을 의미하지 않으므로 NULL이 발생할 수 있는 것으로 처리합니다.
+SQL 결과의 판정 규칙은
+[Nullable 메타데이터 지원 범위](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-nullable-metadata)를
+참고합니다.
+
 ## 지원 API 매트릭스
 
 | 클래스 | API | 설명 | 반환 |
@@ -163,6 +188,7 @@ if __name__ == '__main__':
 | `cursor.fetchone()` | 한 건 조회 | `tuple | dict | None` |
 | `cursor.fetchmany(size)` | 최대 `size`건 조회 | `list` |
 | `cursor.fetchall()` | 전체 조회 | `list` |
+| `cursor.description` | 결과 컬럼 메타데이터. 일곱 번째 값은 `null_ok`입니다. | `tuple | None` |
 | `cursor.close()` | 커서 종료 | `None` |
 | `cursor.rowcount` | 영향 행 수 | `int` |
 | `connection.append(table, rows, types=None, times=None, strict=False)` | Append 프로토콜로 row를 추가합니다. 2.3부터 trailing 컬럼 생략 시 `NULL` padding을 적용합니다. | 입력 row 수 |

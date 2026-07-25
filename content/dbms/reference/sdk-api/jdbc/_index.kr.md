@@ -13,6 +13,40 @@ JDBC(Java DataBase Connectivity)는 자바에서 데이터베이스를 조작하
 
 [표준 함수 스펙 4.0](https://www.oracle.com/java/technologies/javase/javase-tech-database.html#corespec40)
 
+## Nullable 메타데이터 조회
+
+`ResultSetMetaData.isNullable()`로 SELECT 결과 컬럼의 NULL 가능 여부를 조회합니다.
+
+```java
+ResultSetMetaData meta = resultSet.getMetaData();
+int nullable = meta.isNullable(columnIndex);
+
+if (nullable == ResultSetMetaData.columnNoNulls) {
+    // NULL이 될 수 없음
+} else {
+    // columnNullable 또는 columnNullableUnknown: NULL 처리 필요
+}
+```
+
+| 반환 상수 | 숫자 값 | 의미 |
+|----------|:------:|------|
+| `ResultSetMetaData.columnNoNulls` | `0` | NULL이 될 수 없음 |
+| `ResultSetMetaData.columnNullable` | `1` | NULL이 될 수 있음 |
+| `ResultSetMetaData.columnNullableUnknown` | `2` | 판정할 수 없음 |
+
+`columnNullableUnknown`은 `NOT NULL`을 의미하지 않습니다. NULL이 발생할 수 있는 것으로
+처리합니다. SQL 결과의 판정 규칙은
+[Nullable 메타데이터 지원 범위](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-nullable-metadata)를
+참고합니다.
+
+테이블 컬럼의 NULL 제약은 `DatabaseMetaData.getColumns()` 결과의 `NULLABLE`과
+`IS_NULLABLE`로 확인합니다. `PRIMARY KEY`는 Nullable 값으로 판단하지 않고
+`DatabaseMetaData.getPrimaryKeys()`로 별도 조회합니다.
+
+Machbase JDBC의 `PreparedStatement.getParameterMetaData()`는 공개 API로 지원하지
+않습니다. Prepared Parameter의 Nullable 상태가 필요한 애플리케이션은
+Native MachCLI 또는 SQLCLI/ODBC의 `DescribeParam` API를 사용합니다.
+
 ## JDBC 인증 방식
 
 > **참고**: AUTH KEY challenge 인증은 Machbase 8.5 이상에서 지원됩니다.

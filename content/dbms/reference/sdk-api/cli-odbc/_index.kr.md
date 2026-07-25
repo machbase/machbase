@@ -36,6 +36,74 @@ ODBC(Open Database Connectivity)는 CLI 기반의 대표적 표준 인터페이�
 | SQLCopyDesc       | SQLGetConnectAttr | SQLNumParams     | SQLStatistics     |
 | SQLDescribeCol    | SQLGetData        | SQLNumResultCols | SQLTables         |
 
+## Nullable 메타데이터 조회
+
+SELECT 결과 컬럼과 Prepared Parameter의 NULL 가능 여부는 다음 세 값으로 반환됩니다.
+
+| 상태 | Native MachCLI | SQLCLI/ODBC |
+|------|:--------------:|:-----------:|
+| NULL이 될 수 없음 | `0` | `SQL_NO_NULLS` |
+| NULL이 될 수 있음 | `1` | `SQL_NULLABLE` |
+| 판정할 수 없음 | `2` | `SQL_NULLABLE_UNKNOWN` |
+
+판정할 수 없는 값은 `NOT NULL`이 아닙니다. `SQL_NULLABLE`과
+`SQL_NULLABLE_UNKNOWN`을 모두 NULL 처리 대상으로 가정합니다. SQL 식별 규칙은
+[Nullable 메타데이터 지원 범위](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-nullable-metadata)를
+참고합니다.
+
+### Native MachCLI
+
+Native MachCLI에서는 `<machcli.h>`를 포함하고 `MachCLIDescribeCol()` 또는
+`MachCLIDescribeParam()`의 마지막 인자로 Nullable 상태를 받습니다.
+
+```c
+int nullable;
+int type;
+int precision;
+int scale;
+
+MachCLIDescribeCol(stmt, column_no,
+                   name, sizeof(name), &name_length,
+                   &type, &precision, &scale, &nullable);
+
+MachCLIDescribeParam(stmt, parameter_no,
+                     &type, &precision, &scale, &nullable);
+```
+
+### SQLCLI와 ODBC
+
+SQLCLI와 ODBC에서는 `SQLDescribeCol()`과 `SQLDescribeParam()`의 `NullablePtr`로
+Nullable 상태를 받습니다.
+
+```c
+SQLSMALLINT nullable;
+
+SQLDescribeCol(stmt, column_no,
+               name, sizeof(name), &name_length,
+               &type, &precision, &scale, &nullable);
+
+SQLDescribeParam(stmt, parameter_no,
+                 &type, &precision, &scale, &nullable);
+```
+
+컬럼 속성과 IRD(Implementation Row Descriptor)에서도 같은 값을 조회할 수 있습니다.
+
+```c
+SQLLEN nullable_attr;
+SQLColAttribute(stmt, column_no, SQL_DESC_NULLABLE,
+                NULL, 0, NULL, &nullable_attr);
+
+SQLHDESC ird;
+SQLSMALLINT nullable_desc;
+SQLGetStmtAttr(stmt, SQL_ATTR_IMP_ROW_DESC, &ird, 0, NULL);
+SQLGetDescField(ird, column_no, SQL_DESC_NULLABLE,
+                &nullable_desc, 0, NULL);
+```
+
+테이블 컬럼의 NULL 제약은 `SQLColumns()` 결과의 `NULLABLE`과 `IS_NULLABLE`로
+확인합니다. `PRIMARY KEY`는 Nullable 값으로 판단하지 않고 `SQLPrimaryKeys()`로 별도
+조회합니다.
+
 ## 접속을 위한 연결 스트링
 CLI 접속 시 사용하는 연결 스트링 항목은 다음과 같습니다.
 
@@ -2794,7 +2862,7 @@ int main()
     }
 
     printf("----------------------------------------------------------------\n");
-    printf("%32s%16s%10s\n","Name","Type","Length");
+    printf("%32s%16s%10s%10s\n","Name","Type","Length","Nullable");
     printf("----------------------------------------------------------------\n");
 
     for(i = 0; i < sColumns; i++)
@@ -2809,7 +2877,8 @@ int main()
                        &sDecimalDigits,
                        (SQLSMALLINT *)&sNullable);
 
-        printf("%32s%16d%10d\n",sColName, sColType, sColLen);
+        printf("%32s%16d%10d%10d\n",
+               sColName, sColType, sColLen, sNullable);
     }
 
     printf("----------------------------------------------------------------\n");
@@ -2831,19 +2900,19 @@ make를 실행하면 열 정보가 출력됩니다.
 [mach@localhost cli]$ ./sample5_describe
 connected ...
 ----------------------------------------------------------------
-Name Type Length
+Name Type Length Nullable
 ----------------------------------------------------------------
-SEQ 5 5
-SCORE 4 10
-TOTAL -5 19
-PERCENTAGE 6 27
-RATIO 8 27
-ID 12 10
-SRCIP 2104 15
-DSTIP 2106 60
-REG_DATE 9 31
-TLOG 2100 67108864
-IMAGE -2 67108864
+SEQ 5 5 1
+SCORE 4 10 1
+TOTAL -5 19 1
+PERCENTAGE 6 27 1
+RATIO 8 27 1
+ID 12 10 1
+SRCIP 2104 15 1
+DSTIP 2106 60 1
+REG_DATE 9 31 1
+TLOG 2100 67108864 1
+IMAGE -2 67108864 1
 ----------------------------------------------------------------
 [mach@localhost cli]$
 ```
