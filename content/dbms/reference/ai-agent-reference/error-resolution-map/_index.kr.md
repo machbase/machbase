@@ -28,6 +28,7 @@ toc: true
 |-----------|-----------|------|------|
 | Go `Begin()` 호출 실패 | `not supported` 또는 panic | Go 드라이버에 Transaction 미구현 | Transaction 제거 또는 JDBC/ODBC 사용 |
 | Python `?` parameter 오류 | `ProgrammingError` / 바인딩 실패 | positional `?`에 mapping 전달 또는 parameter 수 불일치 | sequence와 marker 수를 맞추거나 `:name`과 mapping 사용 |
+| 구형 서버에서 Python named bind 실패 | `NotSupportedError`, SQLSTATE `0A000` | 연결 protocol이 4.0.3 미만 | `%s` 또는 `?`와 sequence를 사용하거나 서버와 SDK 업그레이드 |
 | 활성 TRANSACTION 테이블 트랜잭션 안의 TAG 쓰기 실패 | `not supported` | TRANSACTION 테이블 트랜잭션에 비 TRANSACTION 쓰기를 포함함 | TRANSACTION 테이블 트랜잭션 종료 후 TAG 쓰기 실행 |
 | Append 후 데이터 미반영 | 즉시 SELECT 결과 없음 | Append 버퍼 미플러시 | `executeAppendClose()` / `flush()` 호출 확인 |
 | REST API HTTPS 오류 | `SSL certificate error` | 인증서 미설정 또는 자체 서명 인증서 | `-k` 옵션(curl) 또는 인증서 등록 |

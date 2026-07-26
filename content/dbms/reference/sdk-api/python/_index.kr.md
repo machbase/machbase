@@ -314,9 +314,15 @@ cursor 하나는 server statement 하나만 보유합니다. 여러 SQL을 각�
 - named parameter key가 누락되거나 불필요한 key가 추가된 경우
 - marker가 없는 SQL에 비어 있지 않은 parameter를 전달한 경우
 
+marker가 없는 SQL에는 `None`, 빈 sequence 또는 빈 mapping을 parameter 없음으로 전달할
+수 있습니다. 빈 mapping은 내부적으로 `None`으로 정규화되므로 protocol version과 관계없이
+같은 의미로 처리됩니다.
+
 parameter 오류가 발생해도 cached statement는 유지되므로 올바른 parameter로 같은 SQL을
 다시 실행할 수 있습니다. protocol 4.0.3보다 오래된 서버에서 named parameter를 사용하면
-`NotSupportedError`가 발생합니다. 이 경우 positional marker를 사용합니다.
+서버 PREPARE 전에 `NotSupportedError`와 SQLSTATE `0A000`이 발생합니다. 이 오류는 현재
+cached statement를 해제하거나 교체하지 않습니다. 구형 서버에서는 positional marker를
+사용합니다.
 
 `cursor.close()`는 cached server statement를 해제합니다. 같은 cursor를 두 번 닫아도
 안전하며, connection이 먼저 닫힌 경우에는 네트워크 요청 없이 로컬 상태만 정리합니다.

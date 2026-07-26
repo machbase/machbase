@@ -25,6 +25,8 @@ toc: true
 | `cursor(prepared=True)`는 동일 원본 SQL의 server statement 재사용 | dbms-nfx#3980, commit `f3e153d6` | SQL 변경 또는 cursor close 시 해제 |
 | `MachbasePreparedCursor`는 공개 package symbol | dbms-nfx `machbaseAPI/__init__.py`, commit `f3e153d6` | Python API 2.4 |
 | prepared cursor는 `%s`, `?`, `%(name)s`, `:name` 지원 | dbms-nfx#3980 회귀 테스트 | quote와 comment 내부 marker는 보존 |
+| protocol 4.0.3 미만 named 실행은 PREPARE 전 `NotSupportedError(0A000)` | dbms-nfx#3980, commit `95a9be1d` | 기존 cached statement 유지 |
+| marker 없는 SQL의 빈 mapping은 parameter 없음으로 정규화 | dbms-nfx#3980, commit `95a9be1d` | `None`, 빈 sequence와 동일 |
 
 ## Named Bind Parameter
 
