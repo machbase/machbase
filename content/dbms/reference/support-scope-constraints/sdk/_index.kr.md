@@ -12,7 +12,7 @@ Machbase는 다양한 프로그래밍 언어와 프로토콜을 위한 SDK를 �
 | SDK | Append | AUTH KEY | Transaction API | Server Prepared | Named Bind API | Nullable 메타데이터 |
 |-----|:------:|:--------:|:---------------:|:---------------:|:--------------:|:-------------------:|
 | **JDBC** | O | O | △ | O | O | O |
-| **Python** | O | X | X | △ | O | O |
+| **Python** | O | X | X | O | O | O |
 | **Go (native)** | O | X | X | O | X | X |
 | **Go (database/sql)** | X | X | X | O | X | X |
 | **.NET** | O | X | X | X | △ | O |
@@ -22,7 +22,8 @@ Machbase는 다양한 프로그래밍 언어와 프로토콜을 위한 SDK를 �
 
 > 기호: O = 지원, △ = SDK별로 제한된 방식으로 지원, X = 미지원
 >
-> Python은 `execute()`와 `executemany()`에서 내부 서버 prepare/bind를 수행하지만 공개
+> Python은 서버 prepare/bind를 지원합니다. `execute()`는 호출마다 prepare하고 닫으며,
+> `executemany()`는 한 번 prepare한 statement를 호출 내부에서 재사용합니다. 공개
 > `prepare()` 객체는 없습니다. .NET은 이름 컬렉션을 client-side typed literal로 렌더링한
 > 뒤 ExecDirect로 실행합니다. ODBC/CLI의 이름 API는 SQLCLI에서만 제공되며 ODBC는 ordinal
 > `SQLBindParameter()`를 사용합니다.
@@ -43,8 +44,10 @@ Machbase는 다양한 프로그래밍 언어와 프로토콜을 위한 SDK를 �
 
 ### Python: 명시적 Prepared Statement 객체 미지원
 
-Python `machbaseAPI`는 별도의 공개 `prepare()` 객체를 제공하지 않습니다. `:name` SQL과
-mapping은 `execute()` 또는 `executemany()` 내부의 서버 prepare/bind 경로를 사용합니다.
+Python `machbaseAPI`는 Server Prepared Statement를 지원하지만 별도의 공개 `prepare()`
+객체를 제공하지 않습니다. `:name` SQL과 mapping을 사용하면 `execute()`는 호출마다
+prepare/execute/close하고, `executemany()`는 한 번 prepare한 뒤 각 mapping을 실행하고
+닫습니다. 따라서 statement를 여러 `execute()` 호출에 걸쳐 직접 재사용할 수는 없습니다.
 기존 `%s` 또는 `%(name)s` 형식은 클라이언트 렌더링 방식으로 유지됩니다.
 
 ```python

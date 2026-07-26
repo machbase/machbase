@@ -70,7 +70,9 @@ toc: true
 - Transaction: 미지원
 - 파라미터: `:name`과 mapping은 서버 prepare/bind 사용
 - 호환 문법: `%s`, `%(name)s`는 client-side 렌더링
-- Prepared Statement: 공개 `prepare()` 객체 없이 `execute()` 내부에서 제한적으로 지원
+- Server Prepared Statement: 지원. `execute()`는 호출마다 prepare/close하고,
+  `executemany()`는 호출 내부에서 statement 재사용
+- 명시적 Prepared Statement 객체: 미지원
 - Nullable 메타데이터: `cursor.description[i][6]`
 
 ### Go (machcli / native)

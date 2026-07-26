@@ -470,7 +470,7 @@ AUTH KEY challenge 인증은 DB 포트(기본 5656)에 접속하는 드라이버
 |-----|:---:|:---:|:---:|:---:|------|
 | **ODBC/CLI** | △ | O | O | △ | SQLCLI는 이름 API, ODBC는 ordinal API 사용 |
 | **JDBC** | △ | O | O | O | `MachPreparedStatement.setObject(String, Object)` |
-| **Python** | X | △ | O | O | `execute()` 내부 서버 prepare/bind, 공개 `prepare()` 객체 없음 |
+| **Python** | X | O | O | O | 서버 prepare/bind 지원, 공개 `prepare()` 객체 없음 |
 | **.NET Connector** | X | X | O | △ | client-side typed literal 렌더링 후 ExecDirect |
 | **Go (database/sql)** | X | O | O | X | `db.Prepare()`와 `?` 바인딩 |
 | **Go (native client)** | X | O | O | X | `Prepare(ctx, sql)`과 positional 파라미터 |
@@ -507,9 +507,10 @@ try {
 
 반복 실행할 쿼리를 미리 파싱·컴파일하여 성능을 높입니다. SQL 인젝션 방지 효과도 있습니다.
 
-Python `machbaseAPI` DB-API 스타일 커서는 별도 `prepare()` 객체를 제공하지 않습니다.
-그러나 `:name` SQL과 mapping을 `execute()` 또는 `executemany()`에 전달하면 내부적으로
-서버 prepare/bind를 수행합니다.
+Python `machbaseAPI`는 Server Prepared Statement를 지원하지만 DB-API 스타일 커서에
+별도 공개 `prepare()` 객체를 제공하지 않습니다. `:name` SQL과 mapping을 `execute()`에
+전달하면 호출할 때마다 서버 statement를 prepare하고 실행한 뒤 닫습니다.
+`executemany()`는 호출할 때 한 번 prepare하고 모든 행을 실행한 뒤 statement를 닫습니다.
 
 ```python
 # Python
@@ -518,11 +519,19 @@ sql = """
     INSERT INTO sensor_log (name, time, value)
     VALUES (:name, :time, :value)
 """
-for name, ts, val in data_list:
-    cursor.execute(sql, {"name": name, "time": ts, "value": val})
+cursor.executemany(
+    sql,
+    [
+        {"name": name, "time": ts, "value": val}
+        for name, ts, val in data_list
+    ],
+)
 ```
 
-기존 `%s`와 `%(name)s`는 호환을 위해 유지되며 클라이언트에서 SQL 리터럴을 렌더링합니다.
+반복 입력에는 statement를 호출 내부에서 재사용하는 `executemany()`를 권장합니다. 공개
+`prepare()` 객체가 없으므로 애플리케이션이 statement를 여러 `execute()` 호출에 걸쳐
+유지할 수는 없습니다. 기존 `%s`와 `%(name)s`는 호환을 위해 유지되며 클라이언트에서 SQL
+리터럴을 렌더링합니다.
 
 ```go
 // Go database/sql

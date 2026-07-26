@@ -67,7 +67,7 @@ Machbase의 주요 제한 사항을 테이블 유형별, Edition별, 일반 시�
 
 | SDK | 제한 내용 |
 |-----|---------|
-| Python | Transaction API와 공개 `prepare()` 객체 미지원. `:name` mapping은 내부 서버 prepare/bind 지원 |
+| Python | 서버 Prepared Statement 지원. Transaction API와 공개 `prepare()` 객체 미지원. `execute()`는 호출마다 prepare/close하고 `executemany()`는 호출 내부에서 재사용 |
 | Go (database/sql) | Transaction 미지원 |
 | Go (native) | Transaction 미지원, AUTH KEY 미지원 |
 | .NET | Transaction API, AUTH KEY와 서버 Prepared Statement 미지원. 이름 컬렉션은 client-side 렌더링 |

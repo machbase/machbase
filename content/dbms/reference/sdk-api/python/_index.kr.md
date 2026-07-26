@@ -195,6 +195,17 @@ cur.executemany(
 )
 ```
 
+서버 Prepared Statement의 수명은 호출 방식에 따라 다릅니다.
+
+| 호출 | 서버 statement 수명 | 재사용 범위 |
+|------|----------------------|-------------|
+| `execute(sql, params)` | 호출마다 prepare/execute 후 close | 호출 간 재사용 없음 |
+| `executemany(sql, rows)` | 한 번 prepare 후 각 행을 execute하고 close | 해당 호출 내부 |
+
+따라서 Python DB-API는 Server Prepared Statement를 지원하지만, 공개 `prepare()` 객체가
+없으므로 애플리케이션이 statement 수명을 직접 관리하거나 여러 `execute()` 호출에 걸쳐
+재사용할 수는 없습니다. 같은 SQL로 여러 행을 처리할 때는 `executemany()`를 사용합니다.
+
 mapping key는 선행 콜론 없이 지정하며 대소문자를 구분합니다. 같은 이름이 반복되면 한
 값을 모든 위치에 적용합니다. 이름 누락, extra key와 named/positional 혼용은
 `ProgrammingError`를 반환합니다. 이전 서버에서 이름 기반 API를 사용하면 SQLSTATE
@@ -202,8 +213,7 @@ mapping key는 선행 콜론 없이 지정하며 대소문자를 구분합니다
 
 호환을 위해 `%s`와 `%(name)s` 문법도 유지합니다. 이 두 형식은 클라이언트에서 SQL
 리터럴을 렌더링하는 기존 경로이며, 새 코드에는 서버 메타데이터를 사용하는 `:name`
-형식을 권장합니다. DB-API는 독립된 공개 `prepare()` 객체를 제공하지 않지만
-`execute()`와 `executemany()`가 내부적으로 서버 prepare/bind를 수행합니다.
+형식을 권장합니다.
 
 공통 이름 문법은
 [Named Bind Parameter syntax](../../sql/syntax-dictionary-sql/named-bind-parameter-syntax/)를

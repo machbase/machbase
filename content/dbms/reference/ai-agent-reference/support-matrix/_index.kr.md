@@ -51,7 +51,7 @@ toc: true
 | SDK | Append | AUTH KEY | Transaction API | Server Prepared | Named Bind API | Nullable Metadata |
 |-----|:------:|:--------:|:---------------:|:---------------:|:--------------:|:-----------------:|
 | JDBC | O | O | △ | O | O | O |
-| Python (machbaseAPI) | O | X | X | △² | O | O |
+| Python (machbaseAPI) | O | X | X | O² | O | O |
 | Go (machcli / native) | O | X | X³ | O | X | X |
 | Go (database/sql) | X | X | X³ | O | X | X |
 | .NET (MachConnector) | O | X | X | X | △⁴ | O |
@@ -60,8 +60,10 @@ toc: true
 | ODBC/CLI | O | O | △ | O | △⁶ | O |
 | R (RODBC) | X | X | X | X | X | X |
 
-> ² Python machbaseAPI는 `:name` mapping을 내부 서버 prepare/bind로 실행하지만 공개
-> `prepare()` 객체는 없습니다. `%s`와 `%(name)s`는 기존 client-side 렌더링 방식입니다.
+> ² Python machbaseAPI는 서버 prepare/bind를 지원합니다. `execute()`는 호출마다
+> prepare/execute/close하고, `executemany()`는 한 번 prepare한 statement를 호출 내부에서
+> 재사용합니다. 공개 `prepare()` 객체는 없습니다. `%s`와 `%(name)s`는 기존 client-side
+> 렌더링 방식입니다.
 > ³ Go driver (machcli, database/sql 모두): `Begin()` / `BeginTx()` 미구현.
 > ⁴ .NET 이름 컬렉션은 client-side typed literal 렌더링 후 ExecDirect를 사용합니다.
 > ⁵ Node.js AUTH KEY: 현재 미지원.

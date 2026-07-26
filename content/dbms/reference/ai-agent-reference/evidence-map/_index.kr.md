@@ -20,7 +20,9 @@ toc: true
 | 사실 | 근거 (소스) | 비고 |
 |------|------------|------|
 | Python machbaseAPI의 `paramstyle`은 `named` | dbms-nfx `ux/src/python/machbaseAPI/__init__.py` | `:name` SQL과 mapping 사용 |
-| `execute()`와 `executemany()`의 named mapping은 서버 prepare/bind 사용 | dbms-nfx#3935, commit `a60f8414` | 공개 `prepare()` 객체는 없음 |
+| `execute()`의 named mapping은 호출마다 서버 prepare/execute/close | dbms-nfx `ux/src/python/machbaseAPI/connector.py` | 호출 간 statement 재사용 없음 |
+| `executemany()`는 한 번 prepare한 statement로 모든 mapping 실행 | dbms-nfx `ux/src/python/machbaseAPI/connector.py` | 호출이 끝나면 statement close |
+| 공개 `prepare()` 객체는 없음 | dbms-nfx#3935, commit `a60f8414` | 내부 서버 prepare/bind는 지원 |
 | `%s`, `%(name)s`는 호환용 client-side 렌더링 | Python SDK 구현 | 새 코드에는 `:name` 권장 |
 
 ## Named Bind Parameter
