@@ -470,7 +470,7 @@ AUTH KEY challenge 인증은 DB 포트(기본 5656)에 접속하는 드라이버
 |-----|:---:|:---:|:---:|:---:|------|
 | **ODBC/CLI** | △ | O | O | △ | SQLCLI는 이름 API, ODBC는 ordinal API 사용 |
 | **JDBC** | △ | O | O | O | `MachPreparedStatement.setObject(String, Object)` |
-| **Python** | X | O | O | O | 서버 prepare/bind 지원, 공개 `prepare()` 객체 없음 |
+| **Python** | X | O | O | O | 2.4 prepared cursor로 호출 간 statement 재사용 |
 | **.NET Connector** | X | X | O | △ | client-side typed literal 렌더링 후 ExecDirect |
 | **Go (database/sql)** | X | O | O | X | `db.Prepare()`와 `?` 바인딩 |
 | **Go (native client)** | X | O | O | X | `Prepare(ctx, sql)`과 positional 파라미터 |
@@ -507,14 +507,13 @@ try {
 
 반복 실행할 쿼리를 미리 파싱·컴파일하여 성능을 높입니다. SQL 인젝션 방지 효과도 있습니다.
 
-Python `machbaseAPI`는 Server Prepared Statement를 지원하지만 DB-API 스타일 커서에
-별도 공개 `prepare()` 객체를 제공하지 않습니다. `:name` SQL과 mapping을 `execute()`에
-전달하면 호출할 때마다 서버 statement를 prepare하고 실행한 뒤 닫습니다.
-`executemany()`는 호출할 때 한 번 prepare하고 모든 행을 실행한 뒤 statement를 닫습니다.
+Python `machbaseAPI` 2.4는 `cursor(prepared=True)`로 재사용 가능한 prepared cursor를
+생성합니다. 동일한 원본 SQL 문자열을 사용하는 `execute()`와 `executemany()` 호출은
+cursor가 보유한 server statement를 재사용합니다.
 
 ```python
 # Python
-cursor = conn.cursor()
+cursor = conn.cursor(prepared=True)
 sql = """
     INSERT INTO sensor_log (name, time, value)
     VALUES (:name, :time, :value)
@@ -528,10 +527,11 @@ cursor.executemany(
 )
 ```
 
-반복 입력에는 statement를 호출 내부에서 재사용하는 `executemany()`를 권장합니다. 공개
-`prepare()` 객체가 없으므로 애플리케이션이 statement를 여러 `execute()` 호출에 걸쳐
-유지할 수는 없습니다. 기존 `%s`와 `%(name)s`는 호환을 위해 유지되며 클라이언트에서 SQL
-리터럴을 렌더링합니다.
+prepared cursor는 cursor 하나당 server statement 하나를 유지합니다. 원본 SQL 문자열이
+달라지면 기존 statement를 해제하고 새 SQL을 준비하며, 여러 SQL을 각각 유지하려면 SQL별
+cursor를 생성합니다. 일반 cursor는 기존 동작을 유지합니다. 일반 cursor의 `%s`와
+`%(name)s`는 클라이언트 렌더링 방식이지만 prepared cursor에서는 각각 `?`와 `:name`으로
+변환하여 서버에 바인딩합니다.
 
 ```go
 // Go database/sql

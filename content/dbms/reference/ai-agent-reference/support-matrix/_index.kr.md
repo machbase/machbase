@@ -60,10 +60,10 @@ toc: true
 | ODBC/CLI | O | O | △ | O | △⁶ | O |
 | R (RODBC) | X | X | X | X | X | X |
 
-> ² Python machbaseAPI는 서버 prepare/bind를 지원합니다. `execute()`는 호출마다
-> prepare/execute/close하고, `executemany()`는 한 번 prepare한 statement를 호출 내부에서
-> 재사용합니다. 공개 `prepare()` 객체는 없습니다. `%s`와 `%(name)s`는 기존 client-side
-> 렌더링 방식입니다.
+> ² Python machbaseAPI 2.4는 `cursor(prepared=True)`로 동일 SQL의 server statement를
+> 여러 `execute()`와 `executemany()` 호출에서 재사용합니다. cursor 하나는 statement
+> 하나를 보유합니다. 일반 cursor의 `%s`와 `%(name)s`는 client-side 렌더링 방식이며,
+> prepared cursor에서는 각각 `?`와 `:name`으로 변환하여 서버에 바인딩합니다.
 > ³ Go driver (machcli, database/sql 모두): `Begin()` / `BeginTx()` 미구현.
 > ⁴ .NET 이름 컬렉션은 client-side typed literal 렌더링 후 ExecDirect를 사용합니다.
 > ⁵ Node.js AUTH KEY: 현재 미지원.

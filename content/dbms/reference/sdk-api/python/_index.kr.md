@@ -7,11 +7,14 @@ toc: true
 
 ## 개요
 
-2.3 패키지 기준입니다. PyPI 패키지명은 `machbaseapi`(소문자)이고, 순수 Python 구현이라 네이티브 바이너리(`.so/.dll/.dylib`)가 필요 없습니다. 기존 `machbase` 사용 흐름은 그대로 유지됩니다.
+2.4 패키지 기준입니다. PyPI 패키지명은 `machbaseapi`(소문자)이고, 순수 Python 구현이라
+네이티브 바이너리(`.so/.dll/.dylib`)가 필요 없습니다. 기존 `machbase` 사용 흐름은
+그대로 유지됩니다.
 
 - 패키지 설치명: `machbaseapi`
 - 기존과 동일하게 `import machbaseAPI` 사용
 - DB-API 방식 `connect()`, `cursor()` 지원
+- 2.4부터 `cursor(prepared=True)`로 서버 statement를 여러 호출에서 재사용
 - `append*`는 `on_ack` 콜백을 추가할 수 있어 ACK 관찰 가능
 - `append()`, `appendByTime()`, `appendData()`, `appendDataByTime()`는 타입 리스트를 생략해도 동작합니다. 서버 메타데이터 기반으로 타입을 자동 추론합니다.
 - 2.3부터 append row의 마지막 일부 컬럼을 생략하면 append null-bit를 통해 `NULL`로 저장합니다.
@@ -26,7 +29,7 @@ toc: true
 
 - `pip`을 사용할 수 있는 Python 3.6 이상
 - 접속 가능한 Machbase 서버와 계정 정보(기본 계정 `SYS/MANAGER`, 포트 `5656`)
-- 2.3은 네이티브 라이브러리 의존성이 없습니다.
+- 2.4는 네이티브 라이브러리 의존성이 없습니다.
 
 ### PyPI에서 설치
 
@@ -195,16 +198,17 @@ cur.executemany(
 )
 ```
 
-서버 Prepared Statement의 수명은 호출 방식에 따라 다릅니다.
+서버 Prepared Statement의 수명은 cursor 종류와 호출 방식에 따라 다릅니다.
 
-| 호출 | 서버 statement 수명 | 재사용 범위 |
-|------|----------------------|-------------|
-| `execute(sql, params)` | 호출마다 prepare/execute 후 close | 호출 간 재사용 없음 |
-| `executemany(sql, rows)` | 한 번 prepare 후 각 행을 execute하고 close | 해당 호출 내부 |
+| Cursor | 호출 | 서버 statement 재사용 범위 |
+|--------|------|----------------------------|
+| 일반 cursor | `execute(sql, params)` | 해당 호출만 |
+| 일반 cursor | `executemany(sql, rows)` | 해당 호출 내부 |
+| prepared cursor | `execute()` / `executemany()` | 동일한 원본 SQL을 사용하는 후속 호출 |
 
-따라서 Python DB-API는 Server Prepared Statement를 지원하지만, 공개 `prepare()` 객체가
-없으므로 애플리케이션이 statement 수명을 직접 관리하거나 여러 `execute()` 호출에 걸쳐
-재사용할 수는 없습니다. 같은 SQL로 여러 행을 처리할 때는 `executemany()`를 사용합니다.
+일반 cursor의 `:name`과 mapping은 서버 prepare/bind를 사용하지만 호출이 끝나면
+statement를 닫습니다. 여러 호출에서 같은 statement를 재사용하려면
+`cursor(prepared=True)`를 사용합니다.
 
 mapping key는 선행 콜론 없이 지정하며 대소문자를 구분합니다. 같은 이름이 반복되면 한
 값을 모든 위치에 적용합니다. 이름 누락, extra key와 named/positional 혼용은
@@ -212,12 +216,115 @@ mapping key는 선행 콜론 없이 지정하며 대소문자를 구분합니다
 `0A000`의 `NotSupportedError`를 반환합니다.
 
 호환을 위해 `%s`와 `%(name)s` 문법도 유지합니다. 이 두 형식은 클라이언트에서 SQL
-리터럴을 렌더링하는 기존 경로이며, 새 코드에는 서버 메타데이터를 사용하는 `:name`
-형식을 권장합니다.
+리터럴을 렌더링하는 일반 cursor의 기존 경로입니다. prepared cursor에서는 `%s`를 `?`로,
+`%(name)s`를 `:name`으로 변환하여 서버 prepare/bind 경로로 실행합니다.
 
 공통 이름 문법은
 [Named Bind Parameter syntax](../../sql/syntax-dictionary-sql/named-bind-parameter-syntax/)를
 참고하십시오.
+
+## Prepared Cursor (2.4)
+
+`connection.cursor(prepared=True)`는 서버 Prepared Statement 하나를 보유하고 동일한 SQL을
+여러 번 실행할 때 재사용합니다. 반복 INSERT, 반복 조건 조회와 동일 SQL의 batch 실행에
+사용합니다.
+
+```python
+from machbaseAPI import connect
+
+conn = connect(
+    host="127.0.0.1",
+    port=5656,
+    user="SYS",
+    password="MANAGER",
+)
+cur = conn.cursor(dictionary=False, raw=False, prepared=True)
+
+sql = "INSERT INTO SENSOR_DATA (ID, NAME, VALUE) VALUES (%s, %s, %s)"
+cur.execute(sql, (700, "sensor-a", 21.5))
+cur.execute(sql, (701, "sensor-b", 22.1))
+cur.executemany(
+    sql,
+    [
+        (702, "sensor-c", 23.0),
+        (703, "sensor-d", None),
+    ],
+)
+
+cur.close()
+conn.close()
+```
+
+`cursor()`의 관련 인자는 다음과 같습니다.
+
+- `dictionary=True`: 조회 결과를 컬럼 이름 기반 dictionary로 반환합니다.
+- `dictionary=False`: 조회 결과를 tuple로 반환합니다.
+- `raw=True`: 기존 raw 결과 계약을 유지합니다.
+- `prepared=True`: 공개 타입인 `MachbasePreparedCursor`를 반환합니다.
+- `prepared=False`: 기존 일반 cursor를 반환하는 기본값입니다.
+
+### Parameter marker
+
+prepared cursor는 Python DB-API 형식과 Machbase native 형식을 모두 지원합니다.
+
+| 공개 marker | 서버 marker | Parameter 형태 |
+|---------------|-------------|----------------|
+| `%s` | `?` | tuple, list 등의 sequence |
+| `?` | `?` | tuple, list 등의 sequence |
+| `%(name)s` | `:name` | dictionary 등의 mapping |
+| `:name` | `:name` | dictionary 등의 mapping |
+
+문자열 리터럴, 따옴표로 묶은 식별자, `--` 주석과 `/* ... */` 주석 안의 marker 모양은
+변환하지 않습니다. 한 SQL에서 positional marker와 named marker를 혼용할 수 없습니다.
+named marker 이름은 영문자, `_`, `$`로 시작하고 이후에는 숫자도 사용할 수 있습니다.
+named marker는 Machbase protocol 4.0.3 이상에서 지원합니다.
+
+```python
+sql = (
+    "SELECT ID, NAME FROM SENSOR_DATA "
+    "WHERE ID = %(target)s OR PARENT_ID = %(target)s"
+)
+cur.execute(sql, {"target": 700})
+rows = cur.fetchall()
+```
+
+### Statement 재사용
+
+prepared cursor는 원본 SQL 문자열이 이전 호출과 정확히 같을 때 cached server statement를
+재사용합니다. 공백이나 주석을 포함하여 문자열이 달라지면 기존 statement를 해제하고 새
+statement를 준비합니다.
+
+```python
+insert_cur = conn.cursor(prepared=True)
+select_cur = conn.cursor(prepared=True)
+```
+
+cursor 하나는 server statement 하나만 보유합니다. 여러 SQL을 각각 계속 재사용하려면 위와
+같이 SQL별 prepared cursor를 생성합니다. `executemany()`가 끝난 뒤에도 statement는
+유지되며 동일 SQL의 후속 `execute()` 또는 `executemany()`에서 재사용됩니다. 빈 parameter
+목록을 전달하면 statement를 준비하거나 실행하지 않고 `0`을 반환합니다.
+
+### 오류와 종료
+
+다음 입력에는 `ProgrammingError`가 발생합니다.
+
+- marker가 있지만 parameter를 전달하지 않은 경우
+- positional marker에 mapping을 전달하거나 named marker에 sequence를 전달한 경우
+- positional marker와 named marker를 혼용한 경우
+- named parameter key가 누락되거나 불필요한 key가 추가된 경우
+- marker가 없는 SQL에 비어 있지 않은 parameter를 전달한 경우
+
+parameter 오류가 발생해도 cached statement는 유지되므로 올바른 parameter로 같은 SQL을
+다시 실행할 수 있습니다. protocol 4.0.3보다 오래된 서버에서 named parameter를 사용하면
+`NotSupportedError`가 발생합니다. 이 경우 positional marker를 사용합니다.
+
+`cursor.close()`는 cached server statement를 해제합니다. 같은 cursor를 두 번 닫아도
+안전하며, connection이 먼저 닫힌 경우에는 네트워크 요청 없이 로컬 상태만 정리합니다.
+닫힌 prepared cursor에서 `execute()`, `executemany()` 또는 fetch API를 호출하면
+`InterfaceError`가 발생합니다.
+
+prepared cursor는 SQL의 허용 범위나 Python API의 auto-commit 동작을 변경하지 않습니다.
+테이블별 DML 범위는 [지원 범위와 제약](../../support-scope-constraints/)을 참고하십시오.
 
 ## 지원 API 매트릭스
 
@@ -246,12 +353,12 @@ mapping key는 선행 콜론 없이 지정하며 대소문자를 구분합니다
 | `machbase` | `append(table_name, rows_or_types, aValues=None, format='YYYY-MM-DD HH24:MI:SS')` | 열기·추가·닫기를 한 번에 처리하는 편의 함수입니다. 타입 리스트를 생략하려면 두 번째 인자로 rows를 전달합니다. | `1` 또는 `0` |
 | `machbase` | `appendByTime(table_name, rows_or_types, aValues=None, format='YYYY-MM-DD HH24:MI:SS', aTimes=None)` | 타임스탬프 인지 Append를 위한 편의 함수입니다. 타입 리스트를 생략하려면 두 번째 인자로 rows를 전달하고 `aTimes`로 타임스탬프를 지정합니다. | `1` 또는 `0` |
 
-## DB-API 스타일 API (2.3)
+## DB-API 스타일 API (2.4)
 
 | API | 설명 | 반환 |
 | -- | -- | -- |
 | `connect(**kwargs)` | DB-API 연결 생성. `host`, `port`, `user`, `password` 등은 키워드 인자로 전달합니다. | `MachbaseConnection` |
-| `cursor(dictionary=True)` | 커서 생성 (`True`: dict, `False`: tuple) | `MachbaseCursor` |
+| `cursor(dictionary=True, raw=False, prepared=False)` | 일반 또는 prepared cursor 생성 | `MachbaseCursor` 또는 `MachbasePreparedCursor` |
 | `cursor.execute(sql, params=None)` | SQL 실행 | `cursor` |
 | `cursor.executemany(sql, seq_of_params)` | 같은 SQL을 여러 mapping 또는 sequence로 실행 | 실행 횟수 |
 | `cursor.fetchone()` | 한 건 조회 | `tuple | dict | None` |
@@ -367,9 +474,9 @@ conn.close()
 
 ## API 참고 및 샘플 (legacy-style `machbase` class)
 
-아래 예제는 2.3 패키지에서도 유지되는 legacy-style `machbase` 클래스를 사용합니다.
+아래 예제는 2.4 패키지에서도 유지되는 legacy-style `machbase` 클래스를 사용합니다.
 `getSessionId()`, `count()`, `checkBit()`와 같은 API는 예전 native 패키지에는 있었지만
-현재 pure-Python 구현에서는 제공되지 않습니다. 필요 시 2.3 DB-API 예제를 참고하십시오.
+현재 pure-Python 구현에서는 제공되지 않습니다. 필요 시 2.4 DB-API 예제를 참고하십시오.
 
 각 스크립트에서 호스트·포트·계정 정보를 환경에 맞게 수정하십시오. 모든 예제는 독립 실행이 가능하며 `python3 script.py` 형태로 실행할 수 있습니다.
 

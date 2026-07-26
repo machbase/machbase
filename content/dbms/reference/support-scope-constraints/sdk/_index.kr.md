@@ -22,10 +22,10 @@ Machbase는 다양한 프로그래밍 언어와 프로토콜을 위한 SDK를 �
 
 > 기호: O = 지원, △ = SDK별로 제한된 방식으로 지원, X = 미지원
 >
-> Python은 서버 prepare/bind를 지원합니다. `execute()`는 호출마다 prepare하고 닫으며,
-> `executemany()`는 한 번 prepare한 statement를 호출 내부에서 재사용합니다. 공개
-> `prepare()` 객체는 없습니다. .NET은 이름 컬렉션을 client-side typed literal로 렌더링한
-> 뒤 ExecDirect로 실행합니다. ODBC/CLI의 이름 API는 SQLCLI에서만 제공되며 ODBC는 ordinal
+> Python 2.4는 `cursor(prepared=True)`로 동일 SQL의 server statement를 여러
+> `execute()`와 `executemany()` 호출에서 재사용합니다. 일반 cursor의 기존 일회성 실행
+> 방식도 유지합니다. .NET은 이름 컬렉션을 client-side typed literal로 렌더링한 뒤
+> ExecDirect로 실행합니다. ODBC/CLI의 이름 API는 SQLCLI에서만 제공되며 ODBC는 ordinal
 > `SQLBindParameter()`를 사용합니다.
 
 ## 기능별 상세 안내
@@ -42,21 +42,23 @@ Machbase는 다양한 프로그래밍 언어와 프로토콜을 위한 SDK를 �
 
 ## 주요 제약 사항
 
-### Python: 명시적 Prepared Statement 객체 미지원
+### Python: Prepared Cursor
 
-Python `machbaseAPI`는 Server Prepared Statement를 지원하지만 별도의 공개 `prepare()`
-객체를 제공하지 않습니다. `:name` SQL과 mapping을 사용하면 `execute()`는 호출마다
-prepare/execute/close하고, `executemany()`는 한 번 prepare한 뒤 각 mapping을 실행하고
-닫습니다. 따라서 statement를 여러 `execute()` 호출에 걸쳐 직접 재사용할 수는 없습니다.
-기존 `%s` 또는 `%(name)s` 형식은 클라이언트 렌더링 방식으로 유지됩니다.
+Python `machbaseAPI` 2.4는 `cursor(prepared=True)`를 제공합니다. prepared cursor는
+동일한 원본 SQL 문자열에 대해 cached server statement를 재사용하고, SQL이 달라지거나
+cursor를 닫을 때 기존 statement를 해제합니다.
 
 ```python
-cursor = conn.cursor()
+cursor = conn.cursor(prepared=True)
 cursor.execute(
-    "INSERT INTO sensor_log VALUES (:name, :time, :value)",
-    {"name": "sensor01", "time": ts, "value": 25.3},
+    "INSERT INTO sensor_log VALUES (%s, %s, %s)",
+    ("sensor01", ts, 25.3),
 )
 ```
+
+cursor 하나는 server statement 하나만 보유합니다. 여러 SQL을 각각 계속 재사용해야 하면
+SQL별 prepared cursor를 생성합니다. `%s`, `?`, `%(name)s`, `:name`을 지원하며 named
+marker에는 Machbase protocol 4.0.3 이상이 필요합니다.
 
 ### AUTH KEY: ODBC/CLI, JDBC만 완전 지원
 

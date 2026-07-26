@@ -20,10 +20,11 @@ toc: true
 | 사실 | 근거 (소스) | 비고 |
 |------|------------|------|
 | Python machbaseAPI의 `paramstyle`은 `named` | dbms-nfx `ux/src/python/machbaseAPI/__init__.py` | `:name` SQL과 mapping 사용 |
-| `execute()`의 named mapping은 호출마다 서버 prepare/execute/close | dbms-nfx `ux/src/python/machbaseAPI/connector.py` | 호출 간 statement 재사용 없음 |
-| `executemany()`는 한 번 prepare한 statement로 모든 mapping 실행 | dbms-nfx `ux/src/python/machbaseAPI/connector.py` | 호출이 끝나면 statement close |
-| 공개 `prepare()` 객체는 없음 | dbms-nfx#3935, commit `a60f8414` | 내부 서버 prepare/bind는 지원 |
-| `%s`, `%(name)s`는 호환용 client-side 렌더링 | Python SDK 구현 | 새 코드에는 `:name` 권장 |
+| 일반 cursor의 named `execute()`는 호출마다 서버 prepare/execute/close | dbms-nfx#3935, commit `a60f8414` | prepared cursor와 구분 |
+| 일반 cursor의 `executemany()`는 호출 내부에서 statement 재사용 | dbms-nfx#3935, commit `a60f8414` | 호출이 끝나면 statement close |
+| `cursor(prepared=True)`는 동일 원본 SQL의 server statement 재사용 | dbms-nfx#3980, commit `f3e153d6` | SQL 변경 또는 cursor close 시 해제 |
+| `MachbasePreparedCursor`는 공개 package symbol | dbms-nfx `machbaseAPI/__init__.py`, commit `f3e153d6` | Python API 2.4 |
+| prepared cursor는 `%s`, `?`, `%(name)s`, `:name` 지원 | dbms-nfx#3980 회귀 테스트 | quote와 comment 내부 marker는 보존 |
 
 ## Named Bind Parameter
 

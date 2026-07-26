@@ -66,7 +66,7 @@ WHERE time > ADD_TIME(sysdate, '0/0/0 0:-30:0');
 
 | SDK | 플레이스홀더 | 예시 |
 |-----|------------|------|
-| Python (machbaseAPI) | `%s` 또는 `%(name)s` | `cursor.execute("SELECT * FROM t WHERE name = %s", ('v1',))` |
+| Python (machbaseAPI) | `%s`, `?`, `%(name)s`, `:name` | `conn.cursor(prepared=True).execute("SELECT * FROM t WHERE name = ?", ('v1',))` |
 | Java JDBC | `?` | `pstmt.setString(1, "v1")` |
 | Go (machcli / native) | `?` | `db.Query("SELECT ... WHERE name = ?", "v1")` |
 | Go (database/sql) | `?` | `db.Query("SELECT ... WHERE name = ?", "v1")` |
@@ -74,7 +74,9 @@ WHERE time > ADD_TIME(sysdate, '0/0/0 0:-30:0');
 | ODBC/CLI | `?` | `SQLBindParameter(...)` |
 | REST API | 해당 없음 | URL 파라미터 또는 JSON body로 값 직접 포함 |
 
-> **주의**: Python machbaseAPI에서 `?`를 사용하면 오류가 발생합니다. 반드시 `%s` 또는 `%(name)s`를 사용하십시오.
+> Python에서 `%s`와 `?`에는 sequence를, `%(name)s`와 `:name`에는 mapping을 전달합니다.
+> 동일 SQL을 여러 호출에서 재사용할 때는 Python API 2.4의 `cursor(prepared=True)`를
+> 사용합니다.
 
 ## ROLLUP 조회 규칙
 
@@ -99,7 +101,7 @@ WHERE name = 'temp_01'
 |------|------|------------|
 | TAG 쓰기를 `BEGIN` 안에서 실행 | 활성 TRANSACTION 테이블 트랜잭션에는 TAG 쓰기를 포함할 수 없음 | TAG 쓰기는 트랜잭션 밖에서 실행 |
 | Go `database/sql`에서 `db.Begin()` | `Begin()` / `BeginTx()` 미구현 → 오류 | Transaction이 필요하면 TRANSACTION 테이블 + ODBC/JDBC 사용 |
-| Python에서 `?` 플레이스홀더 | machbaseAPI는 `%s` 방식 → 오류 | `%s` 또는 `%(name)s` 사용 |
+| Python에서 `?`에 mapping 전달 | `?`는 positional marker이므로 container 불일치 | sequence를 전달하거나 `:name`과 mapping 사용 |
 | ROLLUP 집계에 `AVG()` 직접 사용 | ROLLUP 결과 컬럼 구조와 불일치 | `STAT(avg)` 형식 사용 |
 | TAG 테이블에 일반 `FROM table_name` 사용 | 정상 문법 | 태그 선택자와 시간 조건을 WHERE에 작성 |
 | LOG 테이블 `UPDATE` | LOG 테이블은 Append-only → 미지원 | 수정 불필요한 설계 권장 |

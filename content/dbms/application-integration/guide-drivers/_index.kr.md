@@ -1907,6 +1907,7 @@ public class FullExample {
 - Python 3.6 이상 필요
 - 네이티브 라이브러리 의존성 없음
 - DB-API 2.0 방식: `connect()`, `cursor()` 지원
+- Python API 2.4부터 재사용 가능한 `cursor(prepared=True)` 지원
 - Append 프로토콜 지원 (대량 고속 적재)
 
 ### 설치
@@ -2049,8 +2050,9 @@ db.close()
 | API | 설명 |
 |-----|------|
 | `connect(**kwargs)` | 연결 생성. `host`, `port`, `user`, `password` 키워드 인자 사용 |
-| `cursor(dictionary=True)` | 커서 생성. `True`이면 딕셔너리, `False`이면 튜플 반환 |
+| `cursor(dictionary=True, raw=False, prepared=False)` | 일반 또는 prepared cursor 생성 |
 | `cursor.execute(sql, params=None)` | SQL 실행 |
+| `cursor.executemany(sql, seq_of_params)` | 같은 SQL을 여러 parameter 묶음으로 실행 |
 | `cursor.fetchone()` | 결과 한 행 조회 |
 | `cursor.fetchmany(size)` | 최대 `size`건 조회 |
 | `cursor.fetchall()` | 전체 결과 조회 |
@@ -2109,6 +2111,40 @@ print('batch:', batch)
 cur.close()
 conn.close()
 ```
+
+### Prepared cursor (2.4)
+
+같은 SQL을 여러 번 실행할 때는 `prepared=True`로 cursor를 생성합니다. prepared cursor는
+동일한 원본 SQL 문자열을 사용하는 동안 하나의 server statement를 유지합니다.
+
+```python
+from machbaseAPI import connect
+
+conn = connect(host='127.0.0.1', port=5656, user='SYS', password='MANAGER')
+cur = conn.cursor(dictionary=False, prepared=True)
+
+sql = 'INSERT INTO PY_SENSOR(ts, device, value) VALUES(%s, %s, %s)'
+cur.execute(sql, [1720000000000000000, 'sensor-1', 23.5])
+cur.execute(sql, [1720000001000000000, 'sensor-2', 24.1])
+cur.executemany(
+    sql,
+    [
+        [1720000002000000000, 'sensor-3', 24.3],
+        [1720000003000000000, 'sensor-4', None],
+    ],
+)
+
+cur.close()
+conn.close()
+```
+
+prepared cursor는 positional `%s`와 `?`, named `%(name)s`와 `:name`을 지원합니다.
+positional marker에는 sequence를, named marker에는 mapping을 전달합니다. cursor 하나는
+server statement 하나를 보유하므로 SQL 문자열이 달라지면 이전 statement를 해제합니다.
+여러 SQL을 각각 유지하려면 SQL별 cursor를 생성하고, 사용 후 `close()`로 닫습니다.
+
+marker 변환, 재사용, 오류와 종료 동작은
+[Python Prepared Cursor](../../reference/sdk-api/python/#prepared-cursor-24)를 참고하십시오.
 
 ### 에러 처리
 

@@ -48,7 +48,7 @@ toc: true
 | Python (machbaseAPI) | Transaction | `begin()` / `commit()` / `rollback()` 미지원 |
 | .NET (MachConnector) | Transaction | `MachTransaction` 미구현 |
 | .NET (MachConnector) | AUTH KEY 인증 | 연결 옵션 미지원 |
-| Python (machbaseAPI) | 명시적 Prepared Statement 객체 | 미지원 — 서버 Prepared Statement는 지원하며 `executemany()` 호출 내부에서 재사용 |
+| Python (machbaseAPI) | Prepared cursor cache | cursor당 server statement 하나. SQL 문자열이 달라지면 기존 statement 해제 |
 | .NET (MachConnector) | Server Prepared Statement | 미지원 — 이름 컬렉션은 client-side 렌더링 후 ExecDirect |
 | Go (machcli / database/sql) | Named Bind API | 미지원 — `?`와 positional argument 사용 |
 | REST API | Transaction | 미지원 |

@@ -21,6 +21,7 @@ toc: true
 | SELECT 결과 Nullable 메타데이터 필요 | **ODBC/CLI**, **JDBC**, **Python**, **Node.js**, **.NET** | Go와 REST API는 공개 결과 메타데이터 API 없음 |
 | Prepared Parameter Nullable 메타데이터 필요 | **Native MachCLI**, **SQLCLI/ODBC**, **JDBC** | JDBC는 `getParameterMetaData()` 지원 |
 | 서버 Named Bind 필요 | **SQLCLI**, **JDBC**, **Python**, **Node.js** | ODBC/machsql은 ordinal, .NET은 client-side 렌더링 |
+| Python에서 동일 SQL 반복 실행 | **machbaseAPI 2.4 prepared cursor** | `cursor(prepared=True)`로 호출 간 statement 재사용 |
 | Go 언어 선호 + Append 필요 | **machcli** (native) | [Go 가이드](/dbms/application-integration/guide-drivers/#go) |
 | Go 언어 선호 + 표준 인터페이스 | **database/sql** 드라이버 | Append 불필요한 경우 |
 | 브라우저 / 웹 / 스크립트 | **REST API** (포트 5657, `/machbase` 엔드포인트) | [REST API 가이드](/dbms/application-integration/rest-api/) |
@@ -68,11 +69,11 @@ toc: true
 - Append: `conn.append(table, cols, data)` 또는 `machbase()` 클래스
 - AUTH KEY: 미지원
 - Transaction: 미지원
-- 파라미터: `:name`과 mapping은 서버 prepare/bind 사용
-- 호환 문법: `%s`, `%(name)s`는 client-side 렌더링
-- Server Prepared Statement: 지원. `execute()`는 호출마다 prepare/close하고,
-  `executemany()`는 호출 내부에서 statement 재사용
-- 명시적 Prepared Statement 객체: 미지원
+- 일반 cursor: `:name`과 mapping은 서버 prepare/bind, `%s`와 `%(name)s`는
+  client-side 렌더링
+- Prepared cursor: `cursor(prepared=True)`. `%s`, `?`, `%(name)s`, `:name` 지원
+- Statement 재사용: 동일한 원본 SQL을 여러 `execute()`와 `executemany()` 호출에서 재사용
+- Cache 제약: cursor당 statement 하나, SQL 변경 또는 cursor close 시 해제
 - Nullable 메타데이터: `cursor.description[i][6]`
 
 ### Go (machcli / native)

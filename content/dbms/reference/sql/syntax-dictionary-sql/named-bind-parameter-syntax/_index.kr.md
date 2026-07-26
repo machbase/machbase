@@ -165,7 +165,7 @@ Statement 데이터 타입을 사용할 수 있습니다. `DECIMAL` 또는 `NUME
 | ODBC | `:name` SQL을 `SQLBindParameter()` ordinal로 바인딩 |
 | JDBC | `MachPreparedStatement.setObject(String name, Object value)` |
 | Node.js/TypeScript | 배열은 positional, 객체는 named 입력 |
-| Python DB-API | `execute()` 또는 `executemany()`에 mapping 전달 |
+| Python DB-API | mapping 전달. 2.4 prepared cursor는 `:name`과 `%(name)s`를 호출 간 재사용 |
 | .NET | `MachCommand.Parameters.AddWithValue(":name", value)` |
 | Go | 이름 기반 API 미지원, `?`와 positional argument 사용 |
 | machsql | SQL은 `:name`, 값은 `$1`, `$2` 순서로 지정 |

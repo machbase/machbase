@@ -426,7 +426,8 @@ sql = f"SELECT * FROM tag_table WHERE name = '{sensor_id}'"
 Prepared statement를 사용하면 파라미터 값은 항상 데이터로만 처리됩니다.
 
 ```python
-# Python machbaseAPI: %s 파라미터 렌더링 사용
+# Python machbaseAPI 2.4: server Prepared Statement 사용
+cur = conn.cursor(prepared=True)
 sql = "SELECT * FROM tag_table WHERE name = %s"
 cur.execute(sql, ['sensor_id_value'])
 ```
@@ -486,14 +487,14 @@ SDK별 API는
 
 #### INSERT (Python)
 
-Python `machbaseAPI`의 DB-API 스타일 커서는 `:name` SQL과 mapping을 서버
-prepare/bind 경로로 실행합니다.
+Python `machbaseAPI` 2.4의 prepared cursor는 같은 SQL을 여러 번 실행할 때 server
+statement를 재사용합니다.
 
 ```python
 from machbaseAPI import connect
 
 conn = connect(host='127.0.0.1', port=5656, user='SYS', password='MANAGER')
-cur = conn.cursor()
+cur = conn.cursor(prepared=True)
 
 sql = """
     INSERT INTO tag_table (name, time, value)
@@ -605,7 +606,9 @@ SQLFreeStmt(stmt, SQL_DROP);
 
 ## Parameter binding
 
-SQL 문에 값을 안전하게 전달하는 메커니즘입니다. ODBC, JDBC, .NET, Go, Node.js 드라이버는 `?` 위치 바인딩을, Python `machbaseAPI`는 `%s` 또는 `%(name)s` 자리 표시자를 사용합니다.
+SQL 문에 값을 안전하게 전달하는 메커니즘입니다. ODBC, JDBC, .NET, Go, Node.js
+드라이버는 주로 `?` 위치 바인딩을 사용합니다. Python `machbaseAPI` prepared cursor는
+`%s`, `?`, `%(name)s`, `:name`을 지원합니다.
 
 ### 위치 기반 바인딩 (Positional Binding)
 
@@ -618,8 +621,9 @@ INSERT INTO tag_table (name, time, value) VALUES (?, ?, ?)
 
 파라미터는 왼쪽부터 순서대로 1번이며, 각 드라이버에서 이 위치 순서에 따라 값을 바인딩합니다.
 
-> Machbase 서버 프로토콜의 기본 바인딩은 위치 기반입니다. Python `machbaseAPI`의
-> `%(name)s` 형식은 Python 클라이언트가 SQL 문자열을 렌더링하는 편의 기능입니다.
+> 일반 Python cursor의 `%s`와 `%(name)s`는 클라이언트에서 SQL 리터럴을 렌더링합니다.
+> `cursor(prepared=True)`에서는 `%s`를 `?`로, `%(name)s`를 `:name`으로 변환하여 서버에
+> 바인딩합니다.
 
 ### DATETIME 타입 바인딩
 
@@ -760,9 +764,11 @@ pstmt.setFloat(5, 23.5f);           // FLOAT
 pstmt.setShort(6, (short)10);       // SMALLINT
 ```
 
-#### Python (`%s` 또는 `%(name)s`)
+#### Python (`%s`, `?`, `%(name)s`, `:name`)
 
 ```python
+cur = conn.cursor(prepared=True)
+
 # 위치 파라미터는 %s를 사용합니다.
 cur.execute(
     "INSERT INTO tag_table (name, time, value) VALUES (%s, %s, %s)",
@@ -776,6 +782,9 @@ cur.execute(
     {"name": "sensor_01", "time": now_ns, "value": 23.5}
 )
 ```
+
+prepared cursor에서 `%s`와 `?`에는 sequence를, `%(name)s`와 `:name`에는 mapping을
+전달합니다. positional과 named marker는 한 SQL에서 혼용할 수 없습니다.
 
 #### .NET (MachCommand.Parameters)
 
