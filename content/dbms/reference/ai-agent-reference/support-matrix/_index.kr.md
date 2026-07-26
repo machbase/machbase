@@ -48,23 +48,26 @@ toc: true
 
 ## SDK × 주요 기능 지원표
 
-| SDK | Append | AUTH KEY 인증 | Transaction API | Server Prepared Statement | Nullable Metadata |
-|-----|:------:|:-------------:|:---------------:|:-------------------------:|:-----------------:|
-| JDBC | O | O | △ | O | O |
-| Python (machbaseAPI) | O | X | X | X² | O |
-| Go (machcli / native) | O | X | X³ | O | X |
-| Go (database/sql) | X | X | X³ | O | X |
-| .NET (MachConnector) | O | X | X | O | O |
-| Node.js | O | X⁴ | X | O | O |
-| REST API | O | X | X | X | X |
-| ODBC/CLI | O | O | △ | O | O |
-| R (RODBC) | X | X | X | X | X |
+| SDK | Append | AUTH KEY | Transaction API | Server Prepared | Named Bind API | Nullable Metadata |
+|-----|:------:|:--------:|:---------------:|:---------------:|:--------------:|:-----------------:|
+| JDBC | O | O | △ | O | O | O |
+| Python (machbaseAPI) | O | X | X | △² | O | O |
+| Go (machcli / native) | O | X | X³ | O | X | X |
+| Go (database/sql) | X | X | X³ | O | X | X |
+| .NET (MachConnector) | O | X | X | X | △⁴ | O |
+| Node.js | O | X⁵ | X | O | O | O |
+| REST API | O | X | X | X | X | X |
+| ODBC/CLI | O | O | △ | O | △⁶ | O |
+| R (RODBC) | X | X | X | X | X | X |
 
-> ² Python machbaseAPI는 `%s` 클라이언트 렌더링 방식 사용. 서버 Prepared Statement 미지원.
+> ² Python machbaseAPI는 `:name` mapping을 내부 서버 prepare/bind로 실행하지만 공개
+> `prepare()` 객체는 없습니다. `%s`와 `%(name)s`는 기존 client-side 렌더링 방식입니다.
 > ³ Go driver (machcli, database/sql 모두): `Begin()` / `BeginTx()` 미구현.
-> ⁴ Node.js AUTH KEY: 현재 미지원.
+> ⁴ .NET 이름 컬렉션은 client-side typed literal 렌더링 후 ExecDirect를 사용합니다.
+> ⁵ Node.js AUTH KEY: 현재 미지원.
+> ⁶ SQLCLI는 이름 API를 제공하고 ODBC는 `:name` SQL을 ordinal로 바인딩합니다.
 > JDBC와 ODBC/CLI 트랜잭션은 SQL `BEGIN`을 직접 실행해야 합니다. JDBC
 > `setAutoCommit(false)`는 시작 문을 보내지 않으며, ODBC autocommit 속성도 서버 트랜잭션을
 > 자동으로 시작하지 않습니다.
 > Nullable Metadata의 O는 SELECT 결과 컬럼 조회를 의미합니다. Prepared Parameter의
-> Nullable 상태는 Native MachCLI와 SQLCLI/ODBC에서 조회할 수 있습니다.
+> Nullable 상태는 Native MachCLI, SQLCLI/ODBC와 JDBC에서 조회할 수 있습니다.

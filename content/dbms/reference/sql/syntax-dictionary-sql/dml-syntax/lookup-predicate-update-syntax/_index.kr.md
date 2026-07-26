@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.1.1.11.3 LOOKUP predicate UPDATE syntax'
+title: '17.1.1.12.3 LOOKUP predicate UPDATE syntax'
 weight: 30
 toc: true
 ---

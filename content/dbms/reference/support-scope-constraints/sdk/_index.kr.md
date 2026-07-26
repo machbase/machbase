@@ -9,18 +9,23 @@ Machbase는 다양한 프로그래밍 언어와 프로토콜을 위한 SDK를 �
 
 ## SDK별 주요 기능 지원 현황
 
-| SDK | Append | AUTH KEY | Transaction API | Prepared Statement | Nullable 메타데이터 | 비고 |
-|-----|:------:|:--------:|:---------------:|:------------------:|:-------------------:|------|
-| **JDBC** | O | O | △ | O | O | 결과 컬럼 지원, SQL로 `BEGIN` 실행 필요 |
-| **Python** | O | X | X | X | O | DB-API `null_ok`, 서버 Prepared Statement 미지원 |
-| **Go (native)** | O | X | X | O | X | Nullable 공개 API 없음 |
-| **Go (database/sql)** | X | X | X | O | X | Nullable 공개 API 없음 |
-| **.NET** | O | X | X | O | O | `GetSchemaTable().AllowDBNull` |
-| **Node.js** | O | X | X | O | O | `ColumnMeta.nullable` |
-| **REST API** | O | X | X | X | X | 결과 메타데이터 API 없음 |
-| **ODBC/CLI** | O | O | △ | O | O | 결과 컬럼과 Prepared Parameter 지원 |
+| SDK | Append | AUTH KEY | Transaction API | Server Prepared | Named Bind API | Nullable 메타데이터 |
+|-----|:------:|:--------:|:---------------:|:---------------:|:--------------:|:-------------------:|
+| **JDBC** | O | O | △ | O | O | O |
+| **Python** | O | X | X | △ | O | O |
+| **Go (native)** | O | X | X | O | X | X |
+| **Go (database/sql)** | X | X | X | O | X | X |
+| **.NET** | O | X | X | X | △ | O |
+| **Node.js** | O | X | X | O | O | O |
+| **REST API** | O | X | X | X | X | X |
+| **ODBC/CLI** | O | O | △ | O | △ | O |
 
-> 기호: O = 지원, △ = 서버 SQL 직접 실행으로 제한적 지원, X = 미지원
+> 기호: O = 지원, △ = SDK별로 제한된 방식으로 지원, X = 미지원
+>
+> Python은 `execute()`와 `executemany()`에서 내부 서버 prepare/bind를 수행하지만 공개
+> `prepare()` 객체는 없습니다. .NET은 이름 컬렉션을 client-side typed literal로 렌더링한
+> 뒤 ExecDirect로 실행합니다. ODBC/CLI의 이름 API는 SQLCLI에서만 제공되며 ODBC는 ordinal
+> `SQLBindParameter()`를 사용합니다.
 
 ## 기능별 상세 안내
 
@@ -31,17 +36,23 @@ Machbase는 다양한 프로그래밍 언어와 프로토콜을 위한 SDK를 �
 | Append API | [SDK별 APPEND 지원 범위 안내](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-append) |
 | AUTH KEY 인증 | [SDK별 AUTH KEY 지원 범위 안내](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-auth-key) |
 | Transaction / Prepared Statement | [SDK별 transaction / prepare / bind 지원 범위 안내](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-transaction-prepare-bind) |
+| Named Bind Parameter | [Named Bind Parameter syntax](/dbms/reference/sql/syntax-dictionary-sql/named-bind-parameter-syntax/) |
 | Nullable 메타데이터 | [SELECT 결과 Nullable 메타데이터 지원](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-nullable-metadata) |
 
 ## 주요 제약 사항
 
-### Python: Prepared Statement 미지원
+### Python: 명시적 Prepared Statement 객체 미지원
 
-Python `machbaseAPI`의 커서는 서버 사이드 Prepared Statement를 지원하지 않습니다. `%s` 또는 `%(name)s` 스타일 파라미터는 클라이언트에서 렌더링하여 전송합니다.
+Python `machbaseAPI`는 별도의 공개 `prepare()` 객체를 제공하지 않습니다. `:name` SQL과
+mapping은 `execute()` 또는 `executemany()` 내부의 서버 prepare/bind 경로를 사용합니다.
+기존 `%s` 또는 `%(name)s` 형식은 클라이언트 렌더링 방식으로 유지됩니다.
 
 ```python
 cursor = conn.cursor()
-cursor.execute("INSERT INTO sensor_log VALUES (%s, %s, %s)", ['sensor01', ts, 25.3])
+cursor.execute(
+    "INSERT INTO sensor_log VALUES (:name, :time, :value)",
+    {"name": "sensor01", "time": ts, "value": 25.3},
+)
 ```
 
 ### AUTH KEY: ODBC/CLI, JDBC만 완전 지원

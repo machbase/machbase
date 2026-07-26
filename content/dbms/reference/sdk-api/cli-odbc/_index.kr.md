@@ -104,6 +104,98 @@ SQLGetDescField(ird, column_no, SQL_DESC_NULLABLE,
 확인합니다. `PRIMARY KEY`는 Nullable 값으로 판단하지 않고 `SQLPrimaryKeys()`로 별도
 조회합니다.
 
+## Named Bind Parameter
+
+ODBC 표준은 이름으로 Prepared Parameter를 바인딩하는 함수를 제공하지 않습니다.
+이식성이 필요한 애플리케이션은 `?`와 `SQLBindParameter()`를 사용합니다.
+
+Machbase ODBC 드라이버는 SQL의 `:name` marker를 해석할 수 있지만 값은 SQL에 나타난
+순서대로 `SQLBindParameter()`의 ordinal에 바인딩합니다. 같은 이름이 반복되어도 각
+위치는 독립된 ordinal이므로 서로 다른 값을 전달할 수 있습니다.
+
+Native MachCLI도 별도의 이름 setter를 제공하지 않습니다. `:name` SQL을 prepare한 뒤
+`MachCLIBindParam()`으로 각 발생 위치의 ordinal을 바인딩합니다.
+
+```c
+SQLPrepare(stmt,
+    (SQLCHAR *)"SELECT ID, NAME FROM SENSOR_DATA "
+               "WHERE ID = :id OR PARENT_ID = :id",
+    SQL_NTS);
+
+SQLBindParameter(stmt, 1, SQL_PARAM_INPUT,
+    SQL_C_SLONG, SQL_INTEGER, 0, 0,
+    &first_id, 0, &first_ind);
+SQLBindParameter(stmt, 2, SQL_PARAM_INPUT,
+    SQL_C_SLONG, SQL_INTEGER, 0, 0,
+    &parent_id, 0, &parent_ind);
+```
+
+Machbase SQLCLI는 외부 C/C++용 `<machbase_sqlcli.h>`에 다음 비표준 확장을 제공합니다.
+이 함수는 ODBC 표준 함수나 Native MachCLI API가 아닙니다.
+
+```c
+SQLRETURN SQLBindParameterByName(
+    SQLHSTMT stmt,
+    SQLCHAR *parameter_name,
+    SQLSMALLINT name_length,
+    SQLSMALLINT input_output_type,
+    SQLSMALLINT value_type,
+    SQLSMALLINT parameter_type,
+    SQLULEN column_size,
+    SQLSMALLINT decimal_digits,
+    SQLPOINTER value,
+    SQLLEN buffer_length,
+    SQLLEN *indicator);
+
+SQLRETURN SQLBindParameterByNameW(
+    SQLHSTMT stmt,
+    SQLWCHAR *parameter_name,
+    SQLSMALLINT name_length,
+    SQLSMALLINT input_output_type,
+    SQLSMALLINT value_type,
+    SQLSMALLINT parameter_type,
+    SQLULEN column_size,
+    SQLSMALLINT decimal_digits,
+    SQLPOINTER value,
+    SQLLEN buffer_length,
+    SQLLEN *indicator);
+```
+
+이름은 선행 콜론 없이 전달합니다. 한 번의 호출로 같은 이름의 모든 발생 위치를
+바인딩하며, 이름 기반 API와 ordinal bind를 한 statement에서 혼용할 수 없습니다.
+`SQLBindParameterByNameW()`의 이름은 ASCII 문자로 지정합니다.
+
+```c
+SQLPrepare(stmt,
+    (SQLCHAR *)"INSERT INTO SENSOR_DATA (ID, VALUE) "
+               "VALUES (:id, :value)",
+    SQL_NTS);
+
+SQLBindParameterByName(stmt, (SQLCHAR *)"id", SQL_NTS,
+    SQL_PARAM_INPUT, SQL_C_SLONG, SQL_INTEGER,
+    0, 0, &id, 0, &id_ind);
+SQLBindParameterByName(stmt, (SQLCHAR *)"value", SQL_NTS,
+    SQL_PARAM_INPUT, SQL_C_CHAR, SQL_DECIMAL,
+    20, 6, decimal_text, sizeof(decimal_text), &value_ind);
+
+SQLExecute(stmt);
+```
+
+NULL은 indicator에 `SQL_NULL_DATA`를 지정합니다. 대표 SQLSTATE는 다음과 같습니다.
+
+| SQLSTATE | 상황 |
+|---|---|
+| `07002` | 이름 기반 바인딩 대상 SQL에 anonymous marker가 있음 |
+| `07006` | 필요한 값이 누락되었거나 타입이 맞지 않음 |
+| `07009` | 파라미터 이름을 찾을 수 없음 |
+| `HY010` | 이름 기반과 ordinal 바인딩을 혼용했거나 호출 순서가 잘못됨 |
+| `HY090` | 이름이 유효하지 않음 |
+| `HYC00` | 연결된 서버가 이름 기반 API를 지원하지 않음 |
+
+공통 이름 문법과 반복 이름 규칙은
+[Named Bind Parameter syntax](../../sql/syntax-dictionary-sql/named-bind-parameter-syntax/)를
+참고하십시오.
+
 ## 접속을 위한 연결 스트링
 CLI 접속 시 사용하는 연결 스트링 항목은 다음과 같습니다.
 

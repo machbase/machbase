@@ -12,7 +12,7 @@ XMA(eXtended Machbase Architecture) 프로토콜은 Machbase 서버와 클라이
 | 서버 버전 | 8.5 클라이언트 드라이버 | 8.6 클라이언트 드라이버 |
 |-----------|:---------------------:|:---------------------:|
 | **8.6 서버** | 제한적 호환 | 완전 호환 |
-| **8.5 서버** | 완전 호환 | 하위 호환 |
+| **8.5 서버** | 완전 호환 | 하위 호환, 8.6 이름 API 미지원 |
 
 - **완전 호환**: 모든 기능이 정상 동작합니다.
 - **제한적 호환**: 기본 연결은 가능하나 8.6 신규 기능(AUTH KEY 확장 등)이 동작하지 않을 수 있습니다.
@@ -72,6 +72,38 @@ AUTH_SIG_SCHEME=ECDSA;
 [Nullable 메타데이터 지원 범위](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-nullable-metadata)를
 참고합니다.
 
+### Named Bind Parameter
+
+Machbase 8.6에서 추가된 이름 기반 SDK API는 8.6 클라이언트와 서버가 함께 필요합니다.
+기존 `?` positional Prepared Statement는 이전 버전 조합에서도 사용할 수 있습니다.
+
+| 클라이언트와 서버 조합 | `?` positional | `:name` SQL과 ordinal bind | 이름 기반 SDK API |
+|---|:---:|:---:|:---:|
+| 8.6 클라이언트 + 8.6 서버 | O | O | O |
+| 8.5 클라이언트 + 8.6 서버 | O | O | X |
+| 8.6 클라이언트 + 8.5 서버 | O | 서버 구현 범위 | X |
+| 8.5 클라이언트 + 8.5 서버 | O | 서버 구현 범위 | X |
+
+8.5 클라이언트는 새 이름 setter를 제공하지 않지만, 8.6 서버가 해석한 `:name` SQL을
+기존 ordinal API로 바인딩할 수 있습니다. 반대로 8.6 클라이언트의 이름 기반 API를 이전
+서버에 사용하면 자동으로 SQL을 다시 작성하지 않고 unsupported 오류를 반환합니다.
+
+| SDK | 이전 서버에서의 대표 오류 |
+|---|---|
+| C/C++ SQLCLI | SQLSTATE `HYC00` |
+| JDBC | SQLSTATE `0A000` |
+| Node.js/TypeScript | `ERR_MACHBASE_NAMED_BIND_UNSUPPORTED` |
+| Python | `NotSupportedError`, SQLSTATE `0A000` |
+
+.NET의 `MachParameterCollection`은 파라미터를 client-side typed literal로 렌더링한 뒤
+ExecDirect로 실행하므로 위 서버 Prepared Named Bind 호환 표의 이름 기반 SDK API에
+포함하지 않습니다. 다만 `:name` marker 사용은 protocol 4.0.3 연결을 확인하며 이전
+서버에서는 `MachException`을 반환합니다.
+
+문법과 SDK별 사용법은
+[Named Bind Parameter syntax](/dbms/reference/sql/syntax-dictionary-sql/named-bind-parameter-syntax/)를
+참고하십시오.
+
 ## 드라이버 버전 확인
 
 JDBC:
@@ -94,4 +126,6 @@ SQLGetInfo(conn, SQL_DRIVER_VER, buf, sizeof(buf), NULL);
 2. 드라이버를 순차적으로 업그레이드하는 경우, 업그레이드 기간 동안 8.5 드라이버가 8.6 서버에 제한적으로 연결될 수 있음을 인지하십시오.
 3. AUTH KEY 인증을 사용하는 경우 드라이버를 가장 먼저 업그레이드하십시오.
 4. Nullable 메타데이터를 애플리케이션 로직에 사용하는 경우 서버와 SDK를 모두 8.6으로
+   업그레이드하십시오.
+5. Named Bind Parameter의 이름 기반 SDK API를 사용하는 경우 서버와 SDK를 모두 8.6으로
    업그레이드하십시오.

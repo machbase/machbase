@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '17.1.1.11 DML syntax'
-weight: 110
+title: '17.1.1.12 DML syntax'
+weight: 120
 toc: true
 ---
 

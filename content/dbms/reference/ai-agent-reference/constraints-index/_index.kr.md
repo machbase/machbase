@@ -48,7 +48,9 @@ toc: true
 | Python (machbaseAPI) | Transaction | `begin()` / `commit()` / `rollback()` 미지원 |
 | .NET (MachConnector) | Transaction | `MachTransaction` 미구현 |
 | .NET (MachConnector) | AUTH KEY 인증 | 연결 옵션 미지원 |
-| Python (machbaseAPI) | Server Prepared Statement | 미지원 — `%s` 또는 `%(name)s` 플레이스홀더를 클라이언트에서 렌더링 후 전송 |
+| Python (machbaseAPI) | 명시적 Prepared Statement 객체 | 미지원 — `:name` mapping은 `execute()` 내부 서버 prepare/bind 사용 |
+| .NET (MachConnector) | Server Prepared Statement | 미지원 — 이름 컬렉션은 client-side 렌더링 후 ExecDirect |
+| Go (machcli / database/sql) | Named Bind API | 미지원 — `?`와 positional argument 사용 |
 | REST API | Transaction | 미지원 |
 | REST API | Prepared Statement | 미지원 |
 | Node.js | AUTH KEY 인증 | 미지원 |

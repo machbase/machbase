@@ -24,6 +24,7 @@ toc: true
 | 특정 태그의 최신값 조회 | `SELECT ... FROM TAG TABLE t RECENT 1` | [SELECT RECENT](../../../reference/sql/syntax-dictionary-sql/select-syntax/) |
 | 시간 범위 집계 조회 | ROLLUP 테이블 활용 또는 `GROUP BY` | [ROLLUP](/dbms/tag-rollup-usage/overview-use-criteria/#rollup) |
 | 복잡한 조회를 단계별로 구성 | Standard Edition에서 비재귀 `WITH`/CTE 사용 | [WITH / CTE](/dbms/reference/sql/syntax-dictionary-sql/cte-syntax/) |
+| SQL 값을 이름으로 바인딩 | `:name` marker와 SDK의 named 입력 사용 | [Named Bind Parameter](/dbms/reference/sql/syntax-dictionary-sql/named-bind-parameter-syntax/) |
 | 텍스트/로그 검색 | LOG 테이블에 `WHERE text LIKE` 또는 전문 검색 | [LOG 테이블](/dbms/log-table-usage/) |
 | 시계열 보간 / 시리즈 분석 | `SERIES BY` 절 사용 | [SELECT 문법](../../../reference/sql/syntax-dictionary-sql/select-syntax/) |
 | 복수 태그 비교 조회 | `FROM TAG TABLE t WHERE name IN (...)` | [TAG 테이블](/dbms/tag-table-usage/) |

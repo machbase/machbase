@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '17.1.1.19 STREAM procedure syntax'
-weight: 190
+title: '17.1.1.20 STREAM procedure syntax'
+weight: 200
 toc: true
 ---
 

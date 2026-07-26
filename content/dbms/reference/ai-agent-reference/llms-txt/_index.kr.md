@@ -43,6 +43,7 @@ Machbase 공식 문서 기준 (`/dbms/` 경로 아래):
 | Append API 개념 | `/dbms/application-integration/concepts-common/#append-api-batch` |
 | SDK 지원 범위 | `/dbms/application-integration/support-scope-sdk/` |
 | Nullable 메타데이터 | `/dbms/application-integration/support-scope-sdk/#support-scope-sdk-nullable-metadata` |
+| Named Bind Parameter | `/dbms/reference/sql/syntax-dictionary-sql/named-bind-parameter-syntax/` |
 | JDBC | `/dbms/application-integration/guide-drivers/#jdbc` |
 | Python | `/dbms/application-integration/guide-drivers/#python` |
 | Go | `/dbms/application-integration/guide-drivers/#go` |
@@ -69,6 +70,7 @@ Machbase 공식 문서 기준 (`/dbms/` 경로 아래):
 |------|-----|
 | SQL 레퍼런스 | `/dbms/reference/sql/` |
 | WITH / CTE (Standard Edition) | `/dbms/reference/sql/syntax-dictionary-sql/cte-syntax/` |
+| Named Bind Parameter | `/dbms/reference/sql/syntax-dictionary-sql/named-bind-parameter-syntax/` |
 | 설정 레퍼런스 | `/dbms/reference/configuration/` |
 | 에러 코드 | `/dbms/reference/error-dictionary-codes/` |
 | 지원 범위와 제약 | `/dbms/reference/support-scope-constraints/` |

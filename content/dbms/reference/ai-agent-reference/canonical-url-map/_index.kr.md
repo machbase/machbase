@@ -45,6 +45,7 @@ toc: true
 | REST API | `/dbms/application-integration/rest-api/` |
 | SDK 지원 범위 전체 | `/dbms/application-integration/support-scope-sdk/` |
 | Nullable 메타데이터 지원 | `/dbms/application-integration/support-scope-sdk/#support-scope-sdk-nullable-metadata` |
+| Named Bind Parameter | `/dbms/reference/sql/syntax-dictionary-sql/named-bind-parameter-syntax/` |
 
 ## 운영
 
@@ -76,6 +77,7 @@ toc: true
 | DML (INSERT/UPDATE/DELETE) | `/dbms/reference/sql/syntax-dictionary-sql/dml-syntax/` |
 | SELECT | `/dbms/reference/sql/syntax-dictionary-sql/select-syntax/` |
 | WITH / CTE (Standard Edition) | `/dbms/reference/sql/syntax-dictionary-sql/cte-syntax/` |
+| Named Bind Parameter | `/dbms/reference/sql/syntax-dictionary-sql/named-bind-parameter-syntax/` |
 | 내장 함수 | `/dbms/reference/sql/dictionary/` |
 | 데이터 타입 | `/dbms/reference/sql/type-data-types-dictionary/` |
 | 에러 코드 | `/dbms/reference/error-dictionary-codes/` |

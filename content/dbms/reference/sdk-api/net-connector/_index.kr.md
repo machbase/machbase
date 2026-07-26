@@ -510,6 +510,10 @@ public sealed class MachParameterCollection :
 
 > `MachParameter` 바인딩은 Prepared Statement 의미의 실행 계획 캐시를 제공하지 않습니다.
 > 반복 실행 성능은 실제 쿼리와 서버 캐시 상태로 측정합니다.
+>
+> 현재 provider는 파라미터를 타입별 SQL 리터럴로 렌더링한 뒤 ExecDirect로 실행합니다.
+> 따라서 `MachParameterCollection`은 서버의 Prepared Named Bind protocol이나 파라미터
+> 메타데이터를 사용하지 않습니다.
 
 #### Add
 
@@ -768,7 +772,12 @@ using (var connection = new MachConnection(connString))
 
 ### 파라미터 바인딩
 
-`MachParameterCollection`을 이용하면 시계열 조회 조건 등을 파라미터로 안전하게 전달할 수 있습니다.
+`MachParameterCollection`은 `:name`, `@name`, `?name` marker를 처리합니다. 공통 SQL
+문법과 같은 `:name` 형식을 권장합니다. 이름 검색은 대소문자를 구분하지 않으며, 같은
+이름이 반복되면 한 값이 모든 위치에 적용됩니다.
+
+`:name` 형식은 Machbase 8.6 서버 연결에서 사용합니다. 이전 서버에 연결하면
+`MachException`을 반환합니다. `@name`과 `?name`은 기존 provider 호환 형식입니다.
 
 ```csharp
 using var connection = new MachConnection(connString);
@@ -777,18 +786,16 @@ connection.Open();
 const string sql = @"
     SELECT *
       FROM tab2
-     WHERE CreatedDateTime < @CurrentTime
-       AND CreatedDateTime >= @PastTime";
+     WHERE CreatedDateTime < :current_time
+       AND CreatedDateTime >= :past_time";
 
 using var command = new MachCommand(sql, connection);
 
 var now = DateTime.UtcNow;
 var past = now.AddMinutes(-1);
 
-command.ParameterCollection.Add(
-    new MachParameter { ParameterName = "@CurrentTime", Value = now });
-command.ParameterCollection.Add(
-    new MachParameter { ParameterName = "@PastTime", Value = past });
+command.Parameters.AddWithValue(":current_time", now);
+command.Parameters.AddWithValue(":past_time", past);
 
 using var reader = command.ExecuteReader();
 while (reader.Read())
@@ -796,6 +803,10 @@ while (reader.Read())
     Console.WriteLine($"{reader.GetName(0)} : {reader.GetValue(0)}");
 }
 ```
+
+NULL은 `DBNull.Value`로 전달합니다. 공통 이름 문법은
+[Named Bind Parameter syntax](../../sql/syntax-dictionary-sql/named-bind-parameter-syntax/)를
+참고하십시오.
 
 ### Append
 

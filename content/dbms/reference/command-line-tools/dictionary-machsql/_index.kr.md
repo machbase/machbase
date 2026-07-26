@@ -130,6 +130,37 @@ machsql 프롬프트(`Mach>`)에서 사용할 수 있는 내장 명령입니다.
 | `SHOW USERS` | 사용자 목록 출력 |
 | `SHOW LICENSE` | 라이선스 정보 출력 |
 
+## Named Bind Parameter
+
+`machsql`의 `PREPARE` SQL에는 `:name` marker를 사용할 수 있습니다. 값은 이름이 아니라
+SQL에 나타난 순서대로 `$1`, `$2`, ... 변수에 지정합니다.
+
+```sql
+PREPARE INSERT INTO SENSOR_DATA (ID, NAME, VALUE)
+        VALUES (:id, :name, :value);
+$1 := 900;
+$2 := 'machsql-client';
+$3 := 72.125000;
+EXECUTE;
+PREPARE CLEAN;
+```
+
+같은 이름이 반복되어도 각 발생 위치에 값을 지정합니다.
+
+```sql
+PREPARE SELECT ID, NAME
+        FROM SENSOR_DATA
+        WHERE ID = :id OR PARENT_ID = :id;
+$1 := 900;
+$2 := 900;
+EXECUTE;
+PREPARE CLEAN;
+```
+
+이름 문법과 발생 순서 규칙은
+[Named Bind Parameter syntax](../../sql/syntax-dictionary-sql/named-bind-parameter-syntax/)를
+참고하십시오.
+
 ## 사용 예시
 
 ```bash

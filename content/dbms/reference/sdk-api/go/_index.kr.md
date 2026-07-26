@@ -589,7 +589,10 @@ func main() {
 
 ## 참고 사항 및 제한 사항
 
-- 파라미터는 `?` 형태의 positional placeholder를 사용하며, named parameter는 지원하지 않습니다.
+- 파라미터는 `?` 형태의 positional placeholder를 사용합니다. `sql.Named()`과
+  `:name` 이름 기반 API는 지원하지 않습니다. 공통 SQL 기능과 SDK별 차이는
+  [Named Bind Parameter syntax](../../sql/syntax-dictionary-sql/named-bind-parameter-syntax/)를
+  참고하십시오.
 - `database/sql`의 connection pooling은 일반적인 `sql.DB` 방식대로 동작합니다.
 - 명시적 트랜잭션은 지원하지 않으므로 `Begin`, `BeginTx`는 오류를 반환합니다.
 - `LastInsertId()`는 지원하지 않습니다.

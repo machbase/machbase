@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.1.1.11.1 TAG data UPDATE syntax'
+title: '17.1.1.12.1 TAG data UPDATE syntax'
 weight: 10
 toc: true
 ---

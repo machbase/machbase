@@ -43,9 +43,52 @@ if (nullable == ResultSetMetaData.columnNoNulls) {
 `IS_NULLABLE`로 확인합니다. `PRIMARY KEY`는 Nullable 값으로 판단하지 않고
 `DatabaseMetaData.getPrimaryKeys()`로 별도 조회합니다.
 
-Machbase JDBC의 `PreparedStatement.getParameterMetaData()`는 공개 API로 지원하지
-않습니다. Prepared Parameter의 Nullable 상태가 필요한 애플리케이션은
-Native MachCLI 또는 SQLCLI/ODBC의 `DescribeParam` API를 사용합니다.
+`PreparedStatement.getParameterMetaData()`는 `ParameterMetaData`를 반환합니다.
+파라미터 개수, 타입, 타입명, Java 클래스, 정밀도, 스케일, Nullable 상태, signed 여부와
+파라미터 모드를 조회할 수 있습니다.
+
+```java
+ParameterMetaData meta = preparedStatement.getParameterMetaData();
+for (int i = 1; i <= meta.getParameterCount(); i++) {
+    System.out.printf("%d %s nullable=%d%n",
+        i, meta.getParameterTypeName(i), meta.isNullable(i));
+}
+```
+
+## Named Bind Parameter
+
+Machbase JDBC는 `MachPreparedStatement`에 이름 기반 setter를 제공합니다.
+
+```java
+void setObject(String name, Object value) throws SQLException
+```
+
+이름은 선행 콜론을 포함하거나 생략할 수 있습니다. 같은 이름이 여러 번 나타나면 한 번의
+호출로 모든 위치를 바인딩합니다. 이름은 대소문자를 구분하며, 이름 setter와 숫자 index
+setter를 한 statement에서 혼용할 수 없습니다.
+
+```java
+import com.machbase.jdbc.MachPreparedStatement;
+import java.math.BigDecimal;
+
+try (MachPreparedStatement ps =
+        (MachPreparedStatement) conn.prepareStatement(
+            "INSERT INTO SENSOR_DATA (ID, NAME, VALUE) " +
+            "VALUES (:id, :name, :value)")) {
+    ps.setObject("id", 400);
+    ps.setObject(":name", "jdbc-client");
+    ps.setObject("value", new BigDecimal("31.125000"));
+    ps.executeUpdate();
+}
+```
+
+Batch, NULL과 `DECIMAL`/`NUMERIC`도 같은 API를 사용합니다. SQL에 없는 이름이나
+named/positional 혼용은 SQLSTATE `07009`, 이름 기반 API를 지원하지 않는 이전 서버는
+SQLSTATE `0A000`을 반환합니다.
+
+공통 이름 문법은
+[Named Bind Parameter syntax](../../sql/syntax-dictionary-sql/named-bind-parameter-syntax/)를
+참고하십시오.
 
 ## JDBC 인증 방식
 

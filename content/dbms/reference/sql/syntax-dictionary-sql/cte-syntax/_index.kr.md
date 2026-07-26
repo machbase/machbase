@@ -22,7 +22,7 @@ Machbase 8.6.0 Standard Edition은 비재귀 SELECT CTE를 지원합니다. CTE�
 | 중첩 CTE | O | 바깥 CTE는 하위 `SELECT`에서 참조할 수 있습니다. |
 | `INSERT SELECT` | O | `INSERT INTO ... WITH ... SELECT` 순서를 사용합니다. |
 | VIEW 정의 | O | `CREATE VIEW ... AS WITH ... SELECT`를 사용합니다. |
-| prepared statement | O | CTE 본문과 주 `SELECT`에서 `?`를 사용할 수 있습니다. |
+| prepared statement | O | CTE 본문과 주 `SELECT`에서 `?` 또는 `:name`을 사용할 수 있습니다. |
 | EXPLAIN | O | `EXPLAIN`, `EXPLAIN FULL`, `EXPLAIN TRACE`를 지원합니다. |
 | `UNION ALL`, PIVOT | O | 기존 `SELECT`의 지원 범위와 제약을 따릅니다. |
 | 테이블 유형 | O | LOG, TAG, LOOKUP, VOLATILE, TRANSACTION 테이블을 조회할 수 있습니다. |
@@ -33,6 +33,9 @@ Machbase 8.6.0 Standard Edition은 비재귀 SELECT CTE를 지원합니다. CTE�
 CTE 본문에서는 JOIN, 집계 함수, `GROUP BY`, `HAVING`, `ORDER BY`, `LIMIT`, `UNION ALL`,
 PIVOT을 기존 `SELECT` 규칙에 따라 사용할 수 있습니다. LOG 테이블의 `DURATION`,
 `SERIES BY`, 윈도우 함수와 TAG 테이블의 ROLLUP도 기존 규칙을 따릅니다.
+
+Named parameter의 이름 규칙과 SDK별 바인딩 방법은
+[Named Bind Parameter syntax](../named-bind-parameter-syntax/)를 참고하십시오.
 
 ## 기본 문법
 

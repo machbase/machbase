@@ -88,7 +88,7 @@ OUTER JOIN으로 생성된 결과 컬럼은 SDK의 결과 메타데이터 API로
 |-----|-----|:----------:|:----------:|:---------:|
 | Native MachCLI | `MachCLIDescribeCol()`, `MachCLIDescribeParam()` | `0` | `1` | `2` |
 | SQLCLI/ODBC | `SQLDescribeCol()`, `SQLDescribeParam()`, `SQLColAttribute()`, `SQLGetDescField()` | `SQL_NO_NULLS` | `SQL_NULLABLE` | `SQL_NULLABLE_UNKNOWN` |
-| JDBC | `ResultSetMetaData.isNullable()` | `columnNoNulls` | `columnNullable` | `columnNullableUnknown` |
+| JDBC | `ResultSetMetaData.isNullable()`, `ParameterMetaData.isNullable()` | `columnNoNulls` | `columnNullable` | `columnNullableUnknown` |
 | Node.js | `ColumnMeta.nullable` | `ColumnNullable.NoNulls` | `ColumnNullable.Nullable` | `ColumnNullable.Unknown` |
 | Python | `cursor.description[i][6]` | `False` | `True` | `None` |
 | .NET | `GetSchemaTable()["AllowDBNull"]` | `false` | `true` | `DBNull.Value` |
@@ -466,19 +466,19 @@ AUTH KEY challenge 인증은 DB 포트(기본 5656)에 접속하는 드라이버
 
 ### 지원 범위 표
 
-| SDK | Transaction API (TRANSACTION) | Prepared Statement | Parameter Binding | 비고 |
-|-----|:---:|:---:|:---:|------|
-| **ODBC/CLI** | △ | O | O | SQL로 `BEGIN`, `SQLEndTran`으로 종료 |
-| **JDBC** | △ | O | O | SQL로 `BEGIN` 실행 필요. `setAutoCommit(false)`는 시작 문을 보내지 않음 |
-| **Python** | X | X | O | transaction API 미지원, `%s`/`%(name)s` 클라이언트 렌더링 |
-| **.NET Connector** | X | O | O | `MachTransaction` 미구현 |
-| **Go (database/sql)** | X | O | O | `Begin`/`BeginTx` 미지원, `db.Prepare()`와 `?` 바인딩 |
-| **Go (native client)** | X | O | O | `Prepare(ctx, sql)`과 `Exec`/`Query` 파라미터 지원 |
-| **Node.js** | X | O | O | transaction 편의 API 미지원, prepare/bind는 지원 |
-| **REST API** | X | X | X | 단일 요청 단위, 서버사이드 파라미터 없음 |
+| SDK | Transaction API | Server Prepared | Parameter Binding | 이름 기반 API | 비고 |
+|-----|:---:|:---:|:---:|:---:|------|
+| **ODBC/CLI** | △ | O | O | △ | SQLCLI는 이름 API, ODBC는 ordinal API 사용 |
+| **JDBC** | △ | O | O | O | `MachPreparedStatement.setObject(String, Object)` |
+| **Python** | X | △ | O | O | `execute()` 내부 서버 prepare/bind, 공개 `prepare()` 객체 없음 |
+| **.NET Connector** | X | X | O | △ | client-side typed literal 렌더링 후 ExecDirect |
+| **Go (database/sql)** | X | O | O | X | `db.Prepare()`와 `?` 바인딩 |
+| **Go (native client)** | X | O | O | X | `Prepare(ctx, sql)`과 positional 파라미터 |
+| **Node.js** | X | O | O | O | 배열은 positional, 객체는 named 입력 |
+| **REST API** | X | X | X | X | 단일 요청 단위, 서버 파라미터 없음 |
 
 - O: 지원
-- △: 서버 SQL을 직접 실행하는 방식으로 제한적 지원
+- △: SDK별로 제한된 방식으로 지원
 - X: 미지원
 
 표의 Transaction 열은 SDK가 제공하는 표준 편의 API 기준입니다. 임의 SQL을 같은 물리 연결로
@@ -507,16 +507,22 @@ try {
 
 반복 실행할 쿼리를 미리 파싱·컴파일하여 성능을 높입니다. SQL 인젝션 방지 효과도 있습니다.
 
-Python `machbaseAPI` DB-API 스타일 커서는 별도 `prepare()` 메서드를 제공하지 않습니다.
-같은 SQL 문자열과 `%s` 파라미터를 반복 호출하는 방식입니다.
+Python `machbaseAPI` DB-API 스타일 커서는 별도 `prepare()` 객체를 제공하지 않습니다.
+그러나 `:name` SQL과 mapping을 `execute()` 또는 `executemany()`에 전달하면 내부적으로
+서버 prepare/bind를 수행합니다.
 
 ```python
 # Python
 cursor = conn.cursor()
-sql = "INSERT INTO sensor_log (name, time, value) VALUES (%s, %s, %s)"
+sql = """
+    INSERT INTO sensor_log (name, time, value)
+    VALUES (:name, :time, :value)
+"""
 for name, ts, val in data_list:
-    cursor.execute(sql, [name, ts, val])
+    cursor.execute(sql, {"name": name, "time": ts, "value": val})
 ```
+
+기존 `%s`와 `%(name)s`는 호환을 위해 유지되며 클라이언트에서 SQL 리터럴을 렌더링합니다.
 
 ```go
 // Go database/sql
@@ -530,6 +536,14 @@ for _, row := range dataList {
 ### Parameter Binding
 
 파라미터 바인딩 시 DATETIME 타입은 **나노초 정수**로 전달하는 것을 권장합니다.
+
+Machbase 8.6은 값 위치에 `:name` marker를 사용할 수 있습니다. 이름 API를 지원하는
+JDBC, Node.js와 Python은 이름으로 값을 전달합니다. SQLCLI는
+`SQLBindParameterByName()`을 제공하며, ODBC와 machsql은 `:name` SQL을 발생 순서의
+ordinal로 바인딩합니다. .NET의 이름 컬렉션은 client-side 렌더링 방식입니다. 공통
+문법과 SDK별 차이는
+[Named Bind Parameter syntax](/dbms/reference/sql/syntax-dictionary-sql/named-bind-parameter-syntax/)를
+참고하십시오.
 
 ```java
 // JDBC - DATETIME 나노초 바인딩
@@ -566,7 +580,7 @@ SQLExecute(stmt);
 | SDK | NULL 바인딩 방법 |
 |-----|----------------|
 | JDBC | `ps.setNull(idx, java.sql.Types.INTEGER)` |
-| Python | `%s` 또는 `%(name)s` 파라미터에 `None` 전달 (`NULL`로 렌더링) |
+| Python | `:name` mapping 값에 `None` 전달 |
 | .NET | `DBNull.Value` |
 | Go | `sql.NullString{Valid: false}` 등 Null 타입 |
 | ODBC/CLI | indicator를 `SQL_NULL_DATA`로 설정 |

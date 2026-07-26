@@ -11,6 +11,10 @@ SELECT 결과 컬럼의 NULL 가능 여부와 SDK별 반환 형식은
 [Nullable 메타데이터 지원 범위](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-nullable-metadata)를
 참고합니다.
 
+`:name` SQL 문법, 반복 이름과 SDK별 바인딩 방식은
+[Named Bind Parameter syntax](../sql/syntax-dictionary-sql/named-bind-parameter-syntax/)를
+참고합니다.
+
 ## 공통 연결 정보
 
 | 항목 | 기본값 | 설명 |
@@ -24,11 +28,11 @@ SELECT 결과 컬럼의 NULL 가능 여부와 SDK별 반환 형식은
 
 | SDK | 설명 |
 |-----|------|
-| [CLI/ODBC](./cli-odbc/) | C/C++ CLI/ODBC API, Append, Nullable 메타데이터 |
-| [JDBC](./jdbc/) | Java JDBC API, Append, Nullable 메타데이터 |
-| [Python](./python/) | `machbaseapi` Python 클라이언트와 DB-API `null_ok` |
-| [Node.js / TypeScript](./node-js-typescript/) | `@machbase/ts-client`와 `ColumnMeta.nullable` |
-| [.NET Connector](./net-connector/) | UniMachNetConnector, ADO.NET, `GetSchemaTable()` |
-| [Go](./go/) | `machgo` 네이티브 클라이언트, `database/sql` 드라이버와 제한 사항 |
+| [CLI/ODBC](./cli-odbc/) | C/C++ CLI/ODBC, 이름/ordinal 바인딩, Append, Nullable 메타데이터 |
+| [JDBC](./jdbc/) | Java JDBC, Named Bind, Append, Nullable 메타데이터 |
+| [Python](./python/) | `machbaseapi` DB-API, named mapping, `null_ok` |
+| [Node.js / TypeScript](./node-js-typescript/) | `@machbase/ts-client`, named object 입력, `ColumnMeta.nullable` |
+| [.NET Connector](./net-connector/) | ADO.NET 이름 컬렉션, Append, `GetSchemaTable()` |
+| [Go](./go/) | `machgo`, `database/sql`과 positional 파라미터 제약 |
 
 REST API는 [REST API 레퍼런스](../rest-api/)에서 별도로 확인합니다.

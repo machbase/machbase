@@ -29,6 +29,7 @@ SQL 문법 사전은 Machbase에서 지원하는 모든 SQL 구문의 BNF 표기
 | [LOAD DATA INFILE](./load-data-infile-syntax/) | DML | CSV 파일에서 직접 데이터 입력 |
 | [SELECT](./select-syntax/) | SELECT | 데이터 조회 (JOIN, GROUP BY, ORDER BY, LIMIT 포함) |
 | [WITH / CTE](./cte-syntax/) | SELECT | Standard Edition의 비재귀 공통 테이블 표현식 |
+| [Named Bind Parameter](./named-bind-parameter-syntax/) | SQL 공통 | `:name` 형식의 값 파라미터 |
 | [SAVE DATA INTO](./save-data-into-syntax/) | SELECT | 조회 결과를 CSV 파일로 저장 |
 | [BACKUP](./backup-restore-mount-syntax/#backup) | 운영 | 데이터베이스 또는 테이블 백업 |
 | [RESTORE (machadmin -r)](./backup-restore-mount-syntax/#restore) | 운영 | 오프라인 복원 |

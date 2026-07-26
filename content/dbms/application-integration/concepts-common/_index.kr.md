@@ -457,32 +457,37 @@ Append API와는 별개로, Append는 전용 API 호출로 동작합니다. 대�
 
 ### CTE 파라미터 바인딩
 
-Standard Edition에서는 CTE 본문과 주 `SELECT`에 위치 바인드 매개변수를 사용할 수 있습니다.
+Standard Edition에서는 CTE 본문과 주 `SELECT`에 positional 또는 named bind parameter를
+사용할 수 있습니다.
 
 ```sql
 WITH selected_data AS (
     SELECT device_id, time, value
     FROM sensor_data
-    WHERE device_id = ?
+    WHERE device_id = :device_id
 )
 SELECT device_id, time, value
 FROM selected_data
-WHERE value >= ?;
+WHERE value >= :minimum_value;
 ```
 
-매개변수는 SQL 문에 나타나는 순서대로 바인드합니다. 참조하지 않는 CTE에 있는 매개변수도
-문장의 매개변수로 등록되므로 반드시 값을 바인드해야 합니다. 같은 CTE를 여러 번
-참조하더라도 CTE 본문의 매개변수 개수가 참조 횟수만큼 늘어나지는 않습니다.
+ordinal API는 매개변수를 SQL 문에 나타나는 순서대로 바인딩하고, 이름 API는 marker
+이름으로 바인딩합니다. 참조하지 않는 CTE에 있는 매개변수도 문장의 매개변수로 등록되므로
+반드시 값을 바인딩해야 합니다. 같은 CTE를 여러 번 참조하더라도 CTE 본문의 매개변수
+개수가 참조 횟수만큼 늘어나지는 않습니다.
 
 전체 CTE 문법과 제한은
-[WITH / CTE syntax](/dbms/reference/sql/syntax-dictionary-sql/cte-syntax/)를 참고하십시오.
+[WITH / CTE syntax](/dbms/reference/sql/syntax-dictionary-sql/cte-syntax/), 이름 규칙과
+SDK별 API는
+[Named Bind Parameter syntax](/dbms/reference/sql/syntax-dictionary-sql/named-bind-parameter-syntax/)를
+참고하십시오.
 
 ### 예제
 
 #### INSERT (Python)
 
-Python `machbaseAPI`의 DB-API 스타일 커서는 서버 prepared statement가 아니라 `%s`
-자리 표시자를 클라이언트에서 렌더링하는 방식입니다.
+Python `machbaseAPI`의 DB-API 스타일 커서는 `:name` SQL과 mapping을 서버
+prepare/bind 경로로 실행합니다.
 
 ```python
 from machbaseAPI import connect
@@ -490,16 +495,18 @@ from machbaseAPI import connect
 conn = connect(host='127.0.0.1', port=5656, user='SYS', password='MANAGER')
 cur = conn.cursor()
 
-sql = "INSERT INTO tag_table (name, time, value) VALUES (%s, %s, %s)"
+sql = """
+    INSERT INTO tag_table (name, time, value)
+    VALUES (:name, :time, :value)
+"""
 
 sensor_data = [
-    ('sensor_01', 1720000000000000000, 23.5),
-    ('sensor_01', 1720000001000000000, 23.7),
-    ('sensor_02', 1720000000000000000, 18.2),
+    {'name': 'sensor_01', 'time': 1720000000000000000, 'value': 23.5},
+    {'name': 'sensor_01', 'time': 1720000001000000000, 'value': 23.7},
+    {'name': 'sensor_02', 'time': 1720000000000000000, 'value': 18.2},
 ]
 
-for row in sensor_data:
-    cur.execute(sql, row)
+cur.executemany(sql, sensor_data)
 
 cur.close()
 conn.close()
@@ -509,8 +516,10 @@ conn.close()
 
 ```python
 cur.execute(
-    "SELECT name, time, value FROM tag_table WHERE name = %s AND time >= %s",
-    ['sensor_01', 1720000000000000000],
+    """SELECT name, time, value
+       FROM tag_table
+       WHERE name = :name AND time >= :from_time""",
+    {'name': 'sensor_01', 'from_time': 1720000000000000000},
 )
 
 for row in cur.fetchall():

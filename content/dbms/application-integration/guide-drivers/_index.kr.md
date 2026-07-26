@@ -2890,7 +2890,10 @@ while (true) {
 1. **항상 연결 닫기**: `try...finally` 블록으로 `conn.end()`가 반드시 호출되도록 합니다.
 2. **Prepared Statement 재사용**: 동일 쿼리를 반복 실행할 때는 `prepare()`로 한 번 준비하고 재사용합니다.
 3. **배치 입력 활용**: 단건 `INSERT` 대신 `appendBatch()`나 `appendOpen()`으로 대량 적재를 수행합니다.
-4. **파라미터 바인딩 사용**: SQL 인젝션 방지를 위해 문자열 결합 대신 `?` 플레이스홀더를 사용합니다.
+4. **파라미터 바인딩 사용**: 문자열 결합 대신 `?`와 배열 또는 `:name`과 객체를
+   사용합니다. 자세한 규칙은
+   [Named Bind Parameter](/dbms/reference/sql/syntax-dictionary-sql/named-bind-parameter-syntax/)를
+   참고하십시오.
 5. **오류 처리**: 모든 DB 작업을 `try...catch`로 감쌉니다.
 6. **rowsFailed 확인**: Append 후에는 `rowsFailed`를 확인해 오류 여부를 점검합니다.
 

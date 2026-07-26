@@ -210,6 +210,54 @@ const [rows, fields] = await conn.query('SELECT ID, NAME FROM demo ORDER BY ID')
 console.table(rows);
 ```
 
+#### Named Bind Parameter
+
+`execute()`, `query()`와 Prepared Statement의 `execute()`에서 배열은 positional 입력,
+plain object는 named 입력입니다.
+
+```typescript
+export type MachbaseNamedBindInput =
+  Record<string, MachbaseBindInput>;
+export type MachbaseExecuteInput =
+  MachbaseBindInput[] | MachbaseNamedBindInput;
+```
+
+```javascript
+await conn.execute(
+  'INSERT INTO demo (ID, NAME) VALUES (:id, :name)',
+  { id: 1, name: 'node-client' },
+);
+
+const [rows] = await conn.query(
+  'SELECT ID, NAME FROM demo WHERE ID = :id OR PARENT_ID = :id',
+  { id: 1 },
+);
+```
+
+Prepared Statement에서도 객체를 전달합니다.
+
+```javascript
+const stmt = await conn.prepare(
+  'SELECT ID, NAME FROM demo WHERE ID = :id'
+);
+try {
+  const [rows] = await stmt.execute({ id: 1 });
+} finally {
+  await stmt.close();
+}
+```
+
+객체 key는 선행 콜론 없이 지정하며 대소문자를 구분합니다. 반복된 이름에는 같은 값이
+적용됩니다. 객체 입력과 `?` marker를 함께 사용하거나, 필요한 key를 누락하거나, SQL에
+없는 key를 전달하면 오류를 반환합니다.
+
+| 오류 코드 | 상황 |
+|---|---|
+| `ERR_MACHBASE_BIND_MISSING` | 필요한 이름이 누락됨 |
+| `ERR_MACHBASE_BIND_EXTRA` | SQL에 없는 이름을 전달함 |
+| `ERR_MACHBASE_BIND_MIXED` | named marker와 anonymous marker를 혼용함 |
+| `ERR_MACHBASE_NAMED_BIND_UNSUPPORTED` | 서버가 이름 기반 바인딩을 지원하지 않음 |
+
 `fields`의 각 `ColumnMeta` 객체는 `nullable` 속성을 제공합니다.
 
 ```typescript
@@ -587,11 +635,17 @@ await conn.execute('COMMIT');
 
 ### 파라미터 바인딩
 
-지원 타입은 `int32`, `int64`, `float64`, `varchar` 등 범용 스칼라 타입입니다. `null`을 전달할 경우 명시적 타입을 함께 지정하십시오.
+배열 입력은 `?` positional marker에, 객체 입력은 `:name` marker에 바인딩합니다.
+지원 타입은 `int32`, `int64`, `float64`, `varchar` 등 범용 스칼라 타입입니다.
+`null`을 전달할 경우 명시적 타입을 함께 지정하십시오.
 
 ```javascript
 { value: null, type: 'varchar' }
 ```
+
+이름 규칙과 최대 파라미터 수는
+[Named Bind Parameter syntax](../../sql/syntax-dictionary-sql/named-bind-parameter-syntax/)를
+참고하십시오.
 
 ### Append 프로토콜
 

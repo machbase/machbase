@@ -151,6 +151,64 @@ SQL 결과의 판정 규칙은
 [Nullable 메타데이터 지원 범위](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-nullable-metadata)를
 참고합니다.
 
+### Named Bind Parameter
+
+Python DB-API 모듈의 `paramstyle`은 `"named"`입니다. `cursor.execute()`와
+`cursor.executemany()`에 mapping을 전달하면 `:name` SQL을 서버의 prepare/bind 경로로
+실행합니다.
+
+```python
+from decimal import Decimal
+from machbaseAPI import connect
+
+conn = connect(host="127.0.0.1", port=5656,
+               user="SYS", password="MANAGER")
+cur = conn.cursor(dictionary=False)
+
+cur.execute(
+    """INSERT INTO SENSOR_DATA (ID, NAME, VALUE)
+       VALUES (:id, :name, :value)""",
+    {
+        "id": 600,
+        "name": "python-client",
+        "value": Decimal("52.125000"),
+    },
+)
+
+cur.execute(
+    """SELECT ID, NAME FROM SENSOR_DATA
+       WHERE ID = :id OR PARENT_ID = :id""",
+    {"id": 600},
+)
+```
+
+`executemany()`는 각 행을 mapping으로 전달합니다.
+
+```python
+cur.executemany(
+    "INSERT INTO SENSOR_DATA (ID, NAME, VALUE) "
+    "VALUES (:id, :name, :value)",
+    [
+        {"id": 601, "name": "batch-a", "value": Decimal("1.5")},
+        {"id": 602, "name": "batch-b", "value": None},
+    ],
+)
+```
+
+mapping key는 선행 콜론 없이 지정하며 대소문자를 구분합니다. 같은 이름이 반복되면 한
+값을 모든 위치에 적용합니다. 이름 누락, extra key와 named/positional 혼용은
+`ProgrammingError`를 반환합니다. 이전 서버에서 이름 기반 API를 사용하면 SQLSTATE
+`0A000`의 `NotSupportedError`를 반환합니다.
+
+호환을 위해 `%s`와 `%(name)s` 문법도 유지합니다. 이 두 형식은 클라이언트에서 SQL
+리터럴을 렌더링하는 기존 경로이며, 새 코드에는 서버 메타데이터를 사용하는 `:name`
+형식을 권장합니다. DB-API는 독립된 공개 `prepare()` 객체를 제공하지 않지만
+`execute()`와 `executemany()`가 내부적으로 서버 prepare/bind를 수행합니다.
+
+공통 이름 문법은
+[Named Bind Parameter syntax](../../sql/syntax-dictionary-sql/named-bind-parameter-syntax/)를
+참고하십시오.
+
 ## 지원 API 매트릭스
 
 | 클래스 | API | 설명 | 반환 |
@@ -185,6 +243,7 @@ SQL 결과의 판정 규칙은
 | `connect(**kwargs)` | DB-API 연결 생성. `host`, `port`, `user`, `password` 등은 키워드 인자로 전달합니다. | `MachbaseConnection` |
 | `cursor(dictionary=True)` | 커서 생성 (`True`: dict, `False`: tuple) | `MachbaseCursor` |
 | `cursor.execute(sql, params=None)` | SQL 실행 | `cursor` |
+| `cursor.executemany(sql, seq_of_params)` | 같은 SQL을 여러 mapping 또는 sequence로 실행 | 실행 횟수 |
 | `cursor.fetchone()` | 한 건 조회 | `tuple | dict | None` |
 | `cursor.fetchmany(size)` | 최대 `size`건 조회 | `list` |
 | `cursor.fetchall()` | 전체 조회 | `list` |

@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '17.1.1.14 INDEX syntax'
-weight: 140
+title: '17.1.1.15 INDEX syntax'
+weight: 150
 toc: true
 ---
 

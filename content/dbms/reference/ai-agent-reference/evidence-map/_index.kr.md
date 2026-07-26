@@ -19,8 +19,18 @@ toc: true
 
 | 사실 | 근거 (소스) | 비고 |
 |------|------------|------|
-| Python machbaseAPI 파라미터 바인딩 스타일: `%s` 또는 `%(name)s` | Python SDK 가이드 | `?` 플레이스홀더 사용 불가 |
-| Python machbaseAPI는 Server Prepared Statement 미지원 | machbaseAPI 구현 방식 (클라이언트 렌더링) | 쿼리 문자열을 클라이언트에서 완성 후 서버에 전송 |
+| Python machbaseAPI의 `paramstyle`은 `named` | dbms-nfx `ux/src/python/machbaseAPI/__init__.py` | `:name` SQL과 mapping 사용 |
+| `execute()`와 `executemany()`의 named mapping은 서버 prepare/bind 사용 | dbms-nfx#3935, commit `a60f8414` | 공개 `prepare()` 객체는 없음 |
+| `%s`, `%(name)s`는 호환용 client-side 렌더링 | Python SDK 구현 | 새 코드에는 `:name` 권장 |
+
+## Named Bind Parameter
+
+| 사실 | 근거 (소스) | 비고 |
+|------|------------|------|
+| 공통 marker 문법은 `:name`이고 값 위치에만 사용 | dbms-nfx#3935, commit `a60f8414` | [SQL 문법](../../sql/syntax-dictionary-sql/named-bind-parameter-syntax/) |
+| 파라미터는 고유 이름이 아니라 발생 횟수로 계산하며 최대 256개 | dbms-nfx 3935 회귀 테스트 | 반복 이름도 각 occurrence로 계산 |
+| JDBC, Node.js, Python 이름 API는 반복 이름에 한 값을 적용 | dbms-nfx 3935 SDK 회귀 테스트 | 이름은 대소문자 구분 |
+| .NET 이름 컬렉션은 client-side 렌더링 후 ExecDirect 사용 | MachConnector40 provider 구현 | 서버 Named Bind 근거로 사용하지 않음 |
 
 ## Go SDK
 
