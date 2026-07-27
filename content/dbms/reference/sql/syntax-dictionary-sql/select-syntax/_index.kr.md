@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.1.1.1 SELECT syntax'
+title: '17.1.1.1 SELECT'
 weight: 10
 toc: true
 ---

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.1.1.9 SERIES BY syntax'
+title: '17.1.1.9 SERIES BY'
 weight: 90
 toc: true
 ---

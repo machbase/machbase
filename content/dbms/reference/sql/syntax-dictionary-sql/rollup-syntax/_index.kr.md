@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.1.1.18 ROLLUP syntax'
+title: '17.1.1.18 ROLLUP'
 weight: 180
 toc: true
 ---

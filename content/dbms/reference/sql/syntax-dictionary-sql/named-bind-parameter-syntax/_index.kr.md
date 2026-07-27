@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.1.1.3 Named Bind Parameter syntax'
+title: '17.1.1.3 Named Bind Parameter'
 weight: 30
 toc: true
 ---

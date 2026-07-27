@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.1.1.5 SEARCH / ESEARCH / REGEXP syntax'
+title: '17.1.1.5 SEARCH / ESEARCH / REGEXP'
 weight: 50
 toc: true
 ---

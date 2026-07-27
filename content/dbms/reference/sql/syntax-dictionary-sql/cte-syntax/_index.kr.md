@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.1.1.2 WITH / CTE syntax'
+title: '17.1.1.2 WITH / CTE'
 weight: 20
 toc: true
 ---

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.1.1.11 DDL syntax'
+title: '17.1.1.11 DDL'
 weight: 110
 toc: true
 ---

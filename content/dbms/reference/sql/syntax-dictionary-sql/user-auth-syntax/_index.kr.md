@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.1.1.21 USER/AUTH syntax'
+title: '17.1.1.21 USER/AUTH'
 weight: 210
 toc: true
 ---

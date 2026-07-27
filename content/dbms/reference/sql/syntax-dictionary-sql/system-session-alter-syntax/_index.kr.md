@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.1.1.22 SYSTEM/SESSION/ALTER SYSTEM syntax'
+title: '17.1.1.22 SYSTEM/SESSION/ALTER SYSTEM'
 weight: 220
 toc: true
 ---
