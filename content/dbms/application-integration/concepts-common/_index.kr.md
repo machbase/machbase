@@ -14,6 +14,7 @@ toc: true
 | [타임존 연결 옵션](/dbms/application-integration/concepts-common/#timezone-connection) | UTC 내부 저장, 연결 시 timezone 설정, TO_CHAR/TO_DATE와 timezone, SYSDATE vs NOW |
 | [Prepared statement](/dbms/application-integration/concepts-common/#prepared-statement) | SQL 인젝션 방지, 재사용 성능, TAG/LOG 테이블에서의 사용 |
 | [Parameter binding](/dbms/application-integration/concepts-common/#parameter-binding) | 위치 바인딩(`?`), DATETIME nanosecond 처리, NULL 값, SDK별 바인딩 방법 |
+| [DML 영향 행 수](/dbms/application-integration/concepts-common/#dml-affected-rows) | UPDATE/DELETE 결과 의미와 SDK별 확인 방법 |
 | [트랜잭션 처리](/dbms/application-integration/concepts-common/#transaction) | TRANSACTION SQL 트랜잭션과 SDK별 제어 API 범위 |
 | [Append API와 Batch INSERT](/dbms/application-integration/concepts-common/#append-api-batch) | TAG/LOG Append와 TRANSACTION batch Append의 차이 |
 | [오류 처리와 재시도](/dbms/application-integration/concepts-common/#error-handling-retry) | 연결 오류 코드, exponential backoff, Append flush 실패, connection pool 격리 |
@@ -810,6 +811,32 @@ cmd.ExecuteNonQuery();
 | DOUBLE → FLOAT 바인딩 | 정밀도 손실 가능, DOUBLE로 바인딩 권장 |
 
 타임존 관련 처리는 [타임존 연결 옵션](/dbms/application-integration/concepts-common/#timezone-connection)을 참조하십시오.
+
+<a id="dml-affected-rows"></a>
+
+## DML 영향 행 수 확인
+
+`UPDATE`와 `DELETE`를 실행한 뒤에는 클라이언트별 공개 API에서 영향 행 수를 확인합니다.
+서버는 Direct execution과 prepared statement에 같은 계산 기준을 적용합니다.
+
+| 클라이언트/SDK | 영향 행 수 확인 방법 |
+|----------------|-----------------------|
+| machsql | `N row(s) updated/deleted.` 또는 `No row updated/deleted.` 메시지 |
+| SQLCLI/ODBC | `SQLRowCount()` |
+| JDBC | `Statement.executeUpdate()` 반환값 또는 `Statement.getUpdateCount()` |
+| Python | `cursor.execute()` 이후 `cursor.rowcount` |
+| Node.js / TypeScript | `execute()` 결과의 `affectedRows` |
+| Go native | 실행 결과의 `RowsAffected()` |
+| Go `database/sql` | `sql.Result.RowsAffected()` |
+| .NET | `MachCommand.ExecuteNonQuery()` 반환값 |
+
+`UPDATE`의 영향 행 수는 실제 값 변경 여부가 아니라 `WHERE` 조건에 일치한 행 수입니다.
+같은 값을 반복해서 설정해도 조건에 계속 일치하면 같은 행 수가 반환됩니다. `DELETE`는
+실제로 삭제된 행 수를 반환하므로 같은 삭제를 반복하면 다음 실행은 `0`입니다.
+
+정확한 SQL 의미와 machsql 출력 예제는
+[DML의 UPDATE/DELETE 영향 행 수](/dbms/reference/sql/syntax-dictionary-sql/dml-syntax/#dml-update-delete-affected-rows)를
+참고하십시오.
 
 <a id="transaction"></a>
 

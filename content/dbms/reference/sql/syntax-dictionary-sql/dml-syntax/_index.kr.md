@@ -263,6 +263,54 @@ DELETE FROM sensors METADATA;  -- 모든 메타데이터 삭제 (실제 데이�
 
 ---
 
+<a id="dml-update-delete-affected-rows"></a>
+
+## UPDATE/DELETE 영향 행 수
+
+`UPDATE`와 `DELETE`를 실행한 클라이언트는 해당 문장의 영향 행 수(affected rows)를
+확인할 수 있습니다. Direct execution과 prepared statement 모두 같은 기준을 사용합니다.
+
+`UPDATE`는 실제로 값이 달라진 행 수가 아니라 `WHERE` 조건에 일치한 행 수를 반환합니다.
+따라서 기존 값과 같은 값을 다시 설정해도 대상 행이 조건에 일치하면 영향 행 수에
+포함됩니다. `WHERE` 절을 생략할 수 있는 테이블에서는 모든 대상 행이 일치한 것으로
+계산합니다.
+
+`DELETE`는 조건에 일치해 실제로 삭제된 행 수를 반환합니다. 같은 `DELETE`를 반복하면
+첫 실행에서 행이 제거되므로 다음 실행은 `0`을 반환합니다.
+
+```sql
+CREATE LOOKUP TABLE device_state (
+    id INTEGER PRIMARY KEY,
+    value INTEGER
+);
+
+INSERT INTO device_state VALUES (1, 10);
+INSERT INTO device_state VALUES (2, 10);
+
+UPDATE device_state SET value = 20 WHERE id >= 1 AND id <= 2;
+-- 2 row(s) updated.
+
+UPDATE device_state SET value = 20 WHERE id >= 1 AND id <= 2;
+-- 2 row(s) updated. (동일 값 반복 UPDATE)
+
+UPDATE device_state SET value = 20 WHERE id = 999;
+-- No row updated.
+
+DELETE FROM device_state WHERE id = 1;
+-- 1 row(s) deleted.
+
+DELETE FROM device_state WHERE id = 1;
+-- No row deleted.
+```
+
+`No row updated.` 또는 영향 행 수 `0`은 설정한 값이 기존 값과 같다는 의미가 아니라,
+조건에 일치한 행이 없다는 의미입니다.
+
+트랜잭션에서 반환된 영향 행 수는 각 문장을 실행한 시점의 결과입니다. 이후
+`ROLLBACK`하더라도 이미 반환된 영향 행 수의 의미는 바뀌지 않습니다.
+
+---
+
 ## 관련 문서
 
 - [DDL 문법 사전](../ddl-syntax/) - 테이블 생성 및 스키마 변경

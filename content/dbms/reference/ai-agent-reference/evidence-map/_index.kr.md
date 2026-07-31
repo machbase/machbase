@@ -37,6 +37,15 @@ toc: true
 | JDBC, Node.js, Python 이름 API는 반복 이름에 한 값을 적용 | dbms-nfx 3935 SDK 회귀 테스트 | 이름은 대소문자 구분 |
 | .NET 이름 컬렉션은 client-side 렌더링 후 ExecDirect 사용 | MachConnector40 provider 구현 | 서버 Named Bind 근거로 사용하지 않음 |
 
+## UPDATE/DELETE 영향 행 수
+
+| 사실 | 근거 (소스) | 비고 |
+|------|------------|------|
+| `UPDATE`는 실제 값 변경 여부와 무관하게 `WHERE` 조건에 일치한 행 수를 반환 | dbms-nfx#3982, commit `038e7568` | 동일 값 반복 UPDATE도 대상 행을 포함 |
+| `DELETE`는 실제 삭제된 행 수를 반환 | dbms-nfx#3982 회귀 테스트 | 같은 DELETE를 반복하면 다음 실행은 `0` |
+| Direct execution과 prepared statement는 같은 영향 행 수 기준을 사용 | dbms-nfx#3982 MMP 구현 및 회귀 테스트 | [DML 영향 행 수](../../sql/syntax-dictionary-sql/dml-syntax/#dml-update-delete-affected-rows) |
+| 기존 SDK 공개 API가 서버의 영향 행 수를 노출 | dbms-nfx#3982 Standard/Cluster 및 SDK 회귀 테스트 | [SDK별 확인 방법](/dbms/application-integration/concepts-common/#dml-affected-rows) |
+
 ## Go SDK
 
 | 사실 | 근거 (소스) | 비고 |
