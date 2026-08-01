@@ -17,7 +17,7 @@ toc: true
 | Append 필요 + .NET | **MachConnector** (`MachAppendWriter`) | [.NET 가이드](/dbms/application-integration/guide-drivers/#net-connector) |
 | Append 필요 + Node.js | **@machbase/ts-client** | [Node.js 가이드](/dbms/application-integration/guide-drivers/#node-js-typescript) |
 | AUTH KEY 인증 필요 | **JDBC**, **ODBC/CLI**, **machsql** | Python/Go/.NET/Node.js는 AUTH KEY 미지원 |
-| TRANSACTION 테이블 트랜잭션 필요 | **JDBC**, **ODBC/CLI** | SQL `BEGIN`을 직접 실행해야 함 |
+| TRANSACTION 테이블 트랜잭션 필요 | **JDBC**, **ODBC/CLI** | JDBC 표준 API는 Standard Edition에서 지원 |
 | SELECT 결과 Nullable 메타데이터 필요 | **ODBC/CLI**, **JDBC**, **Python**, **Node.js**, **.NET** | Go와 REST API는 공개 결과 메타데이터 API 없음 |
 | Prepared Parameter Nullable 메타데이터 필요 | **Native MachCLI**, **SQLCLI/ODBC**, **JDBC** | JDBC는 `getParameterMetaData()` 지원 |
 | 서버 Named Bind 필요 | **SQLCLI**, **JDBC**, **Python**, **Node.js** | ODBC/machsql은 ordinal, .NET은 client-side 렌더링 |
@@ -59,7 +59,8 @@ toc: true
 
 - Append: `MachStatement.executeAppendOpen()` → `executeAppendData()` → `executeAppendClose()`
 - AUTH KEY: 지원 (`connectURL`에 키 파일 경로 지정)
-- Transaction: SQL `BEGIN` 직접 실행 후 SQL 또는 `commit()`/`rollback()`으로 종료
+- Transaction: Standard Edition에서 `setAutoCommit(false)`, `commit()`, `rollback()` 지원
+- Transaction 시작: manual mode의 첫 Statement에서 lazy `BEGIN`
 - 파라미터: `?` 또는 `:name`, `MachPreparedStatement.setObject(String, Object)`
 - Prepared Parameter 메타데이터: `PreparedStatement.getParameterMetaData()`
 - Nullable 메타데이터: `ResultSetMetaData.isNullable()`

@@ -50,7 +50,7 @@ toc: true
 
 | SDK | Append | AUTH KEY | Transaction API | Server Prepared | Named Bind API | Nullable Metadata |
 |-----|:------:|:--------:|:---------------:|:---------------:|:--------------:|:-----------------:|
-| JDBC | O | O | △ | O | O | O |
+| JDBC | O | O | O | O | O | O |
 | Python (machbaseAPI) | O | X | X | O² | O | O |
 | Go (machcli / native) | O | X | X³ | O | X | X |
 | Go (database/sql) | X | X | X³ | O | X | X |
@@ -68,8 +68,8 @@ toc: true
 > ⁴ .NET 이름 컬렉션은 client-side typed literal 렌더링 후 ExecDirect를 사용합니다.
 > ⁵ Node.js AUTH KEY: 현재 미지원.
 > ⁶ SQLCLI는 이름 API를 제공하고 ODBC는 `:name` SQL을 ordinal로 바인딩합니다.
-> JDBC와 ODBC/CLI 트랜잭션은 SQL `BEGIN`을 직접 실행해야 합니다. JDBC
-> `setAutoCommit(false)`는 시작 문을 보내지 않으며, ODBC autocommit 속성도 서버 트랜잭션을
-> 자동으로 시작하지 않습니다.
+> JDBC는 Standard Edition TRANSACTION 테이블에서 `setAutoCommit(false)`, `commit()`과
+> `rollback()`을 지원하며 첫 Statement에서 lazy `BEGIN`을 실행합니다. ODBC/CLI는 SQL
+> `BEGIN` 또는 해당 transaction 제어 API의 지원 범위를 확인합니다.
 > Nullable Metadata의 O는 SELECT 결과 컬럼 조회를 의미합니다. Prepared Parameter의
 > Nullable 상태는 Native MachCLI, SQLCLI/ODBC와 JDBC에서 조회할 수 있습니다.

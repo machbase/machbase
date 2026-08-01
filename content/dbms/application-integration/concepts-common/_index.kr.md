@@ -851,27 +851,26 @@ cmd.ExecuteNonQuery();
 | **TRANSACTION** | O | O | `BEGIN` 이후 TRANSACTION DML을 커밋하거나 롤백 |
 | **VOLATILE** | X | X | 각 DML 문 단위로 반영 |
 | **LOOKUP** | X | X | 각 DML 문 단위로 반영 |
-| **TAG** | X | X | 입력과 제한적 data UPDATE를 문 단위로 반영 |
-| **LOG** | X | X | append 중심 입력을 문 단위로 반영 |
+| **TAG** | △ | △ | JDBC manual transaction의 독립 DML은 rollback 가능. Append는 문 단위 반영 |
+| **LOG** | X | X | JDBC 호환 경로에서 auto-commit 재실행될 수 있음 |
 
-> 활성 TRANSACTION 테이블 트랜잭션 안에서는 LOG, TAG, LOOKUP, VOLATILE 테이블 쓰기와 DDL이 차단됩니다.
-> 여러 테이블 타입의 쓰기를 하나의 트랜잭션으로 묶을 수 없습니다.
+> TRANSACTION 테이블을 변경한 활성 트랜잭션에서는 LOG, TAG, LOOKUP, VOLATILE 테이블
+> 쓰기와 DDL이 차단됩니다. JDBC의 독립 TAG/LOG DML 예외는 아래에서 구분합니다.
 
 ### Autocommit 동작
 
-서버 SQL에서는 plain `BEGIN`, `COMMIT`, `ROLLBACK`을 사용합니다. `BEGIN TRANSACTION` 같은 별도 구문은
-지원하지 않습니다. SDK의 표준 트랜잭션 편의 API가 이 SQL 흐름을 모두 구현한 것은 아니므로,
-아래 지원 표와 각 드라이버 레퍼런스를 함께 확인합니다.
+서버 SQL에서는 plain `BEGIN`, `COMMIT`, `ROLLBACK`을 사용합니다. `BEGIN TRANSACTION` 같은
+별도 구문은 지원하지 않습니다. JDBC는 이 흐름을 표준 Connection API로 제공하며,
+`setAutoCommit(false)` 이후 첫 Statement를 실행할 때 lazy `BEGIN`을 전송합니다. 다른 SDK는
+아래 지원 표와 각 드라이버 레퍼런스를 확인합니다.
 
 ```java
-// JDBC: 서버 SQL로 트랜잭션 시작 및 종료
+// JDBC: Standard Edition의 TRANSACTION 테이블
 Connection conn = DriverManager.getConnection(url, props);
-Statement tx = conn.createStatement();
-tx.execute("BEGIN");
+conn.setAutoCommit(false);
 
-try {
-    PreparedStatement ps = conn.prepareStatement(
-        "INSERT INTO orders (order_id, amount) VALUES (?, ?)");
+try (PreparedStatement ps = conn.prepareStatement(
+         "INSERT INTO orders (order_id, amount) VALUES (?, ?)")) {
     ps.setInt(1, 1001);
     ps.setDouble(2, 50000.0);
     ps.executeUpdate();
@@ -880,9 +879,9 @@ try {
     ps.setDouble(2, 30000.0);
     ps.executeUpdate();
 
-    tx.execute("COMMIT");
+    conn.commit();
 } catch (SQLException e) {
-    tx.execute("ROLLBACK");
+    conn.rollback();
     throw e;
 }
 ```
@@ -902,16 +901,13 @@ SQLEndTran(SQL_HANDLE_DBC, conn, SQL_COMMIT);
 
 ### TAG/LOG 테이블에 대한 트랜잭션 시도
 
-트랜잭션 밖에서 실행한 TAG/LOG 입력은 해당 문 또는 Append 요청 단위로 반영되며 이후
-`ROLLBACK`으로 취소할 수 없습니다. `BEGIN`은 TRANSACTION 테이블 트랜잭션을 시작하므로, 그 안에서
-TAG/LOG 쓰기를 실행하면 해당 쓰기가 차단됩니다.
+Append로 실행한 TAG/LOG 입력과 트랜잭션 밖의 LOG 입력은 이후 `ROLLBACK`으로 취소할 수
+없습니다. JDBC manual transaction에서 TRANSACTION 테이블을 아직 변경하지 않은 독립 TAG
+DML은 트랜잭션에 참여해 rollback할 수 있습니다. 같은 시점의 첫 LOG DML은 호환 경로에서
+auto-commit으로 재실행될 수 있으므로 rollback 대상이 아닙니다.
 
-```text
--- TAG INSERT가 활성 TRANSACTION 테이블 트랜잭션 안에서 거부됩니다.
-BEGIN;
-INSERT INTO sensor_tag (name, time, value) VALUES ('s01', NOW, 25.0);
-ROLLBACK;
-```
+TRANSACTION 테이블을 변경한 뒤에는 LOG/TAG DML과 DDL이 오류로 거절됩니다. rollback이
+필요한 업무 데이터는 TRANSACTION 테이블을 사용합니다.
 
 TAG/LOG 테이블에서 잘못 삽입된 데이터를 제거하려면 [DELETE 정책](/dbms/data-modeling-table-design/alter-data-mutation-policy/#policy-delete)을 참고하십시오.
 
@@ -920,7 +916,7 @@ TAG/LOG 테이블에서 잘못 삽입된 데이터를 제거하려면 [DELETE �
 | SDK | 트랜잭션 편의 API | 비고 |
 |-----|:---:|------|
 | ODBC/CLI | △ | SQL로 `BEGIN`, `SQLEndTran`으로 종료 가능 |
-| JDBC | △ | SQL로 `BEGIN` 실행 필요. `setAutoCommit(false)`는 시작 문을 보내지 않음 |
+| JDBC | O | `setAutoCommit(false)`, `commit()`, `rollback()` 지원. 첫 Statement에서 lazy `BEGIN` |
 | Python | X | `begin()`/`commit()`/`rollback()`이 `NotSupportedError` 반환 |
 | .NET | X | `MachTransaction` 미구현 |
 | Go (database/sql) | X | 현재 Go SQL 드라이버는 `Begin` / `BeginTx` 미지원 |

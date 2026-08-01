@@ -23,13 +23,13 @@ toc: true
 - **지속적인 대량 쓰기**가 필요하면 → ODBC/CLI, JDBC, Go native 등 Append API 지원 드라이버 사용
 - **표준 SQL 인터페이스**가 필요하면 → JDBC, Python(DB-API 2.0), Go(`database/sql`)
 - **웹 서비스·마이크로서비스 통합**이라면 → REST API
-- **트랜잭션이 필요한 TRANSACTION 작업**이라면 → ODBC/CLI 또는 JDBC에서 SQL `BEGIN` 직접 실행
+- **트랜잭션이 필요한 TRANSACTION 작업**이라면 → JDBC 표준 트랜잭션 API 또는 ODBC/CLI 사용
 - **조회 결과의 NULL 가능 여부를 실행 전에 확인**해야 한다면 → Native MachCLI, SQLCLI/ODBC,
   JDBC, Node.js, Python 또는 .NET 사용
 
-> **참고**: TAG와 LOG 테이블은 append 중심 입력에 최적화되어 있습니다. TAG data UPDATE는
-> 태그 선택자와 시간축 조건으로 범위를 제한한 데이터 보정 기능이며 TRANSACTION 테이블 트랜잭션에는
-> 참여하지 않습니다.
+> **참고**: TAG와 LOG 테이블은 append 중심 입력에 최적화되어 있습니다. JDBC manual
+> transaction에서 TRANSACTION 테이블을 변경하기 전의 독립 TAG DML은 rollback할 수 있지만,
+> Append 입력과 호환 경로에서 auto-commit된 LOG DML은 rollback할 수 없습니다.
 
 <a id="support-scope-sdk-nullable-metadata"></a>
 
@@ -469,7 +469,7 @@ AUTH KEY challenge 인증은 DB 포트(기본 5656)에 접속하는 드라이버
 | SDK | Transaction API | Server Prepared | Parameter Binding | 이름 기반 API | 비고 |
 |-----|:---:|:---:|:---:|:---:|------|
 | **ODBC/CLI** | △ | O | O | △ | SQLCLI는 이름 API, ODBC는 ordinal API 사용 |
-| **JDBC** | △ | O | O | O | `MachPreparedStatement.setObject(String, Object)` |
+| **JDBC** | O | O | O | O | 표준 Connection 트랜잭션 API와 이름 기반 bind 지원 |
 | **Python** | X | O | O | O | 2.4 prepared cursor로 호출 간 statement 재사용 |
 | **.NET Connector** | X | X | O | △ | client-side typed literal 렌더링 후 ExecDirect |
 | **Go (database/sql)** | X | O | O | X | `db.Prepare()`와 `?` 바인딩 |
@@ -481,27 +481,35 @@ AUTH KEY challenge 인증은 DB 포트(기본 5656)에 접속하는 드라이버
 - △: SDK별로 제한된 방식으로 지원
 - X: 미지원
 
-표의 Transaction 열은 SDK가 제공하는 표준 편의 API 기준입니다. 임의 SQL을 같은 물리 연결로
-계속 실행할 수 있는 SDK에서는 SQL `BEGIN`/`COMMIT`/`ROLLBACK`을 직접 전송할 수 있지만,
+표의 Transaction 열은 SDK가 제공하는 표준 편의 API 기준입니다. JDBC는
+`setAutoCommit(false)`, `commit()`과 `rollback()`을 제공합니다. ODBC/CLI처럼 임의 SQL을
+같은 물리 연결로 계속 실행하는 SDK는 SQL `BEGIN`/`COMMIT`/`ROLLBACK`을 사용할 수 있지만,
 연결 유지와 오류 처리를 애플리케이션이 책임져야 합니다.
 
 ### 트랜잭션 (Transaction)
 
-TRANSACTION 테이블에서만 SQL `BEGIN` 이후의 `COMMIT`/`ROLLBACK`이 유효합니다. 나머지 테이블 유형의
-쓰기는 TRANSACTION 테이블 트랜잭션에 참여하지 않습니다.
+JDBC의 표준 트랜잭션 API는 Standard Edition의 TRANSACTION 테이블 작업에 사용합니다.
+`setAutoCommit(false)`는 즉시 `BEGIN`을 보내지 않고 첫 Statement 실행 시 트랜잭션을
+시작합니다.
 
 ```java
-// JDBC: setAutoCommit(false) 대신 서버 SQL BEGIN을 실행합니다.
-Statement tx = conn.createStatement();
-tx.execute("BEGIN");
+conn.setAutoCommit(false);
 try {
     stmt.executeUpdate("INSERT INTO orders VALUES (1, 50000)");
     stmt.executeUpdate("INSERT INTO orders VALUES (2, 30000)");
-    tx.execute("COMMIT");
+    conn.commit();
 } catch (SQLException e) {
-    tx.execute("ROLLBACK");
+    conn.rollback();
+    throw e;
 }
 ```
+
+독립 TAG DML은 JDBC manual transaction에 참여해 rollback할 수 있습니다. TRANSACTION
+테이블을 변경하기 전의 첫 LOG DML은 호환 경로에서 auto-commit으로 재실행될 수 있어
+rollback 대상이 아닙니다. TRANSACTION 테이블을 변경한 뒤에는 LOG/TAG DML과 DDL이
+거절됩니다. 자세한 내용은
+[JDBC 트랜잭션과 커넥션 풀](/dbms/reference/sdk-api/jdbc/transaction-pooling/)을
+참고합니다.
 
 ### Prepared Statement
 
@@ -626,11 +634,13 @@ API 레퍼런스는 **17장 레퍼런스**를 참고합니다.
 - 전체 기능 지원
 
 #### JDBC (Java)
-표준 JDBC 4.x 인터페이스를 구현하여 Spring, Hibernate, MyBatis 등 Java 생태계 프레임워크와 호환됩니다.
+Java 8/JDBC 4.2 핵심 인터페이스를 구현하여 Spring JDBC, HikariCP와 MyBatis 등 Java
+생태계 프레임워크에서 사용할 수 있습니다.
 
 - HikariCP 등 커넥션 풀링 지원
+- Standard Edition TRANSACTION 테이블의 표준 Connection 트랜잭션 API 지원
 - `MachStatement.executeAppendOpen()` 계열 메서드를 통한 Append API 지원
-- AUTH KEY challenge 인증 지원 (Machbase 8.0 이상)
+- AUTH KEY challenge 인증 지원 (Machbase 8.5 이상)
 
 #### Python
 Python DB-API 2.0(PEP 249) 인터페이스를 제공합니다.

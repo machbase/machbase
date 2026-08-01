@@ -5,1056 +5,201 @@ weight: 20
 toc: true
 ---
 
-## JDBC 개요
-
-JDBC(Java DataBase Connectivity)는 자바에서 데이터베이스를 조작하기 위한 표준 API입니다. JDBC 드라이버만 제공되면 어떤 데이터베이스든 코드 수정 없이 접근할 수 있습니다.
-
-## 표준 JDBC 함수
-
-[표준 함수 스펙 4.0](https://www.oracle.com/java/technologies/javase/javase-tech-database.html#corespec40)
-
-## Nullable 메타데이터 조회
-
-`ResultSetMetaData.isNullable()`로 SELECT 결과 컬럼의 NULL 가능 여부를 조회합니다.
-
-```java
-ResultSetMetaData meta = resultSet.getMetaData();
-int nullable = meta.isNullable(columnIndex);
-
-if (nullable == ResultSetMetaData.columnNoNulls) {
-    // NULL이 될 수 없음
-} else {
-    // columnNullable 또는 columnNullableUnknown: NULL 처리 필요
-}
-```
-
-| 반환 상수 | 숫자 값 | 의미 |
-|----------|:------:|------|
-| `ResultSetMetaData.columnNoNulls` | `0` | NULL이 될 수 없음 |
-| `ResultSetMetaData.columnNullable` | `1` | NULL이 될 수 있음 |
-| `ResultSetMetaData.columnNullableUnknown` | `2` | 판정할 수 없음 |
-
-`columnNullableUnknown`은 `NOT NULL`을 의미하지 않습니다. NULL이 발생할 수 있는 것으로
-처리합니다. SQL 결과의 판정 규칙은
-[Nullable 메타데이터 지원 범위](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-nullable-metadata)를
-참고합니다.
-
-테이블 컬럼의 NULL 제약은 `DatabaseMetaData.getColumns()` 결과의 `NULLABLE`과
-`IS_NULLABLE`로 확인합니다. `PRIMARY KEY`는 Nullable 값으로 판단하지 않고
-`DatabaseMetaData.getPrimaryKeys()`로 별도 조회합니다.
-
-`PreparedStatement.getParameterMetaData()`는 `ParameterMetaData`를 반환합니다.
-파라미터 개수, 타입, 타입명, Java 클래스, 정밀도, 스케일, Nullable 상태, signed 여부와
-파라미터 모드를 조회할 수 있습니다.
-
-```java
-ParameterMetaData meta = preparedStatement.getParameterMetaData();
-for (int i = 1; i <= meta.getParameterCount(); i++) {
-    System.out.printf("%d %s nullable=%d%n",
-        i, meta.getParameterTypeName(i), meta.isNullable(i));
-}
-```
-
-## Named Bind Parameter
-
-Machbase JDBC는 `MachPreparedStatement`에 이름 기반 setter를 제공합니다.
-
-```java
-void setObject(String name, Object value) throws SQLException
-```
-
-이름은 선행 콜론을 포함하거나 생략할 수 있습니다. 같은 이름이 여러 번 나타나면 한 번의
-호출로 모든 위치를 바인딩합니다. 이름은 대소문자를 구분하며, 이름 setter와 숫자 index
-setter를 한 statement에서 혼용할 수 없습니다.
-
-```java
-import com.machbase.jdbc.MachPreparedStatement;
-import java.math.BigDecimal;
-
-try (MachPreparedStatement ps =
-        (MachPreparedStatement) conn.prepareStatement(
-            "INSERT INTO SENSOR_DATA (ID, NAME, VALUE) " +
-            "VALUES (:id, :name, :value)")) {
-    ps.setObject("id", 400);
-    ps.setObject(":name", "jdbc-client");
-    ps.setObject("value", new BigDecimal("31.125000"));
-    ps.executeUpdate();
-}
-```
-
-Batch, NULL과 `DECIMAL`/`NUMERIC`도 같은 API를 사용합니다. SQL에 없는 이름이나
-named/positional 혼용은 SQLSTATE `07009`, 이름 기반 API를 지원하지 않는 이전 서버는
-SQLSTATE `0A000`을 반환합니다.
-
-공통 이름 문법은
-[Named Bind Parameter syntax](../../sql/syntax-dictionary-sql/named-bind-parameter-syntax/)를
-참고하십시오.
-
-## JDBC 인증 방식
-
-> **참고**: AUTH KEY challenge 인증은 Machbase 8.5 이상에서 지원됩니다.
-
-Machbase JDBC는 기존 비밀번호 인증과 함께 공개키 기반 challenge 인증을 지원합니다.
-
-### 비밀번호 인증
-
-기존과 동일하게 `user`, `password`를 사용합니다.
-
-### AUTH KEY challenge 인증
-
-challenge 인증은 다음 속성을 사용합니다.
-
-- `AUTH_MODE`
-  - `PASSWORD` 또는 `CHALLENGE`
-- `AUTH_SIG_SCHEME`
-  - `ECDSA`
-  - `RSA_PKCS1_V15`
-  - `RSA_PSS`
-- `AUTH_KEY_FILE`
-  - 로컬 PEM 개인키 파일 경로
-
-설명:
-
-- `AUTH_MODE=CHALLENGE`에서는 `password`를 인증에 사용하지 않습니다.
-- `AUTH_KEY_FILE`은 필수입니다.
-- `AUTH_SIG_SCHEME`를 생략하면 키 파일 기반으로 기본 스킴을 자동 선택합니다.
-  - EC 키: `ECDSA`
-  - RSA 키: `RSA_PKCS1_V15`
-- 지원 키 파라미터는 ECDSA `P-256`, `P-384`, `P-521` 및 RSA `2048`, `3072`, `4096` bits입니다.
-- RSA-PSS 인증을 사용하려면 `AUTH_SIG_SCHEME=RSA_PSS`를 명시합니다.
-- `AUTH_KEY_FILE`만 주고 `AUTH_MODE`를 생략하면 내부적으로 `CHALLENGE`로 처리합니다.
-- 개인키 파일은 절대 경로 사용을 권장합니다. 상대 경로는 JVM의 현재 작업 디렉터리 기준으로 해석됩니다.
-- POSIX 환경에서는 개인키 파일 권한을 `600`으로 제한하는 것을 권장합니다.
-
-### Properties 예제
-
-```java
-String sURL = "jdbc:machbase://127.0.0.1:5656/machbasedb";
-
-Properties sProps = new Properties();
-sProps.put("user", "app_user");
-sProps.put("AUTH_MODE", "CHALLENGE");
-sProps.put("AUTH_SIG_SCHEME", "ECDSA");
-sProps.put("AUTH_KEY_FILE", "/opt/machbase/keys/app_user_ecdsa.pem");
-
-Class.forName("com.machbase.jdbc.MachDriver");
-Connection conn = DriverManager.getConnection(sURL, sProps);
-```
-
-### URL query string 예제
-
-```text
-jdbc:machbase://127.0.0.1:5656/machbasedb?AUTH_MODE=CHALLENGE&AUTH_SIG_SCHEME=ECDSA&AUTH_KEY_FILE=/opt/machbase/keys/app_user_ecdsa.pem
-```
-
-다만 키 파일 경로를 URL에 포함하면 로그나 설정 덤프에 더 쉽게 노출될 수 있으므로, 일반적으로는 `Properties` 사용을 권장합니다.
-
-### reconnect 동작
-
-- 초기 연결이 `AUTH_MODE=CHALLENGE`였다면 reconnect도 challenge 인증을 다시 수행합니다.
-- reconnect 시 이전 nonce나 signature를 재사용하지 않습니다.
-- challenge 실패 시 password fallback을 자동으로 수행하지 않습니다.
-
-## JDBC 연결 옵션
-
-드라이버는 `Properties` 또는 URL query string으로 연결 옵션을 받습니다.
-현재 DBMS standard 소스에서 처리하는 공개 옵션은 다음과 같습니다.
-
-| 옵션 | 설명 |
-| -- | -- |
-| `user` / `password` | 비밀번호 인증 계정 정보 |
-| `AUTH_MODE`, `AUTH_SIG_SCHEME`, `AUTH_KEY_FILE` | 위에서 설명한 challenge 인증 옵션 |
-| `TIMEZONE` | `+0900` 같은 세션 timezone 문자열. 잘못된 timezone 문자열은 연결 설정 오류로 처리됩니다. |
-| `randomHost` | `true`이면 파싱된 host 목록에서 연결 대상을 무작위로 선택합니다. |
-| `maxStatements` | pooled connection에서 사용할 최대 cached statement 개수 |
-| `CONNECTION_TIMEOUT` | socket connect timeout(초). `0`은 유한 timeout 없음 |
-| `SOCKET_TIMEOUT` | socket read timeout(초). `0`은 유한 timeout 없음 |
-| `characterEncoding` | 클라이언트 문자 인코딩 이름 |
-
-## 확장 JDBC 함수
-
-### setIpv4
-
-```java
-void setIpv4(int ind, String ipString)
-```
-
-PrepareStatement에서 IPv4 주소 타입을 입력하기 위한 함수입니다.
-
-컬럼 인덱스와 IPv4 문자열을 인자로 받습니다.
-
-### setIpv6
-
-```java
-void setIpv6(int ind, String ipString)
-```
-PrepareStatement에서 IPv6 주소 타입을 입력하기 위한 함수입니다.
-
-컬럼 인덱스와 IPv6 문자열을 인자로 받습니다.
-
-### executeAppendOpen
-
-```java
-ResultSet executeAppendOpen(String aTableName, int aErrorCheckCount)
-```
-
-Statement에서 Append 프로토콜을 쓰기 위한 것으로 프로토콜을 오픈합니다.
-
-테이블 이름과 오류 검사 간격을 인자로 받습니다. 결과값으로 ResultSet을 리턴합니다.
-
-### executeAppendData
-
-```java
-int executeAppendData(ResultSetMetaData rsmd, ArrayList aData)
-```
-
-Statement에서 Append 프로토콜을 위한 것으로 실제 데이터를 입력합니다.
-
-executeAppendOpen의 결과값인 ResultSet의 메타데이터와 입력하고자 하는 데이터를 인자로 받습니다. 결과값이 전송 버퍼에 저장되면 1이 리턴되고, 전송 버퍼가 차서 마크베이스로 전송되면 2가 리턴됩니다. 따라서 1 또는 2가 리턴되면 성공으로 판단하면 됩니다.
-
-### executeAppendDataByTime
-
-```java
-int executeAppendDataByTime(ResultSetMetaData rsmd, long aTime, ArrayList aData)
-```
-
-Statement에서 Append 프로토콜을 위한 것으로 실제 데이터를 시간 기준으로 입력합니다.
-
-executeAppendOpen의 결과값인 ResultSet의 메타데이터와 설정하고자 하는 특정 시간대의 시간 값, 입력하고자 하는 데이터를 인자로 받습니다. 결과값이 전송 버퍼에 저장되면 1이 리턴됩니다.
-
-### executeAppendFlush
-
-```java
-int executeAppendFlush()
-```
-
-현재 append stream을 flush하고 pending append response를 확인합니다. 결과값으로 성공하면 1을 리턴합니다.
-
-### executeAppendClose
-
-```java
-int executeAppendClose()
-```
-
-Statement에서 Append 프로토콜을 위한 것으로 statement를 종료합니다.
-
-결과값으로 성공하면 1을 리턴합니다.
-
-### executeSetAppendErrorCallback
-
-```java
-int executeSetAppendErrorCallback(MachAppendCallback aCallback)
-```
-
-Append 수행하는 도중에 에러가 발생하는 경우 에러를 출력하는 콜백 함수를 설정합니다.
-
-에러 로그를 출력하는 콜백 함수를 인자로 받습니다. 결과값으로 성공하면 1이 리턴됩니다.
-
-### getAppendSuccessCount
-
-```java
-long getAppendSuccessCount()
-```
-
-Statement에서 Append 프로토콜을 위한 것으로 성공한 개수를 리턴합니다.
-
-결과값으로 성공한 개수를 리턴합니다.
-
-### getAppendFailureCount
-
-```java
-long getAppendFailureCount()
-```
-Statement에서 Append 프로토콜을 위한 것으로 실패한 개수를 리턴합니다.
-
-결과값으로 실패한 개수를 리턴합니다.
-
-### Batch append 구현 참고
-
-소스에는 batch append 쓰기를 위한 내부 프로토콜 메서드 `executeAppendAll`, `executeAppendAllByTime`이 있습니다. 확인한 DBMS standard 소스에서는 공개 `MachStatement` 메서드로 노출되어 있지 않으므로, 별도 public wrapper가 제공되기 전에는 위에 문서화한 공개 append 메서드를 사용합니다.
-
-## 응용 프로그램 개발
-
-### JDBC 라이브러리 설치 확인
-
-$MACHBASE_HOME/lib 디렉터리에 machbase.jar 파일이 있는지 확인합니다.
+Machbase JDBC 드라이버는 Java 8을 기준으로 JDBC 4.2 핵심 API를 제공합니다. 표준 JDBC
+API로 서버에 연결하고 PreparedStatement, 타입 지정 조회와 바인딩, 데이터베이스
+메타데이터, 로컬 트랜잭션과 커넥션 풀을 사용할 수 있습니다.
+
+| 항목 | 값 |
+|------|----|
+| Java bytecode 기준 | Java 8 |
+| 드라이버가 보고하는 JDBC 버전 | 4.2 |
+| 드라이버 버전 | 3.0.0 |
+| JDBC URL | `jdbc:machbase://<host>:<port>/machbasedb` |
+| `Driver.jdbcCompliant()` | `false` |
+
+`jdbcCompliant()`의 `false`는 JDBC 4.2 API 지원 여부가 아니라 SQL-92 Entry Level 전체
+지원 여부를 나타냅니다. 애플리케이션에서는 필요한 선택 기능을
+`DatabaseMetaData`의 capability 메서드로 확인합니다.
+
+## 드라이버 설치
+
+### JAR 파일 사용
+
+Machbase 설치 디렉터리의 `machbase.jar`를 classpath에 추가합니다.
 
 ```bash
-[mach@localhost ~]$ cd $MACHBASE_HOME/lib
-[mach@localhost lib]$ ls -l machbase.jar
--rw-rw-r-- 1 mach mach 78599 Jun 18 10:00 machbase.jar
-[mach@localhost lib]$
+ls -l "$MACHBASE_HOME/lib/machbase.jar"
+javac -classpath ".:$MACHBASE_HOME/lib/machbase.jar" MyApp.java
+java -classpath ".:$MACHBASE_HOME/lib/machbase.jar" MyApp
 ```
 
-### Makefile 작성 가이드
+JAR에는 `META-INF/services/java.sql.Driver`가 포함되어 있습니다. JDBC 4.0 이후 환경에서는
+`Class.forName("com.machbase.jdbc.MachDriver")`를 호출하지 않아도 드라이버가 자동으로
+등록됩니다. 기존 애플리케이션의 명시적 호출은 그대로 사용할 수 있습니다.
 
-$(MACHBASE_HOME)/lib/machbase.jar를 classpath에 지정해주어야 합니다. 다음은 Makefile 예시입니다.
+### Maven
 
-```bash
-CLASSPATH=".:$(MACHBASE_HOME)/lib/machbase.jar"
-
-SAMPLE_SRC = MakeData.java Sample1Connect.java Sample2Insert.java Sample3PrepareStmt.java Sample4Append.java
-
-all: build
-
-build:
-    -@rm -rf *.class
-    javac -classpath $(CLASSPATH) -d . $(SAMPLE_SRC)
-
-create_table:
-    machsql -s localhost -u sys -p manager -f createTable.sql
-
-select_table:
-    machsql -s localhost -u sys -p manager -f selectTable.sql
-
-make_data_file:
-    java -classpath $(CLASSPATH) MakeData
-
-run_sample1:
-    java -classpath $(CLASSPATH) Sample1Connect
-
-run_sample2:
-    java -classpath $(CLASSPATH) Sample2Insert
-
-run_sample3:
-    java -classpath $(CLASSPATH) Sample3PrepareStmt
-
-run_sample4:
-    java -classpath $(CLASSPATH) Sample4Append
-
-clean:
-    rm -rf *.class
-```
-
-### 컴파일 및 링크
-
-make 명령으로 컴파일합니다.
-
-```bash
-[mach@localhost jdbc]$ make
-javac -classpath ".:/home/machbase/machbase_home/lib/machbase.jar" -d . MakeData.java Sample1Connect.java Sample2Insert.java Sample3PrepareStmt.java Sample4Append.java
-[mach@localhost jdbc]$
-```
-
-## Maven을 이용한 응용 프로그램 개발
-
-Maven을 사용해서 마크베이스 JDBC(machjdbc)를 프로젝트로 가져올 수 있습니다.
-Machbase JDBC 드라이버는 [Maven Central Repository](https://mvnrepository.com/artifact/com.machbase/machjdbc)에서 찾을 수 있습니다.
-
-### machjdbc을 가져와서 사용하기
-
-machjdbc를 프로젝트에 가져오려면, `pom.xml`를 열어서 아래의 내용을 `<dependencies>` 태그 안에 추가해 줍니다.
-```
+```xml
 <dependency>
     <groupId>com.machbase</groupId>
     <artifactId>machjdbc</artifactId>
     <version>{{< jdbc_version >}}</version>
 </dependency>
 ```
-> 버전 번호인 {{< jdbc_version >}}은 Maven Central의 최신 버전으로 바꾸어도 됩니다.
-<br>
 
-그러면 아래처럼 `import` 구문을 이용해서 machjdbc를 소스 안에서 사용할 수 있습니다.
+### Gradle
+
+```groovy
+dependencies {
+    implementation 'com.machbase:machjdbc:{{< jdbc_version >}}'
+}
 ```
-import com.machbase.jdbc.*;
-```
-<br><br>
 
-## JDBC 샘플
+배포 artifact 버전은 [Maven Central](https://mvnrepository.com/artifact/com.machbase/machjdbc)에서
+확인합니다. 드라이버가 런타임 메타데이터로 반환하는 `3.0.0`과 artifact 버전은 서로 다른
+버전 체계입니다.
 
-### 접속 예제
+## 서버에 연결
 
-마크베이스 서버에 접속하는 예제입니다. 소스 파일명은 Sample1Connect.java입니다.
-
-> [Tips] _arrival_time 컬럼은 디폴트로 표시되지 않습니다.<br>
-> 따라서 _arrival_time 컬럼을 표시하려면, 연결 문자열에 show_hidden_cols=1 을 추가하면 됩니다.<br><br>
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;아래 예제 소스에서 접속 문자열을 다음과 같이 수정하면 됩니다.<br>
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;String sURL = "jdbc:machbase://localhost:5656/machbasedb?show_hidden_cols=1";
+사용자 이름과 비밀번호는 소스 코드에 기록하지 않고 환경 변수나 secret manager로
+전달합니다.
 
 ```java
-import java.util.*;
-import java.sql.*;
-import com.machbase.jdbc.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.util.Properties;
 
-public class Sample1Connect
-{
-    public static Connection connect()
-    {
-        Connection conn = null;
-        try
-        {
-            String sURL = "jdbc:machbase://localhost:5656/machbasedb";
+String url = "jdbc:machbase://127.0.0.1:5656/machbasedb";
 
-            Properties sProps = new Properties();
-            sProps.put("user", "sys");
-            sProps.put("password", "manager");
+Properties properties = new Properties();
+properties.setProperty("user", "SYS");
+properties.setProperty("password", System.getenv("MACHBASE_PASSWORD"));
 
-            Class.forName("com.machbase.jdbc.MachDriver");
-            conn = DriverManager.getConnection(sURL, sProps);
-        }
-        catch ( ClassNotFoundException ex )
-        {
-            System.err.println("Exception : unable to load mach jdbc driver class");
-        }
-        catch ( Exception e )
-        {
-            System.err.println("Exception : " + e.getMessage());
-        }
-        return conn;
-    }
+try (Connection connection =
+         DriverManager.getConnection(url, properties)) {
+    // SQL을 실행합니다.
+}
+```
 
-    public static void main(String[] args) throws Exception
-    {
-        Connection conn = null;
+### 연결 옵션
 
-        try
-        {
-            conn = connect();
-            if( conn != null )
-            {
-                System.out.println("machbase JDBC connected.");
+연결 옵션은 `Properties` 또는 URL query string으로 지정합니다.
+
+| 옵션 | 설명 |
+|------|------|
+| `user`, `password` | 비밀번호 인증 정보 |
+| `TIMEZONE` | 세션 타임존. `+0900` 형식을 사용합니다. |
+| `randomHost` | 호스트 목록에서 연결 대상을 무작위로 선택합니다. |
+| `maxStatements` | 풀링 연결의 최대 캐시 Statement 수 |
+| `CONNECTION_TIMEOUT` | 소켓 연결 timeout(초). `0`은 제한 없음입니다. |
+| `SOCKET_TIMEOUT` | 소켓 읽기 timeout(초). `0`은 제한 없음입니다. |
+| `characterEncoding` | 클라이언트 문자 인코딩 |
+| `AUTH_MODE` | `PASSWORD` 또는 `CHALLENGE` |
+| `AUTH_SIG_SCHEME` | `ECDSA`, `RSA_PKCS1_V15`, `RSA_PSS` |
+| `AUTH_KEY_FILE` | PEM 개인키 파일 경로 |
+
+```java
+String url =
+    "jdbc:machbase://127.0.0.1:5656/machbasedb?TIMEZONE=+0900";
+```
+
+연결이 끊긴 뒤 자동 reconnect가 성공해도 이전 Statement, PreparedStatement와 ResultSet은
+재사용하지 않습니다. 활성 트랜잭션에서 연결 오류가 발생하면 연결을 폐기하고 업무의
+멱등성 정책에 따라 전체 트랜잭션을 다시 실행합니다.
+
+## AUTH KEY 인증
+
+공개키 기반 challenge 인증에서는 비밀번호 대신 로컬 개인키로 서버 challenge에
+서명합니다.
+
+```java
+Properties properties = new Properties();
+properties.setProperty("user", "app_user");
+properties.setProperty("AUTH_MODE", "CHALLENGE");
+properties.setProperty("AUTH_SIG_SCHEME", "ECDSA");
+properties.setProperty(
+    "AUTH_KEY_FILE", "/opt/machbase/keys/app_user_ecdsa.pem");
+
+Connection connection = DriverManager.getConnection(
+    "jdbc:machbase://127.0.0.1:5656/machbasedb", properties);
+```
+
+- `AUTH_MODE=CHALLENGE`에서는 `password`를 인증에 사용하지 않습니다.
+- `AUTH_KEY_FILE`은 필수입니다.
+- `AUTH_SIG_SCHEME`을 생략하면 키 종류에 맞는 기본 서명 방식을 선택합니다.
+- POSIX 환경에서는 개인키 파일 권한을 `600`으로 제한합니다.
+
+## 빠른 시작
+
+다음 예제는 LOG 테이블에 값을 입력하고 다시 조회합니다.
+
+```java
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.Properties;
+
+public class JdbcQuickStart {
+    public static void main(String[] args) throws Exception {
+        Properties properties = new Properties();
+        properties.setProperty("user", "SYS");
+        properties.setProperty(
+            "password", System.getenv("MACHBASE_PASSWORD"));
+
+        try (Connection connection = DriverManager.getConnection(
+                 "jdbc:machbase://127.0.0.1:5656/machbasedb",
+                 properties);
+             Statement statement = connection.createStatement()) {
+            statement.execute(
+                "CREATE LOG TABLE jdbc_sensor " +
+                "(ts DATETIME, name VARCHAR(40), value DOUBLE)");
+
+            try (PreparedStatement insert = connection.prepareStatement(
+                     "INSERT INTO jdbc_sensor VALUES (?, ?, ?)")) {
+                insert.setLong(1, System.currentTimeMillis() * 1_000_000L);
+                insert.setString(2, "sensor-1");
+                insert.setDouble(3, 25.3);
+                insert.executeUpdate();
             }
-        }
-        catch( Exception e )
-        {
-            System.err.println("Exception : " + e.getMessage());
-        }
-        finally
-        {
-            if( conn != null )
-            {
-                conn.close();
-                conn = null;
+
+            try (ResultSet result = statement.executeQuery(
+                     "SELECT name, value FROM jdbc_sensor")) {
+                while (result.next()) {
+                    System.out.printf("%s %.1f%n",
+                        result.getString("NAME"),
+                        result.getDouble("VALUE"));
+                }
             }
         }
     }
 }
 ```
 
-컴파일 후 실행합니다.
+DATETIME에 epoch nanosecond 값을 전달할 때는 `long`을 사용합니다. 예제의 테이블이 이미
+존재하면 `CREATE LOG TABLE`을 생략하거나 다른 이름을 사용합니다.
 
-```bash
-[mach@localhost jdbc]$ make
-javac -classpath ".:/home/machbase/machbase_home/lib/machbase.jar" -d . MakeData.java Sample1Connect.java Sample2Insert.java Sample3PrepareStmt.java Sample4Append.java
-[mach@localhost jdbc]$ make run_sample1
-java -classpath ".:/home/machbase/machbase_home/lib/machbase.jar" Sample1Connect
-machbase JDBC connected.
-```
-
-### 데이터 입력 및 출력 예제 (1) 직접 입/출력
-
-데이터를 입력하고 출력하는 예제입니다. 소스 파일명은 Sample2Insert.java입니다.
-
-먼저 machsql로 sample_table을 생성해야 합니다.
-
-```bash
-[mach@localhost jdbc]$ machsql
-=================================================================
-     Machbase Client Query Utility
-     Release Version 8.5.4.develop
-     Copyright 2014, Machbase Inc. or its subsidiaries.
-     All Rights Reserved.
-=================================================================
-Machbase server address (Default:127.0.0.1):
-Machbase rser ID  (Default:SYS)
-Machbase user password: MANAGER
-MACHBASE_CONNECT_MODE=INET, PORT=5656 EDITION=STANDARD
-mach> create table sample_table(d1 short, d2 integer, d3 long, f1 float, f2 double, name varchar(20), text text, bin binary, v4 ipv4, v6 ipv6, dt datetime);
-Created successfully.
-mach> exit
-[mach@localhost jdbc]$
-```
+## 버전 확인
 
 ```java
-import java.util.*;
-import java.sql.*;
-import com.machbase.jdbc.*;
+import java.sql.DatabaseMetaData;
 
-public class Sample2Insert
-{
-    public static Connection connect()
-    {
-        Connection conn = null;
-        try
-        {
+DatabaseMetaData metadata = connection.getMetaData();
 
-            String sURL = "jdbc:machbase://localhost:5656/machbasedb";
-
-            Properties sProps = new Properties();
-            sProps.put("user", "sys");
-            sProps.put("password", "manager");
-
-            Class.forName("com.machbase.jdbc.MachDriver");
-
-            conn = DriverManager.getConnection(sURL, sProps);
-
-        }
-        catch ( ClassNotFoundException ex )
-        {
-            System.err.println("Exception : unable to load mach jdbc driver class");
-        }
-        catch ( Exception e )
-        {
-            System.err.println("Exception : " + e.getMessage());
-        }
-
-        return conn;
-    }
-
-
-    public static void main(String[] args) throws Exception
-    {
-        Connection conn = null;
-        Statement stmt = null;
-        String sql;
-
-        try
-        {
-            conn = connect();
-            if( conn != null )
-            {
-                System.out.println("machbase JDBC connected.");
-
-                stmt = conn.createStatement();
-
-                for(int i=1; i<10; i++)
-                {
-                    sql = "INSERT INTO SAMPLE_TABLE VALUES (";
-                    sql += (i - 5) * 6552;//short
-                    sql += ","+ ((i - 5) * 429496728);//integer
-                    sql += ","+ ((i - 5) * 922337203685477580L);//long
-                    sql += ","+ 1.23456789+"e"+((i<=5)?"":"+")+((i-5)*7);//float
-                    sql += ","+ 1.23456789+"e"+((i<=5)?"":"+")+((i-5)*61);//double
-                    sql += ",'id-"+i+"'";//varchar
-                    sql += ",'name-"+i+"'";//text
-                    sql += ",'aabbccddeeff'";//binary
-                    sql += ",'192.168.0."+i+"'";//ipv4
-                    sql += ",'::192.168.0."+i+"'";
-                    sql += ",TO_DATE('2014-08-0"+i+"','YYYY-MM-DD')";//dt
-                    sql += ")";
-
-                    stmt.execute(sql);
-
-                    System.out.println( i+" record inserted.");
-                }
-
-                String query = "SELECT d1, d2, d3, f1, f2, name, text, bin, to_hex(bin), v4, v6, to_char(dt,'YYYY-MM-DD') as dt from SAMPLE_TABLE";
-                ResultSet rs = stmt.executeQuery(query);
-                while( rs.next () )
-                {
-                    short d1 = rs.getShort("d1");
-                    int d2 = rs.getInt("d2");
-                    long d3 = rs.getLong("d3");
-                    float f1 = rs.getFloat("f1");
-                    double f2 = rs.getDouble("f2");
-                    String name = rs.getString("name");
-                    String text = rs.getString("text");
-                    String bin = rs.getString("bin");
-                    String hexbin = rs.getString("to_hex(bin)");
-                    String v4 = rs.getString("v4");
-                    String v6 = rs.getString("v6");
-                    String dt = rs.getString("dt");
-
-                    System.out.print("d1: " + d1);
-                    System.out.print(", d2: " + d2);
-                    System.out.print(", d3: " + d3);
-                    System.out.print(", f1: " + f1);
-                    System.out.print(", f2: " + f2);
-                    System.out.print(", name: " + name);
-                    System.out.print(", text: " + text);
-                    System.out.print(", bin: " + bin);
-                    System.out.print(", hexbin: "+hexbin);
-                    System.out.print(", v4: " + v4);
-                    System.out.print(", v6: " + v6);
-                    System.out.println(", dt: " + dt);
-
-                }
-                rs.close();
-            }
-        }
-        catch( SQLException se )
-        {
-            System.err.println("SQLException : " + se.getMessage());
-        }
-        catch( Exception e )
-        {
-            System.err.println("Exception : " + e.getMessage());
-        }
-        finally
-        {
-            if( stmt != null )
-            {
-                stmt.close();
-                stmt = null;
-            }
-            if( conn != null )
-            {
-                conn.close();
-                conn = null;
-            }
-        }
-    }
-}
-```
-컴파일 후 실행합니다.
-
-```bash
-[mach@localhost jdbc]$ make
-javac -classpath ".:/home/machbase/machbase_home/lib/machbase.jar" -d . MakeData.java Sample1Connect.java Sample2Insert.java Sample3PrepareStmt.java Sample4Append.java
-[mach@localhost jdbc]$ make run_sample2
-make run_sample2
-java -classpath ".:/home/machbase/machbase_home/lib/machbase.jar" Sample2Insert
-machbase JDBC connected.
-1 record inserted.
-2 record inserted.
-3 record inserted.
-4 record inserted.
-5 record inserted.
-6 record inserted.
-7 record inserted.
-8 record inserted.
-9 record inserted.
-d1: 26208, d2: 1717986912, d3: 3689348814741910320, f1: 1.2345679E28, f2: 1.23456789E244, name: id-9, text: name-9, bin: aabbccddeeff, hexbin: 616162626363646465656666, v4: 192.168.0.9, v6: 0:0:0:0:0:0:c0a8:9, dt: 2014-08-09
-d1: 19656, d2: 1288490184, d3: 2767011611056432740, f1: 1.2345678E21, f2: 1.23456789E183, name: id-8, text: name-8, bin: aabbccddeeff, hexbin: 616162626363646465656666, v4: 192.168.0.8, v6: 0:0:0:0:0:0:c0a8:8, dt: 2014-08-08
-d1: 13104, d2: 858993456, d3: 1844674407370955160, f1: 1.23456788E14, f2: 1.23456789E122, name: id-7, text: name-7, bin: aabbccddeeff, hexbin: 616162626363646465656666, v4: 192.168.0.7, v6: 0:0:0:0:0:0:c0a8:7, dt: 2014-08-07
-d1: 6552, d2: 429496728, d3: 922337203685477580, f1: 1.2345679E7, f2: 1.23456789E61, name: id-6, text: name-6, bin: aabbccddeeff, hexbin: 616162626363646465656666, v4: 192.168.0.6, v6: 0:0:0:0:0:0:c0a8:6, dt: 2014-08-06
-d1: 0, d2: 0, d3: 0, f1: 1.2345679, f2: 1.23456789, name: id-5, text: name-5, bin: aabbccddeeff, hexbin: 616162626363646465656666, v4: 192.168.0.5, v6: 0:0:0:0:0:0:c0a8:5, dt: 2014-08-05
-d1: -6552, d2: -429496728, d3: -922337203685477580, f1: 1.2345679E-7, f2: 1.23456789E-61, name: id-4, text: name-4, bin: aabbccddeeff, hexbin: 616162626363646465656666, v4: 192.168.0.4, v6: 0:0:0:0:0:0:c0a8:4, dt: 2014-08-04
-d1: -13104, d2: -858993456, d3: -1844674407370955160, f1: 1.2345679E-14, f2: 1.23456789E-122, name: id-3, text: name-3, bin: aabbccddeeff, hexbin: 616162626363646465656666, v4: 192.168.0.3, v6: 0:0:0:0:0:0:c0a8:3, dt: 2014-08-03
-d1: -19656, d2: -1288490184, d3: -2767011611056432740, f1: 1.2345679E-21, f2: 1.23456789E-183, name: id-2, text: name-2, bin: aabbccddeeff, hexbin: 616162626363646465656666, v4: 192.168.0.2, v6: 0:0:0:0:0:0:c0a8:2, dt: 2014-08-02
-d1: -26208, d2: -1717986912, d3: -3689348814741910320, f1: 1.2345679E-28, f2: 1.23456789E-244, name: id-1, text: name-1, bin: aabbccddeeff, hexbin: 616162626363646465656666, v4: 192.168.0.1, v6: 0:0:0:0:0:0:c0a8:1, dt: 2014-08-01
+System.out.println(metadata.getDriverName());
+System.out.println(metadata.getDriverVersion());
+System.out.println(metadata.getJDBCMajorVersion()); // 4
+System.out.println(metadata.getJDBCMinorVersion()); // 2
 ```
 
-### 데이터 입력 및 출력 예제 (2) PreparedStatement 이용한 입력
+## 관련 문서
 
-PreparedStatement를 이용한 데이터 입출력 예제입니다. 소스 파일명은 Sample3PrepareStmt.java입니다.
-
-```java
-import java.util.*;
-import java.sql.*;
-import java.text.SimpleDateFormat;
-import com.machbase.jdbc.*;
-
-public class Sample3PrepareStmt
-{
-    public static Connection connect()
-    {
-        Connection conn = null;
-        try
-        {
-            String sURL = "jdbc:machbase://localhost:5656/machbasedb";
-
-            Properties sProps = new Properties();
-            sProps.put("user", "sys");
-            sProps.put("password", "manager");
-
-            Class.forName("com.machbase.jdbc.MachDriver");
-
-            conn = DriverManager.getConnection(sURL, sProps);
-
-        }
-        catch ( ClassNotFoundException ex )
-        {
-            System.err.println("Exception : unable to load mach jdbc driver class");
-        }
-        catch ( Exception e )
-        {
-            System.err.println("Exception : " + e.getMessage());
-        }
-        return conn;
-    }
-
-    public static void main(String[] args) throws Exception
-    {
-        Connection conn = null;
-        Statement stmt = null;
-        MachPreparedStatement preStmt = null;
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss SSS");
-
-        try
-        {
-            conn = connect();
-            if( conn != null )
-            {
-                System.out.println("machbase JDBC connected.");
-
-                stmt = conn.createStatement();
-                preStmt = (MachPreparedStatement)conn.prepareStatement("INSERT INTO SAMPLE_TABLE VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
-                String ipStr = null;
-                String dateStr = null;
-                for(int i=1; i<10; i++)
-                {
-                    ipStr = String.format("172.16.0.%d",i);
-                    dateStr = String.format("2014-08-09 12:23:34 %03d", i);
-                    byte[] bin = new byte[20];
-                    for(int j=0;j<20;j++){
-                        bin[j]=(byte)(Math.random()*255);
-                    }
-                    java.util.Date day = sdf.parse(dateStr);
-                    java.sql.Date sqlDate = new java.sql.Date(day.getTime());
-
-                    preStmt.setShort(1, (i-5) * 3276 );
-                    preStmt.setInt(2, (i-5) * 214748364 );
-                    preStmt.setLong(3, (i-5) * 922337203685477580L );
-                    preStmt.setFloat(4, 1.23456789101112131415*Math.pow(10,i));
-                    preStmt.setDouble(5, 1.23456789101112131415*Math.pow(10,i*10));
-                    preStmt.setString(6, String.format("varchar-%d",i));
-                    preStmt.setString(7, String.format("text-%d",i));
-                    preStmt.setBytes(8, bin);
-                    preStmt.setIpv4(9, ipStr);
-                    preStmt.setIpv6(10, "::"+ipStr);
-                    preStmt.setDate(11, sqlDate);
-                    preStmt.executeUpdate();
-
-                    System.out.println( i+" record inserted.");
-                }
-
-                //date type format : YYYY-MM-DD HH24:MI:SS mmm:uuu:nnnn
-                String query = "SELECT d1, d2, d3, f1, f2, name, text, bin, to_hex(bin), v4, v6, to_char(dt,'YYYY-MM-DD HH24:MI:SS mmm:uuu:nnn') as dt from SAMPLE_TABLE";
-                ResultSet rs = stmt.executeQuery(query);
-                while( rs.next () )
-                {
-                    short d1 = rs.getShort("d1");
-                    int d2 = rs.getInt("d2");
-                    long d3 = rs.getLong("d3");
-                    float f1 = rs.getFloat("f1");
-                    double f2 = rs.getDouble("f2");
-                    String name = rs.getString("name");
-                    String text = rs.getString("text");
-                    String bin = rs.getString("bin");
-                    String hexbin = rs.getString("to_hex(bin)");
-                    String v4 = rs.getString("v4");
-                    String v6 = rs.getString("v6");
-                    String dt = rs.getString("dt");
-
-                    System.out.print("d1: " + d1);
-                    System.out.print(", d2: " + d2);
-                    System.out.print(", d3: " + d3);
-                    System.out.print(", f1: " + f1);
-                    System.out.print(", f2: " + f2);
-                    System.out.print(", name: " + name);
-                    System.out.print(", text: " + text);
-                    System.out.print(", bin: " + bin);
-                    System.out.print(", hexbin: "+hexbin);
-                    System.out.print(", v4: " + v4);
-                    System.out.print(", v6: " + v6);
-                    System.out.println(", dt: " + dt);
-                }
-                rs.close();
-            }
-        }
-        catch( SQLException se )
-        {
-            System.err.println("SQLException : " + se.getMessage());
-        }
-        catch( Exception e )
-        {
-            System.err.println("Exception : " + e.getMessage());
-        }
-        finally
-        {
-            if( stmt != null )
-            {
-                stmt.close();
-                stmt = null;
-            }
-            if( conn != null )
-            {
-                conn.close();
-                conn = null;
-            }
-        }
-    }
-}
-```
-컴파일 후 실행합니다.
-
-Sample2Insert.java에서 입력한 데이터가 함께 출력되고 있다는 점에 유의해야 합니다.
-
-```bash
-[mach@localhost jdbc]$ make
-javac -classpath ".:/home/machbase/machbase_home/lib/machbase.jar" -d . Sample1Connect.java
-MakeData.java Sample2Insert.java Sample3PrepareStmt.java Sample4Append.java
-[mach@localhost jdbc]$ make run_sample3
-make run_sample3
-java -classpath ".:/home/machbase/machbase_home/lib/machbase.jar" Sample3PrepareStmt
-machbase JDBC connected.
-1 record inserted.
-2 record inserted.
-3 record inserted.
-4 record inserted.
-5 record inserted.
-6 record inserted.
-7 record inserted.
-8 record inserted.
-9 record inserted.
-d1: 13104, d2: 858993456, d3: 3689348814741910320, f1: 754454.6, f2: 453821.380752063, name:
-varchar-9, text: text-9, bin: ?+,??r?J?????S)n?, hexbin:
-A4C9A8D491D6728B4AACB39EE5FC5300296EFA9F, v4: 172.16.0.9, v6: 0:0:0:0:0:0:ac10:9, dt:
-2014-08-09 12:23:34 009:000:000
-?h???a?, hexbin: 6C20F09329ABBA3E7DE501C30DA368D6EFC961EF, v4: 172.16.0.8, v6:
-0:0:0:0:0:0:ac10:8, dt: 2014-08-09 12:23:34 008:000:000
-d1: 6552, d2: 429496728, d3: 1844674407370955160, f1: 2664182.0, f2: 1357910.1926900472, name:
-varchar-7, text: text-7, bin: ????Uls?q?H?I?&(?, hexbin:
-B5A0A2EFA185556C73BF719448BD49C92628F8C6, v4: 172.16.0.7, v6: 0:0:0:0:0:0:ac10:7, dt:
-2014-08-09 12:23:34 007:000:000
-d1: 3276, d2: 214748364, d3: 922337203685477580, f1: 443847.1, f2: 9342855.256576871, name:
-varchar-6, text: text-6, bin: ??>x??Eu?? ?Iw??+n, hexbin:
-BC973E78F5B44575D6CC15F94977DAE62B6E1D0E, v4: 172.16.0.6, v6: 0:0:0:0:0:0:ac10:6, dt:
-2014-08-09 12:23:34 006:000:000
-d1: 0, d2: 0, d3: 0, f1: 1283723.1, f2: 1771261.2019240903, name: varchar-5, text: text-5,
-bin: &== j?j3?? T??y?
-??, hexbin: 263D3D1C6AF56A33F79D0C54A5C479A4030AFE8B, v4: 172.16.0.5, v6: 0:0:0:0:0:0:ac10:5,
-dt: 2014-08-09 12:23:34 005:000:000
-d1: -3276, d2: -214748364, d3: -922337203685477580, f1: 9447498.0, f2: 7529392.937964935,
-name: varchar-4, text: text-4, bin: ?Sw ??)? ?h2?E??/?, hexbin:
-C653771DD2DF29CDB30ED96832E745D3D7A52FD2, v4: 172.16.0.4, v6: 0:0:0:0:0:0:ac10:4, dt:
-2014-08-09 12:23:34 004:000:000
-d1: -6552, d2: -429496728, d3: -1844674407370955160, f1: 9589634.0, f2: 5994172.201347323,
-name: varchar-3, text: text-3, bin: 9aB,.????L/?=3,?`?f, hexbin:
-3961422C2EA39BE6F2964C2FCD3D332C8960A466, v4: 172.16.0.3, v6: 0:0:0:0:0:0:ac10:3, dt:
-2014-08-09 12:23:34 003:000:000
-d1: -9828, d2: -644245092, d3: -2767011611056432740, f1: 7409537.5, f2: 2313739.6613546023,
-name: varchar-2, text: text-2, bin: _? N?3 ?? ??~H ??= 8, hexbin:
-5F84144EF63320F3C718B0FD7E4809A4CB3D1838, v4: 172.16.0.2, v6: 0:0:0:0:0:0:ac10:2, dt:
-2014-08-09 12:23:34 002:000:000
-d1: -13104, d2: -858993456, d3: -3689348814741910320, f1: 596626.75, f2: 2649492.1936065694,
-name: varchar-1, text: text-1, bin: ???d??Wu$v? 7m?-, hexbin:
-E8D0C564B4EB57E59B08752476FC07376DBF2D14, v4: 172.16.0.1, v6: 0:0:0:0:0:0:ac10:1, dt:
-2014-08-09 12:23:34 001:000:000
-d1: 26208, d2: 1717986912, d3: 3689348814741910320, f1: 1.2345679E28, f2: 1.23456789E244,
-name: id-9, text: name-9, bin: aabbccddeeff, hexbin: 616162626363646465656666, v4:
-192.168.0.9, v6: 0:0:0:0:0:0:c0a8:9, dt: 2014-08-09 00:00:00 000:000:000
-d1: 19656, d2: 1288490184, d3: 2767011611056432740, f1: 1.2345678E21, f2: 1.23456789E183,
-name: id-8, text: name-8, bin: aabbccddeeff, hexbin: 616162626363646465656666, v4:
-192.168.0.8, v6: 0:0:0:0:0:0:c0a8:8, dt: 2014-08-08 00:00:00 000:000:000
-d1: 13104, d2: 858993456, d3: 1844674407370955160, f1: 1.23456788E14, f2: 1.23456789E122,
-name: id-7, text: name-7, bin: aabbccddeeff, hexbin: 616162626363646465656666, v4:
-192.168.0.7, v6: 0:0:0:0:0:0:c0a8:7, dt: 2014-08-07 00:00:00 000:000:000
-d1: 6552, d2: 429496728, d3: 922337203685477580, f1: 1.2345679E7, f2: 1.23456789E61, name:
-id-6, text: name-6, bin: aabbccddeeff, hexbin: 616162626363646465656666, v4: 192.168.0.6, v6:
-0:0:0:0:0:0:c0a8:6, dt: 2014-08-06 00:00:00 000:000:000
-d1: 0, d2: 0, d3: 0, f1: 1.2345679, f2: 1.23456789, name: id-5, text: name-5, bin:
-aabbccddeeff, hexbin: 616162626363646465656666, v4: 192.168.0.5, v6: 0:0:0:0:0:0:c0a8:5, dt:
-2014-08-05 00:00:00 000:000:000
-d1: -6552, d2: -429496728, d3: -922337203685477580, f1: 1.2345679E-7, f2: 1.23456789E-61,
-name: id-4, text: name-4, bin: aabbccddeeff, hexbin: 616162626363646465656666, v4:
-192.168.0.4, v6: 0:0:0:0:0:0:c0a8:4, dt: 2014-08-04 00:00:00 000:000:000
-d1: -13104, d2: -858993456, d3: -1844674407370955160, f1: 1.2345679E-14, f2: 1.23456789E-122,
-name: id-3, text: name-3, bin: aabbccddeeff, hexbin: 616162626363646465656666, v4:
-192.168.0.3, v6: 0:0:0:0:0:0:c0a8:3, dt: 2014-08-03 00:00:00 000:000:000
-d1: -19656, d2: -1288490184, d3: -2767011611056432740, f1: 1.2345679E-21, f2: 1.23456789E-183,
-name: id-2, text: name-2, bin: aabbccddeeff, hexbin: 616162626363646465656666, v4:
-192.168.0.2, v6: 0:0:0:0:0:0:c0a8:2, dt: 2014-08-02 00:00:00 000:000:000
-d1: -26208, d2: -1717986912, d3: -3689348814741910320, f1: 1.2345679E-28, f2: 1.23456789E-244,
-name: id-1, text: name-1, bin: aabbccddeeff, hexbin: 616162626363646465656666, v4:
-192.168.0.1, v6: 0:0:0:0:0:0:c0a8:1, dt: 2014-08-01 00:00:00 000:000:000
-```
-
-### 확장 함수 Append 예제
-
-마크베이스 JDBC 드라이버는 대량 데이터를 빠르게 입력하기 위한 Append 프로토콜을 지원합니다.
-
-이전 예제의 sample_table을 그대로 사용합니다. 소스 파일명은 Sample4Append.java이며, data.txt의 내용을 sample_table에 입력합니다. 실행 전에 `make_data_file` target으로 data.txt를 생성하십시오.
-
-```java
-import java.util.*;
-import java.sql.*;
-import java.io.*;
-import java.text.SimpleDateFormat;
-import java.math.BigDecimal;
-import com.machbase.jdbc.*;
-
-
-public class Sample4Append
-{
-    protected static final String sTableName = "sample_table";
-    protected static final int sErrorCheckCount = 100;
-
-    public static Connection connect()
-    {
-        Connection conn = null;
-        try
-        {
-            String sURL = "jdbc:machbase://localhost:5656/machbasedb";
-
-            Properties sProps = new Properties();
-            sProps.put("user", "sys");
-            sProps.put("password", "manager");
-
-            Class.forName("com.machbase.jdbc.MachDriver");
-
-            conn = DriverManager.getConnection(sURL, sProps);
-
-        }
-        catch ( ClassNotFoundException ex )
-        {
-            System.err.println("Exception : unable to load mach jdbc driver class");
-        }
-        catch ( Exception e )
-        {
-            System.err.println("Exception : " + e.getMessage());
-        }
-        return conn;
-    }
-
-    public static void main(String[] args) throws Exception
-    {
-        Connection conn = null;
-        MachStatement stmt = null;
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Calendar cal = Calendar.getInstance();
-        String filename = "data.txt";
-
-        try
-        {
-            conn = connect();
-            if( conn != null )
-            {
-                System.out.println("machbase JDBC connected.");
-
-                stmt = (MachStatement)conn.createStatement();
-
-                ResultSet rs = stmt.executeAppendOpen(sTableName, sErrorCheckCount);
-                ResultSetMetaData rsmd = rs.getMetaData();
-
-                System.out.println("append open ok");
-
-                MachAppendCallback cb = new MachAppendCallback() {
-                        @Override
-                        public void onAppendError(long aErrNo, String aErrMsg, String aRowMsg) {
-                             System.out.format("Append Error : [%05d - %s]\n%s\n", aErrNo, aErrMsg, aRowMsg);
-                        }
-                    };
-
-                stmt.executeSetAppendErrorCallback(cb);
-
-                System.out.println("append data start");
-                BufferedReader in = new BufferedReader(new FileReader(filename));
-                String buf = null;
-                int cnt = 0;
-                long dt;
-
-                long startTime = System.nanoTime();
-
-                while( (buf = in.readLine()) != null )
-                {
-                    ArrayList<Object> sBuf = new ArrayList<Object>();
-                    StringTokenizer st = new StringTokenizer(buf,",");
-                    for(int i=0; st.hasMoreTokens() ;i++ )
-                    {
-                        switch(i){
-                            case 7://binary case
-                                sBuf.add(new ByteArrayInputStream(st.nextToken().getBytes())); break;
-                            case 10://date case
-                                java.util.Date day = sdf.parse(st.nextToken());
-                                cal.setTime(day);
-                                dt = cal.getTimeInMillis()*1000000; //make nanotime
-                                sBuf.add(dt);
-                                break;
-                            default:
-                                sBuf.add(st.nextToken()); break;
-                        }
-                    }
-
-                    if( stmt.executeAppendData(rsmd, sBuf) != 1 )
-                    {
-                        System.err.println("Error : AppendData error");
-                        break;
-                    }
-
-                    if( (cnt++%10000) == 0 )
-                    {
-                        System.out.print(".");
-                    }
-                    sBuf = null;
-
-                }
-                System.out.println("\nappend data end");
-
-                long endTime = System.nanoTime();
-                stmt.executeAppendClose();
-                System.out.println("append close ok");
-                System.out.println("Append Result : success = "+stmt.getAppendSuccessCount()+", failure = "+stmt.getAppendFailureCount());
-                System.out.println("timegap " + ((endTime - startTime)/1000) + " in microseconds, " + cnt + " records" );
-
-                try {
-                    BigDecimal records = new BigDecimal( cnt );
-                    BigDecimal gap = new BigDecimal( (double)(endTime - startTime)/1000000000 );
-                    BigDecimal rps = records.divide(gap, 2, BigDecimal.ROUND_UP );
-
-                    System.out.println( rps + " records/second" );
-                } catch(ArithmeticException ae) {
-                    System.out.println( cnt + " records/second");
-                }
-
-                rs.close();
-            }
-        }
-        catch( SQLException se )
-        {
-            System.err.println("SQLException : " + se.getMessage());
-        }
-        catch( Exception e )
-        {
-            System.err.println("Exception : " + e.getMessage());
-        }
-        finally
-        {
-            if( stmt != null )
-            {
-                stmt.close();
-                stmt = null;
-            }
-            if( conn != null )
-            {
-                conn.close();
-                conn = null;
-            }
-        }
-    }
-}
-```
-
-Append를 할 때 date 타입 데이터는 반드시 long 타입의 나노초 단위 시간으로 변환하여 전송하여야 합니다.
-
-```bash
-[mach@localhost jdbc]$ make run_sample4
-make run_sample4
-java -classpath ".:/home/machbase/machbase_home/lib/machbase.jar" Sample4Append;
-machbase JDBC connected.
-append open ok
-append data start
-......
-append data end
-append close ok
-Append Result : success = 100000, failure = 0
-timegap 6905594 in microseconds, 100000 records
-8688.61 records/second
-```
-
-10,000건마다 점(.)을 표시하고 있으며, 입력 소요 시간을 알 수 있습니다.
-
-```bash
-## machsql을 이용하여 실제 입력된 건수를 확인해보자.
-## Sample2Insert,Sample3PrepareStmt에서 입력한 건수와 함께 100018건이 입력된 것을 확인합니다.
-
-
-[mach@localhost jdbc]$ machsql
-=================================================================
-     Machbase Client Query Utility
-     Release Version 8.5.4.develop
-     Copyright 2014, Machbase Inc. or its subsidiaries.
-     All Rights Reserved.
-=================================================================
-Machbase server address (Default:127.0.0.1):
-Machbase user ID  (Default:SYS)
-Machbase user password: MANAGER
-MACHBASE_CONNECT_MODE=INET, PORT=5656 EDITION=STANDARD
-mach> select count(*) from sample_table;
-count(*)
------------------------
-100018
-[1] row(s) selected.
-```
+| 문서 | 내용 |
+|------|------|
+| [PreparedStatement와 타입](./prepared-types/) | parameter metadata, named bind, SQLType, NULL과 타입 변환 |
+| [ResultSet, Statement와 LOB](./resultset-lob/) | typed 조회, stream, LOB, timeout과 자원 관리 |
+| [트랜잭션과 커넥션 풀](./transaction-pooling/) | Standard 로컬 트랜잭션, DataSource와 pool |
+| [DatabaseMetaData](./database-metadata/) | 테이블, 컬럼, 키, 인덱스와 capability 조회 |
+| [Append API](./append-api/) | `MachStatement` 기반 고속 입력 |
+| [마이그레이션과 문제 해결](./migration-troubleshooting/) | 이전 드라이버 전환, 미지원 기능과 오류 처리 |

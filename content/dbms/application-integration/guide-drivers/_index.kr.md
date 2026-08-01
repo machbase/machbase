@@ -1493,11 +1493,16 @@ checkError(ret, "SQLExecDirect", gEnv, gCon, sStmt);
 
 ### JDBC 개요
 
-JDBC(Java DataBase Connectivity)는 자바 프로그래밍 언어로 데이터베이스에 접근하기 위한 표준 API입니다. Machbase JDBC 드라이버를 사용하면 어떤 자바 애플리케이션에서도 코드를 거의 수정하지 않고 Machbase 서버에 연결할 수 있습니다.
+JDBC(Java Database Connectivity)는 Java 애플리케이션에서 데이터베이스에 접근하는 표준
+API입니다. Machbase JDBC 드라이버는 Java 8을 기준으로 JDBC 4.2 핵심 API를 제공합니다.
 
-- 표준 JDBC 스펙: [JDBC 4.0](https://www.oracle.com/java/technologies/javase/javase-tech-database.html#corespec40)
+- Java/JDBC 기준: Java 8, JDBC 4.2
+- 드라이버 버전: 3.0.0
 - 드라이버 클래스: `com.machbase.jdbc.MachDriver`
 - Connection URL 형식: `jdbc:machbase://HOST:PORT/machbasedb`
+
+`Driver.jdbcCompliant()`은 SQL-92 Entry Level 전체 지원 여부를 기준으로 `false`를
+반환합니다. 이 값은 JDBC 4.2 API 지원 여부를 의미하지 않습니다.
 
 ### 드라이버 설치
 
@@ -1516,6 +1521,9 @@ javac -classpath ".:$MACHBASE_HOME/lib/machbase.jar" MyApp.java
 java  -classpath ".:$MACHBASE_HOME/lib/machbase.jar" MyApp
 ```
 
+JAR에는 JDBC service provider가 포함되어 있으므로 JDBC 4.0 이후 환경에서는
+`Class.forName()`을 호출하지 않아도 드라이버가 자동 등록됩니다.
+
 #### Maven
 
 `pom.xml`의 `<dependencies>` 블록에 다음을 추가합니다.
@@ -1524,7 +1532,7 @@ java  -classpath ".:$MACHBASE_HOME/lib/machbase.jar" MyApp
 <dependency>
     <groupId>com.machbase</groupId>
     <artifactId>machjdbc</artifactId>
-    <version>8.6.0</version>
+    <version>{{< jdbc_version >}}</version>
 </dependency>
 ```
 
@@ -1534,7 +1542,7 @@ java  -classpath ".:$MACHBASE_HOME/lib/machbase.jar" MyApp
 
 ```groovy
 dependencies {
-    implementation 'com.machbase:machjdbc:8.6.0'
+    implementation 'com.machbase:machjdbc:{{< jdbc_version >}}'
 }
 ```
 
@@ -1555,7 +1563,6 @@ public class ConnectSample {
         props.put("user", "SYS");
         props.put("password", "MANAGER");
 
-        Class.forName("com.machbase.jdbc.MachDriver");
         return DriverManager.getConnection(url, props);
     }
 
@@ -1598,7 +1605,7 @@ props.put("TIMEZONE", "+0900");
 
 ### AUTH KEY 인증
 
-Machbase 8.0 이상에서 공개키 기반 Challenge 인증을 사용할 수 있습니다.
+Machbase 8.5 이상에서 공개키 기반 Challenge 인증을 사용할 수 있습니다.
 
 ```java
 String url = "jdbc:machbase://127.0.0.1:5656/machbasedb";
@@ -1609,7 +1616,6 @@ props.put("AUTH_MODE", "CHALLENGE");
 props.put("AUTH_SIG_SCHEME", "ECDSA");
 props.put("AUTH_KEY_FILE", "/opt/machbase/keys/app_user_ecdsa.pem");
 
-Class.forName("com.machbase.jdbc.MachDriver");
 Connection conn = DriverManager.getConnection(url, props);
 ```
 
@@ -1632,7 +1638,6 @@ public class PreparedStmtSample {
         props.put("user", "SYS");
         props.put("password", "MANAGER");
 
-        Class.forName("com.machbase.jdbc.MachDriver");
         try (Connection conn = DriverManager.getConnection(url, props)) {
             // 테이블 생성
             try (Statement stmt = conn.createStatement()) {
@@ -1686,6 +1691,38 @@ pstmt.setIpv6(3, "::1");
 pstmt.executeUpdate();
 ```
 
+### 트랜잭션
+
+Standard Edition의 TRANSACTION 테이블에서는 표준 JDBC 트랜잭션 API를 사용합니다.
+`setAutoCommit(false)`는 즉시 SQL `BEGIN`을 보내지 않고 첫 Statement를 실행할 때
+트랜잭션을 시작합니다.
+
+```java
+conn.setAutoCommit(false);
+
+try (PreparedStatement pstmt = conn.prepareStatement(
+         "INSERT INTO orders (order_id, amount) VALUES (?, ?)")) {
+    pstmt.setInt(1, 1001);
+    pstmt.setBigDecimal(2, new java.math.BigDecimal("50000.00"));
+    pstmt.executeUpdate();
+
+    pstmt.setInt(1, 1002);
+    pstmt.setBigDecimal(2, new java.math.BigDecimal("30000.00"));
+    pstmt.executeUpdate();
+
+    conn.commit();
+} catch (SQLException exception) {
+    conn.rollback();
+    throw exception;
+}
+```
+
+commit과 rollback 후에도 auto-commit은 `false`로 유지됩니다. commit은 열린 ResultSet을
+닫지만 Statement와 PreparedStatement는 재사용할 수 있습니다. 테이블 종류별 동작과
+커넥션 풀 초기화 규칙은
+[JDBC 트랜잭션과 커넥션 풀](/dbms/reference/sdk-api/jdbc/transaction-pooling/)을
+참고합니다.
+
 ### Append API
 
 Machbase Append 프로토콜은 대량 데이터를 고속으로 적재할 때 사용합니다. `MachStatement`를 통해 접근합니다.
@@ -1719,8 +1756,6 @@ public class AppendSample {
         Properties props = new Properties();
         props.put("user", "SYS");
         props.put("password", "MANAGER");
-
-        Class.forName("com.machbase.jdbc.MachDriver");
 
         try (Connection conn = DriverManager.getConnection(url, props)) {
             MachStatement stmt = (MachStatement) conn.createStatement();
@@ -1838,8 +1873,6 @@ public class FullExample {
         props.put("password", "MANAGER");
         props.put("TIMEZONE", "+0900");
 
-        Class.forName("com.machbase.jdbc.MachDriver");
-
         try (Connection conn = DriverManager.getConnection(url, props)) {
             System.out.println("Connected to Machbase.");
 
@@ -1890,10 +1923,16 @@ public class FullExample {
 
 ### 주의 사항
 
-- 트랜잭션은 TRANSACTION 테이블 작업에서 사용합니다. LOG/TAG 테이블 Append성 입력은 롤백 대상이 아니므로 테이블 타입별 지원 범위를 확인합니다.
-- LOG 테이블과 TAG 테이블에는 `UPDATE`를 사용할 수 없습니다.
+- Standard Edition의 TRANSACTION 테이블은 JDBC 표준 트랜잭션 API를 사용합니다.
+- LOG/TAG Append 입력은 rollback 대상이 아닙니다. manual transaction의 테이블 종류별
+  DML 동작은 JDBC 트랜잭션 레퍼런스를 확인합니다.
+- LOG 테이블에는 `UPDATE`를 사용할 수 없습니다. TAG data UPDATE는 태그 선택자와 시간축
+  조건을 만족하는 제한된 보정 작업에만 사용합니다.
 - `_arrival_time` 컬럼은 기본적으로 숨겨져 있습니다. 표시하려면 URL에 `show_hidden_cols=1`을 추가합니다.
 - Append에서 DATETIME 값은 반드시 나노초 단위 `long`으로 전달해야 합니다.
+
+JDBC 4.2의 전체 타입, metadata, pool과 문제 해결 정보는
+[JDBC 레퍼런스](/dbms/reference/sdk-api/jdbc/)를 참고합니다.
 
 <a id="python"></a>
 

@@ -29,7 +29,7 @@ SELECT 결과 컬럼의 NULL 가능 여부와 SDK별 반환 형식은
 | SDK | 설명 |
 |-----|------|
 | [CLI/ODBC](./cli-odbc/) | C/C++ CLI/ODBC, 이름/ordinal 바인딩, Append, Nullable 메타데이터 |
-| [JDBC](./jdbc/) | Java JDBC, Named Bind, Append, Nullable 메타데이터 |
+| [JDBC](./jdbc/) | Java 8/JDBC 4.2, 트랜잭션, pool, metadata, Named Bind와 Append |
 | [Python](./python/) | `machbaseapi` DB-API, named mapping, `null_ok` |
 | [Node.js / TypeScript](./node-js-typescript/) | `@machbase/ts-client`, named object 입력, `ColumnMeta.nullable` |
 | [.NET Connector](./net-connector/) | ADO.NET 이름 컬렉션, Append, `GetSchemaTable()` |

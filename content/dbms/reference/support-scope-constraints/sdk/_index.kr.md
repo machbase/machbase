@@ -11,7 +11,7 @@ Machbase는 다양한 프로그래밍 언어와 프로토콜을 위한 SDK를 �
 
 | SDK | Append | AUTH KEY | Transaction API | Server Prepared | Named Bind API | Nullable 메타데이터 |
 |-----|:------:|:--------:|:---------------:|:---------------:|:--------------:|:-------------------:|
-| **JDBC** | O | O | △ | O | O | O |
+| **JDBC** | O | O | O | O | O | O |
 | **Python** | O | X | X | O | O | O |
 | **Go (native)** | O | X | X | O | X | X |
 | **Go (database/sql)** | X | X | X | O | X | X |
@@ -68,8 +68,9 @@ AUTH KEY challenge 인증은 DB 포트(기본 5656)에 접속하는 드라이버
 
 Go `database/sql` 드라이버와 Go native 클라이언트 모두 `Begin`/`BeginTx` 트랜잭션이 구현되어
 있지 않습니다. Python `machbaseAPI`도 `begin`/`commit`/`rollback`을 지원하지 않으며,
-`.NET`의 `MachTransaction`도 구현되어 있지 않습니다. TRANSACTION 테이블 트랜잭션은 SQL `BEGIN`을 직접
-실행할 수 있는 JDBC 또는 ODBC/CLI 경로를 사용합니다.
+`.NET`의 `MachTransaction`도 구현되어 있지 않습니다. Standard Edition의 TRANSACTION
+테이블에는 JDBC의 `setAutoCommit(false)`, `commit()`, `rollback()` 또는 ODBC/CLI의
+SQL 트랜잭션 경로를 사용합니다.
 
 ### Go와 REST API: Nullable 메타데이터 미지원
 
@@ -83,7 +84,7 @@ Native MachCLI, SQLCLI/ODBC, JDBC, Python, Node.js 또는 .NET을 사용합니�
 |----------|---------|
 | 지속적인 대량 쓰기 (Append) | ODBC/CLI, JDBC, Go (native), Python |
 | AUTH KEY 키 기반 인증 | JDBC, ODBC/CLI, machsql |
-| TRANSACTION 테이블 트랜잭션 | JDBC, ODBC/CLI (SQL `BEGIN` 직접 실행) |
+| TRANSACTION 테이블 트랜잭션 | JDBC 표준 Connection API, ODBC/CLI |
 | SELECT 결과의 NULL 가능 여부 확인 | ODBC/CLI, JDBC, Python, Node.js, .NET |
 | 웹 서비스/마이크로서비스 통합 | REST API |
 | Go 표준 인터페이스 | Go (database/sql) |

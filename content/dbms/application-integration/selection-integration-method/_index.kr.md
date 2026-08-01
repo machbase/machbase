@@ -40,7 +40,7 @@ HTTP JSON 요청 단위로 동작하므로 배포 제약과 측정한 처리량�
 | 개발 언어 | 권장 연동 방식 | 비고 |
 |-----------|---------------|------|
 | C / C++ | CLI/ODBC | 네이티브 연결과 Append API |
-| Java | JDBC | Spring Boot, Hibernate 호환 |
+| Java | JDBC | Spring JDBC, HikariCP, MyBatis 연동 |
 | Python | Python SDK (machbaseAPI) | Pandas 통합, 스크립트 자동화 |
 | C# / VB.NET | .NET (MachClient) | ADO.NET 호환, Windows 친화적 |
 | Go | Go 드라이버 | database/sql 인터페이스 |
@@ -120,6 +120,7 @@ Node.js 또는 HTTP 환경인가?
 | Append API | O | O | O | O | Go native만 O | O | O |
 | Prepared statement | O | O | O | O | O | O | - |
 | Connection pool | 수동 구현 | O (HikariCP 등) | O | O | O | O | - |
+| TRANSACTION table transaction | △ | O (Standard) | - | - | - | - | - |
 | AUTH KEY 인증 | O | O | - | - | - | - | 별도 방식 |
 | Pandas 통합 | - | - | O | - | - | - | - |
 | ADO.NET 호환 | - | - | - | O | - | - | - |
