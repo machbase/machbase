@@ -608,7 +608,7 @@ SQLFreeStmt(stmt, SQL_DROP);
 ## Parameter binding
 
 SQL 문에 값을 안전하게 전달하는 메커니즘입니다. ODBC, JDBC, .NET, Go, Node.js
-드라이버는 주로 `?` 위치 바인딩을 사용합니다. Python `machbaseAPI` prepared cursor는
+드라이버는 `?` 위치 바인딩을 사용하며 Go와 일부 드라이버는 이름 기반 바인딩도 제공합니다. Python `machbaseAPI` prepared cursor는
 `%s`, `?`, `%(name)s`, `:name`을 지원합니다.
 
 ### 위치 기반 바인딩 (Positional Binding)
@@ -800,6 +800,29 @@ cmd.Parameters.Add(new MachParameter { Value = 23.5 });
 cmd.ExecuteNonQuery();
 ```
 
+#### Go
+
+Go native API는 `api.Named("name", value)`, `database/sql` 드라이버는 `sql.Named("name", value)`를
+사용합니다. named marker와 positional marker는 한 문장에서 혼용하지 않습니다.
+
+```go
+rows, err := conn.Query(ctx,
+    `SELECT name, value FROM tag_table WHERE name = :name`,
+    api.Named("name", "sensor_01"),
+)
+```
+
+```go
+rows, err := db.QueryContext(ctx,
+    `SELECT name, value FROM tag_table WHERE name = :name`,
+    sql.Named("name", "sensor_01"),
+)
+```
+
+Go에서 NULL을 받을 때는 `sql.Null[T]`, `sql.NullString`, `sql.NullTime` 같은 nullable 대상
+타입을 사용합니다. native 결과 컬럼의 NULL 가능 여부는 `api.Column.Nullability`, SQL 드라이버는
+`Rows.ColumnTypeNullable()`로 확인합니다.
+
 ### 타입 변환 주의사항
 
 타입 불일치 시 암묵적 변환을 시도하지만 정밀도 손실이 발생할 수 있습니다. 특히 다음 경우에 주의하십시오.
@@ -919,8 +942,8 @@ TAG/LOG 테이블에서 잘못 삽입된 데이터를 제거하려면 [DELETE �
 | JDBC | O | `setAutoCommit(false)`, `commit()`, `rollback()` 지원. 첫 Statement에서 lazy `BEGIN` |
 | Python | X | `begin()`/`commit()`/`rollback()`이 `NotSupportedError` 반환 |
 | .NET | X | `MachTransaction` 미구현 |
-| Go (database/sql) | X | 현재 Go SQL 드라이버는 `Begin` / `BeginTx` 미지원 |
-| Go (native client) | X | Append-only API 중심 |
+| Go (database/sql) | O | 기본 isolation level의 `Begin` / `BeginTx`, `Commit`, `Rollback` 지원 |
+| Go (native client) | △ | 전용 편의 API는 없지만 같은 연결에서 `BEGIN` / `COMMIT` / `ROLLBACK` SQL 실행 가능 |
 | Node.js | X | transaction 편의 API 미지원 |
 | REST API | X | 단일 요청 단위 처리 |
 

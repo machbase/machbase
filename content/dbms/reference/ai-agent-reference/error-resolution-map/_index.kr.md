@@ -26,7 +26,7 @@ toc: true
 
 | 오류 상황 | 오류 내용 | 원인 | 조치 |
 |-----------|-----------|------|------|
-| Go `Begin()` 호출 실패 | `not supported` 또는 panic | Go 드라이버에 Transaction 미구현 | Transaction 제거 또는 JDBC/ODBC 사용 |
+| Go `Begin()` 호출 실패 | isolation/read-only 옵션 오류 | 기본 isolation level과 read/write 트랜잭션만 지원 | 옵션을 기본값으로 사용하거나 native에서 트랜잭션 SQL 직접 실행 |
 | Python `?` parameter 오류 | `ProgrammingError` / 바인딩 실패 | positional `?`에 mapping 전달 또는 parameter 수 불일치 | sequence와 marker 수를 맞추거나 `:name`과 mapping 사용 |
 | 구형 서버에서 Python named bind 실패 | `NotSupportedError`, SQLSTATE `0A000` | 연결 protocol이 4.0.3 미만 | `%s` 또는 `?`와 sequence를 사용하거나 서버와 SDK 업그레이드 |
 | 활성 TRANSACTION 테이블 트랜잭션 안의 TAG 쓰기 실패 | `not supported` | TRANSACTION 테이블 트랜잭션에 비 TRANSACTION 쓰기를 포함함 | TRANSACTION 테이블 트랜잭션 종료 후 TAG 쓰기 실행 |

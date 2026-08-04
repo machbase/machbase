@@ -33,6 +33,6 @@ SELECT 결과 컬럼의 NULL 가능 여부와 SDK별 반환 형식은
 | [Python](./python/) | `machbaseapi` DB-API, named mapping, `null_ok` |
 | [Node.js / TypeScript](./node-js-typescript/) | `@machbase/ts-client`, named object 입력, `ColumnMeta.nullable` |
 | [.NET Connector](./net-connector/) | ADO.NET 이름 컬렉션, Append, `GetSchemaTable()` |
-| [Go](./go/) | `machgo`, `database/sql`과 positional 파라미터 제약 |
+| [Go](./go/) | `machgo`, `database/sql`, positional/named bind, DECIMAL, 트랜잭션 |
 
 REST API는 [REST API 레퍼런스](../rest-api/)에서 별도로 확인합니다.

@@ -13,7 +13,7 @@ Machbase에 연결하기 위한 각 드라이버 및 SDK의 사용 방법을 다
 | [CLI/ODBC](/dbms/application-integration/guide-drivers/#cli-odbc) | C / C++ | 네이티브 라이브러리 | 지원 | 직접 연결과 Append API 제공 |
 | JDBC | Java | TCP/IP | 지원 | 표준 JDBC 인터페이스. `MachStatement` Append API 제공 |
 | Python | Python | TCP/IP | 지원 | `machbaseAPI` 패키지 제공. 데이터 분석 환경에 적합 |
-| Go | Go | TCP/IP | 지원 | 네이티브 `machgo` Appender 제공. `database/sql`은 표준 SQL 인터페이스용 |
+| Go | Go | TCP/IP | native만 지원 | `machgo` Appender 제공. `database/sql`은 표준 SQL 인터페이스용 |
 | Node.js | JavaScript / TypeScript | TCP/IP | 지원 | `@machbase/ts-client` 패키지 제공 |
 | REST API | 모든 언어 | HTTP | 지원 | `/machbase` POST Append 지원. 별도 드라이버 불필요 |
 
@@ -4004,11 +4004,12 @@ if err == sql.ErrNoRows {
 
 | 항목 | 내용 |
 |------|------|
-| 파라미터 형식 | `?` 형태의 positional placeholder만 지원. named parameter 미지원 |
-| 트랜잭션 | 명시적 트랜잭션 미지원 (`Begin`, `BeginTx`는 오류 반환) |
+| 파라미터 형식 | positional `?`와 named marker를 지원. 값은 `sql.Named()`으로 전달하며 한 문장에서 두 방식을 혼용할 수 없음 |
+| 트랜잭션 | 기본 isolation level의 `Begin`, `BeginTx`, `Commit`, `Rollback` 지원. 사용자 지정 isolation과 ReadOnly는 미지원 |
 | LastInsertId | 미지원 |
 | bool 파라미터 | 미지원. 정수(`0`/`1`)로 대체 |
-| 지원 타입 | 일반 SQL 타입, `time.Time`, `[]byte`, `net.IP` |
+| 지원 타입 | 일반 SQL 타입, `time.Time`, `[]byte`, `net.IP`, `api.Decimal` |
+| Nullable 메타데이터 | `Rows.ColumnTypeNullable()` 지원. 알 수 없는 경우 `ok=false` 반환 |
 | Append API | `database/sql` 인터페이스를 통해서는 Append 사용 불가. 필요 시 [Go 클라이언트](#go) 사용 |
 
 <a id="r-rodbc"></a>

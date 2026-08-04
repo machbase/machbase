@@ -13,14 +13,17 @@ Machbase는 다양한 프로그래밍 언어와 프로토콜을 위한 SDK를 �
 |-----|:------:|:--------:|:---------------:|:---------------:|:--------------:|:-------------------:|
 | **JDBC** | O | O | O | O | O | O |
 | **Python** | O | X | X | O | O | O |
-| **Go (native)** | O | X | X | O | X | X |
-| **Go (database/sql)** | X | X | X | O | X | X |
+| **Go (native)** | O | X | △ | O | O | O |
+| **Go (database/sql)** | X | X | O | O | O | O |
 | **.NET** | O | X | X | X | △ | O |
 | **Node.js** | O | X | X | O | O | O |
 | **REST API** | O | X | X | X | X | X |
 | **ODBC/CLI** | O | O | △ | O | △ | O |
 
 > 기호: O = 지원, △ = SDK별로 제한된 방식으로 지원, X = 미지원
+>
+> Go `database/sql`의 Transaction API는 기본 isolation level의 읽기/쓰기 트랜잭션에 한하며,
+> named bind와 DECIMAL/NULL 메타데이터는 neo-client 8.6 API 및 protocol 4.0.3 이상을 기준으로 합니다.
 >
 > Python 2.4는 `cursor(prepared=True)`로 동일 SQL의 server statement를 여러
 > `execute()`와 `executemany()` 호출에서 재사용합니다. 일반 cursor의 기존 일회성 실행
@@ -64,19 +67,21 @@ marker에는 Machbase protocol 4.0.3 이상이 필요합니다.
 
 AUTH KEY challenge 인증은 DB 포트(기본 5656)에 접속하는 드라이버 레벨의 기능입니다. Python, Go, Node.js SDK는 현재 AUTH KEY 인증을 지원하지 않습니다.
 
-### Go: Transaction 미지원
+### Go: Transaction 지원 범위
 
-Go `database/sql` 드라이버와 Go native 클라이언트 모두 `Begin`/`BeginTx` 트랜잭션이 구현되어
-있지 않습니다. Python `machbaseAPI`도 `begin`/`commit`/`rollback`을 지원하지 않으며,
-`.NET`의 `MachTransaction`도 구현되어 있지 않습니다. Standard Edition의 TRANSACTION
-테이블에는 JDBC의 `setAutoCommit(false)`, `commit()`, `rollback()` 또는 ODBC/CLI의
-SQL 트랜잭션 경로를 사용합니다.
+Go `database/sql` 드라이버는 기본 isolation level에서 `Begin`/`BeginTx`, `Commit`, `Rollback`을
+제공합니다. Go native 클라이언트에는 전용 `Begin` 메서드가 없지만 같은 연결에서 `BEGIN`,
+`COMMIT`, `ROLLBACK` SQL을 직접 실행할 수 있습니다. Python `machbaseAPI`는
+`begin`/`commit`/`rollback`을 지원하지 않으며, `.NET`의 `MachTransaction`도 구현되어 있지
+않습니다. Standard Edition의 TRANSACTION 테이블에는 Go SQL 드라이버의 `BeginTx` 또는
+JDBC의 `setAutoCommit(false)`, `commit()`, `rollback()`을 사용할 수 있습니다.
 
-### Go와 REST API: Nullable 메타데이터 미지원
+### Go와 REST API: Nullable 메타데이터
 
-Go native, Go `database/sql`, REST API에는 SELECT 결과 컬럼의 Nullable 상태를 조회하는
-공개 API가 없습니다. 결과를 읽기 전에 NULL 가능 여부를 확인해야 하는 애플리케이션은
-Native MachCLI, SQLCLI/ODBC, JDBC, Python, Node.js 또는 .NET을 사용합니다.
+Go native는 `api.Column.Nullability`, Go `database/sql`은 `Rows.ColumnTypeNullable()`로
+SELECT 결과 컬럼의 Nullable 상태를 조회할 수 있습니다. 두 API 모두 서버가 정보를 알 수
+없는 경우 unknown 상태를 반환할 수 있으므로 실제 scan에는 nullable 대상 타입을 사용합니다.
+REST API에는 결과 메타데이터 API가 없습니다.
 
 ## SDK 선택 가이드
 
@@ -84,8 +89,8 @@ Native MachCLI, SQLCLI/ODBC, JDBC, Python, Node.js 또는 .NET을 사용합니�
 |----------|---------|
 | 지속적인 대량 쓰기 (Append) | ODBC/CLI, JDBC, Go (native), Python |
 | AUTH KEY 키 기반 인증 | JDBC, ODBC/CLI, machsql |
-| TRANSACTION 테이블 트랜잭션 | JDBC 표준 Connection API, ODBC/CLI |
-| SELECT 결과의 NULL 가능 여부 확인 | ODBC/CLI, JDBC, Python, Node.js, .NET |
+| TRANSACTION 테이블 트랜잭션 | Go (`database/sql`), JDBC 표준 Connection API, ODBC/CLI |
+| SELECT 결과의 NULL 가능 여부 확인 | Go, ODBC/CLI, JDBC, Python, Node.js, .NET |
 | 웹 서비스/마이크로서비스 통합 | REST API |
 | Go 표준 인터페이스 | Go (database/sql) |
 | 브라우저/스크립트 연동 | Node.js, REST API |

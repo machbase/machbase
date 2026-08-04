@@ -12,14 +12,14 @@ toc: true
 ## machgo 개요
 
 `machgo` 패키지는 Machbase 네이티브 프로토콜에 접근하기 위한 순수 Go 클라이언트입니다.
-`machcli`와 동일한 API 스타일을 제공하면서 CGo 의존성이 없습니다.
+Go 표준 도구 체인으로 빌드할 수 있으며 CGo 의존성이 없습니다.
 완전한 Go 툴체인으로 네이티브 포트 성능이 필요하다면 `machgo`가 좋은 선택입니다.
 
 ### machgo를 사용하는 이유
 
 - **CGo 의존성 없음**: 순수 Go 환경으로 빌드 및 배포 가능
 - **네이티브 프로토콜 접근**: Machbase 네이티브 포트(기본 `5656`)로 연결
-- **machcli와의 API 호환성**: 동일한 연결/쿼리/어펜더 패턴 재사용 가능
+- **일관된 API**: 연결, 쿼리, 어펜더를 하나의 Go API로 사용
 - **운영 친화적**: 컨테이너 환경 및 크로스 플랫폼 Go 배포에 적합
 
 ### 사전 요구사항
@@ -64,7 +64,6 @@ conf := &machgo.Config{
 }
 
 // 데이터베이스 인스턴스 생성
-// API 사용 방식은 machcli와 동일
 mdb, err := machgo.NewDatabase(conf)
 if err != nil {
     panic(err)
@@ -254,13 +253,17 @@ apd, err := conn.Appender(ctx, "example_table")
 if err != nil {
     panic(err)
 }
-defer apd.Close()
 
 for i := range 10_000 {
     if err := apd.Append("tag1", time.Now(), float64(i)); err != nil {
         panic(err)
     }
 }
+success, failed, err := apd.Close()
+if err != nil {
+    panic(err)
+}
+fmt.Println("appended:", success, "failed:", failed)
 ```
 
 appender는 애플리케이션이 `Append()` 요청한 데이터를 버퍼에 쌓아두다가 지정된 임계값에 도달해야만 서버로 전송합니다.
@@ -387,7 +390,94 @@ func main() {
 }
 ```
 
-이 워크플로우는 `machcli`와 의도적으로 동일하게 만들어졌으며, 기존 코드를 최소 변경으로 마이그레이션할 수 있습니다.
+`machgo`의 연결, 쿼리, 어펜더는 같은 클라이언트 안에서 일관된 방식으로 사용합니다.
+
+## 네이티브 API <small>Machbase 8.6.0 부터 지원되는 기능</small>
+
+### DECIMAL
+
+`api.Decimal`은 부동 소수점 오차 없이 DECIMAL 값을 표현하는 fixed-point 타입입니다.
+`api.ParseDecimal`은 지정한 scale보다 많은 소수 자리를 반올림하며, 반올림 방식은 0에서 멀어지는
+half-away-from-zero입니다.
+
+- precision 범위: `1`~`65` (`api.DecimalMaxPrecision`)
+- scale 범위: `0`~`30`이며 precision보다 클 수 없음
+- precision을 초과하는 값, 잘못된 문자열, 범위를 벗어난 precision/scale은 오류
+- `String`, `Precision`, `Scale`, `Unscaled`로 값을 확인할 수 있음
+
+```go
+price, err := api.ParseDecimal("12.3456", 10, 2)
+if err != nil {
+    panic(err)
+}
+fmt.Println(price.String()) // 12.35
+
+result := conn.Exec(ctx,
+    `INSERT INTO decimal_table VALUES (?, ?)`,
+    "item-1", price,
+)
+if err := result.Err(); err != nil {
+    panic(err)
+}
+```
+
+### Named bind parameter
+
+네이티브 API에서는 `api.Named(name, value)`로 이름 기반 매개변수를 전달할 수 있습니다.
+이름은 대소문자를 구분하고 SQL의 marker 순서와 인자 순서는 달라도 됩니다. 같은 이름을 여러 번
+사용한 marker에는 한 번 전달한 값이 적용됩니다.
+
+```go
+rows, err := conn.Query(ctx,
+    `SELECT name, value FROM example_table
+       WHERE name = :name OR value > :threshold`,
+    api.Named("threshold", 10.0),
+    api.Named("name", "tag1"),
+)
+if err != nil {
+    panic(err)
+}
+defer rows.Close()
+```
+
+이름이 없거나, SQL에 없는 이름을 전달하거나, 같은 이름을 중복 전달하거나, named와 positional
+인자를 섞으면 오류가 발생합니다. 한 문장의 매개변수는 최대 256개이며, 구형 protocol에서는
+서버 버전에 따라 제한이 더 낮을 수 있습니다.
+
+### NULL과 컬럼 메타데이터
+
+조회 결과의 `api.Column`은 `Nullable`과 `Nullability`를 제공합니다. `Nullability`는
+`NullabilityNoNulls`, `NullabilityNullable`, `NullabilityUnknown` 중 하나이며, 서버가
+정보를 제공하지 않는 경우 `Unknown`입니다.
+
+NULL을 일반 Go 값으로 scan하면 오류가 발생할 수 있으므로 `database/sql`의 `sql.Null[T]`,
+`sql.NullString`, `sql.NullTime` 등 nullable 대상 타입을 사용합니다. DECIMAL은
+`sql.Null[api.Decimal]`로 받을 수 있습니다.
+
+### TRANSACTION 테이블
+
+`api.TableTypeTransaction`(값 `8`)은 Standard Edition에서 사용하는 TRANSACTION 테이블 타입입니다.
+네이티브 API의 `Appender`는 LOG, TAG, TRANSACTION 테이블을 대상으로 사용할 수 있습니다. 네이티브
+클라이언트에는 `Begin` 편의 메서드가 없으므로 트랜잭션 제어가 필요하면 연결에서 `BEGIN`,
+`COMMIT`, `ROLLBACK` SQL을 직접 실행합니다.
+
+```go
+if err := conn.Exec(ctx, "BEGIN").Err(); err != nil {
+    panic(err)
+}
+if err := conn.Exec(ctx,
+    `INSERT INTO transaction_table VALUES (?, ?)`, "id-1", 10,
+).Err(); err != nil {
+    _ = conn.Exec(ctx, "ROLLBACK")
+    panic(err)
+}
+if err := conn.Exec(ctx, "COMMIT").Err(); err != nil {
+    panic(err)
+}
+```
+
+Appender의 batch는 SQL 트랜잭션에 포함되지 않으며 batch 단위로 독립 커밋됩니다. 입력 성공/실패
+건수는 `Close()` 결과로 확인하고, 필요한 경우 `Flush()`를 호출합니다.
 
 
 ## Go database/sql 드라이버
@@ -426,6 +516,7 @@ import (
     "fmt"
     "strings"
 
+    "github.com/machbase/neo-client/api"
     _ "github.com/machbase/neo-client"
 )
 ```
@@ -587,17 +678,116 @@ func main() {
 }
 ```
 
+## database/sql <small>Machbase 8.6.0 부터 지원되는 기능</small>
+
+### Named bind parameter
+
+`database/sql`에서는 표준 `sql.Named(name, value)`를 사용합니다. 이름은 대소문자를 구분하며,
+SQL marker의 순서와 인자 순서는 달라도 됩니다. 같은 이름을 반복해서 사용한 marker에는 한 번
+전달한 값이 적용됩니다.
+
+```go
+rows, err := db.QueryContext(ctx,
+    `SELECT name, value FROM example
+       WHERE name = :name OR value > :threshold`,
+    sql.Named("threshold", 10.0),
+    sql.Named("name", "example-client"),
+)
+if err != nil {
+    panic(err)
+}
+defer rows.Close()
+```
+
+드라이버는 `:name` 형태의 이름 marker를 처리합니다. 이름이 없거나, SQL에
+없는 이름을 전달하거나, 같은 이름을 중복 전달하거나, named와 positional 인자를 섞으면 오류가
+발생합니다. 한 문장의 named/positional 매개변수는 최대 256개이며, protocol 4.0.3 미만 서버는
+최대 255개 제한을 사용할 수 있습니다.
+
+### DECIMAL과 NULL
+
+`api.Decimal`은 `database/sql`의 `driver.Valuer`와 `sql.Scanner`를 구현하므로 DECIMAL 입력과
+출력에 사용할 수 있습니다. 정밀도가 필요한 경우 `api.ParseDecimal`로 precision과 scale을
+명시해 값을 만듭니다.
+
+```go
+amount, err := api.ParseDecimal("123.456", 18, 3)
+if err != nil {
+    panic(err)
+}
+if _, err := db.ExecContext(ctx,
+    `INSERT INTO decimal_table VALUES (?, ?)`, "item-1", amount,
+); err != nil {
+    panic(err)
+}
+```
+
+`Rows.ColumnTypeNullable`로 결과 컬럼의 NULL 허용 여부를 확인할 수 있습니다. 두 번째 반환값이
+`false`이면 드라이버가 해당 정보를 알 수 없다는 뜻입니다. 실제 값은 일반 Go 값 대신
+`sql.Null[T]`, `sql.NullString`, `sql.NullTime`, `sql.Null[api.Decimal]` 같은 nullable 대상에
+scan하십시오.
+
+```go
+rows, err := db.QueryContext(ctx, `SELECT value, note FROM decimal_table`)
+if err != nil {
+    panic(err)
+}
+defer rows.Close()
+
+for rows.Next() {
+    var value sql.Null[api.Decimal]
+    var note sql.NullString
+    if err := rows.Scan(&value, &note); err != nil {
+        panic(err)
+    }
+}
+```
+
+### 트랜잭션
+
+Standard Edition의 TRANSACTION 테이블을 사용할 때 `database/sql`의 `Begin` 또는 `BeginTx`로
+트랜잭션을 시작할 수 있습니다. 기본 isolation level만 지원하며, 사용자 지정 isolation level과 `ReadOnly` 옵션은
+지원하지 않습니다.
+
+```go
+tx, err := db.BeginTx(ctx, nil)
+if err != nil {
+    panic(err)
+}
+
+if _, err := tx.ExecContext(ctx,
+    `INSERT INTO transaction_table VALUES (?, ?)`, "id-1", 10,
+); err != nil {
+    _ = tx.Rollback()
+    panic(err)
+}
+if err := tx.Commit(); err != nil {
+    panic(err)
+}
+```
+
+`Commit` 또는 `Rollback`이 완료된 뒤 같은 트랜잭션을 다시 사용하면 `sql.ErrTxDone`이 반환됩니다.
+커밋 또는 롤백 전에 모든 `Rows`를 닫아야 합니다. connection pool이 세션을 재사용할 때 미완료
+트랜잭션은 자동으로 rollback됩니다. context 취소로 커밋이 실패한 경우 같은 트랜잭션을 다시
+커밋하려고 시도하지 마십시오.
+
+`database/sql`의 `Appender` API는 제공하지 않습니다. 대량 입력은 네이티브 `machgo` Appender를
+사용하고, SQL 트랜잭션 안에서의 입력은 `tx.ExecContext`를 사용합니다.
+
+### Prepared statement와 statement cache
+
+`db.PrepareContext`로 만든 statement는 여러 번 실행할 수 있습니다. 드라이버의 statement cache는
+연결별로 동작하며, `statement_cache=auto|on|off` DSN 키로 설정합니다. 테이블을 삭제 후 다시
+만들었거나 결과 컬럼 타입이 변경된 경우 캐시된 metadata가 갱신되도록 statement를 다시 준비합니다.
+
 ## 참고 사항 및 제한 사항
 
-- 파라미터는 `?` 형태의 positional placeholder를 사용합니다. `sql.Named()`과
-  `:name` 이름 기반 API는 지원하지 않습니다. 공통 SQL 기능과 SDK별 차이는
+- positional placeholder와 named placeholder를 모두 사용할 수 있지만, 한 문장 안에서 두 방식을
+  섞을 수 없습니다. 이름 기반 API는 `sql.Named()`을 사용합니다. 공통 SQL 기능과 SDK별 차이는
   [Named Bind Parameter syntax](../../sql/syntax-dictionary-sql/named-bind-parameter-syntax/)를
   참고하십시오.
 - `database/sql`의 connection pooling은 일반적인 `sql.DB` 방식대로 동작합니다.
-- 명시적 트랜잭션은 지원하지 않으므로 `Begin`, `BeginTx`는 오류를 반환합니다.
 - `LastInsertId()`는 지원하지 않습니다.
-- 파라미터 타입은 드라이버 구현을 따릅니다. 일반적인 SQL 타입, `time.Time`, `[]byte`, `net.IP`는 지원하지만 `bool` 파라미터는 지원하지 않습니다.
-- Go native와 `database/sql` 드라이버에는 SELECT 결과 컬럼의 Nullable 메타데이터를
-  조회하는 공개 API가 없습니다. 이 정보가 필요한 애플리케이션은
-  [지원되는 SDK](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-nullable-metadata)를
-  사용합니다.
+- 파라미터 타입은 드라이버 구현을 따릅니다. 일반적인 SQL 타입, `time.Time`, `[]byte`, `net.IP`,
+  `api.Decimal`을 지원하지만 `bool` 파라미터는 지원하지 않습니다.
+- `BeginTx`에서는 기본 isolation level과 읽기/쓰기 트랜잭션만 지원합니다.

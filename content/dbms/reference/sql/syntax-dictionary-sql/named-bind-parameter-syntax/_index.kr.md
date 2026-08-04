@@ -167,7 +167,8 @@ Statement 데이터 타입을 사용할 수 있습니다. `DECIMAL` 또는 `NUME
 | Node.js/TypeScript | 배열은 positional, 객체는 named 입력 |
 | Python DB-API | mapping 전달. 2.4 prepared cursor는 `:name`과 `%(name)s`를 호출 간 재사용 |
 | .NET | `MachCommand.Parameters.AddWithValue(":name", value)` |
-| Go | 이름 기반 API 미지원, `?`와 positional argument 사용 |
+| Go native | `api.Named("name", value)` |
+| Go `database/sql` | `sql.Named("name", value)` |
 | machsql | SQL은 `:name`, 값은 `$1`, `$2` 순서로 지정 |
 
 자세한 API와 오류 처리는 [SDK API 레퍼런스](../../../sdk-api/)와

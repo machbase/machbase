@@ -43,7 +43,7 @@ HTTP JSON 요청 단위로 동작하므로 배포 제약과 측정한 처리량�
 | Java | JDBC | Spring JDBC, HikariCP, MyBatis 연동 |
 | Python | Python SDK (machbaseAPI) | Pandas 통합, 스크립트 자동화 |
 | C# / VB.NET | .NET (MachClient) | ADO.NET 호환, Windows 친화적 |
-| Go | Go 드라이버 | database/sql 인터페이스 |
+| Go | `machgo` 또는 Go `database/sql` | native Appender, 표준 SQL 인터페이스, named bind와 트랜잭션 지원 범위가 다름 |
 | JavaScript / TypeScript | Node.js 드라이버 또는 REST API | 웹 백엔드, IoT 게이트웨이 |
 | 언어 무관 | REST API | HTTP 환경, 마이크로서비스 |
 
@@ -120,7 +120,7 @@ Node.js 또는 HTTP 환경인가?
 | Append API | O | O | O | O | Go native만 O | O | O |
 | Prepared statement | O | O | O | O | O | O | - |
 | Connection pool | 수동 구현 | O (HikariCP 등) | O | O | O | O | - |
-| TRANSACTION table transaction | △ | O (Standard) | - | - | - | - | - |
+| TRANSACTION table transaction | △ | O (Standard) | - | - | Go SQL: O, native: △ | - | - |
 | AUTH KEY 인증 | O | O | - | - | - | - | 별도 방식 |
 | Pandas 통합 | - | - | O | - | - | - | - |
 | ADO.NET 호환 | - | - | - | O | - | - | - |

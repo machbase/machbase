@@ -81,7 +81,7 @@ conn.close();
 
 ## Go (native client)
 
-`github.com/machbase/neo-client/machcli` 패키지를 사용합니다.
+`github.com/machbase/neo-client/machgo` 패키지를 사용합니다.
 
 ```go
 package main
@@ -90,32 +90,34 @@ import (
     "context"
     "fmt"
     "time"
-    "github.com/machbase/neo-client/machcli"
+    "github.com/machbase/neo-client/api"
+    "github.com/machbase/neo-client/machgo"
 )
 
 func main() {
-    db, err := machcli.New("tcp://127.0.0.1:5656",
-        machcli.WithUser("SYS"),
-        machcli.WithPassword("MANAGER"),
-    )
+    mdb, err := machgo.NewDatabase(&machgo.Config{Host: "127.0.0.1", Port: 5656})
     if err != nil {
         panic(err)
     }
-    defer db.Close()
 
     ctx := context.Background()
+    conn, err := mdb.Connect(ctx, api.WithPassword("sys", "manager"))
+    if err != nil {
+        panic(err)
+    }
+    defer conn.Close()
 
     // INSERT
-    _, err = db.Exec(ctx,
+    result := conn.Exec(ctx,
         "INSERT INTO sensor_tag (name, time, value) VALUES (?, ?, ?)",
-        "sensor-01", time.Now().UnixNano(), 23.5,
+        "sensor-01", time.Now(), 23.5,
     )
-    if err != nil {
+    if err := result.Err(); err != nil {
         panic(err)
     }
 
     // 조회
-    rows, err := db.Query(ctx,
+    rows, err := conn.Query(ctx,
         "SELECT name, time, value FROM sensor_tag ORDER BY time DESC LIMIT 5")
     if err != nil {
         panic(err)
@@ -123,10 +125,10 @@ func main() {
     defer rows.Close()
     for rows.Next() {
         var name string
-        var ts int64
+        var ts time.Time
         var val float64
         rows.Scan(&name, &ts, &val)
-        fmt.Printf("%s %d %.2f\n", name, ts, val)
+        fmt.Printf("%s %s %.2f\n", name, ts.Local(), val)
     }
 }
 ```
@@ -213,8 +215,8 @@ conn.Close();
 |------|--------|:---:|:---:|
 | Python | `machbaseAPI` | O | X |
 | Java | JDBC (`machbase-jdbc`) | O | O |
-| Go | `machcli` (native) | O | X |
-| Go | `database/sql` | X | X |
+| Go | `machgo` (native) | O | △ (SQL 직접 실행) |
+| Go | `database/sql` | X | O (기본 isolation level) |
 | Node.js | `@machbase/ts-client` | O | X |
 | .NET | `MachConnector` | O | X |
 | REST API | HTTP | O | X |

@@ -68,8 +68,8 @@ WHERE time > ADD_TIME(sysdate, '0/0/0 0:-30:0');
 |-----|------------|------|
 | Python (machbaseAPI) | `%s`, `?`, `%(name)s`, `:name` | `conn.cursor(prepared=True).execute("SELECT * FROM t WHERE name = ?", ('v1',))` |
 | Java JDBC | `?` | `pstmt.setString(1, "v1")` |
-| Go (machcli / native) | `?` | `db.Query("SELECT ... WHERE name = ?", "v1")` |
-| Go (database/sql) | `?` | `db.Query("SELECT ... WHERE name = ?", "v1")` |
+| Go (machgo / native) | `?`, `:name` | `conn.Query(ctx, "SELECT ... WHERE name = :name", api.Named("name", "v1"))` |
+| Go (database/sql) | `?`, `:name` | `db.Query("SELECT ... WHERE name = :name", sql.Named("name", "v1"))` |
 | .NET (MachConnector) | `?` | `cmd.Parameters.Add(new MachParameter { Value = "v1" })` |
 | ODBC/CLI | `?` | `SQLBindParameter(...)` |
 | REST API | 해당 없음 | URL 파라미터 또는 JSON body로 값 직접 포함 |
@@ -100,7 +100,7 @@ WHERE name = 'temp_01'
 | 패턴 | 문제 | 올바른 방법 |
 |------|------|------------|
 | TAG 쓰기를 `BEGIN` 안에서 실행 | 활성 TRANSACTION 테이블 트랜잭션에는 TAG 쓰기를 포함할 수 없음 | TAG 쓰기는 트랜잭션 밖에서 실행 |
-| Go `database/sql`에서 `db.Begin()` | `Begin()` / `BeginTx()` 미구현 → 오류 | Transaction이 필요하면 TRANSACTION 테이블 + ODBC/JDBC 사용 |
+| Go `database/sql`에서 `db.Begin()` | 기본 isolation level에서 지원 | TRANSACTION 테이블 작업을 `BeginTx`/`Commit`/`Rollback`으로 감쌈 |
 | Python에서 `?`에 mapping 전달 | `?`는 positional marker이므로 container 불일치 | sequence를 전달하거나 `:name`과 mapping 사용 |
 | ROLLUP 집계에 `AVG()` 직접 사용 | ROLLUP 결과 컬럼 구조와 불일치 | `STAT(avg)` 형식 사용 |
 | TAG 테이블에 일반 `FROM table_name` 사용 | 정상 문법 | 태그 선택자와 시간 조건을 WHERE에 작성 |

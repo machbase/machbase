@@ -37,7 +37,7 @@ toc: true
 |-----|----------|
 | JDBC | `/dbms/application-integration/guide-drivers/#jdbc` |
 | Python (machbaseAPI) | `/dbms/application-integration/guide-drivers/#python` |
-| Go (native / machcli) | `/dbms/application-integration/guide-drivers/#go` |
+| Go (native / machgo) | `/dbms/application-integration/guide-drivers/#go` |
 | Go (database/sql) | `/dbms/application-integration/guide-drivers/#go-go-sql` |
 | .NET (MachConnector) | `/dbms/application-integration/guide-drivers/#net-connector` |
 | Node.js | `/dbms/application-integration/guide-drivers/#node-js-typescript` |

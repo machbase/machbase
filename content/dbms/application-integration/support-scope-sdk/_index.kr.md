@@ -23,8 +23,8 @@ toc: true
 - **지속적인 대량 쓰기**가 필요하면 → ODBC/CLI, JDBC, Go native 등 Append API 지원 드라이버 사용
 - **표준 SQL 인터페이스**가 필요하면 → JDBC, Python(DB-API 2.0), Go(`database/sql`)
 - **웹 서비스·마이크로서비스 통합**이라면 → REST API
-- **트랜잭션이 필요한 TRANSACTION 작업**이라면 → JDBC 표준 트랜잭션 API 또는 ODBC/CLI 사용
-- **조회 결과의 NULL 가능 여부를 실행 전에 확인**해야 한다면 → Native MachCLI, SQLCLI/ODBC,
+- **트랜잭션이 필요한 TRANSACTION 작업**이라면 → Go `database/sql`, JDBC 표준 트랜잭션 API 또는 ODBC/CLI 사용
+- **조회 결과의 NULL 가능 여부를 실행 전에 확인**해야 한다면 → Go, Native MachCLI, SQLCLI/ODBC,
   JDBC, Node.js, Python 또는 .NET 사용
 
 > **참고**: TAG와 LOG 테이블은 append 중심 입력에 최적화되어 있습니다. JDBC manual
@@ -92,7 +92,8 @@ OUTER JOIN으로 생성된 결과 컬럼은 SDK의 결과 메타데이터 API로
 | Node.js | `ColumnMeta.nullable` | `ColumnNullable.NoNulls` | `ColumnNullable.Nullable` | `ColumnNullable.Unknown` |
 | Python | `cursor.description[i][6]` | `False` | `True` | `None` |
 | .NET | `GetSchemaTable()["AllowDBNull"]` | `false` | `true` | `DBNull.Value` |
-| Go | 공개 API 없음 | - | - | - |
+| Go (native) | `api.Column.Nullability` | `NullabilityNoNulls` | `NullabilityNullable` | `NullabilityUnknown` |
+| Go (database/sql) | `Rows.ColumnTypeNullable()` | `false, true` | `true, true` | `false, false` |
 | REST API | 결과 메타데이터 API 없음 | - | - | - |
 
 상세 API와 예제는 [CLI/ODBC](/dbms/reference/sdk-api/cli-odbc/),
@@ -472,8 +473,8 @@ AUTH KEY challenge 인증은 DB 포트(기본 5656)에 접속하는 드라이버
 | **JDBC** | O | O | O | O | 표준 Connection 트랜잭션 API와 이름 기반 bind 지원 |
 | **Python** | X | O | O | O | 2.4 prepared cursor로 호출 간 statement 재사용 |
 | **.NET Connector** | X | X | O | △ | client-side typed literal 렌더링 후 ExecDirect |
-| **Go (database/sql)** | X | O | O | X | `db.Prepare()`와 `?` 바인딩 |
-| **Go (native client)** | X | O | O | X | `Prepare(ctx, sql)`과 positional 파라미터 |
+| **Go (database/sql)** | O | O | O | O | `BeginTx`, `db.Prepare()`, `sql.Named()` 지원 |
+| **Go (native client)** | △ | O | O | O | `BEGIN`/`COMMIT`/`ROLLBACK` SQL 직접 실행, `api.Named()` 지원 |
 | **Node.js** | X | O | O | O | 배열은 positional, 객체는 named 입력 |
 | **REST API** | X | X | X | X | 단일 요청 단위, 서버 파라미터 없음 |
 
@@ -481,7 +482,9 @@ AUTH KEY challenge 인증은 DB 포트(기본 5656)에 접속하는 드라이버
 - △: SDK별로 제한된 방식으로 지원
 - X: 미지원
 
-표의 Transaction 열은 SDK가 제공하는 표준 편의 API 기준입니다. JDBC는
+표의 Transaction 열은 SDK가 제공하는 표준 편의 API 기준입니다. Go `database/sql`은
+기본 isolation level의 `Begin`/`BeginTx`, `Commit`, `Rollback`을 제공합니다. Go native는
+전용 `Begin` 메서드 대신 같은 연결에서 트랜잭션 SQL을 직접 실행합니다. JDBC는
 `setAutoCommit(false)`, `commit()`과 `rollback()`을 제공합니다. ODBC/CLI처럼 임의 SQL을
 같은 물리 연결로 계속 실행하는 SDK는 SQL `BEGIN`/`COMMIT`/`ROLLBACK`을 사용할 수 있지만,
 연결 유지와 오류 처리를 애플리케이션이 책임져야 합니다.
@@ -619,8 +622,8 @@ API 레퍼런스는 **17장 레퍼런스**를 참고합니다.
 | **JDBC** | Java | TCP 5656 | 17장 레퍼런스 → JDBC |
 | **Python** | Python 3.7+ | TCP 5656 | 17장 레퍼런스 → Python |
 | **.NET** | C# / VB.NET | TCP 5656 | 17장 레퍼런스 → .NET |
-| **Go (native)** | Go 1.18+ | TCP 5656 | 17장 레퍼런스 → Go |
-| **Go (database/sql)** | Go 1.18+ | TCP 5656 | 17장 레퍼런스 → Go |
+| **Go (native)** | Go 1.22+ | TCP 5656 | 17장 레퍼런스 → Go |
+| **Go (database/sql)** | Go 1.22+ | TCP 5656 | 17장 레퍼런스 → Go |
 | **Node.js** | JavaScript / TypeScript | TCP 5656 | 17장 레퍼런스 → Node.js |
 | **REST API** | 언어 독립 (HTTP) | TCP 5657 | 17장 레퍼런스 → REST API |
 

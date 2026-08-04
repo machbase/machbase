@@ -44,17 +44,17 @@ toc: true
 
 | SDK | 제약 항목 | 내용 |
 |-----|-----------|------|
-| Go (machcli / database/sql) | Transaction | `Begin()` / `BeginTx()` 미구현 — COMMIT/ROLLBACK 불가 |
+| Go (machgo / database/sql) | Transaction | native는 SQL 직접 실행, `database/sql`은 기본 isolation level의 `Begin`/`Commit`/`Rollback` 지원 |
 | Python (machbaseAPI) | Transaction | `begin()` / `commit()` / `rollback()` 미지원 |
 | .NET (MachConnector) | Transaction | `MachTransaction` 미구현 |
 | .NET (MachConnector) | AUTH KEY 인증 | 연결 옵션 미지원 |
 | Python (machbaseAPI) | Prepared cursor cache | cursor당 server statement 하나. SQL 문자열이 달라지면 기존 statement 해제 |
 | .NET (MachConnector) | Server Prepared Statement | 미지원 — 이름 컬렉션은 client-side 렌더링 후 ExecDirect |
-| Go (machcli / database/sql) | Named Bind API | 미지원 — `?`와 positional argument 사용 |
+| Go (machgo / database/sql) | Named Bind API | native `api.Named()`, SQL 드라이버 `sql.Named()` 지원 |
 | REST API | Transaction | 미지원 |
 | REST API | Prepared Statement | 미지원 |
 | Node.js | AUTH KEY 인증 | 미지원 |
-| Go (database/sql) | Append API | 미지원 — Append가 필요하면 `machcli` (native) 사용 |
+| Go (database/sql) | Append API | 미지원 — Append가 필요하면 `machgo` (native) 사용 |
 
 ## 일반 제약
 

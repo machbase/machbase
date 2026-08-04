@@ -35,6 +35,7 @@ toc: true
 | 공통 marker 문법은 `:name`이고 값 위치에만 사용 | dbms-nfx#3935, commit `a60f8414` | [SQL 문법](../../sql/syntax-dictionary-sql/named-bind-parameter-syntax/) |
 | 파라미터는 고유 이름이 아니라 발생 횟수로 계산하며 최대 256개 | dbms-nfx 3935 회귀 테스트 | 반복 이름도 각 occurrence로 계산 |
 | JDBC, Node.js, Python 이름 API는 반복 이름에 한 값을 적용 | dbms-nfx 3935 SDK 회귀 테스트 | 이름은 대소문자 구분 |
+| Go native `api.Named()`와 Go `database/sql` `sql.Named()` 지원 | neo-client PR #3, 최종 커밋 `6b9dae0c` | named와 positional 인자 혼용 금지 |
 | .NET 이름 컬렉션은 client-side 렌더링 후 ExecDirect 사용 | MachConnector40 provider 구현 | 서버 Named Bind 근거로 사용하지 않음 |
 
 ## UPDATE/DELETE 영향 행 수
@@ -50,8 +51,9 @@ toc: true
 
 | 사실 | 근거 (소스) | 비고 |
 |------|------------|------|
-| Go `database/sql` 드라이버: `Begin()` / `BeginTx()` 미구현 | Go 드라이버 소스 코드 | Transaction 시작 불가 |
-| Go `machcli` (native): Append API 지원, Transaction 미지원 | machcli 드라이버 문서 | [Go 드라이버 가이드](/dbms/application-integration/guide-drivers/#go) |
+| Go `database/sql` 드라이버: `Begin()` / `BeginTx()` 구현 | neo-client PR #3, 최종 커밋 `6b9dae0c` | 기본 isolation level의 SQL 트랜잭션 |
+| Go native `machgo`: Appender, named bind, DECIMAL, NULL 메타데이터 지원 | neo-client PR #3, 최종 커밋 `6b9dae0c` | [Go SDK 레퍼런스](/dbms/reference/sdk-api/go/) |
+| Go `database/sql`: named bind, DECIMAL, NULL 메타데이터 지원 | neo-client PR #3, 최종 커밋 `6b9dae0c` | [Go SDK 레퍼런스](/dbms/reference/sdk-api/go/) |
 
 ## Cluster Edition
 

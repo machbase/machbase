@@ -29,7 +29,7 @@ toc: true
 |------|:-----------:|----------------|----------|
 | 핵심 개념 | ~15 | TAG, LOG, LOOKUP, VOLATILE, TRANSACTION, ROLLUP, STREAM, Append, BASETIME | `/dbms/core-concepts/` |
 | 시작하기 | ~10 | 설치, 빠른 시작, 첫 번째 쿼리, machadmin | `/dbms/getting-started/` |
-| 애플리케이션 연동 | ~50 | JDBC, Python, Go, .NET, Node.js, REST, Append, machbaseAPI, machcli | `/dbms/application-integration/` |
+| 애플리케이션 연동 | ~50 | JDBC, Python, Go, .NET, Node.js, REST, Append, machbaseAPI, machgo | `/dbms/application-integration/` |
 | 성능 튜닝 | ~20 | 배치 크기, ROLLUP, 캐시, Append 최적화, 인덱스 | `/dbms/performance/` |
 | 운영 / 설정 | ~80 | BACKUP, MOUNT, ALTER SYSTEM, 설정 파라미터, machadmin, machclusterctl | `/dbms/operations-configuration-recovery/` |
 | 보안 | ~40 | 사용자, 권한, AUTH KEY, GRANT, REVOKE, 원격 접속, 암호화 | `/dbms/security-access-control/` |

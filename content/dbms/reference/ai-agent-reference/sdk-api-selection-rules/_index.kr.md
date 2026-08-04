@@ -13,16 +13,16 @@ toc: true
 |----------|----------|------|
 | Append 필요 + Java | **JDBC** (`MachStatement.executeAppendOpen()`) | [JDBC 가이드](/dbms/application-integration/guide-drivers/#jdbc) |
 | Append 필요 + Python | **machbaseAPI** (`machbase()` 클래스의 `append()`) | [Python 가이드](/dbms/application-integration/guide-drivers/#python) |
-| Append 필요 + Go | **machcli** (native client) | `database/sql`은 Append 미지원 |
+| Append 필요 + Go | **machgo** (native client) | `database/sql`은 Append 미지원 |
 | Append 필요 + .NET | **MachConnector** (`MachAppendWriter`) | [.NET 가이드](/dbms/application-integration/guide-drivers/#net-connector) |
 | Append 필요 + Node.js | **@machbase/ts-client** | [Node.js 가이드](/dbms/application-integration/guide-drivers/#node-js-typescript) |
 | AUTH KEY 인증 필요 | **JDBC**, **ODBC/CLI**, **machsql** | Python/Go/.NET/Node.js는 AUTH KEY 미지원 |
-| TRANSACTION 테이블 트랜잭션 필요 | **JDBC**, **ODBC/CLI** | JDBC 표준 API는 Standard Edition에서 지원 |
-| SELECT 결과 Nullable 메타데이터 필요 | **ODBC/CLI**, **JDBC**, **Python**, **Node.js**, **.NET** | Go와 REST API는 공개 결과 메타데이터 API 없음 |
-| Prepared Parameter Nullable 메타데이터 필요 | **Native MachCLI**, **SQLCLI/ODBC**, **JDBC** | JDBC는 `getParameterMetaData()` 지원 |
-| 서버 Named Bind 필요 | **SQLCLI**, **JDBC**, **Python**, **Node.js** | ODBC/machsql은 ordinal, .NET은 client-side 렌더링 |
+| TRANSACTION 테이블 트랜잭션 필요 | **Go (`database/sql`)**, **JDBC**, **ODBC/CLI** | Go SQL은 기본 isolation level, JDBC는 Standard Edition에서 지원 |
+| SELECT 결과 Nullable 메타데이터 필요 | **Go**, **ODBC/CLI**, **JDBC**, **Python**, **Node.js**, **.NET** | Go native는 `api.Column`, SQL은 `ColumnTypeNullable` 사용 |
+| Prepared Parameter Nullable 메타데이터 필요 | **Go**, **Native MachCLI**, **SQLCLI/ODBC**, **JDBC** | Go는 결과 컬럼 메타데이터를 제공 |
+| 서버 Named Bind 필요 | **Go**, **SQLCLI**, **JDBC**, **Python**, **Node.js** | Go는 `api.Named()` 또는 `sql.Named()` 사용 |
 | Python에서 동일 SQL 반복 실행 | **machbaseAPI 2.4 prepared cursor** | `cursor(prepared=True)`로 호출 간 statement 재사용 |
-| Go 언어 선호 + Append 필요 | **machcli** (native) | [Go 가이드](/dbms/application-integration/guide-drivers/#go) |
+| Go 언어 선호 + Append 필요 | **machgo** (native) | [Go 가이드](/dbms/application-integration/guide-drivers/#go) |
 | Go 언어 선호 + 표준 인터페이스 | **database/sql** 드라이버 | Append 불필요한 경우 |
 | 브라우저 / 웹 / 스크립트 | **REST API** (포트 5657, `/machbase` 엔드포인트) | [REST API 가이드](/dbms/application-integration/rest-api/) |
 | 데이터 탐색 / 보고 | **R + RODBC** | 통계 분석에 적합 |
@@ -34,7 +34,7 @@ toc: true
 |------|----------|---------------|---------------------|
 | Java | JDBC | JDBC (executeAppendOpen) | JDBC |
 | Python | machbaseAPI | machbaseAPI (append()) | 미지원 (JDBC/.NET/ODBC 고려) |
-| Go | database/sql | machcli (native) | 미지원 (다른 SDK 고려) |
+| Go | database/sql | machgo (native) | `database/sql` 또는 native SQL 트랜잭션 |
 | C# / .NET | MachConnector | MachConnector (MachAppendWriter) | 미지원 (`MachTransaction` 미구현) |
 | Node.js | @machbase/ts-client | @machbase/ts-client | 미지원 |
 | C / C++ | ODBC/CLI | ODBC/CLI | ODBC/CLI |
@@ -45,13 +45,13 @@ toc: true
 
 | 조합 | 이유 | 대안 |
 |------|------|------|
-| Go `database/sql` + Append | Append 미지원 | `machcli` (native) 사용 |
-| Go + Transaction (BEGIN/COMMIT) | `Begin()` / `BeginTx()` 미구현 | ODBC 또는 JDBC 사용 |
-| Go + Nullable 결과 메타데이터 | 공개 조회 API 없음 | ODBC/CLI, JDBC, Python, Node.js 또는 .NET 사용 |
+| Go `database/sql` + Append | Append 미지원 | `machgo` (native) 사용 |
+| Go native + Transaction (BEGIN/COMMIT) | 전용 `Begin` 메서드 없음 | 같은 연결에서 트랜잭션 SQL 직접 실행 |
+| Go + Nullable 결과 메타데이터 | native는 `api.Column`, SQL은 `ColumnTypeNullable` 사용 | nullable 대상 타입으로 scan |
 | REST API + Transaction | REST API는 단일 요청 기반, Transaction 미지원 | JDBC / ODBC 사용 |
 | Node.js + AUTH KEY | Node.js 드라이버 AUTH KEY 미지원 | JDBC / ODBC 사용 |
 | Python named mapping에 `?` 사용 | 객체 입력은 `:name` SQL이 필요 | `:name`과 mapping 사용 |
-| Go `sql.Named()` 사용 | 이름 기반 파라미터 미지원 | `?`와 positional argument 사용 |
+| Go `sql.Named()` 사용 | `database/sql`에서 지원 | named marker와 `sql.Named()` 사용. positional과 혼용 금지 |
 
 ## SDK별 주요 특징 요약
 
@@ -77,22 +77,22 @@ toc: true
 - Cache 제약: cursor당 statement 하나, SQL 변경 또는 cursor close 시 해제
 - Nullable 메타데이터: `cursor.description[i][6]`
 
-### Go (machcli / native)
+### Go (machgo / native)
 
 - Append: `stmt.AppendOpen()` → `stmt.AppendData()` → `stmt.AppendClose()`
 - AUTH KEY: 미지원
-- Transaction: 미지원 (`Begin()` 미구현)
-- 파라미터: `?` 플레이스홀더, 이름 기반 API 미지원
-- Nullable 메타데이터: 공개 API 없음
+- Transaction: 전용 편의 API 없음. `BEGIN` / `COMMIT` / `ROLLBACK` SQL 직접 실행
+- 파라미터: positional `?`와 `api.Named()` 이름 기반 API
+- Nullable 메타데이터: `api.Column.Nullability`
 
 ### Go (database/sql)
 
 - Append: 미지원
 - AUTH KEY: 미지원
-- Transaction: 미지원
-- 파라미터: `?` 플레이스홀더, `sql.Named()` 미지원
+- Transaction: 기본 isolation level의 `Begin` / `BeginTx`, `Commit`, `Rollback` 지원
+- 파라미터: positional `?`와 `sql.Named()` 이름 기반 API
 - 적합한 용도: 단순 SELECT, INSERT (TAG 테이블 소량), 시스템 뷰 조회
-- Nullable 메타데이터: 공개 API 없음
+- Nullable 메타데이터: `Rows.ColumnTypeNullable()`
 
 ### .NET (MachConnector)
 
