@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '11.7 데이터 입력과 반출'
+title: '12.7 데이터 입력과 반출'
 weight: 70
 toc: true
 ---
@@ -95,7 +95,7 @@ SQL INSERT, Append API, 파일 적재(machloader, csvimport), SQL 기반 파일 
 │   └── 소량 또는 일반 트랜잭션 처리 → SQL INSERT
 │
 ├── HTTP/REST
-│   └── 외부 시스템, IoT → REST API (11장 참고)
+│   └── 외부 시스템, IoT → REST API (12장 참고)
 │
 └── TAG 메타데이터
     └── 초기 로드 또는 일괄 업데이트 → tagmetaimport
@@ -121,8 +121,8 @@ SQL INSERT, Append API, 파일 적재(machloader, csvimport), SQL 기반 파일 
 
 #### 연동 경로 요약
 
-- **REST API 상세**: [11장 애플리케이션 연동](/dbms/application-integration/) 참고
-- **SDK (Go/Python/C) 상세**: [11장 애플리케이션 연동](/dbms/application-integration/) 참고
+- **REST API 상세**: [12장 애플리케이션 연동](/dbms/application-integration/) 참고
+- **SDK (Go/Python/C) 상세**: [11장 개발 도구 연동](/dbms/development-tools-integration/) 및 [12장 애플리케이션 연동](/dbms/application-integration/) 참고
 
 <a id="sql"></a>
 
@@ -339,7 +339,7 @@ MCHCloseAppender(appender, &successCnt, &failCnt);
 #### REST API Append
 
 REST API를 통한 Append도 요청 안의 여러 행을 한 번에 입력할 수 있습니다. 상세는
-[11장 애플리케이션 연동](/dbms/application-integration/)을 참고하십시오.
+[12장 애플리케이션 연동](/dbms/application-integration/)을 참고하십시오.
 
 #### 주의사항
 

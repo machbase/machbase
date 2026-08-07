@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '15.2 TAG + TRANSACTION + LOG 조인 대시보드'
+title: '16.2 TAG + TRANSACTION + LOG 조인 대시보드'
 weight: 40
 toc: true
 ---

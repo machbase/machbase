@@ -21,10 +21,11 @@ This manual is being reorganized around table-type usage. Korean content is auth
 | 8 | [RDB Table Usage](./rdb-table-usage/) | RDB schema, DML, transactions, JOIN, backup constraints |
 | 9 | [LOOKUP Table Usage](./lookup-table-usage/) | Reference data, primary keys, JSON, predicate DML, and joins |
 | 10 | [VOLATILE Table Usage](./volatile-table-usage/) | Memory tables, UPSERT, state cache, restart behavior |
-| 11 | [Application Integration](./application-integration/) | Drivers and REST API |
-| 12 | [Performance Tuning](./performance-tuning/) | Query, ingestion, and cache tuning |
-| 13 | [Operations, Configuration, and Recovery](./operations-configuration-recovery/) | Server operations, backup, Cluster operations |
-| 14 | [Accounts, Privileges, and Access Control](./security-access-control/) | Users, privileges, and access control |
-| 15 | [Scenario Guides](./scenario-guides/) | Task-oriented scenario guides |
-| 16 | [Troubleshooting](./troubleshooting/) | Diagnostics and resolution guides |
-| 17 | [Reference](./reference/) | SQL, functions, configuration, and API reference |
+| 11 | [Development Tools Integration](./development-tools-integration/) | CLI/ODBC, JDBC, Python, Node.js, .NET, and Go SDK/API |
+| 12 | [Application Integration](./application-integration/) | Integration selection, common concepts, practical guides, and REST API |
+| 13 | [Performance Tuning](./performance-tuning/) | Query, ingestion, and cache tuning |
+| 14 | [Operations, Configuration, and Recovery](./operations-configuration-recovery/) | Server operations, backup, Cluster operations |
+| 15 | [Accounts, Privileges, and Access Control](./security-access-control/) | Users, privileges, and access control |
+| 16 | [Scenario Guides](./scenario-guides/) | Task-oriented scenario guides |
+| 17 | [Troubleshooting](./troubleshooting/) | Diagnostics and resolution guides |
+| 18 | [Reference](./reference/) | SQL, functions, configuration, and system catalog reference |

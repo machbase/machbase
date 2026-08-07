@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.8.1 Edition별 기능 지원표'
+title: '18.8.1 Edition별 기능 지원표'
 weight: 10
 toc: true
 ---
@@ -23,6 +23,7 @@ Machbase는 단일 서버용 **Standard Edition**과 다중 노드 수평 확장
 | ROLLUP_REBUILD | O | X | Cluster Edition 미지원 |
 | STREAM | O | X | Cluster Edition 미지원 |
 | **백업 및 복구** | | | |
+| 논리 다중 데이터베이스 | O | X | Standard Edition 전용. DB별 CPU·메모리·디스크 물리 quota는 제공하지 않음 |
 | BACKUP DATABASE | O | O | |
 | BACKUP TABLE | O | O | |
 | MOUNT DATABASE | O | X | Cluster Edition 미지원 |

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '12.8 입력 성능과 연동 경로'
+title: '13.8 입력 성능과 연동 경로'
 weight: 80
 toc: true
 ---
@@ -19,9 +19,9 @@ toc: true
 ## 이 절에서 다루는 내용
 
 - **[입력 성능 기본 원칙](/dbms/performance-tuning/data-input-performance/#performance-principles)**: 처리량을 높이는 핵심 원칙
-- **[REST 입력 경로 안내](/dbms/performance-tuning/data-input-performance/#path-guide-rest)**: REST API 연동 개요 (상세는 11장)
-- **[SDK 입력 경로 안내](/dbms/performance-tuning/data-input-performance/#path-guide-sdk)**: SDK Append/INSERT 개요 (상세는 11장)
-- **[Fluentd 파이프라인](/dbms/log-table-usage/fluentd-pipeline/#pipeline-fluentd)**: Fluentd 기반 파이프라인 개요 (상세는 11장)
+- **[REST 입력 경로 안내](/dbms/performance-tuning/data-input-performance/#path-guide-rest)**: REST API 연동 개요 (상세는 12장)
+- **[SDK 입력 경로 안내](/dbms/performance-tuning/data-input-performance/#path-guide-sdk)**: SDK Append/INSERT 개요 (상세는 11장과 12장)
+- **[Fluentd 파이프라인](/dbms/log-table-usage/fluentd-pipeline/#pipeline-fluentd)**: Fluentd 기반 파이프라인 개요 (상세는 12장)
 
 
 <a id="performance-principles"></a>
@@ -133,7 +133,7 @@ curl -X POST http://127.0.0.1:5657/machbase \
 
 REST API의 인증, 엔드포인트, 요청/응답 형식, 배치 전송 방법은 다음 문서를 참고하십시오.
 
-> **[11장 애플리케이션 연동 → REST API](/dbms/application-integration/)** 에서 상세 내용을 다룹니다.
+> **[12장 애플리케이션 연동 → REST API](/dbms/application-integration/)** 에서 상세 내용을 다룹니다.
 
 <a id="path-guide-sdk"></a>
 
@@ -187,4 +187,4 @@ db.ExecContext(ctx, "INSERT INTO orders VALUES (?, ?, ?)",
 
 SDK 설치, 연결 설정, Append API 사용법, 샘플 코드는 다음 문서를 참고하십시오.
 
-> **[11장 애플리케이션 연동 → SDK](/dbms/application-integration/)** 에서 상세 내용을 다룹니다.
+> SDK API 명세는 **[11장 개발 도구 연동](/dbms/development-tools-integration/)**, 실무 연동 예제는 **[12장 애플리케이션 연동](/dbms/application-integration/)** 에서 다룹니다.

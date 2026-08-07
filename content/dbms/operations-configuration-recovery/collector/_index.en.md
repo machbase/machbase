@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '13.7 Collector 운영'
+title: '14.8 Collector 운영'
 weight: 70
 toc: true
 ---

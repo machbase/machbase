@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.1.1.21 USER/AUTH'
+title: '18.1.1.21 USER/AUTH'
 weight: 210
 toc: true
 ---
@@ -107,7 +107,9 @@ grant_stmt  ::= 'GRANT'  priv_list 'ON' object_ref 'TO'   user_name
 revoke_stmt ::= 'REVOKE' priv_list 'ON' object_ref 'FROM' user_name
 
 priv_list  ::= priv_value ( ',' priv_value )*
-object_ref ::= 'machbasedb' | table_name | 'user_name.table_name' | 'db_name.user_name.table_name'
+object_ref ::= 'DATABASE' database_name
+             | 'TABLE' ['database_name.'] owner_name '.' table_name
+             | ['database_name.'] owner_name '.' table_name
 ```
 
 ### 테이블 권한
@@ -129,25 +131,28 @@ REVOKE ALL ON sys.sensor_log FROM app_user;
 
 ```sql
 -- DDL 권한 (CREATE + DROP)
-GRANT DDL ON machbasedb TO deploy_user;
+GRANT DDL ON DATABASE factory_a TO deploy_user;
 
 -- 개별 DDL 권한
-GRANT CREATE ON machbasedb TO create_user;
-GRANT DROP   ON machbasedb TO drop_user;
-GRANT ALTER  ON machbasedb TO ops_user;
+GRANT CONNECT ON DATABASE factory_a TO app_user;
+GRANT CREATE ON DATABASE factory_a TO create_user;
+GRANT DROP   ON DATABASE factory_a TO drop_user;
+GRANT ALTER  ON DATABASE factory_a TO ops_user;
 
 -- 운영 권한
-GRANT BACKUP ON machbasedb TO backup_user;
-GRANT MOUNT  ON machbasedb TO mount_user;
+GRANT BACKUP ON DATABASE factory_a TO backup_user;
+GRANT MOUNT  ON DATABASE MACHBASEDB TO mount_user;
+GRANT USAGE  ON DATABASE factory_a_backup TO report_user;
 
 -- 모든 데이터베이스 권한
-GRANT ALL ON machbasedb TO admin_user;
+GRANT ALL ON DATABASE factory_a TO admin_user;
 
 -- 권한 회수
-REVOKE BACKUP ON machbasedb FROM backup_user;
+REVOKE BACKUP ON DATABASE factory_a FROM backup_user;
 ```
 
-데이터베이스 권한 종류: `CREATE`, `DROP`, `ALTER`, `MOUNT`, `BACKUP`, `DDL`(`CREATE+DROP`), `ALL`
+데이터베이스 권한 종류: `CONNECT`, `CREATE`, `DROP`, `ALTER`, `BACKUP`, `MOUNT`, `USAGE`,
+`DDL`(`CREATE+DROP`), `ALL`(`CONNECT+CREATE+DROP+ALTER+BACKUP`)
 
 ### 데이터베이스 권한이 필요한 작업
 

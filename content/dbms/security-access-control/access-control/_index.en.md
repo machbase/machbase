@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '14.5 접속 제어'
+title: '15.5 접속 제어'
 weight: 50
 toc: true
 ---

@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '13.3 ALTER SYSTEM 운영'
-weight: 30
+title: '14.4 ALTER SYSTEM 운영'
+weight: 40
 toc: true
 ---
 `ALTER SYSTEM`은 서버의 전역 자원을 관리하는 SQL 구문입니다. 세션 제어, 라이선스 설치, 캐시 정리, 체크포인트, I/O 동결 등 서버 운영에 필요한 작업을 수행합니다.

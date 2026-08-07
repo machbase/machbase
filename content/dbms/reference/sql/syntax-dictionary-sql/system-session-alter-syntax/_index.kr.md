@@ -1,13 +1,13 @@
 ---
 type: docs
-title: '17.1.1.22 SYSTEM/SESSION/ALTER SYSTEM'
+title: '18.1.1.22 SYSTEM/SESSION/ALTER SYSTEM'
 weight: 220
 toc: true
 ---
 
 `ALTER SYSTEM`은 서버 전역 자원을 관리하는 구문입니다. `ALTER SESSION`은 현재 세션에만 적용되는 파라미터를 설정합니다.
 
-> **권한**: `ALTER SYSTEM` 명령은 `SYS` 계정 또는 `GRANT ALTER ON MACHBASEDB TO user_name;`으로 권한을 부여받은 사용자만 실행할 수 있습니다.
+> **권한**: `ALTER SYSTEM` 명령은 `SYS` 계정 또는 `GRANT ALTER ON DATABASE database_name TO user_name;`으로 권한을 부여받은 사용자만 실행할 수 있습니다.
 
 ---
 

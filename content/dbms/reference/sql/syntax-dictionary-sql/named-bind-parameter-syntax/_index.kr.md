@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.1.1.3 Named Bind Parameter'
+title: '18.1.1.3 Named Bind Parameter'
 weight: 30
 toc: true
 ---
@@ -171,7 +171,7 @@ Statement 데이터 타입을 사용할 수 있습니다. `DECIMAL` 또는 `NUME
 | Go `database/sql` | `sql.Named("name", value)` |
 | machsql | SQL은 `:name`, 값은 `$1`, `$2` 순서로 지정 |
 
-자세한 API와 오류 처리는 [SDK API 레퍼런스](../../../sdk-api/)와
+자세한 API와 오류 처리는 [개발 도구 연동](../../../../development-tools-integration/)과
 [machsql 명령/옵션 사전](../../../command-line-tools/dictionary-machsql/)을 참고하십시오.
 
 ## 호환성과 오류

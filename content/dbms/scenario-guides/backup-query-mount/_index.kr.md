@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '15.6 백업 데이터 마운트 후 조회'
+title: '16.6 백업 데이터 마운트 후 조회'
 weight: 110
 toc: true
 ---
@@ -20,7 +20,7 @@ toc: true
 
 > **에디션 참고**: MOUNT/UMOUNT는 Standard Edition 전용 기능입니다. Cluster Edition에서는 지원되지 않습니다.
 
-> **권한 요구사항**: 일반 사용자가 MOUNT를 실행하려면 `GRANT MOUNT ON machbasedb TO user_name;` 권한이 필요합니다.
+> **권한 요구사항**: 일반 사용자가 MOUNT를 실행하려면 `GRANT MOUNT ON DATABASE MACHBASEDB TO user_name;` 권한이 필요합니다. mounted database 조회에는 별도로 `USAGE`와 table `SELECT`가 필요합니다.
 
 ## 1단계: 백업 수행
 
@@ -55,7 +55,7 @@ MOUNT DATABASE 'machbase_20240101' TO backup_20240101;
 ```
 
 - `'/backup/machbase_20240101'`: BACKUP 명령으로 생성된 디렉터리 경로
-- `backup_20240101`: 마운트된 DB에 접근할 때 사용할 이름 (SQL에서 스키마처럼 사용)
+- `backup_20240101`: mounted database에 접근할 때 사용할 database alias
 
 마운트 성공 후 마운트된 DB 목록을 확인합니다.
 

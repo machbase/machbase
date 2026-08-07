@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.1.1 SQL 문법 사전'
+title: '18.1.1 SQL 문법 사전'
 weight: 10
 toc: true
 ---
@@ -45,6 +45,7 @@ SQL 문법 사전은 Machbase에서 지원하는 모든 SQL 구문의 BNF 표기
 | [SERIES BY](./series-syntax/) | 분석 | 연속 조건 만족 레코드 그룹화 |
 | [SEARCH / ESEARCH / REGEXP](./search-esearch-regexp-syntax/) | 검색 | 키워드 인덱스 기반 텍스트 검색 |
 | [ROLLUP REBUILD](./rollup-rebuild-syntax/) | 운영 | 롤업 결과 재계산 |
+| [DATABASE](./database-syntax/) | DDL/세션 | 논리 데이터베이스 생성·선택·삭제와 상태 확인 |
 
 ## BNF 표기 규칙
 

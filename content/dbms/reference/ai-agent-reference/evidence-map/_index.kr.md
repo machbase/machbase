@@ -1,11 +1,22 @@
 ---
 type: docs
-title: '17.10.6 evidence-map'
+title: '18.10.6 evidence-map'
 weight: 60
 toc: true
 ---
 
 이 페이지는 Machbase에 관한 기술적 사실의 근거(소스)를 매핑합니다. AI 에이전트가 사실에 근거한 답변을 생성하거나, 답변의 출처를 명시할 때 참조합니다.
+
+## 다중 데이터베이스
+
+| 사실 | 근거 (소스) | 비고 |
+|------|------------|------|
+| 하나의 Standard 인스턴스에서 여러 logical database를 사용하며 기본 DB는 `MACHBASEDB` | dbms-nfx #3235 / PR #3977 최종 user manual | Cluster/XMA와 물리 자원 격리는 범위 밖 |
+| 객체 이름은 `table`, `owner.table`, `database.owner.table`이며 `db.table`은 owner.table | dbms-nfx #3235 최종 parser·regression·user manual | 3-part 이름으로 다른 DB를 명시 |
+| `DATABASE_ID`는 logical catalog ID이고 `TABLESPACE_ID`와 다름 | dbms-nfx PR #3977 system catalog implementation | `V$DATABASES`, `M$SYS_*` 조인 시 함께 사용 |
+| mounted database는 READ ONLY이며 `USAGE`와 table `SELECT`가 필요 | dbms-nfx #3235 backup/security regression | `USE`와 쓰기는 불가 |
+| CMI 4.0.3이 multi-database client/server 경계 | dbms-nfx PR #3977 protocol compatibility tests | 8.5.2/CMI 4.0.2는 MACHBASEDB 호환 동작만 확인 |
+| prepared/cursor/appender는 prepare/open 시점 catalog에 고정 | dbms-nfx #3235 session/client regression | `USE` 후 새 handle 생성 권장 |
 
 ## 인증 / 보안
 
@@ -52,8 +63,20 @@ toc: true
 | 사실 | 근거 (소스) | 비고 |
 |------|------------|------|
 | Go `database/sql` 드라이버: `Begin()` / `BeginTx()` 구현 | neo-client PR #3, 최종 커밋 `6b9dae0c` | 기본 isolation level의 SQL 트랜잭션 |
-| Go native `machgo`: Appender, named bind, DECIMAL, NULL 메타데이터 지원 | neo-client PR #3, 최종 커밋 `6b9dae0c` | [Go SDK 레퍼런스](/dbms/reference/sdk-api/go/) |
-| Go `database/sql`: named bind, DECIMAL, NULL 메타데이터 지원 | neo-client PR #3, 최종 커밋 `6b9dae0c` | [Go SDK 레퍼런스](/dbms/reference/sdk-api/go/) |
+| Go native `machgo`: Appender, named bind, DECIMAL, NULL·PRIMARY KEY 메타데이터 지원 | neo-client PR #3, 커밋 `915d846b` | [Go SDK 레퍼런스](/dbms/development-tools-integration/go/) |
+| Go `database/sql`: named bind, DECIMAL, NULL 메타데이터 지원. 표준 PK API는 없음 | neo-client PR #3, 커밋 `915d846b` 및 Go 표준 `database/sql` 계약 | [Go SDK 레퍼런스](/dbms/development-tools-integration/go/) |
+
+## PRIMARY KEY 메타데이터
+
+| 사실 | 근거 (소스) | 비고 |
+|------|------------|------|
+| CMI 4.0.3 결과 컬럼 type word에 PRIMARY KEY 플래그를 전달 | dbms-nfx #4010, 커밋 `7e4a6f411` | 직접 컬럼에만 적용 |
+| TRANSACTION·LOOKUP·VOLATILE PK와 TAG `NAME`을 결과 메타데이터로 식별 | dbms-nfx #4010 분석·회귀 테스트 | LOG, 표현식, 집계식, 외부 조인 NULL 측은 PK 아님 |
+| Go native `api.Column.PrimaryKey`가 `Rows.Columns()`와 `Row.Columns()`에 전달 | neo-client PR #3, 커밋 `915d846b` | prepared·statement cache 경로 포함 |
+| Go `database/sql.ColumnType`에는 PRIMARY KEY API가 없음 | Go 표준 인터페이스 및 neo-client 구현 | native API 또는 카탈로그 조회 사용 |
+| ODBC `SQLPrimaryKeys()`와 JDBC `getPrimaryKeys()`가 실제 PK 목록 반환 | dbms-nfx #4010 회귀 테스트 | 비-SYS 소유자와 TAG `NAME` 포함 |
+| `machsql DESC`가 `[ PRIMARY KEY ]` 섹션 표시 | dbms-nfx #4010 회귀 테스트 | SQLCLI `DescribeCol` 계약은 변경 없음 |
+| CMI 4.0.2 이하에서는 신규 PRIMARY KEY wire 플래그를 숨김 | dbms-nfx #4010 protocol 호환성 테스트 | 구형 클라이언트 호환성 유지 |
 
 ## Cluster Edition
 

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.1.1.17 BACKUP / RESTORE / MOUNT'
+title: '18.1.1.17 BACKUP / RESTORE / MOUNT'
 weight: 170
 toc: true
 ---
@@ -9,13 +9,32 @@ Machbase의 백업·복원·마운트 구문은 데이터를 안전하게 보호
 
 > **권한**: 일반 사용자가 백업·마운트를 실행하려면 별도 권한이 필요합니다.
 > ```sql
-> GRANT BACKUP ON machbasedb TO user_name;
-> GRANT MOUNT  ON machbasedb TO user_name;
+> GRANT BACKUP ON DATABASE database_name TO user_name;
+> GRANT MOUNT  ON DATABASE MACHBASEDB TO user_name;
 > ```
 
 ---
 
 ## BACKUP
+
+### 논리 데이터베이스 백업
+
+8.6.0 Standard Edition에서는 대상 catalog를 명시하는 logical backup을 사용할 수 있습니다.
+
+```sql
+backup_logical_database_stmt ::=
+    'BACKUP DATABASE' database_name 'INTO DISK' '=' 'backup_path'
+    [ 'AFTER' 'backup_path_or_lsn' ]
+```
+
+```sql
+BACKUP DATABASE factory_a INTO DISK = '/backup/factory_a_20260806';
+BACKUP DATABASE factory_a INTO DISK = '/backup/factory_a_inc'
+  AFTER '/backup/factory_a_20260806';
+```
+
+논리 backup은 하나의 active database catalog를 대상으로 합니다. 여러 active database가
+포함된 전체 인스턴스 image는 logical `MOUNT` 또는 `RESTORE` 입력으로 사용할 수 없습니다.
 
 ### 전체 백업
 
@@ -87,7 +106,32 @@ BACKUP TABLE sensor_log INTO DISK = '/backup/sensor_log_20240101';
 
 ## RESTORE
 
-복원은 서버를 중단한 상태(오프라인)에서만 수행합니다. `machadmin -r` 명령을 사용합니다.
+기존 `machadmin -r` 복원은 서버를 중단한 오프라인 인스턴스 복원입니다. 8.6.0 Standard
+Edition에서는 논리 database를 새 catalog로 복원하거나 READ ONLY target을 교체하는
+online `RESTORE DATABASE`도 지원합니다.
+
+```sql
+restore_database_stmt ::=
+    'RESTORE DATABASE' database_name 'FROM DISK' '=' 'backup_path'
+    [ 'REMAP OWNER' old_owner 'TO' new_owner ]
+    [ 'REPLACE' ]
+```
+
+```sql
+RESTORE DATABASE factory_a_copy
+  FROM DISK = '/backup/factory_a_20260806'
+  REMAP OWNER APP_A TO APP_ARCHIVE;
+
+RESTORE DATABASE factory_a
+  FROM DISK = '/backup/factory_a_20260806'
+  REPLACE;
+```
+
+`RESTORE DATABASE`는 SYS 전용입니다. `REPLACE` target은 READ ONLY이며 참조가 없어야
+하고, restore 후 database/table 권한은 자동 승계되지 않으므로 다시 부여해야 합니다.
+backup image의 unsupported object나 owner 충돌은 restore 전체를 실패시킬 수 있습니다.
+
+### 기존 인스턴스 오프라인 복원 (`machadmin -r`)
 
 ```bash
 # 1. (권장) 복원 전 현재 데이터 백업
@@ -138,10 +182,12 @@ mount_database_stmt ::=
     'MOUNT DATABASE' 'backup_database_path' 'TO' mount_name
 ```
 
-서버를 중단하거나 데이터를 교체하지 않고, 백업 데이터베이스를 현재 서버에 읽기 전용으로 연결합니다.
+서버를 중단하거나 active database를 교체하지 않고, 단일 catalog backup image를 현재 서버에
+mounted database로 연결합니다. mounted database는 항상 READ ONLY이며 `USE`로 current
+database가 될 수 없습니다.
 
 - `backup_database_path`: DISK 방식으로 생성된 백업 디렉터리 경로
-- `mount_name`: 마운트된 DB에 접근할 때 사용할 이름(스키마)
+- `mount_name`: mounted database에 접근할 때 사용할 database alias
 
 ```sql
 -- 절대 경로로 마운트
@@ -154,6 +200,7 @@ MOUNT DATABASE 'machbase_20240101' TO backup_db;
 ### 마운트된 DB 조회
 
 마운트된 데이터베이스의 테이블은 `mount_name.user_name.table_name` 형식으로 접근합니다.
+조회하려면 mounted database의 `USAGE`와 대상 table의 `SELECT`가 모두 필요합니다.
 
 ```sql
 -- 마운트 DB의 테이블 조회
@@ -193,7 +240,7 @@ UMOUNT DATABASE backup_db;
 | IBFILE 방식 백업 마운트 | 불가 (DISK 방식만 마운트 가능) |
 | 버전 호환성 | 백업 DB와 현재 서버의 메타 버전이 호환되어야 함 |
 | TAG 테이블 기간 복원 | 미지원 (전체 백업 또는 증분 백업으로만 복원 가능) |
-| Cluster Edition | MOUNT/UMOUNT 제한될 수 있음 |
+| Cluster Edition | 다중 database와 MOUNT/UMOUNT 미지원 |
 
 ---
 

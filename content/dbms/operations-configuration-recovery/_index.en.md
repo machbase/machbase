@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '13. Operations, Configuration, and Recovery'
-weight: 130
+title: '14. Operations, Configuration, and Recovery'
+weight: 140
 toc: true
 ---

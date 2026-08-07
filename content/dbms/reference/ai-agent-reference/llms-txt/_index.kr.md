@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.10.12 llms.txt'
+title: '18.10.12 llms.txt'
 weight: 120
 toc: true
 ---
@@ -41,15 +41,20 @@ Machbase 공식 문서 기준 (`/dbms/` 경로 아래):
 | 섹션 | URL |
 |------|-----|
 | Append API 개념 | `/dbms/application-integration/concepts-common/#append-api-batch` |
-| SDK 지원 범위 | `/dbms/application-integration/support-scope-sdk/` |
-| Nullable 메타데이터 | `/dbms/application-integration/support-scope-sdk/#support-scope-sdk-nullable-metadata` |
+| SDK 지원 범위 | `/dbms/development-tools-integration/#sdk` |
+| Nullable 메타데이터 | `/dbms/development-tools-integration/#support-scope-sdk-nullable-metadata` |
 | Named Bind Parameter | `/dbms/reference/sql/syntax-dictionary-sql/named-bind-parameter-syntax/` |
-| JDBC | `/dbms/application-integration/guide-drivers/#jdbc` |
-| Python | `/dbms/application-integration/guide-drivers/#python` |
-| Go | `/dbms/application-integration/guide-drivers/#go` |
-| .NET | `/dbms/application-integration/guide-drivers/#net-connector` |
-| Node.js | `/dbms/application-integration/guide-drivers/#node-js-typescript` |
-| ODBC/CLI | `/dbms/application-integration/guide-drivers/#cli-odbc` |
+
+### 개발 도구 연동
+
+| SDK API | URL |
+|---------|-----|
+| JDBC | `/dbms/development-tools-integration/jdbc/` |
+| Python | `/dbms/development-tools-integration/python/` |
+| Go | `/dbms/development-tools-integration/go/` |
+| .NET | `/dbms/development-tools-integration/net-connector/` |
+| Node.js | `/dbms/development-tools-integration/node-js-typescript/` |
+| ODBC/CLI | `/dbms/development-tools-integration/cli-odbc/` |
 
 ### 보안
 

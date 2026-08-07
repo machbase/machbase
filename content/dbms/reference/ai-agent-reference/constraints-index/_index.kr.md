@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.10.5 constraints-index'
+title: '18.10.5 constraints-index'
 weight: 50
 toc: true
 ---
@@ -54,7 +54,19 @@ toc: true
 | REST API | Transaction | 미지원 |
 | REST API | Prepared Statement | 미지원 |
 | Node.js | AUTH KEY 인증 | 미지원 |
-| Go (database/sql) | Append API | 미지원 — Append가 필요하면 `machgo` (native) 사용 |
+| Go (database/sql) | Append API | 표준 `sql.DB`/`sql.Tx`에는 없음 — `sql.Conn.Raw()`에서 `machbase.Conn.Appender()` 확장 사용 가능. 신규 대량 입력은 `machgo` 권장 |
+
+## 다중 데이터베이스 제약
+
+| 제약 항목 | 내용 |
+|-----------|------|
+| Edition | Standard Edition 전용. Cluster/XMA 분산 catalog는 지원하지 않음 |
+| 물리 격리 | database별 CPU·메모리·디스크 quota 또는 process 격리를 제공하지 않음 |
+| 객체 이름 | 다른 database를 지정할 때 `database.owner.table`을 사용하며 `database.table` shortcut은 없음 |
+| Mounted database | READ ONLY이며 `USE`할 수 없음. `USAGE`와 table `SELECT`가 필요 |
+| Transaction 중 USE | 진행 중인 transaction에서는 current database를 변경할 수 없음 |
+| Handle binding | prepared statement, cursor, appender는 prepare/open 당시 database에 고정 |
+| Compatibility | CMI 4.0.3 미만 client/server 조합에서는 비기본 database 선택을 보장하지 않음 |
 
 ## 일반 제약
 

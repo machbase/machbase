@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.8.8 백업/마운트 지원표'
+title: '18.8.8 백업/마운트 지원표'
 weight: 80
 toc: true
 ---
@@ -11,11 +11,17 @@ toc: true
 
 | 기능 | Standard | Cluster | 비고 |
 |------|:--------:|:-------:|------|
+| 논리 다중 데이터베이스 | O | X | Standard Edition 전용 |
 | BACKUP DATABASE | O | O | 전체 데이터베이스 백업 |
 | BACKUP TABLE | O | O | 특정 테이블만 백업 |
 | MOUNT DATABASE | O | X | Cluster Edition 미지원 |
 | UMOUNT DATABASE | O | X | Cluster Edition 미지원 |
 | machadmin -r 복구 | O | X | Cluster Edition 미지원 |
+
+`BACKUP DATABASE database_name INTO DISK`는 하나의 active logical database를 백업합니다.
+여러 active database가 포함된 full-instance image는 logical `MOUNT`/`RESTORE DATABASE`의
+입력으로 사용할 수 없습니다. mounted database 조회에는 `USAGE`와 table `SELECT`가
+필요하며 `USE`와 쓰기는 지원하지 않습니다.
 
 ## 테이블 타입별 백업 지원
 
@@ -44,7 +50,7 @@ BACKUP TABLE sensor_data INTO DISK = '/data/backup/sensor_backup';
 MOUNT DATABASE '/data/backup/machbase_backup' TO MOUNTDB;
 
 -- 마운트된 DB의 데이터 조회
-SELECT * FROM mountdb!!sensor_data RECENT 10;
+SELECT * FROM MOUNTDB.SYS.sensor_data LIMIT 10;
 
 -- 마운트 해제
 UMOUNT DATABASE MOUNTDB;

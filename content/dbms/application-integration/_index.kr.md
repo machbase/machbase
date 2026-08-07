@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '11. 애플리케이션 연동'
-weight: 110
+title: '12. 애플리케이션 연동'
+weight: 120
 toc: true
 ---
 
@@ -51,7 +51,7 @@ Machbase는 C/C++, Java, Python, .NET, Go, Node.js, REST API 등 다양한 프�
 |------|------|
 | [드라이버별 가이드](guide-drivers/) | CLI/ODBC, JDBC, Python, .NET, Go, Node.js, R/RODBC 사용 패턴 |
 | [REST API](rest-api/) | `/machbase` SQL 실행과 POST Append, 인증 및 오류 처리 |
-| [SDK별 지원 범위 안내](support-scope-sdk/) | Append, AUTH KEY, Transaction/Prepare/Bind 지원 범위 |
+| [SDK별 지원 범위 안내](/dbms/development-tools-integration/#sdk) | Append, AUTH KEY, Transaction/Prepare/Bind 지원 범위 |
 
 ### 외부 도구 연동
 
@@ -61,11 +61,12 @@ Machbase는 C/C++, Java, Python, .NET, Go, Node.js, REST API 등 다양한 프�
 
 ## 각 드라이버의 완전한 API 명세 위치
 
-이 장(11장)은 연동 방식에 대한 **실무 가이드**입니다. 각 드라이버의 완전한 API 명세와 레퍼런스는 **17장 레퍼런스**에서 확인할 수 있습니다.
+이 장(12장)은 연동 방식에 대한 **실무 가이드**입니다. 각 드라이버의 완전한 API 명세는 **11장 개발 도구 연동**에서 확인하고, SQL·설정 등 일반 레퍼런스는 **18장 레퍼런스**에서 확인합니다.
 
 ```
-11장 (이 장)  → 연동 방식 선택, 공통 개념, 실무 예제
-17장 레퍼런스 → 각 SDK의 완전한 API 명세, 함수 목록, 옵션 상세
+12장 (이 장)       → 연동 방식 선택, 공통 개념, 실무 예제
+11장 개발 도구 연동 → 각 SDK의 완전한 API 명세, 함수 목록, 옵션 상세
+18장 레퍼런스      → SQL, 설정, 시스템 카탈로그 등 공통 레퍼런스
 ```
 
 ## 빠른 시작
@@ -75,4 +76,4 @@ Machbase는 C/C++, Java, Python, .NET, Go, Node.js, REST API 등 다양한 프�
 1. [연동 방식 선택 가이드](/dbms/application-integration/selection-integration-method/#selection-guide-integration-method)에서 환경에 맞는 드라이버를 결정합니다.
 2. [연결 문자열과 인증](/dbms/application-integration/concepts-common/#connection-string-authentication)에서 기본 연결 방법을 확인합니다.
 3. 사용 패턴에 따라 [Append API](/dbms/application-integration/concepts-common/#append-api-batch) 또는 [Prepared statement](/dbms/application-integration/concepts-common/#prepared-statement)를 선택합니다.
-4. 17장 레퍼런스에서 해당 드라이버의 상세 API를 참조합니다.
+4. 11장 개발 도구 연동에서 해당 드라이버의 상세 API를 참조합니다.

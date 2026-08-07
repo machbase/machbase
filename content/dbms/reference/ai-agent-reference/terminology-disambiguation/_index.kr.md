@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.10.7 terminology-disambiguation'
+title: '18.10.7 terminology-disambiguation'
 weight: 70
 toc: true
 ---
@@ -22,7 +22,7 @@ toc: true
 | **Broker** | Cluster Edition에서 클라이언트 연결을 수신하고 Warehouse 노드로 쿼리를 분산하는 노드. | 메시지 브로커(Kafka, RabbitMQ 등)와 다름. Machbase Cluster의 프록시/라우팅 노드 역할. |
 | **machbase.trc** | Machbase 서버의 메인 로그 파일. `$MACHBASE_HOME/trc/` 디렉토리에 위치. | `.trc`는 "trace"의 약자. LOG 테이블(데이터 저장)과 다른 서버 운영 로그 파일. |
 | **VOLATILE 테이블** | 메모리에만 존재하는 임시 테이블. 서버 재시작 시 데이터 소멸. Standard Edition 전용. | TRANSACTION 테이블의 인메모리 버전과 유사하나, Cluster Edition에서는 미지원. |
-| **machgo** | Go 언어용 Machbase native 클라이언트 드라이버. Append, named bind, DECIMAL, NULL 메타데이터를 지원. | Go 표준 `database/sql` 드라이버와 구분. Append는 `machgo`에서 사용. |
+| **machgo** | Go 언어용 Machbase native 클라이언트 드라이버. Append, named bind, DECIMAL, NULL 메타데이터와 초기 database 선택을 지원. | Go 표준 `database/sql` 드라이버와 구분. 표준 Append API는 없지만 `machbase.Conn.Appender()`를 `sql.Conn.Raw()`에서 선택적으로 사용할 수 있음. |
 
 ## 자주 발생하는 혼동 사례
 

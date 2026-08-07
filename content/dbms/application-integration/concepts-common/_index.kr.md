@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '11.2 공통 연동 개념'
+title: '12.2 공통 연동 개념'
 weight: 20
 toc: true
 ---
@@ -76,7 +76,7 @@ WITH AUTH KEY (
 );
 ```
 
-AUTH KEY를 사용한 연결은 드라이버별 설정이 다릅니다. 자세한 설정은 [SDK별 AUTH KEY 지원 범위 안내](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-auth-key)를 참조하십시오.
+AUTH KEY를 사용한 연결은 드라이버별 설정이 다릅니다. 자세한 설정은 [SDK별 AUTH KEY 지원 범위 안내](/dbms/development-tools-integration/#support-scope-sdk-auth-key)를 참조하십시오.
 
 ### 드라이버별 연결 문자열 예시
 
@@ -308,7 +308,7 @@ conn.Open();
 
 #### ODBC
 
-ODBC 연결 문자열에서 timezone을 설정할 수 있습니다. 드라이버별 옵션은 17장 레퍼런스를
+ODBC 연결 문자열에서 timezone을 설정할 수 있습니다. 드라이버별 옵션은 11장 개발 도구 연동을
 확인하십시오.
 
 ```c
@@ -823,6 +823,12 @@ Go에서 NULL을 받을 때는 `sql.Null[T]`, `sql.NullString`, `sql.NullTime` �
 타입을 사용합니다. native 결과 컬럼의 NULL 가능 여부는 `api.Column.Nullability`, SQL 드라이버는
 `Rows.ColumnTypeNullable()`로 확인합니다.
 
+PRIMARY KEY 여부는 NULL 가능 여부와 별도의 메타데이터입니다. Go native 결과 컬럼은
+`api.Column.PrimaryKey`로 확인할 수 있지만 Go `database/sql` 표준 `ColumnType`에는 PK API가
+없습니다. SDK별 결과 컬럼과 카탈로그 조회 방법은
+[PRIMARY KEY 메타데이터 지원 범위](/dbms/development-tools-integration/#support-scope-sdk-primary-key-metadata)를
+참고하십시오.
+
 ### 타입 변환 주의사항
 
 타입 불일치 시 암묵적 변환을 시도하지만 정밀도 손실이 발생할 수 있습니다. 특히 다음 경우에 주의하십시오.
@@ -951,7 +957,7 @@ TAG/LOG 테이블에서 잘못 삽입된 데이터를 제거하려면 [DELETE �
 임의 SQL을 연속 실행할 수 있는 SDK는 Node.js 예제처럼 `BEGIN`/`COMMIT`/`ROLLBACK`을 직접
 전송할 수 있습니다. 연결 풀이나 요청마다 연결이 바뀌는 API에서는 이 방식을 사용하지 않습니다.
 
-상세 SDK별 지원 범위는 [SDK별 transaction/prepare/bind 지원 범위](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-transaction-prepare-bind)를 참고하십시오.
+상세 SDK별 지원 범위는 [SDK별 transaction/prepare/bind 지원 범위](/dbms/development-tools-integration/#support-scope-sdk-transaction-prepare-bind)를 참고하십시오.
 
 <a id="append-api-batch"></a>
 
@@ -1006,7 +1012,7 @@ Machbase 서버
 | Node.js 드라이버 | O | `appendBatch`, `appendOpen` |
 | REST API | O | `POST /machbase` |
 
-상세 API는 17장 레퍼런스의 각 드라이버 문서를 참조하십시오.
+상세 API는 11장 개발 도구 연동의 각 드라이버 문서를 참조하십시오.
 
 #### 언제 Append API를 써야 하는가
 

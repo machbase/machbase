@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '13.1 서버와 데이터베이스 운영'
+title: '14.1 서버와 데이터베이스 운영'
 weight: 10
 toc: true
 ---
@@ -13,6 +13,10 @@ toc: true
 | [서버 시작과 종료](/dbms/operations-configuration-recovery/server-database/#start-server) | `machadmin -u`, `-s`, `-k`, `-e` 명령어 사용법과 시작 실패 대처 |
 | [데이터베이스 생성과 삭제](/dbms/operations-configuration-recovery/server-database/#create-delete-database) | DB 초기화, 디렉터리 구조, 안전한 삭제 절차 |
 | [라이선스 설치와 확인](/dbms/operations-configuration-recovery/server-database/#license) | 라이선스 파일 위치, 온라인 설치, 만료 시 동작 |
+
+이 페이지의 `machadmin` 명령은 서버 인스턴스와 물리 데이터 디렉터리를 관리합니다. 8.6.0의
+논리 데이터베이스를 생성·전환·삭제하거나 데이터베이스별 권한을 관리하려면
+[다중 데이터베이스](/dbms/operations-configuration-recovery/multi-database/)를 참조하십시오.
 
 ## machadmin 주요 옵션 요약
 
@@ -187,9 +191,13 @@ tail -100 $MACHBASE_HOME/trc/machbase.trc
 
 <a id="create-delete-database"></a>
 
-## 데이터베이스 생성과 삭제
+## 인스턴스 데이터베이스 생성과 삭제
 
-Machbase에서 "데이터베이스"란 테이블, 인덱스, 내부 메타데이터를 담는 파일 집합을 의미합니다. 서버를 처음 설치한 뒤에는 반드시 데이터베이스를 생성해야 서버를 시작할 수 있습니다.
+이 절의 "데이터베이스"는 서버가 시작할 수 있도록 `$MACHBASE_HOME/dbs/`에 만드는
+물리 인스턴스 저장소를 의미합니다. Machbase 8.6.0에서 SQL `CREATE DATABASE`로 만드는
+논리 catalog와는 다른 lifecycle입니다. 논리 데이터베이스는 하나의 인스턴스 안에서 여러 개를
+만들 수 있으며, 자세한 내용은 [다중 데이터베이스](/dbms/operations-configuration-recovery/multi-database/)를
+참조하십시오.
 
 ### 데이터베이스 생성
 

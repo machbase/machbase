@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '14.3 권한 관리'
+title: '15.3 권한 관리'
 weight: 30
 toc: true
 ---
@@ -15,14 +15,17 @@ Machbase 권한은 적용 범위에 따라 두 가지로 나뉩니다.
 | 데이터베이스 권한 | DB 전체 범위에서 DDL 및 관리 작업 허용 | 테이블 생성, 백업 실행 |
 | 테이블 권한 | 특정 테이블에 대한 DML 작업 허용 | 특정 테이블 조회·삽입 |
 
-데이터베이스 권한은 `GRANT ... ON MACHBASEDB TO user` 구문으로 부여하고,
-테이블 권한은 `GRANT ... ON schema.table TO user` 구문으로 부여합니다.
+데이터베이스 권한은 `GRANT ... ON DATABASE database_name TO user` 구문으로 부여하고,
+테이블 권한은 `GRANT ... ON TABLE [database.]owner.table TO user` 구문으로 부여합니다.
+기존 `MACHBASEDB` 대상 문법은 호환성을 위해 유지되지만, 8.6.0의 논리 데이터베이스에는
+대상 database를 명시해야 합니다. 자세한 내용은 [다중 데이터베이스](/dbms/operations-configuration-recovery/multi-database/)를
+참조하십시오.
 
 ## GRANT / REVOKE 명령어 개요
 
 ```sql
 -- 데이터베이스 권한 부여
-GRANT CREATE ON machbasedb TO app_user;
+GRANT CREATE ON DATABASE factory_a TO app_user;
 
 -- 테이블 권한 부여
 GRANT SELECT ON sys.sensor_log TO reader_user;
@@ -56,8 +59,8 @@ SYS 계정 (슈퍼유저)
   └─ 다른 사용자에게 권한 부여 가능
 
 일반 사용자
-  ├─ 데이터베이스 권한 (DB 전체 범위)
-  │    SELECT, INSERT, DELETE, UPDATE, CREATE, DROP, ALTER, BACKUP, MOUNT, DDL, ALL
+  ├─ 데이터베이스 권한 (database 범위)
+  │    CONNECT, CREATE, DROP, ALTER, BACKUP, MOUNT, USAGE, DDL, ALL
   └─ 테이블 권한 (특정 테이블 범위)
        SELECT, INSERT, DELETE, UPDATE, ALL
 ```
@@ -67,21 +70,23 @@ SYS 계정은 모든 권한을 기본으로 보유하므로 별도로 GRANT를 �
 
 ### 데이터베이스 권한 목록
 
-`MACHBASEDB`를 대상으로 부여하는 DB 전체 범위 권한입니다.
+active database 또는 mounted database를 대상으로 부여하는 권한입니다.
 
 | 권한 | 허용하는 작업 |
 |---|---|
+| `CONNECT` | active database 연결, `USE`, 객체 탐색 |
 | `CREATE` | 테이블, 뷰, 인덱스, 롤업, 테이블스페이스, 리텐션 생성 |
 | `DROP` | 테이블, 뷰, 인덱스, 롤업, 테이블스페이스, 리텐션 삭제 |
 | `ALTER` | 테이블 구조 변경, `ALTER SYSTEM` 실행 |
 | `BACKUP` | `BACKUP DATABASE` 실행 |
 | `MOUNT` | `MOUNT DATABASE` / `UMOUNT DATABASE` 실행 |
+| `USAGE` | mounted database 탐색. table `SELECT`를 대신하지 않음 |
 | `DDL` | CREATE + DROP 묶음 (두 권한 동시 부여) |
-| `ALL` | SELECT, INSERT, DELETE, UPDATE, CREATE, DROP, ALTER, BACKUP, MOUNT 일괄 부여 |
+| `ALL` | CONNECT, CREATE, DROP, ALTER, BACKUP 일괄 부여. table DML과 MOUNT는 제외 |
 
-`GRANT ALL ON MACHBASEDB`는 DML 권한 비트도 함께 부여하지만,
-`GRANT SELECT ON MACHBASEDB`처럼 DML 권한만 개별로 DB 대상에 부여하는 구문은
-지원되지 않습니다. 다른 사용자 소유 테이블에 접근하려면 테이블 대상 GRANT가 필요합니다.
+`GRANT SELECT ON DATABASE database_name`처럼 DML 권한을 database 전체에 부여하는
+구문은 지원되지 않습니다. 다른 사용자 소유 테이블에 접근하려면 database `CONNECT`와
+table 대상 DML GRANT가 모두 필요합니다.
 
 ### 테이블 권한 목록
 
@@ -101,15 +106,15 @@ SYS 계정은 모든 권한을 기본으로 보유하므로 별도로 GRANT를 �
 
 ```sql
 -- 데이터베이스 ALL 권한
-GRANT ALL ON machbasedb TO admin_user;
+GRANT ALL ON DATABASE factory_a TO admin_user;
 
 -- 테이블 DML 권한 전체 (SELECT, INSERT, DELETE, UPDATE)
 GRANT ALL ON sys.sensor_log TO app_user;
 ```
 
-대상이 `MACHBASEDB`이면 SELECT, INSERT, DELETE, UPDATE, CREATE, DROP, MOUNT,
-BACKUP, ALTER 권한 비트를 일괄 부여하고, 특정 테이블이면 해당 테이블의 DML 권한
-전체를 의미합니다.
+대상이 `DATABASE database_name`이면 해당 database의 `CONNECT`, `CREATE`, `DROP`,
+`ALTER`, `BACKUP` 권한을 부여합니다. table 대상이면 해당 table의 DML 권한 전체를
+의미하며, `MOUNT`와 table DML은 database `ALL`에 포함되지 않습니다.
 
 ### 신규 사용자의 기본 권한
 
@@ -151,34 +156,34 @@ REVOKE privilege_list ON target FROM user_name;
 ```
 
 - `privilege_list`: 쉼표로 구분된 하나 이상의 권한명
-- `target`: `MACHBASEDB` (데이터베이스 권한) 또는 `[schema.]table_name` (테이블 권한)
+- `target`: `DATABASE database_name` (데이터베이스 권한) 또는 `TABLE [database.]owner.table` (테이블 권한)
 - `user_name`: 대상 사용자명 (대소문자 무관, 내부적으로 대문자 처리)
 
 ### 데이터베이스 권한 부여
 
-`MACHBASEDB`를 대상으로 DDL 및 관리 권한을 부여합니다.
+지정한 active database를 대상으로 DDL 및 관리 권한을 부여합니다.
 
 ```sql
 -- 테이블·뷰·인덱스 생성 권한
-GRANT CREATE ON machbasedb TO app_user;
+GRANT CREATE ON DATABASE factory_a TO app_user;
 
 -- 테이블·뷰·인덱스 삭제 권한
-GRANT DROP ON machbasedb TO app_user;
+GRANT DROP ON DATABASE factory_a TO app_user;
 
 -- CREATE + DROP 묶음 (DDL 권한)
-GRANT DDL ON machbasedb TO deploy_user;
+GRANT DDL ON DATABASE factory_a TO deploy_user;
 
 -- 테이블 구조 변경 및 ALTER SYSTEM 권한
-GRANT ALTER ON machbasedb TO ops_user;
+GRANT ALTER ON DATABASE factory_a TO ops_user;
 
 -- 백업 실행 권한
-GRANT BACKUP ON machbasedb TO backup_user;
+GRANT BACKUP ON DATABASE factory_a TO backup_user;
 
 -- 마운트/언마운트 권한
-GRANT MOUNT ON machbasedb TO mount_user;
+GRANT MOUNT ON DATABASE MACHBASEDB TO mount_user;
 
 -- 모든 데이터베이스 권한 일괄 부여
-GRANT ALL ON machbasedb TO admin_user;
+GRANT ALL ON DATABASE factory_a TO admin_user;
 ```
 
 ### 테이블 권한 부여
@@ -197,7 +202,7 @@ GRANT SELECT, INSERT ON sensor_tag TO iot_user;
 GRANT SELECT ON sys.sensor_log TO reader_user;
 
 -- DB명·스키마명·테이블명 모두 지정
-GRANT SELECT ON machbasedb.sys.sensor_log TO reader_user;
+GRANT SELECT ON TABLE factory_a.sys.sensor_log TO reader_user;
 
 -- 테이블의 모든 DML 권한 부여
 GRANT ALL ON sensor_log TO app_user;
@@ -214,14 +219,14 @@ REVOKE INSERT ON sensor_log FROM writer_user;
 REVOKE ALL ON sensor_log FROM app_user;
 
 -- 데이터베이스 권한 취소
-REVOKE BACKUP ON machbasedb FROM backup_user;
-REVOKE ALL ON machbasedb FROM admin_user;
+REVOKE BACKUP ON DATABASE factory_a FROM backup_user;
+REVOKE ALL ON DATABASE factory_a FROM admin_user;
 ```
 
 ### 주의 사항
 
-- `GRANT SELECT ON machbasedb TO user` 형식으로 DML 권한을 데이터베이스 전체에 부여하는 것은 지원하지 않습니다. DML 권한은 반드시 특정 테이블을 지정해야 합니다.
-- 데이터베이스 권한 대상 이름은 반드시 `MACHBASEDB`를 사용합니다. 다른 이름을 지정하면 `[ERR-02186: Invalid database name.]` 오류가 발생합니다.
+- `GRANT SELECT ON DATABASE database_name TO user` 형식으로 DML 권한을 데이터베이스 전체에 부여할 수 없습니다. DML 권한은 반드시 특정 테이블을 지정해야 합니다.
+- active database 권한은 해당 database 이름을 지정합니다. `MOUNT`는 `MACHBASEDB`에 부여하고, mounted database를 읽을 때는 별도로 `USAGE`와 table `SELECT`가 필요합니다.
 - SYS 계정은 모든 권한을 기본으로 보유하므로 별도 GRANT가 필요 없습니다.
 
 ### 현재 권한 확인
@@ -244,27 +249,31 @@ SELECT * FROM m$obj_privileges WHERE obj_name = 'SENSOR_LOG';
 
 ## 데이터베이스 권한
 
-데이터베이스 권한은 `MACHBASEDB` 전체 범위에 적용되는 권한입니다. 개별 DML 권한은
-테이블 대상으로 부여하지만, `ALL ON MACHBASEDB`는 DML 권한 비트까지 함께 포함합니다.
+데이터베이스 권한은 지정한 active database 범위에 적용됩니다. 개별 DML 권한은
+테이블 대상으로 부여하며, `ALL ON DATABASE database_name`은 database lifecycle 권한만
+포함합니다.
 
 ### 데이터베이스 권한 목록
 
 | 권한 | 허용하는 작업 | 기본 보유 |
 |---|---|---|
+| `CONNECT` | 연결, `USE`, 객체 탐색 | 예(MACHBASEDB 호환) |
 | `CREATE` | 테이블, 뷰, 인덱스, 롤업, 테이블스페이스, 리텐션 생성 | 예 |
 | `DROP` | 테이블, 뷰, 인덱스, 롤업, 테이블스페이스, 리텐션 삭제 | 예 |
 | `ALTER` | 테이블 구조 변경, `ALTER SYSTEM` 실행 | 아니오 |
 | `BACKUP` | `BACKUP DATABASE` 실행 | 아니오 |
 | `MOUNT` | `MOUNT DATABASE` / `UMOUNT DATABASE` 실행 | 아니오 |
+| `USAGE` | mounted database 탐색 | 아니오 |
 | `DDL` | CREATE + DROP 묶음 | — |
-| `ALL` | SELECT, INSERT, DELETE, UPDATE, CREATE, DROP, ALTER, BACKUP, MOUNT 일괄 부여 | — |
+| `ALL` | CONNECT, CREATE, DROP, ALTER, BACKUP 일괄 부여 | — |
 
 "기본 보유"가 "예"인 권한은 `CREATE USER`로 생성된 사용자가 별도 GRANT 없이 보유합니다.
 나머지 권한은 SYS 계정이 명시적으로 부여해야 합니다.
 
 ### 권한이 필요한 주요 작업
 
-다음 작업은 테이블 권한이 아닌 데이터베이스 권한이 필요합니다.
+다음 작업은 테이블 권한이 아닌 데이터베이스 권한이 필요합니다. `database_name`은
+작업 대상 active database로 바꿉니다.
 
 | 작업 | 필요한 권한 |
 |---|---|
@@ -283,16 +292,16 @@ SELECT * FROM m$obj_privileges WHERE obj_name = 'SENSOR_LOG';
 
 ```sql
 -- deploy_user에게 DDL 권한 부여
-GRANT DDL ON machbasedb TO deploy_user;
+GRANT DDL ON DATABASE factory_a TO deploy_user;
 
 -- ops_user에게 ALTER 권한 부여
-GRANT ALTER ON machbasedb TO ops_user;
+GRANT ALTER ON DATABASE factory_a TO ops_user;
 
 -- backup_user에게 BACKUP 권한 부여
-GRANT BACKUP ON machbasedb TO backup_user;
+GRANT BACKUP ON DATABASE factory_a TO backup_user;
 
 -- admin_user에게 모든 데이터베이스 권한 부여
-GRANT ALL ON machbasedb TO admin_user;
+GRANT ALL ON DATABASE factory_a TO admin_user;
 ```
 
 ### 하위 섹션
@@ -316,16 +325,16 @@ GRANT ALL ON machbasedb TO admin_user;
 
 #### 데이터베이스 권한으로서의 DML
 
-Machbase에서는 DML 권한을 데이터베이스 전체 범위(`MACHBASEDB`)로 부여할 수 없습니다.
+Machbase에서는 DML 권한을 데이터베이스 전체 범위로 부여할 수 없습니다.
 DML 권한은 반드시 특정 테이블을 대상으로 부여해야 합니다.
 
 ```sql
 -- 올바른 방법: 특정 테이블에 SELECT 부여
 GRANT SELECT ON sys.sensor_log TO reader_user;
 
--- 지원하지 않는 방법: MACHBASEDB에 SELECT 부여 (오류 발생)
-GRANT SELECT ON machbasedb TO reader_user;
--- [ERR-02186: Invalid database name.]
+-- 지원하지 않는 방법: database에 SELECT 부여 (오류 발생)
+GRANT SELECT ON DATABASE factory_a TO reader_user;
+-- DML 권한은 TABLE scope에서만 부여할 수 있습니다.
 ```
 
 테이블별로 세밀하게 권한을 제어하려면 [테이블 권한](/dbms/security-access-control/privileges/#privileges-2)을 참고하십시오.
@@ -429,10 +438,10 @@ GRANT ALL ON sys.sensor_log TO app_user;
 
 ```sql
 -- app_user에게 CREATE 권한 부여
-GRANT CREATE ON machbasedb TO app_user;
+GRANT CREATE ON DATABASE factory_a TO app_user;
 
 -- CREATE 권한 취소
-REVOKE CREATE ON machbasedb FROM app_user;
+REVOKE CREATE ON DATABASE factory_a FROM app_user;
 ```
 
 #### DROP 권한
@@ -448,10 +457,10 @@ REVOKE CREATE ON machbasedb FROM app_user;
 
 ```sql
 -- app_user에게 DROP 권한 부여
-GRANT DROP ON machbasedb TO app_user;
+GRANT DROP ON DATABASE factory_a TO app_user;
 
 -- DROP 권한 취소
-REVOKE DROP ON machbasedb FROM app_user;
+REVOKE DROP ON DATABASE factory_a FROM app_user;
 ```
 
 #### 소유자의 DROP 권한
@@ -466,7 +475,7 @@ DROP TABLE my_table;
 
 -- ops_user가 다른 사용자 소유 테이블을 삭제하려면 DROP 권한 필요
 -- SYS 계정에서 권한 부여
-GRANT DROP ON machbasedb TO ops_user;
+GRANT DROP ON DATABASE factory_a TO ops_user;
 ```
 
 #### CREATE + DROP 동시 부여
@@ -475,11 +484,11 @@ GRANT DROP ON machbasedb TO ops_user;
 
 ```sql
 -- CREATE + DROP을 한 번에 부여
-GRANT DDL ON machbasedb TO deploy_user;
+GRANT DDL ON DATABASE factory_a TO deploy_user;
 
 -- 개별 부여와 동일한 효과
-GRANT CREATE ON machbasedb TO deploy_user;
-GRANT DROP ON machbasedb TO deploy_user;
+GRANT CREATE ON DATABASE factory_a TO deploy_user;
+GRANT DROP ON DATABASE factory_a TO deploy_user;
 ```
 
 `DDL` 합성 권한에 대한 자세한 내용은 [DDL / ALL 합성 권한](/dbms/security-access-control/privileges/#database-privileges-privileges-ddl-all)을 참고하십시오.
@@ -502,10 +511,10 @@ GRANT DROP ON machbasedb TO deploy_user;
 
 ```sql
 -- ops_user에게 ALTER 권한 부여
-GRANT ALTER ON machbasedb TO ops_user;
+GRANT ALTER ON DATABASE factory_a TO ops_user;
 
 -- ALTER 권한 취소
-REVOKE ALTER ON machbasedb FROM ops_user;
+REVOKE ALTER ON DATABASE factory_a FROM ops_user;
 ```
 
 #### ALTER TABLE 사용 예
@@ -546,10 +555,10 @@ SYS 계정은 별도 권한 없이 백업을 실행할 수 있습니다.
 
 ```sql
 -- backup_user에게 BACKUP 권한 부여
-GRANT BACKUP ON machbasedb TO backup_user;
+GRANT BACKUP ON DATABASE factory_a TO backup_user;
 
 -- BACKUP 권한 취소
-REVOKE BACKUP ON machbasedb FROM backup_user;
+REVOKE BACKUP ON DATABASE factory_a FROM backup_user;
 ```
 
 #### BACKUP DATABASE 실행 예
@@ -598,10 +607,10 @@ SYS 계정은 별도 권한 없이 마운트/언마운트를 실행할 수 있�
 
 ```sql
 -- mount_user에게 MOUNT 권한 부여
-GRANT MOUNT ON machbasedb TO mount_user;
+GRANT MOUNT ON DATABASE MACHBASEDB TO mount_user;
 
 -- MOUNT 권한 취소
-REVOKE MOUNT ON machbasedb FROM mount_user;
+REVOKE MOUNT ON DATABASE MACHBASEDB FROM mount_user;
 ```
 
 #### MOUNT DATABASE 실행 예
@@ -643,32 +652,32 @@ GRANT SELECT ON backup_db.sys.sensor_log TO mount_user;
 
 ```sql
 -- DDL 권한 부여 (CREATE + DROP 동시 부여)
-GRANT DDL ON machbasedb TO deploy_user;
+GRANT DDL ON DATABASE factory_a TO deploy_user;
 
 -- 개별 부여와 동일
-GRANT CREATE ON machbasedb TO deploy_user;
-GRANT DROP ON machbasedb TO deploy_user;
+GRANT CREATE ON DATABASE factory_a TO deploy_user;
+GRANT DROP ON DATABASE factory_a TO deploy_user;
 ```
 
 `DDL` 권한을 취소하면 `CREATE`와 `DROP`이 함께 취소됩니다.
 
 ```sql
 -- DDL 권한 취소
-REVOKE DDL ON machbasedb FROM deploy_user;
+REVOKE DDL ON DATABASE factory_a FROM deploy_user;
 ```
 
 #### ALL 합성 권한
 
 `ALL`은 데이터베이스 대상에서 사용할 수 있는 권한 비트를 일괄 부여합니다.
-`MACHBASEDB`에 대한 `ALL`은 `SELECT`, `INSERT`, `DELETE`, `UPDATE`, `CREATE`,
-`DROP`, `MOUNT`, `ALTER`, `BACKUP`을 모두 포함합니다.
+`ALL ON DATABASE database_name`은 `CONNECT`, `CREATE`, `DROP`, `ALTER`, `BACKUP`을
+포함합니다. table DML과 `MOUNT`는 별도로 부여합니다.
 
 ```sql
 -- 모든 데이터베이스 권한 일괄 부여
-GRANT ALL ON machbasedb TO admin_user;
+GRANT ALL ON DATABASE factory_a TO admin_user;
 
 -- 모든 데이터베이스 권한 일괄 취소
-REVOKE ALL ON machbasedb FROM admin_user;
+REVOKE ALL ON DATABASE factory_a FROM admin_user;
 ```
 
 #### ALL의 대상별 의미 차이
@@ -677,20 +686,20 @@ REVOKE ALL ON machbasedb FROM admin_user;
 
 | 대상 | ALL의 의미 |
 |---|---|
-| `MACHBASEDB` | SELECT, INSERT, DELETE, UPDATE, CREATE, DROP, MOUNT, ALTER, BACKUP |
+| `DATABASE database_name` | CONNECT, CREATE, DROP, ALTER, BACKUP |
 | 특정 테이블 | SELECT, INSERT, DELETE, UPDATE (DML 권한 전체) |
 
 ```sql
 -- 데이터베이스 관리 권한 전체 부여
-GRANT ALL ON machbasedb TO admin_user;
+GRANT ALL ON DATABASE factory_a TO admin_user;
 
 -- 특정 테이블의 DML 권한 전체 부여
 GRANT ALL ON sys.sensor_log TO app_user;
 ```
 
-`GRANT ALL ON MACHBASEDB`가 DML 권한 비트를 포함하더라도,
-`GRANT SELECT ON MACHBASEDB`처럼 DML 권한을 개별로 DB 대상에 부여하는 구문은
-지원되지 않습니다. 다른 사용자 소유 테이블 접근은 테이블 대상 `GRANT`로 제어합니다.
+`GRANT SELECT ON DATABASE database_name`처럼 DML 권한을 개별로 database 대상에
+부여하는 구문은 지원되지 않습니다. 다른 사용자 소유 테이블 접근은 table 대상
+`GRANT`로 제어합니다.
 
 #### SYS 계정의 권한
 
@@ -698,20 +707,20 @@ SYS 계정은 모든 권한을 기본으로 보유합니다. GRANT 명령을 실
 
 ```sql
 -- SYS 계정에 권한을 부여할 필요가 없습니다.
--- GRANT ALL ON machbasedb TO SYS;  -- 불필요
+-- GRANT ALL ON DATABASE MACHBASEDB TO SYS;  -- 불필요
 ```
 
 #### 실무 활용 예제
 
 ```sql
 -- 배포 자동화 계정: DDL만 허용
-GRANT DDL ON machbasedb TO ci_deploy_user;
+GRANT DDL ON DATABASE factory_a TO ci_deploy_user;
 
 -- DBA 계정: 모든 데이터베이스 권한 부여
-GRANT ALL ON machbasedb TO dba_user;
+GRANT ALL ON DATABASE factory_a TO dba_user;
 
 -- 특정 프로젝트 종료 후 권한 회수
-REVOKE ALL ON machbasedb FROM ci_deploy_user;
+REVOKE ALL ON DATABASE factory_a FROM ci_deploy_user;
 ```
 
 <a id="privileges-grant-exclude"></a>
@@ -739,15 +748,15 @@ REVOKE ALL ON machbasedb FROM ci_deploy_user;
 
 | 권한 | 부여 구문 |
 |---|---|
-| `ALTER` | `GRANT ALTER ON machbasedb TO user;` |
-| `BACKUP` | `GRANT BACKUP ON machbasedb TO user;` |
-| `MOUNT` | `GRANT MOUNT ON machbasedb TO user;` |
+| `ALTER` | `GRANT ALTER ON DATABASE factory_a TO user;` |
+| `BACKUP` | `GRANT BACKUP ON DATABASE factory_a TO user;` |
+| `MOUNT` | `GRANT MOUNT ON DATABASE MACHBASEDB TO user;` |
 
 ```sql
 -- 기본 제외 권한 부여 예시
-GRANT ALTER ON machbasedb TO ops_user;
-GRANT BACKUP ON machbasedb TO backup_user;
-GRANT MOUNT ON machbasedb TO mount_user;
+GRANT ALTER ON DATABASE factory_a TO ops_user;
+GRANT BACKUP ON DATABASE factory_a TO backup_user;
+GRANT MOUNT ON DATABASE MACHBASEDB TO mount_user;
 ```
 
 ### 객체 소유권과 권한
@@ -822,7 +831,7 @@ GRANT INSERT ON sys.sensor_tag TO collector_user;
 |---|---|
 | 테이블명만 | `GRANT SELECT ON sensor_log TO user1` |
 | 스키마.테이블명 | `GRANT SELECT ON sys.sensor_log TO user1` |
-| DB명.스키마명.테이블명 | `GRANT SELECT ON machbasedb.sys.sensor_log TO user1` |
+| DB명.스키마명.테이블명 | `GRANT SELECT ON TABLE factory_a.sys.sensor_log TO user1` |
 
 ### 권한 부여 예제
 
@@ -960,7 +969,7 @@ ALTER USER old_employee IDENTIFIED BY '!DISABLED!ACCOUNT!';
 REVOKE ALL ON sys.sensor_log FROM old_employee;
 
 -- 데이터베이스 권한 전체 취소
-REVOKE ALL ON machbasedb FROM old_employee;
+REVOKE ALL ON DATABASE factory_a FROM old_employee;
 
 -- 해당 사용자가 소유한 객체를 다른 사용자에게 이관 후 계정 삭제
 -- (소유 테이블이 있는 경우 먼저 DROP TABLE 또는 소유권 이전 필요)

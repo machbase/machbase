@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.8.6 SDK별 기능 지원표'
+title: '18.8.6 SDK별 기능 지원표'
 weight: 60
 toc: true
 ---
@@ -9,21 +9,23 @@ Machbase는 다양한 프로그래밍 언어와 프로토콜을 위한 SDK를 �
 
 ## SDK별 주요 기능 지원 현황
 
-| SDK | Append | AUTH KEY | Transaction API | Server Prepared | Named Bind API | Nullable 메타데이터 |
-|-----|:------:|:--------:|:---------------:|:---------------:|:--------------:|:-------------------:|
-| **JDBC** | O | O | O | O | O | O |
-| **Python** | O | X | X | O | O | O |
-| **Go (native)** | O | X | △ | O | O | O |
-| **Go (database/sql)** | X | X | O | O | O | O |
-| **.NET** | O | X | X | X | △ | O |
-| **Node.js** | O | X | X | O | O | O |
-| **REST API** | O | X | X | X | X | X |
-| **ODBC/CLI** | O | O | △ | O | △ | O |
+| SDK | Append | AUTH KEY | Transaction API | Server Prepared | Named Bind API | Nullable 메타데이터 | 초기 database |
+|-----|:------:|:--------:|:---------------:|:---------------:|:--------------:|:-------------------:|:--------------:|
+| **JDBC** | O | O | O | O | O | O | O |
+| **Python** | O | X | X | O | O | O | O |
+| **Go (native)** | O | X | △ | O | O | O | `api.WithDatabase()` 또는 SQL `USE` |
+| **Go (database/sql)** | △ | X | O | O | O | O | DSN `database`/`db`, URL path/query |
+| **.NET** | O | X | X | X | △ | O | O (initial) |
+| **Node.js** | O | X | X | O | O | O | O |
+| **REST API** | O | X | X | X | X | X | X |
+| **ODBC/CLI** | O | O | △ | O | △ | O | O |
 
 > 기호: O = 지원, △ = SDK별로 제한된 방식으로 지원, X = 미지원
 >
 > Go `database/sql`의 Transaction API는 기본 isolation level의 읽기/쓰기 트랜잭션에 한하며,
-> named bind와 DECIMAL/NULL 메타데이터는 neo-client 8.6 API 및 protocol 4.0.3 이상을 기준으로 합니다.
+> named bind와 DECIMAL/NULL/PRIMARY KEY 메타데이터는 neo-client 8.6 API 및 protocol 4.0.3 이상을 기준으로 합니다.
+> Go `database/sql`의 Append는 표준 `sql.DB`/`sql.Tx` API에 없지만, neo-client의 `machbase.Conn.Appender()`를
+> `sql.Conn.Raw()`에서 선택적으로 사용할 수 있습니다. 신규 대량 입력에는 native `machgo`를 권장합니다.
 >
 > Python 2.4는 `cursor(prepared=True)`로 동일 SQL의 server statement를 여러
 > `execute()`와 `executemany()` 호출에서 재사용합니다. 일반 cursor의 기존 일회성 실행
@@ -33,15 +35,21 @@ Machbase는 다양한 프로그래밍 언어와 프로토콜을 위한 SDK를 �
 
 ## 기능별 상세 안내
 
-각 기능의 SDK별 상세 지원 내용은 11장 SDK별 지원 범위 안내에서 확인하십시오.
+다중 데이터베이스는 Standard Edition에서 지원합니다. client별 초기 database 선택과
+catalog 변경, connection pool 주의사항은 [다중 데이터베이스 운영 가이드](/dbms/operations-configuration-recovery/multi-database/#9-client에서-데이터베이스-선택)를
+참조하십시오. protocol 4.0.3 미만 client/server 조합에서는 비기본 database 선택을
+보장하지 않습니다.
+
+각 기능의 SDK별 상세 지원 내용은 [11장 개발 도구 연동의 SDK 지원 범위](/dbms/development-tools-integration/#sdk)에서 확인하십시오.
 
 | 기능 | 참조 페이지 |
 |------|-----------|
-| Append API | [SDK별 APPEND 지원 범위 안내](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-append) |
-| AUTH KEY 인증 | [SDK별 AUTH KEY 지원 범위 안내](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-auth-key) |
-| Transaction / Prepared Statement | [SDK별 transaction / prepare / bind 지원 범위 안내](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-transaction-prepare-bind) |
+| Append API | [SDK별 APPEND 지원 범위 안내](/dbms/development-tools-integration/#support-scope-sdk-append) |
+| AUTH KEY 인증 | [SDK별 AUTH KEY 지원 범위 안내](/dbms/development-tools-integration/#support-scope-sdk-auth-key) |
+| Transaction / Prepared Statement | [SDK별 transaction / prepare / bind 지원 범위 안내](/dbms/development-tools-integration/#support-scope-sdk-transaction-prepare-bind) |
 | Named Bind Parameter | [Named Bind Parameter syntax](/dbms/reference/sql/syntax-dictionary-sql/named-bind-parameter-syntax/) |
-| Nullable 메타데이터 | [SELECT 결과 Nullable 메타데이터 지원](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-nullable-metadata) |
+| Nullable 메타데이터 | [SELECT 결과 Nullable 메타데이터 지원](/dbms/development-tools-integration/#support-scope-sdk-nullable-metadata) |
+| PRIMARY KEY 메타데이터 | [SELECT 결과·카탈로그 PRIMARY KEY 지원](/dbms/development-tools-integration/#support-scope-sdk-primary-key-metadata) |
 
 ## 주요 제약 사항
 
@@ -82,6 +90,15 @@ Go native는 `api.Column.Nullability`, Go `database/sql`은 `Rows.ColumnTypeNull
 SELECT 결과 컬럼의 Nullable 상태를 조회할 수 있습니다. 두 API 모두 서버가 정보를 알 수
 없는 경우 unknown 상태를 반환할 수 있으므로 실제 scan에는 nullable 대상 타입을 사용합니다.
 REST API에는 결과 메타데이터 API가 없습니다.
+
+### PRIMARY KEY 결과 메타데이터
+
+Go native는 `api.Column.PrimaryKey`로 직접 컬럼의 PK 상태를 확인할 수 있습니다. Go
+`database/sql`의 표준 `ColumnType`에는 PK 메서드가 없으므로 native API 또는 카탈로그 SQL을
+사용합니다. JDBC, Python, Node.js, .NET, ODBC는 각각의 결과 메타데이터 또는 카탈로그 API로
+PK를 조회할 수 있습니다. 상세한 API 이름과 직접 컬럼·표현식의 차이는
+[PRIMARY KEY 메타데이터 지원 범위](/dbms/development-tools-integration/#support-scope-sdk-primary-key-metadata)를
+참고하십시오.
 
 ## SDK 선택 가이드
 

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.4.2 machsql 명령/옵션 사전'
+title: '18.4.2 machsql 명령/옵션 사전'
 weight: 20
 toc: true
 ---
@@ -27,6 +27,7 @@ machsql -h
 | `-z` | `--timezone` | - | 타임존 설정. 예: `+0900`, `-1230` |
 | `-n` | `--nls` | - | NLS 설정 |
 | `-c` | `--connstr` | - | 추가 연결 매개변수 문자열 (6.1 이상) |
+| `-D` | `--database` | `MACHBASEDB` | 연결 직후 사용할 논리 데이터베이스 (8.6.0 Standard) |
 | `-i` | `--silent` | - | 저작권 배너 없이 실행 |
 | `-v` | `--verbose` | - | 상세 출력 |
 | `-x` | `--testing` | - | 테스트 모드로 실행 |
@@ -111,6 +112,26 @@ machsql -s 127.0.0.1 -u SYS -p MANAGER
 
 `-c` 옵션이 환경변수보다 우선 적용됩니다.
 
+## 논리 데이터베이스 선택
+
+Machbase 8.6.0 Standard Edition에서는 `-D` 또는 `--database`로 연결 직후 사용할
+논리 데이터베이스를 지정할 수 있습니다.
+
+```bash
+machsql -s 127.0.0.1 -u app_a -p 'AppA#1234' -D factory_a
+machsql -s 127.0.0.1 -u app_a -p 'AppA#1234' --database=factory_a
+```
+
+`-c` 연결 문자열을 사용할 때는 `DATABASE=factory_a` 또는 호환 별칭인
+`DBNAME=factory_a`를 지정할 수 있습니다. `-D`와 연결 문자열의 database 값이 다르면
+연결을 거부하므로 하나만 지정하거나 같은 값을 사용하십시오. 연결 후 다음 SQL로 실제
+server catalog를 확인합니다.
+
+```sql
+SELECT CURRENT_DATABASE();
+SHOW CURRENT DATABASE;
+```
+
 ## machsql 내장 명령
 
 machsql 프롬프트(`Mach>`)에서 사용할 수 있는 내장 명령입니다.
@@ -129,6 +150,23 @@ machsql 프롬프트(`Mach>`)에서 사용할 수 있는 내장 명령입니다.
 | `SHOW STATEMENTS` | 서버에 등록된 쿼리 목록 출력 |
 | `SHOW USERS` | 사용자 목록 출력 |
 | `SHOW LICENSE` | 라이선스 정보 출력 |
+| `SHOW DATABASES` | active/mounted 데이터베이스 목록 출력 |
+| `SHOW CURRENT DATABASE` | 현재 session의 데이터베이스 출력 |
+
+## DESC와 PRIMARY KEY 메타데이터
+
+`DESC table_name`은 컬럼과 인덱스 정보에 이어 `[ PRIMARY KEY ]` 섹션을 표시합니다. 이
+섹션에서 PRIMARY KEY 이름, 컬럼 이름, key sequence를 확인할 수 있습니다. TRANSACTION·
+LOOKUP·VOLATILE 테이블의 선언된 PK와 TAG 테이블의 `NAME`이 대상이며, 일반 LOG 테이블에는
+PK 행이 표시되지 않습니다.
+
+```sql
+DESC ACCOUNT;
+```
+
+이 출력은 SELECT 결과 컬럼 메타데이터와 별개입니다. SDK에서 SELECT 결과의 PK 여부를
+확인하려면 [PRIMARY KEY 메타데이터 지원 범위](/dbms/development-tools-integration/#support-scope-sdk-primary-key-metadata)를
+참고하십시오.
 
 ## Named Bind Parameter
 

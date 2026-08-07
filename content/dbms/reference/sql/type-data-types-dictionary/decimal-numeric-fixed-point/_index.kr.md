@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.1.2.2 DECIMAL과 NUMERIC 고정소수점 타입'
+title: '18.1.2.2 DECIMAL과 NUMERIC 고정소수점 타입'
 weight: 20
 toc: true
 ---

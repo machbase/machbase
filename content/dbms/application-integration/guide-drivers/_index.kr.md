@@ -1,10 +1,15 @@
 ---
 type: docs
-title: '11.3 드라이버별 가이드'
+title: '12.3 드라이버별 가이드'
 weight: 30
 toc: true
 ---
 Machbase에 연결하기 위한 각 드라이버 및 SDK의 사용 방법을 다룹니다. C/C++ 네이티브 환경부터 Java, Python, Go 등 다양한 언어별 연결 방식을 제공합니다.
+
+Machbase 8.6.0 Standard Edition에서는 하나의 인스턴스에 여러 logical database를 둘 수
+있습니다. 초기 database 옵션과 `USE`, 3-part table 이름, pool/handle binding 규칙은
+[다중 데이터베이스 운영 가이드](/dbms/operations-configuration-recovery/multi-database/)를
+먼저 확인하십시오. 연결 직후 `CURRENT_DATABASE()`를 실행해 server catalog를 검증합니다.
 
 ## 지원 드라이버 목록
 
@@ -13,7 +18,7 @@ Machbase에 연결하기 위한 각 드라이버 및 SDK의 사용 방법을 다
 | [CLI/ODBC](/dbms/application-integration/guide-drivers/#cli-odbc) | C / C++ | 네이티브 라이브러리 | 지원 | 직접 연결과 Append API 제공 |
 | JDBC | Java | TCP/IP | 지원 | 표준 JDBC 인터페이스. `MachStatement` Append API 제공 |
 | Python | Python | TCP/IP | 지원 | `machbaseAPI` 패키지 제공. 데이터 분석 환경에 적합 |
-| Go | Go | TCP/IP | native만 지원 | `machgo` Appender 제공. `database/sql`은 표준 SQL 인터페이스용 |
+| Go | Go | TCP/IP | native 기본, SQL driver 확장 가능 | `machgo` Appender 제공. `database/sql`은 표준 SQL과 `sql.Conn.Raw()` Appender 확장 제공 |
 | Node.js | JavaScript / TypeScript | TCP/IP | 지원 | `@machbase/ts-client` 패키지 제공 |
 | REST API | 모든 언어 | HTTP | 지원 | `/machbase` POST Append 지원. 별도 드라이버 불필요 |
 
@@ -1720,7 +1725,7 @@ try (PreparedStatement pstmt = conn.prepareStatement(
 commit과 rollback 후에도 auto-commit은 `false`로 유지됩니다. commit은 열린 ResultSet을
 닫지만 Statement와 PreparedStatement는 재사용할 수 있습니다. 테이블 종류별 동작과
 커넥션 풀 초기화 규칙은
-[JDBC 트랜잭션과 커넥션 풀](/dbms/reference/sdk-api/jdbc/transaction-pooling/)을
+[JDBC 트랜잭션과 커넥션 풀](/dbms/development-tools-integration/jdbc/transaction-pooling/)을
 참고합니다.
 
 ### Append API
@@ -1932,7 +1937,7 @@ public class FullExample {
 - Append에서 DATETIME 값은 반드시 나노초 단위 `long`으로 전달해야 합니다.
 
 JDBC 4.2의 전체 타입, metadata, pool과 문제 해결 정보는
-[JDBC 레퍼런스](/dbms/reference/sdk-api/jdbc/)를 참고합니다.
+[JDBC 레퍼런스](/dbms/development-tools-integration/jdbc/)를 참고합니다.
 
 <a id="python"></a>
 
@@ -2183,7 +2188,7 @@ server statement 하나를 보유하므로 SQL 문자열이 달라지면 이전 
 여러 SQL을 각각 유지하려면 SQL별 cursor를 생성하고, 사용 후 `close()`로 닫습니다.
 
 marker 변환, 재사용, 오류와 종료 동작은
-[Python Prepared Cursor](../../reference/sdk-api/python/#prepared-cursor-24)를 참고하십시오.
+[Python Prepared Cursor](../../development-tools-integration/python/#prepared-cursor-24)를 참고하십시오.
 
 ### 에러 처리
 
@@ -2543,7 +2548,7 @@ main().catch(err => console.error('Error:', err));
 | `port` | number | `5656` | 리스너 포트 |
 | `user` | string | – | 데이터베이스 사용자 |
 | `password` | string | – | 비밀번호 |
-| `database` | string | `data` | 데이터베이스 이름 |
+| `database` | string | `MACHBASEDB` | 초기 logical database 이름 |
 | `clientId` | string | `NPM` | 서버 로그에 표시될 클라이언트 ID |
 | `showHiddenColumns` | boolean | `false` | 숨김 컬럼 포함 여부 |
 | `timezone` | string | 빈 값 | 타임존 식별자 |
@@ -3433,6 +3438,7 @@ go get github.com/machbase/neo-client@latest
 - **네이티브 프로토콜**: Machbase 네이티브 포트(기본 `5656`)로 직접 연결
 - **Append API**: 고속 대량 삽입을 위한 전용 인터페이스
 - **세밀한 튜닝**: 연결별 FetchRows, StatementCache 설정 가능
+- **PRIMARY KEY 메타데이터**: `Rows.Columns()`와 `Row.Columns()`에서 직접 컬럼의 PK 상태 확인
 
 #### 설치 {#install}
 
@@ -3486,12 +3492,21 @@ if err != nil {
 ```go
 ctx := context.Background()
 
-conn, err := mdb.Connect(ctx, api.WithPassword("sys", "manager"))
+conn, err := mdb.Connect(
+    ctx,
+    api.WithPassword("sys", "manager"),
+    api.WithDatabase("FACTORY_A"),
+)
 if err != nil {
     log.Fatal(err)
 }
 defer conn.Close()
 ```
+
+`api.WithDatabase(database)`는 연결 직후 초기 database를 선택합니다. 연결 후 `USE`로
+database를 바꿀 수 있으며, 다른 database의 Append 대상은 `database.owner.table` 세 부분
+이름으로 지정합니다. 세부 동작과 CMI 4.0.3 호환 조건은
+[Go SDK 문서](/dbms/development-tools-integration/go/)를 참조하십시오.
 
 {{< callout type="warning" >}}
 리소스 해제를 위해 연결에는 항상 `Close()`를 호출하십시오. `defer conn.Close()` 패턴을 권장합니다.
@@ -3802,6 +3817,14 @@ Statement 캐시를 추가하는 경우:
 server=tcp://sys:manager@127.0.0.1:5656;fetch_rows=1000;statement_cache=auto
 ```
 
+초기 database는 key-value의 `database`/`db`, URL path 또는 URL query로 지정할 수 있습니다.
+
+```text
+server=tcp://sys:manager@127.0.0.1:5656;database=FACTORY_A
+tcp://sys:manager@127.0.0.1:5656/FACTORY_A
+tcp://sys:manager@127.0.0.1:5656?database=FACTORY_A
+```
+
 ##### 지원되는 DSN 키
 
 | 키 | 설명 | 예시 |
@@ -3810,6 +3833,7 @@ server=tcp://sys:manager@127.0.0.1:5656;fetch_rows=1000;statement_cache=auto
 | `host`, `port` | 호스트와 포트를 별도로 지정 | `host=127.0.0.1;port=5656` |
 | `user` | 로그인 사용자 | `user=sys` |
 | `password` | 로그인 비밀번호 | `password=manager` |
+| `database`, `db` | 새 physical connection의 초기 database | `database=FACTORY_A` |
 | `fetch_rows` | 한 번의 round trip에서 가져올 행 수. 현재 드라이버에서는 명시 필요 | `fetch_rows=2000` |
 | `statement_cache` | Statement 캐시 모드: `auto`, `on`, `off` | `statement_cache=auto` |
 | `io_metrics` | I/O metrics 활성화: `true`, `false` | `io_metrics=true` |
@@ -4010,7 +4034,8 @@ if err == sql.ErrNoRows {
 | bool 파라미터 | 미지원. 정수(`0`/`1`)로 대체 |
 | 지원 타입 | 일반 SQL 타입, `time.Time`, `[]byte`, `net.IP`, `api.Decimal` |
 | Nullable 메타데이터 | `Rows.ColumnTypeNullable()` 지원. 알 수 없는 경우 `ok=false` 반환 |
-| Append API | `database/sql` 인터페이스를 통해서는 Append 사용 불가. 필요 시 [Go 클라이언트](#go) 사용 |
+| PRIMARY KEY 메타데이터 | 표준 `database/sql.ColumnType`에는 PK API가 없음. 필요하면 Go native `api.Column.PrimaryKey` 또는 카탈로그 조회 사용 |
+| Append API | 표준 `sql.DB`/`sql.Tx`에는 없음. `sql.Conn.Raw()`의 `machbase.Conn.Appender()` 확장 또는 [Go 클라이언트](#go) 사용 |
 
 <a id="r-rodbc"></a>
 

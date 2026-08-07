@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '12.10 쿼리와 분석'
+title: '13.10 쿼리와 분석'
 weight: 100
 toc: true
 ---

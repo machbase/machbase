@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.6.3 /machiot TAG/Datapoints API'
+title: '18.6.3 /machiot TAG/Datapoints API'
 weight: 30
 toc: true
 ---

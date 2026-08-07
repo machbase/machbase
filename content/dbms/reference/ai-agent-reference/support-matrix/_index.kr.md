@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.10.4 support-matrix'
+title: '18.10.4 support-matrix'
 weight: 40
 toc: true
 ---
@@ -21,6 +21,7 @@ toc: true
 | ROLLUP | O | O |
 | ROLLUP_REBUILD | O | X |
 | STREAM | O | X |
+| 논리 다중 데이터베이스 | O | X |
 | MOUNT / UMOUNT | O | X |
 | 수평 확장 (Scale-out) | X | O |
 | HA (고가용성) | X | O |
@@ -53,12 +54,15 @@ toc: true
 | JDBC | O | O | O | O | O | O |
 | Python (machbaseAPI) | O | X | X | O² | O | O |
 | Go (machgo / native) | O | X | △³ | O | O | O |
-| Go (database/sql) | X | X | O | O | O | O |
+| Go (database/sql) | △ | X | O | O | O | O |
 | .NET (MachConnector) | O | X | X | X | △⁴ | O |
 | Node.js | O | X⁵ | X | O | O | O |
 | REST API | O | X | X | X | X | X |
 | ODBC/CLI | O | O | △ | O | △⁶ | O |
 | R (RODBC) | X | X | X | X | X | X |
+
+> Go `database/sql`의 Append `△`는 표준 `sql.DB`/`sql.Tx` 기능이 아니라
+> `sql.Conn.Raw()`에서 `machbase.Conn.Appender()`를 호출하는 neo-client 확장입니다.
 
 > ² Python machbaseAPI 2.4는 `cursor(prepared=True)`로 동일 SQL의 server statement를
 > 여러 `execute()`와 `executemany()` 호출에서 재사용합니다. cursor 하나는 statement
@@ -74,3 +78,24 @@ toc: true
 > `BEGIN` 또는 해당 transaction 제어 API의 지원 범위를 확인합니다.
 > Nullable Metadata의 O는 SELECT 결과 컬럼 조회를 의미합니다. Go native는
 > `api.Column.Nullability`, Go `database/sql`은 `Rows.ColumnTypeNullable()`을 사용합니다.
+
+## PRIMARY KEY 메타데이터 지원
+
+위의 테이블 타입별 `PRIMARY KEY` 행은 스키마 정의 지원을 나타냅니다. SELECT 결과 컬럼의
+PRIMARY KEY 메타데이터는 SDK별 API가 별도로 제공됩니다.
+
+| SDK | 결과 컬럼 PK 메타데이터 | 테이블 카탈로그 PK |
+|-----|:----------------------:|:------------------:|
+| JDBC | O | O |
+| Python (machbaseAPI) | O | 카탈로그 SQL |
+| Go (machgo / native) | O | 카탈로그 SQL |
+| Go (database/sql) | 표준 API 없음 | 카탈로그 SQL |
+| .NET (MachConnector40) | O | 카탈로그 SQL |
+| Node.js | O | 카탈로그 SQL |
+| ODBC | 별도 표준 API 없음 | `SQLPrimaryKeys()` |
+| SQLCLI | 별도 표준 API 없음 | 카탈로그 SQL |
+| REST API | X | X |
+
+결과 컬럼 PK 플래그는 직접 참조한 PK 컬럼과 TAG `NAME`에만 적용되며, 표현식·집계식·외부
+조인의 NULL 공급 측 컬럼에는 적용되지 않습니다. Machbase 8.6.0의 CMI 4.0.3 협상 시
+플래그를 사용하고, 구형 프로토콜에서는 기존 호환성을 유지합니다.

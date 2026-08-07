@@ -1,11 +1,17 @@
 ---
 type: docs
-title: '17.3.1 메타 테이블 사전'
+title: '18.3.1 메타 테이블 사전'
 weight: 10
 toc: true
 ---
 
 메타 테이블은 `M$` 접두사를 가지며 Machbase 스키마 정보(테이블 정의, 컬럼, 인덱스, 사용자 등)를 조회합니다. DDL 명령 실행 결과가 자동으로 반영되며 읽기 전용입니다.
+
+8.6.0 Standard Edition의 다중 데이터베이스에서는 catalog-local metadata를 조인할 때
+`DATABASE_ID`, `TABLESPACE_ID`와 parent object ID를 함께 사용해야 합니다. 논리
+`DATABASE_ID`와 물리 `TABLESPACE_ID`는 서로 대체할 수 없습니다. 자세한 내용은
+[다중 데이터베이스 운영 가이드](/dbms/operations-configuration-recovery/multi-database/#103-object-metadata를-안전하게-조인)를
+참조하십시오.
 
 ## 메타 테이블 목록
 
@@ -34,6 +40,8 @@ toc: true
 | `NAME` | VARCHAR | 테이블 이름 |
 | `TYPE` | INTEGER | 테이블 타입 |
 | `ID` | INTEGER | 테이블 식별자 |
+| `DATABASE_ID` | INTEGER | 논리 데이터베이스 식별자 |
+| `TABLESPACE_ID` | INTEGER | 물리 tablespace 식별자 |
 | `USER_ID` | INTEGER | 테이블 생성 사용자 식별자 |
 | `COLCOUNT` | INTEGER | 컬럼 수 |
 | `FLAG` | INTEGER | 서브 타입 (1: Tag Data, 2: Rollup, 4: Tag Meta, 8: Tag Stat) |
@@ -58,6 +66,8 @@ toc: true
 | `NAME` | VARCHAR | 컬럼명 |
 | `TYPE` | INTEGER | 컬럼 데이터 타입 |
 | `TABLE_ID` | INTEGER | 소속 테이블 식별자 |
+| `DATABASE_ID` | INTEGER | 논리 데이터베이스 식별자 |
+| `TABLESPACE_ID` | INTEGER | 물리 tablespace 식별자 |
 | `LENGTH` | INTEGER | 컬럼 최대 길이 |
 | `PART_PAGE_COUNT` | INTEGER | 파티션당 페이지 수 |
 | `MINMAX_CACHE_SIZE` | INTEGER | MIN-MAX 캐시 크기 |
@@ -71,6 +81,8 @@ toc: true
 | `NAME` | VARCHAR | 인덱스 이름 |
 | `TYPE` | INTEGER | 인덱스 타입 |
 | `TABLE_ID` | INTEGER | 소속 테이블 식별자 |
+| `DATABASE_ID` | INTEGER | 논리 데이터베이스 식별자 |
+| `TABLESPACE_ID` | INTEGER | 물리 tablespace 식별자 |
 | `COLCOUNT` | INTEGER | 인덱스 컬럼 수 |
 | `MAX_LEVEL` | INTEGER | 최대 LSM 레벨 |
 
@@ -109,14 +121,20 @@ SELECT name FROM m$sys_tables WHERE type = 6;
 -- 특정 테이블의 컬럼 목록
 SELECT c.name AS col_name, c.type AS col_type, c.length
   FROM m$sys_columns c
-  JOIN m$sys_tables  t ON c.table_id = t.id
+  JOIN m$sys_tables  t
+    ON c.database_id = t.database_id
+   AND c.tablespace_id = t.tablespace_id
+   AND c.table_id = t.id
  WHERE t.name = 'SENSOR_TAG'
  ORDER BY c.id;
 
 -- 특정 테이블의 인덱스 목록
 SELECT i.name AS idx_name, i.type AS idx_type, i.colcount
   FROM m$sys_indexes i
-  JOIN m$sys_tables  t ON i.table_id = t.id
+  JOIN m$sys_tables  t
+    ON i.database_id = t.database_id
+   AND i.tablespace_id = t.tablespace_id
+   AND i.table_id = t.id
  WHERE t.name = 'SENSOR_TAG';
 
 -- 인덱스를 구성하는 컬럼 확인

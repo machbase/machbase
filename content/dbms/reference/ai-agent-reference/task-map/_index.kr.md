@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.10.3 task-map'
+title: '18.10.3 task-map'
 weight: 30
 toc: true
 ---
@@ -8,6 +8,15 @@ toc: true
 이 페이지는 사용자 태스크별 수행 방법과 참조 문서를 매핑합니다. AI 에이전트가 "어떻게 X를 하나요?" 유형의 질문에 답할 때 참조합니다.
 
 ## 데이터 저장
+
+## 다중 데이터베이스
+
+| 태스크 | 수행 방법 | 참조 문서 |
+|--------|-----------|-----------|
+| 논리 데이터베이스 생성 | `CREATE DATABASE` 후 `GRANT CONNECT`와 table 권한 부여 | [다중 데이터베이스](/dbms/operations-configuration-recovery/multi-database/) |
+| 현재 데이터베이스 선택 | `USE database_name`, `CURRENT_DATABASE()` 확인 | [DATABASE 문법](/dbms/reference/sql/syntax-dictionary-sql/database-syntax/) |
+| 다른 database의 table 조회 | `database.owner.table` 3-part 이름과 target 권한 사용 | [다중 데이터베이스](/dbms/operations-configuration-recovery/multi-database/#43-다른-데이터베이스를-직접-조회) |
+| backup catalog 조회 | 단일 active catalog를 `MOUNT DATABASE`하고 `USAGE` + table `SELECT` 부여 | [백업·복원·마운트](/dbms/operations-configuration-recovery/backup-restore-mount/) |
 
 | 태스크 | 수행 방법 | 참조 문서 |
 |--------|-----------|-----------|
@@ -29,7 +38,7 @@ toc: true
 | 시계열 보간 / 시리즈 분석 | `SERIES BY` 절 사용 | [SELECT 문법](../../../reference/sql/syntax-dictionary-sql/select-syntax/) |
 | 복수 태그 비교 조회 | `FROM TAG TABLE t WHERE name IN (...)` | [TAG 테이블](/dbms/tag-table-usage/) |
 | 집계 결과 빠른 조회 | ROLLUP 결과 테이블 SELECT | [ROLLUP](/dbms/tag-rollup-usage/overview-use-criteria/#rollup) |
-| SELECT 결과 컬럼의 NULL 가능 여부 확인 | SDK 결과 메타데이터의 `NO_NULLS`, `NULLABLE`, `UNKNOWN` 확인 | [Nullable 메타데이터 지원](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-nullable-metadata) |
+| SELECT 결과 컬럼의 NULL 가능 여부 확인 | SDK 결과 메타데이터의 `NO_NULLS`, `NULLABLE`, `UNKNOWN` 확인 | [Nullable 메타데이터 지원](/dbms/development-tools-integration/#support-scope-sdk-nullable-metadata) |
 
 ## 사용자 / 보안
 

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '12.8 Input Performance and Integration Paths'
+title: '13.8 Input Performance and Integration Paths'
 weight: 80
 toc: true
 ---
@@ -13,8 +13,8 @@ toc: true
 
 <a id="path-guide-rest"></a>
 
-## REST 입력 경로 안내 (상세는 11장으로 연결)
+## REST 입력 경로 안내 (상세는 12장으로 연결)
 
 <a id="path-guide-sdk"></a>
 
-## SDK 입력 경로 안내 (상세는 11장으로 연결)
+## SDK 입력 경로 안내 (상세는 11장과 12장으로 연결)

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.10.2 canonical-url-map'
+title: '18.10.2 canonical-url-map'
 weight: 20
 toc: true
 ---
@@ -21,6 +21,7 @@ toc: true
 | STREAM | `/dbms/core-concepts/features-concepts/#processing-model-stream` |
 | Append (개념) | `/dbms/application-integration/concepts-common/#append-api-batch` |
 | AUTH KEY | `/dbms/security-access-control/authentication-auth-key/` |
+| 다중 데이터베이스 | `/dbms/operations-configuration-recovery/multi-database/` |
 
 ## 데이터 입력
 
@@ -31,20 +32,21 @@ toc: true
 | Collector | `/dbms/operations-configuration-recovery/collector/` |
 | Fluentd 플러그인 | `/dbms/application-integration/external-tools/#fluentd-plugin` |
 
-## 드라이버 가이드
+## 개발 도구 API와 실무 가이드
 
 | SDK | 정규 URL |
 |-----|----------|
-| JDBC | `/dbms/application-integration/guide-drivers/#jdbc` |
-| Python (machbaseAPI) | `/dbms/application-integration/guide-drivers/#python` |
-| Go (native / machgo) | `/dbms/application-integration/guide-drivers/#go` |
-| Go (database/sql) | `/dbms/application-integration/guide-drivers/#go-go-sql` |
-| .NET (MachConnector) | `/dbms/application-integration/guide-drivers/#net-connector` |
-| Node.js | `/dbms/application-integration/guide-drivers/#node-js-typescript` |
-| ODBC/CLI | `/dbms/application-integration/guide-drivers/#cli-odbc` |
-| REST API | `/dbms/application-integration/rest-api/` |
-| SDK 지원 범위 전체 | `/dbms/application-integration/support-scope-sdk/` |
-| Nullable 메타데이터 지원 | `/dbms/application-integration/support-scope-sdk/#support-scope-sdk-nullable-metadata` |
+| JDBC API | `/dbms/development-tools-integration/jdbc/` |
+| Python API | `/dbms/development-tools-integration/python/` |
+| Go API (native / machgo) | `/dbms/development-tools-integration/go/` |
+| .NET API (MachConnector) | `/dbms/development-tools-integration/net-connector/` |
+| Node.js API | `/dbms/development-tools-integration/node-js-typescript/` |
+| ODBC/CLI API | `/dbms/development-tools-integration/cli-odbc/` |
+| 실무 드라이버 가이드 | `/dbms/application-integration/guide-drivers/` |
+| REST API 레퍼런스 | `/dbms/reference/rest-api/` |
+| REST API 실무 가이드 | `/dbms/application-integration/rest-api/` |
+| SDK 지원 범위 전체 | `/dbms/development-tools-integration/#sdk` |
+| Nullable 메타데이터 지원 | `/dbms/development-tools-integration/#support-scope-sdk-nullable-metadata` |
 | Named Bind Parameter | `/dbms/reference/sql/syntax-dictionary-sql/named-bind-parameter-syntax/` |
 
 ## 운영
@@ -58,6 +60,7 @@ toc: true
 | 설정 레퍼런스 | `/dbms/reference/configuration/` |
 | ROLLUP 운영 | `/dbms/tag-rollup-usage/` |
 | STREAM 운영 | `/dbms/operations-configuration-recovery/automation-stream/#stream` |
+| 논리 database 문법 | `/dbms/reference/sql/syntax-dictionary-sql/database-syntax/` |
 
 ## 보안
 
@@ -78,6 +81,7 @@ toc: true
 | SELECT | `/dbms/reference/sql/syntax-dictionary-sql/select-syntax/` |
 | WITH / CTE (Standard Edition) | `/dbms/reference/sql/syntax-dictionary-sql/cte-syntax/` |
 | Named Bind Parameter | `/dbms/reference/sql/syntax-dictionary-sql/named-bind-parameter-syntax/` |
+| DATABASE lifecycle / USE | `/dbms/reference/sql/syntax-dictionary-sql/database-syntax/` |
 | 내장 함수 | `/dbms/reference/sql/dictionary/` |
 | 데이터 타입 | `/dbms/reference/sql/type-data-types-dictionary/` |
 | 에러 코드 | `/dbms/reference/error-dictionary-codes/` |

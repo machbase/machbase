@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '13.5 STREAM Automation'
+title: '14.6 STREAM Automation'
 weight: 50
 toc: true
 ---

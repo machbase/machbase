@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '13.9 백업, 복원, 마운트'
-weight: 90
+title: '14.10 백업, 복원, 마운트'
+weight: 100
 toc: true
 ---
 운영 환경에서 데이터를 보호하고 필요 시 복구하기 위한 세 가지 핵심 기능 -- 백업, 복원, 마운트 -- 을 다룹니다.
@@ -21,11 +21,17 @@ toc: true
 
 ### 복원 (RESTORE)
 
-백업 데이터를 현재 데이터베이스로 복구합니다. 복원은 오프라인 상태(서버 중단)에서만 수행할 수 있으며, `machadmin -r` 명령을 사용합니다. 복원을 실행하면 현재 데이터베이스의 내용이 백업 시점으로 교체되므로 사전에 현재 데이터를 별도로 백업해 두어야 합니다.
+기존 인스턴스 전체 복원은 오프라인 상태에서 `machadmin -r`로 수행합니다. 8.6.0 Standard
+Edition에서는 [다중 데이터베이스](/dbms/operations-configuration-recovery/multi-database/)의
+논리 catalog를 named `RESTORE DATABASE`로 새 database에 복원하거나 READ ONLY target으로
+교체할 수도 있습니다.
 
 ### 마운트 (MOUNT)
 
-서버를 중단하거나 복원 작업 없이, 백업 데이터베이스를 읽기 전용으로 현재 서버에 연결합니다. 마운트된 데이터베이스는 별도의 이름(스키마)으로 접근하며, 기존 운영 데이터와 동시에 조회할 수 있습니다. 특정 시점의 데이터를 확인하거나 아카이브된 데이터에서 일부 레코드를 추출할 때 유용합니다.
+서버를 중단하거나 복원 작업 없이, 단일 active catalog backup을 mounted database로
+읽기 전용 연결합니다. mounted database는 schema가 아니라 별도 database alias이며,
+`USE`할 수 없습니다. 기존 active database와 동시에 조회하려면 세 부분 이름과 대상
+database `USAGE` 및 table `SELECT` 권한이 필요합니다.
 
 ## 섹션 구성
 
@@ -51,10 +57,10 @@ Machbase 8.5 이상에서는 일반 사용자가 백업과 마운트를 실행�
 
 ```sql
 -- 백업 권한 부여
-GRANT BACKUP ON machbasedb TO user_name;
+GRANT BACKUP ON DATABASE factory_a TO user_name;
 
 -- 마운트 권한 부여
-GRANT MOUNT ON machbasedb TO user_name;
+GRANT MOUNT ON DATABASE MACHBASEDB TO user_name;
 ```
 
 
@@ -509,10 +515,10 @@ BACKUP DATABASE AFTER 'previous_backup_path'
 
 ```sql
 -- 백업 권한 부여
-GRANT BACKUP ON machbasedb TO user_name;
+GRANT BACKUP ON DATABASE factory_a TO user_name;
 
 -- 권한 회수
-REVOKE BACKUP ON machbasedb FROM user_name;
+REVOKE BACKUP ON DATABASE factory_a FROM user_name;
 ```
 
 권한 관리에 대한 자세한 내용은 [사용자 관리](/dbms/reference/sql/syntax-dictionary-sql/user-auth-syntax/) 섹션을 참고하십시오.
@@ -691,7 +697,7 @@ UMOUNT DATABASE backup_db;
 
 ```sql
 -- SYS 사용자가 권한 부여
-GRANT MOUNT ON machbasedb TO user_name;
+GRANT MOUNT ON DATABASE MACHBASEDB TO user_name;
 ```
 
 ### 에디션 참고
@@ -702,7 +708,8 @@ Cluster Edition에서는 `MOUNT` 및 `UMOUNT` 문이 거부될 수 있습니다.
 
 ## 마운트된 데이터베이스 조회
 
-마운트된 데이터베이스는 마운트 이름을 스키마처럼 사용하여 기존 SQL 문법으로 데이터를 조회합니다.
+마운트된 데이터베이스는 마운트 이름을 database alias로 사용하여 기존 SQL 문법으로
+데이터를 조회합니다. 다른 active database와 함께 조회할 때는 세 부분 이름을 사용합니다.
 
 ### 테이블 접근 방식
 
@@ -782,7 +789,7 @@ INSERT INTO sensor_log (name, time, value)
 
 ```sql
 -- 마운트/언마운트 실행 권한
-GRANT MOUNT ON machbasedb TO analyst_user;
+GRANT MOUNT ON DATABASE MACHBASEDB TO analyst_user;
 
 -- 마운트된 테이블 조회 권한
 GRANT SELECT ON backup_db.sys.sensor_log TO analyst_user;

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '15.8 애플리케이션 연동 예제'
+title: '16.8 애플리케이션 연동 예제'
 weight: 130
 toc: true
 ---
@@ -221,4 +221,4 @@ conn.Close();
 | .NET | `MachConnector` | O | X |
 | REST API | HTTP | O | X |
 
-전체 SDK 지원 범위: [SDK별 Append/AUTH KEY/Transaction/Prepare 지원 범위](/dbms/application-integration/support-scope-sdk/)
+전체 SDK 지원 범위: [SDK별 Append/AUTH KEY/Transaction/Prepare 지원 범위](/dbms/development-tools-integration/#sdk)

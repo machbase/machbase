@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.1.2.2 DECIMAL and NUMERIC Fixed-Point Types'
+title: '18.1.2.2 DECIMAL and NUMERIC Fixed-Point Types'
 weight: 20
 toc: true
 ---

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.1.1.13 LOAD DATA INFILE'
+title: '18.1.1.13 LOAD DATA INFILE'
 weight: 130
 toc: true
 ---

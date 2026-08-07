@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '15. 시나리오 가이드'
-weight: 150
+title: '16. 시나리오 가이드'
+weight: 160
 toc: true
 ---
 

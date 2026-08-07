@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '14.1 보안 모델 개요'
+title: '15.1 보안 모델 개요'
 weight: 10
 toc: true
 ---
@@ -73,21 +73,26 @@ GRANT SELECT, INSERT ON sys.sensor_log TO writer_user;
 
 ### 데이터베이스 권한
 
-`MACHBASEDB` 전체에 영향을 미치는 DDL 및 운영 작업을 허용합니다. (Machbase 8.5 이상)
+지정한 active database에 영향을 미치는 DDL 및 운영 작업을 허용합니다. 기본
+`MACHBASEDB` 외에도 8.6.0 Standard Edition의 각 logical database를 대상으로 지정할
+수 있습니다.
 
 | 권한 | 허용 작업 |
 |------|-----------|
+| `CONNECT` | active database 연결, `USE`, 객체 탐색 |
 | `CREATE` | CREATE TABLE/VIEW/INDEX/ROLLUP 등 |
 | `DROP` | DROP TABLE/VIEW/INDEX/ROLLUP 등 |
 | `DDL` | CREATE + DROP 묶음 |
 | `ALTER` | ALTER SYSTEM |
 | `BACKUP` | BACKUP DATABASE |
 | `MOUNT` | MOUNT/UMOUNT DATABASE |
+| `USAGE` | mounted database 탐색. table SELECT는 별도 필요 |
 | `ALL` | 위 모든 데이터베이스 권한 |
 
 ```sql
-GRANT DDL ON machbasedb TO deploy_user;
-GRANT BACKUP ON machbasedb TO backup_user;
+GRANT DDL ON DATABASE factory_a TO deploy_user;
+GRANT BACKUP ON DATABASE factory_a TO backup_user;
+GRANT MOUNT ON DATABASE MACHBASEDB TO mount_user;
 ```
 
 ### 사용자 생성 시 기본 권한
@@ -133,5 +138,5 @@ GRANT SELECT, INSERT ON sys.sensor_log TO writer;
 
 -- DDL 전용 계정 (테이블 생성/삭제)
 CREATE USER deploy IDENTIFIED BY 'Deploy#2024';
-GRANT DDL ON machbasedb TO deploy;
+GRANT DDL ON DATABASE factory_a TO deploy;
 ```

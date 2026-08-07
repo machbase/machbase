@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '14.6 보안 설정 체크리스트'
+title: '15.6 보안 설정 체크리스트'
 weight: 60
 toc: true
 ---
@@ -32,7 +32,7 @@ GRANT SELECT, INSERT ON sys.sensor_log TO writer;
 
 -- DDL 전용 계정
 CREATE USER deploy IDENTIFIED BY 'Deploy#2024!' PASSWORD POLICY HIGH;
-GRANT DDL ON machbasedb TO deploy;
+GRANT DDL ON DATABASE factory_a TO deploy;
 ```
 
 ### 불필요한 계정 제거
@@ -66,7 +66,7 @@ SELECT * FROM m$obj_privileges;
 
 ```sql
 -- 특정 사용자의 BACKUP 권한 회수
-REVOKE BACKUP ON machbasedb FROM user1;
+REVOKE BACKUP ON DATABASE factory_a FROM user1;
 
 -- 특정 테이블에 대한 DELETE 권한 회수
 REVOKE DELETE ON sys.sensor_log FROM user2;

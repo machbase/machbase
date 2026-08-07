@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.1.2 Data Type Dictionary'
+title: '18.1.2 Data Type Dictionary'
 weight: 20
 toc: true
 ---

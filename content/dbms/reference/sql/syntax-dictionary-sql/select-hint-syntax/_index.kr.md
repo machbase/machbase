@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.1.1.4 SELECT hint'
+title: '18.1.1.4 SELECT hint'
 weight: 40
 toc: true
 ---

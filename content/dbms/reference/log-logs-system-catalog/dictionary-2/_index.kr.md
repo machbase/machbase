@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.3.2 가상 테이블 사전'
+title: '18.3.2 가상 테이블 사전'
 weight: 20
 toc: true
 ---
@@ -13,6 +13,8 @@ toc: true
 |---------|------------|------|
 | 세션/시스템 | `V$VERSION` | 서버 버전 정보 |
 | 세션/시스템 | `V$SESSION` | 현재 접속 세션 목록 |
+| 데이터베이스 | `V$DATABASES` | active/mounted 데이터베이스 상태 |
+| 데이터베이스 | `V$DATABASE_OPERATIONS` | database lifecycle 작업 이력 |
 | 세션/시스템 | `V$STMT` | 실행 중인 SQL 문장 |
 | 세션/시스템 | `V$PROPERTY` | 현재 서버 설정값 |
 | 세션/시스템 | `V$SYSMEM` | 시스템 메모리 사용량 |
@@ -40,6 +42,50 @@ toc: true
 
 ```sql
 SELECT binary_signature FROM v$version;
+```
+
+## V$DATABASES
+
+논리 데이터베이스와 mounted database의 상태를 조회합니다. `DATABASE_ID`는 논리
+catalog 식별자이며 `TABLESPACE_ID`와 다릅니다.
+
+| 컬럼 | 설명 |
+|------|------|
+| `DATABASE_ID` | 논리 데이터베이스 식별자 |
+| `SOURCE_DATABASE_ID` | mounted backup의 원본 database 식별자 |
+| `NAME` | database 이름 또는 mounted alias |
+| `KIND` | `ACTIVE` 또는 `MOUNTED` |
+| `ACCESS_MODE` | `READ_WRITE` 또는 `READ_ONLY` |
+| `CAN_USE` | `USE`로 선택할 수 있는지 여부 |
+| `STATE` | lifecycle 상태 |
+| `IS_DEFAULT` | 기본 `MACHBASEDB` 여부 |
+
+```sql
+SELECT database_id, name, kind, access_mode, can_use, state, is_default
+  FROM v$databases
+ ORDER BY database_id;
+```
+
+## V$DATABASE_OPERATIONS
+
+`CREATE`, `ALTER`, `DROP`, `BACKUP`, `RESTORE`, `MOUNT`, `UMOUNT` 작업의 상태와 오류를
+조회합니다. `FAILED_NEEDS_ACTION` 상태는 실제 `V$DATABASES` 상태와 server log를 함께
+확인해야 합니다.
+
+| 컬럼 | 설명 |
+|------|------|
+| `OPERATION_ID` | operation 식별자 |
+| `DATABASE_ID` | 대상 logical database 식별자 |
+| `DATABASE_NAME` | 대상 database 이름 |
+| `STATE` | operation 상태 |
+| `ERROR_MESSAGE` | 실패 원인 |
+| `CREATED_AT` | 생성 시각 |
+| `UPDATED_AT` | 마지막 변경 시각 |
+
+```sql
+SELECT operation_id, database_name, state, error_message
+  FROM v$database_operations
+ ORDER BY operation_id DESC;
 ```
 
 ## V$SESSION

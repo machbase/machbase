@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.3.6 전체 가상 테이블 레퍼런스'
+title: '18.3.6 전체 가상 테이블 레퍼런스'
 weight: 80
 toc: true
 tocSort: true
@@ -21,6 +21,8 @@ Virtual Table은 Machbase 서버의 운영 정보를 테이블 형태로 제공�
   * [V$SYSTIME](#vsystime)
   * [V$STMT](#vstmt)
   * [V$VERSION](#vversion)
+  * [V$DATABASES](#vdatabases)
+  * [V$DATABASE_OPERATIONS](#vdatabase_operations)
   * [V$HTTP\_STATUS](#vhttp_status)
   * [V$NEO\_SESSION](#vneo_session)
   * [V$NEO\_STMT](#vneo_stmt)
@@ -119,6 +121,8 @@ MACHBASE 서버에 접속된 세션 정보를 표시합니다.
 | LOGIN_TIME                         | 접속 시각                                                                                                                            |
 | CLIENT_TYPE                        | 접속 Client 타입                                                                                                                     |
 | USER_NAME                          | 사용자 이름                                                                                                                           |
+| CURRENT_DB_ID                     | 세션의 현재 논리 데이터베이스 식별자                                                                                                  |
+| CURRENT_DB_NAME                   | 세션의 현재 데이터베이스 이름                                                                                                          |
 | USER_IP                            | 사용자 IP                                                                                                                           |
 | SQL_LOGGING                        | 해당 세션의 Trace Log 에 메시지를 남길지 여부<br>Parsing, Validation, Optimization 단계에서 발생하는 에러를 남깁니다.<br>DDL을 수행한 결과를 남깁니다.<br>(위의 두 케이스 모두 남깁니다) |
 | SHOW_HIDDEN_COLS                   | SELECT 시, 숨겨진 컬럼을 나타낼 것인지 여부                                                                                                     |
@@ -242,6 +246,50 @@ MACHBASE 의 버전에 대한 정보를 표시합니다.
 | FILE_CM_MINOR_VERSION     | File Client (Communication Level) 마이너 버전 |
 | FILE_CREATE_TIME          | 파일 생성 시각                                 |
 | EDITION                   | MACHBASE 유형                              |
+
+### V$DATABASES
+---
+
+논리 active database와 mounted database의 상태를 표시합니다. `DATABASE_ID`는 논리
+catalog 식별자이며 물리 `TABLESPACE_ID`와 동일하지 않습니다.
+
+| 컬럼 이름 | 설명 |
+|-----------|------|
+| DATABASE_ID | 논리 데이터베이스 식별자 |
+| SOURCE_DATABASE_ID | mounted backup 원본 데이터베이스 식별자 |
+| NAME | 데이터베이스 이름 또는 mounted alias |
+| KIND | `ACTIVE` 또는 `MOUNTED` |
+| ACCESS_MODE | `READ_WRITE` 또는 `READ_ONLY` |
+| CAN_USE | `USE`로 선택할 수 있는지 여부 |
+| STATE | lifecycle 상태 |
+| IS_DEFAULT | 기본 `MACHBASEDB` 여부 |
+
+```sql
+SELECT database_id, name, kind, access_mode, can_use, state, is_default
+  FROM v$databases
+ ORDER BY database_id;
+```
+
+### V$DATABASE_OPERATIONS
+---
+
+database lifecycle operation의 상태와 오류를 표시합니다.
+
+| 컬럼 이름 | 설명 |
+|-----------|------|
+| OPERATION_ID | operation 식별자 |
+| DATABASE_ID | 대상 논리 데이터베이스 식별자 |
+| DATABASE_NAME | 대상 데이터베이스 이름 |
+| STATE | operation 상태 |
+| ERROR_MESSAGE | 실패 원인 |
+| CREATED_AT | 생성 시각 |
+| UPDATED_AT | 마지막 변경 시각 |
+
+```sql
+SELECT operation_id, database_name, state, error_message
+  FROM v$database_operations
+ ORDER BY operation_id DESC;
+```
 
 ### V$HTTP_STATUS
 ---
@@ -852,7 +900,7 @@ Tagdata 테이블의 Rollup 정보를 표시합니다.
 
 | 컬럼 이름          | 설명                                                      |
 | -------------- | ------------------------------------------------------- |
-| DATABASE_ID    | 데이터베이스 식별자(로컬 DB는 -1)                                  |
+| DATABASE_ID    | 논리 데이터베이스 식별자                                  |
 | ID             | Rollup 작업 ID                                            |
 | ROLLUP_TABLE   | Rollup 테이블 이름                                         |
 | SOURCE_TABLE   | 집계 대상 테이블 이름(TAG/ROLLUP)                                |

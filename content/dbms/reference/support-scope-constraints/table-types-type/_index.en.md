@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.8.2 Feature Support by Table Type'
+title: '18.8.2 Feature Support by Table Type'
 weight: 20
 toc: true
 ---

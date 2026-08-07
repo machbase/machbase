@@ -81,5 +81,5 @@ COMMIT;
 - AUTO COMMIT 모드에서는 각 DML이 개별 트랜잭션으로 처리됩니다.
 - Savepoint와 중첩 트랜잭션은 지원하지 않습니다.
 - SDK의 `setAutoCommit(false)`, `BeginTransaction()` 같은 편의 API 지원 여부는 드라이버마다
-  다릅니다. [SDK별 지원 범위](/dbms/application-integration/support-scope-sdk/#support-scope-sdk-transaction-prepare-bind)를
+  다릅니다. [SDK별 지원 범위](/dbms/development-tools-integration/#support-scope-sdk-transaction-prepare-bind)를
   확인합니다.

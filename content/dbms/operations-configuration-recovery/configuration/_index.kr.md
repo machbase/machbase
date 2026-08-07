@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '13.2 설정 운영'
-weight: 20
+title: '14.3 설정 운영'
+weight: 30
 toc: true
 ---
 Machbase의 설정 파일 구조와 주요 파라미터를 다룹니다. 환경에 맞게 조정하면 성능과 안정성을 크게 향상시킬 수 있습니다.

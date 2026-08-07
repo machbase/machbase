@@ -228,7 +228,9 @@ BACKUP TABLE sensor_values INTO DISK = '/data/backup/sensor_20260703';
 
 ### Restore: 백업본으로 데이터베이스 복원
 
-백업본을 사용해 데이터베이스를 원래 위치에 복원합니다. Backup과 달리 반드시 서버를 중지한 상태에서 `machadmin` 도구로 실행합니다.
+인스턴스 전체 복원은 서버를 중지한 상태에서 `machadmin -r`로 실행합니다. Machbase
+8.6.0 Standard Edition에서는 단일 active logical database를 named
+`RESTORE DATABASE`로 새 catalog에 복원하거나 READ ONLY target을 교체할 수 있습니다.
 
 ```bash
 # 서버 중지 후 machadmin으로 복원
@@ -246,7 +248,7 @@ machadmin -r /data/backup/full_20260703
 MOUNT DATABASE '/data/backup/full_20260703' TO MOUNTDB;
 
 -- Mount된 데이터 조회
-SELECT * FROM MOUNTDB.sensor_values LIMIT 10;
+SELECT * FROM MOUNTDB.SYS.sensor_values LIMIT 10;
 
 -- 마운트 해제
 UMOUNT DATABASE MOUNTDB;
@@ -254,9 +256,14 @@ UMOUNT DATABASE MOUNTDB;
 
 Restore와 달리 데이터를 원래 위치에 복사하지 않습니다. 백업본 디렉터리를 그대로 참조하므로, 과거 특정 시점의 데이터를 조회하거나 검증하는 데 적합합니다.
 
-Mount된 데이터베이스는 읽기 전용입니다. TRANSACTION 테이블도 `MOUNT DATABASE`로 연결한 백업본에서는
-SELECT만 허용되며, mounted TRANSACTION 테이블에 대한 INSERT/UPDATE/DELETE나 `MOUNT TABLE` 방식의 TRANSACTION
-테이블 단독 Mount는 지원하지 않습니다.
+Mount된 database는 읽기 전용이며 `USE`할 수 없습니다. 조회에는 mounted database의
+`USAGE`와 대상 table `SELECT`가 모두 필요합니다. 다른 active database와 함께 조회할
+때는 `MOUNTDB.SYS.sensor_values`처럼 세 부분 이름을 사용합니다. mounted TRANSACTION
+table에 대한 INSERT/UPDATE/DELETE와 `MOUNT TABLE` 방식의 단독 mount는 지원하지 않습니다.
+
+논리 database의 백업·복원, `DATABASE_ID` 상태 확인과 client catalog 선택은
+[다중 데이터베이스 운영 가이드](/dbms/operations-configuration-recovery/multi-database/)를
+참조하십시오.
 
 ### 세 개념의 관계
 
