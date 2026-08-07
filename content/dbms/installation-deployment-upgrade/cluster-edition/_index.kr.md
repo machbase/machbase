@@ -246,7 +246,7 @@ cluster:
 
   package:
     name: machbase
-    origin_path: /home/machbase/packages/machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz
+    origin_path: /home/machbase/packages/machbase-cluster-8.7.0.official-LINUX-X86-64-release.tgz
 
   ssh:
     key_file: /home/machbase/.ssh/id_rsa
@@ -754,8 +754,8 @@ Cluster Edition에는 두 가지 패키지가 있습니다.
 | 경량 패키지 (lightweight) | Broker, Warehouse | 데이터 처리에 필요한 파일만 포함, 크기 작음 |
 
 파일명 예시:
-- 전체: `machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz`
-- 경량: `machbase-cluster-8.6.0.official-LINUX-X86-64-release-lightweight.tgz`
+- 전체: `machbase-cluster-8.7.0.official-LINUX-X86-64-release.tgz`
+- 경량: `machbase-cluster-8.7.0.official-LINUX-X86-64-release-lightweight.tgz`
 
 #### Coordinator와 Deployer에 패키지 배포
 
@@ -766,16 +766,16 @@ Cluster Edition에는 두 가지 패키지가 있습니다.
 ```bash
 # Coordinator 노드에서 실행
 mkdir -p ~/coordinator
-scp machbase@배포서버:/path/to/machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz ~/
-tar zxf machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz -C ~/coordinator
+scp machbase@배포서버:/path/to/machbase-cluster-8.7.0.official-LINUX-X86-64-release.tgz ~/
+tar zxf machbase-cluster-8.7.0.official-LINUX-X86-64-release.tgz -C ~/coordinator
 ```
 
 ##### Deployer 노드
 
 ```bash
 mkdir -p ~/deployer
-scp machbase@배포서버:/path/to/machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz ~/
-tar zxf machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz -C ~/deployer
+scp machbase@배포서버:/path/to/machbase-cluster-8.7.0.official-LINUX-X86-64-release.tgz ~/
+tar zxf machbase-cluster-8.7.0.official-LINUX-X86-64-release.tgz -C ~/deployer
 ```
 
 Broker와 Warehouse 노드에는 이 단계에서 경량 패키지를 직접 압축 해제하지 않습니다. 경량 패키지를 Coordinator에 등록하면, 이후 `--add-node`로 지정한 Deployer가 대상 노드의 `--home-path`에 패키지를 배포합니다.
@@ -786,7 +786,7 @@ Broker와 Warehouse를 Coordinator에서 기동하려면 경량 패키지를 Coo
 
 ```bash
 $MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --add-package=machbase \
-  --file-name="/home/machbase/machbase-cluster-8.6.0.official-LINUX-X86-64-release-lightweight.tgz"
+  --file-name="/home/machbase/machbase-cluster-8.7.0.official-LINUX-X86-64-release-lightweight.tgz"
 ```
 
 등록된 패키지는 이후 Broker와 Warehouse를 `--add-node`로 등록할 때 `--package-name=machbase`로 참조합니다.

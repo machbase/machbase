@@ -5,7 +5,7 @@ weight: 230
 toc: true
 ---
 
-Machbase 8.6.0 Standard Edition의 논리 데이터베이스 lifecycle과 session 선택 구문입니다.
+Machbase 8.7.0 Standard Edition의 논리 데이터베이스 lifecycle과 session 선택 구문입니다.
 데이터베이스 이름은 catalog 이름이며, 서버 인스턴스의 물리 저장소를 관리하는
 `machadmin -c`, `machadmin -d`와는 구분합니다.
 

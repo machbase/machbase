@@ -7,7 +7,7 @@ toc: true
 
 메타 테이블은 `M$` 접두사를 가지며 Machbase 스키마 정보(테이블 정의, 컬럼, 인덱스, 사용자 등)를 조회합니다. DDL 명령 실행 결과가 자동으로 반영되며 읽기 전용입니다.
 
-8.6.0 Standard Edition의 다중 데이터베이스에서는 catalog-local metadata를 조인할 때
+8.7.0 Standard Edition의 다중 데이터베이스에서는 catalog-local metadata를 조인할 때
 `DATABASE_ID`, `TABLESPACE_ID`와 parent object ID를 함께 사용해야 합니다. 논리
 `DATABASE_ID`와 물리 `TABLESPACE_ID`는 서로 대체할 수 없습니다. 자세한 내용은
 [다중 데이터베이스 운영 가이드](/dbms/operations-configuration-recovery/multi-database/#103-object-metadata를-안전하게-조인)를

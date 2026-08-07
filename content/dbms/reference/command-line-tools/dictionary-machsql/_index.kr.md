@@ -27,7 +27,7 @@ machsql -h
 | `-z` | `--timezone` | - | 타임존 설정. 예: `+0900`, `-1230` |
 | `-n` | `--nls` | - | NLS 설정 |
 | `-c` | `--connstr` | - | 추가 연결 매개변수 문자열 (6.1 이상) |
-| `-D` | `--database` | `MACHBASEDB` | 연결 직후 사용할 논리 데이터베이스 (8.6.0 Standard) |
+| `-D` | `--database` | `MACHBASEDB` | 연결 직후 사용할 논리 데이터베이스 (8.7.0 Standard) |
 | `-i` | `--silent` | - | 저작권 배너 없이 실행 |
 | `-v` | `--verbose` | - | 상세 출력 |
 | `-x` | `--testing` | - | 테스트 모드로 실행 |
@@ -114,7 +114,7 @@ machsql -s 127.0.0.1 -u SYS -p MANAGER
 
 ## 논리 데이터베이스 선택
 
-Machbase 8.6.0 Standard Edition에서는 `-D` 또는 `--database`로 연결 직후 사용할
+Machbase 8.7.0 Standard Edition에서는 `-D` 또는 `--database`로 연결 직후 사용할
 논리 데이터베이스를 지정할 수 있습니다.
 
 ```bash

@@ -180,7 +180,7 @@ $MACHBASE_HOME/trc/machbase.trc.20240115  # 롤오버된 이전 로그
 예시:
 
 ```
-[2024-01-15 09:00:01.123] [INFO] [SERVER] Machbase server started. Version=8.6.0
+[2024-01-15 09:00:01.123] [INFO] [SERVER] Machbase server started. Version=8.7.0
 [2024-01-15 09:00:01.450] [INFO] [STORAGE] Checkpoint completed. elapsed=1230ms
 [2024-01-15 10:45:22.001] [ERROR] [NETWORK] Connection refused. client=192.168.1.100
 [2024-01-15 11:30:55.321] [WARN] [STORAGE] Disk usage reached 85%. used_ratio=85, ratio_cap=95
@@ -239,7 +239,7 @@ $MACHBASE_HOME/trc/machbase.trc.20240115  # 롤오버된 이전 로그
 ##### 서버 시작/종료 로그
 
 ```
-[INFO] [SERVER] Machbase server starting. version=8.6.0, pid=12345
+[INFO] [SERVER] Machbase server starting. version=8.7.0, pid=12345
 [INFO] [SERVER] Storage recovery started.
 [INFO] [SERVER] Storage recovery completed.
 [INFO] [SERVER] Machbase server started. port=5656
@@ -1123,7 +1123,7 @@ SELECT binary_db_major_version AS major,
 ```
 BINARY_SIGNATURE        EDITION
 ----------------------  --------
-8.6.0.official-LINUX    Standard
+8.7.0.official-LINUX    Standard
 ```
 
 #### 서버 설정 확인

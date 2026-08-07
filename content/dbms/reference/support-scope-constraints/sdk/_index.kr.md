@@ -23,7 +23,7 @@ Machbase는 다양한 프로그래밍 언어와 프로토콜을 위한 SDK를 �
 > 기호: O = 지원, △ = SDK별로 제한된 방식으로 지원, X = 미지원
 >
 > Go `database/sql`의 Transaction API는 기본 isolation level의 읽기/쓰기 트랜잭션에 한하며,
-> named bind와 DECIMAL/NULL/PRIMARY KEY 메타데이터는 neo-client 8.6 API 및 protocol 4.0.3 이상을 기준으로 합니다.
+> named bind와 DECIMAL/NULL/PRIMARY KEY 메타데이터는 neo-client 8.7.0 API 및 protocol 4.0.3 이상을 기준으로 합니다.
 > Go `database/sql`의 Append는 표준 `sql.DB`/`sql.Tx` API에 없지만, neo-client의 `machbase.Conn.Appender()`를
 > `sql.Conn.Raw()`에서 선택적으로 사용할 수 있습니다. 신규 대량 입력에는 native `machgo`를 권장합니다.
 >

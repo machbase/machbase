@@ -74,7 +74,7 @@ GRANT SELECT, INSERT ON sys.sensor_log TO writer_user;
 ### 데이터베이스 권한
 
 지정한 active database에 영향을 미치는 DDL 및 운영 작업을 허용합니다. 기본
-`MACHBASEDB` 외에도 8.6.0 Standard Edition의 각 logical database를 대상으로 지정할
+`MACHBASEDB` 외에도 8.7.0 Standard Edition의 각 logical database를 대상으로 지정할
 수 있습니다.
 
 | 권한 | 허용 작업 |

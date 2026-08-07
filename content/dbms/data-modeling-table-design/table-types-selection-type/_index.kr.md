@@ -49,7 +49,7 @@ CREATE LOG TABLE sys_log (
 
 ### TRANSACTION 테이블
 
-관계형 구조의 업무 데이터를 저장합니다. Machbase 8.6에서 도입된 타입으로, 일반적인 관계형 테이블처럼 SELECT·INSERT·UPDATE·DELETE를 모두 지원합니다.
+관계형 구조의 업무 데이터를 저장합니다. Machbase 8.7.0에서 도입된 타입으로, 일반적인 관계형 테이블처럼 SELECT·INSERT·UPDATE·DELETE를 모두 지원합니다.
 
 테이블 유형을 생략한 `CREATE TABLE`과 `CREATE TRANSACTION TABLE`, `CREATE TXN TABLE`은
 모두 TRANSACTION 테이블을 생성합니다.

@@ -64,7 +64,7 @@ cp -a $MACHBASE_HOME/lib $MACHBASE_HOME/lib.bak
 #### 3. 새 패키지 압축 해제
 
 ```bash
-tar zxf machbase-SDK-8.6.0.official-LINUX-X86-64-release.tgz -C $MACHBASE_HOME
+tar zxf machbase-SDK-8.7.0.official-LINUX-X86-64-release.tgz -C $MACHBASE_HOME
 ```
 
 압축 해제 시 `bin/`, `lib/`, `include/` 등이 덮어씌워지고 `dbs/`는 변경되지 않습니다.
@@ -129,8 +129,8 @@ Mach> SELECT EDITION, BINARY_DB_MAJOR_VERSION, BINARY_DB_MINOR_VERSION FROM V$VE
 ```yaml
 cluster:
   package:
-    name: machbase-v8.6.0
-    origin_path: /home/machbase/packages/machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz
+    name: machbase-v8.7.0
+    origin_path: /home/machbase/packages/machbase-cluster-8.7.0.official-LINUX-X86-64-release.tgz
 ```
 
 `registered_path`는 `machclusterctl export`가 기록하는 Coordinator package repository 경로입니다. 업그레이드 입력 archive를 지정할 때는 `origin_path`를 사용합니다.
@@ -160,7 +160,7 @@ machclusterctl status
 `machcoordinatoradmin --upgrade-node`를 직접 사용하는 경우에는 대상 노드와 패키지 이름을 함께 지정합니다.
 
 ```bash
-machcoordinatoradmin --upgrade-node=192.168.1.11:5401 --package-name=machbase-v8.6.0
+machcoordinatoradmin --upgrade-node=192.168.1.11:5401 --package-name=machbase-v8.7.0
 ```
 
 온라인 대상은 Broker와 Warehouse로 제한합니다. Broker가 하나만 남아 있을 때 해당 Broker를 업그레이드하면 그 시간 동안 클라이언트 접속이 끊길 수 있습니다.
@@ -206,8 +206,8 @@ machclusterctl upgrade -f cluster.yaml --full-stop --yes --verbose
 수동 배포 환경에서 직접 교체해야 하는 경우, Coordinator에 새 패키지를 등록합니다.
 
 ```bash
-machcoordinatoradmin --add-package=machbase-v8.6.0 \
-  --file-name=/home/machbase/packages/machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz
+machcoordinatoradmin --add-package=machbase-v8.7.0 \
+  --file-name=/home/machbase/packages/machbase-cluster-8.7.0.official-LINUX-X86-64-release.tgz
 ```
 
 Warehouse → Broker → Lookup → Deployer → Coordinator 순으로 종료합니다.
@@ -237,9 +237,9 @@ machcoordinatoradmin --startup-node=192.168.1.14:5501
 재시작 후 Broker와 Warehouse의 패키지 메타데이터를 새 패키지 이름으로 동기화합니다.
 
 ```bash
-machcoordinatoradmin --upgrade-node=192.168.1.11:5401 --package-name=machbase-v8.6.0
-machcoordinatoradmin --upgrade-node=192.168.1.13:5501 --package-name=machbase-v8.6.0
-machcoordinatoradmin --upgrade-node=192.168.1.14:5501 --package-name=machbase-v8.6.0
+machcoordinatoradmin --upgrade-node=192.168.1.11:5401 --package-name=machbase-v8.7.0
+machcoordinatoradmin --upgrade-node=192.168.1.13:5501 --package-name=machbase-v8.7.0
+machcoordinatoradmin --upgrade-node=192.168.1.14:5501 --package-name=machbase-v8.7.0
 ```
 
 ##### 5. 상태 확인

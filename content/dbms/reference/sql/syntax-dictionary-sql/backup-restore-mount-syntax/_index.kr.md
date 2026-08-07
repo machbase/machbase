@@ -19,7 +19,7 @@ Machbase의 백업·복원·마운트 구문은 데이터를 안전하게 보호
 
 ### 논리 데이터베이스 백업
 
-8.6.0 Standard Edition에서는 대상 catalog를 명시하는 logical backup을 사용할 수 있습니다.
+8.7.0 Standard Edition에서는 대상 catalog를 명시하는 logical backup을 사용할 수 있습니다.
 
 ```sql
 backup_logical_database_stmt ::=
@@ -106,7 +106,7 @@ BACKUP TABLE sensor_log INTO DISK = '/backup/sensor_log_20240101';
 
 ## RESTORE
 
-기존 `machadmin -r` 복원은 서버를 중단한 오프라인 인스턴스 복원입니다. 8.6.0 Standard
+기존 `machadmin -r` 복원은 서버를 중단한 오프라인 인스턴스 복원입니다. 8.7.0 Standard
 Edition에서는 논리 database를 새 catalog로 복원하거나 READ ONLY target을 교체하는
 online `RESTORE DATABASE`도 지원합니다.
 

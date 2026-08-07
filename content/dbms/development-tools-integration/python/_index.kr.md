@@ -179,7 +179,7 @@ SQL 결과의 판정 규칙은
 
 ### SELECT 결과의 PRIMARY KEY 메타데이터
 
-Machbase 8.6.0의 CMI 4.0.3 메타데이터를 사용하면 `cursor.column_metadata`의
+Machbase 8.7.0의 CMI 4.0.3 메타데이터를 사용하면 `cursor.column_metadata`의
 `is_primary_key`에서 SELECT 결과 직접 컬럼의 PRIMARY KEY 여부를 확인할 수 있습니다.
 
 ```python

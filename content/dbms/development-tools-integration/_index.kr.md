@@ -190,7 +190,7 @@ PRIMARY KEY 목록을 반환하는 카탈로그 메타데이터로 나뉩니다.
 | JDBC | `DatabaseMetaData.getPrimaryKeys()` | `KEY_SEQ`를 함께 반환 |
 | machsql | `DESC`의 `[ PRIMARY KEY ]` 섹션 | PK 이름, 컬럼, key sequence 표시 |
 
-Machbase 8.6.0에서 CMI 4.0.3 메타데이터를 협상한 경우 결과 컬럼 PK 플래그를 전달합니다.
+Machbase 8.7.0에서 CMI 4.0.3 메타데이터를 협상한 경우 결과 컬럼 PK 플래그를 전달합니다.
 CMI 4.0.2 이하에서는 기존 클라이언트 호환성을 위해 플래그를 전달하지 않습니다. Go
 `database/sql`처럼 표준 결과 메타데이터에 PK API가 없는 인터페이스에서는 카탈로그 SQL 또는
 해당 SDK의 전용 메타데이터 API를 사용합니다.
@@ -635,7 +635,7 @@ for _, row := range dataList {
 
 파라미터 바인딩 시 DATETIME 타입은 **나노초 정수**로 전달하는 것을 권장합니다.
 
-Machbase 8.6은 값 위치에 `:name` marker를 사용할 수 있습니다. 이름 API를 지원하는
+Machbase 8.7.0은 값 위치에 `:name` marker를 사용할 수 있습니다. 이름 API를 지원하는
 JDBC, Node.js와 Python은 이름으로 값을 전달합니다. SQLCLI는
 `SQLBindParameterByName()`을 제공하며, ODBC와 machsql은 `:name` SQL을 발생 순서의
 ordinal로 바인딩합니다. .NET의 이름 컬렉션은 client-side 렌더링 방식입니다. 공통

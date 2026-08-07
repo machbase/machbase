@@ -34,7 +34,7 @@ compatibility. Versions that support TAG data UPDATE can correct values by narro
 the target range with tag names, time predicates, and data-column predicates. Do not
 read this as a general row update that changes the TAG name, time axis, or system
 columns. If general row-level updates are central to the workload, read the RDB,
-LOOKUP, or VOLATILE documents first. RDB is a Standard Edition v1 feature in 8.6;
+LOOKUP, or VOLATILE documents first. RDB is a Standard Edition v1 feature in 8.7.0;
 Cluster Edition does not support creating RDB tables.
 
 Think of table types as storage areas with different roles. A LOG table receives

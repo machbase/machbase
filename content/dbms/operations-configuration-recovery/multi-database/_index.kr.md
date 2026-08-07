@@ -5,7 +5,7 @@ weight: 20
 toc: true
 ---
 
-<span class="badge-since">Machbase 8.6.0부터 지원되는 기능</span>
+<span class="badge-since">Machbase 8.7.0부터 지원되는 기능</span>
 
 ## 1. 이 기능으로 할 수 있는 일
 
@@ -1412,14 +1412,14 @@ catalog는 `FAILED_NEEDS_ACTION`으로 격리됩니다.
 
 ### 12.3 Client/server 조합
 
-다중 active database를 연결 시점에 선택하려면 Machbase 8.6.0 server와 같은
+다중 active database를 연결 시점에 선택하려면 Machbase 8.7.0 server와 같은
 release의 client package를 사용합니다.
 
 | Client → Server | `MACHBASEDB` | 비기본 active database |
 | --- | --- | --- |
-| 8.5.2 client → 8.6.0 server | 기존 방식으로 지원 | 구 client에 initial database 선택 API가 없음 |
-| 8.6.0 client → 8.5.2 server | legacy fallback 지원 | Client에 따라 연결 거부 또는 `MACHBASEDB` fallback |
-| 8.6.0 client → 8.6.0 server | 지원 | 지원 |
+| 8.5.2 client → 8.7.0 server | 기존 방식으로 지원 | 구 client에 initial database 선택 API가 없음 |
+| 8.7.0 client → 8.5.2 server | legacy fallback 지원 | Client에 따라 연결 거부 또는 `MACHBASEDB` fallback |
+| 8.7.0 client → 8.7.0 server | 지원 | 지원 |
 
 비기본 database를 요청한 경우 연결 직후 반드시 `CURRENT_DATABASE()`를 확인합니다.
 
@@ -1430,7 +1430,7 @@ release의 client package를 사용합니다.
 - ODBC/JDBC의 8.5.2 server metadata는 current catalog의 legacy 조회만 보장하며
   다른 catalog를 인자로 지정하는 기능은 지원하지 않을 수 있습니다.
 - Go neo-client의 8.5.2 server fallback은 `MACHBASEDB`와 기존 mounted metadata
-  호환 범위입니다. 다중 active database에는 8.6.0 server가 필요합니다.
+  호환 범위입니다. 다중 active database에는 8.7.0 server가 필요합니다.
 
 Server와 client package를 같은 release로 함께 배포합니다.
 

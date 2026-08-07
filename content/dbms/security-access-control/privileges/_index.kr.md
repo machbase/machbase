@@ -17,7 +17,7 @@ Machbase 권한은 적용 범위에 따라 두 가지로 나뉩니다.
 
 데이터베이스 권한은 `GRANT ... ON DATABASE database_name TO user` 구문으로 부여하고,
 테이블 권한은 `GRANT ... ON TABLE [database.]owner.table TO user` 구문으로 부여합니다.
-기존 `MACHBASEDB` 대상 문법은 호환성을 위해 유지되지만, 8.6.0의 논리 데이터베이스에는
+기존 `MACHBASEDB` 대상 문법은 호환성을 위해 유지되지만, 8.7.0의 논리 데이터베이스에는
 대상 database를 명시해야 합니다. 자세한 내용은 [다중 데이터베이스](/dbms/operations-configuration-recovery/multi-database/)를
 참조하십시오.
 

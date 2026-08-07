@@ -103,7 +103,7 @@ try (ResultSet result = statement.executeQuery(
 ```
 
 `getPrimaryKeys()`는 테이블 카탈로그의 PK를 조회하고, `isPrimaryKey()`는 현재 SELECT
-결과의 컬럼 메타데이터를 조회합니다. Machbase 8.6.0에서 CMI 4.0.3을 협상하지 못한
+결과의 컬럼 메타데이터를 조회합니다. Machbase 8.7.0에서 CMI 4.0.3을 협상하지 못한
 구형 프로토콜에서는 결과 컬럼의 PK 플래그가 `false`로 반환될 수 있습니다.
 
 ## 스키마와 타입 정보

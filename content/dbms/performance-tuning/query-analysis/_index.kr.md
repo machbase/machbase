@@ -644,7 +644,7 @@ ORDER BY avg_temp DESC;
 
 ### WITH / CTE
 
-Machbase 8.6.0 Standard Edition은 비재귀 CTE(Common Table Expression)를 지원합니다. CTE는
+Machbase 8.7.0 Standard Edition은 비재귀 CTE(Common Table Expression)를 지원합니다. CTE는
 한 SQL 문 안에서 `SELECT` 결과에 이름을 붙여 복잡한 조회를 단계별로 구성할 때 사용합니다.
 
 ```sql

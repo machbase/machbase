@@ -229,7 +229,7 @@ BACKUP TABLE sensor_values INTO DISK = '/data/backup/sensor_20260703';
 ### Restore: 백업본으로 데이터베이스 복원
 
 인스턴스 전체 복원은 서버를 중지한 상태에서 `machadmin -r`로 실행합니다. Machbase
-8.6.0 Standard Edition에서는 단일 active logical database를 named
+8.7.0 Standard Edition에서는 단일 active logical database를 named
 `RESTORE DATABASE`로 새 catalog에 복원하거나 READ ONLY target을 교체할 수 있습니다.
 
 ```bash

@@ -24,7 +24,7 @@ toc: true
 |------|------------|------|
 | `AUTH_SIG_SCHEME` 허용값: `ECDSA`, `RSA_PKCS1_V15`, `RSA_PSS` | AUTH KEY 구성 문서 | [AUTH KEY 문서](../../../security-access-control/authentication-auth-key/) |
 | `AUTH_MODE` 허용값: `PASSWORD`, `CHALLENGE` | AUTH KEY 구성 문서 | [AUTH KEY 문서](../../../security-access-control/authentication-auth-key/) |
-| AUTH KEY는 공개키 기반 인증 — 비밀번호 대신 사용 가능 | Machbase 8.6 매뉴얼 보안 섹션 | [AUTH KEY 문서](../../../security-access-control/authentication-auth-key/) |
+| AUTH KEY는 공개키 기반 인증 — 비밀번호 대신 사용 가능 | Machbase 8.7.0 매뉴얼 보안 섹션 | [AUTH KEY 문서](../../../security-access-control/authentication-auth-key/) |
 
 ## Python SDK
 

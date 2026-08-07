@@ -120,7 +120,7 @@ machbase-EDITION-VERSION-OS-CPU-BIT-MODE.EXT
 | 항목 | 설명 | 예시 |
 |------|------|------|
 | EDITION | 에디션 구분 | `SDK`, `cluster` |
-| VERSION | 버전 (Major.Minor.Fix.AUX) | `8.6.0.official` |
+| VERSION | 버전 (Major.Minor.Fix.AUX) | `8.7.0.official` |
 | OS | 운영체제 | `LINUX`, `WINDOWS` |
 | CPU | CPU 아키텍처 | `X86` |
 | BIT | 아키텍처 비트 수 | `64` |
@@ -130,8 +130,8 @@ machbase-EDITION-VERSION-OS-CPU-BIT-MODE.EXT
 Standard Edition Linux tarball은 `machbase-SDK-...tgz` 이름으로 생성됩니다.
 
 예시:
-- Standard Edition: `machbase-SDK-8.6.0.official-LINUX-X86-64-release.tgz`
-- Cluster Edition: `machbase-cluster-8.6.0.official-LINUX-X86-64-release.tgz`
+- Standard Edition: `machbase-SDK-8.7.0.official-LINUX-X86-64-release.tgz`
+- Cluster Edition: `machbase-cluster-8.7.0.official-LINUX-X86-64-release.tgz`
 
 Minor 버전이 다른 경우 DB 파일 및 프로토콜 호환이 보장되지 않습니다. Fix 버전 변경은 호환성이 유지됩니다.
 
@@ -202,7 +202,7 @@ Standard/Edge 샘플에는 TRANSACTION 쓰기 충돌과 내구성 정책을 제�
 
 설치된 라이선스에 설정된 최대 태그 수나 저장 용량을 초과하면 라이선스 위반 상태가 기록됩니다. `V$LICENSE_INFO`의 `VIOLATE_STATUS`와 `VIOLATE_MSG`로 현재 상태를 확인합니다.
 
-Append 건수나 테이블스페이스 디스크 경로 개수를 기준으로 한 제한은 8.6.0 소스에서 확인되는 라이선스 위반 조건이 아닙니다.
+Append 건수나 테이블스페이스 디스크 경로 개수를 기준으로 한 제한은 8.7.0 소스에서 확인되는 라이선스 위반 조건이 아닙니다.
 
 ### 라이선스 파일 구조
 

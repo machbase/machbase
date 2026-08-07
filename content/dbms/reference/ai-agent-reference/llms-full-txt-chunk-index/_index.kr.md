@@ -67,7 +67,7 @@ https://<docs-site>/llms-full.txt
 2. **임베딩 우선순위**: 핵심 개념, 레퍼런스, 문제 해결 범주를 우선 인덱싱
 3. **메타데이터 필터링**: `section` 또는 `keywords` 기반으로 관련 청크를 사전 필터링
 4. **URL 정규화**: [canonical-url-map](../canonical-url-map/)에서 정규 URL 확인
-5. **버전 관리**: 이 문서는 Machbase 8.6 기준. 버전 태그를 메타데이터에 포함 권장
+5. **버전 관리**: 이 문서는 Machbase 8.7.0 기준. 버전 태그를 메타데이터에 포함 권장
 
 ## 참조
 

@@ -310,7 +310,7 @@ for (const field of fields) {
 
 ### SELECT 결과의 PRIMARY KEY 메타데이터
 
-Machbase 8.6.0의 CMI 4.0.3 메타데이터를 사용하면 `query()` 또는 `execute()`가 반환하는
+Machbase 8.7.0의 CMI 4.0.3 메타데이터를 사용하면 `query()` 또는 `execute()`가 반환하는
 `fields` 배열의 `isPrimaryKey`에서 직접 컬럼의 PRIMARY KEY 여부를 확인할 수 있습니다.
 
 ```ts

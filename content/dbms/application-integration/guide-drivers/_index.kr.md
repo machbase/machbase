@@ -6,7 +6,7 @@ toc: true
 ---
 Machbase에 연결하기 위한 각 드라이버 및 SDK의 사용 방법을 다룹니다. C/C++ 네이티브 환경부터 Java, Python, Go 등 다양한 언어별 연결 방식을 제공합니다.
 
-Machbase 8.6.0 Standard Edition에서는 하나의 인스턴스에 여러 logical database를 둘 수
+Machbase 8.7.0 Standard Edition에서는 하나의 인스턴스에 여러 logical database를 둘 수
 있습니다. 초기 database 옵션과 `USE`, 3-part table 이름, pool/handle binding 규칙은
 [다중 데이터베이스 운영 가이드](/dbms/operations-configuration-recovery/multi-database/)를
 먼저 확인하십시오. 연결 직후 `CURRENT_DATABASE()`를 실행해 server catalog를 검증합니다.

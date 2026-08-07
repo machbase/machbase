@@ -21,7 +21,7 @@ toc: true
 
 ### 복원 (RESTORE)
 
-기존 인스턴스 전체 복원은 오프라인 상태에서 `machadmin -r`로 수행합니다. 8.6.0 Standard
+기존 인스턴스 전체 복원은 오프라인 상태에서 `machadmin -r`로 수행합니다. 8.7.0 Standard
 Edition에서는 [다중 데이터베이스](/dbms/operations-configuration-recovery/multi-database/)의
 논리 catalog를 named `RESTORE DATABASE`로 새 database에 복원하거나 READ ONLY target으로
 교체할 수도 있습니다.

@@ -6,7 +6,7 @@ toc: true
 ---
 
 Machbase 오류는 machsql, REST API 응답, 드라이버 예외 메시지, 서버 trace 로그에
-표시됩니다. 이 페이지는 Machbase 8.6 소스의
+표시됩니다. 이 페이지는 Machbase 8.7.0 소스의
 `pm/src/msg/machbaseErrNLogMsg.msg`에서 확인한 대표 오류만 정리합니다.
 8.5 원본의 전체 오류 코드 표는 [8.5 전체 오류 코드 레퍼런스](./original-8-5-full/)를
 함께 참고하십시오.

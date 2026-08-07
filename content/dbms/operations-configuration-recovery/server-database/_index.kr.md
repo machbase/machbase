@@ -14,7 +14,7 @@ toc: true
 | [데이터베이스 생성과 삭제](/dbms/operations-configuration-recovery/server-database/#create-delete-database) | DB 초기화, 디렉터리 구조, 안전한 삭제 절차 |
 | [라이선스 설치와 확인](/dbms/operations-configuration-recovery/server-database/#license) | 라이선스 파일 위치, 온라인 설치, 만료 시 동작 |
 
-이 페이지의 `machadmin` 명령은 서버 인스턴스와 물리 데이터 디렉터리를 관리합니다. 8.6.0의
+이 페이지의 `machadmin` 명령은 서버 인스턴스와 물리 데이터 디렉터리를 관리합니다. 8.7.0의
 논리 데이터베이스를 생성·전환·삭제하거나 데이터베이스별 권한을 관리하려면
 [다중 데이터베이스](/dbms/operations-configuration-recovery/multi-database/)를 참조하십시오.
 
@@ -51,7 +51,7 @@ machadmin -u
 mach@localhost:~$ machadmin -u
 -----------------------------------------------------------------
      Machbase Administration Tool
-     Release Version - 8.6.0
+     Release Version - 8.7.0
      Copyright 2014, MACHBASE Corp. or its subsidiaries
      All Rights Reserved
 -----------------------------------------------------------------
@@ -86,7 +86,7 @@ machadmin -s
 mach@localhost:~$ machadmin -s
 -----------------------------------------------------------------
      Machbase Administration Tool
-     Release Version - 8.6.0
+     Release Version - 8.7.0
      Copyright 2014, MACHBASE Corp. or its subsidiaries
      All Rights Reserved
 -----------------------------------------------------------------
@@ -106,7 +106,7 @@ machadmin -k
 mach@localhost:~$ machadmin -k
 -----------------------------------------------------------------
      Machbase Administration Tool
-     Release Version - 8.6.0
+     Release Version - 8.7.0
      Copyright 2014, MACHBASE Corp. or its subsidiaries
      All Rights Reserved
 -----------------------------------------------------------------
@@ -128,7 +128,7 @@ machadmin -e
 mach@localhost:~$ machadmin -e
 -----------------------------------------------------------------
      Machbase Administration Tool
-     Release Version - 8.6.0
+     Release Version - 8.7.0
      Copyright 2014, MACHBASE Corp. or its subsidiaries
      All Rights Reserved
 -----------------------------------------------------------------
@@ -141,7 +141,7 @@ mach@localhost:~$ machadmin -e
 mach@localhost:~$ machadmin -e
 -----------------------------------------------------------------
      Machbase Administration Tool
-     Release Version - 8.6.0
+     Release Version - 8.7.0
      Copyright 2014, MACHBASE Corp. or its subsidiaries
      All Rights Reserved
 -----------------------------------------------------------------
@@ -194,7 +194,7 @@ tail -100 $MACHBASE_HOME/trc/machbase.trc
 ## 인스턴스 데이터베이스 생성과 삭제
 
 이 절의 "데이터베이스"는 서버가 시작할 수 있도록 `$MACHBASE_HOME/dbs/`에 만드는
-물리 인스턴스 저장소를 의미합니다. Machbase 8.6.0에서 SQL `CREATE DATABASE`로 만드는
+물리 인스턴스 저장소를 의미합니다. Machbase 8.7.0에서 SQL `CREATE DATABASE`로 만드는
 논리 catalog와는 다른 lifecycle입니다. 논리 데이터베이스는 하나의 인스턴스 안에서 여러 개를
 만들 수 있으며, 자세한 내용은 [다중 데이터베이스](/dbms/operations-configuration-recovery/multi-database/)를
 참조하십시오.
@@ -211,7 +211,7 @@ machadmin -c
 mach@localhost:~$ machadmin -c
 -----------------------------------------------------------------
      Machbase Administration Tool
-     Release Version - 8.6.0
+     Release Version - 8.7.0
      Copyright 2014, MACHBASE Corp. or its subsidiaries
      All Rights Reserved
 -----------------------------------------------------------------
@@ -247,7 +247,7 @@ machadmin -d
 mach@localhost:~$ machadmin -d
 -----------------------------------------------------------------
      Machbase Administration Tool
-     Release Version - 8.6.0
+     Release Version - 8.7.0
      Copyright 2014, MACHBASE Corp. or its subsidiaries
      All Rights Reserved
 -----------------------------------------------------------------
@@ -305,7 +305,7 @@ machadmin -t /path/to/license.dat
 mach@localhost:~$ machadmin -t license.dat
 -----------------------------------------------------------------
      Machbase Administration Tool
-     Release Version - 8.6.0
+     Release Version - 8.7.0
      Copyright 2014, MACHBASE Corp. or its subsidiaries
      All Rights Reserved
 -----------------------------------------------------------------
@@ -336,7 +336,7 @@ machadmin -f
 mach@localhost:~$ machadmin -f
 -----------------------------------------------------------------
      Machbase Administration Tool
-     Release Version - 8.6.0
+     Release Version - 8.7.0
      Copyright 2014, MACHBASE Corp. or its subsidiaries
      All Rights Reserved
 -----------------------------------------------------------------

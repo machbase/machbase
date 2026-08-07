@@ -17,7 +17,7 @@ aliases:
 Go 표준 도구 체인으로 빌드할 수 있으며 CGo 의존성이 없습니다.
 완전한 Go 툴체인으로 네이티브 포트 성능이 필요하다면 `machgo`가 좋은 선택입니다.
 
-## 다중 데이터베이스 <small>Machbase 8.6.0 부터 지원되는 기능</small>
+## 다중 데이터베이스 <small>Machbase 8.7.0 부터 지원되는 기능</small>
 
 native `machgo`는 `api.WithDatabase("DATABASE_A")`로 연결 직후의 초기 database를
 선택할 수 있습니다. 연결 후 SQL `USE`로 current database를 변경할 수도 있으며,
@@ -419,7 +419,7 @@ func main() {
 
 `machgo`의 연결, 쿼리, 어펜더는 같은 클라이언트 안에서 일관된 방식으로 사용합니다.
 
-## 네이티브 API <small>Machbase 8.6.0 부터 지원되는 기능</small>
+## 네이티브 API <small>Machbase 8.7.0 부터 지원되는 기능</small>
 
 ### DECIMAL
 
@@ -531,7 +531,7 @@ for _, column := range columns {
 | 별칭을 사용한 직접 컬럼 | 원본 컬럼의 PK 상태 유지 |
 | 산술식·함수·집계식·바인드 값·외부 조인 NULL 공급 측 컬럼 | `false` |
 
-Machbase 8.6.0에서 CMI 4.0.3 메타데이터를 협상한 경우 이 값을 사용할 수 있습니다. CMI
+Machbase 8.7.0에서 CMI 4.0.3 메타데이터를 협상한 경우 이 값을 사용할 수 있습니다. CMI
 4.0.2 이하의 구형 프로토콜에서는 기존 호환성을 위해 PRIMARY KEY 플래그를 전달하지 않습니다.
 
 ### TRANSACTION 테이블
@@ -772,7 +772,7 @@ func main() {
 }
 ```
 
-## database/sql <small>Machbase 8.6.0 부터 지원되는 기능</small>
+## database/sql <small>Machbase 8.7.0 부터 지원되는 기능</small>
 
 ### Named bind parameter
 

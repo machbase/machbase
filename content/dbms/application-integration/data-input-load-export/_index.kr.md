@@ -1018,7 +1018,7 @@ table sensor_log
 ```
 -----------------------------------------------------------------
 Machbase Data Import/Export Utility.
-Release Version 8.6.0
+Release Version 8.7.0
 Copyright 2014, MACHBASE Corporation or its subsidiaries.
 All Rights Reserved.
 -----------------------------------------------------------------

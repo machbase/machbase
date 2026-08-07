@@ -9,7 +9,7 @@ toc: true
 붙여 사용하는 기능입니다. 복잡한 인라인 뷰를 단계별로 분리하거나, 집계 결과를 다른
 테이블과 조인할 때 사용합니다.
 
-Machbase 8.6.0 Standard Edition은 비재귀 SELECT CTE를 지원합니다. CTE는 현재 SQL 문에서만
+Machbase 8.7.0 Standard Edition은 비재귀 SELECT CTE를 지원합니다. CTE는 현재 SQL 문에서만
 유효하며 별도 데이터베이스 객체로 저장되지 않습니다.
 
 ## 지원 범위

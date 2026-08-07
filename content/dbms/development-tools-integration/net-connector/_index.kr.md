@@ -471,7 +471,7 @@ foreach (DataRow row in schema.Rows)
 `IsKey`가 `true`이면 SELECT 결과의 직접 컬럼이 PRIMARY KEY입니다. 표현식이나 집계식은
 `false`입니다.
 
-Machbase 8.6.0의 CMI 4.0.3 메타데이터를 협상하지 못한 구형 프로토콜에서는 `IsKey`가
+Machbase 8.7.0의 CMI 4.0.3 메타데이터를 협상하지 못한 구형 프로토콜에서는 `IsKey`가
 `false`로 반환될 수 있습니다.
 
 Nullable 메타데이터는 DECIMAL precision `1~65`, scale `0~30`과 실제 값을 변경하지
@@ -797,7 +797,7 @@ using (var connection = new MachConnection(connString))
 문법과 같은 `:name` 형식을 권장합니다. 이름 검색은 대소문자를 구분하지 않으며, 같은
 이름이 반복되면 한 값이 모든 위치에 적용됩니다.
 
-`:name` 형식은 Machbase 8.6 서버 연결에서 사용합니다. 이전 서버에 연결하면
+`:name` 형식은 Machbase 8.7.0 서버 연결에서 사용합니다. 이전 서버에 연결하면
 `MachException`을 반환합니다. `@name`과 `?name`은 기존 provider 호환 형식입니다.
 
 ```csharp

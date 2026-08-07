@@ -10,7 +10,7 @@ TRANSACTION 테이블의 스키마 설계 방법과 컬럼 타입, PRIMARY KEY �
 
 ## TRANSACTION 테이블 설계
 
-TRANSACTION 테이블은 Machbase 8.6에서 도입된 관계형 테이블로, SELECT·INSERT·UPDATE·DELETE를 모두 지원합니다. PRIMARY KEY 인덱스와 보조 인덱스를 함께 활용할 수 있습니다.
+TRANSACTION 테이블은 Machbase 8.7.0에서 도입된 관계형 테이블로, SELECT·INSERT·UPDATE·DELETE를 모두 지원합니다. PRIMARY KEY 인덱스와 보조 인덱스를 함께 활용할 수 있습니다.
 
 ```sql
 CREATE TRANSACTION TABLE order_history (
