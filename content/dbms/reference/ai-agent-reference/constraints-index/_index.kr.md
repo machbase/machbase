@@ -9,10 +9,13 @@ toc: true
 
 ## TAG 테이블 제약
 
+TAG data UPDATE는 Standard Edition의 논리 TAG 테이블에서만 지원하며 Cluster Edition에서는
+지원하지 않습니다.
+
 | 제약 항목 | 내용 | 비고 |
 |-----------|------|------|
-| UPDATE WHERE 조건 | 태그 선택 조건(`name =`, `name IN`, `name LIKE`)과 BASETIME 조건 필수 | `OR`, 서브쿼리, 집계 조건 불가 |
-| UPDATE SET 대상 | 실제 데이터 컬럼 허용. 메타데이터는 `UPDATE ... METADATA` 사용 | |
+| UPDATE WHERE 조건 | 태그 선택 조건(`name =`, `name IN`, `name LIKE`)과 하나 이상의 BASETIME 조건 필수 | `OR`, 서브쿼리, 집계, 태그/축 컬럼을 감싼 표현식 불가 |
+| UPDATE SET 대상 | 실제 데이터 컬럼 허용. 메타데이터는 `UPDATE ... METADATA` 사용 | RHS 행 컬럼 참조 불가 |
 | PK(name) 컬럼 UPDATE | 불가 | |
 | BASETIME 컬럼 UPDATE | 불가 | |
 | DELETE | `BEFORE`, `WHERE`, `METADATA`, `ROLLUP` 등 제한된 형태로 지원 | 일반 TRANSACTION DELETE와 동일하게 가정하지 않음 |

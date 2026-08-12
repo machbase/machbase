@@ -173,6 +173,8 @@ UPDATE sensor_tag METADATA
 
 TAG 테이블은 Cluster Edition에서 지원됩니다.
 
+단, TAG data UPDATE는 Standard Edition 전용이며 Cluster Edition에서는 지원되지 않습니다.
+
 ### 요약
 
 ```

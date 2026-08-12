@@ -11,6 +11,11 @@ toc: true
 
 잘못 적재된 시계열 값을 직접 정정하려면 태그 선택 조건과 시간 조건으로 대상 범위를 명확히 제한해야 합니다.
 
+<span class="badge-since">Machbase 8.7.0부터 지원되는 기능</span>
+
+TAG data UPDATE는 Standard Edition의 논리 TAG 테이블에서만 지원합니다. SET 우변에서는
+기존 행의 컬럼을 참조할 수 없으므로 보정값을 상수 또는 bind 변수로 계산해 전달합니다.
+
 ### 기본 정정 패턴
 
 ```sql
@@ -48,7 +53,7 @@ INSERT 직후의 append 데이터는 내부 반영 지연이 있으므로, UPDAT
 
 ```sql
 UPDATE sensor_tag
-   SET value = value * 0.98
+   SET value = 99.5
  WHERE name IN ('TEMP-01', 'TEMP-02')
    AND time BETWEEN TO_DATE('2025-06-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
                 AND TO_DATE('2025-06-01 23:59:59', 'YYYY-MM-DD HH24:MI:SS');
@@ -56,6 +61,11 @@ UPDATE sensor_tag
 
 `LIKE` 조건은 태그 메타 영역에서 패턴에 맞는 태그를 확장한 뒤 UPDATE 대상이 됩니다. 패턴이
 넓으면 예상보다 많은 태그가 수정될 수 있으므로 사전 COUNT를 반드시 수행합니다.
+
+`IN`과 `LIKE`로 여러 태그를 수정하는 작업은 태그별로 순차 처리될 수 있습니다. 한 태그 처리
+후 오류가 반환될 수 있으므로 문장 전체 원자성을 가정하지 않습니다. 오류 후에는 결과를
+조회하고 처리되지 않은 태그로 조건을 좁혀 다시 실행합니다. 같은 문장을 그대로 다시 실행하는
+방법은 상수 대입처럼 반복 실행 결과가 동일한 멱등 UPDATE에만 사용합니다.
 
 ```sql
 SELECT COUNT(*)

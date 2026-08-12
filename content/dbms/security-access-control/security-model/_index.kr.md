@@ -63,7 +63,7 @@ Machbase의 권한은 **테이블 권한**과 **데이터베이스 권한** 두 
 | `SELECT` | 테이블 조회 |
 | `INSERT` | 데이터 입력 |
 | `DELETE` | 데이터 삭제 |
-| `UPDATE` | 데이터 수정 (LOG/TAG 테이블은 지원 안 함) |
+| `UPDATE` | 데이터 수정 (LOG는 미지원, TAG data UPDATE는 Standard Edition에서 태그/축 조건 필요) |
 | `ALL` | 위 모든 DML 권한 |
 
 ```sql

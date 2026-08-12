@@ -97,6 +97,6 @@ toc: true
 
 | 사실 | 근거 (소스) | 비고 |
 |------|------------|------|
-| TAG data UPDATE WHERE는 태그 선택 조건과 BASETIME 조건을 요구하며 `name IN`, `name LIKE`, 시간 범위, 데이터 컬럼 predicate를 지원 | TAG data UPDATE 구문과 지원 범위 문서 | [TAG data UPDATE](/dbms/reference/support-scope-constraints/tag-data-update/) |
-| TAG data UPDATE SET은 실제 데이터 컬럼을 허용하고 PK(name), BASETIME, 메타데이터 컬럼은 거부 | TAG data UPDATE 구문과 지원 범위 문서 | [TAG data UPDATE 구문](/dbms/reference/sql/syntax-dictionary-sql/dml-syntax/tag-data-update-syntax/) |
+| TAG data UPDATE WHERE는 Standard Edition에서 태그 선택 조건과 하나 이상의 BASETIME 조건을 요구하며 `name IN`, `name LIKE`, 한쪽/양쪽 시간 범위, 데이터 컬럼 predicate를 지원 | TAG data UPDATE 구문과 지원 범위 문서 | [TAG data UPDATE](/dbms/reference/support-scope-constraints/tag-data-update/) |
+| TAG data UPDATE SET은 실제 데이터 컬럼을 허용하고 PK(name), BASETIME, 메타데이터 컬럼과 기존 행 컬럼을 참조하는 RHS는 거부 | TAG data UPDATE 구문과 지원 범위 문서 | [TAG data UPDATE 구문](/dbms/reference/sql/syntax-dictionary-sql/dml-syntax/tag-data-update-syntax/) |
 | TAG 테이블 DELETE는 BEFORE/WHERE/METADATA/ROLLUP 등 제한된 형태로 지원 | TAG DELETE 구문과 지원 범위 문서 | 일반 TRANSACTION DELETE와 동일한 범위로 가정하지 않음 |

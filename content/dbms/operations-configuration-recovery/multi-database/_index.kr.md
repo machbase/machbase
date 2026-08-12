@@ -505,7 +505,7 @@ REVOKE USAGE ON DATABASE factory_a_backup FROM report_user;
 | 객체 종류 | `SELECT` | `INSERT` | `DELETE` | `UPDATE` | `ALL ON TABLE` |
 | --- | --- | --- | --- | --- | --- |
 | LOG table | 가능 | 가능 | 가능 | 불가 | `SELECT, INSERT, DELETE` |
-| TAG table | 가능 | 가능 | 가능 | 권한을 부여해도 SQL 기능상 불가 | 실제 지원 DML은 `SELECT, INSERT, DELETE`입니다. |
+| TAG table | 가능 | 가능 | 가능 | Standard 조건부 | `SELECT, INSERT, DELETE, UPDATE` (UPDATE는 태그/BASETIME 조건 필요) |
 | VOLATILE table | 가능 | 가능 | 가능 | 가능 | 네 DML 권한 전체 |
 | LOOKUP table | 가능 | 가능 | 가능 | 가능 | 네 DML 권한 전체 |
 | TRANSACTION table | 가능 | 가능 | 가능 | 가능 | 네 DML 권한 전체 |
@@ -514,12 +514,12 @@ REVOKE USAGE ON DATABASE factory_a_backup FROM report_user;
 LOG table에 `GRANT UPDATE`만 지정하면 오류가 됩니다. 다른 권한과 `UPDATE`를
 함께 `GRANT`하면 지원되는 권한만 남고 `UPDATE`는 제거됩니다. 반면 `UPDATE`를
 명시한 LOG table `REVOKE`는 다른 권한과 함께 지정해도 오류가 되므로,
-지원되는 권한만 회수해야 합니다. LOG와 TAG table 자체가 `UPDATE` SQL을
-지원하지 않으므로 `UPDATE` 권한으로 이 제한을 해제할 수 없습니다.
+지원되는 권한만 회수해야 합니다. LOG UPDATE는 지원되지 않으며, TAG data UPDATE는
+Standard Edition에서 태그 선택자와 BASETIME 조건을 만족하는 경우에만 실행됩니다.
 
 LOG의 `ALL ON TABLE`은 `SELECT`, `INSERT`, `DELETE`로 저장됩니다. TAG는
-`ALL` 권한 비트에 `UPDATE`가 포함될 수 있지만 TAG table 자체가 일반 UPDATE를
-지원하지 않으므로 UPDATE SQL은 계속 실패합니다. 권한 비트와 table 종류의 SQL
+`ALL` 권한 비트에 `UPDATE`가 포함될 수 있으며, Standard Edition에서 조건을 만족하는
+data UPDATE에 사용할 수 있습니다. 권한 비트와 table 종류의 SQL
 기능을 같은 의미로 해석하면 안 됩니다. 권한 하나를 `REVOKE`해도 나머지 권한은
 유지됩니다.
 
@@ -1370,8 +1370,9 @@ catalog는 `FAILED_NEEDS_ACTION`으로 격리됩니다.
 
 ## 11. 테이블 종류별 주의사항
 
-- LOG와 TAG 테이블은 `SELECT`, `INSERT`, `DELETE`를 지원하며 `UPDATE`는
-  지원하지 않습니다.
+- LOG 테이블은 `SELECT`, `INSERT`, `DELETE`를 지원하며 UPDATE는 지원하지 않습니다. TAG
+  테이블은 같은 DML에 더해 Standard Edition에서 태그 선택자와 BASETIME 조건을 만족하는
+  data UPDATE를 지원합니다.
 - VOLATILE과 LOOKUP 테이블은 전체 DML을 지원합니다.
 - VOLATILE과 LOOKUP 테이블 조회는 `WHERE` 절에 primary key 조건을
   사용합니다.

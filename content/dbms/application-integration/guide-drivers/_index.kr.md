@@ -1931,8 +1931,8 @@ public class FullExample {
 - Standard Edition의 TRANSACTION 테이블은 JDBC 표준 트랜잭션 API를 사용합니다.
 - LOG/TAG Append 입력은 rollback 대상이 아닙니다. manual transaction의 테이블 종류별
   DML 동작은 JDBC 트랜잭션 레퍼런스를 확인합니다.
-- LOG 테이블에는 `UPDATE`를 사용할 수 없습니다. TAG data UPDATE는 태그 선택자와 시간축
-  조건을 만족하는 제한된 보정 작업에만 사용합니다.
+- LOG 테이블에는 `UPDATE`를 사용할 수 없습니다. TAG data UPDATE는 Standard Edition에서
+  태그 선택자와 시간축 조건을 만족하는 제한된 보정 작업에만 사용합니다.
 - `_arrival_time` 컬럼은 기본적으로 숨겨져 있습니다. 표시하려면 URL에 `show_hidden_cols=1`을 추가합니다.
 - Append에서 DATETIME 값은 반드시 나노초 단위 `long`으로 전달해야 합니다.
 
@@ -3377,7 +3377,9 @@ adapter.Update(table);
 ```
 
 {{< callout type="info" >}}
-로그 테이블과 태그 테이블은 UPDATE를 지원하지 않습니다. UPDATE/DELETE가 필요한 경우에는 Lookup 또는 Volatile 테이블을 사용하십시오.
+LOG 테이블은 UPDATE를 지원하지 않습니다. TAG data UPDATE는 Standard Edition에서 태그
+선택자와 BASETIME 조건을 지정한 경우에만 사용할 수 있습니다. 일반적인 행 단위 UPDATE가
+필요하면 Lookup 또는 Volatile 테이블을 사용하십시오.
 {{< /callout >}}
 
 ### Entity Framework / LINQ {#ef-linq}

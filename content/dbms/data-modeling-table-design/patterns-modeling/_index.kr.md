@@ -492,7 +492,7 @@ TAG data UPDATE는 태그 선택 조건과 BASETIME 조건을 함께 사용합�
 
 ```sql
 UPDATE sensor_data
-   SET value = value + 1
+   SET value = 101
  WHERE name = 'sensor-01'
    AND time >= TO_DATE('2026-07-01', 'YYYY-MM-DD');
 ```

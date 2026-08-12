@@ -877,7 +877,8 @@ SELECT * FROM m$obj_privileges WHERE grantee = 'APP_USER';
 
 - 테이블 소유자는 별도 GRANT 없이 자신의 테이블에 대한 모든 DML을 실행할 수 있습니다.
 - 다른 사용자 소유의 테이블에 접근하려면 반드시 해당 테이블에 대한 권한이 필요합니다.
-- LOG, TAG 테이블에 `UPDATE` 권한을 부여하더라도 테이블 유형 제약으로 인해 UPDATE를 실행할 수 없습니다.
+- LOG 테이블에 `UPDATE` 권한을 부여해도 LOG UPDATE는 지원되지 않습니다. TAG data UPDATE는
+  Standard Edition에서 태그 선택자와 BASETIME 조건을 만족해야 실행할 수 있습니다.
 - VOLATILE 테이블의 `DELETE`/`UPDATE`는 기본키 기반 `WHERE` 조건이 필요합니다. LOOKUP
   테이블은 기본키 조건과 일반 조건식을 모두 지원합니다.
 

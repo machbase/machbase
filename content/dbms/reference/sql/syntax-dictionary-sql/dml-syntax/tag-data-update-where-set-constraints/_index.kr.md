@@ -8,6 +8,8 @@ toc: true
 TAG data UPDATE는 대상 범위가 명확해야 합니다. WHERE 절에는 태그 선택 조건과 BASETIME
 조건이 모두 필요하고, SET 절은 실제 데이터 컬럼만 대상으로 합니다.
 
+<span class="badge-since">Machbase 8.7.0부터 지원되는 기능</span>
+
 ## SET 절 제약
 
 | 컬럼 역할 | SET 가능 여부 | 설명 |
@@ -19,8 +21,9 @@ TAG data UPDATE는 대상 범위가 명확해야 합니다. WHERE 절에는 태�
 | 메타데이터 컬럼 | X | `UPDATE ... METADATA`로 별도 처리 |
 | 숨김/시스템 컬럼 | X | 내부 컬럼은 SET 대상이 아님 |
 
-SET 표현식에는 상수, 같은 행의 기존 컬럼 값, 산술식, 문자열식, `CASE` 표현식, 허용된
-형변환 함수 등을 사용할 수 있습니다. 서브쿼리와 집계식은 SET RHS로 사용할 수 없습니다.
+SET 표현식에는 상수, bind 변수, 기존 행 컬럼을 참조하지 않는 산술식·문자열식·`CASE`,
+허용된 형변환 함수와 NULL을 사용할 수 있습니다. 기존 행 컬럼을 참조하는 식, 서브쿼리와
+집계식은 SET RHS로 사용할 수 없습니다.
 
 ## WHERE 절 제약
 
@@ -45,6 +48,7 @@ UPDATE table_name
 | 시간 조건 없는 조건 | X |
 | `OR` 조건 | X |
 | `IN (SELECT ...)` | X |
+| 태그/축 컬럼을 함수·연산식으로 감싼 표현식 | X |
 
 ## 메타데이터 UPDATE
 

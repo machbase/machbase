@@ -56,19 +56,22 @@ DECIMAL은 모든 public 테이블 타입의 공통 exact fixed-point 타입입�
 
 ## 주요 제약 상세
 
-### TAG 테이블 UPDATE 제약 (△)
+### TAG 테이블 UPDATE 제약 (△, Standard Edition)
 
 TAG 테이블의 UPDATE는 다음 조건을 모두 만족해야 합니다.
+
+Cluster Edition에서는 TAG data UPDATE를 사용할 수 없습니다.
 
 - `WHERE` 절에 태그 선택 조건(`name =`, `name IN`, `name LIKE`) 포함
 - `WHERE` 절에 BASETIME 컬럼 조건 포함
 - SET 대상은 실제 데이터 컬럼
 - `time` (BASETIME) 컬럼과 `name` 컬럼, 메타데이터 컬럼은 data UPDATE로 수정 불가
+- SET 우변에서 기존 행의 컬럼을 참조할 수 없으며, 상수·bind·column-free 식만 사용 가능
 
 ```sql
 -- 가능: 태그 조건과 시간 조건으로 데이터 컬럼 업데이트
 UPDATE sensor_data
-   SET value = value + 1
+   SET value = 101
  WHERE name = 'sensor01'
    AND time >= TO_DATE('2026-07-01', 'YYYY-MM-DD');
 

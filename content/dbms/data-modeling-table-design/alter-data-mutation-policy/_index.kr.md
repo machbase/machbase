@@ -92,6 +92,10 @@ TAG 데이터(실제 시계열 값)와 TAG 메타데이터 UPDATE는 구문이 �
 TAG data UPDATE는 태그 선택 조건과 BASETIME 조건이 모두 필요하며, `name`과 `time` 컬럼은
 SET 대상으로 사용할 수 없습니다. 상세 내용은 하위 페이지를 참고하십시오.
 
+TAG data UPDATE는 Standard Edition의 논리 TAG 테이블에서만 지원합니다. SET 우변은 기존
+행 컬럼을 참조할 수 없으며 상수, bind 변수, column-free 함수·연산식·`CASE`·NULL을
+사용합니다.
+
 <a id="policy-update-policy-tag-data-update"></a>
 
 ### TAG data UPDATE 정책
@@ -130,14 +134,16 @@ UPDATE tag METADATA
 
 ```sql
 UPDATE tag
-   SET value = value * 0.98
+   SET value = 25.0
  WHERE name IN ('TEMP-01', 'TEMP-02')
    AND time BETWEEN TO_DATE('2024-01-15 10:00:00', 'YYYY-MM-DD HH24:MI:SS')
                 AND TO_DATE('2024-01-15 11:00:00', 'YYYY-MM-DD HH24:MI:SS')
    AND value > 0;
 ```
 
-`OR`, 태그 선택 없는 조건, 시간 조건 없는 조건, 서브쿼리 기반 조건은 허용하지 않습니다.
+`OR`, 태그 선택 없는 조건, 시간 조건 없는 조건, 서브쿼리·집계식 기반 조건은 허용하지
+않습니다. `name IN (...)`, `name LIKE ...`, 한쪽 시간 조건과 `AND`로 연결한 데이터 컬럼
+조건은 사용할 수 있습니다.
 
 #### 운영 고려사항
 
@@ -227,7 +233,7 @@ UPDATE tag
    AND time = TO_DATE('2024-01-15 10:00:00', 'YYYY-MM-DD HH24:MI:SS');
 
 UPDATE tag
-   SET value = value * 0.98
+   SET value = 25.0
  WHERE name = 'TEMP-01'
    AND time BETWEEN TO_DATE('2024-01-15 10:00:00', 'YYYY-MM-DD HH24:MI:SS')
                 AND TO_DATE('2024-01-15 11:00:00', 'YYYY-MM-DD HH24:MI:SS');

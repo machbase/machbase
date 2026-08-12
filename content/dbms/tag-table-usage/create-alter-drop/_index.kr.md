@@ -24,7 +24,9 @@ Tag 테이블은 같은 `tag_name`에 대해 하나의 축 컬럼을 따라 데�
 - 거리축: `DOUBLE`, `LONG`, `ULONG` 타입에 `BASE DISTANCE` 또는 `BASEDISTANCE`
 - `BASE`를 사용할 때는 뒤에 반드시 `TIME` 또는 `DISTANCE`가 와야 합니다
 - 축 컬럼은 하나만 가질 수 있습니다
-- Tag 테이블은 `SELECT`, `INSERT`, `DELETE`를 지원하고 `UPDATE`는 지원하지 않습니다
+- Tag 테이블은 `SELECT`, `INSERT`, `DELETE`를 지원합니다. Standard Edition의 논리 TAG
+  테이블 중 BASETIME 테이블에서는 태그 선택자와 BASETIME 조건을 지정한 data UPDATE도
+  지원합니다. 메타데이터 UPDATE는 `UPDATE ... METADATA`를 사용합니다.
 
 ### 시간축 Tag 테이블 생성
 

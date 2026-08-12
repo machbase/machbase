@@ -11,9 +11,11 @@ Machbase의 주요 제한 사항을 테이블 유형별, Edition별, 일반 시�
 
 | 항목 | 제한 내용 |
 |------|----------|
-| UPDATE 조건 | 태그 선택 조건(`name =`, `name IN`, `name LIKE`)과 BASETIME 조건 필수 |
+| UPDATE 에디션 | Standard Edition만 지원; Cluster Edition은 미지원 |
+| UPDATE 조건 | 태그 선택 조건(`name =`, `name IN`, `name LIKE`)과 하나 이상의 BASETIME 조건 필수 |
 | UPDATE 대상 | 실제 데이터 컬럼 가능. 메타데이터는 `UPDATE ... METADATA` 사용 |
 | UPDATE 불가 컬럼 | `name` (TAGNAME), `time` (BASETIME) |
+| UPDATE SET 우변 | 기존 행 컬럼 참조 불가; 상수·bind·column-free 식 사용 |
 | DELETE 방식 | 범위 삭제 지원; 개별 행 삭제는 DELETE 정책 설정 필요 |
 | Transaction | 미지원 (Append-only 구조, 즉시 커밋) |
 | Append 대상 | TAG/LOG 고속 경로와 TRANSACTION client batch/stream 경로 지원 |

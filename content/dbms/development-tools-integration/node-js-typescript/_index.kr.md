@@ -696,8 +696,9 @@ await conn.execute('COMMIT');
 ### 테이블 타입별 SQL 유의사항
 
 - **LOG 테이블**은 `UPDATE`를 지원하지 않습니다.
-- **TAG 테이블**의 data UPDATE에는 태그 선택 조건과 BASETIME 조건이 필요하며, 태그명·시간축·
-  메타데이터 컬럼은 data UPDATE의 SET 대상이 될 수 없습니다.
+- **TAG 테이블**의 data UPDATE는 Standard Edition에서만 지원합니다. 태그 선택 조건과
+  BASETIME 조건이 필요하며, 태그명·시간축·메타데이터 컬럼은 data UPDATE의 SET 대상이 될 수
+  없습니다. SET 우변에서 기존 행 컬럼을 참조할 수 없습니다.
 - **VOLATILE 테이블**의 UPDATE/DELETE는 기본 키 조건을 사용합니다. **LOOKUP 테이블**은 기본 키
   조건과 일반 조건식을 모두 지원하며, 단건 변경에는 기본 키 조건이 효율적입니다.
 

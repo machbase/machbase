@@ -141,7 +141,7 @@ TAG 테이블의 실제 시계열 데이터는 태그 선택 조건과 BASETIME 
 
 ```sql
 UPDATE sensors
-   SET value = value + 1,
+   SET value = 101,
        status = 1
  WHERE name = 'sensor-01'
    AND time >= TO_DATE('2026-07-01', 'YYYY-MM-DD');

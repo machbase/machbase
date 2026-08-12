@@ -43,9 +43,10 @@ toc: true
 | PRIMARY KEY | O (name) | X | O | O | O |
 | BASETIME 컬럼 | O | - | - | - | - |
 
-> ¹ TAG 테이블 UPDATE: data UPDATE는 태그 선택 조건(`name =`, `name IN`, `name LIKE`)과
-> BASETIME 조건이 모두 필요합니다. SET 대상은 실제 데이터 컬럼이며, PK(`name`), BASETIME,
-> 메타데이터 컬럼은 data UPDATE로 수정할 수 없습니다. 메타데이터는 `UPDATE ... METADATA`를 사용합니다.
+> ¹ TAG 테이블 UPDATE: Standard Edition에서만 지원됩니다. data UPDATE는 태그 선택 조건
+> (`name =`, `name IN`, `name LIKE`)과 하나 이상의 BASETIME 조건이 필요합니다. SET 대상은
+> 실제 데이터 컬럼이며, PK(`name`), BASETIME, 메타데이터 컬럼은 data UPDATE로 수정할 수
+> 없습니다. SET 우변은 기존 행 컬럼을 참조할 수 없습니다. 메타데이터는 `UPDATE ... METADATA`를 사용합니다.
 
 ## SDK × 주요 기능 지원표
 
