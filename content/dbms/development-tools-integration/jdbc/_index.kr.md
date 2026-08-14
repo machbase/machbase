@@ -199,6 +199,33 @@ public class JdbcQuickStart {
 DATETIME에 epoch nanosecond 값을 전달할 때는 `long`을 사용합니다. 예제의 테이블이 이미
 존재하면 `CREATE LOG TABLE`을 생략하거나 다른 이름을 사용합니다.
 
+## INSERT 결과 ROWID
+
+Standard Edition에서 단일 `INSERT ... VALUES`가 성공하면 JDBC 표준 generated keys API로
+입력된 행의 ROWID를 확인할 수 있습니다.
+
+```java
+String sql = "INSERT INTO jdbc_sensor VALUES (?, ?, ?)";
+try (PreparedStatement insert = connection.prepareStatement(
+         sql, Statement.RETURN_GENERATED_KEYS)) {
+    insert.setLong(1, System.currentTimeMillis() * 1_000_000L);
+    insert.setString(2, "sensor-2");
+    insert.setDouble(3, 26.1);
+    insert.executeUpdate();
+
+    try (ResultSet keys = insert.getGeneratedKeys()) {
+        if (keys.next()) {
+            java.sql.RowId rowId = keys.getRowId("ROWID");
+        }
+    }
+}
+```
+
+결과는 `ROWID` 컬럼 하나와 최대 한 행으로 구성됩니다. 반환할 ROWID가 없으면 빈
+`ResultSet`입니다. 지원 여부는 `DatabaseMetaData.supportsGetGeneratedKeys()`로 확인합니다.
+batch, Append, `INSERT ... SELECT`, UPSERT의 차이는
+[ROWID와 INSERT 결과 ID](/dbms/application-integration/rowid-generated-id/)를 참고하십시오.
+
 ## 버전 확인
 
 ```java

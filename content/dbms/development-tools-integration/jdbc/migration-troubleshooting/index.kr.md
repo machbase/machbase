@@ -26,6 +26,7 @@ aliases:
 | 오류 | 잘못된 상태에서 표준 `SQLException` 반환 | SQLState로 오류를 분기합니다. |
 | timeout | query/network timeout 지원 | network timeout 뒤 연결을 폐기합니다. |
 | 커넥션 풀 | logical lease와 상태 reset | close한 handle과 metadata를 재사용하지 않습니다. |
+| generated keys | Standard 단일 INSERT의 ROWID 반환 | `getGeneratedKeys()`의 `ROWID`를 읽습니다. |
 
 named bind는 호환 서버에서 사용합니다. 이전 서버가 이름 기반 bind를 지원하지 않으면
 SQLState `0A000`이 발생하므로 `?` positional parameter로 전환합니다.
@@ -35,13 +36,12 @@ SQLState `0A000`이 발생하므로 `?` positional parameter로 전환합니다.
 다음 JDBC 선택 기능은 지원하지 않습니다.
 
 - savepoint
-- generated keys
 - XA와 분산 트랜잭션
 - stored procedure와 CallableStatement 성공 경로
 - scrollable 또는 updateable ResultSet
 - Statement pooling
 - multiple open results
-- Array, Struct, Ref, RowId, SQLXML과 UDT type map
+- Array, Struct, Ref, SQLXML과 UDT type map
 - 별도 NClob storage와 factory
 - Machbase 전용 RowSet provider
 - JDBC 4.3 sharding과 request boundary API
@@ -64,9 +64,10 @@ SQLState `0A000`이 발생하므로 `?` positional parameter로 전환합니다.
 
 ## SQLState `0A000`
 
-선택한 기능이나 서버 protocol이 해당 API를 지원하지 않습니다. savepoint, generated keys,
-scrollable cursor와 XA에는 대체 흐름을 사용합니다. named bind에서 발생하면 positional
-parameter인 `?`를 사용합니다.
+선택한 기능이나 서버가 해당 API를 지원하지 않습니다. savepoint, scrollable cursor와
+XA에는 대체 흐름을 사용합니다. generated keys는 Standard Edition과 ROWID를 지원하는
+서버·JDBC 조합에서 사용하며, `DatabaseMetaData.supportsGetGeneratedKeys()`로 확인합니다.
+named bind에서 발생하면 positional parameter인 `?`를 사용합니다.
 
 ## commit 이후 ResultSet이 닫힘
 

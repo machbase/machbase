@@ -772,6 +772,29 @@ func main() {
 }
 ```
 
+단일 `INSERT ... VALUES`가 성공하면 `Result.LastInsertId()`로 입력된 행의 ROWID를 확인할
+수 있습니다. 반환 타입이 `int64`이므로 `uint64`로 변환해 ROWID의 64비트 값을 보존합니다.
+
+```go
+result, err := db.ExecContext(ctx,
+	"INSERT INTO EXAMPLE VALUES (?, ?, ?)",
+	"example-client", time.Now(), 3.14)
+if err != nil {
+	panic(err)
+}
+
+value, err := result.LastInsertId()
+if err != nil {
+	panic(err)
+}
+rowID := uint64(value)
+fmt.Println("ROWID:", rowID)
+```
+
+이 기능은 ROWID를 지원하는 Standard Edition에서 사용할 수 있습니다. batch, Append,
+`INSERT ... SELECT`, UPSERT에서는 ROWID를 반환하지 않습니다. 자세한 조건은
+[ROWID와 INSERT 결과 ID](/dbms/application-integration/rowid-generated-id/)를 참고하십시오.
+
 ## database/sql <small>Machbase 8.7.0 부터 지원되는 기능</small>
 
 ### Named bind parameter
@@ -964,7 +987,10 @@ session metadata에 의존하는 statement를 재사용하지 말고 다시 준�
 - `database/sql`의 connection pooling은 일반적인 `sql.DB` 방식대로 동작합니다. DSN에
   `database`/`db`를 지정하면 `USE`로 변경된 session을 pool에 반환할 때 설정된 database로
   복원합니다.
-- `LastInsertId()`는 지원하지 않습니다.
+- ROWID를 지원하는 Standard Edition과 `neo-client`를 사용하면 단일 INSERT 결과에서
+  `Result.LastInsertId()`를 호출할 수 있습니다. 반환된 `int64`는 `uint64`로 변환해 ROWID의
+  bit pattern을 보존합니다. 자세한 내용은 [ROWID와 INSERT 결과 ID](/dbms/application-integration/rowid-generated-id/)를
+  참고하십시오.
 - 파라미터 타입은 드라이버 구현을 따릅니다. 일반적인 SQL 타입, `time.Time`, `[]byte`, `net.IP`,
   `api.Decimal`을 지원하지만 `bool` 파라미터는 지원하지 않습니다.
 - `BeginTx`에서는 기본 isolation level과 읽기/쓰기 트랜잭션만 지원합니다.

@@ -152,6 +152,24 @@ if __name__ == '__main__':
 
 `machbase` 메서드는 대부분 성공 시 `1`, 실패 시 `0`을 반환합니다. 호출 직후 `db.result()`로 서버가 반환한 JSON 페이로드를 확인할 수 있습니다. `select()` 결과를 순회할 때는 `(0, None)`이 반환될 때까지 `db.fetch()`를 반복 호출하고, 마지막에 `db.selectClose()`로 리소스를 해제합니다.
 
+### INSERT 결과 ROWID
+
+Standard Edition에서 DB-API cursor로 단일 `INSERT ... VALUES`를 실행한 뒤
+`cursor.lastrowid`에서 입력된 행의 ROWID를 확인할 수 있습니다.
+
+```python
+cursor.execute(
+    "INSERT INTO orders(item) VALUES(%s)",
+    ("pump",),
+)
+row_id = cursor.lastrowid
+```
+
+값은 임의 정밀도 Python `int`이며 unsigned 64비트 ROWID를 양수로 보존합니다. ROWID가 없는
+실행에서는 `None`입니다. `executemany()`, Append, `INSERT ... SELECT`, UPSERT에서는
+ROWID를 반환하지 않습니다. 실행 실패 후에도 이전 값을 재사용하지 마십시오. 자세한 조건은
+[ROWID와 INSERT 결과 ID](/dbms/application-integration/rowid-generated-id/)를 참고하십시오.
+
 ### DB-API 결과의 Nullable 메타데이터
 
 DB-API 커서에서는 `cursor.description[i][6]`의 `null_ok` 값으로 SELECT 결과 컬럼의
@@ -410,6 +428,7 @@ prepared cursor는 SQL의 허용 범위나 Python API의 auto-commit 동작을 �
 | `cursor.fetchmany(size)` | 최대 `size`건 조회 | `list` |
 | `cursor.fetchall()` | 전체 조회 | `list` |
 | `cursor.description` | 결과 컬럼 메타데이터. 일곱 번째 값은 `null_ok`입니다. | `tuple | None` |
+| `cursor.lastrowid` | 성공한 단일 INSERT의 ROWID. 지원되지 않는 입력 방식이나 실패 후에는 `None`입니다. | `int | None` |
 | `cursor.close()` | 커서 종료 | `None` |
 | `cursor.rowcount` | 영향 행 수 | `int` |
 | `connection.append(table, rows, types=None, times=None, strict=False)` | Append 프로토콜로 row를 추가합니다. 2.3부터 trailing 컬럼 생략 시 `NULL` padding을 적용합니다. | 입력 row 수 |

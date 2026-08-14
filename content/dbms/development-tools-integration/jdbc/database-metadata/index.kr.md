@@ -158,3 +158,8 @@ System.out.println(metadata.supportsMultipleOpenResults());
 
 `Driver.jdbcCompliant()`이 `false`인 것과 개별 JDBC API의 지원 여부는 별개입니다.
 애플리케이션은 필요한 capability를 직접 확인합니다.
+
+Standard Edition에서 ROWID를 지원하는 서버와 연결하면 `supportsGetGeneratedKeys()`는
+`true`, `getRowIdLifetime()`은 `ROWID_VALID_OTHER`를 반환합니다. 지원하지 않는 서버 또는
+Cluster Edition에서는 각각 `false`와 `ROWID_UNSUPPORTED`를 반환합니다. 사용 예제는
+[ROWID와 INSERT 결과 ID](/dbms/application-integration/rowid-generated-id/)를 참고하십시오.

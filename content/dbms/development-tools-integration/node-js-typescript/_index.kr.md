@@ -222,6 +222,24 @@ console.log('Rows affected:', insert.affectedRows); // -> 1
 await conn.execute('COMMIT');
 ```
 
+Standard Edition에서 단일 `INSERT ... VALUES`가 성공하면 실행 결과의 `rowId`에 ROWID가
+포함됩니다. 64비트 정밀도를 보존하기 위해 `number`가 아닌 `bigint`로 처리합니다.
+
+```javascript
+const [result] = await conn.execute(
+  'INSERT INTO sensor_log(message) VALUES(?)',
+  ['started']
+);
+
+if (result.rowId !== undefined) {
+  const rowId = result.rowId; // bigint
+}
+```
+
+ROWID가 없는 실행에는 `rowId` 속성이 없습니다. batch, Append, `INSERT ... SELECT`,
+UPSERT의 차이는 [ROWID와 INSERT 결과 ID](/dbms/application-integration/rowid-generated-id/)를
+참고하십시오.
+
 #### query(sql, values?)
 
 행을 반환하는 쿼리를 실행합니다. 반환값은 `[rows, fields]` 형태의 2요소 튜플입니다.

@@ -43,6 +43,7 @@ Machbase는 C/C++, Java, Python, .NET, Go, Node.js, REST API 등 다양한 프�
 | [Parameter binding](/dbms/application-integration/concepts-common/#parameter-binding) | 위치 바인딩, DATETIME nanosecond 처리, NULL 값 |
 | [트랜잭션 처리](/dbms/application-integration/concepts-common/#transaction) | TRANSACTION SQL 트랜잭션과 SDK별 제어 API 범위 |
 | [Append API와 Batch INSERT](/dbms/application-integration/concepts-common/#append-api-batch) | TAG/LOG Append와 TRANSACTION batch Append의 차이 |
+| [ROWID와 INSERT 결과 ID](rowid-generated-id/) | 테이블별 ROWID 조회와 SDK별 generated ID 확인 방법 |
 | [오류 처리와 재시도](/dbms/application-integration/concepts-common/#error-handling-retry) | 오류 코드, exponential backoff, connection pool 격리 |
 
 ### 드라이버별 가이드와 REST API
@@ -76,4 +77,5 @@ Machbase는 C/C++, Java, Python, .NET, Go, Node.js, REST API 등 다양한 프�
 1. [연동 방식 선택 가이드](/dbms/application-integration/selection-integration-method/#selection-guide-integration-method)에서 환경에 맞는 드라이버를 결정합니다.
 2. [연결 문자열과 인증](/dbms/application-integration/concepts-common/#connection-string-authentication)에서 기본 연결 방법을 확인합니다.
 3. 사용 패턴에 따라 [Append API](/dbms/application-integration/concepts-common/#append-api-batch) 또는 [Prepared statement](/dbms/application-integration/concepts-common/#prepared-statement)를 선택합니다.
-4. 11장 개발 도구 연동에서 해당 드라이버의 상세 API를 참조합니다.
+4. INSERT한 행의 식별자가 필요하면 [ROWID와 INSERT 결과 ID](rowid-generated-id/)를 확인합니다.
+5. 11장 개발 도구 연동에서 해당 드라이버의 상세 API를 참조합니다.

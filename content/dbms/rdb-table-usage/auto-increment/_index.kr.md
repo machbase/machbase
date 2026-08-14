@@ -4,9 +4,18 @@ weight: 160
 toc: true
 ---
 
-`AUTO_INCREMENT`는 TRANSACTION 테이블의 PRIMARY KEY 값을 서버가 자동으로 생성하도록 하는 컬럼 속성입니다. 응용 프로그램이 row마다 고유한 식별자를 직접 계산하지 않아도 되므로, 장비 마스터, 작업 큐, 이벤트 인덱스, 외부 데이터 이관 테이블처럼 단일 숫자 ID가 필요한 TRANSACTION 테이블에 사용할 수 있습니다.
+`AUTO_INCREMENT`는 단일 64비트 정수 PRIMARY KEY 값을 서버가 자동으로 생성하도록 하는
+컬럼 속성입니다. 응용 프로그램이 row마다 고유한 식별자를 직접 계산하지 않아도 되므로,
+장비 마스터, 작업 큐, 임시 상태 테이블처럼 단일 숫자 ID가 필요한 테이블에 사용할 수
+있습니다.
 
-이 기능은 TRANSACTION 테이블 전용입니다. LOOKUP 테이블의 `PROPERTY(SEQUENCE)` 및 `NEXTVAL()`과는 별개의 기능입니다.
+<span class="badge-since">Machbase 8.7.0부터 LOOKUP과 VOLATILE에서도 지원</span>
+
+Standard Edition의 TRANSACTION, LOOKUP, VOLATILE 테이블에서 지원합니다. LOOKUP 테이블의
+`PROPERTY(SEQUENCE)` 및 `NEXTVAL()`과는 별개의 기능입니다.
+
+명시적 트랜잭션이 진행 중일 때는 TRANSACTION 테이블 DDL을 실행할 수 없습니다. 먼저
+`COMMIT` 또는 `ROLLBACK`한 뒤 `CREATE TRANSACTION TABLE`을 실행합니다.
 
 ## 지원 범위
 
@@ -24,25 +33,49 @@ CREATE TRANSACTION TABLE work_order (
     status VARCHAR(16),
     created_at DATETIME
 );
+
+CREATE LOOKUP TABLE lookup_order (
+    id INT64 PRIMARY KEY AUTO_INCREMENT,
+    item VARCHAR(100)
+);
+
+CREATE VOLATILE TABLE volatile_order (
+    id LONG PRIMARY KEY AUTO_INCREMENT,
+    item VARCHAR(100)
+);
 ```
 
 지원 타입은 다음과 같습니다.
 
 | 타입 | 지원 여부 | 설명 |
 | --- | --- | --- |
-| `LONG` | 지원 | TRANSACTION `AUTO_INCREMENT` PRIMARY KEY로 사용할 수 있습니다. |
+| `LONG` | 지원 | `AUTO_INCREMENT` PRIMARY KEY로 사용할 수 있습니다. |
 | `INT64` | 지원 | `LONG`과 같은 64비트 정수 계열로 사용할 수 있습니다. |
 | `SHORT`, `INTEGER`, `ULONG` 등 | 미지원 | `AUTO_INCREMENT` 컬럼으로 사용할 수 없습니다. |
 | `VARCHAR`, `DATETIME`, `TEXT`, `BINARY`, `BLOB`, `CLOB` 등 | 미지원 | 숫자 자동 생성 대상이 아니므로 사용할 수 없습니다. |
 
 제한 사항은 다음과 같습니다.
 
-- TRANSACTION 테이블에서만 사용할 수 있습니다.
+- Standard Edition의 TRANSACTION, LOOKUP, VOLATILE 테이블에서 사용할 수 있습니다.
 - `LONG` 또는 `INT64` 컬럼에만 사용할 수 있습니다.
 - 해당 컬럼은 컬럼 단위 `PRIMARY KEY`여야 합니다.
 - 테이블 단위 PRIMARY KEY, 복합 PRIMARY KEY에는 사용할 수 없습니다.
-- LOOKUP 테이블의 `PROPERTY(SEQUENCE)`와 함께 사용할 수 없습니다.
-- `NEXTVAL()`은 TRANSACTION `AUTO_INCREMENT` 컬럼에 사용할 수 없습니다.
+- LOOKUP 테이블의 같은 컬럼에 `PROPERTY(SEQUENCE)`와 함께 사용할 수 없습니다.
+- `NEXTVAL()`은 `AUTO_INCREMENT` 컬럼에 사용할 수 없습니다.
+
+### 테이블별 차이
+
+| 항목 | TRANSACTION | LOOKUP | VOLATILE |
+|------|-------------|--------|----------|
+| 행과 다음 자동값의 재시작 후 유지 | O | O | X |
+| 명시적 트랜잭션 | O | X | X |
+| `INSERT ... SELECT` | O | X | X |
+| `ON DUPLICATE KEY UPDATE` | O | X | X |
+| 단일 INSERT 결과 ROWID | O | O | O |
+
+VOLATILE은 서버 재시작 시 테이블과 데이터가 사라지므로 자동값도 다시 1부터 시작합니다.
+LOOKUP은 데이터와 다음 자동값을 유지합니다. INSERT 결과 ID를 SDK에서 읽는 방법은
+[ROWID와 INSERT 결과 ID](/dbms/application-integration/rowid-generated-id/)를 참고하십시오.
 
 ## 기본 사용법
 
@@ -92,7 +125,12 @@ INSERT INTO device_master(device_name, site_code)
 VALUES ('new-boiler-02', 'BUSAN-A');
 ```
 
-직접 지정한 값이 현재 자동 sequence보다 크면 이후 자동값은 그 이후 값으로 진행될 수 있습니다. 따라서 `AUTO_INCREMENT` 값은 고유 식별자로 사용하고, 빠짐없는 연속 번호가 필요한 업무 규칙에는 사용하지 않는 것이 좋습니다.
+직접 지정한 값이 현재 다음 자동값 이상이면 다음 자동값은 `지정값 + 1`로 진행합니다. 현재
+다음 자동값보다 작은 값을 지정해도 자동값은 되감기지 않습니다. `0`은 유효한 값입니다.
+`INT64_MAX`를 지정한 뒤에는 더 생성할 값이 없으므로 다음 자동 생성 INSERT가 실패합니다.
+
+따라서 `AUTO_INCREMENT` 값은 고유 식별자로 사용하고, 빠짐없는 연속 번호가 필요한 업무
+규칙에는 사용하지 않는 것이 좋습니다.
 
 중복 PRIMARY KEY INSERT는 실패합니다.
 
@@ -104,6 +142,9 @@ VALUES (1000, 'duplicate-device', 'BUSAN-A');
 실패한 INSERT 이후 자동값 재사용 여부에 의존하지 않습니다. 응용 프로그램은 `AUTO_INCREMENT` 값을 순번 보장 수단이 아니라 row 식별자로 다루어야 합니다.
 
 ## INSERT SELECT와 이관 패턴
+
+이 절의 `INSERT ... SELECT` 패턴은 TRANSACTION 테이블에서만 지원합니다. AUTO_INCREMENT를
+사용하는 LOOKUP과 VOLATILE 테이블에서는 `INSERT ... SELECT`와 UPSERT를 사용할 수 없습니다.
 
 대상 테이블의 자동 생성 컬럼을 생략하면 `INSERT ... SELECT`에서도 row마다 자동값이 생성됩니다.
 
@@ -244,9 +285,10 @@ JDBC `DatabaseMetaData.getColumns()`는 이 flag를 기준으로 `IS_AUTOINCREME
 반환합니다. ODBC descriptor의 `SQL_DESC_AUTO_UNIQUE_VALUE`는 지원하지 않으므로 ODBC
 응용 프로그램은 catalog query로 확인합니다.
 
-`AUTO_INCREMENT` 속성은 system catalog에 저장되므로 정상 shutdown/startup 후에도
-유지됩니다. TRANSACTION `ALTER TABLE ... DROP COLUMN`으로 스키마가 재구성되어도 `AUTO_INCREMENT`
-속성과 다음 자동값은 유지됩니다.
+TRANSACTION과 LOOKUP의 `AUTO_INCREMENT` 속성과 다음 자동값은 정상 shutdown/startup 후에도
+유지됩니다. VOLATILE 테이블은 재시작 시 테이블과 데이터가 사라지므로 속성과 다음 자동값도
+유지되지 않습니다. TRANSACTION `ALTER TABLE ... DROP COLUMN`으로 스키마가 재구성되어도
+`AUTO_INCREMENT` 속성과 다음 자동값은 유지됩니다.
 
 ```sql
 CREATE TRANSACTION TABLE maintenance_ticket (
@@ -270,7 +312,11 @@ ORDER BY ticket_id;
 
 ## SQLAppendBatch 사용 시 주의 사항
 
+이 절은 TRANSACTION 테이블의 `SQLAppendBatch`에 적용됩니다.
+
 `SQLAppendBatch`는 SQL 컬럼 목록처럼 특정 컬럼을 생략하는 표현이 없습니다. 따라서 append API에서 자동값을 생성하려면 auto 컬럼을 포함하고, 값은 `SQL_APPEND_LONG_NULL` sentinel로 전달합니다.
+
+Append와 batch 입력은 단일 행을 대표하는 generated ROWID를 반환하지 않습니다.
 
 지원되는 입력 방식은 다음과 같습니다.
 
@@ -328,7 +374,7 @@ CREATE TRANSACTION TABLE bad_table_pk (
     PRIMARY KEY(id)
 );
 
--- TRANSACTION table이 아니므로 지원되지 않습니다.
+-- LOG 테이블에서는 지원되지 않습니다.
 CREATE LOG TABLE bad_log_table (
     id LONG PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(32)

@@ -55,6 +55,27 @@ DSN=MACHBASE;UID=APP_A;PWD=secret;DATABASE=FACTORY_A
 | SQLCopyDesc       | SQLGetConnectAttr | SQLNumParams     | SQLStatistics     |
 | SQLDescribeCol    | SQLGetData        | SQLNumResultCols | SQLTables         |
 
+## INSERT 결과 ROWID 조회
+
+Standard Edition에서 단일 `INSERT ... VALUES`가 성공하면 같은 statement handle로
+`SQLGetGeneratedRowID()`를 호출해 입력된 행의 ROWID를 확인할 수 있습니다.
+
+```c
+SQLUBIGINT row_id;
+SQLLEN indicator;
+SQLRETURN rc;
+
+rc = SQLGetGeneratedRowID(statement, &row_id, &indicator);
+if (rc == SQL_SUCCESS && indicator == sizeof(row_id)) {
+    /* row_id 사용 */
+}
+```
+
+반환할 ROWID가 없으면 `SQL_NO_DATA`를 반환합니다. batch, Append, loader,
+`INSERT ... SELECT`, UPSERT에서는 generated ROWID를 제공하지 않습니다. 테이블별 지원 범위와
+다른 SDK의 차이는 [ROWID와 INSERT 결과 ID](/dbms/application-integration/rowid-generated-id/)를
+참고하십시오.
+
 ## Nullable 메타데이터 조회
 
 SELECT 결과 컬럼과 Prepared Parameter의 NULL 가능 여부는 다음 세 값으로 반환됩니다.

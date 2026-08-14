@@ -67,6 +67,11 @@ Machbase의 주요 제한 사항을 테이블 유형별, Edition별, 일반 시�
 
 ## SDK 제한
 
+ROWID와 generated ROWID는 Standard Edition에서만 지원합니다. generated ROWID는 단일
+`INSERT ... VALUES`에만 제공되며 batch, Append, loader, `INSERT ... SELECT`, UPSERT에서는
+반환하지 않습니다. SDK별 반환 API는
+[ROWID와 INSERT 결과 ID](/dbms/application-integration/rowid-generated-id/)를 참고하십시오.
+
 | SDK | 제한 내용 |
 |-----|---------|
 | Python | Transaction API 미지원. prepared cursor는 cursor당 server statement 하나만 유지 |
@@ -74,7 +79,7 @@ Machbase의 주요 제한 사항을 테이블 유형별, Edition별, 일반 시�
 | Go (native) | 전용 Transaction 편의 API 없음. 같은 연결에서 트랜잭션 SQL 직접 실행 가능 |
 | .NET | Transaction API, AUTH KEY와 서버 Prepared Statement 미지원. 이름 컬렉션은 client-side 렌더링 |
 | Node.js | Transaction 편의 API와 AUTH KEY 미지원. 같은 연결에서 SQL 직접 실행 가능 |
-| REST API | Transaction 미지원, Prepared Statement 미지원, AUTH KEY 미지원 |
+| REST API | Transaction, Prepared Statement, AUTH KEY, generated ROWID 반환 미지원 |
 
 ## 일반 시스템 제한
 

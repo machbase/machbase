@@ -152,6 +152,30 @@ machsql 프롬프트(`Mach>`)에서 사용할 수 있는 내장 명령입니다.
 | `SHOW LICENSE` | 라이선스 정보 출력 |
 | `SHOW DATABASES` | active/mounted 데이터베이스 목록 출력 |
 | `SHOW CURRENT DATABASE` | 현재 session의 데이터베이스 출력 |
+| `SHOW LAST ROWID` | 가장 최근에 성공한 단일 INSERT의 ROWID 출력 |
+| `SHOW LASTID` | `SHOW LAST ROWID`와 같은 명령 |
+
+### 마지막 INSERT의 ROWID 확인
+
+Machbase 8.7.0 Standard Edition에서는 단일 `INSERT ... VALUES`를 실행한 직후 입력된 행의
+ROWID를 확인할 수 있습니다.
+
+```sql
+INSERT INTO orders(item) VALUES('pump');
+SHOW LAST ROWID;
+```
+
+```text
+Last ROWID : 2048
+```
+
+`SHOW LASTID`도 같은 값을 출력합니다. 반환할 ROWID가 없으면 `0`이 아니라 `NULL`을
+출력합니다. INSERT 실패, batch·Append·loader, `INSERT ... SELECT`, UPSERT 또는 재접속
+뒤에는 이전 값을 사용하지 않습니다. SELECT와 COMMIT 같은 비 INSERT 명령은 마지막 값을
+유지합니다.
+
+테이블별 ROWID 조건과 SDK에서 확인하는 방법은
+[ROWID와 INSERT 결과 ID](/dbms/application-integration/rowid-generated-id/)를 참고하십시오.
 
 ## DESC와 PRIMARY KEY 메타데이터
 

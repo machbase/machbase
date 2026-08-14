@@ -122,12 +122,17 @@ Node.js 또는 HTTP 환경인가?
 | Connection pool | 수동 구현 | O (HikariCP 등) | O | O | O | O | - |
 | TRANSACTION table transaction | △ | O (Standard) | - | - | Go SQL: O, native: △ | - | - |
 | AUTH KEY 인증 | O | O | - | - | - | - | 별도 방식 |
+| 단일 INSERT 결과 ROWID | O | O | O | O | O (`database/sql`) | O | - |
 | Pandas 통합 | - | - | O | - | - | - | - |
 | ADO.NET 호환 | - | - | - | O | - | - | - |
 
 > `-` 는 미지원 또는 해당 없음을 의미합니다. REST API 인증은 DB 포트의 AUTH KEY challenge가
 > 아니라 `HTTP_AUTH` 기반 Basic Authentication을 사용합니다. 각 드라이버의 지원 현황은
 > 11장 개발 도구 연동을 참조합니다.
+
+generated ROWID는 Standard Edition에서 지원되는 단일 `INSERT ... VALUES`에만 제공됩니다.
+반환 API와 64비트 타입 차이는 [ROWID와 INSERT 결과 ID](../rowid-generated-id/)를
+참고하십시오.
 
 ### Append API 지원 여부가 중요한 이유
 

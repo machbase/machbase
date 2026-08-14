@@ -43,6 +43,33 @@ CREATE LOOKUP TABLE product_region_price (
 );
 ```
 
+<a id="create-lookup-auto-increment"></a>
+
+## AUTO_INCREMENT PRIMARY KEY
+
+서버가 숫자 PRIMARY KEY를 생성해야 하면 단일 `LONG` 또는 `INT64` 컬럼에
+`AUTO_INCREMENT`를 지정합니다.
+
+```sql
+CREATE LOOKUP TABLE equipment_registry (
+    equip_id   LONG PRIMARY KEY AUTO_INCREMENT,
+    equip_name VARCHAR(128),
+    location   VARCHAR(64)
+);
+
+INSERT INTO equipment_registry(equip_name, location)
+VALUES ('compressor-01', 'SEOUL-A');
+```
+
+PK 컬럼을 생략하거나 NULL로 지정하면 서버가 값을 생성합니다. 단일
+`INSERT ... VALUES`에서 `0..INT64_MAX` 범위의 PK 값을 직접 지정할 수도 있습니다. 지정값이
+현재 다음 자동값 이상이면 다음 자동값은 `지정값 + 1`로 진행하며, 작은 값을 지정해도
+되감기지 않습니다. 데이터와 다음 자동값은 정상 재시작 후 유지됩니다.
+
+AUTO_INCREMENT를 사용하는 LOOKUP 테이블에서는 `INSERT ... SELECT`와
+`ON DUPLICATE KEY UPDATE`를 사용할 수 없습니다. SDK에서 INSERT 결과 ID를 받는 방법은
+[ROWID와 INSERT 결과 ID](/dbms/application-integration/rowid-generated-id/)를 참고하십시오.
+
 <a id="create-lookup-sequence"></a>
 
 ## SEQUENCE 컬럼 사용
@@ -63,6 +90,8 @@ VALUES (NEXTVAL(seq), 'TEMP-01', 'HIGH', NOW, '온도 초과');
 ```
 
 SEQUENCE 컬럼의 세부 정책은 [SEQUENCE 컬럼](/dbms/lookup-table-usage/sequence-column/)에서 다룹니다.
+`PROPERTY(SEQUENCE)`와 `AUTO_INCREMENT`는 별개의 기능이며 같은 컬럼에 함께 지정하지
+않습니다.
 
 <a id="alter-lookup-index"></a>
 

@@ -67,6 +67,31 @@ CREATE VOLATILE TABLE table_name (
 - `PRIMARY KEY`는 선택 사항입니다.
 - PRIMARY KEY 컬럼은 하나만 지정합니다.
 
+### AUTO_INCREMENT PRIMARY KEY
+
+서버가 숫자 PRIMARY KEY를 생성해야 하면 단일 `LONG` 또는 `INT64` 컬럼에
+`AUTO_INCREMENT`를 지정합니다.
+
+```sql
+CREATE VOLATILE TABLE request_cache (
+    request_id LONG PRIMARY KEY AUTO_INCREMENT,
+    payload    VARCHAR(256)
+);
+
+INSERT INTO request_cache(payload) VALUES('refresh');
+```
+
+PK 컬럼을 생략하거나 NULL로 지정하면 서버가 값을 생성합니다. 단일
+`INSERT ... VALUES`에서 `0..INT64_MAX` 범위의 PK 값을 직접 지정할 수도 있습니다. 지정값이
+현재 다음 자동값 이상이면 다음 자동값은 `지정값 + 1`로 진행하며, 작은 값을 지정해도
+되감기지 않습니다.
+AUTO_INCREMENT를 사용하는 VOLATILE 테이블에서는 `INSERT ... SELECT`와
+`ON DUPLICATE KEY UPDATE`를 사용할 수 없습니다.
+
+VOLATILE 테이블은 서버 재시작 시 테이블과 데이터가 사라지므로 다음 자동값도 1부터 다시
+시작합니다. SDK에서 INSERT 결과 ID를 받는 방법은
+[ROWID와 INSERT 결과 ID](/dbms/application-integration/rowid-generated-id/)를 참고하십시오.
+
 ### 삭제
 
 ```sql

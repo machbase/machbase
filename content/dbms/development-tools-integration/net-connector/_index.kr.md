@@ -333,6 +333,28 @@ int ExecuteNonQuery()
 
 쿼리를 실행하고 영향을 받은 레코드 수를 반환합니다. 주로 `INSERT`, `UPDATE`, `DELETE`, DDL에서 사용합니다.
 
+#### RowId
+
+```cs
+UInt64? RowId
+```
+
+Standard Edition에서 단일 `INSERT ... VALUES`가 성공하면 MachConnector 4.0/4.0-full과
+Universal .NET의 `ExecuteNonQuery()` 호출 후 입력된 행의 ROWID를 확인할 수 있습니다.
+
+```cs
+using (var command = new MachCommand(
+    "INSERT INTO orders(item) VALUES('pump')", connection))
+{
+    command.ExecuteNonQuery();
+    ulong? rowId = command.RowId;
+}
+```
+
+반환할 ROWID가 없으면 `null`입니다. ROWID는 64비트 `RowId`로 읽고, 기존 32비트
+`LastInsertedId`는 사용하지 않습니다. batch와 Append 등의 차이는
+[ROWID와 INSERT 결과 ID](/dbms/application-integration/rowid-generated-id/)를 참고하십시오.
+
 #### ExecuteScalar
 
 ```cs
@@ -359,6 +381,7 @@ DbDataReader ExecuteDbDataReader(CommandBehavior behavior)
 | `CommandTimeout` | 서버 응답을 기다리는 최대 시간(밀리초)입니다. 값은 `MachConnection` 설정을 따르며 여기서는 조회만 가능합니다. |
 | `FetchSize` | 서버에서 한 번에 가져올 레코드 수입니다. 기본값은 3000입니다. |
 | `IsAppendOpened` | Append 세션이 열려 있는지 여부입니다. |
+| `RowId` | 성공한 단일 INSERT의 64비트 ROWID입니다. 값이 없으면 `null`입니다. |
 
 ### MachDataReader
 

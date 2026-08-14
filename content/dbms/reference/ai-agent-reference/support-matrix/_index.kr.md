@@ -20,6 +20,7 @@ toc: true
 | TRANSACTION 테이블 | O | X |
 | ROLLUP | O | O |
 | ROLLUP_REBUILD | O | X |
+| ROWID / generated ROWID | O | X |
 | STREAM | O | X |
 | 논리 다중 데이터베이스 | O | X |
 | MOUNT / UMOUNT | O | X |
@@ -42,38 +43,46 @@ toc: true
 | JSON 컬럼 저장 | O | O | O | X | O |
 | PRIMARY KEY | O (name) | X | O | O | O |
 | BASETIME 컬럼 | O | - | - | - | - |
+| ROWID 조회 | O | O | 조건부² | 조건부² | 조건부² |
+| AUTO_INCREMENT | X | X | O | O | O |
 
 > ¹ TAG 테이블 UPDATE: Standard Edition에서만 지원됩니다. data UPDATE는 태그 선택 조건
 > (`name =`, `name IN`, `name LIKE`)과 하나 이상의 BASETIME 조건이 필요합니다. SET 대상은
 > 실제 데이터 컬럼이며, PK(`name`), BASETIME, 메타데이터 컬럼은 data UPDATE로 수정할 수
 > 없습니다. SET 우변은 기존 행 컬럼을 참조할 수 없습니다. 메타데이터는 `UPDATE ... METADATA`를 사용합니다.
 
+> ² LOOKUP, VOLATILE, TRANSACTION의 ROWID는 0 이상의 단일 `LONG`/`INT64` PRIMARY KEY를
+> 사용합니다. `AUTO_INCREMENT`는 선택 사항입니다.
+
 ## SDK × 주요 기능 지원표
 
-| SDK | Append | AUTH KEY | Transaction API | Server Prepared | Named Bind API | Nullable Metadata |
-|-----|:------:|:--------:|:---------------:|:---------------:|:--------------:|:-----------------:|
-| JDBC | O | O | O | O | O | O |
-| Python (machbaseAPI) | O | X | X | O² | O | O |
-| Go (machgo / native) | O | X | △³ | O | O | O |
-| Go (database/sql) | △ | X | O | O | O | O |
-| .NET (MachConnector) | O | X | X | X | △⁴ | O |
-| Node.js | O | X⁵ | X | O | O | O |
-| REST API | O | X | X | X | X | X |
-| ODBC/CLI | O | O | △ | O | △⁶ | O |
-| R (RODBC) | X | X | X | X | X | X |
+| SDK | Append | Generated ROWID | AUTH KEY | Transaction API | Server Prepared | Named Bind API | Nullable Metadata |
+|-----|:------:|:---------------:|:--------:|:---------------:|:---------------:|:--------------:|:-----------------:|
+| JDBC | O | O | O | O | O | O | O |
+| Python (machbaseAPI) | O | O | X | X | O³ | O | O |
+| Go (machgo / native) | O | X | X | △⁴ | O | O | O |
+| Go (database/sql) | △ | O | X | O | O | O | O |
+| .NET (MachConnector) | O | O | X | X | X | △⁵ | O |
+| Node.js | O | O | X⁶ | X | O | O | O |
+| REST API | O | X | X | X | X | X | X |
+| ODBC/CLI | O | O | O | △ | O | △⁷ | O |
+| R (RODBC) | X | X | X | X | X | X | X |
 
 > Go `database/sql`의 Append `△`는 표준 `sql.DB`/`sql.Tx` 기능이 아니라
 > `sql.Conn.Raw()`에서 `machbase.Conn.Appender()`를 호출하는 neo-client 확장입니다.
 
-> ² Python machbaseAPI 2.4는 `cursor(prepared=True)`로 동일 SQL의 server statement를
+> Generated ROWID는 Standard Edition의 단일 `INSERT ... VALUES`에만 제공됩니다. batch,
+> `executemany()`, Append API, loader, `INSERT ... SELECT`, UPSERT에서는 반환하지 않습니다.
+
+> ³ Python machbaseAPI 2.4는 `cursor(prepared=True)`로 동일 SQL의 server statement를
 > 여러 `execute()`와 `executemany()` 호출에서 재사용합니다. cursor 하나는 statement
 > 하나를 보유합니다. 일반 cursor의 `%s`와 `%(name)s`는 client-side 렌더링 방식이며,
 > prepared cursor에서는 각각 `?`와 `:name`으로 변환하여 서버에 바인딩합니다.
-> ³ Go `database/sql`은 기본 isolation level의 `Begin()` / `BeginTx()`를 지원합니다. Go native는
+> ⁴ Go `database/sql`은 기본 isolation level의 `Begin()` / `BeginTx()`를 지원합니다. Go native는
 > 전용 트랜잭션 편의 메서드 대신 같은 연결에서 `BEGIN` / `COMMIT` / `ROLLBACK` SQL을 직접 실행합니다.
-> ⁴ .NET 이름 컬렉션은 client-side typed literal 렌더링 후 ExecDirect를 사용합니다.
-> ⁵ Node.js AUTH KEY: 현재 미지원.
-> ⁶ SQLCLI는 이름 API를 제공하고 ODBC는 `:name` SQL을 ordinal로 바인딩합니다.
+> ⁵ .NET 이름 컬렉션은 client-side typed literal 렌더링 후 ExecDirect를 사용합니다.
+> ⁶ Node.js AUTH KEY: 현재 미지원.
+> ⁷ SQLCLI는 이름 API를 제공하고 ODBC는 `:name` SQL을 ordinal로 바인딩합니다.
 > JDBC는 Standard Edition TRANSACTION 테이블에서 `setAutoCommit(false)`, `commit()`과
 > `rollback()`을 지원하며 첫 Statement에서 lazy `BEGIN`을 실행합니다. ODBC/CLI는 SQL
 > `BEGIN` 또는 해당 transaction 제어 API의 지원 범위를 확인합니다.

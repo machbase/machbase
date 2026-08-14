@@ -43,6 +43,17 @@ TAG data UPDATE는 Standard Edition의 논리 TAG 테이블에서만 지원하�
 | Custom ROLLUP | 미지원 |
 | ROLLUP_REBUILD | 미지원 |
 
+## ROWID 제약
+
+| 제약 항목 | 내용 |
+|-----------|------|
+| Edition | Standard Edition만 지원 |
+| LOG predicate | equality, range, BETWEEN, ORDER BY 지원; IN 미지원 |
+| TAG predicate | 최상위 AND의 단일 equality만 지원; range, IN, OR, ORDER BY, DELETE 미지원 |
+| LOOKUP/VOLATILE/TRANSACTION | 0 이상의 단일 LONG/INT64 PRIMARY KEY를 ROWID로 사용 |
+| generated ROWID | 단일 `INSERT ... VALUES`만 지원; batch, Append, loader, INSERT SELECT, UPSERT 미지원 |
+| 유효 기간 | DELETE, ROLLBACK, LOG TRUNCATE, DROP/recreate, 폐기된 recovery timeline 뒤에는 재사용 금지 |
+
 ## SDK 제약
 
 | SDK | 제약 항목 | 내용 |

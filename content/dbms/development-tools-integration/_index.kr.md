@@ -57,6 +57,7 @@ SELECT 결과의 PRIMARY KEY 여부와 테이블 카탈로그 조회 방법은
 | [Transaction / Prepare / Bind 지원](#support-scope-sdk-transaction-prepare-bind) | SDK별 트랜잭션·Prepared Statement·파라미터 바인딩 지원 여부 |
 | [Nullable 메타데이터 지원](#support-scope-sdk-nullable-metadata) | SELECT 결과 컬럼과 Prepared Parameter의 NULL 가능 여부 |
 | [PRIMARY KEY 메타데이터 지원](#support-scope-sdk-primary-key-metadata) | SELECT 결과 컬럼과 테이블 카탈로그의 PRIMARY KEY 조회 |
+| [INSERT 결과 ROWID 지원](#support-scope-sdk-generated-rowid) | 단일 INSERT 후 SDK별 ROWID 확인 방법 |
 
 ## 지원 범위 기반 SDK 선택
 
@@ -68,6 +69,8 @@ SELECT 결과의 PRIMARY KEY 여부와 테이블 카탈로그 조회 방법은
 - **트랜잭션이 필요한 TRANSACTION 작업**이라면 → Go `database/sql`, JDBC 표준 트랜잭션 API 또는 ODBC/CLI 사용
 - **조회 결과의 NULL 가능 여부를 실행 전에 확인**해야 한다면 → Go, SQLCLI/ODBC,
   JDBC, Node.js, Python 또는 .NET 사용
+- **단일 INSERT 직후 입력된 행을 다시 조회**해야 한다면 → generated ROWID를 지원하는
+  SQLCLI/ODBC, JDBC, Python, .NET, Go `database/sql` 또는 Node.js 사용
 
 > **참고**: TAG와 LOG 테이블은 append 중심 입력에 최적화되어 있습니다. JDBC manual
 > transaction에서 TRANSACTION 테이블을 변경하기 전의 독립 TAG DML은 rollback할 수 있지만,
@@ -194,6 +197,29 @@ Machbase 8.7.0에서 CMI 4.0.3 메타데이터를 협상한 경우 결과 컬럼
 CMI 4.0.2 이하에서는 기존 클라이언트 호환성을 위해 플래그를 전달하지 않습니다. Go
 `database/sql`처럼 표준 결과 메타데이터에 PK API가 없는 인터페이스에서는 카탈로그 SQL 또는
 해당 SDK의 전용 메타데이터 API를 사용합니다.
+
+<a id="support-scope-sdk-generated-rowid"></a>
+
+## SDK별 INSERT 결과 ROWID 지원
+
+Machbase 8.7.0 Standard Edition에서 성공한 단일 `INSERT ... VALUES`는 입력된 행의 ROWID를
+지원 SDK에 제공합니다.
+
+| SDK 또는 도구 | 확인 방법 | ROWID가 없을 때 |
+|---------------|-----------|-----------------|
+| machsql | `SHOW LAST ROWID` 또는 `SHOW LASTID` | `NULL` |
+| SQLCLI/ODBC | `SQLGetGeneratedRowID()` | `SQL_NO_DATA` |
+| JDBC | `Statement.getGeneratedKeys()` | 빈 `ResultSet` |
+| Python DB-API | `cursor.lastrowid` | `None` |
+| .NET | `MachCommand.RowId` | `null` |
+| Go `database/sql` | `Result.LastInsertId()` | 오류 |
+| Go native | 미지원 | - |
+| Node.js | 실행 결과의 `rowId` | 속성 없음 |
+| REST API | 미지원 | - |
+
+batch, `executemany()`, Append, loader, `INSERT ... SELECT`, UPSERT에서는 단일 ROWID를
+반환하지 않습니다. 테이블별 조회 조건, 64비트 타입과 유효 기간은
+[ROWID와 INSERT 결과 ID](/dbms/application-integration/rowid-generated-id/)를 참고하십시오.
 
 
 <a id="support-scope-sdk-append"></a>
@@ -764,5 +790,6 @@ HTTP 기반으로 언어·프레임워크에 독립적입니다. Machbase Neo의
 - [AUTH KEY 인증 지원](#support-scope-sdk-auth-key)
 - [Transaction / Prepare / Bind 지원](#support-scope-sdk-transaction-prepare-bind)
 - [Nullable 메타데이터 지원](#support-scope-sdk-nullable-metadata)
+- [INSERT 결과 ROWID 지원](#support-scope-sdk-generated-rowid)
 
 REST API는 [REST API 레퍼런스](../reference/rest-api/)에서 별도로 확인합니다.

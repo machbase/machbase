@@ -4032,7 +4032,7 @@ if err == sql.ErrNoRows {
 |------|------|
 | 파라미터 형식 | positional `?`와 named marker를 지원. 값은 `sql.Named()`으로 전달하며 한 문장에서 두 방식을 혼용할 수 없음 |
 | 트랜잭션 | 기본 isolation level의 `Begin`, `BeginTx`, `Commit`, `Rollback` 지원. 사용자 지정 isolation과 ReadOnly는 미지원 |
-| LastInsertId | 미지원 |
+| LastInsertId | Standard 단일 INSERT의 generated ROWID 지원. 반환 `int64`를 `uint64`로 변환 |
 | bool 파라미터 | 미지원. 정수(`0`/`1`)로 대체 |
 | 지원 타입 | 일반 SQL 타입, `time.Time`, `[]byte`, `net.IP`, `api.Decimal` |
 | Nullable 메타데이터 | `Rows.ColumnTypeNullable()` 지원. 알 수 없는 경우 `ok=false` 반환 |
