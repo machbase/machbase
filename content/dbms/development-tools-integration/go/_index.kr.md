@@ -27,8 +27,9 @@ native `machgo`는 `api.WithDatabase("DATABASE_A")`로 연결 직후의 초기 d
 연결의 current database를 보존합니다. 다른 database에 접근하려면 해당 database의
 `CONNECT`와 대상 table의 `INSERT` 권한이 필요합니다.
 
-서버가 CMI 4.0.3 database metadata를 제공하는지는 `*machgo.Conn`의
-`SupportsDatabaseMetadata()`로 확인할 수 있습니다. 구형 protocol에서는 logical
+서버가 Machbase 8.7.0 프로토콜(버전 4.0.3)의 database 메타데이터를 제공하는지는
+`*machgo.Conn`의 `SupportsDatabaseMetadata()`로 확인할 수 있습니다. 구형 프로토콜에서는
+logical
 database ID와 PRIMARY KEY metadata가 제공되지 않을 수 있습니다. 자세한 예제는
 [다중 데이터베이스 운영 가이드](/dbms/operations-configuration-recovery/multi-database/#96-go)를
 참조하십시오.
@@ -531,8 +532,9 @@ for _, column := range columns {
 | 별칭을 사용한 직접 컬럼 | 원본 컬럼의 PK 상태 유지 |
 | 산술식·함수·집계식·바인드 값·외부 조인 NULL 공급 측 컬럼 | `false` |
 
-Machbase 8.7.0에서 CMI 4.0.3 메타데이터를 협상한 경우 이 값을 사용할 수 있습니다. CMI
-4.0.2 이하의 구형 프로토콜에서는 기존 호환성을 위해 PRIMARY KEY 플래그를 전달하지 않습니다.
+Machbase 8.7.0 프로토콜(버전 4.0.3) 메타데이터를 협상한 경우 이 값을 사용할 수 있습니다.
+구형 프로토콜(버전 4.0.2 이하)에서는 기존 호환성을 위해 PRIMARY KEY 플래그를 전달하지
+않습니다.
 
 ### TRANSACTION 테이블
 
@@ -818,7 +820,8 @@ defer rows.Close()
 
 드라이버는 `:name` 형태의 이름 marker를 처리합니다. 이름이 없거나, SQL에
 없는 이름을 전달하거나, 같은 이름을 중복 전달하거나, named와 positional 인자를 섞으면 오류가
-발생합니다. 한 문장의 named/positional 매개변수는 최대 256개이며, protocol 4.0.3 미만 서버는
+발생합니다. 한 문장의 named/positional 매개변수는 최대 256개이며, 프로토콜 버전 4.0.3
+미만 서버는
 최대 255개 제한을 사용할 수 있습니다.
 
 ### DECIMAL과 NULL
@@ -887,7 +890,8 @@ Go 표준 `database/sql.ColumnType`에는 PRIMARY KEY를 반환하는 메서드�
 없습니다. 결과 컬럼의 PK 상태가 필요하면 네이티브 `machgo`의 `api.Column.PrimaryKey`를
 사용하거나 테이블 카탈로그를 별도로 조회합니다.
 
-`database/sql` 드라이버도 CMI 4.0.3 협상과 구형 프로토콜 호환 규칙을 따릅니다. 따라서
+`database/sql` 드라이버도 Machbase 8.7.0 프로토콜(버전 4.0.3) 협상과 구형 프로토콜 호환
+규칙을 따릅니다. 따라서
 구형 프로토콜에서는 결과 컬럼에 PRIMARY KEY 플래그가 노출되지 않습니다.
 
 ### 트랜잭션

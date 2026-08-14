@@ -197,7 +197,7 @@ SQL 결과의 판정 규칙은
 
 ### SELECT 결과의 PRIMARY KEY 메타데이터
 
-Machbase 8.7.0의 CMI 4.0.3 메타데이터를 사용하면 `cursor.column_metadata`의
+Machbase 8.7.0 프로토콜(버전 4.0.3) 메타데이터를 사용하면 `cursor.column_metadata`의
 `is_primary_key`에서 SELECT 결과 직접 컬럼의 PRIMARY KEY 여부를 확인할 수 있습니다.
 
 ```python
@@ -208,7 +208,7 @@ for column in cursor.column_metadata:
 
 `cursor.description`의 DB-API 표준 일곱 번째 값(`null_ok`)은 그대로 NULL 가능 여부만
 나타냅니다. 표현식·집계식·외부 조인의 NULL 공급 측 컬럼은 PK가 아니므로
-`is_primary_key`가 `False`입니다. CMI 4.0.2 이하의 구형 프로토콜에서는 호환성을 위해
+`is_primary_key`가 `False`입니다. 구형 프로토콜(버전 4.0.2 이하)에서는 호환성을 위해
 PK 플래그를 전달하지 않습니다.
 
 ### Named Bind Parameter
@@ -334,7 +334,7 @@ prepared cursor는 Python DB-API 형식과 Machbase native 형식을 모두 지�
 문자열 리터럴, 따옴표로 묶은 식별자, `--` 주석과 `/* ... */` 주석 안의 marker 모양은
 변환하지 않습니다. 한 SQL에서 positional marker와 named marker를 혼용할 수 없습니다.
 named marker 이름은 영문자, `_`, `$`로 시작하고 이후에는 숫자도 사용할 수 있습니다.
-named marker는 Machbase protocol 4.0.3 이상에서 지원합니다.
+named marker는 Machbase 8.7.0 프로토콜(버전 4.0.3) 이상에서 지원합니다.
 
 ```python
 sql = (
@@ -376,7 +376,7 @@ marker가 없는 SQL에는 `None`, 빈 sequence 또는 빈 mapping을 parameter 
 같은 의미로 처리됩니다.
 
 parameter 오류가 발생해도 cached statement는 유지되므로 올바른 parameter로 같은 SQL을
-다시 실행할 수 있습니다. protocol 4.0.3보다 오래된 서버에서 named parameter를 사용하면
+다시 실행할 수 있습니다. 프로토콜 버전 4.0.3보다 오래된 서버에서 named parameter를 사용하면
 서버 PREPARE 전에 `NotSupportedError`와 SQLSTATE `0A000`이 발생합니다. 이 오류는 현재
 cached statement를 해제하거나 교체하지 않습니다. 구형 서버에서는 positional marker를
 사용합니다.

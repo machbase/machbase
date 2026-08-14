@@ -196,8 +196,9 @@ PRIMARY KEY 목록을 반환하는 카탈로그 메타데이터로 나뉩니다.
 | JDBC | `DatabaseMetaData.getPrimaryKeys()` | `KEY_SEQ`를 함께 반환 |
 | machsql | `DESC`의 `[ PRIMARY KEY ]` 섹션 | PK 이름, 컬럼, key sequence 표시 |
 
-Machbase 8.7.0에서 CMI 4.0.3 메타데이터를 협상한 경우 결과 컬럼 PK 플래그를 전달합니다.
-CMI 4.0.2 이하에서는 기존 클라이언트 호환성을 위해 플래그를 전달하지 않습니다. Go
+Machbase 8.7.0 프로토콜(버전 4.0.3) 메타데이터를 협상한 경우 결과 컬럼 PK 플래그를
+전달합니다. 구형 프로토콜(버전 4.0.2 이하)에서는 기존 클라이언트 호환성을 위해 플래그를
+전달하지 않습니다. Go
 `database/sql`처럼 표준 결과 메타데이터에 PK API가 없는 인터페이스에서는 카탈로그 SQL 또는
 해당 SDK의 전용 메타데이터 API를 사용합니다.
 

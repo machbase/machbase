@@ -24,7 +24,8 @@ Machbase는 다양한 프로그래밍 언어와 프로토콜을 위한 SDK를 �
 > 기호: O = 지원, △ = SDK별로 제한된 방식으로 지원, X = 미지원
 >
 > Go `database/sql`의 Transaction API는 기본 isolation level의 읽기/쓰기 트랜잭션에 한하며,
-> named bind와 DECIMAL/NULL/PRIMARY KEY 메타데이터는 neo-client 8.7.0 API 및 protocol 4.0.3 이상을 기준으로 합니다.
+> named bind와 DECIMAL/NULL/PRIMARY KEY 메타데이터는 neo-client 8.7.0 API 및 Machbase
+> 8.7.0 프로토콜(버전 4.0.3) 이상을 기준으로 합니다.
 > Go `database/sql`의 Append는 표준 `sql.DB`/`sql.Tx` API에 없지만, neo-client의 `machbase.Conn.Appender()`를
 > `sql.Conn.Raw()`에서 선택적으로 사용할 수 있습니다. 신규 대량 입력에는 native `machgo`를 권장합니다.
 >
@@ -38,8 +39,8 @@ Machbase는 다양한 프로그래밍 언어와 프로토콜을 위한 SDK를 �
 
 다중 데이터베이스는 Standard Edition에서 지원합니다. client별 초기 database 선택과
 catalog 변경, connection pool 주의사항은 [다중 데이터베이스 운영 가이드](/dbms/operations-configuration-recovery/multi-database/#9-client에서-데이터베이스-선택)를
-참조하십시오. protocol 4.0.3 미만 client/server 조합에서는 비기본 database 선택을
-보장하지 않습니다.
+참조하십시오. Machbase 8.7.0 프로토콜(버전 4.0.3)을 지원하지 않는 client/server 조합에서는
+비기본 database 선택을 보장하지 않습니다.
 
 각 기능의 SDK별 상세 지원 내용은 [11장 개발 도구 연동의 SDK 지원 범위](/dbms/development-tools-integration/#sdk)에서 확인하십시오.
 
@@ -70,7 +71,7 @@ cursor.execute(
 
 cursor 하나는 server statement 하나만 보유합니다. 여러 SQL을 각각 계속 재사용해야 하면
 SQL별 prepared cursor를 생성합니다. `%s`, `?`, `%(name)s`, `:name`을 지원하며 named
-marker에는 Machbase protocol 4.0.3 이상이 필요합니다.
+marker에는 Machbase 8.7.0 프로토콜(버전 4.0.3) 이상이 필요합니다.
 
 ### AUTH KEY: SQLCLI, ODBC, JDBC만 완전 지원
 

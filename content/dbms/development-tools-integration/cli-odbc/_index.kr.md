@@ -170,8 +170,9 @@ SQLFreeStmt(stmt, SQL_CLOSE);
 사용자는 `DESC table_name`의 `[ PRIMARY KEY ]` 섹션에서 PK 이름, 컬럼, key sequence를
 확인합니다.
 
-Machbase 8.7.0의 CMI 4.0.3 메타데이터를 협상한 경우 SELECT 결과 컬럼에도 PK 플래그가
-전달됩니다. CMI 4.0.2 이하에서는 기존 호환성을 위해 결과 컬럼 PK 플래그를 전달하지 않습니다.
+Machbase 8.7.0 프로토콜(버전 4.0.3) 메타데이터를 협상한 경우 SELECT 결과 컬럼에도 PK
+플래그가 전달됩니다. 구형 프로토콜(버전 4.0.2 이하)에서는 기존 호환성을 위해 결과
+컬럼 PK 플래그를 전달하지 않습니다.
 
 ## Named Bind Parameter
 

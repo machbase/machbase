@@ -2456,7 +2456,7 @@ finally:
 
 ### 개요
 
-`@machbase/ts-client`는 Machbase CMI 프로토콜을 순수 TypeScript로 구현한 라이브러리입니다. Node.js 애플리케이션이 네이티브 바인딩 없이도 Machbase 서버에 연결해 SQL 실행, Prepared Statement, Append 프로토콜을 사용할 수 있습니다.
+`@machbase/ts-client`는 Machbase 서버 통신 프로토콜을 순수 TypeScript로 구현한 라이브러리입니다. Node.js 애플리케이션이 네이티브 바인딩 없이도 Machbase 서버에 연결해 SQL 실행, Prepared Statement, Append 프로토콜을 사용할 수 있습니다.
 
 - 패키지: `@machbase/ts-client`
 - Node.js 18 이상 (LTS 권장)
@@ -3510,7 +3510,7 @@ defer conn.Close()
 
 `api.WithDatabase(database)`는 연결 직후 초기 database를 선택합니다. 연결 후 `USE`로
 database를 바꿀 수 있으며, 다른 database의 Append 대상은 `database.owner.table` 세 부분
-이름으로 지정합니다. 세부 동작과 CMI 4.0.3 호환 조건은
+이름으로 지정합니다. 세부 동작과 Machbase 8.7.0 프로토콜(버전 4.0.3) 호환 조건은
 [Go SDK 문서](/dbms/development-tools-integration/go/)를 참조하십시오.
 
 {{< callout type="warning" >}}

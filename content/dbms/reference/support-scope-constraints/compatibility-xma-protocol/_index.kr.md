@@ -95,14 +95,16 @@ Machbase 8.7.0에서 추가된 이름 기반 SDK API는 8.7.0 클라이언트와
 | Node.js/TypeScript | `ERR_MACHBASE_NAMED_BIND_UNSUPPORTED` |
 | Python | PREPARE 전 `NotSupportedError`, SQLSTATE `0A000` |
 
-Python API 2.4의 prepared cursor는 protocol 4.0.3 미만 연결에서 named marker를 서버에
+Python API 2.4의 prepared cursor는 Machbase 8.7.0 프로토콜(버전 4.0.3)을 지원하지 않는
+연결에서 named marker를 서버에
 PREPARE하기 전에 거부합니다. 이 오류는 cursor가 이미 보유한 cached statement를 해제하거나
 교체하지 않습니다. 구형 서버를 계속 사용해야 하면 `%s` 또는 `?` positional marker를
 사용합니다.
 
 .NET의 `MachParameterCollection`은 파라미터를 client-side typed literal로 렌더링한 뒤
 ExecDirect로 실행하므로 위 서버 Prepared Named Bind 호환 표의 이름 기반 SDK API에
-포함하지 않습니다. 다만 `:name` marker 사용은 protocol 4.0.3 연결을 확인하며 이전
+포함하지 않습니다. 다만 `:name` marker 사용은 Machbase 8.7.0 프로토콜(버전 4.0.3)
+연결을 확인하며 이전
 서버에서는 `MachException`을 반환합니다.
 
 문법과 SDK별 사용법은

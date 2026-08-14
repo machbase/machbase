@@ -9,7 +9,7 @@ aliases:
 
 ## 개요
 
-Machbase TypeScript 클라이언트(`@machbase/ts-client`)는 Machbase CMI 프로토콜을 순수 TypeScript로 구현한 라이브러리입니다. Node.js 애플리케이션이 네이티브 바인딩 없이도 Machbase(스탠더드 에디션) 서버에 연결해 SQL 실행, 결과 조회, Prepared Statement 처리, 로그 데이터 Append를 수행할 수 있습니다.
+Machbase TypeScript 클라이언트(`@machbase/ts-client`)는 Machbase 서버 통신 프로토콜을 순수 TypeScript로 구현한 라이브러리입니다. Node.js 애플리케이션이 네이티브 바인딩 없이도 Machbase(스탠더드 에디션) 서버에 연결해 SQL 실행, 결과 조회, Prepared Statement 처리, 로그 데이터 Append를 수행할 수 있습니다.
 
 이 문서에서는 설치, 핵심 API, 예제, 테스트 흐름, 동작 특성을 다룹니다.
 
@@ -168,7 +168,7 @@ bootstrap().catch(console.error);
 
 #### createConnection(config)
 
-Machbase 리스너에 네트워크 세션을 열고 CMI 핸드셰이크를 완료합니다.
+Machbase 리스너에 네트워크 세션을 열고 서버 프로토콜 handshake를 완료합니다.
 
 | 매개변수 | 타입 | 기본값 | 설명 |
 |-----------|------|---------|-------------|
@@ -328,7 +328,7 @@ for (const field of fields) {
 
 ### SELECT 결과의 PRIMARY KEY 메타데이터
 
-Machbase 8.7.0의 CMI 4.0.3 메타데이터를 사용하면 `query()` 또는 `execute()`가 반환하는
+Machbase 8.7.0 프로토콜(버전 4.0.3) 메타데이터를 사용하면 `query()` 또는 `execute()`가 반환하는
 `fields` 배열의 `isPrimaryKey`에서 직접 컬럼의 PRIMARY KEY 여부를 확인할 수 있습니다.
 
 ```ts
@@ -340,8 +340,8 @@ for (const field of fields) {
 }
 ```
 
-표현식·집계식·외부 조인의 NULL 공급 측 컬럼은 `false`입니다. 구형 CMI 4.0.2 이하
-프로토콜에서는 기존 호환성을 위해 PK 플래그를 전달하지 않습니다.
+표현식·집계식·외부 조인의 NULL 공급 측 컬럼은 `false`입니다. 구형 프로토콜(버전 4.0.2
+이하)에서는 기존 호환성을 위해 PK 플래그를 전달하지 않습니다.
 
 ### Prepared Statement 사용
 
@@ -417,7 +417,9 @@ await update.execute([
 
 #### appendBatch(table, columns, rows, options?)
 
-`CMI_APPEND_BATCH_PROTOCOL`을 사용해 **로그 테이블**에 행을 추가합니다. 사용자에게 보이는 컬럼만 전달하면 됩니다(로그 테이블에는 `_arrival_time`, `_rid`가 자동 포함됩니다).
+Machbase Append 프로토콜 상수인 `CMI_APPEND_BATCH_PROTOCOL`을 사용해 **로그 테이블**에
+행을 추가합니다. 사용자에게 보이는 컬럼만 전달하면 됩니다(로그 테이블에는 `_arrival_time`,
+`_rid`가 자동 포함됩니다).
 
 ```javascript
 const appendResult = await conn.appendBatch(
