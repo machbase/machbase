@@ -9,7 +9,8 @@ Machbase는 C/C++, Java, Python, .NET, Go, Node.js, REST API 등 다양한 프�
 
 | 연동 방식 | 언어/환경 | 대표 use case |
 |-----------|-----------|---------------|
-| **CLI/ODBC** | C, C++ | 임베디드 시스템, 최대 성능이 요구되는 수집기 |
+| **Machbase SQLCLI** | C, C++ | 임베디드 시스템, 최대 성능이 요구되는 수집기 |
+| **ODBC** | C, C++ | ODBC 관리자·DSN 기반 애플리케이션 |
 | **JDBC** | Java | Spring Boot 기반 백엔드, 엔터프라이즈 애플리케이션 |
 | **Python** | Python | 데이터 분석, 스크립트 기반 수집, Pandas 연동 |
 | **.NET** | C#, VB.NET | Windows 환경의 산업용 애플리케이션, ADO.NET |
@@ -50,7 +51,7 @@ Machbase는 C/C++, Java, Python, .NET, Go, Node.js, REST API 등 다양한 프�
 
 | 문서 | 내용 |
 |------|------|
-| [드라이버별 가이드](guide-drivers/) | CLI/ODBC, JDBC, Python, .NET, Go, Node.js, R/RODBC 사용 패턴 |
+| [드라이버별 가이드](guide-drivers/) | Machbase SQLCLI, ODBC, JDBC, Python, .NET, Go, Node.js, R/RODBC 사용 패턴 |
 | [REST API](rest-api/) | `/machbase` SQL 실행과 POST Append, 인증 및 오류 처리 |
 | [SDK별 지원 범위 안내](/dbms/development-tools-integration/#sdk) | Append, AUTH KEY, Transaction/Prepare/Bind 지원 범위 |
 

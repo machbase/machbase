@@ -768,7 +768,7 @@ binary literal로 지원하지 않습니다.
   실패합니다.
 - REST append: JSON 문자열을 헥스로 디코드하며, 헥스 파싱 실패 시 기존 base64
   경로로 처리합니다.
-- CLI/ODBC/Java/C#/Node 드라이버는 고정 길이 버퍼로 송수신하며 메타데이터
+- Machbase SQLCLI, ODBC, Java, C#, Node 드라이버는 고정 길이 버퍼로 송수신하며 메타데이터
   `LENGTH`는 바이트 길이입니다.
 
 <a id="original-85-varchar-storage"></a>

@@ -71,7 +71,8 @@ WHERE time > ADD_TIME(sysdate, '0/0/0 0:-30:0');
 | Go (machgo / native) | `?`, `:name` | `conn.Query(ctx, "SELECT ... WHERE name = :name", api.Named("name", "v1"))` |
 | Go (database/sql) | `?`, `:name` | `db.Query("SELECT ... WHERE name = :name", sql.Named("name", "v1"))` |
 | .NET (MachConnector) | `?` | `cmd.Parameters.Add(new MachParameter { Value = "v1" })` |
-| ODBC/CLI | `?` | `SQLBindParameter(...)` |
+| Machbase SQLCLI | `?` | `SQLBindParameter(...)` |
+| ODBC | `?` | `SQLBindParameter(...)` |
 | REST API | 해당 없음 | URL 파라미터 또는 JSON body로 값 직접 포함 |
 
 > Python에서 `%s`와 `?`에는 sequence를, `%(name)s`와 `:name`에는 mapping을 전달합니다.

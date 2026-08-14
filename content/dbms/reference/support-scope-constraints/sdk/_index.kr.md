@@ -18,7 +18,8 @@ Machbase는 다양한 프로그래밍 언어와 프로토콜을 위한 SDK를 �
 | **.NET** | O | X | X | X | △ | O | O (initial) |
 | **Node.js** | O | X | X | O | O | O | O |
 | **REST API** | O | X | X | X | X | X | X |
-| **ODBC/CLI** | O | O | △ | O | △ | O | O |
+| **Machbase SQLCLI** | O | O | △ | O | O | O | O |
+| **ODBC** | O | O | △ | O | △ | O | O |
 
 > 기호: O = 지원, △ = SDK별로 제한된 방식으로 지원, X = 미지원
 >
@@ -30,7 +31,7 @@ Machbase는 다양한 프로그래밍 언어와 프로토콜을 위한 SDK를 �
 > Python 2.4는 `cursor(prepared=True)`로 동일 SQL의 server statement를 여러
 > `execute()`와 `executemany()` 호출에서 재사용합니다. 일반 cursor의 기존 일회성 실행
 > 방식도 유지합니다. .NET은 이름 컬렉션을 client-side typed literal로 렌더링한 뒤
-> ExecDirect로 실행합니다. ODBC/CLI의 이름 API는 SQLCLI에서만 제공되며 ODBC는 ordinal
+> ExecDirect로 실행합니다. 이름 기반 API는 Machbase SQLCLI에서만 제공되며 ODBC는 ordinal
 > `SQLBindParameter()`를 사용합니다.
 
 ## 기능별 상세 안내
@@ -71,7 +72,7 @@ cursor 하나는 server statement 하나만 보유합니다. 여러 SQL을 각�
 SQL별 prepared cursor를 생성합니다. `%s`, `?`, `%(name)s`, `:name`을 지원하며 named
 marker에는 Machbase protocol 4.0.3 이상이 필요합니다.
 
-### AUTH KEY: ODBC/CLI, JDBC만 완전 지원
+### AUTH KEY: SQLCLI, ODBC, JDBC만 완전 지원
 
 AUTH KEY challenge 인증은 DB 포트(기본 5656)에 접속하는 드라이버 레벨의 기능입니다. Python, Go, Node.js SDK는 현재 AUTH KEY 인증을 지원하지 않습니다.
 
@@ -104,10 +105,10 @@ PK를 조회할 수 있습니다. 상세한 API 이름과 직접 컬럼·표현�
 
 | 요구 사항 | 권장 SDK |
 |----------|---------|
-| 지속적인 대량 쓰기 (Append) | ODBC/CLI, JDBC, Go (native), Python |
-| AUTH KEY 키 기반 인증 | JDBC, ODBC/CLI, machsql |
-| TRANSACTION 테이블 트랜잭션 | Go (`database/sql`), JDBC 표준 Connection API, ODBC/CLI |
-| SELECT 결과의 NULL 가능 여부 확인 | Go, ODBC/CLI, JDBC, Python, Node.js, .NET |
+| 지속적인 대량 쓰기 (Append) | Machbase SQLCLI, ODBC, JDBC, Go (native), Python |
+| AUTH KEY 키 기반 인증 | JDBC, Machbase SQLCLI, ODBC, machsql |
+| TRANSACTION 테이블 트랜잭션 | Go (`database/sql`), JDBC 표준 Connection API, Machbase SQLCLI, ODBC |
+| SELECT 결과의 NULL 가능 여부 확인 | Go, Machbase SQLCLI, ODBC, JDBC, Python, Node.js, .NET |
 | 웹 서비스/마이크로서비스 통합 | REST API |
 | Go 표준 인터페이스 | Go (database/sql) |
 | 브라우저/스크립트 연동 | Node.js, REST API |

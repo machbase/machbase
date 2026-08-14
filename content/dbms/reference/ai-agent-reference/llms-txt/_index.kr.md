@@ -54,7 +54,8 @@ Machbase 공식 문서 기준 (`/dbms/` 경로 아래):
 | Go | `/dbms/development-tools-integration/go/` |
 | .NET | `/dbms/development-tools-integration/net-connector/` |
 | Node.js | `/dbms/development-tools-integration/node-js-typescript/` |
-| ODBC/CLI | `/dbms/development-tools-integration/cli-odbc/` |
+| Machbase SQLCLI | `/dbms/development-tools-integration/cli-odbc/` |
+| ODBC | `/dbms/development-tools-integration/cli-odbc/` |
 
 ### 보안
 

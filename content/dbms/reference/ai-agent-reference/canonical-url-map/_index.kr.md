@@ -41,7 +41,8 @@ toc: true
 | Go API (native / machgo) | `/dbms/development-tools-integration/go/` |
 | .NET API (MachConnector) | `/dbms/development-tools-integration/net-connector/` |
 | Node.js API | `/dbms/development-tools-integration/node-js-typescript/` |
-| ODBC/CLI API | `/dbms/development-tools-integration/cli-odbc/` |
+| Machbase SQLCLI API | `/dbms/development-tools-integration/cli-odbc/` |
+| ODBC API | `/dbms/development-tools-integration/cli-odbc/` |
 | 실무 드라이버 가이드 | `/dbms/application-integration/guide-drivers/` |
 | REST API 레퍼런스 | `/dbms/reference/rest-api/` |
 | REST API 실무 가이드 | `/dbms/application-integration/rest-api/` |

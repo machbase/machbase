@@ -65,7 +65,8 @@ toc: true
 | .NET (MachConnector) | O | O | X | X | X | △⁵ | O |
 | Node.js | O | O | X⁶ | X | O | O | O |
 | REST API | O | X | X | X | X | X | X |
-| ODBC/CLI | O | O | O | △ | O | △⁷ | O |
+| Machbase SQLCLI | O | O | O | △ | O | O | O |
+| ODBC | O | X⁸ | O | △ | O | △⁷ | O |
 | R (RODBC) | X | X | X | X | X | X | X |
 
 > Go `database/sql`의 Append `△`는 표준 `sql.DB`/`sql.Tx` 기능이 아니라
@@ -83,8 +84,10 @@ toc: true
 > ⁵ .NET 이름 컬렉션은 client-side typed literal 렌더링 후 ExecDirect를 사용합니다.
 > ⁶ Node.js AUTH KEY: 현재 미지원.
 > ⁷ SQLCLI는 이름 API를 제공하고 ODBC는 `:name` SQL을 ordinal로 바인딩합니다.
+> ⁸ Generated ROWID는 Machbase SQLCLI 확장에서 제공됩니다. 표준 ODBC API 집합에는
+> generated ROWID 조회 함수가 없습니다.
 > JDBC는 Standard Edition TRANSACTION 테이블에서 `setAutoCommit(false)`, `commit()`과
-> `rollback()`을 지원하며 첫 Statement에서 lazy `BEGIN`을 실행합니다. ODBC/CLI는 SQL
+> `rollback()`을 지원하며 첫 Statement에서 lazy `BEGIN`을 실행합니다. SQLCLI와 ODBC는 SQL
 > `BEGIN` 또는 해당 transaction 제어 API의 지원 범위를 확인합니다.
 > Nullable Metadata의 O는 SELECT 결과 컬럼 조회를 의미합니다. Go native는
 > `api.Column.Nullability`, Go `database/sql`은 `Rows.ColumnTypeNullable()`을 사용합니다.

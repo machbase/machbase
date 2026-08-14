@@ -37,7 +37,8 @@ SELECT 결과의 PRIMARY KEY 여부와 테이블 카탈로그 조회 방법은
 
 | SDK | 설명 |
 |-----|------|
-| [CLI/ODBC](./cli-odbc/) | C/C++ CLI/ODBC, 이름/ordinal 바인딩, Append, Nullable·PRIMARY KEY 메타데이터 |
+| [Machbase SQLCLI](./cli-odbc/) | C/C++ SQLCLI, 이름/ordinal 바인딩, Append, Nullable·PRIMARY KEY 메타데이터 |
+| [ODBC](./cli-odbc/) | C/C++ ODBC, ordinal 바인딩, Append, Nullable·PRIMARY KEY 메타데이터 |
 | [JDBC](./jdbc/) | Java 8/JDBC 4.2, 트랜잭션, pool, metadata, Named Bind와 Append |
 | [Python](./python/) | `machbaseapi` DB-API, named mapping, `null_ok`, 컬럼 PK 메타데이터 |
 | [Node.js / TypeScript](./node-js-typescript/) | `@machbase/ts-client`, named object 입력, `ColumnMeta.nullable`, `isPrimaryKey` |
@@ -63,14 +64,15 @@ SELECT 결과의 PRIMARY KEY 여부와 테이블 카탈로그 조회 방법은
 
 애플리케이션 특성에 따라 아래를 참고합니다.
 
-- **지속적인 대량 쓰기**가 필요하면 → ODBC/CLI, JDBC, Go native 등 Append API 지원 드라이버 사용
+- **지속적인 대량 쓰기**가 필요하면 → Machbase SQLCLI, ODBC, JDBC, Go native 등 Append API 지원 드라이버 사용
 - **표준 SQL 인터페이스**가 필요하면 → JDBC, Python(DB-API 2.0), Go(`database/sql`)
 - **웹 서비스·마이크로서비스 통합**이라면 → REST API
-- **트랜잭션이 필요한 TRANSACTION 작업**이라면 → Go `database/sql`, JDBC 표준 트랜잭션 API 또는 ODBC/CLI 사용
-- **조회 결과의 NULL 가능 여부를 실행 전에 확인**해야 한다면 → Go, SQLCLI/ODBC,
+- **트랜잭션이 필요한 TRANSACTION 작업**이라면 → Go `database/sql`, JDBC 표준 트랜잭션 API,
+  Machbase SQLCLI 또는 ODBC 사용
+- **조회 결과의 NULL 가능 여부를 실행 전에 확인**해야 한다면 → Go, Machbase SQLCLI, ODBC,
   JDBC, Node.js, Python 또는 .NET 사용
 - **단일 INSERT 직후 입력된 행을 다시 조회**해야 한다면 → generated ROWID를 지원하는
-  SQLCLI/ODBC, JDBC, Python, .NET, Go `database/sql` 또는 Node.js 사용
+  Machbase SQLCLI 확장, JDBC, Python, .NET, Go `database/sql` 또는 Node.js 사용
 
 > **참고**: TAG와 LOG 테이블은 append 중심 입력에 최적화되어 있습니다. JDBC manual
 > transaction에서 TRANSACTION 테이블을 변경하기 전의 독립 TAG DML은 rollback할 수 있지만,
@@ -131,7 +133,8 @@ OUTER JOIN으로 생성된 결과 컬럼은 SDK의 결과 메타데이터 API로
 
 | SDK | API | `NO_NULLS` | `NULLABLE` | `UNKNOWN` |
 |-----|-----|:----------:|:----------:|:---------:|
-| SQLCLI/ODBC | `SQLDescribeCol()`, `SQLDescribeParam()`, `SQLColAttribute()`, `SQLGetDescField()` | `SQL_NO_NULLS` | `SQL_NULLABLE` | `SQL_NULLABLE_UNKNOWN` |
+| Machbase SQLCLI | `SQLDescribeCol()`, `SQLDescribeParam()`, `SQLColAttribute()`, `SQLGetDescField()` | `SQL_NO_NULLS` | `SQL_NULLABLE` | `SQL_NULLABLE_UNKNOWN` |
+| ODBC | `SQLDescribeCol()`, `SQLDescribeParam()`, `SQLColAttribute()`, `SQLGetDescField()` | `SQL_NO_NULLS` | `SQL_NULLABLE` | `SQL_NULLABLE_UNKNOWN` |
 | JDBC | `ResultSetMetaData.isNullable()`, `ParameterMetaData.isNullable()` | `columnNoNulls` | `columnNullable` | `columnNullableUnknown` |
 | Node.js | `ColumnMeta.nullable` | `ColumnNullable.NoNulls` | `ColumnNullable.Nullable` | `ColumnNullable.Unknown` |
 | Python | `cursor.description[i][6]` | `False` | `True` | `None` |
@@ -150,10 +153,10 @@ OUTER JOIN으로 생성된 결과 컬럼은 SDK의 결과 메타데이터 API로
 
 SELECT 결과 메타데이터와 테이블 스키마 카탈로그는 서로 다른 API입니다.
 
-| 조회 대상 | SQLCLI/ODBC | JDBC |
-|----------|-------------|------|
-| 테이블 컬럼의 NULL 제약 | `SQLColumns()`의 `NULLABLE`, `IS_NULLABLE` | `DatabaseMetaData.getColumns()`의 `NULLABLE`, `IS_NULLABLE` |
-| `PRIMARY KEY` | `SQLPrimaryKeys()` | `DatabaseMetaData.getPrimaryKeys()` |
+| 조회 대상 | Machbase SQLCLI | ODBC | JDBC |
+|----------|-----------------|------|------|
+| 테이블 컬럼의 NULL 제약 | `SQLColumns()`의 `NULLABLE`, `IS_NULLABLE` | `SQLColumns()`의 `NULLABLE`, `IS_NULLABLE` | `DatabaseMetaData.getColumns()`의 `NULLABLE`, `IS_NULLABLE` |
+| `PRIMARY KEY` | 카탈로그 SQL | `SQLPrimaryKeys()` | `DatabaseMetaData.getPrimaryKeys()` |
 
 TAG 이름, `BASETIME`, `SUMMARIZED` 컬럼은 카탈로그에서도 NULL을 허용하지 않는 것으로
 반환됩니다. `IS_NULLABLE`의 문자열 값은 API에서 정의한 `YES`와 `NO`를 사용합니다.
@@ -205,10 +208,11 @@ CMI 4.0.2 이하에서는 기존 클라이언트 호환성을 위해 플래그�
 Machbase 8.7.0 Standard Edition에서 성공한 단일 `INSERT ... VALUES`는 입력된 행의 ROWID를
 지원 SDK에 제공합니다.
 
-| SDK 또는 도구 | 확인 방법 | ROWID가 없을 때 |
-|---------------|-----------|-----------------|
+| SDK 또는 API 집합 | 확인 방법 | ROWID가 없을 때 |
+|-------------------|-----------|-----------------|
 | machsql | `SHOW LAST ROWID` 또는 `SHOW LASTID` | `NULL` |
-| SQLCLI/ODBC | `SQLGetGeneratedRowID()` | `SQL_NO_DATA` |
+| Machbase SQLCLI | `<machbase_sqlcli.h>`의 `SQLGetGeneratedRowID()` | `SQL_NO_DATA` |
+| 표준 ODBC | 표준 generated ROWID API 없음 | - |
 | JDBC | `Statement.getGeneratedKeys()` | 빈 `ResultSet` |
 | Python DB-API | `cursor.lastrowid` | `None` |
 | .NET | `MachCommand.RowId` | `null` |
@@ -220,6 +224,9 @@ Machbase 8.7.0 Standard Edition에서 성공한 단일 `INSERT ... VALUES`는 �
 batch, `executemany()`, Append, loader, `INSERT ... SELECT`, UPSERT에서는 단일 ROWID를
 반환하지 않습니다. 테이블별 조회 조건, 64비트 타입과 유효 기간은
 [ROWID와 INSERT 결과 ID](/dbms/application-integration/rowid-generated-id/)를 참고하십시오.
+
+`SQLGetGeneratedRowID()`는 Machbase SQLCLI 확장입니다. 표준 ODBC API가 아니므로 다른
+ODBC 드라이버로 이식할 때는 대체 API를 별도로 적용해야 합니다.
 
 
 <a id="support-scope-sdk-append"></a>
@@ -573,7 +580,8 @@ AUTH KEY challenge 인증은 DB 포트(기본 5656)에 접속하는 드라이버
 
 | SDK | Transaction API | Server Prepared | Parameter Binding | 이름 기반 API | 비고 |
 |-----|:---:|:---:|:---:|:---:|------|
-| **ODBC/CLI** | △ | O | O | △ | SQLCLI는 이름 API, ODBC는 ordinal API 사용 |
+| **Machbase SQLCLI** | △ | O | O | O | `SQLBindParameterByName()` 제공 |
+| **ODBC** | △ | O | O | △ | `SQLBindParameter()` ordinal 바인딩 |
 | **JDBC** | O | O | O | O | 표준 Connection 트랜잭션 API와 이름 기반 bind 지원 |
 | **Python** | X | O | O | O | 2.4 prepared cursor로 호출 간 statement 재사용 |
 | **.NET Connector** | X | X | O | △ | client-side typed literal 렌더링 후 ExecDirect |
@@ -589,9 +597,9 @@ AUTH KEY challenge 인증은 DB 포트(기본 5656)에 접속하는 드라이버
 표의 Transaction 열은 SDK가 제공하는 표준 편의 API 기준입니다. Go `database/sql`은
 기본 isolation level의 `Begin`/`BeginTx`, `Commit`, `Rollback`을 제공합니다. Go native는
 전용 `Begin` 메서드 대신 같은 연결에서 트랜잭션 SQL을 직접 실행합니다. JDBC는
-`setAutoCommit(false)`, `commit()`과 `rollback()`을 제공합니다. ODBC/CLI처럼 임의 SQL을
-같은 물리 연결로 계속 실행하는 SDK는 SQL `BEGIN`/`COMMIT`/`ROLLBACK`을 사용할 수 있지만,
-연결 유지와 오류 처리를 애플리케이션이 책임져야 합니다.
+`setAutoCommit(false)`, `commit()`과 `rollback()`을 제공합니다. Machbase SQLCLI와 ODBC처럼
+임의 SQL을 같은 물리 연결로 계속 실행하는 SDK는 SQL `BEGIN`/`COMMIT`/`ROLLBACK`을 사용할
+수 있지만, 연결 유지와 오류 처리를 애플리케이션이 책임져야 합니다.
 
 ### 트랜잭션 (Transaction)
 
@@ -680,7 +688,7 @@ ps.executeUpdate();
 ```
 
 ```c
-/* ODBC/CLI - SQLBindParameter */
+/* ODBC - SQLBindParameter */
 SQLLEN nameLen = SQL_NTS;
 SQLLEN timeInd = 0;
 SQLLEN valueInd = 0;
@@ -707,7 +715,8 @@ SQLExecute(stmt);
 | Python | `:name` mapping 값에 `None` 전달 |
 | .NET | `DBNull.Value` |
 | Go | `sql.NullString{Valid: false}` 등 Null 타입 |
-| ODBC/CLI | indicator를 `SQL_NULL_DATA`로 설정 |
+| Machbase SQLCLI | indicator를 `SQL_NULL_DATA`로 설정 |
+| ODBC | indicator를 `SQL_NULL_DATA`로 설정 |
 
 상세 내용은 각 [드라이버별 가이드](/dbms/application-integration/guide-drivers/)를 참고합니다.
 
@@ -722,7 +731,8 @@ Machbase DBMS가 지원하는 SDK 목록과 기능별 지원 범위를 안내합
 
 | SDK | 언어 / 환경 | 연결 포트 | 상세 레퍼런스 |
 |-----|------------|-----------|---------------|
-| **ODBC / CLI** | C / C++ | TCP 5656 | 11장 개발 도구 연동 → ODBC/CLI |
+| **Machbase SQLCLI** | C / C++ | TCP 5656 | 11장 개발 도구 연동 → SQLCLI |
+| **ODBC** | C / C++ | TCP 5656 | 11장 개발 도구 연동 → ODBC |
 | **JDBC** | Java | TCP 5656 | 11장 개발 도구 연동 → JDBC |
 | **Python** | Python 3.7+ | TCP 5656 | 11장 개발 도구 연동 → Python |
 | **.NET** | C# / VB.NET | TCP 5656 | 11장 개발 도구 연동 → .NET |

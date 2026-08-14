@@ -168,10 +168,11 @@ generated ROWID는 statement별 결과입니다. 연결 전체에서 최근 값�
 
 ## SDK별 차이
 
-| SDK/도구 | 확인 방법 | 값이 있을 때 | 값이 없을 때 |
-|----------|-----------|--------------|---------------|
+| SDK/도구 또는 API 집합 | 확인 방법 | 값이 있을 때 | 값이 없을 때 |
+|------------------------|-----------|--------------|---------------|
 | machsql | `SHOW LAST ROWID;` 또는 `SHOW LASTID;` | 64비트 정수 출력 | `NULL` 출력 |
-| C SQLCLI/ODBC | `SQLGetGeneratedRowID()` | `SQLUBIGINT`, `SQL_SUCCESS` | `SQL_NO_DATA` |
+| Machbase SQLCLI | `<machbase_sqlcli.h>`의 `SQLGetGeneratedRowID()` | `SQLUBIGINT`, `SQL_SUCCESS` | `SQL_NO_DATA` |
+| 표준 ODBC | 표준 generated ROWID API 없음 | - | - |
 | JDBC | `Statement.getGeneratedKeys()` | `RowId` 한 행 | 빈 ResultSet |
 | Go `database/sql` | `Result.LastInsertId()` | `int64` 비트 패턴 | 오류 반환 |
 | Go native (`machgo`) | 지원하지 않음 | - | - |
@@ -288,7 +289,11 @@ ulong? rowId = command.RowId;
 MachConnector 4.0/4.0-full과 Universal .NET에서 ROWID는 `UInt64?`인 `RowId`로 읽습니다.
 기존 32비트 `LastInsertedId`에는 ROWID가 저장되지 않습니다.
 
-### C SQLCLI/ODBC
+### Machbase SQLCLI
+
+Machbase SQLCLI는 `<machbase_sqlcli.h>`의 `SQLGetGeneratedRowID()` 확장을 사용합니다.
+이 함수는 ISO CLI나 표준 ODBC 함수가 아닙니다. `SQLHSTMT`를 사용하지만 SQLCLI 확장
+함수이므로, 다른 ODBC 드라이버나 표준 ODBC 코드로 이식할 수 없습니다.
 
 ```c
 SQLUBIGINT row_id;
@@ -302,6 +307,13 @@ if (rc == SQL_SUCCESS && indicator == sizeof(row_id)) {
 ```
 
 generated ROWID가 없으면 `SQL_NO_DATA`를 반환합니다.
+
+### 표준 ODBC
+
+표준 ODBC API 집합에는 실행된 INSERT의 generated ROWID를 조회하는 함수가 없습니다.
+따라서 ODBC 애플리케이션을 표준 API만 사용해 작성하면 이 값을 받을 수 없습니다.
+Machbase SQLCLI 확장과 표준 ODBC를 같은 API로 취급하지 말고, ODBC 애플리케이션에서
+사용할 수 있는 Machbase 전용 확장 여부는 해당 ODBC 배포판의 API 문서를 확인하십시오.
 
 ## 조회 결과와 오류 구분
 

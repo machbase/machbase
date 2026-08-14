@@ -15,7 +15,8 @@ Machbase 8.7.0 Standard Edition에서는 하나의 인스턴스에 여러 logica
 
 | 드라이버 / SDK | 언어 | 연결 방식 | Append 지원 | 특징 |
 |----------------|------|-----------|:-----------:|------|
-| [CLI/ODBC](/dbms/application-integration/guide-drivers/#cli-odbc) | C / C++ | 네이티브 라이브러리 | 지원 | 직접 연결과 Append API 제공 |
+| [Machbase SQLCLI](/dbms/application-integration/guide-drivers/#cli-odbc) | C / C++ | 네이티브 라이브러리 | 지원 | 직접 연결과 Append API 제공 |
+| [ODBC](/dbms/application-integration/guide-drivers/#cli-odbc) | C / C++ | ODBC 드라이버 | 지원 | ODBC 관리자와 DSN으로 연결 |
 | JDBC | Java | TCP/IP | 지원 | 표준 JDBC 인터페이스. `MachStatement` Append API 제공 |
 | Python | Python | TCP/IP | 지원 | `machbaseAPI` 패키지 제공. 데이터 분석 환경에 적합 |
 | Go | Go | TCP/IP | native 기본, SQL driver 확장 가능 | `machgo` Appender 제공. `database/sql`은 표준 SQL과 `sql.Conn.Raw()` Appender 확장 제공 |
@@ -60,8 +61,10 @@ CLI(Call Level Interface)는 [ISO](https://en.wikipedia.org/wiki/International_O
 
 | 페이지 | 내용 |
 |--------|------|
-| [CLI/ODBC 개요](/dbms/application-integration/guide-drivers/#cli-odbc) | 헤더 파일, 라이브러리, 주요 API 함수, 연결 파라미터, Append API 상세 설명 |
-| [CLI/ODBC 예제](/dbms/application-integration/guide-drivers/#examples-cli-odbc) | 접속/해제, INSERT/SELECT, Append 고속 삽입 등 실용적인 예제 코드 |
+| [Machbase SQLCLI 개요](/dbms/application-integration/guide-drivers/#cli-odbc) | 헤더 파일, 라이브러리, 주요 API 함수, 연결 파라미터, Append API 상세 설명 |
+| [ODBC 개요](/dbms/application-integration/guide-drivers/#cli-odbc) | ODBC 드라이버, DSN, 연결 파라미터와 표준 API 설명 |
+| [Machbase SQLCLI 예제](/dbms/application-integration/guide-drivers/#examples-cli-odbc) | 접속/해제, INSERT/SELECT, Append 고속 삽입 등 실용적인 예제 코드 |
+| [ODBC 예제](/dbms/application-integration/guide-drivers/#examples-cli-odbc) | ODBC 관리자와 DSN을 사용한 접속·SQL 실행 예제 |
 
 ### CLI/ODBC의 특징
 

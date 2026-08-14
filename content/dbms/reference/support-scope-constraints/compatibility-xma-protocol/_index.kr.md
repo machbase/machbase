@@ -38,7 +38,7 @@ ALTER USER app_user ADD AUTH KEY (
 
 ### 연결 문자열 호환성
 
-ODBC/CLI에서 AUTH KEY 관련 파라미터:
+Machbase SQLCLI와 ODBC에서 AUTH KEY 관련 파라미터:
 
 ```ini
 AUTH_MODE=CHALLENGE;
@@ -59,8 +59,8 @@ AUTH_SIG_SCHEME=ECDSA;
 
 | SDK | 구버전 조합에서의 값 |
 |-----|----------------------|
-| Native MachCLI | 기존 반환값 `0` |
-| SQLCLI/ODBC | `SQLDescribeCol()`과 `SQLColAttribute()`는 `0`, IRD는 `2` |
+| Machbase SQLCLI | `SQLDescribeCol()`과 `SQLColAttribute()`는 `0`, IRD는 `2` |
+| ODBC | `SQLDescribeCol()`과 `SQLColAttribute()`는 `0`, IRD는 `2` |
 | JDBC | 기존 반환값 `0` |
 | Node.js | `ColumnNullable.Unknown` (`2`) |
 | Python | `None` |
@@ -119,7 +119,7 @@ DatabaseMetaData meta = conn.getMetaData();
 System.out.println("Driver: " + meta.getDriverVersion());
 ```
 
-ODBC/CLI:
+Machbase SQLCLI와 ODBC:
 
 ```c
 SQLGetInfo(conn, SQL_DRIVER_VER, buf, sizeof(buf), NULL);

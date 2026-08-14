@@ -21,7 +21,7 @@ Machbase DBMS 매뉴얼에 오신 것을 환영합니다. 이 문서는 Machbase
 | 8 | [TRANSACTION 테이블 활용](./rdb-table-usage/) | TRANSACTION 스키마, DML, 트랜잭션, JOIN, 백업·복원 |
 | 9 | [LOOKUP 테이블 활용](./lookup-table-usage/) | 기준 정보, PRIMARY KEY, JSON, 일반 predicate DML, JOIN |
 | 10 | [VOLATILE 테이블 활용](./volatile-table-usage/) | 메모리 테이블, UPSERT, 상태 캐시, 재시작과 데이터 소실 |
-| 11 | [개발 도구 연동](./development-tools-integration/) | CLI/ODBC, JDBC, Python, Node.js, .NET, Go SDK/API |
+| 11 | [개발 도구 연동](./development-tools-integration/) | Machbase SQLCLI, ODBC, JDBC, Python, Node.js, .NET, Go SDK/API |
 | 12 | [애플리케이션 연동](./application-integration/) | 연동 방식 선택, 공통 개념, 실무 예제, REST API |
 | 13 | [성능 튜닝](./performance-tuning/) | 쿼리 성능, 수집 성능, 캐시 튜닝 |
 | 14 | [운영, 설정, 복구](./operations-configuration-recovery/) | 서버 관리, 백업, Cluster 운영 |

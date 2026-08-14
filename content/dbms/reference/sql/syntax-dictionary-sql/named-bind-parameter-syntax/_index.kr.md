@@ -143,7 +143,8 @@ NULL은 각 SDK의 표준 NULL 값 또는 indicator를 사용해 전달합니다
 
 | SDK | NULL 값 |
 |---|---|
-| SQLCLI/ODBC | indicator의 `SQL_NULL_DATA` |
+| Machbase SQLCLI | indicator의 `SQL_NULL_DATA` |
+| ODBC | indicator의 `SQL_NULL_DATA` |
 | JDBC | `null` |
 | Node.js/TypeScript | `null` |
 | Python | `None` |
@@ -160,8 +161,7 @@ Statement 데이터 타입을 사용할 수 있습니다. `DECIMAL` 또는 `NUME
 
 | SDK 또는 도구 | 이름 기반 사용 방식 |
 |---|---|
-| Native MachCLI | `:name` SQL을 `MachCLIBindParam()`의 발생 순서 ordinal로 바인딩 |
-| C/C++ SQLCLI | `SQLBindParameterByName()`, `SQLBindParameterByNameW()` |
+| Machbase SQLCLI | `SQLBindParameterByName()`, `SQLBindParameterByNameW()` |
 | ODBC | `:name` SQL을 `SQLBindParameter()` ordinal로 바인딩 |
 | JDBC | `MachPreparedStatement.setObject(String name, Object value)` |
 | Node.js/TypeScript | 배열은 positional, 객체는 named 입력 |

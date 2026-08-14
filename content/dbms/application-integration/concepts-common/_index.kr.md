@@ -63,7 +63,7 @@ UPDATE는 TRANSACTION 테이블 트랜잭션에 참여하지 않습니다.
 
 #### AUTH KEY 인증 (Machbase 8.0 이상)
 
-서버에 등록된 공개키와 클라이언트 개인키 파일로 challenge 인증을 수행합니다. 비밀번호를 소스코드나 설정 파일에 기록할 필요가 없습니다. machsql, ODBC/CLI, JDBC 등에서 사용할 수 있습니다.
+서버에 등록된 공개키와 클라이언트 개인키 파일로 challenge 인증을 수행합니다. 비밀번호를 소스코드나 설정 파일에 기록할 필요가 없습니다. machsql, Machbase SQLCLI, ODBC, JDBC 등에서 사용할 수 있습니다.
 
 AUTH KEY는 사용자 생성 또는 변경 SQL로 공개키를 등록합니다.
 
@@ -851,7 +851,8 @@ PRIMARY KEY 여부는 NULL 가능 여부와 별도의 메타데이터입니다. 
 | 클라이언트/SDK | 영향 행 수 확인 방법 |
 |----------------|-----------------------|
 | machsql | `N row(s) updated/deleted.` 또는 `No row updated/deleted.` 메시지 |
-| SQLCLI/ODBC | `SQLRowCount()` |
+| Machbase SQLCLI | `SQLRowCount()` |
+| ODBC | `SQLRowCount()` |
 | JDBC | `Statement.executeUpdate()` 반환값 또는 `Statement.getUpdateCount()` |
 | Python | `cursor.execute()` 이후 `cursor.rowcount` |
 | Node.js / TypeScript | `execute()` 결과의 `affectedRows` |
@@ -944,7 +945,8 @@ TAG/LOG 테이블에서 잘못 삽입된 데이터를 제거하려면 [DELETE �
 
 | SDK | 트랜잭션 편의 API | 비고 |
 |-----|:---:|------|
-| ODBC/CLI | △ | SQL로 `BEGIN`, `SQLEndTran`으로 종료 가능 |
+| Machbase SQLCLI | △ | SQL로 `BEGIN`, `SQLEndTran`으로 종료 가능 |
+| ODBC | △ | SQL로 `BEGIN`, `SQLEndTran`으로 종료 가능 |
 | JDBC | O | `setAutoCommit(false)`, `commit()`, `rollback()` 지원. 첫 Statement에서 lazy `BEGIN` |
 | Python | X | `begin()`/`commit()`/`rollback()`이 `NotSupportedError` 반환 |
 | .NET | X | `MachTransaction` 미구현 |
@@ -1004,7 +1006,8 @@ Machbase 서버
 
 | SDK | 지원 여부 | 비고 |
 |-----|-----------|------|
-| CLI/ODBC | O | `SQLAppendOpen`, `SQLAppendData`, `SQLAppendFlush` |
+| Machbase SQLCLI | O | `SQLAppendOpen`, `SQLAppendData`, `SQLAppendFlush` |
+| ODBC | O | `SQLAppendOpen`, `SQLAppendData`, `SQLAppendFlush` |
 | JDBC | O | `MachStatement.executeAppendOpen`, `executeAppendData`, `executeAppendFlush` |
 | Python SDK | O | `conn.append(table, rows)` |
 | .NET (MachClient) | O | `MachCommand.AppendOpen`, `AppendData`, `AppendFlush` |

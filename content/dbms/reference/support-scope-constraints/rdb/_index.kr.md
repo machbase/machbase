@@ -24,7 +24,7 @@ Edition에서 LOG 테이블을 만들 때는 `CREATE LOG TABLE`을 사용합니�
 | UPDATE | O | |
 | DELETE | O | |
 | INSERT ... ON DUPLICATE KEY UPDATE | O | PRIMARY KEY·UNIQUE INDEX 충돌 시 기존 row 갱신 |
-| Append API | O | CLI/ODBC batch·stream 경로 지원 |
+| Append API | O | Machbase SQLCLI·ODBC batch·stream 경로 지원 |
 | **트랜잭션** | | |
 | Transaction (COMMIT/ROLLBACK) | O | plain `BEGIN`, `COMMIT`, `ROLLBACK` |
 | Savepoint | X | 미지원 |

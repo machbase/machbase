@@ -57,8 +57,18 @@ DSN=MACHBASE;UID=APP_A;PWD=secret;DATABASE=FACTORY_A
 
 ## INSERT 결과 ROWID 조회
 
-Standard Edition에서 단일 `INSERT ... VALUES`가 성공하면 같은 statement handle로
-`SQLGetGeneratedRowID()`를 호출해 입력된 행의 ROWID를 확인할 수 있습니다.
+Machbase SQLCLI와 ODBC는 표준 함수 이름이 겹치는 부분이 있지만 동일한 API 집합은
+아닙니다. Machbase SQLCLI는 `<machbase_sqlcli.h>`의 API를 사용하고, ODBC는 ODBC 헤더와
+드라이버 관리자 API를 사용합니다. generated ROWID 조회 방법도 API 집합별로 다릅니다.
+
+### Machbase SQLCLI 확장
+
+Machbase SQLCLI는 `<machbase_sqlcli.h>`의 `SQLGetGeneratedRowID()`를 제공합니다. 이
+함수는 ISO CLI나 표준 ODBC 함수가 아니며, `SQLHSTMT`를 사용하더라도 SQLCLI 확장으로
+분류해야 합니다.
+
+Standard Edition에서 단일 `INSERT ... VALUES`가 성공하면 같은 statement handle로 이
+함수를 호출해 입력된 행의 ROWID를 확인할 수 있습니다.
 
 ```c
 SQLUBIGINT row_id;
@@ -76,12 +86,19 @@ if (rc == SQL_SUCCESS && indicator == sizeof(row_id)) {
 다른 SDK의 차이는 [ROWID와 INSERT 결과 ID](/dbms/application-integration/rowid-generated-id/)를
 참고하십시오.
 
+### 표준 ODBC
+
+표준 ODBC API 집합에는 generated ROWID 조회 함수가 없습니다. 따라서 표준 ODBC 코드가
+다른 ODBC 드라이버에서도 동작해야 한다면 `SQLGetGeneratedRowID()`를 호출해서는 안 됩니다.
+Machbase ODBC 드라이버에서 사용할 수 있는 전용 확장이 별도로 제공되는지는 해당 드라이버
+배포 문서를 확인하고, 표준 ODBC 기능으로 간주하지 마십시오.
+
 ## Nullable 메타데이터 조회
 
 SELECT 결과 컬럼과 Prepared Parameter의 NULL 가능 여부는 다음 세 값으로 반환됩니다.
 
-| 상태 | Native MachCLI | SQLCLI/ODBC |
-|------|:--------------:|:-----------:|
+| 상태 | Machbase SQLCLI | ODBC |
+|------|:---------------:|:----:|
 | NULL이 될 수 없음 | `0` | `SQL_NO_NULLS` |
 | NULL이 될 수 있음 | `1` | `SQL_NULLABLE` |
 | 판정할 수 없음 | `2` | `SQL_NULLABLE_UNKNOWN` |
@@ -91,29 +108,14 @@ SELECT 결과 컬럼과 Prepared Parameter의 NULL 가능 여부는 다음 세 �
 [Nullable 메타데이터 지원 범위](/dbms/development-tools-integration/#support-scope-sdk-nullable-metadata)를
 참고합니다.
 
-### Native MachCLI
+### Machbase SQLCLI
 
-Native MachCLI에서는 `<machcli.h>`를 포함하고 `MachCLIDescribeCol()` 또는
-`MachCLIDescribeParam()`의 마지막 인자로 Nullable 상태를 받습니다.
-
-```c
-int nullable;
-int type;
-int precision;
-int scale;
-
-MachCLIDescribeCol(stmt, column_no,
-                   name, sizeof(name), &name_length,
-                   &type, &precision, &scale, &nullable);
-
-MachCLIDescribeParam(stmt, parameter_no,
-                     &type, &precision, &scale, &nullable);
-```
-
-### SQLCLI와 ODBC
-
-SQLCLI와 ODBC에서는 `SQLDescribeCol()`과 `SQLDescribeParam()`의 `NullablePtr`로
+Machbase SQLCLI에서는 `SQLDescribeCol()`과 `SQLDescribeParam()`의 `NullablePtr`로
 Nullable 상태를 받습니다.
+
+### ODBC
+
+ODBC에서는 같은 표준 함수의 `NullablePtr`로 Nullable 상태를 받습니다.
 
 ```c
 SQLSMALLINT nullable;
@@ -180,9 +182,6 @@ Machbase ODBC 드라이버는 SQL의 `:name` marker를 해석할 수 있지만 �
 순서대로 `SQLBindParameter()`의 ordinal에 바인딩합니다. 같은 이름이 반복되어도 각
 위치는 독립된 ordinal이므로 서로 다른 값을 전달할 수 있습니다.
 
-Native MachCLI도 별도의 이름 setter를 제공하지 않습니다. `:name` SQL을 prepare한 뒤
-`MachCLIBindParam()`으로 각 발생 위치의 ordinal을 바인딩합니다.
-
 ```c
 SQLPrepare(stmt,
     (SQLCHAR *)"SELECT ID, NAME FROM SENSOR_DATA "
@@ -198,7 +197,7 @@ SQLBindParameter(stmt, 2, SQL_PARAM_INPUT,
 ```
 
 Machbase SQLCLI는 외부 C/C++용 `<machbase_sqlcli.h>`에 다음 비표준 확장을 제공합니다.
-이 함수는 ODBC 표준 함수나 Native MachCLI API가 아닙니다.
+이 함수는 ODBC 표준 함수가 아닙니다.
 
 ```c
 SQLRETURN SQLBindParameterByName(

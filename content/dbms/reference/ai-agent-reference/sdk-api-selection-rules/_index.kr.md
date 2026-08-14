@@ -16,18 +16,18 @@ toc: true
 | Append 필요 + Go | **machgo** (native client) | `database/sql` 표준 API에는 없으며 `machbase.Conn.Appender()`는 `sql.Conn.Raw()` 확장으로만 제공 |
 | Append 필요 + .NET | **MachConnector** (`MachAppendWriter`) | [.NET 가이드](/dbms/application-integration/guide-drivers/#net-connector) |
 | Append 필요 + Node.js | **@machbase/ts-client** | [Node.js 가이드](/dbms/application-integration/guide-drivers/#node-js-typescript) |
-| AUTH KEY 인증 필요 | **JDBC**, **ODBC/CLI**, **machsql** | Python/Go/.NET/Node.js는 AUTH KEY 미지원 |
-| TRANSACTION 테이블 트랜잭션 필요 | **Go (`database/sql`)**, **JDBC**, **ODBC/CLI** | Go SQL은 기본 isolation level, JDBC는 Standard Edition에서 지원 |
-| SELECT 결과 Nullable 메타데이터 필요 | **Go**, **ODBC/CLI**, **JDBC**, **Python**, **Node.js**, **.NET** | Go native는 `api.Column`, SQL은 `ColumnTypeNullable` 사용 |
+| AUTH KEY 인증 필요 | **JDBC**, **Machbase SQLCLI**, **ODBC**, **machsql** | Python/Go/.NET/Node.js는 AUTH KEY 미지원 |
+| TRANSACTION 테이블 트랜잭션 필요 | **Go (`database/sql`)**, **JDBC**, **Machbase SQLCLI**, **ODBC** | Go SQL은 기본 isolation level, JDBC는 Standard Edition에서 지원 |
+| SELECT 결과 Nullable 메타데이터 필요 | **Go**, **Machbase SQLCLI**, **ODBC**, **JDBC**, **Python**, **Node.js**, **.NET** | Go native는 `api.Column`, SQL은 `ColumnTypeNullable` 사용 |
 | SELECT 결과 PRIMARY KEY 메타데이터 필요 | **Go native**, **JDBC**, **Python**, **Node.js**, **.NET**, **ODBC** | Go `database/sql` 표준 `ColumnType`에는 PK API가 없음 |
-| Prepared Parameter Nullable 메타데이터 필요 | **Go**, **Native MachCLI**, **SQLCLI/ODBC**, **JDBC** | Go는 결과 컬럼 메타데이터를 제공 |
+| Prepared Parameter Nullable 메타데이터 필요 | **Go**, **Machbase SQLCLI**, **ODBC**, **JDBC** | Go는 결과 컬럼 메타데이터를 제공 |
 | 서버 Named Bind 필요 | **Go**, **SQLCLI**, **JDBC**, **Python**, **Node.js** | Go는 `api.Named()` 또는 `sql.Named()` 사용 |
 | Python에서 동일 SQL 반복 실행 | **machbaseAPI 2.4 prepared cursor** | `cursor(prepared=True)`로 호출 간 statement 재사용 |
 | Go 언어 선호 + Append 필요 | **machgo** (native) | [Go 가이드](/dbms/application-integration/guide-drivers/#go) |
 | Go 언어 선호 + 표준 인터페이스 | **database/sql** 드라이버 | Append 불필요한 경우 |
 | 브라우저 / 웹 / 스크립트 | **REST API** (포트 5657, `/machbase` 엔드포인트) | [REST API 가이드](/dbms/application-integration/rest-api/) |
 | 데이터 탐색 / 보고 | **R + RODBC** | 통계 분석에 적합 |
-| C/C++ 애플리케이션 | **ODBC/CLI** | [ODBC 가이드](/dbms/application-integration/guide-drivers/#cli-odbc) |
+| C/C++ 애플리케이션 | **Machbase SQLCLI**, **ODBC** | [C/ODBC 가이드](/dbms/application-integration/guide-drivers/#cli-odbc) |
 
 ## 다중 데이터베이스 선택 규칙
 
@@ -50,7 +50,8 @@ toc: true
 | Go | database/sql | machgo (native) | `database/sql` 또는 native SQL 트랜잭션 |
 | C# / .NET | MachConnector | MachConnector (MachAppendWriter) | 미지원 (`MachTransaction` 미구현) |
 | Node.js | @machbase/ts-client | @machbase/ts-client | 미지원 |
-| C / C++ | ODBC/CLI | ODBC/CLI | ODBC/CLI |
+| C / C++ (Machbase SQLCLI) | Machbase SQLCLI | Machbase SQLCLI | Machbase SQLCLI |
+| C / C++ (ODBC) | ODBC | ODBC | ODBC |
 | R | RODBC | 미지원 | 미지원 |
 | 웹 / curl / HTTP | REST API | REST API (`POST /machbase`) | 미지원 |
 
