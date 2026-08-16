@@ -368,6 +368,290 @@ BITOR(i1, i6)
 ```
 
 
+## CAST
+
+<span class="badge-since">Machbase 8.7.0부터 지원되는 기능</span>
+
+`CAST`는 값, 컬럼 또는 표현식을 지정한 데이터 타입으로 명시적으로 변환합니다. `SELECT`,
+조건식, `CASE`, `UNION ALL`, VIEW 정의와 prepared statement에서 사용할 수 있습니다.
+
+### 문법
+
+```sql
+CAST(expression AS data_type)
+CAST(expression AS data_type(length))
+CAST(expression AS DECIMAL(precision[, scale]))
+```
+
+- `expression`은 변환할 값, 컬럼 또는 SQL 표현식입니다.
+- `data_type`은 아래 표의 대상 타입 또는 별칭입니다.
+- 타입 이름은 대소문자를 구분하지 않습니다.
+- `length`, `precision`, `scale`은 대상 타입에서 허용할 때만 지정할 수 있습니다.
+
+### 지원 타입과 별칭
+
+| 분류 | 대상 타입 | 사용할 수 있는 이름 |
+|------|-----------|---------------------|
+| 부호 있는 정수 | 16비트 | `INT16`, `SHORT` |
+|  | 32비트 | `INT32`, `INT`, `INTEGER` |
+|  | 64비트 | `INT64`, `LONG` |
+| 부호 없는 정수 | 16비트 | `UINT16`, `USHORT` |
+|  | 32비트 | `UINT32`, `UINTEGER` |
+|  | 64비트 | `UINT64`, `ULONG` |
+| 실수 | 단정밀도·배정밀도 | `FLOAT`, `DOUBLE` |
+| 고정소수 | DECIMAL | `DECIMAL`, `NUMERIC`, `DEC`, `FIXED`, `NUMBER` |
+| 문자 | 고정 길이·가변 길이 | `CHAR`, `VARCHAR` |
+| 문자 LOB | 텍스트 | `TEXT`, `CLOB` |
+| 날짜와 시간 | 나노초 정밀도 | `DATETIME` |
+| 네트워크 주소 | IP 주소 | `IPV4`, `IPV6` |
+| 바이너리 | 바이너리·바이너리 LOB | `BINARY`, `BLOB` |
+| 문서 | JSON | `JSON` |
+
+같은 행의 이름은 같은 타입으로 동작합니다. 예를 들어 `INTEGER`, `INT`, `INT32`는 모두
+32비트 부호 있는 정수입니다. 결과 컬럼의 타입 메타데이터에는 표준 타입 이름이 표시될 수
+있습니다.
+
+### 길이와 정밀도
+
+#### CHAR, VARCHAR, BINARY
+
+| 타입 | 길이 생략 시 기본값 | 허용 길이 | 길이 초과 처리 |
+|------|-------------------:|-----------|----------------|
+| `CHAR(n)` | 1 byte | 1~32,767 byte | 앞에서부터 `n` byte 보존 |
+| `VARCHAR(n)` | 32,767 byte | 1~32,767 byte | 앞에서부터 `n` byte 보존 |
+| `BINARY(n)` | 1 byte | 1~67,108,864 byte | 앞에서부터 `n` byte 보존 |
+
+길이는 문자 수가 아니라 byte 수입니다. UTF-8 문자열을 변환할 때는 다중 byte 문자가 중간에서
+잘릴 수 있으므로 충분한 길이를 지정하십시오. `CHAR`는 남는 공간을 공백으로 채우지
+않습니다. `CAST(... AS CHAR(n))`의 결과 메타데이터는 현재 `VARCHAR(n)`으로 표시됩니다.
+
+```sql
+SELECT '[' || CAST('abc' AS CHAR) || ']' AS char_default;
+-- [a]
+
+SELECT '[' || CAST('abc' AS CHAR(5)) || ']' AS char_value;
+-- [abc] (공백을 추가하지 않음)
+
+SELECT CAST('abcdef' AS VARCHAR(3)) AS varchar_value;
+-- abc
+
+SELECT CAST('414243' AS BINARY(2)) AS binary_value;
+-- 4142
+```
+
+`TEXT`, `CLOB`, `BLOB`, `JSON`에는 `length`를 지정할 수 없습니다. 이 타입들의 CAST 결과는
+현재 최대 32,767 byte를 지원하며, 허용된 길이 제한을 넘어 결과 의미가 손상되는 경우에는
+자동으로 자르지 않고 오류를 반환합니다.
+
+#### DECIMAL
+
+| 구문 | 해석 |
+|------|------|
+| `DECIMAL` | `DECIMAL(10,0)` |
+| `DECIMAL(p)` | `DECIMAL(p,0)` |
+| `DECIMAL(p,s)` | precision `p`, scale `s` |
+
+- precision `p`는 `1~65`입니다.
+- scale `s`는 `0~30`이며 precision보다 클 수 없습니다.
+- 입력 값의 소수 자릿수가 scale보다 많으면 0에서 멀어지는 방향의 절반 올림을 적용합니다.
+- DECIMAL 계열 이외의 타입에는 precision 또는 scale을 지정할 수 없습니다.
+
+```sql
+SELECT CAST('12.34' AS DECIMAL(5,2));
+-- 12.34
+
+SELECT CAST(123.456 AS NUMERIC(6,2));
+-- 123.46
+```
+
+### NULL과 빈 문자열
+
+- 입력이 `NULL`이면 대상 타입의 `NULL`을 반환합니다.
+- Machbase에서는 길이가 0인 문자열 리터럴 `''`을 SQL `NULL`로 처리합니다.
+- `''''`는 작은따옴표 한 글자를 나타내는 문자열이므로 빈 문자열이 아닙니다.
+
+```sql
+SELECT CAST(NULL AS INTEGER) AS null_integer;
+SELECT CAST('' AS VARCHAR(10)) AS empty_value;
+SELECT CAST('''' AS VARCHAR(10)) AS quote_value;
+```
+
+### 숫자 변환
+
+숫자 타입끼리 변환하거나 숫자로 해석할 수 있는 문자열을 숫자 타입으로 변환할 수 있습니다.
+
+```sql
+SELECT CAST('123' AS INTEGER);
+SELECT CAST('1.25' AS DOUBLE);
+SELECT CAST(12.9 AS SHORT);       -- 12
+SELECT CAST(-12.9 AS INTEGER);    -- -12
+SELECT CAST('9223372036854775806e0' AS LONG);
+```
+
+- 실수를 정수로 변환할 때 소수부는 반올림하지 않고 0 방향으로 버립니다.
+- 정수 문자열의 지수 표기도 정수 정밀도를 유지해 해석합니다.
+- 대상 타입의 범위를 벗어나는 값은 오류입니다.
+- 부호 없는 정수로 변환할 때 음수 결과는 허용하지 않습니다. 소수부를 버린 결과가 0인
+  값은 0으로 변환할 수 있습니다.
+- `NaN`, 양의 무한대, 음의 무한대는 정수 변환에 사용할 수 없습니다.
+
+CAST로 만들 수 있는 정수 범위는 다음과 같습니다. 각 타입의 NULL 예약값은 유효한 결과
+범위에 포함되지 않습니다.
+
+| 대상 타입 | CAST 결과 범위 |
+|-----------|----------------|
+| `INT16`, `SHORT` | -32,767~32,767 |
+| `UINT16`, `USHORT` | 0~65,534 |
+| `INT32`, `INT`, `INTEGER` | -2,147,483,647~2,147,483,647 |
+| `UINT32`, `UINTEGER` | 0~4,294,967,294 |
+| `INT64`, `LONG` | -9,223,372,036,854,775,807~9,223,372,036,854,775,807 |
+| `UINT64`, `ULONG` | 0~18,446,744,073,709,551,614 |
+
+### 문자열 및 LOB 변환
+
+숫자, 날짜와 시간, IP 주소, 바이너리, JSON을 문자 타입으로 변환할 수 있습니다.
+
+- 정수와 DECIMAL은 값의 10진수 표현을 반환합니다.
+- `FLOAT`는 최대 9자리, `DOUBLE`은 최대 17자리의 유효 숫자를 사용해 표현합니다.
+- `DATETIME`은 세션의 날짜 형식과 시간대에 따라 문자열로 표시됩니다.
+- `IPV4`와 `IPV6`은 표준화된 주소 문자열로 표시됩니다.
+- `BINARY`와 `BLOB`은 접두사 없는 대문자 16진수 문자열로 표시됩니다.
+- JSON은 원문의 JSON 표현을 유지합니다.
+
+```sql
+SELECT CAST(123456 AS VARCHAR(8));
+-- 123456
+
+SELECT CAST(CAST('2001:db8::1' AS IPV6) AS VARCHAR(64));
+
+SELECT CAST(CAST('0x00ff10' AS BLOB) AS VARCHAR(8));
+-- 00FF10
+```
+
+문자열을 `BINARY` 또는 `BLOB`으로 변환할 때는 접두사 없는 짝수 길이 16진수 또는
+`0x`/`0X` 접두사가 있는 짝수 길이 16진수를 사용합니다.
+
+```sql
+SELECT CAST('414243' AS BINARY(3));
+SELECT CAST('0x00ff10' AS BLOB);
+SELECT CAST(X'414243' AS VARCHAR(6));
+```
+
+`BINARY(n)`은 앞에서부터 `n` byte만 보존합니다. 16진수가 아닌 문자나 홀수 길이
+16진수는 오류입니다.
+
+### DATETIME 변환
+
+문자열 또는 숫자를 `DATETIME`으로 변환할 수 있습니다.
+
+- 문자열은 session의 기본 날짜 형식과 시간대를 사용해 해석합니다.
+- 숫자는 Unix epoch 기준 nanosecond로 해석합니다.
+- 숫자 `-1`은 DATETIME의 NULL 표시용 예약값이므로 변환할 수 없습니다.
+- `DATETIME`을 숫자로 변환하면 Unix epoch 기준 nanosecond 값을 반환합니다.
+
+```sql
+SELECT CAST('2026-08-15 12:34:56' AS DATETIME);
+SELECT CAST(1000000000 AS DATETIME);
+SELECT CAST(CAST(1000000000 AS DATETIME) AS VARCHAR(40));
+```
+
+같은 epoch 값도 session timezone이 다르면 문자열로 표시되는 날짜와 시간이 달라질 수
+있습니다.
+
+### IPV4와 IPV6 변환
+
+문자열을 `IPV4` 또는 `IPV6`으로 변환할 수 있습니다. 주소 전체가 올바른 형식이어야 합니다.
+
+```sql
+SELECT CAST('127.0.0.1' AS IPV4);
+SELECT CAST('2001:db8::1' AS IPV6);
+```
+
+잘못된 주소나 대상 타입과 맞지 않는 주소 형식은 오류입니다.
+
+### JSON 변환
+
+문자열을 `JSON`으로 변환할 때는 입력 전체가 유효한 JSON이어야 합니다. 객체와 배열뿐
+아니라 JSON 문자열, 숫자, `true`, `false`, `null`도 사용할 수 있습니다.
+
+```sql
+SELECT CAST('{"ok":true}' AS JSON);
+SELECT CAST('[1,2,3]' AS JSON);
+SELECT CAST('"abc"' AS JSON);
+SELECT CAST(CAST('"abc"' AS JSON) AS VARCHAR(16));
+-- "abc"
+```
+
+일부만 유효한 JSON이거나 JSON이 아닌 문자가 뒤에 남아 있으면 변환할 수 없습니다.
+
+### 표현식과 결과 메타데이터
+
+CAST는 일반 SQL 표현식이므로 WHERE 조건, `CASE`, `UNION ALL`, VIEW 정의에서도 사용할 수
+있습니다.
+
+```sql
+SELECT CASE
+         WHEN reading >= 0 THEN CAST(reading AS VARCHAR(32))
+         ELSE 'invalid'
+       END AS reading_text
+  FROM sensor_log;
+
+CREATE VIEW sensor_cast_view AS
+SELECT CAST(sensor_id AS VARCHAR(100)) AS sensor_id_text,
+       CAST(value AS DECIMAL(12,3)) AS value_decimal
+  FROM sensor_log;
+```
+
+prepared statement에서도 CAST 구문은 동일합니다. 입력값은 `?` 또는 SDK가 제공하는 named
+marker로 전달하고, 대상 타입과 precision/scale은 SQL에 선언합니다.
+
+```sql
+SELECT CAST(? AS DECIMAL(12,2)) AS amount;
+```
+
+CAST 결과의 타입, byte 길이, DECIMAL precision과 scale은 결과 메타데이터와 VIEW 컬럼
+정보에 반영됩니다. 결과의 NULL 가능 여부는 입력 표현식의 NULL 가능 여부를 따릅니다.
+
+각 SDK는 기존 결과 메타데이터 API로 CAST 결과를 확인합니다. CAST 전용 SDK API는 제공하지
+않습니다.
+
+| SDK | CAST 결과 metadata API |
+|-----|------------------------|
+| Machbase SQLCLI | `SQLDescribeCol()`, `SQLColAttribute()` |
+| ODBC | `SQLDescribeCol()`, `SQLColAttribute()` |
+| JDBC | `ResultSetMetaData` |
+| Python | `cursor.description` |
+| Node.js | `ColumnMeta` |
+| .NET | `GetSchemaTable()` |
+| Go (native) | native column metadata |
+| Go (`database/sql`) | `ColumnTypeNullable()` 및 `ColumnType` API |
+
+### 오류가 발생하는 경우
+
+| 원인 | 예 |
+|------|-----|
+| 지원하지 않는 대상 타입 | `CAST('1' AS UNKNOWN_TYPE)` |
+| 허용되지 않은 length 또는 precision/scale | `CAST('1' AS INTEGER(2))`, `CAST('1' AS DECIMAL(2,3))` |
+| 숫자 범위 초과 또는 NULL 예약값 | `CAST('65535' AS USHORT)` |
+| 부호 없는 정수로 변환되는 음수 | `CAST('-1' AS UINTEGER)` |
+| 숫자로 변환할 수 없는 문자열 | `CAST('12x' AS INTEGER)` |
+| 잘못된 IP 주소 | `CAST('999.1.1.1' AS IPV4)` |
+| 홀수 길이 또는 비16진수 바이너리 문자열 | `CAST('123' AS BINARY(4))`, `CAST('GG' AS BLOB)` |
+| 유효하지 않은 JSON | `CAST('{bad}' AS JSON)` |
+| 허용 크기를 초과하는 LOB 또는 JSON 결과 | 32,767 byte를 초과하는 `TEXT`, `CLOB`, `BLOB`, `JSON` 결과 |
+
+### 호환성
+
+CAST 함수는 Machbase 8.7.0에서 지원됩니다. Cluster Edition에서 CAST를 사용하는 경우
+모든 cluster node가 CAST를 지원하는 동일 버전이어야 합니다. CAST를 지원하지 않는 구버전
+node와의 혼합 실행은 지원하지 않습니다.
+
+### 관련 문서
+
+- [SQL 문법 사전](../../syntax-dictionary-sql/)
+- [데이터 타입 사전](../../type-data-types-dictionary/)
+- [DECIMAL과 NUMERIC 고정소수점 타입](../../type-data-types-dictionary/decimal-numeric-fixed-point/)
+
 ## COUNT
 
 컬럼의 레코드 개수를 구하는 집계 함수입니다.

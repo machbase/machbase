@@ -20,6 +20,9 @@ Machbase 8.7.0 버전의 하위 호환성, 업그레이드 주의사항, 지원 
 - 구버전 서버 또는 드라이버 조합에서는 Nullable 메타데이터가 기존 값이나 판정 불가
   값으로 반환될 수 있습니다. 이 값에 의존하는 애플리케이션은 서버와 SDK를 모두
   8.7.0으로 업그레이드하십시오.
+- CAST의 모든 대상 타입과 길이·정밀도 옵션을 사용하는 SQL은 8.7.0 서버에서 지원됩니다.
+  Cluster Edition에서는 모든 cluster node를 CAST를 지원하는 동일 버전으로 구성해야 합니다.
+  자세한 문법과 변환 규칙은 [CAST 함수](../sql/dictionary/functions-full/#cast)를 참고하십시오.
 - 새로운 XMA 프로토콜 변경 사항은 [XMA 프로토콜 호환성](../compatibility-xma-protocol/)을 참고하십시오.
 
 ### 백업 파일 호환성

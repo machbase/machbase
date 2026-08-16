@@ -113,8 +113,8 @@ VIEW의 derived column도 DECIMAL precision과 scale을 유지합니다. `DESC`,
 
 ## 식과 집계 함수
 
-`+`, `-`, `*`, `/`, `ROUND`, `TRUNC`, `CAST`와 다음 집계·정렬 연산에서 DECIMAL 값을 사용할
-수 있습니다.
+`+`, `-`, `*`, `/`, `ROUND`, `TRUNC`, [CAST](../../dictionary/functions-full/#cast)와 다음 집계·정렬 연산에서
+DECIMAL 값을 사용할 수 있습니다.
 
 - `SUM`, `AVG`, `MIN`, `MAX`
 - `GROUP BY`, `ORDER BY`, `DISTINCT`
