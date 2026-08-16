@@ -326,6 +326,10 @@ for (const field of fields) {
 [Nullable 메타데이터 지원 범위](/dbms/development-tools-integration/#support-scope-sdk-nullable-metadata)를
 참고합니다.
 
+Machbase SQL에서 `''`은 SQL `NULL`이므로 해당 `field.nullable`은
+`ColumnNullable.Nullable`이고 결과 행의 값은 JavaScript `null`입니다. 반대로 `''''`는
+작은따옴표 한 글자이므로 `ColumnNullable.NoNulls`와 문자열 값 `'`을 반환합니다.
+
 ### SELECT 결과의 PRIMARY KEY 메타데이터
 
 Machbase 8.7.0 프로토콜(버전 4.0.3) 메타데이터를 사용하면 `query()` 또는 `execute()`가 반환하는

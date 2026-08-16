@@ -195,6 +195,11 @@ SQL 결과의 판정 규칙은
 [Nullable 메타데이터 지원 범위](/dbms/development-tools-integration/#support-scope-sdk-nullable-metadata)를
 참고합니다.
 
+Machbase SQL에서 `''`은 SQL `NULL`이므로 `null_ok`는 `True`입니다. 다만 Python
+connector는 문자열 SQL `NULL`을 기존 호환성에 따라 Python 빈 문자열 `""`으로 반환할 수
+있습니다. 빈 문자열과 NULL을 구분해야 하는 애플리케이션은 `null_ok`와 스키마를 함께
+확인하고, 실제 값만으로 NULL 여부를 판단하지 마십시오.
+
 ### SELECT 결과의 PRIMARY KEY 메타데이터
 
 Machbase 8.7.0 프로토콜(버전 4.0.3) 메타데이터를 사용하면 `cursor.column_metadata`의

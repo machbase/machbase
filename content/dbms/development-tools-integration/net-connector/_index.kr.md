@@ -489,6 +489,10 @@ foreach (DataRow row in schema.Rows)
 [Nullable 메타데이터 지원 범위](/dbms/development-tools-integration/#support-scope-sdk-nullable-metadata)를
 참고합니다.
 
+Machbase SQL에서 `''`은 SQL `NULL`이므로 `GetSchemaTable()`의 `AllowDBNull`은 `true`이고
+해당 행에서 `IsDBNull()`은 `true`입니다. `''''`는 작은따옴표 한 글자이므로
+`AllowDBNull=false`인 NULL이 아닌 문자열 결과입니다.
+
 `GetSchemaTable()`은 `ColumnName`, `ColumnOrdinal`, `ColumnSize`, `NumericPrecision`,
 `NumericScale`, `DataType`, `ProviderType`, `IsLong`, `AllowDBNull`, `IsKey`를 제공합니다.
 `IsKey`가 `true`이면 SELECT 결과의 직접 컬럼이 PRIMARY KEY입니다. 표현식이나 집계식은

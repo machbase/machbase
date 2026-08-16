@@ -108,14 +108,26 @@ SELECT 결과 컬럼과 Prepared Parameter의 NULL 가능 여부는 다음 세 �
 [Nullable 메타데이터 지원 범위](/dbms/development-tools-integration/#support-scope-sdk-nullable-metadata)를
 참고합니다.
 
+Machbase에서는 `''`을 SQL `NULL`로 처리하므로 다음과 같이 빈 문자열 리터럴은
+Nullable로 보고해야 합니다. `''''`는 작은따옴표 한 글자이므로 NULL이 아닌 문자열입니다.
+
+| 표현식 | Machbase SQLCLI | ODBC | 실제 값 |
+|--------|-----------------|------|---------|
+| `''` | `1` | `SQL_NULLABLE` | SQL `NULL` |
+| `'A'` | `0` | `SQL_NO_NULLS` | `A` |
+| `''''` | `0` | `SQL_NO_NULLS` | `'` |
+
 ### Machbase SQLCLI
 
 Machbase SQLCLI에서는 `SQLDescribeCol()`과 `SQLDescribeParam()`의 `NullablePtr`로
-Nullable 상태를 받습니다.
+Nullable 상태를 받습니다. `''`을 조회하면 `NullablePtr`가 `1`이 되며, 행을 가져올 때
+indicator가 `SQL_NULL_DATA`인지 확인해 실제 NULL을 처리합니다.
 
 ### ODBC
 
 ODBC에서는 같은 표준 함수의 `NullablePtr`로 Nullable 상태를 받습니다.
+`''`을 조회하면 `NullablePtr`가 `SQL_NULLABLE`이 되며, `SQLGetData()` 또는
+`SQLBindCol()`의 indicator가 `SQL_NULL_DATA`인지 확인해 실제 NULL을 처리합니다.
 
 ```c
 SQLSMALLINT nullable;

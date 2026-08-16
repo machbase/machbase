@@ -494,6 +494,11 @@ neo-client는 다음과 같은 표준 nullable 타입을 지원합니다.
 처리 대상이 아니므로 사용하지 마십시오. `sql.RawBytes`와 `*sql.RawBytes` 입력은
 `[]byte` 기반 scan 대상으로 변환할 수 있습니다.
 
+Machbase SQL의 빈 문자열 리터럴 `''`은 SQL `NULL`입니다. 따라서 이 값을 조회하면 native
+`api.Column.Nullability`는 `NullabilityNullable`로, `database/sql`의
+`ColumnTypeNullable()`은 `(true, true)`로 보고됩니다. 실제 행은 `sql.NullString` 또는
+동등한 nullable 대상에 scan하십시오.
+
 ### PRIMARY KEY 메타데이터
 
 `api.Column.PrimaryKey`는 SELECT 결과의 직접 컬럼이 테이블의 PRIMARY KEY인지 나타냅니다.

@@ -53,6 +53,10 @@ SQL NULL은 객체 getter에서 Java `null`을 반환합니다. primitive getter
 반환하며, 바로 뒤의 `wasNull()`로 SQL NULL 여부를 확인합니다. 지원하지 않는 변환과 null
 target class에는 `SQLException`이 발생합니다.
 
+Machbase SQL에서 빈 문자열 리터럴 `''`은 SQL `NULL`입니다. 따라서 해당 결과 컬럼의
+`ResultSetMetaData.isNullable()`은 `columnNullable`이고 `getObject()`는 `null`을
+반환합니다. `''''`는 작은따옴표 한 글자이므로 NULL이 아닌 문자열입니다.
+
 unsigned 타입의 기본 객체 매핑은 다음과 같습니다.
 
 | Machbase 타입 | `getObject()` 반환 타입 |

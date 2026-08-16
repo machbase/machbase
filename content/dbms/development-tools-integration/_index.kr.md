@@ -104,11 +104,27 @@ Machbase는 SELECT 결과 컬럼과 Prepared Parameter의 NULL 가능 여부를 
 | TAG 이름, `BASETIME`, `SUMMARIZED` 직접 컬럼 | `NO_NULLS` |
 | NULL을 허용하는 직접 컬럼 | `NULLABLE` |
 | `NULL` 리터럴 | `NULLABLE` |
-| NULL이 아닌 숫자, 문자열, 바이너리 리터럴 | `NO_NULLS` |
+| 빈 문자열 리터럴 `''` | `NULLABLE` |
+| NULL이 아닌 숫자, 문자열, 바이너리 리터럴 (예: `'A'`) | `NO_NULLS` |
 | OUTER JOIN의 NULL 공급 측 컬럼 | 원본 컬럼이 `NOT NULL`이어도 `NULLABLE` |
 | VIEW 또는 집합 연산을 거친 컬럼 | `UNKNOWN` |
 | 산술식, 일반 함수, `CASE`, 집계식, 바인드 값 | `UNKNOWN` |
 | DECIMAL 형변환 결과 | 입력 식의 Nullable 상태 유지 |
+
+Machbase SQL에서는 길이가 0인 문자열 리터럴 `''`을 SQL `NULL`로 처리합니다. 작은따옴표
+문자 하나를 나타내는 `''''`는 빈 문자열이 아니므로 `NULL`이 아닌 문자열 리터럴로
+처리됩니다. 따라서 다음 결과에서는 `EMPTY_VALUE`만 `NULLABLE`이고 실제 값도 `NULL`이며,
+`QUOTE_VALUE`의 실제 값은 작은따옴표 한 글자입니다.
+
+```sql
+SELECT '' AS EMPTY_VALUE,
+       'A' AS NON_EMPTY_VALUE,
+       '''' AS QUOTE_VALUE;
+```
+
+SDK는 이 결과를 각 언어의 Nullable 메타데이터 API와 NULL 확인 방식으로 노출합니다. Python
+DB-API는 호환성 때문에 문자열 SQL `NULL`을 Python 빈 문자열로 반환할 수 있으므로
+`null_ok`와 실제 값의 표현을 함께 확인해야 합니다.
 
 Prepared Parameter는 대상 테이블 컬럼을 식별할 수 있으면 해당 컬럼의 Nullable 상태를
 사용합니다. 대상 컬럼을 식별할 수 없으면 `UNKNOWN`을 사용합니다. Append API가 제공하는
