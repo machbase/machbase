@@ -64,7 +64,7 @@ WHERE sensor_id = 'PUMP_01'
 
 ### EXPLAIN 결과 해석
 
-**INDEX SCAN (빠름)**
+**INDEX SCAN**
 
 ```
 PLAN
@@ -76,9 +76,11 @@ PLAN
     * _arrival_time BETWEEN TO_DATE('2025-01-01') AND TO_DATE('2025-01-02')
 ```
 
-`INDEX SCAN`과 `_ARRIVAL_TIME`의 `BITMAP RANGE`가 나타나면 시간 범위 조건을 스캔 범위 축소에 활용하고 있습니다. LOG 테이블은 `_ARRIVAL_TIME` 컬럼에 기본 Min-Max Cache가 적용되어 범위 검색을 보조합니다.
+`INDEX SCAN`과 `_ARRIVAL_TIME`의 `BITMAP RANGE`가 나타나면 시간 범위 조건을 스캔 범위
+축소에 활용하고 있습니다. `KEY RANGE`에 실제 사용된 조건이 있는지 확인하고, `FILTER`가
+있으면 후보 행에 원래 조건을 최종 적용하는 것으로 해석합니다.
 
-**FULL SCAN (느림)**
+**FULL SCAN**
 
 ```
 PLAN
@@ -87,7 +89,9 @@ PLAN
   FULL SCAN (SENSOR_LOG)
 ```
 
-`FULL SCAN`이 나타나면 조건절이 `_ARRIVAL_TIME` 범위를 포함하지 않거나, 별도 인덱스가 없는 컬럼을 단독 조건으로 사용한 것입니다.
+`FULL SCAN`은 테이블 전체를 읽습니다. 시간 범위나 사용할 수 있는 인덱스가 없을 때뿐
+아니라, 작은 outer 테이블을 한 번 읽거나 안전하지 않은 JOIN 값 변환을 피할 때도 선택될
+수 있습니다. 큰 inner 테이블에서 반복되는지를 우선 확인합니다.
 
 **TAG 테이블 EXPLAIN 예시**
 
@@ -117,10 +121,13 @@ PLAN
 
 | 현재 실행 계획 | 원인 | 개선 방법 |
 |---------------|------|-----------|
-| FULL SCAN (LOG) | `_ARRIVAL_TIME` 조건 없음 | WHERE 절에 시간 범위 추가 |
-| FULL SCAN (LOG) | 다른 컬럼 단독 조건 | 해당 컬럼에 LSM 인덱스 생성 |
-| FULL SCAN (TAG) | `name` 조건 없음 | WHERE 절에 태그 이름 조건 추가 |
-| TAG READ가 느림 | 시간 범위가 너무 넓음 | 조회 범위를 좁히거나 ROLLUP 사용 |
+| FULL SCAN (LOG) | 시간 범위나 사용할 수 있는 인덱스가 없음 | 시간 범위와 인덱스 후보 확인 |
+| 큰 inner 테이블의 FULL SCAN | JOIN 키 인덱스 또는 안전한 타입 변환을 사용할 수 없음 | JOIN 키, 인덱스 선두 컬럼과 타입 확인 |
+| TAG READ가 느림 | 시간 범위가 넓거나 태그 이름으로 대상을 좁히지 못함 | 하위 스캔과 `KEY RANGE`를 확인하고 범위 축소 |
+
+상세한 JOIN 계획 점검 방법은
+[SELECT/JOIN 옵티마이저](/dbms/performance-tuning/performance-query-tuning/#select-join-optimizer)를
+참고하십시오.
 
 ## 3단계: V$STMT, V$SESSION으로 현재 실행 쿼리 확인
 

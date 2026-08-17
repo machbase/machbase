@@ -981,21 +981,31 @@ PLAN
 
 | 항목 | 설명 |
 |------|------|
-| `FULL SCAN` | 인덱스 없이 전체 테이블 스캔 |
-| `INDEX SCAN` | 인덱스를 사용한 범위 스캔 |
+| `FULL SCAN` | 테이블 전체를 읽는 스캔. 큰 inner 테이블에서 반복되는지 함께 확인 |
+| `INDEX SCAN` | 인덱스를 사용한 스캔. 실제 조건은 `KEY RANGE`에서 확인 |
 | `PARALLEL INDEX SCAN` | 병렬 인덱스 스캔 |
 | `BITMAP RANGE` | BITMAP 인덱스 범위 스캔 |
+| `TRANSACTION INDEX SCAN` | TRANSACTION 테이블의 인덱스 스캔 |
+| `TAG READ (RAW)` | TAG 원시 데이터 읽기 노드. 하위 접근 경로를 함께 확인 |
+| `KEYVALUE INDEX SCAN` | TAG 데이터의 키·인덱스 접근 경로 |
 | `KEY RANGE` | 실제 적용된 인덱스 조건 |
-| `FILTER` | 인덱스 적용 후 추가 필터 조건 |
+| `FILTER` | 후보 행에 원래 SQL 조건을 최종 적용 |
 | `GROUP AGGREGATE` | GROUP BY 집계 처리 |
 | `PROJECT` | SELECT 대상 목록 처리 |
 
 #### 활용 팁
 
-- `FULL SCAN`이 나타나면 WHERE 조건에 인덱스가 없는 것입니다. 인덱스를 추가하거나 힌트로 스캔 방향을 조정하십시오.
+- `FULL SCAN` 자체가 항상 문제인 것은 아닙니다. 큰 inner 테이블에서 반복되는지 확인합니다.
+- `INDEX SCAN`과 `FILTER`가 함께 표시되는 것은 정확성을 위한 정상 계획일 수 있습니다.
+- `TAG READ (RAW)`는 하위 `KEYVALUE INDEX SCAN` 또는 `KEYVALUE FULL SCAN`과
+  `KEY RANGE`를 함께 확인합니다.
 - `DURATION`을 사용하면 `_ARRIVAL_TIME` 기준 파티션 가지치기가 적용되어 스캔 범위가 줄어듭니다.
 - CTE는 각 참조가 인라인 뷰로 전개되므로 반복 참조의 스캔과 JOIN 계획을 각각 확인하십시오.
 - 대용량 테이블에서 느린 쿼리는 `EXPLAIN` 결과를 먼저 확인하십시오.
+
+JOIN 순서, 인덱스 선택과 안전한 전체 스캔 전환은
+[SELECT/JOIN 옵티마이저](/dbms/performance-tuning/performance-query-tuning/#select-join-optimizer)를
+참고하십시오.
 
 <a id="item"></a>
 

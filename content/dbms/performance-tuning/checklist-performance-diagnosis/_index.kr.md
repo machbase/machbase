@@ -42,13 +42,19 @@ WHERE device_id = 'dev-01'
   AND _ARRIVAL_TIME BETWEEN TO_DATE('2024-01-01') AND TO_DATE('2024-01-02');
 ```
 
-**FULL SCAN**이 출력되면 해당 컬럼에 인덱스가 없거나 사용되지 않는 것입니다. 인덱스 생성 또는 쿼리 재작성을 검토하십시오.
+`FULL SCAN`이 출력되면 전체 테이블을 읽는 위치와 반복 여부를 확인합니다. 큰 inner 테이블에서
+반복될 때는 JOIN 키 인덱스와 양쪽 컬럼 타입을 검토합니다. 한 번만 수행되는 outer 스캔이나
+안전하지 않은 타입 변환을 피하기 위한 스캔은 정상일 수 있습니다.
 
 | 실행 계획 출력 | 의미 | 조치 |
 |--------------|------|------|
-| `FULL SCAN` | 전체 테이블 스캔 | 인덱스 생성, 시간 범위 조건 추가 |
-| `INDEX SCAN` | 인덱스 활용 중 | 정상 (인덱스 선택도 추가 확인) |
+| `FULL SCAN` | 전체 테이블 스캔 | 위치·반복 여부, 시간 범위, JOIN 키와 타입 확인 |
+| `INDEX SCAN` | 인덱스 활용 중 | `KEY RANGE`와 `FILTER` 확인 |
 | `_ARRIVAL_TIME` 또는 `TIME`의 `BITMAP RANGE` | 시간 범위 조건 활용 중 | 정상 (조회 범위 적정성 확인) |
+
+JOIN 순서와 안전한 전체 스캔 전환의 판단 기준은
+[SELECT/JOIN 옵티마이저](/dbms/performance-tuning/performance-query-tuning/#select-join-optimizer)를
+참고하십시오.
 
 ## 3단계: 인덱스 현황 확인
 
@@ -216,9 +222,9 @@ WHERE name = 'TAG_PARTITION_COUNT';
 1단계: v$stmt, v$session → 실행 중인 쿼리 파악
       │
       ▼
-2단계: EXPLAIN → FULL SCAN 여부 확인
+2단계: EXPLAIN → 스캔 순서와 KEY RANGE 확인
       │
-      ├─ FULL SCAN 있음 → 인덱스 생성 또는 쿼리 수정
+      ├─ 큰 inner FULL SCAN 반복 → JOIN 키·인덱스·타입 확인
       │
       ▼
 3단계: M$SYS_INDEXES → 인덱스 과다/부족 확인

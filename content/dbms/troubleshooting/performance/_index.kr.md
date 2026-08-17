@@ -52,15 +52,16 @@ EXPLAIN SELECT *
 
 출력 결과에서 다음을 확인합니다.
 
-- `FULL SCAN`이 보이면 인덱스가 활용되지 않는 것입니다.
-- `ROWS`가 예상보다 매우 크다면 필터 조건이 충분하지 않은 것입니다.
-- `PARTITION SCAN`이 많다면 시간 범위 필터를 더 좁혀야 합니다.
+- 처음 나타나는 스캔에서 먼저 읽는 테이블을 확인합니다.
+- 큰 inner 테이블에서 `FULL SCAN`이 반복될 가능성이 있는지 확인합니다.
+- `KEY RANGE`에 기대한 인덱스 조건이 있고 나머지 조건이 `FILTER`에 있는지 확인합니다.
+- TAG 테이블은 `TAG READ (RAW)` 아래의 스캔 종류와 시간·태그 이름 조건을 확인합니다.
 
 ### 원인별 해결 방법
 
-#### 1. 인덱스 없는 테이블 스캔
+#### 1. 반복되는 큰 inner 테이블 스캔
 
-**증상**: EXPLAIN에 `FULL SCAN` 표시, 데이터 양에 비례해 응답 시간이 선형 증가
+**증상**: EXPLAIN에서 큰 테이블이 두 번째 이후의 `FULL SCAN`으로 표시되고 응답 시간이 증가
 
 **확인 방법**
 
@@ -71,12 +72,19 @@ SELECT * FROM v$index_node_status;
 
 **해결 방법**
 
-- TAG 테이블은 `name` 컬럼으로 자동 인덱싱됩니다. `name` 조건 없이 조회하면 전체 스캔이 발생합니다. 쿼리에 `WHERE name = '...'` 조건을 추가합니다.
+- TAG 테이블은 `BASETIME` 시간 범위와 태그 이름 조건으로 읽기 범위를 줄입니다.
+  `TAG READ (RAW)` 아래 `KEY RANGE`에 해당 조건이 있는지 확인합니다.
 - LOG 테이블의 특정 컬럼을 자주 검색한다면 해당 컬럼에 인덱스를 추가합니다.
+- JOIN 쿼리는 inner 테이블의 JOIN 키, 복합 인덱스 선두 컬럼과 양쪽 컬럼 타입을 확인합니다.
 
 ```sql
 CREATE INDEX idx_sensor_id ON sensor_log (sensor_id);
 ```
+
+`FULL SCAN`은 한 번만 수행되는 outer 스캔이나 정확성을 위한 안전한 전환일 수도 있습니다.
+자세한 판단 기준은
+[SELECT/JOIN 옵티마이저](/dbms/performance-tuning/performance-query-tuning/#select-join-optimizer)를
+참고하십시오.
 
 #### 2. MINMAX 캐시 미활성화
 

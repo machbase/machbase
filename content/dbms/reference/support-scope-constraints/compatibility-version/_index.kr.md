@@ -23,6 +23,10 @@ Machbase 8.7.0 버전의 하위 호환성, 업그레이드 주의사항, 지원 
 - CAST의 모든 대상 타입과 길이·정밀도 옵션을 사용하는 SQL은 8.7.0 서버에서 지원됩니다.
   Cluster Edition에서는 모든 cluster node를 CAST를 지원하는 동일 버전으로 구성해야 합니다.
   자세한 문법과 변환 규칙은 [CAST 함수](../sql/dictionary/functions-full/#cast)를 참고하십시오.
+- 8.7.0의 Standard Edition에서는 SELECT/JOIN 계획 개선으로 테이블 스캔 순서와 정렬하지
+  않은 결과의 반환 순서가 구버전과 달라질 수 있습니다. 결과 순서가 필요하면 `ORDER BY`를
+  사용하고, 업그레이드 후에는 [SELECT/JOIN 옵티마이저](/dbms/performance-tuning/performance-query-tuning/#select-join-optimizer)의
+  절차에 따라 결과와 실행 계획을 함께 확인하십시오.
 - 새로운 XMA 프로토콜 변경 사항은 [XMA 프로토콜 호환성](../compatibility-xma-protocol/)을 참고하십시오.
 
 ### 백업 파일 호환성
