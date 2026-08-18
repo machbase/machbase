@@ -259,6 +259,28 @@ ALTER SESSION SET FEEDBACK_APPEND_ERROR = 0;  -- 에러 메시지 미전송 (기
 ALTER SESSION SET MAX_QPX_MEM = 1073741824;  -- 1GB
 ```
 
+### SET DDL_LOCK_TIMEOUT
+
+Standard Edition에서 충돌한 DDL 잠금을 기다릴 시간을 초 단위로 지정합니다. 기본값은 `0`,
+설정 범위는 `0`~`1000000`입니다. `0`이면 기다리지 않고 즉시
+`ERR-02031: Resource busy (<object>)`를 반환합니다.
+
+```sql
+ALTER SESSION SET DDL_LOCK_TIMEOUT = 10;  -- 최대 10초 대기
+```
+
+실행 중인 DDL의 대기 시간은 변경되지 않으며 새 값은 다음 DDL부터 적용됩니다. 현재 세션별
+설정값은 `V$SESSION.DDL_LOCK_TIMEOUT`에서 확인합니다.
+
+```sql
+SELECT id, user_name, ddl_lock_timeout
+  FROM v$session
+ WHERE closed = 0
+ ORDER BY id;
+```
+
+충돌 범위와 오류 처리 방법은 [DDL 동시성과 잠금](../ddl-syntax/#ddl-concurrency)을 참고하십시오.
+
 ### SET SESSION_IDLE_TIMEOUT_SEC
 
 세션 유휴 상태 연결 유지 최대 시간 (초 단위)입니다.

@@ -137,6 +137,7 @@ MACHBASE 서버에 접속된 세션 정보를 표시합니다.
 | RS_CACHE_APPROXIMATE_RESULT_ENABLE | Result Cache 사용 시, 정확하지 않은 쿼리의 결과를 캐싱해 갈 것인지 여부                                                                                  |
 | IDLE_TIMEOUT                       | 세션 연결 후 해당 시간 동안 Client 가 아무일도 하지 않을 시 세션 종료                                                                                     |
 | QUERY_TIMEOUT                      | 쿼리 수행 시 응답 대기 시간                                                                                                                 |
+| DDL_LOCK_TIMEOUT (Standard Only)   | 충돌한 DDL 잠금을 기다릴 시간(초). `0`이면 즉시 오류를 반환합니다. |
 | TRANSACTION_BUSY_TIMEOUT_MS                | TRANSACTION 쓰기 충돌 시 대기할 시간(밀리초). `-1`은 계속 대기하고 `0`은 즉시 오류를 반환합니다. |
 
 ### V$SESMEM

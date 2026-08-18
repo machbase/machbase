@@ -43,6 +43,34 @@ SELECT * FROM V$RETENTION_JOB WHERE TABLE_NAME = 'TARGET_TABLE';
 
 스키마 변경 전 Retention Policy가 실행 중이라면 완료 후 작업하십시오.
 
+### 5. DDL 충돌 정책 설정
+
+Machbase 8.7.0 Standard Edition은 서로 다른 객체의 DDL을 동시에 수행할 수 있습니다. 같은 객체나
+직접 관련된 객체의 DDL은 충돌하므로 운영 배포 세션에서 허용할 대기 시간을 먼저 설정합니다.
+
+```sql
+-- 충돌한 DDL 잠금을 최대 10초 동안 대기
+ALTER SESSION SET DDL_LOCK_TIMEOUT = 10;
+
+-- 세션별 설정값 확인
+SELECT id, user_name, ddl_lock_timeout
+  FROM v$session
+ WHERE closed = 0
+ ORDER BY id;
+```
+
+| 동시 실행 대상 | 판단 |
+|----------------|------|
+| 이름이 서로 다른 독립 테이블 | 병렬 실행 가능 |
+| 동일 객체 또는 동일 이름 | 충돌 |
+| 테이블 변경·삭제 DDL과 해당 테이블의 인덱스 DDL | 충돌 |
+| 뷰 DDL과 원본 테이블의 변경·삭제 DDL | 충돌 |
+| TAG 테이블 변경·삭제 DDL과 해당 Rollup 또는 Retention DDL | 충돌 |
+
+Cluster Edition에는 `DDL_LOCK_TIMEOUT`이 없으며 기존 DDL 직렬화 정책을 사용합니다. 자세한
+동작은 [DDL 동시성과 잠금](/dbms/reference/sql/syntax-dictionary-sql/ddl-syntax/#ddl-concurrency)을
+참고하십시오.
+
 ---
 
 ## 컬럼 추가 체크리스트
@@ -97,6 +125,22 @@ ALTER TABLE sensor_tag DROP RETENTION;
 -- 새 정책 적용
 ALTER TABLE sensor_tag ADD RETENTION new_policy;
 ```
+
+---
+
+## DDL 충돌 처리
+
+기본 `DDL_LOCK_TIMEOUT=0`에서는 충돌 시
+`ERR-02031: Resource busy (<object>)`가 즉시 반환됩니다.
+
+1. `ERR-02031`만 제한된 횟수와 대기 간격을 두고 재시도합니다.
+2. 재시도하기 전에 대상 객체와 의존 객체의 현재 상태를 다시 조회합니다.
+3. 대기 후에는 선행 DDL의 결과에 따라 `already exists`나 `table not found`가 반환될 수 있습니다.
+4. 문법 오류, 권한 오류, `already exists`, `table not found`는 같은 SQL로 반복 재시도하지 않습니다.
+5. `machsql`을 사용하는 자동화는 프로세스 종료 코드뿐 아니라 출력의 `ERR-`도 확인합니다.
+
+DDL 대기 시간이 끝나거나 작업이 취소된 뒤에는 다시 실행할 수 있지만, 선행 작업의 반영 여부를
+확인한 다음 재시도해야 합니다.
 
 ---
 

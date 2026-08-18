@@ -222,6 +222,7 @@ SELECT name, value, type FROM v$property ORDER BY name;
 | `MAX_STMT_COUNT_PER_SESSION` | 1024 | 예 | 세션당 최대 Statement 수 |
 | `SESSION_IDLE_TIMEOUT_SEC` | 0 | 아니오 | 세션 유휴 타임아웃 (0: 무제한) |
 | `SESSION_QUERY_TIMEOUT_SEC` | 0 | 예 | 쿼리 실행 타임아웃 기본값 (0: 무제한) |
+| `DDL_LOCK_TIMEOUT` | 0 | 예 | Standard Edition DDL 잠금 대기 시간(초). 0이면 즉시 오류 반환 |
 | `MAX_QPX_MEM` | 1GB | 예 | 쿼리 실행기 최대 메모리 (GROUP BY, ORDER BY 등) |
 
 ### 메모리
@@ -553,6 +554,35 @@ ALTER SYSTEM SET SESSION_IDLE_TIMEOUT_SEC = 1800;
 ALTER SESSION SET SESSION_QUERY_TIMEOUT = 60;
 ```
 
+#### DDL_LOCK_TIMEOUT
+
+Standard Edition에서 다른 DDL과 충돌했을 때 잠금 해제를 기다리는 시간(초)입니다. 0으로
+설정하면 기다리지 않고 즉시 `ERR-02031: Resource busy (<object>)`를 반환합니다.
+
+| 항목 | 값 |
+|------|----|
+| 기본값 | 0 (대기하지 않음) |
+| 범위 | 0 ~ 1000000초 |
+| 적용 대상 | Standard Edition |
+| 재시작 필요 | `machbase.conf` 변경 시 예 |
+
+```ini
+# machbase.conf
+DDL_LOCK_TIMEOUT = 10
+```
+
+`machbase.conf` 값은 서버를 재시작한 뒤 생성되는 세션의 기본값입니다. 현재 접속한 세션에서만
+변경하려면 `ALTER SESSION`을 사용합니다.
+
+```sql
+ALTER SESSION SET DDL_LOCK_TIMEOUT = 10;
+```
+
+실행 중인 DDL은 시작 시점의 값을 계속 사용하며 변경된 값은 다음 DDL부터 적용됩니다. 이 값은
+DDL 잠금 대기만 제한하며 DDL의 전체 실행 시간을 제한하지 않습니다. 자세한 충돌 범위는
+[DDL 동시성과 잠금](/dbms/reference/sql/syntax-dictionary-sql/ddl-syntax/#ddl-concurrency)을
+참고하십시오.
+
 ### 현재 세션 확인
 
 `v$session` 뷰로 현재 연결된 세션 목록과 상태를 확인합니다.
@@ -581,7 +611,7 @@ SELECT name, value
   FROM v$property
  WHERE name IN (
    'PORT_NO', 'HTTP_PORT_NO', 'MAX_SESSION_COUNT',
-   'SESSION_IDLE_TIMEOUT_SEC', 'SESSION_QUERY_TIMEOUT_SEC',
+   'SESSION_IDLE_TIMEOUT_SEC', 'SESSION_QUERY_TIMEOUT_SEC', 'DDL_LOCK_TIMEOUT',
    'GRANT_REMOTE_ACCESS', 'BIND_IP_ADDRESS'
  )
  ORDER BY name;

@@ -485,8 +485,76 @@ DROP RETENTION policy_1d_1h;
 
 ---
 
+## DDL 동시성과 잠금 {#ddl-concurrency}
+
+Machbase 8.7.0 Standard Edition은 서로 독립적인 객체의 DDL을 객체 단위로 조정합니다. 따라서
+같은 데이터베이스에서 서로 다른 이름의 LOG, TAG, VOLATILE, LOOKUP, TRANSACTION 테이블을
+생성하거나 변경하는 DDL은 동시에 진행될 수 있습니다.
+
+| Edition | 독립 객체의 DDL | 충돌 범위 | 충돌 시 대기 설정 |
+|---------|-----------------|-----------|-------------------|
+| Standard | 동시에 진행 가능 | 동일 객체와 직접 관련된 객체 | `DDL_LOCK_TIMEOUT` |
+| Cluster | 기존 정책에 따라 직렬화 | 카탈로그 범위 | `DDL_LOCK_TIMEOUT`을 제공하지 않음 |
+
+독립 객체의 DDL이 동시에 시작되더라도 메타데이터 처리나 스토리지 I/O 같은 공통 작업을 공유할
+수 있습니다. 따라서 클라이언트 수에 비례한 처리량 향상이나 모든 DDL의 동시 완료를 보장하지는
+않습니다.
+
+### 충돌하는 객체
+
+| 동시 실행 상황 | 동작 |
+|----------------|------|
+| 이름이 서로 다른 독립 테이블 | 테이블 유형과 관계없이 동시에 진행할 수 있음 |
+| 동일 객체 또는 동일 이름의 객체 | 한 DDL만 진행하고 다른 DDL은 대기하거나 오류 반환 |
+| 테이블 변경·삭제 DDL과 해당 테이블의 인덱스 DDL | 서로 관련된 객체로 처리 |
+| 뷰 DDL과 뷰가 참조하는 테이블의 변경·삭제 DDL | 서로 관련된 객체로 처리 |
+| TAG 테이블 변경·삭제 DDL과 해당 Rollup 또는 Retention DDL | 서로 관련된 객체로 처리 |
+| `DROP VIEW`, `CREATE OR REPLACE VIEW`, 시스템 범위 DDL | 더 넓은 범위에서 직렬화될 수 있음 |
+
+테이블 유형이 달라도 같은 테이블 이름은 하나의 이름 공간을 사용합니다. 예를 들어 같은 이름으로
+LOG 테이블과 TAG 테이블을 동시에 생성하면 둘 중 하나만 생성됩니다.
+
+### DDL 잠금 대기 시간
+
+Standard Edition에서는 `DDL_LOCK_TIMEOUT`으로 충돌한 DDL 잠금을 기다릴 시간을 초 단위로
+설정합니다.
+
+| 값 | 동작 |
+|---:|------|
+| `0` | 기다리지 않고 즉시 `ERR-02031: Resource busy (<object>)` 반환 |
+| 양수 | 지정한 시간까지 기다린 후 잠금을 얻지 못하면 `ERR-02031` 반환 |
+
+오류 메시지의 괄호에는 대표 충돌 객체가 표시됩니다. 넓은 범위에서 충돌한 DDL은 객체 이름 대신
+`DDL`로 표시될 수 있습니다.
+
+기본값은 `0`이고 설정 범위는 `0`~`1000000`입니다. 현재 세션의 값을 변경하려면 다음 문을
+실행합니다.
+
+```sql
+ALTER SESSION SET DDL_LOCK_TIMEOUT = 10;
+```
+
+하나의 DDL이 여러 잠금 단계를 거치더라도 대기 시간은 단계마다 다시 시작되지 않습니다. 잠금을
+얻은 뒤에는 객체와 의존 관계를 다시 확인하므로, 선행 DDL의 결과에 따라 `already exists`,
+`table not found` 같은 일반 SQL 오류가 반환될 수 있습니다.
+
+`DDL_LOCK_TIMEOUT`은 DDL 잠금을 기다리는 시간만 제한하며 SQL 전체 실행 시간을 제한하지
+않습니다. 실행 중인 DDL은 시작 시점의 값을 계속 사용하고, `ALTER SESSION`으로 변경한 값은
+다음 DDL부터 적용됩니다. DDL의 커밋과 복구 동작은 이전 버전과 동일하며 암시적 커밋을 새로
+수행하지 않습니다.
+
+| 설정 | 단위 | 제한 대상 |
+|------|------|-----------|
+| `DDL_LOCK_TIMEOUT` | 초 | Standard Edition의 DDL 잠금 대기 |
+| `SESSION_QUERY_TIMEOUT_SEC` / `QUERY_TIMEOUT` | 초 | 쿼리 실행 및 응답 대기 |
+| `TRANSACTION_BUSY_TIMEOUT_MS` | 밀리초 | TRANSACTION 테이블의 동시 쓰기 충돌 대기 |
+
+---
+
 ## 관련 문서
 
 - [테이블 유형](/dbms/data-modeling-table-design/) - LOG, TAG, LOOKUP, VOLATILE, TRANSACTION 테이블 특성 및 사용 가이드
 - [TAG 테이블 롤업](/dbms/tag-table-usage/create-alter-drop/#original-85-creating-tag-tables) - 롤업 생성 및 운영 가이드
 - [GRANT/REVOKE](../user-auth-syntax/#grant-revoke) - DDL 실행에 필요한 권한 부여
+- [ALTER SESSION](../system-session-alter-syntax/#alter-session) - 현재 세션의 DDL 잠금 대기 시간 설정
+- [스키마 변경 체크리스트](/dbms/operations-configuration-recovery/checklist-schema-alter/) - 운영 중 DDL 실행과 충돌 대응

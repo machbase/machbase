@@ -112,11 +112,16 @@ toc: true
 
 | 프로퍼티 | 기본값 | 범위 | 설명 |
 |----------|--------|------|------|
+| `DDL_LOCK_TIMEOUT` | 0 | 0~1000000 | Standard Edition DDL 잠금 대기 시간(초). 0이면 즉시 오류 반환 |
 | `SHOW_HIDDEN_COLS` | 0 | 0~1 | `SELECT *`에서 `_ARRIVAL_TIME` 컬럼 표시 여부 |
 | `DURATION_BEGIN` | 0 | 0~2^32-1 | `DURATION` 미지정 SELECT의 기본 시작 오프셋(초) |
 | `DURATION_GAP` | 0 | 0~2^31-1 | `DURATION` 미지정 SELECT의 기본 기간(초) |
 | `LOOKUP_APPEND_UPDATE_ON_DUPKEY` | 0 | 0~1 | Lookup 테이블 Append 시 중복 키 처리. 0=실패, 1=UPDATE |
 | `LIN_HASH_BIT_SIZE` | 7 | 1~31 | 내부 선형 해시 초기 버킷 비트 수 |
+
+`machbase.conf`의 `DDL_LOCK_TIMEOUT`은 서버를 재시작한 뒤 새 세션에 복사됩니다. 현재 세션의
+값은 `ALTER SESSION SET DDL_LOCK_TIMEOUT = seconds`로 변경하고 `V$SESSION`에서 확인합니다.
+Cluster Edition은 이 프로퍼티를 제공하지 않습니다.
 
 ## TRANSACTION 설정
 

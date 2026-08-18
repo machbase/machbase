@@ -34,6 +34,27 @@ Machbase 8.7.0 버전의 하위 호환성, 업그레이드 주의사항, 지원 
   timeout 설정을 확인하십시오.
 - 새로운 XMA 프로토콜 변경 사항은 [XMA 프로토콜 호환성](../compatibility-xma-protocol/)을 참고하십시오.
 
+### DDL 동시성 호환
+
+Machbase 8.7.0은 Edition에 따라 DDL 동시 실행 정책이 다릅니다.
+
+| Edition | 8.7.0 동작 | `DDL_LOCK_TIMEOUT` |
+|---------|------------|--------------------|
+| Standard | 서로 다른 독립 객체의 DDL을 동시에 수행할 수 있음 | 제공함. 기본값 `0`(NOWAIT) |
+| Cluster | 기존 카탈로그 범위 DDL 정책 유지 | 제공하지 않음 |
+
+Standard Edition에서 같은 객체나 직접 관련된 객체의 DDL이 충돌하면 기본 설정에서는
+`ERR-02031: Resource busy (<object>)`가 즉시 반환됩니다. 이전 버전의 대기 동작을 전제로 작성한
+배포 스크립트는 업그레이드 후 다음 중 하나를 명시적으로 적용합니다.
+
+- 배포 세션에서 `ALTER SESSION SET DDL_LOCK_TIMEOUT = seconds`로 제한된 대기 시간을 설정합니다.
+- `ERR-02031`에만 제한된 재시도와 대기 간격을 적용합니다.
+- 재시도 전에 객체 상태를 다시 확인하고 `already exists`, 권한, 문법 오류는 재시도하지 않습니다.
+
+자세한 충돌 관계와 설정 방법은
+[DDL 동시성과 잠금](/dbms/reference/sql/syntax-dictionary-sql/ddl-syntax/#ddl-concurrency)을
+참고하십시오.
+
 ### 백업 파일 호환성
 
 | 백업 파일 버전 | 8.7.0에서 복원 | 비고 |
