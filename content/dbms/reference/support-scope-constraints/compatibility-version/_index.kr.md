@@ -27,6 +27,11 @@ Machbase 8.7.0 버전의 하위 호환성, 업그레이드 주의사항, 지원 
   않은 결과의 반환 순서가 구버전과 달라질 수 있습니다. 결과 순서가 필요하면 `ORDER BY`를
   사용하고, 업그레이드 후에는 [SELECT/JOIN 옵티마이저](/dbms/performance-tuning/performance-query-tuning/#select-join-optimizer)의
   절차에 따라 결과와 실행 계획을 함께 확인하십시오.
+- 8.7.0 JDBC 드라이버는 다중 호스트 URL에서 연결 단계의 I/O 오류가 발생하면 다음
+  호스트로 연결을 시도합니다. 구버전 드라이버가 첫 호스트의 일부 socket 오류에서 연결을
+  종료하는 환경에서는 8.7.0 JDBC 드라이버로 교체하고
+  [다중 호스트 연결](/dbms/development-tools-integration/jdbc/#jdbc-multi-host)의 URL과
+  timeout 설정을 확인하십시오.
 - 새로운 XMA 프로토콜 변경 사항은 [XMA 프로토콜 호환성](../compatibility-xma-protocol/)을 참고하십시오.
 
 ### 백업 파일 호환성

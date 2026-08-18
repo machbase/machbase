@@ -1507,7 +1507,7 @@ API입니다. Machbase JDBC 드라이버는 Java 8을 기준으로 JDBC 4.2 핵�
 - Java/JDBC 기준: Java 8, JDBC 4.2
 - 드라이버 버전: 3.0.0
 - 드라이버 클래스: `com.machbase.jdbc.MachDriver`
-- Connection URL 형식: `jdbc:machbase://HOST:PORT/machbasedb`
+- Connection URL 형식: `jdbc:machbase://HOST_LIST/machbasedb`
 
 `Driver.jdbcCompliant()`은 SQL-92 Entry Level 전체 지원 여부를 기준으로 `false`를
 반환합니다. 이 값은 JDBC 4.2 API 지원 여부를 의미하지 않습니다.
@@ -1584,13 +1584,14 @@ public class ConnectSample {
 
 #### 연결 옵션
 
-드라이버는 `Properties` 객체 또는 URL 쿼리 문자열로 옵션을 받습니다.
+드라이버는 `Properties` 객체 또는 URL 쿼리 문자열로 옵션을 받습니다. `randomHost`는
+`Properties`에서 지정하거나 다중 호스트 URL의 `^` 구분자를 사용합니다.
 
 | 옵션 | 설명 |
 |------|------|
 | `user` / `password` | 비밀번호 인증 계정 정보 |
 | `TIMEZONE` | 세션 타임존 (`+0900` 형식). 잘못된 값은 연결 오류로 처리됩니다. |
-| `randomHost` | `true`이면 호스트 목록에서 무작위로 연결 대상을 선택합니다. |
+| `randomHost` | `true`이면 호스트 목록에서 첫 연결 대상을 무작위로 선택합니다. |
 | `maxStatements` | 풀링 연결에서 사용할 최대 캐시 Statement 수 |
 | `CONNECTION_TIMEOUT` | 소켓 연결 타임아웃(초). `0`은 무제한 |
 | `SOCKET_TIMEOUT` | 소켓 읽기 타임아웃(초). `0`은 무제한 |
@@ -1610,6 +1611,36 @@ String url = "jdbc:machbase://127.0.0.1:5656/machbasedb?TIMEZONE=+0900";
 ```java
 props.put("TIMEZONE", "+0900");
 ```
+
+#### 다중 호스트 연결
+
+Machbase 8.7.0 JDBC 드라이버는 여러 호스트를 하나의 URL에 지정하고 연결 실패 시 다음
+호스트를 시도할 수 있습니다.
+
+| 선택 방식 | 지정 방법 | 동작 |
+|-----------|-----------|------|
+| 순차 선택 | `HOST:PORT`를 `,`로 구분 | URL에 작성한 순서대로 연결을 시도합니다. |
+| 무작위 시작 | `HOST:PORT`를 `^`로 구분 | 목록에서 첫 연결 대상을 무작위로 선택합니다. |
+| 무작위 시작 | `Properties`에 `randomHost=true` 지정 | `,`로 구분한 목록에서 첫 연결 대상을 무작위로 선택합니다. |
+
+```java
+String url =
+    "jdbc:machbase://db1.example.com:5656,db2.example.com:5656/" +
+    "machbasedb?CONNECTION_TIMEOUT=5";
+```
+
+- `,`와 `^`는 하나의 URL에서 함께 사용할 수 없습니다.
+- connection refused, 연결 timeout, socket 오류 등 연결 단계의 I/O 오류가 발생하면 다음
+  호스트를 시도합니다. 모든 호스트가 실패하면 `SQLException`이 발생합니다.
+- `CONNECTION_TIMEOUT`은 호스트별 연결 시도에 적용됩니다. `SOCKET_TIMEOUT`은 연결 후
+  읽기 timeout이며 호스트 선택 순서를 변경하지 않습니다.
+- 다중 호스트 전환은 진행 중인 SQL이나 트랜잭션의 성공 여부 및 안전한 재실행을 보장하지
+  않습니다. 연결 오류가 발생한 트랜잭션은 연결을 폐기한 뒤 업무의 멱등성 정책에 따라
+  전체 작업을 다시 실행합니다.
+
+전체 URL 형식과 무작위 시작 예제는
+[JDBC 다중 호스트 연결](/dbms/development-tools-integration/jdbc/#jdbc-multi-host)을
+참고하십시오.
 
 ### AUTH KEY 인증
 

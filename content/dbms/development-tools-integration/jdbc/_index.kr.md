@@ -16,7 +16,7 @@ API로 서버에 연결하고 PreparedStatement, 타입 지정 조회와 바인�
 | Java bytecode 기준 | Java 8 |
 | 드라이버가 보고하는 JDBC 버전 | 4.2 |
 | 드라이버 버전 | 3.0.0 |
-| JDBC URL | `jdbc:machbase://<host>:<port>/[database]` |
+| JDBC URL | `jdbc:machbase://<host-list>/[database]` |
 | `Driver.jdbcCompliant()` | `false` |
 
 `jdbcCompliant()`의 `false`는 JDBC 4.2 API 지원 여부가 아니라 SQL-92 Entry Level 전체
@@ -102,13 +102,14 @@ try (Connection connection =
 
 ### 연결 옵션
 
-연결 옵션은 `Properties` 또는 URL query string으로 지정합니다.
+연결 옵션은 `Properties` 또는 URL query string으로 지정합니다. `randomHost`는
+`Properties`에서 지정하거나 다중 호스트 URL의 `^` 구분자를 사용합니다.
 
 | 옵션 | 설명 |
 |------|------|
 | `user`, `password` | 비밀번호 인증 정보 |
 | `TIMEZONE` | 세션 타임존. `+0900` 형식을 사용합니다. |
-| `randomHost` | 호스트 목록에서 연결 대상을 무작위로 선택합니다. |
+| `randomHost` | 호스트 목록에서 첫 연결 대상을 무작위로 선택합니다. |
 | `maxStatements` | 풀링 연결의 최대 캐시 Statement 수 |
 | `CONNECTION_TIMEOUT` | 소켓 연결 timeout(초). `0`은 제한 없음입니다. |
 | `SOCKET_TIMEOUT` | 소켓 읽기 timeout(초). `0`은 제한 없음입니다. |
@@ -122,9 +123,59 @@ String url =
     "jdbc:machbase://127.0.0.1:5656/machbasedb?TIMEZONE=+0900";
 ```
 
-연결이 끊긴 뒤 자동 reconnect가 성공해도 이전 Statement, PreparedStatement와 ResultSet은
-재사용하지 않습니다. 활성 트랜잭션에서 연결 오류가 발생하면 연결을 폐기하고 업무의
-멱등성 정책에 따라 전체 트랜잭션을 다시 실행합니다.
+<a id="jdbc-multi-host"></a>
+
+### 다중 호스트 연결
+
+Machbase 8.7.0 JDBC 드라이버는 하나의 URL에 여러 호스트를 지정할 수 있습니다.
+
+| 선택 방식 | 지정 방법 | 동작 |
+|-----------|-----------|------|
+| 순차 선택 | 호스트를 `,`로 구분 | URL에 작성한 순서대로 연결을 시도합니다. |
+| 무작위 시작 | 호스트를 `^`로 구분 | 호스트 목록에서 첫 연결 대상을 무작위로 선택합니다. |
+| 무작위 시작 | `Properties`에 `randomHost=true` 지정 | `,`로 구분한 목록에서 첫 연결 대상을 무작위로 선택합니다. |
+
+다음 URL은 `db1` 연결에 실패하면 `db2`에 연결을 시도합니다.
+
+```java
+String url =
+    "jdbc:machbase://db1.example.com:5656,db2.example.com:5656/" +
+    "machbasedb?CONNECTION_TIMEOUT=5";
+```
+
+`^` 구분자를 사용하면 첫 연결 대상을 무작위로 선택합니다.
+
+```java
+String url =
+    "jdbc:machbase://db1.example.com:5656^db2.example.com:5656/" +
+    "machbasedb?CONNECTION_TIMEOUT=5";
+```
+
+`randomHost` property를 사용하려면 `,`로 호스트를 구분합니다.
+
+```java
+Properties properties = new Properties();
+properties.setProperty("randomHost", "true");
+
+String url =
+    "jdbc:machbase://db1.example.com:5656,db2.example.com:5656/" +
+    "machbasedb?CONNECTION_TIMEOUT=5";
+```
+
+- `,`와 `^` 구분자를 하나의 URL에서 함께 사용할 수 없습니다.
+- connection refused, 연결 timeout, socket 오류 등 연결 단계의 I/O 오류가 발생하면
+  다음 호스트로 연결을 시도합니다. 모든 호스트가 실패하면
+  `DriverManager.getConnection()`이 `SQLException`을 반환합니다.
+- `CONNECTION_TIMEOUT`은 호스트별 연결 시도에 적용됩니다. 따라서 전체 연결 대기 시간은
+  호스트 수와 각 호스트의 응답 시간에 따라 길어질 수 있습니다.
+- `SOCKET_TIMEOUT`은 연결된 socket의 읽기 timeout이며 호스트 선택 순서를 변경하지
+  않습니다.
+
+다중 호스트 전환은 새 연결 또는 재연결 과정의 socket 연결에 적용됩니다. 연결이 끊긴 뒤
+자동 reconnect가 성공해도 이전 Statement, PreparedStatement와 ResultSet은 재사용하지
+않습니다. 진행 중이던 SQL의 성공 여부나 안전한 재실행을 보장하지 않으므로, 활성
+트랜잭션에서 연결 오류가 발생하면 연결을 폐기하고 업무의 멱등성 정책에 따라 전체
+트랜잭션을 다시 실행합니다.
 
 ## AUTH KEY 인증
 
