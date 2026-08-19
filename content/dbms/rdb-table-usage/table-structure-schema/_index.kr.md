@@ -4,7 +4,8 @@ weight: 20
 toc: true
 ---
 
-TRANSACTION 테이블의 스키마 설계 방법과 컬럼 타입, PRIMARY KEY 지정 방식을 설명합니다.
+TRANSACTION 테이블의 스키마 설계 방법과 컬럼 타입, PRIMARY KEY 및 UNIQUE INDEX 지정 방식을
+설명합니다.
 
 <a id="rdb-table-design"></a>
 
@@ -28,7 +29,8 @@ DELETE FROM order_history WHERE order_id = 1001;
 
 - **[활용 사례](/dbms/rdb-table-usage/patterns-scenarios/#use-cases-rdb)**
 - **[스키마 설계](/dbms/rdb-table-usage/table-structure-schema/#rdb-table-design-design-schema-type-rdb)**
-- **[PRIMARY KEY·UNIQUE·일반 인덱스 전략](/dbms/rdb-table-usage/rdb-index-json-path/#index-strategy-rdb-primary-key-unique-normal)**
+- **[PRIMARY KEY·UNIQUE INDEX·일반 인덱스 비교](/dbms/rdb-table-usage/rdb-index-json-path/#index-strategy-rdb-primary-key-unique-normal)**
+- **[UNIQUE INDEX 생성과 동작](/dbms/rdb-table-usage/rdb-index-json-path/#unique-index-rdb)**
 - **[AUTO_INCREMENT](/dbms/rdb-table-usage/auto-increment/)**
 - **[JSON 경로 인덱스](/dbms/rdb-table-usage/rdb-index-json-path/#index-strategy-rdb-json-path)**
 - **[트랜잭션 설계](/dbms/rdb-table-usage/transaction/#design-transaction-rdb)**
@@ -145,6 +147,28 @@ CREATE TRANSACTION TABLE product_catalog (
 
 CREATE PRIMARY KEY INDEX idx_pk_product ON product_catalog(product_id);
 ```
+
+#### UNIQUE 값 보장
+
+TRANSACTION 테이블은 고유성 보장을 지원하지만 `CREATE TABLE` 안에서 컬럼 뒤에 `UNIQUE`를
+붙이거나 `UNIQUE(column)` 제약조건을 선언하지 않습니다. 테이블을 먼저 생성한 뒤
+`CREATE UNIQUE INDEX`를 실행합니다.
+
+```sql
+CREATE TRANSACTION TABLE account (
+    account_id LONG PRIMARY KEY,
+    email      VARCHAR(128) NOT NULL,
+    name       VARCHAR(80)
+);
+
+CREATE UNIQUE INDEX uidx_account_email
+ON account(email);
+```
+
+이후 같은 `email`을 INSERT하거나 기존 row의 `email`을 중복 값으로 UPDATE하면
+`ERR-01418`이 반환됩니다. 단일·복합 UNIQUE INDEX, NULL 및 삭제 동작은
+[UNIQUE INDEX 생성과 동작](/dbms/rdb-table-usage/rdb-index-json-path/#unique-index-rdb)을
+참고하십시오.
 
 자동 번호가 필요한 단일 64비트 정수 PRIMARY KEY에는 `AUTO_INCREMENT`를 사용할 수 있습니다.
 

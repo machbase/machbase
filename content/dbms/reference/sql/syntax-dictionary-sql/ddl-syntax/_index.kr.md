@@ -285,11 +285,17 @@ TRUNCATE TABLE sensor_log;
 
 ```sql
 create_index_stmt ::=
-    'CREATE' index_type_keyword? 'INDEX' index_name
-    'ON' table_name '(' column_name [ json_path ] ')'
+    'CREATE' index_modifier? 'INDEX' index_name
+    'ON' table_name '(' index_column_list ')'
     [ 'INDEX_TYPE' ( 'LSM' | 'KEYWORD' | 'BITMAP' | 'REDBLACK' ) ]
     [ 'TABLESPACE' tablespace_name ]
     [ index_property_list ]
+
+index_modifier ::= 'UNIQUE' | 'PRIMARY KEY'
+
+index_column_list ::=
+    column_name ( ',' column_name )*
+  | column_name json_path
 
 index_property_list ::=
     ( 'MAX_LEVEL'        '=' number
@@ -299,14 +305,22 @@ index_property_list ::=
     ( ',' index_property_list )*
 ```
 
-### 인덱스 타입과 적용 대상
+### 인덱스 지정 방식과 적용 대상
 
-| 인덱스 타입 | 기본 대상 | 설명 |
+| 지정 방식 | 기본 대상 | 설명 |
 |------------|----------|------|
+| PRIMARY KEY | TRANSACTION 테이블 | 단일 컬럼 기본 키. 테이블당 하나만 생성 가능 |
+| UNIQUE | TRANSACTION 테이블 | 단일 또는 복합 컬럼의 중복 값 차단 |
+| 일반 BTREE | TRANSACTION 테이블 | 단일 또는 복합 컬럼 조회 지원 |
 | LSM | LOG 테이블 | 대용량 시계열 데이터에 최적화된 기본 인덱스 |
 | KEYWORD | LOG 테이블 | VARCHAR/TEXT 컬럼 텍스트 검색용 |
 | BITMAP | LOG 테이블 | 데이터 분석용 (VARCHAR, TEXT, BINARY 제외) |
 | REDBLACK | VOLATILE/LOOKUP 테이블 | 실시간 메모리 인덱스 |
+
+TRANSACTION 테이블은 `CREATE TABLE` 안에서 `UNIQUE` 제약조건을 선언하지 않습니다. 테이블을
+만든 뒤 `CREATE UNIQUE INDEX`를 사용합니다.
+[UNIQUE INDEX 생성과 동작](/dbms/rdb-table-usage/rdb-index-json-path/#unique-index-rdb)에서
+중복 데이터, NULL 및 삭제 동작을 확인할 수 있습니다.
 
 ### 예시
 
@@ -319,6 +333,15 @@ CREATE INDEX idx_sensor_name ON sensor_log (name) INDEX_TYPE KEYWORD;
 
 -- BITMAP 인덱스
 CREATE INDEX idx_sensor_status ON sensor_log (status) INDEX_TYPE BITMAP BITMAP_ENCODE = RANGE;
+
+-- TRANSACTION PRIMARY KEY 인덱스
+CREATE PRIMARY KEY INDEX idx_pk_account ON account (account_id);
+
+-- TRANSACTION UNIQUE INDEX
+CREATE UNIQUE INDEX uidx_account_email ON account (email);
+
+-- TRANSACTION 일반 복합 인덱스
+CREATE INDEX idx_account_tenant_name ON account (tenant_id, login_name);
 
 -- JSON 컬럼의 특정 경로에 인덱스 생성 (TAG 테이블)
 CREATE INDEX tag_metric_idx ON tag (value.sensor.name);

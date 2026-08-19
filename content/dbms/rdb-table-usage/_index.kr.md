@@ -21,7 +21,7 @@ TRANSACTION 테이블은 관계형 업무 데이터와 트랜잭션 처리가 �
 | [활용 패턴과 시나리오](./patterns-scenarios/) | 주문 관리, 재고, 설비 이력 등 실무 예시 |
 | [트랜잭션](./transaction/) | BEGIN/COMMIT/ROLLBACK, 배치 INSERT |
 | [잠금, 충돌, busy timeout](./locking-conflict-timeout/) | 동시 쓰기 충돌, 세션 timeout, 진단과 재시도 |
-| [TRANSACTION 인덱스와 JSON path 인덱스](./rdb-index-json-path/) | PRIMARY KEY·보조 인덱스 전략, JSON 경로 인덱스 |
+| [TRANSACTION 인덱스와 JSON path 인덱스](./rdb-index-json-path/) | PRIMARY KEY·UNIQUE INDEX·일반 인덱스, JSON 경로 인덱스 |
 | [JOIN과 관계형 조회 설계](./join-relational-query/) | TRANSACTION-LOOKUP, TRANSACTION-TAG, TRANSACTION-TRANSACTION JOIN |
 | [TRANSACTION 백업, 복원, 마운트](./backup-restore-mount/) | 전체·테이블 백업, 복원, 읽기 전용 마운트 |
 | [Append API 지원과 SDK 사용 범위](./sdk-append-scope/) | Append API 동작 방식, SDK별 지원 현황 |

@@ -4,14 +4,21 @@ weight: 120
 toc: true
 ---
 
-TRANSACTION 테이블의 PRIMARY KEY·보조 인덱스 전략과 JSON 경로 인덱스 활용법을 다룹니다.
+TRANSACTION 테이블의 PRIMARY KEY·UNIQUE INDEX·일반 인덱스 전략과 JSON 경로 인덱스 활용법을
+다룹니다.
 
 
 <a id="index-strategy-rdb-primary-key-unique-normal"></a>
 
-## PRIMARY KEY·보조 인덱스 전략
+## PRIMARY KEY·UNIQUE INDEX·일반 인덱스 전략
 
-TRANSACTION 테이블은 BTREE 기반 PRIMARY KEY 인덱스와 보조 인덱스를 지원합니다. PRIMARY KEY는 `CREATE PRIMARY KEY INDEX`, 보조 인덱스는 `CREATE INDEX`로 생성합니다.
+TRANSACTION 테이블은 BTREE 기반 PRIMARY KEY, UNIQUE INDEX, 일반 인덱스를 지원합니다.
+
+| 구분 | 생성 방법 | 테이블당 개수 | 복합 컬럼 | NULL 처리 |
+|------|-----------|---------------|-----------|-----------|
+| PRIMARY KEY | 컬럼 `PRIMARY KEY` 또는 `CREATE PRIMARY KEY INDEX` | 1개 | 지원하지 않음 | 허용하지 않음 |
+| UNIQUE INDEX | `CREATE UNIQUE INDEX` | 여러 개 | 지원 | NULL 포함 키는 서로 중복으로 보지 않음 |
+| 일반 인덱스 | `CREATE INDEX` | 여러 개 | 지원 | 고유성 검사 없음 |
 
 ### PRIMARY KEY 인덱스
 
@@ -30,10 +37,64 @@ CREATE TRANSACTION TABLE orders (
 CREATE PRIMARY KEY INDEX idx_pk_order ON orders(order_id);
 ```
 
-### 보조 인덱스
+<a id="unique-index-rdb"></a>
+
+### UNIQUE INDEX
+
+TRANSACTION 테이블에서 특정 컬럼이나 컬럼 조합의 중복을 막으려면 테이블을 생성한 뒤
+`CREATE UNIQUE INDEX`를 실행합니다. `CREATE TABLE` 안에서 컬럼 뒤에 `UNIQUE`를 붙이거나
+`UNIQUE(column)` 제약조건을 선언하는 문법은 지원하지 않습니다.
 
 ```sql
--- 단일 컬럼 보조 인덱스
+CREATE UNIQUE INDEX index_name
+ON table_name(column_name [, ...]);
+```
+
+다음 예제는 이메일은 전체 테이블에서, 로그인 이름은 테넌트 안에서만 고유하도록 설정합니다.
+
+```sql
+CREATE TRANSACTION TABLE account (
+    account_id LONG PRIMARY KEY,
+    email      VARCHAR(128) NOT NULL,
+    tenant_id  INTEGER NOT NULL,
+    login_name VARCHAR(64) NOT NULL
+);
+
+-- 단일 컬럼 UNIQUE INDEX
+CREATE UNIQUE INDEX uidx_account_email
+ON account(email);
+
+-- 복합 UNIQUE INDEX: 두 컬럼의 조합이 같을 때 중복
+CREATE UNIQUE INDEX uidx_account_tenant_login
+ON account(tenant_id, login_name);
+```
+
+| 상황 | 동작 |
+|------|------|
+| 기존 row에 중복 값이 있는 상태에서 생성 | `ERR-01418`을 반환하고 인덱스를 생성하지 않음 |
+| 중복 값을 INSERT | `ERR-01418`을 반환하고 row를 추가하지 않음 |
+| 기존 row를 중복 값으로 UPDATE | `ERR-01418`을 반환하고 기존 row를 유지 |
+| UNIQUE 키에 NULL이 포함됨 | 다른 NULL 포함 키와 중복으로 판정하지 않음 |
+| UNIQUE INDEX 삭제 | 해당 컬럼 또는 컬럼 조합의 고유성 검사를 제거 |
+
+NULL 값도 허용하지 않으려면 UNIQUE INDEX를 구성하는 각 컬럼에 `NOT NULL`을 지정합니다.
+인덱스 생성 결과는 다음과 같이 확인하고 삭제합니다.
+
+```sql
+SHOW INDEX uidx_account_email;
+
+DROP INDEX uidx_account_email;
+```
+
+UNIQUE INDEX를 삭제한 뒤 중복 데이터를 저장하면 같은 인덱스를 다시 생성할 때 실패합니다.
+중복 발생 시 기존 row를 갱신하는 방법은
+[INSERT ON DUPLICATE KEY UPDATE](/dbms/rdb-table-usage/insert-on-duplicate-key-update/)를
+참고하십시오.
+
+### 일반 인덱스
+
+```sql
+-- 단일 컬럼 일반 인덱스
 CREATE INDEX idx_order_customer ON orders(customer);
 
 -- 복합 인덱스
@@ -49,7 +110,7 @@ CREATE INDEX idx_tx_time ON tx_history(tx_time);
 -- PK 인덱스 활용
 SELECT order_id, amount, status FROM orders WHERE order_id = 1001;
 
--- 보조 인덱스 활용
+-- 일반 인덱스 활용
 SELECT order_id, amount FROM orders WHERE customer = 'CUST-001';
 
 -- 복합 인덱스 활용 (앞쪽 컬럼부터 적용)

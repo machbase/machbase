@@ -4,7 +4,9 @@ weight: 30
 toc: true
 ---
 
-TRANSACTION 테이블의 DDL(CREATE, ALTER, DROP) 관련 내용을 다룹니다. TRANSACTION 테이블은 관계형 데이터 모델을 사용하므로, 스키마를 만들 때 PRIMARY KEY, 인덱스, AUTO_INCREMENT 사용 여부를 함께 결정합니다.
+TRANSACTION 테이블의 DDL(CREATE, ALTER, DROP) 관련 내용을 다룹니다. TRANSACTION 테이블은
+관계형 데이터 모델을 사용하므로, 스키마를 만들 때 PRIMARY KEY, UNIQUE INDEX, 일반 인덱스,
+AUTO_INCREMENT 사용 여부를 함께 결정합니다.
 
 <a id="create-rdb-table"></a>
 
@@ -52,7 +54,7 @@ CREATE TRANSACTION TABLE order_history (
 
 <a id="create-rdb-primary-key-index"></a>
 
-## PRIMARY KEY와 인덱스 생성
+## PRIMARY KEY, UNIQUE INDEX, 일반 인덱스 생성
 
 PRIMARY KEY는 컬럼 정의에서 지정하거나, 테이블 생성 후 `CREATE PRIMARY KEY INDEX` 문으로 생성합니다.
 
@@ -67,14 +69,26 @@ CREATE TRANSACTION TABLE inventory (
 CREATE PRIMARY KEY INDEX idx_pk_inventory ON inventory(item_id);
 ```
 
-조회, UPDATE, DELETE 조건에 자주 사용하는 컬럼에는 보조 인덱스를 생성합니다.
+고유해야 하는 컬럼이나 컬럼 조합에는 테이블 생성 후 UNIQUE INDEX를 생성합니다. 컬럼 정의에
+`UNIQUE`를 붙이거나 `UNIQUE(column)` 제약조건을 선언하는 문법은 지원하지 않습니다.
+
+```sql
+CREATE UNIQUE INDEX uidx_product_catalog_name
+ON product_catalog(name);
+```
+
+조회, UPDATE, DELETE 조건에 자주 사용하는 컬럼에는 일반 인덱스를 생성합니다.
 
 ```sql
 CREATE INDEX idx_inventory_warehouse ON inventory(warehouse);
 CREATE INDEX idx_order_status_time ON order_history(status, order_time);
 ```
 
-인덱스 설계 기준은 [TRANSACTION 인덱스와 JSON path 인덱스](/dbms/rdb-table-usage/rdb-index-json-path/)에서 다룹니다.
+UNIQUE INDEX의 중복 및 NULL 처리는
+[UNIQUE INDEX 생성과 동작](/dbms/rdb-table-usage/rdb-index-json-path/#unique-index-rdb)에서,
+일반 인덱스 설계 기준은
+[TRANSACTION 인덱스와 JSON path 인덱스](/dbms/rdb-table-usage/rdb-index-json-path/)에서
+다룹니다.
 
 <a id="create-rdb-auto-increment"></a>
 

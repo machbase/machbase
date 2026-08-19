@@ -35,7 +35,7 @@ TRANSACTION 테이블의 주요 특성은 다음과 같습니다.
 |------|------|
 | 주요 용도 | 관계형 업무 데이터, 마스터 데이터, 집계 결과, 상태 관리 |
 | 주요 DML | INSERT, SELECT, UPDATE, DELETE |
-| 키와 인덱스 | PRIMARY KEY, UNIQUE, 일반 인덱스 |
+| 키와 인덱스 | PRIMARY KEY, UNIQUE INDEX, 일반 인덱스 |
 | 트랜잭션 | TRANSACTION DML에 `BEGIN`, `COMMIT`, `ROLLBACK` 지원 |
 | 부가 기능 | AUTO_INCREMENT, JSON 경로 인덱스, 백업·마운트 |
 | 에디션 | Standard Edition에서만 사용 |
@@ -87,8 +87,9 @@ TRANSACTION 테이블 설계 시 다음 순서로 결정합니다.
 
 1. 행을 식별할 PRIMARY KEY를 정합니다.
 2. 자동 번호가 필요하면 `AUTO_INCREMENT` 사용 여부를 결정합니다.
-3. 조회, UPDATE, DELETE 조건에 맞춰 보조 인덱스를 설계합니다.
-4. 트랜잭션 경계를 정하고 장시간 열린 트랜잭션을 피합니다.
-5. 백업, 복원, 읽기 전용 마운트 절차를 운영 정책에 포함합니다.
+3. 중복을 허용하지 않을 업무 키에는 UNIQUE INDEX를 생성합니다.
+4. 조회, UPDATE, DELETE 조건에 맞춰 일반 인덱스를 설계합니다.
+5. 트랜잭션 경계를 정하고 장시간 열린 트랜잭션을 피합니다.
+6. 백업, 복원, 읽기 전용 마운트 절차를 운영 정책에 포함합니다.
 
 스키마 설계는 [테이블 구조와 스키마](/dbms/rdb-table-usage/table-structure-schema/)에서, 트랜잭션은 [트랜잭션](/dbms/rdb-table-usage/transaction/)에서 다룹니다.
