@@ -29,10 +29,10 @@ DELETE FROM order_history WHERE order_id = 1001;
 
 - **[활용 사례](/dbms/rdb-table-usage/patterns-scenarios/#use-cases-rdb)**
 - **[스키마 설계](/dbms/rdb-table-usage/table-structure-schema/#rdb-table-design-design-schema-type-rdb)**
-- **[PRIMARY KEY·UNIQUE INDEX·일반 인덱스 비교](/dbms/rdb-table-usage/rdb-index-json-path/#index-strategy-rdb-primary-key-unique-normal)**
-- **[UNIQUE INDEX 생성과 동작](/dbms/rdb-table-usage/rdb-index-json-path/#unique-index-rdb)**
+- **[PRIMARY KEY·UNIQUE INDEX·일반 인덱스 비교](/dbms/rdb-table-usage/index-performance/#index-strategy-rdb-primary-key-unique-normal)**
+- **[UNIQUE INDEX 생성과 동작](/dbms/rdb-table-usage/index-performance/#unique-index-rdb)**
 - **[AUTO_INCREMENT](/dbms/rdb-table-usage/auto-increment/)**
-- **[JSON 경로 인덱스](/dbms/rdb-table-usage/rdb-index-json-path/#index-strategy-rdb-json-path)**
+- **[JSON 경로 인덱스](/dbms/rdb-table-usage/index-performance/#index-strategy-rdb-json-path)**
 - **[트랜잭션 설계](/dbms/rdb-table-usage/transaction/#design-transaction-rdb)**
 - **[UPDATE·DELETE 설계](/dbms/rdb-table-usage/data-input-mutation/#modeling-rdb-update-delete)**
 - **[잠금·충돌·타임아웃 설계](/dbms/rdb-table-usage/locking-conflict-timeout/#design-locking-conflict-rdb-busy-timeout-ddl-dml)**
@@ -167,7 +167,7 @@ ON account(email);
 
 이후 같은 `email`을 INSERT하거나 기존 row의 `email`을 중복 값으로 UPDATE하면
 `ERR-01418`이 반환됩니다. 단일·복합 UNIQUE INDEX, NULL 및 삭제 동작은
-[UNIQUE INDEX 생성과 동작](/dbms/rdb-table-usage/rdb-index-json-path/#unique-index-rdb)을
+[UNIQUE INDEX 생성과 동작](/dbms/rdb-table-usage/index-performance/#unique-index-rdb)을
 참고하십시오.
 
 자동 번호가 필요한 단일 64비트 정수 PRIMARY KEY에는 `AUTO_INCREMENT`를 사용할 수 있습니다.

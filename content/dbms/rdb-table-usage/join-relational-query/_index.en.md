@@ -1,5 +1,5 @@
 ---
-title: '8.13 JOIN and Relational Query Design'
+title: '8.12 JOIN and Relational Query Design'
 weight: 130
 toc: true
 ---

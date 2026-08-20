@@ -107,7 +107,9 @@ FROM device_state
 WHERE state->'$.status' = 'ALARM';
 ```
 
-자주 조회하는 JSON 필드는 별도 컬럼으로 분리하거나 JSON path 인덱스 적용 여부를 검토합니다. 자세한 내용은 [TRANSACTION 인덱스와 JSON path 인덱스](/dbms/rdb-table-usage/rdb-index-json-path/)를 참고합니다.
+자주 조회하는 JSON 필드는 별도 컬럼으로 분리하거나 JSON path 인덱스 적용 여부를 검토합니다.
+자세한 내용은 [인덱스와 성능](/dbms/rdb-table-usage/index-performance/#index-strategy-rdb-json-path)을
+참고합니다.
 
 <a id="query-rdb-performance"></a>
 

@@ -319,7 +319,7 @@ index_property_list ::=
 
 TRANSACTION 테이블은 `CREATE TABLE` 안에서 `UNIQUE` 제약조건을 선언하지 않습니다. 테이블을
 만든 뒤 `CREATE UNIQUE INDEX`를 사용합니다.
-[UNIQUE INDEX 생성과 동작](/dbms/rdb-table-usage/rdb-index-json-path/#unique-index-rdb)에서
+[UNIQUE INDEX 생성과 동작](/dbms/rdb-table-usage/index-performance/#unique-index-rdb)에서
 중복 데이터, NULL 및 삭제 동작을 확인할 수 있습니다.
 
 ### 예시

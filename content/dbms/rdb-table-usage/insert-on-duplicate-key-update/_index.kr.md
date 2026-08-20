@@ -1,5 +1,5 @@
 ---
-title: '8.17 INSERT ON DUPLICATE KEY UPDATE'
+title: '8.16 INSERT ON DUPLICATE KEY UPDATE'
 weight: 170
 toc: true
 ---

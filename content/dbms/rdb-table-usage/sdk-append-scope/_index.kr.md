@@ -1,5 +1,5 @@
 ---
-title: '8.15 Append API 지원과 SDK 사용 범위'
+title: '8.14 Append API 지원과 SDK 사용 범위'
 weight: 150
 toc: true
 ---

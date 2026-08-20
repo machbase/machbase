@@ -1,5 +1,5 @@
 ---
-title: '8.14 TRANSACTION 백업, 복원, 마운트'
+title: '8.13 TRANSACTION 백업, 복원, 마운트'
 weight: 140
 toc: true
 ---

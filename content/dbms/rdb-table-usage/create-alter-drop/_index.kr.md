@@ -85,9 +85,9 @@ CREATE INDEX idx_order_status_time ON order_history(status, order_time);
 ```
 
 UNIQUE INDEX의 중복 및 NULL 처리는
-[UNIQUE INDEX 생성과 동작](/dbms/rdb-table-usage/rdb-index-json-path/#unique-index-rdb)에서,
+[UNIQUE INDEX 생성과 동작](/dbms/rdb-table-usage/index-performance/#unique-index-rdb)에서,
 일반 인덱스 설계 기준은
-[TRANSACTION 인덱스와 JSON path 인덱스](/dbms/rdb-table-usage/rdb-index-json-path/)에서
+[인덱스와 성능](/dbms/rdb-table-usage/index-performance/)에서
 다룹니다.
 
 <a id="create-rdb-auto-increment"></a>
