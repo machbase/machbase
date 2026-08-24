@@ -7,10 +7,6 @@ toc: true
 
 
 
-<a id="rollup-vs-stream"></a>
-
-## ROLLUP vs STREAM
-
 <a id="retention-vs-delete-truncate"></a>
 
 ## Retention vs DELETE / TRUNCATE

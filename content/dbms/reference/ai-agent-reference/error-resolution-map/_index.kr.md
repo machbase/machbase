@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.10.11 error-resolution-map'
+title: '18.8.11 error-resolution-map'
 weight: 110
 toc: true
 ---
@@ -19,7 +19,6 @@ toc: true
 | 디스크 부족 | `Disk full (ERR-00303)` | `df -h` 및 `v$tablespace` 확인 후 불필요 파일 정리 | [메모리/디스크 문제](/dbms/troubleshooting/performance/#memory-out-of) |
 | CSV 입력 실패 | `Type mismatch` / `parse error` | machloader 옵션 확인: `-E`(에러 허용), `-D`(구분자), `-f`(날짜 형식) | [CSV import 실패](/dbms/troubleshooting/item/#failure-csv-import) |
 | ROLLUP 결과 이상 | 집계값이 예상과 다름 | `ALTER SYSTEM FLUSH ROLLUP` 실행 후 재확인, `v$rollup` status 점검 | [ROLLUP 문제](/dbms/tag-rollup-usage/overview-use-criteria/#rollup) |
-| STREAM 멈춤 | `v$streams` 상태가 STOPPED | `EXEC STREAM_START('stream_name')` 실행, 로그에서 원인 확인 | [STREAM 문제](/dbms/troubleshooting/automation/#execution-stream) |
 | Cluster 노드 이상 | 노드 상태 DISCONNECTED | `machclusterctl status`로 상태 확인 후 해당 노드 재시작 | [Cluster 노드 이상](/dbms/troubleshooting/cluster/#node-state-status-abnormal-cluster) |
 
 ## SDK / 드라이버 오류
@@ -28,10 +27,9 @@ toc: true
 |-----------|-----------|------|------|
 | Go `Begin()` 호출 실패 | isolation/read-only 옵션 오류 | 기본 isolation level과 read/write 트랜잭션만 지원 | 옵션을 기본값으로 사용하거나 native에서 트랜잭션 SQL 직접 실행 |
 | Python `?` parameter 오류 | `ProgrammingError` / 바인딩 실패 | positional `?`에 mapping 전달 또는 parameter 수 불일치 | sequence와 marker 수를 맞추거나 `:name`과 mapping 사용 |
-| 구형 서버에서 Python named bind 실패 | `NotSupportedError`, SQLSTATE `0A000` | 연결 protocol이 4.0.3 미만 | `%s` 또는 `?`와 sequence를 사용하거나 서버와 SDK 업그레이드 |
+| Named bind를 지원하지 않는 서버에서 Python 실행 실패 | `NotSupportedError`, SQLSTATE `0A000` | 서버가 named bind를 지원하지 않음 | `%s` 또는 `?`와 sequence를 사용하거나 서버와 SDK 업그레이드 |
 | 활성 TRANSACTION 테이블 트랜잭션 안의 TAG 쓰기 실패 | `not supported` | TRANSACTION 테이블 트랜잭션에 비 TRANSACTION 쓰기를 포함함 | TRANSACTION 테이블 트랜잭션 종료 후 TAG 쓰기 실행 |
 | Append 후 데이터 미반영 | 즉시 SELECT 결과 없음 | Append 버퍼 미플러시 | `executeAppendClose()` / `flush()` 호출 확인 |
-| REST API HTTPS 오류 | `SSL certificate error` | 인증서 미설정 또는 자체 서명 인증서 | `-k` 옵션(curl) 또는 인증서 등록 |
 
 ## 오류 코드 빠른 참조
 

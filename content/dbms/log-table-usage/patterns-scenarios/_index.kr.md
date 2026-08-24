@@ -390,4 +390,3 @@ ALTER TABLE app_log DROP RETENTION;
 
 - 센서 데이터와 ROLLUP 분석은 [센서 데이터 저장과 ROLLUP 분석](/dbms/tag-rollup-usage/patterns-scenarios/#storage-sensor-data-rollup)을 참고합니다.
 - 장비 마스터와 LOG 테이블을 연계한 알람 관리는 [장비 마스터 데이터와 알람 상태 관리](/dbms/scenario-guides/state-master-status-equipment-alarm/)를 참고합니다.
-- STREAM으로 LOG 데이터를 TAG 테이블에 자동 적재하는 방법은 [STREAM으로 LOG를 TAG로 자동 적재](/dbms/log-table-usage/stream-log-processing/#stream-log-tag)를 참고합니다.

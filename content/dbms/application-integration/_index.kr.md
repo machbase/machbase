@@ -5,7 +5,8 @@ weight: 120
 toc: true
 ---
 
-Machbase는 C/C++, Java, Python, .NET, Go, Node.js, REST API 등 다양한 프로그래밍 언어와 프로토콜을 지원합니다. 아래 표는 각 연동 방식의 대표적인 활용 사례를 요약합니다.
+Machbase는 C/C++, Java, Python, .NET, Go, Node.js 등 다양한 프로그래밍 언어의 드라이버를
+지원합니다. 아래 표는 각 연동 방식의 대표적인 활용 사례를 요약합니다.
 
 | 연동 방식 | 언어/환경 | 대표 use case |
 |-----------|-----------|---------------|
@@ -16,12 +17,11 @@ Machbase는 C/C++, Java, Python, .NET, Go, Node.js, REST API 등 다양한 프�
 | **.NET** | C#, VB.NET | Windows 환경의 산업용 애플리케이션, ADO.NET |
 | **Go** | Go | 고성능 수집 에이전트, 클라우드 네이티브 마이크로서비스 |
 | **Node.js** | JavaScript/TypeScript | 실시간 웹 대시보드, IoT 게이트웨이 |
-| **REST API** | 언어 독립 | 웹 프론트엔드, 마이크로서비스, HTTP 전용 환경 |
 | **외부 도구** | Grafana, Fluentd, Tableau | 시각화, 로그 수집, BI 도구 연동 |
 
 ## 하위 섹션
 
-연동 방식 선택부터 공통 개념, 드라이버별 가이드, REST API, 외부 도구 연동까지 순서대로 구성되어 있습니다.
+연동 방식 선택부터 공통 개념, 드라이버별 가이드, 외부 도구 연동까지 순서대로 구성되어 있습니다.
 
 ### 연동 방식 선택
 
@@ -47,12 +47,11 @@ Machbase는 C/C++, Java, Python, .NET, Go, Node.js, REST API 등 다양한 프�
 | [ROWID와 INSERT 결과 ID](rowid-generated-id/) | 테이블별 ROWID 조회와 SDK별 generated ID 확인 방법 |
 | [오류 처리와 재시도](/dbms/application-integration/concepts-common/#error-handling-retry) | 오류 코드, exponential backoff, connection pool 격리 |
 
-### 드라이버별 가이드와 REST API
+### 드라이버별 가이드
 
 | 문서 | 내용 |
 |------|------|
 | [드라이버별 가이드](guide-drivers/) | Machbase SQLCLI, ODBC, JDBC, Python, .NET, Go, Node.js, R/RODBC 사용 패턴 |
-| [REST API](rest-api/) | `/machbase` SQL 실행과 POST Append, 인증 및 오류 처리 |
 | [SDK별 지원 범위 안내](/dbms/development-tools-integration/#sdk) | Append, AUTH KEY, Transaction/Prepare/Bind 지원 범위 |
 
 ### 외부 도구 연동

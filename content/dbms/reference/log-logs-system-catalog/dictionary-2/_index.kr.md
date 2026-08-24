@@ -20,15 +20,11 @@ toc: true
 | 세션/시스템 | `V$SYSMEM` | 시스템 메모리 사용량 |
 | 세션/시스템 | `V$SYSSTAT` | 시스템 통계 정보 |
 | 세션/시스템 | `V$SYSTIME` | 시스템 시간 통계 |
-| 세션/시스템 | `V$HTTP_STATUS` | HTTP 서비스 상태 |
-| Result Cache | `V$RS_CACHE_LIST` | 결과 캐시 목록 |
-| Result Cache | `V$RS_CACHE_STAT` | 결과 캐시 통계 |
 | 스토리지 | `V$STORAGE` | 스토리지 파일 크기 요약 |
 | 스토리지 | `V$STORAGE_USAGE` | 디스크 사용량과 한계 비율 |
 | 스토리지 | `V$STORAGE_TABLES` | 테이블별 스토리지 사용량 |
 | 스토리지 | `V$STORAGE_MOUNT_DATABASES` | 마운트된 백업 데이터베이스 |
 | 태그 Rollup | `V$ROLLUP` | Rollup 작업 상태 |
-| 스트림 | `V$STREAMS` | Stream 쿼리 실행 상태 |
 | 라이선스 | `V$LICENSE_INFO` | 라이선스 정보 |
 | 잠금 | `V$MUTEX` | 잠금 현황 |
 
@@ -191,33 +187,6 @@ SELECT total_space, used_space, used_ratio, ratio_cap
 SELECT name, usage, max_usage
   FROM v$sysmem
  ORDER BY usage DESC;
-```
-
-## V$STREAMS
-
-등록된 Stream 쿼리의 실행 상태를 표시합니다.
-
-| 컬럼 이름 | 설명 |
-|----------|------|
-| `NAME` | Stream 이름 |
-| `LAST_EX_TIME` | 마지막 실행 시각 |
-| `TABLE_NAME` | 검색 대상 테이블 이름 |
-| `END_RID` | 마지막으로 읽은 RID |
-| `STATE` | 현재 상태 |
-| `QUERY_TXT` | 원본 Stream 쿼리 |
-| `ERROR_MSG` | 마지막 오류 메시지 |
-| `FREQUENCY` | 최소 대기 시간 (나노초) |
-
-```sql
--- Stream 실행 상태 확인
-SELECT name, state, last_ex_time, error_msg
-  FROM v$streams
- ORDER BY name;
-
--- 오류가 발생한 Stream 확인
-SELECT name, state, error_msg
-  FROM v$streams
- WHERE error_msg IS NOT NULL AND error_msg != '';
 ```
 
 ## V$LICENSE_INFO

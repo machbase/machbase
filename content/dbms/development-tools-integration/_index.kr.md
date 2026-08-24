@@ -66,7 +66,8 @@ SELECT 결과의 PRIMARY KEY 여부와 테이블 카탈로그 조회 방법은
 
 - **지속적인 대량 쓰기**가 필요하면 → Machbase SQLCLI, ODBC, JDBC, Go native 등 Append API 지원 드라이버 사용
 - **표준 SQL 인터페이스**가 필요하면 → JDBC, Python(DB-API 2.0), Go(`database/sql`)
-- **웹 서비스·마이크로서비스 통합**이라면 → REST API
+- **웹 서비스·마이크로서비스 통합**이라면 → 백엔드 언어에 맞는 JDBC, Python, Go,
+  Node.js, .NET 또는 ODBC 사용
 - **트랜잭션이 필요한 TRANSACTION 작업**이라면 → Go `database/sql`, JDBC 표준 트랜잭션 API,
   Machbase SQLCLI 또는 ODBC 사용
 - **조회 결과의 NULL 가능 여부를 실행 전에 확인**해야 한다면 → Go, Machbase SQLCLI, ODBC,
@@ -157,9 +158,8 @@ OUTER JOIN으로 생성된 결과 컬럼은 SDK의 결과 메타데이터 API로
 | .NET | `GetSchemaTable()["AllowDBNull"]` | `false` | `true` | `DBNull.Value` |
 | Go (native) | `api.Column.Nullability` | `NullabilityNoNulls` | `NullabilityNullable` | `NullabilityUnknown` |
 | Go (database/sql) | `Rows.ColumnTypeNullable()` | `false, true` | `true, true` | `false, false` |
-| REST API | 결과 메타데이터 API 없음 | - | - | - |
 
-상세 API와 예제는 [CLI/ODBC](/dbms/development-tools-integration/cli-odbc/),
+상세 API와 예제는 [Machbase SQLCLI와 ODBC](/dbms/development-tools-integration/cli-odbc/),
 [JDBC](/dbms/development-tools-integration/jdbc/), [Python](/dbms/development-tools-integration/python/),
 [Node.js](/dbms/development-tools-integration/node-js-typescript/),
 [.NET](/dbms/development-tools-integration/net-connector/), [Go](/dbms/development-tools-integration/go/) 레퍼런스를
@@ -190,7 +190,7 @@ PRIMARY KEY 목록을 반환하는 카탈로그 메타데이터로 나뉩니다.
 
 ### SELECT 결과 컬럼
 
-| SDK | 조회 방법 | 구형 프로토콜 |
+| SDK | 조회 방법 | 이전 버전 조합 |
 |-----|-----------|---------------|
 | JDBC | Machbase 확장 `MachResultSetMetaData.isPrimaryKey(column)` | `false` |
 | Node.js | `fields[i].isPrimaryKey` | `false` |
@@ -212,9 +212,8 @@ PRIMARY KEY 목록을 반환하는 카탈로그 메타데이터로 나뉩니다.
 | JDBC | `DatabaseMetaData.getPrimaryKeys()` | `KEY_SEQ`를 함께 반환 |
 | machsql | `DESC`의 `[ PRIMARY KEY ]` 섹션 | PK 이름, 컬럼, key sequence 표시 |
 
-Machbase 8.7.0 프로토콜(버전 4.0.3) 메타데이터를 협상한 경우 결과 컬럼 PK 플래그를
-전달합니다. 구형 프로토콜(버전 4.0.2 이하)에서는 기존 클라이언트 호환성을 위해 플래그를
-전달하지 않습니다. Go
+Machbase 8.7.0 서버와 해당 버전 SDK를 함께 사용하면 결과 컬럼 PK 플래그를 전달합니다.
+이전 버전 서버 또는 SDK와 연결한 경우에는 플래그가 제공되지 않을 수 있습니다. Go
 `database/sql`처럼 표준 결과 메타데이터에 PK API가 없는 인터페이스에서는 카탈로그 SQL 또는
 해당 SDK의 전용 메타데이터 API를 사용합니다.
 
@@ -236,7 +235,6 @@ Machbase 8.7.0 Standard Edition에서 성공한 단일 `INSERT ... VALUES`는 �
 | Go `database/sql` | `Result.LastInsertId()` | 오류 |
 | Go native | 미지원 | - |
 | Node.js | 실행 결과의 `rowId` | 속성 없음 |
-| REST API | 미지원 | - |
 
 batch, `executemany()`, Append, loader, `INSERT ... SELECT`, UPSERT에서는 단일 ROWID를
 반환하지 않습니다. 테이블별 조회 조건, 64비트 타입과 유효 기간은
@@ -250,7 +248,7 @@ ODBC 드라이버로 이식할 때는 대체 API를 별도로 적용해야 합�
 
 ## SDK별 APPEND 지원 범위 안내
 
-**Append API**는 여러 행을 묶어 입력하기 위한 전용 프로토콜입니다. 반복적인 단건
+**Append API**는 여러 행을 묶어 입력하기 위한 대량 입력 API입니다. 반복적인 단건
 `INSERT`보다 네트워크와 문장 처리 오버헤드를 줄일 수 있으며, 시계열 데이터 수집에서
 핵심적으로 사용됩니다.
 
@@ -258,19 +256,19 @@ ODBC 드라이버로 이식할 때는 대체 API를 별도로 적용해야 합�
 
 | SDK | Append 지원 | API / 메서드 | 비고 |
 |-----|:-----------:|--------------|------|
-| **ODBC / CLI** | O | `SQLAppendOpen` / `SQLAppendData` / `SQLAppendClose` | 버퍼와 flush 직접 제어 |
+| **Machbase SQLCLI** | O | `SQLAppendOpen` / `SQLAppendData` / `SQLAppendClose` | `<machbase_sqlcli.h>`의 Machbase API |
+| **ODBC** | O | `SQLAppendOpen` / `SQLAppendData` / `SQLAppendClose` | ODBC 핸들과 연결에서 사용하는 Machbase 확장 |
 | **JDBC** | O | `MachStatement` Append 메서드 | `executeAppendOpen` / `executeAppendData` / `executeAppendFlush` |
 | **Python** | O | `conn.append(table, rows)` | `machbaseAPI` 패키지 |
 | **.NET** | O | `MachCommand` + `MachAppendWriter` | `MachCommand.AppendOpen(tableName)` |
 | **Go (native)** | O | `AppendWriter` | `conn.Appender(ctx, tableName)` |
 | **Go (database/sql)** | △ | `machbase.Conn.Appender()` | 표준 `sql.DB`/`sql.Tx`에는 없으며 `sql.Conn.Raw()`에서 선택적으로 사용 |
 | **Node.js** | O | `appendBatch` / `appendOpen` | LOG/TAG Append 지원 |
-| **REST API** | O | `POST /machbase` | HTTP JSON Append |
 
 - **O**: 완전 지원
 - **X**: 미지원
 
-### ODBC / CLI: Append 사용 예시
+### Machbase SQLCLI: Append 사용 예시
 
 ```c
 #include <machbase_sqlcli.h>
@@ -408,27 +406,6 @@ func main() {
 }
 ```
 
-### REST API: POST /machbase
-
-REST API를 통한 Append는 JSON 본문에 테이블 이름과 행 배열을 전달합니다.
-
-```bash
-curl -X POST "http://localhost:5657/machbase" \
-  -H "Content-Type: application/json" \
-  -d '{"name":"sensor_data","values":[["sensor01",1720000000000000000,25.3],["sensor02",1720000000000000001,30.1]]}'
-```
-
-성공 시 Append 결과 건수가 반환됩니다.
-
-```json
-{
-  "error_code": 0,
-  "error_message": "",
-  "append_success": 2,
-  "append_failure": 0
-}
-```
-
 ### Append API 성능 특성
 
 | 특성 | 설명 |
@@ -506,10 +483,10 @@ ALTER USER app_auth_key DROP AUTH KEY ID 3;
 | SDK | AUTH KEY 지원 | 설정 방법 |
 |-----|:------------:|-----------|
 | **machsql** | O | `-K <private-key-file>`, `--auth-sig-scheme` |
-| **ODBC / CLI** | O | 연결 문자열 `AUTH_MODE`, `AUTH_KEY_FILE`, `AUTH_SIG_SCHEME` |
+| **Machbase SQLCLI** | O | 연결 문자열 `AUTH_MODE`, `AUTH_KEY_FILE`, `AUTH_SIG_SCHEME` |
+| **ODBC** | O | 연결 문자열 `AUTH_MODE`, `AUTH_KEY_FILE`, `AUTH_SIG_SCHEME` |
 | **JDBC** | O | JDBC Properties 또는 URL 속성 |
 | **Go / Python / Node.js / .NET** | X | 현재 드라이버 연결 옵션에 challenge 인증 설정 없음 |
-| **REST API** | 별도 방식 | `HTTP_AUTH` 기반 Basic Authentication 설정 사용 |
 
 ### machsql 예제
 
@@ -535,7 +512,7 @@ machsql -s 127.0.0.1 -P 5656 \
   -i -f /tmp/auth_key_check.sql
 ```
 
-### ODBC / CLI 연결 문자열
+### Machbase SQLCLI 연결 문자열
 
 ```ini
 SERVER=127.0.0.1;
@@ -552,6 +529,11 @@ AUTH_SIG_SCHEME=ECDSA;
 `AUTH_MODE=CHALLENGE`를 지정하면 `AUTH_KEY_FILE`이 필수입니다. 잘못된 파일 경로,
 키와 맞지 않는 `AUTH_SIG_SCHEME`, 등록되지 않은 사용자 키는 연결 실패로 처리됩니다.
 
+### ODBC 연결 문자열
+
+ODBC에서도 동일한 연결 속성을 사용합니다. 다만 애플리케이션 API는 ODBC 핸들과
+`SQLDriverConnect()` 등 ODBC API 집합을 사용하며 Machbase SQLCLI 헤더를 포함하지 않습니다.
+
 ### JDBC 예제
 
 ```java
@@ -567,13 +549,6 @@ Connection conn = DriverManager.getConnection(url, props);
 
 키 알고리즘으로 서명 방식을 추론할 수 있으면 `AUTH_SIG_SCHEME`을 생략할 수
 있습니다.
-
-### REST API와 AUTH KEY
-
-AUTH KEY challenge 인증은 DB 포트(기본 5656)에 접속하는 드라이버/CLI
-인증 방식입니다. REST API(기본 5657)는 별도의 로그인 토큰 발급 엔드포인트나 Bearer
-토큰 교환 방식으로 AUTH KEY를 처리하지 않습니다. REST API 인증은 `machbase.conf`의
-`HTTP_AUTH` 설정에 따라 Basic Authentication을 사용합니다.
 
 ### 보안 권장 사항
 
@@ -605,7 +580,6 @@ AUTH KEY challenge 인증은 DB 포트(기본 5656)에 접속하는 드라이버
 | **Go (database/sql)** | O | O | O | O | `BeginTx`, `db.Prepare()`, `sql.Named()` 지원 |
 | **Go (native client)** | △ | O | O | O | `BEGIN`/`COMMIT`/`ROLLBACK` SQL 직접 실행, `api.Named()` 지원 |
 | **Node.js** | X | O | O | O | 배열은 positional, 객체는 named 입력 |
-| **REST API** | X | X | X | X | 단일 요청 단위, 서버 파라미터 없음 |
 
 - O: 지원
 - △: SDK별로 제한된 방식으로 지원
@@ -751,21 +725,24 @@ Machbase DBMS가 지원하는 SDK 목록과 기능별 지원 범위를 안내합
 | **Machbase SQLCLI** | C / C++ | TCP 5656 | 11장 개발 도구 연동 → SQLCLI |
 | **ODBC** | C / C++ | TCP 5656 | 11장 개발 도구 연동 → ODBC |
 | **JDBC** | Java | TCP 5656 | 11장 개발 도구 연동 → JDBC |
-| **Python** | Python 3.7+ | TCP 5656 | 11장 개발 도구 연동 → Python |
+| **Python** | Python 3.6+ | TCP 5656 | 11장 개발 도구 연동 → Python |
 | **.NET** | C# / VB.NET | TCP 5656 | 11장 개발 도구 연동 → .NET |
 | **Go (native)** | Go 1.22+ | TCP 5656 | 11장 개발 도구 연동 → Go |
 | **Go (database/sql)** | Go 1.22+ | TCP 5656 | 11장 개발 도구 연동 → Go |
 | **Node.js** | JavaScript / TypeScript | TCP 5656 | 11장 개발 도구 연동 → Node.js |
-| **REST API** | 언어 독립 (HTTP) | TCP 5657 | 18장 레퍼런스 → REST API |
 
 ### SDK 특성 요약
 
-#### ODBC / CLI (C/C++)
-네이티브 C 인터페이스로 가장 낮은 레이턴시와 최대 처리량을 제공합니다. 임베디드 시스템이나 성능이 중요한 데이터 수집 에이전트에 적합합니다.
+#### Machbase SQLCLI (C/C++)
 
-- 표준 ODBC 인터페이스 준수
-- Machbase 고유 APPEND 프로토콜 지원 (`SQLAppendOpen` / `SQLAppendData` / `SQLAppendClose`)
-- 전체 기능 지원
+`<machbase_sqlcli.h>`를 사용하는 Machbase 전용 C API입니다. SQL 실행과 Append 기능을
+하나의 API 집합으로 제공하며 `SQLGetGeneratedRowID()` 같은 Machbase 확장을 포함합니다.
+
+#### ODBC (C/C++)
+
+ODBC 드라이버 관리자와 표준 ODBC 연결 API를 사용하는 별도 API 집합입니다. SQL 실행에는
+표준 ODBC API를 사용하고, 대량 입력에는 Machbase ODBC 확장 Append 함수를 사용할 수 있습니다.
+표준 ODBC에는 generated ROWID 조회 함수가 없습니다.
 
 #### JDBC (Java)
 Java 8/JDBC 4.2 핵심 인터페이스를 구현하여 Spring JDBC, HikariCP와 MyBatis 등 Java
@@ -802,13 +779,6 @@ JavaScript / TypeScript 환경에서 사용합니다.
 - Promise 기반 비동기 API
 - `appendBatch` / `appendOpen`을 통한 LOG/TAG Append API 지원
 
-#### REST API
-HTTP 기반으로 언어·프레임워크에 독립적입니다. Machbase Neo의 HTTP 서버(포트 5657)에 직접 요청을 보냅니다.
-
-- JSON 요청·응답
-- `/machbase?q=<SQL>` (SQL 실행), `/machbase` POST (Append)
-- 인증: `HTTP_AUTH` 활성화 시 Basic Authentication
-
 ### 기능별 지원 범위 상세
 
 각 기능의 SDK별 지원 여부는 아래 페이지를 참고합니다.
@@ -818,5 +788,3 @@ HTTP 기반으로 언어·프레임워크에 독립적입니다. Machbase Neo의
 - [Transaction / Prepare / Bind 지원](#support-scope-sdk-transaction-prepare-bind)
 - [Nullable 메타데이터 지원](#support-scope-sdk-nullable-metadata)
 - [INSERT 결과 ROWID 지원](#support-scope-sdk-generated-rowid)
-
-REST API는 [REST API 레퍼런스](../reference/rest-api/)에서 별도로 확인합니다.

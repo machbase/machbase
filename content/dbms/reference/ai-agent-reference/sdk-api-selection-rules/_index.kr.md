@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.10.9 sdk-api-selection-rules'
+title: '18.8.9 sdk-api-selection-rules'
 weight: 90
 toc: true
 ---
@@ -25,9 +25,10 @@ toc: true
 | Python에서 동일 SQL 반복 실행 | **machbaseAPI 2.4 prepared cursor** | `cursor(prepared=True)`로 호출 간 statement 재사용 |
 | Go 언어 선호 + Append 필요 | **machgo** (native) | [Go 가이드](/dbms/application-integration/guide-drivers/#go) |
 | Go 언어 선호 + 표준 인터페이스 | **database/sql** 드라이버 | Append 불필요한 경우 |
-| 브라우저 / 웹 / 스크립트 | **REST API** (포트 5657, `/machbase` 엔드포인트) | [REST API 가이드](/dbms/application-integration/rest-api/) |
+| 브라우저 / 웹 / 스크립트 | 백엔드 언어에 맞는 **JDBC, Python, Go, Node.js, .NET 또는 ODBC** | 브라우저가 DB에 직접 연결하지 않도록 백엔드에서 쿼리 실행 |
 | 데이터 탐색 / 보고 | **R + RODBC** | 통계 분석에 적합 |
-| C/C++ 애플리케이션 | **Machbase SQLCLI**, **ODBC** | [C/ODBC 가이드](/dbms/application-integration/guide-drivers/#cli-odbc) |
+| C/C++ 직접 연결 | **Machbase SQLCLI** | [Machbase SQLCLI 가이드](/dbms/application-integration/guide-drivers/#machbase-sqlcli) |
+| C/C++ ODBC 환경 | **ODBC** | [ODBC 가이드](/dbms/application-integration/guide-drivers/#odbc) |
 
 ## 다중 데이터베이스 선택 규칙
 
@@ -53,7 +54,7 @@ toc: true
 | C / C++ (Machbase SQLCLI) | Machbase SQLCLI | Machbase SQLCLI | Machbase SQLCLI |
 | C / C++ (ODBC) | ODBC | ODBC | ODBC |
 | R | RODBC | 미지원 | 미지원 |
-| 웹 / curl / HTTP | REST API | REST API (`POST /machbase`) | 미지원 |
+| 웹 백엔드 | 백엔드 언어용 SDK | 같은 SDK의 Append API | SDK별 지원 범위 확인 |
 
 ## 피해야 할 조합
 
@@ -62,7 +63,6 @@ toc: true
 | Go `database/sql` + Append | 표준 `sql.DB`/`sql.Tx`에는 없음. `sql.Conn.Raw()` 확장 사용 가능 | 신규 대량 입력은 `machgo` (native) 권장 |
 | Go native + Transaction (BEGIN/COMMIT) | 전용 `Begin` 메서드 없음 | 같은 연결에서 트랜잭션 SQL 직접 실행 |
 | Go + Nullable 결과 메타데이터 | native는 `api.Column`, SQL은 `ColumnTypeNullable` 사용 | nullable 대상 타입으로 scan |
-| REST API + Transaction | REST API는 단일 요청 기반, Transaction 미지원 | JDBC / ODBC 사용 |
 | Node.js + AUTH KEY | Node.js 드라이버 AUTH KEY 미지원 | JDBC / ODBC 사용 |
 | Python named mapping에 `?` 사용 | 객체 입력은 `:name` SQL이 필요 | `:name`과 mapping 사용 |
 | Go `sql.Named()` 사용 | `database/sql`에서 지원 | named marker와 `sql.Named()` 사용. positional과 혼용 금지 |
@@ -121,14 +121,6 @@ toc: true
 - 실행 방식: client-side typed literal 렌더링 후 ExecDirect
 - Nullable 메타데이터: `MachDataReader.GetSchemaTable().AllowDBNull`
 - PRIMARY KEY 메타데이터: `MachDataReader.GetSchemaTable()["IsKey"]`
-
-### REST API
-
-- 엔드포인트: `http://host:5657/machbase`
-- Append: `POST /machbase` 지원
-- Transaction / Prepared Statement: 미지원
-- Nullable 메타데이터: 결과 메타데이터 API 없음
-- 적합한 용도: 단순 쿼리 실행, 웹 애플리케이션, 스크립팅, HTTP JSON Append
 
 ## 참조
 

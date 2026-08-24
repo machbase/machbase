@@ -4,7 +4,7 @@ title: '12.1 연동 방식 선택'
 weight: 10
 toc: true
 ---
-C/C++, Java, Python, .NET, Go, Node.js, REST API 등 여러 연동 경로 중 프로젝트에 가장 적합한 방식을 고르는 기준을 정리합니다.
+C/C++, Java, Python, .NET, Go, Node.js 등 여러 연동 경로 중 프로젝트에 가장 적합한 방식을 고르는 기준을 정리합니다.
 
 ## 이 섹션의 구성
 
@@ -22,11 +22,10 @@ C/C++, Java, Python, .NET, Go, Node.js, REST API 등 여러 연동 경로 중 �
 
 **데이터 입력 성능**
 지속적인 대량 시계열 데이터를 입력한다면 Append API를 지원하는 Machbase SQLCLI, ODBC, JDBC, Python SDK,
-.NET, Go native, Node.js 드라이버를 검토합니다. REST API도 `/machbase` POST Append를 지원하지만
-HTTP JSON 요청 단위로 동작하므로 배포 제약과 측정한 처리량을 함께 고려합니다.
+.NET, Go native, Node.js 드라이버를 검토합니다.
 
 **운영 환경**
-방화벽으로 인해 TCP 5656 포트를 사용할 수 없는 환경이라면 HTTP 기반 REST API를 검토합니다. Windows 환경의 산업용 애플리케이션이라면 .NET 드라이버나 ODBC를 우선 고려합니다.
+애플리케이션 서버에서 Machbase의 TCP 5656 포트에 연결할 수 있어야 합니다. Windows 환경의 산업용 애플리케이션이라면 .NET 드라이버나 ODBC를 우선 고려합니다.
 
 
 <a id="selection-guide-integration-method"></a>
@@ -39,13 +38,13 @@ HTTP JSON 요청 단위로 동작하므로 배포 제약과 측정한 처리량�
 
 | 개발 언어 | 권장 연동 방식 | 비고 |
 |-----------|---------------|------|
-| C / C++ | Machbase SQLCLI 또는 ODBC | 네이티브 연결과 Append API |
+| C / C++ (직접 연결) | Machbase SQLCLI | `<machbase_sqlcli.h>`와 Machbase 라이브러리 사용 |
+| C / C++ (ODBC 환경) | ODBC | ODBC 드라이버 관리자와 DSN 사용 |
 | Java | JDBC | Spring JDBC, HikariCP, MyBatis 연동 |
 | Python | Python SDK (machbaseAPI) | Pandas 통합, 스크립트 자동화 |
 | C# / VB.NET | .NET (MachClient) | ADO.NET 호환, Windows 친화적 |
 | Go | `machgo` 또는 Go `database/sql` | native Appender, 표준 SQL 인터페이스, named bind와 트랜잭션 지원 범위가 다름 |
-| JavaScript / TypeScript | Node.js 드라이버 또는 REST API | 웹 백엔드, IoT 게이트웨이 |
-| 언어 무관 | REST API | HTTP 환경, 마이크로서비스 |
+| JavaScript / TypeScript | Node.js 드라이버 | 웹 백엔드, IoT 게이트웨이 |
 
 ### 입력 특성별 선택
 
@@ -72,17 +71,18 @@ pool을 조합합니다. 목표 처리량은 실제 문장과 트랜잭션 크�
 
 #### 저빈도 조회 위주 (관리, 대시보드)
 
-별도 드라이버 설치가 어려우면 REST API를 사용하여 HTTP 요청으로 데이터를 조회할 수 있습니다.
+운영 언어에 맞는 JDBC, Python, Go, Node.js, .NET 드라이버나 ODBC를 사용합니다. 브라우저가
+Machbase에 직접 연결하지 않도록 애플리케이션 백엔드에서 쿼리를 실행하고 필요한 결과만 전달합니다.
 
 ### 환경별 선택
 
 | 환경 | 권장 방식 | 이유 |
 |------|-----------|------|
-| Linux 임베디드 시스템 | Machbase SQLCLI 또는 ODBC | 경량, 의존성 최소 |
+| Linux 임베디드 시스템 | Machbase SQLCLI | Machbase 라이브러리로 직접 연결 |
+| Linux/Windows ODBC 환경 | ODBC | 기존 ODBC 관리자와 DSN 활용 |
 | Windows 산업용 PC | ODBC 또는 .NET | Windows 생태계 호환 |
 | Kubernetes / 컨테이너 | JDBC, Python, Go | 언어별 드라이버 경량 배포 |
-| 방화벽으로 5656 차단 | REST API (HTTP 5657) | HTTP만 허용되는 환경 |
-| Grafana 연동 | Grafana 플러그인(MWA 5001 경유) | 시각화 도구 직접 연결 |
+| Grafana 연동 | JDBC 또는 ODBC 데이터 소스 | 지원 드라이버로 서버에 연결 |
 | 로그 수집 파이프라인 | Fluentd 플러그인 | 이벤트·로그 수집 |
 
 ### 결정 트리
@@ -108,27 +108,25 @@ Go인가?
   → YES: Go 드라이버 사용
   → NO: 계속
 
-Node.js 또는 HTTP 환경인가?
-  → YES: Node.js 드라이버 또는 REST API
-  → NO: REST API (언어 무관)
+Node.js 환경인가?
+  → YES: Node.js 드라이버 사용
+  → NO: 애플리케이션 언어에 맞는 JDBC, Python, Go, .NET 또는 ODBC 사용
 ```
 
 ### 기능 지원 매트릭스
 
-| 기능 | Machbase SQLCLI | ODBC | JDBC | Python | .NET | Go | Node.js | REST API |
-|------|:---------------:|:----:|------|--------|------|----|---------|----------|
-| Append API | O | O | O | O | O | Go native만 O | O | O |
-| Prepared statement | O | O | O | O | O | O | O | - |
-| Connection pool | 수동 구현 | 수동 구현 | O (HikariCP 등) | O | O | O | O | - |
-| TRANSACTION table transaction | △ | △ | O (Standard) | - | - | Go SQL: O, native: △ | - | - |
-| AUTH KEY 인증 | O | O | O | - | - | - | - | 별도 방식 |
-| 단일 INSERT 결과 ROWID | O (Machbase 확장) | X (표준 API 없음) | O | O | O | O (`database/sql`) | O | - |
-| Pandas 통합 | - | - | - | O | - | - | - | - |
-| ADO.NET 호환 | - | - | - | - | O | - | - | - |
+| 기능 | Machbase SQLCLI | ODBC | JDBC | Python | .NET | Go | Node.js |
+|------|:---------------:|:----:|------|--------|------|----|---------|
+| Append API | O | O | O | O | O | Go native만 O | O |
+| Prepared statement | O | O | O | O | O | O | O |
+| Connection pool | 수동 구현 | 수동 구현 | O (HikariCP 등) | O | O | O | O |
+| TRANSACTION table transaction | △ | △ | O (Standard) | - | - | Go SQL: O, native: △ | - |
+| AUTH KEY 인증 | O | O | O | - | - | - | - |
+| 단일 INSERT 결과 ROWID | O (Machbase 확장) | X (표준 API 없음) | O | O | O | O (`database/sql`) | O |
+| Pandas 통합 | - | - | - | O | - | - | - |
+| ADO.NET 호환 | - | - | - | - | O | - | - |
 
-> `-` 는 미지원 또는 해당 없음을 의미합니다. REST API 인증은 DB 포트의 AUTH KEY challenge가
-> 아니라 `HTTP_AUTH` 기반 Basic Authentication을 사용합니다. 각 드라이버의 지원 현황은
-> 11장 개발 도구 연동을 참조합니다.
+> `-` 는 미지원 또는 해당 없음을 의미합니다. 각 드라이버의 지원 현황은 11장 개발 도구 연동을 참조합니다.
 
 generated ROWID는 Standard Edition에서 지원되는 단일 `INSERT ... VALUES`에만 제공됩니다.
 Machbase SQLCLI 열의 `O`는 `SQLGetGeneratedRowID()` 확장을 뜻하며, ODBC 열의 `X`는
@@ -165,7 +163,6 @@ Machbase 문서는 역할에 따라 두 곳으로 나뉩니다.
 | **.NET (MachClient)** | 언제 선택할지, ADO.NET 패턴 개요 | `MachConnection`, `MachCommand`, `MachDataReader` 상세 |
 | **Go 드라이버** | 언제 선택할지, database/sql 패턴 | `Open()`, `Prepare()`, Append 인터페이스 상세 |
 | **Node.js 드라이버** | 언제 선택할지, 기본 사용 패턴 | 전체 API 메서드, 콜백/Promise 인터페이스 |
-| **REST API** | 언제 선택할지, 엔드포인트 개요 | 전체 엔드포인트 목록, 요청/응답 형식, 인증 방법 |
 
 ### 문서 구조 원칙
 
@@ -183,7 +180,7 @@ Machbase와 연동하는 외부 도구는 12장의 외부 도구 섹션에서 �
 
 | 도구 | 문서 위치 |
 |------|-----------|
-| Grafana | 12장 > 외부 도구 > Grafana plugin |
+| Grafana | 12장 > 외부 도구 > Grafana |
 | Fluentd | 12장 > 외부 도구 > Fluentd plugin |
 | Tableau | 12장 > 외부 도구 > Tableau connector |
 
@@ -194,4 +191,3 @@ Machbase와 연동하는 외부 도구는 12장의 외부 도구 섹션에서 �
 - 각 SDK의 전체 함수/메서드 목록
 - 드라이버 설치 및 빌드 방법 (11장 개발 도구 연동 참조)
 - 드라이버별 버전 호환성 표 (11장 개발 도구 연동 참조)
-- REST API 전체 엔드포인트 명세 (18장 레퍼런스의 REST API 참조)

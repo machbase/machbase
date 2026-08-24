@@ -11,7 +11,6 @@ toc: true
 | 입력 경로 | 전송 방식 | 응답 특성 | 주요 용도 |
 |----------|-----------|-----------|----------|
 | SDK Append API | 클라이언트 버퍼와 batch/stream | flush·close 시점에 결과 확인 | 지속적인 수집, TRANSACTION client batch 입력 |
-| REST API (JSON) | HTTP 요청 단위 JSON 전송 | 요청 단위 응답 | 범용 HTTP 연동 |
 | machloader | 클라이언트 파일 전송 | 파일 작업 완료 후 결과 확인 | CSV 가져오기·내보내기, 마이그레이션 |
 | LOAD DATA INFILE | 서버가 파일을 직접 읽음 | SQL 문장 완료 시 결과 확인 | 서버 배치 파일 적재 |
 | SQL INSERT | SQL 문장 단위 전송 | 문장별 결과 확인 | 소량 입력과 관계형 DML |
@@ -19,7 +18,6 @@ toc: true
 ## 이 절에서 다루는 내용
 
 - **[입력 성능 기본 원칙](/dbms/performance-tuning/data-input-performance/#performance-principles)**: 처리량을 높이는 핵심 원칙
-- **[REST 입력 경로 안내](/dbms/performance-tuning/data-input-performance/#path-guide-rest)**: REST API 연동 개요 (상세는 12장)
 - **[SDK 입력 경로 안내](/dbms/performance-tuning/data-input-performance/#path-guide-sdk)**: SDK Append/INSERT 개요 (상세는 11장과 12장)
 - **[Fluentd 파이프라인](/dbms/log-table-usage/fluentd-pipeline/#pipeline-fluentd)**: Fluentd 기반 파이프라인 개요 (상세는 12장)
 
@@ -100,41 +98,6 @@ SELECT COUNT(*) FROM sensor_log;
 SELECT COUNT(*) FROM M$SYS_INDEXES WHERE TABLE_NAME = 'SENSOR_LOG';
 ```
 
-<a id="path-guide-rest"></a>
-
-## REST 입력 경로 안내
-
-HTTP REST API를 통해 외부 시스템이나 IoT 디바이스에서 직접 데이터를 입력할 수 있습니다.
-
-### REST API 입력 개요
-
-REST API는 HTTP JSON 기반으로 동작합니다. SDK나 별도 드라이버 없이 `curl` 등 표준 HTTP 클라이언트로 연동할 수 있어 범용성이 높습니다.
-
-```bash
-# REST API로 데이터 삽입 예시
-curl -X POST http://127.0.0.1:5657/machbase \
-    -H "Content-Type: application/json" \
-    -d '{"name":"sensor_log","date_format":"YYYY-MM-DD HH24:MI:SS","values":[["TEMP-01","2024-01-15 10:00:00",25.3]]}'
-```
-
-### 성능 특성
-
-- SQL INSERT 대비 빠르나, SDK Append API보다는 낮은 처리량
-- HTTP와 JSON 처리 비용을 포함하여 요청 크기와 동시 요청 수를 측정
-- 배치(bulk) 전송으로 처리량 향상 가능
-
-### 주요 사용 사례
-
-- IoT 디바이스, 센서 게이트웨이
-- 외부 시스템과의 HTTP 기반 연동
-- 언어·플랫폼 무관 데이터 수집
-
-### 상세 문서
-
-REST API의 인증, 엔드포인트, 요청/응답 형식, 배치 전송 방법은 다음 문서를 참고하십시오.
-
-> **[12장 애플리케이션 연동 → REST API](/dbms/application-integration/)** 에서 상세 내용을 다룹니다.
-
 <a id="path-guide-sdk"></a>
 
 ## SDK 입력 경로 안내
@@ -179,7 +142,7 @@ db.ExecContext(ctx, "INSERT INTO orders VALUES (?, ?, ?)",
 |-----|-------------|
 | Go | 고성능 서버, 마이크로서비스 |
 | Python | 데이터 분석, 스크립트 자동화 |
-| C/C++ | 임베디드, 하드웨어 통합 |
+| Machbase SQLCLI | C/C++ 임베디드, 하드웨어 통합 |
 | JDBC | Java 애플리케이션, Spring Boot |
 | ODBC | C/C++ 범용, 다양한 언어 바인딩 |
 

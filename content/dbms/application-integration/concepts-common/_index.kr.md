@@ -109,8 +109,8 @@ conn = connect(host='127.0.0.1', port=5656, user='SYS', password='MANAGER',
 
 ```c
 // ODBC 연결 문자열 형식
-// "SERVER=호스트;PORT_NO=포트;UID=사용자;PWD=비밀번호;PROTOCOL=버전"
-char connStr[] = "SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;PWD=MANAGER;PROTOCOL=4.0-full";
+// "SERVER=호스트;PORT_NO=포트;UID=사용자;PWD=비밀번호"
+char connStr[] = "SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;PWD=MANAGER";
 
 SQLDriverConnect(conn, NULL, (SQLCHAR*)connStr, SQL_NTS,
                  NULL, 0, NULL, SQL_DRIVER_NOPROMPT);
@@ -139,7 +139,7 @@ SQLConnect(conn,
 #### .NET (MachClient)
 
 ```csharp
-string connStr = "SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;PWD=MANAGER;PROTOCOL=4.0-full";
+string connStr = "SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;PWD=MANAGER";
 MachConnection conn = new MachConnection(connStr);
 conn.Open();
 ```
@@ -153,21 +153,6 @@ import (
 )
 
 db, err := sql.Open("machbase", "server=tcp://sys:manager@127.0.0.1:5656;fetch_rows=1000")
-```
-
-#### REST API
-
-REST API는 별도 드라이버 없이 HTTP로 연결합니다. 포트는 기본 `5657`입니다.
-
-```bash
-# 인증 비활성화 기본 설정
-curl -G "http://127.0.0.1:5657/machbase" \
-     --data-urlencode "q=SELECT 1"
-
-# HTTP_AUTH 활성화 시 Basic Authentication 사용
-curl -u SYS:MANAGER \
-     -G "http://127.0.0.1:5657/machbase" \
-     --data-urlencode "q=SELECT 1"
 ```
 
 ### Connection Pool 권장 설정
@@ -953,7 +938,6 @@ TAG/LOG 테이블에서 잘못 삽입된 데이터를 제거하려면 [DELETE �
 | Go (database/sql) | O | 기본 isolation level의 `Begin` / `BeginTx`, `Commit`, `Rollback` 지원 |
 | Go (native client) | △ | 전용 편의 API는 없지만 같은 연결에서 `BEGIN` / `COMMIT` / `ROLLBACK` SQL 실행 가능 |
 | Node.js | X | transaction 편의 API 미지원 |
-| REST API | X | 단일 요청 단위 처리 |
 
 `X`는 해당 SDK의 표준 트랜잭션 편의 API가 구현되지 않았다는 의미입니다. 같은 물리 연결에서
 임의 SQL을 연속 실행할 수 있는 SDK는 Node.js 예제처럼 `BEGIN`/`COMMIT`/`ROLLBACK`을 직접
@@ -983,8 +967,8 @@ TAG/LOG 테이블에서 잘못 삽입된 데이터를 제거하려면 [DELETE �
 
 ```
 애플리케이션
-  ↓ AppendOpen / appendBatch / POST /machbase
-Append 전용 프로토콜 또는 요청
+  ↓ AppendOpen / appendBatch
+Append API 버퍼
   ↓ flush / close / 응답 확인
 Machbase 서버
 ```
@@ -1013,7 +997,6 @@ Machbase 서버
 | .NET (MachClient) | O | `MachCommand.AppendOpen`, `AppendData`, `AppendFlush` |
 | Go 드라이버 | O | `Appender` 인터페이스 |
 | Node.js 드라이버 | O | `appendBatch`, `appendOpen` |
-| REST API | O | `POST /machbase` |
 
 상세 API는 11장 개발 도구 연동의 각 드라이버 문서를 참조하십시오.
 

@@ -15,20 +15,19 @@ Machbase 8.7.0 Standard Edition에서는 하나의 인스턴스에 여러 logica
 
 | 드라이버 / SDK | 언어 | 연결 방식 | Append 지원 | 특징 |
 |----------------|------|-----------|:-----------:|------|
-| [Machbase SQLCLI](/dbms/application-integration/guide-drivers/#cli-odbc) | C / C++ | 네이티브 라이브러리 | 지원 | 직접 연결과 Append API 제공 |
-| [ODBC](/dbms/application-integration/guide-drivers/#cli-odbc) | C / C++ | ODBC 드라이버 | 지원 | ODBC 관리자와 DSN으로 연결 |
+| [Machbase SQLCLI](/dbms/application-integration/guide-drivers/#machbase-sqlcli) | C / C++ | Machbase 라이브러리 | 지원 | `<machbase_sqlcli.h>` API 사용 |
+| [ODBC](/dbms/application-integration/guide-drivers/#odbc) | C / C++ | ODBC 드라이버 | 지원 | ODBC 관리자와 DSN으로 연결 |
 | JDBC | Java | TCP/IP | 지원 | 표준 JDBC 인터페이스. `MachStatement` Append API 제공 |
 | Python | Python | TCP/IP | 지원 | `machbaseAPI` 패키지 제공. 데이터 분석 환경에 적합 |
 | Go | Go | TCP/IP | native 기본, SQL driver 확장 가능 | `machgo` Appender 제공. `database/sql`은 표준 SQL과 `sql.Conn.Raw()` Appender 확장 제공 |
 | Node.js | JavaScript / TypeScript | TCP/IP | 지원 | `@machbase/ts-client` 패키지 제공 |
-| REST API | 모든 언어 | HTTP | 지원 | `/machbase` POST Append 지원. 별도 드라이버 불필요 |
 
 ## 드라이버 선택 가이드
 
 ### 고성능 시계열 데이터 수집이 목적인 경우
 
 지속적인 대량 시계열 데이터를 입력하고 버퍼와 flush 시점을 직접 제어해야 한다면
-**CLI/ODBC의 Append API**를 검토합니다. Append 프로토콜은 여러 행을 버퍼링하여 반복 INSERT의
+**Machbase SQLCLI 또는 ODBC의 Append API**를 검토합니다. Append API는 여러 행을 버퍼링하여 반복 INSERT의
 네트워크 왕복과 SQL 파싱 횟수를 줄입니다.
 
 ### 기존 Java 애플리케이션과 통합하는 경우
@@ -37,7 +36,7 @@ Machbase 8.7.0 Standard Edition에서는 하나의 인스턴스에 여러 logica
 
 ### 데이터 분석 및 빠른 개발이 목적인 경우
 
-**Python 패키지** 또는 **REST API**를 사용하면 별도의 컴파일 없이 빠르게 프로토타입을 작성하고 분석 결과를 확인할 수 있습니다.
+**Python 패키지**를 사용하면 별도의 컴파일 없이 빠르게 프로토타입을 작성하고 분석 결과를 확인할 수 있습니다.
 
 ## 공통 연결 정보
 
@@ -52,25 +51,27 @@ Machbase 8.7.0 Standard Edition에서는 하나의 인스턴스에 여러 logica
 
 
 <a id="cli-odbc"></a>
+<a id="machbase-sqlcli"></a>
 
-## CLI/ODBC
+## Machbase SQLCLI
 
-CLI(Call Level Interface)는 [ISO](https://en.wikipedia.org/wiki/International_Organization_for_Standardization)/[IEC](https://en.wikipedia.org/wiki/International_Electrotechnical_Commission) 9075-3:2003에 정의된 데이터베이스 접속 표준입니다. 이 표준을 구현한 네이티브 C 라이브러리를 통해 C/C++ 애플리케이션에서 직접 Machbase에 연결하고 데이터를 처리할 수 있습니다.
+Machbase SQLCLI는 `<machbase_sqlcli.h>`와 Machbase 라이브러리를 사용하는 C/C++ API입니다.
+C/C++ 애플리케이션에서 Machbase에 직접 연결하여 SQL과 Append API를 사용할 수 있습니다.
 
 ### 이 섹션의 구성
 
 | 페이지 | 내용 |
 |--------|------|
-| [Machbase SQLCLI 개요](/dbms/application-integration/guide-drivers/#cli-odbc) | 헤더 파일, 라이브러리, 주요 API 함수, 연결 파라미터, Append API 상세 설명 |
-| [ODBC 개요](/dbms/application-integration/guide-drivers/#cli-odbc) | ODBC 드라이버, DSN, 연결 파라미터와 표준 API 설명 |
+| [Machbase SQLCLI 개요](/dbms/application-integration/guide-drivers/#machbase-sqlcli) | 헤더 파일, 라이브러리, 주요 API 함수, 연결 파라미터, Append API 상세 설명 |
+| [ODBC 개요](/dbms/application-integration/guide-drivers/#odbc) | ODBC 드라이버, DSN, 연결 파라미터와 표준 API 설명 |
 | [Machbase SQLCLI 예제](/dbms/application-integration/guide-drivers/#examples-cli-odbc) | 접속/해제, INSERT/SELECT, Append 고속 삽입 등 실용적인 예제 코드 |
 | [ODBC 예제](/dbms/application-integration/guide-drivers/#examples-cli-odbc) | ODBC 관리자와 DSN을 사용한 접속·SQL 실행 예제 |
 
-### CLI/ODBC의 특징
+### Machbase SQLCLI의 특징
 
 - **네이티브 성능**: 별도의 미들웨어 없이 Machbase 서버와 직접 통신
-- **Append API**: 여러 시계열 행을 버퍼링하여 전송하는 전용 입력 프로토콜
-- **표준 호환**: ODBC 3.52 표준을 기반으로 설계되어 익숙한 SQL CLI 패턴 적용 가능
+- **Append API**: 여러 시계열 행을 버퍼링하여 전송하는 대량 입력 API
+- **C/C++ API**: 설치 패키지가 제공하는 헤더와 라이브러리로 직접 연동
 - **C/C++ 지원**: `machbase_sqlcli.h` 헤더와 `libmachbasecli.a` 또는
   `libmachbasecli_dll.so` 라이브러리 제공
 
@@ -97,13 +98,13 @@ gcc -o myapp myapp.c \
 
 <a id="cli-odbc-cli-odbc"></a>
 
-### CLI/ODBC 개요
+### Machbase SQLCLI 개요
 
-#### CLI/ODBC란
+#### API 집합 구분
 
-CLI(Call Level Interface)는 ISO/IEC 9075-3:2003에 정의된 소프트웨어 개발 표준으로, 데이터베이스에 SQL을 전달하고 결과를 받는 방법을 함수 및 명세로 정의합니다. 가장 널리 알려진 구현체가 ODBC(Open Database Connectivity)이며, 현재 최신 ODBC API 버전은 3.52입니다.
-
-이 표준을 구현한 네이티브 C 라이브러리를 제공합니다. C/C++ 애플리케이션은 이 라이브러리를 통해 직접 연결하여 SQL을 실행하고, Append API를 통해 초고속 데이터 삽입을 수행할 수 있습니다.
+Machbase SQLCLI와 ODBC는 함수 이름이 일부 같지만 동일한 API 집합이 아닙니다. 이 절의
+예제는 `<machbase_sqlcli.h>`를 사용하는 Machbase SQLCLI 코드입니다. ODBC 애플리케이션은
+[ODBC](#odbc) 절의 헤더, 드라이버 관리자, 표준 API 범위를 따릅니다.
 
 #### 헤더 파일 및 라이브러리
 
@@ -719,7 +720,7 @@ Machbase는 기본적으로 UTF-8 방식으로 문자열을 저장합니다.
 <a id="examples-cli-odbc"></a>
 <a id="cli-odbc-examples-cli-odbc"></a>
 
-### CLI/ODBC 예제
+### Machbase SQLCLI 예제
 
 Machbase CLI를 사용하는 C 프로그램의 대표적인 예제입니다. 모든 예제는 `machbase_sqlcli.h`를 포함하고 정적 라이브러리는 `libmachbasecli`, 공유 라이브러리는 `libmachbasecli_dll`과 링크하여 컴파일합니다.
 
@@ -1494,6 +1495,42 @@ checkError(ret, "SQLExecDirect", gEnv, gCon, sStmt);
 ```
 
 > **참고**: `SQL_SUCCESS_WITH_INFO`는 경고(예: VARCHAR 값 잘림)를 나타냅니다. 에러는 아니지만 `SQLError()`로 확인하는 것을 권장합니다.
+
+<a id="odbc"></a>
+
+## ODBC
+
+ODBC 애플리케이션은 ODBC 헤더와 드라이버 관리자를 사용하고, Machbase ODBC 드라이버를
+DSN에 등록하여 접속합니다. Machbase SQLCLI의 헤더와 링크 라이브러리를 사용하지 않습니다.
+
+| 항목 | ODBC |
+|------|------|
+| 헤더 | `sql.h`, `sqlext.h` |
+| 드라이버 | Linux `libmachbaseodbc.so`, Windows `machbaseodbc.dll` |
+| 드라이버 관리자 | Linux unixODBC, Windows ODBC 데이터 원본 관리자 |
+| 연결 | DSN 또는 ODBC connection string |
+| 파라미터 바인딩 | `?` marker와 `SQLBindParameter()` ordinal 바인딩 |
+| Generated ROWID | 표준 ODBC API에서 지원하지 않음 |
+
+```c
+#include <sql.h>
+#include <sqlext.h>
+
+SQLHENV env;
+SQLHDBC dbc;
+
+SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &env);
+SQLSetEnvAttr(env, SQL_ATTR_ODBC_VERSION, (SQLPOINTER)SQL_OV_ODBC3, 0);
+SQLAllocHandle(SQL_HANDLE_DBC, env, &dbc);
+SQLConnect(dbc,
+           (SQLCHAR *)"MACHBASE", SQL_NTS,
+           (SQLCHAR *)"SYS", SQL_NTS,
+           (SQLCHAR *)"MANAGER", SQL_NTS);
+```
+
+`SQLGetGeneratedRowID()`는 Machbase SQLCLI 확장이므로 표준 ODBC 코드에서 사용하지
+않습니다. ODBC에서 `SQLAppendOpen()` 계열 함수를 사용할 때도 Machbase 드라이버 확장이라는
+점을 고려하여 다른 ODBC 드라이버로 이식할 코드는 분리합니다.
 
 <a id="jdbc"></a>
 
@@ -3541,7 +3578,7 @@ defer conn.Close()
 
 `api.WithDatabase(database)`는 연결 직후 초기 database를 선택합니다. 연결 후 `USE`로
 database를 바꿀 수 있으며, 다른 database의 Append 대상은 `database.owner.table` 세 부분
-이름으로 지정합니다. 세부 동작과 Machbase 8.7.0 프로토콜(버전 4.0.3) 호환 조건은
+이름으로 지정합니다. 세부 동작과 Machbase 8.7.0 서버 및 SDK 호환 조건은
 [Go SDK 문서](/dbms/development-tools-integration/go/)를 참조하십시오.
 
 {{< callout type="warning" >}}

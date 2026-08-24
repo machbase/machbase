@@ -18,12 +18,12 @@ Machbase DBMS는 PostgreSQL이나 MySQL 같은 범용 RDBMS와 설계 철학부�
 
 ### Standard Edition
 
-단일 노드에서 동작하는 구성입니다. 설치와 운영이 단순하며 TRANSACTION, VOLATILE, STREAM,
+단일 노드에서 동작하는 구성입니다. 설치와 운영이 단순하며 TRANSACTION, VOLATILE,
 Restore/Mount 등 Standard Edition 기능을 함께 사용할 수 있습니다.
 
 - 단일 서버 인스턴스로 SQL 처리와 데이터 저장 기능 제공
 - 별도 분산 코디네이션 없이 즉시 사용 가능
-- ROLLUP, STREAM, Retention Policy, Backup/Mount, TRANSACTION 테이블 등 대부분의 기능 지원
+- ROLLUP, Retention Policy, Backup/Mount, TRANSACTION 테이블 등 대부분의 기능 지원
 
 ### Cluster Edition
 
@@ -50,14 +50,13 @@ Warehouse, Lookup 노드로 역할을 분리합니다.
 | VOLATILE 테이블 | 지원 | 미지원 |
 | TRANSACTION 테이블 | 지원 | 미지원 |
 | ROLLUP | 지원 | 지원 |
-| STREAM | 지원 | 미지원 |
 | Retention Policy | 지원 | 지원 |
 | Backup | 지원 | 지원 |
 | Restore / Mount | 지원 | 미지원 |
 | 수평 확장 (노드 추가) | 불가 | 가능 |
 | 자동 장애 조치 | 불가 | Coordinator가 감시 |
 
-TRANSACTION 테이블과 VOLATILE 테이블, STREAM, Restore/Mount는 Standard Edition 전용 기능입니다. Cluster
+TRANSACTION 테이블과 VOLATILE 테이블, Restore/Mount는 Standard Edition 전용 기능입니다. Cluster
 Edition에서는 관련 구문이 거부됩니다.
 
 ### 선택 기준

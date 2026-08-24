@@ -11,10 +11,6 @@ toc: true
 
 ## ROLLUP 통계의 역할
 
-<a id="processing-model-stream"></a>
-
-## STREAM 처리 모델
-
 <a id="role-retention-policy"></a>
 
 ## Retention Policy의 역할

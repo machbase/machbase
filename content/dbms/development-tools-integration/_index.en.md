@@ -26,7 +26,7 @@ Append, and examples.
 
 | SDK | Description |
 |-----|-------------|
-| [CLI/ODBC](./cli-odbc/) | C/C++ CLI/ODBC APIs and examples |
+| [Machbase SQLCLI and ODBC](./cli-odbc/) | Separate C/C++ SQLCLI and ODBC APIs and examples |
 | [JDBC](./jdbc/) | Java JDBC APIs and Append |
 | [Python](./python/) | `machbaseapi` Python client |
 | [Node.js / TypeScript](./node-js-typescript/) | `@machbase/ts-client` TypeScript client |
@@ -51,5 +51,3 @@ Append, and examples.
 <a id="sdk"></a>
 
 ## SDK Support Scope Index
-
-The REST API is documented separately in the [REST API Reference](../reference/rest-api/).

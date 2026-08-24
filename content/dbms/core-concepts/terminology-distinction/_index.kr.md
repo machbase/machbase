@@ -6,77 +6,12 @@ toc: true
 ---
 운영에서 자주 혼동되는 개념 쌍들을 비교 표와 함께 구분합니다. 각 항목은 "어떤 상황에 무엇을 선택하는가"에 초점을 맞추었습니다.
 
-- **[ROLLUP vs STREAM](/dbms/core-concepts/terminology-distinction/#rollup-vs-stream)** -- 자동 집계와 SQL 기반 변환 처리의 차이
 - **[Retention vs DELETE / TRUNCATE](/dbms/core-concepts/terminology-distinction/#retention-vs-delete-truncate)** -- 자동 정책과 수동 삭제 명령의 차이
 - **[Backup vs Restore vs Mount](/dbms/core-concepts/terminology-distinction/#backup-vs-restore-mount)** -- 데이터 복사, 복원, 읽기 전용 연결의 차이
 - **[machloader vs csvimport / csvexport vs tagmetaimport](/dbms/core-concepts/terminology-distinction/#machloader-vs-csvimport-csvexport-tagmetaimport)** -- 파일 기반 입출력 도구들의 차이
 - **[LOAD DATA INFILE vs machloader](/dbms/core-concepts/terminology-distinction/#load-data-infile-vs-machloader)** -- 서버 파일 SQL 적재와 클라이언트 파일 도구의 차이
 - **[SDK append vs SQL APPEND vs Collector 수집](/dbms/core-concepts/terminology-distinction/#ingestion-sdk-append-vs-sql-collector)** -- 실시간 데이터 수집 경로별 특성과 선택 기준
 
-
-<a id="rollup-vs-stream"></a>
-
-## ROLLUP vs STREAM
-
-ROLLUP과 STREAM은 모두 데이터를 자동으로 변환한다는 점에서 비슷해 보이지만, 적용 대상·동작 방식·유연성이 근본적으로 다릅니다.
-
-### 비교 표
-
-| 항목 | ROLLUP | STREAM |
-| --- | --- | --- |
-| 적용 대상 | TAG 테이블 전용 | 임의 테이블 (LOG, TAG, LOOKUP 등) |
-| 집계 단위 | SEC / MIN / HOUR 고정 | 사용자가 SQL로 자유롭게 정의 |
-| 변환 로직 | 고정 (SUM, COUNT, MIN, MAX, FIRST, LAST) | 임의 SQL (조인, 조건 필터, 문자열 변환 등) |
-| 결과 저장 위치 | `_TAG_ROLLUP_SEC`, `_TAG_ROLLUP_MIN`, `_TAG_ROLLUP_HOUR` | 사용자가 지정한 대상 테이블 |
-| 설정 방법 | `WITH ROLLUP` 절로 테이블 생성 시 지정 | `EXEC STREAM_CREATE`로 별도 생성 |
-| 트리거 방식 | 데이터 입력 시 자동 | 스트림 시작 후 입력 흐름에 따라 자동 실행 |
-| Cluster Edition 지원 | 지원 | 제한적 지원 |
-| 조회 방법 | `rollup()` 함수 사용 | 대상 테이블에 직접 SELECT |
-
-### ROLLUP을 선택하는 경우
-
-- 장기간의 TAG 계측값에서 SEC/MIN/HOUR 단위 집계를 반복 조회하는 경우
-- 대시보드나 모니터링 화면에서 최솟값/최댓값/평균/합계를 실시간 표시해야 하는 경우
-- 설정이 단순하고 추가 관리 부담 없이 자동 집계를 원하는 경우
-
-```sql
--- ROLLUP 활성화
-CREATE TAG TABLE rollup_sensor_values_cmp (
-    name  VARCHAR(128) PRIMARY KEY,
-    time  DATETIME BASETIME,
-    value DOUBLE SUMMARIZED
-) WITH ROLLUP (SEC);
-
--- 분 단위 평균 조회
-SELECT rollup('min', 1, time) AS mtime, AVG(value) AS avg_value
-FROM rollup_sensor_values_cmp
-WHERE name = 'temp_01'
-GROUP BY mtime;
-```
-
-### STREAM을 선택하는 경우
-
-- LOG 테이블의 이벤트를 특정 조건으로 필터링해 TAG 테이블에 계측값 형태로 변환해야 하는 경우
-- SEC/MIN/HOUR가 아닌 사용자 정의 시간 구간(예: 15분, 30분)으로 집계해야 하는 경우
-- 조인이나 복잡한 변환 로직이 필요한 경우
-- 특정 임계값 초과 시 알림용 파생 테이블을 자동 업데이트해야 하는 경우
-
-```sql
--- LOG -> TAG 변환 STREAM 예시
-EXEC STREAM_CREATE(error_count_stream,
-    'INSERT INTO error_stats SELECT ''ERROR_EVENT'', _arrival_time, value FROM device_log WHERE severity = ''ERROR''');
-
-EXEC STREAM_START(error_count_stream);
-```
-
-### 두 기능을 함께 사용하는 패턴
-
-STREAM으로 LOG 테이블의 이벤트를 TAG 테이블로 변환한 뒤, 해당 TAG 테이블에 ROLLUP을 활성화하는 것도 일반적인 패턴입니다. STREAM이 정제된 데이터를 TAG 테이블에 적재하고, ROLLUP이 시간 단위로 자동 집계합니다.
-
-### 다음 읽을 내용
-
-- [ROLLUP 통계의 역할](/dbms/core-concepts/features-concepts/#role-statistics-rollup) -- ROLLUP 상세 개념
-- [STREAM 처리 모델](/dbms/core-concepts/features-concepts/#processing-model-stream) -- STREAM 상세 개념
 
 <a id="retention-vs-delete-truncate"></a>
 
@@ -394,7 +329,7 @@ machloader -i -s 127.0.0.1 -P 5656 \
 
 | 항목 | SDK APPEND | SQL INSERT | Collector |
 | --- | --- | --- | --- |
-| 수집 방식 | 언어별 SDK로 APPEND 프로토콜 직접 사용 | 표준 SQL INSERT 문장 | Machbase 내장 수집기, 별도 설정 파일 |
+| 수집 방식 | 언어별 SDK의 Append API 사용 | 표준 SQL INSERT 문장 | Machbase 내장 수집기, 별도 설정 파일 |
 | 입력 특성 | 배치 전송, SQL 파싱 없음 | 행 단위 SQL 실행 | 설정 기반 버퍼링 |
 | 지원 언어/환경 | Go, Python, .NET, C 등 | ODBC, JDBC, machsql 등 모든 SQL 클라이언트 | 파일, 소켓, ODBC, SFTP 등 소스 기반 |
 | 개발 필요성 | 높음 (SDK API 구현 필요) | 낮음 (SQL 지식만으로 구현 가능) | 낮음 (설정 파일 작성) |
@@ -404,7 +339,7 @@ machloader -i -s 127.0.0.1 -P 5656 \
 
 ### SDK APPEND
 
-Go, Python, .NET 등 언어별 SDK를 사용해 APPEND 프로토콜로 데이터를 전송합니다. 여러 행을
+Go, Python, .NET 등 언어별 SDK의 Append API로 데이터를 전송합니다. 여러 행을
 배치로 전달하므로 반복 SQL INSERT보다 네트워크 왕복과 파싱 횟수를 줄일 수 있습니다.
 
 ```go

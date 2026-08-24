@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.3.6 전체 가상 테이블 레퍼런스'
+title: '18.3.5 전체 가상 테이블 레퍼런스'
 weight: 80
 toc: true
 tocSort: true
@@ -23,12 +23,8 @@ Virtual Table은 Machbase 서버의 운영 정보를 테이블 형태로 제공�
   * [V$VERSION](#vversion)
   * [V$DATABASES](#vdatabases)
   * [V$DATABASE_OPERATIONS](#vdatabase_operations)
-  * [V$HTTP\_STATUS](#vhttp_status)
   * [V$NEO\_SESSION](#vneo_session)
   * [V$NEO\_STMT](#vneo_stmt)
-* [Result Cache](#result-cache)
-  * [V$RS\_CACHE\_LIST](#vrs_cache_list)
-  * [V$RS\_CACHE\_STAT](#vrs_cache_stat)
 * [PVO Statement Cache](#pvo-statement-cache)
   * [V$PVO\_CACHE\_STAT](#vpvo_cache_stat)
   * [V$PVO\_CACHE\_LIST](#vpvo_cache_list)
@@ -67,8 +63,6 @@ Virtual Table은 Machbase 서버의 운영 정보를 테이블 형태로 제공�
   * [V$STORAGE\_TAG\_INDEX](#vstorage_tag_index)
 * [Tag Rollup](#tag-rollup)
   * [V$ROLLUP](#vrollup)
-* [Stream](#stream)
-  * [V$STREAMS](#vstreams)
 * [License](#license)
   * [V$LICENSE\_INFO](#vlicense_info)
 * [Mutex](#mutex)
@@ -130,11 +124,6 @@ MACHBASE 서버에 접속된 세션 정보를 표시합니다.
 | DEFAULT_DATE_FORMAT                | Datetime 입력 시 기본 입력 포맷                                                                                                           |
 | HASH_BUCKET_SIZE                   | 쿼리 수행 시 생성할, Temp Hashtable 의 Bucket 개수                                                                                          |
 | MAX_QPX_MEM                        | 쿼리 수행 시 가용할 최대 메모리 크기                                                                                                            |
-| RS_CACHE_ENABLE                    | Result Cache 사용 여부                                                                                                               |
-| RS_CACHE_TIME_BOUND_MSEC           | Result Cache 사용 시, 결과를 저장하기 위한 최대 경과 시간                                                                                          |
-| RS_CACHE_MAX_MEMORY_PER_QUERY      | Result Cache 사용 시, 쿼리 마다 사용할 최대 메모리 크기                                                                                           |
-| RS_CACHE_MAX_RECORD_PER_QUERY      | Result Cache 사용 시, 쿼리 마다 사용할 최대 결과 개수                                                                                            |
-| RS_CACHE_APPROXIMATE_RESULT_ENABLE | Result Cache 사용 시, 정확하지 않은 쿼리의 결과를 캐싱해 갈 것인지 여부                                                                                  |
 | IDLE_TIMEOUT                       | 세션 연결 후 해당 시간 동안 Client 가 아무일도 하지 않을 시 세션 종료                                                                                     |
 | QUERY_TIMEOUT                      | 쿼리 수행 시 응답 대기 시간                                                                                                                 |
 | DDL_LOCK_TIMEOUT (Standard Only)   | 충돌한 DDL 잠금을 기다릴 시간(초). `0`이면 즉시 오류를 반환합니다. |
@@ -292,23 +281,6 @@ SELECT operation_id, database_name, state, error_message
  ORDER BY operation_id DESC;
 ```
 
-### V$HTTP_STATUS
----
-
-임베디드 HTTP 엔드포인트의 HTTP 서비스 상태를 표시합니다.
-
-| 컬럼 이름 | 설명 |
-| -- | -- |
-| DOC_ROOT | HTTP 문서 루트 |
-| HTTP_PORT | HTTP 서비스 포트 |
-| THREAD_COUNT | HTTP 작업 스레드 수 |
-| CONNECT_COUNT | 접속 수 |
-| SERVICE_SUCCESS_COUNT | 성공한 서비스 수 |
-| SERVICE_FAILURE_COUNT | 실패한 서비스 수 |
-| TOTAL_SERVICE_COUNT | 전체 서비스 수 |
-| CURRENT_SERVICE_COUNT | 현재 서비스 수 |
-| MAX_HTTP_MEM | 최대 HTTP 메모리 크기 |
-
 ### V$NEO_SESSION
 ---
 
@@ -335,38 +307,6 @@ Neo 프로토콜 클라이언트의 statement 상태를 표시합니다.
 | QUERY | statement 텍스트 |
 | APPEND_SUCCESS_CNT | append 성공 건수 |
 | APPEND_FAILURE_CNT | append 실패 건수 |
-
-## Result Cache
-### V$RS_CACHE_LIST
----
-
-결과 캐시 목록을 표시합니다.
-
-| 컬럼 이름           | 설명                          |
-| --------------- | --------------------------- |
-| TOUCH_TIME      | 캐시를 사용하거나 생성한 시각            |
-| USER_ID         | 캐시를 생성한 사용자 식별자             |
-| QUERY           | 캐시를 만든 쿼리문                  |
-| TIME_SPENT      | 결과를 생성하기까지 경과 시간            |
-| TABLE_COUNT     | 쿼리문과 연관된 테이블 개수             |
-| RECORD_COUNT    | 결과 레코드 개수                   |
-| REFERENCE_COUNT | 현재 참조중인 세션의 개수              |
-| HIT_COUNT       | 캐시 히트 횟수                    |
-| AGGR_TOUCH_TIME | 집계 결과인 경우, 캐시를 사용하거나 생성한 시각 |
-| AGGR_HIT_COUNT  | 집계 결과인 경우, 캐시 히트 횟수         |
-
-### V$RS_CACHE_STAT
----
-
-하나의 세션에서의 결과 캐시의 통계 정보를 표시합니다.
-
-| 컬럼 이름              | 설명                |
-| ------------------ | ----------------- |
-| CACHE_COUNT        | 결과 캐시의 개수         |
-| CACHE_HIT          | 총 캐시 히트 횟수        |
-| AGGR_HIT           | 집계 결과의 총 캐시 히트 횟수 |
-| CACHE_REPLACED     | 캐시 교체 횟수          |
-| CACHE_MEMORY_USAGE | 캐시로 사용된 메모리 크기    |
 
 ## PVO Statement Cache
 Standard 에디션에서만 제공되는 글로벌 PVO Statement Cache 상태를 조회합니다.
@@ -918,23 +858,6 @@ Tagdata 테이블의 Rollup 정보를 표시합니다.
 | EXT_TYPE       | 확장(EXTENSION) 여부 플래그                                     |
 | PREDICATE      | 조건 롤업의 필터 식(NULL이면 조건 없음)                              |
 | RUN_STATE      | 스레드 상태: I=INIT, S=SLEEPING, R=RUNNING                      |
-
-## Stream
-### V$STREAMS
----
-
-Stream 정보를 표시합니다.
-
-| 컬럼 이름        | 설명                                                                          |
-| ------------ | --------------------------------------------------------------------------- |
-| NAME         | 서버에 등록된 stream질의의 이름. 서버내에서 유일해야 합니다.                                         |
-| LAST_EX_TIME | 해당 STREAM질의가 마지막으로 수행된 시간                                                   |
-| TABLE_NAME   | STREAM질의의 검색 대상 테이블 이름                                                      |
-| END_RID      | STREAM 질의가 마지막으로 읽어 들인 RID                                                  |
-| STATE        | STREAM질의의 현재 상태                                                             |
-| QUERY_TXT    | 사용자가 입력한 STREAM질의의 원본                                                       |
-| ERROR_MSG    | 마지막으로 실행했을 때의 에러 메시지                                                        |
-| FREQUENCY    | 질의 수행의 최소 대기 시간. 0이면 매 레코드마다 실행되며 0이 아니면 해당 시간이 지날 때 마다 수행됩니다.<br>단위는 나노초입니다. |
 
 ## License
 ### V$LICENSE_INFO

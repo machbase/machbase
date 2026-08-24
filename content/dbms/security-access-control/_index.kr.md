@@ -15,7 +15,7 @@ toc: true
 | [계정 관리](./account/) | 사용자 생성·삭제·비밀번호 변경, 비밀번호 정책(NONE/LOW/HIGH) |
 | [권한 관리](./privileges/) | GRANT/REVOKE, 테이블 권한, 데이터베이스 권한 |
 | [AUTH KEY 인증](./authentication-auth-key/) | 공개키 기반 challenge 인증, 키 생성·등록·관리 |
-| [접속 제어](./access-control/) | 원격 접속 허용 여부, 바인드 IP, HTTP 인증 설정 |
+| [접속 제어](./access-control/) | 원격 접속 허용 여부와 바인드 IP 설정 |
 | [보안 설정 체크리스트](./checklist-configuration/) | 운영 환경 배포 전 점검 항목 |
 
 ## 보안의 4대 영역
@@ -26,4 +26,4 @@ toc: true
 
 **3. 권한 관리** -- 계정이 수행할 수 있는 작업을 제한합니다. 테이블 단위 DML 권한(SELECT, INSERT, DELETE, UPDATE)과 데이터베이스 단위 DDL·운영 권한(CREATE, DROP, ALTER, BACKUP, MOUNT)을 세분화해 최소 권한 원칙을 적용합니다.
 
-**4. 접속 제어** -- 어떤 네트워크 경로에서, 어떤 인증 방식으로 연결을 허용할지 제어합니다. `GRANT_REMOTE_ACCESS`로 원격 접속 허용 여부를 결정하고, `BIND_IP_ADDRESS`로 리스너가 열리는 네트워크 인터페이스를 지정하며, `HTTP_AUTH`로 REST API 인증 방식을 설정합니다.
+**4. 접속 제어** -- 어떤 네트워크 경로에서 연결을 허용할지 제어합니다. `GRANT_REMOTE_ACCESS`로 원격 접속 허용 여부를 결정하고, `BIND_IP_ADDRESS`로 리스너가 열리는 네트워크 인터페이스를 지정합니다.

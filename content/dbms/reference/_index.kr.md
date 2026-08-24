@@ -14,7 +14,6 @@ toc: true
 | [SQL 레퍼런스](./sql/) | SQL 문법 사전, 함수 사전, 데이터 타입, 힌트, 상대 시간 표현 |
 | [설정 레퍼런스](./configuration/) | machbase.conf 속성, 동적 변경 가능 속성 목록 |
 | [명령줄 도구](./command-line-tools/) | machsql, machadmin, machloader 등 CLI 도구 옵션 |
-| [REST API](./rest-api/) | HTTP 엔드포인트, 요청/응답 형식, 인증 방식 |
 | [개발 도구 연동](../development-tools-integration/) | Go, Python, Java, C 클라이언트 SDK/API (11장) |
 | [시스템 카탈로그](./log-logs-system-catalog/) | V$, M$SYS 뷰 목록 및 컬럼 설명 |
 | [에러 코드](./error-dictionary-codes/) | 에러 코드 번호, 메시지, 원인 및 조치 방법 |

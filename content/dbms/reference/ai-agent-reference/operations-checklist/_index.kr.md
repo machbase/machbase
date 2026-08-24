@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.10.10 operations-checklist'
+title: '18.8.10 operations-checklist'
 weight: 100
 toc: true
 ---
@@ -49,16 +49,6 @@ SELECT name, table_name, status, last_run_time FROM v$rollup;
 ALTER SYSTEM FLUSH ROLLUP;
 ```
 
-### STREAM 상태 모니터링
-
-```sql
--- STREAM 목록 및 상태
-SELECT * FROM v$streams;
-
--- STREAM 재시작
-EXEC STREAM_START('stream_name');
-```
-
 ### 오류 로그 확인
 
 ```bash
@@ -75,7 +65,6 @@ tail -100 $MACHBASE_HOME/trc/machbase.trc | grep -i ERROR
 | 메모리 경고 | `v$sys_stat WHERE name LIKE '%MEMORY%'` | 대용량 쿼리 종료, 메모리 설정 확인 |
 | 디스크 부족 | `df -h`, `v$tablespace` | 불필요 파일 정리, MOUNT된 백업 언마운트 |
 | ROLLUP 지연 | `v$rollup` 상태 확인 | `ALTER SYSTEM FLUSH ROLLUP` |
-| STREAM 멈춤 | `v$streams` 상태 = STOPPED | `EXEC STREAM_START('name')` |
 | 특정 쿼리 멈춤 | `v$stmt` 에서 실행 중인 쿼리 확인 | `ALTER SYSTEM KILL SESSION sess_id` |
 
 ## 세션 관리
@@ -110,7 +99,6 @@ WHERE state = 'IDLE';
 | `v$tablespace` | 테이블스페이스(디스크) 사용량 |
 | `v$sys_stat` | 서버 통계 (메모리, I/O 등) |
 | `v$rollup` | ROLLUP 목록 및 상태 |
-| `v$streams` | STREAM 목록 및 상태 |
 | `m$sys_tables` | 테이블 메타데이터 |
 | `m$sys_columns` | 컬럼 메타데이터 |
 | `m$sys_users` | 사용자 목록 |

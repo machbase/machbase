@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.8.3 TRANSACTION 기능 지원표'
+title: '18.6.3 TRANSACTION 기능 지원표'
 weight: 30
 toc: true
 ---
@@ -86,7 +86,7 @@ Cluster Edition에서 TRANSACTION 테이블 생성 시 오류가 발생합니다
 [Error] TRANSACTION table is not supported in Cluster Edition.
 ```
 
-TRANSACTION 테이블이 필요한 경우 Standard Edition을 사용하거나, 트랜잭션 데이터를 외부 RDBMS(PostgreSQL, MySQL 등)에 저장하고 Machbase에서 JOIN 또는 REST API로 연동하는 방식을 검토하십시오.
+TRANSACTION 테이블이 필요한 경우 Standard Edition을 사용하거나, 트랜잭션 데이터를 외부 RDBMS(PostgreSQL, MySQL 등)에 저장하고 애플리케이션 계층에서 함께 처리하는 방식을 검토하십시오.
 
 ## 다른 테이블 유형과 JOIN
 

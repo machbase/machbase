@@ -44,7 +44,7 @@ CREATE ROLLUP _rollup_tag_value_hour ON tag (value) INTERVAL 1 HOUR;
 | `MIN` | 분 단위 집계 |
 | `HOUR` | 시간 단위 집계 |
 
-> `DAY` 단위는 직접 지원하지 않습니다. 하루 단위 집계는 HOUR ROLLUP을 기반으로 쿼리 단계에서 집계하거나 STREAM을 활용합니다.
+> `DAY` 단위는 직접 지원하지 않습니다. 하루 단위 집계는 HOUR ROLLUP을 기반으로 쿼리 단계에서 집계합니다.
 
 ### 조건부 ROLLUP
 

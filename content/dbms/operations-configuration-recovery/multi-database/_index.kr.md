@@ -986,7 +986,8 @@ Full-instance backup은 `RESTORE DATABASE`의 logical image로 사용할 수 없
 | Client | 초기 database | 변경/확인 | 주의사항 |
 | --- | --- | --- | --- |
 | machsql | `-D`, `--database`, `DATABASE`/`DBNAME` | SQL `USE`, `CURRENT_DATABASE()` | 초기 옵션을 중복 지정하지 않습니다. |
-| Native C/ODBC | connection string 또는 pre-connect catalog | catalog attribute와 SQL | Catalog는 database, schema는 owner입니다. |
+| Machbase SQLCLI | connection string의 `DATABASE` 또는 `DBNAME` | SQL `USE`, `CURRENT_DATABASE()` | `<machbase_sqlcli.h>` API를 사용합니다. |
+| ODBC | connection string 또는 pre-connect catalog | catalog attribute와 SQL | Catalog는 database, schema는 owner입니다. |
 | JDBC | URL path 또는 `database` property | `getCatalog()`, `setCatalog()`, SQL | URL/property 값이 다르면 실패합니다. |
 | Python | `connect(database=...)` | SQL | 별도 catalog getter/setter가 없습니다. |
 | Node.js | config 또는 URL의 database | SQL | 별도 catalog getter가 없습니다. |

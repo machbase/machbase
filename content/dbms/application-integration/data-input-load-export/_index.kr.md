@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '12.7 데이터 입력과 반출'
+title: '12.6 데이터 입력과 반출'
 weight: 70
 toc: true
 ---
@@ -23,7 +23,6 @@ SQL INSERT, Append API, 파일 적재(machloader, csvimport), SQL 기반 파일 
 | machloader | CLI 도구. 유연한 스키마 매핑 | 정기 배치, 마이그레이션 |
 | csvimport | machloader 래퍼. 간편 CSV 입력 | 빠른 파일 적재 |
 | tagmetaimport | TAG 메타데이터 전용 | TAG 메타데이터 초기 로드·업데이트 |
-| REST API | HTTP 기반. 범용 연동 | 외부 시스템, IoT 디바이스 |
 | SDK (Go/Python/C) | 내장 Append/INSERT | 애플리케이션 직접 연동 |
 
 상세 선택 가이드는 하위 페이지를 참고하십시오.
@@ -51,7 +50,7 @@ SQL INSERT, Append API, 파일 적재(machloader, csvimport), SQL 기반 파일 
 
 ##### TAG 테이블
 
-- **대량 시계열 수집**: Append API (SDK 경유) 또는 REST API
+- **대량 시계열 수집**: SDK의 Append API
 - **메타데이터 초기 로드**: tagmetaimport 또는 SQL INSERT METADATA
 - **소량 데이터**: SQL INSERT
 
@@ -59,7 +58,7 @@ SQL INSERT, Append API, 파일 적재(machloader, csvimport), SQL 기반 파일 
 
 - **대량 로그 수집**: Append API 또는 machloader
 - **파일 배치 적재**: machloader, csvimport, LOAD DATA INFILE
-- **스트리밍 수집**: REST API 또는 SDK
+- **스트리밍 수집**: SDK의 Append API
 
 ##### TRANSACTION 테이블
 
@@ -94,9 +93,6 @@ SQL INSERT, Append API, 파일 적재(machloader, csvimport), SQL 기반 파일 
 │   ├── TRANSACTION 대량 batch 입력 → client appendBatch/append stream
 │   └── 소량 또는 일반 트랜잭션 처리 → SQL INSERT
 │
-├── HTTP/REST
-│   └── 외부 시스템, IoT → REST API (12장 참고)
-│
 └── TAG 메타데이터
     └── 초기 로드 또는 일괄 업데이트 → tagmetaimport
 ```
@@ -115,13 +111,12 @@ SQL INSERT, Append API, 파일 적재(machloader, csvimport), SQL 기반 파일 
 
 | 구분 | 권장 방법 |
 |------|---------|
-| 실시간 스트리밍 | REST API, SDK Append API |
+| 실시간 스트리밍 | SDK Append API |
 | 정기 배치 | machloader, csvimport, LOAD DATA INFILE |
-| 이벤트 기반 | SDK INSERT 또는 REST API |
+| 이벤트 기반 | SDK INSERT |
 
 #### 연동 경로 요약
 
-- **REST API 상세**: [12장 애플리케이션 연동](/dbms/application-integration/) 참고
 - **SDK (Go/Python/C) 상세**: [11장 개발 도구 연동](/dbms/development-tools-integration/) 및 [12장 애플리케이션 연동](/dbms/application-integration/) 참고
 
 <a id="sql"></a>
@@ -335,11 +330,6 @@ MCHCloseAppender(appender, &successCnt, &failCnt);
 | 오류 처리 | 실패 행 건너뜀 | 행별 오류 반환 |
 | 사용 테이블 | TAG, LOG, LOOKUP, TRANSACTION(client append API) | 모든 테이블 |
 | 사용 방법 | SDK 필요 | SQL 클라이언트 |
-
-#### REST API Append
-
-REST API를 통한 Append도 요청 안의 여러 행을 한 번에 입력할 수 있습니다. 상세는
-[12장 애플리케이션 연동](/dbms/application-integration/)을 참고하십시오.
 
 #### 주의사항
 

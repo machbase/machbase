@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.3.6 Complete Virtual Table Reference'
+title: '18.3.5 Complete Virtual Table Reference'
 weight: 80
 toc: true
 tocSort: true
@@ -27,12 +27,8 @@ Virtual Tables are read-only and can not be added / deleted / updated by the use
   - [V$SYSTIME](#vsystime)
   - [V$STMT](#vstmt)
   - [V$VERSION](#vversion)
-  - [V$HTTP\_STATUS](#vhttp_status)
   - [V$NEO\_SESSION](#vneo_session)
   - [V$NEO\_STMT](#vneo_stmt)
-- [Result Cache](#result-cache)
-  - [V$RS\_CACHE\_LIST](#vrs_cache_list)
-  - [V$RS\_CACHE\_STAT](#vrs_cache_stat)
 - [PVO Statement Cache](#pvo-statement-cache)
   - [V$PVO\_CACHE\_STAT](#vpvo_cache_stat)
   - [V$PVO\_CACHE\_LIST](#vpvo_cache_list)
@@ -71,8 +67,6 @@ Virtual Tables are read-only and can not be added / deleted / updated by the use
   - [V$STORAGE\_TAG\_INDEX](#vstorage_tag_index)
 - [Tag Rollup](#tag-rollup)
   - [V$ROLLUP](#vrollup)
-- [Stream](#stream)
-  - [V$STREAMS](#vstreams)
 - [License](#license)
   - [V$LICENSE\_INFO](#vlicense_info)
 - [Mutex](#mutex)
@@ -135,11 +129,6 @@ Displays session information connected to the Machbase server.
 |DEFAULT_DATE_FORMAT|Default input format upon Datetime input |
 |HASH_BUCKET_SIZE|Number of Buckets in Temp Hashtable created when performing query|
 |MAX_QPX_MEM|Maximum memory size available when performing query|
-|RS_CACHE_ENABLE|Whether Result Cache in in use|
-|RS_CACHE_TIME_BOUND_MSEC|Maximum elapsed time to store results when using Result Cache|
-|RS_CACHE_MAX_MEMORY_PER_QUERY|Maximum size of memory used per query when using Result Cache|
-|RS_CACHE_MAX_RECORD_PER_QUERY|Maximum number of results used per query when using Result Cache|
-|RS_CACHE_APPROXIMATE_RESULT_ENABLE|Whether to cache approximate query results when using Result Cache|
 |IDLE_TIMEOUT|Terminate the session if the client does nothing for that time after the session connected.|
 |QUERY_TIMEOUT|Response waiting time for query execution|
 
@@ -258,23 +247,6 @@ Displays information about Machbase version.
 |FILE_CREATE_TIME|File creation time|
 |EDITION|Machbase type|
 
-### V$HTTP_STATUS
----
-
-Displays HTTP service status for the embedded HTTP endpoint.
-
-|Column Name|Description|
-|--|--|
-|DOC_ROOT|HTTP document root|
-|HTTP_PORT|HTTP service port|
-|THREAD_COUNT|HTTP worker thread count|
-|CONNECT_COUNT|Accepted connection count|
-|SERVICE_SUCCESS_COUNT|Successful service count|
-|SERVICE_FAILURE_COUNT|Failed service count|
-|TOTAL_SERVICE_COUNT|Total service count|
-|CURRENT_SERVICE_COUNT|Current service count|
-|MAX_HTTP_MEM|Maximum HTTP memory size|
-
 ### V$NEO_SESSION
 ---
 
@@ -301,42 +273,6 @@ Displays statement status for Neo protocol clients.
 |QUERY|Statement text|
 |APPEND_SUCCESS_CNT|Append success count|
 |APPEND_FAILURE_CNT|Append failure count|
-
-
-## Result Cache
-
-### V$RS_CACHE_LIST
----
-
-Display the result cache list.
-
-|Column Name|Description|
-|--|--|
-|TOUCH_TIME|Time cache was used or created|
-|USER_ID|Cache user identifier|
-|QUERY|Cache query statement|
-|TIME_SPENT|Time spent producing result|
-|TABLE_COUNT|Number of tables associated with query statement|
-|RECORD_COUNT|Number of result records|
-|REFERENCE_COUNT|Number of sessions currently being referenced|
-|HIT_COUNT|Cache hit count|
-|AGGR_TOUCH_TIME|Time the cache was used or created for aggregate results|
-|AGGR_HIT_COUNT|Cache hit count for aggregate results|
-
-
-### V$RS_CACHE_STAT
----
-
-Display statistical information of result cache in one session.
-
-
-|Column Name|Description|
-|--|--|
-|CACHE_COUNT|Number of result caches|
-|CACHE_HIT|Total cache hit count|
-|AGGR_HIT|Total cache hit count for aggregate results|
-|CACHE_REPLACED|Cache replacement count|
-|CACHE_MEMORY_USAGE|Size of cache memory used|
 
 
 ## PVO Statement Cache
@@ -927,23 +863,6 @@ Displays the Rollup information that stores information of the Tagdata table.
 |PREDICATE|Filter predicate for conditional rollups (NULL if none)|
 |RUN_STATE|Current worker state: I=INIT, S=SLEEPING, R=RUNNING|
 
-
-
-## Stream
-
-### V$STREAMS
----
-
-|Column Name|Description|
-|--|--|
-|NAME|The name of stream query.|
-|LAST_EX_TIME|Last execution time of this query.|
-|TABLE_NAME|The name of table which searched from the query|
-|END_RID|The last RID read by stream query|
-|STATE|Current state of stream query|
-|QUERY_TXT|Query text|
-|ERROR_MSG|Error message of the last stream execution|
-|FREQUENCY|Minimum wait time for query execution. If it is 0, it is executed every record. If it is not 0, it is executed each time. The unit is nanoseconds.|
 
 
 ## License

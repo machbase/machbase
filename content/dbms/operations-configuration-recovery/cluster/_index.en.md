@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '14.11 Cluster 운영'
+title: '14.10 Cluster 운영'
 weight: 100
 toc: true
 ---

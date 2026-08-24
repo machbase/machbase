@@ -7,7 +7,7 @@ toc: true
 
 ## 시나리오 개요
 
-TAG 테이블의 최신 센서값을 폴링하여 실시간 상태판(대시보드)을 구성하는 패턴입니다. 각 센서의 현재값, 상태 등급, 임계값 초과 여부를 표시하고, REST API 또는 외부 시각화 도구와 연동합니다.
+TAG 테이블의 최신 센서값을 폴링하여 실시간 상태판(대시보드)을 구성하는 패턴입니다. 각 센서의 현재값, 상태 등급, 임계값 초과 여부를 표시하고, SDK 기반 백엔드 또는 외부 시각화 도구와 연동합니다.
 
 ---
 
@@ -164,57 +164,50 @@ SELECT t.name,
 
 ---
 
-## 4단계: REST API로 대시보드 연동
+## 4단계: Python SDK 백엔드 연동
 
-HTTP REST API(`/machbase?q=...`)를 사용하면 미들웨어 없이 대시보드에서 직접 쿼리를 실행할 수 있습니다.
+브라우저가 Machbase에 직접 연결하거나 SQL을 전달하지 않도록 애플리케이션 백엔드에서
+Python SDK로 조회합니다. 백엔드는 조회 결과 중 화면에 필요한 컬럼만 JSON 등 애플리케이션
+응답 형식으로 변환합니다.
 
-```bash
-# machbase.conf에서 HTTP 활성화
-HTTP_ENABLE  = 1
-HTTP_PORT_NO = 5657
+```python
+from machbaseAPI import connect
+
+conn = connect(
+    host="127.0.0.1",
+    port=5656,
+    user="dashboard_user",
+    password="password",
+)
+
+QUERY = """
+SELECT t.name, t.time, t.value,
+       CASE WHEN t.value >= 90 THEN 'CRITICAL'
+            WHEN t.value >= 80 THEN 'WARNING'
+            ELSE 'NORMAL' END AS status
+  FROM sensor_tag t
+  JOIN (SELECT name, recent_row_time AS mt FROM v$sensor_tag_stat) s
+    ON t.name = s.name AND t.time = s.mt
+ ORDER BY t.name
+"""
+
+def get_dashboard_data():
+    cursor = conn.cursor()
+    try:
+        cursor.execute(QUERY)
+        return cursor.fetchall()
+    finally:
+        cursor.close()
 ```
 
-```bash
-# curl로 최신값 조회
-curl -G "http://localhost:5657/machbase" \
-     --data-urlencode "q=SELECT /*+ SCAN_BACKWARD(sensor_tag) */ name, time, value FROM sensor_tag WHERE name='TEMP_01' LIMIT 1"
-```
+| 구성 요소 | 역할 |
+|----------|------|
+| 브라우저 또는 대시보드 | 백엔드의 상태 조회 API를 일정 주기로 호출 |
+| 애플리케이션 백엔드 | Machbase 연결 관리, SQL 실행, 결과 변환, 사용자 인증 |
+| Machbase | TCP 5656에서 SDK 연결을 받아 최신 상태 조회 |
 
-응답 예시 (JSON):
-
-```json
-{
-  "data": {
-    "columns": ["NAME", "TIME", "VALUE"],
-    "rows": [
-      ["TEMP_01", "2024-01-15 10:23:45 000:000:000", 72.3]
-    ]
-  },
-  "success": true,
-  "reason": "success",
-  "elapse": "1.234ms"
-}
-```
-
-JavaScript(브라우저)에서 폴링하는 예시:
-
-```javascript
-async function fetchLatestValues() {
-    const tags = ['TEMP_01', 'TEMP_02', 'PRESS_01'];
-    const results = await Promise.all(
-        tags.map(tag =>
-            fetch(`/machbase?q=${encodeURIComponent(
-                `SELECT /*+ SCAN_BACKWARD(sensor_tag) */ name, time, value
-                   FROM sensor_tag WHERE name='${tag}' LIMIT 1`
-            )}`).then(r => r.json())
-        )
-    );
-    updateDashboard(results);
-}
-
-// 2초마다 폴링
-setInterval(fetchLatestValues, 2000);
-```
+운영 환경에서는 `SYS`가 아닌 조회 전용 계정을 사용하고, 백엔드의 연결 풀이나 장기 연결을
+재사용합니다. 사용자 입력을 SQL 문자열에 직접 연결하지 말고 SDK 파라미터 바인딩을 사용합니다.
 
 ---
 
@@ -228,35 +221,6 @@ setInterval(fetchLatestValues, 2000);
 | 10초 이상 | 요약·집계 지표 | 집계 쿼리와 조합 가능 |
 
 폴링 요청을 줄이려면 여러 태그를 단일 쿼리로 묶어 조회하고, 변경된 값만 화면에 반영합니다.
-
-```python
-import requests
-import time
-
-MACHBASE_URL = "http://localhost:5657/machbase"
-
-def get_dashboard_data():
-    query = """
-    SELECT t.name, t.time, t.value,
-           CASE WHEN t.value >= 90 THEN 'CRITICAL'
-                WHEN t.value >= 80 THEN 'WARNING'
-                ELSE 'NORMAL' END AS status
-      FROM sensor_tag t
-      JOIN (SELECT name, recent_row_time AS mt FROM v$sensor_tag_stat) s
-        ON t.name = s.name AND t.time = s.mt
-     ORDER BY t.name
-    """
-    resp = requests.get(MACHBASE_URL, params={"q": query})
-    return resp.json()
-
-while True:
-    data = get_dashboard_data()
-    for row in data["data"]["rows"]:
-        name, ts, value, status = row
-        print(f"{name:12s} | {ts} | {value:8.2f} | {status}")
-    print("---")
-    time.sleep(2)
-```
 
 ---
 
@@ -305,4 +269,3 @@ MAX_SESSION_COUNT = 100
 
 - TAG 테이블 조회 패턴: [/dbms/data-modeling-table-design/table-types-selection-type/](/dbms/data-modeling-table-design/table-types-selection-type/)
 - 통계 가상 테이블(`v$<table>_stat`) 활용은 대량 태그 환경에서 최신값 조회 성능을 크게 향상시킵니다.
-- 상태 알람 자동화는 [../stream-log-tag](/dbms/log-table-usage/stream-log-processing/#stream-log-tag) 시나리오를 참고하십시오.

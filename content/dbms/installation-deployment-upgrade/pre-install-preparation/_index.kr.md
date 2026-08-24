@@ -44,9 +44,8 @@ toc: true
 | 포트 | 용도 |
 |------|------|
 | **5656** | SQL 클라이언트 접속 (Native TCP) |
-| **5657** | HTTP REST API |
 
-SQL 클라이언트 포트를 변경하려면 `$MACHBASE_HOME/conf/machbase.conf`의 `PORT_NO` 항목을 수정합니다. 환경 변수 `MACHBASE_PORT_NO`로도 동일하게 적용됩니다. HTTP REST API 포트는 `HTTP_PORT_NO` 또는 환경 변수 `MACHBASE_HTTP_PORT_NO`로 변경합니다.
+SQL 클라이언트 포트를 변경하려면 `$MACHBASE_HOME/conf/machbase.conf`의 `PORT_NO` 항목을 수정합니다. 환경 변수 `MACHBASE_PORT_NO`로도 동일하게 적용됩니다.
 
 방화벽이 있는 환경에서는 위 포트를 인바운드 허용으로 열어야 합니다. Cluster Edition은 Coordinator link/admin 포트와 Broker, Warehouse, Deployer 포트도 추가로 열어야 합니다.
 
@@ -83,14 +82,14 @@ ulimit -Sn
 
 ```bash
 current=$(cat /proc/sys/net/ipv4/ip_local_reserved_ports)
-ports=5656-5657
+ports=5656
 sudo sysctl -w net.ipv4.ip_local_reserved_ports="${current:+$current,}$ports"
 ```
 
 기존 예약 포트가 있으면 덮어쓰지 말고 쉼표로 구분해 병합합니다. 영구 적용은 `/etc/sysctl.conf`의 `net.ipv4.ip_local_reserved_ports` 항목을 다음 값과 병합합니다.
 
 ```
-net.ipv4.ip_local_reserved_ports = 5656-5657
+net.ipv4.ip_local_reserved_ports = 5656
 ```
 
 ### 시간 동기화
@@ -145,7 +144,6 @@ $MACHBASE_HOME/
 ├── conf/       설정 파일 (machbase.conf 등)
 ├── dbs/        데이터 저장 공간
 ├── doc/        라이선스 문서
-├── http/       HTTP REST API 및 웹 리소스
 ├── include/    C/C++ 헤더 파일
 ├── install/    Makefile용 mk 파일
 ├── lib/        공유 라이브러리

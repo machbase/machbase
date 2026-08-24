@@ -131,10 +131,10 @@ INSERT INTO sensor_log VALUES (TO_DATE('2026-07-03 09:00:00', 'YYYY-MM-DD HH24:M
 
 **SDK APPEND**
 
-Machbase 전용 APPEND 프로토콜로 여러 행을 배치 전송합니다. 반복 `INSERT`보다 네트워크 왕복과
+Machbase Append API로 여러 행을 배치 전송합니다. 반복 `INSERT`보다 네트워크 왕복과
 SQL 파싱 횟수를 줄일 수 있어 지속적인 시계열 수집에 적합합니다.
 
-고속 입력이 필요한 환경에서는 `INSERT` 대신 APPEND 프로토콜을 먼저 검토하십시오. 자세한 내용은 [데이터 입력 방식 선택](/dbms/application-integration/data-input-load-export/)을 참고합니다.
+고속 입력이 필요한 환경에서는 `INSERT` 대신 Append API를 먼저 검토하십시오. 자세한 내용은 [데이터 입력 방식 선택](/dbms/application-integration/data-input-load-export/)을 참고합니다.
 
 ### append-only가 가져오는 설계 제약
 

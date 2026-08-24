@@ -1,11 +1,11 @@
 ---
 type: docs
-title: '18.8.6 SDK별 기능 지원표'
+title: '18.6.6 SDK별 기능 지원표'
 weight: 60
 toc: true
 ---
 
-Machbase는 다양한 프로그래밍 언어와 프로토콜을 위한 SDK를 제공합니다. 각 SDK는 지원하는 기능 범위가 다르므로, 애플리케이션 요구 사항에 맞는 SDK를 선택하는 것이 중요합니다.
+Machbase는 다양한 프로그래밍 언어를 위한 SDK를 제공합니다. 각 SDK는 지원하는 기능 범위가 다르므로, 애플리케이션 요구 사항에 맞는 SDK를 선택하는 것이 중요합니다.
 
 ## SDK별 주요 기능 지원 현황
 
@@ -17,15 +17,14 @@ Machbase는 다양한 프로그래밍 언어와 프로토콜을 위한 SDK를 �
 | **Go (database/sql)** | △ | X | O | O | O | O | DSN `database`/`db`, URL path/query |
 | **.NET** | O | X | X | X | △ | O | O (initial) |
 | **Node.js** | O | X | X | O | O | O | O |
-| **REST API** | O | X | X | X | X | X | X |
 | **Machbase SQLCLI** | O | O | △ | O | O | O | O |
 | **ODBC** | O | O | △ | O | △ | O | O |
 
 > 기호: O = 지원, △ = SDK별로 제한된 방식으로 지원, X = 미지원
 >
 > Go `database/sql`의 Transaction API는 기본 isolation level의 읽기/쓰기 트랜잭션에 한하며,
-> named bind와 DECIMAL/NULL/PRIMARY KEY 메타데이터는 neo-client 8.7.0 API 및 Machbase
-> 8.7.0 프로토콜(버전 4.0.3) 이상을 기준으로 합니다.
+> named bind와 DECIMAL/NULL/PRIMARY KEY 메타데이터는 Machbase 8.7.0 서버와 해당 버전용
+> 클라이언트 SDK를 기준으로 합니다.
 > Go `database/sql`의 Append는 표준 `sql.DB`/`sql.Tx` API에 없지만, neo-client의 `machbase.Conn.Appender()`를
 > `sql.Conn.Raw()`에서 선택적으로 사용할 수 있습니다. 신규 대량 입력에는 native `machgo`를 권장합니다.
 >
@@ -39,8 +38,8 @@ Machbase는 다양한 프로그래밍 언어와 프로토콜을 위한 SDK를 �
 
 다중 데이터베이스는 Standard Edition에서 지원합니다. client별 초기 database 선택과
 catalog 변경, connection pool 주의사항은 [다중 데이터베이스 운영 가이드](/dbms/operations-configuration-recovery/multi-database/#9-client에서-데이터베이스-선택)를
-참조하십시오. Machbase 8.7.0 프로토콜(버전 4.0.3)을 지원하지 않는 client/server 조합에서는
-비기본 database 선택을 보장하지 않습니다.
+참조하십시오. 다중 데이터베이스를 사용할 때는 Machbase 8.7.0 서버와 해당 버전용 클라이언트
+SDK를 함께 사용합니다.
 
 각 기능의 SDK별 상세 지원 내용은 [11장 개발 도구 연동의 SDK 지원 범위](/dbms/development-tools-integration/#sdk)에서 확인하십시오.
 
@@ -71,7 +70,7 @@ cursor.execute(
 
 cursor 하나는 server statement 하나만 보유합니다. 여러 SQL을 각각 계속 재사용해야 하면
 SQL별 prepared cursor를 생성합니다. `%s`, `?`, `%(name)s`, `:name`을 지원하며 named
-marker에는 Machbase 8.7.0 프로토콜(버전 4.0.3) 이상이 필요합니다.
+marker에는 Machbase 8.7.0 서버와 해당 버전용 클라이언트 SDK가 필요합니다.
 
 ### AUTH KEY: SQLCLI, ODBC, JDBC만 완전 지원
 
@@ -86,12 +85,11 @@ Go `database/sql` 드라이버는 기본 isolation level에서 `Begin`/`BeginTx`
 않습니다. Standard Edition의 TRANSACTION 테이블에는 Go SQL 드라이버의 `BeginTx` 또는
 JDBC의 `setAutoCommit(false)`, `commit()`, `rollback()`을 사용할 수 있습니다.
 
-### Go와 REST API: Nullable 메타데이터
+### Go: Nullable 메타데이터
 
 Go native는 `api.Column.Nullability`, Go `database/sql`은 `Rows.ColumnTypeNullable()`로
 SELECT 결과 컬럼의 Nullable 상태를 조회할 수 있습니다. 두 API 모두 서버가 정보를 알 수
 없는 경우 unknown 상태를 반환할 수 있으므로 실제 scan에는 nullable 대상 타입을 사용합니다.
-REST API에는 결과 메타데이터 API가 없습니다.
 
 ### PRIMARY KEY 결과 메타데이터
 
@@ -110,8 +108,8 @@ PK를 조회할 수 있습니다. 상세한 API 이름과 직접 컬럼·표현�
 | AUTH KEY 키 기반 인증 | JDBC, Machbase SQLCLI, ODBC, machsql |
 | TRANSACTION 테이블 트랜잭션 | Go (`database/sql`), JDBC 표준 Connection API, Machbase SQLCLI, ODBC |
 | SELECT 결과의 NULL 가능 여부 확인 | Go, Machbase SQLCLI, ODBC, JDBC, Python, Node.js, .NET |
-| 웹 서비스/마이크로서비스 통합 | REST API |
+| 웹 서비스/마이크로서비스 통합 | 백엔드 언어용 JDBC, Python, Go, Node.js, .NET 또는 ODBC |
 | Go 표준 인터페이스 | Go (database/sql) |
-| 브라우저/스크립트 연동 | Node.js, REST API |
+| 브라우저/스크립트 연동 | Node.js 또는 Python 기반 백엔드 |
 
 상세 선택 규칙은 [AI Agent Reference: SDK/API 선택 규칙](/dbms/reference/ai-agent-reference/sdk-api-selection-rules/)을 참고하십시오.

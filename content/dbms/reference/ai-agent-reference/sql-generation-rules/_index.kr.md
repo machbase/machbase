@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.10.8 sql-generation-rules'
+title: '18.8.8 sql-generation-rules'
 weight: 80
 toc: true
 ---
@@ -73,7 +73,6 @@ WHERE time > ADD_TIME(sysdate, '0/0/0 0:-30:0');
 | .NET (MachConnector) | `?` | `cmd.Parameters.Add(new MachParameter { Value = "v1" })` |
 | Machbase SQLCLI | `?` | `SQLBindParameter(...)` |
 | ODBC | `?` | `SQLBindParameter(...)` |
-| REST API | 해당 없음 | URL 파라미터 또는 JSON body로 값 직접 포함 |
 
 > Python에서 `%s`와 `?`에는 sequence를, `%(name)s`와 `:name`에는 mapping을 전달합니다.
 > 동일 SQL을 여러 호출에서 재사용할 때는 Python API 2.4의 `cursor(prepared=True)`를

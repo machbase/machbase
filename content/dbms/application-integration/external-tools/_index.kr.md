@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '12.5 외부 도구 연동'
+title: '12.4 외부 도구 연동'
 weight: 50
 toc: true
 ---
@@ -227,60 +227,38 @@ SELECT * FROM log_table LIMIT 10;
 
 ## Grafana plugin
 
-Grafana는 오픈소스 관측성 플랫폼입니다. Machbase 데이터소스 플러그인을 통해
-MWA(Machbase Web Admin)의 Grafana용 REST 엔드포인트를 호출하여 시계열
-데이터를 시각화합니다.
+Grafana는 오픈소스 관측성 플랫폼입니다. JDBC 또는 ODBC 데이터 소스 플러그인을 사용해
+Machbase에 연결하고 시계열 데이터를 시각화합니다.
 
 ### 사전 요구 사항
 
-- Grafana 4.5.x 호환 환경
-- Machbase Web Admin(MWA) 실행
-- MWA HTTP 포트 접근 가능 (기본값: `5001`)
-- Machbase 배포 디렉터리의 Grafana 플러그인 패키지
-  (`$MACHBASE_HOME/3rd-party/grafana/machbase.tgz`)
-
-### 플러그인 설치
-
-Machbase 배포 패키지에 포함된 플러그인을 Grafana 플러그인 디렉터리에 압축 해제합니다:
-
-```bash
-sudo mkdir -p /var/lib/grafana/plugins/machbase
-sudo tar -xzf $MACHBASE_HOME/3rd-party/grafana/machbase.tgz \
-    -C /var/lib/grafana/plugins/machbase
-sudo systemctl restart grafana-server
-```
-
-#### 서명되지 않은 플러그인 허용 (개발/테스트 환경)
-
-`grafana.ini` 또는 환경 변수를 통해 서명 검사를 우회할 수 있습니다.
-
-```ini
-# /etc/grafana/grafana.ini
-[plugins]
-allow_loading_unsigned_plugins = machbase
-```
+- 운영 중인 Grafana 환경
+- Grafana 서버에서 Machbase TCP 포트(기본 5656)로 연결 가능한 네트워크
+- Grafana 환경에 맞는 JDBC 또는 ODBC 데이터 소스 플러그인
+- JDBC 사용 시 Machbase JDBC 드라이버, ODBC 사용 시 Machbase ODBC 드라이버와 DSN
 
 ### 데이터소스 연결 설정
 
 1. Grafana 사이드바에서 **Configuration → Data Sources** 로 이동합니다.
-2. **Add data source** 를 클릭하고 `Machbase` 를 검색하여 선택합니다.
-3. 아래 항목을 입력합니다.
+2. **Add data source** 를 클릭하고 설치한 JDBC 또는 ODBC 데이터 소스를 선택합니다.
+3. 사용하는 방식에 맞게 연결 정보를 입력합니다.
 
-| 항목 | 값 | 설명 |
-|------|----|------|
-| **URL** | `http://MWA_HOST:5001/machbase` | MWA의 Grafana REST 엔드포인트 |
+| 방식 | 필수 설정 | 예시 |
+|------|-----------|------|
+| JDBC | 드라이버 클래스, JDBC URL, 사용자, 비밀번호 | `com.machbase.jdbc.MachbaseDriver`, `jdbc:machbase://db.example.com:5656/machbasedb` |
+| ODBC | Machbase DSN, 사용자, 비밀번호 | `machbase_dsn`, `DASHBOARD_USER` |
 
 4. **Save & Test** 를 클릭하여 연결을 확인합니다.
 
-> **주의**: Grafana가 도커 컨테이너에서 실행 중이고 MWA가 호스트에서 실행 중이라면
-> `MWA_HOST` 를 `host.docker.internal` (macOS/Windows) 또는 호스트 IP로 설정합니다.
+Grafana의 JDBC와 ODBC 플러그인은 설정 필드와 시간 변수 형식이 서로 다를 수 있습니다.
+사용하는 플러그인의 문서에서 드라이버 파일 위치, 연결 풀과 변수 치환 방식을 함께 확인합니다.
 
 ### 패널 설정 및 쿼리 작성
 
 #### 시계열 패널 기본 구성
 
 1. 대시보드에서 **Add panel → Time series** 를 선택합니다.
-2. 데이터소스로 `Machbase` 를 선택합니다.
+2. 구성한 JDBC 또는 ODBC 데이터소스를 선택합니다.
 3. 쿼리 편집기에 SQL을 입력합니다.
 
 #### SQL 쿼리 작성 팁
@@ -351,7 +329,7 @@ ORDER BY time ASC
 | 항목 | 값 |
 |------|----|
 | **Type** | Query |
-| **Data source** | Machbase |
+| **Data source** | 구성한 JDBC 또는 ODBC 데이터소스 |
 | **Query** | `SELECT DISTINCT name FROM sensor_data` |
 
 3. 패널 쿼리에서 변수를 사용합니다.
@@ -399,9 +377,9 @@ ORDER BY time ASC
 
 | 증상 | 원인 | 해결 방법 |
 |------|------|-----------|
-| `Data source connection failed` | URL 또는 포트 오류 | MWA 포트(기본 5001)와 `/machbase` 경로 접근 가능 여부 확인 |
+| `Data source connection failed` | JDBC URL, ODBC DSN, 계정 또는 포트 오류 | TCP 5656 연결과 드라이버 설정 확인 |
 | 데이터가 표시되지 않음 | 시간 범위 또는 쿼리 오류 | `time` 별칭과 시간 필터 조건 확인 |
-| 플러그인이 목록에 없음 | 설치 또는 서명 오류 | `grafana.ini` 에서 unsigned plugin 허용 설정 확인 |
+| 플러그인이 목록에 없음 | 데이터 소스 플러그인이 설치되지 않음 | Grafana 환경에 맞는 JDBC 또는 ODBC 플러그인 설치 확인 |
 | 쿼리가 느림 | 인덱스 미사용 | TAG 테이블 사용, `name` 조건과 시간 범위 필터 명시 |
 
 <a id="tableau-connector"></a>

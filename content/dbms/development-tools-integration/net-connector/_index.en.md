@@ -616,7 +616,7 @@ public sealed class MachAppendWriter
 ```
 
 APPEND is supported as a separate class using MachCommand.
-This is a class to support MACHBASE Append Protocol, not ADO.NET standard.
+This class provides the Machbase Append API; it is not part of the ADO.NET standard.
 
 It is created with MachCommand's AppendOpen () without a separate constructor.
 

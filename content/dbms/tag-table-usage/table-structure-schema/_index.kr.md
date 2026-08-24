@@ -766,9 +766,7 @@ binary literal로 지원하지 않습니다.
   0 패딩은 텍스트 출력에 표시되지 않습니다.
 - machloader: 스키마에 `BINARY(n)`을 선언하고, 잘못된 값이나 길이 초과는
   실패합니다.
-- REST append: JSON 문자열을 헥스로 디코드하며, 헥스 파싱 실패 시 기존 base64
-  경로로 처리합니다.
-- Machbase SQLCLI, ODBC, Java, C#, Node 드라이버는 고정 길이 버퍼로 송수신하며 메타데이터
+- Machbase SQLCLI, ODBC, Java, C#, Node.js 드라이버는 고정 길이 버퍼로 송수신하며 메타데이터
   `LENGTH`는 바이트 길이입니다.
 
 <a id="original-85-varchar-storage"></a>

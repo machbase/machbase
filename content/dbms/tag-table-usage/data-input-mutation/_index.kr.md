@@ -4,7 +4,8 @@ weight: 40
 toc: true
 ---
 
-TAG 테이블에 데이터를 입력하는 방법은 INSERT 문, CSV 임포트, RESTful API, SDK 네 가지가 있습니다. 데이터 규모와 수집 환경에 따라 적합한 방법이 다르므로 각각의 특징과 사용법을 살펴봅니다.
+TAG 테이블에 데이터를 입력하는 방법은 INSERT 문, CSV 임포트와 SDK가 있습니다. 데이터 규모와
+수집 환경에 따라 적합한 방법이 다르므로 각각의 특징과 사용법을 살펴봅니다.
 
 <a id="original-85-inserting-data"></a>
 
@@ -149,45 +150,7 @@ csvimport -t TAG -d data.csv -F "time YYYY-MM-DD HH24:MI:SS mmm:uuu:nnn" -l erro
 
 > **중요**: 임포트 중 존재하지 않는 태그 이름은 자동 등록됩니다. 단위, 위치, 상태 같은 메타데이터 값을 명시해야 하는 경우에는 데이터를 로드하기 전에 태그 메타데이터를 먼저 등록하십시오.
 
-### 방법 3: RESTful API
-
-HTTP 요청으로 데이터를 삽입합니다. IoT 디바이스나 웹 애플리케이션에서 주로 활용합니다.
-
-#### API 구문
-
-```json
-{
-  "values": [
-    [TAG_NAME, TAG_TIME, VALUE],
-    [TAG_NAME, TAG_TIME, VALUE],
-    ...
-  ],
-  "date_format": "YYYY-MM-DD HH24:MI:SS mmm:uuu:nnn"
-}
-```
-
-`date_format`이 생략되면 기본 형식 `YYYY-MM-DD HH24:MI:SS mmm:uuu:nnn`이 사용됩니다.
-
-시간축 Tag 테이블은 축 값에 날짜/시간 문자열을 사용하고, 거리축 Tag 테이블은 축 컬럼 타입에 맞는 숫자 값을 사용합니다.
-
-#### API 예제
-
-```bash
-curl -X POST http://localhost:5657/machiot/datapoints/raw/TAG \
-  -H "Content-Type: application/json" \
-  -d '{
-    "date_format": "YYYY-MM-DD HH24:MI:SS",
-    "values": [
-      ["TAG_0001", "2024-01-01 10:00:00", 25.5],
-      ["TAG_0001", "2024-01-01 10:01:00", 26.0],
-      ["TAG_0002", "2024-01-01 10:00:00", 30.2]
-    ]
-  }'
-```
-
-> **사용 시기**: IoT 디바이스, 실시간 데이터 스트리밍, 웹 애플리케이션
-
-### 방법 4: SDK 통합
+### 방법 3: SDK 통합
 
 애플리케이션에서 프로그래밍 방식으로 데이터를 삽입합니다.
 
@@ -224,7 +187,6 @@ conn.close()
 |--------|----------|------|------|
 | **INSERT** | 테스트, 소규모 데이터셋 | 간단, 대화형 | 대용량 데이터에는 느림 |
 | **CSV 임포트** | 대량 로딩, 마이그레이션 | 매우 빠름, 효율적 | 파일 준비 필요 |
-| **RESTful API** | IoT, 웹 앱 | 유연, 플랫폼 독립적 | 네트워크 오버헤드 |
 | **SDK** | 애플리케이션 | 완전한 제어, 타입 안전성 | 개발 필요 |
 
 ### 추가 컬럼 사용

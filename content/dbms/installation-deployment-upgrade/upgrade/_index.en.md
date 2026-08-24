@@ -5,6 +5,12 @@ weight: 40
 toc: true
 ---
 
+<a id="upgrade-check-870"></a>
+
+## Machbase 8.7.0 pre-upgrade check
+
+Remove obsolete HTTP, STREAM, and Result Cache properties and migrate REST, STREAM, WebAdmin,
+and MachCLI dependencies before replacing the server package.
 
 
 <a id="standard-edition"></a>

@@ -12,8 +12,7 @@ toc: true
 | 프로퍼티 | 기본값 | 범위 | 설명 |
 |----------|--------|------|------|
 | `PORT_NO` | 5656 | 1024~65535 | 클라이언트 TCP/IP 연결 포트 |
-| `HTTP_PORT_NO` | 5657 | 1024~65535 | REST API HTTP 포트 |
-| `BIND_IP_ADDRESS` | 0.0.0.0 | - | INET/HTTP 리스너 바인드 IP. `0.0.0.0`은 모든 인터페이스 |
+| `BIND_IP_ADDRESS` | 0.0.0.0 | - | 클라이언트 리스너 바인드 IP. `0.0.0.0`은 모든 인터페이스 |
 | `GRANT_REMOTE_ACCESS` | 1 | 0~1 | 원격 접속 허용 여부. 0이면 로컬만 허용 |
 | `MAX_SESSION_COUNT` | 4096 | 64~2^64-1 | 동시 세션 최대 개수 |
 | `MAX_STMT_COUNT_PER_SESSION` | 1024 | 512~2^32-1 | 세션당 최대 statement 수 |
@@ -22,9 +21,6 @@ toc: true
 | `UNIX_PATH` | machbase-unix | - | Unix domain socket 파일 이름 |
 | `DBS_PATH` | ?/dbs | - | 데이터베이스 파일 저장 경로(`?`는 `$MACHBASE_HOME`) |
 | `PID_PATH` | ?/conf | - | PID 파일 저장 경로 |
-| `HTTP_ENABLE` | 1 | 0~1 | REST API 서비스 활성화 여부 |
-| `HTTP_THREAD_COUNT` | 2 | 0~1024 | HTTP 서버 처리 스레드 수 |
-| `HTTP_MAX_MEM` | 536870912 | 1MB~2^64-1 | 웹 세션당 최대 메모리(바이트). 기본 512MB |
 
 ## CPU / 스레드 설정
 
@@ -105,7 +101,6 @@ toc: true
 
 | 프로퍼티 | 기본값 | 범위 | 설명 |
 |----------|--------|------|------|
-| `HTTP_AUTH` | 0 | 0~1 | REST API Basic Authentication 사용 여부 |
 | `ENABLE_CASE_SENSITIVE_PASSWORD` | 0 | 0~1 | 비밀번호 대소문자 구분 여부. 0이면 대문자로 변환 |
 
 ## 세션 / 쿼리 설정

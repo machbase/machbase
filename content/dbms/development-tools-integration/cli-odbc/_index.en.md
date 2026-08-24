@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '11.1 CLI/ODBC'
+title: '11.1 Machbase SQLCLI and ODBC'
 weight: 10
 toc: true
 aliases:
@@ -8,7 +8,7 @@ aliases:
 ---
 
 
-## CLI/ODBC API
+## Machbase SQLCLI and ODBC APIs
 
 
 CLI is  a software development standard defined in [ISO](https://en.wikipedia.org/wiki/International_Organization_for_Standardization)/[IEC](https://en.wikipedia.org/wiki/International_Electrotechnical_Commission) 9075-3: 2003.
@@ -82,7 +82,7 @@ The CLI extension function is a function for implementing the Append protocol pr
 
 This function consists of four functions: channel open, channel data input, channel flush, and channel closing.
 
-### Understanding Append Protocol
+### Understanding the Append API
 
 The Append protocol provided by Machbase works asynchronously. The term asynchronous means that the response to a specific job requested by the client to the server does not completely synchronize with each other but occurs at the moment when an arbitrary event occurs. That is, even if a client has performed an append, you can not immediately get or verify the results of that execution, and you can check it at any time when the server is ready. For this reason, developers who develop applications using the Append protocol should have an understanding of the following internal behaviors. The following discussion is about how and when a client detects asynchronous errors that occur in the server.
 
@@ -974,7 +974,7 @@ In the case of Windows that inputs/outputs strings in methods other than UTF-8, 
 |Linux|UTF-8|N/A|UTF-8 only supported|
 
 
-## CLI/ODBC Examples
+## Machbase SQLCLI and ODBC Examples
 
 
 ## Application Development

@@ -12,7 +12,7 @@ toc: true
 
 | 페이지 | 내용 |
 |--------|------|
-| [쿼리가 느릴 때](/dbms/troubleshooting/performance/#slow) | 느린 쿼리 탐지, EXPLAIN 분석, 인덱스 및 캐시 설정 |
+| [쿼리가 느릴 때](/dbms/troubleshooting/performance/#slow) | 느린 쿼리 탐지, EXPLAIN 분석, 인덱스 및 시간 범위 설정 |
 | [검색 결과가 예상과 다를 때](/dbms/troubleshooting/performance/#search-results) | 빈 결과, 중복 데이터, 집계 오차, 타임존 문제 |
 | [메모리 부족](/dbms/troubleshooting/performance/#memory-out-of) | OOM 증상, 메모리 사용량 확인, 캐시 파라미터 조정 |
 | [TRANSACTION 테이블 트랜잭션/잠금 충돌](/dbms/rdb-table-usage/locking-conflict-timeout/#transaction-locking-conflict-rdb) | 잠금 현황 확인, 장시간 트랜잭션 종료, 예방 방법 |
@@ -102,30 +102,7 @@ DISK_COLUMNAR_TABLE_MINMAX_CACHE_MAX_SIZE = 131072
 
 값이 `0`이면 캐시가 비활성화된 것입니다. 적절한 크기(단위: KB)로 설정하고 서버를 재시작합니다.
 
-#### 3. 결과 캐시 미활성화
-
-**증상**: 동일한 쿼리를 반복 실행해도 매번 느림
-
-**확인 방법**
-
-```sql
-SELECT * FROM v$property WHERE name = 'RS_CACHE_ENABLE';
-```
-
-값이 `0`이면 결과 캐시가 꺼져 있는 것입니다.
-
-**해결 방법**
-
-`machbase.conf`에서 결과 캐시를 활성화합니다.
-
-```
-RS_CACHE_ENABLE = 1
-RS_CACHE_MAX_MEMORY_SIZE = 536870912
-```
-
-설정 후 서버를 재시작합니다.
-
-#### 4. 과도한 파티션 스캔
+#### 3. 과도한 파티션 스캔
 
 **증상**: 시간 범위 조건을 줬는데도 쿼리가 느림
 
@@ -369,27 +346,7 @@ grep -i "out of memory\|OOM\|memory" $MACHBASE_HOME/trc/machbase.trc | tail -20
 
 ### 원인별 해결 방법
 
-#### 1. 결과 캐시 과다 사용
-
-결과 캐시(`RS_CACHE`)가 메모리의 상당 부분을 점유하고 있는 경우 최대 크기를 줄입니다.
-
-**확인**
-
-```sql
-SELECT * FROM v$property WHERE name LIKE 'RS_CACHE%';
-```
-
-**해결**
-
-`machbase.conf`에서 최대 메모리 크기를 줄입니다.
-
-```
-RS_CACHE_MAX_MEMORY_SIZE = 268435456   # 256MB로 축소 (기본값 512MB)
-```
-
-설정 후 서버를 재시작합니다.
-
-#### 2. 대용량 쿼리 동시 실행
+#### 1. 대용량 쿼리 동시 실행
 
 여러 세션에서 대용량 쿼리를 동시에 실행하면 쿼리별 임시 메모리가 합산되어 OOM이 발생할 수 있습니다.
 
@@ -412,7 +369,7 @@ ALTER SYSTEM KILL SESSION <sess_id>;
 
 이후 동시 실행 쿼리 수를 줄이거나 쿼리에 시간 범위 조건을 추가하여 스캔 범위를 좁힙니다.
 
-#### 3. 버퍼 크기 과다 설정
+#### 2. 버퍼 크기 과다 설정
 
 `machbase.conf`의 버퍼 관련 파라미터가 물리 메모리에 비해 과하게 설정된 경우입니다.
 
@@ -422,17 +379,17 @@ ALTER SYSTEM KILL SESSION <sess_id>;
 
 | 파라미터 | 기본값 | 설명 |
 |---------|--------|------|
-| `RS_CACHE_MAX_MEMORY_SIZE` | 536870912 (512MB) | 결과 캐시 최대 메모리 |
 | `TAG_CACHE_MAX_MEMORY_SIZE` | 134217728 (128MB) | TAG 캐시 메모리 |
 | `DISK_COLUMNAR_TABLE_MINMAX_CACHE_MAX_SIZE` | 131072 (128MB) | MINMAX 캐시 크기 (KB 단위) |
 
-물리 메모리가 8GB라면 위 세 항목의 합계가 2GB를 넘지 않도록 설정하십시오. 남은 메모리는 OS 및 쿼리 실행용으로 확보해야 합니다.
+각 상한은 `PROCESS_MAX_SIZE`와 물리 메모리 범위 안에서 운영 체제 및 쿼리 실행에 필요한
+메모리를 남기도록 조정합니다. 변경 전후의 RSS, swap과 OOM 기록을 비교합니다.
 
 ### OOM 재발 방지
 
 **단기 조치**
 
-- 결과 캐시와 TAG 캐시 크기를 현재 값의 50%로 줄입니다.
+- TAG 캐시와 쿼리 메모리 상한을 점검합니다.
 - 동시 접속 수를 `MAX_SESSION_COUNT` 파라미터로 제한합니다.
 
 **장기 조치**
@@ -445,7 +402,5 @@ ALTER SYSTEM KILL SESSION <sess_id>;
 
 | 파라미터 | 기본값 | 설명 |
 |---------|--------|------|
-| `RS_CACHE_ENABLE` | `1` | 결과 캐시 활성화 여부 (`0`으로 설정해 일시적으로 끌 수 있음) |
-| `RS_CACHE_MAX_MEMORY_SIZE` | `536870912` | 결과 캐시 최대 메모리 (bytes) |
 | `TAG_CACHE_MAX_MEMORY_SIZE` | `134217728` | TAG 캐시 최대 메모리 (bytes) |
 | `MAX_SESSION_COUNT` | `1000` | 최대 동시 세션 수 |

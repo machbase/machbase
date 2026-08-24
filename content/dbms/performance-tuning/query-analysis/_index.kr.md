@@ -26,7 +26,6 @@ toc: true
 | 누락 구간 보간 | INTERPOLATION 힌트 |
 | 텍스트 패턴 검색 | SEARCH / ESEARCH / LIKE |
 | 설정값·상태 JOIN | LOG/TAG ↔ LOOKUP/VOLATILE JOIN |
-| 실시간 변환·적재 | STREAM |
 
 하위 페이지에서 테이블 타입별 조회 제약과 선택 가이드를 확인하십시오.
 
@@ -87,10 +86,6 @@ FROM tag t
 LEFT JOIN device_meta l ON t.name = l.sensor_id
 WHERE t.time BETWEEN '2024-01-15 00:00:00' AND '2024-01-15 12:00:00';
 ```
-
-##### 실시간 변환·적재 자동화
-
-STREAM을 사용하면 데이터가 삽입될 때마다 자동으로 쿼리가 실행되어 다른 테이블로 적재합니다. 상세는 [STREAM](/dbms/operations-configuration-recovery/automation-stream/#stream)을 참고하십시오.
 
 <a id="selection-query-method-table-types-type-query"></a>
 

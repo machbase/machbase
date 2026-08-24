@@ -113,7 +113,7 @@ machcoordinatoradmin -h
 |----------|----------|------|
 | `--file-name=filename` | `--add-package` | 패키지 파일 이름 |
 | `--port-no=portno` | `--add-node`, `--attach-node` | 서비스 포트 번호 |
-| `--http-port-no=portno` | `--add-node`, `--attach-node` | HTTP 관리 포트 번호 |
+| `--http-admin-port=portno` | Coordinator/Deployer `--add-node`, `--attach-node` | 관리 REST 포트 번호 |
 | `--deployer=node` | `--add-node` | Deployer 노드 이름 |
 | `--package-name=name` | `--add-node`, `--upgrade-node` | 설치 소스 패키지 이름 |
 | `--home-path=path` | `--add-node`, `--attach-node` | 노드 설치 경로 |
@@ -161,7 +161,6 @@ machcoordinatoradmin \
   --package-name=machbase \
   --home-path=/home/machbase/warehouse_a1 \
   --port-no=5400 \
-  --http-port-no=5402 \
   --group=Group1 \
   --alias=warehouse-a1 \
   --dbs-path=/data/machbase/warehouse_a1_dbs

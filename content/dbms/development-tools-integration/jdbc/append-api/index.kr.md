@@ -7,7 +7,7 @@ aliases:
   - /dbms/reference/sdk-api/jdbc/append-api/
 ---
 
-Machbase Append API는 LOG와 TAG 테이블에 여러 행을 연속 입력하는 전용 프로토콜입니다.
+Machbase Append API는 LOG와 TAG 테이블에 여러 행을 연속 입력하는 대량 입력 API입니다.
 JDBC에서는 `MachStatement` 확장 메서드로 사용합니다.
 
 ## API

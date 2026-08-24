@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '11.1 CLI/ODBC'
+title: '11.1 Machbase SQLCLI와 ODBC'
 weight: 10
 toc: true
 aliases:
@@ -8,7 +8,7 @@ aliases:
 ---
 
 
-## CLI/ODBC API
+## Machbase SQLCLI와 ODBC API
 
 
 CLI(Call Level Interface)는 [ISO](https://en.wikipedia.org/wiki/International_Organization_for_Standardization)/[IEC](https://en.wikipedia.org/wiki/International_Electrotechnical_Commission) 9075-3:2003에 정의된 소프트웨어 개발 표준으로, SQL 전달과 결과 수신에 관한 함수 명세를 규정합니다. 1990년대 초 C와 COBOL 용으로 개발되었으며 현재까지 스펙이 유지되고 있습니다.
@@ -182,9 +182,9 @@ SQLFreeStmt(stmt, SQL_CLOSE);
 사용자는 `DESC table_name`의 `[ PRIMARY KEY ]` 섹션에서 PK 이름, 컬럼, key sequence를
 확인합니다.
 
-Machbase 8.7.0 프로토콜(버전 4.0.3) 메타데이터를 협상한 경우 SELECT 결과 컬럼에도 PK
-플래그가 전달됩니다. 구형 프로토콜(버전 4.0.2 이하)에서는 기존 호환성을 위해 결과
-컬럼 PK 플래그를 전달하지 않습니다.
+Machbase 8.7.0 서버와 해당 버전 SDK를 함께 사용하면 SELECT 결과 컬럼에도 PK 플래그가
+전달됩니다. 이전 버전 서버 또는 SDK와 연결한 경우에는 결과 컬럼 PK 플래그가 제공되지
+않을 수 있습니다.
 
 ## Named Bind Parameter
 
@@ -1183,7 +1183,7 @@ UTF-8 이외의 방식으로 문자열을 입/출력하는 Windows의 경우 ODB
 | Linux   | UTF-8               | N/A            | UTF-8 만 지원됨                                                |
 
 
-## CLI/ODBC 예제
+## Machbase SQLCLI와 ODBC 예제
 
 
 ## 응용 프로그램 개발

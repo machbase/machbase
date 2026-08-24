@@ -585,4 +585,3 @@ HAVING COUNT(*) > 60   -- 1시간에 60건 이상이면 의심
 
 - [백업, 복원, 마운트](../../operations-configuration-recovery/backup-restore-mount/)
 - [센서 데이터 저장과 ROLLUP 분석](/dbms/tag-rollup-usage/patterns-scenarios/#storage-sensor-data-rollup)
-- [STREAM으로 LOG를 TAG로 자동 적재](/dbms/log-table-usage/stream-log-processing/#stream-log-tag)

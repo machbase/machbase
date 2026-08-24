@@ -24,4 +24,3 @@ LOG 테이블은 시간순으로 지속 입력되는 이벤트와 로그 데이�
 | [정규식과 네트워크 타입 조회](./regex-network-query/) | REGEXP, IPV4/IPV6 연산자 |
 | [Collector 기반 수집](./collector-ingestion/) | 파일/SFTP Collector 설정과 운영 |
 | [Fluentd 입력 파이프라인](./fluentd-pipeline/) | Fluentd/Fluent Bit 연동 |
-| [STREAM으로 LOG 데이터 처리](./stream-log-processing/) | LOG → TAG 자동 적재 파이프라인 |

@@ -13,8 +13,8 @@ TAG 테이블은 태그 이름과 시간 또는 거리 축을 기준으로 계�
 | [개요와 사용 기준](./overview-use-criteria/) | TAG 테이블의 개념과 사용 기준 |
 | [테이블 구조와 스키마](./table-structure-schema/) | 컬럼 설계, 스토리지 전략, 중복 제거 |
 | [생성, 변경, 삭제](./create-alter-drop/) | TAG 테이블 DDL과 속성 설정 |
-| [데이터 입력과 변경](./data-input-mutation/) | INSERT, CSV 임포트, REST API, SDK 입력 |
-| [조회와 분석](./query-analysis/) | 시간·거리 범위 조회, 통계, REST API 조회 |
+| [데이터 입력과 변경](./data-input-mutation/) | INSERT, CSV 임포트, SDK 입력 |
+| [조회와 분석](./query-analysis/) | 시간·거리 범위 조회와 통계 |
 | [인덱스와 성능](./index-performance/) | 자동 인덱스, METADATA 인덱스, TAG/KV 인덱스 |
 | [운영과 데이터 생명주기](./operations-lifecycle/) | 데이터 삭제, 중복 제거 운영 |
 | [제약, 오류, 문제 해결](./constraints-errors-troubleshooting/) | UPDATE 조건 오류, SET 대상 오류, 제약사항 |

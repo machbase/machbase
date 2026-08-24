@@ -4,7 +4,8 @@ weight: 50
 toc: true
 ---
 
-TAG 테이블에서 시계열 데이터를 조회하는 주요 패턴을 다룹니다. 시간축·거리축 범위 조회, 다중 태그 검색, 통계 뷰 활용, RESTful API 추출까지 포함합니다.
+TAG 테이블에서 시계열 데이터를 조회하는 주요 패턴을 다룹니다. 시간축·거리축 범위 조회,
+다중 태그 검색과 통계 뷰 활용을 포함합니다.
 
 <a id="original-85-querying-data"></a>
 
@@ -339,57 +340,6 @@ NULL                            NULL                        NULL                
 tag-1                                                                             3                    2022-08-10 00:00:00 000:000:000 2022-08-12 00:00:00 000:000:000 NULL
 NULL                            NULL                        NULL                            2022-08-10 00:00:00 000:000:000
 [2] row(s) selected.
-```
-
-
-### RESTful API를 사용한 추출
-
-#### RESTful API 준비
-
-다음 속성 값을 지정하고 서버를 시작합니다.
-
-machbase.conf
-
-```
-HTTP_ENABLE = 1
-HTTP_PORT_NO = 5657
-```
-
-활성 HTTP 포트는 `V$HTTP_STATUS`에서 확인할 수 있습니다.
-
-```sql
-SELECT HTTP_PORT FROM V$HTTP_STATUS;
-```
-
-RESTful API 호출 규칙
-
-**SELECT 형식**
-
-```bash
-http://{host}:{http_port}/machiot-rest-api/datapoints/raw/{Table}/{TagName}/{Start}/{End}/{Direction}/{Count}/{Offset}/
-
-Table      : Tag 테이블 이름
-TagName    : Tag 이름. 여러 tag는 쉼표로 구분합니다.
-Start, End : 범위. YYYY-MM-DD, YYYY-MM-DDTHH24:MI:SS, YYYY-MM-DDTHH24:MI:SS,mmm 형식을 사용할 수 있습니다.
-Direction  : 0은 시간 오름차순입니다.
-Count      : LIMIT. 0이면 전체 행을 조회합니다.
-Offset     : 오프셋. 오프셋이 필요 없으면 0을 지정합니다.
-```
-
-#### CURL을 사용한 단일 tag 데이터 조회 샘플
-
-**단일 Tag**
-
-```bash
-$ curl "http://127.0.0.1:5657/machiot-rest-api/datapoints/raw/TAG/TAG_0001/2018-01-01T00:00:00/2018-01-06T00:00:00/0/0/0"
-```
-
-#### CURL을 사용한 다중 tag 데이터 조회
-
-두 개의 tag 값을 조회하는 예제입니다.
-
-```bash
-$ curl "http://127.0.0.1:5657/machiot-rest-api/datapoints/raw/TAG/TAG_0001,TAG_0002/2018-01-05T00:00:00/2018-02-05T00:00:00/0/0/0"
 ```
 
 

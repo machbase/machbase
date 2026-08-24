@@ -1,13 +1,15 @@
 ---
 type: docs
-title: '18.8.10 호환성 및 XMA protocol compatibility'
+title: '18.6.9 서버와 SDK 호환성'
 weight: 100
 toc: true
 ---
 
-XMA(eXtended Machbase Architecture) 프로토콜은 Machbase 서버와 클라이언트 드라이버(JDBC, ODBC, Python, Go 등) 사이의 통신 프로토콜입니다. 프로토콜 버전이 맞지 않으면 연결 실패나 기능 제한이 발생할 수 있습니다.
+Machbase 서버와 SDK의 버전이 다르면 기본 연결은 가능하더라도 최신 인증, 메타데이터,
+Named Bind Parameter 기능이 제한될 수 있습니다. 이 절에서는 서버와 SDK 버전 조합별 지원
+범위와 업그레이드 순서를 설명합니다.
 
-## 프로토콜 버전 호환 표
+## 서버와 SDK 버전 호환 표
 
 | 서버 버전 | 8.5 클라이언트 드라이버 | 8.7.0 클라이언트 드라이버 |
 |-----------|:---------------------:|:---------------------:|
@@ -18,11 +20,11 @@ XMA(eXtended Machbase Architecture) 프로토콜은 Machbase 서버와 클라이
 - **제한적 호환**: 기본 연결은 가능하나 8.7.0 신규 기능(AUTH KEY 확장 등)이 동작하지 않을 수 있습니다.
 - **하위 호환**: 8.5 서버 범위의 기능만 사용 가능합니다.
 
-## 8.7.0 XMA 프로토콜 주요 변경 사항
+## Machbase 8.7.0 SDK의 주요 변경 사항
 
 ### AUTH KEY 인증 확장
 
-8.7.0에서 AUTH KEY challenge 인증 프로토콜이 확장되었습니다.
+8.7.0에서 AUTH KEY challenge 인증 방식이 확장되었습니다.
 
 - 지원 서명 방식: `ECDSA`, `RSA_PKCS1_V15`, `RSA_PSS`
 - 8.5 이하 드라이버는 신규 서명 방식(`RSA_PSS`)을 지원하지 않을 수 있습니다.
@@ -95,7 +97,7 @@ Machbase 8.7.0에서 추가된 이름 기반 SDK API는 8.7.0 클라이언트와
 | Node.js/TypeScript | `ERR_MACHBASE_NAMED_BIND_UNSUPPORTED` |
 | Python | PREPARE 전 `NotSupportedError`, SQLSTATE `0A000` |
 
-Python API 2.4의 prepared cursor는 Machbase 8.7.0 프로토콜(버전 4.0.3)을 지원하지 않는
+Python API 2.4의 prepared cursor는 Machbase 8.7.0 기능을 지원하지 않는 이전 버전 서버
 연결에서 named marker를 서버에
 PREPARE하기 전에 거부합니다. 이 오류는 cursor가 이미 보유한 cached statement를 해제하거나
 교체하지 않습니다. 구형 서버를 계속 사용해야 하면 `%s` 또는 `?` positional marker를
@@ -103,15 +105,14 @@ PREPARE하기 전에 거부합니다. 이 오류는 cursor가 이미 보유한 c
 
 .NET의 `MachParameterCollection`은 파라미터를 client-side typed literal로 렌더링한 뒤
 ExecDirect로 실행하므로 위 서버 Prepared Named Bind 호환 표의 이름 기반 SDK API에
-포함하지 않습니다. 다만 `:name` marker 사용은 Machbase 8.7.0 프로토콜(버전 4.0.3)
-연결을 확인하며 이전
+포함하지 않습니다. 다만 `:name` marker 사용은 Machbase 8.7.0 서버 연결을 확인하며 이전
 서버에서는 `MachException`을 반환합니다.
 
 문법과 SDK별 사용법은
 [Named Bind Parameter syntax](/dbms/reference/sql/syntax-dictionary-sql/named-bind-parameter-syntax/)를
 참고하십시오.
 
-## 드라이버 버전 확인
+## SDK 버전 확인
 
 JDBC:
 
@@ -121,7 +122,13 @@ DatabaseMetaData meta = conn.getMetaData();
 System.out.println("Driver: " + meta.getDriverVersion());
 ```
 
-Machbase SQLCLI와 ODBC:
+Machbase SQLCLI:
+
+```c
+SQLGetInfo(conn, SQL_DRIVER_VER, buf, sizeof(buf), NULL);
+```
+
+ODBC:
 
 ```c
 SQLGetInfo(conn, SQL_DRIVER_VER, buf, sizeof(buf), NULL);
@@ -129,9 +136,9 @@ SQLGetInfo(conn, SQL_DRIVER_VER, buf, sizeof(buf), NULL);
 
 ## 업그레이드 권장 사항
 
-1. 서버와 드라이버를 같은 메이저 버전(8.7.0)으로 함께 업그레이드하십시오.
-2. 드라이버를 순차적으로 업그레이드하는 경우, 업그레이드 기간 동안 8.5 드라이버가 8.7.0 서버에 제한적으로 연결될 수 있음을 인지하십시오.
-3. AUTH KEY 인증을 사용하는 경우 드라이버를 가장 먼저 업그레이드하십시오.
+1. 서버와 SDK를 같은 버전(8.7.0)으로 함께 업그레이드하십시오.
+2. SDK를 순차적으로 업그레이드하는 경우, 업그레이드 기간 동안 8.5 SDK가 8.7.0 서버에 제한적으로 연결될 수 있음을 인지하십시오.
+3. AUTH KEY 인증을 사용하는 경우 SDK를 가장 먼저 업그레이드하십시오.
 4. Nullable 메타데이터를 애플리케이션 로직에 사용하는 경우 서버와 SDK를 모두 8.7.0으로
    업그레이드하십시오.
 5. Named Bind Parameter의 이름 기반 SDK API를 사용하는 경우 서버와 SDK를 모두 8.7.0으로

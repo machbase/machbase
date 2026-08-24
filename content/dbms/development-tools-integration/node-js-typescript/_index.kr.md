@@ -9,7 +9,9 @@ aliases:
 
 ## 개요
 
-Machbase TypeScript 클라이언트(`@machbase/ts-client`)는 Machbase 서버 통신 프로토콜을 순수 TypeScript로 구현한 라이브러리입니다. Node.js 애플리케이션이 네이티브 바인딩 없이도 Machbase(스탠더드 에디션) 서버에 연결해 SQL 실행, 결과 조회, Prepared Statement 처리, 로그 데이터 Append를 수행할 수 있습니다.
+Machbase TypeScript 클라이언트(`@machbase/ts-client`)는 네이티브 바인딩 없이 Machbase
+Standard Edition 서버에 연결하는 라이브러리입니다. Node.js 애플리케이션에서 SQL 실행,
+결과 조회, Prepared Statement 처리, 로그 데이터 Append를 수행할 수 있습니다.
 
 이 문서에서는 설치, 핵심 API, 예제, 테스트 흐름, 동작 특성을 다룹니다.
 
@@ -168,7 +170,7 @@ bootstrap().catch(console.error);
 
 #### createConnection(config)
 
-Machbase 리스너에 네트워크 세션을 열고 서버 프로토콜 handshake를 완료합니다.
+Machbase 리스너에 연결하고 데이터베이스 세션을 생성합니다.
 
 | 매개변수 | 타입 | 기본값 | 설명 |
 |-----------|------|---------|-------------|
@@ -332,7 +334,7 @@ Machbase SQL에서 `''`은 SQL `NULL`이므로 해당 `field.nullable`은
 
 ### SELECT 결과의 PRIMARY KEY 메타데이터
 
-Machbase 8.7.0 프로토콜(버전 4.0.3) 메타데이터를 사용하면 `query()` 또는 `execute()`가 반환하는
+Machbase 8.7.0 서버와 해당 버전 SDK를 사용하면 `query()` 또는 `execute()`가 반환하는
 `fields` 배열의 `isPrimaryKey`에서 직접 컬럼의 PRIMARY KEY 여부를 확인할 수 있습니다.
 
 ```ts
@@ -344,8 +346,8 @@ for (const field of fields) {
 }
 ```
 
-표현식·집계식·외부 조인의 NULL 공급 측 컬럼은 `false`입니다. 구형 프로토콜(버전 4.0.2
-이하)에서는 기존 호환성을 위해 PK 플래그를 전달하지 않습니다.
+표현식·집계식·외부 조인의 NULL 공급 측 컬럼은 `false`입니다. 이전 버전 서버 또는 SDK와
+연결한 경우에는 PK 플래그가 제공되지 않을 수 있습니다.
 
 ### Prepared Statement 사용
 
@@ -417,12 +419,12 @@ await update.execute([
 
 실행 예제 스크립트는 보통 `npm run build` 후 `dist/examples/` 아래에 생성됩니다. 예제는 일반적으로 `MACHBASE_EXAMPLE_*`, `MACHBASE_SMOKE_*`, 마지막으로 `SYS/MANAGER@127.0.0.1` 순서로 접속 정보를 찾습니다.
 
-### Append Protocol
+### Append API
 
 #### appendBatch(table, columns, rows, options?)
 
-Machbase Append 프로토콜 상수인 `CMI_APPEND_BATCH_PROTOCOL`을 사용해 **로그 테이블**에
-행을 추가합니다. 사용자에게 보이는 컬럼만 전달하면 됩니다(로그 테이블에는 `_arrival_time`,
+`appendBatch()`로 **로그 테이블**에 여러 행을 추가합니다. 사용자에게 보이는 컬럼만
+전달하면 됩니다(로그 테이블에는 `_arrival_time`,
 `_rid`가 자동 포함됩니다).
 
 ```javascript
@@ -709,9 +711,11 @@ await conn.execute('COMMIT');
 [Named Bind Parameter syntax](../../reference/sql/syntax-dictionary-sql/named-bind-parameter-syntax/)를
 참고하십시오.
 
-### Append 프로토콜
+### Append API
 
-로그 테이블에는 `appendBatch`를, 점진적 유입이 필요한 경우 스트리밍 도우미(`appendOpen`/`append`)를 사용하십시오. 특정 테이블 타입(예: TAG 테이블)에서 스트리밍을 지원하지 않으면 준비된 문 반복 방식으로 자동 대체됩니다. 운영 시에는 데이터를 청크로 나누고 `rowsFailed`를 확인하는 패턴이 안전합니다.
+로그 테이블에는 `appendBatch`를, 점진적 입력에는 `appendOpen`/`append`를 사용합니다. 특정
+테이블 타입(예: TAG 테이블)에서 이 입력 방식을 지원하지 않으면 준비된 문 반복 방식으로
+자동 대체됩니다. 운영 시에는 데이터를 청크로 나누고 `rowsFailed`를 확인합니다.
 
 ### 오류 처리
 

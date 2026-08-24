@@ -12,6 +12,27 @@ toc: true
 - 업그레이드 전 백업을 수행합니다. [백업 방법](/dbms/operations-configuration-recovery/backup-restore-mount/#backup) 참고.
 - 진행 중인 INSERT·APPEND 클라이언트를 확인합니다.
 
+### 8.7.0 업그레이드 사전 점검
+
+8.5에서 8.7.0으로 업그레이드할 때는 바이너리를 교체하기 전에 다음 의존성을 조사하고
+지원되는 방식으로 전환합니다.
+
+1. `machbase.conf`에서 `HTTP_*`, `RS_CACHE_*`, `STREAM_THREAD_COUNT`,
+   `STREAM_WAIT_MS`를 찾아 제거합니다. 제거된 프로퍼티가 남아 있으면 8.7.0 서버가 시작되지
+   않습니다.
+2. `/machbase`, `/machiot`를 호출하는 애플리케이션은 지원되는 SDK를 사용하는 백엔드로
+   전환합니다.
+3. `STREAM_*` 프로시저와 `FLUSH RESULT_CACHE`를 실행하는 SQL 또는 운영 스크립트를
+   변경합니다.
+4. `machcli.h`와 `MachCLI*()`를 사용하는 C/C++ 애플리케이션을 Machbase SQLCLI 또는
+   ODBC로 이전합니다. SQLCLI와 ODBC는 서로 다른 API 집합입니다.
+5. WebAdmin/MWA에 의존하는 운영 절차와 대시보드는 명령행 도구 또는 별도 애플리케이션으로
+   전환합니다.
+
+제거 항목 전체와 유지 기능은
+[버전 및 호환성](/dbms/reference/support-scope-constraints/compatibility-version/#removed-features-870)을
+참고하십시오.
+
 ## 업그레이드 경로
 
 | 에디션 | 방식 | 링크 |

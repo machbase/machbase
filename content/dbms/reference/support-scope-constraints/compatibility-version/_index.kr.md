@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.8.11 버전 및 호환성'
+title: '18.6.10 버전 및 호환성'
 weight: 110
 toc: true
 ---
@@ -32,7 +32,77 @@ Machbase 8.7.0 버전의 하위 호환성, 업그레이드 주의사항, 지원 
   종료하는 환경에서는 8.7.0 JDBC 드라이버로 교체하고
   [다중 호스트 연결](/dbms/development-tools-integration/jdbc/#jdbc-multi-host)의 URL과
   timeout 설정을 확인하십시오.
-- 새로운 XMA 프로토콜 변경 사항은 [XMA 프로토콜 호환성](../compatibility-xma-protocol/)을 참고하십시오.
+- 서버와 SDK의 버전 조합에 따른 기능 차이는 [서버와 SDK 호환성](../compatibility-xma-protocol/)을 참고하십시오.
+
+<a id="removed-features-870"></a>
+
+### 8.7.0에서 제거된 기능
+
+Machbase 8.7.0은 다음 기능과 인터페이스를 제공하지 않습니다. 제거된 설정, SQL, C API에는
+호환 계층이 없으므로 업그레이드 전에 설정 파일, 운영 SQL, 애플리케이션을 변경해야 합니다.
+
+| 8.5 기능 또는 인터페이스 | 8.7.0 상태 | 사용자 영향 | 전환 방법 |
+|--------------------------|------------|-------------|-----------|
+| DB HTTP/REST (`/machbase`, `/machiot`, 포트 5657) | 제거 | 기존 HTTP 조회와 Append 요청을 사용할 수 없음 | SQLCLI, ODBC, JDBC, Python, Go, Node.js 또는 .NET SDK 사용 |
+| WebAdmin/MWA, 정적 ClusterAdmin UI | 제거 | 웹 UI와 관련 시작 스크립트를 사용할 수 없음 | 서버·클러스터 명령행 도구 사용 |
+| STREAM SQL과 카탈로그 | 제거 | 등록된 STREAM을 실행하거나 상태를 조회할 수 없음 | Collector, Fluentd 또는 애플리케이션 작업으로 처리 |
+| Result Cache | 제거 | 결과 캐시 설정, 상태 조회, flush 명령을 사용할 수 없음 | 인덱스·ROLLUP·쿼리 최적화 또는 애플리케이션 캐시 사용 |
+| `machcli.h`와 `MachCLI*()` | 제거 | 기존 C/C++ 소스와 바이너리를 그대로 사용할 수 없음 | Machbase SQLCLI 또는 ODBC로 이전 |
+
+다음 항목은 이름이 비슷하지만 계속 지원합니다.
+
+| 유지 기능 | 설명 |
+|-----------|------|
+| Machbase SQLCLI | `<machbase_sqlcli.h>`의 `SQL*` API. ODBC와는 별도의 API 집합입니다. |
+| ODBC, JDBC 및 언어별 SDK | Python, Go, Node.js, .NET을 포함한 지원 드라이버를 계속 사용할 수 있습니다. |
+| MachEngine API | 기존 `Mach*` API를 계속 사용할 수 있습니다. |
+| PVO Cache | 실행 계획 객체를 재사용하는 캐시이며 제거된 Result Cache와 다른 기능입니다. |
+| Coordinator/Collector 관리 REST | 데이터 SQL REST가 아닌 관리용 API입니다. Coordinator의 `/admin/` 경로를 계속 사용할 수 있습니다. |
+
+#### 업그레이드 전에 설정 파일 정리
+
+다음 프로퍼티가 8.7.0의 `machbase.conf`에 남아 있으면 알 수 없는 프로퍼티로 처리되어 서버가
+시작되지 않습니다. 바이너리를 교체하기 전에 모두 삭제합니다.
+
+```text
+HTTP_AUTH
+HTTP_ENABLE
+HTTP_MAX_MEM
+HTTP_PORT_NO
+RS_CACHE_APPROXIMATE_RESULT_ENABLE
+RS_CACHE_ENABLE
+RS_CACHE_MAX_MEMORY_PER_QUERY
+RS_CACHE_MAX_MEMORY_SIZE
+RS_CACHE_MAX_RECORD_PER_QUERY
+RS_CACHE_TIME_BOUND_MSEC
+STREAM_THREAD_COUNT
+STREAM_WAIT_MS
+```
+
+기존 STREAM 정의가 필요하면 8.5 서버를 중지하기 전에 `V$STREAMS`와 관련 SQL을 별도로
+기록합니다. 8.7.0에서는 `SYS_STREAM_STMTS`, `V$STREAMS`, `V$HTTP_STATUS`,
+`V$RS_CACHE_LIST`, `V$RS_CACHE_STAT`이 등록되지 않습니다.
+
+업그레이드 후 다음 쿼리의 결과가 각각 `0`인지 확인합니다.
+
+```sql
+SELECT COUNT(*) AS removed_property_count
+FROM V$PROPERTY
+WHERE NAME IN (
+    'HTTP_AUTH', 'HTTP_ENABLE', 'HTTP_MAX_MEM', 'HTTP_PORT_NO',
+    'RS_CACHE_APPROXIMATE_RESULT_ENABLE', 'RS_CACHE_ENABLE',
+    'RS_CACHE_MAX_MEMORY_PER_QUERY', 'RS_CACHE_MAX_MEMORY_SIZE',
+    'RS_CACHE_MAX_RECORD_PER_QUERY', 'RS_CACHE_TIME_BOUND_MSEC',
+    'STREAM_THREAD_COUNT', 'STREAM_WAIT_MS'
+);
+
+SELECT COUNT(*) AS removed_table_count
+FROM V$TABLES
+WHERE NAME IN (
+    'SYS_STREAM_STMTS', 'V$HTTP_STATUS', 'V$RS_CACHE_LIST',
+    'V$RS_CACHE_STAT', 'V$STREAMS'
+);
+```
 
 ### DDL 동시성 호환
 
@@ -69,8 +139,8 @@ Standard Edition에서 같은 객체나 직접 관련된 객체의 DDL이 충돌
 
 1. **업그레이드 전 백업 필수**: `BACKUP DATABASE`로 전체 백업을 수행하십시오.
 2. **드라이버 업데이트**: 서버 업그레이드 후 클라이언트 드라이버(JDBC, ODBC, Python 등)도 8.7.0 버전으로 업데이트하십시오.
-3. **설정 파일 검토**: `machbase.conf`의 신규 또는 변경된 파라미터를 확인하십시오.
-4. **XMA 프로토콜**: 구 버전 드라이버는 8.7.0 서버와 제한적으로 호환됩니다. 가급적 드라이버를 함께 업그레이드하십시오.
+3. **설정 파일 검토**: 제거된 HTTP, STREAM, RS Cache 프로퍼티를 `machbase.conf`에서 삭제하십시오.
+4. **SDK 호환성**: 이전 버전 SDK는 8.7.0 서버와 제한적으로 호환됩니다. 가급적 서버와 SDK를 함께 업그레이드하십시오.
 
 ### 업그레이드 절차
 

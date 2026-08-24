@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.10.5 constraints-index'
+title: '18.8.5 constraints-index'
 weight: 50
 toc: true
 ---
@@ -39,7 +39,6 @@ TAG data UPDATE는 Standard Edition의 논리 TAG 테이블에서만 지원하�
 | VOLATILE 테이블 | 미지원 |
 | TRANSACTION 테이블 | 미지원 |
 | MOUNT / UMOUNT | 미지원 |
-| STREAM | 미지원 |
 | Custom ROLLUP | 미지원 |
 | ROLLUP_REBUILD | 미지원 |
 
@@ -65,8 +64,6 @@ TAG data UPDATE는 Standard Edition의 논리 TAG 테이블에서만 지원하�
 | Python (machbaseAPI) | Prepared cursor cache | cursor당 server statement 하나. SQL 문자열이 달라지면 기존 statement 해제 |
 | .NET (MachConnector) | Server Prepared Statement | 미지원 — 이름 컬렉션은 client-side 렌더링 후 ExecDirect |
 | Go (machgo / database/sql) | Named Bind API | native `api.Named()`, SQL 드라이버 `sql.Named()` 지원 |
-| REST API | Transaction | 미지원 |
-| REST API | Prepared Statement | 미지원 |
 | Node.js | AUTH KEY 인증 | 미지원 |
 | Go (database/sql) | Append API | 표준 `sql.DB`/`sql.Tx`에는 없음 — `sql.Conn.Raw()`에서 `machbase.Conn.Appender()` 확장 사용 가능. 신규 대량 입력은 `machgo` 권장 |
 
@@ -80,7 +77,7 @@ TAG data UPDATE는 Standard Edition의 논리 TAG 테이블에서만 지원하�
 | Mounted database | READ ONLY이며 `USE`할 수 없음. `USAGE`와 table `SELECT`가 필요 |
 | Transaction 중 USE | 진행 중인 transaction에서는 current database를 변경할 수 없음 |
 | Handle binding | prepared statement, cursor, appender는 prepare/open 당시 database에 고정 |
-| Compatibility | Machbase 8.7.0 프로토콜(버전 4.0.3)을 지원하지 않는 client/server 조합에서는 비기본 database 선택을 보장하지 않음 |
+| Compatibility | Machbase 8.7.0보다 이전인 서버 또는 SDK에서는 비기본 database 선택을 보장하지 않음 |
 
 ## 일반 제약
 

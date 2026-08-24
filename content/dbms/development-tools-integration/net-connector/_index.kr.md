@@ -498,8 +498,7 @@ Machbase SQL에서 `''`은 SQL `NULL`이므로 `GetSchemaTable()`의 `AllowDBNul
 `IsKey`가 `true`이면 SELECT 결과의 직접 컬럼이 PRIMARY KEY입니다. 표현식이나 집계식은
 `false`입니다.
 
-Machbase 8.7.0 프로토콜(버전 4.0.3) 메타데이터를 협상하지 못한 구형 프로토콜에서는 `IsKey`가
-`false`로 반환될 수 있습니다.
+이전 버전 서버 또는 SDK와 연결한 경우에는 `IsKey`가 `false`로 반환될 수 있습니다.
 
 Nullable 메타데이터는 DECIMAL precision `1~65`, scale `0~30`과 실제 값을 변경하지
 않습니다. .NET에서는 precision이 29 이하이고 scale이 28 이하인 DECIMAL을

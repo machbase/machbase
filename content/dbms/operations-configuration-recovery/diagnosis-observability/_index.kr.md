@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '14.7 관측과 진단'
+title: '14.6 관측과 진단'
 weight: 70
 toc: true
 ---
@@ -15,12 +15,9 @@ toc: true
 | 세션/시스템 | V$PROPERTY | 현재 서버 설정값 조회 |
 | 세션/시스템 | V$SYSMEM | 시스템 메모리 사용량 |
 | 세션/시스템 | V$SYSSTAT | 시스템 통계 정보 |
-| Result Cache | V$RS_CACHE_LIST | 결과 캐시 목록 |
-| Result Cache | V$RS_CACHE_STAT | 결과 캐시 통계 |
 | 스토리지 | V$STORAGE_USAGE | 디스크 사용량 및 한계 비율 |
 | 스토리지 | V$STORAGE_TABLES | 테이블별 스토리지 사용량 |
 | 태그 Rollup | V$ROLLUP | Rollup 작업 상태 |
-| 스트림 | V$STREAMS | Stream 쿼리 실행 상태 |
 | 라이선스 | V$LICENSE_INFO | 라이선스 정보와 위반 상태 |
 
 ## 로그 파일 위치 요약
@@ -554,17 +551,6 @@ Collector 설정 파일에서 로그 파일 경로와 이름을 별도로 지정
 - 타입 불일치: 소스 데이터 형식과 테이블 스키마를 비교
 - 디스크 풀: 디스크 사용량 확인 및 공간 확보 ([디스크 사용량 확인](/dbms/operations-configuration-recovery/diagnosis-observability/#monitoring-capacity-capacity-disk) 참조)
 
-#### 수집 상태 확인
-
-Collector가 실행 중인 경우 V$STREAMS 가상 테이블에서도 상태를 조회할 수 있습니다.
-
-```sql
--- STREAM 기반 Collector 상태 확인
-SELECT name, state, last_ex_time, error_msg
-  FROM v$streams
- ORDER BY name;
-```
-
 #### 로그 실시간 모니터링
 
 ```bash
@@ -750,15 +736,11 @@ SELECT policy_name, duration, interval
 | 세션/시스템 | V$SYSSTAT | 시스템 통계 정보 |
 | 세션/시스템 | V$SYSTIME | 시스템 시간 통계 |
 | 세션/시스템 | V$VERSION | 서버 버전 정보 |
-| 세션/시스템 | V$HTTP_STATUS | HTTP 서비스 상태 |
-| Result Cache | V$RS_CACHE_LIST | 결과 캐시 목록 |
-| Result Cache | V$RS_CACHE_STAT | 결과 캐시 통계 |
 | 스토리지 | V$STORAGE | 스토리지 파일 크기 요약 |
 | 스토리지 | V$STORAGE_USAGE | 디스크 사용량과 한계 비율 |
 | 스토리지 | V$STORAGE_TABLES | 테이블별 스토리지 사용량 |
 | 스토리지 | V$STORAGE_MOUNT_DATABASES | 마운트된 백업 데이터베이스 |
 | 태그 Rollup | V$ROLLUP | Rollup 작업 상태 |
-| 스트림 | V$STREAMS | Stream 쿼리 실행 상태 |
 | 라이선스 | V$LICENSE_INFO | 라이선스 정보 |
 
 ---
@@ -866,44 +848,6 @@ SELECT total_space, used_space, used_ratio, ratio_cap
 
 ---
 
-### V$RS_CACHE_LIST / V$RS_CACHE_STAT — Result Cache 상태
-
-#### V$RS_CACHE_LIST
-
-| 컬럼 이름 | 설명 |
-|---------|------|
-| TOUCH_TIME | 캐시를 마지막으로 사용하거나 생성한 시각 |
-| USER_ID | 캐시를 생성한 사용자 |
-| QUERY | 캐시를 만든 쿼리문 |
-| TIME_SPENT | 결과 생성까지 경과 시간 |
-| RECORD_COUNT | 결과 레코드 개수 |
-| HIT_COUNT | 캐시 히트 횟수 |
-
-#### V$RS_CACHE_STAT
-
-| 컬럼 이름 | 설명 |
-|---------|------|
-| CACHE_COUNT | 현재 캐시 개수 |
-| CACHE_HIT | 총 캐시 히트 횟수 |
-| AGGR_HIT | 집계 결과의 캐시 히트 횟수 |
-| CACHE_REPLACED | 캐시 교체 횟수 |
-| CACHE_MEMORY_USAGE | 캐시 메모리 사용량 |
-
-```sql
--- Result Cache 전체 통계
-SELECT cache_count, cache_hit, aggr_hit,
-       cache_replaced, cache_memory_usage
-  FROM v$rs_cache_stat;
-
--- 히트율이 높은 캐시 쿼리 확인
-SELECT query, hit_count, record_count, time_spent
-  FROM v$rs_cache_list
- ORDER BY hit_count DESC
- LIMIT 10;
-```
-
----
-
 ### V$ROLLUP — Rollup 상태
 
 Tag 데이터의 Rollup 작업 상태를 표시합니다.
@@ -931,35 +875,6 @@ SELECT rollup_table, source_table, column_name,
 SELECT rollup_table, source_table, enabled
   FROM v$rollup
  WHERE enabled = 0;
-```
-
----
-
-### V$STREAMS — Stream 상태
-
-등록된 Stream 쿼리의 실행 상태를 표시합니다.
-
-| 컬럼 이름 | 설명 |
-|---------|------|
-| NAME | Stream 이름 |
-| LAST_EX_TIME | 마지막 실행 시각 |
-| TABLE_NAME | 검색 대상 테이블 이름 |
-| END_RID | 마지막으로 읽은 RID |
-| STATE | 현재 상태 |
-| QUERY_TXT | 원본 Stream 쿼리 |
-| ERROR_MSG | 마지막 오류 메시지 |
-| FREQUENCY | 최소 대기 시간 (나노초, 0이면 매 레코드마다 실행) |
-
-```sql
--- Stream 실행 상태 확인
-SELECT name, state, last_ex_time, error_msg
-  FROM v$streams
- ORDER BY name;
-
--- 오류가 발생한 Stream 확인
-SELECT name, state, error_msg
-  FROM v$streams
- WHERE error_msg IS NOT NULL AND error_msg != '';
 ```
 
 ---
@@ -1065,7 +980,7 @@ SELECT sess_id, state, query
 - [서버 상태 확인](/dbms/operations-configuration-recovery/diagnosis-observability/#status-check-state-server) — 서버 프로세스 상태, 버전, 포트 확인
 - [세션과 실행 쿼리 확인](/dbms/operations-configuration-recovery/diagnosis-observability/#execution-session) — 접속 세션 목록, 실행 중인 쿼리, 세션 강제 종료
 - [디스크 사용량 확인](/dbms/operations-configuration-recovery/diagnosis-observability/#capacity-disk) — 테이블별 디스크 사용량, OS 레벨 디스크 확인
-- [메모리 사용량 확인](/dbms/operations-configuration-recovery/diagnosis-observability/#memory-capacity) — 프로세스 메모리, Result Cache 상태
+- [메모리 사용량 확인](/dbms/operations-configuration-recovery/diagnosis-observability/#memory-capacity) — 프로세스·세션·페이지 캐시 메모리 상태
 - [백업 검증](/dbms/operations-configuration-recovery/diagnosis-observability/#validation-backup) — 백업 완료 후 무결성 검증 절차
 - [장애 징후 확인](/dbms/operations-configuration-recovery/diagnosis-observability/#failure) — 디스크 풀, OOM, 느린 쿼리 등 장애 징후와 즉각 조치
 
@@ -1574,23 +1489,6 @@ SELECT sm.sid,
 
 메모리를 많이 사용하는 세션을 파악하면 `MAX_QPX_MEM` 설정 조정이나 해당 세션 종료 여부를 결정하는 데 도움이 됩니다.
 
-#### Result Cache 메모리 상태
-
-Result Cache가 활성화된 경우, 캐시 메모리 사용량을 확인합니다.
-
-```sql
--- Result Cache 통계
-SELECT cache_count,
-       cache_hit,
-       aggr_hit,
-       cache_replaced,
-       cache_memory_usage,
-       round(cache_memory_usage / 1048576.0, 1) AS cache_mb
-  FROM v$rs_cache_stat;
-```
-
-`cache_replaced` 값이 지속적으로 증가하면 캐시 메모리가 부족하여 캐시가 자주 교체되고 있는 것입니다. 전역 Result Cache 메모리 한도는 `machbase.conf`의 `RS_CACHE_MAX_MEMORY_SIZE` 파라미터로 조정한 뒤 재시작하여 적용합니다.
-
 #### Page Cache 상태
 
 ```sql
@@ -1640,7 +1538,6 @@ SELECT name, value, deflt
   FROM v$property
  WHERE name IN (
    'MAX_QPX_MEM',
-   'RS_CACHE_MAX_MEMORY_SIZE',
    'VOLATILE_TABLESPACE_MEMORY_MAX_SIZE',
    'TAG_CACHE_MAX_MEMORY_SIZE'
  )
@@ -1650,7 +1547,6 @@ SELECT name, value, deflt
 | 파라미터 | 설명 |
 |---------|------|
 | MAX_QPX_MEM | 세션당 최대 쿼리 메모리 (바이트) |
-| RS_CACHE_MAX_MEMORY_SIZE | Result Cache 최대 메모리 |
 | VOLATILE_TABLESPACE_MEMORY_MAX_SIZE | Volatile 테이블스페이스 최대 메모리 |
 | TAG_CACHE_MAX_MEMORY_SIZE | Tag 테이블 캐시 최대 메모리 |
 
@@ -1927,7 +1823,7 @@ SELECT sm.sid, s.user_name, round(sum(sm.usage)/1048576.0, 1) AS mb
 
 1. 메모리 과다 세션 강제 종료: `ALTER SYSTEM KILL SESSION <id>;`
 2. `MAX_QPX_MEM` 설정으로 세션당 쿼리 메모리 제한
-3. Volatile 테이블 또는 Result Cache 메모리 설정 검토
+3. Volatile 테이블, TAG 캐시와 쿼리 메모리 설정 검토
 
 ---
 

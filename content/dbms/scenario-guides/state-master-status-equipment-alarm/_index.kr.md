@@ -236,7 +236,7 @@ CREATE LOG TABLE alarm_log (
 
 ### 알람 이력 삽입
 
-애플리케이션 또는 STREAM에서 임계값 초과를 감지하면 alarm_log에 기록합니다.
+애플리케이션에서 임계값 초과를 감지하면 alarm_log에 기록합니다.
 
 ```sql
 INSERT INTO alarm_log VALUES (
@@ -355,5 +355,4 @@ ORDER BY alarmed_equipment DESC;
 ## 다음 단계
 
 - TAG, LOG, TRANSACTION 복합 조인 대시보드: [TAG + TRANSACTION + LOG 조인 대시보드](../join-tag-rdb-log/)
-- STREAM 알람 자동화: [STREAM으로 LOG를 TAG로 자동 적재](/dbms/log-table-usage/stream-log-processing/#stream-log-tag)
 - 실시간 상태판: [실시간 상태판 만들기](../state-status-real-time-dashboard/)

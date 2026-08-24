@@ -139,6 +139,5 @@ Cluster Edition에서는 다음 기능이 지원되지 않습니다.
 | Custom ROLLUP | X |
 | ROLLUP_REBUILD | X |
 | MOUNT / UMOUNT | X |
-| STREAM / CQL | X |
 
 전체 제한사항 목록은 [Cluster 운영 제한사항](/dbms/operations-configuration-recovery/cluster/#limitations-cluster)을 참고하십시오.

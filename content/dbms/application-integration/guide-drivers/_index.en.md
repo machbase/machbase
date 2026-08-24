@@ -8,16 +8,21 @@ toc: true
 
 
 <a id="cli-odbc"></a>
+<a id="machbase-sqlcli"></a>
 
-## CLI/ODBC
+## Machbase SQLCLI
 
 <a id="cli-odbc-cli-odbc"></a>
 
-### CLI/ODBC 개요
+### Machbase SQLCLI Overview
 
 <a id="cli-odbc-examples-cli-odbc"></a>
 
-### CLI/ODBC 예제
+### Machbase SQLCLI Examples
+
+<a id="odbc"></a>
+
+## ODBC
 
 <a id="jdbc"></a>
 

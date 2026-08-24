@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.10.6 evidence-map'
+title: '18.8.6 evidence-map'
 weight: 60
 toc: true
 ---
@@ -15,7 +15,7 @@ toc: true
 | 객체 이름은 `table`, `owner.table`, `database.owner.table`이며 `db.table`은 owner.table | dbms-nfx #3235 최종 parser·regression·user manual | 3-part 이름으로 다른 DB를 명시 |
 | `DATABASE_ID`는 logical catalog ID이고 `TABLESPACE_ID`와 다름 | dbms-nfx PR #3977 system catalog implementation | `V$DATABASES`, `M$SYS_*` 조인 시 함께 사용 |
 | mounted database는 READ ONLY이며 `USAGE`와 table `SELECT`가 필요 | dbms-nfx #3235 backup/security regression | `USE`와 쓰기는 불가 |
-| Machbase 8.7.0 프로토콜(버전 4.0.3)이 multi-database client/server 경계 | dbms-nfx PR #3977 protocol compatibility tests | 8.5.2/구형 프로토콜(버전 4.0.2)은 MACHBASEDB 호환 동작만 확인 |
+| 다중 데이터베이스 연결은 Machbase 8.7.0 서버와 해당 버전 SDK에서 지원 | 다중 데이터베이스 매뉴얼 | 이전 버전에서는 기본 `MACHBASEDB` 연결 사용 |
 | prepared/cursor/appender는 prepare/open 시점 catalog에 고정 | dbms-nfx #3235 session/client regression | `USE` 후 새 handle 생성 권장 |
 
 ## 인증 / 보안
@@ -36,7 +36,7 @@ toc: true
 | `cursor(prepared=True)`는 동일 원본 SQL의 server statement 재사용 | dbms-nfx#3980, commit `f3e153d6` | SQL 변경 또는 cursor close 시 해제 |
 | `MachbasePreparedCursor`는 공개 package symbol | dbms-nfx `machbaseAPI/__init__.py`, commit `f3e153d6` | Python API 2.4 |
 | prepared cursor는 `%s`, `?`, `%(name)s`, `:name` 지원 | dbms-nfx#3980 회귀 테스트 | quote와 comment 내부 marker는 보존 |
-| Machbase 8.7.0 프로토콜(버전 4.0.3)을 지원하지 않는 named 실행은 PREPARE 전 `NotSupportedError(0A000)` | dbms-nfx#3980, commit `95a9be1d` | 기존 cached statement 유지 |
+| 이전 버전 서버에서 named 실행을 시도하면 PREPARE 전 `NotSupportedError(0A000)` | Python SDK 매뉴얼 | 기존 cached statement 유지 |
 | marker 없는 SQL의 빈 mapping은 parameter 없음으로 정규화 | dbms-nfx#3980, commit `95a9be1d` | `None`, 빈 sequence와 동일 |
 
 ## Named Bind Parameter
@@ -70,13 +70,13 @@ toc: true
 
 | 사실 | 근거 (소스) | 비고 |
 |------|------------|------|
-| Machbase 8.7.0 프로토콜(버전 4.0.3)이 결과 컬럼 type 정보에 PRIMARY KEY 플래그를 전달 | dbms-nfx #4010, 커밋 `7e4a6f411` | 직접 컬럼에만 적용 |
+| Machbase 8.7.0 서버와 해당 버전 SDK가 결과 컬럼의 PRIMARY KEY 여부를 제공 | SDK 메타데이터 매뉴얼 | 직접 컬럼에만 적용 |
 | TRANSACTION·LOOKUP·VOLATILE PK와 TAG `NAME`을 결과 메타데이터로 식별 | dbms-nfx #4010 분석·회귀 테스트 | LOG, 표현식, 집계식, 외부 조인 NULL 측은 PK 아님 |
 | Go native `api.Column.PrimaryKey`가 `Rows.Columns()`와 `Row.Columns()`에 전달 | neo-client PR #3, 커밋 `915d846b` | prepared·statement cache 경로 포함 |
 | Go `database/sql.ColumnType`에는 PRIMARY KEY API가 없음 | Go 표준 인터페이스 및 neo-client 구현 | native API 또는 카탈로그 조회 사용 |
 | ODBC `SQLPrimaryKeys()`와 JDBC `getPrimaryKeys()`가 실제 PK 목록 반환 | dbms-nfx #4010 회귀 테스트 | 비-SYS 소유자와 TAG `NAME` 포함 |
 | `machsql DESC`가 `[ PRIMARY KEY ]` 섹션 표시 | dbms-nfx #4010 회귀 테스트 | SQLCLI `DescribeCol` 계약은 변경 없음 |
-| 구형 프로토콜(버전 4.0.2 이하)에서는 신규 PRIMARY KEY 플래그를 숨김 | dbms-nfx #4010 protocol 호환성 테스트 | 구형 클라이언트 호환성 유지 |
+| 이전 버전 서버 또는 SDK에서는 PRIMARY KEY 플래그가 제공되지 않을 수 있음 | SDK 메타데이터 매뉴얼 | 버전 혼합 환경에서는 카탈로그 API 사용 |
 
 ## Cluster Edition
 
@@ -84,7 +84,7 @@ toc: true
 |------|------------|------|
 | Cluster Edition: TRANSACTION 테이블 미지원 | Machbase 공식 제한사항 문서 | [지원 범위와 제약](../../../reference/support-scope-constraints/) |
 | Cluster Edition: VOLATILE 테이블 미지원 | Machbase 공식 제한사항 문서 | |
-| Cluster Edition: STREAM, MOUNT, Custom ROLLUP, ROLLUP_REBUILD 미지원 | Machbase 공식 제한사항 문서 | |
+| Cluster Edition: MOUNT, Custom ROLLUP, ROLLUP_REBUILD 미지원 | Machbase 공식 제한사항 문서 | |
 
 ## 성능
 

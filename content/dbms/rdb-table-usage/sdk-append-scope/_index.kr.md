@@ -126,12 +126,12 @@ TRANSACTION 테이블은 다양한 언어의 Machbase SDK를 통해 접근할 �
 
 | SDK | SELECT | INSERT | UPDATE | DELETE | 트랜잭션 |
 |-----|--------|--------|--------|--------|---------|
-| Go SDK | O | O | O | O | O |
-| Python SDK | O | O | O | O | O |
-| C/C++ SDK | O | O | O | O | O |
+| Go `database/sql` | O | O | O | O | O |
+| Go native | O | O | O | O | △ (같은 연결에서 트랜잭션 SQL 실행) |
+| Python SDK | O | O | O | O | X |
+| Machbase SQLCLI | O | O | O | O | △ (같은 연결에서 트랜잭션 SQL 실행) |
 | JDBC | O | O | O | O | O |
-| ODBC | O | O | O | O | O |
-| REST API | O | O | O | O | 제한적 |
+| ODBC | O | O | O | O | △ (같은 연결에서 트랜잭션 SQL 실행) |
 
 ## Go SDK 예시
 
@@ -165,19 +165,17 @@ func main() {
 ## Python SDK 예시
 
 ```python
-import machbase_neo
+from machbaseAPI import connect
 
-conn = machbase_neo.connect(host='127.0.0.1', port=5656, user='SYS', password='MANAGER')
-cursor = conn.cursor()
+conn = connect(host='127.0.0.1', port=5656, user='SYS', password='MANAGER')
+cursor = conn.cursor(prepared=True)
 
 # INSERT
 cursor.execute("INSERT INTO orders VALUES (?, ?, ?, ?, ?)",
                (1001, 'CUST-001', 5, 49.99, 'PENDING'))
-conn.commit()
 
 # UPDATE
 cursor.execute("UPDATE orders SET status = ? WHERE order_id = ?", ('SHIPPED', 1001))
-conn.commit()
 
 # SELECT
 cursor.execute("SELECT order_id, customer, amount FROM orders WHERE customer = ?", ('CUST-001',))
@@ -185,20 +183,7 @@ rows = cursor.fetchall()
 
 # DELETE
 cursor.execute("DELETE FROM orders WHERE order_id = ?", (1001,))
-conn.commit()
 
 cursor.close()
 conn.close()
-```
-
-## REST API 예시
-
-```bash
-# UPDATE via REST
-curl -X POST http://127.0.0.1:5657/api/v1/query \
-  -H "Content-Type: application/json" \
-  -d '{"q": "UPDATE orders SET status='\''SHIPPED'\'' WHERE order_id=1001"}'
-
-# SELECT via REST
-curl "http://127.0.0.1:5657/api/v1/query?q=SELECT+order_id,customer+FROM+orders+WHERE+customer='\''CUST-001'\''"
 ```

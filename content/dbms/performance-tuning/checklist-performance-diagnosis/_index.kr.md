@@ -72,32 +72,24 @@ ORDER BY i.name;
 - Append 성능이 느리다면 인덱스가 너무 많지는 않은가? (인덱스마다 추가 쓰기 비용 발생)
 - 사용하지 않는 인덱스가 있다면 `DROP INDEX`로 제거를 검토하십시오.
 
-## 4단계: Result Cache 히트율 확인
+## 4단계: 반복 집계 쿼리 확인
 
-반복적인 집계 쿼리가 느리면 Result Cache 동작 여부를 확인합니다.
-
-```sql
-SELECT cache_count, cache_hit, cache_replaced FROM v$rs_cache_stat;
-```
-
-**히트율 계산**:
-```
-히트율(%) = cache_hit / (cache_count + cache_hit) × 100
-```
-
-| 히트율 | 상태 | 조치 |
-|--------|------|------|
-| 70% 이상 | 양호 | 유지 |
-| 30~70% | 보통 | `RS_CACHE_MAX_MEMORY_SIZE` 조정 검토 |
-| 30% 미만 | 비효율 | 캐시 크기 확대 또는 `RS_CACHE_TIME_BOUND_MSEC` 조정 |
-
-`cache_replaced`가 높다면 캐시 교체가 빈번하게 발생하는 것입니다. `RS_CACHE_MAX_MEMORY_SIZE`를 늘리거나 `RS_CACHE_MAX_MEMORY_PER_QUERY`를 줄여 더 많은 쿼리 결과를 캐시하십시오.
+동일한 시간 범위의 집계 쿼리를 자주 실행한다면 원시 데이터를 매번 읽고 있는지 확인합니다.
+`EXPLAIN` 결과의 스캔 범위가 넓으면 시간 조건을 줄이거나 ROLLUP 사용을 검토합니다.
 
 ```sql
--- 현재 Result Cache 설정 확인
-SELECT name, value FROM v$property
-WHERE name LIKE 'RS_CACHE%';
+-- 현재 ROLLUP 작업 상태 확인
+SELECT rollup_table, source_table, column_name,
+       interval_time, enabled, last_elapsed_msec, run_state
+  FROM v$rollup
+ ORDER BY rollup_table;
 ```
+
+| 확인 결과 | 조치 |
+|----------|------|
+| 필요한 시간 단위의 ROLLUP이 없음 | 조회 패턴에 맞는 ROLLUP 생성 검토 |
+| `ENABLED`가 0 | 중지 원인을 확인한 뒤 ROLLUP 활성화 |
+| 원시 범위를 반복해서 전체 스캔 | 시간 조건 축소 또는 ROLLUP 테이블 조회 |
 
 ## 5단계: 파티션 상태 확인
 
@@ -157,7 +149,7 @@ free -h
 
 - `available` 메모리가 전체의 10% 미만이면 메모리 부족 상태입니다.
 - swap 사용량이 증가하고 있다면 즉시 조치가 필요합니다.
-- `RS_CACHE_MAX_MEMORY_SIZE`와 `PROCESS_MAX_SIZE`를 낮추는 것을 검토하십시오.
+- `PROCESS_MAX_SIZE`, TAG 캐시와 쿼리 메모리 상한을 검토하십시오.
 
 ## 증상별 해결 방안
 
@@ -165,9 +157,9 @@ free -h
 |------|-----------|-----------|
 | SELECT 느림 | 인덱스 없음, FULL SCAN | `CREATE INDEX`, 시간 범위 조건 추가 |
 | Append 느림 | 인덱스 과다, I/O 포화 | 불필요 인덱스 제거, SSD 사용 |
-| 메모리 계속 증가 | 캐시 설정 과다 | `RS_CACHE_MAX_MEMORY_SIZE` 줄이기 |
+| 메모리 계속 증가 | 동시 쿼리 또는 캐시 설정 과다 | 동시 실행 수와 메모리 상한 점검 |
 | 집계 쿼리 느림 | ROLLUP 미사용 | ROLLUP 생성 및 활용 |
-| 반복 쿼리 느림 | Result Cache 비효율 | `RS_CACHE_TIME_BOUND_MSEC` 낮추기 |
+| 반복 집계 쿼리 느림 | 원시 데이터 반복 스캔 | 시간 범위 축소, ROLLUP 활용 |
 | 서버 재시작 후 느림 | 체크포인트 너무 길었음 | `DISK_COLUMNAR_TABLE_CHECKPOINT_INTERVAL_SEC` 조정 |
 | Cluster Append 느림 | 네트워크 병목, 배치 크기 작음 | `INSERT_RECORD_COUNT_PER_NODE` 상향, 10GbE 확인 |
 | 특정 노드에 부하 집중 | 태그 해시 불균등 분산 | `TAG_PARTITION_COUNT` 조정, 태그명 재설계 |
@@ -185,21 +177,15 @@ ORDER BY s.id, st.id;
 SELECT count(*) AS append_session_count
 FROM v$stmt WHERE query LIKE '%APPEND%';
 
--- 3. Result Cache 히트율 계산
-SELECT
-  cache_count,
-  cache_hit,
-  cache_replaced,
-  ROUND(cache_hit * 100.0 / NULLIF(cache_count + cache_hit, 0), 1) AS hit_rate_pct
-FROM v$rs_cache_stat;
+-- 3. ROLLUP 상태 확인
+SELECT rollup_table, source_table, enabled, run_state
+FROM v$rollup ORDER BY rollup_table;
 
--- 4. 프로퍼티 설정 일괄 확인 (체크포인트/캐시 관련)
+-- 4. 프로퍼티 설정 일괄 확인 (체크포인트/I/O 관련)
 SELECT name, value FROM v$property
 WHERE name IN (
   'DISK_COLUMNAR_TABLE_CHECKPOINT_INTERVAL_SEC',
   'DISK_COLUMNAR_INDEX_CHECKPOINT_INTERVAL_SEC',
-  'RS_CACHE_MAX_MEMORY_SIZE',
-  'RS_CACHE_TIME_BOUND_MSEC',
   'DISK_IO_THREAD_COUNT'
 );
 
@@ -230,7 +216,7 @@ WHERE name = 'TAG_PARTITION_COUNT';
 3단계: M$SYS_INDEXES → 인덱스 과다/부족 확인
       │
       ▼
-4단계: v$rs_cache_stat → Result Cache 히트율 확인
+4단계: v$rollup → 반복 집계의 ROLLUP 활용 여부 확인
       │
       ▼
 5단계: v$table_stat → 파티션 상태 확인
@@ -239,6 +225,6 @@ WHERE name = 'TAG_PARTITION_COUNT';
 6단계: top / iostat / free → OS 리소스 확인
       │
       ├─ I/O 포화 → SSD 교체, DISK_IO_THREAD_COUNT 조정
-      ├─ 메모리 부족 → 캐시 설정 낮추기
+      ├─ 메모리 부족 → 동시 실행 수와 메모리 상한 점검
       └─ CPU 포화 → 병렬 쿼리 조정, 쿼리 분산
 ```

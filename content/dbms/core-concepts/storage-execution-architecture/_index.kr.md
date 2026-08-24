@@ -9,7 +9,7 @@ Machbase DBMS 내부에서 데이터가 어떻게 저장되고 SQL이 어떻게 
 - **[Machbase 아키텍처 개요](/dbms/core-concepts/storage-execution-architecture/#architecture-machbase)** -- SQL 엔진, 저장 관리자, 프로세스 관리자의 역할과 Standard/Cluster Edition의 구조적 차이
 - **[컬럼형 저장과 압축](/dbms/core-concepts/storage-execution-architecture/#storage-columnar-compression-column)** -- 행 지향 저장과의 차이, 시계열 데이터에서 컬럼 압축이 효과적인 이유, 파티션 구조
 - **[인덱싱 기본 원리](/dbms/core-concepts/storage-execution-architecture/#indexing-basics)** -- 테이블 유형별 인덱스 특성(TAG 파티션 인덱스, LOG LSM 인덱스, VOLATILE Red-Black 트리)
-- **[Cache와 실행 계획 개념](/dbms/core-concepts/storage-execution-architecture/#execution-concepts-plan-cache)** -- SQL 실행 과정과 Plan Cache, Result Cache, PVO Cache의 역할
+- **[Cache와 실행 계획 개념](/dbms/core-concepts/storage-execution-architecture/#execution-concepts-plan-cache)** -- SQL 실행 과정과 Plan Cache, PVO Cache의 역할
 
 
 <a id="architecture-machbase"></a>
@@ -87,7 +87,7 @@ LOOKUP 테이블 처리를 위한 Lookup 노드도 Cluster Edition 구성에 포
 
 ### 데이터 흐름: 쓰기
 
-1. 클라이언트가 SQL INSERT 또는 APPEND 프로토콜로 데이터를 전송
+1. 클라이언트가 SQL INSERT 또는 Append API로 데이터를 전송
 2. QP가 대상 테이블과 컬럼을 파악해 SM에 전달
 3. LOG/TAG 테이블이면 SM이 해당 시간 파티션의 컬럼 파일에 데이터를 append
 4. 충분한 데이터가 쌓이면 배경 스레드가 압축 및 인덱스 병합 수행
@@ -347,27 +347,12 @@ SQL 문장의 실행 계획을 메모리에 저장해 두고, 같은 SQL이 다�
 
 실시간 수집 환경에서는 동일한 INSERT나 SELECT 패턴이 반복되므로, Plan Cache가 파싱 CPU 비용을 크게 줄입니다. 서버 기동 후 자동으로 운용되며 별도 설정이 필요 없습니다.
 
-### Result Cache (RS Cache)
+### PVO Cache
 
-SELECT 쿼리의 결과 자체를 캐시합니다. 동일한 쿼리가 짧은 시간 내에 반복 실행될 때, 저장소에서 데이터를 다시 읽지 않고 캐시된 결과를 즉시 반환합니다.
-
-RS Cache는 기본적으로 비활성화되어 있으며, 설정 파일 또는 SQL로 활성화합니다.
-
-```sql
--- RS Cache 활성화 여부 확인
-SELECT * FROM M$SYS_CACHE;
-
--- 세션 수준에서 RS Cache 활성화
-SET RS_CACHE_ENABLE = 1;
-```
-
-대시보드처럼 동일 쿼리를 짧은 주기로 반복하는 환경에서 유용합니다. 단, 데이터가 자주 변하는 테이블에 적용하면 오래된 결과가 반환될 수 있으므로, 정책적으로 허용 가능한 경우에만 활성화하십시오.
-
-### PVO Cache (파티션 메타데이터 캐시)
-
-TAG 테이블의 파티션 메타데이터를 메모리에 보관합니다. TAG 테이블 조회 시 어떤 파티션을 읽어야 하는지 결정하는 데 필요한 메타데이터를 매번 디스크에서 읽지 않고 메모리에서 즉시 참조합니다.
-
-서버 기동 시 자동으로 로드되며, TAG 테이블 조회가 많은 환경에서 특히 효과적입니다.
+동일한 SQL의 파싱과 최적화 결과를 재사용할 수 있도록 실행 계획을 메모리에 저장합니다.
+Standard Edition에서 지원하며, SELECT 결과 row를 저장하는 캐시는 아닙니다. 설정과 상태 확인은
+[PVO Cache와 메모리 튜닝](/dbms/performance-tuning/cache-tuning-memory/#pvo-cache)을
+참고하십시오.
 
 ### EXPLAIN으로 실행 계획 확인
 

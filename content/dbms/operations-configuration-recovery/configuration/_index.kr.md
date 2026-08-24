@@ -19,10 +19,10 @@ Machbase의 모든 설정은 `$MACHBASE_HOME/conf/machbase.conf` 파일에서 �
 | [설정 파일 위치와 적용 절차](/dbms/operations-configuration-recovery/configuration/#file-config-configuration) | machbase.conf 구조, 변경 후 재시작 절차, 백업 방법 |
 | [Runtime 변경 가능 설정과 재시작 필요 설정](/dbms/operations-configuration-recovery/configuration/#alter-start-restart-configuration-runtime) | ALTER SYSTEM SET 사용법, 런타임 변경 가능 파라미터 목록 |
 | [주요 설정 파라미터](/dbms/operations-configuration-recovery/configuration/#parameters-configuration) | 파라미터 전체 요약표 (기본값, 재시작 필요 여부, 설명) |
-| [메모리 설정](/dbms/operations-configuration-recovery/configuration/#memory-configuration) | PROCESS_MAX_SIZE, RS_CACHE 메모리 튜닝 |
+| [메모리 설정](/dbms/operations-configuration-recovery/configuration/#memory-configuration) | PROCESS_MAX_SIZE, 로그·Volatile·Lookup 테이블 메모리 튜닝 |
 | [세션과 네트워크 설정](/dbms/operations-configuration-recovery/configuration/#network-session-configuration) | PORT_NO, MAX_SESSION_COUNT, 타임아웃 설정 |
 | [스토리지와 체크포인트 설정](/dbms/operations-configuration-recovery/configuration/#storage-checkpoint-configuration) | 데이터 경로, 체크포인트 주기, Direct I/O |
-| [타임존](/dbms/operations-configuration-recovery/configuration/#timezone) | 서버·클라이언트 타임존, machsql/machloader/REST API 설정 |
+| [타임존](/dbms/operations-configuration-recovery/configuration/#timezone) | 서버·클라이언트 타임존, machsql·machloader·SDK 설정 |
 
 
 <a id="file-config-configuration"></a>
@@ -79,7 +79,7 @@ machadmin -u
 
 #### 런타임 즉시 적용 설정
 
-`MAX_SESSION_COUNT`, `PROCESS_MAX_SIZE`, `PVO_CACHE_ENABLE` 등 일부 파라미터는 `ALTER SYSTEM SET` 명령어로 서버를 재시작하지 않고 즉시 변경할 수 있습니다. Result Cache의 `RS_CACHE_*` 전역 기본값은 설정 파일을 수정하고 재시작하여 적용하며, 현재 세션의 Result Cache 동작은 `ALTER SESSION SET RS_CACHE_ENABLE = ...`처럼 세션 단위로 변경합니다. 자세한 내용은 [Runtime 변경 가능 설정](/dbms/operations-configuration-recovery/configuration/#alter-start-restart-configuration-runtime)을 참고합니다.
+`MAX_SESSION_COUNT`, `PROCESS_MAX_SIZE`, `PVO_CACHE_ENABLE` 등 일부 파라미터는 `ALTER SYSTEM SET` 명령어로 서버를 재시작하지 않고 즉시 변경할 수 있습니다. 자세한 내용은 [Runtime 변경 가능 설정](/dbms/operations-configuration-recovery/configuration/#alter-start-restart-configuration-runtime)을 참고합니다.
 
 ### 설정 파일 백업
 
@@ -104,7 +104,7 @@ SELECT name, value FROM v$property ORDER BY name;
 SELECT name, value FROM v$property WHERE name = 'PORT_NO';
 
 -- 키워드로 검색
-SELECT name, value FROM v$property WHERE name LIKE 'RS_CACHE%';
+SELECT name, value FROM v$property WHERE name LIKE 'PVO_CACHE%';
 ```
 
 <a id="alter-start-restart-configuration-runtime"></a>
@@ -165,7 +165,6 @@ SELECT name, value FROM v$property WHERE name = 'MAX_SESSION_COUNT';
 | 파라미터 | 기본값 | 설명 |
 |----------|--------|------|
 | `PORT_NO` | 5656 | 클라이언트 연결 TCP 포트 |
-| `HTTP_PORT_NO` | 5657 | REST API HTTP 포트 |
 | `DBS_PATH` | `?/dbs` | 데이터베이스 파일 저장 경로 |
 | `DISK_COLUMNAR_TABLESPACE_MEMORY_MAX_SIZE` | 8GB | 로그 테이블 최대 메모리 |
 | `CPU_COUNT` | 1 | 사용 CPU 수 |
@@ -174,7 +173,6 @@ SELECT name, value FROM v$property WHERE name = 'MAX_SESSION_COUNT';
 | `GRANT_REMOTE_ACCESS` | 1 | 원격 접속 허용 여부 |
 | `DISK_TABLESPACE_DIRECT_IO_WRITE` | 1 | 쓰기 Direct I/O 사용 여부 |
 | `PVO_CACHE_SHARD_COUNT` | 16 | Statement Cache 샤드 수 |
-| `RS_CACHE_*` | 항목별 상이 | Result Cache 전역 기본값 |
 
 ### 변경 사항을 영구 반영하는 절차
 
@@ -209,8 +207,6 @@ SELECT name, value, type FROM v$property ORDER BY name;
 | 파라미터 | 기본값 | 재시작 필요 | 설명 |
 |----------|--------|-------------|------|
 | `PORT_NO` | 5656 | 예 | 클라이언트 연결 TCP 포트 |
-| `HTTP_PORT_NO` | 5657 | 예 | REST API HTTP 포트 |
-| `HTTP_ENABLE` | 1 | 예 | REST API 서비스 사용 여부 |
 | `GRANT_REMOTE_ACCESS` | 1 | 예 | 원격 접속 허용 (0: 로컬 전용) |
 | `BIND_IP_ADDRESS` | 0.0.0.0 | 예 | 리스너 바인드 IP 주소 |
 
@@ -233,17 +229,6 @@ SELECT name, value, type FROM v$property ORDER BY name;
 | `DISK_COLUMNAR_TABLESPACE_MEMORY_MAX_SIZE` | 8GB | 예 | 로그 테이블 최대 메모리 |
 | `DISK_COLUMNAR_TABLESPACE_MEMORY_MIN_SIZE` | 100MB | 예 | 시작 시 사전 확보 메모리 |
 | `VOLATILE_TABLESPACE_MEMORY_MAX_SIZE` | 2GB | 예 | Volatile·Lookup 테이블 총 메모리 한도 |
-
-### Result Cache (RS_CACHE)
-
-| 파라미터 | 기본값 | 재시작 필요 | 설명 |
-|----------|--------|-------------|------|
-| `RS_CACHE_ENABLE` | 1 | 예 | Result Cache 전역 기본 활성화 여부 |
-| `RS_CACHE_TIME_BOUND_MSEC` | 1000 | 예 | 캐시 저장 기준 실행 시간 (밀리초) |
-| `RS_CACHE_MAX_MEMORY_SIZE` | 512MB | 예 | Result Cache 최대 메모리 |
-| `RS_CACHE_MAX_MEMORY_PER_QUERY` | 16MB | 예 | 쿼리당 캐시 최대 메모리 |
-| `RS_CACHE_MAX_RECORD_PER_QUERY` | 10000 | 예 | 쿼리당 캐시 최대 레코드 수 |
-| `RS_CACHE_APPROXIMATE_RESULT_ENABLE` | 0 | 예 | 근사값 모드 (1: 빠르지만 부정확할 수 있음) |
 
 ### 스토리지
 
@@ -290,7 +275,7 @@ SELECT name, value, type FROM v$property ORDER BY name;
 
 ## 메모리 설정
 
-Machbase의 메모리 설정은 서버 전체 프로세스 한도, 로그 테이블 버퍼, Result Cache, Volatile 테이블 등 여러 레이어로 구성됩니다. 각 설정값을 시스템 RAM에 맞게 적절히 조정하면 성능과 안정성을 모두 높일 수 있습니다.
+Machbase의 메모리 설정은 서버 전체 프로세스 한도, 로그 테이블 버퍼, Volatile·Lookup 테이블 등 여러 레이어로 구성됩니다. 각 설정값을 시스템 RAM에 맞게 적절히 조정하면 성능과 안정성을 모두 높일 수 있습니다.
 
 ### 프로세스 최대 메모리
 
@@ -353,52 +338,6 @@ DISK_COLUMNAR_TABLESPACE_MEMORY_MAX_SIZE = 8589934592   # 8GB
 
 메모리가 충분한 환경에서만 활성화를 권장합니다.
 
-### Result Cache 메모리
-
-Result Cache는 반복 실행되는 쿼리의 결과를 메모리에 저장하여 응답 시간을 단축합니다.
-
-#### RS_CACHE_MAX_MEMORY_SIZE
-
-Result Cache 전체가 사용할 수 있는 최대 메모리입니다.
-
-| 항목 | 값 |
-|------|----|
-| 기본값 | 512MB |
-| 재시작 필요 | 예 |
-
-```ini
-# machbase.conf
-RS_CACHE_MAX_MEMORY_SIZE = 1073741824   # 1GB
-```
-
-#### RS_CACHE_MAX_MEMORY_PER_QUERY
-
-단일 쿼리의 결과를 캐시할 때 허용하는 최대 메모리입니다. 이 값을 초과하는 결과는 캐시에 저장되지 않습니다.
-
-| 항목 | 값 |
-|------|----|
-| 기본값 | 16MB |
-| 재시작 필요 | 예 |
-
-```ini
-# machbase.conf
-RS_CACHE_MAX_MEMORY_PER_QUERY = 33554432   # 32MB
-```
-
-#### RS_CACHE_MAX_RECORD_PER_QUERY
-
-단일 쿼리 결과의 최대 레코드 수입니다. 이 수를 초과하는 결과는 캐시에 저장되지 않습니다.
-
-| 항목 | 값 |
-|------|----|
-| 기본값 | 10,000 (배포 설정 파일에서는 50,000으로 설정될 수 있음) |
-| 재시작 필요 | 예 |
-
-```ini
-# machbase.conf
-RS_CACHE_MAX_RECORD_PER_QUERY = 50000
-```
-
 ### Volatile·Lookup 테이블 메모리
 
 #### VOLATILE_TABLESPACE_MEMORY_MAX_SIZE
@@ -414,12 +353,12 @@ RS_CACHE_MAX_RECORD_PER_QUERY = 50000
 
 서버의 RAM 크기에 따른 주요 파라미터 권장값 예시입니다.
 
-| RAM | `PROCESS_MAX_SIZE` | `DISK_COLUMNAR_TABLESPACE_MEMORY_MAX_SIZE` | `RS_CACHE_MAX_MEMORY_SIZE` |
-|-----|--------------------|--------------------------------------------|---------------------------|
-| 16GB | 10GB | 8GB | 512MB |
-| 32GB | 22GB | 16GB | 1GB |
-| 64GB | 44GB | 32GB | 2GB |
-| 128GB | 90GB | 64GB | 4GB |
+| RAM | `PROCESS_MAX_SIZE` | `DISK_COLUMNAR_TABLESPACE_MEMORY_MAX_SIZE` |
+|-----|--------------------|--------------------------------------------|
+| 16GB | 10GB | 8GB |
+| 32GB | 22GB | 16GB |
+| 64GB | 44GB | 32GB |
+| 128GB | 90GB | 64GB |
 
 > **참고**: 위 값은 Machbase 단독 운영 시의 예시입니다. 동일 서버에 다른 서비스가 함께 운영되는 경우 그에 맞게 조정합니다.
 
@@ -428,9 +367,6 @@ RS_CACHE_MAX_RECORD_PER_QUERY = 50000
 ```sql
 -- 서버 메모리 사용 현황
 SELECT * FROM v$sysstat WHERE name LIKE '%memory%' OR name LIKE '%mem%';
-
--- Result Cache 상태
-SELECT name, value FROM v$property WHERE name LIKE 'RS_CACHE%';
 ```
 
 <a id="network-session-configuration"></a>
@@ -454,22 +390,6 @@ SELECT name, value FROM v$property WHERE name LIKE 'RS_CACHE%';
 ```ini
 # machbase.conf
 PORT_NO = 5656
-```
-
-#### HTTP_PORT_NO
-
-REST API 서비스가 사용하는 HTTP 포트 번호입니다.
-
-| 항목 | 값 |
-|------|----|
-| 기본값 | 5657 |
-| 범위 | 1024 ~ 65535 |
-| 재시작 필요 | 예 |
-
-```ini
-# machbase.conf
-HTTP_PORT_NO = 5657
-HTTP_ENABLE  = 1   # REST API 활성화 (0: 비활성)
 ```
 
 #### BIND_IP_ADDRESS
@@ -610,7 +530,7 @@ SELECT s.id AS session_id, s.user_name, st.query, st.state
 SELECT name, value
   FROM v$property
  WHERE name IN (
-   'PORT_NO', 'HTTP_PORT_NO', 'MAX_SESSION_COUNT',
+   'PORT_NO', 'MAX_SESSION_COUNT',
    'SESSION_IDLE_TIMEOUT_SEC', 'SESSION_QUERY_TIMEOUT_SEC', 'DDL_LOCK_TIMEOUT',
    'GRANT_REMOTE_ACCESS', 'BIND_IP_ADDRESS'
  )
@@ -781,13 +701,12 @@ Machbase는 모든 시각(DATETIME) 값을 내부적으로 **UTC 나노초** 단
 
 ### 타임존 동작 원리
 
-Machbase의 타임존은 세 가지 레이어로 구분됩니다.
+Machbase의 타임존은 두 가지 레이어로 구분됩니다.
 
 | 레이어 | 적용 범위 | 설정 방법 |
 |--------|-----------|-----------|
 | 서버 타임존 | 서버 기본값. 클라이언트가 타임존을 지정하지 않으면 이 값이 세션에 적용됨 | `machbase.conf`의 `TIMEZONE` 프로퍼티 또는 OS 기본 타임존 |
 | 세션 타임존 | 개별 연결(세션)에 적용. 서버 타임존을 재정의 | 연결 문자열의 `TIMEZONE` 파라미터, machsql의 `-z` 옵션 |
-| 표시 타임존 | 데이터를 출력할 때 변환하는 기준 타임존 | REST API 헤더 또는 쿼리 파라미터 |
 
 #### 동작 규칙
 
@@ -814,7 +733,6 @@ Machbase는 `+HHMM` 또는 `-HHMM` 형식의 5자리 오프셋을 사용합니�
 | [machsql -z](/dbms/operations-configuration-recovery/configuration/#machsql-z) | machsql 세션 타임존 설정 옵션 |
 | [machloader -z](/dbms/operations-configuration-recovery/configuration/#machloader-z) | CSV 데이터 로드 시 타임존 지정 |
 | [CLI/JDBC/.NET TIMEZONE 연결 옵션](/dbms/operations-configuration-recovery/configuration/#connection-cli-jdbc-net-timezone) | 연결 문자열에서 타임존 지정 |
-| [REST API 타임존 응답](/dbms/operations-configuration-recovery/configuration/#timezone-rest-api) | HTTP 헤더로 응답 타임존 지정 |
 
 <a id="timezone-server-configuration"></a>
 <a id="timezone-timezone-server-configuration"></a>
@@ -1000,13 +918,22 @@ machloader -o -t sensor_data -d output.csv -z +0900
 <a id="connection-cli-jdbc-net-timezone"></a>
 <a id="timezone-connection-cli-jdbc-net-timezone"></a>
 
-### CLI/JDBC/.NET TIMEZONE 연결 옵션
+### SDK별 TIMEZONE 연결 옵션
 
-CLI, ODBC, JDBC, .NET 드라이버를 사용하여 Machbase에 연결할 때 연결 문자열에 `TIMEZONE` 파라미터를 추가하면 해당 세션의 타임존을 지정할 수 있습니다.
+Machbase SQLCLI, ODBC, JDBC, .NET SDK를 사용하여 Machbase에 연결할 때 연결 문자열에
+`TIMEZONE` 파라미터를 추가하면 해당 세션의 타임존을 지정할 수 있습니다.
 
-#### CLI / ODBC 연결 문자열
+#### Machbase SQLCLI 연결 문자열
 
-ODBC 및 CLI 드라이버의 연결 문자열에 `TIMEZONE` 파라미터를 포함합니다.
+Machbase SQLCLI 연결 문자열에 `TIMEZONE` 파라미터를 포함합니다.
+
+```
+SERVER=127.0.0.1;UID=SYS;PWD=MANAGER;CONNTYPE=1;NLS_USE=UTF8;PORT_NO=5656;TIMEZONE=+0900
+```
+
+#### ODBC 연결 문자열
+
+ODBC 연결 문자열에 `TIMEZONE` 파라미터를 포함합니다.
 
 ```
 SERVER=127.0.0.1;UID=SYS;PWD=MANAGER;CONNTYPE=1;NLS_USE=UTF8;PORT_NO=5656;TIMEZONE=+0900
@@ -1065,95 +992,3 @@ conn = mach.connect(
 
 - 타임존은 세션 단위로 적용됩니다. 연결 풀을 사용하는 경우, 풀에서 가져온 연결의 타임존이 예상과 다를 수 있습니다. 연결 풀 초기화 시 타임존 파라미터를 명시적으로 지정하는 것을 권장합니다.
 - 타임존 오프셋은 `+HHMM` 또는 `-HHMM` 형식의 5자리여야 합니다. 예: `+0900`, `-0500`.
-
-<a id="timezone-rest-api"></a>
-<a id="timezone-timezone-rest-api"></a>
-
-### REST API 타임존 응답
-
-Machbase REST API를 사용할 때 HTTP 요청 헤더에 타임존을 지정하면, 응답에 포함된 DATETIME 값이 해당 타임존 기준으로 변환되어 반환됩니다.
-
-#### 요청 헤더에서 타임존 지정
-
-`The-Timezone-Machbase` 헤더를 사용하여 응답 타임존을 지정합니다.
-
-```
-The-Timezone-Machbase: +0900
-```
-
-##### curl 예시
-
-```bash
-# KST(UTC+9) 기준으로 쿼리 결과 조회
-curl -H "Authorization: Basic $(echo -n 'SYS:MANAGER' | base64)" \
-     -H "The-Timezone-Machbase: +0900" \
-     -G "http://127.0.0.1:5657/machbase" \
-     --data-urlencode 'q=SELECT sysdate FROM v$tables LIMIT 1'
-```
-
-응답 JSON의 `timezone` 필드에 적용된 타임존 값이 반환됩니다.
-
-```json
-{
-  "error_code": 0,
-  "error_message": "",
-  "columns": [
-    {
-      "name": "sysdate",
-      "type": 6,
-      "length": 31
-    }
-  ],
-  "timezone": "+0900",
-  "data": [
-    {
-      "sysdate": "2026-07-07 10:30:00 000:000:000"
-    }
-  ]
-}
-```
-
-#### UTC 기준으로 조회
-
-```bash
-# UTC 기준으로 조회
-curl -H "Authorization: Basic $(echo -n 'SYS:MANAGER' | base64)" \
-     -H "The-Timezone-Machbase: +0000" \
-     -G "http://127.0.0.1:5657/machbase" \
-     --data-urlencode 'q=SELECT sysdate FROM v$tables LIMIT 1'
-```
-
-```json
-{
-  "timezone": "+0000",
-  "data": [
-    {
-      "sysdate": "2026-07-07 01:30:00 000:000:000"
-    }
-  ]
-}
-```
-
-#### 타임존 미지정 시 동작
-
-`The-Timezone-Machbase` 헤더를 포함하지 않으면 서버의 기본 타임존(`machbase.conf`의 `TIMEZONE` 값 또는 OS 타임존)이 적용됩니다.
-
-#### 데이터 입력 시 타임존 적용
-
-REST API로 데이터를 INSERT할 때도 동일한 헤더를 사용하면 DATETIME 값이 지정 타임존으로 해석되어 UTC로 변환 후 저장됩니다.
-
-```bash
-curl -X POST \
-     -H "Authorization: Basic $(echo -n 'SYS:MANAGER' | base64)" \
-     -H "Content-Type: application/json" \
-     -H "The-Timezone-Machbase: +0900" \
-     -d '{"q":"INSERT INTO sensor VALUES(TO_DATE(\"2026-07-07 10:00:00\"), 25.3)"}' \
-     "http://127.0.0.1:5657/machbase"
-```
-
-위 예시에서 `2026-07-07 10:00:00`은 KST로 해석되어 UTC 기준 `2026-07-07 01:00:00`으로 저장됩니다.
-
-#### 주의 사항
-
-- 헤더 이름은 `The-Timezone-Machbase`이며, 대소문자를 구분하지 않는 HTTP 표준에 따라 처리됩니다.
-- 오프셋 형식은 `+HHMM` 또는 `-HHMM`(5자리)이어야 합니다.

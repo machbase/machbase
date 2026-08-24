@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.8.1 Edition별 기능 지원표'
+title: '18.6.1 Edition별 기능 지원표'
 weight: 10
 toc: true
 ---
@@ -21,7 +21,6 @@ Machbase는 단일 서버용 **Standard Edition**과 다중 노드 수평 확장
 | ROLLUP (기본) | O | O | |
 | Custom ROLLUP | O | X | Cluster Edition 미지원 |
 | ROLLUP_REBUILD | O | X | Cluster Edition 미지원 |
-| STREAM | O | X | Cluster Edition 미지원 |
 | **백업 및 복구** | | | |
 | 논리 다중 데이터베이스 | O | X | Standard Edition 전용. DB별 CPU·메모리·디스크 물리 quota는 제공하지 않음 |
 | BACKUP DATABASE | O | O | |
@@ -34,7 +33,6 @@ Machbase는 단일 서버용 **Standard Edition**과 다중 노드 수평 확장
 | HA (고가용성) | X | O | Broker/Warehouse 이중화 |
 | **Append API** | O | O | |
 | AUTH KEY 인증 | O | O | |
-| REST API | O | O | |
 
 ## Cluster Edition 제약 사항 요약
 
@@ -43,7 +41,6 @@ Cluster Edition 미지원 기능은 주로 단일 노드 중심의 로컬 파일
 - **TRANSACTION 테이블**: 분산 환경에서 ACID 트랜잭션을 보장하는 TRANSACTION 테이블은 미지원. 트랜잭션이 필요한 데이터는 외부 RDBMS와 연동하십시오.
 - **VOLATILE 테이블**: 메모리 기반 임시 테이블로 노드 간 공유 불가.
 - **MOUNT/UMOUNT**: 로컬 파일 시스템 기반 백업 마운트는 분산 환경에서 미지원.
-- **STREAM**: 단일 노드 실시간 스트림 처리 미지원.
 - **Custom ROLLUP / ROLLUP_REBUILD**: 분산 집계 구조 차이로 커스텀 롤업 재정의 및 재구축 미지원.
 
 ## Edition 선택 기준
@@ -53,5 +50,5 @@ Cluster Edition 미지원 기능은 주로 단일 노드 중심의 로컬 파일
 | 단일 서버의 처리량과 저장 용량으로 운영 가능한 워크로드 | Standard Edition |
 | 단일 서버 범위를 넘어 수평 확장이 필요한 워크로드 | Cluster Edition |
 | 고가용성 (장애 자동 복구) 필요 | Cluster Edition |
-| TRANSACTION 테이블, MOUNT, STREAM 기능 필요 | Standard Edition |
+| TRANSACTION 테이블 또는 MOUNT 기능 필요 | Standard Edition |
 | 대규모 실시간 센서 데이터 수집 | Cluster Edition |

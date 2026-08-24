@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '14.12 운영 체크리스트'
+title: '14.11 운영 체크리스트'
 weight: 120
 toc: true
 ---
@@ -91,15 +91,6 @@ BACKUP DATABASE INTO DISK = '/backup/machbase_weekly';
 ```bash
 machadmin -w /backup/machbase_weekly
 ```
-
-### Result Cache 히트율
-
-```sql
--- Result Cache 통계 확인
-SELECT * FROM v$rs_cache_stat;
-```
-
-히트율이 낮은 경우 캐시 설정 또는 쿼리 패턴을 검토합니다.
 
 ### 라이선스 만료일 확인
 

@@ -50,7 +50,3 @@ toc: true
 <a id="timezone-connection-cli-jdbc-net-timezone"></a>
 
 ### CLI/JDBC/.NET TIMEZONE 연결 옵션
-
-<a id="timezone-timezone-rest-api"></a>
-
-### REST API 타임존 응답

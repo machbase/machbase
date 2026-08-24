@@ -26,9 +26,9 @@ toc: true
 | 13.3 | [인덱스 튜닝](./index-tuning/) | 테이블 타입별 인덱스 선택과 쓰기 비용 |
 | 13.4 | [입력 성능 튜닝](./performance-tuning/) | Append, 배치, 병렬 입력, Collector |
 | 13.5 | [조회와 분석 성능 튜닝](./performance-query-tuning/) | 시간 조건, 실행 계획, ROLLUP, 윈도우 함수 |
-| 13.6 | [캐시와 메모리 튜닝](./cache-tuning-memory/) | Result Cache, PVO Cache, 메모리 사용량 |
+| 13.6 | [캐시와 메모리 튜닝](./cache-tuning-memory/) | PVO Cache, Min-Max Cache, 메모리 사용량 |
 | 13.7 | [스토리지와 Cluster 튜닝](./tuning-storage-cluster/) | 디스크 I/O, 체크포인트, Cluster 구성 |
-| 13.8 | [입력 성능과 연동 경로](./data-input-performance/) | SDK, REST, 파일 입력 경로 선택 |
+| 13.8 | [입력 성능과 연동 경로](./data-input-performance/) | SDK와 파일 입력 경로 선택 |
 | 13.9 | [성능 진단 체크리스트](./checklist-performance-diagnosis/) | 변경 전후 점검 항목과 결과 기록 |
 | 13.10 | [쿼리와 분석](./query-analysis/) | 시계열 조회 문법과 분석 기능 |
 

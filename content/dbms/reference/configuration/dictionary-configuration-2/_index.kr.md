@@ -21,6 +21,11 @@ Coordinator는 클러스터 전체 메타데이터와 노드 상태를 관리합
 | `CLUSTER_LINK_MAX_LISTEN` | 512 | 클러스터 링크 최대 listen 연결 수 |
 | `CLUSTER_LINK_MAX_POLL` | 4096 | 클러스터 링크 최대 poll 이벤트 수 |
 | `CLUSTER_LINK_BUFFER_SIZE` | 33554432 | 클러스터 링크 버퍼 크기(바이트). 기본 32MB |
+| `HTTP_ADMIN_PORT` | 5779 | Coordinator/Deployer 관리 REST 포트 |
+| `HTTP_THREAD_COUNT` | 2 | 관리 REST 요청 처리 스레드 수 |
+
+`HTTP_ADMIN_PORT`는 환경 변수 `MACHBASE_HTTP_ADMIN_PORT`로도 지정할 수 있습니다. 이 포트는
+SQL 조회나 데이터 입력을 위한 포트가 아니라 클러스터 관리 요청에만 사용합니다.
 
 ## 클러스터 링크 타임아웃 설정
 
@@ -47,7 +52,6 @@ Broker는 클라이언트의 쿼리를 받아 Warehouse로 분산 처리합니�
 | 프로퍼티 | 기본값 | 설명 |
 |----------|--------|------|
 | `PORT_NO` | 5656 | 클라이언트 연결 포트 |
-| `HTTP_PORT_NO` | 5657 | REST API 포트 |
 | `QUERY_PARALLEL_FACTOR` | 4 | 병렬 쿼리 처리 스레드 수 (Cluster 기본값) |
 | `CLUSTER_LINK_HOST` | - | Broker가 클러스터 통신에 바인드할 IP |
 | `CLUSTER_LINK_PORT_NO` | - | Broker 클러스터 통신 포트 |

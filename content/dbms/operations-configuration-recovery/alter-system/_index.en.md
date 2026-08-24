@@ -31,10 +31,6 @@ toc: true
 
 ## FLUSH AGER
 
-<a id="flush-result-cache"></a>
-
-## FLUSH RESULT_CACHE
-
 <a id="flush-pvo-cache"></a>
 
 ## FLUSH PVO_CACHE

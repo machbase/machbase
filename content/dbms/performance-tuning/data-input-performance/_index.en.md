@@ -13,8 +13,6 @@ toc: true
 
 <a id="path-guide-rest"></a>
 
-## REST 입력 경로 안내 (상세는 12장으로 연결)
-
 <a id="path-guide-sdk"></a>
 
 ## SDK 입력 경로 안내 (상세는 11장과 12장으로 연결)

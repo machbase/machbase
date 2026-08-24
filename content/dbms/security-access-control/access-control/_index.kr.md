@@ -11,7 +11,6 @@ toc: true
 | 항목 | 설명 |
 |------|------|
 | [원격 접속 설정](/dbms/security-access-control/access-control/#remote-access-configuration) | `GRANT_REMOTE_ACCESS`로 원격 접속 허용 여부 제어 |
-| [HTTP 인증 설정](/dbms/security-access-control/access-control/#authentication-configuration-http) | `HTTP_AUTH`로 REST API Basic Auth 활성화 |
 | [BIND_IP_ADDRESS와 네트워크 노출 제어](/dbms/security-access-control/access-control/#network-exposure-bind-ip-address) | 리스너가 열리는 네트워크 인터페이스 지정 |
 
 ## 접속 제어 관련 주요 설정
@@ -20,16 +19,12 @@ toc: true
 |-----------|--------|------|
 | `GRANT_REMOTE_ACCESS` | `1` | 원격 접속 허용(1) / 차단(0) |
 | `BIND_IP_ADDRESS` | `0.0.0.0` | 리스너 바인드 주소 (모든 인터페이스) |
-| `HTTP_AUTH` | `0` | REST API Basic Authentication 활성화(1) / 비활성화(0) |
 
 설정은 `machbase.conf`에서 영구적으로 변경하거나, `ALTER SYSTEM SET` 구문으로 재시작 없이 즉시 반영할 수 있습니다.
 
 ```sql
 -- 원격 접속 차단
 ALTER SYSTEM SET GRANT_REMOTE_ACCESS = 0;
-
--- REST API Basic Auth 활성화
-ALTER SYSTEM SET HTTP_AUTH = 1;
 ```
 
 
@@ -100,87 +95,18 @@ BIND_IP_ADDRESS = 192.168.1.100   # 내부 네트워크 인터페이스만 리�
 - `GRANT_REMOTE_ACCESS = 0`으로 차단한 상태에서 원격 머신에서 연결을 시도하면 인증 오류가 아니라 접속 거부 오류가 반환됩니다.
 - `BIND_IP_ADDRESS`와 조합해 사용하면 더욱 세밀한 네트워크 노출 제어가 가능합니다. ([BIND_IP_ADDRESS와 네트워크 노출 제어](/dbms/security-access-control/access-control/#network-exposure-bind-ip-address) 참고)
 
-<a id="authentication-configuration-http"></a>
-
-## HTTP 인증 설정
-
-기본 TCP 연결 외에 REST API를 통한 HTTP 접속도 가능합니다. 내장 HTTP 서버의 인증 방식은 `HTTP_AUTH` 설정에 따라 HTTP Basic Authentication을 사용합니다.
-
-### 관련 설정 항목
-
-| 설정 항목 | 기본값 | 설명 |
-|-----------|--------|------|
-| `HTTP_PORT_NO` | `5657` | REST API 리스너 포트 |
-| `HTTP_AUTH` | `0` | Basic Authentication 활성화(1) / 비활성화(0) |
-
-`HTTP_AUTH=0`이면 HTTP 요청은 인증 헤더 없이 SYS 세션으로 처리됩니다. 외부 노출
-환경에서는 `HTTP_AUTH=1`을 사용하고, HTTPS가 필요하면 reverse proxy나 TLS terminator를
-앞단에 배치합니다.
-
-### Basic Authentication 활성화
-
-`HTTP_AUTH = 1`로 설정하면 REST API 요청에 HTTP Basic Authentication 헤더가 필수가 됩니다.
-
-#### machbase.conf에서 영구 설정
-
-```ini
-HTTP_AUTH = 1
-```
-
-변경 후 Machbase를 재시작해야 적용됩니다.
-
-#### ALTER SYSTEM SET으로 즉시 반영
-
-```sql
--- Basic Auth 활성화
-ALTER SYSTEM SET HTTP_AUTH = 1;
-
--- Basic Auth 비활성화
-ALTER SYSTEM SET HTTP_AUTH = 0;
-```
-
-현재 설정값 확인:
-
-```sql
-SELECT name, value FROM v$property WHERE name = 'HTTP_AUTH';
-```
-
-### Basic Auth 사용 예시 (`HTTP_AUTH = 1` 필요)
-
-```bash
-curl -G "http://localhost:5657/machbase" \
-  -u "sys:manager" \
-  --data-urlencode "q=SELECT count(*) FROM sensor_log"
-```
-
-{{< callout type="warning" >}}
-Basic Authentication은 자격증명이 Base64 인코딩만 되어 평문과 동일합니다. 내장 HTTP
-서버를 외부에 노출해야 한다면 외부 reverse proxy에서 HTTPS를 구성하십시오.
-{{< /callout >}}
-
-### 권장 운영 환경 구성
-
-```ini
-# machbase.conf 권장 설정 (운영)
-HTTP_PORT_NO     = 5657
-HTTP_AUTH        = 1       # Basic Auth 강제
-```
-
-운영 환경에서는 내장 HTTP 포트를 내부망에만 바인딩하거나 방화벽으로 제한하고, 외부 HTTPS는
-reverse proxy/TLS terminator에서 처리하는 구성을 권장합니다.
-
 <a id="network-exposure-bind-ip-address"></a>
 
 ## BIND_IP_ADDRESS와 네트워크 노출 제어
 
-`BIND_IP_ADDRESS`는 리스너(TCP 포트)가 연결을 수신할 네트워크 인터페이스를 지정합니다. 서버에 여러 NIC가 있을 때 특정 인터페이스에만 서비스를 노출할 수 있으며, REST API 포트를 포함한 모든 리스너에 동일하게 적용됩니다.
+`BIND_IP_ADDRESS`는 클라이언트 리스너(TCP 포트)가 연결을 수신할 네트워크 인터페이스를 지정합니다. 서버에 여러 NIC가 있을 때 특정 인터페이스에만 서비스를 노출할 수 있습니다.
 
 ### 설정값
 
 | 설정값 | 동작 |
 |--------|------|
 | `0.0.0.0` (기본값) | 모든 네트워크 인터페이스에서 연결 수신 |
-| `127.0.0.1` | 로컬호스트에서만 연결 수신. REST API 포함 외부 노출 없음 |
+| `127.0.0.1` | 로컬호스트에서만 연결 수신 |
 | `192.168.1.100` | 지정한 IP를 가진 인터페이스에서만 연결 수신 |
 
 ### 설정 방법
@@ -215,7 +141,7 @@ BIND_IP_ADDRESS = 127.0.0.1
 GRANT_REMOTE_ACCESS = 0
 ```
 
-이 설정에서는 REST API (`HTTP_PORT_NO`)를 포함한 모든 포트가 외부에서 접근 불가합니다.
+이 설정에서는 Machbase 클라이언트 포트가 외부에서 접근할 수 없습니다.
 
 #### 내부 네트워크에만 서비스 노출
 

@@ -190,11 +190,11 @@ sudo date -s "2025-01-02 12:34:56"
 
 ```bash
 current=$(cat /proc/sys/net/ipv4/ip_local_reserved_ports)
-ports=5101-5110,5201-5202,5301-5302,5401-5402,5500-5503,5656-5657
+ports=5101-5110,5201-5202,5301-5302,5401,5500-5503,5656
 sudo sysctl -w net.ipv4.ip_local_reserved_ports="${current:+$current,}$ports"
 ```
 
-기존 예약 포트가 있으면 덮어쓰지 말고 쉼표로 구분해 병합합니다. 클러스터 구성에 따라 포트 범위를 조정하십시오. Cluster link, admin, service, Broker/Warehouse HTTP 관리 포트, Warehouse replication manager 포트 등을 모두 포함해야 합니다.
+기존 예약 포트가 있으면 덮어쓰지 말고 쉼표로 구분해 병합합니다. 클러스터 구성에 따라 포트 범위를 조정하십시오. Cluster link, Coordinator/Deployer 관리, service, Warehouse replication manager 포트 등을 모두 포함해야 합니다.
 
 ---
 
@@ -266,7 +266,6 @@ cluster:
     broker:
       home_path: /home/machbase/broker
       cluster_link_port: 5401
-      http_port_no: 5402
       service_port: 5656
     warehouse:
       home_path: /home/machbase/warehouse
@@ -355,14 +354,14 @@ cluster:
 
 같은 서버에 같은 타입의 노드를 2개 이상 배치할 때는 두 번째 노드부터 `home_path`와 포트를 명시적으로 지정하여 충돌을 피합니다.
 
-Coordinator와 Deployer의 HTTP 관리 포트는 `http_admin_port`, Broker의 HTTP 포트는 `http_port_no`를 사용합니다.
+Coordinator와 Deployer의 관리 포트는 `http_admin_port`를 사용합니다.
 
 Broker와 Warehouse 노드에는 선택적으로 `dbs_path`를 지정합니다. `dbs_path`는 노드가 설치되는 서버 기준의 데이터 파일 경로이며, 생략하면 `machcoordinatoradmin --add-node`의 기본 `DBS_PATH` 동작을 따릅니다.
 
 기존 `cluster.package.path`는 하위 호환 입력으로 사용할 수 있지만, 새로 작성하는 YAML에서는 `origin_path`를 사용합니다.
 
-`http_admin_port`는 Coordinator와 Deployer에만 사용합니다. Broker의 REST/Web API 포트는
-`http_port_no`로 작성합니다. Lookup과 Warehouse에는 HTTP 포트 필드를 지정하지 않습니다.
+`http_admin_port`는 Coordinator와 Deployer에만 사용합니다. Broker, Lookup, Warehouse에는
+HTTP 포트 필드를 지정하지 않습니다.
 
 작성이 완료되면 유효성을 검사합니다.
 
@@ -847,7 +846,7 @@ machcoordinatoradmin -u
 ```bash
 machcoordinatoradmin --add-node="192.168.1.10:5101" \
   --node-type=coordinator \
-  --http-port-no=5102
+  --http-admin-port=5102
 ```
 
 ##### 4. 등록 확인
@@ -866,7 +865,7 @@ Secondary 노드에서 패키지를 배포하고 `machbase.conf`를 설정한 �
 # Primary Coordinator에서 먼저 등록
 machcoordinatoradmin --add-node="192.168.1.20:5101" \
   --node-type=coordinator \
-  --http-port-no=5102
+  --http-admin-port=5102
 
 # 그 다음 Secondary 노드에서 시작 (--primary 옵션으로 Primary 지정)
 machcoordinatoradmin -u --primary=192.168.1.10:5101
@@ -896,7 +895,7 @@ machdeployeradmin -u
 ```bash
 machcoordinatoradmin --add-node="192.168.1.10:5201" \
   --node-type=deployer \
-  --http-port-no=5202
+  --http-admin-port=5202
 ```
 
 ---
@@ -930,8 +929,7 @@ machcoordinatoradmin --add-node="192.168.1.11:5401" \
   --package-name=machbase \
   --home-path="/home/machbase/broker" \
   --dbs-path="/data/machbase/broker_dbs" \
-  --port-no=5656 \
-  --http-port-no=5402
+  --port-no=5656
 ```
 
 | 파라미터 | 설명 |
@@ -943,7 +941,6 @@ machcoordinatoradmin --add-node="192.168.1.11:5401" \
 | `--home-path` | 노드 홈 디렉터리 |
 | `--dbs-path` | Broker/Warehouse의 데이터 파일 경로. 생략하면 기본 `DBS_PATH`를 사용 |
 | `--port-no` | 클라이언트 또는 노드 서비스 포트 |
-| `--http-port-no` | Broker HTTP 포트입니다. Warehouse HTTP 포트를 사용하는 버전에서는 Warehouse에도 지정합니다. |
 | `--replication` | Warehouse replication manager 주소입니다. `host:port` 형식을 사용합니다. |
 
 ##### 3. 노드 시작
@@ -994,9 +991,6 @@ machcoordinatoradmin --add-node="192.168.1.14:5501" \
 ```
 
 별도 `--add-group` 명령은 사용하지 않습니다. Warehouse 그룹 이름은 각 Warehouse 노드를 등록할 때 `--group`으로 지정합니다.
-
-Warehouse `--add-node`에는 `--http-port-no`를 지정하지 않습니다. Warehouse는 HTTP listener를
-노출하지 않으며, `HTTP_PORT_NO`는 Broker의 REST/Web API 포트에만 사용합니다.
 
 ##### 3. 노드 시작
 

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.1.1.22 SYSTEM/SESSION/ALTER SYSTEM'
+title: '18.1.1.21 SYSTEM/SESSION/ALTER SYSTEM'
 weight: 220
 toc: true
 ---
@@ -23,7 +23,6 @@ toc: true
 | `FREEZE` | 모든 DML 일시 중단 (백업 준비용) |
 | `UNFREEZE` | FREEZE로 중단된 DML 재개 |
 | `FLUSH AGER` | Ager 스레드를 즉시 실행하여 만료 데이터 정리 |
-| `FLUSH RESULT_CACHE` | 쿼리 결과 캐시 전체 초기화 |
 | `FLUSH SYS_STAT` | 쿼리 최적화기용 시스템 통계 정보 갱신 |
 | `FLUSH PVO_CACHE` | PVO Statement 캐시 초기화 |
 | `FLUSH PAGE_CACHE` | OS 페이지 캐시 강제 해제 |
@@ -95,7 +94,6 @@ ALTER SYSTEM UNFREEZE;
 alter_system_flush_stmt ::=
     'ALTER SYSTEM FLUSH'
     ( 'AGER'
-    | 'RESULT_CACHE'
     | 'SYS_STAT'
     | 'PVO_CACHE'
     | 'PAGE_CACHE'
@@ -105,9 +103,6 @@ alter_system_flush_stmt ::=
 ```sql
 -- Ager 즉시 실행 (만료 데이터 정리)
 ALTER SYSTEM FLUSH AGER;
-
--- 쿼리 결과 캐시 초기화
-ALTER SYSTEM FLUSH RESULT_CACHE;
 
 -- 쿼리 최적화기 통계 갱신
 ALTER SYSTEM FLUSH SYS_STAT;
@@ -244,7 +239,7 @@ ALTER SESSION SET SHOW_HIDDEN_COLS = 0;  -- 숨김 컬럼 숨김 (기본값)
 
 ### SET FEEDBACK_APPEND_ERROR
 
-APPEND 프로토콜에서 발생한 에러 메시지를 클라이언트로 전달할지 설정합니다.
+Append API에서 발생한 에러 메시지를 클라이언트로 전달할지 설정합니다.
 
 ```sql
 ALTER SESSION SET FEEDBACK_APPEND_ERROR = 1;  -- 에러 메시지 전송

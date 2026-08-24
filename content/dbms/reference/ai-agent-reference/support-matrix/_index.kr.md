@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.10.4 support-matrix'
+title: '18.8.4 support-matrix'
 weight: 40
 toc: true
 ---
@@ -21,7 +21,6 @@ toc: true
 | ROLLUP | O | O |
 | ROLLUP_REBUILD | O | X |
 | ROWID / generated ROWID | O | X |
-| STREAM | O | X |
 | 논리 다중 데이터베이스 | O | X |
 | MOUNT / UMOUNT | O | X |
 | 수평 확장 (Scale-out) | X | O |
@@ -64,7 +63,6 @@ toc: true
 | Go (database/sql) | △ | O | X | O | O | O | O |
 | .NET (MachConnector) | O | O | X | X | X | △⁵ | O |
 | Node.js | O | O | X⁶ | X | O | O | O |
-| REST API | O | X | X | X | X | X | X |
 | Machbase SQLCLI | O | O | O | △ | O | O | O |
 | ODBC | O | X⁸ | O | △ | O | △⁷ | O |
 | R (RODBC) | X | X | X | X | X | X | X |
@@ -107,8 +105,7 @@ PRIMARY KEY 메타데이터는 SDK별 API가 별도로 제공됩니다.
 | Node.js | O | 카탈로그 SQL |
 | ODBC | 별도 표준 API 없음 | `SQLPrimaryKeys()` |
 | SQLCLI | 별도 표준 API 없음 | 카탈로그 SQL |
-| REST API | X | X |
 
 결과 컬럼 PK 플래그는 직접 참조한 PK 컬럼과 TAG `NAME`에만 적용되며, 표현식·집계식·외부
-조인의 NULL 공급 측 컬럼에는 적용되지 않습니다. Machbase 8.7.0 프로토콜(버전 4.0.3) 협상 시
-플래그를 사용하고, 구형 프로토콜에서는 기존 호환성을 유지합니다.
+조인의 NULL 공급 측 컬럼에는 적용되지 않습니다. 이 메타데이터를 사용하려면 Machbase 8.7.0
+서버와 해당 버전용 클라이언트 SDK를 함께 사용합니다.

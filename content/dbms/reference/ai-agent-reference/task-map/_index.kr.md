@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.10.3 task-map'
+title: '18.8.3 task-map'
 weight: 30
 toc: true
 ---
@@ -67,6 +67,4 @@ toc: true
 |--------|-----------|-----------|
 | 집계 자동화 (ROLLUP) | `CREATE ROLLUP` 후 자동 실행 | [ROLLUP](/dbms/tag-rollup-usage/overview-use-criteria/#rollup) |
 | ROLLUP 수동 재구성 | `EXEC ROLLUP_REBUILD(table_name, tag_name, start_time, end_time)` (Standard Edition) | [ROLLUP](/dbms/tag-rollup-usage/overview-use-criteria/#rollup) |
-| 이벤트 기반 처리 | `CREATE STREAM` + 처리 쿼리 정의 | [STREAM](/dbms/operations-configuration-recovery/automation-stream/#stream) |
 | 데이터 보존 정책 | RETENTION 설정 (LOG 테이블) | [LOG 테이블](/dbms/log-table-usage/) |
-| STREAM 시작/중지 | `EXEC STREAM_START(name)` / `EXEC STREAM_STOP(name)` | [STREAM](/dbms/operations-configuration-recovery/automation-stream/#stream) |

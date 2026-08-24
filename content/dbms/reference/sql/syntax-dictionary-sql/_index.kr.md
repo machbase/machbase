@@ -38,9 +38,8 @@ SQL 문법 사전은 Machbase에서 지원하는 모든 SQL 구문의 BNF 표기
 | [CREATE USER / DROP USER / ALTER USER](./user-auth-syntax/#create-drop-alter-user) | 사용자 | 사용자 생성, 삭제, 비밀번호 변경 |
 | [GRANT / REVOKE](./user-auth-syntax/#grant-revoke) | 사용자 | 권한 부여 및 회수 |
 | [AUTH KEY 관리](./user-auth-syntax/#auth-key) | 사용자 | 공개키 기반 인증 키 등록/관리 |
-| [ALTER SYSTEM](./system-session-alter-syntax/#alter-system) | 시스템 | 세션 제어, 캐시 플러시, 라이선스 설치 등 |
+| [ALTER SYSTEM](./system-session-alter-syntax/#alter-system) | 시스템 | 세션 제어, PVO Cache flush, 라이선스 설치 등 |
 | [ALTER SESSION](./system-session-alter-syntax/#alter-session) | 세션 | 세션별 파라미터 설정 |
-| [CREATE STREAM](./stream-procedure-syntax/) | 스트림 | 실시간 데이터 스트림 처리 정의 |
 | [PIVOT](./pivot-syntax/) | 분석 | 행을 열로 변환하는 피벗 쿼리 |
 | [WINDOW FUNCTION (OVER)](./window-function-over-syntax/) | 분석 | 윈도우 함수와 OVER 절 |
 | [SERIES BY](./series-syntax/) | 분석 | 연속 조건 만족 레코드 그룹화 |

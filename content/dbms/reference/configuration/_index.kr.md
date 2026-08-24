@@ -13,7 +13,6 @@ Machbase 서버는 `$MACHBASE_HOME/conf/machbase.conf` 파일에 정의된 프�
 |------|------|
 | [설정 프로퍼티 사전](./dictionary-configuration/) | 서버 기본 설정, 성능, 보안, 로그 등 Standard Edition 전체 프로퍼티 목록 |
 | [클러스터 설정 프로퍼티 사전](./dictionary-configuration-2/) | Cluster Edition 전용 Coordinator, Broker, Warehouse 설정 |
-| [RS Cache 프로퍼티 사전](./dictionary-rs-cache/) | 쿼리 결과 캐시(Result Set Cache) 관련 프로퍼티 |
 | [PVO Cache 프로퍼티 사전](./dictionary-pvo-cache/) | SQL 실행 계획 캐시(PVO Statement Cache) 관련 프로퍼티 |
 | [Timezone 설정 사전](./dictionary-configuration-timezone/) | 타임존 프로퍼티 및 클라이언트별 타임존 설정 방법 |
 | [8.5 전체 설정 레퍼런스](./original-8-5-full/) | 8.5 원본 설정/메타/가상 테이블 레퍼런스의 전체 항목 보존본 |
@@ -38,7 +37,6 @@ SELECT name, value, min_value, max_value
 
 ```sql
 ALTER SYSTEM SET TRACE_LOG_LEVEL = 3;
-ALTER SYSTEM SET RS_CACHE_ENABLE = 1;
 ALTER SYSTEM SET PVO_CACHE_MAX_MEMORY_SIZE = 536870912;
 ```
 

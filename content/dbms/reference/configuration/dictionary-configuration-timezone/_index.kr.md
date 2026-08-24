@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.2.5 Timezone 설정 사전'
+title: '18.2.4 Timezone 설정 사전'
 weight: 50
 toc: true
 ---
@@ -41,11 +41,6 @@ machloader -o -d data.csv -t table_name -z +0900
 
 JDBC에서 타임존을 지정해야 하는 경우 드라이버 문서의 연결 옵션을 확인합니다.
 이 페이지에서는 `machsql`/`machloader`의 `+-HHMM` 오프셋 형식을 기준으로 설명합니다.
-
-### REST API
-
-REST API에서 타임존을 지정하는 방식은 사용하는 엔드포인트와 클라이언트 구현을 함께
-확인합니다. 확인되지 않은 `tz=Asia/Seoul` 형식은 사용 예로 제시하지 않습니다.
 
 ## 타임존 우선순위
 

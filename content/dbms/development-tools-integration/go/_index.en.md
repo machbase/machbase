@@ -13,15 +13,14 @@ aliases:
 
 ## Overview
 
-The `machgo` package is a pure Go client for Machbase native protocol access.
-It provides the same API style as `machcli`, but without depending on CGo.
-If you need native-port performance with a fully Go toolchain, `machgo` is a good choice.
+The `machgo` package is a pure Go client that connects directly to Machbase without CGo.
+Use it when you need the Machbase Appender and direct connection control in a fully Go toolchain.
 
 ### Why use machgo?
 
 - **No CGo dependency**: Build and deploy with a pure Go environment
-- **Native protocol access**: Connect through the Machbase native port (default `5656`)
-- **API compatibility with machcli**: Reuse the same connection/query/appender patterns
+- **Direct server access**: Connect through the Machbase client port (default `5656`)
+- **Machbase APIs**: Use connection, query, and Appender interfaces from Go
 - **Production-friendly**: Good fit for containerized and cross-platform Go deployments
 
 ### Prerequisites
@@ -66,7 +65,6 @@ conf := &machgo.Config{
 }
 
 // Create a database instance
-// API usage is the same as machcli
 mdb, err := machgo.NewDatabase(conf)
 if err != nil {
     panic(err)
@@ -387,7 +385,7 @@ func main() {
 }
 ```
 
-This workflow is intentionally identical to `machcli` so existing code can be migrated with minimal changes.
+This workflow uses the `machgo` connection and query interfaces.
 
 
 ## Go database/sql Driver

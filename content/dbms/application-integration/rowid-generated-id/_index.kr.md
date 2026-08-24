@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '12.6 ROWID와 INSERT 결과 ID'
+title: '12.5 ROWID와 INSERT 결과 ID'
 weight: 60
 toc: true
 ---
@@ -179,7 +179,6 @@ generated ROWID는 statement별 결과입니다. 연결 전체에서 최근 값�
 | Python | `cursor.lastrowid` | Python `int` (`0..UINT64_MAX-1`) | `None` |
 | Node.js | 실행 결과의 `rowId` | JavaScript `bigint` | 속성 없음 |
 | .NET 4.0/4.0-full, Universal .NET | `MachCommand.RowId` | `UInt64?` 값 | `null` |
-| REST API | 지원하지 않음 | - | - |
 
 SDK 실행 객체는 새 statement 실행을 시작할 때 이전 ROWID 상태를 지웁니다. 실패, batch,
 append 또는 ROWID를 제공하지 않는 INSERT 뒤에 이전 값이 남아 있다고 가정하지 않습니다.

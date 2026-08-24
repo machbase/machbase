@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.8 지원 범위와 제약'
+title: '18.6 지원 범위와 제약'
 weight: 80
 toc: true
 ---
@@ -13,14 +13,13 @@ Machbase의 Edition별, 테이블 타입별, SDK별 기능 지원 범위와 알�
 |--------|------|
 | [Edition별 기능 지원표](./edition/) | Standard Edition vs Cluster Edition 기능 비교 |
 | [테이블 타입별 기능 지원표](./table-types-type/) | TAG / LOG / LOOKUP / VOLATILE / TRANSACTION 테이블별 지원 기능 |
-| [SDK별 기능 지원표](./sdk/) | JDBC, Python, Go, .NET, Node.js, REST API 지원 범위 |
-| [REST API 지원표](./rest-api/) | HTTP 엔드포인트 목록, 인증 방식 |
+| [SDK별 기능 지원표](./sdk/) | JDBC, Python, Go, .NET, Node.js 지원 범위 |
 | [백업/마운트 지원표](./backup-mount/) | BACKUP / MOUNT 기능의 Edition별 지원 여부 |
 | [권한별 기능 지원표](./privileges/) | 데이터베이스 권한 및 테이블 권한 목록 |
 | [TRANSACTION 기능 지원표](./rdb/) | TRANSACTION 테이블 지원 SQL 기능 및 제약 |
 | [제한사항 사전](./limitations-dictionary/) | 테이블 유형별, Edition별 주요 제한사항 종합 |
 | [버전 및 호환성](./compatibility-version/) | 업그레이드 시 주의사항, 지원 OS/플랫폼 |
-| [XMA 프로토콜 호환성](./compatibility-xma-protocol/) | 서버-클라이언트 프로토콜 버전 호환 범위 |
+| [서버와 SDK 호환성](./compatibility-xma-protocol/) | 서버와 SDK 버전 조합별 기능 지원 범위 |
 | [LOOKUP SQL/JSON 지원표](./lookup-sql-json/) | LOOKUP 테이블 SQL/JSON 기능 지원 현황과 제약 |
 | [TAG data UPDATE 지원표](./tag-data-update/) | TAG UPDATE 조건 및 대상 컬럼 지원 현황 |
 

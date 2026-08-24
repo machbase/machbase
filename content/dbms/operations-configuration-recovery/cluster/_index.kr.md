@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '14.11 Cluster 운영'
+title: '14.10 Cluster 운영'
 weight: 110
 toc: true
 ---
@@ -488,7 +488,6 @@ machcoordinatoradmin \
   --package-name=machbase \
   --home-path=/home/machbase/warehouse_b1 \
   --port-no=5400 \
-  --http-port-no=5402 \
   --group=Group2 \
   --alias=warehouse-b1 \
   --dbs-path=/data/machbase/warehouse_b1_dbs
@@ -530,7 +529,6 @@ machcoordinatoradmin \
   --node-type=warehouse \
   --home-path=/home/machbase/warehouse_b1 \
   --port-no=5400 \
-  --http-port-no=5402 \
   --group=Group2 \
   --alias=warehouse-b1
 ```

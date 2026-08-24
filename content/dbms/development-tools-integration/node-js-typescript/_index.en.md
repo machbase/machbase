@@ -9,7 +9,9 @@ aliases:
 
 ## Overview
 
-The Machbase TypeScript client (`@machbase/ts-client`) is a pure TypeScript implementation of the Machbase CMI protocol. It allows Node.js applications to connect to a Machbase (standard edition) server, execute SQL statements, fetch results, work with prepared statements, and append batches of log data without native bindings.
+The Machbase TypeScript client (`@machbase/ts-client`) connects Node.js applications to a
+Machbase Standard Edition server without native bindings. It executes SQL, fetches results,
+uses prepared statements, and appends batches of log data.
 
 This document covers installation, core APIs, practical examples, testing flows, and important behavioural notes.
 
@@ -144,7 +146,7 @@ The facade supports both callbacks and `.promise()`, surfaces `QueryError` for f
 
 #### createConnection(config)
 
-Establishes a network session to the Machbase listener and completes the CMI handshake.
+Connects to the Machbase listener and creates a database session.
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
@@ -282,11 +284,11 @@ await update.execute([
 
 Runnable example scripts are typically built into `dist/examples/` after `npm run build`. They commonly look for `MACHBASE_EXAMPLE_*` first, then `MACHBASE_SMOKE_*`, and finally fall back to `SYS/MANAGER@127.0.0.1`.
 
-### Append Protocol
+### Append API
 
 #### appendBatch(table, columns, rows, options?)
 
-Appends rows to a **log table** using the `CMI_APPEND_BATCH_PROTOCOL`. Provide only user-visible columns (log tables implicitly contain `_arrival_time` and `_rid`).
+Appends rows to a **log table**. Provide only user-visible columns (log tables implicitly contain `_arrival_time` and `_rid`).
 
 ```javascript
 const appendResult = await conn.appendBatch(
@@ -568,9 +570,11 @@ Typed binds cover the portable scalar set (`int32`, `int64`, `float64`, and `var
 { value: null, type: 'varchar' }
 ```
 
-### Append Protocol
+### Append API
 
-Use `appendBatch` for log tables and the streaming helper (`appendOpen` / `append`) for scenarios that need incremental ingest. When the server does not support the streaming protocol for a given table type (for example TAG tables), the facade automatically falls back to a prepared-statement loop. The safe operating pattern is to chunk data, inspect `rowsFailed`, and retry if needed.
+Use `appendBatch` for log tables and `appendOpen` / `append` for incremental ingestion. When the
+server does not support this input method for a table type such as TAG, the facade falls back to a
+prepared-statement loop. Chunk the data and inspect `rowsFailed` before retrying.
 
 ### Error Handling
 

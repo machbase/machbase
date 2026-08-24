@@ -15,7 +15,7 @@ Machbase의 보안 모델은 **사용자 계정**, **권한(GRANT/REVOKE)**, **�
         ▼
 ┌─────────────────────┐
 │   접속 제어          │  BIND_IP_ADDRESS, GRANT_REMOTE_ACCESS
-│   (네트워크 레이어)   │  HTTP_AUTH (REST API)
+│   (네트워크 레이어)   │
 └────────┬────────────┘
          │ 허용된 경우
          ▼

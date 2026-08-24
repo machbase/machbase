@@ -60,33 +60,23 @@ SELECT * FROM check_test;
 DROP TABLE check_test;
 ```
 
-### 7. HTTP REST API 확인
-
-```bash
-curl -G "http://127.0.0.1:5657/machbase" --data-urlencode "q=SELECT 1"
-```
-
-JSON 형식의 쿼리 결과가 반환되면 HTTP REST API가 정상 동작하는 상태입니다.
-
----
-
 ## Cluster Edition 추가 체크리스트
 
-### 8. 클러스터 노드 상태 확인
+### 7. 클러스터 노드 상태 확인
 
 ```bash
 machcoordinatoradmin --cluster-status
 # 모든 노드가 normal 상태인지 확인
 ```
 
-### 9. Broker 접속 테스트
+### 8. Broker 접속 테스트
 
 ```bash
 machsql -s <Broker IP> -u SYS -p MANAGER
 Mach> SELECT * FROM V$NODE_STATUS;
 ```
 
-### 10. 데이터 복제 확인
+### 9. 데이터 복제 확인
 
 Warehouse 그룹 내 복제가 정상 동작하는지 간단한 INSERT로 확인합니다.
 

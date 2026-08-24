@@ -95,17 +95,6 @@ ALTER SYSTEM SET GRANT_REMOTE_ACCESS = 0;
 BIND_IP_ADDRESS = 10.0.0.5   # 내부 네트워크 인터페이스
 ```
 
-### REST API 인증 활성화
-
-REST API를 사용 중이라면 인증을 활성화하고, HTTPS가 필요할 때는 외부 reverse proxy 또는
-TLS terminator에서 처리합니다.
-
-```sql
-ALTER SYSTEM SET HTTP_AUTH = 1;
-```
-
-내장 HTTP 서버의 설정 항목은 `HTTP_ENABLE`, `HTTP_PORT_NO`, `HTTP_AUTH`입니다.
-
 ## AUTH KEY 인증 도입 검토
 
 서비스 계정의 비밀번호 유출 위험을 제거하려면 AUTH KEY(공개키 기반 인증)를 도입하십시오.
@@ -159,5 +148,5 @@ SELECT * FROM m$obj_privileges;
 
 -- 5. 접속 제어 설정 확인
 SELECT name, value FROM v$property
-WHERE name IN ('GRANT_REMOTE_ACCESS', 'BIND_IP_ADDRESS', 'HTTP_AUTH');
+WHERE name IN ('GRANT_REMOTE_ACCESS', 'BIND_IP_ADDRESS');
 ```

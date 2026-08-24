@@ -62,6 +62,18 @@ pip3 install machbaseapi
 
 `pip3`가 PATH에 없다면 `python3 -m pip install machbaseapi` 명령을 사용합니다.
 
+### 설치 패키지에서 오프라인 설치
+
+인터넷에 연결할 수 없는 환경에서는 Machbase 설치 패키지에 포함된 wheel을 설치합니다.
+
+```bash
+python3 -m pip install \
+  $MACHBASE_HOME/3rd-party/python3-module/machbaseapi-2.4-py3-none-any.whl
+```
+
+같은 디렉터리의 `machbaseapi-2.4.tar.gz` 소스 배포 파일도 사용할 수 있습니다. 설치 전에
+Python 3.6 이상인지 확인합니다.
+
 ### 모듈 확인
 
 ```bash
@@ -202,7 +214,7 @@ connector는 문자열 SQL `NULL`을 기존 호환성에 따라 Python 빈 문�
 
 ### SELECT 결과의 PRIMARY KEY 메타데이터
 
-Machbase 8.7.0 프로토콜(버전 4.0.3) 메타데이터를 사용하면 `cursor.column_metadata`의
+Machbase 8.7.0 서버와 해당 버전 SDK를 사용하면 `cursor.column_metadata`의
 `is_primary_key`에서 SELECT 결과 직접 컬럼의 PRIMARY KEY 여부를 확인할 수 있습니다.
 
 ```python
@@ -213,8 +225,8 @@ for column in cursor.column_metadata:
 
 `cursor.description`의 DB-API 표준 일곱 번째 값(`null_ok`)은 그대로 NULL 가능 여부만
 나타냅니다. 표현식·집계식·외부 조인의 NULL 공급 측 컬럼은 PK가 아니므로
-`is_primary_key`가 `False`입니다. 구형 프로토콜(버전 4.0.2 이하)에서는 호환성을 위해
-PK 플래그를 전달하지 않습니다.
+`is_primary_key`가 `False`입니다. 이전 버전 서버 또는 SDK와 연결한 경우에는 PK 플래그가
+제공되지 않을 수 있습니다.
 
 ### Named Bind Parameter
 
@@ -339,7 +351,7 @@ prepared cursor는 Python DB-API 형식과 Machbase native 형식을 모두 지�
 문자열 리터럴, 따옴표로 묶은 식별자, `--` 주석과 `/* ... */` 주석 안의 marker 모양은
 변환하지 않습니다. 한 SQL에서 positional marker와 named marker를 혼용할 수 없습니다.
 named marker 이름은 영문자, `_`, `$`로 시작하고 이후에는 숫자도 사용할 수 있습니다.
-named marker는 Machbase 8.7.0 프로토콜(버전 4.0.3) 이상에서 지원합니다.
+named marker는 Machbase 8.7.0 서버와 해당 버전 SDK에서 지원합니다.
 
 ```python
 sql = (
@@ -381,7 +393,7 @@ marker가 없는 SQL에는 `None`, 빈 sequence 또는 빈 mapping을 parameter 
 같은 의미로 처리됩니다.
 
 parameter 오류가 발생해도 cached statement는 유지되므로 올바른 parameter로 같은 SQL을
-다시 실행할 수 있습니다. 프로토콜 버전 4.0.3보다 오래된 서버에서 named parameter를 사용하면
+다시 실행할 수 있습니다. 이전 버전 서버에서 named parameter를 사용하면
 서버 PREPARE 전에 `NotSupportedError`와 SQLSTATE `0A000`이 발생합니다. 이 오류는 현재
 cached statement를 해제하거나 교체하지 않습니다. 구형 서버에서는 positional marker를
 사용합니다.

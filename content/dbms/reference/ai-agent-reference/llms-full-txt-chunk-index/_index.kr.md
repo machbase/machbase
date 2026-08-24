@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.10.13 llms-full.txt / chunk index'
+title: '18.8.13 llms-full.txt / chunk index'
 weight: 130
 toc: true
 ---
@@ -27,10 +27,10 @@ toc: true
 
 | 범주 | 예상 섹션 수 | 핵심 키워드 예시 | 대표 URL |
 |------|:-----------:|----------------|----------|
-| 핵심 개념 | ~15 | TAG, LOG, LOOKUP, VOLATILE, TRANSACTION, ROLLUP, STREAM, Append, BASETIME | `/dbms/core-concepts/` |
+| 핵심 개념 | ~15 | TAG, LOG, LOOKUP, VOLATILE, TRANSACTION, ROLLUP, Append, BASETIME | `/dbms/core-concepts/` |
 | 시작하기 | ~10 | 설치, 빠른 시작, 첫 번째 쿼리, machadmin | `/dbms/getting-started/` |
 | 개발 도구 연동 | ~20 | JDBC, Python, Go, .NET, Machbase SQLCLI, ODBC, SDK API | `/dbms/development-tools-integration/` |
-| 애플리케이션 연동 | ~50 | 연동 선택, 공통 개념, REST, Append, 외부 도구 | `/dbms/application-integration/` |
+| 애플리케이션 연동 | ~50 | 연동 선택, 공통 개념, SDK, Append, 외부 도구 | `/dbms/application-integration/` |
 | 성능 튜닝 | ~20 | 배치 크기, ROLLUP, 캐시, Append 최적화, 인덱스 | `/dbms/performance/` |
 | 운영 / 설정 | ~80 | BACKUP, MOUNT, ALTER SYSTEM, 설정 파라미터, machadmin, machclusterctl | `/dbms/operations-configuration-recovery/` |
 | 보안 | ~40 | 사용자, 권한, AUTH KEY, GRANT, REVOKE, 원격 접속, 암호화 | `/dbms/security-access-control/` |

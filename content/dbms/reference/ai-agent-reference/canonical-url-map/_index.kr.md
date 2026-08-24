@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.10.2 canonical-url-map'
+title: '18.8.2 canonical-url-map'
 weight: 20
 toc: true
 ---
@@ -18,7 +18,6 @@ toc: true
 | VOLATILE 테이블 | `/dbms/volatile-table-usage/` |
 | TRANSACTION 테이블 | `/dbms/rdb-table-usage/` |
 | ROLLUP | `/dbms/core-concepts/features-concepts/#role-statistics-rollup` |
-| STREAM | `/dbms/core-concepts/features-concepts/#processing-model-stream` |
 | Append (개념) | `/dbms/application-integration/concepts-common/#append-api-batch` |
 | AUTH KEY | `/dbms/security-access-control/authentication-auth-key/` |
 | 다중 데이터베이스 | `/dbms/operations-configuration-recovery/multi-database/` |
@@ -44,8 +43,6 @@ toc: true
 | Machbase SQLCLI API | `/dbms/development-tools-integration/cli-odbc/` |
 | ODBC API | `/dbms/development-tools-integration/cli-odbc/` |
 | 실무 드라이버 가이드 | `/dbms/application-integration/guide-drivers/` |
-| REST API 레퍼런스 | `/dbms/reference/rest-api/` |
-| REST API 실무 가이드 | `/dbms/application-integration/rest-api/` |
 | SDK 지원 범위 전체 | `/dbms/development-tools-integration/#sdk` |
 | Nullable 메타데이터 지원 | `/dbms/development-tools-integration/#support-scope-sdk-nullable-metadata` |
 | Named Bind Parameter | `/dbms/reference/sql/syntax-dictionary-sql/named-bind-parameter-syntax/` |
@@ -60,7 +57,6 @@ toc: true
 | ALTER SYSTEM | `/dbms/reference/sql/syntax-dictionary-sql/system-session-alter-syntax/` |
 | 설정 레퍼런스 | `/dbms/reference/configuration/` |
 | ROLLUP 운영 | `/dbms/tag-rollup-usage/` |
-| STREAM 운영 | `/dbms/operations-configuration-recovery/automation-stream/#stream` |
 | 논리 database 문법 | `/dbms/reference/sql/syntax-dictionary-sql/database-syntax/` |
 
 ## 보안
@@ -95,5 +91,5 @@ toc: true
 | 문제 해결 전체 | `/dbms/troubleshooting/` |
 | 서버 접속 문제 | `/dbms/troubleshooting/server-connection/` |
 | 성능 문제 | `/dbms/troubleshooting/performance/` |
-| 자동화 문제 (ROLLUP/STREAM) | `/dbms/troubleshooting/automation/` |
+| ROLLUP 문제 | `/dbms/tag-rollup-usage/` |
 | Cluster 문제 | `/dbms/troubleshooting/cluster/` |

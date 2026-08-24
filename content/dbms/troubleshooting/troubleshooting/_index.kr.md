@@ -67,7 +67,6 @@ SELECT sess_id, id, state, record_size, query FROM v$stmt;
 | CSV 임포트 오류 | `machloader -b`로 지정한 bad file 확인 | [CSV 임포트 실패](/dbms/troubleshooting/item/#failure-csv-import) |
 | UPDATE/DELETE 오류 | 테이블 타입, WHERE 조건 확인 | [UPDATE/DELETE 문제](/dbms/troubleshooting/update-delete/) |
 | ROLLUP 결과 이상 | `v$rollup`으로 ROLLUP 상태 확인 | [ROLLUP 문제](/dbms/tag-rollup-usage/overview-use-criteria/#rollup) |
-| STREAM 쿼리 미실행 | `v$streams`으로 STREAM 상태 확인 | [STREAM 문제](/dbms/troubleshooting/automation/#execution-stream) |
 | 백업 실패 | 디스크 공간, 백업 경로 권한 확인 | [백업과 복구 문제](/dbms/troubleshooting/recovery-backup/#failure-backup-restore) |
 | MOUNT 실패 | 백업 파일 존재 여부, 버전 확인 | [MOUNT 실패](/dbms/troubleshooting/recovery-backup/#failure-mount) |
 | Cluster 노드 이상 | 노드 간 네트워크 연결 확인 | [Cluster 문제](/dbms/operations-configuration-recovery/cluster//) |
@@ -147,14 +146,11 @@ SELECT * FROM v$storage_usage;
 SELECT * FROM v$storage_tables;
 ```
 
-#### 자동 처리 상태
+#### ROLLUP 상태
 
 ```sql
 -- ROLLUP 상태
 SELECT * FROM v$rollup;
-
--- STREAM 상태
-SELECT * FROM v$streams;
 ```
 
 #### 시스템 통계 및 설정
@@ -413,7 +409,7 @@ tail -30 $MACHBASE_HOME/trc/machbase.trc
 | ERR-020xx | 연결 및 인증 오류 |
 | ERR-021xx ~ 022xx | 권한 및 객체 오류 |
 | ERR-023xx ~ 025xx | 데이터 및 스키마 오류 |
-| ERR-026xx | ROLLUP/STREAM 관련 오류 |
+| ERR-026xx | ROLLUP 관련 오류 |
 
 ### 오류 코드를 찾지 못한 경우
 

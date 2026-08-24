@@ -105,14 +105,14 @@ sudo date -s '2025/01/02 12:34:56'
 
 ```bash
 current=$(cat /proc/sys/net/ipv4/ip_local_reserved_ports)
-ports=5656-5657
+ports=5656
 sudo sysctl -w net.ipv4.ip_local_reserved_ports="${current:+$current,}$ports"
 ```
 
 기존 예약 포트가 있으면 덮어쓰지 말고 쉼표로 구분해 병합합니다. 영구 적용은 `/etc/sysctl.conf`의 `net.ipv4.ip_local_reserved_ports` 항목을 다음 값과 병합합니다.
 
 ```
-net.ipv4.ip_local_reserved_ports = 5656-5657
+net.ipv4.ip_local_reserved_ports = 5656
 ```
 
 Cluster Edition의 경우 클러스터 링크 포트, 어드민 포트, 복제 포트도 범위에 포함하십시오.
@@ -124,12 +124,10 @@ Cluster Edition의 경우 클러스터 링크 포트, 어드민 포트, 복제 �
 ```bash
 # firewalld 사용 환경
 sudo firewall-cmd --permanent --add-port=5656/tcp
-sudo firewall-cmd --permanent --add-port=5657/tcp
 sudo firewall-cmd --reload
 
 # iptables 사용 환경
 sudo iptables -A INPUT -p tcp --dport 5656 -j ACCEPT
-sudo iptables -A INPUT -p tcp --dport 5657 -j ACCEPT
 ```
 
 ---
@@ -167,7 +165,7 @@ tar zxf machbase-SDK-8.7.0.official-LINUX-X86-64-release.tgz
 
 ```bash
 ls -l
-# bin/  conf/  dbs/  doc/  http/  include/  lib/  trc/  ...
+# bin/  conf/  dbs/  doc/  include/  lib/  trc/  ...
 ```
 
 #### 3. 환경 변수 설정
@@ -271,7 +269,6 @@ docker run -d \
   --name machbase \
   --ulimit nofile=65535 \
   -p 5656:5656 \
-  -p 5657:5657 \
   -v /data/machbase:/home/machbase/machbase/dbs \
   machbase/machbase
 ```
@@ -279,7 +276,6 @@ docker run -d \
 | 옵션 | 설명 |
 |------|------|
 | `-p 5656:5656` | SQL 클라이언트 포트 매핑 |
-| `-p 5657:5657` | HTTP REST API 포트 매핑 |
 | `--ulimit nofile=65535` | 컨테이너 안에서 서버가 사용할 파일 디스크립터 한도 |
 | `-v /data/machbase:...` | 데이터 디렉터리 볼륨 마운트 (데이터 영속성 보장) |
 
@@ -307,12 +303,6 @@ docker exec -it machbase machsql
 
 ```bash
 machsql -s 127.0.0.1 -u SYS -p MANAGER
-```
-
-HTTP REST API 쿼리는 `/machbase` 경로로 요청합니다.
-
-```bash
-curl -G "http://127.0.0.1:5657/machbase" --data-urlencode "q=SELECT 1"
 ```
 
 #### 컨테이너 종료 및 재시작
@@ -365,7 +355,6 @@ Machbase가 사용하는 포트를 Windows 방화벽 인바운드 규칙에 추�
 | 포트 | 프로토콜 | 용도 |
 |------|---------|------|
 | 5656 | TCP | SQL 클라이언트 접속 |
-| 5657 | TCP | HTTP REST API |
 
 ##### 설정 방법
 
@@ -375,7 +364,7 @@ Machbase가 사용하는 포트를 Windows 방화벽 인바운드 규칙에 추�
 
 3. 규칙 유형으로 **포트**를 선택하고 **다음**을 클릭합니다.
 
-4. **TCP**를 선택하고, **특정 로컬 포트** 필드에 `5656,5657`을 입력한 후 **다음**을 클릭합니다.
+4. **TCP**를 선택하고, **특정 로컬 포트** 필드에 `5656`을 입력한 후 **다음**을 클릭합니다.
 
 5. **연결 허용**을 선택하고 **다음**을 클릭합니다.
 
@@ -389,7 +378,6 @@ GUI 대신 PowerShell로 빠르게 설정합니다.
 
 ```powershell
 New-NetFirewallRule -DisplayName "Machbase SQL" -Direction Inbound -Protocol TCP -LocalPort 5656 -Action Allow
-New-NetFirewallRule -DisplayName "Machbase HTTP" -Direction Inbound -Protocol TCP -LocalPort 5657 -Action Allow
 ```
 
 #### Visual C++ 재배포 패키지

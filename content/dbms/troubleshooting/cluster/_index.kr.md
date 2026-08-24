@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.8 Cluster 문제'
+title: '17.7 Cluster 문제'
 weight: 80
 toc: true
 ---
@@ -133,7 +133,6 @@ SELECT * FROM v$version;
 | ROLLUP_REBUILD | `ROLLUP_REBUILD is not supported in Cluster Edition` | 해당 기능 없음 (지원 문의) |
 | MOUNT DATABASE | `MOUNT is not supported in Cluster Edition` | Standard Edition에서 마운트 후 데이터 추출 |
 | UMOUNT DATABASE | `UMOUNT is not supported in Cluster Edition` | 해당 기능 없음 |
-| STREAM | `STREAM is not supported in Cluster Edition` | CQL 또는 외부 파이프라인 검토 |
 
 ### 기능별 상세 안내
 
@@ -180,18 +179,6 @@ MOUNT DATABASE '/backup/machbase_20240101' TO backup_db;
 ```
 
 **대안**: Standard Edition 환경에서 마운트하여 필요한 데이터를 추출한 후 Cluster Edition으로 적재합니다.
-
-#### STREAM
-
-STREAM 기능은 Cluster Edition에서 제한됩니다.
-
-```sql
--- 오류 발생: Cluster Edition에서 STREAM 생성
-EXEC STREAM_CREATE(my_stream, 'INSERT INTO dest SELECT * FROM source;');
--- ERR: STREAM is not supported in Cluster Edition
-```
-
-**대안**: CQL(Continuous Query Language) 또는 외부 데이터 파이프라인(Kafka, Flink 등)을 이용한 데이터 흐름 구성을 검토합니다.
 
 ### Standard Edition 전환 검토
 

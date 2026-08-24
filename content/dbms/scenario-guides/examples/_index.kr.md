@@ -135,24 +135,6 @@ func main() {
 
 상세 내용: [Go native client 가이드](/dbms/application-integration/guide-drivers/#go-go)
 
-## REST API (curl)
-
-별도 드라이버 없이 HTTP로 직접 조회합니다.
-
-```bash
-# 조회
-curl -s -G 'http://localhost:5657/machbase' \
-  --data-urlencode "q=SELECT name, time, value FROM sensor_tag ORDER BY time DESC LIMIT 5" \
-  -u SYS:MANAGER
-
-# INSERT도 SQL endpoint로 실행할 수 있습니다.
-curl -s -G 'http://localhost:5657/machbase' \
-  --data-urlencode "q=INSERT INTO sensor_tag VALUES ('sensor-01', TO_DATE('2024-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), 23.5)" \
-  -u SYS:MANAGER
-```
-
-상세 내용: [REST API 가이드](/dbms/application-integration/rest-api/)
-
 ## Node.js / TypeScript
 
 `@machbase/ts-client` 패키지를 사용합니다.
@@ -219,6 +201,5 @@ conn.Close();
 | Go | `database/sql` | X | O (기본 isolation level) |
 | Node.js | `@machbase/ts-client` | O | X |
 | .NET | `MachConnector` | O | X |
-| REST API | HTTP | O | X |
 
 전체 SDK 지원 범위: [SDK별 Append/AUTH KEY/Transaction/Prepare 지원 범위](/dbms/development-tools-integration/#sdk)
