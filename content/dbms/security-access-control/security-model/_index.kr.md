@@ -105,7 +105,7 @@ GRANT MOUNT ON DATABASE MACHBASEDB TO mount_user;
 
 - `ALTER`, `MOUNT`, `BACKUP`
 
-## AUTH KEY 인증 (Machbase 8.5 이상)
+## AUTH KEY 인증
 
 비밀번호 인증 외에 공개키 기반의 AUTH KEY 인증을 사용할 수 있습니다. 클라이언트가 보유한 개인키로 서명하고, 서버에 등록된 공개키로 서명을 검증하는 challenge 방식입니다.
 
@@ -129,14 +129,14 @@ AUTH KEY를 사용하면 비밀번호 유출 위험 없이 서비스 계정을 �
 
 ```sql
 -- 읽기 전용 계정
-CREATE USER reader IDENTIFIED BY 'Reader#2024';
+CREATE USER reader IDENTIFIED BY 'Reader#Strong123';
 GRANT SELECT ON sys.sensor_log TO reader;
 
 -- 데이터 입력 전용 계정
-CREATE USER writer IDENTIFIED BY 'Writer#2024';
+CREATE USER writer IDENTIFIED BY 'Writer#Strong123';
 GRANT SELECT, INSERT ON sys.sensor_log TO writer;
 
 -- DDL 전용 계정 (테이블 생성/삭제)
-CREATE USER deploy IDENTIFIED BY 'Deploy#2024';
+CREATE USER deploy IDENTIFIED BY 'Deploy#Strong123';
 GRANT DDL ON DATABASE factory_a TO deploy;
 ```

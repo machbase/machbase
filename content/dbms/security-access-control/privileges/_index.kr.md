@@ -4,990 +4,219 @@ title: '15.3 권한 관리'
 weight: 30
 toc: true
 ---
-각 사용자가 수행할 수 있는 작업을 제어하는 핵심 보안 기능입니다.
 
-## 권한의 두 가지 종류
-
-Machbase 권한은 적용 범위에 따라 두 가지로 나뉩니다.
-
-| 종류 | 설명 | 예시 |
-|---|---|---|
-| 데이터베이스 권한 | DB 전체 범위에서 DDL 및 관리 작업 허용 | 테이블 생성, 백업 실행 |
-| 테이블 권한 | 특정 테이블에 대한 DML 작업 허용 | 특정 테이블 조회·삽입 |
-
-데이터베이스 권한은 `GRANT ... ON DATABASE database_name TO user` 구문으로 부여하고,
-테이블 권한은 `GRANT ... ON TABLE [database.]owner.table TO user` 구문으로 부여합니다.
-기존 `MACHBASEDB` 대상 문법은 호환성을 위해 유지되지만, 8.7.0의 논리 데이터베이스에는
-대상 database를 명시해야 합니다. 자세한 내용은 [다중 데이터베이스](/dbms/operations-configuration-recovery/multi-database/)를
-참조하십시오.
-
-## GRANT / REVOKE 명령어 개요
+Machbase 권한은 active database 범위의 관리 권한과 특정 테이블의 DML 권한으로 나뉩니다.
+사용자는 database에 연결할 `CONNECT` 권한과, 실제 작업 대상에 필요한 권한을 모두 가져야
+합니다.
 
 ```sql
--- 데이터베이스 권한 부여
-GRANT CREATE ON DATABASE factory_a TO app_user;
-
--- 테이블 권한 부여
-GRANT SELECT ON sys.sensor_log TO reader_user;
-
--- 권한 취소
-REVOKE SELECT ON sys.sensor_log FROM reader_user;
+GRANT CONNECT ON DATABASE factory_a TO app_user;
+GRANT SELECT, INSERT ON TABLE factory_a.sys.sensor_log TO app_user;
 ```
-
-자세한 문법과 예제는 다음 하위 섹션을 참고하십시오.
-
-- [권한 모델](/dbms/security-access-control/privileges/#privileges) — 권한 계층 구조와 전체 권한 목록
-- [GRANT / REVOKE](/dbms/security-access-control/privileges/#grant-revoke) — 권한 부여·취소 구문 상세
-- [데이터베이스 권한](/dbms/security-access-control/privileges/#database-privileges) — 데이터베이스 범위 권한 각각의 설명
-- [테이블 권한](/dbms/security-access-control/privileges/#privileges-2) — 특정 테이블 대상 세밀한 권한 제어
-- [기본 부여 권한과 제외 권한](/dbms/security-access-control/privileges/#privileges-grant-exclude) — 신규 사용자의 초기 권한 범위
-- [LOOKUP UPDATE/DELETE 권한 모델](/dbms/lookup-table-usage/privilege-predicate-performance/#privileges-lookup-update-delete-target-select) — 일반 predicate DML 권한 동작
-- [권한 진단 체크리스트](/dbms/security-access-control/privileges/#checklist-diagnosis-privileges) — 권한 현황 조회 및 감사 방법
-
 
 <a id="privileges"></a>
 
 ## 권한 모델
 
-### 권한 계층 구조
-
-Machbase의 권한 모델은 다음과 같은 구조를 가집니다.
-
-```
-SYS 계정 (슈퍼유저)
-  └─ 모든 권한 보유, 별도 GRANT 불필요
-  └─ 다른 사용자에게 권한 부여 가능
-
-일반 사용자
-  ├─ 데이터베이스 권한 (database 범위)
-  │    CONNECT, CREATE, DROP, ALTER, BACKUP, MOUNT, USAGE, DDL, ALL
-  └─ 테이블 권한 (특정 테이블 범위)
-       SELECT, INSERT, DELETE, UPDATE, ALL
-```
-
-SYS 계정은 모든 권한을 기본으로 보유하므로 별도로 GRANT를 실행할 필요가 없습니다.
-일반 사용자는 SYS 계정 또는 충분한 권한을 가진 관리자로부터 권한을 부여받아야 합니다.
-
-### 데이터베이스 권한 목록
-
-active database 또는 mounted database를 대상으로 부여하는 권한입니다.
-
-| 권한 | 허용하는 작업 |
-|---|---|
-| `CONNECT` | active database 연결, `USE`, 객체 탐색 |
-| `CREATE` | 테이블, 뷰, 인덱스, 롤업, 테이블스페이스, 리텐션 생성 |
-| `DROP` | 테이블, 뷰, 인덱스, 롤업, 테이블스페이스, 리텐션 삭제 |
-| `ALTER` | 테이블 구조 변경, `ALTER SYSTEM` 실행 |
-| `BACKUP` | `BACKUP DATABASE` 실행 |
-| `MOUNT` | `MOUNT DATABASE` / `UMOUNT DATABASE` 실행 |
-| `USAGE` | mounted database 탐색. table `SELECT`를 대신하지 않음 |
-| `DDL` | CREATE + DROP 묶음 (두 권한 동시 부여) |
-| `ALL` | CONNECT, CREATE, DROP, ALTER, BACKUP 일괄 부여. table DML과 MOUNT는 제외 |
-
-`GRANT SELECT ON DATABASE database_name`처럼 DML 권한을 database 전체에 부여하는
-구문은 지원되지 않습니다. 다른 사용자 소유 테이블에 접근하려면 database `CONNECT`와
-table 대상 DML GRANT가 모두 필요합니다.
-
-### 테이블 권한 목록
-
-특정 테이블을 대상으로 부여하는 DML 범위 권한입니다.
-
-| 권한 | 허용하는 작업 | 비고 |
+| 범위 | 권한 | 용도 |
 |---|---|---|
-| `SELECT` | 해당 테이블 조회 | 모든 테이블 유형 지원 |
-| `INSERT` | 해당 테이블에 행 삽입 | 모든 테이블 유형 지원 |
-| `DELETE` | 해당 테이블에서 행 삭제 | 모든 테이블 유형 지원 |
-| `UPDATE` | 해당 테이블의 행 수정 | TAG는 태그/시간 조건 필요. LOG 미지원 |
-| `ALL` | SELECT + INSERT + DELETE + UPDATE 일괄 부여 | |
+| active database | `CONNECT` | 연결 및 `USE` |
+| active database | `CREATE`, `DROP`, `ALTER` | 객체 생성·삭제·변경 |
+| active database | `BACKUP` | database 백업 |
+| active database | `DDL` | `CREATE`와 `DROP` 묶음 |
+| active database | `ALL` | `CONNECT`, `CREATE`, `DROP`, `ALTER`, `BACKUP` |
+| mounted database | `USAGE` | mounted database 탐색 |
+| 관리 database | `MOUNT` | `MOUNT DATABASE`, `UMOUNT DATABASE` |
+| table | `SELECT`, `INSERT`, `DELETE`, `UPDATE` | 특정 테이블 DML |
+| table | `ALL` | 네 가지 테이블 DML 권한 |
 
-### ALL의 의미
-
-`ALL`은 대상에 따라 의미가 다릅니다.
-
-```sql
--- 데이터베이스 ALL 권한
-GRANT ALL ON DATABASE factory_a TO admin_user;
-
--- 테이블 DML 권한 전체 (SELECT, INSERT, DELETE, UPDATE)
-GRANT ALL ON sys.sensor_log TO app_user;
-```
-
-대상이 `DATABASE database_name`이면 해당 database의 `CONNECT`, `CREATE`, `DROP`,
-`ALTER`, `BACKUP` 권한을 부여합니다. table 대상이면 해당 table의 DML 권한 전체를
-의미하며, `MOUNT`와 table DML은 database `ALL`에 포함되지 않습니다.
-
-### 신규 사용자의 기본 권한
-
-`CREATE USER`로 생성된 사용자는 다음 권한을 기본으로 가집니다.
-
-| 기본 보유 | 기본 미보유 (명시적 부여 필요) |
-|---|---|
-| SELECT, INSERT, DELETE, UPDATE, CREATE, DROP | ALTER, BACKUP, MOUNT |
-
-자신이 생성한 객체(테이블, 뷰 등)에 대해서는 소유자로서 모든 작업이 허용됩니다.
-다른 사용자 소유의 객체에 접근하려면 SYS 계정이 명시적으로 GRANT를 실행해야 합니다.
-
-### 권한과 테이블 유형 제약
-
-권한이 있어도 테이블 유형이 지원하지 않는 DML은 실행할 수 없습니다.
-
-- `LOG` 테이블은 `UPDATE`를 지원하지 않습니다.
-- `TAG` 테이블의 data UPDATE는 태그 선택 조건과 BASETIME 조건이 필요합니다.
-- `VOLATILE` 테이블의 `DELETE`/`UPDATE`는 기본키 기반 `WHERE` 조건이 필요합니다. LOOKUP
-  테이블은 기본키 조건과 일반 조건식을 모두 지원합니다.
-
-권한을 부여한다고 해서 지원하지 않는 DML이 허용되는 것은 아닙니다.
+database의 `ALL`은 테이블 DML이나 `MOUNT`를 포함하지 않습니다. 테이블의 `ALL`도 database
+관리 권한을 포함하지 않습니다. 권한이 있어도 해당 테이블 타입이 지원하지 않는 DML은 실행할
+수 없습니다. 예를 들어 LOG 테이블은 `UPDATE`를 지원하지 않습니다.
 
 <a id="grant-revoke"></a>
 
 ## GRANT / REVOKE
 
-`GRANT` 문으로 사용자에게 권한을 부여하고, `REVOKE` 문으로 이미 부여된 권한을 취소합니다.
-두 명령 모두 SYS 계정에서 실행합니다.
-
-### 문법
-
 ```sql
--- 권한 부여
 GRANT privilege_list ON target TO user_name;
-
--- 권한 취소
 REVOKE privilege_list ON target FROM user_name;
 ```
 
-- `privilege_list`: 쉼표로 구분된 하나 이상의 권한명
-- `target`: `DATABASE database_name` (데이터베이스 권한) 또는 `TABLE [database.]owner.table` (테이블 권한)
-- `user_name`: 대상 사용자명 (대소문자 무관, 내부적으로 대문자 처리)
-
-### 데이터베이스 권한 부여
-
-지정한 active database를 대상으로 DDL 및 관리 권한을 부여합니다.
+다음 예제는 사용자에게 database 연결과 한 테이블의 읽기·쓰기를 허용합니다.
 
 ```sql
--- 테이블·뷰·인덱스 생성 권한
-GRANT CREATE ON DATABASE factory_a TO app_user;
+GRANT CONNECT ON DATABASE factory_a TO app_user;
+GRANT SELECT, INSERT ON TABLE factory_a.sys.sensor_log TO app_user;
 
--- 테이블·뷰·인덱스 삭제 권한
-GRANT DROP ON DATABASE factory_a TO app_user;
-
--- CREATE + DROP 묶음 (DDL 권한)
-GRANT DDL ON DATABASE factory_a TO deploy_user;
-
--- 테이블 구조 변경 및 ALTER SYSTEM 권한
-GRANT ALTER ON DATABASE factory_a TO ops_user;
-
--- 백업 실행 권한
-GRANT BACKUP ON DATABASE factory_a TO backup_user;
-
--- 마운트/언마운트 권한
-GRANT MOUNT ON DATABASE MACHBASEDB TO mount_user;
-
--- 모든 데이터베이스 권한 일괄 부여
-GRANT ALL ON DATABASE factory_a TO admin_user;
+REVOKE INSERT ON TABLE factory_a.sys.sensor_log FROM app_user;
+REVOKE CONNECT ON DATABASE factory_a FROM app_user;
 ```
 
-### 테이블 권한 부여
+테이블은 현재 database의 `owner.table` 또는 `database.owner.table`로 지정할 수 있습니다.
+database 전체에 `SELECT` 같은 DML 권한을 주는 구문은 지원하지 않습니다.
 
-특정 테이블에 대한 DML 권한을 부여합니다.
+현재 권한 기록은 `M$SYS_USER_ACCESS`에서 확인합니다.
 
 ```sql
--- 단일 권한 부여
-GRANT SELECT ON sensor_log TO app_user;
-GRANT INSERT ON sensor_log TO writer_user;
-
--- 여러 권한 동시 부여
-GRANT SELECT, INSERT ON sensor_tag TO iot_user;
-
--- 스키마 지정
-GRANT SELECT ON sys.sensor_log TO reader_user;
-
--- DB명·스키마명·테이블명 모두 지정
-GRANT SELECT ON TABLE factory_a.sys.sensor_log TO reader_user;
-
--- 테이블의 모든 DML 권한 부여
-GRANT ALL ON sensor_log TO app_user;
+SELECT DB_NAME, USER_NAME, OWNER_NAME, TABLE_NAME, PRIV
+  FROM M$SYS_USER_ACCESS
+ WHERE USER_NAME = 'APP_USER'
+ ORDER BY DB_NAME, OWNER_NAME, TABLE_NAME;
 ```
 
-### 권한 취소
-
-```sql
--- 테이블 권한 일부 취소
-REVOKE SELECT ON sensor_log FROM app_user;
-REVOKE INSERT ON sensor_log FROM writer_user;
-
--- 테이블 권한 전체 취소
-REVOKE ALL ON sensor_log FROM app_user;
-
--- 데이터베이스 권한 취소
-REVOKE BACKUP ON DATABASE factory_a FROM backup_user;
-REVOKE ALL ON DATABASE factory_a FROM admin_user;
-```
-
-### 주의 사항
-
-- `GRANT SELECT ON DATABASE database_name TO user` 형식으로 DML 권한을 데이터베이스 전체에 부여할 수 없습니다. DML 권한은 반드시 특정 테이블을 지정해야 합니다.
-- active database 권한은 해당 database 이름을 지정합니다. `MOUNT`는 `MACHBASEDB`에 부여하고, mounted database를 읽을 때는 별도로 `USAGE`와 table `SELECT`가 필요합니다.
-- SYS 계정은 모든 권한을 기본으로 보유하므로 별도 GRANT가 필요 없습니다.
-
-### 현재 권한 확인
-
-```sql
--- 데이터베이스 권한 확인
-SELECT * FROM m$sys_privileges;
-
--- 특정 사용자의 데이터베이스 권한 확인
-SELECT * FROM m$sys_privileges WHERE grantee = 'APP_USER';
-
--- 테이블 권한 확인
-SELECT * FROM m$obj_privileges;
-
--- 특정 테이블의 권한 부여 현황 확인
-SELECT * FROM m$obj_privileges WHERE obj_name = 'SENSOR_LOG';
-```
+`OWNER_NAME`과 `TABLE_NAME`이 `NULL`이면 database 범위, 값이 있으면 테이블 범위의
+기록입니다. `PRIV`는 복수 권한을 표현하는 비트 마스크이므로 화면에 나온 숫자 하나를 권한명
+하나로 해석하거나 운영 스크립트에 고정하지 마십시오.
 
 <a id="database-privileges"></a>
 
 ## 데이터베이스 권한
 
-데이터베이스 권한은 지정한 active database 범위에 적용됩니다. 개별 DML 권한은
-테이블 대상으로 부여하며, `ALL ON DATABASE database_name`은 database lifecycle 권한만
-포함합니다.
-
-### 데이터베이스 권한 목록
-
-| 권한 | 허용하는 작업 | 기본 보유 |
-|---|---|---|
-| `CONNECT` | 연결, `USE`, 객체 탐색 | 예(MACHBASEDB 호환) |
-| `CREATE` | 테이블, 뷰, 인덱스, 롤업, 테이블스페이스, 리텐션 생성 | 예 |
-| `DROP` | 테이블, 뷰, 인덱스, 롤업, 테이블스페이스, 리텐션 삭제 | 예 |
-| `ALTER` | 테이블 구조 변경, `ALTER SYSTEM` 실행 | 아니오 |
-| `BACKUP` | `BACKUP DATABASE` 실행 | 아니오 |
-| `MOUNT` | `MOUNT DATABASE` / `UMOUNT DATABASE` 실행 | 아니오 |
-| `USAGE` | mounted database 탐색 | 아니오 |
-| `DDL` | CREATE + DROP 묶음 | — |
-| `ALL` | CONNECT, CREATE, DROP, ALTER, BACKUP 일괄 부여 | — |
-
-"기본 보유"가 "예"인 권한은 `CREATE USER`로 생성된 사용자가 별도 GRANT 없이 보유합니다.
-나머지 권한은 SYS 계정이 명시적으로 부여해야 합니다.
-
-### 권한이 필요한 주요 작업
-
-다음 작업은 테이블 권한이 아닌 데이터베이스 권한이 필요합니다. `database_name`은
-작업 대상 active database로 바꿉니다.
-
-| 작업 | 필요한 권한 |
-|---|---|
-| `CREATE TABLE` / `DROP TABLE` | CREATE / DROP |
-| `CREATE VIEW` / `DROP VIEW` | CREATE / DROP |
-| `CREATE INDEX` / `DROP INDEX` | CREATE / DROP |
-| `CREATE ROLLUP` / `DROP ROLLUP` | CREATE / DROP |
-| `CREATE TABLESPACE` / `DROP TABLESPACE` | CREATE / DROP |
-| `CREATE RETENTION` / `DROP RETENTION` | CREATE / DROP |
-| `ALTER TABLE` (컬럼 추가/삭제 등) | ALTER |
-| `ALTER SYSTEM` | ALTER |
-| `BACKUP DATABASE` | BACKUP |
-| `MOUNT DATABASE` / `UMOUNT DATABASE` | MOUNT |
-
-### 부여 예제
+논리 database는 사용자를 만든 것만으로 연결할 수 없습니다. 대상 database에 `CONNECT`를
+명시적으로 부여하고 필요한 관리 권한을 최소 단위로 추가합니다.
 
 ```sql
--- deploy_user에게 DDL 권한 부여
+GRANT CONNECT ON DATABASE factory_a TO deploy_user;
 GRANT DDL ON DATABASE factory_a TO deploy_user;
-
--- ops_user에게 ALTER 권한 부여
-GRANT ALTER ON DATABASE factory_a TO ops_user;
-
--- backup_user에게 BACKUP 권한 부여
-GRANT BACKUP ON DATABASE factory_a TO backup_user;
-
--- admin_user에게 모든 데이터베이스 권한 부여
-GRANT ALL ON DATABASE factory_a TO admin_user;
+GRANT ALTER ON DATABASE factory_a TO deploy_user;
 ```
 
-### 하위 섹션
-
-각 권한의 상세 설명과 사용 예제는 다음 페이지를 참고하십시오.
-
-- [SELECT / INSERT / DELETE / UPDATE](/dbms/security-access-control/privileges/#select-insert-delete-update)
-- [CREATE / DROP](/dbms/security-access-control/privileges/#create-drop)
-- [ALTER](/dbms/security-access-control/privileges/#alter)
-- [BACKUP](/dbms/security-access-control/privileges/#backup)
-- [MOUNT](/dbms/security-access-control/privileges/#mount)
-- [DDL / ALL 합성 권한](/dbms/security-access-control/privileges/#privileges-ddl-all)
+새 사용자에게 기본으로 기록되는 호환 권한은 기본 database인 `MACHBASEDB` 범위입니다.
+다른 논리 database까지 자동으로 확장되지 않습니다.
 
 <a id="select-insert-delete-update"></a>
 <a id="database-privileges-select-insert-delete-update"></a>
 
 ### SELECT / INSERT / DELETE / UPDATE
 
-`SELECT`, `INSERT`, `DELETE`, `UPDATE`는 데이터 조작 언어(DML) 권한입니다.
-신규 사용자는 이 네 가지 권한을 기본으로 보유합니다.
-
-#### 데이터베이스 권한으로서의 DML
-
-Machbase에서는 DML 권한을 데이터베이스 전체 범위로 부여할 수 없습니다.
-DML 권한은 반드시 특정 테이블을 대상으로 부여해야 합니다.
+DML 권한은 특정 테이블을 대상으로 부여합니다.
 
 ```sql
--- 올바른 방법: 특정 테이블에 SELECT 부여
 GRANT SELECT ON sys.sensor_log TO reader_user;
-
--- 지원하지 않는 방법: database에 SELECT 부여 (오류 발생)
-GRANT SELECT ON DATABASE factory_a TO reader_user;
--- DML 권한은 TABLE scope에서만 부여할 수 있습니다.
-```
-
-테이블별로 세밀하게 권한을 제어하려면 [테이블 권한](/dbms/security-access-control/privileges/#privileges-2)을 참고하십시오.
-
-#### 각 DML 권한 설명
-
-##### SELECT
-
-데이터를 조회하는 권한입니다. 모든 테이블 유형에서 지원합니다.
-
-```sql
--- 특정 테이블 조회 권한 부여
-GRANT SELECT ON sys.sensor_log TO reader_user;
-
--- 권한 취소
-REVOKE SELECT ON sys.sensor_log FROM reader_user;
-```
-
-##### INSERT
-
-테이블에 새 행을 삽입하는 권한입니다. 모든 테이블 유형에서 지원합니다.
-
-```sql
--- 특정 테이블 삽입 권한 부여
 GRANT INSERT ON sys.sensor_log TO writer_user;
-
--- 권한 취소
-REVOKE INSERT ON sys.sensor_log FROM writer_user;
+GRANT DELETE ON sys.device_config TO maint_user;
+GRANT UPDATE ON sys.device_config TO maint_user;
 ```
 
-##### DELETE
-
-테이블에서 행을 삭제하는 권한입니다. 모든 테이블 유형에서 지원합니다.
-
-```sql
--- 특정 테이블 삭제 권한 부여
-GRANT DELETE ON sys.sensor_log TO manager_user;
-
--- 권한 취소
-REVOKE DELETE ON sys.sensor_log FROM manager_user;
-```
-
-##### UPDATE
-
-테이블의 행을 수정하는 권한입니다.
-
-```sql
--- VOLATILE/LOOKUP 테이블에 UPDATE 권한 부여
-GRANT UPDATE ON sys.device_config TO ops_user;
-
--- 권한 취소
-REVOKE UPDATE ON sys.device_config FROM ops_user;
-```
-
-**UPDATE 권한과 테이블 유형 제약:**
-
-| 테이블 유형 | UPDATE 지원 여부 |
-|---|---|
-| LOG | 미지원 |
-| TAG | 지원 (태그/시간 조건 필요) |
-| VOLATILE | 지원 (기본키 기반 WHERE 조건 필요) |
-| LOOKUP | 지원 (기본키 또는 일반 WHERE 조건) |
-
-UPDATE 권한을 부여하더라도 LOG 테이블에서는 UPDATE를 실행할 수 없습니다. TAG 테이블의
-data UPDATE는 태그 선택 조건과 시간 조건을 만족해야 하며, `name`, `time`, 메타데이터 컬럼은
-data UPDATE의 SET 대상이 아닙니다.
-
-#### 복합 DML 권한 부여
-
-여러 DML 권한을 한 번에 부여하려면 테이블 권한을 사용합니다.
-
-```sql
--- 조회와 삽입을 함께 허용
-GRANT SELECT, INSERT ON sys.sensor_log TO iot_user;
-
--- 조회, 삽입, 삭제를 함께 허용
-GRANT SELECT, INSERT, DELETE ON sys.sensor_log TO app_user;
-
--- 해당 테이블의 모든 DML 권한 부여
-GRANT ALL ON sys.sensor_log TO app_user;
-```
+`DELETE`와 `UPDATE`를 부여하기 전에는 대상 테이블 타입의 조건 제약을 함께 검토합니다.
+TAG 데이터 변경은 태그와 시간 조건이 필요하고, VOLATILE 변경은 기본 키 조건이 필요합니다.
 
 <a id="create-drop"></a>
 <a id="database-privileges-create-drop"></a>
 
 ### CREATE / DROP
 
-`CREATE` 권한과 `DROP` 권한은 데이터베이스 객체(테이블, 뷰, 인덱스 등)를 생성하고 삭제하는 권한입니다.
-`CREATE USER`로 생성된 사용자는 이 두 권한을 기본으로 보유합니다.
-
-#### CREATE 권한
-
-`CREATE` 권한이 있는 사용자는 다음 객체를 생성할 수 있습니다.
-
-- 테이블 (`CREATE TABLE`)
-- 뷰 (`CREATE VIEW`)
-- 인덱스 (`CREATE INDEX`)
-- 롤업 (`CREATE ROLLUP`)
-- 테이블스페이스 (`CREATE TABLESPACE`)
-- 리텐션 (`CREATE RETENTION`)
-
 ```sql
--- app_user에게 CREATE 권한 부여
-GRANT CREATE ON DATABASE factory_a TO app_user;
-
--- CREATE 권한 취소
-REVOKE CREATE ON DATABASE factory_a FROM app_user;
-```
-
-#### DROP 권한
-
-`DROP` 권한이 있는 사용자는 다음 객체를 삭제할 수 있습니다.
-
-- 테이블 (`DROP TABLE`)
-- 뷰 (`DROP VIEW`)
-- 인덱스 (`DROP INDEX`)
-- 롤업 (`DROP ROLLUP`)
-- 테이블스페이스 (`DROP TABLESPACE`)
-- 리텐션 (`DROP RETENTION`)
-
-```sql
--- app_user에게 DROP 권한 부여
-GRANT DROP ON DATABASE factory_a TO app_user;
-
--- DROP 권한 취소
-REVOKE DROP ON DATABASE factory_a FROM app_user;
-```
-
-#### 소유자의 DROP 권한
-
-자신이 생성한 객체는 별도의 `DROP` 권한 없이도 삭제할 수 있습니다.
-단, 다른 사용자가 소유한 객체를 삭제하려면 반드시 `DROP` 권한이 필요합니다.
-
-```sql
--- app_user가 자신의 테이블을 삭제하는 경우 (DROP 권한 불필요)
--- app_user 세션에서 실행
-DROP TABLE my_table;
-
--- ops_user가 다른 사용자 소유 테이블을 삭제하려면 DROP 권한 필요
--- SYS 계정에서 권한 부여
-GRANT DROP ON DATABASE factory_a TO ops_user;
-```
-
-#### CREATE + DROP 동시 부여
-
-두 권한을 함께 부여하려면 `DDL` 권한을 사용합니다.
-
-```sql
--- CREATE + DROP을 한 번에 부여
-GRANT DDL ON DATABASE factory_a TO deploy_user;
-
--- 개별 부여와 동일한 효과
 GRANT CREATE ON DATABASE factory_a TO deploy_user;
 GRANT DROP ON DATABASE factory_a TO deploy_user;
 ```
 
-`DDL` 합성 권한에 대한 자세한 내용은 [DDL / ALL 합성 권한](/dbms/security-access-control/privileges/#database-privileges-privileges-ddl-all)을 참고하십시오.
+`DROP`은 복구하기 어려운 변경을 허용하므로, 단순 적재·조회 계정에는 부여하지 마십시오.
+객체 소유권만으로 다른 database에 접속할 수 있는 것은 아닙니다.
 
 <a id="database-privileges-alter"></a>
 
 ### ALTER
 
-`ALTER` 권한은 테이블 구조 변경과 시스템 수준의 설정 변경을 허용하는 권한입니다.
-신규 사용자 생성 시 기본으로 부여되지 않으므로 필요할 때 명시적으로 GRANT해야 합니다.
-
-#### 허용하는 작업
-
-`ALTER` 권한이 있는 사용자는 다음을 실행할 수 있습니다.
-
-- `ALTER TABLE` — 테이블 구조 변경 (컬럼 추가, 컬럼 삭제, 데이터 타입 변경 등)
-- `ALTER SYSTEM` — 시스템 설정 변경 및 관리 명령
-
-#### 권한 부여 예제
-
 ```sql
--- ops_user에게 ALTER 권한 부여
-GRANT ALTER ON DATABASE factory_a TO ops_user;
-
--- ALTER 권한 취소
-REVOKE ALTER ON DATABASE factory_a FROM ops_user;
+GRANT ALTER ON DATABASE factory_a TO deploy_user;
 ```
 
-#### ALTER TABLE 사용 예
-
-```sql
--- ops_user 세션에서 컬럼 추가 (ALTER 권한 필요)
-ALTER TABLE sensor_log ADD COLUMN (location VARCHAR(64));
-
--- 컬럼 삭제
-ALTER TABLE sensor_log DROP COLUMN (location);
-```
-
-#### SYS 전용 작업
-
-다음 작업은 `ALTER` 권한이 있어도 SYS 계정에서만 실행할 수 있습니다.
-
-- `ALTER ROLLUP` — 롤업 정책 변경
-- 일부 `ALTER SYSTEM` 하위 명령 중 SYS 전용 항목
-
-운영 환경에서는 `ALTER` 권한을 DBA나 운영 담당자에게만 부여하고, 일반 애플리케이션 계정에는 부여하지 않도록 권장합니다.
+`ALTER`는 테이블 구조와 운영 설정 변경에 영향을 줄 수 있습니다. 애플리케이션 계정과 분리한
+배포·운영 계정에만 부여하고, 변경 후 현재 설정과 스키마를 다시 조회하십시오.
 
 <a id="database-privileges-backup"></a>
 
 ### BACKUP
 
-`BACKUP` 권한은 `BACKUP DATABASE` 명령을 실행하는 권한입니다.
-신규 사용자 생성 시 기본으로 부여되지 않으므로 필요할 때 명시적으로 GRANT해야 합니다.
-
-#### 허용하는 작업
-
-`BACKUP` 권한이 있는 사용자는 다음 명령을 실행할 수 있습니다.
-
-- `BACKUP DATABASE` — 데이터베이스 전체 또는 증분 백업
-
-SYS 계정은 별도 권한 없이 백업을 실행할 수 있습니다.
-
-#### 권한 부여 예제
-
 ```sql
--- backup_user에게 BACKUP 권한 부여
 GRANT BACKUP ON DATABASE factory_a TO backup_user;
-
--- BACKUP 권한 취소
-REVOKE BACKUP ON DATABASE factory_a FROM backup_user;
 ```
 
-#### BACKUP DATABASE 실행 예
-
-```sql
--- backup_user 세션에서 실행
-BACKUP DATABASE INTO DISK = '/backup/machbase_backup';
-
--- 증분 백업
-BACKUP DATABASE LEVEL 1 INTO DISK = '/backup/machbase_inc_backup';
-```
-
-#### 권한 없을 때의 오류
-
-`BACKUP` 권한이 없는 사용자가 `BACKUP DATABASE`를 실행하면 권한 오류가 발생합니다.
-
-```sql
--- 권한 없는 사용자가 실행할 경우
-BACKUP DATABASE INTO DISK = '/backup/test';
--- [ERR-02xxx: Not enough privilege to execute BACKUP DATABASE.]
-```
-
-#### 운영 지침
-
-- 백업 전용 계정을 별도로 생성하고 `BACKUP` 권한만 부여하는 것을 권장합니다.
-- 백업 계정은 필요한 파일 시스템 경로에 대한 OS 수준 쓰기 권한도 함께 필요합니다.
-- 정기 백업 스크립트는 전용 백업 계정으로 실행하여 SYS 계정 자격증명 노출을 최소화합니다.
+백업 경로에 대한 Machbase 서버 프로세스 OS 계정의 쓰기 권한과 여유 공간은 SQL 권한과
+별도로 필요합니다. 백업용 DB 사용자에는 DML이나 DDL 권한을 함께 주지 않는 구성을 권장합니다.
 
 <a id="database-privileges-mount"></a>
 
 ### MOUNT
 
-`MOUNT` 권한은 `MOUNT DATABASE` 및 `UMOUNT DATABASE` 명령을 실행하는 권한입니다.
-신규 사용자 생성 시 기본으로 부여되지 않으므로 필요할 때 명시적으로 GRANT해야 합니다.
-
-#### 허용하는 작업
-
-`MOUNT` 권한이 있는 사용자는 다음 명령을 실행할 수 있습니다.
-
-- `MOUNT DATABASE` — 백업 또는 외부 데이터베이스를 읽기 전용으로 마운트
-- `UMOUNT DATABASE` — 마운트된 데이터베이스를 해제
-
-SYS 계정은 별도 권한 없이 마운트/언마운트를 실행할 수 있습니다.
-
-#### 권한 부여 예제
-
 ```sql
--- mount_user에게 MOUNT 권한 부여
-GRANT MOUNT ON DATABASE MACHBASEDB TO mount_user;
-
--- MOUNT 권한 취소
-REVOKE MOUNT ON DATABASE MACHBASEDB FROM mount_user;
+GRANT MOUNT ON DATABASE MACHBASEDB TO recovery_user;
 ```
 
-#### MOUNT DATABASE 실행 예
-
-```sql
--- mount_user 세션에서 실행
-MOUNT DATABASE '/backup/machbase_backup' TO 'backup_db';
-
--- 마운트 해제
-UMOUNT DATABASE 'backup_db';
-```
-
-#### 마운트된 DB 데이터 조회 권한
-
-`MOUNT` 권한은 마운트/언마운트 명령 실행만 허용합니다.
-마운트된 데이터베이스의 테이블에서 데이터를 조회하려면 해당 테이블에 대한 `SELECT` 권한이 별도로 필요합니다.
-
-```sql
--- mount_user가 마운트된 DB 테이블을 조회하려면 SELECT도 필요
-GRANT SELECT ON backup_db.sys.sensor_log TO mount_user;
-```
-
-#### 운영 지침
-
-- 마운트 작업은 백업 검증이나 히스토리 데이터 조회 목적으로 주로 사용됩니다.
-- 마운트 전용 계정을 별도로 생성하고 `MOUNT` 권한만 부여하는 것을 권장합니다.
-- 마운트된 데이터베이스는 읽기 전용이므로 데이터 변경 위험 없이 안전하게 조회할 수 있습니다.
+MOUNT/UMOUNT는 관리 작업입니다. mounted database를 탐색할 `USAGE`와 그 안의 테이블을
+읽을 `SELECT`는 별도 권한입니다. 실제 복구 절차는
+[백업, 복구, 마운트](/dbms/operations-configuration-recovery/backup-restore-mount/)를 따르십시오.
 
 <a id="privileges-ddl-all"></a>
 <a id="database-privileges-privileges-ddl-all"></a>
 
 ### DDL / ALL 합성 권한
 
-`DDL`과 `ALL`은 여러 데이터베이스 권한을 묶어서 한 번에 부여하거나 취소하는 합성 권한입니다.
-
-#### DDL 합성 권한
-
-`DDL`은 `CREATE`와 `DROP`을 묶은 합성 권한입니다. 두 권한을 개별로 부여하는 것과 동일한 효과를 가집니다.
-
 ```sql
--- DDL 권한 부여 (CREATE + DROP 동시 부여)
+-- CREATE + DROP
 GRANT DDL ON DATABASE factory_a TO deploy_user;
 
--- 개별 부여와 동일
-GRANT CREATE ON DATABASE factory_a TO deploy_user;
-GRANT DROP ON DATABASE factory_a TO deploy_user;
+-- active database의 CONNECT, CREATE, DROP, ALTER, BACKUP
+GRANT ALL ON DATABASE factory_a TO database_admin;
+
+-- 한 테이블의 SELECT, INSERT, DELETE, UPDATE
+GRANT ALL ON TABLE factory_a.sys.sensor_log TO table_admin;
 ```
 
-`DDL` 권한을 취소하면 `CREATE`와 `DROP`이 함께 취소됩니다.
-
-```sql
--- DDL 권한 취소
-REVOKE DDL ON DATABASE factory_a FROM deploy_user;
-```
-
-#### ALL 합성 권한
-
-`ALL`은 데이터베이스 대상에서 사용할 수 있는 권한 비트를 일괄 부여합니다.
-`ALL ON DATABASE database_name`은 `CONNECT`, `CREATE`, `DROP`, `ALTER`, `BACKUP`을
-포함합니다. table DML과 `MOUNT`는 별도로 부여합니다.
-
-```sql
--- 모든 데이터베이스 권한 일괄 부여
-GRANT ALL ON DATABASE factory_a TO admin_user;
-
--- 모든 데이터베이스 권한 일괄 취소
-REVOKE ALL ON DATABASE factory_a FROM admin_user;
-```
-
-#### ALL의 대상별 의미 차이
-
-`ALL`은 대상에 따라 포함하는 권한이 다릅니다.
-
-| 대상 | ALL의 의미 |
-|---|---|
-| `DATABASE database_name` | CONNECT, CREATE, DROP, ALTER, BACKUP |
-| 특정 테이블 | SELECT, INSERT, DELETE, UPDATE (DML 권한 전체) |
-
-```sql
--- 데이터베이스 관리 권한 전체 부여
-GRANT ALL ON DATABASE factory_a TO admin_user;
-
--- 특정 테이블의 DML 권한 전체 부여
-GRANT ALL ON sys.sensor_log TO app_user;
-```
-
-`GRANT SELECT ON DATABASE database_name`처럼 DML 권한을 개별로 database 대상에
-부여하는 구문은 지원되지 않습니다. 다른 사용자 소유 테이블 접근은 table 대상
-`GRANT`로 제어합니다.
-
-#### SYS 계정의 권한
-
-SYS 계정은 모든 권한을 기본으로 보유합니다. GRANT 명령을 실행하지 않아도 모든 DDL, DML, 관리 작업을 수행할 수 있습니다.
-
-```sql
--- SYS 계정에 권한을 부여할 필요가 없습니다.
--- GRANT ALL ON DATABASE MACHBASEDB TO SYS;  -- 불필요
-```
-
-#### 실무 활용 예제
-
-```sql
--- 배포 자동화 계정: DDL만 허용
-GRANT DDL ON DATABASE factory_a TO ci_deploy_user;
-
--- DBA 계정: 모든 데이터베이스 권한 부여
-GRANT ALL ON DATABASE factory_a TO dba_user;
-
--- 특정 프로젝트 종료 후 권한 회수
-REVOKE ALL ON DATABASE factory_a FROM ci_deploy_user;
-```
+합성 권한은 편리하지만 최소 권한 검토를 어렵게 할 수 있습니다. 자동화 계정에는 가능한 한
+개별 권한을 부여하십시오.
 
 <a id="privileges-grant-exclude"></a>
 
 ## 기본 부여 권한과 제외 권한
 
-`CREATE USER`로 사용자를 생성하면 일부 권한이 자동으로 부여되고, 일부는 명시적으로 부여해야 합니다.
-
-### 기본 보유 권한
-
-신규 생성된 사용자가 별도 GRANT 없이 보유하는 권한입니다.
-
-| 권한 | 허용 작업 |
-|---|---|
-| `SELECT` | 자신이 소유한 테이블 조회 |
-| `INSERT` | 자신이 소유한 테이블 삽입 |
-| `DELETE` | 자신이 소유한 테이블 삭제 |
-| `UPDATE` | 자신이 소유한 테이블 수정 |
-| `CREATE` | 테이블, 뷰, 인덱스 등 객체 생성 |
-| `DROP` | 자신이 소유한 객체 삭제 |
-
-### 기본 제외 권한 (명시적 부여 필요)
-
-다음 권한은 기본 보유 권한에 포함되지 않습니다.
-
-| 권한 | 부여 구문 |
-|---|---|
-| `ALTER` | `GRANT ALTER ON DATABASE factory_a TO user;` |
-| `BACKUP` | `GRANT BACKUP ON DATABASE factory_a TO user;` |
-| `MOUNT` | `GRANT MOUNT ON DATABASE MACHBASEDB TO user;` |
+`CREATE USER`가 만든 사용자는 `MACHBASEDB`에 대한 호환 기본 권한 기록을 가집니다.
+논리 database에서는 다음처럼 필요한 범위를 명시하는 구성을 기준으로 삼으십시오.
 
 ```sql
--- 기본 제외 권한 부여 예시
-GRANT ALTER ON DATABASE factory_a TO ops_user;
-GRANT BACKUP ON DATABASE factory_a TO backup_user;
-GRANT MOUNT ON DATABASE MACHBASEDB TO mount_user;
+GRANT CONNECT ON DATABASE factory_a TO app_user;
+GRANT SELECT, INSERT ON TABLE factory_a.sys.sensor_log TO app_user;
 ```
 
-### 객체 소유권과 권한
-
-사용자가 직접 생성한 객체에 대해서는 해당 사용자가 소유자가 됩니다.
-소유자는 별도 권한 없이 자신의 객체에 대한 모든 DML 및 DROP을 실행할 수 있습니다.
-
-```sql
--- app_user가 생성한 테이블은 app_user가 소유자
--- app_user 세션에서 아래 작업 모두 가능 (별도 GRANT 불필요)
-CREATE LOG TABLE my_data (id INTEGER, val DOUBLE);
-INSERT INTO my_data VALUES (1, 3.14);
-SELECT * FROM my_data;
-DROP TABLE my_data;
-```
-
-### 다른 사용자 소유 객체 접근
-
-SYS 계정이 생성한 테이블이나 다른 사용자 소유 테이블에 접근하려면 명시적 GRANT가 필요합니다.
-
-```sql
--- SYS 소유의 sensor_log를 app_user가 조회하려면
--- SYS 계정에서 권한 부여
-GRANT SELECT ON sys.sensor_log TO app_user;
-
--- app_user1 소유의 테이블을 app_user2가 접근하려면
-GRANT SELECT ON app_user1.shared_table TO app_user2;
-```
-
-권한 부여 없이 다른 사용자 소유 테이블에 접근하면 권한 오류가 발생합니다.
-
-### 최소 권한 원칙 적용
-
-실무에서는 업무에 필요한 최소한의 권한만 부여하는 것을 권장합니다.
-
-```sql
--- 읽기 전용 계정: SELECT만 부여
-CREATE USER reader_user IDENTIFIED BY 'Reader!Pass1';
--- CREATE, DROP, INSERT, DELETE, UPDATE 기본 권한은 제거하지 않음에 주의
--- 다른 사용자 테이블에 대한 접근은 별도 GRANT로 제어
-
--- 데이터 수집 전용 계정: INSERT만 필요한 테이블에 부여
-CREATE USER collector_user IDENTIFIED BY 'Collect!Pass1';
-GRANT INSERT ON sys.sensor_log TO collector_user;
-GRANT INSERT ON sys.sensor_tag TO collector_user;
-```
-
-신규 사용자의 기본 권한(SELECT, INSERT, DELETE, UPDATE, CREATE, DROP)은 자신의 소유 객체에만 적용됩니다. 다른 사용자 소유 객체에 대한 접근은 항상 명시적 GRANT가 필요합니다.
+`ALTER`, `BACKUP`, `MOUNT`, `USAGE`와 다른 논리 database의 권한은 업무 역할을 검토한 뒤
+별도로 부여합니다.
 
 <a id="privileges-2"></a>
 
 ## 테이블 권한
 
-테이블 권한은 특정 테이블에 대한 DML 작업을 세밀하게 제어하는 권한입니다.
-`GRANT ... ON table TO user` 구문으로 부여하며, 테이블 단위로 개별 관리할 수 있습니다.
-
-### 테이블 권한 종류
-
-| 권한 | 허용하는 작업 | 비고 |
-|---|---|---|
-| `SELECT` | 해당 테이블 데이터 조회 | 모든 테이블 유형 지원 |
-| `INSERT` | 해당 테이블에 행 삽입 | 모든 테이블 유형 지원 |
-| `DELETE` | 해당 테이블에서 행 삭제 | 모든 테이블 유형 지원 |
-| `UPDATE` | 해당 테이블의 행 수정 | TAG는 태그/시간 조건 필요. LOG 미지원 |
-| `ALL` | SELECT + INSERT + DELETE + UPDATE 일괄 부여 | |
-
-### 테이블 지정 방법
-
-테이블 권한 부여 시 테이블을 지정하는 방법은 세 가지입니다.
-
-| 형식 | 예시 |
-|---|---|
-| 테이블명만 | `GRANT SELECT ON sensor_log TO user1` |
-| 스키마.테이블명 | `GRANT SELECT ON sys.sensor_log TO user1` |
-| DB명.스키마명.테이블명 | `GRANT SELECT ON TABLE factory_a.sys.sensor_log TO user1` |
-
-### 권한 부여 예제
+테이블 권한은 반드시 대상 객체와 함께 관리합니다.
 
 ```sql
--- 단일 테이블 조회 권한
-GRANT SELECT ON sys.sensor_log TO reader_user;
+GRANT SELECT ON TABLE factory_a.sys.sensor_log TO reader_user;
+GRANT SELECT, INSERT ON TABLE factory_a.sys.sensor_log TO ingest_user;
 
--- 단일 테이블 삽입 권한
-GRANT INSERT ON sensor_tag TO writer_user;
-
--- 여러 DML 권한 동시 부여
-GRANT SELECT, INSERT ON sys.sensor_log TO app_user;
-GRANT SELECT, INSERT, DELETE ON sys.sensor_log TO manager_user;
-
--- 테이블의 모든 DML 권한 부여
-GRANT ALL ON sys.sensor_log TO admin_user;
+REVOKE INSERT ON TABLE factory_a.sys.sensor_log FROM ingest_user;
 ```
 
-### 권한 취소 예제
-
-```sql
--- 특정 권한 취소
-REVOKE DELETE ON sys.sensor_log FROM manager_user;
-
--- 모든 테이블 권한 취소
-REVOKE ALL ON sys.sensor_log FROM admin_user;
-```
-
-### 테이블 권한 조회
-
-```sql
--- 모든 테이블 권한 현황 조회
-SELECT * FROM m$obj_privileges;
-
--- 특정 테이블의 권한 부여 현황
-SELECT * FROM m$obj_privileges WHERE obj_name = 'SENSOR_LOG';
-
--- 특정 사용자의 테이블 권한 목록
-SELECT * FROM m$obj_privileges WHERE grantee = 'APP_USER';
-```
-
-### 주의 사항
-
-- 테이블 소유자는 별도 GRANT 없이 자신의 테이블에 대한 모든 DML을 실행할 수 있습니다.
-- 다른 사용자 소유의 테이블에 접근하려면 반드시 해당 테이블에 대한 권한이 필요합니다.
-- LOG 테이블에 `UPDATE` 권한을 부여해도 LOG UPDATE는 지원되지 않습니다. TAG data UPDATE는
-  Standard Edition에서 태그 선택자와 BASETIME 조건을 만족해야 실행할 수 있습니다.
-- VOLATILE 테이블의 `DELETE`/`UPDATE`는 기본키 기반 `WHERE` 조건이 필요합니다. LOOKUP
-  테이블은 기본키 조건과 일반 조건식을 모두 지원합니다.
+테이블을 삭제할 때 기존 table grant도 정리되며, 같은 이름으로 만든 새 객체에 승계되지
+않습니다. 필요한 권한을 다시 부여한 뒤 `M$SYS_USER_ACCESS`에서 확인하십시오.
 
 <a id="checklist-diagnosis-privileges"></a>
 
 ## 권한 진단 체크리스트
 
-권한 현황을 정기적으로 점검하고 불필요한 권한을 제거하는 것이 데이터베이스 보안의 기본입니다.
-
-### 권한 조회 쿼리
-
-#### 데이터베이스 권한 확인
+사용자와 권한 현황을 다음 순서로 검토합니다.
 
 ```sql
--- 모든 데이터베이스 권한 현황
-SELECT * FROM m$sys_privileges;
+SELECT USER_ID, NAME, PWD_POLICY_LEVEL, VALID_BEFORE
+  FROM M$SYS_USERS
+ ORDER BY USER_ID;
 
--- 특정 사용자의 데이터베이스 권한 확인
-SELECT * FROM m$sys_privileges WHERE grantee = 'APP_USER';
+SELECT DB_NAME, USER_NAME, OWNER_NAME, TABLE_NAME, PRIV
+  FROM M$SYS_USER_ACCESS
+ ORDER BY USER_NAME, DB_NAME, OWNER_NAME, TABLE_NAME;
 ```
 
-#### 테이블 권한 확인
-
-```sql
--- 모든 테이블 권한 현황
-SELECT * FROM m$obj_privileges;
-
--- 특정 테이블의 권한 부여 현황
-SELECT * FROM m$obj_privileges WHERE obj_name = 'SENSOR_LOG';
-
--- 특정 사용자의 테이블 권한 목록
-SELECT * FROM m$obj_privileges WHERE grantee = 'APP_USER';
-```
-
-#### 사용자와 권한 전체 현황
-
-```sql
--- 모든 사용자와 데이터베이스 권한 현황
-SELECT u.user_name, p.privilege_type
-  FROM m$user u
-  LEFT JOIN m$sys_privileges p ON u.user_id = p.grantee_id
- ORDER BY u.user_name, p.privilege_type;
-
--- 모든 사용자와 테이블 권한 현황
-SELECT u.user_name, op.obj_name, op.privilege_type
-  FROM m$user u
-  LEFT JOIN m$obj_privileges op ON u.user_id = op.grantee_id
- ORDER BY u.user_name, op.obj_name, op.privilege_type;
-```
-
-### 진단 체크리스트
-
-#### 일상 점검
-
-- [ ] 신규 사용자 생성 후 최소 권한 원칙 적용 여부 확인
-- [ ] 애플리케이션 계정에 불필요한 관리 권한(ALTER, BACKUP, MOUNT) 부여 여부 확인
-- [ ] 읽기 전용 계정에 INSERT, DELETE, UPDATE 권한이 부여되어 있지 않은지 확인
-
-#### 정기 감사 (분기별 권장)
-
-- [ ] 전체 사용자 목록과 권한 현황 검토
-- [ ] 퇴직·이직한 직원 계정의 비활성화 또는 삭제 여부 확인
-- [ ] 임시로 부여한 권한(테스트, 마이그레이션 등)이 회수되었는지 확인
-- [ ] SYS 계정 비밀번호 변경 이력 확인
-- [ ] 권한이 과도하게 부여된 계정 식별 및 조정
-
-```sql
--- 분기 감사용: 각 사용자별 보유 권한 요약
-SELECT
-    u.user_name,
-    COUNT(DISTINCT p.privilege_type) AS db_priv_count,
-    COUNT(DISTINCT op.obj_name)      AS table_access_count
-  FROM m$user u
-  LEFT JOIN m$sys_privileges p  ON u.user_id = p.grantee_id
-  LEFT JOIN m$obj_privileges op ON u.user_id = op.grantee_id
- GROUP BY u.user_name
- ORDER BY db_priv_count DESC, table_access_count DESC;
-```
-
-### 계정 비활성화 처리
-
-퇴직·이직 시 계정을 즉시 처리합니다.
-
-```sql
--- 비밀번호를 알 수 없는 값으로 변경하여 접속 차단
-ALTER USER old_employee IDENTIFIED BY '!DISABLED!ACCOUNT!';
-
--- 테이블 권한 전체 취소
-REVOKE ALL ON sys.sensor_log FROM old_employee;
-
--- 데이터베이스 권한 전체 취소
-REVOKE ALL ON DATABASE factory_a FROM old_employee;
-
--- 해당 사용자가 소유한 객체를 다른 사용자에게 이관 후 계정 삭제
--- (소유 테이블이 있는 경우 먼저 DROP TABLE 또는 소유권 이전 필요)
-DROP USER old_employee;
-```
-
-> **주의**: 사용자가 소유한 테이블이 있으면 `DROP USER`가 실패합니다. 먼저 해당 사용자의 테이블을 삭제하거나 SYS 계정으로 이관한 후 사용자를 삭제하십시오.
-
-### 권장 계정 구성 예시
-
-| 계정 유형 | 필요 권한 | 설명 |
-|---|---|---|
-| 읽기 전용 | `SELECT ON target_table` | 데이터 조회 전용 |
-| 데이터 수집 | `INSERT ON target_table` | 센서·IoT 데이터 적재 |
-| 애플리케이션 | `SELECT, INSERT ON target_table` | 일반 CRUD 애플리케이션 |
-| 배포 자동화 | `DDL ON machbasedb` | 스키마 변경 자동화 |
-| 운영 DBA | `ALL ON machbasedb` | 데이터베이스 전반 관리 |
-| 백업 에이전트 | `BACKUP ON machbasedb` | 정기 백업 전용 |
-
-각 계정에는 업무에 필요한 최소한의 권한만 부여하고, 정기적으로 권한 현황을 검토하십시오.
+- 사용하지 않는 계정이 남아 있지 않은지 확인합니다.
+- 읽기 계정에 쓰기·DDL·관리 권한이 없는지 확인합니다.
+- 임시 권한은 승인된 기간이 끝나면 `REVOKE`하고 결과를 다시 조회합니다.
+- 사용자를 삭제하기 전 소유 객체와 실행 중인 세션을 확인합니다.
+- 숫자 `PRIV`를 해석해야 하는 감사 도구는 사용 중인 버전의 권한 정의와 함께 검증합니다.

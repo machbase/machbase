@@ -4,178 +4,62 @@ title: '15.5 접속 제어'
 weight: 50
 toc: true
 ---
-접속 제어는 네트워크 경로와 인증 방식에 따라 연결 가능 여부를 결정합니다. 계정 인증보다 앞선 레이어에서 동작하므로, 접속 자체를 차단하는 강력한 수단입니다.
 
-## 이 섹션의 구성
-
-| 항목 | 설명 |
-|------|------|
-| [원격 접속 설정](/dbms/security-access-control/access-control/#remote-access-configuration) | `GRANT_REMOTE_ACCESS`로 원격 접속 허용 여부 제어 |
-| [BIND_IP_ADDRESS와 네트워크 노출 제어](/dbms/security-access-control/access-control/#network-exposure-bind-ip-address) | 리스너가 열리는 네트워크 인터페이스 지정 |
-
-## 접속 제어 관련 주요 설정
-
-| 설정 항목 | 기본값 | 설명 |
-|-----------|--------|------|
-| `GRANT_REMOTE_ACCESS` | `1` | 원격 접속 허용(1) / 차단(0) |
-| `BIND_IP_ADDRESS` | `0.0.0.0` | 리스너 바인드 주소 (모든 인터페이스) |
-
-설정은 `machbase.conf`에서 영구적으로 변경하거나, `ALTER SYSTEM SET` 구문으로 재시작 없이 즉시 반영할 수 있습니다.
+네트워크 접속 범위는 `GRANT_REMOTE_ACCESS`, `BIND_IP_ADDRESS`, 운영체제 또는 클라우드
+방화벽을 함께 사용해 제한합니다. 현재 값은 다음처럼 확인합니다.
 
 ```sql
--- 원격 접속 차단
-ALTER SYSTEM SET GRANT_REMOTE_ACCESS = 0;
+SELECT NAME, VALUE
+  FROM V$PROPERTY
+ WHERE NAME IN ('GRANT_REMOTE_ACCESS', 'BIND_IP_ADDRESS');
 ```
 
+리스너 설정은 서버가 시작할 때 적용됩니다. 운영 중인 리스너가 자동으로 다시 바인드된다고
+가정하지 말고 `machbase.conf`를 변경한 뒤 승인된 재시작 절차를 수행하십시오.
 
 <a id="remote-access-configuration"></a>
 
 ## 원격 접속 설정
 
-`GRANT_REMOTE_ACCESS`는 로컬호스트 이외의 IP에서 Machbase에 접속할 수 있는지를 제어합니다. 이 설정은 계정 인증 이전에 동작하므로, 차단 시 올바른 계정 정보를 가진 클라이언트라도 연결 자체가 거부됩니다.
-
-### 설정값
-
-| 값 | 동작 |
-|----|------|
-| `1` (기본값) | 원격 접속 허용. 모든 IP에서 연결 가능 |
-| `0` | 원격 접속 차단. 로컬호스트(`127.0.0.1`, `::1`)에서만 연결 가능 |
-
-### 설정 방법
-
-#### machbase.conf에서 영구 설정
+`GRANT_REMOTE_ACCESS`는 원격 클라이언트 접속 허용 여부를 제어합니다.
 
 ```ini
+# 원격 접속 허용
+GRANT_REMOTE_ACCESS = 1
+
+# 원격 접속 차단
 GRANT_REMOTE_ACCESS = 0
 ```
 
-변경 후 Machbase를 재시작해야 적용됩니다.
+값을 바꾸기 전에 다음을 확인합니다.
 
-#### ALTER SYSTEM SET으로 즉시 반영
+1. 애플리케이션, 모니터링, 백업 클라이언트의 접속 위치
+2. 로컬 관리 접속을 유지할 방법
+3. 재시작 후 원격·비상 접속을 모두 시험할 점검 순서
 
-```sql
--- 원격 접속 차단 (재시작 불필요)
-ALTER SYSTEM SET GRANT_REMOTE_ACCESS = 0;
-
--- 원격 접속 허용으로 복구
-ALTER SYSTEM SET GRANT_REMOTE_ACCESS = 1;
-```
-
-현재 설정값은 다음 쿼리로 확인할 수 있습니다.
-
-```sql
-SELECT name, value FROM v$property WHERE name = 'GRANT_REMOTE_ACCESS';
-```
-
-### 사용 시나리오
-
-#### 개발 / 테스트 환경
-
-외부 노출 위험을 최소화하려면 원격 접속을 차단하고 로컬 접속만 허용합니다.
-
-```sql
-ALTER SYSTEM SET GRANT_REMOTE_ACCESS = 0;
-```
-
-애플리케이션을 같은 서버에 배포하거나 SSH 터널을 통해 연결하면 됩니다.
-
-#### 운영 환경 (원격 접속 필요)
-
-원격 접속을 허용하되, `BIND_IP_ADDRESS` 설정과 방화벽을 함께 구성해 허용 대역을 제한하는 것을 권장합니다.
-
-```ini
-GRANT_REMOTE_ACCESS = 1
-BIND_IP_ADDRESS = 192.168.1.100   # 내부 네트워크 인터페이스만 리슨
-```
-
-방화벽 규칙으로 허용할 클라이언트 IP를 추가로 제한하면 보안 수준을 높일 수 있습니다.
-
-### 주의사항
-
-- `GRANT_REMOTE_ACCESS = 0`으로 차단한 상태에서 원격 머신에서 연결을 시도하면 인증 오류가 아니라 접속 거부 오류가 반환됩니다.
-- `BIND_IP_ADDRESS`와 조합해 사용하면 더욱 세밀한 네트워크 노출 제어가 가능합니다. ([BIND_IP_ADDRESS와 네트워크 노출 제어](/dbms/security-access-control/access-control/#network-exposure-bind-ip-address) 참고)
+`GRANT_REMOTE_ACCESS=1`만으로 모든 원격 주소를 허용하지 않도록 방화벽 허용 목록을 함께
+구성하십시오.
 
 <a id="network-exposure-bind-ip-address"></a>
 
 ## BIND_IP_ADDRESS와 네트워크 노출 제어
 
-`BIND_IP_ADDRESS`는 클라이언트 리스너(TCP 포트)가 연결을 수신할 네트워크 인터페이스를 지정합니다. 서버에 여러 NIC가 있을 때 특정 인터페이스에만 서비스를 노출할 수 있습니다.
-
-### 설정값
-
-| 설정값 | 동작 |
-|--------|------|
-| `0.0.0.0` (기본값) | 모든 네트워크 인터페이스에서 연결 수신 |
-| `127.0.0.1` | 로컬호스트에서만 연결 수신 |
-| `192.168.1.100` | 지정한 IP를 가진 인터페이스에서만 연결 수신 |
-
-### 설정 방법
-
-`machbase.conf`에서 설정합니다. 변경 후 Machbase를 재시작해야 적용됩니다.
+`BIND_IP_ADDRESS`는 IPv4 리스너가 바인드할 주소입니다.
 
 ```ini
-# 모든 인터페이스 (기본)
+# 모든 IPv4 인터페이스
 BIND_IP_ADDRESS = 0.0.0.0
 
-# 로컬호스트 전용
+# 로컬 IPv4 인터페이스
 BIND_IP_ADDRESS = 127.0.0.1
 
-# 내부 네트워크 인터페이스만 노출
-BIND_IP_ADDRESS = 192.168.1.100
+# 지정한 내부 IPv4 인터페이스
+BIND_IP_ADDRESS = 10.0.0.5
 ```
 
-현재 설정값 확인:
+서버에 존재하지 않는 주소를 지정하면 시작에 실패할 수 있습니다. 설정 변경 전 현재 인터페이스
+주소를 확인하고, 재시작 후 실제 수신 주소와 포트를 운영체제 도구로 검증하십시오.
 
-```sql
-SELECT name, value FROM v$property WHERE name = 'BIND_IP_ADDRESS';
-```
-
-### 네트워크 보안 전략
-
-#### 단일 서버, 로컬 접속 전용
-
-Machbase와 애플리케이션이 같은 서버에서 동작할 때는 `127.0.0.1`로 설정해 외부 노출을 완전히 차단합니다.
-
-```ini
-BIND_IP_ADDRESS = 127.0.0.1
-GRANT_REMOTE_ACCESS = 0
-```
-
-이 설정에서는 Machbase 클라이언트 포트가 외부에서 접근할 수 없습니다.
-
-#### 내부 네트워크에만 서비스 노출
-
-서버에 공인 IP와 내부 IP가 모두 있을 때, 내부 인터페이스에만 바인드해 공인 인터넷에서의 접근을 차단합니다.
-
-```ini
-BIND_IP_ADDRESS = 10.0.0.5       # 내부 네트워크 인터페이스 IP
-GRANT_REMOTE_ACCESS = 1
-```
-
-#### 방화벽과 함께 사용
-
-`BIND_IP_ADDRESS = 0.0.0.0`으로 모든 인터페이스에서 수신하되, 방화벽(iptables, firewalld, 클라우드 보안 그룹)으로 접근 가능한 클라이언트 IP를 제한하는 방법입니다. 운영 환경에서 가장 일반적인 구성입니다.
-
-```bash
-# 예시: iptables로 Machbase 포트(5656)를 특정 대역에만 허용
-iptables -A INPUT -p tcp --dport 5656 -s 10.0.0.0/24 -j ACCEPT
-iptables -A INPUT -p tcp --dport 5656 -j DROP
-```
-
-### BIND_IP_ADDRESS와 GRANT_REMOTE_ACCESS 조합
-
-두 설정은 독립적으로 동작하므로 함께 구성할 수 있습니다.
-
-| `BIND_IP_ADDRESS` | `GRANT_REMOTE_ACCESS` | 결과 |
-|-------------------|-----------------------|------|
-| `0.0.0.0` | `1` | 모든 IP에서 접속 가능 (기본) |
-| `0.0.0.0` | `0` | 로컬호스트에서만 접속 가능 |
-| `127.0.0.1` | `1` | 로컬호스트에서만 접속 가능 (바인드 자체가 로컬) |
-| `192.168.1.100` | `1` | 해당 인터페이스 IP로만 접속 가능 |
-| `192.168.1.100` | `0` | 해당 인터페이스에서도 로컬호스트 연결만 허용 |
-
-### 주의사항
-
-- `BIND_IP_ADDRESS`는 `machbase.conf`에서만 설정할 수 있으며, `ALTER SYSTEM SET`으로 런타임에 변경할 수 없습니다.
-- 잘못된 IP(서버에 없는 인터페이스 주소)를 설정하면 Machbase가 시작되지 않을 수 있습니다.
-- IPv6를 사용하는 경우 `::` (모든 인터페이스) 또는 `::1` (로컬호스트)을 사용합니다.
+`0.0.0.0`이 필요하면 방화벽이나 보안 그룹에서 허용할 소스 주소와 포트를 제한합니다. 구체적인
+방화벽 명령은 배포 운영체제와 네트워크 정책에 따라 다르므로 이 매뉴얼의 고정 명령을 그대로
+적용하지 마십시오.
