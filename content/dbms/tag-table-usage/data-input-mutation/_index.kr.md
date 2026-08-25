@@ -3,229 +3,78 @@ title: '5.4 데이터 입력과 변경'
 weight: 40
 toc: true
 ---
-
-TAG 테이블에 데이터를 입력하는 방법은 INSERT 문, CSV 임포트와 SDK가 있습니다. 데이터 규모와
-수집 환경에 따라 적합한 방법이 다르므로 각각의 특징과 사용법을 살펴봅니다.
+TAG 데이터는 SQL `INSERT`, Append API 또는 파일 적재 도구로 입력합니다. SQL 예제는 기능
+확인과 소량 입력에 사용하고, 지속적인 수집은 Append API를 우선 검토합니다.
 
 <a id="original-85-inserting-data"></a>
 
-## Tag 데이터 삽입
+## SQL INSERT
 
-
-### 방법 1: INSERT 문
-
-소규모 데이터셋이나 대화형 테스트에 적합한 가장 간단한 입력 방법입니다.
-
-#### 기본 INSERT 예제
+다음 예제는 시간축과 거리축 TAG를 각각 만들고 데이터를 확인한 뒤 정리합니다.
 
 ```sql
-Mach> create tag table TAG (name varchar(20) primary key, time datetime basetime, value double summarized);
-Executed successfully.
-
-Mach> insert into tag metadata values ('TAG_0001');
-1 row(s) inserted.
-
--- Insert single values
-Mach> insert into tag values('TAG_0001', now, 0);
-1 row(s) inserted.
-
-Mach> insert into tag values('TAG_0001', now, 1);
-1 row(s) inserted.
-
-Mach> insert into tag values('TAG_0001', now, 2);
-1 row(s) inserted.
-
-Mach> EXEC TABLE_FLUSH(tag);
-Executed successfully.
-
-Mach> select * from tag where name = 'TAG_0001';
-NAME                  TIME                            VALUE
---------------------------------------------------------------------------------------
-TAG_0001              2018-12-19 17:41:37 806:901:728 0
-TAG_0001              2018-12-19 17:41:42 327:839:368 1
-TAG_0001              2018-12-19 17:41:43 812:782:202 2
-[3] row(s) selected.
-```
-
-`EXEC TABLE_FLUSH(tag)`는 대화형 예제에서 방금 입력한 TAG 데이터를 즉시
-조회하거나 통계 뷰에서 확인할 수 있게 합니다.
-
-> **사용 시기**: 테스트, 저용량 삽입, 대화형 데이터 입력
-
-#### TAG metadata와 `_LAST_UPDATE_TIME`
-
-metadata 컬럼이 없는 TAG 테이블은 기존처럼 `name`, `time`, `value` 세 값만 입력할 수 있습니다.
-
-```sql
-CREATE TAG TABLE sensor (
-    name  VARCHAR(128) PRIMARY KEY,
+CREATE TAG TABLE input_time_tag (
+    name  VARCHAR(32) PRIMARY KEY,
     time  DATETIME BASETIME,
     value DOUBLE
 );
 
-INSERT INTO sensor VALUES('tag1', now, 1);
-```
+INSERT INTO input_time_tag
+VALUES ('TEMP_001', TO_DATE('2026-01-01 10:00:00', 'YYYY-MM-DD HH24:MI:SS'), 25.5);
+INSERT INTO input_time_tag
+VALUES ('TEMP_001', TO_DATE('2026-01-01 10:01:00', 'YYYY-MM-DD HH24:MI:SS'), 25.7);
 
-사용자 metadata 컬럼이 있는 TAG 테이블에서 column list 없이 신규 tag를 입력하려면 data 값과 사용자 metadata 값을 함께 제공합니다. `_LAST_UPDATE_TIME` 은 시스템이 관리하는 metadata 변경 시각이므로 입력 값에 포함하지 않습니다.
-
-```sql
-CREATE TAG TABLE sensor_meta (
-    name  VARCHAR(128) PRIMARY KEY,
-    time  DATETIME BASETIME,
-    value DOUBLE
-)
-METADATA (
-    site   VARCHAR(32),
-    status INTEGER
+CREATE TAG TABLE input_distance_tag (
+    name     VARCHAR(32) PRIMARY KEY,
+    distance DOUBLE BASEDISTANCE,
+    value    DOUBLE,
+    quality  INTEGER
 );
 
-INSERT INTO sensor_meta
-VALUES('tag1', now, 1, 'seoul', 1);
+INSERT INTO input_distance_tag VALUES ('PIPE_A', 0.0, 10.1, 100);
+INSERT INTO input_distance_tag VALUES ('PIPE_A', 500.5, 11.2, 100);
+
+EXEC TABLE_FLUSH(input_time_tag);
+EXEC TABLE_FLUSH(input_distance_tag);
+
+SELECT name, time, value FROM input_time_tag ORDER BY time;
+SELECT name, distance, value, quality
+  FROM input_distance_tag
+ ORDER BY distance;
+
+DROP TABLE input_distance_tag;
+DROP TABLE input_time_tag;
 ```
 
-column list를 사용하는 경우에도 필요한 사용자 컬럼만 지정하고 `_LAST_UPDATE_TIME` 은 지정하지 않습니다.
+`TABLE_FLUSH`는 방금 입력한 데이터를 즉시 확인해야 하는 예제·검증 절차에 사용합니다. 일반
+수집 루프에서 행마다 실행하지 마십시오.
 
-```sql
-INSERT INTO sensor_meta(name, time, value, site, status)
-VALUES('tag2', now, 1, 'busan', 1);
-```
+## 메타데이터와 함께 입력
 
-기존 tag의 metadata row가 이미 존재하는 경우 data-only insert는 metadata 값을 변경하지 않습니다. 따라서 `_LAST_UPDATE_TIME` 도 변경되지 않습니다.
+사용자 메타데이터 컬럼이 있는 TAG에서 새 태그를 만들 때는 데이터와 메타데이터 값을 함께
+제공하거나, `INSERT ... METADATA`로 메타데이터를 먼저 등록합니다. 시스템 관리 컬럼은 입력
+목록에 포함하지 않습니다.
 
-#### 거리축 INSERT 예제
+메타데이터 값의 등록·갱신·삭제는 [TAG 메타데이터](../tag-metadata/)를 참고하십시오.
 
-거리축 Tag 테이블도 동일하게 `INSERT`를 사용하지만, 축 컬럼에는 숫자 값을 넣습니다.
+## 입력 경로 선택
 
-```sql
-Mach> CREATE TAG TABLE trip_sensor (
-          name        VARCHAR(20) PRIMARY KEY,
-          distance_m  DOUBLE BASE DISTANCE,
-          value       DOUBLE,
-          quality     INTEGER
-      );
-Executed successfully.
+| 경로 | 적합한 경우 | 확인할 사항 |
+| --- | --- | --- |
+| SQL `INSERT` | 기능 확인, 저빈도 입력 | 문장별 파싱·왕복 비용 |
+| SDK Append | 지속적인 고처리량 입력 | 배치 크기, flush와 오류 처리 |
+| `csvimport` / `machloader` | 클라이언트 파일 일괄 적재 | 컬럼 순서, 날짜 형식, bad 파일 |
+| `LOAD DATA INFILE` | 서버가 접근할 수 있는 파일 | 서버 경로·권한, 오류 정책 |
 
-Mach> INSERT INTO trip_sensor VALUES('ODO_A', 0, 10.1, 100);
-1 row(s) inserted.
+SDK별 연결과 Append 예제는 [개발 도구 연동](/dbms/development-tools-integration/)을,
+파일 형식과 명령은
+[데이터 입력·적재·반출](/dbms/application-integration/data-input-load-export/)을
+참고하십시오.
 
-Mach> INSERT INTO trip_sensor VALUES('ODO_A', 500, 11.2, 101);
-1 row(s) inserted.
+## 데이터 정정
 
-Mach> INSERT INTO trip_sensor VALUES('ODO_B', 1000.1, 21.5, 100);
-1 row(s) inserted.
+TAG data UPDATE는 Standard Edition에서 태그 선택 조건과 BASETIME 범위를 함께 지정해
+실행합니다. 태그명, 축과 메타데이터 컬럼은 일반 data UPDATE 대상으로 사용하지 않습니다.
+정정 후 ROLLUP이 있다면 대상 범위를 재구성합니다.
 
-Mach> EXEC TABLE_FLUSH(trip_sensor);
-Executed successfully.
-```
-
-`DOUBLE` 거리축은 소수 거리값을 그대로 저장할 수 있고, `LONG`/`ULONG` 거리축은 정수 거리값만 저장합니다.
-
-### 방법 2: CSV 파일 임포트
-
-`csvimport` 도구로 CSV 파일의 대량 데이터를 빠르게 로드합니다.
-
-#### CSV 파일 형식
-
-태그 이름, 타임스탬프, 값이 포함된 CSV 파일(`data.csv`)을 준비합니다.
-
-```csv
-TAG_0001, 2009-01-28 07:03:34 0:000:000, -41.98
-TAG_0001, 2009-01-28 07:03:34 1:000:000, -46.50
-TAG_0001, 2009-01-28 07:03:34 2:000:000, -36.16
-```
-
-#### csvimport 사용
-
-```bash
-csvimport -t TAG -d data.csv -F "time YYYY-MM-DD HH24:MI:SS mmm:uuu:nnn" -l error.log
-```
-
-**옵션 설명**:
-- `-t TAG`: 대상 테이블 이름
-- `-d data.csv`: 데이터 파일 경로
-- `-F`: 시간 형식 지정
-- `-l error.log`: 에러 로그 파일
-
-> **사용 시기**: 대량 로딩, 데이터 마이그레이션, 배치 임포트
-
-> **중요**: 임포트 중 존재하지 않는 태그 이름은 자동 등록됩니다. 단위, 위치, 상태 같은 메타데이터 값을 명시해야 하는 경우에는 데이터를 로드하기 전에 태그 메타데이터를 먼저 등록하십시오.
-
-### 방법 3: SDK 통합
-
-애플리케이션에서 프로그래밍 방식으로 데이터를 삽입합니다.
-
-#### 지원 언어
-
-- **[C/C++ 라이브러리](/dbms/development-tools-integration/cli-odbc/)** - 고성능 네이티브 통합
-- **[Java 라이브러리](/dbms/development-tools-integration/jdbc/)** - Java 애플리케이션
-- **[Python 라이브러리](/dbms/development-tools-integration/python/)** - 데이터 과학 및 자동화
-- **[C# 라이브러리](/dbms/development-tools-integration/net-connector/)** - .NET 애플리케이션
-
-#### Python 예제
-
-```python
-import machbaseAPI as mach
-
-# Connect to Machbase
-conn = mach.connect(host='localhost', port=5656)
-
-# Insert data
-cursor = conn.cursor()
-cursor.execute("""
-    INSERT INTO tag VALUES (?, ?, ?)
-""", ('TAG_0001', '2024-01-01 10:00:00', 25.5))
-
-conn.commit()
-conn.close()
-```
-
-> **사용 시기**: 애플리케이션 통합, 자동화된 데이터 수집, 사용자 정의 도구
-
-### 적절한 방법 선택
-
-| 방법 | 적합한 경우 | 장점 | 단점 |
-|--------|----------|------|------|
-| **INSERT** | 테스트, 소규모 데이터셋 | 간단, 대화형 | 대용량 데이터에는 느림 |
-| **CSV 임포트** | 대량 로딩, 마이그레이션 | 매우 빠름, 효율적 | 파일 준비 필요 |
-| **SDK** | 애플리케이션 | 완전한 제어, 타입 안전성 | 개발 필요 |
-
-### 추가 컬럼 사용
-
-Tag 테이블에 추가 컬럼이 있는 경우 삽입 시 포함시킵니다.
-
-축 값은 항상 테이블 정의 순서와 타입을 따라야 합니다. 시간축은 `DATETIME`, 거리축은 `DOUBLE`/`LONG`/`ULONG` 값이 들어갑니다.
-
-```sql
--- Tag table with additional columns
-CREATE TAG TABLE sensors (
-    name VARCHAR(20) PRIMARY KEY,
-    time DATETIME BASETIME,
-    value DOUBLE,
-    location VARCHAR(50),
-    status SHORT
-);
-
--- Insert with additional columns
-INSERT INTO sensors VALUES (
-    'TEMP_001',
-    '2024-01-01 10:00:00',
-    25.5,
-    'Building A',
-    1
-);
-```
-
-### 운영 가이드
-
-1. **태그 메타데이터 등록**: 없는 태그 이름은 자동 등록되지만, 메타데이터 값을 명시해야 할 때는 먼저 등록합니다. `_LAST_UPDATE_TIME` 은 서버가 자동 관리하므로 직접 입력하지 않습니다.
-2. **배치 작업 사용**: 대규모 데이터셋은 CSV 임포트 또는 배치 API 호출을 사용합니다.
-3. **에러 처리**: 반환 값을 확인하고 에러를 로그에 기록합니다.
-4. **시간 정밀도**: 데이터 전체에서 타임스탬프 정밀도를 일관되게 유지합니다.
-5. **데이터 검증**: 태그 이름과 타임스탬프가 운영 규칙을 따르는지 확인합니다.
-
-### 성능 팁
-
-- **CSV 임포트**: 클라이언트에 있는 CSV 파일을 일괄 적재할 때 사용합니다.
-- **배치 삽입**: 여러 INSERT 문을 트랜잭션으로 그룹화합니다.
-- **병렬 로딩**: 병렬 수집을 위해 여러 csvimport 프로세스를 사용합니다.
-- **준비된 문**: SDK에서 파라미터화된 쿼리로 성능을 높입니다.
+자세한 절차는 [TAG 데이터 정정](../tag-data-update-correction/)을 참고하십시오.

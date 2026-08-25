@@ -20,7 +20,6 @@ Machbase는 서버 관리, 데이터 가져오기/내보내기, 쿼리 실행을
 | [machclusterctl](./dictionary-machclusterctl/) | Cluster | 클러스터 전체 시작/종료/관리 도구 |
 | [machcoordinatoradmin](./dictionary-machcoordinatoradmin/) | Cluster | Coordinator 노드 관리 및 클러스터 구성 도구 |
 | [machdeployeradmin](./dictionary-machdeployeradmin/) | Cluster | Deployer 노드 관리 도구 |
-| [8.5 전체 명령행 도구 레퍼런스](./original-8-5-full/) | 8.5 원본 명령행 도구 레퍼런스의 전체 항목 보존본 |
 
 ## 공통 접속 옵션
 

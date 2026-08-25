@@ -5,7 +5,8 @@ weight: 10
 toc: true
 ---
 
-`$MACHBASE_HOME/conf/machbase.conf` 파일에서 설정하는 Standard Edition 주요 프로퍼티 사전입니다. 별도 표시가 없는 한 서버 재시작이 필요합니다. 8.5 원본의 전체 프로퍼티 항목은 [8.5 전체 설정 레퍼런스](../original-8-5-full/)를 함께 참고하십시오.
+`$MACHBASE_HOME/conf/machbase.conf` 파일에서 설정하는 Standard Edition 주요 프로퍼티
+사전입니다. 별도 표시가 없는 한 서버 재시작이 필요합니다.
 
 ## 서버 기본 설정
 

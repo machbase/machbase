@@ -31,7 +31,8 @@ Linux에서 Standard Edition을 설치하는 방법은 두 가지입니다.
 | [Tarball 설치](/dbms/installation-deployment-upgrade/standard-edition/#linux-tarball) | 실제 서버 환경, 데이터 디렉터리를 직접 관리해야 하는 경우 |
 | [Docker 설치](/dbms/installation-deployment-upgrade/standard-edition/#linux-docker) | 개발·테스트 환경, 빠른 구동이 필요한 경우 |
 
-Tarball 설치는 [Linux 환경 준비](/dbms/installation-deployment-upgrade/standard-edition/#linux-preparation-environment-linux)를 먼저 완료해야 합니다. Docker 설치는 Docker Engine과 볼륨/포트 권한만 준비하면 별도 OS 튜닝 없이 시작할 수 있습니다.
+Tarball 설치는 [설치 전 준비](../pre-install-preparation/)를 먼저 완료해야 합니다. Docker
+설치는 Docker Engine과 볼륨·포트 권한을 준비하십시오.
 
 ---
 
@@ -39,96 +40,9 @@ Tarball 설치는 [Linux 환경 준비](/dbms/installation-deployment-upgrade/st
 
 ### Linux 환경 준비
 
-Linux에 설치하기 전에 파일 디스크립터 한도, 시간 설정, 포트 예약을 점검합니다.
-
-#### 파일 디스크립터 한도
-
-내부적으로 많은 수의 파일을 동시에 열기 때문에 OS 기본값(1024)으로는 부족합니다.
-
-```bash
-# 현재 soft limit 확인
-ulimit -Sn
-```
-
-출력값이 65535보다 작으면 다음을 수행합니다.
-
-```bash
-sudo vi /etc/security/limits.conf
-```
-
-아래 내용을 추가합니다.
-
-```
-*  hard  nofile  65535
-*  soft  nofile  65535
-```
-
-systemd 환경에서는 추가로 아래 파일도 수정합니다.
-
-```bash
-sudo vi /etc/systemd/user.conf
-# 추가:
-DefaultLimitNOFILE=65535
-```
-
-수정 후 서버를 재부팅하고 값을 확인합니다.
-
-```bash
-ulimit -Sn
-# 65535
-```
-
-#### 서버 시간 확인
-
-시계열 데이터를 처리하므로 서버 시간이 정확해야 합니다.
-
-```bash
-# 타임존 확인
-ls -l /etc/localtime
-# 예: /etc/localtime -> ../usr/share/zoneinfo/Asia/Seoul
-
-date
-# Wed Jan  2 11:12:44 KST 2019
-```
-
-타임존이 올바르지 않으면 `/usr/share/zoneinfo`에서 적절한 지역을 선택해 심볼릭 링크를 변경합니다.
-
-시간 자체가 맞지 않으면 수동으로 설정합니다.
-
-```bash
-sudo date -s '2025/01/02 12:34:56'
-```
-
-#### 포트 예약
-
-운영체제가 Machbase 포트를 다른 프로세스에 할당하지 못하도록 예약합니다.
-
-```bash
-current=$(cat /proc/sys/net/ipv4/ip_local_reserved_ports)
-ports=5656
-sudo sysctl -w net.ipv4.ip_local_reserved_ports="${current:+$current,}$ports"
-```
-
-기존 예약 포트가 있으면 덮어쓰지 말고 쉼표로 구분해 병합합니다. 영구 적용은 `/etc/sysctl.conf`의 `net.ipv4.ip_local_reserved_ports` 항목을 다음 값과 병합합니다.
-
-```
-net.ipv4.ip_local_reserved_ports = 5656
-```
-
-Cluster Edition의 경우 클러스터 링크 포트, 어드민 포트, 복제 포트도 범위에 포함하십시오.
-
-#### 방화벽 포트 오픈
-
-외부에서 접속이 필요한 경우 포트를 허용합니다.
-
-```bash
-# firewalld 사용 환경
-sudo firewall-cmd --permanent --add-port=5656/tcp
-sudo firewall-cmd --reload
-
-# iptables 사용 환경
-sudo iptables -A INPUT -p tcp --dport 5656 -j ACCEPT
-```
+파일 디스크립터 한도, 시간 동기화, 포트 예약과 방화벽 설정은 Edition 공통 작업입니다.
+중복된 설정을 이 페이지에서 반복하지 않고 [설치 전 준비](../pre-install-preparation/)를
+기준으로 안내합니다.
 
 ---
 
@@ -302,7 +216,7 @@ docker exec -it machbase machsql
 호스트에 machsql이 설치된 경우:
 
 ```bash
-machsql -s 127.0.0.1 -u SYS -p MANAGER
+machsql -s 127.0.0.1 -P 5656 -u SYS -p MANAGER
 ```
 
 #### 컨테이너 종료 및 재시작
@@ -422,7 +336,7 @@ Windows 버전은 ZIP 패키지 또는 설치 실행 파일로 제공됩니다. 
 설치 후 명령 프롬프트에서 `machsql`을 실행하여 서버에 접속합니다. 설치 실행 파일을 사용한 경우 `<설치 경로>\machbase_home\bin`이 시스템 `PATH`에 추가됩니다. ZIP 패키지를 사용한 경우 압축을 해제한 디렉터리의 `bin\`을 `PATH`에 추가하거나 전체 경로로 실행합니다.
 
 ```cmd
-machsql -s 127.0.0.1 -u SYS -p MANAGER
+machsql -s 127.0.0.1 -P 5656 -u SYS -p MANAGER
 ```
 
 기본 관리자 계정: `SYS` / `MANAGER`

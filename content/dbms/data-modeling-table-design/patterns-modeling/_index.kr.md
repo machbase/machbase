@@ -367,21 +367,10 @@ CREATE INDEX idx_equip_type ON equipment(equip_type);
 
 ### 마스터 조인 조회 패턴
 
-```sql
--- 센서 데이터 + 설비 정보 조인
-SELECT s.name AS sensor_id,
-       e.equip_name,
-       l.name AS line_name,
-       f.name AS factory_name,
-       s.time,
-       s.value
-FROM sensor_data s
-JOIN equipment e     ON s.name = e.equip_id
-JOIN production_line l ON e.line_id = l.line_id
-JOIN factory f       ON l.factory_id = f.factory_id
-WHERE f.factory_id = 'F01'
-  AND s.time >= NOW - 3600000000000;
-```
+계측 테이블에는 설비 식별자를 저장하고, 공장·라인·설비 이름 같은 속성은 LOOKUP 테이블에
+한 번만 저장합니다. 조회할 때 계측 테이블의 시간 범위를 먼저 제한한 뒤 설비 식별자로
+LOOKUP 테이블을 조인합니다. 실제 조인 구문과 실행 계획 확인 방법은
+[JOIN·서브쿼리](/dbms/tag-table-usage/join-subquery-tag/)을 참고하십시오.
 
 <a id="persistent-temporary"></a>
 
@@ -463,9 +452,8 @@ GROUP BY name;
 
 ## INSERT·UPDATE 패턴
 
-테이블 타입별 데이터 삽입·수정 패턴을 정리합니다.
-
-### 테이블 타입별 쓰기 패턴
+이 절에서는 모델링에 필요한 쓰기 경로 선택만 정리합니다. 같은 DML 예제를 여러 장에서
+반복하지 않도록 실제 구문은 각 테이블 장과 애플리케이션 입력 문서에서 다룹니다.
 
 | 테이블 타입 | INSERT | UPDATE | DELETE | UPSERT |
 |-----------|--------|--------|--------|--------|
@@ -475,141 +463,23 @@ GROUP BY name;
 | LOOKUP | INSERT / Append API | O (일반 조건식, PK 변경 제외) | O (일반 조건식 또는 전체 삭제) | ON DUPLICATE KEY UPDATE |
 | VOLATILE | INSERT | O (by PK) | O | ON DUPLICATE KEY UPDATE |
 
-### TAG/LOG: Append API 패턴 (고속 입력)
-
-```go
-// Go SDK - Append API (초고속 대량 입력)
-appender, _ := conn.Appender(ctx, "sensor_data")
-for _, row := range rows {
-    appender.Append(row.Name, row.Time, row.Value)
-}
-appender.Close()
-```
-
-### TAG: UPDATE 패턴
-
-TAG data UPDATE는 태그 선택 조건과 BASETIME 조건을 함께 사용합니다.
-
-```sql
-UPDATE sensor_data
-   SET value = 101
- WHERE name = 'sensor-01'
-   AND time >= TO_DATE('2026-07-01', 'YYYY-MM-DD');
-```
-
-### TRANSACTION: UPDATE 패턴
-
-TRANSACTION 테이블은 일반 SQL UPDATE를 지원합니다.
-
-```sql
--- WHERE 조건 UPDATE
-UPDATE orders SET status = 'SHIPPED' WHERE order_id = 1001;
-
--- 자기 참조 UPDATE
-UPDATE inventory SET qty = qty - 5 WHERE item_id = 42;
-
--- 전체 행 UPDATE (WHERE 없음)
-UPDATE product_catalog SET discount = 0;
-```
-
-### VOLATILE: UPDATE 패턴
-
-VOLATILE 테이블은 일반 UPDATE와 ON DUPLICATE KEY UPDATE를 모두 지원합니다.
-
-```sql
--- 일반 UPDATE (WHERE 조건)
-UPDATE device_status SET status = 'NORMAL', value = 23.5 WHERE device_id = 'DEV-01';
-
--- UPSERT: ON DUPLICATE KEY UPDATE (PK 중복 시 자동 UPDATE)
-INSERT INTO device_status VALUES ('DEV-01', 'ALARM', 95.3, NOW)
-ON DUPLICATE KEY UPDATE SET status = 'ALARM', value = 95.3, updated_at = NOW;
-```
-
-### LOOKUP: UPDATE 패턴
-
-```sql
--- PRIMARY KEY 기준 직접 UPDATE
-UPDATE alarm_threshold SET high_limit = 90.0, updated_at = NOW
-WHERE sensor_id = 'TEMP-01';
-```
-
-### 대량 초기 로드 패턴
-
-```bash
-# machloader로 CSV 파일 대량 로드
-machloader -i -d data.csv -t table_name
-```
+지속적인 TAG·LOG 입력은 Append API, 서버가 읽을 수 있는 파일의 일괄 적재는
+`LOAD DATA INFILE`, 클라이언트 파일은 `machloader`를 우선 검토합니다. 자세한 선택 기준은
+[데이터 입력·적재·반출](/dbms/application-integration/data-input-load-export/)을 참고하십시오.
 
 <a id="join-metadata-design"></a>
 
 ## JOIN·메타데이터 설계
 
-여러 테이블 타입을 조합하는 JOIN 설계와 TAG 테이블 METADATA 활용 패턴입니다.
-
-### 크로스 타입 JOIN 패턴
-
-서로 다른 타입의 테이블도 JOIN할 수 있습니다.
-
-```sql
--- TAG(계측) + LOOKUP(기준) + TRANSACTION(이력) 3-way JOIN
-SELECT
-    t.name AS sensor_id,
-    m.location,
-    m.unit,
-    t.time,
-    t.value,
-    a.alarm_time,
-    a.message
-FROM sensor_data t
-JOIN sensor_master m ON t.name = m.sensor_id
-LEFT JOIN alarm_history a ON t.name = a.sensor
-    AND a.alarm_time BETWEEN t.time - 60000000000 AND t.time
-WHERE t.time >= NOW - 3600000000000
-  AND m.dept = 'Production';
-```
-
-### METADATA JOIN 패턴
-
-TAG 테이블의 METADATA를 이용하면 별도 JOIN 없이 태그 속성을 함께 조회할 수 있습니다.
-
-```sql
--- METADATA와 계측값 동시 조회
-SELECT name, location, unit, time, value
-FROM sensor_data
-WHERE time >= NOW - 3600000000000
-  AND location = 'Building-A';  -- METADATA 컬럼 조건
-```
-
-### 서브쿼리 패턴
-
-```sql
--- 임계값을 초과한 센서의 최근 이력 조회
-SELECT s.name, s.time, s.value
-FROM sensor_data s
-WHERE s.name IN (
-    SELECT sensor_name FROM alarm_threshold WHERE high_limit < 80.0
-)
-AND s.time >= NOW - 3600000000000
-ORDER BY s.value DESC;
-```
-
-### JOIN 성능 최적화
+여러 테이블 타입을 조합할 때는 다음 원칙을 적용합니다.
 
 1. 작은 테이블(LOOKUP)을 드라이빙 테이블 쪽에 배치합니다.
 2. JOIN 조건 컬럼에 인덱스를 생성합니다.
 3. WHERE 절로 레코드를 최대한 줄인 뒤 JOIN합니다.
+4. TAG 속성을 함께 조회하는 목적이라면 별도 LOOKUP 대신 METADATA가 적합한지 검토합니다.
 
-```sql
--- 성능 좋은 패턴: 범위 필터 후 JOIN
-SELECT s.name, e.equip_name, s.time, s.value
-FROM (
-    SELECT name, time, value
-    FROM sensor_data
-    WHERE time >= NOW - 3600000000000  -- 먼저 범위 필터
-      AND value > 80.0
-) s
-JOIN equipment_master e ON s.name = e.sensor_id;
-```
+재현 가능한 조인 예제는 [JOIN·서브쿼리](/dbms/tag-table-usage/join-subquery-tag/)와
+[LOOKUP 조인](/dbms/lookup-table-usage/join-patterns-lookup/)을 참고하십시오.
 
 <a id="table-types-patterns-combined-type"></a>
 
@@ -646,17 +516,6 @@ JOIN equipment_master e ON s.name = e.sensor_id;
 │             VOLATILE 테이블                      │
 │             order_status_cache (현재 상태 캐시)  │
 └─────────────────────────────────────────────────┘
-```
-
-```sql
--- TRANSACTION: 주문 상태 UPDATE 가능
-UPDATE orders SET status = 'SHIPPED', shipped_at = NOW WHERE order_id = 1001;
-
--- LOG: 배송 이벤트 추가 전용
-INSERT INTO delivery_log VALUES (NOW, 1001, 'DEPARTED', 'HUB-SEOUL');
-
--- LOOKUP: 제품 가격 갱신
-UPDATE product_master SET price = 19900 WHERE product_id = 42;
 ```
 
 ### 패턴 요약

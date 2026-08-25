@@ -3,422 +3,102 @@ title: '5.7 운영과 데이터 생명주기'
 weight: 70
 toc: true
 ---
-
+TAG 데이터의 수명 주기는 수동 삭제, Retention Policy와 중복 입력 방지로 관리합니다. 이
+페이지는 운영 선택 기준을 설명하며 전체 SQL 문법은 관련 레퍼런스로 연결합니다.
 
 <a id="original-85-deleting-data"></a>
 
-## Tag 데이터 삭제
+## TAG 데이터 삭제
 
+TAG 데이터는 태그 식별자와 축 조건을 사용해 삭제 범위를 제한합니다. 시간축 TAG의 대표적인
+선택은 다음과 같습니다.
 
-### Tag 데이터 삭제 제약 조건
+| 목적 | 조건 |
+| --- | --- |
+| 한 태그의 전체 데이터 삭제 | 태그 `PRIMARY KEY` 일치 |
+| 한 태그의 시간 범위 삭제 | 태그 일치 + BASETIME 범위 |
+| 모든 태그의 과거 데이터 삭제 | BASETIME 조건 또는 `BEFORE` |
+| 테이블의 전체 데이터 삭제 | 조건 없는 TAG `DELETE` |
 
-Tag 데이터 삭제는 제한된 조건식만 허용됩니다. 지원되는 조건은 다음과 같습니다.
-
-* 특정 태그 데이터 삭제
-* 특정 태그의 특정 시간 이전 데이터 삭제
-* 특정 태그의 특정 시간 범위 데이터 삭제
-* 특정 시각 또는 시간 범위의 모든 태그 데이터 삭제
-* 특정 시간 이전의 모든 태그 삭제
-* 모든 데이터 삭제
-
-### DELETE 문 실행
-
-#### 특정 태그 데이터 삭제
-
-특정 태그를 지정하면 해당 태그와 관련된 모든 데이터가 삭제됩니다.
+다음 예제는 별도 검증 테이블을 만들고 삭제 범위를 확인한 뒤 정리합니다.
 
 ```sql
-DELETE FROM TAG WHERE NAME = 'TAG-ID';
+CREATE TAG TABLE lifecycle_tag (
+    name  VARCHAR(32) PRIMARY KEY,
+    time  DATETIME BASETIME,
+    value DOUBLE
+);
+
+INSERT INTO lifecycle_tag VALUES
+    ('TAG_0001', TO_DATE('2026-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), 1.0);
+INSERT INTO lifecycle_tag VALUES
+    ('TAG_0001', TO_DATE('2026-01-02 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), 2.0);
+INSERT INTO lifecycle_tag VALUES
+    ('TAG_0002', TO_DATE('2026-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), 3.0);
+
+DELETE FROM lifecycle_tag
+ WHERE name = 'TAG_0001'
+   AND time < TO_DATE('2026-01-02 00:00:00', 'YYYY-MM-DD HH24:MI:SS');
+
+SELECT name, time, value
+  FROM lifecycle_tag
+ ORDER BY name, time;
+
+DELETE FROM lifecycle_tag;
+DROP TABLE lifecycle_tag;
 ```
 
-```sql
-## Original Data
-Mach> select * from tag;
-NAME                  TIME                            VALUE
---------------------------------------------------------------------------------------
-TAG_0001              2024-01-01 10:00:00 000:000:000 1
-TAG_0001              2024-01-01 10:00:01 000:000:000 1
-TAG_0001              2024-01-01 10:00:04 000:000:000 1
-TAG_0001              2024-01-01 10:00:06 000:000:000 1
-TAG_0001              2024-01-01 10:00:09 000:000:000 1
-TAG_0001              2024-01-01 10:00:10 000:000:000 1
-TAG_0002              2024-01-01 10:00:02 000:000:000 1
-TAG_0002              2024-01-01 10:00:03 000:000:000 1
-TAG_0002              2024-01-01 10:00:05 000:000:000 1
-TAG_0002              2024-01-01 10:00:07 000:000:000 1
-TAG_0002              2024-01-01 10:00:08 000:000:000 1
-[11] row(s) selected.
+삭제 조건의 연산자와 Edition별 지원 범위는
+[TAG DELETE 구문](/dbms/reference/sql/syntax-dictionary-sql/dml-syntax/)을
+참고하십시오. 수동 삭제를 주기적으로 반복해야 한다면
+[Retention Policy](/dbms/operations-configuration-recovery/policy-data-retention/)를
+사용하십시오.
 
-Mach> delete from tag where name = 'TAG_0002';
-5 row(s) deleted.
+### ROLLUP 데이터 처리
 
-Mach> select * from tag;
-NAME                  TIME                            VALUE
---------------------------------------------------------------------------------------
-TAG_0001              2024-01-01 10:00:00 000:000:000 1
-TAG_0001              2024-01-01 10:00:01 000:000:000 1
-TAG_0001              2024-01-01 10:00:04 000:000:000 1
-TAG_0001              2024-01-01 10:00:06 000:000:000 1
-TAG_0001              2024-01-01 10:00:09 000:000:000 1
-TAG_0001              2024-01-01 10:00:10 000:000:000 1
-[6] row(s) selected.
-```
+원시 TAG 데이터의 삭제와 이미 계산된 ROLLUP의 처리는 별개입니다. 원시 데이터를 정정하거나
+삭제한 뒤 집계도 바뀌어야 한다면 대상 범위의 ROLLUP을 재구성합니다. ROLLUP 삭제 구문을
+보관 정책처럼 반복 실행하지 마십시오.
 
-
-#### 특정 태그의 특정 시간 이전 데이터 삭제
-
-특정 태그와 시간을 지정하면 해당 태그와 관련된 지정된 시간 이전의 데이터가 삭제됩니다.
-
-```sql
-DELETE FROM TAG WHERE NAME = 'TAG-ID' AND TIME <= 'Time-string';
-```
-
-```sql
-## Original Data
-Mach> select * from tag;
-NAME                  TIME                            VALUE
---------------------------------------------------------------------------------------
-TAG_0001              2024-01-01 10:00:00 000:000:000 1
-TAG_0001              2024-01-01 10:00:01 000:000:000 1
-TAG_0001              2024-01-01 10:00:04 000:000:000 1
-TAG_0001              2024-01-01 10:00:06 000:000:000 1
-TAG_0001              2024-01-01 10:00:09 000:000:000 1
-TAG_0001              2024-01-01 10:00:10 000:000:000 1
-TAG_0002              2024-01-01 10:00:02 000:000:000 1
-TAG_0002              2024-01-01 10:00:03 000:000:000 1
-TAG_0002              2024-01-01 10:00:05 000:000:000 1
-TAG_0002              2024-01-01 10:00:07 000:000:000 1
-TAG_0002              2024-01-01 10:00:08 000:000:000 1
-[11] row(s) selected.
-
-Mach> delete from tag where name = 'TAG_0002' and time <= '2024-01-01 10:00:05';
-3 row(s) deleted.
-
-Mach> select * from tag;
-NAME                  TIME                            VALUE
---------------------------------------------------------------------------------------
-TAG_0001              2024-01-01 10:00:00 000:000:000 1
-TAG_0001              2024-01-01 10:00:01 000:000:000 1
-TAG_0001              2024-01-01 10:00:04 000:000:000 1
-TAG_0001              2024-01-01 10:00:06 000:000:000 1
-TAG_0001              2024-01-01 10:00:09 000:000:000 1
-TAG_0001              2024-01-01 10:00:10 000:000:000 1
-TAG_0002              2024-01-01 10:00:07 000:000:000 1
-TAG_0002              2024-01-01 10:00:08 000:000:000 1
-[8] row(s) selected.
-```
-
-
-#### 특정 태그의 특정 시간 범위 데이터 삭제
-
-특정 태그와 시간 범위를 지정하면 해당 태그와 관련된 지정된 시간 범위 내의 데이터가 삭제됩니다.
-
-```sql
-DELETE FROM TAG WHERE NAME = 'TAG-ID' AND TIME >= 'Time-string' AND TIME <= 'Time-string';
-```
-
-```sql
-## Original Data
-Mach> select * from tag;
-NAME                  TIME                            VALUE
---------------------------------------------------------------------------------------
-TAG_0001              2024-01-01 10:00:00 000:000:000 1
-TAG_0001              2024-01-01 10:00:01 000:000:000 1
-TAG_0001              2024-01-01 10:00:04 000:000:000 1
-TAG_0001              2024-01-01 10:00:06 000:000:000 1
-TAG_0001              2024-01-01 10:00:09 000:000:000 1
-TAG_0001              2024-01-01 10:00:10 000:000:000 1
-TAG_0002              2024-01-01 10:00:02 000:000:000 1
-TAG_0002              2024-01-01 10:00:03 000:000:000 1
-TAG_0002              2024-01-01 10:00:05 000:000:000 1
-TAG_0002              2024-01-01 10:00:07 000:000:000 1
-TAG_0002              2024-01-01 10:00:08 000:000:000 1
-[11] row(s) selected.
-
-Mach> delete from tag where name = 'TAG_0002' and time >= '2024-01-01 10:00:04' and time <= '2024-01-01 10:00:08';
-3 row(s) deleted.
-
-Mach> select * from tag;
-NAME                  TIME                            VALUE
---------------------------------------------------------------------------------------
-TAG_0001              2024-01-01 10:00:00 000:000:000 1
-TAG_0001              2024-01-01 10:00:01 000:000:000 1
-TAG_0001              2024-01-01 10:00:04 000:000:000 1
-TAG_0001              2024-01-01 10:00:06 000:000:000 1
-TAG_0001              2024-01-01 10:00:09 000:000:000 1
-TAG_0001              2024-01-01 10:00:10 000:000:000 1
-TAG_0002              2024-01-01 10:00:02 000:000:000 1
-TAG_0002              2024-01-01 10:00:03 000:000:000 1
-[8] row(s) selected.
-```
-#### 특정 시간 이전의 모든 태그 삭제
-
-버전 8.0.50부터 태그 이름 없이 시간 기반 조건만으로도 DELETE를 실행할 수 있습니다.
-
-##### BEFORE 절 사용 (레거시 구문)
-
-```sql
-DELETE FROM TAG BEFORE TO_DATE('Time-string');
-```
-
-##### WHERE 절과 시간 조건 사용 (향상된 구문)
-
-> **참고**: 다음 향상된 구문은 Machbase 버전 8.0.50 이상에서 지원됩니다.
-
-```sql
--- 정확한 시간의 데이터 삭제
-DELETE FROM TAG WHERE time_column = 'time_string';
-
--- 특정 시간 이전 데이터 삭제
-DELETE FROM TAG WHERE time_column < 'time_string';
-
--- 특정 시간 이전 또는 해당 시간의 데이터 삭제
-DELETE FROM TAG WHERE time_column <= 'time_string';
-
--- 시간 범위 내의 데이터 삭제
-DELETE FROM TAG WHERE time_column BETWEEN 'time_string1' AND 'time_string2';
-```
-
-**BEFORE 절 사용 예제:**
-
-```bash
-## Original Data
-Mach> select * from tag;
-NAME TIME VALUE
---------------------------------------------------------------------------------------
-TAG_0001 2018-01-01 01:00:00 000:000:000 1
-TAG_0001 2018-01-02 02:00:00 000:000:000 2
-TAG_0001 2018-01-03 03:00:00 000:000:000 3
-TAG_0001 2018-01-04 04:00:00 000:000:000 4
-TAG_0001 2018-01-05 05:00:00 000:000:000 5
-TAG_0001 2018-01-06 06:00:00 000:000:000 6
-TAG_0001 2018-01-07 07:00:00 000:000:000 7
-TAG_0001 2018-01-08 08:00:00 000:000:000 8
-TAG_0001 2018-01-09 09:00:00 000:000:000 9
-TAG_0001 2018-01-10 10:00:00 000:000:000 10
-TAG_0002 2018-02-01 01:00:00 000:000:000 11
-TAG_0002 2018-02-02 02:00:00 000:000:000 12
-TAG_0002 2018-02-03 03:00:00 000:000:000 13
-TAG_0002 2018-02-04 04:00:00 000:000:000 14
-TAG_0002 2018-02-05 05:00:00 000:000:000 15
-TAG_0002 2018-02-06 06:00:00 000:000:000 16
-TAG_0002 2018-02-07 07:00:00 000:000:000 17
-TAG_0002 2018-02-08 08:00:00 000:000:000 18
-TAG_0002 2018-02-09 09:00:00 000:000:000 19
-TAG_0002 2018-02-10 10:00:00 000:000:000 20
-[20] row(s) selected.
-
-Mach> delete from tag before to_date('2018-02-01');
-10 row(s) deleted.
-
-Mach> select * from tag;
-NAME TIME VALUE
---------------------------------------------------------------------------------------
-TAG_0002 2018-02-01 01:00:00 000:000:000 11
-TAG_0002 2018-02-02 02:00:00 000:000:000 12
-TAG_0002 2018-02-03 03:00:00 000:000:000 13
-TAG_0002 2018-02-04 04:00:00 000:000:000 14
-TAG_0002 2018-02-05 05:00:00 000:000:000 15
-TAG_0002 2018-02-06 06:00:00 000:000:000 16
-TAG_0002 2018-02-07 07:00:00 000:000:000 17
-TAG_0002 2018-02-08 08:00:00 000:000:000 18
-TAG_0002 2018-02-09 09:00:00 000:000:000 19
-TAG_0002 2018-02-10 10:00:00 000:000:000 20
-[10] row(s) selected.
-```
-
-**향상된 WHERE 절 사용 예제:**
-
-```sql
--- 2018-02-01 이전의 모든 데이터 삭제 (BEFORE 절과 동일)
-Mach> delete from tag where time < '2018-02-01';
-10 row(s) deleted.
-
--- 특정 시간의 모든 데이터 삭제
-Mach> delete from tag where time = '2018-02-01 01:00:00';
-2 row(s) deleted.
-
--- 특정 시간 범위의 모든 데이터 삭제
-Mach> delete from tag where time between '2018-01-05' and '2018-01-07';
-6 row(s) deleted.
-```
-
-#### 모든 데이터 삭제
-
-조건이 없으면 모든 데이터가 삭제됩니다.
-
-```bash
-## Original Data
-Mach> select * from tag;
-NAME TIME VALUE
---------------------------------------------------------------------------------------
-TAG_0001 2018-01-01 01:00:00 000:000:000 1
-TAG_0001 2018-01-02 02:00:00 000:000:000 2
-TAG_0001 2018-01-03 03:00:00 000:000:000 3
-TAG_0001 2018-01-04 04:00:00 000:000:000 4
-TAG_0001 2018-01-05 05:00:00 000:000:000 5
-TAG_0001 2018-01-06 06:00:00 000:000:000 6
-TAG_0001 2018-01-07 07:00:00 000:000:000 7
-TAG_0001 2018-01-08 08:00:00 000:000:000 8
-TAG_0001 2018-01-09 09:00:00 000:000:000 9
-TAG_0001 2018-01-10 10:00:00 000:000:000 10
-TAG_0002 2018-02-01 01:00:00 000:000:000 11
-TAG_0002 2018-02-02 02:00:00 000:000:000 12
-TAG_0002 2018-02-03 03:00:00 000:000:000 13
-TAG_0002 2018-02-04 04:00:00 000:000:000 14
-TAG_0002 2018-02-05 05:00:00 000:000:000 15
-TAG_0002 2018-02-06 06:00:00 000:000:000 16
-TAG_0002 2018-02-07 07:00:00 000:000:000 17
-TAG_0002 2018-02-08 08:00:00 000:000:000 18
-TAG_0002 2018-02-09 09:00:00 000:000:000 19
-TAG_0002 2018-02-10 10:00:00 000:000:000 20
-[20] row(s) selected.
-
-Mach> delete from tag;
-20 row(s) deleted.
-
-Mach> select * from tag;
-NAME TIME VALUE
---------------------------------------------------------------------------------------
-[0] row(s) selected.
-```
-
-
-### ROLLUP 데이터 삭제
-
-Tag 테이블과 연관된 롤업 데이터도 삭제할 수 있습니다.
-
-#### BEFORE 절 사용 (레거시 구문)
-
-```sql
--- 특정 시간 이전의 모든 롤업 데이터 삭제
-DELETE FROM TAG ROLLUP BEFORE TO_DATE('Time-string');
-
--- 모든 롤업 데이터 삭제
-DELETE FROM TAG ROLLUP;
-```
-
-BEFORE 문에서 시간을 지정하면 해당 시간 이전의 모든 롤업 데이터가 삭제됩니다. 시간을 지정하지 않으면 모든 롤업 데이터가 삭제됩니다.
-
-#### WHERE 절과 시간 조건 사용 (향상된 구문)
-
-> **참고**: 다음 향상된 구문은 Machbase 버전 8.0.50 이상에서 지원됩니다.
-
-```sql
--- 정확한 시간의 롤업 데이터 삭제
-DELETE FROM TAG ROLLUP WHERE time_column = 'time_string';
-
--- 특정 시간 이전 롤업 데이터 삭제
-DELETE FROM TAG ROLLUP WHERE time_column < 'time_string';
-
--- 특정 시간 이전 또는 해당 시간의 롤업 데이터 삭제
-DELETE FROM TAG ROLLUP WHERE time_column <= 'time_string';
-
--- 시간 범위 내의 롤업 데이터 삭제
-DELETE FROM TAG ROLLUP WHERE time_column BETWEEN 'time_string1' AND 'time_string2';
-```
-
-**예제:**
-
-```sql
--- 2018-01-15 이전의 롤업 데이터 삭제
-Mach> delete from tag rollup where time < '2018-01-15';
-14 row(s) deleted.
-
--- 특정 시간의 롤업 데이터 삭제
-Mach> delete from tag rollup where time = '2018-01-15 00:00:00';
-1 row(s) deleted.
-
--- 시간 범위 내의 롤업 데이터 삭제
-Mach> delete from tag rollup where time between '2018-01-10' and '2018-01-20';
-10 row(s) deleted.
-```
+- [ROLLUP 부분 삭제와 재구성](/dbms/tag-rollup-usage/delete-partial-rebuild-rollup/)
+- [TAG 데이터 정정 후 ROLLUP 재구성](../tag-data-update-correction/)
 
 <a id="original-85-duplication-removal"></a>
 
 ## 자동 중복 제거
 
-
-### 중복 제거 설정
-
-TAG 테이블 생성 시 중복 제거 기간을 테이블 속성으로 전달합니다. 최대 설정 기간은 43200분(30일)입니다.
-
-```sql
--- 새로 삽입된 데이터가 시스템 시간으로부터 1440분(하루) 이내의 기존 데이터와 중복되면 해당 데이터가 삭제됩니다.
-
-CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED) TAG_DUPLICATE_CHECK_DURATION=1440;
-```
-
-중복 제거 속성은 m$sys_table_property 테이블에서 확인합니다.
-```sql
-SELECT * FROM m$sys_table_property WHERE id={table_id} AND name = 'TAG_DUPLICATE_CHECK_DURATION';
-```
-
-데이터 삽입/조회 예제 - 중복 제거 기간이 1440분(하루)인 경우
-```sql
--- 서버 시각 기준 중복 제거 기간 안에 들어오는 타임스탬프를 사용합니다.
--- DATE_TRUNC('day', NOW)는 같은 날 반복 실행 시 동일한 타임스탬프를 만듭니다.
-
-INSERT INTO tag VALUES('tag1', DATE_TRUNC('day', NOW), 0);
-INSERT INTO tag VALUES('tag1', DATE_TRUNC('day', NOW), 0);
-
-EXEC TABLE_FLUSH(tag);
-
-SELECT * FROM tag WHERE name = 'tag1';
-NAME                  TIME                            VALUE
---------------------------------------------------------------------------------------
-tag1                  <current day> 00:00:00 000:000:000 0
-
-```
-### 설정 변경
-TAG_DUPLICATE_CHECK_DURATION은 다음과 같이 수정합니다.
+`TAG_DUPLICATE_CHECK_DURATION`은 서버 현재 시각을 기준으로 지정 기간 안에 들어오는 입력에서
+태그명, 축 값과 데이터 값이 같은 행을 중복으로 처리합니다. 재전송 가능성이 있는 수집
+파이프라인에서 사용하고, 입력 지연이 설정 기간을 넘을 수 있는지 함께 검토하십시오.
 
 ```sql
-ALTER TABLE {table_name} set TAG_DUPLICATE_CHECK_DURATION={duration in minutes};
+CREATE TAG TABLE dedup_tag (
+    name  VARCHAR(32) PRIMARY KEY,
+    time  DATETIME BASETIME,
+    value DOUBLE
+) TAG_DUPLICATE_CHECK_DURATION = 1440;
+
+INSERT INTO dedup_tag VALUES ('TAG_0001', DATE_TRUNC('day', NOW), 1.0);
+INSERT INTO dedup_tag VALUES ('TAG_0001', DATE_TRUNC('day', NOW), 1.0);
+
+EXEC TABLE_FLUSH(dedup_tag);
+
+SELECT name, time, value
+  FROM dedup_tag
+ WHERE name = 'TAG_0001';
+
+ALTER TABLE dedup_tag SET TAG_DUPLICATE_CHECK_DURATION = 60;
+DROP TABLE dedup_tag;
 ```
 
-### 중복 제거 제약 조건
+설정 단위는 분이며 허용 범위는 현재 버전의
+[CREATE TAG TABLE 구문](/dbms/reference/sql/syntax-dictionary-sql/ddl-syntax/)을 기준으로
+확인하십시오. 이미 보관 정책으로 삭제된 데이터는 중복 판정 대상에 남아 있지 않습니다.
 
-* 분 단위로 구성하며, 최대 43200분(30일)까지 설정 가능합니다.
-* 기존 입력 데이터가 이미 삭제된 경우, 동일한 데이터를 다시 입력해도 중복으로 간주하지 않습니다.
+## 운영 점검 순서
 
-### TRACE 로그로 중복 제거 확인
-TRACE_LOG_LEVEL에 32(SM_2)를 추가하면 중복제거 시 로그로 출력됩니다.
-```sql
--- 설정 확인
-select name, value from v$property where name = 'TRACE_LOG_LEVEL';
-
--- 설정 변경
-alter system set TRACE_LOG_LEVEL={기존값 + 32};
-```
-
-**설정 예시**
-```sql
--- 현재 값 확인
-Mach> select name, value from v$property where name = 'TRACE_LOG_LEVEL';
-name                                                          value
----------------------------------------------------------------------------------------------------------------------------------------------------
-TRACE_LOG_LEVEL                                               277
-[1] row(s) selected.
-
--- 32 추가 (277 + 32 = 309)
-Mach> alter system set TRACE_LOG_LEVEL=309;
-Altered successfully.
-```
-
-- 로그 파일 위치: `$MACHBASE_HOME/trc/machbase.trc`
-- 빠른 필터:
-  ```bash
-  tail -n 50 $MACHBASE_HOME/trc/machbase.trc | grep DUP_DROP
-  ```
-- 로그 포맷: `DUP_DROP Table=<테이블명> TAG=<tag id> TIME=<시간> COL<n>=<값> ...`
-- 실제 예시 (TAG=1의 동일 TIME 중복):
-  ```
-  [2025-11-29 13:50:27 P-151395 T-126344581076672][SM-INFO] DUP_DROP Table=TAG TAG=1 TIME=1998-12-24 09:00:00 000:000:012  COL3=12.000000
-  ...
-  [2025-11-29 13:50:27 P-151395 T-126344581076672][SM-INFO] DUP_DROP Table=TAG TAG=1 TIME=1998-12-24 09:00:00 000:000:048  COL3=48.000000
-  ```
-- 활용 포인트
-  - TIME을 기준으로 동일 시각에 중복이 어떻게 제거되는지 확인.
-  - `Table=`/`TAG=`를 grep으로 추가 필터링하면 특정 테이블·태그만 빠르게 추적.
-- 주의: 한 줄 최대 약 4KB라 컬럼이 매우 많으면 뒤가 잘릴 수 있으나 크래시는 발생하지 않습니다.
+1. 원시 데이터와 ROLLUP의 보관 기간을 각각 정합니다.
+2. 늦게 도착하는 데이터의 최대 지연을 측정해 중복 검사 기간을 정합니다.
+3. 삭제·정정 전에 대상 태그와 시간 범위를 `SELECT`로 확인합니다.
+4. 대량 변경 후 ROLLUP과 대표 조회 결과를 검증합니다.
+5. 입력량, 디스크 사용량과 Retention 실행 상태를 함께 모니터링합니다.

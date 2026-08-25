@@ -15,4 +15,3 @@ relative time expressions.
 | [Data type dictionary](./type-data-types-dictionary/) | Data type sizes, ranges, null values, and table-type support |
 | [Hint dictionary](./hint-dictionary-select/) | SELECT query hints |
 | [Relative time dictionary](./relative-time-dictionary/) | DURATION, BEFORE, AFTER, RANGE, and related expressions |
-| [8.5 complete SQL reference](./original-8-5-full/) | Full SQL reference preserved from the 8.5 manual |

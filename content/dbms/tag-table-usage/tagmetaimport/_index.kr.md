@@ -9,7 +9,8 @@ toc: true
 
 ## tagmetaimport로 TAG 메타데이터 가져오기
 
-`tagmetaimport`는 TAG 테이블의 메타데이터를 CSV 파일로 일괄 로드하거나 업데이트하는 전용 도구입니다. 내부적으로 `_TAG_META` 테이블을 대상으로 `machloader`를 실행합니다.
+`tagmetaimport`는 TAG 테이블의 메타데이터를 CSV 파일로 일괄 로드하거나 업데이트하는 전용
+도구입니다. 사용자는 TAG 테이블 이름을 지정하며 시스템 저장 객체를 직접 다루지 않습니다.
 
 ### TAG 메타데이터란
 
@@ -30,7 +31,7 @@ CREATE TAG TABLE sensors (
 
 ### CSV 파일 형식
 
-메타데이터 CSV 파일은 `name` 컬럼과 사용자 메타데이터 컬럼만 포함합니다. 내부 컬럼(`_ID`, `_LAST_UPDATE_TIME`)은 포함하지 않습니다.
+메타데이터 CSV 파일에는 `name` 컬럼과 사용자가 정의한 메타데이터 컬럼만 포함합니다.
 
 ```csv
 TEMP_001,Building-A/F1,READY
@@ -71,15 +72,8 @@ tagmetaimport -t sensors -d metadata.csv \
 
 ### machloader와 비교
 
-machloader를 사용할 경우 TAG 메타데이터 물리 테이블을 직접 지정해야 합니다.
-
-```bash
-# machloader로 TAG 메타데이터 적재 시
-machloader -i -d metadata.csv -t _tag_meta -I
-# 또는 tagmetaimport 사용 권장
-```
-
-`tagmetaimport`는 지정한 TAG 테이블의 메타데이터를 `_tag_meta` 경로로 적재하도록 처리합니다.
+일반 행 데이터의 파일 입출력에는 `machloader`를 사용하고, TAG 메타데이터의 일괄 등록에는
+`tagmetaimport`를 사용합니다. 시스템 저장 객체를 `machloader` 대상으로 지정하지 마십시오.
 
 ### SQL INSERT로 대체
 

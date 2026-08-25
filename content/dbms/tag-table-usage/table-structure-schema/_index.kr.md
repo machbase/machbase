@@ -150,7 +150,9 @@ CREATE TAG TABLE vibration_sensor (
 
 #### 파티션 전략
 
-Machbase는 `_arrival_time` 또는 `BASETIME` 기준으로 데이터를 내부적으로 파티션화합니다. 별도 파티션 설정 없이도 시간 범위 쿼리가 효율적으로 실행됩니다. 보존 기간 설정은 [운영 및 구성](/dbms/operations-configuration-recovery/)을 참고하십시오.
+시간축 TAG는 `BASETIME`을 기준으로 범위를 제한해 조회합니다. 시스템 저장 객체나 파티션
+이름에 의존하지 말고, 보존 기간은 [데이터 보존 정책](/dbms/operations-configuration-recovery/policy-data-retention/)으로
+관리하십시오.
 
 <a id="tag-table-design-duplication-removal"></a>
 

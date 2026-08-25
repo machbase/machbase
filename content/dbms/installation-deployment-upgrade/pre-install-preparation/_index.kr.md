@@ -4,7 +4,8 @@ title: '3.1 설치 전 준비'
 weight: 10
 toc: true
 ---
-설치를 시작하기 전에 시스템 요구사항과 환경을 점검해야 합니다. 사전 준비가 부족하면 설치 후 오류나 성능 저하가 발생할 수 있습니다.
+설치를 시작하기 전에 배포 패키지와 운영체제의 호환성, 시스템 자원과 네트워크를
+점검합니다. 제품별 지원 범위는 제공받은 패키지의 릴리스 정보와 기술 지원 정책을 우선합니다.
 
 | 항목 | 설명 |
 |------|------|
@@ -18,26 +19,17 @@ toc: true
 
 ## 설치 전 요구사항
 
-### 지원 운영체제
+### 운영체제와 패키지
 
-| OS | 버전 |
-|----|------|
-| RHEL / CentOS | 7 이상 |
-| Ubuntu | 18.04 LTS 이상 |
-| Windows | 10, Server 2019 이상 |
+운영체제 종류와 CPU 아키텍처가 설치 패키지의 표기와 일치해야 합니다. 지원 운영체제와 최소
+버전은 릴리스마다 바뀔 수 있으므로, 고정된 버전 표 대신 패키지와 함께 제공되는 릴리스 정보로
+확인하십시오.
 
-운영체제 아키텍처는 설치할 패키지의 비트 수와 일치해야 합니다.
+### 시스템 자원
 
-### 하드웨어 최소 요구사항
-
-| 항목 | 최솟값 | 권장값 |
-|------|--------|--------|
-| CPU | 2코어 | 8코어 이상 |
-| RAM | 4 GB | 32 GB 이상 |
-| 디스크 | 20 GB (설치 공간) | SSD, 데이터 크기의 2배 이상 |
-| 네트워크 | 100 Mbps | 1 Gbps 이상 (Cluster Edition) |
-
-시계열 데이터는 지속적으로 적재되므로 디스크 여유 공간을 넉넉하게 확보하십시오. 데이터 보존 정책(Retention Policy)을 함께 설계하면 디스크 관리 부담을 줄일 수 있습니다.
+CPU, 메모리, 디스크와 네트워크 요구량은 입력률, 보관 기간, 인덱스와 ROLLUP 구성에 따라
+달라집니다. 설치 공간뿐 아니라 예상 원시 데이터, 백업과 운영 여유 공간을 포함해 산정하고,
+실제 워크로드로 용량과 처리량을 검증하십시오.
 
 ### 기본 포트
 
@@ -196,25 +188,10 @@ Standard/Edge 샘플에는 TRANSACTION 쓰기 충돌과 내구성 정책을 제�
 
 라이선스 파일이 없어도 서버는 기본 `COMMUNITY` 라이선스 정보로 구동됩니다.
 
-### 라이선스 상태와 제한 확인
+### 라이선스 상태 확인
 
-설치된 라이선스에 설정된 최대 태그 수나 저장 용량을 초과하면 라이선스 위반 상태가 기록됩니다. `V$LICENSE_INFO`의 `VIOLATE_STATUS`와 `VIOLATE_MSG`로 현재 상태를 확인합니다.
-
-Append 건수나 테이블스페이스 디스크 경로 개수를 기준으로 한 제한은 8.7.0 소스에서 확인되는 라이선스 위반 조건이 아닙니다.
-
-### 라이선스 파일 구조
-
-발급받은 라이선스는 `license.dat` 텍스트 파일 형식입니다.
-
-```
-#License ID: 00000001
-#Issue DATE: 20991231
-#License Type(Version 3): FOGUNLIMITED
-#Company: MACHBASE
-#Project(Product): NONE
-#Country Code: KR
-dXlIm7cdJjV1eUibtx0mNQ...
-```
+설치된 라이선스의 상태와 제한 위반 여부는 `V$LICENSE_INFO`의 `VIOLATE_STATUS`와
+`VIOLATE_MSG`로 확인합니다. 라이선스 파일의 본문은 수정하지 마십시오.
 
 ### 설치 방법
 
@@ -243,17 +220,6 @@ ALTER SYSTEM INSTALL LICENSE = '/path/to/license.dat';
 ```
 
 ### 설치 확인
-
-#### 서버 로그 확인
-
-서버 시작 후 `$MACHBASE_HOME/trc/machbase.trc`에서 라이선스 정보가 출력되면 정상 설치된 것입니다.
-
-```
-[INFO] LICENSE [License ID] [00000001]
-[INFO] LICENSE [Issue DATE] [20991231]
-[INFO] LICENSE [License Type(Version 3)] [FOGUNLIMITED]
-[INFO] LICENSE [Company] [MACHBASE]
-```
 
 #### machadmin 확인
 

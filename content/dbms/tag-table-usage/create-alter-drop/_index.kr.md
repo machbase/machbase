@@ -3,206 +3,81 @@ title: '5.3 생성, 변경, 삭제'
 weight: 30
 toc: true
 ---
-
+TAG 테이블은 태그 식별자와 하나의 축 컬럼을 필수로 가집니다. 이 페이지에서는 실행 가능한
+기본 예제를 제공하고, 전체 옵션은 SQL 레퍼런스로 연결합니다.
 
 <a id="original-85-creating-tag-tables"></a>
 
-## Tag 테이블 생성 및 삭제
+## TAG 테이블 생성
 
+| 축 | 컬럼 정의 | 용도 |
+| --- | --- | --- |
+| 시간 | `DATETIME BASETIME` | 센서 측정 시각, 이벤트 발생 시각 |
+| 거리 | `DOUBLE`, `LONG`, `ULONG` + `BASEDISTANCE` | 주행거리, 선로·배관 위치 |
 
-### 학습 내용
+한 테이블에는 축 컬럼을 하나만 정의합니다. 태그명 컬럼은 `PRIMARY KEY`이며, 시간축과
+거리축 중 데이터의 실제 의미에 맞는 축을 선택합니다. 거리축 TAG에는 ROLLUP을 사용할 수
+없습니다.
 
-시간축과 거리축 Tag 테이블을 생성, 설정 및 삭제하는 방법을 다룹니다.
-
-> **버전**: 거리축(`BASE DISTANCE`, `BASEDISTANCE`)은 Machbase 8.0.75+에서 지원합니다.
-
-### 축(axis) 기본 규칙
-
-Tag 테이블은 같은 `tag_name`에 대해 하나의 축 컬럼을 따라 데이터를 저장합니다.
-
-- 시간축: `DATETIME BASE TIME` 또는 `DATETIME BASETIME`
-- 거리축: `DOUBLE`, `LONG`, `ULONG` 타입에 `BASE DISTANCE` 또는 `BASEDISTANCE`
-- `BASE`를 사용할 때는 뒤에 반드시 `TIME` 또는 `DISTANCE`가 와야 합니다
-- 축 컬럼은 하나만 가질 수 있습니다
-- Tag 테이블은 `SELECT`, `INSERT`, `DELETE`를 지원합니다. Standard Edition의 논리 TAG
-  테이블 중 BASETIME 테이블에서는 태그 선택자와 BASETIME 조건을 지정한 data UPDATE도
-  지원합니다. 메타데이터 UPDATE는 `UPDATE ... METADATA`를 사용합니다.
-
-### 시간축 Tag 테이블 생성
-
-가장 일반적인 시간축 Tag 테이블은 세 가지 핵심 요소를 필요로 합니다:
-- **태그 이름** (PRIMARY KEY): 센서 또는 데이터 소스를 식별
-- **입력 시간** (BASETIME): 데이터가 기록된 시간
-- **센서 값**: 실제 측정값
-
-#### 시간축 생성 예제
+### 시간축 TAG
 
 ```sql
--- 이것은 실패합니다 - 필수 키워드 누락
-Mach> CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME, value DOUBLE);
-[ERR-02253: Mandatory column definition (PRIMARY KEY / BASE TIME) is missing.]
-
--- 올바른 방법 - 필수 BASETIME 키워드 포함
-Mach> CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE);
-Executed successfully.
-
--- 통계 정보를 위한 SUMMARIZED 포함
-Mach> CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED);
-Executed successfully.
-
-Mach> desc tag;
-[ COLUMN ]
-----------------------------------------------------------------
-NAME      TYPE        LENGTH
-----------------------------------------------------------------
-NAME      varchar         20
-TIME      datetime       31
-VALUE     double          17
+CREATE TAG TABLE tag_create_demo (
+    name  VARCHAR(32) PRIMARY KEY,
+    time  DATETIME BASETIME,
+    value DOUBLE SUMMARIZED
+) METADATA (
+    location VARCHAR(64)
+);
 ```
 
-> **팁**: SUMMARIZED 키워드는 value 컬럼에 대한 자동 통계 추적(최소값, 최대값, 평균)을 활성화하며, 분석에 유용합니다.
+`SUMMARIZED`는 ROLLUP 등 집계 기능을 사용할 숫자형 컬럼에 지정합니다. 위치·단위처럼
+태그마다 한 번 저장하는 속성은 `METADATA`, 매 측정마다 달라지는 값은 일반 데이터 컬럼에
+정의합니다.
 
-### 거리축 Tag 테이블 생성
-
-거리축 Tag 테이블은 누적 주행거리, 이송거리, 선로 위치처럼 거리값을 따라 데이터를 저장합니다.
+### 거리축 TAG
 
 ```sql
-Mach> CREATE TAG TABLE trip_sensor (
-          name        VARCHAR(20) PRIMARY KEY,
-          distance_m  DOUBLE BASE DISTANCE,
-          value       DOUBLE,
-          quality     INTEGER
-      );
-Executed successfully.
-
-Mach> CREATE TAG TABLE trip_sensor_alias (
-          name        VARCHAR(20) PRIMARY KEY,
-          distance_m  LONG BASEDISTANCE,
-          value       DOUBLE
-      ) METADATA (route_id VARCHAR(20), axis_unit VARCHAR(8));
-Executed successfully.
+CREATE TAG TABLE distance_create_demo (
+    name     VARCHAR(32) PRIMARY KEY,
+    distance DOUBLE BASEDISTANCE,
+    value    DOUBLE
+);
 ```
 
-거리축 컬럼은 8바이트 타입만 사용할 수 있습니다.
+소수 거리값에는 `DOUBLE`, 정수 축에는 값 범위에 맞는 `LONG` 또는 `ULONG`을 사용합니다.
 
-- `DOUBLE`
-- `LONG`
-- `ULONG`
+## TAG 테이블 변경
 
-소수점 거리값이 필요하면 `DOUBLE`, 정수 거리값만 저장하면 `LONG` 또는 `ULONG`을 사용합니다.
-
-다음 타입은 거리축으로 사용할 수 없습니다.
-
-- `FLOAT`
-- `INTEGER`
-- `UINTEGER`
-- `SHORT`
-- `USHORT`
-
-> **제한 사항**: 거리축 Tag 테이블은 `WITH ROLLUP`을 지원하지 않습니다. 자세한 내용은 [집계용 롤업 테이블](/dbms/tag-rollup-usage/overview-use-criteria/#original-85-rollup-tables)을 참고하십시오.
-
-### 추가 센서 컬럼 추가
-
-실제 센서 데이터에는 이름, 축, 값 외에도 그룹 ID, IP 주소 등 추가 컬럼이 필요한 경우가 많습니다.
+TAG 데이터 컬럼의 임의 변경은 제한됩니다. 스키마를 확장해야 한다면 새 테이블로 전환하는
+방법을 먼저 검토하십시오. 메타데이터 컬럼은 지원 구문으로 추가하거나 삭제할 수 있습니다.
 
 ```sql
-Mach> create tag table TAG (name varchar(20) primary key, time datetime basetime, value double, grpid short, myip ipv4);
-Executed successfully.
+ALTER TABLE tag_create_demo
+    METADATA ADD COLUMN (team VARCHAR(32));
 
-Mach> desc tag;
-[ COLUMN ]
-----------------------------------------------------------------
-NAME             TYPE        LENGTH
-----------------------------------------------------------------
-NAME             varchar         20
-TIME             datetime        31
-VALUE            double          17
-GRPID            short            6       <=== 추가된 컬럼
-MYIP             ipv4            15       <=== 추가된 컬럼
+ALTER TABLE tag_create_demo
+    METADATA DROP COLUMN (team);
 ```
 
-> **참고**: 5.6 버전 이전에는 VARCHAR 타입이 추가 컬럼으로 허용되지 않았습니다. 5.6 버전 이상에서는 추가 컬럼에서 VARCHAR를 지원합니다.
+데이터가 있는 운영 테이블에서는 변경 전에 의존 쿼리, SDK 컬럼 순서와 재입력 경로를
+확인합니다.
 
-### 메타데이터 컬럼 추가
+## TAG 테이블 삭제
 
-메타데이터 컬럼은 태그 이름별로 고유한 정보(예: 방 번호, 설명)를 저장하며, 매 센서 읽기마다 중복 저장하지 않습니다.
+`DROP TABLE`은 원시 데이터와 메타데이터를 함께 제거합니다. ROLLUP 등 의존 객체가 있으면
+먼저 의존 순서에 따라 정리해야 합니다.
 
 ```sql
-Mach> create tag table TAG (name varchar(20) primary key, time datetime basetime, value double)
-   2  metadata (room_no integer, tag_description varchar(100));
-Executed successfully.
+DROP TABLE distance_create_demo;
+DROP TABLE tag_create_demo;
 ```
 
-#### 메타데이터 사용 예제
+정확한 속성, 허용 범위와 DDL은
+[DDL 구문 사전](/dbms/reference/sql/syntax-dictionary-sql/ddl-syntax/)을 참고하십시오.
 
-|name|room_no|tag_description|
-|--|--|--|
-|temp_001|1|섭씨 온도를 읽습니다|
-|humid_001|1|백분율로 습도를 읽습니다|
+다음으로 읽을 내용:
 
-센서 데이터와 함께 메타데이터를 쿼리:
-
-```sql
-Mach> SELECT name, time, value, tag_description FROM tag LIMIT 1;
-name                  time                            value
---------------------------------------------------------------------------------------
-tag_description
-------------------------------------------------------------------------------------
-temp_001              2019-03-01 09:52:17 000:000:000 25.3
-섭씨 온도를 읽습니다
-```
-
-### 테이블 속성 설정
-
-다음 속성으로 메모리 및 CPU 사용을 제어합니다.
-
-|속성|설명|기본값|범위|
-|--|--|--|--|
-|TAG_PARTITION_COUNT|파티션 개수|4|1-1024|
-|TAG_DATA_PART_SIZE|파티션당 데이터 크기|16MB|1MB-1GB|
-|TAG_STAT_ENABLE|통계 추적 활성화|1 (활성화)|0-1|
-
-#### 속성 예제
-
-```sql
--- 저용량 데이터를 위한 단일 파티션
-Mach> CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE)
-      TAG_PARTITION_COUNT=1;
-
--- 사용자 정의 데이터 파트 크기
-Mach> CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE)
-      TAG_DATA_PART_SIZE=1048576;
-
--- 여러 속성
-Mach> CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED)
-      TAG_PARTITION_COUNT=2, TAG_STAT_ENABLE=1;
-```
-
-### Tag 테이블 삭제
-
-Tag 테이블을 다시 생성하거나 디스크 공간을 확보하려면 DROP 명령을 사용합니다.
-
-```sql
-Mach> DROP TABLE tag;
-Dropped successfully.
-
-Mach> DESC tag;
-tag does not exist.
-```
-
-> **경고**: Tag 테이블을 삭제하면 관련된 모든 데이터 및 메타데이터 테이블이 영구적으로 삭제됩니다. 이 작업은 되돌릴 수 없습니다.
-
-### 모범 사례
-
-1. **SUMMARIZED 사용**: 통계 정보가 필요할 때 value 컬럼에 SUMMARIZED 키워드를 추가합니다
-2. **파티션 계획**: 파티션 개수가 많을수록 병렬 처리가 향상되지만 더 많은 메모리를 사용합니다
-3. **적절한 이름 선택**: Tag 테이블 이름은 유효한 식별자라면 무엇이든 가능합니다 ("TAG"일 필요 없음)
-4. **메타데이터 vs 추가 컬럼**:
-   - 드물게 변경되는 태그별 정보에는 메타데이터를 사용합니다
-   - 각 읽기마다 변경되는 데이터에는 추가 컬럼을 사용합니다
-
-### 다음 단계
-
-- [Tag 메타데이터 관리](../tag-metadata) -- 태그 이름 생성 및 관리
-- [Tag 데이터 삽입](/dbms/tag-table-usage/data-input-mutation/#original-85-inserting-data) -- 다양한 데이터 입력 방법
-- [Tag 데이터 쿼리](/dbms/tag-table-usage/query-analysis/#original-85-querying-data) -- 효율적인 데이터 검색
+- [TAG 테이블 구조와 스키마](../table-structure-schema/)
+- [TAG 데이터 입력과 변경](../data-input-mutation/)
+- [TAG 메타데이터](../tag-metadata/)

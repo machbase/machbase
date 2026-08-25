@@ -62,8 +62,8 @@ CREATE VOLATILE TABLE sensor_latest (
 | | 안티패턴 (LOOKUP) | 올바른 설계 (TAG) |
 |-|-----------------|-----------------|
 | 이력 저장 | X (PK 중복 불가) | O |
-| 고속 입력 | 느림 | 빠름 (Append API) |
-| 시간 범위 조회 | 불가 | O |
+| 지속 입력 경로 | 행 식별자 중심 | 시계열 Append API 사용 가능 |
+| 시간 범위 조회 | 일반 조건 조회 | 태그·시간 축 조회 |
 
 <a id="per-sensor-create"></a>
 
@@ -71,15 +71,22 @@ CREATE VOLATILE TABLE sensor_latest (
 
 ### 문제
 
-센서(태그)마다 별도 테이블을 생성하는 패턴입니다. 센서 수가 늘어날수록 테이블 수가 폭발적으로 증가해 관리가 불가능해집니다.
+센서(태그)마다 별도 테이블을 생성하는 패턴입니다. 센서 수가 늘어날수록 DDL, 권한과 조회
+대상도 함께 늘어나 운영 비용이 커집니다.
 
 ### 안티패턴 예시
 
 ```sql
 -- 잘못된 설계: 센서마다 테이블 생성
-CREATE TAG TABLE sensor_temp_01 (...);
-CREATE TAG TABLE sensor_temp_02 (...);
-CREATE TAG TABLE sensor_temp_03 (...);
+CREATE TAG TABLE sensor_temp_01 (
+    name VARCHAR(32) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE
+);
+CREATE TAG TABLE sensor_temp_02 (
+    name VARCHAR(32) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE
+);
+CREATE TAG TABLE sensor_temp_03 (
+    name VARCHAR(32) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE
+);
 -- ... 센서가 10,000개면 테이블도 10,000개
 ```
 
@@ -88,7 +95,7 @@ CREATE TAG TABLE sensor_temp_03 (...);
 | 문제 | 설명 |
 |------|------|
 | 관리 복잡도 | 테이블 수만큼 DDL 관리 필요 |
-| 쿼리 불편 | 크로스-센서 집계 불가 |
+| 쿼리 불편 | 여러 테이블을 결합해야 센서 간 집계 가능 |
 | 메타데이터 증가 | 시스템 카탈로그 부하 |
 | 신규 센서 추가 | 매번 DDL 실행 필요 |
 
@@ -158,7 +165,7 @@ CREATE LOG TABLE sensor_wrong (
 **올바른 설계**: TAG 테이블 사용
 
 ```sql
-CREATE TAG TABLE sensor_data (
+CREATE TAG TABLE sensor_measurements (
     name  VARCHAR(64) PRIMARY KEY,
     time  DATETIME    BASETIME,
     value DOUBLE
@@ -253,7 +260,9 @@ VOLATILE 테이블은 **재생성 가능한 캐시 데이터**에만 사용합�
 
 ### 문제
 
-센서·IoT 계측값 같은 대량 시계열 데이터를 TRANSACTION 테이블에 저장하는 패턴입니다. TRANSACTION 테이블은 UPDATE/DELETE를 포함한 일반 관계형 워크로드에 최적화되어 있어 초고빈도 시계열 수집에는 부적합합니다.
+센서·IoT 계측값 같은 지속적인 시계열 데이터를 TRANSACTION 테이블에 저장하는 패턴입니다.
+관계형 갱신이 필요하지 않다면 TAG 테이블의 태그·시간 축과 ROLLUP을 활용할 수 없으므로
+조회와 운영 요구에 맞지 않습니다.
 
 ### 안티패턴 예시
 
@@ -271,10 +280,9 @@ CREATE TRANSACTION TABLE sensor_timeseries (
 
 | 문제 | 설명 |
 |------|------|
-| Append API 고속 버퍼 미적용 | TRANSACTION 테이블의 Append는 트랜잭션 기반으로, TAG·LOG의 초고속 버퍼 최적화가 없음 |
-| 시계열 최적화 없음 | 시간 범위 집계 성능이 TAG 테이블 대비 저하 |
-| 시계열 압축 없음 | TAG 테이블의 시계열 압축 알고리즘 미적용 |
-| 시계열 분석 기능 미흡 | TAG 전용 ROLLUP, FIRST, LAST 등 시계열 최적화 미지원 |
+| 입력 의미 불일치 | 관계형 트랜잭션이 필요하지 않은 값에도 관계형 쓰기 경로 사용 |
+| 시간 축 부재 | TAG의 BASETIME 기반 조회 구조를 사용할 수 없음 |
+| 집계 기능 차이 | TAG 전용 ROLLUP을 사용할 수 없음 |
 
 ### 올바른 패턴
 
@@ -282,7 +290,7 @@ CREATE TRANSACTION TABLE sensor_timeseries (
 
 ```sql
 -- 올바름: TAG 테이블 사용
-CREATE TAG TABLE sensor_data (
+CREATE TAG TABLE sensor_history (
     name   VARCHAR(64) PRIMARY KEY,
     time   DATETIME    BASETIME,
     value  DOUBLE,
@@ -292,7 +300,7 @@ CREATE TAG TABLE sensor_data (
 -- Append API 고속 버퍼로 대량 입력 가능
 -- 시간 단위 집계와 TAG 전용 최적화 활용 가능
 SELECT name, DATE_TRUNC('hour', time, 1) AS hour, AVG(value), MAX(value)
-FROM sensor_data
+FROM sensor_history
 WHERE time >= NOW - 86400000000000
 GROUP BY name, hour;
 ```

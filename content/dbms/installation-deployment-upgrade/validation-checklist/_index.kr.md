@@ -32,7 +32,7 @@ ss -tlnp | grep 5656
 ### 3. machsql 접속 테스트
 
 ```bash
-machsql -s 127.0.0.1 -u SYS -p MANAGER
+machsql -s 127.0.0.1 -P 5656 -u SYS -p MANAGER
 # MACHBASE_CONNECT_MODE=INET, PORT=5656 EDITION=STANDARD
 # Mach>
 ```
@@ -72,8 +72,11 @@ machcoordinatoradmin --cluster-status
 ### 8. Broker 접속 테스트
 
 ```bash
-machsql -s <Broker IP> -u SYS -p MANAGER
-Mach> SELECT * FROM V$NODE_STATUS;
+machsql -s <Broker IP> -P 5656 -u SYS -p MANAGER
+```
+
+```sql
+SELECT * FROM V$NODE_STATUS;
 ```
 
 ### 9. 데이터 복제 확인

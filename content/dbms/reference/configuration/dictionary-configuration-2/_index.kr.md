@@ -7,7 +7,7 @@ toc: true
 
 Cluster Edition에서는 `$MACHBASE_COORDINATOR_HOME/conf/`, `$MACHBASE_BROKER_HOME/conf/`, `$MACHBASE_WAREHOUSE_HOME/conf/` 각 노드의 설정 파일을 통해 클러스터 동작을 제어합니다.
 
-이 페이지는 운영 시 자주 확인하는 주요 클러스터 프로퍼티를 정리합니다. 8.5 원본의 전체 클러스터 프로퍼티 항목은 [8.5 전체 설정 레퍼런스](../original-8-5-full/)를 함께 참고하십시오.
+이 페이지는 운영 시 자주 확인하는 주요 클러스터 프로퍼티를 정리합니다.
 
 ## Coordinator 설정
 

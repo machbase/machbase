@@ -78,28 +78,16 @@ LOOKUP의 지원 predicate는
 ### LOG
 
 LOG는 임의의 일반 `WHERE` 조건 대신 로그 보존형 삭제 구문을 사용합니다.
-
-```sql
-DELETE FROM sensor_log OLDEST 1000 ROWS;
-DELETE FROM sensor_log EXCEPT 7 DAY;
-DELETE FROM sensor_log BEFORE TO_DATE('2024-01-01', 'YYYY-MM-DD');
-DELETE FROM sensor_log;
-```
+`OLDEST`, `EXCEPT`, `BEFORE` 또는 전체 삭제 중 목적에 맞는 형식을 선택합니다. 정확한 구문과
+실행 예제는 [LOG DELETE](/dbms/log-table-usage/delete-truncate-log/)를 참고하십시오.
 
 <a id="condition-tag-kv-delete-before"></a>
 
 ### TAG/KV
 
 TAG/KV는 `BEFORE`로 오래된 데이터를 정리하거나, 태그 이름과 축 조건을 사용해 대상을
-지정합니다. `BEFORE` 시각은 현재보다 과거여야 합니다.
-
-```sql
-DELETE FROM tag BEFORE TO_DATE('2024-01-01', 'YYYY-MM-DD');
-DELETE FROM tag WHERE name = 'TEMP-01';
-DELETE FROM tag
- WHERE name = 'TEMP-01'
-   AND time < TO_DATE('2024-01-01', 'YYYY-MM-DD');
-```
+지정합니다. `BEFORE` 시각은 현재보다 과거여야 합니다. 실행 구문은
+[TAG 데이터 삭제](/dbms/tag-table-usage/delete-data-tag/)를 참고하십시오.
 
 수동 보존 삭제를 반복해야 한다면
 [Retention Policy](/dbms/operations-configuration-recovery/policy-data-retention/)를
@@ -110,12 +98,8 @@ DELETE FROM tag
 
 ### TAG 메타데이터
 
-TAG 메타데이터는 `DELETE FROM table_name METADATA` 구문으로 삭제합니다. 대상 중 실제
+TAG 메타데이터는 `DELETE FROM table_name METADATA` 형식으로 삭제합니다. 대상 중 실제
 데이터가 있는 태그가 하나라도 있으면 문장 전체가 실패합니다.
-
-```sql
-DELETE FROM tag METADATA WHERE name = 'TEMP-01';
-```
 
 상세 조건은 [TAG 메타데이터](/dbms/tag-table-usage/tag-metadata/)를 참고하십시오.
 
@@ -125,11 +109,6 @@ DELETE FROM tag METADATA WHERE name = 'TEMP-01';
 
 `TRUNCATE TABLE`은 LOG와 TRANSACTION에서만 지원합니다. 스키마와 인덱스 정의는
 유지하고 모든 행을 제거합니다.
-
-```sql
-TRUNCATE TABLE sensor_log;
-TRUNCATE TABLE orders;
-```
 
 | 항목 | TRUNCATE | DELETE |
 |------|----------|--------|

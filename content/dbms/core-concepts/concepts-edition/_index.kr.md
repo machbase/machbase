@@ -78,7 +78,7 @@ Edition에서는 관련 구문이 거부됩니다.
 ### 다음 읽을 내용
 
 - [기존 RDBMS와의 차이](/dbms/core-concepts/concepts-edition/#differences-rdbms) -- Machbase 설계 철학의 전체 맥락
-- [Machbase 아키텍처 개요](/dbms/core-concepts/storage-execution-architecture/#architecture-machbase) -- Standard/Cluster 구조의 내부 상세
+- [Machbase 아키텍처 개요](/dbms/core-concepts/storage-execution-architecture/#architecture-machbase) -- Standard/Cluster 구성 개요
 
 <a id="differences-rdbms"></a>
 

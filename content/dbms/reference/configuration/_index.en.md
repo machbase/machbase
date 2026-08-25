@@ -14,4 +14,3 @@ Machbase configuration is controlled through properties in
 | [Cluster configuration property dictionary](./dictionary-configuration-2/) | Cluster Edition properties |
 | [PVO Cache property dictionary](./dictionary-pvo-cache/) | PVO Statement Cache properties |
 | [Timezone dictionary](./dictionary-configuration-timezone/) | Client and server timezone settings |
-| [8.5 complete configuration reference](./original-8-5-full/) | Full configuration, meta table, and virtual table reference preserved from the 8.5 manual |

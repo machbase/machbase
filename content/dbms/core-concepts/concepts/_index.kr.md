@@ -203,7 +203,7 @@ FROM device_events
 DURATION 1 HOUR;
 ```
 
-`DURATION` 구문은 내부적으로 `_arrival_time`을 기준으로 동작합니다.
+LOG 테이블의 `DURATION` 구문은 `_arrival_time`을 시간 기준으로 사용합니다.
 
 ### TAG 테이블의 BASETIME 컬럼
 

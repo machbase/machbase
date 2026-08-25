@@ -35,8 +35,7 @@ UPDATE sensor_tag
    AND time <  TO_DATE('2025-06-01 13:00:00', 'YYYY-MM-DD HH24:MI:SS');
 ```
 
-INSERT 직후의 append 데이터는 내부 반영 지연이 있으므로, UPDATE 전 대상 row가
-조회되는지 확인합니다.
+INSERT 직후 UPDATE를 이어서 실행하는 수집 경로에서는 대상 행이 조회되는지 먼저 확인합니다.
 
 ### 대량 정정 성능 고려사항
 

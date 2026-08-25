@@ -102,9 +102,12 @@ machadmin -u
 ```bash
 machbased -v
 
-# machsql에서 확인
-machsql -u SYS -p MANAGER
-Mach> SELECT EDITION, BINARY_DB_MAJOR_VERSION, BINARY_DB_MINOR_VERSION FROM V$VERSION;
+# 서버 접속
+machsql -s 127.0.0.1 -P 5656 -u SYS -p MANAGER
+```
+
+```sql
+SELECT EDITION, BINARY_DB_MAJOR_VERSION, BINARY_DB_MINOR_VERSION FROM V$VERSION;
 ```
 
 ### 주의사항

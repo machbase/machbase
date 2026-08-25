@@ -16,7 +16,6 @@ SQL 문법, 함수, 데이터 타입, 쿼리 힌트, 상대 시간 표현의 정
 | [데이터 타입 사전](./type-data-types-dictionary/) | 지원 데이터 타입의 크기, 범위, 기본값, 테이블 유형별 사용 가능 여부 |
 | [SELECT hint syntax](./syntax-dictionary-sql/select-hint-syntax/) | SELECT 힌트 문법, 사용법, 적용 대상 |
 | [상대 시간 표현 사전](./relative-time-dictionary/) | DURATION, BEFORE, AFTER, RANGE 등 시간 범위 표현 문법 |
-| [8.5 전체 SQL 레퍼런스](./original-8-5-full/) | 8.5 원본 SQL 레퍼런스의 전체 항목 보존본 |
 
 ## SQL 특징
 

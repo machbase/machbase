@@ -490,7 +490,7 @@ machclusterctl status --coordinator /home/machbase/coordinator
 Broker 노드의 IP와 포트로 접속합니다.
 
 ```bash
-machsql -s 192.168.1.11 -u SYS -p MANAGER
+machsql -s 192.168.1.11 -P 5656 -u SYS -p MANAGER
 # Mach>
 ```
 
@@ -1082,8 +1082,11 @@ Coordinator와 Deployer 프로세스는 각 노드에서 `machcoordinatoradmin -
 Broker 포트로 접속하여 쿼리를 실행합니다.
 
 ```bash
-machsql -s 192.168.1.11 -u SYS -p MANAGER
-Mach> SELECT * FROM V$NODE_STATUS;
+machsql -s 192.168.1.11 -P 5656 -u SYS -p MANAGER
+```
+
+```sql
+SELECT * FROM V$NODE_STATUS;
 ```
 
 `V$NODE_STATUS` 뷰는 접속한 노드의 타입, 상태, 호스트, Coordinator 연결 정보 등을 반환합니다. 등록된 전체 노드 목록은 `machcoordinatoradmin --cluster-status` 출력에서 확인합니다.

@@ -19,4 +19,3 @@ export, and interactive SQL execution.
 | [machclusterctl](./dictionary-machclusterctl/) | Cluster | Cluster-wide control tool |
 | [machcoordinatoradmin](./dictionary-machcoordinatoradmin/) | Cluster | Coordinator administration |
 | [machdeployeradmin](./dictionary-machdeployeradmin/) | Cluster | Deployer administration |
-| [8.5 complete command-line tools reference](./original-8-5-full/) | Standard / Cluster | Full command-line tools reference preserved from the 8.5 manual |
