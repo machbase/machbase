@@ -548,7 +548,7 @@ SELECT
     MIN(time) AS first_anomaly,
     MAX(time) AS last_anomaly
   FROM sensor_tag
- WHERE time > NOW - INTERVAL '1' HOUR
+ WHERE time > ADD_TIME(SYSDATE, '0/0/0 -1:0:0')
    AND (value < -40 OR value > 200)
  GROUP BY name
 HAVING COUNT(*) > 0
@@ -563,9 +563,9 @@ SELECT
     COUNT(*) AS zero_count
   FROM sensor_tag
  WHERE value = 0
-   AND time > NOW - INTERVAL '24' HOUR
+   AND time > ADD_TIME(SYSDATE, '0/0/-1 0:0:0')
  GROUP BY name, hour_bucket
-HAVING COUNT(*) > 60   -- 1시간에 60건 이상이면 의심
+HAVING COUNT(*) > 0
  ORDER BY zero_count DESC;
 ```
 
