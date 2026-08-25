@@ -370,7 +370,7 @@ CREATE INDEX idx_equip_type ON equipment(equip_type);
 계측 테이블에는 설비 식별자를 저장하고, 공장·라인·설비 이름 같은 속성은 LOOKUP 테이블에
 한 번만 저장합니다. 조회할 때 계측 테이블의 시간 범위를 먼저 제한한 뒤 설비 식별자로
 LOOKUP 테이블을 조인합니다. 실제 조인 구문과 실행 계획 확인 방법은
-[JOIN·서브쿼리](/dbms/tag-table-usage/join-subquery-tag/)을 참고하십시오.
+[JOIN·서브쿼리](/dbms/tag-table-usage/query-analysis/)을 참고하십시오.
 
 <a id="persistent-temporary"></a>
 
@@ -478,8 +478,8 @@ GROUP BY name;
 3. WHERE 절로 레코드를 최대한 줄인 뒤 JOIN합니다.
 4. TAG 속성을 함께 조회하는 목적이라면 별도 LOOKUP 대신 METADATA가 적합한지 검토합니다.
 
-재현 가능한 조인 예제는 [JOIN·서브쿼리](/dbms/tag-table-usage/join-subquery-tag/)와
-[LOOKUP 조인](/dbms/lookup-table-usage/join-patterns-lookup/)을 참고하십시오.
+재현 가능한 조인 예제는 [TAG 조회와 분석](/dbms/tag-table-usage/query-analysis/)과
+[LOOKUP 조회와 분석](/dbms/lookup-table-usage/query-analysis/)을 참고하십시오.
 
 <a id="table-types-patterns-combined-type"></a>
 

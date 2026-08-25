@@ -35,8 +35,8 @@ ROLLUP과 보존 정책을 확인합니다.
 
 타입별 생성 예제는 다음 문서를 참고하십시오.
 
-- [TAG 테이블 생성](/dbms/tag-table-usage/create-tag-table/)
-- [LOG 테이블 생성](/dbms/log-table-usage/create-log-table/)
+- [TAG 테이블 생성](/dbms/tag-table-usage/create-alter-drop/)
+- [LOG 테이블 생성](/dbms/log-table-usage/create-alter-drop/)
 - [TRANSACTION 테이블](/dbms/rdb-table-usage/)
 - [LOOKUP 테이블](/dbms/lookup-table-usage/)
 - [VOLATILE 테이블](/dbms/volatile-table-usage/)

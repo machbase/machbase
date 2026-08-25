@@ -26,7 +26,7 @@ INSERT INTO lookup_mutation_demo VALUES ('TEMP', 'Temperature', 'ACTIVE', NOW);
 INSERT INTO lookup_mutation_demo VALUES ('PRESS', 'Pressure', 'ACTIVE', NOW);
 ```
 
-SEQUENCE 키가 필요하면 [SEQUENCE](/dbms/lookup-table-usage/sequence/)를 참고합니다.
+SEQUENCE 키가 필요하면 [SEQUENCE](/dbms/lookup-table-usage/sequence-column/)를 참고합니다.
 
 <a id="update-lookup-basic"></a>
 

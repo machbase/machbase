@@ -80,4 +80,4 @@ JSON path 연산자의 반환 타입과 비교 값의 타입을 맞추고, 원�
 - 넓은 기간의 반복 집계를 secondary index만으로 해결하려 하지 말고 ROLLUP을 검토합니다.
 
 정확한 인덱스 구문은 [SQL 문법 사전](/dbms/reference/sql/syntax-dictionary-sql/)을,
-측정과 튜닝 절차는 [쿼리 튜닝](/dbms/performance-tuning/query-tuning/)을 참고하십시오.
+측정과 튜닝 절차는 [쿼리 튜닝](/dbms/performance-tuning/performance-query-tuning/)을 참고하십시오.

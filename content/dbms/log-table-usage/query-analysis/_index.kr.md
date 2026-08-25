@@ -59,7 +59,7 @@ SELECT _arrival_time, device, value
 목적으로 변경하지 마십시오.
 
 - [SELECT와 스캔 힌트](/dbms/reference/sql/syntax-dictionary-sql/select-hint-syntax/)
-- [쿼리 튜닝](/dbms/performance-tuning/query-tuning/)
+- [쿼리 튜닝](/dbms/performance-tuning/performance-query-tuning/)
 
 <a id="original-85-simple-join"></a>
 

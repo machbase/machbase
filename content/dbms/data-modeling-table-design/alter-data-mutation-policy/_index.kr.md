@@ -79,7 +79,7 @@ LOOKUP의 지원 predicate는
 
 LOG는 임의의 일반 `WHERE` 조건 대신 로그 보존형 삭제 구문을 사용합니다.
 `OLDEST`, `EXCEPT`, `BEFORE` 또는 전체 삭제 중 목적에 맞는 형식을 선택합니다. 정확한 구문과
-실행 예제는 [LOG DELETE](/dbms/log-table-usage/delete-truncate-log/)를 참고하십시오.
+실행 예제는 [LOG 데이터 생명주기](/dbms/log-table-usage/operations-lifecycle/)를 참고하십시오.
 
 <a id="condition-tag-kv-delete-before"></a>
 
@@ -87,7 +87,7 @@ LOG는 임의의 일반 `WHERE` 조건 대신 로그 보존형 삭제 구문을 
 
 TAG/KV는 `BEFORE`로 오래된 데이터를 정리하거나, 태그 이름과 축 조건을 사용해 대상을
 지정합니다. `BEFORE` 시각은 현재보다 과거여야 합니다. 실행 구문은
-[TAG 데이터 삭제](/dbms/tag-table-usage/delete-data-tag/)를 참고하십시오.
+[TAG 데이터 변경](/dbms/tag-table-usage/data-input-mutation/)을 참고하십시오.
 
 수동 보존 삭제를 반복해야 한다면
 [Retention Policy](/dbms/operations-configuration-recovery/policy-data-retention/)를

@@ -59,7 +59,7 @@ WHERE site = 'SEOUL'
 ```
 
 자주 사용하는 일반 조건 컬럼에는 인덱스를 추가할 수 있습니다. 인덱스 설계와 생성 방법은
-[인덱스](/dbms/lookup-table-usage/index/)를 참고합니다.
+[인덱스](/dbms/lookup-table-usage/index-performance/)를 참고합니다.
 
 <a id="query-lookup-join"></a>
 
