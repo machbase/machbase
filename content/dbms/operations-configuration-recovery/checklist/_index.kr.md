@@ -38,7 +38,8 @@ SELECT total_space, used_space, used_ratio, ratio_cap
   FROM v$storage_usage;
 ```
 
-디스크 사용량이 80% 이상이면 즉시 데이터 정리 또는 용량 증설을 검토합니다.
+스토리지의 경고 임계값은 데이터 증가 속도, 증설 소요 시간, 장애 대응 여유를 기준으로
+정합니다. 한 번의 사용률보다 증가 추세와 `RATIO_CAP` 도달 예상 시점을 함께 확인하십시오.
 
 ### 장기 실행 세션 확인
 
@@ -99,7 +100,8 @@ machadmin -w /backup/machbase_weekly
 SELECT * FROM v$license_info;
 ```
 
-만료 30일 이내인 경우 갱신 절차를 시작합니다.
+갱신에 필요한 내부 승인과 발급 소요 시간을 고려해 사전에 정한 임계 시점부터 갱신 절차를
+시작합니다.
 
 ### 서버 로그 검토
 
@@ -162,7 +164,7 @@ SELECT user_id, name, valid_before
 
 | 증상 | 확인 명령 | 조치 |
 |------|-----------|------|
-| 서버 응답 없음 | `machadmin -e` | 재시작(`machadmin -u`) 또는 강제 종료 후 재시작 |
+| 서버 응답 없음 | `machadmin -e` | 로그와 프로세스 상태를 확인한 뒤 승인된 복구 절차 수행 |
 | 디스크 풀 | `df -h` | 오래된 데이터·로그 정리, 보관 데이터 외부 이동 |
 | 메모리 부족 | `free -h` | 캐시 크기 조정, 장기 실행 세션 종료 |
 | 수집 중단 | `machcollectoradmin --list` / Collector 로그 | Collector 재시작 |
@@ -174,7 +176,7 @@ SELECT user_id, name, valid_before
 ## 자동화 권장 사항
 
 - 일별 점검 항목은 cron 스크립트로 자동화하고 결과를 이메일 또는 모니터링 시스템으로 전송합니다.
-- 디스크 사용량 80% 초과 시 자동 알림을 설정합니다.
+- 용량 계획에서 정한 경고·위험 임계값에 자동 알림을 설정합니다.
 - 백업은 `cron`으로 자동 실행하고 성공/실패 여부를 기록합니다.
 
 ```bash
@@ -182,6 +184,5 @@ SELECT user_id, name, valid_before
 # 매일 오전 8시 서버 상태 및 디스크 확인
 0 8 * * * /opt/scripts/machbase_daily_check.sh >> /var/log/machbase_check.log 2>&1
 
-# 매주 일요일 새벽 2시 백업 실행
-0 2 * * 0 /opt/scripts/machbase_weekly_backup.sh >> /var/log/machbase_backup.log 2>&1
+# 주간 백업은 서비스의 유지보수 시간에 맞춰 별도 스크립트로 등록
 ```

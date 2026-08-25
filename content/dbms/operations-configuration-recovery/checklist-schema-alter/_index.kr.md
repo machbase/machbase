@@ -12,7 +12,9 @@ toc: true
 ### 1. 테이블 타입 확인
 
 ```sql
-SELECT TABLE_NAME, TABLE_TYPE FROM M$SYS_TABLES WHERE TABLE_NAME = 'TARGET_TABLE';
+SELECT NAME AS TABLE_NAME, TYPE AS TABLE_TYPE
+  FROM M$SYS_TABLES
+ WHERE NAME = 'TARGET_TABLE';
 ```
 
 테이블 타입별 ALTER TABLE 지원 범위가 다릅니다. [테이블 타입별 관리 가능 범위](/dbms/data-modeling-table-design/table-types-type-manageable/)를 미리 확인하십시오.
@@ -24,7 +26,12 @@ SELECT TABLE_NAME, TABLE_TYPE FROM M$SYS_TABLES WHERE TABLE_NAME = 'TARGET_TABLE
 DESC target_table;
 
 -- 인덱스 확인
-SELECT * FROM M$SYS_INDEXES WHERE TABLE_NAME = 'TARGET_TABLE';
+SELECT i.NAME AS INDEX_NAME, i.TYPE AS INDEX_TYPE
+  FROM M$SYS_INDEXES i
+  JOIN M$SYS_TABLES t
+    ON i.DATABASE_ID = t.DATABASE_ID
+   AND i.TABLE_ID = t.ID
+ WHERE t.NAME = 'TARGET_TABLE';
 ```
 
 ### 3. 데이터 볼륨 확인
@@ -33,7 +40,8 @@ SELECT * FROM M$SYS_INDEXES WHERE TABLE_NAME = 'TARGET_TABLE';
 SELECT COUNT(*) FROM target_table;
 ```
 
-대용량 테이블의 스키마 변경은 시간이 걸릴 수 있습니다. 업무 시간 외 실행을 권장합니다.
+대용량 테이블의 스키마 변경은 시간이 걸릴 수 있습니다. 테스트 환경에서 소요 시간과 잠금
+영향을 측정한 뒤 서비스의 유지보수 시간에 실행하십시오.
 
 ### 4. Retention Policy 적용 여부
 
@@ -45,8 +53,8 @@ SELECT * FROM V$RETENTION_JOB WHERE TABLE_NAME = 'TARGET_TABLE';
 
 ### 5. DDL 충돌 정책 설정
 
-Machbase 8.7.0 Standard Edition은 서로 다른 객체의 DDL을 동시에 수행할 수 있습니다. 같은 객체나
-직접 관련된 객체의 DDL은 충돌하므로 운영 배포 세션에서 허용할 대기 시간을 먼저 설정합니다.
+Standard Edition은 서로 다른 객체의 DDL을 동시에 수행할 수 있습니다. 같은 객체나 직접
+관련된 객체의 DDL은 충돌하므로 운영 배포 세션에서 허용할 대기 시간을 먼저 설정합니다.
 
 ```sql
 -- 충돌한 DDL 잠금을 최대 10초 동안 대기
@@ -116,7 +124,7 @@ DROP INDEX idx_old;
 ## Retention Policy 변경 체크리스트
 
 - [ ] 정책 변경 필요 시: 기존 정책 해제 → 새 정책 생성/적용
-- [ ] 보존 기간 단축 시: 즉시 삭제가 시작되므로 데이터 손실 가능성 검토
+- [ ] 보존 기간 단축 시: 다음 삭제 작업에서 대상이 늘어날 수 있으므로 데이터 손실 가능성 검토
 
 ```sql
 -- 기존 정책 해제
@@ -154,7 +162,12 @@ DESC target_table;
 SELECT COUNT(*) FROM target_table;
 
 -- 인덱스 상태 확인
-SELECT * FROM M$SYS_INDEXES WHERE TABLE_NAME = 'TARGET_TABLE';
+SELECT i.NAME AS INDEX_NAME, i.TYPE AS INDEX_TYPE
+  FROM M$SYS_INDEXES i
+  JOIN M$SYS_TABLES t
+    ON i.DATABASE_ID = t.DATABASE_ID
+   AND i.TABLE_ID = t.ID
+ WHERE t.NAME = 'TARGET_TABLE';
 ```
 
 ---
