@@ -1,8 +1,10 @@
 ---
 type: docs
-title: '12.4 외부 도구 연동'
-weight: 50
+title: '11.12 외부 도구 연동'
+weight: 120
 toc: true
+aliases:
+  - /dbms/application-integration/external-tools/
 ---
 
 외부 수집·시각화 도구는 Machbase가 제공하는 SQLCLI, JDBC, ODBC 또는 검증된 전용

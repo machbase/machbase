@@ -37,7 +37,7 @@ SELECT * FROM volatile_mutation_demo ORDER BY id;
 갱신 대상으로 지정할 수 없습니다.
 
 대량 입력 API는 언어와 드라이버에 따라 초기화·바인딩·오류 처리가 다릅니다. 불완전한 코드
-조각을 복사하지 말고 [SDK 및 통합](/dbms/application-integration/)의 해당 드라이버 예제를
+조각을 복사하지 말고 [SDK 및 통합](/dbms/development-tools-integration/)의 해당 드라이버 예제를
 사용합니다.
 
 <a id="original-85-deleting-data"></a>

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.6.4 TAG data UPDATE 지원표'
+title: '17.6.4 TAG data UPDATE 지원표'
 weight: 40
 toc: true
 ---

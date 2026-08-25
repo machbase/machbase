@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '11.1 Machbase SQLCLI와 ODBC'
-weight: 10
+title: '11.4 Machbase SQLCLI와 ODBC'
+weight: 40
 toc: true
 aliases:
   - /dbms/reference/sdk-api/cli-odbc/
@@ -162,7 +162,7 @@ Standard Edition에서 단일 `INSERT ... VALUES`가 성공한 뒤 생성된 ROW
 - 표준 ODBC: generated ROWID 전용 표준 API 없음
 
 batch, Append, `INSERT ... SELECT`, UPSERT에서는 같은 반환을 가정하지 않습니다. 자세한
-범위는 [ROWID와 INSERT 결과 ID](/dbms/application-integration/rowid-generated-id/)를
+범위는 [ROWID와 INSERT 결과 ID](/dbms/development-tools-integration/rowid-generated-id/)를
 참고합니다.
 
 ## Append 확장 API

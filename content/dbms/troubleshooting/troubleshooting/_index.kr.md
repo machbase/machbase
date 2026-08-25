@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.1 문제 해결 접근법'
+title: '16.1 문제 해결 접근법'
 weight: 10
 toc: true
 ---
@@ -71,6 +71,6 @@ rg -n 'ERR-|ERROR|WARN' "$MACHBASE_HOME/trc/machbase.trc"
 
 ## 오류 코드로 원인 찾기
 
-17장에 오류 코드 의미를 다시 복제하지 않습니다. 정확한 코드를 기록한 뒤
+16장에 오류 코드 의미를 다시 복제하지 않습니다. 정확한 코드를 기록한 뒤
 [오류 코드 사전](/dbms/reference/error-dictionary-codes/)에서 현재 정의를 확인하십시오.
 코드가 사전에 없으면 전체 메시지, 서버 빌드, 재현 SQL과 로그 시각을 함께 수집합니다.

@@ -190,10 +190,10 @@ curl -X POST http://localhost:5657/machiot/datapoints/raw/TAG \
 
 ### 지원 언어
 
-- **[C/C++ 라이브러리](/dbms/application-integration/guide-drivers/#cli-odbc)** - 고성능 네이티브 통합
-- **[Java 라이브러리](/dbms/application-integration/guide-drivers/#jdbc)** - Java 애플리케이션
-- **[Python 라이브러리](/dbms/application-integration/guide-drivers/#python)** - 데이터 과학 및 자동화
-- **[C# 라이브러리](/dbms/application-integration/guide-drivers/#net-connector)** - .NET 애플리케이션
+- **[C/C++ 라이브러리](/dbms/development-tools-integration/cli-odbc/#machbase-sqlcli)** - 고성능 네이티브 통합
+- **[Java 라이브러리](/dbms/development-tools-integration/jdbc/)** - Java 애플리케이션
+- **[Python 라이브러리](/dbms/development-tools-integration/python/)** - 데이터 과학 및 자동화
+- **[C# 라이브러리](/dbms/development-tools-integration/net-connector/)** - .NET 애플리케이션
 
 ### Python 예제
 

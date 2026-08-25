@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.8.9 sdk-api-selection-rules'
+title: '17.8.9 sdk-api-selection-rules'
 weight: 90
 toc: true
 ---
@@ -124,6 +124,6 @@ toc: true
 
 ## 참조
 
-- SDK 지원 범위 전체: [지원 범위 (SDK)](/dbms/development-tools-integration/#sdk)
+- SDK 지원 범위 전체: [지원 범위 (SDK)](/dbms/development-tools-integration/sdk-support-scope/#sdk)
 - 기능 지원 매트릭스: [support-matrix](../support-matrix/)
 - 제약 사항: [constraints-index](../constraints-index/)

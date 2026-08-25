@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '11.3 Python'
-weight: 30
+title: '11.6 Python'
+weight: 60
 toc: true
 aliases:
   - /dbms/reference/sdk-api/python/

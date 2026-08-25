@@ -68,7 +68,7 @@ DROP TABLE input_time_tag;
 
 SDK별 연결과 Append 예제는 [개발 도구 연동](/dbms/development-tools-integration/)을,
 파일 형식과 명령은
-[데이터 입력·적재·반출](/dbms/application-integration/data-input-load-export/)을
+[데이터 입력·적재·반출](/dbms/development-tools-integration/data-input-load-export/)을
 참고하십시오.
 
 ## 데이터 정정

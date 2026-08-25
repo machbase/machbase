@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '16.2 장비 마스터와 알람'
+title: '15.2 장비 마스터와 알람'
 weight: 20
 toc: true
 ---

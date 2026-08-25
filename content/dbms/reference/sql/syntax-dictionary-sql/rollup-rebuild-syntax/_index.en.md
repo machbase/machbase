@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.1.1.17 ROLLUP_REBUILD syntax'
+title: '17.1.1.17 ROLLUP_REBUILD syntax'
 weight: 170
 toc: true
 ---

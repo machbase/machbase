@@ -12,4 +12,4 @@ English structure placeholder. Korean content is authoritative for this restruct
 
 <a id="support-scope-rdb-sdk"></a>
 
-## RDB SDK/도구 지원 범위 개요 (세부 지원표는 18장으로 연결)
+## RDB SDK/tool support overview (see Chapter 17 for the detailed matrix)

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.8.6 evidence-map'
+title: '17.8.6 evidence-map'
 weight: 60
 toc: true
 ---
@@ -17,7 +17,7 @@ commit hash와 소스 트리 경로는 제품 사용자가 검증할 수 있는 
 | 사용자, AUTH KEY, 비밀번호 정책 | [계정·권한·접속 제어](/dbms/security-access-control/) |
 | SQL grammar와 지원 구문 | [SQL 레퍼런스](/dbms/reference/sql/) |
 | Python, Go, JDBC, Node.js, .NET API | [개발 도구 연동](/dbms/development-tools-integration/) |
-| Named Bind와 영향 행 수 | [애플리케이션 연동](/dbms/application-integration/) |
+| Named Bind와 영향 행 수 | [애플리케이션 연동](/dbms/development-tools-integration/) |
 | 시스템 뷰와 메타 테이블 열 | [시스템 카탈로그](/dbms/reference/log-logs-system-catalog/) |
 | Edition·table type·SDK 제한 | [지원 범위와 제약](/dbms/reference/support-scope-constraints/) |
 | 오류 코드 의미 | [오류 코드 사전](/dbms/reference/error-dictionary-codes/) |

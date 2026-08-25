@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '15. 계정, 권한, 접속 제어'
-weight: 150
+title: '14. 계정, 권한, 접속 제어'
+weight: 140
 toc: true
 ---
 

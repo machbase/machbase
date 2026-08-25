@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.1.2.1 JSON Type Support by Table Type'
+title: '17.1.2.1 JSON Type Support by Table Type'
 weight: 10
 toc: true
 ---

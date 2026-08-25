@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.8.4 support-matrix'
+title: '17.8.4 support-matrix'
 weight: 40
 toc: true
 ---

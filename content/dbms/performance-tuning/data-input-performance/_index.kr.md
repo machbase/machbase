@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '13.8 입력 성능과 연동 경로'
+title: '12.8 입력 성능과 연동 경로'
 weight: 80
 toc: true
 ---
@@ -14,8 +14,8 @@ toc: true
 
 | 요구사항 | 권장 경로 | 다음 문서 |
 |----------|-----------|-----------|
-| 지속적인 TAG/LOG 대량 수집 | SDK Append API | [SDK 기능 지원표](/dbms/development-tools-integration/#support-scope-sdk-append) |
-| 애플리케이션의 소량·범용 DML | Prepared SQL `INSERT` | [공통 연동 개념](/dbms/application-integration/concepts-common/) |
+| 지속적인 TAG/LOG 대량 수집 | SDK Append API | [SDK 기능 지원표](/dbms/development-tools-integration/sdk-support-scope/#support-scope-sdk-append) |
+| 애플리케이션의 소량·범용 DML | Prepared SQL `INSERT` | [공통 연동 개념](/dbms/development-tools-integration/concepts-common/) |
 | 클라이언트 CSV 가져오기·내보내기 | `machloader` | [machloader 레퍼런스](/dbms/reference/command-line-tools/dictionary-machloader/) |
 | 서버가 접근할 수 있는 파일 적재 | `LOAD DATA INFILE` | [LOAD DATA INFILE](/dbms/reference/sql/syntax-dictionary-sql/load-data-infile-syntax/) |
 | 로컬·SFTP 파일의 반복 수집 | Collector | [Collector 기반 수집](/dbms/log-table-usage/collector-ingestion/) |

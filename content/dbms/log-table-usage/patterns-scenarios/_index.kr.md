@@ -47,7 +47,7 @@ INSERT INTO sc7_app_log VALUES ('web-02', 'ERROR', 'database timeout');
 EXEC TABLE_FLUSH(sc7_app_log);
 ```
 
-대량 수집은 [Append API](/dbms/application-integration/concepts-common/#append-api-batch), 파일
+대량 수집은 [Append API](/dbms/development-tools-integration/concepts-common/#append-api-batch), 파일
 수집은 [Collector](/dbms/log-table-usage/collector-ingestion/)의 정본을 사용합니다. 접속
 비밀번호를 예제 소스에 고정하지 않습니다.
 

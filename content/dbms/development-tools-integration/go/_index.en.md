@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '11.6 Go'
-weight: 60
+title: '11.9 Go'
+weight: 90
 toc: true
 aliases:
   - /dbms/reference/sdk-api/go/

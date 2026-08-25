@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.6.6 SDK별 기능 지원표'
+title: '17.6.6 SDK별 기능 지원표'
 weight: 60
 toc: true
 ---
@@ -41,16 +41,18 @@ catalog 변경, connection pool 주의사항은 [다중 데이터베이스 운�
 참조하십시오. 다중 데이터베이스를 사용할 때는 Machbase 8.7.0 서버와 해당 버전용 클라이언트
 SDK를 함께 사용합니다.
 
-각 기능의 SDK별 상세 지원 내용은 [11장 개발 도구 연동의 SDK 지원 범위](/dbms/development-tools-integration/#sdk)에서 확인하십시오.
+각 기능의 SDK별 상세 지원 내용은
+[11장 SDK 기능 지원 범위](/dbms/development-tools-integration/sdk-support-scope/#sdk)에서
+확인하십시오.
 
 | 기능 | 참조 페이지 |
 |------|-----------|
-| Append API | [SDK별 APPEND 지원 범위 안내](/dbms/development-tools-integration/#support-scope-sdk-append) |
-| AUTH KEY 인증 | [SDK별 AUTH KEY 지원 범위 안내](/dbms/development-tools-integration/#support-scope-sdk-auth-key) |
-| Transaction / Prepared Statement | [SDK별 transaction / prepare / bind 지원 범위 안내](/dbms/development-tools-integration/#support-scope-sdk-transaction-prepare-bind) |
+| Append API | [SDK별 APPEND 지원 범위 안내](/dbms/development-tools-integration/sdk-support-scope/#support-scope-sdk-append) |
+| AUTH KEY 인증 | [SDK별 AUTH KEY 지원 범위 안내](/dbms/development-tools-integration/sdk-support-scope/#support-scope-sdk-auth-key) |
+| Transaction / Prepared Statement | [SDK별 transaction / prepare / bind 지원 범위 안내](/dbms/development-tools-integration/sdk-support-scope/#support-scope-sdk-transaction-prepare-bind) |
 | Named Bind Parameter | [Named Bind Parameter syntax](/dbms/reference/sql/syntax-dictionary-sql/named-bind-parameter-syntax/) |
-| Nullable 메타데이터 | [SELECT 결과 Nullable 메타데이터 지원](/dbms/development-tools-integration/#support-scope-sdk-nullable-metadata) |
-| PRIMARY KEY 메타데이터 | [SELECT 결과·카탈로그 PRIMARY KEY 지원](/dbms/development-tools-integration/#support-scope-sdk-primary-key-metadata) |
+| Nullable 메타데이터 | [SELECT 결과 Nullable 메타데이터 지원](/dbms/development-tools-integration/sdk-support-scope/#support-scope-sdk-nullable-metadata) |
+| PRIMARY KEY 메타데이터 | [SELECT 결과·카탈로그 PRIMARY KEY 지원](/dbms/development-tools-integration/sdk-support-scope/#support-scope-sdk-primary-key-metadata) |
 
 ## 주요 제약 사항
 
@@ -97,7 +99,7 @@ Go native는 `api.Column.PrimaryKey`로 직접 컬럼의 PK 상태를 확인할 
 `database/sql`의 표준 `ColumnType`에는 PK 메서드가 없으므로 native API 또는 카탈로그 SQL을
 사용합니다. JDBC, Python, Node.js, .NET, ODBC는 각각의 결과 메타데이터 또는 카탈로그 API로
 PK를 조회할 수 있습니다. 상세한 API 이름과 직접 컬럼·표현식의 차이는
-[PRIMARY KEY 메타데이터 지원 범위](/dbms/development-tools-integration/#support-scope-sdk-primary-key-metadata)를
+[PRIMARY KEY 메타데이터 지원 범위](/dbms/development-tools-integration/sdk-support-scope/#support-scope-sdk-primary-key-metadata)를
 참고하십시오.
 
 ## SDK 선택 가이드

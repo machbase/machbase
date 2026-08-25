@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.1.1.9 SERIES BY'
+title: '17.1.1.9 SERIES BY'
 weight: 90
 toc: true
 ---

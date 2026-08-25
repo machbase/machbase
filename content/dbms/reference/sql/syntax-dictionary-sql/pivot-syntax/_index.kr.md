@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.1.1.7 PIVOT'
+title: '17.1.1.7 PIVOT'
 weight: 70
 toc: true
 ---

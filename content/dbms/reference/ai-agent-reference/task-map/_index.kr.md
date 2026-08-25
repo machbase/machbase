@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.8.3 task-map'
+title: '17.8.3 task-map'
 weight: 30
 toc: true
 ---
@@ -20,9 +20,9 @@ toc: true
 
 | 태스크 | 수행 방법 | 참조 문서 |
 |--------|-----------|-----------|
-| 센서/시계열 데이터 저장 | TAG 테이블 생성 후 Append API 사용 | [TAG 테이블](/dbms/tag-table-usage/), [Append](/dbms/application-integration/concepts-common/#append-api-batch) |
+| 센서/시계열 데이터 저장 | TAG 테이블 생성 후 Append API 사용 | [TAG 테이블](/dbms/tag-table-usage/), [Append](/dbms/development-tools-integration/concepts-common/#append-api-batch) |
 | 로그/이벤트 데이터 저장 | LOG 테이블 생성 후 Append API 또는 INSERT 사용 | [LOG 테이블](/dbms/log-table-usage/) |
-| CSV/파일 일괄 입력 | machloader `-i` 옵션으로 파일 로드 | [machloader](/dbms/application-integration/data-input-load-export/#file-import-machloader) |
+| CSV/파일 일괄 입력 | machloader `-i` 옵션으로 파일 로드 | [machloader](/dbms/development-tools-integration/data-input-load-export/#file-import-machloader) |
 | LOOKUP 마스터 데이터 관리 | LOOKUP 테이블 INSERT/UPDATE/DELETE | [LOOKUP 테이블](/dbms/lookup-table-usage/) |
 | 실시간 스트림 입력 | Collector 또는 Fluentd 플러그인 | [Collector](/dbms/operations-configuration-recovery/collector/), [Fluentd](/dbms/log-table-usage/fluentd-pipeline/) |
 
@@ -38,7 +38,7 @@ toc: true
 | 시계열 보간 / 시리즈 분석 | `SERIES BY` 절 사용 | [SELECT 문법](../../../reference/sql/syntax-dictionary-sql/select-syntax/) |
 | 복수 태그 비교 조회 | `FROM table_name WHERE name IN (...)` | [TAG 테이블](/dbms/tag-table-usage/) |
 | 집계 결과 빠른 조회 | ROLLUP 결과 테이블 SELECT | [ROLLUP](/dbms/tag-rollup-usage/overview-use-criteria/#rollup) |
-| SELECT 결과 컬럼의 NULL 가능 여부 확인 | SDK 결과 메타데이터의 `NO_NULLS`, `NULLABLE`, `UNKNOWN` 확인 | [Nullable 메타데이터 지원](/dbms/development-tools-integration/#support-scope-sdk-nullable-metadata) |
+| SELECT 결과 컬럼의 NULL 가능 여부 확인 | SDK 결과 메타데이터의 `NO_NULLS`, `NULLABLE`, `UNKNOWN` 확인 | [Nullable 메타데이터 지원](/dbms/development-tools-integration/sdk-support-scope/#support-scope-sdk-nullable-metadata) |
 
 ## 사용자 / 보안
 

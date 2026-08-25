@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.6.5 LOOKUP SQL/JSON 지원표'
+title: '17.6.5 LOOKUP SQL/JSON 지원표'
 weight: 50
 toc: true
 ---

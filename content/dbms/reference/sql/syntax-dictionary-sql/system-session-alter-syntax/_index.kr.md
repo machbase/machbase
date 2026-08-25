@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.1.1.21 SYSTEM/SESSION/ALTER SYSTEM'
+title: '17.1.1.21 SYSTEM/SESSION/ALTER SYSTEM'
 weight: 220
 toc: true
 ---

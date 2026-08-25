@@ -465,7 +465,7 @@ GROUP BY name;
 
 지속적인 TAG·LOG 입력은 Append API, 서버가 읽을 수 있는 파일의 일괄 적재는
 `LOAD DATA INFILE`, 클라이언트 파일은 `machloader`를 우선 검토합니다. 자세한 선택 기준은
-[데이터 입력·적재·반출](/dbms/application-integration/data-input-load-export/)을 참고하십시오.
+[데이터 입력·적재·반출](/dbms/development-tools-integration/data-input-load-export/)을 참고하십시오.
 
 <a id="join-metadata-design"></a>
 

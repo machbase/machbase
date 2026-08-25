@@ -1,13 +1,13 @@
 ---
 type: docs
-title: '16.4 대량 적재 파이프라인'
+title: '15.4 대량 적재 파이프라인'
 weight: 40
 toc: true
 ---
 
 대량 적재는 입력 파일, 대상 테이블, 실패 처리, 재시도와 검증을 하나의 파이프라인으로
 설계해야 합니다. 명령 옵션의 정본은
-[데이터 입력·적재·내보내기](/dbms/application-integration/data-input-load-export/)와
+[데이터 입력·적재·내보내기](/dbms/development-tools-integration/data-input-load-export/)와
 [machloader 사전](/dbms/reference/command-line-tools/dictionary-machloader/)에서 확인합니다.
 
 ## 1단계: 적재 계약 정의

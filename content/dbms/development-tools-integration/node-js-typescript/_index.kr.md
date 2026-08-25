@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '11.4 Node.js / TypeScript'
-weight: 40
+title: '11.7 Node.js / TypeScript'
+weight: 70
 toc: true
 aliases:
   - /dbms/reference/sdk-api/node-js-typescript/
@@ -178,7 +178,7 @@ if (result.rowId !== undefined) {
 ```
 
 ROWID가 없는 실행에는 `rowId` 속성이 없습니다. batch, Append, `INSERT ... SELECT`,
-UPSERT의 차이는 [ROWID와 INSERT 결과 ID](/dbms/application-integration/rowid-generated-id/)를
+UPSERT의 차이는 [ROWID와 INSERT 결과 ID](/dbms/development-tools-integration/rowid-generated-id/)를
 참고하십시오.
 
 #### query(sql, values?)
@@ -264,7 +264,7 @@ for (const field of fields) {
 
 `ColumnNullable.Unknown`은 `NOT NULL`을 의미하지 않습니다. NULL이 발생할 수 있는 것으로
 처리합니다. SQL 결과의 판정 규칙은
-[Nullable 메타데이터 지원 범위](/dbms/development-tools-integration/#support-scope-sdk-nullable-metadata)를
+[Nullable 메타데이터 지원 범위](/dbms/development-tools-integration/sdk-support-scope/#support-scope-sdk-nullable-metadata)를
 참고합니다.
 
 Machbase SQL에서 `''`은 SQL `NULL`이므로 해당 `field.nullable`은

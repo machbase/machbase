@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '11.2.3 트랜잭션과 커넥션 풀'
+title: '11.5.3 트랜잭션과 커넥션 풀'
 weight: 30
 toc: true
 aliases:

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.1.1.8 window function / OVER'
+title: '17.1.1.8 window function / OVER'
 weight: 80
 toc: true
 ---

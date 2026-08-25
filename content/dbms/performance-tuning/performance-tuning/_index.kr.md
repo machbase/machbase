@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '13.4 입력 성능 튜닝'
+title: '12.4 입력 성능 튜닝'
 weight: 40
 toc: true
 ---
@@ -41,7 +41,7 @@ toc: true
 - 재연결 뒤 이전 batch를 다시 보낼 때 중복 정책을 적용합니다.
 - 여러 Appender가 같은 key를 보낼 때 ordering 요구사항을 정의합니다.
 
-SDK별 코드는 [11장 개발 도구 연동](/dbms/development-tools-integration/)을 참고합니다.
+SDK별 코드는 [11장 개발 및 애플리케이션 연동](/dbms/development-tools-integration/)을 참고합니다.
 
 ## 파일 적재
 
@@ -49,7 +49,7 @@ machloader와 csvimport는 작은 표본 파일로 delimiter, encoding, NULL, DA
 검증합니다. 운영 실행에서는 log와 bad file을 보존하고 exit code, 입력·실패 건수, 대상
 table의 최종 시간 범위를 확인합니다.
 
-명령과 옵션은 [데이터 입력과 반출](/dbms/application-integration/data-input-load-export/)을
+명령과 옵션은 [데이터 입력과 반출](/dbms/development-tools-integration/data-input-load-export/)을
 참고합니다.
 
 ## 병목 분류

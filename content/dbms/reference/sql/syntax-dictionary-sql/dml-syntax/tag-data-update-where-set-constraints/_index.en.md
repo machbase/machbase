@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.1.1.10.2 TAG data UPDATE WHERE/SET constraints'
+title: '17.1.1.10.2 TAG data UPDATE WHERE/SET constraints'
 weight: 20
 toc: true
 ---

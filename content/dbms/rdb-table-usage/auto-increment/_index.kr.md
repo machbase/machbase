@@ -75,7 +75,7 @@ CREATE VOLATILE TABLE volatile_order (
 
 VOLATILE은 서버 재시작 시 테이블과 데이터가 사라지므로 자동값도 다시 1부터 시작합니다.
 LOOKUP은 데이터와 다음 자동값을 유지합니다. INSERT 결과 ID를 SDK에서 읽는 방법은
-[ROWID와 INSERT 결과 ID](/dbms/application-integration/rowid-generated-id/)를 참고하십시오.
+[ROWID와 INSERT 결과 ID](/dbms/development-tools-integration/rowid-generated-id/)를 참고하십시오.
 
 ## 기본 사용법
 

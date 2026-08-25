@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.6.9 서버와 SDK 호환성'
+title: '17.6.9 서버와 SDK 호환성'
 weight: 100
 toc: true
 ---
@@ -71,7 +71,7 @@ AUTH_SIG_SCHEME=ECDSA;
 구버전 조합에서 반환된 `0`은 실제 스키마의 `NOT NULL`을 보장하지 않을 수 있습니다.
 애플리케이션이 Nullable 값에 따라 처리 방식을 결정한다면 서버와 SDK를 함께
 업그레이드합니다. API별 사용법은
-[Nullable 메타데이터 지원 범위](/dbms/development-tools-integration/#support-scope-sdk-nullable-metadata)를
+[Nullable 메타데이터 지원 범위](/dbms/development-tools-integration/sdk-support-scope/#support-scope-sdk-nullable-metadata)를
 참고합니다.
 
 ### Named Bind Parameter

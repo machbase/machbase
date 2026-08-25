@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '11.2.1 PreparedStatement와 타입'
+title: '11.5.1 PreparedStatement와 타입'
 weight: 10
 toc: true
 aliases:
@@ -174,5 +174,5 @@ statement.executeUpdate();
 `ParameterMetaData.isNullable()`은 `parameterNoNulls`, `parameterNullable` 또는
 `parameterNullableUnknown`을 반환합니다. `parameterNullableUnknown`을 NOT NULL로
 해석하지 않습니다. SQL별 판정 규칙은
-[Nullable 메타데이터 지원 범위](/dbms/development-tools-integration/#support-scope-sdk-nullable-metadata)를
+[Nullable 메타데이터 지원 범위](/dbms/development-tools-integration/sdk-support-scope/#support-scope-sdk-nullable-metadata)를
 참고합니다.

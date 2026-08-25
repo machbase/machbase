@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '16.1 실시간 상태 대시보드'
+title: '15.1 실시간 상태 대시보드'
 weight: 10
 toc: true
 ---
@@ -90,7 +90,7 @@ SELECT l.name,
 동시 사용자와 쿼리 비용을 측정해 정합니다.
 
 Grafana 등 외부 도구의 설치와 연결은
-[외부 도구 연동](/dbms/application-integration/external-tools/)을 참고하십시오.
+[외부 도구 연동](/dbms/development-tools-integration/external-tools/)을 참고하십시오.
 
 ## 3단계: 정리
 

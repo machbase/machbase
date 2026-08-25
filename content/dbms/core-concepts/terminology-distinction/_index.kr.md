@@ -52,7 +52,7 @@ DML 문서를 확인하십시오.
 | `tagmetaimport` | TAG 메타데이터 적재 | 태그 이름과 메타데이터를 일괄 등록·변경 |
 
 `tagmetaimport`는 TAG의 시계열 측정값을 적재하는 도구가 아닙니다. 지원 테이블, 파일 형식과
-옵션은 [데이터 입력·적재·반출](/dbms/application-integration/data-input-load-export/) 및
+옵션은 [데이터 입력·적재·반출](/dbms/development-tools-integration/data-input-load-export/) 및
 [명령행 도구 사전](/dbms/reference/command-line-tools/)을 참고하십시오.
 
 <a id="load-data-infile-vs-machloader"></a>
@@ -67,7 +67,7 @@ DML 문서를 확인하십시오.
 | 적합한 경우 | 서버에 배치된 파일을 SQL 작업으로 적재 | 클라이언트 파일을 전송하고 오류 행을 분리 |
 
 파일 위치와 권한을 먼저 확인한 뒤 선택하십시오. 전체 구문과 재현 가능한 예제는
-[데이터 입력·적재·반출](/dbms/application-integration/data-input-load-export/)에 있습니다.
+[데이터 입력·적재·반출](/dbms/development-tools-integration/data-input-load-export/)에 있습니다.
 
 <a id="ingestion-sdk-append-vs-sql-collector"></a>
 
@@ -84,4 +84,4 @@ TCP, UDP, 소켓 또는 ODBC 수집을 지원한다고 가정하지 마십시오
 [Collector 레퍼런스](/dbms/reference/collector/)를 기준으로 확인하십시오.
 
 애플리케이션 입력 경로의 API와 성능 특성은
-[데이터 입력 방식 선택](/dbms/application-integration/data-input-load-export/)을 참고하십시오.
+[데이터 입력 방식 선택](/dbms/development-tools-integration/data-input-load-export/)을 참고하십시오.

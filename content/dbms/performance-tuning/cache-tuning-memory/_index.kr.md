@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '13.6 PVO Cache와 메모리 튜닝'
+title: '12.6 PVO Cache와 메모리 튜닝'
 weight: 60
 toc: true
 ---

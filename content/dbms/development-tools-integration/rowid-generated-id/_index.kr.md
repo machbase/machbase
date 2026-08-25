@@ -1,8 +1,10 @@
 ---
 type: docs
-title: '12.5 ROWID와 INSERT 결과 ID'
-weight: 60
+title: '11.11 ROWID와 INSERT 결과 ID'
+weight: 110
 toc: true
+aliases:
+  - /dbms/application-integration/rowid-generated-id/
 ---
 
 <span class="badge-since">Machbase 8.7.0부터 지원되는 기능</span>
@@ -341,8 +343,8 @@ INSERT는 성공했지만 네트워크 응답이 끊기면 애플리케이션이
 
 ## 관련 문서
 
-- [연동 방식 선택](/dbms/application-integration/selection-integration-method/)
-- [드라이버별 가이드](/dbms/application-integration/guide-drivers/)
+- [연동 방식 선택](/dbms/development-tools-integration/selection-integration-method/)
+- [SDK 기능 지원 범위](/dbms/development-tools-integration/sdk-support-scope/)
 - [AUTO_INCREMENT](/dbms/rdb-table-usage/auto-increment/)
 - [LOG 데이터 입력](/dbms/log-table-usage/data-input-mutation/)
 - [TAG 데이터 입력](/dbms/tag-table-usage/data-input-mutation/)

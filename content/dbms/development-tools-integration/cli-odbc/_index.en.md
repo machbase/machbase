@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '11.1 Machbase SQLCLI and ODBC'
-weight: 10
+title: '11.4 Machbase SQLCLI and ODBC'
+weight: 40
 toc: true
 aliases:
   - /dbms/reference/sdk-api/cli-odbc/

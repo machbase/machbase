@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '16.8 SDK 선택'
+title: '15.8 SDK 선택'
 weight: 80
 toc: true
 ---

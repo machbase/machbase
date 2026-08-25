@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '11.4 Node.js / TypeScript'
-weight: 40
+title: '11.7 Node.js / TypeScript'
+weight: 70
 toc: true
 aliases:
   - /dbms/reference/sdk-api/node-js-typescript/

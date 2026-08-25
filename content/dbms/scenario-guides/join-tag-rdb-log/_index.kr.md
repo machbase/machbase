@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '16.3 TAG·TRANSACTION·LOG 조인'
+title: '15.3 TAG·TRANSACTION·LOG 조인'
 weight: 30
 toc: true
 ---

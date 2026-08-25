@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '11.2.6 마이그레이션과 문제 해결'
+title: '11.5.6 마이그레이션과 문제 해결'
 weight: 60
 toc: true
 aliases:

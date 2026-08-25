@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '13.6 PVO Cache and Memory Tuning'
+title: '12.6 PVO Cache and Memory Tuning'
 weight: 60
 toc: true
 ---

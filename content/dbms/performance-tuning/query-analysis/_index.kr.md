@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '13.10 쿼리 분석 경로'
+title: '12.10 쿼리 분석 경로'
 weight: 100
 toc: true
 ---

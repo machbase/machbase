@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.6.3 TRANSACTION 기능 지원표'
+title: '17.6.3 TRANSACTION 기능 지원표'
 weight: 30
 toc: true
 ---

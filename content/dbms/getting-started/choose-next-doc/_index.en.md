@@ -22,8 +22,8 @@ feature area to study first.
 | Store industrial IoT sensor, equipment, or measurement values | [TAG table design](/dbms/tag-table-usage/) |
 | Store logs, events, or financial tick receive histories | [LOG table design](/dbms/log-table-usage/) |
 | Manage equipment names, codes, or mapping data | [LOOKUP design](/dbms/lookup-table-usage/), and in RDB-supporting versions, [RDB design](/dbms/rdb-table-usage/) and [LOOKUP vs RDB](/dbms/data-modeling-table-design/table-types-selection-type/#comparison-rdb-vs-lookup) |
-| Check SQL syntax | [SQL reference](/dbms/reference/sql/), [SQL ingestion](/dbms/application-integration/data-input-load-export/#sql) |
-| Connect applications | [Application integration](/dbms/application-integration/), [Driver guide](/dbms/application-integration/guide-drivers/) |
+| Check SQL syntax | [SQL reference](/dbms/reference/sql/), [SQL ingestion](/dbms/development-tools-integration/data-input-load-export/#sql) |
+| Connect applications | [Application integration](/dbms/development-tools-integration/), [Driver guide](/dbms/development-tools-integration/selection-integration-method/) |
 | Change operational settings | [Operations, configuration, and recovery](/dbms/operations-configuration-recovery/) |
 
 ## What to Check Next

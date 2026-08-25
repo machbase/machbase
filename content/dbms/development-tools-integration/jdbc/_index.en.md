@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '11.2 JDBC'
-weight: 20
+title: '11.5 JDBC'
+weight: 50
 toc: true
 aliases:
   - /dbms/reference/sdk-api/jdbc/

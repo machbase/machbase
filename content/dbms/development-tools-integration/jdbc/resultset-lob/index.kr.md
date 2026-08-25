@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '11.2.2 ResultSet, Statement와 LOB'
+title: '11.5.2 ResultSet, Statement와 LOB'
 weight: 20
 toc: true
 aliases:

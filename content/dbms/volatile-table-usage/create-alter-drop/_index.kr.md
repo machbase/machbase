@@ -85,7 +85,7 @@ AUTO_INCREMENT를 사용하는 VOLATILE 테이블에서는 `INSERT ... SELECT`�
 
 VOLATILE 테이블은 서버 재시작 시 테이블과 데이터가 사라지므로 다음 자동값도 1부터 다시
 시작합니다. SDK에서 INSERT 결과 ID를 받는 방법은
-[ROWID와 INSERT 결과 ID](/dbms/application-integration/rowid-generated-id/)를 참고하십시오.
+[ROWID와 INSERT 결과 ID](/dbms/development-tools-integration/rowid-generated-id/)를 참고하십시오.
 
 ### 삭제
 

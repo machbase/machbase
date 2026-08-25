@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.1.2 데이터 타입 사전'
+title: '17.1.2 데이터 타입 사전'
 weight: 20
 toc: true
 ---

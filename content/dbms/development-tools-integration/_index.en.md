@@ -1,53 +1,61 @@
 ---
 type: docs
-title: '11. Development Tools Integration'
+title: '11. Development and Application Integration'
 weight: 110
 toc: true
 aliases:
   - /dbms/reference/sdk-api/
-  - /dbms/development-tools-integration/support-scope-sdk/
-  - /dbms/application-integration/support-scope-sdk/
+  - /dbms/application-integration/
 ---
 
-This section provides Machbase SDK API references and support-scope information
-by SDK type. Use each child page for installation, connection, SQL execution,
-Append, and examples.
+Choose an integration method for the application, then use the SDK-specific reference and the
+cross-SDK operational guidance in this chapter. SDK pages own installation, API, and complete code;
+the selection, common-concepts, and support-scope pages own cross-SDK decisions.
 
-## Common Connection Information
+## Reading order
+
+1. Use [Choose an integration method](selection-integration-method/) to select an interface for the
+   application language and workload.
+2. Review authentication, time values, binding, transactions, and retries in
+   [Common integration concepts](concepts-common/).
+3. Compare required capabilities in [SDK feature support](sdk-support-scope/).
+4. Follow the SDK page for installation, connection, and executable code.
+5. Apply the task-specific guidance for [Data input and export](data-input-load-export/),
+   [ROWID and generated IDs](rowid-generated-id/), and [External tools](external-tools/).
+
+## SDK references
+
+| Environment | Documentation |
+|---|---|
+| Native C/C++ or ODBC | [Machbase SQLCLI and ODBC](cli-odbc/) |
+| Java and Spring | [JDBC](jdbc/) |
+| Python | [Python](python/) |
+| Node.js and TypeScript | [Node.js / TypeScript](node-js-typescript/) |
+| C# and VB.NET | [.NET Connector](net-connector/) |
+| Native Go or `database/sql` | [Go](go/) |
+
+## Common connection information
 
 | Item | Default | Description |
-|------|---------|-------------|
+|---|---|---|
 | HOST | `127.0.0.1` | Machbase server host name or IP address |
 | PORT | `5656` | Machbase server port (`PORT_NO` in `machbase.conf`) |
 | USER | `SYS` | User ID |
 | PASSWORD | `MANAGER` | User password |
 
-## SDK References
+Use a dedicated user with the minimum required privileges in production. See
+[Accounts, privileges, and access control](../security-access-control/) for account and
+authentication configuration.
 
-| SDK | Description |
-|-----|-------------|
-| [Machbase SQLCLI and ODBC](./cli-odbc/) | Separate C/C++ SQLCLI and ODBC APIs and examples |
-| [JDBC](./jdbc/) | Java JDBC APIs and Append |
-| [Python](./python/) | `machbaseapi` Python client |
-| [Node.js / TypeScript](./node-js-typescript/) | `@machbase/ts-client` TypeScript client |
-| [.NET Connector](./net-connector/) | UniMachNetConnector and ADO.NET APIs |
-| [Go](./go/) | `machgo` native client and `database/sql` driver |
+## Legacy support-scope anchors
 
+The following anchors remain for existing bookmarks. Use
+[SDK feature support](sdk-support-scope/) for the current content.
 
-
-
+<a id="support-scope-sdk-nullable-metadata"></a>
+<a id="support-scope-sdk-primary-key-metadata"></a>
+<a id="support-scope-sdk-generated-rowid"></a>
 <a id="support-scope-sdk-append"></a>
-
-## SDK APPEND Support Scope
-
 <a id="support-scope-sdk-auth-key"></a>
-
-## SDK AUTH KEY Support Scope
-
 <a id="support-scope-sdk-transaction-prepare-bind"></a>
-
-## SDK transaction / prepare / bind Support Scope
-
 <a id="sdk"></a>
-
-## SDK Support Scope Index

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '11.2.4 DatabaseMetaData'
+title: '11.5.4 DatabaseMetaData'
 weight: 40
 toc: true
 aliases:
@@ -162,4 +162,4 @@ System.out.println(metadata.supportsMultipleOpenResults());
 Standard Edition에서 ROWID를 지원하는 서버와 연결하면 `supportsGetGeneratedKeys()`는
 `true`, `getRowIdLifetime()`은 `ROWID_VALID_OTHER`를 반환합니다. 지원하지 않는 서버 또는
 Cluster Edition에서는 각각 `false`와 `ROWID_UNSUPPORTED`를 반환합니다. 사용 예제는
-[ROWID와 INSERT 결과 ID](/dbms/application-integration/rowid-generated-id/)를 참고하십시오.
+[ROWID와 INSERT 결과 ID](/dbms/development-tools-integration/rowid-generated-id/)를 참고하십시오.

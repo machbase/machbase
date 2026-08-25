@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.8.12 llms.txt'
+title: '17.8.12 llms.txt'
 weight: 120
 toc: true
 ---
@@ -40,9 +40,9 @@ Machbase 공식 문서 기준 (`/dbms/` 경로 아래):
 
 | 섹션 | URL |
 |------|-----|
-| Append API 개념 | `/dbms/application-integration/concepts-common/#append-api-batch` |
-| SDK 지원 범위 | `/dbms/development-tools-integration/#sdk` |
-| Nullable 메타데이터 | `/dbms/development-tools-integration/#support-scope-sdk-nullable-metadata` |
+| Append API 개념 | `/dbms/development-tools-integration/concepts-common/#append-api-batch` |
+| SDK 지원 범위 | `/dbms/development-tools-integration/sdk-support-scope/#sdk` |
+| Nullable 메타데이터 | `/dbms/development-tools-integration/sdk-support-scope/#support-scope-sdk-nullable-metadata` |
 | Named Bind Parameter | `/dbms/reference/sql/syntax-dictionary-sql/named-bind-parameter-syntax/` |
 
 ### 개발 도구 연동

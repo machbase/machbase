@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17. Troubleshooting'
-weight: 170
+title: '16. Troubleshooting'
+weight: 160
 toc: true
 ---

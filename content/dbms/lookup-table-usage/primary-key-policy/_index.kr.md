@@ -4,7 +4,7 @@ weight: 100
 toc: true
 ---
 LOOKUP 테이블의 PRIMARY KEY 설계 원칙과 정책을 다룹니다. SDK가 SELECT 결과에서 PK 여부를
-확인하는 방법은 [PRIMARY KEY 메타데이터 지원 범위](/dbms/development-tools-integration/#support-scope-sdk-primary-key-metadata)를
+확인하는 방법은 [PRIMARY KEY 메타데이터 지원 범위](/dbms/development-tools-integration/sdk-support-scope/#support-scope-sdk-primary-key-metadata)를
 참고합니다.
 
 

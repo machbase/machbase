@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '16.7 Collector 파일 적재'
+title: '15.7 Collector 파일 적재'
 weight: 70
 toc: true
 ---

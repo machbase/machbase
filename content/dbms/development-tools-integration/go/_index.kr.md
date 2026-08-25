@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '11.6 Go'
-weight: 60
+title: '11.9 Go'
+weight: 90
 toc: true
 aliases:
   - /dbms/reference/sdk-api/go/
@@ -778,7 +778,7 @@ fmt.Println("ROWID:", rowID)
 
 이 기능은 ROWID를 지원하는 Standard Edition에서 사용할 수 있습니다. batch, Append,
 `INSERT ... SELECT`, UPSERT에서는 ROWID를 반환하지 않습니다. 자세한 조건은
-[ROWID와 INSERT 결과 ID](/dbms/application-integration/rowid-generated-id/)를 참고하십시오.
+[ROWID와 INSERT 결과 ID](/dbms/development-tools-integration/rowid-generated-id/)를 참고하십시오.
 
 ## database/sql <small>Machbase 8.7.0 부터 지원되는 기능</small>
 
@@ -974,7 +974,7 @@ session metadata에 의존하는 statement를 재사용하지 말고 다시 준�
   복원합니다.
 - ROWID를 지원하는 Standard Edition과 `neo-client`를 사용하면 단일 INSERT 결과에서
   `Result.LastInsertId()`를 호출할 수 있습니다. 반환된 `int64`는 `uint64`로 변환해 ROWID의
-  bit pattern을 보존합니다. 자세한 내용은 [ROWID와 INSERT 결과 ID](/dbms/application-integration/rowid-generated-id/)를
+  bit pattern을 보존합니다. 자세한 내용은 [ROWID와 INSERT 결과 ID](/dbms/development-tools-integration/rowid-generated-id/)를
   참고하십시오.
 - 파라미터 타입은 드라이버 구현을 따릅니다. 일반적인 SQL 타입, `time.Time`, `[]byte`, `net.IP`,
   `api.Decimal`을 지원하지만 `bool` 파라미터는 지원하지 않습니다.

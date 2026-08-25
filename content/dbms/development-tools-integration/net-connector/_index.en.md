@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '11.5 .NET Connector'
-weight: 50
+title: '11.8 .NET Connector'
+weight: 80
 toc: true
 aliases:
   - /dbms/reference/sdk-api/net-connector/

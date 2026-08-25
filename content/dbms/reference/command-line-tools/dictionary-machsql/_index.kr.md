@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.4.2 machsql 명령/옵션 사전'
+title: '17.4.2 machsql 명령/옵션 사전'
 weight: 20
 toc: true
 ---
@@ -175,7 +175,7 @@ Last ROWID : 2048
 유지합니다.
 
 테이블별 ROWID 조건과 SDK에서 확인하는 방법은
-[ROWID와 INSERT 결과 ID](/dbms/application-integration/rowid-generated-id/)를 참고하십시오.
+[ROWID와 INSERT 결과 ID](/dbms/development-tools-integration/rowid-generated-id/)를 참고하십시오.
 
 ## DESC와 PRIMARY KEY 메타데이터
 
@@ -189,7 +189,7 @@ DESC ACCOUNT;
 ```
 
 이 출력은 SELECT 결과 컬럼 메타데이터와 별개입니다. SDK에서 SELECT 결과의 PK 여부를
-확인하려면 [PRIMARY KEY 메타데이터 지원 범위](/dbms/development-tools-integration/#support-scope-sdk-primary-key-metadata)를
+확인하려면 [PRIMARY KEY 메타데이터 지원 범위](/dbms/development-tools-integration/sdk-support-scope/#support-scope-sdk-primary-key-metadata)를
 참고하십시오.
 
 ## Named Bind Parameter

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.6.11 제한사항 사전'
+title: '17.6.11 제한사항 사전'
 weight: 120
 toc: true
 ---
@@ -69,7 +69,7 @@ Machbase의 주요 제한 사항을 테이블 유형별, Edition별, 일반 시�
 ROWID와 generated ROWID는 Standard Edition에서만 지원합니다. generated ROWID는 단일
 `INSERT ... VALUES`에만 제공되며 batch, Append, loader, `INSERT ... SELECT`, UPSERT에서는
 반환하지 않습니다. SDK별 반환 API는
-[ROWID와 INSERT 결과 ID](/dbms/application-integration/rowid-generated-id/)를 참고하십시오.
+[ROWID와 INSERT 결과 ID](/dbms/development-tools-integration/rowid-generated-id/)를 참고하십시오.
 
 | SDK | 제한 내용 |
 |-----|---------|

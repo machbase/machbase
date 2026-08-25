@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '16.5 백업 데이터 조회'
+title: '15.5 백업 데이터 조회'
 weight: 50
 toc: true
 ---

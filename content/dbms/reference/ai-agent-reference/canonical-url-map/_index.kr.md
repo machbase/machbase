@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.8.2 canonical-url-map'
+title: '17.8.2 canonical-url-map'
 weight: 20
 toc: true
 ---
@@ -18,7 +18,7 @@ toc: true
 | VOLATILE 테이블 | `/dbms/volatile-table-usage/` |
 | TRANSACTION 테이블 | `/dbms/rdb-table-usage/` |
 | ROLLUP | `/dbms/core-concepts/features-concepts/#role-statistics-rollup` |
-| Append (개념) | `/dbms/application-integration/concepts-common/#append-api-batch` |
+| Append (개념) | `/dbms/development-tools-integration/concepts-common/#append-api-batch` |
 | AUTH KEY | `/dbms/security-access-control/authentication-auth-key/` |
 | 다중 데이터베이스 | `/dbms/operations-configuration-recovery/multi-database/` |
 
@@ -26,10 +26,10 @@ toc: true
 
 | 방법 | 정규 URL |
 |------|----------|
-| Append API (공통 개념) | `/dbms/application-integration/concepts-common/#append-api-batch` |
-| machloader (CSV/파일 입력) | `/dbms/application-integration/data-input-load-export/#file-import-machloader` |
+| Append API (공통 개념) | `/dbms/development-tools-integration/concepts-common/#append-api-batch` |
+| machloader (CSV/파일 입력) | `/dbms/development-tools-integration/data-input-load-export/#file-import-machloader` |
 | Collector | `/dbms/operations-configuration-recovery/collector/` |
-| Fluentd 플러그인 | `/dbms/application-integration/external-tools/#fluentd-plugin` |
+| Fluentd 플러그인 | `/dbms/development-tools-integration/external-tools/#fluentd-plugin` |
 
 ## 개발 도구 API와 실무 가이드
 
@@ -42,9 +42,9 @@ toc: true
 | Node.js API | `/dbms/development-tools-integration/node-js-typescript/` |
 | Machbase SQLCLI API | `/dbms/development-tools-integration/cli-odbc/` |
 | ODBC API | `/dbms/development-tools-integration/cli-odbc/` |
-| 실무 드라이버 가이드 | `/dbms/application-integration/guide-drivers/` |
-| SDK 지원 범위 전체 | `/dbms/development-tools-integration/#sdk` |
-| Nullable 메타데이터 지원 | `/dbms/development-tools-integration/#support-scope-sdk-nullable-metadata` |
+| 실무 드라이버 가이드 | `/dbms/development-tools-integration/selection-integration-method/` |
+| SDK 지원 범위 전체 | `/dbms/development-tools-integration/sdk-support-scope/#sdk` |
+| Nullable 메타데이터 지원 | `/dbms/development-tools-integration/sdk-support-scope/#support-scope-sdk-nullable-metadata` |
 | Named Bind Parameter | `/dbms/reference/sql/syntax-dictionary-sql/named-bind-parameter-syntax/` |
 
 ## 운영

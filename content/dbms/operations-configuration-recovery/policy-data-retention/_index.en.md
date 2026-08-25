@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '14.5 Data Retention Policy'
+title: '13.5 Data Retention Policy'
 weight: 40
 toc: true
 ---

@@ -55,7 +55,7 @@ Fluentd는 오픈소스 데이터 수집 에이전트로, 다양한 소스에서
 
 Fluentd Output Plugin 설치, 설정, 튜닝 방법은 다음 문서를 참고하십시오.
 
-> **[12장 애플리케이션 연동 → Fluentd](/dbms/application-integration/)** 에서 상세 내용을 다룹니다.
+> **[11장 개발 및 애플리케이션 연동 → Fluentd](/dbms/development-tools-integration/external-tools/#fluentd-plugin)** 에서 상세 내용을 다룹니다.
 
 <a id="log-logs-pipeline-connection-fluentd"></a>
 

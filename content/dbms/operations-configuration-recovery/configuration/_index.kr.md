@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '14.3 설정 운영'
+title: '13.3 설정 운영'
 weight: 30
 toc: true
 ---
@@ -148,7 +148,7 @@ CSV 원본의 timezone과 date format을 함께 문서화합니다.
 
 ## SDK connection timezone
 
-지원 option 이름은 SDK마다 다릅니다. [11장 개발 도구 연동](/dbms/development-tools-integration/)
+지원 option 이름은 SDK마다 다릅니다. [11장 개발 및 애플리케이션 연동](/dbms/development-tools-integration/)
 에서 해당 driver의 connection option을 확인하고, 입력·조회·pool 재사용 뒤에도 같은
 timezone이 적용되는지 검증합니다.
 

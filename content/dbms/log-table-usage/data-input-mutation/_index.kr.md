@@ -57,7 +57,7 @@ DROP TABLE input_log;
 
 파일 적재 전에는 컬럼 순서, 구분자, 날짜 형식과 인코딩을 소량 샘플로 검증하고 bad 파일과
 로그를 보존합니다. 전체 명령과 재현 예제는
-[데이터 입력·적재·반출](/dbms/application-integration/data-input-load-export/)을
+[데이터 입력·적재·반출](/dbms/development-tools-integration/data-input-load-export/)을
 기준으로 사용하십시오.
 
 ## 입력 경로 비교

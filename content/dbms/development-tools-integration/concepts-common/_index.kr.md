@@ -1,13 +1,14 @@
 ---
 type: docs
-title: '12.2 공통 연동 개념'
+title: '11.2 공통 연동 개념'
 weight: 20
 toc: true
+aliases:
+  - /dbms/application-integration/concepts-common/
 ---
 
 드라이버나 언어에 관계없이 공통으로 적용되는 연결, 바인딩, 트랜잭션, 대량 입력, 오류 처리
-원칙을 설명합니다. SDK별 함수명과 완전한 코드는
-[11장 개발 도구 연동](/dbms/development-tools-integration/)을 정본으로 사용합니다.
+원칙을 설명합니다. SDK별 함수명과 완전한 코드는 이 장의 SDK별 페이지를 정본으로 사용합니다.
 
 <a id="connection-string-authentication"></a>
 
@@ -131,7 +132,7 @@ LOG·TAG Append를 같은 rollback 단위로 가정하지 않습니다.
 
 Append connection은 일반 query connection과 분리합니다. 컬럼 순서와 타입을 테이블
 스키마에 맞추고, flush와 close의 의미는 해당 SDK 문서를 기준으로 합니다. 지원 SDK는
-[SDK별 APPEND 지원 범위](/dbms/development-tools-integration/#support-scope-sdk-append)를
+[SDK별 APPEND 지원 범위](../sdk-support-scope/#support-scope-sdk-append)를
 참고합니다.
 
 <a id="error-handling-retry"></a>

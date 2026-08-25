@@ -1,8 +1,10 @@
 ---
 type: docs
-title: '12.6 데이터 입력과 반출'
-weight: 70
+title: '11.10 데이터 입력과 반출'
+weight: 100
 toc: true
+aliases:
+  - /dbms/application-integration/data-input-load-export/
 ---
 
 SQL, Append API, 파일 도구 중 데이터 양과 운영 방식에 맞는 경로를 선택합니다. 이 페이지는
@@ -62,7 +64,7 @@ DROP TABLE integration_insert_demo;
 
 Append는 각 SDK의 전용 API로 table을 열고 여러 row를 보낸 뒤 flush·close하는 흐름입니다.
 컬럼 순서와 타입을 대상 스키마에 맞추고, 일반 query와 connection을 분리합니다. 언어별
-완전한 코드는 [11장 개발 도구 연동](/dbms/development-tools-integration/)을 참고합니다.
+완전한 코드는 이 장의 SDK별 페이지를 참고합니다.
 
 <a id="load-data-infile"></a>
 <a id="sql-load-data-infile"></a>

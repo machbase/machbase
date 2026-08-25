@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.8.13 RAG chunk index 설계'
+title: '17.8.13 RAG chunk index 설계'
 weight: 130
 toc: true
 ---

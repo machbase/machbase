@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '13.8 Input Performance and Integration Paths'
+title: '12.8 Input Performance and Integration Paths'
 weight: 80
 toc: true
 ---

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.3.4 V$STORAGE_MOUNT_DATABASES 사전'
+title: '17.3.4 V$STORAGE_MOUNT_DATABASES 사전'
 weight: 50
 toc: true
 ---
