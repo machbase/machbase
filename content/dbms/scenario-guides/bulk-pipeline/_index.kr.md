@@ -1,460 +1,84 @@
 ---
 type: docs
-title: '16.4 대량 데이터 적재 파이프라인'
-weight: 60
+title: '16.4 대량 적재 파이프라인'
+weight: 40
 toc: true
 ---
 
-## 시나리오 개요
+대량 적재는 입력 파일, 대상 테이블, 실패 처리, 재시도와 검증을 하나의 파이프라인으로
+설계해야 합니다. 명령 옵션의 정본은
+[데이터 입력·적재·내보내기](/dbms/application-integration/data-input-load-export/)와
+[machloader 사전](/dbms/reference/command-line-tools/dictionary-machloader/)에서 확인합니다.
 
-CSV 파일, 외부 데이터베이스, 메모리 내 데이터 구조 등에서 대용량 데이터를 고속으로 적재하는 파이프라인을 설계합니다. 적재 방식별 특성을 비교하고 상황에 맞는 최적의 전략을 선택합니다.
+## 1단계: 적재 계약 정의
 
----
+다음을 배치 실행 전에 고정합니다.
 
-## 1단계: 파이프라인 설계 원칙
+- 대상 database, 테이블과 열 순서
+- 파일 인코딩, 구분자, 따옴표, 줄바꿈과 시간 형식
+- 중복 행을 구분할 키 또는 시간 범위
+- 허용할 실패 행과 전체 배치 실패 기준
+- 원본, 처리 완료, 실패 파일의 보관 위치
 
-### 적재 방식 선택 기준
-
-| 방식 | 적합한 상황 | 처리량 | 비고 |
-|------|------------|--------|------|
-| **machloader** | CSV/텍스트 파일 일괄 적재 | 매우 높음 | 운영 자동화에 적합 |
-| **Append API (JDBC)** | Java 애플리케이션 내 실시간 적재 | 높음 | 배치 크기 조절 가능 |
-| **Append API (Python)** | 스크립트 기반 ETL, 분석 파이프라인 | 높음 | 간단한 구현 |
-| **INSERT** | 소량 데이터, 트랜잭션 필요 시 | 낮음 | 대량 적재에는 부적합 |
-
-> **원칙:** 지속적인 애플리케이션 입력은 Append API를, 클라이언트 파일 적재는 machloader를
-> 우선 검토합니다. SQL INSERT와 비교할 때는 같은 데이터, 동시성, 인덱스 조건으로 처리량과
-> 지연을 측정합니다.
-
-### 적재 대상 테이블 생성
+LOG 테이블에는 `_ARRIVAL_TIME`이 자동으로 제공되므로 사용자 열로 다시 선언하지 않습니다.
 
 ```sql
--- LOG 테이블: 시계열 이벤트 로그 적재 예시
-CREATE LOG TABLE sensor_log (
-    _arrival_time DATETIME,
-    device_id     VARCHAR(64),
-    sensor_type   VARCHAR(32),
-    value         DOUBLE,
-    quality       INTEGER
-);
-
--- TAG 테이블: 센서 시계열 데이터 적재 예시
-CREATE TAG TABLE sensor_tag (
-    name  VARCHAR(64) PRIMARY KEY,
-    time  DATETIME BASETIME,
-    value DOUBLE SUMMARIZED
+CREATE LOG TABLE sc16_bulk_log (
+    source_time DATETIME,
+    sensor_id   VARCHAR(64),
+    value       DOUBLE,
+    quality     INTEGER
 );
 ```
 
----
+## 2단계: 입력 방식 선택
 
-## 2단계: machloader를 이용한 CSV 대량 적재
+| 조건 | 시작점 |
+|---|---|
+| 정형 CSV 파일 | `machloader` |
+| 애플리케이션에서 연속 배치 입력 | 해당 SDK의 Append API |
+| 일회성 소량 검증 | prepared INSERT |
 
-machloader는 CSV 파일을 Machbase에 직접 적재하는 공식 CLI 도구입니다. 내부적으로 Append API를 사용하므로 INSERT보다 훨씬 빠릅니다.
-
-### 기본 사용법
-
-```bash
-# CSV 파일을 sensor_log 테이블에 적재
-machloader -i -t sensor_log -d /data/sensor_20240101.csv
-
-# 헤더 행이 포함된 CSV (첫 번째 행을 컬럼명으로 처리)
-machloader -i -t sensor_log -d /data/sensor_20240101.csv -H
-
-# 인코딩 지정 (UTF-8 파일)
-machloader -i -t sensor_log -d /data/sensor_20240101.csv -E UTF-8
-
-# 파이프(|) 구분자 사용
-machloader -i -t sensor_log -d /data/sensor_20240101.csv -E UTF-8 -D '|'
-```
-
-### CSV 파일 형식 예시
-
-```csv
-# 헤더 없는 CSV (컬럼 순서가 테이블 정의와 일치해야 함)
-2024-01-01 00:00:01,DEVICE_A,TEMP,72.3,100
-2024-01-01 00:00:01,DEVICE_A,PRESS,1.04,100
-2024-01-01 00:00:02,DEVICE_B,TEMP,68.5,100
-```
-
-```csv
-# 헤더 포함 CSV (-H 옵션 사용 시)
-_arrival_time,device_id,sensor_type,value,quality
-2024-01-01 00:00:01,DEVICE_A,TEMP,72.3,100
-2024-01-01 00:00:01,DEVICE_A,PRESS,1.04,100
-```
-
-### 주요 옵션 정리
-
-| 옵션 | 설명 | 예시 |
-|------|------|------|
-| `-i` | 입력(import) 모드 | 필수 |
-| `-t` | 대상 테이블 이름 | `-t sensor_log` |
-| `-d` | 입력 파일 경로 | `-d /data/file.csv` |
-| `-H` | 첫 번째 행을 헤더로 처리 | |
-| `-E` | 파일 인코딩 | `-E UTF-8` |
-| `-D` | 필드 구분자 (기본: 쉼표) | `-D '|'` |
-| `-b` | 오류 레코드 저장 파일 | `-b /tmp/sensor.bad` |
-| `-l` | 처리 로그 파일 | `-l /tmp/sensor.log` |
-| `-n` | 레코드 구분자 | `-n '\\n'` |
-
-### 배치 적재 자동화 스크립트
+`machloader -h`로 현재 배포본의 옵션 의미를 확인한 뒤 사용합니다. 예를 들어 오류 행 파일은
+`-b`, 실행 로그는 `-l`로 지정합니다. `-e`와 `-n`을 오류 수 옵션으로 사용하지 마십시오.
 
 ```bash
-#!/bin/bash
-# daily_load.sh - 전날 데이터 파일을 일괄 적재
-
-DATA_DIR="/data/sensors"
-LOG_DIR="/var/log/machloader"
-TABLE="sensor_log"
-DATE=$(date -d "yesterday" +%Y%m%d)
-
-mkdir -p "$LOG_DIR"
-
-for FILE in "$DATA_DIR"/sensor_${DATE}_*.csv; do
-    BASENAME=$(basename "$FILE" .csv)
-    machloader -i -t "$TABLE" -d "$FILE" -H -E UTF-8 \
-               -b "$LOG_DIR/${BASENAME}.bad" \
-               -l "$LOG_DIR/${BASENAME}.log" \
-               >> "$LOG_DIR/${BASENAME}.log" 2>&1
-
-    if [ $? -eq 0 ]; then
-        echo "[$(date)] SUCCESS: $FILE"
-        mv "$FILE" "$DATA_DIR/done/"
-    else
-        echo "[$(date)] FAILED:  $FILE (확인: $LOG_DIR/${BASENAME}.log)"
-    fi
-done
+machloader -h
+machloader -s 127.0.0.1 -P 5656 -u app_user \
+  -t sc16_bulk_log -i /data/input.csv \
+  -b /data/input.bad -l /data/input.log
 ```
 
----
+비밀번호는 명령행에 고정하지 말고 배포 환경의 안전한 입력 수단을 사용합니다.
 
-## 3단계: Append API를 이용한 프로그래밍 방식 (Python)
+## 3단계: Append 구현
 
-Python에서 `machbaseAPI` 패키지를 사용하면 애플리케이션 내에서 직접 고속 적재를 구현할 수 있습니다.
+언어별 Append 호출, 반환값과 오류 처리는 [개발 도구 연동](/dbms/development-tools-integration/)의
+현재 quickstart를 사용합니다. 예외만 기다리지 말고 SDK가 반환하는 성공·실패 값도 확인합니다.
+실패한 행을 문자열 결합 INSERT로 자동 재실행하지 마십시오. 바인드 구문을 사용하고, 실패가
+일시적인지 데이터 오류인지 구분한 뒤 재처리합니다.
 
-### 기본 Append 예시
+## 4단계: 완료 검증
 
-```python
-import json
-import re
-from machbaseAPI.machbaseAPI import machbase
-
-HOST     = "localhost"
-USER     = "SYS"
-PASSWORD = "MANAGER"
-PORT     = 5656
-
-def get_column_types(db, table_name):
-    """테이블의 컬럼 타입 목록을 반환합니다."""
-    db.columns(table_name)
-    columns_str = db.result()
-    types = [
-        json.loads(item).get("type")
-        for item in re.findall(r"\{[^}]+\}", columns_str)
-    ]
-    return types
-
-def load_csv_data(file_path, table_name="sensor_log"):
-    db = machbase()
-    db.open(HOST, USER, PASSWORD, PORT)
-
-    types = get_column_types(db, table_name)
-
-    batch_size = 5000
-    values = []
-
-    with open(file_path, "r", encoding="utf-8") as f:
-        next(f)  # 헤더 건너뜀
-        for line in f:
-            cols = line.strip().split(",")
-            values.append(cols)
-
-            if len(values) >= batch_size:
-                db.append(table_name, types, values, "YYYY-MM-DD HH24:MI:SS")
-                values.clear()
-
-    # 나머지 데이터 flush
-    if values:
-        db.append(table_name, types, values, "YYYY-MM-DD HH24:MI:SS")
-
-    db.close()
-    print(f"적재 완료: {file_path}")
-
-load_csv_data("/data/sensor_20240101.csv")
-```
-
----
-
-## 4단계: 병렬 Append로 처리량 극대화
-
-멀티스레드로 여러 연결에서 동시에 Append를 수행하면 처리량이 거의 선형으로 증가합니다.
-
-```python
-import json
-import re
-import threading
-from machbaseAPI.machbaseAPI import machbase
-
-HOST     = "localhost"
-USER     = "SYS"
-PASSWORD = "MANAGER"
-PORT     = 5656
-TABLE    = "sensor_log"
-THREADS  = 4        # 권장: Warehouse 노드 수 × 1~2
-BATCH    = 10000
-
-def get_column_types():
-    db = machbase()
-    db.open(HOST, USER, PASSWORD, PORT)
-    db.columns(TABLE)
-    columns_str = db.result()
-    types = [
-        json.loads(item).get("type")
-        for item in re.findall(r"\{[^}]+\}", columns_str)
-    ]
-    db.close()
-    return types
-
-def append_worker(thread_id, data_chunk, types):
-    db = machbase()
-    db.open(HOST, USER, PASSWORD, PORT)
-
-    batch = []
-    for row in data_chunk:
-        batch.append(row)
-        if len(batch) >= BATCH:
-            db.append(TABLE, types, batch, "YYYY-MM-DD HH24:MI:SS")
-            batch.clear()
-
-    if batch:
-        db.append(TABLE, types, batch, "YYYY-MM-DD HH24:MI:SS")
-
-    db.close()
-    print(f"[Thread-{thread_id}] 완료: {len(data_chunk)}건")
-
-def parallel_append(all_data):
-    types = get_column_types()
-
-    # 데이터를 스레드 수로 균등 분할
-    chunks = [all_data[i::THREADS] for i in range(THREADS)]
-
-    threads = []
-    for i, chunk in enumerate(chunks):
-        t = threading.Thread(target=append_worker, args=(i, chunk, types))
-        threads.append(t)
-        t.start()
-
-    for t in threads:
-        t.join()
-
-    print(f"병렬 적재 완료: 총 {len(all_data)}건")
-
-# 사용 예시
-all_rows = [...]  # 적재할 데이터 목록
-parallel_append(all_rows)
-```
-
-> **Cluster Edition 고려사항:** Cluster Edition에서는 Broker 노드와 Warehouse 노드가 분리됩니다. machloader/Append 클라이언트는 Broker 서비스 포트로 연결합니다. Warehouse 노드 직접 Append는 지원하지 않습니다. 자세한 내용은 [/dbms/operations-configuration-recovery/cluster/](/dbms/operations-configuration-recovery/cluster/) 시나리오를 참고하십시오.
-
----
-
-## 5단계: 적재 진행 상황 모니터링
-
-적재가 진행되는 동안 Machbase 시스템 뷰로 실시간 상태를 확인합니다.
+적재 시작 전에 기준 행 수와 시간 범위를 기록하고, 완료 후 같은 쿼리로 비교합니다.
 
 ```sql
--- 현재 실행 중인 Append 세션 확인
-SELECT sess_id,
-       id        AS stmt_id,
-       state,
-       record_size,
-       query
-  FROM v$stmt
- WHERE query LIKE '%APPEND%'
- ORDER BY sess_id, id;
+SELECT COUNT(*) AS row_count,
+       MIN(source_time) AS min_source_time,
+       MAX(source_time) AS max_source_time
+  FROM sc16_bulk_log;
 ```
+
+검증에는 loader 또는 SDK의 성공 건수, 실패 파일의 행 수, 대상 테이블 행 수를 모두 사용합니다.
+checkpoint는 DB 입력 성공과 검증이 끝난 뒤에만 전진시킵니다.
+
+## 5단계: 정리
+
+검증용 객체가 더 필요하지 않으면 제거합니다.
 
 ```sql
--- 세션별 네트워크·쿼리 통계
-SELECT id,
-       login_time,
-       user_name,
-       user_ip,
-       closed
-  FROM v$session
- ORDER BY login_time DESC;
+DROP TABLE sc16_bulk_log;
 ```
 
-```sql
--- 테이블 행 수로 적재 진행 확인
-SELECT COUNT(*) AS total_rows FROM sensor_log;
-
--- 가장 최근에 적재된 행의 시간 확인
-SELECT MAX(_arrival_time) AS latest_arrival FROM sensor_log;
-```
-
----
-
-## 6단계: 오류 처리 전략
-
-### machloader 오류 행 처리
-
-machloader는 `-e` 옵션으로 오류 행을 별도 파일에 저장합니다.
-
-```bash
-machloader -i -t sensor_log -d /data/sensor.csv -H \
-           -e /tmp/sensor_err.csv \
-           -n 100   # 최대 100건까지 오류 허용 후 계속 진행
-```
-
-오류 파일을 검토한 뒤 데이터를 보정하여 재적재합니다.
-
-```bash
-# 오류 파일 확인
-cat /tmp/sensor_err.csv
-
-# 보정 후 재적재
-machloader -i -t sensor_log -d /tmp/sensor_err_fixed.csv -H
-```
-
-### Python Append API 오류 처리
-
-```python
-def safe_append(db, table_name, types, values, fallback=True):
-    """Append 실패 시 INSERT로 fallback하는 함수."""
-    try:
-        db.append(table_name, types, values, "YYYY-MM-DD HH24:MI:SS")
-    except Exception as e:
-        print(f"[WARN] Append 실패: {e}")
-        if fallback:
-            # 건별 INSERT로 재시도 (느리지만 안전)
-            for row in values:
-                try:
-                    cols   = ", ".join(str(v) for v in row)
-                    sql    = f"INSERT INTO {table_name} VALUES ({cols})"
-                    db.execute(sql)
-                except Exception as ex:
-                    print(f"[ERROR] INSERT 실패: {ex} | row={row}")
-```
-
-### 부분 실패 대응 체크포인트 방식
-
-대용량 파일을 청크 단위로 나누어 적재하고, 적재 완료한 오프셋을 파일에 기록하면 중단 후 이어서 적재할 수 있습니다.
-
-```python
-import os
-
-CHECKPOINT_FILE = "/tmp/load_checkpoint.txt"
-
-def load_with_checkpoint(file_path, table_name, types, batch_size=5000):
-    # 이전 체크포인트 읽기
-    start_line = 0
-    if os.path.exists(CHECKPOINT_FILE):
-        with open(CHECKPOINT_FILE) as f:
-            start_line = int(f.read().strip())
-        print(f"체크포인트에서 재개: {start_line}행부터")
-
-    db = machbase()
-    db.open(HOST, USER, PASSWORD, PORT)
-
-    values = []
-    current_line = 0
-
-    with open(file_path, "r") as f:
-        next(f)  # 헤더 건너뜀
-        for line in f:
-            current_line += 1
-            if current_line <= start_line:
-                continue
-
-            values.append(line.strip().split(","))
-
-            if len(values) >= batch_size:
-                db.append(table_name, types, values, "YYYY-MM-DD HH24:MI:SS")
-                values.clear()
-                # 체크포인트 저장
-                with open(CHECKPOINT_FILE, "w") as cf:
-                    cf.write(str(current_line))
-
-    if values:
-        db.append(table_name, types, values, "YYYY-MM-DD HH24:MI:SS")
-
-    db.close()
-    # 완료 후 체크포인트 삭제
-    if os.path.exists(CHECKPOINT_FILE):
-        os.remove(CHECKPOINT_FILE)
-    print(f"적재 완료: 총 {current_line - start_line}건")
-```
-
----
-
-## 7단계: 적재 후 검증 쿼리
-
-적재 완료 후 데이터 무결성을 검증합니다.
-
-```sql
--- 적재된 총 건수 확인
-SELECT COUNT(*) AS total_rows
-  FROM sensor_log;
-
--- 날짜별 적재 건수 분포 확인
-SELECT TO_CHAR(_arrival_time, 'YYYY-MM-DD') AS load_date,
-       COUNT(*)                              AS row_count
-  FROM sensor_log
- GROUP BY TO_CHAR(_arrival_time, 'YYYY-MM-DD')
- ORDER BY load_date DESC
- LIMIT 10;
-
--- 최신 적재 시각 확인
-SELECT MAX(_arrival_time) AS latest_time,
-       MIN(_arrival_time) AS oldest_time
-  FROM sensor_log;
-
--- 장치별 데이터 건수 확인
-SELECT device_id,
-       COUNT(*)      AS row_count,
-       MIN(value)    AS min_val,
-       MAX(value)    AS max_val,
-       AVG(value)    AS avg_val
-  FROM sensor_log
- GROUP BY device_id
- ORDER BY device_id
- LIMIT 20;
-
--- TAG 테이블의 경우 통계 뷰로 빠르게 확인
-SELECT name,
-       row_count,
-       min_time,
-       max_time,
-       recent_row_time
-  FROM v$sensor_tag_stat
- ORDER BY name;
-```
-
----
-
-## Cluster Edition 고려사항
-
-| 항목 | Standard Edition | Cluster Edition |
-|------|-----------------|-----------------|
-| 적재 대상 | Machbase 단일 노드 | Broker 서비스 포트 |
-| 병렬 스레드 | CPU 코어 수 기준 | Warehouse 노드 수 × 1~2 |
-| machloader | 단일 프로세스 | Broker 포트로 연결 |
-| 오류 처리 | 단순 재시도 | 노드 장애 시 다른 노드로 재연결 |
-
-Cluster Edition에서 machloader를 사용할 때는 Broker 포트로 연결합니다.
-
-```bash
-# Cluster Edition: Broker 포트(5656)로 연결
-machloader -i -t sensor_log -d /data/sensor.csv -H \
-           -s localhost -u SYS -p MANAGER -P 5656
-```
-
----
-
-## 참고
-
-- `_ARRIVAL_TIME` 역순 입력 주의사항: [../../performance-tuning/performance-tuning/performance-tuning-bulk](/dbms/performance-tuning/performance-tuning/#performance-tuning-bulk)
-- 대량 입력 성능 튜닝: [../../performance-tuning/performance-tuning/performance-tuning-bulk](/dbms/performance-tuning/performance-tuning/#performance-tuning-bulk)
-- Collector를 이용한 파일 수집: [/dbms/scenario-guides/file-ingestion-collector/](/dbms/scenario-guides/file-ingestion-collector/)
+스레드 수, 배치 크기, 재시도 간격은 고정 권장값이 아니라 테스트 환경의 처리량, 지연, 메모리와
+서버 부하를 함께 측정해 결정합니다.

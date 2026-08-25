@@ -5,51 +5,20 @@ weight: 160
 toc: true
 ---
 
-실제 업무 시나리오를 단계별로 따라하며 Machbase의 주요 기능을 익히는 실습 안내서입니다. 데이터 수집·저장·집계·조회·운영까지 산업 현장에서 자주 쓰이는 패턴을 SQL과 코드 예시로 다룹니다.
+이 장은 앞 장의 기능을 실제 운영 흐름으로 조합합니다. SQL 실습은 각 페이지의 고유한
+`SC16_` 객체를 사용하며 생성, 입력, 검증, 정리 순서로 구성합니다.
 
-각 시나리오는 독립적으로 수행할 수 있습니다. Machbase를 처음 쓴다면 초급 시나리오부터 시작하십시오.
+| 절 | 시나리오 | 정본으로 연결되는 내용 |
+|---|---|---|
+| 16.1 | [실시간 상태 대시보드](./state-status-real-time-dashboard/) | TAG 최신값과 상태 판정 |
+| 16.2 | [장비 마스터와 알람](./state-master-status-equipment-alarm/) | LOOKUP, TAG, LOG |
+| 16.3 | [TAG·TRANSACTION·LOG 조인](./join-tag-rdb-log/) | 이기종 테이블 조인 |
+| 16.4 | [대량 적재 파이프라인](./bulk-pipeline/) | loader와 Append 선택 |
+| 16.5 | [백업 데이터 조회](./backup-query-mount/) | BACKUP, MOUNT, UMOUNT |
+| 16.6 | [클러스터 작업 계획](./cluster/) | 설치·운영 정본을 이용한 변경 계획 |
+| 16.7 | [Collector 파일 적재](./file-ingestion-collector/) | 템플릿 등록과 결과 검증 |
+| 16.8 | [SDK 선택](./examples/) | 11장의 검증된 언어별 quickstart |
 
-## 시나리오 목록
-
-| # | 시나리오 | 난이도 | 핵심 기능 |
-|---|----------|--------|-----------|
-| 1 | [센서 데이터 저장과 ROLLUP 분석](/dbms/tag-rollup-usage/patterns-scenarios/#storage-sensor-data-rollup) | 초급 | TAG 테이블, ROLLUP |
-| 2 | [로그 데이터 저장과 텍스트 검색](/dbms/log-table-usage/patterns-scenarios/#storage-log-text-search-logs) | 초급 | LOG 테이블, SEARCH |
-| 3 | [장비 마스터 데이터와 알람 상태 관리](state-master-status-equipment-alarm/) | 중급 | LOOKUP 테이블, JOIN |
-| 4 | [TAG + TRANSACTION + LOG 조인 대시보드](join-tag-rdb-log/) | 중급 | 복합 JOIN, 집계 |
-| 5 | [실시간 상태판 만들기](state-status-real-time-dashboard/) | 중급 | TAG, LOOKUP, Python SDK |
-| 6 | [대량 데이터 적재 파이프라인](bulk-pipeline/) | 중급 | Append API, 배치 |
-| 7 | [Collector로 파일 수집하기](file-ingestion-collector/) | 중급 | Collector |
-| 8 | [Fluentd로 로그 파이프라인 연결하기](/dbms/log-table-usage/fluentd-pipeline/#log-logs-pipeline-connection-fluentd) | 중급 | Fluentd 플러그인 |
-| 9 | [이상 데이터 정정 후 ROLLUP Rebuild](/dbms/tag-rollup-usage/rollup-rebuild/#correction-abnormal-data-rollup-rebuild) | 고급 | ROLLUP Rebuild |
-| 10 | [백업 데이터 마운트 후 조회](backup-query-mount/) | 고급 | Backup, Mount |
-| 11 | [Cluster 설치와 확장](cluster/) | 고급 | Cluster Edition |
-| 12 | [애플리케이션 연동 예제](examples/) | 초급~중급 | SDK |
-
-## 난이도 기준
-
-- **초급**: 기본 SQL과 테이블 생성·조회에 집중합니다. Machbase를 처음 접하는 분도 따라할 수 있습니다.
-- **중급**: 테이블 유형별 특성과 기본 운영 방식을 이해한 상태에서 시작합니다. 여러 기능을 조합해 실용적인 패턴을 구성합니다.
-- **고급**: 내부 동작 원리와 운영 경험을 전제합니다. 성능 최적화, 장애 대응, 클러스터 구성 등을 다룹니다.
-
-## 시나리오 그룹
-
-### 데이터 저장과 조회 (1~2번)
-
-TAG 테이블과 LOG 테이블의 기본 사용 패턴입니다. 데이터 수집·저장 후 ROLLUP 집계와 텍스트 검색으로 조회하는 흐름을 익힙니다.
-
-### 마스터 데이터와 복합 조회 (3~4번)
-
-LOOKUP 테이블로 장비 마스터를 관리하고, TAG·LOG·TRANSACTION 테이블을 조인해 대시보드용 데이터를 구성하는 패턴을 다룹니다.
-
-### 실시간 처리와 파이프라인 (5~8번)
-
-SDK 백엔드로 상태판을 만들고, Collector와 Fluentd로 외부 데이터를 수집하는 파이프라인을 구축합니다.
-
-### 자동화와 고급 운영 (9~11번)
-
-ROLLUP Rebuild, 백업 마운트, 클러스터 구성 등 운영 환경에서 필요한 고급 패턴을 다룹니다.
-
-### 애플리케이션 연동 (12번)
-
-Python, Go 등 다양한 언어의 SDK로 Machbase에 연결하는 예제를 제공합니다.
+공유 서버에서 실습할 때는 별도 논리 database를 사용하고, 완료 후 만든 객체와 database를
+삭제하십시오. 백업·MOUNT, Collector, Cluster 예제는 서비스와 파일 시스템에 영향을 주므로
+격리된 검증 환경에서만 실행합니다.

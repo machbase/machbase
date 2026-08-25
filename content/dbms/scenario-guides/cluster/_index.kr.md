@@ -1,143 +1,55 @@
 ---
 type: docs
-title: '16.7 Cluster 설치와 확장'
-weight: 120
+title: '16.6 클러스터 작업 계획'
+weight: 60
 toc: true
 ---
 
-Machbase Cluster Edition은 대용량 시계열 데이터를 여러 노드에 분산 저장·처리합니다. Cluster 초기 구성부터 운영 중 Warehouse 노드 추가를 통한 수평 확장 절차까지 다룹니다.
+Cluster 설치와 노드 변경은 여러 호스트와 데이터 가용성에 영향을 줍니다. 이 시나리오는
+복사해 실행하는 축약 runbook 대신, 배포 구성에서 실제 명령을 도출하고 검증하는 순서를
+제시합니다.
 
-## Cluster 구성 요소
+## 사전 확인
 
-| 노드 유형 | 역할 | 최소 구성 |
-|-----------|------|:---:|
-| **Coordinator** | 클러스터 메타데이터·토폴로지 관리, 노드 상태 감시 | 1개 |
-| **Deployer** | 패키지 배포, 노드 설치·업그레이드 자동화 | 호스트당 1개 |
-| **Broker** | 클라이언트 연결 수신, 쿼리 라우팅 | 1개 이상 |
-| **Warehouse** | 실제 데이터 저장·처리 | 1개 이상 |
+1. [설치·배포·업그레이드](/dbms/installation-deployment-upgrade/)에서 사용 중인 Edition과
+   배포 방식을 확인합니다.
+2. 배포 저장소의 `cluster.yaml`에서 Coordinator, Broker, Warehouse, Deployer 주소와 포트를
+   확인합니다. 포트를 문서의 고정값으로 가정하지 않습니다.
+3. [Cluster 운영](/dbms/operations-configuration-recovery/cluster/)에서 상태와 안전 제한을
+   확인합니다.
+4. 백업, 롤백 조건, 중단 허용 시간과 승인자를 기록합니다.
 
-최소 구성 예시 (개발용):
-```
-호스트 A: Coordinator + Deployer + Broker
-호스트 B: Deployer + Warehouse
-```
+## 현재 상태 수집
 
-## 사전 준비
-
-1. 모든 노드에 Machbase Cluster Edition 패키지 설치
-2. 노드 간 SSH 키 인증 설정 (Deployer가 원격 명령 실행에 사용)
-3. 방화벽: 기본 포트 허용 (Coordinator 5301, Broker 5656, Warehouse 5300+)
-4. `$MACHBASE_HOME/conf/machbase.conf` 각 노드 역할에 맞게 설정
-
-## 클러스터 초기화
-
-`machclusterctl`로 클러스터 전체를 관리합니다.
+실제 설치의 관리 도구 도움말과 상태 명령만 먼저 실행합니다.
 
 ```bash
-# 설정 검증
-machclusterctl validate -f cluster.yaml
-
-# 클러스터 설치
-machclusterctl install -f cluster.yaml --yes
-
-# 클러스터 전체 시작
-machclusterctl start -f cluster.yaml
-
-# 전체 상태 확인
+machclusterctl --help
 machclusterctl status
+machcoordinatoradmin --cluster-status
 ```
 
-상태 출력 예시:
-```
-Cluster Status: RUNNING
-  Coordinator  [host-a:5301]  RUNNING
-  Broker       [host-a:5656]  RUNNING
-  Warehouse[0] [host-b:5300]  RUNNING
-```
+도구 이름과 지원 옵션은 패키지와 Edition에 따라 다를 수 있습니다. 고정된 예시 출력을
+파싱하지 말고, 실행 중인 배포본의 도움말과 자동화 인터페이스를 기준으로 합니다.
 
-## 클러스터 접속
+## 노드 추가·제거 계획
 
-Broker 주소로 접속합니다. Standard Edition과 동일한 연결 방식을 사용합니다.
+변경 전에 다음 질문에 모두 답할 수 있어야 합니다.
 
-```bash
-# machsql로 접속
-machsql -s host-a -P 5656 -u SYS -p MANAGER
+- 추가하거나 제거할 역할과 노드 이름은 무엇인가
+- 서비스 포트와 노드 간 통신 포트는 각각 무엇인가
+- 데이터 재배치와 복제 상태를 어디서 확인할 것인가
+- 작업 도중 중지하거나 되돌릴 기준은 무엇인가
+- 변경 후 클라이언트 연결, 쓰기, 조회를 어떻게 검증할 것인가
 
-# 클러스터 토폴로지 확인
-SELECT host, nodetype, state, coord_host, coord_http_admin_port
-  FROM v$node_status;
-```
+노드 추가·제거·강제 복구 명령은 토폴로지와 배포 방식에 종속되므로 14장의 운영 정본과 실제
+배포 도구가 생성한 절차를 사용하십시오. Deployer나 Warehouse를 임의로 `machadmin`으로
+시작하거나, 서비스 포트를 노드 등록 포트로 추측해서는 안 됩니다.
 
-## Warehouse 노드 추가 (수평 확장)
+## 완료 조건
 
-데이터 처리량이 증가할 때 Warehouse 노드를 추가해 수평 확장합니다.
-
-### 1단계: 새 노드 패키지 설치
-
-새 호스트(host-c)에 Machbase 패키지를 설치하고 Deployer를 기동합니다.
-
-```bash
-# host-c에서 Deployer 시작
-machadmin -u
-```
-
-### 2단계: 클러스터에 Warehouse 노드 등록
-
-```bash
-# Coordinator가 실행 중인 노드에서
-machcoordinatoradmin --add-node=host-c:5300 --node-type=warehouse \
-  --deployer=<deployer> --package-name=<package> --home-path=<path> \
-  --port-no=<service-port> --replication=<replication-port> --group=<group>
-```
-
-### 3단계: 노드 상태 확인
-
-```bash
-machclusterctl status
-
-# 또는 SQL로 확인
-SELECT host, nodetype, state FROM v$node_status;
-```
-
-새 Warehouse 노드가 `RUNNING` 상태가 되면 자동으로 데이터 분산이 시작됩니다.
-
-## 노드 제거 절차
-
-운영 중 특정 Warehouse 노드를 제거할 때는 데이터 재배치 후 제거합니다.
-
-```bash
-# 상태 확인 후 제거
-machcoordinatoradmin --remove-node=<warehouse-node-name-or-host:cluster-port>
-```
-
-> **주의:** 노드 제거 전에 해당 노드의 데이터 복사본이 다른 노드에 있는지 확인하십시오. 단일 복제본인 경우 데이터 손실이 발생할 수 있습니다.
-
-## 장애 복구
-
-Warehouse 노드가 예기치 않게 중단된 경우:
-
-```bash
-# 1. 장애 노드 상태 확인
-machclusterctl status
-
-# 2. 해당 노드에서 Warehouse 재시작
-machadmin -u  # 장애 노드에서 실행
-
-# 3. 클러스터 합류 확인
-machclusterctl status
-```
-
-자세한 Warehouse 장애 복구 절차는 [Warehouse 상태 복구](/dbms/operations-configuration-recovery/cluster/#recovery-state-status-warehouse)를 참고하십시오.
-
-## Cluster Edition 제약사항
-
-Cluster Edition에서는 다음 기능이 지원되지 않습니다.
-
-| 기능 | 지원 여부 |
-|------|:---:|
-| TRANSACTION 테이블 | X |
-| Custom ROLLUP | X |
-| ROLLUP_REBUILD | X |
-| MOUNT / UMOUNT | X |
-
-전체 제한사항 목록은 [Cluster 운영 제한사항](/dbms/operations-configuration-recovery/cluster/#limitations-cluster)을 참고하십시오.
+- 모든 필수 노드가 의도한 상태로 보고된다.
+- Broker를 통한 시험 입력과 조회가 성공한다.
+- 데이터 분포와 복제 상태가 변경 계획의 기대와 일치한다.
+- 경고·오류 로그가 없고 모니터링이 정상으로 복귀한다.
+- 실제 명령, 결과, 되돌림 여부를 변경 기록에 남겼다.
