@@ -28,7 +28,7 @@ BACKUP DATABASE INTO DISK = '/backup/sc16_snapshot';
 ## 2단계: MOUNT와 조회
 
 ```sql
-MOUNT DATABASE '/backup/sc16_snapshot' AS sc16_mount;
+MOUNT DATABASE '/backup/sc16_snapshot' TO sc16_mount;
 
 SELECT id, value
   FROM sc16_mount.sys.sc16_backup_source

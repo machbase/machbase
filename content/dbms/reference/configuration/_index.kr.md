@@ -25,7 +25,7 @@ Machbase 서버는 `$MACHBASE_HOME/conf/machbase.conf` 파일에 정의된 프�
 SELECT name, value, type FROM v$property ORDER BY name;
 
 -- 특정 프로퍼티 조회
-SELECT name, value, min_value, max_value
+SELECT name, value, min, max
   FROM v$property
  WHERE name = 'PORT_NO';
 ```

@@ -35,8 +35,8 @@ toc: true
 | 요구사항 | 권장 방식 | 주의사항 |
 |----------|----------|----------|
 | 초기 database를 지정하는 JDBC/ODBC/Python/Node.js | 각 client의 database/catalog 연결 옵션 | 연결 직후 `CURRENT_DATABASE()` 확인 |
-| Go native에서 database 전환 | `api.WithDatabase()`, SQL `USE`, 3-part 이름 | `Conn.Appender()`의 target database와 권한 확인 |
-| Go `database/sql` pool에서 여러 DB 사용 | DSN `database`/`db` 또는 URL path/query | 설정된 database가 있으면 `ResetSession()`에서 해당 DB로 복원 |
+| Go native에서 database 선택 | v1.8.3+ `api.WithDatabase()`, SQL `USE`, 3-part 이름 | `WithDatabase`는 연결 시 초기 선택, `USE`는 열린 연결 전환 |
+| Go `database/sql` pool에서 여러 DB 사용 | v1.8.3+ DSN `database`/`db` 또는 URL path/query | 설정된 database가 있으면 `ResetSession()`에서 해당 DB로 복원 |
 | mounted backup 조회 | `USAGE ON DATABASE` + table `SELECT` | mounted DB는 READ ONLY, `USE` 불가 |
 
 다중 데이터베이스의 정규 동작은 [운영 가이드](/dbms/operations-configuration-recovery/multi-database/)를

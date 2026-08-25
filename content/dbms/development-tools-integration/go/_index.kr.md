@@ -19,9 +19,9 @@ Go 표준 도구 체인으로 빌드할 수 있으며 CGo 의존성이 없습니
 
 ## 다중 데이터베이스
 
-현재 공개 `machgo` API에는 연결 옵션으로 database를 지정하는 함수가 없습니다. 연결한 뒤
-`conn.Exec(ctx, "USE DATABASE_A")`를 실행하고, statement와 cursor는 database 선택 후
-생성합니다. Appender의 다중 database 지원 범위는 사용 중인 SDK 버전에서 별도로
+neo-client v1.8.3 이상은 `api.WithDatabase()`로 연결의 초기 database를 선택합니다. 이미
+열린 연결에서 전환할 때는 `conn.Exec(ctx, "USE DATABASE_A")`를 실행합니다. statement,
+cursor와 Appender는 database 선택 후 생성하고, 사용 중인 서버·SDK 조합에서 지원 범위를
 검증하십시오.
 
 ### machgo를 사용하는 이유
@@ -109,6 +109,7 @@ ctx := context.Background()
 conn, err := mdb.Connect(
     ctx,
     api.WithPassword("sys", "manager"),
+    api.WithDatabase("MACHBASEDB"),
 )
 if err != nil {
     panic(err)
@@ -120,7 +121,8 @@ defer conn.Close()
 
 - `api.WithPassword(user, password)`
 
-다른 database를 선택하려면 연결 직후 `conn.Exec(ctx, "USE FACTORY_A")`를 실행합니다.
+초기 database는 neo-client v1.8.3 이상의 `api.WithDatabase()`로 지정합니다. 이미 열린 같은
+connection에서 다른 database로 전환하려면 `conn.Exec(ctx, "USE FACTORY_A")`를 실행합니다.
 
 ### 연결 단위 튜닝 옵션
 

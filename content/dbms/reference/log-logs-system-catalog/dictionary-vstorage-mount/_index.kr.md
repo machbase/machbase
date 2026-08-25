@@ -1,57 +1,51 @@
 ---
 type: docs
-title: '18.3.4 V$STORAGE_MOUNT_* 사전'
+title: '18.3.4 V$STORAGE_MOUNT_DATABASES 사전'
 weight: 50
 toc: true
 ---
 
-`V$STORAGE_MOUNT_DATABASES`는 백업 데이터를 현재 서버에 읽기 전용으로 마운트한 상태를 표시합니다. 마운트된 백업 데이터베이스에서 데이터를 SELECT로 직접 조회할 수 있습니다.
+`V$STORAGE_MOUNT_DATABASES`는 현재 인스턴스에 읽기 전용으로 연결된 backup database를
+표시합니다.
 
-## V$STORAGE_MOUNT_DATABASES
+## 컬럼
 
-| 컬럼 이름 | 타입 | 설명 |
-|----------|------|------|
-| `MOUNT_NAME` | VARCHAR | 마운트에 부여된 이름 |
-| `PATH` | VARCHAR | 마운트된 백업 데이터의 경로 |
-| `MOUNT_TIME` | DATETIME | 마운트가 수행된 시각 |
-| `STATUS` | VARCHAR | 마운트 상태 (`MOUNTED` / `ERROR`) |
+| 컬럼 | 타입 | 설명 |
+|---|---|---|
+| `NAME` | VARCHAR | backup database 이름 |
+| `PATH` | VARCHAR | backup 이미지 원본 경로 |
+| `BACKUP_TBSID` | LONG | backup의 tablespace 식별자 |
+| `BACKUP_SCN` | LONG | backup SCN |
+| `MOUNTDB` | VARCHAR | MOUNT할 때 지정한 database 별칭 |
+| `DB_BEGIN_TIME` | VARCHAR | backup 데이터의 시작 시각 |
+| `DB_END_TIME` | VARCHAR | backup 데이터의 종료 시각 |
+| `BACKUP_BEGIN_TIME` | VARCHAR | backup 작업 시작 시각 |
+| `BACKUP_END_TIME` | VARCHAR | backup 작업 종료 시각 |
+| `FLAG` | INTEGER | 내부 상태 플래그. 값의 의미를 임의로 해석하지 않음 |
 
-## SQL 예제
-
-```sql
--- 현재 마운트된 백업 데이터베이스 목록 전체 조회
-SELECT * FROM v$storage_mount_databases;
-
--- 마운트 이름과 경로, 마운트 시각 확인
-SELECT mount_name, path, mount_time, status
-  FROM v$storage_mount_databases
- ORDER BY mount_time DESC;
-
--- 마운트 상태가 정상인 항목만 확인
-SELECT mount_name, path, mount_time
-  FROM v$storage_mount_databases
- WHERE status = 'MOUNTED';
-```
-
-## 마운트 명령 참고
-
-백업 데이터베이스를 마운트하고 해제하는 명령입니다.
+## 조회
 
 ```sql
--- 백업 데이터베이스 마운트
-MOUNT DATABASE 'backup_20240101' TO '/data/backup/20240101';
-
--- 마운트 해제
-UMOUNT DATABASE 'backup_20240101';
+SELECT NAME, PATH, MOUNTDB,
+       DB_BEGIN_TIME, DB_END_TIME,
+       BACKUP_BEGIN_TIME, BACKUP_END_TIME
+  FROM V$STORAGE_MOUNT_DATABASES
+ ORDER BY MOUNTDB;
 ```
 
-마운트 후 마운트 이름을 접두사로 사용하여 데이터를 조회합니다.
+## MOUNT와 조회 예제
 
 ```sql
--- 마운트된 백업에서 데이터 조회
-SELECT * FROM backup_20240101:sensor_tag
- WHERE time >= TO_DATE('2024-01-01') AND time < TO_DATE('2024-01-02')
- ORDER BY time;
+MOUNT DATABASE '/data/backup/sc16_snapshot' TO backup_check;
+
+SELECT *
+  FROM backup_check.sys.target_table
+ LIMIT 10;
+
+UMOUNT DATABASE backup_check;
 ```
 
-> 마운트 기능 상세와 운영 절차는 [백업과 복구](../../../operations-configuration-recovery/) 섹션을 참고하십시오.
+피연산자는 backup 경로, `TO`, 별칭 순서입니다. mounted database의 객체는
+`mount_alias.owner.table` 세 부분 이름으로 조회합니다. 전체 권한과 안전 제한은
+[BACKUP/RESTORE/MOUNT 문법](/dbms/reference/sql/syntax-dictionary-sql/backup-restore-mount-syntax/)을
+참고하십시오.

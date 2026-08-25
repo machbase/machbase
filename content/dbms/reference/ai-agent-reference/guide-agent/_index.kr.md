@@ -38,7 +38,7 @@ toc: true
 
 - Machbase "Append"는 SQL INSERT와 다른 전용 API입니다. [terminology-disambiguation](../terminology-disambiguation/) 참고.
 - Machbase "ROLLUP"은 SQL `GROUP BY ROLLUP`이 아닌 시계열 집계 기능입니다.
-- TAG 테이블 조회 시 `FROM TAG TABLE` 문법이 필요합니다.
+- TAG 테이블 조회도 일반 `FROM table_name` 문법을 사용합니다.
 - 계획 중인 기능(planned)은 현재 미지원임을 사용자에게 명시하십시오.
 
 ## 불확실한 경우

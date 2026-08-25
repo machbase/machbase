@@ -70,8 +70,8 @@ Connection conn = DriverManager.getConnection(
 try {
     Statement stmt = conn.createStatement();
     stmt.execute("BEGIN");
-    stmt.executeUpdate("INSERT INTO orders VALUES (1, 'customer_a', 50000, NOW())");
-    stmt.executeUpdate("INSERT INTO orders VALUES (2, 'customer_b', 30000, NOW())");
+    stmt.executeUpdate("INSERT INTO orders VALUES (1, 'customer_a', 50000, SYSDATE)");
+    stmt.executeUpdate("INSERT INTO orders VALUES (2, 'customer_b', 30000, SYSDATE)");
     stmt.execute("COMMIT");
 } catch (SQLException e) {
     conn.createStatement().execute("ROLLBACK");

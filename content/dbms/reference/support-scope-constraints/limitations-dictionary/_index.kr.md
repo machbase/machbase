@@ -87,4 +87,4 @@ ROWID와 generated ROWID는 Standard Edition에서만 지원합니다. generated
 | VARCHAR 최대 길이 | 32767 바이트 | |
 | 테이블 이름 최대 길이 | 40자 | |
 | 컬럼 이름 최대 길이 | 40자 | |
-| 동시 접속 세션 수 | 설정값 `MAX_SESSION_COUNT` | 기본값 512 |
+| 동시 접속 세션 수 | 설정값 `MAX_SESSION_COUNT` | 현재 값은 `V$PROPERTY`에서 확인 |

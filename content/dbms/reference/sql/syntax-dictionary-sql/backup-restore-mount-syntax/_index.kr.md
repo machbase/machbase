@@ -136,9 +136,17 @@ backup image의 unsupported object나 owner 충돌은 restore 전체를 실패�
 
 ### 기존 인스턴스 오프라인 복원 (`machadmin -r`)
 
+복원 전 백업 SQL 파일을 준비해 검증한 뒤 실행합니다.
+
+```sql
+-- /secure/path/pre_restore_backup.sql
+BACKUP DATABASE INTO DISK = '/backup/before_restore';
+```
+
 ```bash
-# 1. (권장) 복원 전 현재 데이터 백업
-machsql -u sys -p manager -e "BACKUP DATABASE INTO DISK = '/backup/before_restore';"
+# 1. 복원 전 현재 데이터 백업
+machsql -s 127.0.0.1 -P 5656 -u SYS \
+  -f /secure/path/pre_restore_backup.sql
 
 # 2. 서버 종료
 machadmin -s
@@ -153,7 +161,9 @@ machadmin -r /backup/machbase_20240101
 machadmin -u
 ```
 
-복원을 실행하면 현재 데이터베이스가 백업 시점으로 완전히 교체됩니다.
+`machadmin -d`는 현재 database를 파기합니다. 복구 대상, 백업과 되돌림 계획을 확인하고
+명시적으로 승인받은 뒤에만 실행하십시오. 복원을 실행하면 현재 database가 백업 시점으로
+완전히 교체됩니다.
 
 ### 증분 백업 복원
 

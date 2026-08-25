@@ -30,13 +30,13 @@ toc: true
 
 | 태스크 | 수행 방법 | 참조 문서 |
 |--------|-----------|-----------|
-| 특정 태그의 최신값 조회 | `SELECT ... FROM TAG TABLE t RECENT 1` | [SELECT RECENT](../../../reference/sql/syntax-dictionary-sql/select-syntax/) |
+| 특정 태그의 최신값 조회 | `SCAN_BACKWARD` + `LIMIT 1` 또는 TAG stat의 최신 시각 | [SELECT](../../../reference/sql/syntax-dictionary-sql/select-syntax/) |
 | 시간 범위 집계 조회 | ROLLUP 테이블 활용 또는 `GROUP BY` | [ROLLUP](/dbms/tag-rollup-usage/overview-use-criteria/#rollup) |
 | 복잡한 조회를 단계별로 구성 | Standard Edition에서 비재귀 `WITH`/CTE 사용 | [WITH / CTE](/dbms/reference/sql/syntax-dictionary-sql/cte-syntax/) |
 | SQL 값을 이름으로 바인딩 | `:name` marker와 SDK의 named 입력 사용 | [Named Bind Parameter](/dbms/reference/sql/syntax-dictionary-sql/named-bind-parameter-syntax/) |
 | 텍스트/로그 검색 | LOG 테이블에 `WHERE text LIKE` 또는 전문 검색 | [LOG 테이블](/dbms/log-table-usage/) |
 | 시계열 보간 / 시리즈 분석 | `SERIES BY` 절 사용 | [SELECT 문법](../../../reference/sql/syntax-dictionary-sql/select-syntax/) |
-| 복수 태그 비교 조회 | `FROM TAG TABLE t WHERE name IN (...)` | [TAG 테이블](/dbms/tag-table-usage/) |
+| 복수 태그 비교 조회 | `FROM table_name WHERE name IN (...)` | [TAG 테이블](/dbms/tag-table-usage/) |
 | 집계 결과 빠른 조회 | ROLLUP 결과 테이블 SELECT | [ROLLUP](/dbms/tag-rollup-usage/overview-use-criteria/#rollup) |
 | SELECT 결과 컬럼의 NULL 가능 여부 확인 | SDK 결과 메타데이터의 `NO_NULLS`, `NULLABLE`, `UNKNOWN` 확인 | [Nullable 메타데이터 지원](/dbms/development-tools-integration/#support-scope-sdk-nullable-metadata) |
 
@@ -46,7 +46,7 @@ toc: true
 |--------|-----------|-----------|
 | 사용자 생성 | `CREATE USER username IDENTIFIED BY password` | [사용자 관리](/dbms/security-access-control/account/) |
 | 권한 부여 | `GRANT privilege ON object TO user` | [GRANT/REVOKE](/dbms/security-access-control/privileges/#grant-revoke) |
-| AUTH KEY 등록 | `CREATE AUTH KEY` + 공개키 파일 등록 | [AUTH KEY](../../../security-access-control/authentication-auth-key/) |
+| AUTH KEY 등록 | `ALTER USER ... ADD AUTH KEY`로 공개키 등록 | [AUTH KEY](../../../security-access-control/authentication-auth-key/) |
 | 원격 접속 허용 | 설정 파일 `BIND_IP_ADDRESS`, `PORT_NO` 확인 및 방화벽 설정 | [원격 접속](/dbms/security-access-control/access-control/) |
 | 비밀번호 변경 | `ALTER USER username IDENTIFIED BY new_password` | [사용자 관리](/dbms/security-access-control/account/) |
 
@@ -57,9 +57,9 @@ toc: true
 | 데이터 백업 | `BACKUP DATABASE INTO DISK = '/path'` | [BACKUP/RESTORE](/dbms/operations-configuration-recovery/backup-restore-mount/) |
 | 백업 데이터 마운트 | `MOUNT DATABASE '/path' TO mount_name` | [MOUNT](/dbms/operations-configuration-recovery/backup-restore-mount/#database-mount) |
 | 느린 쿼리 중지 | `v$stmt` 확인 후 `ALTER SYSTEM KILL SESSION` | [operations-checklist](../operations-checklist/) |
-| 서버 상태 확인 | `machadmin -c` 또는 `SELECT * FROM v$session` | [operations-checklist](../operations-checklist/) |
+| 서버 상태 확인 | `machadmin -e`와 `SELECT * FROM V$SESSION` | [operations-checklist](../operations-checklist/) |
 | 이상 데이터 정정 | LOOKUP: UPDATE/DELETE, TAG: data UPDATE 후 필요 시 ROLLUP_REBUILD | [제약 사항](../constraints-index/) |
-| 디스크 사용량 확인 | `SELECT * FROM v$tablespace` | [operations-checklist](../operations-checklist/) |
+| 디스크 사용량 확인 | `SELECT * FROM V$STORAGE_USAGE` | [operations-checklist](../operations-checklist/) |
 
 ## 자동화
 

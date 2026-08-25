@@ -72,7 +72,7 @@ SELECT 1;
 SELECT 'alive';
 SELECT 1 + 2;
 SELECT ABS(-7);
-SELECT NOW();
+SELECT SYSDATE;
 ```
 
 ---

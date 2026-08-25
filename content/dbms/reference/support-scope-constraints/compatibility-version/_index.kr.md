@@ -22,7 +22,7 @@ Machbase 8.7.0 버전의 하위 호환성, 업그레이드 주의사항, 지원 
   8.7.0으로 업그레이드하십시오.
 - CAST의 모든 대상 타입과 길이·정밀도 옵션을 사용하는 SQL은 8.7.0 서버에서 지원됩니다.
   Cluster Edition에서는 모든 cluster node를 CAST를 지원하는 동일 버전으로 구성해야 합니다.
-  자세한 문법과 변환 규칙은 [CAST 함수](../sql/dictionary/functions-full/#cast)를 참고하십시오.
+  자세한 문법과 변환 규칙은 [CAST 함수](/dbms/reference/sql/dictionary/functions-full/#cast)를 참고하십시오.
 - 8.7.0의 Standard Edition에서는 SELECT/JOIN 계획 개선으로 테이블 스캔 순서와 정렬하지
   않은 결과의 반환 순서가 구버전과 달라질 수 있습니다. 결과 순서가 필요하면 `ORDER BY`를
   사용하고, 업그레이드 후에는 [SELECT/JOIN 옵티마이저](/dbms/performance-tuning/performance-query-tuning/#select-join-optimizer)의
@@ -144,9 +144,20 @@ Standard Edition에서 같은 객체나 직접 관련된 객체의 DDL이 충돌
 
 ### 업그레이드 절차
 
+```sql
+-- /secure/path/pre_upgrade_backup.sql
+BACKUP DATABASE INTO DISK = '/data/backup/pre_upgrade_backup';
+```
+
+```sql
+-- /secure/path/check_version.sql
+SELECT * FROM V$VERSION;
+```
+
 ```bash
 # 1. 현재 버전 백업
-machsql -e "BACKUP DATABASE INTO DISK = '/data/backup/pre_upgrade_backup'"
+machsql -s 127.0.0.1 -P 5656 -u SYS \
+  -f /secure/path/pre_upgrade_backup.sql
 
 # 2. 서버 중지
 machadmin -s
@@ -157,7 +168,8 @@ machadmin -s
 machadmin -u
 
 # 5. 버전 확인
-machsql -e "SELECT * FROM v$version"
+machsql -s 127.0.0.1 -P 5656 -u SYS \
+  -f /secure/path/check_version.sql
 ```
 
 ## 지원 OS 및 플랫폼

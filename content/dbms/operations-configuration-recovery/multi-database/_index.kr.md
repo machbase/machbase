@@ -251,9 +251,11 @@ connection config의 `database` 또는 URL path를 사용하고 `CURRENT_DATABAS
 
 ### 9.6 Go
 
-공개 native `machgo`에는 `api.WithDatabase()`가 없습니다. 연결 후 같은 connection에서
-`conn.Exec(ctx, "USE FACTORY_A")`를 실행합니다. `database/sql` pool은 connection이 바뀔
-수 있으므로 current database 지속을 가정하지 않습니다.
+neo-client v1.8.3 이상 native `machgo`는 연결 시 `api.WithDatabase("FACTORY_A")`로 초기
+database를 선택합니다. 이미 열린 같은 connection에서 전환할 때는
+`conn.Exec(ctx, "USE FACTORY_A")`를 실행합니다. `database/sql`은 DSN의 `database`/`db`
+또는 URL path/query로 초기 database를 지정하면 pool에서 connection을 재사용할 때 설정된
+database로 복원합니다. SDK 최소 버전과 `CURRENT_DATABASE()` 결과를 함께 검증하십시오.
 
 ### 9.7 .NET
 

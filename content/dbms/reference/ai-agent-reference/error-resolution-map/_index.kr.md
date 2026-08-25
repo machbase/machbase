@@ -5,52 +5,27 @@ weight: 110
 toc: true
 ---
 
-이 페이지는 Machbase 사용 중 발생하는 주요 오류 상황별 원인과 해결 방법을 매핑합니다.
+오류 코드를 요약 페이지에 복제하면 제품 변경과 함께 의미가 어긋날 수 있습니다. AI는 전체
+오류 코드와 메시지를 보존하고 [오류 코드 사전](/dbms/reference/error-dictionary-codes/)에서
+정확한 의미를 찾습니다.
 
 ## 오류 해결 맵
 
-| 오류 상황 | 오류 내용 | 즉시 조치 | 참조 문서 |
-|-----------|-----------|-----------|-----------|
-| 서버 접속 불가 | `Connection refused` | `machadmin -c`로 서버 상태 확인 → 미기동 시 `machadmin -u`로 시작 | [서버 시작 문제](/dbms/troubleshooting/server-connection/#start-server) |
-| 인증 실패 | `Authentication failed` | 비밀번호 또는 AUTH KEY 파일 경로/권한 확인 | [인증 실패](/dbms/troubleshooting/server-connection/#failure-authentication) |
-| 권한 없음 | `Insufficient privilege (ERR-02186)` | `GRANT privilege ON object TO user` 실행 | [GRANT/REVOKE](/dbms/security-access-control/privileges/#grant-revoke) |
-| 테이블 미존재 | `Table not found (ERR-02058)` | `SELECT name FROM m$sys_tables` 로 테이블명 확인 후 `CREATE TABLE` | [DDL 문법](../../../reference/sql/syntax-dictionary-sql/ddl-syntax/) |
-| PK 중복 | `Duplicate key (ERR-01003)` | LOOKUP 테이블: `UPDATE` 또는 입력 데이터 중복 확인 | [DML 문법](../../../reference/sql/syntax-dictionary-sql/dml-syntax/) |
-| 디스크 부족 | `Disk full (ERR-00303)` | `df -h` 및 `v$tablespace` 확인 후 불필요 파일 정리 | [메모리/디스크 문제](/dbms/troubleshooting/performance/#memory-out-of) |
-| CSV 입력 실패 | `Type mismatch` / `parse error` | machloader 옵션 확인: `-E`(에러 허용), `-D`(구분자), `-f`(날짜 형식) | [CSV import 실패](/dbms/troubleshooting/item/#failure-csv-import) |
-| ROLLUP 결과 이상 | 집계값이 예상과 다름 | `ALTER SYSTEM FLUSH ROLLUP` 실행 후 재확인, `v$rollup` status 점검 | [ROLLUP 문제](/dbms/tag-rollup-usage/overview-use-criteria/#rollup) |
-| Cluster 노드 이상 | 노드 상태 DISCONNECTED | `machclusterctl status`로 상태 확인 후 해당 노드 재시작 | [Cluster 노드 이상](/dbms/troubleshooting/cluster/#node-state-status-abnormal-cluster) |
+| 증상 | 첫 확인 | 정본 |
+|---|---|---|
+| 서버 접속 불가 | `machadmin -e`, 주소·포트·리스너·방화벽 | [서버와 연결 문제](/dbms/troubleshooting/server-connection/) |
+| 인증 실패 | 사용자 만료, 선택한 AUTH_MODE, 키 활성 상태 | [인증 문제](/dbms/troubleshooting/server-connection/#failure-authentication) |
+| 권한 오류 | 대상 database·owner·table과 `M$SYS_USER_ACCESS` | [권한 관리](/dbms/security-access-control/privileges/) |
+| 객체 오류 | 현재 database와 `M$SYS_TABLES`, `M$SYS_COLUMNS` | [시스템 카탈로그](/dbms/reference/log-logs-system-catalog/) |
+| loader 입력 실패 | `machloader -h`, bad/log 파일, schema | [입력 문제](/dbms/troubleshooting/item/#failure-csv-import) |
+| 디스크·메모리 경고 | `V$STORAGE_USAGE`, `V$SYSMEM`, OS 상태 | [성능 문제](/dbms/troubleshooting/performance/) |
+| Cluster 노드 이상 | 전체 토폴로지와 최초 오류 노드 | [Cluster 문제](/dbms/troubleshooting/cluster/) |
 
-## SDK / 드라이버 오류
+## SDK 오류
 
-| 오류 상황 | 오류 내용 | 원인 | 조치 |
-|-----------|-----------|------|------|
-| Go `Begin()` 호출 실패 | isolation/read-only 옵션 오류 | 기본 isolation level과 read/write 트랜잭션만 지원 | 옵션을 기본값으로 사용하거나 native에서 트랜잭션 SQL 직접 실행 |
-| Python `?` parameter 오류 | `ProgrammingError` / 바인딩 실패 | positional `?`에 mapping 전달 또는 parameter 수 불일치 | sequence와 marker 수를 맞추거나 `:name`과 mapping 사용 |
-| Named bind를 지원하지 않는 서버에서 Python 실행 실패 | `NotSupportedError`, SQLSTATE `0A000` | 서버가 named bind를 지원하지 않음 | `%s` 또는 `?`와 sequence를 사용하거나 서버와 SDK 업그레이드 |
-| 활성 TRANSACTION 테이블 트랜잭션 안의 TAG 쓰기 실패 | `not supported` | TRANSACTION 테이블 트랜잭션에 비 TRANSACTION 쓰기를 포함함 | TRANSACTION 테이블 트랜잭션 종료 후 TAG 쓰기 실행 |
-| Append 후 데이터 미반영 | 즉시 SELECT 결과 없음 | Append 버퍼 미플러시 | `executeAppendClose()` / `flush()` 호출 확인 |
+SDK 이름과 버전, 서버 빌드, 연결 옵션, 전체 오류와 최소 재현 코드를 함께 수집합니다. 동일한
+기능이라도 SDK마다 marker, 시간 타입, Append 반환값과 database 선택 방법이 다르므로
+[개발 도구 연동](/dbms/development-tools-integration/)의 해당 언어 정본을 사용합니다.
 
-## 오류 코드 빠른 참조
-
-| 오류 코드 | 의미 |
-|-----------|------|
-| ERR-00303 | 디스크 공간 부족 |
-| ERR-01003 | PK 중복 (Duplicate key) |
-| ERR-02058 | 테이블 미존재 (Table not found) |
-| ERR-02186 | 권한 없음 (Insufficient privilege) |
-
-전체 오류 코드 목록: [에러 코드 사전](../../../reference/error-dictionary-codes/)
-
-## 로그 파일 위치
-
-| 로그 | 경로 |
-|------|------|
-| 서버 메인 로그 | `$MACHBASE_HOME/trc/machbase.trc` |
-| Cluster Broker 로그 | `$MACHBASE_HOME/trc/broker.trc` |
-| machloader 오류 로그 | 실행 시 `-l` 옵션으로 지정한 경로 |
-
-## 참조
-
-- 운영 모니터링 쿼리: [operations-checklist](../operations-checklist/)
-- 문제 해결 전체: [Troubleshooting](../../../troubleshooting/)
+오류 메시지의 일부 문자열만 보고 임의의 `ERR-` 번호를 붙이지 않습니다. 사전에 없는 코드는
+서버 빌드와 로그 위치를 포함해 지원 요청 자료로 남깁니다.

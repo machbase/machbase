@@ -13,8 +13,8 @@ Machbase는 다양한 프로그래밍 언어를 위한 SDK를 제공합니다. �
 |-----|:------:|:--------:|:---------------:|:---------------:|:--------------:|:-------------------:|:--------------:|
 | **JDBC** | O | O | O | O | O | O | O |
 | **Python** | O | X | X | O | O | O | O |
-| **Go (native)** | O | X | △ | O | O | O | `api.WithDatabase()` 또는 SQL `USE` |
-| **Go (database/sql)** | △ | X | O | O | O | O | DSN `database`/`db`, URL path/query |
+| **Go (native)** | O | X | △ | O | O | O | v1.8.3+ `api.WithDatabase()` 또는 SQL `USE` |
+| **Go (database/sql)** | △ | X | O | O | O | O | v1.8.3+ DSN `database`/`db`, URL path/query |
 | **.NET** | O | X | X | X | △ | O | O (initial) |
 | **Node.js** | O | X | X | O | O | O | O |
 | **Machbase SQLCLI** | O | O | △ | O | O | O | O |

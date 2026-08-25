@@ -59,7 +59,7 @@ SELECT * FROM (
 ```sql
 SELECT * FROM (
     SELECT name, time, value
-      FROM TAG TABLE sensor_tag
+      FROM sensor_tag
      WHERE time BETWEEN TO_DATE('2024-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
                     AND TO_DATE('2024-01-01 01:00:00', 'YYYY-MM-DD HH24:MI:SS')
 ) PIVOT (

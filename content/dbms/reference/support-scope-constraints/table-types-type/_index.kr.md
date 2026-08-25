@@ -42,7 +42,7 @@ Machbase는 용도에 따라 다섯 가지 테이블 유형을 제공합니다. 
 | LSM 인덱스 | X | O | X | X | X |
 | **조회** | | | | | |
 | SELECT | O | O | O | O | O |
-| RECENT N | O | O | X | X | X |
+| 최신값 조회(`SCAN_BACKWARD`, TAG stat) | O | X | X | X | X |
 | JOIN (다른 테이블과) | △ | △ | O | O | O |
 | Subquery | O | O | O | O | O |
 | VIEW | O | O | O | O | O |
@@ -77,7 +77,7 @@ UPDATE sensor_data
 
 -- 불가: BASETIME 컬럼 업데이트
 UPDATE sensor_data
-   SET time = NOW()
+   SET time = SYSDATE
  WHERE name = 'sensor01'
    AND time >= TO_DATE('2026-07-01', 'YYYY-MM-DD');
 ```
@@ -100,13 +100,16 @@ Append API는 TAG, LOG, LOOKUP 테이블에 사용할 수 있습니다. LOOKUP �
 appendBatch 또는 append stream 경로를 사용하며, VOLATILE 테이블에는 일반 `INSERT` SQL을
 사용합니다.
 
-## TAG 테이블 시간 범위 조회
+## TAG 테이블 최신값과 시간 범위 조회
 
-TAG 테이블은 시계열 조회에 최적화된 특수 문법을 지원합니다.
+TAG 테이블은 역방향 스캔과 시간 조건으로 최신값과 범위를 조회합니다.
 
 ```sql
--- 최신 5개 값 조회
-SELECT * FROM sensor_data RECENT 5;
+-- 특정 태그의 최신 5개 값 조회
+SELECT /*+ SCAN_BACKWARD(sensor_data) */ *
+  FROM sensor_data
+ WHERE name = 'sensor01'
+ LIMIT 5;
 
 -- 시간 범위 조회
 SELECT * FROM sensor_data

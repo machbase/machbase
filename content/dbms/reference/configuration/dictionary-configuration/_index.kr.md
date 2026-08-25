@@ -148,7 +148,7 @@ Cluster Edition은 이 프로퍼티를 제공하지 않습니다.
 SELECT name, value, type FROM v$property ORDER BY name;
 
 -- 특정 프로퍼티 상세 조회
-SELECT name, value, min_value, max_value
+SELECT name, value, min, max
   FROM v$property
  WHERE name = 'MAX_SESSION_COUNT';
 ```
