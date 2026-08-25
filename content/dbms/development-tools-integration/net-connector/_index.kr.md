@@ -12,7 +12,6 @@ aliases:
 * [개요](#overview)
 * [설치](#install)
 * [NuGet(통합 8.0.54)](#nuget-unified-connector)
-* [레거시 NuGet(5.x) 설치](#install-connector-via-nuget-package-manager)
 * [커넥션 문자열 참고](#connection-string-reference)
 * [API 레퍼런스](#api-reference)
 * [사용 예시](#usage-and-examples)
@@ -118,34 +117,19 @@ NUGET_PACKAGES="$PKG_DIR" dotnet run --no-restore
 ### 최소 사용 예시
 
 ```csharp
+using System;
 using Mach.Data.MachClient;
 
-var cs = "SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;PWD=MANAGER;PROTOCOL=4.0-full";
+var password = Environment.GetEnvironmentVariable("MACHBASE_PASSWORD")
+    ?? throw new InvalidOperationException("MACHBASE_PASSWORD is required");
+var cs = $"SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;PWD={password};PROTOCOL=4.0-full";
 using var conn = new MachConnection(cs);
 conn.Open();
 
 using var cmd = new MachCommand("SELECT COUNT(*) FROM V$TABLES", conn);
-var count = (long)cmd.ExecuteScalar();
+var count = Convert.ToInt64(cmd.ExecuteScalar());
 Console.WriteLine($"Tables: {count}");
 ```
-
-## 레거시 NuGet(5.x) 설치 {#install-connector-via-nuget-package-manager}
-
-> **참고**: Machbase .NET Connector 5.0 패키지는 NuGet에 등록되어 있으며, 통합형 UniMachNetConnector가 도입되기 이전의 독립 배포본입니다.
-
-Visual Studio를 사용하면 기존(통합 이전) .NET Connector도 NuGet에서 받을 수 있습니다. 아래 절차는 `machNetConnector5.0` 패키지를 설치하는 방법입니다. (새 프로젝트에는 통합형 `UniMachNetConnector` 8.0.54 사용을 권장합니다.)
-
-1. Visual Studio에서 새 C# .NET 프로젝트를 생성합니다.
-2. 솔루션 탐색기에서 프로젝트 이름을 마우스 오른쪽 클릭하고 **NuGet 패키지 관리**를 선택합니다.
-3. NuGet 패키지 관리자 창이 열리면 상단의 **찾아보기** 탭을 선택하고 `machNet`을 검색합니다.
-4. 검색 결과 목록에서 **machNetConnector5.0**을 선택하고 **설치**를 클릭합니다.
-5. **변경 내용 미리 보기** 창이 나타나면 **확인**을 눌러 설치를 계속합니다.
-6. 설치가 완료되면 솔루션 탐색기 > **종속성 → 패키지**에서 설치된 패키지를 확인할 수 있습니다.
-7. `Program.cs`에 `using Mach.Data.MachClient;`를 추가하면 machNetConnector API를 사용할 수 있습니다.
-
-> 어떤 NuGet을 써야 하나요?
-> - 신규/업그레이드 앱: `UniMachNetConnector` 8.0.54 권장(net452 및 net5.0~net8.0 지원, 모든 프로토콜 및 4.0-full 포함).
-> - 레거시 유지: 통합 패키지로 전환이 어려울 때만 `machNetConnector5.0`을 사용하십시오.
 
 ## 커넥션 문자열 참고 {#connection-string-reference}
 

@@ -5,77 +5,31 @@ weight: 120
 toc: true
 ---
 
-Machbase는 C/C++, Java, Python, .NET, Go, Node.js 등 다양한 프로그래밍 언어의 드라이버를
-지원합니다. 아래 표는 각 연동 방식의 대표적인 활용 사례를 요약합니다.
+이 장은 애플리케이션의 연동 방식 선택과 공통 운영 원칙을 다룹니다. SDK 설치, 함수,
+완전한 코드는 [11장 개발 도구 연동](/dbms/development-tools-integration/)을 정본으로
+사용합니다.
 
-| 연동 방식 | 언어/환경 | 대표 use case |
-|-----------|-----------|---------------|
-| **Machbase SQLCLI** | C, C++ | 임베디드 시스템, 최대 성능이 요구되는 수집기 |
-| **ODBC** | C, C++ | ODBC 관리자·DSN 기반 애플리케이션 |
-| **JDBC** | Java | Spring Boot 기반 백엔드, 엔터프라이즈 애플리케이션 |
-| **Python** | Python | 데이터 분석, 스크립트 기반 수집, Pandas 연동 |
-| **.NET** | C#, VB.NET | Windows 환경의 산업용 애플리케이션, ADO.NET |
-| **Go** | Go | 고성능 수집 에이전트, 클라우드 네이티브 마이크로서비스 |
-| **Node.js** | JavaScript/TypeScript | 실시간 웹 대시보드, IoT 게이트웨이 |
-| **외부 도구** | Grafana, Fluentd, Tableau | 시각화, 로그 수집, BI 도구 연동 |
+## 읽는 순서
 
-## 하위 섹션
+1. [연동 방식 선택](selection-integration-method/)에서 언어와 입력 방식에 맞는 SDK를
+   고릅니다.
+2. [공통 연동 개념](concepts-common/)에서 인증, 시간값, binding, transaction, retry를
+   확인합니다.
+3. [드라이버별 가이드](guide-drivers/)에서 해당 SDK 레퍼런스로 이동합니다.
+4. [데이터 입력과 반출](data-input-load-export/)에서 INSERT, Append, 파일 도구를
+   선택합니다.
+5. 단일 INSERT 결과 식별자가 필요하면 [ROWID와 INSERT 결과 ID](rowid-generated-id/)를
+   확인합니다.
+6. Fluentd, Grafana, Tableau는 [외부 도구 연동](external-tools/)의 공통 검증 절차를
+   적용합니다.
 
-연동 방식 선택부터 공통 개념, 드라이버별 가이드, 외부 도구 연동까지 순서대로 구성되어 있습니다.
+## 문서 소유 범위
 
-### 연동 방식 선택
+| 위치 | 정본 내용 |
+|------|-----------|
+| 11장 개발 도구 연동 | SDK 설치, 연결, API, 코드 |
+| 12장 애플리케이션 연동 | 선택 기준, 공통 설계와 운영 흐름 |
+| 18장 레퍼런스 | SQL 구문, 설정, 명령줄, 시스템 카탈로그 |
 
-어떤 드라이버나 API가 프로젝트에 적합한지 판단하기 위한 가이드입니다.
-
-| 문서 | 내용 |
-|------|------|
-| [연동 방식 선택 가이드](/dbms/application-integration/selection-integration-method/#selection-guide-integration-method) | 사용 목적, 언어, 성능 요구사항별 선택 매트릭스 |
-| [SDK/API canonical owner 구분](/dbms/application-integration/selection-integration-method/#distinction-sdk-api-canonical-owner) | 각 SDK의 완전한 API 명세가 어느 장에 있는지 안내 |
-
-### 공통 연동 개념
-
-드라이버나 언어와 무관하게 적용되는 핵심 개념입니다.
-
-| 문서 | 내용 |
-|------|------|
-| [연결 문자열과 인증](/dbms/application-integration/concepts-common/#connection-string-authentication) | HOST:PORT, SYS/MANAGER, AUTH KEY, connection pool |
-| [타임존 연결 옵션](/dbms/application-integration/concepts-common/#timezone-connection) | UTC 내부 저장, 연결 시 timezone 설정, SYSDATE vs NOW |
-| [Prepared statement](/dbms/application-integration/concepts-common/#prepared-statement) | SQL 인젝션 방지, 재사용 성능, TAG/LOG 테이블 지원 |
-| [Parameter binding](/dbms/application-integration/concepts-common/#parameter-binding) | 위치 바인딩, DATETIME nanosecond 처리, NULL 값 |
-| [트랜잭션 처리](/dbms/application-integration/concepts-common/#transaction) | TRANSACTION SQL 트랜잭션과 SDK별 제어 API 범위 |
-| [Append API와 Batch INSERT](/dbms/application-integration/concepts-common/#append-api-batch) | TAG/LOG Append와 TRANSACTION batch Append의 차이 |
-| [ROWID와 INSERT 결과 ID](rowid-generated-id/) | 테이블별 ROWID 조회와 SDK별 generated ID 확인 방법 |
-| [오류 처리와 재시도](/dbms/application-integration/concepts-common/#error-handling-retry) | 오류 코드, exponential backoff, connection pool 격리 |
-
-### 드라이버별 가이드
-
-| 문서 | 내용 |
-|------|------|
-| [드라이버별 가이드](guide-drivers/) | Machbase SQLCLI, ODBC, JDBC, Python, .NET, Go, Node.js, R/RODBC 사용 패턴 |
-| [SDK별 지원 범위 안내](/dbms/development-tools-integration/#sdk) | Append, AUTH KEY, Transaction/Prepare/Bind 지원 범위 |
-
-### 외부 도구 연동
-
-| 문서 | 내용 |
-|------|------|
-| [외부 도구](external-tools/) | Grafana 플러그인, Fluentd 플러그인, Tableau JDBC/ODBC 연결 |
-
-## 각 드라이버의 완전한 API 명세 위치
-
-이 장(12장)은 연동 방식에 대한 **실무 가이드**입니다. 각 드라이버의 완전한 API 명세는 **11장 개발 도구 연동**에서 확인하고, SQL·설정 등 일반 레퍼런스는 **18장 레퍼런스**에서 확인합니다.
-
-```
-12장 (이 장)       → 연동 방식 선택, 공통 개념, 실무 예제
-11장 개발 도구 연동 → 각 SDK의 완전한 API 명세, 함수 목록, 옵션 상세
-18장 레퍼런스      → SQL, 설정, 시스템 카탈로그 등 공통 레퍼런스
-```
-
-## 빠른 시작
-
-처음 연동을 시도한다면 다음 순서를 권장합니다.
-
-1. [연동 방식 선택 가이드](/dbms/application-integration/selection-integration-method/#selection-guide-integration-method)에서 환경에 맞는 드라이버를 결정합니다.
-2. [연결 문자열과 인증](/dbms/application-integration/concepts-common/#connection-string-authentication)에서 기본 연결 방법을 확인합니다.
-3. 사용 패턴에 따라 [Append API](/dbms/application-integration/concepts-common/#append-api-batch) 또는 [Prepared statement](/dbms/application-integration/concepts-common/#prepared-statement)를 선택합니다.
-4. INSERT한 행의 식별자가 필요하면 [ROWID와 INSERT 결과 ID](rowid-generated-id/)를 확인합니다.
-5. 11장 개발 도구 연동에서 해당 드라이버의 상세 API를 참조합니다.
+같은 SDK 코드를 여러 장에 복제하지 않습니다. 제품·SDK 버전에 따라 달라지는 API는 11장의
+해당 드라이버 페이지에서 확인하고, 12장에서는 의사결정과 교차 SDK 원칙만 설명합니다.

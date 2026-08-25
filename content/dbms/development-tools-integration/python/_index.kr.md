@@ -44,8 +44,6 @@ legacy `machbase.open()`에는 database 인자가 없습니다. multi-database �
 [다중 데이터베이스 운영 가이드](/dbms/operations-configuration-recovery/multi-database/#94-python)를
 참조하십시오.
 
-아래 예제는 기존 `machbase` 클래스 기반 레거시 스크립트를 대상으로 합니다.
-
 ## 설치
 
 ### 요구 사항
@@ -85,84 +83,46 @@ print('module import:', __import__('machbaseAPI'))
 PY
 ```
 
-위 명령이 성공하면 패키지를 정상적으로 import하고 인스턴스를 생성할 수 있음을 의미합니다.
-
-DB-API 방식 샘플도 바로 사용할 수 있습니다.
-
-```python
-from machbaseAPI import connect
-
-conn = connect(host='127.0.0.1', port=5656, user='SYS', password='MANAGER')
-cur = conn.cursor()
-cur.execute('SELECT * FROM m$tables LIMIT 1')
-print(cur.fetchall())
-conn.close()
-```
+위 명령이 성공하면 패키지를 정상적으로 import할 수 있습니다.
 
 ## 빠르게 시작하기
 
-아래 스니펫은 로컬 서버에 접속해 샘플 테이블을 만들고, 데이터를 삽입한 뒤 조회하고 세션을 종료하는 흐름을 보여줍니다.
+다음 DB-API 예제는 샘플 LOG 테이블을 만들고 입력·조회한 뒤 테이블과 연결을 정리합니다.
+비밀번호는 환경 변수로 전달합니다.
 
 ```python
-#!/usr/bin/env python3
-import json
-from machbaseAPI import machbase
+import os
+from machbaseAPI import connect
 
-def main():
-    db = machbase()
-    if db.open('127.0.0.1', 'SYS', 'MANAGER', 5656) == 0:
-        raise SystemExit(db.result())
+conn = connect(
+    host=os.getenv('MACH_HOST', '127.0.0.1'),
+    port=int(os.getenv('MACH_PORT', '5656')),
+    user=os.getenv('MACH_USER', 'SYS'),
+    password=os.environ['MACHBASE_PASSWORD'],
+)
+cur = conn.cursor()
 
-    try:
-        rc = db.execute('drop table py_sample')
-        print('drop table rc:', rc)
-        print('drop table result:', db.result())
-
-        ddl = (
-            "create table py_sample ("
-            "ts datetime,"
-            "device varchar(40),"
-            "value double"
-            ")"
-        )
-        if db.execute(ddl) == 0:
-            raise SystemExit(db.result())
-        print('create table result:', db.result())
-
-        for seq in range(3):
-            sql = (
-                "insert into py_sample values ("
-                f"to_date('2024-01-0{seq+1}','YYYY-MM-DD'),"
-                f"'sensor-{seq}',"
-                f"{20.5 + seq}"
-                ")"
-            )
-            if db.execute(sql) == 0:
-                raise SystemExit(db.result())
-            print('insert result:', db.result())
-
-        if db.select('select * from py_sample order by ts') == 0:
-            raise SystemExit(db.result())
-
-        while True:
-            rc, payload = db.fetch()
-            if rc == 0:
-                break
-            row = json.loads(payload)
-            print('row:', row)
-
-        db.selectClose()
-    finally:
-        if db.close() == 0:
-            raise SystemExit(db.result())
-
-if __name__ == '__main__':
-    main()
+try:
+    cur.execute(
+        'CREATE LOG TABLE py_sample '
+        '(ts DATETIME, device VARCHAR(40), value DOUBLE)'
+    )
+    cur.execute(
+        "INSERT INTO py_sample VALUES ("
+        "TO_DATE('2026-01-01','YYYY-MM-DD'), 'sensor-1', 20.5)"
+    )
+    cur.execute('SELECT device, value FROM py_sample')
+    print(cur.fetchall())
+finally:
+    cur.execute('DROP TABLE py_sample')
+    cur.close()
+    conn.close()
 ```
 
 ## 결과 처리
 
-`machbase` 메서드는 대부분 성공 시 `1`, 실패 시 `0`을 반환합니다. 호출 직후 `db.result()`로 서버가 반환한 JSON 페이로드를 확인할 수 있습니다. `select()` 결과를 순회할 때는 `(0, None)`이 반환될 때까지 `db.fetch()`를 반복 호출하고, 마지막에 `db.selectClose()`로 리소스를 해제합니다.
+DB-API cursor는 `execute()`, `fetchone()`, `fetchall()`을 제공합니다. 작업이 끝나면 cursor와
+connection을 닫고, 샘플 객체가 운영 database에 남지 않도록 정리합니다.
 
 ### INSERT 결과 ROWID
 
@@ -553,9 +513,10 @@ conn.close()
 
 위 예제에서 `status`, `site`, `line`은 모두 `NULL`로 저장됩니다. 반대로 `value`를 생략한 TAG append는 오류로 처리됩니다.
 
-## API 참고 및 샘플 (legacy-style `machbase` class)
+## `machbase` 클래스 호환 API
 
-아래 예제는 2.4 패키지에서도 유지되는 legacy-style `machbase` 클래스를 사용합니다.
+기존 애플리케이션과의 호환을 위해 유지되는 `machbase` 클래스 사용법을 설명합니다. 신규
+코드에는 앞의 DB-API `connect()` 방식을 권장합니다.
 `getSessionId()`, `count()`, `checkBit()`와 같은 API는 예전 native 패키지에는 있었지만
 현재 pure-Python 구현에서는 제공되지 않습니다. 필요 시 2.4 DB-API 예제를 참고하십시오.
 
@@ -900,14 +861,3 @@ def main():
 if __name__ == '__main__':
     main()
 ```
-
-### 진단 도우미
-
-#### machbase.checkBit()
-
-`checkBit()`는 기존 native 기반 버전에 있던 포인터 폭 확인용 API로, 2.3 순수 Python 패키지에서는 더 이상 제공되지 않습니다.
-
-### 저수준 바인딩
-
-2.3 순수 Python 패키지에서는 `get_library_path()`, `openDB()`, `execAppend*()` 또는 포인터 유틸리티 API(예: `getlAddr`, `getrAddr`)와 같은 저수준 `ctypes` 인터페이스를 제공하지 않습니다.
-기존 C 레이어 직접 접근이 필요한 경우에는 2.0 이전 버전(네이티브 기반 패키지)을 사용하십시오.

@@ -17,21 +17,12 @@ aliases:
 Go 표준 도구 체인으로 빌드할 수 있으며 CGo 의존성이 없습니다.
 완전한 Go 툴체인으로 네이티브 포트 성능이 필요하다면 `machgo`가 좋은 선택입니다.
 
-## 다중 데이터베이스 <small>Machbase 8.7.0 부터 지원되는 기능</small>
+## 다중 데이터베이스
 
-native `machgo`는 `api.WithDatabase("DATABASE_A")`로 연결 직후의 초기 database를
-선택할 수 있습니다. 연결 후 SQL `USE`로 current database를 변경할 수도 있으며,
-다른 database의 table은 `database.owner.table` 세 부분 이름으로 지정합니다.
-
-`Conn.Appender()`는 세 부분 이름의 대상 database를 조회하고 append-open 전후에
-연결의 current database를 보존합니다. 다른 database에 접근하려면 해당 database의
-`CONNECT`와 대상 table의 `INSERT` 권한이 필요합니다.
-
-연결한 서버와 SDK가 database 메타데이터를 지원하는지는 `*machgo.Conn`의
-`SupportsDatabaseMetadata()`로 확인할 수 있습니다. 이전 버전 서버 또는 SDK에서는 logical
-database ID와 PRIMARY KEY metadata가 제공되지 않을 수 있습니다. 자세한 예제는
-[다중 데이터베이스 운영 가이드](/dbms/operations-configuration-recovery/multi-database/#96-go)를
-참조하십시오.
+현재 공개 `machgo` API에는 연결 옵션으로 database를 지정하는 함수가 없습니다. 연결한 뒤
+`conn.Exec(ctx, "USE DATABASE_A")`를 실행하고, statement와 cursor는 database 선택 후
+생성합니다. Appender의 다중 database 지원 범위는 사용 중인 SDK 버전에서 별도로
+검증하십시오.
 
 ### machgo를 사용하는 이유
 
@@ -118,7 +109,6 @@ ctx := context.Background()
 conn, err := mdb.Connect(
     ctx,
     api.WithPassword("sys", "manager"),
-    api.WithDatabase("FACTORY_A"),
 )
 if err != nil {
     panic(err)
@@ -129,11 +119,8 @@ defer conn.Close()
 인증 옵션:
 
 - `api.WithPassword(user, password)`
-- `api.WithDatabase(database)`: 연결 직후 초기 database 선택
 
-`api.WithDatabase()`는 식별자를 인용한 `USE` 문으로 적용됩니다. database가 없거나
-접근 권한이 없으면 연결이 실패합니다. 이후 `USE`로 database를 바꿀 수 있지만,
-prepared statement와 cursor는 database를 바꾼 뒤 새로 준비하거나 열어야 합니다.
+다른 database를 선택하려면 연결 직후 `conn.Exec(ctx, "USE FACTORY_A")`를 실행합니다.
 
 ### 연결 단위 튜닝 옵션
 
@@ -623,13 +610,6 @@ server=tcp://sys:manager@127.0.0.1:5656
 server=tcp://sys:manager@127.0.0.1:5656;fetch_rows=777;statement_cache=off;io_metrics=true
 ```
 
-URL path 또는 query로 초기 database를 지정할 수도 있습니다.
-
-```text
-tcp://sys:manager@127.0.0.1:5656/FACTORY_A
-tcp://sys:manager@127.0.0.1:5656?database=FACTORY_A
-```
-
 #### 지원되는 DSN 키
 
 | 키 | 설명 |
@@ -638,17 +618,15 @@ tcp://sys:manager@127.0.0.1:5656?database=FACTORY_A
 | `host`, `port` | 서버 호스트와 포트를 별도로 지정 |
 | `user`         | 로그인 사용자 |
 | `password`     | 로그인 비밀번호 |
-| `database`, `db` | 모든 physical connection에서 사용할 초기 database |
 | `fetch_rows`   | 한 번의 round trip에서 가져올 행 수 |
 | `statement_cache` | statement cache 모드: `auto`, `on`, `off` |
 | `io_metrics`   | I/O metrics 활성화 여부: `true`, `false` |
 | `alternative_servers` | `127.0.0.2:5656` 형식의 대체 서버 주소 |
 | `alternative_host`, `alternative_port` | 대체 서버 호스트와 포트를 별도로 지정 |
 
-`database`와 `db`는 동의어입니다. URL path, URL query, key-value DSN 모두 같은 초기
-database 설정으로 처리되며, 이 설정은 `sql.DB`가 새 physical connection을 만들 때마다
-적용됩니다. 연결 후 `USE`로 다른 database를 선택할 수 있지만, pool에 반환할 때 설정된
-초기 database로 복원됩니다.
+`database/sql`의 pool에서는 요청마다 다른 physical connection이 선택될 수 있습니다.
+current database가 유지된다고 가정하지 말고, 다중 database가 필요한 애플리케이션은
+연결 고정과 `USE` 실행 순서를 실제 SDK 버전에서 검증합니다.
 
 ## 조회 예제
 

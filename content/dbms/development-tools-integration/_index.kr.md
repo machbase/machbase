@@ -43,7 +43,7 @@ SELECT 결과의 PRIMARY KEY 여부와 테이블 카탈로그 조회 방법은
 | [Python](./python/) | `machbaseapi` DB-API, named mapping, `null_ok`, 컬럼 PK 메타데이터 |
 | [Node.js / TypeScript](./node-js-typescript/) | `@machbase/ts-client`, named object 입력, `ColumnMeta.nullable`, `isPrimaryKey` |
 | [.NET Connector](./net-connector/) | ADO.NET 이름 컬렉션, Append, `GetSchemaTable()`의 `IsKey` |
-| [Go](./go/) | `machgo`, `database/sql`, 초기 database, positional/named bind, DECIMAL·NULL, 트랜잭션, PK 메타데이터, Appender |
+| [Go](./go/) | `machgo`, `database/sql`, positional/named bind, DECIMAL·NULL, 트랜잭션, PK 메타데이터, Appender |
 
 각 SDK의 API와 기능 지원 범위를 비교하고, 애플리케이션 요구사항에 맞는 SDK를 선택할 수 있도록
 기능별 지원 여부와 제약을 정리합니다.

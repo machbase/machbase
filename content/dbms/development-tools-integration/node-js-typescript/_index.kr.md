@@ -69,13 +69,13 @@ node -e "const { createConnection } = require('@machbase/ts-client'); console.lo
 ```
 
 > **참고**: 이 클라이언트는 Node.js에서 TCP 소켓을 사용하며, 브라우저용 라이브러리(웹소켓 전송)를 제공하지 않습니다.
-> DBMS standard 소스의 패키지 버전은 `@machbase/ts-client` 1.0.0입니다.
+> DBMS standard 소스의 패키지 버전은 `@machbase/ts-client` 1.0.1입니다.
 >
 > 이 문서의 기본 계정(`SYS`/`MANAGER`)은 로컬 테스트용 예시입니다. 운영 환경에서는 전용 계정과 비밀번호를 사용하십시오.
 
 ## 빠르게 시작하기
 
-아래 예제는 로컬 서버에 연결해 샘플 테이블을 생성하고 데이터를 삽입·조회한 뒤 세션을 종료하는 흐름을 보여줍니다.
+아래 예제는 로컬 서버에 연결해 시스템 테이블을 조회하고 세션을 종료합니다.
 
 ```typescript
 // src/example.ts
@@ -94,75 +94,14 @@ console.log(rows);
 await conn.end();
 ```
 
-### CommonJS 예제
-
-```javascript
-// quickstart.js (CommonJS, Node 18+)
-const { createConnection } = require('@machbase/ts-client');
-
-async function main() {
-  const conn = createConnection({
-    host: '127.0.0.1',
-    user: 'SYS',
-    password: 'MANAGER',
-    port: 5656,
-  });
-  await conn.connect();
-
-  const [rows] = await conn.query('SELECT * FROM V$TABLES ORDER BY NAME LIMIT ?', [10]);
-  console.table(rows);
-
-  await conn.end();
-}
-
-main().catch(err => console.error('Unexpected failure:', err));
-```
-
 > **트랜잭션 안내:** 서버는 TRANSACTION 테이블에 plain `BEGIN`, `COMMIT`, `ROLLBACK` SQL을
 > 지원합니다. 이 클라이언트의 `beginTransaction`, `commit`, `rollback` 편의 메서드는
 > 구현되어 있지 않으므로 `execute()`로 SQL을 직접 실행해야 합니다.
 
-### Machbase 페이사드
-
-익숙한 Node.js SQL 클라이언트 스타일을 선호한다면 `createConnection()`으로 제공되는 페이사드를 사용할 수 있습니다.
-
-```javascript
-// facade-basic.js (CommonJS)
-const { createConnection } = require('@machbase/ts-client');
-
-async function bootstrap() {
-  const conn = createConnection({ host: '127.0.0.1', user: 'SYS', password: 'MANAGER' });
-  await conn.connect();
-  try {
-    const [rows, fields] = await conn.query('SELECT NAME FROM V$TABLES ORDER BY NAME LIMIT ?', [3]);
-    console.log('rows', rows, 'fields', fields?.map(f => f.name));
-
-    await new Promise((resolve, reject) =>
-      conn.query('SELECT VALUE FROM V$SYSSTAT WHERE NAME = ?', ['SERVER_VERSION'], (err, result) => {
-        if (err) return reject(err);
-        console.log('callback result', result);
-        resolve();
-      })
-    );
-  } finally {
-    await conn.end();
-  }
-}
-
-bootstrap().catch(console.error);
-```
-
-페이사드는 콜백과 `.promise()`를 모두 지원하고, 실패 시 `QueryError`를 반환하며, 서버 메시지를 그대로 전달합니다.
-
-> **페이사드 제약:** `beginTransaction`, `commit`, `rollback` 편의 메서드는 즉시
-> `QueryError`를 반환합니다. TRANSACTION 테이블 트랜잭션은 `execute('BEGIN')`과
-> `execute('COMMIT')`/`execute('ROLLBACK')`으로 제어합니다. LOG 테이블 UPDATE는 지원하지
-> 않으며, TAG data UPDATE는 태그 선택 조건과 BASETIME 조건을 모두 만족해야 합니다.
-
 ## 자주 발생하는 문제
 
 - **ECONNREFUSED** – 서버가 실행 중인지(`machadmin -u`), 호스트와 포트가 맞는지, 방화벽이 리스너 포트(기본 5656)의 TCP 연결을 허용하는지 확인하십시오.
-- **Authentication failed** – 사용자/비밀번호를 다시 확인하고 대상 데이터베이스가 생성되어 있는지(`machadmin -c`) 점검하십시오.
+- **Authentication failed** – 사용자·비밀번호와 계정의 접속 권한을 확인하십시오.
 
 ## API 참조
 
@@ -738,27 +677,3 @@ await conn.execute('COMMIT');
 4. **오류 처리**: DB 작업을 `try...catch`로 감싸고 적절히 로깅합니다.
 5. **커넥션 풀 사용**: 운영 환경에서는 커넥션 풀을 도입해 동시 요청을 안정적으로 처리하십시오.
 6. **쿼리 파라미터화**: SQL 인젝션을 방지하려면 문자열 결합 대신 바인딩(`?` 플레이스홀더)을 사용하십시오.
-
-## 변경 이력
-
-### 2025-10-08
-
-- npm, yarn, pnpm 및 오프라인 `.tgz` 설치 절차를 일반 사용자 관점으로 정리했습니다.
-- Node.js 전용 런타임 제약과 연결 문제 해결 팁을 보강했습니다.
-- 테이블 타입별 SQL 제약 사항을 동작 특성 섹션에 통합했습니다.
-
-### 2025-10-03
-
-- TAG 스트리밍 예제를 추가하고 기본 `MACHBASE_NATIVE_APPEND` 동작을 문서화했습니다.
-- 네이티브 Append가 불가능할 때 Prepared Statement로 자동 폴백하는 동작을 정리했습니다.
-
-### 2025-10-02
-
-- Machbase 페이사드(`createConnection`, `QueryError`, `.promise()`, 페이사드 준비문)를 도입했습니다.
-- 콜백/프로미스 흐름과 테이블 타입별 `UPDATE` 오류 처리 검증을 확장했습니다.
-
-### 2025-09-30
-
-- 자리기반 Prepared Statement를 추가했습니다.
-- 로그 테이블용 `appendBatch`와 null 처리, 통계 반환을 추가했습니다.
-- 트랜잭션, 페이지네이션, 파라미터 바인딩, append 청크, 오류 처리 예제와 통합 검증을 보강했습니다.

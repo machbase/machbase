@@ -52,10 +52,13 @@ PVO_CACHE_SHARD_COUNT       = 16
 
 `PVO_CACHE_SHARD_COUNT`를 제외한 PVO Cache 프로퍼티는 실행 중에 변경할 수 있습니다.
 
-```sql
+```text
 ALTER SYSTEM SET PVO_CACHE_MAX_MEMORY_SIZE = 536870912;
 ALTER SYSTEM SET PVO_CACHE_MAX_PLANS_PER_SQL = 256;
 ```
+
+이 값은 예시입니다. 현재값과 memory 예산을 확인한 뒤 maintenance 절차에서 적용하며, 변경
+전후 지연과 memory를 비교합니다.
 
 ### 상태 확인
 

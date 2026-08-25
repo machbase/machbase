@@ -4,368 +4,93 @@ title: '14.1 서버와 데이터베이스 운영'
 weight: 10
 toc: true
 ---
-`machadmin`은 Machbase의 핵심 관리 도구입니다. 서버 시작·종료, 데이터베이스 생성·삭제, 라이선스 설치, 실행 상태 확인 등 대부분의 운영 작업을 이 명령어 하나로 수행합니다. `$MACHBASE_HOME/bin/` 디렉터리에 위치합니다.
 
-## 이 섹션의 구성
+`machadmin`은 server instance 시작·종료, physical database 생성·삭제, license 설치,
+offline restore를 수행합니다. SQL `CREATE DATABASE`로 만드는 logical database와
+`machadmin -c`의 physical instance database를 구분합니다.
 
-| 페이지 | 내용 |
-|--------|------|
-| [서버 시작과 종료](/dbms/operations-configuration-recovery/server-database/#start-server) | `machadmin -u`, `-s`, `-k`, `-e` 명령어 사용법과 시작 실패 대처 |
-| [데이터베이스 생성과 삭제](/dbms/operations-configuration-recovery/server-database/#create-delete-database) | DB 초기화, 디렉터리 구조, 안전한 삭제 절차 |
-| [라이선스 설치와 확인](/dbms/operations-configuration-recovery/server-database/#license) | 라이선스 파일 위치, 온라인 설치, 만료 시 동작 |
+## 주요 option 확인
 
-이 페이지의 `machadmin` 명령은 서버 인스턴스와 물리 데이터 디렉터리를 관리합니다. 8.7.0의
-논리 데이터베이스를 생성·전환·삭제하거나 데이터베이스별 권한을 관리하려면
-[다중 데이터베이스](/dbms/operations-configuration-recovery/multi-database/)를 참조하십시오.
+```bash
+"$MACHBASE_HOME/bin/machadmin" -h
+```
 
-## machadmin 주요 옵션 요약
-
-| 옵션 | 기능 |
-|------|------|
-| `-u` / `--startup` | 서버 시작 |
-| `-s` / `--shutdown` | 서버 정상 종료 |
-| `-k` / `--kill` | 서버 강제 종료 |
-| `-e` / `--check` | 서버 실행 상태 확인 |
-| `-c` / `--createdb` | 데이터베이스 생성 |
-| `-d` / `--destroydb` | 데이터베이스 삭제 |
-| `-t` / `--licinstall` | 라이선스 파일 설치 |
-| `-f` / `--licinfo` | 설치된 라이선스 정보 확인 |
-| `-r` / `--restore` | 백업으로부터 데이터베이스 복구 |
-
+설치된 release의 help를 기준으로 option과 영향을 확인합니다.
 
 <a id="start-server"></a>
 
-## 서버 시작과 종료
+## Server 시작과 종료
 
-`machadmin` 명령어로 서버를 시작하고 종료합니다.
-
-### 서버 시작
+상태 확인은 안전하게 실행할 수 있습니다.
 
 ```bash
-machadmin -u
+"$MACHBASE_HOME/bin/machadmin" -e
 ```
 
-서버를 시작합니다. 데이터베이스가 정상적으로 종료된 경우 simple 복구 모드로 시작하고, 비정상 종료(전원 차단 등) 이후에는 자동으로 complex 복구 모드를 적용합니다.
+start·shutdown은 service manager와 운영 runbook 중 한 경로로 통일합니다.
 
-```
-mach@localhost:~$ machadmin -u
------------------------------------------------------------------
-     Machbase Administration Tool
-     Release Version - 8.7.0
-     Copyright 2014, MACHBASE Corp. or its subsidiaries
-     All Rights Reserved
------------------------------------------------------------------
-Machbase server started successfully.
-```
+- 시작 전 config, license, data path, free space를 확인합니다.
+- 시작 후 `machadmin -e`, 5656 connection, 가벼운 SQL, server log를 확인합니다.
+- 정상 종료 전 새 connection·입력을 차단하고 진행 중 transaction·backup·Appender를
+  확인합니다.
+- 강제 종료는 정상 종료가 반복 실패하고 recovery 영향을 판단한 경우에만 사용합니다.
+- recovery mode를 임의로 강제하지 말고 오류와 공식 복구 절차를 확인합니다.
 
-#### 복구 모드를 지정하여 시작
-
-비정상 종료 이후 복구 방식을 직접 지정할 수 있습니다.
-
-```bash
-machadmin -u --recovery=simple    # 기본값: 정상 종료 후 재시작 시 사용
-machadmin -u --recovery=complex   # 비정상 종료 후 재시작 시 사용 (시간이 더 소요됨)
-machadmin -u --recovery=reset     # simple·complex로 복구 불가 시 사용 (일부 데이터 손실 가능)
-```
-
-| 모드 | 설명 |
-|------|------|
-| `simple` | 정상 종료 후 재시작 시 적용되는 기본 모드 |
-| `complex` | 전원 차단 등 비정상 종료 후 재시작 시 적용. simple보다 시간이 더 소요됨 |
-| `reset` | simple·complex 모드로 복구되지 않을 때 사용. 모든 테이블 데이터를 검사하며 일부 데이터 손실 가능 |
-
-### 서버 정상 종료
-
-```bash
-machadmin -s
-```
-
-현재 처리 중인 트랜잭션을 완료한 뒤 서버를 종료합니다(graceful shutdown). 데이터 일관성이 보장되므로 가능한 한 이 방법을 사용합니다.
-
-```
-mach@localhost:~$ machadmin -s
------------------------------------------------------------------
-     Machbase Administration Tool
-     Release Version - 8.7.0
-     Copyright 2014, MACHBASE Corp. or its subsidiaries
-     All Rights Reserved
------------------------------------------------------------------
-Waiting for the server shut down...
-Server shut down successfully.
-```
-
-### 서버 강제 종료
-
-```bash
-machadmin -k
-```
-
-서버 프로세스를 즉시 종료합니다. 진행 중인 트랜잭션이 중단되므로, 다음 시작 시 complex 복구 모드가 적용될 수 있습니다. 정상 종료(`-s`)가 응답하지 않을 때만 사용합니다.
-
-```
-mach@localhost:~$ machadmin -k
------------------------------------------------------------------
-     Machbase Administration Tool
-     Release Version - 8.7.0
-     Copyright 2014, MACHBASE Corp. or its subsidiaries
-     All Rights Reserved
------------------------------------------------------------------
-Waiting for Machbase terminated...
-Server terminated successfully.
-```
-
-### 서버 실행 상태 확인
-
-```bash
-machadmin -e
-```
-
-서버가 현재 실행 중인지 확인합니다.
-
-서버가 실행 중이 아닌 경우:
-
-```
-mach@localhost:~$ machadmin -e
------------------------------------------------------------------
-     Machbase Administration Tool
-     Release Version - 8.7.0
-     Copyright 2014, MACHBASE Corp. or its subsidiaries
-     All Rights Reserved
------------------------------------------------------------------
-[Error] Machbase server is not running.
-```
-
-서버가 실행 중인 경우:
-
-```
-mach@localhost:~$ machadmin -e
------------------------------------------------------------------
-     Machbase Administration Tool
-     Release Version - 8.7.0
-     Copyright 2014, MACHBASE Corp. or its subsidiaries
-     All Rights Reserved
------------------------------------------------------------------
-Machbase server is running with PID(14098).
-```
-
-### 시작 실패 시 확인 사항
-
-서버가 시작되지 않을 때는 다음 항목을 순서대로 점검합니다.
-
-#### 1. 포트 충돌 확인
-
-기본 포트(5656)가 이미 사용 중인지 확인합니다.
-
-```bash
-ss -tlnp | grep 5656
-```
-
-포트가 점유되어 있다면 해당 프로세스를 종료하거나 `machbase.conf`에서 `PORT_NO` 값을 변경합니다.
-
-#### 2. 라이선스 확인
-
-라이선스 파일이 없거나 만료된 경우 서버가 시작되지 않을 수 있습니다.
-
-```bash
-ls -l $MACHBASE_HOME/conf/license.dat
-machadmin -f
-```
-
-#### 3. 데이터베이스 존재 여부 확인
-
-데이터베이스가 생성되지 않은 경우 서버를 시작할 수 없습니다. 먼저 `machadmin -c`로 데이터베이스를 생성합니다.
-
-```bash
-ls $MACHBASE_HOME/dbs/
-```
-
-#### 4. 트레이스 로그 확인
-
-서버 로그에서 오류 원인을 확인합니다.
-
-```bash
-tail -100 $MACHBASE_HOME/trc/machbase.trc
-```
-
-로그 파일에서 `[ERR]` 또는 `FATAL` 키워드를 찾아 원인을 파악합니다.
+명령 출력 예시는 release마다 달라질 수 있으므로 성공 문구 전체를 자동화 조건으로
+사용하지 않습니다. process exit code와 실제 connection을 함께 확인합니다.
 
 <a id="create-delete-database"></a>
 
-## 인스턴스 데이터베이스 생성과 삭제
+## Physical instance database
 
-이 절의 "데이터베이스"는 서버가 시작할 수 있도록 `$MACHBASE_HOME/dbs/`에 만드는
-물리 인스턴스 저장소를 의미합니다. Machbase 8.7.0에서 SQL `CREATE DATABASE`로 만드는
-논리 catalog와는 다른 lifecycle입니다. 논리 데이터베이스는 하나의 인스턴스 안에서 여러 개를
-만들 수 있으며, 자세한 내용은 [다중 데이터베이스](/dbms/operations-configuration-recovery/multi-database/)를
-참조하십시오.
+`machadmin -c`와 `machadmin -d`는 `DBS_PATH`의 physical instance data를 생성·삭제합니다.
+logical database 작업은 [다중 데이터베이스](../multi-database/)의 SQL을 사용합니다.
 
-### 데이터베이스 생성
+physical database 삭제·초기화는 instance 전체 data를 잃을 수 있는 파괴적 작업입니다.
+일반 예제로 shutdown→destroy→create→startup 명령을 연속 제공하지 않습니다.
 
-```bash
-machadmin -c
-```
+실행 전 확인:
 
-`$MACHBASE_HOME/dbs/` 디렉터리 아래에 초기 데이터베이스 파일을 생성합니다. 이미 데이터베이스가 존재하면 오류가 발생합니다.
+1. 대상 `MACHBASE_HOME`과 `DBS_PATH`의 절대 경로
+2. service·process가 완전히 종료됐는지
+3. 최신 backup과 격리 restore 검증
+4. 보존해야 할 config, license, log
+5. rollback 가능 여부와 예상 recovery 시간
+6. 두 명의 작업자가 instance·path를 교차 확인했는지
 
-```
-mach@localhost:~$ machadmin -c
------------------------------------------------------------------
-     Machbase Administration Tool
-     Release Version - 8.7.0
-     Copyright 2014, MACHBASE Corp. or its subsidiaries
-     All Rights Reserved
------------------------------------------------------------------
-Database created successfully.
-```
-
-데이터베이스 생성이 완료되면 `machadmin -u`로 서버를 시작할 수 있습니다.
-
-### 데이터 디렉터리 구조
-
-데이터베이스 생성 후 `$MACHBASE_HOME` 아래에 다음과 같은 디렉터리가 구성됩니다.
-
-```
-$MACHBASE_HOME/
-├── bin/          # machadmin, machsql 등 실행 파일
-├── conf/         # machbase.conf, license.dat 등 설정 파일
-├── dbs/          # 데이터베이스 파일 (테이블, 인덱스, 메타데이터)
-├── trc/          # 트레이스 로그 (machbase.trc 등)
-└── lib/          # 공유 라이브러리
-```
-
-`DBS_PATH` 프로퍼티(기본값: `?/dbs`)를 변경하면 데이터 저장 경로를 별도 디스크나 볼륨으로 지정할 수 있습니다. 변경 후에는 서버 재시작이 필요합니다.
-
-### 데이터베이스 삭제
-
-```bash
-machadmin -d
-```
-
-데이터베이스를 영구적으로 삭제합니다. 삭제 전에 확인 메시지가 표시되며, `y`를 입력해야 실행됩니다.
-
-```
-mach@localhost:~$ machadmin -d
------------------------------------------------------------------
-     Machbase Administration Tool
-     Release Version - 8.7.0
-     Copyright 2014, MACHBASE Corp. or its subsidiaries
-     All Rights Reserved
------------------------------------------------------------------
-Destroy Machbase database- Are you sure?(y/N) y
-Database destroyed successfully.
-```
-
-> **주의**: 데이터베이스 삭제는 되돌릴 수 없습니다. `dbs/` 디렉터리 내의 모든 데이터가 영구적으로 삭제됩니다. 삭제 전에 반드시 백업을 수행하거나, 데이터 보존이 필요 없는 환경인지 확인하십시오.
-
-삭제 작업은 서버가 실행 중이지 않은 상태에서 수행해야 합니다. 서버가 실행 중이라면 먼저 `machadmin -s`로 종료한 뒤 삭제합니다.
-
-### 데이터베이스 초기화 절차
-
-기존 데이터를 모두 제거하고 새로 시작하려면 다음 순서로 진행합니다.
-
-```bash
-# 1. 서버 종료
-machadmin -s
-
-# 2. 데이터베이스 삭제
-machadmin -d
-
-# 3. 데이터베이스 재생성
-machadmin -c
-
-# 4. 서버 시작
-machadmin -u
-```
+data directory 내부 file과 metadata를 수동으로 생성·이동·삭제하지 않습니다.
 
 <a id="license"></a>
 
-## 라이선스 설치와 확인
+## License 설치와 확인
 
-Machbase를 운영하려면 유효한 라이선스가 필요합니다. 라이선스는 파일 형태로 제공되며, 오프라인(서버 시작 전) 또는 온라인(서버 실행 중) 방식으로 설치할 수 있습니다.
+license file은 비밀정보로 취급하고 내용이나 실제 key를 문서·ticket·log에 복사하지
+않습니다.
 
-### 라이선스 파일 위치
-
-라이선스 파일은 다음 경로에 위치해야 합니다.
-
-```
-$MACHBASE_HOME/conf/license.dat
-```
-
-서버 시작 시 이 파일을 자동으로 읽습니다. 파일이 없거나 유효하지 않으면 서버가 시작되지 않거나 제한된 모드로 동작합니다.
-
-### 오프라인 라이선스 설치 (machadmin)
-
-서버가 실행 중이지 않은 상태에서 `machadmin -t` 옵션으로 라이선스를 설치합니다.
-
-```bash
-machadmin -t /path/to/license.dat
-```
-
-```
-mach@localhost:~$ machadmin -t license.dat
------------------------------------------------------------------
-     Machbase Administration Tool
-     Release Version - 8.7.0
-     Copyright 2014, MACHBASE Corp. or its subsidiaries
-     All Rights Reserved
------------------------------------------------------------------
-License installed successfully.
-```
-
-설치가 완료되면 라이선스 파일이 `$MACHBASE_HOME/conf/license.dat`로 복사됩니다.
-
-### 온라인 라이선스 설치 (ALTER SYSTEM)
-
-서버가 실행 중인 상태에서도 SQL 명령어로 라이선스를 갱신할 수 있습니다.
+| 상태 | 방법 |
+|------|------|
+| server 종료 상태의 설치 | 현재 release의 `machadmin` license option |
+| server 실행 중 설치 | `ALTER SYSTEM INSTALL LICENSE` |
+| 적용 확인 | `machadmin` license info와 `V$LICENSE_INFO` |
 
 ```sql
-ALTER SYSTEM INSTALL LICENSE = '/path/to/new_license.dat';
+SELECT *
+FROM V$LICENSE_INFO;
 ```
 
-서버 재시작 없이 즉시 적용됩니다. 새 라이선스 파일은 서버가 접근 가능한 경로에 있어야 합니다.
+설치 전 대상 instance, edition, 유효 기간, file permission을 확인합니다. online 설치
+경로는 server process가 읽을 수 있어야 합니다. 갱신 후 새 connection과 필요한 edition
+기능을 검증하고 원본 license file의 보관 정책을 적용합니다.
 
-### 라이선스 정보 확인
+## 장애 시 자료
 
-#### machadmin으로 확인
+- `machadmin -e` 결과와 exit code
+- release·edition과 `MACHBASE_HOME`
+- 실제 config·data path
+- server 시작·종료 시각
+- 최초 오류 전후 server log
+- filesystem free space와 permission
+- 직전 config·license·storage 변경
 
-```bash
-machadmin -f
-```
-
-```
-mach@localhost:~$ machadmin -f
------------------------------------------------------------------
-     Machbase Administration Tool
-     Release Version - 8.7.0
-     Copyright 2014, MACHBASE Corp. or its subsidiaries
-     All Rights Reserved
------------------------------------------------------------------
-                   INFORMATION
-ID                                : 00000001
-Issue Date                        : 2099-12-31
-License Type(Version 3)           : FOGUNLIMITED
-Company                           : MACHBASE
-Project(Product)                  : NONE
-Country Code                      : KR
-Install Date                      : 2026-06-13 15:08:00
------------------------------------------------------------------
-License information displayed successfully.
-```
-
-#### SQL로 확인
-
-서버 실행 중에는 시스템 뷰로 라이선스 정보를 조회할 수 있습니다.
-
-```sql
-SELECT * FROM v$license_info;
-```
-
-### 라이선스 만료 시 동작
-
-라이선스가 만료되면 다음과 같이 동작합니다.
-
-- 이미 연결된 세션은 유지되지만 새 연결이 제한될 수 있습니다.
-- 데이터 쓰기(Append/Insert)가 거부되고 읽기 전용 모드로 전환될 수 있습니다.
-- 트레이스 로그(`$MACHBASE_HOME/trc/machbase.trc`)에 라이선스 만료 경고가 기록됩니다.
-
-라이선스 만료 전에 새 라이선스를 발급받아 `ALTER SYSTEM INSTALL LICENSE` 명령어로 무중단 갱신하는 것을 권장합니다.
+server가 시작되지 않는다는 이유로 physical database를 삭제하거나 reset recovery를 먼저
+실행하지 않습니다. backup을 보존한 채 원인을 진단합니다.
