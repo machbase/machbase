@@ -1,5 +1,5 @@
 ---
-title: '6.3 ROLLUP 대상 TAG 테이블 설계'
+title: '6.2 ROLLUP 대상 TAG 테이블 설계'
 weight: 20
 toc: true
 ---

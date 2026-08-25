@@ -552,23 +552,3 @@ binary literal로 지원하지 않습니다.
   실패합니다.
 - Machbase SQLCLI, ODBC, Java, C#, Node.js 드라이버는 고정 길이 버퍼로 송수신하며 메타데이터
   `LENGTH`는 바이트 길이입니다.
-
-<a id="original-85-varchar-storage"></a>
-
-## VARCHAR 저장소 최적화
-
-
-### VARCHAR 저장소 옵션
-varchar 데이터를 고정 영역에 저장하는 최대 크기입니다.
-이 값보다 긴 varchar 값은 가변 영역에 저장됩니다. 15에서 127까지 지정 가능하며, 기본값은 15입니다.
-
-```sql
--- 입력 VARCHAR 데이터의 크기가 15 이하이면 확장 파일 대신 고정 데이터 파일에 저장됩니다.
-
-CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED, strval VARCHAR(100)) VARCHAR_FIXED_LENGTH_MAX = 15;
-```
-
-VARCHAR 저장소 옵션 값의 속성은 테이블 m$sys_table_property에 표시됩니다.
-```sql
-SELECT * FROM m$sys_table_property WHERE id={table_id} AND name = 'VARCHAR_FIXED_LENGTH_MAX';
-```

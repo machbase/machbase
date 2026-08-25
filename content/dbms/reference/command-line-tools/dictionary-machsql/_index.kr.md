@@ -175,7 +175,7 @@ Last ROWID : 2048
 유지합니다.
 
 테이블별 ROWID 조건과 SDK에서 확인하는 방법은
-[ROWID와 INSERT 결과 ID](/dbms/development-tools-integration/rowid-generated-id/)를 참고하십시오.
+[ROWID와 INSERT 결과 ID](/dbms/reference/sql/rowid/)를 참고하십시오.
 
 ## DESC와 PRIMARY KEY 메타데이터
 

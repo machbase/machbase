@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '16.4 입력과 적재 문제'
-weight: 40
+title: '16.3 입력과 적재 문제'
+weight: 30
 toc: true
 ---
 

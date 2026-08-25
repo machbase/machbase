@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '3. 설치, 배포, 업그레이드'
+title: '3. Installation, Deployment, and Upgrade'
 weight: 30
 toc: true
 ---

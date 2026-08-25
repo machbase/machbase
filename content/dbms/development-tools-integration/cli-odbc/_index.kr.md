@@ -162,7 +162,7 @@ Standard Edition에서 단일 `INSERT ... VALUES`가 성공한 뒤 생성된 ROW
 - 표준 ODBC: generated ROWID 전용 표준 API 없음
 
 batch, Append, `INSERT ... SELECT`, UPSERT에서는 같은 반환을 가정하지 않습니다. 자세한
-범위는 [ROWID와 INSERT 결과 ID](/dbms/development-tools-integration/rowid-generated-id/)를
+범위는 [ROWID와 INSERT 결과 ID](/dbms/reference/sql/rowid/)를
 참고합니다.
 
 ## Append 확장 API
@@ -200,3 +200,20 @@ binary, IP, DATETIME, NULL 표현은 설치된 `machbase_sqlcli.h`의 `SQL_APPEN
 `$MACHBASE_HOME/include/machbase_sqlcli.h`가 해당 라이브러리와 일치하는 기준입니다.
 샘플을 다른 버전의 헤더와 혼용하지 말고, 컴파일·링크·5656 연결 테스트를 배포 파이프라인에
 포함합니다.
+
+## DECIMAL Append
+
+`SQLAppendDataV2()`와 `SQLAppendBatch()`로 `DECIMAL` 또는 `NUMERIC` 값을 입력할 때는
+32바이트 opaque 타입 `SQL_APPEND_NUMERIC`과 공개 생성 함수를 사용합니다. 내부 바이트를
+애플리케이션에서 직접 만들거나 수정하지 않습니다.
+
+| 입력 | 함수 |
+|---|---|
+| UTF-8 숫자 문자열 | `SQLAppendNumericFromString()` |
+| signed·unsigned 정수 | `SQLAppendNumericFromInt64()`, `SQLAppendNumericFromUInt64()` |
+| `SQL_NUMERIC_STRUCT` | `SQLAppendNumericFromSQLNumeric()` |
+| NULL | `SQLAppendNumericSetNull()` |
+
+정확한 값을 보존하려면 문자열 또는 `SQL_NUMERIC_STRUCT`를 우선 사용합니다. type 배열에는
+`SQL_APPEND_TYPE_NUMERIC` 또는 `SQL_APPEND_TYPE_DECIMAL`을 지정하고, 대상 컬럼의
+precision과 scale을 기준으로 overflow와 반올림을 확인하십시오.

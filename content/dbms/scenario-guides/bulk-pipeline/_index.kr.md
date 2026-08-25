@@ -23,7 +23,7 @@ toc: true
 LOG 테이블에는 `_ARRIVAL_TIME`이 자동으로 제공되므로 사용자 열로 다시 선언하지 않습니다.
 
 ```sql
-CREATE LOG TABLE sc16_bulk_log (
+CREATE LOG TABLE sc15_bulk_log (
     source_time DATETIME,
     sensor_id   VARCHAR(64),
     value       DOUBLE,
@@ -45,7 +45,7 @@ CREATE LOG TABLE sc16_bulk_log (
 ```bash
 machloader -h
 machloader -s 127.0.0.1 -P 5656 -u app_user \
-  -t sc16_bulk_log -i /data/input.csv \
+  -t sc15_bulk_log -i /data/input.csv \
   -b /data/input.bad -l /data/input.log
 ```
 
@@ -66,7 +66,7 @@ machloader -s 127.0.0.1 -P 5656 -u app_user \
 SELECT COUNT(*) AS row_count,
        MIN(source_time) AS min_source_time,
        MAX(source_time) AS max_source_time
-  FROM sc16_bulk_log;
+  FROM sc15_bulk_log;
 ```
 
 검증에는 loader 또는 SDK의 성공 건수, 실패 파일의 행 수, 대상 테이블 행 수를 모두 사용합니다.
@@ -77,7 +77,7 @@ checkpoint는 DB 입력 성공과 검증이 끝난 뒤에만 전진시킵니다.
 검증용 객체가 더 필요하지 않으면 제거합니다.
 
 ```sql
-DROP TABLE sc16_bulk_log;
+DROP TABLE sc15_bulk_log;
 ```
 
 스레드 수, 배치 크기, 재시도 간격은 고정 권장값이 아니라 테스트 환경의 처리량, 지연, 메모리와

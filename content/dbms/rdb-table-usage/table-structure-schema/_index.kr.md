@@ -31,7 +31,7 @@ DELETE FROM order_history WHERE order_id = 1001;
 - **[스키마 설계](/dbms/rdb-table-usage/table-structure-schema/#rdb-table-design-design-schema-type-rdb)**
 - **[PRIMARY KEY·UNIQUE INDEX·일반 인덱스 비교](/dbms/rdb-table-usage/index-performance/#index-strategy-rdb-primary-key-unique-normal)**
 - **[UNIQUE INDEX 생성과 동작](/dbms/rdb-table-usage/index-performance/#unique-index-rdb)**
-- **[AUTO_INCREMENT](/dbms/rdb-table-usage/auto-increment/)**
+- **[AUTO_INCREMENT](/dbms/reference/sql/syntax-dictionary-sql/auto-increment-syntax/)**
 - **[JSON 경로 인덱스](/dbms/rdb-table-usage/index-performance/#index-strategy-rdb-json-path)**
 - **[트랜잭션 설계](/dbms/rdb-table-usage/transaction/#design-transaction-rdb)**
 - **[UPDATE·DELETE 설계](/dbms/rdb-table-usage/data-input-mutation/#modeling-rdb-update-delete)**
@@ -39,8 +39,8 @@ DELETE FROM order_history WHERE order_id = 1001;
 - **[자기 참조·INSERT SELECT](/dbms/rdb-table-usage/data-input-mutation/#reference-self-rdb-insert-select)**
 - **[JOIN 설계](/dbms/rdb-table-usage/join-relational-query/#join-design-rdb)**
 - **[백업·복원·마운트](/dbms/rdb-table-usage/backup-restore-mount/#design-backup-mount-rdb)**
-- **[Append API](/dbms/rdb-table-usage/sdk-append-scope/#unsupported-rejected-rdb-append-api)**
-- **[SDK 지원 범위](/dbms/rdb-table-usage/sdk-append-scope/#support-scope-rdb-sdk)**
+- **[Append API](/dbms/rdb-table-usage/data-input-mutation/#unsupported-rejected-rdb-append-api)**
+- **[SDK 지원 범위](/dbms/rdb-table-usage/data-input-mutation/#support-scope-rdb-sdk)**
 - **[Edition 제한](/dbms/rdb-table-usage/constraints-errors-troubleshooting/#limitations-rdb-edition)**
 
 <a id="rdb-table-design-design-schema-type-rdb"></a>
@@ -180,7 +180,7 @@ CREATE TRANSACTION TABLE device_master (
 );
 ```
 
-`AUTO_INCREMENT`의 지원 타입, INSERT 방식, catalog 확인 방법은 [AUTO_INCREMENT](/dbms/rdb-table-usage/auto-increment/)를 참고합니다.
+`AUTO_INCREMENT`의 지원 타입, INSERT 방식, catalog 확인 방법은 [AUTO_INCREMENT](/dbms/reference/sql/syntax-dictionary-sql/auto-increment-syntax/)를 참고합니다.
 
 #### 주의사항
 

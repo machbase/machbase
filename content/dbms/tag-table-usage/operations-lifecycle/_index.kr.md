@@ -60,7 +60,7 @@ DROP TABLE lifecycle_tag;
 삭제한 뒤 집계도 바뀌어야 한다면 대상 범위의 ROLLUP을 재구성합니다. ROLLUP 삭제 구문을
 보관 정책처럼 반복 실행하지 마십시오.
 
-- [ROLLUP 부분 삭제와 재구성](/dbms/tag-rollup-usage/delete-partial-rebuild-rollup/)
+- [ROLLUP 부분 삭제와 재구성](/dbms/tag-rollup-usage/rollup-rebuild/)
 - [TAG 데이터 정정 후 ROLLUP 재구성](../tag-data-update-correction/)
 
 <a id="original-85-duplication-removal"></a>

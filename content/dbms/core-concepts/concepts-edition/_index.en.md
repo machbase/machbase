@@ -11,6 +11,7 @@ toc: true
 
 ## Standard Edition과 Cluster Edition 차이
 
-<a id="differences-rdbms"></a>
+## Related documentation
 
-## 기존 RDBMS와의 차이
+See [Data model concepts](../concepts/#differences-rdbms) for the differences between time-series
+data models and general-purpose relational databases.

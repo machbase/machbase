@@ -3,6 +3,8 @@ type: docs
 title: '17.6.2 테이블 타입별 기능 지원표'
 weight: 20
 toc: true
+aliases:
+  - /dbms/data-modeling-table-design/table-types-type-manageable/
 ---
 
 Machbase는 용도에 따라 다섯 가지 테이블 유형을 제공합니다. 각 테이블 유형은 설계 목적에 따라 지원하는 기능 범위가 다릅니다.

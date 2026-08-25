@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '16.5 쿼리와 성능 문제'
-weight: 50
+title: '16.4 쿼리와 성능 문제'
+weight: 40
 toc: true
 ---
 

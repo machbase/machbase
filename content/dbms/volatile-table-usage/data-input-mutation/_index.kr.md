@@ -2,6 +2,8 @@
 title: '10.4 데이터 입력과 변경'
 weight: 40
 toc: true
+aliases:
+  - /dbms/volatile-table-usage/on-duplicate-key-update/
 ---
 
 VOLATILE 테이블의 `INSERT`, 중복 키 갱신, `DELETE`를 실행 가능한 예제로 설명합니다.

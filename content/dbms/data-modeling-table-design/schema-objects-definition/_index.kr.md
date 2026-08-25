@@ -54,7 +54,8 @@ ROLLUP과 보존 정책을 확인합니다.
 4. 되돌리기 어렵다면 새 테이블을 만들고 검증 후 전환하는 방식을 사용합니다.
 
 정확한 지원 범위와 구문은 [ALTER TABLE 사전](/dbms/reference/sql/syntax-dictionary-sql/)과
-[테이블 타입별 관리 범위](../table-types-type-manageable/)를 참고하십시오.
+[테이블 타입별 지원 범위](/dbms/reference/support-scope-constraints/table-types-type/)를
+참고하십시오.
 
 <a id="selection-type-column-data-types"></a>
 

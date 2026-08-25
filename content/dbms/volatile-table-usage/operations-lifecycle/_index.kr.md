@@ -2,6 +2,10 @@
 title: '10.7 운영과 데이터 생명주기'
 weight: 70
 toc: true
+aliases:
+  - /dbms/volatile-table-usage/memory-lifecycle/
+  - /dbms/volatile-table-usage/restart-data-loss/
+  - /dbms/volatile-table-usage/memory-monitoring-cache-rebuild/
 ---
 
 VOLATILE 테이블의 생성·적재·사용·소멸·재구성 절차를 정리합니다.
@@ -50,3 +54,19 @@ VOLATILE에는 원본에서 재생성 가능한 최신 상태나 중간 결과�
 - 행 수와 메모리 한도를 관찰합니다.
 - 보존이 필요한 데이터가 VOLATILE에만 남지 않도록 점검합니다.
 - 재시작 훈련에서 생성, 적재, 검증 순서를 확인합니다.
+
+## 메모리 확인과 캐시 재구성
+
+```sql
+SELECT * FROM V$STORAGE_DC_VOLATILE_TABLE;
+SELECT * FROM V$SYSMEM;
+SELECT * FROM V$SESMEM;
+
+SELECT NAME, VALUE
+  FROM V$PROPERTY
+ WHERE NAME = 'VOLATILE_TABLESPACE_MEMORY_MAX_SIZE';
+```
+
+특정 내부 컬럼명에 의존하지 말고 배포 버전의 view 정의를 확인합니다. 캐시를 다시 만들 때는
+행 수와 표본 값을 기록하고, 사용 흐름을 전환한 뒤 테이블 생성·초기 적재·검증 순서로
+진행합니다. 실패 시 빈 캐시로 안전하게 동작할 수 있어야 합니다.

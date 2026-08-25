@@ -1,6 +1,6 @@
 ---
 title: '8.12 JOIN과 관계형 조회 설계'
-weight: 130
+weight: 120
 toc: true
 ---
 

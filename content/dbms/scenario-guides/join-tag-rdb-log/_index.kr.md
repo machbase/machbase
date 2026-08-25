@@ -10,34 +10,34 @@ TAG 센서값, TRANSACTION 장비 마스터, LOG 이벤트를 고유 키와 시�
 ## 테이블과 데이터 준비
 
 ```sql
-CREATE TAG TABLE sc16_join_tag (
+CREATE TAG TABLE sc15_join_tag (
     name  VARCHAR(32) PRIMARY KEY,
     time  DATETIME BASETIME,
     value DOUBLE SUMMARIZED
 );
 
-CREATE TRANSACTION TABLE sc16_join_equipment (
+CREATE TRANSACTION TABLE sc15_join_equipment (
     eq_id     VARCHAR(32),
     eq_name   VARCHAR(64),
     threshold DOUBLE
 );
 
-CREATE LOG TABLE sc16_join_event (
+CREATE LOG TABLE sc15_join_event (
     eq_id    VARCHAR(32),
     severity VARCHAR(10),
     message  VARCHAR(256)
 );
 
-INSERT INTO sc16_join_equipment VALUES ('EQ-001', '압축기 1', 85.0);
-INSERT INTO sc16_join_equipment VALUES ('EQ-002', '펌프 2', 72.0);
+INSERT INTO sc15_join_equipment VALUES ('EQ-001', '압축기 1', 85.0);
+INSERT INTO sc15_join_equipment VALUES ('EQ-002', '펌프 2', 72.0);
 
-INSERT INTO sc16_join_tag METADATA VALUES ('EQ-001');
-INSERT INTO sc16_join_tag METADATA VALUES ('EQ-002');
-INSERT INTO sc16_join_tag VALUES ('EQ-001', SYSDATE, 88.5);
-INSERT INTO sc16_join_tag VALUES ('EQ-002', SYSDATE, 65.0);
+INSERT INTO sc15_join_tag METADATA VALUES ('EQ-001');
+INSERT INTO sc15_join_tag METADATA VALUES ('EQ-002');
+INSERT INTO sc15_join_tag VALUES ('EQ-001', SYSDATE, 88.5);
+INSERT INTO sc15_join_tag VALUES ('EQ-002', SYSDATE, 65.0);
 
-INSERT INTO sc16_join_event VALUES ('EQ-001', 'WARN', 'temperature threshold');
-EXEC TABLE_FLUSH(sc16_join_tag);
+INSERT INTO sc15_join_event VALUES ('EQ-001', 'WARN', 'temperature threshold');
+EXEC TABLE_FLUSH(sc15_join_tag);
 ```
 
 ## TAG + TRANSACTION 최신 상태 조인
@@ -45,14 +45,14 @@ EXEC TABLE_FLUSH(sc16_join_tag);
 ```sql
 WITH latest AS (
     SELECT t.name, t.time, t.value
-      FROM sc16_join_tag t
-      JOIN v$sc16_join_tag_stat s
+      FROM sc15_join_tag t
+      JOIN v$sc15_join_tag_stat s
         ON t.name = s.name
        AND t.time = s.recent_row_time
 )
 SELECT e.eq_id, e.eq_name, l.time, l.value, e.threshold,
        CASE WHEN l.value > e.threshold THEN 'ALARM' ELSE 'NORMAL' END AS state
-  FROM sc16_join_equipment e
+  FROM sc15_join_equipment e
   JOIN latest l
     ON e.eq_id = l.name
  ORDER BY e.eq_id;
@@ -65,8 +65,8 @@ SELECT e.eq_id, e.eq_name, l.time, l.value, e.threshold,
 ```sql
 SELECT t.name, t.time AS sensor_time, t.value,
        l._arrival_time AS event_time, l.severity, l.message
-  FROM sc16_join_tag t
-  JOIN sc16_join_event l
+  FROM sc15_join_tag t
+  JOIN sc15_join_event l
     ON t.name = l.eq_id
    AND l._arrival_time BETWEEN ADD_TIME(t.time, '0/0/0 0:-10:0')
                            AND ADD_TIME(t.time, '0/0/0 0:10:0')
@@ -80,7 +80,7 @@ SELECT t.name, t.time AS sensor_time, t.value,
 ## 정리
 
 ```sql
-DROP TABLE sc16_join_event;
-DROP TABLE sc16_join_tag;
-DROP TABLE sc16_join_equipment;
+DROP TABLE sc15_join_event;
+DROP TABLE sc15_join_tag;
+DROP TABLE sc15_join_equipment;
 ```

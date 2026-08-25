@@ -6,36 +6,36 @@ toc: true
 ---
 
 TAG 테이블의 최신값과 LOOKUP 테이블의 임계값을 결합해 현재 상태를 계산합니다. 예제는
-`SC16_DASHBOARD_` 접두사를 사용하며 마지막에 객체를 정리합니다.
+`SC15_DASHBOARD_` 접두사를 사용하며 마지막에 객체를 정리합니다.
 
 ## 사전 준비
 
 ```sql
-CREATE TAG TABLE sc16_dashboard_tag (
+CREATE TAG TABLE sc15_dashboard_tag (
     name  VARCHAR(64) PRIMARY KEY,
     time  DATETIME BASETIME,
     value DOUBLE SUMMARIZED
 );
 
-CREATE LOOKUP TABLE sc16_dashboard_threshold (
+CREATE LOOKUP TABLE sc15_dashboard_threshold (
     tag_name   VARCHAR(64) PRIMARY KEY,
     warn_value DOUBLE,
     crit_value DOUBLE
 );
 
-INSERT INTO sc16_dashboard_tag METADATA VALUES ('TEMP_01');
-INSERT INTO sc16_dashboard_tag METADATA VALUES ('TEMP_02');
-INSERT INTO sc16_dashboard_tag METADATA VALUES ('PRESS_01');
+INSERT INTO sc15_dashboard_tag METADATA VALUES ('TEMP_01');
+INSERT INTO sc15_dashboard_tag METADATA VALUES ('TEMP_02');
+INSERT INTO sc15_dashboard_tag METADATA VALUES ('PRESS_01');
 
-INSERT INTO sc16_dashboard_tag VALUES ('TEMP_01', SYSDATE, 72.3);
-INSERT INTO sc16_dashboard_tag VALUES ('TEMP_02', SYSDATE, 88.1);
-INSERT INTO sc16_dashboard_tag VALUES ('PRESS_01', SYSDATE, 1.04);
+INSERT INTO sc15_dashboard_tag VALUES ('TEMP_01', SYSDATE, 72.3);
+INSERT INTO sc15_dashboard_tag VALUES ('TEMP_02', SYSDATE, 88.1);
+INSERT INTO sc15_dashboard_tag VALUES ('PRESS_01', SYSDATE, 1.04);
 
-INSERT INTO sc16_dashboard_threshold VALUES ('TEMP_01', 80.0, 90.0);
-INSERT INTO sc16_dashboard_threshold VALUES ('TEMP_02', 80.0, 90.0);
-INSERT INTO sc16_dashboard_threshold VALUES ('PRESS_01', 1.10, 1.20);
+INSERT INTO sc15_dashboard_threshold VALUES ('TEMP_01', 80.0, 90.0);
+INSERT INTO sc15_dashboard_threshold VALUES ('TEMP_02', 80.0, 90.0);
+INSERT INTO sc15_dashboard_threshold VALUES ('PRESS_01', 1.10, 1.20);
 
-EXEC TABLE_FLUSH(sc16_dashboard_tag);
+EXEC TABLE_FLUSH(sc15_dashboard_tag);
 ```
 
 ## 1단계: 최신 센서값 조회
@@ -43,9 +43,9 @@ EXEC TABLE_FLUSH(sc16_dashboard_tag);
 한 태그의 최신값은 역방향 스캔과 `LIMIT 1`로 조회할 수 있습니다.
 
 ```sql
-SELECT /*+ SCAN_BACKWARD(sc16_dashboard_tag) */
+SELECT /*+ SCAN_BACKWARD(sc15_dashboard_tag) */
        name, time, value
-  FROM sc16_dashboard_tag
+  FROM sc15_dashboard_tag
  WHERE name = 'TEMP_01'
  LIMIT 1;
 ```
@@ -54,8 +54,8 @@ SELECT /*+ SCAN_BACKWARD(sc16_dashboard_tag) */
 
 ```sql
 SELECT t.name, t.time, t.value
-  FROM sc16_dashboard_tag t
-  JOIN v$sc16_dashboard_tag_stat s
+  FROM sc15_dashboard_tag t
+  JOIN v$sc15_dashboard_tag_stat s
     ON t.name = s.name
    AND t.time = s.recent_row_time
  ORDER BY t.name;
@@ -66,8 +66,8 @@ SELECT t.name, t.time, t.value
 ```sql
 WITH latest AS (
     SELECT t.name, t.time, t.value
-      FROM sc16_dashboard_tag t
-      JOIN v$sc16_dashboard_tag_stat s
+      FROM sc15_dashboard_tag t
+      JOIN v$sc15_dashboard_tag_stat s
         ON t.name = s.name
        AND t.time = s.recent_row_time
 )
@@ -80,7 +80,7 @@ SELECT l.name,
          ELSE 'NORMAL'
        END AS status
   FROM latest l
-  JOIN sc16_dashboard_threshold c
+  JOIN sc15_dashboard_threshold c
     ON l.name = c.tag_name
  ORDER BY l.name;
 ```
@@ -95,6 +95,6 @@ Grafana 등 외부 도구의 설치와 연결은
 ## 3단계: 정리
 
 ```sql
-DROP TABLE sc16_dashboard_threshold;
-DROP TABLE sc16_dashboard_tag;
+DROP TABLE sc15_dashboard_threshold;
+DROP TABLE sc15_dashboard_tag;
 ```

@@ -1,5 +1,5 @@
 ---
-title: '6.4 ROLLUP 생성과 삭제'
+title: '6.3 ROLLUP 생성과 삭제'
 weight: 30
 toc: true
 ---

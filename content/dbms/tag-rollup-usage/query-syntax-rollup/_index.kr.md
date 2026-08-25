@@ -1,5 +1,5 @@
 ---
-title: '6.5 ROLLUP 조회 문법'
+title: '6.4 ROLLUP 조회 문법'
 weight: 40
 toc: true
 ---

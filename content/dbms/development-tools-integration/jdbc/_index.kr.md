@@ -275,7 +275,7 @@ try (PreparedStatement insert = connection.prepareStatement(
 결과는 `ROWID` 컬럼 하나와 최대 한 행으로 구성됩니다. 반환할 ROWID가 없으면 빈
 `ResultSet`입니다. 지원 여부는 `DatabaseMetaData.supportsGetGeneratedKeys()`로 확인합니다.
 batch, Append, `INSERT ... SELECT`, UPSERT의 차이는
-[ROWID와 INSERT 결과 ID](/dbms/development-tools-integration/rowid-generated-id/)를 참고하십시오.
+[ROWID와 INSERT 결과 ID](/dbms/reference/sql/rowid/)를 참고하십시오.
 
 ## 버전 확인
 

@@ -1,7 +1,9 @@
 ---
-title: '6.8 확장 ROLLUP'
+title: '6.7 확장 ROLLUP과 FIRST/LAST'
 weight: 70
 toc: true
+aliases:
+  - /dbms/tag-rollup-usage/first-last-rollup/
 ---
 
 <a id="rollup-extension"></a>
@@ -63,3 +65,22 @@ ORDER BY rt;
 | MIN/MAX/AVG/SUM/COUNT | 일반 ROLLUP |
 | 구간 첫 값·마지막 값 필요 | 확장 ROLLUP (EXTENSION) |
 | 캔들스틱(OHLC) 차트 | 확장 ROLLUP (FIRST=Open, LAST=Close) |
+
+### OHLC 예제
+
+```sql
+SELECT rollup('min', 5, time) AS rt,
+       FIRST(time, price) AS open,
+       MAX(price)         AS high,
+       MIN(price)         AS low,
+       LAST(time, price)  AS close
+  FROM stock_tick
+ WHERE code = 'AAPL'
+   AND time >= TO_DATE('2026-01-15 09:00:00')
+   AND time <  TO_DATE('2026-01-15 18:00:00')
+ GROUP BY rt
+ ORDER BY rt;
+```
+
+`FIRST(basetime_column, value_column)`과 `LAST(basetime_column, value_column)`의 시간 컬럼은
+대상 TAG 테이블의 BASETIME 컬럼을 사용합니다.

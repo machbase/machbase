@@ -2,6 +2,8 @@
 title: '10.4 Data Input and Mutation'
 weight: 40
 toc: true
+aliases:
+  - /dbms/volatile-table-usage/on-duplicate-key-update/
 ---
 English structure placeholder. Korean content is authoritative for this restructuring pass.
 

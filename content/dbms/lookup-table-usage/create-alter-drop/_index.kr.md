@@ -68,7 +68,7 @@ PK 컬럼을 생략하거나 NULL로 지정하면 서버가 값을 생성합니�
 
 AUTO_INCREMENT를 사용하는 LOOKUP 테이블에서는 `INSERT ... SELECT`와
 `ON DUPLICATE KEY UPDATE`를 사용할 수 없습니다. SDK에서 INSERT 결과 ID를 받는 방법은
-[ROWID와 INSERT 결과 ID](/dbms/development-tools-integration/rowid-generated-id/)를 참고하십시오.
+[ROWID와 INSERT 결과 ID](/dbms/reference/sql/rowid/)를 참고하십시오.
 
 <a id="create-lookup-sequence"></a>
 

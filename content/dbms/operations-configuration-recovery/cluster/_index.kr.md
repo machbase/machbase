@@ -1,8 +1,10 @@
 ---
 type: docs
 title: '13.10 Cluster 운영'
-weight: 110
+weight: 100
 toc: true
+aliases:
+  - /dbms/scenario-guides/cluster/
 ---
 
 Cluster 작업은 topology, node 역할, replication·data 상태를 확인한 뒤 검증된 runbook으로

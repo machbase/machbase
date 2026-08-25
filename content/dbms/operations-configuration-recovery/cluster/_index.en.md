@@ -3,6 +3,8 @@ type: docs
 title: '13.10 Cluster 운영'
 weight: 100
 toc: true
+aliases:
+  - /dbms/scenario-guides/cluster/
 ---
 
 

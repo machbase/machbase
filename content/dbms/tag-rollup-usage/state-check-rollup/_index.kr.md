@@ -1,7 +1,9 @@
 ---
-title: '6.13 ROLLUP 상태 확인'
-weight: 120
+title: '6.11 ROLLUP 상태 확인'
+weight: 110
 toc: true
+aliases:
+  - /dbms/tag-rollup-usage/operational-notes-rollup/
 ---
 
 <a id="state-status-rollup-wakeup-interval-vrollup"></a>

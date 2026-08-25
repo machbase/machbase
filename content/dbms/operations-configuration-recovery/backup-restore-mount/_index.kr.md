@@ -1,7 +1,7 @@
 ---
 type: docs
 title: '13.9 백업, 복원, 마운트'
-weight: 100
+weight: 90
 toc: true
 ---
 
@@ -105,7 +105,7 @@ offline restore는 현재 instance data를 교체할 수 있는 파괴적 작업
 mount는 backup을 읽기 전용 database로 연결해 조사·선별 복구할 때 사용합니다.
 
 ```text
-MOUNT DATABASE mount_name FROM '/absolute/backup/path';
+MOUNT DATABASE '/absolute/backup/path' TO mount_name;
 UMOUNT DATABASE mount_name;
 ```
 

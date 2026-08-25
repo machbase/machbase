@@ -6,6 +6,8 @@ toc: true
 aliases:
   - /dbms/application-integration/selection-integration-method/
   - /dbms/application-integration/guide-drivers/
+  - /dbms/scenario-guides/examples/
+  - /dbms/reference/ai-agent-reference/sdk-api-selection-rules/
 ---
 
 프로젝트의 언어, 입력 특성, 배포 환경에 맞는 연동 방식을 선택합니다.

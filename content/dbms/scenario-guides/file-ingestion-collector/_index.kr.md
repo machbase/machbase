@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '15.7 Collector 파일 적재'
-weight: 70
+title: '15.6 Collector 파일 적재'
+weight: 60
 toc: true
 ---
 
@@ -25,9 +25,9 @@ Collector 설정 항목과 파싱 규칙은
 운영 서버가 아닌 검증 환경에서 먼저 등록합니다.
 
 ```bash
-machcollectoradmin --create-collector=sc16_file \
-  --template=/path/to/sc16_file.tpl
-machcollectoradmin --status-collector=sc16_file
+machcollectoradmin --create-collector=sc15_file \
+  --template=/path/to/sc15_file.tpl
+machcollectoradmin --status-collector=sc15_file
 ```
 
 등록 전에 `MACHBASE_COLLECTOR_HOME`과 `conf/machcollector.conf`가 실제 배포에 맞게 준비되어
@@ -37,8 +37,8 @@ machcollectoradmin --status-collector=sc16_file
 
 ```bash
 machadmin -e
-machcollectoradmin --start-collector=sc16_file
-machcollectoradmin --status-collector=sc16_file
+machcollectoradmin --start-collector=sc15_file
+machcollectoradmin --status-collector=sc15_file
 ```
 
 처리 건수만 보지 말고 대상 테이블에서 파일의 최소·최대 시각, 행 수, 대표 값을 조회합니다.
@@ -47,7 +47,7 @@ machcollectoradmin --status-collector=sc16_file
 ## 4. 중지와 재처리
 
 ```bash
-machcollectoradmin --stop-collector=sc16_file
+machcollectoradmin --stop-collector=sc15_file
 ```
 
 재처리 전에 Collector 로그에서 마지막으로 완료한 파일과 offset을 확인합니다. 이미 처리한

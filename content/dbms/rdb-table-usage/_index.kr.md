@@ -23,6 +23,7 @@ TRANSACTION 테이블은 관계형 업무 데이터와 트랜잭션 처리가 �
 | [잠금, 충돌, busy timeout](./locking-conflict-timeout/) | 동시 쓰기 충돌, 세션 timeout, 진단과 재시도 |
 | [JOIN과 관계형 조회 설계](./join-relational-query/) | TRANSACTION-LOOKUP, TRANSACTION-TAG, TRANSACTION-TRANSACTION JOIN |
 | [TRANSACTION 백업, 복원, 마운트](./backup-restore-mount/) | 전체·테이블 백업, 복원, 읽기 전용 마운트 |
-| [Append API 지원과 SDK 사용 범위](./sdk-append-scope/) | Append API 동작 방식, SDK별 지원 현황 |
-| [AUTO_INCREMENT](./auto-increment/) | 64비트 PRIMARY KEY 자동 번호 생성과 테이블별 차이 |
 | [INSERT ON DUPLICATE KEY UPDATE](./insert-on-duplicate-key-update/) | TRANSACTION upsert 문법과 충돌 처리 |
+
+여러 테이블 타입에 공통인 자동 번호 문법은
+[AUTO_INCREMENT](/dbms/reference/sql/syntax-dictionary-sql/auto-increment-syntax/)를 참고하십시오.

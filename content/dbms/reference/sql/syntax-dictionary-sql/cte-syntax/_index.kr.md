@@ -406,4 +406,4 @@ CTE는 테이블 유형별 DML 기능을 확장하지 않습니다. LOG, TAG, LO
 - [집합 연산자](../set-operator-syntax/)
 - [PIVOT syntax](../pivot-syntax/)
 - [윈도우 함수와 OVER](../window-function-over-syntax/)
-- [쿼리 분석과 EXPLAIN](/dbms/performance-tuning/query-analysis/)
+- [쿼리 분석과 EXPLAIN](/dbms/performance-tuning/performance-query-tuning/)

@@ -23,6 +23,7 @@ This page mirrors the Korean chapter structure. Detailed English content will be
 | [Locks, Conflicts, and Busy Timeout](./locking-conflict-timeout/) | Lock checks, conflict prevention, and timeout settings |
 | [JOIN and Relational Query Design](./join-relational-query/) | RDB-LOOKUP, RDB-TAG, and RDB-RDB joins |
 | [RDB Backup, Restore, and Mount](./backup-restore-mount/) | Database/table backup, restore, and read-only mount |
-| [Append API Scope](./sdk-append-scope/) | Append API behavior and SDK support |
-| [AUTO_INCREMENT](./auto-increment/) | RDB primary key auto numbering |
 | [INSERT ON DUPLICATE KEY UPDATE](./insert-on-duplicate-key-update/) | RDB upsert syntax and conflict handling |
+
+See [AUTO_INCREMENT](/dbms/reference/sql/syntax-dictionary-sql/auto-increment-syntax/) for the
+cross-table automatic-key syntax.

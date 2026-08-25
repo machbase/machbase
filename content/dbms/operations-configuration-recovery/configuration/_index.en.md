@@ -1,7 +1,7 @@
 ---
 type: docs
 title: '13.3 설정 운영'
-weight: 20
+weight: 30
 toc: true
 ---
 

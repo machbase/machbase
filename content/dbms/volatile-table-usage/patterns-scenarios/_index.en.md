@@ -2,6 +2,8 @@
 title: '10.9 Patterns and Scenarios'
 weight: 90
 toc: true
+aliases:
+  - /dbms/volatile-table-usage/state-cache-temporary-aggregation/
 ---
 English structure placeholder. Korean content is authoritative for this restructuring pass.
 

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.1.1.8 SAVE DATA INTO syntax'
-weight: 80
+title: '17.1.1.10 SAVE DATA INTO syntax'
+weight: 100
 toc: true
 ---

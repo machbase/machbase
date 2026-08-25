@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '16.7 Cluster 문제'
-weight: 80
+title: '16.6 Cluster 문제'
+weight: 60
 toc: true
 ---
 

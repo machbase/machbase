@@ -178,7 +178,7 @@ if (result.rowId !== undefined) {
 ```
 
 ROWID가 없는 실행에는 `rowId` 속성이 없습니다. batch, Append, `INSERT ... SELECT`,
-UPSERT의 차이는 [ROWID와 INSERT 결과 ID](/dbms/development-tools-integration/rowid-generated-id/)를
+UPSERT의 차이는 [ROWID와 INSERT 결과 ID](/dbms/reference/sql/rowid/)를
 참고하십시오.
 
 #### query(sql, values?)

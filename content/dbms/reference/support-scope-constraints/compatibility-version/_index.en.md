@@ -1,7 +1,7 @@
 ---
 type: docs
 title: '17.6.10 버전 및 호환성'
-weight: 110
+weight: 100
 toc: true
 ---
 

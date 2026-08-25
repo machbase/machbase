@@ -6,6 +6,7 @@ toc: true
 aliases:
   - /dbms/development-tools-integration/support-scope-sdk/
   - /dbms/application-integration/support-scope-sdk/
+  - /dbms/reference/support-scope-constraints/sdk/
 ---
 
 Compare SDK capabilities before selecting an interface. Use each SDK page as the canonical source
@@ -46,7 +47,7 @@ application needs table-schema facts.
 
 Generated ROWID support applies to a single SQL INSERT when the selected SDK exposes the generated
 identifier. It does not apply to Append or bulk-file input. See
-[ROWID and INSERT result IDs](../rowid-generated-id/) for table and SDK constraints.
+[ROWID](/dbms/reference/sql/rowid/) for SQL and table constraints.
 
 <a id="support-scope-sdk-append"></a>
 

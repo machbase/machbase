@@ -3,6 +3,8 @@ type: docs
 title: '12.6 PVO Cache and Memory Tuning'
 weight: 60
 toc: true
+aliases:
+  - /dbms/tag-table-usage/tag-cache-operations/
 ---
 
 <a id="pvo-cache"></a>

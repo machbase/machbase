@@ -12,13 +12,13 @@ toc: true
 ## 1단계: 검증 데이터와 백업 생성
 
 ```sql
-CREATE TRANSACTION TABLE sc16_backup_source (
+CREATE TRANSACTION TABLE sc15_backup_source (
     id    INTEGER,
     value VARCHAR(40)
 );
-INSERT INTO sc16_backup_source VALUES (1, 'before backup');
+INSERT INTO sc15_backup_source VALUES (1, 'before backup');
 
-BACKUP DATABASE INTO DISK = '/backup/sc16_snapshot';
+BACKUP DATABASE INTO DISK = '/backup/sc15_snapshot';
 ```
 
 경로가 이미 존재하는지, Machbase 서버 프로세스의 OS 계정이 상위 디렉터리에 쓸 수 있는지,
@@ -28,10 +28,10 @@ BACKUP DATABASE INTO DISK = '/backup/sc16_snapshot';
 ## 2단계: MOUNT와 조회
 
 ```sql
-MOUNT DATABASE '/backup/sc16_snapshot' TO sc16_mount;
+MOUNT DATABASE '/backup/sc15_snapshot' TO sc15_mount;
 
 SELECT id, value
-  FROM sc16_mount.sys.sc16_backup_source
+  FROM sc15_mount.sys.sc15_backup_source
  ORDER BY id;
 ```
 
@@ -40,17 +40,17 @@ database의 객체인지 알 수 있도록 세 부분 이름을 명시합니다.
 
 ```sql
 SELECT 'CURRENT' AS source_name, COUNT(*) AS row_count
-  FROM sc16_backup_source
+  FROM sc15_backup_source
 UNION ALL
 SELECT 'BACKUP' AS source_name, COUNT(*) AS row_count
-  FROM sc16_mount.sys.sc16_backup_source;
+  FROM sc15_mount.sys.sc15_backup_source;
 ```
 
 ## 3단계: UMOUNT와 정리
 
 ```sql
-UMOUNT DATABASE sc16_mount;
-DROP TABLE sc16_backup_source;
+UMOUNT DATABASE sc15_mount;
+DROP TABLE sc15_backup_source;
 ```
 
 UMOUNT 전에 mounted database를 사용하는 세션과 쿼리가 없는지 확인합니다. MOUNT 조회 성공은

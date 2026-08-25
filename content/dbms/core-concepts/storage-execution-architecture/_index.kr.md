@@ -268,36 +268,9 @@ Machbase는 시계열 데이터를 시간순으로 파티션된 구조로 저장
 [파티션 5] MIN=75, MAX=90  →  검색값 85 → 스캔 ✓
 ```
 
-#### 설정
+#### 설정과 기본값
 
-컬럼별 Min-Max Cache 크기는 `PROPERTY(MINMAX_CACHE_SIZE = n)` 옵션으로 지정합니다.
-
-```sql
--- id 컬럼에 Min-Max Cache 적용 (20KB)
-CREATE LOG TABLE ctest (
-    id   INTEGER PROPERTY(MINMAX_CACHE_SIZE = 20480),
-    name VARCHAR(100) PROPERTY(MINMAX_CACHE_SIZE = 0)  -- VARCHAR는 0만 허용
-);
-```
-
-#### 기본값과 규칙
-
-| 항목 | 기본값 |
-|------|--------|
-| 일반 컬럼 MINMAX_CACHE_SIZE | 10KB (10240 bytes) |
-| `_ARRIVAL_TIME` (숨김 컬럼) | 100MB (자동 적용) |
-| VARCHAR 컬럼 | 0 고정 (캐시 미지원) |
-
-- Min-Max Cache는 명시적으로 인덱스를 생성하지 않아도 동작합니다.
-- `ALTER TABLE ... MODIFY COLUMN ... SET MINMAX_CACHE_SIZE = n`으로 생성 후 변경 가능합니다.
-- 레코드가 없는 테이블은 Min-Max Cache 메모리를 할당하지 않습니다.
-- 파티션 수가 증가할수록 설정된 크기만큼 메모리가 점진적으로 증가합니다.
-- VARCHAR 타입에 MINMAX_CACHE_SIZE를 0 이외의 값으로 설정하면 오류가 발생합니다.
-
-```sql
--- 생성 후 캐시 크기 변경
-ALTER TABLE ctest MODIFY COLUMN id SET MINMAX_CACHE_SIZE = 20480;
-```
+Min-Max Cache의 설정값, 허용 범위와 변경 절차는 [캐시와 메모리 튜닝](../../performance-tuning/cache-tuning-memory/)과 [설정 프로퍼티 사전](../../reference/configuration/dictionary-configuration/)을 정본으로 사용합니다. 개념 문서에 특정 버전의 기본값이나 변경 SQL을 복제하지 않습니다.
 
 ### 다음 읽을 내용
 

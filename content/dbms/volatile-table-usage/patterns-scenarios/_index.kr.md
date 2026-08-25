@@ -2,6 +2,8 @@
 title: '10.9 활용 패턴과 시나리오'
 weight: 90
 toc: true
+aliases:
+  - /dbms/volatile-table-usage/state-cache-temporary-aggregation/
 ---
 
 <a id="use-cases-volatile"></a>

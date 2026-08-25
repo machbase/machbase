@@ -28,73 +28,7 @@ toc: true
 | Prepared Statement | O | Primary key 및 일반 predicate의 bind 지원 |
 | Append API | △ | 일반 SQL INSERT가 기본이며, Append는 별도 LOOKUP append 정책을 따름 |
 
-## LOOKUP JSON 컬럼 예
 
-```sql
-CREATE LOOKUP TABLE device_lookup
-(
-    id          VARCHAR(32) PRIMARY KEY,
-    site        VARCHAR(32),
-    status      VARCHAR(16),
-    score       INTEGER,
-    updated_at  DATETIME,
-    meta        JSON
-);
+## 정본
 
-INSERT INTO device_lookup VALUES
-(
-    'dev-001',
-    'SEOUL',
-    'READY',
-    30,
-    TO_DATE('2026-06-01 10:00:00'),
-    '{"region":"kr","level":3,"tags":["edge","main"]}'
-);
-```
-
-JSON path는 SELECT, UPDATE, DELETE 조건에 사용할 수 있습니다.
-
-```sql
-SELECT id, status
-FROM device_lookup
-WHERE meta->'$.region' = 'kr'
-  AND JSON_EXTRACT_INTEGER(meta, '$.level') >= 3;
-
-UPDATE device_lookup
-SET meta = JSON_SET(meta, '$.status', 'active')
-WHERE meta->'$.region' = 'kr'
-  AND status = 'READY';
-```
-
-## UPDATE/DELETE 조건
-
-LOOKUP 테이블의 UPDATE와 DELETE는 Primary key 조건뿐 아니라 non-PK, 범위, 문자열, 날짜,
-논리 조합과 JSON path 조건을 지원합니다. WHERE 절을 생략한 DELETE는 모든 row를 삭제합니다.
-
-```sql
-UPDATE device_lookup
-SET status = 'ACTIVE',
-    score = score + 10,
-    meta = JSON_SET(meta, '$.state', 'active')
-WHERE site = 'SEOUL'
-  AND JSON_EXTRACT_INTEGER(meta, '$.level') >= 3;
-
-DELETE FROM device_lookup
-WHERE status = 'EXPIRED'
-   OR updated_at < TO_DATE('2026-01-01 00:00:00');
-
-DELETE FROM device_lookup;
-```
-
-`SET` 절에서는 현재 row의 컬럼 값을 참조할 수 있습니다. 단, primary key 컬럼 자체는
-`SET` 절에서 변경할 수 없습니다.
-
-## 제약과 주의사항
-
-| 항목 | 내용 |
-|------|------|
-| JSON primary key | `JSON` 컬럼은 primary key로 사용할 수 없음 |
-| JSON path index | JSON path별 전용 인덱스는 지원하지 않음 |
-| JSON path 문자열 | 작은따옴표(`'$.key'`)를 사용해야 하며 큰따옴표는 식별자로 해석됨 |
-| 숫자 비교 | `->` 대신 `JSON_EXTRACT_INTEGER`, `JSON_EXTRACT_DOUBLE` 등 타입별 함수를 권장 |
-| 일반 predicate DML | 조건에 맞는 모든 row에 적용되므로 실행 전에 같은 조건으로 대상 범위 확인 |
+LOOKUP JSON 스키마와 실행 예제는 [JSON 컬럼과 조회](../../../lookup-table-usage/json-column-query/)를, UPDATE·DELETE 문법은 [DML 문법](../../sql/syntax-dictionary-sql/dml-syntax/)을 참고하십시오.

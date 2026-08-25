@@ -2,6 +2,8 @@
 title: '9.9 활용 패턴과 시나리오'
 weight: 90
 toc: true
+aliases:
+  - /dbms/lookup-table-usage/reference-master-modeling/
 ---
 LOOKUP 테이블의 활용 패턴과 시나리오를 다룹니다.
 

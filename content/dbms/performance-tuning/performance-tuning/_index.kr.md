@@ -3,6 +3,8 @@ type: docs
 title: '12.4 입력 성능 튜닝'
 weight: 40
 toc: true
+aliases:
+  - /dbms/performance-tuning/data-input-performance/
 ---
 
 입력 성능은 경로, row 크기, batch, 동시성, index, storage의 영향을 함께 받습니다. 대표
@@ -17,6 +19,10 @@ toc: true
 | Append API | 지속적인 TAG·LOG 대량 입력 |
 | TRANSACTION transaction | 원자성이 필요한 관계형 DML |
 | machloader·csvimport | 큰 파일의 일괄 적재 |
+
+Collector의 반복 파일 수집과 SDK별 입력 경로는
+[데이터 입력과 반출](/dbms/development-tools-integration/data-input-load-export/)에서 선택하고,
+이 페이지에서는 선택한 경로의 처리량과 지연만 조정합니다.
 
 <a id="performance-tuning-bulk"></a>
 

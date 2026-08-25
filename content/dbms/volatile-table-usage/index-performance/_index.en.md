@@ -2,6 +2,8 @@
 title: '10.6 Indexes and Performance'
 weight: 60
 toc: true
+aliases:
+  - /dbms/volatile-table-usage/red-black-index/
 ---
 English structure placeholder. Korean content is authoritative for this restructuring pass.
 

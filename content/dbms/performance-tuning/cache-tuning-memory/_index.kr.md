@@ -3,6 +3,8 @@ type: docs
 title: '12.6 PVO Cache와 메모리 튜닝'
 weight: 60
 toc: true
+aliases:
+  - /dbms/tag-table-usage/tag-cache-operations/
 ---
 
 SQL 실행 계획을 재사용하는 PVO Cache와 LOG 테이블의 범위 조회를 돕는 Min-Max Cache,
@@ -130,3 +132,15 @@ vmstat 5 10
 
 설정을 변경한 뒤에는 동일한 쿼리 부하에서 PVO Cache 지표, 응답 시간, 프로세스 메모리와 swap
 추세를 함께 비교합니다.
+
+## TAG metadata cache
+
+TAG metadata cache를 초기화해야 할 때는 영향을 확인한 뒤 다음 공개 명령을 사용합니다.
+
+```sql
+ALTER SYSTEM FLUSH TAG_CACHE;
+```
+
+metadata 변경 반영이나 cache 진단 목적으로만 사용하고, 반복적인 성능 개선 명령으로 실행하지
+않습니다. 현재 설정은 `V$PROPERTY`에서 확인하고 property의 정확한 이름·범위·runtime 변경
+가능 여부는 [설정 사전](/dbms/reference/configuration/)을 기준으로 판단합니다.

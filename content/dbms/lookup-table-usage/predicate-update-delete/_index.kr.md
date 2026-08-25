@@ -2,6 +2,8 @@
 title: '9.13 일반 predicate UPDATE/DELETE'
 weight: 130
 toc: true
+aliases:
+  - /dbms/lookup-table-usage/privilege-predicate-performance/
 ---
 
 LOOKUP 테이블은 기본 키뿐 아니라 일반 조건식으로 여러 행을 수정하거나 삭제할 수 있습니다.
@@ -52,3 +54,13 @@ DELETE FROM equipment_master
 
 - [LOOKUP predicate UPDATE](/dbms/reference/sql/syntax-dictionary-sql/dml-syntax/lookup-predicate-update-syntax/)
 - [LOOKUP predicate DELETE](/dbms/reference/sql/syntax-dictionary-sql/dml-syntax/lookup-predicate-delete-syntax/)
+
+## 권한과 성능
+
+UPDATE와 DELETE에는 각각 대상 테이블의 `UPDATE`, `DELETE` 권한이 필요합니다. 애플리케이션이
+변경 전후 값을 직접 조회할 때만 `SELECT`도 부여합니다. 권한 SQL은
+[권한 관리](/dbms/security-access-control/privileges/)를 정본으로 사용합니다.
+
+기본 키 equality는 단건 대상을 직접 찾고, 일반 조건식은 조건을 평가해 변경 대상을 수집합니다.
+반복 단건 변경에는 prepared statement와 bind를 사용하고, 대량 변경은 같은 조건의 행 수와
+실행 시간을 검증 환경에서 측정하십시오.

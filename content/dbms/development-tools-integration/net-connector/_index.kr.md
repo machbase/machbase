@@ -337,7 +337,7 @@ using (var command = new MachCommand(
 
 반환할 ROWID가 없으면 `null`입니다. ROWID는 64비트 `RowId`로 읽고, 기존 32비트
 `LastInsertedId`는 사용하지 않습니다. batch와 Append 등의 차이는
-[ROWID와 INSERT 결과 ID](/dbms/development-tools-integration/rowid-generated-id/)를 참고하십시오.
+[ROWID와 INSERT 결과 ID](/dbms/reference/sql/rowid/)를 참고하십시오.
 
 #### ExecuteScalar
 

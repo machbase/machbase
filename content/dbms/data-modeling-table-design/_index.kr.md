@@ -28,7 +28,6 @@ toc: true
 | 4.3 | [데이터 변경 정책](./alter-data-mutation-policy/) | 테이블 타입별 UPDATE, DELETE, TRUNCATE 정책 |
 | 4.4 | [안티패턴](./table-types-patterns-type-anti/) | 피해야 할 테이블 선택과 스키마 설계 |
 | 4.5 | [모델링 패턴](./patterns-modeling/) | 시계열, 이벤트, 상태, 참조, 업무 데이터 모델 |
-| 4.6 | [테이블 타입별 관리 가능 범위](./table-types-type-manageable/) | DDL, DML, 인덱스, Retention 지원 범위 |
 
 새 스키마를 설계할 때는 4.2에서 테이블 타입을 선택하고, 4.1과 4.3에서 스키마와 변경 정책을
 구체화한 뒤 4.4의 안티패턴을 점검합니다.

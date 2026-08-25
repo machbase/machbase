@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '11.12 외부 도구 연동'
-weight: 120
+title: '11.11 외부 도구 연동'
+weight: 110
 toc: true
 aliases:
   - /dbms/application-integration/external-tools/
@@ -34,7 +34,7 @@ aliases:
 - 오류 row를 별도 파일이나 dead-letter 경로로 보존하는지
 
 Fluentd 설치·설정 예제를 이 페이지에 중복하지 않습니다. DBMS 수집 흐름은
-[Fluentd 파이프라인](/dbms/log-table-usage/fluentd-pipeline/)을 정본으로 사용하고, 설치한
+[Fluentd 파이프라인](fluentd/)을 정본으로 사용하고, 설치한
 plugin의 option은 해당 버전의 plugin 문서를 확인합니다.
 
 <a id="grafana-plugin"></a>

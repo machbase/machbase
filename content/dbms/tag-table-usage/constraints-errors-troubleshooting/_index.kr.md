@@ -2,6 +2,8 @@
 title: '5.8 제약, 오류, 문제 해결'
 weight: 80
 toc: true
+aliases:
+  - /dbms/troubleshooting/update-delete/
 ---
 
 

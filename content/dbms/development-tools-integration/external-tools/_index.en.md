@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '11.12 External Tools'
-weight: 120
+title: '11.11 External Tools'
+weight: 110
 toc: true
 aliases:
   - /dbms/application-integration/external-tools/
@@ -25,7 +25,7 @@ plugin. Confirm availability and compatibility for the deployed tool version bef
 
 For a Fluentd output plugin or file pipeline, verify Ruby and Fluentd compatibility, LOG-table
 column mapping, buffer flush and overflow policy, restart duplicate handling, and a dead-letter path.
-Use [Fluentd pipeline](../../log-table-usage/fluentd-pipeline/) as the canonical DBMS workflow and
+Use [Fluentd pipeline](fluentd/) as the canonical DBMS workflow and
 the installed plugin's documentation for version-specific options.
 
 <a id="grafana-plugin"></a>

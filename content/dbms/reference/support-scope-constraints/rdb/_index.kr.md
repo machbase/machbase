@@ -47,55 +47,13 @@ Edition에서 LOG 테이블을 만들 때는 `CREATE LOG TABLE`을 사용합니�
 | Stored Procedure | X | 미지원 |
 | Foreign Key | X | 미지원 |
 
-`AUTO_INCREMENT` 사용법은 [AUTO_INCREMENT](/dbms/rdb-table-usage/auto-increment/), upsert는
+`AUTO_INCREMENT` 사용법은 [AUTO_INCREMENT](/dbms/reference/sql/syntax-dictionary-sql/auto-increment-syntax/), upsert는
 [INSERT ON DUPLICATE KEY UPDATE](/dbms/rdb-table-usage/insert-on-duplicate-key-update/), Append
-동작은 [Append API 지원 범위](/dbms/rdb-table-usage/sdk-append-scope/)를 참고하십시오.
+동작은 [Append API 지원 범위](/dbms/rdb-table-usage/data-input-mutation/)를 참고하십시오.
 
-## TRANSACTION 테이블 생성 예시
 
-```sql
-CREATE TRANSACTION TABLE orders (
-    order_id   INTEGER PRIMARY KEY,
-    customer   VARCHAR(100),
-    amount     DOUBLE,
-    order_date DATETIME
-);
-```
+## 관련 문서
 
-## 트랜잭션 사용 예시 (JDBC)
-
-```java
-Connection conn = DriverManager.getConnection(
-    "jdbc:machbase://127.0.0.1:5656/machbasedb", "SYS", "MANAGER");
-try {
-    Statement stmt = conn.createStatement();
-    stmt.execute("BEGIN");
-    stmt.executeUpdate("INSERT INTO orders VALUES (1, 'customer_a', 50000, SYSDATE)");
-    stmt.executeUpdate("INSERT INTO orders VALUES (2, 'customer_b', 30000, SYSDATE)");
-    stmt.execute("COMMIT");
-} catch (SQLException e) {
-    conn.createStatement().execute("ROLLBACK");
-}
-```
-
-## Cluster Edition 제약
-
-Cluster Edition에서 TRANSACTION 테이블 생성 시 오류가 발생합니다.
-
-```
-[Error] TRANSACTION table is not supported in Cluster Edition.
-```
-
-TRANSACTION 테이블이 필요한 경우 Standard Edition을 사용하거나, 트랜잭션 데이터를 외부 RDBMS(PostgreSQL, MySQL 등)에 저장하고 애플리케이션 계층에서 함께 처리하는 방식을 검토하십시오.
-
-## 다른 테이블 유형과 JOIN
-
-TRANSACTION 테이블은 TAG, LOG, LOOKUP 테이블과 JOIN이 가능합니다.
-
-```sql
--- TAG 테이블과 TRANSACTION 테이블 JOIN
-SELECT s.name, s.time, s.value, o.customer
-FROM sensor_data s
-JOIN orders o ON s.name = o.sensor_name
-WHERE s.time >= now - 1h;
-```
+- [TRANSACTION 테이블 활용](../../../rdb-table-usage/)
+- [TRANSACTION DDL과 DML](../../sql/syntax-dictionary-sql/)
+- [SDK 기능 지원 범위](../../../development-tools-integration/sdk-support-scope/)

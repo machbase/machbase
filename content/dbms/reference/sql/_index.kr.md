@@ -3,6 +3,8 @@ type: docs
 title: '17.1 SQL 레퍼런스'
 weight: 10
 toc: true
+aliases:
+  - /dbms/reference/ai-agent-reference/sql-generation-rules/
 ---
 
 SQL 문법, 함수, 데이터 타입, 쿼리 힌트, 상대 시간 표현의 정확한 정의를 제공합니다.
@@ -16,12 +18,13 @@ SQL 문법, 함수, 데이터 타입, 쿼리 힌트, 상대 시간 표현의 정
 | [데이터 타입 사전](./type-data-types-dictionary/) | 지원 데이터 타입의 크기, 범위, 기본값, 테이블 유형별 사용 가능 여부 |
 | [SELECT hint syntax](./syntax-dictionary-sql/select-hint-syntax/) | SELECT 힌트 문법, 사용법, 적용 대상 |
 | [상대 시간 표현 사전](./relative-time-dictionary/) | DURATION, BEFORE, AFTER, RANGE 등 시간 범위 표현 문법 |
+| [ROWID](./rowid/) | 테이블별 ROWID 의미, 조회 조건과 INSERT 결과 |
 
 ## SQL 특징
 
 표준 ANSI SQL을 기반으로 시계열 데이터 처리에 최적화된 확장 문법을 제공합니다.
 
-- **TAG 테이블 전용 문법**: `TAG TABLE` 키워드, `RECENT`, `FIRST`/`LAST`, `SERIES BY`, `ROLLUP`
+- **TAG 시계열 기능**: BASETIME, METADATA, `FIRST`/`LAST`, `SERIES BY`, ROLLUP
 - **시간 범위 조회**: `DURATION`, `BEFORE`, `AFTER`, `RANGE` 절
 - **공통 테이블 표현식**: Standard Edition의 비재귀 `WITH`/CTE
 - **빠른 전체 삽입**: `APPEND` 프로토콜 (CLI/SDK)

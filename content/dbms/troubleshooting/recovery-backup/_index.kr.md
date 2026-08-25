@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '16.6 백업과 복구 문제'
-weight: 60
+title: '16.5 백업과 복구 문제'
+weight: 50
 toc: true
 ---
 
@@ -55,7 +55,7 @@ SELECT * FROM V$STORAGE_MOUNT_DATABASES;
 현행 구문은 백업 경로 뒤에 별칭을 지정합니다.
 
 ```sql
-MOUNT DATABASE '/backup/sc16_snapshot' TO backup_check;
+MOUNT DATABASE '/backup/sc15_snapshot' TO backup_check;
 SELECT COUNT(*) FROM backup_check.sys.target_table;
 UMOUNT DATABASE backup_check;
 ```

@@ -2,6 +2,8 @@
 title: '9.9 Patterns and Scenarios'
 weight: 90
 toc: true
+aliases:
+  - /dbms/lookup-table-usage/reference-master-modeling/
 ---
 English structure placeholder. Korean content is authoritative for this restructuring pass.
 

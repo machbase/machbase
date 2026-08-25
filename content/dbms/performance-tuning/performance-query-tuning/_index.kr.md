@@ -3,6 +3,8 @@ type: docs
 title: '12.5 조회와 분석 성능 튜닝'
 weight: 50
 toc: true
+aliases:
+  - /dbms/performance-tuning/query-analysis/
 ---
 
 조회 성능은 결과 정확성을 유지하면서 읽는 row와 partition, 정렬·집계 작업량을 줄이는
@@ -137,3 +139,12 @@ window partition과 order key가 넓으면 정렬·메모리 비용이 커질 �
 - 단일 실행뿐 아니라 동시 query에서 비교했는가
 - 입력 처리량과 메모리 사용량에 부작용이 없는가
 - 변경을 되돌릴 DDL·property 값과 기준 측정값을 기록했는가
+
+## 관련 SQL 정본
+
+| 주제 | 정본 |
+|---|---|
+| SELECT·시간 조건 | [SELECT 문법](/dbms/reference/sql/syntax-dictionary-sql/select-syntax/) |
+| VIEW·CTE·집합 연산 | [SQL 문법 사전](/dbms/reference/sql/syntax-dictionary-sql/) |
+| 힌트 | [SELECT hint](/dbms/reference/sql/syntax-dictionary-sql/select-hint-syntax/) |
+| 함수·집계 | [함수 사전](/dbms/reference/sql/dictionary/) |

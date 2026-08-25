@@ -1,6 +1,6 @@
 ---
-title: '6.12 ROLLUP Start, Stop, and Immediate Collection'
-weight: 110
+title: '6.10 ROLLUP Start, Stop, and Immediate Collection'
+weight: 100
 toc: true
 ---
 English structure placeholder. Korean content is authoritative for this restructuring pass.

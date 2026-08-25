@@ -7,6 +7,17 @@ aliases:
   - /dbms/reference/sdk-api/jdbc/
 ---
 
+## Focused JDBC guides
+
+| Guide | Scope |
+|---|---|
+| [PreparedStatement and types](prepared-types/) | Binding, NULL, DATETIME, DECIMAL, and named markers |
+| [ResultSet, Statement, and LOB](resultset-lob/) | Result lifecycle, fetch, and large values |
+| [Transactions and connection pools](transaction-pooling/) | Commit boundaries and pooled-session reset |
+| [DatabaseMetaData](database-metadata/) | Schema, nullability, primary keys, and generated keys |
+| [Append API](append-api/) | JDBC Append lifecycle and error handling |
+| [Migration and troubleshooting](migration-troubleshooting/) | Driver migration and diagnostic evidence |
+
 ## JDBC Overview
 
 The set of database manipulation interfaces created in the Java programming language is called JDBC (Java DataBase Connectivity). A set of APIs that provide a consistent interface for a variety of relational databases, defining a set of object-oriented classes of classes that the programmer will use to build SQL requests. That is, if you use a JDBC driver, no matter which database you use, there is an advantage that you can apply it directly without modifying the code.

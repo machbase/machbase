@@ -3,6 +3,8 @@ type: docs
 title: '2.5 용어 구분'
 weight: 50
 toc: true
+aliases:
+  - /dbms/reference/ai-agent-reference/terminology-disambiguation/
 ---
 이 페이지는 이름이나 목적이 비슷해 혼동하기 쉬운 기능의 선택 기준만 비교합니다. 실행 예제와
 옵션은 연결된 상세 문서를 참고하십시오.

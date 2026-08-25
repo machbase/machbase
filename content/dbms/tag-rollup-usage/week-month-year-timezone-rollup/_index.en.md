@@ -1,6 +1,6 @@
 ---
-title: '6.11 Week, Month, Year, and Time Zone Queries'
-weight: 100
+title: '6.9 Week, Month, Year, and Time Zone Queries'
+weight: 90
 toc: true
 ---
 English structure placeholder. Korean content is authoritative for this restructuring pass.

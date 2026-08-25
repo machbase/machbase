@@ -3,6 +3,8 @@ type: docs
 title: '12.1 성능 문제 접근 순서'
 weight: 10
 toc: true
+aliases:
+  - /dbms/performance-tuning/checklist-performance-diagnosis/
 ---
 
 성능 문제는 재현 조건과 기준값을 확보한 뒤 병목을 좁혀야 합니다. 근거 없이 property나
@@ -65,3 +67,12 @@ query에 시간 범위가 있는지, 조건이 함수나 형변환 때문에 ind
 
 효과가 없거나 부작용이 크면 기록한 이전 값으로 되돌립니다. schema나 storage 구조 변경은
 마지막 수단으로 검토하고, staging과 복구 절차를 먼저 준비합니다.
+
+## 최종 진단 체크리스트
+
+- 현재 작업과 session을 정상 baseline과 비교했는가
+- 실제 SQL과 시간 범위로 실행 계획을 확인했는가
+- index·ROLLUP 변경이 입력 비용에 미치는 영향을 확인했는가
+- OS와 서버 지표의 시각을 같은 작업과 맞췄는가
+- property·schema 변경을 한 번에 하나씩 적용했는가
+- 원복 값과 재측정 결과를 기록했는가

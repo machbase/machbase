@@ -50,73 +50,14 @@ Machbase를 설치하면 `SYS` 계정이 자동으로 생성됩니다. SYS는 �
 > ALTER USER SYS IDENTIFIED BY '새_비밀번호';
 > ```
 
-## 권한 종류
+## 상세 정본
 
-Machbase의 권한은 **테이블 권한**과 **데이터베이스 권한** 두 가지로 나뉩니다.
+- 사용자 lifecycle과 비밀번호 정책: [계정 관리](../account/)
+- database·table 권한과 GRANT/REVOKE: [권한 관리](../privileges/)
+- 공개키 등록·롤오버: [AUTH KEY 인증](../authentication-auth-key/)
+- 원격 접속과 listener: [접속 제어](../access-control/)
 
-### 테이블 권한
-
-특정 테이블에 대한 DML 작업을 허용합니다.
-
-| 권한 | 설명 |
-|------|------|
-| `SELECT` | 테이블 조회 |
-| `INSERT` | 데이터 입력 |
-| `DELETE` | 데이터 삭제 |
-| `UPDATE` | 데이터 수정 (LOG는 미지원, TAG data UPDATE는 Standard Edition에서 태그/축 조건 필요) |
-| `ALL` | 위 모든 DML 권한 |
-
-```sql
-GRANT SELECT ON sensor_log TO reader_user;
-GRANT SELECT, INSERT ON sys.sensor_log TO writer_user;
-```
-
-### 데이터베이스 권한
-
-지정한 active database에 영향을 미치는 DDL 및 운영 작업을 허용합니다. 기본
-`MACHBASEDB` 외에도 8.7.0 Standard Edition의 각 logical database를 대상으로 지정할
-수 있습니다.
-
-| 권한 | 허용 작업 |
-|------|-----------|
-| `CONNECT` | active database 연결, `USE`, 객체 탐색 |
-| `CREATE` | CREATE TABLE/VIEW/INDEX/ROLLUP 등 |
-| `DROP` | DROP TABLE/VIEW/INDEX/ROLLUP 등 |
-| `DDL` | CREATE + DROP 묶음 |
-| `ALTER` | ALTER SYSTEM |
-| `BACKUP` | BACKUP DATABASE |
-| `MOUNT` | MOUNT/UMOUNT DATABASE |
-| `USAGE` | mounted database 탐색. table SELECT는 별도 필요 |
-| `ALL` | 위 모든 데이터베이스 권한 |
-
-```sql
-GRANT DDL ON DATABASE factory_a TO deploy_user;
-GRANT BACKUP ON DATABASE factory_a TO backup_user;
-GRANT MOUNT ON DATABASE MACHBASEDB TO mount_user;
-```
-
-### 사용자 생성 시 기본 권한
-
-사용자를 생성하면 다음 권한이 자동으로 부여됩니다.
-
-- `SELECT`, `INSERT`, `DELETE`, `UPDATE`, `CREATE`, `DROP`
-
-다음 권한은 포함되지 않으므로 필요할 때 명시적으로 부여해야 합니다.
-
-- `ALTER`, `MOUNT`, `BACKUP`
-
-## AUTH KEY 인증
-
-비밀번호 인증 외에 공개키 기반의 AUTH KEY 인증을 사용할 수 있습니다. 클라이언트가 보유한 개인키로 서명하고, 서버에 등록된 공개키로 서명을 검증하는 challenge 방식입니다.
-
-지원 알고리즘:
-
-| 알고리즘 | 지원 파라미터 |
-|----------|--------------|
-| ECDSA | P-256, P-384, P-521 |
-| RSA | 2048, 3072, 4096 bits |
-
-AUTH KEY를 사용하면 비밀번호 유출 위험 없이 서비스 계정을 운영할 수 있습니다. 설정 방법은 [AUTH KEY 인증](../authentication-auth-key/)을 참고하십시오.
+개요 페이지에 전체 권한표와 인증 SQL을 복제하지 않습니다.
 
 ## 최소 권한 원칙
 

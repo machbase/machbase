@@ -1,5 +1,5 @@
 ---
-title: '6.4 Create and Delete ROLLUP'
+title: '6.3 Create and Delete ROLLUP'
 weight: 30
 toc: true
 ---

@@ -1,7 +1,7 @@
 ---
 type: docs
 title: '13.8 스키마 변경 체크리스트'
-weight: 90
+weight: 80
 toc: true
 ---
 
@@ -17,7 +17,7 @@ SELECT NAME AS TABLE_NAME, TYPE AS TABLE_TYPE
  WHERE NAME = 'TARGET_TABLE';
 ```
 
-테이블 타입별 ALTER TABLE 지원 범위가 다릅니다. [테이블 타입별 관리 가능 범위](/dbms/data-modeling-table-design/table-types-type-manageable/)를 미리 확인하십시오.
+테이블 타입별 ALTER TABLE 지원 범위가 다릅니다. [테이블 타입별 관리 가능 범위](/dbms/reference/support-scope-constraints/table-types-type/)를 미리 확인하십시오.
 
 ### 2. 현재 스키마 확인
 

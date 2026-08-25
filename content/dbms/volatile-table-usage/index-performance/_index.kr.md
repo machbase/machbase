@@ -2,6 +2,8 @@
 title: '10.6 인덱스와 성능'
 weight: 60
 toc: true
+aliases:
+  - /dbms/volatile-table-usage/red-black-index/
 ---
 
 VOLATILE 테이블의 인덱스 생성과 선택 기준을 설명합니다.

@@ -45,9 +45,3 @@ English structure placeholder. Korean content is authoritative for this restruct
 ## TAG Binary Columns
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.
-
-<a id="original-85-varchar-storage"></a>
-
-## TAG VARCHAR Storage
-
-English structure placeholder. Korean content is authoritative for this restructuring pass.

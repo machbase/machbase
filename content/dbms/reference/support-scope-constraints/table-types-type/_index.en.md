@@ -3,6 +3,8 @@ type: docs
 title: '17.6.2 Feature Support by Table Type'
 weight: 20
 toc: true
+aliases:
+  - /dbms/data-modeling-table-design/table-types-type-manageable/
 ---
 
 ## Fixed-Point Type Support

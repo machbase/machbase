@@ -140,7 +140,7 @@ row_id = cursor.lastrowid
 값은 임의 정밀도 Python `int`이며 unsigned 64비트 ROWID를 양수로 보존합니다. ROWID가 없는
 실행에서는 `None`입니다. `executemany()`, Append, `INSERT ... SELECT`, UPSERT에서는
 ROWID를 반환하지 않습니다. 실행 실패 후에도 이전 값을 재사용하지 마십시오. 자세한 조건은
-[ROWID와 INSERT 결과 ID](/dbms/development-tools-integration/rowid-generated-id/)를 참고하십시오.
+[ROWID와 INSERT 결과 ID](/dbms/reference/sql/rowid/)를 참고하십시오.
 
 ### DB-API 결과의 Nullable 메타데이터
 

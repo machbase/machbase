@@ -11,6 +11,8 @@ toc: true
 
 ## 시계열 데이터 이해하기
 
+<a id="differences-rdbms"></a>
+
 <a id="write-oriented-append-only"></a>
 
 ## 쓰기 중심 워크로드와 append-only 모델

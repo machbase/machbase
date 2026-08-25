@@ -1,7 +1,7 @@
 ---
 type: docs
 title: '17.6.10 버전 및 호환성'
-weight: 110
+weight: 100
 toc: true
 ---
 
@@ -133,68 +133,7 @@ Standard Edition에서 같은 객체나 직접 관련된 객체의 DDL이 충돌
 | 8.7.0 백업 | O | |
 | 8.4 이하 백업 | △ | 버전에 따라 다름, 테스트 필요 |
 
-## 업그레이드 시 주의사항
 
-### 8.5 → 8.7.0 업그레이드
+## 업그레이드 정본
 
-1. **업그레이드 전 백업 필수**: `BACKUP DATABASE`로 전체 백업을 수행하십시오.
-2. **드라이버 업데이트**: 서버 업그레이드 후 클라이언트 드라이버(JDBC, ODBC, Python 등)도 8.7.0 버전으로 업데이트하십시오.
-3. **설정 파일 검토**: 제거된 HTTP, STREAM, RS Cache 프로퍼티를 `machbase.conf`에서 삭제하십시오.
-4. **SDK 호환성**: 이전 버전 SDK는 8.7.0 서버와 제한적으로 호환됩니다. 가급적 서버와 SDK를 함께 업그레이드하십시오.
-
-### 업그레이드 절차
-
-```sql
--- /secure/path/pre_upgrade_backup.sql
-BACKUP DATABASE INTO DISK = '/data/backup/pre_upgrade_backup';
-```
-
-```sql
--- /secure/path/check_version.sql
-SELECT * FROM V$VERSION;
-```
-
-```bash
-# 1. 현재 버전 백업
-machsql -s 127.0.0.1 -P 5656 -u SYS \
-  -f /secure/path/pre_upgrade_backup.sql
-
-# 2. 서버 중지
-machadmin -s
-
-# 3. 8.7.0 바이너리 설치 (패키지 또는 tarball)
-
-# 4. 서버 시작
-machadmin -u
-
-# 5. 버전 확인
-machsql -s 127.0.0.1 -P 5656 -u SYS \
-  -f /secure/path/check_version.sql
-```
-
-## 지원 OS 및 플랫폼
-
-| 플랫폼 | 아키텍처 | 지원 여부 | 최소 요구 버전 |
-|--------|---------|:--------:|-------------|
-| Linux (RHEL / CentOS) | x86_64 | O | 7.x 이상 |
-| Linux (Ubuntu) | x86_64 | O | 18.04 LTS 이상 |
-| Linux (Debian) | x86_64 | O | 10 이상 |
-| Linux | ARM64 (aarch64) | O | |
-| Windows | x86_64 | X | 미지원 |
-| macOS | x86_64 / ARM64 | X | 미지원 (개발 환경 용도 제외) |
-
-## 지원 종료 (EOL) 정책
-
-- 각 메이저 버전은 출시 후 최소 2년간 보안 패치를 제공합니다.
-- 8.4 이하 버전은 지원이 종료되었습니다.
-- 지원 버전 현황은 Machbase 공식 사이트를 확인하십시오.
-
-## 버전 확인 방법
-
-```sql
--- 서버 버전 확인
-SELECT * FROM v$version;
-
--- 서버 정보 확인
-SELECT * FROM v$property WHERE name LIKE '%VERSION%';
-```
+실행 순서, 지원 플랫폼과 사전 점검은 [업그레이드](../../../installation-deployment-upgrade/upgrade/)를 참고하십시오. 이 페이지는 SQL·server·client 호환성 사실만 유지합니다.

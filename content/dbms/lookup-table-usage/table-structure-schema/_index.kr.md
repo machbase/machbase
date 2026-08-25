@@ -41,7 +41,7 @@ sensor_id = 'TEMP-01'  ───────►  { site, unit, status, ... }
 - **[PRIMARY KEY 설계](/dbms/lookup-table-usage/primary-key-policy/#design-primary-key)**
 - **[컬럼 및 시퀀스 설계](/dbms/lookup-table-usage/sequence-column/#design-column-lookup-sequence)**
 - **[JSON 컬럼과 조회](/dbms/lookup-table-usage/json-column-query/#condition-query-lookup-json)**
-- **[참조 설계 패턴](/dbms/lookup-table-usage/reference-master-modeling/#patterns-reference-design)**
+- **[참조 설계 패턴](/dbms/lookup-table-usage/patterns-scenarios/#patterns-reference-design)**
 - **[인덱스 전략](/dbms/lookup-table-usage/index-performance/#index-strategy-lookup)**
 - **[PRIMARY KEY 정책](/dbms/lookup-table-usage/primary-key-policy/#policy-lookup-primary-key)**
 - **[일반 조건식 기반 UPDATE·DELETE](/dbms/lookup-table-usage/predicate-update-delete/)**

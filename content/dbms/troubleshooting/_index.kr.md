@@ -3,6 +3,8 @@ type: docs
 title: '16. 문제 해결'
 weight: 160
 toc: true
+aliases:
+  - /dbms/reference/ai-agent-reference/error-resolution-map/
 ---
 
 Machbase 운영 중 발생하는 문제를 증상 확인, 원인 진단, 해결, 재발 방지 순서로 다룹니다.
@@ -18,10 +20,13 @@ Machbase 운영 중 발생하는 문제를 증상 확인, 원인 진단, 해결,
 |-----:|------|------|
 | 16.1 | [문제 해결 접근법](./troubleshooting/) | 증상 수집, 진단 명령, 로그와 오류 코드 분석 |
 | 16.2 | [서버와 연결 문제](./server-connection/) | 서버 시작, 원격 접속, 인증 오류 |
-| 16.3 | [UPDATE/DELETE 문제](./update-delete/) | 테이블 타입별 변경 조건과 JSON 경로 오류 |
-| 16.4 | [입력과 적재 문제](./item/) | Append, CSV 가져오기, Collector 오류 |
-| 16.5 | [쿼리와 성능 문제](./performance/) | 느린 쿼리, 빈 결과, 메모리, 트랜잭션 충돌 |
-| 16.6 | [백업과 복구 문제](./recovery-backup/) | BACKUP, RESTORE, MOUNT, UMOUNT 오류 |
-| 16.7 | [Cluster 문제](./cluster/) | 노드 상태와 Cluster Edition 오류 |
+| 16.3 | [입력과 적재 문제](./item/) | Append, CSV 가져오기, Collector 오류 |
+| 16.4 | [쿼리와 성능 문제](./performance/) | 느린 쿼리, 빈 결과, 메모리, 트랜잭션 충돌 |
+| 16.5 | [백업과 복구 문제](./recovery-backup/) | BACKUP, RESTORE, MOUNT, UMOUNT 오류 |
+| 16.6 | [Cluster 문제](./cluster/) | 노드 상태와 Cluster Edition 오류 |
+| 16.7 | [ROLLUP 문제](./rollup/) | 집계 지연, 결과 불일치와 재구성 판단 |
+
+TAG와 LOOKUP의 UPDATE·DELETE 조건 오류는 각 테이블 장의 제약·문제 해결 페이지에서
+확인하십시오.
 
 문제를 해결한 뒤에는 원인, 조치, 확인 쿼리와 재발 방지 항목을 운영 기록에 남깁니다.

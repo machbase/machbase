@@ -105,7 +105,7 @@ CREATE TRANSACTION TABLE device_master (
 );
 ```
 
-`AUTO_INCREMENT` 컬럼은 단일 64비트 정수 PRIMARY KEY에 사용합니다. INSERT 방식과 catalog 확인 방법은 [AUTO_INCREMENT](/dbms/rdb-table-usage/auto-increment/)에서 다룹니다.
+`AUTO_INCREMENT` 컬럼은 단일 64비트 정수 PRIMARY KEY에 사용합니다. INSERT 방식과 catalog 확인 방법은 [AUTO_INCREMENT](/dbms/reference/sql/syntax-dictionary-sql/auto-increment-syntax/)에서 다룹니다.
 
 <a id="alter-rdb-table"></a>
 

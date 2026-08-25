@@ -68,8 +68,8 @@ VOLATILE 테이블은 메모리에만 존재하며, 서버 재시작 시 데이�
 
 - **[활용 사례](/dbms/volatile-table-usage/patterns-scenarios/#use-cases-volatile)**
 - **[영속성 차이·DDL](/dbms/volatile-table-usage/create-alter-drop/#differences-persistence-ddl)**
-- **[메모리 생명주기](/dbms/volatile-table-usage/memory-lifecycle/#lifecycle-memory)**
+- **[메모리 생명주기](/dbms/volatile-table-usage/operations-lifecycle/#lifecycle-memory)**
 - **[PRIMARY KEY 설계](/dbms/volatile-table-usage/table-structure-schema/#primary-key-design-primary-key)**
-- **[Red-Black 트리 인덱스](/dbms/volatile-table-usage/red-black-index/#index-strategy-red-black)**
-- **[ON DUPLICATE KEY UPDATE](/dbms/volatile-table-usage/on-duplicate-key-update/#on-duplicate-key-update)**
-- **[데이터 손실 위험](/dbms/volatile-table-usage/restart-data-loss/#data-loss)**
+- **[Red-Black 트리 인덱스](/dbms/volatile-table-usage/index-performance/#index-strategy-red-black)**
+- **[ON DUPLICATE KEY UPDATE](/dbms/volatile-table-usage/data-input-mutation/#on-duplicate-key-update)**
+- **[데이터 손실 위험](/dbms/volatile-table-usage/operations-lifecycle/#data-loss)**

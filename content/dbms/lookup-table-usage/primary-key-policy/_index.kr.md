@@ -127,8 +127,3 @@ INSERT INTO country VALUES ('NEW', '새 국가명');
 
 LOOKUP 테이블 DML은 개별 문장 단위로 실행합니다. `BEGIN`/`COMMIT`으로 묶는 TRANSACTION
 트랜잭션에는 LOOKUP DML을 포함할 수 없습니다.
-
-### 복합 PRIMARY KEY 주의사항
-
-- 복합 PK의 각 컬럼 순서가 인덱스 효율에 영향을 줍니다.
-- 첫 번째 PK 컬럼이 주요 조회 조건이어야 합니다.

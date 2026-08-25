@@ -1,7 +1,9 @@
 ---
-title: '6.13 ROLLUP State Check'
-weight: 120
+title: '6.11 ROLLUP State Check'
+weight: 110
 toc: true
+aliases:
+  - /dbms/tag-rollup-usage/operational-notes-rollup/
 ---
 English structure placeholder. Korean content is authoritative for this restructuring pass.
 

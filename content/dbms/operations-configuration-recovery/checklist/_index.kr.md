@@ -1,8 +1,10 @@
 ---
 type: docs
 title: '13.11 운영 체크리스트'
-weight: 120
+weight: 110
 toc: true
+aliases:
+  - /dbms/reference/ai-agent-reference/operations-checklist/
 ---
 
 정기적으로 수행해야 하는 점검 항목입니다. 일별·주별·월별 루틴 점검과 장애 발생 시 대응 체크리스트로 구성됩니다.
@@ -156,22 +158,6 @@ SELECT user_id, name, valid_before
 
 불필요한 계정이나 만료 정책이 없는 계정이 있으면 보안 정책을 강화합니다.
 
----
-
-## 장애 대응 체크리스트
-
-장애 발생 시 아래 표를 참고하여 신속하게 원인을 파악하고 조치합니다.
-
-| 증상 | 확인 명령 | 조치 |
-|------|-----------|------|
-| 서버 응답 없음 | `machadmin -e` | 로그와 프로세스 상태를 확인한 뒤 승인된 복구 절차 수행 |
-| 디스크 풀 | `df -h` | 오래된 데이터·로그 정리, 보관 데이터 외부 이동 |
-| 메모리 부족 | `free -h` | 캐시 크기 조정, 장기 실행 세션 종료 |
-| 수집 중단 | `machcollectoradmin --list` / Collector 로그 | Collector 재시작 |
-| 쿼리 느림 | `EXPLAIN <쿼리>` | 인덱스 추가, ROLLUP 활용, 쿼리 튜닝 |
-| 클러스터 노드 이탈 | `machcoordinatoradmin --cluster-status` | 노드 재시작 또는 [Warehouse 복구](/dbms/operations-configuration-recovery/cluster/#recovery-state-status-warehouse) |
-| 클라이언트 연결 불가 | `machadmin -e` / Broker 상태 | Broker 재시작, 포트·방화벽 확인 |
-| 라이선스 만료 | `SELECT * FROM v$license_info` | 라이선스 갱신 후 서버 재시작 |
 
 ## 자동화 권장 사항
 

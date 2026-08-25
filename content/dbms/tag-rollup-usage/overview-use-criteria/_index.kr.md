@@ -77,7 +77,7 @@ ROLLUP 집계는 원시 데이터 입력과 비동기로 진행될 수 있습니
 | 달력 단위와 시간대 | [WEEK·MONTH·YEAR와 시간대](../week-month-year-timezone-rollup/) |
 | JSON 집계 | [JSON SUMMARIZED ROLLUP](../json-summarized-rollup/) |
 | 수정·삭제 후 재구성 | [ROLLUP 재구성](../rollup-rebuild/) |
-| 장애 진단 | [ROLLUP 문제 해결](../constraints-errors-troubleshooting/rollup-troubleshooting/) |
+| 장애 진단 | [ROLLUP 문제 해결](/dbms/troubleshooting/rollup/) |
 
 전체 SQL 형식은 [ROLLUP 구문 사전](/dbms/reference/sql/syntax-dictionary-sql/rollup-syntax/)을
 기준으로 확인하십시오.

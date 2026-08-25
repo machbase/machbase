@@ -36,7 +36,7 @@ SELECT NAME, PATH, MOUNTDB,
 ## MOUNT와 조회 예제
 
 ```sql
-MOUNT DATABASE '/data/backup/sc16_snapshot' TO backup_check;
+MOUNT DATABASE '/data/backup/sc15_snapshot' TO backup_check;
 
 SELECT *
   FROM backup_check.sys.target_table

@@ -2,10 +2,12 @@
 title: '8.4 데이터 입력과 변경'
 weight: 40
 toc: true
+aliases:
+  - /dbms/rdb-table-usage/sdk-append-scope/
 ---
 TRANSACTION 테이블은 일반 `INSERT`, `UPDATE`, `DELETE`와 `INSERT ... SELECT`를 지원합니다.
 UPSERT는 [INSERT ON DUPLICATE KEY UPDATE](../insert-on-duplicate-key-update/), 자동 번호 키는
-[AUTO_INCREMENT](../auto-increment/)를 참고하십시오.
+[AUTO_INCREMENT](/dbms/reference/sql/syntax-dictionary-sql/auto-increment-syntax/)를 참고하십시오.
 
 <a id="modeling-rdb-update-delete"></a>
 
@@ -80,3 +82,23 @@ DROP TABLE mutation_orders;
 SELECT 결과의 컬럼 수와 타입은 대상 컬럼 목록과 일치해야 합니다. constraint 오류가 발생하면
 해당 statement의 삽입은 롤백됩니다. 대량 이관은 재시작 가능한 범위로 나누고 처리 건수를
 기록하십시오.
+
+<a id="unsupported-rejected-rdb-append-api"></a>
+<a id="support-scope-rdb-sdk"></a>
+
+## 대량 입력과 Append
+
+TRANSACTION 테이블도 Append API를 지원하지만 TAG·LOG의 지속 수집 경로와 같은 처리량을
+가정하지 않습니다. 관계형 제약과 transaction 경로를 거치므로 대표 데이터로 일반 INSERT,
+prepared batch와 Append를 비교하십시오.
+
+| 입력 방식 | 사용 기준 |
+|---|---|
+| prepared batch | transaction 단위와 오류 위치를 명확히 관리할 때 |
+| Append API | 지원 SDK에서 정형 batch를 연속 입력할 때 |
+| machloader | 파일과 schema mapping으로 일괄 입력할 때 |
+
+`AUTO_INCREMENT` 컬럼을 SQLCLI `SQLAppendBatch()`에서 처리하는 방식과 DECIMAL 입력 타입은
+[SQLCLI와 ODBC](/dbms/development-tools-integration/cli-odbc/)를 참고하십시오. 언어별 Append
+지원은 [SDK 기능 지원 범위](/dbms/development-tools-integration/sdk-support-scope/#support-scope-sdk-append)를
+확인합니다.

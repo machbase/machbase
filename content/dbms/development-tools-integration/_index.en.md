@@ -20,8 +20,8 @@ the selection, common-concepts, and support-scope pages own cross-SDK decisions.
    [Common integration concepts](concepts-common/).
 3. Compare required capabilities in [SDK feature support](sdk-support-scope/).
 4. Follow the SDK page for installation, connection, and executable code.
-5. Apply the task-specific guidance for [Data input and export](data-input-load-export/),
-   [ROWID and generated IDs](rowid-generated-id/), and [External tools](external-tools/).
+5. Apply the task-specific guidance for [Data input and export](data-input-load-export/) and
+   [External tools](external-tools/). See [ROWID](../reference/sql/rowid/) for SQL semantics.
 
 ## SDK references
 

@@ -1,7 +1,7 @@
 ---
 type: docs
 title: '17.6.9 서버와 SDK 호환성'
-weight: 100
+weight: 90
 toc: true
 ---
 

@@ -23,4 +23,3 @@ TAG 테이블은 태그 이름과 시간 또는 거리 축을 기준으로 계�
 | [시간축과 거리축 TAG](./time-distance-axis/) | 시간축·거리축 설계와 조회 패턴 |
 | [TAG data UPDATE와 데이터 보정](./tag-data-update-correction/) | 시계열 데이터 직접 정정, 보정 이력 패턴 |
 | [tagmetaimport와 메타데이터 일괄 등록](./tagmetaimport/) | CSV 기반 메타데이터 일괄 로드 |
-| [TAG cache와 운영 튜닝](./tag-cache-operations/) | TAG 캐시 초기화와 크기 설정 |
