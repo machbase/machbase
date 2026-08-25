@@ -4,175 +4,54 @@ weight: 40
 toc: true
 ---
 
-VOLATILE 테이블의 INSERT, Append, ON DUPLICATE KEY UPDATE, DELETE 사용법을 다룹니다.
-
+VOLATILE 테이블의 `INSERT`, 중복 키 갱신, `DELETE`를 실행 가능한 예제로 설명합니다.
 
 <a id="original-85-insert-update"></a>
 
-## Volatile 데이터 삽입 및 업데이트
+## 데이터 입력과 갱신
 
-
-###  데이터 삽입
-
-volatile 테이블의 데이터 삽입은 다음과 같습니다.
+다음 예제는 마지막 정리 구문까지 순서대로 실행할 수 있습니다. 최신 상태처럼 같은 키의 값을
+계속 바꿔야 한다면 `PRIMARY KEY`를 정의하고 `ON DUPLICATE KEY UPDATE`를 사용합니다.
 
 ```sql
-Mach> create volatile table vtable (id integer, name varchar(20));
-Created successfully.
-Mach> insert into vtable values(1, 'west device');
-1 row(s) inserted.
-Mach> insert into vtable values(2, 'east device');
-1 row(s) inserted.
-Mach> insert into vtable values(3, 'north device');
-1 row(s) inserted.
-Mach> insert into vtable values(4, 'south device');
-1 row(s) inserted.
+CREATE VOLATILE TABLE volatile_mutation_demo (
+    id         INTEGER PRIMARY KEY,
+    direction  VARCHAR(10),
+    refcnt     INTEGER
+);
+
+INSERT INTO volatile_mutation_demo VALUES (1, 'west', 0);
+INSERT INTO volatile_mutation_demo VALUES (2, 'east', 0);
+
+INSERT INTO volatile_mutation_demo VALUES (1, 'south', 0)
+ON DUPLICATE KEY UPDATE;
+
+INSERT INTO volatile_mutation_demo VALUES (1, 'south', 0)
+ON DUPLICATE KEY UPDATE SET refcnt = 1;
+
+SELECT * FROM volatile_mutation_demo ORDER BY id;
 ```
 
+중복 키가 없으면 새 행이 입력됩니다. 중복 키가 있으면 `SET` 절이 없는 구문은 입력값으로
+행 전체를 갱신하고, `SET` 절이 있는 구문은 지정한 컬럼만 갱신합니다. `PRIMARY KEY` 자체는
+갱신 대상으로 지정할 수 없습니다.
 
-###  데이터 Append
-
-Machbase에서 제공하는 빠른 실시간 데이터 입력 API입니다.
-C, C++, C#, Java, Python, PHP, Javascript에서 append를 사용할 수 있습니다.
-
-```sql
-Mach> create volatile table vtable (id integer, value double);
-```
-
-```c
-SQL_APPEND_PARAM sParam[2];
-for(int i=0; i<10000; i++)
-{
-    sParam[0].mInteger  = i;
-    sParam[1].mDouble   = i;
-    if (SQLAppendDataV2(stmt, sParam) != SQL_SUCCESS)
-    {
-        break;
-    }
-}
-```
-
-Cluster Edition Append의 경우, Leader Broker에서 수행해야 합니다.
-
-자세한 내용은 [SDK 및 통합](/dbms/application-integration/) 가이드를 참조하십시오.
-
-
-###  데이터 업데이트
-
-volatile 테이블에 데이터를 입력할 때, ON DUPLICATE KEY UPDATE 절을 사용하여 중복된 primary key 값을 가진 데이터를 업데이트할 수 있습니다.
-
-#### 삽입할 데이터 값으로 업데이트
-
-INSERT 문에서 삽입할 데이터를 지정했지만, 삽입 데이터의 primary key 값과 일치하는 다른 데이터가 있으면 INSERT 문이 실패하고 해당 데이터가 삽입되지 않습니다. 삽입 데이터의 primary key 값과 일치하는 다른 데이터가 있고 삽입 대신 해당 데이터를 업데이트하려면 ON DUPLICATE KEY UPDATE 절을 추가할 수 있습니다.
-
-* 중복된 primary key 데이터가 없으면 삽입할 데이터의 내용이 그대로 삽입됩니다.
-* 중복된 primary key 데이터가 있으면 기존 데이터가 삽입할 데이터의 내용으로 업데이트됩니다.
-
-이 기능을 사용하기 위한 제약 조건은 다음과 같습니다.
-
-* volatile 테이블에 primary key가 지정되어 있어야 합니다.
-* 삽입할 값에 primary key 값이 포함되어야 합니다.
-
-```sql
-Mach> create volatile table vtable (id integer primary key, direction varchar(10), refcnt integer);
-Created successfully.
-Mach> insert into vtable values(1, 'west', 0);
-1 row(s) inserted.
-Mach> insert into vtable values(2, 'east', 0);
-1 row(s) inserted.
-Mach> select * from vtable;
-ID          DIRECTION   REFCNT
-----------------------------------------
-1           west       0
-2           east        0
-[2] row(s) selected.
-
-Mach> insert into vtable values(1, 'south', 0);
-[ERR-01418 : The key already exists in the unique index.]
-Mach> insert into vtable values(1, 'south', 0) on duplicate key update;
-1 row(s) inserted.
-
-Mach> select * from vtable;
-ID          DIRECTION   REFCNT
-----------------------------------------
-1           south        0
-2           east        0
-[2] row(s) selected.
-```
-
-#### 업데이트할 데이터 값 지정
-
-삽입할 데이터 값과 다른 컬럼 값으로 업데이트해야 하는 경우 ON DUPLICATE KEY UPDATE SET 절을 통해 지정할 수 있습니다.
-
-* primary key 중복 데이터가 존재하지 않으면 삽입할 데이터의 내용이 그대로 삽입됩니다.
-* primary key 중복 데이터가 존재하면 기존 데이터는 SET 절에 지정된 업데이트 데이터로만 업데이트됩니다.
-* **primary key 값은 업데이트할 데이터 값으로 지정할 수 없습니다.**
-* SET 절에 지정되지 않은 컬럼의 값은 업데이트되지 않습니다.
-
-```sql
-Mach> create volatile table vtable (id integer primary key, direction varchar(10), refcnt integer);
-Created successfully.
-Mach> insert into vtable values(1, 'west', 0);
-1 row(s) inserted.
-Mach> insert into vtable values(2, 'east', 0);
-1 row(s) inserted.
-Mach> select * from vtable;
-ID          DIRECTION   REFCNT
-----------------------------------------
-1           west        0
-2           east        0
-[2] row(s) selected.
-
-Mach> insert into vtable values(1, 'west', 0) on duplicate key update set refcnt = 1;
-1 row(s) inserted.
-
-Mach> select * from vtable;
-ID          DIRECTION   REFCNT
-----------------------------------------
-1           west        1
-2           east        0
-[2] row(s) selected.
-```
+대량 입력 API는 언어와 드라이버에 따라 초기화·바인딩·오류 처리가 다릅니다. 불완전한 코드
+조각을 복사하지 말고 [SDK 및 통합](/dbms/application-integration/)의 해당 드라이버 예제를
+사용합니다.
 
 <a id="original-85-deleting-data"></a>
 
-## Volatile 데이터 삭제
+## 데이터 삭제
 
-
-###  데이터 삭제
-
-Volatile 테이블은 조건절(WHERE 절)에서 primary key 값 조건을 사용하여 데이터를 삭제할 수 있습니다.
-
-* **volatile 테이블에는 primary key 컬럼이 지정되어 있어야 합니다.**
-* (Primary key 컬럼) = (값) 조건만 허용되며, 다른 조건과 함께 사용할 수 없습니다.
-* primary key 컬럼이 아닌 다른 컬럼을 사용할 수 없습니다.
+조건부 삭제는 `PRIMARY KEY = 값` 형태만 지원합니다. 다른 컬럼 조건이나 복합 조건은 사용할 수
+없습니다.
 
 ```sql
-Mach> create volatile table vtable (id integer primary key, name varchar(20));
-Created successfully.
-Mach> insert into vtable values(1, 'west device');
-1 row(s) inserted.
-Mach> insert into vtable values(2, 'east device');
-1 row(s) inserted.
-Mach> insert into vtable values(3, 'north device');
-1 row(s) inserted.
-Mach> insert into vtable values(4, 'south device');
-1 row(s) inserted.
-Mach> select * from vtable;
-ID          NAME
--------------------------------------
-1           west device
-2           east device
-3           north device
-4           south device
-[4] row(s) selected.
-Mach> delete from vtable where id = 2;
-[1] row(s) deleted.
-Mach> select * from vtable;
-ID          NAME
--------------------------------------
-1           west device
-3           north device
-4           south device
-[3] row(s) selected.
+DELETE FROM volatile_mutation_demo WHERE id = 2;
+SELECT * FROM volatile_mutation_demo ORDER BY id;
+DROP TABLE volatile_mutation_demo;
 ```
+
+모든 행을 비워야 하면 테이블을 삭제한 뒤 초기화 스크립트로 다시 생성하는 방식을 사용할 수
+있습니다. 서버 재시작 때 테이블과 데이터가 모두 사라진다는 점도 함께 고려합니다.

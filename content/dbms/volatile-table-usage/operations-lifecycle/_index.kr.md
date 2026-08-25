@@ -4,94 +4,49 @@ weight: 70
 toc: true
 ---
 
-VOLATILE 테이블의 운영과 데이터 생명주기를 다룹니다. VOLATILE 테이블의 데이터는 메모리에만 존재하므로, 생성·적재·사용·소멸·재구성 흐름을 운영 절차에 포함해야 합니다.
+VOLATILE 테이블의 생성·적재·사용·소멸·재구성 절차를 정리합니다.
 
 <a id="operations-volatile-lifecycle"></a>
 
 ## 데이터 생명주기
 
-VOLATILE 테이블은 서버가 실행 중일 때만 데이터를 유지합니다.
-
-```
-서버 시작
-  └── VOLATILE 테이블 생성
-        └── 초기 데이터 적재
-              └── INSERT / UPDATE / DELETE / UPSERT
-                    └── 서버 종료 또는 재시작 → 데이터 소멸
-```
-
-테이블 정의와 초기 적재 SQL은 운영 스크립트로 관리합니다.
-
-```bash
-machsql -u SYS -p MANAGER -f /etc/machbase/volatile_startup.sql
-```
-
-```sql
-CREATE VOLATILE TABLE sensor_latest (
-    sensor_id  VARCHAR(64) PRIMARY KEY,
-    value      DOUBLE,
-    updated_at DATETIME
-);
-```
+1. 서버 시작 후 테이블 생성 SQL을 실행합니다.
+2. 필요하면 영속 원본에서 초기 데이터를 적재합니다.
+3. 애플리케이션이 조회와 갱신을 시작합니다.
+4. 보존해야 할 결과는 영속 테이블에 기록합니다.
+5. 서버가 종료되면 테이블과 데이터가 모두 소멸합니다.
 
 <a id="operations-volatile-session-scope"></a>
 
-## 세션 공유와 접근
+## 세션 공유
 
-VOLATILE 테이블은 세션 전용 임시 테이블이 아니라 서버 수준에서 공유되는 테이블입니다. 한 세션에서 입력한 데이터는 다른 세션에서도 조회할 수 있습니다.
-
-```sql
--- 세션 A
-INSERT INTO sensor_latest VALUES ('TEMP-01', 25.3, NOW);
-
--- 세션 B
-SELECT *
-FROM sensor_latest
-WHERE sensor_id = 'TEMP-01';
-```
-
-여러 애플리케이션이 같은 VOLATILE 테이블을 갱신하면 PRIMARY KEY 기준의 UPSERT 패턴을 사용해 중복 입력을 처리합니다.
+VOLATILE 테이블은 서버 수준에서 공유됩니다. 한 세션이 입력한 행을 다른 세션이 조회할 수
+있으며, 연결 종료만으로 데이터가 사라지지 않습니다.
 
 <a id="operations-volatile-flush"></a>
 
-## 영속 테이블로 플러시
+## 영속 데이터와의 경계
 
-보존이 필요한 데이터는 주기적으로 LOG, TAG, TRANSACTION 등 영속 테이블에 복사합니다.
-
-```sql
-INSERT INTO sensor_latest_history
-SELECT sensor_id, value, updated_at
-FROM sensor_latest;
-```
-
-원본 TAG 테이블에서 최신 상태를 다시 만들 수 있다면, VOLATILE 테이블에는 최신 캐시만 보관하고 원본은 TAG 테이블에 유지합니다.
+VOLATILE에는 원본에서 재생성 가능한 최신 상태나 중간 결과만 둡니다. 감사 기록, 원본 이벤트,
+복구할 수 없는 결과는 TAG, LOG, LOOKUP 또는 TRANSACTION 테이블에 저장합니다. 복사 SQL은
+원본과 대상의 컬럼, 중복 처리, 실행 주기를 포함해 별도의 작업으로 관리합니다.
 
 <a id="operations-volatile-restart"></a>
 
-## 재시작 대응
+## 재시작 절차
 
-서버 재시작 후에는 VOLATILE 테이블과 데이터가 모두 사라집니다. 운영 절차에는 다음 작업을 포함합니다.
-
-1. VOLATILE 테이블 생성 SQL 실행
-2. 영속 테이블에서 초기 데이터 적재
-3. 애플리케이션 캐시 갱신 또는 수집 재개
-4. 데이터 건수와 최신 시각 확인
-
-```sql
-INSERT INTO sensor_latest
-SELECT name, value, time
-FROM sensor_data
-WHERE time >= NOW - 60000000000;
-```
-
-초기 적재 쿼리는 원본 데이터의 구조와 최신값 판정 기준에 맞춰 작성합니다.
+- 시작 스크립트에서 테이블을 생성합니다.
+- 영속 원본이 있으면 정의된 기준 시점의 데이터만 적재합니다.
+- 예상 행 수와 최신 시각을 확인합니다.
+- 검증이 끝난 뒤 수집기와 애플리케이션 쓰기를 재개합니다.
+- 재구성이 실패하면 빈 캐시 상태에서 서비스가 안전하게 동작하는지 확인합니다.
 
 <a id="operations-volatile-checklist"></a>
 
 ## 운영 체크리스트
 
-- VOLATILE 테이블에는 재생성 가능한 데이터만 저장합니다.
-- 서버 시작 시 생성·초기 적재 스크립트를 자동 실행할 수 있게 준비합니다.
-- 예상 행 수와 메모리 사용량을 주기적으로 확인합니다.
-- 중요 데이터는 영속 테이블로 플러시합니다.
-- 재시작 후 데이터가 비어 있는 상태를 애플리케이션이 처리할 수 있어야 합니다.
+- 생성·초기 적재 SQL을 형상 관리합니다.
+- 스크립트를 운영 계정과 실제 접속 정보로 사전 검증합니다.
+- 행 수와 메모리 한도를 관찰합니다.
+- 보존이 필요한 데이터가 VOLATILE에만 남지 않도록 점검합니다.
+- 재시작 훈련에서 생성, 적재, 검증 순서를 확인합니다.

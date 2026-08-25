@@ -57,17 +57,15 @@ ALTER ROLLUP _tag_ru_1h FORCE;
 
 ### ROLLUP 스토리지 모니터링
 
-ROLLUP 테이블은 내부적으로 KEYVALUE 테이블로 관리됩니다. `SHOW TABLES`로 확인 가능합니다.
+ROLLUP의 상태와 처리 지연은 `V$ROLLUP`과 `SHOW ROLLUPGAP`으로 확인합니다. 시스템 저장
+테이블의 이름이나 타입을 운영 스크립트에서 사용하지 마십시오.
 
-```sql
--- ROLLUP 관련 내부 테이블 확인
-SHOW TABLES;
--- _TAG_ROLLUP_SEC, _TAG_ROLLUP_MIN, _TAG_ROLLUP_HOUR 등이 KEYVALUE 타입으로 표시
-```
+### 업그레이드 후 확인
 
-### 메타 버전 업그레이드
-
-Machbase 버전 업그레이드 후 ROLLUP 메타 버전이 변경될 수 있습니다. 서버 최초 기동 시 카탈로그가 자동 갱신됩니다. 갱신에 실패하면 서버를 중지하고 새 DB를 생성한 뒤 ROLLUP을 재생성합니다.
+업그레이드 후에는 서버 기동 로그, `V$ROLLUP` 상태와 대표 집계 결과를 확인합니다. 카탈로그
+또는 ROLLUP 오류가 발생해도 데이터베이스를 새로 만들지 말고, 먼저 백업을 보존한 상태에서
+[업그레이드 절차](/dbms/installation-deployment-upgrade/upgrade/)와 기술 지원 절차를
+따르십시오.
 
 ### 일반적인 운영 체크리스트
 

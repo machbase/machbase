@@ -4,102 +4,63 @@ weight: 50
 toc: true
 ---
 
-VOLATILE 테이블의 데이터 조회 방법을 다룹니다.
-
+VOLATILE 테이블의 키 조회, 일반 조건 조회, 임시 집계를 실행 가능한 예제로 설명합니다.
 
 <a id="original-85-querying-data"></a>
 
-## Volatile 데이터 추출
+## 예제 데이터 준비
 
-VOLATILE 테이블은 다른 테이블 타입과 동일하게 `SELECT` 문으로 조회합니다. 데이터와 인덱스가 메모리에 있으므로 최신 상태 캐시, 임시 집계, 작업 상태 조회처럼 반복 조회가 많은 용도에 적합합니다.
-
-```sql
-Mach> create volatile table vtable (id integer primary key, name varchar(20));
-Created successfully.
-Mach> insert into vtable values(1, 'west device');
-1 row(s) inserted.
-Mach> insert into vtable values(2, 'east device');
-1 row(s) inserted.
-Mach> insert into vtable values(3, 'north device');
-1 row(s) inserted.
-Mach> insert into vtable values(4, 'south device');
-1 row(s) inserted.
-Mach> select * from vtable;
-ID          NAME
--------------------------------------
-1           west device
-2           east device
-3           north device
-4           south device
-[4] row(s) selected.
-Mach> select * from vtable where id = 1;
-ID          NAME
--------------------------------------
-1           west device
-[1] row(s) selected.
-Mach> select * from vtable where name like 'west%';
-ID          NAME
--------------------------------------
-1           west device
-[1] row(s) selected.
-```
-
-<a id="query-volatile-primary-key"></a>
-
-## PRIMARY KEY 조회
-
-PRIMARY KEY가 있는 VOLATILE 테이블은 키 조건으로 단건 데이터를 조회합니다.
+VOLATILE 테이블은 다른 테이블 타입과 동일하게 `SELECT` 문으로 조회합니다. 다음 예제는
+마지막 정리 구문까지 순서대로 실행할 수 있습니다.
 
 ```sql
-CREATE VOLATILE TABLE device_status (
+CREATE VOLATILE TABLE volatile_query_demo (
     device_id  VARCHAR(64) PRIMARY KEY,
     status     VARCHAR(16),
     value      DOUBLE,
     updated_at DATETIME
 );
 
+INSERT INTO volatile_query_demo VALUES ('DEV-01', 'RUNNING', 42.5, NOW);
+INSERT INTO volatile_query_demo VALUES ('DEV-02', 'STOPPED', 0, NOW);
+```
+
+<a id="query-volatile-primary-key"></a>
+
+## PRIMARY KEY 조회
+
+키 조건은 최신 상태 캐시의 단건 조회에 적합합니다.
+
+```sql
 SELECT device_id, status, value, updated_at
-FROM device_status
+FROM volatile_query_demo
 WHERE device_id = 'DEV-01';
 ```
 
-최신 상태 캐시는 대부분 PRIMARY KEY 조회로 구성합니다. `ON DUPLICATE KEY UPDATE`로 같은 키의 값을 계속 갱신하면 조회 쿼리는 항상 최신 상태만 읽습니다.
-
 <a id="query-volatile-index"></a>
 
-## 인덱스 기반 조회
+## 일반 조건 조회
 
-PRIMARY KEY 외 컬럼을 조건이나 범위로 자주 조회하면 보조 인덱스를 생성합니다.
-
-```sql
-CREATE VOLATILE TABLE sensor_cache (
-    sensor_id  VARCHAR(64) PRIMARY KEY,
-    value      DOUBLE,
-    updated_at DATETIME,
-    status     VARCHAR(16)
-);
-
-CREATE INDEX idx_sensor_cache_time ON sensor_cache(updated_at);
-CREATE INDEX idx_sensor_cache_status ON sensor_cache(status);
-```
+`PRIMARY KEY`가 아닌 컬럼으로 반복 조회한다면 보조 인덱스를 검토합니다.
 
 ```sql
-SELECT sensor_id, value, updated_at
-FROM sensor_cache
-WHERE updated_at >= '2026-01-01 10:00:00'
-  AND updated_at <  '2026-01-01 11:00:00';
+CREATE INDEX idx_volatile_query_status ON volatile_query_demo(status);
+
+SELECT device_id, value, updated_at
+FROM volatile_query_demo
+WHERE status = 'RUNNING';
 ```
 
-모든 인덱스는 메모리를 사용합니다. 조회에 사용하지 않는 인덱스를 과도하게 만들면 메모리 사용량과 갱신 비용이 증가합니다.
+인덱스도 메모리를 사용하므로 실제 조회에 필요한 컬럼에만 생성합니다.
 
 <a id="query-volatile-temporary-analysis"></a>
 
 ## 임시 집계 조회
 
-짧은 주기의 집계 결과를 VOLATILE 테이블에 저장하면 대시보드나 알람 판단에서 반복 계산을 줄일 수 있습니다.
+짧은 주기의 집계 결과를 저장하면 대시보드나 알람 판단에서 반복 계산을 줄일 수 있습니다.
 
 ```sql
-CREATE VOLATILE TABLE sensor_1min_summary (
+CREATE VOLATILE TABLE volatile_summary_demo (
     summary_key VARCHAR(96) PRIMARY KEY,
     sensor_id   VARCHAR(64),
     bucket_time DATETIME,
@@ -108,21 +69,27 @@ CREATE VOLATILE TABLE sensor_1min_summary (
     sample_cnt  LONG
 );
 
+INSERT INTO volatile_summary_demo
+VALUES ('TEMP-01:2026-01-01T00:00', 'TEMP-01', TO_DATE('2026-01-01 00:00:00'),
+        21.5, 23.0, 60);
+
 SELECT sensor_id, bucket_time, avg_value, max_value
-FROM sensor_1min_summary
+FROM volatile_summary_demo
 WHERE sensor_id = 'TEMP-01'
 ORDER BY bucket_time DESC
 LIMIT 10;
+
+DROP TABLE volatile_summary_demo;
+DROP TABLE volatile_query_demo;
 ```
 
-집계 결과를 장기 보관해야 하면 VOLATILE 테이블에만 두지 말고 LOG 또는 TRANSACTION 테이블로 주기적으로 복사합니다.
+집계 결과를 장기 보관해야 하면 LOG 또는 TRANSACTION 테이블로 주기적으로 복사합니다.
 
 <a id="query-volatile-limitations"></a>
 
 ## 조회 시 주의사항
 
-- 서버 재시작 후 VOLATILE 데이터는 비어 있을 수 있으므로 조회 결과가 0건인 상황을 처리합니다.
-- PRIMARY KEY 조회가 중심이면 PRIMARY KEY를 반드시 지정합니다.
-- 범위 조회나 정렬 조건에 자주 쓰는 컬럼은 보조 인덱스를 검토합니다.
-- JSON 컬럼은 VOLATILE 테이블에서 사용할 수 없습니다.
-- 중요한 원본 데이터는 TAG, LOG, LOOKUP, TRANSACTION 같은 영속 테이블에 저장하고 VOLATILE은 캐시로 사용합니다.
+- 서버 재시작 후에는 테이블부터 다시 생성해야 합니다.
+- 키 조회가 중심이면 `PRIMARY KEY`를 지정합니다.
+- 범위 조회나 정렬에 자주 쓰는 컬럼은 보조 인덱스를 검토합니다.
+- 중요한 원본 데이터는 영속 테이블에 저장하고 VOLATILE은 캐시로 사용합니다.

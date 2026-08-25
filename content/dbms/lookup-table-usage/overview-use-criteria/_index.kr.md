@@ -6,8 +6,7 @@ toc: true
 
 LOOKUP 테이블은 기준 코드, 장비 마스터, 임계값, 설정값처럼 비교적 작고 자주 참조되는 데이터를
 저장하는 테이블입니다. 데이터는 영속 저장되지만 SQL 조회에 사용하는 전체 행은 메모리에
-상주합니다. `PRIMARY KEY`를 key, 나머지 행 값을 value로 사용하는 구조로 이해할 수 있으며,
-키 기반 조회와 갱신에 특화되어 있습니다.
+상주합니다. 따라서 반복적인 키 기반 조회와 갱신에 적합합니다.
 
 <a id="overview-lookup-characteristics"></a>
 
@@ -31,7 +30,6 @@ LOOKUP 테이블의 주요 특성은 다음과 같습니다.
 | 주요 용도 | 코드 테이블, 장비 마스터, 임계값, 참조 데이터 |
 | 필수 조건 | `PRIMARY KEY` 필요 |
 | 저장 방식 | 영속 저장 후 서버 기동 시 전체 행을 메모리에 적재 |
-| 메모리 구조 | PK Red-Black 인덱스가 메모리 행을 가리키는 key-value형 구조 |
 | 조회 패턴 | PK 조회에 최적화, 일반 조건 조회와 다른 테이블 JOIN 지원 |
 | 변경 패턴 | INSERT, UPDATE, DELETE |
 | 부가 기능 | SEQUENCE 컬럼, Append 중복 키 정책 |
@@ -49,15 +47,8 @@ LOOKUP 테이블의 주요 특성은 다음과 같습니다.
 - 임계값이나 설정값처럼 운영 중 변경될 수 있는 참조값을 저장합니다.
 - `PRIMARY KEY`로 행을 명확하게 식별할 수 있습니다.
 
-예를 들어 센서 마스터와 TAG 데이터를 결합하면 위치와 단위를 함께 조회할 수 있습니다.
-
-```sql
-SELECT d.name, m.site, m.unit, d.time, d.value
-FROM sensor_data d
-JOIN sensor_master m ON d.name = m.sensor_id
-WHERE m.status = 'ACTIVE'
-  AND d.time >= NOW - 3600000000000;
-```
+TAG 또는 LOG 데이터에 위치와 단위 같은 설명을 붙이는 JOIN 예제는
+[조회와 분석](/dbms/lookup-table-usage/query-analysis/)에서 다룹니다.
 
 <a id="overview-lookup-not-use"></a>
 

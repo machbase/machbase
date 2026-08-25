@@ -56,13 +56,8 @@ CREATE VOLATILE TABLE sensor_latest (
 
 ### 생성 문법
 
-```sql
-CREATE VOLATILE TABLE table_name (
-    pk_col  type  PRIMARY KEY,  -- PK 기반 동작이 필요할 때 지정
-    col2    type,
-    ...
-);
-```
+기본 구문은 `CREATE VOLATILE TABLE 테이블명 (컬럼 정의, ...)`입니다. 키 기반 갱신이나 삭제가
+필요할 때 한 컬럼에 `PRIMARY KEY`를 지정합니다.
 
 - `PRIMARY KEY`는 선택 사항입니다.
 - PRIMARY KEY 컬럼은 하나만 지정합니다.

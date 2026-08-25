@@ -6,71 +6,41 @@ toc: true
 
 <a id="on-duplicate-key-update"></a>
 
-## UPDATE와 ON DUPLICATE KEY UPDATE
+## 중복 키 갱신 선택
 
-VOLATILE 테이블은 PRIMARY KEY 기준의 `UPDATE`와 `ON DUPLICATE KEY UPDATE`를 지원합니다.
+VOLATILE 테이블은 `PRIMARY KEY`가 중복될 때 새 행 대신 기존 행을 갱신할 수 있습니다.
 
-### 일반 UPDATE
+| 목적 | 구문 |
+|------|------|
+| 입력값으로 기존 행 전체 갱신 | `ON DUPLICATE KEY UPDATE` |
+| 지정한 컬럼만 갱신 | `ON DUPLICATE KEY UPDATE SET ...` |
+| 존재하는 행을 명시적으로 변경 | `UPDATE ... WHERE primary_key = ...` |
 
-```sql
-CREATE VOLATILE TABLE device_status (
-    device_id  VARCHAR(64) PRIMARY KEY,
-    status     VARCHAR(16),
-    value      DOUBLE,
-    updated_at DATETIME
-);
+`SET` 절에서는 `PRIMARY KEY`를 변경할 수 없습니다. 자동 증가 키를 사용하는 VOLATILE
+테이블에는 이 구문을 사용할 수 없습니다.
 
--- PRIMARY KEY 기준 UPDATE
-UPDATE device_status SET status = 'NORMAL', updated_at = NOW WHERE device_id = 'DEV-01';
-```
+완전한 생성·입력·조회·정리 예제는
+[데이터 입력과 변경](/dbms/volatile-table-usage/data-input-mutation/)에 있습니다.
 
-`UPDATE`/`DELETE` 조건은 반드시 PRIMARY KEY 동등 조건이어야 합니다. 일반 컬럼 조건이나 전체 행 갱신은 지원하지 않습니다.
+## 카운터를 갱신할 때
 
-### ON DUPLICATE KEY UPDATE (UPSERT)
-
-PRIMARY KEY가 중복되면 INSERT 대신 UPDATE를 실행하는 UPSERT 패턴입니다.
+입력 측에서 계산한 최신 카운터 값을 저장하려면 `SET` 절을 사용합니다.
 
 ```sql
--- 처음 삽입 (INSERT)
-INSERT INTO device_status VALUES ('DEV-01', 'NORMAL', 23.5, NOW)
-ON DUPLICATE KEY UPDATE SET status = 'NORMAL', value = 23.5, updated_at = NOW;
-
--- 동일 PK 재삽입 (UPDATE 실행)
-INSERT INTO device_status VALUES ('DEV-01', 'ALARM', 95.3, NOW)
-ON DUPLICATE KEY UPDATE SET status = 'ALARM', value = 95.3, updated_at = NOW;
-
--- 결과: DEV-01의 status = 'ALARM' (업데이트됨)
-```
-
-### 삽입값으로 갱신
-
-삽입하려던 값 그대로 기존 행을 덮어쓰려면 `SET` 절을 생략합니다.
-
-```sql
-INSERT INTO hourly_summary VALUES ('TEMP-01', '2024-01-01 10:00:00', 23.5, 25.0, 60)
-ON DUPLICATE KEY UPDATE;
-```
-
-### 카운터 패턴
-
-```sql
-CREATE VOLATILE TABLE event_counter (
+CREATE VOLATILE TABLE volatile_counter_demo (
     event_type VARCHAR(32) PRIMARY KEY,
-    cnt        LONG,
-    last_seen  DATETIME
+    event_count LONG
 );
 
--- 없으면 1로 시작, 있으면 명시한 값으로 갱신
-INSERT INTO event_counter VALUES ('LOGIN', 1, NOW)
-ON DUPLICATE KEY UPDATE SET cnt = 1, last_seen = NOW;
+INSERT INTO volatile_counter_demo VALUES ('LOGIN', 1)
+ON DUPLICATE KEY UPDATE SET event_count = 1;
 
-INSERT INTO event_counter VALUES ('LOGIN', 2, NOW)
-ON DUPLICATE KEY UPDATE SET cnt = 2, last_seen = NOW;
+INSERT INTO volatile_counter_demo VALUES ('LOGIN', 2)
+ON DUPLICATE KEY UPDATE SET event_count = 2;
+
+SELECT * FROM volatile_counter_demo;
+DROP TABLE volatile_counter_demo;
 ```
 
-### 주의사항
-
-- `ON DUPLICATE KEY UPDATE`는 VOLATILE 테이블에서 동작합니다. TAG, LOG 테이블에서는 사용할 수 없습니다.
-- UPDATE 절에서 PRIMARY KEY 컬럼 값을 변경하지 마십시오.
-- `ON DUPLICATE KEY UPDATE SET` 절에는 갱신할 값을 명시합니다. `cnt = cnt + 1`처럼 기존 값을
-  참조해 계산하는 카운터 표현식은 사용할 수 없습니다.
+이 예제의 `SET` 값은 누적 연산이 아니라 입력 측에서 계산한 값입니다. 여러 클라이언트가
+동시에 누적값을 계산해야 한다면 경합과 유실 갱신 가능성을 별도로 검증합니다.

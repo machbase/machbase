@@ -8,59 +8,24 @@ toc: true
 
 ## 활용 사례
 
-VOLATILE 테이블이 적합한 대표적인 활용 사례입니다.
+VOLATILE은 원본을 대신하는 저장소가 아니라 재생성 가능한 메모리 작업 영역에 적합합니다.
 
-### 적합한 데이터 유형
+| 패턴 | 키 | 재생성 원본 | 권장 만료 방식 |
+|------|----|-------------|----------------|
+| 장비 최신 상태 | 장비 ID | TAG 또는 LOG | 같은 키 갱신 |
+| 짧은 주기 집계 | 대상과 시간 버킷 | TAG 또는 LOG | 버킷 교체 또는 재구성 |
+| 작업 진행 상태 | 작업 ID | 작업 시스템 | 완료 후 키 삭제 |
+| 임시 조회 캐시 | 요청 또는 객체 ID | 영속 테이블 | 전체 재구성 |
 
-| 유형 | 설명 |
-|------|------|
-| 실시간 집계 캐시 | 최근 N분 집계 결과를 캐싱 |
-| 세션 상태 저장 | 애플리케이션 세션 데이터 |
-| 임시 조인 중간 테이블 | 복잡한 쿼리 최적화용 중간 결과 |
-| 최신 값 캐시 (Last Known Value) | 센서별 최신 계측값 |
-| 대시보드 캐시 | 자주 조회되는 집계 데이터 |
+최신 상태의 생성·갱신 예제는
+[데이터 입력과 변경](/dbms/volatile-table-usage/data-input-mutation/)에, 조회와 임시 집계
+예제는 [조회와 분석](/dbms/volatile-table-usage/query-analysis/)에 있습니다.
 
-### 예시: 최신 센서 값 캐시
+## 부적합한 경우
 
-```sql
-CREATE VOLATILE TABLE sensor_latest (
-    sensor_id  VARCHAR(64) PRIMARY KEY,
-    value      DOUBLE,
-    updated_at DATETIME
-);
+- 재시작 후 반드시 복구해야 하는 원본 또는 감사 데이터
+- 메모리 한도를 예측할 수 없는 무제한 적재
+- 복합 트랜잭션과 관계형 제약이 필요한 업무 데이터
+- 장기간 보관할 시계열 또는 이벤트 데이터
 
--- 최신 값 업데이트 (ON DUPLICATE KEY UPDATE 사용)
-INSERT INTO sensor_latest VALUES ('TEMP-01', 25.3, NOW)
-ON DUPLICATE KEY UPDATE SET value = 25.3, updated_at = NOW;
-
--- 현재 모든 센서 최신값 조회
-SELECT sensor_id, value, updated_at FROM sensor_latest;
-```
-
-### 예시: 실시간 집계 캐시
-
-```sql
-CREATE VOLATILE TABLE recent_summary (
-    key_id    VARCHAR(64) PRIMARY KEY,
-    sensor_id VARCHAR(64),
-    base_ts   DATETIME,
-    avg_val   DOUBLE,
-    max_val   DOUBLE,
-    count     INTEGER
-);
-
--- 1시간마다 집계 갱신
-DELETE FROM recent_summary;
-
-INSERT INTO recent_summary
-SELECT name,
-       name, MAX(DATE_TRUNC('hour', time, 1)), AVG(value), MAX(value), COUNT(*)
-FROM sensor_data
-WHERE time >= NOW - 3600000000000
-GROUP BY name;
-```
-
-### 부적합한 경우
-
-- 서버 재시작 후에도 데이터가 필요한 경우 → LOOKUP 또는 TRANSACTION 테이블
-- 대용량 데이터 → 메모리 부족 위험
+이 경우 데이터 성격에 따라 TAG, LOG, LOOKUP, TRANSACTION 테이블을 선택합니다.

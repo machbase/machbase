@@ -54,10 +54,20 @@ TRANSACTION 테이블의 주요 특성은 다음과 같습니다.
 - 백업·마운트 대상에 포함되는 관계형 데이터를 관리합니다.
 
 ```sql
+CREATE TRANSACTION TABLE inventory (
+    item_id LONG PRIMARY KEY,
+    qty     INTEGER
+);
+
+INSERT INTO inventory VALUES (42, 10);
+
 BEGIN;
 UPDATE inventory SET qty = qty - 1 WHERE item_id = 42;
 INSERT INTO order_history VALUES (1001, 42, 1, 19900, 'ORDERED');
 COMMIT;
+
+DROP TABLE inventory;
+DROP TABLE order_history;
 ```
 
 <a id="overview-rdb-not-use"></a>

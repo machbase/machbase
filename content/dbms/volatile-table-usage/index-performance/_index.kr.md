@@ -4,70 +4,44 @@ weight: 60
 toc: true
 ---
 
-VOLATILE 테이블의 인덱스 생성 방법과 지원되는 인덱스 유형을 정리합니다.
-
+VOLATILE 테이블의 인덱스 생성과 선택 기준을 설명합니다.
 
 <a id="original-85-volatile-indexes"></a>
 
-## Volatile 인덱스 생성 및 관리
+## 지원 인덱스
 
+`PRIMARY KEY`를 선언하면 키 조회용 인덱스가 생성됩니다. 일반 컬럼에는 `REDBLACK` 인덱스를
+추가할 수 있습니다. `BITMAP`과 `KEYWORD` 인덱스는 VOLATILE 테이블에서 지원하지 않습니다.
 
-###  인덱스 생성 및 사용
-
-volatile 테이블은 실시간 검색에 최적화된 RED-BLACK Tree를 제공합니다. 모든 데이터 유형에 대해 인덱스를 설정할 수 있습니다. 그러나 하나의 컬럼에 대해 하나의 인덱스만 생성할 수 있으며, 복합 인덱스는 제공되지 않습니다.
-
-```sql
-Mach> create volatile table vtable (id integer, name varchar(10));
-Created successfully.
-Mach> create index idx_vrb on vtable (name) index_type redblack;
-Created successfully.
-Mach> desc vtable;
-----------------------------------------------------------------
-NAME                          TYPE                LENGTH
-----------------------------------------------------------------
-ID                            integer             11
-NAME                          varchar             10
-
-[ INDEX ]
-----------------------------------------------------------------
-NAME                          TYPE                COLUMN
-----------------------------------------------------------------
-IDX_VRB                       REDBLACK            NAME
-Mach>
-```
-
-
-###  Primary Key 인덱스
-
-volatile 테이블의 특정 컬럼에 primary key가 할당되면 RED-BLACK Tree 인덱스가 자동으로 생성됩니다. 이 경우 Uniqueness 속성을 가진 특수 인덱스가 생성되며 중복 값을 허용하지 않습니다.
+다음 예제는 생성부터 정리까지 순서대로 실행할 수 있습니다.
 
 ```sql
-Mach> create volatile table vtable (id integer primary key, name varchar(20));
-Created successfully.
-Mach> desc vtable;
-----------------------------------------------------------------
-NAME                          TYPE                LENGTH
-----------------------------------------------------------------
-ID                            integer             11
-NAME                          varchar             20
+CREATE VOLATILE TABLE volatile_index_demo (
+    id       INTEGER PRIMARY KEY,
+    name     VARCHAR(20),
+    status   VARCHAR(16)
+);
 
-[ INDEX ]
-----------------------------------------------------------------
-NAME                          TYPE                COLUMN
-----------------------------------------------------------------
-__PK_IDX_VTABLE               REDBLACK            ID
+CREATE INDEX idx_volatile_name
+ON volatile_index_demo(name) INDEX_TYPE REDBLACK;
 
-Mach>
+INSERT INTO volatile_index_demo VALUES (1, 'west device', 'ACTIVE');
+INSERT INTO volatile_index_demo VALUES (2, 'east device', 'INACTIVE');
+
+SELECT id, name
+FROM volatile_index_demo
+WHERE name = 'west device';
+
+DROP INDEX idx_volatile_name;
+DROP TABLE volatile_index_demo;
 ```
 
+## 설계 기준
 
-###  기타 인덱스 유형
+- 키 기반 단건 조회와 갱신에는 `PRIMARY KEY`를 사용합니다.
+- 일반 컬럼의 동등·범위 조건이 반복될 때만 보조 인덱스를 추가합니다.
+- 데이터뿐 아니라 인덱스도 메모리를 사용하므로 불필요한 인덱스를 제거합니다.
+- 실제 쿼리의 조건과 행 수를 기준으로 생성 전후 응답 시간과 메모리를 비교합니다.
 
-log 테이블에서 사용되는 bitmap 또는 keyword 인덱스는 volatile 테이블에서 사용할 수 없습니다.
-
-```sql
-Mach> create bitmap   index idx_1237 on vtable(id1);
-[ERR-02069: BITMAP index can only be created for LOG table.]
-Mach> create keyword  index idx_1238 on vtable(name);
-[ERR-02069: KEYWORD index can only be created for LOG table.]
-```
+구문 세부사항은 [인덱스 구문](/dbms/reference/sql/syntax-dictionary-sql/index-syntax/)을
+참고합니다.

@@ -8,54 +8,27 @@ toc: true
 
 ## 메모리 생명주기
 
-VOLATILE 테이블의 데이터는 메모리에 저장되며, 서버가 종료되면 함께 소멸됩니다.
+VOLATILE 테이블의 정의와 데이터는 서버 프로세스의 생명주기를 따릅니다.
 
-### 생명주기
+| 사건 | 테이블 정의 | 데이터 |
+|------|-------------|--------|
+| 클라이언트 연결 종료 | 유지 | 유지 |
+| 세션 종료 | 유지 | 유지 |
+| 서버 정상 종료 또는 장애 종료 | 소멸 | 소멸 |
+| 서버 재시작 | 다시 생성 필요 | 다시 적재 필요 |
 
-```
-서버 시작
-  └── VOLATILE 테이블 생성 (수동 또는 초기화 스크립트)
-        └── 데이터 INSERT/UPDATE/DELETE
-              └── 서버 종료 → 데이터 소멸
-```
+VOLATILE은 세션 전용 임시 테이블이 아닙니다. 서버가 실행 중이면 여러 세션과
+애플리케이션이 같은 테이블을 공유합니다. 따라서 동시 갱신에는 `PRIMARY KEY`와 중복 키
+갱신 정책을 사용합니다.
 
-### 세션 공유
+## 운영 원칙
 
-VOLATILE 테이블은 세션 범위가 아닌 **서버 수준** 공유 테이블입니다. 여러 세션에서 동시에 읽기·쓰기할 수 있습니다.
+- 원본이나 감사 기록은 영속 테이블에 저장합니다.
+- 테이블 생성과 초기 적재 SQL을 배포 산출물로 관리합니다.
+- 애플리케이션은 재시작 직후 테이블이 없거나 비어 있는 상태를 처리해야 합니다.
+- 예상 행 수와 인덱스 수를 제한하고 메모리 사용량을 관찰합니다.
 
-```sql
--- 세션 A
-INSERT INTO sensor_latest VALUES ('TEMP-01', 25.3, NOW);
-
--- 세션 B (다른 연결)
-SELECT * FROM sensor_latest WHERE sensor_id = 'TEMP-01';
--- TEMP-01, 25.3, ... 조회 가능
-```
-
-### 메모리 사용량
-
-데이터가 전부 메모리에 있으므로 사용량을 주기적으로 확인합니다.
-
-```sql
--- VOLATILE 테이블 레코드 수 확인
-SELECT COUNT(*) FROM sensor_latest;
-```
-
-### 서버 시작 시 자동 생성 패턴
-
-```bash
-# /etc/machbase/startup.sql (예시)
-CREATE VOLATILE TABLE sensor_latest (
-    sensor_id  VARCHAR(64) PRIMARY KEY,
-    value      DOUBLE,
-    updated_at DATETIME
-);
-
-# 서버 시작 후 machsql로 실행
-machsql -u SYS -p MANAGER -f /etc/machbase/startup.sql
-```
-
-### 주의사항
-
-- 대량 데이터를 VOLATILE 테이블에 저장하면 서버 메모리 부족(OOM)이 발생할 수 있습니다.
-- 예상 레코드 수 × 행 크기가 가용 메모리의 10% 이내로 유지하는 것을 권장합니다.
+실제 재생성 순서와 점검 항목은
+[운영과 데이터 생명주기](/dbms/volatile-table-usage/operations-lifecycle/)와
+[메모리 모니터링과 캐시 재구성](/dbms/volatile-table-usage/memory-monitoring-cache-rebuild/)을
+참고합니다.

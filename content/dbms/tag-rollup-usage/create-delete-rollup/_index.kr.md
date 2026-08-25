@@ -36,24 +36,23 @@ CREATE ROLLUP [IF NOT EXISTS] rollup_name
 #### 생성 예시
 
 ```sql
--- 기본 1초 롤업
-CREATE ROLLUP _tag_ru_1s ON tag(value) INTERVAL 1 SEC;
+CREATE TAG TABLE create_rollup_demo (
+    name  VARCHAR(32) PRIMARY KEY,
+    time  DATETIME BASETIME,
+    value DOUBLE SUMMARIZED
+);
 
--- 1초 롤업을 소스로 1분 롤업 생성
-CREATE ROLLUP _tag_ru_1m FROM _tag_ru_1s INTERVAL 1 MIN;
+CREATE ROLLUP create_ru_1s
+    ON create_rollup_demo(value) INTERVAL 1 SEC;
 
--- 1분을 소스로 1시간 롤업
-CREATE ROLLUP _tag_ru_1h FROM _tag_ru_1m INTERVAL 1 HOUR;
+CREATE ROLLUP create_ru_1m
+    FROM create_ru_1s INTERVAL 1 MIN;
 
--- 30초 단위 롤업
-CREATE ROLLUP _tag_ru_30s ON tag(value) INTERVAL 30 SEC;
-
--- EXTENSION 롤업 (FIRST/LAST 지원)
-CREATE ROLLUP _tag_ru_1s_ext ON tag(value) INTERVAL 1 SEC EXTENSION;
-
--- 조건 롤업 (value >= 0 인 데이터만 집계)
-CREATE ROLLUP _tag_ru_valid ON tag(value) INTERVAL 1 MIN WHERE value >= 0;
+CREATE ROLLUP create_ru_1h
+    FROM create_ru_1m INTERVAL 1 HOUR;
 ```
+
+조건, 확장, 사용자 정의 ROLLUP은 각각의 상세 문서에서 실행 가능한 예제를 제공합니다.
 
 #### TAG 테이블 생성 시 자동 생성 (WITH ROLLUP)
 
@@ -66,9 +65,8 @@ CREATE TAG TABLE tag (
 ) WITH ROLLUP (SEC);
 ```
 
-자동 생성 롤업 이름: `_TAG_ROLLUP_SEC`, `_TAG_ROLLUP_MIN`, `_TAG_ROLLUP_HOUR`
-
-> 롤업 이름이 이미 존재하면 TAG 테이블은 생성되지만 WITH ROLLUP 처리는 실패합니다.
+자동 생성된 이름은 원본 테이블 이름에서 파생됩니다. 이름을 추측하지 말고 `V$ROLLUP`에서
+확인하십시오. 같은 이름의 객체가 있으면 `WITH ROLLUP` 처리가 실패할 수 있습니다.
 
 #### 제약사항
 
@@ -79,7 +77,7 @@ CREATE TAG TABLE tag (
 
 ### DROP ROLLUP
 
-```sql
+```text
 DROP ROLLUP rollup_name;
 ```
 
@@ -88,18 +86,12 @@ DROP ROLLUP rollup_name;
 다른 롤업이 해당 롤업을 소스로 참조하는 경우 삭제할 수 없습니다. 의존 순서의 역순으로 삭제해야 합니다.
 
 ```sql
--- 잘못된 순서 (오류 발생)
-DROP ROLLUP _tag_ru_1s;  -- ERR-02651: Dependent ROLLUP table exists.
-
--- 올바른 순서
-DROP ROLLUP _tag_ru_1h;
-DROP ROLLUP _tag_ru_1m;
-DROP ROLLUP _tag_ru_1s;
+DROP ROLLUP create_ru_1h;
+DROP ROLLUP create_ru_1m;
+DROP ROLLUP create_ru_1s;
+DROP TABLE create_rollup_demo;
 ```
 
 #### TAG 테이블 삭제 시 일괄 삭제
 
-```sql
--- CASCADE: TAG 테이블과 종속 ROLLUP을 모두 삭제
-DROP TABLE tag CASCADE;
-```
+원본 TAG와 종속 ROLLUP을 함께 삭제해야 한다면 `DROP TABLE table_name CASCADE`를 사용합니다.

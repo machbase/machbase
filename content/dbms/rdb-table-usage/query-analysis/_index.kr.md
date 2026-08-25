@@ -13,6 +13,25 @@ TRANSACTION 테이블의 SELECT, 집계, 필터링 등 조회 관련 내용을 �
 TRANSACTION 테이블은 일반 SQL SELECT 문으로 조회합니다.
 
 ```sql
+CREATE TRANSACTION TABLE order_history (
+    order_id   LONG PRIMARY KEY,
+    customer   VARCHAR(64),
+    item_id    LONG,
+    amount     DOUBLE,
+    status     VARCHAR(16),
+    order_time DATETIME
+);
+
+CREATE TRANSACTION TABLE product_catalog (
+    product_id LONG PRIMARY KEY,
+    name       VARCHAR(128)
+);
+
+INSERT INTO product_catalog VALUES (42, 'Temperature Sensor');
+INSERT INTO order_history
+VALUES (1001, 'CUST-001', 42, 19900, 'ORDERED',
+        TO_DATE('2026-01-01 10:00:00', 'YYYY-MM-DD HH24:MI:SS'));
+
 SELECT order_id, customer, amount, status
 FROM order_history
 WHERE order_id = 1001;
@@ -65,14 +84,8 @@ JOIN product_catalog p ON o.item_id = p.product_id
 WHERE o.status = 'ORDERED';
 ```
 
-TAG 또는 LOG 테이블의 원본 데이터를 집계한 뒤 TRANSACTION 테이블에 적재하면, 이후 업무 기준 조회와 JOIN을 단순하게 구성할 수 있습니다.
-
-```sql
-SELECT s.sensor_id, s.avg_value, m.site, m.unit
-FROM daily_sensor_summary s
-JOIN sensor_master m ON s.sensor_id = m.sensor_id
-WHERE s.summary_date = '2026-01-01';
-```
+TAG 또는 LOG 테이블의 원본 데이터를 집계한 뒤 TRANSACTION 테이블에 적재하면, 이후 업무 기준
+조회와 JOIN을 단순하게 구성할 수 있습니다.
 
 <a id="query-rdb-aggregation"></a>
 
@@ -105,6 +118,11 @@ CREATE TRANSACTION TABLE device_state (
 SELECT device_id, ts
 FROM device_state
 WHERE state->'$.status' = 'ALARM';
+
+DROP TABLE device_state;
+DROP INDEX idx_order_status_time;
+DROP TABLE product_catalog;
+DROP TABLE order_history;
 ```
 
 자주 조회하는 JSON 필드는 별도 컬럼으로 분리하거나 JSON path 인덱스 적용 여부를 검토합니다.

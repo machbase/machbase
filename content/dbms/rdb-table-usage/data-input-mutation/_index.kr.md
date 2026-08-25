@@ -3,131 +3,80 @@ title: '8.4 데이터 입력과 변경'
 weight: 40
 toc: true
 ---
-
-TRANSACTION 테이블의 INSERT, UPDATE, DELETE 사용법과 INSERT SELECT 패턴을 다룹니다.
-
-TRANSACTION 테이블에서 "없으면 INSERT, 있으면 UPDATE"가 필요한 경우에는 [INSERT ON DUPLICATE KEY UPDATE](/dbms/rdb-table-usage/insert-on-duplicate-key-update/)를 사용합니다. 자동 번호 PRIMARY KEY가 필요한 INSERT 패턴은 [AUTO_INCREMENT](/dbms/rdb-table-usage/auto-increment/)에서 다룹니다.
-
+TRANSACTION 테이블은 일반 `INSERT`, `UPDATE`, `DELETE`와 `INSERT ... SELECT`를 지원합니다.
+UPSERT는 [INSERT ON DUPLICATE KEY UPDATE](../insert-on-duplicate-key-update/), 자동 번호 키는
+[AUTO_INCREMENT](../auto-increment/)를 참고하십시오.
 
 <a id="modeling-rdb-update-delete"></a>
 
-## UPDATE·DELETE 설계
+## UPDATE·DELETE
 
-TRANSACTION 테이블은 UPDATE와 DELETE를 모두 지원합니다. WHERE 절 없이 전체 행을 대상으로 실행할 수도 있습니다.
-
-### UPDATE
+다음 예제는 스키마와 초기 데이터를 포함하므로 그대로 실행할 수 있습니다.
 
 ```sql
--- WHERE 조건 기반 UPDATE
-UPDATE orders SET status = 'SHIPPED' WHERE order_id = 1001;
+CREATE TRANSACTION TABLE mutation_orders (
+    order_id   LONG PRIMARY KEY,
+    customer   VARCHAR(64),
+    amount     DOUBLE,
+    status     VARCHAR(16),
+    order_time DATETIME
+);
 
--- 복합 조건 UPDATE
-UPDATE inventory SET qty = qty - 5, updated_at = NOW
-WHERE item_id = 42 AND warehouse = 'WH-01';
+INSERT INTO mutation_orders
+VALUES (1001, 'CUST-001', 19900, 'PENDING',
+        TO_DATE('2026-01-01', 'YYYY-MM-DD'));
+INSERT INTO mutation_orders
+VALUES (1002, 'CUST-002', 29900, 'CANCELLED',
+        TO_DATE('2026-01-02', 'YYYY-MM-DD'));
 
--- 자기 참조 UPDATE (컬럼 계산)
-UPDATE score_board SET score = score + 10 WHERE user_id = 'U001';
+UPDATE mutation_orders
+   SET status = 'SHIPPED'
+ WHERE order_id = 1001 AND status = 'PENDING';
 
--- WHERE 없이 전체 행 UPDATE
-UPDATE product_catalog SET discount = 0;
+DELETE FROM mutation_orders
+ WHERE status = 'CANCELLED';
+
+SELECT order_id, customer, amount, status
+  FROM mutation_orders
+ ORDER BY order_id;
 ```
 
-### DELETE
-
-```sql
--- 조건 기반 DELETE
-DELETE FROM orders WHERE order_id = 1001;
-
--- 범위 DELETE
-DELETE FROM orders WHERE status = 'CANCELLED' AND tx_time < '2023-01-01';
-
--- 전체 삭제 (WHERE 없음)
-DELETE FROM temp_staging;
-```
-
-### 트랜잭션 내 UPDATE + DELETE 조합
-
-```sql
-BEGIN;
--- 재고 차감
-UPDATE inventory SET qty = qty - 3 WHERE item_id = 42 AND warehouse = 'WH-01';
--- 출고 이력 기록
-INSERT INTO dispatch_history VALUES (NOW, 42, 'WH-01', 3, 'ORDER-9999');
--- 이미 완료된 이전 예약 삭제
-DELETE FROM reservations WHERE item_id = 42 AND order_id = 'ORDER-9999';
-COMMIT;
-```
-
-### 상태 관리 패턴
-
-```sql
--- 주문 상태 전환
-UPDATE orders SET status = 'PROCESSING', updated_at = NOW
-WHERE order_id = 1001 AND status = 'PENDING';
-
--- 여러 주문 일괄 상태 변경
-UPDATE orders SET status = 'EXPIRED'
-WHERE status = 'PENDING' AND created_at < NOW - 86400000000000;
-```
-
-### 주의사항
-
-- WHERE 없는 UPDATE는 테이블 전체 행을 수정합니다. 실행 전에 대상 범위를 확인합니다.
-- 장시간 열린 트랜잭션은 잠금 충돌을 유발할 수 있습니다.
-- UPDATE/DELETE 시 WHERE 절 컬럼에 인덱스가 있으면 성능이 크게 향상됩니다.
+조건 없는 `UPDATE`와 `DELETE`는 전체 행을 대상으로 합니다. 운영 전에 같은 `WHERE` 조건의
+`SELECT`로 대상 건수를 확인하고, 자주 사용하는 조건 컬럼에는 실제 실행 계획을 확인한 뒤
+인덱스를 설계하십시오.
 
 <a id="reference-self-rdb-insert-select"></a>
 
-## 자기 참조·INSERT SELECT
+## INSERT SELECT
 
-`INSERT INTO ... SELECT ...` 문으로 다른 테이블의 데이터를 복사하거나 변환하여 삽입할 수 있습니다.
-
-### INSERT SELECT 기본
+다른 테이블의 결과를 복사하거나 같은 테이블의 행을 변환해 삽입할 수 있습니다.
 
 ```sql
--- 다른 TRANSACTION 테이블에서 데이터 복사
-INSERT INTO order_archive
-SELECT order_id, customer, item_id, amount, order_time, status
-FROM order_history
-WHERE order_time < '2023-01-01';
+CREATE TRANSACTION TABLE mutation_order_archive (
+    order_id   LONG PRIMARY KEY,
+    customer   VARCHAR(64),
+    amount     DOUBLE,
+    status     VARCHAR(16),
+    order_time DATETIME
+);
 
--- 조건 가공 후 삽입
-INSERT INTO active_orders
-SELECT order_id, customer, item_id, amount, order_time, status
-FROM order_history
-WHERE status = 'PENDING';
+INSERT INTO mutation_order_archive
+SELECT order_id, customer, amount, status, order_time
+  FROM mutation_orders
+ WHERE order_time < TO_DATE('2026-02-01', 'YYYY-MM-DD');
+
+INSERT INTO mutation_orders
+    (order_id, customer, amount, status, order_time)
+SELECT order_id + 10000, 'TEST-001', amount, status, order_time
+  FROM mutation_orders
+ WHERE customer = 'CUST-001';
+
+SELECT COUNT(*) FROM mutation_order_archive;
+
+DROP TABLE mutation_order_archive;
+DROP TABLE mutation_orders;
 ```
 
-### LOG 테이블에서 TRANSACTION 테이블로 데이터 이관
-
-```sql
--- LOG 테이블 데이터를 TRANSACTION 테이블로 집계하여 삽입
-INSERT INTO daily_summary (date, sensor, avg_val, max_val, count, region)
-SELECT
-    DATE_TRUNC('day', event_time),
-    sensor_name,
-    AVG(value),
-    MAX(value),
-    COUNT(*),
-    region
-FROM raw_events
-GROUP BY DATE_TRUNC('day', event_time), sensor_name, region;
-```
-
-### 자기 참조: 동일 테이블 내 복사
-
-```sql
--- 특정 고객 데이터를 다른 고객으로 복제 (예: 테스트 데이터 생성)
-INSERT INTO order_history (order_id, customer, item_id, amount, order_time, status)
-SELECT order_id + 10000, 'TEST-001', item_id, amount, order_time, status
-FROM order_history
-WHERE customer = 'CUST-001'
-  AND order_time >= '2024-01-01';
-```
-
-### 주의사항
-
-- TRANSACTION 대상 `INSERT SELECT`는 statement 단위로 처리됩니다. 중간 행에서 constraint 오류가
-  발생하면 해당 statement가 삽입한 행 전체를 롤백합니다. 대량 데이터는 배치로 분할합니다.
-- SELECT 결과의 컬럼 수와 타입이 INSERT 대상 테이블의 컬럼과 일치해야 합니다.
-- `INSERT SELECT`와 `ON DUPLICATE KEY UPDATE`의 결합은 지원하지 않습니다.
+SELECT 결과의 컬럼 수와 타입은 대상 컬럼 목록과 일치해야 합니다. constraint 오류가 발생하면
+해당 statement의 삽입은 롤백됩니다. 대량 이관은 재시작 가능한 범위로 나누고 처리 건수를
+기록하십시오.

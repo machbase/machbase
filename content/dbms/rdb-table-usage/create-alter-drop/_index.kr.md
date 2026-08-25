@@ -158,7 +158,7 @@ ALTER TABLE product_catalog RENAME TO product_master;
 테이블을 삭제하려면 `DROP TABLE`을 사용합니다.
 
 ```sql
-DROP TABLE product_catalog;
+DROP TABLE product_master;
 ```
 
 `DROP TABLE`은 테이블 정의, 데이터, 관련 인덱스를 삭제합니다. 운영 데이터는 삭제 전에 백업 또는 내보내기 절차를 먼저 수행합니다.
@@ -188,5 +188,4 @@ DROP TABLE product_catalog;
 3. 컬럼을 참조하는 인덱스와 VIEW가 정상인지 확인합니다.
 4. 서버 로그에 DDL 복구 오류가 남아 있으면 추가 DDL을 중단하고 백업 상태를 점검합니다.
 
-서버가 내부적으로 사용하는 `__rdbt_<table-id>.db.ddl_backup` 파일은 저장 형식 호환성을 위해
-이전 내부 명칭을 유지합니다. 이 파일을 사용자가 직접 이동, 수정, 삭제해서는 안 됩니다.
+데이터 디렉터리의 저장 파일은 사용자가 직접 이동, 수정하거나 삭제하지 마십시오.

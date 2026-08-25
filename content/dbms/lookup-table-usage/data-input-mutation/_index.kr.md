@@ -3,47 +3,30 @@ title: '9.4 데이터 입력과 변경'
 weight: 40
 toc: true
 ---
-LOOKUP 테이블의 데이터 입력, 갱신, 삭제 방법을 다룹니다.
+LOOKUP 테이블의 데이터 입력, 갱신, 삭제 방법을 하나의 실행 가능한 예제로 설명합니다.
 
 
 <a id="original-85-inserting-data"></a>
 
-## Lookup 데이터 입력
+## 예제 테이블 준비
 
-LOOKUP 테이블은 `INSERT`, `UPDATE`, `DELETE`로 기준 데이터를 관리합니다. 기준 코드, 장비 마스터, 임계값처럼 운영 중 변경되는 참조 데이터를 저장하므로, 변경 전 영향 범위를 확인하는 절차를 함께 둡니다.
+다음 예제는 마지막의 정리 구문까지 순서대로 실행할 수 있습니다.
 
 <a id="insert-lookup-basic"></a>
 
-## INSERT
-
-LOOKUP 테이블은 `PRIMARY KEY`가 필수이므로 입력 시 키 값을 함께 넣습니다.
-
 ```sql
-CREATE LOOKUP TABLE sensor_master (
-    sensor_id VARCHAR(64) PRIMARY KEY,
-    site      VARCHAR(32),
-    unit      VARCHAR(16),
-    status    VARCHAR(16),
+CREATE LOOKUP TABLE lookup_mutation_demo (
+    code       VARCHAR(32) PRIMARY KEY,
+    label      VARCHAR(64),
+    status     VARCHAR(16),
     updated_at DATETIME
 );
 
-INSERT INTO sensor_master
-VALUES ('TEMP-01', 'SEOUL', 'Celsius', 'ACTIVE', NOW);
+INSERT INTO lookup_mutation_demo VALUES ('TEMP', 'Temperature', 'ACTIVE', NOW);
+INSERT INTO lookup_mutation_demo VALUES ('PRESS', 'Pressure', 'ACTIVE', NOW);
 ```
 
-SEQUENCE 컬럼을 사용하는 경우에는 `NEXTVAL()`로 키 값을 생성합니다.
-
-```sql
-CREATE LOOKUP TABLE alarm_history (
-    seq        LONG PROPERTY(SEQUENCE=1) PRIMARY KEY,
-    sensor_id  VARCHAR(64),
-    alarm_type VARCHAR(32),
-    occurred_at DATETIME
-);
-
-INSERT INTO alarm_history
-VALUES (NEXTVAL(seq), 'TEMP-01', 'HIGH', NOW);
-```
+SEQUENCE 키가 필요하면 [SEQUENCE](/dbms/lookup-table-usage/sequence/)를 참고합니다.
 
 <a id="update-lookup-basic"></a>
 
@@ -52,14 +35,14 @@ VALUES (NEXTVAL(seq), 'TEMP-01', 'HIGH', NOW);
 단건 변경은 PRIMARY KEY 조건으로 처리합니다.
 
 ```sql
-UPDATE sensor_master
+UPDATE lookup_mutation_demo
 SET status = 'INACTIVE',
     updated_at = NOW
-WHERE sensor_id = 'TEMP-01';
+WHERE code = 'TEMP';
 ```
 
-여러 행을 변경할 때는 일반 컬럼, 범위, 문자열, 날짜, JSON path 조건을 사용할 수 있습니다.
-단건 변경은 대상이 명확하고 PK 인덱스를 직접 사용하는 PRIMARY KEY 조건을 권장합니다.
+여러 행을 변경할 때는 먼저 같은 `WHERE` 절로 대상을 조회합니다. 단건 변경은 대상이 명확하고
+인덱스를 사용할 수 있는 `PRIMARY KEY` 조건을 권장합니다.
 
 PRIMARY KEY 컬럼 자체는 변경하지 않는 것이 원칙입니다. 키를 바꿔야 하면 기존 행을 삭제하고 새 키로 다시 입력합니다.
 
@@ -70,9 +53,9 @@ PRIMARY KEY 컬럼 자체는 변경하지 않는 것이 원칙입니다. 키를 
 SQL INSERT에서 키 중복 시 갱신이 필요하면 `ON DUPLICATE KEY UPDATE`를 사용합니다.
 
 ```sql
-INSERT INTO sensor_master
-VALUES ('TEMP-01', 'SEOUL', 'Celsius', 'ACTIVE', NOW)
-ON DUPLICATE KEY UPDATE SET status = 'ACTIVE', updated_at = NOW;
+INSERT INTO lookup_mutation_demo
+VALUES ('TEMP', 'Temperature sensor', 'ACTIVE', NOW)
+ON DUPLICATE KEY UPDATE SET label = 'Temperature sensor', status = 'ACTIVE', updated_at = NOW;
 ```
 
 Append로 데이터를 삽입할 때 primary key가 중복되면 `LOOKUP_APPEND_UPDATE_ON_DUPKEY` 설정에 따라 해당 행을 업데이트할 수 있습니다. 이 설정은 LOOKUP 테이블 append 경로의 중복 키 처리 정책이므로, 운영 환경에서는 현재 설정값을 확인한 뒤 사용합니다.
@@ -87,13 +70,14 @@ WHERE name = 'LOOKUP_APPEND_UPDATE_ON_DUPKEY';
 
 ## TABLE_REFRESH
 
-Lookup 노드에서 데이터를 리로드하려면 EXEC TABLE_REFRESH 명령을 사용합니다.
+클러스터에서 LOOKUP 데이터를 다시 읽어야 할 때는 `TABLE_REFRESH`를 실행합니다.
 
 ```sql
-EXEC TABLE_REFRESH(lktable);
+EXEC TABLE_REFRESH(lookup_mutation_demo);
 ```
 
-대량 입력이나 외부 도구를 통한 반영 후 조회 노드의 참조 데이터를 갱신해야 하는 상황에서 사용합니다. 운영 중에는 새 데이터가 반영되는 시점과 애플리케이션 조회 시점을 맞춥니다.
+단일 노드에서 일반 SQL DML만 사용했다면 별도로 실행할 필요가 없습니다. 클러스터 운영 절차는
+[운영과 수명주기](/dbms/lookup-table-usage/operations-lifecycle/)를 참고합니다.
 
 <a id="original-85-deleting-data"></a>
 
@@ -102,15 +86,16 @@ EXEC TABLE_REFRESH(lktable);
 단건 삭제는 PRIMARY KEY 조건을 사용합니다.
 
 ```sql
-DELETE FROM sensor_master
-WHERE sensor_id = 'TEMP-01';
+DELETE FROM lookup_mutation_demo
+WHERE code = 'PRESS';
 ```
 
 일반 조건식을 사용하면 조건에 맞는 모든 행을 삭제합니다. 모든 행을 삭제하려면 WHERE 절을
 생략합니다.
 
 ```sql
-DELETE FROM sensor_master;
+DELETE FROM lookup_mutation_demo;
+DROP TABLE lookup_mutation_demo;
 ```
 
 <a id="mutation-lookup-checklist"></a>
@@ -122,4 +107,4 @@ DELETE FROM sensor_master;
 - 모든 행을 삭제하기 전에는 백업 또는 재입력 원본을 확인합니다.
 - PRIMARY KEY 값 변경은 DELETE 후 INSERT로 처리합니다.
 - Append 중복 키 처리는 `LOOKUP_APPEND_UPDATE_ON_DUPKEY` 설정을 확인합니다.
-- 대량 변경 후 필요하면 `EXEC TABLE_REFRESH(table_name)`으로 참조 데이터를 갱신합니다.
+- 클러스터에서 데이터를 다시 읽어야 할 때만 `EXEC TABLE_REFRESH(table_name)`을 사용합니다.

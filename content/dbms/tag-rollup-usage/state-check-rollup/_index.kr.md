@@ -56,7 +56,7 @@ ORDER BY LAST_ELAPSED_MSEC DESC;
 `show rollupgap` 명령으로도 상태를 확인할 수 있습니다.
 
 ```sql
-Mach> show rollupgap;
+SHOW ROLLUPGAP;
 ```
 
 RID 기준으로 아직 처리하지 못한 데이터의 양(gap)을 보여줍니다. Gap이 크면 ROLLUP이 입력 속도를 따라가지 못하고 있는 것입니다.

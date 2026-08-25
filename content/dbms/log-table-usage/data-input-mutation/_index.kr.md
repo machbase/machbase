@@ -1,272 +1,73 @@
 ---
-title: '7.4 데이터 입력과 변경'
+title: '7.4 데이터 입력'
 weight: 40
 toc: true
 ---
+LOG 데이터는 SQL `INSERT`, Append API 또는 파일 적재 도구로 입력합니다. 입력 경로는 데이터
+발생 방식과 처리량, 파일 위치를 기준으로 선택합니다.
 
-LOG 테이블에 데이터를 입력하는 방법은 SQL INSERT, Append API, machloader Import, LOAD DATA 네 가지가 있습니다.
+<a id="original-85-inserting-data"></a>
 
+## SQL INSERT
 
-<a id="original-85-insert-data"></a>
-
-## Insert
-
-
-다른 상용 RDBMS와 마찬가지로, 테이블을 먼저 생성한 뒤 INSERT INTO 문으로 데이터를 입력합니다.
-
-Machbase는 대화형 쿼리 프로세서로 'machsql' 도구를 제공합니다.
-
-
-### 테이블 생성
+SQL은 소량 입력과 기능 확인에 적합합니다. `_arrival_time`을 컬럼 목록에서 생략하면 서버가
+수신 시각을 기록합니다.
 
 ```sql
-CREATE LOG TABLE table_name ( column1 datatype, column2 datatype, column3 datatype, .... );
-```
-
-```sql
-CREATE LOG TABLE sensor_data ( id VARCHAR(32), val DOUBLE );
-```
-
-
-### 데이터 삽입
-
-```sql
-INSERT INTO table_name VALUES (value1, value2, value3, ...);
-```
-
-```sql
-INSERT INTO sensor_data VALUES('sensor1', 10.1);
-INSERT INTO sensor_data VALUES('sensor2', 20.2);
-INSERT INTO sensor_data VALUES('sensor3', 30.3);
-```
-
-
-<a id="confirm-data-insert"></a>
-### 데이터 삽입 확인
-
-```sql
-SELECT column1, column2, ... FROM table_name;
-```
-
-```sql
-SELECT * FROM sensor_data;
-```
-
-
-<a id="sample-example"></a>
-### 전체 프로세스
-
-machsql을 사용한 예제는 다음과 같습니다.
-
-```sql
-Mach> CREATE LOG TABLE sensor_data (id VARCHAR(32), val DOUBLE);
- Created successfully.
-Mach> INSERT INTO sensor_data VALUES('sensor1', 10.1);
- 1 row(s) inserted.
-Mach> INSERT INTO sensor_data VALUES('sensor2', 20.2);
- 1 row(s) inserted.
-Mach> INSERT INTO sensor_data VALUES('sensor3', 30.3);
- 1 row(s) inserted.
-Mach> SELECT * FROM sensor_data;
-ID VAL
------------------------------------------------------------------
-sensor3 30.3
-sensor2 20.2
-sensor1 10.1
-[3] row(s) selected.
-```
-
-<a id="original-85-append-data"></a>
-
-## Append
-
-
-Machbase가 제공하는 고속 실시간 데이터 입력 API입니다.
-
-C, C++, C#, Java, Python, PHP, Javascript로 호출할 수 있습니다.
-
-자세한 내용은 [SDK 및 통합](/dbms/application-integration/) 가이드를 참조합니다.
-
-<a id="importing-data"></a>
-<a id="original-85-import-data"></a>
-
-## Import
-
-
-machloader 도구를 사용하면 CSV 등 구분자 기반 텍스트 파일을 일괄 입력할 수 있습니다.
-
-machloader에 대한 자세한 설명은 [machloader](/dbms/application-integration/data-input-load-export/#file-import-machloader) 문서를 참조합니다.
-
-### 목차
-
-* [데이터 가져오기](#importing-data)
-* [데이터 입력 확인](#confirm-data-insert)
-* [샘플 예제](#sample-example)
-
-
-### 테이블 생성
-
-```sql
-CREATE LOG TABLE import_sample
-(
-    srcip     IPV4,
-    srcport   INTEGER,
-    dstip     IPV4,
-    dstport   INTEGER,
-    protocol  SHORT,
-    eventlog  VARCHAR(1024),
-    eventcode SHORT,
-    eventsize LONG
+CREATE LOG TABLE input_log (
+    event_time DATETIME,
+    device     VARCHAR(32),
+    message    VARCHAR(128),
+    value      DOUBLE
 );
+
+INSERT INTO input_log(event_time, device, message, value)
+VALUES (TO_DATE('2026-01-01 10:00:00', 'YYYY-MM-DD HH24:MI:SS'),
+        'DEV-01', 'temperature warning', 82.5);
+
+SELECT _arrival_time, event_time, device, message, value
+  FROM input_log
+  DURATION 1 HOUR;
+
+DROP TABLE input_log;
 ```
 
+재현 테스트처럼 수신 시각을 고정해야 하는 경우에만 `_arrival_time`을 명시합니다. 운영
+애플리케이션의 실제 이벤트 시각은 별도 `DATETIME` 컬럼에 저장하십시오.
 
-### 데이터 가져오기
+## Append API
 
-machloader로 csv 파일을 입력합니다.
+지속적인 대량 입력은 SDK의 Append API를 사용해 여러 행을 배치로 전송합니다. 다음 항목을
+반드시 처리합니다.
 
-```bash
-machloader  -i  -t  import_sample   -d  sample_data.csv
-```
+- 연결과 Appender 종료 시 남은 버퍼 flush
+- 행별 타입·NULL 처리와 Append 반환 오류
+- 재연결 시 중복 전송 가능성
+- 배치 크기별 지연 시간과 메모리 사용량
 
+언어별 실행 예제는 [개발 도구 연동](/dbms/development-tools-integration/)을 참고하십시오.
 
-### 데이터 입력 확인
+## 파일 적재
 
-입력된 데이터를 확인합니다.
+| 입력 파일 위치 | 선택 |
+| --- | --- |
+| 클라이언트가 접근하는 CSV | `csvimport` 또는 `machloader` |
+| 서버가 접근할 수 있는 파일 | `LOAD DATA INFILE` |
+| 지속적으로 생성되는 로컬·SFTP 파일 | Collector 검토 |
 
+파일 적재 전에는 컬럼 순서, 구분자, 날짜 형식과 인코딩을 소량 샘플로 검증하고 bad 파일과
+로그를 보존합니다. 전체 명령과 재현 예제는
+[데이터 입력·적재·반출](/dbms/application-integration/data-input-load-export/)을
+기준으로 사용하십시오.
 
-``` sql
-SELECT  COUNT(*)    FROM    import_sample;
-```
+## 입력 경로 비교
 
+| 경로 | 장점 | 주의점 |
+| --- | --- | --- |
+| SQL `INSERT` | 간단하고 모든 SQL 클라이언트에서 사용 | 문장별 파싱·왕복 비용 |
+| Append API | 배치 기반 지속 입력 | SDK 통합과 오류·재시도 처리 필요 |
+| 파일 적재 | 대량 초기·배치 데이터에 적합 | 파일 형식과 실패 행 관리 필요 |
+| Collector | 지원 파일 소스를 설정으로 수집 | 현재 지원 source type 확인 필요 |
 
-### 샘플 예제
-
-machloader와 machsql을 사용한 전체 프로세스입니다.
-
-```sql
-Mach> CREATE LOG TABLE import_sample
-     (
-         srcip     IPV4,
-         srcport   INTEGER,
-         dstip     IPV4,
-         dstport   INTEGER,
-         protocol  SHORT,
-         eventlog  VARCHAR(1024),
-         eventcode SHORT,
-         eventsize LONG
-     );
-Created successfully.
-Mach> quit
-```
-
-```bash
-[mach@localhost ~]$ cd $MACHBASE_HOME/sample/quickstart
-[mach@localhost ~]$ tar -xzf sample_data.tar.gz
-[mach@localhost ~]$ ls -l sample_data.csv
--rw-r--r-- 1 mach mach 110477124 Nov  9  2022 sample_data.csv
-
-[mach@localhost ~]$ machloader -i -t import_sample -d sample_data.csv
------------------------------------------------------------------
-     Machbase Data Import/Export Utility.
-     Release Version x.x.x.official
-     Copyright 2014, Machbase Inc. or its subsidiaries.
-     All Rights Reserved.
------------------------------------------------------------------
-NLS            : US7ASCII            EXECUTE MODE   : IMPORT
-TARGET TABLE   : import_sample
-DATA FILE      : sample_data.csv
-IMPORT MODE    : APPEND              FIELD TERM     : ,
-ROW TERM       : \n                  ENCLOSURE      : "
-ESCAPE         : \                   ARRIVAL_TIME   : FALSE
-ENCODING       : NONE                HEADER         : FALSE
-CREATE LOG TABLE   : FALSE
- Progress bar                       Imported records        Error records
-                                             1000000                    0
-Import time         :  0 hour  0 min  2.39 sec
-Load success count  : 1000000
-Load fail count     : 0
-[mach@localhost ~]$
-```
-
-```sql
-Mach> SELECT COUNT(*) FROM import_sample;
-COUNT(*)
------------------------
-1000000
-[1] row(s) selected.
-Mach>
-```
-
-<a id="original-85-load-data"></a>
-
-## SQL로 로드
-
-
-'Load Data' 문은 csv 파일의 데이터를 Machbase에 입력합니다.
-
-csv 파일의 첫 번째 줄로 컬럼을 자동 생성하며, 생성되는 컬럼의 데이터 타입은 VARCHAR(32768)입니다. 데이터 파일 경로는 $MACHBASE_HOME 기준의 상대 경로이며, 절대 경로도 사용 가능합니다.
-
-테이블 데이터를 csv 파일로 저장하려면 SAVE DATA 문을 사용합니다.
-
-미리 테이블을 생성하는 경우, CSV 파일의 각 필드에 대한 데이터 타입은 VARCHAR 또는 TEXT로 설정해야 합니다.
-
-'load_sample.csv' 파일을 LOAD DATA 문에 입력하면 'load_sample' 테이블이 자동으로 생성됩니다.
-
-
-### 데이터 로드
-
-```sql
-LOAD DATA INFILE 'sample/quickstart/load_sample.csv' INTO TABLE load_sample AUTO HEADUSE;
-```
-
-### 데이터 로드 확인
-
-```sql
-SELECT * FROM load_sample;
-```
-
-
-### 샘플 예제
-
-샘플 파일을 사용한 전체 수행 과정입니다.
-
-```bash
-[mach@localhost ~]$ cd $MACHBASE_HOME/sample/quickstart
-[mach@localhost ~]$ ls -l load_sample.csv
--rw-r--r-- 1 mach mach 2373 Jun 13 15:07 load_sample.csv
-
-[mach@localhost ~]$ machsql
-=================================================================
-     Machbase Client Query Utility
-     Release Version x.x.x.official
-     Copyright 2014, Machbase Inc. or its subsidiaries.
-     All Rights Reserved
-=================================================================
-Machbase server address (Default:127.0.0.1) :
-Machbase user ID  (Default:SYS)
-Machbase User Password :
-MACHBASE_CONNECT_MODE=INET, PORT=5656 EDITION=STANDARD
-
-Mach> LOAD DATA INFILE 'sample/quickstart/load_sample.csv' INTO TABLE load_sample AUTO HEADUSE;
-50 row(s) loaded.
-Mach> DESC load_sample;
-----------------------------------------------------------------
-NAME                          TYPE                LENGTH
-----------------------------------------------------------------
-SENSOR_ID                     varchar             32767
-EPOCH_TIME                    varchar             32767
-E_YEAR                        varchar             32767
-E_MONTH                       varchar             32767
-E_DAY                         varchar             32767
-E_HOUR                        varchar             32767
-E_MINUTE                      varchar             32767
-E_SECOND                      varchar             32767
-VALUE                         varchar             32767
-Mach> SELECT COUNT(*) FROM load_sample;
-COUNT(*)
------------------------
-50
-[1] row(s) selected.
-Mach>
-```
+LOG는 입력된 행의 일반 `UPDATE`를 지원하지 않습니다. 잘못 입력한 데이터의 보정과 삭제는
+[운영과 데이터 생명주기](../operations-lifecycle/)를 참고하십시오.
