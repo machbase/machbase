@@ -5,46 +5,32 @@ weight: 50
 toc: true
 ---
 
-Machbase Collector는 다양한 소스(파일, 네트워크, 시리얼 포트 등)에서 데이터를 수집하여 Machbase 테이블에 입력하는 에이전트입니다. 이 섹션은 Collector 설정 파라미터의 빠른 참조 레퍼런스입니다.
+Machbase Collector는 로컬 또는 SFTP 파일을 읽어 Machbase 테이블에 적재합니다. 설정은
+JSON이 아니라 `KEY=VALUE` 형식의 `.tpl` 템플릿과 컬럼 매핑용 `.rgx` 파일로 구성합니다.
 
-## 설정 파일 구조
+현재 배포 소스에서 확인되는 `COLLECT_TYPE`은 `FILE`과 `SFTP`입니다. TCP, UDP,
+SERIAL, HTTP, MQTT는 지원 소스 타입으로 문서화하지 않습니다.
 
-Collector 설정은 JSON 형식 파일로 관리합니다. 기본 구조는 다음과 같습니다.
+## 설정 구성
 
-```json
-{
-  "name": "collector-name",
-  "source": {
-    "type": "<소스 타입>",
-    ...
-  },
-  "template": {
-    "type": "<템플릿 타입>",
-    ...
-  },
-  "target": {
-    "table": "<테이블 이름>",
-    ...
-  }
-}
+```text
+[FILE 또는 SFTP 파일] -> [.tpl 수집 설정] -> [.rgx 파싱·컬럼 매핑] -> [Machbase]
 ```
 
-## 하위 섹션
+| 파일 | 역할 |
+|------|------|
+| `.tpl` | 소스 타입, 입력 경로, 파싱 방식, DB 접속과 대상 테이블을 지정합니다. |
+| `.rgx` | CSV·REGEX·JSON 입력의 레코드 파싱과 컬럼 매핑을 정의합니다. |
+
+## 하위 레퍼런스
 
 | 섹션 | 설명 |
 |------|------|
-| [Collector template 사전](./dictionary-collector-template/) | 데이터 파싱 템플릿 설정 (CSV, JSON, 정규식) |
-| [Collector source type 사전](./dictionary-collector-source-type/) | 지원 소스 타입과 필수 설정 파라미터 |
-| [Collector regex/options 사전](./dictionary-collector-regex-options/) | 정규식 패턴 옵션과 자주 쓰는 패턴 예시 |
+| [Collector template 사전](./dictionary-collector-template/) | `.tpl`과 `.rgx`의 설정 키 |
+| [Collector source type 사전](./dictionary-collector-source-type/) | `FILE`, `SFTP` 소스 타입 |
+| [Collector regex/options 사전](./dictionary-collector-regex-options/) | 정규식 옵션과 패턴 예시 |
 
-## 빠른 참조: 주요 설정 파라미터
-
-| 파라미터 | 위치 | 설명 |
-|---------|------|------|
-| `name` | 최상위 | Collector 인스턴스 이름 |
-| `source.type` | source | 수집 소스 타입 (FILE, TCP, UDP 등) |
-| `template.type` | template | 파싱 방식 (CSV, JSON, REGEX 등) |
-| `target.table` | target | 데이터를 입력할 Machbase 테이블 이름 |
-| `target.server` | target | Machbase 서버 접속 정보 |
-
-Collector 기능의 개념과 운영 가이드는 [데이터 수집](/dbms/operations-configuration-recovery/collector/) 섹션을 참고하십시오.
+설치부터 파일 수집까지의 절차는
+[Collector 기반 수집](/dbms/log-table-usage/collector-ingestion/)을 참고하십시오. Manager 운영과
+장애 대응은 [Collector 운영](/dbms/operations-configuration-recovery/collector/)을
+참고하십시오.

@@ -78,4 +78,4 @@ SELECT /*+ SAMPLING(time, '1 min', 1) */ name, time, value
 
 ## 관련 문서
 
-- [SELECT 힌트 사전](/dbms/reference/sql/hint-dictionary-select/) — 전체 힌트 빠른 참조
+- [쿼리 성능 튜닝](/dbms/performance-tuning/performance-query-tuning/) — 실행 계획과 힌트 적용 기준

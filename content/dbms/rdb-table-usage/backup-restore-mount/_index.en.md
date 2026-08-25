@@ -1,5 +1,5 @@
 ---
-title: '8.13 RDB Backup, Restore, and Mount'
+title: '8.13 TRANSACTION Backup, Restore, and Mount'
 weight: 140
 toc: true
 ---
@@ -8,24 +8,24 @@ English structure placeholder. Korean content is authoritative for this restruct
 
 <a id="support-scope-backup-rdb"></a>
 
-## RDB backup support scope
+## TRANSACTION backup support scope
 
 <a id="backup-rdb"></a>
 
-## Back up RDB tables
+## Back up TRANSACTION tables
 
 <a id="verify-backup-rdb"></a>
 
-## Verify an RDB backup
+## Verify a TRANSACTION backup
 
 <a id="restore-rdb"></a>
 
-## Restore RDB tables
+## Restore TRANSACTION tables
 
 <a id="mount-rdb"></a>
 <a id="design-backup-mount-rdb"></a>
 
-## Mount and query RDB tables
+## Mount and query TRANSACTION tables
 
 <a id="troubleshooting-backup-rdb"></a>
 

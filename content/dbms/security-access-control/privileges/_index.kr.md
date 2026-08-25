@@ -820,7 +820,7 @@ GRANT INSERT ON sys.sensor_tag TO collector_user;
 | `SELECT` | 해당 테이블 데이터 조회 | 모든 테이블 유형 지원 |
 | `INSERT` | 해당 테이블에 행 삽입 | 모든 테이블 유형 지원 |
 | `DELETE` | 해당 테이블에서 행 삭제 | 모든 테이블 유형 지원 |
-| `UPDATE` | 해당 테이블의 행 수정 | VOLATILE, LOOKUP 전용 |
+| `UPDATE` | 해당 테이블의 행 수정 | TAG는 태그/시간 조건 필요. LOG 미지원 |
 | `ALL` | SELECT + INSERT + DELETE + UPDATE 일괄 부여 | |
 
 ### 테이블 지정 방법

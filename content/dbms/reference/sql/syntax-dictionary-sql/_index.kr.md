@@ -15,11 +15,11 @@ SQL 문법 사전은 Machbase에서 지원하는 모든 SQL 구문의 BNF 표기
 | [DROP TABLE](./ddl-syntax/#drop-table) | DDL | 테이블 삭제 |
 | [ALTER TABLE](./ddl-syntax/#alter-table) | DDL | 테이블 스키마 변경 (컬럼 추가/삭제/수정/이름 변경) |
 | [TRUNCATE TABLE](./ddl-syntax/#truncate-table) | DDL | 테이블 데이터 전체 삭제 |
-| [CREATE INDEX](./ddl-syntax/#create-index) | DDL | 인덱스 생성 (LSM/KEYWORD/BITMAP/REDBLACK) |
-| [DROP INDEX](./ddl-syntax/#drop-index) | DDL | 인덱스 삭제 |
-| [CREATE ROLLUP](./ddl-syntax/#create-rollup) | DDL | TAG 테이블 롤업 정의 생성 |
-| [DROP ROLLUP / ALTER ROLLUP](./ddl-syntax/#drop-rollup) | DDL | 롤업 삭제 및 제어 |
-| [CREATE RETENTION](./ddl-syntax/#create-retention) | DDL | 데이터 보존 정책 생성 |
+| [CREATE INDEX](./index-syntax/#create-index) | DDL | 테이블 타입별 인덱스 생성 |
+| [DROP INDEX](./index-syntax/#drop-index) | DDL | 인덱스 삭제 |
+| [CREATE ROLLUP](./rollup-syntax/#create-rollup) | DDL | TAG 테이블 롤업 정의 생성 |
+| [DROP ROLLUP / ALTER ROLLUP](./rollup-syntax/#drop-rollup) | DDL | 롤업 삭제 및 제어 |
+| [CREATE RETENTION](./retention-syntax/#create-retention) | DDL | 데이터 보존 정책 생성 |
 | [CREATE VIEW / DROP VIEW](./view-syntax/) | DDL | 저장 뷰 생성 및 삭제 |
 | [CREATE TABLESPACE](./ddl-syntax/#create-tablespace) | DDL | 테이블스페이스 생성 |
 | [INSERT INTO](./dml-syntax/#insert-into) | DML | 단건 및 다건 데이터 삽입 |

@@ -7,6 +7,8 @@ toc: true
 
 RETENTION 정책은 테이블에서 오래된 데이터를 자동으로 삭제하는 기능입니다. 지정한 보존 기간이 지난 데이터를 주기적으로 삭제해 스토리지를 관리합니다.
 
+<a id="create-retention"></a>
+
 ## RETENTION 정책 생성
 
 ```sql
@@ -29,6 +31,8 @@ CREATE RETENTION policy_30d_1d DURATION 30 DAY INTERVAL 1 DAY;
 -- 3개월 보존, 1일마다 삭제 실행
 CREATE RETENTION policy_3m_1d DURATION 3 MONTH INTERVAL 1 DAY;
 ```
+
+<a id="drop-retention"></a>
 
 ## RETENTION 정책 삭제
 

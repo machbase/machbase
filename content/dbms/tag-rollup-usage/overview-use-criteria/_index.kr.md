@@ -252,7 +252,7 @@ CREATE ROLLUP <rollup_name>
 - 조건부 롤업은 `ON/FROM` 문법의 외부 `WHERE`를 사용합니다.
 - Custom Rollup(`INTO ... AS (SELECT ...)`)은 `SELECT` 내부 `WHERE`만 지원합니다.
 - 즉, `CREATE ROLLUP ... INTO (...) AS (...) INTERVAL ... WHERE ...` 형태는 허용되지 않습니다.
-- 자세한 Custom 문법은 [Custom Rollup: 사용자 정의 집계](/dbms/tag-rollup-usage/custom-rollup/#original-85-rollup-custom), SQL 문법은 [DDL: CREATE ROLLUP](/dbms/reference/sql/syntax-dictionary-sql/ddl-syntax/#create-rollup)을 참고합니다.
+- 자세한 Custom 문법은 [Custom Rollup: 사용자 정의 집계](/dbms/tag-rollup-usage/custom-rollup/#original-85-rollup-custom), SQL 문법은 [ROLLUP syntax](/dbms/reference/sql/syntax-dictionary-sql/rollup-syntax/)를 참고합니다.
 
 #### 자동 선택 우선순위(힌트 없을 때)
 1. `ROLLUP_TABLE(<rollup_table_name>)` 힌트가 있으면 그 롤업을 무조건 사용.

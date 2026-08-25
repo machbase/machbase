@@ -19,7 +19,7 @@ toc: true
 | 4 | [TAG + TRANSACTION + LOG 조인 대시보드](join-tag-rdb-log/) | 중급 | 복합 JOIN, 집계 |
 | 5 | [실시간 상태판 만들기](state-status-real-time-dashboard/) | 중급 | TAG, LOOKUP, Python SDK |
 | 6 | [대량 데이터 적재 파이프라인](bulk-pipeline/) | 중급 | Append API, 배치 |
-| 7 | [Collector로 파일/소켓 데이터 수집하기](file-ingestion-collector/) | 중급 | Collector |
+| 7 | [Collector로 파일 수집하기](file-ingestion-collector/) | 중급 | Collector |
 | 8 | [Fluentd로 로그 파이프라인 연결하기](/dbms/log-table-usage/fluentd-pipeline/#log-logs-pipeline-connection-fluentd) | 중급 | Fluentd 플러그인 |
 | 9 | [이상 데이터 정정 후 ROLLUP Rebuild](/dbms/tag-rollup-usage/rollup-rebuild/#correction-abnormal-data-rollup-rebuild) | 고급 | ROLLUP Rebuild |
 | 10 | [백업 데이터 마운트 후 조회](backup-query-mount/) | 고급 | Backup, Mount |

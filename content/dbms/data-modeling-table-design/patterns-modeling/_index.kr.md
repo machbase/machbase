@@ -672,5 +672,5 @@ UPDATE product_master SET price = 19900 WHERE product_id = 42;
 ---
 
 다음으로 읽을 내용:
-- [쿼리와 집계](/dbms/performance-tuning/query-analysis/#item-aggregation-group)
+- [SELECT의 GROUP BY와 집계](/dbms/reference/sql/syntax-dictionary-sql/select-syntax/)
 - [운영 및 구성](/dbms/operations-configuration-recovery/)

@@ -7,6 +7,8 @@ toc: true
 
 ROLLUP은 TAG 테이블의 시계열 데이터를 지정한 시간 단위로 자동 집계하는 기능입니다. 백그라운드 스레드가 주기적으로 집계를 수행하며, 결과는 내부 ROLLUP 테이블에 저장됩니다.
 
+<a id="create-rollup"></a>
+
 ## ROLLUP 생성
 
 ```sql
@@ -99,6 +101,8 @@ JSON 컬럼의 특정 멤버를 ROLLUP 대상 값으로 사용할 수 있습니�
 CREATE ROLLUP tag_json_metric_ru ON tag_json (value->'$.metric') INTERVAL 1 SEC;
 ```
 
+<a id="drop-rollup"></a>
+
 ## ROLLUP 삭제
 
 ```sql
@@ -108,6 +112,8 @@ DROP ROLLUP rollup_name
 ```sql
 DROP ROLLUP _rollup_tag_value_sec;
 ```
+
+<a id="alter-rollup"></a>
 
 ## ROLLUP 제어
 

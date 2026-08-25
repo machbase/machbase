@@ -228,4 +228,4 @@ ALTER ROLLUP _tag_ru_1s WAKEUP;
 ### 관련 페이지
 
 - [ROLLUP 개념과 생성](/dbms/tag-rollup-usage/overview-use-criteria/#rollup) — ROLLUP 생성, 계층 설계 전반
-- [SELECT 힌트 사용](/dbms/performance-tuning/query-analysis/#query-select-hint-select) — ROLLUP_TABLE 힌트 상세
+- [SELECT hint syntax](/dbms/reference/sql/syntax-dictionary-sql/select-hint-syntax/) — ROLLUP_TABLE 힌트 상세

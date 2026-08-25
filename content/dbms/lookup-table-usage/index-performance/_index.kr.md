@@ -3,18 +3,18 @@ title: '9.6 인덱스와 성능'
 weight: 60
 toc: true
 ---
-LOOKUP/VOLATILE 테이블의 인덱스 구조와 성능 튜닝을 다룹니다.
+LOOKUP 테이블의 인덱스 구조와 성능 튜닝을 다룹니다.
 
 
 <a id="index-tuning-lookup-volatile"></a>
 <a id="original-85-lookup-indexes"></a>
 <a id="index-strategy-lookup"></a>
 
-## LOOKUP/VOLATILE 인덱스 튜닝
+## LOOKUP 인덱스 튜닝
 
-LOOKUP 테이블과 VOLATILE 테이블은 모두 PRIMARY KEY에 Red-Black 트리 인덱스가 자동 생성됩니다.
-LOOKUP의 전체 행과 인덱스는 SQL 조회 중 메모리에 상주합니다. 필요하면 non-PK 컬럼에도
-Red-Black 보조 인덱스를 추가할 수 있습니다.
+LOOKUP의 PRIMARY KEY에는 Red-Black 트리 인덱스가 자동 생성됩니다. 전체 행과 인덱스는
+SQL 조회 중 메모리에 상주합니다. 필요하면 non-PK 컬럼에도 Red-Black 보조 인덱스를
+추가할 수 있습니다.
 
 ### LOOKUP 테이블 인덱스
 
@@ -76,54 +76,10 @@ Primary key와 Red-Black 보조 인덱스의 조회 비용은 트리 크기에 �
 | 전체 행이 서버 메모리에 들어가지 않는 대규모 기준 정보 | TRANSACTION 테이블 검토 |
 | 관계형 트랜잭션이 필요한 기준 정보 | TRANSACTION 테이블 검토 |
 
-### VOLATILE 테이블 인덱스
+### VOLATILE과의 구분
 
-#### PK 자동 Red-Black 트리 인덱스
-
-VOLATILE 테이블은 메모리 기반이며, PRIMARY KEY 컬럼에 Red-Black 트리 인덱스가 자동 생성됩니다. 모든 작업이 메모리에서 수행되므로 삽입·조회·수정·삭제 모두 매우 빠릅니다.
-
-```sql
-CREATE VOLATILE TABLE device_status (
-    device_id   INTEGER PRIMARY KEY,  -- Red-Black 트리 자동 생성
-    status      VARCHAR(20),
-    last_updated DATETIME,
-    error_count INTEGER
-);
-```
-
-```sql
--- PK 조회: 인메모리 Red-Black 트리 사용, 매우 빠름 O(log n)
-SELECT * FROM device_status WHERE device_id = 101;
-
--- PK 기준 업데이트: 빠름
-UPDATE device_status SET status = 'RUNNING' WHERE device_id = 101;
-
--- PK 기준 삭제: 빠름
-DELETE FROM device_status WHERE device_id = 101;
-```
-
-#### non-PK 컬럼 보조 인덱스
-
-VOLATILE 테이블도 non-PK 컬럼에 Red-Black 보조 인덱스를 생성할 수 있습니다. 보조 인덱스가 없으면 전체 메모리 스캔이 발생하지만, 데이터가 메모리에 있으므로 디스크 기반 테이블보다 부담이 작습니다.
-
-```sql
-CREATE INDEX idx_device_status_status ON device_status(status);
-
-SELECT * FROM device_status WHERE status = 'ERROR';
-```
-
-VOLATILE 테이블은 **현재 상태를 보관하는 소규모 인메모리 테이블**로 사용하는 것이 목적에 맞습니다. 반복 조회하는 non-PK 조건에만 보조 인덱스를 생성합니다.
-
-#### VOLATILE 테이블 특성 요약
-
-| 특성 | 내용 |
-|-----|------|
-| 인덱스 구조 | Red-Black 트리 (PK 자동) |
-| 저장 위치 | 메모리 (재시작 시 데이터 소멸) |
-| PK 조회 복잡도 | O(log n) |
-| non-PK 조회 | 보조 인덱스 또는 전체 메모리 스캔 |
-| 추가 인덱스 | Red-Black 보조 인덱스 생성 가능 |
-| 규모 판단 | 메모리 사용량과 재시작 시 재구성 비용 측정 |
+VOLATILE은 재시작 때 데이터가 사라지는 별도 테이블 타입입니다. VOLATILE 인덱스 설계는
+[VOLATILE 인덱스와 성능](/dbms/volatile-table-usage/index-performance/)을 참고하십시오.
 
 ### 대용량 기준 정보가 필요한 경우
 
@@ -150,12 +106,6 @@ CREATE INDEX idx_category ON device_master_log (category) INDEX_TYPE BITMAP;
 
 ### 핵심 정리
 
-| 항목 | LOOKUP | VOLATILE |
-|------|--------|---------|
-| 기본 인덱스 | Red-Black 트리 (PK) | Red-Black 트리 (PK) |
-| 추가 인덱스 생성 | Red-Black 보조 인덱스 가능 | Red-Black 보조 인덱스 가능 |
-| non-PK 조회 | 보조 인덱스 또는 전체 스캔 | 보조 인덱스 또는 전체 메모리 스캔 |
-| 조회 데이터 위치 | 전체 행이 메모리에 상주 | 전체 행이 메모리에 상주 |
-| 데이터 지속성 | 영속 저장본에서 재구성 | 재시작 시 소멸 |
-| 규모 판단 | 행·인덱스 메모리, 기동 시간과 갱신 부하 측정 | 메모리와 재구성 비용 측정 |
-| 최적화 방향 | PK와 반복 조회 컬럼에만 인덱스 설계 | 소규모 유지, 반복 조회 컬럼에만 인덱스 설계 |
+- PRIMARY KEY 인덱스는 자동 생성됩니다.
+- 반복하는 non-PK 조건에만 보조 인덱스를 만듭니다.
+- 행·가변 길이 값·인덱스의 메모리, 기동 시간과 갱신 부하를 함께 측정합니다.

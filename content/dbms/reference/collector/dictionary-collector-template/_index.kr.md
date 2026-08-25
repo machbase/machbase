@@ -57,11 +57,16 @@ CREATE_TABLE_MODE=2
 | 입력 방식 | `APPEND_MODE`, `CREATE_TABLE_MODE`, `SLEEP_TIME`, `AUTO_ADD_COLUMN`, `REGEX_SORT`, `ROTATE_FILE_COUNT`, `ROTATE_REGEX_SORT`, `REGEX_FILE_COUNT`, `CHECK_BAD_DATA` |
 | DB 접속 | `DB_TABLE_NAME`, `DB_ADDR`, `DB_PORT`, `DB_USER`, `DB_PASS`, `DB_ALTERNATIVE_SERVERS`, `DB_LIST` |
 | Alternative DB | `ALSDB_TABLE_NAME`, `ALSDB_ADDR`, `ALSDB_PORT`, `ALSDB_USER`, `ALSDB_PASS` |
-| Socket/SFTP | `SOCKET_PORT`, `SOCKET_PROTOCOL`, `SFTP_HOST`, `SFTP_PORT`, `SFTP_USER`, `SFTP_PASS`, `SFTP_TIMEOUT` |
-| ODBC | `ODBC_DSN`, `ODBC_QUERY`, `ODBC_SEQ_COLUMN`, `ODBC_USE_ORDER_BY`, `ODBC_DATETIME_FORMAT` |
+| 연결 호환 키 | `SOCKET_PORT`, `SOCKET_PROTOCOL`, `SFTP_HOST`, `SFTP_PORT`, `SFTP_USER`, `SFTP_PASS`, `SFTP_TIMEOUT` |
+| 외부 DB 호환 키 | `ODBC_DSN`, `ODBC_QUERY`, `ODBC_SEQ_COLUMN`, `ODBC_USE_ORDER_BY`, `ODBC_DATETIME_FORMAT` |
 | 파일 처리 | `FILE_BACKUP_PATH`, `FILE_BACKUP_MODE`, `RULE_FILE`, `PER_FILE_QUERY_IF`, `PER_FILE_QUERY_TRUE`, `PER_FILE_QUERY_FALSE` |
 
 ## `.rgx` 규칙 파일 키
+
+위 전체 키 목록에 socket 또는 ODBC 이름이 남아 있어도 해당 이름이 현재 지원되는
+`COLLECT_TYPE`임을 뜻하지 않습니다. 지원 입력 소스는
+[Collector source type 사전](../dictionary-collector-source-type/)의 `FILE`, `SFTP`를
+기준으로 판단하십시오.
 
 `REGEX_PATH`가 가리키는 `.rgx` 규칙 파일은 레코드 파싱과 컬럼 매핑을 정의합니다.
 

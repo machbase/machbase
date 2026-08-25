@@ -11,11 +11,11 @@ toc: true
 
 | 요구사항 | 권장 SDK | 비고 |
 |----------|----------|------|
-| Append 필요 + Java | **JDBC** (`MachStatement.executeAppendOpen()`) | [JDBC 가이드](/dbms/application-integration/guide-drivers/#jdbc) |
-| Append 필요 + Python | **machbaseAPI** (`machbase()` 클래스의 `append()`) | [Python 가이드](/dbms/application-integration/guide-drivers/#python) |
+| Append 필요 + Java | **JDBC** (`MachStatement.executeAppendOpen()`) | [JDBC 레퍼런스](/dbms/development-tools-integration/jdbc/) |
+| Append 필요 + Python | **machbaseAPI** (`machbase()` 클래스의 `append()`) | [Python 레퍼런스](/dbms/development-tools-integration/python/) |
 | Append 필요 + Go | **machgo** (native client) | `database/sql` 표준 API에는 없으며 `machbase.Conn.Appender()`는 `sql.Conn.Raw()` 확장으로만 제공 |
-| Append 필요 + .NET | **MachConnector** (`MachAppendWriter`) | [.NET 가이드](/dbms/application-integration/guide-drivers/#net-connector) |
-| Append 필요 + Node.js | **@machbase/ts-client** | [Node.js 가이드](/dbms/application-integration/guide-drivers/#node-js-typescript) |
+| Append 필요 + .NET | **MachConnector** (`MachAppendWriter`) | [.NET 레퍼런스](/dbms/development-tools-integration/net-connector/) |
+| Append 필요 + Node.js | **@machbase/ts-client** | [Node.js 레퍼런스](/dbms/development-tools-integration/node-js-typescript/) |
 | AUTH KEY 인증 필요 | **JDBC**, **Machbase SQLCLI**, **ODBC**, **machsql** | Python/Go/.NET/Node.js는 AUTH KEY 미지원 |
 | TRANSACTION 테이블 트랜잭션 필요 | **Go (`database/sql`)**, **JDBC**, **Machbase SQLCLI**, **ODBC** | Go SQL은 기본 isolation level, JDBC는 Standard Edition에서 지원 |
 | SELECT 결과 Nullable 메타데이터 필요 | **Go**, **Machbase SQLCLI**, **ODBC**, **JDBC**, **Python**, **Node.js**, **.NET** | Go native는 `api.Column`, SQL은 `ColumnTypeNullable` 사용 |
@@ -23,12 +23,12 @@ toc: true
 | Prepared Parameter Nullable 메타데이터 필요 | **Go**, **Machbase SQLCLI**, **ODBC**, **JDBC** | Go는 결과 컬럼 메타데이터를 제공 |
 | 서버 Named Bind 필요 | **Go**, **SQLCLI**, **JDBC**, **Python**, **Node.js** | Go는 `api.Named()` 또는 `sql.Named()` 사용 |
 | Python에서 동일 SQL 반복 실행 | **machbaseAPI 2.4 prepared cursor** | `cursor(prepared=True)`로 호출 간 statement 재사용 |
-| Go 언어 선호 + Append 필요 | **machgo** (native) | [Go 가이드](/dbms/application-integration/guide-drivers/#go) |
+| Go 언어 선호 + Append 필요 | **machgo** (native) | [Go 레퍼런스](/dbms/development-tools-integration/go/) |
 | Go 언어 선호 + 표준 인터페이스 | **database/sql** 드라이버 | Append 불필요한 경우 |
 | 브라우저 / 웹 / 스크립트 | 백엔드 언어에 맞는 **JDBC, Python, Go, Node.js, .NET 또는 ODBC** | 브라우저가 DB에 직접 연결하지 않도록 백엔드에서 쿼리 실행 |
 | 데이터 탐색 / 보고 | **R + RODBC** | 통계 분석에 적합 |
-| C/C++ 직접 연결 | **Machbase SQLCLI** | [Machbase SQLCLI 가이드](/dbms/application-integration/guide-drivers/#machbase-sqlcli) |
-| C/C++ ODBC 환경 | **ODBC** | [ODBC 가이드](/dbms/application-integration/guide-drivers/#odbc) |
+| C/C++ 직접 연결 | **Machbase SQLCLI** | [Machbase SQLCLI 레퍼런스](/dbms/development-tools-integration/cli-odbc/) |
+| C/C++ ODBC 환경 | **ODBC** | [ODBC 레퍼런스](/dbms/development-tools-integration/cli-odbc/) |
 
 ## 다중 데이터베이스 선택 규칙
 

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '16.5 Collector로 파일/소켓 데이터 수집하기'
+title: '16.5 Ingest files with Collector'
 weight: 70
 toc: true
 ---

@@ -4,13 +4,14 @@ title: '14.7 Collector 운영'
 weight: 80
 toc: true
 ---
-Collector는 파일, 메시지 큐, 네트워크 스트림 등 외부 데이터 소스에서 데이터를 읽어 Machbase 테이블에 실시간으로 적재하는 컴포넌트입니다.
+Collector는 로컬 또는 SFTP 파일을 읽어 Machbase 테이블에 적재하는 컴포넌트입니다.
+현재 확인된 `COLLECT_TYPE`은 `FILE`과 `SFTP`입니다.
 
 ## Collector 아키텍처
 
 ```
-[외부 데이터 소스]  →  [Collector 인스턴스]  →  [Collector Manager]  →  [Machbase]
-   파일/소켓/MQ           수집·변환·버퍼링            프로세스 관리         저장
+[FILE/SFTP 소스]  →  [Collector 인스턴스]  →  [Collector Manager]  →  [Machbase]
+    파일 읽기           파싱·컬럼 매핑             프로세스 관리         저장
 ```
 
 - **Collector Manager**: 여러 Collector 인스턴스를 관리하는 데몬 프로세스입니다. Machbase 서버와 독립된 별도 프로세스로 동작합니다.
@@ -105,7 +106,7 @@ tail -100 $MACHBASE_COLLECTOR_HOME/trc/machcollectoradmin.trc
 ### Collector 생성
 
 ```bash
-machcollectoradmin --create-collector=my_collector --template=collector_config.xml
+machcollectoradmin --create-collector=my_collector --template=collector_config.tpl
 ```
 
 | 옵션 | 설명 |
@@ -183,9 +184,9 @@ machcollectoradmin --list
 ```
 Name           Status    Config File
 -----------    --------  -----------------------------------
-my_collector   RUNNING   /home/mach/conf/collector_a.xml
-log_collector  STOPPED   /home/mach/conf/collector_b.xml
-err_collector  ERROR     /home/mach/conf/collector_c.xml
+my_collector   RUNNING   /home/mach/conf/collector_a.tpl
+log_collector  STOPPED   /home/mach/conf/collector_b.tpl
+err_collector  ERROR     /home/mach/conf/collector_c.tpl
 ```
 
 ### 특정 Collector 상태 조회
@@ -199,7 +200,7 @@ machcollectoradmin --status=my_collector
 ```
 Name        : my_collector
 Status      : RUNNING
-Config File : /home/mach/conf/collector_a.xml
+Config File : /home/mach/conf/collector_a.tpl
 Collected   : 1,234,567 rows
 Error Count : 0
 Last Active : 2026-07-07 10:32:15
@@ -234,7 +235,7 @@ ERROR 상태인 Collector가 있으면 다음 순서로 원인을 파악합니�
 1. **상태 조회**: `machcollectoradmin --status=<이름>`으로 오류 개수와 마지막 활동 시간 확인
 2. **로그 확인**: 기본적으로 `$MACHBASE_COLLECTOR_HOME/trc/machcollector.trc`에서 오류 메시지 확인. Collector별 trace 로그를 활성화했다면 `$MACHBASE_COLLECTOR_HOME/trc/<이름>.trc`도 함께 확인
 3. **Machbase 연결 확인**: Machbase 서버가 정상 실행 중인지 `machadmin -e`로 확인
-4. **소스 연결 확인**: 데이터 소스(파일 경로, 소켓 포트, MQ 서버 등)가 유효한지 확인
+4. **소스 연결 확인**: 로컬 파일 경로 또는 SFTP 접속 정보가 유효한지 확인
 
 오류 원인을 제거한 후 [장애 복구](/dbms/operations-configuration-recovery/collector/#recovery-failure-collector) 절차에 따라 복구합니다.
 
@@ -262,7 +263,7 @@ Collector가 ERROR 상태이거나 수집이 중단된 경우 다음 절차에 �
 | 네트워크 단절 | ERROR 상태, 연결 오류 로그 | 네트워크 연결 및 방화벽 확인 |
 | Machbase 서버 재시작 | ERROR 상태, DB 연결 실패 로그 | `machadmin -e` |
 | 데이터 소스 중단 | RUNNING이나 수집 행 수 미증가 | 소스 서버·파일 경로 확인 |
-| 설정 파일 오류 | STARTING에서 ERROR로 전환 | 설정 XML 문법·경로 확인 |
+| 설정 파일 오류 | STARTING에서 ERROR로 전환 | `.tpl` 키와 파일 경로 확인 |
 | 디스크 공간 부족 | ERROR 상태, 디스크 쓰기 실패 로그 | `df -h` |
 | 권한 오류 | ERROR 상태, 권한 오류 로그 | 파일·디렉터리 권한 확인 |
 
@@ -302,22 +303,11 @@ machcollectoradmin --list | awk 'NR>2 {print $1}' | \
   xargs -I{} sh -c 'machcollectoradmin --stop-collector={} ; machcollectoradmin --start-collector={}'
 ```
 
-### 데이터 유실 방지
+### 데이터 재처리 확인
 
-Collector는 내부 버퍼를 이용해 Machbase 연결이 일시적으로 끊어지더라도 수집된 데이터를 보존합니다.
-
-- **내부 메모리 버퍼**: 단기 연결 단절 시 데이터를 메모리에 보관하다가 재연결 후 전송합니다.
-- **파일 버퍼**: 설정 파일에서 파일 기반 버퍼를 활성화하면 Collector 프로세스가 종료된 경우에도 재시작 후 미전송 데이터를 복구할 수 있습니다.
-
-파일 버퍼 설정 예 (collector_config.xml):
-
-```xml
-<buffer>
-  <type>file</type>
-  <path>/data/collector_buffer/my_collector</path>
-  <max-size-mb>1024</max-size-mb>
-</buffer>
-```
+장애 복구 전 `LOG_SOURCE` 원본과 `FILE_BACKUP_PATH`의 처리 완료 파일을 확인합니다. 재시작
+후 어느 파일과 offset부터 처리하는지는 배포 버전의 Collector 로그와 샘플 설정을 기준으로
+검증하십시오. 검증하지 않은 파일을 원본 경로에 다시 두면 중복 적재될 수 있습니다.
 
 ### 설정 오류로 인한 복구
 
@@ -329,10 +319,10 @@ machcollectoradmin --stop-collector=my_collector
 machcollectoradmin --drop-collector=my_collector
 
 # 2. 설정 파일 수정
-vi /path/to/collector_config.xml
+vi /path/to/collector_config.tpl
 
 # 3. 새 설정으로 재생성 및 시작
-machcollectoradmin --create-collector=my_collector --template=/path/to/collector_config.xml
+machcollectoradmin --create-collector=my_collector --template=/path/to/collector_config.tpl
 machcollectoradmin --start-collector=my_collector
 ```
 

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '12.3 드라이버별 가이드'
+title: '12.3 Driver Guide'
 weight: 30
 toc: true
 ---
@@ -9,6 +9,7 @@ toc: true
 
 <a id="cli-odbc"></a>
 <a id="machbase-sqlcli"></a>
+<a id="examples-cli-odbc"></a>
 
 ## Machbase SQLCLI
 
@@ -45,6 +46,7 @@ toc: true
 ## Go
 
 <a id="go-go"></a>
+<a id="go-sql"></a>
 
 ### Go 클라이언트
 

@@ -461,7 +461,7 @@ curl http://localhost:24220/api/plugins.json | python3 -m json.tool
 
 ### 참고
 
-- Machbase LOG 테이블 전문 검색: [전문 검색 조건](/dbms/performance-tuning/query-analysis/#condition-conditional-search)
+- Machbase LOG 테이블 전문 검색: [SEARCH / ESEARCH / REGEXP](/dbms/reference/sql/syntax-dictionary-sql/search-esearch-regexp-syntax/)
 - Collector를 이용한 파일 수집: [/dbms/scenario-guides/file-ingestion-collector/](/dbms/scenario-guides/file-ingestion-collector/)
 - 대량 적재 파이프라인: [/dbms/scenario-guides/bulk-pipeline/](/dbms/scenario-guides/bulk-pipeline/)
 - Fluentd 공식 문서: https://docs.fluentd.org

@@ -65,7 +65,7 @@ UPDATE tag
    AND time = TO_DATE('2024-01-15 10:00:00', 'YYYY-MM-DD HH24:MI:SS');
 
 UPDATE tag
-   SET value = value * 0.98
+   SET value = 25.0
  WHERE name = 'TEMP-01'
    AND time BETWEEN TO_DATE('2024-01-15 10:00:00', 'YYYY-MM-DD HH24:MI:SS')
                 AND TO_DATE('2024-01-15 11:00:00', 'YYYY-MM-DD HH24:MI:SS');

@@ -23,14 +23,15 @@ Machbase의 백업·복원·마운트 구문은 데이터를 안전하게 보호
 
 ```sql
 backup_logical_database_stmt ::=
-    'BACKUP DATABASE' database_name 'INTO DISK' '=' 'backup_path'
+    'BACKUP DATABASE' database_name
     [ 'AFTER' 'backup_path_or_lsn' ]
+    'INTO DISK' '=' 'backup_path'
 ```
 
 ```sql
 BACKUP DATABASE factory_a INTO DISK = '/backup/factory_a_20260806';
-BACKUP DATABASE factory_a INTO DISK = '/backup/factory_a_inc'
-  AFTER '/backup/factory_a_20260806';
+BACKUP DATABASE factory_a AFTER '/backup/factory_a_20260806'
+  INTO DISK = '/backup/factory_a_inc';
 ```
 
 논리 backup은 하나의 active database catalog를 대상으로 합니다. 여러 active database가
@@ -61,32 +62,34 @@ BACKUP DATABASE INTO DISK = 'backup_20240101';
 
 ```sql
 backup_incremental_stmt ::=
-    'BACKUP DATABASE INTO DISK' '=' 'backup_path'
-    'AFTER' 'backup_path_or_lsn'
+    'BACKUP DATABASE AFTER' 'backup_path_or_lsn'
+    'INTO DISK' '=' 'backup_path'
 ```
 
 마지막 전체(또는 증분) 백업 이후에 변경된 데이터만 백업합니다.
 
 ```sql
 -- 전체 백업 이후 변경분 증분 백업
-BACKUP DATABASE INTO DISK = '/backup/incr_20240102'
-AFTER '/backup/machbase_20240101';
+BACKUP DATABASE AFTER '/backup/machbase_20240101'
+INTO DISK = '/backup/incr_20240102';
 ```
 
 ### 기간 백업
 
 ```sql
 backup_period_stmt ::=
-    'BACKUP DATABASE INTO DISK' '=' 'backup_path'
+    'BACKUP DATABASE'
     'FROM' datetime_expr 'TO' datetime_expr
+    'INTO DISK' '=' 'backup_path'
 ```
 
 지정한 시간 범위에 해당하는 데이터만 백업합니다.
 
 ```sql
-BACKUP DATABASE INTO DISK = '/backup/period_jan'
+BACKUP DATABASE
 FROM TO_DATE('2024-01-01','YYYY-MM-DD')
-TO   TO_DATE('2024-02-01','YYYY-MM-DD');
+TO   TO_DATE('2024-02-01','YYYY-MM-DD')
+INTO DISK = '/backup/period_jan';
 ```
 
 ### 테이블 백업

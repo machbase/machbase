@@ -80,96 +80,18 @@ INSERT INTO weather_station VALUES ('WS-01', NOW, 22.5, 65.0, NULL, NULL);
 
 ### 이진 데이터 컬럼 설계
 
-TAG 테이블에 이미지, 파형, 스펙트럼 등 이진(Binary) 데이터를 함께 저장해야 하는 경우 `BINARY` 타입을 사용합니다.
-
-#### BINARY 타입
-
-```sql
-CREATE TAG TABLE waveform_data (
-    name     VARCHAR(64) PRIMARY KEY,
-    time     DATETIME    BASETIME,
-    rms      DOUBLE,
-    waveform BINARY(1024) -- 파형 데이터 (이진)
-);
-```
-
-#### 삽입
-
-```sql
--- machsql에서는 0x로 시작하는 hex 문자열 사용
-INSERT INTO waveform_data VALUES (
-    'sensor-01', NOW,
-    0.354,
-    '0x0102030405060708'
-);
-```
-
-#### 주의사항
-
-- TAG 테이블의 `BINARY(n)` 컬럼은 1~32767바이트 범위에서 크기를 지정합니다.
-- `BINARY` 데이터에는 집계 함수(`AVG`, `SUM` 등)를 적용할 수 없습니다.
-- 대용량 이진 데이터를 자주 조회하면 성능에 영향이 있을 수 있습니다. 이진 데이터는 별도 파일 스토리지에 저장하고, TAG 테이블에는 파일 경로 또는 참조 키만 저장하는 패턴도 고려합니다.
-
-#### 이진 데이터를 외부 참조로 대체하는 패턴
-
-```sql
-CREATE TAG TABLE waveform_ref (
-    name      VARCHAR(64) PRIMARY KEY,
-    time      DATETIME    BASETIME,
-    rms       DOUBLE,
-    file_path VARCHAR(512)  -- 외부 파일 참조
-);
-```
+TAG 테이블의 `BINARY(n)`은 1~32767바이트의 센서 프레임을 저장할 때 사용합니다. 입력
+literal, 길이 제약과 드라이버 동작은 [Binary 컬럼](#original-85-binary-columns)을
+참고하십시오. 큰 이미지나 파형은 외부 스토리지에 두고 참조 키만 저장하는 설계도
+검토하십시오.
 
 <a id="tag-table-design-storage-varchar"></a>
 
 ### VARCHAR 스토리지 최적화
 
-`VARCHAR` 컬럼은 크기와 성능의 균형을 고려해 설정합니다.
-
-#### VARCHAR 크기 설정
-
-```sql
--- 태그 이름: 충분히 여유 있게
-CREATE TAG TABLE sensor_data (
-    name   VARCHAR(128) PRIMARY KEY,  -- 128자 여유
-    time   DATETIME     BASETIME,
-    status VARCHAR(32),               -- 상태 문자열
-    label  VARCHAR(256)               -- 레이블
-);
-```
-
-#### 권장 크기
-
-| 용도 | 권장 크기 |
-|------|---------|
-| 태그 이름 (`PRIMARY KEY`) | 64~256 |
-| 상태 코드 | 16~32 |
-| 단위 | 8~16 |
-| 설명 | 128~512 |
-| 경로/URL | 512~1024 |
-
-#### 주의사항
-
-- `PRIMARY KEY`(`VARCHAR`) 컬럼은 태그 이름으로 사용됩니다. 너무 짧게 설정하면 실제 센서 이름이 잘릴 수 있습니다.
-- `VARCHAR`는 짧은 값을 내부 영역에, 일정 길이를 넘는 값을 외부 영역에 저장합니다.
-- 넉넉한 크기 지정은 스키마 유연성을 높이지만, 집계 쿼리나 정렬 시 내부 처리 버퍼 크기에 영향을 주므로 과도하게 큰 값은 피합니다.
-
-#### 태그 이름 설계 패턴
-
-태그 이름을 구조화하면 범위 조회가 쉬워집니다.
-
-```sql
--- 구조화된 태그 이름: {site}/{building}/{floor}/{sensor_id}
-INSERT INTO sensor_data VALUES ('HQ/A-BLDG/3F/TEMP-01', NOW, 'NORMAL', '3F temperature sensor 01');
-INSERT INTO sensor_data VALUES ('HQ/A-BLDG/3F/TEMP-02', NOW, 'NORMAL', '3F temperature sensor 02');
-
--- 같은 건물의 센서 조회
-SELECT name, time, status
-FROM sensor_data
-WHERE name LIKE 'HQ/A-BLDG/%'
-  AND time >= NOW - 3600000000000;
-```
+`VARCHAR`는 실제 최대 길이에 맞춰 선언합니다. 고정 영역 임계값을 조정해야 할 때는
+[VARCHAR 저장소 옵션](#original-85-varchar-storage)을 참고하십시오. 태그 이름에는 사이트,
+설비, 센서 식별자를 일관된 구분자로 조합해 범위 조회가 가능하도록 설계합니다.
 
 <a id="tag-table-design-strategy"></a>
 
@@ -234,155 +156,15 @@ Machbase는 `_arrival_time` 또는 `BASETIME` 기준으로 데이터를 내부�
 
 ### 자동 중복 제거
 
-동일한 태그·시간 조합의 데이터가 반복 입력되면, 설정된 시간 창 내에서 중복이 자동 제거됩니다.
-
-#### 설정: TAG_DUPLICATE_CHECK_DURATION
-
-테이블 생성 시 `TAG_DUPLICATE_CHECK_DURATION` 속성으로 중복 제거 기간(분 단위)을 지정합니다.
-
-```sql
--- 1440분(24시간) 이내 중복 자동 제거
-CREATE TAG TABLE tag (
-    name  VARCHAR(20) PRIMARY KEY,
-    time  DATETIME BASETIME,
-    value DOUBLE SUMMARIZED
-) TAG_DUPLICATE_CHECK_DURATION = 1440;
-```
-
-새로 삽입된 데이터의 시간이 현재 서버 시각으로부터 설정된 기간 내에 이미 존재하는 데이터와 동일하면, 해당 행은 삽입되지 않습니다.
-
-#### 동작 예시
-
-```sql
--- 동일 시각 데이터를 두 번 삽입
-INSERT INTO tag VALUES ('tag1', DATE_TRUNC('day', NOW), 0);
-INSERT INTO tag VALUES ('tag1', DATE_TRUNC('day', NOW), 0);  -- 중복 → 무시됨
-
-EXEC TABLE_FLUSH(tag);
-
--- 결과: 1건만 저장됨
-SELECT * FROM tag WHERE name = 'tag1';
-```
-
-`INSERT` 직후 같은 세션에서 태그 이름 조건으로 결과를 확인할 때는 `EXEC TABLE_FLUSH`를 먼저 실행합니다. Flush 전에는 전체 조회에서는 보이더라도 태그 이름 조건 조회가 아직 인덱스에 반영되지 않을 수 있습니다.
-
-#### 설정 변경
-
-Standard Edition에서는 생성 후 변경할 수 있습니다. Cluster Edition에서는 0이 아닌 값으로 생성하거나 `ALTER TABLE`로 변경하는 것이 제한될 수 있습니다.
-
-```sql
-ALTER TABLE tag SET TAG_DUPLICATE_CHECK_DURATION = 2880;  -- 48시간으로 변경
-```
-
-현재 설정값 확인:
-
-```sql
-SELECT * FROM m$sys_table_property
-WHERE name = 'TAG_DUPLICATE_CHECK_DURATION';
-```
-
-#### 제약 사항
-
-| 항목 | 내용 |
-|------|------|
-| 최대 기간 | 43,200분 (30일) |
-| 단위 | 분(minute) |
-| 기본값 | 0 (중복 제거 비활성) |
-
-- 기간이 0이면 중복 제거가 동작하지 않습니다.
-- 중복 제거로 무시된 데이터가 이후 삭제되어 빈 자리가 생겨도, 그 자리에 동일 데이터를 재입력할 때는 중복으로 간주하지 않습니다.
-
-#### TRACE 로그로 중복 제거 확인
-
-`TRACE_LOG_LEVEL`에 32(SM_2)를 추가하면 중복 제거 시 로그가 출력됩니다.
-
-```sql
--- 현재 레벨 확인
-SELECT name, value FROM v$property WHERE name = 'TRACE_LOG_LEVEL';
-
--- 32 추가 (예: 기존 277이면 277 + 32 = 309)
-ALTER SYSTEM SET TRACE_LOG_LEVEL = 309;
-```
-
-로그 위치: `$MACHBASE_HOME/trc/machbase.trc`
-
-```bash
-tail -f $MACHBASE_HOME/trc/machbase.trc | grep DUP_DROP
-```
-
-로그 포맷: `DUP_DROP Table=<테이블명> TAG=<tag id> TIME=<시간> COL<n>=<값>`
-
-```
-[SM-INFO] DUP_DROP Table=TAG TAG=1 TIME=1998-12-24 09:00:00 000:000:012 COL3=12.000000
-```
+중복 제거는 스키마 선택 사항이지만 설정 변경과 추적은 운영 작업입니다. 속성 범위, 변경
+절차와 `DUP_DROP` 로그는
+[운영과 데이터 생명주기의 자동 중복 제거](/dbms/tag-table-usage/operations-lifecycle/#original-85-duplication-removal)를
+정본으로 사용하십시오.
 
 <a id="tag-table-design-lsl-usl"></a>
-
-### LSL·USL 설계
-
-품질 관리나 설비 모니터링에서는 하한 규격값(LSL, Lower Specification Limit)과 상한 규격값(USL, Upper Specification Limit)을 함께 저장하여 이상 감지에 활용합니다.
-
-#### METADATA에 LSL·USL 저장
-
-태그별로 고정된 규격값은 `LOWER LIMIT`과 `UPPER LIMIT` METADATA 컬럼에 저장합니다. 이
-제약은 `SUMMARIZED` 값 컬럼에 적용됩니다.
-
-```sql
-CREATE TAG TABLE quality_sensor (
-    name    VARCHAR(64) PRIMARY KEY,
-    time    DATETIME    BASETIME,
-    value   DOUBLE SUMMARIZED
-) METADATA (
-    lsl     DOUBLE LOWER LIMIT,   -- 하한 규격값
-    usl     DOUBLE UPPER LIMIT,   -- 상한 규격값
-    target  DOUBLE    -- 목표값
-);
-
--- 센서 초기화 시 규격값 설정
-INSERT INTO quality_sensor METADATA (name, lsl, usl, target)
-VALUES ('QS-MOTOR-01', 70.0, 90.0, 80.0);
-```
-
-#### 이상 감지 쿼리
-
-```sql
--- 규격 이탈 데이터 조회
-SELECT q.name, q.time, q.value, m.lsl, m.usl
-FROM quality_sensor q
-JOIN quality_sensor METADATA m ON q.name = m.name
-WHERE q.time >= NOW - 3600000000000
-  AND (q.value < m.lsl OR q.value > m.usl);
-```
-
-#### 동적 LSL·USL 패턴
-
-규격값이 시간에 따라 변하는 경우, 별도 LOOKUP 테이블에 저장합니다.
-
-```sql
-CREATE LOOKUP TABLE spec_limits (
-    sensor_name VARCHAR(64) PRIMARY KEY,
-    lsl         DOUBLE,
-    usl         DOUBLE,
-    updated_at  DATETIME
-);
-
--- 규격값 변경
-UPDATE spec_limits SET lsl = 68.0, usl = 92.0, updated_at = NOW
-WHERE sensor_name = 'QS-MOTOR-01';
-```
-
-#### 알람 임계값과의 차이
-
-| 값 | 설명 |
-|-----|------|
-| LSL (Lower Spec Limit) | 품질 규격 하한 — 이 미만은 불량 |
-| USL (Upper Spec Limit) | 품질 규격 상한 — 이 초과는 불량 |
-| LCL (Lower Control Limit) | 통계적 관리 하한 (±3σ) |
-| UCL (Upper Control Limit) | 통계적 관리 상한 (±3σ) |
-
 <a id="original-85-lsl-usl-limits"></a>
 
-## LSL/USL을 통한 데이터 품질 관리
+### LSL·USL 설계
 
 
 ### LSL/USL 소개
@@ -420,7 +202,7 @@ __Value__ 컬럼 타입과 일치해야 하며, __SUMMARIZED__ 속성과 마찬�
 
 태그 메타데이터 테이블의 컬럼에 `LOWER LIMIT`(LSL) 또는 `UPPER LIMIT`(USL) 키워드를 지정합니다. Tag 테이블 생성 시 또는 메타데이터 컬럼 추가 시 설정할 수 있습니다.
 
-#### CRAETE
+#### CREATE
 
 ```sql
 CREATE TAG TABLE example (
@@ -457,11 +239,11 @@ CREATE TAG TABLE example (
     value   INTEGER     SUMMARIZED
 );
 
-ALTER TABLE _example_meta ADD COLUMN (lsl INTEGER LOWER LIMIT);
-ALTER TABLE _example_meta ADD COLUMN (usl INTEGER UPPER LIMIT);
+ALTER TABLE example METADATA ADD COLUMN (lsl INTEGER LOWER LIMIT);
+ALTER TABLE example METADATA ADD COLUMN (usl INTEGER UPPER LIMIT);
 ```
 
-[CREATE](#craete)와 마찬가지로 하나의 속성만 추가할 수도 있습니다.
+[CREATE](#create)와 마찬가지로 하나의 속성만 추가할 수도 있습니다.
 
 ```sql
 CREATE TAG TABLE example (
@@ -470,7 +252,7 @@ CREATE TAG TABLE example (
     value   INTEGER     SUMMARIZED
 );
 
-ALTER TABLE _example_meta ADD COLUMN (usl INTEGER UPPER LIMIT);
+ALTER TABLE example METADATA ADD COLUMN (usl INTEGER UPPER LIMIT);
 ```
 
 #### INSERT
@@ -525,10 +307,10 @@ Mach> UPDATE example metadata SET lsl = 10, usl = 100 WHERE tag_id = 'TAG_01';
 1 row(s) updated.
 Elapsed time: 0.001
 
-Mach> SELECT * FROM _example_meta;
-_ID                  TAG_ID                                              LSL         USL
-------------------------------------------------------------------------------------------------------
-1                    TAG_01                                              10          100
+Mach> SELECT tag_id, lsl, usl FROM example METADATA;
+TAG_ID                                              LSL         USL
+----------------------------------------------------------------------------------------
+TAG_01                                              10          100
 [1] row(s) selected.
 Elapsed time: 0.001
 ```
@@ -542,10 +324,10 @@ Mach> UPDATE EXAMPLE METADATA SET lsl = NULL, usl = NULL WHERE tag_id = 'TAG_01'
 1 row(s) updated.
 Elapsed time: 0.001
 
-Mach> SELECT * FROM _example_meta;
-_ID                  TAG_ID                                              LSL         USL
-------------------------------------------------------------------------------------------------------
-1                    TAG_01                                              NULL        NULL
+Mach> SELECT tag_id, lsl, usl FROM example METADATA;
+TAG_ID                                              LSL         USL
+----------------------------------------------------------------------------------------
+TAG_01                                              NULL        NULL
 [1] row(s) selected.
 Elapsed time: 0.001
 ```

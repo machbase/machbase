@@ -252,18 +252,7 @@ ALTER TABLE product_master RENAME TO product_catalog;
 
 ### ADD / DROP RETENTION
 
-```sql
-alter_table_add_retention_stmt ::=
-    'ALTER TABLE' table_name 'ADD RETENTION' policy_name
-
-alter_table_drop_retention_stmt ::=
-    'ALTER TABLE' table_name 'DROP RETENTION'
-```
-
-```sql
-ALTER TABLE tag ADD RETENTION policy_1d_1h;
-ALTER TABLE tag DROP RETENTION;
-```
+Retention 연결과 해제 문법은 [RETENTION syntax](../retention-syntax/)를 참고하십시오.
 
 ---
 
@@ -283,84 +272,14 @@ TRUNCATE TABLE sensor_log;
 
 ## CREATE INDEX
 
-```sql
-create_index_stmt ::=
-    'CREATE' index_modifier? 'INDEX' index_name
-    'ON' table_name '(' index_column_list ')'
-    [ 'INDEX_TYPE' ( 'LSM' | 'KEYWORD' | 'BITMAP' | 'REDBLACK' ) ]
-    [ 'TABLESPACE' tablespace_name ]
-    [ index_property_list ]
-
-index_modifier ::= 'UNIQUE' | 'PRIMARY KEY'
-
-index_column_list ::=
-    column_name ( ',' column_name )*
-  | column_name json_path
-
-index_property_list ::=
-    ( 'MAX_LEVEL'        '=' number
-    | 'PAGE_SIZE'        '=' number
-    | 'BITMAP_ENCODE'    '=' ( 'EQUAL' | 'RANGE' )
-    | 'PART_VALUE_COUNT' '=' number )
-    ( ',' index_property_list )*
-```
-
-### 인덱스 지정 방식과 적용 대상
-
-| 지정 방식 | 기본 대상 | 설명 |
-|------------|----------|------|
-| PRIMARY KEY | TRANSACTION 테이블 | 단일 컬럼 기본 키. 테이블당 하나만 생성 가능 |
-| UNIQUE | TRANSACTION 테이블 | 단일 또는 복합 컬럼의 중복 값 차단 |
-| 일반 BTREE | TRANSACTION 테이블 | 단일 또는 복합 컬럼 조회 지원 |
-| LSM | LOG 테이블 | 대용량 시계열 데이터에 최적화된 기본 인덱스 |
-| KEYWORD | LOG 테이블 | VARCHAR/TEXT 컬럼 텍스트 검색용 |
-| BITMAP | LOG 테이블 | 데이터 분석용 (VARCHAR, TEXT, BINARY 제외) |
-| REDBLACK | VOLATILE/LOOKUP 테이블 | 실시간 메모리 인덱스 |
-
-TRANSACTION 테이블은 `CREATE TABLE` 안에서 `UNIQUE` 제약조건을 선언하지 않습니다. 테이블을
-만든 뒤 `CREATE UNIQUE INDEX`를 사용합니다.
-[UNIQUE INDEX 생성과 동작](/dbms/rdb-table-usage/index-performance/#unique-index-rdb)에서
-중복 데이터, NULL 및 삭제 동작을 확인할 수 있습니다.
-
-### 예시
-
-```sql
--- 기본 인덱스 (LOG 테이블 → LSM)
-CREATE INDEX idx_sensor_id ON sensor_log (id);
-
--- KEYWORD 인덱스 (텍스트 검색용)
-CREATE INDEX idx_sensor_name ON sensor_log (name) INDEX_TYPE KEYWORD;
-
--- BITMAP 인덱스
-CREATE INDEX idx_sensor_status ON sensor_log (status) INDEX_TYPE BITMAP BITMAP_ENCODE = RANGE;
-
--- TRANSACTION PRIMARY KEY 인덱스
-CREATE PRIMARY KEY INDEX idx_pk_account ON account (account_id);
-
--- TRANSACTION UNIQUE INDEX
-CREATE UNIQUE INDEX uidx_account_email ON account (email);
-
--- TRANSACTION 일반 복합 인덱스
-CREATE INDEX idx_account_tenant_name ON account (tenant_id, login_name);
-
--- JSON 컬럼의 특정 경로에 인덱스 생성 (TAG 테이블)
-CREATE INDEX tag_metric_idx ON tag (value.sensor.name);
-CREATE INDEX tag_metric_idx2 ON tag (value->'$.metric');
-```
+인덱스 타입, 테이블별 지원 범위, JSON path와 속성은 [INDEX syntax](../index-syntax/)를
+참고하십시오.
 
 ---
 
 ## DROP INDEX
 
-```sql
-drop_index_stmt ::= 'DROP INDEX' index_name
-```
-
-지정한 인덱스를 삭제합니다. 해당 테이블을 조회 중인 다른 세션이 있으면 오류가 발생합니다.
-
-```sql
-DROP INDEX idx_sensor_id;
-```
+삭제 문법과 제약은 [INDEX syntax](../index-syntax/#drop-index)를 참고하십시오.
 
 ---
 
@@ -410,101 +329,33 @@ DROP TABLESPACE tbs1;
 
 ## CREATE ROLLUP
 
-```sql
--- 기본 롤업
-create_rollup_stmt ::=
-    'CREATE ROLLUP' rollup_name
-    'ON' src_table_name '(' src_column [ '->' json_path ] ')'
-    'INTERVAL' number ( 'SEC' | 'MIN' | 'HOUR' )
-
--- 조건부 롤업
-create_conditional_rollup_stmt ::=
-    'CREATE ROLLUP' rollup_name
-    ( 'ON' src_table_name '(' src_column [ '->' json_path ] ')'
-    | 'FROM' src_rollup_name )
-    'INTERVAL' number ( 'SEC' | 'MIN' | 'HOUR' )
-    'WHERE' predicate
-
--- 사용자 정의 롤업
-create_custom_rollup_stmt ::=
-    'CREATE ROLLUP' rollup_name
-    'INTO' '(' dest_table_name ')'
-    'AS' '(' select_stmt ')'
-    'INTERVAL' number ( 'SEC' | 'MIN' | 'HOUR' )
-    [ 'WAKEUP INTERVAL' number ( 'SEC' | 'MIN' | 'HOUR' ) ]
-```
-
-```sql
--- 1초 간격 기본 롤업
-CREATE ROLLUP _rollup_tag_value_sec ON tag(value) INTERVAL 1 SEC;
-
--- 조건부 롤업 (quality = 1인 데이터만 집계)
-CREATE ROLLUP _rollup_tag_good ON tag(value) INTERVAL 1 MIN WHERE quality = 1;
-
--- JSON 컬럼 멤버 롤업
-CREATE ROLLUP tag_metric_ru ON tag (value->'$.metric') INTERVAL 1 MIN;
-```
+기본, 조건부, custom ROLLUP 문법은 [ROLLUP syntax](../rollup-syntax/)를 참고하십시오.
 
 ---
 
 ## DROP ROLLUP
 
-```sql
-drop_rollup_stmt ::= 'DROP ROLLUP' rollup_name
-```
-
-```sql
-DROP ROLLUP _rollup_tag_value_sec;
-```
+삭제 문법은 [ROLLUP syntax](../rollup-syntax/#drop-rollup)를 참고하십시오.
 
 ---
 
 ## ALTER ROLLUP
 
-```sql
-alter_rollup_stmt ::=
-    'ALTER ROLLUP' rollup_name ( 'START' | 'STOP' | 'WAKEUP' | 'FORCE' )
-  | 'ALTER ROLLUP' rollup_name 'SET WAKEUP INTERVAL' number ( 'SEC' | 'MIN' | 'HOUR' )
-```
-
-```sql
-ALTER ROLLUP _rollup_tag_value_sec START;
-ALTER ROLLUP _rollup_tag_value_sec STOP;
-ALTER ROLLUP _rollup_tag_value_sec WAKEUP;
-ALTER ROLLUP _rollup_tag_value_sec FORCE;
-ALTER ROLLUP _rollup_tag_value_sec SET WAKEUP INTERVAL 10 SEC;
-```
+시작, 중지, 강제 실행과 주기 변경은 [ROLLUP syntax](../rollup-syntax/#alter-rollup)를
+참고하십시오.
 
 ---
 
 ## CREATE RETENTION
 
-```sql
-create_retention_stmt ::=
-    'CREATE RETENTION' policy_name
-    'DURATION' duration ( 'MONTH' | 'DAY' )
-    'INTERVAL' interval ( 'DAY' | 'HOUR' )
-```
-
-```sql
--- 1일 보존, 1시간 간격으로 정리
-CREATE RETENTION policy_1d_1h DURATION 1 DAY INTERVAL 1 HOUR;
-
--- 30일 보존, 1일 간격으로 정리
-CREATE RETENTION policy_30d_1d DURATION 30 DAY INTERVAL 1 DAY;
-```
+생성 문법과 테이블 연결은 [RETENTION syntax](../retention-syntax/)를 참고하십시오.
 
 ---
 
 ## DROP RETENTION
 
-```sql
-drop_retention_stmt ::= 'DROP RETENTION' policy_name
-```
-
-```sql
-DROP RETENTION policy_1d_1h;
-```
+삭제 문법과 연결 해제 순서는 [RETENTION syntax](../retention-syntax/#drop-retention)를
+참고하십시오.
 
 ---
 
