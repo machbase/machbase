@@ -57,7 +57,6 @@ Append 지원만으로 드라이버를 결정하지 않습니다. flush 지연, 
 | SDK별 기능 지원 여부 | [SDK 기능 지원 범위](../sdk-support-scope/) |
 | SQL·설정·명령줄 상세 | [17장 레퍼런스](/dbms/reference/) |
 | 입력·반출 방식 선택 | [데이터 입력과 반출](../data-input-load-export/) |
-| 외부 도구 연결 검증 | [외부 도구 연동](../external-tools/) |
 
 SDK 함수 목록과 설치 절차는 선택 가이드에 복제하지 않습니다. 지원 여부가 바뀌는 기능은
 해당 SDK 페이지와 배포 artifact를 함께 확인합니다.

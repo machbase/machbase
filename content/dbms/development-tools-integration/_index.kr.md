@@ -20,9 +20,8 @@ aliases:
    확인합니다.
 3. [SDK 기능 지원 범위](sdk-support-scope/)에서 필요한 기능의 실제 지원 여부를 비교합니다.
 4. 해당 언어의 SDK 페이지에서 설치, 연결과 실행 코드를 확인합니다.
-5. [데이터 입력과 반출](data-input-load-export/)과 [외부 도구 연동](external-tools/)에서
-   작업별 절차를 적용합니다. SQL의 ROWID 의미는 [ROWID](../reference/sql/rowid/)를
-   참고하십시오.
+5. [데이터 입력과 반출](data-input-load-export/)에서 작업별 절차를 적용합니다. SQL의 ROWID
+   의미는 [ROWID](../reference/sql/rowid/)를 참고하십시오.
 
 ## SDK별 레퍼런스
 

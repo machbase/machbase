@@ -57,7 +57,6 @@ TRANSACTION-table rollback unit.
 | Feature availability | [SDK feature support](../sdk-support-scope/) |
 | SQL, configuration, and command details | [Reference](../../reference/) |
 | Input and export selection | [Data input and export](../data-input-load-export/) |
-| External-tool validation | [External tools](../external-tools/) |
 
 Keep SDK function lists and installation procedures in the SDK page instead of copying them into
 cross-SDK guidance.

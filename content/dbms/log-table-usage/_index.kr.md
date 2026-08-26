@@ -23,6 +23,3 @@ LOG 테이블은 시간순으로 지속 입력되는 이벤트와 로그 데이�
 | [텍스트 검색과 KEYWORD 인덱스](./text-search-keyword-index/) | SEARCH, ESEARCH, LIKE, REGEXP |
 | [네트워크 타입 조회](./regex-network-query/) | IPV4/IPV6 저장과 비교 |
 | [Collector 기반 수집](./collector-ingestion/) | LOG 대상 스키마와 record mapping |
-
-Fluentd 설치·buffer·retry 설정은
-[외부 도구 연동](/dbms/development-tools-integration/external-tools/fluentd/)을 참고하십시오.

@@ -90,8 +90,6 @@ SELECT e.eq_id, e.eq_name, e.location,
 
 API나 dashboard는 조회 결과와 함께 마지막 측정 시각을 반환하고, 허용 지연을 넘긴 장비를
 별도 `STALE` 상태로 표현합니다. polling 간격은 유입 주기와 query 비용을 측정해 정합니다.
-Grafana 등 외부 도구의 설치와 연결은
-[외부 도구 연동](/dbms/development-tools-integration/external-tools/)을 참고하십시오.
 
 ```sql
 INSERT INTO sc15_alarm_log VALUES ('PUMP_01', 'TEMP_HIGH', 83.7);
