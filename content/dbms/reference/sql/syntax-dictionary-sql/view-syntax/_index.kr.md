@@ -95,6 +95,59 @@ FROM city_summary;
 VIEW 정의에는 바인드 매개변수(`?`)를 사용할 수 없습니다. 실행할 때마다 달라지는 조건은
 VIEW를 조회하는 `SELECT`에 작성합니다.
 
+<a id="view-user-context"></a>
+
+## VIEW 사용자 컨텍스트
+
+Machbase 8.7.0부터 VIEW 내부에서 `CURRENT_*`와 `SESSION_*` 함수를 사용해 definer와 caller를
+구분할 수 있습니다. 다음 예제에서 `VIEW_OWNER`는 VIEW를 만들고, `VIEW_CALLER`는 부여받은
+권한으로 조회합니다.
+
+```sql
+CONNECT sys/manager;
+CREATE USER view_owner IDENTIFIED BY 'VIEW_OWNER';
+CREATE USER view_caller IDENTIFIED BY 'VIEW_CALLER';
+
+CONNECT view_owner/VIEW_OWNER;
+CREATE LOOKUP TABLE user_context_source (id INTEGER PRIMARY KEY);
+INSERT INTO user_context_source VALUES (1);
+
+CREATE VIEW v_user_context AS
+SELECT CURRENT_USER() AS current_name,
+       SESSION_USER() AS session_name,
+       CURRENT_USER_ID() AS current_id,
+       SESSION_USER_ID() AS session_id
+  FROM user_context_source;
+
+CONNECT sys/manager;
+GRANT SELECT ON view_owner.v_user_context TO view_caller;
+
+CONNECT view_caller/VIEW_CALLER;
+SELECT current_name,
+       session_name,
+       CASE WHEN current_id <> session_id THEN 'DIFF' ELSE 'SAME' END AS id_context
+  FROM view_owner.v_user_context;
+```
+
+```text
+CURRENT_NAME  SESSION_NAME  ID_CONTEXT
+VIEW_OWNER    VIEW_CALLER   DIFF
+```
+
+VIEW 내부의 `CURRENT_*`는 VIEW owner를 반환하고, `SESSION_*`는 연결한 caller를 반환합니다.
+일반 SQL에서는 두 계열이 같은 사용자를 반환합니다. 함수 계약은
+[사용자 컨텍스트 함수](../../dictionary/functions-full/#current-session-user)를 참고합니다.
+
+```sql
+CONNECT view_owner/VIEW_OWNER;
+DROP VIEW v_user_context;
+DROP TABLE user_context_source;
+
+CONNECT sys/manager;
+DROP USER view_caller;
+DROP USER view_owner;
+```
+
 ## DROP VIEW
 
 ```sql

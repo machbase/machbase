@@ -15,4 +15,5 @@ Machbase SQL built-in functions are organized by category.
 | [JSON functions and `->` operator](operators-json/) | JSON extraction, mutation, and path operators |
 | [Regular expression functions](regex/) | REGEXP_LIKE, REGEXP_SUBSTR, and related regex functions |
 | [NEXTVAL function](nextval/) | Auto-increment values for Lookup table Sequence columns |
+| [User context functions](functions-full/#current-session-user) | CURRENT_USER, SESSION_USER, and internal user IDs |
 | [Complete function reference](functions-full/) | Full function entries and examples preserved from the 8.5 reference |

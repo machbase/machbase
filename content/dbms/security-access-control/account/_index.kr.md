@@ -45,6 +45,19 @@ DROP USER app_user;
 작업을 계속하려면 `CONNECT user/password;`로 새 세션 인증을 수행하거나 클라이언트를 다시
 연결합니다.
 
+<a id="drop-user-active-session"></a>
+
+### 활성 세션이 있는 사용자 삭제
+
+다른 관리자 세션이 사용자를 삭제해도 해당 사용자로 이미 인증한 세션은 즉시 종료되지
+않습니다. 기존 세션은 로그인할 때 보존한 사용자명과 내부 ID를 유지하지만, 삭제된 사용자는
+새로 접속할 수 없고 `M$SYS_USERS`에서도 조회되지 않습니다. 삭제 전 활성 세션을 확인하고
+애플리케이션 연결을 먼저 종료합니다.
+
+Machbase 8.7.0부터 기존 세션의 사용자 컨텍스트는
+[CURRENT_USER와 SESSION_USER 함수](../../reference/sql/dictionary/functions-full/#current-session-user)로
+확인할 수 있습니다.
+
 <a id="policy-password"></a>
 
 ## 비밀번호 정책

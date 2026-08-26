@@ -718,6 +718,81 @@ FROM api_log;
 ```
 
 
+<a id="current-session-user"></a>
+<a id="current_user"></a>
+<a id="session_user"></a>
+<a id="current_user_id"></a>
+<a id="session_user_id"></a>
+
+## CURRENT_USER / SESSION_USER / CURRENT_USER_ID / SESSION_USER_ID
+
+<span class="badge-since">Machbase 8.7.0부터 지원되는 기능</span>
+
+현재 SQL 실행의 유효 권한 사용자와 접속 세션 사용자를 이름 또는 내부 ID로 조회합니다.
+Standard Edition과 Cluster Edition에서 모두 지원합니다.
+
+| 함수 | 반환형 | 설명 |
+|---|---|---|
+| `CURRENT_USER()` | `VARCHAR` | 현재 SQL 실행에 적용되는 유효 권한 사용자명 |
+| `SESSION_USER()` | `VARCHAR` | 현재 접속 세션의 인증 사용자명 |
+| `CURRENT_USER_ID()` | `INTEGER` | 유효 권한 사용자의 내부 ID |
+| `SESSION_USER_ID()` | `INTEGER` | 인증 세션 사용자의 내부 ID |
+
+네 함수는 인자를 받지 않으며 괄호를 포함해 호출합니다. 괄호 없는 `CURRENT_USER` keyword나
+`USER`, `SYSTEM_USER`, `CURRENT_SCHEMA` alias는 지원하지 않습니다.
+
+```sql
+SELECT CURRENT_USER() AS current_name,
+       SESSION_USER() AS session_name,
+       CURRENT_USER_ID() AS current_id,
+       SESSION_USER_ID() AS session_id;
+```
+
+일반 SQL에서는 current user와 session user가 같습니다.
+
+```text
+CURRENT_NAME  SESSION_NAME  CURRENT_ID  SESSION_ID
+SYS           SYS           1           1
+```
+
+### VIEW에서의 사용자 컨텍스트
+
+다른 사용자가 소유한 definer VIEW를 조회하면 VIEW 내부 SQL은 소유자 권한으로 실행됩니다.
+
+- `CURRENT_USER()`와 `CURRENT_USER_ID()`는 VIEW owner를 반환합니다.
+- `SESSION_USER()`와 `SESSION_USER_ID()`는 VIEW를 호출한 접속 세션 사용자를 반환합니다.
+
+재현 가능한 owner/caller 예제는 [VIEW 문법](../../syntax-dictionary-sql/view-syntax/#view-user-context)을
+참고합니다.
+
+### 사용자가 삭제된 활성 세션
+
+다른 관리자 세션이 현재 접속 중인 사용자를 `DROP USER`해도 기존 접속은 즉시 종료되지
+않습니다. 기존 세션의 네 함수는 로그인할 때 보존한 사용자명과 ID를 계속 반환합니다. 삭제된
+사용자는 새로 접속할 수 없으며 `M$SYS_USERS`에서도 조회되지 않습니다.
+
+사용자 ID는 Machbase metadata의 내부 식별자입니다. 장기간 보존하는 업무용 사용자 key로
+사용하지 말고 현재 metadata를 비교하거나 join할 때만 사용합니다.
+
+```sql
+SELECT COUNT(*)
+  FROM M$SYS_USERS
+ WHERE NAME = SESSION_USER()
+   AND USER_ID = SESSION_USER_ID();
+```
+
+### 오류
+
+함수에 인자를 전달하면 `ERR-02036`을 반환합니다. 나머지 세 함수도 같은 규칙을 적용합니다.
+
+```sql
+SELECT CURRENT_USER(1);
+-- ERR-02036: Function [CURRENT_USER] has an invalid argument.
+```
+
+관련 계정 lifecycle은 [계정 관리](../../../../security-access-control/account/)를 참고합니다.
+
+
 ## DATE_TRUNC
 
 DATETIME 값을 지정한 시간 단위로 절사하여 반환합니다.

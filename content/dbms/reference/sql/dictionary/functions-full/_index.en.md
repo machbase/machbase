@@ -435,6 +435,81 @@ FROM api_log;
 ```
 
 
+<a id="current-session-user"></a>
+<a id="current_user"></a>
+<a id="session_user"></a>
+<a id="current_user_id"></a>
+<a id="session_user_id"></a>
+
+## CURRENT_USER / SESSION_USER / CURRENT_USER_ID / SESSION_USER_ID
+
+Starting with Machbase 8.7.0, these functions return the effective authorization user for the
+current SQL execution or the authenticated user of the connection session. They are supported in
+both Standard Edition and Cluster Edition.
+
+| Function | Return type | Description |
+|---|---|---|
+| `CURRENT_USER()` | `VARCHAR` | Effective authorization user name for the current SQL execution |
+| `SESSION_USER()` | `VARCHAR` | Authenticated connection-session user name |
+| `CURRENT_USER_ID()` | `INTEGER` | Internal ID of the effective authorization user |
+| `SESSION_USER_ID()` | `INTEGER` | Internal ID of the authenticated session user |
+
+All four functions take no arguments and require parentheses. Bare `CURRENT_USER` and aliases such
+as `USER`, `SYSTEM_USER`, and `CURRENT_SCHEMA` are not supported.
+
+```sql
+SELECT CURRENT_USER() AS current_name,
+       SESSION_USER() AS session_name,
+       CURRENT_USER_ID() AS current_id,
+       SESSION_USER_ID() AS session_id;
+```
+
+For ordinary SQL, the current and session users are the same.
+
+```text
+CURRENT_NAME  SESSION_NAME  CURRENT_ID  SESSION_ID
+SYS           SYS           1           1
+```
+
+### User context in a VIEW
+
+When a user queries a definer VIEW owned by another user, its internal SQL runs with the owner's
+authorization context.
+
+- `CURRENT_USER()` and `CURRENT_USER_ID()` return the VIEW owner.
+- `SESSION_USER()` and `SESSION_USER_ID()` return the connected caller.
+
+See [VIEW syntax](../../syntax-dictionary-sql/view-syntax/#view-user-context) for a complete
+owner/caller example.
+
+### Active session after DROP USER
+
+Dropping a user from another administrator session does not immediately disconnect an existing
+session. The four functions continue to return the user name and ID retained at login. New
+connections fail, and the deleted user no longer appears in `M$SYS_USERS`.
+
+User IDs are internal metadata identifiers. Do not store them as durable business identifiers; use
+them only for comparisons or joins against current metadata.
+
+```sql
+SELECT COUNT(*)
+  FROM M$SYS_USERS
+ WHERE NAME = SESSION_USER()
+   AND USER_ID = SESSION_USER_ID();
+```
+
+### Error
+
+Passing an argument returns `ERR-02036`. The other three functions follow the same rule.
+
+```sql
+SELECT CURRENT_USER(1);
+-- ERR-02036: Function [CURRENT_USER] has an invalid argument.
+```
+
+See [Account management](../../../../security-access-control/account/) for the account lifecycle.
+
+
 ## DATE_TRUNC
 
 This function returns a given datetime value as a new datetime value that is displayed only up to 'time unit' and 'time range'.

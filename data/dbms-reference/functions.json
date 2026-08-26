@@ -2,7 +2,7 @@
   "schema_version": 1,
   "source": {
     "repository": "nfx",
-    "revision": "cce422d2972b21bc73badf831fbf41da25a22262",
+    "revision": "efd9802968e36569ee64c79b6838cd98f7d7d406",
     "registry": "qp/src/qpf/qpf.c",
     "extraction_mode": "source_heuristic",
     "limitations": [
@@ -13,9 +13,9 @@
   },
   "manual_reference": "content/dbms/reference/sql/dictionary/functions-full/_index.kr.md",
   "counts": {
-    "registered_functions": 133,
-    "functions_with_korean_reference_heading": 104,
-    "descriptor_symbols": 163
+    "registered_functions": 137,
+    "functions_with_korean_reference_heading": 108,
+    "descriptor_symbols": 167
   },
   "functions": [
     {
@@ -88,6 +88,106 @@
                 "cluster"
               ],
               "source": "qp/src/qpf/qpfCurrentDatabase.c:76"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CURRENT_USER",
+      "registered_symbol": "gCurrentUserDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gCurrentUserDesc",
+          "variants": [
+            {
+              "name": "CURRENT_USER",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPM_MAX_NAME_LEN + 1",
+              "argument_count": 0,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfCurrentUser.c:125"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SESSION_USER",
+      "registered_symbol": "gSessionUserDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gSessionUserDesc",
+          "variants": [
+            {
+              "name": "SESSION_USER",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPM_MAX_NAME_LEN + 1",
+              "argument_count": 0,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfCurrentUser.c:144"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CURRENT_USER_ID",
+      "registered_symbol": "gCurrentUserIDDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gCurrentUserIDDesc",
+          "variants": [
+            {
+              "name": "CURRENT_USER_ID",
+              "declared_return_type": "QPT_TYPE_INT32",
+              "internal_return_size_expression": "sizeof(nbp_sint32_t)",
+              "argument_count": 0,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfCurrentUser.c:163"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SESSION_USER_ID",
+      "registered_symbol": "gSessionUserIDDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gSessionUserIDDesc",
+          "variants": [
+            {
+              "name": "SESSION_USER_ID",
+              "declared_return_type": "QPT_TYPE_INT32",
+              "internal_return_size_expression": "sizeof(nbp_sint32_t)",
+              "argument_count": 0,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfCurrentUser.c:182"
             }
           ]
         }

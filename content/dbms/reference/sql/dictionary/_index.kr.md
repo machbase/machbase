@@ -15,6 +15,7 @@ toc: true
 | [JSON 함수와 `->` 연산자](operators-json/) | JSON 데이터 추출·조작 함수 및 경로 연산자 |
 | [정규식 함수](regex/) | REGEXP_LIKE, REGEXP_SUBSTR 등 정규식 기반 검색·변환 함수 |
 | [NEXTVAL 함수](nextval/) | Lookup 테이블 Sequence 컬럼용 자동 증가값 생성 함수 |
+| [사용자 컨텍스트 함수](functions-full/#current-session-user) | CURRENT_USER, SESSION_USER와 내부 사용자 ID 조회 |
 | [전체 함수 레퍼런스](functions-full/) | 기존 함수 항목과 CAST를 포함한 전체 함수 레퍼런스 |
 
 ## 공통 규칙

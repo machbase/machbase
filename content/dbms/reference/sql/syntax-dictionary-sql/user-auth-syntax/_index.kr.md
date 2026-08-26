@@ -59,6 +59,12 @@ drop_user_stmt ::= 'DROP USER' user_name
 
 `SYS` 사용자는 삭제할 수 없습니다. 해당 사용자가 생성한 테이블이 남아 있으면 오류가 발생합니다.
 
+다른 관리자 세션이 사용자를 삭제해도 기존 활성 세션은 즉시 종료되지 않습니다. 새 접속은
+실패하며 기존 세션은 로그인 시점의 사용자명과 ID를 유지합니다. 운영 절차는
+[계정 관리](../../../../security-access-control/account/#drop-user-active-session)를,
+확인 함수는 [사용자 컨텍스트 함수](../../dictionary/functions-full/#current-session-user)를
+참고합니다.
+
 ```sql
 DROP USER old_user;
 ```
