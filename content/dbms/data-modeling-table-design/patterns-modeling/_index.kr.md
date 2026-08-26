@@ -452,20 +452,10 @@ GROUP BY name;
 
 ## INSERT·UPDATE 패턴
 
-이 절에서는 모델링에 필요한 쓰기 경로 선택만 정리합니다. 같은 DML 예제를 여러 장에서
-반복하지 않도록 실제 구문은 각 테이블 장과 애플리케이션 입력 문서에서 다룹니다.
-
-| 테이블 타입 | INSERT | UPDATE | DELETE | UPSERT |
-|-----------|--------|--------|--------|--------|
-| TAG | INSERT / Append API | O (태그/시간 조건) | O | X |
-| LOG | INSERT / Append API | X | O (BEFORE/OLDEST/EXCEPT) | X |
-| TRANSACTION | INSERT / SDK Append API | O (WHERE 유무 모두) | O | ON DUPLICATE KEY UPDATE |
-| LOOKUP | INSERT / Append API | O (일반 조건식, PK 변경 제외) | O (일반 조건식 또는 전체 삭제) | ON DUPLICATE KEY UPDATE |
-| VOLATILE | INSERT | O (by PK) | O | ON DUPLICATE KEY UPDATE |
-
-지속적인 TAG·LOG 입력은 Append API, 서버가 읽을 수 있는 파일의 일괄 적재는
-`LOAD DATA INFILE`, 클라이언트 파일은 `machloader`를 우선 검토합니다. 자세한 선택 기준은
-[데이터 입력·적재·반출](/dbms/development-tools-integration/data-input-load-export/)을 참고하십시오.
+모델은 어떤 데이터를 변경 가능하게 둘지 결정해야 하지만, 이 페이지에서 DML 지원표를 다시
+정의하지 않습니다. 테이블별 변경 조건은 [데이터 변경 정책](../alter-data-mutation-policy/)을,
+INSERT·Append·파일 입력 선택은
+[데이터 입력과 반출](/dbms/development-tools-integration/data-input-load-export/)을 사용하십시오.
 
 <a id="join-metadata-design"></a>
 

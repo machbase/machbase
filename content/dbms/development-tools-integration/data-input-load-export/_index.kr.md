@@ -24,6 +24,26 @@ SQL, Append API, 파일 도구 중 데이터 양과 운영 방식에 맞는 경�
 | `LOAD DATA INFILE` | 서버가 읽을 수 있는 파일 적재 | 서버 파일 권한, 입력 건수 |
 | `machloader`·`csvimport` | 클라이언트 파일 적재 | log·bad file, 입력·실패 건수 |
 
+<a id="machloader-vs-csvimport-csvexport-tagmetaimport"></a>
+<a id="load-data-infile-vs-machloader"></a>
+<a id="ingestion-sdk-append-vs-sql-collector"></a>
+
+### 경로와 도구 비교
+
+| 경로·도구 | 실행 위치와 용도 |
+|---|---|
+| SDK Append | 애플리케이션이 지속적으로 여러 TAG·LOG row 전송 |
+| SQL INSERT | 소량 입력과 일반 SQL 연동 |
+| `LOAD DATA INFILE` | 서버가 읽을 수 있는 파일을 SQL로 적재 |
+| `machloader` | 클라이언트 파일의 mapping·log·bad file을 세밀하게 제어 |
+| `csvimport`·`csvexport` | 단순 CSV 입출력 wrapper |
+| `tagmetaimport` | TAG metadata를 일괄 등록·변경 |
+| Collector | FILE·SFTP source를 반복 수집 |
+
+`tagmetaimport`는 TAG 측정값 입력 도구가 아닙니다. 지원 Collector source와 정확한 option은
+[명령행 도구](/dbms/reference/command-line-tools/)와
+[Collector 레퍼런스](/dbms/reference/collector/)를 확인하십시오.
+
 <a id="selection-input-method-selection-input-method-guide"></a>
 
 원본 보존이 필요한 시계열·이벤트는 TAG 또는 LOG에 넣습니다. 관계형 변경은 TRANSACTION,

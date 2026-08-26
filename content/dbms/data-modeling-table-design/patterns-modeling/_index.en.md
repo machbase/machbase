@@ -33,7 +33,11 @@ toc: true
 
 <a id="insert-update"></a>
 
-## INSERT 중심 데이터와 UPDATE 중심 데이터
+## INSERT-oriented and UPDATE-oriented data
+
+Use [Data mutation policy](../alter-data-mutation-policy/) for table-specific DML constraints and
+[Data input and export](/dbms/development-tools-integration/data-input-load-export/) for INSERT,
+Append, and file-path selection. This modeling page does not duplicate the support matrix.
 
 <a id="join-metadata-design"></a>
 

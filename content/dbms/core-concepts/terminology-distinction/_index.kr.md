@@ -44,46 +44,9 @@ DML 문서를 확인하십시오.
 작성하십시오.
 
 <a id="machloader-vs-csvimport-csvexport-tagmetaimport"></a>
-
-## machloader vs csvimport·csvexport vs tagmetaimport
-
-| 도구 | 역할 | 선택 기준 |
-| --- | --- | --- |
-| `machloader` | 테이블 데이터 적재·반출 | 형식, 컬럼 매핑과 오류 파일을 세밀하게 제어 |
-| `csvimport` / `csvexport` | CSV 입출력 래퍼 | 단순한 CSV 작업을 짧은 명령으로 수행 |
-| `tagmetaimport` | TAG 메타데이터 적재 | 태그 이름과 메타데이터를 일괄 등록·변경 |
-
-`tagmetaimport`는 TAG의 시계열 측정값을 적재하는 도구가 아닙니다. 지원 테이블, 파일 형식과
-옵션은 [데이터 입력·적재·반출](/dbms/development-tools-integration/data-input-load-export/) 및
-[명령행 도구 사전](/dbms/reference/command-line-tools/)을 참고하십시오.
-
 <a id="load-data-infile-vs-machloader"></a>
-
-## LOAD DATA INFILE vs machloader
-
-| 항목 | `LOAD DATA INFILE` | `machloader` |
-| --- | --- | --- |
-| 파일을 읽는 주체 | Machbase 서버 | 명령을 실행한 클라이언트 |
-| 파일 위치 | 서버가 접근할 수 있는 경로 | 클라이언트가 접근할 수 있는 경로 |
-| 실행 인터페이스 | SQL | 명령행 |
-| 적합한 경우 | 서버에 배치된 파일을 SQL 작업으로 적재 | 클라이언트 파일을 전송하고 오류 행을 분리 |
-
-파일 위치와 권한을 먼저 확인한 뒤 선택하십시오. 전체 구문과 재현 가능한 예제는
-[데이터 입력·적재·반출](/dbms/development-tools-integration/data-input-load-export/)에 있습니다.
-
 <a id="ingestion-sdk-append-vs-sql-collector"></a>
 
-## SDK Append vs SQL INSERT vs Collector
+## 입력 경로 비교
 
-| 경로 | 특성 | 적합한 경우 |
-| --- | --- | --- |
-| SDK Append | 여러 행을 Append API로 전송 | 지속적인 고처리량 시계열 입력 |
-| SQL `INSERT` | SQL 파싱과 실행을 거쳐 행 입력 | 저빈도 입력, 기능 확인, 기존 SQL 연동 |
-| Collector | `.tpl`과 `.rgx` 설정으로 파일 수집 | 로컬 또는 SFTP 파일을 코드 없이 수집 |
-
-현재 Collector의 공개 소스 유형은 `FILE`과 `SFTP`입니다. 템플릿에 남아 있는 호환 키만 보고
-TCP, UDP, 소켓 또는 ODBC 수집을 지원한다고 가정하지 마십시오. 설정 형식과 지원 범위는
-[Collector 레퍼런스](/dbms/reference/collector/)를 기준으로 확인하십시오.
-
-애플리케이션 입력 경로의 API와 성능 특성은
-[데이터 입력 방식 선택](/dbms/development-tools-integration/data-input-load-export/)을 참고하십시오.
+입력 API, loader와 Collector의 선택 기준은 [데이터 입력과 반출](../../development-tools-integration/data-input-load-export/#machloader-vs-csvimport-csvexport-tagmetaimport)로 이동했습니다. 이 페이지에는 제품 동작을 이해하는 데 필요한 운영 개념 비교만 유지합니다.

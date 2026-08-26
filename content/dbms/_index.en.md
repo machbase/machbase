@@ -15,7 +15,7 @@ and reference information for Machbase 8.7.0.
 | 1 | [Getting Started](./getting-started/) | Overview, connection checks, quick start |
 | 2 | [Core Concepts](./core-concepts/) | Table types, time model, ROLLUP, and retention policies |
 | 3 | [Installation, Deployment, and Upgrade](./installation-deployment-upgrade/) | Installation and edition-specific deployment |
-| 4 | [Table Type Concepts and Selection](./data-modeling-table-design/) | Table type comparison and selection |
+| 4 | [Table Type Selection and Schema Design](./data-modeling-table-design/) | Type decisions, schema, mutation policy, and patterns |
 | 5 | [TAG Table Usage](./tag-table-usage/) | TAG structure, metadata, input, query, correction, operations |
 | 6 | [ROLLUP for TAG Tables](./tag-rollup-usage/) | ROLLUP design, creation, query, rebuild, operations |
 | 7 | [LOG Table Usage](./log-table-usage/) | LOG structure, input, text search, and Collector mapping |

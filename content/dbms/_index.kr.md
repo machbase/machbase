@@ -15,7 +15,7 @@ Machbase DBMS 매뉴얼에 오신 것을 환영합니다. 이 문서는 Machbase
 | 1 | [처음 시작하기](./getting-started/) | 개요, 접속 확인, 빠른 시작, 기본 명령 |
 | 2 | [핵심 개념](./core-concepts/) | 테이블 유형, 시간 모델, ROLLUP, Retention Policy |
 | 3 | [설치, 배포, 업그레이드](./installation-deployment-upgrade/) | 설치 준비, Standard Edition, Cluster Edition, 업그레이드 |
-| 4 | [테이블 타입 개념과 선택](./data-modeling-table-design/) | 테이블 타입 비교, 선택 기준, 모델링 패턴과 안티패턴 |
+| 4 | [테이블 타입 선택과 스키마 설계](./data-modeling-table-design/) | 타입 결정, 스키마, 변경 정책과 모델링 패턴 |
 | 5 | [TAG 테이블 활용](./tag-table-usage/) | TAG 구조, 메타데이터, 입력, 조회, 보정, 운영 |
 | 6 | [TAG 테이블을 위한 ROLLUP 활용](./tag-rollup-usage/) | ROLLUP 설계, 생성, 조회, 재구성, 운영, 성능 튜닝 |
 | 7 | [LOG 테이블 활용](./log-table-usage/) | LOG 구조, 입력, 텍스트 검색과 Collector mapping |

@@ -9,7 +9,10 @@ toc: true
 
 <a id="create-delete"></a>
 
-## 테이블 생성과 삭제
+## Create and drop tables
+
+Complete [table-type selection](../table-types-selection-type/) first. This page owns object names,
+columns, keys, constraints, indexes, and views for the selected type.
 
 <a id="alter"></a>
 

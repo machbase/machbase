@@ -23,6 +23,22 @@ Use the linked SQL and tool references for the complete option set.
 | `LOAD DATA INFILE` | A file readable by the server | Server permissions and input count |
 | `machloader` or `csvimport` | A client-side file | Log, bad file, input and failure counts |
 
+<a id="machloader-vs-csvimport-csvexport-tagmetaimport"></a>
+<a id="load-data-infile-vs-machloader"></a>
+<a id="ingestion-sdk-append-vs-sql-collector"></a>
+
+### Compare paths and tools
+
+| Path or tool | Primary use |
+|---|---|
+| SDK Append | Continuous multi-row TAG or LOG input from an application |
+| SQL INSERT | Low-volume input and general SQL integration |
+| `LOAD DATA INFILE` | A file readable by the server process |
+| `machloader` | Client files with explicit mapping, logs, and bad rows |
+| `csvimport` and `csvexport` | Simple CSV wrappers |
+| `tagmetaimport` | Bulk TAG metadata registration and changes |
+| Collector | Repeated FILE or SFTP source collection |
+
 Choose the table type first: TAG or LOG for retained time-series and event data, TRANSACTION for
 relational changes, LOOKUP for small reference data, and VOLATILE for rebuildable in-memory data.
 Then choose the input path based on volume, latency, retry unit, and duplicate policy.

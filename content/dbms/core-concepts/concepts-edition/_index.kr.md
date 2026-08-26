@@ -7,7 +7,7 @@ toc: true
 Machbase DBMS는 PostgreSQL이나 MySQL 같은 범용 RDBMS와 설계 철학부터 다릅니다. 그 차이를 명확히 이해하고 운영 규모에 따라 올바른 Edition을 선택하는 데 필요한 개념을 다룹니다.
 
 - **[Standard Edition과 Cluster Edition 차이](/dbms/core-concepts/concepts-edition/#differences-standard-edition-cluster)** -- 단일 노드 구성과 분산 클러스터 구성의 구조적 차이, 기능 지원 범위, 선택 기준
-- **[기존 RDBMS와의 차이](/dbms/core-concepts/concepts-edition/#differences-rdbms)** -- append-only 모델, 시간 중심 설계, 컬럼형 저장 등 전통적 RDBMS와의 근본적 차이
+- **[기존 RDBMS와의 차이](/dbms/core-concepts/concepts/#differences-rdbms)** -- append 중심 시계열 모델과 관계형 workload의 차이
 
 
 <a id="differences-standard-edition-cluster"></a>

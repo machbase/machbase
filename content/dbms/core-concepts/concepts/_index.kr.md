@@ -56,6 +56,20 @@ Machbase DBMS가 시계열 데이터를 다루는 방식은 일반적인 관계�
 
 두 형태는 실제 시스템에서 함께 존재합니다. 산업 IoT에서는 설비의 온도·진동이 계측값이고 알람·정비 이력이 이벤트이며, 금융 시스템에서는 호가·체결 틱이 계측값에 가깝고 수신 상태·지연 경보가 이벤트입니다.
 
+### 테이블 타입의 역할
+
+| 테이블 타입 | 개념적 역할 |
+|---|---|
+| TAG | 이름과 시간·거리 축을 가진 계측 데이터 |
+| LOG | 수신 순서로 계속 추가되는 이벤트와 로그 |
+| TRANSACTION | transaction과 관계형 변경이 필요한 업무 데이터 |
+| LOOKUP | 메모리에 적재해 참조하는 영속 기준 정보 |
+| VOLATILE | 재시작 후 다시 만들 수 있는 공유 메모리 상태 |
+
+이 표는 역할을 설명합니다. 실제 데이터의 변경 방식과 조회 패턴을 적용한 선택은
+[테이블 타입 선택](/dbms/data-modeling-table-design/table-types-selection-type/)에서
+수행합니다.
+
 <a id="differences-rdbms"></a>
 
 ### 전통적인 RDBMS와의 차이
@@ -101,42 +115,17 @@ append 중심 모델에서는 새로운 이벤트나 측정값을 기존 행의 
 LOG/TAG 입력은 일반적인 행 갱신 트랜잭션과 다른 경로를 사용합니다. 완료된 Append 요청은
 TRANSACTION 테이블 트랜잭션의 `ROLLBACK` 대상으로 취급하지 않습니다.
 
-### 테이블 유형별 쓰기 제약
+### 테이블 타입과 변경 모델
 
-append-only 원칙은 테이블 유형마다 다르게 적용됩니다.
+LOG와 TAG는 append 중심 시계열 경로를 사용합니다. TRANSACTION은 관계형 DML과 명시적 transaction을 제공하고, LOOKUP과 VOLATILE은 key 중심으로 변경되는 상태·참조 데이터를 다룹니다.
 
-| 테이블 유형 | INSERT | UPDATE | DELETE |
-| --- | --- | --- | --- |
-| LOG | 가능 | 불가 | `BEFORE`, `OLDEST`, `EXCEPT` 등 시간/보존 조건 기반 |
-| TAG | 가능 | 가능 (Standard Edition, 태그 선택자와 시간축 조건 필요) | `BEFORE` 또는 태그/축 조건 기반 |
-| LOOKUP | 가능 | Primary key 또는 일반 조건식 | Primary key 또는 일반 조건식, 조건 없는 전체 삭제 |
-| VOLATILE | 가능 | Primary key 조건 기반 | Primary key 조건 기반 |
-| TRANSACTION | 가능 | 일반 WHERE 조건 기반 | 일반 WHERE 조건 기반 |
+정확한 UPDATE·DELETE·TRUNCATE 지원 조건은 [데이터 변경 정책](../../data-modeling-table-design/alter-data-mutation-policy/)을 정본으로 사용합니다. 개념 장에서는 테이블별 predicate 표를 반복하지 않습니다.
 
-LOG와 TAG 테이블이 append 중심 모델의 핵심입니다. LOOKUP은 Primary key fast path와 일반
-조건식으로 기준 정보를 변경하고, VOLATILE은 Primary key 조건으로 상태 데이터를 변경합니다.
-LOOKUP의 조건 없는 DELETE는 모든 행을 삭제합니다.
-TRANSACTION 테이블은 관계형 업무 데이터를 Machbase 안에서 다루는 테이블이며 append-only 설계 대상이
-아닙니다.
+### 쓰기 경로의 개념
 
-### 쓰기 경로: INSERT vs APPEND
+SQL `INSERT`는 SQL 실행 결과를 즉시 확인하는 일반 입력 경로이고, SDK Append는 여러 시계열 row를 전송하는 전용 입력 경로입니다. Append는 TRANSACTION table transaction의 rollback 단위가 아닙니다.
 
-대량 데이터를 입력하는 방법은 두 가지입니다.
-
-**SQL `INSERT`**
-
-표준 SQL 문장으로 한 번에 한 행씩 입력합니다. 네트워크 왕복과 파싱 오버헤드가 있어 소량 입력이나 테스트에 적합합니다.
-
-```sql
-INSERT INTO sensor_log VALUES (TO_DATE('2026-07-03 09:00:00', 'YYYY-MM-DD HH24:MI:SS'), 'pump01', 23.5);
-```
-
-**SDK APPEND**
-
-Machbase Append API로 여러 행을 배치 전송합니다. 반복 `INSERT`보다 네트워크 왕복과
-SQL 파싱 횟수를 줄일 수 있어 지속적인 시계열 수집에 적합합니다.
-
-고속 입력이 필요한 환경에서는 `INSERT` 대신 Append API를 먼저 검토하십시오. 자세한 내용은 [데이터 입력 방식 선택](/dbms/development-tools-integration/data-input-load-export/)을 참고합니다.
+API 선택, batch, acknowledgement와 오류 처리는 [데이터 입력과 반출](../../development-tools-integration/data-input-load-export/)을 참고하십시오.
 
 ### append-only가 가져오는 설계 제약
 
@@ -260,3 +249,4 @@ LOOKUP, VOLATILE, TRANSACTION 테이블의 DATETIME 컬럼은 일반 컬럼입�
 - [시계열 데이터 이해하기](/dbms/core-concepts/concepts/#time-series) — 시계열 데이터의 본질
 - [LOG 테이블 설계](/dbms/log-table-usage/) — `_arrival_time`을 활용한 이벤트 테이블 설계
 - [TAG 테이블 설계](/dbms/tag-table-usage/) — BASETIME을 활용한 계측값 테이블 설계
+- [테이블 타입 선택](/dbms/data-modeling-table-design/table-types-selection-type/) — 실제 데이터의 변경·조회 조건으로 최종 타입 결정

@@ -5,8 +5,18 @@ weight: 20
 toc: true
 ---
 
-Machbase DBMS를 효과적으로 활용하려면 시스템 설계 원칙을 먼저 이해해야 합니다. 2장은 테이블 설계와 SQL 작성에 앞서 알아야 할 핵심 개념을 다섯 섹션으로 나누어 다룹니다.
+Machbase의 데이터·시간·저장·Edition 모델을 이해합니다. 이 장은 동작 이유와 용어를
+설명하며, 실제 테이블·컬럼·DML 설계는 4장에서 결정합니다.
 
-**[데이터 모델 개념](concepts/)** -- 시계열 데이터가 일반 업무 데이터와 어떻게 다른지, append-only 구조를 채택한 이유, 테이블 유형별 시간 표현 방식을 다룹니다. **[저장 및 실행 구조](storage-execution-architecture/)** -- 전체 아키텍처와 컬럼형 저장, 인덱싱 원리, 실행 계획 및 캐시 개념을 다룹니다. **[주요 기능 개념](features-concepts/)** -- ROLLUP, Retention Policy, Backup/Restore/Mount의 역할과 동작 방식을 다룹니다. **[Edition 개념](concepts-edition/)** -- 기존 RDBMS와의 차이, Standard Edition과 Cluster Edition의 차이를 다룹니다. **[용어 구분](terminology-distinction/)** -- 운영에서 혼동하기 쉬운 개념 쌍들을 비교 표와 함께 구분합니다.
+## 이 장의 구성
 
-각 섹션은 독립적으로 읽을 수 있지만, 처음 접하는 경우 데이터 모델 개념부터 순서대로 읽는 것을 권장합니다.
+| 절 | 내용 |
+|---|---|
+| [데이터 모델 개념](concepts/) | 시계열 데이터, 테이블 타입 역할, append와 시간 모델 |
+| [저장 및 실행 구조](storage-execution-architecture/) | architecture, 컬럼 저장, index와 cache 원리 |
+| [주요 기능 개념](features-concepts/) | ROLLUP, Retention, Backup·Restore·Mount의 역할 |
+| [Edition 개념](concepts-edition/) | Standard와 Cluster의 구조·선택 기준 |
+| [운영 개념 구분](terminology-distinction/) | Retention·삭제, Backup·Restore·Mount 구분 |
+
+개념을 확인한 뒤 [테이블 타입 선택과 스키마 설계](/dbms/data-modeling-table-design/)로
+이동하십시오.

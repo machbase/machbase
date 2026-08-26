@@ -6,7 +6,6 @@ toc: true
 ---
 잘못된 타입 선택은 성능 저하와 기능 제한으로 이어지므로, 설계 초기에 데이터 성격에 맞는 타입을 결정해야 합니다.
 
-- **[테이블 타입 개요](/dbms/data-modeling-table-design/table-types-selection-type/#table-types-type)**
 - **[타입 선택 결정 가이드](/dbms/data-modeling-table-design/table-types-selection-type/#selection-decision)**
 - **[타입 비교표](/dbms/data-modeling-table-design/table-types-selection-type/#comparison-tag-log-rdb-volatile-lookup)**
 - **[TRANSACTION vs LOOKUP 비교](/dbms/data-modeling-table-design/table-types-selection-type/#comparison-rdb-vs-lookup)**
@@ -14,89 +13,7 @@ toc: true
 
 <a id="table-types-type"></a>
 
-## 테이블 타입 개요
-
-### TAG 테이블
-
-센서·IoT 기기에서 수집되는 계측값을 저장하는 타입으로, 시간축(BASETIME) 또는 거리축(BASEDISTANCE)을 기준으로 다수의 태그(센서 이름)를 하나의 테이블에서 관리합니다.
-
-```sql
-CREATE TAG TABLE sensor_data (
-    name   VARCHAR(64) PRIMARY KEY,
-    time   DATETIME    BASETIME,
-    value  DOUBLE
-);
-```
-
-- `PRIMARY KEY` 컬럼: 태그(센서) 식별자
-- `BASETIME` 컬럼: 시간축 (나노초 정밀도 DATETIME)
-- 값 컬럼: DOUBLE, INTEGER 등
-
-### LOG 테이블
-
-시스템 이벤트, 애플리케이션 로그, 네트워크 패킷 등 추가 전용(append-only) 데이터에 적합합니다. `CREATE LOG TABLE` 문법을 사용합니다.
-
-```sql
-CREATE LOG TABLE sys_log (
-    level    SHORT,
-    msg      VARCHAR(512),
-    src_ip   IPV4
-);
-```
-
-- `_arrival_time` 컬럼이 자동 추가됩니다 (나노초 DATETIME).
-- UPDATE와 일반 조건 DELETE는 지원하지 않습니다. 보존/정리 목적의 `BEFORE`, `OLDEST`, `EXCEPT` DELETE를 사용합니다.
-
-### TRANSACTION 테이블
-
-관계형 구조의 업무 데이터를 저장합니다. Machbase 8.7.0에서 도입된 타입으로, 일반적인 관계형 테이블처럼 SELECT·INSERT·UPDATE·DELETE를 모두 지원합니다.
-
-테이블 유형을 생략한 `CREATE TABLE`과 `CREATE TRANSACTION TABLE`, `CREATE TXN TABLE`은
-모두 TRANSACTION 테이블을 생성합니다.
-
-```sql
-CREATE TRANSACTION TABLE product (
-    id       INTEGER,
-    name     VARCHAR(128),
-    category VARCHAR(64),
-    price    DOUBLE
-);
-```
-
-- SELECT, INSERT, UPDATE, DELETE 모두 지원
-- UPDATE는 WHERE 조건 유무 모두 지원
-- PRIMARY KEY 인덱스 및 보조 인덱스 생성 가능
-- Standard Edition 전용
-
-### VOLATILE 테이블
-
-메모리에만 존재하는 임시 테이블입니다. 서버 재시작 시 데이터가 소멸됩니다.
-
-```sql
-CREATE VOLATILE TABLE session_cache (
-    id     INTEGER PRIMARY KEY,
-    val    VARCHAR(256)
-);
-```
-
-- `PRIMARY KEY` 선택. `ON DUPLICATE KEY UPDATE`나 PK 기반 조회를 사용하려면 지정합니다.
-- `ON DUPLICATE KEY UPDATE` 지원
-- 세션 간 공유 가능 (서버 수준)
-
-### LOOKUP 테이블
-
-소규모 코드 테이블·기준 정보를 저장하며, 실시간 업데이트가 가능한 참조 데이터에 적합합니다.
-
-```sql
-CREATE LOOKUP TABLE code_master (
-    code   VARCHAR(16) PRIMARY KEY,
-    label  VARCHAR(128)
-);
-```
-
-- `PRIMARY KEY` 필수
-- PRIMARY KEY 기준 UPDATE·DELETE 지원
-- 디스크에 영속 저장
+테이블 타입의 역할과 저장 개념은 [데이터 모델 개념](../../core-concepts/concepts/#time-series)을 먼저 읽으십시오. 이 페이지는 설명을 반복하지 않고 실제 데이터의 변경·조회·영속성 요구사항으로 타입을 결정합니다.
 
 <a id="selection-decision"></a>
 

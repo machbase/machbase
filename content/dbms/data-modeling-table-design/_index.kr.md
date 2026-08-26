@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '4. 테이블 타입 개념과 선택'
+title: '4. 테이블 타입 선택과 스키마 설계'
 weight: 40
 toc: true
 ---
@@ -9,15 +9,8 @@ toc: true
 스키마를 설계합니다. 먼저 테이블 타입을 결정한 뒤 제약 조건과 데이터 변경 정책을 정의하고,
 검증된 모델링 패턴을 적용합니다.
 
-## 테이블 타입 요약
-
-| 타입 | DDL | 주요 용도 |
-|------|-----|----------|
-| TAG | `CREATE TAG TABLE` | 이름과 시간축을 가진 센서·계측 데이터 |
-| LOG | `CREATE LOG TABLE` | 순차적으로 추가되는 이벤트·로그 데이터 |
-| TRANSACTION | `CREATE TRANSACTION TABLE` | 트랜잭션과 관계형 변경이 필요한 업무 데이터 |
-| VOLATILE | `CREATE VOLATILE TABLE` | 재시작 시 폐기 가능한 인메모리 상태·캐시 |
-| LOOKUP | `CREATE LOOKUP TABLE` | 코드, 기준 정보, 참조 데이터 |
+각 테이블 타입의 역할을 처음 접한다면 [데이터 모델 개념](/dbms/core-concepts/concepts/)을
+먼저 읽으십시오. 이 장에서는 역할 설명을 반복하지 않고 설계 결정을 수행합니다.
 
 ## 이 장의 구성
 
