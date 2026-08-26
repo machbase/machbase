@@ -9,6 +9,7 @@ aliases:
 VOLATILE 테이블의 `INSERT`, 중복 키 갱신, `DELETE`를 실행 가능한 예제로 설명합니다.
 
 <a id="original-85-insert-update"></a>
+<a id="on-duplicate-key-update"></a>
 
 ## 데이터 입력과 갱신
 

@@ -20,8 +20,8 @@ LOG 테이블은 시간순으로 지속 입력되는 이벤트와 로그 데이�
 | [제약, 오류, 문제 해결](./constraints-errors-troubleshooting/) | 지원하지 않는 기능과 주의사항 |
 | [활용 패턴과 시나리오](./patterns-scenarios/) | 로그 저장, 텍스트 검색, 집계 분석 예제 |
 | [_arrival_time 시간 모델](./arrival-time-model/) | 자동 시각 컬럼의 특성과 조회 |
-| [텍스트 검색과 KEYWORD 인덱스](./text-search-keyword-index/) | SEARCH, ESEARCH, LIKE 연산자 |
-| [정규식과 네트워크 타입 조회](./regex-network-query/) | REGEXP, IPV4/IPV6 연산자 |
+| [텍스트 검색과 KEYWORD 인덱스](./text-search-keyword-index/) | SEARCH, ESEARCH, LIKE, REGEXP |
+| [네트워크 타입 조회](./regex-network-query/) | IPV4/IPV6 저장과 비교 |
 | [Collector 기반 수집](./collector-ingestion/) | LOG 대상 스키마와 record mapping |
 
 Fluentd 설치·buffer·retry 설정은

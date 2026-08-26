@@ -6,6 +6,7 @@ toc: true
 aliases:
   - /dbms/reference/ai-agent-reference/support-matrix/
   - /dbms/reference/ai-agent-reference/constraints-index/
+  - /dbms/reference/support-scope-constraints/limitations-dictionary/
 ---
 
 Use these matrices to confirm Edition, table-type, privilege, backup, ROLLUP, and compatibility

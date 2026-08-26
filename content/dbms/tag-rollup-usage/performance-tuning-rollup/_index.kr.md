@@ -1,6 +1,6 @@
 ---
-title: '6.13 ROLLUP 성능 튜닝'
-weight: 130
+title: '6.11 ROLLUP 성능 튜닝'
+weight: 110
 toc: true
 ---
 
@@ -45,46 +45,11 @@ ORDER BY hour_bucket;
 -- 같은 조건으로 실행 계획, 스캔 행 수와 응답 시간을 비교
 ```
 
-### rollup() 함수로 사전 집계 결과 조회
+### 조회 문법 정본
 
-`rollup()` 함수는 지정한 시간 단위에 해당하는 ROLLUP 테이블을 자동으로 선택해 집계 결과를 반환합니다.
-
-```sql
-rollup('단위', 배수, 시간컬럼)
-```
-
-| 단위 | 약어 | 설명 |
-|------|------|------|
-| `sec` | `s` | 초 단위 |
-| `min` | `m` | 분 단위 |
-| `hour` | `h` | 시간 단위 |
-| `day` | `d` | 일 단위 |
-| `week` | `w` | 주 단위 |
-| `month` | `M` | 월 단위 |
-| `year` | `y` | 연 단위 |
-
-```sql
--- 1분 단위 집계 (1분 ROLLUP 활용)
-SELECT rollup('min', 1, time)  AS bucket, AVG(value) AS avg_val
-FROM   sensor_tag
-WHERE  name = 'SENSOR-01'
-  AND  time BETWEEN '2025-06-01 00:00:00' AND '2025-06-01 06:00:00'
-GROUP BY bucket ORDER BY bucket;
-
--- 5분 단위 집계 (1분 ROLLUP을 5개 합산)
-SELECT rollup('min', 5, time)  AS bucket, AVG(value) AS avg_val
-FROM   sensor_tag
-WHERE  name = 'SENSOR-01'
-  AND  time BETWEEN '2025-06-01 00:00:00' AND '2025-06-01 06:00:00'
-GROUP BY bucket ORDER BY bucket;
-
--- 1시간 단위 집계 (1시간 ROLLUP 활용)
-SELECT rollup('hour', 1, time) AS bucket, AVG(value) AS avg_val
-FROM   sensor_tag
-WHERE  name = 'SENSOR-01'
-  AND  time BETWEEN '2025-06-01' AND '2025-07-01'
-GROUP BY bucket ORDER BY bucket;
-```
+`rollup()` signature, 지원 단위, origin과 후보 선택은
+[ROLLUP 조회 문법](../query-syntax-rollup/)을 정본으로 사용합니다. 이 페이지에서는 같은 query의
+원시 GROUP BY와 ROLLUP 실행 시간만 비교합니다.
 
 ### 적절한 ROLLUP 계층 설계
 
@@ -120,98 +85,16 @@ CREATE ROLLUP _tag_ru_1h FROM _tag_ru_1m INTERVAL 1 HOUR;
 
 자주 조회하는 시간 단위에 맞는 ROLLUP을 준비해 두면 대시보드와 리포트 응답 시간을 안정적으로 유지할 수 있습니다.
 
-### ROLLUP_TABLE 힌트로 특정 테이블 강제 지정
+### ROLLUP_TABLE hint
 
-동일한 컬럼에 여러 ROLLUP이 있을 때 옵티마이저 선택이 최적이 아니면 `ROLLUP_TABLE` 힌트로 직접 지정합니다.
+특정 후보를 강제해야 할 때만 `ROLLUP_TABLE` hint를 사용합니다. 정확한 형식과 자동 선택은
+[ROLLUP 조회 문법](../query-syntax-rollup/)을 참고합니다.
 
-```sql
--- 조건 ROLLUP(_tag_ru_cond_1m)을 강제 선택
-SELECT /*+ ROLLUP_TABLE(_tag_ru_cond_1m) */
-       rollup('min', 1, time) AS bucket,
-       AVG(value)
-FROM   sensor_tag
-WHERE  name = 'SENSOR-01'
-  AND  time BETWEEN '2025-06-01 00:00:00' AND '2025-06-01 01:00:00'
-GROUP BY bucket
-ORDER BY bucket;
-```
+### 운영 상태와 즉시 집계
 
-`FIRST()` 또는 `LAST()` 함수를 사용하는 경우, EXTENSION ROLLUP 테이블을 힌트로 지정해야 합니다.
-
-```sql
--- EXTENSION ROLLUP 강제 지정 (FIRST/LAST 사용 시)
-SELECT /*+ ROLLUP_TABLE(_tag_ru_1m_ext) */
-       rollup('min', 1, time) AS bucket,
-       FIRST(time, value)     AS first_val,
-       LAST(time, value)      AS last_val
-FROM   sensor_tag
-WHERE  name = 'SENSOR-01'
-  AND  time BETWEEN '2025-06-01 00:00:00' AND '2025-06-01 01:00:00'
-GROUP BY bucket
-ORDER BY bucket;
-```
-
-### WAKEUP INTERVAL 조정
-
-ROLLUP 스레드가 새 데이터를 확인하는 주기(WAKEUP INTERVAL)를 조정해 실시간성과 시스템 부하 사이의 균형을 맞춥니다.
-
-**기본 동작:** WAKEUP INTERVAL = ROLLUP INTERVAL (집계 주기와 동일)
-
-```sql
--- 현재 ROLLUP 상태 확인
-SELECT ROLLUP_TABLE, INTERVAL_TIME, WAKEUP_INTERVAL, LAST_ELAPSED_MSEC, RUN_STATE
-FROM   V$ROLLUP
-ORDER BY ROLLUP_TABLE;
-```
-
-#### 실시간성이 중요한 경우
-
-WAKEUP INTERVAL을 짧게 설정하면 새 데이터가 빨리 집계됩니다. CPU 사용량이 소폭 증가합니다.
-
-```sql
--- 1분 ROLLUP을 10초마다 깨우기 (실시간성 향상)
-ALTER ROLLUP _tag_ru_1m SET WAKEUP INTERVAL 10 SEC;
-
--- 1시간 ROLLUP을 5분마다 깨우기
-ALTER ROLLUP _tag_ru_1h SET WAKEUP INTERVAL 5 MIN;
-```
-
-규칙: WAKEUP INTERVAL은 ROLLUP INTERVAL의 약수(정수 배)여야 합니다.
-
-#### 입력 부하가 클 때
-
-WAKEUP INTERVAL을 길게 설정하면 집계 작업이 덜 자주 실행되어 입력 처리 성능을 보호합니다.
-
-```sql
--- 부하가 큰 상황: wakeup 주기를 ROLLUP 주기와 동일하게 유지 (기본값)
-ALTER ROLLUP _tag_ru_1s SET WAKEUP INTERVAL 1 SEC;  -- 1초 ROLLUP = 1초마다 wakeup
-```
-
-#### 처리 지연(Gap) 모니터링
-
-```sql
--- 집계 지연 상태 확인
-Mach> SHOW ROLLUPGAP;
-
--- 집계 소요 시간이 wakeup 주기에 근접하거나 초과하면 주기 재검토 필요
-SELECT ROLLUP_TABLE, LAST_ELAPSED_MSEC, WAKEUP_INTERVAL
-FROM   V$ROLLUP
-WHERE  LAST_ELAPSED_MSEC > WAKEUP_INTERVAL * 0.8;  -- 80% 이상 사용 시 경고
-```
-
-### 대량 데이터 로드 후 즉시 집계
-
-machloader나 Append API로 대량 데이터를 적재한 직후에는 아직 집계되지 않은 데이터가 많습니다. FORCE 명령으로 즉시 집계합니다.
-
-```sql
--- 하위 ROLLUP부터 순서대로 강제 집계 (블로킹: 완료까지 대기)
-ALTER ROLLUP _tag_ru_1s FORCE;
-ALTER ROLLUP _tag_ru_1m FORCE;
-ALTER ROLLUP _tag_ru_1h FORCE;
-
--- 비블로킹 방식 (집계 트리거 후 즉시 반환)
-ALTER ROLLUP _tag_ru_1s WAKEUP;
-```
+WAKEUP interval, START/STOP/FORCE, `V`과 `SHOW ROLLUPGAP`은
+[ROLLUP 제어와 상태 확인](../ingestion-control-rollup/)에서 다룹니다. 성능 변경 전후에는 gap이
+0인 같은 상태에서 query를 비교합니다.
 
 ### ROLLUP 조회와 원시 GROUP BY 비교
 

@@ -2,6 +2,8 @@
 title: '5.2 Table Structure and Schema'
 weight: 20
 toc: true
+aliases:
+  - /dbms/tag-table-usage/time-distance-axis/
 ---
 English structure placeholder. Korean content is authoritative for this restructuring pass.
 
@@ -9,6 +11,10 @@ English structure placeholder. Korean content is authoritative for this restruct
 <a id="tag-table-design"></a>
 
 ## TAG 테이블 설계
+
+<a id="time-axis-design-tag"></a>
+<a id="distance-axis-design-tag"></a>
+<a id="distance-axis-query-range"></a>
 
 <a id="tag-table-design-design-column"></a>
 

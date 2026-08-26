@@ -9,6 +9,7 @@ ROLLUP은 TAG 테이블의 숫자형 `SUMMARIZED` 컬럼을 지정한 시간 구
 아닙니다.
 
 <a id="original-85-rollup-tables"></a>
+<a id="rollup"></a>
 
 ## 사용 기준
 
@@ -55,7 +56,8 @@ DROP TABLE rollup_overview_demo CASCADE;
 ```
 
 ROLLUP 집계는 원시 데이터 입력과 비동기로 진행될 수 있습니다. 입력 직후 결과가 필요하면
-[ROLLUP 상태와 지연 확인](../state-check-rollup/)에서 처리 상태를 확인하십시오.
+[ROLLUP 제어와 상태 확인](../ingestion-control-rollup/#state-status-rollup-wakeup-interval-vrollup)에서
+처리 상태를 확인하십시오.
 
 ## 설계 순서
 
@@ -74,7 +76,7 @@ ROLLUP 집계는 원시 데이터 입력과 비동기로 진행될 수 있습니
 | 사용자 정의 집계 | [Custom ROLLUP](../custom-rollup/) |
 | 조건 집계 | [Conditional ROLLUP](../conditional-rollup/) |
 | FIRST·LAST | [확장 ROLLUP](../extension-rollup/) |
-| 달력 단위와 시간대 | [WEEK·MONTH·YEAR와 시간대](../week-month-year-timezone-rollup/) |
+| 달력 단위와 시간대 | [ROLLUP 조회 문법](../query-syntax-rollup/#query-week-month-year-day-timezone-origin-rollup) |
 | JSON 집계 | [JSON SUMMARIZED ROLLUP](../json-summarized-rollup/) |
 | 수정·삭제 후 재구성 | [ROLLUP 재구성](../rollup-rebuild/) |
 | 장애 진단 | [ROLLUP 문제 해결](/dbms/troubleshooting/rollup/) |

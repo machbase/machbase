@@ -206,117 +206,19 @@ SELECT /*+ ROLLUP_TABLE(_tag_rollup_custom_3) */
 
 <a id="rollup-conditional-extension-tc"></a>
 <a id="original-85-rollup-conditional-extension"></a>
-
-## 조건부 롤업 전체 예제
-
-
-조건부 롤업 생성, 데이터 입력, 결과 조회를 한 번에 실행하는 예제입니다.
-
-```sql
--- 같은 이름의 테스트 테이블이 있으면 먼저 삭제합니다.
-DROP TABLE tag CASCADE;
-create tag table tag (name varchar(20) primary key, time datetime basetime, value double summarized, value2 double);
-
-# value1
-create rollup _tag_rollup_custom_1 on tag(value) interval 1 sec  extension;
-create rollup _tag_rollup_custom_2 from _tag_rollup_custom_1 interval 1 min extension;
-create rollup _tag_rollup_custom_3 on tag(value) interval 1 min extension where value2 = 0;
-
-insert into tag values('APPL', '2020-01-01 00:00:00', 100,  0);
-insert into tag values('APPL', '2020-01-01 00:00:10', 101,  0);
-insert into tag values('APPL', '2020-01-01 00:00:11', 130,  0);
-insert into tag values('APPL', '2020-01-01 00:00:20', 120,  0);
-insert into tag values('APPL', '2020-01-01 00:00:30', 110,  0);
-insert into tag values('APPL', '2020-01-01 00:00:40', 9900,  1);
-insert into tag values('APPL', '2020-01-01 00:00:50', 99,  0);
-
-insert into tag values('APPL', '2020-01-01 00:01:00', 98, 0);
-insert into tag values('APPL', '2020-01-01 00:01:10', 94, 0);
-insert into tag values('APPL', '2020-01-01 00:01:20', 2990, 1);
-insert into tag values('APPL', '2020-01-01 00:01:30', 92, 0);
-insert into tag values('APPL', '2020-01-01 00:01:40', 99, 0);
-insert into tag values('APPL', '2020-01-01 00:01:50', 102, 0);
-
-insert into tag values('APPL', '2020-01-01 00:02:00', 110, 0);
-insert into tag values('APPL', '2020-01-01 00:02:10', 120, 0);
-insert into tag values('APPL', '2020-01-01 00:02:20', 140, 0);
-insert into tag values('APPL', '2020-01-01 00:02:30', 66160, 1);
-insert into tag values('APPL', '2020-01-01 00:02:40', 170, 0);
-insert into tag values('APPL', '2020-01-01 00:02:50', 180, 0);
-
-exec rollup_force(_tag_rollup_custom_1);
-exec rollup_force(_tag_rollup_custom_2);
-exec rollup_force(_tag_rollup_custom_3);
-
-select rollup('sec', 10, time) as rt , count(value), min(value), max(value), first(time, value), last(time , value) from tag group by rt order by rt;
-select rollup('min', 1, time) as rt , count(value), min(value), max(value), first(time, value), last(time , value)  from tag group by rt order by rt;
-select /*+ ROLLUP_TABLE(_tag_rollup_custom_3) */ rollup('min', 1, time) as rt , count(value), min(value), max(value), first(time, value), last(time , value)  from tag group by rt order by rt;
-```
-
 <a id="condition-conditional-rollup"></a>
 
-## 조건 ROLLUP
-
-조건 ROLLUP은 원본 데이터에 WHERE 필터를 적용해, 특정 조건을 만족하는 행만 집계합니다. 정상 데이터, 알람 데이터 등 카테고리별 사전 집계에 유용합니다.
-
-### 생성 구문
+## 문법과 제약
 
 ```sql
 CREATE ROLLUP rollup_name
-  ( ON source_table(column_name)
-  | FROM source_rollup_table )
+  ON source_table(column_name)
   INTERVAL n (SEC|MIN|HOUR)
   WHERE predicate;
 ```
 
-### 생성 예시
-
-```sql
--- value >= 0 인 데이터만 집계
-CREATE ROLLUP _tag_ru_valid_1m ON tag(value) INTERVAL 1 MIN
-  WHERE value >= 0;
-
--- status = 'NORMAL' 인 경우만 집계 (status 컬럼이 TAG 테이블에 있을 때)
-CREATE ROLLUP _tag_ru_normal_1m ON tag(value) INTERVAL 1 MIN
-  WHERE status = 1;
-
--- 복합 조건
-CREATE ROLLUP _tag_ru_alarm_1s ON tag(value) INTERVAL 1 SEC
-  WHERE value > 90.0 AND quality >= 2;
-
--- 분 롤업을 소스로 조건 시간 롤업
-CREATE ROLLUP _tag_ru_cond_1h FROM _tag_ru_valid_1m INTERVAL 1 HOUR;
-```
-
-### WHERE 조건 제약
-
-- 허용: 비교 연산자, BETWEEN, IN, LIKE, AND/OR/NOT, CASE, 비집계 스칼라 함수
-- 금지: 서브쿼리, 집계 함수(SUM, AVG 등), 존재하지 않는 컬럼
-- 태그명(PRIMARY KEY) 컬럼 조건은 지원하지 않습니다 (내부적으로 숫자 ID로 관리)
-
-### 자동 선택과 힌트
-
-조건 없는 ROLLUP과 조건 ROLLUP이 같은 주기·컬럼으로 있을 때, 엔진은 기본적으로 **조건 없는 ROLLUP**을 선택합니다. 조건 ROLLUP이 필요할 때는 힌트를 사용합니다.
-
-```sql
--- 기본: 조건 없는 롤업 자동 선택
-SELECT rollup('min', 1, time) AS rt, AVG(value)
-FROM   tag
-WHERE  name = 'SENSOR-01'
-GROUP BY rt;
-
--- 조건 롤업 강제 지정
-SELECT /*+ ROLLUP_TABLE(_tag_ru_valid_1m) */
-       rollup('min', 1, time) AS rt, AVG(value)
-FROM   tag
-WHERE  name = 'SENSOR-01'
-GROUP BY rt;
-```
-
-### V$ROLLUP에서 조건 확인
-
-```sql
-SELECT ROLLUP_TABLE, PREDICATE
-FROM   V$ROLLUP
-WHERE  PREDICATE IS NOT NULL;
-```
+WHERE에는 비교, BETWEEN, IN, LIKE, 논리 연산과 비집계 scalar 함수를 사용할 수 있습니다.
+subquery와 집계 함수는 사용할 수 없으며 tag-name PRIMARY KEY 조건도 지원하지 않습니다.
+조건 없는 후보가 함께 있으면 자동 선택이 달라질 수 있으므로 필요한 경우 `ROLLUP_TABLE` hint를
+사용합니다. 조건과 상태는 `V$ROLLUP.PREDICATE` 및
+[ROLLUP 제어와 상태 확인](../ingestion-control-rollup/)에서 확인합니다.

@@ -1,6 +1,6 @@
 ---
-title: '8.12 JOIN and Relational Query Design'
-weight: 120
+title: '8.11 JOIN and Relational Query Design'
+weight: 110
 toc: true
 ---
 English structure placeholder. Korean content is authoritative for this restructuring pass.

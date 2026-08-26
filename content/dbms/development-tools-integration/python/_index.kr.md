@@ -842,7 +842,10 @@ def main():
             ['2024-01-01 11:00:00', 'node-2', 40.1],
             ['2024-01-01 11:01:00', 'node-2', 40.7],
         ]
-        epoch_times = [1704106800, 1704106860]
+        epoch_times = [
+            1704106800 * 1_000_000_000,
+            1704106860 * 1_000_000_000,
+        ]
 
         if db.appendOpen('PY_APPEND_TIME') == 0:
             raise SystemExit(db.result())
@@ -861,3 +864,6 @@ def main():
 if __name__ == '__main__':
     main()
 ```
+
+`aTimes`는 row와 같은 순서의 epoch nanosecond sequence입니다. 초 단위 Unix timestamp를
+그대로 전달하지 마십시오.

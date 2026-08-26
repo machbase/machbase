@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '4.1 Schema Object Definition'
-weight: 10
+title: '4.2 Schema Object Definition'
+weight: 20
 toc: true
 ---
 

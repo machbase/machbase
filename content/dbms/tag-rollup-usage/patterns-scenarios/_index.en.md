@@ -1,6 +1,6 @@
 ---
-title: '6.14 ROLLUP Scenarios'
-weight: 140
+title: '6.12 ROLLUP Scenarios'
+weight: 120
 toc: true
 ---
 English structure placeholder. Korean content is authoritative for this restructuring pass.

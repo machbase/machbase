@@ -17,9 +17,6 @@ toc: true
 | `SYSDATE` / `sysdate` | `sysdate` | 현재 시각 (`NOW`와 동일) |
 | `now - offset` | `now - 1h` | 현재 시각에서 오프셋 뺄셈 |
 | `now + offset` | `now + 30m` | 현재 시각에서 오프셋 덧셈 |
-| `ADD_TIME(time, diff)` | `ADD_TIME(now, '0/0/0 -1:0:0')` | 년/월/일 시:분:초 형식의 시간 보정 |
-| `TO_DATE('...', 'format')` | `TO_DATE('2024-01-01', 'YYYY-MM-DD')` | 문자열을 DATETIME으로 변환 |
-| `TO_TIMESTAMP(ns)` | `TO_TIMESTAMP(1704067200000000000)` | 나노초 정수를 DATETIME으로 변환 |
 | 나노초 정수 직접 사용 | `value + 1000000000` | 나노초 단위 정수를 DATETIME에 더함 |
 
 ## 상대 시간 단위 (리터럴 접미사)
@@ -39,50 +36,13 @@ toc: true
 
 ## ADD_TIME 함수
 
-함수 기반 날짜 연산입니다. 상대 시간 리터럴을 지원하지 않는 이전 버전 또는 월/연 단위처럼 리터럴로 표현할 수 없는 계산에 사용합니다.
-
-```sql
-ADD_TIME(datetime_expr, 'year/month/day hour:minute:second')
-```
-
-| 위치 | 의미 | 예 |
-|------|------|----|
-| `year/month/day` | 년, 월, 일 보정값 | `'1/0/0 0:0:0'`, `'-1/0/0 0:0:0'` |
-| `hour:minute:second` | 시, 분, 초 보정값 | `'0/0/0 1:30:0'`, `'0/0/0 -1:0:0'` |
-
-```sql
--- 1시간 전
-SELECT * FROM sensor_log WHERE time > ADD_TIME(now, '0/0/0 -1:0:0');
-
--- 한 달 후
-SELECT * FROM maintenance_plan WHERE scheduled_at < ADD_TIME(now, '0/1/0 0:0:0');
-```
+월·연처럼 상대 시간 literal에 없는 달력 보정에는 `ADD_TIME()`을 사용합니다. signature,
+format과 오류는 [SQL 함수 사전](../dictionary/functions-full/#add_time)을 정본으로 사용합니다.
 
 ## TO_DATE 함수
 
-문자열을 DATETIME 타입으로 변환합니다.
-
-```sql
-TO_DATE('datetime_string', 'format')
-```
-
-| 포맷 토큰 | 의미 |
-|-----------|------|
-| `YYYY` | 4자리 연도 |
-| `MM` | 2자리 월 |
-| `DD` | 2자리 일 |
-| `HH24` | 24시간제 시 |
-| `MI` | 분 |
-| `SS` | 초 |
-| `mmm` | 밀리초 |
-| `uuu` | 마이크로초 |
-| `nnn` | 나노초 |
-
-```sql
-SELECT * FROM sensor_tag
- WHERE time >= TO_DATE('2024-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
-   AND time <  TO_DATE('2024-01-02 00:00:00', 'YYYY-MM-DD HH24:MI:SS');
-```
+문자열 경계를 사용해야 할 때는 `TO_DATE()`로 DATETIME을 명시합니다. format token과 변환
+오류는 [SQL 함수 사전](../dictionary/functions-full/#to_date)을 정본으로 사용합니다.
 
 ## 활용 패턴
 

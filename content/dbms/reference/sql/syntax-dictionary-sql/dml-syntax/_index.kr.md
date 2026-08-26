@@ -53,7 +53,21 @@ VALUES ('sensor-01', 'building-A', 'celsius');
 
 ### ON DUPLICATE KEY UPDATE
 
-PRIMARY KEY가 있는 LOOKUP/VOLATILE 테이블에서 키 중복 시 기존 행을 UPDATE합니다.
+`INSERT ... VALUES`에서 duplicate key가 발생하면 기존 행을 UPDATE합니다. `INSERT ... SELECT`와
+결합할 수 없습니다.
+
+| 테이블 타입 | duplicate 판정 key | 지원 범위 |
+|---|---|---|
+| TRANSACTION | PRIMARY KEY, 단일·복합 UNIQUE INDEX | Standard Edition |
+| LOOKUP | PRIMARY KEY | 지원 |
+| VOLATILE | PRIMARY KEY | 지원 |
+| TAG METADATA | tag name PRIMARY KEY | 지원 |
+| TAG data, LOG | - | 미지원 |
+
+`SET`을 생략하면 INSERT 입력값으로 기존 non-key 컬럼을 갱신합니다. `SET`이 있으면 오른쪽
+표현식은 duplicate 기존 행을 기준으로 평가합니다. LOOKUP·VOLATILE·TRANSACTION에서는
+PRIMARY KEY 자체를 갱신할 수 없습니다. TAG METADATA의 tag name과 시스템 관리 컬럼은
+[TAG 메타데이터](/dbms/tag-table-usage/tag-metadata/)의 변경 규칙을 따릅니다.
 
 ```sql
 -- 키 중복 시 value 컬럼만 업데이트
@@ -66,6 +80,10 @@ INSERT INTO devices (device_id, ip, status)
 VALUES ('dev-001', '192.168.1.2', 'ONLINE')
 ON DUPLICATE KEY UPDATE;
 ```
+
+duplicate를 판정할 key가 없는 table에서의 UPSERT, key 변경, `VALUES(col)`·`EXCLUDED.col` 같은
+다른 DBMS 전용 표현은 오류입니다. TRANSACTION의 UNIQUE 충돌·transaction 예제는
+[TRANSACTION upsert](/dbms/rdb-table-usage/insert-on-duplicate-key-update/)를 참고하십시오.
 
 ---
 

@@ -89,5 +89,5 @@ DROP TABLE query_log;
 조인 조건 없는 Cartesian join은 사용하지 않습니다. 여러 대형 LOG 테이블을 직접 조인해야
 한다면 시간 조건, 인덱스와 비정규화 대안을 함께 검토하십시오.
 
-문자열·정규식·네트워크 주소 검색은 [정규식과 네트워크 조회](../regex-network-query/)를,
-전문 검색은 [텍스트 검색과 KEYWORD 인덱스](../text-search-keyword-index/)를 참고하십시오.
+문자열·정규식·전문 검색은 [텍스트 검색과 KEYWORD 인덱스](../text-search-keyword-index/)를,
+IPV4/IPV6 주소는 [네트워크 타입 조회](../regex-network-query/)를 참고하십시오.

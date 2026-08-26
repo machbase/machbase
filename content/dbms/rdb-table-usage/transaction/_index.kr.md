@@ -1,6 +1,6 @@
 ---
-title: '8.10 트랜잭션'
-weight: 100
+title: '8.9 트랜잭션'
+weight: 90
 toc: true
 ---
 TRANSACTION 테이블의 DML은 `BEGIN`, `COMMIT`, `ROLLBACK`으로 하나의 작업 단위로 묶을 수

@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '6.12 ROLLUP_REBUILD'
-weight: 120
+title: '6.10 ROLLUP_REBUILD'
+weight: 100
 toc: true
 aliases:
   - /dbms/tag-rollup-usage/delete-partial-rebuild-rollup/

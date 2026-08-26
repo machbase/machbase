@@ -216,9 +216,9 @@ sudo sysctl -w net.ipv4.ip_local_reserved_ports="${current:+$current,}$ports"
 | 1. cluster.yaml 작성 | [cluster.yaml 작성](/dbms/installation-deployment-upgrade/cluster-edition/#machclusterctl-cluster-yaml) |
 | 2. YAML 유효성 검사 | [YAML 검증](/dbms/installation-deployment-upgrade/cluster-edition/#machclusterctl-validation-yaml) |
 | 3. 최초 설치 및 시작 | [최초 설치](/dbms/installation-deployment-upgrade/cluster-edition/#machclusterctl-initial) |
-| 4. 상태 확인 | [상태 확인](/dbms/installation-deployment-upgrade/cluster-edition/#machclusterctl-status-check-state) |
-| 5. (이후) 구성 변경 | [구성 변경 적용](/dbms/installation-deployment-upgrade/cluster-edition/#machclusterctl-configuration-change-alter) |
-| 6. (장애 시) 복구 | [배포 실패 시 복구](/dbms/installation-deployment-upgrade/cluster-edition/#machclusterctl-failure-recovery) |
+| 4. 상태 확인 | [최초 설치와 상태 확인](/dbms/installation-deployment-upgrade/cluster-edition/#machclusterctl-initial) |
+| 5. (이후) 구성 변경 | [Cluster 운영](/dbms/operations-configuration-recovery/cluster/) |
+| 6. (장애 시) 복구 | [Cluster 문제 해결](/dbms/troubleshooting/cluster/) |
 
 ---
 
@@ -520,7 +520,7 @@ machclusterctl stop
 2. [Coordinator / Deployer 설치](/dbms/installation-deployment-upgrade/cluster-edition/#manual-machcoordinatoradmin-coordinator-deployer) — 핵심 관리 노드 구동
 3. [Package 등록](/dbms/installation-deployment-upgrade/cluster-edition/#manual-machcoordinatoradmin-package) — 실행 중인 Coordinator에 경량 패키지 등록
 4. [Lookup / Broker / Warehouse 설치](/dbms/installation-deployment-upgrade/cluster-edition/#manual-machcoordinatoradmin-lookup-broker-warehouse) — 데이터 처리 노드 등록 및 구동
-5. [노드 상태 확인](/dbms/installation-deployment-upgrade/cluster-edition/#manual-machcoordinatoradmin-status-check-node-state) — 클러스터 정상 동작 검증
+5. [전체 상태 확인](/dbms/installation-deployment-upgrade/cluster-edition/#manual-machcoordinatoradmin-lookup-broker-warehouse) — 등록·구동 후 최초 상태 검증
 
 ### machclusterctl 대비 차이점
 

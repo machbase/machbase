@@ -27,7 +27,7 @@ DELETE FROM order_history WHERE order_id = 1001;
 
 ### 이 섹션의 구성
 
-- **[활용 사례](/dbms/rdb-table-usage/patterns-scenarios/#use-cases-rdb)**
+- **[활용 사례](/dbms/rdb-table-usage/overview-use-criteria/#use-cases-rdb)**
 - **[스키마 설계](/dbms/rdb-table-usage/table-structure-schema/#rdb-table-design-design-schema-type-rdb)**
 - **[PRIMARY KEY·UNIQUE INDEX·일반 인덱스 비교](/dbms/rdb-table-usage/index-performance/#index-strategy-rdb-primary-key-unique-normal)**
 - **[UNIQUE INDEX 생성과 동작](/dbms/rdb-table-usage/index-performance/#unique-index-rdb)**

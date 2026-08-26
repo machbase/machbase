@@ -308,6 +308,8 @@ DELETE FROM sensors
 DELETE FROM sensors METADATA;
 ```
 
+<a id="metadata-design-json"></a>
+
 ### JSON 메타데이터 컬럼
 
 메타데이터에 `JSON` 컬럼을 선언할 수 있습니다.

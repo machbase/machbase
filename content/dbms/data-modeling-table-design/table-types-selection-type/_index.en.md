@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '4.2 Choose a Table Type'
-weight: 20
+title: '4.1 Choose a Table Type'
+weight: 10
 toc: true
 ---
 

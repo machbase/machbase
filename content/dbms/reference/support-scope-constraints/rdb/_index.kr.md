@@ -24,7 +24,6 @@ Edition에서 LOG 테이블을 만들 때는 `CREATE LOG TABLE`을 사용합니�
 | UPDATE | O | |
 | DELETE | O | |
 | INSERT ... ON DUPLICATE KEY UPDATE | O | PRIMARY KEY·UNIQUE INDEX 충돌 시 기존 row 갱신 |
-| Append API | O | Machbase SQLCLI·ODBC batch·stream 경로 지원 |
 | **트랜잭션** | | |
 | Transaction (COMMIT/ROLLBACK) | O | plain `BEGIN`, `COMMIT`, `ROLLBACK` |
 | Savepoint | X | 미지원 |
@@ -48,8 +47,10 @@ Edition에서 LOG 테이블을 만들 때는 `CREATE LOG TABLE`을 사용합니�
 | Foreign Key | X | 미지원 |
 
 `AUTO_INCREMENT` 사용법은 [AUTO_INCREMENT](/dbms/reference/sql/syntax-dictionary-sql/auto-increment-syntax/), upsert는
-[INSERT ON DUPLICATE KEY UPDATE](/dbms/rdb-table-usage/insert-on-duplicate-key-update/), Append
-동작은 [Append API 지원 범위](/dbms/rdb-table-usage/data-input-mutation/)를 참고하십시오.
+[INSERT ON DUPLICATE KEY UPDATE](/dbms/rdb-table-usage/insert-on-duplicate-key-update/)를
+참고하십시오. Append는 client별 경로가 다르므로
+[SDK Append matrix](/dbms/development-tools-integration/sdk-support-scope/#append-table-type-matrix)를
+정본으로 사용합니다.
 
 
 ## 관련 문서

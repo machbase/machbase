@@ -18,9 +18,7 @@ ROLLUP은 TAG 테이블의 시계열 데이터를 시간 단위로 집계해 조
 | [Custom ROLLUP](./custom-rollup/) | 사용자 정의 SELECT 기반 집계 |
 | [확장 ROLLUP](./extension-rollup/) | EXTENSION 키워드와 FIRST/LAST 지원 |
 | [JSON SUMMARIZED ROLLUP](./json-summarized-rollup/) | JSON 컬럼 내 숫자 필드 집계 |
-| [주/월/연 단위 조회와 시간대 기준](./week-month-year-timezone-rollup/) | day/week/month/year 조회와 origin 설정 |
-| [ROLLUP 시작, 중지, 즉시 수집](./ingestion-control-rollup/) | START/STOP/WAKEUP/FORCE 제어 |
-| [ROLLUP 상태 확인](./state-check-rollup/) | V$ROLLUP 조회, SHOW ROLLUPGAP |
+| [ROLLUP 제어와 상태 확인](./ingestion-control-rollup/) | START/STOP/WAKEUP/FORCE, V$ROLLUP, ROLLUPGAP |
 | [ROLLUP_REBUILD](./rollup-rebuild/) | DROP·재생성과 범위 재계산 선택 절차 |
 | [ROLLUP 성능 튜닝](./performance-tuning-rollup/) | 계층 설계, 힌트, WAKEUP INTERVAL 조정 |
 | [ROLLUP 활용 시나리오](./patterns-scenarios/) | IoT 센서, OHLC, 에너지 소비량 등 실전 예제 |

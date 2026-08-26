@@ -1,6 +1,6 @@
 ---
-title: '8.13 TRANSACTION 백업, 복원, 마운트'
-weight: 130
+title: '8.12 TRANSACTION 백업, 복원, 마운트'
+weight: 120
 toc: true
 ---
 
@@ -27,6 +27,8 @@ TRANSACTION 객체가 포함된 백업을 Cluster에 복원하는 경로로 사�
 
 <a id="backup-rdb"></a>
 
+
+<a id="design-backup-mount-rdb"></a>
 
 ## TRANSACTION 검증 항목
 

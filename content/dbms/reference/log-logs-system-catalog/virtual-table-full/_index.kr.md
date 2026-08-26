@@ -377,7 +377,7 @@ PVO Statement Cache에 저장된 SQL별 상세 정보를 보여줍니다.
 | PATH              | 백업 파일의 위치              |
 | BACKUP_TBSID      | 백업 데이터베이스의 테이블스페이스 식별자 |
 | BACKUP_SCN        | 백업 데이터베이스의 식별자         |
-| MOUNTDB           | 백업 시간                  |
+| MOUNTDB           | MOUNT할 때 지정한 데이터베이스 별칭 |
 | DB_BEGIN_TIME     | 백업 데이터베이스의 최초입력 시간     |
 | DB_END_TIME       | 백업 데이터베이스의 최종 입력 시간    |
 | BACKUP_BEGIN_TIME | 백업 실행시 시작 시간           |

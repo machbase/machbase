@@ -9,6 +9,10 @@ Standard Edition can separate objects and access privileges across multiple logi
 one server. This page owns the adoption and operational workflow. Use the linked references for SQL
 syntax, privileges, SDK options, and backup procedures.
 
+<a id="94-python"></a>
+<a id="95-nodejs"></a>
+<a id="97-net"></a>
+
 ## Scope
 
 - Multiple databases are a Standard Edition feature.

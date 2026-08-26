@@ -20,6 +20,5 @@ TAG 테이블은 태그 이름과 시간 또는 거리 축을 기준으로 계�
 | [제약, 오류, 문제 해결](./constraints-errors-troubleshooting/) | UPDATE 조건 오류, SET 대상 오류, 제약사항 |
 | [활용 패턴과 시나리오](./patterns-scenarios/) | IoT, 에너지, 차량 추적 활용 사례 |
 | [TAG 메타데이터](./tag-metadata/) | 메타데이터 CRUD, JSON 메타데이터, path 인덱스 |
-| [시간축과 거리축 TAG](./time-distance-axis/) | 시간축·거리축 설계와 조회 패턴 |
 | [TAG data UPDATE와 데이터 보정](./tag-data-update-correction/) | 시계열 데이터 직접 정정, 보정 이력 패턴 |
 | [tagmetaimport와 메타데이터 일괄 등록](./tagmetaimport/) | CSV 기반 메타데이터 일괄 로드 |

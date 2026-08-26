@@ -177,7 +177,7 @@ WHERE time >= '2026-07-01' AND time < '2026-07-02'
 
 - [인덱싱 기본 원리](/dbms/core-concepts/storage-execution-architecture/#indexing-basics) -- 컬럼 저장 위에서 동작하는 인덱스 구조
 - [Machbase 아키텍처 개요](/dbms/core-concepts/storage-execution-architecture/#architecture-machbase) -- 저장 관리자(SM)와 데이터 흐름
-- [기존 RDBMS와의 차이](/dbms/core-concepts/concepts-edition/#differences-rdbms) -- 저장 방식 차이의 전체 맥락
+- [기존 RDBMS와의 차이](/dbms/core-concepts/concepts/#differences-rdbms) -- 저장 방식 차이의 전체 맥락
 
 <a id="indexing-basics"></a>
 
@@ -230,16 +230,11 @@ SQL 문장이 Machbase에 도달해 결과가 반환되기까지 다음 단계�
 
 파싱과 최적화는 동일한 SQL이 반복 실행될 때마다 중복 수행될 수 있으며, 캐시는 이 중복 비용을 제거합니다.
 
-### Plan Cache
+### 실행 계획 재사용과 PVO Cache
 
-SQL 문장의 실행 계획을 메모리에 저장해 두고, 같은 SQL이 다시 들어오면 파싱과 최적화 단계를 생략하고 저장된 계획을 재사용합니다.
-
-실시간 수집 환경에서는 동일한 INSERT나 SELECT 패턴이 반복되므로, Plan Cache가 파싱 CPU 비용을 크게 줄입니다. 서버 기동 후 자동으로 운용되며 별도 설정이 필요 없습니다.
-
-### PVO Cache
-
-동일한 SQL의 파싱과 최적화 결과를 재사용할 수 있도록 실행 계획을 메모리에 저장합니다.
-Standard Edition에서 지원하며, SELECT 결과 row를 저장하는 캐시는 아닙니다. 설정과 상태 확인은
+공개 설정과 진단 뷰가 제공되는 실행 계획 cache는 PVO Statement Cache입니다. 동일 SQL의
+파싱·검증·최적화 결과와 plan을 재사용하며 SELECT 결과 row를 저장하지 않습니다. 별도의
+`Plan Cache`를 독립 기능이나 설정으로 가정하지 마십시오. 설정, hit·eviction과 무효화 확인은
 [PVO Cache와 메모리 튜닝](/dbms/performance-tuning/cache-tuning-memory/#pvo-cache)을
 참고하십시오.
 
@@ -255,7 +250,9 @@ WHERE name = 'temp_sensor_01'
                AND TO_DATE('2026-07-03', 'YYYY-MM-DD');
 ```
 
-실행 계획 출력에서 파티션 pruning 적용 여부, 인덱스 사용 여부, RS Cache 히트 여부를 확인합니다. 성능이 기대에 못 미칠 때 `EXPLAIN`을 먼저 실행해 실행 경로를 검토하십시오.
+실행 계획 출력에서 partition pruning, index와 filter 적용 여부를 확인합니다. PVO Cache의
+hit·eviction은 `V$PVO_CACHE_STAT`, 개별 cached SQL은 `V$PVO_CACHE_LIST`에서 별도로
+확인합니다.
 
 ### 다음 읽을 내용
 

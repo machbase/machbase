@@ -25,8 +25,8 @@ PVO Cache는 실행 계획을 저장하며 SELECT 결과를 저장하지 않습�
 
 ## PVO Cache 운영
 
-PVO(Partition Value Object) Cache는 SQL 실행 계획을 메모리에 저장하여 동일한 SQL을 다시
-실행할 때 파싱과 최적화 비용을 줄입니다. Standard Edition에서 지원합니다.
+PVO Statement Cache는 SQL 실행 계획을 메모리에 저장하여 동일한 SQL을 다시 실행할 때
+파싱·검증·최적화 비용을 줄입니다. Standard Edition에서 지원합니다.
 
 바인드 변수를 사용하면 SQL 텍스트를 일정하게 유지할 수 있어 실행 계획 재사용에 유리합니다.
 사용자, 기본 날짜 형식, 시간대, 숨김 컬럼 표시 여부, 쿼리 병렬도와 같은 세션 속성이 다르면

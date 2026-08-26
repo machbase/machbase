@@ -70,14 +70,17 @@ WHERE name = 'LOOKUP_APPEND_UPDATE_ON_DUPKEY';
 
 ## TABLE_REFRESH
 
-클러스터에서 LOOKUP 데이터를 다시 읽어야 할 때는 `TABLE_REFRESH`를 실행합니다.
+영속 LOOKUP 내용을 runtime memory table에 다시 반영해야 할 때는 `TABLE_REFRESH`를 실행합니다.
 
 ```sql
 EXEC TABLE_REFRESH(lookup_mutation_demo);
 ```
 
-단일 노드에서 일반 SQL DML만 사용했다면 별도로 실행할 필요가 없습니다. 클러스터 운영 절차는
-[운영과 수명주기](/dbms/lookup-table-usage/operations-lifecycle/)를 참고합니다.
+일반 SQL DML 직후마다 실행하는 명령은 아닙니다. 대상은 현재 database의 LOOKUP table이며,
+READ ONLY database에서는 실행할 수 없습니다. 이름 범위·권한·오류 계약은
+[EXEC procedure 정본](/dbms/reference/sql/syntax-dictionary-sql/execute-procedure-syntax/#table-refresh)을
+참고하고, 클러스터 운영 절차는 [운영과 수명주기](/dbms/lookup-table-usage/operations-lifecycle/)를
+참고합니다.
 
 <a id="original-85-deleting-data"></a>
 
@@ -107,4 +110,5 @@ DROP TABLE lookup_mutation_demo;
 - 모든 행을 삭제하기 전에는 백업 또는 재입력 원본을 확인합니다.
 - PRIMARY KEY 값 변경은 DELETE 후 INSERT로 처리합니다.
 - Append 중복 키 처리는 `LOOKUP_APPEND_UPDATE_ON_DUPKEY` 설정을 확인합니다.
-- 클러스터에서 데이터를 다시 읽어야 할 때만 `EXEC TABLE_REFRESH(table_name)`을 사용합니다.
+- 영속 LOOKUP을 runtime memory에 다시 반영해야 할 때만 `EXEC TABLE_REFRESH(table_name)`을
+  사용합니다.

@@ -11,6 +11,7 @@ aliases:
 VOLATILE 테이블의 생성·적재·사용·소멸·재구성 절차를 정리합니다.
 
 <a id="operations-volatile-lifecycle"></a>
+<a id="lifecycle-memory"></a>
 
 ## 데이터 생명주기
 
@@ -36,6 +37,7 @@ VOLATILE에는 원본에서 재생성 가능한 최신 상태나 중간 결과�
 원본과 대상의 컬럼, 중복 처리, 실행 주기를 포함해 별도의 작업으로 관리합니다.
 
 <a id="operations-volatile-restart"></a>
+<a id="data-loss"></a>
 
 ## 재시작 절차
 

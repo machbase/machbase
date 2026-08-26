@@ -12,15 +12,7 @@ aliases:
 
 ## 입력 경로 선택
 
-| 경로 | 적합한 작업 |
-|------|-------------|
-| 단건 INSERT | 소량 입력, 즉시 결과 확인 |
-| prepared batch | 반복 SQL과 중간 규모 batch |
-| Append API | 지속적인 TAG·LOG 대량 입력 |
-| TRANSACTION transaction | 원자성이 필요한 관계형 DML |
-| machloader·csvimport | 큰 파일의 일괄 적재 |
-
-Collector의 반복 파일 수집과 SDK별 입력 경로는
+입력 경로와 SDK·table type별 지원 범위는
 [데이터 입력과 반출](/dbms/development-tools-integration/data-input-load-export/)에서 선택하고,
 이 페이지에서는 선택한 경로의 처리량과 지연만 조정합니다.
 
@@ -40,23 +32,16 @@ Collector의 반복 파일 수집과 SDK별 입력 경로는
 
 ## Append 운영
 
-- query connection과 Append connection을 분리합니다.
-- 대상 table의 컬럼 순서와 타입을 metadata로 확인합니다.
-- flush와 close의 성공·실패 건수를 기록합니다.
-- error callback·ack를 소비하지 않아 오류가 누적되지 않도록 합니다.
-- 재연결 뒤 이전 batch를 다시 보낼 때 중복 정책을 적용합니다.
-- 여러 Appender가 같은 key를 보낼 때 ordering 요구사항을 정의합니다.
-
-SDK별 코드는 [11장 개발 및 애플리케이션 연동](/dbms/development-tools-integration/)을 참고합니다.
+Append lifecycle·오류·중복 처리 계약은
+[공통 연동 개념](/dbms/development-tools-integration/concepts-common/#append-api-batch)과
+[SDK Append matrix](/dbms/development-tools-integration/sdk-support-scope/#append-table-type-matrix)를
+따릅니다. 이 페이지에서는 batch 크기, connection 수, rows/s와 tail latency만 측정합니다.
 
 ## 파일 적재
 
-machloader와 csvimport는 작은 표본 파일로 delimiter, encoding, NULL, DATETIME을 먼저
-검증합니다. 운영 실행에서는 log와 bad file을 보존하고 exit code, 입력·실패 건수, 대상
-table의 최종 시간 범위를 확인합니다.
-
-명령과 옵션은 [데이터 입력과 반출](/dbms/development-tools-integration/data-input-load-export/)을
-참고합니다.
+파일 형식 검증, bad file, exit code와 최종 row 확인은
+[데이터 입력과 반출](/dbms/development-tools-integration/data-input-load-export/)을 정본으로
+사용합니다. 여기서는 같은 검증이 끝난 workload의 성능만 비교합니다.
 
 ## 병목 분류
 

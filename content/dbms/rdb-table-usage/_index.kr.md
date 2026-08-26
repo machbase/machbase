@@ -18,7 +18,6 @@ TRANSACTION 테이블은 관계형 업무 데이터와 트랜잭션 처리가 �
 | [인덱스와 성능](./index-performance/) | PRIMARY KEY·UNIQUE INDEX·일반·JSON path 인덱스와 튜닝 |
 | [운영과 데이터 생명주기](./operations-lifecycle/) | 데이터 관리와 운영 절차 |
 | [제약, 오류, 문제 해결](./constraints-errors-troubleshooting/) | Edition 제한, 기능 제약, 오류 대응 |
-| [활용 패턴과 시나리오](./patterns-scenarios/) | 주문 관리, 재고, 설비 이력 등 실무 예시 |
 | [트랜잭션](./transaction/) | BEGIN/COMMIT/ROLLBACK, 배치 INSERT |
 | [잠금, 충돌, busy timeout](./locking-conflict-timeout/) | 동시 쓰기 충돌, 세션 timeout, 진단과 재시도 |
 | [JOIN과 관계형 조회 설계](./join-relational-query/) | TRANSACTION-LOOKUP, TRANSACTION-TAG, TRANSACTION-TRANSACTION JOIN |

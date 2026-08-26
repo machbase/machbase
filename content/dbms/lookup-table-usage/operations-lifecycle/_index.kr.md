@@ -39,6 +39,11 @@ LOOKUP 데이터는 생성, 입력, 갱신, 참조, 백업, 복구의 흐름으�
 4. 필요한 경우 `EXEC TABLE_REFRESH(table_name)`을 실행합니다.
 5. 대표 조회 쿼리로 반영 여부를 확인합니다.
 
+`TABLE_REFRESH`는 일반 SQL DML 직후마다 실행하는 명령이 아닙니다. 영속 LOOKUP 내용을 runtime
+memory table에 다시 반영해야 할 때 사용하며, 이름 범위·권한·오류 계약은
+[EXEC procedure 정본](/dbms/reference/sql/syntax-dictionary-sql/execute-procedure-syntax/#table-refresh)을
+참고합니다.
+
 ```sql
 SELECT *
 FROM sensor_master
@@ -66,52 +71,11 @@ WHERE site = 'SEOUL'
 
 ## 백업·복구 지원 범위
 
-LOOKUP 테이블은 디스크에 영속 저장되며 데이터베이스 백업에 포함됩니다.
-
-## 백업 포함 여부
-
-| 테이블 타입 | 데이터베이스 백업 포함 |
-|-----------|-------------------|
-| TAG | O |
-| LOG | O |
-| TRANSACTION | O |
-| **LOOKUP** | **O** |
-| VOLATILE | X (메모리 전용) |
-
-## 백업
-
-```sql
--- LOOKUP 테이블 데이터는 전체 백업에 자동 포함
-BACKUP DATABASE INTO DISK = '/backup/machbase_20240101';
-```
-
-## 복구
-
-```bash
-# 데이터베이스 복원 시 LOOKUP 테이블 데이터도 함께 복원
-machadmin -r '/backup/machbase_20240101'
-```
-
-## 마운트를 통한 조회
-
-```sql
--- 백업을 마운트하여 LOOKUP 테이블 데이터 조회
-MOUNT DATABASE '/backup/machbase_20240101' TO old_db;
-
-SELECT * FROM old_db.country_code;
-
-UMOUNT DATABASE old_db;
-```
-
-## 주의사항
-
-- LOOKUP 테이블은 서버 재시작 후에도 데이터가 유지됩니다.
-- 서버 기동 시 모든 LOOKUP 행과 인덱스를 메모리에 구성하므로 데이터 규모에 따라 기동 시간과
-  메모리 사용량이 증가합니다.
-- VOLATILE 테이블과 달리 데이터 손실 위험이 없습니다.
-- 대용량 LOOKUP 테이블은 백업 시간에 영향을 줄 수 있습니다.
-- LOOKUP 테이블과 VOLATILE 테이블은 메모리 한도 설정의 영향을 받습니다. LOOKUP에는 서버
-  메모리에 상주시킬 수 있는 규모의 참조 데이터를 저장합니다.
+LOOKUP은 disk에 영속 저장되고 database backup에 포함되며, restore 뒤 row를 memory table과
+index로 다시 구성합니다.
+공통 BACKUP·RESTORE·MOUNT 명령과 Edition 범위는
+[백업·복원·마운트](/dbms/operations-configuration-recovery/backup-restore-mount/)를 정본으로
+사용합니다. 복구 뒤 대표 key와 JOIN 결과를 검증합니다.
 
 <a id="lifecycle-lookup-monitoring"></a>
 

@@ -1,6 +1,6 @@
 ---
-title: '8.11 잠금, 충돌, busy timeout'
-weight: 110
+title: '8.10 잠금, 충돌, busy timeout'
+weight: 100
 toc: true
 ---
 

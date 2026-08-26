@@ -47,7 +47,7 @@ Warehouse, Lookup 노드로 역할을 분리합니다.
 | 기능 | Standard Edition | Cluster Edition |
 | --- | --- | --- |
 | LOG/TAG/LOOKUP 테이블 | 모두 지원 | 모두 지원 |
-| VOLATILE 테이블 | 지원 | 미지원 |
+| VOLATILE 테이블 | 지원 | 지원 |
 | TRANSACTION 테이블 | 지원 | 미지원 |
 | ROLLUP | 지원 | 지원 |
 | Retention Policy | 지원 | 지원 |
@@ -56,8 +56,9 @@ Warehouse, Lookup 노드로 역할을 분리합니다.
 | 수평 확장 (노드 추가) | 불가 | 가능 |
 | 자동 장애 조치 | 불가 | Coordinator가 감시 |
 
-TRANSACTION 테이블과 VOLATILE 테이블, Restore/Mount는 Standard Edition 전용 기능입니다. Cluster
-Edition에서는 관련 구문이 거부됩니다.
+TRANSACTION 테이블과 Restore/Mount는 Standard Edition 전용 기능입니다. VOLATILE 테이블은
+두 Edition에서 지원하지만 서버·노드 lifecycle에 따른 데이터 소멸 범위는 배포 구성에서
+별도로 검증해야 합니다.
 
 ### 선택 기준
 
@@ -77,7 +78,7 @@ Edition에서는 관련 구문이 거부됩니다.
 
 ### 다음 읽을 내용
 
-- [기존 RDBMS와의 차이](/dbms/core-concepts/concepts-edition/#differences-rdbms) -- Machbase 설계 철학의 전체 맥락
+- [기존 RDBMS와의 차이](/dbms/core-concepts/concepts/#differences-rdbms) -- Machbase 설계 철학의 전체 맥락
 - [Machbase 아키텍처 개요](/dbms/core-concepts/storage-execution-architecture/#architecture-machbase) -- Standard/Cluster 구성 개요
 
 

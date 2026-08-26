@@ -40,6 +40,12 @@ CREATE RETENTION policy_name
     INTERVAL interval_value {DAY|HOUR|MIN|SEC};
 ```
 
+`DURATION`은 월부터 초까지, `INTERVAL`은 일부터 초까지 지정할 수 있습니다. `MONTH`는 달력
+월이 아니라 고정 30일이므로 법적 보관처럼 달력 경계가 중요한 정책은 `DAY` 단위로 환산하고
+실제 삭제 기준을 검증합니다. 정확한 parser 문법과 적용 가능한 table type은
+[RETENTION 문법](/dbms/reference/sql/syntax-dictionary-sql/retention-syntax/)을 정본으로
+사용합니다.
+
 예를 들어 30일을 보존하고 하루마다 삭제 대상을 처리하는 정책은 다음과 같습니다.
 
 ```sql

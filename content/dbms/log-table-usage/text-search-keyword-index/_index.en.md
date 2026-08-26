@@ -3,6 +3,14 @@ title: '7.11 Text Search and KEYWORD Index'
 weight: 110
 toc: true
 ---
+
+<a id="regex"></a>
+<a id="regexp-not"></a>
+<a id="regex-regexp-not"></a>
+<a id="regexp-like"></a>
+<a id="regex-regexp-like"></a>
+<a id="search-not"></a>
+<a id="like-not"></a>
 English structure placeholder. Korean content is authoritative for this restructuring pass.
 
 

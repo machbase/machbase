@@ -5,7 +5,9 @@ weight: 40
 toc: true
 ---
 
-PVO(Parsed, Validated, Optimized) Cache는 SQL 파싱 및 최적화 결과(실행 계획)를 캐시하여 반복 실행 쿼리의 처리 속도를 높입니다. Standard Edition에서만 동작합니다.
+PVO Statement Cache는 SQL 파싱·검증·최적화 결과와 실행 계획을 재사용하여 반복 SQL의
+처리 비용을 줄입니다. 공개 근거가 없는 약어 확장을 문서에서 정의하지 않습니다. Standard
+Edition에서만 동작합니다.
 
 ## 프로퍼티 목록
 

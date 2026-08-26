@@ -50,6 +50,7 @@ identifier. It does not apply to Append or bulk-file input. See
 [ROWID](/dbms/reference/sql/rowid/) for SQL and table constraints.
 
 <a id="support-scope-sdk-append"></a>
+<a id="append-table-type-matrix"></a>
 
 ## Append API
 

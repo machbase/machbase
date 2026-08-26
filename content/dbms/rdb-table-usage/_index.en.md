@@ -18,7 +18,6 @@ This page mirrors the Korean chapter structure. Detailed English content will be
 | [Indexes and Performance](./index-performance/) | Primary key, unique, normal, and JSON path indexes and tuning |
 | [Operations and Data Lifecycle](./operations-lifecycle/) | Operational procedures and data management |
 | [Constraints, Errors, and Troubleshooting](./constraints-errors-troubleshooting/) | Edition limits, feature constraints, and error handling |
-| [Patterns and Scenarios](./patterns-scenarios/) | Practical RDB table usage patterns |
 | [Transactions](./transaction/) | `BEGIN`, `COMMIT`, `ROLLBACK`, and batch operations |
 | [Locks, Conflicts, and Busy Timeout](./locking-conflict-timeout/) | Lock checks, conflict prevention, and timeout settings |
 | [JOIN and Relational Query Design](./join-relational-query/) | RDB-LOOKUP, RDB-TAG, and RDB-RDB joins |

@@ -16,7 +16,7 @@ Machbase는 단일 서버용 **Standard Edition**과 다중 노드 수평 확장
 | LOG 테이블 | O | O | |
 | LOOKUP 테이블 | O | O | |
 | TRANSACTION 테이블 | O | X | Cluster Edition 미지원 |
-| VOLATILE 테이블 | O | X | Cluster Edition 미지원 |
+| VOLATILE 테이블 | O | O | 메모리 데이터의 node·restart lifecycle은 배포 구성에서 확인 |
 | **데이터 관리** | | | |
 | ROLLUP (기본) | O | O | |
 | Custom ROLLUP | O | X | Cluster Edition 미지원 |
@@ -31,15 +31,15 @@ Machbase는 단일 서버용 **Standard Edition**과 다중 노드 수평 확장
 | **확장성 및 HA** | | | |
 | 수평 확장 | X | O | Warehouse 노드 추가로 확장 |
 | HA (고가용성) | X | O | Broker/Warehouse 이중화 |
-| **Append API** | O | O | |
 | AUTH KEY 인증 | O | O | |
 
 ## Cluster Edition 제약 사항 요약
 
-Cluster Edition 미지원 기능은 주로 단일 노드 중심의 로컬 파일 작업과 트랜잭션 기반 기능입니다.
+Cluster Edition은 단일 노드 중심의 로컬 파일 작업과 TRANSACTION 기능에 제약이 있습니다.
 
 - **TRANSACTION 테이블**: 분산 환경에서 ACID 트랜잭션을 보장하는 TRANSACTION 테이블은 미지원. 트랜잭션이 필요한 데이터는 외부 RDBMS와 연동하십시오.
-- **VOLATILE 테이블**: 메모리 기반 임시 테이블로 노드 간 공유 불가.
+- **VOLATILE 테이블**: 생성·DML은 지원하지만 메모리 데이터는 node-local이며 노드 간 공유되지
+  않습니다. 접속 Broker·routing과 node restart에 따른 데이터 범위를 검증해야 합니다.
 - **MOUNT/UMOUNT**: 로컬 파일 시스템 기반 백업 마운트는 분산 환경에서 미지원.
 - **Custom ROLLUP / ROLLUP_REBUILD**: 분산 집계 구조 차이로 커스텀 롤업 재정의 및 재구축 미지원.
 

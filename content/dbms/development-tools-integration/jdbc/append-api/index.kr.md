@@ -23,10 +23,18 @@ JDBC에서는 `MachStatement` 확장 메서드로 사용합니다.
 | `getAppendSuccessCount()` | 성공한 행 수를 반환합니다. |
 | `getAppendFailureCount()` | 실패한 행 수를 반환합니다. |
 
-`executeAppendData()`가 성공하면 1 또는 2를 반환할 수 있습니다. 성공 여부는 반환값과
-최종 성공·실패 건수를 함께 확인합니다.
+공개 `executeAppendData()`는 성공하면 `1`을 반환하고 유효하지 않은 내부 결과에는
+`SQLException`을 던집니다. 최종 성공·실패 건수와 callback도 함께 확인합니다.
 
 ## 입력 예제
+
+```sql
+CREATE LOG TABLE sensor_data (
+    time DATETIME,
+    name VARCHAR(40),
+    value DOUBLE
+);
+```
 
 ```java
 import com.machbase.jdbc.MachStatement;

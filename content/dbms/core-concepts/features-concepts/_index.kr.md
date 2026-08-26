@@ -1,8 +1,11 @@
 ---
 type: docs
-title: '2.3 주요 기능 개념'
+title: '2.3 주요 기능과 용어 구분'
 weight: 30
 toc: true
+aliases:
+  - /dbms/core-concepts/terminology-distinction/
+  - /dbms/reference/ai-agent-reference/terminology-disambiguation/
 ---
 Machbase DBMS의 장기 데이터 운영에 필요한 ROLLUP, Retention Policy, Backup·Restore·Mount의
 역할과 선택 기준을 설명합니다. 생성 구문과 운영 절차는 각 기능의 상세 문서에서 다룹니다.
@@ -39,6 +42,7 @@ Policy로 별도 설계하고, TAG 데이터를 수정했다면 해당 범위의
 참고하십시오.
 
 <a id="role-retention-policy"></a>
+<a id="retention-vs-delete-truncate"></a>
 
 ## Retention Policy의 역할
 
@@ -61,6 +65,7 @@ TRANSACTION 테이블의 수명 관리는 해당 테이블이 지원하는 명�
 참고하십시오.
 
 <a id="concepts-backup-restore-mount"></a>
+<a id="backup-vs-restore-mount"></a>
 
 ## Backup·Restore·Mount의 관계
 
@@ -81,3 +86,13 @@ Backup은 복구 가능성을 보장하지 않습니다. 정기적으로 Mount �
 참고하십시오. 여러 logical database를 운용한다면
 [다중 데이터베이스 운영](/dbms/operations-configuration-recovery/multi-database/)도 함께
 확인하십시오.
+
+<a id="machloader-vs-csvimport-csvexport-tagmetaimport"></a>
+<a id="load-data-infile-vs-machloader"></a>
+<a id="ingestion-sdk-append-vs-sql-collector"></a>
+
+## 입력 경로 비교
+
+SDK, loader와 Collector의 선택 기준은
+[데이터 입력과 반출](/dbms/development-tools-integration/data-input-load-export/#machloader-vs-csvimport-csvexport-tagmetaimport)로
+이동했습니다.

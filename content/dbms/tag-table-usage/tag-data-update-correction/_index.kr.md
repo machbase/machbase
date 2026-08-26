@@ -1,6 +1,6 @@
 ---
-title: '5.12 TAG data UPDATE와 데이터 보정'
-weight: 120
+title: '5.11 TAG data UPDATE와 데이터 보정'
+weight: 110
 toc: true
 ---
 

@@ -66,7 +66,7 @@ ON DUPLICATE KEY UPDATE SET state = 'ONLINE', updated_at = NOW;
 VOLATILE 테이블은 메모리에만 존재하며, 서버 재시작 시 데이터가 소멸됩니다. 여러 세션이
 공유하되 재시작 후 복구할 필요가 없는 상태나 캐시 용도로 활용합니다.
 
-- **[활용 사례](/dbms/volatile-table-usage/patterns-scenarios/#use-cases-volatile)**
+- **[활용 사례](/dbms/volatile-table-usage/overview-use-criteria/#use-cases-volatile)**
 - **[영속성 차이·DDL](/dbms/volatile-table-usage/create-alter-drop/#differences-persistence-ddl)**
 - **[메모리 생명주기](/dbms/volatile-table-usage/operations-lifecycle/#lifecycle-memory)**
 - **[PRIMARY KEY 설계](/dbms/volatile-table-usage/table-structure-schema/#primary-key-design-primary-key)**

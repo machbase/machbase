@@ -59,7 +59,7 @@ Machbase에서 `.tgz` 패키지를 전달받은 경우:
 
 ```bash
 # example file name; your version may differ
-npm install ./machbase-ts-client-1.0.0.tgz
+npm install ./machbase-ts-client-<version>.tgz
 ```
 
 ### 설치 확인
@@ -69,7 +69,10 @@ node -e "const { createConnection } = require('@machbase/ts-client'); console.lo
 ```
 
 > **참고**: 이 클라이언트는 Node.js에서 TCP 소켓을 사용하며, 브라우저용 라이브러리(웹소켓 전송)를 제공하지 않습니다.
-> DBMS standard 소스의 패키지 버전은 `@machbase/ts-client` 1.0.1입니다.
+> NFX `cce422d2972` source tree의 `package.json`은 `@machbase/ts-client` 1.0.1입니다. 다만
+> named bind·nullable·PK·ROWID·TRANSACTION 기능 일부는 public 1.0.1 publish 뒤 같은 source
+> version 문자열 아래 추가되었습니다. npm version만으로 동일 기능을 가정하지 말고 artifact의
+> commit provenance를 확인하거나 이 NFX source에서 build하십시오.
 >
 > 이 문서의 기본 계정(`SYS`/`MANAGER`)은 로컬 테스트용 예시입니다. 운영 환경에서는 전용 계정과 비밀번호를 사용하십시오.
 
@@ -177,7 +180,7 @@ if (result.rowId !== undefined) {
 }
 ```
 
-ROWID가 없는 실행에는 `rowId` 속성이 없습니다. batch, Append, `INSERT ... SELECT`,
+ROWID가 없는 실행에는 `rowId` 값이 `undefined`입니다. batch, Append, `INSERT ... SELECT`,
 UPSERT의 차이는 [ROWID와 INSERT 결과 ID](/dbms/reference/sql/rowid/)를
 참고하십시오.
 
@@ -376,7 +379,7 @@ const appendResult = await conn.appendBatch(
   ],
   [
     [1, 'alpha', 0.5],
-    { values: [2, 'bravo', 1.25], arrivalTime: Date.now() * 1_000_000 },
+    { values: [2, 'bravo', 1.25], arrivalTime: BigInt(Date.now()) * 1_000_000n },
   ],
 );
 console.log('Appended rows:', appendResult.rowsAppended);
@@ -386,6 +389,8 @@ console.log('Appended rows:', appendResult.rowsAppended);
 
 - `rows`는 값 배열 또는 `{ values, arrivalTime }` 객체 배열을 받을 수 있습니다. `null`은 Machbase 센티널 값으로 자동 인코딩됩니다.
 - `options`는 `arrivalTime`(기본값 1개) 또는 `arrivalTimes`(행별 배열)를 지정할 수 있습니다.
+- epoch nanosecond를 직접 계산할 때는 먼저 `bigint`로 변환합니다. `number` 곱셈은 안전한
+  정수 범위를 넘습니다.
 
 반환값은 `{ table, rowsAppended, rowsFailed, message }` 형태입니다.
 

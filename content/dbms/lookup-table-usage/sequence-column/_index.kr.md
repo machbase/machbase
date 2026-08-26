@@ -19,7 +19,8 @@ LOOKUP 테이블의 SEQUENCE 컬럼 설정과 활용을 다룹니다.
 
 ## SEQUENCE 컬럼 선언
 
-SEQUENCE는 `LONG` 타입 컬럼에만 지정할 수 있습니다. PROPERTY 절의 `SEQUENCE` 파라미터로 시작값을 설정합니다.
+SEQUENCE는 `LONG` 또는 `INT64` 타입 컬럼에 지정할 수 있습니다. PROPERTY 절의 `SEQUENCE`
+파라미터로 시작값을 설정합니다.
 
 ```sql
 CREATE LOOKUP TABLE alarm_history (
@@ -82,6 +83,6 @@ WHERE seq = 101;
 
 ## 주의 사항
 
-- SEQUENCE 컬럼은 `LONG` 타입만 지원합니다.
+- SEQUENCE 컬럼은 `LONG`, `INT64` 타입을 지원합니다.
 - 시작값은 양수(`SEQUENCE=1` 이상)만 허용됩니다.
 - NEXTVAL()을 쓰지 않고 중복 값을 삽입하는 것도 허용되므로, 고유성 보장이 필요하면 PRIMARY KEY를 함께 지정합니다.

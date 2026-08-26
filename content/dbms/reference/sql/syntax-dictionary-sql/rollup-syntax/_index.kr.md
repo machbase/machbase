@@ -184,10 +184,14 @@ SELECT /*+ ROLLUP_TABLE(rollup_table_name) */
 | `MAX(col)` | 구간 최댓값 |
 | `SUM(col)` | 구간 합계 |
 | `COUNT(col)` | 구간 건수 |
-| `FIRST(col)` | 구간 첫 번째 값 |
-| `LAST(col)` | 구간 마지막 값 |
+| `FIRST(compare_expr, return_expr)` | 비교식 기준 첫 행의 반환식 값 |
+| `LAST(compare_expr, return_expr)` | 비교식 기준 마지막 행의 반환식 값 |
 
-> `FIRST()` / `LAST()` 를 사용하려면 `EXTENSION` 타입 ROLLUP이 존재해야 하며, `/*+ ROLLUP_TABLE(...) */` 힌트로 해당 테이블을 명시해야 합니다.
+> `FIRST()` / `LAST()`를 사용하려면 적용 가능한 `EXTENSION` ROLLUP이 필요합니다. EXTENSION
+> ROLLUP만 적용 가능한 경우 hint 없이도 선택될 수 있습니다. 여러 일반·조건·확장 후보 중
+> 특정 결과 집합을 고정해야 할 때 `/*+ ROLLUP_TABLE(...) */` hint를 사용합니다.
+> ROLLUP에서는 첫 번째 인자로 BASETIME 컬럼, 두 번째 인자로 집계 대상 컬럼을 사용하며
+> 반환 타입은 두 번째 인자의 타입입니다.
 
 ## 관련 문서
 

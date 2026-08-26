@@ -1,6 +1,6 @@
 ---
-title: '5.13 tagmetaimport and Metadata Bulk Import'
-weight: 130
+title: '5.12 tagmetaimport and Metadata Bulk Import'
+weight: 120
 toc: true
 ---
 English structure placeholder. Korean content is authoritative for this restructuring pass.

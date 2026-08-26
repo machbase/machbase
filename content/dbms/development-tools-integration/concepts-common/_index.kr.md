@@ -123,17 +123,11 @@ LOG·TAG Append를 같은 rollback 단위로 가정하지 않습니다.
 
 ## Append API와 batch
 
-| 방식 | 적합한 작업 | 확인할 결과 |
-|------|-------------|-------------|
-| 단건 INSERT | 소량 입력, 즉시 오류 확인 | 영향 행 수, generated ID |
-| prepared batch | 중간 규모 반복 SQL | batch 항목별 결과·오류 |
-| Append API | 지속적인 TAG·LOG 대량 입력 | ack, 성공·실패 건수, flush·close 결과 |
-| 파일 도구 | 큰 파일의 일괄 적재 | 로그, bad file, 입력·실패 건수 |
-
-Append connection은 일반 query connection과 분리합니다. 컬럼 순서와 타입을 테이블
-스키마에 맞추고, flush와 close의 의미는 해당 SDK 문서를 기준으로 합니다. 지원 SDK는
-[SDK별 APPEND 지원 범위](../sdk-support-scope/#support-scope-sdk-append)를
-참고합니다.
+입력 방식 선택과 결과 확인 항목은 [데이터 입력과 반출](../data-input-load-export/)에서,
+client·table type별 Append gate는
+[SDK Append matrix](../sdk-support-scope/#append-table-type-matrix)에서 다룹니다. 이 페이지에는
+공통 원칙만 유지합니다. Append connection은 일반 query connection과 분리하고 flush·close와
+실패 row를 확인합니다.
 
 <a id="error-handling-retry"></a>
 

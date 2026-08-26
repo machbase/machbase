@@ -5,6 +5,8 @@ toc: true
 aliases:
   - /dbms/volatile-table-usage/on-duplicate-key-update/
 ---
+
+<a id="on-duplicate-key-update"></a>
 English structure placeholder. Korean content is authoritative for this restructuring pass.
 
 

@@ -2,6 +2,9 @@
 title: '10.1 개요와 사용 기준'
 weight: 10
 toc: true
+aliases:
+  - /dbms/volatile-table-usage/patterns-scenarios/
+  - /dbms/volatile-table-usage/state-cache-temporary-aggregation/
 ---
 
 VOLATILE 테이블은 데이터를 메모리에 저장하는 임시 테이블입니다. 서버가 재시작되면 데이터가 소멸하므로, 재생성 가능한 최신 상태, 임시 집계, 세션 간 공유 캐시 용도로 사용합니다.
@@ -33,6 +36,7 @@ VOLATILE 테이블의 주요 특성은 다음과 같습니다.
 | 백업 | 지원하지 않음 |
 
 <a id="overview-volatile-use-criteria"></a>
+<a id="use-cases-volatile"></a>
 
 ## 사용 기준
 
@@ -54,6 +58,18 @@ SELECT *
 FROM sensor_latest
 WHERE sensor_id = 'TEMP-01';
 ```
+
+### 활용 패턴
+
+| 패턴 | key | 재생성 원본 | 권장 만료 방식 |
+|------|-----|-------------|----------------|
+| 장비 최신 상태 | 장비 ID | TAG 또는 LOG | 같은 key 갱신 |
+| 짧은 주기 집계 | 대상과 시간 bucket | TAG 또는 LOG | bucket 교체 또는 재구성 |
+| 작업 진행 상태 | 작업 ID | 작업 시스템 | 완료 후 key 삭제 |
+| 임시 조회 cache | 요청 또는 객체 ID | 영속 table | 전체 재구성 |
+
+최신 상태 갱신은 [데이터 입력과 변경](../data-input-mutation/)을, 임시 집계는
+[조회와 분석](../query-analysis/)을 참고합니다.
 
 <a id="overview-volatile-not-use"></a>
 

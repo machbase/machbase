@@ -47,6 +47,7 @@ SQL 문법 사전은 Machbase에서 지원하는 모든 SQL 구문의 BNF 표기
 | [ROLLUP REBUILD](./rollup-rebuild-syntax/) | 운영 | 롤업 결과 재계산 |
 | [DATABASE](./database-syntax/) | DDL/세션 | 논리 데이터베이스 생성·선택·삭제와 상태 확인 |
 | [AUTO_INCREMENT](./auto-increment-syntax/) | DDL | 64비트 PRIMARY KEY 자동값 생성 |
+| [EXEC procedure / SHOW ROLLUPGAP](./execute-procedure-syntax/) | 제어 | table flush·refresh와 ROLLUP 제어·상태 확인 |
 
 ## BNF 표기 규칙
 

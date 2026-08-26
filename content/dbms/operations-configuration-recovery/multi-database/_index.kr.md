@@ -68,6 +68,10 @@ prepared statement와 Appender가 있는 상태에서 전환하지 마십시오.
 
 ## 애플리케이션 연결
 
+<a id="94-python"></a>
+<a id="95-nodejs"></a>
+<a id="97-net"></a>
+
 SDK마다 초기 database를 지정하는 option 이름과 pool reset 동작이 다릅니다. 각 SDK의
 connection 문서에서 지원 여부를 확인하고, connection을 빌린 직후 다음 값을 검증합니다.
 

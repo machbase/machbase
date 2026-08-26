@@ -1,5 +1,5 @@
 ---
-title: '7.12 Regex and Network Type Queries'
+title: '7.12 Network Type Queries'
 weight: 120
 toc: true
 ---

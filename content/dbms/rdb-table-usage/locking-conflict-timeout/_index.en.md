@@ -1,6 +1,6 @@
 ---
-title: '8.11 Locks, Conflicts, and Busy Timeout'
-weight: 110
+title: '8.10 Locks, Conflicts, and Busy Timeout'
+weight: 100
 toc: true
 ---
 English structure placeholder. Korean content is authoritative for this restructuring pass.

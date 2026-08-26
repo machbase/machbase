@@ -14,9 +14,8 @@ Machbase의 데이터·시간·저장·Edition 모델을 이해합니다. 이 �
 |---|---|
 | [데이터 모델 개념](concepts/) | 시계열 데이터, 테이블 타입 역할, append와 시간 모델 |
 | [저장 및 실행 구조](storage-execution-architecture/) | architecture, 컬럼 저장, index와 cache 원리 |
-| [주요 기능 개념](features-concepts/) | ROLLUP, Retention, Backup·Restore·Mount의 역할 |
+| [주요 기능과 용어 구분](features-concepts/) | ROLLUP, Retention, Backup·Restore·Mount의 역할과 차이 |
 | [Edition 개념](concepts-edition/) | Standard와 Cluster의 구조·선택 기준 |
-| [운영 개념 구분](terminology-distinction/) | Retention·삭제, Backup·Restore·Mount 구분 |
 
 개념을 확인한 뒤 [테이블 타입 선택과 스키마 설계](/dbms/data-modeling-table-design/)로
 이동하십시오.

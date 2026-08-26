@@ -25,7 +25,6 @@ Machbase는 용도에 따라 다섯 가지 테이블 유형을 제공합니다. 
 |------|:---:|:---:|:------:|:--------:|:---:|
 | **쓰기** | | | | | |
 | INSERT (SQL) | O | O | O | O | O |
-| Append API | O | O | O | X | O |
 | **수정/삭제** | | | | | |
 | UPDATE | △ | X | O | O | O |
 | DELETE | O | O | O | O | O |
@@ -50,6 +49,10 @@ Machbase는 용도에 따라 다섯 가지 테이블 유형을 제공합니다. 
 | VIEW | O | O | O | O | O |
 
 > 기호: O = 지원, X = 미지원, △ = 일부 지원 또는 제약 있음
+
+Append는 client API 경로마다 table-type gate가 다르므로 이 표에서 단일 지원값으로
+일반화하지 않습니다. [SDK Append matrix](/dbms/development-tools-integration/sdk-support-scope/#append-table-type-matrix)를
+정본으로 사용합니다.
 
 DECIMAL은 모든 public 테이블 타입의 공통 exact fixed-point 타입입니다. `NUMERIC`, `DEC`,
 `FIXED`, `NUMBER`는 DECIMAL alias이며, precision은 최대 65, scale은 최대 30입니다. 상세 규칙은
@@ -94,13 +97,6 @@ LOOKUP과 VOLATILE 테이블의 각 DML은 statement 단위로 반영됩니다. 
 ### JSON 컬럼 지원 범위
 
 JSON 컬럼은 TAG, LOG, LOOKUP, TRANSACTION 테이블에서 지원합니다. VOLATILE 테이블은 JSON 타입 컬럼 생성을 지원하지 않습니다. LOOKUP 테이블의 JSON 컬럼은 일반 컬럼으로 사용할 수 있지만 primary key로는 사용할 수 없습니다. 상세 내용은 [JSON 타입의 테이블 타입별 지원 범위](../../sql/type-data-types-dictionary/table-types-type-support-scope-json/)를 참고하십시오.
-
-### Append API 대상 테이블
-
-Append API는 TAG, LOG, LOOKUP 테이블에 사용할 수 있습니다. LOOKUP 테이블은 중복 키 처리
-정책(`LOOKUP_APPEND_UPDATE_ON_DUPKEY`)을 함께 확인하십시오. TRANSACTION 테이블은 지원되는 client의
-appendBatch 또는 append stream 경로를 사용하며, VOLATILE 테이블에는 일반 `INSERT` SQL을
-사용합니다.
 
 ## TAG 테이블 최신값과 시간 범위 조회
 

@@ -88,8 +88,18 @@ Warehouse 그룹 내 복제가 정상 동작하는지 간단한 INSERT로 확인
 CREATE LOG TABLE cluster_check_test (id INTEGER, ts DATETIME);
 INSERT INTO cluster_check_test VALUES (1, NOW);
 
--- 각 Warehouse 노드에 직접 접속하여 데이터 존재 여부 확인
+-- Broker에서 입력 결과 확인
 SELECT COUNT(*) FROM cluster_check_test;
+```
+
+Warehouse 직접 SQL 접속은 일반 애플리케이션 경로가 아니라 replication 진단용 관리 절차입니다.
+`machcoordinatoradmin --cluster-status`에서 같은 replication group의 active·standby peer를
+확인한 뒤, 필요한 경우에만 각 peer의 native port에 관리 계정으로 접속해 동일한 조회 결과를
+비교합니다. 서로 다른 Warehouse group의 모든 노드가 같은 행을 가진다고 가정하지 마십시오.
+
+검증이 끝나면 Broker 연결에서 테이블을 정리합니다.
+
+```sql
 DROP TABLE cluster_check_test;
 ```
 

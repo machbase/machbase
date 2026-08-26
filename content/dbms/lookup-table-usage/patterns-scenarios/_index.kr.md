@@ -27,6 +27,8 @@ LOOKUP 테이블은 다음과 같은 데이터를 저장하는 데 적합합니�
 
 <a id="lookup-pattern-code-table"></a>
 
+<a id="patterns-reference-design"></a>
+
 ## 코드 테이블
 
 ```sql

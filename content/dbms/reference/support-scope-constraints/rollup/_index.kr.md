@@ -24,9 +24,9 @@ aliases:
 | 확장 ROLLUP (EXTENSION) | O | O |
 | Rollup Rebuild (`EXEC ROLLUP_REBUILD`) | O | X |
 
-> **Custom Rollup과 Rollup Rebuild는 Cluster Edition에서 지원하지 않습니다.** Cluster
-> Edition에서 Custom Rollup을 생성하면 `ERR_QP_CUSTOM_ROLLUP_NOT_SUPPORTED_IN_CLUSTER`
-> 오류가 반환됩니다.
+> **Custom ROLLUP과 ROLLUP_REBUILD는 Cluster Edition에서 지원하지 않습니다.** 지원되지 않는
+> 기능을 실행하면 서버가 오류를 반환합니다. 내부 symbolic error 이름을 사용자 계약으로
+> 사용하지 마십시오.
 >
 > 기본 ROLLUP 스레드는 Cluster Edition에서 각 노드에서 독립적으로 동작합니다.
 
@@ -59,9 +59,8 @@ aliases:
 ### ROLLUP 관련 권한
 
 ```sql
--- ROLLUP 생성/삭제 권한 (예시)
-GRANT CREATE ROLLUP ON *.* TO rollup_user;
-GRANT DROP ROLLUP ON *.* TO rollup_user;
+-- 대상 database에서 ROLLUP 객체를 생성·삭제할 권한
+GRANT CREATE, DROP ON DATABASE MACHBASEDB TO rollup_user;
 ```
 
 권한 체계는 [권한 관리](/dbms/security-access-control/privileges/)를 참고하십시오.

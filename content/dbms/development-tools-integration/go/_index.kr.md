@@ -42,7 +42,7 @@ cursor와 Appender는 database 선택 후 생성하고, 사용 중인 서버·SD
 ### 설치
 
 ```sh
-go get github.com/machbase/neo-client@latest
+go get github.com/machbase/neo-client@v1.8.4
 ```
 
 ### Import
@@ -62,14 +62,12 @@ import (
 
 ### 설정
 
-`machgo.Config`를 사용해 호스트/포트 및 동시성 옵션을 설정합니다.
+`machgo.Config`를 사용해 호스트와 포트를 설정합니다.
 
 ```go
 conf := &machgo.Config{
-    Host:         "127.0.0.1", // Machbase 서버 호스트
-    Port:         5656,          // Machbase 네이티브 포트
-    MaxOpenConn:  0,             // 최대 연결 임계값
-    MaxOpenQuery: 0,             // 최대 쿼리 동시성 제한
+    Host: "127.0.0.1",
+    Port: 5656,
 }
 
 // 데이터베이스 인스턴스 생성
@@ -77,30 +75,12 @@ mdb, err := machgo.NewDatabase(conf)
 if err != nil {
     panic(err)
 }
+mdb.SetMaxOpenConns(32)
 ```
 
-#### 설정 매개변수
-
-| 매개변수 | 설명 | 값 |
-|-----------|-------------|--------|
-| `MaxOpenConn` | 최대 오픈 연결 수 | `< 0`: 무제한<br>`0`: CPU 수 × 팩터<br>`> 0`: 지정된 제한 |
-| `MaxOpenConnFactor` | MaxOpenConn이 0일 때의 승수 | 기본값: 1.5 |
-| `MaxOpenQuery` | 최대 동시 쿼리 수 | `< 0`: 무제한<br>`0`: CPU 수 × 팩터<br>`> 0`: 지정된 제한 |
-| `MaxOpenQueryFactor` | MaxOpenQuery가 0일 때의 승수 | 기본값: 1.5 |
-
-#### FlowControl 동작
-
-`MaxOpenConn`과 `MaxOpenQuery`는 FlowControl 제한값입니다.
-둘 중 하나라도 `-1`로 설정하면 해당 제한이 비활성화됩니다(해당 축의 FlowControl 없음).
-
-```go
-conf := &machgo.Config{
-    Host:         "127.0.0.1",
-    Port:         5656,
-    MaxOpenConn:  -1, // connection FlowControl 비활성화
-    MaxOpenQuery: -1, // query FlowControl 비활성화
-}
-```
+v1.8.4의 `Config.MaxOpenConn`, `MaxOpenQuery`와 factor field는 deprecated이며
+`NewDatabase()`가 사용하지 않습니다. 연결 수는 생성 뒤 `SetMaxOpenConns()`로 제한하고,
+query 동시성은 애플리케이션에서 제어합니다.
 
 ### 연결 설정
 
@@ -189,6 +169,18 @@ defer connC.Close()
 {{< callout type="warning" >}}
 리소스 해제를 위해 연결에는 항상 `Close()`를 호출하십시오.
 {{< /callout >}}
+
+## 공통 예제 schema
+
+이후 native query·INSERT·Appender 예제는 다음 TAG table을 먼저 생성한 상태를 전제로 합니다.
+
+```sql
+CREATE TAG TABLE example_table (
+    name VARCHAR(40) PRIMARY KEY,
+    time DATETIME BASETIME,
+    value DOUBLE SUMMARIZED
+);
+```
 
 ## 데이터베이스 작업
 
@@ -312,7 +304,9 @@ Appender flush 예시:
 
 ```go
 if flusher, ok := apd.(api.Flusher); ok {
-    flusher.Flush()
+    if err := flusher.Flush(); err != nil {
+        panic(err)
+    }
 }
 ```
 
@@ -338,10 +332,8 @@ import (
 
 func main() {
     conf := &machgo.Config{
-        Host:         "127.0.0.1",
-        Port:         5656,
-        MaxOpenConn:  -1,
-        MaxOpenQuery: -1,
+        Host: "127.0.0.1",
+        Port: 5656,
     }
 
     mdb, err := machgo.NewDatabase(conf)
@@ -575,7 +567,7 @@ Appender의 batch는 SQL 트랜잭션에 포함되지 않으며 batch 단위로 
 ### 설치
 
 ```sh
-go get github.com/machbase/neo-client@latest
+go get github.com/machbase/neo-client@v1.8.4
 ```
 
 ### Import
@@ -618,13 +610,18 @@ server=tcp://sys:manager@127.0.0.1:5656;fetch_rows=777;statement_cache=off;io_me
 |----|------|
 | `server`       | `tcp://user:password@127.0.0.1:5656` 형식의 서버 URL |
 | `host`, `port` | 서버 호스트와 포트를 별도로 지정 |
-| `user`         | 로그인 사용자 |
-| `password`     | 로그인 비밀번호 |
+| `user`, `uid` | 로그인 사용자 |
+| `password`, `pwd` | 로그인 비밀번호 |
+| `database`, `db` | initial database |
+| `auth_mode` | `password` 또는 `challenge` |
+| `auth_key_file`, `auth_key_pem` | challenge 인증 private key |
 | `fetch_rows`   | 한 번의 round trip에서 가져올 행 수 |
-| `statement_cache` | statement cache 모드: `auto`, `on`, `off` |
+| `statement_cache`, `statementcache` | statement cache 모드: `auto`, `on`, `off` |
 | `io_metrics`   | I/O metrics 활성화 여부: `true`, `false` |
 | `alternative_servers` | `127.0.0.2:5656` 형식의 대체 서버 주소 |
-| `alternative_host`, `alternative_port` | 대체 서버 호스트와 포트를 별도로 지정 |
+
+목록에 없는 key는 parse 오류를 반환합니다. AUTH KEY는 neo-client v1.5.0 이상에서 사용할 수
+있으며 private key를 log에 기록하지 않습니다.
 
 `database/sql`의 pool에서는 요청마다 다른 physical connection이 선택될 수 있습니다.
 current database가 유지된다고 가정하지 말고, 다중 database가 필요한 애플리케이션은

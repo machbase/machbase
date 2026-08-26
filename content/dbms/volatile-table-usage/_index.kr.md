@@ -19,4 +19,3 @@ VOLATILE 테이블은 서버 프로세스 범위에서 공유되는 메모리 �
 | [인덱스와 성능](./index-performance/) | Red-Black 트리 인덱스, PK 인덱스 |
 | [운영과 데이터 생명주기](./operations-lifecycle/) | 운영 절차와 데이터 관리 |
 | [제약, 오류, 문제 해결](./constraints-errors-troubleshooting/) | 기능 제약, 오류 대응 |
-| [활용 패턴과 시나리오](./patterns-scenarios/) | 캐시, 임시 집계, 상태 관리 실무 예시 |

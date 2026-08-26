@@ -1,6 +1,6 @@
 ---
-title: '6.14 ROLLUP 활용 시나리오'
-weight: 140
+title: '6.12 ROLLUP 활용 시나리오'
+weight: 120
 toc: true
 ---
 

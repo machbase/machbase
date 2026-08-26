@@ -1,6 +1,6 @@
 ---
-title: '8.14 TRANSACTION INSERT ON DUPLICATE KEY UPDATE'
-weight: 140
+title: '8.13 TRANSACTION INSERT ON DUPLICATE KEY UPDATE'
+weight: 130
 toc: true
 ---
 
@@ -419,8 +419,13 @@ ON CONFLICT (device_id) DO UPDATE SET status = 'ALARM';
 
 대상 테이블 제한은 다음과 같습니다.
 
-- TRANSACTION 테이블에서만 지원합니다.
-- LOG 테이블과 TAG 테이블에는 지원하지 않습니다.
+- 이 페이지는 TRANSACTION의 PRIMARY KEY·UNIQUE 충돌 동작만 다룹니다. 같은 SQL 형태는
+  LOOKUP과 VOLATILE의 PRIMARY KEY 충돌에도 지원되며 공통 문법은
+  [DML 사전](/dbms/reference/sql/syntax-dictionary-sql/dml-syntax/#on-duplicate-key-update)을
+  정본으로 사용합니다.
+- LOG와 TAG data row에는 지원하지 않습니다. TAG METADATA의 tag name 충돌 처리는
+  [DML 사전](/dbms/reference/sql/syntax-dictionary-sql/dml-syntax/#on-duplicate-key-update)을
+  참고합니다.
 - TRANSACTION 테이블이라도 PRIMARY KEY 또는 UNIQUE INDEX가 없으면 사용할 수 없습니다.
 - JSON path UNIQUE INDEX는 duplicate trigger로 사용하지 않습니다.
 

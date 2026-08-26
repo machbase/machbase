@@ -13,8 +13,8 @@ first if the table roles are unfamiliar.
 
 | Section | Scope |
 |---|---|
-| [Schema objects](schema-objects-definition/) | Tables, columns, types, constraints, indexes, and views |
 | [Choose a table type](table-types-selection-type/) | Decision flow and focused comparisons |
+| [Schema objects](schema-objects-definition/) | Tables, columns, types, constraints, indexes, and views |
 | [Data mutation policy](alter-data-mutation-policy/) | UPDATE, DELETE, and TRUNCATE boundaries |
 | [Anti-patterns](table-types-patterns-type-anti/) | Incorrect table and schema choices |
 | [Modeling patterns](patterns-modeling/) | Time-series, event, state, reference, and business models |

@@ -2,6 +2,8 @@
 title: '8.1 개요와 사용 기준'
 weight: 10
 toc: true
+aliases:
+  - /dbms/rdb-table-usage/patterns-scenarios/
 ---
 
 TRANSACTION 테이블은 Machbase에서 관계형 데이터 모델을 사용하기 위한 테이블 타입입니다. INSERT, SELECT, UPDATE, DELETE를 모두 사용하고, PRIMARY KEY와 보조 인덱스를 기반으로 업무 데이터, 마스터 데이터, 집계 결과를 관리합니다.
@@ -41,6 +43,7 @@ TRANSACTION 테이블의 주요 특성은 다음과 같습니다.
 | 에디션 | Standard Edition에서만 사용 |
 
 <a id="overview-rdb-use-criteria"></a>
+<a id="use-cases-rdb"></a>
 
 ## 사용 기준
 
@@ -52,6 +55,14 @@ TRANSACTION 테이블의 주요 특성은 다음과 같습니다.
 - TAG, LOG 테이블의 원본 데이터를 집계한 결과를 업무 테이블로 관리합니다.
 - JSON 컬럼과 JSON path 인덱스를 관계형 조회와 함께 사용해야 합니다.
 - 백업·마운트 대상에 포함되는 관계형 데이터를 관리합니다.
+
+| 적합한 데이터 유형 | 설명 |
+|--------------------|------|
+| 주문·거래 이력 | 상태 변경, 조회와 삭제 |
+| 설비 이력 | 점검 결과 수정과 이력 조회 |
+| 재고 관리 | 수량 갱신과 업무 key 조회 |
+| 관계형 참조 이력 | 명시적 transaction과 일반 관계형 DML |
+| 이벤트 상태 관리 | 상태 column UPDATE가 필요한 업무 |
 
 ```sql
 CREATE TRANSACTION TABLE inventory (

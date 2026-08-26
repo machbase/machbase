@@ -10,12 +10,11 @@ toc: true
 
 | 절 | 시나리오 | 정본으로 연결되는 내용 |
 |---|---|---|
-| 15.1 | [실시간 상태 대시보드](./state-status-real-time-dashboard/) | TAG 최신값과 상태 판정 |
-| 15.2 | [장비 마스터와 알람](./state-master-status-equipment-alarm/) | LOOKUP, TAG, LOG |
-| 15.3 | [TAG·TRANSACTION·LOG 조인](./join-tag-rdb-log/) | 이기종 테이블 조인 |
-| 15.4 | [대량 적재 파이프라인](./bulk-pipeline/) | loader와 Append 선택 |
-| 15.5 | [백업 데이터 조회](./backup-query-mount/) | BACKUP, MOUNT, UMOUNT |
-| 15.6 | [Collector 파일 적재](./file-ingestion-collector/) | 템플릿 등록과 결과 검증 |
+| 15.1 | [실시간 장비 상태와 알람](./state-master-status-equipment-alarm/) | LOOKUP 기준, TAG 최신값, LOG 알람 이력 |
+| 15.2 | [TAG·TRANSACTION·LOG 조인](./join-tag-rdb-log/) | 이기종 테이블 조인 |
+| 15.3 | [대량 적재 파이프라인](./bulk-pipeline/) | loader와 Append 선택 |
+| 15.4 | [백업 데이터 조회](./backup-query-mount/) | BACKUP, MOUNT, UMOUNT |
+| 15.5 | [Collector 파일 적재](./file-ingestion-collector/) | 템플릿 등록과 결과 검증 |
 
 공유 서버에서 실습할 때는 별도 논리 database를 사용하고, 완료 후 만든 객체와 database를
 삭제하십시오. 백업·MOUNT, Collector, Cluster 예제는 서비스와 파일 시스템에 영향을 주므로

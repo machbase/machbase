@@ -9,3 +9,6 @@ aliases:
 ---
 
 English structure placeholder. Korean content is authoritative for this restructuring pass.
+
+<a id="lifecycle-memory"></a>
+<a id="data-loss"></a>

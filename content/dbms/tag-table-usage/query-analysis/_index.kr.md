@@ -256,9 +256,6 @@ tag 테이블을 생성하면, tag ID별 통계 정보를 집계하는 가상 �
 
 
 ```bash
-Mach> CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED);
-Executed successfully.
-
 Mach> DESC v$tag_stat;
 [ COLUMN ]
 ----------------------------------------------------------------------------------------------------
@@ -296,9 +293,6 @@ select 예제는 다음과 같습니다.
 1. SUMMARIZED 컬럼이 존재하는 경우
 
 ```bash
-Mach> CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED);
-Executed successfully.
-
 Mach> INSERT INTO tag VALUES('tag-0', TO_DATE('2021-08-12'), 10);
 Mach> INSERT INTO tag VALUES('tag-0', TO_DATE('2021-08-13'), 10);
 Mach> INSERT INTO tag VALUES('tag-0', TO_DATE('2021-08-14'), 20);
@@ -343,73 +337,34 @@ NULL                            NULL                        NULL                
 ```
 
 
-### 힌트를 사용하여 검색 방향 지정
+### scan 방향 hint
 
-tag 테이블은 기본적으로 가장 오래된 레코드부터 반환합니다. 가장 최근 레코드부터 검색하려면 힌트로 검색 방향을 제어할 수 있습니다.
+기본 정방향과 최신 row 우선 역방향을 같은 schema에서 확인합니다.
 
-#### 정방향 검색
+```sql
+SELECT *
+  FROM tag
+ WHERE name = 'TAG_0001'
+ ORDER BY time
+ LIMIT 10;
 
-기본 동작이며, '/*+ SCAN_FORWARD(table_name) */' 힌트로 명시할 수도 있습니다.
+SELECT /*+ SCAN_FORWARD(tag) */ name, time, value
+  FROM tag
+ WHERE name = 'TAG_0001'
+ LIMIT 10;
 
-```bash
-Mach> SELECT * FROM tag WHERE t_name='TAG_99' LIMIT 10;
-T_NAME                T_TIME                          T_VALUE
---------------------------------------------------------------------------------------
-TAG_99                2017-01-01 00:00:49 500:000:000 0
-TAG_99                2017-01-01 00:01:39 500:000:000 1
-TAG_99                2017-01-01 00:02:29 500:000:000 2
-TAG_99                2017-01-01 00:03:19 500:000:000 3
-TAG_99                2017-01-01 00:04:09 500:000:000 4
-TAG_99                2017-01-01 00:04:59 500:000:000 5
-TAG_99                2017-01-01 00:05:49 500:000:000 6
-TAG_99                2017-01-01 00:06:39 500:000:000 7
-TAG_99                2017-01-01 00:07:29 500:000:000 8
-TAG_99                2017-01-01 00:08:19 500:000:000 9
-[10] row(s) selected.
-Elapsed time: 0.001
-
-Mach> SELECT /*+ SCAN_FORWARD(tag) */  * FROM tag WHERE t_name='TAG_99' LIMIT 10;
-T_NAME                T_TIME                          T_VALUE
---------------------------------------------------------------------------------------
-TAG_99                2017-01-01 00:00:49 500:000:000 0
-TAG_99                2017-01-01 00:01:39 500:000:000 1
-TAG_99                2017-01-01 00:02:29 500:000:000 2
-TAG_99                2017-01-01 00:03:19 500:000:000 3
-TAG_99                2017-01-01 00:04:09 500:000:000 4
-TAG_99                2017-01-01 00:04:59 500:000:000 5
-TAG_99                2017-01-01 00:05:49 500:000:000 6
-TAG_99                2017-01-01 00:06:39 500:000:000 7
-TAG_99                2017-01-01 00:07:29 500:000:000 8
-TAG_99                2017-01-01 00:08:19 500:000:000 9
-[10] row(s) selected.
-Elapsed time: 0.001
-Mach>
+SELECT /*+ SCAN_BACKWARD(tag) */ name, time, value
+  FROM tag
+ WHERE name = 'TAG_0001'
+ LIMIT 10;
 ```
 
-#### 역방향 검색
+hint가 없을 때의 기본 방향은
+[TABLE_SCAN_DIRECTION](/dbms/reference/configuration/dictionary-configuration/)을 참고합니다.
 
-'/*+ SCAN_BACKWARD(table_name) */' 힌트를 사용합니다.
+## 정리
 
-```bash
-Mach> SELECT /*+ SCAN_BACKWARD(tag) */ * FROM tag WHERE t_name='TAG_99' LIMIT 10;
-T_NAME                T_TIME                          T_VALUE
---------------------------------------------------------------------------------------
-TAG_99                2017-02-27 20:53:19 500:000:000 9
-TAG_99                2017-02-27 20:52:29 500:000:000 8
-TAG_99                2017-02-27 20:51:39 500:000:000 7
-TAG_99                2017-02-27 20:50:49 500:000:000 6
-TAG_99                2017-02-27 20:49:59 500:000:000 5
-TAG_99                2017-02-27 20:49:09 500:000:000 4
-TAG_99                2017-02-27 20:48:19 500:000:000 3
-TAG_99                2017-02-27 20:47:29 500:000:000 2
-TAG_99                2017-02-27 20:46:39 500:000:000 1
-TAG_99                2017-02-27 20:45:49 500:000:000 0
-[10] row(s) selected.
-Elapsed time: 0.001
-Mach>
+```sql
+DROP TABLE other_tag;
+DROP TABLE tag;
 ```
-
-#### 기본 스캔 방향 속성 설정
-
-[TABLE_SCAN_DIRECTION](/dbms/reference/configuration/dictionary-configuration/) 속성을 사용하여,
-SELECT 쿼리에 힌트가 없을 때 TAG 테이블 스캔 방향을 설정할 수 있습니다.

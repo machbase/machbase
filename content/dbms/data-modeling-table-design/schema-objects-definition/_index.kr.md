@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '4.1 스키마 객체 정의'
-weight: 10
+title: '4.2 스키마 객체 정의'
+weight: 20
 toc: true
 ---
 이 페이지는 테이블, 컬럼, 인덱스와 VIEW를 설계할 때 결정할 항목을 정리합니다. SQL 문법과

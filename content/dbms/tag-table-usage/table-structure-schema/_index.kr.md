@@ -2,6 +2,8 @@
 title: '5.2 테이블 구조와 스키마'
 weight: 20
 toc: true
+aliases:
+  - /dbms/tag-table-usage/time-distance-axis/
 ---
 
 
@@ -11,8 +13,8 @@ toc: true
 
 태그(센서) 이름을 `PRIMARY KEY`로, 시간 또는 거리 기준 컬럼을 축으로 대량의 시계열 데이터를 저장합니다.
 
-- **[시간축 TAG 테이블 설계](/dbms/tag-table-usage/time-distance-axis/#time-axis-design-tag)**
-- **[거리축 TAG 테이블 설계](/dbms/tag-table-usage/time-distance-axis/#distance-axis-design-tag)**
+- **[시간축 TAG 테이블 설계](#time-axis-design-tag)**
+- **[거리축 TAG 테이블 설계](#distance-axis-design-tag)**
 - **[활용 사례](/dbms/tag-table-usage/patterns-scenarios/#use-cases-tag)**
 - **[METADATA 설계](/dbms/tag-table-usage/tag-metadata/#metadata-design-tag)**
 - **[JSON METADATA 설계](/dbms/tag-table-usage/tag-metadata/#metadata-design-json)**
@@ -24,6 +26,36 @@ toc: true
 - **[LSL·USL 설계](/dbms/tag-table-usage/table-structure-schema/#tag-table-design-lsl-usl)**
 - **[제약 및 주의사항](/dbms/tag-table-usage/constraints-errors-troubleshooting/#limitations-tag)**
 - **[자동 중복 제거](/dbms/tag-table-usage/table-structure-schema/#tag-table-design-duplication-removal)**
+
+<a id="time-axis-design-tag"></a>
+
+### 시간축과 거리축 선택
+
+시간에 따라 발생한 계측값은 `DATETIME BASETIME`을 사용합니다. 특정 경로의 누적 위치처럼
+시간보다 거리 구간이 핵심이면 `LONG`, `ULONG` 또는 `DOUBLE BASEDISTANCE`를 사용합니다.
+한 TAG table은 두 축을 동시에 가질 수 없습니다.
+
+```sql
+CREATE TAG TABLE time_sensor (
+    name  VARCHAR(40) PRIMARY KEY,
+    time  DATETIME BASETIME,
+    value DOUBLE SUMMARIZED
+);
+```
+
+<a id="distance-axis-design-tag"></a>
+<a id="distance-axis-query-range"></a>
+
+```sql
+CREATE TAG TABLE rail_sensor (
+    name     VARCHAR(40) PRIMARY KEY,
+    distance DOUBLE BASEDISTANCE,
+    value    DOUBLE
+);
+```
+
+`DURATION`, ROLLUP과 시간 함수는 BASETIME에만 적용됩니다. 거리 범위 조회는 일반 비교와
+`BETWEEN`을 사용하며, 실행 예제는 [조회와 분석](../query-analysis/)을 참고합니다.
 
 <a id="tag-table-design-design-column"></a>
 
@@ -89,8 +121,8 @@ literal, 길이 제약과 드라이버 동작은 [Binary 컬럼](#original-85-bi
 
 ### VARCHAR 스토리지 최적화
 
-`VARCHAR`는 실제 최대 길이에 맞춰 선언합니다. 고정 영역 임계값을 조정해야 할 때는
-[VARCHAR 저장소 옵션](#original-85-varchar-storage)을 참고하십시오. 태그 이름에는 사이트,
+`VARCHAR`는 실제 최대 길이에 맞춰 선언합니다. 저장 option의 정확한 문법은
+[DDL 사전](/dbms/reference/sql/syntax-dictionary-sql/ddl-syntax/)을 참고하십시오. 태그 이름에는 사이트,
 설비, 센서 식별자를 일관된 구분자로 조합해 범위 조회가 가능하도록 설계합니다.
 
 <a id="tag-table-design-strategy"></a>

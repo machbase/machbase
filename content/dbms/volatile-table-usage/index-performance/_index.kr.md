@@ -9,6 +9,7 @@ aliases:
 VOLATILE 테이블의 인덱스 생성과 선택 기준을 설명합니다.
 
 <a id="original-85-volatile-indexes"></a>
+<a id="index-strategy-red-black"></a>
 
 ## 지원 인덱스
 

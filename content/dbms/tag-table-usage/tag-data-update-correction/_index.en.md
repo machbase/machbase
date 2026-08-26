@@ -1,6 +1,6 @@
 ---
-title: '5.12 TAG Data UPDATE and Correction'
-weight: 120
+title: '5.11 TAG Data UPDATE and Correction'
+weight: 110
 toc: true
 ---
 English structure placeholder. Korean content is authoritative for this restructuring pass.

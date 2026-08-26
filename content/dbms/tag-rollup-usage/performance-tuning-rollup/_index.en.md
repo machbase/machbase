@@ -1,6 +1,6 @@
 ---
-title: '6.13 ROLLUP Performance Tuning'
-weight: 130
+title: '6.11 ROLLUP Performance Tuning'
+weight: 110
 toc: true
 ---
 English structure placeholder. Korean content is authoritative for this restructuring pass.

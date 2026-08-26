@@ -1,6 +1,8 @@
 ---
 type: docs
-title: '15.2 장비 마스터 데이터와 알람 상태 관리'
-weight: 20
+title: '15.1 Real-time Equipment State and Alarms'
+weight: 10
 toc: true
+aliases:
+  - /dbms/scenario-guides/state-status-real-time-dashboard/
 ---

@@ -210,3 +210,26 @@ WHERE _arrival_time >= '2024-01-01 00:00:00'
 - 영문 기준 단어 분리(공백, 구두점)를 기반으로 역인덱스를 구성합니다.
 - 매우 긴 텍스트는 `VARCHAR(n)` 대신 `TEXT`를 사용합니다.
 - `TEXT` 컬럼에는 정렬(`ORDER BY`)이나 집계(`GROUP BY`)를 적용하지 않는 것을 권장합니다.
+
+<a id="regex"></a>
+<a id="regexp-not"></a>
+<a id="regex-regexp-not"></a>
+
+## REGEXP와 REGEXP_LIKE
+
+`REGEXP`는 POSIX 확장 정규식과 일치하는 row를, `NOT REGEXP`는 일치하지 않는 row를
+선택합니다.
+
+```sql
+SELECT _arrival_time, message
+  FROM app_log
+ WHERE _arrival_time >= now - 1h
+   AND message REGEXP 'ERR-[0-9]+|timeout';
+```
+
+<a id="regexp-like"></a>
+<a id="regex-regexp-like"></a>
+
+`REGEXP_LIKE(string_expression, pattern)`은 일치하면 `1`, 아니면 `0`을 반환하므로 SELECT나
+`CASE`에도 사용할 수 있습니다. 정규식은 넓은 범위를 읽을 수 있으므로 시간 조건과
+`SEARCH`/`ESEARCH`로 후보를 먼저 줄입니다.

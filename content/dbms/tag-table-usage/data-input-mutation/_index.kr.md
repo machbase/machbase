@@ -46,8 +46,11 @@ DROP TABLE input_distance_tag;
 DROP TABLE input_time_tag;
 ```
 
-`TABLE_FLUSH`는 방금 입력한 데이터를 즉시 확인해야 하는 예제·검증 절차에 사용합니다. 일반
-수집 루프에서 행마다 실행하지 마십시오.
+`TABLE_FLUSH`는 pending storage/input buffer를 명시적으로 flush해야 하는 검증·운영 절차에
+사용합니다. transaction commit이나 조회 가시성 보장 수단은 아니며, 일반 수집 루프에서 행마다
+실행하지 마십시오. 인자와 오류 계약은
+[EXEC procedure 정본](/dbms/reference/sql/syntax-dictionary-sql/execute-procedure-syntax/#table-flush)을
+참고합니다.
 
 ## 메타데이터와 함께 입력
 

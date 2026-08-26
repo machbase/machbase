@@ -37,7 +37,7 @@ aliases:
 1. 애플리케이션 언어에서 유지보수 가능한 공식 드라이버를 고릅니다.
 2. 5656 포트 연결, 운영체제와 runtime 호환성을 확인합니다.
 3. SQL, prepared statement, Append, transaction 중 필요한 기능을 정합니다.
-4. [SDK 기능 지원표](../sdk-support-scope/#sdk)에서 실제 지원 여부를
+4. [SDK 기능 지원표](../sdk-support-scope/)에서 실제 지원 여부를
    확인합니다.
 5. 표본 데이터로 timestamp, NULL, 숫자, 문자열을 왕복 검증합니다.
 6. 목표 row 크기·동시 연결·batch 크기로 부하 테스트합니다.

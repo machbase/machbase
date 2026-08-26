@@ -11,7 +11,7 @@ aliases:
 
 * [개요](#overview)
 * [설치](#install)
-* [NuGet(통합 8.0.54)](#nuget-unified-connector)
+* [NuGet(통합 8.0.55)](#nuget-unified-connector)
 * [커넥션 문자열 참고](#connection-string-reference)
 * [API 레퍼런스](#api-reference)
 * [사용 예시](#usage-and-examples)
@@ -19,13 +19,16 @@ aliases:
 
 ## 개요 {#overview}
 
-Machbase는 와이어 프로토콜 2.1~4.0을 모두 지원하는 범용 ADO.NET 프로바이더 **UniMachNetConnector**를 제공합니다. 현재 통합 패키지는 `UniMachNetConnector` 8.0.54이며 `net452`, `net5.0`, `net6.0`, `net7.0`, `net8.0` 타깃을 빌드합니다. 커넥터는 실행 시 커넥션 문자열을 참고해 적합한 프로토콜을 자동 협상합니다.
+Machbase는 와이어 프로토콜 2.1~4.0을 지원하는 범용 ADO.NET 프로바이더
+**UniMachNetConnector**를 제공합니다. 현재 통합 패키지는 `UniMachNetConnector` 8.0.55이며
+`net452`, `net5.0`, `net6.0`, `net7.0`, `net8.0` 타깃을 빌드합니다. 자동 협상은 connection
+string에 `PROTOCOL=auto` 또는 `auto-full`을 지정했을 때만 동작합니다.
 
 ## 설치 {#install}
 
 설치된 Machbase 서버·클라이언트에는 `$MACHBASE_HOME/lib/` 경로에 범용 .NET 프로바이더가
-함께 배포됩니다. 표준 Linux 설치에는 예를 들어 `UniMachNetConnector-net50-8.0.54.dll`과
-`machNetConnector-40-net50-3.2.1.dll` 같은 프로토콜별 어셈블리가 포함될 수 있습니다.
+함께 배포됩니다. 표준 Linux 설치에는 예를 들어 `UniMachNetConnector-net50-8.0.55.dll`과
+`machNetConnector-40-net50-3.2.2.dll` 같은 프로토콜별 어셈블리가 포함될 수 있습니다.
 소스 프로젝트는 필요한 .NET SDK가 있을 때 추가 target-framework flavor도 빌드할 수 있습니다.
 
 - **UniMachNetConnector**: 프레임워크에 구애받지 않는 진입점입니다. 소스 빌드 파일 이름은
@@ -50,7 +53,7 @@ SERVER=127.0.0.1;PORT_NO=5656;UID=APP_A;PWD=secret;DATABASE=FACTORY_A
 자동으로 가정하지 않습니다. 자세한 제한은 [다중 데이터베이스 운영 가이드](/dbms/operations-configuration-recovery/multi-database/#97-net)를
 참조하십시오.
 
-## NuGet로 설치 (통합 커넥터, 8.0.54) {#nuget-unified-connector}
+## NuGet로 설치 (통합 커넥터, 8.0.55) {#nuget-unified-connector}
 
 통합 커넥터의 패키지 ID는 `UniMachNetConnector`입니다. 새 프로젝트에서는 DLL 복사 대신 NuGet 패키지 참조 방식을 권장합니다.
 
@@ -62,14 +65,14 @@ SERVER=127.0.0.1;PORT_NO=5656;UID=APP_A;PWD=secret;DATABASE=FACTORY_A
 
 ```bash
 # 프로젝트 폴더에서 실행
-dotnet add package UniMachNetConnector --version 8.0.54
+dotnet add package UniMachNetConnector --version 8.0.55
 dotnet build
 ```
 
 소스(피드)를 명시적으로 제어해야 하면 참조 추가만 하고, 별도로 복원하십시오.
 
 ```bash
-dotnet add package UniMachNetConnector --version 8.0.54 --no-restore
+dotnet add package UniMachNetConnector --version 8.0.55 --no-restore
 
 # nuget.org 메타데이터를 강제로 갱신
 dotnet nuget locals http-cache --clear
@@ -78,13 +81,13 @@ dotnet restore --no-cache --source https://api.nuget.org/v3/index.json
 
 ### Visual Studio
 
-- 프로젝트 마우스 오른쪽 클릭 → NuGet 패키지 관리 → 찾아보기 → “UniMachNetConnector” 검색 → 8.0.54 선택 → 설치.
+- 프로젝트 마우스 오른쪽 클릭 → NuGet 패키지 관리 → 찾아보기 → “UniMachNetConnector” 검색 → 8.0.55 선택 → 설치.
 
 ### 프로젝트 파일 예시
 
 ```xml
 <ItemGroup>
-  <PackageReference Include="UniMachNetConnector" Version="8.0.54" />
+  <PackageReference Include="UniMachNetConnector" Version="8.0.55" />
   <!-- 추가 Machbase 패키지 불필요 -->
   <!-- 대상 프레임워크: net452|net5.0|net6.0|net7.0|net8.0 -->
 </ItemGroup>
@@ -92,7 +95,7 @@ dotnet restore --no-cache --source https://api.nuget.org/v3/index.json
 
 ### 로컬/사내 피드 사용(선택)
 
-사내 레지스트리 또는 폴더 피드를 사용할 경우 다음과 같이 소스를 추가하고 복원합니다. 폴더 피드는 `UniMachNetConnector.8.0.54.nupkg`를 해당 디렉터리에 배치하면 됩니다.
+사내 레지스트리 또는 폴더 피드를 사용할 경우 다음과 같이 소스를 추가하고 복원합니다. 폴더 피드는 `UniMachNetConnector.8.0.55.nupkg`를 해당 디렉터리에 배치하면 됩니다.
 
 ```bash
 # 1회 설정
@@ -159,7 +162,9 @@ var connectionString = string.Format(
 서버 버전이 혼재된 환경이라면 `PROTOCOL=auto`를 지정해 UniMachNetConnector가 실행 시 적절한 레거시 프로토콜을 협상하도록 설정할 수 있습니다. 동작 방식은 다음과 같습니다.
 
 - `PROTOCOL=auto`는 4.0 → 3.0 → 2.2 → 2.1 순서로 핸드셰이크를 시도하며, 커넥션 문자열에 전달한 호스트·포트·사용자·비밀번호·데이터베이스·`CONNECT_TIMEOUT` 값을 그대로 사용합니다.
-- `PROTOCOL=auto-full`은 위와 같지만 서버가 4.0을 리턴하면 먼저 `4.0-full` 디스크립터를 시도하고, 필요시 제한 버전(4.0)으로 폴백합니다.
+- `PROTOCOL=auto-full`은 server major가 4이면 등록된 `4.0-full` descriptor를 선택합니다.
+  descriptor가 없는 build에서만 limited 4.0을 선택하며, full 연결 실패 후 limited로 자동
+  재시도하지 않습니다.
 - `SERVER=hostA:5700,hostB:6000`처럼 여러 호스트를 지정하면 순차적으로 시도하며, 실패 메시지에는 각 호스트/프로토콜 조합이 기록되어 문제 지점을 파악할 수 있습니다.
 - 자격 증명은 기존 레거시 드라이버와 동일하게 대문자로 변환됩니다. 기본 데이터베이스(`data`)를 사용하지 않는다면 `DATABASE=` 값을 명시하십시오.
 - `CONNECT_TIMEOUT` 값이 각 감지 라운드 트립에 적용됩니다. 예외 메시지에 `Protocol probe received an invalid response`가 보이면 포트·방화벽·TLS 설정을 다시 확인하십시오.
@@ -677,7 +682,7 @@ Machbase에서 발생한 오류를 표현하는 예외 클래스입니다.
 
 | 이름 | 설명 |
 |--|--|
-| `MachErrorCode` | Machbase가 반환한 오류 코드입니다. |
+| `MachErrorCode` | 가능한 경우 Machbase 오류 코드입니다. Universal provider가 legacy 예외를 번역하면 `0`일 수 있습니다. |
 
 ### MachAppendWriter
 
@@ -725,79 +730,45 @@ string GetRowBuffer()
 
 ### 연결
 
-`MachConnection`을 생성해 `Open()`/`Close()`로 연결을 제어할 수 있습니다.
+다음 예제는 환경 변수 비밀번호로 연결하고 LOG table을 생성·입력·조회한 뒤 삭제합니다.
 
 ```csharp
-var connString = string.Format(
-    "SERVER={0};PORT_NO={1};UID=SYS;PWD=MANAGER;",
-    SERVER_HOST,
-    SERVER_PORT);
+using System;
+using Mach.Data.MachClient;
 
-var connection = new MachConnection(connString);
+var password = Environment.GetEnvironmentVariable("MACHBASE_PASSWORD")
+    ?? throw new InvalidOperationException("MACHBASE_PASSWORD is required");
+var connString = $"SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;PWD={password};PROTOCOL=4.0-full";
+using var connection = new MachConnection(connString);
 connection.Open();
-// ... 작업 ...
-connection.Close();
-```
+const string tableName = "NET_QUERY_DEMO";
 
-`using` 문을 사용하면 `Close()`를 직접 호출하지 않아도 자원이 정리됩니다.
-
-```csharp
-var connString = string.Format(
-    "SERVER={0};PORT_NO={1};UID=SYS;PWD=MANAGER;",
-    SERVER_HOST,
-    SERVER_PORT);
-
-using (var connection = new MachConnection(connString))
+using (var create = new MachCommand(
+    $"CREATE LOG TABLE {tableName} (id INTEGER, name VARCHAR(40))", connection))
 {
-    connection.Open();
-    // ... 작업 ...
+    create.ExecuteNonQuery();
 }
-```
-
-### 쿼리 실행
-
-`MachCommand`로 SQL 구문을 실행할 수 있습니다.
-
-```csharp
-var connString = string.Format(
-    "SERVER={0};PORT_NO={1};UID=SYS;PWD=MANAGER;",
-    SERVER_HOST,
-    SERVER_PORT);
-
-using (var connection = new MachConnection(connString))
+try
 {
-    connection.Open();
-
-    const string sql = "CREATE LOG TABLE tab1 ( col1 INTEGER, col2 VARCHAR(20) )";
-    using var command = new MachCommand(sql, connection);
-    command.ExecuteNonQuery();
-}
-```
-
-### SELECT 실행
-
-`MachCommand.ExecuteReader()`를 사용하면 `MachDataReader`로 결과를 순차적으로 읽을 수 있습니다.
-
-```csharp
-var connString = string.Format(
-    "SERVER={0};PORT_NO={1};UID=SYS;PWD=MANAGER;",
-    SERVER_HOST,
-    SERVER_PORT);
-
-using (var connection = new MachConnection(connString))
-{
-    connection.Open();
-
-    using var command = new MachCommand("SELECT * FROM tab1", connection);
-    using var reader = command.ExecuteReader();
-
+    using (var insert = new MachCommand(
+        $"INSERT INTO {tableName} VALUES (1, 'pump')", connection))
+    {
+        insert.ExecuteNonQuery();
+    }
+    using var query = new MachCommand($"SELECT id, name FROM {tableName}", connection);
+    using var reader = query.ExecuteReader();
     while (reader.Read())
     {
-        for (var i = 0; i < reader.FieldCount; i++)
+        for (var column = 0; column < reader.FieldCount; column++)
         {
-            Console.WriteLine($"{reader.GetName(i)} : {reader.GetValue(i)}");
+            Console.WriteLine($"{reader.GetName(column)} : {reader.GetValue(column)}");
         }
     }
+}
+finally
+{
+    using var drop = new MachCommand($"DROP TABLE {tableName}", connection);
+    drop.ExecuteNonQuery();
 }
 ```
 
@@ -811,22 +782,20 @@ using (var connection = new MachConnection(connString))
 `MachException`을 반환합니다. `@name`과 `?name`은 기존 provider 호환 형식입니다.
 
 ```csharp
+var password = Environment.GetEnvironmentVariable("MACHBASE_PASSWORD")
+    ?? throw new InvalidOperationException("MACHBASE_PASSWORD is required");
+var connString = $"SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;PWD={password};PROTOCOL=4.0-full";
 using var connection = new MachConnection(connString);
 connection.Open();
 
 const string sql = @"
-    SELECT *
-      FROM tab2
-     WHERE CreatedDateTime < :current_time
-       AND CreatedDateTime >= :past_time";
+    SELECT NAME
+      FROM V$TABLES
+     WHERE NAME = :table_name OR NAME = :table_name";
 
 using var command = new MachCommand(sql, connection);
 
-var now = DateTime.UtcNow;
-var past = now.AddMinutes(-1);
-
-command.Parameters.AddWithValue(":current_time", now);
-command.Parameters.AddWithValue(":past_time", past);
+command.Parameters.AddWithValue(":table_name", "V$TABLES");
 
 using var reader = command.ExecuteReader();
 while (reader.Read())
@@ -844,72 +813,86 @@ NULL은 `DBNull.Value`로 전달합니다. 공통 이름 문법은
 Append 프로토콜을 사용하면 대량의 시계열 데이터를 빠르게 적재할 수 있습니다.
 
 ```csharp
+using System;
+using System.Collections.Generic;
+using Mach.Data.MachClient;
+
+var password = Environment.GetEnvironmentVariable("MACHBASE_PASSWORD")
+    ?? throw new InvalidOperationException("MACHBASE_PASSWORD is required");
+var connString = $"SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;PWD={password};PROTOCOL=4.0-full";
 using var connection = new MachConnection(connString);
 connection.Open();
 
-using var appendCommand = new MachCommand(connection);
-var writer = appendCommand.AppendOpen("tab2");
-
-var row = new List<object>();
-for (var i = 1; i <= 100000; i++)
+const string tableName = "NET_APPEND_DEMO";
+using (var create = new MachCommand(
+    $"CREATE LOG TABLE {tableName} (ID INTEGER, NAME VARCHAR(40))", connection))
 {
-    row.Add(i);
-    row.Add($"NAME_{i % 100}");
-
-    appendCommand.AppendData(writer, row);
-    row.Clear();
-
-    if (i % 1000 == 0)
-    {
-        appendCommand.AppendFlush(writer);
-    }
+    create.ExecuteNonQuery();
 }
 
-appendCommand.AppendClose(writer);
+try
+{
+using var appendCommand = new MachCommand(connection);
+var writer = appendCommand.AppendOpen(tableName);
+writer.SetErrorDelegator(error =>
+    Console.Error.WriteLine($"Append row error: {error.Message}\n{error.GetRowBuffer()}"));
+
+try
+{
+    for (var i = 1; i <= 100000; i++)
+    {
+        appendCommand.AppendData(writer, new List<object> { i, $"NAME_{i % 100}" });
+        if (i % 1000 == 0) appendCommand.AppendFlush(writer);
+    }
+}
+finally
+{
+    if (appendCommand.IsAppendOpened) appendCommand.AppendClose(writer);
+}
+
 Console.WriteLine($"Success Count : {writer.SuccessCount}");
 Console.WriteLine($"Failure Count : {writer.FailureCount}");
+if (writer.FailureCount != 0)
+    throw new InvalidOperationException($"Append failed rows: {writer.FailureCount}");
+}
+finally
+{
+    if (connection.State == System.Data.ConnectionState.Open)
+    {
+        try
+        {
+            using var drop = new MachCommand($"DROP TABLE {tableName}", connection);
+            drop.ExecuteNonQuery();
+        }
+        catch (Exception cleanupError)
+        {
+            Console.Error.WriteLine($"cleanup failed: {cleanupError.Message}");
+        }
+    }
+}
 ```
 
 ### Error Delegator 설정
 
-Append 중 서버에서 오류가 발생하면 지정한 델리게이트가 호출됩니다.
-
-```csharp
-void AppendErrorDelegator(MachAppendException e)
-{
-    Console.WriteLine("====================");
-    Console.WriteLine("Append error");
-    Console.WriteLine(e.Message);
-    Console.WriteLine(e.GetRowBuffer());
-    Console.WriteLine("====================");
-}
-
-// 등록
-writer.SetErrorDelegator(AppendErrorDelegator);
-```
+Append 중 row 오류는 위 예제처럼 writer를 연 직후 delegate로 받고, close 뒤 success/failure
+count를 확인합니다.
 
 ### 자동 AppendFlush 설정
 
-`MachConnection.SetConnectAppendFlush(true)`로 설정하면 Append 중 일정 주기로 자동 flush가 실행됩니다.
-
-```csharp
-var connection = new MachConnection(connString);
-connection.Open();
-connection.SetConnectAppendFlush(true);
-```
-
-`false`로 설정하면 자동 flush가 비활성화됩니다.
+AppendOpen은 자동 flush thread를 시작합니다. 끄려면 이미 열린 writer에 대해
+`connection.SetConnectAppendFlush(false)`를 호출합니다. 자동 thread 오류가 즉시 public
+exception으로 전달되지 않을 수 있으므로 명시 flush·close와 callback/count 확인을 유지합니다.
 
 ## 프로토콜 4.0-full 전체 API {#full-provider-apis-protocol-40-full}
 
-`PROTOCOL=4.0-full`을 사용하면 확장된 ADO.NET 표면을 사용할 수 있습니다. 8.0.54 소스
-패키지에서 4.0 limited connector는 3.1.2, 4.0-full connector는 3.2.1입니다.
+`PROTOCOL=4.0-full`을 사용하면 확장된 ADO.NET 표면을 사용할 수 있습니다. 8.0.55 소스
+패키지에서 4.0 limited connector는 3.1.3, 4.0-full connector는 3.2.2입니다.
 설치된 Linux 패키지는 `$MACHBASE_HOME/lib/` 아래에 net50 flavor만 포함할 수 있으므로,
 다른 target framework가 필요하면 소스 빌드 또는 NuGet restore 산출물을 사용하십시오.
 
-- `UniMachNetConnector-net50-8.0.54.dll` – DBMS Standard Linux 패키지에서 흔히 설치되는 universal entry point
-- `machNetConnector-40-net50-3.1.2.dll` – protocol 4.0 limited connector
-- `machNetConnector-40-net50-3.2.1.dll` – protocol 4.0-full connector
+- `UniMachNetConnector-net50-8.0.55.dll` – DBMS Standard Linux 패키지에서 흔히 설치되는 universal entry point
+- `machNetConnector-40-net50-3.1.3.dll` – protocol 4.0 limited connector
+- `machNetConnector-40-net50-3.2.2.dll` – protocol 4.0-full connector
 
 ### 4.0-full에서 추가된 주요 타입
 
@@ -921,8 +904,10 @@ connection.SetConnectAppendFlush(true);
 ### 전체 API 활성화
 
 ```csharp
+var password = Environment.GetEnvironmentVariable("MACHBASE_PASSWORD")
+    ?? throw new InvalidOperationException("MACHBASE_PASSWORD is required");
 var connString =
-    "SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;PWD=MANAGER;PROTOCOL=4.0-full";
+    $"SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;PWD={password};PROTOCOL=4.0-full";
 using var connection = new MachConnection(connString);
 connection.Open();
 ```
@@ -937,7 +922,8 @@ var builder = new MachConnectionStringBuilder
     Server = "127.0.0.1",
     Port = 5656,
     UserID = "SYS",
-    Password = "MANAGER"
+    Password = Environment.GetEnvironmentVariable("MACHBASE_PASSWORD")
+        ?? throw new InvalidOperationException("MACHBASE_PASSWORD is required")
 };
 
 builder["PROTOCOL"] = "4.0-full";
@@ -946,18 +932,29 @@ using var connection = new MachConnection(builder.ConnectionString);
 connection.Open();
 ```
 
-### 예시: MachDataAdapter로 append
+### 예시: MachDataAdapter로 SQL INSERT
 
-Lookup 테이블을 `DataTable`로 가져온 뒤 새 레코드를 추가하고 `MachDataAdapter`로 다시 반영할 수 있습니다.
+Lookup table을 `DataTable`로 가져와 새 row를 추가하면 command builder가 일반 SQL INSERT를
+실행합니다. 이 경로는 Append protocol이 아닙니다.
 
 ```csharp
 using Mach.Data.MachClient;
+using System;
 using System.Data;
 
+var password = Environment.GetEnvironmentVariable("MACHBASE_PASSWORD")
+    ?? throw new InvalidOperationException("MACHBASE_PASSWORD is required");
 var connString =
-    "SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;PWD=MANAGER;PROTOCOL=4.0-full";
+    $"SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;PWD={password};PROTOCOL=4.0-full";
 using var connection = new MachConnection(connString);
 connection.Open();
+
+using (var create = new MachCommand(
+    "CREATE LOOKUP TABLE dotnet_lookup_demo (id INTEGER PRIMARY KEY, name VARCHAR(80))",
+    connection))
+{
+    create.ExecuteNonQuery();
+}
 
 var adapter = new MachDataAdapter(
     "SELECT id, name FROM dotnet_lookup_demo ORDER BY id",
@@ -972,39 +969,43 @@ newRow["id"] = 2001;
 newRow["name"] = "Inserted from MachDataAdapter";
 table.Rows.Add(newRow);
 
-adapter.Update(table);
-```
-
-> **Tip**: 전송 전 SQL을 확인하려면 `MachDataAdapter.MachRowUpdating` / `MachRowUpdated` 이벤트를 구독하십시오.
-
-```csharp
 adapter.MachRowUpdating += (sender, args) =>
 {
     Console.WriteLine(
         $"About to run {args.StatementType} with SQL: {args.Command?.CommandText}");
 };
+
+adapter.Update(table);
+
+using var drop = new MachCommand("DROP TABLE dotnet_lookup_demo", connection);
+drop.ExecuteNonQuery();
 ```
+
+> **Tip**: 전송 전 SQL을 확인하려면 위처럼 `Update()` 전에 event를 구독하십시오.
 
 ### 예시: DbProviderFactory 활용
 
 `MachDbProviderFactory.Instance`를 사용하면 `DbProviderFactories`, Dapper 등 프로바이더 중립 구성에 Machbase를 연결할 수 있습니다.
 
 ```csharp
+using System;
 using System.Data.Common;
 using Mach.Data.MachClient;
 
 DbProviderFactory factory = MachDbProviderFactory.Instance;
 
 using DbConnection connection = factory.CreateConnection()!;
+var password = Environment.GetEnvironmentVariable("MACHBASE_PASSWORD")
+    ?? throw new InvalidOperationException("MACHBASE_PASSWORD is required");
 connection.ConnectionString =
-    "SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;PWD=MANAGER;PROTOCOL=4.0-full";
+    $"SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;PWD={password};PROTOCOL=4.0-full";
 connection.Open();
 
 using DbCommand command = connection.CreateCommand();
-command.CommandText = "SELECT COUNT(*) FROM dotnet_lookup_demo";
+command.CommandText = "SELECT COUNT(*) FROM V$TABLES";
 var count = (long)command.ExecuteScalar();
 
-Console.WriteLine($"Lookup rows: {count}");
+Console.WriteLine($"Visible tables: {count}");
 ```
 
 설정 기반 애플리케이션에서 팩터리를 자동으로 노출하려면 시작 시 `MachDbProviderFactory.Register()`를 한 번 호출해 `DbProviderFactories.GetFactory("Mach.Data")`가 동일한 인스턴스를 반환하도록 구성하십시오.
