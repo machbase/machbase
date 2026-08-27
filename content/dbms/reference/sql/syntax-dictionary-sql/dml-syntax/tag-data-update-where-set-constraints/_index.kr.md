@@ -37,11 +37,16 @@ UPDATE table_name
 | WHERE 조건 | 지원 여부 |
 |-----------|:---------:|
 | `name = '...'` | O |
+| `name = ?`, `name = :tag_name` | O |
+| `? = name`, `:tag_name = name` | O |
 | `name IN ('...', '...')` | O |
 | `name LIKE '...'` | O |
 | `time = t1` | O |
+| `time = ?`, `time = :base_time` | O |
+| `? = time`, `:base_time = time` | O |
 | `time BETWEEN t1 AND t2` | O |
 | `time >= t1 AND time < t2` | O |
+| `time >= ? AND time < ?` | O |
 | 한쪽 시간 조건 | O |
 | 데이터 컬럼 조건 | O |
 | 태그 선택 없는 조건 | X |
@@ -49,6 +54,15 @@ UPDATE table_name
 | `OR` 조건 | X |
 | `IN (SELECT ...)` | X |
 | 태그/축 컬럼을 함수·연산식으로 감싼 표현식 | X |
+
+Bind parameter는 조건의 값 위치에만 사용합니다. 태그 이름과 BASETIME 컬럼을 marker로
+대체할 수 없으며, bind를 사용해도 태그 선택 조건과 시간 조건은 모두 필요합니다. 같은
+prepared statement를 다시 실행하면 새로 바인딩한 값으로 대상을 선택하고, 일치하는 행이
+없으면 affected rows `0`으로 성공합니다.
+
+NAME과 TIME parameter의 타입 정보와 SDK별 API는
+[TAG data UPDATE의 bind parameter](../tag-data-update-syntax/#tag-data-update-predicate-bind) 및
+[Named Bind Parameter](../../named-bind-parameter-syntax/)를 참고하십시오.
 
 ## 메타데이터 UPDATE
 
@@ -110,4 +124,5 @@ UPDATE sensor_tag
 ## 관련 문서
 
 - [TAG data UPDATE syntax](../tag-data-update-syntax/)
+- [Named Bind Parameter](../../named-bind-parameter-syntax/)
 - [ROLLUP_REBUILD syntax](../../rollup-rebuild-syntax/)

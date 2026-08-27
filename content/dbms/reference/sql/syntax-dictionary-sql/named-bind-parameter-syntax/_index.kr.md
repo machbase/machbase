@@ -116,6 +116,30 @@ Named Bind Parameter는 테이블별 DML 정책이나 Edition 제약을 변경�
 Standard Edition과 Cluster Edition은 같은 `:name` 문법과 ordinal 규칙을 사용합니다.
 실제로 실행할 수 있는 SQL과 테이블 타입은 각 Edition의 기존 지원 범위를 따릅니다.
 
+<a id="named-bind-tag-data-update"></a>
+
+### TAG data UPDATE에서 사용
+
+Machbase 8.7.0부터 Standard Edition의 TAG data UPDATE는 `WHERE` 절의 NAME과 BASETIME
+조건 값에 named marker를 사용할 수 있습니다.
+
+```sql
+UPDATE sensor_tag
+   SET value = :value,
+       status = :status,
+       note = :note
+ WHERE name = :name
+   AND time = :time;
+```
+
+같은 prepared statement를 다시 실행할 때 SET, NAME, TIME 값을 새로 바인딩할 수 있습니다.
+일치하는 행이 없으면 affected rows `0`으로 성공합니다. bind 사용 여부와 관계없이 태그 선택
+조건과 BASETIME 조건은 모두 필요하고, SET 대상 컬럼 제약도 그대로 적용됩니다.
+
+지원되는 조건 형태와 parameter metadata는
+[TAG data UPDATE](../dml-syntax/tag-data-update-syntax/#tag-data-update-predicate-bind)를
+참고하십시오.
+
 ## CTE에서 사용
 
 Standard Edition에서는 CTE 본문과 주 `SELECT`에서 Named Bind Parameter를 사용할 수

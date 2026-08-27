@@ -28,6 +28,11 @@ Machbase 8.7.0 버전의 하위 호환성, 업그레이드 주의사항, 지원 
   확인해야 합니다. 구버전 서버에서는 이 문법을 사용할 수 없습니다. 자세한 계약은
   [INDEX 문법](/dbms/reference/sql/syntax-dictionary-sql/index-syntax/#create-index-if-not-exists)을
   참고하십시오.
+- 8.7.0 Standard Edition 서버는 TAG data UPDATE의 NAME과 BASETIME 조건 값에 positional
+  또는 named bind parameter를 사용할 수 있습니다. 구버전 서버에서는 같은 prepared
+  UPDATE가 `ERR-2190`으로 거부될 수 있습니다. 조건 형태와 SDK API는
+  [TAG data UPDATE bind](/dbms/reference/sql/syntax-dictionary-sql/dml-syntax/tag-data-update-syntax/#tag-data-update-predicate-bind)를
+  참고하십시오.
 - 8.7.0의 Standard Edition에서는 SELECT/JOIN 계획 개선으로 테이블 스캔 순서와 정렬하지
   않은 결과의 반환 순서가 구버전과 달라질 수 있습니다. 결과 순서가 필요하면 `ORDER BY`를
   사용하고, 업그레이드 후에는 [SELECT/JOIN 옵티마이저](/dbms/performance-tuning/performance-query-tuning/#select-join-optimizer)의

@@ -133,7 +133,10 @@ bootstrap().catch(console.error);
 
 The facade supports both callbacks and `.promise()`, surfaces `QueryError` for failed operations, and forwards server messages.
 
-> **Facade limitations:** `beginTransaction`, `commit`, and `rollback` report `QueryError` immediately because Machbase does not support SQL transactions. `UPDATE` on LOG or TAG tables also fails fast with an explicit server error.
+> **Facade limitations:** `beginTransaction`, `commit`, and `rollback` report
+> `QueryError` in this client path. LOG tables do not support UPDATE. Starting with
+> Machbase 8.7.0, Standard Edition passes constrained TAG data UPDATE statements to the
+> server.
 
 ## Common Issues
 
@@ -395,7 +398,8 @@ const safeValue = conn.escape('user input');
   3. Demonstrates prepared statements with positional binds.
   4. Performs stress append (default: 5 batches x 200 rows) and verifies row counts.
   5. Issues `COMMIT` in each stage to demonstrate the expected transaction failure.
-  6. Exercises the Machbase facade and verifies that transactions or `UPDATE` on LOG/TAG tables raise `QueryError` immediately.
+  6. Exercises Machbase facade error propagation for unsupported transaction helpers
+     and LOG UPDATE statements.
 
 Sample console output:
 
@@ -578,11 +582,18 @@ prepared-statement loop. Chunk the data and inspect `rowsFailed` before retrying
 
 ### Error Handling
 
-Errors propagate as standard `Error` objects (or `QueryError` when using the facade). Inspect `error.message` or the `QueryError` fields (`code`, `sql`) to diagnose issues. The integration suite deliberately exercises missing-table queries and unsupported `UPDATE` statements to keep failure messages descriptive.
+Errors propagate as standard `Error` objects (or `QueryError` when using the facade). Inspect
+`error.message` or the `QueryError` fields (`code`, `sql`) to diagnose issues. The integration suite
+deliberately exercises missing-table queries, unsupported LOG UPDATE, and invalid TAG UPDATE
+conditions to keep failure messages descriptive.
 
 ### Table Type SQL Semantics
 
-- **LOG and TAG tables** support `SELECT`, `INSERT`, and `DELETE`, but not `UPDATE`.
+- **LOG tables** support `SELECT`, `INSERT`, and `DELETE`, but not `UPDATE`.
+- **TAG tables** support constrained data UPDATE in Machbase 8.7.0 Standard Edition. The WHERE
+  clause must contain tag-selection and BASETIME conditions. Positional arrays and named objects
+  can bind those condition values. See
+  [TAG data UPDATE binds](../../reference/sql/syntax-dictionary-sql/dml-syntax/tag-data-update-syntax/#tag-data-update-predicate-bind).
 - **VOLATILE tables** use primary-key conditions for UPDATE and DELETE. **LOOKUP tables** support both
   primary-key and general predicates; prefer a primary-key condition for efficient single-row changes.
 
@@ -611,7 +622,7 @@ Errors propagate as standard `Error` objects (or `QueryError` when using the fac
 ### 2025-10-02
 
 - Introduced the Machbase facade (`createConnection`, `QueryError`, `.promise()`, and facade prepared statements).
-- Expanded integration coverage for callbacks, promise flows, and rejected `UPDATE` on LOG/TAG tables.
+- Expanded integration coverage for callbacks, promise flows, and server UPDATE errors.
 
 ### 2025-09-30
 

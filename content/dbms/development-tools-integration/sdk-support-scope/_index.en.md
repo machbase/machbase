@@ -75,6 +75,13 @@ capabilities independently, including placeholder syntax and supported parameter
 syntax is defined in the
 [SQL syntax dictionary](../../reference/sql/syntax-dictionary-sql/named-bind-parameter-syntax/).
 
+Starting with Machbase 8.7.0, TAG data UPDATE in Standard Edition can bind NAME and
+BASETIME condition values through each SDK's existing positional or named API. The NFX
+#4127 regression matrix covers C/C++ SQLCLI, Go `database/sql`, JDBC, Node.js, Python,
+and .NET. ODBC is not part of that SDK matrix and binds markers by ordinal with
+`SQLBindParameter()`. See the canonical
+[TAG data UPDATE bind contract](../../reference/sql/syntax-dictionary-sql/dml-syntax/tag-data-update-syntax/#tag-data-update-predicate-bind).
+
 <a id="sdk"></a>
 
 ## SDK index

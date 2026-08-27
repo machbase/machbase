@@ -911,7 +911,9 @@ or restore additional target frameworks when your application needs them.
 - `MachDbProviderFactory` (`Instance`, `Register()`, and the standard `Create*` methods) so frameworks can resolve the connector by invariant name `Mach.Data`.
 - `MachConnectionStringBuilder` for strongly typed connection-string edits without remembering every keyword.
 - `MachDataAdapter` plus the `MachRowUpdating`/`MachRowUpdated` events for DataTable/DataSet workflows.
-- `MachCommandBuilder` to auto-generate INSERT/DELETE (and UPDATE for tables that support it—never for log/tag tables) commands from a SELECT statement.
+- `MachCommandBuilder` to auto-generate INSERT/DELETE and general UPDATE commands from a SELECT
+  statement. Do not use an auto-generated UPDATE for LOG or TAG tables; TAG data UPDATE requires
+  explicit tag-selection and BASETIME conditions.
 
 ### Enable the full provider stack
 ```csharp
@@ -920,7 +922,10 @@ using var connection = new MachConnection(connString);
 connection.Open();
 ```
 
-Use lookup or volatile tables when you need INSERT/DELETE/UPDATE semantics. Log and tag tables do not accept UPDATE statements, so keep those workloads append-only.
+Use TRANSACTION, LOOKUP, or VOLATILE tables for general row UPDATE semantics. LOG tables remain
+append-only. Starting with Machbase 8.7.0, a `MachCommand` in Standard Edition can execute a
+constrained TAG data UPDATE and bind its NAME and BASETIME values through the parameter collection.
+See [TAG data UPDATE binds](../../reference/sql/syntax-dictionary-sql/dml-syntax/tag-data-update-syntax/#tag-data-update-predicate-bind).
 
 ### Build connection strings fluently
 ```csharp

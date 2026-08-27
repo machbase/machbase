@@ -30,3 +30,26 @@ VALUES (:id, :name, :value, :created_at);
 Prepared-statement types and table DML constraints still apply. See
 [Development and application integration](/dbms/development-tools-integration/) for SDK APIs and
 [DML syntax](../dml-syntax/) for supported statements.
+
+<a id="named-bind-tag-data-update"></a>
+
+## TAG data UPDATE
+
+Starting with Machbase 8.7.0, TAG data UPDATE in Standard Edition accepts named
+markers for NAME and BASETIME condition values.
+
+```sql
+UPDATE sensor_tag
+   SET value = :value,
+       status = :status,
+       note = :note
+ WHERE name = :name
+   AND time = :time;
+```
+
+Reexecuting the prepared statement can use new SET, NAME, and TIME values. A no-match
+execution succeeds with affected rows `0`. Bind parameters do not relax the required
+tag selector, BASETIME condition, or SET-target restrictions.
+
+See [TAG data UPDATE predicate binds](../dml-syntax/tag-data-update-syntax/#tag-data-update-predicate-bind)
+for supported condition forms and parameter metadata.

@@ -128,6 +128,14 @@ Prepared statement와 parameter binding은 transaction 지원과 별개입니다
 [Named Bind Parameter](/dbms/reference/sql/syntax-dictionary-sql/named-bind-parameter-syntax/)를
 참고하십시오.
 
+Machbase 8.7.0 Standard Edition의 TAG data UPDATE는 각 SDK의 기존 positional/named API로
+NAME과 BASETIME 조건 값을 바인딩할 수 있습니다. NFX #4127 회귀 테스트는 C/C++ SQLCLI,
+Go `database/sql`, JDBC, Node.js, Python과 .NET 경로를 검증합니다. ODBC는 별도 SDK 회귀
+매트릭스에 포함되지 않으며 `?` 또는 named SQL의 marker를 표준 `SQLBindParameter()` ordinal로
+바인딩합니다. TAG UPDATE 조건 계약은
+[TAG data UPDATE bind](/dbms/reference/sql/syntax-dictionary-sql/dml-syntax/tag-data-update-syntax/#tag-data-update-predicate-bind)를
+정본으로 사용합니다.
+
 Transaction 열의 `△`는 전용 객체 대신 같은 connection에서 transaction SQL을 직접 실행하는
 경로입니다. Named bind 열의 `△`는 standard capability가 아닌 vendor/client rendering
 extension입니다.
