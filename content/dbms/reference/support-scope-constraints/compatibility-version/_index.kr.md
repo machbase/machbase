@@ -23,6 +23,11 @@ Machbase 8.7.0 버전의 하위 호환성, 업그레이드 주의사항, 지원 
 - CAST의 모든 대상 타입과 길이·정밀도 옵션을 사용하는 SQL은 8.7.0 서버에서 지원됩니다.
   Cluster Edition에서는 모든 cluster node를 CAST를 지원하는 동일 버전으로 구성해야 합니다.
   자세한 문법과 변환 규칙은 [CAST 함수](/dbms/reference/sql/dictionary/functions-full/#cast)를 참고하십시오.
+- 8.7.0 서버는 `CREATE INDEX IF NOT EXISTS`를 지원합니다. 같은 database와 owner에 동일한
+  index name이 있으면 기존 정의를 유지하고 성공하므로, 반복 배포 후 실제 index mapping을
+  확인해야 합니다. 구버전 서버에서는 이 문법을 사용할 수 없습니다. 자세한 계약은
+  [INDEX 문법](/dbms/reference/sql/syntax-dictionary-sql/index-syntax/#create-index-if-not-exists)을
+  참고하십시오.
 - 8.7.0의 Standard Edition에서는 SELECT/JOIN 계획 개선으로 테이블 스캔 순서와 정렬하지
   않은 결과의 반환 순서가 구버전과 달라질 수 있습니다. 결과 순서가 필요하면 `ORDER BY`를
   사용하고, 업그레이드 후에는 [SELECT/JOIN 옵티마이저](/dbms/performance-tuning/performance-query-tuning/#select-join-optimizer)의

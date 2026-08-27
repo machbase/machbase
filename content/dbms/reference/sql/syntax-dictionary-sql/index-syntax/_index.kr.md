@@ -12,9 +12,11 @@ toc: true
 
 ## CREATE INDEX
 
+<span class="badge-since">Machbase 8.7.0부터 지원되는 기능</span>
+
 ```sql
 create_index_stmt ::=
-    'CREATE' index_modifier? 'INDEX' index_name
+    'CREATE' index_modifier? 'INDEX' [ 'IF NOT EXISTS' ] index_name
     'ON' index_target '(' index_column_list ')'
     [ 'INDEX_TYPE' ( 'LSM' | 'KEYWORD' | 'BITMAP' | 'REDBLACK' | 'TAG' ) ]
     [ 'TABLESPACE' tablespace_name ]
@@ -34,6 +36,63 @@ index_property_list ::=
     | 'BITMAP_ENCODE'    '=' ( 'EQUAL' | 'RANGE' )
     | 'PART_VALUE_COUNT' '=' number )
     ( ',' index_property_list )*
+```
+
+<a id="create-index-if-not-exists"></a>
+
+### IF NOT EXISTS
+
+`IF NOT EXISTS`를 지정하면 같은 database와 owner에 동일한 index name이 있을 때 오류 없이
+성공하고 기존 index를 유지합니다.
+
+- 동일한 이름이 없으면 table, column, index type, property와 권한을 기존 CREATE INDEX와
+  동일하게 검증한 뒤 생성합니다.
+- 동일한 이름이 있으면 table, column, index type, JSON path와 property를 비교하거나
+  변경하지 않습니다.
+- 중복 판정 namespace는 `database + owner + index name`입니다. 다른 database나 owner의 같은
+  이름은 별도 index입니다.
+- 옵션을 생략한 CREATE INDEX는 기존 duplicate-name 오류를 그대로 반환합니다.
+
+{{< callout type="warning" >}}
+`IF NOT EXISTS`는 index 정의를 일치시키는 기능이 아닙니다. 같은 이름이 있으면 statement의
+target table이나 column이 없거나 정의가 달라도 no-op으로 성공합니다. 반복 배포 뒤에는
+`SHOW INDEX` 또는 system catalog에서 실제 table, column, type과 property를 확인하십시오.
+{{< /callout >}}
+
+```sql
+CREATE LOG TABLE sensor_log_ifne (
+    sensor_id INTEGER,
+    value     DOUBLE
+);
+
+CREATE INDEX IF NOT EXISTS sensor_log_ifne_idx
+    ON sensor_log_ifne(sensor_id);
+
+-- 같은 이름이 있으므로 성공하고 기존 SENSOR_ID mapping을 유지합니다.
+CREATE INDEX IF NOT EXISTS sensor_log_ifne_idx
+    ON sensor_log_ifne(value);
+
+SHOW INDEX sensor_log_ifne_idx;
+
+DROP TABLE sensor_log_ifne;
+```
+
+### 조건부 생성 지원 형태
+
+| 형식 | 지원 범위 |
+|---|---|
+| 일반 `CREATE INDEX IF NOT EXISTS` | 해당 table type에서 지원하는 일반 index |
+| `CREATE UNIQUE INDEX IF NOT EXISTS` | Standard Edition TRANSACTION table |
+| `CREATE PRIMARY KEY INDEX IF NOT EXISTS` | Standard Edition TRANSACTION table |
+| TAG data JSON path / TAG METADATA index | Standard Edition, Cluster Edition |
+| 일반 문법의 `INDEX_TYPE` 절 | 해당 table type과 index type의 기존 지원 범위 |
+
+deprecated `CREATE BITMAP INDEX`, `CREATE KEYWORD INDEX`, `CREATE REDBLACK INDEX` 전용 문법에는
+`IF NOT EXISTS`를 사용할 수 없습니다. 일반 문법을 사용합니다.
+
+```sql
+CREATE INDEX IF NOT EXISTS idx_message
+    ON app_log(message) INDEX_TYPE KEYWORD;
 ```
 
 ## 테이블 타입별 지원 범위

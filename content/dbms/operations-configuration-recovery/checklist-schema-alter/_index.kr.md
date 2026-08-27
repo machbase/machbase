@@ -110,14 +110,23 @@ ALTER TABLE sensor_log DROP COLUMN (old_col);
 - [ ] 인덱스 생성/삭제는 쿼리 성능에 직접 영향
 - [ ] 인덱스 생성 작업은 기존 데이터에 대한 인덱싱을 포함하므로, 대용량 테이블에서는 시간이 소요됨
 - [ ] 사용하지 않는 인덱스는 INSERT 성능을 저하시키므로 삭제 고려
+- [ ] `IF NOT EXISTS` 사용 시 같은 이름의 기존 index 정의를 별도로 확인
 
 ```sql
--- 인덱스 생성 (대용량 테이블은 야간 실행 권장)
-CREATE INDEX idx_new ON sensor_log (sensor_id);
+-- 반복 배포에서 조건부 생성
+CREATE INDEX IF NOT EXISTS idx_new ON sensor_log (sensor_id);
+
+-- name-only no-op일 수 있으므로 실제 mapping 확인
+SHOW INDEX idx_new;
 
 -- 불필요한 인덱스 삭제
 DROP INDEX idx_old;
 ```
+
+`IF NOT EXISTS`는 같은 database와 owner의 index name만 확인합니다. 기존 index의 table,
+column, type과 property가 배포 의도와 일치하는지는
+[INDEX 문법](/dbms/reference/sql/syntax-dictionary-sql/index-syntax/#create-index-if-not-exists)의
+규칙에 따라 별도로 검증합니다.
 
 ---
 

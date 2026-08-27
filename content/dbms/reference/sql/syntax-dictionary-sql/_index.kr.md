@@ -15,7 +15,7 @@ SQL 문법 사전은 Machbase에서 지원하는 모든 SQL 구문의 BNF 표기
 | [DROP TABLE](./ddl-syntax/#drop-table) | DDL | 테이블 삭제 |
 | [ALTER TABLE](./ddl-syntax/#alter-table) | DDL | 테이블 스키마 변경 (컬럼 추가/삭제/수정/이름 변경) |
 | [TRUNCATE TABLE](./ddl-syntax/#truncate-table) | DDL | 테이블 데이터 전체 삭제 |
-| [CREATE INDEX](./index-syntax/#create-index) | DDL | 테이블 타입별 인덱스 생성 |
+| [CREATE INDEX](./index-syntax/#create-index) | DDL | 조건부 생성과 테이블 타입별 인덱스 지원 |
 | [DROP INDEX](./index-syntax/#drop-index) | DDL | 인덱스 삭제 |
 | [CREATE ROLLUP](./rollup-syntax/#create-rollup) | DDL | TAG 테이블 롤업 정의 생성 |
 | [DROP ROLLUP / ALTER ROLLUP](./rollup-syntax/#drop-rollup) | DDL | 롤업 삭제 및 제어 |

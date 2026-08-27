@@ -2,7 +2,7 @@
   "schema_version": 1,
   "source": {
     "repository": "nfx",
-    "revision": "efd9802968e36569ee64c79b6838cd98f7d7d406",
+    "revision": "c4306546ff847563ea17939e4f9ae1326d13642a",
     "registries": [
       "pm/src/pmi/pmiFixedTableList.c",
       "mm/src/mmi/mmiFixedTableList.c",
