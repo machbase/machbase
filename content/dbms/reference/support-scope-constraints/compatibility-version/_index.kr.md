@@ -33,6 +33,12 @@ Machbase 8.7.0 버전의 하위 호환성, 업그레이드 주의사항, 지원 
   UPDATE가 `ERR-2190`으로 거부될 수 있습니다. 조건 형태와 SDK API는
   [TAG data UPDATE bind](/dbms/reference/sql/syntax-dictionary-sql/dml-syntax/tag-data-update-syntax/#tag-data-update-predicate-bind)를
   참고하십시오.
+- 8.7.0 서버의 BASE DISTANCE TAG 통계 뷰는 축 컬럼을 `*_DISTANCE` 이름과 원본
+  `DOUBLE`, `LONG`, `ULONG` 타입으로 제공합니다. 기존 `*_TIME` 이름은 alias로 제공되지
+  않으며, 기존 테이블도 서버 재시작 후 새 스키마를 사용합니다. BASE TIME TAG의
+  `*_TIME DATETIME` 스키마는 유지됩니다. 애플리케이션 SQL과 result mapping은
+  [TAG별 통계 뷰](/dbms/tag-table-usage/query-analysis/#tag-stat-axis-schema)의 변환표에
+  따라 변경하십시오.
 - 8.7.0의 Standard Edition에서는 SELECT/JOIN 계획 개선으로 테이블 스캔 순서와 정렬하지
   않은 결과의 반환 순서가 구버전과 달라질 수 있습니다. 결과 순서가 필요하면 `ORDER BY`를
   사용하고, 업그레이드 후에는 [SELECT/JOIN 옵티마이저](/dbms/performance-tuning/performance-query-tuning/#select-join-optimizer)의

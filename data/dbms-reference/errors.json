@@ -2,7 +2,7 @@
   "schema_version": 1,
   "source": {
     "repository": "nfx",
-    "revision": "04ff8f25926b469b3e232b597630238ea664a37f",
+    "revision": "9f086447c84ecf4f944ad3421de315799968278f",
     "message_catalog": "pm/src/msg/machbaseErrNLogMsg.msg"
   },
   "manual_reference": "content/dbms/reference/error-dictionary-codes/_index.kr.md",

@@ -165,6 +165,45 @@ UPDATE sensor_tag METADATA
 태그 이름이나 시간 축을 변경해야 하는 경우에는 새 `name`/`time` 값으로 데이터를 삽입한 뒤
 운영 정책에 따라 기존 데이터를 삭제합니다.
 
+<a id="tag-stat-distance-schema-error"></a>
+
+## BASE DISTANCE TAG STAT 컬럼 오류
+
+Machbase 8.7.0은 BASE DISTANCE TAG의 `V$<TABLE>_STAT` 축 컬럼을 거리 이름과 숫자
+타입으로 제공합니다. 업그레이드 전 SQL이 `MIN_TIME`, `MAX_TIME`, `RECENT_ROW_TIME`
+등을 조회하면 컬럼을 찾을 수 없다는 오류가 발생할 수 있습니다.
+
+### 증상
+
+- 업그레이드 후 BASE DISTANCE 통계 뷰에서 기존 `*_TIME` 컬럼을 조회할 수 없습니다.
+- 구버전 서버에서는 거리값이 `DATETIME`으로 해석되어 의미 없는 날짜처럼 보일 수 있습니다.
+- Cluster Edition에서 Standard와 같은 ordinal result mapping을 사용하면 선두의
+  `HOSTNAME` 때문에 이후 컬럼이 어긋날 수 있습니다.
+
+### 진단
+
+대상 테이블의 축과 실제 통계 뷰 스키마를 함께 확인합니다.
+
+```sql
+DESC distance_sensor;
+DESC V$DISTANCE_SENSOR_STAT;
+```
+
+BASE DISTANCE 테이블이면 `MIN_DISTANCE`, `MAX_DISTANCE`, `MIN_VALUE_DISTANCE`,
+`MAX_VALUE_DISTANCE`, `RECENT_ROW_DISTANCE`가 원본 거리축 타입으로 표시되어야 합니다.
+Cluster Edition에서는 `HOSTNAME VARCHAR(64)`가 첫 컬럼에 추가됩니다.
+
+### 해결 방법
+
+1. SQL의 기존 `*_TIME` 이름을 대응하는 `*_DISTANCE` 이름으로 변경합니다.
+2. SDK result mapping을 `DATETIME`이 아니라 원본 `DOUBLE`, `LONG`, `ULONG` 타입으로
+   변경합니다.
+3. Cluster 결과는 컬럼 이름으로 읽거나 `HOSTNAME`을 포함한 ordinal을 다시 확인합니다.
+4. BASE TIME TAG 쿼리는 기존 `*_TIME DATETIME` mapping을 유지합니다.
+
+전체 변환표와 Cluster 집계 주의사항은
+[TAG별 통계 뷰](../query-analysis/#tag-stat-axis-schema)를 참고하십시오.
+
 <a id="limitations-tag"></a>
 
 ## 제약 및 주의사항

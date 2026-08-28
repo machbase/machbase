@@ -36,6 +36,32 @@ execution. See
 
 ## TAG data UPDATE SET 대상 컬럼 오류
 
+<a id="tag-stat-distance-schema-error"></a>
+
+## BASE DISTANCE TAG STAT column errors
+
+Machbase 8.7.0 exposes BASE DISTANCE `V$<TABLE>_STAT` axis columns with distance
+names and numeric types. SQL that still selects `MIN_TIME`, `MAX_TIME`,
+`MIN_VALUE_TIME`, `MAX_VALUE_TIME`, or `RECENT_ROW_TIME` from a distance-axis STAT
+view can fail after upgrade.
+
+Check both schemas before changing the application:
+
+```sql
+DESC distance_sensor;
+DESC V$DISTANCE_SENSOR_STAT;
+```
+
+A BASE DISTANCE view must expose `MIN_DISTANCE`, `MAX_DISTANCE`,
+`MIN_VALUE_DISTANCE`, `MAX_VALUE_DISTANCE`, and `RECENT_ROW_DISTANCE` with the
+original `DOUBLE`, `LONG`, or `ULONG` axis type. Cluster Edition also prepends
+`HOSTNAME VARCHAR(64)`.
+
+Update SQL and result mappings to the `*_DISTANCE` names and numeric types. Keep the
+existing `*_TIME DATETIME` mapping for BASE TIME tables. See
+[Per-tag statistics view](../query-analysis/#tag-stat-axis-schema) for the complete
+migration map and Cluster aggregation guidance.
+
 <a id="limitations-tag"></a>
 
 ## TAG 제한사항

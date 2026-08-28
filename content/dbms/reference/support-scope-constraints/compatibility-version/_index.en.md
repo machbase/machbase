@@ -14,6 +14,12 @@ toc: true
   values in TAG data UPDATE predicates. Older servers can reject the same prepared
   UPDATE with `ERR-2190`. See
   [TAG data UPDATE binds](/dbms/reference/sql/syntax-dictionary-sql/dml-syntax/tag-data-update-syntax/#tag-data-update-predicate-bind).
+- BASE DISTANCE TAG statistics use `*_DISTANCE` names and the original `DOUBLE`,
+  `LONG`, or `ULONG` axis type. The former `*_TIME` names are not aliases, and existing
+  tables use the new schema after the server restarts. BASE TIME TAG statistics retain
+  their `*_TIME DATETIME` schema. See the
+  [per-tag statistics view](/dbms/tag-table-usage/query-analysis/#tag-stat-axis-schema)
+  for the migration map.
 
 <a id="removed-features-870"></a>
 

@@ -248,11 +248,27 @@ TAG_0002              2018-02-04 04:00:00 000:000:000 14
 [2] row(s) selected.
 ```
 
-### 특정 Tag ID별 통계 정보 표시
+<a id="tag-stat-axis-schema"></a>
+
+### TAG별 통계 뷰 `V$<TABLE>_STAT`
 
 tag 테이블을 생성하면, tag ID별 통계 정보를 집계하는 가상 테이블이 자동으로 만들어집니다. 이 가상 테이블의 이름은 v${tag 테이블 이름}_stat입니다.
 
 통계 정보 대상 컬럼은 자동으로 세 번째 컬럼으로 지정됩니다.
+
+<span class="badge-since">BASE DISTANCE 축별 STAT 스키마는 Machbase 8.7.0부터 지원</span>
+
+축 관련 컬럼 이름과 타입은 TAG 테이블의 축에 따라 달라집니다.
+
+| TAG 축 | 최소/최대 축 | 최소/최대값 발생 축 | 최근 입력 row 축 | 축 통계 타입 |
+|--------|--------------|----------------------|------------------|--------------|
+| `DATETIME BASE TIME` | `MIN_TIME`, `MAX_TIME` | `MIN_VALUE_TIME`, `MAX_VALUE_TIME` | `RECENT_ROW_TIME` | `DATETIME` |
+| `DOUBLE/LONG/ULONG BASE DISTANCE` | `MIN_DISTANCE`, `MAX_DISTANCE` | `MIN_VALUE_DISTANCE`, `MAX_VALUE_DISTANCE` | `RECENT_ROW_DISTANCE` | 원본 BASE DISTANCE 타입 |
+
+두 Edition의 공통 컬럼은 `NAME`, `ROW_COUNT`, `MIN_VALUE`, `MAX_VALUE`입니다. Cluster
+Edition에서는 스키마 맨 앞에 `HOSTNAME VARCHAR(64)`가 추가됩니다.
+
+#### BASE TIME STAT 스키마
 
 
 ```bash
@@ -336,6 +352,119 @@ NULL                            NULL                        NULL                
 [2] row(s) selected.
 ```
 
+#### BASE DISTANCE STAT 스키마
+
+거리축 TAG 테이블의 통계 뷰는 거리값을 숫자 타입으로 제공합니다.
+
+```sql
+CREATE TAG TABLE distance_sensor (
+    name       VARCHAR(32) PRIMARY KEY,
+    odometer_m DOUBLE BASE DISTANCE,
+    value      DOUBLE SUMMARIZED
+);
+
+INSERT INTO distance_sensor VALUES('sensor', 20.5, 8);
+INSERT INTO distance_sensor VALUES('sensor', 10.25, 3);
+INSERT INTO distance_sensor VALUES('sensor', 30.75, 5);
+
+EXEC TABLE_FLUSH(distance_sensor);
+```
+
+Standard Edition에서 `DOUBLE BASE DISTANCE` 테이블의 스키마는 다음과 같습니다.
+
+```text
+Mach> DESC V$DISTANCE_SENSOR_STAT;
+[ COLUMN ]
+----------------------------------------------------------------------------------------------------
+NAME                                                        NULL?    TYPE                LENGTH
+----------------------------------------------------------------------------------------------------
+NAME                                                                 varchar             100
+ROW_COUNT                                                            ulong               20
+MIN_DISTANCE                                                         double              17
+MAX_DISTANCE                                                         double              17
+MIN_VALUE                                                            double              17
+MIN_VALUE_DISTANCE                                                   double              17
+MAX_VALUE                                                            double              17
+MAX_VALUE_DISTANCE                                                   double              17
+RECENT_ROW_DISTANCE                                                  double              17
+```
+
+거리축 통계 컬럼 다섯 개의 타입은 원본 BASE DISTANCE 컬럼 타입을 따릅니다.
+
+| BASE DISTANCE 타입 | STAT 컬럼 타입 | `DESC` 길이 |
+|--------------------|----------------|-------------|
+| `DOUBLE` | `double` | 17 |
+| `LONG` | `long` | 20 |
+| `ULONG` | `ulong` | 20 |
+
+```sql
+SELECT name,
+       row_count,
+       min_distance,
+       max_distance,
+       min_value,
+       min_value_distance,
+       max_value,
+       max_value_distance,
+       recent_row_distance
+  FROM V$DISTANCE_SENSOR_STAT
+ WHERE name = 'sensor';
+```
+
+- `MIN_DISTANCE`와 `MAX_DISTANCE`는 해당 통계 row의 최소·최대 거리입니다.
+- `MIN_VALUE_DISTANCE`와 `MAX_VALUE_DISTANCE`는 각각 최소·최대 summarized value가
+  발생한 거리입니다.
+- `RECENT_ROW_DISTANCE`는 가장 큰 거리가 아니라 가장 최근에 입력된 row의 거리입니다.
+- `SUMMARIZED` 컬럼이 없으면 `MIN_VALUE_DISTANCE`와 `MAX_VALUE_DISTANCE`는 `NULL`입니다.
+
+##### Cluster Edition에서 조회
+
+Cluster Edition의 통계 뷰에는 `HOSTNAME`이 추가되고 warehouse별 통계 row가 반환될 수
+있습니다. 먼저 warehouse별 값을 확인합니다.
+
+```sql
+SELECT hostname, name, row_count,
+       min_distance, max_distance,
+       min_value, min_value_distance,
+       max_value, max_value_distance,
+       recent_row_distance
+  FROM V$DISTANCE_SENSOR_STAT
+ ORDER BY hostname, name;
+```
+
+row 수와 거리 경계는 tag 이름으로 안전하게 집계할 수 있습니다.
+
+```sql
+SELECT name,
+       SUM(row_count)     AS row_count,
+       MIN(min_distance)  AS min_distance,
+       MAX(max_distance)  AS max_distance
+  FROM V$DISTANCE_SENSOR_STAT
+ GROUP BY name;
+```
+
+{{< callout type="warning" >}}
+`MIN_VALUE`와 `MIN_VALUE_DISTANCE`, `MAX_VALUE`와 `MAX_VALUE_DISTANCE`는 같은 warehouse
+row의 짝을 유지해야 합니다. 두 컬럼을 각각 독립적으로 `MIN` 또는 `MAX`하면 서로 다른
+warehouse의 값이 결합될 수 있습니다. `RECENT_ROW_DISTANCE`도 warehouse별 최근 입력
+거리이므로 `MAX(RECENT_ROW_DISTANCE)`를 전체 cluster의 최근 입력 row로 해석하지 않습니다.
+{{< /callout >}}
+
+##### 8.7.0 호환성
+
+BASE DISTANCE 통계 뷰의 기존 이름은 alias로 제공되지 않습니다. 기존 테이블도 8.7.0
+서버가 재시작되면 새 스키마로 구성됩니다.
+
+| 8.7.0 이전 이름 | 8.7.0 이름 |
+|-----------------|------------|
+| `MIN_TIME` | `MIN_DISTANCE` |
+| `MAX_TIME` | `MAX_DISTANCE` |
+| `MIN_VALUE_TIME` | `MIN_VALUE_DISTANCE` |
+| `MAX_VALUE_TIME` | `MAX_VALUE_DISTANCE` |
+| `RECENT_ROW_TIME` | `RECENT_ROW_DISTANCE` |
+
+BASE TIME TAG 테이블은 기존 `*_TIME DATETIME` 스키마를 유지합니다.
+
 
 ### scan 방향 hint
 
@@ -365,6 +494,8 @@ hint가 없을 때의 기본 방향은
 ## 정리
 
 ```sql
+DROP TABLE distance_sensor;
+DROP TABLE trip_tag;
 DROP TABLE other_tag;
 DROP TABLE tag;
 ```

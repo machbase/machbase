@@ -25,8 +25,13 @@ toc: true
 | 스토리지 | `V$STORAGE_TABLES` | 테이블별 스토리지 사용량 |
 | 스토리지 | `V$STORAGE_MOUNT_DATABASES` | 마운트된 백업 데이터베이스 |
 | 태그 Rollup | `V$ROLLUP` | Rollup 작업 상태 |
+| TAG 테이블 | `V$<TABLE>_STAT` | 테이블별 tag·축 통계. 실제 이름은 TAG 테이블 이름에 따라 생성 |
 | 라이선스 | `V$LICENSE_INFO` | 라이선스 정보 |
 | 잠금 | `V$MUTEX` | 잠금 현황 |
+
+`V$<TABLE>_STAT`은 TAG 테이블마다 동적으로 생성되므로 고정된 전역 가상 테이블 목록과
+구분합니다. 시간축·거리축별 컬럼 이름과 타입은
+[TAG별 통계 뷰](/dbms/tag-table-usage/query-analysis/#tag-stat-axis-schema)를 참고하십시오.
 
 ## V$VERSION
 
