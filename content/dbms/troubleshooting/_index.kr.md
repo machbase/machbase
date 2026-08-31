@@ -3,8 +3,6 @@ type: docs
 title: '16. 문제 해결'
 weight: 160
 toc: true
-aliases:
-  - /dbms/reference/ai-agent-reference/error-resolution-map/
 ---
 
 Machbase 운영 중 발생하는 문제를 증상 확인, 원인 진단, 해결, 재발 방지 순서로 다룹니다.

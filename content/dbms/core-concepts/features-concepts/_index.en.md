@@ -5,7 +5,6 @@ weight: 30
 toc: true
 aliases:
   - /dbms/core-concepts/terminology-distinction/
-  - /dbms/reference/ai-agent-reference/terminology-disambiguation/
 ---
 
 

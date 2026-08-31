@@ -3,8 +3,6 @@ type: docs
 title: '13.11 운영 체크리스트'
 weight: 110
 toc: true
-aliases:
-  - /dbms/reference/ai-agent-reference/operations-checklist/
 ---
 
 정기적으로 수행해야 하는 점검 항목입니다. 일별·주별·월별 루틴 점검과 장애 발생 시 대응 체크리스트로 구성됩니다.

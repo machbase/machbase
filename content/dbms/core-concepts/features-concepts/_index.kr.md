@@ -5,7 +5,6 @@ weight: 30
 toc: true
 aliases:
   - /dbms/core-concepts/terminology-distinction/
-  - /dbms/reference/ai-agent-reference/terminology-disambiguation/
 ---
 Machbase DBMS의 장기 데이터 운영에 필요한 ROLLUP, Retention Policy, Backup·Restore·Mount의
 역할과 선택 기준을 설명합니다. 생성 구문과 운영 절차는 각 기능의 상세 문서에서 다룹니다.

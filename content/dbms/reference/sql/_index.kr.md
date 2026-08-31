@@ -3,8 +3,6 @@ type: docs
 title: '17.1 SQL 레퍼런스'
 weight: 10
 toc: true
-aliases:
-  - /dbms/reference/ai-agent-reference/sql-generation-rules/
 ---
 
 SQL 문법, 함수, 데이터 타입, 쿼리 힌트, 상대 시간 표현의 정확한 정의를 제공합니다.

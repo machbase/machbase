@@ -3,14 +3,6 @@ type: docs
 title: '17. 레퍼런스'
 weight: 170
 toc: true
-aliases:
-  - /dbms/reference/ai-agent-reference/
-  - /dbms/reference/ai-agent-reference/guide-agent/
-  - /dbms/reference/ai-agent-reference/canonical-url-map/
-  - /dbms/reference/ai-agent-reference/task-map/
-  - /dbms/reference/ai-agent-reference/evidence-map/
-  - /dbms/reference/ai-agent-reference/llms-txt/
-  - /dbms/reference/ai-agent-reference/llms-full-txt-chunk-index/
 ---
 
 문법, 함수, 설정, 시스템 카탈로그의 정확한 정의를 빠르게 찾아보는 종합 레퍼런스입니다.
@@ -29,6 +21,7 @@ SDK/API 문서는 11장 개발 및 애플리케이션 연동에서, 개념이나
 | [에러 코드](./error-dictionary-codes/) | 에러 코드 번호, 메시지, 원인 및 조치 방법 |
 | [지원 범위 및 제약](./support-scope-constraints/) | 테이블 유형별 기능 지원 여부, 알려진 제약 사항 |
 | [Collector](./collector/) | Machbase Collector 설정 및 플러그인 레퍼런스 |
+| [AI Agent Reference](./ai-agent-reference/) | AI·RAG용 탐색 가이드, 정본 맵과 LLM 출력 |
 
 ## 활용 방법
 

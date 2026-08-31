@@ -7,7 +7,6 @@ aliases:
   - /dbms/application-integration/selection-integration-method/
   - /dbms/application-integration/guide-drivers/
   - /dbms/scenario-guides/examples/
-  - /dbms/reference/ai-agent-reference/sdk-api-selection-rules/
 ---
 
 Choose an integration method for the application language, input pattern, and deployment

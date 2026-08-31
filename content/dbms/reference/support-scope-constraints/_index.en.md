@@ -4,8 +4,6 @@ title: '17.6 Support Scope and Constraints'
 weight: 80
 toc: true
 aliases:
-  - /dbms/reference/ai-agent-reference/support-matrix/
-  - /dbms/reference/ai-agent-reference/constraints-index/
   - /dbms/reference/support-scope-constraints/limitations-dictionary/
 ---
 

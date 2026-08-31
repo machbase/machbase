@@ -4,8 +4,6 @@ title: '17.6 지원 범위와 제약'
 weight: 80
 toc: true
 aliases:
-  - /dbms/reference/ai-agent-reference/support-matrix/
-  - /dbms/reference/ai-agent-reference/constraints-index/
   - /dbms/reference/support-scope-constraints/limitations-dictionary/
 ---
 

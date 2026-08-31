@@ -3,8 +3,6 @@ type: docs
 title: '17.1 SQL Reference'
 weight: 10
 toc: true
-aliases:
-  - /dbms/reference/ai-agent-reference/sql-generation-rules/
 ---
 
 Machbase SQL reference covers syntax, functions, data types, query hints, and
