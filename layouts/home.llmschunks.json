@@ -1,0 +1,38 @@
+{{- $dbms := .Site.GetPage "/dbms" -}}
+{{- $pages := partial "llms/dbms-pages.html" $dbms -}}
+{{- $documents := slice -}}
+{{- range $pages -}}
+  {{- $parentURL := "" -}}
+  {{- with .Parent -}}
+    {{- $parentURL = .Permalink -}}
+  {{- end -}}
+  {{- $lastModified := "" -}}
+  {{- with .GitInfo -}}
+    {{- $lastModified = .AuthorDate.UTC.Format "2006-01-02T15:04:05Z" -}}
+  {{- end -}}
+  {{- $id := strings.TrimSuffix "/" .RelPermalink -}}
+  {{- $markdownURL := "" -}}
+  {{- with .OutputFormats.Get "markdown" -}}
+    {{- $markdownURL = .Permalink -}}
+  {{- end -}}
+  {{- $document := dict
+        "id" $id
+        "title" .Title
+        "url" .Permalink
+        "markdown_url" $markdownURL
+        "kind" .Kind
+        "parent_url" $parentURL
+        "weight" .Weight
+        "last_modified" $lastModified
+  -}}
+  {{- $documents = $documents | append $document -}}
+{{- end -}}
+{{- $payload := dict
+      "schema_version" 1
+      "product" "Machbase DBMS"
+      "manual_version" (printf "%v" .Site.Params.dbmsVersion)
+      "language" .Site.Language.Lang
+      "document_count" (len $documents)
+      "documents" $documents
+-}}
+{{- jsonify (dict "indent" "  ") $payload -}}

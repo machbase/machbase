@@ -43,6 +43,7 @@ ignoreFiles:
   - "content/fluid/*"
 
 params:
+  dbmsVersion: 8.7.0
   latestNeoVer: v8.5.6
   examples_url: https://github.com/machbase/neo-server/tree/main/examples
   releases_url: https://github.com/machbase/neo-server/releases
@@ -96,6 +97,24 @@ menu:
         icon: github
       weight: 50
 
+outputFormats:
+  llms:
+    mediaType: text/plain
+    baseName: llms
+    isPlainText: true
+    notAlternative: true
+  llmsfull:
+    mediaType: text/plain
+    baseName: llms-full
+    isPlainText: true
+    notAlternative: true
+  llmschunks:
+    mediaType: application/json
+    baseName: llms-chunks
+    isPlainText: true
+    notAlternative: true
+
 outputs:
+  home: [html, rss, llms, llmsfull, llmschunks]
   page: [html, markdown]
   section: [html, rss, markdown]
