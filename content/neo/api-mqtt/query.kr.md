@@ -11,7 +11,7 @@ MQTT에서 데이터베이스 쿼리를 실행하려면 `db/query` 토픽으로 
 | param       | default | description                                           |
 |:----------- |---------|:------------------------------------------------------|
 | **q**       | _n/a_   | 실행할 SQL 쿼리 문자열                                      |
-| p           |         | 선택 사항. `?` bind placeholder에 전달할 파라미터의 JSON 배열입니다.<br/>예: `["name", 1234, 1.23, true]` {{< neo_since ver="8.0.75" />}} |
+| p           |         | 선택 사항. SQL 플레이스홀더에 전달할 바인드 파라미터입니다.<br/>- `?` 위치 지정 파라미터(JSON 배열): `["name", 1234]` {{< neo_since ver="8.0.75" />}}<br/>- `:name` 네임드 파라미터(JSON 객체): `{"name": "wave.sin", "n": 5}` {{< neo_since ver="8.7.0" />}} |
 | reply       | db/reply| 쿼리 결과를 받을 토픽                                       |
 | format      | json    | 결과 형식: json, csv, box                               |
 | timeformat  | ns      | 시간 단위: s, ms, us, ns                                |
@@ -36,12 +36,23 @@ MQTT에서 데이터베이스 쿼리를 실행하려면 `db/query` 토픽으로 
 | header      |         | `skip`을 지정하면 헤더를 포함하지 않습니다. |
 | precision   | -1      | 부동소수점 자릿수: -1은 반올림 없음, 0은 정수             |
 
-기본 예시는 클라이언트가 `db/reply/#`를 구독한 뒤 `reply` 필드를 `db/reply/my_query`로 지정해 `db/query` 토픽으로 쿼리를 발행하고, 여러 메시지 중 자신의 응답만 구분하는 방법을 보여 줍니다. `?` bind placeholder를 사용할 때는 `p` 필드에 JSON 배열을 지정합니다.
+기본 예시는 클라이언트가 `db/reply/#`를 구독한 뒤 `reply` 필드를 `db/reply/my_query`로 지정해 `db/query` 토픽으로 쿼리를 발행하고, 여러 메시지 중 자신의 응답만 구분하는 방법을 보여 줍니다. 바인드 플레이스홀더를 사용할 때는 `p` 필드에 `?`를 위한 JSON 배열을 지정합니다.
 
 ```json
 {
-    "q": "select name,time,value from example where name = ? limit 5",
-    "p": ["wave.sin"],
+    "q": "select name,time,value from example where name = ? limit ?",
+    "p": ["wave.sin", 5],
+    "format": "csv",
+    "reply": "db/reply/my_query"
+}
+```
+
+또는 `:name` 네임드 파라미터를 위한 JSON 객체를 지정합니다. {{< neo_since ver="8.7.0" />}}
+
+```json
+{
+    "q": "select name,time,value from example where name = :name limit :n",
+    "p": {"name": "wave.sin", "n": 5},
     "format": "csv",
     "reply": "db/reply/my_query"
 }

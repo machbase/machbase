@@ -17,7 +17,7 @@ There are several SRC functions are included. For example, `SQL()` produces reco
 
 - `bridge()` *bridge('name')* If a bridge is given, the SQL query is executed on the bridge
 - `sqltext` *string* : SQL SELECT statement to retrieve data from database. Use backtick(`) for multi-line sql string.
-- `params` : Variadic arguments for the bind arguments for the query.
+- `params` : Variadic arguments for query binding parameters.
 
 *Example)*
 
@@ -32,12 +32,20 @@ SQL (`
 `)
 ```
 
-- Query with variadic arguments
+- Query with variadic positional arguments
 
 ```js
 SQL(`SELECT time, value FROM example WHERE name = ? LIMIT ?`,
     param('name') ?? 'temperature',
     param('limit') ?? 10)
+```
+
+- Query with named parameters {{< neo_since ver="8.7.0" />}}
+
+```js
+SQL(`SELECT time, value FROM example WHERE name = :name LIMIT :limit`,
+    named('name', param('name') ?? 'temperature'),
+    named('limit', param('limit') ?? 10))
 ```
 
 - Query to bridge database
@@ -51,6 +59,37 @@ SQL(
     bridge('sqlite'),
     `SELECT time, value FROM example WHERE name = ?`,
     param('name') ?? "temperature")
+```
+
+### named()
+
+{{< neo_since ver="8.7.0" />}}
+
+*Syntax*: `named( name, value )`
+
+Creates a named bind parameter for SQL queries using placeholders like `:name`.
+
+- `name` *string* : parameter name matching the `:name` placeholder in the SQL query.
+- `value` *any* : value to bind.
+
+*Example)*
+
+```js
+SQL("SELECT time, value FROM tag_simple WHERE name = :name LIMIT :one",
+    named("name", "tag1"),
+    named("one", 1))
+```
+
+```js
+SQL(`
+    SELECT * FROM example
+    WHERE name = :name
+      AND time BETWEEN :from AND :to
+`,
+    named("name", "microwave"),
+    named("from", "2023-03-01 14:00:00"),
+    named("to", "2023-03-01 14:10:00"))
+```
 ```
 
 ## SQL_SELECT()

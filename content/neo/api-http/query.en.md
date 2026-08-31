@@ -80,7 +80,7 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 | param       | default | description                   |
 |:----------- |---------|:----------------------------- |
 | **q**       | _required_ | SQL query string              |
-| p           |         | JSON array of parameters for `?` bind placeholders.<br/>Example: `["name", 1234, 1.23, true]` {{< neo_since ver="8.5.0" />}} |
+| p           |         | Bind parameters for SQL placeholders.<br/>- JSON array for `?` positional placeholders: `["name", 1234, 1.23, true]` {{< neo_since ver="8.5.0" />}}<br/>- JSON object for `:name` named placeholders: `{"name": "Alice", "n": 2}` {{< neo_since ver="8.7.0" />}} |
 | format      | `json`    | Result data format: json, csv, box, ndjson |
 | timeformat  | `ns`      | Time format: s, ms, us, ns    |
 | tz          | `UTC`     | Time Zone: UTC, Local and location spec |

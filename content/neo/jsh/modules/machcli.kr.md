@@ -80,7 +80,8 @@ normalizeTableName(tableName)
 
 **Connection.query()**
 
-조회 SQL을 실행하고 `Rows` 객체를 반환합니다.
+조회 SQL을 실행하고 `Rows` 객체를 반환합니다. `params`에는 `?` 위치 지정 파라미터를 위한 가변 인자를 전달합니다.
+또는 `:key` 네임드 파라미터를 위한 `{ key: value, ... }` 객체를 전달할 수 있습니다 {{< neo_since ver="8.7.0" />}}.
 
 <h6>사용 형식</h6>
 
@@ -102,15 +103,23 @@ const conf = {
 try {
     db = new Client(conf);
     conn = db.connect();
+
+    // 위치 지정 파라미터
     rows = conn.query('SELECT NAME, TIME, VALUE FROM TAG LIMIT ?', 1);
     for (const row of rows) {
         console.println(row.NAME, row.TIME, row.VALUE);
     }
+    rows.close();
+
+    // 네임드 파라미터
+    rows = conn.query('SELECT NAME, TIME, VALUE FROM TAG WHERE NAME = :name ORDER BY TIME LIMIT :one', { name: 'jsh', one: 1 });
+    for (const row of rows) {
+        console.println(row.NAME, row.TIME, row.VALUE);
+    }
+    rows.close();
 } catch( e ) {
     console.println("ERROR", e.message);
 }
-rows && rows.close();
-conn && conn.close();
 db && db.close();
 ```
 

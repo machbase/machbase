@@ -80,7 +80,7 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 | param       | default | description                                                |
 |:----------- |---------|:-----------------------------------------------------------|
 | **q**       | _required_ | 실행할 SQL 구문입니다.                                     |
-| p           |         | `?` bind placeholder에 전달할 파라미터의 JSON 배열입니다.<br/> 예: `["name", 1234, 1.23, true]` {{< neo_since ver="8.5.0" />}} |
+| p           |         | SQL 플레이스홀더에 전달할 바인드 파라미터입니다.<br/>- `?` 위치 지정 파라미터(JSON 배열): `["name", 1234, 1.23, true]` {{< neo_since ver="8.5.0" />}}<br/>- `:name` 네임드 파라미터(JSON 객체): `{"name": "Alice", "n": 2}` {{< neo_since ver="8.7.0" />}} |
 | format      | `json`    | 결과 데이터 형식: json, csv, box, ndjson                  |
 | timeformat  | `ns`      | 시간 단위: s, ms, us, ns                                  |
 | tz          | `UTC`     | 시간대: UTC, Local, 위치 지정                             |

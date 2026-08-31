@@ -80,7 +80,8 @@ Connection object returned by `Client.connect()`.
 
 **Connection.query()**
 
-Executes a SELECT query and returns a `Rows` object.
+Executes a SELECT query and returns a `Rows` object. `params` can be positional arguments for `?` placeholders.
+Or a key-value object `{ key: value, ... }` for `:key` named parameters {{< neo_since ver="8.7.0" />}}.
 
 <h6>Syntax</h6>
 
@@ -102,15 +103,23 @@ const conf = {
 try {
   db = new Client(conf);
   conn = db.connect();
+
+  // Positional parameters
   rows = conn.query('SELECT NAME, TIME, VALUE FROM TAG LIMIT ?', 1);
   for (const row of rows) {
     console.println(row.NAME, row.TIME, row.VALUE);
   }
+  rows.close();
+
+  // Named parameters
+  rows = conn.query('SELECT NAME, TIME, VALUE FROM TAG WHERE NAME = :name ORDER BY TIME LIMIT :one', { name: 'jsh', one: 1 });
+  for (const row of rows) {
+    console.println(row.NAME, row.TIME, row.VALUE);
+  }
+  rows.close();
 } catch( e ) {
   console.println("ERROR", e.message);
 }
-rows && rows.close();
-conn && conn.close();
 db && db.close();
 ```
 

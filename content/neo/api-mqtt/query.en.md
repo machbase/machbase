@@ -11,7 +11,7 @@ The database query topic for MQTT is `db/query`. Send a query request to this to
 | param       | default | description                   |
 |:----------- |---------|:----------------------------- |
 | **q**       | _n/a_   | SQL query string              |
-| p           |         | Optional. JSON array of parameters for `?` bind placeholders.<br/>Example: `["name", 1234, 1.23, true]` {{< neo_since ver="8.0.75" />}} |
+| p           |         | Optional. Bind parameters for SQL placeholders.<br/>- JSON array for `?` positional placeholders: `["name", 1234]` {{< neo_since ver="8.0.75" />}}<br/>- JSON object for `:name` named placeholders: `{"name": "wave.sin", "n": 5}` {{< neo_since ver="8.7.0" />}} |
 | reply       | db/reply| The topic where to receive the result of query |
 | format      | json    | Result data format: json, csv, box |
 | timeformat  | ns      | Time format: s, ms, us, ns    |
@@ -37,16 +37,28 @@ Those options are available only when `format=json`
 | precision   | -1      | precision of float value, -1 for no round, 0 for int |
 
 
-A basic query example shows the client subscribe to `db/reply/#` and publish a query request to `db/query` with *reply* field `db/reply/my_query` so that it can identify the individual reply from multiple messages. To use `?` bind placeholders, provide a JSON array in the `p` field.
+A basic query example shows the client subscribe to `db/reply/#` and publish a query request to `db/query` with *reply* field `db/reply/my_query` so that it can identify the individual reply from multiple messages. To use bind placeholders, provide a JSON array for `?` in the `p` field.
 
 ```json
 {
-    "q": "select name,time,value from example where name = ? limit 5",
-    "p": ["wave.sin"],
+    "q": "select name,time,value from example where name = ? limit ?",
+    "p": ["wave.sin", 5],
     "format": "csv",
     "reply": "db/reply/my_query"
 }
 ```
+
+Or a JSON object for named placeholders (e.g. `:name`) in the `p` field. {{< neo_since ver="8.7.0" />}}
+
+```json
+{
+    "q": "select name,time,value from example where name = :name limit :n",
+    "p": {"name": "wave.sin", "n": 5},
+    "format": "csv",
+    "reply": "db/reply/my_query"
+}
+```
+
 
 {{< figure src="../img/query_mqttx.png" width="600px" caption="A demonstration shows how to query and receive responses over MQTT. (Using MQTTX.app)">}}
 

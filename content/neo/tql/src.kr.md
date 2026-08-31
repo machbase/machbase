@@ -31,12 +31,22 @@ SQL (`
 `)
 ```
 
-- 가변 인자 쿼리
+- 위치 기반 가변 인자 쿼리
 
 ```js
 SQL(`SELECT time, value FROM example WHERE name = ? LIMIT ?`,
     param('name') ?? 'temperature',
     param('limit') ?? 10)
+```
+
+- 네임드 파라미터 쿼리
+
+{{< neo_since ver="8.7.0" />}}
+
+```js
+SQL(`SELECT time, value FROM example WHERE name = :name LIMIT :limit`,
+    named('name', param('name') ?? 'temperature'),
+    named('limit', param('limit') ?? 10))
 ```
 
 - 브리지 데이터베이스 쿼리
@@ -50,6 +60,34 @@ SQL(
     bridge('sqlite'),
     `SELECT time, value FROM example WHERE name = ?`,
     param('name') ?? "temperature")
+```
+
+### named() {{< neo_since ver="8.7.0" />}}
+
+*구문*: `named( name, value )`
+
+SQL 구문의 `:name`과 같은 네임드 바인드 플레이스홀더에 전달할 파라미터를 지정합니다.
+
+- `name` *string*: SQL 구문 내 `:name` 플레이스홀더에 대응하는 파라미터 이름입니다.
+- `value` *any*: 바인딩할 값입니다.
+
+**예시**
+
+```js
+SQL("SELECT time, value FROM tag_simple WHERE name = :name LIMIT :one",
+    named("name", "tag1"),
+    named("one", 1))
+```
+
+```js
+SQL(`
+    SELECT * FROM example
+    WHERE name = :name
+      AND time BETWEEN :from AND :to
+`,
+    named("name", "microwave"),
+    named("from", "2023-03-01 14:00:00"),
+    named("to", "2023-03-01 14:10:00"))
 ```
 
 ## SQL_SELECT()
