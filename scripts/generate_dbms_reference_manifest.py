@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
-"""Generate DBMS reference inventories from the Machbase NFX source tree.
+"""Generate DBMS reference inventories and error catalogs from the NFX source tree.
 
-The generated JSON is an audit input, not a replacement for user-facing prose.
-It records what the server registers and whether the corresponding Korean
-reference page currently names each item.
+The generated JSON records what the server registers. The complete error catalog
+blocks in the Korean and English manuals are generated from the same parsed error
+definitions while surrounding user-facing guidance remains hand-authored.
 """
 
 from __future__ import annotations
 
 import argparse
 import ast
+import html
 import json
 import re
 import subprocess
@@ -23,6 +24,9 @@ SCHEMA_VERSION = 1
 FUNCTION_MANUAL = Path("content/dbms/reference/sql/dictionary/functions-full/_index.kr.md")
 TABLE_MANUAL = Path("content/dbms/reference/log-logs-system-catalog/virtual-table-full/_index.kr.md")
 ERROR_MANUAL = Path("content/dbms/reference/error-dictionary-codes/_index.kr.md")
+ERROR_MANUAL_EN = Path("content/dbms/reference/error-dictionary-codes/_index.en.md")
+ERROR_CATALOG_BEGIN = "<!-- BEGIN GENERATED NFX ERROR CATALOG -->"
+ERROR_CATALOG_END = "<!-- END GENERATED NFX ERROR CATALOG -->"
 
 
 def line_number(text: str, offset: int) -> int:
@@ -675,12 +679,90 @@ def decode_c_string(value: str) -> str:
         raise ValueError(f"cannot decode C message string {value!r}") from exc
 
 
-def generate_errors(nfx_root: Path, manual_root: Path) -> dict:
+def error_catalog_cell(value: str) -> str:
+    escaped = html.escape(value, quote=True)
+    escaped = (
+        escaped.replace("|", "&#124;")
+        .replace("*", "&#42;")
+        .replace("`", "&#96;")
+        .replace("[", "&#91;")
+        .replace("]", "&#93;")
+    )
+    escaped = escaped.replace("\r", "&#13;").replace("\n", "&#10;")
+    return f"<code>{escaped}</code>"
+
+
+def render_error_catalog(errors: list[dict], language: str) -> str:
+    if language not in {"en", "kr"}:
+        raise ValueError(f"unsupported error catalog language: {language}")
+
+    grouped: dict[int, list[dict]] = defaultdict(list)
+    for error in errors:
+        grouped[(error["id"] // 1000) * 1000].append(error)
+
+    if language == "kr":
+        title = "전체 오류 메시지"
+        intro = (
+            f"다음 {len(errors):,}개 항목은 Machbase 8.7.0 NFX 오류 카탈로그의 "
+            "`ERR_ID`, `KEY`, `MSG_EN`을 생성한 결과입니다."
+        )
+        columns = ("코드", "심볼", "메시지 원문")
+    else:
+        title = "Complete error message catalog"
+        intro = (
+            f"The following {len(errors):,} entries are generated from the `ERR_ID`, "
+            "`KEY`, and `MSG_EN` fields in the Machbase 8.7.0 NFX error catalog."
+        )
+        columns = ("Code", "Symbol", "Message")
+
+    lines = [
+        '<a id="full-error-catalog"></a>',
+        "",
+        f"## {title}",
+        "",
+        intro,
+        "",
+    ]
+    for range_start, entries in sorted(grouped.items()):
+        range_end = range_start + 999
+        lines.extend(
+            [
+                f"### `ERR-{range_start:05d}`–`ERR-{range_end:05d}` ({len(entries):,})",
+                "",
+                f"| {columns[0]} | {columns[1]} | {columns[2]} |",
+                "|------|------|------|",
+            ]
+        )
+        for error in entries:
+            lines.append(
+                "| "
+                + " | ".join(
+                    (
+                        error_catalog_cell(error["code"]),
+                        error_catalog_cell(error["key"]),
+                        error_catalog_cell(error["message_en"].rstrip()),
+                    )
+                )
+                + " |"
+            )
+        lines.append("")
+    return "\n".join(lines).rstrip()
+
+
+def replace_generated_error_catalog(text: str, catalog: str) -> str:
+    if text.count(ERROR_CATALOG_BEGIN) != 1 or text.count(ERROR_CATALOG_END) != 1:
+        raise ValueError("error manual must contain exactly one generated catalog marker pair")
+    start = text.index(ERROR_CATALOG_BEGIN) + len(ERROR_CATALOG_BEGIN)
+    end = text.index(ERROR_CATALOG_END)
+    if end < start:
+        raise ValueError("generated error catalog markers are out of order")
+    return text[:start] + "\n\n" + catalog.rstrip() + "\n\n" + text[end:]
+
+
+def generate_errors(nfx_root: Path) -> dict:
     message_path = nfx_root / "pm/src/msg/machbaseErrNLogMsg.msg"
     raw_text = message_path.read_text(encoding="utf-8")
     text = strip_msg_comments(raw_text)
-    manual_text = (manual_root / ERROR_MANUAL).read_text(encoding="utf-8")
-    documented_codes = set(re.findall(r"ERR-\d{5}", manual_text))
     errors: list[dict] = []
     for id_match in re.finditer(r"\bERR_ID\s*=\s*(\d+)\s*;", text):
         open_at = text.rfind("{", 0, id_match.start())
@@ -714,7 +796,7 @@ def generate_errors(nfx_root: Path, manual_root: Path) -> dict:
                 "message_en": message,
                 "format_tokens": format_tokens,
                 "conversion_tokens": conversions,
-                "listed_in_korean_reference": code in documented_codes,
+                "listed_in_korean_reference": True,
                 "source": f"{relative(message_path, nfx_root)}:{line_number(text, id_match.start())}",
             }
         )
@@ -760,9 +842,12 @@ def main() -> int:
         "--output-dir",
         type=Path,
         default=Path("data/dbms-reference"),
-        help="generated JSON directory, relative to the manual root by default",
+        help=(
+            "generated JSON directory, relative to the manual root by default; "
+            "error catalog blocks remain under the manual root"
+        ),
     )
-    parser.add_argument("--check", action="store_true", help="fail if checked-in JSON is stale")
+    parser.add_argument("--check", action="store_true", help="fail if any generated output is stale")
     args = parser.parse_args()
 
     nfx_root = args.nfx_root.resolve()
@@ -777,17 +862,29 @@ def main() -> int:
         manual_root / FUNCTION_MANUAL,
         manual_root / TABLE_MANUAL,
         manual_root / ERROR_MANUAL,
+        manual_root / ERROR_MANUAL_EN,
     ]
     missing = [str(path) for path in required if not path.exists()]
     if missing:
         parser.error(f"required inputs are missing: {', '.join(missing)}")
 
+    error_manifest = generate_errors(nfx_root)
     generated = {
         "functions.json": generate_functions(nfx_root, manual_root),
         "system-tables.json": generate_system_tables(nfx_root, manual_root),
-        "errors.json": generate_errors(nfx_root, manual_root),
+        "errors.json": error_manifest,
     }
     rendered = {name: serialize(value) for name, value in generated.items()}
+    error_manuals = {
+        ERROR_MANUAL: replace_generated_error_catalog(
+            (manual_root / ERROR_MANUAL).read_text(encoding="utf-8"),
+            render_error_catalog(error_manifest["errors"], "kr"),
+        ),
+        ERROR_MANUAL_EN: replace_generated_error_catalog(
+            (manual_root / ERROR_MANUAL_EN).read_text(encoding="utf-8"),
+            render_error_catalog(error_manifest["errors"], "en"),
+        ),
+    }
 
     if args.check:
         stale: list[str] = []
@@ -795,8 +892,12 @@ def main() -> int:
             path = output_dir / name
             if not path.exists() or path.read_text(encoding="utf-8") != expected:
                 stale.append(path.as_posix())
+        for relative_path, expected in error_manuals.items():
+            path = manual_root / relative_path
+            if path.read_text(encoding="utf-8") != expected:
+                stale.append(path.as_posix())
         if stale:
-            print("stale DBMS reference manifests:", file=sys.stderr)
+            print("stale DBMS reference outputs:", file=sys.stderr)
             for path in stale:
                 print(f"  {path}", file=sys.stderr)
             return 1
@@ -804,6 +905,8 @@ def main() -> int:
         output_dir.mkdir(parents=True, exist_ok=True)
         for name, value in rendered.items():
             (output_dir / name).write_text(value, encoding="utf-8")
+        for relative_path, value in error_manuals.items():
+            (manual_root / relative_path).write_text(value, encoding="utf-8")
 
     summary = {
         "revision": next(iter(generated.values()))["source"]["revision"],

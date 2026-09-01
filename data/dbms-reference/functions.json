@@ -2,7 +2,7 @@
   "schema_version": 1,
   "source": {
     "repository": "nfx",
-    "revision": "9f086447c84ecf4f944ad3421de315799968278f",
+    "revision": "4ab04c7ae964934b111dca8a9150c6f5e8c09600",
     "registry": "qp/src/qpf/qpf.c",
     "extraction_mode": "source_heuristic",
     "limitations": [

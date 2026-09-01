@@ -2,19 +2,20 @@
 
 The JSON files in `data/dbms-reference/` are generated audit inputs for the DBMS manual. They capture
 the registered function descriptors, fixed-table schemas, and errors found in the authoritative NFX
-source checkout. Registration is not, by itself, a promise that an item is a public API. These
-snapshots do not replace the explanations, examples, compatibility notes, or remedies in
-`content/dbms/`.
+source checkout. Registration is not, by itself, a promise that an item is a public API. The error
+generator additionally owns the marked complete-catalog blocks in the Korean and English error
+dictionary pages. Surrounding explanations, examples, compatibility notes, causes, and remedies
+remain hand-authored.
 
-Regenerate the snapshots after changing either the NFX revision or the corresponding Korean
-reference pages:
+Regenerate the snapshots and localized error catalog blocks after changing the NFX revision or the
+corresponding reference pages:
 
 ```bash
 python3 scripts/generate_dbms_reference_manifest.py \
   --nfx-root /path/to/nfx
 ```
 
-CI or review can detect stale snapshots without modifying files:
+CI or review can detect stale JSON or manual catalog blocks without modifying files:
 
 ```bash
 python3 scripts/generate_dbms_reference_manifest.py \
@@ -22,9 +23,10 @@ python3 scripts/generate_dbms_reference_manifest.py \
   --check
 ```
 
-The `has_korean_reference_heading` and `listed_in_korean_reference` fields are narrow coverage
-signals based on reference headings or explicit error codes. A `false` value is a review queue entry,
-not proof that the whole manual never mentions the item. Edition-specific descriptors and
+The `has_korean_reference_heading` field is a narrow coverage signal based on reference headings. A
+`false` value is a review queue entry, not proof that the whole manual never mentions the item. The
+complete generated Korean error catalog makes `listed_in_korean_reference` true for every parsed
+`ERR_ID`. Edition-specific descriptors and
 preprocessor conditions remain visible in each manifest so reviewers do not accidentally turn one
 build variant into a universal contract.
 

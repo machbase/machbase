@@ -29,5 +29,56 @@ class MessageLexerTest(unittest.TestCase):
         self.assertEqual(MODULE.decode_c_string('"line 1\\n" "line 2"'), "line 1\nline 2")
 
 
+class ErrorCatalogRenderTest(unittest.TestCase):
+    def test_html_cell_preserves_markdown_special_characters(self):
+        self.assertEqual(
+            MODULE.error_catalog_cell("value<%s>|`next`\nline"),
+            "<code>value&lt;%s&gt;&#124;&#96;next&#96;&#10;line</code>",
+        )
+
+    def test_html_cell_prevents_typographic_quote_replacement(self):
+        self.assertEqual(
+            MODULE.error_catalog_cell("file's \"name\""),
+            "<code>file&#x27;s &quot;name&quot;</code>",
+        )
+
+    def test_html_cell_preserves_markdown_emphasis(self):
+        self.assertEqual(
+            MODULE.error_catalog_cell("(*NOT USED*)"),
+            "<code>(&#42;NOT USED&#42;)</code>",
+        )
+
+    def test_catalog_is_grouped_and_sorted_by_range(self):
+        errors = [
+            {"id": 1001, "code": "ERR-01001", "key": "ERR_B", "message_en": "second"},
+            {"id": 1, "code": "ERR-00001", "key": "ERR_A", "message_en": "first"},
+        ]
+        catalog = MODULE.render_error_catalog(errors, "en")
+        self.assertIn("### `ERR-00000`–`ERR-00999` (1)", catalog)
+        self.assertIn("### `ERR-01000`–`ERR-01999` (1)", catalog)
+        self.assertLess(catalog.index("ERR-00001"), catalog.index("ERR-01001"))
+
+    def test_generated_marker_replacement_is_stable(self):
+        source = (
+            "before\n"
+            + MODULE.ERROR_CATALOG_BEGIN
+            + "\nold\n"
+            + MODULE.ERROR_CATALOG_END
+            + "\nafter\n"
+        )
+        expected = (
+            "before\n"
+            + MODULE.ERROR_CATALOG_BEGIN
+            + "\n\nnew\n\n"
+            + MODULE.ERROR_CATALOG_END
+            + "\nafter\n"
+        )
+        self.assertEqual(MODULE.replace_generated_error_catalog(source, "new"), expected)
+
+    def test_generated_marker_pair_is_required(self):
+        with self.assertRaisesRegex(ValueError, "exactly one"):
+            MODULE.replace_generated_error_catalog("no markers", "catalog")
+
+
 if __name__ == "__main__":
     unittest.main()
