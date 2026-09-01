@@ -22,12 +22,48 @@ params:
 | timeformat  | `ns`     | 시간 단위: `s`, `ms`, `us`, `ns`                               |
 | tz          | `UTC`    | 시간대: `UTC`, `Local`, 특정 지역                              |
 | method      | `insert` | 데이터 쓰기 방식: `insert`, `append`                           |
+| db          | `MACHBASEDB` | 다중 database 환경에서 대상 database 이름을 지정합니다. {{< neo_since ver="8.7.0" />}} |
 
 **INSERT vs. APPEND**
 
 기본적으로 `/db/write` API는 `INSERT INTO ...` 구문을 사용해 데이터를 저장합니다. 소량의 레코드를 적재할 때는 `append` 방식과 성능 차이가 거의 없습니다.
 
 수십만 건 이상의 대량 데이터를 적재할 때는 `method=append` 매개변수를 사용해 주십시오. 이렇게 지정하면 `method=insert`가 암묵적으로 적용되는 기본 동작 대신 Machbase Neo가 “append” 방식을 사용하도록 설정됩니다.
+
+**다중 Database**
+
+서버가 둘 이상의 named database를 호스팅하는 경우, `db` 쿼리 매개변수로 대상 database를 지정할 수 있습니다. `method=insert`, `method=append` 모두 동일하게 적용됩니다. JSON body 요청이라면 쿼리 매개변수 대신(또는 함께) 최상위 `"db"` 필드로도 지정할 수 있으며, 둘 다 지정된 경우 쿼리 매개변수가 우선합니다.
+
+`db`를 생략하거나 빈 값이면 기본 database인 `MACHBASEDB`가 대상이 됩니다. 잘못된 형식의 database 이름은 `400 Bad Request`로 응답하며, 존재하지 않거나 접속한 사용자가 접근할 수 없는 database는 에러로 응답합니다.
+
+```http
+POST http://127.0.0.1:5654/db/write/EXAMPLE?db=OTHERDB
+Content-Type: application/json
+
+{
+    "data": {
+        "columns":["name", "time", "value"],
+        "rows": [
+            [ "json-data", 1670380342000000000, 1.0001 ]
+        ]
+    }
+}
+```
+
+```sh
+curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE?db=OTHERDB' \
+  -H "Content-Type: application/json" \
+  --data-binary @- << 'EOF'
+{
+    "data": {
+        "columns":["name", "time", "value"],
+        "rows": [
+            [ "json-data", 1670380342000000000, 1.0001 ]
+        ]
+    }
+}
+EOF
+```
 
 **Content-Type 헤더**
 

@@ -23,12 +23,48 @@ And another benefit of `write` is that a client application can insert multiple 
 | timeformat  | `ns`     | Time format: `s`, `ms`, `us`, `ns` |
 | tz          | `UTC`    | Time Zone: `UTC`, `Local` and location spec |
 | method      | `insert` | Writing methods: `insert`, `append`  |
+| db          | `MACHBASEDB` | Target database name for multiple-database environments. {{< neo_since ver="8.7.0" />}} |
 
 **INSERT vs. APPEND**
 
 By default, the `/db/write` API uses the `INSERT INTO...` statement to write data. For a small number of records, this method performs similarly to the `append` method.
 
 When writing a large amount of data (e.g., more than several hundred thousand records), use the `method=append` parameter. This specifies that Machbase Neo should use the "append" method instead of the default "INSERT INTO..." statement, which is implicitly specified as `method=insert`.
+
+**Multiple-Database**
+
+When the server hosts more than one named database, use the `db` query parameter to select the target database for the write, for both `method=insert` and `method=append`. For a JSON body request, the same target can be given as a top-level `"db"` field instead of (or together with) the query parameter; the query parameter takes precedence when both are given.
+
+If `db` is omitted or empty, the write targets the default database `MACHBASEDB`. An invalid database name responds with `400 Bad Request`, and a database that does not exist (or that the connected user cannot access) responds with an error.
+
+```http
+POST http://127.0.0.1:5654/db/write/EXAMPLE?db=OTHERDB
+Content-Type: application/json
+
+{
+    "data": {
+        "columns":["name", "time", "value"],
+        "rows": [
+            [ "json-data", 1670380342000000000, 1.0001 ]
+        ]
+    }
+}
+```
+
+```sh
+curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE?db=OTHERDB' \
+  -H "Content-Type: application/json" \
+  --data-binary @- << 'EOF'
+{
+    "data": {
+        "columns":["name", "time", "value"],
+        "rows": [
+            [ "json-data", 1670380342000000000, 1.0001 ]
+        ]
+    }
+}
+EOF
+```
 
 **Content-Type Header**
 

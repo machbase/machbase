@@ -39,6 +39,20 @@ The `append` is recommend for the general situation of MQTT environment.
 
 - `db/write/EXAMPLE:csv:gzip` means writing data to the table `EXAMPLE` with `INSERT INTO...` SQL statement and the payload is gzip compressed CSV.
 
+**Multiple-Database**
+
+{{< neo_since ver="8.7.0" />}}
+
+The MQTT v3.1/v3.1.1 topic syntax has no dedicated field for `db`, but the `{table}` portion of the topic can be written as `db.user.table` or `user.table`, in which case the embedded database is used. If the qualifier is omitted, writes always target the default database `MACHBASEDB`.
+
+```
+db/append/OTHERDB.SYS.EXAMPLE
+```
+
+The topic above appends to the `SYS.EXAMPLE` table in the `OTHERDB` database.
+
+The target database can also be selected with the `db` user property in MQTT v5. However, if the topic already includes a `db.user.table` qualifier, that value takes precedence over the `db` user property. See [MQTT v5 Write](../writev5) for details.
+
 
 ## APPEND method
 

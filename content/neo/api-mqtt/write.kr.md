@@ -38,6 +38,20 @@ db/{method}/{table}:{format}:{compress}
 
 - `db/write/EXAMPLE:csv:gzip`은 `INSERT INTO...` SQL로 gzip 압축된 CSV를 저장합니다.
 
+**다중 Database**
+
+{{< neo_since ver="8.7.0" />}}
+
+MQTT v3.1/v3.1.1 토픽 문법에는 `db`를 지정하는 별도 필드가 없지만, 토픽의 `{table}` 부분을 `db.user.table` 또는 `user.table` 형태로 적으면 그 안에 포함된 database가 대상이 됩니다. qualifier를 생략하면 항상 기본 database인 `MACHBASEDB`로 저장됩니다.
+
+```
+db/append/OTHERDB.SYS.EXAMPLE
+```
+
+위 토픽은 `OTHERDB` database의 `SYS.EXAMPLE` 테이블에 append 방식으로 저장합니다.
+
+MQTT v5의 `db` 사용자 프로퍼티로도 대상 database를 지정할 수 있습니다. 다만 토픽에 `db.user.table` qualifier가 포함되어 있으면 그 값이 `db` 사용자 프로퍼티보다 우선합니다. 자세한 내용은 [MQTT v5 데이터 쓰기](../writev5)를 참고하십시오.
+
 
 ## APPEND 방식
 

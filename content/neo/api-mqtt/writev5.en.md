@@ -24,6 +24,7 @@ When using MQTT v5, the topic syntax can be simply `db/write/{table}`, and the f
 | compress       |          | `gzip`                  |
 | method         | `insert` | `insert`, `append`      |
 | reply          |          | Topic to which the server sends the result messages |
+| db             | `MACHBASEDB` | Target database name for multiple-database environments. {{< neo_since ver="8.7.0" />}} |
 
 
 **Additional properties for format=csv** 
@@ -37,6 +38,20 @@ When using MQTT v5, the topic syntax can be simply `db/write/{table}`, and the f
 {{< callout emoji="📌" >}}
 According to the semantics of append method, `header=columns` does not work with `method=append`.
 {{< /callout >}}
+
+**Multiple-Database**
+
+When the server hosts more than one named database, set the `db` user property to select the target database. It applies to both `method=insert` and `method=append`. If `db` is omitted or empty, the write targets the default database `MACHBASEDB`.
+
+The `{table}` portion of the topic can also embed a `db.user.table` or `user.table` qualifier (see [MQTT v3.1 Write](../write)). When the topic includes this qualifier, it always takes precedence over the `db` user property.
+
+```sh
+mosquitto_pub -h 127.0.0.1 -p 5653 -V 5 -t db/write/EXAMPLE \
+    -D PUBLISH user-property db OTHERDB \
+    -s << 'EOF'
+[ "my-car", 1670380342000000000, 32.1 ]
+EOF
+```
 
 ## APPEND method
 

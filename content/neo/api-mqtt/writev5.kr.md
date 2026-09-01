@@ -24,6 +24,7 @@ MQTT v5에서는 토픽을 `db/write/{table}`처럼 간단히 지정하고, 아�
 | compress       |          | `gzip`                  |
 | method         | `insert` | `insert`, `append`      |
 | reply          |          | Topic to which the server sends the result messages |
+| db             | `MACHBASEDB` | 다중 database 환경에서 대상 database 이름을 지정합니다. {{< neo_since ver="8.7.0" />}} |
 
 
 **format=csv일 때 추가 프로퍼티** 
@@ -37,6 +38,20 @@ MQTT v5에서는 토픽을 `db/write/{table}`처럼 간단히 지정하고, 아�
 {{< callout emoji="📌" >}}
 append 방식의 특성상 `header=columns`는 `method=append`와 함께 사용할 수 없습니다.
 {{< /callout >}}
+
+**다중 Database**
+
+서버가 둘 이상의 named database를 호스팅하는 경우, `db` 사용자 프로퍼티로 대상 database를 지정할 수 있습니다. `method=insert`, `method=append` 모두 동일하게 적용됩니다. `db`를 생략하거나 빈 값으로 두면 기본 database인 `MACHBASEDB`가 대상이 됩니다.
+
+토픽의 `{table}` 부분에 `db.user.table` 또는 `user.table` 형태로 qualifier를 포함시킬 수도 있습니다([MQTT v3.1 데이터 쓰기](../write) 참고). 토픽에 이 qualifier가 있으면 `db` 사용자 프로퍼티보다 항상 우선합니다.
+
+```sh
+mosquitto_pub -h 127.0.0.1 -p 5653 -V 5 -t db/write/EXAMPLE \
+    -D PUBLISH user-property db OTHERDB \
+    -s << 'EOF'
+[ "my-car", 1670380342000000000, 32.1 ]
+EOF
+```
 
 ## APPEND 방식
 
