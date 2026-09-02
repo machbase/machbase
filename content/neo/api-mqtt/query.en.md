@@ -12,6 +12,7 @@ The database query topic for MQTT is `db/query`. Send a query request to this to
 |:----------- |---------|:----------------------------- |
 | **q**       | _n/a_   | SQL query string              |
 | p           |         | Optional. Bind parameters for SQL placeholders.<br/>- JSON array for `?` positional placeholders: `["name", 1234]` {{< neo_since ver="8.0.75" />}}<br/>- JSON object for `:name` named placeholders: `{"name": "wave.sin", "n": 5}` {{< neo_since ver="8.7.0" />}} |
+| db          |         | Optional. Target database name for multiple-database environment {{< neo_since ver="8.7.0" />}} |
 | reply       | db/reply| The topic where to receive the result of query |
 | format      | json    | Result data format: json, csv, box |
 | timeformat  | ns      | Time format: s, ms, us, ns    |
