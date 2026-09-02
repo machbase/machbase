@@ -26,12 +26,29 @@ new Client(config)
 - `password` (default: `manager`)
 - `alternativeHost` (optional)
 - `alternativePort` (optional)
+- `database` (optional): Database to use when connecting in a multi-database environment (alias `db`) {{< neo_since ver="8.7.0" />}}
 
 <h6>Usage example</h6>
 
 ```js {linenos=table,linenostart=1}
 const { Client } = require('machcli');
 const db = new Client({ host: '127.0.0.1', port: 5656, user: 'sys', password: 'manager' });
+```
+
+<h6>Multi-database example</h6>
+
+Specify `database` when creating the client to select the target database for the connection. `db` is an alias of `database`. {{< neo_since ver="8.7.0" />}}
+
+```js {linenos=table,linenostart=1}
+const { Client } = require('machcli');
+const db = new Client({
+  host: '127.0.0.1',
+  port: 5656,
+  user: 'sys',
+  password: 'manager',
+  db: 'MACHBASEDB',
+});
+const conn = db.connect();
 ```
 
 **Client.connect()**

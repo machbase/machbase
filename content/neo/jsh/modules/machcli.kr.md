@@ -26,12 +26,29 @@ new Client(config)
 - `password` (기본값: `manager`)
 - `alternativeHost` (선택)
 - `alternativePort` (선택)
+- `database` (선택): 멀티 데이터베이스 환경에서 연결에 사용할 대상 데이터베이스 (별칭: `db`) {{< neo_since ver="8.7.0" />}}
 
 <h6>사용 예시</h6>
 
 ```js {linenos=table,linenostart=1}
 const { Client } = require('machcli');
 const db = new Client({ host: '127.0.0.1', port: 5656, user: 'sys', password: 'manager' });
+```
+
+<h6>멀티 데이터베이스 예시</h6>
+
+클라이언트 생성 시 `database`를 지정하면 연결에 사용할 대상 데이터베이스를 선택할 수 있습니다. `db`는 `database`의 별칭입니다. {{< neo_since ver="8.7.0" />}}
+
+```js {linenos=table,linenostart=1}
+const { Client } = require('machcli');
+const db = new Client({
+    host: '127.0.0.1',
+    port: 5656,
+    user: 'sys',
+    password: 'manager',
+    db: 'MACHBASEDB',
+});
+const conn = db.connect();
 ```
 
 **Client.connect()**
