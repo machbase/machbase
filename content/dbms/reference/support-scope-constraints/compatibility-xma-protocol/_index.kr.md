@@ -69,6 +69,11 @@ Named bind는 client마다 server prepared, ordinal bind 또는 client-side rend
 포함되지 않은 SDK는 ARRAY 메타데이터나 값을 기존 scalar 타입으로 대체하지 않으며 해당
 요청을 오류로 처리합니다.
 
+ARRAY의 SQL 요소 위치와 Machbase 전용 SDK position은 0-based입니다. 기존 1-based SQL,
+sparse 객체와 indexed Append target은 위치를 1씩 낮춥니다. 저장 데이터와 dense ARRAY
+요소 순서는 바뀌지 않습니다. JDBC parameter ordinal이나 `java.sql.Array` slice처럼
+표준 API가 정의한 1-based 위치는 이 변경의 대상이 아닙니다.
+
 Cluster Edition은 coordinator, broker와 warehouse를 모두 ARRAY를 지원하는 같은 DBMS
 8.7.0 빌드로 구성합니다. 혼합 버전 상태에서는 ARRAY DDL이나 ARRAY 데이터를 사용하는
 작업을 시작하지 마십시오.

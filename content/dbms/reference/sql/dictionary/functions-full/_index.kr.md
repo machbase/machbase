@@ -229,19 +229,25 @@ SELECT ARRAY_LENGTH(ARRAY[10, NULL, 30]);
 
 ## ARRAY_SPARSE
 
-`ARRAY_SPARSE`는 고정 길이 `ARRAY`에서 값이 있는 위치만 지정합니다. 위치는 1부터
+`ARRAY_SPARSE`는 고정 길이 `ARRAY`에서 값이 있는 위치만 지정합니다. 위치는 0부터
 시작하며, 생략한 위치는 element NULL입니다.
 
 ```sql
 -- 대상 컬럼에서 타입과 cardinality를 결정합니다.
 INSERT INTO sensor_array (id, channels)
-VALUES (1, ARRAY_SPARSE(1 => 10, 4 => 40));
+VALUES (1, ARRAY_SPARSE(0 => 10, 3 => 40));
 
 -- 대상이 없는 표현식은 타입과 cardinality를 명시합니다.
-SELECT ARRAY_SPARSE(INT32[4], 1 => 10, 4 => 40);
+SELECT ARRAY_SPARSE(INT32[4], 0 => 10, 3 => 40);
+
+-- bracket 축약형은 가장 큰 position + 1로 cardinality를 추론합니다.
+SELECT [1 => 12, 33 => 23];
 ```
 
-중복 또는 범위 밖 position은 오류입니다. 입력 방식과 SDK sparse 객체는
+bracket 축약형은 대상 ARRAY가 있으면 대상 타입과 cardinality를 사용합니다. standalone
+표현식이면 dense ARRAY와 같은 숫자 공통 타입을 사용하고 가장 큰 position에 1을 더해
+cardinality를 정합니다. target 없는 all-NULL sparse, 중복 또는 범위 밖 position은
+오류입니다. 입력 방식과 SDK sparse 객체는
 [Sparse ARRAY와 선택 컬럼 Append API](/dbms/development-tools-integration/data-input-load-export/array-append/)를
 참고하십시오.
 

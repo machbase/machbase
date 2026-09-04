@@ -317,9 +317,10 @@ append 워크로드에는 별도 연결을 사용하십시오.
 
 ### ARRAY와 선택 컬럼 Append
 
-Machbase DBMS 8.7.0의 ARRAY 기능이 포함된 `neo-client` 개발 소스에서는 고정 길이 ARRAY와
-선택 target을 사용할 수 있습니다. 이 기능이 공개 모듈 버전에 포함되었다고 가정하지
-말고 사용하는 SDK 소스 또는 배포물의 기능 포함 여부를 확인하십시오.
+Machbase DBMS 8.7.0의 ARRAY 기능이 포함된
+[`neo-client` PR #17](https://github.com/machbase/neo-client/pull/17) 이후의 v2 module
+소스는 고정 길이 ARRAY와 선택 target을 지원합니다. 공개 v2 릴리스가 지정되기 전에는 공개
+모듈 버전에 같은 기능이 포함되었다고 가정하지 마십시오.
 
 ```go
 func appendSelected(ctx context.Context, dsn string) error {
@@ -329,8 +330,8 @@ func appendSelected(ctx context.Context, dsn string) error {
         dsn,
         "ARRAY_APPEND_EXAMPLE",
         "ID",
-        "A[1]",
-        "A[4]",
+        "A[0]",
+        "A[3]",
     ); err != nil {
         return err
     }
@@ -356,8 +357,9 @@ func appendSelected(ctx context.Context, dsn string) error {
 위 예제는 `context`, `fmt`와
 `client "github.com/machbase/neo-client/v2"`를 import한 상태를 전제로 합니다.
 
-행마다 다른 위치를 입력할 때는 `api.NewSparseArray()`를 사용합니다. 위치는 1부터
-시작합니다. API와 버전 제한은
+행마다 다른 위치를 입력할 때는 `api.NewSparseArray()`를 사용합니다. `Array.Set()`,
+`Get()`, `Entries()`와 indexed Append target의 position은 0-based입니다. API와 버전
+제한은
 [Sparse ARRAY와 선택 컬럼 Append API](../data-input-load-export/array-append/)를
 참고하십시오.
 

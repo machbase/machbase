@@ -227,15 +227,16 @@ Machbase DBMS 8.7.0은 `SQL_MACHBASE_ARRAY_DESC`를 사용한 typed ARRAY 조회
 ```c
 SQLCHAR *targets[] = {
     (SQLCHAR *)"ID",
-    (SQLCHAR *)"CHANNELS[1]",
-    (SQLCHAR *)"CHANNELS[4]",
+    (SQLCHAR *)"CHANNELS[0]",
+    (SQLCHAR *)"CHANNELS[3]",
     NULL
 };
 
 SQLAppendOpenColumns(statement, (SQLCHAR *)"SENSOR_ARRAY", targets, 0);
 ```
 
-컬럼명 목록은 마지막 원소가 `NULL`이어야 합니다. `SQLAppendBatch()`는 ARRAY를 지원하지
+ARRAY element target과 sparse descriptor의 position은 0-based입니다. 컬럼명 목록은
+마지막 원소가 `NULL`이어야 합니다. `SQLAppendBatch()`는 ARRAY를 지원하지
 않습니다. descriptor 정의, whole NULL과 element NULL 처리, direct ODBC handle 제약은
 [Sparse ARRAY와 선택 컬럼 Append API](../data-input-load-export/array-append/)를
 참고하십시오.

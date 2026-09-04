@@ -170,26 +170,26 @@ VALUES (11, [NULL, NULL, NULL, NULL]);
 
 ## 요소 조회
 
-요소 위치는 1부터 시작합니다.
+요소 위치는 0부터 시작합니다. cardinality가 4이면 유효한 위치는 `0..3`입니다.
 
 ```sql
 SELECT CHANNELS,
-       CHANNELS[1] AS FIRST_CHANNEL,
-       CHANNELS[4] AS LAST_CHANNEL,
-       CHANNELS[5] AS OUT_OF_RANGE
+       CHANNELS[0] AS FIRST_CHANNEL,
+       CHANNELS[3] AS LAST_CHANNEL,
+       CHANNELS[4] AS OUT_OF_RANGE
   FROM SENSOR_ARRAY;
 ```
 
 다음 경우에는 오류 대신 SQL `NULL`을 반환합니다.
 
-- 인덱스가 0, 음수 또는 cardinality보다 큰 경우
+- 인덱스가 음수 또는 cardinality 이상인 경우
 - 인덱스 표현식이 SQL NULL인 경우
 - `ARRAY` 전체가 NULL인 경우
 - 해당 요소가 NULL인 경우
 
 {{< callout type="warning" >}}
-요소 postfix는 인용하지 않은 단순 컬럼명에만 사용할 수 있습니다. `A[1]`은 가능하지만
-`T.A[1]`과 `"A"[1]`은 지원하지 않습니다.
+요소 postfix는 인용하지 않은 단순 컬럼명에만 사용할 수 있습니다. `A[0]`은 가능하지만
+`T.A[0]`과 `"A"[0]`은 지원하지 않습니다.
 {{< /callout >}}
 
 ## ARRAY_LENGTH
@@ -214,7 +214,7 @@ NULL 규칙을 따릅니다.
 SELECT ID
   FROM SENSOR_ARRAY
  WHERE CHANNELS = [1.5, NULL, 3.5, 4.5]
-    OR CHANNELS[2] IS NULL;
+    OR CHANNELS[1] IS NULL;
 ```
 
 요소 표현식은 해당 숫자 타입의 일반 표현식과 조건식에 사용할 수 있습니다. 반면 전체
@@ -477,9 +477,11 @@ Console.WriteLine(reader.IsDBNull(0));
 ### Go neo-client
 
 이 항목은 Machbase Neo 서버가 아니라 `neo-client`가 Machbase DBMS에 직접 연결하는 SDK
-경로입니다. ARRAY 지원 코드는 `array-type-support` 개발 브랜치의 v2 module에 있습니다.
-정식 배포 전에는 해당 소스 checkout과 `go.work` 또는 `replace` 등 명시적 로컬 module
-연결이 필요합니다. 공개 릴리스에 기능이 있다고 가정하지 마십시오.
+경로입니다. 0-based ARRAY API는
+[`neo-client` PR #17](https://github.com/machbase/neo-client/pull/17) 이후의 v2 module
+소스에 있습니다.
+공개 v2 릴리스가 지정되기 전에는 해당 소스 checkout과 `go.work` 또는 `replace` 등
+명시적 로컬 module 연결이 필요합니다. 공개 v1 릴리스에 기능이 있다고 가정하지 마십시오.
 
 ```go
 import (
@@ -496,7 +498,7 @@ if err != nil { return err }
 defer db.Close()
 
 dense, err := api.NewArray(api.SqlTypeInt32,
-    []any{int32(10), nil, int32(30)})
+    int32(10), nil, int32(30))
 if err != nil { return err }
 if _, err = db.ExecContext(context.Background(),
     "INSERT INTO SDK_ARRAY_SAMPLE(ID,A_I32) VALUES(3,?)", dense); err != nil {
@@ -533,7 +535,7 @@ encoded payload byte length이므로 cardinality로 사용하면 안 됩니다. 
 `machsql`은 canonical `ARRAY` 문자열을 출력합니다.
 
 ```sql
-SELECT ID, CHANNELS, ARRAY_LENGTH(CHANNELS), CHANNELS[2]
+SELECT ID, CHANNELS, ARRAY_LENGTH(CHANNELS), CHANNELS[1]
   FROM SENSOR_ARRAY
  ORDER BY ID;
 ```
@@ -567,6 +569,8 @@ Machbase DBMS 8.7.0 환경에서 backup, restore와 mount를 수행합니다.
 ## 버전과 오류 처리
 
 - `ARRAY` 타입은 Machbase DBMS 8.7.0에서 지원합니다.
+- ARRAY의 SQL 요소 위치와 Machbase 전용 SDK position은 0-based입니다. 기존 1-based
+  SQL과 SDK 호출은 위치를 1씩 낮춰야 합니다.
 - Machbase DBMS 8.7.0 서버와 ARRAY 기능이 포함된 SDK 빌드를 함께 사용합니다.
 - 지원하지 않는 서버 또는 SDK에서는 ARRAY를 다른 타입으로 자동 변환하지 않고 오류를
   반환합니다.

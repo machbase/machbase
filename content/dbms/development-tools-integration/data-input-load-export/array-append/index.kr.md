@@ -17,12 +17,12 @@ Machbase DBMS 8.7.0에서는 고정 길이 `ARRAY`의 일부 위치만 입력할
 | 요구사항 | 권장 방식 |
 |---|---|
 | SQL 한 행에서 값이 있는 위치만 지정 | `ARRAY_SPARSE(position => value, ...)` |
-| 여러 Append 행이 항상 같은 위치를 입력 | Append Open의 `A[1]`, `A[4]` target |
+| 여러 Append 행이 항상 같은 위치를 입력 | Append Open의 `A[0]`, `A[3]` target |
 | Append 행마다 입력 위치가 다름 | whole `A` target과 SDK sparse 객체 |
 | 모든 요소가 NULL인 non-NULL ARRAY | 빈 sparse 객체 |
 | ARRAY 자체가 NULL | SQL `NULL` 또는 SDK의 whole-NULL 값 |
 
-위치는 SQL과 모든 SDK 공개 API에서 1부터 시작합니다.
+위치는 SQL과 모든 Machbase 전용 SDK API에서 0부터 시작합니다.
 
 ## SQL sparse 입력
 
@@ -38,34 +38,53 @@ CREATE LOG TABLE ARRAY_APPEND_EXAMPLE
 );
 
 INSERT INTO ARRAY_APPEND_EXAMPLE (ID, A)
-VALUES (1, ARRAY_SPARSE(1 => 10, 4 => 40));
+VALUES (1, ARRAY_SPARSE(0 => 10, 3 => 40));
 ```
 
 SELECT처럼 대상 타입을 추론할 수 없는 문맥에서는 요소 타입과 cardinality를 먼저
 지정합니다.
 
 ```sql
-SELECT ARRAY_SPARSE(INT32[4], 1 => 10, 4 => 40);
-SELECT ARRAY_SPARSE(DECIMAL(12,4)[4], 2 => 1.2500);
+SELECT ARRAY_SPARSE(INT32[4], 0 => 10, 3 => 40);
+SELECT ARRAY_SPARSE(DECIMAL(12,4)[4], 1 => 1.2500);
 ```
 
-- position은 `1..cardinality` 범위의 정수 literal이어야 합니다.
+- position은 `0..cardinality-1` 범위의 정수 literal이어야 합니다.
 - pair 순서는 자유지만 같은 position을 중복 지정할 수 없습니다.
 - 생략한 위치와 `position => NULL`은 element NULL입니다.
 - `ARRAY_SPARSE()` 또는 `ARRAY_SPARSE(INT32[4])`는 all-element-NULL ARRAY입니다.
 - whole NULL은 `ARRAY_SPARSE()`가 아니라 SQL `NULL`로 입력합니다.
 - 잘못된 position이나 요소 변환은 문장 전체를 실패시킵니다.
 
+### Direct sparse shorthand
+
+`ARRAY_SPARSE` wrapper 없이 bracket 안에 position과 value pair를 직접 쓸 수 있습니다.
+
+```sql
+INSERT INTO ARRAY_APPEND_EXAMPLE (ID, A)
+VALUES (2, [0 => 10, 3 => 40]);
+
+SELECT [1 => 12, 33 => 23];
+```
+
+대상 ARRAY가 있으면 대상 타입과 cardinality를 사용합니다. standalone에서는 dense
+ARRAY와 같은 숫자 공통 타입을 추론하고 cardinality를 `가장 큰 position + 1`로
+결정합니다. 따라서 두 번째 예제는 `INT32[34]`입니다.
+
+standalone all-NULL sparse는 요소 타입을 알 수 없어 오류입니다. 이 경우
+`ARRAY_SPARSE(TYPE[N], ...)` 형식을 사용합니다. `[]`는 기존 dense empty constructor로
+유지되며 `ARRAY[0 => 1]`은 지원하지 않습니다.
+
 ### INSERT target에 위치 지정
 
 여러 행이 같은 위치를 입력하면 컬럼 목록에 element target을 직접 지정합니다.
 
 ```sql
-INSERT INTO ARRAY_APPEND_EXAMPLE (ID, A[1], A[4])
+INSERT INTO ARRAY_APPEND_EXAMPLE (ID, A[0], A[3])
 VALUES (2, 10, 40);
 
 -- A는 존재하지만 모든 element가 NULL입니다.
-INSERT INTO ARRAY_APPEND_EXAMPLE (ID, A[1], A[4])
+INSERT INTO ARRAY_APPEND_EXAMPLE (ID, A[0], A[3])
 VALUES (3, NULL, NULL);
 
 -- A 자체가 NULL입니다.
@@ -73,11 +92,11 @@ INSERT INTO ARRAY_APPEND_EXAMPLE (ID)
 VALUES (4);
 ```
 
-같은 문장에서 `A`와 `A[1]`을 함께 지정하거나 같은 element를 두 번 지정할 수 없습니다.
+같은 문장에서 `A`와 `A[0]`을 함께 지정하거나 같은 element를 두 번 지정할 수 없습니다.
 scalar 컬럼이나 범위 밖 위치를 element target으로 사용하면 오류입니다.
 
 indexed target은 `INSERT ... VALUES`와 Append 선택 target에서 지원합니다.
-`INSERT ... SELECT`와 `UPDATE ... SET A[1] = ...`에서는 지원하지 않습니다.
+`INSERT ... SELECT`와 `UPDATE ... SET A[0] = ...`에서는 지원하지 않습니다.
 
 ## Append 공통 규칙
 
@@ -170,11 +189,11 @@ int main(void)
     SQLHSTMT append = SQL_NULL_HSTMT;
     SQLCHAR conn[] =
         "SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;PWD=MANAGER;CONNTYPE=1";
-    SQLCHAR *fixed[] = {(SQLCHAR*)"ID", (SQLCHAR*)"A[1]",
-                        (SQLCHAR*)"A[4]", NULL};
+    SQLCHAR *fixed[] = {(SQLCHAR*)"ID", (SQLCHAR*)"A[0]",
+                        (SQLCHAR*)"A[3]", NULL};
     SQLCHAR *whole[] = {(SQLCHAR*)"ID", (SQLCHAR*)"A", NULL};
     SQL_APPEND_PARAM row[3];
-    SQLUSMALLINT positions[2] = {2, 4};
+    SQLUSMALLINT positions[2] = {1, 3};
     SQLINTEGER values[2] = {200, 400};
     SQLLEN indicators[2] = {0, 0};
     SQL_MACHBASE_SPARSE_ARRAY_DESC sparse;
@@ -289,7 +308,8 @@ cc -I"$MACHBASE_HOME/include" sparse_append.c \
 LD_LIBRARY_PATH="$MACHBASE_HOME/lib" ./sparse_append
 ```
 
-descriptor position은 정렬하지 않아도 되지만 중복될 수 없습니다. entry indicator가
+descriptor position은 0-based입니다. 정렬하지 않아도 되지만 중복될 수 없습니다.
+entry indicator가
 `SQL_NULL_DATA`이면 해당 위치는 element NULL입니다. `entry_count == 0`은 빈 sparse
 ARRAY이고, whole NULL은 `mVar.mData = NULL`, `mVar.mLength = 0`으로 지정합니다.
 
@@ -347,13 +367,13 @@ int main() {
         !ok(SQLAllocStmt(h.dbc, &h.stmt)))
         throw std::runtime_error("connect");
 
-    SQLCHAR *fixed[] = {(SQLCHAR*)"ID", (SQLCHAR*)"A[1]",
-                        (SQLCHAR*)"A[4]", nullptr};
+    SQLCHAR *fixed[] = {(SQLCHAR*)"ID", (SQLCHAR*)"A[0]",
+                        (SQLCHAR*)"A[3]", nullptr};
     std::array<SQL_APPEND_PARAM, 3> row{};
     row[0].mLong = 1; row[1].mInteger = 10; row[2].mInteger = 40;
     append(h, fixed, row.data(), 3);
 
-    std::array<SQLUSMALLINT, 2> pos{2, 4};
+    std::array<SQLUSMALLINT, 2> pos{1, 3};
     std::array<SQLINTEGER, 2> val{200, 400};
     std::array<SQLLEN, 2> ind{0, 0};
     SQL_MACHBASE_SPARSE_ARRAY_DESC sparse{};
@@ -438,8 +458,8 @@ int main(void) {
         !ok(SQLAllocStmt(dbc, &stmt)))
         return 1;
 
-    SQLCHAR *fixed[] = {(SQLCHAR*)"ID", (SQLCHAR*)"A[1]",
-                        (SQLCHAR*)"A[4]", NULL};
+    SQLCHAR *fixed[] = {(SQLCHAR*)"ID", (SQLCHAR*)"A[0]",
+                        (SQLCHAR*)"A[3]", NULL};
     SQL_APPEND_PARAM row[3] = {0};
     row[0].mLong = 1; row[1].mInteger = 10; row[2].mInteger = 40;
     if (!ok(SQLAppendOpenColumns(stmt,
@@ -451,7 +471,7 @@ int main(void) {
     if (!ok(SQLAppendClose(stmt, &success, &failure)) ||
         success != 1 || failure != 0) return 2;
 
-    SQLUSMALLINT positions[2] = {2, 4};
+    SQLUSMALLINT positions[2] = {1, 3};
     SQLINTEGER values[2] = {200, 400};
     SQLLEN indicators[2] = {0, 0};
     SQL_MACHBASE_SPARSE_ARRAY_DESC sparse = {0};
@@ -560,12 +580,12 @@ public class SparseAppend {
             "jdbc:machbase://127.0.0.1:5656/machbasedb", "SYS", "MANAGER");
         try {
             try (MachStatement st = (MachStatement)con.createStatement()) {
-                append(st, new String[] {"ID", "A[1]", "A[4]"},
+                append(st, new String[] {"ID", "A[0]", "A[3]"},
                        new Object[][] {{1L, 10, 40}});
 
                 Map<Integer,Object> entries = new HashMap<Integer,Object>();
-                entries.put(2, 200);
-                entries.put(4, 400);
+                entries.put(1, 200);
+                entries.put(3, 400);
                 MachSparseArray sparse = con.createSparseArrayOf(
                     "INT32", 4, entries);
                 MachSparseArray empty = con.createSparseArrayOf(
@@ -589,7 +609,7 @@ public class SparseAppend {
 }
 ```
 
-`createSparseArrayOf()`의 map key는 1-based position입니다. `MachSparseArray.clear()`와
+`createSparseArrayOf()`의 map key는 0-based position입니다. `MachSparseArray.clear()`와
 `set()`으로 같은 객체를 재사용할 수 있습니다. empty map은 all-element-NULL ARRAY이고
 Java `null`은 whole NULL입니다.
 
@@ -609,10 +629,10 @@ def main():
         conn.append(
             "ARRAY_APPEND_EXAMPLE",
             [[1, 10, 40]],
-            columns=["ID", "A[1]", "A[4]"],
+            columns=["ID", "A[0]", "A[3]"],
         )
 
-        sparse = SparseArray(4).set(2, 200).set(4, 400)
+        sparse = SparseArray(4).set(1, 200).set(3, 400)
         empty = SparseArray(4)
         conn.append(
             "ARRAY_APPEND_EXAMPLE",
@@ -655,7 +675,7 @@ if db.open("127.0.0.1", "SYS", "MANAGER", 5656) != 1:
     raise RuntimeError(db.result())
 try:
     if db.appendOpenColumns(
-        "ARRAY_APPEND_EXAMPLE", ["ID", "A[1]", "A[4]"]
+        "ARRAY_APPEND_EXAMPLE", ["ID", "A[0]", "A[3]"]
     ) != 1:
         raise RuntimeError(db.result())
     try:
@@ -667,7 +687,7 @@ try:
         if db.appendClose() != 1:
             raise RuntimeError(db.result())
 
-    sparse = SparseArray(4).set(2, 200).set(4, 400)
+    sparse = SparseArray(4).set(1, 200).set(3, 400)
     empty = SparseArray(4)
     if db.appendOpenColumns(
         "ARRAY_APPEND_EXAMPLE", ["ID", "A"]
@@ -712,11 +732,11 @@ async function appendRows(connection, columns, rows) {
   try {
     await appendRows(connection, [
       { name: 'ID', type: 'int64' },
-      { name: 'A[1]', type: 'int32' },
-      { name: 'A[4]', type: 'int32' },
+      { name: 'A[0]', type: 'int32' },
+      { name: 'A[3]', type: 'int32' },
     ], [[1n, 10, 40]]);
 
-    const sparse = new SparseArray(4).set(2, 200).set(4, 400);
+    const sparse = new SparseArray(4).set(1, 200).set(3, 400);
     const empty = new SparseArray(4);
     await appendRows(connection, [
       { name: 'ID', type: 'int64' },
@@ -737,8 +757,8 @@ async function appendRows(connection, columns, rows) {
 });
 ```
 
-`MACHBASE_NATIVE_APPEND=0`으로 prepared fallback을 선택하면 `SparseArray`를 Append 값으로
-사용할 수 없습니다. sparse Append는 기본 Append 경로를 사용합니다.
+`MACHBASE_NATIVE_APPEND=0`으로 prepared fallback을 선택해도 `SparseArray`를
+ARRAY-compatible 값으로 처리합니다.
 
 ## .NET full/legacy provider
 
@@ -784,13 +804,13 @@ using var connection = new MachConnection(
 connection.Open();
 
 Append(connection,
-    new List<string> { "ID", "A[1]", "A[4]" },
+    new List<string> { "ID", "A[0]", "A[3]" },
     new List<List<object>> {
         new List<object> { 1L, 10, 40 }
     });
 
 var sparse = new MachSparseArray(MachDBType.INT32_ARRAY, 4)
-    .Set(2, 200).Set(4, 400);
+    .Set(1, 200).Set(3, 400);
 var empty = new MachSparseArray(MachDBType.INT32_ARRAY, 4);
 Append(connection,
     new List<string> { "ID", "A" },
@@ -818,8 +838,10 @@ provider가 열린 handle을 정리하고 connection은 재사용할 수 있습�
 ## Go neo-client
 
 이 예제는 Machbase Neo 서버가 아니라 `neo-client`가 Machbase DBMS에 직접 연결하는
-경로입니다. ARRAY와 선택 컬럼 Append API가 포함된 개발 브랜치 소스를 사용해야 하며,
-공개 모듈 버전에 같은 기능이 포함되었다고 가정하지 마십시오.
+경로입니다. 0-based ARRAY와 선택 컬럼 Append API는
+[`neo-client` PR #17](https://github.com/machbase/neo-client/pull/17) 이후의 v2 module
+소스에 있습니다. 공개 v2 릴리스가 지정되기 전에는 공개 모듈 버전에 같은 기능이
+포함되었다고 가정하지 마십시오.
 
 ```go
 package main
@@ -863,15 +885,15 @@ func main() {
     if err := db.PingContext(ctx); err != nil { panic(err) }
 
     if err := appendRows(ctx, dsn, "ARRAY_APPEND_EXAMPLE",
-        []string{"ID", "A[1]", "A[4]"},
+        []string{"ID", "A[0]", "A[3]"},
         [][]any{{int64(1), int32(10), int32(40)}}); err != nil {
         panic(err)
     }
 
     sparse, err := api.NewSparseArray(api.SqlTypeInt32, 4)
     if err != nil { panic(err) }
-    if err := sparse.Set(2, int32(200)); err != nil { panic(err) }
-    if err := sparse.Set(4, int32(400)); err != nil { panic(err) }
+    if err := sparse.Set(1, int32(200)); err != nil { panic(err) }
+    if err := sparse.Set(3, int32(400)); err != nil { panic(err) }
     empty, err := api.NewSparseArray(api.SqlTypeInt32, 4)
     if err != nil { panic(err) }
     var wholeNull *api.Array
@@ -907,7 +929,7 @@ func main() {
 모든 SDK 예제 실행 후 다음 쿼리로 결과를 확인합니다.
 
 ```sql
-SELECT ID, A, ARRAY_LENGTH(A), A[1], A[2], A[3], A[4]
+SELECT ID, A, ARRAY_LENGTH(A), A[0], A[1], A[2], A[3]
   FROM ARRAY_APPEND_EXAMPLE
  ORDER BY ID;
 ```
@@ -925,11 +947,12 @@ SELECT ID, A, ARRAY_LENGTH(A), A[1], A[2], A[3], A[4]
 ## 버전과 제한 사항
 
 - `ARRAY`와 선택 컬럼 Append는 Machbase DBMS 8.7.0 기능입니다.
+- ARRAY 공개 position은 0-based입니다. 기존 1-based sparse와 target 호출은 위치를
+  1씩 낮춰야 합니다.
 - Machbase DBMS 8.7.0 서버와 ARRAY 기능이 포함된 SDK 빌드를 함께 사용합니다.
 - 기존 full-row Append Open 함수와 메서드의 시그니처와 의미는 유지됩니다.
 - C API의 컬럼명 목록은 NULL-terminated 배열이며 별도의 count를 받지 않습니다.
 - 잘못된 cardinality, 중복 또는 범위 밖 position, 중복 target, whole/element target
   충돌과 값 개수 불일치는 오류입니다.
-- Node.js prepared fallback은 `SparseArray`를 지원하지 않습니다.
 - Go ARRAY API는 정식 모듈 릴리스 전까지 기능이 포함된 개발 소스를 연결해야 합니다.
 - SDK는 실패한 행을 성공 건수에 포함해서는 안 됩니다.

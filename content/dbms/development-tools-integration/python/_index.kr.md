@@ -876,7 +876,8 @@ Machbase DBMS 8.7.0은 ARRAY를 Python `list`로 반환하며 prepared 입력에
 컬럼 자체의 `None`입니다.
 
 선택 target은 `connection.append(..., columns=...)`로 지정합니다. 행마다 다른 ARRAY
-위치를 입력할 때는 `SparseArray`를 사용합니다.
+위치를 입력할 때는 `SparseArray`를 사용합니다. indexed target과 `SparseArray.set()`의
+position은 0-based입니다.
 
 ```python
 from machbaseAPI import SparseArray, connect
@@ -891,10 +892,10 @@ try:
     connection.append(
         "ARRAY_APPEND_EXAMPLE",
         [[1, 10, 40]],
-        columns=["ID", "A[1]", "A[4]"],
+        columns=["ID", "A[0]", "A[3]"],
     )
 
-    sparse = SparseArray(4).set(2, 200).set(4, 400)
+    sparse = SparseArray(4).set(1, 200).set(3, 400)
     connection.append(
         "ARRAY_APPEND_EXAMPLE",
         [[2, sparse]],
