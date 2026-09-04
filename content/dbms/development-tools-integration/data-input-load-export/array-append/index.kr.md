@@ -114,90 +114,173 @@ ARRAY 입력과 조회에는 다음 공개 타입을 사용합니다.
 | `SQL_C_MACHBASE_SPARSE_ARRAY` | prepared sparse ARRAY 입력 |
 | `SQL_APPEND_SPARSE_ARRAY_DESC_LENGTH` | Append sparse descriptor 식별 |
 
-### 선택 컬럼으로 Append Open
-
 `SQLAppendOpenColumns()`와 wide 문자 버전은 마지막 원소가 `NULL`인 컬럼명 포인터
 배열을 받습니다. 별도의 컬럼 수 인자는 없습니다.
 
 ```c
 SQLRETURN SQL_API SQLAppendOpenColumns(
-    SQLHSTMT     stmtHandle,
-    SQLCHAR     *tableName,
-    SQLCHAR    **columnNames,
-    SQLINTEGER   errorCheckCount);
+    SQLHSTMT     aStmtHandle,
+    SQLCHAR     *aTableName,
+    SQLCHAR    **aColumnNames,
+    SQLINTEGER   aErrorCheckCount);
 
 SQLRETURN SQL_API SQLAppendOpenColumnsW(
-    SQLHSTMT     stmtHandle,
-    SQLWCHAR    *tableName,
-    SQLWCHAR   **columnNames,
-    SQLINTEGER   errorCheckCount);
+    SQLHSTMT     aStmtHandle,
+    SQLWCHAR    *aTableName,
+    SQLWCHAR   **aColumnNames,
+    SQLINTEGER   aErrorCheckCount);
 ```
 
-`columnNames == NULL`이거나 첫 원소가 `NULL`이면 오류입니다. C 포인터에는 배열 길이
-정보가 없으므로 호출자는 반드시 마지막 `NULL`까지 유효한 배열을 제공해야 합니다.
+`aColumnNames == NULL`이거나 첫 원소가 `NULL`이면 오류입니다. C 포인터에는 배열 길이
+정보가 없으므로 호출자는 반드시 마지막 `NULL`까지 유효한 배열을 제공해야 합니다. 종단
+`NULL`을 빠뜨리면 배열 경계를 벗어나 읽을 수 있으므로 안전하게 진단된다고 가정하면 안
+됩니다.
+
+다음 `sparse_append.c`는 테이블을 만들고 네 행을 Append한 뒤 결과를 출력합니다.
 
 ```c
-SQLCHAR *targets[] = {
-    (SQLCHAR *)"ID",
-    (SQLCHAR *)"A[1]",
-    (SQLCHAR *)"A[4]",
-    NULL
-};
-SQL_APPEND_PARAM row[3] = {0};
-SQLBIGINT success = 0;
-SQLBIGINT failure = 0;
+/* sparse_append.c */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <machbase_sqlcli.h>
 
-row[0].mLong = 1;
-row[1].mInteger = 10;
-row[2].mInteger = 40;
+static int ok(SQLRETURN rc)
+{
+    return rc == SQL_SUCCESS || rc == SQL_SUCCESS_WITH_INFO;
+}
 
-SQLAppendOpenColumns(stmt, (SQLCHAR *)"ARRAY_APPEND_EXAMPLE", targets, 0);
-SQLAppendDataV3(stmt, row, 3);
-SQLAppendClose(stmt, &success, &failure);
+static void fail(SQLHENV env, SQLHDBC dbc, SQLHSTMT stmt, const char *where)
+{
+    SQLCHAR state[6] = {0};
+    SQLCHAR message[1024] = {0};
+    SQLINTEGER native = 0;
+    SQLSMALLINT length = 0;
+    SQLError(env, dbc, stmt, state, &native, message,
+             (SQLSMALLINT)sizeof(message), &length);
+    fprintf(stderr, "%s: %s %d %s\n", where, state, (int)native, message);
+    exit(EXIT_FAILURE);
+}
+
+int main(void)
+{
+    SQLHENV env = SQL_NULL_HENV;
+    SQLHDBC dbc = SQL_NULL_HDBC;
+    SQLHSTMT sql = SQL_NULL_HSTMT;
+    SQLHSTMT append = SQL_NULL_HSTMT;
+    SQLCHAR conn[] =
+        "SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;PWD=MANAGER;CONNTYPE=1";
+    SQLCHAR *fixed[] = {(SQLCHAR*)"ID", (SQLCHAR*)"A[1]",
+                        (SQLCHAR*)"A[4]", NULL};
+    SQLCHAR *whole[] = {(SQLCHAR*)"ID", (SQLCHAR*)"A", NULL};
+    SQL_APPEND_PARAM row[3];
+    SQLUSMALLINT positions[2] = {2, 4};
+    SQLINTEGER values[2] = {200, 400};
+    SQLLEN indicators[2] = {0, 0};
+    SQL_MACHBASE_SPARSE_ARRAY_DESC sparse;
+    SQLBIGINT success = 0;
+    SQLBIGINT failure = 0;
+    SQLINTEGER id;
+    SQLLEN idInd;
+    SQLLEN textInd;
+    SQLCHAR text[128];
+
+    if (!ok(SQLAllocEnv(&env)) || !ok(SQLAllocConnect(env, &dbc)) ||
+        !ok(SQLDriverConnect(dbc, NULL, conn, SQL_NTS, NULL, 0, NULL,
+                             SQL_DRIVER_NOPROMPT)) ||
+        !ok(SQLAllocStmt(dbc, &sql)) || !ok(SQLAllocStmt(dbc, &append)))
+        fail(env, dbc, SQL_NULL_HSTMT, "connect");
+
+    SQLExecDirect(sql, (SQLCHAR*)"DROP TABLE ARRAY_APPEND_EXAMPLE", SQL_NTS);
+    if (!ok(SQLExecDirect(sql,
+        (SQLCHAR*)"CREATE LOG TABLE ARRAY_APPEND_EXAMPLE(ID LONG,A INT32[4])",
+        SQL_NTS)))
+        fail(env, dbc, sql, "create");
+
+    memset(row, 0, sizeof(row));
+    row[0].mLong = 1;
+    row[1].mInteger = 10;
+    row[2].mInteger = 40;
+    if (!ok(SQLAppendOpenColumns(append,
+            (SQLCHAR*)"ARRAY_APPEND_EXAMPLE", fixed, 0)))
+        fail(env, dbc, append, "fixed open");
+    if (!ok(SQLAppendDataV3(append, row, 3))) {
+        SQLAppendClose(append, &success, &failure);
+        fail(env, dbc, append, "fixed row");
+    }
+    if (!ok(SQLAppendClose(append, &success, &failure)) ||
+        success != 1 || failure != 0)
+        fail(env, dbc, append, "fixed close");
+
+    memset(&sparse, 0, sizeof(sparse));
+    sparse.struct_size = sizeof(sparse);
+    sparse.element_c_type = SQL_C_SLONG;
+    sparse.cardinality = 4;
+    sparse.entry_count = 2;
+    sparse.positions = positions;
+    sparse.values = values;
+    sparse.value_stride = sizeof(values[0]);
+    sparse.element_indicators = indicators;
+
+    memset(row, 0, sizeof(row));
+    if (!ok(SQLAppendOpenColumns(append,
+            (SQLCHAR*)"ARRAY_APPEND_EXAMPLE", whole, 0)))
+        fail(env, dbc, append, "sparse open");
+
+    row[0].mLong = 2;
+    row[1].mVar.mData = &sparse;
+    row[1].mVar.mLength = SQL_APPEND_SPARSE_ARRAY_DESC_LENGTH;
+    if (!ok(SQLAppendDataV3(append, row, 2))) {
+        SQLAppendClose(append, &success, &failure);
+        fail(env, dbc, append, "sparse row");
+    }
+
+    row[0].mLong = 3;
+    sparse.entry_count = 0;
+    if (!ok(SQLAppendDataV3(append, row, 2))) {
+        SQLAppendClose(append, &success, &failure);
+        fail(env, dbc, append, "empty sparse row");
+    }
+
+    row[0].mLong = 4;
+    row[1].mVar.mData = NULL;
+    row[1].mVar.mLength = 0;
+    if (!ok(SQLAppendDataV3(append, row, 2))) {
+        SQLAppendClose(append, &success, &failure);
+        fail(env, dbc, append, "whole NULL row");
+    }
+    success = 0;
+    failure = 0;
+    if (!ok(SQLAppendClose(append, &success, &failure)) ||
+        success != 3 || failure != 0)
+        fail(env, dbc, append, "sparse close");
+
+    if (!ok(SQLExecDirect(sql,
+        (SQLCHAR*)"SELECT ID,A FROM ARRAY_APPEND_EXAMPLE ORDER BY ID", SQL_NTS)))
+        fail(env, dbc, sql, "select");
+    if (!ok(SQLBindCol(sql, 1, SQL_C_SLONG, &id, sizeof(id), &idInd)) ||
+        !ok(SQLBindCol(sql, 2, SQL_C_CHAR, text, sizeof(text), &textInd)))
+        fail(env, dbc, sql, "bind verify");
+    for (;;) {
+        SQLRETURN fetch = SQLFetch(sql);
+        if (fetch == SQL_NO_DATA)
+            break;
+        if (!ok(fetch))
+            fail(env, dbc, sql, "fetch verify");
+        printf("%d %s\n", (int)id,
+               textInd == SQL_NULL_DATA ? "NULL" : (char*)text);
+    }
+
+    SQLFreeStmt(append, SQL_DROP);
+    SQLFreeStmt(sql, SQL_DROP);
+    SQLDisconnect(dbc);
+    SQLFreeConnect(dbc);
+    SQLFreeEnv(env);
+    return EXIT_SUCCESS;
+}
 ```
 
-### sparse ARRAY descriptor
-
-whole ARRAY target에 sparse 값을 전달할 때는 `SQL_MACHBASE_SPARSE_ARRAY_DESC`를
-사용합니다.
-
-```c
-SQLUSMALLINT positions[2] = {2, 4};
-SQLINTEGER values[2] = {200, 400};
-SQLLEN indicators[2] = {0, 0};
-SQL_MACHBASE_SPARSE_ARRAY_DESC sparse = {0};
-
-sparse.struct_size = sizeof(sparse);
-sparse.element_c_type = SQL_C_SLONG;
-sparse.cardinality = 4;
-sparse.entry_count = 2;
-sparse.positions = positions;
-sparse.values = values;
-sparse.value_stride = sizeof(values[0]);
-sparse.element_indicators = indicators;
-
-SQLCHAR *targets[] = {
-    (SQLCHAR *)"ID",
-    (SQLCHAR *)"A",
-    NULL
-};
-SQL_APPEND_PARAM row[2] = {0};
-
-row[0].mLong = 2;
-row[1].mVar.mData = &sparse;
-row[1].mVar.mLength = SQL_APPEND_SPARSE_ARRAY_DESC_LENGTH;
-```
-
-descriptor position은 정렬하지 않아도 되지만 중복될 수 없습니다.
-`element_indicators`의 값이 `SQL_NULL_DATA`이면 해당 위치는 element NULL입니다.
-`entry_count == 0`은 빈 sparse ARRAY입니다. whole NULL은 다음과 같이 지정합니다.
-
-```c
-row[1].mVar.mData = NULL;
-row[1].mVar.mLength = 0;
-```
-
-다음과 같이 빌드합니다.
+다음과 같이 빌드하고 실행합니다.
 
 ```bash
 cc -I"$MACHBASE_HOME/include" sparse_append.c \
@@ -206,40 +289,217 @@ cc -I"$MACHBASE_HOME/include" sparse_append.c \
 LD_LIBRARY_PATH="$MACHBASE_HOME/lib" ./sparse_append
 ```
 
+descriptor position은 정렬하지 않아도 되지만 중복될 수 없습니다. entry indicator가
+`SQL_NULL_DATA`이면 해당 위치는 element NULL입니다. `entry_count == 0`은 빈 sparse
+ARRAY이고, whole NULL은 `mVar.mData = NULL`, `mVar.mLength = 0`으로 지정합니다.
+
 ## C++ SQLCLI
 
-C++도 SQLCLI descriptor를 사용합니다. Append가 끝날 때까지 container의 주소가 바뀌지
-않도록 크기를 먼저 고정합니다.
+C++ 전용 전송 객체를 새로 만들지 않고 SQLCLI descriptor를 사용합니다. 다음 예제는
+RAII wrapper로 close를 보장하고 C++ container가 살아 있는 동안 descriptor를 전송합니다.
 
 ```cpp
-std::array<SQLUSMALLINT, 2> positions{2, 4};
-std::array<SQLINTEGER, 2> values{200, 400};
-std::array<SQLLEN, 2> indicators{0, 0};
-SQL_MACHBASE_SPARSE_ARRAY_DESC sparse{};
+/* sparse_append.cpp */
+#include <array>
+#include <iostream>
+#include <stdexcept>
+#include <machbase_sqlcli.h>
 
-sparse.struct_size = sizeof(sparse);
-sparse.element_c_type = SQL_C_SLONG;
-sparse.cardinality = 4;
-sparse.entry_count = positions.size();
-sparse.positions = positions.data();
-sparse.values = values.data();
-sparse.value_stride = sizeof(values[0]);
-sparse.element_indicators = indicators.data();
+static bool ok(SQLRETURN rc) {
+    return rc == SQL_SUCCESS || rc == SQL_SUCCESS_WITH_INFO;
+}
 
-SQLCHAR *targets[] = {
-    (SQLCHAR *)"ID",
-    (SQLCHAR *)"A",
-    nullptr
+struct Handles {
+    SQLHENV env{SQL_NULL_HENV};
+    SQLHDBC dbc{SQL_NULL_HDBC};
+    SQLHSTMT stmt{SQL_NULL_HSTMT};
+    ~Handles() {
+        if (stmt != SQL_NULL_HSTMT) SQLFreeStmt(stmt, SQL_DROP);
+        if (dbc != SQL_NULL_HDBC) { SQLDisconnect(dbc); SQLFreeConnect(dbc); }
+        if (env != SQL_NULL_HENV) SQLFreeEnv(env);
+    }
 };
+
+static void append(Handles& h, SQLCHAR **columns,
+                   SQL_APPEND_PARAM *row, SQLINTEGER count) {
+    SQLBIGINT success = 0, failure = 0;
+    if (!ok(SQLAppendOpenColumns(h.stmt,
+            (SQLCHAR*)"ARRAY_APPEND_EXAMPLE", columns, 0)))
+        throw std::runtime_error("SQLAppendOpenColumns");
+    try {
+        if (!ok(SQLAppendDataV3(h.stmt, row, count)))
+            throw std::runtime_error("SQLAppendDataV3");
+    } catch (...) {
+        SQLAppendClose(h.stmt, &success, &failure);
+        throw;
+    }
+    if (!ok(SQLAppendClose(h.stmt, &success, &failure)) || failure != 0)
+        throw std::runtime_error("SQLAppendClose");
+}
+
+int main() {
+    Handles h;
+    SQLCHAR conn[] =
+        "SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;PWD=MANAGER;CONNTYPE=1";
+    if (!ok(SQLAllocEnv(&h.env)) || !ok(SQLAllocConnect(h.env, &h.dbc)) ||
+        !ok(SQLDriverConnect(h.dbc, nullptr, conn, SQL_NTS, nullptr, 0,
+                             nullptr, SQL_DRIVER_NOPROMPT)) ||
+        !ok(SQLAllocStmt(h.dbc, &h.stmt)))
+        throw std::runtime_error("connect");
+
+    SQLCHAR *fixed[] = {(SQLCHAR*)"ID", (SQLCHAR*)"A[1]",
+                        (SQLCHAR*)"A[4]", nullptr};
+    std::array<SQL_APPEND_PARAM, 3> row{};
+    row[0].mLong = 1; row[1].mInteger = 10; row[2].mInteger = 40;
+    append(h, fixed, row.data(), 3);
+
+    std::array<SQLUSMALLINT, 2> pos{2, 4};
+    std::array<SQLINTEGER, 2> val{200, 400};
+    std::array<SQLLEN, 2> ind{0, 0};
+    SQL_MACHBASE_SPARSE_ARRAY_DESC sparse{};
+    sparse.struct_size = sizeof(sparse);
+    sparse.element_c_type = SQL_C_SLONG;
+    sparse.cardinality = 4;
+    sparse.entry_count = 2;
+    sparse.positions = pos.data();
+    sparse.values = val.data();
+    sparse.value_stride = sizeof(val[0]);
+    sparse.element_indicators = ind.data();
+
+    SQLCHAR *whole[] = {(SQLCHAR*)"ID", (SQLCHAR*)"A", nullptr};
+    std::array<SQL_APPEND_PARAM, 2> sparseRow{};
+    sparseRow[0].mLong = 2;
+    sparseRow[1].mVar.mData = &sparse;
+    sparseRow[1].mVar.mLength = SQL_APPEND_SPARSE_ARRAY_DESC_LENGTH;
+    append(h, whole, sparseRow.data(), 2);
+
+    sparse.entry_count = 0;
+    sparseRow[0].mLong = 3;
+    append(h, whole, sparseRow.data(), 2);
+
+    sparseRow[0].mLong = 4;
+    sparseRow[1].mVar.mData = nullptr;
+    sparseRow[1].mVar.mLength = 0;
+    append(h, whole, sparseRow.data(), 2);
+
+    if (!ok(SQLExecDirect(h.stmt,
+        (SQLCHAR*)"SELECT ID,A FROM ARRAY_APPEND_EXAMPLE ORDER BY ID", SQL_NTS)))
+        throw std::runtime_error("verify query");
+    SQLINTEGER id{}; SQLLEN idInd{}, arrayInd{}; SQLCHAR value[128]{};
+    if (!ok(SQLBindCol(h.stmt, 1, SQL_C_SLONG,
+                       &id, sizeof(id), &idInd)) ||
+        !ok(SQLBindCol(h.stmt, 2, SQL_C_CHAR,
+                       value, sizeof(value), &arrayInd)))
+        throw std::runtime_error("bind verify");
+    for (;;) {
+        SQLRETURN fetch = SQLFetch(h.stmt);
+        if (fetch == SQL_NO_DATA) break;
+        if (!ok(fetch)) throw std::runtime_error("fetch verify");
+        std::cout << id << ' ' <<
+            (arrayInd == SQL_NULL_DATA ? "NULL" : (char*)value) << '\n';
+    }
+}
 ```
 
-모든 예외 경로에서 `SQLAppendClose()`를 호출하도록 RAII wrapper 또는 정리 함수를
-사용합니다.
+```bash
+c++ -std=c++11 -I"$MACHBASE_HOME/include" sparse_append.cpp \
+  -L"$MACHBASE_HOME/lib" -lmachbasecli -lm -ldl -lrt -pthread \
+  -o sparse_append_cpp
+```
 
 ## Machbase ODBC extension
 
 Machbase driver library를 직접 링크하고 `machbase_sqlcli.h`를 사용하는 ODBC C
-애플리케이션은 같은 extension 함수를 사용할 수 있습니다.
+애플리케이션은 같은 extension 함수를 사용할 수 있습니다. 다음 예제는 direct Machbase
+driver API로 네 행을 입력합니다. 테이블은 앞 절의 DDL로 미리 만듭니다.
+
+```c
+/* sparse_odbc.c */
+#include <stdio.h>
+#include <string.h>
+#include <machbase_sqlcli.h>
+
+static int ok(SQLRETURN rc) {
+    return rc == SQL_SUCCESS || rc == SQL_SUCCESS_WITH_INFO;
+}
+
+int main(void) {
+    SQLHENV env = SQL_NULL_HENV;
+    SQLHDBC dbc = SQL_NULL_HDBC;
+    SQLHSTMT stmt = SQL_NULL_HSTMT;
+    SQLBIGINT success = 0, failure = 0;
+    SQLCHAR connection[] =
+        "SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;PWD=MANAGER;CONNTYPE=1";
+
+    if (!ok(SQLAllocEnv(&env)) ||
+        !ok(SQLAllocConnect(env, &dbc)) ||
+        !ok(SQLDriverConnect(dbc, NULL, connection, SQL_NTS,
+                             NULL, 0, NULL, SQL_DRIVER_NOPROMPT)) ||
+        !ok(SQLAllocStmt(dbc, &stmt)))
+        return 1;
+
+    SQLCHAR *fixed[] = {(SQLCHAR*)"ID", (SQLCHAR*)"A[1]",
+                        (SQLCHAR*)"A[4]", NULL};
+    SQL_APPEND_PARAM row[3] = {0};
+    row[0].mLong = 1; row[1].mInteger = 10; row[2].mInteger = 40;
+    if (!ok(SQLAppendOpenColumns(stmt,
+            (SQLCHAR*)"ARRAY_APPEND_EXAMPLE", fixed, 0))) return 2;
+    if (!ok(SQLAppendDataV3(stmt, row, 3))) {
+        SQLAppendClose(stmt, &success, &failure);
+        return 2;
+    }
+    if (!ok(SQLAppendClose(stmt, &success, &failure)) ||
+        success != 1 || failure != 0) return 2;
+
+    SQLUSMALLINT positions[2] = {2, 4};
+    SQLINTEGER values[2] = {200, 400};
+    SQLLEN indicators[2] = {0, 0};
+    SQL_MACHBASE_SPARSE_ARRAY_DESC sparse = {0};
+    sparse.struct_size = sizeof(sparse);
+    sparse.element_c_type = SQL_C_SLONG;
+    sparse.cardinality = 4;
+    sparse.entry_count = 2;
+    sparse.positions = positions;
+    sparse.values = values;
+    sparse.value_stride = sizeof(values[0]);
+    sparse.element_indicators = indicators;
+    SQLCHAR *whole[] = {(SQLCHAR*)"ID", (SQLCHAR*)"A", NULL};
+    memset(row, 0, sizeof(row));
+    row[0].mLong = 2;
+    row[1].mVar.mData = &sparse;
+    row[1].mVar.mLength = SQL_APPEND_SPARSE_ARRAY_DESC_LENGTH;
+    if (!ok(SQLAppendOpenColumns(stmt,
+            (SQLCHAR*)"ARRAY_APPEND_EXAMPLE", whole, 0))) return 3;
+    if (!ok(SQLAppendDataV3(stmt, row, 2))) {
+        SQLAppendClose(stmt, &success, &failure);
+        return 3;
+    }
+    sparse.entry_count = 0;
+    row[0].mLong = 3;
+    if (!ok(SQLAppendDataV3(stmt, row, 2))) {
+        SQLAppendClose(stmt, &success, &failure);
+        return 3;
+    }
+    row[0].mLong = 4;
+    row[1].mVar.mData = NULL;
+    row[1].mVar.mLength = 0;
+    if (!ok(SQLAppendDataV3(stmt, row, 2))) {
+        SQLAppendClose(stmt, &success, &failure);
+        return 3;
+    }
+    success = 0;
+    failure = 0;
+    if (!ok(SQLAppendClose(stmt, &success, &failure)) ||
+        success != 3 || failure != 0) return 3;
+
+    SQLFreeStmt(stmt, SQL_DROP);
+    SQLDisconnect(dbc);
+    SQLFreeConnect(dbc);
+    SQLFreeEnv(env);
+    puts("ODBC sparse append OK");
+    return 0;
+}
+```
 
 ```bash
 cc sparse_odbc.c -I/opt/machbase/include -L/opt/machbase/lib \
@@ -250,7 +510,8 @@ LD_LIBRARY_PATH=/opt/machbase/lib ./sparse_odbc
 {{< callout type="warning" >}}
 범용 ODBC Driver Manager가 만든 statement handle을 direct SQLCLI extension에 넘기면
 handle ABI가 다르므로 혼용하지 마십시오. 선택 컬럼 Append는 Machbase driver extension과
-direct driver handle을 사용해야 합니다.
+direct driver handle을 사용해야 합니다. 범용 ODBC API에는 Append Open 선택 target이
+없습니다.
 {{< /callout >}}
 
 ## JDBC
@@ -265,39 +526,72 @@ ResultSet executeAppendOpen(String tableName,
 ```
 
 ```java
-try (MachStatement statement =
-         (MachStatement) connection.createStatement()) {
-    ResultSet metadataResult = statement.executeAppendOpen(
-        "ARRAY_APPEND_EXAMPLE",
-        new String[] {"ID", "A[1]", "A[4]"},
-        0);
-    ResultSetMetaData metadata = metadataResult.getMetaData();
+import com.machbase.jdbc.MachConnection;
+import com.machbase.jdbc.MachSparseArray;
+import com.machbase.jdbc.MachStatement;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-    ArrayList<Object> row = new ArrayList<Object>();
-    row.add(Long.valueOf(1));
-    row.add(Integer.valueOf(10));
-    row.add(Integer.valueOf(40));
-    statement.executeAppendData(metadata, row);
-    statement.executeAppendClose();
+public class SparseAppend {
+    static void append(MachStatement st, String[] columns, Object[][] values)
+        throws Exception {
+        try (ResultSet metaResult = st.executeAppendOpen(
+                 "ARRAY_APPEND_EXAMPLE", columns, 0)) {
+            ResultSetMetaData meta = metaResult.getMetaData();
+            try {
+                for (Object[] value : values) {
+                    ArrayList<Object> row = new ArrayList<Object>();
+                    for (Object item : value) row.add(item);
+                    st.executeAppendData(meta, row);
+                }
+            } finally {
+                st.executeAppendClose();
+            }
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        Class.forName("com.machbase.jdbc.MachDriver");
+        MachConnection con = (MachConnection)DriverManager.getConnection(
+            "jdbc:machbase://127.0.0.1:5656/machbasedb", "SYS", "MANAGER");
+        try {
+            try (MachStatement st = (MachStatement)con.createStatement()) {
+                append(st, new String[] {"ID", "A[1]", "A[4]"},
+                       new Object[][] {{1L, 10, 40}});
+
+                Map<Integer,Object> entries = new HashMap<Integer,Object>();
+                entries.put(2, 200);
+                entries.put(4, 400);
+                MachSparseArray sparse = con.createSparseArrayOf(
+                    "INT32", 4, entries);
+                MachSparseArray empty = con.createSparseArrayOf(
+                    "INT32", 4, new HashMap<Integer,Object>());
+                append(st, new String[] {"ID", "A"}, new Object[][] {
+                    {2L, sparse}, {3L, empty}, {4L, null}
+                });
+
+                try (ResultSet rs = st.executeQuery(
+                    "SELECT ID,A,ARRAY_LENGTH(A) " +
+                    "FROM ARRAY_APPEND_EXAMPLE ORDER BY ID")) {
+                    while (rs.next())
+                        System.out.println(
+                            rs.getLong(1) + " " + rs.getString(2));
+                }
+            }
+        } finally {
+            con.close();
+        }
+    }
 }
 ```
 
-행마다 다른 위치를 입력하려면 `createSparseArrayOf()`를 사용합니다. map key는 1-based
-position입니다.
-
-```java
-Map<Integer, Object> entries = new HashMap<Integer, Object>();
-entries.put(Integer.valueOf(2), Integer.valueOf(200));
-entries.put(Integer.valueOf(4), Integer.valueOf(400));
-
-MachSparseArray sparse = connection.createSparseArrayOf(
-    "INT32", 4, entries);
-MachSparseArray empty = connection.createSparseArrayOf(
-    "INT32", 4, new HashMap<Integer, Object>());
-```
-
-`MachSparseArray.set()`과 `clear()`로 같은 객체를 재사용할 수 있습니다. empty map은
-all-element-NULL ARRAY이고 Java `null`은 whole NULL입니다.
+`createSparseArrayOf()`의 map key는 1-based position입니다. `MachSparseArray.clear()`와
+`set()`으로 같은 객체를 재사용할 수 있습니다. empty map은 all-element-NULL ARRAY이고
+Java `null`은 whole NULL입니다.
 
 ## Python DB-API
 
@@ -306,29 +600,44 @@ all-element-NULL ARRAY이고 Java `null`은 whole NULL입니다.
 ```python
 from machbaseAPI import SparseArray, connect
 
-connection = connect(
-    host="127.0.0.1",
-    port=5656,
-    user="SYS",
-    password="MANAGER",
-    database="MACHBASEDB",
-)
-try:
-    connection.append(
-        "ARRAY_APPEND_EXAMPLE",
-        [[1, 10, 40]],
-        columns=["ID", "A[1]", "A[4]"],
-    )
 
-    sparse = SparseArray(4).set(2, 200).set(4, 400)
-    empty = SparseArray(4)
-    connection.append(
-        "ARRAY_APPEND_EXAMPLE",
-        [[2, sparse], [3, empty], [4, None]],
-        columns=["ID", "A"],
-    )
-finally:
-    connection.close()
+def main():
+    conn = connect(host="127.0.0.1", port=5656,
+                   user="SYS", password="MANAGER",
+                   database="MACHBASEDB")
+    try:
+        conn.append(
+            "ARRAY_APPEND_EXAMPLE",
+            [[1, 10, 40]],
+            columns=["ID", "A[1]", "A[4]"],
+        )
+
+        sparse = SparseArray(4).set(2, 200).set(4, 400)
+        empty = SparseArray(4)
+        conn.append(
+            "ARRAY_APPEND_EXAMPLE",
+            [[2, sparse], [3, empty], [4, None]],
+            columns=["ID", "A"],
+        )
+
+        rows = conn.cursor(dictionary=False).execute(
+            "SELECT ID,A,ARRAY_LENGTH(A) "
+            "FROM ARRAY_APPEND_EXAMPLE ORDER BY ID"
+        ).fetchall()
+        expected = [
+            (1, [10, None, None, 40], 4),
+            (2, [None, 200, None, 400], 4),
+            (3, [None, None, None, None], 4),
+            (4, None, None),
+        ]
+        assert rows == expected, rows
+        print("Python sparse append OK")
+    finally:
+        conn.close()
+
+
+if __name__ == "__main__":
+    main()
 ```
 
 `SparseArray.clear()`는 cardinality를 유지하면서 모든 요소를 NULL로 되돌립니다.
@@ -357,6 +666,20 @@ try:
     finally:
         if db.appendClose() != 1:
             raise RuntimeError(db.result())
+
+    sparse = SparseArray(4).set(2, 200).set(4, 400)
+    empty = SparseArray(4)
+    if db.appendOpenColumns(
+        "ARRAY_APPEND_EXAMPLE", ["ID", "A"]
+    ) != 1:
+        raise RuntimeError(db.result())
+    try:
+        for row in ([2, sparse], [3, empty], [4, None]):
+            if db.appendData("ARRAY_APPEND_EXAMPLE", None, row) != 1:
+                raise RuntimeError(db.result())
+    finally:
+        if db.appendClose() != 1:
+            raise RuntimeError(db.result())
 finally:
     db.close()
 ```
@@ -369,35 +692,49 @@ DB-API `append(..., columns=...)` 사용을 권장합니다.
 `AppendColumnDefinition.name`에 whole 컬럼 또는 indexed target을 지정합니다.
 
 ```javascript
+'use strict';
 const { createConnection, SparseArray } = require('@machbase/ts-client');
 
-const connection = createConnection({
-  host: '127.0.0.1',
-  port: 5656,
-  user: 'SYS',
-  password: 'MANAGER',
-});
-await connection.connect();
-try {
-  let appender = await connection.appendOpen('ARRAY_APPEND_EXAMPLE', [
-    { name: 'ID', type: 'int64' },
-    { name: 'A[1]', type: 'int32' },
-    { name: 'A[4]', type: 'int32' },
-  ]);
-  await appender.append([[1n, 10, 40]]);
-  await appender.close();
-
-  const sparse = new SparseArray(4).set(2, 200).set(4, 400);
-  const empty = new SparseArray(4);
-  appender = await connection.appendOpen('ARRAY_APPEND_EXAMPLE', [
-    { name: 'ID', type: 'int64' },
-    { name: 'A', type: 'int32-array' },
-  ]);
-  await appender.append([[2n, sparse], [3n, empty], [4n, null]]);
-  await appender.close();
-} finally {
-  await connection.end();
+async function appendRows(connection, columns, rows) {
+  const appender = await connection.appendOpen('ARRAY_APPEND_EXAMPLE', columns);
+  try {
+    await appender.append(rows);
+  } finally {
+    await appender.close();
+  }
 }
+
+(async () => {
+  const connection = createConnection({
+    host: '127.0.0.1', port: 5656, user: 'SYS', password: 'MANAGER',
+  });
+  await connection.connect();
+  try {
+    await appendRows(connection, [
+      { name: 'ID', type: 'int64' },
+      { name: 'A[1]', type: 'int32' },
+      { name: 'A[4]', type: 'int32' },
+    ], [[1n, 10, 40]]);
+
+    const sparse = new SparseArray(4).set(2, 200).set(4, 400);
+    const empty = new SparseArray(4);
+    await appendRows(connection, [
+      { name: 'ID', type: 'int64' },
+      { name: 'A', type: 'int32-array' },
+    ], [[2n, sparse], [3n, empty], [4n, null]]);
+
+    const [rows] = await connection.query(
+      'SELECT ID,A,ARRAY_LENGTH(A) LEN ' +
+      'FROM ARRAY_APPEND_EXAMPLE ORDER BY ID',
+    );
+    console.log(rows);
+  } finally {
+    await connection.end();
+  }
+})().catch((error) => {
+  console.error(error.stack || error);
+  process.exitCode = 1;
+});
 ```
 
 `MACHBASE_NATIVE_APPEND=0`으로 prepared fallback을 선택하면 `SparseArray`를 Append 값으로
@@ -418,34 +755,65 @@ MachAppendWriter AppendOpen(string tableName,
 ```
 
 ```csharp
-using var command = new MachCommand(connection);
-var writer = command.AppendOpen(
-    "ARRAY_APPEND_EXAMPLE",
-    new List<string> { "ID", "A[1]", "A[4]" });
-try
-{
-    command.AppendData(
-        writer, new List<object> { 1L, 10, 40 });
-}
-finally
-{
-    if (command.IsAppendOpened)
-        command.AppendClose(writer);
-}
-```
+using System;
+using System.Collections.Generic;
+using Mach.Data.MachClient;
 
-행마다 다른 위치를 입력할 때는 `MachSparseArray`를 사용합니다.
+static void Append(MachConnection connection,
+                   IList<string> columns,
+                   IList<List<object>> rows)
+{
+    using var command = new MachCommand(connection);
+    var writer = command.AppendOpen("ARRAY_APPEND_EXAMPLE", columns);
+    try
+    {
+        foreach (var row in rows)
+            command.AppendData(writer, row);
+    }
+    finally
+    {
+        if (command.IsAppendOpened)
+            command.AppendClose(writer);
+    }
+    if (writer.FailureCount != 0)
+        throw new InvalidOperationException("APPEND row failure");
+}
 
-```csharp
+using var connection = new MachConnection(
+    "SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;PWD=MANAGER");
+connection.Open();
+
+Append(connection,
+    new List<string> { "ID", "A[1]", "A[4]" },
+    new List<List<object>> {
+        new List<object> { 1L, 10, 40 }
+    });
+
 var sparse = new MachSparseArray(MachDBType.INT32_ARRAY, 4)
-    .Set(2, 200)
-    .Set(4, 400);
+    .Set(2, 200).Set(4, 400);
 var empty = new MachSparseArray(MachDBType.INT32_ARRAY, 4);
+Append(connection,
+    new List<string> { "ID", "A" },
+    new List<List<object>> {
+        new List<object> { 2L, sparse },
+        new List<object> { 3L, empty },
+        new List<object> { 4L, DBNull.Value },
+    });
+
+using var verify = new MachCommand(
+    "SELECT ID,A,ARRAY_LENGTH(A) FROM ARRAY_APPEND_EXAMPLE ORDER BY ID",
+    connection);
+using var reader = verify.ExecuteReader();
+while (reader.Read())
+    Console.WriteLine(reader.IsDBNull(1)
+        ? $"{reader.GetInt64(0)} NULL"
+        : $"{reader.GetInt64(0)} " +
+          string.Join(",", (object[])reader.GetValue(1)));
 ```
 
-`MachSparseArray.Clear()`는 객체를 all-element-NULL 상태로 되돌립니다. whole NULL은
-`DBNull.Value`입니다. Append Open 성공 후 metadata 처리에 실패하면 provider가 열린
-handle을 정리하고 connection은 재사용할 수 있습니다.
+`MachSparseArray.Clear()`는 객체를 재사용 가능한 all-element-NULL 상태로 되돌립니다.
+whole NULL은 `DBNull.Value`입니다. Append Open 성공 후 metadata 처리에 실패하면
+provider가 열린 handle을 정리하고 connection은 재사용할 수 있습니다.
 
 ## Go neo-client
 
@@ -454,6 +822,18 @@ handle을 정리하고 connection은 재사용할 수 있습니다.
 공개 모듈 버전에 같은 기능이 포함되었다고 가정하지 마십시오.
 
 ```go
+package main
+
+import (
+    "context"
+    "database/sql"
+    "errors"
+    "fmt"
+
+    client "github.com/machbase/neo-client/v2"
+    "github.com/machbase/neo-client/v2/api"
+)
+
 func appendRows(ctx context.Context, dsn, table string,
     columns []string, rows [][]any) error {
     appender := &client.Appender{}
@@ -467,36 +847,55 @@ func appendRows(ctx context.Context, dsn, table string,
         }
     }
     success, failure, err := appender.Close()
-    if err != nil {
-        return err
-    }
+    if err != nil { return err }
     if failure != 0 {
-        return fmt.Errorf(
-            "append success=%d failure=%d", success, failure)
+        return fmt.Errorf("append success=%d failure=%d", success, failure)
     }
     return nil
 }
-```
 
-```go
-sparse, err := api.NewSparseArray(api.SqlTypeInt32, 4)
-if err != nil {
-    panic(err)
-}
-if err := sparse.Set(2, int32(200)); err != nil {
-    panic(err)
-}
-if err := sparse.Set(4, int32(400)); err != nil {
-    panic(err)
-}
+func main() {
+    ctx := context.Background()
+    dsn := "server=tcp://sys:manager@127.0.0.1:5656"
+    db, err := sql.Open(client.DefaultDriverName, dsn)
+    if err != nil { panic(err) }
+    defer db.Close()
+    if err := db.PingContext(ctx); err != nil { panic(err) }
 
-err = appendRows(
-    ctx,
-    dsn,
-    "ARRAY_APPEND_EXAMPLE",
-    []string{"ID", "A"},
-    [][]any{{int64(2), sparse}},
-)
+    if err := appendRows(ctx, dsn, "ARRAY_APPEND_EXAMPLE",
+        []string{"ID", "A[1]", "A[4]"},
+        [][]any{{int64(1), int32(10), int32(40)}}); err != nil {
+        panic(err)
+    }
+
+    sparse, err := api.NewSparseArray(api.SqlTypeInt32, 4)
+    if err != nil { panic(err) }
+    if err := sparse.Set(2, int32(200)); err != nil { panic(err) }
+    if err := sparse.Set(4, int32(400)); err != nil { panic(err) }
+    empty, err := api.NewSparseArray(api.SqlTypeInt32, 4)
+    if err != nil { panic(err) }
+    var wholeNull *api.Array
+    if err := appendRows(ctx, dsn, "ARRAY_APPEND_EXAMPLE",
+        []string{"ID", "A"}, [][]any{
+            {int64(2), sparse}, {int64(3), empty}, {int64(4), wholeNull},
+        }); err != nil {
+        panic(err)
+    }
+
+    rows, err := db.QueryContext(ctx,
+        "SELECT ID,A,ARRAY_LENGTH(A) FROM ARRAY_APPEND_EXAMPLE ORDER BY ID")
+    if err != nil { panic(err) }
+    defer rows.Close()
+    for rows.Next() {
+        var id int64
+        var value sql.NullString
+        var length sql.NullInt64
+        if err := rows.Scan(&id, &value, &length); err != nil { panic(err) }
+        if !value.Valid { fmt.Println(id, "NULL"); continue }
+        fmt.Println(id, value.String, length.Int64)
+    }
+    if err := rows.Err(); err != nil { panic(err) }
+}
 ```
 
 `Appender.Connect(ctx, dsn, table, columns...)`의 가변 인자가 선택 target입니다.

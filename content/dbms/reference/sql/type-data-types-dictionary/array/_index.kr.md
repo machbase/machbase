@@ -266,48 +266,109 @@ DESC SENSOR_ARRAY;
 `[value,null,value]` 형식을 사용합니다. 소문자 `null`은 element NULL이며 컬럼 결과의
 SQL `NULL`은 whole NULL입니다.
 
-## SDK에서 ARRAY 사용
+## SDK에서 ARRAY 읽기와 쓰기
 
-SDK별 기본 표현은 다음과 같습니다.
+다음 예제는 공통 테이블과 데이터를 사용합니다.
 
-| SDK | 조회 표현 | 입력 방식 |
-|---|---|---|
-| C SQLCLI/C++ | `SQL_MACHBASE_ARRAY_DESC` | descriptor를 parameter에 bind |
-| JDBC | `java.sql.Array` | `Connection.createArrayOf()`와 `setArray()` |
-| Python | `list` | prepared `execute`/`executemany`에 `list` 또는 `tuple` 전달 |
-| Node.js | JavaScript `Array` | execute, prepared 또는 `appendOpen()`에 중첩 배열 전달 |
-| .NET | `object[]` | parameter 또는 `AppendData()`에 배열 전달 |
-| Go | canonical 문자열 또는 `api.Array` | 사용 중인 SDK 빌드의 ARRAY API 사용 |
+```sql
+CREATE LOG TABLE SDK_ARRAY_SAMPLE
+(
+    ID INTEGER,
+    A_I32 INT32[3],
+    A_U64 UINT64[3],
+    A_DEC DECIMAL(12,4)[3]
+);
+
+INSERT INTO SDK_ARRAY_SAMPLE VALUES
+    (1,
+     [1,NULL,-3],
+     [1,NULL,18446744073709551614],
+     [1.2500,NULL,-3.7500]);
+INSERT INTO SDK_ARRAY_SAMPLE (ID) VALUES (2);
+```
 
 whole NULL은 각 SDK의 NULL 값으로 표현하고 element NULL은 collection 내부의 NULL 값으로
 표현합니다. `UINT64`와 `DECIMAL`은 SDK가 제공하는 정밀도 보존 타입을 사용해야 합니다.
 
-### C SQLCLI와 C++
+### C SQLCLI
 
 typed fetch에는 `SQL_C_MACHBASE_ARRAY`와 `SQL_MACHBASE_ARRAY_DESC`를 사용합니다.
 
 ```c
 SQLINTEGER values[3] = {0};
-SQLLEN elementIndicators[3] = {0};
-SQLLEN outerIndicator = 0;
+SQLLEN elements[3] = {0};
+SQLLEN outer = 0;
 SQL_MACHBASE_ARRAY_DESC array = {0};
 
 array.struct_size = sizeof(array);
 array.element_c_type = SQL_C_SLONG;
 array.capacity = 3;
 array.values = values;
-array.element_indicators = elementIndicators;
+array.element_indicators = elements;
 
-SQLBindCol(stmt, 1, SQL_C_MACHBASE_ARRAY,
-           &array, sizeof(array), &outerIndicator);
+SQLExecDirect(stmt,
+    (SQLCHAR*)"SELECT A_I32 FROM SDK_ARRAY_SAMPLE WHERE ID=1", SQL_NTS);
+SQLBindCol(stmt, 1, SQL_C_MACHBASE_ARRAY, &array, sizeof(array), &outer);
+SQLFetch(stmt);
+/* outer != SQL_NULL_DATA, array.count == 3,
+ * values[0] == 1, elements[1] == SQL_NULL_DATA, values[2] == -3 */
 ```
 
-whole NULL이면 `outerIndicator == SQL_NULL_DATA`이고 `array.count == 0`입니다. NULL 요소를
+whole NULL이면 `outer == SQL_NULL_DATA`이고 `array.count == 0`입니다. NULL 요소를
 구분하려면 `element_indicators`를 제공해야 합니다. `DECIMAL`을 문자열로 받을 때는
 `element_c_type = SQL_C_CHAR`와 요소 버퍼 간 `value_stride`를 설정합니다.
 
-prepared INSERT에서는 `capacity`, `count`, `ColumnSize`를 대상 cardinality로 지정합니다.
-ARRAY parameter-set execute와 기존 `SQLAppendBatch`는 ARRAY를 지원하지 않습니다.
+prepared INSERT는 `capacity`, `count`, `ColumnSize`를 대상 cardinality로 설정합니다.
+
+```c
+array.count = 3;
+SQLPrepare(stmt,
+    (SQLCHAR*)"INSERT INTO SDK_ARRAY_SAMPLE(ID,A_I32) VALUES(3,?)", SQL_NTS);
+SQLBindParameter(stmt, 1, SQL_PARAM_INPUT,
+    SQL_C_MACHBASE_ARRAY, SQL_MACHBASE_ARRAY, 3, 0,
+    &array, sizeof(array), &outer);
+SQLExecute(stmt);
+```
+
+전체 NULL 입력은 `outer = SQL_NULL_DATA`로 지정합니다. ARRAY parameter-set execute는
+현재 지원하지 않으며 `HYC00`을 반환합니다. 기존 `SQLAppendBatch`도 ARRAY type code가
+없어 ARRAY를 지원하지 않지만 동일한 SQLSTATE를 계약하지는 않습니다.
+
+### C++
+
+C++은 SQLCLI descriptor ABI를 그대로 사용합니다. bind부터 fetch가 끝날 때까지
+`vector`의 주소가 바뀌지 않도록 크기를 고정합니다.
+
+```cpp
+std::vector<SQLINTEGER> values(3);
+std::vector<SQLLEN> indicators(3);
+SQLLEN outer = 0;
+SQL_MACHBASE_ARRAY_DESC array{};
+array.struct_size = sizeof(array);
+array.element_c_type = SQL_C_SLONG;
+array.capacity = values.size();
+array.values = values.data();
+array.element_indicators = indicators.data();
+
+SQLBindCol(stmt, 1, SQL_C_MACHBASE_ARRAY,
+           &array, sizeof(array), &outer);
+```
+
+애플리케이션 모델에서는 whole NULL을
+`std::optional<std::vector<std::optional<T>>>`의 바깥 `optional`, element NULL을
+안쪽 `optional`로 표현할 수 있습니다.
+
+### Machbase ODBC와 범용 ODBC
+
+Machbase 전용 header를 사용하는 ODBC C 프로그램은 C SQLCLI와 같은 ARRAY descriptor를
+사용합니다. 전용 타입을 해석하지 않는 범용 도구는 canonical text로 조회하거나 요소를
+각각 projection합니다.
+
+```sql
+SELECT ID, A_I32, A_I32[1], A_I32[2], A_I32[3]
+  FROM SDK_ARRAY_SAMPLE
+ ORDER BY ID;
+```
 
 ### JDBC
 
@@ -315,59 +376,155 @@ JDBC는 `java.sql.Array`를 반환합니다. `UINT64`는 `BigInteger`, `DECIMAL`
 `BigDecimal`로 보존합니다.
 
 ```java
-java.sql.Array value = resultSet.getArray(1);
-Object[] elements = (Object[]) value.getArray();
+try (Connection con = DriverManager.getConnection(
+         "jdbc:machbase://127.0.0.1:5656/machbasedb", "SYS", "MANAGER");
+     Statement st = con.createStatement();
+     ResultSet rs = st.executeQuery(
+         "SELECT A_I32 FROM SDK_ARRAY_SAMPLE ORDER BY ID")) {
+    rs.next();
+    java.sql.Array sqlArray = rs.getArray(1);
+    Object[] values = (Object[])sqlArray.getArray();
+    // [Integer(1), null, Integer(-3)]
+    rs.next();
+    assert rs.getArray(1) == null && rs.wasNull();
+}
 ```
 
-JDBC 타입은 `Types.ARRAY`, precision은 cardinality, scale은 `DECIMAL` 요소의
+metadata의 JDBC type은 `Types.ARRAY`, precision은 cardinality, `DECIMAL` scale은 요소
 scale입니다. `Connection.createArrayOf()`로 만든 값을 `PreparedStatement.setArray()`에
 전달할 수 있습니다.
 
 ### Python
 
-Python은 `ARRAY`를 `list`로 반환합니다. element NULL과 whole NULL은 각각 list 내부의
-`None`과 컬럼 자체의 `None`으로 구분합니다. `UINT64`는 `int`, `DECIMAL`은
-`Decimal`로 반환합니다.
+Python은 ARRAY를 `list`, element NULL과 whole NULL을 각각 내부 `None`과 컬럼 자체의
+`None`으로 반환합니다. `UINT64`는 arbitrary precision `int`, `DECIMAL`은 `Decimal`입니다.
 
 ```python
-rows = connection.cursor(dictionary=True).execute(
-    "SELECT A_I32 FROM SDK_ARRAY_SAMPLE ORDER BY ID"
-).fetchall()
+from decimal import Decimal
+from machbaseAPI import connect
 
-assert rows[0]["A_I32"] == [1, None, -3]
-assert rows[1]["A_I32"] is None
+conn = connect(host="127.0.0.1", port=5656,
+               user="SYS", password="MANAGER")
+try:
+    rows = conn.cursor(dictionary=True).execute(
+        "SELECT A_I32,A_U64,A_DEC FROM SDK_ARRAY_SAMPLE ORDER BY ID"
+    ).fetchall()
+    assert rows[0]["A_I32"] == [1, None, -3]
+    assert rows[0]["A_U64"][2] == 18446744073709551614
+    assert rows[0]["A_DEC"][0] == Decimal("1.2500")
+    assert rows[1]["A_I32"] is None
+finally:
+    conn.close()
 ```
 
-prepared `execute()`와 `executemany()`는 `list` 또는 `tuple`을 `ARRAY`로 입력할 수
-있습니다. `cursor.column_metadata`에서 타입, cardinality와 `DECIMAL` 요소 메타데이터를
-확인합니다.
+prepared `execute()`와 `executemany()`는 `list` 또는 `tuple`을 ARRAY로 encode합니다.
+`cursor.column_metadata`에서 ARRAY type code, cardinality와 `DECIMAL` 요소 metadata를
+확인할 수 있습니다.
 
 ### Node.js
 
-Node.js는 JavaScript `Array`를 반환합니다. `INT64`와 `UINT64`는 `bigint`, `DECIMAL`은
-정밀도를 보존하기 위해 문자열로 반환합니다.
+Node.js는 ARRAY를 JavaScript `Array`로 반환합니다. `INT64`와 `UINT64`는 `bigint`,
+`DECIMAL`은 정밀도 보존을 위해 문자열로 반환합니다.
 
 ```javascript
-const [rows] = await connection.query(
-  'SELECT A_I32, A_U64, A_DEC FROM SDK_ARRAY_SAMPLE ORDER BY ID',
-);
-console.log(rows[0].A_I32); // [1, null, -3]
+const { createConnection } = require('@machbase/ts-client');
+const conn = createConnection({
+  host: '127.0.0.1', port: 5656, user: 'SYS', password: 'MANAGER',
+});
+await conn.connect();
+try {
+  const [rows] = await conn.query(
+    'SELECT A_I32,A_U64,A_DEC FROM SDK_ARRAY_SAMPLE ORDER BY ID',
+  );
+  console.log(rows[0].A_I32); // [1, null, -3]
+  console.log(rows[0].A_U64); // [1n, null, 18446744073709551614n]
+  console.log(rows[1].A_I32); // null: whole NULL
+} finally {
+  await conn.end();
+}
 ```
 
 `JSON.stringify()` 전에 `bigint`를 문자열로 바꾸고 `DECIMAL` 문자열을 `Number`로 강제
-변환하지 마십시오.
+변환하지 마십시오. prepared statement의 `getColumns()`에서 ARRAY cardinality와 요소
+precision/scale metadata를 확인할 수 있습니다.
 
-### .NET
+### .NET full/legacy provider
 
-.NET full/legacy provider는 `ARRAY`를 `object[]`로 반환합니다. element NULL은 배열의
-`null`, whole NULL은 `IsDBNull()`로 구분합니다. CLR `decimal` 범위를 벗어나는 값은
-invariant 문자열로 반환합니다.
+MachConnector40 full/legacy provider는 ARRAY를 `object[]`로 반환합니다. element NULL은
+배열 안의 `null`, whole NULL은 `IsDBNull()`로 구분합니다.
 
-### Go
+```csharp
+using Mach.Data.MachClient;
+using var conn = new MachConnection(
+    "SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;PWD=MANAGER");
+conn.Open();
+using var cmd = new MachCommand(
+    "SELECT A_I32 FROM SDK_ARRAY_SAMPLE ORDER BY ID", conn);
+using var reader = cmd.ExecuteReader();
+reader.Read();
+var values = (object[])reader.GetValue(0);
+Console.WriteLine((int)values[0]);
+Console.WriteLine(values[1] is null);
+reader.Read();
+Console.WriteLine(reader.IsDBNull(0));
+```
 
-Go의 `database/sql` 결과 경계는 canonical 문자열을 제공합니다. whole NULL은
-`sql.NullString`으로 확인합니다. ARRAY 입력 API는 해당 기능이 포함된 `neo-client`
-빌드를 사용해야 하며 공개 릴리스의 버전 문자열만으로 지원 여부를 판단하지 마십시오.
+각 요소는 `short`, `ushort`, `int`, `uint`, `long`, `ulong`, `float`, `double`,
+`decimal`입니다. CLR `decimal` 범위를 벗어나는 값은 invariant 문자열로 반환합니다.
+`GetSchemaTable()`은 provider type, cardinality, element scale과 `object[]` field type을
+제공합니다.
+
+### Go neo-client
+
+이 항목은 Machbase Neo 서버가 아니라 `neo-client`가 Machbase DBMS에 직접 연결하는 SDK
+경로입니다. ARRAY 지원 코드는 `array-type-support` 개발 브랜치의 v2 module에 있습니다.
+정식 배포 전에는 해당 소스 checkout과 `go.work` 또는 `replace` 등 명시적 로컬 module
+연결이 필요합니다. 공개 릴리스에 기능이 있다고 가정하지 마십시오.
+
+```go
+import (
+    "context"
+    "database/sql"
+    "fmt"
+
+    client "github.com/machbase/neo-client/v2"
+    "github.com/machbase/neo-client/v2/api"
+)
+
+db, err := sql.Open(client.DefaultDriverName, dsn)
+if err != nil { return err }
+defer db.Close()
+
+dense, err := api.NewArray(api.SqlTypeInt32,
+    []any{int32(10), nil, int32(30)})
+if err != nil { return err }
+if _, err = db.ExecContext(context.Background(),
+    "INSERT INTO SDK_ARRAY_SAMPLE(ID,A_I32) VALUES(3,?)", dense); err != nil {
+    return err
+}
+
+rows, err := db.QueryContext(context.Background(),
+    "SELECT A_I32 FROM SDK_ARRAY_SAMPLE WHERE ID=3")
+if err != nil { return err }
+defer rows.Close()
+for rows.Next() {
+    var raw sql.NullString
+    if err := rows.Scan(&raw); err != nil { return err }
+    fmt.Println(raw.String) // [10,null,30]
+}
+return rows.Err()
+```
+
+`database/sql` 결과 경계는 canonical 문자열을 제공합니다. `sql.NullString`으로 whole
+NULL을 확인하고 유효한 값이면 `array.Scan(raw.String)`, whole NULL이면
+`array.Scan(nil)`로 해석합니다. 원래의 narrow integer와 `FLOAT` 타입까지 보존하려면
+요소 metadata로 receiver를 먼저 만듭니다. `DECIMAL` precision/scale은
+`NewSparseArrayWithMeta()`로 지정합니다.
+
+`ColumnTypes()`의 `DatabaseTypeName()`은 ARRAY 타입 이름을, `DecimalSize()`는
+`DECIMAL` 요소 precision/scale을 제공합니다. 현재 `Length()`는 cardinality가 아니라
+encoded payload byte length이므로 cardinality로 사용하면 안 됩니다. 표준
+`database/sql` metadata만으로 cardinality를 직접 얻을 수 없습니다.
 
 ## 명령행 도구와 데이터 이동
 
@@ -379,6 +536,12 @@ Go의 `database/sql` 결과 경계는 canonical 문자열을 제공합니다. wh
 SELECT ID, CHANNELS, ARRAY_LENGTH(CHANNELS), CHANNELS[2]
   FROM SENSOR_ARRAY
  ORDER BY ID;
+```
+
+SQL 파일로 저장한 뒤 다음과 같이 실행할 수 있습니다.
+
+```bash
+machsql -s 127.0.0.1 -P 5656 -u SYS -p MANAGER -f array_query.sql
 ```
 
 ### machloader
