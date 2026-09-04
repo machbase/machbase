@@ -89,18 +89,18 @@ Machbase DBMS 8.7.0에서는 `executeAppendOpen()` overload에 컬럼명이나
 ```java
 ResultSet appendResult = statement.executeAppendOpen(
     "sensor_array",
-    new String[] {"ID", "CHANNELS[1]", "CHANNELS[4]"},
+    new String[] {"ID", "CHANNELS[0]", "CHANNELS[3]"},
     0);
 ```
 
 행마다 다른 ARRAY 위치를 입력할 때는 `MachConnection.createSparseArrayOf()`로
-`MachSparseArray`를 생성합니다. map key는 1부터 시작하며 빈 map은 all-element-NULL
+`MachSparseArray`를 생성합니다. map key는 0부터 시작하며 빈 map은 all-element-NULL
 ARRAY입니다. Java `null`은 whole NULL입니다.
 
 ```java
 Map<Integer, Object> entries = new HashMap<Integer, Object>();
-entries.put(Integer.valueOf(2), Integer.valueOf(200));
-entries.put(Integer.valueOf(4), Integer.valueOf(400));
+entries.put(Integer.valueOf(1), Integer.valueOf(200));
+entries.put(Integer.valueOf(3), Integer.valueOf(400));
 
 MachSparseArray sparse = connection.createSparseArrayOf(
     "INT32", 4, entries);
@@ -110,6 +110,10 @@ dense ARRAY의 조회와 prepared 입력에는 `java.sql.Array`, `Connection.cre
 `PreparedStatement.setArray()`를 사용합니다. 전체 예제와 target 충돌 규칙은
 [Sparse ARRAY와 선택 컬럼 Append API](../../data-input-load-export/array-append/)를
 참고하십시오.
+
+SQL ARRAY element target과 `MachSparseArray` position은 0-based입니다. JDBC 표준의
+parameter ordinal과 `java.sql.Array.getArray(index, count)` slice index는 기존처럼
+1-based이므로 서로 혼동하지 마십시오.
 
 ## DATETIME
 

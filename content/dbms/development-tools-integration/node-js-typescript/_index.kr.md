@@ -422,7 +422,8 @@ TAG 테이블의 `DATETIME` 컬럼에는 `Date` 객체 또는 `bigint` epoch 값
 
 Machbase DBMS 8.7.0의 선택 컬럼 Append에서는 `name`에 일반 컬럼 또는
 `ARRAY_COLUMN[position]`을 지정합니다. 행마다 다른 위치를 입력할 때는
-`SparseArray`를 whole ARRAY target에 전달합니다.
+`SparseArray`를 whole ARRAY target에 전달합니다. indexed target과
+`SparseArray.set()`의 position은 0-based입니다.
 
 ```javascript
 const { SparseArray } = require('@machbase/ts-client');
@@ -431,13 +432,13 @@ const stream = await conn.appendOpen('array_append_example', [
   { name: 'ID', type: 'int64' },
   { name: 'A', type: 'int32-array' },
 ]);
-const sparse = new SparseArray(4).set(2, 200).set(4, 400);
+const sparse = new SparseArray(4).set(1, 200).set(3, 400);
 await stream.append([[2n, sparse]]);
 await stream.close();
 ```
 
-`MACHBASE_NATIVE_APPEND=0`으로 prepared fallback을 강제하면 `SparseArray`를 Append 값으로
-사용할 수 없습니다. 전체 예제와 NULL 구분은
+`MACHBASE_NATIVE_APPEND=0`으로 prepared fallback을 강제해도 `SparseArray`를
+ARRAY-compatible 값으로 처리합니다. 전체 예제와 NULL 구분은
 [Sparse ARRAY와 선택 컬럼 Append API](../data-input-load-export/array-append/)를
 참고하십시오.
 

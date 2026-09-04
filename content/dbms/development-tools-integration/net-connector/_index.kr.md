@@ -879,7 +879,8 @@ Machbase DBMS 8.7.0 full/legacy provider는 ARRAY를 `object[]`로 반환합니�
 
 `AppendOpen()`의 `IList<string>` overload에는 일반 컬럼이나
 `ARRAY_COLUMN[position]`을 전달할 수 있습니다. 행마다 다른 위치를 입력할 때는
-`MachSparseArray`를 whole ARRAY target에 전달합니다.
+`MachSparseArray`를 whole ARRAY target에 전달합니다. indexed target과
+`MachSparseArray.Set()`의 position은 0-based입니다.
 
 ```csharp
 using var append = new MachCommand(connection);
@@ -887,8 +888,8 @@ var writer = append.AppendOpen(
     "ARRAY_APPEND_EXAMPLE",
     new List<string> { "ID", "A" });
 var sparse = new MachSparseArray(MachDBType.INT32_ARRAY, 4)
-    .Set(2, 200)
-    .Set(4, 400);
+    .Set(1, 200)
+    .Set(3, 400);
 
 try
 {

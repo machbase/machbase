@@ -108,11 +108,14 @@ Machbase DBMS 8.7.0의 ARRAY 지원 범위는 다음과 같습니다.
 | Python | O | O | O |
 | Node.js | O | O | O |
 | .NET full/legacy provider | O | O | O |
-| Go | 개발 소스 | 개발 소스 | 개발 소스 |
+| Go | v2 main 소스 | v2 main 소스 | v2 main 소스 |
 
-Machbase DBMS 8.7.0 서버와 ARRAY 기능이 포함된 SDK 빌드를 함께 사용합니다. 기존 full-row
-scalar Append API는 유지됩니다. Go는 ARRAY 기능이 포함된 `neo-client` 개발 소스를
-사용해야 하며 공개 모듈 버전만으로 지원을 가정하지 않습니다. 자세한 입력 방식과 API는
+Machbase DBMS 8.7.0 서버와 ARRAY 기능이 포함된 SDK 빌드를 함께 사용합니다. ARRAY의 SQL
+요소 위치와 Machbase 전용 SDK position은 0-based입니다. 기존 full-row scalar Append
+API는 유지됩니다. Node.js prepared fallback도 `SparseArray`를 지원합니다. Go는
+[`neo-client` PR #17](https://github.com/machbase/neo-client/pull/17) 이후의 v2 main
+소스를 사용해야 하며 공개 v2 릴리스가 지정되기 전에는
+공개 모듈 버전만으로 지원을 가정하지 않습니다. 자세한 입력 방식과 API는
 [Sparse ARRAY와 선택 컬럼 Append API](../data-input-load-export/array-append/)를
 참고하십시오.
 
@@ -174,8 +177,9 @@ version 문자열만으로 동일 기능을 가정하지 말고 배포 artifact�
 확인하거나 NFX source build를 사용합니다.
 
 ARRAY와 선택 컬럼 Append의 확인 기준은 NFX
-`309b4c04969bea8841cb95c09a159564aef9e4e7`입니다. 서버는 Machbase DBMS 8.7.0을,
-클라이언트는 해당 리비전 이후의 검증된 SDK 산출물을 기준으로 판단합니다.
+`655d1333870313c4951698b89c9a3c9ada11d630`과 병합 커밋
+`f756986c4836982723e2aa7727ec05b7e05e9707`입니다. 서버는 Machbase DBMS 8.7.0을,
+클라이언트는 해당 변경 이후의 검증된 SDK 산출물을 기준으로 판단합니다.
 
 <a id="sdk"></a>
 
