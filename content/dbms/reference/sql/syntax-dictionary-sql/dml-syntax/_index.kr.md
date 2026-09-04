@@ -32,7 +32,8 @@ insert_stmt ::=
     'VALUES' '(' value_list ')'
     [ 'ON DUPLICATE KEY UPDATE' [ 'SET' set_list ] ]
 
-insert_column_list ::= column_name ( ',' column_name )*
+insert_column_list ::= insert_target ( ',' insert_target )*
+insert_target      ::= column_name | array_column_name '[' position ']'
 value_list         ::= value ( ',' value )*
 set_list           ::= column_name '=' value ( ',' column_name '=' value )*
 ```
@@ -50,6 +51,31 @@ INSERT INTO sensor_log (name, value) VALUES ('sensor-01', 23.5);
 INSERT INTO sensors METADATA (name, location, unit)
 VALUES ('sensor-01', 'building-A', 'celsius');
 ```
+
+### ARRAY element target
+
+Machbase DBMS 8.7.0에서는 `INSERT ... VALUES`의 컬럼 목록에 고정 길이 `ARRAY`의 위치를
+지정할 수 있습니다. position은 1부터 시작합니다. 지정하지 않은 요소는 element NULL로
+저장됩니다.
+
+```sql
+CREATE LOG TABLE array_input (
+    id INTEGER,
+    channels INT32[4]
+);
+
+INSERT INTO array_input (id, channels[1], channels[4])
+VALUES (1, 10, 40);
+```
+
+같은 문장에서 whole ARRAY target과 element target을 함께 사용하거나 같은 위치를 두 번
+지정할 수 없습니다. scalar 컬럼과 범위 밖 position도 element target으로 사용할 수
+없습니다. indexed target은 `INSERT ... SELECT`와 `UPDATE SET`에서는 지원하지 않습니다.
+
+ARRAY 값 생성, sparse 입력과 Append 선택 target은
+[숫자 ARRAY 타입](/dbms/reference/sql/type-data-types-dictionary/array/)과
+[Sparse ARRAY와 선택 컬럼 Append API](/dbms/development-tools-integration/data-input-load-export/array-append/)를
+참고하십시오.
 
 ### ON DUPLICATE KEY UPDATE
 

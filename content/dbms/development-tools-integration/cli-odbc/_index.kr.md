@@ -171,7 +171,7 @@ batch, Append, `INSERT ... SELECT`, UPSERT에서는 같은 반환을 가정하�
 
 | 단계 | 주요 함수 |
 |------|-----------|
-| 열기 | `SQLAppendOpen()` |
+| 열기 | `SQLAppendOpen()`, 선택 컬럼은 `SQLAppendOpenColumns()`/`W()` |
 | 단건 입력 | `SQLAppendDataV2()` 또는 지원 버전의 Append 함수 |
 | batch 입력 | `SQLAppendBatch()` |
 | 서버 반영 | `SQLAppendFlush()` |
@@ -217,3 +217,25 @@ binary, IP, DATETIME, NULL 표현은 설치된 `machbase_sqlcli.h`의 `SQL_APPEN
 정확한 값을 보존하려면 문자열 또는 `SQL_NUMERIC_STRUCT`를 우선 사용합니다. type 배열에는
 `SQL_APPEND_TYPE_NUMERIC` 또는 `SQL_APPEND_TYPE_DECIMAL`을 지정하고, 대상 컬럼의
 precision과 scale을 기준으로 overflow와 반올림을 확인하십시오.
+
+## ARRAY와 선택 컬럼 Append
+
+Machbase DBMS 8.7.0은 `SQL_MACHBASE_ARRAY_DESC`를 사용한 typed ARRAY 조회·bind와
+`SQL_MACHBASE_SPARSE_ARRAY_DESC`를 사용한 sparse 입력을 지원합니다. 선택 컬럼 Append는
+`SQLAppendOpenColumns()` 또는 `SQLAppendOpenColumnsW()`를 사용합니다.
+
+```c
+SQLCHAR *targets[] = {
+    (SQLCHAR *)"ID",
+    (SQLCHAR *)"CHANNELS[1]",
+    (SQLCHAR *)"CHANNELS[4]",
+    NULL
+};
+
+SQLAppendOpenColumns(statement, (SQLCHAR *)"SENSOR_ARRAY", targets, 0);
+```
+
+컬럼명 목록은 마지막 원소가 `NULL`이어야 합니다. `SQLAppendBatch()`는 ARRAY를 지원하지
+않습니다. descriptor 정의, whole NULL과 element NULL 처리, direct ODBC handle 제약은
+[Sparse ARRAY와 선택 컬럼 Append API](../data-input-load-export/array-append/)를
+참고하십시오.

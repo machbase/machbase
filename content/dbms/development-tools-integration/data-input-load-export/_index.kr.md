@@ -86,6 +86,11 @@ Append는 각 SDK의 전용 API로 table을 열고 여러 row를 보낸 뒤 flus
 컬럼 순서와 타입을 대상 스키마에 맞추고, 일반 query와 connection을 분리합니다. 언어별
 완전한 코드는 이 장의 SDK별 페이지를 참고합니다.
 
+Machbase DBMS 8.7.0에서는 Append Open 단계에서 입력할 컬럼이나 `ARRAY` element target을
+선택할 수 있습니다. 행마다 다른 ARRAY 위치를 입력할 때는 SDK의 sparse ARRAY 객체를
+사용합니다. 선택 기준, API와 검증 예제는
+[Sparse ARRAY와 선택 컬럼 Append API](array-append/)를 참고하십시오.
+
 <a id="load-data-infile"></a>
 <a id="sql-load-data-infile"></a>
 

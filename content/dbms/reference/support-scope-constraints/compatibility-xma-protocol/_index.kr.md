@@ -62,6 +62,22 @@ Named bind는 client마다 server prepared, ordinal bind 또는 client-side rend
 다릅니다. [SDK 기능 지원 범위](/dbms/development-tools-integration/sdk-support-scope/#support-scope-sdk-transaction-prepare-bind)를
 정본으로 사용합니다. 이 페이지는 version pair와 upgrade 순서만 소유합니다.
 
+### ARRAY와 선택 컬럼 Append
+
+고정 길이 숫자 ARRAY와 선택 컬럼 Append는 Machbase DBMS 8.7.0에서 지원합니다. DBMS
+8.7.0 서버와 ARRAY 기능이 포함된 SDK 빌드를 함께 사용하십시오. 구버전 서버 또는 기능이
+포함되지 않은 SDK는 ARRAY 메타데이터나 값을 기존 scalar 타입으로 대체하지 않으며 해당
+요청을 오류로 처리합니다.
+
+Cluster Edition은 coordinator, broker와 warehouse를 모두 ARRAY를 지원하는 같은 DBMS
+8.7.0 빌드로 구성합니다. 혼합 버전 상태에서는 ARRAY DDL이나 ARRAY 데이터를 사용하는
+작업을 시작하지 마십시오.
+
+SQL과 SDK별 요구사항은
+[숫자 ARRAY 타입](/dbms/reference/sql/type-data-types-dictionary/array/)과
+[Sparse ARRAY와 선택 컬럼 Append API](/dbms/development-tools-integration/data-input-load-export/array-append/)를
+참고하십시오.
+
 ## SDK 버전 확인
 
 JDBC:
@@ -93,3 +109,6 @@ SQLGetInfo(conn, SQL_DRIVER_VER, buf, sizeof(buf), NULL);
    업그레이드하십시오.
 5. Named Bind Parameter의 이름 기반 SDK API를 사용하는 경우 서버와 SDK를 모두 8.7.0으로
    업그레이드하십시오.
+6. ARRAY 또는 선택 컬럼 Append를 사용하는 경우 서버는 Machbase DBMS 8.7.0으로,
+   클라이언트는 해당 기능이 포함된 SDK 빌드로 업그레이드하십시오. Cluster Edition은
+   모든 노드를 함께 맞춥니다.

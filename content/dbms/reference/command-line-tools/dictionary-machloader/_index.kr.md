@@ -90,6 +90,20 @@ machloader -o -d output.csv -t sensor_data -H
 machloader -o -d output.csv -t sensor_data -a
 ```
 
+### ARRAY 컬럼
+
+Machbase DBMS 8.7.0의 ARRAY 컬럼은 `[value,null,value]` 형식으로 가져오고 내보냅니다.
+쉼표가 ARRAY 내부에 포함되므로 CSV 필드를 enclosure로 감쌉니다.
+
+```csv
+1,"[1.5,null,3.5,4.5]"
+```
+
+NULL field는 whole NULL이고 `"[null,null]"`은 모든 요소가 NULL인 non-NULL ARRAY입니다.
+`-C` 자동 테이블 생성은 ARRAY 타입을 추론하지 않으므로 ARRAY 컬럼이 필요한 테이블은
+먼저 명시적으로 생성합니다. 자세한 타입과 NULL 규칙은
+[숫자 ARRAY 타입](/dbms/reference/sql/type-data-types-dictionary/array/)을 참고하십시오.
+
 ## 인코딩 및 구분자 설정
 
 EUC-KR 인코딩, 탭 구분자:

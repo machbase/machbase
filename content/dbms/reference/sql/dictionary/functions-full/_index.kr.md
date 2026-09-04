@@ -214,6 +214,37 @@ SELECT APPROX_PERCENTILE(latency_ms, 0.95) AS ap95,
 FROM api_log;
 ```
 
+## ARRAY_LENGTH
+
+`ARRAY_LENGTH(array_value)`는 non-NULL `ARRAY`의 선언 cardinality를 반환합니다.
+
+```sql
+SELECT ARRAY_LENGTH(ARRAY[10, NULL, 30]);
+-- 3
+```
+
+모든 요소가 NULL이어도 cardinality를 반환합니다. whole NULL은 NULL을 반환하며, 타입
+정보가 없는 `ARRAY_LENGTH(NULL)`은 오류입니다. 자세한 ARRAY 문법과 제약은
+[숫자 ARRAY 타입](/dbms/reference/sql/type-data-types-dictionary/array/)을 참고하십시오.
+
+## ARRAY_SPARSE
+
+`ARRAY_SPARSE`는 고정 길이 `ARRAY`에서 값이 있는 위치만 지정합니다. 위치는 1부터
+시작하며, 생략한 위치는 element NULL입니다.
+
+```sql
+-- 대상 컬럼에서 타입과 cardinality를 결정합니다.
+INSERT INTO sensor_array (id, channels)
+VALUES (1, ARRAY_SPARSE(1 => 10, 4 => 40));
+
+-- 대상이 없는 표현식은 타입과 cardinality를 명시합니다.
+SELECT ARRAY_SPARSE(INT32[4], 1 => 10, 4 => 40);
+```
+
+중복 또는 범위 밖 position은 오류입니다. 입력 방식과 SDK sparse 객체는
+[Sparse ARRAY와 선택 컬럼 Append API](/dbms/development-tools-integration/data-input-load-export/array-append/)를
+참고하십시오.
+
 
 ## AREA {#area}
 

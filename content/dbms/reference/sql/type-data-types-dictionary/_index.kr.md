@@ -20,6 +20,7 @@ Machbase에서 지원하는 SQL 데이터 타입을 설명합니다.
 | `FLOAT` | 4 bytes | 32비트 단정밀도 부동소수점 | 양수 최대값 |
 | `DOUBLE` | 8 bytes | 64비트 배정밀도 부동소수점 | 양수 최대값 |
 | `DECIMAL(M,D)` | precision에 따라 가변 | exact fixed-point, M: 1~65, D: 0~30 | - |
+| `ARRAY` | 요소 타입과 cardinality에 따라 가변 | 고정 길이 1차원 숫자 배열, cardinality 1~1024 | whole NULL과 element NULL 구분 |
 | `DATETIME` | 8 bytes | 1970-01-01 ~ 2262-04-11 (나노초 정밀도) | - |
 | `VARCHAR(n)` | 가변 | 최대 n 바이트 (1 ~ 32,768) | - |
 | `IPV4` | 4 bytes | 0.0.0.0 ~ 255.255.255.255 | - |
@@ -94,6 +95,24 @@ CREATE TRANSACTION TABLE invoice (
 `DECIMAL`은 `DECIMAL(10,0)`으로, `DECIMAL(M)`은 `DECIMAL(M,0)`으로 해석합니다. 선언 규칙,
 반올림, 인덱스, 집계 및 클라이언트 매핑은 [DECIMAL과 NUMERIC 고정소수점 타입](decimal-numeric-fixed-point/)을
 참고하십시오.
+
+---
+
+## ARRAY 타입
+
+Machbase DBMS 8.7.0은 숫자 요소를 정해진 개수만큼 저장하는 고정 길이 1차원
+`ARRAY` 타입을 지원합니다. 요소 타입 뒤에 cardinality를 지정합니다.
+
+```sql
+CREATE LOG TABLE sensor_array (
+    id INTEGER,
+    location DOUBLE[2],
+    acceleration FLOAT[3]
+);
+```
+
+지원 요소 타입, NULL 구분, 입력·조회 문법과 SDK별 표현은
+[숫자 ARRAY 타입](array/)을 참고하십시오.
 
 ---
 

@@ -192,6 +192,22 @@ DESC ACCOUNT;
 확인하려면 [PRIMARY KEY 메타데이터 지원 범위](/dbms/development-tools-integration/sdk-support-scope/#support-scope-sdk-primary-key-metadata)를
 참고하십시오.
 
+## ARRAY 표시와 DESC
+
+Machbase DBMS 8.7.0의 `DESC`는 ARRAY 컬럼을 `INT32[3]`,
+`DECIMAL(12,4)[2]`와 같은 canonical 선언으로 표시합니다. 조회 결과는
+`[value,null,value]` 형식이며 소문자 `null`은 element NULL입니다. 컬럼 전체가 NULL이면
+일반 SQL `NULL`로 표시합니다.
+
+```sql
+SELECT ID, CHANNELS, ARRAY_LENGTH(CHANNELS), CHANNELS[2]
+  FROM SENSOR_ARRAY
+ ORDER BY ID;
+```
+
+ARRAY 선언, NULL 구분과 표현식은
+[숫자 ARRAY 타입](/dbms/reference/sql/type-data-types-dictionary/array/)을 참고하십시오.
+
 ## Named Bind Parameter
 
 `machsql`의 `PREPARE` SQL에는 `:name` marker를 사용할 수 있습니다. 값은 이름이 아니라

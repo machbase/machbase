@@ -872,6 +872,40 @@ finally
 }
 ```
 
+### ARRAY와 선택 컬럼 Append
+
+Machbase DBMS 8.7.0 full/legacy provider는 ARRAY를 `object[]`로 반환합니다. element NULL은
+배열 안의 `null`, whole NULL은 `IsDBNull()`로 구분합니다.
+
+`AppendOpen()`의 `IList<string>` overload에는 일반 컬럼이나
+`ARRAY_COLUMN[position]`을 전달할 수 있습니다. 행마다 다른 위치를 입력할 때는
+`MachSparseArray`를 whole ARRAY target에 전달합니다.
+
+```csharp
+using var append = new MachCommand(connection);
+var writer = append.AppendOpen(
+    "ARRAY_APPEND_EXAMPLE",
+    new List<string> { "ID", "A" });
+var sparse = new MachSparseArray(MachDBType.INT32_ARRAY, 4)
+    .Set(2, 200)
+    .Set(4, 400);
+
+try
+{
+    append.AppendData(writer, new List<object> { 2L, sparse });
+}
+finally
+{
+    if (append.IsAppendOpened)
+        append.AppendClose(writer);
+}
+```
+
+빈 `MachSparseArray`는 all-element-NULL ARRAY이고 `DBNull.Value`는 whole NULL입니다.
+overload와 전체 검증 예제는
+[Sparse ARRAY와 선택 컬럼 Append API](../data-input-load-export/array-append/)를
+참고하십시오.
+
 ### Error Delegator 설정
 
 Append 중 row 오류는 위 예제처럼 writer를 연 직후 delegate로 받고, close 뒤 success/failure

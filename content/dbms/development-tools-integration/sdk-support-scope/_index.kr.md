@@ -96,6 +96,26 @@ batch, `executemany()`, Append, loader, `INSERT ... SELECT`와 UPSERT에서는 �
 회귀 검증이 더 필요한 범위입니다. Append extension은 표준 ODBC나 `database/sql` 기능이
 아닙니다.
 
+### ARRAY와 선택 컬럼 Append
+
+Machbase DBMS 8.7.0의 ARRAY 지원 범위는 다음과 같습니다.
+
+| SDK | dense ARRAY 조회·입력 | sparse ARRAY | 선택 컬럼 Append |
+|---|:---:|:---:|:---:|
+| SQLCLI·C++ | O | O | O |
+| Machbase ODBC extension | O | O | O |
+| JDBC | O | O | O |
+| Python | O | O | O |
+| Node.js | O | O | O |
+| .NET full/legacy provider | O | O | O |
+| Go | 개발 소스 | 개발 소스 | 개발 소스 |
+
+Machbase DBMS 8.7.0 서버와 ARRAY 기능이 포함된 SDK 빌드를 함께 사용합니다. 기존 full-row
+scalar Append API는 유지됩니다. Go는 ARRAY 기능이 포함된 `neo-client` 개발 소스를
+사용해야 하며 공개 모듈 버전만으로 지원을 가정하지 않습니다. 자세한 입력 방식과 API는
+[Sparse ARRAY와 선택 컬럼 Append API](../data-input-load-export/array-append/)를
+참고하십시오.
+
 <a id="support-scope-sdk-auth-key"></a>
 
 ## AUTH KEY
@@ -152,6 +172,10 @@ extension입니다.
 NFX cce422d의 Node 기능 일부는 public npm 1.0.1 publish 이후 추가되었습니다. registry package의
 version 문자열만으로 동일 기능을 가정하지 말고 배포 artifact의 commit provenance를
 확인하거나 NFX source build를 사용합니다.
+
+ARRAY와 선택 컬럼 Append의 확인 기준은 NFX
+`309b4c04969bea8841cb95c09a159564aef9e4e7`입니다. 서버는 Machbase DBMS 8.7.0을,
+클라이언트는 해당 리비전 이후의 검증된 SDK 산출물을 기준으로 판단합니다.
 
 <a id="sdk"></a>
 

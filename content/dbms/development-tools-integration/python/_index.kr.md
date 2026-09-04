@@ -386,6 +386,7 @@ prepared cursor는 SQL의 허용 범위나 Python API의 auto-commit 동작을 �
 | `machbase` | `selectClose()` | 열린 결과 집합 커서를 닫습니다. | `1` 또는 `0` |
 | `machbase` | `result()` | 최신 JSON 페이로드를 반환합니다. | JSON 문자열 |
 | `machbase` | `appendOpen(table_name, types=None)` | 컬럼 타입 코드를 지정하여 Append 프로토콜을 시작합니다. 생략 시 서버 메타데이터로 타입을 사용할 수 있습니다. | `1` 또는 `0` |
+| `machbase` | `appendOpenColumns(table_name, columns, types=None)` | Machbase DBMS 8.7.0에서 선택 컬럼 또는 ARRAY element target으로 Append를 시작합니다. | `1` 또는 `0` |
 | `machbase` | `appendData(table_name, rows_or_types, values=None, format='YYYY-MM-DD HH24:MI:SS', on_ack=None)` | 활성 Append 세션으로 행을 추가합니다. 타입 리스트를 생략하려면 두 번째 인자로 rows를 전달합니다. 호출 시 데이터 패킷을 즉시 전송합니다. | `1` 또는 `0` |
 | `machbase` | `appendDataByTime(table_name, rows_or_types, values=None, format='YYYY-MM-DD HH24:MI:SS', aTimes=None, on_ack=None)` | 명시적 타임스탬프로 행을 추가합니다. 타입 리스트를 생략하려면 두 번째 인자로 rows를 전달하고 `aTimes`로 타임스탬프를 지정합니다. 호출 시 데이터 패킷을 즉시 전송합니다. | `1` 또는 `0` |
 | `machbase` | `appendFlush()` | 이미 전송된 Append 데이터의 pending response를 확인하는 동기화 지점입니다. 전송 지연 버퍼를 비우는 API가 아닙니다. | `1` 또는 `0` |
@@ -408,7 +409,7 @@ prepared cursor는 SQL의 허용 범위나 Python API의 auto-commit 동작을 �
 | `cursor.lastrowid` | 성공한 단일 INSERT의 ROWID. 지원되지 않는 입력 방식이나 실패 후에는 `None`입니다. | `int | None` |
 | `cursor.close()` | 커서 종료 | `None` |
 | `cursor.rowcount` | 영향 행 수 | `int` |
-| `connection.append(table, rows, types=None, times=None, strict=False)` | Append 프로토콜로 row를 추가합니다. 2.3부터 trailing 컬럼 생략 시 `NULL` padding을 적용합니다. | 입력 row 수 |
+| `connection.append(table, rows, *, types=None, times=None, date_format=..., strict=False, columns=None)` | Append로 row를 추가합니다. `columns`는 선택 컬럼 또는 ARRAY element target을 지정합니다. | 입력 row 수 |
 
 ## 2.3 append 타입 생략과 trailing NULL padding (권장)
 
@@ -867,3 +868,43 @@ if __name__ == '__main__':
 
 `aTimes`는 row와 같은 순서의 epoch nanosecond sequence입니다. 초 단위 Unix timestamp를
 그대로 전달하지 마십시오.
+
+## ARRAY와 선택 컬럼 Append
+
+Machbase DBMS 8.7.0은 ARRAY를 Python `list`로 반환하며 prepared 입력에는 `list` 또는
+`tuple`을 사용할 수 있습니다. element NULL은 collection 내부의 `None`, whole NULL은
+컬럼 자체의 `None`입니다.
+
+선택 target은 `connection.append(..., columns=...)`로 지정합니다. 행마다 다른 ARRAY
+위치를 입력할 때는 `SparseArray`를 사용합니다.
+
+```python
+from machbaseAPI import SparseArray, connect
+
+connection = connect(
+    host="127.0.0.1",
+    port=5656,
+    user="SYS",
+    password="MANAGER",
+)
+try:
+    connection.append(
+        "ARRAY_APPEND_EXAMPLE",
+        [[1, 10, 40]],
+        columns=["ID", "A[1]", "A[4]"],
+    )
+
+    sparse = SparseArray(4).set(2, 200).set(4, 400)
+    connection.append(
+        "ARRAY_APPEND_EXAMPLE",
+        [[2, sparse]],
+        columns=["ID", "A"],
+    )
+finally:
+    connection.close()
+```
+
+`SparseArray.clear()`는 cardinality를 유지하면서 모든 요소를 NULL로 되돌립니다. 자세한
+NULL 구분, validation과 legacy API 예제는
+[Sparse ARRAY와 선택 컬럼 Append API](../data-input-load-export/array-append/)를
+참고하십시오.
