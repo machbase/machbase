@@ -54,6 +54,10 @@ Machbase 8.7.0 버전의 하위 호환성, 업그레이드 주의사항, 지원 
   [숫자 ARRAY 타입](/dbms/reference/sql/type-data-types-dictionary/array/)과
   [Sparse ARRAY와 선택 컬럼 Append API](/dbms/development-tools-integration/data-input-load-export/array-append/)를
   참고하십시오.
+- ARRAY 컬럼은 Standard Edition의 LOG, VOLATILE, LOOKUP, TRANSACTION, TAG METADATA와
+  Cluster Edition의 LOG 테이블에서 `ADD COLUMN`과 `DROP COLUMN`을 지원합니다. 테이블별
+  기존 row의 DEFAULT 적용 차이는 [DDL 문법](/dbms/reference/sql/syntax-dictionary-sql/ddl-syntax/#add-column)을
+  확인하십시오.
 - ARRAY의 공개 position은 0-based입니다. 초기 1-based ARRAY SQL, sparse 객체와 indexed
   Append target을 사용한 코드는 각 위치를 1씩 낮춰야 합니다. 저장된 ARRAY 데이터와
   dense ARRAY 요소 순서에는 변경이 없으므로 데이터 마이그레이션은 필요하지 않습니다.

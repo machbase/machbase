@@ -61,12 +61,17 @@ LOG 테이블은 운영 중 필요한 컬럼을 추가, 삭제, 이름 변경, �
 
 ```sql
 ALTER TABLE security_event ADD COLUMN (host_name VARCHAR(128));
+
+ALTER TABLE security_event
+    ADD COLUMN (channels INT32[3] DEFAULT [1, NULL, 3]);
 ```
 
-기존 데이터에는 새 컬럼 값이 없으므로, 새 컬럼을 사용하는 쿼리는 NULL 처리 또는 입력 시점 구분을 고려합니다.
+DEFAULT가 없으면 기존 row의 새 컬럼은 NULL입니다. DEFAULT를 지정하면 기존 row에도 해당
+값을 적용합니다. ARRAY DEFAULT의 요소 수는 선언 cardinality와 정확히 같아야 합니다.
 
 ```sql
 ALTER TABLE security_event DROP COLUMN (host_name);
+ALTER TABLE security_event DROP COLUMN (channels);
 ALTER TABLE security_event RENAME COLUMN category TO event_category;
 ALTER TABLE security_event MODIFY COLUMN (message VARCHAR(4096));
 ```

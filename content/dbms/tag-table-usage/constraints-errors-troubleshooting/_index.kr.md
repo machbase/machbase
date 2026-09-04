@@ -217,7 +217,8 @@ Cluster Edition에서는 `HOSTNAME VARCHAR(64)`가 첫 컬럼에 추가됩니다
 | DELETE | 지원 (`BEFORE` 또는 태그/축 조건) |
 | 다중 PRIMARY KEY | 미지원 (단일 컬럼만) |
 | BASETIME과 BASEDISTANCE 동시 사용 | 미지원 |
-| ALTER TABLE (컬럼 삭제/변경) | 미지원 |
+| TAG DATA 일반 컬럼 ALTER ADD/DROP | 미지원 |
+| TAG METADATA 컬럼 ALTER ADD/DROP | 지원 (Standard Edition) |
 
 ### 태그 수 제한
 

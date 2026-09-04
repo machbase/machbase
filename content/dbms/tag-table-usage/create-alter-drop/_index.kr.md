@@ -56,9 +56,25 @@ TAG 데이터 컬럼의 임의 변경은 제한됩니다. 스키마를 확장해
 ALTER TABLE tag_create_demo
     METADATA ADD COLUMN (team VARCHAR(32));
 
+ALTER TABLE tag_create_demo METADATA
+    ADD COLUMN (limits DECIMAL(12,4)[2] DEFAULT [0.0000, NULL]);
+
 ALTER TABLE tag_create_demo
     METADATA DROP COLUMN (team);
+
+ALTER TABLE tag_create_demo METADATA
+    DROP COLUMN (limits);
 ```
+
+Standard Edition에서는 TAG METADATA에 고정 길이 숫자 ARRAY 컬럼을 추가할 수 있습니다.
+ALTER 전에 존재한 metadata row에는 명시한 ARRAY DEFAULT를 적용합니다. ALTER 뒤 TAG DATA
+입력으로 자동 등록되는 metadata row에는 DEFAULT를 다시 적용하지 않으며 새 ARRAY 컬럼은
+whole NULL입니다.
+
+TAG DATA의 일반 ARRAY 컬럼은 `CREATE TABLE`에서 선언할 수 있지만 ALTER로 추가할 수
+없습니다. TAG METADATA ARRAY에는 자동 index를 만들지 않으며 명시적 index도 지원하지
+않습니다. 자세한 규칙은 [TAG 메타데이터](../tag-metadata/)와
+[숫자 ARRAY 타입](/dbms/reference/sql/type-data-types-dictionary/array/)을 참고하십시오.
 
 데이터가 있는 운영 테이블에서는 변경 전에 의존 쿼리, SDK 컬럼 순서와 재입력 경로를
 확인합니다.

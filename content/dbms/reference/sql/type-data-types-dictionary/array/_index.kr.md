@@ -45,7 +45,7 @@ Machbase DBMS 8.7.0은 같은 숫자 타입의 값을 정해진 개수만큼 저
 | `ULONG` | `UINT64` |
 | `NUMERIC`, `DEC`, `FIXED`, `NUMBER` | `DECIMAL` |
 
-## 테이블 생성
+## 테이블 생성과 컬럼 추가
 
 다음 예제는 네 개의 채널 값, 세 개의 누적값, 두 개의 고정소수점 값을 저장합니다.
 
@@ -57,6 +57,35 @@ CREATE LOG TABLE SENSOR_ARRAY
     COUNTERS UINT64[3],
     AMOUNTS  DECIMAL(12,4)[2]
 );
+```
+
+기존에 `ADD COLUMN`을 지원하는 테이블에는 같은 ARRAY 선언을 사용해 컬럼을 추가하고
+기존 `DROP COLUMN` 문법으로 제거할 수 있습니다.
+
+```sql
+ALTER TABLE SENSOR_ARRAY
+    ADD COLUMN (STATUS_VALUES INT32[3]);
+
+ALTER TABLE SENSOR_ARRAY
+    ADD COLUMN (LIMITS DECIMAL(12,4)[2] DEFAULT [0.0000, NULL]);
+
+ALTER TABLE SENSOR_ARRAY
+    DROP COLUMN (STATUS_VALUES);
+
+ALTER TABLE SENSOR_ARRAY
+    DROP COLUMN (LIMITS);
+```
+
+`DECIMAL(12)[2]`처럼 scale을 생략하면 `DECIMAL(12,0)[2]`로 처리합니다.
+
+TAG METADATA ARRAY는 `METADATA ADD COLUMN`과 `METADATA DROP COLUMN`을 사용합니다.
+
+```sql
+ALTER TABLE SENSOR_TAG METADATA
+    ADD COLUMN (LIMITS DECIMAL(12,4)[2] DEFAULT [0.0000, NULL]);
+
+ALTER TABLE SENSOR_TAG METADATA
+    DROP COLUMN (LIMITS);
 ```
 
 `ARRAY`는 다음 위치의 일반 데이터 컬럼에 사용할 수 있습니다.
@@ -72,11 +101,44 @@ CREATE LOG TABLE SENSOR_ARRAY
 `UPDATE`는 계속 지원하지 않으며 TAG 테이블의 `UPDATE`도 기존에 허용된 DATA 또는
 METADATA 경로만 사용할 수 있습니다.
 
+### ADD COLUMN 지원 범위
+
+| Edition | 테이블 또는 컬럼 영역 | ARRAY ADD/DROP |
+|---|---|:---:|
+| Standard | LOG | O |
+| Standard | VOLATILE | O |
+| Standard | LOOKUP | O |
+| Standard | TRANSACTION | O |
+| Standard | TAG METADATA | O |
+| Standard | TAG DATA 일반 컬럼 | X |
+| Cluster | LOG | O |
+| Cluster | 그 외 테이블 또는 TAG METADATA | X |
+
+TAG DATA 일반 ARRAY 컬럼은 `CREATE TABLE`에서 선언할 수 있지만 ALTER로 추가할 수
+없습니다.
+
+### DEFAULT와 기존 row
+
+- DEFAULT가 없으면 ALTER 전에 존재한 row의 새 ARRAY 컬럼은 whole NULL입니다.
+- LOG, LOOKUP, TRANSACTION과 TAG METADATA에서는 명시한 ARRAY DEFAULT를 기존 row에
+  적용합니다.
+- VOLATILE은 기존 scalar `ADD COLUMN`과 마찬가지로 기존 row를 DEFAULT로 다시 쓰지
+  않으므로 새 ARRAY 컬럼은 whole NULL입니다.
+- Cluster LOG는 명시한 ARRAY DEFAULT를 기존 row에 적용합니다.
+- DEFAULT constructor의 요소 수는 선언 cardinality와 정확히 같아야 합니다.
+
+TAG DATA insert 또는 Append로 tag가 자동 등록되는 시점이 ALTER 뒤라면 새 metadata
+row에는 ADD COLUMN DEFAULT를 다시 적용하지 않습니다. 추가된 ARRAY metadata 컬럼은
+whole NULL로 생성됩니다. DEFAULT는 ALTER 전에 존재한 metadata row만 backfill합니다.
+
 다음 역할에는 `ARRAY`를 사용할 수 없습니다.
 
 - PRIMARY KEY, UNIQUE 또는 일반 인덱스 키
 - `AUTO_INCREMENT`, `SEQUENCE`
 - TAG 테이블의 NAME, BASETIME, BASE DISTANCE, SUMMARIZED 컬럼
+
+TAG METADATA ARRAY 컬럼에는 자동 index를 생성하지 않으며 명시적 index도 지원하지
+않습니다.
 
 다음 선언은 지원하지 않습니다.
 
@@ -88,11 +150,6 @@ VARCHAR[4]
 INT32[2][3]
 DECIMAL[4](12,4)
 ```
-
-{{< callout type="warning" >}}
-`CREATE TABLE`에서는 `ARRAY` 컬럼을 선언할 수 있지만
-`ALTER TABLE ... ADD COLUMN (A INT32[3])`은 지원하지 않습니다.
-{{< /callout >}}
 
 ## ARRAY 값 입력
 
