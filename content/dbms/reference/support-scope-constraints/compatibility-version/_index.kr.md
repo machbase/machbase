@@ -48,6 +48,12 @@ Machbase 8.7.0 버전의 하위 호환성, 업그레이드 주의사항, 지원 
   종료하는 환경에서는 8.7.0 JDBC 드라이버로 교체하고
   [다중 호스트 연결](/dbms/development-tools-integration/jdbc/#jdbc-multi-host)의 URL과
   timeout 설정을 확인하십시오.
+- Machbase DBMS 8.7.0은 고정 길이 숫자 ARRAY와 선택 컬럼 Append를 지원합니다. ARRAY를
+  사용하는 애플리케이션은 DBMS 8.7.0 서버와 해당 기능이 포함된 SDK 빌드를 함께 사용하고,
+  Cluster Edition은 모든 노드를 함께 업그레이드하십시오. 자세한 SQL과 API는
+  [숫자 ARRAY 타입](/dbms/reference/sql/type-data-types-dictionary/array/)과
+  [Sparse ARRAY와 선택 컬럼 Append API](/dbms/development-tools-integration/data-input-load-export/array-append/)를
+  참고하십시오.
 - 서버와 SDK의 버전 조합에 따른 기능 차이는 [서버와 SDK 호환성](../compatibility-xma-protocol/)을 참고하십시오.
 
 <a id="removed-features-870"></a>

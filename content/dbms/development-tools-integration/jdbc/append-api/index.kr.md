@@ -15,6 +15,7 @@ JDBC에서는 `MachStatement` 확장 메서드로 사용합니다.
 | 메서드 | 설명 |
 |--------|------|
 | `executeAppendOpen(tableName, errorCheckCount)` | Append session을 시작하고 컬럼 메타데이터를 반환합니다. |
+| `executeAppendOpen(tableName, inputColumns, errorCheckCount)` | Machbase DBMS 8.7.0에서 선택 컬럼 또는 ARRAY element target으로 Append session을 시작합니다. |
 | `executeAppendData(metadata, data)` | 한 행을 전송합니다. |
 | `executeAppendDataByTime(metadata, time, data)` | 나노초 시간을 지정해 한 행을 전송합니다. |
 | `executeAppendFlush()` | pending 응답을 동기화합니다. |
@@ -80,6 +81,36 @@ try (MachStatement statement =
 }
 ```
 
+## ARRAY와 선택 컬럼
+
+Machbase DBMS 8.7.0에서는 `executeAppendOpen()` overload에 컬럼명이나
+`ARRAY_COLUMN[position]`을 전달할 수 있습니다.
+
+```java
+ResultSet appendResult = statement.executeAppendOpen(
+    "sensor_array",
+    new String[] {"ID", "CHANNELS[1]", "CHANNELS[4]"},
+    0);
+```
+
+행마다 다른 ARRAY 위치를 입력할 때는 `MachConnection.createSparseArrayOf()`로
+`MachSparseArray`를 생성합니다. map key는 1부터 시작하며 빈 map은 all-element-NULL
+ARRAY입니다. Java `null`은 whole NULL입니다.
+
+```java
+Map<Integer, Object> entries = new HashMap<Integer, Object>();
+entries.put(Integer.valueOf(2), Integer.valueOf(200));
+entries.put(Integer.valueOf(4), Integer.valueOf(400));
+
+MachSparseArray sparse = connection.createSparseArrayOf(
+    "INT32", 4, entries);
+```
+
+dense ARRAY의 조회와 prepared 입력에는 `java.sql.Array`, `Connection.createArrayOf()`와
+`PreparedStatement.setArray()`를 사용합니다. 전체 예제와 target 충돌 규칙은
+[Sparse ARRAY와 선택 컬럼 Append API](../../data-input-load-export/array-append/)를
+참고하십시오.
+
 ## DATETIME
 
 Append의 DATETIME 값은 epoch nanosecond 단위의 `long`으로 전달합니다.
@@ -110,5 +141,6 @@ ordered append는 protocol packet 한도를 공유하므로 한 행의 전체 �
 미만으로 유지합니다. BLOB/CLOB처럼 큰 값을 입력할 때는 행 크기와 클라이언트 메모리
 사용량을 함께 확인합니다.
 
-Append API는 TRANSACTION 테이블 입력에 사용하지 않습니다. rollback이 필요한 여러 DML은
-[JDBC 트랜잭션](../transaction-pooling/)을 사용합니다.
+TRANSACTION 테이블의 Append batch는 SQL transaction에 포함되지 않고 독립적으로
+반영됩니다. rollback이 필요한 여러 DML은 [JDBC 트랜잭션](../transaction-pooling/)을
+사용합니다.

@@ -34,6 +34,12 @@ column_def ::= column_name column_type
 decimal_type ::= ( 'DECIMAL' | 'NUMERIC' | 'DEC' | 'FIXED' | 'NUMBER' )
                  [ '(' precision [ ',' scale ] ')' ]
 
+array_type ::= ( 'SHORT' | 'INT16' | 'USHORT' | 'UINT16'
+               | 'INTEGER' | 'INT' | 'INT32' | 'UINTEGER' | 'UINT32'
+               | 'LONG' | 'INT64' | 'ULONG' | 'UINT64'
+               | 'FLOAT' | 'DOUBLE' | decimal_type )
+             '[' cardinality ']'
+
 column_axis ::= 'BASETIME' | 'BASE TIME' | 'BASE DISTANCE' | 'BASEDISTANCE'
 
 column_property_list ::=
@@ -72,6 +78,10 @@ Edition 전용이므로 Cluster Edition에서는 세 TRANSACTION 생성 문법�
 `DECIMAL`은 모든 테이블 유형에서 사용할 수 있습니다. precision은 1~65, scale은 0~30이며
 scale은 precision보다 클 수 없습니다. 자세한 내용은 [DECIMAL과 NUMERIC 고정소수점
 타입](/dbms/reference/sql/type-data-types-dictionary/decimal-numeric-fixed-point/)을 참고하십시오.
+
+Machbase DBMS 8.7.0의 `ARRAY`는 숫자 요소 타입 뒤에 `1..1024` 범위의 cardinality를
+지정합니다. 지원 타입과 테이블별 제약은
+[숫자 ARRAY 타입](/dbms/reference/sql/type-data-types-dictionary/array/)을 참고하십시오.
 
 ### 예시
 
@@ -186,6 +196,9 @@ ALTER TABLE product_master ADD COLUMN (stock_qty INTEGER DEFAULT 0);
 ALTER TABLE sensor_log ADD COLUMN (flag INTEGER DEFAULT 0);
 ALTER TABLE sensor_log ADD COLUMN (tag_ip IPV4 DEFAULT '192.168.0.1');
 ```
+
+`ALTER TABLE ... ADD COLUMN`으로 ARRAY 컬럼을 추가하는 기능은 지원하지 않습니다. ARRAY
+컬럼은 `CREATE TABLE`에서 선언합니다.
 
 ### DROP COLUMN
 
