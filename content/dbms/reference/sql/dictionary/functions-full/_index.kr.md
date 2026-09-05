@@ -418,12 +418,16 @@ BITOR(i1, i6)
 CAST(expression AS data_type)
 CAST(expression AS data_type(length))
 CAST(expression AS DECIMAL(precision[, scale]))
+CAST(array_expression AS numeric_type[cardinality])
+CAST(array_expression AS DECIMAL(precision[, scale])[cardinality])
 ```
 
 - `expression`은 변환할 값, 컬럼 또는 SQL 표현식입니다.
+- `array_expression`은 숫자 `ARRAY` 또는 SQL `NULL`입니다.
 - `data_type`은 아래 표의 대상 타입 또는 별칭입니다.
 - 타입 이름은 대소문자를 구분하지 않습니다.
 - `length`, `precision`, `scale`은 대상 타입에서 허용할 때만 지정할 수 있습니다.
+- ARRAY 입력과 대상의 `cardinality`는 정확히 같아야 합니다.
 
 ### 지원 타입과 별칭
 
@@ -544,6 +548,39 @@ CAST로 만들 수 있는 정수 범위는 다음과 같습니다. 각 타입의
 | `INT64`, `LONG` | -9,223,372,036,854,775,807~9,223,372,036,854,775,807 |
 | `UINT64`, `ULONG` | 0~18,446,744,073,709,551,614 |
 
+### 숫자 ARRAY 전체 변환
+
+같은 cardinality의 숫자 `ARRAY`는 요소 타입을 전체 변환할 수 있습니다. 대상에는
+`INT16`, `UINT16`, `INT32`, `UINT32`, `INT64`, `UINT64`, `FLOAT`, `DOUBLE`, `DECIMAL`과
+지원 타입 표의 숫자 별칭을 사용합니다.
+
+```sql
+SELECT CAST([1.9, NULL, -3.9] AS INT32[3]);
+SELECT CAST([1.235, NULL, -2.345] AS DECIMAL(6,2)[3]);
+```
+
+- whole NULL은 변환 뒤에도 whole NULL입니다.
+- element NULL은 같은 위치의 element NULL로 유지됩니다.
+- 각 non-NULL 요소에는 대응하는 scalar 숫자 CAST의 절삭, 반올림과 범위 규칙을
+  적용합니다.
+- 한 요소라도 변환할 수 없으면 CAST와 이를 포함한 문장 전체가 실패합니다. 변환된 일부
+  요소나 행을 결과로 남기지 않습니다.
+- `DECIMAL[N]`은 `DECIMAL(10,0)[N]`, `DECIMAL(p)[N]`은 `DECIMAL(p,0)[N]`으로
+  처리합니다.
+
+prepared statement에서도 CAST 대상이 parameter의 요소 타입, cardinality와 DECIMAL
+precision/scale을 결정합니다. 같은 statement에 dense ARRAY, sparse ARRAY와 whole NULL을
+다시 bind할 수 있습니다.
+
+```sql
+SELECT CAST(? AS INT32[3]);
+SELECT CAST(? AS DECIMAL(12,4)[3]);
+```
+
+scalar를 ARRAY로 확장하거나 ARRAY를 scalar로 축소할 수 없습니다. 서로 다른 cardinality
+사이에 padding 또는 truncation하지 않으며 문자열, 날짜, IP, BINARY, JSON ARRAY를
+대상으로 지정할 수 없습니다.
+
 ### 문자열 및 LOB 변환
 
 숫자, 날짜와 시간, IP 주소, 바이너리, JSON을 문자 타입으로 변환할 수 있습니다.
@@ -649,6 +686,10 @@ SELECT CAST(? AS DECIMAL(12,2)) AS amount;
 CAST 결과의 타입, byte 길이, DECIMAL precision과 scale은 결과 메타데이터와 VIEW 컬럼
 정보에 반영됩니다. 결과의 NULL 가능 여부는 입력 표현식의 NULL 가능 여부를 따릅니다.
 
+`CASE` 또는 `UNION ALL`에서 ARRAY 결과를 결합하려면 요소 타입, cardinality와 DECIMAL
+precision/scale이 모두 같아야 합니다. 서로 다르면 각 결과를 명시적으로 같은 ARRAY
+타입으로 CAST한 뒤 결합합니다.
+
 각 SDK는 기존 결과 메타데이터 API로 CAST 결과를 확인합니다. CAST 전용 SDK API는 제공하지
 않습니다.
 
@@ -672,6 +713,9 @@ CAST 결과의 타입, byte 길이, DECIMAL precision과 scale은 결과 메타�
 | 숫자 범위 초과 또는 NULL 예약값 | `CAST('65535' AS USHORT)` |
 | 부호 없는 정수로 변환되는 음수 | `CAST('-1' AS UINTEGER)` |
 | 숫자로 변환할 수 없는 문자열 | `CAST('12x' AS INTEGER)` |
+| scalar와 ARRAY 사이의 변환 | `CAST(1 AS INT32[1])`, `CAST([1] AS INT32)` |
+| ARRAY cardinality 불일치 | `CAST([1, 2] AS INT32[3])` |
+| 지원하지 않는 ARRAY 대상 타입 | `CAST([1] AS VARCHAR[1])` |
 | 잘못된 IP 주소 | `CAST('999.1.1.1' AS IPV4)` |
 | 홀수 길이 또는 비16진수 바이너리 문자열 | `CAST('123' AS BINARY(4))`, `CAST('GG' AS BLOB)` |
 | 유효하지 않은 JSON | `CAST('{bad}' AS JSON)` |
@@ -679,14 +723,16 @@ CAST 결과의 타입, byte 길이, DECIMAL precision과 scale은 결과 메타�
 
 ### 호환성
 
-CAST 함수는 Machbase 8.7.0에서 지원됩니다. Cluster Edition에서 CAST를 사용하는 경우
-모든 cluster node가 CAST를 지원하는 동일 버전이어야 합니다. CAST를 지원하지 않는 구버전
-node와의 혼합 실행은 지원하지 않습니다.
+CAST 함수와 숫자 ARRAY 전체 CAST는 Machbase 8.7.0에서 지원됩니다. Standard Edition과
+Cluster Edition에서 사용할 수 있으며, Cluster Edition에서는 모든 cluster node가 CAST를
+지원하는 동일 버전이어야 합니다. CAST를 지원하지 않는 구버전 node와의 혼합 실행은
+지원하지 않습니다.
 
 ### 관련 문서
 
 - [SQL 문법 사전](../../syntax-dictionary-sql/)
 - [데이터 타입 사전](../../type-data-types-dictionary/)
+- [숫자 ARRAY 타입](../../type-data-types-dictionary/array/)
 - [DECIMAL과 NUMERIC 고정소수점 타입](../../type-data-types-dictionary/decimal-numeric-fixed-point/)
 
 ## COUNT
