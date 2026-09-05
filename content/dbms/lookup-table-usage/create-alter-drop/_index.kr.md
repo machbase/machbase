@@ -93,6 +93,28 @@ SEQUENCE 컬럼의 세부 정책은 [SEQUENCE 컬럼](/dbms/lookup-table-usage/s
 `PROPERTY(SEQUENCE)`와 `AUTO_INCREMENT`는 별개의 기능이며 같은 컬럼에 함께 지정하지
 않습니다.
 
+<a id="alter-lookup-column"></a>
+
+## 컬럼 추가와 삭제
+
+Standard Edition에서는 LOOKUP 테이블에 고정 길이 숫자 ARRAY 컬럼을 추가하고 삭제할 수
+있습니다.
+
+```sql
+ALTER TABLE equipment_master
+    ADD COLUMN (limits DECIMAL(12,4)[2] DEFAULT [0.0000, NULL]);
+
+ALTER TABLE equipment_master
+    DROP COLUMN (limits);
+```
+
+DEFAULT가 없으면 기존 row의 새 ARRAY 컬럼은 whole NULL입니다. DEFAULT를 지정하면 기존
+row에도 해당 값을 적용합니다. ARRAY DEFAULT의 요소 수는 선언 cardinality와 정확히
+같아야 합니다. ARRAY 컬럼은 PRIMARY KEY나 index key로 사용할 수 없습니다.
+
+지원 타입과 제약은
+[숫자 ARRAY 타입](/dbms/reference/sql/type-data-types-dictionary/array/)을 참고하십시오.
+
 <a id="alter-lookup-index"></a>
 
 ## 인덱스 추가

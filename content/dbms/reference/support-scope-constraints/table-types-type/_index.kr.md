@@ -38,6 +38,9 @@ Machbase는 용도에 따라 다섯 가지 테이블 유형을 제공합니다. 
 | JSON path query | O | O | O | X | O |
 | **고정소수점** | | | | | |
 | DECIMAL / NUMERIC 컬럼 | O | O | O | O | O |
+| **고정 길이 ARRAY** | | | | | |
+| ARRAY 컬럼 생성 | O | O | O | O | O |
+| ARRAY ADD/DROP COLUMN | △ | O | O | O | O |
 | **인덱스** | | | | | |
 | 기본 인덱스 | O | O | O | O | O |
 | LSM 인덱스 | X | O | X | X | X |
@@ -58,6 +61,12 @@ DECIMAL은 모든 public 테이블 타입의 공통 exact fixed-point 타입입�
 `FIXED`, `NUMBER`는 DECIMAL alias이며, precision은 최대 65, scale은 최대 30입니다. 상세 규칙은
 [DECIMAL과 NUMERIC 고정소수점 타입](../../sql/type-data-types-dictionary/decimal-numeric-fixed-point/)을
 참고하십시오.
+
+ARRAY ADD/DROP은 Standard Edition의 LOG, VOLATILE, LOOKUP, TRANSACTION, TAG METADATA에서
+지원합니다. TAG 열의 `△`는 TAG DATA 일반 컬럼을 ALTER로 추가할 수 없고 TAG METADATA만
+지원한다는 의미입니다. Cluster Edition에서는 LOG 경로만 지원합니다. 정확한 문법과 기존
+row의 DEFAULT 규칙은 [DDL 문법](../../sql/syntax-dictionary-sql/ddl-syntax/#add-column)과
+[숫자 ARRAY 타입](../../sql/type-data-types-dictionary/array/)을 참고하십시오.
 
 ## 주요 제약 상세
 

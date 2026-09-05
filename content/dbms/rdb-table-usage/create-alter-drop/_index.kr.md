@@ -122,13 +122,23 @@ TRANSACTION 테이블에서는 `MODIFY COLUMN`을 사용하지 않습니다.
 ```sql
 ALTER TABLE product_catalog
 ADD COLUMN (stock_qty INTEGER DEFAULT 0);
+
+ALTER TABLE product_catalog
+ADD COLUMN (limits DECIMAL(12)[2] DEFAULT [10, 20]);
 ```
+
+고정 길이 숫자 ARRAY도 같은 형식으로 추가할 수 있습니다. `DECIMAL(12)[2]`처럼 scale을
+생략하면 0으로 처리합니다. DEFAULT가 없으면 기존 row는 whole NULL이고, DEFAULT를
+지정하면 기존 row에도 해당 ARRAY 값을 적용합니다.
 
 ### 컬럼 삭제
 
 ```sql
 ALTER TABLE product_catalog
 DROP COLUMN (stock_qty);
+
+ALTER TABLE product_catalog
+DROP COLUMN (limits);
 ```
 
 PRIMARY KEY, UNIQUE INDEX, 일반 인덱스, JSON path 인덱스가 참조하는 컬럼은 바로 삭제할 수

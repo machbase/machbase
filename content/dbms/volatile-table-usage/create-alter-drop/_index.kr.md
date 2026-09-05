@@ -87,6 +87,26 @@ VOLATILE 테이블은 서버 재시작 시 테이블과 데이터가 사라지�
 시작합니다. SDK에서 INSERT 결과 ID를 받는 방법은
 [ROWID와 INSERT 결과 ID](/dbms/reference/sql/rowid/)를 참고하십시오.
 
+### 컬럼 추가와 삭제
+
+Standard Edition에서는 VOLATILE 테이블에 고정 길이 숫자 ARRAY 컬럼을 추가하고 삭제할
+수 있습니다.
+
+```sql
+ALTER TABLE sensor_latest
+    ADD COLUMN (thresholds DOUBLE[2] DEFAULT [10.0, 20.0]);
+
+ALTER TABLE sensor_latest
+    DROP COLUMN (thresholds);
+```
+
+VOLATILE은 기존 scalar `ADD COLUMN`과 마찬가지로 ALTER 전에 존재한 row를 DEFAULT로 다시
+쓰지 않습니다. ARRAY DEFAULT를 지정해도 기존 row의 새 컬럼은 whole NULL입니다. 이
+동작은 LOG, LOOKUP, TRANSACTION과 TAG METADATA의 backfill 규칙과 다릅니다.
+
+ARRAY의 지원 요소 타입, cardinality와 DEFAULT 규칙은
+[숫자 ARRAY 타입](/dbms/reference/sql/type-data-types-dictionary/array/)을 참고하십시오.
+
 ### 삭제
 
 ```sql

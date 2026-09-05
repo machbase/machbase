@@ -181,7 +181,7 @@ DROP TABLE sensor_log;
 
 ```sql
 alter_table_add_stmt ::=
-    'ALTER TABLE' table_name 'ADD COLUMN'
+    'ALTER TABLE' table_name [ 'METADATA' ] 'ADD COLUMN'
     '(' column_name column_type [ 'DEFAULT' value ] ')'
 ```
 
@@ -195,21 +195,52 @@ ALTER TABLE product_master ADD COLUMN (stock_qty INTEGER DEFAULT 0);
 -- 기본값과 함께 추가
 ALTER TABLE sensor_log ADD COLUMN (flag INTEGER DEFAULT 0);
 ALTER TABLE sensor_log ADD COLUMN (tag_ip IPV4 DEFAULT '192.168.0.1');
+
+-- ARRAY 컬럼과 DEFAULT 추가
+ALTER TABLE sensor_log
+    ADD COLUMN (channels INT32[3] DEFAULT [1, NULL, 3]);
+
+-- TAG METADATA ARRAY 컬럼 추가
+ALTER TABLE sensor_tag METADATA
+    ADD COLUMN (limits DECIMAL(12,4)[2] DEFAULT [0.0000, NULL]);
 ```
 
-`ALTER TABLE ... ADD COLUMN`으로 ARRAY 컬럼을 추가하는 기능은 지원하지 않습니다. ARRAY
-컬럼은 `CREATE TABLE`에서 선언합니다.
+`DECIMAL(p)[n]` ARRAY에서 scale을 생략하면 0으로 처리합니다. ARRAY DEFAULT의 요소 수는
+선언 cardinality와 정확히 같아야 합니다. 잘못된 요소 타입, cardinality, precision,
+scale, 중첩 또는 다차원 선언과 길이가 다른 DEFAULT는 컬럼을 일부 생성하지 않고 문장
+전체를 실패시킵니다.
+
+#### ARRAY ADD COLUMN 지원 범위
+
+| Edition | 테이블 또는 컬럼 영역 | 지원 | 기존 row의 명시적 DEFAULT |
+|---|---|:---:|---|
+| Standard | LOG | O | 적용 |
+| Standard | VOLATILE | O | 적용하지 않고 whole NULL 유지 |
+| Standard | LOOKUP | O | 적용 |
+| Standard | TRANSACTION | O | 적용 |
+| Standard | TAG METADATA | O | 적용 |
+| Standard | TAG DATA 일반 컬럼 | X | - |
+| Cluster | LOG | O | 적용 |
+| Cluster | 그 외 테이블 또는 TAG METADATA | X | - |
+
+DEFAULT가 없으면 지원되는 모든 테이블에서 ALTER 전에 존재한 row의 새 ARRAY 컬럼은 whole
+NULL입니다. TAG DATA 일반 ARRAY 컬럼은 `CREATE TABLE`에서 선언할 수 있지만 ALTER로
+추가할 수 없습니다. 타입과 NULL 계약은
+[숫자 ARRAY 타입](/dbms/reference/sql/type-data-types-dictionary/array/)을 참고하십시오.
 
 ### DROP COLUMN
 
 ```sql
 alter_table_drop_stmt ::=
-    'ALTER TABLE' table_name 'DROP COLUMN' '(' column_name ')'
+    'ALTER TABLE' table_name [ 'METADATA' ]
+    'DROP COLUMN' '(' column_name ')'
 ```
 
 ```sql
 ALTER TABLE sensor_log DROP COLUMN (quality);
 ALTER TABLE product_master DROP COLUMN (stock_qty);
+ALTER TABLE sensor_log DROP COLUMN (channels);
+ALTER TABLE sensor_tag METADATA DROP COLUMN (limits);
 ```
 
 ### RENAME COLUMN

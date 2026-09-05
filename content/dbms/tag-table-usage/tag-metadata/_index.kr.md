@@ -19,6 +19,7 @@ Tag 메타데이터는 태그의 정적 속성을 저장하는 영역입니다. 
 - 메타데이터 전용 조회
 - 메타데이터 조건 기반 `UPDATE` / `DELETE`
 - metadata row 마지막 변경 시각 조회
+- ARRAY metadata 컬럼 ADD/DROP과 기존 row DEFAULT
 - `JSON` 타입 메타데이터 컬럼 선언
 - JSON path 조회와 JSON path 인덱스
 - JSON 문서 일부만 수정하는 부분 갱신
@@ -43,6 +44,50 @@ METADATA (
 ```
 
 메타데이터 컬럼은 태그 이름별로 1행만 저장됩니다.
+
+### ARRAY 메타데이터 컬럼 추가와 삭제
+
+Standard Edition에서는 기존 TAG 테이블의 METADATA 영역에 고정 길이 숫자 ARRAY 컬럼을
+추가하고 삭제할 수 있습니다.
+
+```sql
+INSERT INTO sensors (name, time, value)
+VALUES ('TEMP_OLD', TO_DATE('2026-09-05 00:00:00'), 10.0);
+
+ALTER TABLE sensors METADATA
+    ADD COLUMN (limits DECIMAL(12,4)[2] DEFAULT [0.0000, NULL]);
+
+INSERT INTO sensors (name, time, value)
+VALUES ('TEMP_NEW', TO_DATE('2026-09-05 00:00:01'), 20.0);
+
+SELECT name, limits
+  FROM sensors METADATA
+ ORDER BY name;
+```
+
+ALTER 전에 존재한 `TEMP_OLD` metadata row에는 `[0.0000, NULL]`을 backfill합니다. ALTER
+뒤 TAG DATA 입력으로 자동 등록된 `TEMP_NEW` metadata row에는 ADD COLUMN DEFAULT를 다시
+적용하지 않으며 `limits`는 whole NULL입니다. DEFAULT가 없는 경우에는 ALTER 전 row도
+whole NULL입니다.
+
+추가한 ARRAY metadata 컬럼은 일반 TAG 조회의 명시 projection과 `SELECT *`에도
+포함됩니다. ARRAY metadata 컬럼에는 자동 index를 만들지 않으며 다음과 같은 명시적
+index도 지원하지 않습니다.
+
+```sql
+-- 지원하지 않으며 오류를 반환합니다.
+CREATE INDEX idx_sensor_limits ON sensors METADATA(limits);
+```
+
+컬럼을 제거할 때도 `METADATA`를 지정합니다.
+
+```sql
+ALTER TABLE sensors METADATA DROP COLUMN (limits);
+```
+
+TAG DATA의 일반 ARRAY 컬럼은 `CREATE TAG TABLE`에서 선언할 수 있지만 ALTER로 추가할 수
+없습니다. 지원 요소 타입, cardinality와 DEFAULT 규칙은
+[숫자 ARRAY 타입](/dbms/reference/sql/type-data-types-dictionary/array/)을 참고하십시오.
 
 ### 메타데이터 입력
 
@@ -538,6 +583,7 @@ DROP INDEX idx_ship_owner;
 - 메타데이터 전용 조회는 `FROM TAG METADATA`
 - 데이터 조회는 `FROM TAG`
 - 메타데이터 수정/삭제는 `UPDATE/DELETE ... METADATA`
+- ARRAY metadata 컬럼 변경은 `ALTER TABLE ... METADATA ADD/DROP COLUMN`
 - JSON 메타데이터는 `INFO JSON`
 - `_LAST_UPDATE_TIME` 은 metadata row의 마지막 변경 시각이며 명시적으로 조회할 수 있습니다
 - JSON path 인덱스는 `INFO JSON INDEX(...)` 또는 `CREATE INDEX ... ON TAG METADATA (...)`

@@ -351,7 +351,7 @@ Elapsed time: 0.001
 
 #### DELETE
 
-태그 메타 테이블은 `DROP COLUMN`을 지원하지 않으므로 LSL/USL 컬럼 자체를 삭제할 수는 없습니다. 대신 값을 NULL로 설정하면 제약 없이 데이터를 입력할 수 있습니다.
+LSL/USL 컬럼은 `DROP COLUMN`으로 제거하지 않고 값을 NULL로 설정해 제약을 해제합니다.
 
 ```sql
 Mach> UPDATE EXAMPLE METADATA SET lsl = NULL, usl = NULL WHERE tag_id = 'TAG_01';
