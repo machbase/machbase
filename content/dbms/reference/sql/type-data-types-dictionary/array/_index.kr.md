@@ -261,6 +261,51 @@ SELECT ID, ARRAY_LENGTH(CHANNELS)
 모든 요소가 NULL이어도 cardinality를 반환합니다. whole NULL은 NULL을 반환합니다.
 타입 정보가 없는 `ARRAY_LENGTH(NULL)`은 인자 타입을 결정할 수 없으므로 오류입니다.
 
+## ARRAY 전체 CAST
+
+같은 cardinality의 숫자 `ARRAY`는 `CAST(array_expression AS TYPE[N])`로 요소 타입을
+전체 변환할 수 있습니다.
+
+```sql
+SELECT CAST(CHANNELS AS INT32[4])
+  FROM SENSOR_ARRAY;
+
+SELECT CAST(AMOUNTS AS DECIMAL(10,2)[2])
+  FROM SENSOR_ARRAY;
+```
+
+- 입력은 숫자 `ARRAY` 또는 SQL `NULL`이어야 합니다.
+- 대상에는 이 문서의 숫자 요소 타입과 별칭을 사용할 수 있습니다.
+- 입력과 대상 cardinality는 정확히 같아야 합니다.
+- whole NULL과 각 element NULL은 변환 뒤에도 유지됩니다.
+- 각 non-NULL 요소에는 대응하는 scalar CAST의 숫자 변환 규칙을 적용합니다.
+- `DECIMAL[N]`은 `DECIMAL(10,0)[N]`, `DECIMAL(p)[N]`은 `DECIMAL(p,0)[N]`으로
+  처리합니다.
+- 한 요소라도 범위나 변환 규칙을 위반하면 CAST와 이를 포함한 문장 전체가 실패합니다.
+
+prepared statement에서는 CAST 대상이 parameter와 결과의 요소 타입, cardinality와
+DECIMAL precision/scale을 결정합니다. ARRAY 값, whole NULL과 sparse ARRAY를 같은
+statement에 다시 bind할 수 있습니다.
+
+```sql
+SELECT CAST(? AS INT32[3]);
+SELECT CAST(? AS DECIMAL(12,4)[3]);
+```
+
+`CASE`와 `UNION ALL`에서 ARRAY 결과를 결합하려면 요소 타입, cardinality와 DECIMAL
+precision/scale이 모두 같아야 합니다. 서로 다르면 명시적으로 같은 ARRAY 타입으로
+CAST한 뒤 결합합니다.
+
+다음 변환은 지원하지 않습니다.
+
+- scalar 값을 ARRAY로 확장
+- ARRAY를 scalar로 축소
+- 서로 다른 cardinality 사이의 padding 또는 truncation
+- 문자열, 날짜, IP, BINARY, JSON ARRAY 대상
+
+전체 문법, 숫자 변환과 오류 규칙은
+[CAST 함수](../../dictionary/functions-full/#cast)를 참고하십시오.
+
 ## 비교와 표현식
 
 `ARRAY` 전체에 `=`, `<>`, `IS NULL`, `IS NOT NULL`을 사용할 수 있습니다. 같은 위치의
