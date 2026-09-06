@@ -47,21 +47,24 @@ Linux에 설치할 경우 아래 항목을 설치 전에 점검합니다.
 
 #### 파일 디스크립터 한도
 
-다수의 파일을 동시에 열기 때문에 기본값(1024)으로는 부족합니다.
+다수의 파일을 동시에 여는 워크로드에서는 낮은 파일 디스크립터 한도가 병목이 될 수 있습니다.
+기본 한도는 운영체제와 계정 설정에 따라 다르므로 서버를 실행할 계정에서 확인합니다.
 
 ```bash
 # 현재 값 확인
 ulimit -Sn
 ```
 
-값이 65535보다 작으면 `/etc/security/limits.conf`를 수정하고 재부팅합니다.
+이 설치 예제에서는 65535를 사용합니다. 한도가 이보다 작으면 `/etc/security/limits.conf`를
+수정한 뒤 새 로그인 세션에서 적용 여부를 확인합니다.
 
 ```
 *  hard  nofile  65535
 *  soft  nofile  65535
 ```
 
-재부팅 후 값을 다시 확인합니다.
+서버를 실행할 계정으로 다시 로그인한 뒤 값을 확인합니다. 서비스 관리자를 통해 서버를
+시작한다면 해당 서비스의 파일 디스크립터 한도도 별도로 확인합니다.
 
 ```bash
 ulimit -Sn
@@ -70,7 +73,8 @@ ulimit -Sn
 
 #### 포트 예약
 
-운영체제가 Machbase 포트를 다른 프로세스에 할당하지 않도록 예약합니다.
+Machbase 서비스 포트가 운영체제의 임시 포트 자동 할당에 사용되지 않도록 예약합니다.
+이 설정은 다른 프로세스가 같은 포트를 명시적으로 사용하는 것까지 차단하지는 않습니다.
 
 ```bash
 current=$(cat /proc/sys/net/ipv4/ip_local_reserved_ports)
@@ -124,7 +128,9 @@ Standard Edition Linux tarball은 `machbase-SDK-...tgz` 이름으로 생성됩�
 - Standard Edition: `machbase-SDK-8.7.0.official-LINUX-X86-64-release.tgz`
 - Cluster Edition: `machbase-cluster-8.7.0.official-LINUX-X86-64-release.tgz`
 
-Minor 버전이 다른 경우 DB 파일 및 프로토콜 호환이 보장되지 않습니다. Fix 버전 변경은 호환성이 유지됩니다.
+Minor 버전이 다르면 DB 파일과 프로토콜의 호환성이 달라질 수 있습니다. Fix 버전 변경을
+포함한 실제 업그레이드 가능 경로는 대상 릴리스의 호환성 안내와
+[업그레이드 절차](../upgrade/)에서 확인합니다.
 
 ### 설치 디렉터리 구조
 

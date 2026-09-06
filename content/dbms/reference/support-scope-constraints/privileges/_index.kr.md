@@ -25,7 +25,8 @@ Machbase 권한은 적용 범위에 따라 **데이터베이스 권한**과 **�
 | `DDL` | CREATE + DROP 묶음 (합성 권한) | — |
 | `ALL` | CONNECT, CREATE, DROP, ALTER, BACKUP 일괄 부여 | — |
 
-> "기본 보유 O": `CREATE USER`로 생성된 사용자가 별도 GRANT 없이 보유하는 권한
+> "기본 보유 O"는 `CREATE USER`로 생성된 사용자의 `MACHBASEDB` 호환 기본 권한을 뜻합니다.
+> 다른 논리 데이터베이스의 권한은 별도로 부여합니다.
 
 ## 테이블 권한
 

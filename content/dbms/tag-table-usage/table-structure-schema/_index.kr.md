@@ -61,9 +61,13 @@ CREATE TAG TABLE rail_sensor (
 
 ### 값 컬럼 설계
 
-TAG 테이블의 값 컬럼(BASETIME 또는 BASEDISTANCE 이외의 컬럼)은 계측값을 저장합니다.
+TAG 테이블의 값 컬럼은 태그 이름과 축 컬럼을 제외한 일반 데이터 컬럼입니다. 계측값,
+상태, 품질 코드처럼 측정 행마다 달라지는 값을 저장합니다.
 
 #### 지원 타입
+
+아래는 자주 사용하는 타입의 예입니다. JSON, BINARY, DECIMAL과 숫자 ARRAY를 포함한 전체
+지원 범위는 [데이터 타입 사전](/dbms/reference/sql/type-data-types-dictionary/)을 참고하십시오.
 
 | 타입 | 설명 | 저장 크기 |
 |------|------|---------|
@@ -153,7 +157,8 @@ CREATE TAG TABLE temperature_sensor (
 
 ##### 다중 TAG 테이블
 
-측정 항목이 완전히 다른 경우(컬럼 구성이 다른 경우)만 테이블을 분리합니다.
+컬럼 구성이 다르거나 보존 기간·접근 권한·운영 주기를 따로 관리해야 하면 테이블 분리를
+검토합니다. 센서 수가 늘었다는 이유만으로 센서별 테이블을 만들지는 않습니다.
 
 ```sql
 -- 온도·습도 센서 (DOUBLE 값)
@@ -190,8 +195,8 @@ CREATE TAG TABLE vibration_sensor (
 
 ### 자동 중복 제거
 
-중복 제거는 스키마 선택 사항이지만 설정 변경과 추적은 운영 작업입니다. 속성 범위, 변경
-절차와 `DUP_DROP` 로그는
+중복 제거는 스키마 선택 사항이지만 설정 변경과 검증은 운영 작업입니다. 설정과 변경
+절차는
 [운영과 데이터 생명주기의 자동 중복 제거](/dbms/tag-table-usage/operations-lifecycle/#original-85-duplication-removal)를
 정본으로 사용하십시오.
 
@@ -215,7 +220,7 @@ LSL(Lower Specification Limit)은 하한 규격값, USL(Upper Specification Limi
 * LSL/USL 설정을 부여하기 전에 입력된 데이터는 검증되지 않습니다.
 * LSL/USL 컬럼을 NULL로 설정하면 입력 데이터를 검증하지 않습니다.
 * LSL/USL 기능은 개별적으로 사용할 수 있습니다. 상한 사양만 일치시키려면 USL만 설정할 수 있습니다.
-* USL 기능만 사용하는 경우 USL보다 낮은 데이터는 검증되지 않습니다.
+* USL만 설정하면 상한 초과만 검사하고, LSL만 설정하면 하한 미달만 검사합니다.
 
 #### 지원되는 데이터 타입
 
@@ -250,7 +255,8 @@ METADATA (
 ```
 
 두 컬럼을 함께 사용하거나 하나만 사용할 수 있습니다.
-LSL만 설정하면 LSL보다 높은 데이터는 검증하지 않습니다. `USL == NULL`과 동일한 효과입니다.
+LSL만 설정하면 `Value >= LSL`을 검사하고 상한은 제한하지 않습니다. USL 값을 `NULL`로
+둔 것과 같은 의미입니다.
 
 ```sql
 CREATE TAG TABLE example (
@@ -395,7 +401,7 @@ Elapsed time: 0.001
 
 
 `BINARY(n)`은 Tag 테이블에서 센서 프레임용 고정 길이 바이너리 값을 저장합니다.
-다른 테이블 타입이나 프로토콜에서는 허용되지 않습니다. 길이는 1~32K-1
+TAG 외 테이블에는 `BINARY(n)` 컬럼을 선언할 수 없습니다. 길이는 1~32K-1
 (1~32767)바이트만 유효하며, 인덱스를 생성할 수 없습니다.
 
 명시적 binary literal로 `BINARY` 값을 입력합니다.

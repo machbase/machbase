@@ -16,7 +16,8 @@ Named Bind Parameter 기능이 제한될 수 있습니다. 이 절에서는 서�
 | **8.7.0 서버** | 제한적 호환 | 완전 호환 |
 | **8.5 서버** | 완전 호환 | 하위 호환, 8.7.0 이름 API 미지원 |
 
-- **완전 호환**: 모든 기능이 정상 동작합니다.
+- **완전 호환**: 같은 버전 조합입니다. 실제 사용 가능 기능은 Edition, 테이블 유형과
+  SDK별 지원 범위에 따르며, 해당 기능이 포함된 빌드를 사용해야 합니다.
 - **제한적 호환**: 기본 연결은 가능하나 8.7.0 신규 기능(AUTH KEY 확장 등)이 동작하지 않을 수 있습니다.
 - **하위 호환**: 8.5 서버 범위의 기능만 사용 가능합니다.
 
@@ -52,15 +53,16 @@ AUTH_SIG_SCHEME=ECDSA;
 
 ### Nullable 메타데이터
 
-Nullable metadata의 실제 API와 미지원 조합은 이 페이지에서 SDK별로 다시 정의하지 않습니다.
+결과 컬럼이 NULL을 허용하는지 확인하는 API와 서버·SDK 조합별 제약은
 [Nullable 메타데이터 지원 범위](/dbms/development-tools-integration/sdk-support-scope/#support-scope-sdk-nullable-metadata)를
-정본으로 사용하고, server/client version pair를 함께 기록합니다.
+참고하십시오. 호환성을 점검할 때는 서버와 클라이언트 버전을 함께 기록합니다.
 
 ### Named Bind Parameter
 
-Named bind는 client마다 server prepared, ordinal bind 또는 client-side rendering 여부가
-다릅니다. [SDK 기능 지원 범위](/dbms/development-tools-integration/sdk-support-scope/#support-scope-sdk-transaction-prepare-bind)를
-정본으로 사용합니다. 이 페이지는 version pair와 upgrade 순서만 소유합니다.
+이름이 있는 매개변수를 서버에 준비된 문장으로 전달하는지, 위치 순서로 바인딩하는지,
+클라이언트에서 SQL 문자열로 변환하는지는 SDK마다 다릅니다.
+[SDK 기능 지원 범위](/dbms/development-tools-integration/sdk-support-scope/#support-scope-sdk-transaction-prepare-bind)에서
+사용하는 클라이언트의 동작을 확인하십시오.
 
 ### ARRAY와 선택 컬럼 Append
 

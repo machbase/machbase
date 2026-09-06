@@ -20,7 +20,7 @@ SELECT USER_ID, NAME, PWD_POLICY_LEVEL, VALID_BEFORE
  WHERE NAME = 'APP_USER';
 ```
 
-사용자명은 대문자로 저장됩니다. 논리 database에 연결하려면 계정 생성 후 대상 database의
+사용자명은 대문자로 저장됩니다. 논리 데이터베이스에 연결하려면 계정 생성 후 대상 데이터베이스의
 `CONNECT` 권한을 별도로 부여합니다.
 
 ```sql

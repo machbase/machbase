@@ -26,5 +26,5 @@ index improves its target access path but increases memory use and DML cost.
 
 Size a LOOKUP table using actual row width, variable-length values, row count, and all indexes. Server
 startup reads every persisted row and rebuilds the in-memory rows and indexes, so validate both memory
-usage and startup time. Use an RDB table when the complete relational data set should not reside in
+usage and startup time. Use a TRANSACTION table when the complete relational data set should not reside in
 memory.

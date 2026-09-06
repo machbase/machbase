@@ -19,7 +19,9 @@ toc: true
 
 ### 문제
 
-LOOKUP 테이블을 초고빈도 시계열 데이터 조회에 사용하는 패턴입니다. LOOKUP 테이블은 소규모 참조 데이터에 최적화되어 있어 대량 시계열 데이터의 고속 조회에는 부적합합니다.
+문제는 조회 빈도 자체가 아니라, 계속 늘어나는 계측 이력을 LOOKUP에 저장하는 설계입니다.
+LOOKUP은 전체 행과 인덱스를 메모리에 유지하므로 장기 시계열 이력이 쌓일수록 메모리 부담이
+커집니다. 작은 기준 정보를 키로 반복 조회하는 용도에는 적합합니다.
 
 ### 안티패턴 예시
 
@@ -61,7 +63,7 @@ CREATE VOLATILE TABLE sensor_latest (
 
 | | 안티패턴 (LOOKUP) | 올바른 설계 (TAG) |
 |-|-----------------|-----------------|
-| 이력 저장 | X (PK 중복 불가) | O |
+| 같은 센서 키로 이력 누적 | X (예제의 센서 키가 행을 식별) | O (태그 이름 아래 여러 계측 행 저장) |
 | 지속 입력 경로 | 행 식별자 중심 | 시계열 Append API 사용 가능 |
 | 시간 범위 조회 | 일반 조건 조회 | 태그·시간 축 조회 |
 
@@ -199,7 +201,10 @@ UPDATE order_history SET status = 'SHIPPED' WHERE order_id = 1001;
 
 ### 안티패턴 4: 시계열 데이터를 TRANSACTION 테이블에 저장
 
-시계열 데이터(센서값)를 TRANSACTION 테이블에 저장하면 시간 범위 쿼리 성능이 떨어지고, Append API의 고속 버퍼 최적화도 쓸 수 없습니다. 자세한 내용은 [시계열 데이터 TRANSACTION 오용](/dbms/data-modeling-table-design/table-types-patterns-type-anti/#time-series-storage-misuse-rdb) 항목을 참고합니다.
+TRANSACTION에도 시간 컬럼과 Append API를 사용할 수 있지만 TAG 전용 시간축 저장 구조와
+ROLLUP은 제공되지 않습니다. 관계형 변경보다 계측 이력 수집과 집계가 중심이면 TAG를
+검토합니다. 자세한 내용은 [시계열 데이터 TRANSACTION 오용](/dbms/data-modeling-table-design/table-types-patterns-type-anti/#time-series-storage-misuse-rdb)을
+참고하십시오.
 
 <a id="storage-persistent-volatile"></a>
 
@@ -225,8 +230,9 @@ INSERT INTO critical_config VALUES ('max_connections', '1000');
 
 ### 문제점
 
-- 서버 재시작, 장애, OOM 등 어떤 상황에서도 데이터가 소멸됩니다.
-- 운영 중 데이터 소멸로 서비스 장애가 발생합니다.
+- 서버가 종료되거나 재시작되면 테이블과 데이터가 소멸합니다.
+- 서버 프로세스가 종료되는 장애에서도 메모리의 데이터를 복구할 수 없으므로,
+  유일한 원본을 VOLATILE에 저장하면 데이터 손실로 이어집니다.
 
 ### 올바른 패턴
 

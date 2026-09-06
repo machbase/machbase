@@ -24,7 +24,7 @@ SQL 문법 사전은 Machbase에서 지원하는 모든 SQL 구문의 BNF 표기
 | [CREATE TABLESPACE](./ddl-syntax/#create-tablespace) | DDL | 테이블스페이스 생성 |
 | [INSERT INTO](./dml-syntax/#insert-into) | DML | 단건 및 다건 데이터 삽입 |
 | [INSERT SELECT](./dml-syntax/#insert-select) | DML | 조회 결과를 다른 테이블에 삽입 |
-| [UPDATE](./dml-syntax/#update) | DML | LOOKUP/VOLATILE 테이블 레코드 수정 |
+| [UPDATE](./dml-syntax/#update) | DML | TRANSACTION/LOOKUP/VOLATILE 행 수정과 조건이 제한된 TAG 데이터 보정 |
 | [DELETE](./dml-syntax/#delete) | DML | 테이블 데이터 삭제 |
 | [LOAD DATA INFILE](./load-data-infile-syntax/) | DML | CSV 파일에서 직접 데이터 입력 |
 | [SELECT](./select-syntax/) | SELECT | 데이터 조회 (JOIN, GROUP BY, ORDER BY, LIMIT 포함) |
@@ -33,7 +33,7 @@ SQL 문법 사전은 Machbase에서 지원하는 모든 SQL 구문의 BNF 표기
 | [CAST](../dictionary/functions-full/#cast) | SQL 표현식 | 값을 지정한 데이터 타입으로 명시적으로 변환 |
 | [SAVE DATA INTO](./save-data-into-syntax/) | SELECT | 조회 결과를 CSV 파일로 저장 |
 | [BACKUP](./backup-restore-mount-syntax/#backup) | 운영 | 데이터베이스 또는 테이블 백업 |
-| [RESTORE (machadmin -r)](./backup-restore-mount-syntax/#restore) | 운영 | 오프라인 복원 |
+| [RESTORE](./backup-restore-mount-syntax/#restore) | 운영 | 논리 데이터베이스 복원과 `machadmin -r`을 사용하는 오프라인 복원 |
 | [MOUNT / UMOUNT DATABASE](./backup-restore-mount-syntax/#mount-database) | 운영 | 백업 데이터베이스 마운트/언마운트 |
 | [CREATE USER / DROP USER / ALTER USER](./user-auth-syntax/#create-drop-alter-user) | 사용자 | 사용자 생성, 삭제, 비밀번호 변경 |
 | [GRANT / REVOKE](./user-auth-syntax/#grant-revoke) | 사용자 | 권한 부여 및 회수 |

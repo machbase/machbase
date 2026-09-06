@@ -56,5 +56,6 @@ SELECT * FROM volatile_mutation_demo ORDER BY id;
 DROP TABLE volatile_mutation_demo;
 ```
 
-모든 행을 비워야 하면 테이블을 삭제한 뒤 초기화 스크립트로 다시 생성하는 방식을 사용할 수
-있습니다. 서버 재시작 때 테이블과 데이터가 모두 사라진다는 점도 함께 고려합니다.
+테이블 정의를 유지한 채 모든 행을 비우려면 `DELETE FROM 테이블명`처럼 WHERE를 생략합니다.
+스키마까지 초기화해야 하면 DROP 후 다시 생성합니다. 서버 재시작 때도 테이블과 데이터가
+모두 사라지므로 초기화 스크립트를 별도로 관리합니다.

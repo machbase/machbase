@@ -3,8 +3,8 @@ title: '7.12 네트워크 타입 조회'
 weight: 120
 toc: true
 ---
-네트워크 주소를 `IPV4`·`IPV6` type으로 저장하고 비교하는 방법을 설명합니다. 문자열
-`REGEXP`는 [텍스트 검색과 KEYWORD 인덱스](../text-search-keyword-index/#regex)로 이동했습니다.
+네트워크 주소를 `IPV4`·`IPV6` 타입으로 저장하고 비교하는 방법을 설명합니다. 문자열의
+정규식 검색은 [텍스트 검색과 KEYWORD 인덱스](../text-search-keyword-index/#regex)를 참고하십시오.
 
 <a id="design-type-network-data-types"></a>
 

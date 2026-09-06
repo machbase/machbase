@@ -64,7 +64,8 @@ ORDER BY rt;
 
 ### JSON Whole-Document 집계
 
-JSON SUMMARIZED 컬럼 전체를 대상으로 하는 특수 집계도 지원됩니다. JSON 내 모든 숫자 필드를 한 번에 집계합니다.
+JSON SUMMARIZED 컬럼 전체를 대상으로 집계하면 객체의 숫자 경로별 통계를 JSON으로
+반환합니다. 배열 내부 요소를 자동으로 펼쳐 집계하는 방식은 아닙니다.
 
 ```sql
 CREATE ROLLUP tag_json_whole_ru
@@ -74,6 +75,11 @@ CREATE ROLLUP tag_json_whole_ru
 
 ### 주의사항
 
-- JSON ROLLUP 대상은 숫자형(number)으로 파싱 가능한 필드여야 합니다.
-- 문자열 JSON 값에 대해 ROLLUP을 생성하면 오류가 발생합니다.
+- 개별 경로의 숫자 집계와 문서 전체 집계를 구분합니다. 문서 전체 집계는 숫자 값만
+  계산에 사용하며 문자열·불리언·JSON null·배열은 숫자 집계에서 제외합니다.
+- 문서 전체 집계에서 비숫자 경로는 결과에 null로 표시되거나 생략될 수 있습니다.
+  문자열 속성이 포함되어 있다는 이유만으로 ROLLUP 생성이 거부되는 것은 아닙니다.
+- 유효하지 않은 JSON은 입력 단계에서 오류가 발생합니다.
+- `COUNT(value)`는 SQL NULL이 아닌 문서 수, `COUNT(*)`는 행 수입니다. 각 숫자 경로의
+  유효 표본 수와 혼동하지 않습니다.
 - JSONPath 문법: `value->'$.path'`, dot 문법: `value.path` 둘 다 사용 가능합니다.

@@ -13,7 +13,7 @@ API로 서버에 연결하고 PreparedStatement, 타입 지정 조회와 바인�
 
 | 항목 | 값 |
 |------|----|
-| Java bytecode 기준 | Java 8 |
+| Java 바이트코드 기준 | Java 8 |
 | 드라이버가 보고하는 JDBC 버전 | 4.2 |
 | 드라이버 버전 | 3.0.0 |
 | JDBC URL | `jdbc:machbase://<host-list>/[database]` |
@@ -21,11 +21,11 @@ API로 서버에 연결하고 PreparedStatement, 타입 지정 조회와 바인�
 
 `jdbcCompliant()`의 `false`는 JDBC 4.2 API 지원 여부가 아니라 SQL-92 Entry Level 전체
 지원 여부를 나타냅니다. 애플리케이션에서는 필요한 선택 기능을
-`DatabaseMetaData`의 capability 메서드로 확인합니다.
+`DatabaseMetaData`의 기능 메서드로 확인합니다.
 
 ## 다중 데이터베이스
 
-URL path 또는 `database` property로 초기 database를 지정할 수 있습니다.
+URL 경로 또는 `database` 연결 속성으로 초기 데이터베이스를 지정할 수 있습니다.
 
 ```java
 String url = "jdbc:machbase://127.0.0.1:5656/factory_a";
@@ -35,10 +35,10 @@ System.out.println(conn.getCatalog());
 conn.setCatalog("FACTORY_A");
 ```
 
-`getCatalog()`와 `setCatalog()`는 server current database와 동기화됩니다. URL path와
-property를 동시에 지정하면 값이 같아야 하며, JDBC metadata에서 catalog는 database,
-schema는 owner입니다. pooled connection은 반환 시 초기 catalog로 복원되는지 확인하고,
-prepared statement와 append handle은 생성 시점 database에 고정된다는 점을 고려합니다.
+`getCatalog()`와 `setCatalog()`는 서버 현재 데이터베이스와 동기화됩니다. URL 경로와
+설정 속성을 동시에 지정하면 값이 같아야 하며, JDBC 메타데이터에서 카탈로그는 데이터베이스,
+스키마는 소유자입니다. pooled 연결은 반환 시 초기 카탈로그로 복원되는지 확인하고,
+준비된 문장과 append 핸들은 생성 시점 데이터베이스에 고정된다는 점을 고려합니다.
 
 ## 드라이버 설치
 
@@ -74,13 +74,13 @@ dependencies {
 }
 ```
 
-배포 artifact 버전은 [Maven Central](https://mvnrepository.com/artifact/com.machbase/machjdbc)에서
-확인합니다. 드라이버가 런타임 메타데이터로 반환하는 `3.0.0`과 artifact 버전은 서로 다른
+배포 산출물 버전은 [Maven Central](https://mvnrepository.com/artifact/com.machbase/machjdbc)에서
+확인합니다. 드라이버가 런타임 메타데이터로 반환하는 `3.0.0`과 배포 산출물 버전은 서로 다른
 버전 체계입니다.
 
 ## 서버에 연결
 
-사용자 이름과 비밀번호는 소스 코드에 기록하지 않고 환경 변수나 secret manager로
+사용자 이름과 비밀번호는 소스 코드에 기록하지 않고 환경 변수나 비밀 관리 시스템으로
 전달합니다.
 
 ```java
@@ -102,7 +102,7 @@ try (Connection connection =
 
 ### 연결 옵션
 
-연결 옵션은 `Properties` 또는 URL query string으로 지정합니다. `randomHost`는
+연결 옵션은 `Properties` 또는 URL 쿼리 문자열로 지정합니다. `randomHost`는
 `Properties`에서 지정하거나 다중 호스트 URL의 `^` 구분자를 사용합니다.
 
 | 옵션 | 설명 |
@@ -111,8 +111,8 @@ try (Connection connection =
 | `TIMEZONE` | 세션 타임존. `+0900` 형식을 사용합니다. |
 | `randomHost` | 호스트 목록에서 첫 연결 대상을 무작위로 선택합니다. |
 | `maxStatements` | 풀링 연결의 최대 캐시 Statement 수 |
-| `CONNECTION_TIMEOUT` | 소켓 연결 timeout(초). `0`은 제한 없음입니다. |
-| `SOCKET_TIMEOUT` | 소켓 읽기 timeout(초). `0`은 제한 없음입니다. |
+| `CONNECTION_TIMEOUT` | 소켓 연결 시간 초과(초). `0`은 제한 없음입니다. |
+| `SOCKET_TIMEOUT` | 소켓 읽기 시간 초과(초). `0`은 제한 없음입니다. |
 | `characterEncoding` | 클라이언트 문자 인코딩 |
 | `AUTH_MODE` | `PASSWORD` 또는 `CHALLENGE` |
 | `AUTH_SIG_SCHEME` | `ECDSA`, `RSA_PKCS1_V15`, `RSA_PSS` |
@@ -151,7 +151,7 @@ String url =
     "machbasedb?CONNECTION_TIMEOUT=5";
 ```
 
-`randomHost` property를 사용하려면 `,`로 호스트를 구분합니다.
+`randomHost` 설정 속성을 사용하려면 `,`로 호스트를 구분합니다.
 
 ```java
 Properties properties = new Properties();
@@ -163,15 +163,15 @@ String url =
 ```
 
 - `,`와 `^` 구분자를 하나의 URL에서 함께 사용할 수 없습니다.
-- connection refused, 연결 timeout, socket 오류 등 연결 단계의 I/O 오류가 발생하면
+- 연결 refused, 연결 시간 초과, 소켓 오류 등 연결 단계의 I/O 오류가 발생하면
   다음 호스트로 연결을 시도합니다. 모든 호스트가 실패하면
   `DriverManager.getConnection()`이 `SQLException`을 반환합니다.
 - `CONNECTION_TIMEOUT`은 호스트별 연결 시도에 적용됩니다. 따라서 전체 연결 대기 시간은
   호스트 수와 각 호스트의 응답 시간에 따라 길어질 수 있습니다.
-- `SOCKET_TIMEOUT`은 연결된 socket의 읽기 timeout이며 호스트 선택 순서를 변경하지
+- `SOCKET_TIMEOUT`은 연결된 소켓의 읽기 대기 시간을 제한하며 호스트 선택 순서를 변경하지
   않습니다.
 
-다중 호스트 전환은 새 연결 또는 재연결 과정의 socket 연결에 적용됩니다. 연결이 끊긴 뒤
+다중 호스트 전환은 새 연결 또는 재연결 과정의 소켓 연결에 적용됩니다. 연결이 끊긴 뒤
 자동 reconnect가 성공해도 이전 Statement, PreparedStatement와 ResultSet은 재사용하지
 않습니다. 진행 중이던 SQL의 성공 여부나 안전한 재실행을 보장하지 않으므로, 활성
 트랜잭션에서 연결 오류가 발생하면 연결을 폐기하고 업무의 멱등성 정책에 따라 전체
@@ -247,7 +247,7 @@ public class JdbcQuickStart {
 }
 ```
 
-DATETIME에 epoch nanosecond 값을 전달할 때는 `long`을 사용합니다. 예제의 테이블이 이미
+DATETIME에 epoch 나노초 값을 전달할 때는 `long`을 사용합니다. 예제의 테이블이 이미
 존재하면 `CREATE LOG TABLE`을 생략하거나 다른 이름을 사용합니다.
 
 ## INSERT 결과 ROWID
@@ -274,7 +274,7 @@ try (PreparedStatement insert = connection.prepareStatement(
 
 결과는 `ROWID` 컬럼 하나와 최대 한 행으로 구성됩니다. 반환할 ROWID가 없으면 빈
 `ResultSet`입니다. 지원 여부는 `DatabaseMetaData.supportsGetGeneratedKeys()`로 확인합니다.
-batch, Append, `INSERT ... SELECT`, UPSERT의 차이는
+배치, Append, `INSERT ... SELECT`, UPSERT의 차이는
 [ROWID와 INSERT 결과 ID](/dbms/reference/sql/rowid/)를 참고하십시오.
 
 ## 버전 확인
@@ -294,9 +294,9 @@ System.out.println(metadata.getJDBCMinorVersion()); // 2
 
 | 문서 | 내용 |
 |------|------|
-| [PreparedStatement와 타입](./prepared-types/) | parameter metadata, named bind, SQLType, NULL과 타입 변환 |
-| [ResultSet, Statement와 LOB](./resultset-lob/) | typed 조회, stream, LOB, timeout과 자원 관리 |
-| [트랜잭션과 커넥션 풀](./transaction-pooling/) | Standard 로컬 트랜잭션, DataSource와 pool |
-| [DatabaseMetaData](./database-metadata/) | 테이블, 컬럼, 키, 인덱스와 capability 조회 |
+| [PreparedStatement와 타입](./prepared-types/) | 매개변수 메타데이터, 이름 기반 bind, SQLType, NULL과 타입 변환 |
+| [ResultSet, Statement와 LOB](./resultset-lob/) | typed 조회, 스트림, LOB, 시간 초과와 자원 관리 |
+| [트랜잭션과 커넥션 풀](./transaction-pooling/) | Standard 로컬 트랜잭션, DataSource와 연결 풀 |
+| [DatabaseMetaData](./database-metadata/) | 테이블, 컬럼, 키, 인덱스와 기능 조회 |
 | [Append API](./append-api/) | `MachStatement` 기반 고속 입력 |
 | [마이그레이션과 문제 해결](./migration-troubleshooting/) | 이전 드라이버 전환, 미지원 기능과 오류 처리 |

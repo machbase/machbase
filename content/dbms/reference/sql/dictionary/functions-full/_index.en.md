@@ -1617,7 +1617,9 @@ ROWNUM()             SORT                        NAME
 
 ## SERIESNUM
 
-Returns a number indicating how many of the records belong to the series grouped by SERIES BY. The return type is BIGINT type, and always returns 1 if the SERIES BY clause is not used.
+Returns the number of the contiguous series that each row belongs to, as grouped by
+`SERIES BY`. Rows in the same series receive the same number; this is not a row
+number within the series. The return type is BIGINT. Without `SERIES BY`, it returns 1.
 
 ```sql
 SERIESNUM()

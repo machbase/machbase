@@ -96,6 +96,7 @@ VOLATILE 테이블 설계 시 다음 순서로 결정합니다.
 2. PRIMARY KEY가 필요한지 결정합니다.
 3. 예상 행 수와 메모리 사용량을 산정합니다.
 4. 재시작 후 테이블 생성과 초기 적재 절차를 준비합니다.
-5. 중요 데이터는 주기적으로 영속 테이블에 플러시합니다.
+5. 보존해야 하는 결과는 애플리케이션의 명시적인 쓰기 작업으로 영속 테이블에 저장합니다.
+   VOLATILE을 영속화하는 전용 flush 명령은 없습니다.
 
 스키마와 PRIMARY KEY 설계는 [테이블 구조와 스키마](/dbms/volatile-table-usage/table-structure-schema/)에서, 재시작 대응은 [재시작과 데이터 소실](/dbms/volatile-table-usage/operations-lifecycle/)에서 다룹니다.

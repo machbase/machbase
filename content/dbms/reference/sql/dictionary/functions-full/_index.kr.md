@@ -1980,7 +1980,9 @@ ROWNUM()             SORT                        NAME
 
 ## SERIESNUM
 
-SERIES BY로 그룹화된 시리즈에서 각 레코드가 몇 번째인지 나타내는 번호를 반환합니다. 반환 타입은 BIGINT이며, SERIES BY 절을 사용하지 않으면 항상 1을 반환합니다.
+`SERIES BY`로 구분한 연속 구간 중 각 행이 속한 구간의 번호를 반환합니다. 같은 구간의
+행에는 같은 번호를 부여하므로 구간 안의 행 순번과는 다릅니다. 반환 타입은 BIGINT이며,
+`SERIES BY` 절을 사용하지 않으면 항상 1을 반환합니다.
 
 ```sql
 SERIESNUM()

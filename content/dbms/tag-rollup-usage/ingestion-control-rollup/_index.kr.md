@@ -28,7 +28,8 @@ EXEC ROLLUP_START('rollup_name');
 EXEC ROLLUP_STOP('rollup_name');
 ```
 
-STOP 후 재시작하면 중단된 시점부터 이어서 집계합니다.
+STOP 후 START하면 처리하지 않은 입력분부터 이어서 집계합니다. 중지 중 원본이 보존 정책으로
+삭제되면 해당 데이터는 다시 읽을 수 없으므로 중지 기간과 원본 보관 기간을 함께 관리합니다.
 
 ### 즉시 수집 (WAKEUP / FORCE)
 
@@ -48,7 +49,10 @@ EXEC ROLLUP_FORCE('rollup_name');
 | 명령 | 블로킹 | 사용 시점 |
 |------|--------|-----------|
 | WAKEUP | 비블로킹 | 집계를 트리거만 하고 바로 다음 작업 진행 |
-| FORCE | 블로킹 | 집계 완료 후 조회해야 하는 경우 |
+| FORCE | 블로킹 | 호출 시점 원본의 처리 범위를 따라잡은 뒤 조회할 경우 |
+
+FORCE는 이미 집계한 과거 행의 수정 내용을 다시 계산하는 명령이 아닙니다. 원본 보정 후에는
+[ROLLUP_REBUILD](../rollup-rebuild/)를 사용합니다. 중지한 ROLLUP은 먼저 START합니다.
 
 ### WAKEUP INTERVAL 조정
 

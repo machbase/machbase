@@ -6,10 +6,10 @@ toc: true
 ---
 
 Machbase DBMS 8.7.0에서는 고정 길이 `ARRAY`의 일부 위치만 입력할 수 있습니다. 행마다
-입력 위치가 달라지는 경우에는 sparse ARRAY를 사용하고, 여러 Append 행이 같은 위치를
+입력 위치가 달라지는 경우에는 희소 ARRAY를 사용하고, 여러 Append 행이 같은 위치를
 입력하는 경우에는 Append Open 단계에서 선택 컬럼을 지정합니다.
 
-`ARRAY` 타입 선언, 일반 입력, 조회와 SDK별 dense ARRAY 처리는
+`ARRAY` 타입 선언, 일반 입력, 조회와 SDK별 밀집 ARRAY 처리는
 [숫자 ARRAY 타입](/dbms/reference/sql/type-data-types-dictionary/array/)을 참고하십시오.
 
 ## 입력 방식 선택
@@ -17,9 +17,9 @@ Machbase DBMS 8.7.0에서는 고정 길이 `ARRAY`의 일부 위치만 입력할
 | 요구사항 | 권장 방식 |
 |---|---|
 | SQL 한 행에서 값이 있는 위치만 지정 | `ARRAY_SPARSE(position => value, ...)` |
-| 여러 Append 행이 항상 같은 위치를 입력 | Append Open의 `A[0]`, `A[3]` target |
-| Append 행마다 입력 위치가 다름 | whole `A` target과 SDK sparse 객체 |
-| 모든 요소가 NULL인 non-NULL ARRAY | 빈 sparse 객체 |
+| 여러 Append 행이 항상 같은 위치를 입력 | Append Open의 `A[0]`, `A[3]` 대상 |
+| Append 행마다 입력 위치가 다름 | whole `A` 대상과 SDK 희소 객체 |
+| 모든 요소가 NULL인 non-NULL ARRAY | 빈 희소 객체 |
 | ARRAY 자체가 NULL | SQL `NULL` 또는 SDK의 whole-NULL 값 |
 
 위치는 SQL과 모든 Machbase 전용 SDK API에서 0부터 시작합니다.
@@ -41,7 +41,7 @@ INSERT INTO ARRAY_APPEND_EXAMPLE (ID, A)
 VALUES (1, ARRAY_SPARSE(0 => 10, 3 => 40));
 ```
 
-SELECT처럼 대상 타입을 추론할 수 없는 문맥에서는 요소 타입과 cardinality를 먼저
+SELECT처럼 대상 타입을 추론할 수 없는 문맥에서는 요소 타입과 요소 수를 먼저
 지정합니다.
 
 ```sql
@@ -49,16 +49,16 @@ SELECT ARRAY_SPARSE(INT32[4], 0 => 10, 3 => 40);
 SELECT ARRAY_SPARSE(DECIMAL(12,4)[4], 1 => 1.2500);
 ```
 
-- position은 `0..cardinality-1` 범위의 정수 literal이어야 합니다.
-- pair 순서는 자유지만 같은 position을 중복 지정할 수 없습니다.
-- 생략한 위치와 `position => NULL`은 element NULL입니다.
-- `ARRAY_SPARSE()` 또는 `ARRAY_SPARSE(INT32[4])`는 all-element-NULL ARRAY입니다.
-- whole NULL은 `ARRAY_SPARSE()`가 아니라 SQL `NULL`로 입력합니다.
-- 잘못된 position이나 요소 변환은 문장 전체를 실패시킵니다.
+- 위치는 `0..cardinality-1` 범위의 정수 literal이어야 합니다.
+- pair 순서는 자유지만 같은 위치를 중복 지정할 수 없습니다.
+- 생략한 위치와 `position => NULL`은 요소 NULL입니다.
+- `ARRAY_SPARSE()` 또는 `ARRAY_SPARSE(INT32[4])`는 모든 요소가 NULL인 ARRAY입니다.
+- 배열 전체 NULL은 `ARRAY_SPARSE()`가 아니라 SQL `NULL`로 입력합니다.
+- 잘못된 위치나 요소 변환은 문장 전체를 실패시킵니다.
 
 ### Direct sparse shorthand
 
-`ARRAY_SPARSE` wrapper 없이 bracket 안에 position과 value pair를 직접 쓸 수 있습니다.
+`ARRAY_SPARSE` 래퍼 없이 bracket 안에 위치와 value pair를 직접 쓸 수 있습니다.
 
 ```sql
 INSERT INTO ARRAY_APPEND_EXAMPLE (ID, A)
@@ -67,17 +67,17 @@ VALUES (2, [0 => 10, 3 => 40]);
 SELECT [1 => 12, 33 => 23];
 ```
 
-대상 ARRAY가 있으면 대상 타입과 cardinality를 사용합니다. standalone에서는 dense
-ARRAY와 같은 숫자 공통 타입을 추론하고 cardinality를 `가장 큰 position + 1`로
+대상 ARRAY가 있으면 대상 타입과 요소 수를 사용합니다. standalone에서는 밀집
+ARRAY와 같은 숫자 공통 타입을 추론하고 요소 수를 `가장 큰 position + 1`로
 결정합니다. 따라서 두 번째 예제는 `INT32[34]`입니다.
 
-standalone all-NULL sparse는 요소 타입을 알 수 없어 오류입니다. 이 경우
-`ARRAY_SPARSE(TYPE[N], ...)` 형식을 사용합니다. `[]`는 기존 dense empty constructor로
+standalone all-NULL 희소는 요소 타입을 알 수 없어 오류입니다. 이 경우
+`ARRAY_SPARSE(TYPE[N], ...)` 형식을 사용합니다. `[]`는 기존 밀집 empty constructor로
 유지되며 `ARRAY[0 => 1]`은 지원하지 않습니다.
 
 ### INSERT target에 위치 지정
 
-여러 행이 같은 위치를 입력하면 컬럼 목록에 element target을 직접 지정합니다.
+여러 행이 같은 위치를 입력하면 컬럼 목록에 요소 대상을 직접 지정합니다.
 
 ```sql
 INSERT INTO ARRAY_APPEND_EXAMPLE (ID, A[0], A[3])
@@ -92,10 +92,10 @@ INSERT INTO ARRAY_APPEND_EXAMPLE (ID)
 VALUES (4);
 ```
 
-같은 문장에서 `A`와 `A[0]`을 함께 지정하거나 같은 element를 두 번 지정할 수 없습니다.
-scalar 컬럼이나 범위 밖 위치를 element target으로 사용하면 오류입니다.
+같은 문장에서 `A`와 `A[0]`을 함께 지정하거나 같은 요소를 두 번 지정할 수 없습니다.
+스칼라 컬럼이나 범위 밖 위치를 요소 대상으로 사용하면 오류입니다.
 
-indexed target은 `INSERT ... VALUES`와 Append 선택 target에서 지원합니다.
+요소 위치를 지정한 대상은 `INSERT ... VALUES`와 Append 선택 대상에서 지원합니다.
 `INSERT ... SELECT`와 `UPDATE ... SET A[0] = ...`에서는 지원하지 않습니다.
 
 ## Append 공통 규칙
@@ -115,12 +115,12 @@ ID=4  A=NULL                    whole NULL
 - DEFAULT가 있는 컬럼은 DEFAULT를 사용합니다.
 - 값을 반드시 요구하는 컬럼이 빠지면 Append Open 또는 행 입력이 실패합니다.
 
-선택 target 목록은 비어 있을 수 없으며 대소문자를 무시해 중복될 수 없습니다. whole
-ARRAY target과 같은 ARRAY의 element target을 함께 열 수 없습니다. 한 번 Append Open한
-뒤에는 각 행의 값 개수와 순서가 target 목록과 정확히 같아야 합니다.
+선택 대상 목록은 비어 있을 수 없으며 대소문자를 무시해 중복될 수 없습니다. whole
+ARRAY 대상과 같은 ARRAY의 요소 대상을 함께 열 수 없습니다. 한 번 Append Open한
+뒤에는 각 행의 값 개수와 순서가 대상 목록과 정확히 같아야 합니다.
 
-행 입력 중 오류가 발생해도 열린 Append handle은 닫아야 합니다. Append Open 자체가
-실패하면 SDK가 내부 상태를 정리하므로 같은 connection을 다시 사용할 수 있습니다.
+행 입력 중 오류가 발생해도 열린 Append 핸들은 닫아야 합니다. Append Open 자체가
+실패하면 SDK가 내부 상태를 정리하므로 같은 연결을 다시 사용할 수 있습니다.
 
 ## C SQLCLI
 
@@ -129,11 +129,11 @@ ARRAY 입력과 조회에는 다음 공개 타입을 사용합니다.
 | 타입 또는 상수 | 용도 |
 |---|---|
 | `SQL_MACHBASE_ARRAY` | SQL ARRAY 타입 식별 |
-| `SQL_C_MACHBASE_ARRAY` | dense ARRAY 조회와 bind descriptor |
-| `SQL_C_MACHBASE_SPARSE_ARRAY` | prepared sparse ARRAY 입력 |
-| `SQL_APPEND_SPARSE_ARRAY_DESC_LENGTH` | Append sparse descriptor 식별 |
+| `SQL_C_MACHBASE_ARRAY` | 밀집 ARRAY 조회와 bind 디스크립터 |
+| `SQL_C_MACHBASE_SPARSE_ARRAY` | prepared 희소 ARRAY 입력 |
+| `SQL_APPEND_SPARSE_ARRAY_DESC_LENGTH` | Append 희소 디스크립터 식별 |
 
-`SQLAppendOpenColumns()`와 wide 문자 버전은 마지막 원소가 `NULL`인 컬럼명 포인터
+`SQLAppendOpenColumns()`와 와이드 문자 버전은 마지막 원소가 `NULL`인 컬럼명 포인터
 배열을 받습니다. 별도의 컬럼 수 인자는 없습니다.
 
 ```c
@@ -308,15 +308,15 @@ cc -I"$MACHBASE_HOME/include" sparse_append.c \
 LD_LIBRARY_PATH="$MACHBASE_HOME/lib" ./sparse_append
 ```
 
-descriptor position은 0-based입니다. 정렬하지 않아도 되지만 중복될 수 없습니다.
+디스크립터 위치는 0부터 시작하는 인덱스입니다. 정렬하지 않아도 되지만 중복될 수 없습니다.
 entry indicator가
-`SQL_NULL_DATA`이면 해당 위치는 element NULL입니다. `entry_count == 0`은 빈 sparse
-ARRAY이고, whole NULL은 `mVar.mData = NULL`, `mVar.mLength = 0`으로 지정합니다.
+`SQL_NULL_DATA`이면 해당 위치는 요소 NULL입니다. `entry_count == 0`은 빈 희소
+ARRAY이고, 배열 전체 NULL은 `mVar.mData = NULL`, `mVar.mLength = 0`으로 지정합니다.
 
 ## C++ SQLCLI
 
-C++ 전용 전송 객체를 새로 만들지 않고 SQLCLI descriptor를 사용합니다. 다음 예제는
-RAII wrapper로 close를 보장하고 C++ container가 살아 있는 동안 descriptor를 전송합니다.
+C++ 전용 전송 객체를 새로 만들지 않고 SQLCLI 디스크립터를 사용합니다. 다음 예제는
+RAII 래퍼로 close를 보장하고 C++ 컨테이너가 살아 있는 동안 디스크립터를 전송합니다.
 
 ```cpp
 /* sparse_append.cpp */
@@ -429,9 +429,9 @@ c++ -std=c++11 -I"$MACHBASE_HOME/include" sparse_append.cpp \
 
 ## Machbase ODBC extension
 
-Machbase driver library를 직접 링크하고 `machbase_sqlcli.h`를 사용하는 ODBC C
+Machbase 드라이버 라이브러리를 직접 링크하고 `machbase_sqlcli.h`를 사용하는 ODBC C
 애플리케이션은 같은 extension 함수를 사용할 수 있습니다. 다음 예제는 direct Machbase
-driver API로 네 행을 입력합니다. 테이블은 앞 절의 DDL로 미리 만듭니다.
+드라이버 API로 네 행을 입력합니다. 테이블은 앞 절의 DDL로 미리 만듭니다.
 
 ```c
 /* sparse_odbc.c */
@@ -528,16 +528,16 @@ LD_LIBRARY_PATH=/opt/machbase/lib ./sparse_odbc
 ```
 
 {{< callout type="warning" >}}
-범용 ODBC Driver Manager가 만든 statement handle을 direct SQLCLI extension에 넘기면
-handle ABI가 다르므로 혼용하지 마십시오. 선택 컬럼 Append는 Machbase driver extension과
-direct driver handle을 사용해야 합니다. 범용 ODBC API에는 Append Open 선택 target이
+범용 ODBC Driver Manager가 만든 문장 핸들을 direct SQLCLI extension에 넘기면
+핸들 ABI가 다르므로 혼용하지 마십시오. 선택 컬럼 Append는 Machbase 드라이버 extension과
+direct 드라이버 핸들을 사용해야 합니다. 범용 ODBC API에는 Append Open 선택 대상이
 없습니다.
 {{< /callout >}}
 
 ## JDBC
 
-기존 `executeAppendOpen(String, int)`는 full-row API로 유지됩니다. 다음 overload에서
-선택 target을 지정합니다.
+기존 `executeAppendOpen(String, int)`는 전체 행 API로 유지됩니다. 다음 오버로드에서
+선택 대상을 지정합니다.
 
 ```java
 ResultSet executeAppendOpen(String tableName,
@@ -609,13 +609,13 @@ public class SparseAppend {
 }
 ```
 
-`createSparseArrayOf()`의 map key는 0-based position입니다. `MachSparseArray.clear()`와
-`set()`으로 같은 객체를 재사용할 수 있습니다. empty map은 all-element-NULL ARRAY이고
-Java `null`은 whole NULL입니다.
+`createSparseArrayOf()`에 전달하는 맵의 키는 0부터 시작하는 요소 위치입니다. `MachSparseArray.clear()`와
+`set()`으로 같은 객체를 재사용할 수 있습니다. 빈 맵은 모든 요소가 NULL인 ARRAY이고
+Java `null`은 배열 전체 NULL입니다.
 
 ## Python DB-API
 
-기존 `append(table, rows)`는 유지되며 `columns=` keyword로 선택 target을 지정합니다.
+기존 `append(table, rows)`는 유지되며 `columns=` keyword로 선택 대상을 지정합니다.
 
 ```python
 from machbaseAPI import SparseArray, connect
@@ -660,11 +660,11 @@ if __name__ == "__main__":
     main()
 ```
 
-`SparseArray.clear()`는 cardinality를 유지하면서 모든 요소를 NULL로 되돌립니다.
+`SparseArray.clear()`는 요소 수를 유지하면서 모든 요소를 NULL로 되돌립니다.
 
 ### Python legacy wrapper
 
-기존 `appendOpen(table, types=None)`는 full-row API로 유지됩니다. 선택 target에는
+기존 `appendOpen(table, types=None)`는 전체 행 API로 유지됩니다. 선택 대상에는
 `appendOpenColumns(table, columns, types=None)`를 사용합니다.
 
 ```python
@@ -704,12 +704,12 @@ finally:
     db.close()
 ```
 
-`appendData()`의 값 개수와 순서는 열린 target 목록을 따릅니다. 새 코드에서는 더 간결한
+`appendData()`의 값 개수와 순서는 열린 대상 목록을 따릅니다. 새 코드에서는 더 간결한
 DB-API `append(..., columns=...)` 사용을 권장합니다.
 
 ## Node.js
 
-`AppendColumnDefinition.name`에 whole 컬럼 또는 indexed target을 지정합니다.
+`AppendColumnDefinition.name`에 컬럼 전체 또는 요소 위치를 지정한 대상을 지정합니다.
 
 ```javascript
 'use strict';
@@ -757,13 +757,13 @@ async function appendRows(connection, columns, rows) {
 });
 ```
 
-`MACHBASE_NATIVE_APPEND=0`으로 prepared fallback을 선택해도 `SparseArray`를
+`MACHBASE_NATIVE_APPEND=0`으로 prepared 대체 경로를 선택해도 `SparseArray`를
 ARRAY-compatible 값으로 처리합니다.
 
 ## .NET full/legacy provider
 
-full API와 legacy MachConnector40은 선택 target을 받는 overload를 제공합니다. 기존
-`AppendOpen(string)`과 error-check overload는 유지됩니다.
+full API와 기존 호환 MachConnector40은 선택 대상을 받는 오버로드를 제공합니다. 기존
+`AppendOpen(string)`과 error-check 오버로드는 유지됩니다.
 
 ```csharp
 MachAppendWriter AppendOpen(string tableName,
@@ -831,14 +831,14 @@ while (reader.Read())
           string.Join(",", (object[])reader.GetValue(1)));
 ```
 
-`MachSparseArray.Clear()`는 객체를 재사용 가능한 all-element-NULL 상태로 되돌립니다.
-whole NULL은 `DBNull.Value`입니다. Append Open 성공 후 metadata 처리에 실패하면
-provider가 열린 handle을 정리하고 connection은 재사용할 수 있습니다.
+`MachSparseArray.Clear()`는 객체를 재사용 가능한 모든 요소가 NULL인 상태로 되돌립니다.
+배열 전체 NULL은 `DBNull.Value`입니다. Append Open 성공 후 메타데이터 처리에 실패하면
+프로바이더가 열린 핸들을 정리하고 연결은 재사용할 수 있습니다.
 
 ## Go neo-client
 
 이 예제는 Machbase Neo 서버가 아니라 `neo-client`가 Machbase DBMS에 직접 연결하는
-경로입니다. 0-based ARRAY와 선택 컬럼 Append API는
+경로입니다. 요소 위치가 0부터 시작하는 ARRAY와 선택 컬럼 Append API는
 [`neo-client` PR #17](https://github.com/machbase/neo-client/pull/17) 이후의 v2 module
 소스에 있습니다. 공개 v2 릴리스가 지정되기 전에는 공개 모듈 버전에 같은 기능이
 포함되었다고 가정하지 마십시오.
@@ -920,7 +920,7 @@ func main() {
 }
 ```
 
-`Appender.Connect(ctx, dsn, table, columns...)`의 가변 인자가 선택 target입니다.
+`Appender.Connect(ctx, dsn, table, columns...)`의 가변 인자가 선택 대상입니다.
 `WithInputColumns(columns...)`를 사용할 때는 `Connect()`보다 먼저 적용합니다. 하나의
 `Appender`에서 `Append`, `Flush`, `Close`를 동시에 호출하지 마십시오.
 
@@ -947,12 +947,13 @@ SELECT ID, A, ARRAY_LENGTH(A), A[0], A[1], A[2], A[3]
 ## 버전과 제한 사항
 
 - `ARRAY`와 선택 컬럼 Append는 Machbase DBMS 8.7.0 기능입니다.
-- ARRAY 공개 position은 0-based입니다. 기존 1-based sparse와 target 호출은 위치를
-  1씩 낮춰야 합니다.
+- ARRAY의 공개 요소 위치는 0부터 시작합니다. 이전 개발 버전에서 위치를 1부터 지정했던
+  희소 ARRAY와 선택 대상 호출은 위치를 1씩 낮춰야 합니다. JDBC의 매개변수 순번처럼
+  별도로 1부터 시작하는 표준 API까지 변경하지 마십시오.
 - Machbase DBMS 8.7.0 서버와 ARRAY 기능이 포함된 SDK 빌드를 함께 사용합니다.
-- 기존 full-row Append Open 함수와 메서드의 시그니처와 의미는 유지됩니다.
-- C API의 컬럼명 목록은 NULL-terminated 배열이며 별도의 count를 받지 않습니다.
-- 잘못된 cardinality, 중복 또는 범위 밖 position, 중복 target, whole/element target
+- 기존 전체 행 Append Open 함수와 메서드의 시그니처와 의미는 유지됩니다.
+- C API의 컬럼명 목록은 NULL-terminated 배열이며 별도의 건수를 받지 않습니다.
+- 잘못된 요소 수, 중복 또는 범위 밖 위치, 중복 대상, whole/element 대상
   충돌과 값 개수 불일치는 오류입니다.
 - Go ARRAY API는 정식 모듈 릴리스 전까지 기능이 포함된 개발 소스를 연결해야 합니다.
 - SDK는 실패한 행을 성공 건수에 포함해서는 안 됩니다.

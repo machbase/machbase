@@ -5,7 +5,8 @@ weight: 20
 toc: true
 ---
 
-TAG 센서값, TRANSACTION 장비 마스터, LOG 이벤트를 고유 키와 시간 범위로 결합합니다.
+TAG 센서값, TRANSACTION 장비 마스터, LOG 이벤트를 장비 키와 시간 범위로 결합합니다.
+TRANSACTION 테이블을 사용하므로 Standard Edition에서 실습합니다.
 
 ## 테이블과 데이터 준비
 
@@ -58,7 +59,8 @@ SELECT e.eq_id, e.eq_name, l.time, l.value, e.threshold,
  ORDER BY e.eq_id;
 ```
 
-구현되지 않은 `RECENT()` 함수 대신 TAG 통계 뷰의 최신 시각을 사용합니다.
+TAG 통계 뷰의 `RECENT_ROW_TIME`과 원본 측정 시각을 맞춰 각 장비의 최신 센서값을
+조회합니다. 이 예제에서는 `EQ-001`이 `ALARM`, `EQ-002`가 `NORMAL`로 표시됩니다.
 
 ## TAG + LOG 시간 범위 조인
 

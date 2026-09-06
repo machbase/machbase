@@ -72,7 +72,10 @@ tail -50 $MACHBASE_COLLECTOR_HOME/trc/machcollector.trc
 machcoordinatoradmin --cluster-status
 ```
 
-비정상 노드(`**unknown**`, `inactive`, `scrapped`)가 있으면 즉시 [Warehouse 상태 복구](/dbms/operations-configuration-recovery/cluster/#recovery-state-status-warehouse) 절차를 진행합니다.
+예상하지 않은 노드 상태가 있으면 역할, 변경 이력과 로그를 먼저 확인합니다. `inactive`나
+`scrapped`는 관리자가 의도적으로 설정한 상태일 수도 있습니다. Warehouse 장애로 판단되면
+[Warehouse 상태 복구](/dbms/operations-configuration-recovery/cluster/#recovery-state-status-warehouse)를
+따르십시오.
 
 ---
 

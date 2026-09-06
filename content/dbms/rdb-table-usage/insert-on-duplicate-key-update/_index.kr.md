@@ -392,6 +392,9 @@ GRANT UPDATE ON SYS.DEVICE_STATE TO app_user;
 | 문자열/LOB | `VARCHAR`, `TEXT`, `CLOB`, `BINARY`, `BLOB` |
 | 기타 | `DATETIME`, `IPV4`, `IPV6`, `JSON` |
 
+위 표는 TRANSACTION에서 사용하는 스칼라 타입을 정리한 것입니다. 숫자 ARRAY의 지원 범위는
+[데이터 타입 사전](/dbms/reference/sql/type-data-types-dictionary/)을 참고하십시오.
+
 duplicate trigger가 되는 key/index 타입은 TRANSACTION PRIMARY KEY 및 UNIQUE INDEX의 타입 정책을
 따릅니다. 이 기능은 key 타입의 지원 범위를 확장하지 않습니다.
 

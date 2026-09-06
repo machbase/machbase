@@ -12,7 +12,7 @@ AUTO_INCREMENT 사용 여부를 함께 결정합니다.
 
 ## TRANSACTION 테이블 생성
 
-TRANSACTION 테이블은 무수식 `CREATE TABLE`, 전체 이름을 사용한 `CREATE TRANSACTION TABLE`,
+TRANSACTION 테이블은 타입을 생략한 `CREATE TABLE`, 전체 이름을 사용한 `CREATE TRANSACTION TABLE`,
 축약형 `CREATE TXN TABLE`로 생성합니다. 세 문법의 결과는 같습니다. 다음 예제처럼 공개 문서와
 운영 스크립트에서는 테이블 유형을 분명히 드러내는 `CREATE TRANSACTION TABLE` 사용을 권장합니다.
 

@@ -41,7 +41,7 @@ SELECT COUNT(*), MIN(_ARRIVAL_TIME), MAX(_ARRIVAL_TIME)
   FROM target_log;
 ```
 
-1. 대상 database, owner와 테이블 이름을 확인합니다.
+1. 대상 데이터베이스, 소유자와 테이블 이름을 확인합니다.
 2. 필터 없이 소량 조회해 데이터 존재 여부와 실제 시간 값을 봅니다.
 3. 연결 시간대와 입력 문자열의 시간대 해석을 확인합니다.
 4. 태그 이름, 대소문자, 경계 연산자(`>`, `>=`, `<`, `<=`)를 확인합니다.
@@ -68,6 +68,6 @@ SELECT ID, SESS_ID, STATE, QUERY FROM V$STMT ORDER BY ID;
 한 번에 가져오는 쿼리, 넓은 조인·정렬, 과도한 동시 실행, 클라이언트의 큰 fetch·Append 버퍼를
 각각 분리해 재현합니다.
 
-설정 기본값을 이 문제 해결 문서에 복제하지 않습니다. 현재 값과 허용 범위는 `V$PROPERTY`와
+현재 설정값은 `V$PROPERTY`에서 조회합니다. 허용 범위와 변경 방법은
 [설정 사전](/dbms/reference/configuration/dictionary-configuration/)에서 확인하고, 변경은 하나씩
 부하 시험한 뒤 적용합니다.

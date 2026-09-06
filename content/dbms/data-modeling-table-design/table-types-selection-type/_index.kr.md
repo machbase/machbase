@@ -13,13 +13,17 @@ toc: true
 
 <a id="table-types-type"></a>
 
-테이블 타입의 역할과 저장 개념은 [데이터 모델 개념](../../core-concepts/concepts/#time-series)을 먼저 읽으십시오. 이 페이지는 설명을 반복하지 않고 실제 데이터의 변경·조회·영속성 요구사항으로 타입을 결정합니다.
+테이블 타입의 역할과 저장 개념은 [데이터 모델 개념](../../core-concepts/concepts/#time-series)을
+참고하십시오. 같은 데이터라도 이력을 누적할지, 현재 상태를 갱신할지에 따라 적합한 타입이
+달라집니다. 변경·조회·영속성 요구사항을 함께 검토합니다.
 
 <a id="selection-decision"></a>
 
 ## 타입 선택 결정 가이드
 
-아래 질문에 순서대로 답하면 적합한 테이블 타입을 결정할 수 있습니다.
+아래 흐름으로 후보를 좁힌 뒤, 필요한 DML과 트랜잭션, 메모리 사용량, Edition 지원 여부를
+비교표에서 확인합니다. 예를 들어 기준 정보라도 여러 변경을 하나의 트랜잭션으로 묶어야
+한다면 LOOKUP 대신 TRANSACTION을 검토합니다.
 
 ### 결정 흐름
 
@@ -50,14 +54,15 @@ toc: true
 | 질문 | 타입 |
 |------|------|
 | 시간 또는 거리 기반 계측값인가? | TAG |
-| 추가만 하고 수정·삭제 불필요? | LOG |
+| 원본 이벤트를 추가하고 오래된 구간만 정리하는가? | LOG |
 | PRIMARY KEY가 필요한 기준 정보이며 반복 조회·갱신하는가? | LOOKUP |
 | 서버 재시작 시 데이터가 사라져도 되는가? | VOLATILE |
 | 일반 관계형 업무 (INSERT/UPDATE/DELETE/SELECT)? | TRANSACTION |
 
 ### 주의사항
 
-- TAG 테이블에 이벤트 로그를 저장하면 태그 수 폭발로 성능이 저하됩니다.
+- 이벤트마다 고유한 이름을 태그 식별자로 사용하면 태그 수와 메타데이터가 계속 늘어납니다.
+  반복 계측 대상이 없는 이벤트는 LOG 테이블을 검토합니다.
 - LOG 테이블은 UPDATE와 일반 조건 DELETE가 불가하므로 수정 가능성이 있는 데이터에는 부적합합니다. 보존/정리 목적의 `BEFORE`, `OLDEST`, `EXCEPT` DELETE만 사용합니다.
 - TRANSACTION 테이블은 Standard Edition 전용입니다. Cluster Edition 환경에서는 LOOKUP(소규모) 또는 외부 RDBMS를 활용합니다.
 - VOLATILE 테이블은 서버 재시작 시 데이터가 소멸됩니다.
@@ -73,9 +78,8 @@ toc: true
 | DDL | `CREATE TAG TABLE` | `CREATE LOG TABLE` | `CREATE TABLE` / `CREATE TRANSACTION TABLE` / `CREATE TXN TABLE` | `CREATE VOLATILE TABLE` | `CREATE LOOKUP TABLE` |
 | 주 용도 | 센서·계측값 | 이벤트·로그 | 관계형 업무 | 임시 집계 | 코드·기준 |
 | INSERT | O | O | O | O | O |
-| APPEND API | O | O | O (SDK) | X | O |
-| UPDATE | O (태그/축 조건) | X | O | O | O |
-| DELETE | O (BEFORE/조건) | O (BEFORE/OLDEST/EXCEPT) | O | O (PK equality) | O (일반 조건식/전체 삭제) |
+| UPDATE | O (Standard, 태그/BASETIME 조건) | X | O | O | O |
+| DELETE | O (BEFORE/조건/전체) | O (BEFORE/OLDEST/EXCEPT/전체) | O | O (PK 일치/전체) | O (일반 조건식/전체 삭제) |
 | PRIMARY KEY | 필수 | X | 선택 | 선택 | 필수 |
 | BASETIME | 필수 (시간축) | X | X | X | X |
 | _arrival_time | X | 자동 추가 | X | X | X |
@@ -83,11 +87,15 @@ toc: true
 | 영속성 | O | O | O | X (메모리) | O |
 | Cluster Edition | O | O | X | O | O |
 
+Append API는 테이블뿐 아니라 SDK와 입력 경로에 따라 지원 범위가 달라집니다.
+[SDK Append 지원표](../../development-tools-integration/sdk-support-scope/#append-table-type-matrix)에서
+사용하는 드라이버와 테이블 조합을 확인합니다.
+
 ### 스토리지 특성
 
 | 항목 | TAG | LOG | TRANSACTION | VOLATILE | LOOKUP |
 |------|-----|-----|-----|----------|--------|
-| 스토리지 | 컬럼형 | 컬럼형 | 행 기반 (관계형) | 메모리 | 행 기반 |
+| 스토리지 | 컬럼형 | 컬럼형 | 행 기반 (관계형) | 메모리 | 영속 저장 + 전체 행 메모리 상주 |
 | 시계열 최적화 | O | 일부 | X | X | X |
 | 대용량 적합 | O | O | O | X | X |
 

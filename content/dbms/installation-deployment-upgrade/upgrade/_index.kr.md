@@ -53,7 +53,9 @@ Cluster Edition의 경우 데이터 가용성 요구사항에 따라 온라인 �
 
 ### 업그레이드 전 준비
 
-1. **백업 수행**: 데이터 디렉터리(`$MACHBASE_HOME/dbs/`)를 백업합니다.
+1. **백업 수행**: 지원되는 BACKUP 명령으로 백업을 만들고 별도 환경에서 복원 여부를
+   확인합니다. 실행 중인 데이터 디렉터리의 단순 복사만으로 복구 가능한 백업을 확보했다고
+   판단하지 마십시오.
 
 2. **클라이언트 연결 종료**: 진행 중인 Append 또는 INSERT 작업을 모두 완료합니다.
 
@@ -73,22 +75,29 @@ machadmin -s
 
 #### 2. 기존 패키지 백업 (선택)
 
-실행 파일과 라이브러리를 백업합니다.
+실행 파일과 라이브러리뿐 아니라 현재 설정과 라이선스도 별도 위치에 보관합니다.
+아래 경로에 이전 백업이 없는지 확인한 뒤 실행합니다.
 
 ```bash
 cp -a $MACHBASE_HOME/bin $MACHBASE_HOME/bin.bak
 cp -a $MACHBASE_HOME/lib $MACHBASE_HOME/lib.bak
+cp -a $MACHBASE_HOME/conf $MACHBASE_HOME/conf.bak
 ```
 
 **데이터 디렉터리(`dbs/`)는 삭제하지 마십시오.** 기존 데이터가 보존됩니다.
 
 #### 3. 새 패키지 압축 해제
 
+새 패키지는 별도 작업 디렉터리에 해제하여 구성과 설정 변경 사항을 먼저 확인합니다.
+
 ```bash
-tar zxf machbase-SDK-8.7.0.official-LINUX-X86-64-release.tgz -C $MACHBASE_HOME
+upgrade_stage=$(mktemp -d)
+tar zxf machbase-SDK-8.7.0.official-LINUX-X86-64-release.tgz -C "$upgrade_stage"
 ```
 
-압축 해제 시 `bin/`, `lib/`, `include/` 등이 덮어씌워지고 `dbs/`는 변경되지 않습니다.
+릴리스의 교체 절차에 따라 실행 파일과 라이브러리를 적용합니다. 기존 `conf/machbase.conf`,
+라이선스와 실제 `DBS_PATH`의 데이터는 보존하고, 새 설정 항목은 기존 설정에 병합합니다.
+패키지에 설정 파일이 포함될 수 있으므로 기존 홈에 그대로 덮어쓰면 운영 설정이 바뀔 수 있습니다.
 
 #### 4. 서버 시작
 
@@ -148,7 +157,8 @@ SELECT EDITION, BINARY_DB_MAJOR_VERSION, BINARY_DB_MINOR_VERSION FROM V$VERSION;
 
 ##### 1. cluster.yaml의 패키지 변경
 
-`cluster.package.name`과 `cluster.package.origin_path`를 새 패키지로 변경합니다. 패키지 내용이 바뀌면 패키지 이름과 archive 파일 이름도 함께 고유하게 바꿉니다.
+`cluster.package.name`과 `cluster.package.origin_path`를 새 패키지로 변경합니다. 패키지 내용이
+바뀌면 패키지 이름과 압축 파일 이름도 함께 고유하게 바꿉니다.
 
 ```yaml
 cluster:
@@ -157,7 +167,8 @@ cluster:
     origin_path: /home/machbase/packages/machbase-cluster-8.7.0.official-LINUX-X86-64-release.tgz
 ```
 
-`registered_path`는 `machclusterctl export`가 기록하는 Coordinator package repository 경로입니다. 업그레이드 입력 archive를 지정할 때는 `origin_path`를 사용합니다.
+`registered_path`는 `machclusterctl export`가 기록하는 Coordinator 패키지 저장소 경로입니다.
+업그레이드할 압축 파일을 지정할 때는 `origin_path`를 사용합니다.
 
 ##### 2. 실행 계획 확인
 
@@ -171,7 +182,7 @@ machclusterctl upgrade -f cluster.yaml --online --dry-run --verbose
 machclusterctl upgrade -f cluster.yaml --online --yes --verbose
 ```
 
-`--online`을 생략해도 online 모드로 처리되지만, 운영 절차를 명확히 하기 위해 옵션을 명시하는 것을 권장합니다.
+`--online`을 생략해도 온라인 모드로 처리되지만, 운영 절차를 명확히 하기 위해 옵션을 명시하는 것을 권장합니다.
 
 ##### 4. 전체 상태 확인
 
@@ -209,7 +220,9 @@ machcoordinatoradmin --upgrade-node=192.168.1.11:5401 --package-name=machbase-v8
 
 `cluster.package.name`과 `cluster.package.origin_path`를 새 패키지로 변경합니다. 업그레이드 전에는 노드 추가, 삭제, 포트 변경 같은 토폴로지 변경이 없어야 합니다. 토폴로지 변경이 있으면 먼저 `apply`로 반영한 뒤 업그레이드를 수행합니다.
 
-`machclusterctl upgrade --full-stop`은 Coordinator와 Deployer를 포함한 모든 노드 홈에 같은 archive를 교체 반영합니다. 따라서 `origin_path`에는 `machcoordinatoradmin`과 `machdeployeradmin`이 포함된 전체 Cluster 패키지를 지정합니다.
+`machclusterctl upgrade --full-stop`은 Coordinator와 Deployer를 포함한 모든 노드 홈에
+같은 패키지를 교체 반영합니다. 따라서 `origin_path`에는 `machcoordinatoradmin`과
+`machdeployeradmin`이 포함된 전체 Cluster 패키지를 지정합니다.
 
 ##### 3. 실행 계획 확인
 
@@ -223,7 +236,8 @@ machclusterctl upgrade -f cluster.yaml --full-stop --dry-run --verbose
 machclusterctl upgrade -f cluster.yaml --full-stop --yes --verbose
 ```
 
-`machclusterctl`은 전체 클러스터 중단을 전제로 패키지를 staging 경로에 해제한 뒤 노드 홈에 교체 반영합니다.
+`machclusterctl`은 전체 클러스터 중단을 전제로 패키지를 임시 준비 경로에 해제한 뒤
+노드 홈에 교체 반영합니다.
 
 #### 수동 배포 참고
 
@@ -245,7 +259,9 @@ machdeployeradmin --shutdown
 machcoordinatoradmin --shutdown
 ```
 
-각 노드 홈을 새 패키지로 교체할 때는 기존 `conf/machbase.conf`, `dbs/`, `meta/`, `package/` 디렉터리를 보존합니다. 기존 홈 위에 단순히 압축을 해제하지 말고, staging 경로에 새 패키지를 해제한 뒤 보존 대상 경로를 제외하고 교체합니다.
+각 노드 홈을 새 패키지로 교체할 때는 기존 `conf/machbase.conf`, `dbs/`, `meta/`, `package/`
+디렉터리를 보존합니다. 별도 작업 경로에 새 패키지를 해제한 뒤 보존 대상 경로를 제외하고
+교체합니다.
 
 Coordinator → Deployer → Lookup → Broker → Warehouse 순으로 시작합니다.
 

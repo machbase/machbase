@@ -42,7 +42,7 @@ CREATE TAG TABLE power_meter (
 ### 시간 범위 집계
 
 ```sql
--- 1시간 단위 평균 전력 (최근 24시간)
+-- 1시간 단위 계량값 평균과 최댓값 (최근 24시간)
 SELECT meter_id,
        DATE_TRUNC('hour', time, 1) AS hour,
        AVG(kwh) AS avg_kwh,
@@ -52,6 +52,10 @@ WHERE time >= NOW - 86400000000000
 GROUP BY meter_id, hour
 ORDER BY meter_id, hour;
 ```
+
+`kwh`가 누적 전력량이면 위 평균은 계량기 지시값의 평균이며 시간당 소비량이 아닙니다.
+구간 소비량은 시작·종료 계량값의 차이와 계량기 초기화·교체·최댓값 초과 처리 규칙을
+함께 적용해 계산합니다. 전력(kW)과 전력량(kWh)도 구분해 컬럼 이름과 단위를 정합니다.
 
 ### 다중 해상도 저장 패턴
 
@@ -77,17 +81,23 @@ CREATE VOLATILE TABLE power_1min (
 
 ### 시간대 처리
 
-내부적으로 UTC 기준 시각을 저장하므로, 표시할 때 타임존 변환을 적용합니다.
+DATETIME은 시점을 나타내며 문자열 입력과 출력은 접속 환경의 시간대 영향을 받습니다.
+한국 시각으로 표시하려면 클라이언트의 시간대 설정을 맞춥니다. 저장된 시각에 9시간을
+더하면 같은 시점을 다른 시간대로 표시하는 것이 아니라 값 자체를 9시간 뒤로 바꾸므로
+표시용 변환과 구분해야 합니다.
 
 ```sql
--- UTC → KST 변환 (UTC+9)
+-- 클라이언트 시간대를 확인한 뒤 원래 시각을 조회
 SELECT meter_id,
-       time + 32400000000000 AS time_kst,
+       time,
        kwh
 FROM power_meter
 WHERE meter_id = 'MTR-001'
   AND time >= '2024-01-01 00:00:00';
 ```
+
+입력 시각의 시간대와 접속 시간대가 다르면 입력 전에 기준을 통일합니다. JDBC의
+`TIMEZONE` 설정 예는 [JDBC 연결](/dbms/development-tools-integration/jdbc/)을 참고하십시오.
 
 <a id="distance-axis-modeling"></a>
 
@@ -376,7 +386,9 @@ LOOKUP 테이블을 조인합니다. 실제 조인 구문과 실행 계획 확�
 
 ## 영속·임시 혼합 패턴
 
-영속 테이블(TAG, LOG, TRANSACTION, LOOKUP)과 임시 테이블(VOLATILE)을 조합해 성능과 데이터 무결성을 함께 확보하는 패턴입니다.
+영속 테이블(TAG, LOG, TRANSACTION, LOOKUP)에 원본을 보관하고 VOLATILE에 조회용 캐시를
+유지하는 패턴입니다. 두 저장 경로가 하나의 트랜잭션으로 처리된다고 가정하지 말고,
+캐시 지연과 실패 후 재구성 절차를 함께 설계합니다.
 
 ### 원본 + 집계 캐시 패턴
 
@@ -463,9 +475,9 @@ INSERT·Append·파일 입력 선택은
 
 여러 테이블 타입을 조합할 때는 다음 원칙을 적용합니다.
 
-1. 작은 테이블(LOOKUP)을 드라이빙 테이블 쪽에 배치합니다.
-2. JOIN 조건 컬럼에 인덱스를 생성합니다.
-3. WHERE 절로 레코드를 최대한 줄인 뒤 JOIN합니다.
+1. 원본 행 수뿐 아니라 필터 적용 후 행 수와 실행 계획을 보고 조인 순서를 검토합니다.
+2. JOIN 조건 컬럼의 타입을 맞추고, 지원되는 인덱스의 사용 여부를 확인합니다.
+3. WHERE 절에 시간 범위와 업무 조건을 명시해 조인할 행 수를 줄입니다.
 4. TAG 속성을 함께 조회하는 목적이라면 별도 LOOKUP 대신 METADATA가 적합한지 검토합니다.
 
 재현 가능한 조인 예제는 [TAG 조회와 분석](/dbms/tag-table-usage/query-analysis/)과

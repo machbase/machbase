@@ -5,8 +5,8 @@ weight: 30
 toc: true
 ---
 
-Machbase 권한은 active database 범위의 관리 권한과 특정 테이블의 DML 권한으로 나뉩니다.
-사용자는 database에 연결할 `CONNECT` 권한과, 실제 작업 대상에 필요한 권한을 모두 가져야
+Machbase 권한은 활성 데이터베이스 범위의 관리 권한과 특정 테이블의 DML 권한으로 나뉩니다.
+사용자는 데이터베이스에 연결할 `CONNECT` 권한과, 실제 작업 대상에 필요한 권한을 모두 가져야
 합니다.
 
 ```sql
@@ -20,17 +20,17 @@ GRANT SELECT, INSERT ON TABLE factory_a.sys.sensor_log TO app_user;
 
 | 범위 | 권한 | 용도 |
 |---|---|---|
-| active database | `CONNECT` | 연결 및 `USE` |
-| active database | `CREATE`, `DROP`, `ALTER` | 객체 생성·삭제·변경 |
-| active database | `BACKUP` | database 백업 |
-| active database | `DDL` | `CREATE`와 `DROP` 묶음 |
-| active database | `ALL` | `CONNECT`, `CREATE`, `DROP`, `ALTER`, `BACKUP` |
-| mounted database | `USAGE` | mounted database 탐색 |
-| 관리 database | `MOUNT` | `MOUNT DATABASE`, `UMOUNT DATABASE` |
-| table | `SELECT`, `INSERT`, `DELETE`, `UPDATE` | 특정 테이블 DML |
-| table | `ALL` | 네 가지 테이블 DML 권한 |
+| 활성 데이터베이스 | `CONNECT` | 연결 및 `USE` |
+| 활성 데이터베이스 | `CREATE`, `DROP`, `ALTER` | 객체 생성·삭제·변경 |
+| 활성 데이터베이스 | `BACKUP` | 데이터베이스 백업 |
+| 활성 데이터베이스 | `DDL` | `CREATE`와 `DROP` 묶음 |
+| 활성 데이터베이스 | `ALL` | `CONNECT`, `CREATE`, `DROP`, `ALTER`, `BACKUP` |
+| 마운트된 데이터베이스 | `USAGE` | 마운트된 데이터베이스 탐색 |
+| 관리 데이터베이스 | `MOUNT` | `MOUNT DATABASE`, `UMOUNT DATABASE` |
+| 테이블 | `SELECT`, `INSERT`, `DELETE`, `UPDATE` | 특정 테이블 DML |
+| 테이블 | `ALL` | 네 가지 테이블 DML 권한 |
 
-database의 `ALL`은 테이블 DML이나 `MOUNT`를 포함하지 않습니다. 테이블의 `ALL`도 database
+데이터베이스의 `ALL`은 테이블 DML이나 `MOUNT`를 포함하지 않습니다. 테이블의 `ALL`도 데이터베이스
 관리 권한을 포함하지 않습니다. 권한이 있어도 해당 테이블 타입이 지원하지 않는 DML은 실행할
 수 없습니다. 예를 들어 LOG 테이블은 `UPDATE`를 지원하지 않습니다.
 
@@ -43,7 +43,7 @@ GRANT privilege_list ON target TO user_name;
 REVOKE privilege_list ON target FROM user_name;
 ```
 
-다음 예제는 사용자에게 database 연결과 한 테이블의 읽기·쓰기를 허용합니다.
+다음 예제는 사용자에게 데이터베이스 연결과 한 테이블의 읽기·쓰기를 허용합니다.
 
 ```sql
 GRANT CONNECT ON DATABASE factory_a TO app_user;
@@ -53,8 +53,8 @@ REVOKE INSERT ON TABLE factory_a.sys.sensor_log FROM app_user;
 REVOKE CONNECT ON DATABASE factory_a FROM app_user;
 ```
 
-테이블은 현재 database의 `owner.table` 또는 `database.owner.table`로 지정할 수 있습니다.
-database 전체에 `SELECT` 같은 DML 권한을 주는 구문은 지원하지 않습니다.
+테이블은 현재 데이터베이스의 `owner.table` 또는 `database.owner.table`로 지정할 수 있습니다.
+데이터베이스 전체에 `SELECT` 같은 DML 권한을 주는 구문은 지원하지 않습니다.
 
 현재 권한 기록은 `M$SYS_USER_ACCESS`에서 확인합니다.
 
@@ -65,7 +65,7 @@ SELECT DB_NAME, USER_NAME, OWNER_NAME, TABLE_NAME, PRIV
  ORDER BY DB_NAME, OWNER_NAME, TABLE_NAME;
 ```
 
-`OWNER_NAME`과 `TABLE_NAME`이 `NULL`이면 database 범위, 값이 있으면 테이블 범위의
+`OWNER_NAME`과 `TABLE_NAME`이 `NULL`이면 데이터베이스 범위, 값이 있으면 테이블 범위의
 기록입니다. `PRIV`는 복수 권한을 표현하는 비트 마스크이므로 화면에 나온 숫자 하나를 권한명
 하나로 해석하거나 운영 스크립트에 고정하지 마십시오.
 
@@ -73,7 +73,7 @@ SELECT DB_NAME, USER_NAME, OWNER_NAME, TABLE_NAME, PRIV
 
 ## 데이터베이스 권한
 
-논리 database는 사용자를 만든 것만으로 연결할 수 없습니다. 대상 database에 `CONNECT`를
+논리 데이터베이스는 사용자를 만든 것만으로 연결할 수 없습니다. 대상 데이터베이스에 `CONNECT`를
 명시적으로 부여하고 필요한 관리 권한을 최소 단위로 추가합니다.
 
 ```sql
@@ -82,8 +82,8 @@ GRANT DDL ON DATABASE factory_a TO deploy_user;
 GRANT ALTER ON DATABASE factory_a TO deploy_user;
 ```
 
-새 사용자에게 기본으로 기록되는 호환 권한은 기본 database인 `MACHBASEDB` 범위입니다.
-다른 논리 database까지 자동으로 확장되지 않습니다.
+새 사용자에게 기본으로 기록되는 호환 권한은 기본 데이터베이스인 `MACHBASEDB` 범위입니다.
+다른 논리 데이터베이스까지 자동으로 확장되지 않습니다.
 
 <a id="select-insert-delete-update"></a>
 <a id="database-privileges-select-insert-delete-update"></a>
@@ -113,7 +113,7 @@ GRANT DROP ON DATABASE factory_a TO deploy_user;
 ```
 
 `DROP`은 복구하기 어려운 변경을 허용하므로, 단순 적재·조회 계정에는 부여하지 마십시오.
-객체 소유권만으로 다른 database에 접속할 수 있는 것은 아닙니다.
+객체 소유권만으로 다른 데이터베이스에 접속할 수 있는 것은 아닙니다.
 
 <a id="database-privileges-alter"></a>
 
@@ -145,7 +145,7 @@ GRANT BACKUP ON DATABASE factory_a TO backup_user;
 GRANT MOUNT ON DATABASE MACHBASEDB TO recovery_user;
 ```
 
-MOUNT/UMOUNT는 관리 작업입니다. mounted database를 탐색할 `USAGE`와 그 안의 테이블을
+MOUNT/UMOUNT는 관리 작업입니다. 마운트된 데이터베이스를 탐색할 `USAGE`와 그 안의 테이블을
 읽을 `SELECT`는 별도 권한입니다. 실제 복구 절차는
 [백업, 복구, 마운트](/dbms/operations-configuration-recovery/backup-restore-mount/)를 따르십시오.
 
@@ -173,14 +173,14 @@ GRANT ALL ON TABLE factory_a.sys.sensor_log TO table_admin;
 ## 기본 부여 권한과 제외 권한
 
 `CREATE USER`가 만든 사용자는 `MACHBASEDB`에 대한 호환 기본 권한 기록을 가집니다.
-논리 database에서는 다음처럼 필요한 범위를 명시하는 구성을 기준으로 삼으십시오.
+논리 데이터베이스에서는 다음처럼 필요한 범위를 명시하는 구성을 기준으로 삼으십시오.
 
 ```sql
 GRANT CONNECT ON DATABASE factory_a TO app_user;
 GRANT SELECT, INSERT ON TABLE factory_a.sys.sensor_log TO app_user;
 ```
 
-`ALTER`, `BACKUP`, `MOUNT`, `USAGE`와 다른 논리 database의 권한은 업무 역할을 검토한 뒤
+`ALTER`, `BACKUP`, `MOUNT`, `USAGE`와 다른 논리 데이터베이스의 권한은 업무 역할을 검토한 뒤
 별도로 부여합니다.
 
 <a id="privileges-2"></a>
@@ -196,7 +196,7 @@ GRANT SELECT, INSERT ON TABLE factory_a.sys.sensor_log TO ingest_user;
 REVOKE INSERT ON TABLE factory_a.sys.sensor_log FROM ingest_user;
 ```
 
-테이블을 삭제할 때 기존 table grant도 정리되며, 같은 이름으로 만든 새 객체에 승계되지
+테이블을 삭제할 때 기존 테이블 grant도 정리되며, 같은 이름으로 만든 새 객체에 승계되지
 않습니다. 필요한 권한을 다시 부여한 뒤 `M$SYS_USER_ACCESS`에서 확인하십시오.
 
 <a id="checklist-diagnosis-privileges"></a>

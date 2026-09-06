@@ -4,7 +4,7 @@ weight: 20
 toc: true
 ---
 
-LOG 테이블의 내부 구조와 스키마 설계 원칙을 다룹니다.
+LOG 테이블의 컬럼 구성과 스키마 설계 원칙을 다룹니다.
 
 
 <a id="log-table-design"></a>
@@ -29,7 +29,7 @@ LOG 테이블 스키마 설계의 핵심은 조회 패턴에 맞게 컬럼을 �
 #### 기본 원칙
 
 1. **컬럼 수 최소화**: 불필요한 컬럼은 쿼리 성능에 영향을 줍니다.
-2. **적절한 데이터 타입**: 네트워크 주소는 `IPV4`/`IPV6`, 포트는 `USHORT` 또는 `INTEGER`
+2. **적절한 데이터 타입**: 네트워크 주소는 `IPV4`/`IPV6`, 포트 번호는 `INTEGER`를 사용합니다.
 3. **이벤트 시각 컬럼 별도 추가**: `_arrival_time` 외에 이벤트 발생 시각이 필요하면 `DATETIME` 컬럼을 추가합니다.
 
 #### 데이터 타입 선택
@@ -38,7 +38,7 @@ LOG 테이블 스키마 설계의 핵심은 조회 패턴에 맞게 컬럼을 �
 |--------|---------|------|
 | IP 주소 (v4) | `IPV4` | 4바이트 저장, 비교 연산 최적화 |
 | IP 주소 (v6) | `IPV6` | 16바이트 저장 |
-| 포트 번호 | `USHORT` | 0~65535, 2바이트 |
+| 포트 번호 | `INTEGER` | 0~65535 전체 범위 표현 가능 |
 | 짧은 문자열 | `VARCHAR(n)` | 가변 길이 |
 | 긴 텍스트 | `TEXT` | 전문 검색 가능 |
 | 플래그/코드 | `SHORT` 또는 `INTEGER` | 숫자 비교가 빠름 |
@@ -53,8 +53,8 @@ CREATE LOG TABLE security_event (
     category    VARCHAR(32),     -- 이벤트 카테고리
     src_ip      IPV4,
     dst_ip      IPV4,
-    src_port    USHORT,
-    dst_port    USHORT,
+    src_port    INTEGER,
+    dst_port    INTEGER,
     protocol    SHORT,
     action      VARCHAR(16),
     description TEXT             -- 상세 설명 (전문 검색 대상)
@@ -62,6 +62,9 @@ CREATE LOG TABLE security_event (
 ```
 
 #### 주의사항
+
+- Machbase의 `USHORT`는 65535를 NULL 예약값으로 사용하므로 포트 번호 전체 범위를
+  저장하려면 `INTEGER`를 사용합니다.
 
 - LOG 테이블에는 PRIMARY KEY, UNIQUE 제약을 지정할 수 없습니다.
 - UPDATE와 일반 조건 DELETE가 불가능하므로 잘못 입력된 데이터는 수정할 수 없습니다. 보존/정리 목적의 `BEFORE`, `OLDEST`, `EXCEPT` DELETE는 별도로 사용합니다.

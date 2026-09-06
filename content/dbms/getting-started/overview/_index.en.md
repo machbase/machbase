@@ -4,131 +4,106 @@ title: '1.1 Machbase DBMS Overview'
 weight: 10
 toc: true
 ---
-Machbase DBMS is a time-series database for processing data that continuously arrives
-in time order, such as industrial IoT data and financial tick data. When sensor values
-arrive like a factory conveyor belt, or market prices and volumes change in short
-intervals, the first design question is where to store that data. In Machbase DBMS,
-that starts with choosing a table type that matches the shape and lifecycle of the
-data.
 
-Time-series data usually appears in two shapes. The first is regular measurement data,
-such as a sensor reporting temperature every second. The second is irregular event
-data, such as an order execution, alert, log record, or received tick. Real systems
-usually contain both. In industrial IoT, temperature and vibration are measurements,
-while alarms and maintenance records are events. In finance, quote and trade ticks
-arrive rapidly, while receive status and processing delays remain as events.
-
-## Table Types to Separate First
-
-| Table | Main use | First selection rule |
-| --- | --- | --- |
-| LOG | Append-heavy events, logs, and histories | Use it for high-volume records such as industrial equipment events or financial tick receive histories that are frequently queried by time. |
-| TAG | Sensor, equipment, and measurement values with tag names and time | Use it when queries are centered on tag-based time series and aggregation. |
-| LOOKUP | Codes, equipment metadata, and mapping data | Use it for small reference data that must be joined or looked up quickly. |
-| RDB | Relational business data, state data, and larger reference or dimension data | In Standard Edition versions that support RDB, create it with `CREATE RDB TABLE`; it supports row-level `INSERT`, `UPDATE`, `DELETE`, and joins with other table types. |
-| VOLATILE | Temporary session data | Use it for in-memory data that may disappear when the server stops. |
-
-LOG and TAG are append-oriented tables for high-volume time-series ingest. If no table
-type keyword is specified, `CREATE TABLE` creates a LOG table for backward
-compatibility. Versions that support TAG data UPDATE can correct values by narrowing
-the target range with tag names, time predicates, and data-column predicates. Do not
-read this as a general row update that changes the TAG name, time axis, or system
-columns. If general row-level updates are central to the workload, read the RDB,
-LOOKUP, or VOLATILE documents first. RDB is a Standard Edition v1 feature in 8.7.0;
-Cluster Edition does not support creating RDB tables.
-
-Think of table types as storage areas with different roles. A LOG table receives
-records that keep piling up, while a TAG table organizes values by tag name and time
-axis. For example, an equipment temperature value naturally fits a TAG table, while an
-event saying that a tick was received fits a LOG table. Small reference data belongs
-in LOOKUP, and relational business data with important relationships and constraints
-belongs in an RDB table. RDB tables are covered in a later chapter.
-
-When designing a time-series system, also think about the lifecycle of the data.
-Recent raw data often needs high resolution and fast queries, while older data is
-often useful as summarized data. Retention, rollup, downsampling, and compression are
-therefore not secondary details; they directly affect operating cost and query
-performance.
-
-After this overview, run the representative LOG-table workflow in
-[10-Minute Quick Start](../quick-start/). That single sample verifies that bare
-`CREATE TABLE` creates a LOG table and that create, insert, query, and cleanup work
-together.
-
+Machbase DBMS is a time-series database for storing and analyzing data that accumulates over time,
+such as sensor measurements, equipment events, application logs, and financial ticks. You choose
+tables to match the structure of your data and how you update and query it, and manage historical
+records together with the reference data needed to interpret them.
 
 <a id="introduction"></a>
 
 ## Introduction to Machbase DBMS
 
-Machbase DBMS is a time-series database designed to process time-series data such as
-industrial IoT data and financial tick data as quickly and conveniently as possible.
-Users still create tables and query data with SQL, but ingestion, storage, and query
-behavior depend on the table type.
+### What a Database and SQL Do
 
-Traditional business data is often centered on finding and updating individual
-records or joining business tables. Time-series data is different: it is usually
-append-heavy, queried by time range, and interpreted through aggregations such as
-average, maximum, minimum, and sum. Typical questions include "how did temperature
-change during the last 10 minutes," "how many ticks arrived near market close," and
-"which hours had the most equipment alarms last month."
+A database stores application data in a defined structure so that different tasks can reuse it.
+A database management system, or DBMS, is the software that manages requests to read and write
+that data, user permissions, and storage space.
 
-### Core View
+A table groups records with the same structure. A row can represent one event or measurement.
+Columns hold individual attributes, such as a timestamp, equipment name, or measured value.
+Each column has a data type, such as a number, string, or date and time. This defined structure
+is called a schema.
 
-- Start with a LOG table when data continuously arrives, such as application logs,
-  event histories, equipment status records, or financial tick receive logs.
-- Start with a TAG table when the data clearly has tag name, time, and value columns.
-- Start with LOOKUP for small, read-heavy reference data.
-- Read the RDB-oriented documents for relational business entities and reference data
-  where updates and relationships matter. In Standard Edition versions that support
-  RDB, create RDB tables with `CREATE RDB TABLE`.
-- Use VOLATILE tables for temporary working data.
+For example, a temperature history might look like this. The times and values below are
+illustrative.
 
-This point of view matters when learning Machbase. The basic unit is not only "one
-current value," but a flow of values over time. When designing a schema, consider
-ingest rate, time predicates, aggregation interval, retention period, and reference
-data relationships together.
+| Measurement target | Measurement time | Temperature |
+|---|---|---:|
+| Equipment A temperature sensor | 09:00:00 | 23.1 |
+| Equipment A temperature sensor | 09:00:01 | 23.5 |
+| Equipment B temperature sensor | 09:00:01 | 18.0 |
 
-You do not need to create every table type at the beginning. Run the LOG-table sample
-in [10-Minute Quick Start](/dbms/getting-started/quick-start/) first, then move to the TAG, LOOKUP,
-RDB, or VOLATILE documents according to your data. If `SHOW TABLES` later displays
-`KEYVALUE` tables whose names start with `_TAG_DATA_`, treat them as DBMS-managed
-internal tables for TAG data, not as a first design choice.
+SQL is the language used to work with this data. `CREATE` creates a table, `INSERT` adds rows,
+and `SELECT` reads the rows and columns you need. `WHERE` specifies selection conditions,
+`GROUP BY` defines aggregation groups, and `ORDER BY` controls result ordering.
+Although the SQL language is shared, supported changes and storage behavior depend on the
+table type.
+
+### Current State and Historical Records
+
+“What is the current temperature of equipment A?” and “How did its temperature change over the
+past hour?” are different questions. Repeatedly overwriting one current value loses the history.
+Storing each measurement as a new row with a timestamp lets you analyze trends, maximum values,
+and when an abnormal condition occurred.
+
+These histories keep growing in a time-series system. In addition to ingestion speed, you must
+decide which targets and time ranges you will query and how long you need to keep raw data.
+Measurements do not necessarily arrive at regular intervals. Network delays, equipment outages,
+and retransmission can produce late or missing readings.
+
+### Measurements, Events, and Reference Data
+
+A measurement describes the value of a particular target at a particular time. An event records
+something that happened, such as an alarm, a trade execution, or a service starting. Equipment
+names, installation locations, and units of measurement are reference data used to interpret
+those records.
+
+A system often needs all three. Investigating an abnormal temperature may require the temperature
+history, alarms from the same period, and the sensor's installation location. SQL joins
+(`JOIN`) connect historical records with reference data through a shared value, such as an
+equipment identifier.
+
+## Table Types to Separate First
+
+| Table | Main use | What to check when choosing |
+|---|---|---|
+| TAG | Measurement histories organized by tag name and a time or distance axis | Whether queries focus on ranges and aggregates for specific tags. |
+| LOG | Event and log histories with multiple attributes | Whether you continuously add records and read them using time or search conditions. |
+| LOOKUP | Persistent reference data, such as equipment codes and mappings | The size and update pattern of the reference data loaded into memory. |
+| TRANSACTION | Business data requiring row-level changes and transactions | Whether you need relational DML and transactions in Standard Edition. |
+| VOLATILE | Shared state that can be recreated after a restart | Whether you can rebuild the data when it is lost at server shutdown. |
+
+In Machbase DBMS 8.7.0, explicitly use `CREATE LOG TABLE` to create a LOG table. A bare
+`CREATE TABLE` creates a TRANSACTION table, which is supported in Standard Edition.
+
+An industry label alone does not determine the table type. Even for financial ticks, a design
+may focus on changes in values for each instrument or on searching received events with many
+fields. For the final choice, including update, join, and retention requirements, see
+[Table Type Selection](/dbms/data-modeling-table-design/table-types-selection-type/).
 
 <a id="problems-solved"></a>
 
 ## Problems Machbase Solves
 
-Machbase DBMS is most useful when data keeps flowing in rather than quietly sitting
-still. Examples include factory equipment status, application access logs, urban
-infrastructure sensor values, and financial market ticks. This data must not only be
-stored, but also checked immediately and analyzed again later.
+Machbase's time-series features can be used together for the following tasks.
 
-A time-series database does more than store a large number of rows. It must keep up
-with fast ingest, make recent and historical data searchable by time, and support an
-operational strategy for long-term storage. As raw data ages, systems often summarize
-it or apply retention rules so storage growth remains manageable.
+| Task | Example | Related features |
+|---|---|---|
+| Collect raw history | Continuously store sensor readings and equipment events | TAG and LOG tables, SQL input, and SDK Append |
+| Query a relevant range | Inspect equipment A's temperature changes over the past hour | Tag and time conditions, indexes, and execution plans |
+| Query recurring statistics | Compare minute or hourly trends over long periods | TAG ROLLUP |
+| Interpret data | Associate sensor codes with equipment names and locations | Reference data and JOIN |
+| Manage retention periods | Remove raw records past their retention period | Retention Policy on supported tables |
+| Protect data against failures | Verify backup and recovery procedures | Edition-specific backup and recovery features |
 
-Machbase DBMS is useful when the following requirements appear together:
+ROLLUP computes statistics over ranges of raw data. Compression reduces the space needed to
+store data, while a Retention Policy deletes old records. These features serve different purposes;
+having aggregates does not by itself mean that it is appropriate to delete the raw data.
 
-- Devices, sensors, applications, or market data feeds continuously generate data at
-  sub-second or second-level intervals.
-- Recent data must be queried immediately, while older data must remain available for
-  long-term analysis.
-- Ingestion performance, SQL, aggregation, joins, and retention policies must work
-  together.
-- Raw time-series data and reference data must be managed in the same system.
-- Sub-second or millisecond raw data and minute, hour, or day-level aggregates often
-  need to coexist.
+Performance requirements depend on data types, ingestion volume, concurrent queries, retention
+periods, and server resources. Learn the workflow with a small example, then measure throughput
+and latency using actual data and query conditions.
+[Core Concepts](../../core-concepts/) explains the roles of these features in more detail.
 
-Table types are the interface for separating these problems. LOG handles append-heavy
-raw events, TAG handles tag-based measurements, and LOOKUP/RDB handles reference data.
-
-This separation clarifies both ingest paths and query patterns. Raw events can be
-appended quickly, tag measurements can be found by tag name and time, and reference
-data can be used for joins and interpretation. The value of a time-series system
-appears when these parts work together.
-
-The representative sample in this chapter checks only the smallest version of the
-problem: store one event and read it back. Real designs start by deciding whether the
-data is an event, a tag-based measurement, or reference data, then moving to the
-corresponding table-type document.
+Next, store one event and read it back in [10-Minute Quick Start](../quick-start/).

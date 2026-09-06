@@ -21,8 +21,8 @@ aliases:
 
 Machbase는 와이어 프로토콜 2.1~4.0을 지원하는 범용 ADO.NET 프로바이더
 **UniMachNetConnector**를 제공합니다. 현재 통합 패키지는 `UniMachNetConnector` 8.0.55이며
-`net452`, `net5.0`, `net6.0`, `net7.0`, `net8.0` 타깃을 빌드합니다. 자동 협상은 connection
-string에 `PROTOCOL=auto` 또는 `auto-full`을 지정했을 때만 동작합니다.
+`net452`, `net5.0`, `net6.0`, `net7.0`, `net8.0` 타깃을 빌드합니다. 자동 협상은 연결
+문자열에 `PROTOCOL=auto` 또는 `auto-full`을 지정했을 때만 동작합니다.
 
 ## 설치 {#install}
 
@@ -41,15 +41,15 @@ string에 `PROTOCOL=auto` 또는 `auto-full`을 지정했을 때만 동작합니
 
 ## 다중 데이터베이스
 
-MachConnector 4.0은 connection string의 `DATABASE` 또는 `DB_NAME`으로 initial database를
+MachConnector 4.0은 연결 문자열의 `DATABASE` 또는 `DB_NAME`으로 초기 데이터베이스를
 선택할 수 있습니다.
 
 ```text
 SERVER=127.0.0.1;PORT_NO=5656;UID=APP_A;PWD=secret;DATABASE=FACTORY_A
 ```
 
-표준 `Database` property와 `ChangeDatabase()`를 current catalog 전환 API로 보장하지
-않으므로 SQL `USE`와 `CURRENT_DATABASE()`를 사용합니다. pool 반환 시 catalog reset도
+표준 `Database` 설정 속성과 `ChangeDatabase()`를 current 카탈로그 전환 API로 보장하지
+않으므로 SQL `USE`와 `CURRENT_DATABASE()`를 사용합니다. 연결 풀 반환 시 카탈로그 초기화도
 자동으로 가정하지 않습니다. 자세한 제한은 [다중 데이터베이스 운영 가이드](/dbms/operations-configuration-recovery/multi-database/#97-net)를
 참조하십시오.
 
@@ -59,7 +59,7 @@ SERVER=127.0.0.1;PORT_NO=5656;UID=APP_A;PWD=secret;DATABASE=FACTORY_A
 
 - 지원 TFM: net452, net5.0, net6.0, net7.0, net8.0
 - net5.0 이상 빌드는 self-contained입니다. net452 빌드는 소스 프로젝트 기준
-  `System.ValueTuple` 4.5.0을 restore합니다.
+  `System.ValueTuple` 4.5.0을 복원합니다.
 
 ### 빠른 시작(명령줄)
 
@@ -162,8 +162,8 @@ var connectionString = string.Format(
 서버 버전이 혼재된 환경이라면 `PROTOCOL=auto`를 지정해 UniMachNetConnector가 실행 시 적절한 레거시 프로토콜을 협상하도록 설정할 수 있습니다. 동작 방식은 다음과 같습니다.
 
 - `PROTOCOL=auto`는 4.0 → 3.0 → 2.2 → 2.1 순서로 핸드셰이크를 시도하며, 커넥션 문자열에 전달한 호스트·포트·사용자·비밀번호·데이터베이스·`CONNECT_TIMEOUT` 값을 그대로 사용합니다.
-- `PROTOCOL=auto-full`은 server major가 4이면 등록된 `4.0-full` descriptor를 선택합니다.
-  descriptor가 없는 build에서만 limited 4.0을 선택하며, full 연결 실패 후 limited로 자동
+- `PROTOCOL=auto-full`은 서버 major가 4이면 등록된 `4.0-full` 디스크립터를 선택합니다.
+  디스크립터가 없는 빌드에서만 limited 4.0을 선택하며, full 연결 실패 후 limited로 자동
   재시도하지 않습니다.
 - `SERVER=hostA:5700,hostB:6000`처럼 여러 호스트를 지정하면 순차적으로 시도하며, 실패 메시지에는 각 호스트/프로토콜 조합이 기록되어 문제 지점을 파악할 수 있습니다.
 - 자격 증명은 기존 레거시 드라이버와 동일하게 대문자로 변환됩니다. 기본 데이터베이스(`data`)를 사용하지 않는다면 `DATABASE=` 값을 명시하십시오.
@@ -175,7 +175,9 @@ var connectionString = string.Format(
 
 {{< callout type="warning" >}}
 아래에 명시되지 않은 기능은 아직 구현되지 않았거나 정상적으로 동작하지 않을 수 있습니다.<br>
-존재하지 않는 메서드나 필드를 호출하면 `NotImplementedException` 또는 `NotSupportedException`이 발생합니다.
+선언된 API라도 구현하지 않거나 지원하지 않는 기능은 `NotImplementedException` 또는
+`NotSupportedException`을 반환할 수 있습니다. 필요한 API가 설치한 프로바이더에 있는지
+먼저 확인하십시오.
 {{< /callout >}}
 
 ### MachConnection
@@ -304,7 +306,9 @@ void AppendDataWithTime(
 void AppendFlush(MachAppendWriter writer)
 ```
 
-버퍼에 쌓인 데이터를 즉시 서버로 전송합니다. 호출 주기가 짧을수록 장애 시 데이터 유실이 줄어들지만 처리량은 낮아집니다.
+버퍼에 쌓인 데이터를 서버로 전송합니다. 호출 주기를 줄이면 클라이언트 버퍼에 남는 데이터와
+전송 지연을 줄일 수 있지만 통신 비용은 증가할 수 있습니다. 호출 성공만으로 디스크 내구성을
+판단하지 말고, 서버 처리 결과와 대상 테이블의 내구성 정책을 함께 확인합니다.
 
 #### AppendClose
 
@@ -341,7 +345,7 @@ using (var command = new MachCommand(
 ```
 
 반환할 ROWID가 없으면 `null`입니다. ROWID는 64비트 `RowId`로 읽고, 기존 32비트
-`LastInsertedId`는 사용하지 않습니다. batch와 Append 등의 차이는
+`LastInsertedId`는 사용하지 않습니다. 배치와 Append 등의 차이는
 [ROWID와 INSERT 결과 ID](/dbms/reference/sql/rowid/)를 참고하십시오.
 
 #### ExecuteScalar
@@ -489,8 +493,8 @@ Machbase SQL에서 `''`은 SQL `NULL`이므로 `GetSchemaTable()`의 `AllowDBNul
 
 이전 버전 서버 또는 SDK와 연결한 경우에는 `IsKey`가 `false`로 반환될 수 있습니다.
 
-Nullable 메타데이터는 DECIMAL precision `1~65`, scale `0~30`과 실제 값을 변경하지
-않습니다. .NET에서는 precision이 29 이하이고 scale이 28 이하인 DECIMAL을
+Nullable 메타데이터는 DECIMAL 전체 자릿수 `1~65`, 소수 자릿수 `0~30`과 실제 값을 변경하지
+않습니다. .NET에서는 전체 자릿수가 29 이하이고 소수 자릿수가 28 이하인 DECIMAL을
 `System.Decimal`로 반환합니다. 이 범위를 넘는 DECIMAL은 정밀도 손실을 방지하기 위해
 `System.String`으로 반환합니다. 이때 `GetSchemaTable().DataType`, `GetFieldType()`,
 실제 행 값의 CLR 형식도 모두 `System.String`입니다.
@@ -547,8 +551,8 @@ public sealed class MachParameterCollection :
 > `MachParameter` 바인딩은 Prepared Statement 의미의 실행 계획 캐시를 제공하지 않습니다.
 > 반복 실행 성능은 실제 쿼리와 서버 캐시 상태로 측정합니다.
 >
-> 현재 provider는 파라미터를 타입별 SQL 리터럴로 렌더링한 뒤 ExecDirect로 실행합니다.
-> 따라서 `MachParameterCollection`은 서버의 Prepared Named Bind protocol이나 파라미터
+> 현재 프로바이더는 파라미터를 타입별 SQL 리터럴로 렌더링한 뒤 ExecDirect로 실행합니다.
+> 따라서 `MachParameterCollection`은 서버의 Prepared Named Bind 프로토콜이나 파라미터
 > 메타데이터를 사용하지 않습니다.
 
 #### Add
@@ -682,7 +686,7 @@ Machbase에서 발생한 오류를 표현하는 예외 클래스입니다.
 
 | 이름 | 설명 |
 |--|--|
-| `MachErrorCode` | 가능한 경우 Machbase 오류 코드입니다. Universal provider가 legacy 예외를 번역하면 `0`일 수 있습니다. |
+| `MachErrorCode` | 가능한 경우 Machbase 오류 코드입니다. Universal 프로바이더가 기존 호환 예외를 번역하면 `0`일 수 있습니다. |
 
 ### MachAppendWriter
 
@@ -730,7 +734,7 @@ string GetRowBuffer()
 
 ### 연결
 
-다음 예제는 환경 변수 비밀번호로 연결하고 LOG table을 생성·입력·조회한 뒤 삭제합니다.
+다음 예제는 환경 변수 비밀번호로 연결하고 LOG 테이블을 생성·입력·조회한 뒤 삭제합니다.
 
 ```csharp
 using System;
@@ -774,12 +778,12 @@ finally
 
 ### 파라미터 바인딩
 
-`MachParameterCollection`은 `:name`, `@name`, `?name` marker를 처리합니다. 공통 SQL
+`MachParameterCollection`은 `:name`, `@name`, `?name` 자리표시자를 처리합니다. 공통 SQL
 문법과 같은 `:name` 형식을 권장합니다. 이름 검색은 대소문자를 구분하지 않으며, 같은
 이름이 반복되면 한 값이 모든 위치에 적용됩니다.
 
 `:name` 형식은 Machbase 8.7.0 서버 연결에서 사용합니다. 이전 서버에 연결하면
-`MachException`을 반환합니다. `@name`과 `?name`은 기존 provider 호환 형식입니다.
+`MachException`을 반환합니다. `@name`과 `?name`은 기존 프로바이더 호환 형식입니다.
 
 ```csharp
 var password = Environment.GetEnvironmentVariable("MACHBASE_PASSWORD")
@@ -874,13 +878,13 @@ finally
 
 ### ARRAY와 선택 컬럼 Append
 
-Machbase DBMS 8.7.0 full/legacy provider는 ARRAY를 `object[]`로 반환합니다. element NULL은
-배열 안의 `null`, whole NULL은 `IsDBNull()`로 구분합니다.
+Machbase DBMS 8.7.0 full/legacy 프로바이더는 ARRAY를 `object[]`로 반환합니다. 요소 NULL은
+배열 안의 `null`, 배열 전체 NULL은 `IsDBNull()`로 구분합니다.
 
-`AppendOpen()`의 `IList<string>` overload에는 일반 컬럼이나
+`AppendOpen()`의 `IList<string>` 오버로드에는 일반 컬럼이나
 `ARRAY_COLUMN[position]`을 전달할 수 있습니다. 행마다 다른 위치를 입력할 때는
-`MachSparseArray`를 whole ARRAY target에 전달합니다. indexed target과
-`MachSparseArray.Set()`의 position은 0-based입니다.
+`MachSparseArray`를 배열 전체 대상에 전달합니다. 요소 위치를 지정한 대상과
+`MachSparseArray.Set()`의 위치는 0부터 시작하는 인덱스입니다.
 
 ```csharp
 using var append = new MachCommand(connection);
@@ -902,20 +906,20 @@ finally
 }
 ```
 
-빈 `MachSparseArray`는 all-element-NULL ARRAY이고 `DBNull.Value`는 whole NULL입니다.
-overload와 전체 검증 예제는
+빈 `MachSparseArray`는 모든 요소가 NULL인 ARRAY이고 `DBNull.Value`는 배열 전체 NULL입니다.
+오버로드와 전체 검증 예제는
 [Sparse ARRAY와 선택 컬럼 Append API](../data-input-load-export/array-append/)를
 참고하십시오.
 
 ### Error Delegator 설정
 
-Append 중 row 오류는 위 예제처럼 writer를 연 직후 delegate로 받고, close 뒤 success/failure
-count를 확인합니다.
+Append 중 행 오류는 위 예제처럼 writer를 연 직후 delegate로 받고, close 뒤 success/failure
+건수를 확인합니다.
 
 ### 자동 AppendFlush 설정
 
-AppendOpen은 자동 flush thread를 시작합니다. 끄려면 이미 열린 writer에 대해
-`connection.SetConnectAppendFlush(false)`를 호출합니다. 자동 thread 오류가 즉시 public
+AppendOpen은 자동 flush 스레드를 시작합니다. 끄려면 이미 열린 writer에 대해
+`connection.SetConnectAppendFlush(false)`를 호출합니다. 자동 스레드 오류가 즉시 공개
 exception으로 전달되지 않을 수 있으므로 명시 flush·close와 callback/count 확인을 유지합니다.
 
 ## 프로토콜 4.0-full 전체 API {#full-provider-apis-protocol-40-full}
@@ -923,18 +927,19 @@ exception으로 전달되지 않을 수 있으므로 명시 flush·close와 call
 `PROTOCOL=4.0-full`을 사용하면 확장된 ADO.NET 표면을 사용할 수 있습니다. 8.0.55 소스
 패키지에서 4.0 limited connector는 3.1.3, 4.0-full connector는 3.2.2입니다.
 설치된 Linux 패키지는 `$MACHBASE_HOME/lib/` 아래에 net50 flavor만 포함할 수 있으므로,
-다른 target framework가 필요하면 소스 빌드 또는 NuGet restore 산출물을 사용하십시오.
+다른 대상 framework가 필요하면 소스 빌드 또는 NuGet 복원 산출물을 사용하십시오.
 
 - `UniMachNetConnector-net50-8.0.55.dll` – DBMS Standard Linux 패키지에서 흔히 설치되는 universal entry point
-- `machNetConnector-40-net50-3.1.3.dll` – protocol 4.0 limited connector
-- `machNetConnector-40-net50-3.2.2.dll` – protocol 4.0-full connector
+- `machNetConnector-40-net50-3.1.3.dll` – 프로토콜 4.0 limited connector
+- `machNetConnector-40-net50-3.2.2.dll` – 프로토콜 4.0-full connector
 
 ### 4.0-full에서 추가된 주요 타입
 
 - `MachDbProviderFactory`: `Mach.Data` invariant 이름으로 프로바이더를 등록/생성할 수 있습니다.
 - `MachConnectionStringBuilder`: 키워드 오타 없이 커넥션 문자열을 구성할 수 있습니다.
 - `MachDataAdapter`, `MachRowUpdating`, `MachRowUpdated`: `DataTable`/`DataSet` 기반 워크플로를 지원합니다.
-- `MachCommandBuilder`: SELECT 문으로부터 INSERT/DELETE(조건에 따라 UPDATE) 구문을 자동 생성합니다. 로그·태그 테이블은 UPDATE를 허용하지 않는다는 점에 유의하십시오.
+- `MachCommandBuilder`: SELECT 문으로부터 INSERT/DELETE(조건에 따라 UPDATE) 구문을 자동
+  생성합니다. 자동 생성 SQL이 대상 테이블의 DML 제약에 맞는지 실행 전에 확인합니다.
 
 ### 전체 API 활성화
 
@@ -947,7 +952,11 @@ using var connection = new MachConnection(connString);
 connection.Open();
 ```
 
-UPDATE/DELETE가 필요한 경우에는 Lookup/Volatile 테이블을 사용하고, 로그·태그 테이블은 Append 전용으로 유지하십시오.
+UPDATE/DELETE가 필요한 경우에는 테이블 타입별 조건과 드라이버의 SQL 생성 범위를 함께
+확인합니다. LOG는 UPDATE를 지원하지 않습니다. Machbase DBMS 8.7.0 Standard Edition의
+TAG UPDATE는 NAME과 BASETIME 조건을 요구하므로 범용 CommandBuilder가 만든 SQL에
+의존하지 말고 [TAG UPDATE 구문](/dbms/reference/sql/syntax-dictionary-sql/dml-syntax/tag-data-update-syntax/)에
+맞는 명령과 바인딩을 사용합니다.
 
 ### 커넥션 문자열 빌더 사용
 
@@ -969,8 +978,8 @@ connection.Open();
 
 ### 예시: MachDataAdapter로 SQL INSERT
 
-Lookup table을 `DataTable`로 가져와 새 row를 추가하면 command builder가 일반 SQL INSERT를
-실행합니다. 이 경로는 Append protocol이 아닙니다.
+Lookup 테이블을 `DataTable`로 가져와 새 행을 추가하면 command builder가 일반 SQL INSERT를
+실행합니다. 이 경로는 Append 프로토콜이 아닙니다.
 
 ```csharp
 using Mach.Data.MachClient;
@@ -1016,7 +1025,7 @@ using var drop = new MachCommand("DROP TABLE dotnet_lookup_demo", connection);
 drop.ExecuteNonQuery();
 ```
 
-> **Tip**: 전송 전 SQL을 확인하려면 위처럼 `Update()` 전에 event를 구독하십시오.
+> **Tip**: 전송 전 SQL을 확인하려면 위처럼 `Update()` 전에 이벤트를 구독하십시오.
 
 ### 예시: DbProviderFactory 활용
 

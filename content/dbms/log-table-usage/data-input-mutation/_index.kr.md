@@ -32,8 +32,9 @@ SELECT _arrival_time, event_time, device, message, value
 DROP TABLE input_log;
 ```
 
-재현 테스트처럼 수신 시각을 고정해야 하는 경우에만 `_arrival_time`을 명시합니다. 운영
-애플리케이션의 실제 이벤트 시각은 별도 `DATETIME` 컬럼에 저장하십시오.
+데이터 이관이나 재현 테스트에서 `_arrival_time`을 명시해야 하면 입력 시각의 순서와 해당
+입력 도구의 제약을 확인합니다. 일반 수집 애플리케이션의 실제 이벤트 시각은 별도
+`DATETIME` 컬럼에 저장하십시오.
 
 ## Append API
 

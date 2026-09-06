@@ -5,8 +5,8 @@ weight: 40
 toc: true
 ---
 
-AUTH KEY 인증은 서버에 공개키를 등록하고 클라이언트가 보관한 개인키로 challenge에 서명하는
-인증 방식입니다. 장기 비밀번호를 애플리케이션이 직접 사용하는 빈도를 줄일 수 있지만, 개인키
+AUTH KEY 인증은 서버에 공개키를 등록하고 클라이언트가 보관한 개인키로 서버의 인증 요청값
+(challenge)에 서명하는 방식입니다. 비밀번호 대신 개인키를 사용할 수 있지만, 개인키
 보호와 교체 절차는 별도로 운영해야 합니다. 연결마다 `AUTH_MODE=PASSWORD` 또는
 `AUTH_MODE=CHALLENGE`를 선택합니다.
 
@@ -97,8 +97,8 @@ ALTER USER app_user
   ALTER AUTH KEY ID 3 VALID_BEFORE='2048-06-30';
 ```
 
-만료일을 연장하기 전에 키 사용 주체와 보관 상태를 다시 확인합니다. 단순 연장을 키 교체의
-대신으로 사용하지 마십시오.
+만료일을 연장하기 전에 키 사용 주체와 보관 상태를 다시 확인합니다. 유효기간을 연장해도
+키 자체가 바뀌지는 않으므로 교체 주기는 별도로 관리합니다.
 
 <a id="delete-auth-key"></a>
 <a id="user-auth-key-delete-auth-key"></a>

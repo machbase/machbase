@@ -14,7 +14,7 @@ network, binary, text, and JSON data types.
 and `NUMBER` are aliases.
 
 ```sql
-CREATE RDB TABLE invoice (
+CREATE TRANSACTION TABLE invoice (
     id     LONG PRIMARY KEY,
     amount DECIMAL(18,2),
     rate   NUMERIC(7,4)
@@ -24,7 +24,7 @@ CREATE RDB TABLE invoice (
 `DECIMAL` means `DECIMAL(10,0)`, and `DECIMAL(M)` means `DECIMAL(M,0)`.
 Precision ranges from 1 through 65; scale ranges from 0 through 30 and cannot
 exceed precision. DECIMAL columns are supported by LOG, TAG, VOLATILE, LOOKUP,
-and RDB tables.
+and TRANSACTION tables. TRANSACTION tables are available in Standard Edition only.
 
 See [DECIMAL and NUMERIC Fixed-Point Types](decimal-numeric-fixed-point/) for
 rounding, overflow, indexing, expressions, and client mappings.

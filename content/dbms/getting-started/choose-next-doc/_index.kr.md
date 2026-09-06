@@ -5,24 +5,33 @@ weight: 40
 toc: true
 ---
 
-빠른 시작을 마쳤다면 사용 목적에 맞는 다음 문서를 선택합니다. 산업 IoT 센서 값을 저장하려는 경우, 금융 틱 데이터를 적재하려는 경우, 로그를 분석하려는 경우, 애플리케이션을 연결하려는 경우 각각 읽어야 할 문서가 다릅니다. 매뉴얼은 기능 이름보다 설계 질문을 기준으로 읽는 것이 효과적입니다.
+빠른 시작에서는 한 행을 저장하고 조회했습니다. 실제 시스템을 만들 때는 데이터의
+형태뿐 아니라 변경 방식, 시간 기준, 조회 패턴과 보관 기간을 함께 결정합니다.
 
-다음 문서를 고를 때 네 가지 질문을 던져 보십시오. 데이터가 얼마나 자주 들어오는지, 시간 범위로 얼마나 자주 조회하는지, 원본을 얼마나 오래 보관해야 하는지, 집계나 롤업이 필요한지. 이 질문에 답하면 어떤 테이블과 어떤 기능을 먼저 공부할지 분명해집니다.
+## 설계 전에 답할 질문
+
+- 같은 대상의 값을 시간에 따라 누적합니까, 현재 상태를 덮어씁니까?
+- 측정·발생 시각과 서버 수신 시각 중 어떤 시각이 조회의 기준입니까?
+- 특정 태그의 구간 조회, 여러 컬럼 검색, 키 조회와 조인 중 무엇을 자주 수행합니까?
+- 늦게 도착하거나 중복된 데이터, 잘못된 값을 어떻게 처리합니까?
+- 원본과 집계는 각각 얼마나 오래 필요하며, 재시작 후 반드시 남아야 하는 데이터는 무엇입니까?
+- 필요한 기능을 어느 Edition에서 사용할 수 있습니까?
 
 ## 다음 경로
 
 | 해야 할 일 | 다음 문서 |
-| --- | --- |
-| 산업 IoT 센서, 설비, 계측값 저장 | [TAG 테이블 설계](/dbms/tag-table-usage/) |
-| 로그, 이벤트, 금융 틱 수신 이력 저장 | [LOG 테이블 설계](/dbms/log-table-usage/) |
-| 장비명, 코드, 매핑 정보 관리 | [LOOKUP 설계](/dbms/lookup-table-usage/), [TRANSACTION 설계](/dbms/rdb-table-usage/), [LOOKUP과 TRANSACTION 비교](/dbms/data-modeling-table-design/table-types-selection-type/#comparison-rdb-vs-lookup) |
-| SQL 문법 확인 | [SQL 레퍼런스](/dbms/reference/sql/), [SQL 입력](/dbms/development-tools-integration/data-input-load-export/#sql) |
-| 애플리케이션 연결 | [애플리케이션 연동](/dbms/development-tools-integration/), [드라이버 가이드](/dbms/development-tools-integration/selection-integration-method/) |
-| 운영 설정 변경 | [운영, 설정, 복구](/dbms/operations-configuration-recovery/) |
+|---|---|
+| 시간 이력·저장·조회 원리 이해 | [핵심 개념](../../core-concepts/) |
+| 테이블 유형과 변경 정책 결정 | [테이블 타입 선택과 스키마 설계](../../data-modeling-table-design/) |
+| 센서·계측 이력 저장 | [TAG 테이블 활용](../../tag-table-usage/) |
+| 이벤트와 로그 수집·검색 | [LOG 테이블 활용](../../log-table-usage/) |
+| 장기간의 태그 통계 조회 | [TAG 테이블을 위한 ROLLUP 활용](../../tag-rollup-usage/) |
+| 기준 정보와 업무 데이터 관리 | [LOOKUP](../../lookup-table-usage/), [TRANSACTION](../../rdb-table-usage/) |
+| 다시 생성할 수 있는 상태 관리 | [VOLATILE 테이블 활용](../../volatile-table-usage/) |
+| 애플리케이션에서 입력·조회 | [개발 및 애플리케이션 연동](../../development-tools-integration/) |
+| SQL 문법과 타입 확인 | [SQL 레퍼런스](../../reference/sql/) |
+| 운영·백업·권한 설정 | [운영, 설정, 복구](../../operations-configuration-recovery/), [계정과 권한](../../security-access-control/) |
 
-## 다음 문서에서 확인할 것
-
-- TAG 문서: `NAME`, `BASETIME`, 값 컬럼을 기준으로 센서 계측값을 모델링하는 방법
-- LOG 문서: 이벤트와 로그를 시간 순서로 계속 추가하는 설계
-- LOOKUP/TRANSACTION 문서: 기준 정보, 매핑 정보, 조인 대상 데이터의 분리 방법
-- 데이터 입력 문서: 실습용 `INSERT`가 아닌 운영 수집에 사용하는 Append API, machloader, Collector 경로
+처음에는 대표 데이터와 자주 쓰는 조회를 정해 작은 규모로 실행합니다. 입력 속도, 조회
+지연과 저장 공간을 측정한 뒤 수집 방식, 인덱스, 집계와 보관 정책을 조정합니다.
+[시나리오 가이드](../../scenario-guides/)는 여러 테이블과 기능을 함께 사용하는 예제를 제공합니다.

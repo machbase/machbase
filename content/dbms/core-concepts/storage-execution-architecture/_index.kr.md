@@ -4,258 +4,178 @@ title: '2.2 저장 및 실행 구조'
 weight: 20
 toc: true
 ---
-Machbase DBMS 내부에서 데이터가 어떻게 저장되고 SQL이 어떻게 실행되는지를 개념 수준에서 다룹니다. 성능 튜닝과 시스템 운영에서 올바른 판단을 내리기 위한 배경지식입니다.
 
-- **[Machbase 아키텍처 개요](/dbms/core-concepts/storage-execution-architecture/#architecture-machbase)** -- SQL 엔진, 저장 관리자, 프로세스 관리자의 역할과 Standard/Cluster Edition의 구조적 차이
-- **[컬럼형 저장과 압축](/dbms/core-concepts/storage-execution-architecture/#storage-columnar-compression-column)** -- 행 지향 저장과의 차이, 시계열 데이터에서 컬럼 압축이 효과적인 이유, 파티션 구조
-- **[인덱싱 기본 원리](/dbms/core-concepts/storage-execution-architecture/#indexing-basics)** -- 테이블 유형별 인덱스 특성(TAG 파티션 인덱스, LOG LSM 인덱스, VOLATILE Red-Black 트리)
-- **[Cache와 실행 계획 개념](/dbms/core-concepts/storage-execution-architecture/#execution-concepts-plan-cache)** -- SQL 실행 과정과 Plan Cache, PVO Cache의 역할
-
+조회 시간은 SQL 문장의 길이만으로 결정되지 않습니다. 얼마나 많은 데이터를 읽는지,
+조건으로 읽을 범위를 얼마나 줄일 수 있는지, 정렬·조인·집계에 어떤 처리가 필요한지가
+중요합니다. 이 절에서는 저장, 인덱스와 캐시를 각각 어떤 비용을 줄이는 기술인지
+설명합니다.
 
 <a id="architecture-machbase"></a>
 
 ## Machbase 아키텍처 개요
 
-내부 구조를 이해하면 테이블 설계, 쿼리 작성, 성능 튜닝에서 더 나은 판단을 내릴 수 있습니다.
-
-### 주요 구성 요소
-
-Machbase는 세 가지 핵심 구성 요소로 이루어져 있습니다.
-
-**쿼리 프로세서 (QP, Query Processor)**
-
-클라이언트로부터 SQL 문장을 수신해 파싱하고, 실행 계획을 생성한 뒤 저장 관리자에 요청을 전달합니다. Plan Cache를 통해 반복 쿼리의 파싱 오버헤드를 줄입니다.
-
-**저장 관리자 (SM, Storage Manager)**
-
-실제 데이터의 읽기와 쓰기를 담당합니다. 컬럼 단위로 데이터를 파티션에 저장하고, 인덱스를 관리하며, 압축을 수행합니다. 시계열 데이터의 핵심 성능은 SM의 컬럼형 파티션 구조에서 나옵니다.
-
-TRANSACTION 테이블은 관계형 row 데이터를 다루기 위해 별도 TRANSACTION 저장 경로를 사용합니다. 사용자는 같은
-Machbase SQL로 접근하지만, LOG/TAG의 컬럼형 시계열 저장 구조와 TRANSACTION 테이블의 row/index 저장
-구조는 구분해서 이해해야 합니다.
-
-**프로세스 관리자 (PM, Process Manager)**
-
-서버의 생명주기(기동, 종료)와 내부 배경 작업(ROLLUP 집계, Retention 삭제, 인덱스 병합 등)을 관리합니다.
+사용자는 `machsql`이나 SDK를 통해 서버에 입력·조회 요청을 보냅니다. 서버는 SQL의 문법,
+객체와 권한을 확인하고 실행 방법을 결정한 뒤 저장 데이터에 접근해 결과를 반환합니다.
+저장·실행 방식은 테이블 유형과 Edition에 따라 다릅니다.
 
 ### Standard Edition 구조
 
-Standard Edition은 QP, SM, PM을 모두 포함하는 단일 `machbase` 프로세스로 동작합니다.
+Standard Edition은 단일 데이터베이스 서버에서 SQL 처리와 데이터 저장을 수행합니다.
+LOG·TAG의 시계열 입력뿐 아니라 TRANSACTION의 관계형 변경, LOOKUP·VOLATILE의
+기준 정보와 상태 관리도 각각의 테이블 특성에 맞는 경로로 처리합니다.
 
+```text
+클라이언트: machsql 또는 SDK
+          │ 입력·조회 요청
+          ▼
+Machbase DBMS 서버
+  SQL 분석과 실행 계획
+  테이블별 저장·인덱스 접근
+  메모리 버퍼와 백그라운드 처리
+          │
+          ▼
+테이블 유형에 따른 저장 데이터
 ```
-클라이언트 (machsql, SDK, ODBC/JDBC)
-        │
-        ▼
-   [machbase 프로세스]
-   ┌──────────────────────────────┐
-   │  Query Processor (QP)       │
-   │  · SQL 파싱 / 최적화         │
-   │  · Plan Cache                │
-   │                              │
-   │  Storage Manager (SM)        │
-   │  · 컬럼형 파티션 저장         │
-   │  · 인덱스 관리               │
-   │  · 압축                      │
-   │                              │
-   │  Process Manager (PM)        │
-   │  · ROLLUP / Retention / 병합 │
-   └──────────────────────────────┘
-        │
-        ▼
-   [디스크: 컬럼 파티션 파일]
-```
+
+이 그림은 역할을 나타낸 개념도입니다. 모든 요청이 같은 저장 경로를 거치거나 API 호출
+즉시 디스크 파일에 기록된다는 의미는 아닙니다.
 
 ### Cluster Edition 구조
 
-Cluster Edition은 여러 노드 유형이 역할을 분담합니다.
+Cluster Edition은 여러 노드가 역할을 나누어 수행합니다. 일반적인 애플리케이션 SQL
+접속은 Broker를 통해 이루어지며, Warehouse는 시계열 데이터를 저장하고 쿼리를 실행합니다.
+Coordinator는 클러스터 메타데이터와 노드 상태를 관리하고, Lookup은 기준 정보 처리를,
+Deployer는 배포와 노드 관리를 담당합니다.
 
-```
-클라이언트
-    │
-    ▼
-[Broker 노드]  ←── [Coordinator 노드]
-    │                (메타데이터, 노드 감시)
-    ├──────────────────────────────┐
-    ▼                              ▼
-[Warehouse 노드 1]      [Warehouse 노드 2]
-(데이터 샤드 A)          (데이터 샤드 B)
-```
+데이터를 여러 그룹에 분산하는 것은 처리량과 용량을 나누는 일이고, 같은 그룹에서
+복제하는 것은 장애에 대비하는 일입니다. 두 목적은 다릅니다. 노드를 추가한다고 모든
+쿼리가 같은 비율로 빨라지거나 모든 장애를 자동으로 극복하는 것은 아닙니다.
 
-클라이언트는 항상 Broker에 접속합니다. Broker는 Coordinator로부터 클러스터 메타데이터를 받아 쿼리를 해당 데이터를 보유한 Warehouse 노드로 라우팅합니다. Deployer 노드는 소프트웨어 배포와 노드 초기화에 사용하며, 일상 운영에서는 직접 접촉하지 않습니다.
+구성별 기능 차이는 [Edition 개념](../concepts-edition/)에서, 실제 배포와 장애 대응은
+[Cluster 설치](../../installation-deployment-upgrade/cluster-edition/)와
+[Cluster 운영](../../operations-configuration-recovery/cluster/)에서 확인합니다.
 
-LOOKUP 테이블 처리를 위한 Lookup 노드도 Cluster Edition 구성에 포함됩니다. Warehouse가 대용량 시계열 데이터를 나누어 처리하고, Lookup 노드는 클러스터 전역에서 참조되는 기준 정보 처리를 담당합니다.
+### 입력과 조회의 흐름
 
-### 데이터 흐름: 쓰기
+입력은 대상 테이블·컬럼 확인, 값 변환과 검증, 데이터 전달·저장 단계로 생각할 수 있습니다.
+SQL과 Append API는 처리 결과를 확인하는 방식이 다르므로 애플리케이션은 선택한 경로의
+오류 처리와 완료 조건을 따라야 합니다.
 
-1. 클라이언트가 SQL INSERT 또는 Append API로 데이터를 전송
-2. QP가 대상 테이블과 컬럼을 파악해 SM에 전달
-3. LOG/TAG 테이블이면 SM이 해당 시간 파티션의 컬럼 파일에 데이터를 append
-4. 충분한 데이터가 쌓이면 배경 스레드가 압축 및 인덱스 병합 수행
-
-TRANSACTION 테이블의 `INSERT`/`UPDATE`/`DELETE`는 append-only 시계열 경로가 아니라 TRANSACTION 저장 경로에서
-행 단위 DML로 처리됩니다.
-
-### 데이터 흐름: 읽기
-
-1. 클라이언트가 SELECT 쿼리 전송
-2. QP가 파싱 후 실행 계획 수립 (Plan Cache 활용)
-3. LOG/TAG 테이블이면 SM이 시간 범위에 해당하는 파티션만 선택 (파티션 pruning)
-4. 필요한 컬럼 파일만 읽어 집계 또는 필터 적용
-5. QP가 결과를 클라이언트에 반환
-
-### 다음 읽을 내용
-
-- [컬럼형 저장과 압축](/dbms/core-concepts/storage-execution-architecture/#storage-columnar-compression-column) -- SM의 저장 구조 상세
-- [인덱싱 기본 원리](/dbms/core-concepts/storage-execution-architecture/#indexing-basics) -- 테이블 유형별 인덱스 구조
-- [Cache와 실행 계획 개념](/dbms/core-concepts/storage-execution-architecture/#execution-concepts-plan-cache) -- QP의 캐시와 실행 계획 관리
-- [Standard Edition과 Cluster Edition 차이](/dbms/core-concepts/concepts-edition/#differences-standard-edition-cluster) -- 두 Edition의 선택 기준
+조회는 SQL 분석과 실행 계획 수립, 대상 데이터 접근, 조건 평가와 집계·조인·정렬,
+결과 반환으로 이어집니다. 모든 데이터가 반드시 같은 순서로 처리되는 것은 아니며
+실제 실행 계획에 따라 접근 순서가 달라집니다.
 
 <a id="storage-columnar-compression-column"></a>
 
 ## 컬럼형 저장과 압축
 
-LOG/TAG 테이블의 저장 성능과 압축 효율은 컬럼 지향(columnar) 저장 구조에서 비롯됩니다. 시계열 데이터의 특성이 컬럼형 저장과 만날 때 왜 뛰어난 성능이 나오는지를 이해하면, 테이블 설계와 쿼리 최적화 방향을 더 명확하게 잡을 수 있습니다. TRANSACTION 테이블은 별도 row/index 저장 구조를 사용하므로 여기서 설명하는 컬럼형 저장을 그대로 적용하지 않습니다.
+### 행 지향과 컬럼 지향
 
-### 행 지향 vs 컬럼 지향
+행 지향 저장은 한 행에 속한 값을 함께 다루는 방식이고, 컬럼 지향 저장은 같은 컬럼의
+값을 묶어 다루는 방식입니다. 아래 그림은 두 방식의 차이를 나타낸 예시이며
+실제 파일 배치를 그대로 표현한 것은 아닙니다.
 
-전통적인 RDBMS는 행 지향(row-oriented) 저장을 사용합니다. 한 행의 모든 컬럼 값이 디스크에 연속으로 기록됩니다.
+```text
+논리적 행:
+  (시각1, 센서A, 23.1)
+  (시각2, 센서A, 23.5)
+  (시각3, 센서B, 18.0)
 
-```
-행 지향 저장:
-[time1, sensor_A, 23.1] [time2, sensor_A, 23.5] [time3, sensor_B, 18.0] ...
-```
-
-컬럼 지향 저장에서는 같은 컬럼의 값들이 연속으로 기록됩니다.
-
-```
-컬럼 지향 저장:
-[time1, time2, time3, ...] | [sensor_A, sensor_A, sensor_B, ...] | [23.1, 23.5, 18.0, ...]
+행 지향:    [시각1, 센서A, 23.1] [시각2, 센서A, 23.5] ...
+컬럼 지향:  [시각1, 시각2, 시각3] [센서A, 센서A, 센서B] [23.1, 23.5, 18.0]
 ```
 
-이 차이는 시계열 집계 쿼리에서 결정적입니다. "모든 센서의 온도 평균"을 계산할 때, 행 지향은 각 행 전체를 읽어야 하지만 컬럼 지향은 온도 컬럼 파일만 읽으면 됩니다.
+Machbase의 LOG·TAG 시계열 저장은 컬럼 단위 접근과 압축을 활용합니다. 많은 행에서 일부
+컬럼만 읽는 분석에서는 읽을 데이터의 양을 줄이는 데 도움이 됩니다. 다만 온도 평균을
+조회하더라도 센서·시각 조건이 있으면 해당 조건을 평가할 데이터도 필요합니다.
 
-### 시계열 데이터에서 압축이 효과적인 이유
+행 지향 시스템도 인덱스나 파티션을 이용해 필요한 범위만 읽을 수 있습니다.
+“행 지향은 항상 전체 행을 읽고 컬럼 지향은 언제나 빠르다”는 식으로 비교하지 말고,
+읽을 행·컬럼 수와 접근 경로를 함께 살펴보십시오. TRANSACTION의 관계형 저장이나
+LOOKUP·VOLATILE의 메모리 특성을 LOG·TAG와 같은 구조로 해석해서도 안 됩니다.
 
-컬럼형 저장이 시계열 데이터에서 특히 높은 압축률을 달성하는 이유는 두 가지입니다.
+### 압축이 효과적인 조건
 
-**값의 유사성**
+같은 컬럼에는 같은 타입의 값이 모이고, 센서 값이나 시각에는 반복되거나 비슷한 패턴이
+나타날 수 있습니다. 이런 특성은 압축에 유리합니다. 반면 잡음이 큰 값, 불규칙한 문자열과
+입력 순서가 섞인 데이터는 다른 결과를 보일 수 있습니다.
 
-같은 센서가 짧은 간격으로 측정한 온도값은 서로 비슷합니다(예: 23.1, 23.2, 23.1, 23.0). 이런 값들이 연속 저장되면 델타 인코딩이나 런-렝스 인코딩 같은 압축 알고리즘이 높은 비율로 압축합니다.
+시계열 시각이 반드시 단조 증가하는 것은 아닙니다. 늦게 도착한 측정값과 여러 수집원의
+입력이 섞일 수 있습니다. 실제 압축률과 처리 성능은 타입, 값의 분포, 입력 순서와 설정에
+따라 측정해야 하며 특정 압축 알고리즘이나 비율을 전제하지 않습니다.
 
-**타임스탬프의 순차성**
+### 파티션과 읽기 범위
 
-시계열 타임스탬프는 단조 증가합니다. 연속된 타임스탬프 간의 차이(델타)가 일정한 경우가
-많아 델타 기반 압축을 적용하기에 적합합니다.
+파티션은 데이터를 관리 가능한 부분으로 나누는 단위입니다. 조회 조건과 저장된 범위
+정보를 활용해 관련 없는 부분을 건너뛰면 읽기 작업을 줄일 수 있습니다. 이를 파티션
+가지치기(partition pruning)라고 합니다.
 
-실제 압축률은 데이터 타입, 값의 반복성, 입력 순서와 분포에 따라 달라집니다.
-
-### 시간 기반 파티셔닝
-
-데이터를 시간 기준으로 파티션에 나누어 저장합니다. 파티션은 일정 시간 범위의 데이터를 담는 독립적인 컬럼 파일 집합입니다.
-
-시간 범위 조건(`WHERE time BETWEEN ... AND ...`)이 포함된 쿼리는 해당 범위에 속하는 파티션만 읽습니다. 이를 파티션 pruning이라 하며, 전체 데이터의 일부만 I/O하므로 조회 성능이 크게 향상됩니다.
-
-```
-[파티션 1: 2026-07-01]  [파티션 2: 2026-07-02]  [파티션 3: 2026-07-03]
-       ▲ 이 파티션만 읽음
-WHERE time >= '2026-07-01' AND time < '2026-07-02'
-```
-
-### 읽기 성능 이점 요약
-
-| 항목 | 행 지향 (RDBMS) | 컬럼 지향 (Machbase) |
-| --- | --- | --- |
-| 집계 쿼리 I/O | 전체 행 스캔 | 필요 컬럼만 읽음 |
-| 압축 | 행 단위 데이터 특성에 따라 결정 | 컬럼별 반복 패턴을 활용 |
-| 시간 범위 조회 | 전체 스캔 | 파티션 pruning |
-| 단건 키 조회 | 빠름 | 상대적으로 느림 |
-
-컬럼 지향 저장은 특정 키의 단건 조회보다 시간 범위 집계와 필요한 컬럼만 읽는 분석 쿼리에
-적합합니다.
-
-### 다음 읽을 내용
-
-- [인덱싱 기본 원리](/dbms/core-concepts/storage-execution-architecture/#indexing-basics) -- 컬럼 저장 위에서 동작하는 인덱스 구조
-- [Machbase 아키텍처 개요](/dbms/core-concepts/storage-execution-architecture/#architecture-machbase) -- 저장 관리자(SM)와 데이터 흐름
-- [기존 RDBMS와의 차이](/dbms/core-concepts/concepts/#differences-rdbms) -- 저장 방식 차이의 전체 맥락
+LOG·TAG의 저장 단위가 사용자가 지정한 하루·한 달과 반드시 일치하는 것은 아닙니다.
+태그와 축의 조건, 데이터 분포와 테이블별 저장 구조에 따라 실제 접근 범위가 달라집니다.
+시간 조건을 작성했다는 이유만으로 필요한 데이터만 읽는다고 단정하지 말고 실행 계획과
+측정 결과를 확인합니다.
 
 <a id="indexing-basics"></a>
 
 ## 인덱싱 기본 원리
 
-테이블 타입은 저장 역할에 맞는 서로 다른 접근 구조를 사용합니다.
+인덱스는 조건에 맞는 데이터를 찾는 접근 경로입니다. 찾을 대상이 전체 데이터의 작은
+부분이면 도움이 될 수 있지만, 대부분의 행을 읽는 집계에서는 다른 경로가 유리할 수
+있습니다. 인덱스는 저장 공간과 입력·변경 시 관리 비용도 필요합니다.
 
-| 범주 | 개념 |
+| 테이블 유형 | 접근 경로를 생각할 때의 기준 |
 |---|---|
-| TAG | 태그와 축 범위를 이용해 시계열 partition을 제한 |
-| LOG | 수신 시간 경로와 필요 시 생성한 검색 index를 사용 |
-| TRANSACTION | primary·unique·일반 index로 관계형 key를 조회 |
-| LOOKUP·VOLATILE | memory-resident key와 보조 index를 사용 |
+| TAG | 태그 이름과 시간·거리 축의 범위 |
+| LOG | `_arrival_time` 조건과 지원하는 검색 인덱스 |
+| TRANSACTION | PRIMARY KEY, UNIQUE와 일반 인덱스 |
+| LOOKUP·VOLATILE | 메모리에 적재된 키와 지원하는 보조 인덱스 |
 
-이 장은 저장 구조의 차이만 설명합니다. 컬럼·key·index 설계는 [스키마 객체 정의](../../data-modeling-table-design/schema-objects-definition/)를, 실제 생성과 측정은 [인덱스 튜닝](../../performance-tuning/index-tuning/)을 참고하십시오. Min-Max·PVO Cache의 설정과 기본값은 [캐시와 메모리 튜닝](../../performance-tuning/cache-tuning-memory/)을 정본으로 사용합니다.
+예를 들어 “전체 센서의 한 달 평균”과 “센서 A의 최근 1분 값”은 읽을 데이터의 비율이
+다릅니다. 같은 테이블이라도 두 쿼리에 같은 성능을 기대하기 어렵습니다.
+조인에서는 각 입력의 행 수와 조인 조건도 중요합니다.
+
+지원 인덱스와 제한은 [스키마 객체 정의](../../data-modeling-table-design/schema-objects-definition/)에서,
+측정과 조정 방법은 [인덱스 튜닝](../../performance-tuning/index-tuning/)에서 확인합니다.
 
 <a id="execution-concepts-plan-cache"></a>
 
 ## Cache와 실행 계획 개념
 
-반복적인 SQL 처리 비용을 줄이기 위해 여러 레벨의 캐시를 운용합니다. 각 캐시의 역할을 이해하면 시스템 설정 조정과 성능 문제 진단에 도움이 됩니다.
-
 ### SQL 실행 과정
 
-SQL 문장이 Machbase에 도달해 결과가 반환되기까지 다음 단계를 거칩니다.
-
-```
-클라이언트 SQL
-      │
-      ▼
-  1. 파싱 (Parsing)
-     SQL 문장을 파스 트리로 변환
-      │
-      ▼
-  2. 최적화 (Optimization)
-     파스 트리를 분석해 최적 실행 경로 결정
-     (인덱스 사용 여부, 파티션 pruning 범위 등)
-      │
-      ▼
-  3. 실행 계획 생성 (Plan Generation)
-     최적화 결과를 실행 가능한 계획으로 변환
-      │
-      ▼
-  4. 실행 (Execution)
-     저장 관리자(SM)에 데이터 읽기/쓰기 요청
-      │
-      ▼
-  결과 반환
-```
-
-파싱과 최적화는 동일한 SQL이 반복 실행될 때마다 중복 수행될 수 있으며, 캐시는 이 중복 비용을 제거합니다.
+서버는 SQL의 문법과 타입·객체를 확인하고, 조건과 인덱스 등으로 실행 가능한 접근
+경로를 정한 뒤 실제 데이터를 처리합니다. 실행 계획은 이 처리 방법을 나타냅니다.
+계획을 만드는 비용과 계획에 따라 데이터를 읽는 비용은 서로 다릅니다.
 
 ### 실행 계획 재사용과 PVO Cache
 
-공개 설정과 진단 뷰가 제공되는 실행 계획 cache는 PVO Statement Cache입니다. 동일 SQL의
-파싱·검증·최적화 결과와 plan을 재사용하며 SELECT 결과 row를 저장하지 않습니다. 별도의
-`Plan Cache`를 독립 기능이나 설정으로 가정하지 마십시오. 설정, hit·eviction과 무효화 확인은
-[PVO Cache와 메모리 튜닝](/dbms/performance-tuning/cache-tuning-memory/#pvo-cache)을
-참고하십시오.
+PVO Statement Cache는 재사용 가능한 SQL의 파싱·검증·최적화 결과와 실행 계획을
+재사용해 반복 준비 비용을 줄입니다. 조회 결과 행을 저장하는 캐시가 아니므로 계획을
+재사용해도 데이터를 읽고 조건을 평가하는 작업은 필요합니다.
+
+Min-Max Cache처럼 저장 데이터의 범위 정보를 활용하는 캐시는 읽을 대상을 줄이는
+목적을 가집니다. 실행 계획 캐시와 데이터 접근용 캐시를 하나로 생각하지 마십시오.
+어떤 캐시를 크게 할지는 적중률과 메모리 사용량을 확인한 뒤 판단합니다.
 
 ### EXPLAIN으로 실행 계획 확인
 
-`EXPLAIN` 문으로 쿼리가 실제로 어떤 실행 계획을 사용하는지 확인합니다.
+다음 예제는 [데이터 모델 개념](../concepts/#time-model-arrival-time)에서 만든
+`sensor_values` 테이블을 사용합니다.
 
 ```sql
 EXPLAIN SELECT AVG(value)
 FROM sensor_values
 WHERE name = 'temp_sensor_01'
-  AND time BETWEEN TO_DATE('2026-07-01', 'YYYY-MM-DD')
-               AND TO_DATE('2026-07-03', 'YYYY-MM-DD');
+  AND time >= TO_DATE('2026-07-01', 'YYYY-MM-DD')
+  AND time <  TO_DATE('2026-07-03', 'YYYY-MM-DD');
 ```
 
-실행 계획 출력에서 partition pruning, index와 filter 적용 여부를 확인합니다. PVO Cache의
-hit·eviction은 `V$PVO_CACHE_STAT`, 개별 cached SQL은 `V$PVO_CACHE_LIST`에서 별도로
-확인합니다.
+실행 계획으로 데이터 접근과 조건 적용 방법을 확인합니다. 실행 계획이 존재한다는
+사실만으로 실제 응답 시간이나 디스크 읽기량까지 알 수 있는 것은 아니므로 대표
+데이터에서 실행 시간도 함께 측정합니다. 캐시가 비어 있는 첫 실행과 재사용한 실행의
+조건을 구분하면 결과를 해석하기 쉽습니다.
 
-### 다음 읽을 내용
-
-- [인덱싱 기본 원리](/dbms/core-concepts/storage-execution-architecture/#indexing-basics) -- 실행 계획에서 인덱스가 사용되는 원리
-- [Machbase 아키텍처 개요](/dbms/core-concepts/storage-execution-architecture/#architecture-machbase) -- 쿼리 프로세서(QP)의 역할
-- [컬럼형 저장과 압축](/dbms/core-concepts/storage-execution-architecture/#storage-columnar-compression-column) -- 실행 계획이 읽는 저장 구조
+PVO Cache의 적중·제거 통계는 `V$PVO_CACHE_STAT`, 캐시된 SQL은
+`V$PVO_CACHE_LIST`에서 확인합니다. 설정과 진단은
+[캐시와 메모리 튜닝](../../performance-tuning/cache-tuning-memory/#pvo-cache)을
+참고하십시오.

@@ -20,5 +20,5 @@ the value, making LOOKUP especially suitable for key-based access.
 | Memory usage | Complete rows and all secondary indexes consume server memory |
 
 Use LOOKUP when the complete reference data set fits in server memory and is read repeatedly. Use an
-RDB table when a large relational data set should not be fully memory-resident or requires relational
+TRANSACTION table when a large relational data set should not be fully memory-resident or requires relational
 transactions and business processing.

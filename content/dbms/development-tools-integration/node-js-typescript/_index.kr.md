@@ -17,7 +17,7 @@ Standard Edition 서버에 연결하는 라이브러리입니다. Node.js 애플
 
 ## 다중 데이터베이스
 
-연결 설정 또는 URL의 `database` 값으로 초기 database를 지정합니다. catalog getter는
+연결 설정 또는 URL의 `database` 값으로 초기 데이터베이스를 지정합니다. 카탈로그 getter는
 제공하지 않으므로 SQL `CURRENT_DATABASE()`와 `USE`로 확인·변경합니다.
 
 ```typescript
@@ -30,7 +30,7 @@ const [rows] = await conn.query('SELECT CURRENT_DATABASE()');
 console.table(rows);
 ```
 
-Appender와 prepared statement는 open/prepare 시점의 database에 고정됩니다. 세부 규칙은
+Appender와 준비된 문장은 open/prepare 시점의 데이터베이스에 고정됩니다. 세부 규칙은
 [다중 데이터베이스 운영 가이드](/dbms/operations-configuration-recovery/multi-database/#95-nodejs)를
 참조하십시오.
 
@@ -69,10 +69,10 @@ node -e "const { createConnection } = require('@machbase/ts-client'); console.lo
 ```
 
 > **참고**: 이 클라이언트는 Node.js에서 TCP 소켓을 사용하며, 브라우저용 라이브러리(웹소켓 전송)를 제공하지 않습니다.
-> NFX `cce422d2972` source tree의 `package.json`은 `@machbase/ts-client` 1.0.1입니다. 다만
-> named bind·nullable·PK·ROWID·TRANSACTION 기능 일부는 public 1.0.1 publish 뒤 같은 source
-> version 문자열 아래 추가되었습니다. npm version만으로 동일 기능을 가정하지 말고 artifact의
-> commit provenance를 확인하거나 이 NFX source에서 build하십시오.
+> NFX `cce422d2972` 소스 트리의 `package.json`은 `@machbase/ts-client` 1.0.1입니다. 다만
+> 이름 기반 bind·nullable·PK·ROWID·TRANSACTION 기능 일부는 공개 1.0.1 게시 뒤 같은 소스
+> 버전 문자열 아래 추가되었습니다. npm 버전만으로 동일 기능을 가정하지 말고 배포 산출물의
+> 커밋 출처를 확인하거나 이 NFX 소스에서 빌드하십시오.
 >
 > 이 문서의 기본 계정(`SYS`/`MANAGER`)은 로컬 테스트용 예시입니다. 운영 환경에서는 전용 계정과 비밀번호를 사용하십시오.
 
@@ -103,7 +103,8 @@ await conn.end();
 
 ## 자주 발생하는 문제
 
-- **ECONNREFUSED** – 서버가 실행 중인지(`machadmin -u`), 호스트와 포트가 맞는지, 방화벽이 리스너 포트(기본 5656)의 TCP 연결을 허용하는지 확인하십시오.
+- **ECONNREFUSED** – 서버 상태(`machadmin -e`), 호스트와 포트, 방화벽의 리스너 포트
+  허용 여부를 확인합니다. 기본 SQL 접속 포트는 5656입니다.
 - **Authentication failed** – 사용자·비밀번호와 계정의 접속 권한을 확인하십시오.
 
 ## API 참조
@@ -116,14 +117,14 @@ Machbase 리스너에 연결하고 데이터베이스 세션을 생성합니다.
 
 | 매개변수 | 타입 | 기본값 | 설명 |
 |-----------|------|---------|-------------|
-| `host` | string | `127.0.0.1` | Machbase 서버 IP 또는 호스트명 |
+| `host` | 문자열 | `127.0.0.1` | Machbase 서버 IP 또는 호스트명 |
 | `port` | number | `5656` | 리스너 포트 |
-| `user` | string | – | 데이터베이스 사용자(기본 `SYS`) |
-| `password` | string | – | 비밀번호(기본 `MANAGER`) |
-| `database` | string | `data` | 데이터베이스 이름 |
-| `clientId` | string | `NPM` | 서버 로그에 표시될 클라이언트 ID |
+| `user` | 문자열 | – | 데이터베이스 사용자(기본 `SYS`) |
+| `password` | 문자열 | – | 비밀번호(기본 `MANAGER`) |
+| `database` | 문자열 | `data` | 데이터베이스 이름 |
+| `clientId` | 문자열 | `NPM` | 서버 로그에 표시될 클라이언트 ID |
 | `showHiddenColumns` | boolean | `false` | 메타데이터에 숨김 컬럼 포함 여부 |
-| `timezone` | string | 빈 값 | 선택적 타임존 식별자 |
+| `timezone` | 문자열 | 빈 값 | 선택적 타임존 식별자 |
 | `connectTimeout` | number | 5000 | 소켓 연결 타임아웃(ms) |
 | `queryTimeout` | number | 60000 | 명령별 타임아웃(ms) |
 
@@ -180,7 +181,7 @@ if (result.rowId !== undefined) {
 }
 ```
 
-ROWID가 없는 실행에는 `rowId` 값이 `undefined`입니다. batch, Append, `INSERT ... SELECT`,
+ROWID가 없는 실행에는 `rowId` 값이 `undefined`입니다. 배치, Append, `INSERT ... SELECT`,
 UPSERT의 차이는 [ROWID와 INSERT 결과 ID](/dbms/reference/sql/rowid/)를
 참고하십시오.
 
@@ -195,8 +196,8 @@ console.table(rows);
 
 #### Named Bind Parameter
 
-`execute()`, `query()`와 Prepared Statement의 `execute()`에서 배열은 positional 입력,
-plain object는 named 입력입니다.
+`execute()`, `query()`와 Prepared Statement의 `execute()`에서 배열은 위치 기반 입력,
+plain object는 이름 기반 입력입니다.
 
 ```typescript
 export type MachbaseNamedBindInput =
@@ -230,15 +231,15 @@ try {
 }
 ```
 
-객체 key는 선행 콜론 없이 지정하며 대소문자를 구분합니다. 반복된 이름에는 같은 값이
-적용됩니다. 객체 입력과 `?` marker를 함께 사용하거나, 필요한 key를 누락하거나, SQL에
-없는 key를 전달하면 오류를 반환합니다.
+객체 키는 선행 콜론 없이 지정하며 대소문자를 구분합니다. 반복된 이름에는 같은 값이
+적용됩니다. 객체 입력과 `?` 자리표시자를 함께 사용하거나, 필요한 키를 누락하거나, SQL에
+없는 키를 전달하면 오류를 반환합니다.
 
 | 오류 코드 | 상황 |
 |---|---|
 | `ERR_MACHBASE_BIND_MISSING` | 필요한 이름이 누락됨 |
 | `ERR_MACHBASE_BIND_EXTRA` | SQL에 없는 이름을 전달함 |
-| `ERR_MACHBASE_BIND_MIXED` | named marker와 anonymous marker를 혼용함 |
+| `ERR_MACHBASE_BIND_MIXED` | 이름 기반 자리표시자와 anonymous 자리표시자를 혼용함 |
 | `ERR_MACHBASE_NAMED_BIND_UNSUPPORTED` | 서버가 이름 기반 바인딩을 지원하지 않음 |
 
 `fields`의 각 `ColumnMeta` 객체는 `nullable` 속성을 제공합니다.
@@ -389,12 +390,12 @@ console.log('Appended rows:', appendResult.rowsAppended);
 
 - `rows`는 값 배열 또는 `{ values, arrivalTime }` 객체 배열을 받을 수 있습니다. `null`은 Machbase 센티널 값으로 자동 인코딩됩니다.
 - `options`는 `arrivalTime`(기본값 1개) 또는 `arrivalTimes`(행별 배열)를 지정할 수 있습니다.
-- epoch nanosecond를 직접 계산할 때는 먼저 `bigint`로 변환합니다. `number` 곱셈은 안전한
+- epoch 나노초를 직접 계산할 때는 먼저 `bigint`로 변환합니다. `number` 곱셈은 안전한
   정수 범위를 넘습니다.
 
 반환값은 `{ table, rowsAppended, rowsFailed, message }` 형태입니다.
 
-> **팁**: "column count does not match" 오류는 대상 테이블이 로그 테이블이 아니거나, 컬럼 순서가 스키마와 일치하지 않을 때 발생합니다. TAG 테이블에는 `appendOpen()`을 사용하십시오.
+> **팁**: "컬럼 건수 does not match" 오류는 대상 테이블이 로그 테이블이 아니거나, 컬럼 순서가 스키마와 일치하지 않을 때 발생합니다. TAG 테이블에는 `appendOpen()`을 사용하십시오.
 
 #### appendOpen(table, columns, options?)
 
@@ -422,8 +423,8 @@ TAG 테이블의 `DATETIME` 컬럼에는 `Date` 객체 또는 `bigint` epoch 값
 
 Machbase DBMS 8.7.0의 선택 컬럼 Append에서는 `name`에 일반 컬럼 또는
 `ARRAY_COLUMN[position]`을 지정합니다. 행마다 다른 위치를 입력할 때는
-`SparseArray`를 whole ARRAY target에 전달합니다. indexed target과
-`SparseArray.set()`의 position은 0-based입니다.
+`SparseArray`를 배열 전체 대상에 전달합니다. 요소 위치를 지정한 대상과
+`SparseArray.set()`의 위치는 0부터 시작하는 인덱스입니다.
 
 ```javascript
 const { SparseArray } = require('@machbase/ts-client');
@@ -437,7 +438,7 @@ await stream.append([[2n, sparse]]);
 await stream.close();
 ```
 
-`MACHBASE_NATIVE_APPEND=0`으로 prepared fallback을 강제해도 `SparseArray`를
+`MACHBASE_NATIVE_APPEND=0`으로 prepared 대체 경로를 강제해도 `SparseArray`를
 ARRAY-compatible 값으로 처리합니다. 전체 예제와 NULL 구분은
 [Sparse ARRAY와 선택 컬럼 Append API](../data-input-load-export/array-append/)를
 참고하십시오.
@@ -665,7 +666,7 @@ await conn.execute('COMMIT');
 
 ### 파라미터 바인딩
 
-배열 입력은 `?` positional marker에, 객체 입력은 `:name` marker에 바인딩합니다.
+배열 입력은 `?` 위치 기반 자리표시자에, 객체 입력은 `:name` 자리표시자에 바인딩합니다.
 지원 타입은 `int32`, `int64`, `float64`, `varchar` 등 범용 스칼라 타입입니다.
 `null`을 전달할 경우 명시적 타입을 함께 지정하십시오.
 
@@ -690,8 +691,8 @@ await conn.execute('COMMIT');
 ### 테이블 타입별 SQL 유의사항
 
 - **LOG 테이블**은 `UPDATE`를 지원하지 않습니다.
-- **TAG 테이블**의 data UPDATE는 Standard Edition에서만 지원합니다. 태그 선택 조건과
-  BASETIME 조건이 필요하며, 태그명·시간축·메타데이터 컬럼은 data UPDATE의 SET 대상이 될 수
+- **TAG 테이블**의 데이터 UPDATE는 Standard Edition에서만 지원합니다. 태그 선택 조건과
+  BASETIME 조건이 필요하며, 태그명·시간축·메타데이터 컬럼은 데이터 UPDATE의 SET 대상이 될 수
   없습니다. SET 우변에서 기존 행 컬럼을 참조할 수 없습니다.
 - **VOLATILE 테이블**의 UPDATE/DELETE는 기본 키 조건을 사용합니다. **LOOKUP 테이블**은 기본 키
   조건과 일반 조건식을 모두 지원하며, 단건 변경에는 기본 키 조건이 효율적입니다.

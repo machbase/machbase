@@ -19,6 +19,9 @@ TAG time-series rows can be updated under explicit target conditions. The UPDATE
 must be limited by tag selection and the BASETIME column, and metadata updates use
 a separate syntax.
 
+TAG data UPDATE is supported only on logical TAG tables in Standard Edition. It is not supported
+in Cluster Edition.
+
 #### Policy
 
 1. The WHERE clause must include a tag selector: `name =`, `name IN`, or `name LIKE`.

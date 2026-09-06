@@ -29,7 +29,7 @@ Custom Rollup은 사용자가 작성한 `SELECT` 집계식을 주기적으로 �
 | 집계 정의 | 엔진 고정 집계 | 사용자 정의 `SELECT` |
 | 저장 대상 | 내부 Rollup 테이블 | 사용자가 미리 생성한 TAG 테이블 |
 | WHERE 위치 | `INTERVAL ... WHERE ...` (외부 WHERE) | `SELECT` 내부 `WHERE` |
-| 조회 방식 | `rollup()` 힌트 기반 | 결과 테이블 직접 조회 + 재집계 |
+| 조회 방식 | `rollup()` 함수, 필요 시 ROLLUP 선택 힌트 | 결과 테이블 직접 조회 + 재집계 |
 | 메타 구분 | `v$rollup.ext_type = 0/1` | `v$rollup.ext_type = 2` |
 
 ### 동작 모델과 재집계
@@ -37,6 +37,9 @@ Custom Rollup은 사용자가 작성한 `SELECT` 집계식을 주기적으로 �
 Custom Rollup은 주기마다 증분 구간을 읽어 `INSERT INTO <dest> SELECT ...` 형태로 결과를 저장합니다.
 
 같은 시간 버킷에 부분 집계 row가 여러 개 누적될 수 있으므로, 최종 조회 시에는 버킷 기준으로 반드시 재집계해야 합니다.
+
+평균이나 비율을 부분 집계한 결과끼리 단순 평균하면 각 부분의 표본 수 차이를 반영하지
+못합니다. 합계와 건수를 저장하고, 조회할 때 각각 합산한 뒤 나눕니다.
 
 ```sql
 SELECT code,
@@ -108,6 +111,10 @@ DROP ROLLUP <rollup_name>;
 `DATE_BIN`의 origin은 유효한 DATETIME 범위 값이어야 합니다. 경계값 사용 시 환경/타임존 조건에 따라 오류가 발생할 수 있으므로 충분히 여유 있는 origin을 권장합니다.
 
 ### 기본 예제
+
+다음 예제는 가격·거래량·호가 컬럼에 NULL이 없다는 전제입니다. NULL을 허용하면서 컬럼별
+평균을 계산하려면 `COUNT(*)` 하나를 공유하지 말고 `COUNT(price)`, `COUNT(bid_price)` 등
+각 컬럼의 유효 값 개수를 따로 저장합니다.
 
 #### 1) 소스/대상 테이블
 
@@ -253,20 +260,39 @@ DROP TABLE <source_table>;
 
 ## 다중 센서 비율 집계
 
+다음 예제의 원본 `sensor_data`에는 `name`, `time`, `value`, `sensor_type` 컬럼이 있다고
+가정합니다. `value > 0`인 표본의 비율을 구하며, NULL 표본도 전체 건수에 포함합니다.
+이 비율을 시간 가동률로 해석하려면 일정한 수집 주기와 결측값 처리 정책이 필요합니다.
+
 ```sql
+CREATE TAG TABLE efficiency_rollup (
+    name         VARCHAR(64) PRIMARY KEY,
+    time         DATETIME BASETIME,
+    active_count DOUBLE,
+    sample_count LONG
+);
+
 CREATE ROLLUP rollup_efficiency_1h
   INTO (efficiency_rollup)
   AS (
     SELECT name,
            DATE_TRUNC('hour', time) AS time,
-           SUM(CASE WHEN value > 0 THEN 1.0 ELSE 0.0 END) / COUNT(*) AS uptime_ratio
+           SUM(CASE WHEN value > 0 THEN 1.0 ELSE 0.0 END) AS active_count,
+           COUNT(*) AS sample_count
       FROM sensor_data
      WHERE sensor_type = 'MOTOR'
      GROUP BY name, time
   )
   INTERVAL 1 HOUR;
+
+SELECT name, time,
+       SUM(active_count) / SUM(sample_count) AS active_sample_ratio
+  FROM efficiency_rollup
+ GROUP BY name, time
+ ORDER BY name, time;
 ```
 
-대상 TAG table의 column 수와 type은 SELECT 결과와 일치해야 합니다. WHERE는 AS 내부 SELECT에
+대상 TAG 테이블의 컬럼 수와 타입은 SELECT 결과와 호환되어야 합니다. 태그명 길이도 원본에
+맞춰 조정합니다. WHERE는 AS 내부 SELECT에
 작성합니다. 제어와 상태는 [ROLLUP 제어와 상태 확인](../ingestion-control-rollup/)을, 범위 재구성은
 [ROLLUP_REBUILD](../rollup-rebuild/)를 참고합니다.

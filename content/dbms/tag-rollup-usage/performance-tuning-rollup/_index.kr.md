@@ -29,7 +29,8 @@ ORDER BY hour_bucket;
 -- 실행 계획과 응답 시간을 기준값으로 기록
 ```
 
-ROLLUP을 활용하면 미리 집계된 값만 읽으므로 훨씬 빠릅니다.
+ROLLUP을 활용하면 미리 집계된 값을 읽어 원시 행을 집계하는 작업을 줄일 수 있습니다.
+다음 쿼리의 결과와 실행 시간을 원시 집계 쿼리와 비교합니다.
 
 ```sql
 -- ROLLUP 활용: 사전 집계된 1시간 단위 결과를 직접 조회
@@ -76,6 +77,9 @@ CREATE ROLLUP _tag_ru_1h FROM _tag_ru_1m INTERVAL 1 HOUR;
 
 **계층 설계 기준:**
 
+아래 건수는 태그 1개에 대해 30일 동안 모든 구간에 데이터가 있는 경우의 논리적 버킷 수입니다.
+여러 태그나 부분 집계 행을 포함한 실제 저장 행 수와는 다를 수 있습니다.
+
 | 조회 주기 | 권장 ROLLUP | 예상 결과 건수 (1개월) |
 |-----------|------------|----------------------|
 | 초 단위 | 1초 ROLLUP | ~2,592,000 건 |
@@ -92,7 +96,7 @@ CREATE ROLLUP _tag_ru_1h FROM _tag_ru_1m INTERVAL 1 HOUR;
 
 ### 운영 상태와 즉시 집계
 
-WAKEUP interval, START/STOP/FORCE, `V`과 `SHOW ROLLUPGAP`은
+WAKEUP INTERVAL, START/STOP/FORCE, `V$ROLLUP`과 `SHOW ROLLUPGAP`은
 [ROLLUP 제어와 상태 확인](../ingestion-control-rollup/)에서 다룹니다. 성능 변경 전후에는 gap이
 0인 같은 상태에서 query를 비교합니다.
 

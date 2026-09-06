@@ -51,4 +51,4 @@ Cluster Edition은 단일 노드 중심의 로컬 파일 작업과 TRANSACTION �
 | 단일 서버 범위를 넘어 수평 확장이 필요한 워크로드 | Cluster Edition |
 | 고가용성 (장애 자동 복구) 필요 | Cluster Edition |
 | TRANSACTION 테이블 또는 MOUNT 기능 필요 | Standard Edition |
-| 대규모 실시간 센서 데이터 수집 | Cluster Edition |
+| 실시간 수집량이 단일 서버 용량을 넘어 노드 추가가 필요한 경우 | Cluster Edition |

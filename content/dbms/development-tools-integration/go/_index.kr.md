@@ -15,13 +15,15 @@ aliases:
 
 `machgo` 패키지는 Machbase 서버에 직접 연결하는 순수 Go 클라이언트입니다.
 Go 표준 도구 체인으로 빌드할 수 있으며 CGo 의존성이 없습니다.
-완전한 Go 툴체인으로 네이티브 포트 성능이 필요하다면 `machgo`가 좋은 선택입니다.
+Go 도구 체인으로 빌드하면서 Machbase 전용 API로 연결·조회·대량 입력을 구현할 때
+사용합니다. 표준 `database/sql` 인터페이스가 필요한 경우에는 이 페이지 후반의 드라이버
+사용법을 참고하십시오.
 
 ## 다중 데이터베이스
 
-neo-client v1.8.3 이상은 `api.WithDatabase()`로 연결의 초기 database를 선택합니다. 이미
-열린 연결에서 전환할 때는 `conn.Exec(ctx, "USE DATABASE_A")`를 실행합니다. statement,
-cursor와 Appender는 database 선택 후 생성하고, 사용 중인 서버·SDK 조합에서 지원 범위를
+neo-client v1.8.3 이상은 `api.WithDatabase()`로 연결의 초기 데이터베이스를 선택합니다. 이미
+열린 연결에서 전환할 때는 `conn.Exec(ctx, "USE DATABASE_A")`를 실행합니다. 문장,
+커서와 Appender는 데이터베이스 선택 후 생성하고, 사용 중인 서버·SDK 조합에서 지원 범위를
 검증하십시오.
 
 ### machgo를 사용하는 이유
@@ -33,7 +35,7 @@ cursor와 Appender는 database 선택 후 생성하고, 사용 중인 서버·SD
 
 ### 사전 요구사항
 
-- **Machbase server**: native port로 접근 가능한 실행 중인 DBMS 또는 Neo 서버
+- **Machbase 서버**: 네이티브 포트로 접근 가능한 실행 중인 DBMS 또는 Neo 서버
 - **Go 1.22+**: 최신 Go 버전 권장
 - **네트워크 접근**: 네이티브 포트(기본 `5656`) 접근 가능
 
@@ -78,9 +80,9 @@ if err != nil {
 mdb.SetMaxOpenConns(32)
 ```
 
-v1.8.4의 `Config.MaxOpenConn`, `MaxOpenQuery`와 factor field는 deprecated이며
+v1.8.4의 `Config.MaxOpenConn`, `MaxOpenQuery`와 factor 필드는 deprecated이며
 `NewDatabase()`가 사용하지 않습니다. 연결 수는 생성 뒤 `SetMaxOpenConns()`로 제한하고,
-query 동시성은 애플리케이션에서 제어합니다.
+쿼리 동시성은 애플리케이션에서 제어합니다.
 
 ### 연결 설정
 
@@ -101,8 +103,8 @@ defer conn.Close()
 
 - `api.WithPassword(user, password)`
 
-초기 database는 neo-client v1.8.3 이상의 `api.WithDatabase()`로 지정합니다. 이미 열린 같은
-connection에서 다른 database로 전환하려면 `conn.Exec(ctx, "USE FACTORY_A")`를 실행합니다.
+초기 데이터베이스는 neo-client v1.8.3 이상의 `api.WithDatabase()`로 지정합니다. 이미 열린 같은
+연결에서 다른 데이터베이스로 전환하려면 `conn.Exec(ctx, "USE FACTORY_A")`를 실행합니다.
 
 ### 연결 단위 튜닝 옵션
 
@@ -111,8 +113,8 @@ connection에서 다른 database로 전환하려면 `conn.Exec(ctx, "USE FACTORY
 
 #### 반복 SQL을 위한 StatementCache
 
-하나의 connection lifetime 동안 동일 SQL을 반복 실행하는 경우,
-준비된 statement를 재사용해 성능을 향상할 수 있습니다.
+하나의 연결 수명 동안 동일 SQL을 반복 실행하는 경우,
+준비된 문장을 재사용해 성능을 향상할 수 있습니다.
 
 기본 모드는 `machgo.Config.StatementCache`에 설정하고,
 연결별로 `api.WithStatementCache(...)`로 재정의할 수 있습니다.
@@ -172,7 +174,7 @@ defer connC.Close()
 
 ## 공통 예제 schema
 
-이후 native query·INSERT·Appender 예제는 다음 TAG table을 먼저 생성한 상태를 전제로 합니다.
+이후 네이티브 쿼리·INSERT·Appender 예제는 다음 TAG 테이블을 먼저 생성한 상태를 전제로 합니다.
 
 ```sql
 CREATE TAG TABLE example_table (
@@ -275,7 +277,7 @@ fmt.Println("appended:", success, "failed:", failed)
 ```
 
 appender는 애플리케이션이 `Append()` 요청한 데이터를 버퍼에 쌓아두다가 지정된 임계값에 도달해야만 서버로 전송합니다.
-임계값은 bytes 크기, rows 수, 버퍼에서 가장 오래된 레코드의 인입 시간과 가장 최근 레코드간의 시간 차이를 설정할 수 있으며,
+임계값은 바이트 크기, 행 수, 버퍼에서 가장 오래된 레코드의 인입 시간과 가장 최근 레코드간의 시간 차이를 설정할 수 있으며,
 이 중 한 가지라도 임계값을 초과할 경우 버퍼를 서버로 전송합니다.
 
 서버 전송 버퍼 임계값은 아래 옵션으로 조정할 수 있습니다.
@@ -319,7 +321,7 @@ append 워크로드에는 별도 연결을 사용하십시오.
 
 Machbase DBMS 8.7.0의 ARRAY 기능이 포함된
 [`neo-client` PR #17](https://github.com/machbase/neo-client/pull/17) 이후의 v2 module
-소스는 고정 길이 ARRAY와 선택 target을 지원합니다. 공개 v2 릴리스가 지정되기 전에는 공개
+소스는 고정 길이 ARRAY와 선택 대상을 지원합니다. 공개 v2 릴리스가 지정되기 전에는 공개
 모듈 버전에 같은 기능이 포함되었다고 가정하지 마십시오.
 
 ```go
@@ -358,7 +360,7 @@ func appendSelected(ctx context.Context, dsn string) error {
 `client "github.com/machbase/neo-client/v2"`를 import한 상태를 전제로 합니다.
 
 행마다 다른 위치를 입력할 때는 `api.NewSparseArray()`를 사용합니다. `Array.Set()`,
-`Get()`, `Entries()`와 indexed Append target의 position은 0-based입니다. API와 버전
+`Get()`, `Entries()`와 요소 위치를 지정한 Append 대상의 위치는 0부터 시작하는 인덱스입니다. API와 버전
 제한은
 [Sparse ARRAY와 선택 컬럼 Append API](../data-input-load-export/array-append/)를
 참고하십시오.
@@ -453,12 +455,12 @@ func main() {
 ### DECIMAL
 
 `api.Decimal`은 부동 소수점 오차 없이 DECIMAL 값을 표현하는 fixed-point 타입입니다.
-`api.ParseDecimal`은 지정한 scale보다 많은 소수 자리를 반올림하며, 반올림 방식은 0에서 멀어지는
+`api.ParseDecimal`은 지정한 소수 자릿수보다 많은 소수 자리를 반올림하며, 반올림 방식은 0에서 멀어지는
 half-away-from-zero입니다.
 
-- precision 범위: `1`~`65` (`api.DecimalMaxPrecision`)
-- scale 범위: `0`~`30`이며 precision보다 클 수 없음
-- precision을 초과하는 값, 잘못된 문자열, 범위를 벗어난 precision/scale은 오류
+- 전체 자릿수 범위: `1`~`65` (`api.DecimalMaxPrecision`)
+- 소수 자릿수 범위: `0`~`30`이며 전체 자릿수보다 클 수 없음
+- 전체 자릿수를 초과하는 값, 잘못된 문자열, 범위를 벗어난 precision/scale은 오류
 - `String`, `Precision`, `Scale`, `Unscaled`로 값을 확인할 수 있음
 
 ```go
@@ -480,8 +482,8 @@ if err := result.Err(); err != nil {
 ### Named bind parameter
 
 네이티브 API에서는 `api.Named(name, value)`로 이름 기반 매개변수를 전달할 수 있습니다.
-이름은 대소문자를 구분하고 SQL의 marker 순서와 인자 순서는 달라도 됩니다. 같은 이름을 여러 번
-사용한 marker에는 한 번 전달한 값이 적용됩니다.
+이름은 대소문자를 구분하고 SQL의 자리표시자 순서와 인자 순서는 달라도 됩니다. 같은 이름을 여러 번
+사용한 자리표시자에는 한 번 전달한 값이 적용됩니다.
 
 ```go
 rows, err := conn.Query(ctx,
@@ -496,8 +498,8 @@ if err != nil {
 defer rows.Close()
 ```
 
-이름이 없거나, SQL에 없는 이름을 전달하거나, 같은 이름을 중복 전달하거나, named와 positional
-인자를 섞으면 오류가 발생합니다. 한 문장의 매개변수는 최대 256개이며, 구형 protocol에서는
+이름이 없거나, SQL에 없는 이름을 전달하거나, 같은 이름을 중복 전달하거나, 이름 기반과 위치 기반
+인자를 섞으면 오류가 발생합니다. 한 문장의 매개변수는 최대 256개이며, 구형 프로토콜에서는
 서버 버전에 따라 제한이 더 낮을 수 있습니다.
 
 ### NULL과 컬럼 메타데이터
@@ -506,7 +508,7 @@ defer rows.Close()
 `NullabilityNoNulls`, `NullabilityNullable`, `NullabilityUnknown` 중 하나이며, 서버가
 정보를 제공하지 않는 경우 `Unknown`입니다.
 
-NULL을 일반 Go 값으로 scan하면 오류가 발생할 수 있으므로 nullable 대상 타입을 사용합니다.
+NULL을 일반 Go 값으로 스캔하면 오류가 발생할 수 있으므로 nullable 대상 타입을 사용합니다.
 neo-client는 다음과 같은 표준 nullable 타입을 지원합니다.
 
 | 값 유형 | 지원 대상 타입 |
@@ -518,14 +520,14 @@ neo-client는 다음과 같은 표준 nullable 타입을 지원합니다.
 | Machbase 타입 | `sql.Null[api.Decimal]`, `sql.Null[api.JSONString]` |
 
 `Valid=false`인 대상은 NULL을 받으면 값을 zero value로 초기화하고 그대로 invalid 상태로
-유지합니다. `sql.Null[bool]`과 unsigned 정수의 generic nullable 대상은 이 경로의 NULL
+유지합니다. `sql.Null[bool]`과 unsigned 정수의 범용 nullable 대상은 이 경로의 NULL
 처리 대상이 아니므로 사용하지 마십시오. `sql.RawBytes`와 `*sql.RawBytes` 입력은
-`[]byte` 기반 scan 대상으로 변환할 수 있습니다.
+`[]byte` 기반 스캔 대상으로 변환할 수 있습니다.
 
-Machbase SQL의 빈 문자열 리터럴 `''`은 SQL `NULL`입니다. 따라서 이 값을 조회하면 native
+Machbase SQL의 빈 문자열 리터럴 `''`은 SQL `NULL`입니다. 따라서 이 값을 조회하면 네이티브
 `api.Column.Nullability`는 `NullabilityNullable`로, `database/sql`의
 `ColumnTypeNullable()`은 `(true, true)`로 보고됩니다. 실제 행은 `sql.NullString` 또는
-동등한 nullable 대상에 scan하십시오.
+동등한 nullable 대상에 스캔하십시오.
 
 ### PRIMARY KEY 메타데이터
 
@@ -552,7 +554,7 @@ for _, column := range columns {
 ```
 
 위 예제에서 `id`가 PRIMARY KEY인 경우 `id`만 `true`이고 `id_expr`는 `false`입니다. 컬럼
-별 메타데이터는 일반 조회, `QueryRow`, prepared statement, statement cache 재사용 경로에서
+별 메타데이터는 일반 조회, `QueryRow`, 준비된 문장, 문장 캐시 재사용 경로에서
 같은 의미로 전달됩니다. `Appender.Columns()`도 대상 테이블 컬럼의 `PrimaryKey` 상태를
 반환합니다. `api.Column.PrimaryKey`는 `Nullability`와 별개의 값이므로 NULL 허용 여부를
 사용해 PRIMARY KEY를 추론하지 않습니다.
@@ -590,7 +592,7 @@ if err := conn.Exec(ctx, "COMMIT").Err(); err != nil {
 }
 ```
 
-Appender의 batch는 SQL 트랜잭션에 포함되지 않으며 batch 단위로 독립 커밋됩니다. 입력 성공/실패
+Appender의 배치는 SQL 트랜잭션에 포함되지 않으며 배치 단위로 독립 커밋됩니다. 입력 성공/실패
 건수는 `Close()` 결과로 확인하고, 필요한 경우 `Flush()`를 호출합니다.
 
 
@@ -606,7 +608,7 @@ Appender의 batch는 SQL 트랜잭션에 포함되지 않으며 batch 단위로 
 
 ### 사전 요구사항
 
-- **Machbase server**: native port로 접근 가능한 실행 중인 DBMS 또는 Neo 서버
+- **Machbase 서버**: 네이티브 포트로 접근 가능한 실행 중인 DBMS 또는 Neo 서버
 - **Go 1.22+**: `github.com/machbase/neo-client`에서 요구
 - **계정 정보**: 유효한 Machbase 사용자 계정
 
@@ -660,19 +662,19 @@ server=tcp://sys:manager@127.0.0.1:5656;fetch_rows=777;statement_cache=off;io_me
 | `host`, `port` | 서버 호스트와 포트를 별도로 지정 |
 | `user`, `uid` | 로그인 사용자 |
 | `password`, `pwd` | 로그인 비밀번호 |
-| `database`, `db` | initial database |
+| `database`, `db` | 초기 데이터베이스 |
 | `auth_mode` | `password` 또는 `challenge` |
-| `auth_key_file`, `auth_key_pem` | challenge 인증 private key |
-| `fetch_rows`   | 한 번의 round trip에서 가져올 행 수 |
-| `statement_cache`, `statementcache` | statement cache 모드: `auto`, `on`, `off` |
-| `io_metrics`   | I/O metrics 활성화 여부: `true`, `false` |
+| `auth_key_file`, `auth_key_pem` | challenge 인증 개인키 |
+| `fetch_rows`   | 한 번의 왕복 통신에서 가져올 행 수 |
+| `statement_cache`, `statementcache` | 문장 캐시 모드: `auto`, `on`, `off` |
+| `io_metrics`   | I/O 지표 활성화 여부: `true`, `false` |
 | `alternative_servers` | `127.0.0.2:5656` 형식의 대체 서버 주소 |
 
-목록에 없는 key는 parse 오류를 반환합니다. AUTH KEY는 neo-client v1.5.0 이상에서 사용할 수
-있으며 private key를 log에 기록하지 않습니다.
+목록에 없는 키는 파싱 오류를 반환합니다. AUTH KEY는 neo-client v1.5.0 이상에서 사용할 수
+있으며 개인키를 로그에 기록하지 않습니다.
 
-`database/sql`의 pool에서는 요청마다 다른 physical connection이 선택될 수 있습니다.
-current database가 유지된다고 가정하지 말고, 다중 database가 필요한 애플리케이션은
+`database/sql`의 연결 풀에서는 요청마다 다른 물리 연결이 선택될 수 있습니다.
+현재 데이터베이스가 유지된다고 가정하지 말고, 다중 데이터베이스가 필요한 애플리케이션은
 연결 고정과 `USE` 실행 순서를 실제 SDK 버전에서 검증합니다.
 
 ## 조회 예제
@@ -821,7 +823,7 @@ rowID := uint64(value)
 fmt.Println("ROWID:", rowID)
 ```
 
-이 기능은 ROWID를 지원하는 Standard Edition에서 사용할 수 있습니다. batch, Append,
+이 기능은 ROWID를 지원하는 Standard Edition에서 사용할 수 있습니다. 배치, Append,
 `INSERT ... SELECT`, UPSERT에서는 ROWID를 반환하지 않습니다. 자세한 조건은
 [ROWID와 INSERT 결과 ID](/dbms/reference/sql/rowid/)를 참고하십시오.
 
@@ -830,7 +832,7 @@ fmt.Println("ROWID:", rowID)
 ### Named bind parameter
 
 `database/sql`에서는 표준 `sql.Named(name, value)`를 사용합니다. 이름은 대소문자를 구분하며,
-SQL marker의 순서와 인자 순서는 달라도 됩니다. 같은 이름을 반복해서 사용한 marker에는 한 번
+SQL 자리표시자의 순서와 인자 순서는 달라도 됩니다. 같은 이름을 반복해서 사용한 자리표시자에는 한 번
 전달한 값이 적용됩니다.
 
 ```go
@@ -846,15 +848,15 @@ if err != nil {
 defer rows.Close()
 ```
 
-드라이버는 `:name` 형태의 이름 marker를 처리합니다. 이름이 없거나, SQL에
-없는 이름을 전달하거나, 같은 이름을 중복 전달하거나, named와 positional 인자를 섞으면 오류가
+드라이버는 `:name` 형태의 이름 자리표시자를 처리합니다. 이름이 없거나, SQL에
+없는 이름을 전달하거나, 같은 이름을 중복 전달하거나, 이름 기반과 위치 기반 인자를 섞으면 오류가
 발생합니다. Machbase 8.7.0에서 한 문장의 named/positional 매개변수는 최대 256개입니다.
 이전 버전 서버에서는 최대 255개로 제한될 수 있습니다.
 
 ### DECIMAL과 NULL
 
 `api.Decimal`은 `database/sql`의 `driver.Valuer`와 `sql.Scanner`를 구현하므로 DECIMAL 입력과
-출력에 사용할 수 있습니다. 정밀도가 필요한 경우 `api.ParseDecimal`로 precision과 scale을
+출력에 사용할 수 있습니다. 정밀도가 필요한 경우 `api.ParseDecimal`로 전체 자릿수와 소수 자릿수를
 명시해 값을 만듭니다.
 
 ```go
@@ -872,7 +874,7 @@ if _, err := db.ExecContext(ctx,
 `Rows.ColumnTypeNullable`로 결과 컬럼의 NULL 허용 여부를 확인할 수 있습니다. 두 번째 반환값이
 `false`이면 드라이버가 해당 정보를 알 수 없다는 뜻입니다. 실제 값은 일반 Go 값 대신
 `sql.Null[T]`, `sql.NullString`, `sql.NullTime`, `sql.Null[api.Decimal]` 같은 nullable 대상에
-scan하십시오.
+스캔하십시오.
 
 ```go
 rows, err := db.QueryContext(ctx, `SELECT value, note FROM decimal_table`)
@@ -905,7 +907,7 @@ values = api.NormalizeTypes(values, time.UTC)
 // []any{"ok", nil, []byte("payload")}
 ```
 
-`database/sql`의 표준 `ColumnType`를 native API의 컬럼 표현으로 변환해야 하면
+`database/sql`의 표준 `ColumnType`를 네이티브 API의 컬럼 표현으로 변환해야 하면
 `api.NewColumnWithType(columnType)`를 사용합니다. 이 함수는 `Name`과 `DataType`을
 추론하지만 `Nullable`, `Nullability`, `PrimaryKey` 제약 메타데이터는 복사하거나
 추론하지 않습니다.
@@ -944,13 +946,13 @@ if err := tx.Commit(); err != nil {
 ```
 
 `Commit` 또는 `Rollback`이 완료된 뒤 같은 트랜잭션을 다시 사용하면 `sql.ErrTxDone`이 반환됩니다.
-커밋 또는 롤백 전에 모든 `Rows`를 닫아야 합니다. connection pool이 세션을 재사용할 때 미완료
-트랜잭션은 자동으로 rollback됩니다. context 취소로 커밋이 실패한 경우 같은 트랜잭션을 다시
+커밋 또는 롤백 전에 모든 `Rows`를 닫아야 합니다. 연결 풀이 세션을 재사용할 때 미완료
+트랜잭션은 자동으로 롤백됩니다. context 취소로 커밋이 실패한 경우 같은 트랜잭션을 다시
 커밋하려고 시도하지 마십시오.
 
 표준 `database/sql`의 `sql.DB`와 `sql.Tx`에는 Machbase Append 메서드가 없습니다. 다만
 neo-client의 `machbase.Conn`은 선택적 `Appender()` 확장을 제공하므로, `sql.Conn.Raw()`로
-physical connection을 고정한 뒤 사용할 수 있습니다. Appender를 닫기 전에 `sql.Conn`을
+물리 연결을 고정한 뒤 사용할 수 있습니다. Appender를 닫기 전에 `sql.Conn`을
 반납하지 말고, 일반 SQL과 Append에는 별도 연결을 사용하십시오.
 
 ```go
@@ -996,26 +998,26 @@ if failed != 0 {
 ```
 
 이 확장은 `database/sql`의 표준 Append 호환성을 추가하는 것이 아니므로, 신규 대량 입력
-코드는 native `machgo.Conn.Appender()`를 우선 사용하십시오.
+코드는 네이티브 `machgo.Conn.Appender()`를 우선 사용하십시오.
 
 ### Prepared statement와 statement cache
 
-`db.PrepareContext`로 만든 statement는 여러 번 실행할 수 있습니다. 드라이버의 statement cache는
+`db.PrepareContext`로 만든 문장은 여러 번 실행할 수 있습니다. 드라이버의 문장 캐시는
 연결별로 동작하며, `statement_cache=auto|on|off` DSN 키로 설정합니다. 테이블을 삭제 후 다시
-만들었거나 결과 컬럼 타입이 변경된 경우 캐시된 metadata가 갱신되도록 statement를 다시 준비합니다.
-`USE`로 session database를 변경한 뒤에도 기존 prepared statement나 cursor를 다른 database의
+만들었거나 결과 컬럼 타입이 변경된 경우 캐시된 메타데이터가 갱신되도록 문장을 다시 준비합니다.
+`USE`로 세션 데이터베이스를 변경한 뒤에도 기존 준비된 문장이나 커서를 다른 데이터베이스의
 작업에 재사용하지 말고 새로 준비하거나 열어야 합니다.
 `ALTER SESSION SET` 또는 사용자 컨텍스트를 바꾸는 `CONNECT USER`가 실행된 뒤에도 이전
-session metadata에 의존하는 statement를 재사용하지 말고 다시 준비하십시오.
+세션 메타데이터에 의존하는 문장을 재사용하지 말고 다시 준비하십시오.
 
 ## 참고 사항 및 제한 사항
 
-- positional placeholder와 named placeholder를 모두 사용할 수 있지만, 한 문장 안에서 두 방식을
+- 위치 기반 placeholder와 이름 기반 placeholder를 모두 사용할 수 있지만, 한 문장 안에서 두 방식을
   섞을 수 없습니다. 이름 기반 API는 `sql.Named()`을 사용합니다. 공통 SQL 기능과 SDK별 차이는
   [Named Bind Parameter syntax](../../reference/sql/syntax-dictionary-sql/named-bind-parameter-syntax/)를
   참고하십시오.
-- `database/sql`의 connection pooling은 일반적인 `sql.DB` 방식대로 동작합니다. DSN에
-  `database`/`db`를 지정하면 `USE`로 변경된 session을 pool에 반환할 때 설정된 database로
+- `database/sql`의 연결 풀은 일반적인 `sql.DB` 방식대로 동작합니다. DSN에
+  `database`/`db`를 지정하면 `USE`로 변경된 세션을 연결 풀에 반환할 때 설정된 데이터베이스로
   복원합니다.
 - ROWID를 지원하는 Standard Edition과 `neo-client`를 사용하면 단일 INSERT 결과에서
   `Result.LastInsertId()`를 호출할 수 있습니다. 반환된 `int64`는 `uint64`로 변환해 ROWID의

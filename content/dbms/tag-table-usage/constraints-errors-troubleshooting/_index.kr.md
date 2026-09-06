@@ -208,11 +208,13 @@ Cluster Edition에서는 `HOSTNAME VARCHAR(64)`가 첫 컬럼에 추가됩니다
 
 ## 제약 및 주의사항
 
-### 지원하지 않는 기능
+<a id="지원하지-않는-기능"></a>
+
+### 기능 지원 범위
 
 | 기능 | 상태 |
 |------|------|
-| 실제 시계열 데이터 UPDATE | 지원 (태그/축 조건 필요) |
+| 실제 시계열 데이터 UPDATE | Standard Edition에서 지원 (태그/BASETIME 조건 필요) |
 | 메타데이터 UPDATE | 지원 (`UPDATE ... METADATA`) |
 | DELETE | 지원 (`BEFORE` 또는 태그/축 조건) |
 | 다중 PRIMARY KEY | 미지원 (단일 컬럼만) |

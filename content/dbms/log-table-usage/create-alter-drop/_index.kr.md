@@ -29,8 +29,8 @@ CREATE LOG TABLE security_event (
     category    VARCHAR(32),
     src_ip      IPV4,
     dst_ip      IPV4,
-    src_port    USHORT,
-    dst_port    USHORT,
+    src_port    INTEGER,
+    dst_port    INTEGER,
     message     TEXT
 );
 ```

@@ -59,8 +59,8 @@ ALTER SYSTEM SET PVO_CACHE_MAX_MEMORY_SIZE = 536870912;
 ALTER SYSTEM SET PVO_CACHE_MAX_PLANS_PER_SQL = 256;
 ```
 
-이 값은 예시입니다. 현재값과 memory 예산을 확인한 뒤 maintenance 절차에서 적용하며, 변경
-전후 지연과 memory를 비교합니다.
+이 값은 예시입니다. 현재값과 메모리 예산을 확인한 뒤 유지보수 절차에서 적용하며, 변경
+전후 지연과 메모리를 비교합니다.
 
 ### 상태 확인
 
@@ -133,14 +133,16 @@ vmstat 5 10
 설정을 변경한 뒤에는 동일한 쿼리 부하에서 PVO Cache 지표, 응답 시간, 프로세스 메모리와 swap
 추세를 함께 비교합니다.
 
-## TAG metadata cache
+<a id="tag-metadata-cache"></a>
 
-TAG metadata cache를 초기화해야 할 때는 영향을 확인한 뒤 다음 공개 명령을 사용합니다.
+## TAG 메타데이터 캐시
+
+TAG 메타데이터 캐시를 초기화해야 할 때는 영향을 확인한 뒤 다음 공개 명령을 사용합니다.
 
 ```sql
 ALTER SYSTEM FLUSH TAG_CACHE;
 ```
 
-metadata 변경 반영이나 cache 진단 목적으로만 사용하고, 반복적인 성능 개선 명령으로 실행하지
-않습니다. 현재 설정은 `V$PROPERTY`에서 확인하고 property의 정확한 이름·범위·runtime 변경
+메타데이터 변경 반영이나 캐시 진단 목적으로만 사용하고, 반복적인 성능 개선 명령으로 실행하지
+않습니다. 현재 설정은 `V$PROPERTY`에서 확인하고 설정 속성의 정확한 이름·범위·실행 시점 변경
 가능 여부는 [설정 사전](/dbms/reference/configuration/)을 기준으로 판단합니다.

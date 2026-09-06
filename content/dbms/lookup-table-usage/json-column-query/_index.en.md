@@ -3,7 +3,8 @@ title: '9.12 JSON Column Constraints and Queries'
 weight: 120
 toc: true
 ---
-English structure placeholder. Korean content is authoritative for this restructuring pass.
+LOOKUP tables support JSON values and JSON path predicates. Use a separate scalar column for the
+primary key, and extract frequently searched attributes into ordinary indexed columns when needed.
 
 
 <a id="condition-query-lookup-json"></a>
@@ -60,18 +61,19 @@ WHERE JSON_IS_VALID(config) = 1
 
 <a id="design-column-lookup-json"></a>
 
-## JSON Column Limitation
+<a id="json-column-limitation"></a>
 
-LOOKUP tables do not support `JSON` columns. For flexible reference-data
-attributes, split frequently queried values into regular columns, serialize
-rarely queried attributes into a string, or consider JSON columns in RDB/TAG
-tables.
+## JSON column design
+
+LOOKUP tables support `JSON` as an ordinary column but not as a PRIMARY KEY. Use JSON for flexible
+attributes and regular columns for values used frequently in joins or indexed predicates. The
+following examples compare both designs with distinct table names.
 
 ### Design Example
 
 ```sql
--- Fails: LOOKUP tables cannot contain JSON columns.
-CREATE LOOKUP TABLE sensor_config (
+-- Valid: JSON is a regular column; sensor_id is the primary key.
+CREATE LOOKUP TABLE sensor_config_json (
     sensor_id VARCHAR(64) PRIMARY KEY,
     site      VARCHAR(32),
     status    VARCHAR(16),
@@ -81,7 +83,7 @@ CREATE LOOKUP TABLE sensor_config (
 
 ```sql
 -- Alternative: split frequently queried attributes into regular columns.
-CREATE LOOKUP TABLE sensor_config (
+CREATE LOOKUP TABLE sensor_config_columns (
     sensor_id VARCHAR(64) PRIMARY KEY,
     site      VARCHAR(32),
     status    VARCHAR(16),
@@ -94,12 +96,12 @@ CREATE LOOKUP TABLE sensor_config (
 
 ```sql
 SELECT sensor_id
-FROM sensor_config
+FROM sensor_config_columns
 WHERE site = 'SEOUL'
   AND unit = 'Celsius'
   AND level >= 3;
 
-UPDATE sensor_config
+UPDATE sensor_config_columns
 SET status = 'ACTIVE'
 WHERE sensor_id = 'TEMP-01';
 ```
@@ -109,30 +111,32 @@ WHERE sensor_id = 'TEMP-01';
 | Situation | Recommended approach |
 |-----------|----------------------|
 | Frequently searched or joined value | Regular column |
-| Flexible attributes per device | Serialized string or RDB/TAG JSON column |
+| Flexible attributes per device | LOOKUP JSON column |
 | Numeric predicate | Regular numeric column |
 | Primary key | Stable identifier column |
 | High-frequency path search | Extract the value into a regular column |
 
 ### Notes
 
-- JSON columns cannot be created in LOOKUP/VOLATILE tables.
-- If JSON path predicates or JSON path indexes are required, consider RDB/TAG tables.
+- LOOKUP supports JSON columns and JSON path predicates; VOLATILE does not support JSON columns.
+- Dedicated JSON path indexes are not supported on LOOKUP. Consider TRANSACTION or TAG if such
+  indexes are required.
 
 <a id="definition-column-lookup-json"></a>
 
-## LOOKUP JSON Column Limitation
+<a id="lookup-json-column-limitation"></a>
 
-LOOKUP tables do not support `JSON` columns. For flexible reference-data
-attributes, split frequently queried values into regular columns, serialize
-rarely queried attributes into a string, or consider JSON columns in RDB/TAG
-tables.
+## JSON and regular-column alternatives
+
+The next examples store device settings either in a JSON column or in regular columns. A string
+column can preserve an opaque payload, but a JSON column validates JSON input and supports the path
+queries shown above.
 
 ### Column Definition
 
 ```sql
--- Fails: LOOKUP tables cannot contain JSON columns.
-CREATE LOOKUP TABLE device_config (
+-- Valid JSON column definition.
+CREATE LOOKUP TABLE device_config_json (
     device_id VARCHAR(40) PRIMARY KEY,
     site      VARCHAR(32),
     status    VARCHAR(16),
@@ -143,7 +147,7 @@ CREATE LOOKUP TABLE device_config (
 ### Alternative Schema and Query
 
 ```sql
-CREATE LOOKUP TABLE device_config (
+CREATE LOOKUP TABLE device_config_columns (
     device_id VARCHAR(40) PRIMARY KEY,
     site      VARCHAR(32),
     status    VARCHAR(16),
@@ -153,7 +157,7 @@ CREATE LOOKUP TABLE device_config (
 );
 
 SELECT device_id, limits
-FROM device_config
+FROM device_config_columns
 WHERE region = 'kr'
   AND level >= 3;
 ```
@@ -161,17 +165,17 @@ WHERE region = 'kr'
 ### Update Values
 
 ```sql
-UPDATE device_config
+UPDATE device_config_columns
 SET status = 'ACTIVE'
 WHERE site = 'SEOUL';
 
-UPDATE device_config
+UPDATE device_config_columns
 SET limits = '{"high":85.0,"low":5.0,"verified":1}'
 WHERE device_id = 'DEV-01';
 ```
 
 ### Constraints
 
-- JSON columns cannot be created in LOOKUP/VOLATILE tables.
-- If JSON path predicates or JSON path indexes are required, consider RDB/TAG tables.
+- JSON columns are supported on LOOKUP, but cannot be used as its primary key.
+- Dedicated JSON path indexes require a supporting table type, such as TRANSACTION or TAG.
 - Extract frequently searched values into regular LOOKUP columns.

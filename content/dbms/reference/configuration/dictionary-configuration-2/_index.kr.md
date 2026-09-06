@@ -47,7 +47,9 @@ SQL 조회나 데이터 입력을 위한 포트가 아니라 클러스터 관리
 
 ## Broker 설정
 
-Broker는 클라이언트의 쿼리를 받아 Warehouse로 분산 처리합니다. Broker의 `machbase.conf`는 Standard Edition과 동일한 프로퍼티를 사용하며 추가 클러스터 설정이 적용됩니다.
+Broker는 클라이언트의 쿼리를 받아 Warehouse로 분산 처리합니다. Broker의 `machbase.conf`에는
+서버 공통 설정과 클러스터 설정을 지정합니다. 지원 프로퍼티와 기본값은 Edition과 노드
+역할에 따라 다르므로 Standard Edition의 설정 파일을 그대로 적용하지 마십시오.
 
 | 프로퍼티 | 기본값 | 설명 |
 |----------|--------|------|
@@ -58,7 +60,9 @@ Broker는 클라이언트의 쿼리를 받아 Warehouse로 분산 처리합니�
 
 ## Warehouse 설정
 
-Warehouse는 실제 데이터를 저장하고 처리하는 노드입니다. Standard Edition의 모든 프로퍼티를 지원하며 추가로 아래 클러스터 설정을 사용합니다.
+Warehouse는 실제 데이터를 저장하고 처리하는 노드입니다. 저장 관련 설정과 함께 다음
+클러스터 설정을 사용합니다. `DDL_LOCK_TIMEOUT`처럼 Standard Edition 전용인 프로퍼티는
+Cluster Edition에서 지원하지 않습니다.
 
 | 프로퍼티 | 기본값 | 설명 |
 |----------|--------|------|

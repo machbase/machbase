@@ -32,8 +32,9 @@ SELECT _arrival_time, device, value
  ORDER BY _arrival_time;
 ```
 
-`_arrival_time`은 서버가 행을 받은 시각입니다. 이벤트가 실제로 발생한 시각이 필요하면 예제의
-`event_time`처럼 별도 컬럼을 저장하고 두 의미를 구분하십시오.
+`_arrival_time`은 값을 생략하면 서버가 행을 받은 시각을 기록합니다. 위 예제는 조회 결과를
+재현하기 위해 시각을 명시했습니다. 이벤트가 실제로 발생한 시각은 `event_time`처럼 별도
+컬럼에 저장하고 두 의미를 구분하십시오.
 
 <a id="original-85-select-time-data"></a>
 

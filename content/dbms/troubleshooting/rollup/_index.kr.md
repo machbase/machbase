@@ -33,8 +33,8 @@ SELECT ROLLUP_TABLE,
 
 ## 2. 원본과 같은 범위를 비교
 
-태그, 시작·종료 시각과 bucket을 고정한 뒤 원본 집계와 ROLLUP 조회를 비교합니다. 서로 다른
-시간대, 열린 종료 경계와 다른 bucket 크기를 섞지 마십시오.
+태그, 시작·종료 시각과 집계 구간을 고정한 뒤 원본 집계와 ROLLUP 조회를 비교합니다. 서로 다른
+시간대, 열린 종료 경계와 다른 집계 구간 크기를 섞지 마십시오.
 
 ```sql
 SELECT rollup('min', 1, time) AS bucket,
@@ -48,7 +48,7 @@ SELECT rollup('min', 1, time) AS bucket,
 ```
 
 같은 SQL을 ROLLUP 사용 전후의 실행 계획과 결과로 비교합니다. 존재하지 않는 내부 ROLLUP
-테이블이나 미확인 hint를 진단용으로 만들지 마십시오.
+테이블이나 미확인 힌트를 진단용으로 만들지 마십시오.
 
 ## 3. 즉시 집계와 재확인
 
@@ -80,8 +80,8 @@ EXEC ROLLUP_REBUILD(
 
 ## 5. 지원 요청 자료
 
-- 서버 build와 Edition
-- ROLLUP 정의와 대상 TAG schema
+- 서버 빌드와 Edition
+- ROLLUP 정의와 대상 TAG 스키마
 - `SHOW ROLLUPGAP`과 `V$ROLLUP` 결과
 - 비교한 태그·시간 범위·SQL
 - 최초 서버 오류와 발생 시각

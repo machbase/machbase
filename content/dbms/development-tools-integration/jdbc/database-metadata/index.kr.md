@@ -7,8 +7,8 @@ aliases:
   - /dbms/reference/sdk-api/jdbc/database-metadata/
 ---
 
-`Connection.getMetaData()`는 드라이버, 서버, 스키마 객체와 JDBC capability 정보를
-반환합니다. 결과 컬럼은 JDBC 표준 이름과 순서를 사용하므로 숫자 위치보다 column label로
+`Connection.getMetaData()`는 드라이버, 서버, 스키마 객체와 JDBC 기능 정보를
+반환합니다. 결과 컬럼은 JDBC 표준 이름과 순서를 사용하므로 숫자 위치보다 컬럼 이름으로
 읽는 것을 권장합니다.
 
 ```java
@@ -36,7 +36,7 @@ try (ResultSet tables = metadata.getTables(
 ```
 
 `getTables()`는 TABLE과 VIEW를 구분합니다. Machbase 세부 테이블 종류는 `REMARKS`에서
-확인합니다. 애플리케이션은 특정 ordinal에 의존하지 말고 표준 column label을 사용합니다.
+확인합니다. 애플리케이션은 특정 순번에 의존하지 말고 표준 컬럼 이름을 사용합니다.
 
 ## 컬럼
 
@@ -115,8 +115,8 @@ try (ResultSet result = statement.executeQuery(
 - `getTables()`, `getColumns()`
 - `getPrimaryKeys()`, `getIndexInfo()`
 
-지원하지 않는 선택적 metadata 조회는 null이나 비표준 ResultSet 대신 표준 컬럼을 가진 빈
-ResultSet을 반환할 수 있습니다. 기능을 사용하기 전에 capability 메서드를 확인합니다.
+지원하지 않는 선택적 메타데이터 조회는 null이나 비표준 ResultSet 대신 표준 컬럼을 가진 빈
+ResultSet을 반환할 수 있습니다. 기능을 사용하기 전에 기능 메서드를 확인합니다.
 
 ```java
 if (metadata.supportsSavepoints()) {
@@ -126,8 +126,8 @@ if (metadata.supportsSavepoints()) {
 
 ## catalog
 
-`Connection.getCatalog()`과 `setCatalog()`은 드라이버가 노출하는 현재 catalog 값을
-관리합니다. metadata 메서드의 catalog 인자는 이 값과 일치하는 요청을 필터링하는 데
+`Connection.getCatalog()`과 `setCatalog()`은 드라이버가 노출하는 현재 카탈로그 값을
+관리합니다. 메타데이터 메서드의 카탈로그 인자는 이 값과 일치하는 요청을 필터링하는 데
 사용합니다.
 
 ```java
@@ -135,14 +135,14 @@ String initialCatalog = connection.getCatalog();
 connection.setCatalog(initialCatalog);
 ```
 
-커넥션 풀에서 logical Connection을 반환하면 catalog는 URL에서 결정한 초기 값으로
-복원됩니다. 이전 lease에서 얻은 DatabaseMetaData 객체는 다음 lease에서 재사용하지
+커넥션 풀에서 논리 Connection을 반환하면 카탈로그는 URL에서 결정한 초기 값으로
+복원됩니다. 이전 연결 대여 기간에서 얻은 DatabaseMetaData 객체는 다음 연결 대여 기간에서 재사용하지
 않습니다.
 
 ## 지원 범위 확인
 
-Machbase JDBC는 실제 지원 범위를 capability에 반영합니다. 예를 들어 트랜잭션 격리 수준,
-ResultSet 종류, savepoint, generated key와 multiple open results 지원 여부를 다음과 같이
+Machbase JDBC는 실제 지원 범위를 기능에 반영합니다. 예를 들어 트랜잭션 격리 수준,
+ResultSet 종류, savepoint, generated 키와 multiple open results 지원 여부를 다음과 같이
 확인합니다.
 
 ```java
@@ -157,7 +157,7 @@ System.out.println(metadata.supportsMultipleOpenResults());
 ```
 
 `Driver.jdbcCompliant()`이 `false`인 것과 개별 JDBC API의 지원 여부는 별개입니다.
-애플리케이션은 필요한 capability를 직접 확인합니다.
+애플리케이션은 필요한 기능을 직접 확인합니다.
 
 Standard Edition에서 ROWID를 지원하는 서버와 연결하면 `supportsGetGeneratedKeys()`는
 `true`, `getRowIdLifetime()`은 `ROWID_VALID_OTHER`를 반환합니다. 지원하지 않는 서버 또는

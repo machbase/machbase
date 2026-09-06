@@ -16,8 +16,9 @@ Cluster Edition은 여러 노드에 분산 배포하는 구성으로, 대용량 
 | **Broker** | SQL 파싱 및 쿼리 분배, 클라이언트 접점 |
 | **Warehouse** | 실제 데이터 저장 및 쿼리 실행 |
 
-최소 구성은 Coordinator 1, Deployer 1, Lookup 2(master 1, monitor 1), Broker 1,
-Warehouse 2(그룹당 2노드로 복제) 입니다.
+이 장의 기본 배포 예시는 Coordinator 1개, Deployer 1개, Lookup 2개(master 1개,
+monitor 1개), Broker 1개와 Warehouse 2개(하나의 복제 그룹)로 구성합니다.
+실제 노드 수와 배치는 가용성, 처리량과 장애 시 남아 있어야 할 용량을 기준으로 정합니다.
 
 ## 배포 방식
 
@@ -62,11 +63,14 @@ Coordinator의 지시에 따라 각 노드에 패키지를 배포하고 초기�
 
 #### Lookup
 
-참조 데이터와 조회 처리를 위한 노드입니다. 구성에 따라 master, monitor, slave 역할을 지정합니다.
+참조 데이터와 조회 처리를 위한 노드입니다. 구성에 따라 `master`, `monitor`, `slave`
+역할을 지정합니다.
 
 #### Broker
 
-클라이언트의 SQL 요청을 받아 파싱하고 적절한 Warehouse로 분배합니다. 애플리케이션은 Broker 주소로만 연결하며, Warehouse와 직접 통신하지 않습니다. 이중화를 권장합니다.
+클라이언트의 SQL 요청을 받아 파싱하고 적절한 Warehouse로 분배합니다. 일반 애플리케이션은
+Broker 주소로 연결합니다. Warehouse 직접 연결은 복제 상태 비교 같은 관리 진단 절차에서만
+사용하며, 애플리케이션의 접속 경로와 구분합니다. Broker 이중화를 권장합니다.
 
 - 클라이언트 접속 포트: 기본 5656
 
@@ -178,7 +182,9 @@ sudo systemctl start chronyd
 chronyc tracking
 ```
 
-타임 서버를 사용할 수 없는 경우 직접 설정합니다.
+타임 서버를 사용할 수 없는 격리된 설치 환경에서는 초기 시각을 직접 설정할 수 있습니다.
+다음 값은 형식 예시이므로 실제 현재 시각으로 바꾸십시오. 수동 설정만으로 노드 간 시간 차이가
+지속적으로 보정되지는 않으므로 운영 전에는 시간 동기화 경로를 마련합니다.
 
 ```bash
 sudo date -s "2025-01-02 12:34:56"
@@ -194,7 +200,7 @@ ports=5101-5110,5201-5202,5301-5302,5401,5500-5503,5656
 sudo sysctl -w net.ipv4.ip_local_reserved_ports="${current:+$current,}$ports"
 ```
 
-기존 예약 포트가 있으면 덮어쓰지 말고 쉼표로 구분해 병합합니다. 클러스터 구성에 따라 포트 범위를 조정하십시오. Cluster link, Coordinator/Deployer 관리, service, Warehouse replication manager 포트 등을 모두 포함해야 합니다.
+기존 예약 포트가 있으면 덮어쓰지 말고 쉼표로 구분해 병합합니다. 클러스터 구성에 따라 포트 범위를 조정하십시오. Cluster link, Coordinator/Deployer 관리, 서비스, Warehouse 복제 관리자 포트 등을 모두 포함해야 합니다.
 
 ---
 
@@ -334,9 +340,9 @@ cluster:
 | `cluster.name` | 클러스터 이름입니다. `destroy` 확인 등에서 사용됩니다. |
 | `cluster.hosts` | 노드에서 참조할 호스트 별칭과 SSH 접속 주소입니다. `address`는 `user@host` 형식을 사용합니다. |
 | `cluster.package.name` | Coordinator에 등록할 패키지 이름입니다. |
-| `cluster.package.origin_path` | `install`, `apply`, `upgrade` 실행 때 입력으로 사용할 패키지 archive 경로입니다. |
-| `cluster.package.registered_path` | `export`가 기록하는 Coordinator package repository의 관찰 경로입니다. 실행 입력으로 사용하지 않습니다. |
-| `cluster.ssh.key_file` | 대상 서버 접속에 사용할 private key 경로입니다. 비밀번호 필드는 사용하지 않습니다. |
+| `cluster.package.origin_path` | `install`, `apply`, `upgrade` 실행 때 입력으로 사용할 패키지 보관 파일 경로입니다. |
+| `cluster.package.registered_path` | `export`가 기록하는 Coordinator 패키지 저장소의 관찰 경로입니다. 실행 입력으로 사용하지 않습니다. |
+| `cluster.ssh.key_file` | 대상 서버 접속에 사용할 개인키 경로입니다. 비밀번호 필드는 사용하지 않습니다. |
 | `cluster.defaults` | 노드 타입별 `home_path`, `cluster_link_port`, `service_port` 기본값입니다. |
 | `cluster.coordinators` | Coordinator 노드 목록입니다. `role`은 `primary` 또는 `secondary`를 사용합니다. |
 | `cluster.deployers` | Deployer 노드 목록입니다. |
@@ -348,7 +354,7 @@ cluster:
 
 - Coordinator: 2개 (Primary + Secondary HA)
 - Deployer: 1개 이상
-- Lookup: master 1개, monitor 1개 이상
+- Lookup: `master` 1개, `monitor` 1개 이상
 - Broker: 2개 이상 (부하 분산)
 - Warehouse 그룹: 그룹당 2개 (복제를 통한 고가용성)
 
@@ -386,8 +392,8 @@ machclusterctl validate -f cluster.yaml
 | YAML 문법 | 파일 파싱 오류 여부 |
 | 환경변수 치환 | `${VAR}` 또는 `${VAR:-default}` 표현식 해석 가능 여부 |
 | 필수 필드 | 클러스터 이름, 호스트, 패키지, 노드별 필수 값 누락 여부 |
-| 별칭 | 노드 alias 중복 여부 |
-| 포트 충돌 | 같은 host 안에서 선언된 포트 충돌 여부 |
+| 별칭 | 노드 별칭 중복 여부 |
+| 포트 충돌 | 같은 호스트 안에서 선언된 포트 충돌 여부 |
 | 토폴로지 | Primary Coordinator, Lookup master/monitor, Deployer 참조 관계 |
 
 #### 출력 예시
@@ -418,9 +424,9 @@ machclusterctl apply -f cluster.yaml --dry-run --verbose
 |------|------|------|
 | `field ... not found` | 지원하지 않는 YAML 키 사용 | 현행 스키마의 `cluster.*` 항목으로 수정 |
 | `required field ...` | 필수 값 누락 | 메시지에 표시된 필드를 추가 |
-| `duplicate alias` | 노드 alias 중복 | 모든 노드 alias를 고유하게 변경 |
-| `port conflict` | 같은 host에서 동일 포트 사용 | 해당 노드의 포트 또는 `home_path`를 명시적으로 분리 |
-| `deployer ... not found` | Lookup/Broker/Warehouse가 존재하지 않는 Deployer를 참조 | `deployer` 값을 Deployer alias 또는 host:port로 수정 |
+| `duplicate alias` | 노드 별칭 중복 | 모든 노드 별칭을 고유하게 변경 |
+| `port conflict` | 같은 호스트에서 동일 포트 사용 | 해당 노드의 포트 또는 `home_path`를 명시적으로 분리 |
+| `deployer ... not found` | Lookup/Broker/Warehouse가 존재하지 않는 Deployer를 참조 | `deployer` 값을 Deployer 별칭 또는 호스트:포트로 수정 |
 
 ---
 
@@ -472,7 +478,7 @@ machclusterctl status
 machclusterctl status --coordinator /home/machbase/coordinator
 ```
 
-출력은 `machcoordinatoradmin --cluster-status-full --verbose` 형식입니다. Coordinator와 Broker는 `primary`, `leader` 같은 역할 상태가 표시될 수 있으며, Desired/Actual state가 서로 맞는지 확인합니다.
+출력은 `machcoordinatoradmin --cluster-status-full --verbose` 형식입니다. Coordinator와 Broker는 `primary`, `leader` 같은 역할 상태가 표시될 수 있으며, 목표 상태와 실제 상태가 서로 맞는지 확인합니다.
 
 ```
 +-------------+--------------------------------+--------------------------------+--------------------------------+-------------------------------+-------------+-----------------+----------+
@@ -506,7 +512,9 @@ machclusterctl stop
 
 ### 설치 후 운영
 
-최초 설치와 접속 검증이 끝난 뒤의 topology 변경, node 추가·제거와 상태 복구는 [Cluster 운영](../../operations-configuration-recovery/cluster/)을 따릅니다. 장애 원인 분류와 복구 판단은 [Cluster 문제 해결](../../troubleshooting/cluster/)을 참고하십시오. 설치 페이지에 day-2 운영 명령과 파괴적 복구 절차를 복제하지 않습니다.
+최초 설치와 접속 검증이 끝난 뒤의 노드 구성 변경, 노드 추가·제거와 상태 복구는
+[Cluster 운영](../../operations-configuration-recovery/cluster/)을 따릅니다. 장애 원인 분류와
+복구 판단은 [Cluster 문제 해결](../../troubleshooting/cluster/)을 참고하십시오.
 
 <a id="manual-machcoordinatoradmin"></a>
 
@@ -708,7 +716,9 @@ Coordinator와 Deployer가 준비된 후 Lookup, Broker, Warehouse 노드를 Coo
 
 ##### 1. 등록 파라미터 확인
 
-Broker 설정 파일은 `--add-node` 실행 때 생성되어 Deployer를 통해 대상 노드에 배포됩니다. 등록 전에 cluster link 포트, 서비스 포트, HTTP 포트를 확정합니다.
+Broker 설정 파일은 `--add-node` 실행 때 생성되어 Deployer를 통해 대상 노드에 배포됩니다.
+등록 전에 클러스터 통신 포트와 서비스 포트를 확정합니다. Broker에는 HTTP 관리 포트를
+지정하지 않습니다.
 
 ```
 CLUSTER_LINK_HOST    = 192.168.1.11   # Broker 노드 IP
@@ -739,7 +749,7 @@ machcoordinatoradmin --add-node="192.168.1.11:5401" \
 | `--home-path` | 노드 홈 디렉터리 |
 | `--dbs-path` | Broker/Warehouse의 데이터 파일 경로. 생략하면 기본 `DBS_PATH`를 사용 |
 | `--port-no` | 클라이언트 또는 노드 서비스 포트 |
-| `--replication` | Warehouse replication manager 주소입니다. `host:port` 형식을 사용합니다. |
+| `--replication` | Warehouse 복제 관리자 주소입니다. `host:port` 형식을 사용합니다. |
 
 ##### 3. 노드 시작
 
@@ -755,7 +765,7 @@ Warehouse 노드는 그룹 단위로 구성합니다. 같은 그룹의 노드끼
 
 ##### 1. 등록 파라미터 확인
 
-Warehouse 설정 파일은 `--add-node` 실행 때 생성되어 Deployer를 통해 대상 노드에 배포됩니다. 등록 전에 cluster link 포트, 서비스 포트, replication manager 주소를 확정합니다.
+Warehouse 설정 파일은 `--add-node` 실행 때 생성되어 Deployer를 통해 대상 노드에 배포됩니다. 등록 전에 클러스터 통신 포트, 서비스 포트, 복제 관리자 주소를 확정합니다.
 
 ```
 CLUSTER_LINK_HOST    = 192.168.1.13
@@ -822,4 +832,4 @@ Coordinator, Lookup, Broker, Warehouse가 각 역할에 맞는 정상 상태로 
 
 #### 최초 접속 확인
 
-Broker native port로 접속해 `SELECT CURRENT_DATABASE();`와 표본 조회를 실행합니다. 최초 설치 검증이 끝난 뒤의 개별 node 시작·종료와 상태 복구는 [Cluster 운영](../../operations-configuration-recovery/cluster/)과 [Cluster 문제 해결](../../troubleshooting/cluster/)을 사용하십시오.
+Broker 네이티브 포트로 접속해 `SELECT CURRENT_DATABASE();`와 표본 조회를 실행합니다. 최초 설치 검증이 끝난 뒤의 개별 노드 시작·종료와 상태 복구는 [Cluster 운영](../../operations-configuration-recovery/cluster/)과 [Cluster 문제 해결](../../troubleshooting/cluster/)을 사용하십시오.

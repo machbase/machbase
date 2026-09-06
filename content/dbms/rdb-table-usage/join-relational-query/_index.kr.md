@@ -52,12 +52,12 @@ WHERE o.customer = 'CUST-001';
 
 ### JOIN 성능 최적화
 
-- JOIN 조건 컬럼에 인덱스를 생성합니다.
-- 큰 테이블을 드라이빙 테이블로 사용하지 않습니다.
+- JOIN 조건 컬럼의 타입을 맞추고, 인덱스 사용 여부를 실행 계획에서 확인합니다.
+- 테이블 전체 크기뿐 아니라 조건 적용 후 행 수를 기준으로 조인 순서를 검토합니다.
 - 필요한 컬럼만 SELECT합니다.
 
 ```sql
--- 인덱스 생성으로 JOIN 성능 향상
+-- 조인 조건에 사용할 인덱스 후보
 CREATE INDEX idx_order_item ON order_history(item_id);
 CREATE INDEX idx_tx_order   ON tx_history(order_id);
 ```

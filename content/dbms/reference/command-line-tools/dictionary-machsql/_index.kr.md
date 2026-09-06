@@ -100,7 +100,7 @@ machsql -s 127.0.0.1 -u app_user \
 
 ```bash
 machsql -s 127.0.0.1 -u SYS -p MANAGER -P 5656 \
-    -c ALTERNATIVE_SERVERS=192.168.0.147:9209;CONNECTION_TIMEOUT=10
+    -c 'ALTERNATIVE_SERVERS=192.168.0.147:9209;CONNECTION_TIMEOUT=10'
 ```
 
 환경변수로도 설정할 수 있습니다.

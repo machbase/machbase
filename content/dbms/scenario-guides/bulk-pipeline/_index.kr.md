@@ -6,7 +6,7 @@ toc: true
 ---
 
 대량 적재는 입력 파일, 대상 테이블, 실패 처리, 재시도와 검증을 하나의 파이프라인으로
-설계해야 합니다. 명령 옵션의 정본은
+설계해야 합니다. 명령 옵션의 상세 설명은
 [데이터 입력·적재·내보내기](/dbms/development-tools-integration/data-input-load-export/)와
 [machloader 사전](/dbms/reference/command-line-tools/dictionary-machloader/)에서 확인합니다.
 
@@ -14,7 +14,7 @@ toc: true
 
 다음을 배치 실행 전에 고정합니다.
 
-- 대상 database, 테이블과 열 순서
+- 대상 데이터베이스, 테이블과 열 순서
 - 파일 인코딩, 구분자, 따옴표, 줄바꿈과 시간 형식
 - 중복 행을 구분할 키 또는 시간 범위
 - 허용할 실패 행과 전체 배치 실패 기준
@@ -54,7 +54,7 @@ machloader -s 127.0.0.1 -P 5656 -u app_user \
 ## 3단계: Append 구현
 
 언어별 Append 호출, 반환값과 오류 처리는 [개발 도구 연동](/dbms/development-tools-integration/)의
-현재 quickstart를 사용합니다. 예외만 기다리지 말고 SDK가 반환하는 성공·실패 값도 확인합니다.
+해당 SDK의 빠른 시작 예제를 사용합니다. 예외만 기다리지 말고 SDK가 반환하는 성공·실패 값도 확인합니다.
 실패한 행을 문자열 결합 INSERT로 자동 재실행하지 마십시오. 바인드 구문을 사용하고, 실패가
 일시적인지 데이터 오류인지 구분한 뒤 재처리합니다.
 
@@ -70,7 +70,7 @@ SELECT COUNT(*) AS row_count,
 ```
 
 검증에는 loader 또는 SDK의 성공 건수, 실패 파일의 행 수, 대상 테이블 행 수를 모두 사용합니다.
-checkpoint는 DB 입력 성공과 검증이 끝난 뒤에만 전진시킵니다.
+체크포인트는 DB 입력 성공과 검증이 끝난 뒤에만 전진시킵니다.
 
 ## 5단계: 정리
 

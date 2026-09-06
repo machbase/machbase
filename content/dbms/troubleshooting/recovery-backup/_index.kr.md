@@ -21,8 +21,8 @@ machadmin -e
 tail -100 "$MACHBASE_HOME/trc/machbase.trc"
 ```
 
-restore는 기존 물리 database를 교체하는 파괴적 작업입니다. 실행 중인 서버를 정지하는 것만으로
-충분하지 않으며, 현재 database가 존재하면 restore가 거부됩니다. 다음 순서는 개념적 점검표이며
+복원은 기존 물리 데이터베이스를 교체하는 파괴적 작업입니다. 실행 중인 서버를 정지하는 것만으로
+충분하지 않으며, 현재 데이터베이스가 존재하면 복원이 거부됩니다. 다음 순서는 개념적 점검표이며
 운영 명령으로 그대로 복사하지 마십시오.
 
 ```text
@@ -34,13 +34,13 @@ restore는 기존 물리 database를 교체하는 파괴적 작업입니다. 실
 6. 서버를 시작하고 업무 검증 쿼리를 수행한다.
 ```
 
-`machadmin -d`는 현재 database를 파기하므로 백업과 명시적 승인 없이 실행해서는 안 됩니다.
-정확한 restore 구문과 제약은
+`machadmin -d`는 현재 데이터베이스를 파기하므로 백업과 명시적 승인 없이 실행해서는 안 됩니다.
+정확한 복원 구문과 제약은
 [BACKUP/RESTORE/MOUNT 문법](/dbms/reference/sql/syntax-dictionary-sql/backup-restore-mount-syntax/)을
 참고하십시오.
 
 백업 이미지 확인이나 MOUNT 성공은 1차 검증일 뿐 완전한 복구 가능성을 보장하지 않습니다.
-별도 환경에서 restore와 애플리케이션 검증까지 정기적으로 수행합니다.
+별도 환경에서 복원과 애플리케이션 검증까지 정기적으로 수행합니다.
 
 <a id="failure-mount"></a>
 
@@ -60,5 +60,5 @@ SELECT COUNT(*) FROM backup_check.sys.target_table;
 UMOUNT DATABASE backup_check;
 ```
 
-동일 별칭 충돌, 지원하지 않는 Edition, 호환되지 않는 백업, 사용 중인 mounted database를
+동일 별칭 충돌, 지원하지 않는 Edition, 호환되지 않는 백업, 사용 중인 마운트된 데이터베이스를
 구분해 처리합니다. 강제로 파일을 삭제하거나 서버 메타데이터를 수정하지 마십시오.

@@ -37,7 +37,8 @@ FROM order_history
 WHERE order_id = 1001;
 ```
 
-조건 컬럼에 인덱스가 있으면 조회 성능이 향상됩니다.
+조건 컬럼의 인덱스는 읽는 행 수를 줄이는 데 도움이 될 수 있습니다. 실제 사용 여부와
+효과는 `EXPLAIN`과 대표 데이터의 실행 시간으로 확인합니다.
 
 ```sql
 SELECT order_id, amount, order_time

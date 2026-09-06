@@ -80,6 +80,8 @@ CREATE TRANSACTION TABLE t2 (id INTEGER, name VARCHAR(64), cat VARCHAR(32), val 
 | `DOUBLE` | 64비트 부동소수점 |
 | `DECIMAL(M,D)` | exact 고정소수점 (`NUMERIC`, `DEC`, `FIXED`, `NUMBER` alias) |
 | `VARCHAR(n)` | 가변 문자열 |
+| `TEXT` / `CLOB` | 대용량 문자열 |
+| `BINARY` / `BLOB` | 가변 길이 바이너리 값 |
 | `DATETIME` | 날짜·시간 (나노초) |
 | `IPV4` / `IPV6` | 네트워크 주소 |
 | `JSON` | JSON 문서 |

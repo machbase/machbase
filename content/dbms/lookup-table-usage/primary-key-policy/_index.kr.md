@@ -114,7 +114,7 @@ CREATE INDEX idx_equip_code ON equipment(code);
 
 ### PRIMARY KEY 불변 원칙
 
-PRIMARY KEY 값은 변경하지 않는 것이 원칙입니다. 변경이 필요하면 DELETE + INSERT를 사용합니다.
+PRIMARY KEY 값은 UPDATE할 수 없습니다. 변경이 필요하면 DELETE + INSERT를 사용합니다.
 
 ```sql
 -- 잘못된 패턴 (PK 변경은 DELETE + INSERT로)
@@ -127,3 +127,7 @@ INSERT INTO country VALUES ('NEW', '새 국가명');
 
 LOOKUP 테이블 DML은 개별 문장 단위로 실행합니다. `BEGIN`/`COMMIT`으로 묶는 TRANSACTION
 트랜잭션에는 LOOKUP DML을 포함할 수 없습니다.
+
+따라서 두 문장 사이의 조회와 삽입 실패에 대비해야 합니다. 기존 값을 보관하고 참조하는
+키의 전환 순서를 정한 뒤 변경하며, 전체 변경의 원자성이 필요하면 TRANSACTION 테이블을
+검토합니다.

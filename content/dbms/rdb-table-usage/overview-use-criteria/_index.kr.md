@@ -96,7 +96,7 @@ DROP TABLE order_history;
 
 TRANSACTION 테이블은 관계형 갱신과 조회에 적합하지만, 초고속 append 중심 원본 수집에는 LOG 또는 TAG 테이블이 더 적합합니다. 원본은 LOG/TAG에 저장하고, 업무 상태나 집계 결과만 TRANSACTION 테이블로 관리하는 구성을 우선 검토합니다.
 
-Cluster Edition에서는 무수식 `CREATE TABLE`, `CREATE TRANSACTION TABLE`, `CREATE TXN TABLE`을
+Cluster Edition에서는 타입을 생략한 `CREATE TABLE`, `CREATE TRANSACTION TABLE`, `CREATE TXN TABLE`을
 모두 지원하지 않습니다. Cluster Edition에서 LOG 테이블을 만들 때는 `CREATE LOG TABLE`을
 사용합니다.
 

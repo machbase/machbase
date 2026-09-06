@@ -107,7 +107,7 @@ machcollectoradmin --start-collector=my_collector
 machcollectoradmin --status-collector=my_collector
 ```
 
-재시작 전에는 원본 파일과 처리 완료 파일의 위치를 확인하십시오. 어느 파일과 offset부터
+재시작 전에는 원본 파일과 처리 완료 파일의 위치를 확인하십시오. 어느 파일과 오프셋부터
 재개하는지는 사용 중인 버전의 로그와 템플릿 설정을 기준으로 판단해야 합니다. 이미 처리한
 파일을 입력 위치에 다시 두면 중복 적재될 수 있습니다.
 

@@ -32,17 +32,19 @@ toc: true
 | `d` | 일 | `7d` |
 | `w` | 주 | `2w` (= 14일) |
 
-> 월(`month`, `mo`)과 연(`year`, `y`)은 길이가 일정하지 않아 지원하지 않습니다. `30d` 또는 `365d`로 대체합니다.
+> 월(`month`, `mo`)과 연(`year`, `y`) 접미사는 지원하지 않습니다. 달력 기준으로 한 달이나
+> 한 해를 이동하려면 `ADD_TIME()`을 사용합니다. `30d`와 `365d`는 각각 고정된 일수이므로
+> 달력상의 한 달·한 해와 항상 같지는 않습니다.
 
 ## ADD_TIME 함수
 
-월·연처럼 상대 시간 literal에 없는 달력 보정에는 `ADD_TIME()`을 사용합니다. signature,
-format과 오류는 [SQL 함수 사전](../dictionary/functions-full/#add_time)을 정본으로 사용합니다.
+월·연처럼 상대 시간 리터럴에 없는 달력 보정에는 `ADD_TIME()`을 사용합니다. 인자, 형식과
+오류 조건은 [SQL 함수 사전](../dictionary/functions-full/#add_time)을 참고하십시오.
 
 ## TO_DATE 함수
 
-문자열 경계를 사용해야 할 때는 `TO_DATE()`로 DATETIME을 명시합니다. format token과 변환
-오류는 [SQL 함수 사전](../dictionary/functions-full/#to_date)을 정본으로 사용합니다.
+조회 구간의 시작과 끝을 날짜 문자열로 지정할 때는 `TO_DATE()`로 DATETIME 값을 만듭니다.
+날짜 형식과 변환 오류는 [SQL 함수 사전](../dictionary/functions-full/#to_date)을 참고하십시오.
 
 ## 활용 패턴
 
@@ -111,7 +113,7 @@ SELECT event_time - 250 AS event_time_minus_250ns FROM events;
 
 | 상황 | 오류 | 해결 방법 |
 |------|------|-----------|
-| 지원하지 않는 접미사(`1y`, `5mo`) | `ERR-02034` invalid time expression | 지원 단위(`365d`, `30d` 등)로 교체 |
+| 지원하지 않는 접미사(`1y`, `5mo`) | `ERR-02034` invalid time expression | 달력 단위는 `ADD_TIME()`, 고정 기간은 `d` 등 지원 접미사 사용 |
 | 단위 누락(`now + 10`) | 나노초로 해석됨 | 의도한 단위 접미사 명시 |
 | 너무 큰 값(`1000000d`) | `ERR_OVERFLOW_INTERVAL` | 값 범위 축소 |
 
