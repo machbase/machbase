@@ -4,56 +4,93 @@ weight: 60
 toc: true
 ---
 
-LOG 테이블은 조회 조건에 따라 LSM, KEYWORD, BITMAP 인덱스를 사용할 수 있습니다. 인덱스는
-입력과 저장 비용을 늘리므로 대표 쿼리의 실행 계획을 측정한 뒤 추가합니다.
+인덱스를 만들었는데도 조회가 빨라지지 않으면 먼저 쿼리가 그 인덱스를 사용할 수 있는지
+확인해야 합니다. 인덱스는 읽기 비용을 줄이는 대신 입력·저장·백그라운드 처리 비용을
+늘립니다. 컬럼마다 하나씩 만드는 것보다 대표 조건을 정하는 편이 출발점으로 좋습니다.
 
 <a id="index-tuning-log"></a>
 
-## 인덱스 선택
+## 조회 조건에 맞춰 선택합니다
 
-| 조회 조건 | 시작점 |
-|---|---|
-| DATETIME·숫자 범위 | LSM |
-| VARCHAR/TEXT 단어 검색 | KEYWORD와 `SEARCH`/`ESEARCH` |
-| 반복 값의 분석 조건 | 지원 타입의 BITMAP |
+| 조회 조건 | 검토할 인덱스 | 확인할 점 |
+|---|---|---|
+| 숫자·DATETIME 등의 값과 범위 | LSM | 조건에 맞는 지원 타입과 실제 실행 계획 |
+| VARCHAR·TEXT의 단어·토큰 패턴 | KEYWORD | SEARCH·ESEARCH 사용, LIKE와 결과 의미가 다름 |
+| 지원 타입의 반복 값 분석 | BITMAP | 값 분포와 인코딩, 입력·저장 비용 |
 
-`_ARRIVAL_TIME` 범위는 LOG 테이블의 기본 시간 접근 경로를 먼저 사용합니다. 같은 목적의
-인덱스를 관성적으로 추가하지 말고 `EXPLAIN`과 실제 실행 시간을 비교하십시오.
+LOG의 `_arrival_time` 범위는 기본 시간 접근 경로를 먼저 활용합니다.
+같은 목적의 인덱스를 관성적으로 추가할 필요는 없습니다.
+지원 타입과 속성은 [INDEX 문법](/dbms/reference/sql/syntax-dictionary-sql/index-syntax/)을
+기준으로 확인하세요. 일반적인 RDBMS의 복합 인덱스 설계를 그대로 적용하지 마세요.
 
-## 검증 예제
+## 같은 데이터에서 생성 전후를 비교합니다
 
 ```sql
-CREATE LOG TABLE sc7_index_log (
+CREATE LOG TABLE ch7_index (
+    event_id   INTEGER,
     event_time DATETIME,
-    level      SHORT,
+    severity   SHORT,
     message    VARCHAR(256)
 );
+INSERT INTO ch7_index VALUES (
+    1, TO_DATE('2026-01-01 10:00:00', 'YYYY-MM-DD HH24:MI:SS'), 1, 'service started');
+INSERT INTO ch7_index VALUES (
+    2, TO_DATE('2026-01-01 10:01:00', 'YYYY-MM-DD HH24:MI:SS'), 3, 'database timeout');
+INSERT INTO ch7_index VALUES (
+    3, TO_DATE('2026-01-01 10:02:00', 'YYYY-MM-DD HH24:MI:SS'), 3, 'connection timeout');
 
-CREATE INDEX sc7_idx_event_time
-    ON sc7_index_log(event_time);
-CREATE INDEX sc7_idx_message
-    ON sc7_index_log(message) INDEX_TYPE KEYWORD;
-CREATE INDEX sc7_idx_level
-    ON sc7_index_log(level)
+EXPLAIN SELECT event_id FROM ch7_index WHERE severity = 3;
+
+CREATE INDEX ch7_index_time ON ch7_index(event_time) INDEX_TYPE LSM;
+CREATE INDEX ch7_index_message ON ch7_index(message) INDEX_TYPE KEYWORD;
+CREATE INDEX ch7_index_severity ON ch7_index(severity)
     INDEX_TYPE BITMAP BITMAP_ENCODE = RANGE;
 
-INSERT INTO sc7_index_log VALUES (SYSDATE, 1, 'service started');
-INSERT INTO sc7_index_log VALUES (SYSDATE, 3, 'database timeout');
-EXEC TABLE_FLUSH(sc7_index_log);
+EXEC TABLE_FLUSH(ch7_index);
+EXEC INDEX_FLUSH(ch7_index);
 
-EXPLAIN SELECT _arrival_time, event_time, level, message
-  FROM sc7_index_log
- WHERE message SEARCH 'timeout';
+EXPLAIN SELECT event_id FROM ch7_index WHERE severity = 3;
+EXPLAIN SELECT event_id FROM ch7_index WHERE message SEARCH 'timeout';
 
+SELECT event_id FROM ch7_index
+ WHERE message SEARCH 'timeout'
+ ORDER BY event_id;
 SHOW INDEXES;
-
-DROP INDEX sc7_idx_level;
-DROP INDEX sc7_idx_message;
-DROP INDEX sc7_idx_event_time;
-DROP TABLE sc7_index_log;
 ```
 
-인덱스 생성 전후에는 동일한 데이터량, 바인드 값과 동시 부하로 비교합니다. 쓰기 처리량,
-인덱스 저장 공간과 flush 시간도 함께 기록하십시오. 정확한 속성과 table type 지원 범위는
-[INDEX 문법](/dbms/reference/sql/syntax-dictionary-sql/index-syntax/)을, 진단 절차는
-[인덱스 튜닝](/dbms/performance-tuning/index-tuning/)을 참고하십시오.
+검색 결과는 2·3번입니다. 실행 계획에서 값 조건과 SEARCH가 사용하는 접근 경로를
+비교하고, SHOW INDEXES로 생성된 이름을 확인하세요.
+이 세 행은 동작을 이해하기 위한 표본이지 성능 측정 데이터는 아닙니다.
+
+## 저장 반영과 인덱스 반영은 별도 단계입니다
+
+`TABLE_FLUSH`는 테이블 데이터를 반영하는 작업이고, `INDEX_FLUSH`는 인덱스 빌드가
+진행될 때까지 기다리는 작업입니다. 실습에서 생성 전후 계획과 시간을 비교할 때는 위처럼
+구분해서 사용하세요.
+
+인덱스가 존재하는 것과 입력된 데이터 전체의 인덱스 반영이 끝난 것은 같지 않습니다.
+빌드 지연이 검색 비용에 영향을 줄 수 있습니다. 그렇다고 매 행 입력마다 두 명령을
+호출하면 배치 입력의 이점을 줄이게 됩니다. 운영에서는 입력률과 백그라운드 처리 속도를
+함께 관찰하고 필요한 동기화 시점만 정하세요.
+
+실수하기 쉬운 부분은 인덱스 반영이 늦다는 이유로 같은 데이터를 재입력하는 것입니다.
+재입력 전에 원본 조회 건수와 인덱스 상태를 각각 확인해야 중복을 피할 수 있습니다.
+
+## 실제 성능은 대표 부하에서 판단합니다
+
+생성 전후에 같은 데이터량·조건값·동시 입력 부하를 사용하세요.
+한 번의 실행 시간뿐 아니라 반복 조회 시간, 입력 처리량, 인덱스 공간과 빌드 지연을
+함께 기록합니다. LIKE·REGEXP는 원문 문자열에 조건을 평가하므로 먼저 시간 범위를
+제한하면 검사할 대상을 줄일 수 있습니다. KEYWORD 인덱스가 있다고 LIKE가 SEARCH로
+바뀌는 것은 아닙니다.
+
+```sql
+DROP INDEX ch7_index_severity;
+DROP INDEX ch7_index_message;
+DROP INDEX ch7_index_time;
+DROP TABLE ch7_index;
+```
+
+계획을 읽기 어렵다면 쿼리와 EXPLAIN 결과를 함께 비교해 보세요.
+[인덱스 튜닝](/dbms/performance-tuning/index-tuning/)의 진단 순서가 다음 확인 지점을
+잡는 데 도움이 됩니다.

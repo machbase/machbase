@@ -133,7 +133,7 @@ INSERT INTO sensor_log_copy SELECT * FROM sensor_log;
 
 -- _arrival_time 명시 삽입 (시간 순서 보장 필요)
 INSERT INTO sensor_log_copy (_arrival_time, id, name, value)
-SELECT _arrival_time, id, name, value FROM sensor_log;
+SELECT _arrival_time, id, name, value FROM sensor_log ORDER BY _arrival_time;
 
 -- CTE 결과 삽입
 INSERT INTO sensor_log_copy (id, name, value)
@@ -147,6 +147,11 @@ SELECT id, name, value FROM filtered;
 
 주의사항:
 - `_ARRIVAL_TIME`을 명시하지 않으면 INSERT 실행 시점의 시간이 자동 입력됩니다.
+- LOG의 명시 시각 복사는 빈 대상에 오름차순으로 입력하고, 다른 입력 작업과 분리하세요.
+  대상에 더 최신 시각이 있으면 원본을 정렬했더라도 역전 입력이 됩니다.
+  기본 `DISK_COLUMNAR_TABLE_TIME_INVERSION_MODE=1`에서는 역전된 값을 직전 저장
+  시각+1ns로 보정하고, 0에서는 거부합니다. 따라서 명시 입력이 원본 시각 보존을
+  무조건 보장하지는 않습니다.
 - VARCHAR 컬럼에서 삽입 값이 최대 길이를 초과하면 자동으로 잘라서 입력됩니다.
 - LOG/TAG 입력은 TRANSACTION 테이블 트랜잭션의 ROLLBACK 대상이 아닙니다.
 
@@ -222,10 +227,17 @@ delete_stmt ::=
     | 'BEFORE' datetime_expression ]
     [ 'NO WAIT' ]
 
-time_unit ::= number ( 'YEAR' | 'MONTH' | 'WEEK' | 'DAY' | 'HOUR' | 'MINUTE' | 'SECOND' )
+time_unit ::= 'YEAR' | 'MONTH' | 'WEEK' | 'DAY' | 'HOUR' | 'MINUTE' | 'SECOND'
 ```
 
 LOG 테이블에서는 임의 위치 삭제를 지원하지 않으며, 가장 오래된 데이터부터 연속으로만 삭제할 수 있습니다.
+
+현재 LOG의 `BEFORE t`는 `_arrival_time <= t`인 행을 삭제합니다.
+이름만 보고 경계를 제외한다고 생각하기 쉬우므로 사전 조회도 같은 비교 조건을 사용하세요.
+`EXCEPT n DAY` 등의 기간은 서버 현재 시각을 기준으로 계산하며 마지막 입력 시각을
+기준으로 하지 않습니다. 일반 사용자 DATETIME 컬럼의 값은 이 삭제 기준이 아닙니다.
+실제 전후 결과는 [LOG 보존형 삭제](/dbms/log-table-usage/operations-lifecycle/)에서
+확인할 수 있습니다.
 
 ```sql
 -- 모든 데이터 삭제
@@ -240,7 +252,7 @@ DELETE FROM sensor_log EXCEPT 10000 ROWS;
 -- 최근 N일 데이터를 제외하고 모두 삭제
 DELETE FROM sensor_log EXCEPT 7 DAY;
 
--- 특정 시각 이전 데이터 삭제
+-- 특정 시각까지의 데이터 삭제 (경계 시각 포함)
 DELETE FROM sensor_log BEFORE TO_DATE('2024-01-01', 'YYYY-MM-DD');
 ```
 

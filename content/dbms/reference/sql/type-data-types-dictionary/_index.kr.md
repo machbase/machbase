@@ -26,7 +26,7 @@ NULL 표현에 예약된 값은 일반 데이터로 사용할 수 없습니다. 
 | `DECIMAL(M,D)` | precision에 따라 가변 | exact fixed-point, M: 1~65, D: 0~30 | - |
 | `ARRAY` | 요소 타입과 cardinality에 따라 가변 | 고정 길이 1차원 숫자 배열, cardinality 1~1024 | whole NULL과 element NULL 구분 |
 | `DATETIME` | 8 bytes | 1970-01-01 ~ 2262-04-11 (나노초 정밀도) | - |
-| `VARCHAR(n)` | 가변 | 최대 n 바이트 (1 ~ 32,768) | - |
+| `VARCHAR(n)` | 가변 | 최대 n 바이트 (LOG 선언 범위: 1~32,767) | - |
 | `IPV4` | 4 bytes | 0.0.0.0 ~ 255.255.255.255 | - |
 | `IPV6` | 16 bytes | 0000:...:0000 ~ FFFF:...:FFFF | - |
 | `TEXT` | 가변 | 0 ~ 64MB (전문 검색 인덱스 지원) | - |
@@ -150,7 +150,7 @@ SELECT TO_CHAR(ts, 'YYYY-MM-DD HH24:MI:SS') FROM t;
 ### VARCHAR(n)
 
 가변 길이 문자열 타입입니다. `n`은 문자 수가 아니라 저장할 수 있는 바이트 수이며,
-1 ~ 32,768 범위입니다. UTF-8 문자열은 문자에 따라 필요한 바이트 수가 다르므로 한글과
+LOG의 선언 범위는 1~32,767입니다. UTF-8 문자열은 문자에 따라 필요한 바이트 수가 다르므로 한글과
 이모지 등을 저장할 때는 실제 인코딩 크기를 고려해 길이를 지정합니다.
 
 ```sql
@@ -166,6 +166,11 @@ VARCHAR 크기를 초과하는 대용량 텍스트를 저장하기 위한 타입
 - LOG와 Standard Edition의 TRANSACTION 테이블에서 지원
 - LOG 테이블은 KEYWORD 인덱스와 `SEARCH` 연산자로 키워드 검색 가능
 - TAG, LOOKUP, VOLATILE 테이블에서는 지원하지 않음
+
+LOG의 TEXT 컬럼 자체에는 ORDER BY·GROUP BY를 적용할 수 없습니다.
+단순 성능 권장사항이 아니라 쿼리 검증에서 거부되는 제약입니다.
+정렬·집계에 사용할 장치, 오류 코드, 등급 등은 별도 VARCHAR·숫자 컬럼으로 두세요.
+TEXT를 VARCHAR로 변경하려고 `MODIFY COLUMN`을 사용하는 것도 지원하지 않습니다.
 
 ```sql
 CREATE LOG TABLE log_table (ts DATETIME, message TEXT);
@@ -224,7 +229,7 @@ INSERT INTO v6_log VALUES (NOW, '21DA:D3:0:2F3B:2AA:FF:FE28:9C5A');
 
 JSON 문서를 저장하는 타입입니다. "Key-Value" 쌍으로 구성된 JSON 데이터를 텍스트 형식으로 저장합니다.
 
-- 데이터 최대 크기: 32,768 bytes (VARCHAR와 동일)
+- 데이터 최대 크기: 32,768 bytes
 - JSON path 최대 길이: 512 bytes
 - TAG, LOG, LOOKUP, TRANSACTION 테이블에서 지원
 - VOLATILE 테이블에서는 JSON 컬럼 생성 불가

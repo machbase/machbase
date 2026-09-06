@@ -4,69 +4,87 @@ weight: 20
 toc: true
 ---
 
-LOG 테이블의 컬럼 구성과 스키마 설계 원칙을 다룹니다.
-
+메시지 전체를 한 컬럼에 넣으면 수집을 빨리 시작할 수 있습니다. 하지만 나중에 장비별 오류
+건수를 구하려고 매번 원문을 파싱하면 쿼리가 복잡해집니다. 원문은 보존하되, 반복해서
+조회하고 집계할 값은 별도 컬럼으로 꺼내 두는 것이 이 절의 핵심입니다.
 
 <a id="log-table-design"></a>
-
-## LOG 테이블 설계
-
-LOG 테이블은 이벤트·로그·패킷처럼 추가 전용(append-only) 데이터를 저장하는 테이블 타입입니다. `CREATE LOG TABLE` 문으로 생성하며, `_arrival_time` 컬럼이 자동으로 추가됩니다.
-
-- **[활용 사례](/dbms/log-table-usage/patterns-scenarios/#use-cases-log)**
-- **[_arrival_time 시간 모델](/dbms/log-table-usage/arrival-time-model/#time-model-arrival-time)**
-- **[스키마 설계](/dbms/log-table-usage/table-structure-schema/#log-table-design-design-schema-log)**
-- **[전문 검색 설계](/dbms/log-table-usage/text-search-keyword-index/#design-text-search)**
-- **[네트워크 데이터 타입 설계](/dbms/log-table-usage/regex-network-query/#design-type-network-data-types)**
-- **[제약 및 주의사항](/dbms/log-table-usage/constraints-errors-troubleshooting/#limitations-log)**
-
 <a id="log-table-design-design-schema-log"></a>
 
-### 스키마 설계
+## 발생 시각, 검색 필드, 원문을 나눕니다
 
-LOG 테이블 스키마 설계의 핵심은 조회 패턴에 맞게 컬럼을 구성하는 것입니다.
-
-#### 기본 원칙
-
-1. **컬럼 수 최소화**: 불필요한 컬럼은 쿼리 성능에 영향을 줍니다.
-2. **적절한 데이터 타입**: 네트워크 주소는 `IPV4`/`IPV6`, 포트 번호는 `INTEGER`를 사용합니다.
-3. **이벤트 시각 컬럼 별도 추가**: `_arrival_time` 외에 이벤트 발생 시각이 필요하면 `DATETIME` 컬럼을 추가합니다.
-
-#### 데이터 타입 선택
-
-| 데이터 | 권장 타입 | 이유 |
-|--------|---------|------|
-| IP 주소 (v4) | `IPV4` | 4바이트 저장, 비교 연산 최적화 |
-| IP 주소 (v6) | `IPV6` | 16바이트 저장 |
-| 포트 번호 | `INTEGER` | 0~65535 전체 범위 표현 가능 |
-| 짧은 문자열 | `VARCHAR(n)` | 가변 길이 |
-| 긴 텍스트 | `TEXT` | 전문 검색 가능 |
-| 플래그/코드 | `SHORT` 또는 `INTEGER` | 숫자 비교가 빠름 |
-| 바이트 크기 | `INTEGER` 또는 `LONG` | 오버플로우 주의 |
-
-#### 예시: 통합 보안 이벤트 로그
+다음은 보안 이벤트 한 건을 저장하고 확인하는 독립 실습입니다.
 
 ```sql
-CREATE LOG TABLE security_event (
-    event_time  DATETIME,        -- 이벤트 발생 시각
-    severity    SHORT,           -- 1=INFO, 2=WARN, 3=ERROR, 4=CRITICAL
-    category    VARCHAR(32),     -- 이벤트 카테고리
-    src_ip      IPV4,
-    dst_ip      IPV4,
-    src_port    INTEGER,
-    dst_port    INTEGER,
-    protocol    SHORT,
-    action      VARCHAR(16),
-    description TEXT             -- 상세 설명 (전문 검색 대상)
+CREATE LOG TABLE ch7_schema (
+    event_time DATETIME,
+    event_id   VARCHAR(64),
+    device     VARCHAR(32),
+    severity   SHORT,
+    src_ip     IPV4,
+    dst_port   INTEGER,
+    message    TEXT
 );
+
+INSERT INTO ch7_schema VALUES (
+    TO_DATE('2026-01-01 10:00:00', 'YYYY-MM-DD HH24:MI:SS'),
+    'evt-0001', 'FW-01', 3, '192.0.2.10', 65535,
+    'connection blocked by policy'
+);
+
+SELECT event_id, device, severity, src_ip, dst_port, message
+  FROM ch7_schema;
 ```
 
-#### 주의사항
+`evt-0001` 한 행과 포트 `65535`가 조회됩니다.
+여기서 `event_id`는 추적용 값이지, 중복 입력을 막는 키 제약이 아닙니다.
 
-- Machbase의 `USHORT`는 65535를 NULL 예약값으로 사용하므로 포트 번호 전체 범위를
-  저장하려면 `INTEGER`를 사용합니다.
+`event_time`에는 원본이 기록한 발생 시각을 저장합니다.
+자동 컬럼인 `_arrival_time`을 DDL에 다시 선언하지 마세요.
+네트워크 지연이나 일괄 이관이 있으면 두 시각이 달라지는 것은 자연스러운 일입니다.
 
-- LOG 테이블에는 PRIMARY KEY, UNIQUE 제약을 지정할 수 없습니다.
-- UPDATE와 일반 조건 DELETE가 불가능하므로 잘못 입력된 데이터는 수정할 수 없습니다. 보존/정리 목적의 `BEFORE`, `OLDEST`, `EXCEPT` DELETE는 별도로 사용합니다.
-- 컬럼 추가·삭제·이름 변경과 일부 속성 변경을 지원합니다. 인덱스 컬럼은 인덱스를 먼저
-  삭제한 뒤 변경합니다.
+## 문자열은 길이와 사용 목적을 함께 봅니다
+
+| 값 | 선택할 타입 | 확인할 점 |
+|---|---|---|
+| 장치 이름·짧은 코드·이벤트 ID | `VARCHAR(n)` | LOG의 선언 범위는 1~32,767바이트이며 문자 수가 아님 |
+| 긴 원문 메시지 | `TEXT` | 최대 64MiB, 원문 자체의 정렬·그룹화는 지원하지 않음 |
+| 오류 등급·작은 코드 | `SHORT` 또는 `INTEGER` | 코드별 의미를 수집기와 조회 코드에서 통일 |
+| 포트 | `INTEGER` | `USHORT`의 65535는 NULL 예약값이므로 전체 포트 범위에 부적합 |
+| 누적 바이트 수 | `LONG` | 예상 최댓값과 NULL 예약값 확인 |
+| 주소 | `IPV4` 또는 `IPV6` | 주소 형식과 원본 문자열 보관 필요 구분 |
+
+LOG에서는 VARCHAR와 TEXT 모두 KEYWORD 인덱스로 단어 검색을 할 수 있습니다.
+전문 검색을 한다는 이유만으로 짧은 코드까지 TEXT로 만들 필요는 없습니다.
+
+실수하기 쉬운 부분은 문자열 길이입니다. `VARCHAR(100)`은 한글 100글자를 뜻하지 않습니다.
+UTF-8 표본의 바이트 수를 확인하고, 길이가 넘는 값을 실제 입력 경로로 보내 보세요.
+길이 초과가 잘림이나 오류 중 어떤 형태로 드러나는지는 사용할 SDK·적재 도구까지
+함께 확인해야 합니다.
+
+## 정렬·집계할 값은 별도로 둡니다
+
+위 스키마에서 `device`·`severity`는 검색 조건과 집계 기준이고,
+`message`는 원문을 읽거나 단어를 찾는 데 사용합니다.
+`ORDER BY message`나 `GROUP BY message`처럼 TEXT 자체를 대상으로 삼으면 오류가 납니다.
+메시지를 전부 정렬하기보다 장치, 오류 코드, 발생 시각 중 실제로 필요한 기준을 정하세요.
+
+KEYWORD 인덱스는 형태소 분석기나 검색 점수 기반 검색 엔진과 같지 않습니다.
+단어 검색과 원문 부분 문자열 검색의 차이는
+[텍스트 검색](../text-search-keyword-index/)에서 확인할 수 있습니다.
+
+## 스키마가 바뀌면 입력 쪽도 함께 확인하세요
+
+LOG는 컬럼 추가·삭제·이름 변경과 제한된 속성 변경을 지원합니다.
+그렇다고 저장한 행의 값을 UPDATE로 바꿀 수 있는 것은 아닙니다.
+특히 컬럼 순서에 맞춰 보내는 Appender와 CSV 매핑은 DDL 변경의 영향을 받으므로
+변경 시점과 입력 프로그램 배포를 함께 계획하세요.
+
+실습 테이블을 정리한 뒤 [컬럼 변경 실습](../create-alter-drop/)으로 이어갑니다.
+
+```sql
+DROP TABLE ch7_schema;
+```
+
+어떤 값을 컬럼으로 꺼낼지 막히면 실제로 답해야 하는 질문부터 적어 보세요.
+그 질문을 SQL로 표현해 보면 필요한 컬럼도 더 분명해집니다.

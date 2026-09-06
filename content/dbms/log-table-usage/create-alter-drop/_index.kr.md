@@ -4,124 +4,134 @@ weight: 30
 toc: true
 ---
 
-LOG 테이블의 생성과 삭제 방법을 다룹니다.
-
+컬럼을 추가하는 SQL은 짧지만, 운영에서는 “기존 행에 어떤 값이 보이는가?”와
+“기존 입력 프로그램이 계속 동작하는가?”까지 확인해야 합니다.
+이 절에서는 데이터를 넣어 둔 상태에서 스키마를 바꾸고 그 결과를 살펴봅니다.
 
 <a id="original-85-creating-log-tables"></a>
 
-## Log 테이블 생성 및 관리
+## LOG라고 명시해서 만듭니다
 
-LOG 테이블은 `CREATE LOG TABLE` 문으로 생성합니다. 테이블 타입을 생략한 `CREATE TABLE`은
-TRANSACTION 테이블을 생성하므로 `LOG` 키워드를 생략하지 않습니다. LOG 테이블에는 입력 시각을
-기록하는 `_arrival_time` 컬럼이 자동으로 관리됩니다.
-
-```sql
-Mach> CREATE LOG TABLE sensor_data (id VARCHAR(32), val DOUBLE);
-Created successfully.
-```
-
-운영 로그나 이벤트 데이터는 조회 조건에 맞게 컬럼 타입을 정합니다.
+테이블 타입을 생략한 `CREATE TABLE`은 TRANSACTION 테이블을 만듭니다.
+이 실습에서는 `CREATE LOG TABLE`을 사용하세요.
 
 ```sql
-CREATE LOG TABLE security_event (
-    event_time  DATETIME,
-    severity    SHORT,
-    category    VARCHAR(32),
-    src_ip      IPV4,
-    dst_ip      IPV4,
-    src_port    INTEGER,
-    dst_port    INTEGER,
-    message     TEXT
+CREATE LOG TABLE ch7_ddl (
+    event_id INTEGER,
+    category VARCHAR(32),
+    severity SHORT,
+    message  VARCHAR(128)
 );
+INSERT INTO ch7_ddl VALUES (1, 'network', 3, 'connection timeout');
 ```
-
-`_arrival_time`은 데이터가 Machbase에 도착한 시각입니다. 실제 이벤트 발생 시각이 필요하면 `event_time`처럼 별도 `DATETIME` 컬럼을 둡니다.
 
 <a id="create-log-schema-rules"></a>
 
-## 스키마 설계 기준
-
-LOG 테이블은 append 중심 테이블이므로 입력 후 수정할 수 없다는 전제로 스키마를 정합니다.
-
-| 설계 항목 | 권장 방식 |
-|----------|-----------|
-| 이벤트 시각 | `_arrival_time`과 별도 `DATETIME` 컬럼을 구분 |
-| 긴 메시지 | `TEXT` 컬럼 사용 |
-| IP 주소 | `IPV4`, `IPV6` 타입 사용 |
-| 상태/등급 | `SHORT` 또는 `INTEGER` 사용 |
-| 분석 기준 | 자주 필터링하는 값을 별도 컬럼으로 분리 |
-
-LOG 테이블에는 PRIMARY KEY나 UNIQUE 제약을 지정하지 않습니다. 행 단위 UPDATE가 필요한 데이터는 LOOKUP 또는 TRANSACTION 테이블을 검토합니다.
+자동 컬럼 `_arrival_time`은 DDL에 다시 선언하지 않습니다.
+실제 발생 시각이 필요하면 별도 DATETIME 컬럼을 두세요.
+PRIMARY KEY·UNIQUE 제약은 LOG에서 지원하지 않습니다.
 
 <a id="alter-log-table"></a>
 
-## 컬럼 변경
-
-LOG 테이블은 운영 중 필요한 컬럼을 추가, 삭제, 이름 변경, 일부 속성 변경할 수 있습니다.
+## 기존 행에서 새 컬럼 값을 확인합니다
 
 ```sql
-ALTER TABLE security_event ADD COLUMN (host_name VARCHAR(128));
+ALTER TABLE ch7_ddl ADD COLUMN (host_name VARCHAR(64));
+ALTER TABLE ch7_ddl ADD COLUMN (source_kind VARCHAR(16) DEFAULT 'agent');
+ALTER TABLE ch7_ddl ADD COLUMN (channels INT32[3] DEFAULT [1, NULL, 3]);
 
-ALTER TABLE security_event
-    ADD COLUMN (channels INT32[3] DEFAULT [1, NULL, 3]);
+SELECT event_id, host_name, source_kind, channels
+  FROM ch7_ddl
+ ORDER BY event_id;
 ```
 
-DEFAULT가 없으면 기존 row의 새 컬럼은 NULL입니다. DEFAULT를 지정하면 기존 row에도 해당
-값을 적용합니다. ARRAY DEFAULT의 요소 수는 선언 cardinality와 정확히 같아야 합니다.
+기존 1번 행의 `host_name`은 NULL, `source_kind`는 `agent`,
+`channels`는 `[1, NULL, 3]`으로 조회됩니다.
+DEFAULT가 있는 컬럼과 없는 컬럼의 차이를 여기서 확인하세요.
+ARRAY DEFAULT는 요소 수가 선언한 길이와 같아야 합니다.
+
+이어서 컬럼 이름을 바꾸고 문자열 길이를 늘립니다.
 
 ```sql
-ALTER TABLE security_event DROP COLUMN (host_name);
-ALTER TABLE security_event DROP COLUMN (channels);
-ALTER TABLE security_event RENAME COLUMN category TO event_category;
-ALTER TABLE security_event MODIFY COLUMN (message VARCHAR(4096));
+ALTER TABLE ch7_ddl RENAME COLUMN category TO event_category;
+ALTER TABLE ch7_ddl MODIFY COLUMN (message VARCHAR(4096));
+ALTER TABLE ch7_ddl MODIFY COLUMN severity SET MINMAX_CACHE_SIZE = 1048576;
+
+SELECT event_id, event_category, severity, message FROM ch7_ddl;
 ```
 
-`MODIFY COLUMN`은 VARCHAR 크기 확장, `MINMAX_CACHE_SIZE` 같은 컬럼 속성 변경, NULL/NOT NULL 속성 변경에 사용합니다.
+기존 행의 값은 유지됩니다. 이름을 바꾼 뒤에는 조회 SQL도 `event_category`를 사용해야
+합니다. MINMAX 예제는 숫자 컬럼에 1MiB를 지정한 것으로, 모든 테이블에 적용할 권장값은
+아닙니다.
+
+실수하기 쉬운 부분은 타입 변경입니다. VARCHAR 길이 확장은 TEXT를 VARCHAR로 변환하는
+명령이 아닙니다. `MINMAX_CACHE_SIZE` 역시 VARCHAR·TEXT 같은 가변 길이 컬럼에는
+설정할 수 없습니다.
+
+## NOT NULL은 기존 데이터 검사도 포함합니다
+
+현재 `event_category`에는 값이 있으므로 다음 변경이 가능합니다.
 
 ```sql
-ALTER TABLE security_event MODIFY COLUMN event_category SET MINMAX_CACHE_SIZE = 1048576;
-ALTER TABLE security_event MODIFY COLUMN event_category NOT NULL NOCHECK;
-ALTER TABLE security_event MODIFY COLUMN event_category NULL;
+ALTER TABLE ch7_ddl MODIFY COLUMN event_category NOT NULL;
+ALTER TABLE ch7_ddl MODIFY COLUMN event_category NULL;
 ```
+
+옵션 없는 `NOT NULL`은 기존 행을 검사합니다.
+NULL이 있는 `host_name`에는 적용할 수 없습니다. 아래 SQL은 실패를 확인하고 싶을 때만
+따로 실행하세요.
+
+```sql
+-- 의도적으로 실패: 기존 행의 host_name이 NULL입니다.
+ALTER TABLE ch7_ddl MODIFY COLUMN host_name NOT NULL;
+```
+
+`NOT NULL NOCHECK`는 기존 NULL 검사를 생략합니다.
+기존 NULL을 채우거나 과거 데이터까지 조건을 만족한다고 보장하는 옵션은 아닙니다.
+이 실습의 정상 흐름에서는 사용하지 않습니다.
 
 <a id="alter-log-limitations"></a>
 
-## 컬럼 변경 제약
+## 컬럼을 지울 때는 인덱스부터 확인합니다
 
-LOG 테이블의 컬럼 변경에는 다음 제약이 있습니다.
+```sql
+CREATE INDEX ch7_ddl_host_idx ON ch7_ddl(host_name) INDEX_TYPE LSM;
+DROP INDEX ch7_ddl_host_idx;
+ALTER TABLE ch7_ddl DROP COLUMN (host_name);
+ALTER TABLE ch7_ddl DROP COLUMN (source_kind);
+ALTER TABLE ch7_ddl DROP COLUMN (channels);
 
-- `_ARRIVAL_TIME`, `_RID` 같은 내부 컬럼은 삭제, 이름 변경, 속성 변경 대상이 아닙니다.
-- 인덱스가 걸린 컬럼은 인덱스를 먼저 삭제한 뒤 컬럼을 삭제합니다.
-- 테이블에는 최소 하나 이상의 사용자 컬럼이 남아 있어야 합니다.
-- VARCHAR 크기 변경은 기존 크기보다 크게 확장하는 용도로 사용합니다.
-- 운영 중 append가 계속되는 테이블은 DDL 시점을 분리하고, 변경 후 입력·조회 쿼리를 확인합니다.
+SELECT event_id, event_category, severity, message FROM ch7_ddl;
+```
+
+인덱스가 참조하는 컬럼은 인덱스를 먼저 삭제해야 합니다.
+내부 컬럼 `_ARRIVAL_TIME`·`_RID`는 삭제·이름 변경·속성 변경 대상이 아니며,
+사용자 컬럼은 최소 하나가 남아 있어야 합니다.
+VARCHAR 길이는 기존보다 크게만 변경할 수 있고 최대 32,767바이트 범위여야 합니다.
 
 <a id="delete-log-table-definition"></a>
 
-## 데이터 삭제와 테이블 삭제
+## 데이터를 비우는 것과 정의를 없애는 것은 다릅니다
 
-테이블 정의를 유지하고 데이터를 모두 비우려면 `TRUNCATE TABLE`을 사용합니다.
-
-```sql
-Mach> TRUNCATE TABLE sensor_data;
-Truncated successfully.
-```
-
-테이블 정의와 데이터를 모두 삭제하려면 `DROP TABLE`을 사용합니다.
+주의: 다음 명령은 실습 데이터를 지웁니다.
+LOG 데이터는 TRANSACTION 테이블의 `ROLLBACK`으로 되돌릴 수 없습니다.
 
 ```sql
-Mach> DROP TABLE sensor_data;
-Dropped successfully.
+TRUNCATE TABLE ch7_ddl;
+SELECT COUNT(*) AS remaining_rows FROM ch7_ddl;
+DROP TABLE ch7_ddl;
 ```
 
-`DROP TABLE`은 복구가 필요한 운영 데이터에 바로 실행하지 않습니다. 삭제 전 백업, 마운트 조회, 내보내기 여부를 확인합니다.
+TRUNCATE 뒤 건수는 0이고 정의는 남습니다. 마지막 DROP은 정의도 삭제합니다.
+일부 오래된 데이터만 정리하려면 [보존형 삭제](../operations-lifecycle/)를 사용하세요.
 
 <a id="create-log-checklist"></a>
 
-## 생성 전 체크리스트
+## 운영 적용은 입력 프로그램과 함께 준비하세요
 
-- 실제 이벤트 시각과 도착 시각을 구분할지 결정합니다.
-- 메시지 전문 검색이 필요하면 `TEXT` 컬럼을 사용합니다.
-- 네트워크 주소는 문자열보다 `IPV4`/`IPV6` 타입을 우선 검토합니다.
-- 행 단위 수정이 필요한 정보는 LOG 테이블에 넣지 않고 LOOKUP 또는 TRANSACTION 테이블로 분리합니다.
-- 보존 기간과 삭제 정책을 테이블 생성 시 함께 정합니다.
+변경 전에는 입력 작업과 DDL 시점을 조정하고, 변경 후에는 SQL·Appender·파일 매핑의
+컬럼 이름·순서·타입을 확인합니다. 리소스 사용 중 오류가 나면 반복 실행하기보다
+대상 테이블을 사용하는 작업부터 확인하세요.
+
+어느 변경에서 막혔는지 모르겠다면 변경 전 DDL과 실패한 SQL을 함께 준비해 보세요.
+그 두 가지가 있으면 원인을 훨씬 빠르게 좁힐 수 있습니다.

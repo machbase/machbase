@@ -65,9 +65,16 @@ toc: true
 | `DISK_COLUMNAR_TABLE_COLUMN_PART_FLUSH_MODE` | 0 | 0~1 | 컬럼 파티션이 가득 찼을 때만 flush할지 여부 |
 | `DISK_COLUMNAR_TABLE_CHECKPOINT_INTERVAL_SEC` | 120 | 1~2^32-1 | 테이블 체크포인트 주기(초) |
 | `DISK_COLUMNAR_INDEX_CHECKPOINT_INTERVAL_SEC` | 120 | 1~2^32-1 | 인덱스 체크포인트 주기(초) |
-| `DISK_COLUMNAR_TABLE_TIME_INVERSION_MODE` | 1 | 0~1 | `_ARRIVAL_TIME` 역전 입력 허용 여부 |
+| `DISK_COLUMNAR_TABLE_TIME_INVERSION_MODE` | 1 | 0~1 | LOG 시각 역전 시 1=직전 시각+1ns로 보정, 0=입력 거부 |
 | `DISK_COLUMNAR_TABLESPACE_MEMORY_SLOWDOWN_HIGH_LIMIT_PCT` | 80 | 0~100 | 메모리 사용량 임계값(%). 초과 시 입력 속도 저하 |
 | `DISK_COLUMNAR_TABLESPACE_MEMORY_SLOWDOWN_MSEC` | 1 | 0~2^32-1 | 임계값 초과 시 레코드당 대기 시간(ms) |
+
+LOG의 `DISK_COLUMNAR_TABLE_TIME_INVERSION_MODE=1`은 명시한 과거 시각을 그대로
+저장한다는 뜻이 아닙니다.
+직전 `_ARRIVAL_TIME`보다 작은 값은 보정됩니다. 같은 시각은 이 역전 조건에 해당하지
+않으므로 모든 행의 시각이 고유해지는 것도 아닙니다.
+이관 시에는 [시간 모델](/dbms/log-table-usage/arrival-time-model/)의 정렬·대상 상태를
+함께 확인하세요.
 
 ## 인덱스 설정
 
@@ -95,7 +102,6 @@ toc: true
 | `TAG_TABLE_META_MAX_SIZE` | 524288000 | 1MB~2^32-1 | TAGDATA 테이블 메타데이터 최대 메모리(바이트) |
 | `TAG_PARTITION_COUNT` | 4 | 1~1024 | Tag 테이블 Key Value 파티션 수 |
 | `TAG_DATA_PART_SIZE` | 16MB | 1MB~1GB | Tag 데이터 파티션 크기(바이트) |
-| `TABLE_SCAN_DIRECTION` | 0 | -1~1 | TAG 테이블 스캔 방향. -1=역방향, 0=테이블 유형 기본값, 1=정방향 |
 | `ROLLUP_FETCH_COUNT_LIMIT` | 3000000 | 0~2^32-1 | 롤업 스레드 1회 패치 데이터 수. 0이면 무제한 |
 
 ## 보안 설정
@@ -106,8 +112,13 @@ toc: true
 
 ## 세션 / 쿼리 설정
 
+`TABLE_SCAN_DIRECTION`은 TAG 전용 설정이 아닙니다. LOG 등 스캔 방향을 사용하는
+쿼리에도 영향을 줄 수 있으며, 최종 출력 정렬을 보장하는 설정도 아닙니다.
+출력 순서는 ORDER BY로 지정하고 실제 접근 경로는 EXPLAIN으로 확인하세요.
+
 | 프로퍼티 | 기본값 | 범위 | 설명 |
 |----------|--------|------|------|
+| `TABLE_SCAN_DIRECTION` | 0 | -1~1 | -1=역방향, 0=테이블 유형 기본값, 1=정방향 |
 | `DDL_LOCK_TIMEOUT` | 0 | 0~1000000 | Standard Edition DDL 잠금 대기 시간(초). 0이면 즉시 오류 반환 |
 | `SHOW_HIDDEN_COLS` | 0 | 0~1 | `SELECT *`에서 `_ARRIVAL_TIME` 컬럼 표시 여부 |
 | `DURATION_BEGIN` | 0 | 0~2^32-1 | `DURATION` 미지정 SELECT의 기본 시작 오프셋(초) |

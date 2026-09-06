@@ -5,120 +5,152 @@ weight: 50
 toc: true
 ---
 
-Machbase는 텍스트 데이터 검색을 위해 `SEARCH`, `ESEARCH`, `REGEXP` 세 가지 WHERE 절 연산자를 제공합니다. `SEARCH`와 `ESEARCH`는 KEYWORD 인덱스를 활용해 빠른 검색을 수행하고, `REGEXP`는 정규 표현식 기반의 패턴 매칭을 지원합니다.
+검색 연산자는 비슷해 보여도 검사하는 대상이 다릅니다.
+SEARCH·ESEARCH는 KEYWORD 인덱스의 토큰을 사용하고, LIKE·REGEXP는 원문에 조건을
+평가합니다. 성능 때문에 연산자를 바꾸기 전에 결과 의미가 같은지 확인하세요.
 
 ## SEARCH
 
-KEYWORD 인덱스가 생성된 VARCHAR 또는 TEXT 컬럼에서 단어 단위 검색을 수행합니다.
-
-```sql
+```text
 column_name SEARCH 'search_term'
 column_name NOT SEARCH 'search_term'
 ```
 
-- KEYWORD 인덱스가 반드시 존재해야 합니다.
-- 단어(토큰) 단위로 검색하며, AND 연산으로 여러 조건을 조합할 수 있습니다.
+LOG의 VARCHAR·TEXT 컬럼에 KEYWORD 인덱스가 필요합니다.
+다중 단어는 AND 의미로 찾으며, 어순·인접성을 보장하는 구문 검색은 아닙니다.
+기본 모드에서 일반 ASCII 단어는 소문자로 정규화되고 한글 등은 2-gram으로 분리됩니다.
+모든 언어의 형태소 분석이나 Unicode 대소문자 처리를 보장하는 기능은 아닙니다.
+
+다음 테이블은 이 페이지 전체에서 사용하는 독립 실습입니다.
 
 ```sql
-CREATE LOG TABLE app_log (id INTEGER, message VARCHAR(200), detail VARCHAR(200));
-CREATE KEYWORD INDEX idx_msg    ON app_log (message);
-CREATE KEYWORD INDEX idx_detail ON app_log (detail);
+CREATE LOG TABLE ch7_ref_search (
+    event_id INTEGER,
+    message  VARCHAR(200),
+    detail   VARCHAR(200)
+);
+CREATE INDEX ch7_ref_msg ON ch7_ref_search(message) INDEX_TYPE KEYWORD;
+CREATE INDEX ch7_ref_detail ON ch7_ref_search(detail) INDEX_TYPE KEYWORD;
+INSERT INTO ch7_ref_search VALUES (1, 'ERROR timeout occurred', 'connection reset');
+INSERT INTO ch7_ref_search VALUES (2, 'pretimeout normal', 'port 8080');
+INSERT INTO ch7_ref_search VALUES (3, NULL, NULL);
+EXEC TABLE_FLUSH(ch7_ref_search);
+EXEC INDEX_FLUSH(ch7_ref_search);
 
-INSERT INTO app_log VALUES (1, 'error timeout occurred', 'connection reset');
-INSERT INTO app_log VALUES (2, 'info service started', 'port 8080');
-
--- 단일 단어 검색
-SELECT * FROM app_log WHERE message SEARCH 'error';
-
--- 다중 단어 검색 (AND)
-SELECT * FROM app_log WHERE message SEARCH 'error' AND message SEARCH 'timeout';
-
--- 여러 컬럼 동시 검색
-SELECT * FROM app_log WHERE message SEARCH 'error' AND detail SEARCH 'reset';
-
--- NOT SEARCH: 해당 단어가 없는 행 반환
-SELECT * FROM app_log WHERE message NOT SEARCH 'error';
+SELECT event_id FROM ch7_ref_search WHERE message SEARCH 'timeout' ORDER BY event_id;
+SELECT event_id FROM ch7_ref_search
+ WHERE message SEARCH 'error' AND detail SEARCH 'reset'
+ ORDER BY event_id;
+SELECT event_id FROM ch7_ref_search WHERE message NOT SEARCH 'timeout' ORDER BY event_id;
 ```
+
+앞의 두 쿼리는 1번, 마지막 쿼리는 2번을 선택합니다.
+NOT SEARCH는 NULL 메시지인 3번을 포함하지 않습니다.
+여러 컬럼을 검색하려면 각 대상 컬럼에 필요한 인덱스를 준비하세요.
 
 ## ESEARCH
 
-KEYWORD 인덱스를 활용하면서 `%` 와일드카드 패턴으로 부분 문자열을 검색합니다. `LIKE`의 단점(`%` 앞 전체 스캔)을 보완합니다.
-
-```sql
+```text
 column_name ESEARCH 'pattern%'
 column_name ESEARCH '%pattern%'
 ```
 
-- `%`는 임의의 문자열과 매칭됩니다.
-- `NOT ESEARCH`는 지원하지 않습니다.
+색인된 단어에 패턴을 적용합니다. `pattern%`는 단어 접두사,
+`%pattern%`는 단어 내부의 부분 패턴입니다.
+`%`가 원문 전체의 단어 경계를 자유롭게 가로지르는 것으로 해석하지 마세요.
+아래 예제는 ASCII 키워드 패턴을 기준으로 합니다.
 
 ```sql
-CREATE LOG TABLE realdual (id1 INTEGER, id2 VARCHAR(20), id3 VARCHAR(20));
-CREATE KEYWORD INDEX idx_id2 ON realdual (id2);
-CREATE KEYWORD INDEX idx_id3 ON realdual (id3);
-
-INSERT INTO realdual VALUES (1, 'aaa bbb1', 'cdf def1');
-INSERT INTO realdual VALUES (2, 'bbb ccc1', 'bcd cdf1');
-INSERT INTO realdual VALUES (3, 'abc bbb2', 'abc bcd1');
-
--- 'bbb'로 시작하는 단어가 있는 행 검색
-SELECT id2 FROM realdual WHERE id2 ESEARCH 'bbb%';
-
--- 'cd'를 포함하는 단어가 있는 행 검색
-SELECT id3 FROM realdual WHERE id3 ESEARCH '%cd%';
+SELECT event_id FROM ch7_ref_search WHERE message ESEARCH 'time%' ORDER BY event_id;
+SELECT event_id FROM ch7_ref_search WHERE message ESEARCH '%time%' ORDER BY event_id;
 ```
+
+결과는 각각 1번과 1·2번입니다.
+현재 ESEARCH의 ASCII 패턴 비교는 대소문자를 구분하지 않습니다.
+원문 LIKE의 완전한 대체 기능은 아니며, 패턴에 매칭되는 토큰·행 수에 따라 비용이 달라집니다.
+
+`NOT ESEARCH` 구문은 지원하지 않습니다.
+NOT SEARCH·NOT LIKE로 바꾸면 제외할 행도 달라질 수 있으므로 결과와 NULL 처리를 확인하세요.
+
+## LIKE와 비교
+
+```sql
+SELECT event_id FROM ch7_ref_search WHERE message LIKE '%TIMEOUT%' ORDER BY event_id;
+SELECT event_id FROM ch7_ref_search WHERE message NOT LIKE '%timeout%' ORDER BY event_id;
+```
+
+첫 쿼리는 1·2번, 두 번째는 0건입니다. NULL 행은 NOT LIKE에도 포함되지 않습니다.
+LIKE는 현재 ASCII 비교에서 대소문자를 구분하지 않습니다.
+`%`는 0개 이상의 문자, `_`는 한 문자를 나타냅니다.
+
+LIKE 자체는 KEYWORD 인덱스를 사용하지 않습니다.
+그렇다고 항상 테이블 전체 스캔이라고 단정할 수는 없습니다.
+시간 조건이나 다른 인덱스 조건으로 먼저 대상 행이 제한될 수 있습니다.
 
 ## REGEXP
 
-정규 표현식 패턴으로 데이터를 검색합니다. KEYWORD 인덱스를 사용하지 않으므로 인덱스 조건과 함께 사용해 검색 범위를 줄이는 것이 좋습니다.
-
-```sql
+```text
 column_name REGEXP 'pattern'
 column_name NOT REGEXP 'pattern'
 ```
 
-- 인덱스가 적용되지 않으므로, 전체 스캔이 발생할 수 있습니다.
-- 먼저 `SEARCH`나 `ESEARCH`로 범위를 좁힌 후 `REGEXP`를 적용하면 효율적입니다.
+정규식 패턴에 맞는 부분을 검사합니다. 기본 비교는 대소문자를 구분합니다.
+시작·끝을 제한하려면 `^`·`$`를 사용하세요.
 
 ```sql
-CREATE LOG TABLE realdual (id1 INTEGER, id2 VARCHAR(20), id3 VARCHAR(20));
-
-INSERT INTO realdual VALUES (1, 'time1', 'series1 series21');
-INSERT INTO realdual VALUES (2, 'time2', 'series2 series22');
-INSERT INTO realdual VALUES (3, 'time3', 'series3 series32');
-
--- 단순 패턴 매칭
-SELECT * FROM realdual WHERE id2 REGEXP 'time';
-
--- 문자 클래스 사용
-SELECT * FROM realdual WHERE id2 REGEXP 'time[12]';
-
--- 부정 매칭
-SELECT * FROM realdual WHERE id2 NOT REGEXP 'time[12]';
-
--- 복합 조건: SEARCH로 범위를 줄이고 REGEXP로 정밀 검색
-SELECT * FROM app_log
- WHERE message SEARCH 'error'
-   AND message REGEXP '^ERROR:.*timeout';
+SELECT event_id FROM ch7_ref_search
+ WHERE message REGEXP '^ERROR.*timeout'
+ ORDER BY event_id;
+SELECT event_id FROM ch7_ref_search
+ WHERE message NOT REGEXP 'timeout'
+ ORDER BY event_id;
 ```
+
+첫 쿼리는 1번, 두 번째는 0건입니다.
+REGEXP는 KEYWORD 인덱스를 직접 사용하지 않습니다.
+SEARCH로 먼저 대상을 줄이려면 그 조건이 원하는 결과를 누락시키지 않는지 확인해야 합니다.
 
 ### 함수 형태 REGEXP
 
-스칼라 표현식에서 REGEXP를 함수처럼 사용할 수 있습니다. 일치하면 1, 불일치하면 0을 반환합니다.
+스칼라 표현식에서도 REGEXP 결과를 사용할 수 있습니다.
 
 ```sql
 SELECT 'abcde' REGEXP 'a[bcd]{1,10}e' FROM dual;
--- 결과: 1
 ```
+
+결과는 1입니다. 함수 형태의 REGEXP_LIKE는 비교 옵션도 받을 수 있습니다.
+현재 함수 입력은 VARCHAR여야 하며 패턴과 옵션은 상수 VARCHAR여야 합니다.
+TEXT 컬럼을 받는 REGEXP 연산자와 입력 타입 제약이 같다고 가정하지 마세요.
+
+```sql
+SELECT event_id,
+       REGEXP_LIKE(message, 'error') AS case_sensitive,
+       REGEXP_LIKE(message, 'error', 'i') AS case_insensitive
+  FROM ch7_ref_search
+ WHERE event_id IN (1, 3)
+ ORDER BY event_id;
+```
+
+1번의 결과는 0·1, 3번은 NULL·NULL입니다.
+`i`는 대소문자 비구분, `c`는 구분이며 옵션을 생략하면 구분 비교입니다.
 
 ## 성능 권장사항
 
-| 상황 | 권장 연산자 |
-|------|-------------|
-| 정확한 단어 검색 | `SEARCH` |
-| 단어 접두사/내부 패턴 검색 | `ESEARCH` |
-| 복잡한 정규식 패턴 검색 | `SEARCH` 또는 `ESEARCH` 선행 후 `REGEXP` 추가 |
+| 목적 | 선택 기준 |
+|---|---|
+| 단어 존재 확인 | SEARCH |
+| 색인된 단어의 접두사·부분 패턴 | ESEARCH |
+| 원문 문자열의 부분 패턴 | LIKE |
+| 원문 형식·위치·복잡한 패턴 | REGEXP·REGEXP_LIKE |
+
+인덱스 존재와 빌드 완료를 구분하고, 같은 데이터와 시간 범위에서 비교하세요.
+실습을 마쳤으면 테이블을 정리합니다.
+
+```sql
+DROP TABLE ch7_ref_search;
+```
 
 ## 관련 문서
 
+- [텍스트 검색 실습](/dbms/log-table-usage/text-search-keyword-index/) — 다중 단어·한글·NULL·TEXT 제약
 - [INDEX syntax](../index-syntax/) — KEYWORD 인덱스 생성
