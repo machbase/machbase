@@ -6,6 +6,11 @@ toc: true
 ---
 실제 운영 환경에서 자주 쓰이는 데이터 모델링 패턴을 다룹니다.
 
+각 절의 SQL은 서로 다른 모델을 보여 주는 예제입니다. 필요한 절을 선택해 별도 실습
+환경에서 실행하며, 같은 이름의 테이블이 있는지 먼저 확인합니다. 스키마 생성만으로
+수집·집계·캐시 갱신 작업이 자동 실행되지는 않습니다. 입력 애플리케이션이나 작업
+스케줄러가 수행할 일과 실패 처리도 함께 설계합니다.
+
 - **[시간축 모델링](/dbms/data-modeling-table-design/patterns-modeling/#time-axis-modeling)**
 - **[거리축 모델링](/dbms/data-modeling-table-design/patterns-modeling/#distance-axis-modeling)**
 - **[상태·캐시 모델링](/dbms/data-modeling-table-design/patterns-modeling/#state-cache-status-modeling)**
@@ -22,6 +27,11 @@ toc: true
 ## 시간축 모델링
 
 시간을 기준 축으로 삼는 패턴으로, 센서 계측값·에너지 모니터링·환경 데이터 등에 적합합니다.
+
+한 행은 계량기 한 대의 한 번의 관측입니다. `time`은 수신 시각이 아닌 측정 시각으로
+정하고, `kwh`는 누적 계량값인지 구간 사용량인지 수집 계약에 기록합니다. 다음 스키마는
+전압과 전류도 같은 관측에 포함된다는 전제입니다. 측정 주기나 시각이 서로 다르면 같은 행에
+억지로 맞추기보다 별도 시계열로 저장하거나 결측 처리 규칙을 정합니다.
 
 ### 기본 패턴: TAG 테이블
 
@@ -79,6 +89,11 @@ CREATE VOLATILE TABLE power_1min (
 );
 ```
 
+위 DDL은 저장 공간만 만듭니다. `power_1min`의 `key_id`에는 계량기와 구간을 유일하게
+식별할 값을 애플리케이션이 지정하고 집계값을 채워야 합니다. VOLATILE의 결과는 재시작하면
+사라지므로 장기 집계 보관소로 사용하지 않습니다. 원본 삭제 후에도 필요한 통계는 영속
+TAG 테이블이나 지원되는 ROLLUP으로 보관하고 각각의 보존 정책을 확인합니다.
+
 ### 시간대 처리
 
 DATETIME은 시점을 나타내며 문자열 입력과 출력은 접속 환경의 시간대 영향을 받습니다.
@@ -104,6 +119,11 @@ WHERE meter_id = 'MTR-001'
 ## 거리축 모델링
 
 거리(위치)를 기준 축으로 삼는 패턴으로, 파이프라인 검사·도로 센서·레이저 스캔 등에 적합합니다.
+
+거리축은 시간축의 다른 표시 형식이 아닙니다. 시간축 전용 ROLLUP과 Retention을 그대로
+적용할 수 없습니다. 같은 파이프를 반복 검사한다면 `pipe_id`만으로 서로 다른 검사 회차를
+섞지 않도록 회차 식별자나 테이블 분리 기준을 정합니다. 아래 예제는 한 파이프의 한 회차를
+가정하며 거리 단위는 m, 두께 단위는 mm입니다.
 
 ### 기본 패턴
 
@@ -201,6 +221,11 @@ CREATE TAG TABLE device_status_history (
 
 ### 상태 업데이트 흐름
 
+다음 SQL은 이력과 캐시를 각각 갱신하는 동작을 보여 줍니다. 두 입력은 하나의 트랜잭션이
+아니며, 각각 평가하는 `NOW`도 같은 시각이라고 보장하지 않습니다. 실제 수집에서는 한 번
+정한 측정 시각을 두 경로에 전달합니다. 늦게 도착한 과거 값이 최신 캐시를 덮어쓰지 않도록
+이벤트 순서 판정과 동시 갱신 처리를 애플리케이션에서 정합니다.
+
 ```sql
 -- 새 계측값 수신 시:
 -- 1. TAG 테이블에 이력 저장
@@ -276,7 +301,7 @@ CREATE LOG TABLE audit_log (
     result     VARCHAR(8)      -- SUCCESS, FAILURE
 );
 
-CREATE KEYWORD INDEX idx_audit_detail ON audit_log(detail);
+CREATE INDEX idx_audit_detail ON audit_log(detail) INDEX_TYPE KEYWORD;
 ```
 
 ### 알람 집계 패턴
@@ -325,6 +350,12 @@ WHERE detail SEARCH 'password'
 ## 참조·마스터 모델링
 
 코드 테이블, 설비 마스터, 사용자 정보 등 참조 데이터를 LOOKUP 테이블로 모델링하는 패턴입니다.
+
+식별자만 이력에 저장하면 이름과 위치를 반복 저장하는 비용을 줄일 수 있습니다. 하지만
+현재 마스터의 위치를 바꾸면 과거 이력을 조인한 결과도 새 위치로 표시됩니다. “발생 당시
+어느 라인에 있었는가”가 중요하면 유효 기간이 있는 별도 변경 이력을 설계하거나 원본 행에
+당시 속성을 기록합니다. 아래 계층 스키마의 참조 관계가 외래 키로 자동 검증되는 것은
+아니므로 존재하지 않는 공장·라인 코드를 입력하지 않도록 애플리케이션에서 확인합니다.
 
 ### 계층적 코드 체계
 
@@ -409,11 +440,17 @@ CREATE VOLATILE TABLE sensor_recent_avg (
     base_ts   DATETIME,
     avg_val   DOUBLE,
     max_val   DOUBLE,
-    cnt       INTEGER
+    cnt       LONG
 );
 ```
 
 ### 캐시 갱신 패턴
+
+캐시 한 행은 센서 하나의 최근 2시간 통계입니다. `base_ts`는 집계 창의 경계가 아니라
+집계에 포함된 가장 최근 측정 시각입니다. 매번 같은 범위 정의로 계산하고, 정확히 같은
+시각의 결과를 비교해야 하면 실행마다 기준 시각을 한 번 정해 사용합니다.
+아래 예제는 미래 시각의 측정값을 제외합니다. 결과 비교 시에는 각 SQL의 `NOW` 대신
+동일한 고정 기준 시각을 전달해 하한과 상한을 함께 계산합니다.
 
 ```sql
 -- 주기적 집계 갱신 (1시간마다 실행)
@@ -422,43 +459,66 @@ DELETE FROM sensor_recent_avg;
 INSERT INTO sensor_recent_avg
 SELECT name AS key_id,
        name,
-       MAX(DATE_TRUNC('hour', time, 1)) AS base_ts,
+       MAX(time) AS base_ts,
        AVG(value),
        MAX(value),
        COUNT(*)
 FROM sensor_data
 WHERE time >= NOW - 3600000000000 * 2  -- 최근 2시간 재계산
+  AND time <= NOW
 GROUP BY name;
 ```
 
 `INSERT ... SELECT`에는 `ON DUPLICATE KEY UPDATE`를 붙이지 않습니다. 캐시를 재구성할 때는
 기존 캐시를 삭제한 뒤 다시 적재합니다.
 
+삭제와 재적재 사이에는 캐시가 비거나 일부만 채워진 상태를 다른 조회가 볼 수 있습니다.
+일괄 갱신 중 표시할 결과, 실패 시 재시도와 원본 조회 여부를 애플리케이션에서 정합니다.
+항상 일관된 전체 결과가 필요하면 그 요구를 충족하는 별도의 전환·트랜잭션 모델을 검토합니다.
+
 ### 대시보드 조회 최적화
 
 ```sql
--- 캐시 우선 조회, 없으면 원본에서 계산
+-- 저장된 캐시 조회 (원본 조회로의 전환은 애플리케이션에서 처리)
 SELECT sensor_id, base_ts, avg_val, max_val
 FROM sensor_recent_avg
-WHERE base_ts >= NOW - 86400000000000
+WHERE base_ts >= NOW - 3600000000000 * 2
+  AND base_ts <= NOW
 ORDER BY sensor_id, base_ts;
 ```
 
+이 조건은 최신 측정 시각이 최근 2시간에 속한 캐시 행을 표시합니다. 기존 평균을 조회
+시각 기준으로 다시 계산하는 것은 아니므로, 집계 자체의 최신성은 갱신 주기로 관리합니다.
+
 ### 장애 복구
 
-서버 재시작으로 VOLATILE 캐시가 소멸되면 원본 TAG 테이블에서 재계산합니다.
+서버 재시작으로 VOLATILE 테이블과 캐시가 소멸되면 테이블을 먼저 다시 만든 뒤 원본
+TAG 테이블에서 같은 최근 2시간 통계를 재계산합니다. 아래 CREATE는 테이블이 사라진
+재시작 이후에만 실행합니다. 원본 보존 기간 안에 재계산할 데이터가 남아 있어야 합니다.
 
 ```sql
 -- 캐시 재구성 (서버 재시작 후)
-DELETE FROM sensor_recent_avg;
+CREATE VOLATILE TABLE sensor_recent_avg (
+    key_id    VARCHAR(64) PRIMARY KEY,
+    sensor_id VARCHAR(64),
+    base_ts   DATETIME,
+    avg_val   DOUBLE,
+    max_val   DOUBLE,
+    cnt       LONG
+);
 
 INSERT INTO sensor_recent_avg
 SELECT name,
-       name, MAX(DATE_TRUNC('hour', time, 1)), AVG(value), MAX(value), COUNT(*)
+       name, MAX(time), AVG(value), MAX(value), COUNT(*)
 FROM sensor_data
-WHERE time >= NOW - 86400000000000  -- 최근 24시간 재구성
+WHERE time >= NOW - 3600000000000 * 2  -- 정상 갱신과 같은 최근 2시간
+  AND time <= NOW
 GROUP BY name;
 ```
+
+복구 후 캐시의 센서별 건수·평균·최신 시각을 같은 기준 시각의 원본 집계와 비교합니다.
+`cnt`는 NULL 측정값을 포함한 행 수입니다. 평균에 사용한 표본 수가 필요하면
+`COUNT(value)`를 별도 컬럼으로 저장합니다.
 
 <a id="insert-update"></a>
 
@@ -474,6 +534,10 @@ INSERT·Append·파일 입력 선택은
 ## JOIN·메타데이터 설계
 
 여러 테이블 타입을 조합할 때는 다음 원칙을 적용합니다.
+
+먼저 조인의 관계를 정합니다. 센서 코드마다 마스터가 정확히 한 행인지, 코드가 공장마다
+반복되는지 확인하십시오. 한 원본 행이 여러 기준 행과 일치하면 결과 행이 늘고 SUM 같은
+집계도 중복될 수 있습니다. 코드의 이름뿐 아니라 식별 범위와 타입을 맞춰야 합니다.
 
 1. 원본 행 수뿐 아니라 필터 적용 후 행 수와 실행 계획을 보고 조인 순서를 검토합니다.
 2. JOIN 조건 컬럼의 타입을 맞추고, 지원되는 인덱스의 사용 여부를 확인합니다.
@@ -533,5 +597,6 @@ INSERT·Append·파일 입력 선택은
 ---
 
 다음으로 읽을 내용:
+
 - [SELECT의 GROUP BY와 집계](/dbms/reference/sql/syntax-dictionary-sql/select-syntax/)
 - [운영 및 구성](/dbms/operations-configuration-recovery/)

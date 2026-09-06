@@ -17,6 +17,26 @@ toc: true
 참고하십시오. 같은 데이터라도 이력을 누적할지, 현재 상태를 갱신할지에 따라 적합한 타입이
 달라집니다. 변경·조회·영속성 요구사항을 함께 검토합니다.
 
+### 선택 전에 작성할 데이터 설명
+
+테이블 이름보다 먼저 한 행이 나타내는 사실을 한 문장으로 적습니다. 같은 설비에서 나온
+데이터라도 “온도 측정 한 건”, “현재 운전 상태 한 건”, “정비 작업 한 건”은 서로 다른
+행의 단위이며 키와 변경 방식도 달라집니다.
+
+| 설계 질문 | 설비 모니터링에서 정할 내용 |
+|---|---|
+| 한 행은 무엇인가? | 센서 한 개의 측정 한 건인지, 설비의 현재 상태인지 구분 |
+| 무엇으로 찾는가? | 센서 이름과 발생 시각, 설비 ID, 정비 작업 번호 |
+| 값은 어떻게 변하는가? | 새 이력 추가, 잘못된 값 보정, 현재 행 덮어쓰기 |
+| 함께 확정할 변경이 있는가? | 정비 작업 등록과 부품 수량 변경을 한 트랜잭션으로 묶을지 결정 |
+| 얼마나 보관하는가? | 원본 기간, 집계 기간, 재시작 후 재생성 가능 여부 |
+| 어느 정도의 크기인가? | 태그 수, 초당 행 수, 행 크기, 기준 정보와 인덱스의 메모리 사용량 |
+
+예를 들어 온도 이력은 TAG, 알람 사건은 LOG, 설비 코드표는 LOOKUP이 후보입니다.
+부품 재고 변경과 작업 등록을 함께 확정해야 하면 Standard Edition의 TRANSACTION을
+검토합니다. 현재 상태 캐시는 원본에서 재구성할 수 있을 때 VOLATILE로 분리할 수 있습니다.
+이들을 한 테이블로 합치기보다 각 행의 의미와 실패 시 복구 방법을 먼저 맞춥니다.
+
 <a id="selection-decision"></a>
 
 ## 타입 선택 결정 가이드
@@ -83,7 +103,7 @@ toc: true
 | PRIMARY KEY | 필수 | X | 선택 | 선택 | 필수 |
 | BASETIME | 필수 (시간축) | X | X | X | X |
 | _arrival_time | X | 자동 추가 | X | X | X |
-| 인덱스 | 태그 인덱스 | BITMAP/KEYWORD | BTREE PK + 보조 인덱스 | Red-Black | Red-Black |
+| 인덱스 | 태그·축 접근, 지원되는 보조 인덱스 | BITMAP/KEYWORD/LSM | BTREE PK + 보조 인덱스 | 키·보조 인덱스 | 키·보조 인덱스 |
 | 영속성 | O | O | O | X (메모리) | O |
 | Cluster Edition | O | O | X | O | O |
 
@@ -96,8 +116,11 @@ Append API는 테이블뿐 아니라 SDK와 입력 경로에 따라 지원 범�
 | 항목 | TAG | LOG | TRANSACTION | VOLATILE | LOOKUP |
 |------|-----|-----|-----|----------|--------|
 | 스토리지 | 컬럼형 | 컬럼형 | 행 기반 (관계형) | 메모리 | 영속 저장 + 전체 행 메모리 상주 |
-| 시계열 최적화 | O | 일부 | X | X | X |
-| 대용량 적합 | O | O | O | X | X |
+| 용량 검토 기준 | 태그 수·원본·ROLLUP·보관 기간 | 원본·검색 인덱스·보관 기간 | 행·인덱스·트랜잭션 부하 | 전체 행·인덱스의 메모리 크기 | 전체 행·인덱스의 메모리 크기와 재시작 적재 시간 |
+
+메모리 테이블의 “작다”는 고정 행 수를 의미하지 않습니다. 행 폭, 가변 길이 값과 보조
+인덱스를 포함해 실제 메모리 사용량을 측정합니다. 디스크 기반 테이블도 압축률이나
+서버 사양만으로 처리량을 보장할 수 없으므로 대표 입력과 조회를 함께 실행합니다.
 
 ### TRANSACTION 테이블 제약
 
@@ -122,7 +145,8 @@ TRANSACTION 테이블과 LOOKUP 테이블은 모두 관계형 데이터를 저�
 | UPDATE (WHERE 포함) | O | O |
 | UPDATE (WHERE 없음) | O (전체 행) | X |
 | DELETE | O | O |
-| 인덱스 | BTREE PK + 보조 인덱스 | Red-Black |
+| 명시적 트랜잭션 | 여러 문장을 COMMIT/ROLLBACK으로 제어 | 참여하지 않음, 문장별 변경 |
+| 인덱스 | BTREE PK + 보조 인덱스 | 메모리 키·보조 인덱스 |
 | 데이터 규모 | 디스크 용량과 트랜잭션 부하로 검증 | 참조 데이터 조회·갱신 부하로 검증 |
 | JOIN 대상 | O | O |
 | Cluster Edition | X | O |
@@ -149,15 +173,25 @@ CREATE LOOKUP TABLE country_code (
     code   VARCHAR(4)   PRIMARY KEY,
     name   VARCHAR(64)
 );
+INSERT INTO country_code VALUES ('KR', 'Republic of Korea');
 UPDATE country_code SET name = 'Korea' WHERE code = 'KR';
+SELECT code, name FROM country_code WHERE code = 'KR';
 
 -- TRANSACTION: 주문 이력 (대규모, 일반 UPDATE/DELETE 지원)
 CREATE TRANSACTION TABLE order_history (
-    order_id  LONG,
+    order_id  LONG PRIMARY KEY,
     item_id   INTEGER,
     qty       INTEGER,
-    amount    DOUBLE
+    amount    DECIMAL(18,2)
 );
+INSERT INTO order_history VALUES (12345, 501, 1, 12000.00);
 UPDATE order_history SET qty = 10 WHERE order_id = 12345;
+SELECT order_id, qty, amount FROM order_history WHERE order_id = 12345;
 DELETE FROM order_history WHERE order_id = 12345;
+SELECT COUNT(*) FROM order_history WHERE order_id = 12345;
 ```
+
+첫 SELECT는 변경된 국가명을, 주문 SELECT는 수량 `10`을 반환합니다. 마지막 COUNT는
+`0`입니다. 이 예제의 `amount`는 수량 변경과 별도로 유지하는 예시 금액이며 자동 재계산되지
+않습니다. 실제 주문 모델에서는 단가·수량·합계의 관계와 함께 변경할 컬럼을 명시합니다.
+실습을 끝내면 이 예제에서 만든 테이블만 `DROP TABLE`로 정리합니다.

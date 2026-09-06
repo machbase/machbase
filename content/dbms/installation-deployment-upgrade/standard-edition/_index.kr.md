@@ -4,7 +4,10 @@ title: '3.2 Standard Edition 설치'
 weight: 20
 toc: true
 ---
-Standard Edition은 단일 노드에 설치하는 구성으로, 개발 환경, 소규모 운영, 엣지 디바이스 등에 적합합니다.
+Standard Edition은 한 서버에서 SQL 처리와 데이터 저장을 수행합니다. 설치는 패키지 준비,
+서버 실행 환경 설정, 데이터베이스 생성, 라이선스 확인, 시작과 SQL 검증 순서로 진행합니다.
+단일 서버라고 해서 소량 데이터만 다루는 것은 아니며, 처리량과 보관 기간에 필요한 자원을
+실제 워크로드로 확인해야 합니다.
 
 ## 설치 경로
 
@@ -57,7 +60,7 @@ Linux 환경에 tarball(.tgz)을 압축 해제하여 Standard Edition을 설치�
 Machbase 전용 OS 사용자를 생성합니다.
 
 ```bash
-sudo useradd machbase
+sudo useradd -m -d /home/machbase machbase
 sudo passwd machbase
 ```
 
@@ -65,14 +68,16 @@ sudo passwd machbase
 
 #### 2. 패키지 다운로드 및 압축 해제
 
-설치 디렉터리를 만들고 패키지를 압축 해제합니다.
+예제에서는 패키지를 `/home/machbase/packages/`에 다운로드한 것으로 가정합니다.
+아래 패키지 이름을 실제 배포본으로 바꾸고, 아직 인스턴스가 없는 새 설치 디렉터리에
+압축을 해제합니다. 기존 설치의 갱신은 [업그레이드](../upgrade/) 절차를 사용합니다.
 
 ```bash
-mkdir ~/machbase_home
-cd ~/machbase_home
-
-# 다운로드한 패키지 파일 압축 해제
-tar zxf machbase-SDK-8.7.0.official-LINUX-X86-64-release.tgz
+machbase_package=/home/machbase/packages/machbase-SDK-8.7.0.official-LINUX-X86-64-release.tgz
+test -r "$machbase_package" &&
+mkdir /home/machbase/machbase_home &&
+tar zxf "$machbase_package" -C /home/machbase/machbase_home &&
+cd /home/machbase/machbase_home
 ```
 
 압축 해제 후 디렉터리 구조를 확인합니다.
@@ -87,9 +92,9 @@ ls -l
 `~/.bashrc`에 환경 변수를 추가합니다.
 
 ```bash
-export MACHBASE_HOME=~/machbase_home
-export PATH=$MACHBASE_HOME/bin:$PATH
-export LD_LIBRARY_PATH=$MACHBASE_HOME/lib:$LD_LIBRARY_PATH
+export MACHBASE_HOME=/home/machbase/machbase_home
+export PATH="$MACHBASE_HOME/bin:$PATH"
+export LD_LIBRARY_PATH="$MACHBASE_HOME/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 ```
 
 적용합니다.
@@ -100,12 +105,21 @@ source ~/.bashrc
 
 #### 4. 데이터베이스 생성
 
-`machadmin -c`로 데이터베이스 파일을 초기화합니다.
+`machadmin -c`는 물리 인스턴스의 데이터베이스 파일을 생성합니다. SQL의
+`CREATE DATABASE`로 논리 데이터베이스를 추가하는 작업과 구분하십시오. 실행 전에
+`MACHBASE_HOME`, `conf/machbase.conf`와 실제 `DBS_PATH`가 새 설치 대상인지 확인합니다.
+기존 데이터베이스가 있다는 오류가 나면 삭제·재생성하지 말고 대상 경로부터 확인합니다.
 
 ```bash
 machadmin -c
 # Database created successfully.
 ```
+
+#### 서버 시작 전 설정과 라이선스 확인
+
+`conf/machbase.conf`에서 `PORT_NO`와 `DBS_PATH`를 확인합니다. 별도 라이선스를 사용하는
+경우 [라이선스 설치](../pre-install-preparation/#license)의 파일 복사 또는
+`machadmin -t` 방법으로 설치하고 `machadmin -f`로 확인한 뒤 시작합니다.
 
 #### 5. 서버 시작
 
@@ -117,8 +131,7 @@ machadmin -u
 프로세스 확인:
 
 ```bash
-ps -ef | grep machbased
-# machbase  1234  1  2 11:25 ? 00:00:01 .../machbased -s --recovery=simple
+machadmin -e
 ```
 
 #### 6. 접속 테스트
@@ -137,10 +150,14 @@ machsql
 간단한 테스트를 수행합니다.
 
 ```sql
-CREATE LOG TABLE test (id INTEGER, val DOUBLE);
-INSERT INTO test VALUES (1, 3.14);
-SELECT * FROM test;
+CREATE LOG TABLE install_check (id INTEGER, val DOUBLE);
+INSERT INTO install_check (id, val) VALUES (1, 3.14);
+SELECT id, val FROM install_check;
+DROP TABLE install_check;
 ```
+
+`id=1`, `val=3.14` 한 행이 반환되고 마지막 DROP이 성공하는지 확인합니다.
+`install_check`가 이미 있으면 기존 객체를 삭제하지 말고 사용하지 않는 실습 이름으로 바꿉니다.
 
 #### 서버 종료
 
@@ -158,6 +175,10 @@ machadmin -s
 ```bash
 export MACHBASE_PORT_NO=7878
 ```
+
+서버를 종료한 상태에서 설정을 적용하고 다시 시작합니다. 이 환경 변수는 현재 셸에만
+적용되므로 서비스로 시작한다면 서비스의 환경에도 반영합니다. 접속에는
+`machsql -s 127.0.0.1 -P 7878 -u SYS`처럼 바뀐 포트를 지정합니다.
 
 ---
 
@@ -180,7 +201,7 @@ docker image ls machbase/machbase
 #### 컨테이너 실행
 
 ```bash
-docker run -d \
+docker create \
   --name machbase \
   --ulimit nofile=65535 \
   -p 5656:5656 \
@@ -190,12 +211,29 @@ docker run -d \
 
 | 옵션 | 설명 |
 |------|------|
-| `-p 5656:5656` | SQL 클라이언트 포트 매핑 |
+| `-p 5656:5656` | 호스트 SQL 포트:컨테이너 SQL 포트 매핑 |
 | `--ulimit nofile=65535` | 컨테이너 안에서 서버가 사용할 파일 디스크립터 한도 |
 | `-v /data/machbase:...` | 데이터 디렉터리를 호스트에 보존하는 볼륨 마운트 |
 
 데이터가 컨테이너의 쓰기 계층에만 있으면 컨테이너 삭제 시 함께 제거됩니다. 실제 데이터
 경로가 볼륨에 연결되었는지 확인하고, 볼륨 자체의 삭제나 디스크 장애에 대비한 백업도 준비합니다.
+
+`docker create`는 아직 서버를 시작하지 않습니다. `/data/machbase`는 컨테이너의 서버
+실행 계정이 쓸 수 있어야 하며, 기존 DB 파일이 있으면 버전과 인스턴스가 맞는지 확인합니다.
+이미지의 실제 버전과 `MACHBASE_HOME` 경로를 확인한 뒤 운영에서는 검증한 이미지 태그나
+digest를 고정합니다. 태그 없는 공개 이미지가 항상 8.7.0이라고 가정하지 마십시오.
+
+별도 라이선스를 사용하는 경우 시작 전에 다음처럼 준비한 파일을 복사합니다.
+
+```bash
+docker cp /path/to/license.dat machbase:/home/machbase/machbase/conf/license.dat
+```
+
+준비가 끝나면 컨테이너를 시작합니다.
+
+```bash
+docker start machbase
+```
 
 #### 컨테이너 상태 확인
 
@@ -230,11 +268,14 @@ docker start machbase
 
 #### 라이선스 설치
 
-컨테이너 실행 후 라이선스를 설치하려면 파일을 컨테이너 내부로 복사합니다.
+실행 중 라이선스를 갱신할 때는 컨테이너에 파일을 복사한 뒤 라이선스 설치 명령을
+실행합니다. 컨테이너의 설정 파일과 라이선스는 데이터 볼륨과 별개이므로 컨테이너를
+재생성할 때도 다시 적용할 수 있도록 원본을 보관합니다.
 
 ```bash
-docker cp license.dat machbase:/home/machbase/machbase/conf/license.dat
-docker restart machbase
+docker cp /path/to/license.dat machbase:/tmp/license.dat
+docker exec machbase machadmin -t /tmp/license.dat
+docker exec machbase machadmin -f
 ```
 
 ---
@@ -327,6 +368,25 @@ Windows 버전은 ZIP 패키지 또는 설치 실행 파일로 제공됩니다. 
 4. 설치 경로를 선택합니다. 기본값은 `C:\machbase-<short_version>\` 형식입니다. 변경이 필요하면 경로를 수정한 후 **Next**를 클릭합니다.
 
 5. 설치가 진행됩니다. 완료되면 **Next** → **Close**를 클릭합니다.
+
+#### ZIP 패키지 초기화
+
+ZIP을 해제했다면 명령 프롬프트에서 해당 디렉터리를 설치 홈으로 지정합니다. 다음은
+`C:\machbase`에 새로 설치한 예제입니다. 실제 설정 파일과 라이선스를 먼저 확인하고,
+기존 DB가 없는 새 인스턴스에서만 `-c`를 실행합니다.
+
+```cmd
+set "MACHBASE_HOME=C:\machbase"
+set "PATH=%MACHBASE_HOME%\bin;%PATH%"
+machadmin.exe -c
+machadmin.exe -f
+machadmin.exe -u
+machadmin.exe -e
+```
+
+위 `set` 명령은 현재 창에 적용됩니다. 이후 다른 창이나 서비스에서 실행할 때도 같은
+설치 홈과 실행 파일 경로를 사용해야 합니다. 설치 실행 파일이 이미 데이터베이스를
+만들었다면 ZIP용 생성 명령을 반복하지 마십시오.
 
 #### 서버 시작과 종료
 
