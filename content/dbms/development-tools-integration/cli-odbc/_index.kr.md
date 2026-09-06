@@ -222,8 +222,24 @@ binary, IP, DATETIME, NULL 표현은 설치된 `machbase_sqlcli.h`의 `SQL_APPEN
 ## ARRAY와 선택 컬럼 Append
 
 Machbase DBMS 8.7.0은 `SQL_MACHBASE_ARRAY_DESC`를 사용한 typed ARRAY 조회·bind와
-`SQL_MACHBASE_SPARSE_ARRAY_DESC`를 사용한 희소 입력을 지원합니다. 선택 컬럼 Append는
-`SQLAppendOpenColumns()` 또는 `SQLAppendOpenColumnsW()`를 사용합니다.
+`SQL_MACHBASE_SPARSE_ARRAY_DESC`를 사용한 희소 입력을 지원합니다. 일반 Open에서도
+ARRAY 컬럼에 희소 디스크립터를 전달할 수 있습니다.
+
+```c
+SQLAppendOpen(statement, (SQLCHAR *)"ARRAY_APPEND_FULL_EXAMPLE", 0);
+row[0].mLong = 1;
+row[1].mVar.mData = &sparse;
+row[1].mVar.mLength = SQL_APPEND_SPARSE_ARRAY_DESC_LENGTH;
+SQLAppendDataV3(statement, row, 2);
+SQLAppendClose(statement, &success, &failure);
+```
+
+위 코드는 `ID LONG, A INT32[4]` 테이블의 입력 순서를 따릅니다. 연결·디스크립터·버퍼
+준비와 오류 처리를 포함한 [일반 Open 전체 예제](../data-input-load-export/array-append/#c-full-open)를
+먼저 확인하십시오. 구형 `SQLAppendData(void *[])`에 디스크립터를 넘기는 방식과는 다릅니다.
+
+일부 컬럼이나 고정 ARRAY 요소만 선택할 때는 `SQLAppendOpenColumns()` 또는
+`SQLAppendOpenColumnsW()`를 사용합니다.
 
 ```c
 SQLCHAR *targets[] = {

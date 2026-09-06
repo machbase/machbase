@@ -881,6 +881,17 @@ finally
 Machbase DBMS 8.7.0 full/legacy 프로바이더는 ARRAY를 `object[]`로 반환합니다. 요소 NULL은
 배열 안의 `null`, 배열 전체 NULL은 `IsDBNull()`로 구분합니다.
 
+일반 `AppendOpen(table)`에서도 `MachSparseArray`를 ARRAY 컬럼 값으로 입력할 수 있습니다.
+
+```csharp
+var writer = append.AppendOpen("ARRAY_APPEND_FULL_EXAMPLE");
+```
+
+이때 입력 행은 테이블의 컬럼 순서를 따릅니다. `ID LONG, A INT32[4]` 테이블에 희소 값,
+빈 희소 배열과 전체 NULL을 입력하는
+[일반 Open 예제](../data-input-load-export/array-append/#dotnet-full-open)에서
+`AppendData()`와 Close·결과 확인까지 설명합니다.
+
 `AppendOpen()`의 `IList<string>` 오버로드에는 일반 컬럼이나
 `ARRAY_COLUMN[position]`을 전달할 수 있습니다. 행마다 다른 위치를 입력할 때는
 `MachSparseArray`를 배열 전체 대상에 전달합니다. 요소 위치를 지정한 대상과

@@ -319,6 +319,18 @@ append 워크로드에는 별도 연결을 사용하십시오.
 
 ### ARRAY와 선택 컬럼 Append
 
+일반 `Appender.Connect(ctx, dsn, table)`에서 컬럼 인자를 생략하고 ARRAY 컬럼 값으로
+`api.NewSparseArray()`가 만든 객체를 전달할 수 있습니다. 고정된 요소 선택과는 다릅니다.
+
+```go
+if err := appender.Connect(ctx, dsn, "ARRAY_APPEND_FULL_EXAMPLE"); err != nil {
+    return err
+}
+```
+
+`ID LONG, A INT32[4]` 테이블의 입력 순서, 희소 값 구성, 오류 시 Close와 조회 확인은
+[일반 Connect 예제](../data-input-load-export/array-append/#go-full-open)를 참고하십시오.
+
 Machbase DBMS 8.7.0의 ARRAY 기능이 포함된
 [`neo-client` PR #17](https://github.com/machbase/neo-client/pull/17) 이후의 v2 module
 소스는 고정 길이 ARRAY와 선택 대상을 지원합니다. 공개 v2 릴리스가 지정되기 전에는 공개

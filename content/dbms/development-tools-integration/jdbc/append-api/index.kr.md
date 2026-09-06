@@ -85,6 +85,18 @@ try (MachStatement statement =
 
 ## ARRAY와 선택 컬럼
 
+희소 ARRAY 입력에는 컬럼 선택이 필수가 아닙니다. 일반
+`executeAppendOpen(tableName, errorCheckCount)`으로 열고 반환된 메타데이터에 맞춰
+`MachSparseArray`를 행의 ARRAY 값으로 전달합니다.
+
+```java
+ResultSet opened = statement.executeAppendOpen("ARRAY_APPEND_FULL_EXAMPLE", 0);
+```
+
+연결·입력·Close·조회까지의 [일반 Open 예제](../../data-input-load-export/array-append/#jdbc-full-open)를
+먼저 확인하십시오. `ID`와 ARRAY 컬럼을 선언 순서대로 전달하며 자동 `_arrival_time`은
+행에 추가하지 않습니다.
+
 Machbase DBMS 8.7.0에서는 `executeAppendOpen()` 오버로드에 컬럼명이나
 `ARRAY_COLUMN[position]`을 전달할 수 있습니다.
 

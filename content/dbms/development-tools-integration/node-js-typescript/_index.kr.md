@@ -421,6 +421,15 @@ await stream.close();
 
 TAG 테이블의 `DATETIME` 컬럼에는 `Date` 객체 또는 `bigint` epoch 값을 전달하십시오.
 
+희소 ARRAY는 `appendOpen()`의 ARRAY 값으로 전달할 수 있습니다. 현재
+`@machbase/ts-client`는 `columns` 인자가 필수이므로, 전체 행을 입력할 때도 테이블의 입력
+컬럼을 순서대로 정의합니다. `appendOpen(table)`이나 빈 컬럼 목록을 통한 자동 추론은
+지원하지 않습니다. 아래 예제의 `ID`, `A`가 테이블의 전체 입력 컬럼이면 전체 행 입력입니다.
+ARRAY 안에서 입력할 위치는 각 행의 `SparseArray`가 결정합니다.
+
+연결부터 네 행 입력·Close·조회까지의
+[전체 컬럼 정의 예제](../data-input-load-export/array-append/#node-full-columns)를 참고하십시오.
+
 Machbase DBMS 8.7.0의 선택 컬럼 Append에서는 `name`에 일반 컬럼 또는
 `ARRAY_COLUMN[position]`을 지정합니다. 행마다 다른 위치를 입력할 때는
 `SparseArray`를 배열 전체 대상에 전달합니다. 요소 위치를 지정한 대상과

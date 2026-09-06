@@ -876,6 +876,20 @@ Machbase DBMS 8.7.0은 ARRAY를 Python `list`로 반환하며 prepared 입력에
 `tuple`을 사용할 수 있습니다. 요소 NULL은 컬렉션 내부의 `None`, 배열 전체 NULL은
 컬럼 자체의 `None`입니다.
 
+컬럼 목록 없이 `connection.append(table, rows)`에 `SparseArray`를 전달할 수도 있습니다.
+
+```python
+from machbaseAPI import SparseArray
+
+sparse = SparseArray(4).set(1, 200).set(3, 400)
+connection.append("ARRAY_APPEND_FULL_EXAMPLE", [[2, sparse]])
+```
+
+이 코드는 `ID LONG, A INT32[4]` 테이블과 열린 연결을 전제로 합니다. 전체 NULL·빈 희소
+배열과 결과 확인을 포함한 [일반 입력 예제](../data-input-load-export/array-append/#python-full-open)를
+참고하십시오. legacy wrapper는
+[`appendOpen(table)` 예제](../data-input-load-export/array-append/#python-legacy-full-open)를 제공합니다.
+
 선택 대상은 `connection.append(..., columns=...)`로 지정합니다. 행마다 다른 ARRAY
 위치를 입력할 때는 `SparseArray`를 사용합니다. 요소 위치를 지정한 대상과 `SparseArray.set()`의
 위치는 0부터 시작하는 인덱스입니다.
