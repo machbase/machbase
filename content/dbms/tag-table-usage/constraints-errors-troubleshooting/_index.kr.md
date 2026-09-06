@@ -7,6 +7,30 @@ aliases:
 ---
 
 
+이 페이지의 UPDATE 실습은 Standard Edition을 전제로 합니다. 먼저 다음 테이블을 만들고,
+정상 SQL과 의도적으로 실패하는 SQL을 구분해 실행합니다. 실패 예제를 한꺼번에 정상
+스크립트에 넣지 마십시오. 이름이 겹치는 기존 객체를 삭제하지 않습니다.
+
+```sql
+CREATE TAG TABLE ch5_error_time (
+    name VARCHAR(64) PRIMARY KEY,
+    time DATETIME BASETIME,
+    value DOUBLE,
+    status INTEGER
+) METADATA (location VARCHAR(64));
+INSERT INTO ch5_error_time METADATA VALUES ('sensor-01', 'zone-1');
+INSERT INTO ch5_error_time METADATA VALUES ('sensor-02', 'zone-2');
+INSERT INTO ch5_error_time VALUES
+    ('sensor-01', TO_DATE('2026-07-01 12:00:00', 'YYYY-MM-DD HH24:MI:SS'), 10.0, 0);
+INSERT INTO ch5_error_time VALUES
+    ('sensor-02', TO_DATE('2026-07-01 12:00:00', 'YYYY-MM-DD HH24:MI:SS'), 20.0, 0);
+CREATE TAG TABLE ch5_error_distance (
+    name VARCHAR(64) PRIMARY KEY,
+    distance DOUBLE BASEDISTANCE,
+    value DOUBLE SUMMARIZED
+);
+```
+
 <a id="rejected-condition-tag-data-update-where"></a>
 
 ## TAG data UPDATE WHERE 조건 오류
@@ -27,15 +51,15 @@ WHERE 절에 태그 선택 조건과 BASETIME 조건이 모두 있어야 합니�
 
 ```sql
 -- 시간 조건 없음
-UPDATE sensor_tag SET value = 99.9
+UPDATE ch5_error_time SET value = 99.9
 WHERE name = 'sensor-01';
 
 -- 태그 선택 조건 없음
-UPDATE sensor_tag SET value = 99.9
+UPDATE ch5_error_time SET value = 99.9
 WHERE time >= TO_DATE('2026-07-01', 'YYYY-MM-DD');
 
 -- OR 조건 사용
-UPDATE sensor_tag SET value = 99.9
+UPDATE ch5_error_time SET value = 99.9
 WHERE name = 'sensor-01'
    OR name = 'sensor-02';
 ```
@@ -59,12 +83,12 @@ WHERE name = 'sensor-01'
 태그 선택 조건과 시간 조건을 함께 명시합니다.
 
 ```sql
-UPDATE sensor_tag
+UPDATE ch5_error_time
    SET value = 99.9
  WHERE name = 'sensor-01'
    AND time = TO_DATE('2026-07-01 12:00:00', 'YYYY-MM-DD HH24:MI:SS');
 
-UPDATE sensor_tag
+UPDATE ch5_error_time
    SET status = 1
  WHERE name IN ('sensor-01', 'sensor-02')
    AND time >= TO_DATE('2026-07-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
@@ -77,7 +101,7 @@ Machbase 8.7.0부터 Standard Edition에서는 다음과 같이 NAME과 BASETIME
 parameter를 사용할 수 있습니다.
 
 ```sql
-UPDATE sensor_tag
+UPDATE ch5_error_time
    SET value = ?
  WHERE name = ?
    AND time = ?;
@@ -88,6 +112,7 @@ condition`으로 거부되면 서버 버전을 확인합니다. 구버전 서버
 bind를 지원하지 않습니다. 서버를 8.7.0 이상으로 업그레이드하고, named marker를 사용하면
 해당 이름 기반 API를 지원하는 8.7.0 SDK를 함께 사용합니다.
 
+`?` 예제는 SDK에서 준비·바인딩할 SQL이며 machsql에 값 없이 그대로 실행할 문장은 아닙니다.
 같은 prepared statement를 재사용할 때는 SET, NAME, TIME 값을 모두 다시 바인딩합니다.
 자세한 marker 규칙은
 [TAG data UPDATE bind](/dbms/reference/sql/syntax-dictionary-sql/dml-syntax/tag-data-update-syntax/#tag-data-update-predicate-bind)를
@@ -114,19 +139,19 @@ TAG data UPDATE의 SET 대상이 아닙니다.
 
 ```sql
 -- 오류: PRIMARY KEY 컬럼(name) 업데이트 시도
-UPDATE sensor_tag
+UPDATE ch5_error_time
    SET name = 'new-sensor'
  WHERE name = 'old-sensor'
    AND time >= TO_DATE('2026-07-01', 'YYYY-MM-DD');
 
 -- 오류: BASETIME 컬럼(time) 업데이트 시도
-UPDATE sensor_tag
+UPDATE ch5_error_time
    SET time = NOW
  WHERE name = 'sensor-01'
    AND time >= TO_DATE('2026-07-01', 'YYYY-MM-DD');
 
 -- 오류: 메타데이터 컬럼을 data UPDATE에서 수정
-UPDATE sensor_tag
+UPDATE ch5_error_time
    SET location = 'zone-2'
  WHERE name = 'sensor-01'
    AND time >= TO_DATE('2026-07-01', 'YYYY-MM-DD');
@@ -147,7 +172,7 @@ UPDATE sensor_tag
 데이터 값은 일반 UPDATE로 수정합니다.
 
 ```sql
-UPDATE sensor_tag
+UPDATE ch5_error_time
    SET value = 99.9,
        status = 1
  WHERE name = 'sensor-01'
@@ -157,7 +182,7 @@ UPDATE sensor_tag
 메타데이터는 별도 구문을 사용합니다.
 
 ```sql
-UPDATE sensor_tag METADATA
+UPDATE ch5_error_time METADATA
    SET location = 'zone-2'
  WHERE name = 'sensor-01';
 ```
@@ -185,8 +210,8 @@ Machbase 8.7.0은 BASE DISTANCE TAG의 `V$<TABLE>_STAT` 축 컬럼을 거리 이
 대상 테이블의 축과 실제 통계 뷰 스키마를 함께 확인합니다.
 
 ```sql
-DESC distance_sensor;
-DESC V$DISTANCE_SENSOR_STAT;
+DESC ch5_error_distance;
+DESC V$CH5_ERROR_DISTANCE_STAT;
 ```
 
 BASE DISTANCE 테이블이면 `MIN_DISTANCE`, `MAX_DISTANCE`, `MIN_VALUE_DISTANCE`,
@@ -216,7 +241,7 @@ Cluster Edition에서는 `HOSTNAME VARCHAR(64)`가 첫 컬럼에 추가됩니다
 |------|------|
 | 실제 시계열 데이터 UPDATE | Standard Edition에서 지원 (태그/BASETIME 조건 필요) |
 | 메타데이터 UPDATE | 지원 (`UPDATE ... METADATA`) |
-| DELETE | 지원 (`BEFORE` 또는 태그/축 조건) |
+| DELETE | 지원 (`BEFORE`, 태그/축 조건 또는 전체 삭제) |
 | 다중 PRIMARY KEY | 미지원 (단일 컬럼만) |
 | BASETIME과 BASEDISTANCE 동시 사용 | 미지원 |
 | TAG DATA 일반 컬럼 ALTER ADD/DROP | 미지원 |
@@ -229,7 +254,9 @@ Cluster Edition에서는 `HOSTNAME VARCHAR(64)`가 첫 컬럼에 추가됩니다
   조회와 입력 성능을 측정합니다.
 - 태그 이름이 레코드마다 고유한 값이 되도록 설계하면 안 됩니다 (안티패턴 — [센서별 테이블 생성](/dbms/data-modeling-table-design/table-types-patterns-type-anti/#per-sensor-create) 참고).
 
-### 시간 역삽입 제한
+<a id="시간-역삽입-제한"></a>
+
+### 지연 도착 데이터
 
 - BASETIME 컬럼에는 임의의 과거 시각을 삽입할 수 있습니다.
 - 늦게 도착한 데이터가 많은 워크로드는 실제 입력률과 조회 성능을 별도로 측정합니다.
@@ -245,7 +272,7 @@ TAG 테이블은 Cluster Edition에서 지원됩니다.
 ```
 TAG 테이블 = 센서 이름 (PK) + 시간/거리 축 + 계측값
 - INSERT/APPEND: O
-- UPDATE: 실제 데이터 O (태그/축 조건), METADATA O
+- UPDATE: 실제 DATA는 Standard Edition의 태그/BASETIME 조건, METADATA는 별도 SQL
 - DELETE: O (BEFORE 또는 태그/축 조건)
 - METADATA: O (별도 속성 저장, UPDATE 가능)
 ```
@@ -254,3 +281,13 @@ TAG 테이블 = 센서 이름 (PK) + 시간/거리 축 + 계측값
 
 **다음 읽을 내용**
 - [TRANSACTION 테이블 설계](/dbms/rdb-table-usage/)
+
+## 실습 정리
+
+정상 수정 결과는 SELECT로 확인하고 이번 실습 테이블만 제거합니다.
+
+```sql
+SELECT name, time, value, status FROM ch5_error_time ORDER BY name, time;
+DROP TABLE ch5_error_time;
+DROP TABLE ch5_error_distance;
+```

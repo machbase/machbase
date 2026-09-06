@@ -55,8 +55,11 @@ exec table_flush(tag);
 
 ### 모든 TAG 데이터 추출
 
-```bash
-Mach> select * from tag;
+```sql
+select * from tag ORDER BY name, time;
+```
+
+```text
 NAME TIME VALUE
 --------------------------------------------------------------------------------------
 TAG_0001 2018-01-01 01:00:00 000:000:000 1
@@ -91,7 +94,10 @@ TAG_0002 2018-02-10 10:00:00 000:000:000 20
 TAG 이름이 TAG_0002인 데이터를 조회하는 예제입니다.
 
 ```sql
-Mach> select * from tag where name='TAG_0002';
+select * from tag where name='TAG_0002' ORDER BY name, time;
+```
+
+```text
 NAME                  TIME                            VALUE
 --------------------------------------------------------------------------------------
 TAG_0002              2018-02-01 01:00:00 000:000:000 11
@@ -117,8 +123,11 @@ TAG_0002에 대해 시간 범위를 지정해 데이터를 조회하는 예제�
 > 연속된 조회 구간이 경계 행을 중복해서 읽지 않도록 하려면 `time >= 시작 AND time < 종료`를
 > 사용합니다.
 
-```bash
-Mach> select * from tag where name = 'TAG_0002' and time between to_date('2018-02-01') and to_date('2018-02-05');
+```sql
+select * from tag where name = 'TAG_0002' and time between to_date('2018-02-01') and to_date('2018-02-05') ORDER BY name, time;
+```
+
+```text
 NAME                  TIME                            VALUE
 --------------------------------------------------------------------------------------
 TAG_0002              2018-02-01 01:00:00 000:000:000 11
@@ -126,8 +135,13 @@ TAG_0002              2018-02-02 02:00:00 000:000:000 12
 TAG_0002              2018-02-03 03:00:00 000:000:000 13
 TAG_0002              2018-02-04 04:00:00 000:000:000 14
 [4] row(s) selected.
+```
 
-Mach> select * from tag where name = 'TAG_0002' and time > to_date('2018-02-01') and time < to_date('2018-02-05');
+```sql
+select * from tag where name = 'TAG_0002' and time > to_date('2018-02-01') and time < to_date('2018-02-05') ORDER BY name, time;
+```
+
+```text
 NAME                  TIME                            VALUE
 --------------------------------------------------------------------------------------
 TAG_0002              2018-02-01 01:00:00 000:000:000 11
@@ -204,7 +218,8 @@ SELECT name, distance_m, value
 
 ### 거리 버킷 집계
 
-거리축 집계는 `TRUNC(..., 0)`로 버킷을 나누는 방식이 안전합니다.
+아래 예제는 0 이상인 거리를 500 단위 구간으로 나눕니다. TRUNC는 0 방향으로 자르므로
+음수 좌표의 구간이 필요하면 FLOOR 등 원하는 경계 규칙을 따로 선택합니다.
 
 ```sql
 SELECT TRUNC(distance_m / 500, 0) * 500 AS dist_bucket,
@@ -225,8 +240,11 @@ SELECT TRUNC(distance_m / 500, 0) * 500 AS dist_bucket,
 두 개 이상의 태그에 같은 시간 범위를 적용하는 예제입니다. 대상 이름 목록이 정해져 있으면
 `IN`으로 표현합니다. 대상 태그가 많을 때의 성능은 목록 크기와 시간 범위를 함께 측정합니다.
 
-```bash
-Mach> select * from tag where name in ('TAG_0002', 'TAG_0001') and time between to_date('2018-01-05') and to_date('2018-02-05');
+```sql
+select * from tag where name in ('TAG_0002', 'TAG_0001') and time between to_date('2018-01-05') and to_date('2018-02-05') ORDER BY name, time;
+```
+
+```text
 NAME                  TIME                            VALUE
 --------------------------------------------------------------------------------------
 TAG_0001              2018-01-05 05:00:00 000:000:000 5
@@ -246,8 +264,11 @@ TAG_0002              2018-02-04 04:00:00 000:000:000 14
 
 tag 값에 대한 조건도 지정할 수 있습니다. TAG_0002의 값 중 12보다 크고 15보다 작은 값에 대해 필터링한 결과입니다.
 
-```bash
-Mach> select * from tag where name = 'TAG_0002' and value > 12 and value < 15 and time between to_date('2018-02-01') and to_date('2018-02-05');
+```sql
+select * from tag where name = 'TAG_0002' and value > 12 and value < 15 and time between to_date('2018-02-01') and to_date('2018-02-05') ORDER BY name, time;
+```
+
+```text
 NAME                  TIME                            VALUE
 --------------------------------------------------------------------------------------
 TAG_0002              2018-02-03 03:00:00 000:000:000 13
@@ -261,7 +282,10 @@ TAG_0002              2018-02-04 04:00:00 000:000:000 14
 
 tag 테이블을 생성하면, tag ID별 통계 정보를 집계하는 가상 테이블이 자동으로 만들어집니다. 이 가상 테이블의 이름은 v${tag 테이블 이름}_stat입니다.
 
-통계 정보 대상 컬럼은 자동으로 세 번째 컬럼으로 지정됩니다.
+태그명·축 관련 통계와 세 번째 SUMMARIZED 컬럼의 값 통계를 구분합니다.
+STAT는 백그라운드 인덱스·통계 처리 상태를 반영하므로 직전 입력의 검증은 원본 SELECT와
+함께 수행합니다. 즉시 통계 확인이 필요한 실습에서는 TABLE_FLUSH 후 INDEX_FLUSH로
+처리를 기다립니다.
 
 <span class="badge-since">BASE DISTANCE 축별 STAT 스키마는 Machbase 8.7.0부터 지원</span>
 
@@ -278,8 +302,11 @@ Edition에서는 스키마 맨 앞에 `HOSTNAME VARCHAR(64)`가 추가됩니다.
 #### BASE TIME STAT 스키마
 
 
-```bash
-Mach> DESC v$tag_stat;
+```sql
+DESC v$tag_stat;
+```
+
+```text
 [ COLUMN ]
 ----------------------------------------------------------------------------------------------------
 NAME                                                        NULL?    TYPE                LENGTH
@@ -311,20 +338,32 @@ RECENT_ROW_TIME                                                      datetime   
 |MAX_VALUE_TIME|MAX_VALUE와 함께 삽입된 basetime 컬럼 값|
 |RECENT_ROW_TIME|가장 최근에 삽입된 basetime 컬럼 값|
 
-select 예제는 다음과 같습니다.
+다음 통계 실습은 앞의 20행 조회 예제와 분리한 테이블을 사용합니다. 따라서 아래 두 태그만
+조회되며, 앞의 TAG_0001·TAG_0002가 통계 예상 결과에 섞이지 않습니다.
 
 1. SUMMARIZED 컬럼이 존재하는 경우
 
-```bash
-Mach> INSERT INTO tag VALUES('tag-0', TO_DATE('2021-08-12'), 10);
-Mach> INSERT INTO tag VALUES('tag-0', TO_DATE('2021-08-13'), 10);
-Mach> INSERT INTO tag VALUES('tag-0', TO_DATE('2021-08-14'), 20);
-Mach> INSERT INTO tag VALUES('tag-0', TO_DATE('2021-08-11'), 5);
-Mach> INSERT INTO tag VALUES('tag-1', TO_DATE('2022-08-12'), 100);
-Mach> INSERT INTO tag VALUES('tag-1', TO_DATE('2022-08-11'), 200);
-Mach> INSERT INTO tag VALUES('tag-1', TO_DATE('2022-08-10'), 50);
+```sql
+CREATE TAG TABLE ch5_stat_time (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED);
+```
 
-Mach> SELECT * FROM v$tag_stat;
+```sql
+INSERT INTO ch5_stat_time VALUES('tag-0', TO_DATE('2021-08-12'), 10);
+INSERT INTO ch5_stat_time VALUES('tag-0', TO_DATE('2021-08-13'), 10);
+INSERT INTO ch5_stat_time VALUES('tag-0', TO_DATE('2021-08-14'), 20);
+INSERT INTO ch5_stat_time VALUES('tag-0', TO_DATE('2021-08-11'), 5);
+INSERT INTO ch5_stat_time VALUES('tag-1', TO_DATE('2022-08-12'), 100);
+INSERT INTO ch5_stat_time VALUES('tag-1', TO_DATE('2022-08-11'), 200);
+INSERT INTO ch5_stat_time VALUES('tag-1', TO_DATE('2022-08-10'), 50);
+```
+
+```sql
+EXEC TABLE_FLUSH(ch5_stat_time);
+EXEC INDEX_FLUSH(ch5_stat_time);
+SELECT * FROM v$ch5_stat_time_stat ORDER BY name;
+```
+
+```text
 NAME                                                                              ROW_COUNT            MIN_TIME                        MAX_TIME                        MIN_VALUE
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 MIN_VALUE_TIME                  MAX_VALUE                   MAX_VALUE_TIME                  RECENT_ROW_TIME
@@ -334,20 +373,35 @@ tag-0                                                                           
 tag-1                                                                             3                    2022-08-10 00:00:00 000:000:000 2022-08-12 00:00:00 000:000:000 50
 2022-08-10 00:00:00 000:000:000 200                         2022-08-11 00:00:00 000:000:000 2022-08-10 00:00:00 000:000:000
 [2] row(s) selected.
+```
 
 2. SUMMARIZED 컬럼이 존재하지 않는 경우
-Mach> CREATE TAG TABLE other_tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE);
+
+```sql
+CREATE TAG TABLE other_tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE);
+```
+
+```text
 Executed successfully.
+```
 
-Mach> INSERT INTO other_tag VALUES('tag-0', TO_DATE('2021-08-12'), 10);
-Mach> INSERT INTO other_tag VALUES('tag-0', TO_DATE('2021-08-13'), 10);
-Mach> INSERT INTO other_tag VALUES('tag-0', TO_DATE('2021-08-14'), 20);
-Mach> INSERT INTO other_tag VALUES('tag-0', TO_DATE('2021-08-11'), 5);
-Mach> INSERT INTO other_tag VALUES('tag-1', TO_DATE('2022-08-12'), 100);
-Mach> INSERT INTO other_tag VALUES('tag-1', TO_DATE('2022-08-11'), 200);
-Mach> INSERT INTO other_tag VALUES('tag-1', TO_DATE('2022-08-10'), 50);
+```sql
+INSERT INTO other_tag VALUES('tag-0', TO_DATE('2021-08-12'), 10);
+INSERT INTO other_tag VALUES('tag-0', TO_DATE('2021-08-13'), 10);
+INSERT INTO other_tag VALUES('tag-0', TO_DATE('2021-08-14'), 20);
+INSERT INTO other_tag VALUES('tag-0', TO_DATE('2021-08-11'), 5);
+INSERT INTO other_tag VALUES('tag-1', TO_DATE('2022-08-12'), 100);
+INSERT INTO other_tag VALUES('tag-1', TO_DATE('2022-08-11'), 200);
+INSERT INTO other_tag VALUES('tag-1', TO_DATE('2022-08-10'), 50);
+```
 
-Mach> SELECT * FROM v$other_tag_stat;
+```sql
+EXEC TABLE_FLUSH(other_tag);
+EXEC INDEX_FLUSH(other_tag);
+SELECT * FROM v$other_tag_stat ORDER BY name;
+```
+
+```text
 NAME                                                                              ROW_COUNT            MIN_TIME                        MAX_TIME                        MIN_VALUE
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 MIN_VALUE_TIME                  MAX_VALUE                   MAX_VALUE_TIME                  RECENT_ROW_TIME
@@ -375,12 +429,16 @@ INSERT INTO distance_sensor VALUES('sensor', 10.25, 3);
 INSERT INTO distance_sensor VALUES('sensor', 30.75, 5);
 
 EXEC TABLE_FLUSH(distance_sensor);
+EXEC INDEX_FLUSH(distance_sensor);
 ```
 
 Standard Edition에서 `DOUBLE BASE DISTANCE` 테이블의 스키마는 다음과 같습니다.
 
+```sql
+DESC V$DISTANCE_SENSOR_STAT;
+```
+
 ```text
-Mach> DESC V$DISTANCE_SENSOR_STAT;
 [ COLUMN ]
 ----------------------------------------------------------------------------------------------------
 NAME                                                        NULL?    TYPE                LENGTH
@@ -475,7 +533,9 @@ BASE TIME TAG 테이블은 기존 `*_TIME DATETIME` 스키마를 유지합니다
 
 ### scan 방향 hint
 
-기본 정방향과 최신 row 우선 역방향을 같은 schema에서 확인합니다.
+축 방향의 순회와 결과 정렬을 구분합니다. 역방향 축 조회에서의 최신값은 가장 큰 축 값이며
+마지막에 입력한 행을 나타내는 STAT의 RECENT_ROW 값과 다를 수 있습니다.
+같은 축 값의 여러 행까지 순서를 구분해야 하면 애플리케이션의 추가 기준이 필요합니다.
 
 ```sql
 SELECT *
@@ -501,6 +561,7 @@ hint가 없을 때의 기본 방향은
 ## 정리
 
 ```sql
+DROP TABLE ch5_stat_time;
 DROP TABLE distance_sensor;
 DROP TABLE trip_tag;
 DROP TABLE other_tag;

@@ -23,30 +23,35 @@ TAG 데이터는 태그 식별자와 축 조건을 사용해 삭제 범위를 �
 다음 예제는 별도 검증 테이블을 만들고 삭제 범위를 확인한 뒤 정리합니다.
 
 ```sql
-CREATE TAG TABLE lifecycle_tag (
+CREATE TAG TABLE ch5_lifecycle (
     name  VARCHAR(32) PRIMARY KEY,
     time  DATETIME BASETIME,
     value DOUBLE
 );
 
-INSERT INTO lifecycle_tag VALUES
+INSERT INTO ch5_lifecycle VALUES
     ('TAG_0001', TO_DATE('2026-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), 1.0);
-INSERT INTO lifecycle_tag VALUES
+INSERT INTO ch5_lifecycle VALUES
     ('TAG_0001', TO_DATE('2026-01-02 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), 2.0);
-INSERT INTO lifecycle_tag VALUES
+INSERT INTO ch5_lifecycle VALUES
     ('TAG_0002', TO_DATE('2026-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), 3.0);
 
-DELETE FROM lifecycle_tag
+DELETE FROM ch5_lifecycle
  WHERE name = 'TAG_0001'
    AND time < TO_DATE('2026-01-02 00:00:00', 'YYYY-MM-DD HH24:MI:SS');
 
 SELECT name, time, value
-  FROM lifecycle_tag
+  FROM ch5_lifecycle
  ORDER BY name, time;
 
-DELETE FROM lifecycle_tag;
-DROP TABLE lifecycle_tag;
+DELETE FROM ch5_lifecycle;
+SELECT COUNT(*) FROM ch5_lifecycle;
+DROP TABLE ch5_lifecycle;
 ```
+
+첫 삭제 후 TAG_0001의 2026-01-02 값 2.0과 TAG_0002의 값 3.0이 남습니다.
+전체 삭제 후 COUNT는 0입니다. DATA 삭제와 METADATA 삭제는 별개입니다.
+태그 등록 정보까지 제거하려면 [METADATA 삭제](../tag-metadata/) 조건도 확인합니다.
 
 삭제 조건의 연산자와 Edition별 지원 범위는
 [TAG DELETE 구문](/dbms/reference/sql/syntax-dictionary-sql/dml-syntax/)을
@@ -67,31 +72,41 @@ DROP TABLE lifecycle_tag;
 
 ## 자동 중복 제거
 
-`TAG_DUPLICATE_CHECK_DURATION`은 서버 현재 시각을 기준으로 지정 기간 안에 들어오는 입력에서
-태그명, 축 값과 데이터 값이 같은 행을 중복으로 처리합니다. 재전송 가능성이 있는 수집
-파이프라인에서 사용하고, 입력 지연이 설정 기간을 넘을 수 있는지 함께 검토하십시오.
+`TAG_DUPLICATE_CHECK_DURATION`은 중복 검사 기간을 분 단위로 설정합니다.
+Standard Edition에서는 0~43200분을 지정할 수 있으며 0은 비활성화입니다.
+Cluster Edition에서는 0만 허용하므로 아래 활성화 실습은 Standard 전용입니다.
+
+서버 시각을 기준으로 검사 기간에 해당하는 데이터에서 태그·축·데이터 값이 같은 행을
+중복으로 판정합니다. 인덱스 처리와 중복 행 정리 과정에서 수행되므로 Append 성공 응답을
+“이미 중복 제거된 행 수”로 해석하지 않습니다. 늦게 도착한 데이터가 검사 기간 밖이면
+기대한 중복 제거가 되지 않을 수 있으며 업무 키의 유일성 제약을 대신하지 않습니다.
 
 ```sql
-CREATE TAG TABLE dedup_tag (
+CREATE TAG TABLE ch5_dedup (
     name  VARCHAR(32) PRIMARY KEY,
     time  DATETIME BASETIME,
     value DOUBLE
 ) TAG_DUPLICATE_CHECK_DURATION = 1440;
 
-INSERT INTO dedup_tag VALUES ('TAG_0001', DATE_TRUNC('day', NOW), 1.0);
-INSERT INTO dedup_tag VALUES ('TAG_0001', DATE_TRUNC('day', NOW), 1.0);
+INSERT INTO ch5_dedup VALUES ('TAG_0001', NOW, 1.0);
+INSERT INTO ch5_dedup SELECT name, time, value FROM ch5_dedup;
 
-EXEC TABLE_FLUSH(dedup_tag);
+EXEC TABLE_FLUSH(ch5_dedup);
+EXEC INDEX_FLUSH(ch5_dedup);
 
 SELECT name, time, value
-  FROM dedup_tag
+  FROM ch5_dedup
  WHERE name = 'TAG_0001';
 
-ALTER TABLE dedup_tag SET TAG_DUPLICATE_CHECK_DURATION = 60;
-DROP TABLE dedup_tag;
+ALTER TABLE ch5_dedup SET TAG_DUPLICATE_CHECK_DURATION = 60;
+DROP TABLE ch5_dedup;
 ```
 
-설정 단위는 분이며 허용 범위는 현재 버전의
+두 번째 입력은 첫 행을 복사하므로 축 시각도 정확히 같습니다. 이 실습은 운영 중 동시
+입력이 없는 전제입니다. 저장 버퍼와 인덱스 처리를 기다린 뒤 한 행이 남는지 확인합니다.
+일반 수집 루프에서 행마다 두 flush를 호출하는 패턴은 사용하지 않습니다.
+
+전체 속성과 제약은 현재 버전의
 [CREATE TAG TABLE 구문](/dbms/reference/sql/syntax-dictionary-sql/ddl-syntax/)을 기준으로
 확인하십시오. 이미 보관 정책으로 삭제된 데이터는 중복 판정 대상에 남아 있지 않습니다.
 

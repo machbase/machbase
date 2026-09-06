@@ -12,7 +12,12 @@ toc: true
 
 ### 개요
 
-Tag 메타데이터는 태그의 정적 속성을 저장하는 영역입니다. 센서 위치, 장비 상태, 설치 정보, 외부 식별자, JSON 문서형 속성을 메타데이터에 둘 수 있습니다.
+METADATA는 태그마다 한 행인 현재 속성입니다. 일반 TAG 조회에서는 같은 속성이 각
+DATA 행에 함께 나타납니다. 현재 속성을 바꾸면 과거 DATA를 조회한 결과에도 새 속성이
+보일 수 있으므로 발생 당시 속성이 필요하면 DATA나 별도 속성 이력에 보존합니다.
+
+아래는 기본 메타데이터, JSON 메타데이터와 전체 예제를 서로 다른 테이블로 분리합니다.
+태그의 정적 속성을 저장하는 영역으로 사용하며 센서 위치, 장비 상태, 설치 정보, 외부 식별자, JSON 문서형 속성을 메타데이터에 둘 수 있습니다.
 
 메타데이터 전용 SQL로 다음 작업을 처리할 수 있습니다. 아래 예제의 `TAG`는 테이블 이름이며,
 사용할 때 실제 TAG 테이블 이름으로 바꿉니다.
@@ -32,7 +37,7 @@ Tag 메타데이터는 태그의 정적 속성을 저장하는 영역입니다. 
 메타데이터 컬럼은 `CREATE TAG TABLE` 의 `METADATA (...)` 절에서 정의합니다.
 
 ```sql
-CREATE TAG TABLE sensors (
+CREATE TAG TABLE ch5_meta (
     name VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
     value DOUBLE
@@ -52,17 +57,17 @@ Standard Edition에서는 기존 TAG 테이블의 METADATA 영역에 고정 길�
 추가하고 삭제할 수 있습니다.
 
 ```sql
-INSERT INTO sensors (name, time, value)
+INSERT INTO ch5_meta (name, time, value)
 VALUES ('TEMP_OLD', TO_DATE('2026-09-05 00:00:00'), 10.0);
 
-ALTER TABLE sensors METADATA
+ALTER TABLE ch5_meta METADATA
     ADD COLUMN (limits DECIMAL(12,4)[2] DEFAULT [0.0000, NULL]);
 
-INSERT INTO sensors (name, time, value)
+INSERT INTO ch5_meta (name, time, value)
 VALUES ('TEMP_NEW', TO_DATE('2026-09-05 00:00:01'), 20.0);
 
 SELECT name, limits
-  FROM sensors METADATA
+  FROM ch5_meta METADATA
  ORDER BY name;
 ```
 
@@ -77,13 +82,13 @@ index도 지원하지 않습니다.
 
 ```sql
 -- 지원하지 않으며 오류를 반환합니다.
-CREATE INDEX idx_sensor_limits ON sensors METADATA(limits);
+CREATE INDEX idx_sensor_limits ON ch5_meta METADATA(limits);
 ```
 
 컬럼을 제거할 때도 `METADATA`를 지정합니다.
 
 ```sql
-ALTER TABLE sensors METADATA DROP COLUMN (limits);
+ALTER TABLE ch5_meta METADATA DROP COLUMN (limits);
 ```
 
 TAG DATA의 일반 ARRAY 컬럼은 `CREATE TAG TABLE`에서 선언할 수 있지만 ALTER로 추가할 수
@@ -95,7 +100,7 @@ TAG DATA의 일반 ARRAY 컬럼은 `CREATE TAG TABLE`에서 선언할 수 있지
 메타데이터는 `INSERT INTO ... METADATA` 로 입력합니다.
 
 ```sql
-INSERT INTO sensors METADATA VALUES (
+INSERT INTO ch5_meta METADATA VALUES (
     'TEMP_001',
     'Building-A/F1',
     'READY',
@@ -106,15 +111,16 @@ INSERT INTO sensors METADATA VALUES (
 컬럼 목록을 지정할 수도 있습니다.
 
 ```sql
-INSERT INTO sensors METADATA (name, status, srcip, location)
+INSERT INTO ch5_meta METADATA (name, status, srcip, location)
 VALUES ('TEMP_002', 'STOP', '192.168.0.12', 'Building-A/F2');
 ```
 
 주의사항:
 
-- `VALUES (...)` 의 순서는 항상 `NAME` 다음에 메타데이터 정의 순서를 따릅니다.
-- 지정하지 않은 메타데이터 컬럼은 `NULL` 로 저장됩니다.
-- 메타데이터 행의 식별자는 항상 `NAME` 입니다.
+- 컬럼 목록을 생략한 VALUES는 태그명 다음에 메타데이터 선언 순서를 따릅니다.
+- 컬럼 목록을 지정했다면 그 목록의 순서대로 값을 전달합니다.
+- 생략한 입력의 NULL·DEFAULT 처리는 해당 DDL과 입력 경로의 규칙을 따릅니다.
+- 식별자는 TAG의 태그명 컬럼입니다. 이 예제에서는 그 이름을 `name`으로 선언했습니다.
 - 메타데이터 행이 생성되면 `_LAST_UPDATE_TIME` 이 서버 시각으로 자동 기록됩니다.
 
 <a id="metadata-query-tag"></a>
@@ -127,7 +133,7 @@ VALUES ('TEMP_002', 'STOP', '192.168.0.12', 'Building-A/F2');
 
 ```sql
 SELECT name, location, status, srcip
-  FROM sensors METADATA
+  FROM ch5_meta METADATA
  ORDER BY name;
 ```
 
@@ -135,7 +141,7 @@ SELECT name, location, status, srcip
 
 ```sql
 SELECT *
-  FROM sensors METADATA
+  FROM ch5_meta METADATA
  ORDER BY name;
 ```
 
@@ -155,14 +161,14 @@ TAG metadata에는 각 metadata row의 마지막 변경 시각을 나타내는 �
 
 ```sql
 SELECT name, _last_update_time
-  FROM sensors METADATA;
+  FROM ch5_meta METADATA;
 ```
 
 다른 metadata 컬럼과 함께 조회하거나 조건에 사용할 수 있습니다.
 
 ```sql
 SELECT name, location, status, _last_update_time
-  FROM sensors METADATA
+  FROM ch5_meta METADATA
  WHERE name = 'TEMP_001';
 ```
 
@@ -173,14 +179,14 @@ SELECT name, location, status, _last_update_time
 metadata row가 새로 생성되면 `_LAST_UPDATE_TIME` 이 자동으로 기록됩니다.
 
 ```sql
-INSERT INTO sensors METADATA(name, location, status)
+INSERT INTO ch5_meta METADATA(name, location, status)
 VALUES('TEMP_003', 'Building-A/F3', 'READY');
 ```
 
 사용자 metadata 값이 실제로 변경되면 `_LAST_UPDATE_TIME` 이 갱신됩니다.
 
 ```sql
-UPDATE sensors METADATA
+UPDATE ch5_meta METADATA
    SET status = 'DONE'
  WHERE name = 'TEMP_003';
 ```
@@ -188,18 +194,13 @@ UPDATE sensors METADATA
 같은 값으로 update하거나 JSON missing path 제거처럼 저장 결과가 바뀌지 않는 update는 실제 변경으로 보지 않습니다. 이 경우 `_LAST_UPDATE_TIME` 은 유지됩니다.
 
 ```sql
-UPDATE sensors METADATA
+UPDATE ch5_meta METADATA
    SET status = 'DONE'
  WHERE name = 'TEMP_003';
 ```
 
-JSON metadata 컬럼 `info` 가 있는 테이블에서는 존재하지 않는 경로 제거도 저장값을 바꾸지 않으면 no-op으로 처리됩니다.
-
-```sql
-UPDATE sensors METADATA
-   SET info = JSON_REMOVE(info, '$.missing')
- WHERE name = 'TEMP_003';
-```
+JSON의 존재하지 않는 경로 제거도 저장값을 바꾸지 않으면 no-op입니다. 실행 예제는
+아래 JSON 테이블을 생성한 뒤 확인합니다.
 
 ##### 직접 입력 및 수정 제한
 
@@ -208,12 +209,12 @@ UPDATE sensors METADATA
 다음 문장은 허용되지 않습니다.
 
 ```sql
-INSERT INTO sensors METADATA(name, location, status, _last_update_time)
+INSERT INTO ch5_meta METADATA(name, location, status, _last_update_time)
 VALUES('TEMP_004', 'Building-A/F4', 'READY', now);
 ```
 
 ```sql
-UPDATE sensors METADATA
+UPDATE ch5_meta METADATA
    SET _last_update_time = now
  WHERE name = 'TEMP_003';
 ```
@@ -247,7 +248,7 @@ METADATA (
 
 ```sql
 SELECT name, location, _last_update_time
-  FROM sensors METADATA
+  FROM ch5_meta METADATA
  WHERE _last_update_time >= TO_DATE('2026-06-08 00:00:00')
  ORDER BY _last_update_time;
 ```
@@ -275,7 +276,7 @@ TEMP_002,Building-A/F2,STOP
 
 ```sql
 SELECT name, status, time, value
-  FROM sensors
+  FROM ch5_meta
  WHERE status = 'READY'
  ORDER BY name, time;
 ```
@@ -293,7 +294,7 @@ SELECT name, status, time, value
 메타데이터 수정은 `UPDATE TAG METADATA` 를 사용합니다.
 
 ```sql
-UPDATE sensors METADATA
+UPDATE ch5_meta METADATA
    SET status = 'DONE',
        srcip = '10.0.0.20'
  WHERE name = 'TEMP_001';
@@ -302,7 +303,7 @@ UPDATE sensors METADATA
 메타데이터 조건으로 여러 태그를 한 번에 수정할 수도 있습니다.
 
 ```sql
-UPDATE sensors METADATA
+UPDATE ch5_meta METADATA
    SET status = 'DONE'
  WHERE status = 'READY';
 ```
@@ -321,21 +322,22 @@ UPDATE sensors METADATA
 특정 태그의 메타데이터를 삭제하려면 `WHERE` 절에서 tag name 조건을 지정합니다.
 
 ```sql
-DELETE FROM sensors METADATA
+DELETE FROM ch5_meta METADATA
  WHERE name = 'TEMP_002';
 ```
 
 메타데이터 조건으로 여러 태그를 한 번에 삭제할 수도 있습니다.
 
 ```sql
-DELETE FROM sensors METADATA
+DELETE FROM ch5_meta METADATA
  WHERE status = 'STOP';
 ```
 
-`WHERE` 절을 생략하면 해당 TAG 테이블의 모든 메타데이터를 삭제합니다.
+`WHERE` 절을 생략하면 전체 메타데이터가 대상입니다. 이 실습에는 앞서 입력한
+TEMP_OLD·TEMP_NEW의 DATA가 남아 있으므로 아래 전체 삭제는 의도적으로 실패합니다.
 
 ```sql
-DELETE FROM sensors METADATA;
+DELETE FROM ch5_meta METADATA;
 ```
 
 주의사항:
@@ -348,10 +350,11 @@ DELETE FROM sensors METADATA;
 메타데이터 삭제를 다시 수행합니다.
 
 ```sql
-DELETE FROM sensors
+DELETE FROM ch5_meta
  WHERE name = 'TEMP_001';
 
-DELETE FROM sensors METADATA;
+DELETE FROM ch5_meta METADATA
+ WHERE name = 'TEMP_001';
 ```
 
 <a id="metadata-design-json"></a>
@@ -361,7 +364,7 @@ DELETE FROM sensors METADATA;
 메타데이터에 `JSON` 컬럼을 선언할 수 있습니다.
 
 ```sql
-CREATE TAG TABLE ships (
+CREATE TAG TABLE ch5_meta_json (
     name VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
     value DOUBLE
@@ -375,7 +378,7 @@ METADATA (
 JSON 메타데이터 입력 예:
 
 ```sql
-INSERT INTO ships METADATA VALUES (
+INSERT INTO ch5_meta_json METADATA VALUES (
     'SHIP_001',
     'READY',
     '{"name":"alpha","ship":{"status":"READY"}}'
@@ -388,6 +391,18 @@ INSERT INTO ships METADATA VALUES (
 - 유효하지 않은 JSON 문자열은 오류가 발생합니다.
 - raw JSON 컬럼 자체에는 자동 인덱스가 생성되지 않습니다.
 
+### JSON 값이 바뀌지 않는 경우
+
+```sql
+SELECT name, _last_update_time FROM ch5_meta_json METADATA;
+UPDATE ch5_meta_json METADATA
+   SET info = JSON_REMOVE(info, '$.missing')
+ WHERE name = 'SHIP_001';
+SELECT name, _last_update_time FROM ch5_meta_json METADATA;
+```
+
+경로가 없어 저장값이 그대로이면 변경 시각도 유지됩니다.
+
 ### JSON path 조회
 
 JSON 메타데이터는 `->` 연산자로 조회할 수 있습니다.
@@ -396,7 +411,7 @@ JSON 메타데이터는 `->` 연산자로 조회할 수 있습니다.
 SELECT name,
        info->'$.name',
        info->'$.ship.status'
-  FROM ships METADATA
+  FROM ch5_meta_json METADATA
  WHERE info->'$.ship.status' = 'READY'
  ORDER BY name;
 ```
@@ -405,7 +420,7 @@ SELECT name,
 
 ```sql
 SELECT name, time, value
-  FROM ships
+  FROM ch5_meta_json
  WHERE info->'$.ship.status' = 'READY'
  ORDER BY name, time;
 ```
@@ -420,10 +435,10 @@ SELECT name, time, value
 
 ```sql
 SELECT info->'$[''ship.owner'']'
-  FROM ships METADATA;
+  FROM ch5_meta_json METADATA;
 
 SELECT info->'$[''ship-owner'']'
-  FROM ships METADATA;
+  FROM ch5_meta_json METADATA;
 ```
 
 ### JSON path 인덱스
@@ -433,7 +448,7 @@ SELECT info->'$[''ship-owner'']'
 자주 조회하는 JSON path는 메타데이터 정의 시 함께 인덱싱할 수 있습니다.
 
 ```sql
-CREATE TAG TABLE ships (
+CREATE TAG TABLE ch5_meta_json_indexed (
     name VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
     value DOUBLE
@@ -460,7 +475,7 @@ INFO JSON INDEX('$[''ship.owner'']')
 
 ```sql
 CREATE INDEX idx_ship_owner
-ON ships METADATA (info->'$.owner');
+ON ch5_meta_json METADATA (info->'$.owner');
 ```
 
 #### 인덱스 삭제
@@ -468,14 +483,12 @@ ON ships METADATA (info->'$.owner');
 인덱스 이름만으로 삭제합니다.
 
 ```sql
+SHOW INDEX idx_ship_owner;
 DROP INDEX idx_ship_owner;
 ```
 
-생성 시 `INFO JSON INDEX(...)` 로 자동 생성된 인덱스 이름은 `SHOW INDEX` 로 확인하는 것이 가장 안전합니다.
-
-```sql
-SHOW INDEX idx_ship_owner;
-```
+명시적으로 만든 인덱스는 생성 시 정한 이름으로 관리합니다. `SHOW INDEX idx_ship_owner;`는
+DROP 전에 실행합니다. 삭제 후 같은 이름을 조회하면 존재하지 않는 객체입니다.
 
 #### 인덱스 사용 시 주의사항
 
@@ -483,7 +496,7 @@ SHOW INDEX idx_ship_owner;
 
 ```sql
 SELECT name
-  FROM ships METADATA
+  FROM ch5_meta_json METADATA
  WHERE info->'$.status' = 'READY';
 ```
 
@@ -496,14 +509,15 @@ SELECT name
 
 ### JSON 부분 갱신
 
-JSON 메타데이터는 문서 전체를 다시 쓰지 않고 일부만 갱신할 수 있습니다.
+JSON 함수는 지정 경로를 바꾼 새 문서 값을 반환합니다. UPDATE는 그 결과를 컬럼에 저장합니다.
+이는 경로 단위의 논리적 갱신이며 저장 파일 일부만 제자리에서 수정한다는 성능 보장은 아닙니다.
 
 #### JSON_SET
 
 SQL scalar 값을 JSON scalar로 저장합니다.
 
 ```sql
-UPDATE ships METADATA
+UPDATE ch5_meta_json METADATA
    SET info = JSON_SET(info, '$.ship.status', 'DONE')
  WHERE name = 'SHIP_001';
 ```
@@ -513,7 +527,7 @@ UPDATE ships METADATA
 입력 문자열을 JSON으로 해석해 object 또는 array를 저장합니다.
 
 ```sql
-UPDATE ships METADATA
+UPDATE ch5_meta_json METADATA
    SET info = JSON_SET_JSON(info, '$.owner', '{"name":"machbase","team":"db"}')
  WHERE name = 'SHIP_001';
 ```
@@ -523,7 +537,7 @@ UPDATE ships METADATA
 특정 멤버 또는 하위 경로를 삭제합니다.
 
 ```sql
-UPDATE ships METADATA
+UPDATE ch5_meta_json METADATA
    SET info = JSON_REMOVE(info, '$.owner.team')
  WHERE name = 'SHIP_001';
 ```
@@ -542,7 +556,7 @@ UPDATE ships METADATA
 ### 전체 예제
 
 ```sql
-CREATE TAG TABLE ships (
+CREATE TAG TABLE ch5_meta_complete (
     name VARCHAR(20) PRIMARY KEY,
     time DATETIME BASETIME,
     value DOUBLE
@@ -553,26 +567,26 @@ METADATA (
     info JSON INDEX('name', 'ship.status')
 );
 
-INSERT INTO ships METADATA VALUES (
+INSERT INTO ch5_meta_complete METADATA VALUES (
     'SHIP_001',
     'READY',
     '192.168.0.11',
     '{"name":"alpha","ship":{"status":"READY"}}'
 );
 
-INSERT INTO ships VALUES ('SHIP_001', '2026-04-01 00:00:00', 10.5);
+INSERT INTO ch5_meta_complete VALUES ('SHIP_001', '2026-04-01 00:00:00', 10.5);
 
 SELECT name, status, info
-  FROM ships METADATA;
+  FROM ch5_meta_complete METADATA;
 
 SELECT name, time, value
-  FROM ships
+  FROM ch5_meta_complete
  WHERE info->'$.ship.status' = 'READY';
 
 CREATE INDEX idx_ship_owner
-ON ships METADATA (info->'$.owner');
+ON ch5_meta_complete METADATA (info->'$.owner');
 
-UPDATE ships METADATA
+UPDATE ch5_meta_complete METADATA
    SET info = JSON_SET(info, '$.ship.status', 'DONE')
  WHERE name = 'SHIP_001';
 
@@ -592,3 +606,15 @@ DROP INDEX idx_ship_owner;
 - `_LAST_UPDATE_TIME` 은 서버가 자동 관리하며 standard와 cluster 환경에서 동일하게 동작합니다
 
 <a id="metadata-design-tag"></a>
+
+## 실습 정리
+
+전체 삭제 실패 예제와 달리 DROP은 테이블과 DATA·METADATA를 모두 제거합니다.
+아래 이름이 이번 실습에서 만든 객체인지 확인한 뒤 실행합니다.
+
+```sql
+DROP TABLE ch5_meta;
+DROP TABLE ch5_meta_json;
+DROP TABLE ch5_meta_json_indexed;
+DROP TABLE ch5_meta_complete;
+```
