@@ -8,79 +8,77 @@ aliases:
 
 <a id="rollup-extension"></a>
 
-## 확장 ROLLUP (EXTENSION)
+## EXTENSION과 원본 FIRST/LAST의 차이
 
-`EXTENSION` 키워드를 붙여 생성하면 기본 통계(MIN/MAX/SUM/COUNT) 외에 구간의 첫 번째 값(FIRST)과 마지막 값(LAST)도 저장합니다.
+EXTENSION은 ROLLUP에 첫·마지막 값과 관련 시각 정보를 추가합니다.
+일반 원본 GROUP BY에서 FIRST/LAST를 사용하는 것과, 저장된 ROLLUP에서 FIRST/LAST를
+조회하는 것은 다릅니다. 후자에는 적용 가능한 확장 ROLLUP이 필요합니다.
 
-### 생성
-
-```sql
--- 수동 생성
-CREATE ROLLUP _tag_rollup_1s_ext ON tag(value) INTERVAL 1 SEC EXTENSION;
-
--- WITH ROLLUP 자동 생성
-CREATE TAG TABLE tag (
-    name  VARCHAR(20) PRIMARY KEY,
-    time  DATETIME BASETIME,
-    value DOUBLE SUMMARIZED
-) WITH ROLLUP EXTENSION;
-```
-
-### FIRST / LAST 조회
-
-확장 ROLLUP이 있어야 `FIRST()`, `LAST()` 집계 함수를 사용할 수 있습니다.
+## 준비와 입력
 
 ```sql
-SELECT rollup('min', 1, time) AS rt,
-       FIRST(time, value) AS first_val,
-       LAST(time, value)  AS last_val,
-       MIN(value), MAX(value)
-FROM   tag
-WHERE  name = 'SENSOR-01'
-  AND  time BETWEEN '2024-01-01 00:00:00' AND '2024-01-01 01:00:00'
-GROUP BY rt
-ORDER BY rt;
+CREATE TAG TABLE ch6_ext (
+    code VARCHAR(20) PRIMARY KEY,
+    time DATETIME BASETIME,
+    price DOUBLE
+);
+CREATE ROLLUP ch6_ext_first
+  ON ch6_ext(price) INTERVAL 1 MIN EXTENSION;
+CREATE ROLLUP ch6_ext_plain
+  ON ch6_ext(price) INTERVAL 1 MIN;
+INSERT INTO ch6_ext VALUES ('AAPL', TO_DATE('2026-01-01 09:00:00', 'YYYY-MM-DD HH24:MI:SS'), 100);
+INSERT INTO ch6_ext VALUES ('AAPL', TO_DATE('2026-01-01 09:00:10', 'YYYY-MM-DD HH24:MI:SS'), 105);
+INSERT INTO ch6_ext VALUES ('AAPL', TO_DATE('2026-01-01 09:00:20', 'YYYY-MM-DD HH24:MI:SS'), 99);
+INSERT INTO ch6_ext VALUES ('AAPL', TO_DATE('2026-01-01 09:00:30', 'YYYY-MM-DD HH24:MI:SS'), 103);
+EXEC TABLE_FLUSH(ch6_ext);
+ALTER ROLLUP ch6_ext_first FORCE;
+ALTER ROLLUP ch6_ext_plain FORCE;
 ```
 
-> 확장 ROLLUP이 아닌 일반 ROLLUP에 `ROLLUP_TABLE` 힌트를 지정한 상태에서 FIRST/LAST를 호출하면 오류가 발생합니다.
-
-### 힌트로 특정 ROLLUP 지정
-
-같은 주기·컬럼에 일반 롤업과 확장 롤업이 함께 있으면, 엔진은 일반 롤업을 기본으로 선택합니다. FIRST/LAST가 필요할 때는 힌트로 확장 롤업을 명시합니다.
+## 원본과 OHLC 비교
 
 ```sql
-SELECT /*+ ROLLUP_TABLE(_tag_rollup_1s_ext) */
-       rollup('sec', 10, time) AS rt,
-       FIRST(time, value), LAST(time, value)
-FROM   tag
-WHERE  name = 'SENSOR-01'
-GROUP BY rt
-ORDER BY rt;
+SELECT DATE_TRUNC('minute', time) AS bucket,
+       FIRST(time, price) AS open_price, MAX(price) AS high_price,
+       MIN(price) AS low_price, LAST(time, price) AS close_price
+  FROM ch6_ext WHERE code = 'AAPL'
+ GROUP BY bucket ORDER BY bucket;
+
+SELECT /*+ ROLLUP_TABLE(ch6_ext_first) */
+       rollup('min', 1, time) AS bucket,
+       FIRST(time, price) AS open_price, MAX(price) AS high_price,
+       MIN(price) AS low_price, LAST(time, price) AS close_price
+  FROM ch6_ext WHERE code = 'AAPL'
+ GROUP BY bucket ORDER BY bucket;
 ```
 
-### 선택 기준
+두 쿼리는 09:00 버킷에 Open=100, High=105, Low=99, Close=103을 반환합니다.
+ROLLUP의 FIRST/LAST 첫 인자는 BASETIME, 두 번째는 집계 대상 컬럼을 사용합니다.
+같은 시각의 여러 값은 추가적인 업무 순서가 필요한 경우를 별도로 설계합니다.
 
-| 요구사항 | 사용할 ROLLUP |
-|----------|--------------|
-| MIN/MAX/AVG/SUM/COUNT | 일반 ROLLUP |
-| 구간 첫 값·마지막 값 필요 | 확장 ROLLUP (EXTENSION) |
-| 캔들스틱(OHLC) 차트 | 확장 ROLLUP (FIRST=Open, LAST=Close) |
+## 일반 후보와 확장 후보가 함께 있을 때
 
-### OHLC 예제
+일반 ROLLUP이 확장 ROLLUP보다 무조건 우선하는 것은 아닙니다. 같은 조건·간격의 후보는
+등록 순서의 영향을 받습니다. 이 예제는 확장을 먼저 만들었지만, 결과가 특정 후보에
+의존해야 한다면 위처럼 명시합니다. 확장만 적용 가능한 환경에서는 힌트 없이 선택될 수도 있습니다.
+
+다음은 일반 ROLLUP을 강제하므로 의도적으로 실패하는 조회입니다.
 
 ```sql
-SELECT rollup('min', 5, time) AS rt,
-       FIRST(time, price) AS open,
-       MAX(price)         AS high,
-       MIN(price)         AS low,
-       LAST(time, price)  AS close
-  FROM stock_tick
- WHERE code = 'AAPL'
-   AND time >= TO_DATE('2026-01-15 09:00:00')
-   AND time <  TO_DATE('2026-01-15 18:00:00')
- GROUP BY rt
- ORDER BY rt;
+SELECT /*+ ROLLUP_TABLE(ch6_ext_plain) */
+       rollup('min', 1, time) AS bucket, FIRST(time, price)
+  FROM ch6_ext WHERE code = 'AAPL'
+ GROUP BY bucket;
 ```
 
-`FIRST(basetime_column, value_column)`과 `LAST(basetime_column, value_column)`의 시간 컬럼은
-대상 TAG 테이블의 BASETIME 컬럼을 사용합니다.
+자동 계층에 확장이 필요하면 별도 테이블의 CREATE에서
+`WITH ROLLUP (SEC) EXTENSION`을 사용합니다. FROM으로 계층을 만들 때도 확장 속성을
+일치시켜야 합니다. Custom OHLCV 재집계는 [Custom 실습](../custom-rollup/)을 참고합니다.
+
+## 정리
+
+```sql
+DROP ROLLUP ch6_ext_plain;
+DROP ROLLUP ch6_ext_first;
+DROP TABLE ch6_ext;
+```
