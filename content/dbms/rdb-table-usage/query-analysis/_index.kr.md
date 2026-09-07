@@ -4,138 +4,126 @@ weight: 50
 toc: true
 ---
 
-TRANSACTION 테이블의 SELECT, 집계, 필터링 등 조회 관련 내용을 다룹니다. TRANSACTION 테이블은 PRIMARY KEY와 보조 인덱스를 기반으로 단건 조회, 범위 조회, JOIN, 집계를 수행합니다.
+조회 SQL이 문법상 맞아도 입력한 상태값과 조건이 다르면 결과는 0건입니다.
+정렬 기준이 부족하면 같은 시간의 행이 조회할 때마다 다르게 보일 수도 있습니다.
+다양한 상태와 경계 시각을 가진 표본으로 필터·정렬·집계를 함께 확인하겠습니다.
 
 <a id="query-rdb-basic-select"></a>
 
-## 기본 SELECT
-
-TRANSACTION 테이블은 일반 SQL SELECT 문으로 조회합니다.
+## 확인할 결과가 있는 표본을 준비합니다
 
 ```sql
-CREATE TRANSACTION TABLE order_history (
-    order_id   LONG PRIMARY KEY,
-    customer   VARCHAR(64),
-    item_id    LONG,
-    amount     DOUBLE,
-    status     VARCHAR(16),
-    order_time DATETIME
+CREATE TRANSACTION TABLE ch8_query (
+    order_id LONG PRIMARY KEY,
+    customer VARCHAR(32),
+    item_id  LONG,
+    amount   DECIMAL(18,2),
+    status   VARCHAR(16),
+    ordered  DATETIME
 );
+CREATE TRANSACTION TABLE ch8_query_product (id LONG PRIMARY KEY, name VARCHAR(64));
+INSERT INTO ch8_query_product VALUES (42, 'Pump');
+INSERT INTO ch8_query_product VALUES (43, 'Valve');
 
-CREATE TRANSACTION TABLE product_catalog (
-    product_id LONG PRIMARY KEY,
-    name       VARCHAR(128)
-);
+INSERT INTO ch8_query VALUES (
+    1001, 'C-01', 42, 10.25, 'PENDING', TO_DATE('2026-01-01 10:00:00', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO ch8_query VALUES (
+    1002, 'C-01', 43, 20.50, 'PENDING', TO_DATE('2026-01-01 10:00:00', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO ch8_query VALUES (
+    1003, 'C-02', 42, 30.75, 'SHIPPED', TO_DATE('2026-01-02', 'YYYY-MM-DD'));
 
-INSERT INTO product_catalog VALUES (42, 'Temperature Sensor');
-INSERT INTO order_history
-VALUES (1001, 'CUST-001', 42, 19900, 'ORDERED',
-        TO_DATE('2026-01-01 10:00:00', 'YYYY-MM-DD HH24:MI:SS'));
-
-SELECT order_id, customer, amount, status
-FROM order_history
-WHERE order_id = 1001;
+SELECT order_id, amount, status FROM ch8_query WHERE order_id = 1001;
 ```
 
-조건 컬럼의 인덱스는 읽는 행 수를 줄이는 데 도움이 될 수 있습니다. 실제 사용 여부와
-효과는 `EXPLAIN`과 대표 데이터의 실행 시간으로 확인합니다.
-
-```sql
-SELECT order_id, amount, order_time
-FROM order_history
-WHERE customer = 'CUST-001'
-  AND order_time >= '2026-01-01 00:00:00';
-```
+1001·10.25·PENDING이 조회됩니다.
 
 <a id="query-rdb-filter-sort-limit"></a>
 
-## 필터링, 정렬, 제한
-
-일반 조건식, 범위 조건, 정렬, `LIMIT`을 사용할 수 있습니다.
+## 시간 경계와 같은 시각의 순서를 명시합니다
 
 ```sql
-SELECT order_id, customer, amount, status
-FROM order_history
-WHERE status = 'PENDING'
-ORDER BY order_time DESC
-LIMIT 100;
+SELECT order_id, amount FROM ch8_query
+ WHERE ordered >= TO_DATE('2026-01-01', 'YYYY-MM-DD')
+   AND ordered <  TO_DATE('2026-01-02', 'YYYY-MM-DD')
+   AND status = 'PENDING'
+ ORDER BY ordered DESC, order_id DESC
+ LIMIT 1;
 ```
 
-복합 인덱스는 앞쪽 컬럼 조건이 함께 사용될 때 효율적입니다.
-
-```sql
-CREATE INDEX idx_order_status_time ON order_history(status, order_time);
-
-SELECT order_id, amount
-FROM order_history
-WHERE status = 'PENDING'
-  AND order_time >= '2026-01-01 00:00:00';
-```
+1002 한 행이 선택됩니다. ordered가 같아도 order_id로 순서를 고정했습니다.
+LIMIT만 지정해 원하는 순서를 기대하지 마세요.
+연속된 일별 집계는 시작 포함·끝 제외 조건으로 경계의 중복을 피할 수 있습니다.
+LOG 전용 DURATION이나 자동 _arrival_time은 TRANSACTION에 적용하지 않습니다.
 
 <a id="query-rdb-join"></a>
 
-## JOIN 조회
-
-TRANSACTION 테이블은 다른 TRANSACTION 테이블이나 TAG/LOG 테이블에서 가공한 결과와 함께 사용할 수 있습니다.
+## 기준 정보를 붙일 때 누락과 중복을 확인합니다
 
 ```sql
-SELECT o.order_id, o.customer, p.name, o.amount
-FROM order_history o
-JOIN product_catalog p ON o.item_id = p.product_id
-WHERE o.status = 'ORDERED';
+SELECT o.order_id, p.name, o.amount
+  FROM ch8_query o JOIN ch8_query_product p ON o.item_id = p.id
+ WHERE o.customer = 'C-01'
+ ORDER BY o.order_id;
 ```
 
-TAG 또는 LOG 테이블의 원본 데이터를 집계한 뒤 TRANSACTION 테이블에 적재하면, 이후 업무 기준
-조회와 JOIN을 단순하게 구성할 수 있습니다.
+결과는 (1001, Pump, 10.25), (1002, Valve, 20.50)입니다.
+이 INNER JOIN에서는 기준 정보가 없는 주문이 빠집니다.
+조인 상대에 같은 키가 여러 행이면 결과가 늘어나므로 키의 고유성도 확인해야 합니다.
+다른 타입과의 조인은 [JOIN 실습](../join-relational-query/)에서 다룹니다.
 
 <a id="query-rdb-aggregation"></a>
 
-## 집계 조회
-
-TRANSACTION 테이블은 업무 상태나 집계 결과를 다시 그룹화할 때 사용합니다.
+## 합계는 원본 건수와 함께 확인합니다
 
 ```sql
 SELECT status, COUNT(*) AS cnt, SUM(amount) AS total_amount
-FROM order_history
-GROUP BY status;
+  FROM ch8_query GROUP BY status ORDER BY status;
 ```
 
-시간 또는 카테고리별 집계가 반복되면 집계 기준 컬럼에 인덱스를 추가하거나, 주기적으로 별도 요약 테이블을 생성합니다.
+PENDING은 2건·30.75, SHIPPED는 1건·30.75입니다.
+인덱스가 있다고 모든 집계가 자동으로 빨라지는 것은 아닙니다.
+범위·그룹 수·반환량을 확인하고 반복 업무라면 별도 요약을 검토하세요.
 
 <a id="query-rdb-json"></a>
 
-## JSON 경로 조회
-
-`JSON` 컬럼을 사용하는 TRANSACTION 테이블은 JSON path 조건을 조회에 사용할 수 있습니다.
+## JSON 값이 실제로 들어 있는지부터 확인합니다
 
 ```sql
-CREATE TRANSACTION TABLE device_state (
-    device_id VARCHAR(64),
-    ts        DATETIME,
-    state     JSON,
-    region    VARCHAR(32)
-);
+CREATE TRANSACTION TABLE ch8_query_json (id INTEGER PRIMARY KEY, state JSON);
+INSERT INTO ch8_query_json VALUES (1, '{"status":"ALARM","score":90}');
+INSERT INTO ch8_query_json VALUES (2, '{"status":"NORMAL","score":10}');
+INSERT INTO ch8_query_json VALUES (3, '{"score":20}');
 
-SELECT device_id, ts
-FROM device_state
-WHERE state->'$.status' = 'ALARM';
-
-DROP TABLE device_state;
-DROP INDEX idx_order_status_time;
-DROP TABLE product_catalog;
-DROP TABLE order_history;
+SELECT id, state->'$.status' AS status FROM ch8_query_json
+ WHERE state->'$.status' = 'ALARM'
+ ORDER BY id;
 ```
 
-자주 조회하는 JSON 필드는 별도 컬럼으로 분리하거나 JSON path 인덱스 적용 여부를 검토합니다.
-자세한 내용은 [인덱스와 성능](/dbms/rdb-table-usage/index-performance/#index-strategy-rdb-json-path)을
-참고합니다.
+1번만 선택됩니다. 없는 경로와 조건값이 다른 행을 구분해서 표본을 준비하세요.
+화살표 경로의 문자열 비교와 숫자 추출 함수의 비교를 혼동하지 마세요.
+자주 쓰는 경로는 [JSON path 인덱스](../index-performance/#index-strategy-rdb-json-path)를
+검토할 수 있습니다.
 
 <a id="query-rdb-performance"></a>
 
-## 조회 성능 기준
+## 실행 계획은 지원되는 조건 모양까지 확인합니다
 
-- 단건 조회는 PRIMARY KEY 조건을 우선 사용합니다.
-- UPDATE/DELETE 조건에 쓰는 컬럼에도 인덱스를 설계합니다.
-- 대량 데이터 조회는 시간, 상태, 카테고리 등 선택도가 있는 조건으로 범위를 줄입니다.
-- JSON path 조건은 실행 계획을 확인하고, 고빈도 조건은 일반 컬럼으로 분리합니다.
-- JOIN 대상 컬럼은 타입과 값 형식을 일치시킵니다.
+```sql
+CREATE INDEX ch8_query_status_time ON ch8_query(status, ordered);
+EXPLAIN SELECT order_id FROM ch8_query
+ WHERE status = 'PENDING'
+   AND ordered >= TO_DATE('2026-01-01', 'YYYY-MM-DD');
+```
+
+복합 인덱스의 선두 컬럼과 조건을 맞추되, 실제 사용 여부는 EXPLAIN으로 확인하세요.
+Machbase가 관계형 쿼리 전체를 내부 SQLite에 그대로 맡긴다고 가정하면
+인덱스 선택과 함수 조건을 잘못 해석할 수 있습니다.
+
+```sql
+DROP TABLE ch8_query_json;
+DROP TABLE ch8_query_product;
+DROP TABLE ch8_query;
+```
+
+결과가 다르면 집계나 JOIN부터 복잡하게 분석하기보다 원본 건수, WHERE 조건,
+정렬 기준을 차례로 확인해 보세요.

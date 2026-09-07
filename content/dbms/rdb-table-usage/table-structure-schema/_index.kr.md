@@ -4,188 +4,100 @@ weight: 20
 toc: true
 ---
 
-TRANSACTION 테이블의 스키마 설계 방법과 컬럼 타입, PRIMARY KEY 및 UNIQUE INDEX 지정 방식을
-설명합니다.
+자동 번호가 있으니 중복 걱정은 끝났다고 생각하기 쉽습니다.
+하지만 같은 외부 장비가 서로 다른 번호로 두 번 들어오는 일은 여전히 가능합니다.
+행을 식별하는 키와 업무상 중복을 막는 키를 구분하는 것이 스키마 설계의 출발점입니다.
 
 <a id="rdb-table-design"></a>
-
-## TRANSACTION 테이블 설계
-
-TRANSACTION 테이블은 Machbase 8.7.0에서 도입된 관계형 테이블로, SELECT·INSERT·UPDATE·DELETE를 모두 지원합니다. PRIMARY KEY 인덱스와 보조 인덱스를 함께 활용할 수 있습니다.
-
-```sql
-CREATE TRANSACTION TABLE order_history (
-    order_id  LONG,
-    item_id   INTEGER,
-    qty       INTEGER,
-    amount    DOUBLE
-);
-
-UPDATE order_history SET qty = 10 WHERE order_id = 1001;
-DELETE FROM order_history WHERE order_id = 1001;
-```
-
-### 이 섹션의 구성
-
-- **[활용 사례](/dbms/rdb-table-usage/overview-use-criteria/#use-cases-rdb)**
-- **[스키마 설계](/dbms/rdb-table-usage/table-structure-schema/#rdb-table-design-design-schema-type-rdb)**
-- **[PRIMARY KEY·UNIQUE INDEX·일반 인덱스 비교](/dbms/rdb-table-usage/index-performance/#index-strategy-rdb-primary-key-unique-normal)**
-- **[UNIQUE INDEX 생성과 동작](/dbms/rdb-table-usage/index-performance/#unique-index-rdb)**
-- **[AUTO_INCREMENT](/dbms/reference/sql/syntax-dictionary-sql/auto-increment-syntax/)**
-- **[JSON 경로 인덱스](/dbms/rdb-table-usage/index-performance/#index-strategy-rdb-json-path)**
-- **[트랜잭션 설계](/dbms/rdb-table-usage/transaction/#design-transaction-rdb)**
-- **[UPDATE·DELETE 설계](/dbms/rdb-table-usage/data-input-mutation/#modeling-rdb-update-delete)**
-- **[잠금·충돌·타임아웃 설계](/dbms/rdb-table-usage/locking-conflict-timeout/#design-locking-conflict-rdb-busy-timeout-ddl-dml)**
-- **[자기 참조·INSERT SELECT](/dbms/rdb-table-usage/data-input-mutation/#reference-self-rdb-insert-select)**
-- **[JOIN 설계](/dbms/rdb-table-usage/join-relational-query/#join-design-rdb)**
-- **[백업·복원·마운트](/dbms/rdb-table-usage/backup-restore-mount/#design-backup-mount-rdb)**
-- **[Append API](/dbms/rdb-table-usage/data-input-mutation/#unsupported-rejected-rdb-append-api)**
-- **[SDK 지원 범위](/dbms/rdb-table-usage/data-input-mutation/#support-scope-rdb-sdk)**
-- **[Edition 제한](/dbms/rdb-table-usage/constraints-errors-troubleshooting/#limitations-rdb-edition)**
-
 <a id="rdb-table-design-design-schema-type-rdb"></a>
 
-### 스키마 설계
+## 내부 식별자와 업무 키를 나눕니다
 
-#### 기본 문법
+다음 예제는 내부 번호와 외부 장비 코드를 따로 관리합니다.
 
 ```sql
-CREATE TRANSACTION TABLE table_name (
-    col1 type1,
-    col2 type2,
-    ...
+CREATE TRANSACTION TABLE ch8_schema (
+    id            LONG PRIMARY KEY AUTO_INCREMENT,
+    external_code VARCHAR(64) NOT NULL,
+    device_name   VARCHAR(128) NOT NULL,
+    price         DECIMAL(18,2),
+    state         JSON,
+    updated_at    DATETIME
 );
+CREATE UNIQUE INDEX ch8_schema_code ON ch8_schema(external_code);
+
+INSERT INTO ch8_schema(external_code, device_name, price, state, updated_at)
+VALUES ('ERP-01', 'Pump A', 19900.25, '{"status":"NORMAL"}',
+        TO_DATE('2026-01-01 10:00:00', 'YYYY-MM-DD HH24:MI:SS'));
+
+SELECT external_code, device_name, price, state->'$.status' AS status
+  FROM ch8_schema;
 ```
 
-#### 컬럼 수 제약
+ERP-01 한 행, 가격 19900.25, 상태 NORMAL이 조회됩니다.
+id는 서버가 부여합니다. 연속 번호나 빈 번호 없는 발급을 업무 조건으로 삼지는 마세요.
+발급 번호를 받는 방법은 사용하는 SDK와
+[AUTO_INCREMENT](/dbms/reference/sql/syntax-dictionary-sql/auto-increment-syntax/)를 확인하세요.
 
-최소 1개 이상의 컬럼이 필요합니다.
+## PRIMARY KEY와 UNIQUE는 역할이 다릅니다
+
+TRANSACTION의 PRIMARY KEY는 테이블당 하나이며 단일 컬럼입니다.
+컬럼 뒤에 PRIMARY KEY를 지정하거나, 기존 테이블에 CREATE PRIMARY KEY INDEX로 추가할 수
+있습니다. NULL과 중복이 있는 데이터에는 만들 수 없습니다.
+
+여러 컬럼의 조합을 고유하게 만들려면 복합 UNIQUE INDEX를 사용합니다.
+CREATE TABLE 내부의 UNIQUE·FOREIGN KEY·테이블 수준 PRIMARY KEY 문법을 다른 DBMS에서
+그대로 가져오지 마세요. 고유성은 테이블 생성 후 CREATE UNIQUE INDEX로 지정합니다.
+
+UNIQUE INDEX의 키에 NULL이 포함되면 NULL 포함 키끼리는 중복으로 보지 않습니다.
+“코드가 반드시 있고 고유해야 한다”면 예제처럼 NOT NULL도 함께 선언해야 합니다.
+실수하기 쉬운 또 다른 값은 빈 문자열입니다. Machbase의 빈 문자열과 NULL 처리도 실제
+입력 경로에서 확인하고, 필수 코드는 수집 단계에서 검증하세요.
+
+다음 SQL은 UNIQUE 위반을 확인하는 선택 실습입니다. 정상 입력과 분리해서 실행하세요.
 
 ```sql
--- 정상: 컬럼 1개
-CREATE TRANSACTION TABLE t1 (id INTEGER);
-
--- 정상: 컬럼 여러 개
-CREATE TRANSACTION TABLE t2 (id INTEGER, name VARCHAR(64), cat VARCHAR(32), val DOUBLE);
+-- 의도적으로 실패: external_code 중복
+INSERT INTO ch8_schema(external_code, device_name)
+VALUES ('ERP-01', 'Duplicate Pump');
 ```
 
-#### 지원 데이터 타입
+실패 후 ERP-01은 여전히 한 행이어야 합니다.
+중복 시 갱신하려면 [UPSERT](../insert-on-duplicate-key-update/)의 별도 규칙을 사용합니다.
 
-| 타입 | 설명 |
-|------|------|
-| `INTEGER` (`INT`) | 32비트 정수 |
-| `LONG` | 64비트 정수 |
-| `SHORT` | 16비트 정수 |
-| `FLOAT` | 32비트 부동소수점 |
-| `DOUBLE` | 64비트 부동소수점 |
-| `DECIMAL(M,D)` | exact 고정소수점 (`NUMERIC`, `DEC`, `FIXED`, `NUMBER` alias) |
-| `VARCHAR(n)` | 가변 문자열 |
-| `TEXT` / `CLOB` | 대용량 문자열 |
-| `BINARY` / `BLOB` | 가변 길이 바이너리 값 |
-| `DATETIME` | 날짜·시간 (나노초) |
-| `IPV4` / `IPV6` | 네트워크 주소 |
-| `JSON` | JSON 문서 |
+## 타입은 표현 범위와 연산 목적에 맞춥니다
 
-DECIMAL의 precision, scale, 반올림과 클라이언트 매핑은 [DECIMAL과 NUMERIC 고정소수점
-타입](/dbms/reference/sql/type-data-types-dictionary/decimal-numeric-fixed-point/)을 참고하십시오.
+| 값 | 타입 선택 | 확인할 사항 |
+|---|---|---|
+| 식별자·수량 | SHORT·INTEGER·LONG 및 지원 unsigned 타입 | 범위와 NULL 예약값 |
+| 측정값·근삿값 | FLOAT·DOUBLE | 부동소수점 반올림 |
+| 금액·정확한 소수 | DECIMAL(M,D)와 NUMERIC 등 별칭 | precision·scale·입력 변환 |
+| 코드·이름 | VARCHAR(n) | 문자 수가 아닌 바이트 길이 |
+| 긴 문자열·바이너리 | TEXT/CLOB·BINARY/BLOB | 저장 지원과 정렬·함수·인덱스 지원을 구분 |
+| 발생·변경 시각 | DATETIME | 원본 시간대와 변환 형식 |
+| 네트워크 주소 | IPV4·IPV6 | 주소 형식과 비교 의미 |
+| 부가 속성 | JSON | 자주 검색할 경로와 타입 |
+| 고정 길이 수치 묶음 | 숫자 ARRAY | 요소 타입·길이·whole NULL과 요소 NULL |
 
-#### 설계 예시
+전체 범위는 [데이터 타입 사전](/dbms/reference/sql/type-data-types-dictionary/)을,
+금액은 [DECIMAL](/dbms/reference/sql/type-data-types-dictionary/decimal-numeric-fixed-point/)을
+기준으로 확인하세요. 예제의 DOUBLE을 모든 금액 컬럼에 관성적으로 사용하지 않는 것이 좋습니다.
 
-##### 제품 카탈로그
+## 필요한 제약만 명시하고 입력도 검증합니다
+
+TRANSACTION에는 최소 하나의 사용자 컬럼이 필요합니다.
+LOG의 자동 도착 시각이나 TAG의 METADATA·BASETIME·BASEDISTANCE를 사용할 수 없습니다.
+외래 키가 자동으로 참조 무결성을 검사한다고 가정하지 말고, 필요한 관계 검증을
+애플리케이션과 데이터 점검 절차에 포함하세요.
+
+예제의 UNIQUE INDEX가 있다고 장비 이름·가격의 업무 유효성까지 검사되는 것은 아닙니다.
+필수값, 허용 상태, 수량 범위는 별도로 정의해야 합니다.
 
 ```sql
-CREATE TRANSACTION TABLE product_catalog (
-    product_id   LONG,
-    category     VARCHAR(64),
-    name         VARCHAR(256),
-    price        DECIMAL(18,2)
-);
-
-CREATE INDEX idx_prod_cat ON product_catalog(category);
-
--- 가격 변경
-UPDATE product_catalog SET price = 19900 WHERE product_id = 42;
+SELECT COUNT(*) AS device_count FROM ch8_schema;
+DROP TABLE ch8_schema;
 ```
 
-##### 트랜잭션 이력
-
-```sql
-CREATE TRANSACTION TABLE tx_history (
-    tx_id        LONG,
-    account_id   VARCHAR(32),
-    tx_type      VARCHAR(16),
-    amount       DECIMAL(24,4),
-    tx_time      DATETIME,
-    status       VARCHAR(16)
-);
-
-CREATE INDEX idx_tx_account ON tx_history(account_id);
-CREATE INDEX idx_tx_time    ON tx_history(tx_time);
-
--- 상태 업데이트
-UPDATE tx_history SET status = 'SETTLED' WHERE tx_id = 9999;
-```
-
-#### PRIMARY KEY 지정
-
-컬럼 정의에 직접 `PRIMARY KEY`를 지정하거나, `CREATE PRIMARY KEY INDEX` 문으로 사후 생성할 수 있습니다. TRANSACTION 인덱스는 BTREE로 표시됩니다.
-
-```sql
--- 컬럼 정의에서 PRIMARY KEY 지정
-CREATE TRANSACTION TABLE product_catalog (
-    product_id LONG PRIMARY KEY,
-    name       VARCHAR(256),
-    price      DECIMAL(18,2)
-);
-```
-
-```sql
--- 또는 PRIMARY KEY 인덱스 사후 생성
-CREATE TRANSACTION TABLE product_catalog (
-    product_id LONG,
-    name       VARCHAR(256),
-    price      DECIMAL(18,2)
-);
-
-CREATE PRIMARY KEY INDEX idx_pk_product ON product_catalog(product_id);
-```
-
-#### UNIQUE 값 보장
-
-TRANSACTION 테이블은 고유성 보장을 지원하지만 `CREATE TABLE` 안에서 컬럼 뒤에 `UNIQUE`를
-붙이거나 `UNIQUE(column)` 제약조건을 선언하지 않습니다. 테이블을 먼저 생성한 뒤
-`CREATE UNIQUE INDEX`를 실행합니다.
-
-```sql
-CREATE TRANSACTION TABLE account (
-    account_id LONG PRIMARY KEY,
-    email      VARCHAR(128) NOT NULL,
-    name       VARCHAR(80)
-);
-
-CREATE UNIQUE INDEX uidx_account_email
-ON account(email);
-```
-
-이후 같은 `email`을 INSERT하거나 기존 row의 `email`을 중복 값으로 UPDATE하면
-`ERR-01418`이 반환됩니다. 단일·복합 UNIQUE INDEX, NULL 및 삭제 동작은
-[UNIQUE INDEX 생성과 동작](/dbms/rdb-table-usage/index-performance/#unique-index-rdb)을
-참고하십시오.
-
-자동 번호가 필요한 단일 64비트 정수 PRIMARY KEY에는 `AUTO_INCREMENT`를 사용할 수 있습니다.
-
-```sql
-CREATE TRANSACTION TABLE device_master (
-    id LONG PRIMARY KEY AUTO_INCREMENT,
-    device_name VARCHAR(80),
-    site_code VARCHAR(32)
-);
-```
-
-`AUTO_INCREMENT`의 지원 타입, INSERT 방식, catalog 확인 방법은 [AUTO_INCREMENT](/dbms/reference/sql/syntax-dictionary-sql/auto-increment-syntax/)를 참고합니다.
-
-#### 주의사항
-
-- `METADATA` 절은 TAG 테이블 전용이므로 TRANSACTION 테이블에서는 사용할 수 없습니다.
-- `BASETIME`, `BASEDISTANCE` 키워드도 사용할 수 없습니다.
-- Cluster Edition에서는 TRANSACTION 테이블을 생성할 수 없습니다.
+정리 전 건수는 1입니다.
+스키마 변경은 [생성·변경·삭제](../create-alter-drop/), 조회 경로는
+[인덱스 설계](../index-performance/)에서 이어서 확인하세요.

@@ -134,9 +134,16 @@ Cluster Edition은 이 프로퍼티를 제공하지 않습니다.
 
 | 프로퍼티 | 기본값 | 범위 | 설명 |
 |----------|--------|------|------|
-| `TRANSACTION_BUSY_TIMEOUT_MS` | 30000 | -1~2147483647 | TRANSACTION 쓰기 충돌 시 대기할 시간(ms). -1은 무기한 대기, 0은 즉시 반환 |
+| `TRANSACTION_BUSY_TIMEOUT_MS` | 30000 | -1~2147483647 | 재시도 가능한 TRANSACTION 잠금 충돌의 대기 시간(ms). -1은 취소·해제까지 대기, 0은 즉시 반환 |
 | `TRANSACTION_SYNCHRONOUS` | 2 | 1~2 | TRANSACTION 테이블 트랜잭션 내구성 수준. 1=NORMAL, 2=FULL |
 | `TRANSACTION_JOURNAL_MODE` | 4 | 0~4 | TRANSACTION 저널 모드. 0=DELETE, 4=WAL |
+
+새 세션은 서버의 TRANSACTION_BUSY_TIMEOUT_MS를 복사하며 현재 연결은 ALTER SESSION으로
+변경할 수 있습니다. 이 값은 모든 busy 오류에 대한 최소 대기 시간을 보장하지 않습니다.
+WAL에서 오래된 읽기 스냅샷을 쓰기로 전환할 때의 충돌은 -1이어도 즉시 반환될 수 있습니다.
+이 경우 같은 문장을 반복하지 말고 ROLLBACK 후 새 트랜잭션에서 읽기와 판단부터
+다시 수행하세요. [두 연결 실습](/dbms/rdb-table-usage/locking-conflict-timeout/)에서
+일시적인 쓰기 잠금과 스냅샷 충돌을 비교할 수 있습니다.
 
 ## 로그 / 진단 설정
 
