@@ -24,7 +24,7 @@ VOLATILE 테이블 사용 시 다음 제약을 고려합니다.
 
 ```sql
 -- 실패 예: VOLATILE 테이블에는 JSON 컬럼을 사용하지 않습니다.
-CREATE VOLATILE TABLE session_state (
+CREATE VOLATILE TABLE ch10_err_json (
     session_id VARCHAR(64) PRIMARY KEY,
     payload    JSON
 );
@@ -81,7 +81,7 @@ WHERE NAME = 'VOLATILE_TABLESPACE_MEMORY_MAX_SIZE';
 `ON DUPLICATE KEY UPDATE`, [PK 기반 UPDATE](../data-input-mutation/#volatile-primary-key-update), PK 기반 DELETE를 사용하려면 PRIMARY KEY가 필요합니다.
 
 ```sql
-CREATE VOLATILE TABLE device_status (
+CREATE VOLATILE TABLE ch10_err_device (
     device_id  VARCHAR(64) PRIMARY KEY,
     status     VARCHAR(16),
     updated_at DATETIME
@@ -91,7 +91,7 @@ CREATE VOLATILE TABLE device_status (
 PRIMARY KEY 값은 중복될 수 없습니다. 중복 입력을 갱신으로 처리하려면 `ON DUPLICATE KEY UPDATE`를 사용합니다.
 
 ```sql
-INSERT INTO device_status VALUES ('DEV-01', 'ONLINE', NOW)
+INSERT INTO ch10_err_device VALUES ('DEV-01', 'ONLINE', NOW)
 ON DUPLICATE KEY UPDATE SET status = 'ONLINE', updated_at = NOW;
 ```
 
@@ -121,7 +121,7 @@ SELECT COUNT(*) FROM ch10_diag;
 
 ```sql
 DROP TABLE ch10_diag;
-DROP TABLE device_status;
+DROP TABLE ch10_err_device;
 ```
 
 <a id="troubleshooting-volatile-checklist"></a>
@@ -131,5 +131,5 @@ DROP TABLE device_status;
 - 테이블에 저장한 데이터가 재생성 가능한지 확인합니다.
 - PRIMARY KEY가 필요한 작업인지 확인합니다.
 - `COUNT(*)`와 `V$STORAGE_DC_VOLATILE_TABLE`로 규모와 메모리 사용을 확인합니다.
-- 재시작 후에는 생성 SQL과 초기 적재 SQL을 다시 실행합니다.
+- 재시작 후에는 초기 적재 SQL을 다시 실행합니다. 테이블은 다시 만들지 않아도 됩니다.
 - 영속 보존이 필요하면 VOLATILE이 아니라 TAG, LOG, LOOKUP, TRANSACTION 테이블을 사용합니다.

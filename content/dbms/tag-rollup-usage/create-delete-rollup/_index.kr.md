@@ -85,8 +85,16 @@ SELECT DISTINCT ROLLUP_NAME, ROOT_TABLE, INTERVAL_TIME, EXT_TYPE
  ORDER BY INTERVAL_TIME;
 ```
 
+INTERVAL_TIME이 1000·60000·3600000인 세 행이 조회됩니다.
+
 EXTENSION 자동 생성은 `WITH ROLLUP (SEC) EXTENSION` 형태입니다. 실제 생성 이름은
 V$ROLLUP에서 확인하고, 이름 충돌을 자동으로 해소한다고 가정하지 않습니다.
+
+인자에 따라 만들어지는 계층이 달라집니다. `(SEC)`는 SEC·MIN·HOUR 세 개를, `(MIN)`은
+MIN·HOUR 두 개를, `(HOUR)`는 HOUR 하나를 만들며, 인자를 생략하면 `(SEC)`와 같습니다.
+이때 첫 단계만 원본 TAG를 소스로 삼고 다음 단계는 직전 ROLLUP을 소스로 삼는 계층으로
+연결됩니다. 인자에는 SEC·MIN·HOUR만 사용할 수 있으며, 조회 함수가 받는 DAY 같은 단위를
+지정하면 오류입니다.
 
 ## 삭제와 정의 변경
 

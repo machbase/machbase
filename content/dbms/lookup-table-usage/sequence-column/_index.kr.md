@@ -28,7 +28,7 @@ SEQUENCE는 `LONG` 또는 `INT64` 타입 컬럼에 지정할 수 있습니다. P
 파라미터로 시작값을 설정하며, 이 속성은 LOOKUP 테이블에서만 사용할 수 있습니다.
 
 ```sql
-CREATE LOOKUP TABLE alarm_history (
+CREATE LOOKUP TABLE ch9_sequence (
     seq       LONG PROPERTY(SEQUENCE=1) PRIMARY KEY,
     sensor_id VARCHAR(40),
     alarm_type VARCHAR(20),
@@ -48,14 +48,14 @@ CREATE LOOKUP TABLE alarm_history (
 
 ```sql
 -- NEXTVAL()로 자동 증가값 입력
-INSERT INTO alarm_history (seq, sensor_id, alarm_type, occurred_at, message)
+INSERT INTO ch9_sequence (seq, sensor_id, alarm_type, occurred_at, message)
 VALUES (NEXTVAL(seq), 'TEMP-01', 'HIGH', NOW, '온도 초과');
 
-INSERT INTO alarm_history (seq, sensor_id, alarm_type, occurred_at, message)
+INSERT INTO ch9_sequence (seq, sensor_id, alarm_type, occurred_at, message)
 VALUES (NEXTVAL(seq), 'PRESS-02', 'LOW', NOW, '압력 저하');
 
 -- 조회
-SELECT * FROM alarm_history ORDER BY seq;
+SELECT * FROM ch9_sequence ORDER BY seq;
 -- seq=1, seq=2 순으로 정렬됨
 ```
 
@@ -67,11 +67,11 @@ SEQUENCE 컬럼에 직접 값을 입력하는 것도 허용됩니다. 입력값�
 
 ```sql
 -- 직접 값 지정 (nextval을 쓰지 않아도 됨)
-INSERT INTO alarm_history (seq, sensor_id, alarm_type, occurred_at, message)
+INSERT INTO ch9_sequence (seq, sensor_id, alarm_type, occurred_at, message)
 VALUES (100, 'FLOW-03', 'NORMAL', NOW, '정상 복구');
 
 -- 이후 NEXTVAL() 호출 시 101이 됩니다
-INSERT INTO alarm_history (seq, sensor_id, alarm_type, occurred_at, message)
+INSERT INTO ch9_sequence (seq, sensor_id, alarm_type, occurred_at, message)
 VALUES (NEXTVAL(seq), 'TEMP-01', 'NORMAL', NOW, '온도 정상');
 -- seq = 101
 ```
@@ -80,14 +80,20 @@ VALUES (NEXTVAL(seq), 'TEMP-01', 'NORMAL', NOW, '온도 정상');
 
 ```sql
 -- 최신 알람 N건 조회
-SELECT * FROM alarm_history ORDER BY seq DESC LIMIT 10;
+SELECT * FROM ch9_sequence ORDER BY seq DESC LIMIT 10;
 
 -- 특정 seq 이후 알람 조회
-SELECT * FROM alarm_history WHERE seq > 500 ORDER BY seq;
+SELECT * FROM ch9_sequence WHERE seq > 500 ORDER BY seq;
 
 -- 알람 확인 처리 (PK 기준 UPDATE)
-UPDATE alarm_history SET alarm_type = 'ACKNOWLEDGED'
+UPDATE ch9_sequence SET alarm_type = 'ACKNOWLEDGED'
 WHERE seq = 101;
+```
+
+실습 테이블은 다음과 같이 정리합니다.
+
+```sql
+DROP TABLE ch9_sequence;
 ```
 
 ## 주의 사항

@@ -19,24 +19,24 @@ VOLATILE 테이블의 인덱스 생성과 선택 기준을 설명합니다.
 다음 예제는 생성부터 정리까지 순서대로 실행할 수 있습니다.
 
 ```sql
-CREATE VOLATILE TABLE volatile_index_demo (
+CREATE VOLATILE TABLE ch10_index (
     id       INTEGER PRIMARY KEY,
     name     VARCHAR(20),
     status   VARCHAR(16)
 );
 
-CREATE INDEX idx_volatile_name
-ON volatile_index_demo(name) INDEX_TYPE REDBLACK;
+CREATE INDEX ch10_index_name_idx
+ON ch10_index(name) INDEX_TYPE REDBLACK;
 
-INSERT INTO volatile_index_demo VALUES (1, 'west device', 'ACTIVE');
-INSERT INTO volatile_index_demo VALUES (2, 'east device', 'INACTIVE');
+INSERT INTO ch10_index VALUES (1, 'west device', 'ACTIVE');
+INSERT INTO ch10_index VALUES (2, 'east device', 'INACTIVE');
 
 SELECT id, name
-FROM volatile_index_demo
+FROM ch10_index
 WHERE name = 'west device';
 
-DROP INDEX idx_volatile_name;
-DROP TABLE volatile_index_demo;
+DROP INDEX ch10_index_name_idx;
+DROP TABLE ch10_index;
 ```
 
 ## 설계 기준

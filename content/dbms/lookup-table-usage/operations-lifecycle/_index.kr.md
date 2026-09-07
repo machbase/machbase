@@ -44,26 +44,48 @@ memory table에 다시 반영해야 할 때 사용하며, 이름 범위·권한�
 [EXEC procedure 정본](/dbms/reference/sql/syntax-dictionary-sql/execute-procedure-syntax/#table-refresh)을
 참고합니다.
 
+다음은 이 절차를 그대로 따라가는 실습입니다.
+
 ```sql
-SELECT *
-FROM sensor_master
-WHERE sensor_id = 'TEMP-01';
+CREATE LOOKUP TABLE ch9_ops_sensor (
+    sensor_id  VARCHAR(32) PRIMARY KEY,
+    site       VARCHAR(16),
+    status     VARCHAR(16),
+    updated_at DATETIME
+);
 
-UPDATE sensor_master
-SET status = 'INACTIVE',
-    updated_at = NOW
-WHERE sensor_id = 'TEMP-01';
+INSERT INTO ch9_ops_sensor VALUES ('TEMP-01', 'SEOUL', 'READY', NOW);
+INSERT INTO ch9_ops_sensor VALUES ('TEMP-02', 'SEOUL', 'READY', NOW);
+INSERT INTO ch9_ops_sensor VALUES ('TEMP-03', 'BUSAN', 'READY', NOW);
 
-EXEC TABLE_REFRESH(sensor_master);
+-- 1. 변경 대상을 조회합니다.
+SELECT sensor_id, site, status FROM ch9_ops_sensor WHERE sensor_id = 'TEMP-01';
+
+-- 3. 변경합니다.
+UPDATE ch9_ops_sensor
+   SET status = 'INACTIVE', updated_at = NOW
+ WHERE sensor_id = 'TEMP-01';
+
+-- 4. 필요하면 memory table에 다시 반영합니다.
+EXEC TABLE_REFRESH(ch9_ops_sensor);
+
+-- 5. 대표 조회로 확인합니다.
+SELECT sensor_id, status FROM ch9_ops_sensor ORDER BY sensor_id;
 ```
+
+TEMP-01만 `INACTIVE`가 되고 나머지 두 행은 `READY`로 남습니다.
 
 일괄 변경은 반드시 대상 건수를 먼저 확인합니다.
 
 ```sql
-SELECT COUNT(*)
-FROM sensor_master
-WHERE site = 'SEOUL'
-  AND status = 'READY';
+SELECT COUNT(*) FROM ch9_ops_sensor
+ WHERE site = 'SEOUL' AND status = 'READY';
+```
+
+TEMP-01이 이미 바뀌었으므로 COUNT는 1입니다. 변경 전에 세지 않으면 대상이 달라집니다.
+
+```sql
+DROP TABLE ch9_ops_sensor;
 ```
 
 
