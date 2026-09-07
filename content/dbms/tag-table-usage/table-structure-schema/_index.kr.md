@@ -11,27 +11,52 @@ aliases:
 
 ## TAG 테이블 설계
 
-태그 이름은 반복 관측 대상을 식별하고 DATA 한 행은 그 대상의 관측 한 건을 저장합니다.
-이름은 첫 번째 VARCHAR 컬럼, 시간·거리 축은 두 번째 컬럼입니다. `SUMMARIZED`를
-지정하면 세 번째 컬럼에 사용하며 지원 숫자 타입과 JSON을 사용할 수 있습니다.
-ARRAY는 이름·축·SUMMARIZED 컬럼에 사용할 수 없습니다.
+TAG 테이블을 설계할 때는 먼저 컬럼의 역할을 나눕니다. 모든 컬럼이 같은 의미의 데이터
+컬럼은 아닙니다. 태그 이름 컬럼은 반복해서 관측할 대상을 식별하고, 축 컬럼은 각 관측이
+언제 또는 어느 위치에서 발생했는지를 나타냅니다. 그 다음에 온도, 압력, 상태, 품질 코드처럼
+실제로 저장할 관측값 컬럼을 배치합니다.
+
+첫 번째 컬럼은 태그 이름을 저장하는 `VARCHAR PRIMARY KEY`이고, 두 번째 컬럼은 시간축
+또는 거리축입니다. 시간축은 `DATETIME BASETIME`, 거리축은 `DOUBLE`, `LONG`, `ULONG`
+중 하나와 `BASEDISTANCE`를 사용합니다. `SUMMARIZED`를 지정하는 경우에는 세 번째 컬럼에
+둡니다. ARRAY처럼 특수 역할 컬럼에 사용할 수 없는 타입도 있으므로, 상세 타입과 제약은
+각 절의 예제와 [데이터 타입 사전](/dbms/reference/sql/type-data-types-dictionary/)을 함께
+확인합니다.
 
 이 페이지의 DDL은 모델별 독립 예제입니다. 생성 순서가 필요한 실습은 해당 절 안에서
 설명하며, 같은 이름의 기존 객체가 있으면 다른 이름으로 실행합니다.
 
-- **[시간축 TAG 테이블 설계](#time-axis-design-tag)**
-- **[거리축 TAG 테이블 설계](#distance-axis-design-tag)**
-- **[활용 사례](/dbms/tag-table-usage/patterns-scenarios/#use-cases-tag)**
-- **[METADATA 설계](/dbms/tag-table-usage/tag-metadata/#metadata-design-tag)**
-- **[JSON METADATA 설계](/dbms/tag-table-usage/tag-metadata/#metadata-design-json)**
-- **[값 컬럼 설계](/dbms/tag-table-usage/table-structure-schema/#tag-table-design-design-column)**
-- **[이진 데이터 컬럼 설계](/dbms/tag-table-usage/table-structure-schema/#tag-table-design-design-column-binary)**
-- **[VARCHAR 스토리지 최적화](/dbms/tag-table-usage/table-structure-schema/#tag-table-design-storage-varchar)**
-- **[스토리지 전략](/dbms/tag-table-usage/table-structure-schema/#tag-table-design-strategy)**
-- **[데이터 보정 설계](/dbms/tag-table-usage/tag-data-update-correction/#design-correction-tag)**
-- **[LSL·USL 설계](/dbms/tag-table-usage/table-structure-schema/#tag-table-design-lsl-usl)**
-- **[제약 및 주의사항](/dbms/tag-table-usage/constraints-errors-troubleshooting/#limitations-tag)**
-- **[자동 중복 제거](/dbms/tag-table-usage/table-structure-schema/#tag-table-design-duplication-removal)**
+스키마를 정할 때는 다음 항목을 함께 검토합니다.
+
+- [활용 사례](#tag-schema-use-case-summary)
+- [태그 이름 컬럼](#tag-name-column-design)
+- [시간축과 거리축 선택](#time-axis-design-tag)
+- [값 컬럼 설계](#tag-table-design-design-column)
+- [METADATA 컬럼 설계](#metadata-column-design-summary)
+- [JSON METADATA 컬럼 설계](#json-metadata-column-design-summary)
+- [이진 데이터 컬럼 설계](#tag-table-design-design-column-binary)
+- [VARCHAR 스토리지 최적화](#tag-table-design-storage-varchar)
+- [스토리지 전략](#tag-table-design-strategy)
+- [LSL·USL 설계](#tag-table-design-lsl-usl)
+- [보정과 중복 정책](#correction-duplication-policy-summary)
+- [제약 및 지원 범위](#tag-schema-limitations-summary)
+
+<a id="tag-schema-use-case-summary"></a>
+
+### 활용 사례
+
+TAG는 같은 구조의 관측값이 여러 대상에서 계속 쌓이는 업무에 적합합니다. 센서, 설비,
+이동체, 검사 회차처럼 반복 관측 대상을 먼저 정하고, 그 대상별 이력을 시간 또는 거리 축으로
+조회할 수 있는지 확인합니다. 업무 모델 예시는 [활용 사례](../patterns-scenarios/#use-cases-tag)를
+참고합니다.
+
+<a id="tag-name-column-design"></a>
+
+### 태그 이름 컬럼
+
+태그 이름 컬럼은 DATA 행 하나를 고유하게 식별하는 값이 아니라, 반복해서 관측할 대상을
+식별하는 값입니다. 같은 태그 이름으로 여러 축 값의 DATA 행을 입력할 수 있습니다. 설계할 때는
+센서별, 설비별, 검사 회차별 중 어떤 단위를 하나의 태그로 볼지 먼저 정합니다.
 
 <a id="time-axis-design-tag"></a>
 
@@ -118,6 +143,25 @@ TAG 테이블 값 컬럼은 기본적으로 NULL을 허용합니다. 특정 태�
 INSERT INTO weather_station VALUES ('WS-01', NOW, 22.5, 65.0, NULL, NULL);
 ```
 
+<a id="metadata-column-design-summary"></a>
+
+### METADATA 컬럼 설계
+
+METADATA 컬럼은 DATA 행마다 반복 저장할 값이 아니라 태그별 현재 속성을 저장할 때 사용합니다.
+설치 위치, 단위, 장비 설정, 관리 상태처럼 태그 이름에 붙는 속성이 여기에 해당합니다. DATA와
+METADATA를 분리하면 관측 이력은 유지하면서 태그의 현재 속성만 따로 조회하거나 변경할 수
+있습니다. 입력, 조회, 수정 예제는 [METADATA 사용](../tag-metadata/#original-85-tag-metadata)을
+참고합니다.
+
+<a id="json-metadata-column-design-summary"></a>
+
+### JSON METADATA 컬럼 설계
+
+태그별 속성이 계층 구조를 갖거나 속성 집합이 자주 바뀌면 JSON METADATA 컬럼을 검토합니다.
+예를 들어 설비 위치, 제조사 정보, 설치 옵션을 하나의 JSON 문서로 저장하고 필요한 path만
+조회할 수 있습니다. 자주 조건으로 사용하는 path는 인덱스 설계도 함께 검토합니다. 자세한
+문법과 예제는 [JSON METADATA](../tag-metadata/#metadata-design-json)를 참고합니다.
+
 <a id="tag-table-design-design-column-binary"></a>
 
 ### 이진 데이터 컬럼 설계
@@ -197,28 +241,19 @@ CREATE TAG TABLE vibration_sensor (
 이름에 의존하지 말고, 보존 기간은 [데이터 보존 정책](/dbms/operations-configuration-recovery/policy-data-retention/)으로
 관리하십시오.
 
-<a id="tag-table-design-duplication-removal"></a>
-
-### 자동 중복 제거
-
-중복 제거는 스키마 선택 사항이지만 설정 변경과 검증은 운영 작업입니다. 설정과 변경
-절차는
-[운영과 데이터 생명주기의 자동 중복 제거](/dbms/tag-table-usage/operations-lifecycle/#original-85-duplication-removal)를
-정본으로 사용하십시오.
-
 <a id="tag-table-design-lsl-usl"></a>
 <a id="original-85-lsl-usl-limits"></a>
 
 ### LSL·USL 설계
 
+LSL(Lower Specification Limit)은 하한 규격값, USL(Upper Specification Limit)은 상한
+규격값입니다. TAG 테이블의 메타데이터 컬럼에 태그별 허용 범위를 설정하면, 범위 밖
+DATA 입력을 차단할 수 있습니다.
+
 태그마다 허용 범위를 정해 입력 품질을 제어합니다. 유효 범위 밖 값을 보정하는 기능과는
 다릅니다. 범위를 벗어난 입력은 수집 오류 정책에 따라 기록·재처리해야 합니다.
 
-### LSL/USL 소개
-
-LSL(Lower Specification Limit)은 하한 규격값, USL(Upper Specification Limit)은 상한 규격값입니다. Tag 테이블에 종속된 메타데이터 테이블에서 이 기능을 지원하며, 특정 TAG ID에 규격 범위를 설정하여 범위 밖 데이터의 입력을 차단합니다.
-
-### 제약 조건
+#### 제약 조건
 
 다음 제약 조건이 적용됩니다.
 
@@ -249,14 +284,14 @@ SUMMARIZED 선언 가능 여부와 숫자 한계 설정을 같은 조건으로 �
 |float|32비트 부동 소수점 데이터|-|6[^1]|
 |double|64비트 부동 소수점 데이터|-|15[^1]|
 
-### LSL/USL 설정 및 사용
+#### LSL/USL 설정 및 사용
 
 다음 CREATE 예제들은 서로 다른 선택을 보여 줍니다. 기본 `example`만 이후
 INSERT·UPDATE 실습에서 사용하고, 대안 테이블은 별도로 생성합니다.
 
 태그 메타데이터 테이블의 컬럼에 `LOWER LIMIT`(LSL) 또는 `UPPER LIMIT`(USL) 키워드를 지정합니다. Tag 테이블 생성 시 또는 메타데이터 컬럼 추가 시 설정할 수 있습니다.
 
-#### CREATE
+##### CREATE
 
 ```sql
 CREATE TAG TABLE example (
@@ -283,7 +318,7 @@ METADATA (
 );
 ```
 
-#### ADD COLUMN
+##### ADD COLUMN
 
 데이터가 이미 입력된 후 `ADD COLUMN`을 사용하여 추가하는 경우 기본값은 __NULL__입니다.
 
@@ -310,7 +345,7 @@ CREATE TAG TABLE example_alter_upper (
 ALTER TABLE example_alter_upper METADATA ADD COLUMN (usl INTEGER UPPER LIMIT);
 ```
 
-#### INSERT
+##### INSERT
 
 특정 TAG ID에 대한 LSL/USL 값을 설정합니다.
 
@@ -379,7 +414,7 @@ TAG_01                                              2023-09-12 09:31:27 939:209:
 Elapsed time: 0.001
 ```
 
-#### UPDATE
+##### UPDATE
 
 LSL/USL 컬럼의 값을 수정합니다. 이미 입력된 데이터에는 소급 적용되지 않으므로 주의가 필요합니다.
 
@@ -404,7 +439,7 @@ TAG_01                                              10          100
 Elapsed time: 0.001
 ```
 
-#### DELETE
+##### DELETE
 
 LSL/USL 컬럼은 `DROP COLUMN`으로 제거하지 않고 값을 NULL로 설정해 제약을 해제합니다.
 
@@ -429,7 +464,7 @@ TAG_01                                              NULL        NULL
 Elapsed time: 0.001
 ```
 
-### TRACE 로그로 LSL/USL 위반 확인
+#### TRACE 로그로 LSL/USL 위반 확인
 - 위치: `$MACHBASE_HOME/trc/machbase.trc`
 - 빠른 필터:
   ```bash
@@ -451,6 +486,29 @@ Elapsed time: 0.001
 - 주의: 한 줄 최대 약 4KB라 컬럼이 많을 때 뒤가 잘릴 수 있으며, 기동 직후 메타 캐시 준비 전에는 테이블명이 ID로 보일 수 있습니다.
 
 [^1]: [IEEE 754](https://en.wikipedia.org/wiki/IEEE_754)
+
+<a id="correction-duplication-policy-summary"></a>
+<a id="tag-table-design-duplication-removal"></a>
+
+### 보정과 중복 정책
+
+값 보정과 중복 제거는 컬럼 정의만으로 끝나는 항목은 아니지만, 스키마 설계 단계에서 미리
+정해야 합니다. 보정이 필요하면 어떤 값 컬럼을 수정할 수 있는지, 원본을 별도 컬럼이나 별도
+테이블에 보존할지, 보정 후 ROLLUP을 어떻게 재구성할지 결정합니다. 자세한 내용은
+[데이터 보정](../tag-data-update-correction/#design-correction-tag)을 참고합니다.
+
+같은 태그와 같은 축 값이 반복 입력될 수 있으면 중복을 허용할지, 수집 단계에서 제거할지,
+Machbase의 자동 중복 제거 기능을 사용할지 정합니다. 설정 변경과 운영 검증 절차는
+[자동 중복 제거](../operations-lifecycle/#original-85-duplication-removal)를 참고합니다.
+
+<a id="tag-schema-limitations-summary"></a>
+
+### 제약 및 지원 범위
+
+TAG 테이블은 반복 관측 이력에 맞춘 구조이므로 모든 SQL 기능을 일반 관계형 테이블처럼
+지원하지 않습니다. 축 컬럼, METADATA, 값 보정, ROLLUP, Edition별 지원 범위는 설계 전에
+확인해야 합니다. 지원하지 않는 기능과 대표 오류는
+[제약 및 주의사항](../constraints-errors-troubleshooting/#limitations-tag)을 참고합니다.
 
 <a id="original-85-binary-columns"></a>
 
