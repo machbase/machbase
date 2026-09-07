@@ -89,7 +89,9 @@ SDK별 연결과 Append 예제는 [개발 도구 연동](/dbms/development-tools
 
 TAG data UPDATE는 Standard Edition에서 태그 선택 조건과 BASETIME 범위를 함께 지정해
 실행합니다. 태그명, 축과 메타데이터 컬럼은 일반 data UPDATE 대상으로 사용하지 않습니다.
-정정 후 ROLLUP이 있다면 대상 범위를 재구성합니다.
+정정 후 이미 계산된 ROLLUP은 자동으로 바뀌지 않으므로, ROLLUP이 있다면 대상 범위를
+명시적으로 재구성합니다. 재구성 절차는 [ROLLUP_REBUILD](../../tag-rollup-usage/rollup-rebuild/)를
+참고합니다.
 
 성공 응답·실패 행 수와 재시도 정책을 선택한 입력 API에서 확인합니다. SQL의 NULL,
 SDK의 NULL 표현과 숫자 0을 구분하고, 같은 관측을 재전송할 때의 중복 정책도 정합니다.

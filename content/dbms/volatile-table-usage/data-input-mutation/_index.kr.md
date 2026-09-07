@@ -43,6 +43,26 @@ SELECT * FROM volatile_mutation_demo ORDER BY id;
 조각을 복사하지 말고 [SDK 및 통합](/dbms/development-tools-integration/)의 해당 드라이버 예제를
 사용합니다.
 
+<a id="volatile-primary-key-update"></a>
+
+## 조건부 갱신
+
+이미 있는 행의 일부 컬럼만 바꿀 때는 `UPDATE`를 사용합니다. `INSERT ... ON DUPLICATE KEY
+UPDATE`가 "없으면 넣고 있으면 바꾼다"인 것과 달리, `UPDATE`는 대상 행이 있을 때만 값을
+바꿉니다.
+
+VOLATILE 테이블의 `UPDATE`에는 `WHERE`가 필요하며, 조건은 삭제와 마찬가지로
+`PRIMARY KEY = 값` 형태만 지원합니다. 다른 컬럼 조건이나 복합 조건은 사용할 수 없습니다.
+`WHERE`를 생략한 전체 갱신도 지원하지 않습니다.
+
+```sql
+UPDATE volatile_mutation_demo SET refcnt = refcnt + 1 WHERE id = 2;
+SELECT * FROM volatile_mutation_demo ORDER BY id;
+```
+
+`SET` 절에는 `PRIMARY KEY` 컬럼을 지정할 수 없습니다. 키를 바꿔야 하면 기존 행을 삭제하고
+새 키로 다시 입력합니다.
+
 <a id="original-85-deleting-data"></a>
 
 ## 데이터 삭제

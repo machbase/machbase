@@ -18,7 +18,7 @@ ROLLUP은 원시 행에서 같은 집계를 반복하는 비용을 줄입니다.
 | 한 숫자 컬럼의 반복 구간 통계 | 일반 ROLLUP |
 | 특정 품질 조건을 통과한 표본만 집계 | 조건 ROLLUP |
 | 구간의 첫 값·마지막 값 필요 | EXTENSION ROLLUP |
-| 여러 집계식을 별도 TAG에 저장 | Standard Edition의 Custom ROLLUP |
+| 여러 집계식을 별도 TAG에 저장 | Custom ROLLUP(Standard Edition 전용) |
 | JSON 경로나 문서의 숫자 값 집계 | JSON 경로 또는 문서 전체 ROLLUP |
 | 거리축 TAG | 일반 숫자 구간 집계; ROLLUP은 미지원 |
 

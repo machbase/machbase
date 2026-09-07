@@ -35,7 +35,7 @@ TAG 테이블은 반복 관측하는 대상의 이름과 시간 또는 거리 �
 확인하고, 임의로 삭제하지 않습니다. 성공 예제와 실패를 확인하는 예제를 분리해 실행하며
 정리 SQL은 해당 실습에서 만든 객체에만 적용합니다.
 
-TAG DATA UPDATE는 Standard Edition 기능입니다. 자동 중복 검사 기간, METADATA ALTER와
+TAG DATA UPDATE는 Standard Edition 전용입니다. 자동 중복 검사 기간, METADATA ALTER와
 LSL/USL의 세부 작업도 Edition별 범위를 확인합니다. SQL INSERT, Append의 처리 응답,
 저장 버퍼 flush와 인덱스·통계 처리 완료는 같은 의미가 아닙니다.
 

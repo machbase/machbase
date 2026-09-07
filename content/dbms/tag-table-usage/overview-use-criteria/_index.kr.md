@@ -24,7 +24,7 @@ CREATE TAG TABLE ch5_overview_time (
 );
 
 -- 거리나 위치 구간을 기준으로 관측값을 저장하는 거리축 TAG입니다.
--- 거리축 TAG에는 시간축 ROLLUP을 적용하지 않습니다.
+-- 거리축 TAG에는 ROLLUP을 사용할 수 없습니다.
 CREATE TAG TABLE ch5_overview_distance (
     name     VARCHAR(64) PRIMARY KEY,
     distance DOUBLE BASEDISTANCE,
@@ -34,8 +34,9 @@ CREATE TAG TABLE ch5_overview_distance (
 
 두 예제 모두 이름은 첫 번째 컬럼, 축은 두 번째 컬럼입니다. 시간축은 `DATETIME BASETIME`,
 거리축은 `DOUBLE`, `LONG`, `ULONG` 중 하나와 `BASEDISTANCE`를 사용합니다.
-`SUMMARIZED`를 사용하면 세 번째 컬럼에 지정합니다. 상세 타입·순서는
-[스키마](../table-structure-schema/)를 참고합니다.
+`SUMMARIZED`를 사용하면 세 번째 컬럼에 지정합니다. 컬럼 순서와 지정 가능한 타입은
+[생성, 변경, 삭제](../create-alter-drop/), 모델별 설계 판단은
+[테이블 구조와 스키마](../table-structure-schema/)를 참고합니다.
 
 `SUMMARIZED`는 대표 통계·집계 관련 컬럼을 지정하는 속성이며, ROLLUP 객체를 자동으로
 만들지는 않습니다.
@@ -74,11 +75,14 @@ CREATE TAG TABLE ch5_overview_distance (
 |---|---|
 | 관측 대상보다 사건 자체가 중요한 이벤트 검색 | LOG |
 | 영속 기준 정보의 일반 조건 조회·변경 | LOOKUP |
-| 여러 DML의 명시적 트랜잭션과 관계형 변경 | Standard Edition의 TRANSACTION |
+| 여러 DML의 명시적 트랜잭션과 관계형 변경 | TRANSACTION(Standard Edition 전용) |
 | 원본에서 재구성할 수 있는 공유 상태 캐시 | VOLATILE |
 
 TAG에서도 JOIN과 제한된 값 보정을 사용할 수 있습니다. “JOIN이 필요하면 TAG를 쓸 수 없다”
 또는 “계측값은 반드시 TAG여야 한다”는 식으로 판단하지 않습니다.
+
+다만 DATA의 UPDATE는 Standard Edition 전용입니다. Cluster Edition에서는 METADATA
+UPDATE만 사용할 수 있으므로, 값 보정이 필요하면 재입력과 재집계 절차를 함께 설계합니다.
 
 <a id="overview-tag-design-flow"></a>
 

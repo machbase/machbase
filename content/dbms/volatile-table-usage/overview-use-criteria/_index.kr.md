@@ -57,6 +57,9 @@ ON DUPLICATE KEY UPDATE SET value = 23.5, updated_at = NOW;
 SELECT *
 FROM sensor_latest
 WHERE sensor_id = 'TEMP-01';
+
+-- 다음 절에서 같은 이름을 다시 사용하므로 정리합니다.
+DROP TABLE sensor_latest;
 ```
 
 ### 활용 패턴

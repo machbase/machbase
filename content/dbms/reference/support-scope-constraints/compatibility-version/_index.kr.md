@@ -32,7 +32,7 @@ Machbase 8.7.0 버전의 하위 호환성, 업그레이드 주의사항, 지원 
   참고하십시오.
 - 8.7.0 Standard Edition 서버는 TAG data UPDATE의 NAME과 BASETIME 조건 값에 positional
   또는 named bind parameter를 사용할 수 있습니다. 구버전 서버에서는 같은 prepared
-  UPDATE가 `ERR-2190`으로 거부될 수 있습니다. 조건 형태와 SDK API는
+  UPDATE가 `ERR-02190`으로 거부될 수 있습니다. 조건 형태와 SDK API는
   [TAG data UPDATE bind](/dbms/reference/sql/syntax-dictionary-sql/dml-syntax/tag-data-update-syntax/#tag-data-update-predicate-bind)를
   참고하십시오.
 - 8.7.0 서버의 BASE DISTANCE TAG 통계 뷰는 축 컬럼을 `*_DISTANCE` 이름과 원본

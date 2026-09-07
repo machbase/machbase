@@ -11,8 +11,10 @@ LOOKUP 테이블의 SEQUENCE 컬럼 설정과 활용을 다룹니다.
 
 ## LOOKUP SEQUENCE 컬럼 정의
 
-SEQUENCE 컬럼은 `NEXTVAL`로 입력 번호를 생성할 때 사용합니다. 값의 고유성을 강제하려면
-PRIMARY KEY도 지정합니다. 이 번호를 이벤트 발생 시각의 순서와 동일하게 해석하지 않습니다.
+SEQUENCE 컬럼은 `NEXTVAL`로 입력 번호를 생성할 때 사용합니다. LOOKUP 테이블은
+[PRIMARY KEY가 필수](../primary-key-policy/)이므로, SEQUENCE 컬럼 자체를 PRIMARY KEY로
+지정할지 다른 컬럼을 PRIMARY KEY로 둘지 함께 정합니다. 이 번호를 이벤트 발생 시각의
+순서와 동일하게 해석하지 않습니다.
 
 ## SEQUENCE 컬럼이 필요한 이유
 
@@ -23,7 +25,7 @@ PRIMARY KEY도 지정합니다. 이 번호를 이벤트 발생 시각의 순서�
 ## SEQUENCE 컬럼 선언
 
 SEQUENCE는 `LONG` 또는 `INT64` 타입 컬럼에 지정할 수 있습니다. PROPERTY 절의 `SEQUENCE`
-파라미터로 시작값을 설정합니다.
+파라미터로 시작값을 설정하며, 이 속성은 LOOKUP 테이블에서만 사용할 수 있습니다.
 
 ```sql
 CREATE LOOKUP TABLE alarm_history (
@@ -36,11 +38,13 @@ CREATE LOOKUP TABLE alarm_history (
 ```
 
 - `SEQUENCE=1`: seq 컬럼이 1부터 자동 증가
-- SEQUENCE 컬럼은 PRIMARY KEY로 지정하는 것이 일반적
+- 시작값은 1 이상 4,294,967,295 미만의 정수만 지정할 수 있습니다.
+- 위 예제처럼 SEQUENCE 컬럼을 PRIMARY KEY로 지정하면 번호의 고유성까지 함께 보장됩니다.
 
 ## SEQUENCE 값 삽입: NEXTVAL()
 
-`NEXTVAL()` 함수를 사용하면 현재 저장된 최댓값 + 1을 자동으로 계산해 삽입합니다.
+서버는 SEQUENCE 컬럼마다 다음에 사용할 번호를 카운터로 보관하며, `NEXTVAL()`은 그 값을
+가져와 삽입합니다. 매번 테이블의 최댓값을 다시 계산하지 않습니다.
 
 ```sql
 -- NEXTVAL()로 자동 증가값 입력
@@ -57,7 +61,9 @@ SELECT * FROM alarm_history ORDER BY seq;
 
 ## 일반 컬럼처럼 직접 값 지정
 
-SEQUENCE 컬럼에 직접 값을 입력하는 것도 허용됩니다. 이 경우 내부 최댓값이 갱신되므로 자동 증가 카운터에 영향을 줍니다.
+SEQUENCE 컬럼에 직접 값을 입력하는 것도 허용됩니다. 입력값이 현재 카운터보다 크면
+카운터가 `입력값 + 1`로 올라갑니다. 현재 카운터보다 작은 값을 입력해도 카운터는
+내려가지 않습니다.
 
 ```sql
 -- 직접 값 지정 (nextval을 쓰지 않아도 됨)
@@ -87,5 +93,8 @@ WHERE seq = 101;
 ## 주의 사항
 
 - SEQUENCE 컬럼은 `LONG`, `INT64` 타입을 지원합니다.
-- 시작값은 양수(`SEQUENCE=1` 이상)만 허용됩니다.
-- NEXTVAL()을 쓰지 않고 중복 값을 삽입하는 것도 허용되므로, 고유성 보장이 필요하면 PRIMARY KEY를 함께 지정합니다.
+- 시작값은 양수(`SEQUENCE=1` 이상)만 허용되며 4,294,967,295 미만이어야 합니다.
+- 카운터는 서버에 저장되고 한 방향으로만 올라갑니다. 가장 큰 seq 행을 DELETE해도 그 번호는
+  다시 사용되지 않으므로, 번호가 비어 있는 구간이 생길 수 있습니다.
+- SEQUENCE 컬럼을 PRIMARY KEY로 지정하지 않으면 `NEXTVAL()`을 쓰지 않고 중복 값을 직접
+  입력할 수 있습니다. 번호의 고유성이 필요하면 이 컬럼을 PRIMARY KEY로 지정합니다.

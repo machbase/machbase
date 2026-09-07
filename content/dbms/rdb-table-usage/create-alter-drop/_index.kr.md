@@ -24,8 +24,8 @@ INSERT INTO ch8_ddl VALUES (1, 'P-01', 10);
 ```
 
 CREATE TABLE·CREATE TXN TABLE도 같은 타입을 만듭니다.
-CREATE RDB TABLE·CREATE TRX TABLE은 지원하지 않으며 Standard Edition에서만 사용할 수
-있습니다. LOG를 만들 때는 CREATE LOG TABLE로 명시하세요.
+CREATE RDB TABLE·CREATE TRX TABLE은 지원하지 않습니다. 위 생성 문법은 Standard
+Edition 전용입니다. LOG를 만들 때는 CREATE LOG TABLE로 명시하세요.
 
 <a id="create-rdb-primary-key-index"></a>
 

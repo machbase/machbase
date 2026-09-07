@@ -74,7 +74,7 @@ DROP TABLE ch5_lifecycle;
 
 `TAG_DUPLICATE_CHECK_DURATION`은 중복 검사 기간을 분 단위로 설정합니다.
 Standard Edition에서는 0~43200분을 지정할 수 있으며 0은 비활성화입니다.
-Cluster Edition에서는 0만 허용하므로 아래 활성화 실습은 Standard 전용입니다.
+Cluster Edition에서는 0만 허용하므로 아래 활성화 실습은 Standard Edition 전용입니다.
 
 서버 시각을 기준으로 검사 기간에 해당하는 데이터에서 태그·축·데이터 값이 같은 행을
 중복으로 판정합니다. 인덱스 처리와 중복 행 정리 과정에서 수행되므로 Append 성공 응답을

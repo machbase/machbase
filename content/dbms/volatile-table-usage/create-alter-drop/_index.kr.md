@@ -111,6 +111,7 @@ ARRAY의 지원 요소 타입, cardinality와 DEFAULT 규칙은
 
 ```sql
 DROP TABLE sensor_latest;
+DROP TABLE request_cache;
 ```
 
 ### 주의사항
