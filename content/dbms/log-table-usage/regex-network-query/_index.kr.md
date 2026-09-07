@@ -10,7 +10,9 @@ IP 주소를 문자열로 보관하면 눈으로 읽기는 편하지만, 문자�
 
 <a id="design-type-network-data-types"></a>
 
-## 범위의 양 끝과 NULL을 함께 준비합니다
+<a id="범위의-양-끝과-null을-함께-준비합니다"></a>
+
+## 네트워크 데이터 준비
 
 ```sql
 CREATE LOG TABLE ch7_network (
@@ -30,7 +32,9 @@ SELECT event_id, src_ip, dst_ip, dst_port FROM ch7_network ORDER BY event_id;
 네 행이 조회됩니다. 포트는 INTEGER를 사용합니다.
 USHORT의 최댓값 65535는 NULL 예약값이므로 포트 전체 범위를 그대로 표현하기에 맞지 않습니다.
 
-## 동등 비교와 범위 조회를 구분합니다
+<a id="동등-비교와-범위-조회를-구분합니다"></a>
+
+## 동등 비교와 범위 조회
 
 ```sql
 SELECT event_id FROM ch7_network
@@ -66,7 +70,9 @@ BETWEEN은 양 끝 주소를 포함합니다. 이 예제의 IPv4 범위는 CIDR 
 자동 적용한 것이 아니라, 직접 지정한 두 주소 사이의 범위입니다.
 NULL은 `= NULL`이 아니라 `IS NULL`로 검사하세요.
 
-## 혼합 주소와 원본 표기 정책을 먼저 정하세요
+<a id="혼합-주소와-원본-표기-정책을-먼저-정하세요"></a>
+
+## 주소 형식과 원문 보존
 
 IPv4만 들어오면 IPV4로, IPv6가 들어오면 IPV6로 스키마를 정합니다.
 두 종류를 함께 다루는 경우에는 입력 변환·컬럼 분리 정책을 먼저 정하고 실제 표본으로

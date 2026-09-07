@@ -11,7 +11,9 @@ toc: true
 <a id="transaction-locking-conflict-rdb"></a>
 <a id="design-locking-conflict-rdb-busy-timeout-ddl-dml"></a>
 
-## 두 연결을 준비합니다
+<a id="두-연결을-준비합니다"></a>
+
+## 실습 환경
 
 이 실습은 기본 WAL 설정인 검증용 Standard 환경을 기준으로 합니다.
 A·B는 같은 계정·데이터베이스에 접속한 서로 다른 연결입니다.
@@ -31,7 +33,9 @@ INSERT INTO ch8_lock VALUES (2, 20);
 TRANSACTION_JOURNAL_MODE=4가 WAL입니다.
 다른 값이면 아래 WAL 스냅샷 실습의 결과를 그대로 기대하지 말고 환경부터 확인하세요.
 
-## 같은 테이블의 서로 다른 행도 쓰기가 충돌합니다
+<a id="같은-테이블의-서로-다른-행도-쓰기가-충돌합니다"></a>
+
+## 동시 쓰기 충돌
 
 A에서 트랜잭션을 열고 종료하지 않은 채 기다립니다.
 
@@ -71,7 +75,9 @@ SELECT id, val FROM ch8_lock ORDER BY id;
 이제 값은 11·21입니다.
 같은 테이블의 쓰기 충돌을 일반적인 행 단위 잠금으로 해석하면 안 된다는 것을 보여 줍니다.
 
-## WAL의 오래된 읽기 스냅샷은 대기로 해결되지 않습니다
+<a id="wal의-오래된-읽기-스냅샷은-대기로-해결되지-않습니다"></a>
+
+## WAL 스냅샷 충돌
 
 이전 단계가 모두 끝난 뒤 A에서 읽기 트랜잭션을 엽니다.
 
@@ -112,7 +118,9 @@ SELECT id, val FROM ch8_lock ORDER BY id;
 업무에서 읽은 값으로 다음 변경을 계산했다면 새로운 트랜잭션에서 읽기와 판단부터
 다시 해야 합니다.
 
-## timeout은 보장된 대기 시간이 아닙니다
+<a id="timeout은-보장된-대기-시간이-아닙니다"></a>
+
+## busy timeout
 
 서버 기본 TRANSACTION_BUSY_TIMEOUT_MS는 30000ms이고 새 세션에 복사됩니다.
 현재 세션은 ALTER SESSION으로 바꿀 수 있습니다.
@@ -128,7 +136,9 @@ SELECT id, val FROM ch8_lock ORDER BY id;
 DDL_LOCK_TIMEOUT은 별도의 DDL 잠금 대기 설정이며 이를 바꾼다고 스냅샷 충돌이
 해결되지는 않습니다.
 
-## 오류 문자열 하나로 재시도하지 마세요
+<a id="오류-문자열-하나로-재시도하지-마세요"></a>
+
+## 오류와 재시도
 
 메시지에 TRANSACTION이 있다는 이유만으로 재시도하면 타입·제약·권한 오류까지 반복하게
 됩니다. 드라이버의 오류 코드와 전체 진단, 작업 종류를 함께 보고 재시도 가능한 잠금
@@ -139,7 +149,9 @@ DDL_LOCK_TIMEOUT은 별도의 DDL 잠금 대기 설정이며 이를 바꾼다고
 연결 유실이나 COMMIT 응답 유실은 별도 경우입니다. 이미 처리되었는지 업무 키로 확인하지
 않고 카운터 증가나 주문 처리를 다시 실행하면 중복 반영될 수 있습니다.
 
-## 실행 중인 작업을 찾아 원인을 좁힙니다
+<a id="실행-중인-작업을-찾아-원인을-좁힙니다"></a>
+
+## 충돌 진단
 
 ```sql
 SELECT id, user_name, user_ip, transaction_busy_timeout_ms

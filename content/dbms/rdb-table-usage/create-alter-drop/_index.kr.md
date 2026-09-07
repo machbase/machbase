@@ -10,7 +10,9 @@ toc: true
 
 <a id="create-rdb-table"></a>
 
-## 테이블을 만들고 한 행을 준비합니다
+<a id="테이블을-만들고-한-행을-준비합니다"></a>
+
+## 테이블 생성
 
 ```sql
 CREATE TRANSACTION TABLE ch8_ddl (
@@ -27,7 +29,9 @@ CREATE RDB TABLE·CREATE TRX TABLE은 지원하지 않으며 Standard Edition에
 
 <a id="create-rdb-primary-key-index"></a>
 
-## 기존 데이터에 키와 인덱스를 추가합니다
+<a id="기존-데이터에-키와-인덱스를-추가합니다"></a>
+
+## 키와 인덱스 생성
 
 ```sql
 CREATE PRIMARY KEY INDEX ch8_ddl_pk ON ch8_ddl(id);
@@ -50,7 +54,9 @@ id는 단일 PRIMARY KEY, code는 별도 업무 키입니다.
 
 <a id="alter-rdb-table"></a>
 
-## 새 컬럼이 기존 행에 어떻게 보이는지 확인합니다
+<a id="새-컬럼이-기존-행에-어떻게-보이는지-확인합니다"></a>
+
+## 컬럼 추가와 기본값
 
 ```sql
 ALTER TABLE ch8_ddl ADD COLUMN (label VARCHAR(64));
@@ -68,7 +74,9 @@ DEFAULT가 없는 ARRAY 컬럼을 추가하면 기존 행은 배열 전체가 NU
 TRANSACTION은 MODIFY COLUMN으로 길이·타입을 변경하는 기능을 지원하지 않습니다.
 필요하면 새 스키마로 이관하는 절차를 별도로 준비하세요.
 
-## 인덱스와 의존 객체를 먼저 정리합니다
+<a id="인덱스와-의존-객체를-먼저-정리합니다"></a>
+
+## 컬럼 변경과 의존 객체
 
 ```sql
 DROP INDEX ch8_ddl_qty;
@@ -99,7 +107,9 @@ SELECT id, product_code, status FROM ch8_product;
 
 <a id="drop-rdb-table"></a>
 
-## 전체 삭제와 정의 삭제를 구분합니다
+<a id="전체-삭제와-정의-삭제를-구분합니다"></a>
+
+## 전체 삭제와 테이블 삭제
 
 ```sql
 BEGIN;
@@ -116,7 +126,9 @@ DROP TABLE ch8_product;
 
 <a id="rdb-ddl-operation-notes"></a>
 
-## DDL은 업무 트랜잭션 밖에서 수행하세요
+<a id="ddl은-업무-트랜잭션-밖에서-수행하세요"></a>
+
+## DDL 운영 주의사항
 
 TRUNCATE의 위 동작과 CREATE·ALTER·DROP 같은 스키마 작업을 구분해야 합니다.
 스키마 변경을 BEGIN 안에 넣어 나중에 ROLLBACK할 수 있다고 가정하지 마세요.

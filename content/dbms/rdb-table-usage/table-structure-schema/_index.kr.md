@@ -11,7 +11,9 @@ toc: true
 <a id="rdb-table-design"></a>
 <a id="rdb-table-design-design-schema-type-rdb"></a>
 
-## 내부 식별자와 업무 키를 나눕니다
+<a id="내부-식별자와-업무-키를-나눕니다"></a>
+
+## 내부 식별자와 업무 키
 
 다음 예제는 내부 번호와 외부 장비 코드를 따로 관리합니다.
 
@@ -39,7 +41,9 @@ id는 서버가 부여합니다. 연속 번호나 빈 번호 없는 발급을 �
 발급 번호를 받는 방법은 사용하는 SDK와
 [AUTO_INCREMENT](/dbms/reference/sql/syntax-dictionary-sql/auto-increment-syntax/)를 확인하세요.
 
-## PRIMARY KEY와 UNIQUE는 역할이 다릅니다
+<a id="primary-key와-unique는-역할이-다릅니다"></a>
+
+## PRIMARY KEY와 UNIQUE
 
 TRANSACTION의 PRIMARY KEY는 테이블당 하나이며 단일 컬럼입니다.
 컬럼 뒤에 PRIMARY KEY를 지정하거나, 기존 테이블에 CREATE PRIMARY KEY INDEX로 추가할 수
@@ -65,7 +69,9 @@ VALUES ('ERP-01', 'Duplicate Pump');
 실패 후 ERP-01은 여전히 한 행이어야 합니다.
 중복 시 갱신하려면 [UPSERT](../insert-on-duplicate-key-update/)의 별도 규칙을 사용합니다.
 
-## 타입은 표현 범위와 연산 목적에 맞춥니다
+<a id="타입은-표현-범위와-연산-목적에-맞춥니다"></a>
+
+## 데이터 타입 선택
 
 | 값 | 타입 선택 | 확인할 사항 |
 |---|---|---|
@@ -83,7 +89,9 @@ VALUES ('ERP-01', 'Duplicate Pump');
 금액은 [DECIMAL](/dbms/reference/sql/type-data-types-dictionary/decimal-numeric-fixed-point/)을
 기준으로 확인하세요. 예제의 DOUBLE을 모든 금액 컬럼에 관성적으로 사용하지 않는 것이 좋습니다.
 
-## 필요한 제약만 명시하고 입력도 검증합니다
+<a id="필요한-제약만-명시하고-입력도-검증합니다"></a>
+
+## 제약과 입력 검증
 
 TRANSACTION에는 최소 하나의 사용자 컬럼이 필요합니다.
 LOG의 자동 도착 시각이나 TAG의 METADATA·BASETIME·BASEDISTANCE를 사용할 수 없습니다.

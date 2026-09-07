@@ -11,7 +11,9 @@ toc: true
 <a id="index-tuning-rdb"></a>
 <a id="index-strategy-rdb-primary-key-unique-normal"></a>
 
-## PRIMARY KEY, UNIQUE, 일반 인덱스를 구분합니다
+<a id="primary-key-unique-일반-인덱스를-구분합니다"></a>
+
+## 인덱스 유형
 
 | 종류 | 용도 | 복합 컬럼 | NULL |
 |---|---|---|---|
@@ -25,7 +27,9 @@ LOG의 LSM·KEYWORD 인덱스 구문을 TRANSACTION에 그대로 적용하지 �
 
 <a id="unique-index-rdb"></a>
 
-## NULL과 중복을 함께 확인합니다
+<a id="null과-중복을-함께-확인합니다"></a>
+
+## UNIQUE INDEX와 NULL
 
 ```sql
 CREATE TRANSACTION TABLE ch8_index_account (
@@ -63,7 +67,9 @@ UPDATE ch8_index_account SET email = 'a@example.com' WHERE id = 2;
 오류 메시지만 보고 어떤 업무 키가 중복되었는지 단정하지 말고 인덱스와 입력값을 함께
 확인하세요.
 
-## UNIQUE 삭제는 제약 제거입니다
+<a id="unique-삭제는-제약-제거입니다"></a>
+
+## UNIQUE INDEX 삭제
 
 ```sql
 DROP INDEX ch8_index_email;
@@ -90,7 +96,9 @@ SELECT COUNT(*) AS remaining_rows FROM ch8_index_account;
 건수는 4입니다.
 운영에서는 인덱스를 없애기 전에 이것이 성능용인지 고유성 보장용인지부터 확인해야 합니다.
 
-## 일반·복합 인덱스는 실제 조건으로 비교합니다
+<a id="일반복합-인덱스는-실제-조건으로-비교합니다"></a>
+
+## 일반·복합 인덱스
 
 ```sql
 CREATE TRANSACTION TABLE ch8_index_event (
@@ -126,7 +134,9 @@ SELECT id FROM ch8_index_event
 
 <a id="index-strategy-rdb-json-path"></a>
 
-## JSON path도 같은 데이터에서 확인합니다
+<a id="json-path도-같은-데이터에서-확인합니다"></a>
+
+## JSON path 인덱스
 
 ```sql
 CREATE INDEX ch8_index_json_status ON ch8_index_event(state->'$.status');
@@ -145,7 +155,9 @@ SELECT id FROM ch8_index_event WHERE state->'$.code' = '500' ORDER BY id;
 JSON path UNIQUE INDEX를 만들 수 있는 경우에도 TRANSACTION UPSERT의 충돌 선택 키로는
 사용하지 않습니다. [UPSERT 제약](../insert-on-duplicate-key-update/)을 확인하세요.
 
-## 읽기와 쓰기 비용을 함께 기록합니다
+<a id="읽기와-쓰기-비용을-함께-기록합니다"></a>
+
+## 읽기·쓰기 비용
 
 인덱스 생성 전후에 같은 데이터량·조건값·동시 입력률을 사용하세요.
 조회 시간뿐 아니라 INSERT·UPDATE·DELETE 처리량과 인덱스 공간도 함께 비교합니다.

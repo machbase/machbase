@@ -10,7 +10,9 @@ toc: true
 
 <a id="original-85-select-data"></a>
 
-## 경계에 걸리는 데이터를 준비합니다
+<a id="경계에-걸리는-데이터를-준비합니다"></a>
+
+## 실습 데이터 준비
 
 ```sql
 CREATE LOG TABLE ch7_query (
@@ -37,7 +39,9 @@ SELECT _arrival_time, event_id, device, value
 순서를 고정하려면 시간뿐 아니라 이벤트 번호까지 정렬 기준에 넣습니다.
 이 번호는 예제에서 직접 관리하는 값이며 LOG의 자동 고유 키가 아닙니다.
 
-## 연속 구간에는 시작 포함·끝 제외 조건이 편리합니다
+<a id="연속-구간에는-시작-포함끝-제외-조건이-편리합니다"></a>
+
+## 연속 구간과 시간 경계
 
 ```sql
 SELECT event_id, value
@@ -53,7 +57,9 @@ SELECT event_id, value
 
 <a id="original-85-select-time-data"></a>
 
-## DURATION은 LOG의 도착 시각을 사용합니다
+<a id="duration은-log의-도착-시각을-사용합니다"></a>
+
+## DURATION 조회
 
 ```sql
 SELECT event_id FROM ch7_query
@@ -85,7 +91,9 @@ DURATION은 LOG 전용이며 `_arrival_time`을 사용합니다. TAG의 시간 �
 DATETIME 조건은 WHERE로 지정하세요. 자세한 문법은
 [상대 시간·DURATION 사전](/dbms/reference/sql/relative-time-dictionary/#log-duration)을 참고하세요.
 
-## 스캔 방향과 최종 정렬을 구분합니다
+<a id="스캔-방향과-최종-정렬을-구분합니다"></a>
+
+## 스캔 방향과 정렬
 
 DURATION의 BEFORE는 최신 쪽부터, AFTER는 오래된 쪽부터 읽는 방향을 지정합니다.
 FROM … TO는 두 시각의 순서에 따라 방향이 달라집니다.
@@ -116,7 +124,9 @@ SELECT event_id FROM ch7_query
 
 <a id="original-85-simple-join"></a>
 
-## 작은 LOOKUP 테이블로 장치 설명을 붙입니다
+<a id="작은-lookup-테이블로-장치-설명을-붙입니다"></a>
+
+## LOOKUP 조인
 
 ```sql
 CREATE LOOKUP TABLE ch7_query_device (

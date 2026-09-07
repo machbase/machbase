@@ -12,7 +12,9 @@ SEARCH는 색인된 단어를 찾고, LIKE는 원문 문자열에 패턴을 적�
 <a id="original-85-text-search"></a>
 <a id="design-text-search"></a>
 
-## 서로 다른 검색 결과를 만드는 표본을 준비합니다
+<a id="서로-다른-검색-결과를-만드는-표본을-준비합니다"></a>
+
+## 검색 데이터 준비
 
 ```sql
 CREATE LOG TABLE ch7_search (
@@ -40,7 +42,9 @@ EXEC INDEX_FLUSH(ch7_search);
 <a id="search-not"></a>
 <a id="text-search-search-not"></a>
 
-## SEARCH는 단어를 찾습니다
+<a id="search는-단어를-찾습니다"></a>
+
+## SEARCH와 NOT SEARCH
 
 ```sql
 SELECT event_id FROM ch7_search WHERE message SEARCH 'timeout' ORDER BY event_id;
@@ -66,7 +70,9 @@ SELECT event_id FROM ch7_search WHERE message NOT SEARCH 'timeout' ORDER BY even
 예를 들어 1번의 `ERROR`는 `SEARCH 'error'`로도 검색됩니다.
 이를 모든 Unicode 문자의 언어별 대소문자 처리로 확대해서 해석하지 마세요.
 
-### 한글은 토큰 분리 방식을 이해하면 편합니다
+<a id="한글은-토큰-분리-방식을-이해하면-편합니다"></a>
+
+### 한글 토큰 분리
 
 ```sql
 SELECT event_id FROM ch7_search WHERE message SEARCH '대한' ORDER BY event_id;
@@ -81,7 +87,9 @@ SELECT event_id FROM ch7_search WHERE message SEARCH '연결' ORDER BY event_id;
 <a id="esearch"></a>
 <a id="text-search-esearch"></a>
 
-## ESEARCH는 색인된 단어에 패턴을 적용합니다
+<a id="esearch는-색인된-단어에-패턴을-적용합니다"></a>
+
+## ESEARCH 확장 검색
 
 ```sql
 SELECT event_id FROM ch7_search WHERE message ESEARCH 'time%' ORDER BY event_id;
@@ -110,7 +118,9 @@ SELECT event_id FROM ch7_search WHERE message ESEARCH 'err%' ORDER BY event_id;
 <a id="like-not"></a>
 <a id="text-search-like-not"></a>
 
-## LIKE는 원문 문자열의 패턴을 검사합니다
+<a id="like는-원문-문자열의-패턴을-검사합니다"></a>
+
+## LIKE와 NOT LIKE
 
 ```sql
 SELECT event_id FROM ch7_search WHERE message LIKE '%TIMEOUT%' ORDER BY event_id;
@@ -132,7 +142,9 @@ KEYWORD 인덱스는 사용하지 않으며, WHERE의 다른 조건이나 시간
 <a id="regexp-not"></a>
 <a id="regex-regexp-not"></a>
 
-## 정규식은 형식과 위치를 검사할 때 사용합니다
+<a id="정규식은-형식과-위치를-검사할-때-사용합니다"></a>
+
+## REGEXP와 REGEXP_LIKE
 
 ```sql
 SELECT event_id FROM ch7_search
@@ -176,7 +188,9 @@ SELECT event_id,
 시간 조건이나 SEARCH로 대상을 줄일 수 있지만, 선행 조건이 원하는 행을 놓치면
 뒤의 정규식이 그 행을 되살려 주지는 못합니다.
 
-## 저장 타입과 검색 성능을 혼동하지 마세요
+<a id="저장-타입과-검색-성능을-혼동하지-마세요"></a>
+
+## TEXT 제약과 검색 성능
 
 TEXT는 최대 64MiB 원문을 담을 수 있지만, TEXT 자체의 ORDER BY·GROUP BY는 지원하지
 않습니다. 정렬·집계할 장치·오류 코드·등급은 별도 컬럼에 두세요.

@@ -10,7 +10,9 @@ toc: true
 
 <a id="use-cases-log"></a>
 
-## 먼저 원본 이벤트와 현재 상태를 구분합니다
+<a id="먼저-원본-이벤트와-현재-상태를-구분합니다"></a>
+
+## 원본 이벤트와 현재 상태
 
 LOG에는 사건이 발생할 때마다 새 행을 추가합니다.
 장비의 현재 이름·위치처럼 변경 가능한 기준 정보는 LOOKUP에 분리할 수 있지만,
@@ -22,7 +24,9 @@ TRANSACTION을 먼저 검토하세요.
 
 <a id="storage-log-text-search-logs"></a>
 
-## 분석할 로그와 인덱스를 준비합니다
+<a id="분석할-로그와-인덱스를-준비합니다"></a>
+
+## 로그와 인덱스 생성
 
 시간 조건을 실행 날짜와 무관하게 비교하기 위해 도착 시각을 명시합니다.
 빈 테이블에 오름차순으로 입력하는 실습이며, 일반 수집에서는 원본 발생 시각을
@@ -61,7 +65,9 @@ SELECT COUNT(*) AS received_rows FROM ch7_app;
 입력 건수는 5입니다. 실습을 반복하기 전에 마지막 DROP까지 실행했는지 확인하세요.
 단순 재전송은 중복 행이 될 수 있습니다.
 
-## 특정 오류를 찾고 같은 시간대의 상황을 봅니다
+<a id="특정-오류를-찾고-같은-시간대의-상황을-봅니다"></a>
+
+## 오류와 시간대별 조회
 
 ```sql
 SELECT event_id, host, message FROM ch7_app
@@ -81,7 +87,9 @@ SELECT event_id, host, level, message FROM ch7_app
 특정 단어로 시작하되 분석할 때는 같은 호스트·시간대의 다른 오류도 함께 확인하는
 흐름입니다. 검색 범위를 넓힐 때는 시간 조건을 통째로 제거하기보다 필요한 구간만 늘리세요.
 
-## 시간별·등급별 건수를 비교합니다
+<a id="시간별등급별-건수를-비교합니다"></a>
+
+## 시간별·등급별 집계
 
 ```sql
 SELECT TO_CHAR(_arrival_time, 'YYYY-MM-DD HH24') AS event_hour,
@@ -108,7 +116,9 @@ SELECT TO_CHAR(_arrival_time, 'YYYY-MM-DD HH24') AS event_hour,
 그 조건은 현재 시각 기준이므로 실행 날짜가 바뀌면 표본이 선택되지 않을 수 있습니다.
 운영의 최근 로그 조회와 재현용 고정 시각 조회를 구분하세요.
 
-## 수집과 보존을 연결합니다
+<a id="수집과-보존을-연결합니다"></a>
+
+## 수집과 보존 관리
 
 지속 수집은 [Append 입력](../data-input-mutation/)이나
 [Collector](../collector-ingestion/)에서 이어서 구성할 수 있습니다.

@@ -12,7 +12,9 @@ UPDATE가 성공했다는 응답과 주문 한 건이 원하는 상태로 바뀌
 
 <a id="modeling-rdb-update-delete"></a>
 
-## 현재 상태를 조건에 넣어 변경합니다
+<a id="현재-상태를-조건에-넣어-변경합니다"></a>
+
+## 조건부 UPDATE와 DELETE
 
 ```sql
 CREATE TRANSACTION TABLE ch8_mutation (
@@ -55,7 +57,9 @@ WHERE가 없는 UPDATE·DELETE는 전체 행 대상입니다.
 
 <a id="reference-self-rdb-insert-select"></a>
 
-## 복사할 컬럼과 자기 참조 범위를 명시합니다
+<a id="복사할-컬럼과-자기-참조-범위를-명시합니다"></a>
+
+## INSERT SELECT와 자기 참조
 
 ```sql
 CREATE TRANSACTION TABLE ch8_archive (
@@ -93,7 +97,9 @@ DROP TABLE ch8_mutation;
 <a id="unsupported-rejected-rdb-append-api"></a>
 <a id="support-scope-rdb-sdk"></a>
 
-## 대량 입력에서는 배치의 실제 경계를 확인합니다
+<a id="대량-입력에서는-배치의-실제-경계를-확인합니다"></a>
+
+## 대량 입력과 배치 경계
 
 TRANSACTION도 Append API를 지원합니다.
 예전 파일명이나 앵커에 reject·unsupported가 남아 있다는 이유로 현재 지원하지 않는다고

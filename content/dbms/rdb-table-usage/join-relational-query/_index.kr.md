@@ -10,7 +10,9 @@ SQL이 오류 없이 실행되는 것과 업무 건수를 올바르게 집계하
 
 <a id="join-design-rdb"></a>
 
-## TRANSACTION과 LOOKUP을 연결합니다
+<a id="transaction과-lookup을-연결합니다"></a>
+
+## TRANSACTION–LOOKUP 조인
 
 ```sql
 CREATE TRANSACTION TABLE ch8_join_order (
@@ -43,7 +45,9 @@ INNER JOIN은 1번 주문만, LEFT JOIN은 1·2번 주문을 반환합니다.
 예를 들어 `WHERE p.name = 'Pump'`를 추가하면 NULL 행이 제외됩니다.
 상대를 찾는 조건인지 최종 결과를 거르는 조건인지 구분하세요.
 
-## TRANSACTION끼리도 키의 고유성을 확인합니다
+<a id="transaction끼리도-키의-고유성을-확인합니다"></a>
+
+## TRANSACTION 간 조인
 
 ```sql
 SELECT o.order_id, o.qty, p.status
@@ -56,7 +60,9 @@ SELECT o.order_id, o.qty, p.status
 실제 결제 이력이 주문당 여러 행이면 이 결과도 여러 행이 됩니다.
 주문 금액을 조인 후 합산할 때 중복 합계가 생기지 않도록 관계와 집계 단위를 확인하세요.
 
-## TAG의 근접 시간 조인은 한 행을 고르는 기능이 아닙니다
+<a id="tag의-근접-시간-조인은-한-행을-고르는-기능이-아닙니다"></a>
+
+## TAG 근접 시간 조인
 
 다음은 알람 전후 5초에 있는 모든 측정값을 연결하는 예제입니다.
 
@@ -92,7 +98,9 @@ SELECT a.alarm_id, s.time, s.value
 이 쿼리는 가장 가까운 측정값 하나나 정확히 같은 시각의 값을 고르는 기능이 아닙니다.
 한 값만 필요하면 최근 이전 값·최단 거리 등 선택 기준과 동률 처리 규칙을 별도로 정하세요.
 
-## 타입과 읽기 범위를 먼저 맞춥니다
+<a id="타입과-읽기-범위를-먼저-맞춥니다"></a>
+
+## 조인 설계 기준
 
 조인 키의 타입과 값 형식을 맞추고 시간 범위를 제한한 뒤 실행 계획을 확인합니다.
 필요한 컬럼만 반환하고, 함수·형 변환을 조인 키에 무심코 추가해 접근 경로가 달라지지

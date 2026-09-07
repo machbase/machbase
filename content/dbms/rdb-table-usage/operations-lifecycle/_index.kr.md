@@ -10,7 +10,9 @@ toc: true
 
 <a id="operations-rdb-lifecycle"></a>
 
-## 원본과 업무 상태의 보관 목적을 나눕니다
+<a id="원본과-업무-상태의-보관-목적을-나눕니다"></a>
+
+## 데이터 보관 기준
 
 TAG·LOG에는 원본 시계열을, TRANSACTION에는 변경 가능한 상태나 요약 결과를 둘 수 있습니다.
 두 종류의 보관 기간이 반드시 같을 필요는 없습니다.
@@ -20,7 +22,9 @@ TRANSACTION에는 TAG·LOG의 Retention Policy를 그대로 적용하지 않습�
 <a id="operations-rdb-transaction"></a>
 <a id="operations-rdb-cleanup"></a>
 
-## 삭제 전후를 같은 실습에서 확인합니다
+<a id="삭제-전후를-같은-실습에서-확인합니다"></a>
+
+## 삭제와 롤백
 
 ```sql
 CREATE TRANSACTION TABLE ch8_cleanup (
@@ -51,7 +55,9 @@ SELECT COUNT(*) AS after_rollback FROM ch8_cleanup;
 동시 변경과 스냅샷 충돌을 고려하고, 실행 시 받은 영향 행 수와 최종 상태까지 기록하세요.
 [잠금과 재시도](../locking-conflict-timeout/)에서 관련 상황을 확인할 수 있습니다.
 
-## 큰 작업은 다시 시작할 기준을 남깁니다
+<a id="큰-작업은-다시-시작할-기준을-남깁니다"></a>
+
+## 배치 처리와 재개
 
 전체 삭제를 하나의 긴 트랜잭션으로 처리하기보다 날짜 구간이나 고유 키 범위로 나눕니다.
 각 구간의 경계, 처리 건수와 커밋 결과를 기록하세요.
@@ -64,7 +70,9 @@ SELECT COUNT(*) AS after_rollback FROM ch8_cleanup;
 
 <a id="operations-rdb-backup-recovery"></a>
 
-## 삭제 전에 백업을 실제로 읽어 봅니다
+<a id="삭제-전에-백업을-실제로-읽어-봅니다"></a>
+
+## 백업 검증
 
 백업 명령의 성공만 확인하지 말고, 마운트한 백업에서 업무 키·행 수·합계·인덱스를 점검하세요.
 마운트 조회에는 `마운트명.소유자.테이블명`의 세 부분 이름을 사용합니다.
@@ -76,7 +84,9 @@ TRANSACTION은 증분 백업에서도 해당 백업 시점의 전체 테이블 �
 
 <a id="operations-rdb-checklist"></a>
 
-## 정리 후에도 조회와 공간을 따로 확인합니다
+<a id="정리-후에도-조회와-공간을-따로-확인합니다"></a>
+
+## 정리 후 운영 점검
 
 행이 줄었다고 운영체제의 파일 크기가 곧바로 같은 비율로 줄어드는 것은 아닙니다.
 업무 데이터 건수, 실제 파일 사용량, 백업 보관량을 각각 살펴보세요.

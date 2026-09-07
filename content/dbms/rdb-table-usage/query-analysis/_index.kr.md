@@ -10,7 +10,9 @@ toc: true
 
 <a id="query-rdb-basic-select"></a>
 
-## 확인할 결과가 있는 표본을 준비합니다
+<a id="확인할-결과가-있는-표본을-준비합니다"></a>
+
+## 실습 데이터 준비
 
 ```sql
 CREATE TRANSACTION TABLE ch8_query (
@@ -39,7 +41,9 @@ SELECT order_id, amount, status FROM ch8_query WHERE order_id = 1001;
 
 <a id="query-rdb-filter-sort-limit"></a>
 
-## 시간 경계와 같은 시각의 순서를 명시합니다
+<a id="시간-경계와-같은-시각의-순서를-명시합니다"></a>
+
+## 시간 조건과 정렬
 
 ```sql
 SELECT order_id, amount FROM ch8_query
@@ -57,7 +61,9 @@ LOG 전용 DURATION이나 자동 _arrival_time은 TRANSACTION에 적용하지 �
 
 <a id="query-rdb-join"></a>
 
-## 기준 정보를 붙일 때 누락과 중복을 확인합니다
+<a id="기준-정보를-붙일-때-누락과-중복을-확인합니다"></a>
+
+## 기준 정보 조인
 
 ```sql
 SELECT o.order_id, p.name, o.amount
@@ -73,7 +79,9 @@ SELECT o.order_id, p.name, o.amount
 
 <a id="query-rdb-aggregation"></a>
 
-## 합계는 원본 건수와 함께 확인합니다
+<a id="합계는-원본-건수와-함께-확인합니다"></a>
+
+## 집계 조회
 
 ```sql
 SELECT status, COUNT(*) AS cnt, SUM(amount) AS total_amount
@@ -86,7 +94,9 @@ PENDING은 2건·30.75, SHIPPED는 1건·30.75입니다.
 
 <a id="query-rdb-json"></a>
 
-## JSON 값이 실제로 들어 있는지부터 확인합니다
+<a id="json-값이-실제로-들어-있는지부터-확인합니다"></a>
+
+## JSON 경로 조회
 
 ```sql
 CREATE TRANSACTION TABLE ch8_query_json (id INTEGER PRIMARY KEY, state JSON);
@@ -106,7 +116,9 @@ SELECT id, state->'$.status' AS status FROM ch8_query_json
 
 <a id="query-rdb-performance"></a>
 
-## 실행 계획은 지원되는 조건 모양까지 확인합니다
+<a id="실행-계획은-지원되는-조건-모양까지-확인합니다"></a>
+
+## 인덱스와 실행 계획
 
 ```sql
 CREATE INDEX ch8_query_status_time ON ch8_query(status, ordered);

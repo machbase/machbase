@@ -13,7 +13,9 @@ TRANSACTION 테이블은 이런 관계형 조회와 변경을 위한 Standard Ed
 연결해 봅니다. 내부에 SQLite 저장소를 사용하지만 공개 문법과 지원 범위는 Machbase SQL을
 기준으로 해야 합니다. SQLite나 다른 RDBMS의 기능을 모두 그대로 사용할 수 있는 것은 아닙니다.
 
-## 필요한 작업부터 찾아보세요
+<a id="필요한-작업부터-찾아보세요"></a>
+
+## 이 장의 구성
 
 | 절 | 확인할 내용 |
 |---|---|
@@ -34,7 +36,9 @@ TRANSACTION 테이블은 이런 관계형 조회와 변경을 위한 Standard Ed
 자동 번호의 공통 문법은
 [AUTO_INCREMENT](/dbms/reference/sql/syntax-dictionary-sql/auto-increment-syntax/)에 있습니다.
 
-## 실습 환경과 실행 단위를 먼저 맞춥니다
+<a id="실습-환경과-실행-단위를-먼저-맞춥니다"></a>
+
+## 실습 환경과 실행 단위
 
 SQL 실습은 DBMS 8.7 Standard Edition의 검증 환경을 기준으로 합니다.
 각 절에서 `ch8_` 접두사의 객체를 준비하고 정리하므로 다른 절의 실행 결과에 의존하지

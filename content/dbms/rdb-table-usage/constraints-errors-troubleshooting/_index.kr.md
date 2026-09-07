@@ -10,7 +10,9 @@ toc: true
 
 <a id="limitations-rdb-edition"></a>
 
-## 지원 범위부터 확인합니다
+<a id="지원-범위부터-확인합니다"></a>
+
+## 기능 지원 범위
 
 TRANSACTION은 Standard Edition 전용입니다.
 Cluster에서는 CREATE TABLE·CREATE TRANSACTION TABLE·CREATE TXN TABLE이 모두 거부됩니다.
@@ -33,7 +35,9 @@ Cluster에서 작은 기준 정보 변경은 LOOKUP을 검토할 수 있지만,
 명시적 관계형 트랜잭션의 완전한 대체는 아닙니다.
 원본 이벤트는 LOG·TAG, 관계형 트랜잭션은 별도 RDBMS 등 요구에 맞게 나누어야 합니다.
 
-## 오류별로 확인 대상을 좁힙니다
+<a id="오류별로-확인-대상을-좁힙니다"></a>
+
+## 오류별 진단
 
 | 증상 | 확인할 부분 | 다음 조치 |
 |---|---|---|
@@ -50,7 +54,9 @@ Cluster에서 작은 기준 정보 변경은 LOOKUP을 검토할 수 있지만,
 자세한 두 연결 실습은 [잠금과 busy timeout](../locking-conflict-timeout/)에서 확인하세요.
 오류 문자열에 TRANSACTION이 있다는 이유만으로 반복 실행하지 마세요.
 
-## 작은 표본에서 제약과 상태 보존을 확인합니다
+<a id="작은-표본에서-제약과-상태-보존을-확인합니다"></a>
+
+## 제약 오류와 데이터 보존
 
 ```sql
 CREATE TRANSACTION TABLE ch8_error (
@@ -86,7 +92,9 @@ DROP TABLE ch8_error;
 자동으로 취소되는 것은 아니라는 점을 구분해야 합니다.
 [트랜잭션](../transaction/)에 해당 비교 예제가 있습니다.
 
-## 진단 정보는 민감한 값을 가리고 공유하세요
+<a id="진단-정보는-민감한-값을-가리고-공유하세요"></a>
+
+## 진단 정보 수집
 
 서버 버전·Edition, DDL과 인덱스, 실행 SQL, 오류 코드와 전체 메시지, 실제 영향 행 수를
 함께 준비하면 좋습니다. 연결 장애라면 COMMIT 요청·응답 시각과 업무 키도 필요합니다.

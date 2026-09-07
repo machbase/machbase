@@ -404,7 +404,9 @@ GRANT UPDATE ON owner.table_name TO app_user;
 
 `SELECT` 권한은 TRANSACTION upsert 문장 실행 자체에는 필요하지 않습니다. 단, 응용 프로그램이 결과 확인을 위해 `SELECT`를 실행한다면 별도로 `SELECT` 권한이 필요합니다.
 
-## 타입과 지원하지 않는 구문
+<a id="타입과-지원하지-않는-구문"></a>
+
+## 지원 타입과 제약
 
 `SET` 절에서 갱신할 수 있는 컬럼 타입은 일반 TRANSACTION `UPDATE`와 같은 공개 타입
 지원 범위를 따릅니다.
@@ -493,7 +495,9 @@ ON DUPLICATE KEY UPDATE SET note = 'updated';
 
 `SET` 결과가 다른 UNIQUE 제약 또는 `NOT NULL` constraint를 위반해도 문장은 실패하며 기존 행은 보존됩니다.
 
-## 재전송과 최신 상태의 의미를 확인하세요
+<a id="재전송과-최신-상태의-의미를-확인하세요"></a>
+
+## 재전송과 최신 상태
 
 카운터 증가 UPSERT는 자동 중복 제거가 아닙니다.
 같은 이벤트를 다시 실행하면 기존 카운터가 다시 증가합니다.
@@ -514,7 +518,9 @@ COMMIT 응답을 잃었다면 업무 키·이벤트 처리 기록으로 결과�
 - JSON path UNIQUE INDEX를 upsert key로 사용하는 설계는 피하고, 필요한 경우 별도 일반 컬럼에 key 값을 저장한 뒤 UNIQUE INDEX를 생성합니다.
 
 
-## 실습 결과 확인과 정리
+<a id="실습-결과-확인과-정리"></a>
+
+## 결과 확인과 정리
 
 정상 실습이 끝났으면 대표 값과 건수를 다시 확인합니다.
 아래 예상값은 의도적인 오류 외에 모든 정상 SQL을 한 번씩 실행한 기준입니다.

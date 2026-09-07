@@ -10,7 +10,9 @@ toc: true
 
 <a id="original-85-creating-log-tables"></a>
 
-## LOG라고 명시해서 만듭니다
+<a id="log라고-명시해서-만듭니다"></a>
+
+## LOG 테이블 생성
 
 테이블 타입을 생략한 `CREATE TABLE`은 TRANSACTION 테이블을 만듭니다.
 이 실습에서는 `CREATE LOG TABLE`을 사용하세요.
@@ -33,7 +35,9 @@ PRIMARY KEY·UNIQUE 제약은 LOG에서 지원하지 않습니다.
 
 <a id="alter-log-table"></a>
 
-## 기존 행에서 새 컬럼 값을 확인합니다
+<a id="기존-행에서-새-컬럼-값을-확인합니다"></a>
+
+## 컬럼 추가와 기본값
 
 ```sql
 ALTER TABLE ch7_ddl ADD COLUMN (host_name VARCHAR(64));
@@ -68,7 +72,9 @@ SELECT event_id, event_category, severity, message FROM ch7_ddl;
 명령이 아닙니다. `MINMAX_CACHE_SIZE` 역시 VARCHAR·TEXT 같은 가변 길이 컬럼에는
 설정할 수 없습니다.
 
-## NOT NULL은 기존 데이터 검사도 포함합니다
+<a id="not-null은-기존-데이터-검사도-포함합니다"></a>
+
+## NOT NULL과 기존 데이터
 
 현재 `event_category`에는 값이 있으므로 다음 변경이 가능합니다.
 
@@ -92,7 +98,9 @@ ALTER TABLE ch7_ddl MODIFY COLUMN host_name NOT NULL;
 
 <a id="alter-log-limitations"></a>
 
-## 컬럼을 지울 때는 인덱스부터 확인합니다
+<a id="컬럼을-지울-때는-인덱스부터-확인합니다"></a>
+
+## 인덱스와 컬럼 삭제
 
 ```sql
 CREATE INDEX ch7_ddl_host_idx ON ch7_ddl(host_name) INDEX_TYPE LSM;
@@ -111,7 +119,9 @@ VARCHAR 길이는 기존보다 크게만 변경할 수 있고 최대 32,767바�
 
 <a id="delete-log-table-definition"></a>
 
-## 데이터를 비우는 것과 정의를 없애는 것은 다릅니다
+<a id="데이터를-비우는-것과-정의를-없애는-것은-다릅니다"></a>
+
+## 데이터 삭제와 테이블 삭제
 
 주의: 다음 명령은 실습 데이터를 지웁니다.
 LOG 데이터는 TRANSACTION 테이블의 `ROLLBACK`으로 되돌릴 수 없습니다.
@@ -127,7 +137,9 @@ TRUNCATE 뒤 건수는 0이고 정의는 남습니다. 마지막 DROP은 정의�
 
 <a id="create-log-checklist"></a>
 
-## 운영 적용은 입력 프로그램과 함께 준비하세요
+<a id="운영-적용은-입력-프로그램과-함께-준비하세요"></a>
+
+## DDL 운영 주의사항
 
 변경 전에는 입력 작업과 DDL 시점을 조정하고, 변경 후에는 SQL·Appender·파일 매핑의
 컬럼 이름·순서·타입을 확인합니다. 리소스 사용 중 오류가 나면 반복 실행하기보다

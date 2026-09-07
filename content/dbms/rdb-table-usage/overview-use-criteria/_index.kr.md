@@ -13,7 +13,9 @@ TRANSACTION은 변경 가능한 업무 데이터를 맡기고, 원본 시계열�
 
 <a id="overview-rdb-characteristics"></a>
 
-## 수정과 관계형 조회가 필요한 데이터에 사용합니다
+<a id="수정과-관계형-조회가-필요한-데이터에-사용합니다"></a>
+
+## TRANSACTION 테이블의 특성
 
 TRANSACTION은 SELECT·INSERT·UPDATE·DELETE, PRIMARY KEY, UNIQUE INDEX와 보조 인덱스를
 지원합니다. Standard Edition 전용이며 다음 세 문법은 같은 테이블을 만듭니다.
@@ -31,7 +33,9 @@ Cluster에서는 위 세 생성 문법을 모두 사용할 수 없으며 LOG는 
 <a id="overview-rdb-use-criteria"></a>
 <a id="use-cases-rdb"></a>
 
-## 상태 변경을 작은 예제로 확인합니다
+<a id="상태-변경을-작은-예제로-확인합니다"></a>
+
+## 상태 변경과 롤백
 
 ```sql
 CREATE TRANSACTION TABLE ch8_overview (
@@ -59,7 +63,9 @@ SQL 예제에 등장하는 숫자만 그대로 바꾸는 것보다 이 확인 �
 
 <a id="overview-rdb-not-use"></a>
 
-## 원본, 참조 정보, 업무 상태를 구분합니다
+<a id="원본-참조-정보-업무-상태를-구분합니다"></a>
+
+## 다른 테이블과의 비교
 
 | 주된 요구 | 먼저 검토할 테이블 |
 |---|---|
@@ -79,7 +85,9 @@ Cluster에서 관계형 트랜잭션이 꼭 필요하다면 별도 RDBMS를 포�
 
 <a id="overview-rdb-design-flow"></a>
 
-## 키와 실패 처리부터 설계합니다
+<a id="키와-실패-처리부터-설계합니다"></a>
+
+## 설계 기준
 
 한 행을 식별할 키와 중복을 막을 업무 키를 구분하세요.
 내부 번호에는 PRIMARY KEY, 외부 시스템 코드 같은 별도 고유값에는 UNIQUE INDEX가
