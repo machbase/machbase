@@ -24,7 +24,7 @@ This page summarizes SQL and JSON support for LOOKUP tables.
 | JSON primary key | X | A JSON column cannot be declared as a primary key |
 | JSON path index | X | Dedicated JSON path indexes are not supported |
 | **Other** | | |
-| Transaction | △ | Use LOOKUP DML as individual statements |
+| Explicit transaction (`BEGIN`/`COMMIT`/`ROLLBACK`) | X | DML takes effect per statement; multiple statements cannot be rolled back together |
 | Prepared Statement | O | Binding is supported with primary-key and general predicates |
 | Append API | △ | Regular SQL INSERT is the default; LOOKUP append follows its own duplicate-key policy |
 

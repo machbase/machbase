@@ -4,198 +4,129 @@ weight: 30
 toc: true
 ---
 
-TRANSACTION 테이블의 DDL(CREATE, ALTER, DROP) 관련 내용을 다룹니다. TRANSACTION 테이블은
-관계형 데이터 모델을 사용하므로, 스키마를 만들 때 PRIMARY KEY, UNIQUE INDEX, 일반 인덱스,
-AUTO_INCREMENT 사용 여부를 함께 결정합니다.
+스키마 변경에서는 명령의 성공 여부만큼 기존 데이터와 입력 프로그램의 상태가 중요합니다.
+이름을 바꾼 뒤 예전 SQL을 계속 실행하거나, 인덱스가 참조하는 컬럼부터 삭제하면 오류를
+만나게 됩니다. 이 절에서는 표본을 넣은 상태에서 변경 전후를 확인합니다.
 
 <a id="create-rdb-table"></a>
 
-## TRANSACTION 테이블 생성
-
-TRANSACTION 테이블은 무수식 `CREATE TABLE`, 전체 이름을 사용한 `CREATE TRANSACTION TABLE`,
-축약형 `CREATE TXN TABLE`로 생성합니다. 세 문법의 결과는 같습니다. 다음 예제처럼 공개 문서와
-운영 스크립트에서는 테이블 유형을 분명히 드러내는 `CREATE TRANSACTION TABLE` 사용을 권장합니다.
+## 테이블을 만들고 한 행을 준비합니다
 
 ```sql
-CREATE TRANSACTION TABLE product_catalog (
-    product_id LONG PRIMARY KEY,
-    category   VARCHAR(64),
-    name       VARCHAR(256),
-    price      DOUBLE,
-    updated_at DATETIME
+CREATE TRANSACTION TABLE ch8_ddl (
+    id   LONG,
+    code VARCHAR(32),
+    qty  INTEGER
 );
+INSERT INTO ch8_ddl VALUES (1, 'P-01', 10);
 ```
 
-최소 하나 이상의 컬럼이 필요합니다. 업무 데이터처럼 행을 식별해야 하는 경우에는 PRIMARY KEY를 명시합니다.
-
-```sql
--- 다음 두 문장도 TRANSACTION 테이블을 생성합니다.
-CREATE TABLE customer (id LONG PRIMARY KEY, name VARCHAR(64));
-CREATE TXN TABLE supplier (id LONG PRIMARY KEY, name VARCHAR(64));
-
--- LOG 테이블은 LOG 유형을 명시합니다.
-CREATE LOG TABLE application_event (event_time DATETIME, message VARCHAR(256));
-```
-
-이전 공개 명칭인 `CREATE RDB TABLE`과 `CREATE TRX TABLE`은 지원하지 않습니다. TRANSACTION
-테이블은 Standard Edition 전용입니다. Cluster Edition은 위 세 TRANSACTION 생성 문법을 모두
-거부하지만 `CREATE LOG TABLE`은 지원합니다.
-
-```sql
-CREATE TRANSACTION TABLE order_history (
-    order_id  LONG PRIMARY KEY,
-    customer  VARCHAR(64),
-    item_id   INTEGER,
-    amount    DOUBLE,
-    status    VARCHAR(16),
-    order_time DATETIME
-);
-```
+CREATE TABLE·CREATE TXN TABLE도 같은 타입을 만듭니다.
+CREATE RDB TABLE·CREATE TRX TABLE은 지원하지 않으며 Standard Edition에서만 사용할 수
+있습니다. LOG를 만들 때는 CREATE LOG TABLE로 명시하세요.
 
 <a id="create-rdb-primary-key-index"></a>
 
-## PRIMARY KEY, UNIQUE INDEX, 일반 인덱스 생성
-
-PRIMARY KEY는 컬럼 정의에서 지정하거나, 테이블 생성 후 `CREATE PRIMARY KEY INDEX` 문으로 생성합니다.
+## 기존 데이터에 키와 인덱스를 추가합니다
 
 ```sql
-CREATE TRANSACTION TABLE inventory (
-    item_id   LONG,
-    warehouse VARCHAR(32),
-    qty       INTEGER,
-    updated_at DATETIME
-);
-
-CREATE PRIMARY KEY INDEX idx_pk_inventory ON inventory(item_id);
+CREATE PRIMARY KEY INDEX ch8_ddl_pk ON ch8_ddl(id);
+CREATE UNIQUE INDEX ch8_ddl_code ON ch8_ddl(code);
+CREATE INDEX ch8_ddl_qty ON ch8_ddl(qty);
+SHOW INDEX ch8_ddl_code;
 ```
 
-고유해야 하는 컬럼이나 컬럼 조합에는 테이블 생성 후 UNIQUE INDEX를 생성합니다. 컬럼 정의에
-`UNIQUE`를 붙이거나 `UNIQUE(column)` 제약조건을 선언하는 문법은 지원하지 않습니다.
-
-```sql
-CREATE UNIQUE INDEX uidx_product_catalog_name
-ON product_catalog(name);
-```
-
-조회, UPDATE, DELETE 조건에 자주 사용하는 컬럼에는 일반 인덱스를 생성합니다.
-
-```sql
-CREATE INDEX idx_inventory_warehouse ON inventory(warehouse);
-CREATE INDEX idx_order_status_time ON order_history(status, order_time);
-```
-
-UNIQUE INDEX의 중복 및 NULL 처리는
-[UNIQUE INDEX 생성과 동작](/dbms/rdb-table-usage/index-performance/#unique-index-rdb)에서,
-일반 인덱스 설계 기준은
-[인덱스와 성능](/dbms/rdb-table-usage/index-performance/)에서
-다룹니다.
+id는 단일 PRIMARY KEY, code는 별도 업무 키입니다.
+기존 데이터에 중복이나 PRIMARY KEY의 NULL이 있으면 생성이 실패할 수 있습니다.
+복합 고유성은 CREATE UNIQUE INDEX로 만들며, CREATE TABLE 내부의 UNIQUE 제약 문법은
+지원하지 않습니다.
 
 <a id="create-rdb-auto-increment"></a>
 
-## AUTO_INCREMENT 사용
-
-자동 증가 키가 필요한 경우 `LONG PRIMARY KEY AUTO_INCREMENT`를 사용합니다.
-
-```sql
-CREATE TRANSACTION TABLE device_master (
-    id          LONG PRIMARY KEY AUTO_INCREMENT,
-    device_name VARCHAR(80),
-    site_code   VARCHAR(32),
-    created_at  DATETIME
-);
-```
-
-`AUTO_INCREMENT` 컬럼은 단일 64비트 정수 PRIMARY KEY에 사용합니다. INSERT 방식과 catalog 확인 방법은 [AUTO_INCREMENT](/dbms/reference/sql/syntax-dictionary-sql/auto-increment-syntax/)에서 다룹니다.
+자동 번호가 필요한 경우에는 생성 시 `LONG PRIMARY KEY AUTO_INCREMENT`를 지정합니다.
+이 절의 id는 직접 입력한 값이며 자동 번호 컬럼이 아닙니다.
+두 생성 방식을 같은 객체에 중복 실행하지 마세요.
+[AUTO_INCREMENT](/dbms/reference/sql/syntax-dictionary-sql/auto-increment-syntax/)에 별도 실습이 있습니다.
 
 <a id="alter-rdb-table"></a>
 
-## TRANSACTION 테이블 변경
-
-TRANSACTION 테이블은 컬럼 추가·삭제, 컬럼 이름 변경, 테이블 이름 변경을 지원합니다.
-TRANSACTION 테이블에서는 `MODIFY COLUMN`을 사용하지 않습니다.
-
-### 컬럼 추가
-
-`ADD COLUMN`의 컬럼 정의는 괄호로 묶습니다. `DEFAULT`를 지정하면 기존 row에도 기본값이
-적용됩니다.
+## 새 컬럼이 기존 행에 어떻게 보이는지 확인합니다
 
 ```sql
-ALTER TABLE product_catalog
-ADD COLUMN (stock_qty INTEGER DEFAULT 0);
+ALTER TABLE ch8_ddl ADD COLUMN (label VARCHAR(64));
+ALTER TABLE ch8_ddl ADD COLUMN (status VARCHAR(16) DEFAULT 'NEW');
+ALTER TABLE ch8_ddl ADD COLUMN (limits DECIMAL(12)[2] DEFAULT [10, 20]);
 
-ALTER TABLE product_catalog
-ADD COLUMN (limits DECIMAL(12)[2] DEFAULT [10, 20]);
+SELECT id, label, status, limits FROM ch8_ddl ORDER BY id;
 ```
 
-고정 길이 숫자 ARRAY도 같은 형식으로 추가할 수 있습니다. `DECIMAL(12)[2]`처럼 scale을
-생략하면 0으로 처리합니다. DEFAULT가 없으면 기존 row는 whole NULL이고, DEFAULT를
-지정하면 기존 row에도 해당 ARRAY 값을 적용합니다.
+1번 행에서 label은 NULL, status는 NEW, limits는 [10, 20]입니다.
+DEFAULT가 없는 ARRAY 컬럼을 추가하면 기존 행은 배열 전체가 NULL입니다.
+배열 안의 일부 요소가 NULL인 경우와 구분하세요.
 
-### 컬럼 삭제
+컬럼 정의는 괄호로 묶습니다. 이 문법은 다른 DBMS의 ALTER TABLE 형식과 혼동하기 쉽습니다.
+TRANSACTION은 MODIFY COLUMN으로 길이·타입을 변경하는 기능을 지원하지 않습니다.
+필요하면 새 스키마로 이관하는 절차를 별도로 준비하세요.
+
+## 인덱스와 의존 객체를 먼저 정리합니다
 
 ```sql
-ALTER TABLE product_catalog
-DROP COLUMN (stock_qty);
+DROP INDEX ch8_ddl_qty;
+ALTER TABLE ch8_ddl DROP COLUMN (qty);
+ALTER TABLE ch8_ddl DROP COLUMN (label);
+ALTER TABLE ch8_ddl DROP COLUMN (limits);
+ALTER TABLE ch8_ddl RENAME COLUMN code TO product_code;
 
-ALTER TABLE product_catalog
-DROP COLUMN (limits);
+SELECT id, product_code, status FROM ch8_ddl;
+SHOW INDEX ch8_ddl_code;
 ```
 
-PRIMARY KEY, UNIQUE INDEX, 일반 인덱스, JSON path 인덱스가 참조하는 컬럼은 바로 삭제할 수
-없습니다. 해당 인덱스를 먼저 삭제한 뒤 컬럼을 삭제합니다. 테이블의 마지막 컬럼은 삭제할 수
-없습니다.
+기존 1번 행의 P-01·NEW 값과 업무 키 인덱스가 유지됩니다.
+PRIMARY KEY·UNIQUE·일반·JSON path 인덱스가 참조하는 컬럼은 해당 인덱스부터 확인해야
+합니다. 마지막 사용자 컬럼은 삭제할 수 없습니다.
+
+VIEW가 테이블이나 컬럼을 참조하면 관련 이름 변경·삭제가 거부될 수 있습니다.
+VIEW뿐 아니라 애플리케이션 SQL과 prepared statement도 변경 영향을 받습니다.
+DDL 이후에는 기존 prepared statement를 무조건 재사용하지 말고 다시 준비할 필요를
+확인하세요.
 
 ```sql
-DROP INDEX idx_inventory_warehouse;
-ALTER TABLE inventory DROP COLUMN (warehouse);
+ALTER TABLE ch8_ddl RENAME TO ch8_product;
+SELECT id, product_code, status FROM ch8_product;
 ```
 
-### 컬럼과 테이블 이름 변경
-
-```sql
-ALTER TABLE product_catalog RENAME COLUMN name TO product_name;
-ALTER TABLE product_catalog RENAME TO product_master;
-```
-
-이름을 변경해도 기존 row와 TRANSACTION 인덱스 정의는 유지됩니다. VIEW가 TRANSACTION 테이블이나 대상 컬럼을
-참조하고 있으면 VIEW 정의가 깨지지 않도록 관련 `ALTER TABLE`과 `DROP TABLE`이 거부됩니다.
-의존 VIEW를 먼저 삭제하거나 변경한 뒤 DDL을 실행합니다.
+테이블 이름을 바꾼 뒤에는 ch8_product로 조회합니다.
 
 <a id="drop-rdb-table"></a>
 
-## TRANSACTION 테이블 삭제
-
-테이블을 삭제하려면 `DROP TABLE`을 사용합니다.
+## 전체 삭제와 정의 삭제를 구분합니다
 
 ```sql
-DROP TABLE product_master;
+BEGIN;
+TRUNCATE TABLE ch8_product;
+SELECT COUNT(*) AS during_delete FROM ch8_product;
+ROLLBACK;
+SELECT COUNT(*) AS after_rollback FROM ch8_product;
+DROP TABLE ch8_product;
 ```
 
-`DROP TABLE`은 테이블 정의, 데이터, 관련 인덱스를 삭제합니다. 운영 데이터는 삭제 전에 백업 또는 내보내기 절차를 먼저 수행합니다.
+건수는 각각 0과 1입니다. 현재 TRANSACTION의 TRUNCATE는 전체 행 삭제로 처리되어
+명시적 트랜잭션 안에서 롤백할 수 있습니다. 이 동작을 LOG·TAG의 TRUNCATE에 확대해서
+적용하지 마세요. 마지막 DROP은 데이터·정의·관련 인덱스를 삭제합니다.
 
 <a id="rdb-ddl-operation-notes"></a>
 
-## DDL 운영 주의사항
+## DDL은 업무 트랜잭션 밖에서 수행하세요
 
-- DDL은 운영 중인 DML과 충돌할 수 있으므로 변경 시간대를 분리합니다.
-- 장시간 열린 트랜잭션이 있으면 DDL이 지연되거나 실패할 수 있습니다.
-- 열린 TRANSACTION 결과 커서가 있으면 관련 DDL이 실패할 수 있으므로 커서를 닫은 뒤 실행합니다.
-- TRANSACTION 테이블은 Standard Edition 전용입니다.
-- TRANSACTION 테이블에는 TAG 전용 `METADATA`, `BASETIME`, `BASEDISTANCE` 절을 사용할 수 없습니다.
-- DDL 변경 후에는 TRANSACTION 테이블의 백업 및 복원 검증 절차도 갱신합니다.
+TRUNCATE의 위 동작과 CREATE·ALTER·DROP 같은 스키마 작업을 구분해야 합니다.
+스키마 변경을 BEGIN 안에 넣어 나중에 ROLLBACK할 수 있다고 가정하지 마세요.
+같은 테이블의 활성 트랜잭션이나 열린 커서는 DDL을 차단할 수 있으므로 먼저 결과 집합과
+업무 트랜잭션을 정리합니다.
 
-### 컬럼 DDL 실패 후 복구
+ADD·DROP COLUMN은 카탈로그와 별도 저장 파일을 함께 변경합니다.
+작업 중 서버가 중단되었다면 재시작 복구가 끝나기 전에 같은 DDL을 반복하지 마세요.
+복구 후 DESC, 대표 SELECT·INSERT, 인덱스·VIEW를 확인하고 서버 로그도 점검합니다.
+내부 저장 파일을 직접 이동·수정·삭제하는 방식으로 복구하려 하지 마세요.
 
-`ADD COLUMN`과 `DROP COLUMN`은 catalog와 TRANSACTION 저장소를 함께 변경합니다. 서버 종료,
-디스크 오류 등으로 작업이 중단되면 서버는 재시작 시 남은 DDL 상태를 검사하고 이전 스키마로
-되돌리거나 완료된 변경을 정리합니다. 복구가 끝나기 전에는 같은 테이블의 DDL을 반복 실행하지
-마십시오.
-
-복구 후에는 다음 항목을 확인합니다.
-
-1. `DESC table_name`으로 컬럼 구성을 확인합니다.
-2. `SELECT`와 대표 `INSERT`를 실행해 기존 행과 새 행을 확인합니다.
-3. 컬럼을 참조하는 인덱스와 VIEW가 정상인지 확인합니다.
-4. 서버 로그에 DDL 복구 오류가 남아 있으면 추가 DDL을 중단하고 백업 상태를 점검합니다.
-
-데이터 디렉터리의 저장 파일은 사용자가 직접 이동, 수정하거나 삭제하지 마십시오.
+예상과 다른 스키마가 보이면 변경 전 DDL, 실행 순서, 첫 오류를 함께 살펴보세요.
+마지막 오류만 보는 것보다 원인을 찾기 쉽습니다.

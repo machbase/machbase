@@ -4,84 +4,78 @@ title: '2.4 Edition 개념'
 weight: 40
 toc: true
 ---
-Machbase DBMS는 PostgreSQL이나 MySQL 같은 범용 RDBMS와 설계 철학부터 다릅니다. 그 차이를 명확히 이해하고 운영 규모에 따라 올바른 Edition을 선택하는 데 필요한 개념을 다룹니다.
 
-- **[Standard Edition과 Cluster Edition 차이](/dbms/core-concepts/concepts-edition/#differences-standard-edition-cluster)** -- 단일 노드 구성과 분산 클러스터 구성의 구조적 차이, 기능 지원 범위, 선택 기준
-- **[기존 RDBMS와의 차이](/dbms/core-concepts/concepts/#differences-rdbms)** -- append 중심 시계열 모델과 관계형 workload의 차이
-
+Edition은 배포 구조와 기능 지원 범위를 결정합니다. Standard는 단일 서버에서 시작하는
+구성이고, Cluster는 여러 노드가 저장과 처리를 나누는 구성입니다. 현재 데이터 크기뿐
+아니라 필요한 SQL 기능, 증가율, 장애 대응과 운영 역량을 함께 고려해 선택합니다.
 
 <a id="differences-standard-edition-cluster"></a>
 
 ## Standard Edition과 Cluster Edition 차이
 
-운영 규모와 가용성 요구사항에 따라 두 가지 Edition을 제공합니다. Standard Edition은 단일 서버, Cluster Edition은 여러 노드에 데이터를 분산 처리합니다.
-
 ### Standard Edition
 
-단일 노드에서 동작하는 구성입니다. 설치와 운영이 단순하며 TRANSACTION, VOLATILE,
-Restore/Mount 등 Standard Edition 기능을 함께 사용할 수 있습니다.
+하나의 DBMS 서버에서 SQL 처리와 데이터 저장을 수행합니다. 분산 노드 간의 배포·통신을
+관리할 필요가 없어 개발과 단일 서버 운영을 시작하기에 적합합니다. TRANSACTION 테이블과
+Restore·Mount 등 Standard 전용 기능이 필요한지도 확인합니다.
 
-- 단일 서버 인스턴스로 SQL 처리와 데이터 저장 기능 제공
-- 별도 분산 코디네이션 없이 즉시 사용 가능
-- ROLLUP, Retention Policy, Backup/Mount, TRANSACTION 테이블 등 대부분의 기능 지원
+단일 서버에서 시작한다고 데이터량이 반드시 작아야 하는 것은 아닙니다. 입력량, 조회
+부하와 보관 기간이 해당 서버의 CPU·메모리·스토리지 범위에 맞는지를 측정해 판단합니다.
 
 ### Cluster Edition
 
-여러 서버에 데이터를 분산 저장하고 병렬로 처리합니다. Coordinator, Deployer, Broker,
-Warehouse, Lookup 노드로 역할을 분리합니다.
+Coordinator, Deployer, Broker, Warehouse와 Lookup 노드가 역할을 나눕니다.
 
 | 노드 유형 | 역할 |
-| --- | --- |
-| Coordinator | 클러스터 메타데이터 관리, 노드 상태 감시, 쿼리 라우팅 결정 |
-| Deployer | 소프트웨어 배포 및 노드 초기화 |
-| Broker | 클라이언트 연결 수신, 쿼리를 Warehouse 노드로 분산 |
-| Warehouse | 실제 데이터 저장 및 쿼리 실행 |
-| Lookup | 클러스터 환경의 LOOKUP 테이블 처리 |
+|---|---|
+| Coordinator | 클러스터 메타데이터와 노드 상태 관리 |
+| Deployer | 패키지 배포와 노드 관리 |
+| Broker | 애플리케이션 SQL 접속과 쿼리 분배 |
+| Warehouse | 시계열 데이터 저장과 쿼리 실행 |
+| Lookup | 클러스터 기준 정보 처리 |
 
-클라이언트는 항상 Broker 노드에 접속하며, Broker가 쿼리를 분석해 해당 데이터를 보유한 Warehouse 노드에 요청을 전달합니다.
+일반적인 SQL 애플리케이션은 Broker에 접속합니다. 관리 도구의 접속 대상과 포트는
+역할별로 다르므로 SQL 접속 주소와 관리 주소를 구분합니다.
+
+여러 Warehouse 그룹으로 데이터를 나누는 분산과 같은 그룹 안의 데이터 복제는
+서로 다른 목적입니다. 분산은 용량·처리량 확장에, 복제는 장애 대응에 사용합니다.
+노드 수, 복제 상태, 클라이언트 재접속과 장애 시 운영 절차를 함께 설계해야 합니다.
 
 ### 기능 지원 차이
 
-대부분의 기능은 두 Edition에서 동일하게 동작하지만, 일부 지원 범위가 다릅니다.
-
-| 기능 | Standard Edition | Cluster Edition |
-| --- | --- | --- |
-| LOG/TAG/LOOKUP 테이블 | 모두 지원 | 모두 지원 |
-| VOLATILE 테이블 | 지원 | 지원 |
+| 확인할 항목 | Standard Edition | Cluster Edition |
+|---|---|---|
+| 주요 배포 구조 | 단일 DBMS 서버 | 역할을 나눈 여러 노드 |
 | TRANSACTION 테이블 | 지원 | 미지원 |
-| ROLLUP | 지원 | 지원 |
-| Retention Policy | 지원 | 지원 |
-| Backup | 지원 | 지원 |
-| Restore / Mount | 지원 | 미지원 |
-| 수평 확장 (노드 추가) | 불가 | 가능 |
-| 자동 장애 조치 | 불가 | Coordinator가 감시 |
+| Restore·Mount | 지원 | 미지원 |
+| 용량·처리 확장 | 서버 자원과 저장 구성 확장 | 분산 그룹과 노드 구성 확장 |
+| 장애 대응 설계 | 백업과 복구 절차, 서버 운영 계획 | 노드·그룹 복제와 상태, 접속·복구 절차 |
 
-TRANSACTION 테이블과 Restore/Mount는 Standard Edition 전용 기능입니다. VOLATILE 테이블은
-두 Edition에서 지원하지만 서버·노드 lifecycle에 따른 데이터 소멸 범위는 배포 구성에서
-별도로 검증해야 합니다.
+LOG·TAG·LOOKUP·VOLATILE, ROLLUP과 Retention 등 공통 기능도 세부 DML·DDL·운영 제약이
+모두 같지는 않습니다. 전체 기능 지원 여부는
+[Edition 지원 범위](../../reference/support-scope-constraints/edition/)와
+[테이블 타입별 지원 범위](../../reference/support-scope-constraints/table-types-type/)를
+확인합니다.
 
 ### 선택 기준
 
-**Standard Edition이 적합한 경우**
+1. 필수 기능을 확인합니다. TRANSACTION이나 Restore·Mount가 필요하면 Standard 지원
+   범위를 먼저 검토합니다.
+2. 대표 입력과 조회를 실행합니다. 데이터 타입, 동시 접속, 조회 구간과 보관 기간을
+   실제 업무에 가깝게 맞춰 단일 서버의 여유 자원을 확인합니다.
+3. 데이터 증가율과 장애 요구사항을 반영합니다. 단일 서버를 넘어 분산이 필요하다면
+   Cluster의 네트워크, 복제와 노드 운영 비용까지 검토합니다.
+4. 장애 시나리오를 시험합니다. 노드 감시가 된다는 사실과 서비스가 중단 없이 복구되는
+   것은 다르므로, 복구 시간과 애플리케이션의 재접속·재시도 동작을 확인합니다.
 
-- 단일 서버 또는 온프레미스 소규모 배포
-- 단일 서버의 CPU, 메모리, 스토리지 범위에서 처리 가능한 워크로드
-- 관리 인력이 적고 운영 단순성이 중요한 경우
-- 개발, 테스트, 파일럿 환경
-
-**Cluster Edition이 적합한 경우**
-
-- 단일 서버의 처리량이나 저장 용량을 넘어 수평 확장이 필요한 워크로드
-- 저장 용량이 단일 서버의 한계를 넘는 경우
-- 노드 장애 시에도 서비스를 유지해야 하는 고가용성 요구사항
-- 데이터 볼륨 증가에 따라 노드를 추가해야 하는 탄력적 확장 필요
-
-### 다음 읽을 내용
-
-- [기존 RDBMS와의 차이](/dbms/core-concepts/concepts/#differences-rdbms) -- Machbase 설계 철학의 전체 맥락
-- [Machbase 아키텍처 개요](/dbms/core-concepts/storage-execution-architecture/#architecture-machbase) -- Standard/Cluster 구성 개요
-
+운영 중 Edition을 바꿀 때도 단순히 서버 수만 늘리는 작업으로 생각해서는 안 됩니다.
+사용 중인 SQL·SDK와 데이터 이전·백업·복구 방법의 호환성을 먼저 확인합니다.
 
 ## 관련 문서
 
-시계열 데이터와 범용 RDBMS의 모델 차이는 [데이터 모델 개념](../concepts/#differences-rdbms)을 참고하십시오.
+- [저장 및 실행 구조](../storage-execution-architecture/)에서 처리 흐름을 설명합니다.
+- [설치, 배포, 업그레이드](../../installation-deployment-upgrade/)에서 배포 절차를 안내합니다.
+- [버전 및 호환성](../../reference/support-scope-constraints/compatibility-version/)에서
+  버전별 지원 범위를 확인합니다.
+- [관계형 업무 모델과 시계열 모델](../concepts/#differences-rdbms)에서 데이터 모델의
+  선택 기준을 설명합니다.

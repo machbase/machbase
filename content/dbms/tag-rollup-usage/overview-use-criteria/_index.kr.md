@@ -4,82 +4,91 @@ title: '6.1 ROLLUP 개요와 사용 기준'
 weight: 10
 toc: true
 ---
-ROLLUP은 TAG 테이블의 숫자형 `SUMMARIZED` 컬럼을 지정한 시간 구간으로 미리 집계해 반복
-조회 비용을 줄입니다. 원시 데이터 보관이나 임의의 쿼리 결과 캐시를 대신하는 기능은
-아닙니다.
+
+ROLLUP은 원시 행에서 같은 집계를 반복하는 비용을 줄입니다. 원본 보관 정책이나 임의
+쿼리 결과 캐시가 아니며, 집계에 저장하지 않은 원본 정보까지 복원할 수는 없습니다.
 
 <a id="original-85-rollup-tables"></a>
 <a id="rollup"></a>
 
 ## 사용 기준
 
-| 요구사항 | 선택 |
-| --- | --- |
-| 초·분·시간 단위 통계를 반복 조회 | 기본 ROLLUP |
-| 다른 구간 또는 조건 집계 | 사용자 정의 ROLLUP |
-| 구간의 첫 값·마지막 값 필요 | 확장 ROLLUP |
-| WEEK·MONTH·YEAR 달력 구간 | 해당 시간 단위와 기준 시각 검토 |
-| 원시 값 조회가 대부분 | ROLLUP 없이 시작하고 측정 |
-| 거리축 TAG | ROLLUP 미지원, 쿼리 집계 사용 |
+| 요구 | 검토할 방식 |
+|---|---|
+| 한 숫자 컬럼의 반복 구간 통계 | 일반 ROLLUP |
+| 특정 품질 조건을 통과한 표본만 집계 | 조건 ROLLUP |
+| 구간의 첫 값·마지막 값 필요 | EXTENSION ROLLUP |
+| 여러 집계식을 별도 TAG에 저장 | Standard Edition의 Custom ROLLUP |
+| JSON 경로나 문서의 숫자 값 집계 | JSON 경로 또는 문서 전체 ROLLUP |
+| 거리축 TAG | 일반 숫자 구간 집계; ROLLUP은 미지원 |
 
-ROLLUP을 추가하면 집계 저장 공간과 입력 후 집계 작업이 필요합니다. 대표 쿼리의 조회 빈도,
-원시 데이터량과 허용 지연을 측정한 뒤 적용하십시오.
+일반 숫자 컬럼을 명시해 만드는 ROLLUP에는 SUMMARIZED가 필수가 아닙니다.
+WITH ROLLUP 자동 생성과 JSON 문서 전체 집계에는 별도의 SUMMARIZED 조건이 있습니다.
+자세한 차이는 [생성 문법](../create-delete-rollup/)을 참고합니다.
 
-## 기본 동작
+## 기본 실습
 
-시간축 TAG의 집계 대상 숫자 컬럼에 `SUMMARIZED`를 지정하고 `WITH ROLLUP`으로 기본 계층을
-만들 수 있습니다. 애플리케이션은 생성되는 시스템 객체 이름을 직접 사용하지 않고 원본 TAG
-테이블과 공개 ROLLUP SQL을 사용합니다.
+### 1. 생성과 입력
 
 ```sql
-CREATE TAG TABLE rollup_overview_demo (
-    name  VARCHAR(32) PRIMARY KEY,
-    time  DATETIME BASETIME,
-    value DOUBLE SUMMARIZED
-) WITH ROLLUP (SEC);
-
-INSERT INTO rollup_overview_demo
-VALUES ('TEMP_01', TO_DATE('2026-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), 10.0);
-INSERT INTO rollup_overview_demo
-VALUES ('TEMP_01', TO_DATE('2026-01-01 00:00:30', 'YYYY-MM-DD HH24:MI:SS'), 20.0);
-
-EXEC TABLE_FLUSH(rollup_overview_demo);
-
-SELECT rollup('min', 1, time) AS minute,
-       AVG(value) AS avg_value
-  FROM rollup_overview_demo
- WHERE name = 'TEMP_01'
- GROUP BY minute
- ORDER BY minute;
-
-DROP TABLE rollup_overview_demo CASCADE;
+CREATE TAG TABLE ch6_basic (
+    name VARCHAR(32) PRIMARY KEY,
+    time DATETIME BASETIME,
+    value DOUBLE,
+    quality INTEGER
+);
+CREATE ROLLUP ch6_basic_ru ON ch6_basic(value) INTERVAL 1 MIN;
+INSERT INTO ch6_basic VALUES ('TEMP_01', TO_DATE('2026-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), 10.0, 1);
+INSERT INTO ch6_basic VALUES ('TEMP_01', TO_DATE('2026-01-01 00:00:30', 'YYYY-MM-DD HH24:MI:SS'), 20.0, 1);
+INSERT INTO ch6_basic VALUES ('TEMP_01', TO_DATE('2026-01-01 00:01:00', 'YYYY-MM-DD HH24:MI:SS'), 30.0, 1);
+INSERT INTO ch6_basic VALUES ('TEMP_02', TO_DATE('2026-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), 100.0, 1);
 ```
 
-ROLLUP 집계는 원시 데이터 입력과 비동기로 진행될 수 있습니다. 입력 직후 결과가 필요하면
-[ROLLUP 제어와 상태 확인](../ingestion-control-rollup/#state-status-rollup-wakeup-interval-vrollup)에서
-처리 상태를 확인하십시오.
+### 2. 집계 완료 범위 확인
 
-## 설계 순서
+```sql
+EXEC TABLE_FLUSH(ch6_basic);
+ALTER ROLLUP ch6_basic_ru FORCE;
+SHOW ROLLUPGAP;
+```
 
-1. 반복되는 조회의 시간 단위와 집계 함수를 정합니다.
-2. 집계 대상 숫자 컬럼에 `SUMMARIZED`가 필요한지 확인합니다.
-3. 기본 계층으로 충분한지, 사용자 정의·조건·확장 ROLLUP이 필요한지 선택합니다.
-4. 원시 데이터와 ROLLUP의 보관·재구성 정책을 각각 정합니다.
-5. 운영 데이터량으로 입력 부하, 집계 지연, 조회 시간을 측정합니다.
+SHOW ROLLUPGAP은 machsql 명령입니다. SDK에서는 V$ROLLUP 등 지원되는 SQL 조회를
+사용합니다. TABLE_FLUSH는 저장 버퍼 처리이고 FORCE는 해당 ROLLUP의 처리 범위를
+따라잡는 작업입니다. 지속 입력 중 미래에 들어올 행까지 완료시킨다는 뜻은 아닙니다.
 
-## 상세 문서
+### 3. 원본과 비교
 
-| 작업 | 문서 |
-| --- | --- |
-| 생성·삭제 | [ROLLUP 생성과 삭제](../create-delete-rollup/) |
-| 조회 문법 | [ROLLUP 조회](../query-syntax-rollup/) |
-| 사용자 정의 집계 | [Custom ROLLUP](../custom-rollup/) |
-| 조건 집계 | [Conditional ROLLUP](../conditional-rollup/) |
-| FIRST·LAST | [확장 ROLLUP](../extension-rollup/) |
-| 달력 단위와 시간대 | [ROLLUP 조회 문법](../query-syntax-rollup/#query-week-month-year-day-timezone-origin-rollup) |
-| JSON 집계 | [JSON SUMMARIZED ROLLUP](../json-summarized-rollup/) |
-| 수정·삭제 후 재구성 | [ROLLUP 재구성](../rollup-rebuild/) |
-| 장애 진단 | [ROLLUP 문제 해결](/dbms/troubleshooting/rollup/) |
+```sql
+SELECT DATE_TRUNC('minute', time) AS bucket,
+       COUNT(value), MIN(value), MAX(value), AVG(value)
+  FROM ch6_basic
+ WHERE name = 'TEMP_01'
+ GROUP BY bucket ORDER BY bucket;
 
-전체 SQL 형식은 [ROLLUP 구문 사전](/dbms/reference/sql/syntax-dictionary-sql/rollup-syntax/)을
-기준으로 확인하십시오.
+SELECT rollup('min', 1, time) AS bucket,
+       COUNT(value), MIN(value), MAX(value), AVG(value)
+  FROM ch6_basic
+ WHERE name = 'TEMP_01'
+ GROUP BY bucket ORDER BY bucket;
+```
+
+| 버킷 | COUNT(value) | MIN | MAX | AVG |
+|---|---:|---:|---:|---:|
+| 2026-01-01 00:00:00 | 2 | 10 | 20 | 15 |
+| 2026-01-01 00:01:00 | 1 | 30 | 30 | 30 |
+
+두 쿼리는 같은 결과를 반환해야 합니다. DATE_TRUNC의 원본 집계가 단지 ROLLUP이 존재한다는
+이유로 자동 전환되는 것으로 설명하지 않습니다. ROLLUP 조회에서는 `rollup()`을 명시합니다.
+
+### 4. 정리
+
+```sql
+DROP ROLLUP ch6_basic_ru;
+DROP TABLE ch6_basic;
+```
+
+## 도입 전 확인
+
+대표 태그 수, 입력량, 조회 빈도와 허용 집계 지연을 정합니다. 필요한 가장 세밀한 구간과
+원본 보존 기간을 먼저 결정하고 [계층 설계](../target-tag-table-design/)로 이어갑니다.
+긴 기간의 성능은 운영과 유사한 데이터로 측정하며 이 작은 표본의 시간으로 추정하지 않습니다.

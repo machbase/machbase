@@ -50,7 +50,7 @@ machcollectoradmin --status-collector=sc15_file
 machcollectoradmin --stop-collector=sc15_file
 ```
 
-재처리 전에 Collector 로그에서 마지막으로 완료한 파일과 offset을 확인합니다. 이미 처리한
+재처리 전에 Collector 로그에서 마지막으로 완료한 파일과 오프셋을 확인합니다. 이미 처리한
 파일을 원본 위치에 다시 두면 중복 적재될 수 있습니다. 삭제가 필요하면 중지 상태와 대상
 이름을 다시 확인한 뒤 `--drop-collector`를 사용합니다.
 

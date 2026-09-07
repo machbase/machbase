@@ -6,97 +6,83 @@ toc: true
 
 <a id="storage-sensor-data-rollup"></a>
 
-## 센서 데이터 저장과 ROLLUP 분석
+## 센서별 원본과 구간 통계
 
-TAG 원시 데이터에 1분 ROLLUP을 만들고 gap을 확인한 뒤 시간 구간 집계를 조회합니다. 예제는
-고유한 `SC6_` 객체를 사용하며 마지막에 정리합니다.
+두 센서가 같은 시각에 측정해도 단위가 다르면 평균을 섞지 않습니다. 아래는 현재 단위를
+메타데이터로 관리하고 태그별 집계를 조회하는 독립 실습입니다.
 
-### 1단계: TAG 테이블과 데이터
+### 1. 생성과 입력
 
 ```sql
-CREATE TAG TABLE sc6_sensor (
-    name  VARCHAR(32) PRIMARY KEY,
-    time  DATETIME BASETIME,
-    value DOUBLE SUMMARIZED
-);
-
-INSERT INTO sc6_sensor METADATA VALUES ('TEMP_01');
-INSERT INTO sc6_sensor METADATA VALUES ('PRESS_01');
-
-INSERT INTO sc6_sensor VALUES (
-    'TEMP_01', TO_DATE('2026-08-25 10:00:00', 'YYYY-MM-DD HH24:MI:SS'), 20.0);
-INSERT INTO sc6_sensor VALUES (
-    'TEMP_01', TO_DATE('2026-08-25 10:00:30', 'YYYY-MM-DD HH24:MI:SS'), 22.0);
-INSERT INTO sc6_sensor VALUES (
-    'PRESS_01', TO_DATE('2026-08-25 10:00:00', 'YYYY-MM-DD HH24:MI:SS'), 1.02);
-
-EXEC TABLE_FLUSH(sc6_sensor);
+CREATE TAG TABLE ch6_scenario (
+    name VARCHAR(32) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE
+) METADATA (unit VARCHAR(16));
+INSERT INTO ch6_scenario METADATA VALUES ('TEMP_01', 'celsius');
+INSERT INTO ch6_scenario METADATA VALUES ('PRESS_01', 'bar');
+INSERT INTO ch6_scenario VALUES ('TEMP_01', TO_DATE('2026-01-01 10:00:00'), 20);
+INSERT INTO ch6_scenario VALUES ('TEMP_01', TO_DATE('2026-01-01 10:00:30'), 22);
+INSERT INTO ch6_scenario VALUES ('PRESS_01', TO_DATE('2026-01-01 10:00:00'), 1.02);
+CREATE ROLLUP ch6_scenario_ru ON ch6_scenario(value) INTERVAL 1 MIN;
+EXEC TABLE_FLUSH(ch6_scenario);
+ALTER ROLLUP ch6_scenario_ru FORCE;
 ```
 
-대량 입력은 이 페이지에 SDK 코드를 복제하지 않고
-[개발 도구 연동](/dbms/development-tools-integration/)의 현재 Append quickstart를 사용합니다.
+원본 입력 뒤 ROLLUP을 만들었어도 남아 있는 데이터를 초기 집계합니다.
+생성 완료만으로 초기 집계까지 끝났다고 판단하지 않습니다.
 
-### 2단계: ROLLUP 생성과 상태 확인
+### 2. 결과 확인
 
 ```sql
-CREATE ROLLUP sc6_sensor_ru_1m
-    ON sc6_sensor(value)
-    INTERVAL 1 MIN;
-
+SELECT name, unit FROM ch6_scenario METADATA ORDER BY name;
+SELECT name, DATE_TRUNC('minute', time) AS bucket, COUNT(value), AVG(value)
+  FROM ch6_scenario GROUP BY name, bucket ORDER BY name, bucket;
+SELECT name, rollup('min', 1, time) AS bucket, COUNT(value), AVG(value)
+  FROM ch6_scenario GROUP BY name, bucket ORDER BY name, bucket;
 SHOW ROLLUPGAP;
-SELECT * FROM V$ROLLUP;
 ```
 
-ROLLUP은 비동기로 원시 데이터를 처리합니다. 조회 결과를 검증하기 전에 대상 ROLLUP의 gap이
-0인지 확인하십시오. 생성 직후 gap이 남아 있는 상태에서 집계 결과가 완성됐다고 가정하지
-않습니다.
+TEMP_01은 2건·평균 21°C, PRESS_01은 1건·평균 1.02bar입니다.
+메타데이터 조회는 현재 단위이며 과거 단위 변경 이력을 자동 보존하지 않습니다.
 
-### 3단계: 구간 집계 조회
+### 3. 개별 관측 확인
+
+고정 시각 데이터를 입력했으므로 같은 고정 범위를 조회합니다. 이 데이터에 현재 시각의
+“최근 5분” 조건을 적용하면 실행 날짜에 따라 빈 결과가 됩니다.
 
 ```sql
-SELECT name,
-       ROLLUP('min', 1, time) AS bucket_time,
-       AVG(value) AS avg_value,
-       MIN(value) AS min_value,
-       MAX(value) AS max_value,
-       COUNT(value) AS sample_count
-  FROM sc6_sensor
+SELECT name, time, value FROM ch6_scenario
  WHERE name = 'TEMP_01'
-   AND time BETWEEN TO_DATE('2026-08-25 09:59:00', 'YYYY-MM-DD HH24:MI:SS')
-                AND TO_DATE('2026-08-25 10:02:00', 'YYYY-MM-DD HH24:MI:SS')
- GROUP BY name, bucket_time
- ORDER BY bucket_time;
+   AND time >= TO_DATE('2026-01-01 10:00:00')
+   AND time < TO_DATE('2026-01-01 10:01:00')
+ ORDER BY time;
 ```
 
-최근 원시 데이터는 `ADD_TIME(SYSDATE, ...)`로 범위를 제한합니다.
+두 원본 값은 20과 22입니다. 통계 평균 21에서 각 관측이나 발생 순서를 복원할 수는 없습니다.
+
+### 4. 정리
 
 ```sql
-SELECT name, time, value
-  FROM sc6_sensor
- WHERE name = 'TEMP_01'
-   AND time >= ADD_TIME(SYSDATE, '0/0/0 0:-5:0')
- ORDER BY time DESC;
-```
-
-### 4단계: 정리
-
-```sql
-DROP ROLLUP sc6_sensor_ru_1m;
-DROP TABLE sc6_sensor;
+DROP ROLLUP ch6_scenario_ru;
+DROP TABLE ch6_scenario;
 ```
 
 <a id="use-cases-rollup"></a>
 
-## ROLLUP 활용 사례
+## 업무별 적용
 
-| 요구사항 | 설계 시작점 |
+| 요구 | 확인할 설계 |
 |---|---|
-| 실시간 대시보드 | 최근 구간은 원본, 장기 구간은 ROLLUP. gap을 함께 감시 |
-| 정상 품질만 집계 | 조건부 ROLLUP의 predicate를 실제 품질 열과 대조 |
-| OHLC·첫값·마지막값 | EXTENSION ROLLUP과 `FIRST`/`LAST` 지원 범위 확인 |
-| 여러 태그 비교 | 같은 bucket과 시간 범위를 사용해 집계한 뒤 PIVOT 검토 |
-| 누적 계량기 | 구간 `FIRST`와 `LAST` 차이, reset·wraparound 정책 정의 |
+| 정상 품질 통계 | 조건 필터와 후보 힌트를 고정해 원본과 비교 |
+| OHLC | 확장 ROLLUP의 FIRST/LAST 또는 Custom의 보조 시각 재집계 |
+| 다중 센서 비교 | 태그별 단위와 같은 버킷·조회 범위 사용 |
+| 누적 계량기 소비량 | 경계 차이, 초기화·교체·누락 규칙; 표본 평균과 구분 |
+| 가동률 | 표본 비율과 시간 비율 구분, 결측 구간 정책 |
+| 최신 원본과 장기 집계 결합 | 집계 완료가 확인된 기준점에서 구간을 겹치지 않게 분리 |
 
-각 문법의 정본은 [ROLLUP SQL](/dbms/reference/sql/syntax-dictionary-sql/rollup-syntax/)과 이 장의
-생성·조건·확장 ROLLUP 페이지를 사용하십시오. 고정된 간격 체인이나 성능 수치를 그대로
-복사하지 말고 데이터 주기와 조회 구간을 측정해 결정합니다.
+원본과 ROLLUP 결과를 UNION ALL로 합칠 때는 경계의 중복·누락과 서로 다른 표본 수를
+확인합니다. “최근 2분은 언제나 미집계” 같은 고정 지연을 보장으로 사용하지 않습니다.
+부분 결과를 다시 합쳐 평균을 구한다면 합계와 유효 건수를 전달합니다.
+
+기능별 완결 실습은 [조건](../conditional-rollup/), [확장](../extension-rollup/),
+[JSON](../json-summarized-rollup/), [Custom](../custom-rollup/)에 있습니다.
+문제가 생기면 [진단 순서](../../troubleshooting/rollup/)로 상태와 의미를 먼저 확인합니다.

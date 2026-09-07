@@ -7,82 +7,64 @@ aliases:
   - /dbms/tag-rollup-usage/constraints-errors-troubleshooting/rollup-troubleshooting/
 ---
 
-ROLLUP 결과가 늦거나 원본 집계와 다를 때 상태, gap, 대상 시간 범위와 재구성 필요 여부를
-순서대로 확인합니다.
+ROLLUP 결과가 늦거나 원본과 다르면 처리 지연과 집계 의미의 차이를 먼저 구분합니다.
+예제의 이름은 실제 진단할 테이블·작업으로 바꾸고 삭제·재생성을 첫 조치로 실행하지 않습니다.
 
-## 1. 상태와 gap 확인
-
-```sql
-SHOW ROLLUPGAP;
-
-SELECT ROLLUP_TABLE,
-       INTERVAL_TIME,
-       WAKEUP_INTERVAL,
-       LAST_ELAPSED_MSEC,
-       RUN_STATE
-  FROM V$ROLLUP
- ORDER BY ROLLUP_TABLE;
-```
-
-- gap이 남아 있으면 새 데이터의 집계가 아직 끝나지 않은 상태일 수 있습니다.
-- `RUN_STATE`가 계속 비정상이면 서버 로그에서 같은 시각의 최초 오류를 확인합니다.
-- WAKEUP 주기보다 짧은 지연만으로 장애라고 판단하지 않습니다.
-
-가상 테이블의 정확한 컬럼은
-[V$ROLLUP 사전](/dbms/reference/log-logs-system-catalog/dictionary-vrollup/)을 기준으로 합니다.
-
-## 2. 원본과 같은 범위를 비교
-
-태그, 시작·종료 시각과 bucket을 고정한 뒤 원본 집계와 ROLLUP 조회를 비교합니다. 서로 다른
-시간대, 열린 종료 경계와 다른 bucket 크기를 섞지 마십시오.
+## 1. 상태와 범위 확인
 
 ```sql
-SELECT rollup('min', 1, time) AS bucket,
-       AVG(value), MIN(value), MAX(value), COUNT(value)
-  FROM sensor_tag
- WHERE name = 'sensor-01'
-   AND time >= TO_DATE('2026-01-01 12:00:00')
-   AND time <  TO_DATE('2026-01-01 12:10:00')
- GROUP BY bucket
- ORDER BY bucket;
-```
-
-같은 SQL을 ROLLUP 사용 전후의 실행 계획과 결과로 비교합니다. 존재하지 않는 내부 ROLLUP
-테이블이나 미확인 hint를 진단용으로 만들지 마십시오.
-
-## 3. 즉시 집계와 재확인
-
-정상적으로 유입된 새 데이터의 집계를 촉진할 때 다음 명령을 사용할 수 있습니다.
-
-```sql
-ALTER SYSTEM FLUSH ROLLUP;
+SELECT ROLLUP_NAME, ROLLUP_TABLE, ROOT_TABLE, EXT_TYPE,
+       INTERVAL_TIME, WAKEUP_INTERVAL, ENABLED, RUN_STATE, LAST_ELAPSED_MSEC
+  FROM V$ROLLUP ORDER BY ROLLUP_NAME;
 SHOW ROLLUPGAP;
 ```
 
-반복 실행으로 오류를 숨기지 말고 gap 감소와 서버 로그를 함께 확인합니다.
+SHOW ROLLUPGAP은 machsql 명령이며 SDK SQL API에는 보내지 않습니다.
+gap은 RID 처리 차이이며 시간 지연이나 원본 보정 완료를 직접 나타내지 않습니다.
+여러 계층·Cluster 노드의 상태, 서버 빌드와 데이터베이스·소유자를 함께 기록합니다.
 
-## 4. 데이터 보정 뒤 재구성
+## 2. 같은 데이터 집합인지 비교
 
-TAG 원본을 수정했거나 과거 범위의 집계가 잘못된 경우에는 Standard Edition의
-`ROLLUP_REBUILD` 적용 조건을 확인합니다. Cluster Edition에서는 지원하지 않습니다.
+| 증상 | 확인 |
+|---|---|
+| 일부 표본이 없음 | 조건 ROLLUP 후보가 선택됐는지, 원본 필터와 같은지 |
+| FIRST/LAST 오류 | 실제 선택 후보가 EXTENSION인지 |
+| 월·일 조회에 후보 없음 | 저장 간격 선택 규칙과 조회 버킷을 혼동했는지 |
+| 평균 불일치 | NULL·유효 건수·부분 평균 재집계·태그 단위가 같은지 |
+| 원본 정정 후에도 값이 같음 | FORCE로 과거를 되감으려 하지 않았는지, REBUILD 대상인지 |
+| JSON 건수 불일치 | 원본 문서·SQL NULL·경로별 건수·문서 집계 건수를 구분했는지 |
+
+원본은 DATE_TRUNC/DATE_BIN과 GROUP BY로, 저장 집계는 rollup()으로 조회해 비교합니다.
+태그·시각·origin·종료 경계·집계 함수를 고정합니다. 적용 가능한 ROLLUP이 없으면
+rollup()이 원본 스캔으로 자동 전환된다고 가정하지 않습니다.
+
+## 3. 새 입력을 따라잡기
+
+대상 작업이 활성화된 상태인지 확인하고 필요한 작업을 이름으로 지정합니다.
 
 ```sql
-EXEC ROLLUP_REBUILD(
-    sensor_tag,
-    'sensor-01',
-    TO_DATE('2026-01-01 00:00:00'),
-    TO_DATE('2026-01-02 00:00:00')
-);
+ALTER ROLLUP rollup_name FORCE;
+SHOW ROLLUPGAP;
 ```
 
-정확한 인수, 범위와 검증 절차는
-[ROLLUP_REBUILD](/dbms/tag-rollup-usage/rollup-rebuild/)를 참고하십시오.
+WAKEUP은 깨우기만 하고 FORCE는 처리 범위를 따라잡도록 기다립니다.
+중지된 작업은 상태를 확인한 뒤 START하고, 여러 계층은 하위부터 처리합니다.
+`ALTER SYSTEM FLUSH ROLLUP`은 지원되는 명령이 아니므로 진단 예제로 사용하지 않습니다.
+
+## 4. 과거 보정과 재구성
+
+Standard Edition에서도 모든 생성 구성이 REBUILD 대상인 것은 아닙니다.
+완전한 자동 계층인지, Custom 간격·버킷이 지원되는지, 원본이 남아 있는지 먼저 확인합니다.
+시간 인수는 지원되는 상수 문자열/TO_DATE를 쓰며 해당 시각의 버킷 전체가 재계산됩니다.
+
+관련 작업의 중지·재시작과 부분 실패 가능성을 고려합니다. 성공·실패 뒤에도 결과와 실제
+활성 상태를 확인합니다. [REBUILD 실습](../../tag-rollup-usage/rollup-rebuild/)과
+[인수 계약](../../reference/sql/syntax-dictionary-sql/rollup-rebuild-syntax/)을 따릅니다.
 
 ## 5. 지원 요청 자료
 
-- 서버 build와 Edition
-- ROLLUP 정의와 대상 TAG schema
-- `SHOW ROLLUPGAP`과 `V$ROLLUP` 결과
-- 비교한 태그·시간 범위·SQL
-- 최초 서버 오류와 발생 시각
-- 최근 TAG 수정, 대량 입력과 ROLLUP 설정 변경 이력
+- 서버 빌드·Edition·클라이언트와 접속 대상
+- TAG 스키마, ROLLUP 정의, 조건과 의존 관계
+- 상태·gap과 관측 시각
+- 비교한 원본/ROLLUP SQL, 시간대·origin과 예상/실제 결과
+- 최초 오류와 최근 원본 보정·삭제·대량 입력·설정 변경 이력

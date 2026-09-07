@@ -14,11 +14,11 @@ English structure placeholder. Korean content is authoritative for this restruct
 
 ### RDB 스키마와 타입 설계
 
-RDB tables support `DECIMAL(M,D)` exact fixed-point columns. `NUMERIC`, `DEC`,
+TRANSACTION tables support `DECIMAL(M,D)` exact fixed-point columns. `NUMERIC`, `DEC`,
 `FIXED`, and `NUMBER` are aliases for `DECIMAL`.
 
 ```sql
-CREATE RDB TABLE invoice (
+CREATE TRANSACTION TABLE invoice (
     invoice_id LONG PRIMARY KEY,
     amount     DECIMAL(18,2),
     tax_rate   NUMERIC(7,4)

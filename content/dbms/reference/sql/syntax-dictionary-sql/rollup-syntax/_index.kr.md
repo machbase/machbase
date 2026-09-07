@@ -5,195 +5,100 @@ weight: 180
 toc: true
 ---
 
-ROLLUP은 TAG 테이블의 시계열 데이터를 지정한 시간 단위로 자동 집계하는 기능입니다. 백그라운드 스레드가 주기적으로 집계를 수행하며, 결과는 내부 ROLLUP 테이블에 저장됩니다.
+ROLLUP은 시간축 TAG의 반복 집계를 위한 저장·조회 기능입니다. 일반·조건·확장 ROLLUP은
+공개 `rollup()` 조회로, Custom은 사용자 대상 TAG의 재집계로 읽습니다.
 
 <a id="create-rollup"></a>
 
-## ROLLUP 생성
+## 생성
 
-```sql
-CREATE ROLLUP [IF NOT EXISTS] rollup_name
-    ON table_name [(column_name | column_name -> 'json_path')]
-    INTERVAL number { SEC | MIN | HOUR }
-    [WAKEUP INTERVAL number { SEC | MIN | HOUR }]
-    [EXTENSION extension_name]
-    [WHERE predicate]
+다음은 문법 형식이며 대괄호·중괄호를 그대로 실행하지 않습니다.
 
-CREATE ROLLUP [IF NOT EXISTS] rollup_name
-    FROM source_rollup_table
-    INTERVAL number { SEC | MIN | HOUR }
-    [WAKEUP INTERVAL number { SEC | MIN | HOUR }]
-    [EXTENSION extension_name]
-    [WHERE predicate]
+```text
+CREATE ROLLUP [IF NOT EXISTS] name
+    ON source_tag [(column_name | json_path_expression)]
+    INTERVAL n { SEC | MIN | HOUR }
+    [WAKEUP INTERVAL m { SEC | MIN | HOUR }]
+    [EXTENSION]
+    [WHERE predicate];
+
+CREATE ROLLUP [IF NOT EXISTS] name
+    FROM source_rollup
+    INTERVAL n { SEC | MIN | HOUR }
+    [WAKEUP INTERVAL m { SEC | MIN | HOUR }]
+    [EXTENSION]
+    [WHERE predicate];
+
+CREATE ROLLUP [IF NOT EXISTS] name
+    INTO (destination_tag)
+    AS (SELECT ...)
+    INTERVAL n { SEC | MIN | HOUR }
+    [WAKEUP INTERVAL m { SEC | MIN | HOUR }];
 ```
 
-```sql
--- 1초 단위 ROLLUP 생성
-CREATE ROLLUP _rollup_tag_value_sec ON tag (value) INTERVAL 1 SEC;
-
--- 1분 단위 ROLLUP 생성
-CREATE ROLLUP _rollup_tag_value_min ON tag (value) INTERVAL 1 MIN;
-
--- 1시간 단위 ROLLUP 생성
-CREATE ROLLUP _rollup_tag_value_hour ON tag (value) INTERVAL 1 HOUR;
-```
-
-### 지원 시간 단위
-
-| 단위 | 설명 |
-|------|------|
-| `SEC` | 초 단위 집계 |
-| `MIN` | 분 단위 집계 |
-| `HOUR` | 시간 단위 집계 |
-
-> `DAY` 단위는 직접 지원하지 않습니다. 하루 단위 집계는 HOUR ROLLUP을 기반으로 쿼리 단계에서 집계합니다.
-
-### 조건부 ROLLUP
-
-특정 조건을 만족하는 데이터만 집계하는 조건부 ROLLUP을 생성할 수 있습니다.
-
-```sql
-CREATE ROLLUP rollup_name
-    ON table_name (column_name)
-    INTERVAL number { SEC | MIN | HOUR }
-    WHERE predicate
-```
-
-```sql
--- value2 = 0 인 데이터만 1분 단위로 집계
-CREATE ROLLUP _rollup_tag_value_min_ok
-    ON tag (value)
-    INTERVAL 1 MIN
-    WHERE value2 = 0;
-```
-
-### 사용자 정의 ROLLUP (Custom Rollup)
-
-임의 SELECT 결과를 대상 TAG 테이블에 저장하는 사용자 정의 ROLLUP입니다.
-
-```sql
-CREATE ROLLUP rollup_name
-    INTO (dest_table_name)
-    AS (select_stmt)
-    INTERVAL number { SEC | MIN | HOUR }
-    [WAKEUP INTERVAL number { SEC | MIN | HOUR }]
-```
-
-```sql
-CREATE ROLLUP rollup_stock_1m
-    INTO (stock_rollup_1m)
-    AS (
-        SELECT code,
-               DATE_TRUNC('minute', time) AS time,
-               SUM(price)                 AS sum_price,
-               COUNT(*)                   AS cnt
-          FROM stock_tick
-         GROUP BY code, time
-    )
-    INTERVAL 1 MIN;
-```
-
-### JSON 컬럼 ROLLUP
-
-JSON 컬럼의 특정 멤버를 ROLLUP 대상 값으로 사용할 수 있습니다.
-
-```sql
-CREATE ROLLUP tag_json_metric_ru ON tag_json (value->'$.metric') INTERVAL 1 SEC;
-```
+- EXTENSION은 키워드만 쓰며 별도 extension_name을 붙이지 않습니다.
+- CREATE의 시간 단위는 SEC/MIN/HOUR입니다. DAY 등은 조회 단위와 구분합니다.
+- 일반 숫자 컬럼은 SUMMARIZED 없이 명시할 수 있습니다. JSON 경로 집계와 JSON
+  문서 전체 집계를 구분하며, 문서 전체와 WITH ROLLUP 자동 생성에는 SUMMARIZED 조건이 있습니다.
+- FROM 간격은 소스보다 큰 정수배이며 확장 속성·집계 모드가 맞아야 합니다.
+- WAKEUP은 양수, 집계 간격 이하이며 그 간격을 나누어떨어지게 해야 합니다.
+- Custom은 Standard 전용이고 소스 TAG 하나와 미리 만든 대상 TAG가 필요합니다.
+  WHERE는 SELECT 내부에 쓰고 BASETIME 직접 조건·JOIN·FROM 서브쿼리는 허용하지 않습니다.
+- IF NOT EXISTS는 기존 이름에 대해 생성하지 않는 동작이지 정의를 수정하거나 비교해
+  일치시키는 기능이 아닙니다. 문법과 소스 검증을 모두 무시하는 옵션도 아닙니다.
 
 <a id="drop-rollup"></a>
 
-## ROLLUP 삭제
+## 삭제
 
 ```sql
-DROP ROLLUP rollup_name
+DROP ROLLUP rollup_name;
 ```
 
-```sql
-DROP ROLLUP _rollup_tag_value_sec;
-```
+참조하는 상위 ROLLUP부터 삭제합니다. Custom 대상 TAG는 관련 작업이 남아 있으면 DROP이
+거부됩니다. 원본 TAG의 CASCADE는 관련 ROLLUP 제거 범위까지 확인한 뒤 사용하며,
+사용자 Custom 대상 테이블은 별도 수명주기로 관리합니다.
 
 <a id="alter-rollup"></a>
 
-## ROLLUP 제어
+## 제어
 
 ```sql
--- 롤업 스레드 시작 / 중지
-ALTER ROLLUP rollup_name START;
 ALTER ROLLUP rollup_name STOP;
-
--- 즉시 깨우기 (비동기)
+ALTER ROLLUP rollup_name START;
 ALTER ROLLUP rollup_name WAKEUP;
-
--- 즉시 집계 실행 후 완료 대기 (동기)
 ALTER ROLLUP rollup_name FORCE;
-
--- wakeup 주기 변경
-ALTER ROLLUP rollup_name SET WAKEUP INTERVAL number { SEC | MIN | HOUR };
+ALTER ROLLUP rollup_name SET WAKEUP INTERVAL 10 SEC;
 ```
 
-## ROLLUP 조회
+이 명령은 이미 존재하는 작업과 간격 조건을 전제로 합니다.
+생성 시 자동 시작되며 이미 시작·중지된 상태를 반복 지정하면 오류가 날 수 있습니다.
+WAKEUP은 완료를 기다리지 않고 FORCE는 대상의 소스 처리 범위를 따라잡도록 기다립니다.
+과거 원본 보정에는 [REBUILD의 별도 지원 범위](../rollup-rebuild-syntax/)를 확인합니다.
 
-### 자동 선택
+## 조회와 후보 선택
 
-ROLLUP이 생성된 TAG 테이블에서 GROUP BY와 집계 함수를 사용하면 옵티마이저가 자동으로 ROLLUP 테이블을 선택합니다.
-
-```sql
-SELECT name, DATE_TRUNC('minute', time) AS t,
-       AVG(value), MIN(value), MAX(value)
-  FROM tag
- WHERE name = 'TEMP-01'
-   AND time BETWEEN TO_DATE('2024-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
-                AND TO_DATE('2024-01-01 01:00:00', 'YYYY-MM-DD HH24:MI:SS')
- GROUP BY name, t
- ORDER BY t;
+```text
+rollup(time_unit, period, basetime_column [, origin])
 ```
 
-### rollup() 함수
+반환 타입은 DATETIME입니다. period는 양의 정수 리터럴입니다. 일반 DATE_TRUNC +
+GROUP BY 쿼리가 ROLLUP의 존재만으로 자동 전환된다고 안내하지 않습니다. ROLLUP 조회에는
+`rollup()`을 명시하고, 적용 가능한 후보가 없으면 별도의 원본 쿼리를 사용합니다.
 
-TAG 테이블 조회에서 `rollup()` 함수를 사용해 집계 시간 단위를 명시할 수 있습니다.
+자동 선택은 같은 컬럼·경로·모드에서 조건 없는 후보를 먼저 찾고, 가능한 가장 큰 간격을
+선택합니다. 같은 간격은 등록 순서의 영향을 받습니다. 일반/확장만으로 우선순위를
+단정하지 않습니다. 특정 데이터 집합을 고정하려면 ROLLUP_TABLE 힌트를 사용합니다.
 
-```sql
-SELECT name, rollup('min', 5, time) AS t, AVG(value), COUNT(value)
-  FROM tag
- WHERE name = 'TEMP-01'
-   AND time BETWEEN TO_DATE('2024-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
-                AND TO_DATE('2024-01-01 01:00:00', 'YYYY-MM-DD HH24:MI:SS')
- GROUP BY name, t
- ORDER BY t;
-```
+SEC/MIN의 후보 간격은 period초/분을 기준으로 하며 HOUR·DAY·WEEK·MONTH·YEAR는
+후보 선택 단계에서 period시간을 기준으로 검사합니다. 결과 버킷의 달력 계산과 별개의
+규칙입니다. 월·년 origin은 월의 1일 조건을 확인합니다.
 
-### ROLLUP 힌트로 특정 테이블 강제 선택
+SELECT에 name을 반환하는 태그별 집계는 GROUP BY에도 name을 포함합니다.
+시간 범위·origin·NULL 처리와 후보 조건을 맞춘 뒤 원본 결과와 비교합니다.
+일반 숫자 ROLLUP은 MIN/MAX/SUM/COUNT/AVG/SUMSQ, 확장은 FIRST/LAST를 추가로 지원합니다.
+원본 FIRST/LAST 사용과 저장 ROLLUP의 확장 필요조건을 구분합니다.
+JSON의 문서 전체 COUNT와 경로별 건수는 별도 계약입니다.
 
-```sql
-SELECT /*+ ROLLUP_TABLE(rollup_table_name) */
-       name, rollup('sec', 30, time) AS rt, AVG(value), COUNT(value)
-  FROM tag
- WHERE name = 'TEMP-01'
-   AND time BETWEEN '2024-01-01 00:00:00' AND '2024-01-01 00:10:00'
- GROUP BY rt
- ORDER BY rt;
-```
-
-## ROLLUP 집계 함수
-
-| 함수 | 설명 |
-|------|------|
-| `AVG(col)` | 구간 평균 |
-| `MIN(col)` | 구간 최솟값 |
-| `MAX(col)` | 구간 최댓값 |
-| `SUM(col)` | 구간 합계 |
-| `COUNT(col)` | 구간 건수 |
-| `FIRST(compare_expr, return_expr)` | 비교식 기준 첫 행의 반환식 값 |
-| `LAST(compare_expr, return_expr)` | 비교식 기준 마지막 행의 반환식 값 |
-
-> `FIRST()` / `LAST()`를 사용하려면 적용 가능한 `EXTENSION` ROLLUP이 필요합니다. EXTENSION
-> ROLLUP만 적용 가능한 경우 hint 없이도 선택될 수 있습니다. 여러 일반·조건·확장 후보 중
-> 특정 결과 집합을 고정해야 할 때 `/*+ ROLLUP_TABLE(...) */` hint를 사용합니다.
-> ROLLUP에서는 첫 번째 인자로 BASETIME 컬럼, 두 번째 인자로 집계 대상 컬럼을 사용하며
-> 반환 타입은 두 번째 인자의 타입입니다.
-
-## 관련 문서
-
-- [ROLLUP_REBUILD syntax](../rollup-rebuild-syntax/) — 집계 재계산
-- [ROLLUP 운영 가이드](/dbms/tag-rollup-usage/) — 상태 확인 및 운영 패턴
+실행 가능한 생성·조회·오류 예제는 [6장 ROLLUP 활용](/dbms/tag-rollup-usage/)과
+[조회 문법](/dbms/tag-rollup-usage/query-syntax-rollup/)을 참고하십시오.

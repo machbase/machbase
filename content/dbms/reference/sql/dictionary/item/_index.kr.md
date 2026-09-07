@@ -5,14 +5,17 @@ weight: 20
 toc: true
 ---
 
-윈도우 함수와 시리즈 함수는 행의 순서나 그룹을 기반으로 순위·번호·이전/다음 값을 계산합니다. Machbase는 표준 SQL 윈도우 함수 대신 자체 `ROWNUM()`, `SERIESNUM()` 함수를 제공하며, `SERIES BY` 절을 통해 시계열 데이터의 연속 구간을 분석할 수 있습니다.
+이 페이지는 결과 행에 번호를 붙이는 `ROWNUM()`과 연속 구간을 구분하는 `SERIESNUM()`을
+설명합니다. `SERIES BY`는 정렬된 데이터에서 조건을 연속으로 만족하는 구간을 분석할 때
+사용합니다. `LAG()`와 `LEAD()`처럼 `OVER` 절을 사용하는 함수는
+[윈도우 함수 문법](../../syntax-dictionary-sql/window-function-over-syntax/)을 참고하십시오.
 
 ## 빠른 참조
 
 | 함수 | 문법 | 설명 |
 |------|------|------|
 | ROWNUM | `ROWNUM()` | SELECT 결과 행 번호 부여 |
-| SERIESNUM | `SERIESNUM()` | SERIES BY 그룹 내 시리즈 번호 |
+| SERIESNUM | `SERIESNUM()` | 행이 속한 연속 구간의 번호 (같은 구간의 행은 같은 번호) |
 
 ---
 

@@ -11,7 +11,13 @@ aliases:
 
 ## TAG 테이블 설계
 
-태그(센서) 이름을 `PRIMARY KEY`로, 시간 또는 거리 기준 컬럼을 축으로 대량의 시계열 데이터를 저장합니다.
+태그 이름은 반복 관측 대상을 식별하고 DATA 한 행은 그 대상의 관측 한 건을 저장합니다.
+이름은 첫 번째 VARCHAR 컬럼, 시간·거리 축은 두 번째 컬럼입니다. `SUMMARIZED`를
+지정하면 세 번째 컬럼에 사용하며 지원 숫자 타입과 JSON을 사용할 수 있습니다.
+ARRAY는 이름·축·SUMMARIZED 컬럼에 사용할 수 없습니다.
+
+이 페이지의 DDL은 모델별 독립 예제입니다. 생성 순서가 필요한 실습은 해당 절 안에서
+설명하며, 같은 이름의 기존 객체가 있으면 다른 이름으로 실행합니다.
 
 - **[시간축 TAG 테이블 설계](#time-axis-design-tag)**
 - **[거리축 TAG 테이블 설계](#distance-axis-design-tag)**
@@ -61,9 +67,13 @@ CREATE TAG TABLE rail_sensor (
 
 ### 값 컬럼 설계
 
-TAG 테이블의 값 컬럼(BASETIME 또는 BASEDISTANCE 이외의 컬럼)은 계측값을 저장합니다.
+TAG 테이블의 값 컬럼은 태그 이름과 축 컬럼을 제외한 일반 데이터 컬럼입니다. 계측값,
+상태, 품질 코드처럼 측정 행마다 달라지는 값을 저장합니다.
 
 #### 지원 타입
+
+아래는 자주 사용하는 타입의 예입니다. JSON, BINARY, DECIMAL과 숫자 ARRAY를 포함한 전체
+지원 범위는 [데이터 타입 사전](/dbms/reference/sql/type-data-types-dictionary/)을 참고하십시오.
 
 | 타입 | 설명 | 저장 크기 |
 |------|------|---------|
@@ -153,7 +163,8 @@ CREATE TAG TABLE temperature_sensor (
 
 ##### 다중 TAG 테이블
 
-측정 항목이 완전히 다른 경우(컬럼 구성이 다른 경우)만 테이블을 분리합니다.
+컬럼 구성이 다르거나 보존 기간·접근 권한·운영 주기를 따로 관리해야 하면 테이블 분리를
+검토합니다. 센서 수가 늘었다는 이유만으로 센서별 테이블을 만들지는 않습니다.
 
 ```sql
 -- 온도·습도 센서 (DOUBLE 값)
@@ -169,7 +180,7 @@ CREATE TAG TABLE vibration_sensor (
     name     VARCHAR(64) PRIMARY KEY,
     time     DATETIME    BASETIME,
     rms      DOUBLE,
-    waveform BINARY
+    waveform BINARY(4096)
 );
 ```
 
@@ -190,8 +201,8 @@ CREATE TAG TABLE vibration_sensor (
 
 ### 자동 중복 제거
 
-중복 제거는 스키마 선택 사항이지만 설정 변경과 추적은 운영 작업입니다. 속성 범위, 변경
-절차와 `DUP_DROP` 로그는
+중복 제거는 스키마 선택 사항이지만 설정 변경과 검증은 운영 작업입니다. 설정과 변경
+절차는
 [운영과 데이터 생명주기의 자동 중복 제거](/dbms/tag-table-usage/operations-lifecycle/#original-85-duplication-removal)를
 정본으로 사용하십시오.
 
@@ -200,6 +211,8 @@ CREATE TAG TABLE vibration_sensor (
 
 ### LSL·USL 설계
 
+태그마다 허용 범위를 정해 입력 품질을 제어합니다. 유효 범위 밖 값을 보정하는 기능과는
+다릅니다. 범위를 벗어난 입력은 수집 오류 정책에 따라 기록·재처리해야 합니다.
 
 ### LSL/USL 소개
 
@@ -209,17 +222,21 @@ LSL(Lower Specification Limit)은 하한 규격값, USL(Upper Specification Limi
 
 다음 제약 조건이 적용됩니다.
 
-* `CLUSTER EDITION`은 LSL/USL 기능을 지원하지 않습니다.
+* LSL/USL을 Cluster 전체에서 미지원으로 묶지 않습니다. 테이블 생성 시 한계 정의와
+  메타데이터 값 설정, DATA INSERT·Append의 한계 검사는 공통 경로입니다.
+  기존 METADATA에 한계 컬럼을 ALTER로 추가하는 아래 실습은 Standard Edition에서 수행합니다.
 * LSL/USL을 설정하려면 Tag 테이블의 세 번째 컬럼인 __Value__가 __SUMMARIZED__로 설정되어야 합니다.
 * LSL은 USL보다 작거나 같아야 하며, __Value__ 컬럼의 입력 값은 LSL과 USL 사이에 있어야 합니다 (포함). __(LSL <= Value <= USL)__
 * LSL/USL 설정을 부여하기 전에 입력된 데이터는 검증되지 않습니다.
 * LSL/USL 컬럼을 NULL로 설정하면 입력 데이터를 검증하지 않습니다.
 * LSL/USL 기능은 개별적으로 사용할 수 있습니다. 상한 사양만 일치시키려면 USL만 설정할 수 있습니다.
-* USL 기능만 사용하는 경우 USL보다 낮은 데이터는 검증되지 않습니다.
+* USL만 설정하면 상한 초과만 검사하고, LSL만 설정하면 하한 미달만 검사합니다.
 
 #### 지원되는 데이터 타입
 
-__Value__ 컬럼 타입과 일치해야 하며, __SUMMARIZED__ 속성과 마찬가지로 숫자 타입만 허용됩니다.
+한계 컬럼은 대상 __Value__ 컬럼과 타입이 같아야 합니다. 아래는 기본 숫자 타입의
+규격 범위 설정을 설명합니다. SUMMARIZED 자체의 전체 지원 타입에는 JSON도 있으므로
+SUMMARIZED 선언 가능 여부와 숫자 한계 설정을 같은 조건으로 해석하지 않습니다.
 
 |타입|설명|범위|유효 자릿수|
 |----|------|-----|----|
@@ -233,6 +250,9 @@ __Value__ 컬럼 타입과 일치해야 하며, __SUMMARIZED__ 속성과 마찬�
 |double|64비트 부동 소수점 데이터|-|15[^1]|
 
 ### LSL/USL 설정 및 사용
+
+다음 CREATE 예제들은 서로 다른 선택을 보여 줍니다. 기본 `example`만 이후
+INSERT·UPDATE 실습에서 사용하고, 대안 테이블은 별도로 생성합니다.
 
 태그 메타데이터 테이블의 컬럼에 `LOWER LIMIT`(LSL) 또는 `UPPER LIMIT`(USL) 키워드를 지정합니다. Tag 테이블 생성 시 또는 메타데이터 컬럼 추가 시 설정할 수 있습니다.
 
@@ -250,10 +270,11 @@ METADATA (
 ```
 
 두 컬럼을 함께 사용하거나 하나만 사용할 수 있습니다.
-LSL만 설정하면 LSL보다 높은 데이터는 검증하지 않습니다. `USL == NULL`과 동일한 효과입니다.
+LSL만 설정하면 `Value >= LSL`을 검사하고 상한은 제한하지 않습니다. USL 값을 `NULL`로
+둔 것과 같은 의미입니다.
 
 ```sql
-CREATE TAG TABLE example (
+CREATE TAG TABLE example_lower_only (
     tag_id  VARCHAR(50) PRIMARY KEY,
     time    DATETIME    BASETIME,
     value   INTEGER     SUMMARIZED)
@@ -267,26 +288,26 @@ METADATA (
 데이터가 이미 입력된 후 `ADD COLUMN`을 사용하여 추가하는 경우 기본값은 __NULL__입니다.
 
 ```sql
-CREATE TAG TABLE example (
+CREATE TAG TABLE example_alter_limits (
     tag_id  VARCHAR(50) PRIMARY KEY,
     time    DATETIME    BASETIME,
     value   INTEGER     SUMMARIZED
 );
 
-ALTER TABLE example METADATA ADD COLUMN (lsl INTEGER LOWER LIMIT);
-ALTER TABLE example METADATA ADD COLUMN (usl INTEGER UPPER LIMIT);
+ALTER TABLE example_alter_limits METADATA ADD COLUMN (lsl INTEGER LOWER LIMIT);
+ALTER TABLE example_alter_limits METADATA ADD COLUMN (usl INTEGER UPPER LIMIT);
 ```
 
 [CREATE](#create)와 마찬가지로 하나의 속성만 추가할 수도 있습니다.
 
 ```sql
-CREATE TAG TABLE example (
+CREATE TAG TABLE example_alter_upper (
     tag_id  VARCHAR(50) PRIMARY KEY,
     time    DATETIME    BASETIME,
     value   INTEGER     SUMMARIZED
 );
 
-ALTER TABLE example METADATA ADD COLUMN (usl INTEGER UPPER LIMIT);
+ALTER TABLE example_alter_upper METADATA ADD COLUMN (usl INTEGER UPPER LIMIT);
 ```
 
 #### INSERT
@@ -300,29 +321,55 @@ INSERT INTO example metadata VALUES ('TAG_01', 100, 200);
 설정 후 태그 데이터를 입력하면 다음과 같이 동작합니다.
 
 ```sql
-Mach> INSERT INTO example VALUES ('TAG_01', NOW, 95);  -- Failure
+INSERT INTO example VALUES ('TAG_01', NOW, 95);  -- Failure
+```
+
+```text
 [ERR-02342: SUMMARIZED value is less than LOWER LIMIT.]
+```
 
-Mach> INSERT INTO example VALUES ('TAG_01', NOW, 100); -- Success (Inclusive)
+```sql
+INSERT INTO example VALUES ('TAG_01', NOW, 100); -- Success (Inclusive)
+```
+
+```text
 1 row(s) inserted.
 Elapsed time: 0.000
+```
 
-Mach> INSERT INTO example VALUES ('TAG_01', NOW, 150); -- Success
+```sql
+INSERT INTO example VALUES ('TAG_01', NOW, 150); -- Success
+```
+
+```text
 1 row(s) inserted.
 Elapsed time: 0.000
+```
 
-Mach> INSERT INTO example VALUES ('TAG_01', NOW, 200); -- Success (Inclusive)
+```sql
+INSERT INTO example VALUES ('TAG_01', NOW, 200); -- Success (Inclusive)
+```
+
+```text
 1 row(s) inserted.
 Elapsed time: 0.000
+```
 
-Mach> INSERT INTO example VALUES ('TAG_01', NOW, 205); -- Failure
+```sql
+INSERT INTO example VALUES ('TAG_01', NOW, 205); -- Failure
+```
+
+```text
 [ERR-02341: SUMMARIZED value is greater than UPPER LIMIT.]
 ```
 
 Tag 테이블을 조회하면 규격 범위 내 데이터만 입력된 것을 확인할 수 있습니다.
 
 ```sql
-Mach> SELECT * FROM example;
+SELECT * FROM example;
+```
+
+```text
 TAG_ID                                              TIME                            VALUE       LSL         USL
 ------------------------------------------------------------------------------------------------------------------------------
 TAG_01                                              2023-09-12 09:31:27 923:289:631 100         100         200
@@ -337,11 +384,19 @@ Elapsed time: 0.001
 LSL/USL 컬럼의 값을 수정합니다. 이미 입력된 데이터에는 소급 적용되지 않으므로 주의가 필요합니다.
 
 ```sql
-Mach> UPDATE example metadata SET lsl = 10, usl = 100 WHERE tag_id = 'TAG_01';
+UPDATE example metadata SET lsl = 10, usl = 100 WHERE tag_id = 'TAG_01';
+```
+
+```text
 1 row(s) updated.
 Elapsed time: 0.001
+```
 
-Mach> SELECT tag_id, lsl, usl FROM example METADATA;
+```sql
+SELECT tag_id, lsl, usl FROM example METADATA;
+```
+
+```text
 TAG_ID                                              LSL         USL
 ----------------------------------------------------------------------------------------
 TAG_01                                              10          100
@@ -354,11 +409,19 @@ Elapsed time: 0.001
 LSL/USL 컬럼은 `DROP COLUMN`으로 제거하지 않고 값을 NULL로 설정해 제약을 해제합니다.
 
 ```sql
-Mach> UPDATE EXAMPLE METADATA SET lsl = NULL, usl = NULL WHERE tag_id = 'TAG_01';
+UPDATE EXAMPLE METADATA SET lsl = NULL, usl = NULL WHERE tag_id = 'TAG_01';
+```
+
+```text
 1 row(s) updated.
 Elapsed time: 0.001
+```
 
-Mach> SELECT tag_id, lsl, usl FROM example METADATA;
+```sql
+SELECT tag_id, lsl, usl FROM example METADATA;
+```
+
+```text
 TAG_ID                                              LSL         USL
 ----------------------------------------------------------------------------------------
 TAG_01                                              NULL        NULL
@@ -395,7 +458,9 @@ Elapsed time: 0.001
 
 
 `BINARY(n)`은 Tag 테이블에서 센서 프레임용 고정 길이 바이너리 값을 저장합니다.
-다른 테이블 타입이나 프로토콜에서는 허용되지 않습니다. 길이는 1~32K-1
+TAG의 길이 생략형 `BINARY`는 32767바이트로 처리됩니다. 필요한 프레임 크기를 명시하면
+저장·전송 크기를 이해하기 쉽습니다. TAG 외 테이블에는 `BINARY(n)` 길이 지정형을
+선언할 수 없습니다. 길이는 1~32K-1
 (1~32767)바이트만 유효하며, 인덱스를 생성할 수 없습니다.
 
 명시적 binary literal로 `BINARY` 값을 입력합니다.
@@ -584,3 +649,26 @@ binary literal로 지원하지 않습니다.
   실패합니다.
 - Machbase SQLCLI, ODBC, Java, C#, Node.js 드라이버는 고정 길이 버퍼로 송수신하며 메타데이터
   `LENGTH`는 바이트 길이입니다.
+
+## 예제 정리
+
+이 페이지에서 실제로 만든 테이블만 정리합니다. 대안 DDL을 실행하지 않았다면 그 테이블의
+DROP 문도 실행하지 않습니다.
+
+```sql
+DROP TABLE time_sensor;
+DROP TABLE rail_sensor;
+DROP TABLE weather_station;
+DROP TABLE temperature_sensor;
+DROP TABLE thermo_sensor;
+DROP TABLE vibration_sensor;
+DROP TABLE example;
+DROP TABLE example_lower_only;
+DROP TABLE example_alter_limits;
+DROP TABLE example_alter_upper;
+DROP TABLE t1;
+DROP TABLE t_bin;
+DROP TABLE t_limit;
+DROP TABLE t_dst;
+DROP TABLE t_src;
+```

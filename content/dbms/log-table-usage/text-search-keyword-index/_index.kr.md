@@ -4,232 +4,188 @@ weight: 110
 toc: true
 ---
 
+메시지에 같은 글자가 들어 있어도 SEARCH와 LIKE의 결과는 다를 수 있습니다.
+SEARCH는 색인된 단어를 찾고, LIKE는 원문 문자열에 패턴을 적용하기 때문입니다.
+성능을 비교하기 전에 “어떤 행을 찾으려는가”를 먼저 맞춰 보겠습니다.
+
 <a id="text-search"></a>
 <a id="original-85-text-search"></a>
+<a id="design-text-search"></a>
 
-## 텍스트 검색
+## 서로 다른 검색 결과를 만드는 표본을 준비합니다
 
-KEYWORD 인덱스를 활용하면 VARCHAR/TEXT 컬럼에서 단어 기반 텍스트 검색을 수행할 수 있습니다.
+```sql
+CREATE LOG TABLE ch7_search (
+    event_id INTEGER,
+    message  TEXT
+);
+CREATE INDEX ch7_search_msg ON ch7_search(message) INDEX_TYPE KEYWORD;
 
-### 이 절에서 다루는 내용
+INSERT INTO ch7_search VALUES (1, 'ERROR connection timeout');
+INSERT INTO ch7_search VALUES (2, 'connection slowly refused');
+INSERT INTO ch7_search VALUES (3, 'pretimeout marker');
+INSERT INTO ch7_search VALUES (4, 'normal service');
+INSERT INTO ch7_search VALUES (5, NULL);
+INSERT INTO ch7_search VALUES (6, '대한민국 연결 오류');
+INSERT INTO ch7_search VALUES (7, 'ERR-1001 network');
+INSERT INTO ch7_search VALUES (8, 'timeout refused connection');
 
-- **[SEARCH / NOT SEARCH](/dbms/log-table-usage/text-search-keyword-index/#search-not)**: 키워드 인덱스 기반 단어 검색
-- **[ESEARCH](/dbms/log-table-usage/text-search-keyword-index/#esearch)**: 패턴(%) 확장 검색
-- **[LIKE / NOT LIKE](/dbms/log-table-usage/text-search-keyword-index/#like-not)**: 일반 패턴 매칭
+EXEC TABLE_FLUSH(ch7_search);
+EXEC INDEX_FLUSH(ch7_search);
+```
+
+표본의 `event_id`로 결과를 비교합니다. 메시지는 TEXT이므로 정렬 기준으로 사용하지
+않습니다. LOG의 VARCHAR에도 같은 KEYWORD 검색을 사용할 수 있습니다.
 
 <a id="search-not"></a>
 <a id="text-search-search-not"></a>
 
-### SEARCH / NOT SEARCH
-
-`SEARCH`는 KEYWORD 인덱스가 생성된 VARCHAR/TEXT 컬럼에서 키워드 단어를 고속으로 검색합니다.
-
-#### 사전 조건: KEYWORD 인덱스
+## SEARCH는 단어를 찾습니다
 
 ```sql
--- KEYWORD 인덱스 생성
-CREATE KEYWORD INDEX idx_msg ON event_log (message);
-CREATE KEYWORD INDEX idx_id2 ON sensor_log (sensor_type);
+SELECT event_id FROM ch7_search WHERE message SEARCH 'timeout' ORDER BY event_id;
+SELECT event_id FROM ch7_search WHERE message SEARCH 'connection refused' ORDER BY event_id;
+SELECT event_id FROM ch7_search
+ WHERE message SEARCH 'connection' AND message SEARCH 'refused'
+ ORDER BY event_id;
+SELECT event_id FROM ch7_search WHERE message NOT SEARCH 'timeout' ORDER BY event_id;
 ```
 
-#### SEARCH
+| 조건 | 선택되는 event_id | 이유 |
+|---|---|---|
+| SEARCH 'timeout' | 1, 8 | pretimeout은 별도 단어 |
+| SEARCH 'connection refused' | 2, 8 | 두 단어가 모두 존재 |
+| SEARCH 두 조건을 AND로 결합 | 2, 8 | 같은 메시지에서 두 단어 확인 |
+| NOT SEARCH 'timeout' | 2, 3, 4, 6, 7 | 해당 단어가 없으며 NULL 행은 제외 |
+
+다중 단어 SEARCH는 단어의 어순이나 인접성을 보장하는 구문 검색이 아닙니다.
+2번에는 중간 단어가 있고 8번에는 순서가 뒤집혀 있지만 둘 다 선택됩니다.
+다른 컬럼까지 SEARCH하려면 그 컬럼에도 해당 인덱스가 필요합니다.
+
+기본 토큰화에서 일반 ASCII 단어는 소문자로 정규화됩니다.
+예를 들어 1번의 `ERROR`는 `SEARCH 'error'`로도 검색됩니다.
+이를 모든 Unicode 문자의 언어별 대소문자 처리로 확대해서 해석하지 마세요.
+
+### 한글은 토큰 분리 방식을 이해하면 편합니다
 
 ```sql
--- 'timeout' 단어가 포함된 로그
-SELECT * FROM event_log WHERE message SEARCH 'timeout';
-
--- 복수 컬럼 SEARCH 조합
-SELECT * FROM event_log
-WHERE message SEARCH 'error' AND category SEARCH 'network';
+SELECT event_id FROM ch7_search WHERE message SEARCH '대한' ORDER BY event_id;
+SELECT event_id FROM ch7_search WHERE message SEARCH '연결' ORDER BY event_id;
 ```
 
-#### NOT SEARCH
+둘 다 6번이 선택됩니다. 기본 모드에서 `대한민국`은 `대한`, `한민`, `민국`처럼
+겹치는 2-gram으로 색인됩니다. 형태소나 문장 의미를 이해하는 검색은 아닙니다.
+공백·구두점·한 글자·영문과 한글이 섞인 값은 토큰 경계가 달라질 수 있으므로 실제 표본으로
+확인하세요. MODE 같은 인덱스 옵션을 바꾸면 토큰화도 달라질 수 있습니다.
 
-SEARCH 결과가 아닌 레코드를 반환합니다.
-
-```sql
--- 'timeout'이 포함되지 않은 로그
-SELECT * FROM event_log WHERE message NOT SEARCH 'timeout';
-```
-
-#### SEARCH vs LIKE
-
-| 항목 | SEARCH | LIKE |
-|------|--------|------|
-| 인덱스 | KEYWORD 인덱스 필요 | 불필요 (인덱스 미사용) |
-| 단어 단위 | O (공백·특수문자로 분리된 단어) | X (패턴 매칭) |
-| 성능 | 고속 (인덱스 활용) | 느림 (전체 스캔) |
-| 용도 | 영문·숫자 단어 단위 검색 | 부분 문자열 패턴 |
-
-반복적인 단어 검색에는 KEYWORD 인덱스와 SEARCH를 사용합니다. LIKE는 KEYWORD 인덱스를
-사용하지 않으므로 시간 조건 등으로 검색 범위를 먼저 줄입니다.
-
-#### 다국어 검색
-
-KEYWORD 인덱스는 UTF-8 문자열을 검색할 수 있습니다. 공백으로 단어 경계가 명확하지 않은
-한국어와 일본어 문자열은 2-gram 단위로 색인되므로 연속된 문자열 일부를 SEARCH 조건으로
-지정할 수 있습니다. 실제 분리 결과는 대표 데이터로 확인합니다.
-
+<a id="esearch"></a>
 <a id="text-search-esearch"></a>
 
-### ESEARCH
-
-`ESEARCH`는 KEYWORD 인덱스를 사용하면서 `%` 와일드카드 패턴까지 지원하는 확장 검색입니다. `LIKE`와 달리 인덱스를 활용하므로 부분 문자열 패턴도 빠르게 검색됩니다.
-
-#### ESEARCH 패턴
-
-```text
-col ESEARCH 'pattern%'    -- pattern으로 시작하거나 포함하는 단어
-col ESEARCH '%pattern%'   -- pattern을 포함하는 단어
-```
-
-`%`는 단어 경계 이상의 범위를 나타냅니다.
-
-#### 사전 조건
+## ESEARCH는 색인된 단어에 패턴을 적용합니다
 
 ```sql
--- KEYWORD 인덱스 필요
-CREATE KEYWORD INDEX idx_msg ON event_log (message);
+SELECT event_id FROM ch7_search WHERE message ESEARCH 'time%' ORDER BY event_id;
+SELECT event_id FROM ch7_search WHERE message ESEARCH '%time%' ORDER BY event_id;
+SELECT event_id FROM ch7_search WHERE message ESEARCH 'err%' ORDER BY event_id;
 ```
 
-#### 예시
+| 패턴 | 선택되는 event_id | 의미 |
+|---|---|---|
+| time% | 1, 8 | time으로 시작하는 단어 |
+| %time% | 1, 3, 8 | time을 포함하는 단어 |
+| err% | 1, 7 | error 또는 err처럼 err로 시작하는 단어 |
 
-```sql
--- 'bbb'로 시작하는 단어 포함 (bbb1, bbb_test 등)
-SELECT * FROM event_log WHERE message ESEARCH 'bbb%';
+`time%`가 단어 중간의 time까지 찾는 것은 아닙니다.
+또한 ESEARCH는 원문 전체에 LIKE를 적용하는 것과 같지 않습니다.
+공백·구두점을 가로지르는 원문 패턴을 그대로 ESEARCH에 옮기지 마세요.
+복잡한 다중 조건은 별도 SEARCH·ESEARCH 조건을 AND·OR로 결합해 의미를 명시하세요.
 
--- 'cd'가 포함된 단어 (abcd, cdf, bcd/cdf 등)
-SELECT * FROM event_log WHERE message ESEARCH '%cd%';
+현재 비교 경로에서 ESEARCH는 ASCII 대소문자를 구분하지 않습니다.
+대상 키워드가 넓게 매칭될수록 검색 비용도 커지므로 항상 LIKE보다 빠르다고 단정할 수는
+없습니다. 이 예제는 ASCII 키워드 패턴을 기준으로 합니다.
 
--- 오류 코드 부분 검색
-SELECT * FROM event_log WHERE error_code ESEARCH 'ERR-10%';
-```
-
-#### ESEARCH vs LIKE
-
-| 항목 | ESEARCH | LIKE |
-|------|---------|------|
-| KEYWORD 인덱스 | 필요 | 불필요 |
-| 성능 | 고속 (인덱스 활용) | 느림 (전체 스캔) |
-| 패턴 앞 `%` | 지원 (`%pattern`) | 지원 (인덱스 미사용) |
-| 대소문자 | 대소문자 구분 | 대소문자 구분 |
-
-> `NOT ESEARCH`는 지원하지 않습니다. 반대 패턴이 필요하면 `NOT SEARCH`나 `NOT LIKE`를 사용하십시오.
+`NOT ESEARCH` 구문은 지원하지 않습니다. `NOT SEARCH`나 `NOT LIKE`로 바꾸면
+검색 의미도 바뀝니다. 어떤 행을 제외할지 다시 정의하고 NULL 처리까지 확인하세요.
 
 <a id="like-not"></a>
 <a id="text-search-like-not"></a>
 
-### LIKE / NOT LIKE
-
-`LIKE`는 SQL 표준 패턴 매칭 연산자입니다. 인덱스를 사용하지 않으므로 대용량 테이블에서는 성능에 주의합니다.
-
-#### 패턴 문자
-
-| 문자 | 의미 |
-|------|------|
-| `%` | 0개 이상의 임의 문자 |
-| `_` | 정확히 1개의 임의 문자 |
-
-#### 예시
+## LIKE는 원문 문자열의 패턴을 검사합니다
 
 ```sql
--- 'TEMP'로 시작하는 sensor_id
-SELECT * FROM sensor_log WHERE sensor_id LIKE 'TEMP%';
-
--- '-01'로 끝나는 sensor_id
-SELECT * FROM sensor_log WHERE sensor_id LIKE '%-01';
-
--- 중간에 'ERR' 포함
-SELECT * FROM event_log WHERE message LIKE '%ERR%';
-
--- 4자리 코드 패턴 (___)
-SELECT * FROM sensor_log WHERE code LIKE 'T___';
+SELECT event_id FROM ch7_search WHERE message LIKE '%TIMEOUT%' ORDER BY event_id;
+SELECT event_id FROM ch7_search WHERE message LIKE 'ERR-____' ORDER BY event_id;
+SELECT event_id FROM ch7_search WHERE message NOT LIKE '%timeout%' ORDER BY event_id;
 ```
 
-#### NOT LIKE
+첫 쿼리는 1·3·8번, 두 번째는 0건, 세 번째는 2·4·6·7번입니다.
+7번 메시지는 `ERR-1001` 뒤에도 문자열이 있으므로 `ERR-____` 전체 패턴과 맞지 않습니다.
+`%`는 0개 이상의 문자, `_`는 한 문자를 나타냅니다.
+리터럴 `%`·`_`·역슬래시를 찾을 때는 역슬래시 이스케이프 규칙도 확인하세요.
 
-```sql
--- 'TEMP'로 시작하지 않는 센서
-SELECT * FROM sensor_log WHERE sensor_id NOT LIKE 'TEMP%';
-```
-
-#### 성능 고려사항
-
-- `LIKE '%pattern'` 또는 `LIKE '%pattern%'`처럼 앞에 `%`가 오면 인덱스를 사용할 수 없어 전체 스캔이 발생합니다.
-- 대용량 LOG/TAG 테이블의 VARCHAR 컬럼에 자주 검색한다면 KEYWORD 인덱스를 생성하고 `SEARCH` 또는 `ESEARCH`를 사용하는 것이 성능상 유리합니다.
-
-
-<a id="design-text-search"></a>
-
-## 전문 검색 설계
-
-`TEXT` 타입 컬럼에 KEYWORD 인덱스를 생성하면 `SEARCH` 연산자로 전문 검색(full-text search)을 수행할 수 있습니다.
-
-### TEXT 컬럼 사용
-
-```sql
-CREATE LOG TABLE app_log (
-    event_time  DATETIME,
-    level       VARCHAR(8),
-    message     TEXT        -- 전문 검색 대상
-);
-
-CREATE KEYWORD INDEX idx_app_log_msg ON app_log(message);
-```
-
-### 전문 검색 쿼리
-
-```sql
--- 'error' 단어를 포함하는 로그 조회
-SELECT _arrival_time, level, message
-FROM app_log
-WHERE message SEARCH 'error';
-
--- 여러 단어 AND 조건
-SELECT _arrival_time, message
-FROM app_log
-WHERE message SEARCH 'connection refused';
-
--- _arrival_time 범위와 함께 사용
-SELECT _arrival_time, message
-FROM app_log
-WHERE _arrival_time >= '2024-01-01 00:00:00'
-  AND message SEARCH 'timeout';
-```
-
-### LIKE와의 차이
-
-| 방식 | 인덱스 | 특성 |
-|------|--------|------|
-| `LIKE '%keyword%'` | 미사용 (풀스캔) | 단순 문자열 매칭 |
-| `col SEARCH 'keyword'` | 역인덱스 사용 | 단어 단위 검색, 고성능 |
-
-### 주의사항
-
-- `TEXT` 컬럼은 최대 64MB 저장 가능합니다.
-- 영문 기준 단어 분리(공백, 구두점)를 기반으로 역인덱스를 구성합니다.
-- 매우 긴 텍스트는 `VARCHAR(n)` 대신 `TEXT`를 사용합니다.
-- `TEXT` 컬럼에는 정렬(`ORDER BY`)이나 집계(`GROUP BY`)를 적용하지 않는 것을 권장합니다.
+LIKE도 현재 ASCII 비교에서는 대소문자를 구분하지 않습니다.
+KEYWORD 인덱스는 사용하지 않으며, WHERE의 다른 조건이나 시간 범위로 검사할 행을
+줄일 수 있습니다. 따라서 LIKE가 있다는 이유만으로 항상 테이블 전체를 읽는다고
+설명하는 것도 정확하지 않습니다.
 
 <a id="regex"></a>
 <a id="regexp-not"></a>
 <a id="regex-regexp-not"></a>
 
-## REGEXP와 REGEXP_LIKE
-
-`REGEXP`는 POSIX 확장 정규식과 일치하는 row를, `NOT REGEXP`는 일치하지 않는 row를
-선택합니다.
+## 정규식은 형식과 위치를 검사할 때 사용합니다
 
 ```sql
-SELECT _arrival_time, message
-  FROM app_log
- WHERE _arrival_time >= now - 1h
-   AND message REGEXP 'ERR-[0-9]+|timeout';
+SELECT event_id FROM ch7_search
+ WHERE message REGEXP '^ERR-[0-9]+'
+ ORDER BY event_id;
+
+SELECT event_id FROM ch7_search
+ WHERE message NOT REGEXP 'timeout'
+ ORDER BY event_id;
 ```
+
+첫 쿼리는 7번, 두 번째는 2·4·6·7번입니다.
+REGEXP는 정규식 패턴에 맞는 부분이 있는지 검사합니다.
+문자열 시작이나 끝을 제한하려면 `^`·`$`를 명시하세요.
 
 <a id="regexp-like"></a>
 <a id="regex-regexp-like"></a>
 
-`REGEXP_LIKE(string_expression, pattern)`은 일치하면 `1`, 아니면 `0`을 반환하므로 SELECT나
-`CASE`에도 사용할 수 있습니다. 정규식은 넓은 범위를 읽을 수 있으므로 시간 조건과
-`SEARCH`/`ESEARCH`로 후보를 먼저 줄입니다.
+함수로 사용할 때는 `REGEXP_LIKE`를 사용합니다.
+현재 이 함수의 입력은 VARCHAR여야 하고, 패턴과 옵션도 상수 VARCHAR여야 합니다.
+앞의 TEXT 컬럼을 그대로 전달하면 타입 오류가 나므로 별도 표본을 준비합니다.
+
+```sql
+CREATE LOG TABLE ch7_regexp_fn (event_id INTEGER, message VARCHAR(200));
+INSERT INTO ch7_regexp_fn VALUES (1, 'ERROR connection timeout');
+INSERT INTO ch7_regexp_fn VALUES (5, NULL);
+
+SELECT event_id,
+       REGEXP_LIKE(message, 'error') AS case_sensitive,
+       REGEXP_LIKE(message, 'error', 'i') AS case_insensitive
+  FROM ch7_regexp_fn
+ WHERE event_id IN (1, 5)
+ ORDER BY event_id;
+```
+
+1번은 각각 0·1, NULL 메시지인 5번은 두 결과 모두 NULL입니다.
+기본 정규식 비교는 대소문자를 구분하며, `i` 옵션은 비구분 비교입니다.
+명시적인 구분 비교에는 `c`를 사용할 수 있습니다.
+
+정규식은 KEYWORD 인덱스로 직접 처리되지 않습니다.
+시간 조건이나 SEARCH로 대상을 줄일 수 있지만, 선행 조건이 원하는 행을 놓치면
+뒤의 정규식이 그 행을 되살려 주지는 못합니다.
+
+## 저장 타입과 검색 성능을 혼동하지 마세요
+
+TEXT는 최대 64MiB 원문을 담을 수 있지만, TEXT 자체의 ORDER BY·GROUP BY는 지원하지
+않습니다. 정렬·집계할 장치·오류 코드·등급은 별도 컬럼에 두세요.
+같은 데이터에서 인덱스 존재 여부, 빌드 상태, 조회 범위를 확인한 뒤 성능을 비교합니다.
+
+```sql
+DROP TABLE ch7_regexp_fn;
+DROP TABLE ch7_search;
+```
+
+검색 결과가 다르면 원문 한 행과 사용한 패턴을 함께 확인해 보세요.
+“단어를 찾는지, 원문 일부를 찾는지”를 구분하는 것만으로 해결되는 경우가 많습니다.

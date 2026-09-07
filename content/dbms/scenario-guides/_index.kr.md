@@ -8,7 +8,7 @@ toc: true
 이 장은 앞 장의 기능을 실제 운영 흐름으로 조합합니다. SQL 실습은 각 페이지의 고유한
 `SC15_` 객체를 사용하며 생성, 입력, 검증, 정리 순서로 구성합니다.
 
-| 절 | 시나리오 | 정본으로 연결되는 내용 |
+| 절 | 시나리오 | 함께 확인할 내용 |
 |---|---|---|
 | 15.1 | [실시간 장비 상태와 알람](./state-master-status-equipment-alarm/) | LOOKUP 기준, TAG 최신값, LOG 알람 이력 |
 | 15.2 | [TAG·TRANSACTION·LOG 조인](./join-tag-rdb-log/) | 이기종 테이블 조인 |
@@ -16,6 +16,6 @@ toc: true
 | 15.4 | [백업 데이터 조회](./backup-query-mount/) | BACKUP, MOUNT, UMOUNT |
 | 15.5 | [Collector 파일 적재](./file-ingestion-collector/) | 템플릿 등록과 결과 검증 |
 
-공유 서버에서 실습할 때는 별도 논리 database를 사용하고, 완료 후 만든 객체와 database를
+공유 서버에서 실습할 때는 별도 논리 데이터베이스를 사용하고, 완료 후 만든 객체와 데이터베이스를
 삭제하십시오. 백업·MOUNT, Collector, Cluster 예제는 서비스와 파일 시스템에 영향을 주므로
 격리된 검증 환경에서만 실행합니다.

@@ -14,7 +14,7 @@ Machbase는 용도에 따라 다섯 가지 테이블 유형을 제공합니다. 
 | 테이블 유형 | 주요 용도 |
 |------------|----------|
 | **TAG** | 시계열 센서 데이터 고속 수집 및 집계 (ROLLUP) |
-| **LOG** | 비정형 로그/이벤트 데이터 순차 저장, 텍스트 검색 |
+| **LOG** | 로그·이벤트를 정의한 컬럼에 순차 저장, 텍스트 검색 |
 | **LOOKUP** | 메타데이터, 코드 테이블, 참조 데이터 (UPDATE/DELETE 지원) |
 | **VOLATILE** | 메모리 기반 서버 상태·캐시, 재시작 시 데이터 소멸 |
 | **TRANSACTION** | 트랜잭션이 필요한 일반 관계형 데이터 |
@@ -53,12 +53,13 @@ Machbase는 용도에 따라 다섯 가지 테이블 유형을 제공합니다. 
 
 > 기호: O = 지원, X = 미지원, △ = 일부 지원 또는 제약 있음
 
-Append는 client API 경로마다 table-type gate가 다르므로 이 표에서 단일 지원값으로
-일반화하지 않습니다. [SDK Append matrix](/dbms/development-tools-integration/sdk-support-scope/#append-table-type-matrix)를
-정본으로 사용합니다.
+Append가 지원하는 테이블 유형은 클라이언트 API에 따라 다릅니다. 사용하는 언어와 API의
+지원 범위는 [SDK Append 지원표](/dbms/development-tools-integration/sdk-support-scope/#append-table-type-matrix)를
+확인하십시오.
 
-DECIMAL은 모든 public 테이블 타입의 공통 exact fixed-point 타입입니다. `NUMERIC`, `DEC`,
-`FIXED`, `NUMBER`는 DECIMAL alias이며, precision은 최대 65, scale은 최대 30입니다. 상세 규칙은
+DECIMAL은 다섯 가지 테이블 유형에서 사용할 수 있는 정확한 고정소수점 타입입니다.
+`NUMERIC`, `DEC`, `FIXED`, `NUMBER`는 DECIMAL의 별칭이며, 전체 자릿수(precision)는 최대 65,
+소수 자릿수(scale)는 최대 30입니다. 상세 규칙은
 [DECIMAL과 NUMERIC 고정소수점 타입](../../sql/type-data-types-dictionary/decimal-numeric-fixed-point/)을
 참고하십시오.
 
@@ -100,7 +101,7 @@ UPDATE sensor_data
 
 ### LOOKUP과 VOLATILE의 트랜잭션 범위
 
-LOOKUP과 VOLATILE 테이블의 각 DML은 statement 단위로 반영됩니다. 여러 DML을 `BEGIN`과
+LOOKUP과 VOLATILE 테이블의 각 DML은 문장 단위로 반영됩니다. 여러 DML을 `BEGIN`과
 `COMMIT`/`ROLLBACK`으로 묶는 TRANSACTION 테이블 트랜잭션에는 참여하지 않습니다.
 
 ### JSON 컬럼 지원 범위

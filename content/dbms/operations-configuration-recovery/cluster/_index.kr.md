@@ -7,128 +7,134 @@ aliases:
   - /dbms/scenario-guides/cluster/
 ---
 
-Cluster 작업은 topology, node 역할, replication·data 상태를 확인한 뒤 검증된 runbook으로
-수행합니다. 이 페이지는 안전한 확인 순서만 제공하며, start·stop·remove·destroy 명령을
-복사 실행하는 절차로 제공하지 않습니다.
+Cluster 작업은 노드 구성, 노드 역할, 복제·데이터 상태를 확인한 뒤 검증된 운영 절차서로
+수행합니다. 이 페이지의 점검 순서로 변경 영향과 복구 경로를 확인한 뒤, 설치된 버전의
+관리 도구 명령을 운영 절차서에 반영합니다.
 
 ## 구성 요소
 
 | 역할 | 확인 |
 |------|------|
-| Coordinator | topology와 node state |
-| Deployer | package와 node 배포 |
-| Broker | client connection과 query routing |
-| Warehouse | data 저장·query 처리 |
-| Lookup | 참조 데이터 service |
+| Coordinator | 노드 구성과 노드 상태 |
+| Deployer | 패키지와 노드 배포 |
+| Broker | 클라이언트 연결과 쿼리 라우팅 |
+| Warehouse | 데이터 저장·쿼리 처리 |
+| Lookup | 참조 데이터 서비스 |
 
-node 수와 배치는 가용성·처리량·장애 영역 요구사항을 근거로 설계합니다. 고정 node 수나
-hardware 사양을 모든 환경에 적용하지 않습니다.
+노드 수와 배치는 가용성·처리량·장애 영역 요구사항을 근거로 설계합니다. 고정 노드 수나
+하드웨어 사양을 모든 환경에 적용하지 않습니다.
 
 <a id="status-check-state-cluster"></a>
 
 ## 상태 확인
 
-변경 전후에 Coordinator 관점의 전체 topology와 각 node의 process·resource를 확인합니다.
-상태 문자열과 명령 option은 설치된 도구의 help를 기준으로 합니다.
+변경 전후에 Coordinator 관점의 전체 노드 구성과 각 노드의 프로세스·자원을 확인합니다.
+상태 문자열과 명령 옵션은 설치된 도구의 도움말을 기준으로 합니다.
 
 ```bash
 machcoordinatoradmin --help
 machclusterctl --help
 ```
 
-- expected node가 모두 등록돼 있는가
-- node role, host, port, group이 배포 기록과 같은가
-- service·replication·scrap 상태가 정상인가
-- node별 CPU·memory·disk·network 편차가 있는가
-- Broker를 통한 실제 connection·query가 성공하는가
+- 예상한 노드가 모두 등록돼 있는가
+- 노드 역할, 호스트, 포트, 그룹이 배포 기록과 같은가
+- 서비스·복제·scrap 상태가 정상인가
+- 노드별 CPU·메모리·디스크·네트워크 편차가 있는가
+- Broker를 통한 실제 연결·쿼리가 성공하는가
 
 <a id="machclusterctl-connect-export"></a>
 
-## Connect와 설정 export
+<a id="connect와-설정-export"></a>
 
-`machclusterctl connect`로 접속할 때 대상 Broker와 native port를 명시하고 실제
-`CURRENT_DATABASE()`와 표본 query를 확인합니다. 설정 export에는 host·port·경로와 운영
-정보가 포함될 수 있으므로 접근 권한을 제한하고, import 전에 diff를 검토합니다.
+## 접속과 설정 내보내기
+
+`machclusterctl connect`로 접속할 때 대상 Broker와 네이티브 포트를 명시하고 실제
+`CURRENT_DATABASE()`와 표본 쿼리를 확인합니다. 설정 내보내기에는 호스트·포트·경로와 운영
+정보가 포함될 수 있으므로 접근 권한을 제한하고, 가져오기 전에 diff를 검토합니다.
 
 <a id="node-start-cluster"></a>
 
-## Node 시작·종료
+<a id="node-시작종료"></a>
 
-node 제어 전 다음을 확인합니다.
+## 노드 시작·종료
 
-1. 대상 node 이름·alias·host·role
-2. client connection과 진행 중 query·Appender
-3. Warehouse group의 redundancy와 data state
-4. node 중지 시 남은 capacity
-5. start·stop 순서와 rollback
+노드 제어 전 다음을 확인합니다.
+
+1. 대상 노드 이름·별칭·호스트·역할
+2. 클라이언트 연결과 진행 중 쿼리·Appender
+3. Warehouse 그룹의 이중화와 데이터 상태
+4. 노드 중지 시 남은 처리 용량
+5. 시작·중지 순서와 롤백
 6. 유지보수 뒤 정상 판정 기준
 
-강제 종료는 정상 종료가 반복해서 실패하고 data·recovery 영향을 판단한 경우에만
-사용합니다. 단순 timeout에 바로 kill을 실행하지 않습니다.
+강제 종료는 정상 종료가 반복해서 실패하고 데이터·복구 영향을 판단한 경우에만
+사용합니다. 단순 시간 초과에 바로 kill을 실행하지 않습니다.
 
 <a id="machclusterctl-start-stop-destroy"></a>
 
 ## Cluster 전체 제어와 destroy
 
-전체 start·stop은 Coordinator, Deployer, Broker, Warehouse, Lookup 의존 순서를 현재
-release runbook에서 확인합니다. `destroy`는 topology와 node data를 제거할 수 있는
+전체 시작·중지는 Coordinator, Deployer, Broker, Warehouse, Lookup 의존 순서를 현재
+릴리스 운영 절차서에서 확인합니다. `destroy`는 노드 구성과 노드 데이터를 제거할 수 있는
 파괴적 작업입니다.
 
 - 이름이 비슷한 다른 cluster가 아닌지 확인
-- 최신 backup과 restore 검증
-- service owner 승인과 client 차단
+- 최신 백업과 복원 검증
+- 서비스 소유자 승인과 클라이언트 차단
 - 외부 `DBS_PATH` 포함 삭제 범위 확인
-- rollback 불가능 영역 명시
-- 실행 후 host별 잔여 process·path 확인
+- 롤백 불가능 영역 명시
+- 실행 후 호스트별 잔여 프로세스·경로 확인
 
 일반 상태 복구에 `destroy`를 사용하지 않습니다.
 
 <a id="node-cluster"></a>
 
-## Node 추가·제거
+<a id="node-추가제거"></a>
 
-추가 전 package·version·port·path·filesystem·network를 확인합니다. 제거 전에는 data
-redundancy와 migration 완료, node를 참조하는 alias·group·monitoring을 확인합니다. node
-remove가 home과 data path를 삭제할 수 있으므로 정확한 범위는 해당 명령 help와 staging
+## 노드 추가·제거
+
+추가 전 패키지·버전·포트·경로·파일 시스템·네트워크를 확인합니다. 제거 전에는 데이터
+이중화와 이전 완료, 노드를 참조하는 별칭·그룹·모니터링을 확인합니다. 노드
+remove가 home과 데이터 경로를 삭제할 수 있으므로 정확한 범위는 해당 명령 도움말과 검증 환경
 검증으로 확인합니다.
 
 <a id="state-alter-status-cluster"></a>
 
 ## 상태 변경
 
-Broker 비활성화, Warehouse group read-only, node scrap 같은 상태 변경은 목적이 다릅니다.
-문제 node를 숨기기 위해 상태를 임의 변경하지 않습니다.
+Broker 비활성화, Warehouse 그룹 읽기 전용, 노드 scrap 같은 상태 변경은 목적이 다릅니다.
+문제 노드를 숨기기 위해 상태를 임의 변경하지 않습니다.
 
 | 목적 | 먼저 확인 |
 |------|-----------|
-| 새 connection 차단 | Broker drain과 기존 connection |
-| write 중단 | Warehouse group과 진행 중 Append |
-| node 격리 | replication·data 손상 근거 |
-| service 복귀 | health, data 동기화, 표본 query |
+| 새 연결 차단 | Broker drain과 기존 연결 |
+| 쓰기 중단 | Warehouse 그룹과 진행 중 Append |
+| 노드 격리 | 복제·데이터 손상 근거 |
+| 서비스 복귀 | 정상 동작 여부, 데이터 동기화, 표본 쿼리 |
 
 <a id="recovery-state-status-warehouse"></a>
 
 ## Warehouse 복구
 
 1. 장애 시각과 최초 오류를 보존합니다.
-2. process, disk, network, replication 상태를 확인합니다.
-3. 남은 node의 redundancy와 service 영향을 판단합니다.
-4. 단순 restart, reattach, rebuild 중 지원되는 경로를 선택합니다.
-5. recovery 진행률과 오류를 관찰합니다.
-6. 완료 후 node별 row·시간 범위와 query 결과를 비교합니다.
+2. 프로세스, 디스크, 네트워크, 복제 상태를 확인합니다.
+3. 남은 노드의 이중화와 서비스 영향을 판단합니다.
+4. 단순 재시작, reattach, rebuild 중 지원되는 경로를 선택합니다.
+5. 복구 진행률과 오류를 관찰합니다.
+6. 완료 후 노드별 행·시간 범위와 쿼리 결과를 비교합니다.
 
-data 손상 여부를 확인하지 않고 node를 normal로 강제 전환하지 않습니다.
+데이터 손상 여부를 확인하지 않고 노드를 normal로 강제 전환하지 않습니다.
 
 <a id="limitations-cluster"></a>
 
 ## 제약과 점검표
 
-edition별 SQL, ROLLUP, backup, ALTER SYSTEM 지원 범위는
+에디션별 SQL, ROLLUP, 백업, ALTER SYSTEM 지원 범위는
 [지원 범위](/dbms/reference/support-scope-constraints/)를 확인합니다.
 
-- 모든 node와 client SDK release가 호환되는가
-- maintenance 중 허용되는 read·write 범위가 정의됐는가
-- backup·restore와 node 복구 훈련이 완료됐는가
-- host·port·path를 두 사람이 교차 확인했는가
-- monitoring과 alert가 새 topology를 반영하는가
-- 변경 후 Broker connection, query, Append, metadata를 검증했는가
+- 모든 노드와 클라이언트 SDK 릴리스가 호환되는가
+- 유지보수 중 허용되는 읽기·쓰기 범위가 정의됐는가
+- 백업·복원과 노드 복구 훈련이 완료됐는가
+- 호스트·포트·경로를 두 사람이 교차 확인했는가
+- 모니터링과 알림이 새 노드 구성을 반영하는가
+- 변경 후 Broker 연결, 쿼리, Append, 메타데이터를 검증했는가

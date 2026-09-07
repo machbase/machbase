@@ -15,7 +15,10 @@ Machbase DBMS 8.7.0은 같은 숫자 타입의 값을 정해진 개수만큼 저
 
 ## 지원 타입과 선언 범위
 
-컬럼을 선언할 때 숫자 요소 타입 뒤에 `[cardinality]`를 붙입니다.
+컬럼을 선언할 때 숫자 요소 타입 뒤에 `[cardinality]`를 붙입니다. cardinality는 배열에
+저장할 요소 개수이며, 각 행에서 NULL이 아닌 요소의 개수가 아니라 컬럼에 선언한 고정
+길이를 뜻합니다. 배열 전체가 없는 상태(whole NULL)와 배열 안의 특정 값만 없는 상태
+(element NULL)는 서로 구분합니다.
 
 | 요소 타입 | DDL 예 | 설명 |
 |---|---|---|
@@ -33,9 +36,9 @@ Machbase DBMS 8.7.0은 같은 숫자 타입의 값을 정해진 개수만큼 저
 - `DECIMAL` precision 범위는 `1..65`입니다.
 - `DECIMAL` scale 범위는 `0..30`이며 precision보다 클 수 없습니다.
 
-다음 별칭은 해당 canonical 요소 타입으로 처리됩니다.
+다음 별칭은 해당 대표 요소 타입으로 처리됩니다.
 
-| 별칭 | canonical 타입 |
+| 별칭 | 대표 타입 |
 |---|---|
 | `SHORT` | `INT16` |
 | `USHORT` | `UINT16` |
@@ -117,19 +120,21 @@ METADATA 경로만 사용할 수 있습니다.
 TAG DATA 일반 ARRAY 컬럼은 `CREATE TABLE`에서 선언할 수 있지만 ALTER로 추가할 수
 없습니다.
 
-### DEFAULT와 기존 row
+<a id="default와-기존-row"></a>
 
-- DEFAULT가 없으면 ALTER 전에 존재한 row의 새 ARRAY 컬럼은 whole NULL입니다.
-- LOG, LOOKUP, TRANSACTION과 TAG METADATA에서는 명시한 ARRAY DEFAULT를 기존 row에
+### DEFAULT와 기존 행
+
+- DEFAULT가 없으면 ALTER 전에 존재한 행의 새 ARRAY 컬럼은 전체 NULL입니다.
+- LOG, LOOKUP, TRANSACTION과 TAG METADATA에서는 명시한 ARRAY DEFAULT를 기존 행에
   적용합니다.
-- VOLATILE은 기존 scalar `ADD COLUMN`과 마찬가지로 기존 row를 DEFAULT로 다시 쓰지
-  않으므로 새 ARRAY 컬럼은 whole NULL입니다.
-- Cluster LOG는 명시한 ARRAY DEFAULT를 기존 row에 적용합니다.
-- DEFAULT constructor의 요소 수는 선언 cardinality와 정확히 같아야 합니다.
+- VOLATILE은 단일 값 컬럼의 `ADD COLUMN`과 마찬가지로 기존 행을 DEFAULT로 다시 쓰지
+  않으므로 새 ARRAY 컬럼은 전체 NULL입니다.
+- Cluster LOG는 명시한 ARRAY DEFAULT를 기존 행에 적용합니다.
+- DEFAULT 배열 생성식의 요소 수는 선언한 cardinality와 정확히 같아야 합니다.
 
-TAG DATA insert 또는 Append로 tag가 자동 등록되는 시점이 ALTER 뒤라면 새 metadata
-row에는 ADD COLUMN DEFAULT를 다시 적용하지 않습니다. 추가된 ARRAY metadata 컬럼은
-whole NULL로 생성됩니다. DEFAULT는 ALTER 전에 존재한 metadata row만 backfill합니다.
+ALTER 이후에 TAG DATA의 INSERT 또는 Append로 새 태그가 자동 등록되면, 새 메타데이터
+행에는 ADD COLUMN의 DEFAULT를 적용하지 않습니다. 추가한 ARRAY 메타데이터 컬럼은
+전체 NULL로 생성됩니다. 이 DEFAULT는 ALTER 전에 존재한 메타데이터 행에만 적용됩니다.
 
 다음 역할에는 `ARRAY`를 사용할 수 없습니다.
 
@@ -245,13 +250,14 @@ SELECT CHANNELS,
 - 해당 요소가 NULL인 경우
 
 {{< callout type="warning" >}}
-요소 postfix는 인용하지 않은 단순 컬럼명에만 사용할 수 있습니다. `A[0]`은 가능하지만
+요소 위치를 나타내는 `[위치]`는 따옴표로 감싸지 않은 단순 컬럼명 뒤에만 붙일 수 있습니다.
+`A[0]`은 가능하지만
 `T.A[0]`과 `"A"[0]`은 지원하지 않습니다.
 {{< /callout >}}
 
 ## ARRAY_LENGTH
 
-`ARRAY_LENGTH()`는 non-NULL `ARRAY`의 선언 cardinality를 반환합니다.
+`ARRAY_LENGTH()`는 배열 전체가 NULL이 아니면 선언한 요소 개수(cardinality)를 반환합니다.
 
 ```sql
 SELECT ID, ARRAY_LENGTH(CHANNELS)
@@ -283,9 +289,9 @@ SELECT CAST(AMOUNTS AS DECIMAL(10,2)[2])
   처리합니다.
 - 한 요소라도 범위나 변환 규칙을 위반하면 CAST와 이를 포함한 문장 전체가 실패합니다.
 
-prepared statement에서는 CAST 대상이 parameter와 결과의 요소 타입, cardinality와
-DECIMAL precision/scale을 결정합니다. ARRAY 값, whole NULL과 sparse ARRAY를 같은
-statement에 다시 bind할 수 있습니다.
+준비된 문장(prepared statement)에서는 CAST 대상이 매개변수와 결과의 요소 타입,
+cardinality, DECIMAL의 전체·소수 자릿수를 결정합니다. 같은 문장에 ARRAY 값, 전체 NULL,
+일부 위치만 지정한 sparse ARRAY를 다시 바인딩할 수 있습니다.
 
 ```sql
 SELECT CAST(? AS INT32[3]);

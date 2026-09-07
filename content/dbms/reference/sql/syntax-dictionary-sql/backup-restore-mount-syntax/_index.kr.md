@@ -66,7 +66,11 @@ backup_incremental_stmt ::=
     'INTO DISK' '=' 'backup_path'
 ```
 
-마지막 전체(또는 증분) 백업 이후에 변경된 데이터만 백업합니다.
+마지막 전체 또는 증분 백업을 기준으로 백업합니다.
+테이블 타입별 저장 방식은 구분해야 합니다. TRANSACTION 저장소는 증분 이미지에도
+해당 백업 시점의 전체 스냅샷으로 포함되므로, 변경 행만의 델타나 변경량만큼의 공간으로
+계산하면 안 됩니다. [TRANSACTION 백업 검증](/dbms/rdb-table-usage/backup-restore-mount/)에서
+백업과 현재 데이터의 조회를 비교할 수 있습니다.
 
 ```sql
 -- 전체 백업 이후 변경분 증분 백업

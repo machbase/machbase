@@ -53,7 +53,7 @@ INSERT INTO sc15_equipment_temp VALUES ('MOTOR_01', SYSDATE, 68.0);
 EXEC TABLE_FLUSH(sc15_equipment_temp);
 ```
 
-한 장비만 확인할 때는 역방향 scan과 `LIMIT 1`을 사용할 수 있습니다.
+한 장비만 확인할 때는 역방향 스캔과 `LIMIT 1`을 사용할 수 있습니다.
 
 ```sql
 SELECT /*+ SCAN_BACKWARD(sc15_equipment_temp) */
@@ -86,10 +86,15 @@ SELECT e.eq_id, e.eq_name, e.location,
  ORDER BY e.eq_id;
 ```
 
-알람 판정 결과를 애플리케이션이 확인한 뒤 이력 테이블에 기록합니다.
+위 예제에서는 `PUMP_01`이 `ALARM`, `MOTOR_01`이 `NORMAL`로 표시됩니다. 알람 판정
+결과를 애플리케이션이 확인한 뒤 이력 테이블에 기록합니다. 반복 조회 때 같은 알람을
+계속 기록할지, 상태가 바뀔 때만 기록할지도 애플리케이션에서 결정합니다.
 
-API나 dashboard는 조회 결과와 함께 마지막 측정 시각을 반환하고, 허용 지연을 넘긴 장비를
-별도 `STALE` 상태로 표현합니다. polling 간격은 유입 주기와 query 비용을 측정해 정합니다.
+API나 대시보드는 조회 결과와 함께 마지막 측정 시각을 반환하고, 허용 지연을 넘긴 장비를
+별도 `STALE` 상태로 표현합니다. 위 SQL에는 `STALE` 판정이 포함되어 있지 않습니다.
+또한 내부 조인을 사용하므로 측정값이 없는 장비는 결과에 나타나지 않습니다. 운영 화면에서는
+미수집 장비와 NULL 측정값을 정상 상태로 오인하지 않도록 별도로 처리합니다.
+주기적 조회 간격은 유입 주기와 쿼리 비용을 측정해 정합니다.
 
 ```sql
 INSERT INTO sc15_alarm_log VALUES ('PUMP_01', 'TEMP_HIGH', 83.7);
@@ -99,8 +104,8 @@ SELECT _arrival_time, eq_id, alarm_type, measured_value
  ORDER BY _arrival_time DESC;
 ```
 
-문자열 결합 함수나 현재 시각에서 interval을 빼는 비표준 표현에 의존하지 않고, 장비 ID를
-TAG 이름과 직접 맞췄습니다. 더 복잡한 이름 규칙이 필요하면 적재 단계에서 정규화한 키를
+장비 ID와 TAG 이름에 같은 값을 사용하므로 조인할 때 문자열 변환이 필요하지 않습니다.
+더 복잡한 이름 규칙이 필요하면 적재 단계에서 정규화한 키를
 별도 열로 관리하십시오.
 
 ## 4단계: 정리

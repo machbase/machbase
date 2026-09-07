@@ -9,58 +9,58 @@ aliases:
 
 <a id="support-scope-rollup-rebuild-cluster"></a>
 
-## ROLLUP 지원 범위
+## Edition과 테이블 범위
 
-### Edition별 지원
-
-| 기능 | Standard Edition | Cluster Edition |
-|------|:---:|:---:|
-| CREATE/DROP ROLLUP | O | O |
-| ALTER ROLLUP (START/STOP/FORCE/WAKEUP) | O | O |
+| 기능 | Standard | Cluster |
+|---|:---:|:---:|
+| 시간축 TAG의 일반·조건·확장 ROLLUP 생성·조회·제어 | O | O |
 | WITH ROLLUP 자동 생성 | O | O |
-| ROLLUP 조회 (`rollup()` 함수) | O | O |
-| Custom Rollup (INTO...AS) | O | X |
-| 조건 ROLLUP (WHERE) | O | O |
-| 확장 ROLLUP (EXTENSION) | O | O |
-| Rollup Rebuild (`EXEC ROLLUP_REBUILD`) | O | X |
+| 지원 JSON 경로·문서 전체 집계 | O | O |
+| Custom INTO...AS | O | X |
+| ROLLUP_REBUILD | 제한된 대상·인수에서 지원 | X |
 
-> **Custom ROLLUP과 ROLLUP_REBUILD는 Cluster Edition에서 지원하지 않습니다.** 지원되지 않는
-> 기능을 실행하면 서버가 오류를 반환합니다. 내부 symbolic error 이름을 사용자 계약으로
-> 사용하지 마십시오.
->
-> 기본 ROLLUP 스레드는 Cluster Edition에서 각 노드에서 독립적으로 동작합니다.
+거리축 TAG, LOG, TRANSACTION, VOLATILE, LOOKUP에 시간축 ROLLUP을 적용하지 않습니다.
+Cluster의 상태는 관련 노드와 계층별로 확인합니다.
 
-### 테이블 타입별 ROLLUP 지원
+## 생성 유형과 컬럼
 
-| 테이블 타입 | ROLLUP 지원 |
-|------------|:---:|
-| TAG (시간축) | O |
-| TAG (거리축) | X |
-| LOG | X |
-| TRANSACTION | X |
-| VOLATILE | X |
-| LOOKUP | X |
+| 유형 | 필요한 조건 |
+|---|---|
+| 일반 숫자 | 지원 숫자 DATA 컬럼; 명시 생성 시 SUMMARIZED는 필수가 아님 |
+| JSON 경로 | JSON DATA 컬럼과 집계할 숫자 경로 |
+| JSON 문서 전체 | JSON SUMMARIZED 컬럼 |
+| WITH ROLLUP | 시간축 TAG의 세 번째 SUMMARIZED 컬럼 |
+| FROM 계층 | 더 큰 정수배 간격과 동일한 확장·모드 조건 |
+| Custom | 소스 시간축 TAG 하나, 사전 생성한 호환 대상 TAG |
 
-> ROLLUP은 시간축(BASETIME) TAG 테이블 전용 기능입니다.
+## 집계와 선택
 
-### 집계 함수 지원 범위
+일반 숫자 ROLLUP은 MIN/MAX/SUM/COUNT/AVG/SUMSQ, 확장은 FIRST/LAST를 추가로
+제공합니다. Custom의 부분 결과는 사용자가 재집계합니다. 평균은 합계와 유효 건수로,
+FIRST/LAST는 대응 시각을 함께 유지해 합칩니다.
+JSON 문서 전체의 COUNT는 저장된 집계 건수이며 원본 COUNT(value)와 무조건 같지 않습니다.
 
-| 함수 | 기본 ROLLUP | 확장 ROLLUP |
-|------|:---:|:---:|
-| MIN | O | O |
-| MAX | O | O |
-| SUM | O | O |
-| COUNT | O | O |
-| AVG | O | O |
-| SUMSQ | O | O |
-| FIRST | X | O |
-| LAST | X | O |
+후보 선택은 조건·컬럼·경로·모드·간격에 따릅니다. 일반/확장만으로 우선순위를 단정하거나,
+일 버킷에 24 HOUR ROLLUP이 자동 적용된다고 가정하지 않습니다.
+[조회 규칙](../../../tag-rollup-usage/query-syntax-rollup/)을 확인합니다.
 
-### ROLLUP 관련 권한
+## REBUILD는 생성 지원과 다름
+
+완전한 자동 SEC/MIN/HOUR 계층과 지원 Custom 경로를 대상으로 합니다. 임의 수동 이름,
+부분 자동 계층, 10 MIN Custom 등 생성 가능한 모든 구성을 재구성할 수 있는 것은 아닙니다.
+현재 Custom 시간 경계 처리 간격은 1 SEC·1 MIN·1 HOUR이며 SELECT의 버킷과도 맞아야 합니다.
+상수 시각 인수, 버킷 전체 확장, 상태 전환과 오류 후 확인은
+[REBUILD 레퍼런스](../../sql/syntax-dictionary-sql/rollup-rebuild-syntax/)를 따릅니다.
+
+## 권한
+
+작업 계정에는 대상 데이터베이스 접속과 생성·삭제·조회 등 필요한 권한을 부여합니다.
+다음은 존재하는 작업 계정에 생성·삭제 권한을 부여하는 예시이며 모든 필요 권한을
+한 번에 구성하는 스크립트는 아닙니다.
 
 ```sql
--- 대상 database에서 ROLLUP 객체를 생성·삭제할 권한
 GRANT CREATE, DROP ON DATABASE MACHBASEDB TO rollup_user;
 ```
 
-권한 체계는 [권한 관리](/dbms/security-access-control/privileges/)를 참고하십시오.
+[권한 관리](../../../security-access-control/privileges/)에서 소유자와 작업 범위를
+확인하십시오.

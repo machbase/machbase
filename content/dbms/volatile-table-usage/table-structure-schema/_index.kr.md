@@ -56,7 +56,8 @@ ON DUPLICATE KEY UPDATE SET state = 'ONLINE', updated_at = NOW;
 #### 주의사항
 
 - PRIMARY KEY 없이 생성할 수 있지만, PK 기반 동작(UPSERT, PK 조회 등)은 사용할 수 없습니다.
-- PRIMARY KEY 값은 중복할 수 없습니다 (ON DUPLICATE KEY UPDATE 사용 시 제외).
+- PRIMARY KEY가 같은 행을 둘 이상 저장할 수 없습니다. `ON DUPLICATE KEY UPDATE`는 중복 행을
+  추가하는 대신 기존 행을 갱신합니다.
 - PRIMARY KEY 컬럼은 하나만 지정합니다.
 
 <a id="volatile-table-design"></a>

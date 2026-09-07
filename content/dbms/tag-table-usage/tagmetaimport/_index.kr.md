@@ -4,86 +4,96 @@ weight: 120
 toc: true
 ---
 
-
 <a id="metadata-import-tagmetaimport-tag"></a>
 
-## tagmetaimport로 TAG 메타데이터 가져오기
+## tagmetaimport로 메타데이터 등록
 
-`tagmetaimport`는 TAG 테이블의 메타데이터를 CSV 파일로 일괄 로드하거나 업데이트하는 전용
-도구입니다. 사용자는 TAG 테이블 이름을 지정하며 시스템 저장 객체를 직접 다루지 않습니다.
+`tagmetaimport`는 CSV의 태그명과 사용자 메타데이터를 가져오는 도구입니다.
+일반 SQL의 논리 TAG 이름과 `-t` 입력 대상을 구분해야 합니다. 현재 래퍼는 `-t`를
+machloader에 전달합니다. 아래 논리 테이블 `ch5_meta_import`의 메타데이터 입력 대상은
+`_CH5_META_IMPORT_META`입니다. `-t ch5_meta_import`가 자동으로 METADATA를
+선택한다고 가정하지 마십시오.
 
-### TAG 메타데이터란
+이 이름은 도구의 대상 지정에 사용합니다. SQL 조회·변경은 `ch5_meta_import METADATA`를
+사용하며 저장 객체를 직접 수정하는 절차로 확장하지 않습니다. 기본 대상에 의존하지 말고
+`-t`를 명시합니다.
 
-TAG 테이블에서 `METADATA` 블록으로 정의된 컬럼들의 데이터입니다. 각 태그(name)에 대한 속성 정보(위치, 단위, 설명 등)를 저장합니다.
+## 1. 테이블 준비
+
+기존 객체가 없는 실습 데이터베이스에서 다음 SQL을 실행합니다.
 
 ```sql
-CREATE TAG TABLE sensors (
-    name    VARCHAR(20) PRIMARY KEY,
-    time    DATETIME BASETIME,
-    value   DOUBLE SUMMARIZED
+CREATE TAG TABLE ch5_meta_import (
+    name VARCHAR(40) PRIMARY KEY,
+    time DATETIME BASETIME,
+    value DOUBLE
 ) METADATA (
     location VARCHAR(40),
-    status   VARCHAR(20)
+    status VARCHAR(20)
 );
 ```
 
-위 예시에서 `location`, `status`가 메타데이터 컬럼입니다.
+## 2. CSV 준비
 
-### CSV 파일 형식
-
-메타데이터 CSV 파일에는 `name` 컬럼과 사용자가 정의한 메타데이터 컬럼만 포함합니다.
+다음 내용을 클라이언트의 `ch5_metadata.csv`로 저장합니다.
 
 ```csv
+name,location,status
 TEMP_001,Building-A/F1,READY
 TEMP_002,Building-A/F2,STOP
 TEMP_003,Building-B/F3,READY
 ```
 
-헤더를 포함하는 경우:
-```csv
-name,location,status
-TEMP_001,Building-A/F1,READY
-TEMP_002,Building-A/F2,STOP
-```
+파일에는 태그명 다음에 METADATA 선언 순서대로 값을 넣습니다. DATA의 time·value와
+시스템 컬럼 `_ID`·`_LAST_UPDATE_TIME`은 넣지 않습니다. 헤더가 있으면 `-H`를 지정하며,
+헤더가 임의의 컬럼 순서를 자동으로 맞춰 준다고 가정하지 않습니다.
 
-### tagmetaimport 사용법
+## 3. 입력과 결과 확인
+
+주소·계정은 실제 실습 서버에 맞추고, 사용하는 8.7.0 패키지의 `MACHBASE_HOME`과
+라이브러리 환경에서 실행합니다.
 
 ```bash
-# sensors TAG 테이블의 메타데이터 로드
-tagmetaimport -t sensors -d metadata.csv
-
-# 헤더 있는 CSV
-tagmetaimport -t sensors -d metadata.csv -H
-
-# 서버 접속 정보 지정
-tagmetaimport -t sensors -d metadata.csv \
-    -s 192.168.1.10 -P 5656 -u SYS -p MANAGER
-
-# 로그 파일 생성
-tagmetaimport -t sensors -d metadata.csv \
-    -l import.log -b import.bad
+tagmetaimport -s 127.0.0.1 -P 5656 -u SYS -p MANAGER \
+  -t _CH5_META_IMPORT_META -d ch5_metadata.csv -H \
+  -l ch5_import.log -b ch5_import.bad
 ```
 
-### 동작 방식
-
-- **신규 태그**: 메타데이터와 함께 태그 항목 생성
-- **기존 태그**: 메타데이터 값 업데이트 (`_LAST_UPDATE_TIME` 자동 갱신)
-- 실제 메타데이터 값이 변경된 경우에만 `_LAST_UPDATE_TIME` 갱신
-
-### machloader와 비교
-
-일반 행 데이터의 파일 입출력에는 `machloader`를 사용하고, TAG 메타데이터의 일괄 등록에는
-`tagmetaimport`를 사용합니다. 시스템 저장 객체를 `machloader` 대상으로 지정하지 마십시오.
-
-### SQL INSERT로 대체
-
-소량의 메타데이터는 SQL로도 직접 삽입할 수 있습니다.
+첫 실행은 성공 3건·실패 0건을 기대합니다. 아래 METADATA 조회는 세 행을 반환하고
+DATA COUNT는 0입니다. 메타데이터 등록은 측정값 입력과 다릅니다.
 
 ```sql
--- 메타데이터 삽입
-INSERT INTO sensors METADATA VALUES ('TEMP_001', 'Building-A/F1', 'READY');
-
--- 메타데이터 업데이트
-UPDATE sensors METADATA SET location = 'Building-B/F1'
-WHERE name = 'TEMP_001';
+SELECT name, location, status, _last_update_time
+  FROM ch5_meta_import METADATA ORDER BY name;
+SELECT COUNT(*) FROM ch5_meta_import;
 ```
+
+## 4. 기존 태그와 재실행
+
+같은 파일을 다시 입력해도 기존 태그가 자동 갱신되지 않습니다. 현재 경로는 일반
+METADATA INSERT이므로 중복 태그는 오류 행으로 집계됩니다. 두 번째 실행은 성공
+0건·실패 3건을 기대하며 기존 속성은 유지됩니다. 종료 상태만 보지 말고 성공·실패 건수와
+bad/log 파일을 함께 확인합니다.
+
+새 행과 잘못된 행이 섞인 파일도 전체가 하나의 트랜잭션이라고 가정하지 않습니다.
+이미 반영된 태그를 확인하고 실패 행만 고쳐 재처리합니다. 기존 속성은 명시적인 UPDATE
+또는 지원 UPSERT로 바꿉니다.
+
+```sql
+UPDATE ch5_meta_import METADATA SET status = 'DONE' WHERE name = 'TEMP_001';
+INSERT INTO ch5_meta_import METADATA VALUES ('TEMP_002', 'Building-C/F2', 'READY')
+ON DUPLICATE KEY UPDATE;
+SELECT name, location, status FROM ch5_meta_import METADATA ORDER BY name;
+```
+
+TEMP_001은 DONE으로, TEMP_002는 Building-C/F2·READY로 바뀝니다.
+실제 값이 바뀌면 변경 시각이 갱신되고 같은 값의 no-op은 유지됩니다.
+`tagmetaimport`에 자동 UPSERT 옵션이 있다고 해석하지 마십시오.
+
+## 정리와 관련 문서
+
+결과 확인 후 `DROP TABLE ch5_meta_import;`로 이번 실습 테이블만 정리합니다.
+CSV·로그·bad 파일은 재처리에 필요하지 않은지 확인한 뒤 정리합니다.
+
+상세 옵션은 [tagmetaimport 명령 사전](../../reference/command-line-tools/dictionary-tagmetaimport/)을,
+SQL 등록·변경 규칙은 [TAG 메타데이터](../tag-metadata/)를 참고하십시오.

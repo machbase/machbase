@@ -16,6 +16,9 @@ LOOKUP 테이블은 기본 키뿐 아니라 일반 조건식으로 여러 행을
 조건에 맞는 모든 행을 갱신합니다. `SET` 표현식은 현재 행 값을 참조할 수 있지만 기본 키
 컬럼 자체는 변경할 수 없습니다.
 
+LOOKUP UPDATE에는 `WHERE` 조건이 필요합니다. 전체 행을 갱신하려는 경우에도 지원되는
+조건식을 명시합니다. `WHERE` 없이 전체 삭제가 가능한 DELETE와 구분하십시오.
+
 ```sql
 SELECT COUNT(*)
   FROM equipment_master

@@ -86,7 +86,8 @@ INSERT INTO device_status VALUES ('DEV-01', 'ONLINE', NOW)
 ON DUPLICATE KEY UPDATE SET status = 'ONLINE', updated_at = NOW;
 ```
 
-PRIMARY KEY 컬럼 자체를 변경하는 UPDATE는 피합니다. 키를 변경해야 하는 경우 기존 행을 삭제하고 새 키로 삽입합니다.
+PRIMARY KEY 컬럼 자체는 UPDATE할 수 없습니다. 키를 변경해야 하는 경우 기존 행을 삭제하고
+새 키로 삽입합니다.
 
 <a id="error-volatile-restart-loss"></a>
 

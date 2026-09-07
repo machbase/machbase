@@ -3,71 +3,91 @@ title: '7.4 데이터 입력'
 weight: 40
 toc: true
 ---
-LOG 데이터는 SQL `INSERT`, Append API 또는 파일 적재 도구로 입력합니다. 입력 경로는 데이터
-발생 방식과 처리량, 파일 위치를 기준으로 선택합니다.
+
+한두 행이 잘 들어간다고 수집 준비가 끝난 것은 아닙니다.
+지속 수집에서는 전송 버퍼, 일부 행의 실패, 연결이 끊긴 뒤의 재전송까지 생각해야 합니다.
+먼저 SQL로 컬럼과 시간을 확인한 뒤 실제 처리량에 맞는 입력 경로를 선택하세요.
 
 <a id="original-85-inserting-data"></a>
 
-## SQL INSERT
-
-SQL은 소량 입력과 기능 확인에 적합합니다. `_arrival_time`을 컬럼 목록에서 생략하면 서버가
-수신 시각을 기록합니다.
+## 작은 INSERT로 입력 계약을 확인합니다
 
 ```sql
-CREATE LOG TABLE input_log (
+CREATE LOG TABLE ch7_input (
     event_time DATETIME,
+    event_id   VARCHAR(32),
     device     VARCHAR(32),
-    message    VARCHAR(128),
-    value      DOUBLE
+    message    VARCHAR(128)
 );
 
-INSERT INTO input_log(event_time, device, message, value)
+INSERT INTO ch7_input(event_time, event_id, device, message)
 VALUES (TO_DATE('2026-01-01 10:00:00', 'YYYY-MM-DD HH24:MI:SS'),
-        'DEV-01', 'temperature warning', 82.5);
+        'evt-001', 'DEV-01', 'connection timeout');
 
-SELECT _arrival_time, event_time, device, message, value
-  FROM input_log
-  DURATION 1 HOUR;
-
-DROP TABLE input_log;
+SELECT _arrival_time, event_time, event_id, device, message
+  FROM ch7_input;
 ```
 
-재현 테스트처럼 수신 시각을 고정해야 하는 경우에만 `_arrival_time`을 명시합니다. 운영
-애플리케이션의 실제 이벤트 시각은 별도 `DATETIME` 컬럼에 저장하십시오.
+한 행이 조회되며 `event_time`은 고정된 발생 시각입니다.
+`_arrival_time`을 생략했으므로 입력 경로에서 서버 시각을 사용합니다.
+기본 설정에서는 시각 역전 시 보정이 일어날 수 있으므로 항상 실제 수신 시각과 정확히
+같다고 가정하지 마세요. 자세한 규칙은 [시간 모델](../arrival-time-model/)에서 확인합니다.
 
-## Append API
+같은 이벤트를 다시 넣으면 어떻게 되는지도 확인해 보겠습니다.
 
-지속적인 대량 입력은 SDK의 Append API를 사용해 여러 행을 배치로 전송합니다. 다음 항목을
-반드시 처리합니다.
+```sql
+INSERT INTO ch7_input(event_time, event_id, device, message)
+VALUES (TO_DATE('2026-01-01 10:00:00', 'YYYY-MM-DD HH24:MI:SS'),
+        'evt-001', 'DEV-01', 'connection timeout');
 
-- 연결과 Appender 종료 시 남은 버퍼 flush
-- 행별 타입·NULL 처리와 Append 반환 오류
-- 재연결 시 중복 전송 가능성
-- 배치 크기별 지연 시간과 메모리 사용량
+SELECT event_id, COUNT(*) AS received_rows
+  FROM ch7_input
+ GROUP BY event_id;
 
-언어별 실행 예제는 [개발 도구 연동](/dbms/development-tools-integration/)을 참고하십시오.
+DROP TABLE ch7_input;
+```
 
-## 파일 적재
+`evt-001`의 건수는 2입니다. 이름이 같아도 LOG가 중복을 제거하지 않습니다.
+수집 애플리케이션의 “전송 완료”와 원본 이벤트의 “한 번만 저장”은 별도 문제입니다.
 
-| 입력 파일 위치 | 선택 |
-| --- | --- |
-| 클라이언트가 접근하는 CSV | `csvimport` 또는 `machloader` |
-| 서버가 접근할 수 있는 파일 | `LOAD DATA INFILE` |
-| 지속적으로 생성되는 로컬·SFTP 파일 | Collector 검토 |
+## 입력 경로는 데이터 위치와 발생 방식으로 고릅니다
 
-파일 적재 전에는 컬럼 순서, 구분자, 날짜 형식과 인코딩을 소량 샘플로 검증하고 bad 파일과
-로그를 보존합니다. 전체 명령과 재현 예제는
-[데이터 입력·적재·반출](/dbms/development-tools-integration/data-input-load-export/)을
-기준으로 사용하십시오.
+| 상황 | 시작할 경로 | 함께 확인할 항목 |
+|---|---|---|
+| 소량 입력·기능 확인 | SQL INSERT | 컬럼 목록, 타입, 날짜 형식 |
+| 애플리케이션의 지속 대량 입력 | SDK Append | 버퍼 전송, 행별 실패, 재접속 정책 |
+| 클라이언트에서 읽는 CSV | csvimport·machloader | 컬럼 매핑, 실패 행 파일 |
+| 서버에서 읽을 수 있는 적재 파일 | LOAD DATA INFILE | 서버 경로와 파일 접근 권한 |
+| 계속 생성되는 로컬·SFTP 파일 | Collector | 파일 상태, 매핑, 재처리 중복 |
 
-## 입력 경로 비교
+SQL INSERT는 문장마다 처리 비용이 발생합니다. 지속적인 대량 입력에는 여러 행을 묶어
+보내는 Append API를 검토하세요. 언어별 실행 코드는
+[개발 및 애플리케이션 연동](/dbms/development-tools-integration/)에서 선택하면 됩니다.
 
-| 경로 | 장점 | 주의점 |
-| --- | --- | --- |
-| SQL `INSERT` | 간단하고 모든 SQL 클라이언트에서 사용 | 문장별 파싱·왕복 비용 |
-| Append API | 배치 기반 지속 입력 | SDK 통합과 오류·재시도 처리 필요 |
-| 파일 적재 | 대량 초기·배치 데이터에 적합 | 파일 형식과 실패 행 관리 필요 |
-| Collector | 지원 파일 소스를 설정으로 수집 | 현재 지원 source type 확인 필요 |
+## Append에서는 전송과 결과 확인을 분리해 생각하세요
 
-LOG는 입력된 행의 일반 `UPDATE`를 지원하지 않습니다. 잘못 입력한 데이터의 보정과 삭제는
-[운영과 데이터 생명주기](../operations-lifecycle/)를 참고하십시오.
+Appender에 행을 전달한 시점에는 데이터가 클라이언트 버퍼에 남아 있을 수 있습니다.
+사용하는 SDK의 flush·close 동작을 확인하고, 정상 종료뿐 아니라 예외 경로에서도
+남은 버퍼와 연결을 처리해야 합니다.
+
+호출이 성공했다고 모든 행이 저장되었다고 단정하지 마세요.
+SDK에 따라 반환값, 오류 콜백, 종료 시 성공·실패 건수처럼 결과를 확인하는 경로가 다릅니다.
+입력 길이 초과, NULL, 날짜 변환 오류를 일부러 포함한 작은 배치로 먼저 확인하는 편이 좋습니다.
+
+실수하기 쉬운 상황은 응답을 받기 전에 연결이 끊기는 경우입니다.
+이미 저장된 배치를 다시 보낼 수 있으므로 원본 이벤트 ID와 처리 위치를 기록하세요.
+LOG의 INSERT·Append는 TRANSACTION 테이블 트랜잭션의 ROLLBACK 대상도 아닙니다.
+
+## 파일 적재는 성공 건수보다 매핑을 먼저 봅니다
+
+한글·빈 문자열·NULL·긴 메시지·서로 다른 시간대를 포함한 표본을 준비하세요.
+원본 필드 수와 대상 컬럼 순서가 일치하는지 확인한 다음 전체 파일을 처리합니다.
+실패 행 파일과 로그도 보관해야 같은 오류를 다시 분석할 수 있습니다.
+
+전체 명령은 [데이터 입력·적재·반출](/dbms/development-tools-integration/data-input-load-export/)을,
+지속 파일 수집은 [Collector 실습](../collector-ingestion/)을 참고하세요.
+과거 데이터 이관에서 `_arrival_time`을 보존하려면 정렬 순서와 기존 대상 데이터까지
+확인해야 합니다. 일반 수집의 과거 발생 시각은 별도 `event_time`에 저장하는 편이 안전합니다.
+
+막히면 전체 배치보다 실패한 원본 한 행부터 확인해 보세요.
+필드 값, 대상 타입, 사용한 입력 API를 함께 보면 원인을 찾기 수월합니다.

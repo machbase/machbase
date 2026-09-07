@@ -44,7 +44,9 @@ WHERE code = 'TEMP';
 여러 행을 변경할 때는 먼저 같은 `WHERE` 절로 대상을 조회합니다. 단건 변경은 대상이 명확하고
 인덱스를 사용할 수 있는 `PRIMARY KEY` 조건을 권장합니다.
 
-PRIMARY KEY 컬럼 자체는 변경하지 않는 것이 원칙입니다. 키를 바꿔야 하면 기존 행을 삭제하고 새 키로 다시 입력합니다.
+PRIMARY KEY 컬럼 자체는 UPDATE할 수 없습니다. 키를 바꿔야 하면 기존 행을 삭제하고 새 키로
+다시 입력합니다. 두 문장을 하나의 TRANSACTION 트랜잭션으로 묶을 수 없으므로 중간 실패와
+참조 데이터의 변경 절차도 함께 설계합니다.
 
 <a id="upsert-lookup"></a>
 
@@ -70,7 +72,8 @@ WHERE name = 'LOOKUP_APPEND_UPDATE_ON_DUPKEY';
 
 ## TABLE_REFRESH
 
-영속 LOOKUP 내용을 runtime memory table에 다시 반영해야 할 때는 `TABLE_REFRESH`를 실행합니다.
+영속 저장된 LOOKUP 내용을 실행 중인 메모리 테이블에 다시 반영해야 할 때는
+`TABLE_REFRESH`를 실행합니다.
 
 ```sql
 EXEC TABLE_REFRESH(lookup_mutation_demo);

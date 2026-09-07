@@ -6,111 +6,86 @@ aliases:
   - /dbms/rdb-table-usage/patterns-scenarios/
 ---
 
-TRANSACTION 테이블은 Machbase에서 관계형 데이터 모델을 사용하기 위한 테이블 타입입니다. INSERT, SELECT, UPDATE, DELETE를 모두 사용하고, PRIMARY KEY와 보조 인덱스를 기반으로 업무 데이터, 마스터 데이터, 집계 결과를 관리합니다.
+장비의 측정값은 계속 쌓이지만, 점검 상태나 재고 수량은 기존 값을 바꾸어야 합니다.
+둘을 같은 모델로 처리하려 하면 원본 보관과 상태 변경의 요구가 섞이기 쉽습니다.
+TRANSACTION은 변경 가능한 업무 데이터를 맡기고, 원본 시계열은 TAG·LOG에 남기는 구성을
+먼저 생각해 보세요.
 
 <a id="overview-rdb-characteristics"></a>
 
-## TRANSACTION 테이블의 특성
+## 수정과 관계형 조회가 필요한 데이터에 사용합니다
 
-TRANSACTION 테이블은 다음 세 문법으로 생성할 수 있습니다.
+TRANSACTION은 SELECT·INSERT·UPDATE·DELETE, PRIMARY KEY, UNIQUE INDEX와 보조 인덱스를
+지원합니다. Standard Edition 전용이며 다음 세 문법은 같은 테이블을 만듭니다.
 
-- `CREATE TABLE`: 테이블 유형을 생략하는 기본 문법
-- `CREATE TRANSACTION TABLE`: 전체 테이블 유형 이름을 명시하는 문법
-- `CREATE TXN TABLE`: 축약형을 사용하는 문법
+| 문법 | 의미 |
+|---|---|
+| CREATE TABLE | 타입을 생략한 기본 TRANSACTION 생성 |
+| CREATE TRANSACTION TABLE | 타입을 명시한 생성 |
+| CREATE TXN TABLE | 축약형 생성 |
 
-세 문법은 동일한 TRANSACTION 테이블을 생성합니다. LOG 테이블은 `CREATE LOG TABLE`로
-명시해야 하며, 이전 공개 명칭인 `RDB`와 축약형 `TRX`는 지원하지 않습니다.
-
-```sql
-CREATE TRANSACTION TABLE order_history (
-    order_id  LONG PRIMARY KEY,
-    item_id   INTEGER,
-    qty       INTEGER,
-    amount    DOUBLE,
-    status    VARCHAR(16)
-);
-```
-
-TRANSACTION 테이블의 주요 특성은 다음과 같습니다.
-
-| 항목 | 내용 |
-|------|------|
-| 주요 용도 | 관계형 업무 데이터, 마스터 데이터, 집계 결과, 상태 관리 |
-| 주요 DML | INSERT, SELECT, UPDATE, DELETE |
-| 키와 인덱스 | PRIMARY KEY, UNIQUE INDEX, 일반 인덱스 |
-| 트랜잭션 | TRANSACTION DML에 `BEGIN`, `COMMIT`, `ROLLBACK` 지원 |
-| 부가 기능 | AUTO_INCREMENT, JSON 경로 인덱스, 백업·마운트 |
-| 에디션 | Standard Edition에서만 사용 |
+공개 문서와 운영 스크립트에서는 타입이 드러나는 CREATE TRANSACTION TABLE을 권장합니다.
+CREATE RDB TABLE·CREATE TRX TABLE은 지원하지 않습니다.
+Cluster에서는 위 세 생성 문법을 모두 사용할 수 없으며 LOG는 CREATE LOG TABLE로 명시합니다.
 
 <a id="overview-rdb-use-criteria"></a>
 <a id="use-cases-rdb"></a>
 
-## 사용 기준
-
-다음 조건에 해당하면 TRANSACTION 테이블을 사용합니다.
-
-- 행 단위 UPDATE와 DELETE가 필요합니다.
-- PRIMARY KEY 또는 인덱스 기반으로 특정 행을 자주 조회합니다.
-- TRANSACTION DML을 트랜잭션으로 하나의 작업 단위로 묶어야 합니다.
-- TAG, LOG 테이블의 원본 데이터를 집계한 결과를 업무 테이블로 관리합니다.
-- JSON 컬럼과 JSON path 인덱스를 관계형 조회와 함께 사용해야 합니다.
-- 백업·마운트 대상에 포함되는 관계형 데이터를 관리합니다.
-
-| 적합한 데이터 유형 | 설명 |
-|--------------------|------|
-| 주문·거래 이력 | 상태 변경, 조회와 삭제 |
-| 설비 이력 | 점검 결과 수정과 이력 조회 |
-| 재고 관리 | 수량 갱신과 업무 key 조회 |
-| 관계형 참조 이력 | 명시적 transaction과 일반 관계형 DML |
-| 이벤트 상태 관리 | 상태 column UPDATE가 필요한 업무 |
+## 상태 변경을 작은 예제로 확인합니다
 
 ```sql
-CREATE TRANSACTION TABLE inventory (
+CREATE TRANSACTION TABLE ch8_overview (
     item_id LONG PRIMARY KEY,
-    qty     INTEGER
+    qty     INTEGER NOT NULL
 );
-
-INSERT INTO inventory VALUES (42, 10);
+INSERT INTO ch8_overview VALUES (42, 10);
 
 BEGIN;
-UPDATE inventory SET qty = qty - 1 WHERE item_id = 42;
-INSERT INTO order_history VALUES (1001, 42, 1, 19900, 'ORDERED');
-COMMIT;
+UPDATE ch8_overview SET qty = qty - 3 WHERE item_id = 42 AND qty >= 3;
+SELECT item_id, qty FROM ch8_overview;
+ROLLBACK;
 
-DROP TABLE inventory;
-DROP TABLE order_history;
+SELECT item_id, qty FROM ch8_overview;
+DROP TABLE ch8_overview;
 ```
+
+같은 연결에서 트랜잭션 안의 조회는 수량 7, ROLLBACK 뒤 조회는 10입니다.
+`qty >= 3`은 재고가 부족하면 변경하지 않도록 하는 업무 조건입니다.
+
+실수하기 쉬운 부분은 UPDATE가 오류 없이 끝나면 업무도 성공했다고 판단하는 것입니다.
+조건에 맞는 행이 없으면 변경 건수는 0일 수 있습니다. 애플리케이션에서는 영향 행 수가
+기대한 1인지 확인하고 다음 작업이나 롤백을 결정해야 합니다.
+SQL 예제에 등장하는 숫자만 그대로 바꾸는 것보다 이 확인 절차가 더 중요합니다.
 
 <a id="overview-rdb-not-use"></a>
 
-## 다른 테이블을 검토할 경우
+## 원본, 참조 정보, 업무 상태를 구분합니다
 
-다음 요구사항에는 다른 테이블 타입을 검토합니다.
+| 주된 요구 | 먼저 검토할 테이블 |
+|---|---|
+| 센서 이름별 측정값과 ROLLUP | TAG |
+| 수정하지 않는 로그·이벤트 원본 | LOG |
+| 작은 현재 기준 정보 | LOOKUP |
+| 관계형 DML과 명시적 트랜잭션 | TRANSACTION |
+| 재시작 후 사라져도 되는 메모리 상태 | VOLATILE |
 
-| 요구사항 | 권장 테이블 |
-|----------|-------------|
-| 센서 이름과 시간축 기준의 대량 계측 데이터 | TAG |
-| append 중심 원본 로그와 이벤트 | LOG |
-| 작은 기준 코드와 참조 데이터 | LOOKUP |
-| 재시작 후 사라져도 되는 인메모리 상태 캐시 | VOLATILE |
+TRANSACTION에는 장비 점검 상태, 업무 이력, 별도 요약 결과 등을 둘 수 있습니다.
+대량 원본 수집은 TAG·LOG와 처리량·입력 경로를 비교하세요.
+TRANSACTION도 Append를 지원하지만 TAG·LOG와 같은 처리량이나 배치 경계를 가정해서는
+안 됩니다. [입력 방식](../data-input-mutation/)에서 구체적으로 구분합니다.
 
-TRANSACTION 테이블은 관계형 갱신과 조회에 적합하지만, 초고속 append 중심 원본 수집에는 LOG 또는 TAG 테이블이 더 적합합니다. 원본은 LOG/TAG에 저장하고, 업무 상태나 집계 결과만 TRANSACTION 테이블로 관리하는 구성을 우선 검토합니다.
-
-Cluster Edition에서는 무수식 `CREATE TABLE`, `CREATE TRANSACTION TABLE`, `CREATE TXN TABLE`을
-모두 지원하지 않습니다. Cluster Edition에서 LOG 테이블을 만들 때는 `CREATE LOG TABLE`을
-사용합니다.
+LOOKUP은 TRANSACTION의 모든 기능을 대신하는 테이블이 아닙니다.
+Cluster에서 관계형 트랜잭션이 꼭 필요하다면 별도 RDBMS를 포함한 구성을 검토해야 합니다.
 
 <a id="overview-rdb-design-flow"></a>
 
-## 설계 순서
+## 키와 실패 처리부터 설계합니다
 
-TRANSACTION 테이블 설계 시 다음 순서로 결정합니다.
+한 행을 식별할 키와 중복을 막을 업무 키를 구분하세요.
+내부 번호에는 PRIMARY KEY, 외부 시스템 코드 같은 별도 고유값에는 UNIQUE INDEX가
+필요할 수 있습니다. 자동 번호를 사용해도 업무 키의 중복이 저절로 없어지지는 않습니다.
 
-1. 행을 식별할 PRIMARY KEY를 정합니다.
-2. 자동 번호가 필요하면 `AUTO_INCREMENT` 사용 여부를 결정합니다.
-3. 중복을 허용하지 않을 업무 키에는 UNIQUE INDEX를 생성합니다.
-4. 조회, UPDATE, DELETE 조건에 맞춰 일반 인덱스를 설계합니다.
-5. 트랜잭션 경계를 정하고 장시간 열린 트랜잭션을 피합니다.
-6. 백업, 복원, 읽기 전용 마운트 절차를 운영 정책에 포함합니다.
-
-스키마 설계는 [테이블 구조와 스키마](/dbms/rdb-table-usage/table-structure-schema/)에서, 트랜잭션은 [트랜잭션](/dbms/rdb-table-usage/transaction/)에서 다룹니다.
+이어서 자주 실행할 WHERE 조건과 업무의 성공 기준을 정합니다.
+트랜잭션을 어디서 끝내고 오류가 나면 무엇을 확인할지까지 정해 두면,
+동시 요청이나 연결 장애가 생겨도 처리 방향이 흔들리지 않습니다.
+[스키마](../table-structure-schema/)와 [트랜잭션](../transaction/)을 함께 읽어 보세요.

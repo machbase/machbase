@@ -261,12 +261,20 @@ ALTER TABLE product_master RENAME COLUMN name TO product_name;
 alter_table_modify_stmt ::=
     'ALTER TABLE' table_name 'MODIFY COLUMN'
     ( '(' column_name 'VARCHAR' '(' new_size ')' ')'
-    | column_name ( 'NOT NULL' | 'NULL' | 'SET' 'MINMAX_CACHE_SIZE' '=' value ) )
+    | column_name ( 'NOT NULL' [ 'NOCHECK' ] | 'NULL'
+                  | 'SET' 'MINMAX_CACHE_SIZE' '=' value ) )
 ```
 
-LOG·TAG 일반 컬럼에서 VARCHAR 컬럼의 길이를 늘리거나(줄이기 불가), NOT NULL 제약 조건을
-추가·제거하거나, MINMAX_CACHE_SIZE를 변경합니다. TRANSACTION 테이블은 `MODIFY COLUMN`을
-지원하지 않습니다.
+아래 길이 확장과 MINMAX 예제는 LOG 테이블 대상입니다. 기존 VARCHAR의 길이를 늘릴 수
+있지만 줄이거나 다른 타입을 VARCHAR로 바꿀 수는 없습니다. LOG의 새 길이는 최대
+32,767바이트입니다. MINMAX_CACHE_SIZE는 LOG의 지원되는 고정 길이 컬럼에 적용하며,
+VARCHAR·TEXT 같은 가변 길이 컬럼에는 적용할 수 없습니다.
+
+LOG에서 옵션 없는 NOT NULL은 기존 행도 검사합니다. NOCHECK는 그 검사를 생략할 뿐,
+기존 NULL을 채워 주는 옵션은 아닙니다. NULL은 해당 제약을 해제합니다.
+TAG에는 이 범위를 일괄 적용하지 말고
+[TAG 컬럼 변경](/dbms/tag-table-usage/create-alter-drop/)의 별도 제약을 확인하세요.
+TRANSACTION 테이블은 `MODIFY COLUMN`을 지원하지 않습니다.
 
 ```sql
 -- VARCHAR 길이 확장 (줄이기 불가)

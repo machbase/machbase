@@ -4,9 +4,11 @@ title: '4.4 안티패턴'
 weight: 40
 toc: true
 ---
-테이블 설계에서 피해야 할 대표적인 안티패턴을 다룹니다. 아래 패턴은 성능 저하, 운영 복잡도 증가, 데이터 손실로 이어질 수 있습니다.
+안티패턴은 특정 테이블을 사용했다는 사실보다 데이터의 의미와 요구사항에 맞지 않는
+방식으로 사용한 경우를 뜻합니다. 아래 예제의 전제가 자신의 업무에도 적용되는지 확인한 뒤
+대안을 선택하십시오. 같은 스키마라도 현재 상태 관리에는 맞고 이력 누적에는 맞지 않을 수 있습니다.
 
-- **[고빈도 LOOKUP 조회](/dbms/data-modeling-table-design/table-types-patterns-type-anti/#high-frequency-lookup)**
+- **[LOOKUP에 무제한 이력 누적](/dbms/data-modeling-table-design/table-types-patterns-type-anti/#high-frequency-lookup)**
 - **[센서별 테이블 생성](/dbms/data-modeling-table-design/table-types-patterns-type-anti/#per-sensor-create)**
 - **[잘못된 타입 선택](/dbms/data-modeling-table-design/table-types-patterns-type-anti/#table-types-selection-type-wrong)**
 - **[VOLATILE 영속 저장 오용](/dbms/data-modeling-table-design/table-types-patterns-type-anti/#storage-persistent-volatile)**
@@ -15,11 +17,15 @@ toc: true
 
 <a id="high-frequency-lookup"></a>
 
-## 고빈도 LOOKUP 조회
+<a id="고빈도-lookup-조회"></a>
+
+## LOOKUP에 무제한 이력 누적
 
 ### 문제
 
-LOOKUP 테이블을 초고빈도 시계열 데이터 조회에 사용하는 패턴입니다. LOOKUP 테이블은 소규모 참조 데이터에 최적화되어 있어 대량 시계열 데이터의 고속 조회에는 부적합합니다.
+문제는 조회 빈도 자체가 아니라, 계속 늘어나는 계측 이력을 LOOKUP에 저장하는 설계입니다.
+LOOKUP은 전체 행과 인덱스를 메모리에 유지하므로 장기 시계열 이력이 쌓일수록 메모리 부담이
+커집니다. 작은 기준 정보를 키로 반복 조회하는 용도에는 적합합니다.
 
 ### 안티패턴 예시
 
@@ -31,15 +37,18 @@ CREATE LOOKUP TABLE sensor_data_wrong (
     ts         DATETIME
 );
 
--- LOOKUP은 한 센서당 한 행만 저장 가능 (PK 중복 불가)
--- 시계열 이력 저장 불가
+-- 이 스키마는 sensor_id가 PK이므로 센서마다 현재 한 행만 저장
+-- 측정 이력을 그대로 추가하면 같은 PK와 충돌
 INSERT INTO sensor_data_wrong VALUES ('TEMP-01', 25.3, NOW);
 INSERT INTO sensor_data_wrong VALUES ('TEMP-01', 25.5, NOW);  -- PK 중복 오류
 ```
 
 ### 올바른 패턴
 
-시계열 계측값은 TAG 테이블에 저장합니다. 최신 값만 필요하면 VOLATILE 테이블을 캐시로 씁니다.
+태그별 계측 이력 수집과 조회가 중심이면 TAG를 검토합니다. LOOKUP에서도 측정마다 다른
+키를 부여할 수 있지만 전체 이력이 메모리에 상주하는 비용은 남습니다. 최신값 캐시는
+별도의 성능상 필요가 있고 원본에서 복구할 수 있을 때 VOLATILE로 추가합니다. TAG의
+최신값 조회로 요구사항을 만족한다면 캐시를 별도로 유지할 필요가 없습니다.
 
 ```sql
 -- 올바른 설계: 이력은 TAG 테이블
@@ -61,7 +70,7 @@ CREATE VOLATILE TABLE sensor_latest (
 
 | | 안티패턴 (LOOKUP) | 올바른 설계 (TAG) |
 |-|-----------------|-----------------|
-| 이력 저장 | X (PK 중복 불가) | O |
+| 같은 센서 키로 이력 누적 | X (예제의 센서 키가 행을 식별) | O (태그 이름 아래 여러 계측 행 저장) |
 | 지속 입력 경로 | 행 식별자 중심 | 시계열 Append API 사용 가능 |
 | 시간 범위 조회 | 일반 조건 조회 | 태그·시간 축 조회 |
 
@@ -102,6 +111,10 @@ CREATE TAG TABLE sensor_temp_03 (
 ### 올바른 패턴
 
 센서 이름을 PRIMARY KEY로 하는 하나의 TAG 테이블에 모든 센서 데이터를 저장합니다.
+
+이 원칙은 같은 컬럼 구조·권한·보관 정책을 공유하는 센서 집합에 적용합니다. 측정 단위,
+스키마, 접근 권한이나 보관 기간을 독립적으로 관리해야 한다면 테이블을 나누는 것이
+적절할 수 있습니다. 센서 수 자체를 테이블 분리 기준으로 삼지 않는 것이 핵심입니다.
 
 ```sql
 -- 올바른 설계: 모든 온도 센서를 하나의 테이블로
@@ -153,12 +166,16 @@ CREATE LOG TABLE error_log (
 
 ### 안티패턴 2: 센서 값을 LOG 테이블에 저장
 
+LOG에 센서 값이 있다는 사실이 오류는 아닙니다. 문제는 아래처럼 실제 측정 시각을
+생략하고, 요구사항은 태그별 측정 시간 집계인데 수신 시각만 남기는 경우입니다.
+여러 필드로 된 장비 이벤트를 검색하는 것이 주목적이면 LOG가 적합할 수 있습니다.
+
 ```sql
--- 잘못됨: 센서 값을 LOG로 저장
+-- 측정 시각이 필요한 요구사항에 부족한 스키마
 CREATE LOG TABLE sensor_wrong (
     sensor_id VARCHAR(64),
     value     DOUBLE
-    -- 태그별 시간 범위 집계 쿼리가 매우 비효율적
+    -- 실제 측정 시각이 없고 서버 수신 시각만 자동 저장됨
 );
 ```
 
@@ -179,7 +196,7 @@ CREATE TAG TABLE sensor_measurements (
 CREATE LOOKUP TABLE order_history_wrong (
     order_id LONG PRIMARY KEY,
     customer VARCHAR(64)
-    -- LOOKUP은 소규모 전용, 대용량에서 성능 저하
+    -- 전체 행과 인덱스의 메모리 비용, 명시적 트랜잭션 요구를 확인
 );
 ```
 
@@ -199,7 +216,10 @@ UPDATE order_history SET status = 'SHIPPED' WHERE order_id = 1001;
 
 ### 안티패턴 4: 시계열 데이터를 TRANSACTION 테이블에 저장
 
-시계열 데이터(센서값)를 TRANSACTION 테이블에 저장하면 시간 범위 쿼리 성능이 떨어지고, Append API의 고속 버퍼 최적화도 쓸 수 없습니다. 자세한 내용은 [시계열 데이터 TRANSACTION 오용](/dbms/data-modeling-table-design/table-types-patterns-type-anti/#time-series-storage-misuse-rdb) 항목을 참고합니다.
+TRANSACTION에도 시간 컬럼과 Append API를 사용할 수 있지만 TAG 전용 시간축 저장 구조와
+ROLLUP은 제공되지 않습니다. 관계형 변경보다 계측 이력 수집과 집계가 중심이면 TAG를
+검토합니다. 자세한 내용은 [시계열 데이터 TRANSACTION 오용](/dbms/data-modeling-table-design/table-types-patterns-type-anti/#time-series-storage-misuse-rdb)을
+참고하십시오.
 
 <a id="storage-persistent-volatile"></a>
 
@@ -225,8 +245,9 @@ INSERT INTO critical_config VALUES ('max_connections', '1000');
 
 ### 문제점
 
-- 서버 재시작, 장애, OOM 등 어떤 상황에서도 데이터가 소멸됩니다.
-- 운영 중 데이터 소멸로 서비스 장애가 발생합니다.
+- 서버가 종료되거나 재시작되면 테이블과 데이터가 소멸합니다.
+- 서버 프로세스가 종료되는 장애에서도 메모리의 데이터를 복구할 수 없으므로,
+  유일한 원본을 VOLATILE에 저장하면 데이터 손실로 이어집니다.
 
 ### 올바른 패턴
 
@@ -245,7 +266,9 @@ INSERT INTO app_config VALUES ('max_connections', '1000');
 
 ### VOLATILE의 올바른 용도
 
-VOLATILE 테이블은 **재생성 가능한 캐시 데이터**에만 사용합니다.
+VOLATILE에는 재시작 후 재생성하거나 폐기할 수 있는 데이터를 저장합니다. 조회용 캐시뿐
+아니라 수명이 명확한 작업 상태도 포함할 수 있습니다. 업무상 반드시 보존해야 하는
+결과를 메모리에만 두지 않습니다.
 
 | 적합 | 부적합 |
 |------|--------|
@@ -262,7 +285,8 @@ VOLATILE 테이블은 **재생성 가능한 캐시 데이터**에만 사용합�
 
 센서·IoT 계측값 같은 지속적인 시계열 데이터를 TRANSACTION 테이블에 저장하는 패턴입니다.
 관계형 갱신이 필요하지 않다면 TAG 테이블의 태그·시간 축과 ROLLUP을 활용할 수 없으므로
-조회와 운영 요구에 맞지 않습니다.
+해당 기능이 필요한 조회와 운영 요구에 맞지 않을 수 있습니다. 반대로 측정값 등록을
+다른 업무 변경과 하나의 트랜잭션으로 묶어야 하면 TRANSACTION을 선택할 이유가 있습니다.
 
 ### 안티패턴 예시
 
@@ -308,3 +332,13 @@ GROUP BY name, hour;
 ### TRANSACTION 테이블이 적합한 경우
 
 TRANSACTION 테이블은 관계형 구조의 업무 데이터(주문, 재고, 설비 이력 등)에 씁니다. 시간 컬럼이 있더라도 UPDATE/DELETE가 필요한 업무 이력이라면 TRANSACTION 테이블을, 수정 없이 계속 쌓이는 고빈도 계측값이라면 TAG를 선택합니다.
+
+## 의미가 다른 값을 같은 통계로 계산
+
+스키마가 같아도 단위나 행의 의미가 다르면 단순 집계할 수 없습니다. 누적 전력량(kWh)의
+평균은 소비 전력(kW)이 아니며, 여러 구간 평균의 단순 평균은 전체 표본 평균과 다를 수
+있습니다. NULL을 0으로 채우면 측정 실패가 정상적인 0으로 바뀝니다.
+
+타입을 정할 때 단위, 표본 수와 품질 규칙도 함께 기록합니다. 구간별 통계를 재집계할 때는
+합계와 유효 건수 같은 필요한 통계를 유지하고, 원본을 지우기 전에 향후 분석에 필요한
+해상도를 확인합니다.

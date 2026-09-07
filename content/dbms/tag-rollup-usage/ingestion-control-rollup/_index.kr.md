@@ -9,119 +9,112 @@ aliases:
 
 <a id="ingestion-start-stop-immediate-collect-rollup"></a>
 
-## 시작·중지와 즉시 수집
+## 작업 상태와 처리 완료
 
-ROLLUP 스레드는 생성 시 자동으로 시작됩니다. 필요에 따라 수동으로 제어할 수 있습니다.
-`EXEC` 형식의 인자 수·범위·오류 계약은
-[EXEC procedure 정본](/dbms/reference/sql/syntax-dictionary-sql/execute-procedure-syntax/#rollup-start-stop)을
-참고합니다.
-
-### 시작 / 중지
+ROLLUP은 생성 시 자동 시작됩니다. START를 즉시 반복하거나 이미 중지한 작업을 다시
+STOP하면 상태 오류가 날 수 있습니다. 아래 실습은 생성 → STOP → 입력 → START →
+WAKEUP → FORCE 순서로 상태를 구분합니다.
 
 ```sql
--- SQL 방식
-ALTER ROLLUP rollup_name START;
-ALTER ROLLUP rollup_name STOP;
+CREATE TAG TABLE ch6_control (
+    name VARCHAR(32) PRIMARY KEY,
+    time DATETIME BASETIME,
+    value DOUBLE,
+    quality INTEGER
+);
+CREATE ROLLUP ch6_control_ru ON ch6_control(value)
+  INTERVAL 1 MIN WAKEUP INTERVAL 10 SEC;
+ALTER ROLLUP ch6_control_ru STOP;
+INSERT INTO ch6_control VALUES ('TEMP_01', TO_DATE('2026-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), 10.0, 1);
+INSERT INTO ch6_control VALUES ('TEMP_01', TO_DATE('2026-01-01 00:00:30', 'YYYY-MM-DD HH24:MI:SS'), 20.0, 1);
+INSERT INTO ch6_control VALUES ('TEMP_01', TO_DATE('2026-01-01 00:01:00', 'YYYY-MM-DD HH24:MI:SS'), 30.0, 1);
+INSERT INTO ch6_control VALUES ('TEMP_02', TO_DATE('2026-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), 100.0, 1);
+EXEC TABLE_FLUSH(ch6_control);
 
--- 프로시저 방식 (동일한 기능)
-EXEC ROLLUP_START('rollup_name');
-EXEC ROLLUP_STOP('rollup_name');
+SELECT DISTINCT ROLLUP_NAME, ENABLED, INTERVAL_TIME, WAKEUP_INTERVAL
+  FROM V$ROLLUP WHERE ROLLUP_NAME = 'CH6_CONTROL_RU';
+
+ALTER ROLLUP ch6_control_ru START;
+ALTER ROLLUP ch6_control_ru WAKEUP;
+ALTER ROLLUP ch6_control_ru FORCE;
+
+SELECT rollup('min', 1, time) AS bucket, AVG(value)
+  FROM ch6_control WHERE name = 'TEMP_01'
+ GROUP BY bucket ORDER BY bucket;
 ```
 
-STOP 후 재시작하면 중단된 시점부터 이어서 집계합니다.
+중지 상태의 ENABLED는 0, INTERVAL_TIME은 60000ms, WAKEUP_INTERVAL은 10000ms입니다.
+마지막 조회는 TEMP_01의 00:00 평균 15와 00:01 평균 30을 반환합니다.
 
-### 즉시 수집 (WAKEUP / FORCE)
+| 명령 | 목적 | 완료 의미 |
+|---|---|---|
+| STOP | 작업 중지 | 이후 처리하지 않은 입력분은 남아 있음 |
+| START | 중지한 작업 재개 | 처리 위치부터 계속 진행 |
+| WAKEUP | 작업을 깨움 | 처리 완료를 기다리지 않음 |
+| FORCE | 대상 소스의 처리 범위를 따라잡도록 기다림 | 과거 수정분의 재계산이나 미래 입력 완료는 아님 |
+| ROLLUP_REBUILD | 지원 대상의 과거 버킷 재계산 | 원본 보정 후 집계를 다시 구성 |
 
-데이터를 대량 로드한 직후 즉시 집계가 필요할 때 사용합니다.
+SQL ALTER 대신 이름을 지정한 `EXEC ROLLUP_START(name)`, `ROLLUP_STOP(name)`,
+`ROLLUP_FORCE(name)`도 사용할 수 있습니다. 동일 전환을 두 형식으로 연속 실행하지 않습니다.
+이름 없는 일괄 제어와 특정 작업 제어의 범위를 혼동하지 마십시오.
+
+## WAKEUP INTERVAL
+
+생략하면 생성 INTERVAL과 같습니다. 양수이고 집계 간격보다 크지 않아야 하며 집계 간격을
+나누어떨어지게 해야 합니다. 더 자주 깨우면 지연을 줄일 수 있지만 처리 부하도 증가합니다.
 
 ```sql
--- WAKEUP: 스레드를 깨우고 즉시 반환 (비블로킹)
-ALTER ROLLUP rollup_name WAKEUP;
-
--- FORCE: 집계 완료까지 대기 (블로킹)
-ALTER ROLLUP rollup_name FORCE;
-
--- 프로시저 방식 (FORCE와 동일)
-EXEC ROLLUP_FORCE('rollup_name');
+ALTER ROLLUP ch6_control_ru SET WAKEUP INTERVAL 5 SEC;
+SELECT DISTINCT ROLLUP_NAME, INTERVAL_TIME, WAKEUP_INTERVAL
+  FROM V$ROLLUP WHERE ROLLUP_NAME = 'CH6_CONTROL_RU';
 ```
 
-| 명령 | 블로킹 | 사용 시점 |
-|------|--------|-----------|
-| WAKEUP | 비블로킹 | 집계를 트리거만 하고 바로 다음 작업 진행 |
-| FORCE | 블로킹 | 집계 완료 후 조회해야 하는 경우 |
-
-### WAKEUP INTERVAL 조정
-
-기본 wakeup 주기는 ROLLUP 주기와 동일합니다. 더 자주 집계하려면 wakeup 주기를 ROLLUP 주기의 약수로 설정합니다.
+WAKEUP_INTERVAL이 5000ms로 바뀝니다. 다음은 60초의 약수가 아닌 의도적 오류입니다.
 
 ```sql
--- 1분 ROLLUP을 10초마다 깨우기
-ALTER ROLLUP _tag_ru_1m SET WAKEUP INTERVAL 10 SEC;
-```
-
-규칙:
-- wakeup 주기는 0보다 커야 합니다.
-- wakeup 주기는 ROLLUP 주기보다 클 수 없습니다.
-- ROLLUP 주기가 wakeup 주기의 정수배여야 합니다.
-
-### 데이터 로드 후 즉시 집계 패턴
-
-```sql
--- 1. 대량 데이터 로드
-INSERT INTO tag VALUES (...);
--- 또는 machloader / Append API 사용
-
--- 2. 하위 롤업부터 순서대로 강제 집계
-ALTER ROLLUP _tag_ru_1s FORCE;
-ALTER ROLLUP _tag_ru_1m FORCE;
-ALTER ROLLUP _tag_ru_1h FORCE;
-
--- 3. 이후 롤업 조회 가능
-SELECT rollup('hour', 1, time) AS rt, AVG(value)
-FROM   tag
-WHERE  name = 'SENSOR-01'
-GROUP BY rt;
+ALTER ROLLUP ch6_control_ru SET WAKEUP INTERVAL 7 SEC;
 ```
 
 <a id="state-status-rollup-wakeup-interval-vrollup"></a>
 
-## V$ROLLUP 상태 확인
+## V$ROLLUP 읽기
 
-`V$ROLLUP`에서 등록된 ROLLUP의 현재 상태를 조회합니다.
-
-| 컬럼 | 설명 |
-|------|------|
-| ROLLUP_TABLE | ROLLUP table 이름 |
-| SOURCE_TABLE | 집계 source table |
-| INTERVAL_TIME | ROLLUP 주기(ms) |
-| WAKEUP_INTERVAL | wakeup 주기(ms) |
-| LAST_WAKEUP_TIME | 마지막 wakeup 시각 |
-| NEXT_WAKEUP_TIME | 다음 wakeup 예정 시각 |
-| ENABLED | 활성화 여부(1=활성, 0=중지) |
-| END_RID | 마지막으로 처리한 source RID |
-| LAST_ELAPSED_MSEC | 직전 집계 소요 시간(ms) |
-| RUN_STATE | `I`=INIT, `S`=SLEEPING, `R`=RUNNING |
-| PREDICATE | 조건 ROLLUP의 filter, 없으면 NULL |
+| 컬럼 | 해석 |
+|---|---|
+| ROLLUP_NAME | 제어할 작업 이름 |
+| ROLLUP_TABLE | 집계 대상 테이블; Custom은 사용자 대상 TAG |
+| SOURCE_TABLE, ROOT_TABLE | 직접 소스와 작업을 해석할 원본 관계 |
+| COLUMN_NAME | 일반·경로 집계 대상 컬럼 |
+| INTERVAL_TIME, WAKEUP_INTERVAL | 밀리초 단위 생성·실행 간격 |
+| EXT_TYPE | 0 일반, 1 확장, 2 Custom |
+| PREDICATE | 일반 조건식 또는 Custom SELECT 본문 |
+| ENABLED, RUN_STATE | 활성화 여부와 I/S/R 등의 실행 상태 |
+| END_RID | 소스 처리 위치 |
+| LAST_ELAPSED_MSEC | 직전 처리 시간(ms) |
+| DATABASE_NAME, USER_ID | 데이터베이스·소유자 구분 |
 
 ```sql
-SELECT ROLLUP_TABLE, SOURCE_TABLE, INTERVAL_TIME, WAKEUP_INTERVAL,
-       ENABLED, RUN_STATE, LAST_ELAPSED_MSEC, PREDICATE
-  FROM V$ROLLUP
- ORDER BY ROLLUP_TABLE;
-```
-
-`ENABLED=0`이면 STOP 상태로 wakeup하지 않습니다. 오래 걸리는 대상을 찾을 때는
-`LAST_ELAPSED_MSEC`를 내림차순으로 조회합니다.
-
-## SHOW ROLLUPGAP
-
-machsql에서는 다음 client 명령으로 아직 처리하지 못한 RID gap을 확인합니다.
-
-```sql
+SELECT ROLLUP_NAME, ROLLUP_TABLE, SOURCE_TABLE, ROOT_TABLE,
+       INTERVAL_TIME, WAKEUP_INTERVAL, ENABLED, RUN_STATE, LAST_ELAPSED_MSEC
+  FROM V$ROLLUP WHERE ROLLUP_NAME = 'CH6_CONTROL_RU'
+ ORDER BY ROLLUP_NAME;
 SHOW ROLLUPGAP;
 ```
 
-이 명령은 서버 SQL이 아닙니다. 계층의 모든 source→ROLLUP 행이 0인지 확인해야 전체 계층이
-따라잡았다고 판단할 수 있습니다. 출력과 `GAP` 계산 계약은
-[EXEC procedure와 ROLLUPGAP 정본](/dbms/reference/sql/syntax-dictionary-sql/execute-procedure-syntax/#show-rollupgap)을
-참고합니다.
+SHOW ROLLUPGAP은 machsql 전용 클라이언트 명령이며 SDK의 일반 SQL API에 보내지 않습니다.
+GAP은 소스와 ROLLUP 처리 RID의 차이입니다. 시간 지연 자체가 아니고, 모든 계층·관련 노드의
+상태와 함께 봅니다. gap=0이어도 이미 집계한 원본 보정이 반영되었다는 뜻은 아닙니다.
+지속 입력 중의 값은 관측 시점에 따라 변하므로 재현 실습에서는 입력을 멈춘 상태로 비교합니다.
+
+중지 기간에 원본이 보존 정책으로 삭제되면 START만으로 그 데이터를 되살릴 수 없습니다.
+FORCE는 하위에서 상위 순서로 실행하고, 실패하면 최초 오류·상태·소스 접근 가능성을 확인합니다.
+
+## 정리
+
+```sql
+DROP ROLLUP ch6_control_ru;
+DROP TABLE ch6_control;
+```
+
+자세한 명령 계약은 [EXEC 레퍼런스](../../reference/sql/syntax-dictionary-sql/execute-procedure-syntax/)와
+[ROLLUP 문제 해결](../../troubleshooting/rollup/)을 참고합니다.

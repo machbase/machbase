@@ -32,17 +32,19 @@ toc: true
 | `d` | 일 | `7d` |
 | `w` | 주 | `2w` (= 14일) |
 
-> 월(`month`, `mo`)과 연(`year`, `y`)은 길이가 일정하지 않아 지원하지 않습니다. `30d` 또는 `365d`로 대체합니다.
+> 월(`month`, `mo`)과 연(`year`, `y`) 접미사는 지원하지 않습니다. 달력 기준으로 한 달이나
+> 한 해를 이동하려면 `ADD_TIME()`을 사용합니다. `30d`와 `365d`는 각각 고정된 일수이므로
+> 달력상의 한 달·한 해와 항상 같지는 않습니다.
 
 ## ADD_TIME 함수
 
-월·연처럼 상대 시간 literal에 없는 달력 보정에는 `ADD_TIME()`을 사용합니다. signature,
-format과 오류는 [SQL 함수 사전](../dictionary/functions-full/#add_time)을 정본으로 사용합니다.
+월·연처럼 상대 시간 리터럴에 없는 달력 보정에는 `ADD_TIME()`을 사용합니다. 인자, 형식과
+오류 조건은 [SQL 함수 사전](../dictionary/functions-full/#add_time)을 참고하십시오.
 
 ## TO_DATE 함수
 
-문자열 경계를 사용해야 할 때는 `TO_DATE()`로 DATETIME을 명시합니다. format token과 변환
-오류는 [SQL 함수 사전](../dictionary/functions-full/#to_date)을 정본으로 사용합니다.
+조회 구간의 시작과 끝을 날짜 문자열로 지정할 때는 `TO_DATE()`로 DATETIME 값을 만듭니다.
+날짜 형식과 변환 오류는 [SQL 함수 사전](../dictionary/functions-full/#to_date)을 참고하십시오.
 
 ## 활용 패턴
 
@@ -111,10 +113,69 @@ SELECT event_time - 250 AS event_time_minus_250ns FROM events;
 
 | 상황 | 오류 | 해결 방법 |
 |------|------|-----------|
-| 지원하지 않는 접미사(`1y`, `5mo`) | `ERR-02034` invalid time expression | 지원 단위(`365d`, `30d` 등)로 교체 |
+| 지원하지 않는 접미사(`1y`, `5mo`) | `ERR-02034` invalid time expression | 달력 단위는 `ADD_TIME()`, 고정 기간은 `d` 등 지원 접미사 사용 |
 | 단위 누락(`now + 10`) | 나노초로 해석됨 | 의도한 단위 접미사 명시 |
 | 너무 큰 값(`1000000d`) | `ERR_OVERFLOW_INTERVAL` | 값 범위 축소 |
 
+<a id="log-duration"></a>
+
+## LOG의 DURATION
+
+상대 시간 리터럴과 DURATION은 역할이 다릅니다.
+`event_time >= now - 1h`는 선택한 컬럼의 WHERE 조건이고,
+DURATION은 LOG의 `_arrival_time` 범위를 지정합니다.
+TAG의 시간 컬럼이나 사용자 DATETIME 컬럼에는 WHERE 조건을 사용하세요.
+
+```text
+SELECT ... FROM log_table
+ [WHERE ...]
+ DURATION n unit [BEFORE base_time | AFTER base_time]
+ [GROUP BY ...] [HAVING ...] [ORDER BY ...] [LIMIT ...]
+
+SELECT ... FROM log_table
+ [WHERE ...]
+ DURATION FROM from_time TO to_time
+ [GROUP BY ...] [HAVING ...] [ORDER BY ...] [LIMIT ...]
+```
+
+위는 기본 형태입니다. 기간에는 `HOUR`, `MINUTE`, `DAY` 같은 단위를 사용합니다.
+전체 범위를 표현하는 `ALL`도 사용할 수 있습니다.
+DURATION은 WHERE 다음, GROUP BY·ORDER BY 앞에 둡니다.
+
+| 형태 | 범위 | 지정되는 스캔 방향 |
+|---|---|---|
+| DURATION 1 HOUR | 현재 시각 기준 최근 1시간 | 최신 쪽부터 |
+| DURATION 1 HOUR BEFORE t | t−1시간부터 t까지 | 최신 쪽부터 |
+| DURATION 1 HOUR AFTER t | t부터 t+1시간까지 | 오래된 쪽부터 |
+| DURATION FROM a TO b, a < b | a부터 b까지 | 오래된 쪽부터 |
+| DURATION FROM a TO b, a > b | b부터 a까지 | 최신 쪽부터 |
+
+범위의 양 끝을 포함합니다. FROM과 TO가 같은 시각이면 그 시각의 행이 대상입니다.
+스캔 방향과 조인·집계 이후의 최종 출력 순서는 구분하세요.
+결과 순서가 필요하면 ORDER BY를 명시하고, 같은 시각의 여러 행에는 추가 정렬 기준을 둡니다.
+
+다음 예제에서는 끝 시각에 있는 2번 행도 선택됩니다.
+
+```sql
+CREATE LOG TABLE ch7_ref_duration (event_id INTEGER);
+INSERT INTO ch7_ref_duration(_arrival_time, event_id)
+VALUES (TO_DATE('2026-01-01 10:00:00', 'YYYY-MM-DD HH24:MI:SS'), 1);
+INSERT INTO ch7_ref_duration(_arrival_time, event_id)
+VALUES (TO_DATE('2026-01-01 11:00:00', 'YYYY-MM-DD HH24:MI:SS'), 2);
+
+SELECT event_id FROM ch7_ref_duration
+ DURATION 1 HOUR BEFORE TO_DATE('2026-01-01 11:00:00', 'YYYY-MM-DD HH24:MI:SS')
+ ORDER BY event_id;
+
+DROP TABLE ch7_ref_duration;
+```
+
+결과는 1·2번입니다. 일별로 연속 구간을 나눌 때는
+`WHERE _arrival_time >= 시작 AND _arrival_time < 끝`처럼 반개구간을 사용하면
+경계 행을 중복 집계하지 않을 수 있습니다.
+LOG와 LOOKUP이 함께 있는 쿼리는 DURATION 대신 LOG 컬럼의 WHERE 범위를 사용하세요.
+
 ## 관련 문서
 
+- [LOG 시간 범위 실습](/dbms/log-table-usage/query-analysis/) — 경계·정렬·조인 결과 비교
 - [상대 시간 표현](/dbms-8.5/sql-reference/time-expressions/) — 8.5 레퍼런스 상세

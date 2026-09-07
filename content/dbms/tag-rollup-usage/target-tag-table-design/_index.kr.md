@@ -6,76 +6,78 @@ toc: true
 
 <a id="design-rollup-on"></a>
 
-## ROLLUP 설계 가이드
+## ON과 FROM
 
-데이터 수집 패턴과 조회 패턴을 고려해 ROLLUP 계층을 설계합니다.
+`ON source(column)`은 원본 시간축 TAG의 컬럼을 집계합니다. `FROM rollup_name`은
+기존 일반/확장 ROLLUP의 통계를 더 큰 구간으로 합칩니다. Custom의 대상도 TAG이지만,
+다음 Custom 단계는 대상 TAG를 SELECT하는 INTO...AS 구문으로 구성합니다.
 
-### ON vs FROM
-
-| 구문 | 소스 | 사용 시점 |
-|------|------|-----------|
-| `ON table(column)` | TAG 테이블 원시 데이터 | 최하위 ROLLUP 생성 시 |
-| `FROM rollup_table` | 기존 ROLLUP 테이블 | 상위(더 큰 단위) ROLLUP 생성 시 |
+## 계층 실습
 
 ```sql
--- ON: 1초 롤업은 반드시 TAG 테이블에서
-CREATE ROLLUP _ru_1s ON tag(value) INTERVAL 1 SEC;
+CREATE TAG TABLE ch6_design (
+    name VARCHAR(32) PRIMARY KEY,
+    time DATETIME BASETIME,
+    value DOUBLE,
+    quality INTEGER
+);
+CREATE ROLLUP ch6_design_sec ON ch6_design(value) INTERVAL 1 SEC;
+CREATE ROLLUP ch6_design_min FROM ch6_design_sec INTERVAL 1 MIN;
+CREATE ROLLUP ch6_design_hour FROM ch6_design_min INTERVAL 1 HOUR;
+INSERT INTO ch6_design VALUES ('TEMP_01', TO_DATE('2026-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), 10.0, 1);
+INSERT INTO ch6_design VALUES ('TEMP_01', TO_DATE('2026-01-01 00:00:30', 'YYYY-MM-DD HH24:MI:SS'), 20.0, 1);
+INSERT INTO ch6_design VALUES ('TEMP_01', TO_DATE('2026-01-01 00:01:00', 'YYYY-MM-DD HH24:MI:SS'), 30.0, 1);
+INSERT INTO ch6_design VALUES ('TEMP_02', TO_DATE('2026-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), 100.0, 1);
+EXEC TABLE_FLUSH(ch6_design);
+ALTER ROLLUP ch6_design_sec FORCE;
+ALTER ROLLUP ch6_design_min FORCE;
+ALTER ROLLUP ch6_design_hour FORCE;
 
--- FROM: 1분은 1초 롤업에서
-CREATE ROLLUP _ru_1m FROM _ru_1s INTERVAL 1 MIN;
-
--- FROM: 1시간은 1분 롤업에서
-CREATE ROLLUP _ru_1h FROM _ru_1m INTERVAL 1 HOUR;
+SELECT name, rollup('hour', 1, time) AS bucket,
+       SUM(value), COUNT(value), AVG(value)
+  FROM ch6_design
+ GROUP BY name, bucket ORDER BY name, bucket;
 ```
 
-### 주기 설계 원칙
+TEMP_01은 합계 60, 건수 3, 평균 20이고 TEMP_02는 100, 1, 100입니다.
+하위부터 FORCE해야 상위가 새로 생성된 하위 결과까지 처리할 수 있습니다.
 
-1. **가장 작은 단위부터**: 최하위 ROLLUP 주기는 조회에서 필요한 최소 시간 단위여야 합니다.
-2. **배수 관계 유지**: 상위 ROLLUP 주기는 하위 주기의 정수배여야 합니다.
-3. **계층 수 최소화**: 통상 3단계(초→분→시간)면 충분합니다.
+### 계층 제약
 
-```
-초 단위 분석 필요: 1SEC → 1MIN → 1HOUR
-분 단위 분석 충분: 1MIN → 1HOUR
-대용량 장기 보관:  5MIN → 1HOUR → 1DAY (별도 커스텀 롤업)
-```
+- 상위 간격은 소스 간격보다 커야 하며 정수배여야 합니다. 같은 간격도 허용되지 않습니다.
+- 일반 ROLLUP에서 FROM으로 확장 ROLLUP으로 바꾸거나 그 반대로 바꿀 수 없습니다.
+  EXTENSION 속성을 계층에서 일치시킵니다.
+- JSON 경로·문서 모드도 소스와 맞아야 합니다.
+- 필요한 조회의 최소 구간보다 거친 통계로 더 세밀한 원본을 복원할 수 없습니다.
 
-### 실전 설계 패턴
-
-#### 패턴 1: 표준 IoT 센서
+다음은 각각 의도적으로 실패하는 생성 예제입니다.
 
 ```sql
-CREATE ROLLUP _sensor_ru_1s  ON sensor_data(value) INTERVAL 1 SEC;
-CREATE ROLLUP _sensor_ru_1m  FROM _sensor_ru_1s   INTERVAL 1 MIN;
-CREATE ROLLUP _sensor_ru_1h  FROM _sensor_ru_1m   INTERVAL 1 HOUR;
+CREATE ROLLUP ch6_design_bad_same FROM ch6_design_min INTERVAL 1 MIN;
+CREATE ROLLUP ch6_design_bad_divisor FROM ch6_design_min INTERVAL 90 SEC;
+CREATE ROLLUP ch6_design_bad_ext FROM ch6_design_sec INTERVAL 1 MIN EXTENSION;
 ```
 
-#### 패턴 2: 고속 수집 + 실시간 대시보드
+## 간격과 저장량 결정
+
+모든 태그가 모든 구간에 값을 갖는다고 가정하면 논리 버킷 수는 대략
+`(보관 시간 / 버킷 간격) × 태그 수`입니다. 태그 1만 개의 1초 버킷을 365일 보관하면
+약 3,154억 버킷입니다. 실제 저장 행 수는 부분 집계·빈 구간·컬럼 수의 영향을 받고
+디스크 크기는 압축과 저장 부가 비용까지 측정해야 합니다.
+
+초 단위 관측을 분 단위로만 조회한다면 처음부터 모든 초 계층이 필요한지 검토합니다.
+생성 간격은 SEC/MIN/HOUR로 표현하지만 DAY/WEEK/MONTH/YEAR는 조회 버킷 단위입니다.
+특히 일 조회에 24 HOUR 저장 간격을 그대로 적용할 수 있다고 가정하지 말고
+[후보 선택 규칙](../query-syntax-rollup/)을 확인합니다.
+
+새 ROLLUP은 소스에 남아 있는 기존 데이터도 초기 집계하므로 초기 처리량과 gap을 확인합니다.
+원본 보정은 FORCE로 되감기지 않습니다. [REBUILD 지원 범위](../rollup-rebuild/)를 따릅니다.
+
+## 정리
 
 ```sql
--- 10초 단위 집계 (높은 빈도 대시보드)
-CREATE ROLLUP _fast_ru_10s  ON fast_sensor(value) INTERVAL 10 SEC;
-CREATE ROLLUP _fast_ru_1m   FROM _fast_ru_10s    INTERVAL 1 MIN;
-CREATE ROLLUP _fast_ru_1h   FROM _fast_ru_1m     INTERVAL 1 HOUR;
+DROP ROLLUP ch6_design_hour;
+DROP ROLLUP ch6_design_min;
+DROP ROLLUP ch6_design_sec;
+DROP TABLE ch6_design;
 ```
-
-#### 패턴 3: 정상/알람 분리 집계
-
-```sql
-CREATE ROLLUP _sensor_all_1m  ON tag(value) INTERVAL 1 MIN;
-CREATE ROLLUP _sensor_ok_1m   ON tag(value) INTERVAL 1 MIN WHERE quality = 1;
-CREATE ROLLUP _sensor_alm_1m  ON tag(value) INTERVAL 1 MIN WHERE value > 90;
-```
-
-### ROLLUP 스토리지 예측
-
-ROLLUP 테이블의 행 수 ≈ (전체 기간 / ROLLUP 주기) × 태그 개수
-
-예: 태그 1만 개 × 1초 ROLLUP × 1년 = 약 3천억 행 → 스토리지 계획 필요
-
-> 태그가 많을수록 ROLLUP 테이블 크기가 비례해 커집니다. 필요한 컬럼과 주기만 선택적으로 만드십시오.
-
-### 주의사항
-
-- ROLLUP 생성 전에 입력된 데이터는 집계되지 않습니다. 과거 데이터가 있는 경우 `EXEC ROLLUP_FORCE`로 수동 집계하거나, Rebuild를 사용합니다.
-- WITH ROLLUP으로 자동 생성된 롤업은 이름이 고정됩니다. 이름 충돌을 피하려면 수동으로 생성하십시오.

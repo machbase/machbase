@@ -4,94 +4,105 @@ weight: 30
 toc: true
 ---
 
-
 <a id="create-delete-rollup"></a>
 
-## ROLLUP 생성과 삭제
-
-### CREATE ROLLUP
-
-#### 기본 구문
+## 생성 구문
 
 ```text
-CREATE ROLLUP [IF NOT EXISTS] rollup_name
-  ON source_table(column_name)
+CREATE ROLLUP [IF NOT EXISTS] name
+  ON source_tag [(column_or_json_path)]
+  INTERVAL n (SEC|MIN|HOUR)
+  [WAKEUP INTERVAL m (SEC|MIN|HOUR)]
+  [EXTENSION]
+  [WHERE predicate];
+
+CREATE ROLLUP [IF NOT EXISTS] name
+  FROM source_rollup
   INTERVAL n (SEC|MIN|HOUR)
   [WAKEUP INTERVAL m (SEC|MIN|HOUR)]
   [EXTENSION]
   [WHERE predicate];
 ```
 
-상위 롤업(롤업을 소스로 쓰는 경우):
+EXTENSION 뒤에 별도 확장 이름은 쓰지 않습니다. CREATE의 단위는 SEC/MIN/HOUR이며,
+조회 함수의 DAY/MONTH 등과 구분합니다. 간격은 양수이며 현행 검증 상한은 365일에
+해당하는 간격입니다. 소스·계층·집계 모드의 조건도 함께 만족해야 합니다.
 
-```text
-CREATE ROLLUP [IF NOT EXISTS] rollup_name
-  FROM source_rollup_table
-  INTERVAL n (SEC|MIN|HOUR)
-  [WAKEUP INTERVAL m (SEC|MIN|HOUR)]
-  [EXTENSION]
-  [WHERE predicate];
-```
+| 대상 | 조건 |
+|---|---|
+| 일반 숫자 컬럼 | 지원 숫자 타입을 지정; SUMMARIZED는 필수가 아님 |
+| JSON 경로 | 해당 JSON 컬럼과 유효한 경로 지정 |
+| JSON 문서 전체 | JSON SUMMARIZED 컬럼 필요 |
+| WITH ROLLUP 자동 생성 | 세 번째 SUMMARIZED 컬럼 필요 |
+| METADATA·거리축·비TAG | 일반 ROLLUP 대상이 아님 |
 
-#### 생성 예시
+## 생성·중복 확인·조회 실습
 
 ```sql
-CREATE TAG TABLE create_rollup_demo (
-    name  VARCHAR(32) PRIMARY KEY,
-    time  DATETIME BASETIME,
-    value DOUBLE SUMMARIZED
+CREATE TAG TABLE ch6_create (
+    name VARCHAR(32) PRIMARY KEY,
+    time DATETIME BASETIME,
+    value DOUBLE,
+    quality INTEGER
 );
-
-CREATE ROLLUP create_ru_1s
-    ON create_rollup_demo(value) INTERVAL 1 SEC;
-
-CREATE ROLLUP create_ru_1m
-    FROM create_ru_1s INTERVAL 1 MIN;
-
-CREATE ROLLUP create_ru_1h
-    FROM create_ru_1m INTERVAL 1 HOUR;
+CREATE ROLLUP IF NOT EXISTS ch6_create_ru ON ch6_create(value) INTERVAL 1 MIN;
+CREATE ROLLUP IF NOT EXISTS ch6_create_ru ON ch6_create(value) INTERVAL 1 MIN;
+INSERT INTO ch6_create VALUES ('TEMP_01', TO_DATE('2026-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), 10.0, 1);
+INSERT INTO ch6_create VALUES ('TEMP_01', TO_DATE('2026-01-01 00:00:30', 'YYYY-MM-DD HH24:MI:SS'), 20.0, 1);
+INSERT INTO ch6_create VALUES ('TEMP_01', TO_DATE('2026-01-01 00:01:00', 'YYYY-MM-DD HH24:MI:SS'), 30.0, 1);
+INSERT INTO ch6_create VALUES ('TEMP_02', TO_DATE('2026-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), 100.0, 1);
+EXEC TABLE_FLUSH(ch6_create);
+ALTER ROLLUP ch6_create_ru FORCE;
+SELECT DISTINCT ROLLUP_NAME, COLUMN_NAME, INTERVAL_TIME, WAKEUP_INTERVAL
+  FROM V$ROLLUP WHERE ROLLUP_NAME = 'CH6_CREATE_RU';
+SELECT rollup('min', 1, time) AS bucket, AVG(value)
+  FROM ch6_create WHERE name = 'TEMP_01'
+ GROUP BY bucket ORDER BY bucket;
 ```
 
-조건, 확장, 사용자 정의 ROLLUP은 각각의 상세 문서에서 실행 가능한 예제를 제공합니다.
+같은 이름의 재생성은 기존 정의를 유지합니다. IF NOT EXISTS는 정의 변경·동일성 확인 기능이
+아니며, 잘못된 SQL이나 소스 검증을 모두 생략해 주는 옵션도 아닙니다.
+두 간격 컬럼은 60000ms이고 조회 평균은 00:00에 15, 00:01에 30입니다.
 
-#### TAG 테이블 생성 시 자동 생성 (WITH ROLLUP)
+IF NOT EXISTS 없이 같은 이름을 생성하면 오류입니다. 정상 실습과 분리해 확인합니다.
 
 ```sql
--- SEC 이상 전체 계층(SEC/MIN/HOUR) 자동 생성
-CREATE TAG TABLE tag (
-    name  VARCHAR(20) PRIMARY KEY,
-    time  DATETIME BASETIME,
+CREATE ROLLUP ch6_create_ru ON ch6_create(value) INTERVAL 1 MIN;
+```
+
+## WITH ROLLUP 자동 생성
+
+다음은 별도 테이블입니다. SEC부터 MIN·HOUR까지의 기본 계층을 자동 생성합니다.
+
+```sql
+CREATE TAG TABLE ch6_auto (
+    name VARCHAR(32) PRIMARY KEY,
+    time DATETIME BASETIME,
     value DOUBLE SUMMARIZED
 ) WITH ROLLUP (SEC);
+SELECT DISTINCT ROLLUP_NAME, ROOT_TABLE, INTERVAL_TIME, EXT_TYPE
+  FROM V$ROLLUP WHERE ROOT_TABLE = 'CH6_AUTO'
+ ORDER BY INTERVAL_TIME;
 ```
 
-자동 생성된 이름은 원본 테이블 이름에서 파생됩니다. 이름을 추측하지 말고 `V$ROLLUP`에서
-확인하십시오. 같은 이름의 객체가 있으면 `WITH ROLLUP` 처리가 실패할 수 있습니다.
+EXTENSION 자동 생성은 `WITH ROLLUP (SEC) EXTENSION` 형태입니다. 실제 생성 이름은
+V$ROLLUP에서 확인하고, 이름 충돌을 자동으로 해소한다고 가정하지 않습니다.
 
-#### 제약사항
+## 삭제와 정의 변경
 
-- 집계 대상 컬럼은 숫자형(DOUBLE, INTEGER 등)이어야 합니다.
-- FROM으로 참조하는 상위 롤업의 주기는 소스 롤업 주기의 정수배여야 합니다.
-- ROLLUP은 시간축(BASETIME) TAG 테이블에서만 동작합니다. 거리축 TAG 테이블은 지원하지 않습니다.
-- JSON SUMMARIZED 컬럼은 별도 JSON ROLLUP 구문을 사용합니다.
-
-### DROP ROLLUP
-
-```text
-DROP ROLLUP rollup_name;
-```
-
-#### 삭제 규칙
-
-다른 롤업이 해당 롤업을 소스로 참조하는 경우 삭제할 수 없습니다. 의존 순서의 역순으로 삭제해야 합니다.
+다른 ROLLUP이 참조하는 소스는 상위 의존 객체부터 제거합니다. Custom 대상 TAG는 작업을
+삭제하기 전에 DROP할 수 없습니다. 정의를 바꾸려면 읽는 애플리케이션과 재집계 시간을
+고려해 새 객체로 전환하거나 기존 정의를 제거한 뒤 다시 생성합니다.
 
 ```sql
-DROP ROLLUP create_ru_1h;
-DROP ROLLUP create_ru_1m;
-DROP ROLLUP create_ru_1s;
-DROP TABLE create_rollup_demo;
+DROP ROLLUP ch6_create_ru;
+DROP TABLE ch6_create;
+DROP TABLE ch6_auto CASCADE;
 ```
 
-#### TAG 테이블 삭제 시 일괄 삭제
+마지막 CASCADE는 이 실습의 자동 ROLLUP도 함께 제거합니다. 일반 운영 정리의 기본값으로
+사용하지 않습니다. Custom 소스 CASCADE는 관련 작업을 제거하더라도 사용자 대상 TAG까지
+자동 삭제하는 것으로 해석하지 마십시오.
 
-원본 TAG와 종속 ROLLUP을 함께 삭제해야 한다면 `DROP TABLE table_name CASCADE`를 사용합니다.
+조건·확장·JSON·Custom 실습은 각 절에서 독립적으로 제공합니다. 전체 구문은
+[SQL 레퍼런스](../../reference/sql/syntax-dictionary-sql/rollup-syntax/)를 참고합니다.

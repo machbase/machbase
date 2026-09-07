@@ -7,6 +7,10 @@ toc: true
 
 Machbase에서 지원하는 SQL 데이터 타입을 설명합니다.
 
+타입은 저장할 값의 범위와 정밀도에 맞춰 선택합니다. 정수의 최솟값 또는 최댓값처럼
+NULL 표현에 예약된 값은 일반 데이터로 사용할 수 없습니다. 아래 표의 `NULL 값`은 내부
+표현이며, SQL에서는 `NULL`을 입력하고 `IS NULL`로 검사합니다.
+
 ## 데이터 타입 요약
 
 | 타입 | 크기 | 값 범위 | NULL 값 |
@@ -22,7 +26,7 @@ Machbase에서 지원하는 SQL 데이터 타입을 설명합니다.
 | `DECIMAL(M,D)` | precision에 따라 가변 | exact fixed-point, M: 1~65, D: 0~30 | - |
 | `ARRAY` | 요소 타입과 cardinality에 따라 가변 | 고정 길이 1차원 숫자 배열, cardinality 1~1024 | whole NULL과 element NULL 구분 |
 | `DATETIME` | 8 bytes | 1970-01-01 ~ 2262-04-11 (나노초 정밀도) | - |
-| `VARCHAR(n)` | 가변 | 최대 n 바이트 (1 ~ 32,768) | - |
+| `VARCHAR(n)` | 가변 | 최대 n 바이트 (LOG 선언 범위: 1~32,767) | - |
 | `IPV4` | 4 bytes | 0.0.0.0 ~ 255.255.255.255 | - |
 | `IPV6` | 16 bytes | 0000:...:0000 ~ FFFF:...:FFFF | - |
 | `TEXT` | 가변 | 0 ~ 64MB (전문 검색 인덱스 지원) | - |
@@ -35,7 +39,8 @@ Machbase에서 지원하는 SQL 데이터 타입을 설명합니다.
 
 ### SHORT
 
-C 언어의 16비트 부호 있는 정수(`int16_t`)와 동일합니다. 최소 음수 값(-32,768)은 NULL로 인식됩니다. `int16`으로도 표시할 수 있습니다.
+16비트 부호 있는 정수 타입입니다. C의 `int16_t`와 저장 크기는 같지만 최소값
+(-32,768)은 NULL 표현으로 예약됩니다. SQL에서는 `INT16` 별칭도 사용할 수 있습니다.
 
 ```sql
 CREATE LOG TABLE t (c1 SHORT);
@@ -49,7 +54,8 @@ INSERT INTO t VALUES (-32768);  -- NULL로 처리됨
 
 ### INTEGER
 
-C 언어의 32비트 부호 있는 정수(`int32_t`)와 동일합니다. `int32` 또는 `int`로도 표시할 수 있습니다.
+32비트 부호 있는 정수 타입입니다. C의 `int32_t`와 저장 크기는 같지만 최소값은 NULL
+표현으로 예약됩니다. SQL에서는 `INT32` 또는 `INT` 별칭도 사용할 수 있습니다.
 
 ### UINTEGER
 
@@ -57,7 +63,8 @@ C 언어의 32비트 부호 있는 정수(`int32_t`)와 동일합니다. `int32`
 
 ### LONG
 
-C 언어의 64비트 부호 있는 정수(`int64_t`)와 동일합니다. `int64`로도 표시할 수 있습니다.
+64비트 부호 있는 정수 타입입니다. C의 `int64_t`와 저장 크기는 같지만 최소값은 NULL
+표현으로 예약됩니다. SQL에서는 `INT64` 별칭도 사용할 수 있습니다.
 
 ### ULONG
 
@@ -81,8 +88,10 @@ C 언어의 64비트 부동소수점 타입 `double`과 동일합니다. 양수 
 
 ### DECIMAL / NUMERIC
 
-10진수 값을 오차 없이 저장하는 exact fixed-point 타입입니다. `NUMERIC`, `DEC`, `FIXED`,
-`NUMBER`는 `DECIMAL`의 alias입니다.
+선언한 전체 자릿수와 소수 자릿수 범위에서 10진수를 정확하게 저장하는 고정소수점
+타입입니다. 입력값의 소수 자릿수가 선언한 범위를 넘으면 반올림이 발생할 수 있으므로
+금액이나 비율을 저장할 때 필요한 자릿수를 먼저 정합니다. `NUMERIC`, `DEC`, `FIXED`,
+`NUMBER`는 `DECIMAL`의 별칭입니다.
 
 ```sql
 CREATE TRANSACTION TABLE invoice (
@@ -140,7 +149,9 @@ SELECT TO_CHAR(ts, 'YYYY-MM-DD HH24:MI:SS') FROM t;
 
 ### VARCHAR(n)
 
-가변 길이 문자열 타입입니다. `n`은 1 ~ 32,768 바이트 범위이며, UTF-8 인코딩을 사용합니다. 영문 기준 바이트 수이므로 한글 등 멀티바이트 문자 사용 시 적절한 크기를 설정해야 합니다.
+가변 길이 문자열 타입입니다. `n`은 문자 수가 아니라 저장할 수 있는 바이트 수이며,
+LOG의 선언 범위는 1~32,767입니다. UTF-8 문자열은 문자에 따라 필요한 바이트 수가 다르므로 한글과
+이모지 등을 저장할 때는 실제 인코딩 크기를 고려해 길이를 지정합니다.
 
 ```sql
 CREATE LOG TABLE t (name VARCHAR(100), description VARCHAR(1000));
@@ -148,11 +159,18 @@ CREATE LOG TABLE t (name VARCHAR(100), description VARCHAR(1000));
 
 ### TEXT
 
-VARCHAR 크기를 초과하는 대용량 텍스트를 저장하기 위한 타입입니다. 최대 64MB를 저장할 수 있으며 키워드 인덱스를 통한 전문 검색(Full-Text Search)을 지원합니다.
+VARCHAR 크기를 초과하는 대용량 텍스트를 저장하기 위한 타입입니다. 최대 64MB를 저장할 수
+있습니다. 텍스트 저장 지원과 KEYWORD 인덱스 지원은 구분하며, 인덱스 사용 가능 여부는
+테이블 유형에 따라 다릅니다.
 
-- LOG 테이블에서 지원
-- `SEARCH` 절과 함께 키워드 검색 가능
+- LOG와 Standard Edition의 TRANSACTION 테이블에서 지원
+- LOG 테이블은 KEYWORD 인덱스와 `SEARCH` 연산자로 키워드 검색 가능
 - TAG, LOOKUP, VOLATILE 테이블에서는 지원하지 않음
+
+LOG의 TEXT 컬럼 자체에는 ORDER BY·GROUP BY를 적용할 수 없습니다.
+단순 성능 권장사항이 아니라 쿼리 검증에서 거부되는 제약입니다.
+정렬·집계에 사용할 장치, 오류 코드, 등급 등은 별도 VARCHAR·숫자 컬럼으로 두세요.
+TEXT를 VARCHAR로 변경하려고 `MODIFY COLUMN`을 사용하는 것도 지원하지 않습니다.
 
 ```sql
 CREATE LOG TABLE log_table (ts DATETIME, message TEXT);
@@ -169,6 +187,7 @@ CREATE INDEX idx_msg ON log_table (message) INDEX_TYPE KEYWORD;
 이미지, 문서 등 비정형 바이너리 데이터를 저장하는 타입입니다.
 
 - **LOG 테이블**: 가변 길이, 최대 64MB
+- **TRANSACTION 테이블**: 가변 길이 바이너리 값 지원 (Standard Edition)
 - **TAG 테이블**: `BINARY(n)` 형식의 고정 길이 변형, 1 ~ 32,767 bytes
 - LOOKUP, VOLATILE 테이블에서는 지원하지 않음
 
@@ -210,7 +229,7 @@ INSERT INTO v6_log VALUES (NOW, '21DA:D3:0:2F3B:2AA:FF:FE28:9C5A');
 
 JSON 문서를 저장하는 타입입니다. "Key-Value" 쌍으로 구성된 JSON 데이터를 텍스트 형식으로 저장합니다.
 
-- 데이터 최대 크기: 32,768 bytes (VARCHAR와 동일)
+- 데이터 최대 크기: 32,768 bytes
 - JSON path 최대 길이: 512 bytes
 - TAG, LOG, LOOKUP, TRANSACTION 테이블에서 지원
 - VOLATILE 테이블에서는 JSON 컬럼 생성 불가
@@ -271,9 +290,9 @@ Machbase 데이터 타입과 SQL 표준 타입 및 C 타입의 대응 관계입�
 | VARCHAR | O | O | O | O | O |
 | IPV4 | O | O | O | O | O |
 | IPV6 | O | O | O | O | O |
-| TEXT | X | O | X | X | X |
+| TEXT | X | O | X | X | O |
 | JSON | O | O | O | X | O |
-| BINARY | O (고정 길이) | O | X | X | X |
+| BINARY | O (고정 길이) | O | X | X | O |
 
 DECIMAL은 모든 public 테이블 타입에서 지원합니다. TRANSACTION 테이블 자체는 Standard Edition에서
 사용하며, Cluster Edition에서는 LOG/TAG 테이블의 DECIMAL 컬럼과 DDL 전파를 지원합니다.

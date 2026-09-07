@@ -50,14 +50,17 @@ Machbase를 설치하면 `SYS` 계정이 자동으로 생성됩니다. SYS는 �
 > ALTER USER SYS IDENTIFIED BY '새_비밀번호';
 > ```
 
-## 상세 정본
+<a id="상세-정본"></a>
 
-- 사용자 lifecycle과 비밀번호 정책: [계정 관리](../account/)
-- database·table 권한과 GRANT/REVOKE: [권한 관리](../privileges/)
+## 관련 문서
+
+- 사용자 생명 주기와 비밀번호 정책: [계정 관리](../account/)
+- 데이터베이스·테이블 권한과 GRANT/REVOKE: [권한 관리](../privileges/)
 - 공개키 등록·롤오버: [AUTH KEY 인증](../authentication-auth-key/)
 - 원격 접속과 listener: [접속 제어](../access-control/)
 
-개요 페이지에 전체 권한표와 인증 SQL을 복제하지 않습니다.
+계정 생성, 권한 부여와 인증 설정은 각각 별도의 작업입니다. 아래 예제의 계정과 테이블을
+준비한 뒤, 각 계정으로 다시 접속하여 허용한 작업과 제한한 작업을 확인하십시오.
 
 ## 최소 권한 원칙
 
@@ -79,5 +82,6 @@ GRANT SELECT, INSERT ON sys.sensor_log TO writer;
 
 -- DDL 전용 계정 (테이블 생성/삭제)
 CREATE USER deploy IDENTIFIED BY 'Deploy#Strong123';
+GRANT CONNECT ON DATABASE factory_a TO deploy;
 GRANT DDL ON DATABASE factory_a TO deploy;
 ```

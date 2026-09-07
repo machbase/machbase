@@ -25,6 +25,6 @@ SQL 문법, 함수, 데이터 타입, 쿼리 힌트, 상대 시간 표현의 정
 - **TAG 시계열 기능**: BASETIME, METADATA, `FIRST`/`LAST`, `SERIES BY`, ROLLUP
 - **시간 범위 조회**: `DURATION`, `BEFORE`, `AFTER`, `RANGE` 절
 - **공통 테이블 표현식**: Standard Edition의 비재귀 `WITH`/CTE
-- **빠른 전체 삽입**: `APPEND` 프로토콜 (CLI/SDK)
+- **대량 입력 연동**: 클라이언트 SDK의 Append API (SQL 문장이 아닌 별도 입력 API)
 - **텍스트 검색**: `SEARCH`, `ESEARCH`, `REGEXP` 연산자
 - **집합 연산**: `UNION ALL` (UNION, INTERSECT, EXCEPT 미지원)
