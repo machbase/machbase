@@ -19,12 +19,12 @@ VOLATILE 테이블 사용 시 다음 제약을 고려합니다.
 | 백업·마운트 | 지원하지 않음 |
 | JSON 컬럼 | 지원하지 않음 |
 | PRIMARY KEY | 선택 사항, 하나만 지정 |
-| UPDATE/DELETE | PRIMARY KEY 조건 중심으로 사용 |
+| UPDATE/DELETE | `PRIMARY KEY = 값` 조건만 지원 |
 | 메모리 한도 | Volatile/Lookup 테이블 전체 메모리 한도 영향 |
 
 ```sql
 -- 실패 예: VOLATILE 테이블에는 JSON 컬럼을 사용하지 않습니다.
-CREATE VOLATILE TABLE session_state (
+CREATE VOLATILE TABLE ch10_err_json (
     session_id VARCHAR(64) PRIMARY KEY,
     payload    JSON
 );
@@ -38,13 +38,22 @@ CREATE VOLATILE TABLE session_state (
 
 VOLATILE 테이블의 데이터와 인덱스는 메모리를 사용합니다. 행 수가 증가하거나 인덱스가 많으면 메모리 한도에 도달할 수 있습니다.
 
-진단은 다음 순서로 수행합니다.
+진단은 다음 순서로 수행합니다. 아래 실습 테이블은 이 페이지 끝에서 정리합니다.
 
 ```sql
-SELECT COUNT(*) FROM sensor_latest;
+-- 진단 예제용 실습 테이블입니다.
+CREATE VOLATILE TABLE ch10_diag (
+    device_id VARCHAR(64) PRIMARY KEY,
+    value     DOUBLE
+);
+INSERT INTO ch10_diag VALUES ('DEV-01', 10.0);
+
+-- 1. 대상 테이블의 행 수를 확인합니다.
+SELECT COUNT(*) FROM ch10_diag;
 ```
 
 ```sql
+-- 2. VOLATILE 테이블 전체의 메모리 사용을 확인합니다.
 SELECT *
 FROM V$STORAGE_DC_VOLATILE_TABLE;
 ```
@@ -69,10 +78,10 @@ WHERE NAME = 'VOLATILE_TABLESPACE_MEMORY_MAX_SIZE';
 
 ## PRIMARY KEY 관련 오류
 
-`ON DUPLICATE KEY UPDATE`, PK 기반 UPDATE, PK 기반 DELETE를 사용하려면 PRIMARY KEY가 필요합니다.
+`ON DUPLICATE KEY UPDATE`, [PK 기반 UPDATE](../data-input-mutation/#volatile-primary-key-update), PK 기반 DELETE를 사용하려면 PRIMARY KEY가 필요합니다.
 
 ```sql
-CREATE VOLATILE TABLE device_status (
+CREATE VOLATILE TABLE ch10_err_device (
     device_id  VARCHAR(64) PRIMARY KEY,
     status     VARCHAR(16),
     updated_at DATETIME
@@ -82,7 +91,7 @@ CREATE VOLATILE TABLE device_status (
 PRIMARY KEY 값은 중복될 수 없습니다. 중복 입력을 갱신으로 처리하려면 `ON DUPLICATE KEY UPDATE`를 사용합니다.
 
 ```sql
-INSERT INTO device_status VALUES ('DEV-01', 'ONLINE', NOW)
+INSERT INTO ch10_err_device VALUES ('DEV-01', 'ONLINE', NOW)
 ON DUPLICATE KEY UPDATE SET status = 'ONLINE', updated_at = NOW;
 ```
 
@@ -103,10 +112,17 @@ PRIMARY KEY 컬럼 자체는 UPDATE할 수 없습니다. 키를 변경해야 하
 4. 원본 TAG/LOG/TRANSACTION 테이블에서 캐시를 재구성합니다.
 
 ```sql
-SELECT COUNT(*) FROM sensor_latest;
+SELECT COUNT(*) FROM ch10_diag;
 ```
 
 결과가 0이면 초기 적재 절차를 다시 실행합니다.
+
+이 페이지의 실습 테이블은 다음과 같이 정리합니다.
+
+```sql
+DROP TABLE ch10_diag;
+DROP TABLE ch10_err_device;
+```
 
 <a id="troubleshooting-volatile-checklist"></a>
 
@@ -115,5 +131,5 @@ SELECT COUNT(*) FROM sensor_latest;
 - 테이블에 저장한 데이터가 재생성 가능한지 확인합니다.
 - PRIMARY KEY가 필요한 작업인지 확인합니다.
 - `COUNT(*)`와 `V$STORAGE_DC_VOLATILE_TABLE`로 규모와 메모리 사용을 확인합니다.
-- 재시작 후에는 생성 SQL과 초기 적재 SQL을 다시 실행합니다.
+- 재시작 후에는 초기 적재 SQL을 다시 실행합니다. 테이블은 다시 만들지 않아도 됩니다.
 - 영속 보존이 필요하면 VOLATILE이 아니라 TAG, LOG, LOOKUP, TRANSACTION 테이블을 사용합니다.

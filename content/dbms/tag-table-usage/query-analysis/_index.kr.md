@@ -15,7 +15,7 @@ TAG 테이블에서 시계열 데이터를 조회하는 주요 패턴을 다룹�
 ###  샘플 스키마 (시간축)
 
 다음 예제는 TAG 테이블에 두 태그를 등록하고 태그마다 10개 행을 입력합니다.
-`TAG_0001`은 2018년 1월 1~10일, `TAG_0002`는 2월 1~10일 데이터를 사용합니다.
+`TAG_0001`은 2018년 1월 1일부터 10일까지, `TAG_0002`는 2월 1일부터 10일까지의 데이터를 사용합니다.
 
 ```sql
 create tag table TAG (name varchar(20) primary key, time datetime basetime, value double summarized);

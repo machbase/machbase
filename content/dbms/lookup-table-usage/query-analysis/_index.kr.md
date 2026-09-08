@@ -13,24 +13,24 @@ LOOKUP 테이블의 키 조회, 일반 조건 조회, TAG 데이터와의 JOIN�
 다음 LOOKUP 테이블과 TAG 테이블을 준비합니다.
 
 ```sql
-CREATE LOOKUP TABLE lookup_sensor_master (
+CREATE LOOKUP TABLE ch9_query_master (
     sensor_id VARCHAR(32) PRIMARY KEY,
     site      VARCHAR(32),
     unit      VARCHAR(16),
     status    VARCHAR(16)
 );
 
-INSERT INTO lookup_sensor_master VALUES ('TEMP-01', 'SEOUL', 'C', 'ACTIVE');
-INSERT INTO lookup_sensor_master VALUES ('TEMP-02', 'BUSAN', 'C', 'INACTIVE');
+INSERT INTO ch9_query_master VALUES ('TEMP-01', 'SEOUL', 'C', 'ACTIVE');
+INSERT INTO ch9_query_master VALUES ('TEMP-02', 'BUSAN', 'C', 'INACTIVE');
 
-CREATE TAG TABLE lookup_sensor_data (
+CREATE TAG TABLE ch9_query_data (
     name  VARCHAR(32) PRIMARY KEY,
     time  DATETIME BASETIME,
     value DOUBLE SUMMARIZED
 );
 
-INSERT INTO lookup_sensor_data VALUES ('TEMP-01', TO_DATE('2026-01-01 00:00:00'), 23.5);
-INSERT INTO lookup_sensor_data VALUES ('TEMP-02', TO_DATE('2026-01-01 00:00:00'), 19.0);
+INSERT INTO ch9_query_data VALUES ('TEMP-01', TO_DATE('2026-01-01 00:00:00'), 23.5);
+INSERT INTO ch9_query_data VALUES ('TEMP-02', TO_DATE('2026-01-01 00:00:00'), 19.0);
 ```
 
 <a id="query-lookup-primary-key"></a>
@@ -41,7 +41,7 @@ INSERT INTO lookup_sensor_data VALUES ('TEMP-02', TO_DATE('2026-01-01 00:00:00')
 
 ```sql
 SELECT sensor_id, site, unit, status
-FROM lookup_sensor_master
+FROM ch9_query_master
 WHERE sensor_id = 'TEMP-01';
 ```
 
@@ -53,7 +53,7 @@ LOOKUP 테이블은 일반 컬럼 조건으로도 조회할 수 있습니다. �
 
 ```sql
 SELECT sensor_id, site, unit
-FROM lookup_sensor_master
+FROM ch9_query_master
 WHERE site = 'SEOUL'
   AND status = 'ACTIVE';
 ```
@@ -69,8 +69,8 @@ LOOKUP 테이블은 TAG 또는 LOG 테이블의 원본 데이터에 설명 정�
 
 ```sql
 SELECT d.name, m.site, m.unit, d.time, d.value
-FROM lookup_sensor_data d
-JOIN lookup_sensor_master m ON d.name = m.sensor_id
+FROM ch9_query_data d
+JOIN ch9_query_master m ON d.name = m.sensor_id
 WHERE m.status = 'ACTIVE';
 ```
 
@@ -91,8 +91,8 @@ LOOKUP 테이블은 원본 데이터를 저장하기보다 분석 기준을 제�
 시간 범위가 큰 TAG 또는 LOG 테이블은 JOIN 전에 시간 조건으로 조회 범위를 제한합니다.
 
 ```sql
-DROP TABLE lookup_sensor_data CASCADE;
-DROP TABLE lookup_sensor_master;
+DROP TABLE ch9_query_data CASCADE;
+DROP TABLE ch9_query_master;
 ```
 
 <a id="query-lookup-performance"></a>

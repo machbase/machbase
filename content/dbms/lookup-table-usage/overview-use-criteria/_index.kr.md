@@ -15,7 +15,7 @@ LOOKUP 테이블은 기준 코드, 장비 마스터, 임계값, 설정값처럼 
 LOOKUP 테이블은 `CREATE LOOKUP TABLE` 문으로 생성하며, `PRIMARY KEY`가 필수입니다.
 
 ```sql
-CREATE LOOKUP TABLE sensor_master (
+CREATE LOOKUP TABLE ch9_overview (
     sensor_id VARCHAR(64) PRIMARY KEY,
     site      VARCHAR(32),
     unit      VARCHAR(16),
@@ -68,6 +68,12 @@ LOOKUP 테이블은 참조 데이터에 적합하지만, 데이터가 영속 저
 대용량 테이블처럼 사용해서는 안 됩니다. 원본 데이터는 LOG 또는 TAG 테이블에 저장하고,
 LOOKUP 테이블에는 메모리에 상주시켜 반복 조회할 기준 정보를 저장합니다. 관계형 데이터가
 메모리 용량보다 커지거나 복합적인 업무 처리가 필요하면 TRANSACTION 테이블을 사용합니다.
+
+이 절의 실습 테이블은 다음과 같이 정리합니다.
+
+```sql
+DROP TABLE ch9_overview;
+```
 
 <a id="overview-lookup-design-flow"></a>
 

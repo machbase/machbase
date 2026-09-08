@@ -23,10 +23,6 @@ CREATE TRANSACTION TABLE ch8_ddl (
 INSERT INTO ch8_ddl VALUES (1, 'P-01', 10);
 ```
 
-CREATE TABLE·CREATE TXN TABLE도 같은 타입을 만듭니다.
-CREATE RDB TABLE·CREATE TRX TABLE은 지원하지 않으며 Standard Edition에서만 사용할 수
-있습니다. LOG를 만들 때는 CREATE LOG TABLE로 명시하세요.
-
 <a id="create-rdb-primary-key-index"></a>
 
 <a id="기존-데이터에-키와-인덱스를-추가합니다"></a>
@@ -68,6 +64,12 @@ SELECT id, label, status, limits FROM ch8_ddl ORDER BY id;
 
 1번 행에서 label은 NULL, status는 NEW, limits는 [10, 20]입니다.
 DEFAULT가 없는 ARRAY 컬럼을 추가하면 기존 행은 배열 전체가 NULL입니다.
+
+`ADD COLUMN`의 `DEFAULT`와 `CREATE TABLE`의 `DEFAULT`는 허용 범위가 다릅니다.
+위처럼 `ADD COLUMN`에는 타입에 맞는 값을 지정할 수 있지만, `CREATE TABLE`의 컬럼 정의에서는
+`DATETIME` 컬럼의 `DEFAULT SYSDATE`만 사용할 수 있습니다. 다른 타입이나 다른 값을 지정하면
+각각 `ERR-02346`, `ERR-02347`로 거부됩니다. 생성 시점에 기본값이 필요하면 컬럼을 먼저
+만들고 `ADD COLUMN`으로 추가하거나, 입력 구문에서 값을 지정하십시오.
 배열 안의 일부 요소가 NULL인 경우와 구분하세요.
 
 컬럼 정의는 괄호로 묶습니다. 이 문법은 다른 DBMS의 ALTER TABLE 형식과 혼동하기 쉽습니다.

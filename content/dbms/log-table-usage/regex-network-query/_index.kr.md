@@ -68,7 +68,42 @@ SELECT event_id FROM ch7_network
 
 BETWEEN은 양 끝 주소를 포함합니다. 이 예제의 IPv4 범위는 CIDR 대역의 의미를
 자동 적용한 것이 아니라, 직접 지정한 두 주소 사이의 범위입니다.
+대역 자체로 판정하려면 아래 `CONTAINED`를 사용하세요.
 NULL은 `= NULL`이 아니라 `IS NULL`로 검사하세요.
+
+<a id="cidr-대역으로-판정합니다"></a>
+
+## CIDR 대역 판정
+
+주소가 특정 네트워크에 속하는지 검사할 때는 `CONTAINED`를 사용합니다. 대역은 반드시
+`주소/prefix` 형태로 지정하며 IPv4와 IPv6 모두 사용할 수 있습니다.
+
+```sql
+SELECT event_id FROM ch7_network
+ WHERE src_ip CONTAINED '192.0.2.0/24'
+ ORDER BY event_id;
+
+SELECT event_id FROM ch7_network
+ WHERE dst_ip CONTAINED '2001:db8::/32'
+ ORDER BY event_id;
+
+SELECT event_id FROM ch7_network
+ WHERE src_ip NOT CONTAINED '192.0.2.0/24'
+ ORDER BY event_id;
+```
+
+| 조건 | 선택되는 event_id |
+|---|---|
+| IPv4 `CONTAINED '192.0.2.0/24'` | 1, 2 |
+| IPv6 `CONTAINED '2001:db8::/32'` | 1, 2, 3 |
+| IPv4 `NOT CONTAINED '192.0.2.0/24'` | 3 |
+
+방향을 뒤집은 `'192.0.2.0/24' CONTAINS src_ip`도 같은 의미입니다. 좌변에 네트워크,
+우변에 주소가 오는 형태가 `CONTAINS`이고 그 반대가 `CONTAINED`입니다.
+
+prefix 표기를 빼고 `CONTAINED '192.0.2.0'`처럼 쓰면 네트워크로 해석하지 못해 오류입니다.
+NULL 주소인 4번은 어느 조건에도 선택되지 않으므로, 미수집 주소를 함께 세야 하면
+`IS NULL` 조건을 따로 두십시오.
 
 <a id="혼합-주소와-원본-표기-정책을-먼저-정하세요"></a>
 

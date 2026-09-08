@@ -7,8 +7,8 @@ aliases:
   - /dbms/tag-rollup-usage/delete-partial-rebuild-rollup/
 ---
 
-ROLLUP_REBUILD는 원본의 과거 값 보정 이후 집계를 다시 계산하는 Standard Edition
-프로시저입니다. FORCE와 달리 영향 버킷을 삭제·재생성합니다. 모든 ROLLUP 정의를
+ROLLUP_REBUILD는 원본의 과거 값 보정 이후 집계를 다시 계산하는 프로시저이며
+Standard Edition 전용입니다. FORCE와 달리 영향 버킷을 삭제·재생성합니다. 모든 ROLLUP 정의를
 임의로 재구성하는 범용 명령은 아닙니다.
 
 ## 지원 대상을 먼저 확인

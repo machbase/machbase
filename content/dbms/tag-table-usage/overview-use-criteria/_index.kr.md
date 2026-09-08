@@ -16,32 +16,51 @@ TAG는 센서·설비처럼 같은 대상을 반복 관측한 이력을 저장�
 한 테이블에는 시간축 또는 거리축 하나를 지정합니다.
 
 ```sql
-CREATE TAG TABLE ch5_overview (
+-- 시간에 따라 발생한 관측값을 저장하는 시간축 TAG입니다.
+CREATE TAG TABLE ch5_overview_time (
     name VARCHAR(64) PRIMARY KEY,
     time DATETIME BASETIME,
     value DOUBLE SUMMARIZED
 );
+
+-- 거리나 위치 구간을 기준으로 관측값을 저장하는 거리축 TAG입니다.
+-- 거리축 TAG에는 ROLLUP을 사용할 수 없습니다.
+CREATE TAG TABLE ch5_overview_distance (
+    name     VARCHAR(64) PRIMARY KEY,
+    distance DOUBLE BASEDISTANCE,
+    value    DOUBLE
+);
 ```
 
-이름은 첫 번째 컬럼, 축은 두 번째 컬럼입니다. `SUMMARIZED`를 사용하면 세 번째
-컬럼에 지정합니다. 이 속성은 대표 통계·집계 관련 컬럼을 지정하며 ROLLUP 객체를 자동으로
-만들라는 뜻은 아닙니다. 상세 타입·순서는 [스키마](../table-structure-schema/)를 참고합니다.
+두 예제 모두 이름은 첫 번째 컬럼, 축은 두 번째 컬럼입니다. 시간축은 `DATETIME BASETIME`,
+거리축은 `DOUBLE`, `LONG`, `ULONG` 중 하나와 `BASEDISTANCE`를 사용합니다.
+`SUMMARIZED`를 사용하면 세 번째 컬럼에 지정합니다. 컬럼 순서와 지정 가능한 타입은
+[생성, 변경, 삭제](../create-alter-drop/), 모델별 설계 판단은
+[테이블 구조와 스키마](../table-structure-schema/)를 참고합니다.
 
-| 영역 | 한 행 또는 값의 의미 |
+`SUMMARIZED`는 대표 통계·집계 관련 컬럼을 지정하는 속성이며, ROLLUP 객체를 자동으로
+만들지는 않습니다.
+
+다음 표는 예제 테이블의 컬럼 목록이 아니라, TAG 테이블을 사용할 때 구분해야 하는 데이터
+범위입니다. DATA는 사용자가 입력하는 관측 행이고, METADATA와 STAT는 태그별 속성·통계를
+확인할 때 사용하는 별도 범위입니다.
+
+| 데이터 범위 | 의미 |
 |---|---|
-| 태그 이름 | 센서나 반복 관측 대상 식별 |
-| DATA | 한 번의 관측: 축 값과 여러 데이터 컬럼 |
-| METADATA | 태그별 위치·단위·설정 등 현재 속성 |
-| STAT | 태그별 입력 데이터의 통계 정보, DATA 자체와 구분 |
+| 태그 이름 | 센서나 반복 관측 대상을 식별하는 첫 번째 컬럼 |
+| DATA | 사용자가 입력하는 관측 행: 축 값과 여러 데이터 컬럼 |
+| METADATA | 태그별 위치·단위·설정 등 현재 속성. 일반 DATA 컬럼과 구분 |
+| STAT | `V$<TABLE>_STAT`에서 확인하는 태그별 입력 통계. 예제 테이블의 직접 컬럼이 아님 |
 
 <a id="overview-tag-use-criteria"></a>
 
-## 사용 기준
+## TAG가 적합한 경우
 
 - 같은 스키마로 여러 대상의 이력을 계속 추가합니다.
 - 특정 태그의 시간·거리 범위를 자주 조회합니다.
 - 현재 속성을 조건으로 태그를 고르고 해당 이력을 분석합니다.
-- 시간축에서는 지원하는 ROLLUP으로 반복 구간 통계를 조회할 수 있습니다.
+- 시간축 TAG에서 반복 구간 통계를 저장하고 조회해야 합니다. 이 경우 ROLLUP 설계는
+  [TAG ROLLUP](../../tag-rollup-usage/)에서 별도로 확인합니다.
 
 단일 값 모델은 측정 항목별로 태그를 나누고, 다중 값 모델은 같은 관측에서 함께 나온
 온도·압력 등을 한 행에 모읍니다. 측정 시각이 다른 값을 억지로 같은 행에 넣지 말고
@@ -56,11 +75,14 @@ CREATE TAG TABLE ch5_overview (
 |---|---|
 | 관측 대상보다 사건 자체가 중요한 이벤트 검색 | LOG |
 | 영속 기준 정보의 일반 조건 조회·변경 | LOOKUP |
-| 여러 DML의 명시적 트랜잭션과 관계형 변경 | Standard Edition의 TRANSACTION |
+| 여러 DML의 명시적 트랜잭션과 관계형 변경 | TRANSACTION(Standard Edition 전용) |
 | 원본에서 재구성할 수 있는 공유 상태 캐시 | VOLATILE |
 
 TAG에서도 JOIN과 제한된 값 보정을 사용할 수 있습니다. “JOIN이 필요하면 TAG를 쓸 수 없다”
 또는 “계측값은 반드시 TAG여야 한다”는 식으로 판단하지 않습니다.
+
+다만 DATA의 UPDATE는 Standard Edition 전용입니다. Cluster Edition에서는 METADATA
+UPDATE만 사용할 수 있으므로, 값 보정이 필요하면 재입력과 재집계 절차를 함께 설계합니다.
 
 <a id="overview-tag-design-flow"></a>
 
@@ -75,8 +97,13 @@ TAG에서도 JOIN과 제한된 값 보정을 사용할 수 있습니다. “JOIN
 예제 테이블의 확인과 정리는 다음과 같습니다.
 
 ```sql
-DESC ch5_overview;
-DROP TABLE ch5_overview;
+-- 예제 테이블의 스키마를 확인합니다.
+DESC ch5_overview_time;
+DESC ch5_overview_distance;
+
+-- 뒤 예제와 이름이 겹치지 않도록 정리합니다.
+DROP TABLE ch5_overview_distance;
+DROP TABLE ch5_overview_time;
 ```
 
 다음은 [스키마 설계](../table-structure-schema/)와

@@ -39,15 +39,16 @@ VOLATILE 테이블은 다른 테이블 타입과 달리 메모리에만 존재�
 |------|----------|--------|-----|-----|-----|
 | 저장 위치 | 메모리 | 디스크 | 디스크 | 디스크 | 디스크 |
 | 서버 재시작 후 데이터 유지 | X | O | O | O | O |
-| 테이블 구조(DDL) 유지 | X | O | O | O | O |
+| 테이블 구조(DDL) 유지 | O | O | O | O | O |
 
 ### DDL 특성
 
-서버 재시작 시 테이블 자체가 사라집니다. 따라서 서버 시작 시 재생성이 필요합니다.
+VOLATILE에서 사라지는 것은 데이터이고, 테이블 정의는 다른 테이블 타입과 마찬가지로
+영속 저장됩니다. 재시작 후 필요한 작업은 재생성이 아니라 초기 적재입니다.
 
 ```sql
--- 서버 시작 시 VOLATILE 테이블 생성 (초기화 스크립트 필요)
-CREATE VOLATILE TABLE sensor_latest (
+-- 테이블 정의는 한 번만 만들면 됩니다.
+CREATE VOLATILE TABLE ch10_ddl (
     sensor_id  VARCHAR(64) PRIMARY KEY,
     value      DOUBLE,
     updated_at DATETIME
@@ -68,12 +69,12 @@ CREATE VOLATILE TABLE sensor_latest (
 `AUTO_INCREMENT`를 지정합니다.
 
 ```sql
-CREATE VOLATILE TABLE request_cache (
+CREATE VOLATILE TABLE ch10_ddl_seq (
     request_id LONG PRIMARY KEY AUTO_INCREMENT,
     payload    VARCHAR(256)
 );
 
-INSERT INTO request_cache(payload) VALUES('refresh');
+INSERT INTO ch10_ddl_seq(payload) VALUES('refresh');
 ```
 
 PK 컬럼을 생략하거나 NULL로 지정하면 서버가 값을 생성합니다. 단일
@@ -83,8 +84,8 @@ PK 컬럼을 생략하거나 NULL로 지정하면 서버가 값을 생성합니�
 AUTO_INCREMENT를 사용하는 VOLATILE 테이블에서는 `INSERT ... SELECT`와
 `ON DUPLICATE KEY UPDATE`를 사용할 수 없습니다.
 
-VOLATILE 테이블은 서버 재시작 시 테이블과 데이터가 사라지므로 다음 자동값도 1부터 다시
-시작합니다. SDK에서 INSERT 결과 ID를 받는 방법은
+VOLATILE 테이블은 서버 재시작 시 데이터가 사라지므로 다음 자동값도 1부터 다시
+시작합니다. 테이블 정의는 유지되므로 다시 만들 필요는 없습니다. SDK에서 INSERT 결과 ID를 받는 방법은
 [ROWID와 INSERT 결과 ID](/dbms/reference/sql/rowid/)를 참고하십시오.
 
 ### 컬럼 추가와 삭제
@@ -93,10 +94,10 @@ Standard Edition에서는 VOLATILE 테이블에 고정 길이 숫자 ARRAY 컬�
 수 있습니다.
 
 ```sql
-ALTER TABLE sensor_latest
+ALTER TABLE ch10_ddl
     ADD COLUMN (thresholds DOUBLE[2] DEFAULT [10.0, 20.0]);
 
-ALTER TABLE sensor_latest
+ALTER TABLE ch10_ddl
     DROP COLUMN (thresholds);
 ```
 
@@ -110,10 +111,11 @@ ARRAY의 지원 요소 타입, cardinality와 DEFAULT 규칙은
 ### 삭제
 
 ```sql
-DROP TABLE sensor_latest;
+DROP TABLE ch10_ddl;
+DROP TABLE ch10_ddl_seq;
 ```
 
 ### 주의사항
 
-- VOLATILE 테이블의 DDL(구조 정의)은 데이터베이스에 영구 저장되지 않습니다.
-- 서버 재시작 후 자동 재생성되지 않으므로, 초기화 스크립트(예: 시작 시 machsql 실행)를 구성해야 합니다.
+- VOLATILE 테이블의 DDL(구조 정의)은 데이터베이스에 저장되며 서버 재시작 후에도 남습니다.
+- 데이터는 재시작 후 자동 복원되지 않으므로, 초기 적재 스크립트(예: 시작 시 machsql 실행)를 구성해야 합니다.

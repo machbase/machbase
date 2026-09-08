@@ -15,15 +15,15 @@ LOOKUP 테이블의 데이터 입력, 갱신, 삭제 방법을 하나의 실행 
 <a id="insert-lookup-basic"></a>
 
 ```sql
-CREATE LOOKUP TABLE lookup_mutation_demo (
+CREATE LOOKUP TABLE ch9_mutation (
     code       VARCHAR(32) PRIMARY KEY,
     label      VARCHAR(64),
     status     VARCHAR(16),
     updated_at DATETIME
 );
 
-INSERT INTO lookup_mutation_demo VALUES ('TEMP', 'Temperature', 'ACTIVE', NOW);
-INSERT INTO lookup_mutation_demo VALUES ('PRESS', 'Pressure', 'ACTIVE', NOW);
+INSERT INTO ch9_mutation VALUES ('TEMP', 'Temperature', 'ACTIVE', NOW);
+INSERT INTO ch9_mutation VALUES ('PRESS', 'Pressure', 'ACTIVE', NOW);
 ```
 
 SEQUENCE 키가 필요하면 [SEQUENCE](/dbms/lookup-table-usage/sequence-column/)를 참고합니다.
@@ -35,7 +35,7 @@ SEQUENCE 키가 필요하면 [SEQUENCE](/dbms/lookup-table-usage/sequence-column
 단건 변경은 PRIMARY KEY 조건으로 처리합니다.
 
 ```sql
-UPDATE lookup_mutation_demo
+UPDATE ch9_mutation
 SET status = 'INACTIVE',
     updated_at = NOW
 WHERE code = 'TEMP';
@@ -55,7 +55,7 @@ PRIMARY KEY 컬럼 자체는 UPDATE할 수 없습니다. 키를 바꿔야 하면
 SQL INSERT에서 키 중복 시 갱신이 필요하면 `ON DUPLICATE KEY UPDATE`를 사용합니다.
 
 ```sql
-INSERT INTO lookup_mutation_demo
+INSERT INTO ch9_mutation
 VALUES ('TEMP', 'Temperature sensor', 'ACTIVE', NOW)
 ON DUPLICATE KEY UPDATE SET label = 'Temperature sensor', status = 'ACTIVE', updated_at = NOW;
 ```
@@ -76,7 +76,7 @@ WHERE name = 'LOOKUP_APPEND_UPDATE_ON_DUPKEY';
 `TABLE_REFRESH`를 실행합니다.
 
 ```sql
-EXEC TABLE_REFRESH(lookup_mutation_demo);
+EXEC TABLE_REFRESH(ch9_mutation);
 ```
 
 일반 SQL DML 직후마다 실행하는 명령은 아닙니다. 대상은 현재 database의 LOOKUP table이며,
@@ -92,7 +92,7 @@ READ ONLY database에서는 실행할 수 없습니다. 이름 범위·권한·�
 단건 삭제는 PRIMARY KEY 조건을 사용합니다.
 
 ```sql
-DELETE FROM lookup_mutation_demo
+DELETE FROM ch9_mutation
 WHERE code = 'PRESS';
 ```
 
@@ -100,8 +100,8 @@ WHERE code = 'PRESS';
 생략합니다.
 
 ```sql
-DELETE FROM lookup_mutation_demo;
-DROP TABLE lookup_mutation_demo;
+DELETE FROM ch9_mutation;
+DROP TABLE ch9_mutation;
 ```
 
 <a id="mutation-lookup-checklist"></a>

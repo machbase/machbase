@@ -17,13 +17,13 @@ LOOKUP 테이블의 생성, 변경, 삭제 방법을 다룹니다.
 ## LOOKUP 테이블 생성
 
 ```sql
-CREATE LOOKUP TABLE lktable (id INTEGER PRIMARY KEY, name VARCHAR(20));
+CREATE LOOKUP TABLE ch9_ddl (id INTEGER PRIMARY KEY, name VARCHAR(20));
 ```
 
 운영에서 사용하는 기준 정보는 의미 있는 컬럼명을 사용해 정의합니다.
 
 ```sql
-CREATE LOOKUP TABLE equipment_master (
+CREATE LOOKUP TABLE ch9_ddl_equip (
     equip_id   LONG PRIMARY KEY,
     equip_name VARCHAR(128),
     location   VARCHAR(64),
@@ -35,7 +35,7 @@ CREATE LOOKUP TABLE equipment_master (
 `PRIMARY KEY`는 행을 고유하게 식별하고 UPDATE, DELETE, JOIN의 기준이 됩니다. 여러 컬럼 조합이 비즈니스 키라면 조합 문자열을 별도 키 컬럼으로 만들거나 SEQUENCE 기반 대리키를 사용합니다.
 
 ```sql
-CREATE LOOKUP TABLE product_region_price (
+CREATE LOOKUP TABLE ch9_ddl_price (
     price_key  VARCHAR(64) PRIMARY KEY,
     product_id VARCHAR(32),
     region     VARCHAR(16),
@@ -51,13 +51,13 @@ CREATE LOOKUP TABLE product_region_price (
 `AUTO_INCREMENT`를 지정합니다.
 
 ```sql
-CREATE LOOKUP TABLE equipment_registry (
+CREATE LOOKUP TABLE ch9_ddl_registry (
     equip_id   LONG PRIMARY KEY AUTO_INCREMENT,
     equip_name VARCHAR(128),
     location   VARCHAR(64)
 );
 
-INSERT INTO equipment_registry(equip_name, location)
+INSERT INTO ch9_ddl_registry(equip_name, location)
 VALUES ('compressor-01', 'SEOUL-A');
 ```
 
@@ -77,7 +77,7 @@ AUTO_INCREMENT를 사용하는 LOOKUP 테이블에서는 `INSERT ... SELECT`와
 자동 증가 번호가 필요하면 `LONG PROPERTY(SEQUENCE=1)` 컬럼을 사용합니다. 입력 시에는 `NEXTVAL()` 함수로 다음 값을 가져옵니다.
 
 ```sql
-CREATE LOOKUP TABLE alarm_history (
+CREATE LOOKUP TABLE ch9_ddl_alarm (
     seq         LONG PROPERTY(SEQUENCE=1) PRIMARY KEY,
     sensor_id   VARCHAR(64),
     alarm_type  VARCHAR(32),
@@ -85,7 +85,7 @@ CREATE LOOKUP TABLE alarm_history (
     message     VARCHAR(256)
 );
 
-INSERT INTO alarm_history
+INSERT INTO ch9_ddl_alarm
 VALUES (NEXTVAL(seq), 'TEMP-01', 'HIGH', NOW, '온도 초과');
 ```
 
@@ -101,10 +101,10 @@ Standard Edition에서는 LOOKUP 테이블에 고정 길이 숫자 ARRAY 컬럼�
 있습니다.
 
 ```sql
-ALTER TABLE equipment_master
+ALTER TABLE ch9_ddl_equip
     ADD COLUMN (limits DECIMAL(12,4)[2] DEFAULT [0.0000, NULL]);
 
-ALTER TABLE equipment_master
+ALTER TABLE ch9_ddl_equip
     DROP COLUMN (limits);
 ```
 
@@ -122,8 +122,8 @@ row에도 해당 값을 적용합니다. ARRAY DEFAULT의 요소 수는 선언 c
 자주 조회하거나 JOIN 조건에 사용하는 컬럼에는 인덱스를 추가합니다.
 
 ```sql
-CREATE INDEX idx_equipment_location ON equipment_master(location);
-CREATE INDEX idx_equipment_status   ON equipment_master(status);
+CREATE INDEX ch9_ddl_loc_idx ON ch9_ddl_equip(location);
+CREATE INDEX ch9_ddl_status_idx   ON ch9_ddl_equip(status);
 ```
 
 PRIMARY KEY 컬럼에는 기본 인덱스가 생성되므로, 같은 컬럼에 별도 인덱스를 중복 생성하지 않습니다. 인덱스가 많으면 입력과 갱신 비용이 증가하므로 조회 조건이 명확한 컬럼에만 추가합니다.
@@ -135,7 +135,7 @@ PRIMARY KEY 컬럼에는 기본 인덱스가 생성되므로, 같은 컬럼에 �
 행을 삭제하려면 `DELETE` 문을 사용합니다. 단건 삭제는 PK 조건을 사용하는 것이 가장 명확합니다.
 
 ```sql
-DELETE FROM equipment_master
+DELETE FROM ch9_ddl_equip
 WHERE equip_id = 1001;
 ```
 
@@ -143,17 +143,21 @@ WHERE equip_id = 1001;
 
 ```sql
 SELECT COUNT(*)
-FROM equipment_master
+FROM ch9_ddl_equip
 WHERE status = 'RETIRED';
 
-DELETE FROM equipment_master
+DELETE FROM ch9_ddl_equip
 WHERE status = 'RETIRED';
 ```
 
 테이블 자체를 삭제하려면 `DROP TABLE`을 사용합니다.
 
 ```sql
-DROP TABLE lktable;
+DROP TABLE ch9_ddl_alarm;
+DROP TABLE ch9_ddl_registry;
+DROP TABLE ch9_ddl_price;
+DROP TABLE ch9_ddl_equip;
+DROP TABLE ch9_ddl;
 ```
 
 `DROP TABLE`은 테이블 정의와 데이터를 모두 삭제합니다. 필요한 경우 삭제 전에 백업 또는 내보내기 절차를 수행합니다.

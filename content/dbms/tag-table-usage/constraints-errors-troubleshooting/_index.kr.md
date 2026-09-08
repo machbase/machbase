@@ -95,7 +95,7 @@ UPDATE ch5_error_time
    AND time <  TO_DATE('2026-07-02 00:00:00', 'YYYY-MM-DD HH24:MI:SS');
 ```
 
-### NAME 또는 TIME bind가 `ERR-2190`으로 거부될 때
+### NAME 또는 TIME bind가 `ERR-02190`으로 거부될 때
 
 Machbase 8.7.0부터 Standard Edition에서는 다음과 같이 NAME과 BASETIME 조건 값에 bind
 parameter를 사용할 수 있습니다.
@@ -107,8 +107,9 @@ UPDATE ch5_error_time
    AND time = ?;
 ```
 
-태그 선택 조건과 BASETIME 조건이 모두 있는데도 이 문장이 `ERR-2190: Invalid UPDATE/DELETE
-condition`으로 거부되면 서버 버전을 확인합니다. 구버전 서버는 TAG data UPDATE의 NAME/TIME
+태그 선택 조건과 BASETIME 조건이 모두 있는데도 이 문장이
+`ERR-02190: Invalid UPDATE/DELETE condition. Specify it as (primary key column) = (value)`로
+거부되면 서버 버전을 확인합니다. 구버전 서버는 TAG data UPDATE의 NAME/TIME
 bind를 지원하지 않습니다. 서버를 8.7.0 이상으로 업그레이드하고, named marker를 사용하면
 해당 이름 기반 API를 지원하는 8.7.0 SDK를 함께 사용합니다.
 

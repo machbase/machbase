@@ -34,8 +34,9 @@ TAG 테이블은 `PRIMARY KEY` 태그명과 `BASETIME` 또는 `BASEDISTANCE` 축
 컬럼에는 자동·명시적 인덱스가 모두 지원되지 않습니다. 자세한 규칙은
 [TAG 메타데이터](../tag-metadata/)를 참고하십시오.
 
-시계열 값과 자주 바뀌는 상태를 METADATA에 넣으면 갱신 경로와 의미가 불명확해집니다. 값의
-성격에 따라 TAG 데이터 컬럼, LOOKUP 또는 VOLATILE 테이블을 검토하십시오.
+시계열 값과 자주 바뀌는 상태를 METADATA에 넣으면 갱신 경로와 의미가 불명확해집니다.
+값의 성격에 따라 TAG 데이터 컬럼, LOOKUP, VOLATILE 또는
+TRANSACTION(Standard Edition 전용) 테이블을 검토하십시오.
 
 <a id="값-컬럼-secondary-index"></a>
 

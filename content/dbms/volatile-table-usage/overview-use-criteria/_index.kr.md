@@ -16,7 +16,7 @@ VOLATILE 테이블은 데이터를 메모리에 저장하는 임시 테이블입
 VOLATILE 테이블은 `CREATE VOLATILE TABLE` 문으로 생성합니다.
 
 ```sql
-CREATE VOLATILE TABLE sensor_latest (
+CREATE VOLATILE TABLE ch10_overview (
     sensor_id  VARCHAR(64) PRIMARY KEY,
     value      DOUBLE,
     updated_at DATETIME
@@ -51,12 +51,15 @@ VOLATILE 테이블의 주요 특성은 다음과 같습니다.
 최신 센서 상태를 유지하는 예시는 다음과 같습니다.
 
 ```sql
-INSERT INTO sensor_latest VALUES ('TEMP-01', 23.5, NOW)
+INSERT INTO ch10_overview VALUES ('TEMP-01', 23.5, NOW)
 ON DUPLICATE KEY UPDATE SET value = 23.5, updated_at = NOW;
 
 SELECT *
-FROM sensor_latest
+FROM ch10_overview
 WHERE sensor_id = 'TEMP-01';
+
+-- 다음 절에서 같은 이름을 다시 사용하므로 정리합니다.
+DROP TABLE ch10_overview;
 ```
 
 ### 활용 패턴
@@ -95,7 +98,7 @@ VOLATILE 테이블 설계 시 다음 순서로 결정합니다.
 1. 데이터가 재생성 가능한지 확인합니다.
 2. PRIMARY KEY가 필요한지 결정합니다.
 3. 예상 행 수와 메모리 사용량을 산정합니다.
-4. 재시작 후 테이블 생성과 초기 적재 절차를 준비합니다.
+4. 재시작 후 초기 적재 절차를 준비합니다.
 5. 보존해야 하는 결과는 애플리케이션의 명시적인 쓰기 작업으로 영속 테이블에 저장합니다.
    VOLATILE을 영속화하는 전용 flush 명령은 없습니다.
 

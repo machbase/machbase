@@ -9,6 +9,22 @@ aliases:
 LOOKUP 테이블은 기본 키뿐 아니라 일반 조건식으로 여러 행을 수정하거나 삭제할 수 있습니다.
 변경 전 같은 조건으로 대상 행 수를 확인하십시오.
 
+이 페이지의 실습은 다음 테이블 하나로 진행하며 마지막에 정리합니다.
+
+```sql
+CREATE LOOKUP TABLE ch9_predicate (
+    equip_id VARCHAR(32) PRIMARY KEY,
+    site     VARCHAR(16),
+    status   VARCHAR(16),
+    score    INTEGER
+);
+
+INSERT INTO ch9_predicate VALUES ('EQ-01', 'SEOUL', 'READY',   10);
+INSERT INTO ch9_predicate VALUES ('EQ-02', 'SEOUL', 'READY',   20);
+INSERT INTO ch9_predicate VALUES ('EQ-03', 'SEOUL', 'RETIRED', 30);
+INSERT INTO ch9_predicate VALUES ('EQ-04', 'BUSAN', 'READY',   40);
+```
+
 <a id="condition-lookup-update"></a>
 
 ## UPDATE
@@ -20,14 +36,19 @@ LOOKUP UPDATE에는 `WHERE` 조건이 필요합니다. 전체 행을 갱신하�
 조건식을 명시합니다. `WHERE` 없이 전체 삭제가 가능한 DELETE와 구분하십시오.
 
 ```sql
-SELECT COUNT(*)
-  FROM equipment_master
+-- 변경 전 영향 범위를 먼저 셉니다.
+SELECT COUNT(*) FROM ch9_predicate
  WHERE site = 'SEOUL' AND status = 'READY';
 
-UPDATE equipment_master
+UPDATE ch9_predicate
    SET status = 'ACTIVE', score = score + 10
  WHERE site = 'SEOUL' AND status = 'READY';
+
+SELECT equip_id, site, status, score FROM ch9_predicate ORDER BY equip_id;
 ```
+
+COUNT는 2이고, EQ-01과 EQ-02만 `ACTIVE`로 바뀌면서 score가 20·30이 됩니다.
+같은 SEOUL이라도 status가 다른 EQ-03과, 같은 READY라도 site가 다른 EQ-04는 그대로입니다.
 
 <a id="condition-lookup-delete"></a>
 
@@ -36,13 +57,14 @@ UPDATE equipment_master
 조건에 맞는 모든 행을 삭제합니다. `WHERE`를 생략하면 테이블의 모든 행이 삭제됩니다.
 
 ```sql
-SELECT COUNT(*)
-  FROM equipment_master
- WHERE status = 'RETIRED';
+SELECT COUNT(*) FROM ch9_predicate WHERE status = 'RETIRED';
 
-DELETE FROM equipment_master
- WHERE status = 'RETIRED';
+DELETE FROM ch9_predicate WHERE status = 'RETIRED';
+
+SELECT equip_id, status FROM ch9_predicate ORDER BY equip_id;
 ```
+
+COUNT는 1이고 EQ-03이 삭제되어 세 행이 남습니다.
 
 <a id="design-condition-lookup-update-delete"></a>
 
@@ -67,3 +89,7 @@ UPDATE와 DELETE에는 각각 대상 테이블의 `UPDATE`, `DELETE` 권한이 �
 기본 키 equality는 단건 대상을 직접 찾고, 일반 조건식은 조건을 평가해 변경 대상을 수집합니다.
 반복 단건 변경에는 prepared statement와 bind를 사용하고, 대량 변경은 같은 조건의 행 수와
 실행 시간을 검증 환경에서 측정하십시오.
+
+```sql
+DROP TABLE ch9_predicate;
+```
