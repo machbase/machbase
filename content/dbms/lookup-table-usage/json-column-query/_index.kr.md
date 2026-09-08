@@ -117,12 +117,12 @@ WHERE JSON_EXTRACT_INTEGER(config, '$.level') < 2;
 
 <a id="lookup-json-limitations"></a>
 
-이 페이지의 실습 객체는 다음과 같이 정리합니다.
+이 페이지의 실습 객체는 다음과 같이 정리합니다. `ch9_json_bad`는 생성에 실패하는
+예제이므로 정리 대상이 아닙니다.
 
 ```sql
 DROP TABLE ch9_json_fast;
 DROP TABLE ch9_json_ok;
-DROP TABLE ch9_json_bad;
 DROP TABLE ch9_json;
 ```
 

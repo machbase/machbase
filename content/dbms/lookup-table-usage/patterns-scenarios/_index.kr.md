@@ -45,7 +45,7 @@ UPDATE ch9_pattern_country SET name = 'United States' WHERE code = 'US';
 SELECT code, name FROM ch9_pattern_country ORDER BY code;
 ```
 
-US의 이름이 `United States`로 바뀐 두 행이 조회됩니다.
+두 행이 조회되며, US 행의 name만 `United States`로 바뀌어 있습니다.
 
 상태 코드나 알람 코드도 같은 방식으로 관리하며, 이벤트 원본과 JOIN해 사용합니다.
 

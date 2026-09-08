@@ -58,18 +58,18 @@ INSERT INTO ch9_ops_sensor VALUES ('TEMP-01', 'SEOUL', 'READY', NOW);
 INSERT INTO ch9_ops_sensor VALUES ('TEMP-02', 'SEOUL', 'READY', NOW);
 INSERT INTO ch9_ops_sensor VALUES ('TEMP-03', 'BUSAN', 'READY', NOW);
 
--- 1. 변경 대상을 조회합니다.
+-- 변경 대상을 조회합니다.
 SELECT sensor_id, site, status FROM ch9_ops_sensor WHERE sensor_id = 'TEMP-01';
 
--- 3. 변경합니다.
+-- 변경합니다.
 UPDATE ch9_ops_sensor
    SET status = 'INACTIVE', updated_at = NOW
  WHERE sensor_id = 'TEMP-01';
 
--- 4. 필요하면 memory table에 다시 반영합니다.
+-- 필요하면 memory table에 다시 반영합니다.
 EXEC TABLE_REFRESH(ch9_ops_sensor);
 
--- 5. 대표 조회로 확인합니다.
+-- 대표 조회로 확인합니다.
 SELECT sensor_id, status FROM ch9_ops_sensor ORDER BY sensor_id;
 ```
 
