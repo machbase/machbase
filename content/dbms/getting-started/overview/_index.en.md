@@ -6,7 +6,7 @@ toc: true
 ---
 
 Machbase DBMS is a time-series database for storing and analyzing data that accumulates over time,
-such as sensor measurements, equipment events, application logs, and financial ticks. You choose
+such as sensor measurements, equipment events, and application logs. You choose
 tables to match the structure of your data and how you update and query it, and manage historical
 records together with the reference data needed to interpret them.
 
@@ -55,7 +55,7 @@ and retransmission can produce late or missing readings.
 ### Measurements, Events, and Reference Data
 
 A measurement describes the value of a particular target at a particular time. An event records
-something that happened, such as an alarm, a trade execution, or a service starting. Equipment
+something that happened, such as an alarm, an equipment stop, or a service starting. Equipment
 names, installation locations, and units of measurement are reference data used to interpret
 those records.
 
@@ -63,24 +63,6 @@ A system often needs all three. Investigating an abnormal temperature may requir
 history, alarms from the same period, and the sensor's installation location. SQL joins
 (`JOIN`) connect historical records with reference data through a shared value, such as an
 equipment identifier.
-
-## Table Types to Separate First
-
-| Table | Main use | What to check when choosing |
-|---|---|---|
-| TAG | Measurement histories organized by tag name and a time or distance axis | Whether queries focus on ranges and aggregates for specific tags. |
-| LOG | Event and log histories with multiple attributes | Whether you continuously add records and read them using time or search conditions. |
-| LOOKUP | Persistent reference data, such as equipment codes and mappings | The size and update pattern of the reference data loaded into memory. |
-| TRANSACTION | Business data requiring row-level changes and transactions | Whether you need relational DML and transactions in Standard Edition. |
-| VOLATILE | Shared state that can be recreated after a restart | Whether you can rebuild the data when it is lost at server shutdown. |
-
-In Machbase DBMS 8.7.0, explicitly use `CREATE LOG TABLE` to create a LOG table. A bare
-`CREATE TABLE` creates a TRANSACTION table, which is supported in Standard Edition.
-
-An industry label alone does not determine the table type. Even for financial ticks, a design
-may focus on changes in values for each instrument or on searching received events with many
-fields. For the final choice, including update, join, and retention requirements, see
-[Table Type Selection](/dbms/data-modeling-table-design/table-types-selection-type/).
 
 <a id="problems-solved"></a>
 
@@ -105,5 +87,22 @@ Performance requirements depend on data types, ingestion volume, concurrent quer
 periods, and server resources. Learn the workflow with a small example, then measure throughput
 and latency using actual data and query conditions.
 [Core Concepts](../../core-concepts/) explains the roles of these features in more detail.
+
+## Choosing a Table for Your Data
+
+| Table | Main use | What to check when choosing |
+|---|---|---|
+| TAG | Measurement histories organized by tag name and a time or distance axis | Whether queries focus on ranges and aggregates for specific tags. |
+| LOG | Event and log histories with multiple attributes | Whether you continuously add records and read them using time or search conditions. |
+| LOOKUP | Persistent reference data, such as equipment codes and mappings | The size and update pattern of the reference data loaded into memory. |
+| TRANSACTION | Business data requiring row-level changes and transactions | Whether you need relational DML and transactions in Standard Edition. |
+| VOLATILE | Shared state that can be recreated after a restart | Whether you can rebuild the data when it is lost at server shutdown. |
+
+In Machbase DBMS 8.7.0, explicitly use `CREATE LOG TABLE` to create a LOG table. A bare
+`CREATE TABLE` creates a TRANSACTION table, which is supported in Standard Edition.
+
+An industry label alone does not determine the table type. For the final choice, including
+update, join, and retention requirements, see
+[Table Type Selection](/dbms/data-modeling-table-design/table-types-selection-type/).
 
 Next, store one event and read it back in [10-Minute Quick Start](../quick-start/).
