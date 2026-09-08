@@ -90,20 +90,83 @@ VOLATILE의 기존 행과 TAG 메타데이터의 자동 등록 행에는 별도 
 | 데이터 | 권장 검토 타입 | 주의점 |
 | --- | --- | --- |
 | 정수 계측값·코드 | `SHORT`·`INTEGER`·`LONG` 계열 | NULL 예약값과 범위 확인 |
-| 실수 계측값 | `FLOAT`·`DOUBLE` | 정밀도와 집계 오차 확인 |
-| 정확한 소수 계산이 필요한 값 | `DECIMAL` | 전체 자릿수, 소수 자릿수와 반올림 규칙 확인 |
-| 시각 | `DATETIME` | 시간대는 클라이언트·세션 정책과 함께 설계 |
+| 실수 계측값 | `FLOAT`·`DOUBLE` | 정밀도, 집계 오차와 NULL 예약값 확인 |
+| 정확한 소수 계산이 필요한 값 | `DECIMAL` | precision·scale과 반올림 규칙을 먼저 결정 |
+| 시각 | `DATETIME` | 표현 범위와 시간대를 클라이언트·세션 정책과 함께 설계 |
 | 짧은 문자열 | `VARCHAR` | 최대 길이와 인코딩 확인 |
-| 긴 본문 | `TEXT` | 검색 방식과 인덱스 비용 확인 |
+| 긴 본문 | `TEXT` | 지원 테이블 타입, 정렬·집계 제약과 인덱스 비용 확인 |
 | 네트워크 주소 | `IPV4`·`IPV6` | 문자열 대신 주소 타입 사용 검토 |
-| 구조화 문서 | `JSON` | 지원 함수와 크기 제한 확인 |
-| 이진 데이터 | `BINARY` | 테이블 타입별 길이 제한 확인 |
+| 구조화 문서 | `JSON` | 크기 제한, 키 승격 기준과 테이블 타입별 지원 확인 |
+| 이진 데이터 | `BINARY` | 테이블 타입에 따라 가변·고정 길이가 다름 |
 | 고정 개수의 숫자 묶음 | 숫자 `ARRAY` | 요소 타입·길이, 요소별 NULL과 전체 NULL 구분 |
 
 `VARCHAR(n)`의 길이는 바이트 수입니다. 한글이나 이모지를 포함하면 문자 수와 다를 수
 있습니다. 정수 타입은 일부 경계값을 NULL 표현으로 예약하므로 일반 프로그래밍 언어의
-정수 범위를 그대로 적용하지 않습니다. 금액은 필요한 자릿수의 DECIMAL을, 오차가 허용되는
-계측값은 FLOAT/DOUBLE을 검토합니다. “작은 타입”보다 유효 범위와 연산 의미가 우선입니다.
+정수 범위를 그대로 적용하지 않습니다. FLOAT과 DOUBLE도 양수 최대값을 NULL로 인식하므로
+실수 타입이라고 예외는 아닙니다. “작은 타입”보다 유효 범위와 연산 의미가 우선입니다.
+
+### 정확한 소수가 필요한 값: DECIMAL
+
+금액, 세율, 정산 값처럼 10진 정확성이 필요한 값에는 `DECIMAL`을 사용합니다. 오차가
+허용되고 지수 범위가 넓은 계측값에는 `FLOAT`·`DOUBLE`을 사용합니다. 두 계열의 차이는
+저장 크기가 아니라 값의 의미이므로, 반올림 결과를 업무에서 그대로 사용하는 값이라면
+DECIMAL을 선택합니다.
+
+설계 시 다음을 먼저 정합니다.
+
+| 결정 항목 | 내용 |
+|---|---|
+| precision | 전체 유효 숫자 수, 1~65 |
+| scale | 소수 자릿수, 0~30이며 precision보다 클 수 없음 |
+| 생략 규칙 | `DECIMAL`은 `DECIMAL(10,0)`, `DECIMAL(M)`은 `DECIMAL(M,0)` |
+
+scale을 넘는 소수 자릿수는 입력 시점에 0에서 멀어지는 방향의 절반 올림으로 저장됩니다.
+반올림이 저장 시점에 확정되므로 업무 규칙과 같은 방향인지 확인합니다. precision을
+넘는 값은 잘라내거나 부동소수점으로 바꾸지 않고 오류로 처리하므로, 자릿수는 여유를
+두고 정합니다.
+
+`SUM`, `AVG`, `MIN`, `MAX`와 `GROUP BY`, `ORDER BY`, `DISTINCT`는 exact 경로로
+동작합니다. 반면 percentile이나 고급 통계 함수처럼 exact DECIMAL 경로가 없는 연산은
+DOUBLE로 변환해 계산하므로 결과가 근삿값입니다. 정확성이 필요한 집계와 참고용 통계를
+구분해 설계합니다.
+
+애플리케이션 경로에서 값을 부동소수점으로 경유시키면 저장 타입과 무관하게 정확성이
+사라집니다. JDBC는 `BigDecimal`, Python은 `decimal.Decimal`, ODBC는 `SQL_NUMERIC`처럼
+각 언어의 decimal 표현이나 문자열로 전달합니다. 선언 규칙, 인덱스, 클라이언트 매핑은
+[DECIMAL과 NUMERIC 고정소수점 타입](/dbms/reference/sql/type-data-types-dictionary/decimal-numeric-fixed-point/)을
+참고하십시오.
+
+### 구조화 문서: JSON
+
+수집원마다 키가 다르거나 항목이 계속 늘어나는 부가 속성에는 `JSON` 컬럼이 적합합니다.
+스키마 변경 없이 항목을 추가할 수 있기 때문입니다. 반대로 자주 `WHERE`나 `GROUP BY`에
+사용하는 값은 JSON 안에 두지 말고 별도 컬럼으로 승격합니다. JSON 컬럼은 primary key로
+선언할 수 없고, LOOKUP 테이블에서는 JSON path 인덱스를 지원하지 않습니다.
+
+크기 제한도 설계에 반영합니다. 문서 하나는 최대 32,768 바이트, JSON path는 최대 512
+바이트입니다. 원본 payload 전체를 보관하는 용도가 아니라 조회에 필요한 속성을 담는
+용도로 사용합니다.
+
+| 테이블 타입 | JSON 컬럼 | 확인할 점 |
+|---|:---:|---|
+| TAG·LOG·TRANSACTION | O | JSON 함수와 path 조회 지원 |
+| LOOKUP | O | 일반 컬럼으로 지원, JSON path 인덱스는 미지원 |
+| VOLATILE | X | JSON 컬럼을 만들 수 없음 |
+
+조회는 `->` 연산자와 `JSON_EXTRACT_*` 계열을, 갱신은 `JSON_SET` 계열을 사용합니다.
+갱신 함수는 해당 테이블 타입이 `UPDATE`를 지원할 때만 의미가 있으므로, LOG나 TAG처럼
+행 수정이 없는 테이블에서는 입력 시점에 문서를 완성합니다. 함수별 지원 범위는
+[JSON 타입의 테이블 타입별 지원 범위](/dbms/reference/sql/type-data-types-dictionary/table-types-type-support-scope-json/)를
+참고하십시오.
+
+### 타입 선택 전에 확인할 제약
+
+| 타입 | 설계 단계에서 확인할 내용 |
+|---|---|
+| `TEXT` | LOG와 Standard Edition의 TRANSACTION에서만 지원합니다. LOG의 TEXT 컬럼에는 `ORDER BY`와 `GROUP BY`를 사용할 수 없고, `MODIFY COLUMN`으로 VARCHAR로 바꿀 수도 없습니다. 정렬·집계에 쓸 값은 VARCHAR나 숫자 컬럼으로 따로 둡니다. |
+| `BINARY` | LOG는 가변 길이 최대 64MB이지만 TAG는 `BINARY(n)` 고정 길이 1~32,767 바이트로 성격이 다릅니다. LOOKUP과 VOLATILE에서는 지원하지 않습니다. |
+| `DATETIME` | 표현 범위는 1970-01-01부터 2262-04-11까지이며 나노초까지 저장합니다. 만료일이나 무기한을 뜻하는 먼 미래 시각을 임의로 넣지 않습니다. |
+| `ARRAY` | 고정 길이 1차원 숫자 배열이며 cardinality는 1~1024입니다. 전체 NULL과 요소 NULL을 구분해 설계합니다. |
 
 전체 범위와 테이블 타입별 지원 여부는
 [데이터 타입 사전](/dbms/reference/sql/type-data-types-dictionary/)을 기준으로 확인하십시오.
