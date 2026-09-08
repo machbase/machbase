@@ -23,10 +23,6 @@ CREATE TRANSACTION TABLE ch8_ddl (
 INSERT INTO ch8_ddl VALUES (1, 'P-01', 10);
 ```
 
-CREATE TABLE·CREATE TXN TABLE도 같은 타입을 만듭니다.
-CREATE RDB TABLE·CREATE TRX TABLE은 지원하지 않습니다. 위 생성 문법은 Standard
-Edition 전용입니다. LOG를 만들 때는 CREATE LOG TABLE로 명시하세요.
-
 <a id="create-rdb-primary-key-index"></a>
 
 <a id="기존-데이터에-키와-인덱스를-추가합니다"></a>
