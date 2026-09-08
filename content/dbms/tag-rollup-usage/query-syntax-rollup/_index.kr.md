@@ -89,6 +89,85 @@ ROLLUP 조회의 FIRST/LAST에는 EXTENSION이 필요합니다. Custom 결과는
 저장되므로 [Custom 재집계](../custom-rollup/)의 합계·건수 규칙을 사용합니다.
 JSON 문서 전체 집계의 COUNT도 [JSON 절](../json-summarized-rollup/)에서 별도로 설명합니다.
 
+<a id="query-sumsq-stddev-rollup"></a>
+
+### SUMSQ와 분산·표준편차
+
+ROLLUP 조회는 STDDEV, STDDEV_POP, VARIANCE, VAR_POP을 직접 지원하지 않습니다.
+`rollup()` 조회에서 이 함수들을 사용하면
+`ERR-02816: Only rollup column with aggregate function can be referenced in ROLLUP SELECT query.`
+가 발생합니다. 표준편차와 분산은 구간별 결과를 다시 더할 수 없기 때문입니다.
+두 구간의 표준편차를 평균해도 전체 구간의 표준편차가 되지 않습니다.
+
+대신 ROLLUP은 값의 제곱합인 SUMSQ를 COUNT, SUM과 함께 저장합니다. 이 세 값은 모두
+더할 수 있으므로 저장 간격보다 큰 버킷으로 다시 합쳐도 유효하며, 조회 시점에 분산과
+표준편차를 계산할 수 있습니다. SUMSQ는 일반 ROLLUP과 EXTENSION ROLLUP 모두에
+포함됩니다.
+
+| 값 | 계산식 |
+|---|---|
+| 모분산 | `SUMSQ/N - (SUM/N)^2` |
+| 모표준편차 | 모분산의 제곱근 |
+| 표본분산 | `(SUMSQ - SUM^2/N) / (N-1)` |
+| 표본표준편차 | 표본분산의 제곱근 |
+
+N은 `COUNT(value)`이며 NULL을 제외한 유효 값의 개수입니다.
+
+ROLLUP 조회 블록에는 지원되는 집계만 두고, 분산과 표준편차는 인라인 뷰 밖에서
+계산합니다. COUNT, SUM, SUMSQ를 한 번만 읽고 파생 계산을 분리하므로 계산식을
+바꿔도 ROLLUP 조회 부분은 그대로 사용할 수 있습니다.
+
+```sql
+SELECT bucket, n, s, sq,
+       sq/n - POWER(s/n, 2)       AS var_pop,
+       SQRT(sq/n - POWER(s/n, 2)) AS stddev_pop
+  FROM (
+      SELECT rollup('min', 1, time) AS bucket,
+             COUNT(value)           AS n,
+             SUM(value)             AS s,
+             SUMSQ(value)           AS sq
+        FROM ch6_query WHERE name = 'TEMP_01'
+       GROUP BY bucket
+  ) t
+ ORDER BY bucket;
+```
+
+00:00 버킷은 값 10과 20이므로 n=2, s=30, sq=500이고 모분산 25, 모표준편차 5입니다.
+00:01 버킷은 값이 하나이므로 모분산과 모표준편차가 0입니다.
+
+표본분산은 분모가 `N-1`이므로 값이 하나인 버킷을 먼저 걸러야 합니다. 이 판단도
+인라인 뷰 밖에서 수행합니다. `ELSE NULL`을 명시하면 `ERR-02042`가 발생하므로
+`ELSE`를 생략합니다.
+
+```sql
+SELECT bucket, n,
+       CASE WHEN n > 1
+            THEN (sq - POWER(s, 2)/n) / (n - 1)
+            END AS var_samp
+  FROM (
+      SELECT rollup('min', 1, time) AS bucket,
+             COUNT(value)           AS n,
+             SUM(value)             AS s,
+             SUMSQ(value)           AS sq
+        FROM ch6_query WHERE name = 'TEMP_01'
+       GROUP BY bucket
+  ) t
+ ORDER BY bucket;
+```
+
+00:00 버킷의 표본분산은 50이고, 값이 하나인 00:01 버킷은 NULL입니다.
+값이 하나인 구간을 결과에서 빼려면 인라인 뷰 밖에 `WHERE n > 1`을 사용합니다.
+원본 테이블의 `VARIANCE`와 `STDDEV`는 같은 구간에서 NULL이 아니라 0을 반환하므로,
+두 결과를 함께 사용할 때는 표시 정책을 맞춥니다.
+
+위 예제의 값에서는 원본 테이블에 `VAR_POP`, `STDDEV_POP`, `VARIANCE`, `STDDEV`를
+직접 사용한 결과와 같습니다. 다만 두 계산식은 평균이 크고 편차가 작을수록 자리수가
+손실됩니다. 예를 들어 값이 100000 부근에서 소수점 이하로만 흔들리면 `SUMSQ/N`과
+`(SUM/N)^2`가 거의 같은 크기여서 뺄셈 결과의 유효 자리수가 줄어듭니다. 부동소수
+오차로 분산이 아주 작은 음수가 되면 `SQRT`의 결과도 유효하지 않습니다. 정밀도가
+중요한 구간에서는 원본 테이블의 `STDDEV`, `VAR_POP` 결과와 비교해 사용할 수 있는
+범위를 확인합니다.
+
 <a id="query-week-month-year-day-timezone-origin-rollup"></a>
 
 ## 달력 단위와 origin

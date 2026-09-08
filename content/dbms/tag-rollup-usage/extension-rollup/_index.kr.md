@@ -14,6 +14,11 @@ EXTENSION은 ROLLUP에 첫·마지막 값과 관련 시각 정보를 추가합�
 일반 원본 GROUP BY에서 FIRST/LAST를 사용하는 것과, 저장된 ROLLUP에서 FIRST/LAST를
 조회하는 것은 다릅니다. 후자에는 적용 가능한 확장 ROLLUP이 필요합니다.
 
+EXTENSION이 추가하는 것은 첫·마지막 값과 시각뿐입니다. MIN, MAX, SUM, COUNT와
+제곱합인 SUMSQ는 일반 ROLLUP에도 함께 저장됩니다. SUMSQ로 분산과 표준편차를
+계산하는 방법은 [SUMSQ와 분산·표준편차](../query-syntax-rollup/#query-sumsq-stddev-rollup)를
+참고합니다.
+
 ## 준비와 입력
 
 ```sql
