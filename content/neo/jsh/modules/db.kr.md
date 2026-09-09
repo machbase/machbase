@@ -84,6 +84,7 @@ try {
 - `Object` [Conn](#Conn)
 
 
+<a id="Conn"></a>
 ## Conn
 
 ### close()
@@ -157,6 +158,7 @@ appender(table_name, ...columns)
 
 - `Object` [Appender](#appender)
 
+<a id="Row"></a>
 ## Rows
 
 Rows 객체는 쿼리 실행 결과 집합을 캡슐화합니다.

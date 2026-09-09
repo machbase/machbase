@@ -13,6 +13,7 @@ params:
 데이터를 적재할 때는 `INSERT`와 동일하게 동작하는 `write` API를 사용하시는 것이 일반적입니다.
 또한 `write` API를 사용하면 하나의 요청으로 여러 레코드를 한꺼번에 삽입할 수 있다는 장점이 있습니다.
 
+<a id="request-endpoint-and-parameters"></a>
 ## 매개변수
 
 **쓰기 매개변수**
@@ -1011,7 +1012,7 @@ csv-data,2022-12-07 11:39:33,2.0002
 
 ## 예시
 
-API의 자세한 설명은 [Request endpoint and params](/neo/api-http/write#request-endpoint-and-params)를 참고해 주십시오.
+API의 자세한 설명은 [Request endpoint and params](/neo/api-http/write/#request-endpoint-and-parameters)를 참고해 주십시오.
 
 **테스트 테이블**
 

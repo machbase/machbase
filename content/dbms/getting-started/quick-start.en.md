@@ -1,185 +1,90 @@
 ---
 type: docs
-title: 'Quick Start'
-weight: 10
+title: '1.2 10-Minute Quick Start'
+weight: 20
+toc: true
 ---
 
-Get Machbase up and running in 5 minutes! This guide will walk you through installation, creating your first table, and running your first queries.
+Connect to a running server, store one service-start event, and read it back. This example uses
+a LOG table for append-oriented event data and explains the SQL results and the two time columns.
+The estimated time does not include installing the server.
 
 ## Prerequisites
 
-- Linux or Windows operating system
-- 100MB free disk space
-- Terminal access
+- Machbase DBMS is running on `127.0.0.1:5656`.
+- The `machsql` command is available.
+- You can connect with a practice account that can create, insert into, query, and drop tables.
+- The commands below use the initial practice account `SYS` and password `MANAGER`. If the
+  password has been changed, substitute its current value.
+- You can save a SQL file under `/tmp`, and the practice table name `DBMS_GS_QUICK` is available.
 
-## Step 1: Install Machbase
+Use a practice environment where this name does not conflict with a business table.
+The final `DROP TABLE` deletes the practice table and the data inserted into it.
 
-### Linux
+If the server is not ready yet, start with
+[Installation, Deployment, and Upgrade](/dbms/installation-deployment-upgrade/) and
+[Linux Standard Edition Installation](/dbms/installation-deployment-upgrade/standard-edition/#linux).
 
-Download and extract Machbase:
+## Representative Sample
 
-```bash
-# Download package (replace x.x.x with actual version)
-wget http://machbase.com/dist/machbase-standard-x.x.x.official-LINUX-X86-64-release.tgz
+This sample records one service-start event in a LOG table. Explicitly create it with
+`CREATE LOG TABLE`; the `_arrival_time` column is added automatically.
 
-# Create directory and extract
-mkdir machbase_home
-tar zxf machbase-standard-x.x.x.official-LINUX-X86-64-release.tgz -C machbase_home
-
-# Set environment variables
-export MACHBASE_HOME=$(pwd)/machbase_home
-export PATH=$MACHBASE_HOME/bin:$PATH
-export LD_LIBRARY_PATH=$MACHBASE_HOME/lib:$LD_LIBRARY_PATH
-```
-
-### Windows
-
-1. Download the Windows installer (.msi file)
-2. Run the installer and follow the wizard
-3. The installer will automatically set up environment variables
-
-## Step 2: Create and Start Database
+Save the SQL file and run it with the following commands.
 
 ```bash
-# Create database
-machadmin -c
-
-# Start server
-machadmin -u
-```
-
-You should see:
-```
-Database created successfully.
-Machbase server started successfully.
-```
-
-## Step 3: Connect to Machbase
-
-Launch the interactive SQL client:
-
-```bash
-machsql
-```
-
-When prompted:
-- **Server address**: Press Enter (uses default 127.0.0.1)
-- **User ID**: Press Enter (uses default SYS)
-- **Password**: Type `MANAGER` and press Enter
-
-You'll see the `Mach>` prompt, ready for commands!
-
-## Step 4: Create Your First Table
-
-Let's create a table to store sensor temperature data:
-
-```sql
-CREATE TABLE sensor_data (
-    sensor_id VARCHAR(20),
-    temperature DOUBLE,
-    humidity DOUBLE
+cat > /tmp/dbms_gs_quick.sql <<'SQL'
+CREATE LOG TABLE DBMS_GS_QUICK (
+  EVENT_ID INTEGER,
+  EVENT_TIME DATETIME,
+  LEVEL VARCHAR(10),
+  MESSAGE VARCHAR(40)
 );
+
+INSERT INTO DBMS_GS_QUICK (EVENT_ID, EVENT_TIME, LEVEL, MESSAGE)
+VALUES (
+  1,
+  TO_DATE('2026-07-02 09:00:00', 'YYYY-MM-DD HH24:MI:SS'),
+  'INFO',
+  'service started'
+);
+
+SELECT _arrival_time, EVENT_ID, EVENT_TIME, LEVEL, MESSAGE
+FROM DBMS_GS_QUICK
+ORDER BY EVENT_ID;
+
+DROP TABLE DBMS_GS_QUICK;
+SQL
+
+machsql -s 127.0.0.1 -P 5656 -u SYS -p MANAGER -f /tmp/dbms_gs_quick.sql
 ```
 
-## Step 5: Insert Data
+### Check the Results
 
-Add some sample sensor readings:
+Check each SQL step for errors. The SELECT result should contain one row with `EVENT_ID`
+equal to `1`, `LEVEL` equal to `INFO`, and `MESSAGE` equal to `service started`.
+`EVENT_TIME` is the event timestamp supplied by the application. In this example,
+`_arrival_time` is the server arrival timestamp recorded automatically by the DBMS.
+Its value therefore changes each time you run the example and need not equal `EVENT_TIME`.
 
-```sql
-INSERT INTO sensor_data VALUES ('sensor01', 25.3, 65.2);
-INSERT INTO sensor_data VALUES ('sensor01', 25.5, 64.8);
-INSERT INTO sensor_data VALUES ('sensor02', 22.1, 70.5);
-```
+`CREATE LOG TABLE` defines the structure, and `INSERT` adds one row. `SELECT` specifies the
+columns to read, while `ORDER BY EVENT_ID` specifies result ordering. If the final
+`DROP TABLE` succeeds, the practice table is removed. To inspect the data further, omit the
+final DROP statement before running the script, then remove only that practice table when
+you finish.
 
-## Step 6: Query Data
+If a rerun fails because `DBMS_GS_QUICK` already exists, a previous run may not have reached
+the `DROP TABLE` step. Inspect it with `DESC DBMS_GS_QUICK;`. Only if it is the table from
+your previous practice run should you execute `DROP TABLE DBMS_GS_QUICK;` and retry.
+For a connection error, first check the server address, port, running state, and account details.
 
-Retrieve your data:
+## What This Sample Checks
 
-```sql
--- Get all records
-SELECT * FROM sensor_data;
-
--- Get records with timestamps
-SELECT _arrival_time, * FROM sensor_data;
-
--- Get average temperature
-SELECT AVG(temperature) FROM sensor_data;
-
--- Get data from last 10 minutes
-SELECT * FROM sensor_data DURATION 10 MINUTE;
-```
-
-**Note**: The `_arrival_time` column is automatically added to every record with nanosecond precision!
-
-## Understanding the Results
-
-When you run `SELECT * FROM sensor_data`, you'll notice:
-
-1. **Newest data first** - Machbase automatically orders results by most recent
-2. **Automatic timestamps** - Every record has an `_arrival_time` column
-3. **High precision** - Timestamps are accurate to nanoseconds
-
-Example output:
-```
-SENSOR_ID            TEMPERATURE  HUMIDITY
-------------------------------------------------
-sensor02             22.1         70.5
-sensor01             25.5         64.8
-sensor01             25.3         65.2
-[3] row(s) selected.
-```
-
-## What Just Happened?
-
-Congratulations! You've just:
-
-✓ Installed Machbase
-✓ Created and started a database
-✓ Connected using machsql
-✓ Created a table
-✓ Inserted time-series data
-✓ Queried data with automatic timestamping
-
-## Next Steps
-
-Now that you have Machbase running:
-
-1. [**First Steps**](../first-steps/) - Learn more machsql commands
-2. [**Basic Concepts**](../concepts/) - Understand table types and when to use them
-3. [**Table Types**](../../table-types/) - Choose the right table for real-world scenarios
-
-## Common Commands
-
-Keep these handy:
-
-```bash
-# Start Machbase
-machadmin -u
-
-# Stop Machbase
-machadmin -s
-
-# Check if running
-machadmin -e
-
-# Connect to database
-machsql
-```
-
-## Troubleshooting
-
-**Server won't start?**
-- Check if port 5656 is available: `netstat -an | grep 5656`
-- Check logs in `$MACHBASE_HOME/trc/` directory
-
-**Can't connect?**
-- Verify server is running: `machadmin -e`
-- Check default credentials: username `SYS`, password `MANAGER`
-
-**Need help?**
-- See [Troubleshooting Guide](../../troubleshooting/)
-- Check [Error Codes](../../troubleshooting/error-code/)
-
----
-
-**Ready to dive deeper?** Continue to [First Steps](../first-steps/) to master the machsql command-line interface!
+| Item | What it verifies |
+|---|---|
+| Server connection | `machsql` connects to `127.0.0.1:5656`. |
+| Table creation | `CREATE LOG TABLE` explicitly creates a LOG table. |
+| Data input | `INSERT` and `TO_DATE` store event data. |
+| Data query | `SELECT` and `ORDER BY` verify the inserted row. |
+| Automatic column | The server automatically records the LOG table's `_arrival_time`. |
+| Cleanup | `DROP TABLE` removes the practice table. |

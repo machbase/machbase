@@ -1,0 +1,33 @@
+{{- $dbms := .Site.GetPage "/dbms" -}}
+{{- $isKorean := eq .Site.Language.Lang "kr" -}}
+# {{ if $isKorean }}Machbase DBMS 매뉴얼{{ else }}Machbase DBMS Manual{{ end }}
+
+> {{ if $isKorean }}Machbase DBMS {{ .Site.Params.dbmsVersion }} 한국어 문서의 정본 탐색 인덱스입니다.{{ else }}Canonical navigation index for the English Machbase DBMS {{ .Site.Params.dbmsVersion }} manual.{{ end }}
+
+- {{ if $isKorean }}언어{{ else }}Language{{ end }}: `{{ .Site.Language.Lang }}`
+- {{ if $isKorean }}매뉴얼{{ else }}Manual{{ end }}: [{{ $dbms.Title }}]({{ $dbms.Permalink }})
+- {{ if $isKorean }}전체 본문{{ else }}Full text{{ end }}: [llms-full.txt]({{ .Site.Home.Permalink }}llms-full.txt)
+- {{ if $isKorean }}문서 인덱스{{ else }}Document index{{ end }}: [llms-chunks.json]({{ .Site.Home.Permalink }}llms-chunks.json)
+
+## {{ if $isKorean }}매뉴얼 장{{ else }}Manual Chapters{{ end }}
+
+{{- range $dbms.Pages.ByWeight }}
+{{- if not (strings.Contains .RelPermalink "/dbms/8-5-manual/") }}
+- [{{ .LinkTitle }}]({{ .Permalink }}){{ with .Description }}: {{ . | plainify }}{{ end }}
+{{- end }}
+{{- end }}
+
+## {{ if $isKorean }}주요 정본{{ else }}Primary References{{ end }}
+
+{{- $reference := .Site.GetPage "/dbms/reference" -}}
+{{- range $reference.Pages.ByWeight }}
+- [{{ .LinkTitle }}]({{ .Permalink }}){{ with .Description }}: {{ . | plainify }}{{ end }}
+{{- end }}
+
+## {{ if $isKorean }}AI와 RAG{{ else }}AI and RAG{{ end }}
+
+{{- $ai := .Site.GetPage "/dbms/reference/ai-agent-reference" }}
+- [{{ $ai.LinkTitle }}]({{ $ai.Permalink }})
+- [canonical-url-map]({{ (.Site.GetPage "/dbms/reference/ai-agent-reference/canonical-url-map").Permalink }})
+- [task-map]({{ (.Site.GetPage "/dbms/reference/ai-agent-reference/task-map").Permalink }})
+- [evidence-map]({{ (.Site.GetPage "/dbms/reference/ai-agent-reference/evidence-map").Permalink }})

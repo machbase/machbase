@@ -91,6 +91,48 @@ user()
 normalizeTableName(tableName)
 ```
 
+**Client.tx()**
+
+{{< neo_since ver="8.7.0" />}}
+
+풀에서 가져온 연결로 트랜잭션을 열고 그 안에서 `fn`을 실행합니다. `fn`이 정상적으로 반환되면 트랜잭션을 커밋하고, `fn`이 예외를 던지면 트랜잭션을 롤백한 뒤 그 예외를 다시 던집니다. `fn`에는 해당 트랜잭션에 바인딩된 `Connection`이 전달되므로, 이 객체의 `query()`/`queryRow()`/`exec()` 호출은 같은 트랜잭션 안에서 수행됩니다.
+
+{{< callout emoji="⚠️" >}}
+트랜잭션은 `CREATE TABLE`로 생성한 일반(트랜잭션) 테이블에서만 동작합니다. 로그 테이블(`CREATE LOG TABLE`)과 태그 테이블(`CREATE TAG TABLE`)은 트랜잭션을 지원하지 않으며, `tx()` 안에서 이런 테이블에 대해 `exec()`/`query()`를 실행하면 `MACHCLI-ERR-2362`와 같은 오류가 발생합니다.
+{{< /callout >}}
+
+<h6>사용 형식</h6>
+
+```js
+tx(fn)
+```
+
+<h6>사용 예시</h6>
+
+```js {linenos=table,linenostart=1}
+const { Client } = require('machcli');
+const db = new Client({ host: '127.0.0.1', port: 5656, user: 'sys', password: 'manager' });
+const conn = db.connect();
+conn.exec('CREATE TABLE IF NOT EXISTS TX_SAMPLE (ID LONG, NAME VARCHAR(100))');
+
+// fn이 정상적으로 반환되면 자동으로 커밋됩니다.
+db.tx(function (tx) {
+    tx.exec('INSERT INTO TX_SAMPLE VALUES(?, ?)', 1, 'committed');
+});
+
+// fn이 예외를 던지면 롤백 후 그 예외를 다시 던집니다.
+try {
+    db.tx(function (tx) {
+        tx.exec('INSERT INTO TX_SAMPLE VALUES(?, ?)', 2, 'rolledback');
+        throw new Error('abort');
+    });
+} catch (e) {
+    console.println('rolled back:', e.message);
+}
+conn.close();
+db.close();
+```
+
 ## Connection
 
 `Client.connect()`가 반환하는 연결 객체입니다.
@@ -200,6 +242,38 @@ appender.append('sensor-1', new Date(), 12.34);
 appender.flush();
 const result = appender.close();
 console.println(result);
+conn.close();
+db.close();
+```
+
+**Connection.tx()**
+
+{{< neo_since ver="8.7.0" />}}
+
+이 연결 위에서 트랜잭션을 열고 그 안에서 `fn`을 실행합니다. 커밋/롤백 동작은 `Client.tx()`와 동일합니다. 이미 확보해 둔 연결(예: `Client.connect()`가 반환한 연결) 위에서 트랜잭션을 실행해야 할 때 사용합니다.
+
+{{< callout emoji="⚠️" >}}
+트랜잭션은 `CREATE TABLE`로 생성한 일반(트랜잭션) 테이블에서만 동작합니다. 로그 테이블(`CREATE LOG TABLE`)과 태그 테이블(`CREATE TAG TABLE`)은 트랜잭션을 지원하지 않으며, `tx()` 안에서 이런 테이블에 대해 `exec()`/`query()`를 실행하면 `MACHCLI-ERR-2362`와 같은 오류가 발생합니다.
+{{< /callout >}}
+
+<h6>사용 형식</h6>
+
+```js
+tx(fn)
+```
+
+<h6>사용 예시</h6>
+
+```js {linenos=table,linenostart=1}
+const { Client } = require('machcli');
+const db = new Client({ host: '127.0.0.1', port: 5656, user: 'sys', password: 'manager' });
+const conn = db.connect();
+conn.exec('CREATE TABLE IF NOT EXISTS TX_SAMPLE (ID LONG, NAME VARCHAR(100))');
+
+conn.tx(function (tx) {
+    tx.exec('INSERT INTO TX_SAMPLE VALUES(?, ?)', 1, 'committed');
+});
+
 conn.close();
 db.close();
 ```

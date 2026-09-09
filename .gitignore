@@ -3,6 +3,7 @@ _site
 .jekyll-cache
 .jekyll-metadata
 .hugo_build.lock
+.hugo-version
 
 vendor
 Gemfile.lock

@@ -1,0 +1,18 @@
+{{- $pages := slice . -}}
+{{- range .Pages.ByWeight -}}
+  {{- $excluded := strings.Contains .RelPermalink "/dbms/8-5-manual/" -}}
+  {{- if not $excluded -}}
+    {{- if or (eq .Kind "section") (eq .Kind "page") -}}
+      {{- $pages = $pages | append . -}}
+    {{- end -}}
+    {{- if eq .Kind "section" -}}
+      {{- $children := partial "llms/dbms-pages.html" . -}}
+      {{- if gt (len $children) 1 -}}
+        {{- range after 1 $children -}}
+          {{- $pages = $pages | append . -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- return $pages -}}

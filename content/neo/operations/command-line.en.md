@@ -320,9 +320,45 @@ machbase-neo» show ports;
 
 #### show tables
 
-Syntax: `show tables [-a]`
+Syntax: `show tables [FROM <database>[.<user>]] [LIKE <pattern>] [WITH ALL]`
 
-Display the table list. If flag `-a` is specified, the result includes the hidden tables.
+{{< neo_since ver="8.7.0" />}}
+
+Some `show` sub commands support the `FROM` and `LIKE` clauses.
+`FROM <database>[.<user>]` selects the database and user scope to inspect, and `LIKE <pattern>` filters the result by name pattern.
+The `LIKE` pattern is a quoted SQL `LIKE` pattern. `%` matches zero or more characters, and `_` matches one character.
+`IN` can be used as an alias of `FROM`.
+`WITH ALL` includes hidden items.
+
+```sh
+machbase-neo» show tables from MACHBASEDB.SYS like 'TAG%' with all;
+machbase-neo» show indexes like 'IDX_%';
+```
+
+| command | `FROM` | `LIKE` | `WITH ALL` | `LIKE` target |
+|:--------|:------:|:------:|:----------:|:--------------|
+| `show tables` | O | O | O | table name |
+| `show indexes` | O | O | - | index name |
+| `show table <table>` | O | - | O | - |
+| `show index <index>` | O | - | - | - |
+| `show tags <table> [tag...]` | O | O | - | tag name |
+| `show storage` | O | O | - | table name |
+| `show table-usage` | O | O | - | table name |
+| `show lsm` | O | O | - | table name |
+| `show indexgap` | O | O | - | table name |
+| `show tagindexgap` | O | O | - | table name |
+| `show rollupgap` | O | O | - | table name |
+| `show users` | - | O | - | user name |
+| `show databases` | - | O | - | database name |
+| `show meta-tables` | - | O | - | table name |
+| `show virtual-tables` | - | O | - | table name |
+| `show sessions` | - | O | - | user name |
+| `show statements` | - | O | - | query text |
+
+Commands that take a target name, such as `show table`, `show index`, and `show tags`, cannot use a qualified `<database>.<user>.<name>` argument together with a `FROM` clause.
+For `show tags`, `LIKE` cannot be used together with explicit tag-name arguments.
+
+Display the table list. If `WITH ALL` is specified, the result includes the hidden tables.
 
 ```sh
 machbase-neo» show tables;
@@ -337,12 +373,12 @@ machbase-neo» show tables;
 
 #### show table
 
-Syntax `show table [-a] <table>`
+Syntax: `show table <table> [WITH ALL]`
 
-Display the column list of the table. If flag `-a` is specified, the result includes the hidden columns.
+Display the column list of the table. If `WITH ALL` is specified, the result includes the hidden columns.
 
 ```sh
-machbase-neo» show table example -a;
+machbase-neo» show table example with all;
 ┌────────┬───────┬──────────┬────────┬──────────┐
 │ ROWNUM │ NAME  │ TYPE     │ LENGTH │ DESC     │
 ├────────┼───────┼──────────┼────────┼──────────┤
@@ -351,6 +387,16 @@ machbase-neo» show table example -a;
 │      3 │ VALUE │ double   │     17 │          │
 │      4 │ _RID  │ long     │     20 │          │
 └────────┴───────┴──────────┴────────┴──────────┘
+```
+
+#### show indexes
+
+Syntax: `show indexes [FROM <database>[.<user>]] [LIKE <pattern>]`
+
+Display the index list. Use `FROM` to select the scope and `LIKE` to filter index names.
+
+```sh
+machbase-neo» show indexes from MACHBASEDB.SYS like 'TAG%';
 ```
 
 #### show meta-tables

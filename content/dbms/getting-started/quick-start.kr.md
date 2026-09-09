@@ -1,185 +1,89 @@
 ---
 type: docs
-title: '빠른 시작'
-weight: 10
+title: '1.2 10분 빠른 시작'
+weight: 20
+toc: true
 ---
 
-5분 안에 Machbase를 시작하고 실행하세요! 이 가이드는 설치, 첫 번째 테이블 생성 및 첫 번째 쿼리 실행을 안내합니다.
+실행 중인 서버에 접속해 서비스 시작 이벤트 한 건을 저장하고 다시 읽어 봅니다.
+추가 중심 이벤트에 맞는 LOG 테이블을 사용하며, SQL 실행 결과와 두 시간 컬럼의 의미를
+확인합니다. 설치에 필요한 시간은 이 실습의 예상 시간에 포함하지 않습니다.
 
-## 전제 조건
+## 실행 전제
 
-- Linux 또는 Windows 운영 체제
-- 100MB 여유 디스크 공간
-- 터미널 액세스
+- Machbase DBMS 서버가 `127.0.0.1:5656`에서 실행 중입니다.
+- `machsql` 명령을 사용할 수 있습니다.
+- 테이블 생성·입력·조회·삭제 권한이 있는 실습 계정으로 접속할 수 있습니다.
+- 아래 명령은 초기 실습 계정 `SYS`와 비밀번호 `MANAGER`를 사용합니다. 비밀번호를
+  변경했다면 실제 값으로 바꿉니다.
+- `/tmp`에 SQL 파일을 저장할 수 있고, 실습용 이름 `DBMS_GS_QUICK`을 사용할 수 있습니다.
 
-## 1단계: Machbase 설치
+기존 업무 테이블과 이름이 겹치지 않는 실습 환경을 사용합니다. 예제 마지막의
+`DROP TABLE`은 실습 테이블과 입력한 데이터를 삭제합니다.
 
-### Linux
+서버가 아직 준비되지 않았다면 [설치, 배포, 업그레이드](/dbms/installation-deployment-upgrade/)와
+[Linux Standard Edition 설치](/dbms/installation-deployment-upgrade/standard-edition/#linux)를 먼저
+참고하십시오.
 
-Machbase 다운로드 및 압축 해제:
+## 대표 실행 예제
 
-```bash
-# 패키지 다운로드 (x.x.x를 실제 버전으로 바꾸세요)
-wget http://machbase.com/dist/machbase-standard-x.x.x.official-LINUX-X86-64-release.tgz
+서비스 시작 이벤트 한 건을 LOG 테이블에 기록합니다. LOG 테이블은 `CREATE LOG TABLE`로
+명시해서 생성하며, `_arrival_time` 컬럼이 자동으로 추가됩니다.
 
-# 디렉토리 생성 및 압축 해제
-mkdir machbase_home
-tar zxf machbase-standard-x.x.x.official-LINUX-X86-64-release.tgz -C machbase_home
-
-# 환경 변수 설정
-export MACHBASE_HOME=$(pwd)/machbase_home
-export PATH=$MACHBASE_HOME/bin:$PATH
-export LD_LIBRARY_PATH=$MACHBASE_HOME/lib:$LD_LIBRARY_PATH
-```
-
-### Windows
-
-1. Windows 설치 프로그램(.msi 파일) 다운로드
-2. 설치 프로그램을 실행하고 마법사를 따릅니다
-3. 설치 프로그램이 자동으로 환경 변수를 설정합니다
-
-## 2단계: 데이터베이스 생성 및 시작
+다음 명령으로 SQL 파일을 저장하고 실행합니다.
 
 ```bash
-# 데이터베이스 생성
-machadmin -c
-
-# 서버 시작
-machadmin -u
-```
-
-다음과 같이 표시됩니다:
-```
-Database created successfully.
-Machbase server started successfully.
-```
-
-## 3단계: Machbase에 연결
-
-대화형 SQL 클라이언트 실행:
-
-```bash
-machsql
-```
-
-프롬프트가 표시되면:
-- **Server address**: Enter 키 누름 (기본값 127.0.0.1 사용)
-- **User ID**: Enter 키 누름 (기본값 SYS 사용)
-- **Password**: `MANAGER`를 입력하고 Enter 키 누름
-
-명령을 입력할 수 있는 `Mach>` 프롬프트가 표시됩니다!
-
-## 4단계: 첫 번째 테이블 생성
-
-센서 온도 데이터를 저장할 테이블을 생성해 보겠습니다:
-
-```sql
-CREATE TABLE sensor_data (
-    sensor_id VARCHAR(20),
-    temperature DOUBLE,
-    humidity DOUBLE
+cat > /tmp/dbms_gs_quick.sql <<'SQL'
+CREATE LOG TABLE DBMS_GS_QUICK (
+  EVENT_ID INTEGER,
+  EVENT_TIME DATETIME,
+  LEVEL VARCHAR(10),
+  MESSAGE VARCHAR(40)
 );
+
+INSERT INTO DBMS_GS_QUICK (EVENT_ID, EVENT_TIME, LEVEL, MESSAGE)
+VALUES (
+  1,
+  TO_DATE('2026-07-02 09:00:00', 'YYYY-MM-DD HH24:MI:SS'),
+  'INFO',
+  'service started'
+);
+
+SELECT _arrival_time, EVENT_ID, EVENT_TIME, LEVEL, MESSAGE
+FROM DBMS_GS_QUICK
+ORDER BY EVENT_ID;
+
+DROP TABLE DBMS_GS_QUICK;
+SQL
+
+machsql -s 127.0.0.1 -P 5656 -u SYS -p MANAGER -f /tmp/dbms_gs_quick.sql
 ```
 
-## 5단계: 데이터 삽입
+### 결과 확인
 
-샘플 센서 판독값을 추가합니다:
+각 SQL 단계에 오류가 없는지 확인합니다. SELECT 결과 한 행에 `EVENT_ID`가 `1`,
+`LEVEL`이 `INFO`, `MESSAGE`가 `service started`로 표시되어야 합니다.
+`EVENT_TIME`은 애플리케이션이 저장한 실제 이벤트 시각이고, `_arrival_time`은 DBMS가
+이 예제에서 자동 기록한 서버 입력 시각입니다. 따라서 예제를 실행할 때마다
+`_arrival_time` 값은 달라지며 `EVENT_TIME`과 같을 필요가 없습니다.
 
-```sql
-INSERT INTO sensor_data VALUES ('sensor01', 25.3, 65.2);
-INSERT INTO sensor_data VALUES ('sensor01', 25.5, 64.8);
-INSERT INTO sensor_data VALUES ('sensor02', 22.1, 70.5);
-```
+`CREATE LOG TABLE`은 구조를 만들고 `INSERT`는 한 행을 추가합니다. `SELECT`는 읽을
+컬럼을 지정하며, `ORDER BY EVENT_ID`는 결과 순서를 지정합니다. 마지막 `DROP TABLE`까지
+성공하면 실습 테이블이 제거됩니다. 데이터를 더 살펴보려면 실행 전에 마지막 DROP 문을
+제외하고, 조회를 마친 뒤 해당 실습 테이블만 정리합니다.
 
-## 6단계: 데이터 조회
+재실행 중 `DBMS_GS_QUICK`이 이미 존재한다는 오류가 나면 이전 실행이 `DROP TABLE`
+단계에 도달하지 못했을 수 있습니다. `DESC DBMS_GS_QUICK;`으로 구조를 확인하고, 이전
+실습에서 만든 테이블인 경우에만 `DROP TABLE DBMS_GS_QUICK;`을 실행한 뒤 재시도합니다.
+접속 오류라면 먼저 서버 주소·포트·기동 상태와 계정 정보를 확인합니다.
 
-데이터를 검색합니다:
+## 이 예제에서 확인한 것
 
-```sql
--- 모든 레코드 가져오기
-SELECT * FROM sensor_data;
-
--- 타임스탬프가 포함된 레코드 가져오기
-SELECT _arrival_time, * FROM sensor_data;
-
--- 평균 온도 가져오기
-SELECT AVG(temperature) FROM sensor_data;
-
--- 최근 10분간의 데이터 가져오기
-SELECT * FROM sensor_data DURATION 10 MINUTE;
-```
-
-**참고**: `_arrival_time` 컬럼은 나노초 정밀도로 모든 레코드에 자동으로 추가됩니다!
-
-## 결과 이해
-
-`SELECT * FROM sensor_data`를 실행하면 다음을 확인할 수 있습니다:
-
-1. **최신 데이터 우선** - Machbase는 결과를 자동으로 최신 순으로 정렬합니다
-2. **자동 타임스탬프** - 모든 레코드에 `_arrival_time` 컬럼이 있습니다
-3. **높은 정밀도** - 타임스탬프는 나노초까지 정확합니다
-
-출력 예시:
-```
-SENSOR_ID            TEMPERATURE  HUMIDITY
-------------------------------------------------
-sensor02             22.1         70.5
-sensor01             25.5         64.8
-sensor01             25.3         65.2
-[3] row(s) selected.
-```
-
-## 무슨 일이 일어났나요?
-
-축하합니다! 방금 다음을 수행했습니다:
-
-✓ Machbase 설치
-✓ 데이터베이스 생성 및 시작
-✓ machsql을 사용하여 연결
-✓ 테이블 생성
-✓ 시계열 데이터 삽입
-✓ 자동 타임스탬프로 데이터 조회
-
-## 다음 단계
-
-이제 Machbase가 실행되고 있습니다:
-
-1. [**첫 단계**](../first-steps/) - machsql 명령어 더 배우기
-2. [**기본 개념**](../concepts/) - 테이블 타입과 사용 시기 이해
-3. [**테이블 타입**](../../table-types/) - 실제 시나리오에 맞는 테이블 선택
-
-## 일반 명령어
-
-다음 명령어를 편리하게 사용하세요:
-
-```bash
-# Machbase 시작
-machadmin -u
-
-# Machbase 중지
-machadmin -s
-
-# 실행 중인지 확인
-machadmin -e
-
-# 데이터베이스에 연결
-machsql
-```
-
-## 문제 해결
-
-**서버가 시작되지 않나요?**
-- 포트 5656이 사용 가능한지 확인: `netstat -an | grep 5656`
-- `$MACHBASE_HOME/trc/` 디렉토리의 로그 확인
-
-**연결할 수 없나요?**
-- 서버가 실행 중인지 확인: `machadmin -e`
-- 기본 자격 증명 확인: 사용자 이름 `SYS`, 비밀번호 `MANAGER`
-
-**도움이 필요하신가요?**
-- [문제 해결 가이드](../../troubleshooting/) 참조
-- [에러 코드](../../troubleshooting/error-code/) 확인
-
----
-
-**더 깊이 파고들 준비가 되셨나요?** [첫 단계](../first-steps/)로 계속하여 machsql 명령줄 인터페이스를 마스터하세요!
+| 항목 | 확인 내용 |
+| --- | --- |
+| 서버 접속 | `machsql`로 `127.0.0.1:5656`에 접속 |
+| 테이블 생성 | `CREATE LOG TABLE`로 LOG 테이블을 명시적으로 생성 |
+| 데이터 입력 | `INSERT`와 `TO_DATE`로 이벤트 데이터 저장 |
+| 데이터 조회 | `SELECT`와 `ORDER BY`로 입력 결과 확인 |
+| 자동 컬럼 | LOG 테이블의 `_arrival_time`은 서버가 자동 기록 |
+| 정리 | `DROP TABLE`로 실습 테이블 삭제 |

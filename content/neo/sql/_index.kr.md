@@ -48,6 +48,24 @@ SELECT time, value FROM example WHERE name = 'my-car';
 
 {{< figure src="/images/web-select.png" >}}
 
+### Named Args 사용
+
+SQL 에디터에서는 `:name`, `:value`와 같은 named args를 사용할 수 있습니다.
+named args 값은 SQL 문 앞에 `-- env:` 주석으로 지정합니다.
+같은 값을 여러 SQL 문에서 반복해서 사용하거나, 테스트 값을 빠르게 바꿔 실행할 때 유용합니다.
+
+```sql
+-- env: named.name='my-car' named.value=1.5432
+INSERT INTO example VALUES(:name, now, :value);
+
+SELECT * FROM example WHERE name = :name;
+-- env: reset
+```
+
+위 예시는 `name` 인자에 `'my-car'`, `value` 인자에 `1.5432`를 설정한 뒤,
+INSERT와 SELECT 문에서 각각 `:name`, `:value`로 참조합니다.
+`-- env: reset`을 실행하면 SQL 에디터에 설정된 named args가 초기화됩니다.
+
 ### 차트 그리기
 
 INSERT 문을 반복 실행해 데이터를 더 입력합니다.

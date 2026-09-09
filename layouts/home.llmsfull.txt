@@ -1,0 +1,26 @@
+{{- $dbms := .Site.GetPage "/dbms" -}}
+{{- $pages := partial "llms/dbms-pages.html" $dbms -}}
+{{- $isKorean := eq .Site.Language.Lang "kr" -}}
+# {{ if $isKorean }}Machbase DBMS 매뉴얼 전체 본문{{ else }}Machbase DBMS Manual — Full Text{{ end }}
+
+> {{ if $isKorean }}현재 published DBMS {{ .Site.Params.dbmsVersion }} 한국어 페이지를 navigation 순서로 연결한 Markdown corpus입니다.{{ else }}Markdown corpus of the current published English DBMS {{ .Site.Params.dbmsVersion }} pages in navigation order.{{ end }}
+
+- language: `{{ .Site.Language.Lang }}`
+- document_count: `{{ len $pages }}`
+- document_index: {{ .Site.Home.Permalink }}llms-chunks.json
+
+{{- range $pages }}
+
+<!-- document: {{ .RelPermalink }} -->
+
+---
+title: {{ .Title | jsonify }}
+url: {{ .Permalink }}
+language: {{ .Site.Language.Lang }}
+kind: {{ .Kind }}
+---
+
+# {{ .Title }}
+
+{{ .RawContent }}
+{{- end }}

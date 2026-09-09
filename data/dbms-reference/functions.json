@@ -1,0 +1,4064 @@
+{
+  "schema_version": 1,
+  "source": {
+    "repository": "nfx",
+    "revision": "4ab04c7ae964934b111dca8a9150c6f5e8c09600",
+    "registry": "qp/src/qpf/qpf.c",
+    "extraction_mode": "source_heuristic",
+    "limitations": [
+      "Use as a drift and review signal, not as proof of public API or Edition support.",
+      "Declared return type can be replaced by a validator at runtime.",
+      "A compiled Standard/Cluster descriptor visitor is required for an Edition contract."
+    ]
+  },
+  "manual_reference": "content/dbms/reference/sql/functions/functions-full/_index.kr.md",
+  "counts": {
+    "registered_functions": 137,
+    "functions_with_korean_reference_heading": 108,
+    "descriptor_symbols": 167
+  },
+  "functions": [
+    {
+      "name": "CURRENT_DATABASE",
+      "registered_symbol": "gCurrentDatabaseDesc",
+      "has_korean_reference_heading": false,
+      "overloads": [
+        {
+          "symbol": "gCurrentDatabaseDesc",
+          "variants": [
+            {
+              "name": "CURRENT_DATABASE",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPM_MAX_NAME_LEN + 1",
+              "argument_count": 0,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfCurrentDatabase.c:38"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "DATABASE",
+      "registered_symbol": "gDatabaseDesc",
+      "has_korean_reference_heading": false,
+      "overloads": [
+        {
+          "symbol": "gDatabaseDesc",
+          "variants": [
+            {
+              "name": "DATABASE",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPM_MAX_NAME_LEN + 1",
+              "argument_count": 0,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfCurrentDatabase.c:57"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CURRENT_CATALOG",
+      "registered_symbol": "gCurrentCatalogDesc",
+      "has_korean_reference_heading": false,
+      "overloads": [
+        {
+          "symbol": "gCurrentCatalogDesc",
+          "variants": [
+            {
+              "name": "CURRENT_CATALOG",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPM_MAX_NAME_LEN + 1",
+              "argument_count": 0,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfCurrentDatabase.c:76"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CURRENT_USER",
+      "registered_symbol": "gCurrentUserDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gCurrentUserDesc",
+          "variants": [
+            {
+              "name": "CURRENT_USER",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPM_MAX_NAME_LEN + 1",
+              "argument_count": 0,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfCurrentUser.c:125"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SESSION_USER",
+      "registered_symbol": "gSessionUserDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gSessionUserDesc",
+          "variants": [
+            {
+              "name": "SESSION_USER",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPM_MAX_NAME_LEN + 1",
+              "argument_count": 0,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfCurrentUser.c:144"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CURRENT_USER_ID",
+      "registered_symbol": "gCurrentUserIDDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gCurrentUserIDDesc",
+          "variants": [
+            {
+              "name": "CURRENT_USER_ID",
+              "declared_return_type": "QPT_TYPE_INT32",
+              "internal_return_size_expression": "sizeof(nbp_sint32_t)",
+              "argument_count": 0,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfCurrentUser.c:163"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SESSION_USER_ID",
+      "registered_symbol": "gSessionUserIDDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gSessionUserIDDesc",
+          "variants": [
+            {
+              "name": "SESSION_USER_ID",
+              "declared_return_type": "QPT_TYPE_INT32",
+              "internal_return_size_expression": "sizeof(nbp_sint32_t)",
+              "argument_count": 0,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfCurrentUser.c:182"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LENGTH",
+      "registered_symbol": "gLENGTH1Desc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gLENGTH1Desc",
+          "variants": [
+            {
+              "name": "LENGTH",
+              "declared_return_type": "QPT_TYPE_INT32",
+              "internal_return_size_expression": "sizeof(nbp_sint32_t)",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfLENGTH.c:58"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ABS",
+      "registered_symbol": "gABSDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gABSDesc",
+          "variants": [
+            {
+              "name": "ABS",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfABS.c:50"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SQRT",
+      "registered_symbol": "gSQRTDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gSQRTDesc",
+          "variants": [
+            {
+              "name": "SQRT",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "QPT_TYPE_DOUBLE_SIZE",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfMathFunctions.c:586"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "POWER",
+      "registered_symbol": "gPOWERDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gPOWERDesc",
+          "variants": [
+            {
+              "name": "POWER",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "QPT_TYPE_DOUBLE_SIZE",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfMathFunctions.c:606"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "POW",
+      "registered_symbol": "gPOWDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gPOWDesc",
+          "variants": [
+            {
+              "name": "POW",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "QPT_TYPE_DOUBLE_SIZE",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfMathFunctions.c:626"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LOG",
+      "registered_symbol": "gLOGDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gLOGDesc",
+          "variants": [
+            {
+              "name": "LOG",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "QPT_TYPE_DOUBLE_SIZE",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": "gLOG1Desc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfMathFunctions.c:646"
+            }
+          ]
+        },
+        {
+          "symbol": "gLOG1Desc",
+          "variants": [
+            {
+              "name": "LOG",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "QPT_TYPE_DOUBLE_SIZE",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfMathFunctions.c:546"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LN",
+      "registered_symbol": "gLNDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gLNDesc",
+          "variants": [
+            {
+              "name": "LN",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "QPT_TYPE_DOUBLE_SIZE",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfMathFunctions.c:666"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "EXP",
+      "registered_symbol": "gEXPDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gEXPDesc",
+          "variants": [
+            {
+              "name": "EXP",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "QPT_TYPE_DOUBLE_SIZE",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfMathFunctions.c:686"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "FLOOR",
+      "registered_symbol": "gFLOORDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gFLOORDesc",
+          "variants": [
+            {
+              "name": "FLOOR",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "QPT_TYPE_DOUBLE_SIZE",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfMathFunctions.c:706"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CEIL",
+      "registered_symbol": "gCEILDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gCEILDesc",
+          "variants": [
+            {
+              "name": "CEIL",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "QPT_TYPE_DOUBLE_SIZE",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfMathFunctions.c:726"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SIN",
+      "registered_symbol": "gSINDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gSINDesc",
+          "variants": [
+            {
+              "name": "SIN",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "QPT_TYPE_DOUBLE_SIZE",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfMathFunctions.c:746"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "COS",
+      "registered_symbol": "gCOSDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gCOSDesc",
+          "variants": [
+            {
+              "name": "COS",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "QPT_TYPE_DOUBLE_SIZE",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfMathFunctions.c:766"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "TAN",
+      "registered_symbol": "gTANDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gTANDesc",
+          "variants": [
+            {
+              "name": "TAN",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "QPT_TYPE_DOUBLE_SIZE",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfMathFunctions.c:786"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "MOD",
+      "registered_symbol": "gMODDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gMODDesc",
+          "variants": [
+            {
+              "name": "MOD",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "QPT_TYPE_DOUBLE_SIZE",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfMathFunctions.c:806"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "RAND",
+      "registered_symbol": "gRANDDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gRANDDesc",
+          "variants": [
+            {
+              "name": "RAND",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "QPT_TYPE_DOUBLE_SIZE",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": "gRAND0Desc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfMathFunctions.c:826"
+            }
+          ]
+        },
+        {
+          "symbol": "gRAND0Desc",
+          "variants": [
+            {
+              "name": "RAND",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "QPT_TYPE_DOUBLE_SIZE",
+              "argument_count": 0,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfMathFunctions.c:566"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PI",
+      "registered_symbol": "gPIDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gPIDesc",
+          "variants": [
+            {
+              "name": "PI",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "QPT_TYPE_DOUBLE_SIZE",
+              "argument_count": 0,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfMathFunctions.c:846"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "UPPER",
+      "registered_symbol": "gUPPERDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gUPPERDesc",
+          "variants": [
+            {
+              "name": "UPPER",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPF_MAX_VARCHAR_RESULT_SIZE",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfUPPER.c:83"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LOWER",
+      "registered_symbol": "gLOWERDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gLOWERDesc",
+          "variants": [
+            {
+              "name": "LOWER",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPF_MAX_VARCHAR_RESULT_SIZE",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfLOWER.c:83"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SUBSTR",
+      "registered_symbol": "gSUBSTRDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gSUBSTRDesc",
+          "variants": [
+            {
+              "name": "SUBSTR",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPF_MAX_VARCHAR_RESULT_SIZE",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": "gSUBSTR3Desc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfSUBSTR.c:173"
+            }
+          ]
+        },
+        {
+          "symbol": "gSUBSTR3Desc",
+          "variants": [
+            {
+              "name": "SUBSTR",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPF_MAX_VARCHAR_RESULT_SIZE",
+              "argument_count": 3,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfSUBSTR.c:153"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "TO_CHAR",
+      "registered_symbol": "gTOCHARDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gTOCHARDesc",
+          "variants": [
+            {
+              "name": "TO_CHAR",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPF_MAX_VARCHAR_RESULT_SIZE",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": "gTOCHAR3Desc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfTOCHAR.c:311"
+            }
+          ]
+        },
+        {
+          "symbol": "gTOCHAR3Desc",
+          "variants": [
+            {
+              "name": "TO_CHAR",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPF_MAX_VARCHAR_RESULT_SIZE",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfTOCHAR.c:291"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "TO_DATE",
+      "registered_symbol": "gTODATEDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gTODATEDesc",
+          "variants": [
+            {
+              "name": "TO_DATE",
+              "declared_return_type": "QPT_TYPE_DATETIME",
+              "internal_return_size_expression": "sizeof(nbp_hrtime_t)",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": "gTODATE2Desc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfTODATE.c:583"
+            }
+          ]
+        },
+        {
+          "symbol": "gTODATE2Desc",
+          "variants": [
+            {
+              "name": "TO_DATE",
+              "declared_return_type": "QPT_TYPE_DATETIME",
+              "internal_return_size_expression": "sizeof(nbp_hrtime_t)",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfTODATE.c:563"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "NVL",
+      "registered_symbol": "gNVLDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gNVLDesc",
+          "variants": [
+            {
+              "name": "NVL",
+              "declared_return_type": "QPT_TYPE_NULL",
+              "internal_return_size_expression": "0",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfNVL.c:495"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "AVG",
+      "registered_symbol": "gAvgDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gAvgDesc",
+          "variants": [
+            {
+              "name": "AVG",
+              "declared_return_type": "QPT_TYPE_AVG",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfAvg.c:458"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "COUNT",
+      "registered_symbol": "gCountDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gCountDesc",
+          "variants": [
+            {
+              "name": "COUNT",
+              "declared_return_type": "QPT_TYPE_INT64",
+              "internal_return_size_expression": "sizeof(nbp_uint64_t)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": "gCountStarDesc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfCount.c:145"
+            }
+          ]
+        },
+        {
+          "symbol": "gCountStarDesc",
+          "variants": [
+            {
+              "name": "COUNT",
+              "declared_return_type": "QPT_TYPE_INT64",
+              "internal_return_size_expression": "sizeof(nbp_uint64_t)",
+              "argument_count": 0,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfCount.c:126"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SUM",
+      "registered_symbol": "gSumDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gSumDesc",
+          "variants": [
+            {
+              "name": "SUM",
+              "declared_return_type": "QPT_TYPE_NULL",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfSum_ent.c:363"
+            },
+            {
+              "name": "SUM",
+              "declared_return_type": "QPT_TYPE_NULL",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard"
+              ],
+              "source": "qp/src/qpf/qpfSum_std.c:390"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "MIN",
+      "registered_symbol": "gMinDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gMinDesc",
+          "variants": [
+            {
+              "name": "MIN",
+              "declared_return_type": "QPT_TYPE_NULL",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfMin_ent.c:602"
+            },
+            {
+              "name": "MIN",
+              "declared_return_type": "QPT_TYPE_NULL",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard"
+              ],
+              "source": "qp/src/qpf/qpfMin_std.c:429"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "MAX",
+      "registered_symbol": "gMaxDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gMaxDesc",
+          "variants": [
+            {
+              "name": "MAX",
+              "declared_return_type": "QPT_TYPE_NULL",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfMax_ent.c:604"
+            },
+            {
+              "name": "MAX",
+              "declared_return_type": "QPT_TYPE_NULL",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard"
+              ],
+              "source": "qp/src/qpf/qpfMax_std.c:429"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ROWNUM",
+      "registered_symbol": "gRownumDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gRownumDesc",
+          "variants": [
+            {
+              "name": "ROWNUM",
+              "declared_return_type": "QPT_TYPE_UINT64",
+              "internal_return_size_expression": "sizeof(nbp_uint64_t)",
+              "argument_count": 0,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfRownum.c:63"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "TO_HEX",
+      "registered_symbol": "gTOHEXDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gTOHEXDesc",
+          "variants": [
+            {
+              "name": "TO_HEX",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPF_MAX_VARCHAR_RESULT_SIZE",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfTOHEX.c:125"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "TO_INET_STR",
+      "registered_symbol": "gTOINETSTRDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gTOINETSTRDesc",
+          "variants": [
+            {
+              "name": "TO_INET_STR",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPF_INET_STR_BUFFER_SIZE",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfTOINETSTR.c:63"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ADD_TIME",
+      "registered_symbol": "gADDTIMEDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gADDTIMEDesc",
+          "variants": [
+            {
+              "name": "ADD_TIME",
+              "declared_return_type": "QPT_TYPE_DATETIME",
+              "internal_return_size_expression": "sizeof(nbp_hrtime_t)",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfADDTIME.c:124"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "DECODE",
+      "registered_symbol": "gDECODEDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gDECODEDesc",
+          "variants": [
+            {
+              "name": "DECODE",
+              "declared_return_type": "QPT_TYPE_NULL",
+              "internal_return_size_expression": "0",
+              "argument_count": -1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfDECODE.c:188"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "STDDEV_POP",
+      "registered_symbol": "gStdDevPopDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gStdDevPopDesc",
+          "variants": [
+            {
+              "name": "STDDEV_POP",
+              "declared_return_type": "QPT_TYPE_VAR_STDDEV",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfVarStdDev_ent.c:476"
+            },
+            {
+              "name": "STDDEV_POP",
+              "declared_return_type": "QPT_TYPE_VAR_STDDEV",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard"
+              ],
+              "source": "qp/src/qpf/qpfVarStdDev_std.c:234"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "STDDEV",
+      "registered_symbol": "gStdDevDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gStdDevDesc",
+          "variants": [
+            {
+              "name": "STDDEV",
+              "declared_return_type": "QPT_TYPE_VAR_STDDEV",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfVarStdDev_ent.c:494"
+            },
+            {
+              "name": "STDDEV",
+              "declared_return_type": "QPT_TYPE_VAR_STDDEV",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard"
+              ],
+              "source": "qp/src/qpf/qpfVarStdDev_std.c:251"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "VARIANCE",
+      "registered_symbol": "gVarianceDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gVarianceDesc",
+          "variants": [
+            {
+              "name": "VARIANCE",
+              "declared_return_type": "QPT_TYPE_VAR_STDDEV",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfVarStdDev_ent.c:512"
+            },
+            {
+              "name": "VARIANCE",
+              "declared_return_type": "QPT_TYPE_VAR_STDDEV",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard"
+              ],
+              "source": "qp/src/qpf/qpfVarStdDev_std.c:268"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "VAR_POP",
+      "registered_symbol": "gVarPopDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gVarPopDesc",
+          "variants": [
+            {
+              "name": "VAR_POP",
+              "declared_return_type": "QPT_TYPE_VAR_STDDEV",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfVarStdDev_ent.c:530"
+            },
+            {
+              "name": "VAR_POP",
+              "declared_return_type": "QPT_TYPE_VAR_STDDEV",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard"
+              ],
+              "source": "qp/src/qpf/qpfVarStdDev_std.c:285"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "TO_NUMBER",
+      "registered_symbol": "gTONUMBERDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gTONUMBERDesc",
+          "variants": [
+            {
+              "name": "TO_NUMBER",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": "gTONUMBER3Desc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfTONUMBER.c:221"
+            }
+          ]
+        },
+        {
+          "symbol": "gTONUMBER3Desc",
+          "variants": [
+            {
+              "name": "TO_NUMBER",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfTONUMBER.c:201"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "TO_NUMBER_SAFE",
+      "registered_symbol": "gTONUMBERSAFEDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gTONUMBERSAFEDesc",
+          "variants": [
+            {
+              "name": "TO_NUMBER_SAFE",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": "gTONUMBER3SAFEDesc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfTONUMBER.c:261"
+            }
+          ]
+        },
+        {
+          "symbol": "gTONUMBER3SAFEDesc",
+          "variants": [
+            {
+              "name": "TO_NUMBER_SAFE",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfTONUMBER.c:241"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CAST_INTERNAL",
+      "registered_symbol": "gCastDesc",
+      "has_korean_reference_heading": false,
+      "overloads": [
+        {
+          "symbol": "gCastDesc",
+          "variants": [
+            {
+              "name": "CAST_INTERNAL",
+              "declared_return_type": "QPT_TYPE_NULL",
+              "internal_return_size_expression": "0",
+              "argument_count": 4,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfCastDecimal.c:1058"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "TS_CHANGE_COUNT",
+      "registered_symbol": "gTSChgCntDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gTSChgCntDesc",
+          "variants": [
+            {
+              "name": "TS_CHANGE_COUNT",
+              "declared_return_type": "QPT_TYPE_TS_CHGCNT",
+              "internal_return_size_expression": "sizeof(nbp_uint64_t)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfTSCntChange.c:119"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "TO_IPV4",
+      "registered_symbol": "gTOIPV4Desc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gTOIPV4Desc",
+          "variants": [
+            {
+              "name": "TO_IPV4",
+              "declared_return_type": "QPT_TYPE_IPV4",
+              "internal_return_size_expression": "sizeof(cmaIpv4Type)",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfTOIPV4.c:140"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "TO_IPV4_SAFE",
+      "registered_symbol": "gTOIPV4SAFEDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gTOIPV4SAFEDesc",
+          "variants": [
+            {
+              "name": "TO_IPV4_SAFE",
+              "declared_return_type": "QPT_TYPE_IPV4",
+              "internal_return_size_expression": "sizeof(cmaIpv4Type)",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfTOIPV4.c:160"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "TO_IPV6",
+      "registered_symbol": "gTOIPV6Desc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gTOIPV6Desc",
+          "variants": [
+            {
+              "name": "TO_IPV6",
+              "declared_return_type": "QPT_TYPE_IPV6",
+              "internal_return_size_expression": "sizeof(cmaIpv6Type)",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfTOIPV6.c:143"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "TO_IPV6_SAFE",
+      "registered_symbol": "gTOIPV6SAFEDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gTOIPV6SAFEDesc",
+          "variants": [
+            {
+              "name": "TO_IPV6_SAFE",
+              "declared_return_type": "QPT_TYPE_IPV6",
+              "internal_return_size_expression": "sizeof(cmaIpv6Type)",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfTOIPV6.c:163"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "GROUP_CONCAT",
+      "registered_symbol": "gGroupConcatDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gGroupConcatDesc",
+          "variants": [
+            {
+              "name": "GROUP_CONCAT",
+              "declared_return_type": "QPT_TYPE_GROUP_CONCAT",
+              "internal_return_size_expression": "QPT_VARCHAR_MAX_SIZE",
+              "argument_count": -1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfGroupConcat.c:866"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SUBSTRING_INDEX",
+      "registered_symbol": "gSubStringIndexDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gSubStringIndexDesc",
+          "variants": [
+            {
+              "name": "SUBSTRING_INDEX",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPF_MAX_VARCHAR_RESULT_SIZE",
+              "argument_count": 3,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfSubstringIndex.c:208"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LPAD",
+      "registered_symbol": "gLPADDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gLPADDesc",
+          "variants": [
+            {
+              "name": "LPAD",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPF_MAX_VARCHAR_RESULT_SIZE",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": "gLPAD3Desc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfLRPAD.c:308"
+            }
+          ]
+        },
+        {
+          "symbol": "gLPAD3Desc",
+          "variants": [
+            {
+              "name": "LPAD",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPF_MAX_VARCHAR_RESULT_SIZE",
+              "argument_count": 3,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfLRPAD.c:288"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "RPAD",
+      "registered_symbol": "gRPADDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gRPADDesc",
+          "variants": [
+            {
+              "name": "RPAD",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPF_MAX_VARCHAR_RESULT_SIZE",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": "gRPAD3Desc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfLRPAD.c:348"
+            }
+          ]
+        },
+        {
+          "symbol": "gRPAD3Desc",
+          "variants": [
+            {
+              "name": "RPAD",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPF_MAX_VARCHAR_RESULT_SIZE",
+              "argument_count": 3,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfLRPAD.c:328"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LEAST",
+      "registered_symbol": "gLeastDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gLeastDesc",
+          "variants": [
+            {
+              "name": "LEAST",
+              "declared_return_type": "QPT_TYPE_NULL",
+              "internal_return_size_expression": "0",
+              "argument_count": -1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfLeastGreatest.c:164"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "GREATEST",
+      "registered_symbol": "gGreatestDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gGreatestDesc",
+          "variants": [
+            {
+              "name": "GREATEST",
+              "declared_return_type": "QPT_TYPE_NULL",
+              "internal_return_size_expression": "0",
+              "argument_count": -1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfLeastGreatest.c:184"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LTRIM",
+      "registered_symbol": "gLTRIMDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gLTRIMDesc",
+          "variants": [
+            {
+              "name": "LTRIM",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPF_MAX_VARCHAR_RESULT_SIZE",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": "gLTRIM3Desc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfLRTrim.c:249"
+            }
+          ]
+        },
+        {
+          "symbol": "gLTRIM3Desc",
+          "variants": [
+            {
+              "name": "LTRIM",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPF_MAX_VARCHAR_RESULT_SIZE",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfLRTrim.c:229"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "RTRIM",
+      "registered_symbol": "gRTRIMDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gRTRIMDesc",
+          "variants": [
+            {
+              "name": "RTRIM",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPF_MAX_VARCHAR_RESULT_SIZE",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": "gRTRIM3Desc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfLRTrim.c:289"
+            }
+          ]
+        },
+        {
+          "symbol": "gRTRIM3Desc",
+          "variants": [
+            {
+              "name": "RTRIM",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPF_MAX_VARCHAR_RESULT_SIZE",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfLRTrim.c:269"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "REPLACE",
+      "registered_symbol": "gReplaceDesc",
+      "has_korean_reference_heading": false,
+      "overloads": [
+        {
+          "symbol": "gReplaceDesc",
+          "variants": [
+            {
+              "name": "REPLACE",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPF_MAX_VARCHAR_RESULT_SIZE",
+              "argument_count": 3,
+              "aggregate": false,
+              "next_symbol": "gReplace2Desc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfReplace.c:241"
+            }
+          ]
+        },
+        {
+          "symbol": "gReplace2Desc",
+          "variants": [
+            {
+              "name": "REPLACE",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPF_MAX_VARCHAR_RESULT_SIZE",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfReplace.c:221"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "REGEXP_LIKE",
+      "registered_symbol": "gRegexpLikeDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gRegexpLikeDesc",
+          "variants": [
+            {
+              "name": "REGEXP_LIKE",
+              "declared_return_type": "QPT_TYPE_BOOL",
+              "internal_return_size_expression": "QPT_TYPE_BOOL_SIZE",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": "gRegexpLike3Desc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfRegexpLike.c:263"
+            }
+          ]
+        },
+        {
+          "symbol": "gRegexpLike3Desc",
+          "variants": [
+            {
+              "name": "REGEXP_LIKE",
+              "declared_return_type": "QPT_TYPE_BOOL",
+              "internal_return_size_expression": "QPT_TYPE_BOOL_SIZE",
+              "argument_count": 3,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfRegexpLike.c:243"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "REGEXP_SUBSTR",
+      "registered_symbol": "gRegexpSubstrDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gRegexpSubstrDesc",
+          "variants": [
+            {
+              "name": "REGEXP_SUBSTR",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPT_VARCHAR_MAX_SIZE",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": "gRegexpSubstr3Desc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfRegexpSubstr.c:448"
+            }
+          ]
+        },
+        {
+          "symbol": "gRegexpSubstr3Desc",
+          "variants": [
+            {
+              "name": "REGEXP_SUBSTR",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPT_VARCHAR_MAX_SIZE",
+              "argument_count": 3,
+              "aggregate": false,
+              "next_symbol": "gRegexpSubstr4Desc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfRegexpSubstr.c:428"
+            }
+          ]
+        },
+        {
+          "symbol": "gRegexpSubstr4Desc",
+          "variants": [
+            {
+              "name": "REGEXP_SUBSTR",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPT_VARCHAR_MAX_SIZE",
+              "argument_count": 4,
+              "aggregate": false,
+              "next_symbol": "gRegexpSubstr5Desc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfRegexpSubstr.c:408"
+            }
+          ]
+        },
+        {
+          "symbol": "gRegexpSubstr5Desc",
+          "variants": [
+            {
+              "name": "REGEXP_SUBSTR",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPT_VARCHAR_MAX_SIZE",
+              "argument_count": 5,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfRegexpSubstr.c:388"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "REGEXP_REPLACE",
+      "registered_symbol": "gRegexpReplaceDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gRegexpReplaceDesc",
+          "variants": [
+            {
+              "name": "REGEXP_REPLACE",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPT_VARCHAR_MAX_SIZE",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": "gRegexpReplace3Desc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfRegexpReplace.c:568"
+            }
+          ]
+        },
+        {
+          "symbol": "gRegexpReplace3Desc",
+          "variants": [
+            {
+              "name": "REGEXP_REPLACE",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPT_VARCHAR_MAX_SIZE",
+              "argument_count": 3,
+              "aggregate": false,
+              "next_symbol": "gRegexpReplace4Desc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfRegexpReplace.c:548"
+            }
+          ]
+        },
+        {
+          "symbol": "gRegexpReplace4Desc",
+          "variants": [
+            {
+              "name": "REGEXP_REPLACE",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPT_VARCHAR_MAX_SIZE",
+              "argument_count": 4,
+              "aggregate": false,
+              "next_symbol": "gRegexpReplace5Desc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfRegexpReplace.c:528"
+            }
+          ]
+        },
+        {
+          "symbol": "gRegexpReplace5Desc",
+          "variants": [
+            {
+              "name": "REGEXP_REPLACE",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPT_VARCHAR_MAX_SIZE",
+              "argument_count": 5,
+              "aggregate": false,
+              "next_symbol": "gRegexpReplace6Desc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfRegexpReplace.c:508"
+            }
+          ]
+        },
+        {
+          "symbol": "gRegexpReplace6Desc",
+          "variants": [
+            {
+              "name": "REGEXP_REPLACE",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPT_VARCHAR_MAX_SIZE",
+              "argument_count": 6,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfRegexpReplace.c:488"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "REGEXP_INSTR",
+      "registered_symbol": "gRegexpInstrDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gRegexpInstrDesc",
+          "variants": [
+            {
+              "name": "REGEXP_INSTR",
+              "declared_return_type": "QPT_TYPE_INT32",
+              "internal_return_size_expression": "QPT_TYPE_INT32_SIZE",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": "gRegexpInstr3Desc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfRegexpInstr.c:498"
+            }
+          ]
+        },
+        {
+          "symbol": "gRegexpInstr3Desc",
+          "variants": [
+            {
+              "name": "REGEXP_INSTR",
+              "declared_return_type": "QPT_TYPE_INT32",
+              "internal_return_size_expression": "QPT_TYPE_INT32_SIZE",
+              "argument_count": 3,
+              "aggregate": false,
+              "next_symbol": "gRegexpInstr4Desc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfRegexpInstr.c:478"
+            }
+          ]
+        },
+        {
+          "symbol": "gRegexpInstr4Desc",
+          "variants": [
+            {
+              "name": "REGEXP_INSTR",
+              "declared_return_type": "QPT_TYPE_INT32",
+              "internal_return_size_expression": "QPT_TYPE_INT32_SIZE",
+              "argument_count": 4,
+              "aggregate": false,
+              "next_symbol": "gRegexpInstr5Desc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfRegexpInstr.c:458"
+            }
+          ]
+        },
+        {
+          "symbol": "gRegexpInstr5Desc",
+          "variants": [
+            {
+              "name": "REGEXP_INSTR",
+              "declared_return_type": "QPT_TYPE_INT32",
+              "internal_return_size_expression": "QPT_TYPE_INT32_SIZE",
+              "argument_count": 5,
+              "aggregate": false,
+              "next_symbol": "gRegexpInstr6Desc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfRegexpInstr.c:438"
+            }
+          ]
+        },
+        {
+          "symbol": "gRegexpInstr6Desc",
+          "variants": [
+            {
+              "name": "REGEXP_INSTR",
+              "declared_return_type": "QPT_TYPE_INT32",
+              "internal_return_size_expression": "QPT_TYPE_INT32_SIZE",
+              "argument_count": 6,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfRegexpInstr.c:418"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "TRUNC",
+      "registered_symbol": "gTruncDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gTruncDesc",
+          "variants": [
+            {
+              "name": "TRUNC",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "QPT_TYPE_DOUBLE_SIZE",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": "gTrunc1Desc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfTrunc.c:205"
+            }
+          ]
+        },
+        {
+          "symbol": "gTrunc1Desc",
+          "variants": [
+            {
+              "name": "TRUNC",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "QPT_TYPE_DOUBLE_SIZE",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfTrunc.c:185"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ROUND",
+      "registered_symbol": "gRoundDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gRoundDesc",
+          "variants": [
+            {
+              "name": "ROUND",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "QPT_TYPE_DOUBLE_SIZE",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": "gRound1Desc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfRound.c:205"
+            }
+          ]
+        },
+        {
+          "symbol": "gRound1Desc",
+          "variants": [
+            {
+              "name": "ROUND",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "QPT_TYPE_DOUBLE_SIZE",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfRound.c:185"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "DATE_TRUNC",
+      "registered_symbol": "gDateTruncDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gDateTruncDesc",
+          "variants": [
+            {
+              "name": "DATE_TRUNC",
+              "declared_return_type": "QPT_TYPE_DATETIME",
+              "internal_return_size_expression": "sizeof(nbp_hrtime_t)",
+              "argument_count": 3,
+              "aggregate": false,
+              "next_symbol": "gDateTrunc2Desc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfDateTrunc.c:627"
+            }
+          ]
+        },
+        {
+          "symbol": "gDateTrunc2Desc",
+          "variants": [
+            {
+              "name": "DATE_TRUNC",
+              "declared_return_type": "QPT_TYPE_DATETIME",
+              "internal_return_size_expression": "sizeof(nbp_hrtime_t)",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfDateTrunc.c:607"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "DATE_BIN",
+      "registered_symbol": "gDateBinDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gDateBinDesc",
+          "variants": [
+            {
+              "name": "DATE_BIN",
+              "declared_return_type": "QPT_TYPE_DATETIME",
+              "internal_return_size_expression": "sizeof(nbp_hrtime_t)",
+              "argument_count": 4,
+              "aggregate": false,
+              "next_symbol": "gDateBin3Desc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfDateBin.c:493"
+            }
+          ]
+        },
+        {
+          "symbol": "gDateBin3Desc",
+          "variants": [
+            {
+              "name": "DATE_BIN",
+              "declared_return_type": "QPT_TYPE_DATETIME",
+              "internal_return_size_expression": "sizeof(nbp_hrtime_t)",
+              "argument_count": 3,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfDateBin.c:473"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "JSON_SUMMARIZED_STATE",
+      "registered_symbol": "gJsonSummarizedStateDesc",
+      "has_korean_reference_heading": false,
+      "overloads": [
+        {
+          "symbol": "gJsonSummarizedStateDesc",
+          "variants": [
+            {
+              "name": "JSON_SUMMARIZED_STATE",
+              "declared_return_type": "QPT_TYPE_BINARY",
+              "internal_return_size_expression": "QPM_JSON_ROLLUP_STATE_SIZE",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfJSONSummary.c:1122"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "JSON_SUMMARIZED_MERGE",
+      "registered_symbol": "gJsonSummarizedMergeDesc",
+      "has_korean_reference_heading": false,
+      "overloads": [
+        {
+          "symbol": "gJsonSummarizedMergeDesc",
+          "variants": [
+            {
+              "name": "JSON_SUMMARIZED_MERGE",
+              "declared_return_type": "QPT_TYPE_BINARY",
+              "internal_return_size_expression": "QPM_JSON_ROLLUP_STATE_SIZE",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfJSONSummary.c:1141"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "JSON_SUMMARIZED_AVG",
+      "registered_symbol": "gJsonSummarizedAvgDesc",
+      "has_korean_reference_heading": false,
+      "overloads": [
+        {
+          "symbol": "gJsonSummarizedAvgDesc",
+          "variants": [
+            {
+              "name": "JSON_SUMMARIZED_AVG",
+              "declared_return_type": "QPT_TYPE_JSON",
+              "internal_return_size_expression": "QPM_JSON_ROLLUP_STATE_SIZE",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfJSONSummary.c:1160"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "JSON_SUMMARIZED_MIN",
+      "registered_symbol": "gJsonSummarizedMinDesc",
+      "has_korean_reference_heading": false,
+      "overloads": [
+        {
+          "symbol": "gJsonSummarizedMinDesc",
+          "variants": [
+            {
+              "name": "JSON_SUMMARIZED_MIN",
+              "declared_return_type": "QPT_TYPE_JSON",
+              "internal_return_size_expression": "QPM_JSON_ROLLUP_STATE_SIZE",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfJSONSummary.c:1179"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "JSON_SUMMARIZED_MAX",
+      "registered_symbol": "gJsonSummarizedMaxDesc",
+      "has_korean_reference_heading": false,
+      "overloads": [
+        {
+          "symbol": "gJsonSummarizedMaxDesc",
+          "variants": [
+            {
+              "name": "JSON_SUMMARIZED_MAX",
+              "declared_return_type": "QPT_TYPE_JSON",
+              "internal_return_size_expression": "QPM_JSON_ROLLUP_STATE_SIZE",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfJSONSummary.c:1198"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "JSON_SUMMARIZED_SUM",
+      "registered_symbol": "gJsonSummarizedSumDesc",
+      "has_korean_reference_heading": false,
+      "overloads": [
+        {
+          "symbol": "gJsonSummarizedSumDesc",
+          "variants": [
+            {
+              "name": "JSON_SUMMARIZED_SUM",
+              "declared_return_type": "QPT_TYPE_JSON",
+              "internal_return_size_expression": "QPM_JSON_ROLLUP_STATE_SIZE",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfJSONSummary.c:1217"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "JSON_SUMMARIZED_SUMSQ",
+      "registered_symbol": "gJsonSummarizedSumSqDesc",
+      "has_korean_reference_heading": false,
+      "overloads": [
+        {
+          "symbol": "gJsonSummarizedSumSqDesc",
+          "variants": [
+            {
+              "name": "JSON_SUMMARIZED_SUMSQ",
+              "declared_return_type": "QPT_TYPE_JSON",
+              "internal_return_size_expression": "QPM_JSON_ROLLUP_STATE_SIZE",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfJSONSummary.c:1236"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "BITAND",
+      "registered_symbol": "gBitAndDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gBitAndDesc",
+          "variants": [
+            {
+              "name": "BITAND",
+              "declared_return_type": "QPT_TYPE_INT64",
+              "internal_return_size_expression": "sizeof(nbp_sint64_t)",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfBitAndOr.c:116"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "BITOR",
+      "registered_symbol": "gBitOrDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gBitOrDesc",
+          "variants": [
+            {
+              "name": "BITOR",
+              "declared_return_type": "QPT_TYPE_INT64",
+              "internal_return_size_expression": "sizeof(nbp_sint64_t)",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfBitAndOr.c:137"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "EXTRACT_BIT",
+      "registered_symbol": "gExtractBitDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gExtractBitDesc",
+          "variants": [
+            {
+              "name": "EXTRACT_BIT",
+              "declared_return_type": "QPT_TYPE_INT16",
+              "internal_return_size_expression": "QPT_TYPE_INT16_SIZE",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfExtractBinary.c:726"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "EXTRACT_ULONG",
+      "registered_symbol": "gExtractULongDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gExtractULongDesc",
+          "variants": [
+            {
+              "name": "EXTRACT_ULONG",
+              "declared_return_type": "QPT_TYPE_UINT64",
+              "internal_return_size_expression": "sizeof(nbp_uint64_t)",
+              "argument_count": 3,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfExtractBinary.c:745"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "EXTRACT_LONG",
+      "registered_symbol": "gExtractLongDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gExtractLongDesc",
+          "variants": [
+            {
+              "name": "EXTRACT_LONG",
+              "declared_return_type": "QPT_TYPE_INT64",
+              "internal_return_size_expression": "sizeof(nbp_sint64_t)",
+              "argument_count": 3,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfExtractBinary.c:764"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "EXTRACT_FLOAT",
+      "registered_symbol": "gExtractFloatDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gExtractFloatDesc",
+          "variants": [
+            {
+              "name": "EXTRACT_FLOAT",
+              "declared_return_type": "QPT_TYPE_FLOAT",
+              "internal_return_size_expression": "sizeof(nbp_float_t)",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfExtractBinary.c:783"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "EXTRACT_DOUBLE",
+      "registered_symbol": "gExtractDoubleDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gExtractDoubleDesc",
+          "variants": [
+            {
+              "name": "EXTRACT_DOUBLE",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfExtractBinary.c:802"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "EXTRACT_SCALED_DOUBLE",
+      "registered_symbol": "gExtractScaledDoubleDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gExtractScaledDoubleDesc",
+          "variants": [
+            {
+              "name": "EXTRACT_SCALED_DOUBLE",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 6,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfExtractBinary.c:821"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "EXTRACT_LE_BIT",
+      "registered_symbol": "gExtractLEBitDesc",
+      "has_korean_reference_heading": false,
+      "overloads": [
+        {
+          "symbol": "gExtractLEBitDesc",
+          "variants": [
+            {
+              "name": "EXTRACT_LE_BIT",
+              "declared_return_type": "QPT_TYPE_INT16",
+              "internal_return_size_expression": "QPT_TYPE_INT16_SIZE",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfExtractBinary.c:841"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "EXTRACT_LE_ULONG",
+      "registered_symbol": "gExtractLEULongDesc",
+      "has_korean_reference_heading": false,
+      "overloads": [
+        {
+          "symbol": "gExtractLEULongDesc",
+          "variants": [
+            {
+              "name": "EXTRACT_LE_ULONG",
+              "declared_return_type": "QPT_TYPE_UINT64",
+              "internal_return_size_expression": "sizeof(nbp_uint64_t)",
+              "argument_count": 3,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfExtractBinary.c:860"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "EXTRACT_LE_LONG",
+      "registered_symbol": "gExtractLELongDesc",
+      "has_korean_reference_heading": false,
+      "overloads": [
+        {
+          "symbol": "gExtractLELongDesc",
+          "variants": [
+            {
+              "name": "EXTRACT_LE_LONG",
+              "declared_return_type": "QPT_TYPE_INT64",
+              "internal_return_size_expression": "sizeof(nbp_sint64_t)",
+              "argument_count": 3,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfExtractBinary.c:879"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "EXTRACT_LE_FLOAT",
+      "registered_symbol": "gExtractLEFloatDesc",
+      "has_korean_reference_heading": false,
+      "overloads": [
+        {
+          "symbol": "gExtractLEFloatDesc",
+          "variants": [
+            {
+              "name": "EXTRACT_LE_FLOAT",
+              "declared_return_type": "QPT_TYPE_FLOAT",
+              "internal_return_size_expression": "sizeof(nbp_float_t)",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfExtractBinary.c:898"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "EXTRACT_LE_DOUBLE",
+      "registered_symbol": "gExtractLEDoubleDesc",
+      "has_korean_reference_heading": false,
+      "overloads": [
+        {
+          "symbol": "gExtractLEDoubleDesc",
+          "variants": [
+            {
+              "name": "EXTRACT_LE_DOUBLE",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfExtractBinary.c:917"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "EXTRACT_LE_SCALED_DOUBLE",
+      "registered_symbol": "gExtractLEScaledDoubleDesc",
+      "has_korean_reference_heading": false,
+      "overloads": [
+        {
+          "symbol": "gExtractLEScaledDoubleDesc",
+          "variants": [
+            {
+              "name": "EXTRACT_LE_SCALED_DOUBLE",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 6,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfExtractBinary.c:936"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SERIESNUM",
+      "registered_symbol": "gSeriesNumDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gSeriesNumDesc",
+          "variants": [
+            {
+              "name": "SERIESNUM",
+              "declared_return_type": "QPT_TYPE_UINT64",
+              "internal_return_size_expression": "sizeof(nbp_uint64_t)",
+              "argument_count": 0,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfSeriesNum.c:63"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "YEAR",
+      "registered_symbol": "gYearDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gYearDesc",
+          "variants": [
+            {
+              "name": "YEAR",
+              "declared_return_type": "QPT_TYPE_INT16",
+              "internal_return_size_expression": "sizeof(nbp_sint16_t)",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfYearMonthDay.c:89"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "MONTH",
+      "registered_symbol": "gMonthDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gMonthDesc",
+          "variants": [
+            {
+              "name": "MONTH",
+              "declared_return_type": "QPT_TYPE_INT16",
+              "internal_return_size_expression": "sizeof(nbp_sint16_t)",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfYearMonthDay.c:109"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "DAY",
+      "registered_symbol": "gDayDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gDayDesc",
+          "variants": [
+            {
+              "name": "DAY",
+              "declared_return_type": "QPT_TYPE_INT16",
+              "internal_return_size_expression": "sizeof(nbp_sint16_t)",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfYearMonthDay.c:129"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "UNIX_TIMESTAMP",
+      "registered_symbol": "gUnixTimeStampDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gUnixTimeStampDesc",
+          "variants": [
+            {
+              "name": "UNIX_TIMESTAMP",
+              "declared_return_type": "QPT_TYPE_UINT32",
+              "internal_return_size_expression": "sizeof(nbp_uint32_t)",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfUnixTimeStamp.c:61"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "FROM_UNIXTIME",
+      "registered_symbol": "gFromUnixTimeDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gFromUnixTimeDesc",
+          "variants": [
+            {
+              "name": "FROM_UNIXTIME",
+              "declared_return_type": "QPT_TYPE_DATETIME",
+              "internal_return_size_expression": "sizeof(nbp_hrtime_t)",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfFromUnixTime.c:50"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "TO_TIMESTAMP",
+      "registered_symbol": "gToTimestampDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gToTimestampDesc",
+          "variants": [
+            {
+              "name": "TO_TIMESTAMP",
+              "declared_return_type": "QPT_TYPE_INT64",
+              "internal_return_size_expression": "sizeof(nbp_sint64_t)",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfToTimestamp.c:43"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "FROM_TIMESTAMP",
+      "registered_symbol": "gFromTimestampDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gFromTimestampDesc",
+          "variants": [
+            {
+              "name": "FROM_TIMESTAMP",
+              "declared_return_type": "QPT_TYPE_DATETIME",
+              "internal_return_size_expression": "sizeof(nbp_sint64_t)",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfToTimestamp.c:81"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "TO_DATE_SAFE",
+      "registered_symbol": "gToDateSafeDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gToDateSafeDesc",
+          "variants": [
+            {
+              "name": "TO_DATE_SAFE",
+              "declared_return_type": "QPT_TYPE_DATETIME",
+              "internal_return_size_expression": "sizeof(nbp_hrtime_t)",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": "gToDateSafe2Desc",
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfTODATE.c:634"
+            }
+          ]
+        },
+        {
+          "symbol": "gToDateSafe2Desc",
+          "variants": [
+            {
+              "name": "TO_DATE_SAFE",
+              "declared_return_type": "QPT_TYPE_DATETIME",
+              "internal_return_size_expression": "sizeof(nbp_hrtime_t)",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfTODATE.c:614"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "FIRST",
+      "registered_symbol": "gFirstDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gFirstDesc",
+          "variants": [
+            {
+              "name": "FIRST",
+              "declared_return_type": "QPT_TYPE_NULL",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 2,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfFirst.c:917"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LAST",
+      "registered_symbol": "gLastDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gLastDesc",
+          "variants": [
+            {
+              "name": "LAST",
+              "declared_return_type": "QPT_TYPE_NULL",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 2,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfLast.c:917"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "DAYOFWEEK",
+      "registered_symbol": "gDayOfWeekDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gDayOfWeekDesc",
+          "variants": [
+            {
+              "name": "DAYOFWEEK",
+              "declared_return_type": "QPT_TYPE_INT32",
+              "internal_return_size_expression": "sizeof(nbp_sint32_t)",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfDayOfWeek.c:69"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "INSTR",
+      "registered_symbol": "gINSTRDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gINSTRDesc",
+          "variants": [
+            {
+              "name": "INSTR",
+              "declared_return_type": "QPT_TYPE_UINT32",
+              "internal_return_size_expression": "sizeof(nbp_uint32_t)",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfINSTR.c:147"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ISNAN",
+      "registered_symbol": "gIsNanDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gIsNanDesc",
+          "variants": [
+            {
+              "name": "ISNAN",
+              "declared_return_type": "QPT_TYPE_INT16",
+              "internal_return_size_expression": "QPT_TYPE_INT16_SIZE",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfIsNanInf.c:102"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ISINF",
+      "registered_symbol": "gIsInfDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gIsInfDesc",
+          "variants": [
+            {
+              "name": "ISINF",
+              "declared_return_type": "QPT_TYPE_INT16",
+              "internal_return_size_expression": "QPT_TYPE_INT16_SIZE",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfIsNanInf.c:122"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "NEXTVAL",
+      "registered_symbol": "gNextValDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gNextValDesc",
+          "variants": [
+            {
+              "name": "NEXTVAL",
+              "declared_return_type": "QPT_TYPE_INT64",
+              "internal_return_size_expression": "sizeof(nbp_sint64_t)",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfNextVal.c:98"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SUMSQ",
+      "registered_symbol": "gSumSqDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gSumSqDesc",
+          "variants": [
+            {
+              "name": "SUMSQ",
+              "declared_return_type": "QPT_TYPE_NULL",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfSumSq.c:383"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "JSON_EXTRACT",
+      "registered_symbol": "gJSONEXTRACT_UNSAFEDesc",
+      "has_korean_reference_heading": false,
+      "overloads": [
+        {
+          "symbol": "gJSONEXTRACT_UNSAFEDesc",
+          "variants": [
+            {
+              "name": "JSON_EXTRACT",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPF_MAX_VARCHAR_RESULT_SIZE",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfJSON.c:1194"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "JSON_EXTRACT_STRING",
+      "registered_symbol": "gJSONEXTRACT_SAFEDesc",
+      "has_korean_reference_heading": false,
+      "overloads": [
+        {
+          "symbol": "gJSONEXTRACT_SAFEDesc",
+          "variants": [
+            {
+              "name": "JSON_EXTRACT_STRING",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPF_MAX_VARCHAR_RESULT_SIZE",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfJSON.c:1214"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "JSON_EXTRACT_INTEGER",
+      "registered_symbol": "gJSONEXTRACTINTEGER_SAFEDesc",
+      "has_korean_reference_heading": false,
+      "overloads": [
+        {
+          "symbol": "gJSONEXTRACTINTEGER_SAFEDesc",
+          "variants": [
+            {
+              "name": "JSON_EXTRACT_INTEGER",
+              "declared_return_type": "QPT_TYPE_INT64",
+              "internal_return_size_expression": "sizeof(nbp_sint64_t)",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfJSON.c:1235"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "JSON_EXTRACT_DOUBLE",
+      "registered_symbol": "gJSONEXTRACTDOUBLE_SAFEDesc",
+      "has_korean_reference_heading": false,
+      "overloads": [
+        {
+          "symbol": "gJSONEXTRACTDOUBLE_SAFEDesc",
+          "variants": [
+            {
+              "name": "JSON_EXTRACT_DOUBLE",
+              "declared_return_type": "QPT_TYPE_DOUBLE",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfJSON.c:1255"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "JSON_TYPEOF",
+      "registered_symbol": "gJSONTYPEOF_Desc",
+      "has_korean_reference_heading": false,
+      "overloads": [
+        {
+          "symbol": "gJSONTYPEOF_Desc",
+          "variants": [
+            {
+              "name": "JSON_TYPEOF",
+              "declared_return_type": "QPT_TYPE_VARCHAR",
+              "internal_return_size_expression": "QPF_MAX_VARCHAR_RESULT_SIZE",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfJSON.c:1276"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "JSON_IS_VALID",
+      "registered_symbol": "gJSONISVALID_Desc",
+      "has_korean_reference_heading": false,
+      "overloads": [
+        {
+          "symbol": "gJSONISVALID_Desc",
+          "variants": [
+            {
+              "name": "JSON_IS_VALID",
+              "declared_return_type": "QPT_TYPE_INT64",
+              "internal_return_size_expression": "sizeof(nbp_sint64_t)",
+              "argument_count": 1,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfJSON.c:1296"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "JSON_SET",
+      "registered_symbol": "gJSONSET_Desc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gJSONSET_Desc",
+          "variants": [
+            {
+              "name": "JSON_SET",
+              "declared_return_type": "QPT_TYPE_JSON",
+              "internal_return_size_expression": "QPT_VARCHAR_MAX_SIZE",
+              "argument_count": 3,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfJSON.c:1315"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "JSON_SET_JSON",
+      "registered_symbol": "gJSONSETJSON_Desc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gJSONSETJSON_Desc",
+          "variants": [
+            {
+              "name": "JSON_SET_JSON",
+              "declared_return_type": "QPT_TYPE_JSON",
+              "internal_return_size_expression": "QPT_VARCHAR_MAX_SIZE",
+              "argument_count": 3,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfJSON.c:1334"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "JSON_REMOVE",
+      "registered_symbol": "gJSONREMOVE_Desc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gJSONREMOVE_Desc",
+          "variants": [
+            {
+              "name": "JSON_REMOVE",
+              "declared_return_type": "QPT_TYPE_JSON",
+              "internal_return_size_expression": "QPT_VARCHAR_MAX_SIZE",
+              "argument_count": 2,
+              "aggregate": false,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfJSON.c:1353"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LAG",
+      "registered_symbol": "gLagDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gLagDesc",
+          "variants": [
+            {
+              "name": "LAG",
+              "declared_return_type": "QPT_TYPE_NULL",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 2,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfLag.c:150"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LEAD",
+      "registered_symbol": "gLeadDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gLeadDesc",
+          "variants": [
+            {
+              "name": "LEAD",
+              "declared_return_type": "QPT_TYPE_NULL",
+              "internal_return_size_expression": "sizeof(nbp_double_t)",
+              "argument_count": 2,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfLead.c:149"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PERCENTILE_CONT",
+      "registered_symbol": "gPercentileContDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gPercentileContDesc",
+          "variants": [
+            {
+              "name": "PERCENTILE_CONT",
+              "declared_return_type": "QPT_TYPE_ADV_AGGR_DOUBLE",
+              "internal_return_size_expression": "sizeof(qpcAdvAggrDoubleValue)",
+              "argument_count": 2,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfAdvAggr.c:4894"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PERCENTILE_DISC",
+      "registered_symbol": "gPercentileDiscDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gPercentileDiscDesc",
+          "variants": [
+            {
+              "name": "PERCENTILE_DISC",
+              "declared_return_type": "QPT_TYPE_ADV_AGGR_DOUBLE",
+              "internal_return_size_expression": "sizeof(qpcAdvAggrDoubleValue)",
+              "argument_count": 2,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfAdvAggr.c:4913"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "QUANTILE",
+      "registered_symbol": "gQuantileDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gQuantileDesc",
+          "variants": [
+            {
+              "name": "QUANTILE",
+              "declared_return_type": "QPT_TYPE_ADV_AGGR_DOUBLE",
+              "internal_return_size_expression": "sizeof(qpcAdvAggrDoubleValue)",
+              "argument_count": 2,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfAdvAggr.c:4932"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "MEDIAN",
+      "registered_symbol": "gMedianDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gMedianDesc",
+          "variants": [
+            {
+              "name": "MEDIAN",
+              "declared_return_type": "QPT_TYPE_ADV_AGGR_DOUBLE",
+              "internal_return_size_expression": "sizeof(qpcAdvAggrDoubleValue)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfAdvAggr.c:4951"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "P05",
+      "registered_symbol": "gP05Desc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gP05Desc",
+          "variants": [
+            {
+              "name": "P05",
+              "declared_return_type": "QPT_TYPE_ADV_AGGR_DOUBLE",
+              "internal_return_size_expression": "sizeof(qpcAdvAggrDoubleValue)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfAdvAggr.c:4970"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "P10",
+      "registered_symbol": "gP10Desc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gP10Desc",
+          "variants": [
+            {
+              "name": "P10",
+              "declared_return_type": "QPT_TYPE_ADV_AGGR_DOUBLE",
+              "internal_return_size_expression": "sizeof(qpcAdvAggrDoubleValue)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfAdvAggr.c:4975"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "P90",
+      "registered_symbol": "gP90Desc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gP90Desc",
+          "variants": [
+            {
+              "name": "P90",
+              "declared_return_type": "QPT_TYPE_ADV_AGGR_DOUBLE",
+              "internal_return_size_expression": "sizeof(qpcAdvAggrDoubleValue)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfAdvAggr.c:4980"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "P95",
+      "registered_symbol": "gP95Desc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gP95Desc",
+          "variants": [
+            {
+              "name": "P95",
+              "declared_return_type": "QPT_TYPE_ADV_AGGR_DOUBLE",
+              "internal_return_size_expression": "sizeof(qpcAdvAggrDoubleValue)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfAdvAggr.c:4985"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "APPROX_PERCENTILE",
+      "registered_symbol": "gApproxPercentileDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gApproxPercentileDesc",
+          "variants": [
+            {
+              "name": "APPROX_PERCENTILE",
+              "declared_return_type": "QPT_TYPE_ADV_AGGR_DOUBLE",
+              "internal_return_size_expression": "sizeof(qpcAdvAggrDoubleValue)",
+              "argument_count": 2,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfAdvAggr.c:4990"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "APPROX_MEDIAN",
+      "registered_symbol": "gApproxMedianDesc",
+      "has_korean_reference_heading": false,
+      "overloads": [
+        {
+          "symbol": "gApproxMedianDesc",
+          "variants": [
+            {
+              "name": "APPROX_MEDIAN",
+              "declared_return_type": "QPT_TYPE_ADV_AGGR_DOUBLE",
+              "internal_return_size_expression": "sizeof(qpcAdvAggrDoubleValue)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfAdvAggr.c:4995"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "APPROX_P05",
+      "registered_symbol": "gApproxP05Desc",
+      "has_korean_reference_heading": false,
+      "overloads": [
+        {
+          "symbol": "gApproxP05Desc",
+          "variants": [
+            {
+              "name": "APPROX_P05",
+              "declared_return_type": "QPT_TYPE_ADV_AGGR_DOUBLE",
+              "internal_return_size_expression": "sizeof(qpcAdvAggrDoubleValue)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfAdvAggr.c:5000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "APPROX_P10",
+      "registered_symbol": "gApproxP10Desc",
+      "has_korean_reference_heading": false,
+      "overloads": [
+        {
+          "symbol": "gApproxP10Desc",
+          "variants": [
+            {
+              "name": "APPROX_P10",
+              "declared_return_type": "QPT_TYPE_ADV_AGGR_DOUBLE",
+              "internal_return_size_expression": "sizeof(qpcAdvAggrDoubleValue)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfAdvAggr.c:5005"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "APPROX_P90",
+      "registered_symbol": "gApproxP90Desc",
+      "has_korean_reference_heading": false,
+      "overloads": [
+        {
+          "symbol": "gApproxP90Desc",
+          "variants": [
+            {
+              "name": "APPROX_P90",
+              "declared_return_type": "QPT_TYPE_ADV_AGGR_DOUBLE",
+              "internal_return_size_expression": "sizeof(qpcAdvAggrDoubleValue)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfAdvAggr.c:5010"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "APPROX_P95",
+      "registered_symbol": "gApproxP95Desc",
+      "has_korean_reference_heading": false,
+      "overloads": [
+        {
+          "symbol": "gApproxP95Desc",
+          "variants": [
+            {
+              "name": "APPROX_P95",
+              "declared_return_type": "QPT_TYPE_ADV_AGGR_DOUBLE",
+              "internal_return_size_expression": "sizeof(qpcAdvAggrDoubleValue)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfAdvAggr.c:5015"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "MODE",
+      "registered_symbol": "gModeDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gModeDesc",
+          "variants": [
+            {
+              "name": "MODE",
+              "declared_return_type": "QPT_TYPE_ADV_AGGR_DOUBLE",
+              "internal_return_size_expression": "sizeof(qpcAdvAggrDoubleValue)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfAdvAggr.c:5021"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "TOP_K",
+      "registered_symbol": "gTopKDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gTopKDesc",
+          "variants": [
+            {
+              "name": "TOP_K",
+              "declared_return_type": "QPT_TYPE_ADV_AGGR_VARCHAR",
+              "internal_return_size_expression": "QPT_VARCHAR_MAX_SIZE",
+              "argument_count": 2,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfAdvAggr.c:5097"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SLOPE",
+      "registered_symbol": "gSlopeDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gSlopeDesc",
+          "variants": [
+            {
+              "name": "SLOPE",
+              "declared_return_type": "QPT_TYPE_ADV_AGGR_DOUBLE",
+              "internal_return_size_expression": "sizeof(qpcAdvAggrDoubleValue)",
+              "argument_count": 2,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfAdvAggr.c:5040"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "AREA",
+      "registered_symbol": "gAreaDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gAreaDesc",
+          "variants": [
+            {
+              "name": "AREA",
+              "declared_return_type": "QPT_TYPE_ADV_AGGR_DOUBLE",
+              "internal_return_size_expression": "sizeof(qpcAdvAggrDoubleValue)",
+              "argument_count": 2,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfAdvAggr.c:5059"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CUME_DIST",
+      "registered_symbol": "gCumeDistDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gCumeDistDesc",
+          "variants": [
+            {
+              "name": "CUME_DIST",
+              "declared_return_type": "QPT_TYPE_ADV_AGGR_DOUBLE",
+              "internal_return_size_expression": "sizeof(qpcAdvAggrDoubleValue)",
+              "argument_count": 2,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfAdvAggr.c:5078"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "NTILE",
+      "registered_symbol": "gNTileDesc",
+      "has_korean_reference_heading": true,
+      "overloads": [
+        {
+          "symbol": "gNTileDesc",
+          "variants": [
+            {
+              "name": "NTILE",
+              "declared_return_type": "QPT_TYPE_INT32",
+              "internal_return_size_expression": "sizeof(nbp_sint32_t)",
+              "argument_count": 1,
+              "aggregate": true,
+              "next_symbol": null,
+              "editions": [
+                "standard",
+                "cluster"
+              ],
+              "source": "qp/src/qpf/qpfNTile.c:162"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

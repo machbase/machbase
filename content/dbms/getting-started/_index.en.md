@@ -1,47 +1,35 @@
 ---
 type: docs
-title: 'Getting Started'
+title: '1. Getting Started'
 weight: 10
+toc: true
 ---
 
-Welcome to Machbase! This section will help you get up and running quickly.
+This chapter is a starting point for readers new to databases and for developers coming from
+another DBMS. It introduces how Machbase DBMS 8.7.0 stores data, then walks through the basic SQL
+workflow by inserting and querying one event.
 
-## What is Machbase?
+You can read the overview before installing a database. To run the example, you need a running
+DBMS server and its SQL client, `machsql`. The prerequisites in
+[10-Minute Quick Start](./quick-start/) explain how to prepare the server and connection.
 
-Machbase is a high-performance time-series database designed to handle massive amounts of sensor data, IoT device data, and application logs at exceptional speeds.
+## What You Will Learn
 
-**Key Capabilities:**
-- Store millions of records per second
-- Query billions of records in real-time
-- Compress data up to 100x
-- Run on edge devices, servers, or clusters
+1. Understand the roles of tables, rows, columns, and SQL.
+2. Distinguish historical records from current state.
+3. Identify Machbase table types for measurements, events, and reference data.
+4. Connect to the server, create a LOG table, and insert and query data.
+5. Compare event time with server arrival time and choose your next learning path.
 
-## Who Should Use Machbase?
+## Reading Order
 
-Machbase is ideal for:
+| Section | What you can do afterward |
+|---|---|
+| [Machbase DBMS Overview](./overview/) | Explain the purpose of a time-series database and the roles of its table types. |
+| [10-Minute Quick Start](./quick-start/) | Connect, insert and query data, and clean up the practice table. |
+| [Basic Command Cheatsheet](./command-cheatsheet/) | Distinguish shell commands from SQL and find common commands. |
+| [Choose the Next Document](./choose-next-doc/) | Find the documents relevant to your data, development tasks, and operations. |
 
-- **IoT Applications**: Collecting data from thousands of sensors
-- **Industrial Monitoring**: Manufacturing equipment, PLCs, SCADA systems
-- **Application Logging**: High-volume application and system logs
-- **Real-time Analytics**: Financial data, network monitoring, user behavior
-
-## Quick Start Path
-
-Follow these steps to start using Machbase:
-
-1. [**Quick Start**](./quick-start/) - Install and run your first query in 5 minutes
-2. [**Installation Guide**](./installation/) - Detailed installation instructions
-3. [**First Steps with machsql**](./first-steps/) - Learn the command-line interface
-4. [**Basic Concepts**](./concepts/) - Understand core concepts
-
-## What You'll Learn
-
-By the end of this section, you'll be able to:
-
-- Install Machbase on your system
-- Connect to the database
-- Create your first table
-- Insert and query data
-- Understand the different table types
-
-Ready to begin? Start with the [Quick Start](./quick-start/) guide!
+The example uses a small SQL `INSERT` so you can inspect the result directly. For continuous,
+high-volume ingestion and error handling, continue with
+[Data Input and Export](/dbms/development-tools-integration/data-input-load-export/).

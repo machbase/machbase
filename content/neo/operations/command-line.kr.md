@@ -317,9 +317,45 @@ machbase-neo» show ports;
 
 #### show tables
 
-구문: `show tables [-a]`
+구문: `show tables [FROM <database>[.<user>]] [LIKE <pattern>] [WITH ALL]`
 
-테이블 목록을 표시합니다. `-a` 플래그를 지정하면 숨김 테이블이 포함됩니다.
+{{< neo_since ver="8.7.0" />}}
+
+`show` 명령은 일부 하위 명령에서 `FROM` 과 `LIKE` 절을 지원합니다.
+`FROM <database>[.<user>]` 는 조회할 데이터베이스와 사용자를 지정하고, `LIKE <pattern>` 은 이름 패턴으로 결과를 필터링합니다.
+`LIKE` 패턴은 작은따옴표나 큰따옴표로 감싼 SQL `LIKE` 패턴을 사용하며, `%` 는 0개 이상의 문자, `_` 는 1개의 문자와 일치합니다.
+`FROM` 대신 `IN` 을 사용할 수 있습니다.
+`WITH ALL` 은 숨김 항목을 포함합니다.
+
+```sh
+machbase-neo» show tables from MACHBASEDB.SYS like 'TAG%' with all;
+machbase-neo» show indexes like 'IDX_%';
+```
+
+| command | `FROM` | `LIKE` | `WITH ALL` | `LIKE` 적용 대상 |
+|:--------|:------:|:------:|:----------:|:-----------------|
+| `show tables` | O | O | O | 테이블 이름 |
+| `show indexes` | O | O | - | 인덱스 이름 |
+| `show table <table>` | O | - | O | - |
+| `show index <index>` | O | - | - | - |
+| `show tags <table> [tag...]` | O | O | - | 태그 이름 |
+| `show storage` | O | O | - | 테이블 이름 |
+| `show table-usage` | O | O | - | 테이블 이름 |
+| `show lsm` | O | O | - | 테이블 이름 |
+| `show indexgap` | O | O | - | 테이블 이름 |
+| `show tagindexgap` | O | O | - | 테이블 이름 |
+| `show rollupgap` | O | O | - | 테이블 이름 |
+| `show users` | - | O | - | 사용자 이름 |
+| `show databases` | - | O | - | 데이터베이스 이름 |
+| `show meta-tables` | - | O | - | 테이블 이름 |
+| `show virtual-tables` | - | O | - | 테이블 이름 |
+| `show sessions` | - | O | - | 사용자 이름 |
+| `show statements` | - | O | - | 쿼리 텍스트 |
+
+`show table`, `show index`, `show tags` 처럼 대상 이름을 인자로 받는 명령에서는 `<database>.<user>.<name>` 형식의 한정 이름과 `FROM` 절을 동시에 사용할 수 없습니다.
+`show tags` 에서 명시적인 태그 이름을 인자로 지정한 경우에는 `LIKE` 절을 함께 사용할 수 없습니다.
+
+테이블 목록을 표시합니다. `WITH ALL` 을 지정하면 숨김 테이블이 포함됩니다.
 
 ```sh
 machbase-neo» show tables;
@@ -334,12 +370,12 @@ machbase-neo» show tables;
 
 #### show table
 
-구문: `show table [-a] <table>`
+구문: `show table <table> [WITH ALL]`
 
-테이블의 컬럼 목록을 표시합니다. `-a` 플래그를 지정하면 숨김 컬럼도 함께 표시됩니다.
+테이블의 컬럼 목록을 표시합니다. `WITH ALL` 을 지정하면 숨김 컬럼도 함께 표시됩니다.
 
 ```sh
-machbase-neo» show table example -a;
+machbase-neo» show table example with all;
 ┌────────┬───────┬──────────┬────────┬──────────┐
 │ ROWNUM │ NAME  │ TYPE     │ LENGTH │ DESC     │
 ├────────┼───────┼──────────┼────────┼──────────┤
@@ -348,6 +384,16 @@ machbase-neo» show table example -a;
 │      3 │ VALUE │ double   │     17 │          │
 │      4 │ _RID  │ long     │     20 │          │
 └────────┴───────┴──────────┴────────┴──────────┘
+```
+
+#### show indexes
+
+구문: `show indexes [FROM <database>[.<user>]] [LIKE <pattern>]`
+
+인덱스 목록을 표시합니다. `FROM` 절로 조회 범위를 지정하고 `LIKE` 절로 인덱스 이름을 필터링할 수 있습니다.
+
+```sh
+machbase-neo» show indexes from MACHBASEDB.SYS like 'TAG%';
 ```
 
 #### show meta-tables

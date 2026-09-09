@@ -29,7 +29,7 @@ machbase-neo SQL 드라이버는 gRPC를 기반으로 하므로, 클라이언트
 
 ### 인증서 생성
 
-드라이버에 필요한 TLS 인증서(`server-cert.pem`, `client-cert.pem`, `client-key.pem`)를 생성하는 단계별 지침은 [API 보안](/kr/neo/security/) 가이드를 참조하세요. 이 가이드에서는 CA 생성 및 인증서 서명 방법을 설명합니다.
+드라이버에 필요한 TLS 인증서(`server-cert.pem`, `client-cert.pem`, `client-key.pem`)를 생성하는 단계별 지침은 [API 보안](/neo/security/) 가이드를 참조하세요. 이 가이드에서는 CA 생성 및 인증서 서명 방법을 설명합니다.
 
 ## 기본 사용법
 

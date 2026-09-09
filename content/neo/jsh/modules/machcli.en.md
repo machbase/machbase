@@ -91,6 +91,48 @@ Normalizes a table name into `[database, user, table]` format.
 normalizeTableName(tableName)
 ```
 
+**Client.tx()**
+
+{{< neo_since ver="8.7.0" />}}
+
+Runs `fn` inside a transaction on a connection acquired from the pool. If `fn` returns normally, the transaction is committed; if `fn` throws, the transaction is rolled back and the error is re-thrown. `fn` receives a `Connection` bound to the transaction, so `query()`/`queryRow()`/`exec()` on it participate in the same transaction.
+
+{{< callout emoji="⚠️" >}}
+Transactions only work on regular tables created with `CREATE TABLE`. Log tables (`CREATE LOG TABLE`) and tag tables (`CREATE TAG TABLE`) do not support transactions; any `exec()`/`query()` issued inside `tx()` against them fails with an error such as `MACHCLI-ERR-2362`.
+{{< /callout >}}
+
+<h6>Syntax</h6>
+
+```js
+tx(fn)
+```
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1}
+const { Client } = require('machcli');
+const db = new Client({ host: '127.0.0.1', port: 5656, user: 'sys', password: 'manager' });
+const conn = db.connect();
+conn.exec('CREATE TABLE IF NOT EXISTS TX_SAMPLE (ID LONG, NAME VARCHAR(100))');
+
+// commits automatically when fn returns normally
+db.tx(function (tx) {
+  tx.exec('INSERT INTO TX_SAMPLE VALUES(?, ?)', 1, 'committed');
+});
+
+// rolls back and re-throws when fn throws
+try {
+  db.tx(function (tx) {
+    tx.exec('INSERT INTO TX_SAMPLE VALUES(?, ?)', 2, 'rolledback');
+    throw new Error('abort');
+  });
+} catch (e) {
+  console.println('rolled back:', e.message);
+}
+conn.close();
+db.close();
+```
+
 ## Connection
 
 Connection object returned by `Client.connect()`.
@@ -200,6 +242,38 @@ appender.append('sensor-1', new Date(), 12.34);
 appender.flush();
 const result = appender.close();
 console.println(result);
+conn.close();
+db.close();
+```
+
+**Connection.tx()**
+
+{{< neo_since ver="8.7.0" />}}
+
+Runs `fn` inside a transaction on this specific connection, the same commit/rollback semantics as `Client.tx()`. Use it when the transaction must run on a connection you already hold (e.g. a connection returned by `Client.connect()`).
+
+{{< callout emoji="⚠️" >}}
+Transactions only work on regular tables created with `CREATE TABLE`. Log tables (`CREATE LOG TABLE`) and tag tables (`CREATE TAG TABLE`) do not support transactions; any `exec()`/`query()` issued inside `tx()` against them fails with an error such as `MACHCLI-ERR-2362`.
+{{< /callout >}}
+
+<h6>Syntax</h6>
+
+```js
+tx(fn)
+```
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1}
+const { Client } = require('machcli');
+const db = new Client({ host: '127.0.0.1', port: 5656, user: 'sys', password: 'manager' });
+const conn = db.connect();
+conn.exec('CREATE TABLE IF NOT EXISTS TX_SAMPLE (ID LONG, NAME VARCHAR(100))');
+
+conn.tx(function (tx) {
+  tx.exec('INSERT INTO TX_SAMPLE VALUES(?, ?)', 1, 'committed');
+});
+
 conn.close();
 db.close();
 ```

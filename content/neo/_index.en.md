@@ -4,26 +4,29 @@ weight: 10
 toc: true
 ---
 
-✓ Performant timeseries database<br/>
-✓ Scalable from Raspberry Pi to high-end servers<br/>
-✓ Data transformation and visualization<br/>
-✓ Data monitoring with dashboard<br/>
+✓ Data platform for the Physical AI era, powered by a high-performance time-series database<br/>
+✓ Scalable from edge devices (Raspberry Pi) to high-end servers<br/>
+✓ Ingest, transform, and visualize data from the physical world<br/>
+✓ Real-time monitoring of field data with dashboards<br/>
 ✓ Easy to install - instant download and run<br/>
 ✓ Easy to learn - familiar SQL with Tables and Columns<br/>
-✓ Easy to write and query via **HTTP** and **MQTT**<br/>
+✓ Easy to write and query via **HTTP**, **MQTT**, and SQL<br/>
 ✓ Bridge to SQLite, PostgreSQL, MySQL, MSSQL, MQTT Broker, NATS<br/>
 
 {{< button color="purple" href="./getting-started/">}} Get Started {{< /button >}}
 {{< button color="green" href="./releases/">}} Download  {{< /button >}}
 {{< label color="green" >}} LATEST <i>{{< neo_latestver >}}</i> {{< /label>}}
 
-Machbase is a high-performance time-series database tailored for IoT applications and implemented in C.
-`machbase-neo` is an IoT Database Server that integrates the Machbase engine,
-providing essential and user-friendly features for building IoT platforms.
-It supports data ingestion and querying through various protocols,
-including MQTT for direct data transfer from IoT sensors
-and SQL via HTTP for application data retrieval.
-Its versatility allows installation on a wide range of devices, from Raspberry Pi to high-end servers.
+`machbase-neo` is a data platform for the Physical AI era, built on the high-performance
+Machbase time-series database engine implemented in C.
+It collects, stores, transforms, and visualizes time-series data generated in the physical
+world—by robots, autonomous systems, smart factories, and edge devices—and serves it in a
+form that applications and AI models can use directly for training and inference.
+By combining real-time MQTT ingestion, HTTP-based SQL access, TQL transformation,
+dashboards, and bridges to external systems, `machbase-neo` turns field data into
+AI-ready datasets and services.
+Its lightweight architecture runs across a wide range of environments, from edge devices
+to high-end servers.
 
 ### Download 
 
@@ -66,7 +69,7 @@ Geodetic data visualization.
 
 - [GEOMAP()](/neo/tql/geomap/) for map visualization.
 
-### Dashbaord
+### Dashboard
 
 Realtime data monitoring on the fly.
 
@@ -74,8 +77,8 @@ Realtime data monitoring on the fly.
 
 ### API and Interfaces
 
-- [x] HTTP : Applications and Sensors read/write data via [HTTP](/neo/api-http) REST API
-- [x] MQTT : Sensors write data via [MQTT](/neo/api-mqtt) protocol (MQTT v3.1.1 & v5)
+- [x] HTTP : Applications and edge devices read/write data via [HTTP](/neo/api-http) REST API
+- [x] MQTT : Robots, machines, and edge devices write data via [MQTT](/neo/api-mqtt) protocol (MQTT v3.1.1 & v5)
 - [x] SSH : Command line user interface via [ssh](/neo/shell/#remote-access-via-ssh)
 - [x] GUI : [Web](/neo/getting-started/webui/) user interface
 

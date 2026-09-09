@@ -182,7 +182,9 @@ module "machbase.com/neo-logging" {
 
 #### Machbase
 
-Machbase 핵심 설정은 [Machbase 매뉴얼의 Property 섹션](/dbms/config-monitor/property/)을 참고하십시오. 전체 매뉴얼은 [여기](/dbms)에서 확인할 수 있습니다.
+Machbase 핵심 설정은
+[Machbase 설정 프로퍼티 사전](/dbms/reference/configuration/configuration/)을
+참고하십시오. 전체 매뉴얼은 [여기](/dbms)에서 확인할 수 있습니다.
 
 
 #### Shell

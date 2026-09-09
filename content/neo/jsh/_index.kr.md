@@ -79,7 +79,7 @@ Hello World?
 JSH 런타임 환경은 호스트 OS의 파일 시스템과 분리된 가상의 파일시스템으로 동작합니다.
 JSH를 실행해서 내부에서 `ls -l /`을 해보면 아래와 같이 JSH가 동작하는 OS와 완전히 다른 디렉터리 트리 구조를 가진 것을 확인할 수 있다.
 
-{{< figure src="./img/fish-ls.jpg" width="513">}}
+{{< figure src="/neo/jsh/img/fish-ls.jpg" width="513">}}
 
 이 기본 디렉터리들 중에 `/sbin`, `/lib` 는 JSH에 기본으로 내장된 읽기만 가능한 파일들이 존재하며 
 `/work`는 JSH를 실행할 때 별도로 지정하지 않은 경우 OS의 현재 디렉터리 또는 웹 환경에서 파일 익스플로러에서 보이는 디렉터리가 자동으로 마운트 됩니다.
@@ -91,7 +91,7 @@ JSH를 실행해서 내부에서 `ls -l /`을 해보면 아래와 같이 JSH가 
 $ machbase-neo jsh -v /tmp=/var/tmp
 ```
 
-{{< figure src="./img/fish-ls-mount.jpg" width="513">}}
+{{< figure src="/neo/jsh/img/fish-ls-mount.jpg" width="513">}}
 
 ## 외부 실행
 

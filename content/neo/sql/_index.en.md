@@ -48,6 +48,24 @@ SELECT time, value FROM example WHERE name = 'my-car';
 
 {{< figure src="/images/web-select.png" >}}
 
+### Use Named Args
+
+The SQL editor supports named args such as `:name` and `:value`.
+Set named arg values with a `-- env:` comment before the SQL statements.
+This is useful when you want to reuse the same value across multiple statements or quickly change test values.
+
+```sql
+-- env: named.name='my-car' named.value=1.5432
+INSERT INTO example VALUES(:name, now, :value);
+
+SELECT * FROM example WHERE name = :name;
+-- env: reset
+```
+
+In this example, `name` is set to `'my-car'` and `value` is set to `1.5432`.
+The INSERT and SELECT statements refer to them as `:name` and `:value`.
+Run `-- env: reset` to clear the named args configured in the SQL editor.
+
 ### Chart Draw
 
 Insert more records by executing insert statement repeatedly.
