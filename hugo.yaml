@@ -44,7 +44,7 @@ ignoreFiles:
 
 params:
   dbmsVersion: 8.7.0
-  latestNeoVer: v8.5.11
+  latestNeoVer: v8.7.0
   examples_url: https://github.com/machbase/neo-server/tree/main/examples
   releases_url: https://github.com/machbase/neo-server/releases
   jdbc_version: 8.0.2
