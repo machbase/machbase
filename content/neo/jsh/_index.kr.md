@@ -7,12 +7,6 @@ tags: JavaScript
 
 {{< neo_since ver="8.5.0" />}}
 
-{{< callout type="warning" >}}
-**베타 안내**<br/>
-JSH는 현재 베타 단계입니다. 향후 릴리스에서 API와 명령어가 변경될 수 있습니다.
-{{< /callout >}}
-
-
 JSH를 이용하시면 Machbase Neo를 이용하는 JavaScript 애플리케이션을 작성하실 수 있습니다.
 확장자가 `.js`인 파일 또는 `index.js`를 포함하고 있는 디렉터리는 Machbase Neo에서 실행 가능한 애플리케이션으로 인식됩니다.
 
