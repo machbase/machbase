@@ -120,36 +120,51 @@ If the task is not *autostart* mode, you can make it start and stop manually by
 *Syntax:* `timer del <name>`
 
 
-## Hello World? Example
+## Hello World Example
 
 Let's make the "Hello World" of the timer.
+
+### Create Table
+
+```sql
+CREATE TABLE HELLO (
+  NAME  VARCHAR(100) PRIMARY KEY,
+  TICK  DATETIME,
+  COUNT INTEGER
+);
+```
 
 ### Make a *tql* of "Hello World"
 
 Open *tql* editor, copy the code below and save it as `helloworld.tql`.
 
 ```js
-CSV(`helloworld,0,0`)
-MAPVALUE(1, time('now'))
-MAPVALUE(2, random())
-INSERT("name", "time", "value", table("example"))
+FAKE(once(1))
+SQL(`
+  INSERT INTO HELLO
+  VALUES('hi', now, 1)
+  ON DUPLICATE KEY UPDATE SET
+    TS = now,
+    COUNT = COUNT+1
+`)
 ```
 
-Execute the script and it inserts a single record into the EXAMPLE table. 
+Execute the script to insert a single record into the HELLO table.
 Run SELECT SQL to see if it works correctly.
 
 ```sql
-select * from example where name = 'helloworld';
+select * from hello where name = 'hi';
 ```
 
 ```
-sys machbase-neo» select * from example where name = 'helloworld';
-┌────────┬────────────┬─────────────────────────┬────────────────────┐
-│ ROWNUM │ NAME       │ TIME(LOCAL)             │ VALUE              │
-├────────┼────────────┼─────────────────────────┼────────────────────┤
-│      1 │ helloworld │ 2024-06-19 18:20:07.001 │ 0.6132387755535856 │
-└────────┴────────────┴─────────────────────────┴────────────────────┘
-a row fetched.
+sys machbase-neo 2026-09-10 17:00:09
+> select * from hello where name = 'hi';
+┌────────┬──────┬─────────────────────────┬───────┐
+│ ROWNUM │ NAME │ TS                      │ COUNT │
+├────────┼──────┼─────────────────────────┼───────┤
+│      1 │ hi   │ 2026-09-10 17:00:18.918 │     1 │
+└────────┴──────┴─────────────────────────┴───────┘
+a row selected.
 ```
 
 ### Register a timer
@@ -166,29 +181,20 @@ timer add helloworld "@every 5s" helloworld.tql;
 
 Make the new timer to be started by check "Auto Start" option or do it manually by toggle <img src=./img/timer_toggle.png style="display:inline; height:25px;"> button.
 
-As soon as it starts, the new record will be inserted into the table at every 5 seconds.
+Once it starts, you can see TS and COUNT change every 5 seconds.
 
 **Query the result of the timer**
 
 ```
-sys machbase-neo» select * from example where name = 'helloworld';
-┌────────┬────────────┬─────────────────────────┬─────────────────────┐
-│ ROWNUM │ NAME       │ TIME(LOCAL)             │ VALUE               │
-├────────┼────────────┼─────────────────────────┼─────────────────────┤
-│      1 │ helloworld │ 2024-07-03 09:49:47.002 │ 0.14047743934840562 │
-│      2 │ helloworld │ 2024-07-03 09:49:42.002 │ 0.7656153597963373  │
-│      3 │ helloworld │ 2024-07-03 09:49:37.002 │ 0.11713331640146182 │
-│      4 │ helloworld │ 2024-07-03 09:49:32.002 │ 0.5351642943247759  │
-│      5 │ helloworld │ 2024-07-03 09:49:27.001 │ 0.6588127185612987  │
-└────────┴────────────┴─────────────────────────┴─────────────────────┘
-5 rows fetched.
+sys machbase-neo 2026-09-10 17:00:19
+> select * from hello where name = 'hi';
+┌────────┬──────┬─────────────────────────┬───────┐
+│ ROWNUM │ NAME │ TS                      │ COUNT │
+├────────┼──────┼─────────────────────────┼───────┤
+│      1 │ hi   │ 2026-09-10 17:03:24.913 │    19 │
+└────────┴──────┴─────────────────────────┴───────┘
+a row selected.
 ```
-
-**Dashboard**
-
-Create a dashboard to refresh automatically and watch the timer works as expected.
-
-{{< figure src="./img/helloworld-dsh-form.png" width="700px" >}}
 
 ### Manage timers
 

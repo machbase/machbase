@@ -114,32 +114,47 @@ weight: 80
 
 タイマーの基本動作を確認します。
 
+### テーブルの作成
+
+```sql
+CREATE TABLE HELLO (
+  NAME  VARCHAR(100) PRIMARY KEY,
+  TICK  DATETIME,
+  COUNT INTEGER
+);
+```
+
 ### 「Hello World」TQLの作成 {#hello-world-tql-작성}
 
 TQLエディターを開き、以下のコードを入力して`helloworld.tql`として保存します。
 
 ```js
-CSV(`helloworld,0,0`)
-MAPVALUE(1, time('now'))
-MAPVALUE(2, random())
-INSERT("name", "time", "value", table("example"))
+FAKE(once(1))
+SQL(`
+  INSERT INTO HELLO
+  VALUES('hi', now, 1)
+  ON DUPLICATE KEY UPDATE SET
+    TS = now,
+    COUNT = COUNT+1
+`)
 ```
 
-スクリプトを実行すると、EXAMPLEテーブルに1件のデータが挿入されます。  
+スクリプトを実行すると、HELLOテーブルに1件のデータが挿入されます。
 クエリで結果を確認してください。
 
 ```sql
-select * from example where name = 'helloworld';
+select * from hello where name = 'hi';
 ```
 
 ```
-sys machbase-neo» select * from example where name = 'helloworld';
-┌────────┬────────────┬─────────────────────────┬────────────────────┐
-│ ROWNUM │ NAME       │ TIME(LOCAL)             │ VALUE              │
-├────────┼────────────┼─────────────────────────┼────────────────────┤
-│      1 │ helloworld │ 2024-06-19 18:20:07.001 │ 0.6132387755535856 │
-└────────┴────────────┴─────────────────────────┴────────────────────┘
-a row fetched.
+sys machbase-neo 2026-09-10 17:00:09
+> select * from hello where name = 'hi';
+┌────────┬──────┬─────────────────────────┬───────┐
+│ ROWNUM │ NAME │ TS                      │ COUNT │
+├────────┼──────┼─────────────────────────┼───────┤
+│      1 │ hi   │ 2026-09-10 17:00:18.918 │     1 │
+└────────┴──────┴─────────────────────────┴───────┘
+a row selected.
 ```
 
 ### タイマーの登録 {#타이머-등록}
@@ -155,29 +170,20 @@ timer add helloworld "@every 5s" helloworld.tql;
 ```
 
 「Auto Start」オプションを選択するか、<img src=/neo/timer/img/timer_toggle.png style="display:inline; height:25px;">ボタンを押してタイマーを開始します。  
-開始すると、5秒ごとに新しいレコードがテーブルに挿入されます。
+開始すると、5秒ごとにTSとCOUNTが変化することを確認できます。
 
 **タイマーの実行結果の確認**
 
 ```
-sys machbase-neo» select * from example where name = 'helloworld';
-┌────────┬────────────┬─────────────────────────┬─────────────────────┐
-│ ROWNUM │ NAME       │ TIME(LOCAL)             │ VALUE               │
-├────────┼────────────┼─────────────────────────┼─────────────────────┤
-│      1 │ helloworld │ 2024-07-03 09:49:47.002 │ 0.14047743934840562 │
-│      2 │ helloworld │ 2024-07-03 09:49:42.002 │ 0.7656153597963373  │
-│      3 │ helloworld │ 2024-07-03 09:49:37.002 │ 0.11713331640146182 │
-│      4 │ helloworld │ 2024-07-03 09:49:32.002 │ 0.5351642943247759  │
-│      5 │ helloworld │ 2024-07-03 09:49:27.001 │ 0.6588127185612987  │
-└────────┴────────────┴─────────────────────────┴─────────────────────┘
-5 rows fetched.
+sys machbase-neo 2026-09-10 17:00:19
+> select * from hello where name = 'hi';
+┌────────┬──────┬─────────────────────────┬───────┐
+│ ROWNUM │ NAME │ TS                      │ COUNT │
+├────────┼──────┼─────────────────────────┼───────┤
+│      1 │ hi   │ 2026-09-10 17:03:24.913 │    19 │
+└────────┴──────┴─────────────────────────┴───────┘
+a row selected.
 ```
-
-**ダッシュボード**
-
-自動更新するダッシュボードを作成すると、タイマーが正常に動作しているかをリアルタイムに確認できます。
-
-{{< figure src="/neo/timer/img/helloworld-dsh-form.png" width="700px" >}}
 
 ### タイマーの管理 {#타이머-관리}
 
