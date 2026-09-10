@@ -32,7 +32,7 @@ The "head-only machbase-neo" does not provide the 5656 port service, and all oth
 
 {{< neo_since ver="8.0.45" />}}
 
-`machbase-neo serve-headless` starts a DBMS process using only the Machbase DBMS mach port (`5656`). This mode is useful for running a DBMS process without other service ports (HTTP, MQTT, gRPC, SSH) and their related functions.
+`machbase-neo serve-headless` starts a DBMS process using only the Machbase DBMS mach port (`5656`). This mode is useful for running a DBMS process without other service ports (HTTP, MQTT, SSH) and their related functions.
 
 This running mode is specifically designed to work with separate "head-only" mode processes,
 allowing the separation of API services and the DBMS engine.
