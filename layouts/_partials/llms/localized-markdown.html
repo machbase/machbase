@@ -1,0 +1,32 @@
+{{- $content := .RawContent -}}
+{{- if eq .Language.Lang "ja" -}}
+  {{- $root := strings.TrimSuffix "/" (relLangURL "") -}}
+  {{- $lines := slice -}}
+  {{- $fence := "" -}}
+  {{- range split $content "\n" -}}
+    {{- $line := . -}}
+    {{- $markers := findRE "^[[:space:]]*(\x60{3,}|~{3,})" $line -}}
+    {{- if $markers -}}
+      {{- $marker := strings.TrimSpace (index $markers 0) -}}
+      {{- if not $fence -}}
+        {{- $fence = $marker -}}
+      {{- else if and (strings.HasPrefix $marker $fence) (ge (len $marker) (len $fence)) (not (strings.TrimSpace (replaceRE "^[[:space:]]*(\x60{3,}|~{3,})" "" $line))) -}}
+        {{- $fence = "" -}}
+      {{- end -}}
+    {{- else if not $fence -}}
+      {{- range findRE "\\]\\(/(dbms-8\\.5|dbms|neo|apps|fluid)([/#?][^[:space:])]*|)([[:space:]]+\"[^\"]*\"|)\\)" $line -}}
+        {{- $link := . -}}
+        {{- $destination := replaceRE "^\\]\\(([^[:space:])]+).*" "${1}" $link -}}
+        {{- $url := urls.Parse $destination -}}
+        {{- $tail := replaceRE "^/(dbms-8\\.5|dbms|neo|apps|fluid)" "" $url.Path -}}
+        {{- if not (path.Ext $tail) -}}
+          {{- $translated := replaceRE "^/(dbms-8\\.5|dbms|neo|apps|fluid)" (printf "%s/${1}" $root) $destination -}}
+          {{- $line = replace $line $link (replace $link (printf "](%s" $destination) (printf "](%s" $translated)) -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+    {{- $lines = $lines | append $line -}}
+  {{- end -}}
+  {{- $content = delimit $lines "\n" -}}
+{{- end -}}
+{{- return $content -}}

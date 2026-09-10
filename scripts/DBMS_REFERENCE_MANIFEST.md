@@ -3,7 +3,7 @@
 The JSON files in `data/dbms-reference/` are generated audit inputs for the DBMS manual. They capture
 the registered function descriptors, fixed-table schemas, and errors found in the authoritative NFX
 source checkout. Registration is not, by itself, a promise that an item is a public API. The error
-generator additionally owns the marked complete-catalog blocks in the Korean and English error
+generator additionally owns the marked complete-catalog blocks in the Korean, English, and Japanese error
 dictionary pages. Surrounding explanations, examples, compatibility notes, causes, and remedies
 remain hand-authored.
 
@@ -25,8 +25,11 @@ python3 scripts/generate_dbms_reference_manifest.py \
 
 The `has_korean_reference_heading` field is a narrow coverage signal based on reference headings. A
 `false` value is a review queue entry, not proof that the whole manual never mentions the item. The
-complete generated Korean error catalog makes `listed_in_korean_reference` true for every parsed
-`ERR_ID`. Edition-specific descriptors and
+`listed_in_korean_reference` field records whether a parsed `ERR_ID` appears in the Korean manual;
+it does not imply that every registered error belongs in the published catalog. The 8.7.0 public
+catalog omits the 24 removed-feature entries listed in `ERROR_CATALOG_EXCLUDED_CODES` while the
+source inventory retains them. The same exclusion policy applies to Korean, English, and Japanese
+catalog generation. Server error codes, symbols, and original messages are not translated. Edition-specific descriptors and
 preprocessor conditions remain visible in each manifest so reviewers do not accidentally turn one
 build variant into a universal contract.
 
@@ -42,3 +45,6 @@ remedy, retryability, Edition, or version support.
 The `.msg` lexer treats `#`, `//`, and `/* ... */` as comments only outside quoted strings. The
 `format_tokens` array preserves literal `%%`; `conversion_tokens` contains conversion tokens but is
 not an argument list because width and precision `*` can consume additional arguments.
+
+Japanese translation and rendered-site validation, including independent review records and browser
+checks, are described in [Japanese manual maintenance](JAPANESE_MANUAL.md).

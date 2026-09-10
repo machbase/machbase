@@ -1,5 +1,10 @@
-<html>
+{{- $landing := .Site.GetPage (.Site.Params.landingPage | default "/neo") -}}
+<!DOCTYPE html>
+<html lang="{{ .Site.Language.LanguageCode }}">
   <head>
-    <meta http-equiv="Refresh" content="0; url='./neo'" />
+    <meta charset="utf-8" />
+    <title>{{ .Site.Title }}</title>
+    {{ with $landing }}<meta http-equiv="Refresh" content="0; url={{ .RelPermalink }}" />{{ end }}
   </head>
+  <body>{{ with $landing }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}</body>
 </html>

@@ -18,6 +18,49 @@ languages:
     languageCode: ko-KR
     title: 마크베이스
     weight: 2
+  ja:
+    languageName: 日本語
+    languageCode: ja-JP
+    title: MACHBASE
+    weight: 3
+    params:
+      landingPage: /neo
+      navbar:
+        logo:
+          link: /neo
+    menu:
+      main:
+        - identifier: home
+          name: ホーム
+          url: https://machbase.com/
+          weight: 10
+        - identifier: neo
+          name: MACHBASE NEO
+          pageRef: /neo
+          weight: 20
+        - identifier: dbms
+          name: DBMS v8.7
+          pageRef: /dbms
+          weight: 30
+        - identifier: dbms-v85
+          name: DBMS v8.5
+          pageRef: /dbms-8.5
+          weight: 34
+        - identifier: apps
+          name: アプリ
+          pageRef: /apps
+          weight: 38
+        - identifier: search
+          name: 検索
+          weight: 40
+          params:
+            type: search
+        - identifier: github
+          name: GitHub
+          url: https://github.com/machbase/machbase
+          weight: 50
+          params:
+            icon: github
 
 module:
   imports:

@@ -1,33 +1,38 @@
 {{- $dbms := .Site.GetPage "/dbms" -}}
-{{- $isKorean := eq .Site.Language.Lang "kr" -}}
-# {{ if $isKorean }}Machbase DBMS 매뉴얼{{ else }}Machbase DBMS Manual{{ end }}
+{{- $version := dict "Version" .Site.Params.dbmsVersion -}}
+# {{ i18n "llmsManualTitle" }}
 
-> {{ if $isKorean }}Machbase DBMS {{ .Site.Params.dbmsVersion }} 한국어 문서의 정본 탐색 인덱스입니다.{{ else }}Canonical navigation index for the English Machbase DBMS {{ .Site.Params.dbmsVersion }} manual.{{ end }}
+> {{ i18n "llmsManualDescription" $version }}
 
-- {{ if $isKorean }}언어{{ else }}Language{{ end }}: `{{ .Site.Language.Lang }}`
-- {{ if $isKorean }}매뉴얼{{ else }}Manual{{ end }}: [{{ $dbms.Title }}]({{ $dbms.Permalink }})
-- {{ if $isKorean }}전체 본문{{ else }}Full text{{ end }}: [llms-full.txt]({{ .Site.Home.Permalink }}llms-full.txt)
-- {{ if $isKorean }}문서 인덱스{{ else }}Document index{{ end }}: [llms-chunks.json]({{ .Site.Home.Permalink }}llms-chunks.json)
+- {{ i18n "llmsLanguage" }}: `{{ .Site.Language.Lang }}`
+{{ with $dbms }}- {{ i18n "llmsManual" }}: [{{ .Title }}]({{ .Permalink }}){{ end }}
+- {{ i18n "llmsFullText" }}: [llms-full.txt]({{ .Site.Home.Permalink }}llms-full.txt)
+- {{ i18n "llmsDocumentIndex" }}: [llms-chunks.json]({{ .Site.Home.Permalink }}llms-chunks.json)
 
-## {{ if $isKorean }}매뉴얼 장{{ else }}Manual Chapters{{ end }}
+## {{ i18n "llmsChapters" }}
 
-{{- range $dbms.Pages.ByWeight }}
+{{- with $dbms }}
+{{- range .Pages.ByWeight }}
 {{- if not (strings.Contains .RelPermalink "/dbms/8-5-manual/") }}
 - [{{ .LinkTitle }}]({{ .Permalink }}){{ with .Description }}: {{ . | plainify }}{{ end }}
 {{- end }}
 {{- end }}
 
-## {{ if $isKorean }}주요 정본{{ else }}Primary References{{ end }}
+{{- end }}
 
-{{- $reference := .Site.GetPage "/dbms/reference" -}}
-{{- range $reference.Pages.ByWeight }}
+## {{ i18n "llmsReferences" }}
+
+{{- with .Site.GetPage "/dbms/reference" -}}
+{{- range .Pages.ByWeight }}
 - [{{ .LinkTitle }}]({{ .Permalink }}){{ with .Description }}: {{ . | plainify }}{{ end }}
 {{- end }}
 
-## {{ if $isKorean }}AI와 RAG{{ else }}AI and RAG{{ end }}
+{{- end }}
 
-{{- $ai := .Site.GetPage "/dbms/reference/ai-agent-reference" }}
-- [{{ $ai.LinkTitle }}]({{ $ai.Permalink }})
-- [canonical-url-map]({{ (.Site.GetPage "/dbms/reference/ai-agent-reference/canonical-url-map").Permalink }})
-- [task-map]({{ (.Site.GetPage "/dbms/reference/ai-agent-reference/task-map").Permalink }})
-- [evidence-map]({{ (.Site.GetPage "/dbms/reference/ai-agent-reference/evidence-map").Permalink }})
+## {{ i18n "llmsAI" }}
+
+{{- range slice "/dbms/reference/ai-agent-reference" "/dbms/reference/ai-agent-reference/canonical-url-map" "/dbms/reference/ai-agent-reference/task-map" "/dbms/reference/ai-agent-reference/evidence-map" }}
+{{- with $.Site.GetPage . }}
+- [{{ .LinkTitle }}]({{ .Permalink }})
+{{- end }}
+{{- end }}

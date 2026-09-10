@@ -3,3 +3,15 @@ editThisPage: "Edit this page on GitHub →"
 lastUpdated: "Last updated on"
 
 copyright: "© machbase.com"
+
+llmsManualTitle: Machbase DBMS Manual
+llmsManualDescription: "Canonical navigation index for the English Machbase DBMS {{ .Version }} manual."
+llmsLanguage: Language
+llmsManual: Manual
+llmsFullText: Full text
+llmsDocumentIndex: Document index
+llmsChapters: Manual Chapters
+llmsReferences: Primary References
+llmsAI: AI and RAG
+llmsFullTitle: Machbase DBMS Manual — Full Text
+llmsFullDescription: "Markdown corpus of the current published English DBMS {{ .Version }} pages in navigation order."

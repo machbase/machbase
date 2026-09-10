@@ -2,7 +2,7 @@
 """Generate DBMS reference inventories and error catalogs from the NFX source tree.
 
 The generated JSON records what the server registers. The complete error catalog
-blocks in the Korean and English manuals are generated from the same parsed error
+blocks in the Korean, English, and Japanese manuals use the same parsed error
 definitions while surrounding user-facing guidance remains hand-authored.
 """
 
@@ -21,12 +21,23 @@ from typing import Iterable
 
 
 SCHEMA_VERSION = 1
-FUNCTION_MANUAL = Path("content/dbms/reference/sql/functions/functions-full/_index.kr.md")
-TABLE_MANUAL = Path("content/dbms/reference/system-catalog/virtual-table-full/_index.kr.md")
-ERROR_MANUAL = Path("content/dbms/reference/error-codes/_index.kr.md")
-ERROR_MANUAL_EN = Path("content/dbms/reference/error-codes/_index.en.md")
+FUNCTION_MANUAL = Path("content/dbms/reference/sql/functions/functions-full.kr.md")
+TABLE_MANUAL = Path("content/dbms/reference/system-catalog/virtual-table-full.kr.md")
+ERROR_MANUAL = Path("content/dbms/reference/error-codes.kr.md")
+ERROR_MANUAL_EN = Path("content/dbms/reference/error-codes.en.md")
+ERROR_MANUAL_JA = Path("content/dbms/reference/error-codes.ja.md")
+ERROR_MANUALS = {"kr": ERROR_MANUAL, "en": ERROR_MANUAL_EN, "ja": ERROR_MANUAL_JA}
 ERROR_CATALOG_BEGIN = "<!-- BEGIN GENERATED NFX ERROR CATALOG -->"
 ERROR_CATALOG_END = "<!-- END GENERATED NFX ERROR CATALOG -->"
+# These legacy entries were removed from the published 8.7.0 manuals. Keep
+# source inventories intact, but do not reintroduce them when regenerating any locale.
+ERROR_CATALOG_EXCLUDED_CODES = frozenset({
+    "ERR-02102", "ERR-02103", "ERR-02106", "ERR-02107", "ERR-02108",
+    "ERR-02193", "ERR-02194", "ERR-02209", "ERR-02210", "ERR-02211",
+    "ERR-02212", "ERR-02213", "ERR-02214", "ERR-02215", "ERR-02216",
+    "ERR-02217", "ERR-02218", "ERR-02219", "ERR-02220", "ERR-02227",
+    "ERR-02244", "ERR-02245", "ERR-05000", "ERR-05001",
+})
 
 
 def line_number(text: str, offset: int) -> int:
@@ -693,8 +704,10 @@ def error_catalog_cell(value: str) -> str:
 
 
 def render_error_catalog(errors: list[dict], language: str) -> str:
-    if language not in {"en", "kr"}:
+    if language not in ERROR_MANUALS:
         raise ValueError(f"unsupported error catalog language: {language}")
+
+    errors = [error for error in errors if error["code"] not in ERROR_CATALOG_EXCLUDED_CODES]
 
     grouped: dict[int, list[dict]] = defaultdict(list)
     for error in errors:
@@ -703,17 +716,24 @@ def render_error_catalog(errors: list[dict], language: str) -> str:
     if language == "kr":
         title = "전체 오류 메시지"
         intro = (
-            f"다음 {len(errors):,}개 항목은 Machbase 8.7.0 NFX 오류 카탈로그의 "
-            "`ERR_ID`, `KEY`, `MSG_EN`을 생성한 결과입니다."
+            f"다음 {len(errors):,}개 항목은 Machbase 8.7.0 NFX 오류 카탈로그에서 "
+            "제거된 기능의 항목을 제외한 결과입니다."
         )
         columns = ("코드", "심볼", "메시지 원문")
-    else:
-        title = "Complete error message catalog"
+    elif language == "ja":
+        title = "全エラーメッセージ"
         intro = (
-            f"The following {len(errors):,} entries are generated from the `ERR_ID`, "
-            "`KEY`, and `MSG_EN` fields in the Machbase 8.7.0 NFX error catalog."
+            f"以下の {len(errors):,} 件は、Machbase 8.7.0 NFX エラーカタログから、"
+            "削除された機能の項目を除いた一覧です。"
         )
-        columns = ("Code", "Symbol", "Message")
+        columns = ("コード", "シンボル", "メッセージ原文")
+    else:
+        title = "Complete Error Messages"
+        intro = (
+            f"The following {len(errors):,} entries are from the Machbase 8.7.0 NFX error catalog, excluding entries for\n"
+            "removed features."
+        )
+        columns = ("Code", "Symbol", "Original Message")
 
     lines = [
         '<a id="full-error-catalog"></a>',
@@ -861,8 +881,7 @@ def main() -> int:
         nfx_root / "pm/src/msg/machbaseErrNLogMsg.msg",
         manual_root / FUNCTION_MANUAL,
         manual_root / TABLE_MANUAL,
-        manual_root / ERROR_MANUAL,
-        manual_root / ERROR_MANUAL_EN,
+        *(manual_root / path for path in ERROR_MANUALS.values()),
     ]
     missing = [str(path) for path in required if not path.exists()]
     if missing:
@@ -876,14 +895,11 @@ def main() -> int:
     }
     rendered = {name: serialize(value) for name, value in generated.items()}
     error_manuals = {
-        ERROR_MANUAL: replace_generated_error_catalog(
-            (manual_root / ERROR_MANUAL).read_text(encoding="utf-8"),
-            render_error_catalog(error_manifest["errors"], "kr"),
-        ),
-        ERROR_MANUAL_EN: replace_generated_error_catalog(
-            (manual_root / ERROR_MANUAL_EN).read_text(encoding="utf-8"),
-            render_error_catalog(error_manifest["errors"], "en"),
-        ),
+        path: replace_generated_error_catalog(
+            (manual_root / path).read_text(encoding="utf-8"),
+            render_error_catalog(error_manifest["errors"], language),
+        )
+        for language, path in ERROR_MANUALS.items()
     }
 
     if args.check:

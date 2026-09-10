@@ -1,0 +1,2043 @@
+{
+  "schema_version": 1,
+  "sources": {
+    "content/neo/tql/utilities.ja.md": {
+      "primary": "content/neo/tql/utilities.en.md",
+      "companions": [
+        "content/neo/tql/utilities.kr.md"
+      ],
+      "integration": true,
+      "reason": "EN contains complete function signatures, formatting and mathematical tables and examples omitted by KR",
+      "structural_review": {
+        "shortcodes": "Bilingual source includes additional examples; review every technical attribute and source-relative asset relocation."
+      }
+    },
+    "content/neo/tql/basic.ja.md": {
+      "primary": "content/neo/tql/basic.kr.md",
+      "companions": [
+        "content/neo/tql/basic.en.md"
+      ],
+      "integration": true,
+      "reason": "KR base and tagged raw literal examples retained; EN JSON backtick example, arithmetic sample/results, all missing operators, nil coalescing and pragmas added",
+      "structural_review": {
+        "shortcodes": "Bilingual source includes additional examples; review every technical attribute and source-relative asset relocation."
+      }
+    },
+    "content/neo/tql/script.ja.md": {
+      "primary": "content/neo/tql/script.kr.md",
+      "companions": [
+        "content/neo/tql/script.en.md"
+      ],
+      "integration": true,
+      "reason": "KR contexts retained; EN yield/db/query/exec/request/finalize/Examples sections fully translated Independent manager corrected historical ECMA5-only/strict/regexp restrictions against actual Goja SCRIPT execution on Neo v8.5.6-9-g3366d85e.",
+      "structural_review": {
+        "shortcodes": "Bilingual source includes additional examples; review every technical attribute and source-relative asset relocation."
+      }
+    },
+    "content/neo/tql/group.ja.md": {
+      "primary": "content/neo/tql/group.kr.md",
+      "companions": [
+        "content/neo/tql/group.en.md"
+      ],
+      "integration": true,
+      "reason": "KR basic/grouping/options and Type1 list retained; EN list full examples, Type2 functions and all examples added; interpolation citations restored",
+      "structural_review": {
+        "shortcodes": "Bilingual source includes additional examples; review every technical attribute and source-relative asset relocation."
+      }
+    },
+    "content/neo/tql/reading.ja.md": {
+      "primary": "content/neo/tql/reading.kr.md",
+      "companions": [
+        "content/neo/tql/reading.en.md"
+      ],
+      "integration": true,
+      "reason": "KR body retained; EN chart DOM embedding and full cache() section added; source cache-result-data anchor moved to actual section",
+      "structural_review": {
+        "shortcodes": "Bilingual source includes additional examples; review every technical attribute and source-relative asset relocation."
+      }
+    },
+    "content/neo/tql/glance.ja.md": {
+      "primary": "content/neo/tql/glance.kr.md",
+      "companions": [
+        "content/neo/tql/glance.en.md"
+      ],
+      "integration": true,
+      "reason": "KR introduction/tutorial retained; EN verbose CSV/JSON HTTP responses, transpose JSON, INSERT and SELECT examples added",
+      "structural_review": {
+        "shortcodes": "Bilingual source includes additional examples; review every technical attribute and source-relative asset relocation."
+      }
+    },
+    "content/neo/tql/fft.ja.md": {
+      "primary": "content/neo/tql/fft.kr.md",
+      "companions": [
+        "content/neo/tql/fft.en.md"
+      ],
+      "integration": true,
+      "reason": "EN contains a duplicate Read data example under an extra FFT heading; avoid duplicating identical content, but preserve distinct SQL_SELECT last-10s time-axis example alongside KR SQL variant",
+      "structural_review": {
+        "shortcodes": "Bilingual source includes additional examples; review every technical attribute and source-relative asset relocation."
+      }
+    },
+    "content/neo/tql/geomap/_index.ja.md": {
+      "primary": "content/neo/tql/geomap/_index.kr.md",
+      "companions": [
+        "content/neo/tql/geomap/_index.en.md"
+      ],
+      "integration": true,
+      "reason": "KR active reference retained; EN-only GeoJSON FeatureCollection/Feature examples are HTML-commented in source and retained as comments in JA",
+      "structural_review": {
+        "shortcodes": "Bilingual source includes additional examples; review every technical attribute and source-relative asset relocation."
+      }
+    },
+    "content/neo/tql/_index.ja.md": {
+      "primary": "content/neo/tql/_index.kr.md",
+      "companions": [
+        "content/neo/tql/_index.en.md"
+      ],
+      "reason": "Both originals omit closing code fence before SCRIPT-for tab closure. JA closes fence to restore intended subsequent prose.",
+      "structural_review": {
+        "fences": "Original code fence missing before SCRIPT-for tab closure; target restores intended structure.",
+        "headings": "Original code fence missing before SCRIPT-for tab closure; target restores intended structure.",
+        "shortcodes": "Original code fence missing before SCRIPT-for tab closure; target restores intended structure."
+      }
+    },
+    "content/neo/jsh/modules/db.ja.md": {
+      "primary": "content/neo/jsh/modules/db.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/db.en.md"
+      ],
+      "reason": "Resolve Rows.close() return conflict against neo-server jsh/lib/db/dbms.go at 3366d85e47364ebba233a8c93b98b1d2defd2e02 lines 407-418: success undefined, error GoError; iterator registered as goja.SymIterator at line 362. KR any[] copied from next() is incorrect; EN Symbol.iterable is incorrect."
+    },
+    "content/neo/tql/example-time.ja.md": {
+      "primary": "content/neo/tql/example-time.kr.md",
+      "companions": [
+        "content/neo/tql/example-time.en.md"
+      ],
+      "reason": "Correct clickable format_time query to808210800000000001 matching visible example URL and time(epoch) nanosecond input; original href808185601 contradicts link text."
+    },
+    "content/neo/tql/map.ja.md": {
+      "primary": "content/neo/tql/map.kr.md",
+      "companions": [
+        "content/neo/tql/map.en.md"
+      ],
+      "reason": "MAP_LOWPATH corrected to MAP_LOWPASS (neo-server mods/tql/fx_definitions.go172); boxplotInterop to boxplotInterp (same file149); PUSHKEY [k1,v1,v1] corrected to [k1,v1,v2] (fm_monad.go1575); histogram step means bin width (fm_stat.go241-280); shared figures normalized to /neo/tql/img.",
+      "structural_review": {
+        "shortcodes": "Shared figure src path normalization; verify resource existence."
+      }
+    },
+    "content/neo/tql/src.ja.md": {
+      "primary": "content/neo/tql/src.kr.md",
+      "companions": [
+        "content/neo/tql/src.en.md"
+      ],
+      "reason": "KR with EN period nanosecond unit supplementation; equivalent SQL TAG1 corrected to temperature matching preceding SQL_SELECT tag; datetimeType RC822 corrected to RFC822 matching options/timeformat enum.",
+      "structural_review": {
+        "shortcodes": "Shared figure src path normalization; verify resource existence."
+      }
+    },
+    "content/neo/sql/rollup.ja.md": {
+      "primary": "content/neo/sql/rollup.kr.md",
+      "companions": [
+        "content/neo/sql/rollup.en.md"
+      ],
+      "integration": true,
+      "reason": "KR reference prose and examples are retained with EN generic query syntax, parameter constraints, query/lifecycle/deletion samples and all six practical examples, including monthly/quarterly data omitted from KR. Independent manager reconciled all19 EN code blocks plus retained KR basic query and recalculated corrected expected outputs from actual inserted values."
+    },
+    "content/neo/sql/backup-mount.ja.md": {
+      "primary": "content/neo/sql/backup-mount.kr.md",
+      "companions": [
+        "content/neo/sql/backup-mount.en.md"
+      ],
+      "integration": true,
+      "reason": "KR complete reference and sample queries plus EN mount-query syntax, unique concurrent aliases, read-only operation constraints, example expectations and missing-table failure samples. Restore and backup-file layout corrected after direct independent inspection of Neo Restore and NFX backup definitions; EN sample comments fully translated."
+    },
+    "content/neo/sql/ourlier-remove.ja.md": {
+      "primary": "content/neo/sql/ourlier-remove.en.md",
+      "companions": [
+        "content/neo/sql/ourlier-remove.kr.md"
+      ],
+      "reason": "EN complete generic syntax, one-sided limit configuration, metadata updates/NULL disabling and all11 examples; KR constraints/examples checked as covered. Metadata DROP COLUMN non-support claim corrected after isolated actual Neo engine8.5.7 probe: ordinary note and LOWER LIMIT lsl columns dropped successfully; dropping lsl permits the former below-LSL value. Source and probe evidence /tmp/ja_outlier_engine_probe.log."
+    },
+    "content/neo/sql/remove-duplicate.ja.md": {
+      "primary": "content/neo/sql/remove-duplicate.en.md",
+      "companions": [
+        "content/neo/sql/remove-duplicate.kr.md"
+      ],
+      "reason": "EN complete description/catalog queries/examples/results retain all KR material. duration_in_days corrected to minutes, matching syntax and NFXstcnIndex.c minutes-to-nanoseconds conversion. Current system-clock window independently confirmed by stcTable.c8693 assigning nbp_time_now and8539 using mTimeNow minus duration; fixed2024 timestamps retain EN time-window precondition."
+    },
+    "content/dbms-8.5/tools-reference/machclusterctl-user-guide-en.ja.md": {
+      "primary": "content/dbms-8.5/tools-reference/machclusterctl-user-guide-ko.md",
+      "companions": [
+        "content/dbms-8.5/tools-reference/machclusterctl-user-guide-en.md"
+      ],
+      "reason": "Full parallel KO/EN454-line operational guide compared. Both JA variants retain identical translated content and32 executable blocks, differing only in preserved -ko/-en sibling guide links. Original plain Markdown receives required Hugo frontmatter; sample links normalized to verified shared assets."
+    },
+    "content/dbms-8.5/tools-reference/machclusterctl-user-guide-ko.ja.md": {
+      "primary": "content/dbms-8.5/tools-reference/machclusterctl-user-guide-ko.md",
+      "companions": [
+        "content/dbms-8.5/tools-reference/machclusterctl-user-guide-en.md"
+      ],
+      "reason": "Full parallel KO/EN454-line operational guide compared. Both JA variants retain identical translated content and32 executable blocks, differing only in preserved -ko/-en sibling guide links. Original plain Markdown receives required Hugo frontmatter; sample links normalized to verified shared assets."
+    },
+    "content/neo/bridges/mysql.ja.md": {
+      "primary": "content/neo/bridges/mysql.kr.md",
+      "companions": [
+        "content/neo/bridges/mysql.en.md"
+      ],
+      "structural_review": {
+        "fences": "Retain original Tengo example in explicitly obsolete collapsed section; add equivalent current-JavaScript JSON-to-record transformation before same INSERT sink. Neo fm_script.go supports JavaScript only; isolated probe validates current transformation and confirms old Tengo syntax error. No external database execution."
+      },
+      "reason": "Bilingual bridge reference retained; current executable replacement accompanies clearly labelled legacy example, preserving every source sample."
+    },
+    "content/neo/bridges/postgresql.ja.md": {
+      "primary": "content/neo/bridges/postgresql.kr.md",
+      "companions": [
+        "content/neo/bridges/postgresql.en.md"
+      ],
+      "structural_review": {
+        "fences": "Retain original Tengo example in explicitly obsolete collapsed section; add equivalent current-JavaScript JSON-to-record transformation before same INSERT sink. Neo fm_script.go supports JavaScript only; isolated probe validates current transformation and confirms old Tengo syntax error. No external database execution."
+      },
+      "reason": "Bilingual bridge reference retained; current executable replacement accompanies clearly labelled legacy example, preserving every source sample."
+    },
+    "content/neo/bridges/mssql.ja.md": {
+      "primary": "content/neo/bridges/mssql.kr.md",
+      "companions": [
+        "content/neo/bridges/mssql.en.md"
+      ],
+      "structural_review": {
+        "fences": "Retain original Tengo example in explicitly obsolete collapsed section; add equivalent current-JavaScript JSON-to-record transformation before same INSERT sink. Neo fm_script.go supports JavaScript only; isolated probe validates current transformation and confirms old Tengo syntax error. No external database execution."
+      },
+      "reason": "Bilingual bridge reference retained; current executable replacement accompanies clearly labelled legacy example, preserving every source sample."
+    },
+    "content/dbms-8.5/tools-reference/machclusterctl-yaml-guide-en.ja.md": {
+      "primary": "content/dbms-8.5/tools-reference/machclusterctl-yaml-guide-ko.md",
+      "companions": [
+        "content/dbms-8.5/tools-reference/machclusterctl-yaml-guide-en.md"
+      ],
+      "reason": "KO and EN complete configuration reference cross-checked:7 blocks and103 table rows retained; node/host/common precedence, required/fallback conditions, package origin versus registered paths and lifecycle limitations preserved. JA variants differ only in -en/-ko sibling user-guide link."
+    },
+    "content/dbms-8.5/tools-reference/machclusterctl-yaml-guide-ko.ja.md": {
+      "primary": "content/dbms-8.5/tools-reference/machclusterctl-yaml-guide-ko.md",
+      "companions": [
+        "content/dbms-8.5/tools-reference/machclusterctl-yaml-guide-en.md"
+      ],
+      "reason": "KO and EN complete configuration reference cross-checked:7 blocks and103 table rows retained; node/host/common precedence, required/fallback conditions, package origin versus registered paths and lifecycle limitations preserved. JA variants differ only in -en/-ko sibling user-guide link."
+    },
+    "content/neo/operations/metrics.ja.md": {
+      "primary": "content/neo/operations/metrics.kr.md",
+      "companions": [
+        "content/neo/operations/metrics.en.md"
+      ],
+      "reason": "Full parallel53-metric reference retained. recv_pkts/send_pkts represent all MQTT packets, verified current svrmetric.go206–210. Existing named session metrics verified against locally cached Neo v8.0.74/api implementation: conn:wait_time measured by AllocConn(time.Since(waitTime)) after slot wait+EngConnect; hwm:exec_time uses QueryMeter.Execute, not only preparation. Beta warning retained; no claim all legacy keys are supplied by every future release."
+    },
+    "content/neo/operations/command-line.ja.md": {
+      "primary": "content/neo/operations/command-line.kr.md",
+      "companions": [
+        "content/neo/operations/command-line.en.md"
+      ],
+      "reason": "Independent full KR/JA command/configuration reference comparison and parallel EN structural/code coverage check; flags, defaults, HCL technical keys, authentication precedence and security notes retained. Korean hand-authored help descriptions translated; raw English CLI output preserved."
+    },
+    "content/neo/operations/server-config.ja.md": {
+      "primary": "content/neo/operations/server-config.kr.md",
+      "companions": [
+        "content/neo/operations/server-config.en.md"
+      ],
+      "reason": "Independent full KR/JA command/configuration reference comparison and parallel EN structural/code coverage check; flags, defaults, HCL technical keys, authentication precedence and security notes retained. Korean hand-authored help descriptions translated; raw English CLI output preserved."
+    },
+    "content/dbms-8.5/troubleshooting/error-code.ja.md": {
+      "primary": "content/dbms-8.5/troubleshooting/error-code.kr.md",
+      "companions": [
+        "content/dbms-8.5/troubleshooting/error-code.en.md"
+      ],
+      "reason": "Independent complete857-row KR description/EN server-message/JA meaning review; code/message columns are exact.50 per-code description corrections recorded in /tmp/ja85-error-review-overrides.json address busy-vs-shortage, divisor-vs-multiple, JOIN-vs-JSON, status-vs-action, scope/required-value reversals and stale retention units, preserving every original server message. Retention validation corroborated8.5-backport qpvRetention.c."
+    },
+    "content/neo/tql/writing.ja.md": {
+      "primary": "content/neo/tql/writing.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/writing.en.md"
+      ]
+    },
+    "content/neo/tql/sink.ja.md": {
+      "primary": "content/neo/tql/sink.en.md",
+      "companions": [
+        "content/neo/tql/sink.kr.md"
+      ],
+      "integration": true,
+      "reason": "Full English SINK includes active CHART and complete deprecated documentation absent in Korean; independent manager verified all active Korean options, precedence and examples. Deprecated section remains hidden; three source result errors were runtime-confirmed and corrected.",
+      "structural_review": {
+        "shortcodes": "Original deprecated HTML comment contains diagram --> tokens that terminate the comment early; Japanese preserves every deprecated example but escapes those inner tokens so only the intended final terminator closes the comment. Active CHART and all active options remain present."
+      }
+    },
+    "content/neo/tql/html.ja.md": {
+      "primary": "content/neo/tql/html.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/html.en.md"
+      ]
+    },
+    "content/neo/tql/http.ja.md": {
+      "primary": "content/neo/tql/http.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/http.en.md"
+      ]
+    },
+    "content/neo/tql/filters.ja.md": {
+      "primary": "content/neo/tql/filters.kr.md",
+      "reason": "Korean narrative retained; independent manager restored the valid English cumulative-average MAPVALUE plus MAP_AVG example, replacing the Korean unregistered MOVAVG call and missing input value. Other examples are identical except translated comments.",
+      "companions": [
+        "content/neo/tql/filters.en.md"
+      ]
+    },
+    "content/neo/tql/chart/_index.ja.md": {
+      "primary": "content/neo/tql/chart/_index.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/_index.en.md"
+      ]
+    },
+    "content/neo/tql/chart/embed_in_html.ja.md": {
+      "primary": "content/neo/tql/chart/embed_in_html.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/embed_in_html.en.md"
+      ]
+    },
+    "content/neo/tql/geomap/embed_in_html.ja.md": {
+      "primary": "content/neo/tql/geomap/embed_in_html.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/geomap/embed_in_html.en.md"
+      ]
+    },
+    "content/neo/tql/chart/geojson/_index.ja.md": {
+      "primary": "content/neo/tql/chart/geojson/_index.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/geojson/_index.en.md"
+      ]
+    },
+    "content/neo/tql/chart/geojson/seoul_gu.ja.md": {
+      "primary": "content/neo/tql/chart/geojson/seoul_gu.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/geojson/seoul_gu.en.md"
+      ]
+    },
+    "content/neo/tql/chart/scatter/basic_scatter.ja.md": {
+      "primary": "content/neo/tql/chart/scatter/basic_scatter.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/scatter/basic_scatter.en.md"
+      ]
+    },
+    "content/neo/tql/chart/scatter/_index.ja.md": {
+      "primary": "content/neo/tql/chart/scatter/_index.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/scatter/_index.en.md"
+      ]
+    },
+    "content/neo/tql/chart/scatter/million_points.ja.md": {
+      "primary": "content/neo/tql/chart/scatter/million_points.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/scatter/million_points.en.md"
+      ]
+    },
+    "content/neo/tql/chart/scatter/anscombe_quartet.ja.md": {
+      "primary": "content/neo/tql/chart/scatter/anscombe_quartet.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/scatter/anscombe_quartet.en.md"
+      ]
+    },
+    "content/neo/tql/chart/heatmap/_index.ja.md": {
+      "primary": "content/neo/tql/chart/heatmap/_index.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/heatmap/_index.en.md"
+      ]
+    },
+    "content/neo/tql/chart/heatmap/heatmap.ja.md": {
+      "primary": "content/neo/tql/chart/heatmap/heatmap.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/heatmap/heatmap.en.md"
+      ]
+    },
+    "content/neo/tql/chart/heatmap/heatmap_calendar.ja.md": {
+      "primary": "content/neo/tql/chart/heatmap/heatmap_calendar.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/heatmap/heatmap_calendar.en.md"
+      ]
+    },
+    "content/neo/tql/chart/heatmap/heatmap_discrete.ja.md": {
+      "primary": "content/neo/tql/chart/heatmap/heatmap_discrete.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/heatmap/heatmap_discrete.en.md"
+      ]
+    },
+    "content/neo/tql/chart/boxplot/_index.ja.md": {
+      "primary": "content/neo/tql/chart/boxplot/_index.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/boxplot/_index.en.md"
+      ]
+    },
+    "content/neo/tql/chart/boxplot/iris-sepal-length.ja.md": {
+      "primary": "content/neo/tql/chart/boxplot/iris-sepal-length.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/boxplot/iris-sepal-length.en.md"
+      ]
+    },
+    "content/neo/tql/chart/boxplot/michelson-morley.ja.md": {
+      "primary": "content/neo/tql/chart/boxplot/michelson-morley.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/boxplot/michelson-morley.en.md"
+      ]
+    },
+    "content/neo/tql/chart/bar/tangential_polar_bar.ja.md": {
+      "primary": "content/neo/tql/chart/bar/tangential_polar_bar.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/bar/tangential_polar_bar.en.md"
+      ]
+    },
+    "content/neo/tql/chart/bar/_index.ja.md": {
+      "primary": "content/neo/tql/chart/bar/_index.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/bar/_index.en.md"
+      ]
+    },
+    "content/neo/tql/chart/bar/bar_negative.ja.md": {
+      "primary": "content/neo/tql/chart/bar/bar_negative.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/bar/bar_negative.en.md"
+      ]
+    },
+    "content/neo/tql/chart/bar/basic_bar.ja.md": {
+      "primary": "content/neo/tql/chart/bar/basic_bar.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/bar/basic_bar.en.md"
+      ]
+    },
+    "content/neo/tql/chart/bar/bar_category.ja.md": {
+      "primary": "content/neo/tql/chart/bar/bar_category.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/bar/bar_category.en.md"
+      ]
+    },
+    "content/neo/tql/chart/bar/bar_stacked_normalize.ja.md": {
+      "primary": "content/neo/tql/chart/bar/bar_stacked_normalize.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/bar/bar_stacked_normalize.en.md"
+      ]
+    },
+    "content/neo/tql/chart/bar/bar_race.ja.md": {
+      "primary": "content/neo/tql/chart/bar/bar_race.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/bar/bar_race.en.md"
+      ]
+    },
+    "content/neo/tql/chart/bar/bar_largescale.ja.md": {
+      "primary": "content/neo/tql/chart/bar/bar_largescale.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/bar/bar_largescale.en.md"
+      ]
+    },
+    "content/neo/tql/chart/candlestick/_index.ja.md": {
+      "primary": "content/neo/tql/chart/candlestick/_index.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/candlestick/_index.en.md"
+      ]
+    },
+    "content/neo/tql/chart/candlestick/candlestick_marketindex.ja.md": {
+      "primary": "content/neo/tql/chart/candlestick/candlestick_marketindex.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/candlestick/candlestick_marketindex.en.md"
+      ]
+    },
+    "content/neo/tql/chart/candlestick/stock_dji.ja.md": {
+      "primary": "content/neo/tql/chart/candlestick/stock_dji.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/candlestick/stock_dji.en.md"
+      ]
+    },
+    "content/neo/tql/chart/candlestick/basic_candlestick.ja.md": {
+      "primary": "content/neo/tql/chart/candlestick/basic_candlestick.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/candlestick/basic_candlestick.en.md"
+      ]
+    },
+    "content/neo/tql/chart/line3d/_index.ja.md": {
+      "primary": "content/neo/tql/chart/line3d/_index.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/line3d/_index.en.md"
+      ]
+    },
+    "content/neo/tql/chart/line3d/line3d-othographic.ja.md": {
+      "primary": "content/neo/tql/chart/line3d/line3d-othographic.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/line3d/line3d-othographic.en.md"
+      ]
+    },
+    "content/neo/tql/chart/pie/_index.ja.md": {
+      "primary": "content/neo/tql/chart/pie/_index.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/pie/_index.en.md"
+      ]
+    },
+    "content/neo/tql/chart/pie/nightingale.ja.md": {
+      "primary": "content/neo/tql/chart/pie/nightingale.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/pie/nightingale.en.md"
+      ]
+    },
+    "content/neo/tql/chart/pie/basic_pie.ja.md": {
+      "primary": "content/neo/tql/chart/pie/basic_pie.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/pie/basic_pie.en.md"
+      ]
+    },
+    "content/neo/tql/chart/pie/doughnut.ja.md": {
+      "primary": "content/neo/tql/chart/pie/doughnut.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/pie/doughnut.en.md"
+      ]
+    },
+    "content/neo/tql/chart/line/step_line.ja.md": {
+      "primary": "content/neo/tql/chart/line/step_line.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/line/step_line.en.md"
+      ]
+    },
+    "content/neo/tql/chart/line/multiple_y_axes.ja.md": {
+      "primary": "content/neo/tql/chart/line/multiple_y_axes.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/line/multiple_y_axes.en.md"
+      ]
+    },
+    "content/neo/tql/chart/line/_index.ja.md": {
+      "primary": "content/neo/tql/chart/line/_index.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/line/_index.en.md"
+      ]
+    },
+    "content/neo/tql/chart/line/large_area.ja.md": {
+      "primary": "content/neo/tql/chart/line/large_area.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/line/large_area.en.md"
+      ]
+    },
+    "content/neo/tql/chart/line/multiple_x_axes.ja.md": {
+      "primary": "content/neo/tql/chart/line/multiple_x_axes.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/line/multiple_x_axes.en.md"
+      ]
+    },
+    "content/neo/tql/chart/line/stacked_line.ja.md": {
+      "primary": "content/neo/tql/chart/line/stacked_line.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/line/stacked_line.en.md"
+      ]
+    },
+    "content/neo/tql/chart/line/stacked_area.ja.md": {
+      "primary": "content/neo/tql/chart/line/stacked_area.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/line/stacked_area.en.md"
+      ]
+    },
+    "content/neo/tql/chart/line/cartesian_coord.ja.md": {
+      "primary": "content/neo/tql/chart/line/cartesian_coord.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/line/cartesian_coord.en.md"
+      ]
+    },
+    "content/neo/tql/chart/line/line_datatransform.ja.md": {
+      "primary": "content/neo/tql/chart/line/line_datatransform.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/line/line_datatransform.en.md"
+      ]
+    },
+    "content/neo/tql/chart/line/basic_line.ja.md": {
+      "primary": "content/neo/tql/chart/line/basic_line.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/line/basic_line.en.md"
+      ]
+    },
+    "content/neo/tql/chart/line/area_pieces.ja.md": {
+      "primary": "content/neo/tql/chart/line/area_pieces.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/line/area_pieces.en.md"
+      ]
+    },
+    "content/neo/tql/chart/line/line_airpassengers.ja.md": {
+      "primary": "content/neo/tql/chart/line/line_airpassengers.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/line/line_airpassengers.en.md"
+      ]
+    },
+    "content/neo/tql/chart/line/basic_mix.ja.md": {
+      "primary": "content/neo/tql/chart/line/basic_mix.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/line/basic_mix.en.md"
+      ]
+    },
+    "content/neo/tql/chart/line/basic_area.ja.md": {
+      "primary": "content/neo/tql/chart/line/basic_area.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/line/basic_area.en.md"
+      ]
+    },
+    "content/neo/tql/chart/radar/_index.ja.md": {
+      "primary": "content/neo/tql/chart/radar/_index.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/radar/_index.en.md"
+      ]
+    },
+    "content/neo/tql/chart/radar/radar_custom.ja.md": {
+      "primary": "content/neo/tql/chart/radar/radar_custom.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/radar/radar_custom.en.md"
+      ]
+    },
+    "content/neo/tql/chart/radar/basic_radar.ja.md": {
+      "primary": "content/neo/tql/chart/radar/basic_radar.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/radar/basic_radar.en.md"
+      ]
+    },
+    "content/neo/tql/chart/liquidfill/_index.ja.md": {
+      "primary": "content/neo/tql/chart/liquidfill/_index.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/liquidfill/_index.en.md"
+      ]
+    },
+    "content/neo/tql/chart/liquidfill/liquidfill_still.ja.md": {
+      "primary": "content/neo/tql/chart/liquidfill/liquidfill_still.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/liquidfill/liquidfill_still.en.md"
+      ]
+    },
+    "content/neo/tql/chart/liquidfill/liquidfill.ja.md": {
+      "primary": "content/neo/tql/chart/liquidfill/liquidfill.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/liquidfill/liquidfill.en.md"
+      ]
+    },
+    "content/neo/tql/chart/liquidfill/liquidfill_multiple.ja.md": {
+      "primary": "content/neo/tql/chart/liquidfill/liquidfill_multiple.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/liquidfill/liquidfill_multiple.en.md"
+      ]
+    },
+    "content/neo/tql/chart/gauge/_index.ja.md": {
+      "primary": "content/neo/tql/chart/gauge/_index.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/gauge/_index.en.md"
+      ]
+    },
+    "content/neo/tql/chart/gauge/gauge_update.ja.md": {
+      "primary": "content/neo/tql/chart/gauge/gauge_update.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/gauge/gauge_update.en.md"
+      ]
+    },
+    "content/neo/tql/chart/gauge/basic_gauge.ja.md": {
+      "primary": "content/neo/tql/chart/gauge/basic_gauge.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/gauge/basic_gauge.en.md"
+      ]
+    },
+    "content/neo/tql/chart/gauge/gauge.ja.md": {
+      "primary": "content/neo/tql/chart/gauge/gauge.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/gauge/gauge.en.md"
+      ]
+    },
+    "content/neo/tql/chart/globe/_index.ja.md": {
+      "primary": "content/neo/tql/chart/globe/_index.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/globe/_index.en.md"
+      ]
+    },
+    "content/neo/tql/chart/globe/airline.ja.md": {
+      "primary": "content/neo/tql/chart/globe/airline.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/globe/airline.en.md"
+      ]
+    },
+    "content/neo/tql/chart/globe/hello-world.ja.md": {
+      "primary": "content/neo/tql/chart/globe/hello-world.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/globe/hello-world.en.md"
+      ]
+    },
+    "content/neo/tql/chart/bar3d/_index.ja.md": {
+      "primary": "content/neo/tql/chart/bar3d/_index.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/bar3d/_index.en.md"
+      ]
+    },
+    "content/neo/tql/chart/bar3d/bar3d-dataset.ja.md": {
+      "primary": "content/neo/tql/chart/bar3d/bar3d-dataset.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/bar3d/bar3d-dataset.en.md"
+      ]
+    },
+    "content/neo/tql/chart/bar3d/bar3d-stacked.ja.md": {
+      "primary": "content/neo/tql/chart/bar3d/bar3d-stacked.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/bar3d/bar3d-stacked.en.md"
+      ]
+    },
+    "content/neo/tql/chart/bar3d/bar3d-transparent.ja.md": {
+      "primary": "content/neo/tql/chart/bar3d/bar3d-transparent.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/bar3d/bar3d-transparent.en.md"
+      ]
+    },
+    "content/neo/tql/chart/others/_index.ja.md": {
+      "primary": "content/neo/tql/chart/others/_index.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/others/_index.en.md"
+      ]
+    },
+    "content/neo/tql/chart/others/sankey.ja.md": {
+      "primary": "content/neo/tql/chart/others/sankey.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/others/sankey.en.md"
+      ]
+    },
+    "content/neo/tql/chart/others/geo_svg_lines.ja.md": {
+      "primary": "content/neo/tql/chart/others/geo_svg_lines.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/others/geo_svg_lines.en.md"
+      ]
+    },
+    "content/neo/tql/chart/others/wordcloud.ja.md": {
+      "primary": "content/neo/tql/chart/others/wordcloud.kr.md",
+      "reason": "Independent TQL manager compared Korean and English counterparts, preserving source function contracts, example programs and localized presentation.",
+      "companions": [
+        "content/neo/tql/chart/others/wordcloud.en.md"
+      ]
+    },
+    "content/dbms-8.5/advanced-features/_index.ja.md": {
+      "primary": "content/dbms-8.5/advanced-features/_index.kr.md",
+      "companions": [
+        "content/dbms-8.5/advanced-features/_index.en.md"
+      ],
+      "reason": "Independent full Korean/Japanese prose and technical comparison with parallel English source; KR-only edition/privilege notes retained, commands preserved, explanatory comments localized. Shared8.5 resources and legacy-version contracts preserved."
+    },
+    "content/dbms-8.5/advanced-features/backup-restore.ja.md": {
+      "primary": "content/dbms-8.5/advanced-features/backup-restore.kr.md",
+      "companions": [
+        "content/dbms-8.5/advanced-features/backup-restore.en.md"
+      ],
+      "reason": "Independent full Korean/Japanese prose and technical comparison with parallel English source; KR-only edition/privilege notes retained, commands preserved, explanatory comments localized. Shared8.5 resources and legacy-version contracts preserved."
+    },
+    "content/dbms-8.5/advanced-features/create-delete.ja.md": {
+      "primary": "content/dbms-8.5/advanced-features/create-delete.kr.md",
+      "companions": [
+        "content/dbms-8.5/advanced-features/create-delete.en.md"
+      ],
+      "reason": "Independent full Korean/Japanese prose and technical comparison with parallel English source; KR-only edition/privilege notes retained, commands preserved, explanatory comments localized. Shared8.5 resources and legacy-version contracts preserved."
+    },
+    "content/dbms-8.5/advanced-features/database-mount.ja.md": {
+      "primary": "content/dbms-8.5/advanced-features/database-mount.kr.md",
+      "companions": [
+        "content/dbms-8.5/advanced-features/database-mount.en.md"
+      ],
+      "reason": "Independent full Korean/Japanese prose and technical comparison with parallel English source; KR-only edition/privilege notes retained, commands preserved, explanatory comments localized. Shared8.5 resources and legacy-version contracts preserved."
+    },
+    "content/dbms-8.5/advanced-features/overview.ja.md": {
+      "primary": "content/dbms-8.5/advanced-features/overview.kr.md",
+      "companions": [
+        "content/dbms-8.5/advanced-features/overview.en.md"
+      ],
+      "reason": "Independent full Korean/Japanese prose and technical comparison with parallel English source; KR-only edition/privilege notes retained, commands preserved, explanatory comments localized. Shared8.5 resources and legacy-version contracts preserved."
+    },
+    "content/dbms-8.5/advanced-features/retention.ja.md": {
+      "primary": "content/dbms-8.5/advanced-features/retention.kr.md",
+      "companions": [
+        "content/dbms-8.5/advanced-features/retention.en.md"
+      ],
+      "reason": "Independent full Korean/Japanese prose and technical comparison with parallel English source; KR-only edition/privilege notes retained, commands preserved, explanatory comments localized. Shared8.5 resources and legacy-version contracts preserved."
+    },
+    "content/dbms-8.5/advanced-features/sample.ja.md": {
+      "primary": "content/dbms-8.5/advanced-features/sample.kr.md",
+      "companions": [
+        "content/dbms-8.5/advanced-features/sample.en.md"
+      ],
+      "reason": "Independent full Korean/Japanese prose and technical comparison with parallel English source; KR-only edition/privilege notes retained, commands preserved, explanatory comments localized. Shared8.5 resources and legacy-version contracts preserved."
+    },
+    "content/dbms-8.5/advanced-features/startup-shutdown.ja.md": {
+      "primary": "content/dbms-8.5/advanced-features/startup-shutdown.kr.md",
+      "companions": [
+        "content/dbms-8.5/advanced-features/startup-shutdown.en.md"
+      ],
+      "reason": "Independent full Korean/Japanese prose and technical comparison with parallel English source; KR-only edition/privilege notes retained, commands preserved, explanatory comments localized. Shared8.5 resources and legacy-version contracts preserved."
+    },
+    "content/dbms-8.5/installation/license.ja.md": {
+      "primary": "content/dbms-8.5/installation/license.kr.md",
+      "companions": [
+        "content/dbms-8.5/installation/license.en.md"
+      ],
+      "reason": "Independent full Korean/Japanese prose and technical comparison with parallel English source; KR-only edition/privilege notes retained, commands preserved, explanatory comments localized. Shared8.5 resources and legacy-version contracts preserved."
+    },
+    "content/dbms-8.5/installation/package.ja.md": {
+      "primary": "content/dbms-8.5/installation/package.kr.md",
+      "companions": [
+        "content/dbms-8.5/installation/package.en.md"
+      ],
+      "reason": "Independent full Korean/Japanese prose and technical comparison with parallel English source; KR-only edition/privilege notes retained, commands preserved, explanatory comments localized. Shared8.5 resources and legacy-version contracts preserved."
+    },
+    "content/dbms-8.5/installation/linux/linux-env.ja.md": {
+      "primary": "content/dbms-8.5/installation/linux/linux-env.kr.md",
+      "companions": [
+        "content/dbms-8.5/installation/linux/linux-env.en.md"
+      ],
+      "reason": "Independent full Korean/Japanese prose and technical comparison with parallel English source; KR-only edition/privilege notes retained, commands preserved, explanatory comments localized. Shared8.5 resources and legacy-version contracts preserved."
+    },
+    "content/dbms-8.5/installation/linux/tgz-install.ja.md": {
+      "primary": "content/dbms-8.5/installation/linux/tgz-install.kr.md",
+      "companions": [
+        "content/dbms-8.5/installation/linux/tgz-install.en.md"
+      ],
+      "reason": "Independent full Korean/Japanese prose and technical comparison with parallel English source; KR-only edition/privilege notes retained, commands preserved, explanatory comments localized. Shared8.5 resources and legacy-version contracts preserved."
+    },
+    "content/dbms-8.5/installation/linux/docker-install.ja.md": {
+      "primary": "content/dbms-8.5/installation/linux/docker-install.kr.md",
+      "companions": [
+        "content/dbms-8.5/installation/linux/docker-install.en.md"
+      ],
+      "reason": "Independent full Korean/Japanese prose and technical comparison with parallel English source; KR-only edition/privilege notes retained, commands preserved, explanatory comments localized. Shared8.5 resources and legacy-version contracts preserved."
+    },
+    "content/dbms-8.5/installation/windows/windows-env.ja.md": {
+      "primary": "content/dbms-8.5/installation/windows/windows-env.kr.md",
+      "companions": [
+        "content/dbms-8.5/installation/windows/windows-env.en.md"
+      ],
+      "reason": "Independent full Korean/Japanese prose and technical comparison with parallel English source; KR-only edition/privilege notes retained, commands preserved, explanatory comments localized. Shared8.5 resources and legacy-version contracts preserved."
+    },
+    "content/dbms-8.5/getting-started/_index.ja.md": {
+      "primary": "content/dbms-8.5/getting-started/_index.kr.md",
+      "companions": [
+        "content/dbms-8.5/getting-started/_index.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/dbms-8.5/getting-started/installation.ja.md": {
+      "primary": "content/dbms-8.5/getting-started/installation.kr.md",
+      "companions": [
+        "content/dbms-8.5/getting-started/installation.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/dbms-8.5/getting-started/quick-start.ja.md": {
+      "primary": "content/dbms-8.5/getting-started/quick-start.kr.md",
+      "companions": [
+        "content/dbms-8.5/getting-started/quick-start.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/neo/sql/tag-stat.ja.md": {
+      "primary": "content/neo/sql/tag-stat.en.md",
+      "companions": [
+        "content/neo/sql/tag-stat.kr.md"
+      ],
+      "integration": true,
+      "reason": "Compared KR and full EN narrative, all9 statistics fields,10 examples and three configuration cases. Independently confirmed MIN/MAX_VALUE as DOUBLE in current nfx/qp/src/qpm/qpmTagStat.c lines17/19; COUNT/time columns and SUMMARIZED requirements preserved. Removed invalid import --table/prompt syntax; source typo TAG_STAT_ENABLED and stray End Patch text not propagated."
+    },
+    "content/neo/sql/storage-size.ja.md": {
+      "primary": "content/neo/sql/storage-size.en.md",
+      "companions": [
+        "content/neo/sql/storage-size.kr.md"
+      ],
+      "integration": true,
+      "reason": "Compared KR and full EN lifecycle, one-policy-per-table constraint, dependency error,16 examples and last deletion cutoff. Independently reran the isolated generator:150000 rows across41h40m,63599 older than24h. Fixed original invalid FAKE(range), SQL-style TQL comments and future timestamps. Extended syntax/units to MONTH/DAY/HOUR/MIN/SEC retention and DAY/HOUR/MIN/SEC interval, directly confirmed in current NFX parse.ly1427-1481; existing example periods retained."
+    },
+    "content/neo/tag-analyzer/_index.ja.md": {
+      "primary": "content/neo/tag-analyzer/_index.kr.md",
+      "companions": [
+        "content/neo/tag-analyzer/_index.en.md"
+      ],
+      "integration": true,
+      "reason": "Compared complete KR/EN UI narrative and tables, TAG-only/rollup prerequisites, dashboard row layout, RAW/STAT, overlap single-series constraint, FFT, settings and axes. EN-only slider12.5/25/50-percent controls, extra figure and Apply/Ok/Cancel details retained. UI labels remain literal labels, explanatory prose translated; opacity correctly rendered as opacity.",
+      "structural_review": {
+        "shortcodes": "Korean base plus English-only slider-control description and taz_chart_slidebar.jpg figure retained; all source image filenames and sizes inspected."
+      }
+    },
+    "content/neo/dashboard/_index.ja.md": {
+      "primary": "content/neo/dashboard/_index.kr.md",
+      "companions": [
+        "content/neo/dashboard/_index.en.md"
+      ],
+      "integration": true,
+      "reason": "Compared full KR/EN panel/layout/control instructions, variables, query/transform precedence, chart-only TQL sink, time units and all chart-specific option tables through Geomap. EN-only Save to tql DATA/CHART/Block workflow and image retained. Source screenshot names/dimensions and function/variable tokens preserved, UI label literals distinguished from Japanese descriptions.",
+      "structural_review": {
+        "shortcodes": "Full Korean dashboard retained and English-only Save to tql section adds its actual save2tql.jpg figure; compared both source figure lists and technical attributes."
+      }
+    },
+    "content/neo/import-export/_index.ja.md": {
+      "primary": "content/neo/import-export/_index.kr.md",
+      "companions": [
+        "content/neo/import-export/_index.en.md"
+      ],
+      "integration": true,
+      "reason": "Compared all41 source examples, CSV/gzip/stdin/mount routing, export piping, remote options, insert/append, TQL JSON/text and bridge workflows. Independently reran isolated transformations:110/211/152 and123.456/234.567/345.678. Verified corrections gzip filename/flag, STRING versus BYTES, obj.array path and numeric parseFloat; output3 and cumulative6 match generated rows. Database writes and external bridge connections were not executed in isolated probe."
+    },
+    "content/dbms-8.5/getting-started/first-steps.ja.md": {
+      "primary": "content/dbms-8.5/getting-started/first-steps.kr.md",
+      "companions": [
+        "content/dbms-8.5/getting-started/first-steps.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/dbms-8.5/getting-started/concepts.ja.md": {
+      "primary": "content/dbms-8.5/getting-started/concepts.kr.md",
+      "companions": [
+        "content/dbms-8.5/getting-started/concepts.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/neo/sdk-go/_index.ja.md": {
+      "primary": "content/neo/sdk-go/_index.kr.md",
+      "companions": [
+        "content/neo/sdk-go/_index.en.md"
+      ],
+      "integration": true,
+      "reason": "Independently compared KR/EN/JA Go SDK narrative, prerequisites, connection configuration, TLS where applicable, query/Exec/Appender resource rules, defaults and limits. All source code examples match a KR or EN counterpart after removing comments/whitespace; no executable changes. Draft=true is preserved, not published as a new supported SDK. machgo batching thresholds512 rows/512KB/5ms and limits1/4KB/1ms,1.5 concurrency factors and1000 fetch rows; SQL driver transaction/named/bool limitations and CGo/gRPC requirements retained where applicable."
+    },
+    "content/neo/sdk-go/machgo.ja.md": {
+      "primary": "content/neo/sdk-go/machgo.kr.md",
+      "companions": [
+        "content/neo/sdk-go/machgo.en.md"
+      ],
+      "integration": true,
+      "reason": "Independently compared KR/EN/JA Go SDK narrative, prerequisites, connection configuration, TLS where applicable, query/Exec/Appender resource rules, defaults and limits. All source code examples match a KR or EN counterpart after removing comments/whitespace; no executable changes. Draft=true is preserved, not published as a new supported SDK. machgo batching thresholds512 rows/512KB/5ms and limits1/4KB/1ms,1.5 concurrency factors and1000 fetch rows; SQL driver transaction/named/bool limitations and CGo/gRPC requirements retained where applicable."
+    },
+    "content/neo/sdk-go/machcli.ja.md": {
+      "primary": "content/neo/sdk-go/machcli.kr.md",
+      "companions": [
+        "content/neo/sdk-go/machcli.en.md"
+      ],
+      "integration": true,
+      "reason": "Independently compared KR/EN/JA Go SDK narrative, prerequisites, connection configuration, TLS where applicable, query/Exec/Appender resource rules, defaults and limits. All source code examples match a KR or EN counterpart after removing comments/whitespace; no executable changes. Draft=true is preserved, not published as a new supported SDK. machgo batching thresholds512 rows/512KB/5ms and limits1/4KB/1ms,1.5 concurrency factors and1000 fetch rows; SQL driver transaction/named/bool limitations and CGo/gRPC requirements retained where applicable."
+    },
+    "content/neo/sdk-go/sqldriver.ja.md": {
+      "primary": "content/neo/sdk-go/sqldriver.kr.md",
+      "companions": [
+        "content/neo/sdk-go/sqldriver.en.md"
+      ],
+      "integration": true,
+      "reason": "Independently compared KR/EN/JA Go SDK narrative, prerequisites, connection configuration, TLS where applicable, query/Exec/Appender resource rules, defaults and limits. All source code examples match a KR or EN counterpart after removing comments/whitespace; no executable changes. Draft=true is preserved, not published as a new supported SDK. machgo batching thresholds512 rows/512KB/5ms and limits1/4KB/1ms,1.5 concurrency factors and1000 fetch rows; SQL driver transaction/named/bool limitations and CGo/gRPC requirements retained where applicable."
+    },
+    "content/neo/sdk-go/machrpc.ja.md": {
+      "primary": "content/neo/sdk-go/machrpc.kr.md",
+      "companions": [
+        "content/neo/sdk-go/machrpc.en.md"
+      ],
+      "integration": true,
+      "reason": "Independently compared KR/EN/JA Go SDK narrative, prerequisites, connection configuration, TLS where applicable, query/Exec/Appender resource rules, defaults and limits. All source code examples match a KR or EN counterpart after removing comments/whitespace; no executable changes. Draft=true is preserved, not published as a new supported SDK. machgo batching thresholds512 rows/512KB/5ms and limits1/4KB/1ms,1.5 concurrency factors and1000 fetch rows; SQL driver transaction/named/bool limitations and CGo/gRPC requirements retained where applicable."
+    },
+    "content/neo/jsh/modules/psutil.ja.md": {
+      "primary": "content/neo/jsh/modules/psutil.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/psutil.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified13 host/CPU/memory/disk/network API descriptions and second-based uptime/boot epochs,1/5/15-minute load periods. Kept KR network examples where EN has empty fences and preserved draft state. Independently read KR/JA prose and cross-checked EN source/example differences."
+    },
+    "content/neo/jsh/modules/semver.ja.md": {
+      "primary": "content/neo/jsh/modules/semver.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/semver.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified satisfies/maxSatisfying/compare, empty/latest wildcard, malformed candidate skipping versus invalid scalar errors, trim rules and -1/0/1 ordering. All5 executable examples unchanged. Independently read KR/JA prose and cross-checked EN source/example differences."
+    },
+    "content/neo/jsh/modules/util/_index.ja.md": {
+      "primary": "content/neo/jsh/modules/util/_index.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/util/_index.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified parseArgs versus quote-aware splitFields responsibilities and direct require paths; retained module navigation and example. Independently read KR/JA prose and cross-checked EN source/example differences."
+    },
+    "content/neo/jsh/modules/util/splitFields.ja.md": {
+      "primary": "content/neo/jsh/modules/util/splitFields.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/util/splitFields.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified all6 quoted/whitespace examples and string-only TypeError, unused options, empty field omission, unmatched-quote behavior and literal escapes. Independently read KR/JA prose and cross-checked EN source/example differences."
+    },
+    "content/neo/jsh/modules/archive/_index.ja.md": {
+      "primary": "content/neo/jsh/modules/archive/_index.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/archive/_index.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified TAR/ZIP choice, in-memory/callback/stream/file APIs and tar directory/link metadata distinctions. Independently read KR/JA prose and cross-checked EN source/example differences."
+    },
+    "content/neo/jsh/modules/mathx/mat.ja.md": {
+      "primary": "content/neo/jsh/modules/mathx/mat.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/mathx/mat.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified Dense and VecDense dimensions/index operations, elementwise versus matrix multiplication, solves/scaling and QR orthogonal/upper-triangular factorization. All16 source examples preserved. Independently read KR/JA prose and cross-checked EN source/example differences."
+    },
+    "content/neo/jsh/modules/mathx/simplex.ja.md": {
+      "primary": "content/neo/jsh/modules/mathx/simplex.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/mathx/simplex.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified deterministic seeded noise and1–4 dimensional arguments; all3 examples retained. Independently read KR/JA prose and cross-checked EN source/example differences."
+    },
+    "content/neo/jsh/modules/mathx/spatial.ja.md": {
+      "primary": "content/neo/jsh/modules/mathx/spatial.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/mathx/spatial.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified great-circle/haversine latitude/longitude description and example; normalized Japanese term to ハバーサイン for consistency. Independently read KR/JA prose and cross-checked EN source/example differences."
+    },
+    "content/neo/jsh/modules/mathx/filter.ja.md": {
+      "primary": "content/neo/jsh/modules/mathx/filter.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/mathx/filter.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified Avg/MovAvg/Lowpass/Kalman/smoother distinctions and6 examples. KR extra semicolons are equivalent to EN; only omitted-output comments localized. Independently read KR/JA prose and cross-checked EN source/example differences."
+    },
+    "content/dbms-8.5/core-concepts/_index.ja.md": {
+      "primary": "content/dbms-8.5/core-concepts/_index.kr.md",
+      "companions": [
+        "content/dbms-8.5/core-concepts/_index.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/dbms-8.5/core-concepts/time-series-data.ja.md": {
+      "primary": "content/dbms-8.5/core-concepts/time-series-data.kr.md",
+      "companions": [
+        "content/dbms-8.5/core-concepts/time-series-data.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/neo/_index.ja.md": {
+      "primary": "content/neo/_index.kr.md",
+      "companions": [
+        "content/neo/_index.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified complete KR/EN product introduction, Physical AI wording, SQL/HTTP/MQTTv3.1.1/v5/SSH/Web capabilities, all bridge names including NATS, download buttons/shortcodes and figures. No feature or platform omitted. Compared both language sources and Japanese technical prose directly."
+    },
+    "content/neo/security/_index.ja.md": {
+      "primary": "content/neo/security/_index.kr.md",
+      "companions": [
+        "content/neo/security/_index.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified all authentication distinctions: HTTP Bearer, MQTT username token, TLS ignoring MQTT username/password, X.509 files and client-id. Fixed three invalid single-quoted date-substitution payloads and independently checked resulting JSON offline; no MQTT messages sent. Corrected --insecure to hostname-verification semantics using installed mosquitto_pub --help, not the inaccurate source self-signed necessity claim. Compared both language sources and Japanese technical prose directly."
+    },
+    "content/neo/releases/roadmap.ja.md": {
+      "primary": "content/neo/releases/roadmap.kr.md",
+      "companions": [
+        "content/neo/releases/roadmap.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified historical quarter milestones, checked/planned states and five diagrams. Preserved draft=true/toc=false; translated display-only Mermaid labels without changing node IDs/protocol directions. Compared both language sources and Japanese technical prose directly."
+    },
+    "content/neo/timer/_index.ja.md": {
+      "primary": "content/neo/timer/_index.kr.md",
+      "companions": [
+        "content/neo/timer/_index.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified6-field cron bounds/operators, standard yearly/monthly/weekly/daily/hourly expressions, duration syntax, autostart versus explicit start/stop/delete and5-second example. Localized remaining explanatory schedule text and source table labels; command identifiers unchanged. Compared both language sources and Japanese technical prose directly."
+    },
+    "content/neo/sql/_index.ja.md": {
+      "primary": "content/neo/sql/_index.kr.md",
+      "companions": [
+        "content/neo/sql/_index.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified editor steps, DDL/INSERT/SELECT/DELETE/DROP examples, named env arguments/reset and non-SQL SHOW/DESC/TAGS commands. Source full examples retained and external DBMS link localized. Compared both language sources and Japanese technical prose directly."
+    },
+    "content/neo/options/timeformat.ja.md": {
+      "primary": "content/neo/options/timeformat.kr.md",
+      "companions": [
+        "content/neo/options/timeformat.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified all predefined format strings, case-insensitivity, decimal versus zero-padding forms and epoch ns/us/ms/s string variants. Confirmed three RFC3339 prose corrections match actual neighboring request examples;17 example blocks preserved. Compared both language sources and Japanese technical prose directly."
+    },
+    "content/dbms-8.5/configuration/property.ja.md": {
+      "primary": "content/dbms-8.5/configuration/property.en.md",
+      "companions": [
+        "content/dbms-8.5/configuration/property.kr.md"
+      ],
+      "integration": true,
+      "reason": "EN HTML-table structure retained with KR LIN_HASH_BIT_SIZE verificationSQL heading and BIND_IP_ADDRESS default/all-interface semantics restored.532 HTMLcells and91 namedproperty numeric bounds/defaults compared across languages. DURATION_BEGIN/GAP interval direction corrected from qpvDefaultDurationCheck;5.7 inclusive TAGDATA_AUTO_META_INSERT default1 verified git5.7.42/5.7.45 pmuConf.c."
+    },
+    "content/neo/jsh/_index.ja.md": {
+      "primary": "content/neo/jsh/_index.kr.md",
+      "companions": [
+        "content/neo/jsh/_index.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified beta/version notice, application recognition, pipe/redirection precedence/restrictions, virtual mounts, -C inline and @script execution, database example and TQL-only $ context. Eight examples preserved apart from Japanese comments. KR/EN/JA prose and concrete code differences independently reviewed."
+    },
+    "content/neo/jsh/global.ja.md": {
+      "primary": "content/neo/jsh/global.kr.md",
+      "companions": [
+        "content/neo/jsh/global.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified timers in milliseconds, cancellation handles/no-op cases, event-loop immediates and console levels versus print/println/printf output behavior.15 examples match source. KR/EN/JA prose and concrete code differences independently reviewed."
+    },
+    "content/neo/jsh/modules/events.ja.md": {
+      "primary": "content/neo/jsh/modules/events.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/events.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified listener registration/type checks/once/removal aliases, emit Boolean/error forwarding, shallow copies,10-listener warning threshold without registration blocking and non-drop-in limitation.16 examples preserved. KR/EN/JA prose and concrete code differences independently reviewed."
+    },
+    "content/neo/jsh/modules/parser.ja.md": {
+      "primary": "content/neo/jsh/modules/parser.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/parser.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified CSV/NDJSON option/default tables, headers true/false/array, extra _N fields, strict default differences, warnings/data/error/end events, byte counters, blank-line/CRLF/trim behavior.8 examples retained; warning data clarified as trimmed consistent with source parser flow. KR/EN/JA prose and concrete code differences independently reviewed."
+    },
+    "content/neo/jsh/modules/fs.ja.md": {
+      "primary": "content/neo/jsh/modules/fs.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/fs.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified all synchronous file API methods, modes/flags, overwrite versus append, same-mount rename, recursive copies/removals, force behavior, stat/lstat equivalence, Windows no-op ownership changes, fdatasync alias and Sync aliases.46 source examples preserved. KR/EN/JA prose and concrete code differences independently reviewed."
+    },
+    "content/neo/jsh/modules/mathx/_index.ja.md": {
+      "primary": "content/neo/jsh/modules/mathx/_index.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/mathx/_index.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified all40 examples and full English-only descriptive details with Korean contracts, oscillator options/time units/noise, zip lengths, FFT shapes, sorted weighted distributions, statistical formulas and result objects. Kept KR corrected cdf call. Corrected median even-count average claim to empirical50% quantile using mathx.go78/stat.Quantile and independently passing TestMedian/TestMedianInterp; source sample data unchanged. KR/EN/JA prose and concrete code differences independently reviewed."
+    },
+    "content/dbms-8.5/core-concepts/indexing.ja.md": {
+      "primary": "content/dbms-8.5/core-concepts/indexing.kr.md",
+      "companions": [
+        "content/dbms-8.5/core-concepts/indexing.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/dbms-8.5/core-concepts/table-types-overview.ja.md": {
+      "primary": "content/dbms-8.5/core-concepts/table-types-overview.kr.md",
+      "companions": [
+        "content/dbms-8.5/core-concepts/table-types-overview.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/neo/bridges/mqtt.ja.md": {
+      "primary": "content/neo/bridges/mqtt.kr.md",
+      "companions": [
+        "content/neo/bridges/mqtt.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified complete bridge connection/TLS settings, publish/subscribe directions, write descriptor syntax/defaults, QoS0/1, autostart and all source data. Retained old Tengo under explicitly unsupported details and added equivalent current JavaScript mqtt.Client example with identical five values; inspected code and isolated broker test. Localized three diagrams and remaining display-only option descriptions without altering graph IDs/protocol labels. Independently compared Korean/English/Japanese prose and example differences."
+    },
+    "content/neo/bridges/nats.ja.md": {
+      "primary": "content/neo/bridges/nats.kr.md",
+      "companions": [
+        "content/neo/bridges/nats.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified all NATS connection options including NoRandomize/NoEcho polarity and version1.2/Proto1 requirement, subscriber descriptors, gzip/timezone/header defaults, pending-message limit and ten-record Go/TQL flows. Source mistaken broker option and timeformat=2 corrected to server and s; full source content retained. Independently compared Korean/English/Japanese prose and example differences."
+    },
+    "content/neo/jsh/modules/mqtt.ja.md": {
+      "primary": "content/neo/jsh/modules/mqtt.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/mqtt.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified event-driven auto-connect, seconds versus millisecond settings, default publish QoS0/subscribe QoS1, all MQTTv5 properties, String/Uint8Array/object/array inputs, Buffer versus payloadText/correlationData output and before-open/after-close error events. All20 source examples retained. Independently compared Korean/English/Japanese prose and example differences."
+    },
+    "content/neo/jsh/modules/nats.ja.md": {
+      "primary": "content/neo/jsh/modules/nats.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/nats.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified auto-connect, all option/time units, publish JSON encoding, queue and reply subjects, topic alias, String payload and success reason codes1 for subscribed/0 for published. All15 examples retained, no protocol/data changes. Independently compared Korean/English/Japanese prose and example differences."
+    },
+    "content/dbms-8.5/configuration/property-cl.ja.md": {
+      "primary": "content/dbms-8.5/configuration/property-cl.en.md",
+      "companions": [
+        "content/dbms-8.5/configuration/property-cl.kr.md"
+      ],
+      "reason": "Full EN/KR/JA cluster property prose reviewed; EN HTML table organization retained with352cells identical except translated labels and48 namedproperty numeric definitions matched toKR. Restored KR5.6 SEND_RETRY availability and explicit목차 anchor; rawindex anchor fixes Hextra h1 omission. Disk lower-bound strict< confirmed8.5-backport ccd.c1690 against KR<= typo."
+    },
+    "content/neo/jsh/modules/stream.ja.md": {
+      "primary": "content/neo/jsh/modules/stream.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/stream.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified five stream classes, native io.Reader/io.Writer constraints, read EOF types, fixed highWaterMark16384, pipe/unpipe semantics, destroy error/close order, transform callback/push restrictions, draft retention and all eight unchanged source examples. Independently compared complete Korean/Japanese prose and English counterpart."
+    },
+    "content/neo/jsh/modules/ws.ja.md": {
+      "primary": "content/neo/jsh/modules/ws.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/ws.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified version8.5.2, URL type/readyState/message constants, event and send behavior, http.Server-backed server options, synchronous verification/protocol callbacks and explicit unsupported upgrade/noServer APIs; all twelve source examples unchanged. Independently compared complete Korean/Japanese prose and English counterpart."
+    },
+    "content/neo/jsh/modules/readline.ja.md": {
+      "primary": "content/neo/jsh/modules/readline.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/readline.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified version8.0.75, history directory/default name, primary/continuation prompts, synchronous Error return, history deduplication, close EOF, submit/line numbering and complete key bindings; all sixteen source examples unchanged. Independently compared complete Korean/Japanese prose and English counterpart."
+    },
+    "content/neo/jsh/modules/archive/tar.ja.md": {
+      "primary": "content/neo/jsh/modules/archive/tar.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/archive/tar.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified22 source examples and full sync/callback/stream/file APIs; ArrayBuffer and entry shapes, shallow copy, end-time output, overwrite/filter behavior, directory slash and TAR symlink/linkname semantics retained. Independently read Korean/Japanese prose and compared English example differences."
+    },
+    "content/neo/jsh/modules/archive/zip.ja.md": {
+      "primary": "content/neo/jsh/modules/archive/zip.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/archive/zip.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified22 source examples and full sync/callback/stream/file APIs; ArrayBuffer and entry shapes, shallow copy, end-time output, overwrite/filter behavior and explicit absence of TAR link metadata retained. Independently read Korean/Japanese prose and compared English example differences."
+    },
+    "content/neo/jsh/modules/zlib.ja.md": {
+      "primary": "content/neo/jsh/modules/zlib.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/zlib.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified16 source examples; all seven compression/decompression pairs, byte counter directions, pipe native/JS destination and end:false, only one callback per event, no Promise variant retained. Independently read Korean/Japanese prose and compared English example differences."
+    },
+    "content/neo/jsh/modules/os.ja.md": {
+      "primary": "content/neo/jsh/modules/os.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/os.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified49 source examples and all OS APIs; byte/second/millisecond units, logical/physical cores, 1/5/15 load averages, network shapes and normalized signals table plus Windows best-effort constraints retained. Independently read Korean/Japanese prose and compared English example differences."
+    },
+    "content/neo/jsh/modules/process.ja.md": {
+      "primary": "content/neo/jsh/modules/process.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/process.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified47 KR source blocks retained, fixing broken EN execString fence via correct KR structure. Full shutdown-hook reverse order/exception isolation/non-guarantees, placeholder cpu/memory zeros, signal aliases versus event names, Windows restrictions, process argument layout and all APIs retained. Independently read Korean/Japanese prose and compared English example differences."
+    },
+    "content/neo/jsh/modules/machcli.ja.md": {
+      "primary": "content/neo/jsh/modules/machcli.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/machcli.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified30 unchanged source examples and full parameter/enum descriptions;8.7 database alias, named bindings and Client/Connection transaction wrappers preserved, including only regular CREATE TABLE support and LOG/TAG MACHCLI-ERR-2362 warnings. Independently read complete Korean/Japanese prose and compared English code differences."
+    },
+    "content/neo/jsh/modules/dbus.ja.md": {
+      "primary": "content/neo/jsh/modules/dbus.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/dbus.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified25 unchanged examples and all Linux-only D-Bus APIs, required matching fields, typed arguments, unknown-prefix behavior, name-owner absent false, errors and complete schemas. Restored four accidentally translated name field identifiers in tables. Independently read complete Korean/Japanese prose and compared English code differences."
+    },
+    "content/neo/jsh/modules/pretty.ja.md": {
+      "primary": "content/neo/jsh/modules/pretty.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/pretty.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified34 source examples/outputs, all format and style defaults, null/string escaping, progress250ms/20, nanosecond durations and two-leading-unit display, terminal helpers. Independently read full Korean/Japanese prose and compared English code differences."
+    },
+    "content/neo/jsh/modules/service.ja.md": {
+      "primary": "content/neo/jsh/modules/service.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/service.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified28 unchanged examples and complete JSON-RPC API; environment versus explicit controller resolution,5000ms timeout/request lifetime, callback error channel, read/update/reload differences and all details add/update/set/delete existence semantics retained. Independently read full Korean/Japanese prose and compared English code differences."
+    },
+    "content/neo/jsh/modules/util/parseArgs.ja.md": {
+      "primary": "content/neo/jsh/modules/util/parseArgs.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/util/parseArgs.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified11 unchanged examples and all config/result fields; camel/kebab mapping, short flag character clarity, variadic-last and required errors, boolean negation, strict mode, token/positionals rules and default precedence retained. Independently read full Korean/Japanese prose and compared English code differences."
+    },
+    "content/dbms-8.5/configuration/timezone.ja.md": {
+      "primary": "content/dbms-8.5/configuration/timezone.kr.md",
+      "companions": [
+        "content/dbms-8.5/configuration/timezone.en.md"
+      ],
+      "reason": "Complete independent KR/EN/JA prose/technical comparison; comments localized, raw commands/data retained, corresponding source sections and shared8.5 asset paths preserved."
+    },
+    "content/dbms-8.5/configuration/meta-table.ja.md": {
+      "primary": "content/dbms-8.5/configuration/meta-table.kr.md",
+      "companions": [
+        "content/dbms-8.5/configuration/meta-table.en.md"
+      ],
+      "reason": "Complete independent KR/EN/JA prose/technical comparison; comments localized, raw commands/data retained, corresponding source sections and shared8.5 asset paths preserved."
+    },
+    "content/dbms-8.5/configuration/_index.ja.md": {
+      "primary": "content/dbms-8.5/configuration/_index.kr.md",
+      "companions": [
+        "content/dbms-8.5/configuration/_index.en.md"
+      ],
+      "reason": "Complete independent KR/EN/JA prose/technical comparison; comments localized, raw commands/data retained, corresponding source sections and shared8.5 asset paths preserved."
+    },
+    "content/dbms-8.5/installation/windows/msi-install.ja.md": {
+      "primary": "content/dbms-8.5/installation/windows/msi-install.kr.md",
+      "companions": [
+        "content/dbms-8.5/installation/windows/msi-install.en.md"
+      ],
+      "reason": "Complete independent KR/EN/JA prose/technical comparison; comments localized, raw commands/data retained, corresponding source sections and shared8.5 asset paths preserved."
+    },
+    "content/dbms-8.5/installation/cluster/cluster-env.ja.md": {
+      "primary": "content/dbms-8.5/installation/cluster/cluster-env.kr.md",
+      "companions": [
+        "content/dbms-8.5/installation/cluster/cluster-env.en.md"
+      ],
+      "reason": "Complete independent KR/EN/JA prose/technical comparison; comments localized, raw commands/data retained, corresponding source sections and shared8.5 asset paths preserved."
+    },
+    "content/dbms-8.5/installation/upgrade.ja.md": {
+      "primary": "content/dbms-8.5/installation/upgrade.kr.md",
+      "companions": [
+        "content/dbms-8.5/installation/upgrade.en.md"
+      ],
+      "reason": "Complete independent KR/EN/JA prose/technical comparison; comments localized, raw commands/data retained, corresponding source sections and shared8.5 asset paths preserved."
+    },
+    "content/neo/jsh/modules/vizspec.ja.md": {
+      "primary": "content/neo/jsh/modules/vizspec.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/vizspec.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified37 source examples plus full ADVN representation/annotation/time enums, every builder/adapter option and schema; TUILines first-compatible/seriesId errors versus compact blocks, ignored rows/compact,960x420/48 defaults, PNG scale precedence/dpi96/MRTG and legacy signature, nanosecond string precision and separate input/output timezones retained. Independently read complete Korean/Japanese prose and compared English code differences."
+    },
+    "content/neo/jsh/modules/opcua.ja.md": {
+      "primary": "content/neo/jsh/modules/opcua.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/opcua.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified14 source examples and all client methods/errors,100ms minimum retry, status/time fields and units, masks/enums, base64 continuation pagination/release, and10second collector/server setup. Author restored incorrectly translated type field; independently confirmed current ReadResult identifier. Independently read complete Korean/Japanese prose and compared English code differences."
+    },
+    "content/neo/jsh/modules/http.ja.md": {
+      "primary": "content/neo/jsh/modules/http.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/http.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified37 unchanged source examples, all request signatures/options/header semantics, body lifecycle,200–299 ok, server context JSON/XML options, WebSocket synchronous helper limits and complete client/server/HTML examples. Independently read full Korean/Japanese prose and compared available English code differences."
+    },
+    "content/neo/jsh/examples_draft.ja.md": {
+      "primary": "content/neo/jsh/examples_draft.kr.md",
+      "companions": [],
+      "integration": true,
+      "reason": "Verified KR-only draft full20 examples and accompanying MQTT/DB/sysmon/analysis prose, ports5656 and15second monitoring intervals preserved. Draft legacy module names retained; localized HTML display title completely. Independently read full Korean/Japanese prose and compared available English code differences."
+    },
+    "content/neo/jsh/proxy.ja.md": {
+      "primary": "content/neo/jsh/proxy.kr.md",
+      "companions": [
+        "content/neo/jsh/proxy.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified13 unchanged source examples, full prefix removal mappings, localhost/loopback/unix-only target constraint, ownership conflicts, runtime registration lifecycle, absent fallback and controller CLI behavior. Independently read full Korean/Japanese prose and compared available English code differences."
+    },
+    "content/neo/jsh/packages.ja.md": {
+      "primary": "content/neo/jsh/packages.kr.md",
+      "companions": [
+        "content/neo/jsh/packages.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified27 unchanged source examples and complete package manifests/ref resolution/wrappers/global roots/lockfile/copy behavior. Independently inspected neo-server/jsh/sbin/pkg.js: global belongs to uninstall not run, and uninstall removes lock then recreates when dependencies remain; confirmed author source corrections. Independently read full Korean/Japanese prose and compared available English code differences."
+    },
+    "content/neo/jsh/services.ja.md": {
+      "primary": "content/neo/jsh/services.kr.md",
+      "companions": [
+        "content/neo/jsh/services.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified24 unchanged source examples and full JSON-RPC service lifecycle,5000ms controller formats, config persistence/name derivation, read statuses/update versus reload, typed details upsert and scalar/array exclusion, missing/mixed config constraints. Independently read complete Korean/Japanese prose and compared English code differences."
+    },
+    "content/neo/jsh/commands.ja.md": {
+      "primary": "content/neo/jsh/commands.kr.md",
+      "companions": [
+        "content/neo/jsh/commands.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified all42 valid EN blocks retained while repairing KR missing tail closing fence; read raw KR tail-through-shell to confirm no swallowed prose lost. All filesystem flags, virtual environment semantics, controller high-water/reset, echo limitations, visualization options, wc defaults, MQTT QoS0/1/2 and NATS reply/request/timeouts retained. Independently read complete Korean/Japanese prose and compared English code differences."
+    },
+    "content/neo/tutorials/_index.ja.md": {
+      "primary": "content/neo/tutorials/_index.kr.md",
+      "companions": [
+        "content/neo/tutorials/_index.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified children_toc landing structure and weight999. Independently read complete Korean/Japanese prose and compared English example differences."
+    },
+    "content/neo/tutorials/shellscript-waves.ja.md": {
+      "primary": "content/neo/tutorials/shellscript-waves.kr.md",
+      "companions": [
+        "content/neo/tutorials/shellscript-waves.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified32 unchanged source examples and complete shell write/read/walk/query format walkthrough. Seconds-versus-nanoseconds import, UTC/TZ/epoch behavior retained; corrected source us/ms prose ordering and localized six nonidentifier time-unit row labels. Independently read complete Korean/Japanese prose and compared English example differences."
+    },
+    "content/neo/tutorials/cli-go.ja.md": {
+      "primary": "content/neo/tutorials/cli-go.kr.md",
+      "companions": [
+        "content/neo/tutorials/cli-go.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified12 unchanged source examples and complete native Go tutorial, cache/fetch tuning,1.5 factors,1000fetchrows,512KB/512rows/5ms defaults and4KB/1row/1ms minima, zero delay disabling, appender isolation/close requirements. Source selflink repaired to existing Japanese DBMS Go reference. Independently read complete Korean/Japanese prose and compared English example differences."
+    },
+    "content/neo/tutorials/http-bin.ja.md": {
+      "primary": "content/neo/tutorials/http-bin.kr.md",
+      "companions": [
+        "content/neo/tutorials/http-bin.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified all seven source blocks and nested tilde/backtick layout, INSERT JSON versus APPEND CSV,0x/0X hexadecimal versus base64 decoding, defaulthex and base64/bytes/preview outputs and exact paired sample bytes retained. Independently read complete Korean/Japanese prose and compared English example differences."
+    },
+    "content/neo/tutorials/webapp-http.ja.md": {
+      "primary": "content/neo/tutorials/webapp-http.kr.md",
+      "companions": [
+        "content/neo/tutorials/webapp-http.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified10 source blocks and complete HTML workflow,ms timestamps/content type/rows,SQL query,MARKDOWN HTML toggle,CHART and included ECharts steps and five figures. Independently read complete Korean/Japanese prose and compared English code differences."
+    },
+    "content/neo/tutorials/webapp-grid.ja.md": {
+      "primary": "content/neo/tutorials/webapp-grid.kr.md",
+      "companions": [
+        "content/neo/tutorials/webapp-grid.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified two source examples and Grid.js inclusion/JSON column-row mapping/refresh instructions and figure. Independently read complete Korean/Japanese prose and compared English code differences."
+    },
+    "content/neo/tutorials/webapp-random.ja.md": {
+      "primary": "content/neo/tutorials/webapp-random.kr.md",
+      "companions": [
+        "content/neo/tutorials/webapp-random.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified two source examples and one-second CSV write/chart timer workflow and figure. Independently read complete Korean/Japanese prose and compared English code differences."
+    },
+    "content/neo/tutorials/webapp-mermaid-gantt.ja.md": {
+      "primary": "content/neo/tutorials/webapp-mermaid-gantt.kr.md",
+      "companions": [
+        "content/neo/tutorials/webapp-mermaid-gantt.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified complete source example and FILTER_CHANGED8.0.15 first/last state edges,Mermaid rendering/load options and figure. Independently read complete Korean/Japanese prose and compared English code differences."
+    },
+    "content/neo/tutorials/mqtt-bridge-sqlite.ja.md": {
+      "primary": "content/neo/tutorials/mqtt-bridge-sqlite.kr.md",
+      "companions": [
+        "content/neo/tutorials/mqtt-bridge-sqlite.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified five source blocks, all subscriber/destination names, null payload fallback, SCRIPT MAP/DISCARD, JSON publish and bridged SQL editor steps; source UI labels retained. Independently read complete Korean/Japanese prose and compared English code differences."
+    },
+    "content/neo/tutorials/raspi-iot-server.ja.md": {
+      "primary": "content/neo/tutorials/raspi-iot-server.kr.md",
+      "companions": [
+        "content/neo/tutorials/raspi-iot-server.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified13 source blocks and complete sensor/install/network/import/query procedure and power-off instruction. Independently inspected supplied raspi4-gpio.jpg: source mislabeled physical pins2/3/6 as GPIO numbers; clarified physical pin numbers and physical3=GPIO2 without changing wiring/example. Independently read complete Korean/Japanese prose and compared English code differences."
+    },
+    "content/neo/tutorials/stock-rollup.ja.md": {
+      "primary": "content/neo/tutorials/stock-rollup.kr.md",
+      "companions": [
+        "content/neo/tutorials/stock-rollup.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified seven source blocks, full1s/1m/1h schema/job chain,2hours120per-minute workload,MO tag,UNION ALL recent2min split and mandatory regrouping due multiple partial aggregates. All source SQL and Go unchanged except comments. Independently read complete Korean/Japanese prose and compared English code differences."
+    },
+    "content/dbms-8.5/sdk-integration/cli-odbc.ja.md": {
+      "primary": "content/dbms-8.5/sdk-integration/cli-odbc.en.md",
+      "companions": [
+        "content/dbms-8.5/sdk-integration/cli-odbc.kr.md"
+      ],
+      "integration": true,
+      "reason": "EN contains full old datatype explanations and HTML binding illustration; KR supplies zero-timeout warning and mandatory IP mLength reset. Complete EN content retained and KR omissions restored."
+    },
+    "content/dbms-8.5/sdk-integration/cli-odbc-example.ja.md": {
+      "primary": "content/dbms-8.5/sdk-integration/cli-odbc-example.en.md",
+      "companions": [
+        "content/dbms-8.5/sdk-integration/cli-odbc-example.kr.md"
+      ],
+      "integration": true,
+      "reason": "EN defines the complete22-example structure with different heading depths/fence labels. KR layout and SQLDescribeCol explanatory paragraph retained."
+    },
+    "content/dbms-8.5/sdk-integration/dotnet.ja.md": {
+      "primary": "content/dbms-8.5/sdk-integration/dotnet.en.md",
+      "companions": [
+        "content/dbms-8.5/sdk-integration/dotnet.kr.md"
+      ],
+      "integration": true,
+      "reason": "EN includes71 examples and expanded provider behavior compared with68 KR examples. KR precise typed signatures, nanosecond contract and timeout units correct incomplete English equivalents; no distinct example functionality omitted."
+    },
+    "content/dbms-8.5/sdk-integration/go.ja.md": {
+      "primary": "content/dbms-8.5/sdk-integration/go.en.md",
+      "companions": [
+        "content/dbms-8.5/sdk-integration/go.kr.md"
+      ],
+      "integration": true,
+      "reason": "Both complete source narratives and14 examples are equivalent; EN fence highlighting syntax matches translation. KR connection/configuration constraints independently compared."
+    },
+    "content/dbms-8.5/tools-reference/machsql.ja.md": {
+      "primary": "content/dbms-8.5/tools-reference/machsql.en.md",
+      "companions": [
+        "content/dbms-8.5/tools-reference/machsql.kr.md"
+      ],
+      "integration": true,
+      "reason": "EN has the full HEREDOC section and5 additional examples absent from KR. All KR authentication/options/SHOW sections retained; source shell connection strings quoted to preserve semicolon-separated parameters."
+    },
+    "content/neo/api-http/file-upload.ja.md": {
+      "primary": "content/neo/api-http/file-upload.kr.md",
+      "companions": [
+        "content/neo/api-http/file-upload.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified35 source blocks and multipart file/JSON metadata contract, global or per-part X-Store-Dir and datahome, ID time-range TAG/LOG optimization, all five language routes. Chose correct EN filename/metadata example over inconsistent KR PNG/EXTDATA response for SVG DATA query; restored C# SVG filename. Independently confirmed /query/file route in server/http.go356. Independently read complete Korean/Japanese prose and compared English code differences."
+    },
+    "content/neo/api-http/lineprotocol.ja.md": {
+      "primary": "content/neo/api-http/lineprotocol.kr.md",
+      "companions": [
+        "content/neo/api-http/lineprotocol.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified six unchanged source examples and ILP mapping db→table, measurement.field→tag, numeric-only fields, sample87.6/time1782878977000 and telegraf target. Independently read complete Korean/Japanese prose and compared English code differences."
+    },
+    "content/neo/api-http/write.ja.md": {
+      "primary": "content/neo/api-http/write.kr.md",
+      "companions": [
+        "content/neo/api-http/write.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified70 unchanged source examples, all five language tabs/compressed streams,insert versus append,8.7 database precedence/body/query/400 rules,ns/UTC defaults,JSON/NDJSON/CSV schema and headers,append header restriction and every timeformat/timezone tutorial. Independently read complete Korean/Japanese prose and compared English code differences."
+    },
+    "content/neo/api-http/query.ja.md": {
+      "primary": "content/neo/api-http/query.kr.md",
+      "companions": [
+        "content/neo/api-http/query.en.md"
+      ],
+      "integration": true,
+      "reason": "Verified64 source blocks and complete GET/POST JSON/form parameter/output contracts,8.5 bind/8.7 named/database/8.5.2binary versions, three JSON layouts,precision/header/rownum examples. Preserved equivalent KR heredoc binding. Author corrected false newline end framing; independently confirmed codec BOX text/plain and CSV text/csv; charset=utf-8, correcting omitted charset= in source. Independently read complete Korean/Japanese prose and compared English code differences."
+    },
+    "content/neo/sql/tag-table.ja.md": {
+      "primary": "content/neo/sql/tag-table.kr.md",
+      "companions": [
+        "content/neo/sql/tag-table.en.md"
+      ],
+      "integration": true,
+      "reason": "Independently read full EN729-line comprehensive reference and KR short reference against JA, covering all types/ranges, architecture, metadata CRUD constraints, scenarios, indexes, protocols, memory caveats and KR-only rollup/retention/import/view examples. Reviewed33 code/diagram blocks:28 EN plus5 KR, all executable changes are corrected documented HTTP/import/metadata syntax. Verified secondary runtime evidence /tmp/ja_tag_table_probe.log for invalid BYTE/BOOLEAN/REBUILD and dynamic properties, valid immediate metadata ADD/INSERT and data-before-metadata deletion. Corrected EN hourly query factory_id to actual mytag schema factory and removed unsupported implicit chronological-output promise; explicit ORDER BY required. Kept workload-dependent4GB estimate and historical source ranges, preserved counts/examples and all version constraints."
+    },
+    "content/dbms-8.5/table-types/volatile-tables/_index.ja.md": {
+      "primary": "content/dbms-8.5/table-types/volatile-tables/_index.kr.md",
+      "companions": [
+        "content/dbms-8.5/table-types/volatile-tables/_index.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/dbms-8.5/table-types/volatile-tables/creating-volatile-tables.ja.md": {
+      "primary": "content/dbms-8.5/table-types/volatile-tables/creating-volatile-tables.kr.md",
+      "companions": [
+        "content/dbms-8.5/table-types/volatile-tables/creating-volatile-tables.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/dbms-8.5/table-types/volatile-tables/querying-data.ja.md": {
+      "primary": "content/dbms-8.5/table-types/volatile-tables/querying-data.kr.md",
+      "companions": [
+        "content/dbms-8.5/table-types/volatile-tables/querying-data.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/dbms-8.5/table-types/volatile-tables/deleting-data.ja.md": {
+      "primary": "content/dbms-8.5/table-types/volatile-tables/deleting-data.kr.md",
+      "companions": [
+        "content/dbms-8.5/table-types/volatile-tables/deleting-data.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/dbms-8.5/table-types/volatile-tables/insert-update.ja.md": {
+      "primary": "content/dbms-8.5/table-types/volatile-tables/insert-update.kr.md",
+      "companions": [
+        "content/dbms-8.5/table-types/volatile-tables/insert-update.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/dbms-8.5/table-types/volatile-tables/volatile-indexes.ja.md": {
+      "primary": "content/dbms-8.5/table-types/volatile-tables/volatile-indexes.kr.md",
+      "companions": [
+        "content/dbms-8.5/table-types/volatile-tables/volatile-indexes.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/dbms-8.5/table-types/lookup-tables/_index.ja.md": {
+      "primary": "content/dbms-8.5/table-types/lookup-tables/_index.kr.md",
+      "companions": [
+        "content/dbms-8.5/table-types/lookup-tables/_index.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/dbms-8.5/table-types/lookup-tables/creating-lookup-tables.ja.md": {
+      "primary": "content/dbms-8.5/table-types/lookup-tables/creating-lookup-tables.kr.md",
+      "companions": [
+        "content/dbms-8.5/table-types/lookup-tables/creating-lookup-tables.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/dbms-8.5/table-types/lookup-tables/inserting-data.ja.md": {
+      "primary": "content/dbms-8.5/table-types/lookup-tables/inserting-data.kr.md",
+      "companions": [
+        "content/dbms-8.5/table-types/lookup-tables/inserting-data.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/neo/api-http/ui-api.ja.md": {
+      "primary": "content/neo/api-http/ui-api.kr.md",
+      "companions": [
+        "content/neo/api-http/ui-api.en.md"
+      ],
+      "integration": true,
+      "reason": "Independently read full KR/EN/JA prose and all endpoint, parameter, return-type and JSON-RPC method contracts;187 KR/EN/JA examples preserved with exact lexical comparison and individual changed-block review. Differences are Japanese descriptive placeholders/comments and implementation-confirmed corrections: autoStart/int QoS/request quque versus response queue, UNKNOWN, NATS, install/uninstall/possibles, complete ws URLs and executable-directory/backups optional flag. Independently inspected server/http.go routes, http_facility.go881-886 request fields, scheduler registry and svrconf.hcl19; additionally corrected GET keys without id, tag stats route including tags, and package possibles=0 exact-only/empty name installed-featured semantics from manager.go415 and neo-pkgdev pkgsearch.go. All45 RPC methods and request/response examples retained, including sources placing statz methods in different sections."
+    },
+    "content/dbms-8.5/table-types/log-tables/_index.ja.md": {
+      "primary": "content/dbms-8.5/table-types/log-tables/_index.kr.md",
+      "companions": [
+        "content/dbms-8.5/table-types/log-tables/_index.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/dbms-8.5/table-types/log-tables/creating-log-tables.ja.md": {
+      "primary": "content/dbms-8.5/table-types/log-tables/creating-log-tables.kr.md",
+      "companions": [
+        "content/dbms-8.5/table-types/log-tables/creating-log-tables.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/dbms-8.5/table-types/log-tables/deleting-data.ja.md": {
+      "primary": "content/dbms-8.5/table-types/log-tables/deleting-data.kr.md",
+      "companions": [
+        "content/dbms-8.5/table-types/log-tables/deleting-data.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/dbms-8.5/table-types/log-tables/log-indexes.ja.md": {
+      "primary": "content/dbms-8.5/table-types/log-tables/log-indexes.kr.md",
+      "companions": [
+        "content/dbms-8.5/table-types/log-tables/log-indexes.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/dbms-8.5/table-types/log-tables/insert/_index.ja.md": {
+      "primary": "content/dbms-8.5/table-types/log-tables/insert/_index.kr.md",
+      "companions": [
+        "content/dbms-8.5/table-types/log-tables/insert/_index.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/dbms-8.5/table-types/log-tables/insert/append-data.ja.md": {
+      "primary": "content/dbms-8.5/table-types/log-tables/insert/append-data.kr.md",
+      "companions": [
+        "content/dbms-8.5/table-types/log-tables/insert/append-data.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/dbms-8.5/table-types/log-tables/insert/insert-data.ja.md": {
+      "primary": "content/dbms-8.5/table-types/log-tables/insert/insert-data.kr.md",
+      "companions": [
+        "content/dbms-8.5/table-types/log-tables/insert/insert-data.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/neo/api-mqtt/writev5.ja.md": {
+      "primary": "content/neo/api-mqtt/writev5.kr.md",
+      "companions": [
+        "content/neo/api-mqtt/writev5.en.md"
+      ],
+      "integration": true,
+      "reason": "Re-reviewed source/current target after stale prior approval: all12 examples match KR or EN after comment localization,including JSH1.001/2.002/3.003 payload. Full properties/defaults/8.7 database qualifier precedence retained; corrected contradictory source phrase default append to append because documented method default is insert. Independent final stale-approval refresh; prior secondary semantic review retained as additional evidence."
+    },
+    "content/neo/api-mqtt/examples/mqtt-go.ja.md": {
+      "primary": "content/neo/api-mqtt/examples/mqtt-go.kr.md",
+      "companions": [
+        "content/neo/api-mqtt/examples/mqtt-go.en.md"
+      ],
+      "integration": true,
+      "reason": "Re-reviewed final comments and all7 source examples unchanged lexically; restored accidentally Japanese-translated project token inside explicit KR heading anchor. Independent final stale-approval refresh; prior secondary semantic review retained as additional evidence."
+    },
+    "content/neo/api-mqtt/examples/mqtt-python.ja.md": {
+      "primary": "content/neo/api-mqtt/examples/mqtt-python.kr.md",
+      "companions": [
+        "content/neo/api-mqtt/examples/mqtt-python.en.md"
+      ],
+      "integration": true,
+      "reason": "Re-reviewed final publisher-name comment and all9 source examples unchanged lexically except translated comment; restored accidentally translated project token inside explicit KR heading anchor. Independent final stale-approval refresh; prior secondary semantic review retained as additional evidence."
+    },
+    "content/neo/api-mqtt/examples/mqtt-csharp.ja.md": {
+      "primary": "content/neo/api-mqtt/examples/mqtt-csharp.kr.md",
+      "companions": [
+        "content/neo/api-mqtt/examples/mqtt-csharp.en.md"
+      ],
+      "integration": true,
+      "reason": "Re-reviewed final prose/headings and all8 unchanged source examples; restored two accidentally translated project tokens inside explicit KR heading anchors. Independent final stale-approval refresh; prior secondary semantic review retained as additional evidence."
+    },
+    "content/neo/jsh/modules/util/tail.ja.md": {
+      "primary": "content/neo/jsh/modules/util/tail.kr.md",
+      "companions": [
+        "content/neo/jsh/modules/util/tail.en.md"
+      ],
+      "integration": true,
+      "reason": "Re-reviewed full tailer/SSE semantics and final comment delta; all4 examples match original code,fromStart defaultfalse/empty missing file/truncation rotation/caller-controlled lifecycle retained. Independent final stale-approval refresh; prior secondary semantic review retained as additional evidence."
+    },
+    "content/neo/shell/_index.ja.md": {
+      "primary": "content/neo/shell/_index.kr.md",
+      "companions": [
+        "content/neo/shell/_index.en.md"
+      ],
+      "integration": true,
+      "reason": "Re-reviewed complete SSH/WebUI/authorized key procedure and all10 unchanged source examples after final prose edits. Corrected original false private-key challenge decryption description to signing/verification, independently confirmed golang.org/x/crypto/ssh/client_auth.go SignWithAlgorithm; existing remote-access anchor retained. Independent final stale-approval refresh; prior secondary semantic review retained as additional evidence."
+    },
+    "content/dbms-8.5/configuration/virtual-table.ja.md": {
+      "primary": "content/dbms-8.5/configuration/virtual-table.en.md",
+      "companions": [
+        "content/dbms-8.5/configuration/virtual-table.kr.md"
+      ],
+      "integration": true,
+      "reason": "Independently compared all 664 Markdown table rows and 80 headings in EN/KR/JA. EN hierarchy retained; KR stream introduction and TRACE_MUTEX_WAIT_STACK condition restored. Same-version engine confirms cache threshold lower bound, disk byte total, mount alias, DW CRC/timestamp meanings, running sender count and retention cutoff."
+    },
+    "content/dbms-8.5/table-types/tag-tables/_index.ja.md": {
+      "primary": "content/dbms-8.5/table-types/tag-tables/_index.en.md",
+      "companions": [
+        "content/dbms-8.5/table-types/tag-tables/_index.kr.md"
+      ],
+      "reason": "Independent full EN/KR/JA prose, code and tables compared; source structures equivalent, EN heading IDs preserved."
+    },
+    "content/dbms-8.5/table-types/tag-tables/binary-columns.ja.md": {
+      "primary": "content/dbms-8.5/table-types/tag-tables/binary-columns.en.md",
+      "companions": [
+        "content/dbms-8.5/table-types/tag-tables/binary-columns.kr.md"
+      ],
+      "reason": "Independent full EN/KR/JA prose, code and tables compared; source structures equivalent, EN heading IDs preserved."
+    },
+    "content/dbms-8.5/table-types/tag-tables/varchar-storage.ja.md": {
+      "primary": "content/dbms-8.5/table-types/tag-tables/varchar-storage.en.md",
+      "companions": [
+        "content/dbms-8.5/table-types/tag-tables/varchar-storage.kr.md"
+      ],
+      "reason": "Independent full EN/KR/JA prose, code and tables compared; source structures equivalent, EN heading IDs preserved."
+    },
+    "content/dbms-8.5/table-types/tag-tables/tag-indexes.ja.md": {
+      "primary": "content/dbms-8.5/table-types/tag-tables/tag-indexes.en.md",
+      "companions": [
+        "content/dbms-8.5/table-types/tag-tables/tag-indexes.kr.md"
+      ],
+      "reason": "Independent full EN/KR/JA prose, code and tables compared; source structures equivalent, EN heading IDs preserved."
+    },
+    "content/dbms-8.5/table-types/log-tables/insert/import-data.ja.md": {
+      "primary": "content/dbms-8.5/table-types/log-tables/insert/import-data.kr.md",
+      "companions": [
+        "content/dbms-8.5/table-types/log-tables/insert/import-data.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/dbms-8.5/table-types/log-tables/insert/load-data.ja.md": {
+      "primary": "content/dbms-8.5/table-types/log-tables/insert/load-data.kr.md",
+      "companions": [
+        "content/dbms-8.5/table-types/log-tables/insert/load-data.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/dbms-8.5/table-types/log-tables/select/_index.ja.md": {
+      "primary": "content/dbms-8.5/table-types/log-tables/select/_index.kr.md",
+      "companions": [
+        "content/dbms-8.5/table-types/log-tables/select/_index.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/dbms-8.5/table-types/log-tables/select/simple-join.ja.md": {
+      "primary": "content/dbms-8.5/table-types/log-tables/select/simple-join.kr.md",
+      "companions": [
+        "content/dbms-8.5/table-types/log-tables/select/simple-join.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/dbms-8.5/table-types/tag-tables/creating-tag-tables.ja.md": {
+      "primary": "content/dbms-8.5/table-types/tag-tables/creating-tag-tables.en.md",
+      "companions": [
+        "content/dbms-8.5/table-types/tag-tables/creating-tag-tables.kr.md"
+      ],
+      "reason": "Independent full bilingual prose/code/table comparison; original code mistakes corrected only in JA with same-version Python connector evidence and direct example row counting."
+    },
+    "content/dbms-8.5/table-types/tag-tables/inserting-data.ja.md": {
+      "primary": "content/dbms-8.5/table-types/tag-tables/inserting-data.en.md",
+      "companions": [
+        "content/dbms-8.5/table-types/tag-tables/inserting-data.kr.md"
+      ],
+      "reason": "Independent full bilingual prose/code/table comparison; original code mistakes corrected only in JA with same-version Python connector evidence and direct example row counting."
+    },
+    "content/dbms-8.5/table-types/tag-tables/deleting-data.ja.md": {
+      "primary": "content/dbms-8.5/table-types/tag-tables/deleting-data.en.md",
+      "companions": [
+        "content/dbms-8.5/table-types/tag-tables/deleting-data.kr.md"
+      ],
+      "reason": "Independent full bilingual prose/code/table comparison; original code mistakes corrected only in JA with same-version Python connector evidence and direct example row counting."
+    },
+    "content/dbms-8.5/table-types/log-tables/select/select-data.ja.md": {
+      "primary": "content/dbms-8.5/table-types/log-tables/select/select-data.kr.md",
+      "companions": [
+        "content/dbms-8.5/table-types/log-tables/select/select-data.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/dbms-8.5/table-types/log-tables/select/select-time-data.ja.md": {
+      "primary": "content/dbms-8.5/table-types/log-tables/select/select-time-data.kr.md",
+      "companions": [
+        "content/dbms-8.5/table-types/log-tables/select/select-time-data.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/dbms-8.5/sql-reference/ddl.ja.md": {
+      "primary": "content/dbms-8.5/sql-reference/ddl.en.md",
+      "companions": [
+        "content/dbms-8.5/sql-reference/ddl.kr.md"
+      ],
+      "integration": true,
+      "reason": "EN includes the four metadata ADD/DROP syntax and example blocks absent from KR and explicit Tag RENAME support since8.0.50. Full KR prose retained including PART_VALUE_COUNT heading; KR conflicting rollup wakeup multiple wording follows EN evenly-divides semantics. Both sources and all66 executable examples independently compared."
+    },
+    "content/dbms-8.5/table-types/tag-tables/querying-data.ja.md": {
+      "primary": "content/dbms-8.5/table-types/tag-tables/querying-data.en.md",
+      "companions": [
+        "content/dbms-8.5/table-types/tag-tables/querying-data.kr.md"
+      ],
+      "reason": "Full bilingual prose, SQL/output and numeric restrictions independently reviewed; source contradictions corrected using same-version engine and explicit example preconditions."
+    },
+    "content/dbms-8.5/table-types/tag-tables/lsl-usl-limits.ja.md": {
+      "primary": "content/dbms-8.5/table-types/tag-tables/lsl-usl-limits.en.md",
+      "companions": [
+        "content/dbms-8.5/table-types/tag-tables/lsl-usl-limits.kr.md"
+      ],
+      "reason": "Full bilingual prose, SQL/output and numeric restrictions independently reviewed; source contradictions corrected using same-version engine and explicit example preconditions."
+    },
+    "content/dbms-8.5/table-types/tag-tables/duplication-removal.ja.md": {
+      "primary": "content/dbms-8.5/table-types/tag-tables/duplication-removal.en.md",
+      "companions": [
+        "content/dbms-8.5/table-types/tag-tables/duplication-removal.kr.md"
+      ],
+      "reason": "Full bilingual prose, SQL/output and numeric restrictions independently reviewed; source contradictions corrected using same-version engine and explicit example preconditions."
+    },
+    "content/dbms-8.5/table-types/tag-tables/tag-metadata.ja.md": {
+      "primary": "content/dbms-8.5/table-types/tag-tables/tag-metadata.en.md",
+      "companions": [
+        "content/dbms-8.5/table-types/tag-tables/tag-metadata.kr.md"
+      ],
+      "reason": "All bilingual sections and39 examples compared; JA repairs malformed list markers, column-list qualification, SHOW INDEXES discovery command, and target-specific metadata deletion example."
+    },
+    "content/dbms-8.5/table-types/tag-tables/rollup-custom.ja.md": {
+      "primary": "content/dbms-8.5/table-types/tag-tables/rollup-custom.en.md",
+      "companions": [
+        "content/dbms-8.5/table-types/tag-tables/rollup-custom.kr.md"
+      ],
+      "integration": true,
+      "reason": "Full EN/KR prose, examples and outputs independently inspected; KR-only summary/test provenance restored. Custom SELECT byte limit verified qppRollup.c666/686; rebuild partial-second omission corrected to half-open complete buckets."
+    },
+    "content/dbms-8.5/table-types/tag-tables/rollup-rebuild.ja.md": {
+      "primary": "content/dbms-8.5/table-types/tag-tables/rollup-rebuild.en.md",
+      "companions": [
+        "content/dbms-8.5/table-types/tag-tables/rollup-rebuild.kr.md"
+      ],
+      "integration": true,
+      "reason": "Full EN/KR prose, examples and outputs independently inspected; KR-only summary/test provenance restored. Custom SELECT byte limit verified qppRollup.c666/686; rebuild partial-second omission corrected to half-open complete buckets."
+    },
+    "content/dbms-8.5/table-types/tag-tables/rollup-conditional.ja.md": {
+      "primary": "content/dbms-8.5/table-types/tag-tables/rollup-conditional.en.md",
+      "companions": [
+        "content/dbms-8.5/table-types/tag-tables/rollup-conditional.kr.md"
+      ],
+      "integration": true,
+      "reason": "Full EN/KR prose, examples and outputs independently inspected; KR-only summary/test provenance restored. Custom SELECT byte limit verified qppRollup.c666/686; rebuild partial-second omission corrected to half-open complete buckets."
+    },
+    "content/dbms-8.5/table-types/tag-tables/rollup-conditional-extension.tc.ja.md": {
+      "primary": "content/dbms-8.5/table-types/tag-tables/rollup-conditional-extension.tc.en.md",
+      "companions": [
+        "content/dbms-8.5/table-types/tag-tables/rollup-conditional-extension.tc.kr.md"
+      ],
+      "integration": true,
+      "reason": "Full EN/KR prose, examples and outputs independently inspected; KR-only summary/test provenance restored. Custom SELECT byte limit verified qppRollup.c666/686; rebuild partial-second omission corrected to half-open complete buckets."
+    },
+    "content/dbms-8.5/table-types/tag-tables/rollup-tables.ja.md": {
+      "primary": "content/dbms-8.5/table-types/tag-tables/rollup-tables.en.md",
+      "companions": [
+        "content/dbms-8.5/table-types/tag-tables/rollup-tables.kr.md"
+      ],
+      "integration": true,
+      "reason": "Read all840EN lines and fullKR/JA; ENfull order plus missingKR2week origin query restored. All SQL/output compared and numeric aggregates recalculated; source invalid DROP target and duplicate failure-example name corrected."
+    },
+    "content/dbms-8.5/table-types/log-tables/select/text-search.ja.md": {
+      "primary": "content/dbms-8.5/table-types/log-tables/select/text-search.kr.md",
+      "companions": [
+        "content/dbms-8.5/table-types/log-tables/select/text-search.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/dbms-8.5/table-types/log-tables/select/network-type.ja.md": {
+      "primary": "content/dbms-8.5/table-types/log-tables/select/network-type.kr.md",
+      "companions": [
+        "content/dbms-8.5/table-types/log-tables/select/network-type.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/dbms-8.5/installation/cluster/command-line/coordinator-deployer-install.ja.md": {
+      "primary": "content/dbms-8.5/installation/cluster/command-line/coordinator-deployer-install.en.md",
+      "companions": [
+        "content/dbms-8.5/installation/cluster/command-line/coordinator-deployer-install.kr.md"
+      ],
+      "reason": "Full EN/KR/JA installation steps/options/code compared; empty index pages contain only unchanged children_toc with translated frontmatter."
+    },
+    "content/dbms-8.5/installation/cluster/command-line/lookup-broker-warehouse-install.ja.md": {
+      "primary": "content/dbms-8.5/installation/cluster/command-line/lookup-broker-warehouse-install.en.md",
+      "companions": [
+        "content/dbms-8.5/installation/cluster/command-line/lookup-broker-warehouse-install.kr.md"
+      ],
+      "reason": "Full EN/KR/JA installation steps/options/code compared; empty index pages contain only unchanged children_toc with translated frontmatter."
+    },
+    "content/dbms-8.5/installation/cluster/_index.ja.md": {
+      "primary": "content/dbms-8.5/installation/cluster/_index.en.md",
+      "companions": [
+        "content/dbms-8.5/installation/cluster/_index.kr.md"
+      ],
+      "reason": "Full EN/KR/JA installation steps/options/code compared; empty index pages contain only unchanged children_toc with translated frontmatter."
+    },
+    "content/dbms-8.5/installation/linux/_index.ja.md": {
+      "primary": "content/dbms-8.5/installation/linux/_index.en.md",
+      "companions": [
+        "content/dbms-8.5/installation/linux/_index.kr.md"
+      ],
+      "reason": "Full EN/KR/JA installation steps/options/code compared; empty index pages contain only unchanged children_toc with translated frontmatter."
+    },
+    "content/dbms-8.5/_index.ja.md": {
+      "primary": "content/dbms-8.5/_index.kr.md",
+      "companions": [
+        "content/dbms-8.5/_index.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/dbms-8.5/table-types/_index.ja.md": {
+      "primary": "content/dbms-8.5/table-types/_index.kr.md",
+      "companions": [
+        "content/dbms-8.5/table-types/_index.en.md"
+      ],
+      "reason": "Independent KR/EN/JA full-prose comparison and all code-block diff inspection: parallel content preserved."
+    },
+    "content/dbms-8.5/troubleshooting/_index.ja.md": {
+      "primary": "content/dbms-8.5/troubleshooting/_index.kr.md",
+      "companions": [
+        "content/dbms-8.5/troubleshooting/_index.en.md"
+      ],
+      "integration": true,
+      "reason": "KR/EN source narratives equivalent; independently read both and all examples. Corrected source commands/properties against same8.5 authoritative machadmin,Coordinator,DDL,session,mount,property,virtual-table andPython SDK references. Corrected examples retain diagnostic intent; no symptom section omitted.",
+      "structural_review": {
+        "tables": "Overview fabricated error code column removed after comparing full error-code reference; all eight symptoms/solutions retained as message examples. Correct server codes must be looked up in authoritative error-code page."
+      }
+    },
+    "content/dbms-8.5/troubleshooting/common-issues.ja.md": {
+      "primary": "content/dbms-8.5/troubleshooting/common-issues.kr.md",
+      "companions": [
+        "content/dbms-8.5/troubleshooting/common-issues.en.md"
+      ],
+      "integration": true,
+      "reason": "KR/EN source narratives equivalent; independently read both and all examples. Corrected source commands/properties against same8.5 authoritative machadmin,Coordinator,DDL,session,mount,property,virtual-table andPython SDK references. Corrected examples retain diagnostic intent; no symptom section omitted.",
+      "structural_review": {
+        "tables": "Overview fabricated error code column removed after comparing full error-code reference; all eight symptoms/solutions retained as message examples. Correct server codes must be looked up in authoritative error-code page."
+      }
+    }
+  }
+}

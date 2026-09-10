@@ -3,3 +3,15 @@ editThisPage: "Edit this page on GitHub →"
 lastUpdated: "최근 업데이트"
 
 copyright: "© machbase.com"
+
+llmsManualTitle: Machbase DBMS 매뉴얼
+llmsManualDescription: "Machbase DBMS {{ .Version }} 한국어 문서의 정본 탐색 인덱스입니다."
+llmsLanguage: 언어
+llmsManual: 매뉴얼
+llmsFullText: 전체 본문
+llmsDocumentIndex: 문서 인덱스
+llmsChapters: 매뉴얼 장
+llmsReferences: 주요 정본
+llmsAI: AI와 RAG
+llmsFullTitle: Machbase DBMS 매뉴얼 전체 본문
+llmsFullDescription: "현재 published DBMS {{ .Version }} 한국어 페이지를 navigation 순서로 연결한 Markdown corpus입니다."

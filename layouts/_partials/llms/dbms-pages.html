@@ -1,4 +1,6 @@
-{{- $pages := slice . -}}
+{{- $pages := slice -}}
+{{- with . -}}
+{{- $pages = slice . -}}
 {{- range .Pages.ByWeight -}}
   {{- $excluded := strings.Contains .RelPermalink "/dbms/8-5-manual/" -}}
   {{- if not $excluded -}}
@@ -14,5 +16,6 @@
       {{- end -}}
     {{- end -}}
   {{- end -}}
+{{- end -}}
 {{- end -}}
 {{- return $pages -}}

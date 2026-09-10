@@ -30,6 +30,38 @@ class MessageLexerTest(unittest.TestCase):
 
 
 class ErrorCatalogRenderTest(unittest.TestCase):
+    def test_removed_feature_entries_stay_out_of_all_locales(self):
+        errors = [
+            {"id": 2102, "code": "ERR-02102", "key": "ERR_QP_COLLECTOR_NOT_EXIST", "message_en": "obsolete"},
+            {"id": 1, "code": "ERR-00001", "key": "ERR_FILE_CREATE", "message_en": "active %s"},
+        ]
+        for language in MODULE.ERROR_MANUALS:
+            catalog = MODULE.render_error_catalog(errors, language)
+            self.assertNotIn("ERR-02102", catalog)
+            self.assertIn("active %s", catalog)
+        self.assertEqual(len(errors), 2)
+
+    def test_japanese_catalog_preserves_server_messages(self):
+        errors = [{"id": 1, "code": "ERR-00001", "key": "ERR_A",
+                   "message_en": "Invalid value <%s>|%d"}]
+        japanese = MODULE.render_error_catalog(errors, "ja")
+        english = MODULE.render_error_catalog(errors, "en")
+        self.assertIn("全エラーメッセージ", japanese)
+        self.assertIn("メッセージ原文", japanese)
+        rows = lambda text: [line for line in text.splitlines() if line.startswith("| <code>")]
+        self.assertEqual(rows(japanese), rows(english))
+
+    def test_unsupported_catalog_language_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "unsupported"):
+            MODULE.render_error_catalog([], "unknown")
+
+    def test_catalog_paths_match_flat_multilingual_documents(self):
+        for language, path in MODULE.ERROR_MANUALS.items():
+            self.assertEqual(path, Path(f"content/dbms/reference/error-codes.{language}.md"))
+        for path in [MODULE.FUNCTION_MANUAL, MODULE.TABLE_MANUAL, MODULE.ERROR_MANUAL,
+                     MODULE.ERROR_MANUAL_EN]:
+            self.assertTrue((SCRIPT.parent.parent / path).is_file(), str(path))
+
     def test_html_cell_preserves_markdown_special_characters(self):
         self.assertEqual(
             MODULE.error_catalog_cell("value<%s>|`next`\nline"),

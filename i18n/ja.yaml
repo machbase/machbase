@@ -1,0 +1,23 @@
+onThisPage: このページの内容
+editThisPage: GitHubでこのページを編集 →
+lastUpdated: 最終更新日
+copyright: © machbase.com
+home: ホーム
+neo: MACHBASE NEO
+dbms: DBMS v8.7
+dbms-v85: DBMS v8.5
+apps: アプリ
+search: 検索
+github: GitHub
+
+llmsManualTitle: Machbase DBMS マニュアル
+llmsManualDescription: "Machbase DBMS {{ .Version }} 日本語マニュアルの公式ナビゲーションインデックスです。"
+llmsLanguage: 言語
+llmsManual: マニュアル
+llmsFullText: 全文
+llmsDocumentIndex: 文書インデックス
+llmsChapters: マニュアルの構成
+llmsReferences: 主要リファレンス
+llmsAI: AIとRAG
+llmsFullTitle: Machbase DBMS マニュアル — 全文
+llmsFullDescription: "公開中の Machbase DBMS {{ .Version }} 日本語ページをナビゲーション順にまとめた Markdown コーパスです。"
