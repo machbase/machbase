@@ -25,21 +25,14 @@ If the pre-built packages are not compatible with your Linux distribution, you c
 1. Ensure you have Go 1.24 and gcc installed.
 2. Clone the neo-server repository from [GitHub](https://github.com/machbase/neo-server).
 3. Run `go run mage.go install-neo-web` to download the web UI for Machbase Neo.
-4. Run `go run mage.go machbase-neo` to build Machbase Neo.
-5. Locate the executable binary in `./tmp/machbase-neo`.
-6. Copy the executable binary to the directory where you want to install.
+4. Run `go run mage.go install-neo-engine` to download the Machbase Engine.
+5. Run `go run mage.go machbase-neo` to build Machbase Neo.
+6. Locate the executable binary in `./tmp/machbase-neo`.
+7. Copy the executable binary to the directory where you want to install.
 
 ### What's Changed {{< neo_latestver >}}
 
 [Changes](https://github.com/machbase/neo-server/releases/tag/{{< neo_latestver >}})
-
-### How to upgrade from the previous v8.0.x version
-
-The upgrade process is straightforward and involves replacing the executable file.
-
-1. Shut down the machbase-neo process.
-2. Replace the executable file `machbase-neo` (or `machbase-neo.exe`).
-3. Start the machbase-neo process.
 
 ### Previous releases
 
