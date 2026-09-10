@@ -42,7 +42,7 @@ MQTT에서 데이터베이스 쿼리를 실행하려면 `db/query` 토픽으로 
 ```json
 {
     "q": "select name,time,value from example where name = ? limit ?",
-    "p": ["wave.sin", 5],
+    "p": ["my-car", 5],
     "format": "csv",
     "reply": "db/reply/my_query"
 }
@@ -53,7 +53,7 @@ MQTT에서 데이터베이스 쿼리를 실행하려면 `db/query` 토픽으로 
 ```json
 {
     "q": "select name,time,value from example where name = :name limit :n",
-    "p": {"name": "wave.sin", "n": 5},
+    "p": {"name": "my-car", "n": 5},
     "format": "csv",
     "reply": "db/reply/my_query"
 }

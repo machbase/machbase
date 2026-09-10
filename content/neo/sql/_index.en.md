@@ -66,6 +66,21 @@ In this example, `name` is set to `'my-car'` and `value` is set to `1.5432`.
 The INSERT and SELECT statements refer to them as `:name` and `:value`.
 Run `-- env: reset` to clear the named args configured in the SQL editor.
 
+Settings specified with `-- env:` accumulate until `-- env: reset` is run.
+
+```sql
+--env: named.name=my-car
+--env: named.time='2026-09-10 12:28:26.197719833'
+--env: named.layout='YYYY-MM-DD HH24:MI:SS.mmmuuunnn'
+SELECT * FROM example
+  WHERE name = :name AND time=to_date(:time, :layout);
+
+--env: named.new_value=9.876
+UPDATE example SET value = :new_value
+  WHERE name = :name AND time=to_date(:time, :layout);
+--env: reset
+```
+
 ### Chart Draw
 
 Insert more records by executing insert statement repeatedly.

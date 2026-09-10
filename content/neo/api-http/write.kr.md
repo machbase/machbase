@@ -37,6 +37,9 @@ params:
 
 `db`를 생략하거나 빈 값이면 기본 database인 `MACHBASEDB`가 대상이 됩니다. 잘못된 형식의 database 이름은 `400 Bad Request`로 응답하며, 존재하지 않거나 접속한 사용자가 접근할 수 없는 database는 에러로 응답합니다.
 
+{{< tabs >}}
+{{< tab name="HTTP" >}}
+~~~
 ```http
 POST http://127.0.0.1:5654/db/write/EXAMPLE?db=OTHERDB
 Content-Type: application/json
@@ -50,7 +53,9 @@ Content-Type: application/json
     }
 }
 ```
-
+~~~
+{{< /tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE?db=OTHERDB' \
   -H "Content-Type: application/json" \
@@ -65,6 +70,78 @@ curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE?db=OTHERDB' \
 }
 EOF
 ```
+{{< /tab >}}
+{{< tab name="Python" >}}
+```python
+import requests
+
+payload = {
+  "data": {
+    "columns": ["name", "time", "value"],
+    "rows": [
+        ["json-data", 1670380342000000000, 1.0001],
+    ],
+  }
+}
+
+response = requests.post(
+  "http://127.0.0.1:5654/db/write/EXAMPLE",
+  params={"db": "OTHERDB"},
+  json=payload,
+)
+print(response.text)
+```
+{{< /tab >}}
+{{< tab name="Javascript" >}}
+```javascript
+async function writeToDatabase() {
+  const payload = {
+    data: {
+      columns: ["name", "time", "value"],
+      rows: [
+        ["json-data", 1670380342000000000, 1.0001],
+      ],
+    },
+  };
+
+  const response = await fetch("http://127.0.0.1:5654/db/write/EXAMPLE?db=OTHERDB", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  console.log(await response.text());
+}
+
+writeToDatabase();
+```
+{{< /tab >}}
+{{< tab name="C#" >}}
+```csharp
+using System.Net.Http;
+using System.Net.Http.Json;
+
+using var client = new HttpClient();
+
+var response = await client.PostAsJsonAsync(
+  "http://127.0.0.1:5654/db/write/EXAMPLE?db=OTHERDB",
+  new
+  {
+    data = new
+    {
+      columns = new[] { "name", "time", "value" },
+      rows = new object[]
+      {
+        new object[] { "json-data", 1670380342000000000L, 1.0001 },
+      },
+    },
+  }
+);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+```
+{{< /tab >}}
+{{< /tabs >}}
 
 **Content-Type 헤더**
 

@@ -66,6 +66,21 @@ SELECT * FROM example WHERE name = :name;
 INSERT와 SELECT 문에서 각각 `:name`, `:value`로 참조합니다.
 `-- env: reset`을 실행하면 SQL 에디터에 설정된 named args가 초기화됩니다.
 
+`-- env:`로 설정한 내용은 `--env: reset` 전까지 설정이 누적됩니다.
+
+```sql
+--env: named.name=my-car
+--env: named.time='2026-09-10 12:28:26.197719833'
+--env: named.layout='YYYY-MM-DD HH24:MI:SS.mmmuuunnn'
+SELECT * FROM example
+  WHERE name = :name AND time=to_date(:time, :layout);
+
+--env: named.new_value=9.876
+UPDATE example SET value = :new_value
+  WHERE name = :name AND time=to_date(:time, :layout);
+--env: reset
+```
+
 ### 차트 그리기
 
 INSERT 문을 반복 실행해 데이터를 더 입력합니다.

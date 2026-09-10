@@ -32,7 +32,7 @@ machbase-neo serve --data machbase://${SECRET}@192.168.1.100:5656
 
 {{< neo_since ver="8.0.45" />}}
 
-`machbase-neo serve-headless`는 Machbase DBMS mach 포트(`5656`)만 사용하는 DBMS 프로세스를 실행합니다. 이 모드는 다른 서비스 포트(HTTP, MQTT, gRPC, SSH)와 관련 기능 없이 DBMS만 구동할 때 유용합니다.
+`machbase-neo serve-headless`는 Machbase DBMS mach 포트(`5656`)만 사용하는 DBMS 프로세스를 실행합니다. 이 모드는 다른 서비스 포트(HTTP, MQTT, SSH)와 관련 기능 없이 DBMS만 구동할 때 유용합니다.
 
 이 실행 모드는 별도로 구동되는 "헤드 온리" 프로세스와 함께 동작하도록 설계되어,
 API 서비스와 DBMS 엔진을 분리할 수 있습니다.

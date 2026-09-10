@@ -25,21 +25,14 @@ toc: false
 1. Go 1.24와 gcc가 설치되어 있는지 확인합니다.
 2. [GitHub](https://github.com/machbase/neo-server)에서 `neo-server` 저장소를 클론합니다.
 3. `go run mage.go install-neo-web`을 실행해 Machbase Neo 웹 UI를 내려받습니다.
-4. `go run mage.go machbase-neo`를 실행해 Machbase Neo를 빌드합니다.
-5. 빌드된 실행 파일은 `./tmp/machbase-neo` 경로에 생성됩니다.
-6. 원하는 설치 경로에 실행 파일을 복사합니다.
+4. `go run mage.go install-neo-engine`을 실행해서 Machbase Engine을 내려받습니다.
+5. `go run mage.go machbase-neo`를 실행해 Machbase Neo를 빌드합니다.
+6. 빌드된 실행 파일은 `./tmp/machbase-neo` 경로에 생성됩니다.
+7. 원하는 설치 경로에 실행 파일을 복사합니다.
 
 ### 변경 사항 {{< neo_latestver >}}
 
 자세한 변경 내역은 [Changes](https://github.com/machbase/neo-server/releases/tag/{{< neo_latestver >}})에서 확인할 수 있습니다.
-
-### v8.0.x에서 업그레이드하기
-
-업그레이드는 실행 파일을 교체하는 간단한 절차만으로 완료됩니다.
-
-1. 실행 중인 machbase-neo 프로세스를 종료합니다.
-2. `machbase-neo`(또는 Windows의 경우 `machbase-neo.exe`) 실행 파일을 새로운 파일로 교체합니다.
-3. machbase-neo 프로세스를 다시 시작합니다.
 
 ### 이전 버전
 
