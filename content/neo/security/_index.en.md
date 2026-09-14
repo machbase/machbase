@@ -5,108 +5,137 @@ weight: 60
 ---
 
 The tokens are used for HTTP API and MQTT client authentication.
-The generated keys (X.509) are used for MQTT TLS connections and gRPC connections.
+The generated keys (X.509) are used for MQTT TLS connections.
 
-## Generates Key & Token
+## Generate a Token
 
-### Web UI
+1. Select the <img src="/neo/security/img/key_icon.jpg" width=47 style="display:inline"> icon from the left menu.
 
-1. Select the <img src="./img/key_icon.jpg" width=47 style="display:inline"> menu icon from the left most side.
+2. Click the `+` icon <img src="/neo/security/img/token_add_icon.jpg" width=216 style="display:inline"> in the upper-left area.
 
-2. And Click `+` icon <img src="./img/key_add_icon.jpg" width=221 style="display:inline"> from the top left pane.
+3. Enter a "Name" for management and set the validity period (the default is 10 years from today).
 
-3. Set "Client Id" for unique name and set the valid period (default is 3 years from today).
-Then click "Generate" to generates key files for the client.
+4. Click the "Issue token" button to generate an API token.
 
-{{< figure src="./img/key_gen.jpg" width=927px >}}
+{{< figure src="/neo/security/img/token_gen.jpg" width=509px >}}
 
-4. Click "Download *.zip" button or copy & paste each file's content. This is not re-generatable and only chance to make a copy.
+5. This is your last chance to copy the generated token. It cannot be displayed again after you close the screen.
 
-### Shell Command
+{{< figure src="/neo/security/img/token_gen_result.jpg" width=509px >}}
 
-The subcommand `machbase-neo shell key` manages client keys and tokens.
+6. You can generate and manage tokens from the shell just as you can in the web UI.
+  - `token gen <name>`
+  - `token list`
+  - `token del <id>`
 
-**List registered client authentication keys and tokens**
+```sh
+sys machbase-neo 2026-09-14 09:46:43
+> token gen "my api token";
+nt_4_9jShk5SlIimfUFzN3OSfCGLAccVx3U3erqGxPPgitoL
 
-```
-machbase-neo shell key list
-```
+> token list;
+┌────────┬────┬─────────────────┬──────┬───────────────────┬─────────────────────┬─────────────────────┬───────────┐
+│ ROWNUM │ ID │ NAME            │ USER │ TOKEN             │ CREATED             │ EXPIRES             │ LAST USED │
+├────────┼────┼─────────────────┼──────┼───────────────────┼─────────────────────┼─────────────────────┼───────────┤
+│      2 │  4 │ my api token    │ SYS  │ nt_4_9jSh****itoL │ 2026-09-14 09:47:03 │ 2036-09-14 09:47:03 │           │
+└────────┴────┴─────────────────┴──────┴───────────────────┴─────────────────────┴─────────────────────┴───────────┘
 
-List all pre-registered client-id and validation periods.
-
-```
-$ machbase-neo shell key list
-┌────────┬──────────────────────┬───────────────────────────────┬───────────────────────────────┐
-│ ROWNUM │ ID                   │ VALID FROM                    │ EXPIRE                        │
-├────────┼──────────────────────┼───────────────────────────────┼───────────────────────────────┤
-│      1 │ myid2                │ 2023-02-05 01:55:18 +0000 UTC │ 2033-02-02 01:55:18 +0000 UTC │
-│      2 │ myid3                │ 2023-02-05 01:56:36 +0000 UTC │ 2033-02-02 01:56:36 +0000 UTC │
-......
-```
-
-**Delete an existing client authentication key and token**
-
-```
-machbase-neo shell key del <client-id>
+> token del 4;
+Token deleted successfully.
 ```
 
-```
-$ machbase-neo shell key del myid2
-deleted
+## Generate an X.509 Certificate
+
+1. Select the <img src="/neo/security/img/key_icon.jpg" width=47 style="display:inline"> icon from the left menu.
+
+2. Click the `+` icon <img src="/neo/security/img/cert_add_icon.jpg" width=192 style="display:inline"> in the center-left area.
+
+3. Set a "Name" for management, the "Type", and the validity period (the default is 10 years from today).
+
+4. Click the "Generate certificate" button to generate a certificate.
+
+{{< figure src="/neo/security/img/cert_gen.jpg" width=512px >}}
+
+5. Click the "Download *.zip" button, or copy and save the contents of each file.
+This is your last chance to download the generated certificate. The same certificate cannot be generated again after you close the screen.
+
+{{< figure src="/neo/security/img/cert_gen_result.jpg" width=512px >}}
+
+6. You can generate and manage certificates from the shell just as you can in the web UI.
+  - `key gen <name>`
+  - `key list`
+  - `key del <id>`
+
+```sh
+sys machbase-neo 2026-09-14 13:06:03
+> key gen -t ecdsa "my_client_cert";
+id=2
+-----BEGIN CERTIFICATE-----
+MIICjjCCAfCgAwIBAgIRAM6q5O9/ly2HshwRM4wzOPcwCgYIKoZIzj0EAwQwgZIx
+CzAJBgNVBAYTAkNBMREwDwYDVQQHEwhTYW4gSm9zZTEdMBsGA1UECQwUMzAwMyBO
+IEZpcnN0IFN0ICMyMDYxDjAMBgNVBBETBTk1MTM0MRUwEwYDVQQKEwxtYWNoYmFz
+ZS5jb20xEzARBgNVBAsMClImRCBDZW50ZXIxFTATBgNVBAMTDG1hY2hiYXNlLW5l
+bzAeFw0yNjA5MTQwNDA2MDlaFw0zNjA5MTEwNDA2MDlaMBcxFTATBgNVBAMMDGFu
+b3RoZXJfY2VydDBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABOIr0Uj+d8cI2bOT
++TLaDsxKtkmA7s1KGXMgsISg5iHFvSO1W205z6wPrzfaUHP3QFBTtCRbUD7UFokL
+R6WiEYGjgaAwgZ0wDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMC
+BggrBgEFBQcDATAMBgNVHRMBAf8EAjAAMB8GA1UdIwQYMBaAFOljpIF4iVCNw3br
+tW/Ds4lv4Jb7MD0GA1UdEQQ2MDSCDGFub3RoZXJfY2VydIYkdXJuOm1hY2hiYXNl
+Om5lbzpjbGllbnQ6YW5vdGhlcl9jZXJ0MAoGCCqGSM49BAMEA4GLADCBhwJBAjCp
+PUwvoaRrlZB8Zu/FW4SSXVugmDQBPpDpBBN/nbvbKAMAi3n/fvFswp6dfLgD1APo
+KGiHGonXG0Rpx0uXFgsCQgDlAFVwAY+S6bpdRIRYV0neA7fqnqfPxo4HV3otfd5p
+iLHmOUgNxuFfq/C0qKwk2R07mNWtl437HwdUUGb0po0qGA==
+-----END CERTIFICATE-----
+
+-----BEGIN EC PRIVATE KEY-----
+MHcCAQEEIGvf58K/e7FmQW74ZCv5gCvKnBeDemTkM83eD2V/cHuroAoGCCqGSM49
+AwEHoUQDQgAE4ivRSP53xwjZs5P5MtoOzEq2SYDuzUoZcyCwhKDmIcW9I7VbbTnP
+rA+vN9pQc/dAUFO0JFtQPtQWiQtHpaIRgQ==
+-----END EC PRIVATE KEY-----
+
+Caution:
+  This is the last chance to copy and store the PRIVATE KEY.
+  It will not be shown again.
+
+> key list;
+┌────────┬────┬────────────────┬─────────────────────┬─────────────────────┐
+│ ROWNUM │ ID │ NAME           │ NOT VALID BEFORE    │ NOT VALID AFTER     │
+├────────┼────┼────────────────┼─────────────────────┼─────────────────────┤
+│      1 │  2 │ my_client_cert │ 2026-09-14 12:57:33 │ 2036-09-11 12:57:33 │
+└────────┴────┴────────────────┴─────────────────────┴─────────────────────┘
+
+> key del 2;
+Key deleted successfully.
 ```
 
-**Register new client authentication keys and tokens**
+**Registering a New Key**
 
-`machbase-neo shell key gen` subcommand generates new key pair and token for the given client-id.
-It writes keys and token into the file that you specify by `--output` option.
-
-```
-machbase-neo shell key gen <client-id> --output <output_file>
-```
-
-Generate and register new key for the client-id `myapp01`. It stores the generated key and token to the `*_cert.pem`, `*_key.pem` and `*_token` files.
-
-```
-$ machbase-neo shell key gen myapp01 --output ./myapp01 
-Save certificate ./myapp01_cert.pem
-Save private key ./myapp01_key.pem
-Save token ./myapp01_token
-```
-
-Check the generated files.
+For example, if you generate a new key for the client ID `myapp01` and download `myapp001.zip`,
+the archive contains `myapp001_cert.pem`, `myapp001_key.pem`, and `server.pem`.
 
 ```
 $ ls -al ./mayapp01*
--rw-r--r--  1 eirny  staff  782 Feb 20 19:33 ./mayapp01_cert.pem
--rw-------  1 eirny  staff  390 Feb 20 19:33 ./mayapp01_key.pem
--rw-------  1 eirny  staff   81 Feb 20 19:33 ./mayapp01_token
+-rw-r--r--  1 eirny  staff  936 Feb 20 19:33 ./mayapp01_cert.pem
+-rw-------  1 eirny  staff  227 Feb 20 19:33 ./mayapp01_key.pem
+-rw-------  1 eirny  staff 1119 Feb 20 19:33 ./server.pem
 ```
 
-- `*_cert.pem` file is the X.509 certificate for the client which is signed by the server.
-- `*_key.pem` file is the private key for the client.
-- `*_token` file contains token string for the client.
-
-For the token based authentication, see the content of the `*_token` file.
-
-```
-$ cat ./myapp01_token 
-myapp01:b:d59310703c1ebf627f8b781fb50437326ec65b067257ebc72f07b12846761d17   
-```
-
-**Server Certificate**
-
-To retrieve server's certificate, execute command `machbase-neo key server-key --output <path>`, it export server's certificate into the file that specified the path.
-
-```
-machbase-neo shell key server-cert --output ./machbase-neo.crt
-```
+- `*_cert.pem`: the client X.509 certificate signed by the server
+- `*_key.pem`: the client's private key
+- `server.pem`: the server's X.509 certificate
 
 ## HTTP Token authentication
 
 HTTP API of machbase-neo supports the token based authentication.
 
-Enable it by specifying `--http-enable-token-auth true` command line option or set `EnableTokenAuth = true` in the config file.
-When you launching server with the option, all HTTP API invocations requires `Authorization` header with pre-registered token.
+When starting the server with the `--http-enable-token-auth true` command-line option, every HTTP API call must send a pre-registered token in the `Authorization` header. The following table shows how the server behaves depending on the `--http-enable-token-auth` setting and whether the `Authorization` header contains a token.
+
+| `--http-enable-token-auth` | `Authorization` header | Server behavior                        |
+|:---------------------------|:----------------------:|:---------------------------------------|
+| true                       | Present                | Uses the token issuer's privileges     |
+|                            | Absent                 | 401 Unauthorized                       |
+| false (or not set)         | Present                | Uses the token issuer's privileges     |
+|                            | Absent                 | Uses `sys` privileges                   |
 
 ```
 machbase-neo serve --http-enable-token-auth true
@@ -123,42 +152,71 @@ The starting log shows HTTP token authentication is enabled.
 
 ### HTTP Client using token
 
-Let's use the token for API authentication. Set `Authorization` bearer header with the content of token file.
+Set the token in the `Authorization: Bearer <token>` header when calling the API.
 
+{{< tabs >}}
+{{< tab name="HTTP" >}}
+
+~~~
+```http
+GET http://127.0.0.1:5654/db/query
+    ?q=select current_user()
+Authorization: Bearer nt_5_gbXSqzkwdpyV3sYF1gFBvPQBpOxXjAu4d3RIsWGqJiH
+```
+~~~
+
+{{< /tab >}}
+{{< tab name="cURL" >}}
 ```
 curl --output - http://127.0.0.1:5654/db/query \
-    --data-urlencode "q=select * from EXAMPLE limit 2" \
-    -H "Authorization: Bearer `cat ./http-api-app01_token`"
+    --data-urlencode "q=select current_user()" \
+    -H "Authorization: Bearer nt_5_gbXSqzkwdpyV3sYF1gFBvPQBpOxXjAu4d3RIsWGqJiH"
 ```
+{{< /tab >}}
+{{< /tabs >}}
 
 ```json
 {
   "data": {
-    "columns": [ "NAME", "TIME", "VALUE" ],
-    "types": [ "string", "datetime", "double" ],
+    "columns": [ "current_user()" ],
+    "types": [ "string" ],
     "rows": [
-      [ "wave.sin", 1675851592000000000, 0 ],
-      [ "wave.cos", 1675851592000000000, 1 ]
+      [ "SYS" ]
     ]
   },
   "success": true,
   "reason": "success",
-  "elapse": "1.866708ms"
+  "elapse": "492.25µs"
 }
 ```
 
-Let's try without the `Authorization` header, or wrong token.
+If the server is started with `--http-enable-token-auth true`, a request without an `Authorization` header or with an invalid token is rejected as follows.
 
+{{< tabs >}}
+{{< tab name="HTTP" >}}
+
+~~~
+```http
+GET http://127.0.0.1:5654/db/query
+    ?q=select current_user()
+Authorization: Bearer intended-wrong-value
+```
+~~~
+
+{{< /tab >}}
+{{< tab name="cURL" >}}
 ```
 curl --output - http://127.0.0.1:5654/db/query \
-    --data-urlencode "q=select * from EXAMPLE limit 2" \
-    -H "Authorization: Bearer http-api-app01:b:intended-wrong-value"
+    --data-urlencode "q=select current_user()" \
+    -H "Authorization: Bearer intended-wrong-value"
 ```
+{{< /tab >}}
+{{< /tabs >}}
 
-If client provides an invalid token, the server responses `HTTP/1.1 401 Unauthorized` with an error json message below.
+If the token is invalid, the server returns `HTTP/1.1 401 Unauthorized` with the following error message.
 
 ```json
-{"success":false,"reason":"invalid token"}
+{"success":false, "reason":"missing valid token"}
 ```
 
 
@@ -166,8 +224,7 @@ If client provides an invalid token, the server responses `HTTP/1.1 401 Unauthor
 
 MQTT API of machbase-neo supports the token based authentication.
 
-Enable it by specifying `--mqtt-enable-token-auth true` command line option or set `EnableTokenAuth = true` in the config file.
-When you launching server with this option, MQTT CONNECT message requires `client-id`, `username` with pre-registered id and token.
+When the server uses `--mqtt-enable-token-auth true`, the MQTT CONNECT message must include a pre-registered token as the MQTT UserName.
 
 ```
 machbase-neo serve --mqtt-enable-token-auth true
@@ -188,7 +245,7 @@ Use the registered token as the `username` in the CONNECT message, and leave the
 
 ```
 mosquitto_pub -h 127.0.0.1 -p 5653 \
-    --username `cat ./mqtt-api-app01_token` \
+  --username nt_5_gbXSqzkwdpyV3sYF1gFBvPQBpOxXjAu4d3RIsWGqJiH \
     -t db/write/EXAMPLE            \
     -m '[ "wave.pi", `date +%s000000000`, 3.1415]'
 ```

@@ -5,108 +5,141 @@ weight: 60
 ---
 
 토큰은 HTTP API와 MQTT 클라이언트 인증에 사용됩니다.
-생성된 키(X.509)는 MQTT TLS 연결과 gRPC 연결에 사용됩니다.
+생성된 키(X.509)는 MQTT TLS 연결에 사용됩니다.
 
-## 키 & 토큰 생성
-
-### 웹 UI
+## 토큰 생성
 
 1. 좌측 메뉴에서 <img src="/neo/security/img/key_icon.jpg" width=47 style="display:inline"> 아이콘을 선택합니다.
 
-2. 상단 좌측 영역의 `+` 아이콘 <img src="/neo/security/img/key_add_icon.jpg" width=221 style="display:inline">을 클릭합니다.
+2. 상단 좌측 영역의 `+` 아이콘 <img src="/neo/security/img/token_add_icon.jpg" width=216 style="display:inline">을 클릭합니다.
 
-3. 고유한 “Client Id”를 입력하고 유효 기간을 설정합니다(기본값은 오늘 기준 3년).  
-   “Generate” 버튼을 누르면 해당 클라이언트용 키 파일이 생성됩니다.
+3. 관리를 위한 이름 "Name"을 입력하고 유효 기간을 설정합니다 (기본값은 오늘 기준 10년).
 
-{{< figure src="/neo/security/img/key_gen.jpg" width=927px >}}
+4. "Issue token" 버튼을 누르면 API 토큰이 생성됩니다.
 
-4. “Download *.zip” 버튼을 클릭하거나 각 파일 내용을 복사해 저장합니다.  
-   키는 다시 생성할 수 없으므로 이 단계가 유일한 백업 기회입니다.
+{{< figure src="/neo/security/img/token_gen.jpg" width=509px >}}
 
-### 셸 명령
+5. 생성된 토큰을 복사할 수 있는 마지막 기회이며 화면을 닫으면 동일한 토큰을 다시 생성할 수 없습니다.
 
-`machbase-neo shell key` 서브커맨드를 통해 클라이언트 키와 토큰을 관리할 수 있습니다.
+{{< figure src="/neo/security/img/token_gen_result.jpg" width=509px >}}
 
-**등록된 인증 키와 토큰 조회**
+6. 쉘에서 명령어로 웹 GUI에서 처럼 토큰을 생성/관리할 수 있습니다.
+  - `token gen <name>`
+  - `token list`
+  - `token del <id>`
 
-```
-machbase-neo shell key list
-```
+```sh
+sys machbase-neo 2026-09-14 09:46:43
+> token gen "my api token";
+nt_4_9jShk5SlIimfUFzN3OSfCGLAccVx3U3erqGxPPgitoL
 
-등록된 client-id와 유효 기간이 표시됩니다.
+> token list;
+┌────────┬────┬─────────────────┬──────┬───────────────────┬─────────────────────┬─────────────────────┬───────────┐
+│ ROWNUM │ ID │ NAME            │ USER │ TOKEN             │ CREATED             │ EXPIRES             │ LAST USED │
+├────────┼────┼─────────────────┼──────┼───────────────────┼─────────────────────┼─────────────────────┼───────────┤
+│      2 │  4 │ my api token    │ SYS  │ nt_4_9jSh****itoL │ 2026-09-14 09:47:03 │ 2036-09-14 09:47:03 │           │
+└────────┴────┴─────────────────┴──────┴───────────────────┴─────────────────────┴─────────────────────┴───────────┘
 
-```
-$ machbase-neo shell key list
-┌────────┬──────────────────────┬───────────────────────────────┬───────────────────────────────┐
-│ ROWNUM │ ID                   │ VALID FROM                    │ EXPIRE                        │
-├────────┼──────────────────────┼───────────────────────────────┼───────────────────────────────┤
-│      1 │ myid2                │ 2023-02-05 01:55:18 +0000 UTC │ 2033-02-02 01:55:18 +0000 UTC │
-│      2 │ myid3                │ 2023-02-05 01:56:36 +0000 UTC │ 2033-02-02 01:56:36 +0000 UTC │
-......
-```
-
-**기존 키/토큰 삭제**
-
-```
-machbase-neo shell key del <client-id>
+> token del 4;
+Token deleted successfully.
 ```
 
-```
-$ machbase-neo shell key del myid2
-deleted
+## X.509 인증서 생성
+
+1. 좌측 메뉴에서 <img src="/neo/security/img/key_icon.jpg" width=47 style="display:inline"> 아이콘을 선택합니다.
+
+2. 좌측 중앙 영역의 `+` 아이콘 <img src="/neo/security/img/cert_add_icon.jpg" width=192 style="display:inline">을 클릭합니다.
+
+3. 관리를 위한 이름 "Name"과 유형 "Type" 그리고 유효 기간을 설정합니다 (기본값은 오늘 기준 10년).
+
+4. "Generate certificate" 버튼을 누르면 인증서가 생성됩니다.
+
+{{< figure src="/neo/security/img/cert_gen.jpg" width=512px >}}
+
+5. “Download *.zip” 버튼을 클릭하거나 각 파일 내용을 복사해 저장합니다.
+생성된 인증서를 다운로드할 수 있는 마지막 기회이며 화면을 닫으면 동일한 인증서를 다시 생성할 수 없습니다.
+
+{{< figure src="/neo/security/img/cert_gen_result.jpg" width=512px >}}
+
+6. 쉘에서 명령어로 웹 GUI에서 처럼 인증서를 생성/관리할 수 있습니다.
+  - `key gen <name>`
+  - `key list`
+  - `key del <id>`
+
+```sh
+
+sys machbase-neo 2026-09-14 09:48:33
+sys machbase-neo 2026-09-14 13:06:03
+> key gen -t ecdsa "my_client_cert";
+id=2
+-----BEGIN CERTIFICATE-----
+MIICjjCCAfCgAwIBAgIRAM6q5O9/ly2HshwRM4wzOPcwCgYIKoZIzj0EAwQwgZIx
+CzAJBgNVBAYTAkNBMREwDwYDVQQHEwhTYW4gSm9zZTEdMBsGA1UECQwUMzAwMyBO
+IEZpcnN0IFN0ICMyMDYxDjAMBgNVBBETBTk1MTM0MRUwEwYDVQQKEwxtYWNoYmFz
+ZS5jb20xEzARBgNVBAsMClImRCBDZW50ZXIxFTATBgNVBAMTDG1hY2hiYXNlLW5l
+bzAeFw0yNjA5MTQwNDA2MDlaFw0zNjA5MTEwNDA2MDlaMBcxFTATBgNVBAMMDGFu
+b3RoZXJfY2VydDBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABOIr0Uj+d8cI2bOT
++TLaDsxKtkmA7s1KGXMgsISg5iHFvSO1W205z6wPrzfaUHP3QFBTtCRbUD7UFokL
+R6WiEYGjgaAwgZ0wDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMC
+BggrBgEFBQcDATAMBgNVHRMBAf8EAjAAMB8GA1UdIwQYMBaAFOljpIF4iVCNw3br
+tW/Ds4lv4Jb7MD0GA1UdEQQ2MDSCDGFub3RoZXJfY2VydIYkdXJuOm1hY2hiYXNl
+Om5lbzpjbGllbnQ6YW5vdGhlcl9jZXJ0MAoGCCqGSM49BAMEA4GLADCBhwJBAjCp
+PUwvoaRrlZB8Zu/FW4SSXVugmDQBPpDpBBN/nbvbKAMAi3n/fvFswp6dfLgD1APo
+KGiHGonXG0Rpx0uXFgsCQgDlAFVwAY+S6bpdRIRYV0neA7fqnqfPxo4HV3otfd5p
+iLHmOUgNxuFfq/C0qKwk2R07mNWtl437HwdUUGb0po0qGA==
+-----END CERTIFICATE-----
+
+-----BEGIN EC PRIVATE KEY-----
+MHcCAQEEIGvf58K/e7FmQW74ZCv5gCvKnBeDemTkM83eD2V/cHuroAoGCCqGSM49
+AwEHoUQDQgAE4ivRSP53xwjZs5P5MtoOzEq2SYDuzUoZcyCwhKDmIcW9I7VbbTnP
+rA+vN9pQc/dAUFO0JFtQPtQWiQtHpaIRgQ==
+-----END EC PRIVATE KEY-----
+
+
+Caution:
+  This is the last chance to copy and store the PRIVATE KEY.
+  It will not be shown again.
+
+> key list;
+┌────────┬────┬────────────────┬─────────────────────┬─────────────────────┐
+│ ROWNUM │ ID │ NAME           │ NOT VALID BEFORE    │ NOT VALID AFTER     │
+├────────┼────┼────────────────┼─────────────────────┼─────────────────────┤
+│      1 │  2 │ my_client_cert │ 2026-09-14 12:57:33 │ 2036-09-11 12:57:33 │
+└────────┴────┴────────────────┴─────────────────────┴─────────────────────┘
+
+> key del 2;
+Key deleted successfully.
 ```
 
 **새 키/토큰 등록**
 
-`machbase-neo shell key gen` 서브커맨드는 지정한 client-id에 대해 새로운 키와 토큰을 생성합니다.  
-`--output` 옵션으로 저장 경로를 지정하면 해당 경로 아래에 키와 토큰이 생성됩니다.
-
-```
-machbase-neo shell key gen <client-id> --output <output_file>
-```
-
-예를 들어 client-id `myapp01`에 대한 새로운 키를 생성하면 `*_cert.pem`, `*_key.pem`, `*_token` 파일이 생성됩니다.
-
-```
-$ machbase-neo shell key gen myapp01 --output ./myapp01 
-Save certificate ./myapp01_cert.pem
-Save private key ./myapp01_key.pem
-Save token ./myapp01_token
-```
-
-생성된 파일을 확인합니다.
+예를 들어 client-id `myapp01`에 대한 새로운 키를 생성하고 `myapp001.zip`파일을 다운로드 받으면
+그 안에는 `myapp001_cert.pem`, `myapp001_key.pem`과 `server.pem` 파일이 포함되어 있습니다.
 
 ```
 $ ls -al ./mayapp01*
--rw-r--r--  1 eirny  staff  782 Feb 20 19:33 ./mayapp01_cert.pem
--rw-------  1 eirny  staff  390 Feb 20 19:33 ./mayapp01_key.pem
--rw-------  1 eirny  staff   81 Feb 20 19:33 ./mayapp01_token
+-rw-r--r--  1 eirny  staff  936 Feb 20 19:33 ./mayapp01_cert.pem
+-rw-------  1 eirny  staff  227 Feb 20 19:33 ./mayapp01_key.pem
+-rw-------  1 eirny  staff 1119 Feb 20 19:33 ./server.pem
 ```
 
 - `*_cert.pem` : 서버가 서명한 클라이언트용 X.509 인증서
-- `*_key.pem` : 클라이언트의 개인 키
-- `*_token` : 클라이언트 토큰 문자열
-
-토큰 기반 인증 시 `*_token` 파일의 내용을 사용합니다.
-
-```
-$ cat ./myapp01_token 
-myapp01:b:d59310703c1ebf627f8b781fb50437326ec65b067257ebc72f07b12846761d17   
-```
-
-**서버 인증서**
-
-서버 인증서를 내려받으려면 `machbase-neo shell key server-cert --output <경로>` 명령을 사용합니다.
-
-```
-machbase-neo shell key server-cert --output ./machbase-neo.crt
-```
+- `*_key.pem`  : 클라이언트의 개인 키
+- `server.pem` : 서버의 X.509 인증서
 
 ## HTTP 토큰 인증
 
 machbase-neo HTTP API는 토큰 기반 인증을 지원합니다.
 
-명령줄 옵션 `--http-enable-token-auth true` 또는 설정 파일에서 `EnableTokenAuth = true`로 설정하면, 모든 HTTP API 호출 시 사전에 등록된 토큰을 `Authorization` 헤더로 전송해야 합니다.
+서버를 시작할 때 명령줄 옵션 `--http-enable-token-auth true`를 설정하면, 모든 HTTP API 호출 시 사전에 등록된 토큰을 `Authorization` 헤더로 전송해야 합니다. `--http-enable-token-auth`를 설정과 `Authorization` 헤더에 토큰 지정 여부에 따른 서버 동작은 아래의 표와 같습니다.
+
+
+| `--http-enable-token-auth` | `Authorization` 헤더 | 서버 응답             |
+|:---------------------------|:------------------:|:---------------------|
+| true                       | O                  | 토큰 발급자의 권한으로 동작 |
+|                            | X                  | 401 Unauthorized     |
+| false (or not set)         | O                  | 토큰 발급자의 권한으로 동작 |
+|                            | X                  | sys 권한으로 동작       |
 
 ```
 machbase-neo serve --http-enable-token-auth true
@@ -125,40 +158,69 @@ machbase-neo serve --http-enable-token-auth true
 
 토큰 파일 내용을 `Authorization: Bearer <token>` 헤더에 설정해 API를 호출합니다.
 
+{{< tabs >}}
+{{< tab name="HTTP" >}}
+
+~~~
+```http
+GET http://127.0.0.1:5654/db/query
+    ?q=select current_user()
+Authorization: Bearer nt_5_gbXSqzkwdpyV3sYF1gFBvPQBpOxXjAu4d3RIsWGqJiH
+```
+~~~
+
+{{< /tab >}}
+{{< tab name="cURL" >}}
 ```
 curl --output - http://127.0.0.1:5654/db/query \
-    --data-urlencode "q=select * from EXAMPLE limit 2" \
-    -H "Authorization: Bearer `cat ./http-api-app01_token`"
+    --data-urlencode "q=select current_user()" \
+    -H "Authorization: Bearer nt_5_gbXSqzkwdpyV3sYF1gFBvPQBpOxXjAu4d3RIsWGqJiH"
 ```
+{{< /tab >}}
+{{< /tabs >}}
 
 ```json
 {
   "data": {
-    "columns": [ "NAME", "TIME", "VALUE" ],
-    "types": [ "string", "datetime", "double" ],
+    "columns": [ "current_user()" ],
+    "types": [ "string" ],
     "rows": [
-      [ "wave.sin", 1675851592000000000, 0 ],
-      [ "wave.cos", 1675851592000000000, 1 ]
+      [ "SYS" ]
     ]
   },
   "success": true,
   "reason": "success",
-  "elapse": "1.866708ms"
+  "elapse": "492.25µs"
 }
 ```
 
-`Authorization` 헤더를 생략하거나 잘못된 토큰을 사용하면 다음과 같이 거부됩니다.
+서버에 `--http-enable-token-auth true`를 설정한 상태에서 `Authorization` 헤더를 생략하거나 잘못된 토큰을 사용하면 다음과 같이 거부됩니다.
 
+{{< tabs >}}
+{{< tab name="HTTP" >}}
+
+~~~
+```http
+GET http://127.0.0.1:5654/db/query
+    ?q=select current_user()
+Authorization: Bearer intended-wrong-value
+```
+~~~
+
+{{< /tab >}}
+{{< tab name="cURL" >}}
 ```
 curl --output - http://127.0.0.1:5654/db/query \
-    --data-urlencode "q=select * from EXAMPLE limit 2" \
-    -H "Authorization: Bearer http-api-app01:b:intended-wrong-value"
+    --data-urlencode "q=select current_user()" \
+    -H "Authorization: Bearer intended-wrong-value"
 ```
+{{< /tab >}}
+{{< /tabs >}}
 
 올바르지 않은 토큰일 경우 `HTTP/1.1 401 Unauthorized`와 함께 다음과 같은 에러 메시지가 반환됩니다.
 
 ```json
-{"success":false,"reason":"invalid token"}
+{"success":false, "reason":"missing valid token"}
 ```
 
 
@@ -166,7 +228,7 @@ curl --output - http://127.0.0.1:5654/db/query \
 
 machbase-neo의 MQTT API 역시 토큰 기반 인증을 지원합니다.
 
-명령줄에서 `--mqtt-enable-token-auth true` 옵션을 사용하거나 설정 파일에서 `EnableTokenAuth = true`로 지정하면, MQTT CONNECT 메시지에 사전에 등록한 client-id와 토큰(사용자명)을 포함해야 합니다.
+서버에 `--mqtt-enable-token-auth true` 를 사용하면, MQTT CONNECT 메시지에 사전에 등록한 토큰을 MQTT UserName으로 포함해야 합니다.
 
 ```
 machbase-neo serve --mqtt-enable-token-auth true
@@ -187,7 +249,7 @@ CONNECT 메시지의 `username`에 등록된 토큰을 사용하고 `password`�
 
 ```
 mosquitto_pub -h 127.0.0.1 -p 5653 \
-    --username `cat ./mqtt-api-app01_token` \
+    --username nt_5_gbXSqzkwdpyV3sYF1gFBvPQBpOxXjAu4d3RIsWGqJiH \
     -t db/write/EXAMPLE            \
     -m '[ "wave.pi", `date +%s000000000`, 3.1415]'
 ```
