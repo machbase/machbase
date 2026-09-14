@@ -65,7 +65,9 @@ SQL(
     param('name') ?? "temperature")
 ```
 
-### named() {{< neo_since ver="8.7.0" />}}
+### named()
+
+{{< neo_since ver="8.7.0" />}}
 
 *構文*: `named( name, value )`
 
@@ -95,7 +97,9 @@ SQL(`
 
 ## SQL_SELECT()
 
-*構文*: `SQL_SELECT( fields..., from(), between() [, limit()] )` {{< neo_since ver="8.0.15" />}}
+{{< neo_since ver="8.0.15" />}}
+
+*構文*: `SQL_SELECT( fields..., from(), between() [, limit()] )`
 
 - `fields` *string*: 取得する列名。複数指定できます。
 

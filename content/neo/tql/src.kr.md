@@ -62,7 +62,9 @@ SQL(
     param('name') ?? "temperature")
 ```
 
-### named() {{< neo_since ver="8.7.0" />}}
+### named()
+
+{{< neo_since ver="8.7.0" />}}
 
 *구문*: `named( name, value )`
 
@@ -92,7 +94,9 @@ SQL(`
 
 ## SQL_SELECT()
 
-*구문*: `SQL_SELECT( fields..., from(), between() [, limit()] )` {{< neo_since ver="8.0.15" />}}
+{{< neo_since ver="8.0.15" />}}
+
+*구문*: `SQL_SELECT( fields..., from(), between() [, limit()] )`
 
 - `fields` *string*: 조회할 컬럼 이름. 여러 컬럼을 지정할 수 있습니다.
 

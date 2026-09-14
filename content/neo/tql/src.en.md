@@ -90,11 +90,12 @@ SQL(`
     named("from", "2023-03-01 14:00:00"),
     named("to", "2023-03-01 14:10:00"))
 ```
-```
 
 ## SQL_SELECT()
 
-*Syntax*: `SQL_SELECT( fields..., from(), between() [, limit()] )` {{< neo_since ver="8.0.15" />}}
+{{< neo_since ver="8.0.15" />}}
+
+*Syntax*: `SQL_SELECT( fields..., from(), between() [, limit()] )`
 
 - `fields` `string` : column names, multiple columns are possible.
 
