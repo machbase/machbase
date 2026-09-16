@@ -44,6 +44,21 @@ machbase-neo» select * from example;
 └─────────┴──────────┴─────────────────────────┴───────────┘
 ```
 
+### SSH authentication with an API token
+
+{{< neo_since ver="8.7.1" />}}
+
+machbase-neo also supports authentication by passing an API token through the SSH password prompt. The API token is used instead of the database password. After authentication, the SSH shell runs with the database privileges of the user who owns the token.
+
+After issuing an API token, start an SSH connection and enter the token at the password prompt.
+
+```sh
+$ ssh -p 5652 sys@127.0.0.1
+sys@127.0.0.1's password: <API_TOKEN>↵
+```
+
+The base part of the SSH username must match the API token owner, case-insensitively. For example, when connecting as `sys`, provide a token owned by the `sys` user. An API token is a credential equivalent to a password; do not expose it in command-line arguments, shell history, or logs.
+
 ### SSH without password
 
 1. **Generate a key pair**: The first step is to generate a new key pair on the local machine (the machine you will log in from). 
