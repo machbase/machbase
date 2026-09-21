@@ -1,12 +1,14 @@
 ---
-title: machclusterctl YAML 記述ガイド
-weight: 0
+title: 'machclusterctl YAML 記述ガイド'
+type: docs
+weight: 80
 toc: true
+aliases:
+  - /dbms-8.5/tools-reference/machclusterctl-yaml-guide-en/
+  - /dbms-8.5/tools-reference/machclusterctl-yaml-guide-ko/
 ---
 
-# machclusterctl YAML 記述ガイド
-
-`machclusterctl` が使用する `cluster.yaml` の記述方法を説明します。コマンドの実行手順は [machclusterctl-user-guide-ko](../machclusterctl-user-guide-ko/) を参照してください。
+`machclusterctl` が使用する `cluster.yaml` の記述方法を説明します。コマンドの実行手順は [machclusterctl ユーザーガイド](../machclusterctl-user-guide/) を参照してください。
 
 YAML にはクラスタの目標状態を記述します。`machclusterctl` は YAML を読み込み、`cluster.defaults`、`cluster.hosts`、環境変数の置換を適用して最終的な設定値を生成します。
 
@@ -214,7 +216,7 @@ cluster:
     - alias: coord-secondary-1
       host: node2
       role: secondary
-      # node2 の Coordinator だけに別のホームパスを指定。
+      # Only the coordinator on node2 uses a separate home path.
       home_path: "${MC_HOME_BASE:-/machbase}/coordinator-secondary"
 
   deployers:
@@ -242,7 +244,7 @@ cluster:
       host: node3
       deployer: deployer-3
       type: slave
-      # node3 に Lookup を追加する場合に備え、slave のポートだけを上書き。
+      # Override only the slave ports in case another lookup node is added on node3.
       cluster_link_port: "${MC_LOOKUP_SLAVE_PORT:-5311}"
       http_admin_port: "${MC_LOOKUP_SLAVE_HTTP_PORT:-5312}"
 
@@ -254,7 +256,7 @@ cluster:
     - alias: broker-2
       host: node2
       deployer: deployer-2
-      # broker-2 のサービスポート・データパスだけを明示的に上書き。
+      # Override only broker-2's service port and dbs path.
       service_port: "${MC_BROKER2_SERVICE_PORT:-5666}"
       dbs_path: "${MC_HOME_BASE:-/machbase}/dbs/broker-2"
 
@@ -275,7 +277,7 @@ cluster:
         - alias: warehouse-group2-1
           host: node2
           deployer: deployer-2
-          # node2 に 2 台目の Warehouse を配置するため、ポートと home_path を上書き。
+          # Because this is the second warehouse on node2, override ports and home_path.
           home_path: "${MC_HOME_BASE:-/machbase}/warehouse-group2"
           cluster_link_port: "${MC_WAREHOUSE_G2_PORT:-5511}"
           http_admin_port: "${MC_WAREHOUSE_G2_HTTP_PORT:-5512}"
@@ -401,10 +403,10 @@ SSH 設定は、`install`、新規ノードの追加、`destroy`、`upgrade --fu
 
 ```text
 cluster.defaults.common.ssh_user
-  → cluster.ssh
-  → user@host または hosts.<alias>.address のユーザー
-  → cluster.hosts.<alias>.ssh
-  → node.ssh
+  -> cluster.ssh
+  -> user from user@host or hosts.<alias>.address
+  -> cluster.hosts.<alias>.ssh
+  -> node.ssh
 ```
 
 | YAML パス | 型 | 必須 | 説明 |
@@ -500,7 +502,7 @@ Lookup/Broker/Warehouse の `deployer` フィールドは、Deployer の `alias`
 | `http_admin_port` | int | いいえ | HTTP 管理ポート。 |
 | `service_port` | int | defaults がない場合は必須 | クライアント・machsql の接続ポート。 |
 | `home_path` | string | defaults がない場合は必須 | Broker のホームパス。 |
-| `dbs_path` または `dbs-path` | string | いいえ | Broker の DBS_PATH の上書き。 |
+| `dbs_path` または `dbs-path` | string | いいえ | Broker の `DBS_PATH` の上書き。 |
 | `ssh` | object | いいえ | ノード別の SSH 上書き設定。 |
 
 ### 3-11. warehouse group / warehouse node
@@ -520,7 +522,7 @@ Lookup/Broker/Warehouse の `deployer` フィールドは、Deployer の `alias`
 | `warehouse_groups[].nodes[].http_admin_port` | int | いいえ | HTTP 管理ポート。 |
 | `warehouse_groups[].nodes[].service_port` | int | defaults がない場合は必須 | Warehouse のサービスポート。 |
 | `warehouse_groups[].nodes[].home_path` | string | defaults がない場合は必須 | Warehouse のホームパス。 |
-| `warehouse_groups[].nodes[].dbs_path` または `dbs-path` | string | いいえ | Warehouse の DBS_PATH の上書き。 |
+| `warehouse_groups[].nodes[].dbs_path` または `dbs-path` | string | いいえ | Warehouse の `DBS_PATH` の上書き。 |
 | `warehouse_groups[].nodes[].ssh` | object | いいえ | ノード別の SSH 上書き設定。 |
 
 Warehouse の追加時、`machclusterctl` はその Warehouse 自身の `host:service_port+2` をレプリケーションマネージャーのアドレスとして計算します。これはピアのアドレスではなく、生成する Warehouse 設定の `REPLICATION_MANAGER_PORT_NO` に対応します。グループの最初の Warehouse など `--no-replicate` が必要な場合は、`--replication` を同時に渡しません。

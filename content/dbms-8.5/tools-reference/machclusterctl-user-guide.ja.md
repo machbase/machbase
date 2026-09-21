@@ -1,14 +1,16 @@
 ---
-title: machclusterctl ユーザーガイド
-weight: 0
+title: 'machclusterctl ユーザーガイド'
+type: docs
+weight: 70
 toc: true
+aliases:
+  - /dbms-8.5/tools-reference/machclusterctl-user-guide-en/
+  - /dbms-8.5/tools-reference/machclusterctl-user-guide-ko/
 ---
-
-# machclusterctl ユーザーガイド
 
 `machclusterctl` は、YAML ファイルで Machbase Cluster Edition をインストール・運用するコマンドラインツールです。`cluster.yaml` に必要なクラスタ構成を宣言し、`validate`、`install`、`apply`、`upgrade`、`start`、`stop` などのコマンドで管理します。
 
-YAML の記述方法は [machclusterctl-yaml-guide-en](../machclusterctl-yaml-guide-en/) も参照してください。
+YAML の記述方法は [machclusterctl YAML 記述ガイド](../machclusterctl-yaml-guide/) も参照してください。
 
 ## 1. 基本概念
 
@@ -299,13 +301,13 @@ cluster:
 運用 YAML では、次のような Coordinator 管理下のパッケージリポジトリのパスを、新しいパッケージの登録元として使用しないでください。
 
 ```yaml
-# 推奨: 運用者が保持する元のアーカイブパス
+# Recommended: source archive path kept by the operator
 cluster:
   package:
     name: machbase-v2
     path: /machbase/packages/machbase-v2.tgz
 
-# 非推奨: Coordinator が登録後に内部で保持するパス
+# Not recommended: path stored internally after coordinator registration
 cluster:
   package:
     name: machbase-v2
@@ -454,7 +456,7 @@ machclusterctl upgrade -f cluster.yaml --online --dry-run --verbose
 
 ## 14. 参考ファイル
 
-- YAML 記述ガイド: [machclusterctl-yaml-guide-en](../machclusterctl-yaml-guide-en/)
+- YAML 記述ガイド: [machclusterctl YAML 記述ガイド](../machclusterctl-yaml-guide/)
 - 環境変数を使用するサンプル: [machclusterctl-sample-defaults.yaml](/dbms-8.5/tools-reference/machclusterctl-sample-defaults.yaml)
 - 環境変数のサンプル: [machclusterctl-sample-defaults.env.sh](/dbms-8.5/tools-reference/machclusterctl-sample-defaults.env.sh)
 - 静的なサンプル: [machclusterctl-sample-defaults-noenv.yaml](/dbms-8.5/tools-reference/machclusterctl-sample-defaults-noenv.yaml)

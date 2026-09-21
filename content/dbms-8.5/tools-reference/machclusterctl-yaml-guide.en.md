@@ -1,6 +1,13 @@
-# machclusterctl YAML Authoring Guide
+---
+title: 'machclusterctl YAML Authoring Guide'
+type: docs
+weight: 80
+aliases:
+  - /dbms-8.5/tools-reference/machclusterctl-yaml-guide-en/
+  - /dbms-8.5/tools-reference/machclusterctl-yaml-guide-ko/
+---
 
-This document describes how to write the `cluster.yaml` file used by `machclusterctl`. For command execution procedures, see [machclusterctl-user-guide-en](../machclusterctl-user-guide-en/).
+This document describes how to write the `cluster.yaml` file used by `machclusterctl`. For command execution procedures, see [machclusterctl User Guide](../machclusterctl-user-guide/).
 
 YAML describes the desired cluster state. `machclusterctl` reads the YAML and then applies `cluster.defaults`, `cluster.hosts`, and environment-variable substitution to produce the final resolved configuration.
 
@@ -391,7 +398,7 @@ If YAML contains an undefined field, loading fails. Typos are not silently ignor
 
 SSH settings are used by commands that directly access remote servers, such as `install`, new-node add, `destroy`, and `upgrade --full-stop`.
 
-Precedence:
+Precedence (later entries take precedence):
 
 ```text
 cluster.defaults.common.ssh_user

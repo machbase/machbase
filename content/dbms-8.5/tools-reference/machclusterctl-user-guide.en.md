@@ -1,8 +1,15 @@
-# machclusterctl User Guide
+---
+title: 'machclusterctl User Guide'
+type: docs
+weight: 70
+aliases:
+  - /dbms-8.5/tools-reference/machclusterctl-user-guide-en/
+  - /dbms-8.5/tools-reference/machclusterctl-user-guide-ko/
+---
 
 `machclusterctl` is a command-line tool for installing and operating Machbase Cluster Edition with a YAML file. Operators declare the desired cluster layout in `cluster.yaml` and manage the cluster with commands such as `validate`, `install`, `apply`, `upgrade`, `start`, and `stop`.
 
-For YAML authoring details, also see [machclusterctl-yaml-guide-en](../machclusterctl-yaml-guide-en/).
+For YAML authoring details, also see [machclusterctl YAML Authoring Guide](../machclusterctl-yaml-guide/).
 
 ## 1. Basic Concepts
 
@@ -30,7 +37,7 @@ machclusterctl apply -f cluster.yaml --yes
 
 ## 2. Execution Host And Environment
 
-Run `machclusterctl` on the server where the primary coordinator will be installed, or on the primary coordinator server after installation.
+It is recommended to run `machclusterctl` on the server where the primary coordinator will be installed or, after installation, on the primary coordinator server.
 
 Recommended environment variables:
 
@@ -51,7 +58,7 @@ machclusterctl connect broker-1
 machclusterctl export -o cluster-export.yaml
 ```
 
-Use `--coordinator` only when changing environment variables is inconvenient or when you need to inspect multiple coordinator homes from one server.
+Use `--coordinator` to specify the primary coordinator home directly only when changing environment variables is inconvenient or when you need to inspect multiple coordinator homes from one server.
 
 ```bash
 machclusterctl status --coordinator /home/machbase/coordinator
@@ -448,7 +455,7 @@ machclusterctl upgrade -f cluster.yaml --online --dry-run --verbose
 
 ## 14. Reference Files
 
-- YAML authoring guide: [machclusterctl-yaml-guide-en](../machclusterctl-yaml-guide-en/)
-- Environment-variable based sample: [machclusterctl-sample-defaults.yaml](../machclusterctl-sample-defaults.yaml)
-- Sample environment variables: [machclusterctl-sample-defaults.env.sh](../machclusterctl-sample-defaults.env.sh)
-- Static sample: [machclusterctl-sample-defaults-noenv.yaml](../machclusterctl-sample-defaults-noenv.yaml)
+- YAML authoring guide: [machclusterctl YAML Authoring Guide](../machclusterctl-yaml-guide/)
+- Environment-variable based sample: [machclusterctl-sample-defaults.yaml](/dbms-8.5/tools-reference/machclusterctl-sample-defaults.yaml)
+- Sample environment variables: [machclusterctl-sample-defaults.env.sh](/dbms-8.5/tools-reference/machclusterctl-sample-defaults.env.sh)
+- Static sample: [machclusterctl-sample-defaults-noenv.yaml](/dbms-8.5/tools-reference/machclusterctl-sample-defaults-noenv.yaml)
