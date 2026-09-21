@@ -1,0 +1,10 @@
+<dl class="editor-tab-notes">
+  {{- $lang := .lang -}}
+  {{- range $n, $note := .spec.notes -}}
+    <div class="editor-note-{{ $n }}">
+      <dt>{{ if $.plainNumbers }}{{ add $n 1 }}.{{ else }}<span class="ta-note-number">{{ add $n 1 }}</span>{{ end }} {{ $note.label }}</dt>
+      <dd>{{ index $note $lang }}</dd>
+    </div>
+  {{- end -}}
+</dl>
+{{- with .spec.extra -}}<p class="ta-feature-extra">{{ index . $lang }}</p>{{- end -}}

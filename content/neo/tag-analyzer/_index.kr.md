@@ -2,231 +2,345 @@
 title: Tag Analyzer
 type: docs
 weight: 26
+toc: true
 ---
 
-## 개요
-Tag Analyzer는 태그 테이블의 롤업 기능을 활용해 데이터를 차트 형태로 조회하고 분석할 수 있는 기능을 제공합니다.  
-복수의 차트로 구성된 대시보드 구조이며, 대시보드의 각 열이 하나의 차트를 의미합니다.
+Tag Analyzer는 태그 테이블의 시계열 데이터를 대화형으로 탐색하는 Machbase Neo 도구입니다.
 
-### 사용 가능한 테이블
-Tag Analyzer를 사용하려면 다음 조건을 만족해야 합니다.
-- 태그 테이블만 사용할 수 있습니다.
-- 차트 조회 속도를 높이려면 롤업 테이블을 미리 생성해 두십시오.  
-  차트 조회 시 X축 간격은 조회 시간 범위에 따라 자동으로 결정되므로, 1초·1분·1시간 간격의 기본 롤업을 만들어 두는 것을 권장합니다.
+다음과 같은 작업에 사용할 수 있습니다:
 
-태그 테이블 및 롤업 테이블 생성 예시는 아래와 같습니다.
+- 여러 태그의 차트 만들기
+- 시간 범위 조절 및 동기화
+- 차트 겹치기로 데이터 비교
+- 원시 값 확인
+- FFT로 주파수 분석
+- 차트와 설정을 보드로 저장하고 나중에 다시 열기
+
+<span id="1-quickstart"></span>
+
+## 1. 개요 {#overview}
+
+Tag Analyzer 사용 데모 영상입니다. 차트를 만들고, 데이터를 분석하고, 보드를 저장하는 과정을 보여줍니다.
+
+{{< tag-analyzer-overview >}}
+
+### 1.1 Tag Analyzer 탭 열기 {#create-tag-analyzer-tab}
+
+**+**를 클릭한 뒤 **TAG ANALYZER**를 선택해 새 보드를 여세요.
+
+### 1.2 예제 데이터 추가 (선택 사항) {#예제-데이터-준비}
+
+예제 데이터로 Tag Analyzer를 사용해 보세요. 이미 데이터가 있다면 이 섹션을 건너뛰세요.
+
+1. 새 탭 메뉴에서 **SQL**을 선택하고 아래 SQL 예제를 실행해 테이블을 만드세요.
+2. 다른 탭에서 **TQL**을 선택하고 아래 TQL 예제를 실행해 예제 데이터를 넣으세요.
+
+{{< figure
+  src="/images/tag-analyzer/prepare-example-data-editors-kr.png?v=7751b45119"
+  link="/images/tag-analyzer/prepare-example-data-editors-kr.png?v=7751b45119"
+  alt="+ 버튼으로 새 탭을 연 뒤 SQL에서 예제 테이블을 만들고 TQL에서 예제 데이터를 추가하는 위치."
+  caption="그림 1.2: SQL 및 TQL 편집기"
+>}}
+
+**예제 테이블 만들기 (SQL 탭에서 한 번 실행)**
+
 ```sql
-CREATE TAG TABLE tag (NAME VARCHAR(80) PRIMARY KEY, TIME DATETIME BASETIME, VALUE DOUBLE SUMMARIZED);
-
-CREATE ROLLUP _tag_rollup_sec FROM tag INTERVAL 1 SEC;
-CREATE ROLLUP _tag_rollup_min FROM _tag_rollup_sec INTERVAL 1 MIN;
-CREATE ROLLUP _tag_rollup_hour FROM _tag_rollup_min INTERVAL 1 HOUR;
+CREATE TAG TABLE IF NOT EXISTS TAG_ANALYZER_DEMO (
+    NAME VARCHAR(80) PRIMARY KEY,
+    TIME DATETIME BASETIME,
+    VALUE DOUBLE SUMMARIZED
+);
 ```
-※ 태그 테이블에 대한 자세한 내용은 Machbase 매뉴얼(Feature and Tables > Tag Table)을 참고해 주십시오.
 
-## 대시보드
-### 화면 구성
+**예제 테이블에 데이터 추가하기 (TQL 편집기에서 실행)**
 
-{{< figure src="/images/web-ui/taz_dashboard_screen.jpg" width="600" >}}
+```js
+FAKE(oscillator(
+    freq(1/60, 10, 20),
+    range('now-10m', '10m', '1s')
+))
+PUSHVALUE(0, 'temperature')
+APPEND(table('TAG_ANALYZER_DEMO'))
+```
 
-대시보드는 실제 데이터를 표시하는 차트들로 구성됩니다. 차트가 여러 개이면 행 단위로 나열되며, 각 행이 하나의 차트를 의미합니다.
-1. 대시보드 전체 제어 영역입니다. 여기에서 대시보드에 적용된 시간 범위도 확인할 수 있습니다.
-2. 차트가 표시되는 패널입니다. 새 차트를 추가하면 기존 차트 아래쪽에 배치됩니다.
-3. 새 차트를 추가하는 버튼입니다. 항상 가장 아래쪽 행에 위치합니다.
+### 1.3 첫 차트 만들기 {#tag-analyzer-만들기}
 
-### 차트 추가
-대시보드 하단의 [+] 버튼을 클릭하면 새 차트를 만들 수 있습니다.
+Tag Analyzer 탭에서 **New Chart**를 클릭해 차트 생성 대화상자를 여세요.
+자신의 테이블과 태그를 사용하거나 아래 예제 설정을 따라 하세요.
 
-{{< figure src="/images/web-ui/taz_new_chart.jpg" width="300" >}}
+1. **Chart name**에 `Temperature`를 입력하고 **Line**을 선택하세요.
+2. 예제 데이터를 만든 **Database**와 **User**를 선택한 뒤, **Table**은 **TAG_ANALYZER_DEMO**,
+   **Time**은 **TIME**, **Value**는 **VALUE**를 선택하세요.
+3. **Enter** 또는 검색 버튼으로 `temperature`를 검색하고 **Item list**에서 클릭하세요.
+   **Selected**에 추가되면 **AVG**를 유지하세요.
+4. **Apply**를 클릭해 차트를 만드세요.
 
-1. 테이블 선택  
-   태그 형식의 테이블만 목록에 표시됩니다.
-2. 태그 필터  
-   입력한 값이 포함된 태그만 목록에 표시됩니다.
-3. 사용 가능한 태그  
-   페이지 형태로 태그 목록이 표시되며, 하단에 페이지 이동 버튼이 나타납니다.
-4. 선택한 태그  
-   선택된 태그가 표시되며 **Calc. mode**를 변경할 수 있습니다. 동일한 태그라도 Calc. mode가 다르면 중복 선택이 가능합니다.*1)  
-   하단에는 사용 가능한 태그 수와 선택된 태그 수가 표시됩니다.
-5. 차트 유형 선택  
-   영역형·포인트형·라인형 차트를 선택할 수 있습니다. 차트 외형은 차트 설정의 Display 항목에서 변경할 수 있습니다.
+{{< figure
+  src="/images/tag-analyzer/create-tag-analyzer-chart-kr.png?v=96111f013c"
+  link="/images/tag-analyzer/create-tag-analyzer-chart-kr.png?v=96111f013c"
+  alt="전체 Machbase Neo 화면과 New Chart 대화상자. 1. 이름을 입력하고 Line을 선택하세요. 2. 테이블, TIME, VALUE를 선택하세요. 3. temperature를 검색하고 선택하세요. 4. Apply를 클릭해 차트를 만드세요."
+  caption="그림 1.3: 첫 차트 만들기"
+>}}
 
-*1) **Calc. mode** : STAT 모드에서 사용하는 집계 함수(avg, min, max, sum, count 등)를 의미합니다.
+### 1.4 화면 구성 {#화면-구성}
 
-### 대시보드 제어
-대시보드 상단에 배치된 버튼으로 대시보드를 제어할 수 있습니다.
+차트가 준비되었습니다. Tag Analyzer로 데이터를 탐색하고 분석해 보세요.
 
-#### 시간 범위
-대시보드에 적용된 시간 범위가 표시됩니다.  
-이미지와 같이 From/To 값을 직접 입력하거나, 현재 시각과 연동되도록 설정할 수 있습니다(now: 현재 시각, h: 시, m: 분, s: 초).  
-예) `now-3h` = 현재 시각에서 3시간 전
+아래 이미지는 Tag Analyzer의 화면 구성을 보여줍니다.
 
-#### 제어 버튼
+{{< figure
+  src="/images/web-ui/tag-analyzer/controls-overview.png?v=c287c40a80"
+  alt="temperature 예제의 보드 컨트롤, 패널 컨트롤, 범위, 도구와 패널 편집기 위치"
+  caption="그림 1.4: 화면 구성"
+>}}
 
-{{< figure src="/images/web-ui/taz_control_dashboard.jpg" width="400" >}}
+## 2. 보드 컨트롤
 
-1. 데이터를 다시 조회하여 차트를 갱신합니다.  
-   시간 범위와 차트 슬라이더의 선택 영역은 유지됩니다.
-2. 데이터를 다시 조회하여 차트를 갱신합니다.  
-   시간 범위와 차트 슬라이더의 선택 영역이 초기 설정으로 되돌아갑니다.
-3. Tag Analyzer 대시보드를 “.taz” 확장자로 저장합니다.
-4. 다른 이름으로 대시보드를 저장합니다.
-5. Overlap Chart(겹쳐보기) 기능을 실행합니다. 자세한 내용은 "Overlap Chart" 절을 참고해 주십시오.
-6. 조회 시간 범위를 설정합니다. 개별 차트에서 별도 범위를 설정하지 않았다면 이 범위가 대시보드 전체에 적용됩니다.  
-   {{< figure src="/images/web-ui/taz_time_range.jpg" width="300" >}}  
-   - `now` 또는 `last`를 사용할 수 있습니다.  
-     **now** : 현재 시각  
-     **last** : 저장된 데이터의 마지막 시각  
-   - Quick Range를 클릭하면 해당 구간이 자동으로 From/To에 반영됩니다.
+맨 위 도구 모음에서 공통 범위, 새로 고침, 저장, 겹쳐 보기를 조작합니다.
 
-#### Overlap Chart
-차트 여러 개를 한 화면에 겹쳐 비교할 수 있는 기능입니다.
-1. 비교할 차트의 제목을 클릭하여 선택합니다. 선택된 차트는 테두리가 강조 표시됩니다.  
-   {{< figure src="/images/web-ui/taz_overlap_select.jpg" width="600" >}}  
-   - 단일 시리즈를 가진 차트만 Overlap Chart에 사용할 수 있습니다.  
-   - 가장 먼저 선택한 차트의 시간 범위가 Overlap Chart에 적용되며, 제목 앞에 이를 나타내는 아이콘이 표시됩니다.
-2. Overlap Chart 버튼을 클릭하면 선택한 차트가 하나의 차트로 합쳐집니다.  
-   {{< figure src="/images/web-ui/taz_overlap_view.jpg" width="600" >}}  
-   태그별로 조회 시간 범위를 세밀하게 조정하여 비교할 수 있습니다.
+{{< figure
+  src="/images/web-ui/tag-analyzer/board-controls.png"
+  alt="범위, 새로 고침, 저장, 겹쳐 보기와 도움말을 보라색으로 표시한 보드 도구 모음"
+  caption="그림 2: 보드 컨트롤"
+>}}
 
-## 차트
-### 화면 구성
+### 2.1 새 차트 추가 {#새-차트-추가}
 
-{{< figure src="/images/web-ui/taz_chart_screen.jpg" width="600" >}}
+**New Chart**를 클릭해 현재 보드에 차트를 추가합니다.
 
-차트 상단에는 현재 그래프의 시간 범위, X축 간격, 기능 버튼이 표시되며, 하단에는 슬라이더와 범례가 배치됩니다.
-1. 현재 차트가 표시 중인 시간 범위를 보여 줍니다. 슬라이더를 이용해 대시보드 시간 범위 내에서 특정 구간만 선택해 상세 조회할 수 있습니다. 간격(Interval)은 X축 눈금 간격을 의미합니다.
-2. 차트별 기능 버튼이 나타납니다.  
-   {{< figure src="/images/web-ui/taz_chart_functions.jpg" width="300" >}}  
-   a. 데이터를 다시 조회해 차트를 갱신합니다.  
-   b. 차트를 다시 그립니다. 시간 범위와 슬라이더 선택 영역이 초기값으로 돌아갑니다.  
-   c. 차트 설정 창을 엽니다(“Chart Settings” 절 참고).  
-   d. 차트를 삭제합니다.  
-   e. “RAW Data Mode”로 전환합니다.  
-   f. Stat Query : 버튼을 선택한 뒤 차트에서 드래그하면 통계를 조회할 수 있습니다. FFT Chart 기능도 이곳에서 사용할 수 있습니다.  
-   - **RAW Data Mode** : Calc mode를 적용하지 않고 데이터베이스에 저장된 원본 데이터를 사용합니다.  
-     “Pixels between tick marks” 설정값으로 계산된 개수보다 많은 데이터를 선택하면 조회 시간 범위를 조정하고 슬라이더 선택 영역도 함께 변경됩니다.
-3. 실제 차트가 표시되는 영역입니다.
-4. 슬라이더로 선택한 조회 범위가 표시됩니다. `<` `>` 버튼을 이용해 선택한 시간 범위를 50%씩 이동할 수 있습니다.
-5. 슬라이더를 이동하거나 크기를 조정해 차트의 조회 범위를 설정합니다.
-6. 슬라이더가 현재 조회 중인 시간 범위를 표시합니다.
-7. 범례에는 차트에 표시된 데이터 시리즈가 나타나며, 클릭하면 표시/숨김을 전환할 수 있습니다.
+{{< tag-analyzer-features
+  id="add-chart"
+  title="보드에서 새 차트 만들기"
+  caption="그림 2.1: 새 차트 추가"
+>}}
 
-### FFT Chart
-선택한 구간에 대해 통계 조회 기능을 사용하면 FFT Chart 버튼이 활성화되며, 해당 구간을 주파수 영역으로 변환해 확인할 수 있습니다.
+### 2.2 보드 범위 설정 {#공통-범위-설정}
 
-{{< figure src="/images/web-ui/taz_fft_select.jpg" width="600" >}}
+**TIME**을 클릭해 모든 시간 기반 차트의 공통 내비게이터 범위를 설정하거나,
+**DIST**를 클릭해 모든 거리 기반 차트의 공통 내비게이터 범위를 설정합니다.
+둘 다 **From/To**를 사용합니다.
 
-통계를 조회했을 때 FFT Chart 버튼을 사용할 수 있습니다.
+*패널에 따로 설정한 범위가 우선합니다.*
 
-{{< figure src="/images/web-ui/taz_fft_view.jpg" width="600" >}}
+| X축 | From → To (예제) | 의미 |
+|---|---|---|
+| 시간 | `first` → `last` | 생성한 예제 데이터 전체. |
+| 시간 | `last-5m` → `last` | 예제 데이터의 마지막 5분. |
+| 시간 | `first` → `first+5m` | 예제 데이터의 첫 5분. |
 
-설정 방법은 다음과 같습니다.
-1. FFT 차트를 확인할 태그를 선택합니다.
-2. 분석할 주파수(Hz) 범위를 입력합니다. 0을 입력하면 제한이 없습니다.
-3. 2D 또는 3D 차트를 선택합니다. 3D 차트는 시간 축이 추가됩니다.
-4. 입력한 조건에 따라 FFT 차트를 생성합니다.
+날짜와 시간을 직접 입력하거나 빠른 범위를 선택할 수도 있습니다.
+숫자 범위에서는 슬라이더와 빠른 구간 선택을 사용할 수 있습니다.
 
-### 차트 설정
-현재 차트에 적용된 설정을 변경할 수 있습니다.
 
-{{< figure src="/images/web-ui/taz_setting_screen.jpg" width="600" >}}
+### 2.3 새로 고침 {#새로-고침과-전체-데이터-보기}
 
-1. 설정 중인 차트가 표시됩니다. [Apply] 버튼을 클릭하면 변경 내용을 즉시 확인할 수 있습니다.
-2. 수정할 항목을 선택하는 탭입니다.  
-   **General** : 차트 일반 설정  
-   **Data** : 차트에 사용되는 태그  
-   **Axes** : X축과 Y축 설정  
-   **Display** : 차트의 시각적 표현  
-   **Time range** : 차트에만 적용되는 시간 범위
-3. 선택한 항목의 값을 변경하는 영역입니다.
-4. 버튼 영역입니다.  
-   **Apply** : 변경 사항을 적용하지만 설정 창은 유지합니다.  
-   **Ok** : 변경 사항을 적용하고 설정 창을 닫습니다. (Apply를 통해 반영한 내용만 유지됩니다.)  
-   **Cancel** : 변경 사항을 취소하고 설정 창을 닫습니다.
+- **Refresh data:** 각 패널의 현재 범위를 유지하며 데이터를 다시 조회합니다.
+- **Refresh ranges:** 데이터 범위를 다시 확인하고 설정된 범위를 재적용합니다.
+  `last-5m`와 같은 상대 범위도 다시 계산합니다.
+- **Expand all panels to full data range:** 모든 패널에서 사용 가능한 전체 데이터를 봅니다.
 
-#### General
-차트 기본 설정을 변경합니다.  
-{{< figure src="/images/web-ui/taz_setting_general.jpg" width="600" >}}
-| 항목                     | 설명                                                         |
-|:-------------------------|:-------------------------------------------------------------|
-| Chart title              | 차트 제목을 수정합니다.                                      |
-| Use Zoom when dragging   | 차트 영역을 드래그할 때 확대 기능을 사용할지 여부입니다.       |
-| Keep Navigator Position  | 저장할 때 슬라이더 선택 영역 정보를 함께 저장할지 여부입니다. |
+설정된 범위가 없으면 범위 새로 고침은 중앙 구간을 표시합니다. 전체를 보려면 전체 범위 버튼을 사용합니다.
 
-#### Data
-차트에서 사용 중인 태그를 수정합니다.  
-{{< figure src="/images/web-ui/taz_setting_data.jpg" width="600" >}}
+### 2.4 저장하고 다시 열기 {#변경-사항-저장-또는-사본-만들기}
 
-**태그 항목 수정**
-| 항목      | 설명                                                                 |
-|:----------|:---------------------------------------------------------------------|
-| Calc Mode | 집계 함수를 변경합니다.                                              |
-| Tag Names | 사용 중인 태그를 변경합니다. 괄호에는 테이블 이름이 표시되며, 테이블 자체는 변경할 수 없습니다. |
-| Alias     | 범례에 표시될 이름을 수정합니다.<br/> 설정하지 않으면 태그 이름과 Calc Mode가 표시됩니다. |
-| Color     | 색상을 변경합니다.                                                   |
-| X         | 해당 태그를 삭제합니다.                                              |
+**Save**는 현재 `.taz` 파일에 저장하고, **Save as**는 다른 이름이나 폴더를 선택합니다.
+**Ctrl+S**(macOS는 **Cmd+S**)로도 저장할 수 있습니다. 편집 중인 변경 사항은 먼저 적용합니다.
 
-**태그 추가**  
-하단의 [+] 버튼을 클릭하면 차트 생성 시와 동일한 화면이 열리며 태그를 추가할 수 있습니다.
+`.taz` 파일에는 차트 설정, 범위, 하이라이트, 주석이 저장됩니다. 테이블 데이터는 복사하지 않습니다.
 
-#### Axes
-X축과 Y축 설정을 변경합니다.  
-{{< figure src="/images/web-ui/taz_setting_axes.jpg" width="600" >}}  
-※ “Set additional Y-axis” 옵션을 먼저 활성화해야 추가 Y축 영역이 활성화됩니다.
+<span id="저장하고-다시-열기"></span>
 
-**X-Axis**
-| 항목                          | 설명                                                          |
-|:------------------------------|:--------------------------------------------------------------|
-| Display the X-Axis tick line  | X축 눈금을 표시합니다.                                        |
-| Pixels between tick marks     | X축 데이터 1개가 차지하는 픽셀 수입니다.<br/>※ 표시 가능한 데이터 수 = 가로 해상도 ÷ 설정 값 |
-| _(for)_ Raw                   | RAW 모드에서 사용하는 값입니다. (대규모 데이터를 표시할 때 주로 1 미만으로 설정합니다.) |
-| _(for)_ Calculation           | STAT 모드에서 사용하는 값입니다.                             |
-| use Sampling                  | RAW 모드에서 Machbase의 샘플링 기능을 사용하여 **슬라이드** 데이터를 빠르게 조회합니다. |
+보드 탭을 닫은 뒤 File Explorer에서 저장한 파일을 클릭하면 보드가 다시 열립니다.
 
-**Y-Axis**
-| 항목                                | 설명                                                        |
-|:------------------------------------|:------------------------------------------------------------|
-| The scale of the Y-Axis start at zero | Y축을 0에서 시작할지 여부입니다.                           |
-| Display the Y-Axis tick line        | Y축 눈금을 표시합니다.*1)                                   |
-| Custom scale                        | Y축 최소·최대 값을 직접 설정합니다.                         |
-| Custom scale for raw data chart     | RAW 모드에서 사용할 Y축 최소·최대 값을 설정합니다.          |
-| use UCL                             | UCL(Upper Control Limit)을 설정합니다.                      |
-| use LCL                             | LCL(Lower Control Limit)을 설정합니다.                      |
+{{< tag-analyzer-video
+  src="/images/web-ui/tag-analyzer/save-reopen-kr.mp4?v=304f5cf981"
+  poster="/images/web-ui/tag-analyzer/save-reopen-kr-poster.webp?v=a7c7cfadc9"
+  alt="Tag Analyzer 보드 저장하고 다시 열기"
+  caption="데모 2.4: 저장하고 다시 열기"
+>}}
 
-*1) 추가 Y축을 사용하는 경우 항상 표시됩니다.
+### 2.5 차트 겹쳐 보기 {#차트-겹쳐-비교하기}
 
-**Additional Y-Axis**
-| 항목                                | 설명                                                        |
-|:------------------------------------|:------------------------------------------------------------|
-| Set additional Y-Axis               | 추가 Y축 사용 여부를 설정합니다.                            |
-| The scale of the Y-Axis start at zero | 추가 Y축을 0에서 시작할지 여부입니다.                     |
-| Display the Y-Axis tick line        | 추가 Y축 눈금을 표시합니다.*1)                               |
-| Custom scale                        | 추가 Y축의 최소·최대 값을 설정합니다.                      |
-| Custom scale for raw data chart     | RAW 모드에서 사용할 추가 Y축 최소·최대 값을 설정합니다.     |
-| use UCL                             | 추가 Y축의 UCL을 설정합니다.                                |
-| use LCL                             | 추가 Y축의 LCL을 설정합니다.                                |
-| Select Tag                          | 사용할 태그를 선택합니다.<br/>선택된 태그를 다시 클릭하면 선택이 해제됩니다. |
+차트 겹쳐 보기는 여러 차트를 한 화면에 겹쳐 표시하여 데이터 패턴을 비교할 수 있게 합니다.
+각 차트를 X축 방향으로 이동해 서로 다른 시점의 봉우리나 이벤트를 맞출 수 있습니다.여러 시리즈가 있는 차트도 사용할 수 있습니다. 
 
-*1) 추가 Y축을 사용하는 경우 항상 표시됩니다.
+{{< overlap-chart >}}
 
-#### Display
-차트의 시각적 요소를 설정합니다.  
-{{< figure src="/images/web-ui/taz_setting_display.jpg" width="600" >}}
-| 항목                       | 설명                                                                  |
-|:---------------------------|:----------------------------------------------------------------------|
-| Chart Type                 | 선택한 차트 유형에 맞게 표시 방식을 조정합니다.                       |
-| Display data point in the line chart | 라인 차트에 데이터 포인트를 표시할지 여부입니다.           |
-| Display legend             | 범례 표시 여부입니다.                                                 |
-| Point Radius               | 포인트 크기를 설정합니다.<br/>0으로 설정하면 표시되지 않습니다.      |
-| Opacity of Fill Area       | 영역형 차트의 채우기 투명도를 설정합니다(0~1).<br/>0이면 표시되지 않습니다. |
-| Line Thickness             | 선 두께를 설정합니다.                                                 |
+### 2.6 TAZ 파일 삭제 {#taz-파일-삭제}
 
-#### Time range
-차트에만 적용되는 시간 범위를 설정합니다. 값을 지정하지 않으면 대시보드의 시간 범위를 사용합니다.  
-{{< figure src="/images/web-ui/taz_setting_timerange.jpg" width="600" >}}
-| 항목        | 설명                                                                 |
-|:------------|:---------------------------------------------------------------------|
-| From        | 시간 범위의 시작 값을 설정합니다.                                    |
-| To          | 시간 범위의 종료 값을 설정합니다.                                    |
-| Quick range | 항목을 클릭하면 “now” 또는 “last”를 이용해 해당 구간이 자동으로 설정됩니다. |
+**File Explorer**에서 `.taz` 파일을 우클릭하고 **Delete**를 선택한 뒤 확인합니다.
+저장된 보드가 삭제되며 테이블 데이터는 유지됩니다.
+
+{{< tag-analyzer-video
+  src="/images/web-ui/tag-analyzer/delete-taz-kr.mp4?v=a20e0c59af"
+  poster="/images/web-ui/tag-analyzer/delete-taz-kr-poster.webp?v=b33a88b8e2"
+  alt="File Explorer에서 TAZ 파일 삭제하기"
+  caption="데모 2.6: TAZ 파일 삭제"
+>}}
+
+## 3. 패널 컨트롤 {#3-패널-컨트롤}
+
+### 3.1 범위 {#범위와-탐색}
+
+<span id="기본-범위-조절"></span>
+
+차트 위 범위에서 **From/To**를 설정하고 **Apply**를 클릭합니다. 내비게이터를 드래그하거나 확대·축소해 범위를 조절합니다.
+위에서 만든 예제 데이터는 `last-10m`부터 `last`까지로 설정합니다.
+
+{{< tag-analyzer-video
+  src="/images/web-ui/tag-analyzer/basic-range-control-kr.mp4?v=3c67039c20"
+  poster="/images/web-ui/tag-analyzer/basic-range-control-kr-poster.webp?v=81b60c0d09"
+  alt="범위 설정, 내비게이터 이동과 확대"
+  caption="데모 3.1: 기본 범위 조절"
+>}}
+
+{{< range-controls >}}
+
+<details>
+<summary>설정된 범위</summary>
+
+[패널 편집기 → Range](#main-range)의 **Main Range (1)**는 표시 범위에 우선 적용됩니다.
+별도로 설정한 **Nav Range (2)**는 보드 범위보다 우선합니다.
+
+</details>
+
+### 3.2 도구 {#panel-control-tools}
+
+도구 모음의 왼쪽부터 순서대로 설명합니다.
+
+{{< figure
+  src="/images/web-ui/tag-analyzer/panel-controls.png"
+  alt="왼쪽부터 RAW, Select range, Refresh range, Panel Editor, Delete, Extra 순서의 패널 도구"
+  caption="그림 3.2: 도구"
+>}}
+
+#### 3.2.1 RAW {#raw-데이터-보기}
+
+**RAW**를 클릭하면 구간별 집계 데이터와 개별 원본 행 사이를 전환합니다.
+집계 모드에서는 시리즈별 **AVG**, **MIN**, **MAX** 등의 집계 방식을 사용합니다.
+
+<details>
+<summary>RAW 조회 제한과 샘플링</summary>
+
+메인 차트 샘플링을 사용하지 않으면 RAW 조회는 **시리즈당 최대 20,000행**을 반환합니다.
+제한에 도달하면 반환된 데이터에 맞춰 표시 범위가 줄어들 수 있습니다.
+범위를 좁히거나 **Data Setting → Use main chart sampling**을 사용합니다.
+
+메인 차트가 RAW 모드여도 내비게이터에는 평균값이나 샘플링된 데이터가 표시될 수 있습니다.
+
+</details>
+
+#### 3.2.2 Select Range와 FFT {#통계-확인}
+
+선택 구간의 통계를 확인하거나 FFT로 주파수를 분석합니다.
+FFT는 **RAW 모드의 시간축 차트**에서 사용할 수 있습니다.
+
+<span id="fft로-주파수-분석"></span>
+
+{{< fft-demo >}}
+
+`temperature`의 **Min Hz**를 **0.005**, **Max Hz**를 **0.1**로 설정하고 **Apply values**를 클릭합니다.
+예제의 주된 주파수는 약 **0.0167 Hz**입니다.
+
+이 예제의 **3D** 구간은 **1 min**으로 설정합니다. 구간마다 최소 **16개 샘플**이 필요합니다.
+
+#### 3.2.3 Refresh Range {#이-패널-새로-고침}
+
+데이터 범위를 다시 확인하고 설정된 범위를 재적용합니다.
+
+#### 3.2.4 차트 수정 {#panel-editor-tool}
+
+<span id="차트-수정"></span>
+
+톱니바퀴 버튼으로 설정을 수정합니다. **Apply**는 변경 사항을 적용하고, **Close**는 편집기를 닫습니다.
+
+{{< tag-analyzer-video
+  src="/images/web-ui/tag-analyzer/edit-chart-kr.mp4?v=d13b47d4c3"
+  poster="/images/web-ui/tag-analyzer/edit-chart-kr-poster.webp?v=3293acd718"
+  alt="차트 제목과 모양 변경하기"
+  caption="데모 3.2.4: 차트 수정"
+>}}
+
+설정 탭은 [패널 편집기](#4-패널-설정)를 참고합니다.
+
+#### 3.2.5 차트 삭제 {#delete-panel-tool}
+
+<span id="차트-삭제"></span>
+
+**Delete panel**(휴지통 버튼)을 클릭하고 확인합니다.
+
+{{< tag-analyzer-video
+  src="/images/web-ui/tag-analyzer/delete-chart-kr.mp4?v=adf54d76fe"
+  poster="/images/web-ui/tag-analyzer/delete-chart-kr-poster.webp?v=5f2933c6ce"
+  alt="보드에서 차트 삭제하기"
+  caption="데모 3.2.5: 차트 삭제"
+>}}
+
+차트는 `.taz` 보드의 항목 하나입니다. 차트를 삭제해도 `.taz` 파일과 테이블 데이터는 유지됩니다.
+
+#### 3.2.6 하이라이트 {#highlight}
+
+<span id="하이라이트와-주석-추가"></span>
+
+**Extra → Highlight**로 차트의 구간을 강조하고 이름을 붙입니다.
+
+{{< markup-guide id="highlight" >}}
+
+#### 3.2.7 주석 {#annotation}
+
+**Extra → Annotation**으로 시리즈의 특정 지점에 메모를 붙입니다.
+
+{{< markup-guide id="annotation" >}}
+
+하이라이트와 주석을 유지하려면 보드를 저장합니다.
+
+#### 3.2.8 Extra {#extra-panel-tools}
+
+{{< figure
+  src="/images/web-ui/tag-analyzer/panel-extra-tools.png"
+  alt="Extra 메뉴"
+  caption="그림 3.2.8: Extra"
+>}}
+
+- **Set global range:** 이 패널의 범위를 X축 유형이 같은 다른 패널에 복사합니다.
+- **Reload data:** 현재 범위를 유지하며 데이터를 다시 조회합니다.
+- **Expand to full data range:** 이 패널의 전체 데이터를 봅니다.
+
+<span id="편리한-도구"></span>
+
+{{< tag-analyzer-video
+  src="/images/web-ui/tag-analyzer/handy-tools-kr.mp4?v=a549ea9065"
+  poster="/images/web-ui/tag-analyzer/handy-tools-kr-poster.webp?v=8cd2b60ab5"
+  alt="temperature 데이터를 새로 고치고 전체 범위를 표시하는 과정"
+  caption="데모 3.2.8: 새로 고침과 전체 범위"
+>}}
+
+## 4. 패널 편집기 {#4-패널-설정}
+
+차트의 톱니바퀴 버튼을 클릭합니다. **Apply**는 변경 사항을 적용하고, **Close**는 편집기를 닫습니다.
+
+**변경 사항을 적용한 뒤 `.taz` 보드를 저장해야 다음에도 유지됩니다.**
+
+### 4.1 General 탭 {#general}
+
+{{< panel-editor-tab id="general" caption="그림 4.1: General 탭" >}}
+
+### 4.2 Data 탭 {#data}
+
+{{< panel-editor-tab id="data" caption="그림 4.2: Data 탭" >}}
+
+### 4.3 Data Setting 탭 {#data-setting}
+
+{{< panel-editor-tab id="data-setting" caption="그림 4.3: Data Setting 탭" >}}
+
+### 4.4 Axes 탭 {#axes}
+
+{{< panel-editor-tab id="axes" caption="그림 4.4: Axes 탭" >}}
+
+### 4.5 Display 탭 {#display}
+
+{{< panel-editor-tab id="display" caption="그림 4.5: Display 탭" >}}
+
+### 4.6 Range 탭 {#main-range}
+
+{{< panel-editor-tab id="main-range" caption="그림 4.6: Range 탭" >}}

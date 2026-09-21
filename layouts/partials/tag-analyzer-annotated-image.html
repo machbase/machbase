@@ -1,0 +1,37 @@
+{{- $spec := .spec -}}
+{{- $height := $spec.canvasHeight | default $spec.height -}}
+{{- $image := $spec.image -}}
+{{- if not (hasPrefix $image "/") -}}
+  {{- $image = printf "/images/web-ui/tag-analyzer/%s" $image -}}
+{{- end -}}
+{{- $image = $image | relURL -}}
+<a class="ta-annotated-image" href="{{ $image }}" target="_blank" rel="noopener"
+  style="aspect-ratio: {{ $spec.width }} / {{ $height }}" data-annotated-image
+  aria-label="{{ .title }} — {{ if eq .lang "kr" }}{{ if $spec.labelOnly }}안내 확대{{ else }}번호 안내 확대{{ end }}{{ else }}{{ if $spec.labelOnly }}enlarge guide{{ else }}enlarge numbered guide{{ end }}{{ end }}">
+  <img src="{{ $image }}" alt="{{ .title }}" width="{{ $spec.width }}" height="{{ $spec.height }}" loading="lazy">
+  <svg viewBox="0 0 {{ $spec.width }} {{ $height }}" aria-hidden="true" focusable="false">
+    {{- range $n, $note := $spec.notes -}}
+      <g class="editor-note-{{ $n }} ta-callout" data-callout="{{ add $n 1 }}">
+        {{- range $note.regions -}}
+          <rect x="{{ index . 0 }}" y="{{ index . 1 }}" width="{{ index . 2 }}" height="{{ index . 3 }}" rx="5" />
+        {{- end -}}
+        {{- with $note.target -}}
+          <line x1="{{ index $note.callout 0 }}" y1="{{ index $note.callout 1 }}" x2="{{ index . 0 }}" y2="{{ index . 1 }}" />
+        {{- end -}}
+        {{- if not $spec.labelOnly -}}
+        {{- range $note.markers -}}
+          <g transform="translate({{ index . 0 }} {{ index . 1 }})" class="ta-marker">
+            <circle r="17" /><text text-anchor="middle" dy=".35em">{{ add $n 1 }}</text>
+          </g>
+        {{- end -}}
+        {{- end -}}
+        <g transform="translate({{ index $note.callout 0 }} {{ index $note.callout 1 }})" class="ta-label">
+          {{- if not $spec.labelOnly -}}
+          <circle r="21" /><text class="ta-number" text-anchor="middle" dy=".35em">{{ add $n 1 }}</text>
+          {{- end -}}
+          <text class="ta-label-text" x="{{ if $spec.labelOnly }}0{{ else }}34{{ end }}" dy=".35em">{{ $note.short }}</text>
+        </g>
+      </g>
+    {{- end -}}
+  </svg>
+</a>

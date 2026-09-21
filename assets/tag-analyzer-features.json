@@ -1,0 +1,458 @@
+{
+  "fft-controls": {
+    "image": "fft-controls.png?v=164390e0ed",
+    "width": 1920,
+    "height": 700,
+    "notes": [
+      {
+        "label": "Series",
+        "en": "Choose a series.",
+        "kr": "분석할 시리즈 선택.",
+        "regions": [
+          [
+            89,
+            125,
+            1610,
+            40
+          ]
+        ],
+        "markers": [
+          [
+            69,
+            145
+          ]
+        ]
+      },
+      {
+        "label": "2D / 3D",
+        "en": "Spectrum, or frequency changes over time.",
+        "kr": "스펙트럼 또는 시간별 주파수 변화.",
+        "regions": [
+          [
+            1707,
+            125,
+            124,
+            40
+          ]
+        ],
+        "markers": [
+          [
+            1848,
+            145
+          ]
+        ]
+      },
+      {
+        "label": "Min / Max Hz",
+        "en": "Limit frequencies; 0/0 shows all.",
+        "kr": "주파수 범위 제한. 모두 0이면 전체 표시.",
+        "regions": [
+          [
+            89,
+            193,
+            280,
+            40
+          ]
+        ],
+        "markers": [
+          [
+            69,
+            213
+          ]
+        ]
+      },
+      {
+        "label": "Apply values",
+        "en": "Update with the entered settings.",
+        "kr": "입력한 설정으로 갱신.",
+        "regions": [
+          [
+            377,
+            193,
+            118,
+            40
+          ]
+        ],
+        "markers": [
+          [
+            519,
+            213
+          ]
+        ]
+      },
+      {
+        "label": "Spectrum",
+        "en": "Inspect peaks; use the navigator to zoom.",
+        "kr": "피크 확인. 내비게이터로 확대.",
+        "regions": [
+          [
+            89,
+            241,
+            1742,
+            280
+          ]
+        ],
+        "markers": [
+          [
+            1850,
+            381
+          ]
+        ]
+      },
+      {
+        "label": "Close",
+        "en": "Return to the chart.",
+        "kr": "차트로 돌아가기.",
+        "regions": [
+          [
+            1784,
+            603,
+            58,
+            44
+          ]
+        ],
+        "markers": [
+          [
+            1763,
+            625
+          ]
+        ]
+      }
+    ]
+  },
+  "add-chart": {
+    "image": "/images/tag-analyzer/created-tag-analyzer-chart.png",
+    "labelOnly": true,
+    "width": 1042,
+    "height": 599,
+    "notes": [
+      {
+        "label": "New Chart",
+        "en": "Click New Chart below the existing panels to add another chart to this board.",
+        "kr": "기존 패널 아래의 New Chart를 클릭해 현재 보드에 차트를 추가합니다.",
+        "regions": [[34, 533, 973, 60]],
+        "callout": [690, 563],
+        "target": [576, 563],
+        "short": "Create a new chart"
+      }
+    ]
+  },
+  "main-range": {
+    "image": "range-main-panel.png?v=0878d3209e",
+    "width": 1516,
+    "height": 397,
+    "canvasHeight": 487,
+    "notes": [
+      {
+        "label": "Visible range",
+        "en": "Click to set From/To.",
+        "kr": "클릭해 From/To 설정.",
+        "regions": [
+          [
+            560,
+            3,
+            440,
+            29
+          ]
+        ],
+        "callout": [
+          45,
+          450
+        ],
+        "short": "Visible range",
+        "markers": [
+          [
+            1022,
+            20
+          ]
+        ]
+      },
+      {
+        "label": "Drag",
+        "en": "Pan, or zoom when enabled.",
+        "kr": "드래그로 이동. 확대 설정 시 영역 확대.",
+        "regions": [
+          [
+            102,
+            77,
+            1331,
+            167
+          ]
+        ],
+        "callout": [
+          370,
+          450
+        ],
+        "short": "Drag",
+        "markers": [
+          [
+            130,
+            267
+          ]
+        ]
+      },
+      {
+        "label": "Move",
+        "en": "Shift the visible range.",
+        "kr": "표시 범위를 앞뒤로 이동.",
+        "regions": [
+          [
+            8,
+            194,
+            37,
+            38
+          ],
+          [
+            1470,
+            194,
+            38,
+            38
+          ]
+        ],
+        "callout": [
+          620,
+          450
+        ],
+        "short": "Move",
+        "markers": [
+          [
+            27,
+            175
+          ],
+          [
+            1488,
+            175
+          ]
+        ]
+      },
+      {
+        "label": "Zoom",
+        "en": "Zoom in or out.",
+        "kr": "확대 또는 축소.",
+        "regions": [
+          [
+            680,
+            282,
+            61,
+            31
+          ],
+          [
+            775,
+            282,
+            62,
+            31
+          ]
+        ],
+        "callout": [
+          890,
+          450
+        ],
+        "short": "Zoom",
+        "markers": [
+          [
+            659,
+            298
+          ],
+          [
+            856,
+            298
+          ]
+        ]
+      },
+      {
+        "label": "Focus",
+        "en": "Match navigator range, then zoom in.",
+        "kr": "내비게이터 범위를 현재 화면에 맞추고 확대.",
+        "regions": [
+          [
+            744,
+            282,
+            29,
+            31
+          ]
+        ],
+        "callout": [
+          1160,
+          450
+        ],
+        "short": "Focus",
+        "markers": [
+          [
+            758,
+            332
+          ]
+        ]
+      }
+    ]
+  },
+  "navigator": {
+    "image": "range-main-panel.png?v=0878d3209e",
+    "width": 1516,
+    "height": 397,
+    "notes": [
+      {
+        "label": "Selection",
+        "en": "Drag to move; drag edges to resize.",
+        "kr": "드래그로 이동, 양 끝으로 크기 조절.",
+        "regions": [
+          [
+            77,
+            332,
+            1363,
+            35
+          ]
+        ],
+        "short": "Selection",
+        "markers": [
+          [
+            753,
+            377
+          ]
+        ]
+      },
+      {
+        "label": "Side arrows",
+        "en": "Shift the navigator range.",
+        "kr": "내비게이터 범위를 앞뒤로 이동.",
+        "regions": [
+          [
+            24,
+            328,
+            28,
+            29
+          ],
+          [
+            1464,
+            328,
+            29,
+            29
+          ]
+        ],
+        "short": "Side arrows",
+        "markers": [
+          [
+            37,
+            305
+          ],
+          [
+            1478,
+            305
+          ]
+        ]
+      },
+      {
+        "label": "Range inputs",
+        "en": "Click to set From/To.",
+        "kr": "클릭해 From/To 설정.",
+        "regions": [
+          [
+            82,
+            378,
+            128,
+            17
+          ],
+          [
+            1314,
+            378,
+            122,
+            17
+          ]
+        ],
+        "short": "Range inputs",
+        "markers": [
+          [
+            236,
+            381
+          ],
+          [
+            1290,
+            381
+          ]
+        ]
+      }
+    ]
+  },
+  "select-range": {
+    "image": "select-range.png?v=ce7d39838e",
+    "width": 1920,
+    "height": 700,
+    "notes": [
+      {
+        "label": "Select Range",
+        "en": "Enable selection, then drag across the chart.",
+        "kr": "범위 선택을 켜고 차트를 드래그합니다.",
+        "regions": [
+          [
+            1684,
+            67,
+            32,
+            30
+          ]
+        ],
+        "markers": [
+          [
+          1700,
+          45
+          ]
+        ]
+      },
+      {
+        "label": "Selected interval",
+        "en": "Selected start, end, and duration.",
+        "kr": "선택한 시작·끝 시간과 구간 길이.",
+        "regions": [
+          [
+            99,
+            481,
+            349,
+            52
+          ]
+        ],
+        "markers": [
+          [
+            479,
+            507
+          ]
+        ]
+      },
+      {
+        "label": "Statistics",
+        "en": "Per-series min, max, and average of loaded points.",
+        "kr": "로드된 포인트의 시리즈별 최솟값·최댓값·평균.",
+        "regions": [
+          [
+            99,
+            548,
+            349,
+            51
+          ]
+        ],
+        "markers": [
+          [
+            479,
+            573
+          ]
+        ]
+      },
+      {
+        "label": "Open FFT chart",
+        "en": "Analyze the selected time range in RAW mode.",
+        "kr": "RAW 모드에서 선택한 시간 구간을 주파수 분석.",
+        "regions": [
+          [
+            99,
+            613,
+            349,
+            38
+          ]
+        ],
+        "markers": [
+          [
+            479,
+            632
+          ]
+        ]
+      }
+    ]
+  }
+}

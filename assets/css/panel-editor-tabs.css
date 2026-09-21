@@ -1,0 +1,87 @@
+.editor-note-0 { --note-color: #79b8ff; }
+.editor-note-1 { --note-color: #82dbc5; }
+.editor-note-2 { --note-color: #ffd180; }
+.editor-note-3 { --note-color: #ffcf85; }
+.editor-note-4 { --note-color: #ffacbe; }
+.editor-note-5 { --note-color: #b4d982; }
+
+.content .editor-tab-notes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 20px;
+  margin: 0;
+  padding: 20px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.editor-tab-notes > div { padding-left: 10px; border-left: 3px solid var(--note-color); }
+.editor-tab-notes > div:only-child { grid-column: 1 / -1; }
+.content .editor-tab-notes dt { margin: 0; font-weight: 600; color: var(--note-color); }
+.content .editor-tab-notes dd { margin: 4px 0 0; padding: 0; }
+
+@media (max-width: 600px) {
+  .content .editor-tab-notes { grid-template-columns: 1fr; gap: 14px; padding: 16px; }
+}
+
+.ta-feature-card { background: #242424; color: #f8fafc; border-radius: 8px; overflow: hidden; }
+.ta-annotated-image { display: block; position: relative; background: #242424; cursor: zoom-in; }
+.ta-annotated-image img, .content .ta-annotated-image img { display: block; width: 100%; height: auto; object-fit: contain; margin: 0; border-radius: 0; }
+.ta-annotated-image svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.ta-callout rect, .ta-callout line { fill: none; stroke: var(--note-color); stroke-width: 1.75; vector-effect: non-scaling-stroke; }
+.ta-callout line { stroke-width: 1; }
+.ta-callout circle { fill: var(--note-color); stroke: #242424; stroke-width: 3; }
+.ta-callout text { font: 600 28px Arial, sans-serif; fill: #171717; }
+.ta-callout .ta-label-text { fill: var(--note-color); paint-order: stroke; stroke: #242424; stroke-width: 6px; stroke-linejoin: round; }
+.ta-marker text { font-size: 24px; }
+.ta-note-number { display: inline-block; text-align: center; line-height: 24px; width: 24px; height: 24px; margin-right: 4px; border-radius: 50%; background: var(--note-color); color: #171717; font-size: 14px; }
+.content .ta-feature-extra { padding: 0 20px 20px; margin: 0; font-size: 15px; line-height: 1.5; }
+.ta-image-dialog { max-width: calc(100vw - 32px); max-height: calc(100vh - 32px); padding: 12px; background: #242424; color: #fff; border: 1px solid #666; border-radius: 8px; }
+.ta-image-dialog::backdrop { background: rgb(0 0 0 / 75%); }
+.ta-image-dialog button { position: sticky; top: 0; z-index: 1; display: block; margin: 0 0 12px auto; padding: 8px 16px; border: 1px solid #888; border-radius: 5px; background: #242424; color: #fff; cursor: pointer; }
+.ta-image-dialog .ta-annotated-image { width: max(960px, 85vw); max-width: 1588px; cursor: default; }
+
+.ta-described-image {
+  container-type: inline-size;
+  background: #17191c;
+  font-family: "Segoe UI", "Malgun Gothic", sans-serif;
+  text-decoration: none;
+}
+.ta-description-row {
+  display: grid;
+  grid-template-columns: repeat(var(--description-columns), minmax(0, 1fr));
+  gap: var(--description-gap);
+  height: 11.335cqw;
+  padding: 1.511cqw 4.534cqw;
+  box-sizing: border-box;
+}
+.ta-description-title {
+  display: flex;
+  align-items: center;
+  gap: .693cqw;
+  color: var(--note-color);
+  font-size: 1.889cqw;
+  line-height: 2.519cqw;
+  font-weight: 700;
+}
+.ta-description-number {
+  flex: 0 0 1.889cqw;
+  height: 1.889cqw;
+  border-radius: 50%;
+  background: var(--note-color);
+  color: #17191c;
+  font-size: 1.259cqw;
+  line-height: 1.889cqw;
+  text-align: center;
+}
+.ta-description-text {
+  display: block;
+  margin-top: .378cqw;
+  color: #f3f4f6;
+  font-size: 1.448cqw;
+  line-height: 2.015cqw;
+}
+.ta-description-screenshot { display: grid; place-items: center; position: relative; aspect-ratio: var(--description-image-aspect, auto); }
+.ta-description-highlight rect { fill: none; stroke: var(--note-color); stroke-width: 2.5; }
+.ta-description-highlight circle { fill: var(--note-color); stroke: #17191c; stroke-width: 2; }
+.ta-description-highlight text { fill: #17191c; font: 700 20px "Segoe UI", "Malgun Gothic", sans-serif; }

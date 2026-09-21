@@ -1,0 +1,7 @@
+{{- $kr := eq .page.Language.Lang "kr" -}}
+{{- $src := .src | relURL -}}
+<video class="tag-analyzer-player" src="{{ $src }}" poster="{{ .poster | relURL }}"
+  controls muted playsinline preload="none" width="1920" height="1080"
+  aria-label="{{ .alt }}">
+  <a href="{{ $src }}">{{ if $kr }}데모 영상 다운로드{{ else }}Download the demo video{{ end }}</a>
+</video>

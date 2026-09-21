@@ -1,0 +1,4 @@
+<figure class="tag-analyzer-video">
+  {{- partial "tag-analyzer-player.html" (dict "page" .Page "src" (.Get "src") "poster" (.Get "poster") "alt" (.Get "alt")) -}}
+  <figcaption>{{ .Get "caption" }}</figcaption>
+</figure>

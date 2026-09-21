@@ -1,0 +1,12 @@
+{{- $features := resources.Get "tag-analyzer-features.json" | transform.Unmarshal -}}
+{{- $spec := index $features (.Get "id") -}}
+{{- $title := .Get "title" -}}
+<figure class="ta-feature-guide">
+  <div class="ta-feature-card">
+    {{ partial "tag-analyzer-annotated-image.html" (dict "spec" $spec "lang" .Page.Language.Lang "title" $title) }}
+    {{ if not $spec.labelOnly }}
+      {{ partial "tag-analyzer-feature-notes.html" (dict "spec" $spec "lang" .Page.Language.Lang) }}
+    {{ end }}
+  </div>
+  <figcaption>{{ .Get "caption" }}</figcaption>
+</figure>

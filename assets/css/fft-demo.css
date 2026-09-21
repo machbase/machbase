@@ -1,0 +1,198 @@
+.fft-demo-player {
+  border: 1px solid #dce2eb;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f8fafc;
+}
+
+.fft-demo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px;
+}
+
+.content .fft-demo-status {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.fft-demo-status span {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.fft-demo button {
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #fff;
+  color: #334155;
+  font-size: 13px;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.fft-demo button:hover:not(:disabled) {
+  background: #eaf1ff;
+}
+
+.fft-demo button:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.fft-demo button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.fft-demo-stage {
+  aspect-ratio: 16 / 9;
+  background: #202020;
+}
+
+.fft-demo-stage img {
+  width: 100%;
+  height: auto;
+  margin: 0;
+  border-radius: 0;
+}
+
+.fft-demo-stage .tag-analyzer-player {
+  border-radius: 0;
+}
+
+.fft-demo-stage a {
+  display: block;
+  cursor: zoom-in;
+}
+
+.content .fft-demo-description {
+  min-height: 4.6em;
+  margin: 0;
+  padding: 14px 16px 4px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.fft-demo-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px 16px;
+}
+
+.fft-demo-dots {
+  display: flex;
+  min-width: 0;
+}
+
+.fft-demo-dots button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.fft-demo-dots button::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 20px;
+  background: #94a3b8;
+}
+
+.fft-demo-dots [aria-current="step"]::before {
+  width: 20px;
+  background: #2563eb;
+}
+
+.dark .fft-demo-player {
+  border-color: #404040;
+  background: #171717;
+}
+
+.dark .fft-demo-status span { color: #a3a3a3; }
+.dark .fft-demo button { background: #262626; border-color: #525252; color: #e5e5e5; }
+.dark .fft-demo button:hover:not(:disabled) { background: #333d50; }
+.dark .fft-demo-dots button { background: transparent; }
+.dark .fft-demo-dots [aria-current="step"]::before { background: #60a5fa; }
+
+@media (max-width: 480px) {
+  .fft-demo-controls { padding-inline: 8px; gap: 4px; }
+  .fft-demo-controls > button { padding-inline: 8px; white-space: nowrap; flex-shrink: 0; }
+  .fft-demo-dots button { width: 32px; }
+  .content .fft-demo-description { min-height: 6.5em; }
+}
+
+@media print {
+  .fft-demo-controls { display: none; }
+}
+
+.overlap-media .fft-demo-stage a,
+.overlap-media .fft-demo-stage img,
+.overlap-media .fft-demo-stage video {
+  height: 100%;
+}
+
+.overlap-media .fft-demo-stage img,
+.overlap-media .fft-demo-stage video {
+  display: block;
+  object-fit: contain;
+}
+
+.overlap-media .fft-demo-stage { aspect-ratio: 16 / 11; }
+
+
+.tag-analyzer-player {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  background: #202020;
+}
+
+.tag-analyzer-player[hidden],
+.fft-demo-stage a[hidden] { display: none; }
+
+.fft-media-guide[data-ready] .fft-guide-slides { display: grid; }
+.fft-guide-slide { min-width: 0; background: #242424; color: #f8fafc; }
+.fft-media-guide[data-ready] .fft-guide-slide { grid-area: 1 / 1; }
+.fft-guide-slide[aria-hidden="true"] { visibility: hidden; pointer-events: none; }
+.fft-guide-visual { aspect-ratio: 1588 / 1360; display: grid; place-items: center; }
+.fft-guide-visual .tag-analyzer-player { height: 100%; object-fit: contain; border-radius: 0; }
+.fft-guide-visual .ta-annotated-image { width: 100%; }
+.markup-guide .fft-guide-visual { aspect-ratio: 1540 / 950; }
+.fft-compact .fft-guide-visual { aspect-ratio: 16 / 9; }
+.fft-compact .ta-description-row { height: 9.5cqw; padding: 1cqw 4cqw; }
+.content .fft-guide-summary { margin: 0; padding: 20px; font-size: 16px; line-height: 1.5; }
+
+.range-controls[data-ready] .range-control-slides { display: grid; }
+.range-control-slide { min-width: 0; background: #242424; color: #f8fafc; }
+.range-controls[data-ready] .range-control-slide { grid-area: 1 / 1; }
+.range-control-slide[aria-hidden="true"] { visibility: hidden; pointer-events: none; }
+.range-control-visual { aspect-ratio: 1516 / 487; display: grid; place-items: center; }
+.range-control-visual--described { aspect-ratio: auto; }
+.range-control-visual .ta-annotated-image { width: 100%; }
+.range-controls .fft-demo-controls[hidden] { display: none; }
+
+@media print {
+  .fft-media-guide[data-ready] .fft-guide-slides { display: block; }
+  .fft-guide-slide[aria-hidden="true"] { visibility: visible; }
+  .fft-guide-slide { break-inside: avoid; }
+  .range-controls[data-ready] .range-control-slides { display: block; }
+  .range-control-slide[aria-hidden="true"] { visibility: visible; }
+  .range-control-slide { break-inside: avoid; }
+}

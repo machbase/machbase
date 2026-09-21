@@ -1,0 +1,52 @@
+{{- $lang := .Page.Language.Lang -}}
+{{- $kr := eq $lang "kr" -}}
+{{- $features := resources.Get "tag-analyzer-features.json" | transform.Unmarshal -}}
+{{- $version := cond $kr "947525049a" "fc4a08e3c8" -}}
+{{- $posterVersion := cond $kr "cb475b1f71" "ef8164da50" -}}
+{{- $video := printf "/images/web-ui/tag-analyzer/fft-steps/%s-full.mp4?v=%s" $lang $version -}}
+{{- $poster := printf "/images/web-ui/tag-analyzer/fft-steps/%s-1.webp?v=%s" $lang $posterVersion -}}
+{{- $slides := slice
+  (dict "title" "FFT demo" "caption" "Demo 3.2.2: FFT")
+  (dict "title" "Select Range controls" "caption" "Figure 3.2.2a: Select Range" "key" "select-range")
+  (dict "title" "FFT controls" "caption" "Figure 3.2.2b: FFT Controls" "key" "fft-controls")
+-}}
+{{- if $kr -}}
+  {{- $slides = slice
+    (dict "title" "FFT 데모" "caption" "데모 3.2.2: FFT")
+    (dict "title" "범위 선택 컨트롤" "caption" "그림 3.2.2a: 범위 선택" "key" "select-range")
+    (dict "title" "FFT 컨트롤" "caption" "그림 3.2.2b: FFT 컨트롤" "key" "fft-controls")
+  -}}
+{{- end -}}
+{{- $first := index $slides 0 -}}
+{{- $js := resources.Get "js/fft-media-guide.js" | minify | fingerprint -}}
+<figure class="fft-demo fft-media-guide fft-compact" aria-label="{{ if $kr }}FFT 데모와 컨트롤 안내{{ else }}FFT demo and control guides{{ end }}">
+  <div class="fft-demo-player">
+    <div class="fft-demo-header">
+      <p class="fft-demo-status"><span data-fft-count>1 / 3</span><strong data-fft-title>{{ $first.title }}</strong></p>
+    </div>
+    <div class="fft-guide-slides">
+      {{- range $i, $slide := $slides -}}
+        <section class="fft-guide-slide" data-fft-slide data-title="{{ $slide.title }}" data-caption="{{ $slide.caption }}" aria-label="{{ $slide.title }}">
+          <div class="fft-guide-visual">
+            {{- if eq $i 0 -}}
+              {{ partial "tag-analyzer-player.html" (dict "page" $.Page "src" $video "poster" $poster "alt" $slide.title) }}
+            {{- else -}}
+              {{ partial "tag-analyzer-described-image.html" (dict "spec" (index $features $slide.key) "lang" $lang "title" $slide.title) }}
+            {{- end -}}
+          </div>
+        </section>
+      {{- end -}}
+    </div>
+    <nav class="fft-demo-controls" aria-label="{{ if $kr }}FFT 안내 페이지{{ else }}FFT guide pages{{ end }}" hidden>
+      <button type="button" data-fft-back disabled>{{ if $kr }}‹ 이전{{ else }}‹ Back{{ end }}</button>
+      <div class="fft-demo-dots">
+        {{- range $i, $slide := $slides -}}
+          <button type="button" data-fft-dot aria-label="{{ add $i 1 }} / 3: {{ $slide.title }}" title="{{ $slide.title }}" {{ if eq $i 0 }}aria-current="step"{{ end }}></button>
+        {{- end -}}
+      </div>
+      <button type="button" data-fft-next>{{ if $kr }}다음 ›{{ else }}Next ›{{ end }}</button>
+    </nav>
+  </div>
+  <figcaption role="status" aria-live="polite" aria-atomic="true" data-fft-caption>{{ $first.caption }}</figcaption>
+</figure>
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>

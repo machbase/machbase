@@ -1,0 +1,41 @@
+{{- $spec := .spec -}}
+{{- $columns := cond (gt (len $spec.notes) 6) 4 3 -}}
+{{- $colors := slice "#c4a7ff" "#ffab91" "#ffd180" "#80d8ff" "#f6a8d7" "#a5d6a7" "#ffb74d" "#a8d6ce" -}}
+{{- $image := printf "/images/web-ui/tag-analyzer/%s" $spec.image | relURL -}}
+<a class="ta-annotated-image ta-described-image" href="{{ $image }}" target="_blank"
+  rel="noopener" data-annotated-image
+  style="--description-columns: {{ $columns }}; --description-gap: {{ cond (eq $columns 4) "1.763cqw" "3.526cqw" }}; --description-image-aspect: {{ .imageAspect | default "auto" }}"
+  aria-label="{{ .title }} — {{ if eq .lang "kr" }}번호 안내 확대{{ else }}enlarge numbered guide{{ end }}"
+  aria-description="{{ range $n, $note := $spec.notes }}{{ add $n 1 }}. {{ $note.label }}: {{ index $note $.lang }} {{ end }}">
+  {{- range $row := seq 0 1 -}}
+    {{- if eq $row 1 -}}
+      <span class="ta-description-screenshot">
+        <img src="{{ $image }}" alt="{{ $.title }}" width="{{ $spec.width }}" height="{{ $spec.height }}" loading="lazy">
+        <svg viewBox="0 0 {{ $spec.width }} {{ $spec.height }}" aria-hidden="true" focusable="false">
+          {{- range $n, $note := $spec.notes -}}
+            <g class="ta-description-highlight" data-callout="{{ add $n 1 }}" style="--note-color: {{ index $colors $n }}">
+              {{- range $note.regions -}}
+                <rect x="{{ index . 0 }}" y="{{ index . 1 }}" width="{{ index . 2 }}" height="{{ index . 3 }}" rx="6" />
+              {{- end -}}
+              {{- range $note.markers -}}
+                <g transform="translate({{ index . 0 }} {{ index . 1 }})">
+                  <circle r="16" /><text text-anchor="middle" dy=".35em">{{ add $n 1 }}</text>
+                </g>
+              {{- end -}}
+            </g>
+          {{- end -}}
+        </svg>
+      </span>
+    {{- end -}}
+    <span class="ta-description-row" data-description-row="{{ $row }}">
+      {{- range $n, $note := $spec.notes -}}
+        {{- if eq (div $n $columns) $row -}}
+          <span class="ta-description-note" style="--note-color: {{ index $colors $n }}">
+            <strong class="ta-description-title"><span class="ta-description-number">{{ add $n 1 }}</span>{{ $note.short | default $note.label }}</strong>
+            <span class="ta-description-text">{{ index $note $.lang }}</span>
+          </span>
+        {{- end -}}
+      {{- end -}}
+    </span>
+  {{- end -}}
+</a>
