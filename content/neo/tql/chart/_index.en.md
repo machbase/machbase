@@ -31,9 +31,9 @@ weight: 51
 
 Apply a chart theme.
 
-Available themes : `white`, `dark`, `chalk`, `essos`, `infographic`, `macarons`, `purple-passion`, `roma`, `romantic`, `shine`, `vintage`, `walden`, `westeros`, `wonderland`
+Available themes: `white`, `dark`, `chalk`, `essos`, `infographic`, `macarons`, `purple-passion`, `roma`, `romantic`, `shine`, `vintage`, `walden`, `westeros`, `wonderland`
 
-Please refer to [this section](#themes) for the preview of the each theme.
+Refer to [the section below](#themes) for a preview of each theme.
 
 ### plugins()
 
@@ -47,11 +47,10 @@ Please refer to [this section](#themes) for the preview of the each theme.
 | wordcloud          | `/web/echarts/echarts-wordcloud.min.js`  |
 | gl                 | `/web/echarts/echarts-gl.min.js`         |
 
-
 ## Examples
 
 The new `CHART()` provides more fine-tunable options to create attractive charts.
-It is the new version of API that replaces for the previous `CHART_LINE()`, `CHART_BAR()`, `CHART_SCATTER`, `CHART_LINE3D`, `CHART_BAR3D()` and `CHART_SCATTER3D()` functions.
+It is the new version of the API that replaces the previous `CHART_LINE()`, `CHART_BAR()`, `CHART_SCATTER()`, `CHART_LINE3D()`, `CHART_BAR3D()` and `CHART_SCATTER3D()` functions.
 
 ### Line
 
@@ -79,7 +78,7 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
     {{< card link="./line/line_datatransform" title="Data Transform"
             image="./img/line_datatransform.jpg" method="Fill" options="resize 600x lanczos q80 webp">}}
     {{< card link="./line/line_airpassengers" title="Air Passengers"
-        image="./img/line_airpassengers.jpg" method="Fill" options="resize 600x lanczos q80 webp">}}
+            image="./img/line_airpassengers.jpg" method="Fill" options="resize 600x lanczos q80 webp">}}
     {{< card link="./line/cartesian_coord" title="Cartesian Coordinate System"
             image="./img/cartesian_coord.jpg" method="Fill" options="resize 600x lanczos q80 webp">}}
 {{< /cards >}}
@@ -135,6 +134,7 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
 {{< /cards >}}
 
 ### Gauge
+
 {{< cards >}}
     {{< card link="./gauge/basic_gauge" title="Basic Gauge"
             image="./img/basic_gauge.jpg" method="Fill" options="resize 600x lanczos q80 webp">}}
@@ -194,6 +194,7 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
 {{< /cards >}}
 
 ### 3D Globe
+
 {{< cards >}}
     {{< card link="./globe/hello-world" title="Hello World"
             image="./img/gl-hello-world.jpg" method="Fill" options="resize 600x lanczos q80 webp">}}
@@ -233,7 +234,9 @@ It is the new version of API that replaces for the previous `CHART_LINE()`, `CHA
 ## Themes
 
 {{< tabs >}}
+
 {{< tab name="MAPVALUE" >}}
+
 ```js {{linenos=table,hl_lines=[6]}}
 FAKE( arrange(1, 100, 1))
 MAPVALUE(1, sin(2 * PI * 5 * value(0)/100) )
@@ -254,8 +257,11 @@ CHART(  size("500px", "200px"),
         })
 )
 ```
+
 {{< /tab >}}
+
 {{< tab name="SCRIPT" >}}
+
 ```js {{linenos=table,hl_lines=[12]}}
 SCRIPT({
     for( i = 1; i <= 100; i++) {
@@ -282,48 +288,65 @@ CHART(  size("500px", "200px"),
         })
 )
 ```
+
 {{< /tab >}}
+
 {{< /tabs >}}
 
+The images below show the chart with each theme applied.
+
 **white**
-{{< figure src="../img/theme_white.jpg" width="500" >}}
+
+{{< figure src="/neo/tql/img/theme_white.jpg" width="500" >}}
 
 **dark**
-{{< figure src="../img/theme_dark.jpg" width="500" >}}
+
+{{< figure src="/neo/tql/img/theme_dark.jpg" width="500" >}}
 
 **chalk**
-{{< figure src="../img/theme_chalk.jpg" width="500" >}}
+
+{{< figure src="/neo/tql/img/theme_chalk.jpg" width="500" >}}
 
 **essos**
-{{< figure src="../img/theme_essos.jpg" width="500" >}}
+
+{{< figure src="/neo/tql/img/theme_essos.jpg" width="500" >}}
 
 **infographic**
-{{< figure src="../img/theme_infographic.jpg" width="500" >}}
+
+{{< figure src="/neo/tql/img/theme_infographic.jpg" width="500" >}}
 
 **macarons**
-{{< figure src="../img/theme_macarons.jpg" width="500" >}}
+
+{{< figure src="/neo/tql/img/theme_macarons.jpg" width="500" >}}
 
 **purple-passion**
-{{< figure src="../img/theme_purple-passion.jpg" width="500" >}}
+
+{{< figure src="/neo/tql/img/theme_purple-passion.jpg" width="500" >}}
 
 **roma**
-{{< figure src="../img/theme_roma.jpg" width="500" >}}
+
+{{< figure src="/neo/tql/img/theme_roma.jpg" width="500" >}}
 
 **romantic**
-{{< figure src="../img/theme_romantic.jpg" width="500" >}}
+
+{{< figure src="/neo/tql/img/theme_romantic.jpg" width="500" >}}
 
 **shine**
-{{< figure src="../img/theme_shine.jpg" width="500" >}}
+
+{{< figure src="/neo/tql/img/theme_shine.jpg" width="500" >}}
 
 **vintage**
-{{< figure src="../img/theme_vintage.jpg" width="500" >}}
+
+{{< figure src="/neo/tql/img/theme_vintage.jpg" width="500" >}}
 
 **walden**
-{{< figure src="../img/theme_walden.jpg" width="500" >}}
+
+{{< figure src="/neo/tql/img/theme_walden.jpg" width="500" >}}
 
 **westeros**
-{{< figure src="../img/theme_westeros.jpg" width="500" >}}
+
+{{< figure src="/neo/tql/img/theme_westeros.jpg" width="500" >}}
 
 **wonderland**
-{{< figure src="../img/theme_wonderland.jpg" width="500" >}}
 
+{{< figure src="/neo/tql/img/theme_wonderland.jpg" width="500" >}}

@@ -99,7 +99,7 @@ Start machbase-neo shell. It will start interactive mode shell if there are no o
 
 | flag (long)       | default          | desc                                                             |
 |:------------------|:-----------------|:-----------------------------------------------------------------|
-| `-s`, `--server`  | `127.0.0.1:5654` | machbase-neo's HTTP address. e.g. `--server 127.0.0.1:5654`<br/>env: `NEOSHELL_HOST` |
+| `--server`        | `127.0.0.1:5654` | machbase-neo's HTTP address. e.g. `--server 127.0.0.1:5654`<br/>env: `NEOSHELL_HOST` |
 | `--user`          | `sys`            | user name.<br/>env: `NEOSHELL_USER`    |
 | `--password`      | `manager`        | password.<br/>env: `NEOSHELL_PASSWORD` |
 
@@ -126,7 +126,7 @@ If `$NEOSHELL_PASSWORD` (on windows `%NEOSHELL_PASSWORD%`) is set? Use the value
 
 ### Default
 
-None of those are provided? Use default value `127.0.0.1:5654`, `sys` and `manager`.
+If a value is provided in neither way, the shell asks for it and shows its default value (`127.0.0.1:5654`, `SYS`, `manager`). Press Enter to use the default value.
 
 {{% /steps %}}
 
@@ -153,12 +153,12 @@ $ ps -aef |grep machbase-neo
   
 ```sh
 machbase-neo» select binary_signature from v$version;
-┌────────┬─────────────────────────────────────────────┐
-│ ROWNUM │ BINARY_SIGNATURE                            │
-├────────┼─────────────────────────────────────────────┤
-│      1 │ 8.0.2.develop-LINUX-X86-64-release-standard │
-└────────┴─────────────────────────────────────────────┘
-a row fetched.
+┌────────┬──────────────────────────────────────────────────┐
+│ ROWNUM │ BINARY_SIGNATURE                                 │
+├────────┼──────────────────────────────────────────────────┤
+│      1 │ 8.7.0.official-DARWIN-ARM_M1-64-release-standard │
+└────────┴──────────────────────────────────────────────────┘
+a row selected.
 ```
 
 **Create Table**
@@ -169,20 +169,20 @@ machbase-neo» create tag table if not exists example (
   time datetime basetime,
   value double summarized
 );
-executed.
+table created.
 ```
 
 **Schema Table**
 
 ```sh
 machbase-neo» desc example;
-┌────────┬───────┬──────────┬────────┐
-│ ROWNUM │ NAME  │ TYPE     │ LENGTH │
-├────────┼───────┼──────────┼────────┤
-│      1 │ NAME  │ varchar  │     20 │
-│      2 │ TIME  │ datetime │      8 │
-│      3 │ VALUE │ double   │      8 │
-└────────┴───────┴──────────┴────────┘
+┌────────┬────────┬──────────┬────────┬────────────┬───────┐
+│ ROWNUM │ COLUMN │ TYPE     │ LENGTH │ FLAG       │ INDEX │
+├────────┼────────┼──────────┼────────┼────────────┼───────┤
+│      1 │ NAME   │ varchar  │     20 │ tag name   │       │
+│      2 │ TIME   │ datetime │     31 │ base time  │       │
+│      3 │ VALUE  │ double   │     17 │ summarized │       │
+└────────┴────────┴──────────┴────────┴────────────┴───────┘
 ```
 
 **Insert Table**
@@ -197,18 +197,18 @@ a row inserted.
 ```sh
 machbase-neo» select * from example;
 ┌────────┬──────┬─────────────────────┬───────┐
-│ ROWNUM │ NAME │ TIME(LOCAL)         │ VALUE │
+│ ROWNUM │ NAME │ TIME                │ VALUE │
 ├────────┼──────┼─────────────────────┼───────┤
-│      1 │ tag0 │ 2021-08-12 00:00:00 │ 100   │
+│      1 │ tag0 │ 2021-08-12 00:00:00 │   100 │
 └────────┴──────┴─────────────────────┴───────┘
-a row fetched.
+a row selected.
 ```
 
 **Drop Table**
 
 ```sh
 machbase-neo» drop table example;
-executed.
+table dropped.
 ```
 
 ### Sub commands
@@ -228,51 +228,49 @@ machbase-neo» explain select * from example where name = 'tag.1';
      * IN ()
    VOLATILE INDEX SCAN (_EXAMPLE_META)
     [KEY RANGE]
-     *
+     * name = 'tag.1'
 ```
 
 #### export
 
 ```
-  export [options] <table>
-  arguments:
-    table                    table name to read
-  options:
-    -o,--output <file>       output file (default:'-' stdout)
-    -f,--format <format>     output format
-                csv          csv format (default)
-                json         json format
-       --compress <method>   compression method [gzip] (default is not compressed)
-       --[no-]heading        print header message (default:false)
-       --[no-]footer         print footer message (default:false)
-    -d,--delimiter           csv delimiter (default:',')
-       --tz                  timezone for handling datetime
-    -t,--timeformat          time format [ns|ms|s|<timeformat>] (default:'ns')
-                             consult "help timeformat"
-    -p,--precision <int>     set precision of float value to force round
+Usage: export [options] <table>
+
+Arguments:
+  table - table name to read
+
+Options:
+  -h, --help         Show this help message
+  -o, --output       output file (default:'-' stdout) (default: -)
+      --compress     compression type (none, gzip) (default: none)
+  -f, --format       output format (box, csv, tsv, json, ndjson) (default: csv)
+  -t, --timeformat   time format [ns|us|ms|s|<timeformat>] (default: ns)
+      --tz           time zone for handling datetime (default: time zone) (default: local)
+  -p, --precision    set precision of float value to force round (default: -1)
+      --[no-]header  print header (default: false)
+      --null-value   string to represent null values (default: )
+      --[no-]silent  suppress progress output (default: false)
 ```
 
 #### import
 
 ```
-  import [options] <table>
-  arguments:
-    table                 table name to write
-  options:
-    -i,--input <file>     input file, (default: '-' stdin)
-    -f,--format <fmt>     file format [csv] (default:'csv')
-       --compress <alg>   input data is compressed in <alg> (support:gzip)
-       --no-header        there is no header, do not skip first line (default)
-	   --charset          set character encoding, if input is not UTF-8
-       --header           first line is header, skip it
-       --method           write method [insert|append] (default:'insert')
-       --create-table     create table if it doesn't exist (default:false)
-       --truncate-table   truncate table ahead importing new data (default:false)
-    -d,--delimiter        csv delimiter (default:',')
-       --tz               timezone for handling datetime
-    -t,--timeformat       time format [ns|ms|s|<timeformat>] (default:'ns')
-                          consult "help timeformat"
-       --eof <string>     specify eof line, use any string matches [a-zA-Z0-9]+ (default: '.')
+Usage: import [options] <table>
+
+Arguments:
+  table - table name to read
+
+Options:
+  -h, --help          Show this help message
+  -i, --input         input file (default:'-' stdin) (default: -)
+      --compress      compression type (none, gzip) (default: none)
+  -f, --format        input format (csv, tsv, ndjson) (default: csv)
+  -t, --timeformat    time format [ns|us|ms|s|<timeformat>] (default: ns)
+      --tz            time zone for handling datetime (default: time zone) (default: local)
+      --header        header option [skip|columns|none] (default: none)
+      --null-value    string to represent null values (default: NULL)
+      --[no-]dry-run  run in dry mode (default: false)
+      --[no-]verbose  verbose mode, it works only with --dry-run (default: false)
 ```
 
 #### show info
@@ -281,25 +279,29 @@ Display the server information.
 
 ```sh
 machbase-neo» show info;
-┌────────────────────┬─────────────────────────────┐
-│ NAME               │ VALUE                       │
-├────────────────────┼─────────────────────────────┤
-│ build.version      │ v2.0.0                      │
-│ build.hash         │ #c953293f                   │
-│ build.timestamp    │ 2023-08-29T08:08:00         │
-│ build.engine       │ static_standard_linux_amd64 │
-│ runtime.os         │ linux                       │
-│ runtime.arch       │ amd64                       │
-│ runtime.pid        │ 57814                       │
-│ runtime.uptime     │ 2h 30m 57s                  │
-│ runtime.goroutines │ 45                          │
-│ mem.sys            │ 32.6 MB                     │
-│ mem.heap.sys       │ 19.0 MB                     │
-│ mem.heap.alloc     │ 9.7 MB                      │
-│ mem.heap.in-use    │ 13.0 MB                     │
-│ mem.stack.sys      │ 1,024.0 KB                  │
-│ mem.stack.in-use   │ 1,024.0 KB                  │
-└────────────────────┴─────────────────────────────┘
+┌────────┬────────────────────┬──────────────────────────────┐
+│ ROWNUM │ NAME               │ VALUE                        │
+├────────┼────────────────────┼──────────────────────────────┤
+│      1 │ build.engine       │ static_standard_darwin_arm64 │
+│      2 │ build.hash         │ b55f8170                     │
+│      3 │ build.timestamp    │ 2026-09-10T05:43:13          │
+│      4 │ build.version      │ v8.7.1-snapshot              │
+│      5 │ mem.frees          │ 397,853,948                  │
+│      6 │ mem.heap_alloc     │ 32.8MB                       │
+│      7 │ mem.heap_in_use    │ 40.0MB                       │
+│      8 │ mem.heap_sys       │ 547.9MB                      │
+│      9 │ mem.lives          │ 253,315                      │
+│     10 │ mem.mallocs        │ 398,107,263                  │
+│     11 │ mem.stack_in_use   │ 1.5MB                        │
+│     12 │ mem.stack_sys      │ 1.5MB                        │
+│     13 │ mem.sys            │ 564.2MB                      │
+│     14 │ runtime.arch       │ arm64                        │
+│     15 │ runtime.goroutines │ 32                           │
+│     16 │ runtime.os         │ darwin                       │
+│     17 │ runtime.pid        │ 35507                        │
+│     18 │ runtime.processes  │ 10                           │
+│     19 │ runtime.uptime     │ 6 days 4h 4m 42s             │
+└────────┴────────────────────┴──────────────────────────────┘
 ```
 
 #### show ports
@@ -308,14 +310,17 @@ Display the server's interface ports
 
 ```sh
 machbase-neo» show ports;
-┌─────────┬────────────────────────────────────────┐
-│ SERVICE │ PORT                                   │
-├─────────┼────────────────────────────────────────┤
-│ http    │ tcp://127.0.0.1:5654                   │
-│ mach    │ tcp://127.0.0.1:5656                   │
-│ mqtt    │ tcp://127.0.0.1:5653                   │
-│ shell   │ tcp://127.0.0.1:5652                   │
-└─────────┴────────────────────────────────────────┘
+┌────────┬────────────┬─────────────────────────────────────────┐
+│ ROWNUM │ PORT       │ ADDRESS                                 │
+├────────┼────────────┼─────────────────────────────────────────┤
+│      1 │ http       │ tcp://127.0.0.1:5654                    │
+│      2 │ http       │ unix:///tmp/machbase-neo-http-5654.sock │
+│      3 │ mach       │ tcp://127.0.0.1:5656                    │
+│      4 │ mqtt       │ tcp://127.0.0.1:5653                    │
+│      5 │ mqtt       │ unix:///tmp/machbase-neo-mqtt-5653.sock │
+│      6 │ servicectl │ tcp://127.0.0.1:62978                   │
+│      7 │ shell      │ tcp://127.0.0.1:5652                    │
+└────────┴────────────┴─────────────────────────────────────────┘
 ```
 
 #### show tables
@@ -339,7 +344,7 @@ machbase-neo» show indexes like 'IDX_%';
 |:--------|:------:|:------:|:----------:|:--------------|
 | `show tables` | O | O | O | table name |
 | `show indexes` | O | O | - | index name |
-| `show table <table>` | O | - | O | - |
+| `show table [-a] <table>` | O | - | - | - |
 | `show index <index>` | O | - | - | - |
 | `show tags <table> [tag...]` | O | O | - | tag name |
 | `show storage` | O | O | - | table name |
@@ -362,31 +367,29 @@ Display the table list. If `WITH ALL` is specified, the result includes the hidd
 
 ```sh
 machbase-neo» show tables;
-┌────────┬────────────┬──────┬─────────────┬───────────┐
-│ ROWNUM │ DB         │ USER │ NAME        │ TYPE      │
-├────────┼────────────┼──────┼─────────────┼───────────┤
-│      1 │ MACHBASEDB │ SYS  │ EXAMPLE     │ Tag Table │
-│      2 │ MACHBASEDB │ SYS  │ TAG         │ Tag Table │
-│      3 │ MACHBASEDB │ SYS  │ TAGDATA     │ Tag Table │
-└────────┴────────────┴──────┴─────────────┴───────────┘
+┌────────┬───────────────┬───────────┬────────────┬──────────┬────────────┬────────────┐
+│ ROWNUM │ DATABASE_NAME │ USER_NAME │ TABLE_NAME │ TABLE_ID │ TABLE_TYPE │ TABLE_FLAG │
+├────────┼───────────────┼───────────┼────────────┼──────────┼────────────┼────────────┤
+│      1 │ MACHBASEDB    │ SYS       │ EXAMPLE    │      770 │ Tag        │            │
+└────────┴───────────────┴───────────┴────────────┴──────────┴────────────┴────────────┘
 ```
 
 #### show table
 
-Syntax: `show table <table> [WITH ALL]`
+Syntax: `show table [-a] <table>`
 
-Display the column list of the table. If `WITH ALL` is specified, the result includes the hidden columns.
+Display the column list of the table. If `-a` is specified, the result includes the hidden columns.
 
 ```sh
-machbase-neo» show table example with all;
-┌────────┬───────┬──────────┬────────┬──────────┐
-│ ROWNUM │ NAME  │ TYPE     │ LENGTH │ DESC     │
-├────────┼───────┼──────────┼────────┼──────────┤
-│      1 │ NAME  │ varchar  │    100 │ tag name │
-│      2 │ TIME  │ datetime │     31 │ basetime │
-│      3 │ VALUE │ double   │     17 │          │
-│      4 │ _RID  │ long     │     20 │          │
-└────────┴───────┴──────────┴────────┴──────────┘
+machbase-neo» show table -a example;
+┌────────┬────────┬──────────┬────────┬────────────┬───────┐
+│ ROWNUM │ COLUMN │ TYPE     │ LENGTH │ FLAG       │ INDEX │
+├────────┼────────┼──────────┼────────┼────────────┼───────┤
+│      1 │ NAME   │ varchar  │     20 │ tag name   │       │
+│      2 │ TIME   │ datetime │     31 │ base time  │       │
+│      3 │ VALUE  │ double   │     17 │ summarized │       │
+│      4 │ _RID   │ long     │     20 │            │       │
+└────────┴────────┴──────────┴────────┴────────────┴───────┘
 ```
 
 #### show indexes
@@ -403,15 +406,15 @@ machbase-neo» show indexes from MACHBASEDB.SYS like 'TAG%';
 
 ```sh
 machbase-neo» show meta-tables;
-┌────────┬─────────┬────────────────────────┬─────────────┐
-│ ROWNUM │      ID │ NAME                   │ TYPE        │
-├────────┼─────────┼────────────────────────┼─────────────┤
-│      1 │ 1000020 │ M$SYS_TABLESPACES      │ Fixed Table │
-│      2 │ 1000024 │ M$SYS_TABLESPACE_DISKS │ Fixed Table │
-│      3 │ 1000049 │ M$SYS_TABLES           │ Fixed Table │
-│      4 │ 1000051 │ M$TABLES               │ Fixed Table │
-│      5 │ 1000053 │ M$SYS_COLUMNS          │ Fixed Table │
-│      6 │ 1000054 │ M$COLUMNS              │ Fixed Table │
+┌────────┬─────────┬────────────────────────┬───────┐
+│ ROWNUM │      ID │ NAME                   │ TYPE  │
+├────────┼─────────┼────────────────────────┼───────┤
+│      1 │ 1000019 │ M$SYS_TABLESPACES      │ Fixed │
+│      2 │ 1000023 │ M$SYS_TABLESPACE_DISKS │ Fixed │
+│      3 │ 1000049 │ M$SYS_TABLES           │ Fixed │
+│      4 │ 1000052 │ M$SYS_VIEWS            │ Fixed │
+│      5 │ 1000054 │ M$TABLES               │ Fixed │
+│      6 │ 1000056 │ M$SYS_COLUMNS          │ Fixed │
 ......
 ```
 
@@ -419,15 +422,15 @@ machbase-neo» show meta-tables;
 
 ```sh
 machbase-neo» show virtual-tables;
-┌────────┬─────────┬─────────────────────────────────────────┬────────────────────┐
-│ ROWNUM │      ID │ NAME                                    │ TYPE               │
-├────────┼─────────┼─────────────────────────────────────────┼────────────────────┤
-│      1 │      65 │ V$HOME_STAT                             │ Fixed Table (stat) │
-│      2 │      93 │ V$DEMO_STAT                             │ Fixed Table (stat) │
-│      3 │     227 │ V$SAMPLEBENCH_STAT                      │ Fixed Table (stat) │
-│      4 │     319 │ V$TAGDATA_STAT                          │ Fixed Table (stat) │
-│      5 │     382 │ V$EXAMPLE_STAT                          │ Fixed Table (stat) │
-│      6 │     517 │ V$TAG_STAT                              │ Fixed Table (stat) │
+┌────────┬─────────┬─────────────────────────────────────────┬───────┐
+│ ROWNUM │      ID │ NAME                                    │ TYPE  │
+├────────┼─────────┼─────────────────────────────────────────┼───────┤
+│      1 │     769 │ V$EXAMPLE_STAT                          │ Fixed │
+│      2 │ 1000000 │ V$SYSSTAT                               │ Fixed │
+│      3 │ 1000001 │ V$SYSTIME                               │ Fixed │
+│      4 │ 1000002 │ V$SYSMEM                                │ Fixed │
+│      5 │ 1000003 │ V$PROPERTY                              │ Fixed │
+│      6 │ 1000004 │ V$MUTEX                                 │ Fixed │
 ......
 ```
 
@@ -435,37 +438,37 @@ machbase-neo» show virtual-tables;
 
 ```sh
 machbase-neo» show users;
-┌────────┬───────────┐
-│ ROWNUM │ USER_NAME │
-├────────┼───────────┤
-│      1 │ SYS       │
-└────────┴───────────┘
-a row fetched.
+┌────────┬─────────┬──────┐
+│ ROWNUM │ USER_ID │ NAME │
+├────────┼─────────┼──────┤
+│      1 │       1 │ SYS  │
+└────────┴─────────┴──────┘
 ```
 
 #### show license
 
 ```sh
- machbase-neo» show license;
-┌────────┬──────────┬──────────────┬──────────┬────────────┬──────────────┬─────────────────────┐
-│ ROWNUM │ ID       │ TYPE         │ CUSTOMER │ PROJECT    │ COUNTRY_CODE │ INSTALL_DATE        │
-├────────┼──────────┼──────────────┼──────────┼────────────┼──────────────┼─────────────────────┤
-│      1 │ 00000023 │ FOGUNLIMITED │ VUTECH   │ FORESTFIRE │ KR           │ 2024-04-22 15:56:14 │
-└────────┴──────────┴──────────────┴──────────┴────────────┴──────────────┴─────────────────────┘
-a row fetched.
+machbase-neo» show license;
+┌────────┬──────────┬───────────┬──────────┬─────────┬──────────────┬─────────────────────┬────────────┬────────┐
+│ ROWNUM │ ID       │ TYPE      │ CUSTOMER │ PROJECT │ COUNTRY_CODE │ INSTALL_DATE        │ ISSUE_DATE │ STATUS │
+├────────┼──────────┼───────────┼──────────┼─────────┼──────────────┼─────────────────────┼────────────┼────────┤
+│      1 │ 00000000 │ COMMUNITY │ NONE     │ NONE    │ KR           │ 2026-09-10 10:06:19 │ 20991231   │ VALID  │
+└────────┴──────────┴───────────┴──────────┴─────────┴──────────────┴─────────────────────┴────────────┴────────┘
 ```
 
 #### session list
 
 Syntax: `session list` {{< neo_since ver="8.0.17" />}}
 
+To list the connected sessions, use `show sessions`.
+
 ```sh
- machbase-neo» session list;
-┌────┬───────────┬─────────┬────────────┬─────────┬─────────┬──────────┐
-│ ID │ USER_NAME │ USER_ID │ STMT_COUNT │ CREATED │ LAST    │ LAST SQL │
-├────┼───────────┼─────────┼────────────┼─────────┼─────────┼──────────┤
-│ 25 │ SYS       │ 1       │          1 │ 1.667ms │ 1.657ms │ CONNECT  │
-└────┴───────────┴─────────┴────────────┴─────────┴─────────┴──────────┘
+machbase-neo» show sessions;
+┌────────┬──────┬───────────┬─────────┬─────────────────────────┬──────┬───────────┬─────────────┐
+│ ROWNUM │   ID │ USER_NAME │ USER_ID │ LOGIN_TIME              │ TYPE │ USER_IP   │ MAX_QPX_MEM │
+├────────┼──────┼───────────┼─────────┼─────────────────────────┼──────┼───────────┼─────────────┤
+│      1 │ 2484 │ SYS       │       1 │ 2026-09-17 17:35:01.139 │ CLI  │ 127.0.0.1 │ 1.1GB       │
+└────────┴──────┴───────────┴─────────┴─────────────────────────┴──────┴───────────┴─────────────┘
 ```
 
 #### session kill
@@ -478,17 +481,18 @@ Syntax: `session stat` {{< neo_since ver="8.0.17" />}}
 
 ```sh
 machbase-neo» session stat;
-┌────────────────┬───────┐
-│ NAME           │ VALUE │
-├────────────────┼───────┤
-│ CONNS          │ 1     │
-│ CONNS_USED     │ 17    │
-│ STMTS          │ 0     │
-│ STMTS_USED     │ 20    │
-│ APPENDERS      │ 0     │
-│ APPENDERS_USED │ 0     │
-│ RAW_CONNS      │ 1     │
-└────────────────┴───────┘
+┌────────┬──────────────────────┬───────┐
+│ ROWNUM │ METRIC               │ VALUE │
+├────────┼──────────────────────┼───────┤
+│      1 │ OPEN CONN            │     1 │
+│      2 │ IDLE                 │     1 │
+│      3 │ IN USE               │     0 │
+│      4 │ MAX IDLE CLOSED      │   268 │
+│      5 │ MAX IDLE TIME CLOSED │   410 │
+│      6 │ MAX LIFETIME CLOSED  │   852 │
+│      7 │ WAIT COUNT           │     0 │
+│      8 │ WAIT DURATION (AVG)  │    0s │
+└────────┴──────────────────────┴───────┘
 ```
 
 #### desc
@@ -499,13 +503,13 @@ Describe table structure.
 
 ```sh
 machbase-neo» desc example;
-┌────────┬───────┬──────────┬────────┬──────────┐
-│ ROWNUM │ NAME  │ TYPE     │ LENGTH │ DESC     │
-├────────┼───────┼──────────┼────────┼──────────┤
-│      1 │ NAME  │ varchar  │    100 │ tag name │
-│      2 │ TIME  │ datetime │     31 │ basetime │
-│      3 │ VALUE │ double   │     17 │          │
-└────────┴───────┴──────────┴────────┴──────────┘
+┌────────┬────────┬──────────┬────────┬────────────┬───────┐
+│ ROWNUM │ COLUMN │ TYPE     │ LENGTH │ FLAG       │ INDEX │
+├────────┼────────┼──────────┼────────┼────────────┼───────┤
+│      1 │ NAME   │ varchar  │     20 │ tag name   │       │
+│      2 │ TIME   │ datetime │     31 │ base time  │       │
+│      3 │ VALUE  │ double   │     17 │ summarized │       │
+└────────┴────────┴──────────┴────────┴────────────┴───────┘
 ```
 
 ## machbase-neo restore

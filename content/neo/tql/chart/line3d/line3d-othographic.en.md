@@ -47,4 +47,4 @@ CHART(
 )
 ```
 
-{{< figure src="../../img/line3d-othographic.jpg" width="500" >}}
+{{< figure src="/neo/tql/chart/img/line3d-othographic.jpg" width="500" >}}

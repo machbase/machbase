@@ -22,8 +22,8 @@ Choose the latest version for your platform.
 
 If the pre-built packages are not compatible with your Linux distribution, you can still build from the source code on your system.
 
-1. Ensure you have Go 1.24 and gcc installed.
-2. Clone the neo-server repository from [GitHub](https://github.com/machbase/neo-server).
+1. Ensure you have Go 1.25.12 or later and gcc installed.
+2. Clone the `neo-server` repository from [GitHub](https://github.com/machbase/neo-server).
 3. Run `go run mage.go install-neo-web` to download the web UI for Machbase Neo.
 4. Run `go run mage.go install-neo-engine` to download the Machbase Engine.
 5. Run `go run mage.go machbase-neo` to build Machbase Neo.
@@ -32,23 +32,22 @@ If the pre-built packages are not compatible with your Linux distribution, you c
 
 ### What's Changed {{< neo_latestver >}}
 
-[Changes](https://github.com/machbase/neo-server/releases/tag/{{< neo_latestver >}})
+See [Changes](https://github.com/machbase/neo-server/releases/tag/{{< neo_latestver >}}) for the details.
 
 ### Previous releases
 
-Find previously released versions in [here](https://github.com/machbase/neo-server/releases).
-
+Download previously released versions from the [GitHub releases page](https://github.com/machbase/neo-server/releases).
 
 {{< callout type="warning" emoji="⚠️">}}
 **The edge and fog editions** of the previous **v1.5.0** -
 Since v1.5.0, the editions are integrated into the single "standard" edition.<br/>
-If you plan to run old version of machbase-neo on a small device such as Raspberry Pi, select the Edge edition.<br/>
+If you plan to run an old version of machbase-neo on a small device such as Raspberry Pi, select the Edge edition.<br/>
 For machines with larger memory and more CPU cores, such as a personal workstation or server, choose the Fog edition.
 {{< /callout >}}
 
 ### SDK with CLASSIC
 
-This releases are the legacy MACHBASE DBMS and application driver such as JDBC, ODBC and C client library.
+These packages include the legacy MACHBASE DBMS and application drivers such as JDBC, ODBC and the C client library.
 
 | OS         | Architecture   |  Download |
 |:-----------|:---------------|:----------|

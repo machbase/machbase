@@ -15,7 +15,7 @@ machbase-neo shell import   \
     EXAMPLE
 ```
 The command above is downloading a compressed csv file from the remote web server by `curl`.
-It writes out data (compressed, binary) into its stdout stream because we have set `-o -` option, then the output stream is passed to `machbase-neo shell import`, it reads data from stdout by flag `--input -`.
+It writes out data (compressed, binary) into its stdout stream because we have set `-o -` option, then the output stream is passed to `machbase-neo shell import`, it reads data from stdin by flag `--input -`.
 
 Combining two commands with pipe `|`, so that we don't need to store the data in a temporary file consuming the local storage.
 
@@ -24,8 +24,8 @@ The result output shows that 1,000 records are imported.
 ```
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-100  5352  100  5352    0     0   547k      0 --:--:-- --:--:-- --:--:-- 5226k
-import total 1000 record(s) inserted
+100  5352  100  5352    0     0   263k      0 --:--:-- --:--:-- --:--:--  275k
+Import 1,000 rows completed. 1000,0
 ```
 
 Or, we can download data file in the local storage then import from it.
@@ -38,12 +38,13 @@ It is possible to import compressed or uncompressed csv file.
 
 Then import csv file from local storage with `--input <file>` flag. And use `--compress gzip` option if the file is gzip'd form.
 
-The `-v /mnt=.` flag mounts the current directory (`.`) into the shell runtime's `/mnt` path, enabling the `machbase-neo shell` command to access local files within that mounted directory. When importing, specify the full mounted path (e.g., `/mnt/data.csv.gz`) to reference your local files from inside the shell runtime environment.
+The `-v /mnt=.` flag mounts the current directory (`.`) into the shell runtime's `/mnt` path, enabling the `machbase-neo shell` command to access local files within that mounted directory. When importing, specify the full mounted path (e.g., `/mnt/data.csv.gz`) to reference your local files from inside the shell runtime environment. Without `-v`, the current directory is available at `/work` (e.g., `/work/data.csv.gz`).
 
 ```sh
 machbase-neo shell -v /mnt=. \
     import \
-    --input /mnt/data.csv    \
+    --input /mnt/data.csv.gz \
+    --compress gzip       \
     --timeformat s        \
     EXAMPLE
 ```
@@ -54,13 +55,16 @@ Query the table to check.
 machbase-neo shell "select * from example order by time desc limit 5"
 ```
 ```
- ROWNUM  NAME      TIME(UTC)            VALUE     
-──────────────────────────────────────────────────
- 1       wave.sin  2023-02-15 03:47:50  0.994540  
- 2       wave.cos  2023-02-15 03:47:50  -0.104353 
- 3       wave.sin  2023-02-15 03:47:49  0.951002  
- 4       wave.cos  2023-02-15 03:47:49  0.309185  
- 5       wave.cos  2023-02-15 03:47:48  0.669261  
+┌────────┬──────────┬─────────────────────┬───────────┐
+│ ROWNUM │ NAME     │ TIME                │     VALUE │
+├────────┼──────────┼─────────────────────┼───────────┤
+│      1 │ wave.sin │ 2023-02-15 12:47:50 │   0.99454 │
+│      2 │ wave.cos │ 2023-02-15 12:47:50 │ -0.104353 │
+│      3 │ wave.cos │ 2023-02-15 12:47:49 │  0.309185 │
+│      4 │ wave.sin │ 2023-02-15 12:47:49 │  0.951002 │
+│      5 │ wave.cos │ 2023-02-15 12:47:48 │  0.669261 │
+└────────┴──────────┴─────────────────────┴───────────┘
+5 rows selected.
 ```
 
 The sample file contains total 1,000 records and the table contains all of them after importing.
@@ -69,9 +73,12 @@ The sample file contains total 1,000 records and the table contains all of them 
 machbase-neo shell "select count(*) from example"
 ```
 ```
- ROWNUM  COUNT(*) 
-──────────────────
- 1       1000     
+┌────────┬──────────┐
+│ ROWNUM │ COUNT(*) │
+├────────┼──────────┤
+│      1 │     1000 │
+└────────┴──────────┘
+a row selected.
 ```
 
 ## Export csv
@@ -117,9 +124,12 @@ Query the records count of newly create table.
  machbase-neo shell "select count(*) from EXAMPLE_COPY"
 ```
 ```
- ROWNUM  COUNT(*) 
-──────────────────
- 1       1000     
+┌────────┬──────────┐
+│ ROWNUM │ COUNT(*) │
+├────────┼──────────┤
+│      1 │     1000 │
+└────────┴──────────┘
+a row selected.
 ```
 
 This example is applicable in a situation that we want to "copy" a table from *A* database to *B* database.
@@ -136,6 +146,7 @@ machbase-neo shell sql \
     --format csv       \
     --no-rownum        \
     --no-header        \
+    --no-footer        \
     --timeformat ns    \
     "select * from example where name = 'wave.sin' order by time" | \
 machbase-neo shell import \
@@ -145,7 +156,7 @@ machbase-neo shell import \
 ```
 
 We selected data that tag name is `wave.sin`, then import it into the `EXAMPLE_COPY` table.
-It is required `--no-rownum` and `--no-header` options in `sql` command because `import` command need to verify the number of fields and data type of the incoming csv data.
+The `sql` command requires the `--no-rownum`, `--no-header` and `--no-footer` options because the `import` command verifies the number of fields and the data types of the incoming csv data.
 
 ## Import from query result with HTTP API
 
@@ -161,14 +172,10 @@ curl http://127.0.0.1:5654/db/write/EXAMPLE_COPY \
     -X POST --data-binary @- 
 ```
 
-## Import method "insert" vs. "append"
+## Import write method
 
-The import command writes the incoming data with "INSERT INTO..." statement by default.
-As long as the total number of records to write is small, there is not a big difference from "append" method.
-
-When you are expecting a large amount of data (e.g. more than several hundreds thousands records),
-Use `--method append` flag that specify machbase-neo to use "append" method 
-instead of "INSERT INTO..." statement which is implicitly specified as `--method insert`. 
+The import command writes the incoming data with the "append" method, not with "INSERT INTO..." statements.
+The "append" method is efficient when you write a large amount of data (e.g. more than several hundred thousand records).
 
 ## Example
 
@@ -196,11 +203,11 @@ name-1,1687405320000000000,234.567000
 name-2,1687405320000000000,345.678000
 ```
 
-Import data
+Import data. `machbase-neo shell` mounts the current directory at `/work`, so run the command in the directory where `data.csv` is located.
 
 ```sh
-machbase-neo shell import \
-    --input ./data.csv    \
+machbase-neo shell import  \
+    --input /work/data.csv \
     --timeformat ns        \
     EXAMPLE
 ```
@@ -210,12 +217,14 @@ Select data
 ```sh
 machbase-neo shell "SELECT * FROM EXAMPLE";
 
- ROWNUM  NAME    TIME(LOCAL)          VALUE   
-──────────────────────────────────────────────
-      1  name-0  2023-06-22 12:42:00  123.456 
-      2  name-1  2023-06-22 12:42:00  234.567 
-      3  name-2  2023-06-22 12:42:00  345.678 
-3 rows fetched.
+┌────────┬────────┬─────────────────────┬─────────┐
+│ ROWNUM │ NAME   │ TIME                │   VALUE │
+├────────┼────────┼─────────────────────┼─────────┤
+│      1 │ name-0 │ 2023-06-22 12:42:00 │ 123.456 │
+│      2 │ name-1 │ 2023-06-22 12:42:00 │ 234.567 │
+│      3 │ name-2 │ 2023-06-22 12:42:00 │ 345.678 │
+└────────┴────────┴─────────────────────┴─────────┘
+3 rows selected.
 ```
 
 ### Import via TQL
@@ -261,12 +270,14 @@ Select data
 ```sh
 machbase-neo shell "select * from example";
 
- ROWNUM  NAME   TIME(LOCAL)          VALUE 
-───────────────────────────────────────────
-      1  tag-1  1970-01-01 09:00:00  10    
-      2  tag-2  1970-01-01 09:00:00  11    
-      3  tag-3  1970-01-01 09:00:00  12    
-3 rows fetched.
+┌────────┬───────┬─────────────────────────┬───────┐
+│ ROWNUM │ NAME  │ TIME                    │ VALUE │
+├────────┼───────┼─────────────────────────┼───────┤
+│      1 │ tag-1 │ 2026-09-17 17:10:05.268 │   110 │
+│      2 │ tag-2 │ 2026-09-17 17:10:05.268 │   211 │
+│      3 │ tag-3 │ 2026-09-17 17:10:05.268 │   152 │
+└────────┴───────┴─────────────────────────┴───────┘
+3 rows selected.
 ```
 
 **Import JSON**
@@ -289,7 +300,7 @@ Prepare test data saved in `import-data.json`.
 Copy the code below into TQL editor and save `import-tql-json.tql`.
 
 ```js
-BYTES( payload() ?? {
+STRING( payload() ?? {
     {
         "tag": "pump",
         "data": {
@@ -303,9 +314,9 @@ BYTES( payload() ?? {
 })
 SCRIPT({
     obj = JSON.parse($.values[0]);
-    $.yield(obj.tag+"_0", obj.data.time*1000000000, obj.data.number)
-    $.yield(obj.tag+"_1", obj.data.time*1000000000, obj.data.array[1])
-    $.yield(obj.tag+"_2", obj.data.time*1000000000, obj.data.array[2])
+    $.yield(obj.tag+"_0", obj.data.time*1000000000, parseFloat(obj.data.number))
+    $.yield(obj.tag+"_1", obj.data.time*1000000000, obj.array[1])
+    $.yield(obj.tag+"_2", obj.data.time*1000000000, obj.array[2])
     for (i = 0; i < obj.array.length; i++) {
     }
 })
@@ -317,7 +328,7 @@ Post the test data JSON to the tql.
 ```sh
 curl -o - --data-binary @import-data.json http://127.0.0.1:5654/db/tql/import-tql-json.tql
 
-append 2 rows (success 2, fail 0).
+append 3 rows (success 3, fail 0).
 ```
 
 Select data
@@ -325,14 +336,17 @@ Select data
 ```sh
 machbase-neo shell "select * from example";
 
- ROWNUM  NAME    TIME(LOCAL)          VALUE   
-──────────────────────────────────────────────
-      1  tag-1   1970-01-01 09:00:00  10      
-      2  pump_2  2023-06-22 12:42:00  345.678 
-      3  tag-2   1970-01-01 09:00:00  11      
-      4  tag-3   1970-01-01 09:00:00  12      
-      5  pump_1  2023-06-22 12:42:00  234.567 
-5 rows fetched.
+┌────────┬────────┬─────────────────────────┬─────────┐
+│ ROWNUM │ NAME   │ TIME                    │ VALUE   │
+├────────┼────────┼─────────────────────────┼─────────┤
+│      1 │ tag-1  │ 2026-09-17 17:10:05.268 │     110 │
+│      2 │ pump_2 │ 2023-06-22 12:42:00     │ 345.678 │
+│      3 │ tag-2  │ 2026-09-17 17:10:05.268 │     211 │
+│      4 │ tag-3  │ 2026-09-17 17:10:05.268 │     152 │
+│      5 │ pump_1 │ 2023-06-22 12:42:00     │ 234.567 │
+│      6 │ pump_0 │ 2023-06-22 12:42:00     │ 123.456 │
+└────────┴────────┴─────────────────────────┴─────────┘
+6 rows selected.
 ```
 
 
@@ -363,11 +377,13 @@ Select data
 ```sh
 machbase-neo shell "select * from example";
 
- ROWNUM  NAME  TIME(LOCAL)          VALUE 
-──────────────────────────────────────────
-      1  tag0  2021-08-12 09:00:00  10    
-      2  tag0  2021-08-13 09:00:00  11    
-2 rows fetched.
+┌────────┬──────┬─────────────────────┬───────┐
+│ ROWNUM │ NAME │ TIME                │ VALUE │
+├────────┼──────┼─────────────────────┼───────┤
+│      1 │ tag0 │ 2021-08-12 09:00:00 │    10 │
+│      2 │ tag0 │ 2021-08-13 09:00:00 │    11 │
+└────────┴──────┴─────────────────────┴───────┘
+2 rows selected.
 ```
 
 ### Export CSV
@@ -393,14 +409,13 @@ TAG0,1628780400000000000,110
 
 ### Export JSON
 
-Export data
+Export data with the HTTP API.
 
 ```sh
-machbase-neo shell export      \
-    --output ./data_out.json   \
-    --format json              \
-    --timeformat ns            \
-    EXAMPLE
+curl -o data_out.json http://127.0.0.1:5654/db/query \
+    --data-urlencode "q=select * from EXAMPLE"      \
+    --data-urlencode "format=json"                  \
+    --data-urlencode "timeformat=ns"
 ```
 
 Select data
@@ -408,35 +423,7 @@ Select data
 ```sh
 cat data_out.json
 
-{
-  "data": {
-    "columns": [
-      "NAME",
-      "TIME",
-      "VALUE"
-    ],
-    "types": [
-      "string",
-      "datetime",
-      "double"
-    ],
-    "rows": [
-      [
-        "TAG0",
-        1628694000000000000,
-        100
-      ],
-      [
-        "TAG0",
-        1628780400000000000,
-        110
-      ]
-    ]
-  },
-  "success": true,
-  "reason": "success",
-  "elapse": "1.847207ms"
-}
+{"data":{"columns":["NAME","TIME","VALUE"],"types":["string","datetime","double"],"rows":[["TAG0",1628694000000000000,100],["TAG0",1628780400000000000,110]]},"success":true,"reason":"success","elapse":"865.833µs"}
 ```
 
 ### Export via TQL

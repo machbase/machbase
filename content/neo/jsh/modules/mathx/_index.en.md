@@ -30,7 +30,7 @@ arrange(start, end, step)
 
 ```js {linenos=table,linenostart=1}
 const { arrange } = require('mathx');
-arrange(0, 6, 3).forEach((i) => console.log(i))
+arrange(0, 6, 3).forEach((i) => console.log(i));
 
 // 0
 // 3

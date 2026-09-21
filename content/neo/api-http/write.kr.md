@@ -10,7 +10,7 @@ params:
 쓰기 API 엔드포인트는 `/db/write/{TABLE}`이며, `{TABLE}`은 데이터를 저장할 테이블 이름입니다.
 
 `query` API로도 `INSERT` 구문을 실행할 수 있지만, 요청마다 `q` 매개변수에 정적인 SQL 문자열을 구성해야 하므로 비효율적입니다.
-데이터를 적재할 때는 `INSERT`와 동일하게 동작하는 `write` API를 사용하시는 것이 일반적입니다.
+데이터를 적재할 때는 `INSERT` 구문과 동일하게 동작하는 `write` API를 사용하는 것이 적절합니다.
 또한 `write` API를 사용하면 하나의 요청으로 여러 레코드를 한꺼번에 삽입할 수 있다는 장점이 있습니다.
 
 <a id="request-endpoint-and-parameters"></a>
@@ -18,10 +18,10 @@ params:
 
 **쓰기 매개변수**
 
-| param       | default | description                                                    |
+| 매개변수    | 기본값  | 설명                                                           |
 |:----------- |---------|:---------------------------------------------------------------|
 | timeformat  | `ns`     | 시간 단위: `s`, `ms`, `us`, `ns`                               |
-| tz          | `UTC`    | 시간대: `UTC`, `Local`, 특정 지역                              |
+| tz          | `UTC`    | 시간대: `UTC`, `Local`, 지역 이름                              |
 | method      | `insert` | 데이터 쓰기 방식: `insert`, `append`                           |
 | db          | `MACHBASEDB` | 다중 database 환경에서 대상 database 이름을 지정합니다. {{< neo_since ver="8.7.0" />}} |
 
@@ -29,7 +29,7 @@ params:
 
 기본적으로 `/db/write` API는 `INSERT INTO ...` 구문을 사용해 데이터를 저장합니다. 소량의 레코드를 적재할 때는 `append` 방식과 성능 차이가 거의 없습니다.
 
-수십만 건 이상의 대량 데이터를 적재할 때는 `method=append` 매개변수를 사용해 주십시오. 이렇게 지정하면 `method=insert`가 암묵적으로 적용되는 기본 동작 대신 Machbase Neo가 “append” 방식을 사용하도록 설정됩니다.
+수십만 건 이상의 대량 데이터를 적재할 때는 `method=append` 매개변수를 사용합니다. 이 매개변수를 지정하면 Machbase Neo는 `method=insert`로 암묵적으로 지정되는 기본 `INSERT INTO ...` 구문 대신 `append` 방식을 사용합니다.
 
 **다중 Database**
 
@@ -158,11 +158,11 @@ machbase-neo 서버는 `Content-Type` 헤더를 통해 입력 데이터 스트�
 
 이 요청 메시지는 `INSERT INTO {table} (columns...) VALUES (values...)` 구문과 동일한 구조입니다.
 
-| name         | type       |  description            |
+| 이름         | 타입       |  설명                   |
 |:------------ |:-----------|:------------------------|
-| data         | object     | 데이터 본문 전체        |
-| data.columns | array of strings | 컬럼 목록을 지정합니다. |
-| data.rows    | array of tuples  | 레코드 값 배열입니다.   |
+| data         | object     | 데이터 본문             |
+| data.columns | 문자열 배열 | 컬럼 목록 |
+| data.rows    | 튜플 배열  | 레코드 값 배열 |
 
 **JSON**
 
@@ -178,7 +178,7 @@ machbase-neo 서버는 `Content-Type` 헤더를 통해 입력 데이터 스트�
 }
 ```
 
-`Content-Type` 헤더를 `application/json`으로 설정해 주십시오.
+`Content-Type` 헤더를 `application/json`으로 설정합니다.
 
 {{< tabs >}}
 {{< tab name="HTTP" >}}
@@ -222,11 +222,11 @@ import requests
 
 payload = {
   "data": {
-  "columns": ["name", "time", "value"],
-  "rows": [
-      ["json-data", 1670380342000000000, 1.0001],
-      ["json-data", 1670380343000000000, 2.0002],
-  ],
+    "columns": ["name", "time", "value"],
+    "rows": [
+        ["json-data", 1670380342000000000, 1.0001],
+        ["json-data", 1670380343000000000, 2.0002],
+    ],
   }
 }
 
@@ -323,19 +323,19 @@ import requests
 
 payload = {
   "data": {
-  "columns": ["name", "time", "value"],
-  "rows": [
-      ["json-data", 1670380342000000000, 1.0001],
-      ["json-data", 1670380343000000000, 2.0002],
-  ],
+    "columns": ["name", "time", "value"],
+    "rows": [
+        ["json-data", 1670380342000000000, 1.0001],
+        ["json-data", 1670380343000000000, 2.0002],
+    ],
   }
 }
 
 response = requests.post(
   "http://127.0.0.1:5654/db/write/EXAMPLE",
   headers={
-  "Content-Type": "application/json",
-  "Content-Encoding": "gzip",
+    "Content-Type": "application/json",
+    "Content-Encoding": "gzip",
   },
   data=gzip.compress(json.dumps(payload).encode("utf-8")),
 )
@@ -419,7 +419,7 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 
 **timeformat을 사용하는 JSON**
 
-시간 필드가 UNIX 에포크가 아닌 문자열 형식이라면 `timeformat`과 `tz` 매개변수를 함께 지정해 주십시오.
+시간 필드가 UNIX 에포크가 아닌 문자열 형식이면 `timeformat`과 `tz` 매개변수를 함께 지정합니다.
 
 {{< tabs >}}
 {{< tab name="HTTP" >}}
@@ -467,11 +467,11 @@ import requests
 
 payload = {
   "data": {
-  "columns": ["name", "time", "value"],
-  "rows": [
-      ["json-data", "2022-12-07 02:32:22", 1.0001],
-      ["json-data", "2022-12-07 02:32:23", 2.0002],
-  ],
+    "columns": ["name", "time", "value"],
+    "rows": [
+        ["json-data", "2022-12-07 02:32:22", 1.0001],
+        ["json-data", "2022-12-07 02:32:23", 2.0002],
+    ],
   }
 }
 
@@ -554,7 +554,7 @@ NDJSON(Newline Delimited JSON)은 각 줄이 유효한 JSON 객체인 스트리�
 {"NAME":"ndjson-data", "TIME":1670380343000000000, "VALUE":2.002}
 ```
 
-`Content-Type` 헤더를 `application/x-ndjson`으로 설정해 주십시오.
+`Content-Type` 헤더를 `application/x-ndjson`으로 설정합니다.
 
 {{< tabs >}}
 {{< tab name="HTTP" >}}
@@ -640,7 +640,6 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 {{< /tab >}}
 {{< /tabs >}}
 
-
 **timeformat을 사용하는 NDJSON**
 
 시간 필드가 UNIX 에포크가 아닌 문자열 형식이면 다음과 같이 작성할 수 있습니다.
@@ -650,7 +649,7 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 {"NAME":"ndjson-data", "TIME":"2022-12-07 02:33:23", "VALUE":2.002}
 ```
 
-`timeformat`과 `tz` 매개변수를 함께 지정해 주십시오.
+`timeformat`과 `tz` 매개변수를 함께 지정합니다.
 
 {{< tabs >}}
 {{< tab name="HTTP" >}}
@@ -747,23 +746,20 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 {{< /tab >}}
 {{< /tabs >}}
 
-
 ### CSV
 
 다음 옵션은 본문이 CSV 형식일 때만 적용됩니다.
 
-| param         | default | description                                                                 |
+| 매개변수      | 기본값  | 설명                                                                        |
 |:------------- |---------|:----------------------------------------------------------------------------|
 | header        |         | `skip`: 첫 줄을 건너뜁니다.<br/>`columns`: 헤더 줄이 테이블 컬럼명과 일치합니다. |
 | delimiter     | ,       | 필드 구분자                                                                   |
 
-CSV 데이터에 헤더 줄이 포함되어 있다면 `header=skip` 쿼리 매개변수를 설정해 첫 줄을 무시하도록 하십시오.
+CSV 데이터에 헤더 줄이 포함되어 있으면 `header=skip` 쿼리 매개변수를 설정해 machbase-neo가 첫 줄을 무시하도록 합니다.
 
 헤더 줄에서 사용할 컬럼을 지정하고 싶다면 `header=columns`를 사용합니다. 헤더가 테이블 컬럼명과 일치해야 하며, 내부적으로 `INSERT INTO TABLE(columns...) VALUES(...)`의 컬럼 목록으로 활용됩니다.
 
-헤더 줄이 없고 `header` 옵션을 생략한 경우에는 각 줄의 필드가 테이블의 모든 컬럼 순서와 정확히 일치해야 합니다. 이는 `INSERT INTO TABLE VALUES(...)` 구문에 대응하기 위해서입니다.
-
-> append 방식의 특성상 `method=append`와 함께 사용할 때는 `header=columns` 옵션이 동작하지 않습니다.
+헤더 줄이 없고 `header` 옵션을 생략한 경우에는 데이터가 `INSERT INTO TABLE VALUES(...)` 구문으로 기록되므로, 각 줄의 필드가 테이블의 모든 컬럼과 순서대로 일치해야 합니다.
 
 **header=skip**
 
@@ -776,6 +772,7 @@ csv-data,1670380343000000000,2.0002
 ```
 
 `Content-Type` 헤더는 `text/csv`로 지정해야 합니다.
+
 {{< tabs >}}
 {{< tab name="HTTP" >}}
 ~~~
@@ -970,7 +967,7 @@ POST http://127.0.0.1:5654/db/write/EXAMPLE?header=skip
 Content-Type: text/csv
 Content-Encoding: gzip
 
-< /csv/post-data.json.gz
+< /csv/post-data.csv.gz
 ```
 ~~~
 {{< /tab >}}
@@ -997,8 +994,8 @@ response = requests.post(
   "http://127.0.0.1:5654/db/write/EXAMPLE",
   params={"header": "skip"},
   headers={
-  "Content-Type": "text/csv",
-  "Content-Encoding": "gzip",
+    "Content-Type": "text/csv",
+    "Content-Encoding": "gzip",
   },
   data=gzip.compress(payload.encode("utf-8")),
 )
@@ -1068,7 +1065,6 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 {{< /tab >}}
 {{< /tabs >}}
 
-
 **timeformat을 사용하는 CSV**
 
 `timeformat`과 `tz` 쿼리 매개변수를 함께 지정합니다.
@@ -1089,7 +1085,7 @@ csv-data,2022-12-07 11:39:33,2.0002
 
 ## 예시
 
-API의 자세한 설명은 [Request endpoint and params](/neo/api-http/write/#request-endpoint-and-parameters)를 참고해 주십시오.
+API의 자세한 내용은 [요청 엔드포인트와 매개변수](/neo/api-http/write/#request-endpoint-and-parameters)를 참고합니다.
 
 **테스트 테이블**
 
@@ -1116,10 +1112,10 @@ import requests
 response = requests.get(
   "http://127.0.0.1:5654/db/query",
   params={
-  "q": (
-      "create tag table EXAMPLE "
-      "(name varchar(40) primary key, time datetime basetime, value double)"
-  )
+    "q": (
+        "create tag table EXAMPLE "
+        "(name varchar(40) primary key, time datetime basetime, value double)"
+    )
   },
 )
 print(response.text)
@@ -1155,9 +1151,9 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 {{< /tab >}}
 {{< /tabs >}}
 
-**Time**
+**시간**
 
-이 예제에서 사용하는 샘플 파일의 시간 값은 초 단위 UNIX 에포크로 저장되어 있습니다. 따라서 데이터를 불러올 때는 `timeformat=s` 옵션을 지정해 주십시오. 다른 시간 정밀도로 저장된 데이터라면 해당 값에 맞춰 옵션을 수정해야 합니다. Machbase Neo는 기본적으로 시간 정밀도를 `나노초(ns)`로 가정하고 처리합니다.
+이 예제에서 사용하는 샘플 파일의 시간 값은 초 단위 UNIX 에포크입니다. 따라서 데이터를 불러올 때는 `timeformat=s` 옵션을 지정합니다. 다른 시간 정밀도로 저장된 데이터라면 그 정밀도에 맞춰 옵션을 바꿔야 합니다. Machbase Neo는 기본 시간 정밀도를 나노초(`ns`)로 가정합니다.
 
 ### JSON with epoch
 
@@ -1193,7 +1189,7 @@ GET http://127.0.0.1:5654/db/query
 
 ### CSV with epoch
 
-CSV 데이터에 다음과 같이 헤더 줄이 있다면 `header=skip` 쿼리 매개변수를 지정해 주십시오.
+CSV 데이터에 다음과 같이 헤더 줄이 있으면 `header=skip` 쿼리 매개변수를 지정합니다.
 
 ~~~
 ```http
@@ -1256,7 +1252,7 @@ GET http://127.0.0.1:5654/db/query
 
 **Append**
 
-대용량 CSV 파일을 적재할 때는 “append” 방식을 사용하면 “insert” 방식보다 여러 배 빠르게 입력할 수 있습니다.
+대용량 CSV 파일을 적재할 때 `append` 방식을 사용하면 `insert` 방식보다 몇 배 빠르게 데이터를 입력할 수 있습니다.
 
 ~~~
 ```http
@@ -1342,7 +1338,6 @@ wave.sin,2023-02-14T22:39:24.333333333-05:00,0.444444
 wave.sin,2023-02-14T22:39:25.444444444-05:00,0.555555
 ```
 ~~~
-
 
 **America/New_York 시간대로 조회**
 

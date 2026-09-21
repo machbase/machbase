@@ -72,6 +72,9 @@ METADATA (
 );
 ```
 
+*   Outlier validation is performed on the `reading` column, which has the `SUMMARIZED` attribute.
+*   `min_acceptable` and `max_acceptable` are the columns that store the LSL and USL.
+
 **Example (Only LSL):**
 
 It is permissible to define only one limit if validation is only required against a minimum or maximum threshold.
@@ -89,7 +92,7 @@ METADATA (
 
 ### Adding Limits to an Existing Table
 
-LSL/USL columns can be added to the metadata definition of an existing TAG table using `ALTER TABLE` on the dependent metadata table (`_TableName_meta`). Note that `DROP COLUMN` is **not** supported for metadata tables.
+LSL/USL columns can be added to the metadata definition of an existing TAG table using `ALTER TABLE` on the dependent metadata table (`_TableName_meta`). A limit column can also be removed with `DROP COLUMN` on the same metadata table (or `ALTER TABLE table_name METADATA DROP COLUMN (column_name)`); once it is dropped, that limit is no longer checked.
 
 **Syntax:**
 
@@ -209,6 +212,8 @@ TAG_01 | 2024-XX-XX XX:XX:XX XXX:XXX:XXX | 150.5 | 100.0 | 200.0
 TAG_01 | 2024-XX-XX XX:XX:XX XXX:XXX:XXX | 200.0 | 100.0 | 200.0
 */
 ```
+
+The error message shows which limit was violated.
 
 **4. Updating Limits in Metadata:**
 

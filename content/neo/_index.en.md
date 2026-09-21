@@ -73,7 +73,7 @@ Geodetic data visualization.
 
 Realtime data monitoring on the fly.
 
-{{< figure src="/images/dashboard.png" width="740" >}}
+{{< media slug="neo-dashboard/statz-board" width="740" >}}
 
 ### API and Interfaces
 

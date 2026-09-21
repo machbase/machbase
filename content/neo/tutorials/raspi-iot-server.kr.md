@@ -87,8 +87,8 @@ sh -c "$(curl -fsSL https://docs.machbase.com/install.sh)"
 - 압축을 해제합니다.
 
 ```sh
-$ unzip machbase-neo-{{ site.latest_version }}-linux-arm64.zip
-$ cd machbase-neo-{{ site.latest_version }}-linux-arm64
+$ unzip machbase-neo-{{< neo_latestver >}}-linux-arm64.zip
+$ cd machbase-neo-{{< neo_latestver >}}-linux-arm64
 ```
 
 - machbase-neo를 실행합니다.
@@ -142,12 +142,10 @@ python dht.py | ./machbase-neo shell import example
 `--tz local` 옵션은 TIME 필드를 UTC 대신 로컬 시간대로 표시합니다.
 
 ```
-./machbase-neo shell walk --tz local 'select * from example order by time desc'
+./machbase-neo shell sql --tz local 'select * from example order by time desc limit 10'
 ```
 
-`r` 키를 누르면 쿼리를 다시 실행해 최신 데이터를 갱신합니다.
-
-![walk](/images/raspi-walk.gif)
+같은 명령을 다시 실행하면 새로 기록된 데이터를 확인할 수 있습니다.
 
 
 ### 애플리케이션에서 데이터 조회

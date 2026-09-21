@@ -4,15 +4,18 @@ type: docs
 weight: 70
 ---
 
-It is required to properly read and transform data that has been sent by sensors.
-And also read and send data from database to other systems in demanded format.
+Reading and transforming data sent by sensors into the format you want,
+or delivering values stored in the database to other systems in the format they require, calls for a dedicated tool.
+TQL is the Machbase transformation language that lets you process such data easily and flexibly.
 
 ### Generate example 'signal' data
 
 First, generate sample data for the examples below.
 
 {{< tabs >}}
+
 {{< tab name="SCRIPT" >}}
+
 ```js
 SCRIPT({
     const m = require('mathx');
@@ -29,8 +32,11 @@ SCRIPT({
 SQL(`insert into example(name,time,value) values('signal',?,?)`, 
     value(0), value(1))
 ```
-{{</ tab >}}
+
+{{< /tab >}}
+
 {{< tab name="FAKE" >}}
+
 ```js
 FAKE(
   oscillator(
@@ -41,27 +47,39 @@ FAKE(
 SQL(`insert into example(name,time,value) values('signal',?,?)`, 
     value(0), value(1))
 ```
-{{</ tab >}}
-{{</ tabs >}}
+
+{{< /tab >}}
+
+{{< /tabs >}}
 
 ### Output format independent
 
 {{< tabs >}}
+
 {{< tab name="CSV" >}}
+
 ```js {linenos=table,hl_lines=[2],linenostart=1}
 SQL( `SELECT TIME, VALUE FROM EXAMPLE WHERE NAME='signal' LIMIT 100` )
 CSV( timeformat("Default") )
 ```
-{{< figure src="./img/tql_intro_csv.jpg">}}
-{{</ tab >}}
+
+{{< figure src="/neo/tql/img/tql_intro_csv.jpg">}}
+
+{{< /tab >}}
+
 {{< tab name="JSON" >}}
+
 ```js {linenos=table,hl_lines=[2],linenostart=1}
 SQL( `SELECT TIME, VALUE FROM EXAMPLE WHERE NAME='signal' LIMIT 100` )
 JSON( timeformat("Default") )
 ```
-{{< figure src="./img/tql_intro_json.jpg">}}
-{{</ tab >}}
+
+{{< figure src="/neo/tql/img/tql_intro_json.jpg">}}
+
+{{< /tab >}}
+
 {{< tab name="CHART" >}}
+
 ```js {linenos=table,hl_lines=[2-9],linenostart=1}
 SQL( `SELECT TIME, VALUE FROM EXAMPLE WHERE NAME='signal' LIMIT 100` )
 CHART(
@@ -73,9 +91,13 @@ CHART(
     })
 )
 ```
-{{< figure src="./img/tql_intro.jpg">}}
-{{</ tab >}}
+
+{{< figure src="/neo/tql/img/tql_intro.jpg">}}
+
+{{< /tab >}}
+
 {{< tab name="HTML" >}}
+
 ```html {linenos=table,hl_lines=[2],linenostart=1}
 SQL(`SELECT TIME, VALUE FROM EXAMPLE WHERE NAME='signal' LIMIT 100`)
 HTML({
@@ -93,14 +115,19 @@ HTML({
   {{end}}
 })
 ```
-{{< figure src="./img/tql_intro_html.jpg">}}
-{{</ tab >}}
-{{</ tabs >}}
+
+{{< figure src="/neo/tql/img/tql_intro_html.jpg">}}
+
+{{< /tab >}}
+
+{{< /tabs >}}
 
 ### Data source independent
 
 {{< tabs >}}
+
 {{< tab name="JSON" >}}
+
 ```js {{linenos="table",hl_lines=["1-5"]}}
 FAKE( json({ 
     [ "A", 1.0 ],
@@ -112,8 +139,11 @@ MAPVALUE(1, value(1) * 10 )
 
 CSV()
 ```
-{{</ tab >}}
+
+{{< /tab >}}
+
 {{< tab name="CSV" >}}
+
 ```js {{linenos="table",hl_lines=["1-4"]}}
 CSV(`A,1.0
 B,1.5
@@ -124,8 +154,11 @@ MAPVALUE(1, value(1) * 10 )
 
 CSV()
 ```
-{{</ tab >}}
+
+{{< /tab >}}
+
 {{< tab name="SQL" >}}
+
 ```js  {{linenos="table",hl_lines=[1]}}
 SQL(`select time, value from example where name = 'my-car' limit 4`)
 
@@ -133,8 +166,11 @@ MAPVALUE(1, value(1) * 10 )
 
 CSV()
 ```
-{{</ tab >}}
+
+{{< /tab >}}
+
 {{< tab name="SCRIPT-json" >}}
+
 ```js {{linenos="table",hl_lines=[2]}}
 SCRIPT({
     list = JSON.parse(`[["A",1.0], ["B",1.5], ["C",2.0], ["D",2.5]]`);
@@ -145,8 +181,11 @@ SCRIPT({
 MAPVALUE(1, value(1) * 10 )
 CSV()
 ```
-{{</ tab >}}
+
+{{< /tab >}}
+
 {{< tab name="SCRIPT-for" >}}
+
 ```js {{linenos="table",hl_lines=["1-5"]}}
 SCRIPT({
     for (i = 0; i < 10; i++) {
@@ -157,11 +196,14 @@ SCRIPT({
 MAPVALUE(1, value(1) * 10 )
 
 CSV()
-{{</ tab >}}
-{{</ tabs >}}
+```
 
-The purpose of *TQL* is transforming data format.
-This chapter shows how to do this without developing additional applications.
+{{< /tab >}}
+
+{{< /tabs >}}
+
+The purpose of *TQL* is to transform data easily.
+This chapter shows how to process data into various formats without developing additional applications.
 
 <!-- ### N:M transforming
 
@@ -170,12 +212,13 @@ This chapter shows how to do this without developing additional applications.
 
 ### Iris Demo
 
-The example tql code below gives a brief idea of what is TQL for.
+The Iris data examples below give a brief idea of what TQL is used for.
 
 {{< tabs >}}
+
 {{< tab name="AVG" >}}
 
-- avg. values of each classes.
+- Average values of each class
 
 ```js {{linenos="table"}}
 CSV(file("https://docs.machbase.com/assets/example/iris.csv"))
@@ -199,11 +242,14 @@ CHART(
     })
 )
 ```
-{{< figure src="./img/groupbykey_avg.jpg" width="500" >}}
-{{</ tab >}}
+
+{{< figure src="/neo/tql/img/groupbykey_avg.jpg" width="500" >}}
+
+{{< /tab >}}
+
 {{< tab name="STAT" >}}
 
-- min, median, avg, max, stddev of sepal length of the setosa class.
+- Minimum, median, average, maximum and standard deviation of the sepal length of the setosa class
 
 ```js {{linenos="table"}}
 CSV(file("https://docs.machbase.com/assets/example/iris.csv"))
@@ -230,10 +276,14 @@ CHART(
     })
 )
 ```
-{{< figure src="./img/groupbykey_stddev.jpg" width="500" >}}
-{{</ tab >}}
+
+{{< figure src="/neo/tql/img/groupbykey_stddev.jpg" width="500" >}}
+
+{{< /tab >}}
 
 {{< tab name="SCRIPT-bar" >}}
+
+- Uses JavaScript to calculate the minimum and maximum values of each species at once.
 
 ```js {{linenos="table"}}
 CSV(file("https://docs.machbase.com/assets/example/iris.csv"))
@@ -288,10 +338,13 @@ SCRIPT({
 CHART()
 ```
 
-{{< figure src="./img/iris_script_min_max.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/iris_script_min_max.jpg" width="500" >}}
 
-{{</tab>}}
+{{< /tab >}}
+
 {{< tab name="SCRIPT-boxplot" >}}
+
+- Creates a boxplot based on quartiles.
 
 ```js {{linenos="table"}}
 CSV(file("https://docs.machbase.com/assets/example/iris.csv"))
@@ -352,10 +405,11 @@ SCRIPT({
 CHART()
 ```
 
-{{< figure src="./img/iris_script_quantile.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/iris_script_quantile.jpg" width="500" >}}
 
-{{</tab>}}
-{{</ tabs >}}
+{{< /tab >}}
+
+{{< /tabs >}}
 
 ## In this chapter
 

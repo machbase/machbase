@@ -458,11 +458,11 @@ Node.js 호환을 위해 `Sync` 접미사 형태도 별칭으로 함께 제공�
 const fs = require('fs');
 
 try {
-	const content = fs.readFile('/path/to/config.json', 'utf8');
-	const config = JSON.parse(content);
-	console.println('Config loaded:', config);
+    const content = fs.readFile('/path/to/config.json', 'utf8');
+    const config = JSON.parse(content);
+    console.println('Config loaded:', config);
 } catch (e) {
-	console.println('Error reading config:', e);
+    console.println('Error reading config:', e);
 }
 ```
 
@@ -472,9 +472,9 @@ try {
 const fs = require('fs');
 
 function log(message) {
-	const timestamp = new Date().toISOString();
-	const logEntry = `[${timestamp}] ${message}\n`;
-	fs.appendFile('/tmp/app.log', logEntry, 'utf8');
+    const timestamp = new Date().toISOString();
+    const logEntry = `[${timestamp}] ${message}\n`;
+    fs.appendFile('/tmp/app.log', logEntry, 'utf8');
 }
 
 log('Application started');
@@ -487,23 +487,23 @@ log('Processing request');
 const fs = require('fs');
 
 function walkDir(dir, callback, indent = '') {
-	const entries = fs.readdir(dir, { withFileTypes: true });
+    const entries = fs.readdir(dir, { withFileTypes: true });
 
-	entries.forEach(entry => {
-		const fullPath = dir + '/' + entry.name;
+    entries.forEach(entry => {
+        const fullPath = dir + '/' + entry.name;
 
-		if (entry.isDirectory()) {
-			console.println(indent + '[DIR] ' + entry.name);
-			walkDir(fullPath, callback, indent + '  ');
-		} else {
-			console.println(indent + entry.name);
-			callback(fullPath);
-		}
-	});
+        if (entry.isDirectory()) {
+            console.println(indent + '[DIR] ' + entry.name);
+            walkDir(fullPath, callback, indent + '  ');
+        } else {
+            console.println(indent + entry.name);
+            callback(fullPath);
+        }
+    });
 }
 
 walkDir('/tmp', (file) => {
-	// Process each file
+    // Process each file
 });
 ```
 
@@ -513,17 +513,17 @@ walkDir('/tmp', (file) => {
 const fs = require('fs');
 
 function backupFile(path) {
-	if (!fs.exists(path)) {
-		throw new Error('File does not exist');
-	}
+    if (!fs.exists(path)) {
+        throw new Error('File does not exist');
+    }
 
-	const timestamp = Date.now();
-	const backupPath = path + '.backup.' + timestamp;
+    const timestamp = Date.now();
+    const backupPath = path + '.backup.' + timestamp;
 
-	fs.copyFile(path, backupPath);
-	console.println('Backup created:', backupPath);
+    fs.copyFile(path, backupPath);
+    console.println('Backup created:', backupPath);
 
-	return backupPath;
+    return backupPath;
 }
 
 backupFile('/tmp/important.txt');
@@ -535,23 +535,23 @@ backupFile('/tmp/important.txt');
 const fs = require('fs');
 
 function safeWriteFile(path, data) {
-	const tempPath = path + '.tmp';
+    const tempPath = path + '.tmp';
 
-	try {
-		// Write to temporary file first
-		fs.writeFile(tempPath, data, 'utf8');
+    try {
+        // Write to temporary file first
+        fs.writeFile(tempPath, data, 'utf8');
 
-		// If successful, rename to target
-		fs.rename(tempPath, path);
+        // If successful, rename to target
+        fs.rename(tempPath, path);
 
-		console.println('File written safely');
-	} catch (e) {
-		// Clean up temp file if it exists
-		if (fs.exists(tempPath)) {
-			fs.unlink(tempPath);
-		}
-		throw e;
-	}
+        console.println('File written safely');
+    } catch (e) {
+        // Clean up temp file if it exists
+        if (fs.exists(tempPath)) {
+            fs.unlink(tempPath);
+        }
+        throw e;
+    }
 }
 
 safeWriteFile('/tmp/data.txt', 'Important data');

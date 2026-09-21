@@ -57,7 +57,7 @@ bridge exec pg CREATE TABLE IF NOT EXISTS pg_example(
 );
 ```
 
-Can make sure the table has been created with `psql` command line tool
+You can make sure the table has been created with the `psql` command-line tool.
 
 ```
 postgres=# \d pg_example;
@@ -81,6 +81,24 @@ Indexes:
 
 ## *TQL* writing on the PostgreSQL
 
+With the current JavaScript runtime, use the example below.
+
+```js
+STRING(payload() ?? `{
+  "company": "acme",
+  "employee": 10
+}`)
+SCRIPT({
+  // parse the JSON input string and yield it with the current time
+  const msg = JSON.parse($.values[0]);
+  $.yield(msg.company, msg.employee, new Date());
+})
+INSERT(bridge("pg"), table("pg_example"), "company", "employee", "created_on")
+```
+
+<details>
+<summary>Legacy Tengo example (does not run on the current runtime)</summary>
+
 ```js
 BYTES(payload() ?? `{
   "company": "acme",
@@ -100,6 +118,8 @@ SCRIPT("tengo", {
 })
 INSERT(bridge("pg"), table("pg_example"), "company", "employee", "created_on")
 ```
+
+</details>
 
 ```
 postgres=# select * from pg_example;

@@ -359,7 +359,6 @@ tail [OPTION]... <file>
 - `-f, --follow` follow the file as it grows; stops on `SIGINT` or `SIGTERM`
 - `-h, --help` show help
 
-
 <h6>Usage example</h6>
 
 ```sh
@@ -370,7 +369,7 @@ tail [OPTION]... <file>
 
 ### viz
 
-Views, validates, and exports vizspec documents(ADVN).
+Views, validates, and exports vizspec (ADVN) documents.
 It is intended for renderer-neutral analysis output produced by JSH or Machbase Neo workflows.
 
 <h6>Syntax</h6>
@@ -381,9 +380,9 @@ viz <command> [options] <file>
 
 <h6>Subcommands</h6>
 
-- `viz view [options] <file>` render an vizspec as TUI blocks
-- `viz validate <file>` validate an vizspec file
-- `viz export [options] <file>` export an vizspec to SVG
+- `viz view [options] <file>` render a vizspec as TUI blocks
+- `viz validate <file>` validate a vizspec file
+- `viz export [options] <file>` export a vizspec to SVG
 
 <h6>`view` options</h6>
 

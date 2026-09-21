@@ -6,11 +6,13 @@ weight: 21
 
 ## 웹을 통한 원격 접속
 
-Shell 탭을 클릭하면 웹에서 인터랙티브 셸을 실행할 수 있습니다.
+1. 새 탭 화면에서 <img src="/neo/shell/img/shell_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px"> `SHELL`을 선택합니다.
 
-{{< figure src="/images/web-shell-pick.png" width="600" >}}
+{{< figure src="/images/web-shell-pick.png" width="600px" >}}
 
-{{< figure src="/images/web-shell-ui.png" width="600" >}}
+2. 메인 영역에 셸이 열립니다. `sys machbase-neo` 프롬프트에서 SQL 문과 machbase-neo 셸 명령을 실행할 수 있습니다.
+
+{{< figure src="/images/web-shell-ui.png" width="700px" >}}
 
 <a id="remote-access-via-ssh"></a>
 ## SSH를 통한 원격 접속
@@ -72,18 +74,17 @@ SSH 클라이언트는 개인키로 서버가 보낸 챌린지를 복호화해 �
 
 #### 웹 UI에서 SSH 키 등록
 
-1. 왼쪽 하단 메뉴에서 "SSH Keys"를 선택합니다. {{< neo_since ver="8.0.20" />}}
+1. 왼쪽 메뉴 맨 아래 <img src="/neo/shell/img/settings_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px"> 아이콘을 클릭하고 `SSH Keys`를 선택합니다. {{< neo_since ver="8.0.20" />}}
 
-{{< figure src="./img/ssh_keys.jpg" width="207px" >}}
+{{< figure src="/neo/shell/img/ssh_keys.jpg" width="200px" >}}
 
-2. "New SSH Key" 버튼을 클릭하고 공개키를 입력한 뒤 제목을 지정합니다.
-   마지막으로 "Add SSH Key" 버튼을 눌러 등록을 완료합니다.
+2. `New SSH key`를 클릭한 뒤 `Title`에 키를 구분할 이름을, `Public Key`에 공개키 전문을 붙여 넣고 `Add SSH key`를 클릭합니다.
 
-{{< figure src="./img/ssh_keys2.jpg" width="630px" >}}
+{{< figure src="/neo/shell/img/ssh_keys2.jpg" width="590px" >}}
 
-3. 등록된 SSH 키가 목록에 표시됩니다.
+3. 등록한 키가 `Authentication Keys` 목록에 표시됩니다. 더 이상 쓰지 않는 키는 `Delete`로 지웁니다.
 
-{{< figure src="./img/ssh_keys3.jpg" width="630px" >}}
+{{< figure src="/neo/shell/img/ssh_keys3.jpg" width="600px" >}}
 
 #### 셸 명령으로 SSH 키 등록
 
@@ -107,18 +108,19 @@ or
 $ machbase-neo shell ↵
 
 machbase-neo» ssh-key list
-┌────────┬────────────────────────────┬─────────────────────┬──────────────────────────────────┐
-│ ROWNUM │ NAME                       │ KEY TYPE            │ FINGERPRINT                      │
-├────────┼────────────────────────────┼─────────────────────┼──────────────────────────────────┤
-│      1 │ myid@laptop.local          │ ssh-rsa             │ 80bdaba07591276d065ca915a6037fde │
-│      2 │ myid@desktop.local         │ ecdsa-sha2-nistp256 │ e300ee460b890ad4c22cd4c1eae03477 │
-└────────┴────────────────────────────┴─────────────────────┴──────────────────────────────────┘
+┌────────┬───────────────────────────────────────────┬─────────────────────┬────────────────────────────────────────────────────┐
+│ ROWNUM │ NAME                                      │ KEY TYPE            │ FINGERPRINT                                        │
+├────────┼───────────────────────────────────────────┼─────────────────────┼────────────────────────────────────────────────────┤
+│      1 │ **DO NOT DELETE** machbase-neo server key │ ecdsa-sha2-nistp521 │ SHA256:osfeJKNiUV+a2bIdZPA92maMDI23xA/40gAFwqAfpyQ │
+│      2 │ myid@laptop.local                         │ ecdsa-sha2-nistp256 │ SHA256:0IFv6KPDuNJe2s9PoqUBimreYAYih3sDKcxpCYpZCmE │
+└────────┴───────────────────────────────────────────┴─────────────────────┴────────────────────────────────────────────────────┘
 ```
 
 3. 등록된 공개키를 삭제합니다.
 
 ```sh
 machbase-neo» ssh-key del <fingerprint>
+SSH key deleted successfully.
 ```
 
 #### 비밀번호 없이 접속 확인
@@ -127,8 +129,9 @@ machbase-neo» ssh-key del <fingerprint>
 $ ssh -p 5652 sys@127.0.0.1 ↵
 
 Greetings, SYS
-machbase-neo v8.0.20-snapshot (8f10fa95 2024-06-19T16:32:09) standard
-sys machbase-neo»
+machbase-neo v8.7.1-snapshot (b55f8170 2026-09-10T05:43:13) standard
+sys machbase-neo 2026-09-17 17:45:13
+> 
 ```
 
 ### SSH로 명령 실행
@@ -138,13 +141,16 @@ sys machbase-neo»
 ```sh
 $ ssh -p 5652 sys@127.0.0.1 'select * from example order by time desc limit 5'↵
 
- ROWNUM  NAME      TIME(UTC)            VALUE     
-──────────────────────────────────────────────────
- 1       wave.sin  2023-02-09 11:46:46  0.406479  
- 2       wave.cos  2023-02-09 11:46:46  0.913660  
- 3       wave.sin  2023-02-09 11:46:45  -0.000281 
- 4       wave.cos  2023-02-09 11:46:45  1.000000  
- 5       wave.cos  2023-02-09 11:46:44  0.913431  
+┌────────┬────────┬─────────────────────────┬───────────┐
+│ ROWNUM │ NAME   │ TIME                    │     VALUE │
+├────────┼────────┼─────────────────────────┼───────────┤
+│      1 │ signal │ 2026-09-17 17:09:26.712 │ -0.033411 │
+│      2 │ signal │ 2026-09-17 17:09:26.711 │ -0.185026 │
+│      3 │ signal │ 2026-09-17 17:09:26.71  │ -0.344666 │
+│      4 │ signal │ 2026-09-17 17:09:26.709 │ -0.508032 │
+│      5 │ signal │ 2026-09-17 17:09:26.708 │ -0.670817 │
+└────────┴────────┴─────────────────────────┴───────────┘
+5 rows selected.
 ```
 
 ### 보안 주의 사항

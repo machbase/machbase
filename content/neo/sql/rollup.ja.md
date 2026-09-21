@@ -7,7 +7,7 @@ toc: true
 
 ## はじめに {#introduction}
 
-大規模な時系列データの統計値を取得する場合、対象範囲が広がるほど計算コストが増加します。Machbase の **Rollup** は、TAG テーブルのデータを時間区間ごとに事前集計し、高速に検索する機能です。定義したダウンサンプリング周期で自動集計するため、よく使用する統計値をすぐに取得できます。
+大規模な時系列データの統計値を取得する場合、対象範囲が広がるほど計算コストが増加します。長い時間範囲やデータ全体を集計すると、計算量が多く、時間もかかります。Machbase の **Rollup** は、TAG テーブルのデータを時間区間ごとに事前集計し、高速に検索する機能です。定義したダウンサンプリング周期で自動集計するため、よく使用する統計値をすぐに取得できます。
 
 ## 基本概念 {#core-concepts}
 
@@ -15,12 +15,14 @@ toc: true
 
 ### 標準の集計関数 {#supported-aggregations}
 
+Rollup テーブルは、次の標準の集計関数に対応しています。
+
 - `MIN()`: 区間内の最小値。
 - `MAX()`: 区間内の最大値。
 - `SUM()`: 区間内の合計。
 - `COUNT()`: 区間内のデータ件数。
 - `AVG()`: 区間内の平均値。
-- `SUMSQ()`: 値の二乗和。
+- `SUMSQ()`: 区間内の値の二乗和。
 
 ### 拡張集計関数（オプション） {#extended-aggregations-optional}
 
@@ -31,15 +33,23 @@ Rollup 作成時に `EXTENSION` を指定すると、次の関数も使用でき
 
 ### 時間単位 {#time-granularity}
 
-Rollup は固定の時間間隔で動作し、基本単位は秒（SEC）、分（MIN）、時（HOUR）です。日、週、月、年などの大きい単位も、内部で HOUR などの適切な基本単位に対応付けて処理します。
+Rollup は、次の固定の時間間隔で集計します。
+
+- 秒（`SEC`）
+- 分（`MIN`）
+- 時（`HOUR`）
+
+Rollup を使用するクエリでは、これらの基本単位またはその倍数で集計を指定できます。日、週、月、年などの大きい単位も、内部で適切な基本の Rollup テーブルに対応付けて処理します。1 日以上の間隔には、通常 HOUR ベースの Rollup テーブルを使用します。
 
 ## Rollup テーブルの種類 {#rollup-table-types}
 
+Machbase では、Rollup テーブルを作成・管理する方法として次の 2 つを提供しています。
+
 ### デフォルト Rollup {#default-rollup}
 
-- TAG テーブル作成時の `WITH ROLLUP` 句で自動作成します。
-- 最小単位に応じて秒・分・時のテーブルを作成します。たとえば `WITH ROLLUP (MIN)` では分・時の Rollup を作成します。
-- テーブル名は `_<元のテーブル名>_ROLLUP_SEC` の形式で自動生成します。
+- TAG テーブル作成時に `WITH ROLLUP` 句を指定すると、自動的に作成されます。
+- 指定した最小単位に応じて、秒・分・時の Rollup テーブルを作成します。たとえば `WITH ROLLUP (MIN)` では分・時の Rollup を、`WITH ROLLUP` または `WITH ROLLUP (SEC)` では秒・分・時の Rollup を作成します。
+- テーブル名は元の TAG テーブル名を基に、`_<元のテーブル名>_ROLLUP_SEC` の形式で自動生成されます（例: `_mytag_ROLLUP_SEC`）。
 - 1 つの TAG テーブルに作成できるデフォルト Rollup は 1 セットだけです。
 
 ### カスタム Rollup {#custom-rollup}
@@ -47,25 +57,30 @@ Rollup は固定の時間間隔で動作し、基本単位は秒（SEC）、分�
 - `CREATE ROLLUP` 文で明示的に作成します。
 - 10 秒、5 分など、必要な間隔を指定できます。
 - TAG テーブルだけでなく、別の Rollup テーブルをソースに指定して、多段の集計構造を作成できます。
+- デフォルト Rollup の単位にとらわれず、必要な集計間隔を柔軟に定義できます。
 
 ## Rollup テーブルの作成 {#creating-rollup-tables}
 
 ### デフォルト Rollup の作成 {#default-rollup-creation}
 
+デフォルト Rollup テーブルは、TAG テーブルの定義時に作成されます。
+
+**構文:**
+
 ```sql
 CREATE TAG TABLE table_name (
     name_column datatype PRIMARY KEY,
     time_column DATETIME BASETIME,
-    value_column numeric_datatype [SUMMARIZED],
-    ...
+    value_column numeric_datatype [SUMMARIZED]
+    [, additional_columns...]
 )
 WITH ROLLUP [ ( SEC | MIN | HOUR ) ] [ EXTENSION ];
 ```
 
-- 括弧内には最も細かい単位を指定します。省略時は秒（SEC）です。
-- `EXTENSION` を付けると、`FIRST()` と `LAST()` を使用できます。
+- `SEC | MIN | HOUR`: 最も細かい単位を指定します。省略時は秒（`SEC`）です。指定した単位より大きい単位の Rollup も自動的に含まれます（例: `MIN` を指定すると `HOUR` も含まれます）。
+- `EXTENSION`: 省略可能なキーワードです。指定すると `FIRST()` と `LAST()` を使用できます。
 
-例:
+**例:**
 
 ```sql
 -- 秒・分・時の Rollup を作成
@@ -83,25 +98,30 @@ CREATE TAG TABLE detailed_sensor_data (...) WITH ROLLUP EXTENSION;
 
 ### カスタム Rollup の作成 {#custom-rollup-creation}
 
+カスタム Rollup テーブルは、専用の DDL 文で明示的に作成します。
+
+**構文:**
+
 ```sql
 CREATE ROLLUP rollup_name
-ON source_table_or_rollup ( value_column )
+ON source_table_or_rollup_name ( source_value_column )
 INTERVAL interval_value ( SEC | MIN | HOUR )
 [ EXTENSION ];
 ```
 
-- `rollup_name`: 作成する Rollup の名前。
+- `rollup_name`: 作成する Rollup テーブルの名前。
+- `source_table_or_rollup_name`: 元の TAG テーブルまたは既存の Rollup テーブルの名前。
+- `source_value_column`: ソーステーブルで集計対象とする数値列。ソースが Rollup テーブルの場合は省略します。
+- `interval_value`: 集計間隔の数値（例: 10、30）。
 - `SEC | MIN | HOUR`: 集計間隔の単位。
-- `source_table_or_rollup`: 元の TAG テーブルまたは既存の Rollup テーブル。
-- `value_column`: ソースが TAG テーブルの場合に集計対象の数値列を指定します。Rollup の場合は省略します。
-- `interval_value`: 集計間隔の数値。
-- `EXTENSION`: 拡張関数（FIRST/LAST）を有効にします。
+- `EXTENSION`: 省略可能なキーワードです。指定すると `FIRST()` と `LAST()` を使用できます。
 
-**注意事項**
+**注意事項:**
 
-- ソースが Rollup テーブルの場合、新しい間隔はソースの間隔の倍数で、より大きい単位にする必要があります。
+- ソースは TAG テーブルまたは別の Rollup テーブルである必要があります。
+- ソースが Rollup テーブルの場合、新しい `INTERVAL` はソースの Rollup の間隔の倍数で、より大きい単位にする必要があります。
 
-例:
+**例:**
 
 ```sql
 -- 30 秒間隔の Rollup を作成
@@ -116,9 +136,9 @@ CREATE ROLLUP _tag_data_rollup_15min_ext ON tag_data(value) INTERVAL 15 MIN EXTE
 
 ## Rollup データの検索 {#querying-rollup-data}
 
-Rollup テーブルを使用するには `ROLLUP()` 関数を指定します。Machbase が適切な Rollup テーブルを自動選択します。旧 `ROLLUP` キーワード構文もありますが非推奨です。
+事前集計による性能上の利点を活かすには、クエリで `ROLLUP()` 関数を使用します。旧 `ROLLUP` キーワード構文もありますが非推奨です。Machbase は、要求された間隔と単位に合わせて適切な Rollup テーブルを自動選択します。
 
-推奨する一般構文は次のとおりです。
+**構文（推奨）:**
 
 ```sql
 SELECT
@@ -137,7 +157,7 @@ ORDER BY
     rollup_time;
 ```
 
-時間単位の MIN/MAX の記述例です。
+時間単位で `MIN` と `MAX` を検索する例です。
 
 ```sql
 SELECT
@@ -150,15 +170,18 @@ GROUP BY rollup_time
 ORDER BY rollup_time;
 ```
 
-- 第 1 引数: 単位（'sec'、'min'、'hour'、'day'、'week'、'month'、'year' など）。
-- 第 2 引数: 単位の倍数。使用する Rollup テーブルの間隔の有効な倍数である必要があります。
-- 第 3 引数: `BASETIME` 列。
-- 第 4 引数: 省略可能な起点時刻（origin）。デフォルトは `1970-01-01 00:00:00` です。時間区間の境界をそろえる DATETIME リテラルで、週・月・年の区切りを指定する際に使用します。
+- `time_unit`（第 1 引数）: 集計間隔の単位（'sec'、'min'、'hour'、'day'、'week'、'month'、'year' など）。
+- `period`（第 2 引数）: `time_unit` を基準とした集計間隔の倍数。使用する Rollup テーブルの間隔の有効な倍数である必要があります。
+- `basetime_column`（第 3 引数）: TAG テーブルで `BASETIME` 属性を指定した DATETIME 列。
+- `origin`（第 4 引数、省略可能）: 時間区間の境界をそろえる起点時刻を指定する DATETIME リテラル。デフォルトは `1970-01-01 00:00:00` です。週・月・年の区切りをそろえる際に重要です。
+- `AGGREGATE_FUNCTION`: 対応する集計関数のいずれか（`MIN`、`MAX`、`AVG`、`SUM`、`COUNT`、`SUMSQ`、`EXTENSION` 指定時は `FIRST`/`LAST`）。
 
-`ROLLUP()` を含む列は必ず `GROUP BY` に指定し、`MIN`、`MAX`、`AVG`、`SUM`、`COUNT`、`SUMSQ`、`FIRST`、`LAST` などの集計関数と組み合わせて使用します。
+**注意事項:**
 
-検索例:
+- `ROLLUP()` を含む式（またはその別名）を、必ず `GROUP BY` に指定します。
+- `ROLLUP()` を使用する場合、値の列には上記の集計関数だけを適用できます。
 
+**検索例:**
 
 ```sql
 -- 指定月の TAG_00001 の時間単位の MIN と MAX
@@ -205,6 +228,10 @@ ORDER BY week_start;
 
 ### 実行制御 {#lifecycle-control}
 
+Rollup スレッドによる集計処理は、手動で制御できます。
+
+**コマンド:**
+
 ```sql
 -- 指定した Rollup の集計スレッドを開始
 EXEC ROLLUP_START('rollup_name');
@@ -216,7 +243,7 @@ EXEC ROLLUP_FORCE('rollup_name');
 
 - `ROLLUP_FORCE` は待機時間を無視して、直ちに集計を実行します。
 
-実行例:
+**実行例:**
 
 ```sql
 EXEC ROLLUP_START('_tag_data_rollup_30sec');
@@ -226,69 +253,98 @@ EXEC ROLLUP_FORCE('_tag_rollup_hour'); -- 時間単位の未処理データを�
 
 ### Rollup データの削除 {#rollup-data-deletion}
 
+元の TAG テーブルからデータを削除しても、Rollup テーブルの集計データは自動的には削除**されません**。Rollup データは別途削除する必要があります。
+
+**構文:**
+
 ```sql
-DELETE FROM table_name ROLLUP; -- すべて削除
+-- Delete all Rollup data for the specified table
+DELETE FROM table_name ROLLUP;
+
+-- Delete Rollup data before a specific timestamp for the specified table
 DELETE FROM table_name ROLLUP BEFORE TO_DATE('YYYY-MM-DD HH24:MI:SS');
-DELETE FROM table_name ROLLUP WHERE name = 'TAG01';
-DELETE FROM table_name ROLLUP WHERE name = 'TAG01' AND time <= TO_DATE(...);
+
+-- Delete all Rollup data for a specific tag within the table
+DELETE FROM table_name ROLLUP WHERE name = 'specific_tag_id';
+
+-- Delete Rollup data for a specific tag before a specific timestamp
+DELETE FROM table_name ROLLUP WHERE name = 'specific_tag_id' AND time <= TO_DATE('YYYY-MM-DD HH24:MI:SS');
 ```
 
-元の TAG テーブルからデータを削除しても Rollup データは自動削除されないため、別途削除する必要があります。
-
-削除例:
+**削除例:**
 
 ```sql
 -- 2024 年 1 月 15 日より前の Rollup データを削除
 DELETE FROM TAG ROLLUP BEFORE TO_DATE('2024-01-15 00:00:00');
+
 -- TAG01 の Rollup データをすべて削除
 DELETE FROM TAG ROLLUP WHERE name = 'TAG01';
 ```
 
 ### Rollup テーブルの削除 {#rollup-table-deletion}
 
+カスタム Rollup テーブルは個別に削除できます。デフォルト Rollup テーブルは、通常、元の TAG テーブルを削除するときに一緒に削除されます。
+
+**構文:**
+
 ```sql
-DROP ROLLUP rollup_name;          -- カスタム Rollup を削除
-DROP TABLE tag_table CASCADE;     -- TAG テーブルと関連 Rollup をまとめて削除
+-- Drop a specific Custom Rollup table
+DROP ROLLUP rollup_name;
+
+-- Drop a TAG table and all its dependent Rollup tables (Default and Custom)
+DROP TABLE tag_table_name CASCADE;
 ```
 
-他の Rollup から参照される Rollup を削除する場合は、依存する Rollup を先に削除してください。
+**注意事項:** 他の Rollup から参照されている Rollup テーブルは削除できません。依存する Rollup を先に（作成と逆の順序で）削除してください。
 
-削除順序の例:
+**削除順序の例:**
 
 ```sql
 -- _rollup_min が _rollup_sec に依存する場合
 DROP ROLLUP _rollup_min;
 DROP ROLLUP _rollup_sec;
+
 -- sensor_data と関連するすべての Rollup を削除
 DROP TABLE sensor_data CASCADE;
 ```
 
 ## Rollup Gap {#rollup-gap}
 
-Rollup Gap は、TAG テーブルに最新データが入った時点と、Rollup テーブルに反映された時点の差を表します。周期的な集計のため小さな遅延は発生します。大きなギャップや増加するギャップは、処理のボトルネックを示す場合があります。
+**Rollup Gap** は、TAG テーブルに最新データが入った時点と、Rollup テーブルに反映された時点の差を表します。周期的な集計のため小さな遅延は発生します。大きなギャップや増加するギャップは、処理のボトルネックを示す場合があります。
+
+### Rollup Gap の確認 {#checking-rollup-gap}
+
+ギャップの有無を含め、Rollup の現在の処理状況を確認できます。
+
+**コマンド:**
 
 ```sql
 SHOW ROLLUPGAP;
 ```
 
-`SHOW ROLLUPGAP` は、各 Rollup の処理待ちデータ件数を表示します。
+このコマンドは、動作中の各 Rollup の情報と、ギャップの原因となっている処理待ちデータの件数を表示します。`GAP` が 0 なら、最新の状態です。
 
-- `GAP` が 0 なら、最新の状態です。
-- ギャップが増加し続ける場合は、次の対策を検討してください。
-  1. `EXEC ROLLUP_FORCE` で直ちに集計する。
-  2. `TAG_PARTITION_COUNT` を増やす（メモリ使用量の増加に注意）。
-  3. CPU・ディスク I/O の処理能力を増強する。
-  4. 入力速度を調整するか、ハードウェアを拡張する。
+### Rollup Gap の解消 {#mitigating-rollup-gap}
+
+ギャップが大きくなった場合は、次の対策を検討してください。
+
+1. **集計の強制実行:** `EXEC ROLLUP_FORCE('rollup_name');` で、指定した Rollup の処理待ちデータを直ちに集計します。
+2. **並列度の向上:** 元の TAG テーブルの `TAG_PARTITION_COUNT` プロパティを増やします。並列に動作できる Rollup スレッドが増えますが、メモリ使用量も増加するため注意してください。
+3. **ハードウェアリソース:** CPU の速度・コア数とディスク I/O の処理能力を増強します。
+4. **入力速度の管理:** データの入力速度が常にシステムの処理能力を上回る場合は、入力速度を調整するか、ハードウェアをさらに拡張します。
+
+ギャップが解消されない場合は、データの取り込みと Rollup 集計を合わせた負荷に対して、システムリソースが不足していることが多いです。
 
 ## 制約事項 {#limitations}
 
-- 対応する集計関数は固定されており、ユーザー定義の集計は提供しません。
-- Rollup は元のデータに依存するため、外れ値の除去などの品質管理は取り込み前に行ってください。
-- 高速な取り込み環境では CPU と I/O の使用量が増加し、リソースが不足すると Rollup Gap が拡大する場合があります。
-- 高い即時性が必要な場合は、元の TAG データを直接検索するほうが適切な場合があります。
+Rollup は強力な機能ですが、次の制約があります。
+
+- **固定の集計関数:** 対応する集計関数（`MIN`、`MAX`、`AVG`、`SUM`、`COUNT`、`SUMSQ`、オプションで `FIRST`/`LAST`）は固定されており、ユーザー定義の集計は提供しません。独自の集計ロジックが必要な場合は、別の方法を使用してください。
+- **元データの品質:** Rollup は元のデータに依存するため、元の TAG テーブルに取り込まれた誤ったデータや外れ値も、そのまま集計結果に反映されます。外れ値の除去などの品質管理は、取り込み前または取り込み時に行ってください。
+- **リソース消費:** Rollup 処理では、ソースの読み取りと Rollup テーブルへの書き込みに CPU と I/O を使用します。高速な取り込み環境ではリソースの競合が起きやすく、リソースが不足すると Rollup Gap が拡大する場合があります。
+- **遅延:** TAG テーブルにデータが届いてから Rollup テーブルに反映されるまでには、集計間隔と処理時間に応じた遅延（Rollup Gap）があります。高い即時性が求められる場合や、集計値にマイクロ秒単位の精度が必要な場合は、元の TAG データを直接検索するほうが適切なことがあります。
 
 ## 例 {#rollup-examples}
-
 
 Machbase Rollup テーブルの作成、管理、検索の実例を示します。
 
@@ -465,7 +521,6 @@ ORDER BY
     week_start_monday;
 ```
 
-
 ### 例 5: 月単位の Rollup クエリ {#example-5-monthly-rollup-queries}
 
 Rollup を使用して月単位で集計します。通常は HOUR レベルの Rollup テーブルを使用して効率的に計算します。
@@ -570,3 +625,5 @@ DELETE FROM iot_sensors ROLLUP BEFORE TO_DATE('2024-03-01 00:00:00');
 -- 4. iot_sensors_ext と関連するすべての Rollup テーブルを削除
 DROP TABLE iot_sensors_ext CASCADE;
 ```
+
+上記の例のように Rollup 機能を活用すると、膨大な時系列データをさまざまな分析単位ですばやく検索できます。要件に合わせて、デフォルト Rollup とカスタム Rollup を適切に組み合わせて使用してください。

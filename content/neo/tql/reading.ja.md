@@ -21,10 +21,11 @@ INSERT INTO EXAMPLE VALUES('TAG0', TO_DATE('2021-08-13'), 11);
 
 TQLスクリプトを保存すると、エディターの右上に <img src="/images/copy_addr_icon.jpg" width="24px" style="display:inline"> アイコンが表示されます。クリックすると、スクリプトのアドレスをコピーできます。
 
-## CSV
+## CSV {#csv}
 
 {{< tabs >}}
-{{< tab name="既定" >}}
+{{< tab name="default" >}}
+
 以下のコードを `output-csv.tql` として保存してください。
 
 ```js {linenos=table,hl_lines=[2]}
@@ -42,8 +43,10 @@ $ curl http://127.0.0.1:5654/db/tql/output-csv.tql
 TAG0,1628694000000000000,10
 TAG0,1628780400000000000,11
 ```
+
 {{< /tab >}}
 {{< tab name="delimiter()" >}}
+
 以下のコードを `output-csv.tql` として保存してください。
 
 ```js {linenos=table,hl_lines=[2]}
@@ -61,13 +64,15 @@ $ curl http://127.0.0.1:5654/db/tql/output-csv.tql
 TAG0|1628694000000000000|10
 TAG0|1628780400000000000|11
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
-## JSON
+## JSON {#json}
 
 {{< tabs >}}
-{{< tab name="既定" >}}
+{{< tab name="default" >}}
+
 以下のコードを `output-json.tql` として保存してください。
 
 ```js {linenos=table,hl_lines=[2],linenostart=1}
@@ -96,8 +101,10 @@ $ curl http://127.0.0.1:5654/db/tql/output-json.tql
     "elapse": "770.078µs"
 }
 ```
+
 {{< /tab >}}
 {{< tab name="transpose()" >}}
+
 以下のコードを `output-json.tql` として保存してください。
 
 ```js {linenos=table,hl_lines=[2],linenostart=1}
@@ -127,8 +134,10 @@ $ curl http://127.0.0.1:5654/db/tql/output-json.tql
     "elapse": "718.625µs"
 }
 ```
+
 {{< /tab >}}
 {{< tab name="rowsFlatten()" >}}
+
 以下のコードを `output-json.tql` として保存してください。
 
 ```js {linenos=table,hl_lines=[2],linenostart=1}
@@ -157,8 +166,10 @@ $ curl http://127.0.0.1:5654/db/tql/output-json.tql
     "elapse": "718.625µs"
 }
 ```
+
 {{< /tab >}}
 {{< tab name="rowsArray()" >}}
+
 以下のコードを `output-json.tql` として保存してください。
 
 ```js {linenos=table,hl_lines=[2],linenostart=1}
@@ -187,10 +198,11 @@ $ curl http://127.0.0.1:5654/db/tql/output-json.tql
     "elapse": "718.625µs"
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
-## NDJSON
+## NDJSON {#ndjson}
 
 以下のコードを `output-ndjson.tql` として保存してください。
 
@@ -211,10 +223,11 @@ $ curl http://127.0.0.1:5654/db/tql/output-ndjson.tql
 ↵
 ```
 
-## MARKDOWN
+## MARKDOWN {#markdown}
 
 {{< tabs >}}
-{{< tab name="既定" >}}
+{{< tab name="default" >}}
+
 以下のコードを `output-markdown.tql` として保存してください。
 
 ```js {linenos=table,hl_lines=[2]}
@@ -234,8 +247,10 @@ $ curl http://127.0.0.1:5654/db/tql/output-markdown.tql
 |TAG0|1628694000000000000|10.000000|
 |TAG0|1628780400000000000|11.000000|
 ```
+
 {{< /tab >}}
 {{< tab name="html()" >}}
+
 以下のコードを `output-markdown.tql` として保存してください。
 
 ```js {linenos=table,hl_lines=[2]}
@@ -263,10 +278,11 @@ $ curl http://127.0.0.1:5654/db/tql/output-markdown.tql
 </table>
 </div>
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
-## HTML
+## HTML {#html}
 
 `HTML()` 関数は、テンプレート言語を使って結果をHTML文書として出力します。  
 クエリ結果に合わせて、HTMLの構造とスタイルを自由に構成できます。
@@ -300,8 +316,7 @@ HTML({
 
 {{< figure src="/neo/tql/img/html_template_2.jpg" width="518" >}}
 
-<a id="chart-with-chartjson"></a>
-## CHART
+## CHART {#chart}
 
 **TQLファイルの保存**
 
@@ -327,6 +342,7 @@ Webブラウザーで `http://127.0.0.1:5654/db/tql/output-chart.tql` を開い�
 > 従来の `CHART_LINE()`、`CHART_BAR()`、`CHART_SCATTER()` 系の関数は、新しい `CHART()` 関数に置き換えられました。  
 > 例は [CHART()](/neo/tql/chart) を参照してください。
 
+<a id="chart-with-chartjson"></a>
 ### chartJson()の使用 {#chartjson-활용}
 
 **TQLファイルの保存**
@@ -401,7 +417,7 @@ Webブラウザーで `http://127.0.0.1:5654/db/tql/output-chart.tql` を開い�
 この方法は、DOM文書に `<div id='myChart'></div>` がある場合に便利です。
 
 ```html
-... HTML内 ...
+... in HTML ...
 <div id='myChart'></div>
 <script>
     fetch('http://127.0.0.1:5654/db/tql/output-chart.tql').then( function(rsp) {
@@ -418,7 +434,8 @@ Webブラウザーで `http://127.0.0.1:5654/db/tql/output-chart.tql` を開い�
 ... omit ...
 ```
 
-## 結果データのキャッシュ {#cache-result-data}
+<a id="cache-result-data"></a>
+## 結果データのキャッシュ {#결과-데이터-캐시}
 
 {{< neo_since ver="8.0.43" />}}
 
@@ -455,4 +472,4 @@ TTLが経過してキャッシュが自動削除された場合も、キャッ�
 `cache()` を指定していないTQLは、キャッシュを検索しません。
 
 > 注意：キャッシュを過度に使用すると、メモリが不足する可能性があります。
-> たとえば、数十億件のレコードをSELECTするTQLでcache()を使用する場合などです。
+> たとえば、数十億件のレコードをSELECTするTQLで `cache()` を使用する場合などです。

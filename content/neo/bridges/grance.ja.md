@@ -11,33 +11,33 @@ weight: 1
 
 SQLite接続を登録します。
 
-~~~
+```
 bridge add -t sqlite sqlitedb file:/data/sqlite.db;
-~~~
+```
 
 ### 登録済みブリッジの一覧 {#등록된-브리지-조회}
 
-~~~
+```
 bridge list
 ┌──────────┬────────┬────────────────────────┐
 │ NAME     │ TYPE   │ CONNECTION             │
 ├──────────┼────────┼────────────────────────┤
 │ sqlitedb │ sqlite │ file:/data/sqlite.db   │
 └──────────┴────────┴────────────────────────┘
-~~~
+```
 
 ### ブリッジでのコマンド実行 {#브리지에서-명령-실행}
 
-~~~
+```
 bridge exec sqlitedb CREATE TABLE IF NOT EXISTS example(id INTEGER NOT NULL PRIMARY KEY, name TEXT, age TEXT, address TEXT, UNIQUE(name));
-~~~
+```
 
 
 ### ブリッジでのクエリ実行 {#브리지에서-조회-실행}
 
 > `bridge query`コマンドは、「SQL」タイプのブリッジでのみ使用できます。
 
-~~~
+```
 bridge query sqlitedb select * from example;
 
 ┌────┬────────┬─────┬───────────────┐
@@ -47,24 +47,24 @@ bridge query sqlitedb select * from example;
 │  2 │ hong_2 │ 20  │ address for 2 │
 │  3 │ hong_3 │ 20  │ address for 3 │
 └────┴────────┴─────┴───────────────┘
-~~~
+```
 
 
 ### TQLの`SQL()`でのブリッジの使用 {#tql-sql에서-브리지-사용}
 
 `SQL()`関数は、`bridge()`オプションで「SQL」タイプのブリッジを指定し、SQL文を実行します。
 
-~~~js
+```js
 SQL(bridge("sqlitedb"), `select * from example`)
 CSV()
-~~~
+```
 
 ### TQLの`SCRIPT()`でのブリッジの使用 {#tql-script에서-브리지-사용}
 
 以下の例のように、`SCRIPT()`内で`$.db({bridge:"name"})`を呼び出すと、データベースタイプのブリッジにアクセスできます。
 この機能はバージョン8.0.27以降で利用できます。
 
-~~~js
+```js
 SCRIPT({
     err = $.db({bridge:"mem"})
      .query("select company, employee, created_on from mem_example")
@@ -76,7 +76,7 @@ SCRIPT({
     }
 })
 CSV()
-~~~
+```
 
 ### 他のデータベースへのデータコピー {#다른-데이터베이스로-데이터-복사}
 
@@ -93,7 +93,7 @@ CSV()
 
 `/tmp/sqlite.db`にあるSQLiteデータベースに、`example`テーブルを作成します。
 
-~~~sql
+```sql
 --env: bridge=sqlite
 CREATE TABLE IF NOT EXISTS example (
     NAME TEXT,
@@ -101,16 +101,16 @@ CREATE TABLE IF NOT EXISTS example (
     VALUE REAL
 );
 -- env: reset
-~~~
+```
 
 **TQL**
 
 以下のTQLスクリプトは、`SQL()`でデータを検索した後、`bridge("sqlite")`を指定してSQLiteデータベースに取り込みます。
 
-~~~js
+```js
 SQL(`select name, time, value from example where name = 'my-car'`)
 SQL(bridge('sqlite'), `insert into example values(?,?,?)`, value(0), value(1), value(2))
-~~~
+```
 
 ## サブスクライバー {#구독자}
 
@@ -122,7 +122,7 @@ machbase-neoは外部のMQTTブローカーとNATSへの接続に対応してい
 その後、machbase-neoはMQTTクライアントとして動作し、メッセージを受信するたびに、指定したTQLスクリプトに渡します。
 
 
-~~~mermaid
+```mermaid
 flowchart RL
     external-system --PUBLISH--> machbase-neo
     machbase-neo --SUBSCRIBE--> external-system
@@ -139,7 +139,7 @@ flowchart RL
         client["Client"] --PUBLISH--> mqtt[["MQTT
                                             Broker"]]
     end
-~~~
+```
 
 ### サブスクライバーの登録 {#구독자-등록}
 

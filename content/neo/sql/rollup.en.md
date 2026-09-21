@@ -6,7 +6,7 @@ weight: 11
 
 ## Introduction
 
-Querying large-scale time-series datasets for statistical aggregates presents significant performance challenges. Performing aggregations over extensive time ranges or the entire dataset can be computationally expensive and time-consuming. Machbase addresses this through its Rollup feature, a specialized mechanism designed to optimize statistical analysis on time-series data stored within TAG tables. Rollup tables automatically pre-aggregate data at defined time granularities, enabling rapid retrieval of common statistical metrics.
+Querying large-scale time-series datasets for statistical aggregates presents significant performance challenges. Performing aggregations over extensive time ranges or the entire dataset can be computationally expensive and time-consuming. Machbase addresses this through its Rollup feature, a specialized mechanism designed to optimize statistical analysis on time-series data stored within TAG tables. Rollup tables automatically pre-aggregate data at defined time granularities (downsampling intervals), enabling rapid retrieval of common statistical metrics.
 
 ## Core Concepts
 
@@ -15,6 +15,7 @@ A **Rollup Table** in Machbase is a derived table that stores pre-calculated agg
 ### Supported Aggregations
 
 Rollup tables intrinsically support the following standard aggregate functions:
+
 *   `MIN()`: Minimum value within the interval.
 *   `MAX()`: Maximum value within the interval.
 *   `SUM()`: Sum of values within the interval.
@@ -25,12 +26,14 @@ Rollup tables intrinsically support the following standard aggregate functions:
 ### Extended Aggregations (Optional)
 
 By utilizing the `EXTENSION` keyword during creation, Rollup tables can additionally support:
+
 *   `FIRST()`: The first recorded value within the interval.
 *   `LAST()`: The last recorded value within the interval.
 
 ### Time Granularity
 
 Rollup aggregation operates based on fixed time intervals, specifically:
+
 *   Seconds (`SEC`)
 *   Minutes (`MIN`)
 *   Hours (`HOUR`)
@@ -52,7 +55,7 @@ Machbase provides two primary methods for creating and managing Rollup tables:
 
 *   Manually created by the user using the `CREATE ROLLUP` statement.
 *   Allows specification of custom aggregation intervals (e.g., 10 seconds, 5 minutes).
-*   Can be based on a TAG table or another Custom Rollup table, enabling multi-level aggregation hierarchies.
+*   Can be based on a TAG table or another Rollup table, enabling multi-level aggregation hierarchies.
 *   Provides flexibility in defining specific aggregation needs beyond the default granularities.
 
 ## Creating Rollup Tables
@@ -153,16 +156,29 @@ ORDER BY
     rollup_time;
 ```
 
-*   `time_unit`: The desired unit for the aggregation interval ('sec', 'min', 'hour', 'day', 'week', 'month', 'year', etc.).
-*   `period`: The numeric value of the aggregation interval relative to the `time_unit`. Must be a valid multiple of the underlying Rollup table's interval.
-*   `basetime_column`: The DATETIME column designated with the `BASETIME` attribute in the TAG table.
-*   `origin`: (Optional) A DATETIME literal specifying the alignment anchor for time bins. Defaults to '1970-01-01 00:00:00'. Crucial for week/month/year alignment.
-*   `AGGREGATE_FUNCTION`: One of the supported functions (MIN, MAX, AVG, SUM, COUNT, SUMSQ, or FIRST/LAST if `EXTENSION` was used).
+An hourly `MIN`/`MAX` query looks like this:
+
+```sql
+SELECT
+    ROLLUP('hour', 1, time) AS rollup_time,
+    MIN(value),
+    MAX(value)
+FROM tag_table
+WHERE ...
+GROUP BY rollup_time
+ORDER BY rollup_time;
+```
+
+*   `time_unit` (1st argument): The desired unit for the aggregation interval ('sec', 'min', 'hour', 'day', 'week', 'month', 'year', etc.).
+*   `period` (2nd argument): The numeric value of the aggregation interval relative to the `time_unit`. Must be a valid multiple of the underlying Rollup table's interval.
+*   `basetime_column` (3rd argument): The DATETIME column designated with the `BASETIME` attribute in the TAG table.
+*   `origin` (4th argument, optional): A DATETIME literal specifying the alignment anchor for time bins. Defaults to `1970-01-01 00:00:00`. Crucial for week/month/year alignment.
+*   `AGGREGATE_FUNCTION`: One of the supported functions (`MIN`, `MAX`, `AVG`, `SUM`, `COUNT`, `SUMSQ`, or `FIRST`/`LAST` if `EXTENSION` was used).
 
 **Important Considerations:**
 
 *   The query must include a `GROUP BY` clause referencing the `ROLLUP()` expression (or its alias).
-*   Only the supported aggregate functions can be applied to the value column when using the `ROLLUP()` mechanism.
+*   Only the supported aggregate functions listed above can be applied to the value column when using the `ROLLUP()` mechanism.
 
 **Query Examples:**
 
@@ -225,6 +241,8 @@ EXEC ROLLUP_STOP('rollup_name');
 -- Force immediate aggregation processing for a specific Rollup, bypassing the normal interval wait time
 EXEC ROLLUP_FORCE('rollup_name');
 ```
+
+*   `ROLLUP_FORCE` ignores the wait time and runs the aggregation immediately.
 
 **Examples:**
 
@@ -326,7 +344,6 @@ While powerful, the Machbase Rollup feature has certain limitations:
 *   **Source Data Integrity:** Erroneous or outlier data ingested into the source TAG table will be reflected in the Rollup aggregates. Data quality measures should be applied prior to or during ingestion.
 *   **Resource Consumption:** The Rollup process consumes CPU and I/O resources to read from the source and write to the Rollup tables. Under high ingestion loads, this can lead to resource contention and potentially growing Rollup Gaps if resources are inadequate.
 *   **Latency:** There is inherent latency between data arrival in the TAG table and its reflection in Rollup tables, corresponding to the aggregation interval and processing time (the Rollup Gap). Near real-time queries requiring microsecond precision on aggregates might need to query the raw TAG data directly.
-
 
 ## Rollup Examples
 
@@ -438,7 +455,7 @@ WITH ROLLUP EXTENSION; -- Enable FIRST() and LAST()
 
 -- 2. Insert sample data
 INSERT INTO iot_sensors_ext VALUES ('PRES_1', '2024-03-10 09:01:00', 1000.1);
-INSERT INTO iot_sensors_ext VALUES ('PRES_1', '2024-03-10 09:05:00', 1000.5); -- First in 09:00 interval
+INSERT INTO iot_sensors_ext VALUES ('PRES_1', '2024-03-10 09:05:00', 1000.5); -- In 09:00 interval (the first value is 1000.1 at 09:01)
 INSERT INTO iot_sensors_ext VALUES ('PRES_1', '2024-03-10 09:55:00', 1001.0); -- Last in 09:00 interval
 INSERT INTO iot_sensors_ext VALUES ('PRES_1', '2024-03-10 10:02:00', 1001.2); -- First in 10:00 interval
 INSERT INTO iot_sensors_ext VALUES ('PRES_1', '2024-03-10 10:08:00', 1001.5);
@@ -464,7 +481,7 @@ ORDER BY
 /* Expected Approximate Output:
 hour_interval                   first_pressure last_pressure
 ----------------------------------------------------------------------
-2024-03-10 09:00:00 000:000:000 1000.5         1001.0
+2024-03-10 09:00:00 000:000:000 1000.1         1001.0
 2024-03-10 10:00:00 000:000:000 1001.2         1001.8
 */
 ```
@@ -543,7 +560,7 @@ month_interval                  avg_monthly_temp data_points_per_month
 --------------------------------------------------------------------------
 2024-01-01 00:00:00 000:000:000 18.25            2
 2024-02-01 00:00:00 000:000:000 19.1             2
-2024-03-01 00:00:00 000:000:000 20.55            8 -- (Including data from Example 1)
+2024-03-01 00:00:00 000:000:000 20.628571...     7 -- (Including data from Example 1)
 */
 
 -- 2. Query Quarterly (3-Month) SUM and COUNT for TEMP_A
@@ -565,7 +582,7 @@ ORDER BY
 /* Expected Approximate Output:
 quarter_interval                sum_quarterly_temp data_points_per_quarter
 ----------------------------------------------------------------------------
-2024-01-01 00:00:00 000:000:000 241.1              12 -- Sum/Count for Jan, Feb, Mar combined
+2024-01-01 00:00:00 000:000:000 219.1              11 -- Sum/Count for Jan, Feb, Mar combined
 */
 
 -- 3. Explicitly setting Origin (Optional, useful if non-standard month alignment needed)
@@ -610,3 +627,5 @@ DELETE FROM iot_sensors ROLLUP BEFORE TO_DATE('2024-03-01 00:00:00');
 -- 4. Drop the iot_sensors_ext table and all its associated Rollup tables
 DROP TABLE iot_sensors_ext CASCADE;
 ```
+
+As these examples show, the Rollup feature lets you quickly query large volumes of time-series data at various analysis granularities. Combine Default Rollups and Custom Rollups to suit your requirements.

@@ -22,9 +22,11 @@ CREATE TAG TABLE IF NOT EXISTS EXAMPLE  (
 `simple-webapp.html`ファイルを作成します。machbase-neoは、{{< neo_since ver="8.0.14" />}}から`.html`、`.js`、`.css`ファイルを直接編集できます。
 以前のバージョンを使用している場合は、更新するか任意のエディターを使用してください。
 
+左側の`EXPLORER`の見出し行にある<img src="/neo/tutorials/img/new_file_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px">アイコンをクリックし、`Name`に`/simple-webapp.html`を入力して`OK`をクリックします。
+
 {{< figure src="/neo/tutorials/img/simple-webapp-1.jpg" width="600px" >}}
 
-ファイルを編集して保存し、エディター左上の►ボタンをクリックすると、ブラウザーで開けます。
+ファイルを編集して保存し、エディター左上の<img src="/neo/sql/img/sql_run_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px">アイコンをクリックすると、ブラウザーで開けます。
 
 ## データの書き込み {#데이터-쓰기}
 

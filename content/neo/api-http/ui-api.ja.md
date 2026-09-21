@@ -14,7 +14,7 @@ weight: 55
 **POST `/web/api/login`**
 
 {{< tabs >}}
-{{< tab name="リクエスト" >}}
+{{< tab name="Request" >}}
 ```json
 {
     "loginName": "sys",
@@ -22,7 +22,7 @@ weight: 55
 }
 ```
 {{< /tab >}}
-{{< tab name="レスポンス" >}}
+{{< tab name="Response" >}}
 ```json
 {
     "success": true,
@@ -36,20 +36,19 @@ weight: 55
 {{< /tab >}}
 {{< /tabs >}}
 
-
 ### トークンの更新 {#토큰-갱신}
 
 **POST `/web/api/relogin`**
 
 {{< tabs >}}
-{{< tab name="リクエスト" >}}
+{{< tab name="Request" >}}
 ```json
 {
-    "refreshToken": "login時に発行されたリフレッシュトークン"
+    "refreshToken": "refresh token that was issued with 'login'"
 }
 ```
 {{< /tab >}}
-{{< tab name="レスポンス" >}}
+{{< tab name="Response" >}}
 ```json
 {
     "success": true,
@@ -71,7 +70,7 @@ weight: 55
 
 ```json
 {
-    "refreshToken": "login時に発行されたリフレッシュトークン"
+    "refreshToken": "refresh token that was issued with 'login'"
 }
 ```
 
@@ -82,6 +81,7 @@ weight: 55
 現在のトークンの状態を検証します。
 
 - `LoginCheckRsp`
+
 ```json
 {
     "success": true,
@@ -94,14 +94,15 @@ weight: 55
 ```
 
 - `ShellDefinition`
+
 ```json
 {
-    "id": "シェル定義ID（uuid）",
-    "type": "種類",
-    "icon": "アイコン名",
-    "label": "表示名",
-    "theme": "テーマ名",
-    "command": "ターミナル シェルコマンド",
+    "id": "shell definition id (uuid)",
+    "type": "type",
+    "icon": "icon name",
+    "label": "display name",
+    "theme": "theme name",
+    "command": "terminal shell command",
     "attributes": [
         { "removable": true },
         { "cloneable": true },
@@ -126,7 +127,7 @@ weight: 55
 
 **GET, POST `/web/machbase`**
 
-`/db/query` APIと同じ動作ですが、認証方式が異なります。
+`/db/query` APIと同じように動作し、認証方式だけが異なります。
 `/db/query`はクライアントアプリケーションをAPIトークンで認証し、
 `/web/machbase`はユーザー操作用にJWTを検証します。
 
@@ -137,13 +138,13 @@ weight: 55
 テーブル一覧を返します。
 
 - `showall`を`true`にすると、非表示のテーブルもすべて含めます。
-- `name`はテーブル名の絞り込みパターンです。`?`や`*`を含むglob式、または特殊文字を含まない接頭辞を指定できます。
+- `name`はテーブル名の絞り込みパターンです。`?`や`*`を含むglob式、または`?`と`*`を含まない接頭辞を指定できます。
 
 ```json
 {
     "success": true,
-    "reason": "成功状態またはメッセージ",
-    "elapse": "文字列形式の経過時間",
+    "reason": "success or other message",
+    "elapse": "elapse time in string format",
     "data": {
         "columns": ["ROWNUM", "DB", "USER", "NAME", "TYPE"],
         "types": ["int32", "string", "string", "string", "string"],
@@ -165,8 +166,8 @@ weight: 55
 ```json
 {
     "success": true,
-    "reason": "成功状態またはメッセージ",
-    "elapse": "文字列形式の経過時間",
+    "reason": "success or other message",
+    "elapse": "elapse time in string format",
     "data": {
         "columns": ["ROWNUM", "NAME"],
         "types": ["int32", "string"],
@@ -186,13 +187,13 @@ weight: 55
 ```json
 {
     "success": true,
-    "reason": "成功状態またはメッセージ",
-    "elapse": "文字列形式の経過時間",
+    "reason": "success or other message",
+    "elapse": "elapse time in string format",
     "data": {
         "columns": ["ROWNUM", "NAME", "ROW_COUNT", "MIN_TIME", "MAX_TIME",
-			"MIN_VALUE", "MIN_VALUE_TIME", "MAX_VALUE", "MAX_VALUE_TIME", "RECENT_ROW_TIME"],
-        "types": ["int32", "string", "int64", "datetime", "datetime","double", 
-            "datetime", "double", , "datetime",, "datetime"],
+            "MIN_VALUE", "MIN_VALUE_TIME", "MAX_VALUE", "MAX_VALUE_TIME", "RECENT_ROW_TIME"],
+        "types": ["int32", "string", "int64", "datetime", "datetime",
+            "double", "datetime", "double", "datetime", "datetime"],
         "rows":[
             ["...omit...."],
         ]
@@ -201,6 +202,8 @@ weight: 55
 ```
 
 ## シェルとターミナル {#셸-및-터미널}
+
+シェル定義の取得・追加・複製・変更・削除には、JSON-RPCの[`shell.*`](#shelllist)メソッドを使用します。
 
 ### データチャネル {#데이터-채널}
 
@@ -220,38 +223,6 @@ weight: 55
 { "rows": 24, "cols": 80 }
 ```
 
-### シェル定義の取得 {#셸-정의-조회}
-
-**GET `/web/api/shell/:id`**
-
-指定IDの`ShellDefinition`を返します。
-
-### シェル定義の変更 {#셸-정의-수정}
-
-**POST `/web/api/shell/:id`**
-
-指定IDの`ShellDefinition`を更新します。
-
-### シェルの複製 {#셸-복제}
-
-**GET `/web/api/shell/:id/copy`**
-
-指定IDのシェルを複製し、新しい`ShellDefinition`を返します。
-
-### シェル定義の削除  {#셸-정의-삭제-}
-
-**DELETE `/web/api/shell/:id`**
-
-指定IDのシェルを削除します。
-
-```json
-{
-    "success": true,
-    "reason": "成功またはエラーメッセージ",
-    "elapse": "文字列形式の時間"
-}
-```
-
 ## サーバーイベント {#서버-이벤트}
 
 ### イベントチャネル {#이벤트-채널}
@@ -264,13 +235,13 @@ weight: 55
 
 ```json
 {
-    "type": "下表を参照",
+    "type": "type(see below)",
     "ping": {
         "tick": 1234
     },
     "log": {
         "level": "INFO",
-        "message": "ログメッセージ"
+        "message": "log message"
     }
 }
 ```
@@ -282,7 +253,6 @@ weight: 55
 | `log`          | `log.level`      | ログレベル：`TRACE`、`DEBUG`、`INFO`、`WARN`、`ERROR`           |
 |                | `log.message`    | ログメッセージ                                                    |
 |                | `log.repeat`     | 同じメッセージが連続して2回以上繰り返された場合の回数                |
-
 
 ## TQLとワークスペース {#tql-및-워크스페이스}
 
@@ -297,7 +267,6 @@ weight: 55
 | application/json           | "echart", "geomap"         | JSON（echartまたはgeomapのデータ）           |
 | application/json           | -                          | JSON                                      |
 | application/xhtml+xml      | -                          | HTML要素。例：`<div>...</div>`           |
-
 
 ### TQLファイルの実行 {#tql-파일-실행}
 
@@ -321,9 +290,7 @@ weight: 55
 
 ### Markdownのレンダリング {#마크다운-렌더링}
 
-**POST `/web/api/md`**
-
-ボディにMarkdownを送信すると、サーバーがXHTML形式のレンダリング結果を返します。
+Markdownのレンダリングには、JSON-RPCの[`markdown.render`](#markdownrender)メソッドを使用します。
 
 ## ファイル管理 {#파일-관리}
 
@@ -353,8 +320,8 @@ weight: 55
 {
     "isDir": true,
     "name": "name",
-    "content": "ファイルの場合のバイト配列",
-    "children": [{"ディレクトリの場合のSubEntry"}],
+    "content": "bytes array, if the entry is a file",
+    "children": [{"SubEntry, if the entry is a directory"}],
 }
 ```
 
@@ -407,7 +374,6 @@ weight: 55
 
 操作が正常に完了すると、APIは`200 OK`を返します。
 
-
 ### ファイルの削除 {#파일-삭제}
 
 **DELETE `/web/api/files/*path`**
@@ -416,707 +382,23 @@ weight: 55
 
 ## キー管理 {#키-관리}
 
-### キー一覧の取得 {#키-목록-조회}
-
-**GET `/web/api/keys`**
-
-キー情報を返します。
-
-レスポンス
-
-```json
-{
-    "success": true,
-    "reason": "success",
-    "data": [
-        {
-            "idx": 0,
-            "id": "eleven",
-            "notBefore": 1713171461,
-            "notAfter": 2028531461
-        }
-    ],
-    "elapse": "131.9µs"
-}
-```
-### キーの生成 {#키-생성}
-
-**POST `/web/api/keys`**
-
-キーを生成します。
-- `name`は必須です。
-- `notAfter`は有効期限です。
-
-{{< tabs >}}
-{{< tab name="リクエスト" >}}
-```json
-{
-    "name": "eleven",
-    "notBefore": 0,
-    "notAfter": 0
-}
-```
-{{< /tab >}}
-{{< tab name="レスポンス" >}}
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "5.4961ms",
-    "certificate": "-----BEGIN CERTIFICATE-----\nXXXXXXXXXXXXXXXXXX\n-----END CERTIFICATE-----\n",
-    "privateKey": "-----BEGIN EC PRIVATE KEY-----\nXXXXXXXXXXXXXXXX\n-----END EC PRIVATE KEY-----\n",
-    "token": "eleven:b:XXXXXXXXXXXXXXXXX"
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-
-
-### キーの削除 {#키-삭제}
-
-**DELETE `/web/api/keys/:id`**
-
-指定IDのキーを削除します。
-
-レスポンス
-
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "112.8µs"
-}
-```
+キーはJSON-RPCの[`key.*`](#keylist)メソッドで、APIトークンは[`token.*`](#tokenlist)メソッドで管理します。
 
 ## SSHキー {#ssh-키}
 
-### SSHキー一覧の取得 {#ssh-키-목록-조회}
-
-**GET `/web/api/sshkeys`**
-
-SSHキー情報を返します。
-
-レスポンス
-
-```json
-{
-    "data": [
-        {
-            "keyType": "ssh-rsa",
-            "fingerprint": "f08h89fhf0dkv0v0v9c9x0cx9v9",
-            "comment": "example@machbase.com"
-        }
-    ],
-    "elapse": "67.6µs",
-    "reason": "success",
-    "success": true
-}
-```
-### SSHキーの生成 {#ssh-키-생성}
-
-**POST `/web/api/sshkeys`**
-
-**SSH公開鍵認証の使用**
-
-machbase-neoサーバーに公開鍵を登録すると、パスワードを入力せずに`machbase-neo shell`コマンドを実行できます。
-
-{{< tabs >}}
-{{< tab name="リクエスト" >}}
-```json
-{
-    "key": "your publickey"
-}
-```
-{{< /tab >}}
-{{< tab name="レスポンス" >}}
-```json
-{
-    "elapse": "138.801µs",
-    "reason": "success",
-    "success": true
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-
-
-### SSHキーの削除 {#ssh-키-삭제}
-
-**DELETE `/web/api/sshkeys/:fingerprint`**
-
-指定したフィンガープリントのSSHキーを削除します。
-
-レスポンス
-```json
-{
-    "elapse": "198.8µs",
-    "reason": "success",
-    "success": true
-}
-```
-
-
+SSHキーは、JSON-RPCの[`sshkey.*`](#sshkeylist)メソッドで管理します。
 
 ## タイマー {#타이머}
 
-### タイマーの取得 {#타이머-조회}
-
-**GET `/web/api/timers/:name`**
-
-タイマー情報を返します。
-
-- 状態値： `RUNNING`, `STARTING`, `STOP`, `STOPPING`, `FAILED`, `UNKNOWN`
-
-レスポンス
-
-```json
-{
-    "success": true,
-    "reason": "success",
-    "data": [
-        {
-            "name": "ELEVEN",
-            "type": "TIMER",
-            "state": "STOP", 
-            "task": "timer.tql",
-            "schedule": "0 30 * * * *"
-        }
-    ],
-    "elapse": "92.1µs"
-}
-```
-
-### タイマー一覧 {#타이머-목록}
-
-**GET `/web/api/timers`**
-
-タイマー情報の一覧を返します。
-- 状態値： `RUNNING`, `STARTING`, `STOP`, `STOPPING`, `FAILED`, `UNKNOWN`
-
-レスポンス
-
-```json
-{
-    "success": true,
-    "reason": "success",
-    "data": [
-        {
-            "name": "ELEVEN",
-            "type": "TIMER",
-            "state": "STOP",
-            "task": "timer.tql",
-            "schedule": "0 30 * * * *"
-        },
-        {
-            "name": "TWELVE",
-            "type": "TIMER",
-            "state": "RUNNING",
-            "task": "timer2.tql",
-            "schedule": "1 30 * * * *"
-        }
-    ],
-    "elapse": "92.1µs"
-}
-```
-### タイマーの追加 {#타이머-추가}
-
-**POST `/web/api/timers`**
-
-タイマーを追加します。
-- `name`、`autoStart`、`schedule`、`path`は必須です。
-
-タイマーの`schedule`の例
-- `0 30 * * * *`           毎時30分
-- `@every 1h30m`           1時間30分間隔
-- `@daily`                 毎日
-
-{{< tabs >}}
-{{< tab name="リクエスト" >}}
-```json
-{
-    "name":"eleven",
-    "autoStart":false,
-    "schedule":"@every 10s",
-    "path":"timer.tql"
-}
-```
-{{< /tab >}}
-{{< tab name="レスポンス" >}}
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "4.9658ms"
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-### タイマーの開始 {#타이머-시작}
-
-**POST `/web/api/timers/:name/state`**
-
-タイマーを開始します。
-- `state`値が必要です。
-
-{{< tabs >}}
-{{< tab name="リクエスト" >}}
-```json
-{
-    "state":"start",
-}
-```
-{{< /tab >}}
-{{< tab name="レスポンス" >}}
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "822.601µs"
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-### タイマーの停止 {#타이머-중지}
-
-**POST `/web/api/timers/:name/state`**
-
-タイマーを停止します。
-- `state`値が必要です。
-
-{{< tabs >}}
-{{< tab name="リクエスト" >}}
-```json
-{
-    "state":"stop",
-}
-```
-{{< /tab >}}
-{{< tab name="レスポンス" >}}
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "26.2µs"
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-### タイマーの変更 {#타이머-수정}
-
-**PUT `/web/api/timers/:name`**
-
-タイマー設定を変更します。
-- `autoStart`、`schedule`、`path`を指定できます。
-
-{{< tabs >}}
-{{< tab name="リクエスト" >}}
-```json
-{
-    "audoStart" : true,
-    "schedule":"@every 5s",
-    "path":"timer.tql"
-}
-```
-{{< /tab >}}
-{{< tab name="レスポンス" >}}
-```json
-{
-    "elapse": "459.6µs",
-    "reason": "success",
-    "success": true
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-
-
-### タイマーの削除 {#타이머-삭제}
-
-**DELETE `/web/api/timers/:name`**
-
-タイマーを削除します。
-
-レスポンス
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "4.8664ms"
-}
-```
-
+タイマーは、JSON-RPCの[`timer.*`](#timerlist)メソッドで管理します。
 
 ## ブリッジ {#브리지}
 
-### ブリッジ一覧 {#브리지-목록}
-
-**GET `/web/api/bridges`**
-
-ブリッジ情報を返します。
-
-レスポンス
-
-```json
-{
-    "success": true,
-    "reason": "success",
-    "data": [
-        {
-            "name": "pg",
-            "type": "postgres",
-            "path": "host=127.0.0.1 port=5432 user=postgres password=1234 dbname=bridgedb sslmode=disable"
-        }
-    ],
-    "elapse": "1.328301ms"
-}
-```
-### ブリッジの追加 {#브리지-추가}
-
-**POST `/web/api/bridges`**
-
-ブリッジを追加します。
-- `name`、`type`、`path`は必須です。
-- 対応するブリッジは、`SQLite`、`PostgreSql`、`Mysql`、`MSSQL`、`MQTT`、`NATS`です。
-
-{{< tabs >}}
-{{< tab name="リクエスト" >}}
-```json
-{
-    "name":"pg",
-    "type":"postgres", // sqlite、postgres、mysql、mssql、mqtt、natsから選択
-    "path":"host=127.0.0.1 port=5432 user=postgres password=1234 dbname=bridgedb sslmode=disable"
-}
-```
-{{< /tab >}}
-{{< tab name="レスポンス" >}}
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "193.499µs"
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-### ブリッジの実行 {#브리지-실행}
-
-**POST `/web/api/bridges/:name/state`**
-
-ブリッジでコマンドを実行します。
-- `state`と`command`が必要です。
-
-{{< tabs >}}
-{{< tab name="リクエスト" >}}
-```json
-{
-    "state":"exec",
-    "command":"CREATE TABLE IF NOT EXISTS pg_example(id SERIAL PRIMARY KEY,company VARCHAR(50) UNIQUE NOT NULL,employee  INT,discount REAL,plan FLOAT(8),code UUID,valid BOOL, memo TEXT, created_on TIMESTAMP NOT NULL)"
-}
-```
-{{< /tab >}}
-{{< tab name="レスポンス" >}}
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "217.4µs"
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-### ブリッジのクエリ {#브리지-쿼리}
-
-**POST `/web/api/bridges/:name/state`**
-
-ブリッジでクエリを実行します。
-- `state`と`command`が必要です。
-
-{{< tabs >}}
-{{< tab name="リクエスト" >}}
-```json
-{
-    "state":"query",
-    "command":"select * from pg_example"
-}
-```
-{{< /tab >}}
-{{< tab name="レスポンス" >}}
-```json
-{
-    "success": true,
-    "reason": "success",
-    "column": [
-        "id",
-        "company",
-        "employee",
-        "discount",
-        "plan",
-        "code",
-        "valid",
-        "memo",
-        "created_on"
-    ],
-    "rows": [
-        [
-            2,
-            "test-company",
-            10,
-            1.234,
-            2.3456,
-            "c2d29867-3d0b-d497-9191-18a9d8ee7830",
-            true,
-            "test memo",
-            "2023-08-09T14:20:00+09:00"
-        ],
-        [
-            3,
-            "test-company2",
-            10,
-            1.234,
-            2.3456,
-            null,
-            null,
-            null,
-            "2023-08-09T14:20:00+09:00"
-        ]
-    ],
-    "elapse": "53.015905ms"
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-### ブリッジのテスト {#브리지-테스트}
-
-**POST `/web/api/bridges/:name/state`**
-
-ブリッジをテストします。
-
-{{< tabs >}}
-{{< tab name="リクエスト" >}}
-```json
-{
-    "state":"test",
-}
-```
-{{< /tab >}}
-{{< tab name="レスポンス" >}}
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "331.1µs"
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-
-### ブリッジの削除 {#브리지-삭제}
-
-**DELETE `/web/api/bridges/:name`**
-
-指定名のブリッジを削除します。
-
-レスポンス
-
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "112.8µs"
-}
-```
+ブリッジの管理とコマンドの実行には、JSON-RPCの[`bridge.*`](#bridgelist)メソッドを使用します。
 
 ## サブスクライバー {#구독자}
 
-### サブスクライバーの取得 {#구독자-조회}
-
-**GET `/web/api/subscribers/:name`**
-
-サブスクライバー情報を返します。
-- 状態値： `RUNNING`, `STARTING`, `STOP`, `STOPPING`, `FAILED`, `UNKNOWN`
-- `autoStart`、`queue`、`QoS`フィールドは、値がない場合は省略されます。
-
-レスポンス
-
-```json
-{
-    "data": [
-        {
-            "name": "NATS_SUBR",
-            "type": "SUBSCRIBER",
-            "autoStart": true,  // 値がなければ省略
-            "state": "RUNNING", 
-            "task": "db/append/EXAMPLE:csv",
-            "bridge": "my_nats",
-            "topic": "iot.sensor",
-            "queue":"", // 値がなければ省略
-            "QoS":0    // 値がなければ省略
-        }
-    ],
-    "elapse": "253.4µs",
-    "reason": "success",
-    "success": true
-}
-```
-
-### サブスクライバー一覧 {#구독자-목록}
-
-**GET `/web/api/subscribers`**
-
-サブスクライバー情報の一覧を返します。
-- 状態値： `RUNNING`, `STARTING`, `STOP`, `STOPPING`, `FAILED`, `UNKNOWN`
-- `autoStart`、`queue`、`QoS`フィールドは、値がない場合は省略されます。
-
-レスポンス
-
-```json
-{
-    "data": [
-        {
-            "name": "NATS_SUBR",
-            "type": "SUBSCRIBER",
-            "autoStart": true,  // 値がなければ省略
-            "state": "RUNNING",
-            "task": "db/append/EXAMPLE:csv",
-            "bridge": "my_nats",
-            "topic": "iot.sensor",
-            "queue":"", // 値がなければ省略
-            "QoS":0    // 値がなければ省略
-        },
-        {
-            "name": "NATS_SUBR2",
-            "type": "SUBSCRIBER",
-            "autoStart": true,  // 値がなければ省略
-            "state": "STARTING",
-            "task": "db/insert/EXAMPLE2:csv",
-            "bridge": "my_nats2",
-            "topic": "iot.sensor2",
-            "queue":"", // 値がなければ省略
-            "QoS":0    // 値がなければ省略
-        }
-    ],
-    "elapse": "253.4µs",
-    "reason": "success",
-    "success": true
-}
-```
-### サブスクライバーの追加 {#구독자-추가}
-
-**POST `/web/api/subscribers`**
-
-サブスクライバーを追加します。
-- `autoStart`：`true`にすると、machbase-neoとともに起動します。省略または`false`の場合は、手動で開始・停止できます。
-- `name`: 例：`nats_subr`。サブスクライバー名です。
-- `bridge`: 例：`my_nats`。サブスクライバーが使用するブリッジ名です。
-- `topic`: 例：`iot.sensor`。購読対象で、NATSのサブジェクト構文に従います。
-- `task`: 例：`db/append/EXAMPLE:csv`。データ形式と書き込みモードを指定し、CSVデータをEXAMPLEテーブルにappendモードで取り込むことを表します。
-- `autoStart`がfalseの場合は、`subscriber start <name>`、`subscriber stop <name>`コマンドで手動操作できます。
-- `QoS` `int`: MQTTブリッジの場合、トピック購読のQoSを指定します。0または1を使用でき、既定値は0です。
-- `quque` `string`：NATSブリッジのキューグループを指定します。現在のリクエストのJSONキーは`quque`です。レスポンスでは`queue`を使用します。
-
-設定の詳細は、[NATSブリッジ](/neo/bridges/nats/)を参照してください。
-
-{{< tabs >}}
-{{< tab name="リクエスト" >}}
-```json
-{
-    "name":"nats_subr",
-    "autoStart":true,
-    "bridge":"my_nats",
-    "topic":"iot.sensor",
-    "task":"db/append/EXAMPLE:csv",
-    "QoS": 0,  // MQTTブリッジオプション：0または1（既定値0）
-    "quque": "" // NATSブリッジオプション
-}
-```
-{{< /tab >}}
-{{< tab name="レスポンス" >}}
-```json
-{
-    "elapse": "260µs",
-    "reason": "success",
-    "success": true
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-### サブスクライバーの開始 {#구독자-시작}
-
-**POST `/web/api/subscribers/:name/state`**
-
-- `state`値が必要です。
-
-{{< tabs >}}
-{{< tab name="リクエスト" >}}
-```json
-{
-    "state":"start",
-}
-```
-{{< /tab >}}
-{{< tab name="レスポンス" >}}
-```json
-{
-    "elapse": "166.1µs",
-    "reason": "success",
-    "success": true
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-### サブスクライバーの停止 {#구독자-중지}
-
-**POST `/web/api/subscribers/:name/state`**
-
-- `state`値が必要です。
-
-{{< tabs >}}
-{{< tab name="リクエスト" >}}
-```json
-{
-    "state":"stop",
-}
-```
-{{< /tab >}}
-{{< tab name="レスポンス" >}}
-```json
-{
-    "elapse": "54.2µs",
-    "reason": "success",
-    "success": true
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-
-### サブスクライバーの削除 {#구독자-삭제}
-
-**DELETE `/web/api/subscribers/:name`**
-
-指定名のサブスクライバーを削除します。
-
-レスポンス
-
-```json
-{
-    "elapse": "77.1µs",
-    "reason": "success",
-    "success": true
-}
-```
+サブスクライバーは、JSON-RPCの[`subscriber.*`](#subscriberlist)メソッドで管理します。
 
 ## バックアップ {#백업}
 
@@ -1125,8 +407,9 @@ machbase-neoサーバーに公開鍵を登録すると、パスワードを入�
 **GET `/web/api/backup/archives`**
 
 バックアップ一覧を返します。
+
 - 既定のバックアップディレクトリは、machbase-neo実行ファイルのディレクトリ配下の`backups`です。
-- 保存先を変更するには、`--backup-dir={path}`オプションを指定して起動します。既定値を使う場合、この指定は不要です。
+- 保存先を変更するには、`--backup-dir={path}`オプションを指定してmachbase-neoを起動します。既定値を使う場合、このオプションは不要です。
 
 レスポンス
 
@@ -1153,16 +436,18 @@ machbase-neoサーバーに公開鍵を登録すると、パスワードを入�
 **POST `/web/api/backup/archive`**
 
 データベースをバックアップします。<br/>
+
 - **完全バックアップ**：全データをバックアップします。
 - **増分バックアップ**：完全バックアップまたは前回の増分バックアップ以降に追加されたデータだけをバックアップします。
 - **期間バックアップ**：指定期間のデータをバックアップします。
 
 リクエスト
+
 {{< tabs >}}
-{{< tab name="完全バックアップ" >}}
+{{< tab name="Full Backup" >}}
 ```json
 {
-    "type":"database", // databaseまたはtable
+    "type":"database", // database or table
     "tableName":"",
     "duration":{
         "type":"full",
@@ -1170,15 +455,15 @@ machbase-neoサーバーに公開鍵を登録すると、パスワードを入�
         "from":"",
         "to":""
     },
-    "path":"example_backup1" 
-    // "path":"/home/neo/backups/example_backup1" // 絶対パスの例
+    "path":"example_backup1"
+    // "path":"/home/neo/backups/example_backup1" // Absolute Path
 }
 ```
 {{< /tab >}}
-{{< tab name="増分バックアップ" >}}
+{{< tab name="Incremental Backup" >}}
 ```json
 {
-    "type":"database", // databaseまたはtable
+    "type":"database", // database or table
     "tableName":"",
     "duration":{
         "type":"incremental",
@@ -1186,15 +471,15 @@ machbase-neoサーバーに公開鍵を登録すると、パスワードを入�
         "from":"",
         "to":""
     },
-    "path":"example_backup1" 
-    // "path":"/home/neo/backups/example_backup1" // 絶対パスの例
+    "path":"example_backup1"
+    // "path":"/home/neo/backups/example_backup1" // Absolute Path
 }
 ```
 {{< /tab >}}
-{{< tab name="期間バックアップ" >}}
+{{< tab name="Time Backup" >}}
 ```json
 {
-    "type":"database", // databaseまたはtable
+    "type":"database", // database or table
     "tableName":"",
     "duration":{
         "type":"time",
@@ -1202,15 +487,15 @@ machbase-neoサーバーに公開鍵を登録すると、パスワードを入�
         "from":"2024-08-01 00:00:00",
         "to":"2024-08-02 23:59:59"
     },
-    "path":"example_backup1" 
-    // "path":"/home/neo/backups/example_backup1" // 絶対パスの例
+    "path":"example_backup1"
+    // "path":"/home/neo/backups/example_backup1" // Absolute Path
 }
 ```
 {{< /tab >}}
-{{< tab name="テーブルバックアップ" >}}
+{{< tab name="Table Backup" >}}
 ```json
 {
-    "type":"table", // databaseまたはtable
+    "type":"table", // database or table
     "tableName":"example",
     "duration":{
         "type":"full",
@@ -1218,14 +503,15 @@ machbase-neoサーバーに公開鍵を登録すると、パスワードを入�
         "from":"",
         "to":""
     },
-    "path":"example_backup1" 
-    // "path":"/home/neo/backups/example_backup1" // 絶対パスの例
+    "path":"example_backup1"
+    // "path":"/home/neo/backups/example_backup1" // Absolute Path
 }
 ```
 {{< /tab >}}
 {{< /tabs >}}
 
 レスポンス
+
 ```json
 {
     "success": true,
@@ -1241,6 +527,7 @@ machbase-neoサーバーに公開鍵を登録すると、パスワードを入�
 バックアップ状態を返します。<br/>
 
 レスポンス
+
 ```json
 {
     "data": {
@@ -1296,19 +583,20 @@ machbase-neoサーバーに公開鍵を登録すると、パスワードを入�
 **POST `/web/api/backup/mounts/:name`**
 
 データベースをマウントします。
+
 - `:name`: マウント名
 - `path`: バックアップデータベースのパス（絶対パスと相対パスの両方を使用可能）
 
 {{< tabs >}}
-{{< tab name="リクエスト" >}}
+{{< tab name="Request" >}}
 ```json
 {
-    "path":"example_backup1" // 相対パス
-    // "path":"/home/machbase/machbase_home/dbs/example_backup1" // 絶対パス
+    "path":"example_backup1" // Relative Path
+    // "path":"/home/machbase/machbase_home/dbs/example_backup1" // Absolute Path
 }
 ```
 {{< /tab >}}
-{{< tab name="レスポンス" >}}
+{{< tab name="Response" >}}
 ```json
 {
     "elapse": "46.8694ms",
@@ -1324,9 +612,11 @@ machbase-neoサーバーに公開鍵を登録すると、パスワードを入�
 **DELETE `/web/api/backup/mounts/:name`**
 
 データベースをアンマウントします。
+
 - `:name`: アンマウントする名前
 
 レスポンス
+
 ```json
 {
     "elapse": "46.8694ms",
@@ -1338,76 +628,7 @@ machbase-neoサーバーに公開鍵を登録すると、パスワードを入�
 
 ## パッケージ {#패키지}
 
-### 検索 {#검색}
-
-**GET `/web/api/pkgs/search?name=pkg_name&possibles=10`**
-
-クエリパラメーター
- - `name`: 検索するパッケージ名。空の場合は、インストール済みとおすすめのパッケージを返します。
- - `possibles`: 類似するパッケージ候補の件数。`possibles=0`の場合は、指定した名前との完全一致だけを検索します。
-
-
-レスポンス
-
-```json
-{
-    "success": true,
-    "reason": "success",
-    "data":{},
-    "elapse": "547.1µs"
-}
-```
-### 同期 {#동기화}
-
-**GET `/web/api/pkgs/sync`**
-
-パッケージ情報を同期します。
-
-レスポンス
-
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "30.9144ms"
-}
-```
-
-
-### インストール {#설치}
-
-**GET `/web/api/pkgs/install/:name`**
-
- - `:name`: インストールするパッケージ名。必須
-
-レスポンス
-```json
-{
-    "success": true,
-    "reason": "success",
-    "data":{}, // 値がなければ省略
-    "log":"",
-    "elapse": "23.1491ms"
-}
-```
-
-### 削除 {#제거}
-
-**GET `/web/api/pkgs/uninstall/:name`**
-
- - `:name`: 削除するパッケージ名。必須
-
-レスポンス
-```json
-{
-    "success": true,
-    "reason": "success",
-    "data":{}, // 値がなければ省略
-    "log":"",
-    "elapse": "88.4133ms"
-}
-```
-
+パッケージのインストールと削除は、JSHの[`pkg`コマンド](/neo/jsh/packages/)で行います。
 
 ## その他 {#기타}
 
@@ -1416,70 +637,32 @@ machbase-neoサーバーに公開鍵を登録すると、パスワードを入�
 **GET `/web/api/refs/*path`**
 
 - `ReferenceGroup`
+
 ```json
 {
-    "label": "グループ名",
+    "label": "group name",
     "items":[{"ReferenceItem"}]
 }
 ```
 
 - `ReferenceItem`
+
 ```json
 {
     "type": "type",
-    "title": "表示タイトル",
-    "address": "URLアドレス",
-    "target": "ブラウザーのリンク先"
+    "title": "display title",
+    "address": "url address",
+    "target": "browser link target"
 }
 ```
 
 - type: `url`, `wrk`, `tql`, `sql`
-- address: `serverfile://<path>`接頭辞がある場合は、サーバー上のファイルを指し、
-  それ以外は、`https://`で始まる外部Web URLです。
-
+- address：`serverfile://<path>`接頭辞がある場合はサーバー側のファイルを指し、
+  それ以外の場合は`https://`で始まる外部WebのURLです。
 
 ### SQL文の分割 {#sql-구문-분할기}
 
-**POST `/web/api/splitter/sql`**
-
-```json
-{
-    "success": true,
-    "reason": "成功またはエラーの理由",
-    "elapse": "経過時間",
-    "data": {
-        "statements": [
-            {
-                "text": "-- env: bridge=sqlite",
-                "beginLine": 1,
-                "endLine": 1,
-                "isComment": true,
-                "env": {
-                    "bridge": "sqlite",
-                    "error": "`-- env: bridge=database`に構文エラーがある場合"
-                }
-            },
-            {
-                "text": "select * from table",
-                "beginLine": 2,
-                "endLine": 2,
-                "isComment": false,
-                "env": {
-                    "bridge": "sqlite",
-                    "error": "`-- env: bridge=database`に構文エラーがある場合"
-                }
-            },
-            {
-                "text": "-- comment",
-                "beginLine": 3,
-                "endLine": 3,
-                "isComment": true,
-                "env": {}
-            }
-        ]
-    }
-}
-```
+SQL文の分割には、JSON-RPCの[`sql.split`](#sqlsplit)メソッドを使用します。
 
 ### ライセンス情報 {#라이선스-정보}
 
@@ -1488,16 +671,16 @@ machbase-neoサーバーに公開鍵を登録すると、パスワードを入�
 ```json
 {
     "success": true,
-    "reason": "成功またはエラーの理由",
-    "elapse": "経過時間",
+    "reason": "success or error reason",
+    "elapse": "elapse time",
     "data": {
-        "id": "ライセンスID",
-        "type": "種類",
-        "customer": "顧客",
-        "project": "プロジェクト",
-        "countryCode": "国コード",
-        "installDate": "インストール日",
-        "issueDate": "ライセンス発行日"
+        "id": "license id",
+        "type": "type",
+        "customer": "customer",
+        "project": "project",
+        "countryCode": "country code",
+        "installDate": "installation date",
+        "issueDate": "license issue date"
     }
 }
 ```
@@ -1508,11 +691,10 @@ machbase-neoサーバーに公開鍵を登録すると、パスワードを入�
 
 ライセンスファイルをインストールします。
 
-
 ## WebSocket {#websocket}
 
 ```
-ws://127.0.0.1:5654/web/ui/console/{console_id}/data?token={jwt_token}
+ws://127.0.0.1:5654/web/api/console/{console_id}/data?token={jwt_token}
 ```
 
 `console_id`には、セッションを正しく管理するため、クライアントアプリケーションが生成した一意の識別子を指定します。
@@ -1733,6 +915,152 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
 
 </details>
 
+### Vizspec {#vizspec}
+
+#### vizspec.render {#vizspecrender}
+
+`vizspec.render(vizspec)`
+
+*パラメーター*
+- `vizspec` *object*
+
+*戻り値*
+
+- `object|error`
+
+<details>
+<summary>リクエスト・レスポンスのJSON</summary>
+
+*リクエスト*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "vizspec.render",
+        "params": [
+            {}
+        ]
+    }
+}
+```
+
+*レスポンス*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {}
+    }
+}
+```
+
+</details>
+
+#### vizspec.export {#vizspecexport}
+
+`vizspec.export(vizspec, format)`
+
+*パラメーター*
+- `vizspec` *object*
+- `format` *string*
+
+*戻り値*
+
+- `object|error`
+
+<details>
+<summary>リクエスト・レスポンスのJSON</summary>
+
+*リクエスト*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "vizspec.export",
+        "params": [
+            {},
+            "string"
+        ]
+    }
+}
+```
+
+*レスポンス*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {}
+    }
+}
+```
+
+</details>
+
+### サーバー {#server}
+
+#### server.info.get {#serverinfoget}
+
+`server.info.get()`
+
+*パラメーター*
+
+- なし
+
+*戻り値*
+
+- `object<ServerInfoResponse>|error`
+
+<details>
+<summary>リクエスト・レスポンスのJSON</summary>
+
+*リクエスト*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "server.info.get",
+        "params": []
+    }
+}
+```
+
+*レスポンス*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {}
+    }
+}
+```
+
+</details>
+
 #### server.info.statz {#serverinfostatz}
 
 `server.info.statz(names)`
@@ -1876,154 +1204,6 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
 
 </details>
 
-
-### Vizspec {#vizspec}
-
-#### vizspec.render {#vizspecrender}
-
-`vizspec.render(vizspec)`
-
-*パラメーター*
-- `vizspec` *object*
-
-*戻り値*
-
-- `object|error`
-
-<details>
-<summary>リクエスト・レスポンスのJSON</summary>
-
-*リクエスト*
-
-```json
-{
-    "type": "rpc_req",
-    "session": "client-session-#1",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 20,
-        "method": "vizspec.render",
-        "params": [
-            {}
-        ]
-    }
-}
-```
-
-*レスポンス*
-
-```json
-{
-    "type": "rpc_rsp",
-    "session": "client-session-#1",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 20,
-        "result": {}
-    }
-}
-```
-
-</details>
-
-#### vizspec.export {#vizspecexport}
-
-`vizspec.export(vizspec, format)`
-
-*パラメーター*
-- `vizspec` *object*
-- `format` *string*
-
-*戻り値*
-
-- `object|error`
-
-<details>
-<summary>リクエスト・レスポンスのJSON</summary>
-
-*リクエスト*
-
-```json
-{
-    "type": "rpc_req",
-    "session": "client-session-#1",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 20,
-        "method": "vizspec.export",
-        "params": [
-            {},
-            "string"
-        ]
-    }
-}
-```
-
-*レスポンス*
-
-```json
-{
-    "type": "rpc_rsp",
-    "session": "client-session-#1",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 20,
-        "result": {}
-    }
-}
-```
-
-</details>
-
-
-### サーバー {#server}
-
-#### server.info.get {#serverinfoget}
-
-`server.info.get()`
-
-*パラメーター*
-
-- なし
-
-*戻り値*
-
-- `object<ServerInfoResponse>|error`
-
-<details>
-<summary>リクエスト・レスポンスのJSON</summary>
-
-*リクエスト*
-
-```json
-{
-    "type": "rpc_req",
-    "session": "client-session-#1",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 20,
-        "method": "server.info.get",
-        "params": []
-    }
-}
-```
-
-*レスポンス*
-
-```json
-{
-    "type": "rpc_rsp",
-    "session": "client-session-#1",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 20,
-        "result": {}
-    }
-}
-```
-
-</details>
-
 #### server.certificate.get {#servercertificateget}
 
 `server.certificate.get()`
@@ -2072,7 +1252,7 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
 
 #### server.shutdown {#servershutdown}
 
-管理サーバーが実装します。
+管理（mgmt）サーバーが実装します。
 
 `server.shutdown()`
 
@@ -2117,7 +1297,6 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
 ```
 
 </details>
-
 
 ### サービス {#service}
 
@@ -2167,7 +1346,6 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
 ```
 
 </details>
-
 
 ### プロキシ {#proxy}
 
@@ -2359,7 +1537,6 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
 
 </details>
 
-
 ### シェル {#shell}
 
 #### shell.list {#shelllist}
@@ -2457,6 +1634,158 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
 
 </details>
 
+#### shell.copy {#shellcopy}
+
+指定したシェル定義を複製し、新しいIDが割り当てられたシェル定義を返します。
+
+`shell.copy(srcId)`
+
+*パラメーター*
+- `srcId` *string* - 複製するシェル定義のID
+
+*戻り値*
+
+- `object<model.ShellDefinition>|error` - 複製されたシェル定義
+
+<details>
+<summary>リクエスト・レスポンスのJSON</summary>
+
+*リクエスト*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "shell.copy",
+        "params": [
+            "23"
+        ]
+    }
+}
+```
+
+*レスポンス*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {
+            "id": "24",
+            "type": "term",
+            "icon": "console-network-outline",
+            "label": "CUSTOM SHELL",
+            "command": "/bin/sh",
+            "attributes": [
+                {
+                    "removable": true
+                },
+                {
+                    "cloneable": true
+                },
+                {
+                    "editable": true
+                }
+            ]
+        }
+    }
+}
+```
+
+</details>
+
+#### shell.update {#shellupdate}
+
+シェル定義を変更します。対象は`id`で指定し、シェル定義全体を渡します。
+
+`shell.update(shell)`
+
+*パラメーター*
+- `shell` *object<model.ShellDefinition>* - `id`、`type`、`label`、`command`、`icon`、`theme`、`attributes`を含むシェル定義
+    `command`が空の場合はエラーを返します
+
+*戻り値*
+
+- `object<model.ShellDefinition>|error` - 変更後のシェル定義
+
+<details>
+<summary>リクエスト・レスポンスのJSON</summary>
+
+*リクエスト*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "shell.update",
+        "params": [
+            {
+                "id": "24",
+                "type": "term",
+                "icon": "console-network-outline",
+                "label": "_docgen_uiapi_s2",
+                "command": "/bin/bash",
+                "attributes": [
+                    {
+                        "removable": true
+                    },
+                    {
+                        "cloneable": true
+                    },
+                    {
+                        "editable": true
+                    }
+                ],
+                "theme": "dark"
+            }
+        ]
+    }
+}
+```
+
+*レスポンス*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {
+            "id": "24",
+            "type": "term",
+            "icon": "console-network-outline",
+            "label": "_docgen_uiapi_s2",
+            "theme": "dark",
+            "command": "/bin/bash",
+            "attributes": [
+                {
+                    "removable": true
+                },
+                {
+                    "cloneable": true
+                },
+                {
+                    "editable": true
+                }
+            ]
+        }
+    }
+}
+```
+
+</details>
+
 #### shell.delete {#shelldelete}
 
 `shell.delete(id)`
@@ -2503,7 +1832,6 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
 ```
 
 </details>
-
 
 ### ブリッジ {#bridge}
 
@@ -2984,7 +2312,6 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
 
 </details>
 
-
 ### SSHキー {#sshkey}
 
 #### sshkey.list {#sshkeylist}
@@ -3131,7 +2458,6 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
 
 </details>
 
-
 ### キー {#key}
 
 #### key.list {#keylist}
@@ -3144,7 +2470,11 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
 
 *戻り値*
 
-- `array<object<KeyInfo>>|error`
+- `array<object<KeyInfo>>|error` - サーバーのキーストアに保存されたキーの一覧
+    - `idx`：一覧内の順番
+    - `id`：キーID。`key.delete`に指定します
+    - `name`：キー名
+    - `notBefore`、`notAfter`：有効期間の開始時刻と終了時刻（Unixタイムスタンプ、秒）
 
 <details>
 <summary>リクエスト・レスポンスのJSON</summary>
@@ -3173,7 +2503,15 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "result": []
+        "result": [
+            {
+                "idx": 0,
+                "id": 8,
+                "name": "_docgen_uiapi_key",
+                "notBefore": 1789632914,
+                "notAfter": 2104992914
+            }
+        ]
     }
 }
 ```
@@ -3182,26 +2520,27 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
 
 #### key.generate {#keygenerate}
 
-`key.generate(id, typ, notBefore, notAfter, store)`
+`key.generate(name, typ, notBefore, notAfter, store)`
 
 *パラメーター*
-- `id` *string*
-- `typ` *string* - 生成するキーの種類。RSAまたはECDSAが必要
+- `name` *string* - キー名。小文字に変換して保存されます
+- `typ` *string* - 生成するキーの種類。`RSA`または`ECDSA`を指定する必要があります
 - `notBefore` *int64* - キーの有効期間の開始時刻（Unixタイムスタンプ、秒）
     省略または0の場合は、現在時刻を使用します
 - `notAfter` *int64* - キーの有効期間の終了時刻（Unixタイムスタンプ、秒）
     省略または0の場合は、既定の10年間を使用します
 - `store` *bool* - キーペアをサーバーのキーストアに保存するかどうか
+    `false`の場合は保存しないため、`key.list`にも表示されません
 
 *戻り値*
 
 - `any|error` - 生成したキー情報
-    - `id`: キーペアの識別子
-    - `certificate`: キーペアの証明書
-    - `key`: キーペアの秘密鍵
-    - `token`: キーペアに関連付けられたトークン
-    - `serverKey`: サーバー証明書（storeがtrueの場合）
-    - `zip`: キーペアとサーバー証明書を含むZIPアーカイブ（storeがtrueの場合）
+    - `id`：キーID。`store`がfalseの場合は`0`です
+    - `name`：キー名
+    - `certificate`：キーペアの証明書
+    - `key`：キーペアの秘密鍵
+    - `serverKey`：サーバー証明書（`store`がtrueの場合）
+    - `zip`：キーペアとサーバー証明書を含むZIPアーカイブをbase64でエンコードした文字列（`store`がtrueの場合）
 
 <details>
 <summary>リクエスト・レスポンスのJSON</summary>
@@ -3217,11 +2556,11 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
         "id": 20,
         "method": "key.generate",
         "params": [
-            "string",
-            "string",
+            "_docgen_uiapi_key",
+            "ecdsa",
             0,
             0,
-            false
+            true
         ]
     }
 }
@@ -3236,7 +2575,14 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "result": {}
+        "result": {
+            "certificate": "-----BEGIN CERTIFICATE-----\nXXXXXXXXXXXXXXXXXX\n-----END CERTIFICATE-----\n",
+            "id": 8,
+            "key": "-----BEGIN EC PRIVATE KEY-----\nXXXXXXXXXXXXXXXX\n-----END EC PRIVATE KEY-----\n",
+            "name": "_docgen_uiapi_key",
+            "serverKey": "-----BEGIN CERTIFICATE-----\nXXXXXXXXXXXXXXXXXX\n-----END CERTIFICATE-----\n",
+            "zip": "UEsDBXXXXXXXXXXXXXXXX"
+        }
     }
 }
 ```
@@ -3248,7 +2594,7 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
 `key.delete(id)`
 
 *パラメーター*
-- `id` *string*
+- `id` *int64* - `key.list`または`key.generate`が返したキーID
 
 *戻り値*
 
@@ -3268,7 +2614,7 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
         "id": 20,
         "method": "key.delete",
         "params": [
-            "string"
+            8
         ]
     }
 }
@@ -3290,12 +2636,13 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
 
 </details>
 
+### トークン {#token}
 
-### スケジュール {#schedule}
+発行したトークンの使い方は、[APIセキュリティ](/neo/security/)を参照してください。
 
-#### schedule.list {#schedulelist}
+#### token.list {#tokenlist}
 
-`schedule.list()`
+`token.list()`
 
 *パラメーター*
 
@@ -3303,7 +2650,14 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
 
 *戻り値*
 
-- `array<object<scheduler.Schedule>>|error`
+- `array<object<ApiTokenInfo>>|error` - 呼び出したユーザーのAPIトークン一覧
+    - `id`：トークンID。`token.delete`に指定します
+    - `name`：トークン名
+    - `user`：トークンを所有するユーザー
+    - `hint`：一部を伏せたトークン値
+    - `createdAt`：発行時刻（Unixタイムスタンプ、秒）
+    - `notAfter`：有効期限（Unixタイムスタンプ、秒）
+    - `lastUsedAt`：最後に使用した時刻（Unixタイムスタンプ、秒）。一度も使用していない場合は省略されます
 
 <details>
 <summary>リクエスト・レスポンスのJSON</summary>
@@ -3317,7 +2671,7 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "method": "schedule.list",
+        "method": "token.list",
         "params": []
     }
 }
@@ -3332,81 +2686,35 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "result": []
-    }
-}
-```
-
-</details>
-
-#### schedule.timer.add {#scheduletimeradd}
-
-`schedule.timer.add(name, spec, command, autoStart)`
-
-*パラメーター*
-- `name` *string*
-- `spec` *string*
-- `command` *string*
-- `autoStart` *bool*
-
-*戻り値*
-
-- `null|error`
-
-<details>
-<summary>リクエスト・レスポンスのJSON</summary>
-
-*リクエスト*
-
-```json
-{
-    "type": "rpc_req",
-    "session": "client-session-#1",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 20,
-        "method": "schedule.timer.add",
-        "params": [
-            "string",
-            "string",
-            "string",
-            false
+        "result": [
+            {
+                "id": 11,
+                "name": "_docgen_uiapi_token",
+                "user": "SYS",
+                "hint": "nt_b_XXXX****XXXX",
+                "createdAt": 1789632914,
+                "notAfter": 2105252114
+            }
         ]
     }
 }
 ```
 
-*レスポンス*
-
-```json
-{
-    "type": "rpc_rsp",
-    "session": "client-session-#1",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 20,
-        "result": null
-    }
-}
-```
-
 </details>
 
-#### schedule.subscriber.add {#schedulesubscriberadd}
+#### token.generate {#tokengenerate}
 
-`schedule.subscriber.add(name, bridge, command, autoStart, topic, qos)`
+`token.generate(name, notAfter)`
 
 *パラメーター*
-- `name` *string*
-- `bridge` *string*
-- `command` *string*
-- `autoStart` *bool*
-- `topic` *string*
-- `qos` *int*
+- `name` *string* - トークン名。空の場合はエラーを返します
+- `notAfter` *int64* - 有効期限（Unixタイムスタンプ、秒）
+    0の場合は、発行から10年後に設定します
 
 *戻り値*
 
-- `null|error`
+- `object<GeneratedApiToken>|error` - `token.list`の項目と同じフィールドに、トークンの原文である`token`が加わります
+    トークンの原文は、このレスポンスでしか受け取れません
 
 <details>
 <summary>リクエスト・レスポンスのJSON</summary>
@@ -3420,13 +2728,9 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "method": "schedule.subscriber.add",
+        "method": "token.generate",
         "params": [
-            "string",
-            "string",
-            "string",
-            false,
-            "string",
+            "_docgen_uiapi_token",
             0
         ]
     }
@@ -3442,19 +2746,27 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "result": null
+        "result": {
+            "id": 11,
+            "name": "_docgen_uiapi_token",
+            "user": "SYS",
+            "hint": "nt_b_XXXX****XXXX",
+            "createdAt": 1789632914,
+            "notAfter": 2105252114,
+            "token": "nt_b_XXXXXXXXXXXXXXXX"
+        }
     }
 }
 ```
 
 </details>
 
-#### schedule.delete {#scheduledelete}
+#### token.delete {#tokendelete}
 
-`schedule.delete(name)`
+`token.delete(id)`
 
 *パラメーター*
-- `name` *string*
+- `id` *int64* - `token.list`または`token.generate`が返したトークンID
 
 *戻り値*
 
@@ -3472,9 +2784,9 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "method": "schedule.delete",
+        "method": "token.delete",
         "params": [
-            "string"
+            11
         ]
     }
 }
@@ -3496,12 +2808,196 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
 
 </details>
 
-#### schedule.start {#schedulestart}
+### タイマー {#timer}
 
-`schedule.start(name)`
+タイマーは、`timer.list`または`timer.add`が返すIDで指定します。同じ名前で追加しても、新しいIDで登録されます。実行周期の書式は[タイマー](/neo/timer/)を参照してください。
+
+#### timer.list {#timerlist}
+
+`timer.list()`
 
 *パラメーター*
-- `name` *string*
+
+- なし
+
+*戻り値*
+
+- `array<object<timer.Info>>|error` - タイマー一覧
+    - `id`：タイマーID
+    - `userName`、`execUser`：タイマーを所有するユーザーと実行するユーザー
+    - `name`：タイマー名
+    - `autoStart`：自動起動するかどうか。`false`の場合は省略されます
+    - `state`：`RUNNING`、`STARTING`、`STOP`、`STOPPING`、`FAILED`、`UNKNOWN`のいずれか
+    - `task`：実行するTQLファイルのパス
+    - `schedule`：実行周期
+
+<details>
+<summary>リクエスト・レスポンスのJSON</summary>
+
+*リクエスト*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "timer.list",
+        "params": []
+    }
+}
+```
+
+*レスポンス*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": [
+            {
+                "id": 9,
+                "userName": "SYS",
+                "execUser": "sys",
+                "name": "_DOCGEN_UIAPI_TIMER",
+                "state": "STOP",
+                "task": "_docgen_uiapi_timer.tql",
+                "schedule": "@every 1h"
+            }
+        ]
+    }
+}
+```
+
+</details>
+
+#### timer.get {#timerget}
+
+`timer.get(id)`
+
+*パラメーター*
+- `id` *int64* - タイマーID
+
+*戻り値*
+
+- `object<timer.Info>|error` - タイマー情報。フィールドは`timer.list`と同じです
+
+<details>
+<summary>リクエスト・レスポンスのJSON</summary>
+
+*リクエスト*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "timer.get",
+        "params": [
+            9
+        ]
+    }
+}
+```
+
+*レスポンス*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {
+            "id": 9,
+            "userName": "SYS",
+            "execUser": "sys",
+            "name": "_DOCGEN_UIAPI_TIMER",
+            "state": "STOP",
+            "task": "_docgen_uiapi_timer.tql",
+            "schedule": "@every 1h"
+        }
+    }
+}
+```
+
+</details>
+
+#### timer.add {#timeradd}
+
+`timer.add(req)`
+
+*パラメーター*
+- `req` *object*
+    - `name` *string* - タイマー名。大文字に変換して保存されます
+    - `spec` *string* - 実行周期。例：`0 30 * * * *`（毎時30分）、`@every 1h30m`（1時間30分ごと）、`@daily`（毎日）
+    - `command` *string* - 実行するTQLファイルのパス。ファイルが存在しない場合はエラーを返します
+    - `autoStart` *bool* - `true`の場合は追加と同時に開始し、machbase-neoの起動時にも自動で開始します
+
+*戻り値*
+
+- `int64|error` - 作成したタイマーのID
+
+<details>
+<summary>リクエスト・レスポンスのJSON</summary>
+
+*リクエスト*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "timer.add",
+        "params": [
+            {
+                "name": "_docgen_uiapi_timer",
+                "spec": "@every 1h",
+                "command": "_docgen_uiapi_timer.tql",
+                "autoStart": false
+            }
+        ]
+    }
+}
+```
+
+*レスポンス*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": 9
+    }
+}
+```
+
+</details>
+
+#### timer.update {#timerupdate}
+
+`id`で指定したタイマーの設定を、リクエストの内容に置き換えます。
+
+`timer.update(req)`
+
+*パラメーター*
+- `req` *object*
+    - `id` *int64* - タイマーID
+    - `spec` *string* - 実行周期
+    - `command` *string* - 実行するTQLファイルのパス。省略するとエラーを返します
+    - `autoStart` *bool* - 自動起動するかどうか。省略すると`false`になります
 
 *戻り値*
 
@@ -3519,9 +3015,14 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "method": "schedule.start",
+        "method": "timer.update",
         "params": [
-            "string"
+            {
+                "id": 9,
+                "spec": "0 30 * * * *",
+                "command": "_docgen_uiapi_timer.tql",
+                "autoStart": true
+            }
         ]
     }
 }
@@ -3543,12 +3044,12 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
 
 </details>
 
-#### schedule.stop {#schedulestop}
+#### timer.delete {#timerdelete}
 
-`schedule.stop(name)`
+`timer.delete(id)`
 
 *パラメーター*
-- `name` *string*
+- `id` *int64* - タイマーID
 
 *戻り値*
 
@@ -3566,9 +3067,9 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "method": "schedule.stop",
+        "method": "timer.delete",
         "params": [
-            "string"
+            9
         ]
     }
 }
@@ -3590,6 +3091,498 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
 
 </details>
 
+#### timer.start {#timerstart}
+
+`timer.start(id)`
+
+*パラメーター*
+- `id` *int64* - タイマーID
+
+*戻り値*
+
+- `null|error`
+
+<details>
+<summary>リクエスト・レスポンスのJSON</summary>
+
+*リクエスト*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "timer.start",
+        "params": [
+            9
+        ]
+    }
+}
+```
+
+*レスポンス*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
+
+#### timer.stop {#timerstop}
+
+`timer.stop(id)`
+
+*パラメーター*
+- `id` *int64* - タイマーID
+
+*戻り値*
+
+- `null|error`
+
+<details>
+<summary>リクエスト・レスポンスのJSON</summary>
+
+*リクエスト*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "timer.stop",
+        "params": [
+            9
+        ]
+    }
+}
+```
+
+*レスポンス*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
+
+### サブスクライバー {#subscriber}
+
+サブスクライバーは、`subscriber.list`または`subscriber.add`が返すIDで指定します。ブリッジの設定は、[MQTTブリッジ](/neo/bridges/mqtt/)と[NATSブリッジ](/neo/bridges/nats/)を参照してください。
+
+#### subscriber.list {#subscriberlist}
+
+`subscriber.list()`
+
+*パラメーター*
+
+- なし
+
+*戻り値*
+
+- `array<object<subscriber.Info>>|error` - サブスクライバー一覧
+    - `id`：サブスクライバーID
+    - `userName`、`execUser`：サブスクライバーを所有するユーザーと実行するユーザー
+    - `name`：サブスクライバー名
+    - `autoStart`：自動起動するかどうか
+    - `state`：`RUNNING`、`STARTING`、`STOP`、`STOPPING`、`FAILED`、`UNKNOWN`のいずれか
+    - `task`：書き込み記述子
+    - `bridge`：ブリッジ名
+    - `topic`：購読するMQTTトピックまたはNATSサブジェクト
+    - `qos`、`queue`、`stream`：ブリッジのオプション
+    - `autoStart`、`qos`、`queue`、`stream`フィールドは、値がない場合は省略されます
+
+<details>
+<summary>リクエスト・レスポンスのJSON</summary>
+
+*リクエスト*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "subscriber.list",
+        "params": []
+    }
+}
+```
+
+*レスポンス*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": [
+            {
+                "id": 4,
+                "userName": "SYS",
+                "execUser": "sys",
+                "name": "_DOCGEN_UIAPI_SUBR",
+                "state": "STOP",
+                "task": "db/append/EXAMPLE:csv",
+                "bridge": "_docgen_uiapi_mqtt",
+                "topic": "_docgen_uiapi/sensor",
+                "qos": 1
+            }
+        ]
+    }
+}
+```
+
+</details>
+
+#### subscriber.get {#subscriberget}
+
+`subscriber.get(id)`
+
+*パラメーター*
+- `id` *int64* - サブスクライバーID
+
+*戻り値*
+
+- `object<subscriber.Info>|error` - サブスクライバー情報。フィールドは`subscriber.list`と同じです
+
+<details>
+<summary>リクエスト・レスポンスのJSON</summary>
+
+*リクエスト*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "subscriber.get",
+        "params": [
+            4
+        ]
+    }
+}
+```
+
+*レスポンス*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {
+            "id": 4,
+            "userName": "SYS",
+            "execUser": "sys",
+            "name": "_DOCGEN_UIAPI_SUBR",
+            "state": "STOP",
+            "task": "db/append/EXAMPLE:csv",
+            "bridge": "_docgen_uiapi_mqtt",
+            "topic": "_docgen_uiapi/sensor",
+            "qos": 1
+        }
+    }
+}
+```
+
+</details>
+
+#### subscriber.add {#subscriberadd}
+
+`subscriber.add(req)`
+
+*パラメーター*
+- `req` *object*
+    - `name` *string* - サブスクライバー名。大文字に変換して保存されます
+    - `bridge` *string* - サブスクライバーが使用するブリッジ名
+    - `command` *string* - 例：`db/append/EXAMPLE:csv`。書き込み記述子です。この例は、CSV形式で受信したデータを`EXAMPLE`テーブルにappendモードで書き込むことを表します
+    - `autoStart` *bool* - `true`にすると、machbase-neoとともにサブスクライバーも起動します
+    - `mqtt` *object* - MQTTブリッジのオプション
+        - `topic` *string* - 購読するトピック
+        - `qos` *int* - トピック購読のQoSレベル。`0`と`1`に対応し、既定値は`0`です
+    - `nats` *object* - NATSブリッジのオプション
+        - `subject` *string* - 購読するサブジェクト
+        - `queue` *string* - キューグループ
+        - `stream` *string* - ストリーム名
+- `name`、`bridge`、`command`とトピック（`mqtt.topic`または`nats.subject`）は必須です。
+- `mqtt`と`nats`は同時に指定できません。
+
+*戻り値*
+
+- `int64|error` - 作成したサブスクライバーのID
+
+<details>
+<summary>リクエスト・レスポンスのJSON</summary>
+
+*リクエスト*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "subscriber.add",
+        "params": [
+            {
+                "name": "_docgen_uiapi_subr",
+                "bridge": "_docgen_uiapi_mqtt",
+                "command": "db/append/EXAMPLE:csv",
+                "autoStart": false,
+                "mqtt": {
+                    "topic": "_docgen_uiapi/sensor",
+                    "qos": 1
+                }
+            }
+        ]
+    }
+}
+```
+
+*レスポンス*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": 4
+    }
+}
+```
+
+</details>
+
+#### subscriber.update {#subscriberupdate}
+
+`id`で指定したサブスクライバーの設定を、リクエストの内容に置き換えます。
+
+`subscriber.update(req)`
+
+*パラメーター*
+- `req` *object*
+    - `id` *int64* - サブスクライバーID
+    - `bridge`、`command`、`autoStart`、`mqtt`、`nats` - `subscriber.add`と同じです
+
+*戻り値*
+
+- `null|error`
+
+<details>
+<summary>リクエスト・レスポンスのJSON</summary>
+
+*リクエスト*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "subscriber.update",
+        "params": [
+            {
+                "id": 4,
+                "bridge": "_docgen_uiapi_mqtt",
+                "command": "db/append/EXAMPLE:json",
+                "autoStart": false,
+                "mqtt": {
+                    "topic": "_docgen_uiapi/sensor2",
+                    "qos": 0
+                }
+            }
+        ]
+    }
+}
+```
+
+*レスポンス*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
+
+#### subscriber.delete {#subscriberdelete}
+
+`subscriber.delete(id)`
+
+*パラメーター*
+- `id` *int64* - サブスクライバーID
+
+*戻り値*
+
+- `null|error`
+
+<details>
+<summary>リクエスト・レスポンスのJSON</summary>
+
+*リクエスト*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "subscriber.delete",
+        "params": [
+            4
+        ]
+    }
+}
+```
+
+*レスポンス*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
+
+#### subscriber.start {#subscriberstart}
+
+`subscriber.start(id)`
+
+*パラメーター*
+- `id` *int64* - サブスクライバーID
+
+*戻り値*
+
+- `null|error`
+
+<details>
+<summary>リクエスト・レスポンスのJSON</summary>
+
+*リクエスト*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "subscriber.start",
+        "params": [
+            4
+        ]
+    }
+}
+```
+
+*レスポンス*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
+
+#### subscriber.stop {#subscriberstop}
+
+`subscriber.stop(id)`
+
+*パラメーター*
+- `id` *int64* - サブスクライバーID
+
+*戻り値*
+
+- `null|error`
+
+<details>
+<summary>リクエスト・レスポンスのJSON</summary>
+
+*リクエスト*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "subscriber.stop",
+        "params": [
+            4
+        ]
+    }
+}
+```
+
+*レスポンス*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
 
 ### HTTP {#http}
 
@@ -3598,7 +3591,7 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
 `http.debug.set(m)`
 
 *パラメーター*
-- `m` *object* - enableとlogLatencyキーを持つデバッグ設定マップ
+- `m` *object* - `enable`と`logLatency`キーを持つデバッグ設定マップ
 
 *戻り値*
 
@@ -3686,7 +3679,6 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
 ```
 
 </details>
-
 
 ### セッション {#session}
 
@@ -3925,7 +3917,6 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
 
 </details>
 
-
 ### SQL {#sql}
 
 #### sql.split {#sqlsplit}
@@ -3974,7 +3965,6 @@ WebSocketでは、`rpc_req`と`rpc_rsp`イベントを使用します。
 ```
 
 </details>
-
 
 ### LSP {#lsp}
 

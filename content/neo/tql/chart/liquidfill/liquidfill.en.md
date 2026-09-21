@@ -18,4 +18,4 @@ CHART(
 )
 ```
 
-{{< figure src="../../img/liquidfill.jpg" width="500" >}}
+{{< figure src="/neo/tql/chart/img/liquidfill.jpg" width="500" >}}

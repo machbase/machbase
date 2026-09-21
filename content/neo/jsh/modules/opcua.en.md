@@ -19,14 +19,14 @@ new Client(options)
 ```
 
 - Returns: `Client`
-- Throws `missing client options` if `options` is omitted.
+- Throws an exception (`missing client options`) if `options` is omitted.
 
 <h6>Options</h6>
 
 | Option              | Type     | Default                         | Description |
 |:--------------------|:---------|:--------------------------------|:------------|
 | endpoint            | `string` | `""`                            | OPC UA endpoint (`opc.tcp://host:port`) |
-| readRetryInterval   | `number` | `100` (clamped to 100 if lower) | Retry interval for `read()` in milliseconds |
+| readRetryInterval   | `number` | `100` (values below 100 ms are raised to 100) | Retry interval for `read()` in milliseconds |
 | messageSecurityMode | `number` | `MessageSecurityMode.None`      | Security mode. See [MessageSecurityMode](#messagesecuritymode) |
 
 <h6>Usage example</h6>
@@ -301,8 +301,8 @@ try {
 | statusCode      | `string` | Status code name (for example, `StatusGood`) |
 | value           | `any`    | Read value |
 | type            | `string` | Value type name (for example, `Boolean`, `Int32`, `Double`) |
-| sourceTimestamp | `number` | Unix epoch timestamp in milliseconds |
-| serverTimestamp | `number` | Unix epoch timestamp in milliseconds |
+| sourceTimestamp | `number` | Source timestamp (Unix epoch milliseconds) |
+| serverTimestamp | `number` | Server timestamp (Unix epoch milliseconds) |
 
 ## WriteRequest
 

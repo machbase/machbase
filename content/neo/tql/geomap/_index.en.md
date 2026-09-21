@@ -6,7 +6,7 @@ weight: 51
 
 {{< neo_since ver="8.0.44" />}}
 
-*Syntax*: `GEOMAP( [geomapID()] [, tileTemplate()] [, size()] )` 
+*Syntax*: `GEOMAP( [geomapID()] [, tileTemplate()] [, size()] )`
 
 `GEOMAP` generates a map display and shows markers and geometric shapes based on provided coordinates.
 It functions similarly to `CHART`, but it uses coordinates instead of scalar values. The supported coordinates system is [WGS84](https://en.wikipedia.org/wiki/World_Geodetic_System).
@@ -17,7 +17,6 @@ Each input object must include `type` and `coordinates` fields, with an optional
 A layer in the `GEOMAP()` function is an object that is rendered on the map according to its specified type.
 For example, a layer with the type `circle` will display a circle on the map based on the provided properties.
 
-
 ### tileTemplate()
 
 *Syntax*: `tileTemplate(url_template)`
@@ -25,33 +24,32 @@ For example, a layer with the type `circle` will display a circle on the map bas
 The map tile server url template.
 The default is `https://tile.openstreetmap.org/{z}/{x}/{y}.png`.
 
-> **Important :** If the map clients (web browsers) cannot access the default tile server 
+> **Important:** If the map clients (web browsers) cannot access the default tile server
 > due to the firewall and organization's security policy,
-> you will need to run your own tile server inside your organization 
-> and set the tile server URL using `tileTemplate()`. 
+> you will need to run your own tile server inside your organization
+> and set the tile server URL using `tileTemplate()`.
 > Instructions on how to run a tile server are beyond the scope of this document.
 > Please refer to the following for more information about the tile server:
 > https://wiki.openstreetmap.org/wiki/Tile_servers
 
 ### tileGrayscale()
 
-*Syntax* `tileGrayscale(scale)`
+*Syntax*: `tileGrayscale(scale)`
 
-- `scale` *float* Set the gray scale of the tile image it should be 0 ≤ scale ≤ 1.0. (Default: `0`)
-
+- `scale` *float*: gray scale of the tile image, 0 ≤ scale ≤ 1.0 (default: `0`)
 
 ### geomapID()
 
 *Syntax*: `geomapID(id)`
 
-If you need to specify the map id (*string*) instead of auto-generated one.
+Specifies the map ID (*string*) to use instead of an auto-generated one.
 
 ### size()
 
 *Syntax*: `size(width, height)`
 
-- `width` *string* map width in HTML syntax ex) `'800px'`
-- `height` *string* map height in HTML syntax ex) `'800px'`
+- `width` *string*: map width in HTML syntax (e.g. `'800px'`)
+- `height` *string*: map height in HTML syntax (e.g. `'600px'`)
 
 ## Layers
 
@@ -60,7 +58,7 @@ The input data of `GEOMAP()` should be a dictionary structure represented as a J
 
 The object must have `type` and `coordinates` fields, with an optional `properties` field.
 
-**syntax**
+**Format**
 
 ```js
 {
@@ -79,7 +77,6 @@ The object must have `type` and `coordinates` fields, with an optional `properti
 | `type`          | `String`      | Type of the layer. <br/> e.g., `marker`, `circle`, `circleMarker`, etc. |
 | `coordinates`   | `[]Float`,<br/> `[][]Float`, ... | Coordinates for the `type` in [latitude, longitude] order |
 | `properties`    | `Dictionary` | Various options depending on the `type`.<br/>See [Properties](#properties) |
-
 
 ### marker
 
@@ -100,7 +97,7 @@ SCRIPT({
 GEOMAP()
 ```
 
-{{< figure src="../img/geomap-marker.png" width="500" >}}
+{{< figure src="/neo/tql/img/geomap-marker.png" width="500" >}}
 
 ### circleMarker
 
@@ -130,7 +127,7 @@ SCRIPT({
 GEOMAP()
 ```
 
-{{< figure src="../img/geomap-circlemarker.png" width="500" >}}
+{{< figure src="/neo/tql/img/geomap-circlemarker.png" width="500" >}}
 
 ### circle
 
@@ -160,7 +157,7 @@ SCRIPT({
 GEOMAP()
 ```
 
-{{< figure src="../img/geomap-circle.png" width="500" >}}
+{{< figure src="/neo/tql/img/geomap-circle.png" width="500" >}}
 
 ### polyline
 
@@ -188,7 +185,7 @@ SCRIPT({
 GEOMAP()
 ```
 
-{{< figure src="../img/geomap-polyline.png" width="500" >}}
+{{< figure src="/neo/tql/img/geomap-polyline.png" width="500" >}}
 
 ### polygon
 
@@ -217,7 +214,7 @@ SCRIPT({
 GEOMAP()
 ```
 
-{{< figure src="../img/geomap-polygon.png" width="500" >}}
+{{< figure src="/neo/tql/img/geomap-polygon.png" width="500" >}}
 
 ## Properties
 
@@ -228,7 +225,7 @@ GEOMAP()
 | `stroke`        | Boolean| `true`    | Whether to draw stroke along the path. Set it to false to disable borders on polygons or circles. |
 | `color`         | String | `'#3388ff'` | Stroke color  |
 | `weight`        | Number | `3`       | Stroke width in pixels |
-| `opacity`       | Number | `1.0`     | The opacity of the marker.|
+| `opacity`       | Number | `1.0`     | The opacity of the layer. |
 | `fillColor`     | String |           | Fill color. Defaults to the value of the color property. |
 | `fillOpacity`   | Number | `0.2`     | Fill opacity. |
 | `popup`         | Object | `null`    | See [Popup](#popup). |
@@ -236,7 +233,7 @@ GEOMAP()
 
 ### Popup
 
-If layer properties has `popup` object it displays popup message when user click the layer.
+If the layer properties have a `popup` object, a popup message is displayed when the user clicks the layer.
 
 | Property        | Type   | Default    | Description   |
 |:--------------- |:-------|:-----------|:--------------|
@@ -269,7 +266,7 @@ SCRIPT({
 GEOMAP()
 ```
 
-{{< figure src="../img/geomap-marker-popup.png" width="500" >}}
+{{< figure src="/neo/tql/img/geomap-marker-popup.png" width="500" >}}
 
 ### Tooltip
 
@@ -277,11 +274,11 @@ GEOMAP()
 
 Used to display small texts on top of map layers.
 
-| Property         | Type   | Default    | Description   |
+| Property        | Type   | Default    | Description   |
 |:--------------- |:-------|:-----------|:--------------|
-| `content`       | String |            | The content of the popup in Text/HTML. |
+| `content`       | String |            | The content of the tooltip in Text/HTML. |
 | `open`          | Boolean| `false`    | Set initial open state |
-| `direction`     | String | `auto`     | Direction where to open the tooltip. `right,left,top,bottom,center,auto` |
+| `direction`     | String | `auto`     | Direction where to open the tooltip: `right`, `left`, `top`, `bottom`, `center`, `auto` |
 | `permanent`     | Boolean| `false`    | Whether to open the tooltip permanently or only on mouseover |
 | `opacity`       | Number | `0.9`      | Tooltip container opacity |
 
@@ -309,8 +306,7 @@ SCRIPT({
 GEOMAP()
 ```
 
-{{< figure src="../img/geomap-marker-tooltip.png" width="500" >}}
-
+{{< figure src="/neo/tql/img/geomap-marker-tooltip.png" width="500" >}}
 
 <!--
 ## GeoJSON
@@ -357,7 +353,7 @@ SCRIPT({
 GEOMAP()
 ```
 
-{{< figure src="../img/geomap-geojson-collection.png" width="500" >}}
+{{< figure src="/neo/tql/img/geomap-geojson-collection.png" width="500" >}}
 
 ### Feature
 
@@ -394,14 +390,14 @@ SCRIPT({
 GEOMAP()
 ```
 
-{{< figure src="../img/geomap-geojson-collection.png" width="500" >}}
+{{< figure src="/neo/tql/img/geomap-geojson-collection.png" width="500" >}}
 
 -->
 
 ## Examples
 
 Load test data from a CSV file and insert it into the "TRIP" table.
-This TQL downloads the CSV file from the given URL, 
+This TQL downloads the CSV file from the given URL,
 converts the CSV strings into the appropriate data types,
 and inserts the records into the TRIP table.
 
@@ -418,7 +414,7 @@ SCRIPT({
         "lat double, "+
         "lon double "+
     ")")
-    // parse time form csv string '23-04-21 16:53:21:123000'
+    // parse time from csv string '23-04-21 16:53:21:123000'
     function parseTime(str) { 
         y = "20"+str.substr(0,2);
         m = str.substr(3,2) - 1;
@@ -448,6 +444,7 @@ SQL(`INSERT INTO TRIP (name, time, value, lat, lon) values(?,?,?,?,?)`,
 
 {{< tabs >}}
 {{< tab name="SQL" >}}
+
 ```js {{linenos=table,hl_lines=[5,7]}}
 SQL(`SELECT time, lat, lon FROM TRIP
      WHERE name = 'firenze' ORDER BY time`)
@@ -469,8 +466,10 @@ SCRIPT({
 })
 GEOMAP()
 ```
+
 {{< /tab >}}
 {{< tab name="CSV" >}}
+
 ```js {{linenos=table,hl_lines=["8-11"]}}
 // CSV Format: TIME, LAT, LON
 CSV(file("https://docs.machbase.com/assets/example/data-trajectory-firenze.csv"))
@@ -497,18 +496,20 @@ SCRIPT({
 
 GEOMAP()
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
-{{< figure src="./img/trajectory-firenze.png" width="600" >}}
+{{< figure src="/neo/tql/geomap/img/trajectory-firenze.png" width="600" >}}
 
 ### Distance and Speed
 
-Using the Haversine formula to calculate the distance moved in meters between two points,
-then computing the moving speed in kilometers per hour (Km/H) based on the time difference between these points.
+Use the Haversine formula to calculate the distance moved in meters between two points,
+then compute the moving speed in kilometers per hour (km/h) based on the time difference between these points.
 
 {{< tabs >}}
 {{< tab name="SQL" >}}
+
 ```js {{linenos=table,hl_lines=[7,"22-23",28]}}
 SQL(`SELECT time, lat, lon FROM TRIP
      WHERE name = 'firenze' ORDER BY time`)
@@ -549,8 +550,10 @@ SCRIPT({
 })
 GEOMAP()
 ```
+
 {{< /tab >}}
 {{< tab name="CSV" >}}
+
 ```js {{linenos=table,hl_lines=["20-22",30,51,"45-46"]}}
 // CSV Format: TIME("23-04-21 16:53:21:568000"), LAT, LON
 CSV(file("https://docs.machbase.com/assets/example/data-trajectory-firenze.csv"))
@@ -614,7 +617,8 @@ SCRIPT({
 })
 GEOMAP()
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
-{{< figure src="./img/trajectory-firenze-speed.png" width="600" >}}
+{{< figure src="/neo/tql/geomap/img/trajectory-firenze-speed.png" width="600" >}}

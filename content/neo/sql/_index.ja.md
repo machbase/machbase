@@ -5,15 +5,15 @@ type: docs
 weight: 22
 ---
 
-「SQL」を選択すると、新しいSQLエディターが開きます。
+新しいタブの画面で `SQL` カードを選択すると、新しいSQLエディターが開きます。
 
-{{< figure src="/images/web-sql-pick.png" width="600" >}}
+{{< figure src="/images/web-sql-pick.png" width="600px" >}}
 
 ## SQL {#sql}
 
 ### テーブルの作成 {#테이블-생성}
 
-画面の左側がSQLエディター、右側が結果とログのパネルです。
+画面の左側がSQLエディター、右側が結果パネル（`RESULT`・`CHART`）です。実行ログは下部のコンソールに表示されます。
 
 以下のDDL文をコピーして、エディターに貼り付けます。
 
@@ -25,7 +25,7 @@ CREATE TAG TABLE IF NOT EXISTS example (
 );
 ```
 
-`Ctrl+Enter`を押すか、左上の▶︎アイコンをクリックして実行します。文末のセミコロンを忘れずに入力してください。
+エディター左上の<img src="/neo/sql/img/sql_run_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px">をクリックするか、`Ctrl+Enter`（macOS では `Cmd+Enter`）を押して実行します。文末のセミコロンを忘れずに入力してください。
 
 {{< figure src="/images/web-cretable.png" >}}
 
@@ -67,6 +67,21 @@ SELECT * FROM example WHERE name = :name;
 INSERT文とSELECT文で、それぞれ`:name`、`:value`として参照します。
 `-- env: reset`を実行すると、SQLエディターに設定した名前付き引数がリセットされます。
 
+`-- env:`で指定した設定は、`-- env: reset`を実行するまで累積されます。
+
+```sql
+--env: named.name=my-car
+--env: named.time='2026-09-10 12:28:26.197719833'
+--env: named.layout='YYYY-MM-DD HH24:MI:SS.mmmuuunnn'
+SELECT * FROM example
+  WHERE name = :name AND time=to_date(:time, :layout);
+
+--env: named.new_value=9.876
+UPDATE example SET value = :new_value
+  WHERE name = :name AND time=to_date(:time, :layout);
+--env: reset
+```
+
 ### グラフの描画 {#차트-그리기}
 
 INSERT文を繰り返し実行して、データを追加します。
@@ -84,22 +99,22 @@ SELECT time, value FROM example WHERE name = 'my-car';
 ```
 {{< figure src="/images/web-select-multi.png" >}}
 
-右側のパネルで*CHART*タブをクリックすると、結果を折れ線グラフで確認できます。
+右側のパネルで `CHART` タブをクリックすると、結果を折れ線グラフで確認できます。1 列目が X 軸、2 列目が Y 軸になり、`X Axis`・`Y Axis` で列を変えてから横の ▶ ボタンを押すと描き直します。
 
-{{< figure src="/images/web-select-chart.jpg" width="600" >}}
+{{< figure src="/images/web-select-chart.jpg" width="560px" >}}
 
 ### CSVファイルのダウンロード {#csv-파일-다운로드}
 
-クエリ結果全体をCSVファイルとしてダウンロードできます。
+結果パネル右上の<img src="/neo/sql/img/sql_download_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px">をクリックすると、クエリ結果を CSV ファイルとしてダウンロードします。結果表は 50 行ずつ表示しますが、CSV ファイルにはクエリが返すすべての行がヘッダー行付きで保存され、時刻の値はエディターの時刻形式・タイムゾーン設定に従います。
 
-{{< figure src="./img/web-select-download.png" >}}
+{{< figure src="/neo/sql/img/web-select-download.png" width="570px" >}}
 
 ### テーブルの削除 {#테이블-삭제}
 
 *DELETE*文でレコードを削除します。
 
 ```sql
-DELETE FROM example WHERE name = 'my-car'
+DELETE FROM example WHERE name = 'my-car';
 ```
 
 テーブルを作り直す場合は、テーブルを削除します。
@@ -118,7 +133,7 @@ DROP TABLE example;
 show tables;
 ```
 
-{{< figure src="./img/web-show-tables.png" >}}
+{{< figure src="/neo/sql/img/web-show-tables.png" >}}
 
 ### desc _table_name_ {#desc-_table_name_}
 
@@ -128,7 +143,7 @@ show tables;
 desc example;
 ```
 
-{{< figure src="./img/web-desc-table.png" >}}
+{{< figure src="/neo/sql/img/web-desc-table.png" >}}
 
 ### show tags _table_name_ {#show-tags-_table_name_}
 
@@ -138,7 +153,7 @@ show tags example;
 
 TAGテーブルに保存されたタグの一覧を確認します。
 
-{{< figure src="./img/web-show-tags.png" >}}
+{{< figure src="/neo/sql/img/web-show-tags.png" >}}
 
 
 ## SQLガイド {#sql-가이드}

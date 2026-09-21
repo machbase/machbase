@@ -103,4 +103,4 @@ CHART(
 )
 ```
 
-{{< figure src="../../img/anscombe_quartet.jpg" width="500" >}}
+{{< figure src="/neo/tql/chart/img/anscombe_quartet.jpg" width="500" >}}

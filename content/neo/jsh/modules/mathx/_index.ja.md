@@ -361,7 +361,7 @@ for( i=1; i<=100; i++) {
     x.push(i);
 }
 x = m.sort(x);
-console.log(m.cdf(1.0, x)); // 0.01
+console.log(m); // 0.01
 ```
 
 ## mean() {#mean}

@@ -18,7 +18,7 @@ CREATE TAG TABLE IF NOT EXISTS EXAMPLE  (
 
 This example shows how to utilize grid library with data from machbase-neo.
 
-{{< figure src="../img/grid-webapp-1.jpg" width="600px" >}}
+{{< figure src="/neo/tutorials/img/grid-webapp-1.jpg" width="600px" >}}
 
 - line 18,19, Embed Grid.js library.
 - line 29,30, Assign columns and data fields from the result JSON.

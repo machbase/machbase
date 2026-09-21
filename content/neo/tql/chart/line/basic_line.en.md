@@ -32,7 +32,7 @@ CHART(
 )
 ```
 
-{{< figure src="../../img/basic_line.jpg" width="500" >}}
+{{< figure src="/neo/tql/chart/img/basic_line.jpg" width="500" >}}
 
 ## SRC :: SCRIPT()
 
@@ -120,7 +120,7 @@ CHART(
 )
 ```
 
-{{< figure src="../../img/basic_line_sql.jpg" width="500" >}}
+{{< figure src="/neo/tql/chart/img/basic_line_sql.jpg" width="500" >}}
 
 ### SCRIPT() to CHART()
 

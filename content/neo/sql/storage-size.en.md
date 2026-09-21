@@ -6,7 +6,7 @@ weight: 51
 
 ## Introduction
 
-Time-series databases, particularly those handling high-frequency data from numerous sources, face the challenge of continuous data accumulation. Ingesting potentially millions of data points per second necessitates substantial storage capacity. Over time, managing this storage often involves manual monitoring of disk utilization followed by periodic execution of `DELETE` operations to reclaim space, introducing operational complexity and potential for error. Furthermore, many applications require data to be retained only for a specific operational period, after which older data becomes obsolete.
+Time-series databases, particularly those handling high-frequency data from numerous sources, face the challenge of continuous data accumulation. Ingesting potentially millions of data points per second requires substantial storage capacity. Over time, managing this storage often involves manually monitoring disk utilization and periodically running `DELETE` operations to reclaim space, which adds operational complexity and the potential for error. Furthermore, many applications require data to be retained only for a specific operational period, after which older data becomes obsolete.
 
 To address these challenges, Machbase implements an Automatic Storage Size Management mechanism through its **Retention Policy** feature. This feature provides a declarative approach to automatically purge data that has aged beyond a defined retention period, thereby maintaining predictable storage utilization and simplifying long-term data lifecycle management.
 
@@ -14,17 +14,18 @@ To address these challenges, Machbase implements an Automatic Storage Size Manag
 
 A Retention Policy in Machbase defines a rule for the automatic, time-based deletion of data from specified tables. It operates based on two primary parameters:
 
-*   **Duration:** This specifies the maximum age of data to be retained within a table. Data older than this duration, measured relative to the current system time during the policy check, becomes eligible for deletion. The duration can be defined in units of `MONTH` or `DAY`.
-*   **Interval:** This determines the frequency at which Machbase checks the associated table(s) for data eligible for deletion based on the defined `DURATION`. The interval defines how often the retention enforcement process is executed and can be set in units of `DAY` or `HOUR`.
+*   **Duration:** This specifies the maximum age of data to be retained within a table. Data older than this duration, measured relative to the current system time during the policy check, becomes eligible for deletion. The duration can be defined in units of `MONTH`, `DAY`, `HOUR`, `MIN` or `SEC`.
+*   **Interval:** This determines how often Machbase checks the associated table(s) for data eligible for deletion based on the defined `DURATION`. The interval defines how often the retention enforcement process is executed and can be set in units of `DAY`, `HOUR`, `MIN` or `SEC`.
 
 When a Retention Policy is applied to a table, a background process periodically (as defined by `INTERVAL`) scans the table. It identifies and automatically deletes all data rows whose timestamp (specifically, the value in the `BASETIME` column) is older than the current system time minus the specified `DURATION`.
 
 The lifecycle of managing data retention using this feature involves:
-1.  Creating a named Retention Policy object specifying the `DURATION` and `INTERVAL`.
-2.  Applying the created Retention Policy to one or more target tables.
+
+1.  Creating a named Retention Policy object that specifies the `DURATION` and `INTERVAL` (`CREATE RETENTION`).
+2.  Applying the created Retention Policy to one or more target tables (`ALTER TABLE ... ADD RETENTION`).
 3.  Machbase automatically executing the deletion process according to the policy's schedule.
-4.  Optionally detaching the policy from a table if automatic deletion is no longer required for that table.
-5.  Optionally dropping the Retention Policy object itself once it is no longer applied to any tables.
+4.  Optionally detaching the policy from a table if automatic deletion is no longer required for that table (`ALTER TABLE ... DROP RETENTION`).
+5.  Optionally dropping the Retention Policy object itself once it is no longer applied to any tables (`DROP RETENTION`).
 
 ## Creating a Retention Policy
 
@@ -34,15 +35,15 @@ A Retention Policy is defined as a distinct database object using the `CREATE RE
 
 ```sql
 CREATE RETENTION policy_name
-    DURATION duration_value { MONTH | DAY }
-    INTERVAL interval_value { DAY | HOUR };
+    DURATION duration_value { MONTH | DAY | HOUR | MIN | SEC }
+    INTERVAL interval_value { DAY | HOUR | MIN | SEC };
 ```
 
 *   `policy_name`: A unique identifier chosen by the user for this specific retention policy.
 *   `duration_value`: An integer representing the length of the data retention period.
-*   `MONTH | DAY`: The time unit for the `duration_value`.
+*   `MONTH | DAY | HOUR | MIN | SEC`: The time unit for the `duration_value`.
 *   `interval_value`: An integer representing the frequency of the deletion check.
-*   `DAY | HOUR`: The time unit for the `interval_value`.
+*   `DAY | HOUR | MIN | SEC`: The time unit for the `interval_value`.
 
 **Examples:**
 
@@ -92,7 +93,7 @@ Information about defined Retention Policies and their application status can be
     SELECT * FROM M$RETENTION;
     ```
 
-*   **`V$RETENTION_JOB`:** This view displays which policies are currently applied to which tables, along with the status of the retention job (e.g., `WAITING`) and the timestamp of the last successful deletion execution (`LAST_DELETED_TIME`).
+*   **`V$RETENTION_JOB`:** This view shows which policies are currently applied to which tables, along with the status of the retention job (e.g., `WAITING`) and the reference time used by the last deletion run (`LAST_DELETED_TIME`).
 
     ```sql
     -- View retention policies currently applied to tables
@@ -101,7 +102,7 @@ Information about defined Retention Policies and their application status can be
 
 ## Detaching and Removing Policies
 
-A Retention Policy can be detached from a table, stopping the automatic deletion process for that specific table. The policy object itself can then be deleted if it's no longer needed and not applied to any other tables.
+A Retention Policy can be detached from a table, stopping the automatic deletion process for that specific table. The policy object itself can then be deleted if it is no longer needed and not applied to any other tables.
 
 ### Detaching from a Table
 
@@ -117,7 +118,7 @@ ALTER TABLE table_name DROP RETENTION;
 
 ### Removing a Policy Object
 
-Use the `DROP RETENTION` statement to delete the policy definition itself. This operation will fail if the policy is still applied to any table.
+Use the `DROP RETENTION` statement to delete the policy definition itself. This operation fails if the policy is still applied to any table, so detach the policy from the table first.
 
 **Syntax:**
 
@@ -185,14 +186,13 @@ SELECT * FROM V$RETENTION_JOB WHERE TABLE_NAME = 'RET_TAG';
 **4. Load Data (Including Old Data):**
 
 ```tql
--- Use TQL FAKE function to simulate loading 150,000 records
--- spanning roughly the last 2 days (some older than 1 day).
--- Adjust timeAdd parameters as needed to ensure data older than DURATION exists.
-FAKE(range(1, 150000, 1))
-MAPVALUE(1, sin((2*PI*value(0)/100))) -- Sample value generation
-MAPVALUE(0, timeAdd("now-2d", strSprintf("+%.fs", value(0)*100))) -- Generate timestamps over ~2 days ending now
-PUSHVALUE(0, "sensor-a") -- Assign a tag name
-APPEND(table("ret_tag")) -- Append to the target table
+// Generate 150,000 records at 1-second intervals (about 41.7 hours up to now).
+// Some of the records are older than 1 day.
+FAKE(arrange(1, 150000, 1))
+MAPVALUE(1, sin((2*PI*value(0)/100)))
+MAPVALUE(0, timeAdd("now", strSprintf("-%.fs", 150000-value(0))))
+PUSHVALUE(0, "sensor-a")
+APPEND(table("ret_tag"))
 ```
 
 **5. Verify Initial Data Load:**
@@ -200,12 +200,12 @@ APPEND(table("ret_tag")) -- Append to the target table
 ```sql
 -- Check the total number of records inserted
 SELECT COUNT(*) FROM ret_tag;
--- Expected: 150000 (or close to it, depending on exact FAKE generation)
+-- Expected: 150000, if the retention job has not run yet
 ```
 
 **6. Wait for Retention Execution:**
 
-Wait for a duration longer than the policy's `INTERVAL` (1 hour in this case). The background retention job will automatically run.
+Wait for a duration longer than the policy's `INTERVAL` (1 hour in this case). The background retention job runs automatically and deletes data older than 1 day.
 
 **7. Verify Data Deletion:**
 
@@ -235,3 +235,5 @@ DROP RETENTION policy_1d_1h;
 SELECT * FROM M$RETENTION WHERE POLICY_NAME = 'POLICY_1D_1H';
 -- Expected: No rows returned.
 ```
+
+With automatic storage management, you can keep data only for a set period and have older data cleaned up automatically, which greatly reduces the operational burden and the chance of errors.

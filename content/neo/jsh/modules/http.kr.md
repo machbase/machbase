@@ -321,7 +321,7 @@ server.serve();
 - `ctx.json(status, data[, { space: number|string }])`
 - `ctx.xml(status, data[, { root: string }])`
 
-`ctx.json()`은 들여쓰기 옵션 `space` 을 지원합니다.
+`ctx.json()`은 들여쓰기 옵션 `space`을 지원합니다.
 
 ```js
 ctx.json(http.status.OK, { greeting: 'hello', name: 'neo' }, { space: 2 });

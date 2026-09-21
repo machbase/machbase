@@ -29,7 +29,7 @@ It uses `FAKE( statz(period, metrics...) )` SRC function, and then makes time-va
 
 {{< tabs >}}
 {{< tab name="CHART" >}}
-{{< figure src="../img/metrics_http_latency.jpg" width="600" >}}
+{{< figure src="/neo/operations/img/metrics_http_latency.jpg" width="600" >}}
 {{< /tab >}}
 {{< tab name="Code" >}}
 ```js

@@ -213,7 +213,7 @@ WHERE NAME = 'camera-1'
 AND DATA->'$.FN' = 'image_file.svg';
 ```
 
-**`/db/query` 検索**
+### `/db/query` での検索 {#dbquery-조회}
 
 以下は、`/db/query` APIでSELECTクエリを実行する例です。
 

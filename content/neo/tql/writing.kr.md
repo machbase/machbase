@@ -36,6 +36,7 @@ SQL(`insert into example values(?,?,?)`, value(0), value(1), value(2))
 ### 2. HTTP POST
 
 {{< tabs >}}
+
 {{< tab name="HTTP" >}}
 
 ~~~
@@ -49,6 +50,7 @@ TAG0,1628953200000000000,13
 ~~~
 
 {{< /tab >}}
+
 {{< tab name="cURL" >}}
 
 ```sh
@@ -59,7 +61,9 @@ TAG0,1628866800000000000,12
 TAG0,1628953200000000000,13
 EOF
 ```
+
 {{< /tab >}}
+
 {{< /tabs >}}
 
 **Response:**
@@ -90,7 +94,8 @@ EOF
 
 ### 1. TQL 파일 생성
 
-다음 코드를 `append-csv.tql`로 저장해 주십시오.
+다음 코드를 `append-csv.tql`로 저장해 주십시오.  
+TQL 스크립트를 저장하면 편집기 우측 상단에 <img src="/images/copy_addr_icon.jpg" width="24px" style="display:inline"> 아이콘이 나타납니다. 클릭하면 스크립트 주소를 복사할 수 있습니다.
 
 ```js {linenos=table,hl_lines=["7"]}
 CSV(payload(), 
@@ -105,6 +110,7 @@ APPEND(table('example'))
 ### 2. HTTP POST
 
 {{< tabs >}}
+
 {{< tab name="HTTP" >}}
 
 ~~~
@@ -118,6 +124,7 @@ TAG0,1628953200000000000,13
 ~~~
 
 {{< /tab >}}
+
 {{< tab name="cURL" >}}
 
 ```sh
@@ -128,13 +135,15 @@ TAG2,1628866800000000000,12
 TAG2,1628953200000000000,13
 EOF
 ```
+
 {{< /tab >}}
+
 {{< /tabs >}}
 
 ### 3. MQTT PUBLISH
 
 ```sh
-mosquitto_pub -h 127.0.0.1 -p 5653 -t db/tql/input-csv.tql -s << 'EOF'
+mosquitto_pub -h 127.0.0.1 -p 5653 -t db/tql/append-csv.tql -s << 'EOF'
 TAG3,1628866800000000000,12
 TAG3,1628953200000000000,13
 EOF
@@ -144,7 +153,7 @@ EOF
 
 ### 1. TQL 파일 생성
 
-`SCRIPT()` 함수를 이용해 커스텀 JSON을 파싱합니다.  
+`SCRIPT()` 함수로 커스텀 형식의 JSON을 파싱합니다.  
 다음 코드를 `input-json.tql`로 저장해 주십시오.
 
 ```js {linenos=table}
@@ -158,6 +167,7 @@ SQL(`insert into example values(?,?,?)`, value(0), value(1), value(2))
 ### 2. HTTP POST
 
 {{< tabs >}}
+
 {{< tab name="HTTP" >}}
 
 ~~~
@@ -179,7 +189,9 @@ Content-Type: application/json
 ~~~
 
 {{< /tab >}}
+
 {{< tab name="cURL" >}}
+
 ```sh
 curl -X POST http://127.0.0.1:5654/db/tql/input-json.tql \
     -H "Content-Type: application/json" \
@@ -196,14 +208,15 @@ curl -X POST http://127.0.0.1:5654/db/tql/input-json.tql \
 }
 EOF
 ```
+
 {{< /tab >}}
+
 {{< /tabs >}}
 
 ### 3. MQTT PUBLISH
 
-`input-json.json` 파일을 아래처럼 준비해 주십시오.
-
-```json
+```sh
+mosquitto_pub -h 127.0.0.1 -p 5653 -t db/tql/input-json.tql -s << 'EOF'
 {
   "data": {
     "columns": [ "NAME", "TIME", "VALUE" ],
@@ -214,24 +227,21 @@ EOF
     ]
   }
 }
-```
-
-```sh
-mosquitto_pub -h 127.0.0.1 -p 5653 \
-    -t db/tql/input-json.tql \
-    -f input-json.json
+EOF
 ```
 
 ## 커스텀 텍스트
 
-데이터를 가공한 뒤 데이터베이스에 저장해야 한다면, 적절한 *tql* 스크립트를 준비해 `db/tql/{tql_file.tql}` 토픽으로 전송해 주십시오.
+데이터를 가공한 뒤 데이터베이스에 저장해야 한다면, 적절한 *tql* 스크립트를 준비하고 `db/tql/{tql_file.tql}` 토픽으로 데이터를 전송해 주십시오.
 
 ### 1. TQL 파일 생성
 
 다음 예시는 여러 줄의 텍스트 데이터를 가공해 테이블에 쓰는 방법을 보여 줍니다.
 
 {{< tabs >}}
+
 {{< tab name="SCRIPT" >}}
+
 ```js {linenos=table,hl_lines=[11,12],linenostart=1}
 SCRIPT({
     content = $.payload;
@@ -240,42 +250,48 @@ SCRIPT({
     }
     lines = content
         .split(/\r?\n/)
-        .map(line => line.trim())     // 공백 제거
-        .filter(line => line !== ""); // 빈 줄 제거
+        .map(line => line.trim())     // trim spaces
+        .filter(line => line !== ""); // filter empty lines
     lines.forEach((line, idx) => {
-        part = line.substring(0, 2);  // 앞 두 글자만 사용
+        part = line.substring(0, 2);  // takes the first 2 letters
         $.yield('text_'+idx, (new Date()), parseInt(part));
     });
 })
 CSV(timeformat('default'))
 // SQL(`insert into example values(?,?,?)`, value(0), value(1), value(2))
 ```
+
 {{< /tab >}}
+
 {{< tab name="MAP" >}}
+
 MAP 함수를 사용한 변환 예시입니다.
 
 ```js {linenos=table,hl_lines=["13-15"],linenostart=1}
-// payload()는 HTTP POST 또는 MQTT로 전달된 데이터를 반환합니다.
-// ?? 연산자는 내용이 없을 때 오른쪽 값을 사용합니다.
-// 웹 UI 편집기에서 테스트할 때 유용합니다.
+// payload() returns the payload that arrived via HTTP-POST or MQTT,
+// The ?? operator means that if tql is called without content,
+//        the right side value is applied
+// It is a good practice while the code is being developed on the tql editor of web-ui.
 STRING( payload() ?? ` 12345
                      23456
                      78901
                      89012
                      90123
                   `, separator('\n'), trimspace(true))
-FILTER( len(value(0)) > 0 )   // 빈 줄 제거
-// 데이터 변환
-MAPVALUE(-1, time("now"))     // PUSHVALUE(0, time("now"))와 동일
-MAPVALUE(-1, "text_"+key())   // PUSHVALUE(0, "text_"+key())와 동일
+FILTER( len(value(0)) > 0 )   // filter empty line
+// transforming data
+MAPVALUE(-1, time("now"))     // equiv. PUSHVALUE(0, time("now"))
+MAPVALUE(-1, "text_"+key())   // equiv. PUSHVALUE(0, "text_"+key())
 MAPVALUE(2, strSub( value(2), 0, 2 ) )
 
-// 테스트 시 CSV 출력
+// Run this code in the tql editor of web-ui for testing
 CSV( timeformat("DEFAULT") )
-// 실사용 시 아래 주석을 해제하십시오.
+// Uncomment the line below for the real action
 // SQL(`insert into example values(?,?,?)`, value(0), value(1), value(2))
 ```
+
 {{< /tab >}}
+
 {{< /tabs >}}
 
 **결과 예시**
@@ -294,10 +310,12 @@ text_4,2023-12-02 11:03:36.054,90
 
 ### 2. HTTP POST
 
-동일한 TQL 파일은 HTTP POST 요청과 함께 사용할 수도 있습니다.
+같은 TQL 파일을 HTTP POST 요청에도 사용할 수 있습니다.
 
 {{< tabs >}}
+
 {{< tab name="HTTP" >}}
+
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/tql/script-post-lines.tql
@@ -309,8 +327,11 @@ Content-Type: text/plain
 442222
 ```
 ~~~
-{{</ tab >}}
+
+{{< /tab >}}
+
 {{< tab name="cURL" >}}
+
 ```sh
 curl http://127.0.0.1:5654/db/tql/script-post-lines.tql \
   -H "Content-Type: text/plain" \
@@ -321,8 +342,10 @@ curl http://127.0.0.1:5654/db/tql/script-post-lines.tql \
 442222
 EOF
 ```
-{{</ tab >}}
-{{</ tabs >}}
+
+{{< /tab >}}
+
+{{< /tabs >}}
 
 **Response:**
 
@@ -349,7 +372,7 @@ mosquitto_pub -h 127.0.0.1 -p 5653 \
 EOF
 ```
 
-이후 데이터가 정상적으로 변환·저장되었는지 확인합니다.
+이후 데이터가 정상적으로 변환되어 저장되었는지 확인합니다.
 
 ```sh
 $ machbase-neo shell "select * from example where name like 'text_%'"

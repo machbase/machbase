@@ -7,7 +7,7 @@ weight: 70
 ## Fast Fourier Transform
 
 {{< callout emoji="📌" >}}
-For smooth practice, the following query should be run to prepare tables and data.
+To follow the examples smoothly, run the following query to prepare the table and data in advance.
 {{< /callout >}}
 
 ```sql
@@ -18,15 +18,16 @@ CREATE TAG TABLE IF NOT EXISTS EXAMPLE (
 );
 ```
 
-## Generates sample data
+## Generate sample data
 
-Open a new *tql* editor on the web ui and copy the code below and run it.
+Open a new *tql* editor on the web UI, then copy the code below and run it.
 
 In this example, `oscillator()` generates a composite wave of 15Hz 1.0 + 24Hz 1.5.
-And `CHART_SCATTER()` has `dataZoom()` option function that provides an slider under the x-Axis.
+And `CHART_SCATTER()` has the `dataZoom()` option function that provides a slider under the x-axis.
 
 {{< tabs >}}
 {{< tab name="SCRIPT" >}}
+
 ```js {linenos=table,hl_lines=["3-11"],linenostart=1}
 SCRIPT({
     const m = require('mathx');
@@ -49,8 +50,10 @@ SCRIPT({
 })
 CHART( size("600px", "350px") )
 ```
+
 {{</ tab >}}
 {{< tab name="FAKE" >}}
+
 ```js {linenos=table,hl_lines=["2-5"],linenostart=1}
 FAKE( 
   oscillator(
@@ -60,6 +63,7 @@ FAKE(
 )
 CHART_SCATTER( size("600px", "350px"), dataZoom('slider', 95, 100) )
 ```
+
 {{</ tab >}}
 {{</ tabs >}}
 
@@ -71,6 +75,7 @@ Store the generated data into the database with the tag name 'signal'.
 
 {{< tabs >}}
 {{< tab name="SCRIPT" >}}
+
 ```js {linenos=table,hl_lines=[13,16]}
 SCRIPT({
     const m = require('mathx');
@@ -89,8 +94,10 @@ SCRIPT({
 })
 SQL('insert into example values(?,?,?)','signal',value(0),value(1))
 ```
+
 {{</ tab >}}
 {{< tab name="FAKE" >}}
+
 ```js {linenos=table,hl_lines=["10"],linenostart=1}
 FAKE(
   oscillator(
@@ -103,15 +110,17 @@ FAKE(
 // |
 SQL('insert into example values(?,?,?)','signal',value(0),value(1))
 ```
+
 {{</ tab >}}
 {{</ tabs >}}
 
-It will show "10000 rows inserted." message in the "Result" pane.
+The "Result" pane shows `10000 rows inserted.` for the FAKE example and `10001 rows inserted.` for the SCRIPT example, because `mathx.oscillator()` includes both ends of the time range.
 
-For a comment, it took about *270ms* in a test machine (Apple mac mini M1), but using `APPEND()` method in the example below, took *65ms* (x4 faster).
+For reference, it took about *270ms* on a test machine (Apple Mac mini M1), but using the `APPEND()` method in the example below took *65ms* (x4 faster).
 
 {{< tabs >}}
 {{< tab name="SCRIPT" >}}
+
 ```js {linenos=table,hl_lines=[13,16]}
 SCRIPT({
     const m = require('mathx');
@@ -130,8 +139,10 @@ SCRIPT({
 })
 APPEND( table('example') )
 ```
+
 {{</ tab >}}
 {{< tab name="FAKE" >}}
+
 ```js {linenos=table,hl_lines=[10,14]}
 FAKE(
   oscillator(
@@ -148,11 +159,12 @@ PUSHVALUE(0,'signal')
 // |
 APPEND( table('example') )
 ```
+
 {{</ tab >}}
 {{</ tabs >}}
 
 {{< callout type="warning" >}}
-The 'APPEND' works only when fields of input records exactly match with columns of the table in order and types.
+`APPEND` works only when the fields of input records exactly match the columns of the table in order and types.
 {{< /callout >}}
 
 ## Read data from database
@@ -161,6 +173,7 @@ The code below reads the stored data from the 'example' table.
 
 {{< tabs >}}
 {{< tab name="SQL">}}
+
 ```js
 SQL(`select time, value from example where name = 'signal' order by time`)
 CHART(
@@ -173,52 +186,27 @@ CHART(
     })
 )
 ```
+
 {{</ tab >}}
 {{< tab name="SQL_SELECT">}}
+
 ```js
 SQL_SELECT('time', 'value', from('example', 'signal'), between('last-10s', 'last'))
 CHART_LINE( size("600px", "350px"), dataZoom('slider', 95, 100))
 ```
+
 {{</ tab >}}
 {{</ tabs >}}
 
 {{< figure src="/images/web-fft-tql-query.png" width="500" >}}
 
-## Fast Fourier Transform
+## Performing the Fast Fourier Transform
 
-Add few data manipulation function between `SQL_SELECT()` source and `CHART_LINE()` sink.
-
-{{< tabs >}}
-{{< tab name="SQL">}}
-```js
-SQL(`select time, value from example where name = 'signal' order by time`)
-CHART(
-    size("600px", "350px"), 
-    chartOption({
-        xAxis:{ data: column(0) },
-        yAxis:{},
-        series:[ {type:"line", data: column(1), showAllSymbol:true } ],
-        dataZoom:{type:"slider", start:95, end: 100},
-    })
-)
-```
-{{</ tab >}}
-{{< tab name="SQL_SELECT">}}
-```js
-SQL_SELECT('time', 'value', from('example', 'signal'), between('last-10s', 'last'))
-CHART_LINE( size("600px", "350px"), dataZoom('slider', 95, 100))
-```
-{{</ tab >}}
-{{</ tabs >}}
-
-{{< figure src="/images/web-fft-tql-query.png" width="500" >}}
-
-## 고속 푸리에 변환 수행
-
-`SQL_SELECT()` 소스와 `CHART_LINE()` 싱크 사이에 몇 가지 데이터 변환 함수를 추가합니다.
+Add a few data transformation functions between the `SQL_SELECT()` source and the `CHART_LINE()` sink.
 
 {{< tabs >}}
 {{< tab name="GROUPBYKEY" >}}
+
 ```js {linenos=table,hl_lines=["2-4"],linenostart=1}
 SQL(`select time, value from example where name = 'signal' order by time`)
 MAPKEY('sample')
@@ -231,8 +219,10 @@ CHART_LINE(
   dataZoom('slider', 0, 10) 
 )
 ```
+
 {{< /tab >}}
 {{< tab name="SCRIPT-1" >}}
+
 ```js {linenos=table,hl_lines=12}
 SQL(`select time, value from example where name = 'signal' order by time`)
 SCRIPT({
@@ -257,8 +247,10 @@ SCRIPT({
 })
 CHART(size("600px", "350px"))
 ```
+
 {{</ tab >}}
 {{< tab name="SCRIPT-2" >}}
+
 ```js {linenos=table,hl_lines=[11,12],linenostart=1}
 SQL(`select time, value from example where name = 'signal' order by time`)
 SCRIPT({
@@ -283,6 +275,7 @@ CHART_LINE(
   dataZoom('slider', 0, 10) 
 )
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -293,21 +286,47 @@ CHART_LINE(
 {{% steps %}}
 
 ### SQL_SELECT()
-`SQL_SELECT(...)` yields records from the query result in the form of `{key: rownum, value: (time, value) }`
+
+`SQL_SELECT(...)` yields records from the query result in the form of `{key: rownum, value: (time, value)}`.
 
 ### MAPKEY('sample')
+
 `MAPKEY('sample')` sets the constant string 'sample' as a new key for all records.
-As result all records have same *key* `'sample'` and `(time, value)` as *value*. `{key: 'sample', value:(time, value)}`
+As a result, all records have the same *key* `'sample'` and `(time, value)` as *value*. `{key: 'sample', value:(time, value)}`
 
 ### GROUPBYKEY()
-`GROUPBYKEY()` merge all records that has the same key. In this example, all query results are combined into a record that has same *key* 'sample' and value is an array of tuples which formed `{key: 'sample', value:[ (time1, value1), (time2, value2), ..., (timeN, valueN) ]}`.
+
+`GROUPBYKEY()` merges all records that have the same key. In this example, all query results are combined into a record whose *key* is 'sample' and whose value is an array of tuples: `{key: 'sample', value:[ (time1, value1), (time2, value2), ..., (timeN, valueN) ]}`.
 
 ### FFT()
-`FFT()` applies Fast Fourier Transform on the value of the record and transform the value (time-value) into an array of tuples (frequency-amplitude). `{key: 'sample', value:[ (Hz1, Ampl1), (Hz2, Ampl2), ... ]}`.
+
+`FFT()` applies the Fast Fourier Transform on the value of the record and transforms the array of `(time, value)` tuples into an array of `(frequency, amplitude)` tuples. `{key: 'sample', value:[ (Hz1, Ampl1), (Hz2, Ampl2), ... ]}`
 
 {{% /steps %}}
 
 ## Adding time axis
+
+The following example adds a time axis to visualize the frequency transform results as a time series.
+
+```js {linenos=table,hl_lines=["3-7"],linenostart=1}
+SQL(`select time, value from example where name = 'signal' order by time`)
+
+MAPKEY( roundTime(value(0), '500ms') )
+GROUPBYKEY()
+FFT(minHz(0), maxHz(100))
+FLATTEN()
+PUSHKEY('fft')
+CHART_BAR3D(
+      xAxis(0, 'time', 'time'),
+      yAxis(1, 'Hz'),
+      zAxis(2, 'Amp'),
+      size('600px', '600px'), visualMap(0, 1.5), theme('westeros')
+)
+```
+
+{{< figure src="/images/web-fft-tql-3d.png" width="500" >}}
+
+To query the 10 seconds up to the latest record of the tag with `SQL_SELECT()`, write the script as follows.
 
 ```js {linenos=table,hl_lines=["3-7"],linenostart=1}
 SQL_SELECT( 'time', 'value', from('example', 'signal'), between('last-10s', 'last'))
@@ -325,32 +344,33 @@ CHART_BAR3D(
 )
 ```
 
-{{< figure src="/images/web-fft-tql-3d.png" width="500" >}}
-
-## How it works
+## How the time axis example works
 
 {{% steps %}}
 
 ### SQL_SELECT()
 
-`SQL_SELECT(...)` yields records from the query result. `{key: time, value: (value) }`
+`SQL_SELECT(...)` yields records from the query result in the form of `{key: rownum, value: (time, value)}`.
 
 ### MAPKEY()
-`MAPKEY( roundTime(value(0), '500ms'))` sets the new key with the result of roundTime `value(0)` by 500 milliseconds. 
-As result the records are transformed into `{key: (time/500ms)*500ms, value:(time, value)}`
+
+`MAPKEY( roundTime(value(0), '500ms'))` sets the new key to `value(0)` truncated to a 500-millisecond boundary.
+As a result, the records are transformed into `{key: (time/500ms)*500ms, value:(time, value)}`.
 
 ### GROUPBYKEY()
-`GROUPBYKEY()` makes records grouped in every 500ms. `{key: time1In500ms, value:[(time1, value1), (time2, value2)...]}`
+
+`GROUPBYKEY()` groups the records in every 500ms. `{key: time1In500ms, value:[(time1, value1), (time2, value2)...]}`
 
 ### FFT()
-`FFT()` applies Fast Fourier Transform for each record. The optional functions `minHz(0)` and `maxHz(100)` limits the scope of the output just for the better visualization. `{key:time1In500ms, value:[(Hz1, Ampl1), ...]}`, `{key:'time2In500ms', value:[(Hz1, Ampl1), ...]}`, ...
+
+`FFT()` applies the Fast Fourier Transform to each record. The optional functions `minHz(0)` and `maxHz(100)` limit the scope of the output for better visualization. `{key:time1In500ms, value:[(Hz1, Ampl1), ...]}`, `{key:'time2In500ms', value:[(Hz1, Ampl1), ...]}`, ...
 
 ### FLATTEN()
-`FLATTEN()` reduces the dimension of the value array by splitting into multiple records. As result it yields.
+
+`FLATTEN()` reduces the dimension of the value array by splitting it into multiple records. As a result, each frequency-amplitude pair is yielded as a separate record.
 
 ### PUSHKEY()
-`PUSHKEY('fft')` sets the constant string 'fft' as new key for all records. and the previous key will be "pushed" into the first place of value array. `{key:'fft', value:(time1In500ms, Hz1, Ampl1)}`, `{key:'fft', value:(time1In500ms, Hz2, Ampl2)}`...
+
+`PUSHKEY('fft')` sets the constant string 'fft' as the new key for all records, and the previous key is "pushed" into the first place of the value array. `{key:'fft', value:(time1In500ms, Hz1, Ampl1)}`, `{key:'fft', value:(time1In500ms, Hz2, Ampl2)}`...
 
 {{% /steps %}}
-
-

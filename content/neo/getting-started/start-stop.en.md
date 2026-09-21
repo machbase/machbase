@@ -12,7 +12,7 @@ Run machbase-neo with `serve` command on Linux and macOS.
 machbase-neo serve
 ```
 
-{{< figure src="../img/server-serve.gif" width="600" >}}
+{{< figure src="/neo/getting-started/img/server-serve.gif" width="600" >}}
 
 ### Expose ports
 

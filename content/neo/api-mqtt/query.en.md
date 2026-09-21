@@ -61,7 +61,7 @@ Or a JSON object for named placeholders (e.g. `:name`) in the `p` field. {{< neo
 ```
 
 
-{{< figure src="../img/query_mqttx.png" width="600px" caption="A demonstration shows how to query and receive responses over MQTT. (Using MQTTX.app)">}}
+{{< figure src="/neo/api-mqtt/img/query_mqttx.png" width="600px" caption="A demonstration shows how to query and receive responses over MQTT. (Using MQTTX.app)">}}
 
 ## Client Examples
 

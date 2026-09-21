@@ -38,4 +38,4 @@ CHART(
 )
 ```
 
-{{< figure src="../../img/boxplot_iris_sepal_length.jpg" width="500" >}}
+{{< figure src="/neo/tql/chart/img/boxplot_iris_sepal_length.jpg" width="500" >}}

@@ -4,7 +4,7 @@ type: docs
 weight: 55
 ---
 
-TQL supports the `SCRIPT()` function, which utilizes JavaScript (ECMA5) in both **SRC** and **MAP** contexts {{< neo_since ver="8.0.36" />}}.
+TQL supports the `SCRIPT()` function, which utilizes JavaScript in both **SRC** and **MAP** contexts {{< neo_since ver="8.0.36" />}}.
 This feature offers developers the flexibility to use a familiar programming language,
 enhancing their ability to create more dynamic and powerful scripts within TQL.
 
@@ -14,22 +14,19 @@ enhancing their ability to create more dynamic and powerful scripts within TQL.
 
 *Syntax*: `SCRIPT({init_code}, {main_code}, {deinit_code})`
 
-- *init_code* : initialize code (optional but madatory if *deinit_code* exists)
+- *init_code* : initialization code (optional, but mandatory if *deinit_code* exists)
 - *main_code* : script code
-- *deinit_code* : destruct code (optional)
+- *deinit_code* : destruction code (optional)
 
 The *init_code* is optional and runs only once at the beginning. The *main_code* is mandatory and cannot be omitted.
 
 **Caveat Emptor**
 
-- `use strict` does nothing.
-- ECMA5 only. Some ES6 features e.g. Typed Arrays and back-tick string interpolation are not supported.
-- Regular expression is not fully compatible with the ECMA5 specification.
-    The following regular expression syntax is incompatible:
-    
-    - `(?=)`  Lookahead (positive), it produces a parsing error
-    - `(?!)`  Lookahead (backhead), it produces a parsing error
-    - `\1`,`\2`,`\3`, ...    Backreference, it produces a parsing error
+The current `SCRIPT()` uses a Goja-based JavaScript runtime.
+Typed Arrays, template literals (back-tick strings), `const` and arrow functions are available.
+Strict mode with `"use strict"` also works.
+Regular expression lookahead (`(?=...)`, `(?!...)`) and backreferences (`\1`, etc.) are also supported.
+The supported language features follow the version of the runtime built into your Machbase Neo.
 
 ## JSH Modules
 
@@ -47,7 +44,7 @@ CSV()
 
 ## Context Object
 
-Machbase-neo exposes the `$` variable as the context object. JavaScript can access and yield records and database through this context.
+Machbase Neo exposes the `$` variable as the context object. JavaScript can access records and the database, and yield new records, through this context.
 
 - `$.payload` Input data of the request. Available only when `SCRIPT()` is used as an SRC node; otherwise, it is `undefined`.
 - `$.params` Input query parameters of the request.
@@ -55,7 +52,7 @@ Machbase-neo exposes the `$` variable as the context object. JavaScript can acce
 - `$.key`, `$.values` Javascript access point to the key and values of the current record. It is only available if the `SCRIPT()` is a MAP function.
 - `$.yield()` Yield a new record with values
 - `$.yieldKey()` Yield a new record with key and values
-- `$.yieldArray()` Same as `$.yield()`, but it take only one argument of array type instead of multiple arguments. 
+- `$.yieldArray()` Same as `$.yield()`, but it takes only one argument of array type instead of multiple arguments.
 - `$.db()` Returns a new database connection.
 - `$.db().query()` Execute SQL query.
 - `$.db().exec()` Execute non-SELECT SQL.
@@ -98,7 +95,7 @@ Then the result is: `testing,10,10`
 ### `$.params`
 
 JavaScript can access the request's query parameters using `$.params`.
-The value of a query parameter can be accessed in two ways: using dot notation (`$.params.name`) 
+The value of a query parameter can be accessed in two ways: using dot notation (`$.params.name`)
 or bracket notation (`$.params["name"]`).
 Both forms are interchangeable and can be used based on the context or preference.
 
@@ -107,7 +104,7 @@ SCRIPT({
     var prefix = $.params.prefix ? $.params.prefix : "name";
     var offset = $.params.offset ? $.params.offset : 0;
     var limit = $.params.limit ? $.params.limit: 10;
-    $.yield(obj.prefix, obj.offset, obj.limit);
+    $.yield(prefix, offset, limit);
 })
 CSV()
 ```
@@ -123,8 +120,7 @@ The result will be the default values: `name,0,10`.
 Call the tql file with parameters.
 
 ```sh
-curl -o - -X POST "http://127.0.0.1:5654/db/tql/test.tql?"\
-"prefix=testing&offset=12&limit=20"
+curl -o - -X POST "http://127.0.0.1:5654/db/tql/test.tql?prefix=testing&offset=12&limit=20"
 ```
 
 The result is: `testing,12,20`.
@@ -218,7 +214,7 @@ $.yieldKey(key, field1, field2, field3);
 
 {{< neo_since ver="8.0.39" />}}
 
-Yield a record contained in an array. 
+Yield a record contained in an array.
 `$.yieldArray()` takes a single array argument representing a record, in contrast to `$.yield()`, which takes variable-length arguments.
 This is useful when working with arrays.
 
@@ -249,15 +245,17 @@ The option parameter is supported {{< neo_since ver="8.0.37" />}}
 
 ### `$.db().query()`
 
-JavaScript can query the database using `$.db().query()`. 
+JavaScript can query the database using `$.db().query()`.
 Apply a callback function with `forEach()` to the return value of `query()` to iterate over the query results.
 
 If the callback function of `.forEach()` explicitly returns `false`, the iteration stops immediately.
-If the callback function returns `true` or does not return anything (which means it returns `undefined`), 
+If the callback function returns `true` or does not return anything (which means it returns `undefined`),
 the iteration continues until the end of the query result.
 
 {{< tabs >}}
+
 {{< tab name="MACHBASE" >}}
+
 ```js {{linenos=table,hl_lines=["7-10",14]}}
 SCRIPT({
   var data = $.payload;
@@ -285,7 +283,9 @@ cpu.percent,1725343898315887000,6.1
 ```
 
 {{< /tab >}}
+
 {{< tab name="BRIDGE-SQLITE" >}}
+
 ```js {{linenos=table,hl_lines=["7-10",14]}}
 SCRIPT({
   var data = $.payload;
@@ -311,11 +311,13 @@ testing,1732589744886,16.70559756851126
 testing,1732589744886,49.93214293713331
 testing,1732589744886,54.485508690434905
 ```
+
 {{< /tab >}}
+
 {{< /tabs >}}
 
 Choose specific columns from the result of `$.db().query()` to yield using `$.yield()`.
-Use `$.yieldArray()` {{< neo_since ver="8.0.39" />}} to yield all columns in a time.
+Use `$.yieldArray()` {{< neo_since ver="8.0.39" />}} to yield all columns at once.
 
 ```js {{linenos=table,hl_lines=["4"]}}
 SCRIPT({
@@ -343,13 +345,14 @@ SCRIPT({
 CSV( header(true) )
 ```
 
-
 ### `$.db().exec()`
 
 If the SQL is not a SELECT statement, use `$.db().exec()` to execute INSERT, DELETE, CREATE TABLE statements.
 
 {{< tabs >}}
+
 {{< tab name="MACHBASE" >}}
+
 ```js {{linenos=table,hl_lines=["10-14", "21-22"]}}
 SCRIPT({
     for( i = 0; i < 3; i++) {
@@ -381,8 +384,11 @@ SCRIPT({
 })
 CSV()
 ```
+
 {{< /tab >}}
+
 {{< tab name="BRIDGE-SQLITE" >}}
+
 ```js {{linenos=table,hl_lines=["10-14", "21-22"]}}
 SCRIPT({
     for( i = 0; i < 3; i++) {
@@ -428,9 +434,10 @@ FROM
 -- env: reset
 ```
 
-{{< figure src="../img/script_js_db_sqlite_exec.png" width="600px" >}}
+{{< figure src="/neo/tql/img/script_js_db_sqlite_exec.png" width="600px" >}}
 
 {{< /tab >}}
+
 {{< /tabs >}}
 
 ### `$.request().do()`
@@ -446,7 +453,8 @@ FROM
     body: "body content if the method is POST or PUT"
 }
 ```
-The actual request is made when `.then()` is called with a callback function to handle the response. The callback function receives a Response object as an argument, which provides several properties and methods.
+
+The actual request is made when `.do()` is called with a callback function to handle the response. The callback function receives a Response object as an argument, which provides several properties and methods.
 
 **Response**
 
@@ -456,9 +464,9 @@ The actual request is made when `.then()` is called with a callback function to 
 | `.status`        | Number  | http response code |
 | `.statusText`    | String  | status code and message. e.g. `200 OK` |
 | `.url`           | String  | request url      |
-| `.headers`       | Map     | response headers | 
+| `.headers`       | Map     | response headers |
 
-The Response object provides useful methods that serves the body content of the response.
+The Response object provides useful methods that serve the body content of the response.
 
 | Method                 | Description  |
 |:-----------------------|:-------------|
@@ -529,11 +537,12 @@ DISCARD()
 
 **Result**
 
-{{< figure src="../img/script_js_helloworld.png" width="550px" >}}
+{{< figure src="/neo/tql/img/script_js_helloworld.png" width="550px" >}}
 
 ### Builtin Math object
 
 {{< tabs >}}
+
 {{< tab name="JS" >}}
 
 Javascript builtin functions are available:
@@ -560,7 +569,9 @@ CHART(
   })
 )
 ```
+
 {{< /tab >}}
+
 {{< tab name="SET-MAP" >}}
 
 The equivalent result using SET-MAP functions instead of Javascript is:
@@ -587,11 +598,14 @@ CHART(
   })
 )
 ```
+
 {{< /tab >}}
+
 {{< /tabs >}}
 
 **Result**
-{{< figure src="../img/script_js_sphere.png" width="550px" >}}
+
+{{< figure src="/neo/tql/img/script_js_sphere.png" width="550px" >}}
 
 ### JSON parser
 
@@ -613,6 +627,7 @@ JSON()
 ```
 
 **Result**
+
 ```json
 {
     "data": {
@@ -688,4 +703,3 @@ SCRIPT({
 })
 CSV(header(false))
 ```
-

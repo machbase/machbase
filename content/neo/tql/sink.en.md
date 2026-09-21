@@ -6,7 +6,7 @@ weight: 21
 
 All *tql* scripts must end with one of the sink functions.
 
-The basic SINK function might be `INSERT()` which write the incoming records onto machbase-neo database. `CHART()` function can render various charts with incoming records. `JSON()` and `CSV()` encode incoming data into proper formats.
+The basic SINK function is `INSERT()`, which writes the incoming records into the machbase-neo database. `CHART()` function can render various charts with incoming records. `JSON()` and `CSV()` encode incoming data into proper formats.
 
 ![tql_sink](../img/tql_sink.jpg)
 
@@ -14,13 +14,12 @@ The basic SINK function might be `INSERT()` which write the incoming records ont
 
 *Syntax*: `INSERT( [bridge(),] columns..., table() [, tag()] )`
 
-`INSERT()` stores incoming records into specified database table by an 'INSERT' statement for each record.
+`INSERT()` stores incoming records into the specified database table by running an `INSERT` statement for each record.
 
 - `bridge()` *bridge('name')* optional.
 - `columns` *string* column list.
 - `table()` *table('name')* specify the destination table name.
 - `tag()` *tag('name')* optional, applicable only to tag tables.
-
 
 {{< tabs >}}
 {{< tab name="Example" >}}
@@ -36,7 +35,8 @@ INSERT("name", "time", "value", table("example"))
 ```
 {{</tab>}}
 {{< tab name="PUSHVALUE()" >}}
-Write records to machbase with same tag name by adding "name" field by `PUSHVALUE()`.
+Write records to machbase with the same tag name by adding a "name" field with `PUSHVALUE()`.
+
 ```js {{linenos=table,hl_lines=[5,7]}}
 FAKE(json({
     [1708582792, 32.34],
@@ -48,7 +48,8 @@ INSERT("name","time", "value", table("example"))
 ```
 {{</tab>}}
 {{< tab name="tag()" >}}
-Write records to machbase with same tag name by using `tag()` option if the destination is a tag table.
+If the destination is a tag table, write records to machbase with the same tag name by using the `tag()` option.
+
 ```js {{linenos=table,hl_lines=[6]}}
 FAKE(json({
     [1708582792, 32.34],
@@ -60,7 +61,7 @@ INSERT("time", "value", table("example"), tag('temperature'))
 {{</tab>}}
 {{</tabs>}}
 
-Insert records into bridged database.
+Insert records into a bridged database.
 
 ```js {{linenos=table,hl_lines=[2]}}
 INSERT(
@@ -73,7 +74,7 @@ INSERT(
 
 *Syntax*: `APPEND( table() )`
 
-*APPEND()* stores incoming records into specified database table via the 'append' method of machbase-neo.
+`APPEND()` stores incoming records into the specified database table via the `append` method of machbase-neo.
 
 - `table()` *table(string)* specify destination table
 
@@ -93,7 +94,7 @@ APPEND( table("example") )
 Makes the records of the result in CSV format. The values of the records become the fields of the CSV lines.
 The end of the data is identified by the last two consecutive newline characters (`\n\n`).
 
-For example, if a record was `{key: k, value:[v1,v2]}`, it generates an CSV records as `v1,v2`.
+For example, if a record was `{key: k, value:[v1,v2]}`, it generates a CSV record `v1,v2`.
 
 - `tz` *tz(name)* time zone, default is `tz('UTC')`
 - `timeformat` *timeformat(string)* specify the format how represents datetime fields, default is `timeformat('ns')`
@@ -112,6 +113,7 @@ FAKE( arrange(1, 3, 1))
 MAPVALUE(1, value(0)*10)
 CSV()
 ```
+
 ```csv
 1,10
 2,20
@@ -124,6 +126,7 @@ FAKE( arrange(1, 3, 1))
 MAPVALUE(1, value(0)*10, "x10")
 CSV( heading(true) )
 ```
+
 ```csv
 x,x10
 1,10
@@ -137,6 +140,7 @@ FAKE( arrange(1, 3, 1))
 MAPVALUE(1, value(0)*10, "x10")
 CSV( heading(true), delimiter("|") )
 ```
+
 ```csv
 x|x10
 1|10
@@ -149,10 +153,11 @@ x|x10
 FAKE( json({ ["A", 123], ["B", null], ["C", 234] }) )
 CSV( nullValue("***") )
 ```
+
 ```csv
-A|123
-B|***
-C|234
+A,123
+B,***
+C,234
 ```
 {{</ tab >}}
 {{</ tabs >}}
@@ -166,7 +171,7 @@ Generates JSON results from the values of the records.
 - `transpose` *transpose(boolean)* transpose rows and columns, it is useful that specifying `transpose(true)` for the most of chart libraries.
 - `tz` *tz(name)* time zone, default is `tz('UTC')`.
 - `timeformat` *timeformat(string)* specify the format how represents datetime fields, default is `timeformat('ns')`.
-- `rownum` *rownum(boolean)` adds rownum column.
+- `rownum` *rownum(boolean)* adds rownum column.
 - `precision` *precision(int)* specify precision of float fields, `precision(-1)` means no restriction, `precision(0)` converts to integer.
 - `rowsFlatten` *rowsFlatten(boolean)* reduces the array dimension of the *rows* field in the JSON object. If `JSON()` has `transpose(true)` and `rowsFlatten(true)` together, it ignores `rowsFlatten(true)` and only `transpose(true)` affects on the result. {{< neo_since ver="8.0.12" />}}
 - `rowsArray` *rowsArray(boolean)* produces JSON that contains only array of object for each record. The `rowsArray(true)` has higher priority than `transpose(true)` and `rowsFlatten(true)`. {{< neo_since ver="8.0.12" />}}
@@ -184,8 +189,8 @@ JSON()
 ```json {hl_lines=[5]}
 {
     "data": {
-        "columns": [ "x" ],
-        "types": [ "double" ],
+        "columns": [ "x", "column" ],
+        "types": [ "double", "double" ],
         "rows": [ [ 1, 10 ], [ 2, 20 ], [ 3, 30 ] ]
     },
     "success": true,
@@ -206,7 +211,7 @@ JSON( transpose(true) )
     "data": {
         "columns": [ "x", "x10" ],
         "types": [ "double", "double" ],
-        "cols": [ [ 1, 2, 3 ], [ 20, 30, 40 ] ]
+        "cols": [ [ 1, 2, 3 ], [ 10, 20, 30 ] ]
     },
     "success": true,
     "reason": "success",
@@ -267,7 +272,7 @@ The end of the data is identified by the last two consecutive newline characters
 
 - `tz` *tz(name)* time zone, default is `tz('UTC')`.
 - `timeformat` *timeformat(string)* specify the format how represents datetime fields, default is `timeformat('ns')`.
-- `rownum` *rownum(boolean)` adds rownum column.
+- `rownum` *rownum(boolean)* adds rownum column.
 - `cache()` cache result data. see [Cache Result Data](../reading/#cache-result-data) for details. {{< neo_since ver="8.0.43" />}}
 - `binaryformat()` *binaryformat(string)*: specify the encoding format for BINARY columns. Supported formats: `hex`, `base64`, `bytes`, `preview` {{< neo_since ver="8.5.2" />}}
 
@@ -310,8 +315,9 @@ FAKE( csv(`
 `))
 MARKDOWN()
 ```
+
 ```
-|column0 |	column1 |
+|column0 | column1 |
 |:-------|:---------|
 | 10     | The first line |
 | 20     | 2nd line |
@@ -334,7 +340,7 @@ MARKDOWN( briefCount(2) )
 ```
 
 ```
-|column0 |	column1 |
+|column0 | column1 |
 |:-------|:---------|
 | 10     | The first line |
 | 20     | 2nd line |
@@ -356,7 +362,7 @@ FAKE( csv(`
 MARKDOWN( briefCount(2), html(true) )
 ```
 
-|column0 |	column1 |
+|column0 | column1 |
 |:-------|:---------|
 | 10     | The first line |
 | 20     | 2nd line |
@@ -387,7 +393,7 @@ It functions similarly to `HTML()`, but does not perform HTML escaping on the da
 
 *Syntax*: `DISCARD()` {{< neo_since ver="8.0.7" />}}
 
-`DISCARD()` silently ignore all records as its name implies, so that no output generates.
+`DISCARD()` silently ignores all records as its name implies, so no output is generated.
 
 ```js {linenos=table,hl_lines=[8],linenostart=1}
 FAKE( json({
@@ -406,7 +412,7 @@ CSV()
 
 *Syntax*: `CHART()` {{< neo_since ver="8.0.8" />}}
 
-Generates chart using Apache echarts.
+Generates a chart using Apache ECharts.
 
 Refer to [CHART() examples](/neo/tql/chart/) for the various usages.
 
@@ -460,7 +466,7 @@ CHART(
 {{< /tab >}}
 {{< /tabs >}}
 
-{{< figure src="../img/chart_line.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/chart_line.jpg" width="500" >}}
 
 ### CHART_BAR()
 
@@ -509,7 +515,7 @@ CHART(
 {{< /tab >}}
 {{< /tabs >}}
 
-{{< figure src="../img/chart_bar.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/chart_bar.jpg" width="500" >}}
 
 ### CHART_SCATTER()
 
@@ -558,7 +564,7 @@ CHART(
 {{< /tab >}}
 {{< /tabs >}}
 
-{{< figure src="../img/chart_scatter.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/chart_scatter.jpg" width="500" >}}
 
 ### CHART_LINE3D()
 
@@ -625,7 +631,7 @@ CHART(
 {{< /tab >}}
 {{< /tabs >}}
 
-{{< figure src="../img/chart_line3d.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/chart_line3d.jpg" width="500" >}}
 
 
 ### CHART_BAR3D()
@@ -692,7 +698,7 @@ CHART(
 {{< /tab >}}
 {{< /tabs >}}
 
-{{< figure src="../img/chart_bar3d.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/chart_bar3d.jpg" width="500" >}}
 
 ### CHART_SCATTER3D()
 
@@ -758,7 +764,7 @@ CHART(
 {{< /tab >}}
 {{< /tabs >}}
 
-{{< figure src="../img/chart_scatter3d.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/chart_scatter3d.jpg" width="500" >}}
 
 ### title()
 
@@ -784,7 +790,7 @@ CHART(
 
 - `idx` *number* index of column for the axis
 - `label` *string* label of the axis
-- `type` *string* type fo the axis, available: `'time'` and `'value'`, default is `'value'` if not specified.
+- `type` *string* type of the axis, available: `'time'` and `'value'`, default is `'value'` if not specified.
 
 > zAxis() is effective only with 3D chart
 
@@ -880,7 +886,7 @@ CHART_LINE(
 )
 ```
 
-{{< figure src="../img/sink_chart_toolbox.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/sink_chart_toolbox.jpg" width="500" >}}
 
 ### visualMap()
 
@@ -920,7 +926,7 @@ CHART_LINE(
 )
 ```
 
-{{< figure src="../img/sink_chart_visualMapColor.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/sink_chart_visualMapColor.jpg" width="500" >}}
 
 ### markArea()
 
@@ -947,7 +953,7 @@ CHART_SCATTER(
  )
 ```
 
-{{< figure src="../img/sink_chart_markarea.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/sink_chart_markarea.jpg" width="500" >}}
 
 ### markXAxis()
 
@@ -968,7 +974,7 @@ CHART_SCATTER(
 )
 ```
 
-{{< figure src="../img/chart_marker_x.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/chart_marker_x.jpg" width="500" >}}
 
 ### markYAxis()
 
@@ -990,4 +996,4 @@ CHART_SCATTER(
 )
 ```
 
-{{< figure src="../img/chart_marker_y.jpg" width="500" >}} -->
+{{< figure src="/neo/tql/img/chart_marker_y.jpg" width="500" >}} -->

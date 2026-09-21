@@ -21,9 +21,11 @@ CREATE TAG TABLE IF NOT EXISTS EXAMPLE  (
 Let's make a html file named `simple-webapp.html`. machbase-neo supports `.html`, `.js` and `.css` file editing {{< neo_since ver="8.0.14" />}}.
 If you are using previous version of machbase-neo, please update it or use your favorite editor instead.
 
-{{< figure src="../img/simple-webapp-1.jpg" width="600px" >}}
+Click the <img src="/neo/tutorials/img/new_file_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px"> icon in the `EXPLORER` header on the left, enter `/simple-webapp.html` in `Name`, and click `OK`.
 
-Edit and save html file, open in web browser by click ► button on left top corner of the editor.
+{{< figure src="/neo/tutorials/img/simple-webapp-1.jpg" width="600px" >}}
+
+Edit and save the html file, then click the <img src="/neo/sql/img/sql_run_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px"> icon at the top left of the editor to open it in the web browser.
 
 ## Write data
 
@@ -71,7 +73,7 @@ Copy and paste the below codes.
 - line 9: Set content-type of the payload, so that machbase-neo interprets it properly.
 - line 11-18: The actual data in payload. This example has only one record in the `rows` field, but it may contain multiple records, 
 
-{{< figure src="../img/simple-webapp-2.jpg" width="600px" >}}
+{{< figure src="/neo/tutorials/img/simple-webapp-2.jpg" width="600px" >}}
 
 ## Read data
 
@@ -101,7 +103,7 @@ function queryData() {
 <div id=rspQuery></div>
 ```
 
-{{< figure src="../img/simple-webapp-3.jpg" width="600px" >}}
+{{< figure src="/neo/tutorials/img/simple-webapp-3.jpg" width="600px" >}}
 
 ## Markdown
 
@@ -132,7 +134,7 @@ function markdownData() {
 <div id=rspMarkdown></div>
 ```
 
-{{< figure src="../img/simple-webapp-4.jpg" width="600px" >}}
+{{< figure src="/neo/tutorials/img/simple-webapp-4.jpg" width="600px" >}}
 
 ## Chart
 
@@ -192,7 +194,7 @@ And add Apache echart library, it is already included in machbase-neo for pre-lo
 <div id=rspChart></div>
 ```
 
-{{< figure src="../img/simple-webapp-5.jpg" width="600px" >}}
+{{< figure src="/neo/tutorials/img/simple-webapp-5.jpg" width="600px" >}}
 
 
 ## Full source code

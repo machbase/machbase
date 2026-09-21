@@ -41,7 +41,7 @@ TQL 스크립트를 호출할 때 `X-Tql-Output: json` 헤더를 추가하면 {{
 {
     "chartID": "NDg4ODQ4MzMxMjgyMDYzMzY",
     "jsAssets": ["/web/echarts/echarts.min.js"],
-    "jsCodeAssets": ["/web/api/tql-assets/NDg4ODQ4MzMxMjgyMDYzMzY.js"],
+	"jsCodeAssets": ["/web/api/tql-assets/NDg4ODQ4MzMxMjgyMDYzMzY.js"],
     "style": {
         "width": "600px",
         "height": "600px"	

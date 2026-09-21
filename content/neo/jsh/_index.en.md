@@ -54,9 +54,9 @@ Copy the following code and save it as `hello.js`.
 console.print("Hello World?\n")
 ```
 
-Select "JSH" from the "New..." page.
+Select `JSH` on the `New...` page of a new tab.
 
-{{< figure src="./img/fish.jpg" width="86">}}
+{{< figure src="/neo/jsh/img/fish.jpg" width="86">}}
 
 It works as a simple command-line interpreter for running `.js` files.
 
@@ -67,7 +67,7 @@ To run the saved script, enter the following command:
 Hello World? 
 ```
 
-{{< figure src="./img/fish-hello.jpg" width="486">}}
+{{< figure src="/neo/jsh/img/fish-hello.jpg" width="486">}}
 
 
 ## Directory Mounting
@@ -76,7 +76,7 @@ The JSH runtime environment uses a virtual file system that is isolated from the
 If you run JSH and execute `ls -l /` inside it, you can see that JSH has its own directory tree,
 which is different from the directory structure of the host operating system.
 
-{{< figure src="./img/fish-ls.jpg" width="513">}}
+{{< figure src="/neo/jsh/img/fish-ls.jpg" width="513">}}
 
 Among these default directories, `/sbin` and `/lib` contain read-only files built into JSH.
 The `/work` directory is automatically mounted to the current OS directory, or to the directory shown in the file explorer in the web environment, unless another directory is specified when JSH starts.
@@ -88,7 +88,7 @@ For example, to mount the OS directory `/var/tmp` as `/tmp` in JSH, run the foll
 $ machbase-neo jsh -v /tmp=/var/tmp
 ```
 
-{{< figure src="./img/fish-ls-mount.jpg" width="513">}}
+{{< figure src="/neo/jsh/img/fish-ls-mount.jpg" width="513">}}
 
 ## External Execution
 

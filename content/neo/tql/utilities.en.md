@@ -11,7 +11,7 @@ Utility functions can be commonly used as parameters of any functions.
 | constants        | description                         |
 |:---------------- | :---------------------------------- |
 | `NULL`           | null value                          |
-| `PI`             | 3.141592....   https://oeis.org/A000796 |
+| `PI`             | pi (3.141592...) [reference](https://oeis.org/A000796) |
 
 ## Context
 
@@ -103,13 +103,13 @@ CSV()
 
 *Syntax*: `strHasSuffix(str, suffix) : boolean` {{< neo_since ver="8.0.7" />}}
 
-`strHasSuffix` tests whether the string s ends with suffix.
+`strHasSuffix` tests whether the string str ends with suffix.
 
 ### strReplaceAll()
 
 *Syntax*: `strReplaceAll(str, old, new) : string` {{< neo_since ver="8.0.7" />}}
 
-`strReplaceAll` returns a copy of the string s with all non-overlapping instances of old replaced by new.
+`strReplaceAll` returns a copy of the string str with all non-overlapping instances of old replaced by new.
 If old is empty, it matches at the beginning of the string
 and after each UTF-8 sequence, yielding up to k+1 replacements for a k-rune string.
 
@@ -122,7 +122,7 @@ and after each UTF-8 sequence, yielding up to k+1 replacements for a k-rune stri
 - `new` *string*
 - `n` *integer*
 
-`strReplace`returns a copy of the string s with the first n non-overlapping instances of old replaced by new.
+`strReplace` returns a copy of the string str with the first n non-overlapping instances of old replaced by new.
 If old is empty, it matches at the beginning of the string and after each UTF-8 sequence,
 yielding up to k+1 replacements for a k-rune string.
 If n < 0, there is no limit on the number of replacements.
@@ -153,7 +153,7 @@ Returns the index of the last instance of substr in str, or -1 if substr is not 
 
 ### strToLower()
 
-*Syntax*: `strToLower(str, suffix) : string` {{< neo_since ver="8.0.7" />}}
+*Syntax*: `strToLower(str) : string` {{< neo_since ver="8.0.7" />}}
 
 `strToLower` returns str with all Unicode letters mapped to their lower case.
 
@@ -161,7 +161,7 @@ Returns the index of the last instance of substr in str, or -1 if substr is not 
 
 *Syntax*: `strSprintf(fmt, args...) : string` {{< neo_since ver="8.0.7" />}}
 
-`strSprintf()` formats according to a format specifier and returns the resulting string.
+`strSprintf()` formats according to a format specifier and returns the resulting string (similar to Go's `fmt.Sprintf`).
 
 The syntax of `fmt` format string is `%[flags][width][.precision]verb`.
 
@@ -200,7 +200,11 @@ world,3.141792,hello world? 3.14
 - `format` *string*|*sqlTimeformat()*
 - `tz` *tz()* optional, time zone if omitted default is `tz('UTC')`.
 
-`strTime()` formats time value to string according to the given format and time zone.
+`strTime()` formats a time value to a string according to the given format and time zone.
+
+```js
+MAPVALUE(0, strTime(time("now"), "2006/01/02 15:04:05.999", tz("UTC")), "result")
+```
 
 **numeric timeformat**
 
@@ -258,7 +262,7 @@ JSON()
 {
     "data": {
         "columns": [ "column0", "column1" ],
-        "types": [ "string", "double" ],
+        "types": [ "string", "string" ],
         "rows": [ [ "world", 3.141792 ] ]
     },
     "success": true,
@@ -291,7 +295,7 @@ JSON()
 {
     "data": {
         "columns": [ "column0", "column1" ],
-        "types": [ "string", "bool" ],
+        "types": [ "string", "string" ],
         "rows": [ [ "world", true ] ]
     },
     "success": true,
@@ -369,7 +373,7 @@ timeMonth()  returns the month of the year specified by *time*.
 
 ### timeDay()
 
-*Syntax*: `timeMonth( time [, timezone] ) : number`  {{< neo_since ver="8.0.15" />}}
+*Syntax*: `timeDay( time [, timezone] ) : number`  {{< neo_since ver="8.0.15" />}}
 
 timeDay()  returns the day of the month specified by *time*.
 
@@ -377,7 +381,7 @@ timeDay()  returns the day of the month specified by *time*.
 
 *Syntax*: `timeHour( time [, timezone] ) : number`  {{< neo_since ver="8.0.15" />}}
 
-timeHour() returns the hour within the day specified by *time*, in the range [0, 23]..
+timeHour() returns the hour within the day specified by *time*, in the range [0, 23].
 
 ### timeMinute()
 
@@ -401,7 +405,7 @@ timeNanosecond() returns the nanosecond offset within the second specified by *t
 
 *Syntax*: `timeISOYear( time [, timezone] ) : number`  {{< neo_since ver="8.0.15" />}}
 
-timeISOYear() returns the ISO 8601 year number in which ts occurs.
+timeISOYear() returns the ISO 8601 year number in which *time* occurs.
 
 ### timeISOWeek()
 
@@ -497,7 +501,7 @@ CSV()
 
 *Syntax*: `roundTime( time, duration ) : time`
 
-Returns rounded time.
+Returns the time rounded down to a multiple of `duration` since the Unix epoch. Specify `duration` as a unit such as `1h` or `1s`.
 
 *Example)*
 
@@ -509,8 +513,8 @@ Returns rounded time.
 *Syntax*: `parseTime( time, format [, timezone] ) : time`
 
 - `time` *string* time expression
-- `format` *string* time format expression
-- `timezone` *tz* timezone, use `tz()` to get the demand location, if omitted default is `tz("UTC")`.
+- `format` *string* time format expression. You can use a predefined name such as `"DEFAULT"` or `"RFC3339"`, or `sqlTimeformat()` and similar functions.
+- `timezone` *tz* time zone, use `tz()` to get the desired location. If omitted, the default is `tz("UTC")`.
 
 *Example)*
 
@@ -521,13 +525,15 @@ Returns rounded time.
 
 *Syntax*: `tz( name ) : timeZone`
 
-Returns time zone that matched with the given name
+Returns the time zone that matches the given name.
 
 *Example)*
 - `tz('local')`
 - `tz('UTC')`
 - `tz('EST')`
 - `tz("Europe/Paris")`
+
+<a id="timeformat-sqltimeformat-ansitimeformat"></a>
 
 ### timeformat()
 
@@ -590,14 +596,12 @@ CSV(timeformat("DEFAULT"), tz("Asia/Seoul"))
 | YYYY           | four-digit year value                             |
 | YY             | two-digit year value                              |
 | MM             | two-digit month value between 01 to 12            |
-| MMM            | day of week                                       |
 | DD             | two-digit day of month between 01 to 31           |
 | HH24           | two-digit hour value between 00 to 23             |
-| HH12           | two-digit hour value between 0 to 12              |
-| HH             | two-digit hour value between 0 to 12              |
+| HH12           | two-digit hour value between 01 to 12             |
+| HH             | hour value between 1 to 12, without zero padding  |
 | MI             | two-digit minute value between 00 to 59           |
 | SS             | two-digit seconds value between 0 and 59          |
-| AM             | AM/PM                                             |
 | nnn...         | 1 to 9 digits fractions of a second               |
 
 ```js {linenos=table,hl_lines=["6"],linenostart=1}
@@ -649,7 +653,7 @@ CSV( ansiTimeformat("yyyy-mm-dd hh:nn:ss.ffffff"), tz("UTC"))
 
 Mathematical functions. {{< neo_since ver="8.0.6" />}}
 
-> This functions does not guarantee bit-identical results across system architectures.
+> These functions do not guarantee bit-identical results across system architectures.
 
 | function         | description                         |
 |:---------------- | :---------------------------------- |
@@ -710,7 +714,7 @@ CHART(
 ```
 {{< /tab >}}
 {{< tab name="RESULT" >}}
-{{< figure src="../img/tql-math-example.jpg" width="380px" >}}
+{{< figure src="/neo/tql/img/tql-math-example.jpg" width="380px" >}}
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -727,7 +731,7 @@ CHART(
 - `seed` *int* seed number
 - `dim1` ~ `dim4` *float number*
 
-`simplex()` returns SimpleX noise([wikipedia](https://en.wikipedia.org/wiki/Simplex_noise)) by given seed and dimension values.
+`simplex()` returns SimpleX noise([wikipedia](https://en.wikipedia.org/wiki/Simplex_noise)) by given seed and dimension values. Up to four dimensions can be specified.
 
 {{< tabs >}}
 {{< tab name="CODE" >}}
@@ -759,7 +763,7 @@ CHART(
 ```
 {{< /tab >}}
 {{< tab name="RESULT" >}}
-{{< figure src="../img/map_simplex.jpg" width="430px" >}}
+{{< figure src="/neo/tql/img/map_simplex.jpg" width="430px" >}}
 {{< /tab >}}
 {{< /tabs >}}
 

@@ -117,9 +117,9 @@ weight: 80
 
 ```sql
 CREATE TABLE HELLO (
-    NAME  VARCHAR(100) PRIMARY KEY,
-    TICK  DATETIME,
-    COUNT INTEGER
+  NAME  VARCHAR(100) PRIMARY KEY,
+  TICK  DATETIME,
+  COUNT INTEGER
 );
 ```
 
@@ -130,11 +130,11 @@ TQL 에디터를 열어 아래 코드를 입력하고 `helloworld.tql`로 저장
 ```js
 FAKE(once(1))
 SQL(`
-    INSERT INTO HELLO
-    VALUES('hi', now, 1)
-    ON DUPLICATE KEY UPDATE SET
-        TS = now,
-        COUNT = COUNT+1
+  INSERT INTO HELLO
+  VALUES('hi', now, 1)
+  ON DUPLICATE KEY UPDATE SET
+    TS = now,
+    COUNT = COUNT+1
 `)
 ```
 

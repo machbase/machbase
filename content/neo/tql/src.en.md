@@ -120,7 +120,7 @@ SQL(`SELECT
     FROM
         EXAMPLE
     WHERE
-        name = 'TAG1'
+        name = 'temperature'
     AND time BETWEEN (
         SELECT MAX_TIME-10000000000
         FROM V$EXAMPLE_STAT
@@ -543,7 +543,7 @@ CHART(
 )
 ```
 
-{{< figure src="../img/linspace_chart.jpg" width="600px" >}}
+{{< figure src="/neo/tql/img/linspace_chart.jpg" width="600px" >}}
 
 {{< /tab >}}
 {{< /tabs >}}
@@ -602,7 +602,7 @@ CHART(
 )
 ```
 
-{{< figure src="../img/meshgrid_chart.jpg" width="350px" >}}
+{{< figure src="/neo/tql/img/meshgrid_chart.jpg" width="350px" >}}
 
 {{< /tab >}}
 {{< /tabs >}}

@@ -8,7 +8,7 @@ toc: true
 ## 高速フーリエ変換 {#고속-푸리에-변환}
 
 {{< callout emoji="📌" >}}
-実習を進める前に、以下のクエリを実行してテーブルとデータを準備してください。
+実習を円滑に進めるために、以下のクエリを実行してテーブルとデータを事前に準備してください。
 {{< /callout >}}
 
 ```sql
@@ -28,6 +28,7 @@ Web UIで新しい *tql* エディターを開き、以下のコードをコピ�
 
 {{< tabs >}}
 {{< tab name="SCRIPT" >}}
+
 ```js {linenos=table,hl_lines=["3-11"],linenostart=1}
 SCRIPT({
     const m = require('mathx');
@@ -50,8 +51,10 @@ SCRIPT({
 })
 CHART( size("600px", "350px") )
 ```
+
 {{</ tab >}}
 {{< tab name="FAKE" >}}
+
 ```js {linenos=table,hl_lines=["2-5"],linenostart=1}
 FAKE( 
   oscillator(
@@ -61,6 +64,7 @@ FAKE(
 )
 CHART_SCATTER( size("600px", "350px"), dataZoom('slider', 95, 100) )
 ```
+
 {{</ tab >}}
 {{</ tabs >}}
 
@@ -72,6 +76,7 @@ CHART_SCATTER( size("600px", "350px"), dataZoom('slider', 95, 100) )
 
 {{< tabs >}}
 {{< tab name="SCRIPT" >}}
+
 ```js {linenos=table,hl_lines=[13,16]}
 SCRIPT({
     const m = require('mathx');
@@ -90,8 +95,10 @@ SCRIPT({
 })
 SQL('insert into example values(?,?,?)','signal',value(0),value(1))
 ```
+
 {{</ tab >}}
 {{< tab name="FAKE" >}}
+
 ```js {linenos=table,hl_lines=["10"],linenostart=1}
 FAKE(
   oscillator(
@@ -104,15 +111,17 @@ FAKE(
 // |
 SQL('insert into example values(?,?,?)','signal',value(0),value(1))
 ```
+
 {{</ tab >}}
 {{</ tabs >}}
 
-実行結果ウィンドウに「10000 rows inserted.」と表示されます。
+実行結果ウィンドウには、FAKEの例では`10000 rows inserted.`、SCRIPTの例では`10001 rows inserted.`と表示されます。`mathx.oscillator()`は時間範囲の両端を含むためです。
 
-テストマシン（Apple Mac mini M1）では約270msかかりました。以下の例のように `APPEND()` を使用すると、約65ms（約4倍高速）に短縮できます。
+参考までに、テストマシン（Apple Mac mini M1）では約270msかかりましたが、以下の例のように `APPEND()` を使用すると、約65ms（約4倍高速）に短縮できます。
 
 {{< tabs >}}
 {{< tab name="SCRIPT" >}}
+
 ```js {linenos=table,hl_lines=[13,16]}
 SCRIPT({
     const m = require('mathx');
@@ -131,8 +140,10 @@ SCRIPT({
 })
 APPEND( table('example') )
 ```
+
 {{</ tab >}}
 {{< tab name="FAKE" >}}
+
 ```js {linenos=table,hl_lines=[10,14]}
 FAKE(
   oscillator(
@@ -149,6 +160,7 @@ PUSHVALUE(0,'signal')
 // |
 APPEND( table('example') )
 ```
+
 {{</ tab >}}
 {{</ tabs >}}
 
@@ -162,6 +174,7 @@ APPEND( table('example') )
 
 {{< tabs >}}
 {{< tab name="SQL">}}
+
 ```js
 SQL(`select time, value from example where name = 'signal' order by time`)
 CHART(
@@ -174,12 +187,15 @@ CHART(
     })
 )
 ```
+
 {{</ tab >}}
 {{< tab name="SQL_SELECT">}}
+
 ```js
 SQL_SELECT('time', 'value', from('example', 'signal'), between('last-10s', 'last'))
 CHART_LINE( size("600px", "350px"), dataZoom('slider', 95, 100))
 ```
+
 {{</ tab >}}
 {{</ tabs >}}
 
@@ -187,10 +203,11 @@ CHART_LINE( size("600px", "350px"), dataZoom('slider', 95, 100))
 
 ## 高速フーリエ変換を実行する {#고속-푸리에-변환-수행}
 
-`SQL_SELECT()` ソースと `CHART_LINE()` シンクの間に、データ変換関数を追加します。
+`SQL_SELECT()` ソースと `CHART_LINE()` シンクの間に、いくつかのデータ変換関数を追加します。
 
 {{< tabs >}}
 {{< tab name="GROUPBYKEY" >}}
+
 ```js {linenos=table,hl_lines=["2-4"],linenostart=1}
 SQL(`select time, value from example where name = 'signal' order by time`)
 MAPKEY('sample')
@@ -203,8 +220,10 @@ CHART_LINE(
   dataZoom('slider', 0, 10) 
 )
 ```
+
 {{< /tab >}}
 {{< tab name="SCRIPT-1" >}}
+
 ```js {linenos=table,hl_lines=12}
 SQL(`select time, value from example where name = 'signal' order by time`)
 SCRIPT({
@@ -229,8 +248,10 @@ SCRIPT({
 })
 CHART(size("600px", "350px"))
 ```
+
 {{</ tab >}}
 {{< tab name="SCRIPT-2" >}}
+
 ```js {linenos=table,hl_lines=[11,12],linenostart=1}
 SQL(`select time, value from example where name = 'signal' order by time`)
 SCRIPT({
@@ -255,6 +276,7 @@ CHART_LINE(
   dataZoom('slider', 0, 10) 
 )
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -264,16 +286,20 @@ CHART_LINE(
 
 {{% steps %}}
 
-### SQL_SELECT()
+### SQL_SELECT() {#sql_select}
+
 `SQL_SELECT(...)` 関数は、クエリ結果を `{key: rownum, value: (time, value)}` 形式のレコードとして渡します。
 
-### MAPKEY('sample')
-`MAPKEY('sample')` 関数は、すべてのレコードに固定キー 'sample' を設定します。各レコードの *key* は `'sample'` となり、*value* の `(time, value)` は維持されます。`{key: 'sample', value:(time, value)}`
+### MAPKEY('sample') {#mapkeysample}
 
-### GROUPBYKEY()
-`GROUPBYKEY()` は、同じキーを持つレコードを結合します。この例では、すべてのクエリ結果が1つのレコードにまとまり、`{key: 'sample', value:[ (time1, value1), (time2, value2), ..., (timeN, valueN) ]}` となります。
+`MAPKEY('sample')` 関数は、すべてのレコードに固定文字列 'sample' を新しいキーとして設定します。各レコードの *key* は `'sample'` となり、*value* の `(time, value)` は維持されます。`{key: 'sample', value:(time, value)}`
 
-### FFT()
+### GROUPBYKEY() {#groupbykey}
+
+`GROUPBYKEY()` は、同じキーを持つレコードを結合します。この例では、すべてのクエリ結果が、*key* が 'sample' で値がタプルの配列である1つのレコードにまとまり、`{key: 'sample', value:[ (time1, value1), (time2, value2), ..., (timeN, valueN) ]}` となります。
+
+### FFT() {#fft}
+
 `FFT()` は、レコードの値に高速フーリエ変換を適用し、`(time, value)` 配列を `(frequency, amplitude)` 配列に変換します。`{key: 'sample', value:[ (Hz1, Ampl1), (Hz2, Ampl2), ... ]}`
 
 {{% /steps %}}
@@ -300,7 +326,7 @@ CHART_BAR3D(
 
 {{< figure src="/images/web-fft-tql-3d.png" width="500" >}}
 
-`SQL_SELECT()` で直近10秒の範囲を指定する場合は、次のように記述できます。
+`SQL_SELECT()` で、タグの最新データの時刻から10秒前までの範囲を指定する場合は、次のように記述できます。
 
 ```js {linenos=table,hl_lines=["3-7"],linenostart=1}
 SQL_SELECT( 'time', 'value', from('example', 'signal'), between('last-10s', 'last'))
@@ -322,23 +348,28 @@ CHART_BAR3D(
 
 {{% steps %}}
 
-### SQL_SELECT()
+### SQL_SELECT() {#sql_select-1}
 
 `SQL_SELECT(...)` 関数は、クエリ結果を `{key: rownum, value: (time, value)}` 形式で渡します。
 
-### MAPKEY()
-`MAPKEY( roundTime(value(0), '500ms'))` は、`value(0)` を500ミリ秒のバケット境界に切りそろえた結果を新しいキーに設定します。レコードは `{key: (time/500ms)*500ms, value:(time, value)}` 形式に変換されます。
+### MAPKEY() {#mapkey}
 
-### GROUPBYKEY()
+`MAPKEY( roundTime(value(0), '500ms'))` は、`value(0)` を500ミリ秒単位で切り捨てた結果を新しいキーに設定します。レコードは `{key: (time/500ms)*500ms, value:(time, value)}` 形式に変換されます。
+
+### GROUPBYKEY() {#groupbykey-1}
+
 `GROUPBYKEY()` は、レコードを500ミリ秒単位でグループ化します。`{key: time1In500ms, value:[(time1, value1), (time2, value2)...]}`
 
-### FFT()
+### FFT() {#fft-1}
+
 `FFT()` は、各レコードに高速フーリエ変換を適用します。省略可能な `minHz(0)` と `maxHz(100)` は、可視化用に出力範囲を制限します。`{key:time1In500ms, value:[(Hz1, Ampl1), ...]}`、`{key:'time2In500ms', value:[(Hz1, Ampl1), ...]}`、...
 
-### FLATTEN()
-`FLATTEN()` は、値配列の次元を減らし、複数のレコードに分割します。各周波数と振幅のペアが個別のレコードとして出力されます。
+### FLATTEN() {#flatten}
 
-### PUSHKEY()
-`PUSHKEY('fft')` は、すべてのレコードに固定キー 'fft' を設定し、以前のキーを値配列の先頭に移動します。`{key:'fft', value:(time1In500ms, Hz1, Ampl1)}`、`{key:'fft', value:(time1In500ms, Hz2, Ampl2)}`...
+`FLATTEN()` は、値配列を複数のレコードに分割して次元を減らします。各周波数と振幅のペアが個別のレコードとして出力されます。
+
+### PUSHKEY() {#pushkey}
+
+`PUSHKEY('fft')` は、すべてのレコードに固定文字列 'fft' を新しいキーとして設定し、以前のキーを値配列の先頭に移動します。`{key:'fft', value:(time1In500ms, Hz1, Ampl1)}`、`{key:'fft', value:(time1In500ms, Hz2, Ampl2)}`...
 
 {{% /steps %}}

@@ -15,28 +15,28 @@ toc: true
 入力データはJavaScriptオブジェクトで指定します。各オブジェクトには `type` と `coordinates` フィールドが必須で、`properties` は省略可能です。  
 `type` に応じたレイヤーを地図上に描画します。たとえば `type: "circle"` は、指定した座標に円を表示します。
 
-### tileTemplate()
+### tileTemplate() {#tiletemplate}
 
 *構文*: `tileTemplate(url_template)`
 
 タイルサーバーのURLテンプレートを指定します。既定値は `https://tile.openstreetmap.org/{z}/{x}/{y}.png` です。
 
-> **重要：** 社内のファイアウォールやセキュリティポリシーによって既定のタイルサーバーにアクセスできない場合は、内部にタイルサーバーを構築し、`tileTemplate()` でURLを設定してください。  
+> **重要**：社内のファイアウォールやセキュリティポリシーによって既定のタイルサーバーにアクセスできない場合は、内部にタイルサーバーを構築し、`tileTemplate()` でURLを設定してください。  
 > タイルサーバーの構築方法はこの文書の対象外です。詳細は https://wiki.openstreetmap.org/wiki/Tile_servers を参照してください。
 
-### tileGrayscale()
+### tileGrayscale() {#tilegrayscale}
 
 *構文*: `tileGrayscale(scale)`
 
-- `scale` *float*：タイル画像をグレースケールで表示する際の値（0 ≤ scale ≤ 1.0、既定値は `0`）
+- `scale` *float*：タイル画像のグレースケールの度合い（0 ≤ scale ≤ 1.0、既定値は `0`）
 
-### geomapID()
+### geomapID() {#geomapid}
 
 *構文*: `geomapID(id)`
 
 自動生成されるIDの代わりに使用する地図のID（文字列）を指定します。
 
-### size()
+### size() {#size}
 
 *構文*: `size(width, height)`
 
@@ -65,10 +65,10 @@ toc: true
 | 名前           | 型                     | 説明 |
 |:---------------|:-------------------------|:-----|
 | `type`         | `String`                 | レイヤーの種類（`marker`、`circle`、`circleMarker` など） |
-| `coordinates`  | `[]Float`, `[][]Float`… | 緯度と経度の配列 |
+| `coordinates`  | `[]Float`, `[][]Float`… | `type` に応じた座標を [緯度, 経度] の順で指定 |
 | `properties`   | `Dictionary`            | レイヤーの種類に応じたオプション。[プロパティ](#properties)を参照 |
 
-### marker
+### marker {#marker}
 
 ```js {{linenos=table,hl_lines=["8-11"]}}
 FAKE(json({
@@ -89,7 +89,7 @@ GEOMAP()
 
 {{< figure src="/neo/tql/img/geomap-marker.png" width="500" >}}
 
-### circleMarker
+### circleMarker {#circlemarker}
 
 **プロパティ**
 
@@ -119,7 +119,7 @@ GEOMAP()
 
 {{< figure src="/neo/tql/img/geomap-circlemarker.png" width="500" >}}
 
-### circle
+### circle {#circle}
 
 **プロパティ**
 
@@ -149,7 +149,7 @@ GEOMAP()
 
 {{< figure src="/neo/tql/img/geomap-circle.png" width="500" >}}
 
-### polyline
+### polyline {#polyline}
 
 ```js
 FAKE(json({
@@ -177,7 +177,7 @@ GEOMAP()
 
 {{< figure src="/neo/tql/img/geomap-polyline.png" width="500" >}}
 
-### polygon
+### polygon {#polygon}
 
 ```js
 FAKE(json({
@@ -212,7 +212,7 @@ GEOMAP()
 
 | プロパティ          | 型    | 既定値     | 説明 |
 |:--------------|:--------|:-----------|:-----|
-| `stroke`      | Boolean | `true`     | 輪郭線を描画するかどうか |
+| `stroke`      | Boolean | `true`     | パスに沿って輪郭線を描画するかどうか。ポリゴンや円の枠線を消すには `false` に設定します。 |
 | `color`       | String  | `'#3388ff'`| 輪郭線の色 |
 | `weight`      | Number  | `3`        | 輪郭線の太さ（px） |
 | `opacity`     | Number  | `1.0`      | レイヤーの不透明度 |
@@ -299,9 +299,9 @@ GEOMAP()
 {{< figure src="/neo/tql/img/geomap-marker-tooltip.png" width="500" >}}
 
 <!--
-## GeoJSON
+## GeoJSON {#geojson}
 
-### FeatureCollection
+### FeatureCollection {#featurecollection}
 
 ```js
 SCRIPT({
@@ -345,7 +345,7 @@ GEOMAP()
 
 {{< figure src="/neo/tql/img/geomap-geojson-collection.png" width="500" >}}
 
-### Feature
+### Feature {#feature}
 
 ```js
 SCRIPT({
@@ -434,6 +434,7 @@ SQL(`INSERT INTO TRIP (name, time, value, lat, lon) values(?,?,?,?,?)`,
 
 {{< tabs >}}
 {{< tab name="SQL" >}}
+
 ```js {{linenos=table,hl_lines=[5,7]}}
 SQL(`SELECT time, lat, lon FROM TRIP
      WHERE name = 'firenze' ORDER BY time`)
@@ -455,8 +456,10 @@ SCRIPT({
 })
 GEOMAP()
 ```
+
 {{< /tab >}}
 {{< tab name="CSV" >}}
+
 ```js {{linenos=table,hl_lines=["8-11"]}}
 // CSV形式： TIME, LAT, LON
 CSV(file("https://docs.machbase.com/assets/example/data-trajectory-firenze.csv"))
@@ -483,6 +486,7 @@ SCRIPT({
 
 GEOMAP()
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -495,6 +499,7 @@ GEOMAP()
 
 {{< tabs >}}
 {{< tab name="SQL" >}}
+
 ```js {{linenos=table,hl_lines=[7,"22-23",28]}}
 SQL(`SELECT time, lat, lon FROM TRIP
      WHERE name = 'firenze' ORDER BY time`)
@@ -535,8 +540,10 @@ SCRIPT({
 })
 GEOMAP()
 ```
+
 {{< /tab >}}
 {{< tab name="CSV" >}}
+
 ```js {{linenos=table,hl_lines=["20-22",30,51,"45-46"]}}
 // CSV形式： TIME("23-04-21 16:53:21:568000"), LAT, LON
 CSV(file("https://docs.machbase.com/assets/example/data-trajectory-firenze.csv"))
@@ -600,6 +607,7 @@ SCRIPT({
 })
 GEOMAP()
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 

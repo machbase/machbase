@@ -342,11 +342,12 @@ sleep [OPTION] <sec>
 /work > sleep 5
 ```
 
-
 ### tail
 
 파일의 마지막 부분을 출력합니다.
 `-f` 옵션을 사용하면 파일에 추가되는 새 내용을 실시간으로 이어서 출력합니다.
+
+<h6>사용 형식</h6>
 
 ```sh
 tail [OPTION]... <file>
@@ -364,6 +365,7 @@ tail [OPTION]... <file>
 /work > tail app.log
 /work > tail -n 20 app.log
 /work > tail -f app.log
+```
 
 ### viz
 

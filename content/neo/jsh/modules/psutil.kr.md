@@ -78,7 +78,7 @@ console.log("cpu percent:", ...psutil.cpuPercent(0, true));
 const psutil = require("@jsh/psutil")
 console.log("load:", psutil.loadAvg());
 
-// load: {"load1":2.33349609375,"load5":2.22021484375,"load15":2.1396484375}
+// laod: {"load1":2.33349609375,"load5":2.22021484375,"load15":2.1396484375}
 ```
 
 ## memVirtual()

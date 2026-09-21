@@ -10,7 +10,7 @@ MQTT 브리지를 사용하면 machbase-neo가 외부 MQTT 브로커와 메시�
 MQTT 기반 플랫폼에서 machbase-neo를 도입할 때 브리지만 연결하면 기존 시스템을 변경할 필요가 없습니다.
 {{< /callout >}}
 
-- Send messages to external MQTT broker
+- 외부 MQTT 브로커로 메시지 전송
 
 ```mermaid
 flowchart LR
@@ -28,7 +28,7 @@ flowchart LR
   end
 ```
 
-- Receive messages from external MQTT broker
+- 외부 MQTT 브로커에서 메시지 수신
 
 ```mermaid
 flowchart RL
@@ -61,17 +61,17 @@ MQTT 브리지는 machbase-neo가 외부 브로커에 접속하는 방식을 정
 
 사용 가능한 연결 옵션
 
-| Option           | Description                          | example         |
+| 옵션             | 설명                                 | 예시            |
 | :-----------     | :---------------------------------   | :-------------  |
-| `broker`         | broker address, If the broker has redundant access points, use multiple "broker" options | `broker=192.0.1.100:1883` |
-| `id`             | client id                            |                 |
-| `username`       | username                             |                 |
-| `password`       | password                             |                 |
-| `keepalive`      | keepalive in duration format         | `keepalive=30s` |
-| `cleansession`   | cleansession                         | `cleansession=1` `cleansession=false` |
-| `cafile`         | ca cert (`*.pem`) file path            |  *TLS*          |
-| `key`            | client private key (`*.pem`) file path |  *TLS*          |
-| `cert`           | client certificate (`*.pem`) file path |  *TLS*          |
+| `broker`         | 브로커 주소. 브로커 접속 지점이 이중화되어 있으면 `broker` 옵션을 여러 개 지정합니다 | `broker=192.0.1.100:1883` |
+| `id`             | 클라이언트 ID                        |                 |
+| `username`       | 사용자 이름                          |                 |
+| `password`       | 비밀번호                             |                 |
+| `keepalive`      | 기간 형식의 keepalive                | `keepalive=30s` |
+| `cleansession`   | 클린 세션                            | `cleansession=1` `cleansession=false` |
+| `cafile`         | CA 인증서(`*.pem`) 파일 경로           |  *TLS*          |
+| `key`            | 클라이언트 개인 키(`*.pem`) 파일 경로  |  *TLS*          |
+| `cert`           | 클라이언트 인증서(`*.pem`) 파일 경로   |  *TLS*          |
 
 > `cafile`, `key`, `cert` 옵션을 모두 지정하면 TLS를 통한 보안 MQTT 연결이 활성화됩니다.
 
@@ -81,7 +81,7 @@ MQTT 브리지는 machbase-neo가 외부 브로커에 접속하는 방식을 정
 machbase-neo가 `neo/messages` 토픽으로 메시지를 발행하면 해당 브로커를 통해 메시지를 수신합니다.
 
 ```sh
-mosquitto_sub -d -h 127.0.0.1 -p 1883 -i client-app -t neo/messages                                            1 ↵
+mosquitto_sub -d -h 127.0.0.1 -p 1883 -i client-app -t neo/messages
 Client client-app sending CONNECT
 Client client-app received CONNACK (0)
 Client client-app sending SUBSCRIBE (Mid: 1, Topic: neo/messages, QoS: 0, Options: 0x00)
@@ -97,6 +97,41 @@ Subscribed (mid: 1): 0
 브리지의 `publish` 기능은 [Timer](/neo/timer/)와 결합해 자동으로 데이터를 전송할 때 더욱 강력합니다.
 {{< /callout >}}
 
+현재 JavaScript 런타임에서는 아래 TQL로 같은 외부 브로커에 메시지를 보낼 수 있습니다.
+이 예시는 `mqtt` 모듈로 클라이언트 연결을 만듭니다.
+등록된 브리지의 `publish()`를 사용하는 이전 Tengo 예시는 아래에 참고용으로 남겨 두었습니다.
+
+```js
+SCRIPT({
+  const mqtt = require('mqtt');
+  const values = [0, 2.5, 5, 7.5, 10];
+  const client = new mqtt.Client({servers: ['tcp://127.0.0.1:1883']});
+  let published = 0;
+  const timeout = setTimeout(() => client.close(), 5000);
+  client.on('open', () => {
+    for (const value of values) {
+      client.publish('neo/messages', 'The message number is ' + value, {qos: 1});
+      $.yield(value);
+    }
+  });
+  client.on('published', () => {
+    if (++published === values.length) {
+      clearTimeout(timeout);
+      client.close();
+    }
+  });
+  client.on('error', err => {
+    console.error(err);
+    clearTimeout(timeout);
+    client.close();
+  });
+})
+CSV()
+```
+
+<details>
+<summary>이전 Tengo 예시(현재 런타임에서는 실행되지 않습니다)</summary>
+
 ```js {linenos=table,hl_lines=[4,5],linenostart=1}
 FAKE(linspace(0,10, 5))
 SCRIPT("tengo", {
@@ -108,10 +143,12 @@ SCRIPT("tengo", {
 CSV()
 ```
 
+</details>
+
 스크립트를 실행하면 `mosquitto_sub`가 수신한 메시지를 즉시 출력합니다.
 
 ```sh
-mosquitto_sub -d -h 127.0.0.1 -p 1883 -i client-app -t neo/messages                                            1 ↵
+mosquitto_sub -d -h 127.0.0.1 -p 1883 -i client-app -t neo/messages
 ... omit ...
 Client client-app received PUBLISH (d0, q0, r0, m0, 'neo/messages', ... (23 bytes))
 The message number is 0
@@ -201,7 +238,7 @@ mosquitto 로그에 아래와 같은 연결 기록이 표시됩니다.
 subscriber add --autostart mqtt_subr my_mqtt iot/sensor db/append/EXAMPLE:csv;
 ```
 
-Execute `subscriber list` to confirm the registration.
+`subscriber list`를 실행해 등록 결과를 확인합니다.
 
 ```
 ┌───────────┬─────────┬────────────┬───────────────────────┬───────────┬─────────┐
@@ -215,7 +252,7 @@ Execute `subscriber list` to confirm the registration.
 - `--autostart`: machbase-neo 시작 시 구독자를 자동 실행합니다. 생략하면 수동으로 시작/중지할 수 있습니다.
 - `mqtt_subr`: 구독자 이름입니다.
 - `my_mqtt`: 사용할 브리지 이름입니다.
-- `iot/sensor`: 구독할 토픽(MQTT 토픽 문법 사용).
+- `iot/sensor`: 구독할 토픽입니다. MQTT 토픽 문법을 따릅니다.
 - `db/append/EXAMPLE:csv`: 쓰기 디스크립터입니다. 입력 데이터가 CSV이며 `EXAMPLE` 테이블에 append 모드로 기록함을 의미합니다.
 
 쓰기 디스크립터 대신 *TQL* 스크립트 경로를 지정할 수도 있습니다. 예제는 후반부에 소개합니다.
@@ -234,11 +271,11 @@ db/{method}/{table_name}:{format}:{compress}?{options}
 
 **table_name**
 
-대상 테이블 이름(대소문자 무시)
+대상 테이블 이름을 지정합니다. 대소문자를 구분하지 않습니다.
 
 **format**
 
-- `json` (default)
+- `json` (기본값)
 - `csv`
 
 **compress**
@@ -247,14 +284,14 @@ db/{method}/{table_name}:{format}:{compress}?{options}
 
 **options**
 
-추가로 `?` 뒤에 URL 인코딩된 옵션을 지정할 수 있습니다.
+`?` 뒤에 URL 인코딩한 옵션을 추가로 지정할 수 있습니다.
 
-| Name          | Default      | Description                                                    |
+| 이름          | 기본값       | 설명                                                           |
 | :------------ | :----------- | :------------------------------------------------------------- |
-| `timeformat`  | `ns`         | Time format: s, ms, us, ns                                     |
-| `tz`          | `UTC`        | Time Zone: UTC, Local and location spec                        |
-| `delimiter`   | `,`          | CSV delimiter, ignored if content is not csv                   |
-| `heading`     | `false`      | If CSV contains header line, set `true` to skip the first line |
+| `timeformat`  | `ns`         | 시간 형식: s, ms, us, ns                                       |
+| `tz`          | `UTC`        | 타임존: UTC, Local, 지역 지정                                  |
+| `delimiter`   | `,`          | CSV 구분자. CSV가 아니면 무시합니다                            |
+| `heading`     | `false`      | CSV에 헤더 줄이 있으면 `true`로 지정해 첫 줄을 건너뜁니다      |
 
 - `db/append/EXAMPLE:csv?timeformat=s&heading=true`
 - `db/write/EXAMPLE:csv:gzip?timeformat=s`

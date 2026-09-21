@@ -459,11 +459,11 @@ Node.jsとの互換性のため、`Sync`接尾辞を持つ別名も提供しま�
 const fs = require('fs');
 
 try {
-	const content = fs.readFile('/path/to/config.json', 'utf8');
-	const config = JSON.parse(content);
-	console.println('Config loaded:', config);
+    const content = fs.readFile('/path/to/config.json', 'utf8');
+    const config = JSON.parse(content);
+    console.println('Config loaded:', config);
 } catch (e) {
-	console.println('Error reading config:', e);
+    console.println('Error reading config:', e);
 }
 ```
 
@@ -473,9 +473,9 @@ try {
 const fs = require('fs');
 
 function log(message) {
-	const timestamp = new Date().toISOString();
-	const logEntry = `[${timestamp}] ${message}\n`;
-	fs.appendFile('/tmp/app.log', logEntry, 'utf8');
+    const timestamp = new Date().toISOString();
+    const logEntry = `[${timestamp}] ${message}\n`;
+    fs.appendFile('/tmp/app.log', logEntry, 'utf8');
 }
 
 log('Application started');
@@ -514,17 +514,17 @@ walkDir('/tmp', (file) => {
 const fs = require('fs');
 
 function backupFile(path) {
-	if (!fs.exists(path)) {
-		throw new Error('File does not exist');
-	}
+    if (!fs.exists(path)) {
+        throw new Error('File does not exist');
+    }
 
-	const timestamp = Date.now();
-	const backupPath = path + '.backup.' + timestamp;
+    const timestamp = Date.now();
+    const backupPath = path + '.backup.' + timestamp;
 
-	fs.copyFile(path, backupPath);
-	console.println('Backup created:', backupPath);
+    fs.copyFile(path, backupPath);
+    console.println('Backup created:', backupPath);
 
-	return backupPath;
+    return backupPath;
 }
 
 backupFile('/tmp/important.txt');

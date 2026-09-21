@@ -49,4 +49,4 @@ CHART(
 )
 ```
 
-{{< figure src="../../img/heatmap_discrete.jpg" width="500" >}}
+{{< figure src="/neo/tql/chart/img/heatmap_discrete.jpg" width="500" >}}

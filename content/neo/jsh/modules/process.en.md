@@ -147,26 +147,6 @@ const process = require('process');
 process.exit(-1);
 ```
 
-
-## which()
-
-Finds a JavaScript command in `PATH` and returns the resolved file path.
-
-If the command does not include `.js`, it is added automatically.
-
-<h6>Syntax</h6>
-
-```js
-which(command)
-```
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1}
-const process = require('process');
-console.println(process.which('echo')); // e.g. /sbin/echo.js
-```
-
 ## expand()
 
 Expands environment variables such as `$HOME` and `${HOME}` in a string.
@@ -195,7 +175,6 @@ The JSH runtime environment object.
 const process = require('process');
 console.println(process.env.get('HOME'));
 ```
-
 
 ## exec()
 
@@ -235,6 +214,15 @@ Executes JavaScript source code from a string and returns its exit code.
 
 ```js
 execString(source, ...args)
+```
+
+<h6>Usage example</h6>
+
+```js {linenos=table,linenostart=1}
+const process = require('process');
+const code = process.execString("console.println('hello from execString')");
+console.println('exit code:', code);
+```
 
 ## hrtime()
 
@@ -598,22 +586,3 @@ function trace() {
 }
 trace();
 ```
-
-## expand()
-
-Expands environment variables such as `$HOME` and `${HOME}` in a string.
-
-<h6>Syntax</h6>
-
-```js
-expand(value)
-```
-
-<h6>Usage example</h6>
-
-```js {linenos=table,linenostart=1}
-const process = require('process');
-console.println(process.expand('$HOME/file.txt'));
-console.println(process.expand('${HOME}/../lib/file.txt'));
-```
-

@@ -5,7 +5,7 @@ weight: 55
 toc: true
 ---
 
-TQLは、**SRC** と **MAP** のコンテキストでJavaScriptを使用できる `SCRIPT()` 関数を提供します {{< neo_since ver="8.0.36" />}}。  
+TQLは、**SRC** と **MAP** のコンテキストでJavaScriptを使用できる `SCRIPT()` 関数を提供します {{< neo_since ver="8.0.36" />}}。
 使い慣れたプログラミング言語でロジックを記述し、より柔軟で強力なスクリプトを作成できます。
 
 *構文*: `SCRIPT({main_code})`
@@ -52,15 +52,15 @@ Machbase Neoは、コンテキストオブジェクトとして `$` 変数を提
 - `$.key`、`$.values`：現在のレコードのキーと値にアクセスします。MAPコンテキストでのみ使用できます。
 - `$.yield()`：値だけを渡して新しいレコードを出力します。
 - `$.yieldKey()`：キーと値を渡して新しいレコードを出力します。
-- `$.yieldArray()`：配列1つを引数として受け取り、レコードを出力します。
+- `$.yieldArray()`：`$.yield()` と同じですが、複数の引数の代わりに配列型の引数を1つだけ受け取ります。
 - `$.db()`：新しいデータベース接続を返します。
 - `$.db().query()`：SQLクエリを実行します。
 - `$.db().exec()`：SELECT以外のSQLを実行します。
 - `$.request().do()`：リモートサーバーにHTTPリクエストを送信します。
 
-### `$.payload`
+### `$.payload` {#payload}
 
-`$.payload` からリクエスト本文のデータを読み取れます。入力データがない場合は `undefined` です。  
+`$.payload` からリクエスト本文のデータを読み取れます。入力データがない場合は `undefined` です。
 SRCノードとして使用する場合にのみアクセスできます。
 
 ```js {{linenos=table,hl_lines=[2]}}
@@ -92,9 +92,9 @@ curl -o - -X POST http://127.0.0.1:5654/db/tql/test.tql \
 
 結果：`testing,10,10`
 
-### `$.params`
+### `$.params` {#params}
 
-`$.params` は、リクエストのクエリパラメーターを提供します。  
+`$.params` は、リクエストのクエリパラメーターを提供します。
 ドット表記（`$.params.name`）と角括弧表記（`$.params["name"]`）の両方を使用できます。
 
 ```js {{linenos=table,hl_lines=["2-4"]}}
@@ -123,9 +123,9 @@ curl -o - -X POST "http://127.0.0.1:5654/db/tql/test.tql?prefix=testing&offset=1
 
 結果：`testing,12,20`
 
-### `$.result`
+### `$.result` {#result}
 
-`SCRIPT` が出力する結果のカラムと型を定義します。  
+`SCRIPT` が出力する結果のカラムと型を定義します。
 次の例のように、初期化コード内で設定します。
 
 ```js {{linenos=table,hl_lines=["2-5"]}}
@@ -144,7 +144,7 @@ SCRIPT({
 JSON()
 ```
 
-### `$.key`
+### `$.key` {#key}
 
 現在のレコードのキーにアクセスします。MAPコンテキストでのみ定義され、SRCでは `undefined` です。
 
@@ -166,7 +166,7 @@ hello-2,key is 1
 hello-3,key is 2
 ```
 
-### `$.values`
+### `$.values` {#values}
 
 現在のレコードの値配列にアクセスします。MAPコンテキストでのみ使用でき、SRCでは `undefined` です。
 
@@ -188,7 +188,7 @@ CSV()
 
 `the first value is string,2nd value is 10,3rd is 3.14`
 
-### `$.yield()`
+### `$.yield()` {#yield}
 
 新しいレコードを次のステップに出力します。キーには連番が自動的に割り当てられます。
 
@@ -196,7 +196,7 @@ CSV()
 $.yield(field1, field2, field3);
 ```
 
-### `$.yieldKey()`
+### `$.yieldKey()` {#yieldkey}
 
 `yieldKey()` は `$.yield()` と同様に動作しますが、最初の引数でレコードのキーを指定します。
 
@@ -204,7 +204,7 @@ $.yield(field1, field2, field3);
 $.yieldKey(key, field1, field2, field3);
 ```
 
-### `$.yieldArray()`
+### `$.yieldArray()` {#yieldarray}
 
 {{< neo_since ver="8.0.39" />}}
 
@@ -220,7 +220,7 @@ for( i = 0; i < unknown; i++) {
 $.yieldArray(arr);
 ```
 
-### `$.db()`
+### `$.db()` {#db}
 
 新しいデータベース接続を返します。接続は `query()` と `exec()` 関数を提供します。
 
@@ -237,7 +237,7 @@ optionパラメーターは次のバージョンからサポートされます {
 }
 ```
 
-### `$.db().query()`
+### `$.db().query()` {#dbquery}
 
 JavaScriptから `$.db().query()` でデータベースを検索できます。
 `query()` の戻り値に `forEach()` でコールバック関数を適用し、クエリ結果を反復処理します。
@@ -247,7 +247,9 @@ JavaScriptから `$.db().query()` でデータベースを検索できます。
 クエリ結果の末尾まで反復処理を続けます。
 
 {{< tabs >}}
+
 {{< tab name="MACHBASE" >}}
+
 ```js {{linenos=table,hl_lines=["7-10",14]}}
 SCRIPT({
   var data = $.payload;
@@ -275,7 +277,9 @@ cpu.percent,1725343898315887000,6.1
 ```
 
 {{< /tab >}}
+
 {{< tab name="BRIDGE-SQLITE" >}}
+
 ```js {{linenos=table,hl_lines=["7-10",14]}}
 SCRIPT({
   var data = $.payload;
@@ -301,7 +305,9 @@ testing,1732589744886,16.70559756851126
 testing,1732589744886,49.93214293713331
 testing,1732589744886,54.485508690434905
 ```
+
 {{< /tab >}}
+
 {{< /tabs >}}
 
 `$.db().query()` の結果から特定のカラムを選び、`$.yield()` で出力できます。
@@ -333,13 +339,14 @@ SCRIPT({
 CSV( header(true) )
 ```
 
-
-### `$.db().exec()`
+### `$.db().exec()` {#dbexec}
 
 SQLがSELECT文でない場合は、`$.db().exec()` を使用してINSERT、DELETE、CREATE TABLE文を実行します。
 
 {{< tabs >}}
+
 {{< tab name="MACHBASE" >}}
+
 ```js {{linenos=table,hl_lines=["10-14", "21-22"]}}
 SCRIPT({
     for( i = 0; i < 3; i++) {
@@ -371,8 +378,11 @@ SCRIPT({
 })
 CSV()
 ```
+
 {{< /tab >}}
+
 {{< tab name="BRIDGE-SQLITE" >}}
+
 ```js {{linenos=table,hl_lines=["10-14", "21-22"]}}
 SCRIPT({
     for( i = 0; i < 3; i++) {
@@ -421,9 +431,10 @@ FROM
 {{< figure src="/neo/tql/img/script_js_db_sqlite_exec.png" width="600px" >}}
 
 {{< /tab >}}
+
 {{< /tabs >}}
 
-### `$.request().do()`
+### `$.request().do()` {#requestdo}
 
 *構文*: `$.request(url [, option]).do(callback)`
 
@@ -436,6 +447,7 @@ FROM
     body: "body content if the method is POST or PUT"
 }
 ```
+
 レスポンスを処理するコールバック関数を指定して `.do()` を呼び出すと、実際のリクエストを送信します。コールバック関数は、各種プロパティとメソッドを持つResponseオブジェクトを引数として受け取ります。
 
 **レスポンス**
@@ -472,7 +484,7 @@ $.request("https://server/path", {
 });
 ```
 
-### finalize()
+### finalize() {#finalize}
 
 `SCRIPT()` 内のJavaScriptコードで `function finalize() {}` を定義すると、
 すべてのレコードを処理した後に、システムがこの関数を自動的に呼び出します。
@@ -506,7 +518,7 @@ CSV()
 
 この例は、`1`、`2`、`3`、`999` の4レコードを出力します。
 
-## 例 {#examples}
+## 例 {#예제}
 
 ### Hello World {#hello-world}
 
@@ -521,9 +533,10 @@ DISCARD()
 
 {{< figure src="/neo/tql/img/script_js_helloworld.png" width="550px" >}}
 
-### 組み込みMathオブジェクト {#builtin-math-object}
+### 組み込みMathオブジェクト {#내장-math-객체}
 
 {{< tabs >}}
+
 {{< tab name="JS" >}}
 
 JavaScriptの組み込み関数を使用できます。
@@ -550,7 +563,9 @@ CHART(
   })
 )
 ```
+
 {{< /tab >}}
+
 {{< tab name="SET-MAP" >}}
 
 JavaScriptの代わりにSET-MAP関数で同じ結果を得る例です。
@@ -577,13 +592,16 @@ CHART(
   })
 )
 ```
+
 {{< /tab >}}
+
 {{< /tabs >}}
 
 **結果**
+
 {{< figure src="/neo/tql/img/script_js_sphere.png" width="550px" >}}
 
-### JSONの解析 {#json-parser}
+### JSONの解析 {#json-파싱}
 
 ```js {{linenos=table,hl_lines=["11"]}}
 SCRIPT({
@@ -603,6 +621,7 @@ JSON()
 ```
 
 **結果**
+
 ```json
 {
     "data": {
@@ -616,7 +635,7 @@ JSON()
 }
 ```
 
-### CSVの取得 {#request-csv}
+### CSVの取得 {#csv-가져오기}
 
 ```js {{linenos=table,hl_lines=["17-19"]}}
 SCRIPT({
@@ -646,7 +665,7 @@ SCRIPT({
 CSV(header(true))
 ```
 
-### JSONテキストの取得 {#request-json-text}
+### JSONテキストの取得 {#json-텍스트-가져오기}
 
 この例は、リモートサーバーからJSONを取得し、JavaScriptで解析する方法を示します。
 
@@ -678,4 +697,3 @@ SCRIPT({
 })
 CSV(header(false))
 ```
-

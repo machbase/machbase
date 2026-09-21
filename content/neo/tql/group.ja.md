@@ -11,13 +11,13 @@ toc: true
 ## 構文 {#구문}
 
 ```
-GROUP( [lazy(boolean)] [, by()] [, aggregator ...] )
+GROUP( [lazy(boolean)] [, by()] [, aggregator...] )
 ```
 
 - `lazy(boolean)`：遅延モードを設定します（既定値は `false`）。
-- `by(value [, timewindow()] [, name])`：グループの分割基準を指定します。  
-  {{< neo_since ver="8.0.14" />}}以降は、`by()` を指定せずにデータ全体に集計関数を適用することもできます。
-- `aggregator`：1つ以上の集計関数をカンマで区切って指定します。
+- `by(value [, timewindow()] [, name])`：指定した値でグループを分ける方法を指定します。
+以前は `GROUP()` で `by()` が必須でしたが、{{< neo_since ver="8.0.14" />}}以降は省略して、データ全体に一度に集計関数を適用できます。
+- `aggregator`：集計関数のリスト。複数の集計関数をカンマで区切って指定できます。
 
 ```js {linenos=table,hl_lines=["7-12"],linenostart=1}
 FAKE(json({
@@ -27,98 +27,176 @@ FAKE(json({
     ["B", 4]
 }))
 GROUP(
-    by(value(0), "CATEGORY"),
-    avg(value(1), "AVG"),
-    sum(value(1), "SUM"),
-    first(value(1) * 10, "x10")
+    by( value(0), "CATEGORY" ),
+    avg( value(1), "AVG" ),
+    sum( value(1), "SUM"),
+    first( value(1) * 10, "x10")
 )
-CSV(header(true))
+CSV( header(true) )
 ```
 
 **結果**
+
 {{< figure src="/neo/tql/img/group-type1-ex1.jpg" width="600" >}}
 
-### `by()`
+### `by()` {#by}
 
-*構文*: `by(value [, timewindow] [, label])`
+`by()` は、最初の引数として値を受け取り、省略可能な引数として `timewindow()` と `name` を受け取ります。
+
+*構文*: `by( value [, timewindow] [, label] )`
 
 - `value`：グループ化の基準値。通常は時刻または文字列です。
 - `timewindow(from, until, period)`：時間範囲を指定します。
-- `label`：新しいカラム名（既定値は `"GROUP"`）。
+- `label`：*string*、新しいカラム名（既定値は `"GROUP"`）。
 
-### `lazy()`
+### `lazy()` {#lazy}
 
 *構文*: `lazy(boolean)`
 
-既定値の `false` の場合、`GROUP()` は現在のレコードと前のレコードの `by()` 値が変わるたびに結果を出力します。  
-つまり、連続するレコードの値が同じ場合にのみ、1つのグループになります。  
-`lazy(true)` を設定すると、入力ストリームの終端までデータを蓄積してからグループを計算します。未ソートのデータもグループ化できますが、多くのメモリを使用します。
+`false`（既定値）の場合、`GROUP()` は現在のレコードの `by()` 値を前のレコードの値と比較し、値が変わるたびに新しいレコードを出力します。
+そのため、連続するレコードの `by()` 値が同じ場合にのみ、1つのグループになります。
+`lazy(true)` を設定すると、レコードを出力する前に入力ストリームの終端まですべてのレコードを蓄積するため、未ソートの `by()` 値もグループ化できますが、多くのメモリを使用します。
 
-### `timewindow()`
+### `timewindow()` {#timewindow}
 
-*構文*: `timewindow(from, until, period)` {{< neo_since ver="8.0.13" />}}
+*構文*: `timewindow( from, until, period )` {{< neo_since ver="8.0.13" />}}
 
-- `from`、`until`：開始を含み、終了を含まない時間範囲です。実データの有無にかかわらず、必要な区間を指定できます。
-- `period`：`from` と `until` の間の時間間隔を表します。
+- `from`、`until`：*time*、時間範囲です。*from* は範囲に含まれ、*until* は含まれません。
+実データの有無にかかわらず、必要な時間範囲を指定できます。
+- `period`：*duration*、*from* と *until* の間を区切る時間間隔です。
 
 > [timewindowの例](#timewindow-1)を参照してください。
 
-一定の時間間隔でデータを可視化する際、クエリ結果に空の区間や過密な区間があると、必要な形にデータを整えるのが難しくなります。  
+データベースに保存されたデータの分析や可視化は、手間がかかる場合があります。必要な時間範囲にデータがない場合や、1つの区間に複数のデータがある場合は、なおさらです。
+
+たとえば、一定の時間間隔で時刻と値のチャートを表示する場合、SELECT文で取得したデータをそのままチャートライブラリに渡すと、レコード間の時間間隔がチャートの時間軸と揃わないことがあります。途中のデータが欠けていたり、ある区間にデータが密集していたりするとこのようなずれが生じ、必要な形にデータを整えるのが難しくなります。
+
+通常、アプリケーション開発者は一定の時間間隔の配列を作成し、クエリ結果のレコードを順に読みながら配列の各要素（スロット）を埋めます。スロットにすでに値がある場合は、特定の演算（例：min、max、first、last）で1つの値だけを保持します。最後に、値のないスロットを任意の値（例：0またはNULL）で埋めます。
+
 `timewindow()` を使うと、この処理をTQL内で行えます。
 
 ### 集計関数（aggregator） {#집계기aggregator}
 
-集計関数を指定しない場合、`GROUP()` は既定で元のレコードをそのまま配列にまとめて返します。  
-連続するレコードの `by()` 値が同じ場合、`[[v1,v2], [v3,v4], ...]` 形式の配列を生成します。
-
-集計関数には2種類あります。
-- **Type 1**：結果の候補だけを保持し、最終値のみを返します。
-- **Type 2**：グループ全体のデータを保持し、計算後にメモリを解放します。`lazy(true)` と併用すると、関連カラムの全データをメモリに保持します。
-
-#### 共通オプション {#공통-옵션}
-
-`where()`、`nullValue()`、`predict()`、`label` は、すべての集計関数で使用できる省略可能なオプションです。
-
-- `where(predicate)`：条件式を満たす値だけを集計します。{{< neo_since ver="8.0.13" />}}
-- `nullValue(alternative)`：集計結果がない場合の代替値を指定します。{{< neo_since ver="8.0.13" />}}
-- `predict(algorithm)`：値がない場合、補間アルゴリズムによって値を補います。{{< neo_since ver="8.0.13" />}}
-- `label`：結果のカラム名（既定値は関数名）
-
-| algorithm            | 説明 |
-|:---------------------|:-----|
-| `PiecewiseConstant`  | 左連続の区分定数による1次元補間 |
-| `PiecewiseLinear`    | 1次元の線形補間 |
-| `AkimaSpline`        | 値と1階微分が連続する1次元の3次補間。<br/> https://www.iue.tuwien.ac.at/phd/rottinger/node60.html を参照 |
-| `FritschButland`     | 値と1階微分が連続し、単調性を保証する区分3次の1次元補間。<br/> Fritsch, F. N. and Butland, J., "A method for constructing local monotone piecewise cubic interpolants" (1984), SIAM J. Sci. Statist. Comput., 5(2), pp. 300-304を参照 |
-| `LinearRegression`   | 隣接値を使った線形回帰による補間 |
+集計関数を指定しない場合、`GROUP` はグループごとに `by()` の値だけを含むレコードを1件生成します。
+たとえば、`["A",1]`、`["A",2]`、`["B",3]` のレコードに `GROUP( by(value(0)) )` を適用すると、`A` と `B` の2件のレコードが生成され、ほかの値は破棄されます。
+グループの値を残すには、`list()` などの集計関数を指定します。
 
 ## 集計関数 {#집계-함수}
 
 *構文*: `function_name( value [, value...] [, where()] [, nullValue()] [, predict()] [, label])`
 
-関数に応じて1つ以上の値を渡します。以下のType 1関数の `x` は *float* 値です。
+- `value`：関数に応じて1つ以上の値を渡します。
+- `where( predicate )`：条件式を受け取り、条件式が `true` になる値だけを集計します。
+- `nullValue(alternative)`：集計結果として出力する値がない場合に、`NULL` の代わりに使用する値を指定します。
+- `predict(algorithm)`：集計結果として出力する値がない場合に、`NULL` の代わりに使用する値を予測するアルゴリズムを指定します。
+- `label`：*string*、結果のカラム名（既定値は集計関数名）。
 
-- <a id="avg"></a>`avg(x [, option...])`：平均（Type 1）
-- <a id="sum"></a>`sum(x [, option...])`：合計（Type 1）
-- <a id="count"></a>`count(x [, option...])`：件数（Type 1）{{< neo_since ver="8.0.13" />}}
-- <a id="first"></a>`first(x [, option...])`：最初の値（Type 1）
-- <a id="last"></a>`last(x [, option...])`：最後の値（Type 1）
-- <a id="min"></a>`min(x [, option...])`：最小値（Type 1）
-- <a id="max"></a>`max(x [, option...])`：最大値（Type 1）
-- <a id="rss"></a>`rss(x [, option...])`：二乗和平方根（Type 1）
-- <a id="rms"></a>`rms(x [, option...])`：二乗平均平方根（Type 1）
-- `list(x [, option...])`：すべての値をリストにまとめる（Type 2）{{< neo_since ver="8.0.15" />}}
+集計関数には2種類あります。
 
-### list() {#list}
+- **Type 1**：結果の候補値だけを保持し、最終値のみを返します。
+- **Type 2**：グループ全体のデータを保持して集計結果を計算した後、次のグループのためにメモリを解放します。`GROUP()` で `lazy(true)` とType 2関数を併用すると、関連カラムの入力データ全体をメモリに保持します。
+
+### 共通オプション {#공통-옵션}
+
+`where()`、`nullValue()`、`predict()`、`label` は省略可能な引数で、以下の各関数の構文の `option` に当たります。
+
+#### where() {#where}
+
+*構文*: `where(predicate)` {{< neo_since ver="8.0.13" />}}
+
+> [whereの例](#where-1)を参照してください。
+
+#### nullValue() {#nullvalue}
+
+*構文*: `nullValue(alternative)` {{< neo_since ver="8.0.13" />}}
+
+> [nullValueの例](#nullvalue-1)を参照してください。
+
+#### predict() {#predict}
+
+*構文*: `predict(algorithm)` {{< neo_since ver="8.0.13" />}}
+
+> [predictの例](#predict-1)を参照してください。
+
+| algorithm            | 説明 |
+|:---------------------|:-----|
+| `PiecewiseConstant`  | 左連続の区分定数による1次元補間 |
+| `PiecewiseLinear`    | 1次元の区分線形補間 |
+| `AkimaSpline`        | 値と1階微分が連続する区分3次の1次元補間。<br/> https://www.iue.tuwien.ac.at/phd/rottinger/node60.html を参照 |
+| `FritschButland`     | 値と1階微分が連続し、単調性を保証する区分3次の1次元補間。<br/> Fritsch, F. N. and Butland, J., "A method for constructing local monotone piecewise cubic interpolants" (1984), SIAM J. Sci. Statist. Comput., 5(2), pp. 300-304を参照 |
+| `LinearRegression`   | 隣接値を使った線形回帰による補間 |
+
+### 関数一覧 {#함수-목록}
+
+以下のType 1関数の `x` は *float* 値です。
+
+#### avg() {#avg}
+
+Type 1、*構文*: `avg(x [, option...])`
+
+グループの値の平均です。
+
+#### sum() {#sum}
+
+Type 1、*構文*: `sum(x [, option...])`
+
+グループの値の合計です。
+
+#### count() {#count}
+
+Type 1、*構文*: `count(x [, option...])` {{< neo_since ver="8.0.13" />}}
+
+グループの値の件数です。
+
+#### first() {#first}
+
+Type 1、*構文*: `first(x [, option...])`
+
+グループの最初の値です。
+
+#### last() {#last}
+
+Type 1、*構文*: `last(x [, option...])`
+
+グループの最後の値です。
+
+#### min() {#min}
+
+Type 1、*構文*: `min(x [, option...])`
+
+グループの最小値です。
+
+#### max() {#max}
+
+Type 1、*構文*: `max(x [, option...])`
+
+グループの最大値です。
+
+#### rss() {#rss}
+
+Type 1、*構文*: `rss(x [, option...])`
+
+二乗和平方根（Root Sum Square）
+
+#### rms() {#rms}
+
+Type 1、*構文*: `rms(x [, option...])`
+
+二乗平均平方根（Root Mean Square）
+
+#### list() {#list}
 
 Type 2、*構文*: `list(x [, option...])` {{< neo_since ver="8.0.15" />}}
 
 - `x`：*float* 値
 
-`list()` は、すべての *x* 値を集計し、各値を含む1つのリストを生成します。`JSON(rowsArray(true))` や `FLATTEN()` と組み合わせると、結果をさまざまな形式に加工できます。
+`list()` は、すべての *x* 値を集計し、各値を含む1つのリストを生成します。
+`JSON(rowsArray(true))` や `FLATTEN()` と組み合わせると、結果をさまざまな形式に加工できます。
 
 {{< tabs >}}
+
 {{< tab name="JSON" >}}
+
 ```js {linenos=table,hl_lines=[4]}
 FAKE(json({["A",1], ["A",2], ["B",3], ["B",4], ["C",5]}))
 GROUP(
@@ -144,8 +222,11 @@ JSON()
     "elapse": "220.375µs"
 }
 ```
+
 {{</ tab >}}
+
 {{< tab name="JSON(rowsArray)" >}}
+
 ```js {linenos=table,hl_lines=[4,7]}
 FAKE(json({["A",1], ["A",2], ["B",3], ["B",4], ["C",5]}))
 GROUP(
@@ -159,8 +240,8 @@ JSON(rowsArray(true))
 ```json
 {
     "data": {
-        "columns": ["name", "values", "avg"],
-        "types": [ "string", "list", "float64" ],
+        "columns": ["name", "avg", "values"],
+        "types": [ "string", "double", "list" ],
         "rows": [
             {  "name": "A", "avg": 1.5, "values": [ 1, 2 ] },
             {  "name": "B", "avg": 3.5, "values": [ 3, 4 ] },
@@ -172,8 +253,11 @@ JSON(rowsArray(true))
     "elapse": "270.25µs"
 }
 ```
+
 {{</ tab >}}
+
 {{< tab name="FLATTEN" >}}
+
 ```js {linenos=table,hl_lines=[4,7]}
 FAKE(json({["A",1], ["A",2], ["B",3], ["B",4], ["C",5]}))
 GROUP(
@@ -201,10 +285,12 @@ JSON()
     "elapse": "252.625µs"
 }
 ```
+
 {{</ tab >}}
+
 {{</ tabs >}}
 
-### lrs() {#lrs}
+#### lrs() {#lrs}
 
 Type 2、*構文*: `lrs(x, y [, weight(w)] [, option...])` {{< neo_since ver="8.0.13" />}}
 
@@ -212,9 +298,9 @@ Type 2、*構文*: `lrs(x, y [, weight(w)] [, option...])` {{< neo_since ver="8.
 - `y`：*float* 値
 - `weight(w)`：省略した場合、すべての重みは1です。
 
-*x*-*y* を直交座標系の点とみなし、線形回帰の傾きを求めます。*x* は数値型または時刻型です。
+*x*-*y* を直交座標系の点とみなし、線形回帰の傾き（Linear Regression Slope）を求めます。*x* は数値型または時刻型です。
 
-### mean() {#mean}
+#### mean() {#mean}
 
 Type 2、*構文*: `mean(x [, weight(w)] [, option...])`
 
@@ -225,7 +311,7 @@ Type 2、*構文*: `mean(x [, weight(w)] [, option...])`
 
 mean($x$, weight($w$)) = $ \frac{\sum {w_i  x_i}} {\sum {w_i}} $
 
-### cdf() {#cdf}
+#### cdf() {#cdf}
 
 Type 2、*構文*: `cdf(x, q [, weight(w)] [, option...])` {{< neo_since ver="8.0.14" />}}
 
@@ -236,7 +322,7 @@ Type 2、*構文*: `cdf(x, q [, weight(w)] [, option...])` {{< neo_since ver="8.
 `cdf()` は、*x* の経験累積分布関数の値、すなわちq以下のサンプルの割合を返します。
 `cdf()` は理論上 `quantile()` の逆関数ですが、すべての *q* で実際に逆関数になるとは限りません。
 
-### correlation() {#correlation}
+#### correlation() {#correlation}
 
 Type 2、*構文*: `correlation(x, y [, weight(w)] [, option...])` {{< neo_since ver="8.0.14" />}}
 
@@ -248,7 +334,7 @@ Type 2、*構文*: `correlation(x, y [, weight(w)] [, option...])` {{< neo_since
 correlation($x$, $y$, weight($w$)) = $ \frac{\sum {w_i (x_i - \bar{x}) (y_i - \bar{y})}} {stdX * stdY} $,
 （$\bar{x}$ = xの平均、$\bar{y}$ = yの平均）
 
-### covariance() {#covariance}
+#### covariance() {#covariance}
 
 Type 2、*構文*: `covariance(x, y [, weight(w)] [, option...])` {{< neo_since ver="8.0.14" />}}
 
@@ -260,8 +346,7 @@ Type 2、*構文*: `covariance(x, y [, weight(w)] [, option...])` {{< neo_since 
 covariance($x$, $y$, weight($w$)) = $ \frac{\sum {w_i (x_i - \bar{x}) (y_i - \bar{y})}} { \sum {w_i} -1 } $,
 （$\bar{x}$ = xの平均、$\bar{y}$ = yの平均）
 
-
-### quantile() {#quantile}
+#### quantile() {#quantile}
 
 Type 2、*構文*: `quantile(x, p [, weight(w)] [, option...])` {{< neo_since ver="8.0.13" />}}
 
@@ -273,7 +358,7 @@ Type 2、*構文*: `quantile(x, p [, weight(w)] [, option...])` {{< neo_since ve
 
 サンプルの割合p以上を下側に含む、最小の値qを返します。
 
-### quantileInterpolated() {#quantileinterpolated}
+#### quantileInterpolated() {#quantileinterpolated}
 
 Type 2、*構文*: `quantileInterpolated(x, p [, weight(w)] [, option...])` {{< neo_since ver="8.0.13" />}}
 
@@ -285,7 +370,7 @@ Type 2、*構文*: `quantileInterpolated(x, p [, weight(w)] [, option...])` {{< 
 
 `quantileInterpolated()` の戻り値は、線形補間した値です。
 
-### median() {#median}
+#### median() {#median}
 
 Type 2、*構文*: `median(x [, weight(w)] [, option...])`
 
@@ -294,7 +379,7 @@ Type 2、*構文*: `median(x [, weight(w)] [, option...])`
 
 `quantile(x, 0.5 [, option...])` と同じです。
 
-### medianInterpolated() {#medianinterpolated}
+#### medianInterpolated() {#medianinterpolated}
 
 Type 2、*構文*: `medianInterpolated(x [, weight(w)] [, option...])`
 
@@ -303,7 +388,7 @@ Type 2、*構文*: `medianInterpolated(x [, weight(w)] [, option...])`
 
 `quantileInterpolated(x, 0.5 [, option...])` と同じです。
 
-### stddev() {#stddev}
+#### stddev() {#stddev}
 
 Type 2、*構文*: `stddev(x [, weight(w)] [, option...])`
 
@@ -311,7 +396,7 @@ Type 2、*構文*: `stddev(x [, weight(w)] [, option...])`
 
 `stddev()` は、標本標準偏差を返します。
 
-### stderr() {#stderr}
+#### stderr() {#stderr}
 
 Type 2、*構文*: `stderr(x [, weight(w)] [, option...])`
 
@@ -319,23 +404,23 @@ Type 2、*構文*: `stderr(x [, weight(w)] [, option...])`
 
 `stderr()` は、指定した値の標準偏差を用いて平均の標準誤差を返します。
 
-### entropy() {#entropy}
+#### entropy() {#entropy}
 
 Type 2、*構文*: `entropy(x [, option...])`
 
 分布のシャノンエントロピーです。自然対数を使用します。
 
-### mode() {#mode}
+#### mode() {#mode}
 
 Type 2、*構文*: `mode(x [, weight(w)] [, option...])`
 
 - `weight(w)`：省略した場合、すべての重みは1です。
 
-`mode()` は、指定した値と重みに基づき、データセットで最も頻出する値を返します。
+`mode()` は、*value* で指定したデータと重みに基づき、データセットで最も頻出する値を返します。
 値の比較にはfloat64の厳密な等価比較を使用するため、注意してください。
 最頻値が複数ある場合、いずれか1つを返します。
 
-### moment() {#moment}
+#### moment() {#moment}
 
 Type 2、*構文*: `moment(x, n [, weight(w)] [, option...])` {{< neo_since ver="8.0.14" />}}
 
@@ -345,7 +430,7 @@ Type 2、*構文*: `moment(x, n [, weight(w)] [, option...])` {{< neo_since ver=
 
 `moment()` は、サンプルの加重 *n* 次モーメントを計算します。
 
-### variance() {#variance}
+#### variance() {#variance}
 
 Type 2、*構文*: `variance(x [, weight(w)] [, option...])` {{< neo_since ver="8.0.14" />}}
 
@@ -363,13 +448,14 @@ GROUP(
 )
 CSV(heading(true), precision(4))
 ```
+
 {{< figure src="/neo/tql/img/group-variance.jpg" width="600" >}}
 
-## 例 {#examples}
+## 例 {#예제}
 
 ### timewindow() {#timewindow-1}
 
-`FAKE()` は1msごとに時刻と値を生成するため、1秒間に1,000レコードが生成されます。
+`FAKE()` は10msごとに時刻と値のレコードを生成するため、1秒間に100レコードがあります。
 以下のTQLは、1秒間隔（`timewindow()` の `period("1s")`）のデータを生成します。
 必要な時間帯に実データ（レコード）がなければ、既定値のNULLで埋めます。
 
@@ -420,7 +506,7 @@ CSV(sqlTimeformat('YYYY-MM-DD HH24:MI:SS'), heading(true))
 
 ### predict() {#predict-1}
 
-`nullValue()` で空の値（NULL）を定数で埋めるだけでなく、隣接値を参照して補間できます。
+`nullValue()` で空の値（NULL）を定数で埋めるだけでなく、隣接値を参照して補間したデータを得ることもできます。
 上記の例の `last()` に `predict("LinearRegression")` を追加して再実行してください。値がなくNULLを返していたレコードに、線形回帰で予測した値が入ります。
 
 予測に必要な隣接値が不足していると、`predict()` は補間値を生成できない場合があります。その場合は `nullValue()` を適用し、指定されていなければ `NULL` を返します。
@@ -450,7 +536,7 @@ CSV(sqlTimeformat('YYYY-MM-DD HH24:MI:SS'), heading(true))
 ### where() {#where-1}
 
 温度と湿度を測定する2つのセンサーが、それぞれ1秒ごとにデータを保存するとします。
-実際のセンサーシステム間には時刻差があるため、保存データは次の例のようになることがあります。
+実際のセンサーシステム間には常に時刻差があるため、保存データは次の例のようになることがあります。
 
 {{< figure src="/neo/tql/img/group-where-ex1.jpg" >}}
 
@@ -519,7 +605,7 @@ GROUP(
 
 {{< figure src="/neo/tql/img/group-where-ex4.jpg" width="600" >}}
 
-### チャート {#chart}
+### チャート {#차트}
 
 ```js {linenos=table,hl_lines=["4-8"],linenostart=1}
 CSV(file("https://docs.machbase.com/assets/example/iris.csv"))
@@ -548,4 +634,5 @@ CHART(
 ```
 
 **結果**
+
 {{< figure src="/neo/tql/img/groupbykey_stddev.jpg" width="476" >}}

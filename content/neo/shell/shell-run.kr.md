@@ -37,16 +37,22 @@ machbase-neo shell run batch.sh
 
 ```
 SELECT count(*) FROM EXAMPLE WHERE name = 'wave.cos'
- ROWNUM  COUNT(*)
-──────────────────
-      1  2175
-a row fetched.
+┌────────┬──────────┐
+│ ROWNUM │ COUNT(*) │
+├────────┼──────────┤
+│      1 │     2175 │
+└────────┴──────────┘
+a row selected.
 
-SELECT count(*) FROM EXAMPLE WHERE name = 'wave.sin'
- ROWNUM  COUNT(*)
-──────────────────
-      1  8175
-a row fetched.
+SELECT count(*) FROM EXAMPLE
+  WHERE name = 'wave.sin'
+
+┌────────┬──────────┐
+│ ROWNUM │ COUNT(*) │
+├────────┼──────────┤
+│      1 │     8175 │
+└────────┴──────────┘
+a row selected.
 ```
 
 ## 인터랙티브 모드에서 실행
@@ -56,20 +62,22 @@ $ machbase-neo shell
 
 machbase-neo» run ./b.sh;
 SELECT count(*) FROM EXAMPLE WHERE name = 'wave.cos'
-╭────────┬──────────╮
+┌────────┬──────────┐
 │ ROWNUM │ COUNT(*) │
 ├────────┼──────────┤
-│      1 │ 2175     │
-╰────────┴──────────╯
-a row fetched.
+│      1 │     2175 │
+└────────┴──────────┘
+a row selected.
 
-SELECT count(*) FROM EXAMPLE WHERE name = 'wave.sin'
-╭────────┬──────────╮
+SELECT count(*) FROM EXAMPLE
+  WHERE name = 'wave.sin'
+
+┌────────┬──────────┐
 │ ROWNUM │ COUNT(*) │
 ├────────┼──────────┤
-│      1 │ 8175     │
-╰────────┴──────────╯
-a row fetched.
+│      1 │     8175 │
+└────────┴──────────┘
+a row selected.
 ```
 
 ## 실행 가능한 스크립트 만들기
@@ -96,16 +104,19 @@ $ chmod +x batch.sh
 
 ```sh
 $ ./batch.sh
-
 SELECT count(*) FROM EXAMPLE WHERE name = 'wave.cos'
- ROWNUM  COUNT(*)
-──────────────────
-      1  2175
-a row fetched.
+┌────────┬──────────┐
+│ ROWNUM │ COUNT(*) │
+├────────┼──────────┤
+│      1 │     2175 │
+└────────┴──────────┘
+a row selected.
 
 SELECT count(*) FROM EXAMPLE WHERE name = 'wave.sin'
- ROWNUM  COUNT(*)
-──────────────────
-      1  8175
-a row fetched.
+┌────────┬──────────┐
+│ ROWNUM │ COUNT(*) │
+├────────┼──────────┤
+│      1 │     8175 │
+└────────┴──────────┘
+a row selected.
 ```

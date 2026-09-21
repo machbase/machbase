@@ -78,6 +78,25 @@ machbase-neo» bridge query ms select * from ms_example;
 
 ## *TQL* writing on the MSSQL
 
+With the current JavaScript runtime, use the example below.
+
+```js
+STRING(payload() ?? `{
+  "id":1,
+  "company": "acme",
+  "employee": 10
+}`)
+SCRIPT({
+  // parse the JSON input string and yield it with the current time
+  const msg = JSON.parse($.values[0]);
+  $.yield(msg.id, msg.company, msg.employee, new Date());
+})
+INSERT(bridge("ms"), table("ms_example"), "id", "company", "employee", "created_on")
+```
+
+<details>
+<summary>Legacy Tengo example (does not run on the current runtime)</summary>
+
 ```js
 BYTES(payload() ?? `{
   "id":1,
@@ -98,6 +117,8 @@ SCRIPT("tengo", {
 })
 INSERT(bridge("ms"), table("ms_example"), "id", "company", "employee", "created_on")
 ```
+
+</details>
 
 ```
 machbase-neo» bridge query ms select id, company, employee, created_on from ms_example;

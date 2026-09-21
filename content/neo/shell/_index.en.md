@@ -6,11 +6,13 @@ weight: 21
 
 ## Remote Access via Web
 
-Click the Shell tab to run the interactive shell on the web.
+1. Select <img src="/neo/shell/img/shell_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px"> `SHELL` on the new tab screen.
 
-{{< figure src="/images/web-shell-pick.png" width="600" >}}
+{{< figure src="/images/web-shell-pick.png" width="600px" >}}
 
-{{< figure src="/images/web-shell-ui.png" width="600" >}}
+2. The shell opens in the main editor area. Run SQL statements and machbase-neo shell commands at the `sys machbase-neo` prompt.
+
+{{< figure src="/images/web-shell-ui.png" width="700px" >}}
 
 ## Remote Access via SSH
 
@@ -73,18 +75,17 @@ The SSH client will automatically use your private key to decrypt a challenge se
 
 #### Register ssh key from Web UI
 
-1. Select "SSH Keys" menu from the left bottom menu. {{< neo_since ver="8.0.20" />}}
+1. Click the <img src="/neo/shell/img/settings_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px"> icon at the bottom of the left menu and select `SSH Keys`. {{< neo_since ver="8.0.20" />}}
 
-{{< figure src="./img/ssh_keys.jpg" width="207px" >}}
+{{< figure src="/neo/shell/img/ssh_keys.jpg" width="200px" >}}
 
-2. To add a new SSH key, click on the "New SSH Key" button. Paste your public key in the designated field and provide a title.
-   Finally, click on the "Add SSH Key" button to complete the process.
+2. Click `New SSH key`, give the key a name in `Title`, paste the whole public key into `Public Key`, then click `Add SSH key`.
 
-{{< figure src="./img/ssh_keys2.jpg" width="630px" >}}
+{{< figure src="/neo/shell/img/ssh_keys2.jpg" width="590px" >}}
 
-3. Your SSH key has been registered shows on the list.
+3. The registered key appears in the `Authentication Keys` list. Use `Delete` to remove a key you no longer use.
 
-{{< figure src="./img/ssh_keys3.jpg" width="630px" >}}
+{{< figure src="/neo/shell/img/ssh_keys3.jpg" width="600px" >}}
 
 #### Register ssh key from shell command
 
@@ -108,18 +109,19 @@ or
 $ machbase-neo shell ↵
 
 machbase-neo» ssh-key list
-┌────────┬────────────────────────────┬─────────────────────┬──────────────────────────────────┐
-│ ROWNUM │ NAME                       │ KEY TYPE            │ FINGERPRINT                      │
-├────────┼────────────────────────────┼─────────────────────┼──────────────────────────────────┤
-│      1 │ myid@laptop.local          │ ssh-rsa             │ 80bdaba07591276d065ca915a6037fde │
-│      2 │ myid@desktop.local         │ ecdsa-sha2-nistp256 │ e300ee460b890ad4c22cd4c1eae03477 │
-└────────┴────────────────────────────┴─────────────────────┴──────────────────────────────────┘
+┌────────┬───────────────────────────────────────────┬─────────────────────┬────────────────────────────────────────────────────┐
+│ ROWNUM │ NAME                                      │ KEY TYPE            │ FINGERPRINT                                        │
+├────────┼───────────────────────────────────────────┼─────────────────────┼────────────────────────────────────────────────────┤
+│      1 │ **DO NOT DELETE** machbase-neo server key │ ecdsa-sha2-nistp521 │ SHA256:osfeJKNiUV+a2bIdZPA92maMDI23xA/40gAFwqAfpyQ │
+│      2 │ myid@laptop.local                         │ ecdsa-sha2-nistp256 │ SHA256:0IFv6KPDuNJe2s9PoqUBimreYAYih3sDKcxpCYpZCmE │
+└────────┴───────────────────────────────────────────┴─────────────────────┴────────────────────────────────────────────────────┘
 ```
 
 3. Remove registered public key
 
 ```sh
 machbase-neo» ssh-key del <fingerprint>
+SSH key deleted successfully.
 ```
 
 #### Connect without password
@@ -128,8 +130,9 @@ machbase-neo» ssh-key del <fingerprint>
 $ ssh -p 5652 sys@127.0.0.1 ↵
 
 Greetings, SYS
-machbase-neo v8.0.20-snapshot (8f10fa95 2024-06-19T16:32:09) standard
-sys machbase-neo»
+machbase-neo v8.7.1-snapshot (b55f8170 2026-09-10T05:43:13) standard
+sys machbase-neo 2026-09-17 17:45:13
+> 
 ```
 
 ### Execute commands via SSH
@@ -139,13 +142,16 @@ We can execute any machbase-neo shell command remotely only with `ssh`.
 ```sh
 $ ssh -p 5652 sys@127.0.0.1 'select * from example order by time desc limit 5'↵
 
- ROWNUM  NAME      TIME(UTC)            VALUE     
-──────────────────────────────────────────────────
- 1       wave.sin  2023-02-09 11:46:46  0.406479  
- 2       wave.cos  2023-02-09 11:46:46  0.913660  
- 3       wave.sin  2023-02-09 11:46:45  -0.000281 
- 4       wave.cos  2023-02-09 11:46:45  1.000000  
- 5       wave.cos  2023-02-09 11:46:44  0.913431  
+┌────────┬────────┬─────────────────────────┬───────────┐
+│ ROWNUM │ NAME   │ TIME                    │     VALUE │
+├────────┼────────┼─────────────────────────┼───────────┤
+│      1 │ signal │ 2026-09-17 17:09:26.712 │ -0.033411 │
+│      2 │ signal │ 2026-09-17 17:09:26.711 │ -0.185026 │
+│      3 │ signal │ 2026-09-17 17:09:26.71  │ -0.344666 │
+│      4 │ signal │ 2026-09-17 17:09:26.709 │ -0.508032 │
+│      5 │ signal │ 2026-09-17 17:09:26.708 │ -0.670817 │
+└────────┴────────┴─────────────────────────┴───────────┘
+5 rows selected.
 ```
 
 ### Security Considerations

@@ -91,7 +91,7 @@ append方式と配列ペイロードにより、IoTやリアルタイムのデ�
 
 コードの主要な部分を、以下で順に示します。
 
-```js {linenos=table,linenostart=1,hl_lines=["9-13",25,30]}
+```js {linenos=table,linenostart=1,hl_lines=["9-13","18-19",27,32]}
 // 必要なモジュールをインポートし、
 // ポート5653のローカルMQTTブローカーに接続するクライアントを作成します。
 const mqtt = require('mqtt');

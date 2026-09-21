@@ -18,7 +18,7 @@ CREATE TAG TABLE IF NOT EXISTS EXAMPLE  (
 
 This example generates random data per second and refresh chart automatically.
 
-{{< figure src="../img/random-webapp-1.jpg" width="600px" >}}
+{{< figure src="/neo/tutorials/img/random-webapp-1.jpg" width="600px" >}}
 
 - line 11, When the "start" button is clicked, it start timer and write data into `EXAMPLE` table.
 - line 13, The payload is CSV format.

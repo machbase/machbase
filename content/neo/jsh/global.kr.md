@@ -29,7 +29,7 @@ setTimeout(callback, delayMs[, ...args])
 
 ```js {linenos=table,linenostart=1,hl_lines=[2,3,4]}
 setTimeout((name, count) => {
-	console.println("Timeout with args:", name, count);
+    console.println("Timeout with args:", name, count);
 }, 50, "test", 42);
 
 // Output:
@@ -52,7 +52,7 @@ clearTimeout(timer)
 
 ```js {linenos=table,linenostart=1,hl_lines=[2,3]}
 const timer = setTimeout(() => {
-	console.println("should not run");
+    console.println("should not run");
 }, 100);
 
 clearTimeout(timer);
@@ -80,11 +80,11 @@ setInterval(callback, delayMs[, ...args])
 ```js {linenos=table,linenostart=1,hl_lines=[4,6]}
 let count = 0;
 const timer = setInterval(() => {
-	count++;
-	console.println("count:", count);
-	if (count >= 3) {
-		clearInterval(timer);
-	}
+    count++;
+    console.println("count:", count);
+    if (count >= 3) {
+        clearInterval(timer);
+    }
 }, 100);
 ```
 
@@ -119,7 +119,7 @@ setImmediate(callback[, ...args])
 ```js {linenos=table,linenostart=1,hl_lines=[2,3]}
 console.println("Add event loop");
 setImmediate(() => {
-	console.println("event loop called");
+    console.println("event loop called");
 });
 
 // Output:

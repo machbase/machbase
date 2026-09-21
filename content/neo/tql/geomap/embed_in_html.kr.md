@@ -59,7 +59,7 @@ GEOMAP()
     },
     "jsAssets": ["/web/geomap/leaflet.js"],
     "cssAssets": ["/web/geomap/leaflet.css"],
-    "jsCodeAssets": [
+	"jsCodeAssets": [
         "/web/api/tql-assets/MTcwMzE3NjYwMjA0Nzg1NjY0_opt.js",
         "/web/api/tql-assets/MTcwMzE3NjYwMjA0Nzg1NjY0.js"
     ]

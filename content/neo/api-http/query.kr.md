@@ -30,7 +30,7 @@ GET http://127.0.0.1:5654/db/query
 {{< tab name="cURL" >}}
 ```sh 
 curl -o - http://127.0.0.1:5654/db/query \
-   --data-urlencode "q=select * from EXAMPLE limit 2"
+     --data-urlencode "q=select * from EXAMPLE limit 2"
 ```
 {{< /tab >}}
 {{< tab name="Python" >}}
@@ -134,7 +134,7 @@ GET http://127.0.0.1:5654/db/query
 {{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
-  --data-urlencode "q=select * from EXAMPLE limit 2"
+    --data-urlencode "q=select * from EXAMPLE limit 2"
 ```
 {{< /tab >}}
 {{< tab name="Python" >}}
@@ -315,8 +315,8 @@ GET http://127.0.0.1:5654/db/query
 {{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
-  --data-urlencode "q=select * from EXAMPLE limit 2" \
-  --data-urlencode "format=ndjson"
+    --data-urlencode "q=select * from EXAMPLE limit 2" \
+    --data-urlencode "format=ndjson"
 ```
 {{< /tab >}}
 {{< tab name="Python" >}}
@@ -388,8 +388,8 @@ GET http://127.0.0.1:5654/db/query
 {{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
-  --data-urlencode "q=select * from EXAMPLE limit 2" \
-  --data-urlencode "format=csv"
+    --data-urlencode "q=select * from EXAMPLE limit 2" \
+    --data-urlencode "format=csv"
 ```
 {{< /tab >}}
 {{< tab name="Python" >}}
@@ -461,7 +461,7 @@ GET http://127.0.0.1:5654/db/query
 {{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
-  --data-urlencode "q=select * from EXAMPLE limit 2" \
+    --data-urlencode "q=select * from EXAMPLE limit 2" \
     --data-urlencode "format=box" \
     --data-urlencode "timeformat=default" \
     --data-urlencode "tz=Asia/Seoul"
@@ -544,8 +544,8 @@ GET http://127.0.0.1:5654/db/query
 {{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
-  --data-urlencode "q=select * from EXAMPLE limit 2" \
-  --data-urlencode "format=csv"
+    --data-urlencode "q=select * from EXAMPLE limit 2" \
+    --data-urlencode "format=csv"
 ```
 {{< /tab >}}
 {{< tab name="Python" >}}
@@ -622,12 +622,7 @@ Content-Type: application/json
 ```sh
 curl -o - -X POST http://127.0.0.1:5654/db/query \
     -H 'Content-Type: application/json' \
-    --data-binary @- << 'EOF'
-{
-  "q": "select * from EXAMPLE limit ?",
-  "p": [2]
-}
-EOF
+    -d '{ "q":"select * from EXAMPLE limit ?", "p":[2] }'
 ```
 {{< /tab >}}
 {{< tab name="Python" >}}
@@ -691,7 +686,7 @@ q=select * from EXAMPLE limit 2
 {{< tab name="cURL" >}}
 ```sh
 curl -o - -X POST http://127.0.0.1:5654/db/query \
-  --data-urlencode "q=select * from EXAMPLE limit 2"
+    --data-urlencode "q=select * from EXAMPLE limit 2"
 ```
 {{< /tab >}}
 {{< tab name="Python" >}}

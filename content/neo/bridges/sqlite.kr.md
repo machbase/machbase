@@ -18,10 +18,17 @@ SQLite는 아래와 같이 메모리 전용 모드도 지원합니다.
 bridge add -t sqlite mem file::memory:?cache=shared
 ```
 
-아래 명령은 그림과 같은 웹 UI에서 수행하는 설정과 동일합니다.
+웹 UI에서는 다음 순서로 등록합니다. 설정 내용은 위 명령과 같습니다.
+
+1. 왼쪽 메뉴에서 <img src="/neo/bridges/img/bridge_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px"> 아이콘을 클릭합니다.
+
+2. `BRIDGE` 머리줄의 <img src="/neo/bridges/img/bridge_add_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px"> 아이콘을 클릭합니다.
+
+3. `Name`에 `mem`, `Type`에 `SQLite`, `Connection String`에 `file::memory:?cache=shared`를 입력합니다.
+
+4. `Create`를 클릭합니다.
 
 {{< figure src="/neo/bridges/img/sqlite-add.png" width="500" >}}
-
 
 ## 브리지 연결 테스트
 
@@ -29,6 +36,8 @@ bridge add -t sqlite mem file::memory:?cache=shared
 machbase-neo» bridge test mem;
 Test bridge mem connectivity... success 11.917µs
 ```
+
+웹 UI에서는 `BRIDGE` 목록에서 브리지를 선택하고 `Test`를 클릭합니다. 연결되면 `success`가 표시됩니다.
 
 {{< figure src="/neo/bridges/img/sqlite-test.png" width="600" >}}
 

@@ -71,7 +71,7 @@ MQTT 기반 실시간 수집, HTTP SQL 조회, TQL 변환, 대시보드, 외부 
 
 실시간 데이터를 즉시 모니터링하실 수 있습니다.
 
-{{< figure src="/images/dashboard.png" width="740" >}}
+{{< media slug="neo-dashboard/statz-board" width="740" >}}
 
 ### API 및 인터페이스
 

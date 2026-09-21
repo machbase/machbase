@@ -11,8 +11,8 @@ params:
 書き込みAPIのエンドポイントは`/db/write/{TABLE}`です。`{TABLE}`は、データを保存するテーブル名です。
 
 `query` APIでも`INSERT`文を実行できますが、リクエストごとに`q`パラメーター用のSQL文字列を構成する必要があり、非効率です。
-データの取り込みには、通常は`INSERT`と同じように動作する`write` APIを使用します。
-`write` APIでは、1回のリクエストで複数のレコードを一括挿入できます。
+データの取り込みには、`INSERT`文と同じように動作する`write` APIを使用するのが適切です。
+また、`write` APIには、1回のリクエストで複数のレコードを一括挿入できるという利点もあります。
 
 <a id="request-endpoint-and-parameters"></a>
 ## パラメーター {#매개변수}
@@ -22,7 +22,7 @@ params:
 | パラメーター       | 既定値 | 説明                                                    |
 |:----------- |---------|:---------------------------------------------------------------|
 | timeformat  | `ns`     | 時刻の単位：`s`、`ms`、`us`、`ns`                               |
-| tz          | `UTC`    | タイムゾーン：`UTC`、`Local`、地域指定                              |
+| tz          | `UTC`    | タイムゾーン：`UTC`、`Local`、地域名                              |
 | method      | `insert` | 書き込み方式：`insert`、`append`                           |
 | db          | `MACHBASEDB` | 複数データベース環境で対象データベース名を指定します。 {{< neo_since ver="8.7.0" />}} |
 
@@ -30,7 +30,7 @@ params:
 
 既定では、`/db/write` APIは`INSERT INTO ...`文でデータを保存します。少量のレコードの取り込みでは、`append`方式との性能差はほとんどありません。
 
-数十万件以上の大量データを取り込む場合は、`method=append`を指定します。これにより、暗黙の既定値`method=insert`ではなく、Machbase Neoのappend方式を使用します。
+数十万件以上の大量データを取り込む場合は、`method=append`パラメーターを指定します。これにより、Machbase Neoは、暗黙的に`method=insert`として指定される既定の`INSERT INTO ...`文ではなく、`append`方式を使用します。
 
 **複数データベース**
 
@@ -38,6 +38,9 @@ params:
 
 `db`が省略または空の場合、既定のデータベース`MACHBASEDB`が対象です。データベース名の形式が不正なら`400 Bad Request`を返します。データベースが存在しない場合や、接続ユーザーにアクセス権がない場合もエラーを返します。
 
+{{< tabs >}}
+{{< tab name="HTTP" >}}
+~~~
 ```http
 POST http://127.0.0.1:5654/db/write/EXAMPLE?db=OTHERDB
 Content-Type: application/json
@@ -51,7 +54,9 @@ Content-Type: application/json
     }
 }
 ```
-
+~~~
+{{< /tab >}}
+{{< tab name="cURL" >}}
 ```sh
 curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE?db=OTHERDB' \
   -H "Content-Type: application/json" \
@@ -66,6 +71,78 @@ curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE?db=OTHERDB' \
 }
 EOF
 ```
+{{< /tab >}}
+{{< tab name="Python" >}}
+```python
+import requests
+
+payload = {
+  "data": {
+    "columns": ["name", "time", "value"],
+    "rows": [
+        ["json-data", 1670380342000000000, 1.0001],
+    ],
+  }
+}
+
+response = requests.post(
+  "http://127.0.0.1:5654/db/write/EXAMPLE",
+  params={"db": "OTHERDB"},
+  json=payload,
+)
+print(response.text)
+```
+{{< /tab >}}
+{{< tab name="Javascript" >}}
+```javascript
+async function writeToDatabase() {
+  const payload = {
+    data: {
+      columns: ["name", "time", "value"],
+      rows: [
+        ["json-data", 1670380342000000000, 1.0001],
+      ],
+    },
+  };
+
+  const response = await fetch("http://127.0.0.1:5654/db/write/EXAMPLE?db=OTHERDB", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  console.log(await response.text());
+}
+
+writeToDatabase();
+```
+{{< /tab >}}
+{{< tab name="C#" >}}
+```csharp
+using System.Net.Http;
+using System.Net.Http.Json;
+
+using var client = new HttpClient();
+
+var response = await client.PostAsJsonAsync(
+  "http://127.0.0.1:5654/db/write/EXAMPLE?db=OTHERDB",
+  new
+  {
+    data = new
+    {
+      columns = new[] { "name", "time", "value" },
+      rows = new object[]
+      {
+        new object[] { "json-data", 1670380342000000000L, 1.0001 },
+      },
+    },
+  }
+);
+response.EnsureSuccessStatusCode();
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+```
+{{< /tab >}}
+{{< /tabs >}}
 
 **Content-Typeヘッダー**
 
@@ -84,9 +161,9 @@ JSONには`Content-Type: application/json`、CSVには`Content-Type: text/csv`�
 
 | 名前         | 型       |  説明            |
 |:------------ |:-----------|:------------------------|
-| data         | object     | データボディ全体        |
-| data.columns | 文字列の配列 | 列の一覧を指定します。 |
-| data.rows    | タプルの配列  | レコード値の配列です。   |
+| data         | object     | データボディ            |
+| data.columns | 文字列の配列 | 列の一覧 |
+| data.rows    | タプルの配列  | レコード値の配列 |
 
 **JSON**
 
@@ -146,11 +223,11 @@ import requests
 
 payload = {
   "data": {
-  "columns": ["name", "time", "value"],
-  "rows": [
-      ["json-data", 1670380342000000000, 1.0001],
-      ["json-data", 1670380343000000000, 2.0002],
-  ],
+    "columns": ["name", "time", "value"],
+    "rows": [
+        ["json-data", 1670380342000000000, 1.0001],
+        ["json-data", 1670380343000000000, 2.0002],
+    ],
   }
 }
 
@@ -247,19 +324,19 @@ import requests
 
 payload = {
   "data": {
-  "columns": ["name", "time", "value"],
-  "rows": [
-      ["json-data", 1670380342000000000, 1.0001],
-      ["json-data", 1670380343000000000, 2.0002],
-  ],
+    "columns": ["name", "time", "value"],
+    "rows": [
+        ["json-data", 1670380342000000000, 1.0001],
+        ["json-data", 1670380343000000000, 2.0002],
+    ],
   }
 }
 
 response = requests.post(
   "http://127.0.0.1:5654/db/write/EXAMPLE",
   headers={
-  "Content-Type": "application/json",
-  "Content-Encoding": "gzip",
+    "Content-Type": "application/json",
+    "Content-Encoding": "gzip",
   },
   data=gzip.compress(json.dumps(payload).encode("utf-8")),
 )
@@ -391,11 +468,11 @@ import requests
 
 payload = {
   "data": {
-  "columns": ["name", "time", "value"],
-  "rows": [
-      ["json-data", "2022-12-07 02:32:22", 1.0001],
-      ["json-data", "2022-12-07 02:32:23", 2.0002],
-  ],
+    "columns": ["name", "time", "value"],
+    "rows": [
+        ["json-data", "2022-12-07 02:32:22", 1.0001],
+        ["json-data", "2022-12-07 02:32:23", 2.0002],
+    ],
   }
 }
 
@@ -564,10 +641,9 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 {{< /tab >}}
 {{< /tabs >}}
 
-
 **timeformatを使用するNDJSON**
 
-時刻フィールドがUNIXエポックではなく文字列形式の場合は、以下のように指定します。
+時刻フィールドがUNIXエポックではなく文字列形式の場合は、以下のように記述します。
 
 ```json
 {"NAME":"ndjson-data", "TIME":"2022-12-07 02:33:22", "VALUE":1.001}
@@ -671,7 +747,6 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 {{< /tab >}}
 {{< /tabs >}}
 
-
 ### CSV {#csv}
 
 以下のオプションは、ボディがCSV形式の場合だけに適用します。
@@ -681,13 +756,11 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 | header        |         | `skip`：先頭行をスキップします。<br/>`columns`：ヘッダー行の項目がテーブルの列名に対応します。 |
 | delimiter     | ,       | フィールド区切り文字                                                                   |
 
-CSVデータにヘッダー行がある場合は、`header=skip`クエリパラメーターで先頭行を無視します。
+CSVデータにヘッダー行がある場合は、`header=skip`クエリパラメーターを設定し、machbase-neoに先頭行を無視させます。
 
 ヘッダー行で使用する列を指定するには、`header=columns`を使用します。ヘッダーはテーブルの列名と一致する必要があり、内部で`INSERT INTO TABLE(columns...) VALUES(...)`の列一覧として使用します。
 
-ヘッダー行がなく、`header`オプションを省略する場合、各行のフィールドはテーブルの全列の順序と一致する必要があります。`INSERT INTO TABLE VALUES(...)`文に対応するためです。
-
-> append方式の特性上、`method=append`では`header=columns`オプションは動作しません。
+ヘッダー行がなく、`header`オプションを省略する場合は、データが`INSERT INTO TABLE VALUES(...)`文として書き込まれるため、各行のフィールドはテーブルのすべての列と順序どおりに一致する必要があります。
 
 **header=skip**
 
@@ -700,6 +773,7 @@ csv-data,1670380343000000000,2.0002
 ```
 
 `Content-Type`ヘッダーは、`text/csv`を指定します。
+
 {{< tabs >}}
 {{< tab name="HTTP" >}}
 ~~~
@@ -894,7 +968,7 @@ POST http://127.0.0.1:5654/db/write/EXAMPLE?header=skip
 Content-Type: text/csv
 Content-Encoding: gzip
 
-< /csv/post-data.json.gz
+< /csv/post-data.csv.gz
 ```
 ~~~
 {{< /tab >}}
@@ -921,8 +995,8 @@ response = requests.post(
   "http://127.0.0.1:5654/db/write/EXAMPLE",
   params={"header": "skip"},
   headers={
-  "Content-Type": "text/csv",
-  "Content-Encoding": "gzip",
+    "Content-Type": "text/csv",
+    "Content-Encoding": "gzip",
   },
   data=gzip.compress(payload.encode("utf-8")),
 )
@@ -992,7 +1066,6 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 {{< /tab >}}
 {{< /tabs >}}
 
-
 **timeformatを使用するCSV**
 
 `timeformat`と`tz`クエリパラメーターを指定します。
@@ -1040,10 +1113,10 @@ import requests
 response = requests.get(
   "http://127.0.0.1:5654/db/query",
   params={
-  "q": (
-      "create tag table EXAMPLE "
-      "(name varchar(40) primary key, time datetime basetime, value double)"
-  )
+    "q": (
+        "create tag table EXAMPLE "
+        "(name varchar(40) primary key, time datetime basetime, value double)"
+    )
   },
 )
 print(response.text)
@@ -1079,9 +1152,9 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 {{< /tab >}}
 {{< /tabs >}}
 
-**Time**
+**時刻**
 
-この例のサンプルファイルの時刻は、秒単位のUNIXエポック時刻です。読み込む際は、`timeformat=s`を指定してください。他の時刻精度のデータでは、その精度に合わせて変更します。Machbase Neoは、既定で時刻を`ナノ秒（ns）`として扱います。
+この例のサンプルファイルの時刻は、秒単位のUNIXエポック時刻です。そのため、読み込む際は`timeformat=s`オプションを指定します。他の時刻精度で保存したデータでは、その精度に合わせてこのオプションを変更する必要があります。Machbase Neoは、既定の時刻精度をナノ秒（`ns`）とみなします。
 
 ### エポック時刻を使用するJSON {#json-with-epoch}
 
@@ -1117,7 +1190,7 @@ GET http://127.0.0.1:5654/db/query
 
 ### エポック時刻を使用するCSV {#csv-with-epoch}
 
-以下のようにCSVにヘッダー行がある場合は、`header=skip`を指定します。
+以下のようにCSVデータにヘッダー行がある場合は、`header=skip`クエリパラメーターを指定します。
 
 ~~~
 ```http
@@ -1180,7 +1253,7 @@ GET http://127.0.0.1:5654/db/query
 
 **Append**
 
-大容量のCSVファイルでは、append方式でinsert方式より数倍高速に取り込めます。
+大容量のCSVファイルを取り込む場合は、`append`方式を使用すると、`insert`方式より数倍高速にデータを入力できます。
 
 ~~~
 ```http
@@ -1266,7 +1339,6 @@ wave.sin,2023-02-14T22:39:24.333333333-05:00,0.444444
 wave.sin,2023-02-14T22:39:25.444444444-05:00,0.555555
 ```
 ~~~
-
 
 **America/New_Yorkタイムゾーンでの検索**
 

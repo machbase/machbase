@@ -6,7 +6,7 @@ weight: 33
 
 This example shows how to utilize mermaid.js library for gantt diagram.
 
-{{< figure src="../img/gantt-webapp-1.jpg" width="600px" >}}
+{{< figure src="/neo/tutorials/img/gantt-webapp-1.jpg" width="600px" >}}
 
 - line 7, `<div>` with `class="mermaid"`.
 - line 56, Embed mermaid.js library with `startOnLoad:false`.

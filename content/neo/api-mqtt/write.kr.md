@@ -89,7 +89,7 @@ append 방식과 배열 페이로드를 사용하면 대량 데이터를 효율�
 
 주요 코드 부분을 단계별로 살펴보면 다음과 같습니다.
 
-```js {linenos=table,linenostart=1,hl_lines=["9-13",17,22]}
+```js {linenos=table,linenostart=1,hl_lines=["9-13",19,24]}
 // 필요한 모듈을 임포트하고
 // 5653 포트의 로컬 MQTT 브로커에 연결하도록 클라이언트를 생성합니다.
 const mqtt = require('mqtt');

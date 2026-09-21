@@ -15,7 +15,7 @@ Machbase provides a built-in, database-level mechanism to address this issue. Th
 The Duplicate Transmission Removal feature functions by defining a specific lookback duration during TAG table creation. This duration establishes a temporal window, relative to the system time of data insertion. When a new data row is being inserted into the TAG table, Machbase performs a check:
 
 1.  **Identification:** It compares the `PRIMARY KEY` column value (typically the Tag ID or `name`) and the `BASETIME` column value (the timestamp) of the incoming row against existing rows in the table.
-2.  **Temporal Check:** It searches for any existing row that has the *exact same* `PRIMARY KEY` and `BASETIME` values as the incoming row.
+2.  **Search:** It searches for any existing row that has the *exact same* `PRIMARY KEY` and `BASETIME` values as the incoming row.
 3.  **Window Condition:** If such an identical row exists, and its `BASETIME` falls within the configured lookback duration (measured backward from the **system time** of the current insertion attempt), the incoming row is considered a duplicate.
 4.  **Action:** Duplicate incoming rows identified through this process are automatically discarded and are not persisted in the TAG table.
 
@@ -39,23 +39,25 @@ CREATE TAG TABLE table_name (
 TAG_DUPLICATE_CHECK_DURATION = duration_in_minutes;
 ```
 
-*   `duration_in_days`: An integer specifying the lookback period in minutes.
+*   `duration_in_minutes`: An integer specifying the lookback period in minutes.
     *   Minimum value: `1` (minute)
-    *   Maximum value: `43200` (minutes)
+    *   Maximum value: `43200` (minutes, 30 days)
     *   Default value: `0` (disabled)
 
 **Verification:**
 
 The configured duration for a specific TAG table can be verified by querying the system catalog views.
 
-1.  **Retrieve Table ID:**
+1.  **Retrieve Table ID:** Write the table name in uppercase.
+
     ```sql
     SELECT id
     FROM m$sys_tables
     WHERE name = 'YOUR_TABLE_NAME'; -- Note: Table name must be in uppercase
     ```
 
-2.  **Query Property Value:**
+2.  **Query Property Value:** Replace `{table_id_from_step_1}` with the ID retrieved in step 1.
+
     ```sql
     SELECT value
     FROM m$sys_table_property
@@ -63,8 +65,10 @@ The configured duration for a specific TAG table can be verified by querying the
       AND name = 'TAG_DUPLICATE_CHECK_DURATION';
     ```
 
-**Changing configuration**
-TAG_DUPLICATE_CHECK_DURATION settings can be modified as shown below.
+**Changing Configuration:**
+
+You can change the `TAG_DUPLICATE_CHECK_DURATION` setting as shown below.
+
 ```sql
 ALTER TABLE {table_name} set TAG_DUPLICATE_CHECK_DURATION={duration in minutes};
 ```
@@ -73,7 +77,7 @@ ALTER TABLE {table_name} set TAG_DUPLICATE_CHECK_DURATION={duration in minutes};
 
 Understanding the following constraints and behavioral aspects is crucial for effectively utilizing this feature:
 
-*   **Granularity and Scope:** The duration is configured exclusively in minutes units, with a maximum temporal scope of 43200 minutes(30 days).
+*   **Granularity and Scope:** The duration is configured only in minutes, with a maximum of 43200 minutes (30 days).
 *   **Interaction with Data Deletion:** The deduplication check relies on the presence of the original data point within the lookback window. If the *original* data record (the "first write") is explicitly deleted from the TAG table *before* an identical duplicate arrives, the newly arriving record will **not** be identified as a duplicate. It will be treated as a new "first write" because its potential duplicate counterpart no longer exists for comparison within the database's current state.
 *   **Semantic Behavior:** The mechanism strictly adheres to keeping the *first* encountered record for a given (Primary Key, Basetime) combination and discarding subsequent identical entries within the defined window. It is not suitable for scenarios requiring "last-write-wins" semantics.
 *   **Consistency Model:** In high-volume, real-time ingestion scenarios, there might be minimal latency between data insertion and the point at which the deduplication check fully reflects the most current state across all internal structures. This is consistent with typical eventually consistent behaviors in distributed data systems.
@@ -102,7 +106,7 @@ TAG_DUPLICATE_CHECK_DURATION=1440; -- Enable deduplication with a 1440 minutes (
 
 **2. Data Insertion:**
 
-The following INSERT statements demonstrate how duplicates are handled. Assume these are executed sequentially and the system time progresses such that the 1-day window is relevant for timestamps on `2024-01-02` relative to each other, `2024-01-04` relative to each other, etc.
+The following INSERT statements demonstrate how duplicates are handled. Assume that they are executed in order and that, at each insertion, the system time is such that the timestamps being compared (`2024-01-02` against `2024-01-02`, `2024-01-04` against `2024-01-04`, and so on) fall within the 1-day window. Running these fixed past timestamps as-is at the current time does not satisfy this assumption.
 
 ```sql
 -- Insert initial records
@@ -126,12 +130,11 @@ INSERT INTO dup_tag VALUES('tag2', '2024-01-04 09:00:00 000:000:001', 2); -- Dis
 -- Insert records for 'tag2' at different timestamps
 INSERT INTO dup_tag VALUES('tag2', '2024-01-04 09:00:00 000:000:002', 1); -- Kept (First instance for this specific time)
 INSERT INTO dup_tag VALUES('tag2', '2024-01-04 09:00:00 000:000:003', 2); -- Kept (First instance for this specific time)
-
 ```
 
 **3. Data Verification:**
 
-Querying the table will show only the records that were successfully inserted (i.e., the "first-write" for each unique `name` and `time` combination within the effective window).
+Querying the table shows only the records that were successfully inserted, that is, the "first write" for each unique `name` and `time` combination within the effective window. Later rows with the same combination were discarded.
 
 ```sql
 -- Query data for 'tag1'

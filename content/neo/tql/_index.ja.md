@@ -13,9 +13,10 @@ TQLは、こうしたデータを簡単かつ柔軟に加工するためのMachb
 
 以下の例で使用するサンプルデータをまず生成します。
 
-
 {{< tabs >}}
+
 {{< tab name="SCRIPT" >}}
+
 ```js
 SCRIPT({
     const m = require('mathx');
@@ -32,8 +33,11 @@ SCRIPT({
 SQL(`insert into example(name,time,value) values('signal',?,?)`, 
     value(0), value(1))
 ```
-{{</ tab >}}
+
+{{< /tab >}}
+
 {{< tab name="FAKE" >}}
+
 ```js
 FAKE(
   oscillator(
@@ -44,27 +48,39 @@ FAKE(
 SQL(`insert into example(name,time,value) values('signal',?,?)`, 
     value(0), value(1))
 ```
-{{</ tab >}}
-{{</ tabs >}}
+
+{{< /tab >}}
+
+{{< /tabs >}}
 
 ### 出力形式に依存しない処理 {#출력-형식과-무관하게-사용}
 
 {{< tabs >}}
+
 {{< tab name="CSV" >}}
+
 ```js {linenos=table,hl_lines=[2],linenostart=1}
 SQL( `SELECT TIME, VALUE FROM EXAMPLE WHERE NAME='signal' LIMIT 100` )
 CSV( timeformat("Default") )
 ```
+
 {{< figure src="/neo/tql/img/tql_intro_csv.jpg">}}
+
 {{< /tab >}}
+
 {{< tab name="JSON" >}}
+
 ```js {linenos=table,hl_lines=[2],linenostart=1}
 SQL( `SELECT TIME, VALUE FROM EXAMPLE WHERE NAME='signal' LIMIT 100` )
 JSON( timeformat("Default") )
 ```
+
 {{< figure src="/neo/tql/img/tql_intro_json.jpg">}}
+
 {{< /tab >}}
+
 {{< tab name="CHART" >}}
+
 ```js {linenos=table,hl_lines=[2-9],linenostart=1}
 SQL( `SELECT TIME, VALUE FROM EXAMPLE WHERE NAME='signal' LIMIT 100` )
 CHART(
@@ -76,9 +92,13 @@ CHART(
     })
 )
 ```
+
 {{< figure src="/neo/tql/img/tql_intro.jpg">}}
+
 {{< /tab >}}
+
 {{< tab name="HTML" >}}
+
 ```html {linenos=table,hl_lines=[2],linenostart=1}
 SQL(`SELECT TIME, VALUE FROM EXAMPLE WHERE NAME='signal' LIMIT 100`)
 HTML({
@@ -96,14 +116,19 @@ HTML({
   {{end}}
 })
 ```
+
 {{< figure src="/neo/tql/img/tql_intro_html.jpg">}}
+
 {{< /tab >}}
+
 {{< /tabs >}}
 
 ### 入力ソースに依存しない処理 {#입력-소스와-무관하게-사용}
 
 {{< tabs >}}
+
 {{< tab name="JSON" >}}
+
 ```js {{linenos="table",hl_lines=["1-5"]}}
 FAKE( json({ 
     [ "A", 1.0 ],
@@ -115,8 +140,11 @@ MAPVALUE(1, value(1) * 10 )
 
 CSV()
 ```
+
 {{< /tab >}}
+
 {{< tab name="CSV" >}}
+
 ```js {{linenos="table",hl_lines=["1-4"]}}
 CSV(`A,1.0
 B,1.5
@@ -127,8 +155,11 @@ MAPVALUE(1, value(1) * 10 )
 
 CSV()
 ```
+
 {{< /tab >}}
+
 {{< tab name="SQL" >}}
+
 ```js  {{linenos="table",hl_lines=[1]}}
 SQL(`select time, value from example where name = 'my-car' limit 4`)
 
@@ -136,8 +167,11 @@ MAPVALUE(1, value(1) * 10 )
 
 CSV()
 ```
+
 {{< /tab >}}
+
 {{< tab name="SCRIPT-json" >}}
+
 ```js {{linenos="table",hl_lines=[2]}}
 SCRIPT({
     list = JSON.parse(`[["A",1.0], ["B",1.5], ["C",2.0], ["D",2.5]]`);
@@ -148,8 +182,11 @@ SCRIPT({
 MAPVALUE(1, value(1) * 10 )
 CSV()
 ```
+
 {{< /tab >}}
+
 {{< tab name="SCRIPT-for" >}}
+
 ```js {{linenos="table",hl_lines=["1-5"]}}
 SCRIPT({
     for (i = 0; i < 10; i++) {
@@ -161,7 +198,9 @@ MAPVALUE(1, value(1) * 10 )
 
 CSV()
 ```
+
 {{< /tab >}}
+
 {{< /tabs >}}
 
 *TQL* の目的は、データを簡単に変換することです。
@@ -177,6 +216,7 @@ CSV()
 以下のIrisデータの例で、TQLの用途を簡単に確認できます。
 
 {{< tabs >}}
+
 {{< tab name="AVG" >}}
 
 - クラスごとの平均値
@@ -203,8 +243,11 @@ CHART(
     })
 )
 ```
+
 {{< figure src="/neo/tql/img/groupbykey_avg.jpg" width="500" >}}
+
 {{< /tab >}}
+
 {{< tab name="STAT" >}}
 
 - setosaクラスのがく片の長さの最小値、中央値、平均値、最大値、標準偏差
@@ -234,7 +277,9 @@ CHART(
     })
 )
 ```
+
 {{< figure src="/neo/tql/img/groupbykey_stddev.jpg" width="500" >}}
+
 {{< /tab >}}
 
 {{< tab name="SCRIPT-bar" >}}
@@ -297,6 +342,7 @@ CHART()
 {{< figure src="/neo/tql/img/iris_script_min_max.jpg" width="500" >}}
 
 {{< /tab >}}
+
 {{< tab name="SCRIPT-boxplot" >}}
 
 - 四分位数に基づく箱ひげ図（boxplot）を生成します。
@@ -363,6 +409,7 @@ CHART()
 {{< figure src="/neo/tql/img/iris_script_quantile.jpg" width="500" >}}
 
 {{< /tab >}}
+
 {{< /tabs >}}
 
 ## この章の内容 {#이-장에서-다루는-내용}

@@ -4,15 +4,15 @@ type: docs
 weight: 22
 ---
 
-"SQL"을 선택하면 새로운 SQL 에디터가 열립니다.
+새 탭 화면에서 `SQL` 카드를 선택하면 새 SQL 에디터가 열립니다.
 
-{{< figure src="/images/web-sql-pick.png" width="600" >}}
+{{< figure src="/images/web-sql-pick.png" width="600px" >}}
 
 ## SQL
 
 ### 테이블 생성
 
-화면 왼쪽은 SQL 에디터, 오른쪽은 결과와 로그 패널입니다.
+화면 왼쪽은 SQL 에디터, 오른쪽은 결과 패널(`RESULT`·`CHART`)입니다. 실행 로그는 아래쪽 콘솔에 표시됩니다.
 
 아래 DDL을 복사해 에디터에 붙여 넣습니다.
 
@@ -24,7 +24,7 @@ CREATE TAG TABLE IF NOT EXISTS example (
 );
 ```
 
-`Ctrl+Enter`를 누르거나 왼쪽 상단 ▶︎ 아이콘을 클릭해 실행합니다. 문장 끝의 세미콜론을 잊지 마십시오.
+에디터 칸 왼쪽 위의 <img src="/neo/sql/img/sql_run_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px"> 을 클릭하거나 `Ctrl+Enter`(macOS 는 `Cmd+Enter`)를 눌러 실행합니다. 문장 끝의 세미콜론을 잊지 마십시오.
 
 {{< figure src="/images/web-cretable.png" >}}
 
@@ -66,7 +66,7 @@ SELECT * FROM example WHERE name = :name;
 INSERT와 SELECT 문에서 각각 `:name`, `:value`로 참조합니다.
 `-- env: reset`을 실행하면 SQL 에디터에 설정된 named args가 초기화됩니다.
 
-`-- env:`로 설정한 내용은 `--env: reset` 전까지 설정이 누적됩니다.
+`-- env:`로 설정한 내용은 `-- env: reset`을 실행할 때까지 누적됩니다.
 
 ```sql
 --env: named.name=my-car
@@ -98,22 +98,22 @@ SELECT time, value FROM example WHERE name = 'my-car';
 ```
 {{< figure src="/images/web-select-multi.png" >}}
 
-오른쪽 패널의 *CHART* 탭을 클릭하면 결과를 선 그래프로 확인할 수 있습니다.
+오른쪽 패널의 `CHART` 탭을 클릭하면 결과를 선 그래프로 확인할 수 있습니다. 첫 번째 열이 X 축, 두 번째 열이 Y 축으로 잡히며, `X Axis`·`Y Axis`에서 열을 바꾼 뒤 옆의 ▶ 버튼을 누르면 다시 그립니다.
 
-{{< figure src="/images/web-select-chart.jpg" width="600" >}}
+{{< figure src="/images/web-select-chart.jpg" width="560px" >}}
 
 ### CSV 파일 다운로드
 
-쿼리 결과 전체를 CSV 파일로 다운로드할 수 있습니다.
+결과 패널 오른쪽 위의 <img src="/neo/sql/img/sql_download_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px"> 을 클릭하면 쿼리 결과를 CSV 파일로 내려받습니다. 결과 표는 50행씩 나눠 보여 주지만 CSV 파일에는 쿼리가 반환하는 모든 행이 머리행과 함께 저장되며, 시간 값은 에디터의 시간 형식·시간대 설정을 따릅니다.
 
-{{< figure src="./img/web-select-download.png" >}}
+{{< figure src="/neo/sql/img/web-select-download.png" width="570px" >}}
 
 ### 테이블 삭제
 
 *DELETE* 문으로 레코드를 삭제합니다.
 
 ```sql
-DELETE FROM example WHERE name = 'my-car'
+DELETE FROM example WHERE name = 'my-car';
 ```
 
 새로 만들고 싶다면 테이블을 삭제하세요.
@@ -132,7 +132,7 @@ DROP TABLE example;
 show tables;
 ```
 
-{{< figure src="./img/web-show-tables.png" >}}
+{{< figure src="/neo/sql/img/web-show-tables.png" >}}
 
 ### desc _table_name_
 
@@ -142,7 +142,7 @@ show tables;
 desc example;
 ```
 
-{{< figure src="./img/web-desc-table.png" >}}
+{{< figure src="/neo/sql/img/web-desc-table.png" >}}
 
 ### show tags _table_name_
 
@@ -152,7 +152,7 @@ show tags example;
 
 TAG 테이블의 저장된 태그 목록을 확인합니다.
 
-{{< figure src="./img/web-show-tags.png" >}}
+{{< figure src="/neo/sql/img/web-show-tags.png" >}}
 
 
 ## SQL 가이드

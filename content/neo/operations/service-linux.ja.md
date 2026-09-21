@@ -18,7 +18,7 @@ $ vi neo-start.sh
 `serve`コマンドに`--pid <path>`フラグを指定して、プロセスIDを指定したパスのファイルに記録します。
 
 ```sh {{linenos=table}}
-#!/bin/bash
+#!/bin/bash 
 exec /data/machbase-neo serve \
     --pid /data/neo.pid \
     --host 0.0.0.0 \

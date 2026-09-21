@@ -55,7 +55,7 @@ GET http://127.0.0.1:5654/db/query
 ```
 ~~~
 
-{{< figure src="./img/http_client_wrk.jpg" width="936" >}}
+{{< figure src="/neo/api-http/img/http_client_wrk.jpg" width="936" >}}
 
 - TQL
 
@@ -68,7 +68,7 @@ HTTP({
 TEXT()
 ```
 
-{{< figure src="./img/http_client_tql.jpg" width="733" >}}
+{{< figure src="/neo/api-http/img/http_client_tql.jpg" width="733" >}}
 
 ## In this chapter
 

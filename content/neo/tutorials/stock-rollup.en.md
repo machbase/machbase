@@ -26,7 +26,7 @@ finer-grained table, which reduces query load while keeping near-real-time resul
 - Machbase Neo is running
 - Go 1.24+
 - You can connect as `sys` (for initial user creation)
-- Basic familiarity with Machbase Go SDK. See [MachGo SDK](/neo/sdk-go/machgo/).
+- Basic familiarity with Machbase Go SDK. See [MachGo SDK](/neo/tutorials/cli-go/).
 
 ## 1) Create the `stock` user (as `sys`)
 
@@ -431,4 +431,4 @@ After running the insert program, check the following in order:
 - Use multi-stage rollup tables
 - Insert data only into the `stock_tick` raw table, and rollup tables are accumulated automatically
 
-For more Go API details, see [MachGo SDK](/neo/sdk-go/machgo/) and related pages under [Go SDK](/neo/sdk-go/).
+For more Go API details, see [MachGo SDK](/neo/tutorials/cli-go/) and [Go SDK](/dbms/development-tools-integration/go/).

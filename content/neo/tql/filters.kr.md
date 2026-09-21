@@ -36,7 +36,7 @@ CHART(size("600px", "400px"))
 ```
 {{< /tab >}}
 {{< tab name="SET-MAP" >}}
-```js
+```js {{linenos=table,hl_lines=[4,5]}}
 FAKE(arrange(1,5,0.03))
 MAPVALUE(0, round(value(0)*100)/100)
 
@@ -91,7 +91,7 @@ CHART(size("600px", "400px"))
 ```
 {{< /tab >}}
 {{< tab name="SET-MAP" >}}
-```js
+```js {{linenos=table,hl_lines=[5,7]}}
 FAKE(arrange(1,5,0.03))
 MAPVALUE(0, round(value(0)*100)/100)
 
@@ -125,7 +125,7 @@ CHART(
 
 {{< /tab >}}
 {{< tab name="SCRIPT" >}}
-```js
+```js {{linenos=table,hl_lines=[6,7,17]}}
 SCRIPT({
     x = []; y = [];
     for (i = 1.0; i <= 5.0; i+=0.03) {
@@ -149,7 +149,7 @@ CHART(size("600px", "400px"))
 ```
 {{< /tab >}}
 {{< tab name="SET-MAP" >}}
-```js
+```js {{linenos=table,hl_lines=[5,12]}}
 FAKE(arrange(1,5,0.03))
 MAPVALUE(0, round(value(0)*100)/100)
 SET(sig, sin(1.2*2*PI*value(0)) )
@@ -210,12 +210,13 @@ CHART(size("600px", "400px"))
 ```
 {{< /tab >}}
 {{< tab name="SET-MAP" >}}
-```js
+```js {{linenos=table,hl_lines=[6,14]}}
 FAKE(arrange(1,5,0.03))
 MAPVALUE(0, round(value(0)*100)/100)
 SET(sig, sin(1.2*2*PI*value(0)) )
 SET(noise, 0.09*cos(9*2*PI*value(0)) + 0.15*sin(12*2*PI*value(0)))
-MOVAVG( value(1), window(10) )
+MAPVALUE(1, $sig + $noise)
+MAP_AVG(2, value(1))
 CHART(
     size("600px", "400px"),
     chartOption({
@@ -223,7 +224,7 @@ CHART(
         yAxis:{ max:1.5, min:-1.5 },
         series:[
             { type: "line", data: column(1), name:"value+noise" },
-            { type: "line", data: column(2), name:"avg" },
+            { type: "line", data: column(2), name:"AVG" },
         ],
         legend: { bottom: 10 }
     })

@@ -42,11 +42,11 @@ const db = new Client({ host: '127.0.0.1', port: 5656, user: 'sys', password: 'm
 ```js {linenos=table,linenostart=1}
 const { Client } = require('machcli');
 const db = new Client({
-    host: '127.0.0.1',
-    port: 5656,
-    user: 'sys',
-    password: 'manager',
-    db: 'MACHBASEDB',
+  host: '127.0.0.1',
+  port: 5656,
+  user: 'sys',
+  password: 'manager',
+  db: 'MACHBASEDB',
 });
 const conn = db.connect();
 ```
@@ -271,7 +271,7 @@ const conn = db.connect();
 conn.exec('CREATE TABLE IF NOT EXISTS TX_SAMPLE (ID LONG, NAME VARCHAR(100))');
 
 conn.tx(function (tx) {
-    tx.exec('INSERT INTO TX_SAMPLE VALUES(?, ?)', 1, 'committed');
+  tx.exec('INSERT INTO TX_SAMPLE VALUES(?, ?)', 1, 'committed');
 });
 
 conn.close();

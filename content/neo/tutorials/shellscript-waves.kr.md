@@ -198,21 +198,6 @@ machbase-neo shell sql \
 
 {{% /steps %}}
 
-### Table view
-
-It is also possible browsing query result forward/backward with "walk" command like below.
-
-```sh
-machbase-neo shell walk "select * from EXAMPLE order by time desc"
-```
-
-Then you can scroll up/down with keyboard, press `ESC` to exit table view.
-
-Press `r` to re-execute query to refresh result, it is particularly useful with query was sorted by `order by time desc` to see the latest values when data is continuously being written.
-
-![img](/images/shell-walk.gif)
-
-
 ### Query Output format
 
 #### JSON

@@ -389,7 +389,7 @@ CHART(
 )
 ```
 
-{{< figure src="../img/tql-math-example2.jpg" width="400px" >}}
+{{< figure src="/neo/tql/img/tql-math-example2.jpg" width="400px" >}}
 
 ## MAP_DIFF()
 
@@ -476,7 +476,7 @@ CHART(
 )
 ```
 
-{{< figure src="../img/tql-map_avg.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/tql-map_avg.jpg" width="500" >}}
 
 ## MAP_MOVAVG()
 
@@ -515,7 +515,7 @@ CHART(
 - Line 5 : Generate signal value mxied with noise
 - Line 6 : Moving average with windows size is 10
 
-{{< figure src="../img/tql-map_movavg_filter.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/tql-map_movavg_filter.jpg" width="500" >}}
 
 ## MAP_LOWPASS()
 
@@ -555,7 +555,7 @@ CHART(
 - Line 5: Generate signal value with noise
 - Line 6: Apply low pass filter with *alpha* = `0.40`
 
-{{< figure src="../img/tql-map_lowpass_filter.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/tql-map_lowpass_filter.jpg" width="500" >}}
 
 
 ## MAP_KALMAN()
@@ -600,7 +600,7 @@ CHART(
 - Line 6: Artificially generated meaured value *value*+*noise*.
 - Line 10: Apply Kalman filter on the meatured values.
 
-{{< figure src="../img/tql-map_kalman_filter.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/tql-map_kalman_filter.jpg" width="500" >}}
 
 ## HISTOGRAM()
 
@@ -653,7 +653,7 @@ CHART(
     })
 )
 ```
-{{< figure src="../img/tql-histogram.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/tql-histogram.jpg" width="500" >}}
 {{</ tab >}}
 {{< tab name="CATEGORY" >}}
 ```js {{linenos=table,hl_lines=[4,"13-14"]}}
@@ -675,7 +675,7 @@ CHART(
     })
 )
 ```
-{{< figure src="../img/tql-histogram-cat.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/tql-histogram-cat.jpg" width="500" >}}
 {{</ tab >}}
 {{</ tabs >}}
 
