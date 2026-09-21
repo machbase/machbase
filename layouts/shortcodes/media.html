@@ -1,0 +1,44 @@
+{{/*
+  언어별 미디어 숏코드.  layouts/shortcodes/media.html 로 문서 레포에 복사해 쓴다.
+
+      {{< media slug="neo-dashboard/add-chart" width="600" >}}
+
+  인자는 전부 '이름 인자'다. Hugo 는 한 숏코드 호출에서 위치 인자와 이름 인자를
+  섞으면 빌드를 세운다("Cannot mix named and positional parameters") — 실측으로 확인했다.
+
+  세 언어 파일에 **글자 그대로 같은 한 줄**을 넣는다. check_japanese_manual.py 는
+  title/subtitle/caption/alt 외의 숏코드 속성이 원문과 다르면 error 로 잡기 때문에,
+  언어별 경로를 src 에 직접 쓰면 검증이 깨진다.
+
+  실제 파일 선택은 data/doc_media.yaml 을 보고 여기서 한다.
+    - 현재 언어 파일이 있으면 그것
+    - 없으면 kr 로 폴백
+    - kr 도 없으면 errorf 로 빌드를 세운다 (조용한 404 방지)
+
+  data/doc_media.yaml 은 gen_doc_media.mjs 가 생성한다. 파일 시스템을 직접 뒤지지 않는
+  이유는 fileExists 가 static/ 아래를 보는지 확인되지 않았기 때문이다.
+*/}}
+
+{{- $slug := .Get "slug" -}}
+{{- $width := .Get "width" | default "600" -}}
+{{- $lang := site.Language.Lang -}}
+
+{{- if not $slug -}}
+  {{- errorf "media: slug=\"<feature>/<name>\" 를 지정할 것 (%s)" .Position -}}
+{{- end -}}
+
+{{- $entry := index (site.Data.doc_media).media $slug -}}
+{{- if not $entry -}}
+  {{- errorf "media: '%s' 가 data/doc_media.yaml 에 없다. gen_doc_media.mjs 를 다시 돌릴 것 (%s)" $slug .Position -}}
+{{- end -}}
+
+{{- $file := index $entry $lang -}}
+{{- if not $file -}}{{- $file = index $entry "kr" -}}{{- end -}}
+{{- if not $file -}}
+  {{- errorf "media: '%s' 에 %s 도 kr 도 없다 (%s)" $slug $lang .Position -}}
+{{- end -}}
+
+<figure>
+  <img src="{{ $file | relURL }}" width="{{ $width }}" alt="{{ .Get `alt` | default `` }}" loading="lazy">
+  {{- with .Get "caption" }}<figcaption>{{ . }}</figcaption>{{ end -}}
+</figure>

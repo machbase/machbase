@@ -1,0 +1,130 @@
+# 생성 파일. 직접 고치지 말 것 — node gen_doc_media.mjs <docs_repo>
+media:
+  "neo-dashboard/add-chart":
+    en: "/images/web-ui/neo-dashboard/en/add-chart.gif"
+    kr: "/images/web-ui/neo-dashboard/kr/add-chart.gif"
+    ja: "/images/web-ui/neo-dashboard/ja/add-chart.gif"
+  "neo-dashboard/board-autorefresh":
+    en: "/images/web-ui/neo-dashboard/board-autorefresh.png"
+    kr: "/images/web-ui/neo-dashboard/board-autorefresh.png"
+    ja: "/images/web-ui/neo-dashboard/board-autorefresh.png"
+  "neo-dashboard/board-dist-range":
+    en: "/images/web-ui/neo-dashboard/board-dist-range.png"
+    kr: "/images/web-ui/neo-dashboard/board-dist-range.png"
+    ja: "/images/web-ui/neo-dashboard/board-dist-range.png"
+  "neo-dashboard/board-time-range":
+    en: "/images/web-ui/neo-dashboard/board-time-range.png"
+    kr: "/images/web-ui/neo-dashboard/board-time-range.png"
+    ja: "/images/web-ui/neo-dashboard/board-time-range.png"
+  "neo-dashboard/board-variable-config":
+    en: "/images/web-ui/neo-dashboard/board-variable-config.png"
+    kr: "/images/web-ui/neo-dashboard/board-variable-config.png"
+    ja: "/images/web-ui/neo-dashboard/board-variable-config.png"
+  "neo-dashboard/chart-setting-preview":
+    en: "/images/web-ui/neo-dashboard/chart-setting-preview.png"
+    kr: "/images/web-ui/neo-dashboard/chart-setting-preview.png"
+    ja: "/images/web-ui/neo-dashboard/chart-setting-preview.png"
+  "neo-dashboard/control-buttons":
+    en: "/images/web-ui/neo-dashboard/control-buttons.gif"
+    kr: "/images/web-ui/neo-dashboard/control-buttons.gif"
+    ja: "/images/web-ui/neo-dashboard/control-buttons.gif"
+  "neo-dashboard/home-new":
+    en: "/images/web-ui/neo-dashboard/home-new.png"
+    kr: "/images/web-ui/neo-dashboard/home-new.png"
+    ja: "/images/web-ui/neo-dashboard/home-new.png"
+  "neo-dashboard/panel-distance-tab":
+    en: "/images/web-ui/neo-dashboard/panel-distance-tab.png"
+    kr: "/images/web-ui/neo-dashboard/panel-distance-tab.png"
+    ja: "/images/web-ui/neo-dashboard/panel-distance-tab.png"
+  "neo-dashboard/panel-menu":
+    en: "/images/web-ui/neo-dashboard/panel-menu.png"
+    kr: "/images/web-ui/neo-dashboard/panel-menu.png"
+    ja: "/images/web-ui/neo-dashboard/panel-menu.png"
+  "neo-dashboard/panel-time-tab":
+    en: "/images/web-ui/neo-dashboard/panel-time-tab.png"
+    kr: "/images/web-ui/neo-dashboard/panel-time-tab.png"
+    ja: "/images/web-ui/neo-dashboard/panel-time-tab.png"
+  "neo-dashboard/query-control-icons":
+    en: "/images/web-ui/neo-dashboard/query-control-icons.png"
+    kr: "/images/web-ui/neo-dashboard/query-control-icons.png"
+    ja: "/images/web-ui/neo-dashboard/query-control-icons.png"
+  "neo-dashboard/query-tag-based":
+    en: "/images/web-ui/neo-dashboard/query-tag-based.png"
+    kr: "/images/web-ui/neo-dashboard/query-tag-based.png"
+    ja: "/images/web-ui/neo-dashboard/query-tag-based.png"
+  "neo-dashboard/query-two-series":
+    en: "/images/web-ui/neo-dashboard/query-two-series.png"
+    kr: "/images/web-ui/neo-dashboard/query-two-series.png"
+    ja: "/images/web-ui/neo-dashboard/query-two-series.png"
+  "neo-dashboard/query-typing-mode":
+    en: "/images/web-ui/neo-dashboard/query-typing-mode.png"
+    kr: "/images/web-ui/neo-dashboard/query-typing-mode.png"
+    ja: "/images/web-ui/neo-dashboard/query-typing-mode.png"
+  "neo-dashboard/share":
+    en: "/images/web-ui/neo-dashboard/en/share.gif"
+    kr: "/images/web-ui/neo-dashboard/kr/share.gif"
+    ja: "/images/web-ui/neo-dashboard/ja/share.gif"
+  "neo-dashboard/share-modal":
+    en: "/images/web-ui/neo-dashboard/share-modal.png"
+    kr: "/images/web-ui/neo-dashboard/share-modal.png"
+    ja: "/images/web-ui/neo-dashboard/share-modal.png"
+  "neo-dashboard/statz-board":
+    en: "/images/web-ui/neo-dashboard/statz-board.png"
+    kr: "/images/web-ui/neo-dashboard/statz-board.png"
+    ja: "/images/web-ui/neo-dashboard/statz-board.png"
+  "neo-dashboard/transform-filled":
+    en: "/images/web-ui/neo-dashboard/transform-filled.png"
+    kr: "/images/web-ui/neo-dashboard/transform-filled.png"
+    ja: "/images/web-ui/neo-dashboard/transform-filled.png"
+  "neo-dashboard/type-adv-scatter":
+    en: "/images/web-ui/neo-dashboard/type-adv-scatter.png"
+    kr: "/images/web-ui/neo-dashboard/type-adv-scatter.png"
+    ja: "/images/web-ui/neo-dashboard/type-adv-scatter.png"
+  "neo-dashboard/type-bar":
+    en: "/images/web-ui/neo-dashboard/type-bar.png"
+    kr: "/images/web-ui/neo-dashboard/type-bar.png"
+    ja: "/images/web-ui/neo-dashboard/type-bar.png"
+  "neo-dashboard/type-gauge":
+    en: "/images/web-ui/neo-dashboard/type-gauge.png"
+    kr: "/images/web-ui/neo-dashboard/type-gauge.png"
+    ja: "/images/web-ui/neo-dashboard/type-gauge.png"
+  "neo-dashboard/type-geomap":
+    en: "/images/web-ui/neo-dashboard/type-geomap.png"
+    kr: "/images/web-ui/neo-dashboard/type-geomap.png"
+    ja: "/images/web-ui/neo-dashboard/type-geomap.png"
+  "neo-dashboard/type-line":
+    en: "/images/web-ui/neo-dashboard/type-line.png"
+    kr: "/images/web-ui/neo-dashboard/type-line.png"
+    ja: "/images/web-ui/neo-dashboard/type-line.png"
+  "neo-dashboard/type-liquid-fill":
+    en: "/images/web-ui/neo-dashboard/type-liquid-fill.png"
+    kr: "/images/web-ui/neo-dashboard/type-liquid-fill.png"
+    ja: "/images/web-ui/neo-dashboard/type-liquid-fill.png"
+  "neo-dashboard/type-pie":
+    en: "/images/web-ui/neo-dashboard/type-pie.png"
+    kr: "/images/web-ui/neo-dashboard/type-pie.png"
+    ja: "/images/web-ui/neo-dashboard/type-pie.png"
+  "neo-dashboard/type-scatter":
+    en: "/images/web-ui/neo-dashboard/type-scatter.png"
+    kr: "/images/web-ui/neo-dashboard/type-scatter.png"
+    ja: "/images/web-ui/neo-dashboard/type-scatter.png"
+  "neo-dashboard/type-text":
+    en: "/images/web-ui/neo-dashboard/type-text.png"
+    kr: "/images/web-ui/neo-dashboard/type-text.png"
+    ja: "/images/web-ui/neo-dashboard/type-text.png"
+  "neo-dashboard/type-tql-chart":
+    en: "/images/web-ui/neo-dashboard/type-tql-chart.png"
+    kr: "/images/web-ui/neo-dashboard/type-tql-chart.png"
+    ja: "/images/web-ui/neo-dashboard/type-tql-chart.png"
+  "neo-dashboard/type-video":
+    en: "/images/web-ui/neo-dashboard/type-video.png"
+    kr: "/images/web-ui/neo-dashboard/type-video.png"
+    ja: "/images/web-ui/neo-dashboard/type-video.png"
+  "neo-dashboard/variable-new":
+    en: "/images/web-ui/neo-dashboard/variable-new.png"
+    kr: "/images/web-ui/neo-dashboard/variable-new.png"
+    ja: "/images/web-ui/neo-dashboard/variable-new.png"
+  "neo-dashboard/variables":
+    en: "/images/web-ui/neo-dashboard/en/variables.gif"
+    kr: "/images/web-ui/neo-dashboard/kr/variables.gif"
+    ja: "/images/web-ui/neo-dashboard/ja/variables.gif"

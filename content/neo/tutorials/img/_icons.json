@@ -1,0 +1,26 @@
+{
+ "app": "neo-web",
+ "note": "문서 본문 인라인 아이콘의 출처(UI 에서 잘라 낸 위치)",
+ "icons": [
+  {
+   "file": "new_file_icon.png",
+   "source": {
+    "screen": "왼쪽 EXPLORER 패널 EXPLORER 머리줄",
+    "element": "첫 번째 버튼(툴팁 New file)",
+    "url": "http://127.0.0.1:5654/web/ui",
+    "viewport": "1100×800",
+    "dpr": 2
+   },
+   "crop": {
+    "x": 134,
+    "y": 158,
+    "w": 19,
+    "h": 19,
+    "padding": 3,
+    "basis": "svg"
+   },
+   "size": "38×38",
+   "capturedAt": "2026-09-17T07:46:52.116Z"
+  }
+ ]
+}

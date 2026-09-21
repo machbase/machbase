@@ -1,0 +1,27 @@
+{
+ "app": "neo-web",
+ "note": "문서 본문 인라인 아이콘의 출처(UI 에서 잘라 낸 위치)",
+ "icons": [
+  {
+   "file": "tql_save_icon.png",
+   "source": {
+    "screen": "TQL 편집기 머리줄",
+    "element": "저장 버튼(aria-label Save)",
+    "selector": "[aria-label=\"Save\"]",
+    "url": "http://127.0.0.1:5654/web/ui",
+    "viewport": "1100×800",
+    "dpr": 2
+   },
+   "crop": {
+    "x": 503,
+    "y": 49,
+    "w": 22,
+    "h": 22,
+    "padding": 3,
+    "basis": "svg"
+   },
+   "size": "44×44",
+   "capturedAt": "2026-09-17T07:49:56.810Z"
+  }
+ ]
+}

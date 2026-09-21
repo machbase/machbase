@@ -1,0 +1,366 @@
+{
+ "app": "neo-web",
+ "note": "문서 본문 인라인 아이콘의 출처(UI 에서 잘라 낸 위치)",
+ "icons": [
+  {
+   "file": "dash_new_panel.png",
+   "source": {
+    "screen": "대시보드 헤더",
+    "element": "1번째 아이콘 버튼(툴팁 New panel)",
+    "url": "http://127.0.0.1:5654/web/ui",
+    "viewport": "1400×900",
+    "dpr": 3
+   },
+   "crop": {
+    "x": 876,
+    "y": 49,
+    "w": 22,
+    "h": 22,
+    "padding": 3,
+    "basis": "svg"
+   },
+   "size": "66×66",
+   "capturedAt": "2026-09-17T08:22:32.274Z"
+  },
+  {
+   "file": "dash_refresh.png",
+   "source": {
+    "screen": "대시보드 헤더",
+    "element": "2번째 아이콘 버튼(툴팁 Refresh)",
+    "url": "http://127.0.0.1:5654/web/ui",
+    "viewport": "1400×900",
+    "dpr": 3
+   },
+   "crop": {
+    "x": 904,
+    "y": 49,
+    "w": 22,
+    "h": 22,
+    "padding": 3,
+    "basis": "svg"
+   },
+   "size": "66×66",
+   "capturedAt": "2026-09-17T08:22:32.306Z"
+  },
+  {
+   "file": "dash_save.png",
+   "source": {
+    "screen": "대시보드 헤더",
+    "element": "3번째 아이콘 버튼(툴팁 Save)",
+    "url": "http://127.0.0.1:5654/web/ui",
+    "viewport": "1400×900",
+    "dpr": 3
+   },
+   "crop": {
+    "x": 1303,
+    "y": 49,
+    "w": 22,
+    "h": 22,
+    "padding": 3,
+    "basis": "svg"
+   },
+   "size": "66×66",
+   "capturedAt": "2026-09-17T08:22:32.338Z"
+  },
+  {
+   "file": "dash_save_as.png",
+   "source": {
+    "screen": "대시보드 헤더",
+    "element": "4번째 아이콘 버튼(툴팁 Save as)",
+    "url": "http://127.0.0.1:5654/web/ui",
+    "viewport": "1400×900",
+    "dpr": 3
+   },
+   "crop": {
+    "x": 1331,
+    "y": 49,
+    "w": 22,
+    "h": 22,
+    "padding": 3,
+    "basis": "svg"
+   },
+   "size": "66×66",
+   "capturedAt": "2026-09-17T08:22:32.372Z"
+  },
+  {
+   "file": "dash_variable_config.png",
+   "source": {
+    "screen": "대시보드 헤더",
+    "element": "5번째 아이콘 버튼(툴팁 Variable config)",
+    "url": "http://127.0.0.1:5654/web/ui",
+    "viewport": "1400×900",
+    "dpr": 3
+   },
+   "crop": {
+    "x": 1359,
+    "y": 49,
+    "w": 22,
+    "h": 22,
+    "padding": 3,
+    "basis": "svg"
+   },
+   "size": "66×66",
+   "capturedAt": "2026-09-17T08:22:32.406Z"
+  },
+  {
+   "file": "dash_auto_refresh.png",
+   "source": {
+    "screen": "대시보드 헤더",
+    "element": "aria-label=\"Auto refresh\"",
+    "url": "http://127.0.0.1:5654/web/ui",
+    "viewport": "1400×900",
+    "dpr": 3
+   },
+   "crop": {
+    "x": 1246,
+    "y": 42,
+    "w": 36,
+    "h": 36,
+    "padding": 3,
+    "basis": "svg"
+   },
+   "size": "108×108",
+   "capturedAt": "2026-09-17T08:22:32.436Z"
+  },
+  {
+   "file": "dash_create_panel.png",
+   "source": {
+    "screen": "빈 대시보드 가운데",
+    "element": "aria-label=\"Create New Panel\"",
+    "url": "http://127.0.0.1:5654/web/ui",
+    "viewport": "1400×900",
+    "dpr": 3
+   },
+   "crop": {
+    "x": 693,
+    "y": 442,
+    "w": 66,
+    "h": 66,
+    "padding": 3,
+    "basis": "svg"
+   },
+   "size": "198×198",
+   "capturedAt": "2026-09-17T08:22:32.470Z"
+  },
+  {
+   "file": "dash_variable_add_value.png",
+   "source": {
+    "screen": "변수 설정 > New variable",
+    "element": "Value 줄 오른쪽 ⊕",
+    "url": "http://127.0.0.1:5654/web/ui",
+    "viewport": "1400×900",
+    "dpr": 3
+   },
+   "crop": {
+    "x": 496,
+    "y": 663,
+    "w": 22,
+    "h": 22,
+    "padding": 3,
+    "basis": "svg"
+   },
+   "size": "66×66",
+   "capturedAt": "2026-09-17T08:22:36.137Z"
+  },
+  {
+   "file": "dash_series_typing.png",
+   "source": {
+    "screen": "패널 편집기 시리즈 행",
+    "element": "오른쪽 아이콘 1번째(툴팁 Typing)",
+    "url": "http://127.0.0.1:5654/web/ui",
+    "viewport": "1400×900",
+    "dpr": 3
+   },
+   "crop": {
+    "x": 894,
+    "y": 539,
+    "w": 20,
+    "h": 20,
+    "padding": 3,
+    "basis": "svg"
+   },
+   "size": "60×60",
+   "capturedAt": "2026-09-17T08:22:41.554Z"
+  },
+  {
+   "file": "dash_series_formula.png",
+   "source": {
+    "screen": "패널 편집기 시리즈 행",
+    "element": "오른쪽 아이콘 2번째(툴팁 Enter formula)",
+    "url": "http://127.0.0.1:5654/web/ui",
+    "viewport": "1400×900",
+    "dpr": 3
+   },
+   "crop": {
+    "x": 916,
+    "y": 539,
+    "w": 20,
+    "h": 20,
+    "padding": 3,
+    "basis": "svg"
+   },
+   "size": "60×60",
+   "capturedAt": "2026-09-17T08:22:41.588Z"
+  },
+  {
+   "file": "dash_series_visible.png",
+   "source": {
+    "screen": "패널 편집기 시리즈 행",
+    "element": "오른쪽 아이콘 3번째(툴팁 Visible)",
+    "url": "http://127.0.0.1:5654/web/ui",
+    "viewport": "1400×900",
+    "dpr": 3
+   },
+   "crop": {
+    "x": 937,
+    "y": 538,
+    "w": 22,
+    "h": 22,
+    "padding": 3,
+    "basis": "svg"
+   },
+   "size": "66×66",
+   "capturedAt": "2026-09-17T08:22:41.621Z"
+  },
+  {
+   "file": "dash_series_color.png",
+   "source": {
+    "screen": "패널 편집기 시리즈 행",
+    "element": "오른쪽 아이콘 4번째(툴팁 Color)",
+    "url": "http://127.0.0.1:5654/web/ui",
+    "viewport": "1400×900",
+    "dpr": 3
+   },
+   "crop": {
+    "x": 958,
+    "y": 537,
+    "w": 24,
+    "h": 24,
+    "padding": 3,
+    "basis": "svg"
+   },
+   "size": "72×72",
+   "capturedAt": "2026-09-17T08:22:41.655Z"
+  },
+  {
+   "file": "dash_series_expand.png",
+   "source": {
+    "screen": "패널 편집기 시리즈 행",
+    "element": "오른쪽 아이콘 5번째(툴팁 Expand)",
+    "url": "http://127.0.0.1:5654/web/ui",
+    "viewport": "1400×900",
+    "dpr": 3
+   },
+   "crop": {
+    "x": 982,
+    "y": 539,
+    "w": 20,
+    "h": 20,
+    "padding": 3,
+    "basis": "svg"
+   },
+   "size": "60×60",
+   "capturedAt": "2026-09-17T08:22:41.688Z"
+  },
+  {
+   "file": "dash_series_delete.png",
+   "source": {
+    "screen": "패널 편집기 시리즈 행",
+    "element": "오른쪽 아이콘 6번째(툴팁 Delete)",
+    "url": "http://127.0.0.1:5654/web/ui",
+    "viewport": "1400×900",
+    "dpr": 3
+   },
+   "crop": {
+    "x": 1003,
+    "y": 538,
+    "w": 22,
+    "h": 22,
+    "padding": 3,
+    "basis": "svg"
+   },
+   "size": "66×66",
+   "capturedAt": "2026-09-17T08:22:41.722Z"
+  },
+  {
+   "file": "dash_tag_search.png",
+   "source": {
+    "screen": "패널 편집기 시리즈 행",
+    "element": "Tag 입력칸 오른쪽 아이콘",
+    "url": "http://127.0.0.1:5654/web/ui",
+    "viewport": "1400×900",
+    "dpr": 3
+   },
+   "crop": {
+    "x": 364,
+    "y": 644,
+    "w": 21,
+    "h": 21,
+    "padding": 3,
+    "basis": "svg"
+   },
+   "size": "63×63",
+   "capturedAt": "2026-09-17T08:22:41.753Z"
+  },
+  {
+   "file": "dash_add_series.png",
+   "source": {
+    "screen": "패널 편집기 시리즈 목록 아래",
+    "element": "가운데 ⊕",
+    "url": "http://127.0.0.1:5654/web/ui",
+    "viewport": "1400×900",
+    "dpr": 3
+   },
+   "crop": {
+    "x": 549,
+    "y": 711,
+    "w": 24,
+    "h": 24,
+    "padding": 3,
+    "basis": "svg"
+   },
+   "size": "72×72",
+   "capturedAt": "2026-09-17T08:22:41.787Z"
+  },
+  {
+   "file": "dash_transform_help.png",
+   "source": {
+    "screen": "패널 편집기 Transform 탭 항목",
+    "element": "[?] 버튼(RxQuestionMark)",
+    "url": "http://127.0.0.1:5654/web/ui",
+    "viewport": "1400×900",
+    "dpr": 3
+   },
+   "crop": {
+    "x": 938,
+    "y": 544,
+    "w": 19,
+    "h": 19,
+    "padding": 3,
+    "basis": "svg"
+   },
+   "size": "57×57",
+   "capturedAt": "2026-09-17T08:27:57.170Z"
+  },
+  {
+   "file": "dash_panel_menu.png",
+   "source": {
+    "screen": "대시보드 패널 헤더 오른쪽",
+    "element": ".draggable-panel-header-menu 버튼(GoGrabber)",
+    "url": "http://127.0.0.1:5654/web/ui",
+    "viewport": "1400×900",
+    "dpr": 3
+   },
+   "crop": {
+    "x": 657,
+    "y": 93,
+    "w": 26,
+    "h": 26,
+    "padding": 3,
+    "basis": "svg"
+   },
+   "size": "78×78",
+   "capturedAt": "2026-09-17T08:28:07.103Z"
+  }
+ ]
+}

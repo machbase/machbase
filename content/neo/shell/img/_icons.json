@@ -1,0 +1,101 @@
+[
+ {
+  "file": "shell_icon.png",
+  "source": {
+   "screen": "웹 UI 좌측 레일",
+   "element": "[aria-label=\"SHELL\"]",
+   "url": "http://127.0.0.1:5654/web/ui",
+   "viewport": "1280×900",
+   "dpr": 3
+  },
+  "crop": {
+   "x": 2,
+   "y": 96,
+   "w": 50,
+   "h": 48,
+   "padding": 4
+  },
+  "size": "150×144",
+  "appVersion": "v8.7.1-snapshot",
+  "capturedAt": "2026-09-17T03:34:34.617Z"
+ },
+ {
+  "file": "settings_icon.png",
+  "source": {
+   "screen": "웹 UI 좌측 레일 맨 아래",
+   "element": "[aria-label=\"Settings\"]",
+   "url": "http://127.0.0.1:5654/web/ui",
+   "viewport": "1280×900",
+   "dpr": 3
+  },
+  "crop": {
+   "x": 2,
+   "y": 852,
+   "w": 50,
+   "h": 48,
+   "padding": 4
+  },
+  "size": "150×144",
+  "appVersion": "v8.7.1-snapshot",
+  "capturedAt": "2026-09-17T03:34:34.657Z"
+ },
+ {
+  "file": "console_open_shell_icon.png",
+  "source": {
+   "screen": "콘솔 패널 제목 줄",
+   "element": "[aria-label=\"Open shell\"]",
+   "url": "http://127.0.0.1:5654/web/ui",
+   "viewport": "1280×900",
+   "dpr": 3
+  },
+  "crop": {
+   "x": 1164,
+   "y": 649,
+   "w": 44,
+   "h": 36,
+   "padding": 4
+  },
+  "size": "132×108",
+  "appVersion": "v8.7.1-snapshot",
+  "capturedAt": "2026-09-17T03:34:34.689Z"
+ },
+ {
+  "file": "shell_add_icon.png",
+  "source": {
+   "screen": "SHELL 패널 제목 줄",
+   "element": "제목 줄의 첫 번째 버튼(+)",
+   "url": "http://127.0.0.1:5654/web/ui",
+   "viewport": "1280×900",
+   "dpr": 3
+  },
+  "crop": {
+   "x": 181,
+   "y": 39,
+   "w": 26,
+   "h": 26,
+   "padding": 4
+  },
+  "size": "78×78",
+  "appVersion": "v8.7.1-snapshot",
+  "capturedAt": "2026-09-17T03:34:35.980Z"
+ },
+ {
+  "file": "shell_add_form.jpg",
+  "source": {
+   "screen": "SHELL 패널 → + → 셸 추가 폼",
+   "element": "입력 폼 전체(오른쪽 도움말 제외)",
+   "url": "http://127.0.0.1:5654/web/ui",
+   "viewport": "1280×900",
+   "dpr": 3
+  },
+  "crop": {
+   "x": 258,
+   "y": 92,
+   "w": 460,
+   "h": 550
+  },
+  "note": "문서 예시 값(terminal / /bin/zsh -il)을 입력한 상태. 기본값에는 이 PC 의 실제 경로가 들어간다.",
+  "appVersion": "v8.7.1-snapshot",
+  "capturedAt": "2026-09-17T03:34:38.045Z"
+ }
+]
