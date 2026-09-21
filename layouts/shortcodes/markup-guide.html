@@ -1,14 +1,21 @@
 {{- $lang := .Page.Language.Lang -}}
 {{- $kr := eq $lang "kr" -}}
+{{- $ja := eq $lang "ja" -}}
 {{- $id := .Get "id" -}}
 {{- $guides := resources.Get "tag-analyzer-markup.json" | transform.Unmarshal -}}
 {{- $guide := index $guides $id -}}
-{{- $name := index $guide.title $lang -}}
+{{- $name := index $guide.title $lang | default $guide.title.en -}}
 {{- $demo := printf "%s %s: %s" (cond $kr "데모" "Demo") $guide.number $name -}}
 {{- $description := printf "%s %s: %s %s" (cond $kr "그림" "Figure") $guide.number $name (cond $kr "설명" "Description") -}}
 {{- $slides := slice (dict "title" (printf "%s %s" $name (cond $kr "데모" "demo")) "caption" $demo) (dict "title" (printf "%s %s" $name (cond $kr "컨트롤" "controls")) "caption" $description) -}}
+{{- if $ja -}}
+  {{- $slides = slice
+    (dict "title" (printf "%sのデモ" $name) "caption" (printf "デモ %s: %s" $guide.number $name))
+    (dict "title" (printf "%sの操作" $name) "caption" (printf "図 %s: %sの説明" $guide.number $name))
+  -}}
+{{- end -}}
 {{- $first := index $slides 0 -}}
-{{- $media := index $guide.media $lang -}}
+{{- $media := index $guide.media $lang | default $guide.media.en -}}
 {{- $js := resources.Get "js/fft-media-guide.js" | minify | fingerprint -}}
 <figure class="fft-demo fft-media-guide markup-guide" data-markup-guide="{{ $id }}" aria-label="{{ $name }}">
   <div class="fft-demo-player">
@@ -28,14 +35,14 @@
         </section>
       {{- end -}}
     </div>
-    <nav class="fft-demo-controls" aria-label="{{ $name }} {{ if $kr }}안내 페이지{{ else }}guide pages{{ end }}" hidden>
-      <button type="button" data-fft-back disabled>{{ if $kr }}‹ 이전{{ else }}‹ Back{{ end }}</button>
+    <nav class="fft-demo-controls" aria-label="{{ $name }} {{ if $kr }}안내 페이지{{ else if $ja }}ガイドのページ{{ else }}guide pages{{ end }}" hidden>
+      <button type="button" data-fft-back disabled>{{ if $kr }}‹ 이전{{ else if $ja }}‹ 前へ{{ else }}‹ Back{{ end }}</button>
       <div class="fft-demo-dots">
         {{- range $i, $slide := $slides -}}
           <button type="button" data-fft-dot aria-label="{{ add $i 1 }} / 2: {{ $slide.title }}" title="{{ $slide.title }}" {{ if eq $i 0 }}aria-current="step"{{ end }}></button>
         {{- end -}}
       </div>
-      <button type="button" data-fft-next>{{ if $kr }}다음 ›{{ else }}Next ›{{ end }}</button>
+      <button type="button" data-fft-next>{{ if $kr }}다음 ›{{ else if $ja }}次へ ›{{ else }}Next ›{{ end }}</button>
     </nav>
   </div>
   <figcaption role="status" aria-live="polite" aria-atomic="true" data-fft-caption>{{ $first.caption }}</figcaption>

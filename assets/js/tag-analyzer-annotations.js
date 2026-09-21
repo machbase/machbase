@@ -7,7 +7,8 @@ document.querySelectorAll('[data-annotated-image]').forEach(image => {
     dialog.setAttribute('aria-label', image.getAttribute('aria-label'));
     const close = document.createElement('button');
     close.type = 'button';
-    close.textContent = document.documentElement.lang.startsWith('ko') ? '닫기 ×' : 'Close ×';
+    const lang = document.documentElement.lang;
+    close.textContent = lang.startsWith('ko') ? '닫기 ×' : lang.startsWith('ja') ? '閉じる ×' : 'Close ×';
     close.addEventListener('click', () => dialog.close());
     const enlarged = document.createElement('div');
     enlarged.className = image.className;

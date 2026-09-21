@@ -7,7 +7,7 @@
 {{- $image = $image | relURL -}}
 <a class="ta-annotated-image" href="{{ $image }}" target="_blank" rel="noopener"
   style="aspect-ratio: {{ $spec.width }} / {{ $height }}" data-annotated-image
-  aria-label="{{ .title }} — {{ if eq .lang "kr" }}{{ if $spec.labelOnly }}안내 확대{{ else }}번호 안내 확대{{ end }}{{ else }}{{ if $spec.labelOnly }}enlarge guide{{ else }}enlarge numbered guide{{ end }}{{ end }}">
+  aria-label="{{ .title }} — {{ if eq .lang "kr" }}{{ if $spec.labelOnly }}안내 확대{{ else }}번호 안내 확대{{ end }}{{ else if eq .lang "ja" }}ガイドを拡大{{ else }}{{ if $spec.labelOnly }}enlarge guide{{ else }}enlarge numbered guide{{ end }}{{ end }}">
   <img src="{{ $image }}" alt="{{ .title }}" width="{{ $spec.width }}" height="{{ $spec.height }}" loading="lazy">
   <svg viewBox="0 0 {{ $spec.width }} {{ $height }}" aria-hidden="true" focusable="false">
     {{- range $n, $note := $spec.notes -}}

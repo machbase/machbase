@@ -18,6 +18,12 @@ languages:
     languageCode: ko-KR
     title: 마크베이스
     weight: 2
+  ja:
+    languageName: 日本語
+    languageCode: ja-JP
+    title: MACHBASE
+    weight: 3
+    disabled: true
 
 module:
   imports:

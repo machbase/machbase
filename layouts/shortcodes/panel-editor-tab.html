@@ -2,6 +2,9 @@
 {{- $spec := index (where $tabs "id" (.Get "id")) 0 -}}
 {{- $lang := .Page.Language.Lang -}}
 {{- $title := printf "%s %s" $spec.title (cond (eq $lang "kr") "탭" "Tab") -}}
+{{- if eq $lang "ja" -}}
+  {{- $title = printf "%s タブ" $spec.title -}}
+{{- end -}}
 {{- $imageRatio := 0.0 -}}
 {{- range $tabs -}}
   {{- $imageRatio = math.Max $imageRatio (div (float .height) (float .width)) -}}

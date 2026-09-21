@@ -3,8 +3,8 @@
   {{- range $n, $note := .spec.notes -}}
     <div class="editor-note-{{ $n }}">
       <dt>{{ if $.plainNumbers }}{{ add $n 1 }}.{{ else }}<span class="ta-note-number">{{ add $n 1 }}</span>{{ end }} {{ $note.label }}</dt>
-      <dd>{{ index $note $lang }}</dd>
+      <dd>{{ index $note $lang | default $note.en }}</dd>
     </div>
   {{- end -}}
 </dl>
-{{- with .spec.extra -}}<p class="ta-feature-extra">{{ index . $lang }}</p>{{- end -}}
+{{- with .spec.extra -}}<p class="ta-feature-extra">{{ index . $lang | default .en }}</p>{{- end -}}

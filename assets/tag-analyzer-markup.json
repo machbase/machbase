@@ -3,6 +3,7 @@
     "number": "3.2.6",
     "title": {
       "en": "Highlight",
+      "ja": "ハイライト",
       "kr": "하이라이트"
     },
     "media": {
@@ -23,6 +24,7 @@
         "label": "Extra → Highlight",
         "short": "Highlight",
         "en": "Enable in Extra, then drag over a range.",
+        "ja": "Extra で有効にし、範囲をドラッグします。",
         "kr": "Extra에서 켜고 범위를 드래그합니다.",
         "regions": [
           [
@@ -42,6 +44,7 @@
       {
         "label": "Label",
         "en": "Name the highlighted interval.",
+        "ja": "強調する範囲の名前を入力します。",
         "kr": "강조할 구간의 이름을 입력합니다.",
         "regions": [
           [
@@ -61,6 +64,7 @@
       {
         "label": "Start / End",
         "en": "Adjust the interval’s boundaries.",
+        "ja": "範囲の開始と終了を調整します。",
         "kr": "구간의 시작과 끝을 조정합니다.",
         "regions": [
           [
@@ -81,6 +85,7 @@
         "label": "Fill / Text color",
         "short": "Colors",
         "en": "Choose the range fill and label color.",
+        "ja": "範囲の塗りつぶしとラベルの色を選択します。",
         "kr": "구간과 라벨의 색상을 선택합니다.",
         "regions": [
           [
@@ -100,6 +105,7 @@
       {
         "label": "Apply / Cancel",
         "en": "Apply the edit, or discard it with Cancel.",
+        "ja": "変更を適用するか、Cancel で取り消します。",
         "kr": "수정 사항을 적용하거나 취소합니다.",
         "regions": [
           [
@@ -119,6 +125,7 @@
       {
         "label": "Delete",
         "en": "Click a saved label to edit or delete it.",
+        "ja": "保存したラベルをクリックして編集・削除します。",
         "kr": "기존 라벨을 클릭하여 수정·삭제합니다.",
         "regions": [
           [
@@ -141,6 +148,7 @@
     "number": "3.2.7",
     "title": {
       "en": "Annotation",
+      "ja": "注釈",
       "kr": "주석"
     },
     "media": {
@@ -161,6 +169,7 @@
         "label": "Extra → Annotation",
         "short": "Annotation",
         "en": "Enable in Extra, then click a point.",
+        "ja": "Extra で有効にし、任意の位置をクリックします。",
         "kr": "Extra에서 켜고 지점을 클릭합니다.",
         "regions": [
           [
@@ -180,6 +189,7 @@
       {
         "label": "Series",
         "en": "Choose the series for the note.",
+        "ja": "注釈を付ける系列を選択します。",
         "kr": "메모를 붙일 시리즈를 선택합니다.",
         "regions": [
           [
@@ -199,6 +209,7 @@
       {
         "label": "Time / Axis",
         "en": "Set the time or numeric X position.",
+        "ja": "時刻または X 軸の数値を指定します。",
         "kr": "시간 또는 숫자 X 위치를 정합니다.",
         "regions": [
           [
@@ -218,6 +229,7 @@
       {
         "label": "Text",
         "en": "Enter the note shown on the chart.",
+        "ja": "チャートに表示するメモを入力します。",
         "kr": "차트에 표시할 메모를 입력합니다.",
         "regions": [
           [
@@ -238,6 +250,7 @@
         "label": "Fill / Text color",
         "short": "Colors",
         "en": "Choose the fill and text colors.",
+        "ja": "背景と文字の色を選択します。",
         "kr": "배경과 글자 색상을 선택합니다.",
         "regions": [
           [
@@ -258,6 +271,7 @@
         "label": "Clip to panel range",
         "short": "Clip to range",
         "en": "Keep the label inside the plot area.",
+        "ja": "ラベルをプロット領域内に表示します。",
         "kr": "라벨을 차트 영역 안에 표시합니다.",
         "regions": [
           [
@@ -277,6 +291,7 @@
       {
         "label": "Apply / Cancel",
         "en": "Apply the edit, or discard it.",
+        "ja": "変更を適用するか、取り消します。",
         "kr": "수정 사항을 적용하거나 취소합니다.",
         "regions": [
           [
@@ -296,6 +311,7 @@
       {
         "label": "Delete",
         "en": "Click a saved note to edit or delete it.",
+        "ja": "保存した注釈をクリックして編集・削除します。",
         "kr": "기존 메모를 클릭하여 수정·삭제합니다.",
         "regions": [
           [

@@ -5,7 +5,7 @@ weight: 26
 toc: true
 ---
 
-Tag Analyzer는 태그 테이블의 시계열 데이터를 대화형으로 탐색하는 Machbase Neo 도구입니다.
+Tag Analyzer로 태그 테이블의 데이터를 차트로 시각화하고 분석할 수 있습니다.
 
 다음과 같은 작업에 사용할 수 있습니다:
 
@@ -20,24 +20,33 @@ Tag Analyzer는 태그 테이블의 시계열 데이터를 대화형으로 탐�
 
 ## 1. 개요 {#overview}
 
-Tag Analyzer 사용 데모 영상입니다. 차트를 만들고, 데이터를 분석하고, 보드를 저장하는 과정을 보여줍니다.
-
-{{< tag-analyzer-overview >}}
+{{< figure
+  src="/images/tag-analyzer/created-tag-analyzer-chart.png"
+  link="/images/tag-analyzer/created-tag-analyzer-chart.png"
+  alt="temperature 태그의 차트와 시간 범위 내비게이터가 표시된 Tag Analyzer 보드"
+>}}
 
 ### 1.1 Tag Analyzer 탭 열기 {#create-tag-analyzer-tab}
 
-**+**를 클릭한 뒤 **TAG ANALYZER**를 선택해 새 보드를 여세요.
+**+**를 클릭한 뒤 **TAG ANALYZER**를 선택해 새 보드를 엽니다.
+
+{{< figure
+  src="/images/tag-analyzer/create-tag-analyzer-tab-kr.png?v=c84d93768b"
+  link="/images/tag-analyzer/create-tag-analyzer-tab-kr.png?v=c84d93768b"
+  alt="새 탭 메뉴에서 + 버튼과 TAG ANALYZER 항목을 강조한 화면."
+  caption="그림 1.1: Tag Analyzer 탭 열기"
+>}}
 
 ### 1.2 예제 데이터 추가 (선택 사항) {#예제-데이터-준비}
 
-예제 데이터로 Tag Analyzer를 사용해 보세요. 이미 데이터가 있다면 이 섹션을 건너뛰세요.
+예제 데이터로 Tag Analyzer를 사용해 볼 수 있습니다. 이미 데이터가 있다면 이 섹션을 건너뜁니다.
 
-1. 새 탭 메뉴에서 **SQL**을 선택하고 아래 SQL 예제를 실행해 테이블을 만드세요.
-2. 다른 탭에서 **TQL**을 선택하고 아래 TQL 예제를 실행해 예제 데이터를 넣으세요.
+1. 새 탭 메뉴에서 **SQL**을 선택하고 아래 SQL 예제를 실행해 테이블을 만듭니다.
+2. 다른 탭에서 **TQL**을 선택하고 아래 TQL 예제를 실행해 예제 데이터를 추가합니다.
 
 {{< figure
-  src="/images/tag-analyzer/prepare-example-data-editors-kr.png?v=7751b45119"
-  link="/images/tag-analyzer/prepare-example-data-editors-kr.png?v=7751b45119"
+  src="/images/tag-analyzer/prepare-example-data-editors-kr.png?v=fea3c32a9c"
+  link="/images/tag-analyzer/prepare-example-data-editors-kr.png?v=fea3c32a9c"
   alt="+ 버튼으로 새 탭을 연 뒤 SQL에서 예제 테이블을 만들고 TQL에서 예제 데이터를 추가하는 위치."
   caption="그림 1.2: SQL 및 TQL 편집기"
 >}}
@@ -65,26 +74,26 @@ APPEND(table('TAG_ANALYZER_DEMO'))
 
 ### 1.3 첫 차트 만들기 {#tag-analyzer-만들기}
 
-Tag Analyzer 탭에서 **New Chart**를 클릭해 차트 생성 대화상자를 여세요.
-자신의 테이블과 태그를 사용하거나 아래 예제 설정을 따라 하세요.
+Tag Analyzer 탭에서 **New Chart**를 클릭해 차트 생성 대화상자를 엽니다.
+자신의 테이블과 태그를 사용하거나 아래 예제 설정을 따릅니다.
 
-1. **Chart name**에 `Temperature`를 입력하고 **Line**을 선택하세요.
+1. **Chart name**에 `Temperature`를 입력하고 **Line**을 선택합니다.
 2. 예제 데이터를 만든 **Database**와 **User**를 선택한 뒤, **Table**은 **TAG_ANALYZER_DEMO**,
-   **Time**은 **TIME**, **Value**는 **VALUE**를 선택하세요.
-3. **Enter** 또는 검색 버튼으로 `temperature`를 검색하고 **Item list**에서 클릭하세요.
-   **Selected**에 추가되면 **AVG**를 유지하세요.
-4. **Apply**를 클릭해 차트를 만드세요.
+   **Time**은 **TIME**, **Value**는 **VALUE**를 선택합니다.
+3. **Enter** 또는 검색 버튼으로 `temperature`를 검색하고 **Item list**에서 클릭합니다.
+   **Selected**에 추가되면 **AVG**를 유지합니다.
+4. **Apply**를 클릭해 차트를 만듭니다.
 
 {{< figure
-  src="/images/tag-analyzer/create-tag-analyzer-chart-kr.png?v=96111f013c"
-  link="/images/tag-analyzer/create-tag-analyzer-chart-kr.png?v=96111f013c"
-  alt="전체 Machbase Neo 화면과 New Chart 대화상자. 1. 이름을 입력하고 Line을 선택하세요. 2. 테이블, TIME, VALUE를 선택하세요. 3. temperature를 검색하고 선택하세요. 4. Apply를 클릭해 차트를 만드세요."
+  src="/images/tag-analyzer/create-tag-analyzer-chart-kr.png?v=ccfabf1952"
+  link="/images/tag-analyzer/create-tag-analyzer-chart-kr.png?v=ccfabf1952"
+  alt="전체 Machbase Neo 화면과 New Chart 대화상자. 1. 이름을 입력하고 Line을 선택합니다. 2. 테이블, TIME, VALUE를 선택합니다. 3. temperature를 검색하고 선택합니다. 4. Apply를 클릭해 차트를 만듭니다."
   caption="그림 1.3: 첫 차트 만들기"
 >}}
 
 ### 1.4 화면 구성 {#화면-구성}
 
-차트가 준비되었습니다. Tag Analyzer로 데이터를 탐색하고 분석해 보세요.
+차트가 준비되면 데이터를 탐색하고 분석할 수 있습니다.
 
 아래 이미지는 Tag Analyzer의 화면 구성을 보여줍니다.
 
@@ -114,11 +123,10 @@ Tag Analyzer 탭에서 **New Chart**를 클릭해 차트 생성 대화상자를 
   caption="그림 2.1: 새 차트 추가"
 >}}
 
-### 2.2 보드 범위 설정 {#공통-범위-설정}
+### 2.2 보드 공용 범위 설정 {#공통-범위-설정}
 
 **TIME**을 클릭해 모든 시간 기반 차트의 공통 내비게이터 범위를 설정하거나,
 **DIST**를 클릭해 모든 거리 기반 차트의 공통 내비게이터 범위를 설정합니다.
-둘 다 **From/To**를 사용합니다.
 
 *패널에 따로 설정한 범위가 우선합니다.*
 
@@ -128,8 +136,7 @@ Tag Analyzer 탭에서 **New Chart**를 클릭해 차트 생성 대화상자를 
 | 시간 | `last-5m` → `last` | 예제 데이터의 마지막 5분. |
 | 시간 | `first` → `first+5m` | 예제 데이터의 첫 5분. |
 
-날짜와 시간을 직접 입력하거나 빠른 범위를 선택할 수도 있습니다.
-숫자 범위에서는 슬라이더와 빠른 구간 선택을 사용할 수 있습니다.
+날짜와 시간을 직접 입력하거나 `first`, `last`, `last-5m` 등의 상대 범위를 설정할 수 있습니다.
 
 
 ### 2.3 새로 고침 {#새로-고침과-전체-데이터-보기}

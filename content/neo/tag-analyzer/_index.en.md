@@ -20,13 +20,22 @@ It can be used to:
 
 ## 1. Overview {#overview}
 
-This is a demo usage video. It shows how to create charts, analyze data, and save a board.
-
-{{< tag-analyzer-overview >}}
+{{< figure
+  src="/images/tag-analyzer/created-tag-analyzer-chart.png"
+  link="/images/tag-analyzer/created-tag-analyzer-chart.png"
+  alt="Tag Analyzer board showing a temperature tag chart and time-range navigator"
+>}}
 
 ### 1.1 Open a Tag Analyzer Tab {#create-tag-analyzer-tab}
 
 Click **+**, then choose **TAG ANALYZER** to open a new board.
+
+{{< figure
+  src="/images/tag-analyzer/create-tag-analyzer-tab.png?v=d14367faf6"
+  link="/images/tag-analyzer/create-tag-analyzer-tab.png?v=d14367faf6"
+  alt="The + button and TAG ANALYZER option highlighted in the new-tab menu."
+  caption="Figure 1.1: Open a Tag Analyzer Tab"
+>}}
 
 ### 1.2 Add Sample Data (Optional) {#prepare-example-data}
 

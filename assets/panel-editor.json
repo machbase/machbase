@@ -7,6 +7,7 @@
       {
         "label": "Chart title",
         "en": "Rename the panel.",
+        "ja": "パネルの名前を変更します。",
         "kr": "패널 이름을 변경합니다.",
         "regions": [
           [
@@ -30,6 +31,7 @@
       {
         "label": "Use Zoom when dragging",
         "en": "Drag to zoom into an area. Turn off to pan instead.",
+        "ja": "ドラッグした範囲を拡大します。無効にすると、ドラッグで表示範囲を移動します。",
         "kr": "드래그한 영역을 확대합니다. 끄면 드래그로 화면을 이동합니다.",
         "regions": [
           [
@@ -53,6 +55,7 @@
       {
         "label": "Order raw data by time",
         "en": "Sort RAW points by their X-axis values before plotting.",
+        "ja": "RAW データを X 軸の値で並べ替えて表示します。",
         "kr": "RAW 데이터를 X축 값 순서로 정렬해 표시합니다.",
         "regions": [
           [
@@ -76,6 +79,7 @@
       {
         "label": "Normalize values",
         "en": "Set the right Y-axis's automatic range to 0–100. Plotted values stay unchanged.",
+        "ja": "右 Y 軸の自動範囲を 0～100 に設定します。データの値自体は変わりません。",
         "kr": "오른쪽 Y축의 자동 범위를 0–100으로 설정합니다. 데이터 값 자체는 변환하지 않습니다.",
         "regions": [
           [
@@ -99,6 +103,7 @@
       {
         "label": "Save current visible range in TAZ",
         "en": "Save the current main and navigator views. When off, reopen with the configured ranges.",
+        "ja": "現在のメインチャートとナビゲーターの表示範囲を保存します。無効にすると、再表示時に設定済みの範囲を使用します。",
         "kr": "현재 메인 차트와 내비게이터 범위를 저장합니다. 끄면 다시 열 때 설정된 범위를 사용합니다.",
         "regions": [
           [
@@ -131,6 +136,7 @@
       {
         "label": "Add new series",
         "en": "Click to add a new series to the chart.",
+        "ja": "クリックしてチャートに新しい系列を追加します。",
         "kr": "클릭해 차트에 새 시리즈를 추가합니다.",
         "regions": [
           [
@@ -154,6 +160,7 @@
       {
         "label": "Calculation mode",
         "en": "Choose how data in each interval is summarized, such as AVG, SUM, MIN, or MAX.",
+        "ja": "AVG、SUM、MIN、MAX など、区間内のデータの集計方法を選択します。",
         "kr": "AVG, SUM, MIN, MAX 등 각 구간의 데이터 집계 방식을 선택합니다.",
         "regions": [
           [
@@ -177,6 +184,7 @@
       {
         "label": "Alias / Color",
         "en": "Set the displayed series name and color. These settings affect appearance only.",
+        "ja": "系列の表示名と色を設定します。データには影響しません。",
         "kr": "표시할 시리즈 이름과 색상을 설정합니다. 화면 모양에만 영향을 줍니다.",
         "regions": [
           [
@@ -215,6 +223,7 @@
       {
         "label": "Main Chart / Nav Bar Data Density",
         "en": "Set points per pixel separately. Higher density requests more detail; clear both fields in a row for automatic density.",
+        "ja": "各領域の点数／ピクセルを設定します。多いほど詳細です。行内の両方を空欄にすると自動です。",
         "kr": "각 영역의 픽셀당 포인트 수를 설정합니다. 높을수록 세밀하며, 행의 두 값을 비우면 자동입니다.",
         "regions": [
           [
@@ -238,6 +247,7 @@
       {
         "label": "Use main chart sampling",
         "en": "Use the entered sampling value for RAW data. When off, use the standard RAW query.",
+        "ja": "入力したサンプリング値で RAW データを取得します。無効にすると通常の RAW クエリーを使用します。",
         "kr": "입력한 샘플링 값으로 RAW 데이터를 조회합니다. 끄면 일반 RAW 조회를 사용합니다.",
         "regions": [
           [
@@ -261,6 +271,7 @@
       {
         "label": "Use navigation sampling",
         "en": "Sample RAW navigator data. When off, a time-based navigator uses interval averages.",
+        "ja": "RAW のナビゲーターデータをサンプリングします。無効にすると、時間軸のナビゲーターは区間ごとの平均値を表示します。",
         "kr": "RAW 내비게이터 데이터를 샘플링합니다. 끄면 시간 기반 내비게이터는 구간별 평균을 표시합니다.",
         "regions": [
           [
@@ -293,6 +304,7 @@
       {
         "label": "Start at zero / Show tick marks",
         "en": "Include zero in the Y-axis range. Toggle grid lines for each axis.",
+        "ja": "Y 軸の範囲に 0 を含めます。各軸のグリッド線の表示も切り替えられます。",
         "kr": "Y축 범위에 0을 포함합니다. 각 축의 격자선을 켜거나 끕니다.",
         "regions": [
           [
@@ -322,6 +334,7 @@
       {
         "label": "Custom scale",
         "en": "Set minimum and maximum Y values; blank means Auto. RAW charts use a separate scale.",
+        "ja": "Y 軸の最小値と最大値を設定します。空欄は Auto です。RAW チャートには別の範囲を設定します。",
         "kr": "Y축 최솟값과 최댓값을 설정합니다. 빈 값은 Auto이며 RAW 차트는 별도 범위를 사용합니다.",
         "regions": [
           [
@@ -345,6 +358,7 @@
       {
         "label": "LCL / UCL",
         "en": "Add lower and upper control-limit lines at the values you enter.",
+        "ja": "入力した値に下側・上側管理限界線を表示します。",
         "kr": "입력한 값에 하한·상한 관리선을 표시합니다.",
         "regions": [
           [
@@ -368,6 +382,7 @@
       {
         "label": "Right Y-axis",
         "en": "Enable a separate scale and choose its series. The copy button copies the left-axis settings.",
+        "ja": "独立した目盛りを有効にし、系列を選択します。コピーボタンで左 Y 軸の設定をコピーできます。",
         "kr": "별도 축을 켜고 시리즈를 선택합니다. 복사 버튼으로 왼쪽 축 설정을 가져옵니다.",
         "regions": [
           [
@@ -400,6 +415,7 @@
       {
         "label": "Preset",
         "en": "Choose Line, Scatter, or Zone (area). Editing point or line styles switches to Custom.",
+        "ja": "Line、Scatter、Zone（面）を選択します。点や線のスタイルを変更すると Custom に切り替わります。",
         "kr": "Line, Scatter, Zone(영역)을 선택합니다. 포인트나 선 스타일을 수정하면 Custom으로 바뀝니다.",
         "regions": [
           [
@@ -423,6 +439,7 @@
       {
         "label": "Display data points / Point Radius",
         "en": "Show point markers and adjust their size.",
+        "ja": "データ点を表示し、マーカーのサイズを調整します。",
         "kr": "데이터 포인트를 표시하고 크기를 조절합니다.",
         "regions": [
           [
@@ -452,6 +469,7 @@
       {
         "label": "Display legend / Connect gaps",
         "en": "Show series labels and join lines across missing data.",
+        "ja": "系列名を表示し、欠損区間の前後を線でつなぎます。",
         "kr": "시리즈 이름을 표시하고 데이터가 없는 구간의 선을 연결합니다.",
         "regions": [
           [
@@ -475,6 +493,7 @@
       {
         "label": "Fill opacity / Line thickness",
         "en": "Adjust the filled area's transparency and the line width.",
+        "ja": "塗りつぶしの不透明度と線の太さを調整します。",
         "kr": "채움 영역의 불투명도와 선 두께를 조절합니다.",
         "regions": [
           [
@@ -508,6 +527,7 @@
         "label": "Main Range",
         "short": "Main Range",
         "en": "Set the main chart's visible From/To range. It takes priority over other range settings.",
+        "ja": "メインチャートの From/To を設定します。他の範囲設定より優先されます。",
         "kr": "메인 차트의 From/To 표시 범위를 설정합니다. 다른 범위 설정보다 우선합니다.",
         "regions": [[27, 114, 567, 89]],
         "markers": [[145, 158]]
@@ -516,6 +536,7 @@
         "label": "Nav Range",
         "short": "Nav Range",
         "en": "Set the navigator's From/To range. It takes priority over the board range.",
+        "ja": "ナビゲーターの From/To を設定します。ボードの範囲より優先されます。",
         "kr": "내비게이터의 From/To 범위를 설정합니다. 보드 범위보다 우선합니다.",
         "regions": [[638, 114, 567, 89]],
         "markers": [[756, 158]]
@@ -524,6 +545,7 @@
         "label": "Quick Range",
         "short": "Quick Range",
         "en": "Pick a preset range.",
+        "ja": "用意された範囲を選択します。",
         "kr": "미리 정해진 범위를 선택합니다.",
         "regions": [[27, 213, 567, 245], [638, 213, 567, 245]],
         "markers": [[612, 229], [1214, 229]]
@@ -532,6 +554,7 @@
         "label": "Reset",
         "short": "Reset",
         "en": "Clear that section's custom range to use its automatic range.",
+        "ja": "その領域のカスタム範囲を解除し、自動範囲を使用します。",
         "kr": "해당 영역의 사용자 지정 범위를 지우고 자동 범위를 사용합니다.",
         "regions": [[518, 65, 78, 38], [1129, 65, 78, 38]],
         "markers": [[498, 84], [1109, 84]]

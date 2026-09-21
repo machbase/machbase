@@ -7,6 +7,7 @@
       {
         "label": "Series",
         "en": "Choose a series.",
+        "ja": "分析する系列を選択します。",
         "kr": "분석할 시리즈 선택.",
         "regions": [
           [
@@ -26,6 +27,7 @@
       {
         "label": "2D / 3D",
         "en": "Spectrum, or frequency changes over time.",
+        "ja": "2D はスペクトル、3D は時間による周波数の変化を表示します。",
         "kr": "스펙트럼 또는 시간별 주파수 변화.",
         "regions": [
           [
@@ -45,6 +47,7 @@
       {
         "label": "Min / Max Hz",
         "en": "Limit frequencies; 0/0 shows all.",
+        "ja": "周波数の範囲を指定します。両方を 0 にすると全体を表示します。",
         "kr": "주파수 범위 제한. 모두 0이면 전체 표시.",
         "regions": [
           [
@@ -64,6 +67,7 @@
       {
         "label": "Apply values",
         "en": "Update with the entered settings.",
+        "ja": "入力した設定で表示を更新します。",
         "kr": "입력한 설정으로 갱신.",
         "regions": [
           [
@@ -83,6 +87,7 @@
       {
         "label": "Spectrum",
         "en": "Inspect peaks; use the navigator to zoom.",
+        "ja": "ピークを確認します。ナビゲーターで拡大できます。",
         "kr": "피크 확인. 내비게이터로 확대.",
         "regions": [
           [
@@ -102,6 +107,7 @@
       {
         "label": "Close",
         "en": "Return to the chart.",
+        "ja": "チャートに戻ります。",
         "kr": "차트로 돌아가기.",
         "regions": [
           [
@@ -129,6 +135,7 @@
       {
         "label": "New Chart",
         "en": "Click New Chart below the existing panels to add another chart to this board.",
+        "ja": "既存パネルの下の New Chart をクリックして、ボードにチャートを追加します。",
         "kr": "기존 패널 아래의 New Chart를 클릭해 현재 보드에 차트를 추가합니다.",
         "regions": [[34, 533, 973, 60]],
         "callout": [690, 563],
@@ -146,6 +153,7 @@
       {
         "label": "Visible range",
         "en": "Click to set From/To.",
+        "ja": "クリックして From/To を設定します。",
         "kr": "클릭해 From/To 설정.",
         "regions": [
           [
@@ -170,6 +178,7 @@
       {
         "label": "Drag",
         "en": "Pan, or zoom when enabled.",
+        "ja": "表示範囲を移動します。拡大が有効な場合は、範囲を拡大します。",
         "kr": "드래그로 이동. 확대 설정 시 영역 확대.",
         "regions": [
           [
@@ -194,6 +203,7 @@
       {
         "label": "Move",
         "en": "Shift the visible range.",
+        "ja": "表示範囲を前後に移動します。",
         "kr": "표시 범위를 앞뒤로 이동.",
         "regions": [
           [
@@ -228,6 +238,7 @@
       {
         "label": "Zoom",
         "en": "Zoom in or out.",
+        "ja": "拡大・縮小します。",
         "kr": "확대 또는 축소.",
         "regions": [
           [
@@ -262,6 +273,7 @@
       {
         "label": "Focus",
         "en": "Match navigator range, then zoom in.",
+        "ja": "ナビゲーターを現在の表示範囲に合わせ、拡大します。",
         "kr": "내비게이터 범위를 현재 화면에 맞추고 확대.",
         "regions": [
           [
@@ -293,6 +305,7 @@
       {
         "label": "Selection",
         "en": "Drag to move; drag edges to resize.",
+        "ja": "ドラッグで移動し、両端のドラッグで幅を調整します。",
         "kr": "드래그로 이동, 양 끝으로 크기 조절.",
         "regions": [
           [
@@ -313,6 +326,7 @@
       {
         "label": "Side arrows",
         "en": "Shift the navigator range.",
+        "ja": "ナビゲーターの範囲を前後に移動します。",
         "kr": "내비게이터 범위를 앞뒤로 이동.",
         "regions": [
           [
@@ -343,6 +357,7 @@
       {
         "label": "Range inputs",
         "en": "Click to set From/To.",
+        "ja": "クリックして From/To を設定します。",
         "kr": "클릭해 From/To 설정.",
         "regions": [
           [
@@ -380,6 +395,7 @@
       {
         "label": "Select Range",
         "en": "Enable selection, then drag across the chart.",
+        "ja": "範囲選択を有効にし、チャートをドラッグします。",
         "kr": "범위 선택을 켜고 차트를 드래그합니다.",
         "regions": [
           [
@@ -399,6 +415,7 @@
       {
         "label": "Selected interval",
         "en": "Selected start, end, and duration.",
+        "ja": "選択した範囲の開始、終了、長さを表示します。",
         "kr": "선택한 시작·끝 시간과 구간 길이.",
         "regions": [
           [
@@ -418,6 +435,7 @@
       {
         "label": "Statistics",
         "en": "Per-series min, max, and average of loaded points.",
+        "ja": "読み込み済みデータの最小値、最大値、平均値を系列ごとに表示します。",
         "kr": "로드된 포인트의 시리즈별 최솟값·최댓값·평균.",
         "regions": [
           [
@@ -437,6 +455,7 @@
       {
         "label": "Open FFT chart",
         "en": "Analyze the selected time range in RAW mode.",
+        "ja": "RAW モードで、選択した時間範囲の周波数を分析します。",
         "kr": "RAW 모드에서 선택한 시간 구간을 주파수 분석.",
         "regions": [
           [

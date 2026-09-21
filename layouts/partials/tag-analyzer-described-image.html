@@ -5,8 +5,8 @@
 <a class="ta-annotated-image ta-described-image" href="{{ $image }}" target="_blank"
   rel="noopener" data-annotated-image
   style="--description-columns: {{ $columns }}; --description-gap: {{ cond (eq $columns 4) "1.763cqw" "3.526cqw" }}; --description-image-aspect: {{ .imageAspect | default "auto" }}"
-  aria-label="{{ .title }} — {{ if eq .lang "kr" }}번호 안내 확대{{ else }}enlarge numbered guide{{ end }}"
-  aria-description="{{ range $n, $note := $spec.notes }}{{ add $n 1 }}. {{ $note.label }}: {{ index $note $.lang }} {{ end }}">
+  aria-label="{{ .title }} — {{ if eq .lang "kr" }}번호 안내 확대{{ else if eq .lang "ja" }}番号付きガイドを拡大{{ else }}enlarge numbered guide{{ end }}"
+  aria-description="{{ range $n, $note := $spec.notes }}{{ add $n 1 }}. {{ $note.label }}: {{ index $note $.lang | default $note.en }} {{ end }}">
   {{- range $row := seq 0 1 -}}
     {{- if eq $row 1 -}}
       <span class="ta-description-screenshot">
@@ -32,7 +32,7 @@
         {{- if eq (div $n $columns) $row -}}
           <span class="ta-description-note" style="--note-color: {{ index $colors $n }}">
             <strong class="ta-description-title"><span class="ta-description-number">{{ add $n 1 }}</span>{{ $note.short | default $note.label }}</strong>
-            <span class="ta-description-text">{{ index $note $.lang }}</span>
+            <span class="ta-description-text">{{ index $note $.lang | default $note.en }}</span>
           </span>
         {{- end -}}
       {{- end -}}

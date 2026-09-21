@@ -1,5 +1,6 @@
 {{- $lang := .Page.Language.Lang -}}
 {{- $kr := eq $lang "kr" -}}
+{{- $ja := eq $lang "ja" -}}
 {{- $features := resources.Get "tag-analyzer-features.json" | transform.Unmarshal -}}
 {{- $slides := slice
   (dict "key" "main-range" "id" "main-panel-range-controls" "title" "Main Chart Control" "caption" "Figure 3.1.1: Main Chart Control")
@@ -10,10 +11,15 @@
     (dict "key" "main-range" "id" "main-panel-range-controls" "title" "메인 차트 컨트롤" "caption" "그림 3.1.1: 메인 차트 컨트롤")
     (dict "key" "navigator" "id" "navigator-range-controls" "title" "내비게이션 바 컨트롤" "caption" "그림 3.1.2: 내비게이션 바 컨트롤")
   -}}
+{{- else if $ja -}}
+  {{- $slides = slice
+    (dict "key" "main-range" "id" "main-panel-range-controls" "title" "メインチャートの操作" "caption" "図 3.1.1: メインチャートの操作")
+    (dict "key" "navigator" "id" "navigator-range-controls" "title" "ナビゲーションバーの操作" "caption" "図 3.1.2: ナビゲーションバーの操作")
+  -}}
 {{- end -}}
 {{- $first := index $slides 0 -}}
 {{- $js := resources.Get "js/range-controls.js" | minify | fingerprint -}}
-<figure class="fft-demo range-controls" aria-label="{{ if $kr }}범위 컨트롤 안내{{ else }}Range control guides{{ end }}">
+<figure class="fft-demo range-controls" aria-label="{{ if $kr }}범위 컨트롤 안내{{ else if $ja }}範囲の操作ガイド{{ else }}Range control guides{{ end }}">
   <div class="fft-demo-player">
     <div class="fft-demo-header">
       <p class="fft-demo-status"><span data-range-count>1 / 2</span><strong data-range-title>{{ $first.title }}</strong></p>
@@ -28,15 +34,15 @@
         </section>
       {{- end -}}
     </div>
-    <nav class="fft-demo-controls" aria-label="{{ if $kr }}범위 안내 페이지{{ else }}Range guide pages{{ end }}" hidden>
-      <button type="button" data-range-back disabled>{{ if $kr }}‹ 이전{{ else }}‹ Back{{ end }}</button>
+    <nav class="fft-demo-controls" aria-label="{{ if $kr }}범위 안내 페이지{{ else if $ja }}範囲ガイドのページ{{ else }}Range guide pages{{ end }}" hidden>
+      <button type="button" data-range-back disabled>{{ if $kr }}‹ 이전{{ else if $ja }}‹ 前へ{{ else }}‹ Back{{ end }}</button>
       <div class="fft-demo-dots">
         {{- range $i, $slide := $slides -}}
           <button type="button" data-range-dot aria-label="{{ add $i 1 }} / 2: {{ $slide.title }}"
             title="{{ $slide.title }}" {{ if eq $i 0 }}aria-current="step"{{ end }}></button>
         {{- end -}}
       </div>
-      <button type="button" data-range-next>{{ if $kr }}다음 ›{{ else }}Next ›{{ end }}</button>
+      <button type="button" data-range-next>{{ if $kr }}다음 ›{{ else if $ja }}次へ ›{{ else }}Next ›{{ end }}</button>
     </nav>
   </div>
   <figcaption role="status" aria-live="polite" aria-atomic="true" data-range-caption>{{ $first.caption }}</figcaption>
