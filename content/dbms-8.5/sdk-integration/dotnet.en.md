@@ -8,8 +8,8 @@ weight: 20
 
 * [Overview](#overview)
 * [Install](#install)
-* [NuGet (Unified 8.0.54)](#nuget-unified-connector)
-* [NuGet (Legacy 5.x) — Package Manager](#install-connector-via-nuget-package-manager)
+* [NuGet (Unified 8.0.54)](#install-via-nuget-unified-connector-8054)
+* [NuGet (Legacy 5.x)](#install-via-nuget-legacy-5x)
 * [Connection String Reference](#connection-string-reference)
 * [API Reference](#api-reference)
 * [Usage and Examples](#usage-and-examples)
@@ -17,7 +17,7 @@ weight: 20
 
 ## Overview
 
-Machbase ships a universal ADO.NET provider, **UniMachNetConnector**, that wraps every supported Machbase wire protocol (2.1 through 4.0). The DBMS standard source currently identifies the unified package as `UniMachNetConnector` version 8.0.54 and builds target frameworks `net452`, `net5.0`, `net6.0`, `net7.0`, and `net8.0`. The connector automatically chooses the correct protocol at runtime based on the connection string.
+Machbase ships a universal ADO.NET provider, **UniMachNetConnector**, that wraps every supported Machbase wire protocol (2.1 through 4.0). The DBMS standard source currently identifies the unified package as `UniMachNetConnector` version 8.0.54 and builds the target frameworks `net452`, `net5.0`, `net6.0`, `net7.0`, and `net8.0`. The connector automatically negotiates the correct protocol at runtime based on the connection string, so time-series ingestion and query workloads get a suitable protocol without extra configuration.
 
 ## Install
 
@@ -27,15 +27,15 @@ A standard Linux install can include the .NET 5.0 build, for example
 `machNetConnector-40-net50-3.2.1.dll`. The source project can build additional target-framework
 flavors when the matching .NET SDK is available.
 
-- **UniMachNetConnector** – the framework-neutral entry point. Source builds are named
+- **UniMachNetConnector**: The framework-neutral entry point. Source builds are named
   `UniMachNetConnector-net{452|50|60|70|80}-<version>.dll`, so choose the build that matches
   the target framework you deploy.
-- **Legacy protocol connectors** – optional protocol-specific assemblies that the universal
-  loader can activate on demand, such as `machNetConnector-XX-net{40|50|60|70|80}-<version>.dll`.
+- **Legacy protocol connectors**: Optional protocol-specific assemblies that the universal
+  loader activates on demand, such as `machNetConnector-XX-net{40|50|60|70|80}-<version>.dll`.
 
-Reference the DLL that matches your application, or copy it next to your binaries when you deploy.
+Reference the DLL that matches your application's target framework, or copy it next to your binaries when you deploy.
 
-## Install via NuGet (Unified Connector, 8.0.54) {#nuget-unified-connector}
+## Install via NuGet (Unified Connector, 8.0.54)
 
 The unified provider package ID is `UniMachNetConnector`. This is the recommended way for new apps because it keeps your project self-contained without shipping loose DLLs.
 
@@ -51,7 +51,7 @@ dotnet add package UniMachNetConnector --version 8.0.54
 dotnet build
 ```
 
-If you added the reference but need to control sources (CI, offline, or corporate feed), add first then restore explicitly:
+If you need to control the package sources (CI, offline, or a corporate feed), add the reference first and then restore explicitly:
 
 ```bash
 dotnet add package UniMachNetConnector --version 8.0.54 --no-restore
@@ -78,7 +78,7 @@ dotnet restore --no-cache --source https://api.nuget.org/v3/index.json
 
 ### Using a local or private feed (optional)
 
-If your environment uses a local folder feed or an internal registry, point restore to those sources. For a folder feed, place `UniMachNetConnector.8.0.54.nupkg` under a directory and add it as a source:
+If your environment uses a local folder feed or an internal registry, point restore to those sources. For a folder feed, place `UniMachNetConnector.8.0.54.nupkg` in a directory and add it as a source:
 
 ```bash
 # one-time setup
@@ -90,7 +90,7 @@ dotnet restore --no-cache \
   --source https://api.nuget.org/v3/index.json
 ```
 
-In CI or restricted accounts, prefer an explicit packages directory with an absolute path:
+In CI or restricted accounts, specify the package cache directory with an absolute path:
 
 ```bash
 PKG_DIR="$(pwd)/.nuget-packages"; mkdir -p "$PKG_DIR"
@@ -98,7 +98,7 @@ NUGET_PACKAGES="$PKG_DIR" dotnet restore --no-cache --source /path/to/local-nuge
 NUGET_PACKAGES="$PKG_DIR" dotnet run --no-restore
 ```
 
-> Tip: If you recently published 8.0.54 and `dotnet add package` still reports an older version, clear the HTTP cache and use `--no-cache` as shown above. A transient “incompatible with 'all' frameworks” message is usually a side effect of failed restore, not a real TFM mismatch.
+> Tip: If `NU1102` (unable to find the specified version) appears right after 8.0.54 is published, or `dotnet add package` still reports an older version, the cause is usually indexing or caching. Clear the HTTP cache with `dotnet nuget locals http-cache --clear` and restore with `--no-cache` as shown above. A transient “incompatible with 'all' frameworks” message is usually a side effect of a failed restore, not a real TFM mismatch; the package supports net452 and net5.0–net8.0.
 
 ### Minimal usage sample
 
@@ -114,19 +114,19 @@ var count = (long)cmd.ExecuteScalar();
 Console.WriteLine($"Tables: {count}");
 ```
 
-## NuGet (Legacy 5.x) — Package Manager {#install-connector-via-nuget-package-manager}
+## Install via NuGet (Legacy 5.x)
 
-> **Note**: .NET Connector 5.0 of Machbase has already enrolled to NuGet package! This 5.0 package is the legacy standalone distribution that predates the unified UniMachNetConnector.
+> **Note**: Machbase .NET Connector 5.0 is also registered on NuGet. This 5.0 package is the legacy standalone distribution that predates the unified UniMachNetConnector.
 
-If you use Visual Studio, you can still obtain the pre-unified connector from NuGet. The steps below install the legacy `machNetConnector5.0` package (use this only when you must target older code that predates the unified provider).
+If you use Visual Studio, you can still obtain the pre-unified connector from NuGet. The steps below install the legacy `machNetConnector5.0` package. Use it only when you must target older code that predates the unified provider; for new projects, `UniMachNetConnector` 8.0.54 is recommended.
 
 1. In Visual Studio, create a new C# .NET project.
-2. When the project is created, activate context menu above project name at Solution Explorer and select "Manage NuGet Packages".
-3. When NuGet Package Manager window is activated, select "Browse" tab on the upper left and search "machNet".
-4. When the result is displayed on the left pane, select "machNetConnector5.0" and select "Install".
-5. If Preview Changes window is activated, just select "OK" to continue to install.
-6. When the package was installed successfully, you can confirm it at "Dependencies - Packages" on Solution Explorer.
-7. Now, you can use machNetConnector by "using Mach.Data.MachClient" at Program.cs.
+2. In Solution Explorer, right-click the project name and select **Manage NuGet Packages**.
+3. When the NuGet Package Manager window opens, select the **Browse** tab at the upper left and search for `machNet`.
+4. In the search results, select **machNetConnector5.0** and click **Install**.
+5. If the **Preview Changes** window appears, click **OK** to continue the installation.
+6. When the installation is complete, you can find the package under **Dependencies → Packages** in Solution Explorer.
+7. Add `using Mach.Data.MachClient;` to `Program.cs` to use the machNetConnector API.
 
 > Which NuGet should I use?
 > - Prefer `UniMachNetConnector` 8.0.54 for new or upgraded apps. It supports net452 and net5.0–net8.0 and bundles all protocols, including the full provider surface (4.0-full).
@@ -159,19 +159,19 @@ var connectionString = string.Format(
 
 When your application connects to a mix of Machbase releases, set `PROTOCOL=auto` to let UniMachNetConnector negotiate the correct legacy handshake at runtime. The resolver works as follows:
 
-- `PROTOCOL=auto` tests versions 4.0, 3.0, 2.2, then 2.1 in that order, using your supplied host, port, user, password, database, and `CONNECT_TIMEOUT`.
-- `PROTOCOL=auto-full` behaves the same but, when the server reports protocol 4.0, the connector prefers the full-provider descriptor (`4.0-full`) before falling back to the limited surface area.
+- `PROTOCOL=auto` tries versions 4.0, 3.0, 2.2, and then 2.1 in that order, using the host, port, user, password, database, and `CONNECT_TIMEOUT` supplied in the connection string.
+- `PROTOCOL=auto-full` behaves the same, but when the server reports protocol 4.0, the connector tries the full-provider descriptor (`4.0-full`) first and falls back to the limited version (4.0) if needed.
 - Multiple hosts in `SERVER=hostA:5700,hostB:6000` are tried sequentially; each failure message records the per-host/per-protocol attempt so you can pinpoint unreachable versions.
 - Credentials are upper-cased the same way as the legacy native drivers, so existing SYS/MANAGER test deployments work without change. Provide an explicit `DATABASE=` value when you do not use the default `data` catalog.
-- The `CONNECT_TIMEOUT` governs each probe roundtrip. If you see `Protocol probe received an invalid response (missing result)` in the exception text, the handshake did not complete—verify the port, TLS/SSL settings, or firewall.
+- `CONNECT_TIMEOUT` applies to each probe round trip. If you see `Protocol probe received an invalid response (missing result)` in the exception text, the handshake did not complete; verify the port, TLS/SSL settings, or firewall.
 
-Explicit `PROTOCOL=2.1`, `3.0`, `4.0`, or `4.0-full` remain available when you already know the exact server version and want to skip auto-detection.
+If you already know the exact server version, you can skip auto-detection by specifying `PROTOCOL=2.1`, `3.0`, `4.0`, or `4.0-full` explicitly.
 
 ## API Reference
 
 {{<callout type="warning">}}
 Features not listed below may not be implemented yet or may not work correctly.<br>
-If you call a method or field that is not a named instance, it generates NotImplementedException or a NotSupportedException.
+Calling a method or field that does not exist throws `NotImplementedException` or `NotSupportedException`.
 {{</callout>}}
 
 ### MachConnection
@@ -180,17 +180,17 @@ If you call a method or field that is not a named instance, it generates NotImpl
 public sealed class MachConnection : DbConnection
 ```
 
-This class is responsible for linking with Machbase.
+This class handles the connection to Machbase.
 
-Because it inherits IDisposable like DbConnection, it supports disassociation through Dispose () or automatic disposition of object using using () statement.
+Like DbConnection, it implements IDisposable, so it can be released with Dispose() or automatically with a using statement.
 
 #### Constructor
+
 ```
 MachConnection(string aConnectionString)
 ```
 
-Creates a MachConnection with a Connection String as input.
-
+Creates a MachConnection instance from a connection string.
 
 #### Open
 
@@ -198,7 +198,7 @@ Creates a MachConnection with a Connection String as input.
 void Open()
 ```
 
-Attempts to connect to the connection string.
+Establishes the actual connection using the connection string.
 
 #### Close
 
@@ -206,7 +206,7 @@ Attempts to connect to the connection string.
 void Close()
 ```
 
-Closes the connection when connecting.
+Closes the open connection.
 
 #### SetConnectAppendFlush
 
@@ -214,15 +214,14 @@ Closes the connection when connecting.
 void SetConnectAppendFlush(bool activeFlush)
 ```
 
-Set flush to be performed automatically during append.
+Sets whether flush is performed automatically during append.
 
 #### Field
 
 | Name | Description |
 |--|--|
 |State|Represents a System.Data.ConnectionState value.|
-|StatusString|Indicates the state to be performed by the connected MachCommand.<br>This is used internally to decorate the Error Message and it is not appropriate to check the status of the query with this value because it indicates the state in which the operation started.|
-
+|StatusString|The status string of the MachCommand that the connection currently depends on.<br>It is used internally to build error messages and indicates the state in which the operation started, so do not use it to check the status of a query.|
 
 ### MachCommand
 
@@ -230,24 +229,23 @@ Set flush to be performed automatically during append.
 public sealed class MachCommand : DbCommand
 ```
 
-A class that performs **SQL commands or APPEND** using MachConnection.
+A class that executes **SQL commands or APPEND** through MachConnection.
 
-Since it inherits IDisposable like DbCommand, it supports object disposal through Dispose () or automatic disposal of object using using () statement
+Like DbCommand, it implements IDisposable, so it can be released with Dispose() or automatically with a using statement.
 
 #### Constructor
 
 ```cs
-MachCommand(string aQueryString, MachConnection)
+MachCommand(string aQueryString, MachConnection aConn)
 ```
 
-Creates by typing the query to be executed along with the MachConnection object to be connected.
+Creates an instance with the query to execute and the MachConnection object to use.
 
 ```cs
-MachCommand(MachConnection)
+MachCommand(MachConnection aConn)
 ```
 
-Creates a MachConnection object to connect to. Use only if there is no query to perform (eg APPEND).
-
+Creates an instance with only the MachConnection object to use. Use it when there is no query to execute (for example, APPEND).
 
 #### CreateParameter
 
@@ -260,18 +258,19 @@ Creates a new MachParameter.
 #### AppendOpen
 
 ```cs
-MachAppendWriter AppendOpen(aTableName, aErrorCheckCount = 0, MachAppendOption = None)
+MachAppendWriter AppendOpen(
+    string aTableName,
+    int aErrorCheckCount = 0,
+    MachAppendOption option = MachAppendOption.None)
 ```
 
-Starts APPEND. Returns a MachAppendWriter object.
+Starts APPEND and returns a MachAppendWriter object.
 
-* aTableName: Target table name
-* aErrorCheckCount: Each time the cumulative number of records entered by APPEND-DATA matches, it is checked whether it is sent to the server or not.<br>
-  In other words, you are setting the automatic APPEND-FLUSH point.<br>
-* MachAppendOption: Currently only one option is provided.
-  * MachAppendOption.None: No options are attached.
-  * MachAppendOption.MicroSecTruncated: When inputting the value of a DateTime object, enter the value expressed only up to microsecond.
-  (The Ticks value of a DateTime object is expressed up to 100 nanoseconds.)
+* aTableName: Target table name.
+* aErrorCheckCount: Each time the cumulative number of records entered with AppendData reaches this value, the records are sent to the server and checked for failure. In other words, it sets the automatic APPEND-FLUSH point.
+* option: One of the following MachAppendOption values.
+    * MachAppendOption.None: No option.
+    * MachAppendOption.MicroSecTruncated: DateTime values are entered only up to microseconds. (The Ticks value of a DateTime object is expressed in units of 100 nanoseconds.)
 
 #### AppendData
 
@@ -279,24 +278,24 @@ Starts APPEND. Returns a MachAppendWriter object.
 void AppendData(MachAppendWriter aWriter, List<object> aDataList)
 ```
 
-Through the MachAppendWriter object, it takes a list containing the data and enters it into the database.
-- In the order of the data in the List, each datatype must match the datatype of the column represented in the table.
-- If the data in the List is insufficient or overflows, an error occurs.
+Takes a list containing the data and enters it into the database through the MachAppendWriter object.
 
-> **Note**: When representing a time value with a ulong object, simply do not enter the Tick value of the DateTime object. In that value, you must enter a value that excludes the DateTime Tick value that represents 1970-01-01.
+- The values in the list are loaded into the Append buffer in order, and the type of each value must match the type of the corresponding table column.
+- If the list has too few or too many values, an exception occurs.
 
+> **Note**: When you specify `_arrival_time` as a `ulong`, pass the number of nanoseconds since 1970-01-01 UTC, as Machbase expects. Do not pass the Tick value of a DateTime object as is: because `DateTime.Ticks` is in units of 100 nanoseconds, subtract the Ticks of the epoch (1970-01-01) from the UTC Ticks and multiply the result by 100.
 
 ```cs
 void AppendDataWithTime(MachAppendWriter aWriter, List<object> aDataList, DateTime aArrivalTime)
 ```
 
-Method that explicitly puts an _arrival_time value into a DateTime object in AppendData().
+Same as AppendData(), but explicitly specifies the `_arrival_time` value as a DateTime object.
 
 ```cs
 void AppendDataWithTime(MachAppendWriter aWriter, List<object> aDataList, ulong aArrivalTimeLong)
 ```
 
-Method that can explicitly put _arrival_time value into a ulong object in AppendData(). Refer to AppendData() above for problems that may occur when typing a ulong value as an _arrival_time value.
+Same as AppendData(), but explicitly specifies the `_arrival_time` value as a `ulong` in nanoseconds. For the points to check when you pass a `ulong` value as `_arrival_time`, see AppendData() above.
 
 #### AppendFlush
 
@@ -304,9 +303,9 @@ Method that can explicitly put _arrival_time value into a ulong object in Append
 void AppendFlush(MachAppendWriter aWriter)
 ```
 
-The data entered by AppendData() is immediately sent to the server to force data insert.<br>
-The more frequently the call is made, the lower the data loss rate due to the system error and the faster the error check, although the performance is lowered.<br>
-The less frequently the call is made, the more likely the data loss will occur and the error checking will be delayed, but the performance will increase significantly.
+Immediately sends the data entered with AppendData() to the server to force the insert.<br>
+The more often it is called, the less data is lost on a system failure and the sooner errors are detected, but performance goes down.<br>
+The less often it is called, the more likely data loss becomes and the later errors are detected, but performance goes up significantly.
 
 #### AppendClose
 
@@ -314,7 +313,7 @@ The less frequently the call is made, the more likely the data loss will occur a
 void AppendClose(MachAppendWriter aWriter)
 ```
 
-Closes APPEND. Internally, after calling AppendFlush(), the actual protocol is internally finished.
+Closes APPEND. Internally, it calls AppendFlush() and then finishes the protocol.
 
 #### ExecuteNonQuery
 
@@ -322,7 +321,7 @@ Closes APPEND. Internally, after calling AppendFlush(), the actual protocol is i
 int ExecuteNonQuery()
 ```
 
-Performs the input query. Returns the number of records affected by the query. It is usually used when performing queries except SELECT.
+Executes the query and returns the number of records affected by it. It is usually used for queries other than SELECT, such as INSERT, UPDATE, DELETE, and DDL.
 
 #### ExecuteScalar
 
@@ -330,7 +329,7 @@ Performs the input query. Returns the number of records affected by the query. I
 object ExecuteScalar()
 ```
 
-Performs the input query. Returns the first value of the query targetlist as an object. It is usually used when you want to perform a SELECT query, especially a SELECT (Scalar Query) with only one result, and get the result without a DbDataReader.
+Executes the query and returns the first value of the query's target list as an object. It is usually used to get the result of a SELECT query that returns only one value (a scalar query) without a DbDataReader.
 
 #### ExecuteDbDataReader
 
@@ -338,19 +337,18 @@ Performs the input query. Returns the first value of the query targetlist as an 
 DbDataReader ExecuteDbDataReader(CommandBehavior aBehavior)
 ```
 
-Executes the input query, generates a DbDataReader that can read the result of the query, and returns it.
+Executes the query and returns a DbDataReader that reads the query result sequentially.
 
 #### Field
 
 | Name | Description|
 |--|--|
-| Connection / DbConnection                   | Connected MachConnection.|
-| ParameterCollection / DbParameterCollection | The MachParameterCollection to use for the Binding purpose.|
-| CommandText                                 | Query string.|
-| CommandTimeout                              | The amount of time it takes to perform a particular task, waiting for a response from the server.<br>It follows the values ​​set in MachConnection, where you can only reference values.|
-| FetchSize                                   | The number of records to fetch from the server at one time . The default value is 3000.|
-| IsAppendOpened                              | Determines if Append is already open when APPEND is at work|
-
+| Connection / DbConnection                   | The connected MachConnection.|
+| ParameterCollection / DbParameterCollection | The MachParameterCollection used for binding.|
+| CommandText                                 | The SQL string to execute.|
+| CommandTimeout                              | The maximum time (in milliseconds) to wait for a response from the server.<br>It follows the value set in MachConnection and can only be read here.|
+| FetchSize                                   | The number of records to fetch from the server at one time. The default value is 3000.|
+| IsAppendOpened                              | Whether an Append session is open.|
 
 ### MachDataReader
 
@@ -358,7 +356,7 @@ Executes the input query, generates a DbDataReader that can read the result of t
 public sealed class MachDataReader : DbDataReader
 ```
 
-This is a class that reads fetch results. Only objects created with MachCommand.ExecuteDbDataReader () that can not be explicitly created are available.
+A class that reads fetched results sequentially. It cannot be created directly; use only the object obtained from MachCommand.ExecuteDbDataReader().
 
 #### GetName
 
@@ -366,7 +364,7 @@ This is a class that reads fetch results. Only objects created with MachCommand.
 string GetName(int ordinal)
 ```
 
-Returns the ordinal column name.
+Returns the name of the column at the ordinal position.
 
 #### GetDataTypeName
 
@@ -374,7 +372,7 @@ Returns the ordinal column name.
 string GetDataTypeName(int ordinal)
 ```
 
-Returns the datatype name of the ordinal column.
+Returns the Machbase data type name of the column at the ordinal position.
 
 #### GetFieldType
 
@@ -382,8 +380,7 @@ Returns the datatype name of the ordinal column.
 Type GetFieldType(int ordinal)
 ```
 
-Returns the datatype of the ordinal column.
-
+Returns the .NET type mapped to the column at the ordinal position.
 
 #### GetOrdinal
 
@@ -393,14 +390,13 @@ int GetOrdinal(string name)
 
 Returns the index at which the column name is located.
 
-
 #### GetValue
 
 ```cs
 object GetValue(int ordinal)
 ```
 
-Returns the ordinal value of the current record.
+Returns the value at the ordinal position of the current record as an `object`.
 
 #### IsDBNull
 
@@ -408,7 +404,7 @@ Returns the ordinal value of the current record.
 bool IsDBNull(int ordinal)
 ```
 
-Returns whether the ordinal value of the current record is NULL.
+Returns whether the value at the ordinal position of the current record is NULL.
 
 #### GetValues
 
@@ -416,7 +412,7 @@ Returns whether the ordinal value of the current record is NULL.
 int GetValues(object[] values)
 ```
 
-Sets all the values ​​of the current record and returns the number.
+Fills the array with the values of the current record and returns the number of values filled.
 
 #### Get*xxxx*
 
@@ -434,7 +430,7 @@ double GetDouble(int ordinal)
 float GetFloat(int ordinal)
 ```
 
-Returns the ordinal column value according to the datatype.
+Returns the value of the column at the ordinal position as the specified data type.
 
 #### Read
 
@@ -442,18 +438,18 @@ Returns the ordinal column value according to the datatype.
 bool Read()
 ```
 
-Reads the next record. Returns False if the result does not exist.
+Reads the next record. Returns false if there are no more results.
 
 #### Field
 
 | Name | Description|
 |--|--|
-| FetchSize         |The number of records to fetch from the server at one time. The default is 3000, which can not be modified here.|
+| FetchSize         |The number of records to fetch from the server at one time. The default is 3000, and it cannot be modified here.|
 | FieldCount        |Number of result columns.|
-| this[int ordinal] |Equivalent to object GetValue (int ordinal).|
-| this[string name] |Equivalent to object GetValue(GetOrdinal(name).|
-| HasRows           |Indicates whether the result is present.|
-| RecordsAffected   |Unlike MachCommand, here, it represents Fetch Count.|
+| this[int ordinal] |Equivalent to GetValue(int ordinal).|
+| this[string name] |Equivalent to GetValue(GetOrdinal(name)).|
+| HasRows           |Whether the result exists.|
+| RecordsAffected   |Unlike in MachCommand, it represents the number of fetched records here.|
 
 ### MachParameterCollection
 
@@ -461,11 +457,11 @@ Reads the next record. Returns False if the result does not exist.
 public sealed class MachParameterCollection : DbParameterCollection, IEnumerable<MachParameter>
 ```
 
-This is a class that binds parameters needed by MachCommand.
+A class that manages the set of parameters bound to a MachCommand.
 
-If you do this after binding, the values ​​are done together.
+If you execute the command after binding, the values are sent together.
 
-> Since the concept of Prepared Statement is not implemented, execution performance after Binding is the same as the performance performed first.
+> Since the execution plan cache of a prepared statement is not implemented in the current version, executing the same query repeatedly performs the same as the first execution.
 
 #### Add
 
@@ -473,26 +469,25 @@ If you do this after binding, the values ​​are done together.
 MachParameter Add(string parameterName, DbType dbType)
 ```
 
-Adds the MachParameter, specifying the parameter name and type. Returns the added MachParameter object.
+Adds a MachParameter with the specified parameter name and type, and returns the added MachParameter object.
 
 ```cs
 int Add(object value)
 ```
 
-Adds a value. Returns the index added.
-
+Adds a value and returns the index where it was added.
 
 ```cs
 void AddRange(Array values)
 ```
 
-Adds an array of simple values.
+Adds an array of simple values at once.
 
 ```cs
 MachParameter AddWithValue(string parameterName, object value)
 ```
 
-Adds the parameter name and its value. Returns the added MachParameter object.|
+Adds a parameter name and its value together, and returns the added MachParameter object.
 
 #### Contains
 
@@ -500,13 +495,13 @@ Adds the parameter name and its value. Returns the added MachParameter object.|
 bool Contains(object value)
 ```
 
-Determines whether or not the corresponding value is added.
+Determines whether the value has already been added.
 
 ```cs
 bool Contains(string value)
 ```
 
-Determines whether or not the corresponding parameter name is added.
+Determines whether a parameter with the specified name exists.
 
 #### Clear
 
@@ -514,7 +509,7 @@ Determines whether or not the corresponding parameter name is added.
 void Clear()
 ```
 
-Deletes all parameters.
+Removes all parameters.
 
 #### IndexOf
 
@@ -522,13 +517,13 @@ Deletes all parameters.
 int IndexOf(object value)
 ```
 
-Returns the index of the corresponding value.
+Returns the index of the value.
 
 ```cs
 int IndexOf(string parameterName)
 ```
 
-Returns the index of the corresponding parameter name.
+Returns the index of the parameter name.
 
 #### Insert
 
@@ -536,7 +531,7 @@ Returns the index of the corresponding parameter name.
 void Insert(int index, object value)
 ```
 
-Adds the value to a specific index.
+Inserts the value at the specified index.
 
 #### Remove
 
@@ -544,27 +539,27 @@ Adds the value to a specific index.
 void Remove(object value)
 ```
 
-Deletes the parameter including the value.
+Removes the parameter that contains the value.
 
 ```cs
 void RemoveAt(int index)
 ```
 
-Deletes the parameter located at the index.
+Removes the parameter at the index.
 
 ```cs
 void RemoveAt(string parameterName)
 ```
 
-Deletes the parameter with that name.
+Removes the parameter with the specified name.
 
 #### Field
 
 | Name                 | Description                 |
 | ----------------- | --------------------------------------- |
-|Count              | Number of parameters|
-|this[int index]    | Indicates the MachParameter at index.|
-|this[string name]  | Indicates the MachParameter of the order in which the parameter names match.|
+|Count              | Number of parameters.|
+|this[int index]    | The MachParameter at the index.|
+|this[string name]  | The MachParameter whose name matches.|
 
 ### MachParameter
 
@@ -572,7 +567,7 @@ Deletes the parameter with that name.
 public sealed class MachParameter : DbParameter
 ```
 
-This is a class that contains the information that binds the necessary parameters to each MachCommand.
+A class that stores the binding information of an individual parameter for a MachCommand.
 
 No special methods are supported.
 
@@ -581,14 +576,13 @@ No special methods are supported.
 | Name            | Description                                                                          |
 | ------------- | --------------------------------------------------------------------------------- |
 |ParameterName|Parameter name|
-|Value|Value|
+|Value|Value to send|
 |Size|Value size|
 |Direction|ParameterDirection (Input / Output / InputOutput / ReturnValue)<br>The default value is Input.|
-|DbType|DB Type|
-|MachDbType|MACHBASE DB Type<br>May differ from DB Type.|
-|IsNullable|Whether nullable|
-|HasSetDbType|Whether DB Type is specified|
-
+|DbType|.NET-side DB type|
+|MachDbType|Machbase DB type<br>It may differ from DbType.|
+|IsNullable|Whether NULL is allowed|
+|HasSetDbType|Whether DbType has been set|
 
 ### MachException
 
@@ -596,15 +590,15 @@ No special methods are supported.
 public class MachException : DbException
 ```
 
-This is a class that displays errors that appear in Machbase.
+A class that represents errors that occur in Machbase.
 
-An error message is set, and all error messages  can be found in  MachErrorMsg .
+An error message is set, and all error messages can be found in MachErrorMsg.
 
 #### Field
 
 | Name| Description|
 |--|--|
-|int MachErrorCode|Error code provided by MACHBASE|
+|int MachErrorCode|Error code returned by Machbase|
 
 ### MachAppendWriter
 
@@ -612,10 +606,10 @@ An error message is set, and all error messages  can be found in  MachErrorMsg .
 public sealed class MachAppendWriter
 ```
 
-APPEND is supported as a separate class using MachCommand.
-This is a class to support MACHBASE Append Protocol, not ADO.NET standard.
+A helper class that supports APPEND separately, used together with MachCommand.
+It supports the Machbase Append protocol, not the ADO.NET standard.
 
-It is created with MachCommand's AppendOpen () without a separate constructor.
+It has no separate constructor; you obtain an instance by calling MachCommand.AppendOpen().
 
 #### SetErrorDelegator
 
@@ -625,16 +619,15 @@ void SetErrorDelegator(ErrorDelegateFuncType aFunc)
 void ErrorDelegateFuncType(MachAppendException e);
 ```
 
-Specifies the ErrorDelegateFunc to call when an error occurs.
+Registers the ErrorDelegateFunc to call when an error occurs during Append.
 
 #### Field
 
 | Name | Description |
 |--|--|
-|SuccessCount|Number of successful records. Is set after AppendClose().|
-|FailureCount|The number of records that failed input. Set after AppendClose ().|
-|Option|MachAppendOption received input during AppendOpen()|
-
+|SuccessCount|The number of records stored successfully. It is set after AppendClose().|
+|FailureCount|The number of records that failed to be entered. It is set after AppendClose().|
+|Option|The MachAppendOption value passed to AppendOpen().|
 
 ### MachAppendException
 
@@ -642,12 +635,12 @@ Specifies the ErrorDelegateFunc to call when an error occurs.
 public sealed class MachAppendException : MachException
 ```
 
-Same as MachException, except that:
+Same as MachException, except for the following:
 
-* An error message is received from the server side.
-* A data buffer in which an error has occurred can be obtained. (comma-separated) can be used to process and re-append or record data.
+* The error message is received from the server as is.
+* The data buffer of the record that caused the error can be obtained (comma-separated), so you can process it and append it again or record it.
 
-The exception is only available within the ErrorDelegateFunc.
+This exception is available only inside the ErrorDelegateFunc.
 
 #### GetRowBuffer
 
@@ -655,13 +648,14 @@ The exception is only available within the ErrorDelegateFunc.
 string GetRowBuffer()
 ```
 
-A data buffer in which an error has occurred can be obtained.
+Returns the data buffer of the record that caused the error as a string.
 
 ## Usage and Examples
 
 ### Connection
 
-You can create a MachConnection and use Open () - Close ().
+You can create a MachConnection and control the connection with Open() and Close().
+
 ```c#
 String sConnString = String.Format("DSN={0};PORT_NO={1};UID=SYS;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
 MachConnection sConn = new MachConnection(sConnString);
@@ -670,7 +664,8 @@ sConn.Open();
 sConn.Close();
 ```
 
-If you use the using statement, you do not need to call Close (), which is a connection closing task.
+If you use the using statement, resources are released without calling Close() yourself.
+
 ```c#
 String sConnString = String.Format("DSN={0};PORT_NO={1};UID=SYS;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
 using (MachConnection sConn = new MachConnection(sConnString))
@@ -682,7 +677,7 @@ using (MachConnection sConn = new MachConnection(sConnString))
 
 ### Executing Queries
 
-Create a MachCommand and perform the query.
+You can create a MachCommand and execute SQL statements.
 
 ```c#
 String sConnString = String.Format("DSN={0};PORT_NO={1};UID=SYS;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
@@ -691,7 +686,7 @@ using (MachConnection sConn = new MachConnection(sConnString))
     sConn.Open();
 
     String sQueryString = "CREATE TABLE tab1 ( col1 INTEGER, col2 VARCHAR(20) )";
-    MachCommand sCommand = new MachCommand(sQueryString , sConn)
+    MachCommand sCommand = new MachCommand(sQueryString , sConn);
     try
     {
         sCommand.ExecuteNonQuery();
@@ -703,7 +698,8 @@ using (MachConnection sConn = new MachConnection(sConnString))
 }
 ```
 
-Again, using the using statement, MachCommand release can be done immediately.
+With the using statement, the MachCommand can also be released immediately.
+
 ```c#
 String sConnString = String.Format("DSN={0};PORT_NO={1};UID=SYS;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
 using (MachConnection sConn = new MachConnection(sConnString))
@@ -726,9 +722,11 @@ using (MachConnection sConn = new MachConnection(sConnString))
 ```
 
 ### Executing SELECT
-You can get a MachDataReader by executing a MachCommand with a SELECT query.
+
+Executing a MachCommand with a SELECT query through ExecuteReader() gives you a MachDataReader.
 
 You can fetch the records one by one through the MachDataReader.
+
 ```c#
 String sConnString = String.Format("DSN={0};PORT_NO={1};UID=SYS;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
 using (MachConnection sConn = new MachConnection(sConnString))
@@ -760,7 +758,9 @@ using (MachConnection sConn = new MachConnection(sConnString))
 ```
 
 ### Parameter Binding
-You can create a MachParameterCollection and then link it to a MachCommand.
+
+You can fill the MachParameterCollection of a MachCommand with parameters. This lets you pass conditions, such as a time-series query range, safely as parameters.
+
 ```c#
 String sConnString = String.Format("DSN={0};PORT_NO={1};UID=SYS;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
 using (MachConnection sConn = new MachConnection(sConnString))
@@ -803,10 +803,14 @@ using (MachConnection sConn = new MachConnection(sConnString))
 ```
 
 ### APPEND
-When you run AppendOpen () on a MachCommand, you get a MachAppendWriter object.
 
-Using this object and MachCommand, you can get a list of one input record and perform an AppendData().
-AppendFlush() will reflect the input of all records, and AppendClose () will end the entire Append process.
+With the Append protocol, you can load a large amount of time-series data quickly.
+
+When you run AppendOpen() on a MachCommand, you get a MachAppendWriter object.
+
+With this object and the MachCommand, pass a list holding one input record to AppendData().
+AppendFlush() applies the input of all records, and AppendClose() ends the entire Append process.
+
 ```c#
 String sConnString = String.Format("DSN={0};PORT_NO={1};UID=SYS;PWD=MANAGER;", SERVER_HOST, SERVER_PORT);
 using (MachConnection sConn = new MachConnection(sConnString))
@@ -830,7 +834,7 @@ using (MachConnection sConn = new MachConnection(sConnString))
 
             if (i % 1000 == 0)
             {
-                sAppendCommand.AppendFlush();
+                sAppendCommand.AppendFlush(sWriter);
             }
         }
 
@@ -840,6 +844,7 @@ using (MachConnection sConn = new MachConnection(sConnString))
     }
 }
 ```
+
 ```c#
 private static void AppendErrorDelegator(MachAppendException e)
 {
@@ -850,9 +855,10 @@ private static void AppendErrorDelegator(MachAppendException e)
 
 ### Set Error Delegator
 
-In MachAppendWriter, you can specify a function to detect errors occurring on the MACHBASE server side during APPEND.
+In MachAppendWriter, you can specify a function that is called when an error occurs on the Machbase server side during APPEND.
 
-In .NET, this function type is specified as a Delegator Function.
+In .NET, this function is specified as a delegate function.
+
 ```c#
 public static void ErrorCallbackFunc(MachAppendException e)
 {
@@ -874,7 +880,7 @@ public static void DoAppend()
 
 ### Set Auto AppendFlush
 
-If you set `Set Connect Append Flush` to true in the connection, flush is automatically performed during append.
+If you call `SetConnectAppendFlush(true)` on the connection, flush is performed automatically at regular intervals during append.
 
 ```cs
 private static string connString = $"SERVER={HOST};PORT_NO={port};USER={USER};PWD={PWD}";
@@ -887,7 +893,7 @@ public static void Main(string[] args)
 }
 ```
 
-If set to false, the function is disabled.
+If set to false, automatic flush is disabled.
 
 ```cs
 conn.SetConnectAppendFlush(false);
@@ -905,12 +911,14 @@ or restore additional target frameworks when your application needs them.
 - `machNetConnector-40-net50-3.2.1.dll` – protocol 4.0-full connector.
 
 ### Key types introduced by 4.0-full
-- `MachDbProviderFactory` (`Instance`, `Register()`, and the standard `Create*` methods) so frameworks can resolve the connector by invariant name `Mach.Data`.
+
+- `MachDbProviderFactory` (`Instance`, `Register()`, and the standard `Create*` methods) so frameworks can resolve the connector by the invariant name `Mach.Data`.
 - `MachConnectionStringBuilder` for strongly typed connection-string edits without remembering every keyword.
 - `MachDataAdapter` plus the `MachRowUpdating`/`MachRowUpdated` events for DataTable/DataSet workflows.
 - `MachCommandBuilder` to auto-generate INSERT/DELETE (and UPDATE for tables that support it—never for log/tag tables) commands from a SELECT statement.
 
 ### Enable the full provider stack
+
 ```csharp
 var connString = "SERVER=127.0.0.1;PORT_NO=5656;UID=SYS;PWD=MANAGER;PROTOCOL=4.0-full";
 using var connection = new MachConnection(connString);
@@ -920,6 +928,7 @@ connection.Open();
 Use lookup or volatile tables when you need INSERT/DELETE/UPDATE semantics. Log and tag tables do not accept UPDATE statements, so keep those workloads append-only.
 
 ### Build connection strings fluently
+
 ```csharp
 var builder = new MachConnectionStringBuilder
 {
@@ -937,7 +946,8 @@ connection.Open();
 ```
 
 ### Sample: append rows with MachDataAdapter
-This example downloads a lookup table into a `DataTable`, appends a new row, and pushes the change back. The `MachCommandBuilder` auto-generates the INSERT statement. (If the table does not exist yet, create it once: `CREATE LOOKUP TABLE dotnet_lookup_demo(id LONG PRIMARY KEY, name VARCHAR(64));`)
+
+This example loads a lookup table into a `DataTable`, adds a new row, and pushes the change back with `MachDataAdapter`. The `MachCommandBuilder` auto-generates the INSERT statement. (If the table does not exist yet, create it once: `CREATE LOOKUP TABLE dotnet_lookup_demo(id LONG PRIMARY KEY, name VARCHAR(64));`)
 
 ```csharp
 using Mach.Data.MachClient;
@@ -963,7 +973,7 @@ table.Rows.Add(newRow);
 adapter.Update(table);
 ```
 
-> **Tip**: When you need to inspect or veto outgoing commands, subscribe to `MachDataAdapter.MachRowUpdating` / `MachRowUpdated`.
+> **Tip**: When you need to inspect or veto outgoing commands before they are sent, subscribe to `MachDataAdapter.MachRowUpdating` / `MachRowUpdated`.
 
 ```csharp
 adapter.MachRowUpdating += (sender, args) =>
@@ -973,6 +983,7 @@ adapter.MachRowUpdating += (sender, args) =>
 ```
 
 ### Sample: work through DbProviderFactory
+
 `MachDbProviderFactory.Instance` lets you plug Machbase into provider-agnostic infrastructure such as `DbProviderFactories`, Dapper, or your own DI container.
 
 ```csharp
@@ -992,6 +1003,6 @@ var count = (long)command.ExecuteScalar();
 Console.WriteLine($"Lookup rows: {count}");
 ```
 
-Need to make the factory visible to configuration-driven apps? Call `MachDbProviderFactory.Register()` once during startup so `DbProviderFactories.GetFactory("Mach.Data")` returns the same instance.
+To expose the factory to configuration-driven apps, call `MachDbProviderFactory.Register()` once during startup so that `DbProviderFactories.GetFactory("Mach.Data")` returns the same instance.
 
-Remember that `4.0-full` is only available when you connect to Machbase 7.x or later servers; fall back to `Protocol=4.0` (limited surface) or the 2.x/3.x protocols for older clusters.
+Remember that `4.0-full` is available only when you connect to Machbase 7.x or later servers; for older servers, fall back to `PROTOCOL=4.0` (limited surface) or the 2.x/3.x protocols.

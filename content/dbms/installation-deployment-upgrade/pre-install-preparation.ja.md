@@ -90,7 +90,7 @@ ulimit -Sn
 
 ```bash
 ulimit -Sn
-# 出力: 65535
+# Expected output: 65535
 ```
 
 #### ポートの予約
@@ -161,7 +161,7 @@ Fixバージョン変更も含む実際のアップグレード経路は、対�
 
 tarballを展開すると、`$MACHBASE_HOME`配下に次の構造が作成されます。
 
-```
+```text
 $MACHBASE_HOME/
 ├── bin/        実行ファイル
 ├── conf/       設定ファイル（machbase.confなど）

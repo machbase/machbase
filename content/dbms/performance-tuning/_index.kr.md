@@ -25,7 +25,7 @@ toc: true
 | 12.2 | [모델링 성능 튜닝](./performance-tuning-modeling/) | 테이블 타입과 스키마 설계 점검 |
 | 12.3 | [인덱스 튜닝](./index-tuning/) | 테이블 타입별 인덱스 선택과 쓰기 비용 |
 | 12.5 | [조회와 분석 성능 튜닝](./performance-query-tuning/) | 시간 조건, 실행 계획, ROLLUP, 윈도우 함수 |
-| 12.6 | [캐시와 메모리 튜닝(영문)](/dbms/performance-tuning/cache-tuning-memory/) | PVO Cache, Min-Max Cache, 메모리 사용량 |
+| 12.6 | [캐시와 메모리 튜닝](./cache-tuning-memory/) | PVO Cache, Min-Max Cache, 메모리 사용량 |
 | 12.7 | [스토리지와 Cluster 튜닝](./tuning-storage-cluster/) | 디스크 I/O, 체크포인트, Cluster 구성 |
 
 처리량과 응답 시간은 하드웨어, 데이터 분포, 스키마, 인덱스, 동시 사용자 수에 따라 달라집니다.

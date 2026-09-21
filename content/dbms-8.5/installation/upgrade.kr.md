@@ -11,14 +11,14 @@ Coordinator / Deployer는 수동으로 업그레이드해야 합니다.
 #### 주의 사항
 
 * 업그레이드 중에는 노드 추가 / 시작 / 종료 / 삭제와 같은 명령을 실행할 수 없습니다.
-* DDL 또는 DELETE가 사용 중이어서는 안 됩니다. (INSERT, APPEND, SELECT는 상관없습니다.)
+* DDL 또는 DELETE가 실행 중이면 안 됩니다. (INSERT, APPEND, SELECT는 실행해도 됩니다.)
 
 #### Coordinator 종료
 
 
-Coordinator / Deployer는 종료되더라도 Broker / Warehouse의 INSERT, APPEND, SELECT에 영향을 주지 않습니다.
+Coordinator / Deployer를 종료해도 Broker / Warehouse의 INSERT, APPEND, SELECT에는 영향을 주지 않습니다.
 
-그러나 종료되는 동안 Broker / Warehouse도 종료되는 것을 감지하지 못합니다. (일반적으로 재시작 후 감지됩니다)
+다만 Coordinator / Deployer가 종료된 동안에는 Broker / Warehouse가 종료되어도 이를 감지하지 못합니다. (일반적으로 재시작한 뒤에 감지합니다.)
 
 ```bash
 machcoordinatoradmin --shutdown
@@ -26,13 +26,13 @@ machcoordinatoradmin --shutdown
 
 #### Coordinator 백업 (선택 사항)
 
-$MACH_COORDINATOR_HOME에 있는 dbs/ 및 conf/ 디렉토리를 백업합니다.
+`$MACHBASE_COORDINATOR_HOME`에 있는 `dbs/` 및 `conf/` 디렉터리를 백업합니다.
 
 #### Coordinator 업그레이드
 
-* 경량 패키지 대신 전체 패키지로 진행합니다.
+* 경량 패키지가 아닌 전체 패키지를 사용합니다.
 
-패키지를 $MACH_COORDINATOR_HOME에 압축 해제하여 덮어씁니다.
+패키지를 `$MACHBASE_COORDINATOR_HOME`에 압축 해제하여 기존 파일을 덮어씁니다.
 
 ```bash
 tar zxvf machbase-ent-new.official-LINUX-X86-64-release.tgz -C $MACHBASE_COORDINATOR_HOME
@@ -47,7 +47,7 @@ machcoordinatoradmin --startup
 
 ## Deployer 업그레이드
 
-Coordinator와 동일한 프로세스입니다.
+Coordinator와 절차가 같습니다.
 
 #### 주의 사항
 
@@ -61,16 +61,16 @@ machdeployeradmin --shutdown
 
 #### Deployer 백업 (선택 사항)
 
-$MACH_DEPLOYER_HOME에 있는 dbs/ 및 conf/ 디렉토리를 백업합니다.
+`$MACHBASE_DEPLOYER_HOME`에 있는 `dbs/` 및 `conf/` 디렉터리를 백업합니다.
 
 #### Deployer 업그레이드
 
-* Deployer가 설치된 호스트에서 MWA 또는 Collector를 실행하지 않는 경우 경량 패키지로 진행할 수 있습니다.
+* Deployer가 설치된 호스트에서 MWA 또는 Collector를 실행하지 않는다면 경량 패키지를 사용해도 됩니다.
 
-패키지를 $MACH_DEPLOYER_HOME에 압축 해제하여 덮어씁니다.
+패키지를 `$MACHBASE_DEPLOYER_HOME`에 압축 해제하여 기존 파일을 덮어씁니다.
 
 ```bash
-tar zxvf machbase-ent-new.official-LINUX-X86-64-release.tgz -C $MACH_DEPLOYER_HOME
+tar zxvf machbase-ent-new.official-LINUX-X86-64-release.tgz -C $MACHBASE_DEPLOYER_HOME
 ```
 
 #### Deployer 시작
@@ -82,15 +82,15 @@ machdeployeradmin --startup
 
 ## 패키지 등록
 
-Broker / Warehouse를 업그레이드하려면 Coordinator에 패키지를 등록하고 업그레이드를 진행합니다.
+Broker / Warehouse를 업그레이드하려면 Coordinator에 패키지를 등록한 뒤 업그레이드를 진행합니다.
 
 {{< callout type="info" >}}
-경량 패키지를 등록하는 것이 좋습니다.
+경량 패키지를 등록하는 것을 권장합니다.
 {{< /callout >}}
 
-먼저 $MACH_COORDINATOR_HOME이 있는 호스트로 패키지를 이동합니다.
+먼저 `$MACHBASE_COORDINATOR_HOME`이 있는 호스트로 패키지를 옮깁니다.
 
-다음으로 다음 명령을 사용하여 패키지를 추가합니다.
+그런 다음 아래 명령으로 패키지를 추가합니다.
 
 ```bash
 machcoordinatoradmin --add-package=new_package --file-name=./machbase-ent-new.official-LINUX-X86-64-release-lightweight.tgz
@@ -99,7 +99,7 @@ machcoordinatoradmin --add-package=new_package --file-name=./machbase-ent-new.of
 |옵션|설명|
 |--|--|
 |--add-package|추가할 패키지 이름을 지정합니다.|
-|--file-name|추가할 패키지 파일의 경로를 지정합니다.<br>**동일한 파일 이름을 가진 패키지가 추가되면 오류가 발생하므로 파일 이름을 확인하십시오.**|
+|--file-name|추가할 패키지 파일의 경로를 지정합니다.<br>**이미 추가된 패키지와 파일 이름이 같으면 오류가 발생하므로 파일 이름을 확인하십시오.**|
 
 
 #### Broker/Warehouse 업그레이드
@@ -120,11 +120,11 @@ machcoordinatoradmin --upgrade-node=localhost:5656 --package-name=new_package
 
 |옵션|설명|
 |--|--|
-|--upgrade-node|업그레이드 대상 노드의 이름을 입력합니다.|
-|--package-name|업그레이드할 패키지의 이름을 입력합니다.|
+|--upgrade-node|업그레이드할 노드의 이름을 지정합니다.|
+|--package-name|업그레이드에 사용할 패키지의 이름을 지정합니다.|
 
-* 노드를 종료하지 않고 노드를 업그레이드하면 자동으로 노드를 종료하고 노드 업그레이드를 수행합니다.
-  그러나 안정성을 위해 업그레이드하기 전에 명시적으로 노드를 종료해야 합니다.
+* 노드를 종료하지 않은 상태에서 업그레이드하면 노드를 자동으로 종료한 뒤 업그레이드합니다.
+  다만 안정성을 위해 업그레이드 전에 노드를 명시적으로 종료하십시오.
 
 ## 노드 시작
 
@@ -135,29 +135,29 @@ machcoordinatoradmin --startup-node=localhost:5656
 
 ## Snapshot Failover
 
-Machbase 6.5 Cluster Edition부터 Snapshot Failover 기능이 추가되었습니다.
+Snapshot Failover는 Machbase 6.5 Cluster Edition부터 사용할 수 있습니다.
 
-Snapshot failover는 DBMS가 정상 상태일 때 스냅샷을 기록하고 특정 warehouse에 장애가 발생하면 정상 스냅샷을 제외한 문제가 발생한 부분에 대해서만 failover를 수행하여 빠른 복구를 제공하는 기능입니다.
+Snapshot failover는 DBMS가 정상 상태일 때 스냅샷을 기록해 두고, 특정 warehouse에 장애가 발생하면 정상 스냅샷 이전 데이터를 제외하고 문제가 발생한 부분에 대해서만 failover를 수행해 빠르게 복구하는 기능입니다.
 
 #### Snapshot 기본 개념
 
-Cluster Edition의 그룹별로 그룹 내 warehouse 간의 정상 데이터 위치를 기록하는 개념입니다.
+Cluster Edition의 그룹마다, 그룹 내 warehouse들의 데이터가 어디까지 정상인지 그 위치를 기록합니다.
 
-그룹 내 warehouse에서 생성된 스냅샷 이전의 모든 데이터는 정상 상태의 데이터이며, 각 스냅샷은 그룹별로 기록됩니다.
+그룹 내 warehouse에서 생성된 스냅샷 이전의 데이터는 모두 정상 상태이며, 스냅샷은 그룹 단위로 기록됩니다.
 
 #### Snapshot Failover 작동 방식
 
-특정 warehouse에 문제가 발생하면 warehouse가 scrapped 상태로 전환되고 데이터 복구가 필요합니다.
+특정 warehouse에 문제가 발생하면 해당 warehouse는 scrapped 상태로 전환되며, 데이터를 복구해야 합니다.
 
-Snapshot Recovery를 수행할 때 문제가 발생한 warehouse의 정상 스냅샷을 기준으로 스냅샷 이후의 데이터가 지워지고, 동일한 그룹 내 정상 상태의 warehouse의 기준 스냅샷 이후 데이터가 문제가 발생한 warehouse로 복제되어 복구가 완료됩니다.
+Snapshot Recovery를 수행하면 문제가 발생한 warehouse에서 정상 스냅샷 이후의 데이터를 지웁니다. 이어서 같은 그룹의 정상 warehouse에서 기준 스냅샷 이후의 데이터를 문제가 발생한 warehouse로 복제하면 복구가 완료됩니다.
 
 #### 자동 스냅샷 실행
 
-기본적으로 자동 스냅샷 실행이 활성화되어 있으며, 스냅샷 실행 간격은 60초로 설정됩니다. 클러스터에 여러 warehouse 그룹이 있는 경우 스냅샷 간격마다 한 그룹만 순차적으로 스냅샷을 수행합니다.
+자동 스냅샷 실행은 기본으로 활성화되어 있으며, 실행 간격은 60초입니다. 클러스터에 warehouse 그룹이 여러 개 있으면 스냅샷 간격마다 한 그룹씩 차례로 스냅샷을 수행합니다.
 
-실행 간격이 0으로 설정되면 자동 스냅샷 실행이 비활성화됩니다.
+실행 간격을 0으로 설정하면 자동 스냅샷 실행이 비활성화됩니다.
 
-스냅샷 간격 설정은 명령이 실행될 때 즉시 반영됩니다.
+스냅샷 간격 설정은 명령을 실행하는 즉시 반영됩니다.
 
 ```bash
 ## 스냅샷 간격 설정
@@ -169,11 +169,11 @@ machcoordinatoradmin --configuration
 
 #### 수동으로 스냅샷 생성
 
-machcoordinatoradmin 도구를 사용하여 **group_name**을 지정하고 수동으로 스냅샷을 수행합니다.
+`machcoordinatoradmin` 도구에서 **group_name**을 지정해 수동으로 스냅샷을 수행합니다.
 
-**group_name**은 group1, group2와 같이 사전 설정됩니다.
+**group_name**은 group1, group2처럼 미리 정해진 그룹 이름입니다.
 
-클러스터에 여러 그룹이 있는 경우 전체 스냅샷을 생성하려면 각 그룹에 대해 스냅샷을 수행해야 합니다.
+클러스터에 그룹이 여러 개 있으면, 전체 스냅샷을 만들기 위해 그룹마다 스냅샷을 수행해야 합니다.
 
 ```bash
 ## group_name에 대해 수동으로 스냅샷 생성
@@ -182,7 +182,7 @@ machcoordinatoradmin --exec-snapshot --group='group_name'
 
 #### 스냅샷을 기반으로 scrapped 노드 복구
 
-scrapped 노드가 발생하면 다음과 같이 복구됩니다.
+scrapped 노드가 발생하면 다음과 같이 복구합니다.
 
 ```bash
 ## 그룹 상태를 readonly로 변경
@@ -200,9 +200,9 @@ machcoordinatoradmin --exec-sync=[nodename]
 machcoordinatoradmin --set-group-state=normal --group=[groupname]
 ```
 
-#### Snapshot-based recovery process of scrapped nodes
+#### 스냅샷 기반 scrapped 노드 복구 과정
 
-When recovering a scrapped node with a snapshot, the following process is performed.
+스냅샷으로 scrapped 노드를 복구하면 다음 과정이 진행됩니다.
 
 ```bash
 /* Initial cluster state */
@@ -353,7 +353,7 @@ Source:
 | warehouse   | localhost:30520 | group2          | normal          | normal        | normal        | ----------- |
 +-------------+-----------------+-----------------+-----------------+-------------------------------+-------------+
   
-## Change the group state to readonly
+## Change the group state to normal
 machcoordinatoradmin --set-group-state=normal --group=[groupname]
   
 kellen@kellen-ku:~$ machcoordinatoradmin --set-group-state=normal --group=group1
@@ -380,8 +380,8 @@ Flag      : 0
 +-------------+-----------------+-----------------+-----------------+-------------------------------+-------------+
 ```
 
-#### Snapshot related properties
+#### 스냅샷 관련 프로퍼티
 
-|Property|Description|Applies to|
+|프로퍼티|설명|적용 위치|
 |--|--|--|
-|GROUP_SNAPSHOT_TIMEOUT_SEC|Determines the timeout time when executing Snapshot<br>Default : 60 (sec)<br>Minimum : 0 (wait infinitely)<br>Maximum : uint32_max (sec)|Write in each node's machbase.conf file|
+|GROUP_SNAPSHOT_TIMEOUT_SEC|스냅샷 실행 시 타임아웃 시간<br>기본값 : 60 (초)<br>최소값 : 0 (무한 대기)<br>최대값 : uint32_max (초)|각 노드의 `machbase.conf` 파일에 설정|

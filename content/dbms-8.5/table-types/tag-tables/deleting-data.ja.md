@@ -7,13 +7,13 @@ toc: true
 
 ## 概要 {#overview}
 
-Tag データの削除には、性能を維持するための制約があります。制約を理解し、データのライフサイクルを管理してください。
+Machbase は、性能を維持するために設計された制約のもとで、Tag データを効率よく削除する機能を提供します。データのライフサイクルを効果的に管理するには、これらの制約を理解することが重要です。
 
 ## 削除の制約 {#tag-data-deletion-constraints}
 
-制限された条件で削除できます。タグ名、タグ名と時刻、
-全タグを対象とした時刻条件、`BEFORE`、または
-全行削除を使用できます。
+Machbase では、限られた条件式で Tag データを削除できます。タグ名、タグ名と時刻条件、
+全タグを対象とした時刻条件、`BEFORE` で削除するか、
+すべての行を削除できます。
 
 対応する条件：
 
@@ -28,7 +28,7 @@ Tag データの削除には、性能を維持するための制約がありま�
 
 ### 特定タグの全データを削除 {#delete-specific-tag-data}
 
-指定したタグの全データを削除します。
+特定のタグを指定すると、そのタグのすべてのデータを削除します。
 
 ```sql
 DELETE FROM TAG WHERE NAME = 'TAG-ID';
@@ -70,7 +70,7 @@ TAG_0001              2024-01-01 10:00:10 000:000:000 1
 
 ### 特定タグの指定時刻より前を削除 {#delete-data-before-a-specific-time-for-a-specific-tag}
 
-タグと時刻を指定します。以下の `<=` の例は、指定時刻と同じ時刻のデータも削除します。
+特定のタグと時刻を指定すると、そのタグの指定時刻より前のデータを削除します。以下の `<=` の例は、指定時刻と同じ時刻のデータも削除します。
 
 ```sql
 DELETE FROM TAG WHERE NAME = 'TAG-ID' AND TIME <= 'Time-string';
@@ -114,7 +114,7 @@ TAG_0002              2024-01-01 10:00:08 000:000:000 1
 
 ### 特定タグの指定期間を削除 {#delete-specific-time-range-data-for-a-specific-tag}
 
-タグと期間を指定し、その範囲のデータを削除します。
+特定のタグと期間を指定すると、そのタグの指定期間内のデータを削除します。
 
 ```sql
 DELETE FROM TAG WHERE NAME = 'TAG-ID' AND TIME >= 'Time-string' AND TIME <= 'Time-string';
@@ -154,9 +154,10 @@ TAG_0002              2024-01-01 10:00:02 000:000:000 1
 TAG_0002              2024-01-01 10:00:03 000:000:000 1
 [8] row(s) selected.
 ```
+
 ### 全タグの指定時刻より前を削除 {#delete-all-tags-before-a-specific-time}
 
-8.0.50 以降では、タグ名を指定せずに時刻条件で削除する拡張構文をサポートします。
+Machbase 8.0.50 以降では、タグ名を指定せずに時刻条件だけで削除する拡張 DELETE 構文をサポートします。
 
 #### `BEFORE` 句（従来の構文） {#using-before-clause-legacy-syntax}
 
@@ -182,7 +183,7 @@ DELETE FROM TAG WHERE time_column <= 'time_string';
 DELETE FROM TAG WHERE time_column BETWEEN 'time_string1' AND 'time_string2';
 ```
 
-**`BEFORE` の例：**
+**`BEFORE` 句の例：**
 
 ```bash
 -- 元データ
@@ -230,7 +231,7 @@ TAG_0002 2018-02-10 10:00:00 000:000:000 20
 [10] row(s) selected.
 ```
 
-**拡張 WHERE の例：**
+**拡張 WHERE 句の例：**
 
 次の各文は、上の元データ 20 行をそれぞれ復元してから、独立して実行する例です。
 
@@ -291,7 +292,7 @@ NAME TIME VALUE
 
 ## ROLLUP データの削除 {#delete-rollup-data}
 
-Tag テーブルに関連するロールアップデータも削除できます。
+Machbase では、Tag テーブルに関連するロールアップデータも削除できます。
 
 ### `BEFORE` 句（従来の構文） {#using-before-clause-legacy-syntax-1}
 
@@ -303,7 +304,7 @@ DELETE FROM TAG ROLLUP BEFORE TO_DATE('Time-string');
 DELETE FROM TAG ROLLUP;
 ```
 
-`BEFORE` に指定した時刻より前の全ロールアップデータを削除します。時刻を省略すると、全データを削除します。
+`BEFORE` に時刻を指定すると、その時刻より前のすべてのロールアップデータを削除します。時刻を省略すると、すべてのロールアップデータを削除します。
 
 ### 時刻条件付き WHERE 句（拡張構文） {#using-where-clause-with-time-conditions-enhanced-syntax-1}
 

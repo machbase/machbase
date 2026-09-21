@@ -896,7 +896,7 @@ int main()
 
 Makefile에 sample3_prepare.c를 등록하고 컴파일하여 실행하면 다음과 같이 나옵니다.
 
-``` bash
+```bash
 [mach@localhost cli]$ make
  
 [mach@localhost cli]$ ./sample3_prepare
@@ -2136,7 +2136,7 @@ IMAGE -2 BINARY 67108864
 ```
 
 
-## 멀티 쓰레드 append 예제
+### 멀티 쓰레드 append 예제
 
 하나의 프로그램에서 여러 스레드를 이용해 여러 테이블에 append하는 예제입니다.
 
@@ -2858,7 +2858,6 @@ machsql을 통해 아래와 같이 결과를 확인할 수 있습니다.
 
 ```bash
 [mach@localhost cli]$ machsql
- 
  
 =================================================================
      Machbase Client Query Utility

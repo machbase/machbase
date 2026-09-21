@@ -5,7 +5,7 @@ weight: 110
 toc: true
 ---
 
-よくある問題の対処、エラーコード、性能改善の方法を説明します。
+Machbase のよくある問題の対処、エラーコード、性能改善の方法を説明します。
 
 ## よくある問題 {#common-issues}
 
@@ -14,11 +14,13 @@ toc: true
 #### 起動しない {#server-wont-start}
 
 **症状：**
-- `machadmin -u` が失敗
+
+- `machadmin -u` が失敗する
 - Address already in use エラー
 - サーバープロセスがない
 
 **対処：**
+
 ```bash
 # ポートの使用を確認
 netstat -an | grep 5656
@@ -41,11 +43,13 @@ machadmin -u
 #### クラッシュする {#server-crashes}
 
 **症状：**
-- 予期しない停止
-- コアダンプが生成
+
+- 予期せず停止する
+- コアダンプが生成される
 - Segmentation fault エラー
 
 **対処：**
+
 ```bash
 # ログを確認
 tail -100 $MACHBASE_HOME/trc/machbase.trc
@@ -66,11 +70,13 @@ du -sh $MACHBASE_HOME/dbs/
 #### 接続できない {#cannot-connect}
 
 **症状：**
-- Connection refused
+
+- Connection refused エラー
 - Connection timeout
-- machsql で接続失敗
+- machsql で接続に失敗する
 
 **対処：**
+
 ```bash
 # 稼働を確認
 machadmin -e
@@ -89,10 +95,12 @@ machsql -s localhost -u SYS -p MANAGER
 #### 接続数が多すぎる {#too-many-connections}
 
 **症状：**
-- Max connections exceeded
+
+- Max connections exceeded エラー
 - 新規接続が拒否される
 
 **対処：**
+
 ```sql
 -- 接続数を確認
 SELECT COUNT(*) FROM V$SESSION;
@@ -108,11 +116,13 @@ SELECT COUNT(*) FROM V$SESSION;
 #### 検索が遅い {#slow-queries}
 
 **症状：**
+
 - 実行に時間がかかる
-- タイムアウト
+- タイムアウトエラー
 - CPU 使用率が高い
 
 **対処：**
+
 ```sql
 -- 時刻条件を追加
 SELECT * FROM table DURATION 1 HOUR;  -- この条件を追加
@@ -136,11 +146,13 @@ EXPLAIN SELECT ...;
 #### メモリ不足 {#out-of-memory}
 
 **症状：**
-- Out of memory
-- クエリーが途中で失敗
+
+- Out of memory エラー
+- クエリーが途中で失敗する
 - サーバーが応答しない
 
 **対処：**
+
 ```sql
 -- 結果を減らす
 SELECT * FROM table DURATION 1 HOUR LIMIT 1000;
@@ -154,14 +166,16 @@ SELECT col1, col2 FROM table;  -- SELECT * を避ける
 
 ### データの問題 {#data-issues}
 
-#### インポートが失敗 {#import-fails}
+#### インポートが失敗する {#import-fails}
 
 **症状：**
+
 - machloader のエラー
-- CSV の読み込みが失敗
+- CSV のインポートが失敗する
 - データ型の不一致
 
 **対処：**
+
 ```bash
 # CSV 形式を確認
 head -10 data.csv
@@ -171,9 +185,8 @@ machsql -f - <<EOF
 SHOW TABLE tablename;
 EOF
 
-# エラーログを確認
-# machloader の -l で指定した実行ログを確認
-cat /tmp/machloader.log
+# Check error log
+cat $MACHBASE_HOME/trc/machloader.trc
 
 # データ型を検証
 # CSV の列をスキーマに合わせる
@@ -181,16 +194,21 @@ cat /tmp/machloader.log
 # 少量のバッチで先に試す
 head -100 data.csv > test.csv
 machloader -i -t table -d test.csv -l /tmp/machloader.log
+
+# Check the execution log specified with machloader -l
+cat /tmp/machloader.log
 ```
 
 #### データが見つからない {#missing-data}
 
 **症状：**
+
 - 想定したデータがない
 - 件数が一致しない
 - 時刻に欠落がある
 
 **対処：**
+
 ```sql
 -- 時刻範囲を確認
 SELECT MIN(_arrival_time), MAX(_arrival_time) FROM table;
@@ -214,13 +232,13 @@ SELECT COUNT(*) FROM table WHERE column IS NULL;
 | メッセージ例 | 対処 |
 |---------|----------|
 | Connection failed | サーバーとネットワークを確認 |
-| Authentication failed | 認証情報を確認 |
-| Table not found | 名前を確認し、SHOW TABLES を実行 |
+| Authentication failed | ユーザー名とパスワードを確認 |
+| Table not found | テーブル名を確認し、SHOW TABLES を実行 |
 | Column not found | 列名を確認し、SHOW TABLE を実行 |
 | Duplicate key | PRIMARY KEY の制約を確認 |
-| Data type mismatch | 型を検証 |
+| Data type mismatch | データ型を検証 |
 | Out of memory | 検索対象を減らす、メモリを増やす |
-| Timeout | 時刻条件を追加、タイムアウトを調整 |
+| Timeout | 時刻条件を追加、タイムアウトを延長 |
 
 全一覧は[エラーコード](./error-code/)を参照してください。
 
@@ -228,7 +246,8 @@ SELECT COUNT(*) FROM table WHERE column IS NULL;
 
 ### クエリーの最適化 {#query-optimization}
 
-1. **時刻条件を指定**
+1. **常に時刻条件を指定**
+
 ```sql
 -- 避ける例
 SELECT * FROM sensors WHERE sensor_id = 'sensor01';
@@ -240,6 +259,7 @@ DURATION 1 HOUR;
 ```
 
 2. **分析にロールアップを使用**
+
 ```sql
 -- 低速
 SELECT AVG(value) FROM sensors
@@ -255,12 +275,14 @@ WHERE name = 'sensor-1'
 GROUP BY rtime;
 ```
 
-3. **必要なインデックスを作成**
+3. **インデックスを作成**
+
 ```sql
 CREATE INDEX idx_level ON logs(level);
 ```
 
 4. **結果件数を制限**
+
 ```sql
 SELECT * FROM logs DURATION 1 DAY LIMIT 1000;
 ```
@@ -280,12 +302,14 @@ QUERY_PARALLEL_FACTOR = 8
 
 ### データ管理 {#data-management}
 
-1. **保持期間を設定**
+1. **保持ポリシーを設定**
+
 ```sql
 DELETE FROM logs EXCEPT 30 DAYS;
 ```
 
 2. **書き込みを一括化**
+
 ```python
 # 一括挿入に APPEND API を使用
 # machbaseAPI.connect() の接続 conn と、行のリスト data を使用
@@ -293,13 +317,14 @@ conn.append('table', data)
 ```
 
 3. **ストレージを監視**
+
 ```sql
 SHOW STORAGE;
 ```
 
 ## 診断コマンド {#diagnostic-commands}
 
-### 稼働状態 {#check-server-status}
+### 稼働状態の確認 {#check-server-status}
 
 ```bash
 # サーバーの稼働確認
@@ -352,9 +377,9 @@ SHOW LICENSE;
 
 ### 収集する情報 {#information-to-gather}
 
-問題の報告には、次を用意します。
+問題を報告するときは、次の情報を用意してください。
 
-1. **正確なエラーメッセージ**
+1. **エラーメッセージ**（正確なテキスト）
 2. **サーバーログ**（$MACHBASE_HOME/trc/machbase.trc）
 3. **Machbase のバージョン**（`machadmin -v`）
 4. **OS 情報**（`uname -a`）
@@ -362,19 +387,19 @@ SHOW LICENSE;
 
 ### 参照資料 {#support-resources}
 
-- 本ガイドと[よくある問題](./common-issues/)
-- [エラーコード](./error-code/)
-- [メモリ不足](./memory-error/)
+- **ドキュメント**：本ガイドと[よくある問題](./common-issues/)を確認してください。
+- **エラーコード**：[エラーコード一覧](./error-code/)を確認してください。
+- **メモリの問題**：[メモリエラーガイド](./memory-error/)を参照してください。
 
 ## 問題を防ぐための推奨事項 {#best-practices-to-avoid-issues}
 
-1. クエリーに時刻条件を指定
-2. 保持ポリシーを設定
-3. サーバーリソースを定期監視
-4. 定期バックアップ（毎日）
-5. 小さなデータで先にテスト
-6. 適切なテーブル型を選択
-7. Machbase を適切な最新版へ更新
+1. **クエリーに常に時刻条件を指定**
+2. **データ保持ポリシーを設定**
+3. **サーバーリソースを定期的に監視**
+4. **定期バックアップ**（毎日）
+5. **小さなデータセットで先にクエリーをテスト**
+6. **データに適したテーブル型を選択**
+7. **Machbase を最新版に更新**
 
 ## 簡単な対処 {#quick-fixes}
 
@@ -400,5 +425,5 @@ EOF
 ## 関連ドキュメント {#related-documentation}
 
 - [設定](../configuration/)：サーバー設定
-- [ツール](../tools-reference/)：コマンドライン
-- [よくある問題](./common-issues/)：FAQ
+- [ツール](../tools-reference/)：コマンドラインツール
+- [よくある問題](./common-issues/)：よくある質問

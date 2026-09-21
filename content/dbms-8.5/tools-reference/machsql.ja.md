@@ -9,7 +9,7 @@ toc: true
 
 ## 起動オプション {#run-option-description}
 
-```
+```bash
 [mach@localhost]$ machsql -h
 ```
 
@@ -34,7 +34,7 @@ toc: true
 
 例：
 
-```
+```bash
 machsql -s localhost -u sys -p manager
 machsql --server=localhost --user=sys --password=manager
 machsql -s localhost -u sys -p manager -f script.sql
@@ -68,7 +68,7 @@ machsql -s 127.0.0.1 -u app_user \
 
 注意事項：
 
-- `-K` / `--auth-key-file` は、内部で `AUTH_MODE=CHALLENGE` を有効にします。
+- `-K`、`--auth-key-file` は、内部で `AUTH_MODE=CHALLENGE` を有効にします。
 - `--auth-sig-scheme` を省略すると、鍵アルゴリズムから既定の方式を選びます。
   - `ECDSA` 鍵：`ECDSA`
   - RSA 鍵：`RSA_PKCS1_V15`
@@ -91,21 +91,20 @@ machsql -c "SERVER=127.0.0.1;PORT_NO=5656;UID=APP_USER;AUTH_MODE=CHALLENGE;AUTH_
 
 ### 失敗する場合 {#failure-cases}
 
-- 鍵ファイルが存在しない。
-- 鍵の型が `AUTH_SIG_SCHEME` と一致しない。
+- 鍵ファイルが存在しない場合、認証に失敗します。
+- 鍵の型が `AUTH_SIG_SCHEME` と一致しない場合、認証に失敗します。
 - 有効期限（`VALID_BEFORE`）を過ぎた、または無効化された AUTH KEY は、
   認証に使用できません。
 
 ## 環境変数 MACHBASE_CONNECTION_STRING {#environment-variable-machbase_connection_string}
 
-基本の接続パラメーターを指定します。CONNECTION_TIMEOUT や ALTERNATIVE_SERVERS の追加には、次の環境変数を使用できます。
+基本の接続パラメーターを指定します。たとえば `CONNECTION_TIMEOUT` と `ALTERNATIVE_SERVERS` の設定を追加するには、次の環境変数を設定します。
 
-```
+```bash
 export MACHBASE_CONNECTION_STRING="ALTERNATIVE_SERVERS=192.168.0.148:8888;CONNECTION_TIMEOUT=3"
 ```
 
--c の接続パラメーターは環境変数より優先されます。このオプションは 6.1 以降でサポートされます。
-
+`-c` オプションで指定した接続パラメーターは、環境変数より優先されます。この機能は 6.1 以降でサポートされます。
 
 ## ヒアドキュメントによる `SQL` スクリプト {#using-heredoc-for-sql-scripts}
 
@@ -178,7 +177,6 @@ SQL
 - 終端の区切り語は、1 行に単独で記述してください。
 - すべての `machsql` 起動オプションと併用できます。
 
-
 ## SHOW コマンド {#show-command}
 
 テーブル、テーブルスペース、インデックスなどの情報を表示します。
@@ -199,6 +197,7 @@ SHOW コマンド一覧：
 * SHOW USERS
 
 ### SHOW INDEX {#show-index}
+
 インデックス情報を表示します。
 
 構文：
@@ -209,7 +208,7 @@ SHOW INDEX index_name
 
 例：
 
-```
+```sql
 Mach> CREATE TABLE t1 (c1 INTEGER, c2 VARCHAR(10));
 Created successfully.
 Mach> CREATE VOLATILE TABLE t2 (c1 INTEGER, c2 VARCHAR(10));
@@ -237,13 +236,13 @@ T1                                                  C2                          
 
 すべてのインデックスを表示します。
 
-**構文：**
+構文：
 
 ```
 SHOW INDEXES
 ```
 
-**例：**
+例：
 
 ```sql
 Mach> CREATE TABLE t1 (c1 INTEGER, c2 VARCHAR(10));
@@ -275,7 +274,7 @@ SYS                   T2                                                  C1    
 
 例：
 
-```
+```sql
 Mach> SHOW INDEXGAP
 TABLE_NAME                                INDEX_NAME                                GAP
 -------------------------------------------------------------------------------------------------------------
@@ -289,7 +288,7 @@ LSM インデックス作成の情報を表示します。
 
 例：
 
-```
+```sql
 Mach> SHOW LSM;
 TABLE_NAME                                INDEX_NAME                                LEVEL       COUNT
 --------------------------------------------------------------------------------------------------------------------------
@@ -308,7 +307,7 @@ T1                                        IDX2                                  
 
 例：
 
-```
+```sql
 Mach> SHOW LICENSE
 INSTALL_DATE          ISSUE_DATE            EXPIRY_DATE  TYPE        POLICY
 ---------------------------------------------------------------------------------------
@@ -322,7 +321,7 @@ INSTALL_DATE          ISSUE_DATE            EXPIRY_DATE  TYPE        POLICY
 
 例：
 
-```
+```sql
 Mach> SHOW STATEMENTS
 USER_ID     SESSION_ID  QUERY
 --------------------------------------------------------------------------------------------------------------
@@ -342,7 +341,7 @@ SHOW STORAGE
 
 例：
 
-```
+```sql
 Mach> CREATE TAG TABLE TAG (name varchar(20) primary key, time datetime basetime, value double summarized);
 Created successfully.
 
@@ -368,7 +367,7 @@ SHOW TABLE table_name
 
 例：
 
-```
+```sql
 Mach> CREATE TABLE t1 (c1 INTEGER, c2 VARCHAR(10));
 Created successfully.
 Mach> CREATE INDEX t1_idx1 ON t1(c1) INDEX_TYPE LSM;
@@ -398,7 +397,7 @@ T1_IDX2                       LSM                 C1
 
 例：
 
-```
+```sql
 Mach> SHOW TABLES
 NAME
 --------------------------------------------
@@ -415,7 +414,7 @@ SALGRADE
 
 例：
 
-```
+```sql
 Mach> CREATE TABLE t1 (id integer);
 Created successfully.
 Mach> CREATE INDEX t1_idx_id ON t1(id);
@@ -441,7 +440,7 @@ T1                                        ID                                    
 
 例：
 
-```
+```sql
 Mach> CREATE TABLESPACE tbs1 DATADISK disk1 (DISK_PATH="tbs1_disk1"), disk2 (DISK_PATH="tbs1_disk2"), disk3 (DISK_PATH="tbs1_disk3");
 Created successfully.
 
@@ -464,7 +463,7 @@ TBS1                                                                            
 
 例：
 
-```
+```sql
 Mach> CREATE USER testuser IDENTIFIED BY 'test1234';
 Created successfully.
 

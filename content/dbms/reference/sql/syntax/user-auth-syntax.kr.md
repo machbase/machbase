@@ -9,7 +9,9 @@ toc: true
 
 ---
 
-## CREATE USER {#create-drop-alter-user}
+<a id="create-drop-alter-user"></a>
+
+## CREATE USER
 
 ```sql
 create_user_stmt ::=
@@ -106,7 +108,9 @@ CONNECT app_user/App#1234;
 
 ---
 
-## GRANT / REVOKE {#grant-revoke}
+<a id="grant-revoke"></a>
+
+## GRANT / REVOKE
 
 ```sql
 grant_stmt  ::= 'GRANT'  priv_list 'ON' object_ref 'TO'   user_name
@@ -176,7 +180,9 @@ REVOKE BACKUP ON DATABASE factory_a FROM backup_user;
 
 ---
 
-## AUTH KEY 관리 {#auth-key}
+<a id="auth-key"></a>
+
+## AUTH KEY 관리
 
 AUTH KEY는 비밀번호 대신 공개키 기반 challenge 인증을 사용할 때 Machbase에 등록하는 공개키입니다.
 
@@ -218,7 +224,7 @@ auth_key_spec ::=
 
 ```sql
 ALTER USER app_user ADD AUTH KEY (
-    key='-----BEGIN PUBLIC KEY-----\nMFkw...(생략)...==\n-----END PUBLIC KEY-----\n',
+    key='-----BEGIN PUBLIC KEY-----\nMFkw...(omitted)...==\n-----END PUBLIC KEY-----\n',
     valid_before='2047-12-31',
     comment='primary key'
 );

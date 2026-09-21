@@ -14,6 +14,7 @@ UTF-8 plain-text 목차입니다.
 |------|-----|
 | 영어 | [https://docs.machbase.com/llms.txt](/llms.txt) |
 | 한국어 | [https://docs.machbase.com/kr/llms.txt](/kr/llms.txt) |
+| 일본어 | [https://docs.machbase.com/ja/llms.txt](/ja/llms.txt) |
 
 출력은 현재 `/dbms/` 문서만 포함합니다. Machbase Neo, 보존용 DBMS 8.5, draft와 alias
 페이지는 포함하지 않습니다.
@@ -29,7 +30,7 @@ UTF-8 plain-text 목차입니다.
 ## 사용 방법
 
 1. `llms.txt`에서 질문 주제의 canonical section을 찾습니다.
-2. 개별 Markdown이 필요하면 해당 문서 URL의 `index.md`를 읽습니다.
+2. 개별 Markdown이 필요하면 `llms-chunks.json`에서 해당 문서의 `markdown_url`을 사용합니다. 섹션 페이지는 URL 아래의 `index.md`, 그 밖의 페이지는 URL 끝의 `/`를 `.md`로 바꾼 경로로 발행됩니다(예: `/dbms/getting-started/choose-next-doc.md`).
 3. 전체 corpus가 필요하면 [llms-full.txt](../llms-full-txt-chunk-index/)를 사용합니다.
 4. crawler가 문서 단위 metadata를 필요로 하면 `llms-chunks.json`을 사용합니다.
 

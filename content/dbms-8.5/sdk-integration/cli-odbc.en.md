@@ -4,20 +4,21 @@ type : docs
 weight: 10
 ---
 
-CLI is  a software development standard defined in [ISO](https://en.wikipedia.org/wiki/International_Organization_for_Standardization)/[IEC](https://en.wikipedia.org/wiki/International_Electrotechnical_Commission) 9075-3: 2003.
+CLI is a software development standard defined in [ISO](https://en.wikipedia.org/wiki/International_Organization_for_Standardization)/[IEC](https://en.wikipedia.org/wiki/International_Electrotechnical_Commission) 9075-3:2003.
 
-The CLI defines functions and specifications for how to pass SQL to the database and how to receive and analyze the results. This CLI was developed in the early 1990s and was developed exclusively for C and COBOL languages, and its specifications have been maintained to date.
+The CLI defines functions and specifications for how to pass SQL to the database and how to receive and analyze the results. The CLI was developed in the early 1990s exclusively for the C and COBOL languages, and its specification has been maintained to date.
 
-The most widely known standard interface to date is ODBC (Open Database Connectivity), which provides a way for a client program to access a database regardless of the type of database. The current ODBC API version is 3.52 and is defined in ISO and X/Open standards.
+The most widely known standard interface to date is ODBC (Open Database Connectivity), which provides a way for a client program to access a database regardless of the type of database. The current ODBC API version is 3.52 and is defined in the ISO and X/Open standards.
 
 
 ## Standard CLI Functions
 
 See the following links for usage of the standard functions.
-* [Wikipedia](http://en.wikipedia.org/wiki/Call_Level_Interface)
+
+* [Wikipedia](https://en.wikipedia.org/wiki/Call_Level_Interface)
 * [Open Group Document](https://www2.opengroup.org/ogsys/catalog/c451)
 
-You can refer to the following function.
+You can refer to the following functions.
 
 | | | | |
 |--|--|--|--|
@@ -36,29 +37,29 @@ You can refer to the following function.
 
 ## Connection String for Connecting
 
-To connect through the CLI, you need to create a connection string. The contents of each are as follows.
+To connect through the CLI, you need to create a connection string. The items are as follows.
 
 |Connection String Item Name|Item Description|
 |--|--|
 |DSN|Specifies the data source name.<br>ODBC specifies the section name of the file containing the resource, and CLI specifies the server name or IP address.|
-|DBNAME|Describes the DB name of Machbase.|
+|DBNAME|Specifies the Machbase DB name.|
 |SERVER|Indicates the host name or IP address of the server where Machbase is located.|
-|NLS_USE|Sets the language type to use with each other (currently unused, kept for future expansion).|
+|NLS_USE|Sets the language type used by both sides (currently unused, kept for future expansion).|
 |UID|User ID|
 |PWD|User password|
 |PORT_NO|Port number to connect to|
-|PORT_DIR|Specifies the file path to use when connecting to a Unix domain from Unix.<br>(It is specified when modified from the server, and it works even if it is not specified by default.)|
-|CONNTYPE|Specifies the connection method between the client and the server.<br><br>1: Connection with TCP / IP INET<br>2: Connect to Unix Domain|
-|COMPRESS|Indicates whether to compress the Append protocol.<br><br>If this value is 0, it is transmitted without compression.<br>If this value is any value greater than 0, it is compressed only if the Append record is larger than its value.<br><br>Ex) COMPRESS = 512<br>Only when the record size is larger than 512, it is compressed and operates.<br><br>For remote connection, compression improves transmission performance.|
-|SHOW_HIDDEN_COLS|Decides whether to show the hidden column (`_arrival_time`) when executing it with select *.<br><br>If it is 0, it is not shown. If it is 1, information of the corresponding column is output.|
-|CONNECTION_TIMEOUT|Sets how long to wait on the first connection.<br><br>The default setting is 30 seconds.<br>This value is set higher if the server response on the first connection is slower than 30 seconds.|
-|SOCKET_TIMEOUT|This is a timeout that occurs when Protocol I/O takes time.<br><br>The client checks and waits , then performing Disconnect.<br><br>Same as Read Timeout of ORACLE. (In MYSQL and MSSQL, uses SOCKET_TIMEOUT as same as Machbase.)<br><br>Set SOCKET_TIMEOUT=NN (seconds) in Connection String, and the default value is set to 30 minutes (1800).|
-|ALTERNATIVE_SERVERS|When using the cluster version, it is a setting to have the information of several brokers additionally.<br><br>When multiple brokers are registered, even if the connected broker is terminated, the data is continuously input after connecting to another broker.<br><br>Multiple brokers can be registered, and the values of <server address>:<server port> are separated by commas.<br><br>ex) ALTERNATIVE_SERVERS=192.168.0.10:20320,192.168.0.11:20320;|
+|PORT_DIR|Specifies the file path used when connecting through a Unix domain socket on Unix.<br>(Specify it only when it was changed on the server; by default, it works without it.)|
+|CONNTYPE|Specifies the connection method between the client and the server.<br><br>1: Connect with TCP/IP INET<br>2: Connect with Unix Domain|
+|COMPRESS|Indicates whether to compress the Append protocol.<br><br>If this value is 0, data is transmitted without compression.<br>If this value is greater than 0, an Append record is compressed only when it is larger than this value.<br><br>Ex) COMPRESS=512<br>Only records larger than 512 are compressed.<br><br>For remote connections, compression improves transmission performance.|
+|SHOW_HIDDEN_COLS|Decides whether to show the hidden column (`_arrival_time`) when running `select *`.<br><br>If it is 0, the column is not shown. If it is 1, the column is output.|
+|CONNECTION_TIMEOUT|Sets how long to wait on the first connection.<br><br>The default is 30 seconds.<br>Set this value higher if the server may take longer than 30 seconds to respond to the first connection.<br><br>A CONNECTION_TIMEOUT of 0 means no timeout limit; the client waits indefinitely even when the connection fails, so avoid it where possible.|
+|SOCKET_TIMEOUT|The timeout that occurs when protocol I/O takes too long.<br><br>The client checks it, waits, and then disconnects.<br><br>Same as the Read Timeout of ORACLE. (MYSQL and MSSQL use the same name, SOCKET_TIMEOUT.)<br><br>Set SOCKET_TIMEOUT=NN (seconds) in the connection string. The default is 30 minutes (1800).|
+|ALTERNATIVE_SERVERS|When using the cluster version, this setting holds the information of additional brokers.<br><br>When multiple brokers are registered, even if the connected broker goes down, the client connects to another broker and continues inputting data.<br><br>Multiple brokers can be registered; write the values of <server address>:<server port> separated by commas.<br><br>ex) ALTERNATIVE_SERVERS=192.168.0.10:20320,192.168.0.11:20320;|
 |AUTH_MODE|Authentication mode. Use `PASSWORD` for password authentication or `CHALLENGE` for private-key challenge authentication. If `AUTH_KEY_FILE` is set and `AUTH_MODE` is omitted, the CLI treats the connection as `CHALLENGE`.|
 |AUTH_SIG_SCHEME|Signature scheme for `AUTH_MODE=CHALLENGE`: `ECDSA`, `RSA_PKCS1_V15`, or `RSA_PSS`. If omitted, the client attempts to infer the default scheme from the key file.|
 |AUTH_KEY_FILE|Local PEM private key file path for `AUTH_MODE=CHALLENGE`. The key file is required for challenge authentication.|
 
-An example of CLI connection is as follows.
+An example of a CLI connection is as follows.
 
 ```c
 sprintf(connStr,"SERVER=127.0.0.1;COMPRESS=512;UID=SYS;PWD=MANAGER;CONNTYPE=1;PORT_NO=%d", MACHBASE_PORT_NO);
@@ -71,73 +72,76 @@ if (SQL_ERROR == SQLDriverConnect( gCon, NULL, (SQLCHAR *)connStr, SQL_NTS, NULL
 
 ## Extension CLI Function (APPEND)
 
-The CLI extension function is a function for implementing the Append protocol provided to input data to the Machbase server at high speed.
+The CLI extension functions implement the Append protocol, which is provided to input data into the Machbase server at high speed.
 
-This function consists of four functions: channel open, channel data input, channel flush, and channel closing.
+They consist of four kinds of functions: channel open, data input to the channel, channel flush, and channel close.
 
 ### Understanding Append Protocol
 
-The Append protocol provided by Machbase works asynchronously. The term asynchronous means that the response to a specific job requested by the client to the server does not completely synchronize with each other but occurs at the moment when an arbitrary event occurs. That is, even if a client has performed an append, you can not immediately get or verify the results of that execution, and you can check it at any time when the server is ready. For this reason, developers who develop applications using the Append protocol should have an understanding of the following internal behaviors. The following discussion is about how and when a client detects asynchronous errors that occur in the server.
+The Append protocol provided by Machbase works asynchronously. Asynchronous means that the response to a job the client requested from the server is not fully synchronized with the request, but arrives when an arbitrary event occurs. That is, even if a client has performed an append, it cannot immediately get or verify the result of that execution; it can check the result at the point when the server is ready. For this reason, developers who build applications with the Append protocol should understand the following internal behavior. The following sections describe when and how a client detects asynchronous errors that occur in the server and returns them to the user.
 
 ### Append Data Transfer
 
-In a typical call such as SQLExecute or SQLExecDirect (), Machbase uses a synchronous scheme that returns the results back to the client immediately. However, SQLAppendDataV2 () does not send a request immediately after user data is entered. Instead, it waits until all of the client communication buffers are full, and then it sends the data to the client all at once. The reason for this design is that the input data of the client using Append assumes tens to hundreds of thousands of records per second, so it utilizes the buffering method for high-speed data transmission. For this reason, if the user wants to transmit the contents of the buffer at will, the user can input data explicitly by calling SQLAppendFlush () function.
+In a typical call such as SQLExecute() or SQLExecDirect(), Machbase uses a synchronous scheme that returns the result to the client immediately. However, SQLAppendDataV2() does not send a request immediately after user data is entered. Instead, it waits until the client communication buffer is full and then sends the data to the server all at once. This design assumes that a client using Append inputs tens to hundreds of thousands of records per second, so it uses buffering for high-speed data transmission. For this reason, if the user wants to send the contents of the buffer at an arbitrary time, the user can call SQLAppendFlush() to input the data explicitly.
 
 ### Append Data Error Check
 
-As mentioned earlier, the Append protocol is buffered and operates asynchronously. In particular, it is very important to understand when and how an error is detected because it takes a method to detect an error only when an error occurs, without receiving any response when an error does not occur in the server. In addition, since the cost of detecting an error is relatively large, it is very inefficient to check each time a record is input, and currently Machbase is designed to detect an error only in the following cases explicitly. When an error is detected, the error callback function set by the user is called every time.
-1. Checks after all the transmit buffers are full and the data has been explicitly sent to the server,
-2. Checks after explicitly sending data to the server from within SQLAppendFlush ()
-3. Checks just before shut down from within SQLAppendClose ()
+As mentioned earlier, the Append protocol is buffered and operates asynchronously. In particular, the server sends no response when no error occurs and the client detects an error only when one occurs, so it is very important to understand when and how an error is detected. In addition, because detecting an error is relatively expensive, checking on every record input would be very inefficient, so Machbase currently detects errors explicitly only in the following cases. When an error is detected, the error callback function set by the user is called every time.
 
-In other words, it is basically designed to detect errors only in the above three cases, and is designed to minimize the occurrence of I/O.
+1. After the transmit buffer is full and the data has been explicitly sent to the server
+2. After SQLAppendFlush() explicitly sends data to the server
+3. Just before closing, inside SQLAppendClose()
+
+In other words, errors are basically detected only in the above three cases, which is designed to minimize I/O.
 
 ### Additional Options for Checking Server Errors
 
-In order to achieve the maximum performance, the default error detection technique can be more frequently checked and utilized by the user if desired. This can be done by adjusting the last argument to the SQLAppendOpen () function, aErrorCheckCount. When this value is 0, it does not perform any checking operation and operates basically. However, if this value is greater than 0, SQLAppendData () is explicitly checked for errors every time it is called. In other words, if this value is 10, you pay the cost of checking for errors every 10 appends. Therefore, when this value is small, system resources for error detection are used much, so it should be adjusted to an appropriate number.
+The default error detection, set up for maximum performance, can be made more frequent if the user wants. This is done by adjusting aErrorCheckCount, the last argument of the SQLAppendOpen() function. When this value is 0, no additional check is performed and the default behavior applies. If this value is greater than 0, errors are explicitly checked every time SQLAppendData() has been called that many times. For example, if this value is 10, you pay the cost of an error check every 10 appends. Therefore, a small value uses a lot of system resources for error detection, so adjust it to an appropriate number.
 
 ### Leaving Trace Log When Server Error Occurs
 
-If you want to leave a trace log for the append data where an error occurs, set the prepared property DUMP_APPEND_ERROR to 1 on the server. With this setting, the specification of the record that generated the error in the mach.trc file is written to the file. However, if the number of errors is excessive, the amount of system resources used will increase drastically, which may degrade the overall performance of Machbase.
+If you want to leave a trace log for the append data that caused an error, set the server property DUMP_APPEND_ERROR to 1. With this setting, the description of the record that caused the error is written to the mach.trc file. However, if errors are excessive, system resource usage increases sharply and can degrade the overall performance of Machbase, so use it with care.
 
 ### APPEND Function Description
 
 #### SQLAppendOpen
 
-```sql
+```c
 SQLRETURN SQLAppendOpen(SQLHSTMT   aStatementHandle,
                         SQLCHAR   *aTableName,
                         SQLINTEGER aErrorCheckCount );
 ```
 
-This function opens a channel for the target table. If this channel is not closed afterwards, it is kept open continuously.
+This function opens a channel for the target table. The channel stays open until you close it.
+
 A maximum of 1024 statements can be set for one connection. You can use SQLAppendOpen for each statement.
 
-1. aStatementHandle: Represents the handle of the Statement to be appended.
-2. aTableName: Indicates the name of the table to which Append will be performed.
-3. aErrorCheckCount: Decides whether to check the server for errors whenever several data are input. If this value is 0, no error is checked arbitrarily.
+1. aStatementHandle: The handle of the statement on which Append is performed.
+2. aTableName: The name of the table to which Append is performed.
+3. aErrorCheckCount: Decides after how many input records the server is checked for errors. If this value is 0, no extra error check is performed.
 
 #### SQLAppendData (deprecated)
-`SQLRETURN  SQLAppendData(SQLHSTMT StatementHandle, void *aData[]);
-`
 
-This function is a function that inputs data for the channel.
+```c
+SQLRETURN  SQLAppendData(SQLHSTMT StatementHandle, void *aData[]);
+```
 
-* aData is an array containing pointers to the data to be input. The number of arrays must match the number of columns held by the table specified at Open.
-* The return value can be SQL_SUCCESS, SQL_SUCCESS_WITH_INFO, or SQL_ERROR.<br>
-  In particular, if SQL_SUCCESS_WITH_INFO is returned, there may be errors such as a lengthy input column being truncated, so check the result again.
+This function inputs data into the channel.
+
+* aData is an array containing pointers to the data to be input. The number of array elements must match the number of columns of the table specified at open.
+* The return value can be SQL_SUCCESS, SQL_SUCCESS_WITH_INFO, or SQL_ERROR. In particular, if SQL_SUCCESS_WITH_INFO is returned, an input column may have been truncated because it was too long, so check the result again.
 
 **Configuration According to Data Type**
 
 Numeric and character types
-* Types such as float, double, short, int, long long, and char * work well with pointers to their values. 
+
+* Types such as float, double, short, int, long long, and char * work with a pointer to their value.
 
 Address type
 
-* 0x04, 0x7f, 0x00, 0x00, 0x01 are entered in this order.
-* In the case of ipv4, it is passed as an array of 5-byte unsigned char.
-* The first byte is set to 4, the next 4 bytes are set to consecutive address values.
-* For example, in the case of 127.0.0.1, five byte arrays **0x04, 0x7f, 0x00, 0x00, and 0x01** are entered in order.
+* IPv4 is passed as a 5-byte unsigned char array.
+* The first byte is set to 4, and the next 4 bytes are set to the consecutive address values.
+* For example, 127.0.0.1 is entered as the 5-byte array **0x04, 0x7f, 0x00, 0x00, 0x01** in this order.
 
 ```c
 // For tables with four column information (short (16), int (32), long (64), varchar)
@@ -163,12 +167,11 @@ testAppendIPFunc()
 
 datetime type
 
-* Since Machbase internally has a nano-unit time resolution value, it must be converted when setting the time on the client, and it is expressed as a 64-bit unsigned integer value.<br>
-  Therefore, for proper conversion, you need to add nano values ​​after converting to seconds using the UNIX library mktime.<br>
-  ※ Machbase time = (total time (seconds) since January 1, 1970) * 1,000,000,000 + milli-second * 1,000,000 + micro-second * 1000 + nano-second;
+* Machbase internally keeps time with nanosecond resolution, so a time set on the client must be converted, and it is expressed as a 64-bit unsigned integer. For proper conversion, convert the time to seconds with the UNIX library function mktime and then add the sub-second values.
+* ※ Machbase time = (total time (seconds) since January 1, 1970) * 1,000,000,000 + milli-second * 1,000,000 + micro-second * 1000 + nano-second;
 
 ```c
-// Code if Date String is entered as "Year - Month - Date: Minute: Second Millis: Micro: Nano"
+// Code for a date string in the form "Year-Month-Day Hour:Minute:Second Milli:Micro:Nano"
  
 testAppendDateStrFunc(char *aDateString)
 {
@@ -192,20 +195,21 @@ testAppendDateStrFunc(char *aDateString)
 }
 ```
 
-### SQLAppendDataByTime(deprecated)
+#### SQLAppendDataByTime(deprecated)
 
 ```c
 SQLRETURN  SQLAppendDataByTime(SQLHSTMT StatementHandle, SQLBIGINT aTime, void *aData[]);
 ```
 
-This function is a function to input data for the corresponding channel, and the value of `_arrival_time` stored in the DB can be set to a specific time value instead of the current time.
-For example, you want to enter the date in the log file a month ago as the date.
+This function inputs data into the channel, and it lets you set the `_arrival_time` value stored in the DB to a specific time instead of the current time.
 
-* aTime is a time value set to `_arrival_time`.
+For example, use it when you want to enter the dates in a log file from a month ago as they were at that time.
+
+* aTime is the time value set to `_arrival_time`.
 * aData is an array containing pointers to the data to be input.
-* The number of arrays must match the number of columns held by the table specified at Open.
+* The number of array elements must match the number of columns of the table specified at open.
 
-For the rest, refer to the SQLAppendData () function.
+For the rest, refer to the SQLAppendData() function.
 
 ```c
 // For tables with four column information (short (16), int (32), long (64), varchar)
@@ -228,26 +232,27 @@ testAppendFuncWithTime()
 }
 ```
 
-### SQLAppendDataV2
+#### SQLAppendDataV2
 
 ```c
 SQLRETURN  SQLAppendDataV2(SQLHSTMT StatementHandle, SQL_APPEND_PARAM *aData);
 ```
 
-This function is a newly introduced Append function since Machbase 2.0. It is a convenient function that improves the input method inconvenient in existing functions.
-In the case of TEXT and BINARY type introduced in 2.0 especially, input is possible only in SQLAppendDataV2 () function.
+This Append function was introduced in Machbase 2.0 and greatly improves the input method that was inconvenient in the earlier function.
 
-* Can input NULL for each type
-* Can input string length when inputting VARCHAR
-* Can input binary and string data when inputting IPv4 or IPv6
-* Can specify data length for TEXT, BINARY type
+In particular, the TEXT and BINARY types introduced in 2.0 can be input only with SQLAppendDataV2().
 
-The function arguments are structured as follows.
+* NULL can be input for each type
+* The string length can be specified when inputting VARCHAR
+* IPv4 and IPv6 can be input as binary or string data
+* The data length can be specified for the TEXT and BINARY types
 
-* aData is a pointer to an array of arguments called SQL_APPEND_PARAM. The number of this array must match the number of columns held by the table specified at Open.
-* The return value can be SQL_SUCCESS, SQL_SUCCESS_WITH_INFO, or SQL_ERROR. In particular, if SQL_SUCCESS_WITH_INFO is returned, there may be errors such as a lengthy input column being truncated, so check the result again.
+The function arguments are as follows.
 
-Below is the definition of SQL_APPEND_PARAM that will actually be used in V2 , which is included in machbase_sqlcli.h.
+* aData is a pointer to an array of SQL_APPEND_PARAM arguments. The number of array elements must match the number of columns of the table specified at open.
+* The return value can be SQL_SUCCESS, SQL_SUCCESS_WITH_INFO, or SQL_ERROR. In particular, if SQL_SUCCESS_WITH_INFO is returned, an input column may have been truncated because it was too long, so check the result again.
+
+Below is the definition of SQL_APPEND_PARAM used in V2, which is included in machbase_sqlcli.h.
 
 ```c
 typedef struct machbaseAppendVarStruct
@@ -299,11 +304,11 @@ typedef union machbaseAppendParam
 #define SQL_APPEND_PARAM machbaseAppendParam
 ```
 
-As you can see from the above, there is a structure in which a shared structure machbaseAppendParam which internally contains one argument. The length and value for the data and string can be explicitly entered for each data type. Examples of actual use are as follows.
+As shown above, one argument is held internally in the union machbaseAppendParam. For each data type, the length and value of the data or string can be entered explicitly. Examples of actual use are as follows.
 
 **Fixed-Length Numeric Type Input**
 
-Fixed-length numeric types are short, ushort, integer, uinteger, long, ulong, float, and double. This type can be entered by directly assigning a value to the structure member of SQL_APPEND_PARAM.
+Fixed-length numeric types are short, ushort, integer, uinteger, long, ulong, float, and double. These types can be entered by directly assigning a value to the corresponding member of SQL_APPEND_PARAM.
 
 |Database Type|NULL Macro|SQL_APPEND_PARAM Member|
 |--|--|--|
@@ -353,34 +358,33 @@ void testAppendExampleFunc()
 
 **Date Type Input**
 
-Below is an example of inputting data of DATETIME type. Several macros are available for convenience.
+Below is an example of inputting DATETIME data. Several macros are available for convenience.
 
-Performs operations on the mDateTime member in SQL_APPEND_PARAM. The following macro can specify a date by setting a 64-bit integer value called mTime in the mDateTime structure.
+These operate on the mDateTime member of SQL_APPEND_PARAM. The following macros specify a date by setting mTime, a 64-bit integer in the mDateTime structure.
 
 ```c
 typedef struct machbaseAppendDateTimeStruct
 {
-long long       mTime;
+    long long       mTime;
 #if defined(SUPPORT_STRUCT_TM)
-struct tm       mTM;
+    struct tm       mTM;
 #endif
-char           *mDateStr;
-char           *mFormatStr;
+    char           *mDateStr;
+    char           *mFormatStr;
 } machbaseAppendDateTimeStruct;
 ```
 
 |Macro|Description|
 |--|--|
 |SQL_APPEND_DATETIME_NOW|Enters the current client time.|
-|SQL_APPEND_DATETIME_STRUCT_TM|Sets a value to mTM, the struct tm structure of mDateTime, and inputs the value to the database.|
-|SQL_APPEND_DATETIME_STRING|Sets a value for the string type of mDateTime and enters it into the database.<br><br>mDateStr: real date string value assigned<br>mFormatStr: format string assignment for date string|
-|SQL_APPEND_DATETIME_NULL|Enters the value of the date column as NULL.|
-|Any 64-bit Value|This value is entered as the actual datetime.<br><br>This value represents an integer value in nanoseconds since January 1, 1970.<br>For example, if this value is 1 billion (1,000,000,000), it represents 0: 1: 1 on January 1, 1970. (GMT)|
+|SQL_APPEND_DATETIME_STRUCT_TM|Sets a value in mTM, the struct tm structure of mDateTime, and enters that value into the database.|
+|SQL_APPEND_DATETIME_STRING|Sets a string value in mDateTime and enters it into the database.<br><br>mDateStr: the actual date string value<br>mFormatStr: the format string for the date string|
+|SQL_APPEND_DATETIME_NULL|Enters NULL into the date column.|
+|Any 64-bit Value|This value is entered as the actual datetime.<br><br>It is an integer representing the time elapsed in nanoseconds since January 1, 1970.<br>For example, if this value is 1 billion (1,000,000,000), it represents 00:00:01 on January 1, 1970 (GMT).|
+
+The following example enters an actual value for each case, assuming that there is one DATETIME column.
 
 ```c
-
-// Assume that the table schema consists of eight columns, SHORT, USHORT, INTEGER, UINTEGER, LONG, ULONG, FLOAT, and DOUBLE, respectively.
- 
 void testAppendDateTimeFunc()
 {
     SQL_APPEND_PARAM sParam[1];
@@ -413,15 +417,15 @@ void testAppendDateTimeFunc()
 
 **Internet Address Type Input**
 
-The following is an example of inputting IPv4 and IPv6 type data. There are also several macros available for your convenience. Performs operations on the mLength member in SQL_APPEND_PARAM.
+The following is an example of inputting IPv4 and IPv6 data. Several macros are also available for convenience. They operate on the mLength member of SQL_APPEND_PARAM.
 
 ```c
 /* for IPv4, IPv6 as bin or string representation */
 typedef struct machbaseAppendIPStruct
 {
-unsigned char   mLength; /* 0:null, 4:ipv4, 6:ipv6, 255:string representation */
-unsigned char   mAddr[16];
-char           *mAddrString;
+    unsigned char   mLength; /* 0:null, 4:ipv4, 6:ipv6, 255:string representation */
+    unsigned char   mAddr[16];
+    char           *mAddrString;
 } machbaseAppendIPStruct;
 ```
 
@@ -437,11 +441,11 @@ The following is an example of entering actual values for each case.
 ```c
 void testAppendIPFunc()
 {
-SQL_APPEND_PARAM sParam[1];
-/* NULL */
-sParam[0].mIP.mLength  = SQL_APPEND_IP_NULL;
-SQLAppendDataV2(Stmt, sParam);
-
+    SQL_APPEND_PARAM sParam[1];
+    /* NULL */
+    sParam[0].mIP.mLength  = SQL_APPEND_IP_NULL;
+    SQLAppendDataV2(Stmt, sParam);
+ 
     /* Direct array access */
     sParam[0].mIP.mLength  = SQL_APPEND_IP_IPV4;
     sParam[0].mIP.mAddr[0] = 127;
@@ -495,19 +499,21 @@ SQLAppendDataV2(Stmt, sParam);
 }
 ```
 
+When an IP value is entered as a string, SQLAppendDataV2() changes mLength to 4 or 6 according to the address type. Therefore, when you input values in a loop, set mLength to SQL_APPEND_IP_STRING before every SQLAppendDataV2() call.
+
 **Variable Data Types (Character and Binary Data) Input**
 
-Variable data types include VARCHAR and TEXT, and BLOB and CLOB. In existing functions, only VARCHAR was supported, and there was no way for the user to enter the length of the string. For that reason, we had to get the length through the strlen () function each time, but from function V2, the user can directly specify the length for the variable data type. Thus, if the user knows the length in advance, data can be input more quickly. Internally, the variable data type is a structure. However, for convenience of development, members are created separately for each data type.
+Variable data types include VARCHAR, TEXT, BLOB, and CLOB. The earlier function supported only VARCHAR and gave the user no way to enter the string length, so the length had to be obtained with strlen() each time. Since V2, the user can specify the length of variable data directly, so if the length is known in advance, data can be input faster. Internally, variable data types share one structure, but for convenience separate members are provided for each data type.
 
 ```c
 typedef struct machbaseAppendVarStruct
 {
-unsigned int mLength;
-void *mData;
+    unsigned int mLength;
+    void *mData;
 } machbaseAppendVarStruct;
 ```
 
-When inputting a variable data type, set the length of the data to mLength and set the primitive data pointer to mData. If mLength is greater than the defined schema, it is automatically truncated. At this time, SQLAppendDataV2 () returns SQL_SUCCESS_WITH_INFO and also fills the internal structure with a related warning message. To see this warning message, use SQLError () function.
+When inputting variable data, set the data length in mLength and the raw data pointer in mData. If mLength is larger than the length defined in the schema, the data is truncated automatically. In that case, SQLAppendDataV2() returns SQL_SUCCESS_WITH_INFO and also fills the internal structure with a related warning message. To see this warning message, use the SQLError() function.
 
 |Database Type|NULL Macro|SQL_APPEND_PARAM Member<br>(mVar is acceptable)|
 |--|--|--|
@@ -518,7 +524,7 @@ When inputting a variable data type, set the length of the data to mLength and s
 |BLOB|SQL_APPEND_BLOB_NULL|mBlob|
 |CLOB|SQL_APPEND_CLOB_NULL|mClob|
 
-The following is an example of entering actual values for each environment. Assumes that there is one VARCHAR column.
+The following is an example of entering actual values for each case. Assume that there is one VARCHAR column.
 
 ```sql
 CREATE TABLE ttt (name VARCHAR(10));
@@ -547,13 +553,13 @@ void testAppendVarcharFunc()
 }
 ```
 
-The following is an example of inserting text type data.
+The following is an example of inputting TEXT data.
 
 ```sql
 CREATE TABLE ttt (doc TEXT);
 ```
 
-```cpp
+```c
 void testAppendFunc()
 {
     SQL_APPEND_PARAM sParam[1];
@@ -570,21 +576,20 @@ void testAppendFunc()
 }
 ```
 
+#### SQLAppendDataByTimeV2
 
-### SQLAppendDataByTimeV2
-
-```sql
+```c
 SQLRETURN  SQLAppendDataByTimeV2(SQLHSTMT StatementHandle, SQLBIGINT aTime, SQL_APPEND_PARAM  *aData);
 ```
 
-This function is a function to input data for the corresponding channel, and the value of `_arrival_time` stored in the DB can be set to a specific time value instead of the current time. For example, you want to enter the date in the log file a month ago as the date.
+This function inputs data into the channel, and it lets you set the `_arrival_time` value stored in the DB to a specific time instead of the current time. For example, use it when you want to enter the dates in a log file from a month ago as they were at that time.
 
-* aTime is the time value to be set to `_arrival_time`. You must enter the nano second value from January 1, 1970 to the present. Also, input values ​​must be sorted in order from the past to the present.
-* aData is an array containing pointers to the data to be input. The number of arrays must match the number of columns held by the table specified at Open.
+* aTime is the time value to be set to `_arrival_time`. Enter the value in nanoseconds since January 1, 1970. The input values must also be sorted in order from the past to the present.
+* aData is an array containing pointers to the data to be input. The number of array elements must match the number of columns of the table specified at open.
 
-For the rest, refer to the SQLAppendDataV2 () function.
+For the rest, refer to the SQLAppendDataV2() function.
 
-### SQLAppendDataV3 and SQLAppendDataByTimeV3
+#### SQLAppendDataV3 and SQLAppendDataByTimeV3
 
 ```c
 SQLRETURN SQLAppendDataV3(SQLHSTMT aStmtHandle,
@@ -600,7 +605,7 @@ SQLRETURN SQLAppendDataByTimeV3(SQLHSTMT aStmtHandle,
 V3 uses the same `SQL_APPEND_PARAM` values as V2 and adds `aColCount`.
 Use it when the number of values supplied by the client must be explicit instead of inferred only from the table metadata opened by `SQLAppendOpen`.
 
-### SQLAppendBatch and SQLAppendBatchByTime
+#### SQLAppendBatch and SQLAppendBatchByTime
 
 ```c
 SQLRETURN SQLAppendBatch(SQLHSTMT aStmtHandle,
@@ -621,38 +626,39 @@ SQLRETURN SQLAppendBatchByTime(SQLHSTMT aStmtHandle,
 
 Batch append sends a rectangular row set in one call. `aTypes` is an array of `SQL_APPEND_TYPE_*` values, and `aData` contains `aRowCount * aColCount` values in row order. `SQL_APPEND_TYPE_JSON` is available for JSON columns; BLOB and CLOB type entries are retained for variable binary/text payloads.
 
-### SQLAppendFlush
+#### SQLAppendFlush
 
-```sql
+```c
 SQLRETURN SQLAppendFlush(SQLHSTMT StatementHandle);
 ```
 
 This function immediately sends the data accumulated in the current channel buffer to the Machbase server.
 
-### SQLAppendClose
-```sql
+#### SQLAppendClose
+
+```c
 SQLRETURN SQLAppendClose(SQLHSTMT   aStmtHandle,
                          SQLBIGINT* aSuccessCount,
                          SQLBIGINT* aFailureCount);
 ```
 
-This function closes the currently open channel. If an unopened channel exists, an error occurs.
+This function closes the currently open channel. If the channel is not open, an error occurs.
 
-* aSuccessCount: The number of successful Append records.
-* aFailureCount: The number of failed Append records.
+* aSuccessCount: The number of records appended successfully.
+* aFailureCount: The number of records that failed to be appended.
 
-### SQLAppendSetErrorCallback
+#### SQLAppendSetErrorCallback
 
-```sql
+```c
 SQLRETURN SQLAppendSetErrorCallback(SQLHSTMT aStmtHandle, SQLAppendErrorCallback aFunc);
 ```
 
-This function sets the callback function that is called when an error occurs during append. If you do not set this function, the client will ignore any errors that occur in the server.
+This function sets the callback function that is called when an error occurs during Append after SQLAppendOpen() has succeeded. If you do not set it, the client ignores errors even when they occur in the server.
 
-* aStmtHandle: Specifies a Statement to check for errors.
+* aStmtHandle: Specifies the statement to check for errors.
 * aFunc: Specifies the function pointer to call on Append failure.
 
-The prototype for SQLAppendErrorCallback is:
+The prototype of SQLAppendErrorCallback is as follows.
 
 ```c
 typedef void (*SQLAppendErrorCallback)(SQLHSTMT aStmtHandle,
@@ -663,26 +669,26 @@ typedef void (*SQLAppendErrorCallback)(SQLHSTMT aStmtHandle,
                                          SQLLEN aRowBufLen);
 ```
 
-* aStatementHandle: the statement handle that generated the error
-* aErrorCode: 32-bit error code that caused the error
-* aErrorMessage: string for the error code
-* aErrorBufLen: the length of aErrorMessage
-* aRowBuf: a string containing the detailed description of the record that caused the error
-* aRowBufLen: length of aRowBuf
+* aStatementHandle: The statement handle that caused the error
+* aErrorCode: The 32-bit error code that caused the error
+* aErrorMessage: The string for the error code
+* aErrorBufLen: The length of aErrorMessage
+* aRowBuf: A string containing the detailed description of the record that caused the error
+* aRowBufLen: The length of aRowBuf
 
 **Example of Using Error Callback (dumpError)**
 
 ```c
 void dumpError(SQLHSTMT    aStmtHandle,
-SQLINTEGER  aErrorCode,
-SQLPOINTER  aErrorMessage,
-SQLLEN      aErrorBufLen,
-SQLPOINTER  aRowBuf,
-SQLLEN      aRowBufLen)
+               SQLINTEGER  aErrorCode,
+               SQLPOINTER  aErrorMessage,
+               SQLLEN      aErrorBufLen,
+               SQLPOINTER  aRowBuf,
+               SQLLEN      aRowBufLen)
 {
-char       sErrMsg[1024] = {0, };
-char       sRowMsg[32 * 1024] = {0, };
-
+    char       sErrMsg[1024] = {0, };
+    char       sRowMsg[32 * 1024] = {0, };
+ 
     if (aErrorMessage != NULL)
     {
         strncpy(sErrMsg, (char *)aErrorMessage, aErrorBufLen);
@@ -695,10 +701,10 @@ char       sRowMsg[32 * 1024] = {0, };
  
     fprintf(stdout, "Append Error : [%d][%s]\n[%s]\n\n", aErrorCode, sErrMsg, sRowMsg);
 }
-
-
+ 
+ 
 ......
-
+ 
     if( SQLAppendOpen(m_IStmt, TableName, aErrorCheckCount) != SQL_SUCCESS )
     {
         fprintf(stdout, "SQLAppendOpen error\n");
@@ -717,54 +723,55 @@ char       sRowMsg[32 * 1024] = {0, };
 }
 ```
 
-### SQLSetConnectAppendFlush
+#### SQLSetConnectAppendFlush
 
-```sql
+```c
 SQLRETURN SQL_API SQLSetConnectAppendFlush(SQLHDBC hdbc, SQLINTEGER option)
 ```
 
-The data input by Append is written to the communication buffer and is sent to the server when the user calls the SQLAppendFlush function in the waiting state or the communication buffer becomes full. You can use this function if you want the user to send data by append to the server at regular intervals even if the buffer is not full. This function computes the difference between the last transmitted time and the current time every 100ms, and transfers the contents of the communication buffer to the server when the specified time (1 second if not set) has passed.
+Data input by Append is written to the communication buffer and waits there until the user calls SQLAppendFlush or the buffer becomes full, and then it is sent to the server. Use this function if you want the Append data to be sent to the server at regular intervals even when the buffer is not full. Every 100 ms, this function computes the difference between the last transmission time and the current time, and sends the contents of the communication buffer to the server when the specified time (1 second if not set) has passed.
 
-The parameters are:
+The parameters are as follows.
 
-* hdbc: DB connection handle.
-* If option: 0, auto flush is off; otherwise, auto flush is on.
+* hdbc: The DB connection handle.
+* option: If 0, auto flush is turned off; any other value turns auto flush on.
 
-Executing on an unconnected hdbc will result in an error.
+Executing it on an unconnected hdbc results in an error.
 
-### SQLSetStmtAppendInterval
-```sql
+#### SQLSetStmtAppendInterval
+
+```c
 SQLRETURN SQL_API SQLSetStmtAppendInterval(SQLHSTMT hstmt, SQLINTEGER fValue)
 ```
 
-Uses SQLSetConnectAppendFlush to turn off automatic flushing or flushing for a particular statement when you turn on flushing on a time unit.
+When time-based flushing is turned on with SQLSetConnectAppendFlush, use this function to turn off automatic flushing or adjust the flush interval for a particular statement.
 
-The parameters are:
+The parameters are as follows.
 
-* hstmt: This is the statement handle that you want to adjust the flush interval.
-* fValue: The value to which you want to adjust the flush interval. **If 0, flush is not performed and the unit is ms**. Set to a multiple of 100 since the thread that determines whether to flush every 100ms is executed. It does not automatically flush at exactly the right time. **1000 is the default value**.
+* hstmt: The statement handle whose flush interval you want to adjust.
+* fValue: The flush interval to set. **If 0, flush is not performed, and the unit is ms**. Because the thread that decides whether to flush runs every 100 ms, set it to a multiple of 100. Automatic flush does not run at exactly the specified time. **1000 is the default value**.
 
-Execution of this function will succeed even if time-based flush is not running.
+This function succeeds even if time-based flush is not running.
 
 **Error Check and Description**
 
-This is a description of the code and how to check for errors when using the Append related functions. If the return value in the CLI function is not SQL_SUCCESS, you can check the error message using the following code.
+This section describes how to check for errors when using the Append-related functions, and the error codes. If a CLI function does not return SQL_SUCCESS, you can check the error message with the following code.
 
 ```c
 SQLINTEGER errNo;
 int msgLength;
 char sqlState[6];
 char errMsg[1024];
-
+ 
 if (SQL_SUCCESS == SQLError ( env, con, stmt, (SQLCHAR *)sqlState, &errNo,
-(SQLCHAR *)errMsg, 1024, &msgLength ))
+                              (SQLCHAR *)errMsg, 1024, &msgLength ))
 {
-//set five length error code
-printf("ERROR-%05d: %s\n", errNo, errMsg);
+    //set five length error code
+    printf("ERROR-%05d: %s\n", errNo, errMsg);
 }
 ```
 
-The error message returned from the Append related function is as follows.
+The error messages returned by the Append-related functions are as follows.
 
 <table>
   <thead>
@@ -798,24 +805,24 @@ The error message returned from the Append related function is as follows.
     </tr>
     <tr>
       <td>cannot allocate compress memory.</td>
-      <td>Compressed buffer memory allocation error occurred.</td>
+      <td>A compression buffer memory allocation error occurred.</td>
     </tr>
     <tr>
       <td>invalid return after reading column meta.</td>
-      <td>Return value has an error.</td>
+      <td>The return value has an error.</td>
     </tr>
     <tr>
       <td rowspan="3">SQLAppendData</td>
       <td>statement is not opened.</td>
-      <td>Called AppendData without AppendOpen.</td>
+      <td>AppendData was called without AppendOpen.</td>
     </tr>
     <tr>
       <td>column() truncated :</td>
-      <td>Occurs when you enter data that is larger than the size specified in the varchar type column.</td>
+      <td>Occurs when you enter data larger than the size specified for a varchar type column.</td>
     </tr>
     <tr>
       <td>Failed to add binary.</td>
-      <td>Write error in communication buffer occurred.</td>
+      <td>A write error occurred in the communication buffer.</td>
     </tr>
     <tr>
       <td rowspan="5">SQLAppendClose</td>
@@ -836,12 +843,12 @@ The error message returned from the Append related function is as follows.
     </tr>
     <tr>
       <td>invalid return after reading column meta.</td>
-      <td>Return value has an error.</td>
+      <td>The return value has an error.</td>
     </tr>
     <tr>
       <td rowspan="2">SQLAppendFlush</td>
       <td>statement is not opened.</td>
-      <td>Not in AppendOpen state</td>
+      <td>Not in AppendOpen state.</td>
     </tr>
     <tr>
       <td>Failed to close stream protocol.</td>
@@ -854,32 +861,32 @@ The error message returned from the Append related function is as follows.
     </tr>
     <tr>
       <td>Protocol Error (not APPEND_DATA_PROTOCOL)</td>
-      <td>Communication buffer read result is not APPEND_DATA_PROTOCOL value.</td>
+      <td>The value read from the communication buffer is not APPEND_DATA_PROTOCOL.</td>
     </tr>
     <tr>
       <td rowspan="8">SQLAppendDataV2</td>
       <td>Invalid date format or date string.</td>
-      <td>Occurs when the datetime type is wrong.</td>
+      <td>Occurs when the datetime format is wrong.</td>
     </tr>
     <tr>
       <td>statement is not opened.</td>
-      <td>Not in AppendOpen state</td>
+      <td>Not in AppendOpen state.</td>
     </tr>
     <tr>
       <td>column() truncated :</td>
-      <td>This occurs when you enter data that is larger than the size specified in the binary type column.</td>
+      <td>Occurs when you enter data larger than the size specified for a binary type column.</td>
     </tr>
     <tr>
       <td>column() truncated :</td>
-      <td>Occurs when you enter data that is larger than the size specified in the varchar and text type column.</td>
+      <td>Occurs when you enter data larger than the size specified for a varchar or text type column.</td>
     </tr>
     <tr>
       <td>Failed to add stream.</td>
-      <td>Write error in communication buffer occurred.</td>
+      <td>A write error occurred in the communication buffer.</td>
     </tr>
     <tr>
       <td>IP address length is invalid.</td>
-      <td>The mLength value of the IPv4, IPv6 type structure is specified incorrectly.</td>
+      <td>The mLength value of the IPv4/IPv6 type structure is specified incorrectly.</td>
     </tr>
     <tr>
       <td>IP string is invalid.</td>
@@ -887,18 +894,20 @@ The error message returned from the Append related function is as follows.
     </tr>
     <tr>
       <td>Unknown data type has been specified.</td>
-      <td>Not the data type used by Machbase.</td>
+      <td>Not a data type used by Machbase.</td>
     </tr>
   </tbody>
 </table>
 
 ## Column wise parameter binding
 
-The SQLAppend function, which is used to enter a large amount of data into Machbase quickly, can be used only when entering a log / tag table, and the SQLAppend function cannot be used to perform a bulk update on a lookup or volatile table.
-For this purpose, Machbase 5.5 and later versions support column wise parameter binding. (Row wise format parameter binding is not yet supported.)
-Set SQL_ATTR_PARAM_BIND_TYPE in the argument Attribute of the function SQLSetStmtAttr () and SQL_PARAM_BIND_BY_COLUMN in the parameter param.
-For each column to bind, set the parameter to an array and the indicator variable to an array. Then call SQLBindParameter () with this parameter.
-The figure below shows how columnar binding works for each parameter array.
+The SQLAppend functions, which input a large amount of data into Machbase quickly, can be used only for log and tag tables; they cannot be used to perform a bulk update on a lookup or volatile table.
+
+For this purpose, Machbase 5.5 and later versions support column-wise parameter binding. (Row-wise parameter binding is not supported yet.)
+
+Set SQL_ATTR_PARAM_BIND_TYPE in the Attribute argument of SQLSetStmtAttr() and SQL_PARAM_BIND_BY_COLUMN in the param argument. For each column to bind, set the parameter as an array and the indicator variable as an array as well. Then call SQLBindParameter() with these parameters.
+
+The figure below shows how column-wise binding works for each parameter array.
 
 <table>
   <thead>
@@ -911,15 +920,16 @@ The figure below shows how columnar binding works for each parameter array.
   <tbody>
     <tr>
       <td>Value_Array</td>
-      <td>Indicator/<br><br>length array</td>
+      <td>Indicator/<br>length array</td>
       <td>Value_Array</td>
-      <td>Indicator/<br><br>length array</td>
+      <td>Indicator/<br>length array</td>
       <td>Value_Array</td>
-      <td>Indicator/<br><br>length array</td>
+      <td>Indicator/<br>length array</td>
     </tr>
   </tbody>
 </table>
 
+The following example inserts a large amount of data with column-wise parameter binding.
 
 ```c
 #define DESC_LEN 51
@@ -930,7 +940,7 @@ SQLCHAR * Statement = "INSERT INTO Parts (PartID, Description, Price) VALUES (?,
 SQLUINTEGER PartIDArray[ARRAY_SIZE];
 SQLCHAR DescArray[ARRAY_SIZE][DESC_LEN];
 SQLREAL PriceArray[ARRAY_SIZE];
-/* Array of predicate variables to bind */
+/* Array of indicator variables to bind */
 SQLINTEGER PartIDIndArray[ARRAY_SIZE], DescLenOrIndArray[ARRAY_SIZE], PriceIndArray[ARRAY_SIZE];
 SQLUSMALLINT i, ParamStatusArray[ARRAY_SIZE];
 SQLUINTEGER ParamsProcessed;
@@ -957,11 +967,12 @@ SQLBindParameter(hstmt, 3, SQL_PARAM_INPUT, SQL_C_FLOAT, SQL_REAL, 7, 0,
 
 ## Supported Strings
 
-Machbase stores string data using UTF-8 by default.
-In the case of Windows that inputs/outputs strings in methods other than UTF-8, ODBC converts them as follows.
+Machbase stores string data in UTF-8 by default.
+
+On Windows, where strings are input and output in encodings other than UTF-8, ODBC converts them as follows.
 
 |OS|Unicode/Non-Unicode|String Conversion|Note|
 |--|--|--|--|
 |Windows|Unicode (UTF-16)|UTF-16 ⟷ UTF-8|N/A|
-|Windows|Non-Unicode (MBCS)|MBCS ⟷ UTF-8|Use the default string of Non-Unicode application in Windows settings|
-|Linux|UTF-8|N/A|UTF-8 only supported|
+|Windows|Non-Unicode (MBCS)|MBCS ⟷ UTF-8|Uses the default string encoding for non-Unicode applications in the Windows settings|
+|Linux|UTF-8|N/A|Only UTF-8 is supported|

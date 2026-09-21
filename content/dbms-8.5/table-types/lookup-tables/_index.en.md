@@ -22,7 +22,7 @@ Lookup tables are disk-based tables optimized for reference data that changes ra
 
 ```sql
 CREATE LOOKUP TABLE table_name (
-    column1 data_type,
+    column1 data_type PRIMARY KEY,
     column2 data_type,
     ...
 );

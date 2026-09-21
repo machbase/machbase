@@ -20,7 +20,7 @@ Virtual Tables are read-only and can not be added / deleted / updated by the use
   - [V$SESMEM](#vsesmem)
   - [V$SESSTAT](#vsesstat)
   - [V$SESTIME](#vsestime)
-- [V$SYSMEM](#vsysmem)
+  - [V$SYSMEM](#vsysmem)
   - [V$SYSSTAT](#vsysstat)
   - [V$SYSTIME](#vsystime)
   - [V$STMT](#vstmt)
@@ -179,7 +179,7 @@ Displays the time information of the session.
 |MAX_TICK|Maximum time (per each performance unit)|
 
 
-## V$SYSMEM
+### V$SYSMEM
 
 Displays memory information of the system.
 

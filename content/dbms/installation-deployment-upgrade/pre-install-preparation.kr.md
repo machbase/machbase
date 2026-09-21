@@ -159,7 +159,7 @@ Minor 버전이 다르면 DB 파일과 프로토콜의 호환성이 달라질 �
 
 tarball 압축을 해제하면 `$MACHBASE_HOME` 아래에 다음 구조가 생성됩니다.
 
-```
+```text
 $MACHBASE_HOME/
 ├── bin/        실행 파일
 ├── conf/       설정 파일 (machbase.conf 등)

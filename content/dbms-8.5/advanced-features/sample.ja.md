@@ -40,7 +40,7 @@ $ machsql --server=127.0.0.1 --port=${MACHBASE_PORT_NO} --user=SYS --password=MA
 
 ## STREAM の作成と実行 {#create-and-run-stream}
 
-作成した TAG テーブルと LOG テーブル用のサンプルファイルを実行し、STREAM を開始します。
+作成した TAG テーブルと LOG テーブル用のサンプルファイルを実行し、STREAM を作成して開始します。
 
 ```bash
 $ machsql --server=127.0.0.1 --port=${MACHBASE_PORT_NO} --user=SYS --password=MANAGER --script=4_plc_stream_tag.sql
@@ -56,11 +56,11 @@ EXEC STREAM_CREATE(event_v0, 'insert into tag select ''MTAG_V00'', tm, v0 from p
 EXEC STREAM_START(event_v0);
 ```
 
-正常に開始されると、plc_tag_table への入力に応じて各 STREAM が動作し、TAG テーブルへデータを挿入します。
+STREAM が正常に実行されると、`plc_tag_table` にデータが挿入されるたびに各 STREAM が動作し、そのデータを TAG テーブルへ挿入します。
 
 ## STREAM の状態確認 {#check-stream-status}
 
-仮想テーブル v$streams で、実行中のストリーム数、クエリー、状態、エラーメッセージを確認できます。
+Machbase が提供する仮想テーブル `v$streams` で、実行中のストリーム数、使用中のクエリー、状態、エラーメッセージを確認できます。
 
 ```sql
 Mach> desc v$streams;
@@ -106,8 +106,8 @@ RUNNING EVENT_C15 PLC_TAG_TABLE insert into tag select 'MTAG_C15', tm, c15 from 
 
 ## データの読み込み {#load-data}
 
-すべての STREAM が実行中であることを確認し、machloader でデータを入力して動作を確認します。
-STREAM は入力方法に依存しません。CLI、JDBC、Collector など、どの方法で入力しても TAG テーブルへ自動的に挿入します。
+すべての STREAM が実行中であることを確認したら、machloader でデータを入力して動作を確認します。
+STREAM は入力方法に関係なく動作するため、CLI、JDBC、Collector など、どの方法で入力しても TAG テーブルへ自動的に挿入されます。
 
 ```bash
 $ cat 5_plc_tag_load.sh
@@ -132,7 +132,7 @@ CREATE TABLE   : FALSE              CREATE TABLESPACE: FALSE
                                                80000                    0
 ```
 
-読み込み中に TAG テーブルを検索すると、リアルタイムで挿入されていることを確認できます。
+読み込み中に TAG テーブルを検索すると、データがリアルタイムで挿入されていることを確認できます。
 
 ```sql
 Mach> select count(*) from TAG;
@@ -155,7 +155,7 @@ Elapsed time: 0.000
 
 ## STREAM の実行結果 {#result-of-stream}
 
-次のように、元テーブル plc_tag_table のどこまで読み取ったか確認できます。
+各 STREAM が元テーブル（`plc_tag_table`）のデータをどこまで読み取ったかは、次のように確認できます。
 
 ```sql
 Mach> select name, state, end_rid from v$streams;
@@ -182,7 +182,7 @@ EVENT_C15 RUNNING 746604
 [18] row(s) selected.
 ```
 
-end_rid が元テーブルのレコード数と一致すれば、未処理のデータはありません。
+`end_rid` の値が元テーブルのレコード数と一致すれば、元テーブルにはもう読み取るデータがありません。
 
 ```sql
 Mach> select name, state, end_rid from v$streams;
@@ -209,7 +209,7 @@ EVENT_C15 RUNNING 2000000
 [18] row(s) selected.
 ```
 
-TAG テーブルの件数が「元テーブルのレコード数 × STREAM 数」と一致すれば、すべてのデータが正常に処理されたことを確認できます。
+TAG テーブルの件数は `元テーブルのレコード数 × STREAM 数` と一致するため、STREAM がすべてのデータを正常に読み取ったことを確認できます。
 
 ```sql
 Mach> select count(*) from TAG;
@@ -231,14 +231,14 @@ min(time)                       max(time)
 
 ## データの追加 {#add-data}
 
-INSERT 文でデータを追加し、入力のたびに STREAM が反応するか確認できます。
+INSERT 文でデータを追加し、入力のたびに STREAM が実際に反応するかを確認します。
 
 ```sql
 Mach> insert into plc_tag_table values(TO_DATE('2009-01-28 12:37:00 000:000:000'), 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000);
 1 row(s) inserted.
 ```
 
-PLC_TAG_TABLE に 1 レコードを追加すると、次のように各ストリームの end_rid が 2000001 に増加します。
+`PLC_TAG_TABLE` に 1 レコードを追加するとすぐに、次のように各ストリームの `end_rid` が 2000001 に増加します。
 
 ```sql
 Mach> select name, state, end_rid from v$streams;

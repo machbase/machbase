@@ -179,7 +179,9 @@ ID          DT
 ```
 
 
-## APPROX_PERCENTILE {#approx_percentile-family}
+<a id="approx_percentile-family"></a>
+
+## APPROX_PERCENTILE {#approx_percentile}
 
 ```
 APPROX_PERCENTILE
@@ -3049,7 +3051,9 @@ SELECT MODE(alarm_code)
 FROM event_log;
 ```
 
-## `P05` / `P10` / `P90` / `P95` {#p05-p10-p90-p95}
+<a id="p05-p10-p90-p95"></a>
+
+## `P05` / `P10` / `P90` / `P95` {#p05--p10--p90--p95}
 
 よく使う正確なパーセンタイルの短縮形です。
 
@@ -3074,7 +3078,9 @@ SELECT P05(response_ms),
 FROM web_log;
 ```
 
-## `PERCENTILE_CONT` / `PERCENTILE_DISC` {#percentile_cont-percentile_disc}
+<a id="percentile_cont-percentile_disc"></a>
+
+## `PERCENTILE_CONT` / `PERCENTILE_DISC` {#percentile_cont--percentile_disc}
 
 数値入力の正確なパーセンタイルを計算します。
 

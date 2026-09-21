@@ -73,22 +73,22 @@ Mach> insert into vtable values(1, 'west', 0);
 Mach> insert into vtable values(2, 'east', 0);
 1 row(s) inserted.
 Mach> select * from vtable;
-ID          DIRECTION   REFCNT
+ID          DIRECTION   REFCNT     
 ----------------------------------------
-1           west       0
-2           east        0
+1           west       0          
+2           east        0          
 [2] row(s) selected.
-
+ 
 Mach> insert into vtable values(1, 'south', 0);
 [ERR-01418 : The key already exists in the unique index.]
 Mach> insert into vtable values(1, 'south', 0) on duplicate key update;
 1 row(s) inserted.
-
+ 
 Mach> select * from vtable;
-ID          DIRECTION   REFCNT
+ID          DIRECTION   REFCNT     
 ----------------------------------------
-1           south        0
-2           east        0
+1           south        0          
+2           east        0          
 [2] row(s) selected.
 ```
 
@@ -109,19 +109,19 @@ Mach> insert into vtable values(1, 'west', 0);
 Mach> insert into vtable values(2, 'east', 0);
 1 row(s) inserted.
 Mach> select * from vtable;
-ID          DIRECTION   REFCNT
+ID          DIRECTION   REFCNT     
 ----------------------------------------
-1           west        0
-2           east        0
+1           west        0          
+2           east        0          
 [2] row(s) selected.
-
+ 
 Mach> insert into vtable values(1, 'west', 0) on duplicate key update set refcnt = 1;
 1 row(s) inserted.
-
+ 
 Mach> select * from vtable;
-ID          DIRECTION   REFCNT
+ID          DIRECTION   REFCNT     
 ----------------------------------------
-1           west        1
-2           east        0
+1           west        1          
+2           east        0          
 [2] row(s) selected.
 ```

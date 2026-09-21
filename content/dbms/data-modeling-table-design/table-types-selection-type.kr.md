@@ -47,7 +47,7 @@ toc: true
 
 ### 결정 흐름
 
-```
+```text
 데이터가 센서/기기 계측값인가?
   ├── YES → 시간축인가?    YES → TAG TABLE (BASETIME)
   │            거리축인가?  YES → TAG TABLE (BASEDISTANCE)

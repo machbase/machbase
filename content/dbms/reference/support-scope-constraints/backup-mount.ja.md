@@ -35,5 +35,5 @@ toc: true
 
 ## 正式な参照先
 
-- 構文: [BACKUP · RESTORE · MOUNT](../../sql/syntax/backup-restore-mount-syntax/)
+- 構文: [BACKUP・RESTORE・MOUNT](../../sql/syntax/backup-restore-mount-syntax/)
 - 運用手順: [バックアップ、復元、マウント](../../../operations-configuration-recovery/backup-restore-mount/)

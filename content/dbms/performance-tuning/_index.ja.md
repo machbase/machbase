@@ -24,7 +24,7 @@ toc: true
 | 12.2 | [モデリングの性能調整](./performance-tuning-modeling/) | テーブルタイプとスキーマ設計の確認 |
 | 12.3 | [インデックスのチューニング](./index-tuning/) | タイプ別のインデックス選択と書き込みコスト |
 | 12.5 | [クエリと分析の性能調整](./performance-query-tuning/) | 時間条件、実行計画、ROLLUP、ウィンドウ関数 |
-| 12.6 | [キャッシュとメモリのチューニング](/dbms/performance-tuning/cache-tuning-memory/) | PVO Cache、Min-Max Cache、メモリ使用量 |
+| 12.6 | [キャッシュとメモリのチューニング](./cache-tuning-memory/) | PVO Cache、Min-Max Cache、メモリ使用量 |
 | 12.7 | [ストレージと Cluster のチューニング](./tuning-storage-cluster/) | ディスク I/O、チェックポイント、Cluster 構成 |
 
 スループットと応答時間は、ハードウェア、データ分布、スキーマ、インデックス、同時利用者数に依存します。

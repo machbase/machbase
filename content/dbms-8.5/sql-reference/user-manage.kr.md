@@ -4,7 +4,7 @@ type: docs
 weight: 60
 ---
 
-# Index
+# 목차
 
 * [CREATE USER](#create-user)
 * [DROP USER](#drop-user)
@@ -16,7 +16,7 @@ weight: 60
 * [AUTH KEY 메타 조회](#auth-key-메타-조회)
 * [CONNECT](#connect)
 * [GRANT/REVOKE](#grantrevoke)
-* [Managing User Example](#managing-user-example)
+* [사용자 관리 예제](#사용자-관리-예제)
 
 
 ## CREATE USER
@@ -29,7 +29,7 @@ weight: 60
 create_user_stmt ::= 'CREATE USER' user_name 'IDENTIFIED BY' password
 ```
 
-사용자를 생성하는 구문입니다:
+사용자를 생성하는 구문은 다음과 같습니다.
 
 ```sql
 -- Example
@@ -48,9 +48,10 @@ CREATE USER user_name IDENTIFIED BY password PASSWORD POLICY { NONE | LOW | HIGH
 CREATE USER app_user IDENTIFIED BY "Aa!StrongPwd1" PASSWORD POLICY LOW;
 CREATE USER ops_user IDENTIFIED BY "Bb@StrongPwd2" PASSWORD POLICY HIGH;
 ```
+
 사용자명은 생성 시 대문자로 변환되어 저장됩니다. 예를 들어 `CREATE USER app_user ...`로 생성하면
-메타 테이블과 `V$` 뷰에서는 `APP_USER`로 조회됩니다. 이후 접속이나 권한 부여 구문에서도 같은 사용자명으로
-처리됩니다.
+메타 테이블과 `V$` 뷰에서는 `APP_USER`로 저장, 표시됩니다. 이후 접속이나 권한 부여 구문에서도 같은 사용자명을
+사용합니다.
 
 
 ## DROP USER
@@ -63,7 +64,7 @@ CREATE USER ops_user IDENTIFIED BY "Bb@StrongPwd2" PASSWORD POLICY HIGH;
 drop_user_stmt ::= 'DROP USER' user_name
 ```
 
-사용자를 삭제하는 구문은 다음과 같습니다. SYS 사용자는 삭제할 수 없으며, 삭제하려는 사용자가 이미 생성한 테이블이 있으면 오류가 표시됩니다.
+사용자를 삭제하는 구문은 다음과 같습니다. SYS 사용자는 삭제할 수 없으며, 삭제하려는 사용자가 생성한 테이블이 남아 있으면 오류가 발생합니다.
 
 ```sql
 -- Example
@@ -81,7 +82,7 @@ DROP USER old_user
 alter_user_pwd_stmt ::= 'ALTER USER' user_name 'IDENTIFIED BY' password
 ```
 
-사용자는 다음 구문을 통해 비밀번호를 변경할 수 있습니다.
+다음 구문으로 비밀번호를 변경할 수 있습니다.
 
 ```sql
 -- Example
@@ -107,9 +108,9 @@ ALTER USER user_name IDENTIFIED BY password PASSWORD POLICY { NONE | LOW | HIGH 
   - 비밀번호 강도 제약이 없습니다.
   - 비밀번호 만료 시각(`VALID_BEFORE`)은 `NULL`입니다.
 - `LOW`
-  - 최소 길이 10자 이상이어야 합니다.
-  - 대문자, 소문자, 특수문자를 포함해야 합니다.
-  - 5자리 이상 연속 숫자, 증가/감소 숫자 연번, 키보드 연속 문자열은 사용할 수 없습니다.
+  - 비밀번호는 10자 이상이어야 합니다.
+  - 비밀번호에 대문자, 소문자, 특수문자를 포함해야 합니다.
+  - 5자리 이상 이어지는 숫자, 증가/감소하는 연속 숫자, 키보드 배열 순서의 문자열은 사용할 수 없습니다.
   - 비밀번호 만료 시각(`VALID_BEFORE`)은 `NULL`입니다.
 - `HIGH`
   - `LOW` 규칙을 모두 적용합니다.
@@ -134,7 +135,7 @@ ALTER USER user3 IDENTIFIED BY "Ff#NewPwd66" PASSWORD POLICY NONE;
 - `ALTER USER ... IDENTIFIED BY ... PASSWORD POLICY ...`는 새 정책으로 새 비밀번호를 검증합니다.
 - 정책을 `HIGH`로 설정하거나 `HIGH` 사용자의 비밀번호를 변경하면 `VALID_BEFORE`가 현재 시각 기준 90일 뒤로 갱신됩니다.
 - 정책을 `LOW` 또는 `NONE`으로 설정하면 `VALID_BEFORE`는 `NULL`로 갱신됩니다.
-- 만료된 계정은 로그인할 수 없으므로 본인 계정으로 비밀번호를 변경할 수 없습니다. 관리자 계정에서 새 비밀번호로 리셋해야 합니다.
+- 만료된 계정은 로그인할 수 없으므로 해당 계정으로는 비밀번호를 변경할 수 없습니다. 관리자 계정에서 새 비밀번호로 재설정해야 합니다.
 
 정책과 만료 시각은 `M$SYS_USERS`에서 확인할 수 있습니다.
 
@@ -144,9 +145,10 @@ FROM M$SYS_USERS;
 ```
 
 `PWD_POLICY_LEVEL` 값은 `0 = NONE`, `1 = LOW`, `2 = HIGH`를 의미합니다. `VALID_BEFORE`는 값이 있을 때 `YYYY-MM-DD` 형식으로 표시됩니다.
+
 ## AUTH KEY 파일 생성
 
-> **참고**: 다음 설명은 Machbase 8.5 이상에서 지원됩니다.
+> **참고**: 다음 동작은 Machbase 8.5 이상에서 지원됩니다.
 
 AUTH KEY 인증은 클라이언트 측 개인키 파일과 Machbase 사용자에 등록된 공개키를 사용합니다.
 일반적으로 `openssl`로 키 쌍을 생성하고, 개인키는 클라이언트 호스트에 보관하며, 공개키만
@@ -204,16 +206,16 @@ openssl rsa -in app_user_rsa.key -RSAPublicKey_out -out app_user_rsa_pkcs1.pub
 chmod 600 app_user_rsa.key
 ```
 
-RSA 3072-bit, 4096-bit 키를 사용하려면 `openssl genrsa`의 마지막 인자를 각각 `3072`, `4096`으로 지정합니다.
+RSA 3072-bit 또는 4096-bit 키를 사용하려면 `openssl genrsa`의 마지막 인자를 각각 `3072`, `4096`으로 지정합니다.
 
-공개키를 SQL에 넣을 때는 PEM 파일을 줄바꿈이 `\n`으로 이스케이프된 한 줄 문자열로
+공개키를 SQL에 넣을 때는 PEM 파일의 줄바꿈을 이스케이프하여 하나의 SQL 문자열로
 변환합니다.
 
 ```bash
 awk '{printf "%s\\n", $0}' app_user_ecdsa.pub
 ```
 
-명령 출력 결과를 `CREATE USER ... WITH AUTH KEY` 또는 `ALTER USER ... ADD AUTH KEY`의
+명령의 출력 결과를 `CREATE USER ... WITH AUTH KEY` 또는 `ALTER USER ... ADD AUTH KEY`의
 `PUBKEY` 값으로 사용합니다.
 
 다음 예는 생성한 공개키로 등록 SQL 파일을 만드는 방법입니다.
@@ -263,9 +265,9 @@ EOF
 
 ## AUTH KEY를 포함한 사용자 생성
 
-> **참고**: 다음 설명은 Machbase 8.5 이상에서 지원됩니다.
+> **참고**: 다음 동작은 Machbase 8.5 이상에서 지원됩니다.
 
-Machbase는 비밀번호 인증과 함께 공개키 기반 challenge 인증용 AUTH KEY를 사용자에 등록할 수 있습니다.
+Machbase는 비밀번호 인증과 함께, 공개키 기반 challenge 인증에 사용할 AUTH KEY를 사용자에 등록할 수 있습니다.
 
 ```sql
 CREATE USER app_user IDENTIFIED BY 'App#1234'
@@ -308,7 +310,7 @@ WITH AUTH KEY (
 X.509 인증서로 등록하면 Machbase는 인증서 안의 공개키를 추출해 저장합니다. 인증서 chain
 검증이나 CA trust 검증은 수행하지 않으며, 인증서는 공개키와 만료일 정보를 담는 입력 형식으로
 사용됩니다. 등록 입력은 단일 PEM 블록이어야 하며, 여러 인증서를 이어 붙인 chain PEM, private
-key PEM, OpenSSH 공개키 원형, 지원하지 않는 PEM header, 유효 PEM 뒤에 붙은 임의 텍스트는
+key PEM, OpenSSH 공개키 원문, 지원하지 않는 PEM header, 유효한 PEM 블록 뒤에 공백이 아닌 텍스트가 붙은 입력은
 등록되지 않습니다.
 
 X.509 인증서에는 `notAfter` 만료일이 있습니다. `VALID_BEFORE`는 인증서 `notAfter`보다 늦을
@@ -326,7 +328,7 @@ ALTER USER app_user ADD AUTH KEY (
 );
 ```
 
-추가된 키는 즉시 활성 상태(`ACTIVATED=1`)로 생성됩니다. 롤오버 기간에는 한 사용자에 여러 활성 AUTH KEY를 둘 수 있습니다.
+추가된 키는 즉시 활성 상태(`ACTIVATED=1`)로 생성됩니다. 키 롤오버 기간에는 한 사용자가 여러 개의 활성 AUTH KEY를 가질 수 있습니다.
 
 ### AUTH KEY 활성화 / 비활성화
 
@@ -336,7 +338,7 @@ ALTER USER app_user ACTIVATE AUTH KEY ID 3;
 ```
 
 - 비활성화된 키는 challenge 인증에 사용할 수 없습니다.
-- 한 사용자에 여러 AUTH KEY를 보유할 수 있습니다.
+- 한 사용자가 여러 AUTH KEY를 보유할 수 있습니다.
 
 ### AUTH KEY 유효기간 변경
 
@@ -355,11 +357,11 @@ ALTER USER app_user DROP AUTH KEY ID 3;
 ```
 
 - 삭제된 키는 즉시 인증에 사용할 수 없습니다.
-- 사용자 삭제 시 해당 사용자의 AUTH KEY 메타도 함께 정리됩니다.
+- 사용자를 삭제하면 해당 사용자의 AUTH KEY 메타 정보도 함께 삭제됩니다.
 
 ## AUTH KEY 메타 조회
 
-등록된 AUTH KEY 메타는 `V$USER_AUTH_KEYS`에서 조회할 수 있습니다.
+등록된 AUTH KEY 메타 정보는 `V$USER_AUTH_KEYS`에서 조회할 수 있습니다.
 
 주요 컬럼:
 
@@ -367,8 +369,8 @@ ALTER USER app_user DROP AUTH KEY ID 3;
 - `USER_NAME`: AUTH KEY 소유 사용자
 - `KEY_ALGO`: 키 알고리즘 (`RSA`, `ECDSA`)
 - `KEY_PARAM`: 키 파라미터
-  - RSA 키: 비트 길이 예) `2048`
-  - EC 키: 곡선 이름 예) `P-256`, `P-384`, `P-521`
+  - RSA 키: `2048` 같은 비트 길이
+  - EC 키: `P-256`, `P-384`, `P-521` 같은 곡선 이름
 - `ACTIVATED`: 활성화 여부
 - `VALID_AFTER`, `VALID_BEFORE`: 유효 기간
 - `ADDITIONAL_INFO`: 서버가 생성한 AUTH KEY 부가 정보
@@ -405,7 +407,7 @@ SELECT key_id, user_name, pubkey
 user_connect_stmt: 'CONNECT' user_name '/' password
 ```
 
-사용자는 애플리케이션을 종료하지 않고 다음 구문을 통해 다른 사용자로 재연결할 수 있습니다.
+애플리케이션을 종료하지 않고 다음 구문으로 다른 사용자로 다시 연결할 수 있습니다.
 
 ```sql
 -- Example
@@ -421,7 +423,7 @@ CONNECT user1/password;
 
 ![priv_value](/images/sql/user/priv_value.png)
 
-GRANT 문을 통해 사용자에게 권한을 부여하고, REVOKE 문을 통해 이미 부여된 권한을 회수합니다.
+`GRANT`로 사용자에게 권한을 부여하고, `REVOKE`로 이미 부여한 권한을 회수합니다.
 
 기본 예제:
 
@@ -443,13 +445,13 @@ REVOKE ALL ON mytable FROM user1;
 
 ### 테이블 권한
 
-테이블에 대한 권한을 부여할 때는 다음과 같이 사용합니다.
+테이블에 대한 권한을 부여할 때는 다음 형식으로 대상을 지정합니다.
 
 - `table`
 - `user.table`
 - `db.user.table`
 
-권한 종류:
+사용할 수 있는 테이블 권한:
 
 - `SELECT`
 - `INSERT`
@@ -468,7 +470,7 @@ GRANT ALL ON machbasedb.sys.sensor_log TO app_user;
 
 ### Machbase 8.5 이상: 데이터베이스 권한
 
-> **참고**: 다음 설명은 Machbase 8.5 이상에서 지원됩니다.
+> **참고**: 다음 동작은 Machbase 8.5 이상에서 지원됩니다.
 
 Machbase 8.5 이상에서는 `MACHBASEDB`를 대상으로 데이터베이스 범위 권한을 부여할 수 있습니다.
 
@@ -496,7 +498,7 @@ GRANT ALL ON machbasedb TO admin_user;
 
 ### `ALL`의 의미
 
-> **참고**: 다음 설명은 Machbase 8.5 이상에서 지원됩니다.
+> **참고**: 다음 동작은 Machbase 8.5 이상에서 지원됩니다.
 
 `ALL`은 항상 같은 뜻이 아닙니다. 대상에 따라 의미가 달라집니다.
 
@@ -509,7 +511,7 @@ GRANT ALL ON machbasedb TO admin_user;
 
 ### 데이터베이스 이름에 직접 DML 권한을 부여할 수 없는 경우
 
-> **참고**: 다음 설명은 Machbase 8.5 이상에서 지원됩니다.
+> **참고**: 다음 동작은 Machbase 8.5 이상에서 지원됩니다.
 
 다음과 같이 데이터베이스 이름 `MACHBASEDB`에 `SELECT`, `INSERT`, `DELETE`, `UPDATE`를 직접 부여하는 방식은 사용할 수 없습니다.
 
@@ -535,7 +537,7 @@ GRANT INSERT ON sys.sensor_log TO user1;
 
 ### 데이터베이스 대상 이름은 `MACHBASEDB`를 사용
 
-> **참고**: 다음 설명은 Machbase 8.5 이상에서 지원됩니다.
+> **참고**: 다음 동작은 Machbase 8.5 이상에서 지원됩니다.
 
 데이터베이스 범위 권한을 부여할 때는 `MACHBASEDB`를 사용합니다.
 
@@ -556,7 +558,7 @@ GRANT BACKUP ON typo TO backup_user;
 
 ### 데이터베이스 권한이 필요한 작업
 
-> **참고**: 다음 설명은 Machbase 8.5 이상에서 지원됩니다.
+> **참고**: 다음 동작은 Machbase 8.5 이상에서 지원됩니다.
 
 다음 작업은 테이블 권한이 아니라 `MACHBASEDB`에 대한 데이터베이스 권한이 필요합니다.
 
@@ -625,9 +627,9 @@ GRANT MOUNT ON machbasedb TO mount_user;
 ```
 
 
-## Managing User Example
+## 사용자 관리 예제
 
-위 쿼리의 예제와 결과입니다.
+다음은 위 구문의 실행 예와 결과입니다.
 
 ```
 ############################################

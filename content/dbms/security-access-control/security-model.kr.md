@@ -9,7 +9,7 @@ Machbase의 보안 모델은 **사용자 계정**, **권한(GRANT/REVOKE)**, **�
 
 ## Machbase 보안 구조
 
-```
+```text
 클라이언트 연결 요청
         │
         ▼

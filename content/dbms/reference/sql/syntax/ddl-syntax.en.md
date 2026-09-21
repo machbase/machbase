@@ -406,7 +406,9 @@ For deletion syntax and detachment order, see [RETENTION Syntax](../retention-sy
 
 ---
 
-## DDL Concurrency and Locks {#ddl-concurrency}
+<a id="ddl-concurrency"></a>
+
+## DDL Concurrency and Locks
 
 Machbase 8.7.0 Standard Edition coordinates DDL at object level for independent objects. DDL
 creating or changing differently named LOG, TAG, VOLATILE, LOOKUP, and TRANSACTION tables in the

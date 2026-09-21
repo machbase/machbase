@@ -118,8 +118,8 @@ The following example rebuilds the `09:30` ~ `09:31` buckets for `stock_tick -> 
 STOP ROLLUP rollup_stock_1m;
 
 DELETE FROM stock_rollup_1m
-WHERE time BETWEEN TO_DATE('2026-01-27 09:30:00')
-               AND TO_DATE('2026-01-27 09:31:59');
+WHERE time >= TO_DATE('2026-01-27 09:30:00')
+  AND time < TO_DATE('2026-01-27 09:32:00');
 
 INSERT INTO stock_rollup_1m
 SELECT code,
@@ -128,8 +128,8 @@ SELECT code,
        SUM(volume)                AS sum_volume,
        COUNT(*)                   AS cnt
 FROM stock_tick
-WHERE time BETWEEN TO_DATE('2026-01-27 09:30:00')
-               AND TO_DATE('2026-01-27 09:31:59')
+WHERE time >= TO_DATE('2026-01-27 09:30:00')
+  AND time < TO_DATE('2026-01-27 09:32:00')
 GROUP BY code, time;
 
 EXEC TABLE_FLUSH('stock_rollup_1m');
@@ -158,8 +158,8 @@ SELECT code,
        SUM(volume)                AS volume,
        COUNT(*)                   AS cnt
 FROM stock_tick
-WHERE time BETWEEN TO_DATE('2026-01-27 09:30:00')
-               AND TO_DATE('2026-01-27 09:30:59')
+WHERE time >= TO_DATE('2026-01-27 09:30:00')
+  AND time < TO_DATE('2026-01-27 09:31:00')
 GROUP BY code, time;
 
 EXEC TABLE_FLUSH('stock_candle_1m');

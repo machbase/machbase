@@ -22,7 +22,7 @@ Lookup 테이블은 드물게 변경되지만 자주 읽히는 참조 데이터�
 
 ```sql
 CREATE LOOKUP TABLE table_name (
-    column1 data_type,
+    column1 data_type PRIMARY KEY,
     column2 data_type,
     ...
 );

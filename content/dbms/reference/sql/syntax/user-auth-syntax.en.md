@@ -10,7 +10,9 @@ privileges, and managing public-key AUTH KEY authentication.
 
 ---
 
-## CREATE USER {#create-drop-alter-user}
+<a id="create-drop-alter-user"></a>
+
+## CREATE USER
 
 ```sql
 create_user_stmt ::=
@@ -109,7 +111,9 @@ CONNECT app_user/App#1234;
 
 ---
 
-## GRANT / REVOKE {#grant-revoke}
+<a id="grant-revoke"></a>
+
+## GRANT / REVOKE
 
 ```sql
 grant_stmt  ::= 'GRANT'  priv_list 'ON' object_ref 'TO'   user_name
@@ -179,7 +183,9 @@ by default. Grant `ALTER`, `MOUNT`, and `BACKUP` explicitly.
 
 ---
 
-## AUTH KEY Management {#auth-key}
+<a id="auth-key"></a>
+
+## AUTH KEY Management
 
 An AUTH KEY is a public key registered in Machbase for challenge authentication
 instead of password authentication.

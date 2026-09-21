@@ -178,7 +178,9 @@ ID          DT
 [3] row(s) selected.
 ```
 
-## APPROX_PERCENTILE {#approx_percentile-family}
+<a id="approx_percentile-family"></a>
+
+## APPROX_PERCENTILE
 
 ```
 APPROX_PERCENTILE
@@ -252,7 +254,7 @@ cardinality를 정합니다. target 없는 all-NULL sparse, 중복 또는 범위
 참고하십시오.
 
 
-## AREA {#area}
+## AREA
 
 `AREA(y, x)`는 숫자형 `(x, y)` 점들로 이루어진 곡선 아래 면적을 정확하게 계산하는 집계 함수입니다.
 
@@ -782,7 +784,7 @@ COUNT(id1)
 ```
 
 
-## CUME_DIST {#cume_dist}
+## CUME_DIST
 
 `CUME_DIST(value, threshold)`는 `value`가 `threshold` 이하인 행의 누적 비율을 반환합니다.
 
@@ -1790,7 +1792,7 @@ MAX(c)
 ```
 
 
-## MEDIAN {#median}
+## MEDIAN
 
 `MEDIAN(value)`는 숫자식의 정확한 중앙값을 반환하며 `PERCENTILE_CONT(value, 0.5)`와 같은
 방식으로 동작합니다.
@@ -2890,7 +2892,7 @@ NULL
 ```
 
 
-## TOP_K {#top_k}
+## TOP_K
 
 `TOP_K(value, k)`는 가장 자주 등장한 `k`개의 숫자 값을 `value:count` 형식의 문자열로 반환합니다.
 
@@ -3252,7 +3254,7 @@ JSON_REMOVE('{"owner":{"name":"machbase","team":"db"}}', '$.owner.team')
 - `JSON_REMOVE(..., '$')` 는 허용되지 않습니다.
 - JSON 문서 인자가 `NULL` 이면 결과는 SQL `NULL` 입니다.
 
-## PI() {#pi}
+## PI()
 
 `DOUBLE` 타입의 π 상수를 반환합니다.
 
@@ -3268,7 +3270,7 @@ PI()
 [1] row(s) selected.
 ```
 
-## SQRT() {#sqrt}
+## SQRT()
 
 제곱근을 반환합니다.
 
@@ -3284,7 +3286,7 @@ SQRT(9)   SQRT(2.25)         SQRT(16.0)
 [1] row(s) selected.
 ```
 
-## POWER() {#power}
+## POWER()
 
 `base`의 `exponent` 거듭제곱을 반환합니다.
 
@@ -3300,7 +3302,7 @@ POWER(2, 3)   POWER(9, 0.5)   POWER(4, -1)
 [1] row(s) selected.
 ```
 
-## POW() {#pow}
+## POW()
 
 `POWER()`의 별칭입니다.
 
@@ -3316,7 +3318,7 @@ POW(2, 3)   POW(2, -1)   POW(10, 0)
 [1] row(s) selected.
 ```
 
-## LOG() {#log}
+## LOG()
 
 `LOG(n)`은 자연로그, `LOG(base, n)`은 지정한 밑의 로그를 계산합니다.
 
@@ -3332,7 +3334,7 @@ LOG(2, 8)   LOG(100)             LOG(10, 1000)
 [1] row(s) selected.
 ```
 
-## LN() {#ln}
+## LN()
 
 자연로그 `ln(n)`을 반환합니다.
 
@@ -3348,7 +3350,7 @@ LN(1)      LN(10)         LN(1000)
 [1] row(s) selected.
 ```
 
-## EXP() {#exp}
+## EXP()
 
 `e^n`을 반환합니다.
 
@@ -3364,7 +3366,7 @@ EXP(0)      EXP(1)         EXP(-1)
 [1] row(s) selected.
 ```
 
-## FLOOR() {#floor}
+## FLOOR()
 
 음의 무한대 방향으로 내림합니다.
 
@@ -3380,7 +3382,7 @@ FLOOR(-1.2)  FLOOR(3.9)  FLOOR(-3.0)
 [1] row(s) selected.
 ```
 
-## CEIL() {#ceil}
+## CEIL()
 
 양의 무한대 방향으로 올림합니다.
 
@@ -3396,7 +3398,7 @@ CEIL(-1.2)  CEIL(3.2)  CEIL(-3.0)
 [1] row(s) selected.
 ```
 
-## SIN() {#sin}
+## SIN()
 
 라디안 입력, 사인값 반환.
 
@@ -3412,7 +3414,7 @@ SIN(0)      SIN(PI()/2)   SIN(PI())
 [1] row(s) selected.
 ```
 
-## SLOPE {#slope}
+## SLOPE
 
 `SLOPE(y, x)`는 숫자형 `(x, y)` 점들에 대한 선형 회귀 직선의 기울기를 계산합니다.
 
@@ -3430,7 +3432,7 @@ SELECT SLOPE(temp_c, sample_sec)
 FROM sensor_log;
 ```
 
-## COS() {#cos}
+## COS()
 
 라디안 입력, 코사인값 반환.
 
@@ -3446,7 +3448,7 @@ COS(0)      COS(PI())   COS(PI()/2)
 [1] row(s) selected.
 ```
 
-## TAN() {#tan}
+## TAN()
 
 라디안 입력, 탄젠트값 반환.
 
@@ -3462,7 +3464,7 @@ TAN(0)      TAN(PI()/4)  TAN(PI())
 [1] row(s) selected.
 ```
 
-## MOD() {#mod}
+## MOD()
 
 몫을 0으로 절사한 기준으로 나머지를 계산합니다.
 
@@ -3478,7 +3480,7 @@ MOD(10, 3)  MOD(11, 4)  MOD(-10, 3)  MOD(3.5, 0.5)
 [1] row(s) selected.
 ```
 
-## MODE {#mode}
+## MODE
 
 `MODE(value)`는 입력 집합에서 가장 자주 나타나는 숫자 값을 반환합니다.
 
@@ -3496,7 +3498,9 @@ SELECT MODE(alarm_code)
 FROM event_log;
 ```
 
-## P05 / P10 / P90 / P95 {#p05-p10-p90-p95}
+<a id="p05-p10-p90-p95"></a>
+
+## P05 / P10 / P90 / P95
 
 자주 쓰는 분위값을 빠르게 표현할 수 있도록 준비된 정확 분위수 축약 함수입니다.
 
@@ -3521,7 +3525,9 @@ SELECT P05(response_ms),
 FROM web_log;
 ```
 
-## PERCENTILE_CONT / PERCENTILE_DISC {#percentile_cont-percentile_disc}
+<a id="percentile_cont-percentile_disc"></a>
+
+## PERCENTILE_CONT / PERCENTILE_DISC
 
 이 함수들은 숫자형 입력에 대해 정확한 분위값을 계산하는 집계 함수입니다.
 
@@ -3542,7 +3548,7 @@ SELECT PERCENTILE_CONT(latency_ms, 0.95) AS pcont95,
 FROM api_log;
 ```
 
-## QUANTILE {#quantile}
+## QUANTILE
 
 `QUANTILE(value, ratio)`는 숫자형 입력에 대해 정확한 연속 분위값을 계산합니다.
 
@@ -3560,7 +3566,7 @@ SELECT QUANTILE(cpu_usage, 0.75)
 FROM host_metric;
 ```
 
-## RAND() {#rand}
+## RAND()
 
 난수 값을 생성합니다.
 

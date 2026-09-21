@@ -119,9 +119,9 @@ WHERE time BETWEEN '2025-10-09 00:00:00' AND '2025-10-10 00:00:00';
 전통적인 데이터베이스는 전체 행을 함께 저장합니다:
 
 ```
-행 1: [timestamp1, sensor_id, temp, humidity]
-행 2: [timestamp2, sensor_id, temp, humidity]
-행 3: [timestamp3, sensor_id, temp, humidity]
+Row 1: [timestamp1, sensor_id, temp, humidity]
+Row 2: [timestamp2, sensor_id, temp, humidity]
+Row 3: [timestamp3, sensor_id, temp, humidity]
 ```
 
 **문제**: "AVG(temperature)"를 쿼리하면 데이터베이스가 temperature만이 아닌 모든 컬럼을 읽습니다.

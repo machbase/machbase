@@ -7,7 +7,9 @@ aliases:
   - /dbms/reference/sdk-api/net-connector/
 ---
 
-## 목차 {#index}
+<a id="index"></a>
+
+## 목차
 
 * [개요](#overview)
 * [설치](#install)
@@ -17,14 +19,18 @@ aliases:
 * [사용 예시](#usage-and-examples)
 * [프로토콜 4.0-full 전체 API](#full-provider-apis-protocol-40-full)
 
-## 개요 {#overview}
+<a id="overview"></a>
+
+## 개요
 
 Machbase는 와이어 프로토콜 2.1~4.0을 지원하는 범용 ADO.NET 프로바이더
 **UniMachNetConnector**를 제공합니다. 현재 통합 패키지는 `UniMachNetConnector` 8.0.55이며
 `net452`, `net5.0`, `net6.0`, `net7.0`, `net8.0` 타깃을 빌드합니다. 자동 협상은 연결
 문자열에 `PROTOCOL=auto` 또는 `auto-full`을 지정했을 때만 동작합니다.
 
-## 설치 {#install}
+<a id="install"></a>
+
+## 설치
 
 설치된 Machbase 서버·클라이언트에는 `$MACHBASE_HOME/lib/` 경로에 범용 .NET 프로바이더가
 함께 배포됩니다. 표준 Linux 설치에는 예를 들어 `UniMachNetConnector-net50-8.0.55.dll`과
@@ -53,7 +59,9 @@ SERVER=127.0.0.1;PORT_NO=5656;UID=APP_A;PWD=secret;DATABASE=FACTORY_A
 자동으로 가정하지 않습니다. 자세한 제한은 [다중 데이터베이스 운영 가이드](/dbms/operations-configuration-recovery/multi-database/#97-net)를
 참조하십시오.
 
-## NuGet로 설치 (통합 커넥터, 8.0.55) {#nuget-unified-connector}
+<a id="nuget-unified-connector"></a>
+
+## NuGet로 설치 (통합 커넥터, 8.0.55)
 
 통합 커넥터의 패키지 ID는 `UniMachNetConnector`입니다. 새 프로젝트에서는 DLL 복사 대신 NuGet 패키지 참조 방식을 권장합니다.
 
@@ -134,7 +142,9 @@ var count = Convert.ToInt64(cmd.ExecuteScalar());
 Console.WriteLine($"Tables: {count}");
 ```
 
-## 커넥션 문자열 참고 {#connection-string-reference}
+<a id="connection-string-reference"></a>
+
+## 커넥션 문자열 참고
 
 커넥션 문자열의 각 항목은 세미콜론(`;`)으로 구분합니다. 표의 한 행에 표시된 키워드는 서로 동일한 의미를 갖습니다.
 
@@ -171,7 +181,9 @@ var connectionString = string.Format(
 
 이미 서버 버전을 알고 있다면 `PROTOCOL=2.1`, `3.0`, `4.0`, `4.0-full`처럼 명시적으로 지정해 자동 감지를 건너뛸 수도 있습니다.
 
-## API 레퍼런스 {#api-reference}
+<a id="api-reference"></a>
+
+## API 레퍼런스
 
 {{< callout type="warning" >}}
 아래에 명시되지 않은 기능은 아직 구현되지 않았거나 정상적으로 동작하지 않을 수 있습니다.<br>
@@ -730,7 +742,9 @@ string GetRowBuffer()
 
 오류가 발생한 원본 레코드를 문자열 형태로 반환합니다.
 
-## 사용 예시 {#usage-and-examples}
+<a id="usage-and-examples"></a>
+
+## 사용 예시
 
 ### 연결
 
@@ -933,7 +947,9 @@ AppendOpen은 자동 flush 스레드를 시작합니다. 끄려면 이미 열린
 `connection.SetConnectAppendFlush(false)`를 호출합니다. 자동 스레드 오류가 즉시 공개
 exception으로 전달되지 않을 수 있으므로 명시 flush·close와 callback/count 확인을 유지합니다.
 
-## 프로토콜 4.0-full 전체 API {#full-provider-apis-protocol-40-full}
+<a id="full-provider-apis-protocol-40-full"></a>
+
+## 프로토콜 4.0-full 전체 API
 
 `PROTOCOL=4.0-full`을 사용하면 확장된 ADO.NET 표면을 사용할 수 있습니다. 8.0.55 소스
 패키지에서 4.0 limited connector는 3.1.3, 4.0-full connector는 3.2.2입니다.

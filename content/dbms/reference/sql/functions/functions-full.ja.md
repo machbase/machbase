@@ -178,7 +178,9 @@ ID          DT
 [3] row(s) selected.
 ```
 
-## APPROX_PERCENTILE {#approx_percentile-family}
+<a id="approx_percentile-family"></a>
+
+## APPROX_PERCENTILE
 
 ```
 APPROX_PERCENTILE
@@ -244,7 +246,7 @@ SELECT [1 => 12, 33 => 23];
 角括弧の省略形は、対象ARRAYがあればその型とcardinalityを使用します。単独の式では密なARRAYと同じ共通数値型を使用し、最大positionに1を加えてcardinalityを決定します。対象列のない全要素NULLの疎な配列、重複したposition、範囲外のpositionはエラーです。取り込み方法とSDKの疎なオブジェクトは[Sparse ARRAYと選択列Append API](/dbms/development-tools-integration/data-input-load-export/array-append/)を参照してください。
 
 
-## AREA {#area}
+## AREA
 
 `AREA(y, x)`は数値の`(x, y)`点からなる曲線の下の面積を正確に計算する集約関数です。
 
@@ -743,7 +745,7 @@ COUNT(id1)
 ```
 
 
-## CUME_DIST {#cume_dist}
+## CUME_DIST
 
 `CUME_DIST(value, threshold)`は、`value`が`threshold`以下の行の累積比率を返します。
 
@@ -1732,7 +1734,7 @@ MAX(c)
 ```
 
 
-## MEDIAN {#median}
+## MEDIAN
 
 `MEDIAN(value)`は数値式の正確な中央値を返し、`PERCENTILE_CONT(value, 0.5)`と同じ方式で動作します。
 
@@ -2828,7 +2830,7 @@ NULL
 ```
 
 
-## TOP_K {#top_k}
+## TOP_K
 
 `TOP_K(value, k)`は、頻度の高い`k`個の数値を`value:count`形式の文字列で返します。
 
@@ -3188,7 +3190,7 @@ JSON_REMOVE('{"owner":{"name":"machbase","team":"db"}}', '$.owner.team')
 - `JSON_REMOVE(..., '$')`は許可しません。
 - JSONドキュメント引数が`NULL`なら結果はSQL `NULL`です。
 
-## PI() {#pi}
+## PI()
 
 π定数を`DOUBLE`型で返します。
 
@@ -3204,7 +3206,7 @@ PI()
 [1] row(s) selected.
 ```
 
-## SQRT() {#sqrt}
+## SQRT()
 
 平方根を返します。
 
@@ -3220,7 +3222,7 @@ SQRT(9)   SQRT(2.25)         SQRT(16.0)
 [1] row(s) selected.
 ```
 
-## POWER() {#power}
+## POWER()
 
 `base`の`exponent`乗を返します。
 
@@ -3236,7 +3238,7 @@ POWER(2, 3)   POWER(9, 0.5)   POWER(4, -1)
 [1] row(s) selected.
 ```
 
-## POW() {#pow}
+## POW()
 
 `POWER()`の別名です。
 
@@ -3252,7 +3254,7 @@ POW(2, 3)   POW(2, -1)   POW(10, 0)
 [1] row(s) selected.
 ```
 
-## LOG() {#log}
+## LOG()
 
 `LOG(n)`は自然対数、`LOG(base, n)`は指定した底の対数を計算します。
 
@@ -3268,7 +3270,7 @@ LOG(2, 8)   LOG(100)             LOG(10, 1000)
 [1] row(s) selected.
 ```
 
-## LN() {#ln}
+## LN()
 
 自然対数`ln(n)`を返します。
 
@@ -3284,7 +3286,7 @@ LN(1)      LN(10)         LN(1000)
 [1] row(s) selected.
 ```
 
-## EXP() {#exp}
+## EXP()
 
 `e^n`を返します。
 
@@ -3300,7 +3302,7 @@ EXP(0)      EXP(1)         EXP(-1)
 [1] row(s) selected.
 ```
 
-## FLOOR() {#floor}
+## FLOOR()
 
 負の無限大方向へ切り捨てます。
 
@@ -3316,7 +3318,7 @@ FLOOR(-1.2)  FLOOR(3.9)  FLOOR(-3.0)
 [1] row(s) selected.
 ```
 
-## CEIL() {#ceil}
+## CEIL()
 
 正の無限大方向へ切り上げます。
 
@@ -3332,7 +3334,7 @@ CEIL(-1.2)  CEIL(3.2)  CEIL(-3.0)
 [1] row(s) selected.
 ```
 
-## SIN() {#sin}
+## SIN()
 
 ラジアンの入力から正弦を返します。
 
@@ -3348,7 +3350,7 @@ SIN(0)      SIN(PI()/2)   SIN(PI())
 [1] row(s) selected.
 ```
 
-## SLOPE {#slope}
+## SLOPE
 
 `SLOPE(y, x)`は、数値の`(x, y)`点に対する線形回帰直線の傾きを計算します。
 
@@ -3366,7 +3368,7 @@ SELECT SLOPE(temp_c, sample_sec)
 FROM sensor_log;
 ```
 
-## COS() {#cos}
+## COS()
 
 ラジアンの入力から余弦を返します。
 
@@ -3382,7 +3384,7 @@ COS(0)      COS(PI())   COS(PI()/2)
 [1] row(s) selected.
 ```
 
-## TAN() {#tan}
+## TAN()
 
 ラジアンの入力から正接を返します。
 
@@ -3398,7 +3400,7 @@ TAN(0)      TAN(PI()/4)  TAN(PI())
 [1] row(s) selected.
 ```
 
-## MOD() {#mod}
+## MOD()
 
 商を0方向へ切り捨てて余りを計算します。
 
@@ -3414,7 +3416,7 @@ MOD(10, 3)  MOD(11, 4)  MOD(-10, 3)  MOD(3.5, 0.5)
 [1] row(s) selected.
 ```
 
-## MODE {#mode}
+## MODE
 
 `MODE(value)`は入力集合で最も頻度の高い数値を返します。
 
@@ -3432,7 +3434,9 @@ SELECT MODE(alarm_code)
 FROM event_log;
 ```
 
-## P05 / P10 / P90 / P95 {#p05-p10-p90-p95}
+<a id="p05-p10-p90-p95"></a>
+
+## P05 / P10 / P90 / P95
 
 よく使う分位点を簡潔に表す、正確な分位点計算の短縮関数です。
 
@@ -3457,7 +3461,9 @@ SELECT P05(response_ms),
 FROM web_log;
 ```
 
-## PERCENTILE_CONT / PERCENTILE_DISC {#percentile_cont-percentile_disc}
+<a id="percentile_cont-percentile_disc"></a>
+
+## PERCENTILE_CONT / PERCENTILE_DISC
 
 数値入力の正確な分位点を計算する集約関数です。
 
@@ -3478,7 +3484,7 @@ SELECT PERCENTILE_CONT(latency_ms, 0.95) AS pcont95,
 FROM api_log;
 ```
 
-## QUANTILE {#quantile}
+## QUANTILE
 
 `QUANTILE(value, ratio)`は数値入力の正確な連続分位点を計算します。
 
@@ -3496,7 +3502,7 @@ SELECT QUANTILE(cpu_usage, 0.75)
 FROM host_metric;
 ```
 
-## RAND() {#rand}
+## RAND()
 
 乱数値を生成します。
 
@@ -3884,7 +3890,7 @@ SELECT t.jval.name
 JSONドットアクセスは、JSON列を基点としてのみ使用できます。
 
 ```sql
--- 非対応
+-- Not supported
 (jval->'$.sensor').temperature
 name.member
 ```

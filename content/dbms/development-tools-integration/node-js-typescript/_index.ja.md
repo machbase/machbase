@@ -255,7 +255,7 @@ for (const field of fields) {
   if (field.nullable === ColumnNullable.NoNulls) {
     console.log(field.name, 'NO_NULLS');
   } else {
-    console.log(field.name, 'NULL処理が必要');
+    console.log(field.name, 'NULL handling required');
   }
 }
 ```

@@ -15,6 +15,7 @@ This guide covers the most common issues encountered when working with Machbase 
 **Symptom**: Client tools fail to connect to Machbase server
 
 **Common Causes**:
+
 1. Server is not running
 2. Wrong port number
 3. Firewall blocking connection
@@ -27,7 +28,7 @@ This guide covers the most common issues encountered when working with Machbase 
 ps -ef | grep machbase
 
 # Check server status
-machadmin -s
+machadmin -e
 
 # Start server if not running
 machadmin -u
@@ -38,13 +39,14 @@ grep PORT_NO $MACHBASE_HOME/conf/machbase.conf
 
 ### Connection Timeout
 
-**Symptom**: Connection attempts timeout
+**Symptom**: Connection attempts time out
 
 **Solution**:
+
 - Check network connectivity
 - Verify `PORT_NO` in `machbase.conf`
-- Ensure no firewall blocking the port
-- Check if max connections limit is reached
+- Ensure no firewall is blocking the port
+- Check if the max connections limit is reached
 
 ```sql
 -- Check current connections
@@ -58,6 +60,7 @@ SELECT * FROM v$session;
 **Symptom**: Data insertion is slower than expected
 
 **Common Causes**:
+
 1. Using INSERT instead of APPEND
 2. Not using batch operations
 3. Insufficient memory allocation
@@ -65,17 +68,19 @@ SELECT * FROM v$session;
 
 **Solutions**:
 
-```sql
--- Use APPEND for bulk inserts (faster)
-INSERT /*+ APPEND */ INTO table_name VALUES (...);
+For bulk loading, use the APPEND API or a CSV tool in APPEND mode. The SQL comment `INSERT /*+ APPEND */` does not switch an INSERT to the APPEND protocol.
 
--- For tag tables, use csvimport for bulk loading
+```bash
+# Bulk load into a tag table (default append mode)
 csvimport -t TAG_TABLE -d data.csv
-
--- Check and adjust memory settings
--- In machbase.conf:
-TAGDATA_CACHE_MAX_SIZE = 2G  -- Increase for better performance
 ```
+
+```properties
+# machbase.conf: example that sets the TAG cache limit per pool to 2 GiB
+TAG_CACHE_MAX_MEMORY_SIZE = 2147483648
+```
+
+The total cache capacity is this value multiplied by `TAG_CACHE_POOL_COUNT`. Adjust it to the physical memory and the memory used by other processes.
 
 ### Slow SELECT Performance
 
@@ -90,7 +95,7 @@ EXPLAIN SELECT * FROM tag WHERE name = 'TAG_001';
 -- For tag tables, ensure time range is specified
 SELECT * FROM tag
 WHERE name = 'TAG_001'
-  AND time BETWEEN TO_DATE('2024-01-01') AND TO_DATE('2024-01-31');
+  AND time BETWEEN TO_DATE('2024-01-01', 'YYYY-MM-DD') AND TO_DATE('2024-01-31', 'YYYY-MM-DD');
 
 -- Use rollup tables for aggregation queries
 SELECT rollup('hour', 1, time), AVG(value)
@@ -129,14 +134,15 @@ CREATE TAG TABLE tag (
 ### SUMMARIZED Value Out of Range
 
 **Symptom**:
+
 - `ERR-02341: SUMMARIZED value is greater than UPPER LIMIT`
 - `ERR-02342: SUMMARIZED value is less than LOWER LIMIT`
 
-**Solution**: The value exceeds LSL/USL limits. Either adjust the limits or fix the input data.
+**Solution**: The value exceeds LSL/USL limits. Either adjust the limits or fix the input data. The following example assumes that the metadata columns `lsl`/`usl` with the `LOWER LIMIT`/`UPPER LIMIT` attributes are defined for `table_name`. This feature is available in Standard Edition. For details, see [LSL/USL](../../table-types/tag-tables/lsl-usl-limits/).
 
 ```sql
 -- Check current limits
-SELECT * FROM _table_meta;
+SELECT * FROM _table_name_meta;
 
 -- Update limits
 UPDATE table_name METADATA SET lsl = 0, usl = 1000 WHERE name = 'TAG_001';
@@ -149,7 +155,7 @@ UPDATE table_name METADATA SET lsl = NULL, usl = NULL WHERE name = 'TAG_001';
 
 **Symptom**: Cannot insert data, tag name not found
 
-**Solution**: Register tag name in metadata first
+**Solution**: Register the tag name in the metadata first.
 
 ```sql
 -- Insert tag metadata
@@ -167,26 +173,29 @@ INSERT INTO tag_table VALUES ('TAG_001', NOW, 100);
 
 **Solutions**:
 
-1. **Check current memory usage**:
+1. **Check current memory usage**
+
 ```sql
-SELECT * FROM v$memstat;
+SELECT * FROM V$SESMEM;
 ```
 
-2. **Adjust memory settings in machbase.conf**:
+2. **Adjust memory settings in `machbase.conf`**
+
+   For setting names and units, see [Property](../../configuration/property/). The total TAG cache capacity is the per-pool value multiplied by the pool count.
+
 ```conf
-# Increase cache sizes
-TAGDATA_CACHE_MAX_SIZE = 4G
-LOOKUP_CACHE_MAX_SIZE = 512M
+# Example that sets the TAG cache limit per pool to 4 GiB
+TAG_CACHE_MAX_MEMORY_SIZE = 4294967296
 
-# Adjust buffer sizes
-APPEND_BUFFER_SIZE = 128M
-SELECT_BUFFER_SIZE = 64M
+# Example that sets the maximum memory used by one query to 64 MiB
+MAX_QPX_MEM = 67108864
 ```
 
-3. **Restart server after configuration changes**:
+3. **Restart server after configuration changes**
+
 ```bash
-machadmin -k  # Kill server
-machbase      # Start server
+machadmin -s  # Shut down server normally
+machadmin -u  # Start server
 ```
 
 For detailed memory error solutions, see [Memory Errors](../memory-error).
@@ -197,11 +206,11 @@ For detailed memory error solutions, see [Memory Errors](../memory-error).
 
 **Symptom**: `ERR-02651: Dependent ROLLUP table exists`
 
-**Solution**: Drop rollup tables in reverse dependency order
+**Solution**: Drop rollup tables in reverse dependency order.
 
 ```sql
 -- Check rollup dependencies
-SELECT * FROM m$sys_tables WHERE type = 'KEYVALUE';
+SELECT * FROM V$ROLLUP;
 
 -- Drop in reverse order
 DROP ROLLUP rollup_hour;
@@ -218,14 +227,14 @@ DROP TABLE tag_table;
 
 ```sql
 -- Force rollup execution
-EXEC ROLLUP_FORCE('rollup_name');
+ALTER ROLLUP rollup_name FORCE;
 
 -- Check rollup status
 SELECT * FROM v$rollup;
 
 -- Restart rollup
-EXEC ROLLUP_STOP('rollup_name');
-EXEC ROLLUP_START('rollup_name');
+ALTER ROLLUP rollup_name STOP;
+ALTER ROLLUP rollup_name START;
 ```
 
 ## Index Issues
@@ -234,14 +243,14 @@ EXEC ROLLUP_START('rollup_name');
 
 **Symptom**: Index drop fails
 
-**Solution**: Ensure no active sessions are using the table
+**Solution**: Ensure no active sessions are using the table.
 
 ```sql
 -- Check active sessions
 SELECT * FROM v$session;
 
--- Kill sessions if necessary (carefully!)
-EXEC KILL_SESSION(session_id);
+-- Kill sessions if necessary (carefully!): as SYS, check the target session_id
+ALTER SYSTEM KILL SESSION session_id;
 
 -- Then drop index
 DROP INDEX index_name;
@@ -257,10 +266,10 @@ DROP INDEX index_name;
 
 ```bash
 # Check license status
-machadmin -L
+machadmin -f
 
 # Install new license
-machadmin -i new_license_file.dat
+machadmin -t new_license_file.dat
 ```
 
 ## Backup and Recovery Issues
@@ -270,6 +279,7 @@ machadmin -i new_license_file.dat
 **Symptom**: Mount operation fails
 
 **Common Causes**:
+
 1. Database files corrupted
 2. Incompatible version
 3. Files still in use
@@ -278,13 +288,13 @@ machadmin -i new_license_file.dat
 
 ```sql
 -- Check database status
-SELECT * FROM v$database;
+SELECT * FROM V$STORAGE_MOUNT_DATABASES;
 
 -- Unmount before remounting
-ALTER DATABASE database_name CLOSE;
+UNMOUNT DATABASE database_name;
 
 -- Mount database
-ALTER DATABASE database_name MOUNT 'path/to/database';
+MOUNT DATABASE 'path/to/database' TO database_name;
 ```
 
 ## Cluster-Specific Issues
@@ -302,18 +312,18 @@ ALTER DATABASE database_name MOUNT 'path/to/database';
 
 ```bash
 # Check cluster status
-machcoordinatoradmin -s
+machcoordinatoradmin --cluster-status
 
 # Restart coordinator if needed
-machcoordinatoradmin -k
-machcoordinator
+machcoordinatoradmin -s
+machcoordinatoradmin -u
 ```
 
 ## Best Practices for Avoiding Issues
 
 1. **Regular Monitoring**:
    - Monitor server logs regularly
-   - Check performance metrics via v$ tables
+   - Check performance metrics via V$ tables
    - Set up alerting for critical errors
 
 2. **Proper Configuration**:
@@ -350,12 +360,12 @@ Useful commands for troubleshooting:
 ```sql
 -- Check server status
 SELECT * FROM v$version;
-SELECT * FROM v$instance;
+SELECT * FROM V$SYSSTAT;
 
 -- Monitor performance
-SELECT * FROM v$memstat;
+SELECT * FROM V$SESMEM;
 SELECT * FROM v$session;
-SELECT * FROM v$sqlstat;
+SELECT * FROM V$STMT;
 
 -- Check table information
 SELECT * FROM m$sys_tables;
@@ -365,18 +375,12 @@ SELECT * FROM m$sys_table_property;
 
 ## Log Files Location
 
-Important log files for troubleshooting:
+Important log file for troubleshooting:
 
-```bash
-# Server logs
-$MACHBASE_HOME/trc/machbase-{pid}.trc
-
-# Backup logs
-$MACHBASE_HOME/trc/backup.trc
-
-# Rollup logs
-$MACHBASE_HOME/trc/rollup.trc
-
-# Error logs
-$MACHBASE_HOME/trc/error.trc
+```text
+$MACHBASE_HOME/trc/machbase.trc
 ```
+
+Check server errors, backup operations, and rollup operations in this trace log. You can adjust the log level with [TRACE_LOG_LEVEL](../trace-log/). Log file splitting and output to separate files depend on the operational settings, so fixed `backup.trc`, `rollup.trc`, and `error.trc` files are not always created.
+
+For details on administrative operations, see [machadmin](../../tools-reference/machadmin/), [System/Session Management](../../sql-reference/sys-session-manage/), and [Database Mount](../../advanced-features/database-mount/).

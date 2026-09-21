@@ -165,7 +165,7 @@ SELECT event_time - 250 AS event_time_minus_250ns
 ## Reference Cheat Sheet
 
 ```
-Pattern          Meaning
+Pattern         Meaning
 --------------  --------------------------------------------
 now - 5m        Timestamp exactly five minutes ago
 sysdate + 1d    Tomorrow (24 hours after system timestamp)

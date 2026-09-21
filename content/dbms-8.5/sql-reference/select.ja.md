@@ -36,7 +36,7 @@ toc: true
 * [データの保存](#save-data)
 
 
-`SELECT` は、各テーブルのデータを検索、抽出、加工する構文です。
+`SELECT` は、Machbase のさまざまなテーブルからデータを検索、抽出、加工する構文です。
 
 ## `SELECT` 構文 {#select-syntax}
 
@@ -53,14 +53,11 @@ SELECT target_list [FROM table_list]
 [DURATION duration_expr];
 ```
 
-通常は `FROM` を使用しますが、単純な式は
-`FROM` なしでも実行できます。
+通常は `FROM` を使用しますが、単純な式は `FROM` なしでも実行できます。
 
 ## `FROM` なしの `SELECT` {#select-without-from}
 
-テーブルを読み取らず、定数、文字列リテラル、算術式、
-単純な関数の結果を 1 行返します。接続確認や
-簡単な計算に利用できます。
+テーブルを読み取らず、定数、文字列リテラル、算術式、単純な関数の結果を 1 行返します。接続確認や簡単な計算に利用できます。
 
 ```sql
 select 1;
@@ -93,16 +90,11 @@ ERR-02362: This statement is not supported.
 ERR-02039: No table specified in the target list.
 ```
 
-`FROM` なしの `SELECT` は、単一行の式だけを対象とします。集計関数、
-ソート、条件、周期指定、ヒントは使用できません。
+`FROM` なしの `SELECT` は、単一行の式だけを対象とします。集計関数、ソート、条件、周期指定、ヒントは使用できません。
 
 ## 集合演算子 {#set-operator}
 
-複数の `SELECT` の結果を、1 つの結果にまとめます。
-Machbase は `UNION ALL` だけをサポートします。左右の `SELECT` は、
-（1）同じ型または互換型、（2）同じ結果列数である
-必要があります。いずれかを満たさない場合は
-エラーになります。
+複数の `SELECT` の結果を、1 つの結果にまとめます。Machbase は `UNION ALL` だけをサポートします。左右の `SELECT` は、（1）同じ型または互換型、（2）同じ結果列数である必要があります。いずれかを満たさない場合はエラーになります。
 
 型の互換性と変換は、次の規則に従います。
 * 符号付き整数と符号なし整数は互換ではありません。
@@ -131,7 +123,7 @@ SELECT i1, i2 ...
 SELECT i1 (Select avg(c1) FROM t1), i2 ...
 ```
 
-## CASE 式 {#case-statement}
+### CASE 式 {#case-statement}
 
 ```sql
 CASE <simple_case_expression|searched_case_expression> [else_clause] END
@@ -147,7 +139,7 @@ else_clause ::=
     ELSE else_value_expr
 ```
 
-一般的な IF ... THEN ... ELSE に相当します。simple_case_expression は、CASE の列や式が WHEN の comparison_expr と一致すると return_expr を返します。WHEN ... THEN は複数指定できます。
+一般的なプログラミング言語の IF ... THEN ... ELSE ブロックに相当する式です。simple_case_expression は、CASE の列や式が WHEN の comparison_expr と一致すると return_expr を返します。WHEN ... THEN は複数指定できます。
 
 searched_case_expression は CASE の後に式を書かず、WHEN に比較条件を指定します。最初に真になる THEN の値を返します。どの条件も満たさない場合（NULL を含む）は ELSE の値を返します。
 
@@ -167,7 +159,7 @@ NULL
 [2] row(s) selected.
 ```
 
-単純 CASE の例では、i1 が 2 の場合に NULL を返します。
+simple_case_expression の例では、i1 列の値が 2 の場合に NULL を返します。
 
 ```
 select case when i1 > 0 then 100 when i1 > 1 then 200 end from t1;
@@ -178,7 +170,7 @@ case when i1 > 0 then 100 when i1 > 1 then 200 end
 [2] row(s) selected.
 ```
 
-検索 CASE の例では、最初の条件が成立して 100 を返し、2 番目の条件は評価しません。
+searched_case_expression は最初に成立した条件の値を返すため、100 を返し、2 番目の条件は評価しません。
 
 
 ## `FROM` {#from}
@@ -189,7 +181,7 @@ case when i1 > 0 then 100 when i1 > 1 then 200 end
 FROM table_name
 ```
 
-table_name で指定したテーブルを取得します。
+table_name で指定したテーブルのデータを取得します。
 
 ### サブクエリー（インラインビュー） {#subqueryinline-view}
 
@@ -203,9 +195,7 @@ FROM (Select statement)
 
 ### 保存されたビュー {#stored-view}
 
-`FROM` には、事前に `CREATE VIEW` で作成したビューも指定できます。
-インラインビューと異なり、名前付きの論理オブジェクトです。
-`DESC`、`SHOW VIEWS`、`M$SYS_VIEWS` でメタデータを確認できます。
+`FROM` には、事前に `CREATE VIEW` で作成したビューも指定できます。インラインビューと異なり、名前付きの論理オブジェクトです。`DESC`、`SHOW VIEWS`、`M$SYS_VIEWS` でメタデータを確認できます。
 
 ```sql
 SELECT *
@@ -213,8 +203,7 @@ FROM v_customer
 WHERE id = 100;
 ```
 
-作成、削除、メタデータ、性能と制限、Tag/`BINARY` の例は、
-[VIEW](../view) を参照してください。
+作成、削除、メタデータ、性能と制限、Tag/`BINARY` の例は、[VIEW](../view) を参照してください。
 
 ### JOIN（内部結合） {#joininner-join}
 
@@ -253,17 +242,16 @@ SELECT t1.i1, t2.i1 FROM t1 LEFT OUTER JOIN t2 ON (t1.i1 = t2.i1) WHERE t2.i2 = 
 ![pivot_clause](/images/sql/select/pivot_clause.png)
 
 
-GROUP BY の集計結果を、行から列へ並べ替えて表示します。
+PIVOT 文は、行として出力される GROUP BY の集計結果を列に並べ替えて表示します。
 
 インラインビューと組み合わせ、次のように処理します。
 * PIVOT で使わない列を GROUP BY し、PIVOT IN の値に対して集計関数を実行します。
 * グループ化した列と集計結果を、列方向に展開します。
 
-複数センサーのデータから、デバイスごとの値を集計する例です。
-CASE で書く集計を、PIVOT で簡潔に表現できます。
+次は、複数のセンサーから収集したデータで、デバイスごとの値を集計する例です。CASE で書く集計を、PIVOT で簡潔に表現できます。
 
 ```sql
--- PIVOT なし
+-- w/o PIVOT
 SELECT * FROM (
     SELECT
              regtime,
@@ -276,14 +264,14 @@ SELECT * FROM (
     GROUP BY regtime
 ) WHERE front_axis_torque >= 40 AND rear_axis_torque >= 20;
   
--- PIVOT あり
+-- w/ PIVOT
 SELECT * FROM (
     SELECT regtime, tagid, dvalue FROM result_d
     WHERE  regtime BETWEEN TO_DATE('2018-12-07 00:00:00') AND TO_DATE('2018-12-08 05:00:00')
 ) PIVOT (SUM(dvalue) FOR tagid IN ('FRONT_AXIS_TORQUE', 'REAR_AXIS_TORQUE', 'HOIST_AXIS_TORQUE', 'SLIDE_AXIS_TORQUE'))
 WHERE front_axis_torque >= 40 AND rear_axis_torque >= 20;
  
--- 結果
+-- Result
 regtime                         'FRONT_AXIS_TORQUE'         'REAR_AXIS_TORQUE'          'HOIST_AXIS_TORQUE'         'SLIDE_AXIS_TORQUE'       
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 2018-12-07 16:42:29 840:000:000 12158                       7244                        NULL                        NULL                      
@@ -314,7 +302,7 @@ WHERE i1 = (SELECT MAX(c2) FROM T1)
 
 ### SEARCH {#search-statement}
 
-通常の条件に加えて、キーワードインデックスを作成すると SEARCH 演算子でテキスト検索できます。
+構文は一般的なデータベースと同じです。ただし、キーワードインデックスを作成する必要があり、テキスト検索用の演算子キーワードとして `SEARCH` を使用します。
 
 ```sql
 -- drop table realdual;
@@ -374,10 +362,10 @@ ID1         ID2                   ID3
 
 ### ESEARCH {#esearch-statement}
 
-ESEARCH は ASCII テキストの拡張検索です。% でパターンを指定します。LIKE で先頭に % を置くと全レコードを調べますが、ESEARCH はその場合もインデックス内の語を高速に検索できます。英語のエラーメッセージやコードの部分検索に役立ちます。
+ESEARCH は ASCII テキストの拡張検索を行う検索キーワードです。パターンは % で指定します。LIKE で先頭に % を置くと全レコードを調べる必要がありますが、ESEARCH はその場合も語を高速に検索できます。英語のエラーメッセージやコードの一部を検索する場合に役立ちます。
 
 ```sql
--- 例
+-- Example
  
 select id2 from realdual where id2 esearch 'bbb%';
 id2
@@ -387,7 +375,7 @@ aaa bbb1
  
 [2] row(s) selected.
  
--- bbb% の検索結果には bbb1 も含む
+-- Search pattern 'bbb%' also includes bbb1 in search results.
  
  
 select id3 from realdual where id3 esearch '%cd%';
@@ -398,7 +386,7 @@ bcd/cdf1ad
 abc, bcd1
 [3] row(s) selected.
  
--- % は先頭や末尾だけでなく途中にも使用可能
+-- % character works in middle of search pattern as well as beginning and end.
  
 select id3 from realdual where id3 esearch '%cd%';
 id3
@@ -411,7 +399,7 @@ abc, bcd1
 
 ### NOT SEARCH {#not-search-statement}
 
-SEARCH に一致しないレコードに対して真を返します。
+NOT SEARCH は、SEARCH で検索されたレコード以外のレコードに対して真を返します。
 
 NOT ESEARCH は使用できません。
 
@@ -431,10 +419,9 @@ id
 
 ### REGEXP {#regexp-statement}
 
-正規表現でデータを検索し、列の文字列パターンを絞り込みます。
+REGEXP は正規表現でデータを検索します。主に、特定の列を正規表現のパターンで絞り込む場合に使用します。
 
-インデックスを利用できないため、他の列にインデックス条件を付けて検索対象を減らしてください。
-SEARCH/ESEARCH で先に対象を絞ってから REGEXP を適用すると、全体の効率を改善できます。
+REGEXP ではインデックスを利用できないため、他の列にインデックス条件を付けて検索範囲を狭め、全体の検索コストを下げてください。SEARCH/ESEARCH で先に対象を絞ってから REGEXP を適用すると、全体の効率を改善できます。
 
 ```sql
 Mach>
@@ -493,11 +480,11 @@ Mach> SELECT 'abcde' REGEXP 'a[bcd]{1,10}e' from dual;
 column_name IN (value1, value2,...)
 ```
 
-値がリストに含まれると真を返します。OR で連結した条件と同等です。
+IN は、値がリストに含まれると真を返します。OR で連結した条件と同等です。
 
 ### IN とサブクエリー {#use-in-statement-and-subquery}
 
-IN の右側にサブクエリーを指定し、左側の値が結果に含まれるか確認します。左側に複数の列を指定するとエラーになります。
+条件の IN の右側にサブクエリーを指定できます。左側の列の値がサブクエリーの結果セットに含まれるかを確認します。IN の左側に複数の列を指定するとエラーになります。
 
 ```sql
 WHERE i1 IN (Select c1 from ...)
@@ -511,7 +498,7 @@ WHERE i1 IN (Select c1 from ...)
 column_name BETWEEN value1 AND value2
 ```
 
-列の値が value1 から value2 の範囲内なら真を返します。
+BETWEEN は、列の値が value1 から value2 の範囲内なら真を返します。
 
 ### RANGE {#range-statement}
 
@@ -521,7 +508,7 @@ column_name RANGE duration_spec;
 -- duration_spec : integer (YEAR | WEEK | HOUR | MINUTE | SECOND);
 ```
 
-指定列の時刻条件を簡単に記述する演算子です。特定の絶対時刻ではなく、現在時刻を基準とする範囲を対象にし、必要な期間のレコードを取得できます。
+RANGE は、指定した列の時刻条件を簡単に記述できる演算子です。（BEFORE キーワードのように）特定の時刻を指定する代わりに、現在時刻を基準とする範囲を対象とするため、必要な期間のレコードを簡単に取得できます。
 
 ```sql
 select * from test where id < 2 and c1 range 1 hour;
@@ -541,32 +528,34 @@ SELECT ...
 GROUP BY { col_name | expr } ,...[ HAVING <search_condition> ]
  
 select id1, avg(id2) from exptab where id2 group by id1 order by id1;
--- id1 でグループ化し、id2 の平均を求める。
 ```
+
+例のクエリーは、id1 ごとに id2 の平均値を求めます。
 
 
 ## ORDER BY {#order-by}
 
-結果を昇順または降順に並べます。ASC/`DESC` を省略すると昇順です。ORDER BY 自体を省略した場合の順序は、クエリーによって異なります。
+ORDER BY は結果を昇順または降順に並べます。`ASC`/`DESC` を省略すると昇順です。ORDER BY 自体を省略した場合の順序は、クエリーによって異なります。
 
 ```sql
 SELECT ...
 ORDER BY {col_name | expr} [ASC | DESC]
  
 select id1, avg(id2) from exptab where id2 group by id1 order by id1;
--- id1 でグループ化し、id2 の平均を求める。
 ```
+
+例のクエリーは、id1 ごとに id2 の平均値を求めます。
 
 
 ## SERIES BY {#series-by}
 
-並べた結果を SERIES BY 条件に一致する連続した系列として抽出します。ORDER BY がなければ _ARRIVAL_TIME で並べます。GROUP BY を使用する場合や、_ARRIVAL_TIME のない Volatile/Lookup では、ORDER BY が必要です。
+SERIES BY は、並べ替えた結果セットから SERIES BY 条件に一致する連続した値を抽出します。ORDER BY がなければ _ARRIVAL_TIME の値で並べます。そのため、GROUP BY を使用する場合や、_ARRIVAL_TIME 列のない Volatile テーブルや Lookup テーブルを検索する場合は、ORDER BY が必要です。
 
 同じ連続条件に属する結果は、SERIESNUM() が同じ値を返します。
 
+例えば、次のデータがあるとします。
+
 ```sql
--- 次のデータを使用する例
- 
 CREATE TABLE T1 (C1 INTEGER, C2 INTEGER);
 INSERT INTO T1 VALUES (0, 1);
  
@@ -583,10 +572,11 @@ INSERT INTO T1 VALUES (5, 2);
 INSERT INTO T1 VALUES (6, 3);
  
 INSERT INTO T1 VALUES (7, 1);
- 
- 
--- 次のクエリーは、以下の結果を返す。
- 
+```
+
+次のクエリーは、以下の結果を返します。
+
+```sql
 SELECT C1,C2 FROM T1 ORDER BY C1 SERIES BY C2>1;
 C1          C2         
 ---------------------------
@@ -595,14 +585,14 @@ C1          C2
 3           2          
 5           2          
 6           3   
- 
--- C2 が 1 より大きい区間に対応する C1 の範囲は、SERIESNUM で各レコードの系列番号を取得して確認できます。
 ```
+
+C2 の値が 1 より大きい区間に対応する C1 の範囲は、SERIESNUM 関数で各レコードが属するグループを出力して確認できます。
 
 
 ## LIMIT {#limit}
 
-出力するレコード数を制限します。整数で結果セットの開始位置と件数を指定できます。
+LIMIT は出力するレコード数を制限します。結果セットの開始位置（offset）と出力する行数（row_count）を整数で指定します。
 
 ```sql
 LIMIT [offset,] row_count
@@ -613,7 +603,7 @@ select id1, avg(id2) from exptab where id2 group by id1 order by id1 LIMIT 10;
 
 ## DURATION {#duration}
 
-`_arrival_time` を基に検索範囲を限定します。BEFORE と組み合わせて特定時刻を基準とする範囲を指定できます。対象を減らすことで性能を改善し、負荷を軽減します。詳しい使用例を示します。
+DURATION は、`_arrival_time` を基準に検索範囲を簡単に限定するキーワードです。BEFORE と組み合わせると、特定の時点を基準とする範囲を指定できます。DURATION を使用すると、検索性能を大きく向上させ、システム負荷を大きく軽減できます。詳しい使用方法は次の例を参照してください。
 
 ```sql
 DURATION Number TimeSpec [BEFORE/AFTER Number TimeSpec]
@@ -621,8 +611,7 @@ DURATION FROM expr TO expr
 TimeSpec : YEAR | MONTH | WEEK |  DAY | HOUR | MINUTE | SECOND
 ```
 
-`DURATION FROM expr TO expr` は、`_arrival_time` の明示的な範囲を指定します。
-`expr` には `TO_DATE(value, format)` などの日時式を使用できます。
+`DURATION FROM expr TO expr` は、`_arrival_time` の明示的な範囲を指定します。`expr` には `TO_DATE(value, format)` などの日時式を使用できます。
 
 ```sql
 create table t8(i1 integer);
@@ -631,7 +620,7 @@ insert into t8 values(2);
  
 select i1 from t8;
  
--- BEFORE なし
+-- Without BEFORE clause
 select i1 from t8 duration 2 second;
 select i1 from t8 duration 1 minute;
 select i1 from t8 duration 1 hour;
@@ -640,7 +629,7 @@ select i1 from t8 duration 1 week;
 select i1 from t8 duration 1 month;
 select i1 from t8 duration 1 year;
  
--- 完全な DURATION 構文
+-- Using full DURATION statement
 select i1 from t8 duration 1 second before 1 day;
 select i1 from t8 duration 1 minute before 1 day;
 select i1 from t8 duration 1 hour before 1 day;
@@ -649,7 +638,7 @@ select i1 from t8 duration 1 week before 1 day;
 select i1 from t8 duration 1 month before 1 day;
 select i1 from t8 duration 1 year before 1 day;
 
--- 明示的な範囲を使用
+-- Using explicit range
 select i1 from t8
 duration from to_date('2024-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
        to to_date('2030-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS');
@@ -674,7 +663,7 @@ i1
 1          
 [2] row(s) selected.
  
-#BEFORE なし
+-- Without BEFORE clause
 Mach> select i1 from t8 duration 2 second;
 i1         
 --------------
@@ -724,7 +713,7 @@ i1
 1          
 [2] row(s) selected.
  
--- 完全な DURATION 構文
+-- Using full DURATION statement
 Mach> select i1 from t8 duration 1 second before 1 day;
 i1         
 --------------
@@ -764,7 +753,7 @@ i1
 
 ## データの保存（SAVE DATA） {#save-data}
 
-クエリー結果を直接 CSV に保存します。
+クエリー結果を CSV データファイルに直接保存します。
 
 ```sql
 SAVE DATA INTO 'file_name.csv' [HEADER ON|OFF] [(FIELDS | COLUMNS) [TERMINATED BY 'char'] [ENCLOSED BY 'char']] [ENCODED BY coding_name] AS select query;
@@ -780,8 +769,8 @@ SAVE DATA INTO 'file_name.csv' [HEADER ON|OFF] [(FIELDS | COLUMNS) [TERMINATED B
 
 ```sql
 SAVE DATA INTO '/tmp/aaa.csv' AS select * from t1;
--- 結果を CSV 形式で /tmp/aaa.csv に保存
+-- Execute select statement and write result to '/tmp/aaa.csv' file in csv format.
   
 SAVE DATA INTO '/tmp/ccc.csv' HEADER ON FIELDS TERMINATED BY ';' ENCLOSED BY '\'' ENCODED BY MS949 AS select * from t1 where i1 > 100;
--- 結果を /tmp/ccc.csv に保存。区切りと囲み文字、MS949 を指定
+-- Execute select statement and write result to /tmp/ccc.csv file. Specify field delimiter and enclosing character, and set encoding of stored data to MS949.
 ```

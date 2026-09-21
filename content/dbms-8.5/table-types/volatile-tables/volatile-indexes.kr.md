@@ -15,16 +15,16 @@ Mach> create index idx_vrb on vtable (name) index_type redblack;
 Created successfully.
 Mach> desc vtable;
 ----------------------------------------------------------------
-NAME                          TYPE                LENGTH
+NAME                          TYPE                LENGTH       
 ----------------------------------------------------------------
-ID                            integer             11
-NAME                          varchar             10
-
-[ INDEX ]
+ID                            integer             11             
+NAME                          varchar             10                 
+ 
+[ INDEX ]                             
 ----------------------------------------------------------------
 NAME                          TYPE                COLUMN
 ----------------------------------------------------------------
-IDX_VRB                       REDBLACK            NAME
+IDX_VRB                       REDBLACK            NAME               
 Mach>
 ```
 
@@ -38,17 +38,17 @@ Mach> create volatile table vtable (id integer primary key, name varchar(20));
 Created successfully.
 Mach> desc vtable;
 ----------------------------------------------------------------
-NAME                          TYPE                LENGTH
+NAME                          TYPE                LENGTH       
 ----------------------------------------------------------------
-ID                            integer             11
-NAME                          varchar             20
-
-[ INDEX ]
+ID                            integer             11             
+NAME                          varchar             20                 
+ 
+[ INDEX ]                             
 ----------------------------------------------------------------
 NAME                          TYPE                COLUMN
 ----------------------------------------------------------------
-__PK_IDX_VTABLE               REDBLACK            ID
-
+__PK_IDX_VTABLE               REDBLACK            ID  
+ 
 Mach>
 ```
 
@@ -58,7 +58,7 @@ Mach>
 log 테이블에서 사용되는 bitmap 또는 keyword 인덱스는 volatile 테이블에서 사용할 수 없습니다.
 
 ```sql
-Mach> create bitmap   index idx_1237 on vtable(id1);
+Mach> create bitmap   index idx_1237 on vtable(id);
 [ERR-02069: BITMAP index can only be created for LOG table.]
 Mach> create keyword  index idx_1238 on vtable(name);
 [ERR-02069: KEYWORD index can only be created for LOG table.]

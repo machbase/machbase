@@ -22,8 +22,8 @@ Machbase는 각 클라이언트의 Timezone이 각 세션에서만 유효하다�
 ```
 "YYYY-MM-DD HH24:MI:SS ZZZ(Timezone String)"
 
-예제)
-"12:06:56.568+01:00"
+Example) 
+"12:06:56.568+01:00"  
 "2006.07.10 at 15:08:56 -05:00"
 "09  AM, GMT+09:00"
 ```
@@ -52,7 +52,7 @@ Machbase는 사용 편의성을 높이고 복잡성을 제거하기 위해 5자�
 다음은 Machbase가 지원하는 TIMEZONE 형식을 보여줍니다.
 
 ```
-예제)
+ex)
 TIMEZONE=+0900
 TIMEZONE=-0900
 ```

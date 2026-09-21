@@ -404,7 +404,9 @@ DROP TABLESPACE tbs1;
 
 ---
 
-## DDLの同時実行性とロック {#ddl-concurrency}
+<a id="ddl-concurrency"></a>
+
+## DDLの同時実行性とロック
 
 Machbase 8.7.0 Standard Editionは、独立したオブジェクトのDDLをオブジェクト単位で調整します。
 したがって、同じデータベースで異なる名前のLOG、TAG、VOLATILE、LOOKUP、TRANSACTIONテーブルを作成・変更するDDLは、同時に進行できます。

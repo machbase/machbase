@@ -12,8 +12,8 @@ weight: 40
 MACHBASE 라이선스는 license.dat 파일로 관리됩니다. 제품용 또는 테스트용으로 구매한 라이선스는 텍스트 파일 형식으로 표시됩니다.
 
 ```bash
-mach@localhost:~$ cat license.dat
-
+mach@localhost:~$ cat license.dat 
+ 
 \#License ID: 00000001
 \#Issue DATE: 20991231
 \#License Type\(Version 3\): FOGUNLIMITED

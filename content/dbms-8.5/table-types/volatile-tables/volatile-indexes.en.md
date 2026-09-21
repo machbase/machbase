@@ -58,7 +58,7 @@ Mach>
 The bitmap or keyword index used in the log table can not be used in a volatile table.
 
 ```sql
-Mach> create bitmap   index idx_1237 on vtable(id1);
+Mach> create bitmap   index idx_1237 on vtable(id);
 [ERR-02069: BITMAP index can only be created for LOG table.]
 Mach> create keyword  index idx_1238 on vtable(name);
 [ERR-02069: KEYWORD index can only be created for LOG table.]

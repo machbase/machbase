@@ -22,14 +22,14 @@ Tag テーブルは `(tag_name, axis, value)` 形式のデータ保存に最適�
 ## 基本構文 {#basic-syntax}
 
 ```sql
--- 時間軸
+-- Time axis
 CREATE TAG TABLE sensor_data (
     tag_name VARCHAR(32) PRIMARY KEY,
     event_time DATETIME BASETIME,
     value DOUBLE SUMMARIZED
 );
 
--- 距離軸
+-- Distance axis
 CREATE TAG TABLE trip_data (
     tag_name VARCHAR(32) PRIMARY KEY,
     distance_m DOUBLE BASE DISTANCE,

@@ -24,20 +24,20 @@ Mach> insert into vtable values(3, 'north device');
 Mach> insert into vtable values(4, 'south device');
 1 row(s) inserted.
 Mach> select * from vtable;
-ID          NAME
+ID          NAME                 
 -------------------------------------
-1           west device
-2           east device
-3           north device
-4           south device
+1           west device          
+2           east device          
+3           north device         
+4           south device         
 [4] row(s) selected.
 Mach> delete from vtable where id = 2;
 [1] row(s) deleted.
 Mach> select * from vtable;
-ID          NAME
+ID          NAME                 
 -------------------------------------
-1           west device
-3           north device
-4           south device
+1           west device          
+3           north device         
+4           south device         
 [3] row(s) selected.
 ```

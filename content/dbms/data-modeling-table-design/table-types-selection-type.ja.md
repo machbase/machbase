@@ -45,7 +45,7 @@ toc: true
 
 ### 選択フロー
 
-```
+```text
 センサー/機器の計測値か?
   ├── YES → 時間軸か? YES → TAG TABLE (BASETIME)
   │         距離軸か? YES → TAG TABLE (BASEDISTANCE)
