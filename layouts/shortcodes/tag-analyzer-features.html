@@ -3,10 +3,7 @@
 {{- $title := .Get "title" -}}
 <figure class="ta-feature-guide">
   <div class="ta-feature-card">
-    {{ partial "tag-analyzer-annotated-image.html" (dict "spec" $spec "lang" .Page.Language.Lang "title" $title) }}
-    {{ if not $spec.labelOnly }}
-      {{ partial "tag-analyzer-feature-notes.html" (dict "spec" $spec "lang" .Page.Language.Lang) }}
-    {{ end }}
+    {{ partial "tag-analyzer-callout-guide.html" (dict "spec" $spec "id" (.Get "id") "lang" .Page.Language.Lang "title" $title) }}
   </div>
   <figcaption>{{ .Get "caption" }}</figcaption>
 </figure>

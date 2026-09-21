@@ -17,7 +17,7 @@
 {{- $first := index $slides 0 -}}
 {{- $media := index $guide.media $lang | default $guide.media.en -}}
 {{- $js := resources.Get "js/fft-media-guide.js" | minify | fingerprint -}}
-<figure class="fft-demo fft-media-guide markup-guide" data-markup-guide="{{ $id }}" aria-label="{{ $name }}">
+<figure class="fft-demo fft-media-guide markup-guide fft-callout-demo" data-markup-guide="{{ $id }}" aria-label="{{ $name }}">
   <div class="fft-demo-player">
     <div class="fft-demo-header">
       <p class="fft-demo-status"><span data-fft-count>1 / 2</span><strong data-fft-title>{{ $first.title }}</strong></p>
@@ -29,7 +29,7 @@
             {{- if eq $i 0 -}}
               {{ partial "tag-analyzer-player.html" (dict "page" $.Page "src" $media.video "poster" $media.poster "alt" $slide.title) }}
             {{- else -}}
-              {{ partial "tag-analyzer-described-image.html" (dict "spec" $guide "lang" $lang "title" $slide.title) }}
+              {{ partial "tag-analyzer-callout-guide.html" (dict "spec" $guide "id" $id "lang" $lang "title" $slide.title) }}
             {{- end -}}
           </div>
         </section>

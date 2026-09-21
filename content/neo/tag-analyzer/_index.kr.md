@@ -18,7 +18,7 @@ Tag Analyzer로 태그 테이블의 데이터를 차트로 시각화하고 분�
 
 <span id="1-quickstart"></span>
 
-## 1. 개요 {#overview}
+## 1. Tag Analyzer 데모 만들기 {#overview}
 
 {{< figure
   src="/images/tag-analyzer/created-tag-analyzer-chart.png"
@@ -30,10 +30,9 @@ Tag Analyzer로 태그 테이블의 데이터를 차트로 시각화하고 분�
 
 **+**를 클릭한 뒤 **TAG ANALYZER**를 선택해 새 보드를 엽니다.
 
-{{< figure
-  src="/images/tag-analyzer/create-tag-analyzer-tab-kr.png?v=c84d93768b"
-  link="/images/tag-analyzer/create-tag-analyzer-tab-kr.png?v=c84d93768b"
-  alt="새 탭 메뉴에서 + 버튼과 TAG ANALYZER 항목을 강조한 화면."
+{{< tag-analyzer-features
+  id="open-tab"
+  title="Tag Analyzer 탭 열기"
   caption="그림 1.1: Tag Analyzer 탭 열기"
 >}}
 
@@ -41,13 +40,9 @@ Tag Analyzer로 태그 테이블의 데이터를 차트로 시각화하고 분�
 
 예제 데이터로 Tag Analyzer를 사용해 볼 수 있습니다. 이미 데이터가 있다면 이 섹션을 건너뜁니다.
 
-1. 새 탭 메뉴에서 **SQL**을 선택하고 아래 SQL 예제를 실행해 테이블을 만듭니다.
-2. 다른 탭에서 **TQL**을 선택하고 아래 TQL 예제를 실행해 예제 데이터를 추가합니다.
-
-{{< figure
-  src="/images/tag-analyzer/prepare-example-data-editors-kr.png?v=fea3c32a9c"
-  link="/images/tag-analyzer/prepare-example-data-editors-kr.png?v=fea3c32a9c"
-  alt="+ 버튼으로 새 탭을 연 뒤 SQL에서 예제 테이블을 만들고 TQL에서 예제 데이터를 추가하는 위치."
+{{< tag-analyzer-features
+  id="example-editors"
+  title="SQL 및 TQL 편집기"
   caption="그림 1.2: SQL 및 TQL 편집기"
 >}}
 
@@ -77,17 +72,9 @@ APPEND(table('TAG_ANALYZER_DEMO'))
 Tag Analyzer 탭에서 **New Chart**를 클릭해 차트 생성 대화상자를 엽니다.
 자신의 테이블과 태그를 사용하거나 아래 예제 설정을 따릅니다.
 
-1. **Chart name**에 `Temperature`를 입력하고 **Line**을 선택합니다.
-2. 예제 데이터를 만든 **Database**와 **User**를 선택한 뒤, **Table**은 **TAG_ANALYZER_DEMO**,
-   **Time**은 **TIME**, **Value**는 **VALUE**를 선택합니다.
-3. **Enter** 또는 검색 버튼으로 `temperature`를 검색하고 **Item list**에서 클릭합니다.
-   **Selected**에 추가되면 **AVG**를 유지합니다.
-4. **Apply**를 클릭해 차트를 만듭니다.
-
-{{< figure
-  src="/images/tag-analyzer/create-tag-analyzer-chart-kr.png?v=ccfabf1952"
-  link="/images/tag-analyzer/create-tag-analyzer-chart-kr.png?v=ccfabf1952"
-  alt="전체 Machbase Neo 화면과 New Chart 대화상자. 1. 이름을 입력하고 Line을 선택합니다. 2. 테이블, TIME, VALUE를 선택합니다. 3. temperature를 검색하고 선택합니다. 4. Apply를 클릭해 차트를 만듭니다."
+{{< tag-analyzer-features
+  id="create-chart"
+  title="첫 차트 만들기"
   caption="그림 1.3: 첫 차트 만들기"
 >}}
 
@@ -97,9 +84,9 @@ Tag Analyzer 탭에서 **New Chart**를 클릭해 차트 생성 대화상자를 
 
 아래 이미지는 Tag Analyzer의 화면 구성을 보여줍니다.
 
-{{< figure
-  src="/images/web-ui/tag-analyzer/controls-overview.png?v=c287c40a80"
-  alt="temperature 예제의 보드 컨트롤, 패널 컨트롤, 범위, 도구와 패널 편집기 위치"
+{{< tag-analyzer-features
+  id="overview"
+  title="화면 구성"
   caption="그림 1.4: 화면 구성"
 >}}
 
@@ -107,9 +94,9 @@ Tag Analyzer 탭에서 **New Chart**를 클릭해 차트 생성 대화상자를 
 
 맨 위 도구 모음에서 공통 범위, 새로 고침, 저장, 겹쳐 보기를 조작합니다.
 
-{{< figure
-  src="/images/web-ui/tag-analyzer/board-controls.png"
-  alt="범위, 새로 고침, 저장, 겹쳐 보기와 도움말을 보라색으로 표시한 보드 도구 모음"
+{{< tag-analyzer-features
+  id="board-controls"
+  title="보드 컨트롤"
   caption="그림 2: 보드 컨트롤"
 >}}
 
@@ -168,8 +155,7 @@ Tag Analyzer 탭에서 **New Chart**를 클릭해 차트 생성 대화상자를 
 
 ### 2.5 차트 겹쳐 보기 {#차트-겹쳐-비교하기}
 
-차트 겹쳐 보기는 여러 차트를 한 화면에 겹쳐 표시하여 데이터 패턴을 비교할 수 있게 합니다.
-각 차트를 X축 방향으로 이동해 서로 다른 시점의 봉우리나 이벤트를 맞출 수 있습니다.여러 시리즈가 있는 차트도 사용할 수 있습니다. 
+차트 겹쳐 보기로 여러 차트를 겹쳐 비교하고 각 차트를 X축 방향으로 개별 이동할 수 있습니다.
 
 {{< overlap-chart >}}
 
@@ -194,20 +180,13 @@ Tag Analyzer 탭에서 **New Chart**를 클릭해 차트 생성 대화상자를 
 차트 위 범위에서 **From/To**를 설정하고 **Apply**를 클릭합니다. 내비게이터를 드래그하거나 확대·축소해 범위를 조절합니다.
 위에서 만든 예제 데이터는 `last-10m`부터 `last`까지로 설정합니다.
 
-{{< tag-analyzer-video
-  src="/images/web-ui/tag-analyzer/basic-range-control-kr.mp4?v=3c67039c20"
-  poster="/images/web-ui/tag-analyzer/basic-range-control-kr-poster.webp?v=81b60c0d09"
-  alt="범위 설정, 내비게이터 이동과 확대"
-  caption="데모 3.1: 기본 범위 조절"
->}}
-
 {{< range-controls >}}
 
 <details>
 <summary>설정된 범위</summary>
 
-[패널 편집기 → Range](#main-range)의 **Main Range (1)**는 표시 범위에 우선 적용됩니다.
-별도로 설정한 **Nav Range (2)**는 보드 범위보다 우선합니다.
+[패널 편집기 → Range](#main-range)의 **Main Range (A)**는 표시 범위에 우선 적용됩니다.
+별도로 설정한 **Nav Range (B)**는 보드 범위보다 우선합니다.
 
 </details>
 
@@ -215,9 +194,9 @@ Tag Analyzer 탭에서 **New Chart**를 클릭해 차트 생성 대화상자를 
 
 도구 모음의 왼쪽부터 순서대로 설명합니다.
 
-{{< figure
-  src="/images/web-ui/tag-analyzer/panel-controls.png"
-  alt="왼쪽부터 RAW, Select range, Refresh range, Panel Editor, Delete, Extra 순서의 패널 도구"
+{{< tag-analyzer-features
+  id="panel-tools"
+  title="도구"
   caption="그림 3.2: 도구"
 >}}
 
@@ -303,15 +282,12 @@ FFT는 **RAW 모드의 시간축 차트**에서 사용할 수 있습니다.
 
 #### 3.2.8 Extra {#extra-panel-tools}
 
-{{< figure
-  src="/images/web-ui/tag-analyzer/panel-extra-tools.png"
-  alt="Extra 메뉴"
+{{< tag-analyzer-features
+  id="extra-tools"
+  title="Extra"
   caption="그림 3.2.8: Extra"
 >}}
 
-- **Set global range:** 이 패널의 범위를 X축 유형이 같은 다른 패널에 복사합니다.
-- **Reload data:** 현재 범위를 유지하며 데이터를 다시 조회합니다.
-- **Expand to full data range:** 이 패널의 전체 데이터를 봅니다.
 
 <span id="편리한-도구"></span>
 

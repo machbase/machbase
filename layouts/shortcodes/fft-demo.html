@@ -27,7 +27,7 @@
 {{- end -}}
 {{- $first := index $slides 0 -}}
 {{- $js := resources.Get "js/fft-media-guide.js" | minify | fingerprint -}}
-<figure class="fft-demo fft-media-guide fft-compact" aria-label="{{ if $kr }}FFT 데모와 컨트롤 안내{{ else if $ja }}FFT のデモと操作ガイド{{ else }}FFT demo and control guides{{ end }}">
+<figure class="fft-demo fft-media-guide fft-compact fft-callout-demo" aria-label="{{ if $kr }}FFT 데모와 컨트롤 안내{{ else if $ja }}FFT のデモと操作ガイド{{ else }}FFT demo and control guides{{ end }}">
   <div class="fft-demo-player">
     <div class="fft-demo-header">
       <p class="fft-demo-status"><span data-fft-count>1 / 3</span><strong data-fft-title>{{ $first.title }}</strong></p>
@@ -39,7 +39,7 @@
             {{- if eq $i 0 -}}
               {{ partial "tag-analyzer-player.html" (dict "page" $.Page "src" $video "poster" $poster "alt" $slide.title) }}
             {{- else -}}
-              {{ partial "tag-analyzer-described-image.html" (dict "spec" (index $features $slide.key) "lang" $lang "title" $slide.title) }}
+              {{ partial "tag-analyzer-callout-guide.html" (dict "spec" (index $features $slide.key) "id" $slide.key "lang" $lang "title" $slide.title) }}
             {{- end -}}
           </div>
         </section>

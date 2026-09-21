@@ -18,7 +18,7 @@ It can be used to:
 
 <span id="1-quickstart"></span>
 
-## 1. Overview {#overview}
+## 1. Create a Tag Analyzer Demo {#overview}
 
 {{< figure
   src="/images/tag-analyzer/created-tag-analyzer-chart.png"
@@ -30,10 +30,9 @@ It can be used to:
 
 Click **+**, then choose **TAG ANALYZER** to open a new board.
 
-{{< figure
-  src="/images/tag-analyzer/create-tag-analyzer-tab.png?v=d14367faf6"
-  link="/images/tag-analyzer/create-tag-analyzer-tab.png?v=d14367faf6"
-  alt="The + button and TAG ANALYZER option highlighted in the new-tab menu."
+{{< tag-analyzer-features
+  id="open-tab"
+  title="Open a Tag Analyzer Tab"
   caption="Figure 1.1: Open a Tag Analyzer Tab"
 >}}
 
@@ -41,13 +40,9 @@ Click **+**, then choose **TAG ANALYZER** to open a new board.
 
 Use this sample data to try Tag Analyzer. Skip this section if you already have data.
 
-1. Choose **SQL** from the new-tab menu to create the table with the SQL example below.
-2. Choose **TQL** in another tab to insert the sample data with the TQL example below.
-
-{{< figure
-  src="/images/tag-analyzer/prepare-example-data-editors.png?v=169f7f9d00"
-  link="/images/tag-analyzer/prepare-example-data-editors.png?v=169f7f9d00"
-  alt="Open a new tab with +. Choose SQL to create the sample table, then TQL to insert sample data."
+{{< tag-analyzer-features
+  id="example-editors"
+  title="SQL and TQL Editors"
   caption="Figure 1.2: SQL and TQL Editors"
 >}}
 
@@ -77,17 +72,9 @@ APPEND(table('TAG_ANALYZER_DEMO'))
 In the Tag Analyzer tab, click **New Chart** to open the chart creation dialog.
 Use your own table and tag, or follow the sample settings below.
 
-1. Set **Chart name** to `Temperature` and choose **Line**.
-2. Select the **Database** and **User** used for the example data, then choose
-   **TAG_ANALYZER_DEMO** as **Table**, **TIME** as **Time**, and **VALUE** as **Value**.
-3. Search for `temperature` with **Enter** or the search button, then click it in **Item list**.
-   It appears under **Selected**. Keep **AVG**.
-4. Click **Apply** to create the chart.
-
-{{< figure
-  src="/images/tag-analyzer/create-tag-analyzer-chart.png?v=3355dfff00"
-  link="/images/tag-analyzer/create-tag-analyzer-chart.png?v=3355dfff00"
-  alt="Full Machbase Neo window with the New Chart dialog. 1. Enter a name and choose Line. 2. Select the table, TIME, and VALUE. 3. Search for temperature and select it. 4. Click Apply to create the chart."
+{{< tag-analyzer-features
+  id="create-chart"
+  title="Create Your First Chart"
   caption="Figure 1.3: Create Your First Chart"
 >}}
 
@@ -97,9 +84,9 @@ Your chart is ready. Use Tag Analyzer to explore and analyze your data.
 
 The image below shows the layout of Tag Analyzer.
 
-{{< figure
-  src="/images/web-ui/tag-analyzer/controls-overview.png?v=c287c40a80"
-  alt="Temperature sample with labels for Board Control, Panel Control, Range, Tools, and Panel Editor"
+{{< tag-analyzer-features
+  id="overview"
+  title="Screen Overview"
   caption="Figure 1.4: Screen Overview"
 >}}
 
@@ -107,9 +94,9 @@ The image below shows the layout of Tag Analyzer.
 
 Use the board toolbar for shared ranges, refresh, saving, and overlap.
 
-{{< figure
-  src="/images/web-ui/tag-analyzer/board-controls.png"
-  alt="Board toolbar with purple labels for ranges, refresh, save, overlap, and help"
+{{< tag-analyzer-features
+  id="board-controls"
+  title="Board Control"
   caption="Figure 2: Board Control"
 >}}
 
@@ -170,25 +157,10 @@ Close the board tab, then click the saved file in File Explorer to reopen the bo
 
 ### 2.5 Overlap Chart {#compare-charts-with-overlap}
 
-Overlap Chart displays multiple charts together so you can compare their patterns.
-Shift each chart along the X-axis to align peaks or events that occur at different times.
+Overlap Chart displays multiple charts together for comparison and lets you shift each one
+independently along the X-axis.
 
 {{< overlap-chart >}}
-
-Charts must have loaded ranges and the same X-axis type. Charts with multiple series are supported.
-
-<details>
-<summary>How overlap alignment works</summary>
-
-**Original** shows the source range; **Altered** shows the range after alignment and shifts.
-
-Each chart starts at zero based on its first plotted point. Time charts display elapsed time;
-numeric charts display relative values. Shifting moves all series from that chart together
-within the comparison view.
-
-</details>
-
-**Help (?)** opens the built-in control guide.
 
 ### 2.6 Delete a TAZ File {#delete-a-taz-file}
 
@@ -211,20 +183,13 @@ This removes the saved board; table data stays intact.
 Click the chart's range to set **From/To**, then **Apply**. Drag or zoom in the navigator to adjust the range.
 For the generated sample, use `last-10m` to `last`.
 
-{{< tag-analyzer-video
-  src="/images/web-ui/tag-analyzer/basic-range-control.mp4?v=ad412ac8f7"
-  poster="/images/web-ui/tag-analyzer/basic-range-control-poster.webp?v=9f72fa6e77"
-  alt="Setting the range, moving the navigator, and zooming"
-  caption="Demo 3.1: Basic Range Control"
->}}
-
 {{< range-controls >}}
 
 <details>
 <summary>Configured ranges</summary>
 
-In [Panel Editor → Range](#main-range), **Main Range (1)** takes priority for the visible range.
-A separate **Nav Range (2)** takes priority over the board range.
+In [Panel Editor → Range](#main-range), **Main Range (A)** takes priority for the visible range.
+A separate **Nav Range (B)** takes priority over the board range.
 
 </details>
 
@@ -232,9 +197,9 @@ A separate **Nav Range (2)** takes priority over the board range.
 
 Follow the toolbar from left to right.
 
-{{< figure
-  src="/images/web-ui/tag-analyzer/panel-controls.png"
-  alt="Panel tools from left to right: RAW, Select range, Refresh range, Panel Editor, Delete, Extra"
+{{< tag-analyzer-features
+  id="panel-tools"
+  title="Tools"
   caption="Figure 3.2: Tools"
 >}}
 
@@ -320,15 +285,12 @@ Save the board to keep highlights and annotations.
 
 #### 3.2.8 Extra {#extra-panel-tools}
 
-{{< figure
-  src="/images/web-ui/tag-analyzer/panel-extra-tools.png"
-  alt="Extra menu"
+{{< tag-analyzer-features
+  id="extra-tools"
+  title="Extra"
   caption="Figure 3.2.8: Extra"
 >}}
 
-- **Set global range:** copy this panel's ranges to panels with the same X-axis type.
-- **Reload data:** reload points, keeping the current range.
-- **Expand to full data range:** show all available data in this panel.
 
 <span id="handy-tools"></span>
 

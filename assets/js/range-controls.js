@@ -3,6 +3,7 @@ document.querySelectorAll('.range-controls').forEach(viewer => {
   viewer.dataset.ready = 'true';
   const slides = [...viewer.querySelectorAll('[data-range-slide]')];
   const dots = [...viewer.querySelectorAll('[data-range-dot]')];
+  const video = viewer.querySelector('video');
   const controls = viewer.querySelector('nav');
   const back = viewer.querySelector('[data-range-back]');
   const next = viewer.querySelector('[data-range-next]');
@@ -10,6 +11,7 @@ document.querySelectorAll('.range-controls').forEach(viewer => {
 
   function show(index) {
     if (index < 0 || index >= slides.length) return;
+    if (index !== active) video.pause();
     active = index;
     slides.forEach((slide, i) => {
       slide.setAttribute('aria-hidden', String(i !== index));

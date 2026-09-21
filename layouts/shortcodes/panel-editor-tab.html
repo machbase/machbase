@@ -5,13 +5,9 @@
 {{- if eq $lang "ja" -}}
   {{- $title = printf "%s タブ" $spec.title -}}
 {{- end -}}
-{{- $imageRatio := 0.0 -}}
-{{- range $tabs -}}
-  {{- $imageRatio = math.Max $imageRatio (div (float .height) (float .width)) -}}
-{{- end -}}
 <figure class="ta-feature-guide panel-editor-tab">
   <div class="ta-feature-card">
-    {{ partial "tag-analyzer-described-image.html" (dict "spec" $spec "lang" $lang "title" $title "imageAspect" (div 1.0 $imageRatio)) }}
+    {{ partial "tag-analyzer-callout-guide.html" (dict "spec" $spec "id" (printf "editor-%s" (.Get "id")) "lang" $lang "title" $title) }}
   </div>
   <figcaption>{{ .Get "caption" }}</figcaption>
 </figure>

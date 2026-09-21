@@ -1,50 +1,54 @@
-{{- $kr := eq .Page.Language.Lang "kr" -}}
-{{- $ja := eq .Page.Language.Lang "ja" -}}
+{{- $lang := .Page.Language.Lang -}}
+{{- $kr := eq $lang "kr" -}}
+{{- $ja := eq $lang "ja" -}}
+{{- $features := resources.Get "tag-analyzer-features.json" | transform.Unmarshal -}}
 {{- $demo := cond $kr "/images/web-ui/tag-analyzer/compare-charts-overlap-kr.mp4?v=345ad9956b" "/images/web-ui/tag-analyzer/compare-charts-overlap.mp4?v=306607e17a" -}}
 {{- $poster := cond $kr "/images/web-ui/tag-analyzer/compare-charts-overlap-kr-poster.webp?v=d2fd767493" "/images/web-ui/tag-analyzer/compare-charts-overlap-poster.webp?v=c13a33849b" -}}
 {{- $slides := slice
-  (dict "src" $demo "caption" "Demo 2.5: Overlap Chart" "alt" "Aligning two temperature curves with three 10-second shifts")
-  (dict "src" "/images/web-ui/tag-analyzer/overlap-controls.png?v=b85a67ea07" "caption" "Figure 2.5: Overlap Chart Description" "alt" "Refresh data reloads data while keeping shifts. Scroll to zoom, drag to pan, and hover for values. Original Range is the source chart’s visible range when Overlap Chart was opened. Altered Range is the range after alignment and shifts, shown as elapsed time. Set an amount and unit, then use the arrows to shift only the comparison. Close returns to the board.")
+  (dict "title" "Overlap Chart demo" "caption" "Demo 2.5: Overlap Chart")
+  (dict "title" "Overlap Chart controls" "caption" "Figure 2.5: Overlap Chart Description")
 -}}
 {{- if $kr -}}
   {{- $slides = slice
-    (dict "src" $demo "caption" "데모 2.5: 차트 겹쳐 보기" "alt" "10초씩 세 번 이동하여 두 temperature 파형을 일치시키는 과정")
-    (dict "src" "/images/web-ui/tag-analyzer/overlap-controls-kr.png?v=a4aced7fe1" "caption" "그림 2.5: 차트 겹쳐 보기 설명" "alt" "이동량을 유지하며 데이터를 다시 조회합니다. 스크롤로 확대·축소하고 드래그로 이동하며 마우스를 올려 값을 확인합니다. Original은 Overlap Chart를 열었을 때 원본 차트에 표시된 범위입니다. Altered는 정렬·이동 후 범위를 경과 시간으로 표시합니다. 이동량과 단위를 설정하고 화살표로 비교 화면만 이동합니다. Close는 보드로 돌아갑니다.")
+    (dict "title" "차트 겹쳐 보기 데모" "caption" "데모 2.5: 차트 겹쳐 보기")
+    (dict "title" "차트 겹쳐 보기 컨트롤" "caption" "그림 2.5: 차트 겹쳐 보기 설명")
   -}}
 {{- else if $ja -}}
   {{- $slides = slice
-    (dict "src" $demo "caption" "デモ 2.5: チャートの重ね合わせ" "alt" "10 秒ずつ 3 回移動して、2 つの temperature の波形を揃える操作")
-    (dict "src" "/images/web-ui/tag-analyzer/overlap-controls.png?v=b85a67ea07" "caption" "図 2.5: チャートの重ね合わせの説明" "alt" "Refresh data は移動量を維持してデータを再読み込みします。スクロールで拡大・縮小、ドラッグで移動し、カーソルを合わせて値を確認します。Original Range は比較画面を開いた時点の元の表示範囲です。Altered Range は位置合わせと移動後の範囲を経過時間で示します。移動量と単位を設定し、矢印で比較画面内の位置を調整します。Close でボードに戻ります。")
+    (dict "title" "チャートの重ね合わせのデモ" "caption" "デモ 2.5: チャートの重ね合わせ")
+    (dict "title" "チャートの重ね合わせの操作" "caption" "図 2.5: チャートの重ね合わせの説明")
   -}}
 {{- end -}}
 {{- $first := index $slides 0 -}}
-{{- $second := index $slides 1 -}}
-{{- $js := resources.Get "js/overlap-media.js" | minify | fingerprint -}}
-<figure class="fft-demo overlap-media"
-  aria-label="{{ if $kr }}차트 겹쳐 보기 데모와 기능 안내{{ else if $ja }}チャートの重ね合わせのデモと操作ガイド{{ else }}Overlap Chart demo and controls{{ end }}">
+{{- $js := resources.Get "js/fft-media-guide.js" | minify | fingerprint -}}
+<figure class="fft-demo fft-media-guide fft-callout-demo overlap-media" aria-label="{{ $first.title }}">
   <div class="fft-demo-player">
-    <div class="fft-demo-stage">
-      {{- partial "tag-analyzer-player.html" (dict "page" .Page "src" $first.src "poster" $poster "alt" $first.alt) -}}
-      <a data-media-link href="{{ $second.src | relURL }}" target="_blank" rel="noopener" hidden
-        aria-label="{{ if $kr }}현재 이미지를 원본 크기로 열기{{ else if $ja }}画像を元のサイズで開く{{ else }}Open current image at full size{{ end }}">
-        <img data-media-image src="{{ $second.src | relURL }}" alt="{{ $second.alt }}"
-          width="3200" height="2200" loading="lazy">
-      </a>
+    <div class="fft-demo-header">
+      <p class="fft-demo-status"><span data-fft-count>1 / 2</span><strong data-fft-title>{{ $first.title }}</strong></p>
     </div>
-    <nav class="fft-demo-controls" aria-label="{{ if $kr }}차트 겹쳐 보기 이미지 선택{{ else if $ja }}重ね合わせガイドのページ{{ else }}Overlap Chart media selection{{ end }}" hidden>
-      <button type="button" data-media-back disabled>{{ if $kr }}‹ 이전{{ else if $ja }}‹ 前へ{{ else }}‹ Back{{ end }}</button>
+    <div class="fft-guide-slides">
+      {{- range $i, $slide := $slides -}}
+        <section class="fft-guide-slide" data-fft-slide data-title="{{ $slide.title }}" data-caption="{{ $slide.caption }}" aria-label="{{ $slide.title }}">
+          <div class="fft-guide-visual">
+            {{- if eq $i 0 -}}
+              {{ partial "tag-analyzer-player.html" (dict "page" $.Page "src" $demo "poster" $poster "alt" $slide.title) }}
+            {{- else -}}
+              {{ partial "tag-analyzer-callout-guide.html" (dict "spec" $features.overlap "id" "overlap" "lang" $lang "title" $slide.title) }}
+            {{- end -}}
+          </div>
+        </section>
+      {{- end -}}
+    </div>
+    <nav class="fft-demo-controls" aria-label="{{ if $kr }}차트 겹쳐 보기 안내 페이지{{ else if $ja }}重ね合わせガイドのページ{{ else }}Overlap Chart guide pages{{ end }}" hidden>
+      <button type="button" data-fft-back disabled>{{ if $kr }}‹ 이전{{ else if $ja }}‹ 前へ{{ else }}‹ Back{{ end }}</button>
       <div class="fft-demo-dots">
         {{- range $i, $slide := $slides -}}
-          <button type="button" data-media-slide data-src="{{ $slide.src | relURL }}"
-            data-alt="{{ $slide.alt }}" data-caption="{{ $slide.caption }}"
-            aria-label="{{ add $i 1 }} / 2: {{ $slide.caption }}" title="{{ $slide.caption }}"
-            {{ if eq $i 0 }}aria-current="step"{{ end }}></button>
+          <button type="button" data-fft-dot aria-label="{{ add $i 1 }} / 2: {{ $slide.title }}" title="{{ $slide.title }}" {{ if eq $i 0 }}aria-current="step"{{ end }}></button>
         {{- end -}}
       </div>
-      <button type="button" data-media-next>{{ if $kr }}다음 ›{{ else if $ja }}次へ ›{{ else }}Next ›{{ end }}</button>
+      <button type="button" data-fft-next>{{ if $kr }}다음 ›{{ else if $ja }}次へ ›{{ else }}Next ›{{ end }}</button>
     </nav>
   </div>
-  <figcaption role="status" aria-live="polite" aria-atomic="true">{{ $first.caption }}</figcaption>
-  <noscript><p><a href="{{ $second.src | relURL }}">{{ $second.caption }}</a></p></noscript>
+  <figcaption role="status" aria-live="polite" aria-atomic="true" data-fft-caption>{{ $first.caption }}</figcaption>
 </figure>
 <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>

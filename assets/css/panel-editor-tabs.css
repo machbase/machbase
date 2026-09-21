@@ -24,7 +24,8 @@
   .content .editor-tab-notes { grid-template-columns: 1fr; gap: 14px; padding: 16px; }
 }
 
-.ta-feature-card { background: #242424; color: #f8fafc; border-radius: 8px; overflow: hidden; }
+.ta-feature-card { border: 1px solid #dce2eb; border-radius: 10px; overflow: hidden; }
+.dark .ta-feature-card { border-color: #404040; }
 .ta-annotated-image { display: block; position: relative; background: #242424; cursor: zoom-in; }
 .ta-annotated-image img, .content .ta-annotated-image img { display: block; width: 100%; height: auto; object-fit: contain; margin: 0; border-radius: 0; }
 .ta-annotated-image svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
@@ -85,3 +86,34 @@
 .ta-description-highlight rect { fill: none; stroke: var(--note-color); stroke-width: 2.5; }
 .ta-description-highlight circle { fill: var(--note-color); stroke: #17191c; stroke-width: 2; }
 .ta-description-highlight text { fill: #17191c; font: 700 20px "Segoe UI", "Malgun Gothic", sans-serif; }
+
+.ta-callout-guide { width: 100%; background: #fff; color: #475569; }
+.ta-callout-guide > .ta-callout-image { max-width: var(--guide-image-width, 100%); margin-inline: auto; }
+.content .ta-callout-row {
+  display: grid;
+  grid-template-columns: repeat(var(--callout-columns), minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 12px 16px;
+  font-size: 15px;
+  line-height: 1.45;
+  cursor: text;
+  user-select: text;
+}
+.ta-callout-note { min-width: 0; }
+.content .ta-callout-note dt { display: flex; align-items: center; gap: 6px; margin: 0; color: #1e293b; font-size: 14px; line-height: 20px; font-weight: 600; }
+.content .ta-callout-note dd { margin: 4px 0 0; padding: 0; }
+.ta-callout-letter {
+  flex: 0 0 18px;
+  line-height: 18px;
+  text-align: center;
+  border-radius: 4px;
+  background: var(--note-color);
+  color: #17191c;
+  font-size: 11px;
+}
+.dark .ta-callout-guide { background: #171717; color: #d1d5db; }
+.dark .ta-callout-note dt { color: #f3f4f6; }
+@media (max-width: 600px) {
+  .content .ta-callout-row { grid-template-columns: 1fr; gap: 12px; padding: 12px; font-size: 16px; }
+}

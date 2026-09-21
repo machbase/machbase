@@ -1,3 +1,4 @@
+{{- /* Match Hextra's current partial path so the tutorial assets override its empty hook. */ -}}
 {{- if or (.HasShortcode "tag-analyzer-video") (.HasShortcode "fft-demo") (.HasShortcode "overlap-chart") (.HasShortcode "range-controls") (.HasShortcode "markup-guide") -}}
   {{- $css := resources.Get "css/fft-demo.css" | minify | fingerprint -}}
   {{- $js := resources.Get "js/tag-analyzer-player.js" | minify | fingerprint -}}
@@ -5,7 +6,7 @@
   <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
 {{- end -}}
 
-{{- if or (.HasShortcode "tag-analyzer-features") (.HasShortcode "panel-editor-tab") (.HasShortcode "fft-demo") (.HasShortcode "range-controls") (.HasShortcode "markup-guide") -}}
+{{- if or (.HasShortcode "tag-analyzer-features") (.HasShortcode "panel-editor-tab") (.HasShortcode "fft-demo") (.HasShortcode "range-controls") (.HasShortcode "markup-guide") (.HasShortcode "overlap-chart") -}}
   {{- $css := resources.Get "css/panel-editor-tabs.css" | minify | fingerprint -}}
   {{- $js := resources.Get "js/tag-analyzer-annotations.js" | minify | fingerprint -}}
   <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">

@@ -128,7 +128,6 @@
   },
   "add-chart": {
     "image": "/images/tag-analyzer/created-tag-analyzer-chart.png",
-    "labelOnly": true,
     "width": 1042,
     "height": 599,
     "notes": [
@@ -137,10 +136,29 @@
         "en": "Click New Chart below the existing panels to add another chart to this board.",
         "ja": "既存パネルの下の New Chart をクリックして、ボードにチャートを追加します。",
         "kr": "기존 패널 아래의 New Chart를 클릭해 현재 보드에 차트를 추가합니다.",
-        "regions": [[34, 533, 973, 60]],
-        "callout": [690, 563],
-        "target": [576, 563],
-        "short": "Create a new chart"
+        "regions": [
+          [
+            34,
+            533,
+            973,
+            60
+          ]
+        ],
+        "callout": [
+          690,
+          563
+        ],
+        "target": [
+          576,
+          563
+        ],
+        "short": "Create a new chart",
+        "markers": [
+          [
+            462,
+            563
+          ]
+        ]
       }
     ]
   },
@@ -407,8 +425,8 @@
         ],
         "markers": [
           [
-          1700,
-          45
+            1700,
+            45
           ]
         ]
       },
@@ -469,6 +487,854 @@
           [
             479,
             632
+          ]
+        ]
+      }
+    ]
+  },
+  "open-tab": {
+    "image": "guide-open-editors.png",
+    "width": 1280,
+    "height": 720,
+    "notes": [
+      {
+        "label": "New tab (+)",
+        "en": "Open the new-tab menu.",
+        "kr": "새 탭 메뉴를 엽니다.",
+        "ja": "新しいタブのメニューを開きます。",
+        "regions": [
+          [
+            446,
+            8,
+            28,
+            28
+          ]
+        ],
+        "markers": [
+          [
+            496,
+            23
+          ]
+        ]
+      },
+      {
+        "label": "TAG ANALYZER",
+        "en": "Open a Tag Analyzer board.",
+        "kr": "Tag Analyzer 보드를 엽니다.",
+        "ja": "Tag Analyzer のボードを開きます。",
+        "regions": [
+          [
+            657,
+            127,
+            178,
+            178
+          ]
+        ],
+        "markers": [
+          [
+            746,
+            108
+          ]
+        ]
+      }
+    ]
+  },
+  "example-editors": {
+    "image": "guide-open-editors.png",
+    "width": 1280,
+    "height": 720,
+    "notes": [
+      {
+        "label": "New tab (+)",
+        "en": "Open a separate tab for each editor.",
+        "kr": "각 편집기를 별도 탭으로 엽니다.",
+        "ja": "各エディターを別のタブで開きます。",
+        "regions": [
+          [
+            446,
+            8,
+            28,
+            28
+          ]
+        ],
+        "markers": [
+          [
+            496,
+            23
+          ]
+        ]
+      },
+      {
+        "label": "SQL",
+        "en": "Run the SQL below to create the sample table.",
+        "kr": "아래 SQL로 예제 테이블을 만듭니다.",
+        "ja": "下の SQL でサンプルテーブルを作成します。",
+        "regions": [
+          [
+            273,
+            127,
+            178,
+            178
+          ]
+        ],
+        "markers": [
+          [
+            362,
+            108
+          ]
+        ]
+      },
+      {
+        "label": "TQL",
+        "en": "Run the TQL below to insert the sample data.",
+        "kr": "아래 TQL로 예제 데이터를 추가합니다.",
+        "ja": "下の TQL でサンプルデータを追加します。",
+        "regions": [
+          [
+            465,
+            127,
+            178,
+            178
+          ]
+        ],
+        "markers": [
+          [
+            554,
+            108
+          ]
+        ]
+      }
+    ]
+  },
+  "create-chart": {
+    "image": "guide-create-chart.png",
+    "width": 1440,
+    "height": 1000,
+    "notes": [
+      {
+        "label": "Name / Type",
+        "en": "Enter Temperature and choose Line.",
+        "kr": "Temperature를 입력하고 Line을 선택합니다.",
+        "ja": "Temperature と入力し、Line を選択します。",
+        "regions": [
+          [
+            409,
+            176,
+            621,
+            153
+          ]
+        ],
+        "markers": [
+          [
+            389,
+            196
+          ]
+        ]
+      },
+      {
+        "label": "Data source",
+        "en": "Choose your Database and User, then TAG_ANALYZER_DEMO, TIME, and VALUE.",
+        "kr": "Database와 User를 선택한 뒤 TAG_ANALYZER_DEMO, TIME, VALUE를 지정합니다.",
+        "ja": "Database と User を選び、TAG_ANALYZER_DEMO、TIME、VALUE を指定します。",
+        "regions": [
+          [
+            409,
+            340,
+            621,
+            132
+          ]
+        ],
+        "markers": [
+          [
+            389,
+            360
+          ]
+        ]
+      },
+      {
+        "label": "Tag / Series",
+        "en": "Search for temperature with Enter or the search button, select it in Item list, and keep AVG.",
+        "kr": "Enter 또는 검색 버튼으로 temperature를 검색하고 Item list에서 선택합니다. AVG를 유지합니다.",
+        "ja": "Enter または検索ボタンで temperature を検索し、Item list で選択します。AVG のままにします。",
+        "regions": [
+          [
+            409,
+            483,
+            621,
+            347
+          ]
+        ],
+        "markers": [
+          [
+            389,
+            504
+          ]
+        ]
+      },
+      {
+        "label": "Apply",
+        "en": "Create the chart with these settings.",
+        "kr": "설정한 내용으로 차트를 만듭니다.",
+        "ja": "この設定でチャートを作成します。",
+        "regions": [
+          [
+            999,
+            846,
+            52,
+            38
+          ]
+        ],
+        "markers": [
+          [
+            1071,
+            865
+          ]
+        ]
+      }
+    ]
+  },
+  "overview": {
+    "image": "/images/tag-analyzer/created-tag-analyzer-chart.png",
+    "width": 1042,
+    "height": 599,
+    "notes": [
+      {
+        "label": "Board controls",
+        "en": "Set shared ranges, refresh, save, and compare charts.",
+        "kr": "공용 범위 설정, 새로 고침, 저장, 차트 비교를 수행합니다.",
+        "ja": "共通範囲の設定、更新、保存、チャートの比較を行います。",
+        "regions": [
+          [
+            687,
+            44,
+            337,
+            32
+          ]
+        ],
+        "markers": [
+          [
+            670,
+            60
+          ]
+        ]
+      },
+      {
+        "label": "Visible range",
+        "en": "Set the time or numeric range shown in this chart.",
+        "kr": "차트에 표시할 시간 또는 숫자 범위를 설정합니다.",
+        "ja": "チャートに表示する時間または数値の範囲を設定します。",
+        "regions": [
+          [
+            306,
+            111,
+            332,
+            20
+          ]
+        ],
+        "markers": [
+          [
+            289,
+            121
+          ]
+        ]
+      },
+      {
+        "label": "Panel tools",
+        "en": "Inspect data, open the editor, or manage this chart.",
+        "kr": "데이터를 확인하거나 편집기를 열어 차트를 관리합니다.",
+        "ja": "データの確認、設定の編集、チャートの管理を行います。",
+        "regions": [
+          [
+            792,
+            109,
+            192,
+            27
+          ]
+        ],
+        "markers": [
+          [
+            775,
+            122
+          ]
+        ]
+      },
+      {
+        "label": "Main chart",
+        "en": "Explore the data in the visible range.",
+        "kr": "표시 범위의 데이터를 탐색합니다.",
+        "ja": "表示範囲のデータを探索します。",
+        "regions": [
+          [
+            136,
+            178,
+            789,
+            167
+          ]
+        ],
+        "markers": [
+          [
+            118,
+            195
+          ]
+        ]
+      },
+      {
+        "label": "Navigator",
+        "en": "Move and resize the selected range.",
+        "kr": "선택 범위를 이동하고 크기를 조절합니다.",
+        "ja": "選択範囲を移動し、幅を調整します。",
+        "regions": [
+          [
+            111,
+            433,
+            820,
+            63
+          ]
+        ],
+        "markers": [
+          [
+            94,
+            446
+          ]
+        ]
+      }
+    ]
+  },
+  "board-controls": {
+    "image": "/images/tag-analyzer/created-tag-analyzer-chart.png",
+    "width": 1042,
+    "height": 599,
+    "notes": [
+      {
+        "label": "TIME / DIST",
+        "en": "Set a shared time or numeric range.",
+        "kr": "시간 또는 숫자 공용 범위를 설정합니다.",
+        "ja": "時間または数値の共通範囲を設定します。",
+        "regions": [
+          [
+            690,
+            47,
+            113,
+            26
+          ]
+        ],
+        "markers": [
+          [
+            688,
+            89
+          ]
+        ]
+      },
+      {
+        "label": "Refresh data",
+        "en": "Reload data in every chart.",
+        "kr": "모든 차트의 데이터를 다시 불러옵니다.",
+        "ja": "すべてのチャートのデータを再読み込みします。",
+        "regions": [
+          [
+            809,
+            48,
+            22,
+            26
+          ]
+        ],
+        "markers": [
+          [
+            820,
+            30
+          ]
+        ]
+      },
+      {
+        "label": "Refresh ranges",
+        "en": "Recheck data extents and configured ranges.",
+        "kr": "데이터 범위와 설정된 범위를 다시 확인합니다.",
+        "ja": "データの範囲と設定済みの範囲を再確認します。",
+        "regions": [
+          [
+            840,
+            48,
+            23,
+            26
+          ]
+        ],
+        "markers": [
+          [
+            851,
+            88
+          ]
+        ]
+      },
+      {
+        "label": "Full range",
+        "en": "Show all available data in every chart.",
+        "kr": "모든 차트에서 전체 데이터를 표시합니다.",
+        "ja": "各チャートで利用可能なデータ全体を表示します。",
+        "regions": [
+          [
+            872,
+            48,
+            23,
+            26
+          ]
+        ],
+        "markers": [
+          [
+            884,
+            30
+          ]
+        ]
+      },
+      {
+        "label": "Save",
+        "en": "Save changes to the current TAZ file.",
+        "kr": "현재 TAZ 파일에 변경 사항을 저장합니다.",
+        "ja": "現在の TAZ ファイルに変更を保存します。",
+        "regions": [
+          [
+            904,
+            48,
+            23,
+            26
+          ]
+        ],
+        "markers": [
+          [
+            916,
+            88
+          ]
+        ]
+      },
+      {
+        "label": "Save as",
+        "en": "Save with another name or location.",
+        "kr": "다른 이름이나 위치로 저장합니다.",
+        "ja": "別の名前または場所に保存します。",
+        "regions": [
+          [
+            936,
+            48,
+            23,
+            26
+          ]
+        ],
+        "markers": [
+          [
+            948,
+            30
+          ]
+        ]
+      },
+      {
+        "label": "Overlap Chart",
+        "en": "Compare the selected charts together.",
+        "kr": "선택한 차트를 겹쳐 비교합니다.",
+        "ja": "選択したチャートを重ねて比較します。",
+        "regions": [
+          [
+            968,
+            48,
+            23,
+            26
+          ]
+        ],
+        "markers": [
+          [
+            980,
+            88
+          ]
+        ]
+      },
+      {
+        "label": "Help",
+        "en": "Open the built-in control guide.",
+        "kr": "내장된 조작 안내를 엽니다.",
+        "ja": "内蔵の操作ガイドを開きます。",
+        "regions": [
+          [
+            1000,
+            48,
+            23,
+            26
+          ]
+        ],
+        "markers": [
+          [
+            1012,
+            30
+          ]
+        ]
+      }
+    ]
+  },
+  "panel-tools": {
+    "image": "/images/tag-analyzer/created-tag-analyzer-chart.png",
+    "width": 1042,
+    "height": 599,
+    "notes": [
+      {
+        "label": "RAW",
+        "en": "Switch between raw points and calculated intervals.",
+        "kr": "원시 데이터와 구간별 집계 데이터를 전환합니다.",
+        "ja": "生データと区間ごとの集計データを切り替えます。",
+        "regions": [
+          [
+            791,
+            111,
+            31,
+            22
+          ]
+        ],
+        "markers": [
+          [
+            806,
+            94
+          ]
+        ]
+      },
+      {
+        "label": "Select Range",
+        "en": "Select an interval for statistics and FFT.",
+        "kr": "통계와 FFT를 확인할 구간을 선택합니다.",
+        "ja": "統計と FFT を確認する範囲を選択します。",
+        "regions": [
+          [
+            830,
+            111,
+            21,
+            22
+          ]
+        ],
+        "markers": [
+          [
+            840,
+            150
+          ]
+        ]
+      },
+      {
+        "label": "Refresh range",
+        "en": "Recheck and reapply this chart’s range.",
+        "kr": "이 차트의 범위를 다시 확인하고 적용합니다.",
+        "ja": "このチャートの範囲を再確認し、適用します。",
+        "regions": [
+          [
+            856,
+            111,
+            20,
+            22
+          ]
+        ],
+        "markers": [
+          [
+            867,
+            94
+          ]
+        ]
+      },
+      {
+        "label": "Panel Editor",
+        "en": "Edit the chart’s data and display settings.",
+        "kr": "차트의 데이터와 표시 설정을 수정합니다.",
+        "ja": "データと表示の設定を編集します。",
+        "regions": [
+          [
+            879,
+            111,
+            22,
+            22
+          ]
+        ],
+        "markers": [
+          [
+            890,
+            150
+          ]
+        ]
+      },
+      {
+        "label": "Delete",
+        "en": "Remove this chart from the board.",
+        "kr": "보드에서 이 차트를 삭제합니다.",
+        "ja": "ボードからこのチャートを削除します。",
+        "regions": [
+          [
+            902,
+            111,
+            21,
+            22
+          ]
+        ],
+        "markers": [
+          [
+            913,
+            94
+          ]
+        ]
+      },
+      {
+        "label": "Extra",
+        "en": "Open highlights, annotations, and more tools.",
+        "kr": "하이라이트, 주석 등 추가 도구를 엽니다.",
+        "ja": "ハイライト、注釈などの追加ツールを開きます。",
+        "regions": [
+          [
+            928,
+            111,
+            56,
+            22
+          ]
+        ],
+        "markers": [
+          [
+            965,
+            150
+          ]
+        ]
+      }
+    ]
+  },
+  "extra-tools": {
+    "image": "panel-extra-tools.png",
+    "width": 386,
+    "height": 316,
+    "notes": [
+      {
+        "label": "Highlight",
+        "en": "Drag to mark a range.",
+        "kr": "드래그로 범위를 강조합니다.",
+        "ja": "ドラッグして範囲を強調します。",
+        "regions": [
+          [
+            29,
+            23,
+            341,
+            44
+          ]
+        ],
+        "markers": [
+          [
+            18,
+            45
+          ]
+        ]
+      },
+      {
+        "label": "Annotation",
+        "en": "Attach a note to a data point.",
+        "kr": "데이터 지점에 메모를 추가합니다.",
+        "ja": "データ点にメモを追加します。",
+        "regions": [
+          [
+            29,
+            80,
+            341,
+            44
+          ]
+        ],
+        "markers": [
+          [
+            18,
+            101
+          ]
+        ]
+      },
+      {
+        "label": "Set global range",
+        "en": "Share this range with charts of the same X-axis type.",
+        "kr": "같은 X축 유형의 차트에 이 범위를 적용합니다.",
+        "ja": "同じ X 軸の種類のチャートにこの範囲を適用します。",
+        "regions": [
+          [
+            29,
+            136,
+            341,
+            44
+          ]
+        ],
+        "markers": [
+          [
+            18,
+            157
+          ]
+        ]
+      },
+      {
+        "label": "Reload data",
+        "en": "Reload points, keeping the range.",
+        "kr": "범위를 유지하며 데이터를 다시 불러옵니다.",
+        "ja": "範囲を維持してデータを再読み込みします。",
+        "regions": [
+          [
+            29,
+            192,
+            341,
+            44
+          ]
+        ],
+        "markers": [
+          [
+            18,
+            213
+          ]
+        ]
+      },
+      {
+        "label": "Full range",
+        "en": "Show all available data in this chart.",
+        "kr": "이 차트에서 전체 데이터를 표시합니다.",
+        "ja": "このチャートでデータ全体を表示します。",
+        "regions": [
+          [
+            29,
+            248,
+            341,
+            44
+          ]
+        ],
+        "markers": [
+          [
+            18,
+            269
+          ]
+        ]
+      }
+    ],
+    "imageMaxWidth": 386,
+    "markerRadius": 10
+  },
+  "overlap": {
+    "image": "guide-overlap.png",
+    "width": 1600,
+    "height": 1100,
+    "notes": [
+      {
+        "label": "Refresh data",
+        "en": "Reload data while keeping shifts.",
+        "kr": "이동량을 유지하며 데이터를 다시 불러옵니다.",
+        "ja": "移動量を維持してデータを再読み込みします。",
+        "regions": [
+          [
+            110.59375,
+            250.78125,
+            31.390625,
+            31.390625
+          ]
+        ],
+        "markers": [
+          [
+            92.59375,
+            266.78125
+          ]
+        ]
+      },
+      {
+        "label": "Chart area",
+        "en": "Scroll to zoom, drag to pan, hover for values.",
+        "kr": "스크롤로 확대·축소하고 드래그로 이동하며 값을 확인합니다.",
+        "ja": "スクロールで拡大・縮小、ドラッグで移動し、カーソルで値を確認します。",
+        "regions": [
+          [
+            108.59375,
+            321.625,
+            1382.8125,
+            355
+          ]
+        ],
+        "markers": [
+          [
+            1505,
+            350
+          ]
+        ]
+      },
+      {
+        "label": "Close / ×",
+        "en": "Return to the board.",
+        "kr": "보드로 돌아갑니다.",
+        "ja": "ボードに戻ります。",
+        "regions": [
+          [
+            1465.8125,
+            177.015625,
+            39.1875,
+            39.1875
+          ],
+          [
+            1431.5,
+            869.140625,
+            73.5,
+            54.796875
+          ]
+        ],
+        "markers": [
+          [
+            1447.8125,
+            196.015625
+          ],
+          [
+            1413.5,
+            895.140625
+          ]
+        ]
+      },
+      {
+        "label": "Original Range",
+        "en": "Source chart’s range when the comparison opened.",
+        "kr": "비교 화면을 열었을 때 원본 차트의 범위입니다.",
+        "ja": "比較画面を開いた時点の元のチャートの範囲です。",
+        "regions": [
+          [
+            374.75,
+            771.859375,
+            409.8125,
+            34.203125
+          ]
+        ],
+        "markers": [
+          [
+            570,
+            829
+          ]
+        ]
+      },
+      {
+        "label": "Altered Range",
+        "en": "Range after alignment and shifts, shown as elapsed time.",
+        "kr": "정렬·이동 후의 범위를 경과 시간으로 표시합니다.",
+        "ja": "位置合わせと移動後の範囲を経過時間で表示します。",
+        "regions": [
+          [
+            788.953125,
+            771.859375,
+            407.34375,
+            34.203125
+          ]
+        ],
+        "markers": [
+          [
+            984,
+            829
+          ]
+        ]
+      },
+      {
+        "label": "Shift controls",
+        "en": "Set an amount and unit, then use ← / →. Only the comparison shifts.",
+        "kr": "이동량과 단위를 정하고 ← / →로 비교 화면만 이동합니다.",
+        "ja": "移動量と単位を設定し、← / → で比較画面内の位置を調整します。",
+        "regions": [
+          [
+            1199.6875,
+            764.171875,
+            278.328125,
+            49.59375
+          ]
+        ],
+        "markers": [
+          [
+            1340,
+            833
           ]
         ]
       }

@@ -175,16 +175,28 @@
 .fft-guide-visual .tag-analyzer-player { height: 100%; object-fit: contain; border-radius: 0; }
 .fft-guide-visual .ta-annotated-image { width: 100%; }
 .markup-guide .fft-guide-visual { aspect-ratio: 1540 / 950; }
-.fft-compact .fft-guide-visual { aspect-ratio: 16 / 9; }
-.fft-compact .ta-description-row { height: 9.5cqw; padding: 1cqw 4cqw; }
+.fft-callout-demo .fft-demo-player { background: #fff; }
+.fft-callout-demo .fft-demo-header { padding: 10px 14px; }
+.content .fft-callout-demo .fft-demo-status { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+.fft-callout-demo .fft-demo-status strong { font-weight: 600; }
+.fft-callout-demo .fft-demo-controls { padding-block: 8px; }
+.fft-callout-demo .fft-guide-slide,
+.fft-callout-demo .range-control-slide { display: grid; align-items: center; background: #fff; }
+.fft-callout-demo .fft-guide-slide:first-child,
+.fft-callout-demo .range-control-slide:first-child { background: #202020; }
+.dark .fft-callout-demo .fft-demo-player,
+.dark .fft-callout-demo .fft-guide-slide,
+.dark .fft-callout-demo .range-control-slide { background: #171717; }
+.fft-callout-demo .fft-guide-visual { aspect-ratio: auto; }
+.fft-callout-demo .fft-guide-visual > .tag-analyzer-player { height: auto; }
 .content .fft-guide-summary { margin: 0; padding: 20px; font-size: 16px; line-height: 1.5; }
 
 .range-controls[data-ready] .range-control-slides { display: grid; }
 .range-control-slide { min-width: 0; background: #242424; color: #f8fafc; }
 .range-controls[data-ready] .range-control-slide { grid-area: 1 / 1; }
 .range-control-slide[aria-hidden="true"] { visibility: hidden; pointer-events: none; }
-.range-control-visual { aspect-ratio: 1516 / 487; display: grid; place-items: center; }
-.range-control-visual--described { aspect-ratio: auto; }
+.range-control-visual { display: grid; place-items: center; }
+.range-control-visual .tag-analyzer-player { height: auto; object-fit: contain; border-radius: 0; }
 .range-control-visual .ta-annotated-image { width: 100%; }
 .range-controls .fft-demo-controls[hidden] { display: none; }
 

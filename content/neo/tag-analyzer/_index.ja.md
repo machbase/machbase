@@ -18,7 +18,7 @@ Tag Analyzer を使うと、タグテーブルのデータをチャートで可�
 
 <span id="1-quickstart"></span>
 
-## 1. 概要 {#overview}
+## 1. Tag Analyzer のデモを作成する {#overview}
 
 動画と一部の画像には英語版を使用しています。ボタンやタブの名前は画面の表記に合わせています。
 
@@ -32,10 +32,9 @@ Tag Analyzer を使うと、タグテーブルのデータをチャートで可�
 
 **+** をクリックし、**TAG ANALYZER** を選択して新しいボードを開きます。
 
-{{< figure
-  src="/images/tag-analyzer/create-tag-analyzer-tab.png?v=d14367faf6"
-  link="/images/tag-analyzer/create-tag-analyzer-tab.png?v=d14367faf6"
-  alt="新しいタブのメニューで、+ ボタンと TAG ANALYZER が強調表示されています。"
+{{< tag-analyzer-features
+  id="open-tab"
+  title="Tag Analyzer タブを開く"
   caption="図 1.1: Tag Analyzer タブを開く"
 >}}
 
@@ -43,13 +42,9 @@ Tag Analyzer を使うと、タグテーブルのデータをチャートで可�
 
 Tag Analyzer を試すためのサンプルデータを作成します。すでにデータがある場合は省略できます。
 
-1. 新しいタブのメニューで **SQL** を選択し、下の SQL でテーブルを作成します。
-2. 別のタブで **TQL** を選択し、下の TQL でサンプルデータを追加します。
-
-{{< figure
-  src="/images/tag-analyzer/prepare-example-data-editors.png?v=169f7f9d00"
-  link="/images/tag-analyzer/prepare-example-data-editors.png?v=169f7f9d00"
-  alt="+ で新しいタブを開きます。SQL でテーブルを作成し、TQL でサンプルデータを追加します。"
+{{< tag-analyzer-features
+  id="example-editors"
+  title="SQL エディターと TQL エディター"
   caption="図 1.2: SQL エディターと TQL エディター"
 >}}
 
@@ -79,17 +74,9 @@ APPEND(table('TAG_ANALYZER_DEMO'))
 Tag Analyzer タブで **New Chart** をクリックし、チャート作成ダイアログを開きます。
 自分のテーブルとタグを指定するか、次のサンプル設定を使用します。
 
-1. **Chart name** に `Temperature` と入力し、**Line** を選択します。
-2. サンプルデータを準備した **Database** と **User** を選択します。
-   **Table** に **TAG_ANALYZER_DEMO**、**Time** に **TIME**、**Value** に **VALUE** を指定します。
-3. `temperature` を入力し、**Enter** または検索ボタンで検索します。
-   **Item list** のタグをクリックすると **Selected** に追加されます。集計方法は **AVG** のままにします。
-4. **Apply** をクリックしてチャートを作成します。
-
-{{< figure
-  src="/images/tag-analyzer/create-tag-analyzer-chart.png?v=3355dfff00"
-  link="/images/tag-analyzer/create-tag-analyzer-chart.png?v=3355dfff00"
-  alt="Machbase Neo の画面全体と New Chart ダイアログ。1. 名前と Line を指定します。2. テーブル、TIME、VALUE を選択します。3. temperature を検索して選択します。4. Apply をクリックします。"
+{{< tag-analyzer-features
+  id="create-chart"
+  title="最初のチャートを作成する"
   caption="図 1.3: 最初のチャートを作成する"
 >}}
 
@@ -99,9 +86,9 @@ Tag Analyzer タブで **New Chart** をクリックし、チャート作成ダ�
 
 次の画像は Tag Analyzer の画面構成を示しています。
 
-{{< figure
-  src="/images/web-ui/tag-analyzer/controls-overview.png?v=c287c40a80"
-  alt="Board Control、Panel Control、Range、Tools、Panel Editor の位置を示した画面"
+{{< tag-analyzer-features
+  id="overview"
+  title="画面構成"
   caption="図 1.4: 画面構成"
 >}}
 
@@ -109,9 +96,9 @@ Tag Analyzer タブで **New Chart** をクリックし、チャート作成ダ�
 
 ボードのツールバーで、共通範囲の設定、更新、保存、チャートの重ね合わせを行います。
 
-{{< figure
-  src="/images/web-ui/tag-analyzer/board-controls.png"
-  alt="範囲、更新、保存、重ね合わせ、ヘルプの位置を示したボードのツールバー"
+{{< tag-analyzer-features
+  id="board-controls"
+  title="ボードの操作"
   caption="図 2: ボードの操作"
 >}}
 
@@ -169,24 +156,9 @@ Tag Analyzer タブで **New Chart** をクリックし、チャート作成ダ�
 
 ### 2.5 チャートを重ね合わせる {#compare-charts-with-overlap}
 
-Overlap Chart は複数のチャートを重ねて表示し、データのパターンを比較する機能です。
-各チャートを X 軸方向に移動すると、異なる時刻に発生したピークやイベントを揃えられます。
+Overlap Chart では複数のチャートを重ねて比較し、各チャートを X 軸方向に個別に移動できます。
 
 {{< overlap-chart >}}
-
-読み込み済みの範囲があり、X 軸の種類が同じチャートを使用します。複数の系列を含むチャートにも対応しています。
-
-<details>
-<summary>重ね合わせの位置合わせ</summary>
-
-**Original** は元の範囲、**Altered** は位置合わせと移動後の範囲です。
-
-各チャートの最初の描画点を 0 として揃えます。時間軸では経過時間、数値軸では相対値を表示します。
-移動操作は、比較画面内でそのチャートのすべての系列に適用されます。
-
-</details>
-
-**Help (?)** をクリックすると、操作ガイドが開きます。
 
 ### 2.6 TAZ ファイルを削除する {#delete-a-taz-file}
 
@@ -210,20 +182,13 @@ Overlap Chart は複数のチャートを重ねて表示し、データのパタ
 ナビゲーターのドラッグや拡大・縮小でも範囲を調整できます。
 サンプルデータでは `last-10m` から `last` を指定します。
 
-{{< tag-analyzer-video
-  src="/images/web-ui/tag-analyzer/basic-range-control.mp4?v=ad412ac8f7"
-  poster="/images/web-ui/tag-analyzer/basic-range-control-poster.webp?v=9f72fa6e77"
-  alt="範囲の設定、ナビゲーターの移動、拡大・縮小の操作"
-  caption="デモ 3.1: 基本的な範囲操作"
->}}
-
 {{< range-controls >}}
 
 <details>
 <summary>範囲設定の優先順位</summary>
 
-[Panel Editor → Range](#main-range) の **Main Range (1)** は、表示範囲の設定で優先されます。
-**Nav Range (2)** を個別に設定した場合は、ボードの共通範囲より優先されます。
+[Panel Editor → Range](#main-range) の **Main Range (A)** は、表示範囲の設定で優先されます。
+**Nav Range (B)** を個別に設定した場合は、ボードの共通範囲より優先されます。
 
 </details>
 
@@ -231,9 +196,9 @@ Overlap Chart は複数のチャートを重ねて表示し、データのパタ
 
 ツールバーの機能を左から順に紹介します。
 
-{{< figure
-  src="/images/web-ui/tag-analyzer/panel-controls.png"
-  alt="左から RAW、Select range、Refresh range、Panel Editor、Delete、Extra が並ぶツールバー"
+{{< tag-analyzer-features
+  id="panel-tools"
+  title="ツール"
   caption="図 3.2: ツール"
 >}}
 
@@ -319,15 +284,12 @@ FFT を使用するには、**RAW モード**と**時間軸のチャート**が�
 
 #### 3.2.8 Extra {#extra-panel-tools}
 
-{{< figure
-  src="/images/web-ui/tag-analyzer/panel-extra-tools.png"
-  alt="Extra メニュー"
+{{< tag-analyzer-features
+  id="extra-tools"
+  title="Extra"
   caption="図 3.2.8: Extra"
 >}}
 
-- **Set global range:** このパネルの範囲を、同じ種類の X 軸を持つパネルに適用します。
-- **Reload data:** 現在の範囲を維持して、データを再読み込みします。
-- **Expand to full data range:** このパネルで利用可能なデータ全体を表示します。
 
 <span id="handy-tools"></span>
 

@@ -1,0 +1,51 @@
+{{- $spec := .spec -}}
+{{- $count := len $spec.notes -}}
+{{- $columns := int (math.Min $count (cond (gt $count 6) 4 (cond (eq $count 4) 2 3))) -}}
+{{- $letters := slice "A" "B" "C" "D" "E" "F" "G" "H" -}}
+{{- $colors := slice "#c4a7ff" "#ffab91" "#ffd180" "#80d8ff" "#f6a8d7" "#a5d6a7" "#ffb74d" "#a8d6ce" -}}
+{{- $radius := $spec.markerRadius | default (div (float $spec.width) 80) -}}
+{{- $image := $spec.image -}}
+{{- if not (hasPrefix $image "/") -}}
+  {{- $image = printf "/images/web-ui/tag-analyzer/%s" $image -}}
+{{- end -}}
+{{- $image = $image | relURL -}}
+{{- $notesID := printf "guide-%s-notes" .id -}}
+<div class="ta-callout-guide" style="--callout-columns: {{ $columns }}">
+  {{- range $row := seq 0 1 -}}
+    {{- if eq $row 1 -}}
+      <a class="ta-annotated-image ta-callout-image" href="{{ $image }}" target="_blank"
+        {{ with $spec.imageMaxWidth }}style="--guide-image-width: {{ . }}px"{{ end }}
+        rel="noopener" data-annotated-image
+        aria-label="{{ $.title }} — {{ if eq $.lang "kr" }}이미지 확대{{ else if eq $.lang "ja" }}画像を拡大{{ else }}enlarge screenshot{{ end }}"
+        aria-describedby="{{ $notesID }}-0{{ if gt $count $columns }} {{ $notesID }}-1{{ end }}">
+        <img src="{{ $image }}" alt="{{ $.title }}" width="{{ $spec.width }}" height="{{ $spec.height }}" loading="lazy">
+        <svg viewBox="0 0 {{ $spec.width }} {{ $spec.height }}" aria-hidden="true" focusable="false">
+          {{- range $n, $note := $spec.notes -}}
+            <g class="ta-description-highlight" data-callout="{{ index $letters $n }}" style="--note-color: {{ index $colors $n }}">
+              {{- range $note.regions -}}
+                <rect x="{{ index . 0 }}" y="{{ index . 1 }}" width="{{ index . 2 }}" height="{{ index . 3 }}" rx="6" />
+              {{- end -}}
+              {{- range $note.markers -}}
+                <g transform="translate({{ math.Max $radius (math.Min (sub $spec.width $radius) (index . 0)) }} {{ math.Max $radius (math.Min (sub $spec.height $radius) (index . 1)) }})">
+                  <circle r="{{ $radius }}" /><text text-anchor="middle" dy=".35em" style="font-size: {{ div (mul $radius 4) 3.0 }}px">{{ index $letters $n }}</text>
+                </g>
+              {{- end -}}
+            </g>
+          {{- end -}}
+        </svg>
+      </a>
+    {{- end -}}
+    {{- if lt (mul $row $columns) $count -}}
+    <dl class="ta-callout-row" id="{{ $notesID }}-{{ $row }}">
+      {{- range $n, $note := $spec.notes -}}
+        {{- if eq (div $n $columns) $row -}}
+          <div class="ta-callout-note" style="--note-color: {{ index $colors $n }}">
+            <dt><span class="ta-callout-letter">{{ index $letters $n }}</span>{{ $note.short | default $note.label }}</dt>
+            <dd>{{ index $note $.lang | default $note.en }}</dd>
+          </div>
+        {{- end -}}
+      {{- end -}}
+    </dl>
+    {{- end -}}
+  {{- end -}}
+</div>
