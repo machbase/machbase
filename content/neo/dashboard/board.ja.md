@@ -17,7 +17,7 @@ toc: true
 
 ## チャートの追加
 
-操作領域の<img src="/images/web-ui/neo-dashboard/icons/dash_new_panel.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px">アイコンをクリックするとチャート設定画面が開きます。設定後に`Save`をクリックすると、パネルを追加します。  
+操作領域の<img src="/images/web-ui/neo-dashboard/icons/dash_new_panel.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px">アイコンをクリックするとチャート設定画面が開きます。`Table`で参照するテーブルを、`Tag`で表示するタグを選び、`Apply`をクリックするとプレビューにチャートが描画されます。設定後に`Save`をクリックすると、パネルを追加します。  
 ※ 詳細は「チャート設定」を参照してください。
 
 {{< media slug="neo-dashboard/add-chart" width="600" >}}

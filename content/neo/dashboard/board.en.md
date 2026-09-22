@@ -16,7 +16,7 @@ A dashboard consists of charts that display actual data. Each panel can be place
 
 ## Adding Charts
 
-Click the <img src="/images/web-ui/neo-dashboard/icons/dash_new_panel.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px"> icon in the control area to open the chart settings screen. After configuring the chart, click `Save` to add the panel to the dashboard.  
+Click the <img src="/images/web-ui/neo-dashboard/icons/dash_new_panel.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px"> icon in the control area to open the chart settings screen. Choose the table to query in `Table` and the tag to show in `Tag`, then click `Apply` to draw the preview. After configuring the chart, click `Save` to add the panel to the dashboard.  
 ※ See "Chart Settings" for details.
 
 {{< media slug="neo-dashboard/add-chart" width="600" >}}

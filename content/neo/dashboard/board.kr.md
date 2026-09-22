@@ -16,7 +16,7 @@ weight: 10
 
 ## 차트 추가
 
-컨트롤 영역의 <img src="/images/web-ui/neo-dashboard/icons/dash_new_panel.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px"> 아이콘을 클릭하면 차트 설정 화면이 열립니다. 설정을 마치고 `Save`를 누르면 대시보드에 패널이 추가됩니다.  
+컨트롤 영역의 <img src="/images/web-ui/neo-dashboard/icons/dash_new_panel.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px"> 아이콘을 클릭하면 차트 설정 화면이 열립니다. `Table`에서 조회할 테이블을, `Tag`에서 표시할 태그를 고른 뒤 `Apply`를 누르면 미리보기에 차트가 그려집니다. 설정을 마치고 `Save`를 누르면 대시보드에 패널이 추가됩니다.  
 ※ 자세한 내용은 “차트 설정”을 참고하십시오.
 
 {{< media slug="neo-dashboard/add-chart" width="600" >}}
