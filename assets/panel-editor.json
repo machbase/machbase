@@ -467,27 +467,44 @@
         ]
       },
       {
-        "label": "Display legend / Connect gaps",
-        "en": "Show series labels and join lines across missing data.",
-        "ja": "系列名を表示し、欠損区間の前後を線でつなぎます。",
-        "kr": "시리즈 이름을 표시하고 데이터가 없는 구간의 선을 연결합니다.",
+        "label": "Display legend",
+        "en": "Show series labels in the legend.",
+        "ja": "凡例に系列名を表示します。",
+        "kr": "범례에 시리즈 이름을 표시합니다.",
         "regions": [
           [
             436,
             132,
             329,
-            49
+            23
           ]
         ],
         "callout": [
           915,
           195
         ],
-        "short": "Legend / Gaps",
-        "markers": [[789, 161]],
+        "short": "Legend",
+        "markers": [[835, 143]],
         "target": [
           765,
-          159
+          143
+        ]
+      },
+      {
+        "label": "Connect gaps",
+        "en": "Join lines across missing data.",
+        "ja": "欠損区間の前後を線でつなぎます。",
+        "kr": "데이터가 없는 구간의 선을 연결합니다.",
+        "regions": [[436, 160, 329, 24]],
+        "callout": [
+          915,
+          235
+        ],
+        "short": "Connect gaps",
+        "markers": [[789, 173]],
+        "target": [
+          765,
+          172
         ]
       },
       {

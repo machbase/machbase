@@ -1,9 +1,9 @@
 {{- $features := resources.Get "tag-analyzer-features.json" | transform.Unmarshal -}}
 {{- $spec := index $features (.Get "id") -}}
 {{- $title := .Get "title" -}}
-<figure class="ta-feature-guide">
+<figure class="ta-feature-guide" aria-labelledby="guide-{{ .Get "id" }}-caption">
   <div class="ta-feature-card">
     {{ partial "tag-analyzer-callout-guide.html" (dict "spec" $spec "id" (.Get "id") "lang" .Page.Language.Lang "title" $title) }}
   </div>
-  <figcaption>{{ .Get "caption" }}</figcaption>
 </figure>
+{{ partial "tag-analyzer-callout-notes.html" (dict "spec" $spec "id" (.Get "id") "lang" .Page.Language.Lang "caption" (.Get "caption")) }}

@@ -1,0 +1,20 @@
+{{- $letters := slice "A" "B" "C" "D" "E" "F" "G" "H" "I" "J" -}}
+{{- $colors := slice "#c4a7ff" "#ffab91" "#ffd180" "#80d8ff" "#f6a8d7" "#a5d6a7" "#ffb74d" "#a8d6ce" "#b0bec5" "#dce775" -}}
+<section class="ta-callout-body" aria-labelledby="guide-{{ .id }}-caption">
+  <p class="ta-callout-caption" id="guide-{{ .id }}-caption">
+    {{- with .imageNumber -}}
+      {{ if eq $.lang "kr" }}이미지{{ else if eq $.lang "ja" }}画像{{ else }}Image{{ end }} {{ . }}: {{ $.title }}
+    {{- else -}}
+      {{ .caption }}
+    {{- end -}}
+  </p>
+  <dl class="ta-callout-row" id="guide-{{ .id }}-notes">
+    {{- range $n, $note := .spec.notes -}}
+      {{- $labelIndex := add $n ($.offset | default 0) -}}
+      <div class="ta-callout-note" style="--note-color: {{ index $colors $labelIndex }}">
+        <dt><span class="ta-callout-letter">{{ index $letters $labelIndex }}</span>{{ $note.short | default $note.label }}</dt>
+        <dd>{{ index $note $.lang | default $note.en }}</dd>
+      </div>
+    {{- end -}}
+  </dl>
+</section>

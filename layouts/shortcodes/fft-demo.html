@@ -33,13 +33,15 @@
       <p class="fft-demo-status"><span data-fft-count>1 / 3</span><strong data-fft-title>{{ $first.title }}</strong></p>
     </div>
     <div class="fft-guide-slides">
+      {{- $offset := 0 -}}
       {{- range $i, $slide := $slides -}}
         <section class="fft-guide-slide" data-fft-slide data-title="{{ $slide.title }}" data-caption="{{ $slide.caption }}" aria-label="{{ $slide.title }}">
           <div class="fft-guide-visual">
             {{- if eq $i 0 -}}
               {{ partial "tag-analyzer-player.html" (dict "page" $.Page "src" $video "poster" $poster "alt" $slide.title) }}
             {{- else -}}
-              {{ partial "tag-analyzer-callout-guide.html" (dict "spec" (index $features $slide.key) "id" $slide.key "lang" $lang "title" $slide.title) }}
+              {{ partial "tag-analyzer-callout-guide.html" (dict "spec" (index $features $slide.key) "id" $slide.key "lang" $lang "title" $slide.title "offset" $offset) }}
+              {{- $offset = add $offset (len (index $features $slide.key).notes) -}}
             {{- end -}}
           </div>
         </section>
@@ -57,4 +59,11 @@
   </div>
   <figcaption role="status" aria-live="polite" aria-atomic="true" data-fft-caption>{{ $first.caption }}</figcaption>
 </figure>
+{{- $offset := 0 -}}
+{{- range $i, $slide := $slides -}}
+  {{- with $slide.key -}}
+    {{ partial "tag-analyzer-callout-notes.html" (dict "spec" (index $features .) "id" . "lang" $lang "title" $slide.title "imageNumber" (add $i 1) "offset" $offset) }}
+    {{- $offset = add $offset (len (index $features .).notes) -}}
+  {{- end -}}
+{{- end -}}
 <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>

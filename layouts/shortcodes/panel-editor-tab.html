@@ -5,9 +5,9 @@
 {{- if eq $lang "ja" -}}
   {{- $title = printf "%s タブ" $spec.title -}}
 {{- end -}}
-<figure class="ta-feature-guide panel-editor-tab">
+<figure class="ta-feature-guide panel-editor-tab" aria-labelledby="guide-editor-{{ .Get "id" }}-caption">
   <div class="ta-feature-card">
     {{ partial "tag-analyzer-callout-guide.html" (dict "spec" $spec "id" (printf "editor-%s" (.Get "id")) "lang" $lang "title" $title) }}
   </div>
-  <figcaption>{{ .Get "caption" }}</figcaption>
 </figure>
+{{ partial "tag-analyzer-callout-notes.html" (dict "spec" $spec "id" (printf "editor-%s" (.Get "id")) "lang" $lang "caption" (.Get "caption")) }}

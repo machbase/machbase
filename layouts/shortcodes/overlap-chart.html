@@ -51,4 +51,5 @@
   </div>
   <figcaption role="status" aria-live="polite" aria-atomic="true" data-fft-caption>{{ $first.caption }}</figcaption>
 </figure>
+{{ partial "tag-analyzer-callout-notes.html" (dict "spec" $features.overlap "id" "overlap" "lang" $lang "title" (index $slides 1).title "imageNumber" 2) }}
 <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
