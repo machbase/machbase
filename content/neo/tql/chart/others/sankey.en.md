@@ -35,4 +35,4 @@ SCRIPT({
 CHART()
 ```
 
-{{< figure src="../../img/sankey.jpg" width="500" >}}
+{{< figure src="/neo/tql/chart/img/sankey.jpg" width="500" >}}

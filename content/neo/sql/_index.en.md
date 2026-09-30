@@ -4,15 +4,15 @@ type: docs
 weight: 22
 ---
 
-Select "SQL" to open a new sql editor.
+Select the `SQL` card on the new tab screen to open a new SQL editor.
 
-{{< figure src="/images/web-sql-pick.png" width="600" >}}
+{{< figure src="/images/web-sql-pick.png" width="600px" >}}
 
 ## SQL
 
 ### Create table
 
-The page shows the SQL editor on left panel and result and logs are on the right panel.
+The SQL editor is on the left and the result panel (`RESULT`, `CHART`) is on the right. Execution logs appear in the console at the bottom.
 
 Copy the below DDL statement and paste it to the editor.
 
@@ -24,7 +24,7 @@ CREATE TAG TABLE IF NOT EXISTS example (
 );
 ```
 
-Execute the statement by hit "Ctrl+Enter" or click ▶︎ icon on the top-left of the panel. Don't forget the semi-colon of the end of the statement.
+Click <img src="/neo/sql/img/sql_run_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px"> at the top-left of the editor panel, or press `Ctrl+Enter` (`Cmd+Enter` on macOS) to execute the statement. Don't forget the semicolon at the end of the statement.
 
 {{< figure src="/images/web-cretable.png" >}}
 
@@ -98,22 +98,22 @@ SELECT time, value FROM example WHERE name = 'my-car';
 ```
 {{< figure src="/images/web-select-multi.png" >}}
 
-Click *CHART* tab from the right side pane. It will show a line chart with the query result.
+Click the `CHART` tab in the right panel to see the query result as a line chart. The first column is used for the X axis and the second for the Y axis; pick other columns in `X Axis` and `Y Axis`, then click the ▶ button next to them to redraw.
 
-{{< figure src="/images/web-select-chart.jpg" width="600" >}}
+{{< figure src="/images/web-select-chart.jpg" width="560px" >}}
 
 ### Download CSV file
 
-The full result of the query can be exported in a CSV file.
+Click <img src="/neo/sql/img/sql_download_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px"> at the top-right of the result panel to download the query result as a CSV file. The result table loads rows 50 at a time, but the CSV file contains every row the query returns, with a header row; time values follow the editor's time format and time zone settings.
 
-{{< figure src="./img/web-select-download.png" >}}
+{{< figure src="/neo/sql/img/web-select-download.png" width="570px" >}}
 
 ### Delete Table
 
 Delete records with a *DELETE* statement.
 
 ```sql
-DELETE FROM example WHERE name = 'my-car'
+DELETE FROM example WHERE name = 'my-car';
 ```
 
 Or, remove the table if you want to create a fresh one.
@@ -132,7 +132,7 @@ Simplified command that queries `M$SYS_TABLES` table.
 show tables;
 ```
 
-{{< figure src="./img/web-show-tables.png" >}}
+{{< figure src="/neo/sql/img/web-show-tables.png" >}}
 
 ### desc _table_name_
 
@@ -142,7 +142,7 @@ Describe table's columns and related index.
 desc example;
 ```
 
-{{< figure src="./img/web-desc-table.png" >}}
+{{< figure src="/neo/sql/img/web-desc-table.png" >}}
 
 ### show tags _table_name_
 
@@ -152,7 +152,7 @@ show tags example;
 
 Query stored tags of the table, it works to TAG table only.
 
-{{< figure src="./img/web-show-tags.png" >}}
+{{< figure src="/neo/sql/img/web-show-tags.png" >}}
 
 
 ## SQL Guide

@@ -14,18 +14,18 @@ weight: 10
 
 ### 셸 등록
 
-1. 왼쪽 메뉴에서 <img src="/neo/shell/img/shell_icon.jpg" width=47 style="display:inline"> 아이콘을 선택합니다.
+1. 왼쪽 메뉴에서 <img src="/neo/shell/img/shell_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px"> 아이콘을 선택합니다.
 
-2. 상단 왼쪽 패널에서 `+` 아이콘 <img src="/neo/shell/img/shell_add_icon.jpg" width=265 style="display:inline"> 을 클릭합니다.
+2. 패널 제목 줄에서 <img src="/neo/shell/img/shell_add_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px"> 아이콘을 클릭합니다.
 
-3. "Display name"을 입력하고 "Command" 필드에 실행 파일의 절대 경로와 인자를 지정합니다.
-   예를 들어 macOS에서 zsh를 등록하려면 절대 경로를 입력한 뒤 "Save"를 클릭합니다.
+3. `Name`에 표시할 이름을 입력하고 `Command`에 실행 파일의 절대 경로와 인자를 지정한 뒤 `Create`를 클릭합니다. 예를 들어 macOS에서 zsh를 등록하려면 `/bin/zsh -il`을 입력합니다.
 
-{{< figure src="/neo/shell/img/shell_add_form.jpg" width="684px">}}
+{{< figure src="/neo/shell/img/shell_add_form.jpg" width="460px" >}}
 
-- Name: 표시 이름(예약어를 제외한 임의의 텍스트 사용 가능)
+- Name: 표시 이름(최대 16자, `SHELL`은 예약어)
 - Command: 전체 경로와 인자를 포함한 실행 명령
-- Theme : 터미널 색상 테마
+- Theme: 터미널 색상 테마
+- Icon: 탭에 표시할 아이콘
 
 예를 들어 다음과 같은 명령을 등록할 수 있습니다.
 - Windows Cmd.exe: `C:\Windows\System32\cmd.exe`
@@ -34,11 +34,11 @@ weight: 10
 
 ### 등록한 셸 사용
 
-- 메인 에디터 영역에서 사용자 정의 셸을 엽니다.
+- 메인 에디터 영역: 새 탭 화면에 등록한 셸이 카드로 나타납니다. 카드를 선택하면 메인 에디터 영역에 열립니다.
 
 {{< figure src="/images/web-custom-shell.jpeg" width="600px">}}
 
-- 콘솔 영역에서 사용자 정의 셸을 엽니다.
+- 콘솔 영역: 콘솔 제목 줄의 <img src="/neo/shell/img/console_open_shell_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px"> 을 클릭하고 목록에서 등록한 셸을 선택하면 콘솔에 새 탭으로 열립니다.
 
 {{< figure src="/neo/shell/img/web-custom-shell-console.jpg" width="700px">}}
 

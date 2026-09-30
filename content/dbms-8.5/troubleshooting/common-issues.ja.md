@@ -7,18 +7,19 @@ toc: true
 
 ## クイックガイド {#quick-troubleshooting-guide}
 
-利用時によくある問題と、その対処方法を説明します。
+Machbase の利用時によくある問題と、その対処方法を説明します。
 
 ## 接続の問題 {#connection-issues}
 
 ### サーバーに接続できない {#cannot-connect-to-server}
 
-**症状**：クライアントから接続できない
+**症状**：クライアントツールから Machbase サーバーに接続できない
 
 **主な原因：**
+
 1. サーバーが停止している
-2. ポートが違う
-3. ファイアウォールが遮断
+2. ポート番号が違う
+3. ファイアウォールが接続を遮断している
 4. ネットワーク設定の問題
 
 **対処：**
@@ -39,12 +40,13 @@ grep PORT_NO $MACHBASE_HOME/conf/machbase.conf
 
 ### 接続タイムアウト {#connection-timeout}
 
-**症状**：接続の試行がタイムアウト
+**症状**：接続の試行がタイムアウトする
 
 **対処：**
-- ネットワークを確認
+
+- ネットワーク接続を確認
 - `machbase.conf` の `PORT_NO` を確認
-- ファイアウォールで許可されているか確認
+- ファイアウォールでポートが遮断されていないか確認
 - 最大接続数に達していないか確認
 
 ```sql
@@ -56,17 +58,18 @@ SELECT * FROM v$session;
 
 ### INSERT が遅い {#slow-insert-performance}
 
-**症状**：想定より挿入が遅い
+**症状**：データの挿入が想定より遅い
 
 **主な原因：**
-1. APPEND でなく INSERT を使用
+
+1. APPEND ではなく INSERT を使用している
 2. バッチ操作を使用していない
-3. メモリ不足
+3. メモリの割り当てが不足している
 4. インデックスが多すぎる
 
 **対処：**
 
-大量入力には APPEND API または APPEND モードの CSV ツールを使用します。SQL の `INSERT /*+ APPEND */` コメントで APPEND プロトコルへ切り替えることはできません。
+大量入力には APPEND API または APPEND モードの CSV ツールを使用します。SQL の `INSERT /*+ APPEND */` コメントで INSERT を APPEND プロトコルへ切り替えることはできません。
 
 ```bash
 # Tag の一括入力（既定の append モード）
@@ -78,11 +81,11 @@ csvimport -t TAG_TABLE -d data.csv
 TAG_CACHE_MAX_MEMORY_SIZE = 2147483648
 ```
 
-総キャッシュ容量はこの値と `TAG_CACHE_POOL_COUNT` の積です。物理メモリと他の処理の使用量に合わせて調整してください。
+総キャッシュ容量はこの値と `TAG_CACHE_POOL_COUNT` の積です。物理メモリと他のプロセスのメモリ使用量に合わせて調整してください。
 
 ### SELECT が遅い {#slow-select-performance}
 
-**症状**：検索に時間がかかる
+**症状**：クエリーに時間がかかりすぎる
 
 **対処：**
 
@@ -125,17 +128,18 @@ CREATE TAG TABLE tag (
 
 **症状**：`ERR-01851: Variable length columns are not allowed in tag table`
 
-**対処**：5.6 より前の制限です。5.6 以降へ更新するか、固定長列を使用してください。
+**対処**：このエラーは 5.6 より前のバージョンで発生します。5.6 以降へ更新するか、固定長列を使用してください。
 
 ## データ入力の問題 {#data-insertion-issues}
 
 ### SUMMARIZED が範囲外 {#summarized-value-out-of-range}
 
 **症状：**
+
 - `ERR-02341: SUMMARIZED value is greater than UPPER LIMIT`
 - `ERR-02342: SUMMARIZED value is less than LOWER LIMIT`
 
-**対処**：LSL/USL の範囲外です。上下限か入力値を修正します。以下は、`table_name` に `LOWER LIMIT`/`UPPER LIMIT` 属性のメタデータ列 `lsl`/`usl` を定義した場合の例です。この機能は Standard Edition が対象です。詳細は[LSL/USL](../../table-types/tag-tables/lsl-usl-limits/)を参照してください。
+**対処**：値が LSL/USL の範囲外です。上下限か入力データを修正してください。以下は、`table_name` に `LOWER LIMIT`/`UPPER LIMIT` 属性のメタデータ列 `lsl`/`usl` を定義した場合の例です。この機能は Standard Edition で使用できます。詳細は[LSL/USL](../../table-types/tag-tables/lsl-usl-limits/)を参照してください。
 
 ```sql
 -- 現在の上下限を確認
@@ -150,7 +154,7 @@ UPDATE table_name METADATA SET lsl = NULL, usl = NULL WHERE name = 'TAG_001';
 
 ### タグメタデータがない {#tag-metadata-not-found}
 
-**症状**：タグ名が見つからず入力できない
+**症状**：タグ名が見つからず、データを入力できない
 
 **対処**：メタデータにタグ名を先に登録します。
 
@@ -166,18 +170,20 @@ INSERT INTO tag_table VALUES ('TAG_001', NOW, 100);
 
 ### メモリ不足 {#out-of-memory-errors}
 
-**症状**：クラッシュ、またはメモリエラー
+**症状**：サーバーがクラッシュする、またはメモリエラーを返す
 
 **対処：**
 
-1. **現在の使用量を確認**
+1. **現在のメモリ使用量を確認**
+
 ```sql
 SELECT * FROM V$SESMEM;
 ```
 
-2. **`machbase.conf` の設定を調整**
+2. **`machbase.conf` のメモリ設定を調整**
 
-   設定項目と単位は[サーバープロパティ](../../configuration/property/)を確認してください。TAG キャッシュはプール数との積が総容量になります。
+   設定項目と単位は[プロパティ](../../configuration/property/)を確認してください。TAG キャッシュの総容量は、プールごとの値とプール数の積です。
+
 ```conf
 # TAG キャッシュプールごとの上限を 4 GiB にする例
 TAG_CACHE_MAX_MEMORY_SIZE = 4294967296
@@ -186,13 +192,14 @@ TAG_CACHE_MAX_MEMORY_SIZE = 4294967296
 MAX_QPX_MEM = 67108864
 ```
 
-3. **設定変更後に再起動**
+3. **設定変更後にサーバーを再起動**
+
 ```bash
 machadmin -s  # サーバーを正常停止
 machadmin -u  # サーバーを起動
 ```
 
-詳細は[メモリ不足](../memory-error)を参照してください。
+メモリエラーの詳しい対処は[メモリ不足](../memory-error)を参照してください。
 
 ## ロールアップの問題 {#rollup-issues}
 
@@ -215,7 +222,7 @@ DROP TABLE tag_table;
 
 ### ロールアップが更新されない {#rollup-not-updating}
 
-**症状**：集計データが古い
+**症状**：ロールアップのデータが古い
 
 **対処：**
 
@@ -233,11 +240,11 @@ ALTER ROLLUP rollup_name START;
 
 ## インデックスの問題 {#index-issues}
 
-### 削除できない {#cannot-drop-index}
+### インデックスを削除できない {#cannot-drop-index}
 
-**症状**：DROP INDEX が失敗
+**症状**：インデックスの削除が失敗する
 
-**対処**：テーブルを使用する実行中のセッションがないか確認します。
+**対処**：テーブルを使用している実行中のセッションがないか確認します。
 
 ```sql
 -- 実行中セッションを確認
@@ -252,9 +259,9 @@ DROP INDEX index_name;
 
 ## ライセンスの問題 {#license-issues}
 
-### 期限切れ {#license-expired}
+### ライセンスの期限切れ {#license-expired}
 
-**症状**：起動できない、ライセンスエラー
+**症状**：サーバーが起動しない、ライセンスエラー
 
 **対処：**
 
@@ -268,12 +275,13 @@ machadmin -t new_license_file.dat
 
 ## バックアップと復元の問題 {#backup-and-recovery-issues}
 
-### マウントできない {#cannot-mount-database}
+### データベースをマウントできない {#cannot-mount-database}
 
-**症状**：マウントが失敗
+**症状**：マウントが失敗する
 
 **主な原因：**
-1. DB ファイルの破損
+
+1. データベースファイルの破損
 2. バージョンの非互換
 3. ファイルが使用中
 
@@ -294,13 +302,13 @@ MOUNT DATABASE 'path/to/database' TO database_name;
 
 ### ノード間の通信失敗 {#node-communication-failure}
 
-**症状**：ノードが通信できない
+**症状**：ノード間で通信できない
 
 **対処：**
 
-1. ノード間のネットワークを確認
-2. Coordinator の稼働を確認
-3. ファイアウォールを確認
+1. ノード間のネットワーク接続を確認
+2. Coordinator が稼働しているか確認
+3. ファイアウォールのルールを確認
 4. クラスタ設定を確認
 
 ```bash
@@ -312,39 +320,39 @@ machcoordinatoradmin -s
 machcoordinatoradmin -u
 ```
 
-## 予防策 {#best-practices-for-avoiding-issues}
+## 問題を防ぐための推奨事項 {#best-practices-for-avoiding-issues}
 
-1. **定期的な監視**
-   - サーバーログを確認
+1. **定期的な監視**：
+   - サーバーログを定期的に確認
    - V$ テーブルで性能指標を確認
    - 重大なエラーの通知を設定
 
-2. **適切な設定**
-   - 十分なメモリを確保
-   - パーティション数を調整
+2. **適切な設定**：
+   - 十分なメモリを割り当てる
+   - パーティション数を適切に設定
    - キャッシュサイズを適切に設定
 
-3. **データ管理**
-   - 保持ポリシーでライフサイクルを管理
-   - 重要データを定期バックアップ
+3. **データ管理**：
+   - 保持ポリシーでデータのライフサイクルを管理
+   - 重要なデータを定期的にバックアップ
    - ディスク使用量を監視
 
-4. **クエリー最適化**
-   - Tag の検索に時刻範囲を指定
+4. **クエリーの最適化**：
+   - Tag の検索には常に時刻範囲を指定
    - インデックスを適切に使用
-   - 集計にロールアップを使用
+   - 集計にはロールアップテーブルを活用
 
-5. **容量計画**
-   - データ増加を予測
+5. **容量計画**：
+   - データの増加を予測
    - ピーク負荷を想定
    - 必要になる前に基盤を拡張
 
 ## その他のサポート {#getting-more-help}
 
-- [エラーコード](../error-code)でメッセージを確認
-- [メモリ不足](../memory-error)を確認
-- `$MACHBASE_HOME/trc/` のログを確認
-- ログとエラー詳細を添えて Machbase サポートへ連絡
+- 個々のエラーメッセージは[エラーコード](../error-code)で確認してください。
+- メモリ関連の問題は[メモリ不足](../memory-error)を確認してください。
+- `$MACHBASE_HOME/trc/` のサーバーログを確認してください。
+- ログファイルとエラーの詳細を添えて Machbase サポートへ連絡してください。
 
 ## 診断コマンド {#diagnostic-commands}
 
@@ -366,7 +374,7 @@ SELECT * FROM m$sys_users;
 SELECT * FROM m$sys_table_property;
 ```
 
-## ログの場所 {#log-files-location}
+## ログファイルの場所 {#log-files-location}
 
 調査で確認する主なログ：
 
@@ -374,6 +382,6 @@ SELECT * FROM m$sys_table_property;
 $MACHBASE_HOME/trc/machbase.trc
 ```
 
-サーバーのエラー、バックアップ、ロールアップの動作は、このトレースログで確認します。ログレベルは[TRACE_LOG_LEVEL](../trace-log/)で調整できます。ログの分割名や別ファイルへの出力は運用設定に依存するため、固定の `backup.trc`、`rollup.trc`、`error.trc` が常に生成されるとは限りません。
+サーバーのエラー、バックアップ、ロールアップの動作は、このトレースログで確認します。ログレベルは[TRACE_LOG_LEVEL](../trace-log/)で調整できます。ログの分割や別ファイルへの出力は運用設定に依存するため、固定の `backup.trc`、`rollup.trc`、`error.trc` が常に生成されるとは限りません。
 
-管理操作の詳細は、[machadmin](../../tools-reference/machadmin/)、[システムとセッション管理](../../sql-reference/sys-session-manage/)、[データベースのマウント](../../advanced-features/database-mount/)を参照してください。
+管理操作の詳細は、[machadmin](../../tools-reference/machadmin/)、[システムとセッションの管理](../../sql-reference/sys-session-manage/)、[データベースのマウント](../../advanced-features/database-mount/)を参照してください。

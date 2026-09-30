@@ -53,9 +53,9 @@ JSH는 외부 명령에 대해 셸 스타일의 파이프와 리다이렉션 연
 console.print("Hello World?\n")
 ```
 
-"New..." 페이지에서 "JSH"를 선택해 주십시오.
+새 탭의 `New...` 화면에서 `JSH`를 선택합니다.
 
-{{< figure src="./img/fish.jpg" width="86">}}
+{{< figure src="/neo/jsh/img/fish.jpg" width="86">}}
 
 `.js` 파일을 실행하기 위한 단순한 명령줄 인터프리터로 동작합니다.
 
@@ -66,7 +66,7 @@ console.print("Hello World?\n")
 Hello World? 
 ```
 
-{{< figure src="./img/fish-hello.jpg" width="486">}}
+{{< figure src="/neo/jsh/img/fish-hello.jpg" width="486">}}
 
 ## 디렉터리 마운트
 
@@ -75,7 +75,7 @@ JSH를 실행해서 내부에서 `ls -l /`을 해보면 아래와 같이 JSH가 
 
 {{< figure src="/neo/jsh/img/fish-ls.jpg" width="513">}}
 
-이 기본 디렉터리들 중에 `/sbin`, `/lib` 는 JSH에 기본으로 내장된 읽기만 가능한 파일들이 존재하며 
+이 기본 디렉터리들 중에 `/sbin`, `/lib`는 JSH에 기본으로 내장된 읽기만 가능한 파일들이 존재하며 
 `/work`는 JSH를 실행할 때 별도로 지정하지 않은 경우 OS의 현재 디렉터리 또는 웹 환경에서 파일 익스플로러에서 보이는 디렉터리가 자동으로 마운트 됩니다.
 
 사용자가 임의의 디렉터리를 마운트하려면 `-v mount_point=os_dir`옵션을 사용합니다.

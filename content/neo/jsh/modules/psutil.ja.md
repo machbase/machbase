@@ -79,7 +79,7 @@ console.log("cpu percent:", ...psutil.cpuPercent(0, true));
 const psutil = require("@jsh/psutil")
 console.log("load:", psutil.loadAvg());
 
-// load: {"load1":2.33349609375,"load5":2.22021484375,"load15":2.1396484375}
+// laod: {"load1":2.33349609375,"load5":2.22021484375,"load15":2.1396484375}
 ```
 
 ## memVirtual() {#memvirtual}
@@ -97,7 +97,7 @@ for( k in mem) {
 // used 9981026304
 // usedPercent 58.097219467163086
 // free 974204928
-// ...省略...
+// ...omit...
 ```
 
 ## memSwap() {#memswap}
@@ -114,7 +114,7 @@ for( k in mem) {
 // total 1073741824
 // used 28049408
 // free 1045692416
-// ...省略...
+// ...omit...
 ```
 
 ## diskPartitions() {#diskpartitions}
@@ -134,7 +134,7 @@ for( disk of partitions) {
 // mountpoint /
 // fstype apfs
 // opts &[ro journaled multilabel]
-// ...省略...
+// ...omit...
 ```
 
 ## diskUsage() {#diskusage}

@@ -87,8 +87,8 @@ CREATE TAG TABLE example (
     value   INTEGER     SUMMARIZED
 );
  
-ALTER TABLE _example_meta ADD COLUMN (lsl INTEGER LOWER LIMIT);
-ALTER TABLE _example_meta ADD COLUMN (usl INTEGER UPPER LIMIT);
+ALTER TABLE example METADATA ADD COLUMN (lsl INTEGER LOWER LIMIT);
+ALTER TABLE example METADATA ADD COLUMN (usl INTEGER UPPER LIMIT);
 ```
 
 You can also add just one attribute as with [CREATE](#craete).
@@ -100,7 +100,7 @@ CREATE TAG TABLE example (
     value   INTEGER     SUMMARIZED
 );
 
-ALTER TABLE _example_meta ADD COLUMN (usl INTEGER UPPER LIMIT);
+ALTER TABLE example METADATA ADD COLUMN (usl INTEGER UPPER LIMIT);
 ```
 
 ### INSERT

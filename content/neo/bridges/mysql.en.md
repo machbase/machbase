@@ -67,6 +67,24 @@ mysql> desc my_example;
 
 ## *TQL* writing on the MySQL
 
+With the current JavaScript runtime, use the example below.
+
+```js
+STRING(payload() ?? `{
+  "company": "acme",
+  "employee": 10
+}`)
+SCRIPT({
+  // parse the JSON input string and yield it with the current time
+  const msg = JSON.parse($.values[0]);
+  $.yield(msg.company, msg.employee, new Date());
+})
+INSERT(bridge("my"), table("my_example"), "company", "employee", "created_on")
+```
+
+<details>
+<summary>Legacy Tengo example (does not run on the current runtime)</summary>
+
 ```js
 BYTES(payload() ?? `{
   "company": "acme",
@@ -86,6 +104,8 @@ SCRIPT("tengo", {
 })
 INSERT(bridge("my"), table("my_example"), "company", "employee", "created_on")
 ```
+
+</details>
 
 ```
 mysql> update my_example set discount=1.234, plan=2.3456, code='0c275c5e-776f-457e-910e-0a95587d60c7', valid=1, memo='This is mysql bridge test';

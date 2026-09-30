@@ -306,7 +306,7 @@ HTML({
   {{.Value 0}}
 })
 
-// 出力：
+// Output:
 //  O&#39;Reilly: How are &lt;i&gt;you&lt;/i&gt;?
 ```
 
@@ -315,7 +315,7 @@ HTML({
 SCRIPT({ $.yield(`O'Reilly: How are <i>you</i>?`) })
 HTML(`<a href="/path?p={{.ValueHTML 0}}">`)
 
-// 出力：
+// Output:
 //  <a href="/path?p=O%27Reilly%3a%20How%20are%20%3ci%3eyou%3c%2fi%3e%3f">
 ```
 
@@ -323,7 +323,7 @@ HTML(`<a href="/path?p={{.ValueHTML 0}}">`)
 SCRIPT({ $.yield(`O'Reilly: How are <i>you</i>?`) })
 HTML(`<a onx='f("{{.Value 0}}")'>`)
 
-// 出力：
+// Output:
 //  <a onx="f('O\u0027Reilly: How are \u003ci\u003eyou\u003c\/i\u003e?')">
 ```
 
@@ -336,7 +336,7 @@ HTML({
   <a onClick='doMsg("{{.Value 0}}")'>here</a>
 })
 
-// 出力：
+// Output:
 // <script>
 // function doMsg(msg){ console.log(msg); }
 // </script>

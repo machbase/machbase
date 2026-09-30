@@ -43,6 +43,7 @@ TRACE_LOG_LEVEL을 설정하여 각 모듈별로 출력할 로그 레벨을 조�
 -- 현재 값 확인
 select name, value from v$property where name = 'TRACE_LOG_LEVEL';
 
--- 여러 레벨 조합 (값을 더함)
-alter system set TRACE_LOG_LEVEL = {level1 + level2 + ...};
+-- 여러 레벨을 함께 쓰려면 값을 더해 그 합을 설정합니다
+-- 예) MM_1 + MM_2 + QP_1 + SM_1 + XM_1 = 1 + 2 + 4 + 16 + 256 = 279
+alter system set TRACE_LOG_LEVEL = 279;
 ```

@@ -35,7 +35,6 @@ weight: 55
 {{< /tab >}}
 {{< /tabs >}}
 
-
 ### 토큰 갱신
 
 **POST `/web/api/relogin`**
@@ -44,7 +43,7 @@ weight: 55
 {{< tab name="Request" >}}
 ```json
 {
-    "refreshToken": "'login' 시 발급된 리프레시 토큰"
+    "refreshToken": "refresh token that was issued with 'login'"
 }
 ```
 {{< /tab >}}
@@ -70,7 +69,7 @@ weight: 55
 
 ```json
 {
-    "refreshToken": "'login' 시 발급된 리프레시 토큰"
+    "refreshToken": "refresh token that was issued with 'login'"
 }
 ```
 
@@ -81,6 +80,7 @@ weight: 55
 현재 토큰 상태를 검증합니다.
 
 - `LoginCheckRsp`
+
 ```json
 {
     "success": true,
@@ -93,14 +93,15 @@ weight: 55
 ```
 
 - `ShellDefinition`
+
 ```json
 {
-    "id": "셸 정의 ID(uuid)",
-    "type": "유형",
-    "icon": "아이콘 이름",
-    "label": "표시 이름",
-    "theme": "테마 이름",
-    "command": "터미널 셸 명령",
+    "id": "shell definition id (uuid)",
+    "type": "type",
+    "icon": "icon name",
+    "label": "display name",
+    "theme": "theme name",
+    "command": "terminal shell command",
     "attributes": [
         { "removable": true },
         { "cloneable": true },
@@ -109,9 +110,9 @@ weight: 55
 }
 ```
 
-- types
+- 유형
 
-| type | description        |
+| 유형 | 설명               |
 |:-----| :------------------|
 | sql  | SQL 편집기          |
 | tql  | TQL 편집기          |
@@ -125,7 +126,7 @@ weight: 55
 
 **GET, POST `/web/machbase`**
 
-`/db/query` API와 동일하게 동작하며, 차이점은 인증 방식입니다.
+`/db/query` API와 동일하게 동작하며, 인증 방식만 다릅니다.
 `/db/query`는 클라이언트 애플리케이션을 API 토큰으로 인증하는 반면,
 `/web/machbase`는 사용자 상호작용을 위해 JWT를 검증합니다.
 
@@ -136,13 +137,13 @@ weight: 55
 테이블 목록을 반환합니다.
 
 - `showall`을 `true`로 설정하면 숨김 테이블까지 모두 포함합니다.
-- `name`은 테이블 이름을 필터링하는 패턴으로, `?` 또는 `*`가 포함된 glob 표현식이나 접두어(특수 문자가 없는 경우)를 사용할 수 있습니다.
+- `name`은 테이블 이름을 필터링하는 패턴입니다. `?` 또는 `*`가 포함된 glob 표현식이나, `?`와 `*`가 없는 접두어를 사용할 수 있습니다.
 
 ```json
 {
     "success": true,
-    "reason": "성공 여부 또는 메시지",
-    "elapse": "문자열 형식의 경과 시간",
+    "reason": "success or other message",
+    "elapse": "elapse time in string format",
     "data": {
         "columns": ["ROWNUM", "DB", "USER", "NAME", "TYPE"],
         "types": ["int32", "string", "string", "string", "string"],
@@ -164,8 +165,8 @@ weight: 55
 ```json
 {
     "success": true,
-    "reason": "성공 여부 또는 메시지",
-    "elapse": "문자열 형식의 경과 시간",
+    "reason": "success or other message",
+    "elapse": "elapse time in string format",
     "data": {
         "columns": ["ROWNUM", "NAME"],
         "types": ["int32", "string"],
@@ -178,20 +179,20 @@ weight: 55
 
 ### 태그 통계
 
-**GET `/web/api/tables/:table/:tag/stat`**
+**GET `/web/api/tables/:table/tags/:tag/stat`**
 
 지정한 테이블의 태그 통계를 반환합니다.
 
 ```json
 {
     "success": true,
-    "reason": "성공 여부 또는 메시지",
-    "elapse": "문자열 형식의 경과 시간",
+    "reason": "success or other message",
+    "elapse": "elapse time in string format",
     "data": {
         "columns": ["ROWNUM", "NAME", "ROW_COUNT", "MIN_TIME", "MAX_TIME",
-			"MIN_VALUE", "MIN_VALUE_TIME", "MAX_VALUE", "MAX_VALUE_TIME", "RECENT_ROW_TIME"],
-        "types": ["int32", "string", "int64", "datetime", "datetime","double", 
-            "datetime", "double", , "datetime",, "datetime"],
+            "MIN_VALUE", "MIN_VALUE_TIME", "MAX_VALUE", "MAX_VALUE_TIME", "RECENT_ROW_TIME"],
+        "types": ["int32", "string", "int64", "datetime", "datetime",
+            "double", "datetime", "double", "datetime", "datetime"],
         "rows":[
             ["...omit...."],
         ]
@@ -201,11 +202,13 @@ weight: 55
 
 ## 셸 및 터미널
 
+셸 정의는 JSON-RPC [`shell.*`](#shelllist) 메서드로 조회, 추가, 복제, 수정, 삭제합니다.
+
 ### 데이터 채널
 
-**`ws:///web/api/term/:term_id/data`**
+**`ws://{server_address}/web/api/term/:term_id/data`**
 
-터미널용 웹소켓입니다.
+터미널용 WebSocket입니다.
 
 ### 창 크기
 
@@ -219,118 +222,82 @@ weight: 55
 { "rows": 24, "cols": 80 }
 ```
 
-### 셸 정의 조회
-
-**GET `/web/api/shell/:id`**
-
-지정한 ID에 대한 `ShellDefinition`을 반환합니다.
-
-### 셸 정의 수정
-
-**POST `/web/api/shell/:id`**
-
-지정한 ID의 `ShellDefinition`을 업데이트합니다.
-
-### 셸 복제
-
-**GET `/web/api/shell/:id/copy`**
-
-지정한 ID의 셸을 복제한 새 `ShellDefinition`을 반환합니다.
-
-### 셸 정의 삭제 
-
-**DELETE `/web/api/shell/:id`**
-
-지정한 ID의 셸을 삭제합니다.
-
-```json
-{
-    "success": true,
-    "reason": "성공 또는 오류 메시지",
-    "elapse": "문자열 형식의 시간"
-}
-```
-
 ## 서버 이벤트
 
 ### 이벤트 채널
 
 **`ws://127.0.0.1:5654/web/api/console/{console_id}/data?token={jwt_token}`**
 
-양방향 메시지를 위한 웹소켓입니다.
+양방향 메시지를 위한 WebSocket입니다.
 
 - 메시지 유형
 
 ```json
 {
-    "type": "아래 표 참고",
+    "type": "type(see below)",
     "ping": {
         "tick": 1234
     },
     "log": {
         "level": "INFO",
-        "message": "로그 메시지"
+        "message": "log message"
     }
 }
 ```
 
-| type           |  fields          | description                                                    |
+| 유형           |  필드            | 설명                                                           |
 |:---------------| :----------------| :-------------------------------------------------------------|
 | `ping`         |                  | 핑 메시지                                                      |
 |                | `ping.tick`      | 임의의 정수. 서버는 클라이언트가 보낸 숫자를 그대로 응답합니다. |
 | `log`          | `log.level`      | 로그 레벨 `TRACE`, `DEBUG`, `INFO`, `WARN`, `ERROR`           |
 |                | `log.message`    | 로그 메시지                                                    |
-|                | `log.repeat`     | 동일 메시지가 연속 두 번 이상 반복될 때의 횟수                |
-
+|                | `log.repeat`     | 같은 메시지가 연속으로 두 번 이상 반복될 때의 반복 횟수        |
 
 ## TQL 및 워크스페이스
 
-**TQL 컨텐츠 유형**
+**TQL 콘텐츠 유형**
 
-| Header <br/>`Content-Type` | Header <br/>`X-Chart-Type` |          Content                          |
+| 헤더 <br/>`Content-Type`   | 헤더 <br/>`X-Chart-Type`   |          내용                             |
 |:--------------------------:| :-------------------------:| :---------------------------------------- |
-| text/html                  | "echart", "geomap"         | 전체 HTML <br/>예: `<iframe>` 내부에 포함 |
-| text/html                  | -                          | 전체 HTML <br/>예: `<iframe>` 내부에 포함 |
+| text/html                  | "echart", "geomap"         | 전체 HTML <br/>예: `<iframe>` 안에 포함 |
+| text/html                  | -                          | 전체 HTML <br/>예: `<iframe>` 안에 포함 |
 | text/csv                   | -                          | CSV                                       |
 | text/markdown              | -                          | 마크다운                                  |
 | application/json           | "echart", "geomap"         | JSON(echart 또는 geomap 데이터)           |
 | application/json           | -                          | JSON                                      |
 | application/xhtml+xml      | -                          | HTML 요소, 예: `<div>...</div>`           |
 
-
 ### TQL 파일 실행
 
 **GET `/web/api/tql/*path`**
 
-지정한 경로의 TQL을 실행합니다. 응답 형식은 위 ‘TQL 컨텐츠 유형’ 표를 참고해 주십시오.
+지정한 경로의 TQL을 실행합니다. 응답 형식은 위의 'TQL 콘텐츠 유형' 표를 참고합니다.
 
 **POST `/web/api/tql/*path`**
 
-지정한 경로의 TQL을 실행합니다. 응답 형식은 위 ‘TQL 컨텐츠 유형’ 표를 참고해 주십시오.
+지정한 경로의 TQL을 실행합니다. 응답 형식은 위의 'TQL 콘텐츠 유형' 표를 참고합니다.
 
 ### TQL 스크립트 실행
 
 **POST `/web/api/tql`**
 
 본문에 TQL 스크립트를 담아 전송하면 서버가 실행 결과를 반환합니다.
-응답 형식은 ‘TQL 컨텐츠 유형’ 표를 참고해 주십시오.
+응답 형식은 'TQL 콘텐츠 유형' 표를 참고합니다.
 
-요청에 `$`라는 쿼리 매개변수가 포함되어 있으면 해당 값을 TQL 스크립트로 간주하고,
+요청에 `$`라는 쿼리 매개변수가 있으면 그 값을 TQL 스크립트로 간주하고,
 본문은 데이터로 처리합니다. `$` 매개변수는 v8.0.17부터 사용할 수 있습니다.
 
 ### 마크다운 렌더링
 
-**POST `/web/api/md`**
-
-본문에 마크다운을 담아 전송하면 서버가 XHTML 형식의 렌더링 결과를 반환합니다.
+마크다운 렌더링은 JSON-RPC [`markdown.render`](#markdownrender) 메서드를 사용합니다.
 
 ## 파일 관리
 
 ### Content-Type
 
-파일 유형과 Content-Type 매핑입니다.
+파일 유형과 Content-Type의 대응 관계입니다.
 
-| file type | Content-Type             |
+| 파일 유형 | Content-Type             |
 |:----------|:-------------------------|
 | .sql      | text/plain               |
 | .tql      | text/plain               |
@@ -352,8 +319,8 @@ weight: 55
 {
     "isDir": true,
     "name": "name",
-    "content": "파일일 때 바이트 배열",
-    "children": [{"디렉터리일 때의 SubEntry"}],
+    "content": "bytes array, if the entry is a file",
+    "children": [{"SubEntry, if the entry is a directory"}],
 }
 ```
 
@@ -406,7 +373,6 @@ weight: 55
 
 작업이 성공적으로 완료되면 API는 `200 OK` 상태 코드를 반환합니다.
 
-
 ### 파일 삭제
 
 **DELETE `/web/api/files/*path`**
@@ -415,707 +381,23 @@ weight: 55
 
 ## 키 관리
 
-### 키 목록 조회
-
-**GET `/web/api/keys/:id`**
-
-키 정보를 반환합니다.
-
-`response`
-
-```json
-{
-    "success": true,
-    "reason": "success",
-    "data": [
-        {
-            "idx": 0,
-            "id": "eleven",
-            "notBefore": 1713171461,
-            "notAfter": 2028531461
-        }
-    ],
-    "elapse": "131.9µs"
-}
-```
-### 키 생성
-
-**POST `/web/api/keys`**
-
-키를 생성합니다.
-- `name`은 필수입니다.
-- `notAfter`는 만료 시각입니다.
-
-{{< tabs >}}
-{{< tab name="Request" >}}
-```json
-{
-    "name": "eleven",
-    "notBefore": 0,
-    "notAfter": 0
-}
-```
-{{< /tab >}}
-{{< tab name="Response" >}}
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "5.4961ms",
-    "certificate": "-----BEGIN CERTIFICATE-----\nXXXXXXXXXXXXXXXXXX\n-----END CERTIFICATE-----\n",
-    "privateKey": "-----BEGIN EC PRIVATE KEY-----\nXXXXXXXXXXXXXXXX\n-----END EC PRIVATE KEY-----\n",
-    "token": "eleven:b:XXXXXXXXXXXXXXXXX"
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-
-
-### 키 삭제
-
-**DELETE `/web/api/keys/:id`**
-
-지정한 ID의 키를 삭제합니다.
-
-`response`
-
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "112.8µs"
-}
-```
+키는 JSON-RPC [`key.*`](#keylist) 메서드로, API 토큰은 [`token.*`](#tokenlist) 메서드로 관리합니다.
 
 ## SSH 키
 
-### SSH 키 목록 조회
-
-**GET `/web/api/sshkeys`**
-
-SSH 키 정보를 반환합니다.
-
-`response`
-
-```json
-{
-    "data": [
-        {
-            "keyType": "ssh-rsa",
-            "fingerprint": "f08h89fhf0dkv0v0v9c9x0cx9v9",
-            "comment": "example@machbase.com"
-        }
-    ],
-    "elapse": "67.6µs",
-    "reason": "success",
-    "success": true
-}
-```
-### SSH 키 생성
-
-**POST `/web/api/sshkeys`**
-
-**SSH 공개 키 인증 사용**
-
-machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을 비밀번호 입력 없이 실행할 수 있습니다.
-
-{{< tabs >}}
-{{< tab name="Request" >}}
-```json
-{
-    "key": "your publickey"
-}
-```
-{{< /tab >}}
-{{< tab name="Response" >}}
-```json
-{
-    "elapse": "138.801µs",
-    "reason": "success",
-    "success": true
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-
-
-### SSH 키 삭제
-
-**DELETE `/web/api/sshkeys/:fingerprint`**
-
-지정한 지문(fingerprint)의 SSH 키를 삭제합니다.
-
-`response`
-```json
-{
-    "elapse": "198.8µs",
-    "reason": "success",
-    "success": true
-}
-```
-
-
+SSH 키는 JSON-RPC [`sshkey.*`](#sshkeylist) 메서드로 관리합니다.
 
 ## 타이머
 
-### 타이머 조회
-
-**GET `/web/api/timers/:name`**
-
-타이머 정보를 반환합니다.
-
-- 상태 값: `RUNNING`, `STARTING`, `STOP`, `STOPPING`, `FAILED`, `UNKNWON`
-
-`response`
-
-```json
-{
-    "success": true,
-    "reason": "success",
-    "data": [
-        {
-            "name": "ELEVEN",
-            "type": "TIMER",
-            "state": "STOP", 
-            "task": "timer.tql",
-            "schedule": "0 30 * * * *"
-        }
-    ],
-    "elapse": "92.1µs"
-}
-```
-
-### 타이머 목록
-
-**GET `/web/api/timers`**
-
-타이머 정보 목록을 반환합니다.
-- 상태 값: `RUNNING`, `STARTING`, `STOP`, `STOPPING`, `FAILED`, `UNKNWON`
-
-`response`
-
-```json
-{
-    "success": true,
-    "reason": "success",
-    "data": [
-        {
-            "name": "ELEVEN",
-            "type": "TIMER",
-            "state": "STOP",
-            "task": "timer.tql",
-            "schedule": "0 30 * * * *"
-        },
-        {
-            "name": "TWELVE",
-            "type": "TIMER",
-            "state": "RUNNING",
-            "task": "timer2.tql",
-            "schedule": "1 30 * * * *"
-        }
-    ],
-    "elapse": "92.1µs"
-}
-```
-### 타이머 추가
-
-**POST `/web/api/timers`**
-
-타이머를 추가합니다.
-- `name`, `autoStart`, `schedule`, `path`는 필수입니다.
-
-타이머 `schedule` 예시
-- `0 30 * * * *`           매 시간 30분마다
-- `@every 1h30m`           1시간 30분 간격
-- `@daily`                 매일
-
-{{< tabs >}}
-{{< tab name="Request" >}}
-```json
-{
-    "name":"eleven",
-    "autoStart":false,
-    "schedule":"@every 10s",
-    "path":"timer.tql"
-}
-```
-{{< /tab >}}
-{{< tab name="Response" >}}
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "4.9658ms"
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-### 타이머 시작
-
-**POST `/web/api/timers/:name/state`**
-
-타이머를 시작합니다.
-- `state` 값이 필요합니다.
-
-{{< tabs >}}
-{{< tab name="Request" >}}
-```json
-{
-    "state":"start",
-}
-```
-{{< /tab >}}
-{{< tab name="Response" >}}
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "822.601µs"
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-### 타이머 중지
-
-**POST `/web/api/timers/:name/state`**
-
-타이머를 중지합니다.
-- `state` 값이 필요합니다.
-
-{{< tabs >}}
-{{< tab name="Request" >}}
-```json
-{
-    "state":"stop",
-}
-```
-{{< /tab >}}
-{{< tab name="Response" >}}
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "26.2µs"
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-### 타이머 수정
-
-**PUT `/web/api/timers/:name`**
-
-타이머 설정을 수정합니다.
-- `autoStart`, `schedule`, `path`를 지정할 수 있습니다.
-
-{{< tabs >}}
-{{< tab name="Request" >}}
-```json
-{
-    "audoStart" : true,
-    "schedule":"@every 5s",
-    "path":"timer.tql"
-}
-```
-{{< /tab >}}
-{{< tab name="Response" >}}
-```json
-{
-    "elapse": "459.6µs",
-    "reason": "success",
-    "success": true
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-
-
-### 타이머 삭제
-
-**DELETE `/web/api/timers/:name`**
-
-타이머를 삭제합니다.
-
-`Response`
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "4.8664ms"
-}
-```
-
+타이머는 JSON-RPC [`timer.*`](#timerlist) 메서드로 관리합니다.
 
 ## 브리지
 
-### 브리지 목록
-
-**GET `/web/api/bridges`**
-
-브리지 정보를 반환합니다.
-
-`response`
-
-```json
-{
-    "success": true,
-    "reason": "success",
-    "data": [
-        {
-            "name": "pg",
-            "type": "postgres",
-            "path": "host=127.0.0.1 port=5432 user=postgres password=1234 dbname=bridgedb sslmode=disable"
-        }
-    ],
-    "elapse": "1.328301ms"
-}
-```
-### 브리지 추가
-
-**POST `/web/api/bridges`**
-
-브리지를 추가합니다.
-- `name`, `type`, `path`는 필수입니다.
-- 지원되는 브리지는 `SQLite`, `PostgreSql`, `Mysql`, `MSSQL`, `MQTT`입니다.
-
-{{< tabs >}}
-{{< tab name="Request" >}}
-```json
-{
-    "name":"pg",
-    "type":"postgres", // sqlite, postgres, mysql, mssql, mqtt 중 선택
-    "path":"host=127.0.0.1 port=5432 user=postgres password=1234 dbname=bridgedb sslmode=disable"
-}
-```
-{{< /tab >}}
-{{< tab name="Response" >}}
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "193.499µs"
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-### 브리지 실행
-
-**POST `/web/api/bridges/:name/state`**
-
-브리지에서 명령을 실행합니다.
-- `state`, `command`가 필요합니다.
-
-{{< tabs >}}
-{{< tab name="Request" >}}
-```json
-{
-    "state":"exec",
-    "command":"CREATE TABLE IF NOT EXISTS pg_example(id SERIAL PRIMARY KEY,company VARCHAR(50) UNIQUE NOT NULL,employee  INT,discount REAL,plan FLOAT(8),code UUID,valid BOOL, memo TEXT, created_on TIMESTAMP NOT NULL)"
-}
-```
-{{< /tab >}}
-{{< tab name="Response" >}}
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "217.4µs"
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-### 브리지 쿼리
-
-**POST `/web/api/bridges/:name/state`**
-
-브리지에서 쿼리를 수행합니다.
-- `state`, `command`가 필요합니다.
-
-{{< tabs >}}
-{{< tab name="Request" >}}
-```json
-{
-    "state":"query",
-    "command":"select * from pg_example"
-}
-```
-{{< /tab >}}
-{{< tab name="Response" >}}
-```json
-{
-    "success": true,
-    "reason": "success",
-    "column": [
-        "id",
-        "company",
-        "employee",
-        "discount",
-        "plan",
-        "code",
-        "valid",
-        "memo",
-        "created_on"
-    ],
-    "rows": [
-        [
-            2,
-            "test-company",
-            10,
-            1.234,
-            2.3456,
-            "c2d29867-3d0b-d497-9191-18a9d8ee7830",
-            true,
-            "test memo",
-            "2023-08-09T14:20:00+09:00"
-        ],
-        [
-            3,
-            "test-company2",
-            10,
-            1.234,
-            2.3456,
-            null,
-            null,
-            null,
-            "2023-08-09T14:20:00+09:00"
-        ]
-    ],
-    "elapse": "53.015905ms"
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-### 브리지 테스트
-
-**POST `/web/api/bridges/:name/state`**
-
-브리지를 테스트합니다.
-
-{{< tabs >}}
-{{< tab name="Request" >}}
-```json
-{
-    "state":"test",
-}
-```
-{{< /tab >}}
-{{< tab name="Response" >}}
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "331.1µs"
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-
-### 브리지 삭제
-
-**DELETE `/web/api/bridges/:name`**
-
-지정한 이름의 브리지를 삭제합니다.
-
-`response`
-
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "112.8µs"
-}
-```
+브리지 관리와 명령 실행에는 JSON-RPC [`bridge.*`](#bridgelist) 메서드를 사용합니다.
 
 ## 구독자
 
-### 구독자 조회
-
-**GET `/web/api/subscribers/:name`**
-
-구독자 정보를 반환합니다.
-- 상태 값: `RUNNING`, `STARTING`, `STOP`, `STOPPING`, `FAILED`, `UNKNWON`
-- `autoStart`, `queue`, `QoS` 필드는 값이 없으면 생략됩니다.
-
-`response`
-
-```json
-{
-    "data": [
-        {
-            "name": "NATS_SUBR",
-            "type": "SUBSCRIBER",
-            "autoStart": true,  // 값이 없으면 생략
-            "state": "RUNNING", 
-            "task": "db/append/EXAMPLE:csv",
-            "bridge": "my_nats",
-            "topic": "iot.sensor",
-            "queue":"", // 값이 없으면 생략
-            "QoS":""    // 값이 없으면 생략
-        }
-    ],
-    "elapse": "253.4µs",
-    "reason": "success",
-    "success": true
-}
-```
-
-### 구독자 목록
-
-**GET `/web/api/subscribers`**
-
-구독자 정보 목록을 반환합니다.
-- 상태 값: `RUNNING`, `STARTING`, `STOP`, `STOPPING`, `FAILED`, `UNKNWON`
-- `autoStart`, `queue`, `QoS` 필드는 값이 없으면 생략됩니다.
-
-`response`
-
-```json
-{
-    "data": [
-        {
-            "name": "NATS_SUBR",
-            "type": "SUBSCRIBER",
-            "autoStart": true,  // 값이 없으면 생략
-            "state": "RUNNING",
-            "task": "db/append/EXAMPLE:csv",
-            "bridge": "my_nats",
-            "topic": "iot.sensor",
-            "queue":"", // 값이 없으면 생략
-            "QoS":""    // 값이 없으면 생략
-        },
-        {
-            "name": "NATS_SUBR2",
-            "type": "SUBSCRIBER",
-            "autoStart": true,  // 값이 없으면 생략
-            "state": "STARTING",
-            "task": "db/insert/EXAMPLE2:csv",
-            "bridge": "my_nats2",
-            "topic": "iot.sensor2",
-            "queue":"", // 값이 없으면 생략
-            "QoS":""    // 값이 없으면 생략
-        }
-    ],
-    "elapse": "253.4µs",
-    "reason": "success",
-    "success": true
-}
-```
-### 구독자 추가
-
-**POST `/web/api/subscribers`**
-
-구독자를 추가합니다.
-- `autostart`: `--autostart`를 지정하면 machbase-neo가 시작할 때 함께 시작합니다. 생략하면 수동으로 시작/중지할 수 있습니다.
-- `name`: 예) `nats_subr`, 구독자 이름입니다.
-- `bridge`: 예) `my_nats`, 구독자가 사용할 브리지 이름입니다.
-- `topic`: 예) `iot.sensor`, 구독할 대상이며 NATS 주제 문법을 따라야 합니다.
-- `task`: 예) `db/append/EXAMPLE:csv`, 데이터 형식과 쓰기 모드를 지정합니다. CSV 데이터를 EXAMPLE 테이블에 append 모드로 적재한다는 의미입니다.
-- `autostart`가 false이면 `subscriber start <name>`, `subscriber stop <name>` 명령으로 수동 제어가 가능합니다.
-- `QoS` <int>: 브리지가 MQTT 유형일 때 토픽 구독 QoS를 지정합니다. 0 또는 1을 사용할 수 있으며, 기본값은 0입니다.
-- `queue` <string>: 브리지가 NATS 유형일 때 큐 그룹을 지정합니다.
-
-자세한 설정은 nats-bridge 매뉴얼(https://docs.machbase.com/neo/bridges/31.nats/)을 참고해 주십시오.
-
-{{< tabs >}}
-{{< tab name="Request" >}}
-```json
-{
-    "name":"nats_subr",
-    "autoStart":true,
-    "bridge":"my_nats",
-    "topic":"iot.sensor",
-    "task":"db/append/EXAMPLE:csv",
-    "QoS": "",  // MQTT 브리지 옵션: 0 또는 1 (기본값 0)
-    "queue": "" // NATS 브리지 옵션
-}
-```
-{{< /tab >}}
-{{< tab name="Response" >}}
-```json
-{
-    "elapse": "260µs",
-    "reason": "success",
-    "success": true
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-### 구독자 시작
-
-**POST `/web/api/subscribers/:name/state`**
-
-- `state` 값이 필요합니다.
-
-{{< tabs >}}
-{{< tab name="Request" >}}
-```json
-{
-    "state":"start",
-}
-```
-{{< /tab >}}
-{{< tab name="Response" >}}
-```json
-{
-    "elapse": "166.1µs",
-    "reason": "success",
-    "success": true
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-### 구독자 중지
-
-**POST `/web/api/subscribers/:name/state`**
-
-- `state` 값이 필요합니다.
-
-{{< tabs >}}
-{{< tab name="Request" >}}
-```json
-{
-    "state":"stop",
-}
-```
-{{< /tab >}}
-{{< tab name="Response" >}}
-```json
-{
-    "elapse": "54.2µs",
-    "reason": "success",
-    "success": true
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-
-### 구독자 삭제
-
-**DELETE `/web/api/subscribers/:name`**
-
-지정한 이름의 구독자를 삭제합니다.
-
-`response`
-
-```json
-{
-    "elapse": "77.1µs",
-    "reason": "success",
-    "success": true
-}
-```
+구독자는 JSON-RPC [`subscriber.*`](#subscriberlist) 메서드로 관리합니다.
 
 ## 백업
 
@@ -1124,8 +406,9 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 **GET `/web/api/backup/archives`**
 
 백업 목록을 반환합니다.
-- 기본 백업 디렉터리는 `$MACHBASE_HOME/dbs/backup`입니다.
-- machbase-neo를 `--backup-dir={path}` 옵션으로 실행해야 합니다.
+
+- 기본 백업 디렉터리는 machbase-neo 실행 파일이 있는 디렉터리 아래의 `backups`입니다.
+- 저장 위치를 바꾸려면 machbase-neo를 `--backup-dir={path}` 옵션으로 실행합니다. 기본값을 사용할 때는 이 옵션이 필요하지 않습니다.
 
 `response`
 
@@ -1151,17 +434,19 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 
 **POST `/web/api/backup/archive`**
 
-데이터베이스를 백업합니다.</br>
+데이터베이스를 백업합니다.<br/>
+
 - **전체 백업**: 전체 데이터를 백업합니다.
 - **증분 백업**: 전체 백업 또는 이전 증분 백업 이후 추가된 데이터만 백업합니다.
 - **기간 백업**: 특정 기간의 데이터를 백업합니다.
 
 `request`
+
 {{< tabs >}}
 {{< tab name="Full Backup" >}}
 ```json
 {
-    "type":"database", // database 또는 table
+    "type":"database", // database or table
     "tableName":"",
     "duration":{
         "type":"full",
@@ -1169,15 +454,15 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
         "from":"",
         "to":""
     },
-    "path":"example_backup1" 
-    // "path":"/home/neo/backups/example_backup1" // 절대 경로 예시
+    "path":"example_backup1"
+    // "path":"/home/neo/backups/example_backup1" // Absolute Path
 }
 ```
 {{< /tab >}}
 {{< tab name="Incremental Backup" >}}
 ```json
 {
-    "type":"database", // database 또는 table
+    "type":"database", // database or table
     "tableName":"",
     "duration":{
         "type":"incremental",
@@ -1185,15 +470,15 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
         "from":"",
         "to":""
     },
-    "path":"example_backup1" 
-    // "path":"/home/neo/backups/example_backup1" // 절대 경로 예시
+    "path":"example_backup1"
+    // "path":"/home/neo/backups/example_backup1" // Absolute Path
 }
 ```
 {{< /tab >}}
 {{< tab name="Time Backup" >}}
 ```json
 {
-    "type":"database", // database 또는 table
+    "type":"database", // database or table
     "tableName":"",
     "duration":{
         "type":"time",
@@ -1201,15 +486,15 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
         "from":"2024-08-01 00:00:00",
         "to":"2024-08-02 23:59:59"
     },
-    "path":"example_backup1" 
-    // "path":"/home/neo/backups/example_backup1" // 절대 경로 예시
+    "path":"example_backup1"
+    // "path":"/home/neo/backups/example_backup1" // Absolute Path
 }
 ```
 {{< /tab >}}
 {{< tab name="Table Backup" >}}
 ```json
 {
-    "type":"table", // database 또는 table
+    "type":"table", // database or table
     "tableName":"example",
     "duration":{
         "type":"full",
@@ -1217,14 +502,15 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
         "from":"",
         "to":""
     },
-    "path":"example_backup1" 
-    // "path":"/home/neo/backups/example_backup1" // 절대 경로 예시
+    "path":"example_backup1"
+    // "path":"/home/neo/backups/example_backup1" // Absolute Path
 }
 ```
 {{< /tab >}}
 {{< /tabs >}}
 
 `response`
+
 ```json
 {
     "success": true,
@@ -1237,9 +523,10 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 
 **GET `/web/api/backup/archive/status`**
 
-백업 상태를 반환합니다.</br>
+백업 상태를 반환합니다.<br/>
 
 `response`
+
 ```json
 {
     "data": {
@@ -1295,6 +582,7 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 **POST `/web/api/backup/mounts/:name`**
 
 데이터베이스를 마운트합니다.
+
 - `:name`: 마운트 이름
 - `path`: 백업 데이터베이스 경로(절대 경로 또는 상대 경로 모두 사용 가능)
 
@@ -1302,8 +590,8 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 {{< tab name="Request" >}}
 ```json
 {
-    "path":"example_backup1" // 상대 경로
-    // "path":"/home/machbase/machbase_home/dbs/example_backup1" // 절대 경로
+    "path":"example_backup1" // Relative Path
+    // "path":"/home/machbase/machbase_home/dbs/example_backup1" // Absolute Path
 }
 ```
 {{< /tab >}}
@@ -1323,9 +611,11 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 **DELETE `/web/api/backup/mounts/:name`**
 
 데이터베이스를 언마운트합니다.
+
 - `:name`: 언마운트할 이름
 
 `response`
+
 ```json
 {
     "elapse": "46.8694ms",
@@ -1337,76 +627,7 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 
 ## 패키지
 
-### 검색
-
-**GET `/web/api/pkgs/search?name=pkg_name&possibles=10`**
-
-`Query Parameter`
- - `name`: 패키지 이름, 필수
- - `possible`: 검색 개수 (`possible=0`이면 전체 검색)
-
-
-`response`
-
-```json
-{
-    "success": true,
-    "reason": "success",
-    "data":{},
-    "elapse": "547.1µs"
-}
-```
-### 동기화
-
-**GET `/web/api/pkgs/sync`**
-
-패키지 정보를 동기화합니다.
-
-`response`
-
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "30.9144ms"
-}
-```
-
-
-### 설치
-
-**GET `/web/api/pkgs/insall/:name`**
-
- - `:name`: 설치할 패키지 이름, 필수
-
-`response`
-```json
-{
-    "success": true,
-    "reason": "success",
-    "data":{}, // 값이 없으면 생략
-    "log":"",
-    "elapse": "23.1491ms"
-}
-```
-
-### 제거
-
-**GET `/web/api/pkgs/uninsall/:name`**
-
- - `:name`: 제거할 패키지 이름, 필수
-
-`response`
-```json
-{
-    "success": true,
-    "reason": "success",
-    "data":{}, // 값이 없으면 생략
-    "log":"",
-    "elapse": "88.4133ms"
-}
-```
-
+패키지는 JSH [`pkg` 명령](/neo/jsh/packages/)으로 설치하고 제거합니다.
 
 ## 기타
 
@@ -1415,70 +636,32 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 **GET `/web/api/refs/*path`**
 
 - `ReferenceGroup`
+
 ```json
 {
-    "label": "그룹 이름",
+    "label": "group name",
     "items":[{"ReferenceItem"}]
 }
 ```
 
 - `ReferenceItem`
+
 ```json
 {
     "type": "type",
-    "title": "표시 제목",
-    "address": "URL 주소",
-    "target": "브라우저 링크 대상"
+    "title": "display title",
+    "address": "url address",
+    "target": "browser link target"
 }
 ```
 
 - type: `url`, `wrk`, `tql`, `sql`
-- address: `serverfile://<path>` 접두사가 있으면 서버의 파일을 가리키고,
+- address: `serverfile://<path>` 접두어가 있으면 서버 쪽 파일을 가리키고,
   그렇지 않으면 `https://`로 시작하는 외부 웹 URL입니다.
-
 
 ### SQL 구문 분할기
 
-**POST `/web/api/splitter/sql`**
-
-```json
-{
-    "success": true,
-    "reason": "성공 또는 오류 사유",
-    "elapse": "경과 시간",
-    "data": {
-        "statements": [
-            {
-                "text": "-- env: bridge=sqlite",
-                "beginLine": 1,
-                "endLine": 1,
-                "isComment": true,
-                "env": {
-                    "bridge": "sqlite",
-                    "error": "`-- env: bridge=database`에 문법 오류가 있을 때"
-                }
-            },
-            {
-                "text": "select * from table",
-                "beginLine": 2,
-                "endLine": 2,
-                "isComment": false,
-                "env": {
-                    "bridge": "sqlite",
-                    "error": "`-- env: bridge=database`에 문법 오류가 있을 때"
-                }
-            },
-            {
-                "text": "-- comment",
-                "beginLine": 3,
-                "endLine": 3,
-                "isComment": true,
-                "env": {}
-            }
-        ]
-    }
-}
-```
+SQL 구문 분할에는 JSON-RPC [`sql.split`](#sqlsplit) 메서드를 사용합니다.
 
 ### 라이선스 정보
 
@@ -1487,16 +670,16 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 ```json
 {
     "success": true,
-    "reason": "성공 또는 오류 사유",
-    "elapse": "경과 시간",
+    "reason": "success or error reason",
+    "elapse": "elapse time",
     "data": {
-        "id": "라이선스 ID",
-        "type": "유형",
-        "customer": "고객",
-        "project": "프로젝트",
-        "countryCode": "국가 코드",
-        "installDate": "설치 일자",
-        "issueDate": "라이선스 발급 일자"
+        "id": "license id",
+        "type": "type",
+        "customer": "customer",
+        "project": "project",
+        "countryCode": "country code",
+        "installDate": "installation date",
+        "issueDate": "license issue date"
     }
 }
 ```
@@ -1507,11 +690,10 @@ machbase-neo 서버에 공개 키를 등록하면 `machbase-neo shell` 명령을
 
 라이선스 파일을 설치합니다.
 
-
 ## WebSocket
 
 ```
-ws://127.0.0.1:5654/web/ui/console/{console_id}/data?token={jwt_token}
+ws://127.0.0.1:5654/web/api/console/{console_id}/data?token={jwt_token}
 ```
 
 `console_id`는 세션을 올바르게 관리하기 위해 클라이언트 애플리케이션이 생성한 고유 식별자여야 합니다.
@@ -1539,8 +721,8 @@ ws://127.0.0.1:5654/web/ui/console/{console_id}/data?token={jwt_token}
 
 ### LOG
 
-서버는 사용자에게 친숙한 메시지를 전송하여 상태 업데이트나 오류 알림을 제공합니다.
-이 메시지는 상태, 문제, 가이드를 명확하게 전달하여 원활한 상호작용과 문제 해결을 돕습니다.
+서버는 사용자가 이해하기 쉬운 메시지를 보내 상태 변경이나 오류를 알립니다.
+이 메시지는 상태, 문제, 조치 방법을 명확하게 전달하여 원활한 상호작용과 문제 해결을 돕습니다.
 
 - 방향: S -> C
 
@@ -1559,7 +741,7 @@ ws://127.0.0.1:5654/web/ui/console/{console_id}/data?token={jwt_token}
 
 - **timestamp**: 로그 발생 시각으로, 나노초 단위 UNIX 에포크입니다.
 - **level**: 로그 심각도. `"TRACE"`, `"DEBUG"`, `"INFO"`, `"WARN"`, `"ERROR"` 중 하나입니다.
-- **task** (선택): 관련 작업 이름.
+- **task** (선택): 관련 작업의 이름.
 - **message**: 설명 메시지.
 - **repeat** (선택): 동일한 로그 메시지가 연속으로 반복된 횟수로, 중복 출력을 줄이는 데 활용됩니다.
 
@@ -1617,12 +799,12 @@ Web UI는 관리 기능을 위해 JSON-RPC endpoint를 제공합니다.
 
 참고:
 
-- 응답의 HTTP status는 일반적으로 `200 OK` 입니다.
-- 성공 여부는 HTTP status가 아니라 `error` 필드 존재 여부로 판단하십시오.
+- 응답의 HTTP status는 일반적으로 `200 OK`입니다.
+- 성공 여부는 HTTP status가 아니라 `error` 필드가 있는지로 판단합니다.
 
 ### WebSocket JSON-RPC 요청 형식
 
-**`ws:/web/api/console/:console_id/data`**
+**`ws://{server_address}/web/api/console/:console_id/data?token={jwt_token}`**
 
 WebSocket에서는 `rpc_req` / `rpc_rsp` 이벤트를 사용합니다.
 `session` 필드는 UI 클라이언트가 응답을 어느 탭 또는 어느 뷰에 연결할지 구분하기 위한 식별자입니다.
@@ -1685,19 +867,19 @@ WebSocket에서는 `rpc_req` / `rpc_rsp` 이벤트를 사용합니다.
 
 `markdown.render(markdown, darkMode, referer)`
 
-*Params*
+*매개변수*
 - `markdown` *string*
 - `darkMode` *bool*
-- `referer` *string* - the referer URL
+- `referer` *string* - 참조 URL
 
-*Return*
+*반환값*
 
 - `string|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -1716,7 +898,7 @@ WebSocket에서는 `rpc_req` / `rpc_rsp` 이벤트를 사용합니다.
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -1732,167 +914,23 @@ WebSocket에서는 `rpc_req` / `rpc_rsp` 이벤트를 사용합니다.
 
 </details>
 
-#### server.info.statz
-
-`server.info.statz(names)`
-
-*Params*
-- `names` *array<string>* - metric names
-
-*Return*
-
-- `object<ServerStatzResponse>|error` - visualization specifications grouped by name
-
-<details>
-<summary>Request/Response JSON</summary>
-
-*Request*
-
-```json
-{
-    "type": "rpc_req",
-    "session": "client-session-#1",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 20,
-        "method": "server.info.statz",
-        "params": [
-            []
-        ]
-    }
-}
-```
-
-*Response*
-
-```json
-{
-    "type": "rpc_rsp",
-    "session": "client-session-#1",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 20,
-        "result": {}
-    }
-}
-```
-
-</details>
-
-#### server.info.query
-
-`server.info.query(maxRows, pattern)`
-
-*Params*
-- `maxRows` *int* - maximum row count
-- `pattern` *array<string>* - wildcard filters for metric keys
-
-*Return*
-
-- `object<StatzQueryResult>|error` - tabular metric query result
-
-<details>
-<summary>Request/Response JSON</summary>
-
-*Request*
-
-```json
-{
-    "type": "rpc_req",
-    "session": "client-session-#1",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 20,
-        "method": "server.info.query",
-        "params": [
-            0,
-            []
-        ]
-    }
-}
-```
-
-*Response*
-
-```json
-{
-    "type": "rpc_rsp",
-    "session": "client-session-#1",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 20,
-        "result": {}
-    }
-}
-```
-
-</details>
-
-#### server.info.keys
-
-`server.info.keys(pattern)`
-
-*Params*
-- `pattern` *array<string>* - wildcard filters for metric keys
-
-*Return*
-
-- `array<string>|error` - sorted metric key names
-
-<details>
-<summary>Request/Response JSON</summary>
-
-*Request*
-
-```json
-{
-    "type": "rpc_req",
-    "session": "client-session-#1",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 20,
-        "method": "server.info.keys",
-        "params": [
-            []
-        ]
-    }
-}
-```
-
-*Response*
-
-```json
-{
-    "type": "rpc_rsp",
-    "session": "client-session-#1",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 20,
-        "result": []
-    }
-}
-```
-
-</details>
-
-
 ### Vizspec
 
 #### vizspec.render
 
 `vizspec.render(vizspec)`
 
-*Params*
+*매개변수*
 - `vizspec` *object*
 
-*Return*
+*반환값*
 
 - `object|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -1909,7 +947,7 @@ WebSocket에서는 `rpc_req` / `rpc_rsp` 이벤트를 사용합니다.
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -1929,18 +967,18 @@ WebSocket에서는 `rpc_req` / `rpc_rsp` 이벤트를 사용합니다.
 
 `vizspec.export(vizspec, format)`
 
-*Params*
+*매개변수*
 - `vizspec` *object*
 - `format` *string*
 
-*Return*
+*반환값*
 
 - `object|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -1958,7 +996,7 @@ WebSocket에서는 `rpc_req` / `rpc_rsp` 이벤트를 사용합니다.
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -1974,25 +1012,24 @@ WebSocket에서는 `rpc_req` / `rpc_rsp` 이벤트를 사용합니다.
 
 </details>
 
-
 ### Server
 
 #### server.info.get
 
 `server.info.get()`
 
-*Params*
+*매개변수*
 
-- none
+- 없음
 
-*Return*
+*반환값*
 
 - `object<ServerInfoResponse>|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -2007,7 +1044,7 @@ WebSocket에서는 `rpc_req` / `rpc_rsp` 이벤트를 사용합니다.
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -2023,22 +1060,165 @@ WebSocket에서는 `rpc_req` / `rpc_rsp` 이벤트를 사용합니다.
 
 </details>
 
+#### server.info.statz
+
+`server.info.statz(names)`
+
+*매개변수*
+- `names` *array<string>* - 메트릭 이름
+
+*반환값*
+
+- `object<ServerStatzResponse>|error` - 이름별로 묶은 시각화 사양
+
+<details>
+<summary>요청/응답 JSON</summary>
+
+*요청*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "server.info.statz",
+        "params": [
+            []
+        ]
+    }
+}
+```
+
+*응답*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {}
+    }
+}
+```
+
+</details>
+
+#### server.info.query
+
+`server.info.query(maxRows, pattern)`
+
+*매개변수*
+- `maxRows` *int* - 최대 행 수
+- `pattern` *array<string>* - 메트릭 키에 대한 와일드카드 필터
+
+*반환값*
+
+- `object<StatzQueryResult>|error` - 표 형식의 메트릭 조회 결과
+
+<details>
+<summary>요청/응답 JSON</summary>
+
+*요청*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "server.info.query",
+        "params": [
+            0,
+            []
+        ]
+    }
+}
+```
+
+*응답*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {}
+    }
+}
+```
+
+</details>
+
+#### server.info.keys
+
+`server.info.keys(pattern)`
+
+*매개변수*
+- `pattern` *array<string>* - 메트릭 키에 대한 와일드카드 필터
+
+*반환값*
+
+- `array<string>|error` - 정렬된 메트릭 키 이름
+
+<details>
+<summary>요청/응답 JSON</summary>
+
+*요청*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "server.info.keys",
+        "params": [
+            []
+        ]
+    }
+}
+```
+
+*응답*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": []
+    }
+}
+```
+
+</details>
+
 #### server.certificate.get
 
 `server.certificate.get()`
 
-*Params*
+*매개변수*
 
-- none
+- 없음
 
-*Return*
+*반환값*
 
 - `string|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -2053,7 +1233,7 @@ WebSocket에서는 `rpc_req` / `rpc_rsp` 이벤트를 사용합니다.
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -2071,22 +1251,22 @@ WebSocket에서는 `rpc_req` / `rpc_rsp` 이벤트를 사용합니다.
 
 #### server.shutdown
 
-mgmt server implements
+관리(mgmt) 서버에서 구현합니다.
 
 `server.shutdown()`
 
-*Params*
+*매개변수*
 
-- none
+- 없음
 
-*Return*
+*반환값*
 
 - `object<ShutdownResponse>|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -2101,7 +1281,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -2117,24 +1297,23 @@ mgmt server implements
 
 </details>
 
-
 ### Service
 
 #### service.port.list
 
 `service.port.list(svc)`
 
-*Params*
+*매개변수*
 - `svc` *string*
 
-*Return*
+*반환값*
 
 - `array<object<model.ServicePort>>|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -2151,7 +1330,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -2167,24 +1346,23 @@ mgmt server implements
 
 </details>
 
-
 ### Proxy
 
 #### proxy.register
 
 `proxy.register(req)`
 
-*Params*
+*매개변수*
 - `req` *object<ProxyRegisterRequest>*
 
-*Return*
+*반환값*
 
 - `object<ProxyEntrySnapshot>|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -2201,7 +1379,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -2221,17 +1399,17 @@ mgmt server implements
 
 `proxy.unregister(req)`
 
-*Params*
+*매개변수*
 - `req` *object<ProxyUnregisterRequest>*
 
-*Return*
+*반환값*
 
 - `array<object<ProxyEntrySnapshot>>|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -2248,7 +1426,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -2268,17 +1446,17 @@ mgmt server implements
 
 `proxy.list(service)`
 
-*Params*
+*매개변수*
 - `service` *string*
 
-*Return*
+*반환값*
 
 - `array<object<ProxyEntrySnapshot>>|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -2295,7 +1473,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -2315,17 +1493,17 @@ mgmt server implements
 
 `proxy.get(req)`
 
-*Params*
+*매개변수*
 - `req` *object<ProxyGetRequest>*
 
-*Return*
+*반환값*
 
 - `object<ProxyEntrySnapshot>|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -2342,7 +1520,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -2358,25 +1536,24 @@ mgmt server implements
 
 </details>
 
-
 ### Shell
 
 #### shell.list
 
 `shell.list()`
 
-*Params*
+*매개변수*
 
-- none
+- 없음
 
-*Return*
+*반환값*
 
 - `array<object<model.ShellDefinition>>|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -2391,7 +1568,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -2411,18 +1588,18 @@ mgmt server implements
 
 `shell.add(name, command)`
 
-*Params*
+*매개변수*
 - `name` *string*
 - `command` *string*
 
-*Return*
+*반환값*
 
 - `string|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -2440,7 +1617,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -2456,21 +1633,173 @@ mgmt server implements
 
 </details>
 
+#### shell.copy
+
+지정한 셸 정의를 복제하고, 새 ID가 부여된 셸 정의를 반환합니다.
+
+`shell.copy(srcId)`
+
+*매개변수*
+- `srcId` *string* - 복제할 셸 정의의 ID
+
+*반환값*
+
+- `object<model.ShellDefinition>|error` - 복제된 셸 정의
+
+<details>
+<summary>요청/응답 JSON</summary>
+
+*요청*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "shell.copy",
+        "params": [
+            "23"
+        ]
+    }
+}
+```
+
+*응답*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {
+            "id": "24",
+            "type": "term",
+            "icon": "console-network-outline",
+            "label": "CUSTOM SHELL",
+            "command": "/bin/sh",
+            "attributes": [
+                {
+                    "removable": true
+                },
+                {
+                    "cloneable": true
+                },
+                {
+                    "editable": true
+                }
+            ]
+        }
+    }
+}
+```
+
+</details>
+
+#### shell.update
+
+셸 정의를 수정합니다. `id`로 대상을 지정하고 셸 정의 전체를 전달합니다.
+
+`shell.update(shell)`
+
+*매개변수*
+- `shell` *object<model.ShellDefinition>* - `id`, `type`, `label`, `command`, `icon`, `theme`, `attributes`를 담은 셸 정의
+    `command`가 비어 있으면 오류를 반환합니다.
+
+*반환값*
+
+- `object<model.ShellDefinition>|error` - 수정된 셸 정의
+
+<details>
+<summary>요청/응답 JSON</summary>
+
+*요청*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "shell.update",
+        "params": [
+            {
+                "id": "24",
+                "type": "term",
+                "icon": "console-network-outline",
+                "label": "_docgen_uiapi_s2",
+                "command": "/bin/bash",
+                "attributes": [
+                    {
+                        "removable": true
+                    },
+                    {
+                        "cloneable": true
+                    },
+                    {
+                        "editable": true
+                    }
+                ],
+                "theme": "dark"
+            }
+        ]
+    }
+}
+```
+
+*응답*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {
+            "id": "24",
+            "type": "term",
+            "icon": "console-network-outline",
+            "label": "_docgen_uiapi_s2",
+            "theme": "dark",
+            "command": "/bin/bash",
+            "attributes": [
+                {
+                    "removable": true
+                },
+                {
+                    "cloneable": true
+                },
+                {
+                    "editable": true
+                }
+            ]
+        }
+    }
+}
+```
+
+</details>
+
 #### shell.delete
 
 `shell.delete(id)`
 
-*Params*
+*매개변수*
 - `id` *string*
 
-*Return*
+*반환값*
 
 - `null|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -2487,7 +1816,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -2503,25 +1832,24 @@ mgmt server implements
 
 </details>
 
-
 ### Bridge
 
 #### bridge.list
 
 `bridge.list()`
 
-*Params*
+*매개변수*
 
-- none
+- 없음
 
-*Return*
+*반환값*
 
 - `array<object<bridge.BridgeInfo>>|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -2536,7 +1864,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -2556,17 +1884,17 @@ mgmt server implements
 
 `bridge.get(name)`
 
-*Params*
+*매개변수*
 - `name` *string*
 
-*Return*
+*반환값*
 
 - `object<bridge.BridgeInfo>|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -2583,7 +1911,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -2603,19 +1931,19 @@ mgmt server implements
 
 `bridge.add(name, typ, conn)`
 
-*Params*
+*매개변수*
 - `name` *string*
 - `typ` *string*
 - `conn` *string*
 
-*Return*
+*반환값*
 
 - `null|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -2634,7 +1962,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -2654,17 +1982,17 @@ mgmt server implements
 
 `bridge.delete(name)`
 
-*Params*
+*매개변수*
 - `name` *string*
 
-*Return*
+*반환값*
 
 - `null|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -2681,7 +2009,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -2701,17 +2029,17 @@ mgmt server implements
 
 `bridge.test(name)`
 
-*Params*
+*매개변수*
 - `name` *string*
 
-*Return*
+*반환값*
 
 - `bool|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -2728,7 +2056,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -2748,17 +2076,17 @@ mgmt server implements
 
 `bridge.stats(name)`
 
-*Params*
+*매개변수*
 - `name` *string*
 
-*Return*
+*반환값*
 
 - `object<BridgeStats>|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -2775,7 +2103,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -2795,18 +2123,18 @@ mgmt server implements
 
 `bridge.exec(name, command)`
 
-*Params*
+*매개변수*
 - `name` *string*
 - `command` *string*
 
-*Return*
+*반환값*
 
 - `object<BridgeExecResult>|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -2824,7 +2152,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -2844,18 +2172,18 @@ mgmt server implements
 
 `bridge.query(name, query)`
 
-*Params*
+*매개변수*
 - `name` *string*
 - `query` *string*
 
-*Return*
+*반환값*
 
 - `object<BridgeQueryResult>|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -2873,7 +2201,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -2893,17 +2221,17 @@ mgmt server implements
 
 `bridge.result.fetch(handle)`
 
-*Params*
+*매개변수*
 - `handle` *string*
 
-*Return*
+*반환값*
 
 - `object<BridgeQueryRow>|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -2920,7 +2248,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -2940,17 +2268,17 @@ mgmt server implements
 
 `bridge.result.close(handle)`
 
-*Params*
+*매개변수*
 - `handle` *string*
 
-*Return*
+*반환값*
 
 - `null|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -2967,7 +2295,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -2983,25 +2311,24 @@ mgmt server implements
 
 </details>
 
-
 ### Sshkey
 
 #### sshkey.list
 
 `sshkey.list()`
 
-*Params*
+*매개변수*
 
-- none
+- 없음
 
-*Return*
+*반환값*
 
 - `array<object<AuthorizedSshKey>>|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -3016,7 +2343,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -3036,19 +2363,19 @@ mgmt server implements
 
 `sshkey.add(keyType, key, comment)`
 
-*Params*
+*매개변수*
 - `keyType` *string*
 - `key` *string*
 - `comment` *string*
 
-*Return*
+*반환값*
 
 - `null|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -3067,7 +2394,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -3087,17 +2414,17 @@ mgmt server implements
 
 `sshkey.delete(key)`
 
-*Params*
+*매개변수*
 - `key` *string*
 
-*Return*
+*반환값*
 
 - `null|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -3114,7 +2441,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -3130,25 +2457,28 @@ mgmt server implements
 
 </details>
 
-
 ### Key
 
 #### key.list
 
 `key.list()`
 
-*Params*
+*매개변수*
 
-- none
+- 없음
 
-*Return*
+*반환값*
 
-- `array<object<KeyInfo>>|error`
+- `array<object<KeyInfo>>|error` - 서버 키 저장소에 저장된 키 목록
+    - `idx`: 목록 안의 순번
+    - `id`: 키 ID. `key.delete`에 지정합니다.
+    - `name`: 키 이름
+    - `notBefore`, `notAfter`: 유효 기간의 시작 시각과 종료 시각(Unix 타임스탬프, 초)
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -3163,7 +2493,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -3172,7 +2502,15 @@ mgmt server implements
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "result": []
+        "result": [
+            {
+                "idx": 0,
+                "id": 8,
+                "name": "_docgen_uiapi_key",
+                "notBefore": 1789632914,
+                "notAfter": 2104992914
+            }
+        ]
     }
 }
 ```
@@ -3181,31 +2519,32 @@ mgmt server implements
 
 #### key.generate
 
-`key.generate(id, typ, notBefore, notAfter, store)`
+`key.generate(name, typ, notBefore, notAfter, store)`
 
-*Params*
-- `id` *string*
-- `typ` *string* - the type of key to generate, must be RSA or ECDSA
-- `notBefore` *int64* - the start time of the key's validity period in Unix timestamp (sec.)
-    if not specified or 0, the current time will be used
-- `notAfter` *int64* - the end time of the key's validity period in Unix timestamp (sec.)
-    if not specified or 0, the default period of 10 years will be used
-- `store` *bool* - whether to store the key pair in the server's key store
+*매개변수*
+- `name` *string* - 키 이름. 소문자로 바뀌어 저장됩니다.
+- `typ` *string* - 생성할 키의 유형. `RSA` 또는 `ECDSA`여야 합니다.
+- `notBefore` *int64* - 키 유효 기간의 시작 시각(Unix 타임스탬프, 초)
+    지정하지 않거나 0이면 현재 시각을 사용합니다.
+- `notAfter` *int64* - 키 유효 기간의 종료 시각(Unix 타임스탬프, 초)
+    지정하지 않거나 0이면 기본 기간인 10년을 사용합니다.
+- `store` *bool* - 키 쌍을 서버의 키 저장소에 저장할지 여부
+    `false`이면 저장하지 않으므로 `key.list`에도 나타나지 않습니다.
 
-*Return*
+*반환값*
 
-- `any|error` - the generated key information
-    - `id`: the identifier of the key pair
-    - `certificate`: the certificate of the key pair
-    - `key`: the private key of the key pair
-    - `token`: the token associated with the key pair
-    - `serverKey`: the server's certificate (if store is true)
-    - `zip`: a zip archive containing the key pair and server certificate (if store is true)
+- `any|error` - 생성된 키 정보
+    - `id`: 키 ID. `store`가 false이면 `0`입니다.
+    - `name`: 키 이름
+    - `certificate`: 키 쌍의 인증서
+    - `key`: 키 쌍의 개인 키
+    - `serverKey`: 서버 인증서(`store`가 true인 경우)
+    - `zip`: 키 쌍과 서버 인증서를 담은 ZIP 아카이브를 base64로 인코딩한 문자열(`store`가 true인 경우)
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -3216,17 +2555,17 @@ mgmt server implements
         "id": 20,
         "method": "key.generate",
         "params": [
-            "string",
-            "string",
+            "_docgen_uiapi_key",
+            "ecdsa",
             0,
             0,
-            false
+            true
         ]
     }
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -3235,7 +2574,14 @@ mgmt server implements
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "result": {}
+        "result": {
+            "certificate": "-----BEGIN CERTIFICATE-----\nXXXXXXXXXXXXXXXXXX\n-----END CERTIFICATE-----\n",
+            "id": 8,
+            "key": "-----BEGIN EC PRIVATE KEY-----\nXXXXXXXXXXXXXXXX\n-----END EC PRIVATE KEY-----\n",
+            "name": "_docgen_uiapi_key",
+            "serverKey": "-----BEGIN CERTIFICATE-----\nXXXXXXXXXXXXXXXXXX\n-----END CERTIFICATE-----\n",
+            "zip": "UEsDBXXXXXXXXXXXXXXXX"
+        }
     }
 }
 ```
@@ -3246,17 +2592,17 @@ mgmt server implements
 
 `key.delete(id)`
 
-*Params*
-- `id` *string*
+*매개변수*
+- `id` *int64* - `key.list`나 `key.generate`가 반환한 키 ID
 
-*Return*
+*반환값*
 
 - `null|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -3267,13 +2613,13 @@ mgmt server implements
         "id": 20,
         "method": "key.delete",
         "params": [
-            "string"
+            8
         ]
     }
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -3289,25 +2635,33 @@ mgmt server implements
 
 </details>
 
+### Token
 
-### Schedule
+발급한 토큰의 사용법은 [API 보안](/neo/security/)을 참고합니다.
 
-#### schedule.list
+#### token.list
 
-`schedule.list()`
+`token.list()`
 
-*Params*
+*매개변수*
 
-- none
+- 없음
 
-*Return*
+*반환값*
 
-- `array<object<scheduler.Schedule>>|error`
+- `array<object<ApiTokenInfo>>|error` - 호출한 사용자의 API 토큰 목록
+    - `id`: 토큰 ID. `token.delete`에 지정합니다.
+    - `name`: 토큰 이름
+    - `user`: 토큰을 소유한 사용자
+    - `hint`: 일부를 가린 토큰 값
+    - `createdAt`: 발급 시각(Unix 타임스탬프, 초)
+    - `notAfter`: 만료 시각(Unix 타임스탬프, 초)
+    - `lastUsedAt`: 마지막으로 사용한 시각(Unix 타임스탬프, 초). 사용한 적이 없으면 생략됩니다.
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -3316,13 +2670,13 @@ mgmt server implements
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "method": "schedule.list",
+        "method": "token.list",
         "params": []
     }
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -3331,86 +2685,40 @@ mgmt server implements
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "result": []
-    }
-}
-```
-
-</details>
-
-#### schedule.timer.add
-
-`schedule.timer.add(name, spec, command, autoStart)`
-
-*Params*
-- `name` *string*
-- `spec` *string*
-- `command` *string*
-- `autoStart` *bool*
-
-*Return*
-
-- `null|error`
-
-<details>
-<summary>Request/Response JSON</summary>
-
-*Request*
-
-```json
-{
-    "type": "rpc_req",
-    "session": "client-session-#1",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 20,
-        "method": "schedule.timer.add",
-        "params": [
-            "string",
-            "string",
-            "string",
-            false
+        "result": [
+            {
+                "id": 11,
+                "name": "_docgen_uiapi_token",
+                "user": "SYS",
+                "hint": "nt_b_XXXX****XXXX",
+                "createdAt": 1789632914,
+                "notAfter": 2105252114
+            }
         ]
     }
 }
 ```
 
-*Response*
-
-```json
-{
-    "type": "rpc_rsp",
-    "session": "client-session-#1",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 20,
-        "result": null
-    }
-}
-```
-
 </details>
 
-#### schedule.subscriber.add
+#### token.generate
 
-`schedule.subscriber.add(name, bridge, command, autoStart, topic, qos)`
+`token.generate(name, notAfter)`
 
-*Params*
-- `name` *string*
-- `bridge` *string*
-- `command` *string*
-- `autoStart` *bool*
-- `topic` *string*
-- `qos` *int*
+*매개변수*
+- `name` *string* - 토큰 이름. 비어 있으면 오류를 반환합니다.
+- `notAfter` *int64* - 만료 시각(Unix 타임스탬프, 초)
+    0이면 발급 시점부터 10년 뒤로 설정합니다.
 
-*Return*
+*반환값*
 
-- `null|error`
+- `object<GeneratedApiToken>|error` - `token.list` 항목과 같은 필드에 토큰 원문인 `token`이 더해집니다.
+    토큰 원문은 이 응답에서만 받을 수 있습니다.
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -3419,20 +2727,16 @@ mgmt server implements
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "method": "schedule.subscriber.add",
+        "method": "token.generate",
         "params": [
-            "string",
-            "string",
-            "string",
-            false,
-            "string",
+            "_docgen_uiapi_token",
             0
         ]
     }
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -3441,28 +2745,36 @@ mgmt server implements
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "result": null
+        "result": {
+            "id": 11,
+            "name": "_docgen_uiapi_token",
+            "user": "SYS",
+            "hint": "nt_b_XXXX****XXXX",
+            "createdAt": 1789632914,
+            "notAfter": 2105252114,
+            "token": "nt_b_XXXXXXXXXXXXXXXX"
+        }
     }
 }
 ```
 
 </details>
 
-#### schedule.delete
+#### token.delete
 
-`schedule.delete(name)`
+`token.delete(id)`
 
-*Params*
-- `name` *string*
+*매개변수*
+- `id` *int64* - `token.list`나 `token.generate`가 반환한 토큰 ID
 
-*Return*
+*반환값*
 
 - `null|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -3471,15 +2783,15 @@ mgmt server implements
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "method": "schedule.delete",
+        "method": "token.delete",
         "params": [
-            "string"
+            11
         ]
     }
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -3495,21 +2807,33 @@ mgmt server implements
 
 </details>
 
-#### schedule.start
+### Timer
 
-`schedule.start(name)`
+타이머는 `timer.list`나 `timer.add`가 반환하는 ID로 지정합니다. 같은 이름으로 다시 추가해도 새 ID로 등록됩니다. 실행 주기의 문법은 [타이머](/neo/timer/)를 참고합니다.
 
-*Params*
-- `name` *string*
+#### timer.list
 
-*Return*
+`timer.list()`
 
-- `null|error`
+*매개변수*
+
+- 없음
+
+*반환값*
+
+- `array<object<timer.Info>>|error` - 타이머 목록
+    - `id`: 타이머 ID
+    - `userName`, `execUser`: 타이머를 소유한 사용자와 실행하는 사용자
+    - `name`: 타이머 이름
+    - `autoStart`: 자동 시작 여부. `false`이면 생략됩니다.
+    - `state`: `RUNNING`, `STARTING`, `STOP`, `STOPPING`, `FAILED`, `UNKNOWN` 중 하나
+    - `task`: 실행할 TQL 파일 경로
+    - `schedule`: 실행 주기
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -3518,15 +2842,13 @@ mgmt server implements
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "method": "schedule.start",
-        "params": [
-            "string"
-        ]
+        "method": "timer.list",
+        "params": []
     }
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -3535,28 +2857,38 @@ mgmt server implements
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "result": null
+        "result": [
+            {
+                "id": 9,
+                "userName": "SYS",
+                "execUser": "sys",
+                "name": "_DOCGEN_UIAPI_TIMER",
+                "state": "STOP",
+                "task": "_docgen_uiapi_timer.tql",
+                "schedule": "@every 1h"
+            }
+        ]
     }
 }
 ```
 
 </details>
 
-#### schedule.stop
+#### timer.get
 
-`schedule.stop(name)`
+`timer.get(id)`
 
-*Params*
-- `name` *string*
+*매개변수*
+- `id` *int64* - 타이머 ID
 
-*Return*
+*반환값*
 
-- `null|error`
+- `object<timer.Info>|error` - 타이머 정보. 필드는 `timer.list`와 같습니다.
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -3565,15 +2897,137 @@ mgmt server implements
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "method": "schedule.stop",
+        "method": "timer.get",
         "params": [
-            "string"
+            9
         ]
     }
 }
 ```
 
-*Response*
+*응답*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {
+            "id": 9,
+            "userName": "SYS",
+            "execUser": "sys",
+            "name": "_DOCGEN_UIAPI_TIMER",
+            "state": "STOP",
+            "task": "_docgen_uiapi_timer.tql",
+            "schedule": "@every 1h"
+        }
+    }
+}
+```
+
+</details>
+
+#### timer.add
+
+`timer.add(req)`
+
+*매개변수*
+- `req` *object*
+    - `name` *string* - 타이머 이름. 대문자로 바뀌어 저장됩니다.
+    - `spec` *string* - 실행 주기. 예) `0 30 * * * *`(매시 30분), `@every 1h30m`(1시간 30분 간격), `@daily`(매일)
+    - `command` *string* - 실행할 TQL 파일 경로. 파일이 없으면 오류를 반환합니다.
+    - `autoStart` *bool* - `true`이면 추가하는 즉시 시작하고, machbase-neo가 시작할 때도 자동으로 시작합니다.
+
+*반환값*
+
+- `int64|error` - 생성된 타이머 ID
+
+<details>
+<summary>요청/응답 JSON</summary>
+
+*요청*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "timer.add",
+        "params": [
+            {
+                "name": "_docgen_uiapi_timer",
+                "spec": "@every 1h",
+                "command": "_docgen_uiapi_timer.tql",
+                "autoStart": false
+            }
+        ]
+    }
+}
+```
+
+*응답*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": 9
+    }
+}
+```
+
+</details>
+
+#### timer.update
+
+`id`로 지정한 타이머의 설정을 요청 내용으로 바꿉니다.
+
+`timer.update(req)`
+
+*매개변수*
+- `req` *object*
+    - `id` *int64* - 타이머 ID
+    - `spec` *string* - 실행 주기
+    - `command` *string* - 실행할 TQL 파일 경로. 생략하면 오류를 반환합니다.
+    - `autoStart` *bool* - 자동 시작 여부. 생략하면 `false`가 됩니다.
+
+*반환값*
+
+- `null|error`
+
+<details>
+<summary>요청/응답 JSON</summary>
+
+*요청*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "timer.update",
+        "params": [
+            {
+                "id": 9,
+                "spec": "0 30 * * * *",
+                "command": "_docgen_uiapi_timer.tql",
+                "autoStart": true
+            }
+        ]
+    }
+}
+```
+
+*응답*
 
 ```json
 {
@@ -3589,6 +3043,545 @@ mgmt server implements
 
 </details>
 
+#### timer.delete
+
+`timer.delete(id)`
+
+*매개변수*
+- `id` *int64* - 타이머 ID
+
+*반환값*
+
+- `null|error`
+
+<details>
+<summary>요청/응답 JSON</summary>
+
+*요청*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "timer.delete",
+        "params": [
+            9
+        ]
+    }
+}
+```
+
+*응답*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
+
+#### timer.start
+
+`timer.start(id)`
+
+*매개변수*
+- `id` *int64* - 타이머 ID
+
+*반환값*
+
+- `null|error`
+
+<details>
+<summary>요청/응답 JSON</summary>
+
+*요청*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "timer.start",
+        "params": [
+            9
+        ]
+    }
+}
+```
+
+*응답*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
+
+#### timer.stop
+
+`timer.stop(id)`
+
+*매개변수*
+- `id` *int64* - 타이머 ID
+
+*반환값*
+
+- `null|error`
+
+<details>
+<summary>요청/응답 JSON</summary>
+
+*요청*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "timer.stop",
+        "params": [
+            9
+        ]
+    }
+}
+```
+
+*응답*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
+
+### Subscriber
+
+구독자는 `subscriber.list`나 `subscriber.add`가 반환하는 ID로 지정합니다. 브리지 설정은 [MQTT 브리지](/neo/bridges/mqtt/)와 [NATS 브리지](/neo/bridges/nats/)를 참고합니다.
+
+#### subscriber.list
+
+`subscriber.list()`
+
+*매개변수*
+
+- 없음
+
+*반환값*
+
+- `array<object<subscriber.Info>>|error` - 구독자 목록
+    - `id`: 구독자 ID
+    - `userName`, `execUser`: 구독자를 소유한 사용자와 실행하는 사용자
+    - `name`: 구독자 이름
+    - `autoStart`: 자동 시작 여부
+    - `state`: `RUNNING`, `STARTING`, `STOP`, `STOPPING`, `FAILED`, `UNKNOWN` 중 하나
+    - `task`: 쓰기 설명자
+    - `bridge`: 브리지 이름
+    - `topic`: 구독하는 MQTT 토픽 또는 NATS subject
+    - `qos`, `queue`, `stream`: 브리지 옵션
+    - `autoStart`, `qos`, `queue`, `stream` 필드는 값이 없으면 생략됩니다.
+
+<details>
+<summary>요청/응답 JSON</summary>
+
+*요청*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "subscriber.list",
+        "params": []
+    }
+}
+```
+
+*응답*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": [
+            {
+                "id": 4,
+                "userName": "SYS",
+                "execUser": "sys",
+                "name": "_DOCGEN_UIAPI_SUBR",
+                "state": "STOP",
+                "task": "db/append/EXAMPLE:csv",
+                "bridge": "_docgen_uiapi_mqtt",
+                "topic": "_docgen_uiapi/sensor",
+                "qos": 1
+            }
+        ]
+    }
+}
+```
+
+</details>
+
+#### subscriber.get
+
+`subscriber.get(id)`
+
+*매개변수*
+- `id` *int64* - 구독자 ID
+
+*반환값*
+
+- `object<subscriber.Info>|error` - 구독자 정보. 필드는 `subscriber.list`와 같습니다.
+
+<details>
+<summary>요청/응답 JSON</summary>
+
+*요청*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "subscriber.get",
+        "params": [
+            4
+        ]
+    }
+}
+```
+
+*응답*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {
+            "id": 4,
+            "userName": "SYS",
+            "execUser": "sys",
+            "name": "_DOCGEN_UIAPI_SUBR",
+            "state": "STOP",
+            "task": "db/append/EXAMPLE:csv",
+            "bridge": "_docgen_uiapi_mqtt",
+            "topic": "_docgen_uiapi/sensor",
+            "qos": 1
+        }
+    }
+}
+```
+
+</details>
+
+#### subscriber.add
+
+`subscriber.add(req)`
+
+*매개변수*
+- `req` *object*
+    - `name` *string* - 구독자 이름. 대문자로 바뀌어 저장됩니다.
+    - `bridge` *string* - 구독자가 사용할 브리지 이름
+    - `command` *string* - 예) `db/append/EXAMPLE:csv`. 쓰기 설명자로, 이 예는 CSV 형식으로 들어온 데이터를 `EXAMPLE` 테이블에 append 모드로 기록한다는 의미입니다.
+    - `autoStart` *bool* - `true`이면 machbase-neo가 시작할 때 구독자도 함께 시작합니다.
+    - `mqtt` *object* - MQTT 브리지 옵션
+        - `topic` *string* - 구독할 토픽
+        - `qos` *int* - 토픽 구독의 QoS 레벨. `0`과 `1`을 지원하며 기본값은 `0`입니다.
+    - `nats` *object* - NATS 브리지 옵션
+        - `subject` *string* - 구독할 subject
+        - `queue` *string* - 큐 그룹
+        - `stream` *string* - 스트림 이름
+- `name`, `bridge`, `command`와 토픽(`mqtt.topic` 또는 `nats.subject`)은 필수입니다.
+- `mqtt`와 `nats`는 함께 지정할 수 없습니다.
+
+*반환값*
+
+- `int64|error` - 생성된 구독자 ID
+
+<details>
+<summary>요청/응답 JSON</summary>
+
+*요청*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "subscriber.add",
+        "params": [
+            {
+                "name": "_docgen_uiapi_subr",
+                "bridge": "_docgen_uiapi_mqtt",
+                "command": "db/append/EXAMPLE:csv",
+                "autoStart": false,
+                "mqtt": {
+                    "topic": "_docgen_uiapi/sensor",
+                    "qos": 1
+                }
+            }
+        ]
+    }
+}
+```
+
+*응답*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": 4
+    }
+}
+```
+
+</details>
+
+#### subscriber.update
+
+`id`로 지정한 구독자의 설정을 요청 내용으로 바꿉니다.
+
+`subscriber.update(req)`
+
+*매개변수*
+- `req` *object*
+    - `id` *int64* - 구독자 ID
+    - `bridge`, `command`, `autoStart`, `mqtt`, `nats` - `subscriber.add`와 같습니다.
+
+*반환값*
+
+- `null|error`
+
+<details>
+<summary>요청/응답 JSON</summary>
+
+*요청*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "subscriber.update",
+        "params": [
+            {
+                "id": 4,
+                "bridge": "_docgen_uiapi_mqtt",
+                "command": "db/append/EXAMPLE:json",
+                "autoStart": false,
+                "mqtt": {
+                    "topic": "_docgen_uiapi/sensor2",
+                    "qos": 0
+                }
+            }
+        ]
+    }
+}
+```
+
+*응답*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
+
+#### subscriber.delete
+
+`subscriber.delete(id)`
+
+*매개변수*
+- `id` *int64* - 구독자 ID
+
+*반환값*
+
+- `null|error`
+
+<details>
+<summary>요청/응답 JSON</summary>
+
+*요청*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "subscriber.delete",
+        "params": [
+            4
+        ]
+    }
+}
+```
+
+*응답*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
+
+#### subscriber.start
+
+`subscriber.start(id)`
+
+*매개변수*
+- `id` *int64* - 구독자 ID
+
+*반환값*
+
+- `null|error`
+
+<details>
+<summary>요청/응답 JSON</summary>
+
+*요청*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "subscriber.start",
+        "params": [
+            4
+        ]
+    }
+}
+```
+
+*응답*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
+
+#### subscriber.stop
+
+`subscriber.stop(id)`
+
+*매개변수*
+- `id` *int64* - 구독자 ID
+
+*반환값*
+
+- `null|error`
+
+<details>
+<summary>요청/응답 JSON</summary>
+
+*요청*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "subscriber.stop",
+        "params": [
+            4
+        ]
+    }
+}
+```
+
+*응답*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
 
 ### Http
 
@@ -3596,17 +3589,17 @@ mgmt server implements
 
 `http.debug.set(m)`
 
-*Params*
-- `m` *object* - debug setting map with enable and logLatency keys
+*매개변수*
+- `m` *object* - `enable`, `logLatency` 키를 가진 디버그 설정 맵
 
-*Return*
+*반환값*
 
 - `object|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -3623,7 +3616,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -3643,17 +3636,17 @@ mgmt server implements
 
 `http.split(content)`
 
-*Params*
-- `content` *string* - HTTP script text
+*매개변수*
+- `content` *string* - HTTP 스크립트 텍스트
 
-*Return*
+*반환값*
 
-- `array<object<util.HttpStatement>>|error` - parsed HTTP statements array
+- `array<object<util.HttpStatement>>|error` - 파싱된 HTTP 구문 배열
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -3670,7 +3663,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -3686,25 +3679,24 @@ mgmt server implements
 
 </details>
 
-
 ### Session
 
 #### session.list
 
 `session.list()`
 
-*Params*
+*매개변수*
 
-- none
+- 없음
 
-*Return*
+*반환값*
 
 - `array<object<Session>>|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -3719,7 +3711,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -3739,18 +3731,18 @@ mgmt server implements
 
 `session.kill(id, force)`
 
-*Params*
+*매개변수*
 - `id` *string*
 - `force` *bool*
 
-*Return*
+*반환값*
 
 - `null|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -3768,7 +3760,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -3788,17 +3780,17 @@ mgmt server implements
 
 `session.stat(reset)`
 
-*Params*
+*매개변수*
 - `reset` *bool*
 
-*Return*
+*반환값*
 
 - `object<server_api.Statz>|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -3815,7 +3807,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -3835,18 +3827,18 @@ mgmt server implements
 
 `session.limit.get()`
 
-*Params*
+*매개변수*
 
-- none
+- 없음
 
-*Return*
+*반환값*
 
 - `object<SessionLimit>|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -3861,7 +3853,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -3881,17 +3873,17 @@ mgmt server implements
 
 `session.limit.set(m)`
 
-*Params*
+*매개변수*
 - `m` *object*
 
-*Return*
+*반환값*
 
 - `null|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -3908,7 +3900,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -3924,24 +3916,23 @@ mgmt server implements
 
 </details>
 
-
 ### Sql
 
 #### sql.split
 
 `sql.split(content)`
 
-*Params*
+*매개변수*
 - `content` *string*
 
-*Return*
+*반환값*
 
 - `array<object<util.SqlStatement>>|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -3958,7 +3949,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -3974,24 +3965,23 @@ mgmt server implements
 
 </details>
 
-
 ### Lsp
 
 #### lsp.diagnostics
 
 `lsp.diagnostics(req)`
 
-*Params*
+*매개변수*
 - `req` *object<lspDocumentRequest>*
 
-*Return*
+*반환값*
 
 - `object|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -4008,7 +3998,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -4028,17 +4018,17 @@ mgmt server implements
 
 `lsp.completion(req)`
 
-*Params*
+*매개변수*
 - `req` *object<lspDocumentRequest>*
 
-*Return*
+*반환값*
 
 - `object|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -4055,7 +4045,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -4075,17 +4065,17 @@ mgmt server implements
 
 `lsp.hover(req)`
 
-*Params*
+*매개변수*
 - `req` *object<lspDocumentRequest>*
 
-*Return*
+*반환값*
 
 - `object|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -4102,7 +4092,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -4122,17 +4112,17 @@ mgmt server implements
 
 `lsp.signature(req)`
 
-*Params*
+*매개변수*
 - `req` *object<lspDocumentRequest>*
 
-*Return*
+*반환값*
 
 - `object|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -4149,7 +4139,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {
@@ -4169,17 +4159,17 @@ mgmt server implements
 
 `lsp.metadata(req)`
 
-*Params*
+*매개변수*
 - `req` *object<lspMetadataRequest>*
 
-*Return*
+*반환값*
 
 - `object|error`
 
 <details>
-<summary>Request/Response JSON</summary>
+<summary>요청/응답 JSON</summary>
 
-*Request*
+*요청*
 
 ```json
 {
@@ -4196,7 +4186,7 @@ mgmt server implements
 }
 ```
 
-*Response*
+*응답*
 
 ```json
 {

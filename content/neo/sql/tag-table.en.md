@@ -62,6 +62,7 @@ CREATE TABLE Vibration (
     -- Additional columns for each new sensor type
 );
 ```
+
 *This represents a common design approach but faces challenges with schema rigidity in dynamic IoT environments.*
 
 **Machbase Tag Table Schema:**
@@ -73,6 +74,7 @@ CREATE TAG TABLE Vibration (
     value DOUBLE                   -- The actual measured value
 );
 ```
+
 *This structure simplifies the core data schema, focusing on the fundamental elements of time-series data: identifier, time, and value. Additional context is managed via metadata.*
 
 ## Tag Table Fundamentals
@@ -139,7 +141,7 @@ Machbase Tag Tables support the following data types for the `value` column and 
 | `IPV6`     | IPv6 address                     | "::" to "FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF"               | NULL                          |
 | `JSON`     | JSON data type                   | Data length: 1 byte to 32KB; Path length: 1 to 512 characters | NULL                          |
 
-**Note:** The `TEXT` and `BINARY` data types are **not supported** within Tag Tables.
+**Note:** The `TEXT` data type is **not supported** within Tag Tables.
 
 ## Tag Table Creation and Internal Architecture
 
@@ -182,7 +184,7 @@ Several properties can be configured during Tag Table creation to optimize perfo
 | `TAG_PARTITION_COUNT`            | Number of internal data partitions (sub-tables) created. Affects parallelism for ingestion and querying.                                    | 4       | Higher values improve concurrency but increase memory usage. Use lower values (1 or 2) on resource-constrained edge devices. |
 | `TAG_DATA_PART_SIZE`             | Target size (in bytes) for data storage units within partitions.                                                                          | 16MB    | Influences memory allocation related to data buffering and indexing.                          |
 | `TAG_STAT_ENABLE`                | Enables/disables the collection of statistical metadata (min, max, count, sum) per tag. Required for `V$tableName_STAT` view.              | 1 (ON)  | Set to 0 to disable if statistics are not needed, potentially saving minor overhead.           |
-| `TAG_DUPLICATE_CHECK_DURATION`   | Time window (in nanoseconds) within which duplicate records (same name, time, value) are potentially ignored during ingestion.            | 0       | Helps manage redundant data from sources that might occasionally resend data points.          |
+| `TAG_DUPLICATE_CHECK_DURATION`   | Time window (in minutes) within which duplicate records (same name and time) are ignored during ingestion.                                | 0       | Helps manage redundant data from sources that might occasionally resend data points.          |
 | `VARCHAR_FIXED_LENGTH_MAX`       | Maximum length (in bytes) for `VARCHAR` data to be stored inline within the primary data storage. Longer strings may be stored externally. | 15      | Affects storage efficiency and retrieval performance for variable-length strings.               |
 
 **Example with Properties:**
@@ -374,17 +376,20 @@ Metadata columns provide a powerful mechanism for dynamically classifying or ann
 **Scenario:** Track tags that frequently generate errors or are used in specific reports.
 
 1.  **Add an `alias` metadata column:**
+
     ```sql
     ALTER TABLE _basic_meta ADD COLUMN (alias VARCHAR(128) DEFAULT 'normal');
     ```
 
 2.  **Update metadata for specific tags:**
+
     ```sql
     UPDATE basic METADATA SET alias = 'error' WHERE name = 'tag-2';
     UPDATE basic METADATA SET alias = 'report' WHERE name = 'tag-4';
     ```
 
 3.  **Query data based on the dynamic category:**
+
     ```sql
     -- Find data for tags marked as 'error' within a specific time range
     SELECT * FROM basic
@@ -495,7 +500,7 @@ METADATA (
     equipment VARCHAR(64),
     alias VARCHAR(64) -- For dynamic tagging
 )
-WITH ROLLUP; -- Enable automatic time-based aggregation (details in Rollup documentation)
+WITH ROLLUP EXTENSION; -- Enable automatic time-based aggregation, including FIRST()/LAST() (details in Rollup documentation)
 ```
 
 **Types of Queries:**
@@ -526,7 +531,7 @@ SELECT
     AVG(value) AS avg_value,
     LAST(time, value) AS last_value -- Get the last value within the hour
 FROM mytag
-WHERE name IN (SELECT name FROM _mytag_meta WHERE factory_id = 'factory1') -- Filter tags by metadata
+WHERE name IN (SELECT name FROM _mytag_meta WHERE factory = 'factory1') -- Filter tags by metadata
   AND time BETWEEN TO_DATE('2000-01-01 00:00:00') AND TO_DATE('2000-01-01 11:59:59') -- Time range
 GROUP BY name, rollup_time -- Group by tag and aggregated time interval
 ORDER BY name, rollup_time;
@@ -563,6 +568,7 @@ time                          'FRONT_AXIS_TORQUE' 'REAR_AXIS_TORQUE' 'HOIST_AXIS
 2018-12-07 14:56:26 220:000:000 3308                663                NULL                NULL
 ...                           ...                 ...                ...                 ...
 ```
+
 *(Note: Pivoted column names might need quoting if they match keywords or contain special characters).*
 
 ### Data Deletion Operations
@@ -589,10 +595,10 @@ DELETE FROM table_name WHERE name = 'TAG01' AND time < TO_DATE('2023-02-01 00:00
 
 ### Internal versus External Indexes
 
-Tag Tables incorporate highly optimized **internal indexes** automatically created on the (`name`, `time`) columns. These indexes are fundamental to the performance of typical time-series queries.
+Tag Tables incorporate highly optimized **internal indexes** automatically created on the (`name`, `time`) columns. These indexes are fundamental to the performance of typical time-series queries. To return results in time order, specify `ORDER BY time`.
 
-*   **Query `WHERE name = '...'`:** Utilizes the internal index to efficiently locate all data for the specified tag, returned in chronological order.
-*   **Query `WHERE time BETWEEN ... AND ...`:** Utilizes the internal index to scan data across all tags within the specified time range, returned in chronological order.
+*   **Query `WHERE name = '...'`:** Utilizes the internal index to efficiently locate all data for the specified tag.
+*   **Query `WHERE time BETWEEN ... AND ...`:** Utilizes the internal index to scan data across all tags within the specified time range.
 *   **Query `WHERE name = '...' AND time BETWEEN ... AND ...`:** Utilizes the internal index for highly efficient retrieval of data for a specific tag within a specific time range.
 *   **Query `WHERE name = '...' AND time BETWEEN ... AND ... AND value > ...`:** Uses the internal index to find the relevant (`name`, `time`) data blocks, then applies the `value` filter to the retrieved data.
 
@@ -708,12 +714,102 @@ The memory footprint of a Tag Table is influenced by several factors:
 
 *(Internal factors and dynamic allocation make precise calculation complex, but this illustrates the key drivers).*
 
-With default settings (`TAG_PARTITION_COUNT=4`, `TAG_DATA_PART_SIZE=16MB`), a Tag Table can dynamically consume roughly **up to 4 GB** of memory (approx. 1GB per partition) under load, primarily for indexing and buffering.
+With default settings (`TAG_PARTITION_COUNT=4`, `TAG_DATA_PART_SIZE=16MB`), a Tag Table can dynamically consume roughly **up to 4 GB** of memory (approx. 1GB per partition) under load, primarily for indexing and buffering. This figure is a load-dependent estimate, not a guaranteed RAM requirement or usage limit.
 
 **Managing Memory Usage:**
 
-*   **Reduce `TAG_PARTITION_COUNT`:** Lowering the partition count (e.g., to 1 or 2) directly reduces the parallelism factor and associated memory. This can be adjusted dynamically via `ALTER TABLE` properties. Suitable for resource-constrained environments but may impact peak concurrent performance.
+*   **Reduce `TAG_PARTITION_COUNT`:** Setting a lower partition count (e.g., 1 or 2) when creating the table directly reduces the parallelism factor and associated memory. This property cannot be changed dynamically with `ALTER TABLE`. Suitable for resource-constrained environments but may impact peak concurrent performance.
 *   **Tune `TAG_DATA_PART_SIZE`:** Reducing this property (e.g., to 4MB or 8MB, must be >= 1MB) via server configuration reduces the size of internal buffers and index segments, lowering memory pressure. This requires a server restart to take effect.
+
+## Basic Configuration and Ingestion Example
+
+The following example creates a `vibration` table in which each tag has `factory` and `equipment` attributes.
+
+```sql
+CREATE TAG TABLE vibration (
+    name  VARCHAR(80) PRIMARY KEY,
+    time  DATETIME BASETIME,
+    value DOUBLE SUMMARIZED
+)
+METADATA (
+    factory   VARCHAR(32),
+    equipment VARCHAR(64)
+)
+TAG_PARTITION_COUNT = 2,
+TAG_STAT_ENABLE     = 1;
+```
+
+### Adding and Registering Metadata Columns
+
+Per-tag attributes are stored in the metadata table `_vibration_meta`.
+Use `ALTER TABLE` to change its structure; a metadata column can be added with `ADD COLUMN` and removed with `DROP COLUMN`.
+
+```sql
+ALTER TABLE _vibration_meta ADD COLUMN (location VARCHAR(32));
+INSERT INTO vibration METADATA (name, factory, equipment)
+VALUES ('sensor-A', 'factory-1', 'machine-1');
+```
+
+### Loading Data
+
+#### import Tool
+
+Order the CSV fields to match the table columns, including the metadata columns (`name`, `time`, `value`, `factory`, `equipment`, `location`).
+If the first line of the file lists column names such as `name,time,value`, `--header columns` maps the fields by those names.
+`machbase-neo shell` mounts the current directory at `/work`, so run the command in the directory where the file is located.
+The following example specifies time as Unix epoch time in seconds.
+
+```bash
+machbase-neo shell import --input /work/data.csv --timeformat s vibration
+machbase-neo shell import --input /work/data_header.csv --header columns --timeformat s vibration
+```
+
+#### Using the REST API
+
+When you use date-time strings, specify `timeformat` explicitly. In the JSON payload, specify
+the data with `data.columns` and `data.rows` of the HTTP write API.
+
+```http
+POST /db/write/vibration?timeformat=DEFAULT
+Content-Type: application/json
+
+{
+  "data": {
+    "columns": ["name", "time", "value"],
+    "rows": [
+      ["sensor-A", "2024-03-01 10:00:00", 12.3],
+      ["sensor-B", "2024-03-01 10:00:00", 15.7]
+    ]
+  }
+}
+```
+
+### Rollup and Statistics
+
+- Specifying `WITH ROLLUP` automatically creates aggregate tables in second, minute, and hour units, which speeds up analysis by time interval.
+- With `TAG_STAT_ENABLE=1`, the `v$<table>_stat` view shows per-tag statistics such as the record count, minimum and maximum values, and the latest time.
+
+### View Configuration Example
+
+```sql
+CREATE VIEW vibration_view AS
+SELECT m.name,
+       m.factory,
+       m.equipment,
+       d.time,
+       d.value
+FROM vibration d
+JOIN _vibration_meta m ON d.name = m.name;
+```
+
+### Operational Tips
+
+- **Preventing duplicate data**: When `TAG_DUPLICATE_CHECK_DURATION` is set, data with the same `(name, time)` within that period is ignored automatically.
+- **Managing the retention period**: Add a retention policy so that data older than a set period is deleted automatically.
+- **Choosing the partition count**: When creating a table, choose a higher `TAG_PARTITION_COUNT` for high-performance servers and a lower value for edge devices to control resource usage.
+
+Tag Tables are designed to ingest and analyze large volumes of time-series data with a simple schema.
+Combined with rollups, statistics, and retention policies, they form a complete time-series data platform.
 
 ## Summary
 

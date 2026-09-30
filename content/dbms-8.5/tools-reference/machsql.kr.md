@@ -4,7 +4,7 @@ type : docs
 weight: 40
 ---
 
-MACHSQL은 터미널 화면을 통해 SQL질의를 수행하는 대화형 도구입니다.
+machsql은 터미널 화면에서 SQL 질의를 수행하는 대화형 도구입니다.
 
 ## 구동 옵션 설명
 
@@ -31,15 +31,15 @@ MACHSQL은 터미널 화면을 통해 SQL질의를 수행하는 대화형 도구
 | -h        | --help            | 옵션 출력                                       |
 | -c        | --connstr         | Connection 매개변수 추가(6.1 이후 버전부터 지원) |
 
-**Example:**
+예제:
 
 ```bash
 machsql -s localhost -u sys -p manager
 machsql --server=localhost --user=sys --password=manager
 machsql -s localhost -u sys -p manager -f script.sql
 machsql -s localhost -u app_user -K /opt/machbase/keys/app_user_ecdsa.pem --auth-sig-scheme=ECDSA -f script.sql
-## 6.1 이후버전부터 지원
-machsql -s 127.0.0.1 -u sys -p manager -P 8888 -c ALTERNATIVE_SERVERS=192.168.0.147:9209;CONNECTION_TIMEOUT=10
+## Supported from version 6.1 or later
+machsql -s 127.0.0.1 -u sys -p manager -P 8888 -c "ALTERNATIVE_SERVERS=192.168.0.147:9209;CONNECTION_TIMEOUT=10"
 ```
 
 ## AUTH KEY challenge 인증
@@ -93,18 +93,90 @@ connection string 형태는 프로세스 인자나 로그에 키 파일 경로�
 
 ## 환경변수 MACHBASE_CONNECTION_STRING
 
-기본 접속  매개변수를 지정합니다. 예를 들어 CONNECTION_TIMEOUT 값 설정 및 ALTERNATIVE_SERVERS 설정을 추가하기 위해 다음의 환경변수를 설정할 수 있습니다.
+기본 접속 매개변수를 지정합니다. 예를 들어 `CONNECTION_TIMEOUT`과 `ALTERNATIVE_SERVERS` 설정을 추가하려면 다음 환경변수를 설정할 수 있습니다.
 
 ```bash
-export MACHBASE_CONNECTION_STRING=ALTERNATIVE_SERVERS=192.168.0.148:8888;CONNECTION_TIMEOUT=3
+export MACHBASE_CONNECTION_STRING="ALTERNATIVE_SERVERS=192.168.0.148:8888;CONNECTION_TIMEOUT=3"
 ```
--c 옵션으로 접속 매개변수를 지정하면 환경변수보다 우선하여 수행됩니다. 이 기능은 6.1 이후 버전부터 지원합니다.
+
+`-c` 옵션으로 지정한 접속 매개변수는 환경변수보다 우선합니다. 이 기능은 6.1 이후 버전부터 지원합니다.
+
+## HEREDOC으로 SQL 스크립트 실행
+
+machsql은 HEREDOC(Here Document) 구문을 지원하므로, 별도 파일을 만들지 않고 셸에서 SQL 명령을 바로 전달할 수 있습니다. 자동화 스크립트나 일회성 SQL 실행에 특히 유용합니다.
+
+> **참고**: 이 기능은 Machbase 8.0.50 이상에서 지원됩니다.
+
+### 기본 구문
+
+```bash
+machsql -s <server> -u <user> -p <password> <<'DELIMITER'
+SQL statements here
+DELIMITER
+```
+
+구분자로는 임의의 문자열을 사용할 수 있습니다(보통 `EOF`, `SQL`, `SQLBLOCK`). 구분자를 따옴표로 감싸면(`<<'DELIMITER'`) 셸 변수가 확장되지 않습니다.
+
+### 예제
+
+**단순 질의 실행:**
+
+```bash
+machsql -s 127.0.0.1 -u sys -p manager <<'SQLBLOCK'
+select 'WORKS!!!!' from v$tables limit 2;
+SQLBLOCK
+```
+
+**여러 문장 실행:**
+
+```bash
+machsql -s 127.0.0.1 -u sys -p manager <<'EOF'
+CREATE TABLE test_table (id INTEGER, name VARCHAR(100));
+INSERT INTO test_table VALUES (1, 'First Record');
+INSERT INTO test_table VALUES (2, 'Second Record');
+SELECT * FROM test_table;
+DROP TABLE test_table;
+EOF
+```
+
+**변수 사용(구분자에 따옴표 없음):**
+
+```bash
+TABLE_NAME="my_table"
+machsql -s 127.0.0.1 -u sys -p manager <<EOF
+SELECT COUNT(*) FROM ${TABLE_NAME};
+EOF
+```
+
+**출력 리다이렉션:**
+
+```bash
+machsql -s 127.0.0.1 -u sys -p manager <<'SQL' > output.csv
+SELECT name, time, value FROM tag_table
+WHERE time >= NOW - INTERVAL 1 HOUR
+ORDER BY time DESC;
+SQL
+```
+
+### HEREDOC의 장점
+
+1. **임시 파일 불필요**: 별도 스크립트 파일을 만들지 않고 SQL을 실행합니다.
+2. **인라인 스크립트**: 셸 스크립트에 SQL을 직접 넣어 가독성을 높입니다.
+3. **자동화**: 배포 및 유지보수 스크립트를 단순하게 만듭니다.
+4. **변수 치환**: 필요하면 SQL에서 셸 변수를 사용할 수 있습니다(구분자에 따옴표 없이 사용).
+
+### 주의 사항
+
+- 변수 확장을 막으려면 구분자를 따옴표로 감쌉니다(`<<'DELIMITER'`).
+- SQL에서 셸 변수를 사용하려면 따옴표를 뺍니다(`<<DELIMITER`).
+- HEREDOC을 끝내려면 구분자를 한 줄에 단독으로 써야 합니다.
+- machsql의 모든 명령행 옵션과 함께 사용할 수 있습니다.
 
 ## SHOW 명령어
 
 테이블, 테이블스페이스, 인덱스 등의 정보를 출력합니다.
 
-SHOW 명령어 목록
+SHOW 명령어 목록:
 
 * SHOW INDEX
 * SHOW INDEXES
@@ -123,13 +195,13 @@ SHOW 명령어 목록
 
 인덱스 정보를 출력합니다.
 
-**Syntax:**
+구문:
 
 ```
 SHOW INDEX index_name
 ```
 
-**Example:**
+예제:
 
 ```sql
 Mach> CREATE TABLE t1 (c1 INTEGER, c2 VARCHAR(10));
@@ -157,15 +229,15 @@ T1                                                  C2                          
 
 ### SHOW INDEXES
 
-인덱스 전체 리스트를 출력합니다.
+인덱스 전체 목록을 출력합니다.
 
-**Syntax:**
+구문:
 
 ```
 SHOW INDEXES
 ```
 
-**Example:**
+예제:
 
 ```sql
 Mach> CREATE TABLE t1 (c1 INTEGER, c2 VARCHAR(10));
@@ -195,7 +267,7 @@ SYS                   T2                                                  C1    
 
 인덱스 생성 GAP 정보를 출력합니다.
 
-**Example:**
+예제:
 
 ```sql
 Mach> SHOW INDEXGAP
@@ -209,7 +281,7 @@ INDEX_TABLE                               T1_IDX2                               
 
 LSM 인덱스 생성 정보를 출력합니다.
 
-**Example:**
+예제:
 
 ```sql
 Mach> SHOW LSM;
@@ -228,7 +300,7 @@ T1                                        IDX2                                  
 
 라이선스 정보를 출력합니다.
 
-**Example:**
+예제:
 
 ```sql
 Mach> SHOW LICENSE
@@ -242,7 +314,7 @@ INSTALL_DATE          ISSUE_DATE            EXPIRY_DATE  TYPE        POLICY
 
 서버에 등록(Prepare, Execute, Fetch)된 모든 질의문을 출력합니다.
 
-**Example:**
+예제:
 
 ```sql
 Mach> SHOW STATEMENTS
@@ -254,14 +326,15 @@ USER_ID     SESSION_ID  QUERY
 
 ### SHOW STORAGE
 
-사용자가 생성한 테이블 별 디스크 사용량을 출력합니다.
-**Syntax:**
+사용자가 생성한 테이블별 디스크 사용량을 출력합니다.
+
+구문:
 
 ```
 SHOW STORAGE
 ```
 
-**Example:**
+예제:
 
 ```sql
 Mach> CREATE TAG TABLE TAG (name varchar(20) primary key, time datetime basetime, value double summarized);
@@ -281,13 +354,13 @@ _TAG_META                                           0                    0      
 
 사용자가 생성한 테이블의 정보를 출력합니다.
 
-**Syntax:**
+구문:
 
 ```
 SHOW TABLE table_name
 ```
 
-**Example:**
+예제:
 
 ```sql
 Mach> CREATE TABLE t1 (c1 INTEGER, c2 VARCHAR(10));
@@ -317,7 +390,7 @@ T1_IDX2                       LSM                 C1
 
 사용자가 생성한 테이블 전체 목록을 출력합니다.
 
-**Example:**
+예제:
 
 ```sql
 Mach> SHOW TABLES
@@ -332,9 +405,9 @@ SALGRADE
 
 ### SHOW TABLESPACE
 
-테이블 스페이스 정보를 출력합니다.
+테이블스페이스 정보를 출력합니다.
 
-**Example:**
+예제:
 
 ```sql
 Mach> CREATE TABLE t1 (id integer);
@@ -360,13 +433,13 @@ T1                                        ID                                    
 
 테이블스페이스 전체 목록을 출력합니다.
 
-**Example:**
+예제:
 
 ```sql
 Mach> CREATE TABLESPACE tbs1 DATADISK disk1 (DISK_PATH="tbs1_disk1"), disk2 (DISK_PATH="tbs1_disk2"), disk3 (DISK_PATH="tbs1_disk3");
 Created successfully.
 
--- 데이터를 입력한다
+-- Insert data here
 ...
 ...
 
@@ -383,7 +456,7 @@ TBS1                                                                            
 
 사용자 목록을 출력합니다.
 
-**Example:**
+예제:
 
 ```sql
 Mach> CREATE USER testuser IDENTIFIED BY 'test1234';

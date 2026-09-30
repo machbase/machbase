@@ -174,7 +174,7 @@ sample1_connect.c を Makefile に登録し、コンパイルして実行する�
 connected ...
 ```
 
-## データの挿入と取得の例 {#data-input-and-output-example}
+### データの挿入と取得の例 {#data-input-and-output-example}
 
 次の例は、CREATE TABLE でテーブルを作成し、簡単な値を生成して INSERT で挿入し、SELECT で取得します。各データ型の設定方法を、値の入力と確認を通して示します。
 ファイル名は sample2_insert.c です。
@@ -1667,7 +1667,7 @@ time_t getTimeStamp()
 
 sample4_append2.c を Makefile に登録し、コンパイルして実行すると、次のように表示されます。
 
-```
+```bash
 [mach@localhost cli]$ make
 gcc -c -g -W -Wall -rdynamic -fno-inline -m64 -mtune=k8 -g -W -Wall -rdynamic -fno-inline -m64 -mtune=k8 -I/home/mach/machbase_home/include -I. -L//home/mach/machbase_home/include -osample4_append2.o sample4_append2.c
 gcc -m64 -mtune=k8 -L/home/mach/machbase_home/lib -osample4_append2 sample4_append2.o -lmachbasecli -L/home/mach/machbase_home/lib -lm -lpthread -ldl -lrt -rdynamic
@@ -1890,7 +1890,7 @@ int main()
 
 上のファイルを追加して make を実行すると、次の列情報を確認できます。
 
-```
+```bash
 [mach@localhost cli]$ make
  
 [mach@localhost cli]$ ./sample5_describe
@@ -2105,7 +2105,7 @@ int main()
 
 上のファイルを追加して make を実行します。結果は次のとおりです。
 
-```
+```bash
 [mach@localhost cli]$ make
  
 [mach@localhost cli]$ ./sample6_columns
@@ -2785,7 +2785,7 @@ int main()
 
 Makefile に追加し、実行ファイルを起動します。スレッドを使用するため、出力順は異なる場合があります。結果の例を示します。
 
-```
+```bash
 [mach@localhost cli]$ make sample8_multi_session_multi_table
 gcc -c -g -W -Wall -rdynamic -fno-inline -m64 -mtune=k8 -g -W -Wall -rdynamic -fno-inline -m64 -mtune=k8 -I/home/mach/machbase_home/include -I. -L//home/mach/machbase_home/include -osample8_multi_session_multi_table.o sample8_multi_session_multi_table.c
 gcc -m64 -mtune=k8 -L/home/mach/machbase_home/lib -osample8_multi_session_multi_table sample8_multi_session_multi_table.o -lmachbasecli  -L/home/mach/machbase_home/lib -lm -lpthread -ldl -lrt -rdynamic
@@ -2848,7 +2848,7 @@ append result success : 100000, failure : 0
 
 machsql でも次のように結果を確認できます。
 
-```
+```bash
 [mach@localhost cli]$ machsql
  
 =================================================================

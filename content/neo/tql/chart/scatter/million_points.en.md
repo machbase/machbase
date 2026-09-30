@@ -50,4 +50,4 @@ CHART(
 )
 ```
 
-{{< figure src="../../img/million_points.jpg" width="500" >}}
+{{< figure src="/neo/tql/chart/img/million_points.jpg" width="500" >}}

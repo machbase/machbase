@@ -71,7 +71,7 @@ MQTTによるリアルタイム収集、HTTP経由のSQL検索、TQLによる変
 
 リアルタイムデータをすぐに監視できます。
 
-{{< figure src="/images/dashboard.png" width="740" >}}
+{{< media slug="neo-dashboard/statz-board" width="740" >}}
 
 ### APIとインターフェース {#api-및-인터페이스}
 

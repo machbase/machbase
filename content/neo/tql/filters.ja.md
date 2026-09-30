@@ -37,7 +37,7 @@ CHART(size("600px", "400px"))
 ```
 {{< /tab >}}
 {{< tab name="SET-MAP" >}}
-```js
+```js {{linenos=table,hl_lines=[4,5]}}
 FAKE(arrange(1,5,0.03))
 MAPVALUE(0, round(value(0)*100)/100)
 
@@ -92,7 +92,7 @@ CHART(size("600px", "400px"))
 ```
 {{< /tab >}}
 {{< tab name="SET-MAP" >}}
-```js
+```js {{linenos=table,hl_lines=[5,7]}}
 FAKE(arrange(1,5,0.03))
 MAPVALUE(0, round(value(0)*100)/100)
 
@@ -126,7 +126,7 @@ CHART(
 
 {{< /tab >}}
 {{< tab name="SCRIPT" >}}
-```js
+```js {{linenos=table,hl_lines=[6,7,17]}}
 SCRIPT({
     x = []; y = [];
     for (i = 1.0; i <= 5.0; i+=0.03) {
@@ -150,7 +150,7 @@ CHART(size("600px", "400px"))
 ```
 {{< /tab >}}
 {{< tab name="SET-MAP" >}}
-```js
+```js {{linenos=table,hl_lines=[5,12]}}
 FAKE(arrange(1,5,0.03))
 MAPVALUE(0, round(value(0)*100)/100)
 SET(sig, sin(1.2*2*PI*value(0)) )
@@ -211,7 +211,7 @@ CHART(size("600px", "400px"))
 ```
 {{< /tab >}}
 {{< tab name="SET-MAP" >}}
-```js
+```js {{linenos=table,hl_lines=[6,14]}}
 FAKE(arrange(1,5,0.03))
 MAPVALUE(0, round(value(0)*100)/100)
 SET(sig, sin(1.2*2*PI*value(0)) )

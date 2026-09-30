@@ -59,4 +59,4 @@ CHART(
 )
 ```
 
-{{< figure src="../../img/airline.jpg" width="500" >}}
+{{< figure src="/neo/tql/chart/img/airline.jpg" width="500" >}}

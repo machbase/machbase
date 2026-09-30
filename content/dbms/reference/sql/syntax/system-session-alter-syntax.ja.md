@@ -11,7 +11,7 @@ toc: true
 
 ---
 
-## ALTER SYSTEM {#alter-system}
+## ALTER SYSTEM
 
 ### コマンド一覧
 
@@ -201,7 +201,7 @@ ALTER SYSTEM SET TRACE_LOG_LEVEL = 0x00000003;
 
 ---
 
-## ALTER SESSION {#alter-session}
+## ALTER SESSION
 
 セッション単位のパラメーターを変更します。
 
@@ -263,7 +263,7 @@ Standard Editionで競合するDDLロックの待機時間を秒単位で指定�
 `0`の場合は待機せず、直ちに`ERR-02031: Resource busy (<object>)`を返します。
 
 ```sql
-ALTER SESSION SET DDL_LOCK_TIMEOUT = 10;  -- 最大10秒待機
+ALTER SESSION SET DDL_LOCK_TIMEOUT = 10;  -- Wait up to 10 seconds
 ```
 
 実行中のDDLの待機時間は変わらず、新しい値は次のDDLから適用します。セッションごとの現在値は
@@ -283,7 +283,7 @@ SELECT id, user_name, ddl_lock_timeout
 アイドル状態のセッションで接続を維持する最大時間（秒）です。
 
 ```sql
-ALTER SESSION SET SESSION_IDLE_TIMEOUT_SEC = 300;  -- 5分
+ALTER SESSION SET SESSION_IDLE_TIMEOUT_SEC = 300;  -- 5 minutes
 ```
 
 ### SET QUERY_TIMEOUT
@@ -291,7 +291,7 @@ ALTER SESSION SET SESSION_IDLE_TIMEOUT_SEC = 300;  -- 5分
 クエリ実行の最大待機時間（秒）です。超過するとクエリを自動中止します。
 
 ```sql
-ALTER SESSION SET QUERY_TIMEOUT = 60;  -- 60秒
+ALTER SESSION SET QUERY_TIMEOUT = 60;  -- 60 seconds
 ```
 
 ---

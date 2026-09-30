@@ -172,7 +172,7 @@ If you register sample1_connect.c in Makefile, compile and run it, it will appea
 connected ...
 ```
 
-## Data Input and Output Example
+### Data Input and Output Example
 
 In the example source below, we created a table using the CREATE TABLE statement, arbitrarily create simple data values, input data using the INSERT statement, and output the data using the SELECT statement. You will be able to see how to configure each type when entering and checking values ​​directly.
 The sample file name is sample2_insert.c.
@@ -1665,7 +1665,7 @@ time_t getTimeStamp()
 
 If you register sample4_append2.c in the Makefile, compile and run it, it will appear as follows. 
 
-```
+```bash
 [mach@localhost cli]$ make
 gcc -c -g -W -Wall -rdynamic -fno-inline -m64 -mtune=k8 -g -W -Wall -rdynamic -fno-inline -m64 -mtune=k8 -I/home/mach/machbase_home/include -I. -L//home/mach/machbase_home/include -osample4_append2.o sample4_append2.c
 gcc -m64 -mtune=k8 -L/home/mach/machbase_home/lib -osample4_append2 sample4_append2.o -lmachbasecli -L/home/mach/machbase_home/lib -lm -lpthread -ldl -lrt -rdynamic
@@ -1886,7 +1886,7 @@ int main()
 
 If you add the above file and run make, you can see the contents of the column as shown below.
 
-```
+```bash
 [mach@localhost cli]$ make
  
 [mach@localhost cli]$ ./sample5_describe
@@ -2101,7 +2101,7 @@ int main()
 
 Add the above file and run make. The results are as follows.
 
-```
+```bash
 [mach@localhost cli]$ make
  
 [mach@localhost cli]$ ./sample6_columns
@@ -2781,7 +2781,7 @@ int main()
 
 Add the make code and run the executable file. Because the threads are used, the output order may be different. The results are as follows.
 
-```
+```bash
 [mach@localhost cli]$ make sample8_multi_session_multi_table
 gcc -c -g -W -Wall -rdynamic -fno-inline -m64 -mtune=k8 -g -W -Wall -rdynamic -fno-inline -m64 -mtune=k8 -I/home/mach/machbase_home/include -I. -L//home/mach/machbase_home/include -osample8_multi_session_multi_table.o sample8_multi_session_multi_table.c
 gcc -m64 -mtune=k8 -L/home/mach/machbase_home/lib -osample8_multi_session_multi_table sample8_multi_session_multi_table.o -lmachbasecli  -L/home/mach/machbase_home/lib -lm -lpthread -ldl -lrt -rdynamic
@@ -2844,7 +2844,7 @@ append result success : 100000, failure : 0
 
 You can see the result through machsql as below.
 
-```
+```bash
 [mach@localhost cli]$ machsql
  
 =================================================================

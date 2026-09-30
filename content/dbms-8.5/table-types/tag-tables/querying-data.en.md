@@ -299,7 +299,7 @@ Statistic information that is colleced is as follow.
 |MAX_VALUE_TIME|The basetime column value that is inserted with MAX_VALUE|
 |RECENT_ROW_TIME|The basetime column value that is inserted most recently|
 
-Example of select is as follow.
+The following SELECT examples are independent of the earlier sample and assume that no table with the same name exists.
 
 1. When a SUMMARIZED column exists
 
@@ -315,6 +315,9 @@ Mach> INSERT INTO tag VALUES('tag-1', TO_DATE('2022-08-12'), 100);
 Mach> INSERT INTO tag VALUES('tag-1', TO_DATE('2022-08-11'), 200);
 Mach> INSERT INTO tag VALUES('tag-1', TO_DATE('2022-08-10'), 50);
   
+Mach> EXEC TABLE_FLUSH(tag);
+Executed successfully.
+
 Mach> SELECT * FROM v$tag_stat;
 NAME                                                                              ROW_COUNT            MIN_TIME                        MAX_TIME                        MIN_VALUE                 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -338,6 +341,9 @@ Mach> INSERT INTO other_tag VALUES('tag-1', TO_DATE('2022-08-12'), 100);
 Mach> INSERT INTO other_tag VALUES('tag-1', TO_DATE('2022-08-11'), 200);
 Mach> INSERT INTO other_tag VALUES('tag-1', TO_DATE('2022-08-10'), 50);
   
+Mach> EXEC TABLE_FLUSH(other_tag);
+Executed successfully.
+
 Mach> SELECT * FROM v$other_tag_stat;
 NAME                                                                              ROW_COUNT            MIN_TIME                        MAX_TIME                        MIN_VALUE                 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

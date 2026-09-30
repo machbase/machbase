@@ -30,7 +30,7 @@ toc: true
 ## 利用方法
 
 1. `llms.txt`で質問のトピックに対応する正規セクションを探します。
-2. 個別のMarkdownが必要な場合は、該当ドキュメントURLの`index.md`を読みます。
+2. 個別のMarkdownが必要な場合は、`llms-chunks.json`で該当ドキュメントの`markdown_url`を使います。セクションページはURLの下の`index.md`、それ以外のページはURL末尾の`/`を`.md`に置き換えたパスで出力されます（例: `/dbms/getting-started/choose-next-doc.md`）。
 3. コーパス全体が必要な場合は[llms-full.txt](../llms-full-txt-chunk-index/)を使用します。
 4. クローラーでドキュメント単位のメタデータが必要な場合は`llms-chunks.json`を使用します。
 

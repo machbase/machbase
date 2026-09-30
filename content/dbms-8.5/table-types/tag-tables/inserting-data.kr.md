@@ -209,7 +209,6 @@ cursor.execute("""
     INSERT INTO tag VALUES (?, ?, ?)
 """, ('TAG_0001', '2024-01-01 10:00:00', 25.5))
 
-conn.commit()
 conn.close()
 ```
 

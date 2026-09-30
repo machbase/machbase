@@ -155,9 +155,13 @@ for (c in counters) {
 ## netIOCounters()
 
 ```js
+const psutil = require("@jsh/psutil")
+console.log(psutil.netIOCounters())
 ```
 
 ## netProtoCounters()
 
 ```js
+const psutil = require("@jsh/psutil")
+console.log(psutil.netProtoCounters())
 ```

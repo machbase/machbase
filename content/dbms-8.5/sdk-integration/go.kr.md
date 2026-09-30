@@ -117,7 +117,7 @@ defer conn.Close()
 기본 모드는 `machgo.Config.StatementCache`에 설정하고,
 연결별로 `api.WithStatementCache(...)`로 재정의할 수 있습니다.
 
-```go  {linenos=table,linenostart=1,hl_lines=[5,16]}
+```go {linenos=table,linenostart=1,hl_lines=[5,16]}
 // Connection A: statement 재사용을 적극적으로 사용
 connA, err := mdb.Connect(
     ctx,
@@ -153,7 +153,7 @@ defer connB.Close()
 네트워크 레이턴시와 쿼리 특성에 따라 부적절한 값은 급격한 성능 저하와 메모리 소비 증가를 유발할 수 있습니다.
 {{< /callout >}}
 
-```go  {linenos=table,linenostart=1,hl_lines=[5]}
+```go {linenos=table,linenostart=1,hl_lines=[5]}
 // Connection C: 대량 스캔 워크로드를 위한 큰 pre-fetch
 connC, err := mdb.Connect(
     ctx,
@@ -376,7 +376,7 @@ func main() {
         if err := rows.Scan(&name, &tm, &value); err != nil {
             log.Fatal(err)
         }
-        fmt.Printf("Name: %s, Time: %s, Value: %.2f\n",
+        fmt.Printf("Name: %s, Time: %s, Value: %.2f\n", 
             name, tm.Local().Format(time.RFC3339), value)
     }
 }

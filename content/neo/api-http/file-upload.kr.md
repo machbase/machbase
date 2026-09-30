@@ -140,7 +140,7 @@ form.Add(new StringContent("now"), "TIME");
 using var fileStream = File.OpenRead("./data/image_file.svg");
 using var fileContent = new StreamContent(fileStream);
 fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/svg");
-form.Add(fileContent, "DATA", "image_file.png");
+form.Add(fileContent, "DATA", "image_file.svg");
 
 using var request = new HttpRequestMessage(HttpMethod.Post, "http://127.0.0.1:5654/db/write/STASH")
 {
@@ -212,7 +212,7 @@ WHERE NAME = 'camera-1'
 AND DATA->'$.FN' = 'image_file.svg';
 ```
 
-**`/db/query` 조회**
+### `/db/query` 조회
 
 다음은 `/db/query` API로 SELECT 쿼리를 실행하는 예시입니다.
 
@@ -342,11 +342,11 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```json
 {
   "data": {
-    "columns": [ "EXTDATA" ],
+    "columns": [ "DATA" ],
     "types": [ "string" ],
     "rows": [
       [
-        "{\"ID\":\"1ef8a87f-96bd-6576-9ff5-972fa7638db8\",\"FN\":\"image_file.png\",\"SZ\":12692,\"CT\":\"image/png\",\"SD\":\"/tmp/store\"}"
+        "{\"ID\":\"1ef8a87f-96bd-6576-9ff5-972fa7638db8\",\"FN\":\"image_file.svg\",\"SZ\":177,\"CT\":\"image/svg+xml\",\"SD\":\"/tmp/store\"}"
       ]
     ]
   },

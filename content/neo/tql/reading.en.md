@@ -24,12 +24,14 @@ When you save a TQL script, the editor will display a link icon <img src="/image
 
 {{< tabs >}}
 {{< tab name="default" >}}
+
 Save the code below as `output-csv.tql`.
 
 ```js {linenos=table,hl_lines=[2]}
 SQL( `select * from example limit 2` )
 CSV()
 ```
+
 Invoke the tql file with *curl* command.
 
 ```sh
@@ -40,8 +42,10 @@ $ curl http://127.0.0.1:5654/db/tql/output-csv.tql
 TAG0,1628694000000000000,10
 TAG0,1628780400000000000,11
 ```
+
 {{< /tab >}}
 {{< tab name="delimiter()" >}}
+
 Save the code below as `output-csv.tql`.
 
 ```js {linenos=table,hl_lines=[2]}
@@ -59,6 +63,7 @@ $ curl http://127.0.0.1:5654/db/tql/output-csv.tql
 TAG0|1628694000000000000|10
 TAG0|1628780400000000000|11
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -66,6 +71,7 @@ TAG0|1628780400000000000|11
 
 {{< tabs >}}
 {{< tab name="default" >}}
+
 Save the code below as `output-json.tql`.
 
 ```js {linenos=table,hl_lines=[2],linenostart=1}
@@ -94,8 +100,10 @@ $ curl http://127.0.0.1:5654/db/tql/output-json.tql
     "elapse": "770.078µs"
 }
 ```
+
 {{< /tab >}}
 {{< tab name="transpose()" >}}
+
 Save the code below as `output-json.tql`.
 
 ```js {linenos=table,hl_lines=[2],linenostart=1}
@@ -125,8 +133,10 @@ $ curl http://127.0.0.1:5654/db/tql/output-json.tql
     "elapse": "718.625µs"
 }
 ```
+
 {{< /tab >}}
 {{< tab name="rowsFlatten()" >}}
+
 Save the code below as `output-json.tql`.
 
 ```js {linenos=table,hl_lines=[2],linenostart=1}
@@ -155,8 +165,10 @@ $ curl http://127.0.0.1:5654/db/tql/output-json.tql
     "elapse": "718.625µs"
 }
 ```
+
 {{< /tab >}}
 {{< tab name="rowsArray()" >}}
+
 Save the code below as `output-json.tql`.
 
 ```js {linenos=table,hl_lines=[2],linenostart=1}
@@ -185,6 +197,7 @@ $ curl http://127.0.0.1:5654/db/tql/output-json.tql
     "elapse": "718.625µs"
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -209,11 +222,11 @@ $ curl http://127.0.0.1:5654/db/tql/output-ndjson.tql
 ↵
 ```
 
-
 ## MARKDOWN
 
 {{< tabs >}}
 {{< tab name="default" >}}
+
 Save the code below as `output-markdown.tql`.
 
 ```js {linenos=table,hl_lines=[2]}
@@ -233,8 +246,10 @@ $ curl http://127.0.0.1:5654/db/tql/output-markdown.tql
 |TAG0|1628694000000000000|10.000000|
 |TAG0|1628780400000000000|11.000000|
 ```
+
 {{< /tab >}}
 {{< tab name="html()" >}}
+
 Save the code below as `output-markdown.tql`.
 
 ```js {linenos=table,hl_lines=[2]}
@@ -262,6 +277,7 @@ $ curl http://127.0.0.1:5654/db/tql/output-markdown.tql
 </table>
 </div>
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -297,7 +313,7 @@ HTML({
 })
 ```
 
-{{< figure src="../img/html_template_2.jpg" width="518" >}}
+{{< figure src="/neo/tql/img/html_template_2.jpg" width="518" >}}
 
 ## CHART
 
@@ -318,13 +334,13 @@ CHART(
 
 **HTTP GET**
 
-Open web browser with `http://127.0.0.1:5654/db/tql/output-chart.tql`
+Open `http://127.0.0.1:5654/db/tql/output-chart.tql` in a web browser.
 
-{{< figure src="../img/reading-chart-bar.jpg" width="500" >}}
+{{< figure src="/neo/tql/img/reading-chart-bar.jpg" width="500" >}}
 
-> The legacy `CHART_LINE()`, `CHART_BAR()`, `CHART_SCATTER()` and its family functions are deprecated 
-> with the new `CHART()` function.
-> Please refer to the [CHART()](/neo/tql/chart) for the examples.
+> The legacy `CHART_LINE()`, `CHART_BAR()`, `CHART_SCATTER()` and their family functions are deprecated
+> in favor of the new `CHART()` function.
+> Please refer to [CHART()](/neo/tql/chart) for the examples.
 
 ### CHART with chartJson()
 
@@ -346,7 +362,7 @@ CHART(
 
 **HTTP GET**
 
-Open web browser with `http://127.0.0.1:5654/db/tql/output-chart.tql`
+Open `http://127.0.0.1:5654/db/tql/output-chart.tql` in a web browser.
 
 ```json
 {
@@ -360,7 +376,6 @@ Open web browser with `http://127.0.0.1:5654/db/tql/output-chart.tql`
   "theme": "white"
 }
 ```
-
 
 ### CHART with chartID()
 
@@ -383,7 +398,7 @@ CHART(
 
 **HTTP GET**
 
-Open web browser with `http://127.0.0.1:5654/db/tql/output-chart.tql`
+Open `http://127.0.0.1:5654/db/tql/output-chart.tql` in a web browser.
 
 ```json
 {
@@ -398,11 +413,11 @@ Open web browser with `http://127.0.0.1:5654/db/tql/output-chart.tql`
 }
 ```
 
-This scenario is useful when your DOM document has `<div id='myChart'/>`.
+This scenario is useful when your DOM document has `<div id='myChart'></div>`.
 
 ```html
 ... in HTML ...
-<div id='myChart' />
+<div id='myChart'></div>
 <script>
     fetch('http://127.0.0.1:5654/db/tql/output-chart.tql').then( function(rsp) {
         return rsp.json();
@@ -433,14 +448,14 @@ The new `cache()` option accepts two mandatory parameters, `CACHE_KEY` and `TTL`
 
 **Syntax**: `cache(CACHE_KEY string, TTL string, [r float])`
 
-1.	The first parameter, `CACHE_KEY`, is used to register/search the cache data and is composed of 
-    `[filename] + [source_code_hash] + [CACHE_KEY]`. 
-    Therefore, the results executed with the same `CACHE_KEY` in the same TQL (same filename + same code) 
+1. The first parameter, `CACHE_KEY`, is used to register/search the cache data and is composed of
+    `[filename] + [source_code_hash] + [CACHE_KEY]`.
+    Therefore, the results executed with the same `CACHE_KEY` in the same TQL (same filename + same code)
     will have the same key, and the later executed results will overwrite the existing cache data.
-2.	The second parameter, `TTL`, automatically deletes the cache after the given period.
+2. The second parameter, `TTL`, automatically deletes the cache after the given period.
     Requests received after TTL will query the actual DB and return the result data,
     which will then be registered in the cache again.
-3.	The third optional parameter, `r`, is the "preemptive-cache-update-ratio" 
+3. The third optional parameter, `r`, is the "preemptive-cache-update-ratio"
     and must be a value between 0 and 1.0 (excludes 0 and 1.0).
     For the first request received between `r * TTL` and `TTL`,
     the system will respond with the current cache data and then execute the query to update the cache.
@@ -455,4 +470,4 @@ The described behavior only applies when the `cache()` option is added to the SI
 TQLs without the `cache()` option will not search the cache.
 
 > Note: Excessive use of cache may cause memory shortage issues.
-> For example, using cache() in TQLs that SELECT multiple billions of records...
+> For example, using `cache()` in TQLs that SELECT billions of records.

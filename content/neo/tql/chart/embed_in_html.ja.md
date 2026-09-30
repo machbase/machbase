@@ -42,7 +42,7 @@ TQLスクリプトの呼び出し時に `X-Tql-Output: json` ヘッダーを追�
 {
     "chartID": "NDg4ODQ4MzMxMjgyMDYzMzY",
     "jsAssets": ["/web/echarts/echarts.min.js"],
-    "jsCodeAssets": ["/web/api/tql-assets/NDg4ODQ4MzMxMjgyMDYzMzY.js"],
+	"jsCodeAssets": ["/web/api/tql-assets/NDg4ODQ4MzMxMjgyMDYzMzY.js"],
     "style": {
         "width": "600px",
         "height": "600px"	

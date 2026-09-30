@@ -206,7 +206,7 @@ console.println(spec.domain.kind);
 
 ## listSeries()
 
-`spec.series` 의 정규화된 요약 목록을 반환합니다.
+`spec.series`의 정규화된 요약 목록을 반환합니다.
 
 <h6>사용 형식</h6>
 
@@ -227,9 +227,9 @@ listSeries(spec)
 | `index` | integer | `spec.series` 안의 0-based series index 입니다. |
 | `id` | string | Series id 입니다. |
 | `name` | string | 지정된 경우 series name 입니다. |
-| `title` | string | 표시 제목입니다. `name` 이 있으면 `name`, 없으면 `id` 를 사용합니다. |
+| `title` | string | 표시 제목입니다. `name`이 있으면 `name`, 없으면 `id`를 사용합니다. |
 | `kind` | string | Representation kind 입니다. |
-| `tuiLinesCompatible` | boolean | `toTUILines()` 로 렌더링 가능한 series 인지 여부입니다. |
+| `tuiLinesCompatible` | boolean | `toTUILines()`로 렌더링 가능한 series 인지 여부입니다. |
 
 <h6>사용 예시</h6>
 
@@ -337,8 +337,8 @@ new Builder([init])
 
 | Method | Description |
 | --- | --- |
-| `setDomain(definition)` | `spec.domain` 을 설정합니다. |
-| `setXAxis(definition)` | `spec.axes.x` 를 설정합니다. |
+| `setDomain(definition)` | `spec.domain`을 설정합니다. |
+| `setXAxis(definition)` | `spec.axes.x`를 설정합니다. |
 | `addYAxis(definition)` | y-axis 정의를 하나 추가합니다. |
 | `addRawPointSeries(definition)` | `raw-point` series 를 추가합니다. |
 | `addTimeBucketValueSeries(definition)` | `time-bucket-value` series 를 추가합니다. |
@@ -350,8 +350,8 @@ new Builder([init])
 | `addAnnotation(definition)` | annotation object 를 추가합니다. |
 | `addLineAnnotation(definition)` | line annotation 을 추가합니다. |
 | `addRangeAnnotation(definition)` | range annotation 을 추가합니다. |
-| `setView(definition)` | `spec.view` 를 설정합니다. |
-| `setMeta(definition)` | `spec.meta` 를 설정합니다. |
+| `setView(definition)` | `spec.view`를 설정합니다. |
+| `setMeta(definition)` | `spec.meta`를 설정합니다. |
 | `build()` | 정규화된 spec 을 반환합니다. |
 | `stringify()` | build 결과를 문자열로 직렬화합니다. |
 | `listSeries()` | 정규화된 series 요약 목록을 반환합니다. |
@@ -440,20 +440,20 @@ toTUILines(spec[, options])
 | --- | --- | --- | --- |
 | `height` | integer | `3` | raw-point 및 time-bucket-value line 출력에 사용할 차트 높이입니다. |
 | `width` | integer | `40` | 값을 sampling 하고 sparkline 본문을 렌더링할 때 사용할 폭입니다. |
-| `seriesId` | string | 첫 번째 compatible series | `series[].id` 로 렌더링할 series 를 선택합니다. |
+| `seriesId` | string | 첫 번째 compatible series | `series[].id`로 렌더링할 series 를 선택합니다. |
 | `timeformat` | string | `rfc3339` | sparkline x-axis label 에 사용할 출력 시간 형식입니다. |
 | `tz` | string | local timezone | sparkline x-axis label 에 적용할 timezone 입니다. |
 
 참고:
 
-- `seriesId` 를 주지 않으면 `toTUILines()` 는 첫 번째 sparkline-compatible series 를 반환합니다.
-- `seriesId` 를 주면 해당 `series[].id` 와 일치하는 series 를 렌더링합니다.
-- 선택 가능한 series id 를 미리 확인하려면 `listSeries()` 를 사용하십시오.
-- `seriesId` 가 없거나 sparkline-compatible 하지 않은 series 를 가리키면 오류가 발생합니다.
+- `seriesId`를 주지 않으면 `toTUILines()`는 첫 번째 sparkline-compatible series 를 반환합니다.
+- `seriesId`를 주면 해당 `series[].id`와 일치하는 series 를 렌더링합니다.
+- 선택 가능한 series id 를 미리 확인하려면 `listSeries()`를 사용하십시오.
+- `seriesId`가 없거나 sparkline-compatible 하지 않은 series 를 가리키면 오류가 발생합니다.
 - 반환 값은 multi-line TUI chart 를 구성하는 terminal 친화적인 line 배열입니다.
-- `toTUIBlocks()` 와 달리 axis label 을 포함한 확장된 multi-line chart 형태를 유지합니다.
-- `height` 는 `raw-point`, `time-bucket-value` 출력에만 적용됩니다. `time-bucket-band` 는 기존 `max/avg/min` 형식을 유지합니다.
-- `toTUILines()` 는 현재 `rows`, `compact` option 을 받아도 사용하지 않습니다.
+- `toTUIBlocks()`와 달리 axis label 을 포함한 확장된 multi-line chart 형태를 유지합니다.
+- `height`는 `raw-point`, `time-bucket-value` 출력에만 적용됩니다. `time-bucket-band`는 기존 `max/avg/min` 형식을 유지합니다.
+- `toTUILines()`는 현재 `rows`, `compact` option 을 받아도 사용하지 않습니다.
 
 <h6>사용 예시</h6>
 
@@ -538,7 +538,7 @@ toTUIBlocks(spec[, options])
 | `width` | integer | `40` | sparkline, histogram, timeline 렌더링 폭입니다. |
 | `rows` | integer | `8` | table, histogram, event block 에서 보여줄 detail row 최대 개수입니다. |
 | `compact` | boolean | `false` | series summary 와 raw data table block 을 숨깁니다. |
-| `timeformat` | string | `rfc3339` | 출력 시간 형식입니다. 값은 `rfc3339`, `s`, `ms`, `us`, `ns` 를 사용할 수 있습니다. |
+| `timeformat` | string | `rfc3339` | 출력 시간 형식입니다. 값은 `rfc3339`, `s`, `ms`, `us`, `ns`를 사용할 수 있습니다. |
 | `tz` | string | local timezone | 출력 시간값에 적용할 timezone 입니다. |
 
 <h6>반환 값</h6>
@@ -555,12 +555,12 @@ toTUIBlocks(spec[, options])
 | `rows` | array | `table` block 의 row 배열입니다. 각 row 는 column 순서에 맞는 value 배열입니다. |
 | `meta` | object | block 별 부가 정보입니다. 예: `representation`, `axis`, `totalRows`, `truncated`. |
 
-`type` 에 따라 실제로 채워지는 필드는 다를 수 있습니다. 예를 들어 `sparkline` block 은 주로 `lines` 를 사용하고, `table` block 은 `columns`, `rows`, `meta` 를 사용합니다.
+`type`에 따라 실제로 채워지는 필드는 다를 수 있습니다. 예를 들어 `sparkline` block 은 주로 `lines`를 사용하고, `table` block 은 `columns`, `rows`, `meta`를 사용합니다.
 
 참고:
 
-- `toTUIBlocks()` 의 `sparkline` block 은 원래의 compact sparkline 표현을 반환합니다.
-- axis label 과 여러 chart row 를 포함한 확장 형태가 필요하면 `toTUILines()` 를 사용하십시오.
+- `toTUIBlocks()`의 `sparkline` block 은 원래의 compact sparkline 표현을 반환합니다.
+- axis label 과 여러 chart row 를 포함한 확장 형태가 필요하면 `toTUILines()`를 사용하십시오.
 
 <h6>사용 예시</h6>
 
@@ -623,7 +623,7 @@ const svg = vizspec.toSVG(spec, {
 
 ### toPNG()
 
-spec 을 PNG binary data 로 변환합니다. 반환 값은 `ArrayBuffer` 이며, 필요하면 `new Uint8Array(png)` 로 읽을 수 있습니다.
+spec 을 PNG binary data 로 변환합니다. 반환 값은 `ArrayBuffer` 이며, 필요하면 `new Uint8Array(png)`로 읽을 수 있습니다.
 
 <h6>사용 형식</h6>
 
@@ -660,12 +660,12 @@ rasterization 필드:
 | Option | Type | Default | Description |
 | --- | --- | --- | --- |
 | `scale` | number | `1` | SVG 기반 레이아웃을 배율로 확대해서 rasterize 합니다. |
-| `dpi` | integer | unset | `scale` 이 없을 때 사용할 target DPI 입니다. 내부적으로 `dpi / 96` 배율로 적용됩니다. |
-| `theme` | string | `mrtg` | PNG theme 이름입니다. 현재는 `mrtg` 만 지원합니다. |
+| `dpi` | integer | unset | `scale`이 없을 때 사용할 target DPI 입니다. 내부적으로 `dpi / 96` 배율로 적용됩니다. |
+| `theme` | string | `mrtg` | PNG theme 이름입니다. 현재는 `mrtg`만 지원합니다. |
 
 참고:
 
-- `scale` 과 `dpi` 를 함께 주면 `scale` 이 우선합니다.
+- `scale`과 `dpi`를 함께 주면 `scale`이 우선합니다.
 - 현재 PNG renderer 는 MRTG 스타일 output 을 생성합니다.
 - JavaScript API 는 단일 `options` object 를 받아 내부적으로 layout 필드와 rasterization 필드로 분리합니다.
 - 하위 호환을 위해 기존 `toPNG(spec, svgOptions, pngOptions)` 호출 형태도 계속 지원합니다.
@@ -690,7 +690,7 @@ epoch timestamp 를 `s`, `ms`, `us`, `ns` 형식으로 사용하면 값 자체�
 입력 데이터에 timezone 을 따로 명시할 필요가 없습니다. timezone 은 원본 timestamp 에 붙이는 정보라기보다,
 그 timestamp 를 사람이 읽는 문자열로 렌더링할 때 적용하는 출력 옵션으로 이해하면 됩니다.
 
-특히 `ns` 는 값의 자릿수가 커서 JavaScript `number` 로 표현하면 정밀도가 손실될 수 있습니다.
+특히 `ns`는 값의 자릿수가 커서 JavaScript `number`로 표현하면 정밀도가 손실될 수 있습니다.
 예를 들어 `1712102400000000000` 같은 값은 IEEE 754 배정밀도 부동소수점의 안전한 정수 범위를 넘기므로,
 nanosecond epoch 는 문자열로 전달하는 것을 권장합니다.
 
@@ -719,10 +719,10 @@ const spec = vizspec.createSpec({
 
 데이터 소스의 시간 인코딩과 출력 시점의 시간 표현은 서로 다른 관심사입니다.
 
-- `domain.timeformat` 은 ADVN 문서 안의 timestamp 인코딩을 설명합니다.
-- adapter option 의 `timeformat`, `tz` 는 그 timestamp 를 어떤 형식과 timezone 으로 렌더링할지 설명합니다.
+- `domain.timeformat`은 ADVN 문서 안의 timestamp 인코딩을 설명합니다.
+- adapter option 의 `timeformat`, `tz`는 그 timestamp 를 어떤 형식과 timezone 으로 렌더링할지 설명합니다.
 
-adapter option 을 생략하면 `vizspec` adapter 는 기본적으로 `rfc3339` 와 local timezone 을 사용합니다.
+adapter option 을 생략하면 `vizspec` adapter 는 기본적으로 `rfc3339`와 local timezone 을 사용합니다.
 
 예시:
 
@@ -736,7 +736,7 @@ const svg = vizspec.toSVG(spec, {
 });
 ```
 
-같은 규칙이 `toTUIBlocks()` 와 `toEChartsOption()` 에도 적용됩니다.
+같은 규칙이 `toTUIBlocks()`와 `toEChartsOption()` 에도 적용됩니다.
 
 ## `viz` 명령어 사용
 

@@ -7,7 +7,9 @@ aliases:
   - /dbms/reference/sdk-api/net-connector/
 ---
 
-## 目次 {#index}
+<a id="index"></a>
+
+## 目次
 
 * [概要](#overview)
 * [インストール](#install)
@@ -17,14 +19,18 @@ aliases:
 * [使用例](#usage-and-examples)
 * [プロトコル4.0-fullの全API](#full-provider-apis-protocol-40-full)
 
-## 概要 {#overview}
+<a id="overview"></a>
+
+## 概要
 
 Machbaseは通信プロトコル2.1～4.0をサポートする汎用ADO.NETプロバイダー
 **UniMachNetConnector**を提供します。現在の統合パッケージは`UniMachNetConnector` 8.0.55で、
 `net452`、`net5.0`、`net6.0`、`net7.0`、`net8.0`のターゲットをビルドします。
 自動ネゴシエーションは接続文字列に`PROTOCOL=auto`または`auto-full`を指定した場合のみ動作します。
 
-## インストール {#install}
+<a id="install"></a>
+
+## インストール
 
 インストール済みMachbaseサーバー・クライアントには、`$MACHBASE_HOME/lib/`に汎用.NETプロバイダーも
 配布されます。標準のLinuxインストールには、たとえば`UniMachNetConnector-net50-8.0.55.dll`や
@@ -53,7 +59,9 @@ SQLの`USE`と`CURRENT_DATABASE()`を使用します。接続プールへの返�
 行われるとは考えません。詳細な制限は
 [マルチデータベース運用ガイド](/dbms/operations-configuration-recovery/multi-database/#97-net)を参照してください。
 
-## NuGetでインストール（統合コネクター、8.0.55） {#nuget-unified-connector}
+<a id="nuget-unified-connector"></a>
+
+## NuGetでインストール（統合コネクター、8.0.55）
 
 統合コネクターのパッケージIDは`UniMachNetConnector`です。新規プロジェクトでは、DLLのコピーより
 NuGetパッケージ参照を推奨します。
@@ -138,7 +146,9 @@ var count = Convert.ToInt64(cmd.ExecuteScalar());
 Console.WriteLine($"Tables: {count}");
 ```
 
-## 接続文字列リファレンス {#connection-string-reference}
+<a id="connection-string-reference"></a>
+
+## 接続文字列リファレンス
 
 接続文字列の各項目はセミコロン（`;`）で区切ります。表の同じ行にあるキーワードは同じ意味です。
 
@@ -181,7 +191,9 @@ var connectionString = string.Format(
 サーバーバージョンが既知なら、`PROTOCOL=2.1`、`3.0`、`4.0`、`4.0-full`のように明示して
 自動検出を省略することもできます。
 
-## APIリファレンス {#api-reference}
+<a id="api-reference"></a>
+
+## APIリファレンス
 
 {{< callout type="warning" >}}
 以下に記載されていない機能は未実装、または正常に動作しない場合があります。<br>
@@ -744,7 +756,9 @@ string GetRowBuffer()
 
 エラーが発生した元のレコードを文字列で返します。
 
-## 使用例 {#usage-and-examples}
+<a id="usage-and-examples"></a>
+
+## 使用例
 
 ### 接続
 
@@ -944,7 +958,9 @@ AppendOpenは自動フラッシュスレッドを開始します。無効化す�
 `connection.SetConnectAppendFlush(false)`を呼び出します。自動スレッドのエラーが直ちに公開例外として
 通知されない場合があるため、明示的なflush・closeとコールバック・件数の確認を続けます。
 
-## プロトコル4.0-fullの全API {#full-provider-apis-protocol-40-full}
+<a id="full-provider-apis-protocol-40-full"></a>
+
+## プロトコル4.0-fullの全API
 
 `PROTOCOL=4.0-full`では拡張されたADO.NET APIを使用できます。8.0.55ソースパッケージの
 4.0 limited connectorは3.1.3、4.0-full connectorは3.2.2です。インストール済みLinuxパッケージには

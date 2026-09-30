@@ -37,9 +37,9 @@ For distance-axis tables, use these patterns instead.
 
 ## Creating Rollup Tables
 
-When user create tag table, Rollup does not created default, user must create by themselves. Syntax is as follow.
+Creating a tag table does not create rollups by default. Create them yourself with the following syntax.
 
-![create-rollup](/dbms/table-types/tag-tables/create-rollup.png)
+![create-rollup](/dbms-8.5/table-types/tag-tables/create-rollup.png)
 
 Public syntax:
 
@@ -65,23 +65,22 @@ CREATE ROLLUP [IF NOT EXISTS] rollup_name
   [WHERE predicate];
 ```
 
-* rollup name : rollup table's name (Can be freely created with string up to 40)
-* source table name : Name of source table which rollup will aggregate data.
-* src_table_column : rollup target data column name
-    * Numeric columns are supported by default
-    * `JSON SUMMARIZED` is supported as a special mode that aggregates the whole JSON document for `value`.
-    * If the source table is a rollup table, it is omitted and automatically designated as the rollup target column of the source table
-* number sec/min/hour : time and time unit for aggregate <br>
+* rollup name : name of the rollup table (any string of up to 40 characters)
+* source table name : name of the source table whose data the rollup aggregates
+* src_table_column : name of the column to aggregate
+    * By default, only numeric columns are supported.
+    * `JSON SUMMARIZED` is supported as a special mode that aggregates the whole JSON document in `value`.
+    * If the source table is a rollup table, omit it; the rollup target column of the source table is used automatically.
+* number sec/min/hour : aggregation interval and its time unit <br>
    ex) 1 sec aggregate : 1 sec <br>
    ex) 30 seconds aggregate : 30 sec <br>
    ex) 1 minute aggregate : 1 min <br>
    ex) 1 hour aggregate : 1 hour <br>
 * constraint
-    * Source table for aggregation can specify only tag table or rollup table
-    * If source table for aggregation is rollup table, time for rollup table must be bigger than time for source table. And it must be multiple.
+    * The source table can only be a tag table or a rollup table.
+    * If the source table is a rollup table, the interval of the new rollup must be larger than the interval of the source table and must be a multiple of it.
 
-
-Example for Creating rollup table
+Example of creating rollup tables
 
 ```bash
 Mach> CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE, strvalue VARCHAR(20));
@@ -109,7 +108,7 @@ Mach> CREATE ROLLUP _tag_rollup_sec ON tag(strvalue) INTERVAL 1 SEC;
 
 ### Automatically create a ROLLUP table
 
-A roll-up table can be automatically generated using the keyword `with ROLLUP (time_unit)`
+You can create rollup tables automatically with the `WITH ROLLUP (time_unit)` keyword.
 
 ```sql
 CREATE TAG TABLE tagtbl (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED) WITH ROLLUP (time_unit)
@@ -117,13 +116,14 @@ CREATE TAG TABLE tagtbl (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, v
 time_unit := {SEC|MIN|HOUR}
 ```
 
-If the time_unit is not specified as below, it will proceed based on SEC.
+If `time_unit` is omitted as below, SEC is used.
 
 ```sql
 CREATE TAG TABLE tagtbl (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED) WITH ROLLUP
 ```
 
-The name of the automatically generated rollup is generated in the following format. (`tagtbl` contains tag table name.)
+Automatically created rollups are named in the following format. (`tagtbl` is the tag table name.)
+
 * _`tagtbl`_ROLLUP_SEC
 * _`tagtbl`_ROLLUP_MIN
 * _`tagtbl`_ROLLUP_HOUR
@@ -148,18 +148,20 @@ Elapsed time: 0.001
 Mach>
 ```
 
-The criteria entered in time_unit are viewed as the smallest criteria and even the upper time unit is automatically generated.
+The unit given in `time_unit` is treated as the smallest unit, and rollups for the larger time units are created automatically as well.
 
 > When a rollup table name conflict occurs, all rollup table creation fails and only tag tables are generated.
 
-When automatically generating a rollup, you can configure the rollup's DATA_PART_SIZE in bytes.
+When rollups are created automatically, you can set their DATA_PART_SIZE in bytes.
+
 ```sql
 CREATE TAG TABLE tagtbl (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE SUMMARIZED) WITH ROLLUP ROLLUP_DATA_PART_SIZE=(data_part_size)
 ```
 
 ### Extended ROLLUP
 
-By adding the EXTENSION keyword at the end of the syntax for creating Rollup tables, you can create an extended Rollup. An extended Rollup includes both the starting and ending values of the specified interval.
+Add the `EXTENSION` keyword at the end of the rollup creation syntax to create an extended rollup.
+An extended rollup also stores the first and last values of each interval.
 
 ```sql
 -- Manually create an Extended Rollup table
@@ -172,9 +174,10 @@ CREATE TAG TABLE tagtbl (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, v
 ## Conditional Rollups, Filters, and Hints
 
 ### What this feature solves
-When multiple rollups share the same interval, value column, and JSON path, the engine now distinguishes between “plain” rollups and “filtered” rollups. It automatically prefers the unfiltered one, yet lets you force a specific rollup with a hint. Filters are validated at creation time to prevent confusing or unsafe definitions.
+When multiple rollups share the same interval, value column, and JSON path, the engine distinguishes between “plain” rollups and “filtered” rollups. It automatically prefers the unfiltered one, and you can force a specific rollup with a hint. Filters are validated at creation time, so confusing or unsafe definitions are rejected immediately.
 
 ### How to create a filtered rollup
+
 ```sql
 CREATE ROLLUP <rollup_name>
   ( ON <table_name>(<value_col>)
@@ -182,6 +185,7 @@ CREATE ROLLUP <rollup_name>
   INTERVAL <n> <SEC|MIN|HOUR>
   WHERE <predicate>;
 ```
+
 - The predicate is applied to source rows **before** aggregation; predicate columns are not stored in the rollup table.
 - Allowed: regular scalar expressions (AND/OR/NOT, comparison, BETWEEN, IN, LIKE, CASE, non-aggregate functions) that reference existing columns, including non‑summarized columns such as `value2` or `status`.
 - Not allowed: subqueries, aggregate functions, unknown columns, or the tag-name (PK) column of a tag table (it is internally numeric, so string comparison is meaningless).
@@ -202,6 +206,7 @@ CREATE ROLLUP <rollup_name>
 ### Quick recipe (mirrors the regression scenario)
 1) Create a tag table with extra columns you want to filter on, for example `value2 DOUBLE`, `status INTEGER` in addition to the summarized `value`.  
 2) Create both plain and filtered rollups:
+
 ```sql
 CREATE ROLLUP _tag_rollup_plain_1s      ON tag_bulk(value) INTERVAL 1 SEC;
 CREATE ROLLUP _tag_rollup_plain_1m      FROM _tag_rollup_plain_1s INTERVAL 1 MIN;
@@ -214,13 +219,17 @@ CREATE ROLLUP _tag_rollup_plain_1s_ext  ON tag_bulk(value) INTERVAL 1 SEC EXTENS
 CREATE ROLLUP _tag_rollup_cond_1s_ext   ON tag_bulk(value) INTERVAL 1 SEC EXTENSION
   WHERE value2 >= 50 AND status >= 2;
 ```
-3) Load data (bulk loader or INSERT), then flush to make aggregates available:
+
+3) Load data (bulk loader or INSERT), then flush to make aggregates available. Run `ROLLUP_FORCE` on `_TAG_BULK_ROLLUP_SEC` only if the source table was created with `WITH ROLLUP`.
+
 ```sql
 EXEC ROLLUP_FORCE(_TAG_BULK_ROLLUP_SEC);   -- auto rollup from WITH ROLLUP
 EXEC ROLLUP_FORCE(_tag_rollup_plain_1s);
 EXEC ROLLUP_FORCE(_tag_rollup_cond_1s);
 ```
+
 4) Query without a hint (uses the plain rollup automatically):
+
 ```sql
 SELECT rollup('sec', 30, time) AS rt, AVG(value), COUNT(value)
 FROM   tag_bulk
@@ -228,7 +237,9 @@ WHERE  name = 'dev9' AND time BETWEEN '2020-01-02 00:00:00' AND '2020-01-02 00:1
 GROUP BY rt
 ORDER BY rt;
 ```
+
 5) Force a filtered rollup when you must honor the predicate:
+
 ```sql
 SELECT /*+ ROLLUP_TABLE(_tag_rollup_cond_1s) */
        rollup('sec', 30, time) AS rt, AVG(value), COUNT(value)
@@ -237,12 +248,13 @@ WHERE  name = 'dev9' AND time BETWEEN '2020-01-02 00:00:00' AND '2020-01-02 00:1
 GROUP BY rt
 ORDER BY rt;
 ```
+
 6) Using FIRST()/LAST()? Point the hint to an `EXTENSION` rollup; the functions are not available on non-extension rollups.
 
 ### Metadata and upgrade notes
 - `V$ROLLUP` now shows a `PREDICATE` column so you can confirm which filter a rollup was created with.
-- The meta version is bumped to 10.0 to add this column. On first server start after upgrade, the catalog is altered automatically. If the upgrade fails (for example on a very old or corrupted meta), stop the server, create a fresh database, and recreate rollups.
-- Rollup creation still enforces the existing rules on intervals and value types; filters do not change those constraints.
+- The meta version is bumped to 10.0 to add this column. On the first server start after the upgrade, the catalog is altered automatically. If the upgrade fails (for example, because the meta is very old or corrupted), stop the server, keep the original database intact, restore or migrate the data into a new database, and recreate the rollups.
+- Rollup creation still enforces the existing rules on intervals (multiples) and value types (numeric); filters do not change those constraints.
 
 ## Start/Stop Rollup Table
 
@@ -259,24 +271,27 @@ EXEC ROLLUP_STOP(<rollup_name>);
 ```
 
 ### Wakeup interval and scheduling
-- Each rollup wakes up on its own schedule. By default the wakeup interval equals the rollup interval, but you can tighten it to run more frequently (while still aligned to the rollup boundary).
+- Each rollup wakes up on its own schedule. By default, the wakeup interval equals the rollup interval, but you can shorten it (to a divisor of the rollup interval, so it stays aligned to the rollup boundary) to run more often.
 - Syntax to change the wakeup interval:
+
 ```sql
 ALTER ROLLUP <rollup_name> SET WAKEUP INTERVAL <N> (SEC|MIN|HOUR);
 ```
+
   - `N` must be > 0.
   - `N` converted to seconds must be **no larger** than the rollup interval.
   - The rollup interval must be an exact multiple of the wakeup interval; otherwise an error is raised.
   - When changed, the thread wakes immediately and reschedules the next wakeup.
-- Observability: `V$ROLLUP` now exposes `WAKEUP_INTERVAL`, `LAST_WAKEUP_TIME`, `NEXT_WAKEUP_TIME`, and `RUN_STATE` (INIT/SLEEPING/RUNNING). `show rollupgap` also shows the last/next wakeup and run state.
+- Observability: `V$ROLLUP` exposes `WAKEUP_INTERVAL`, `LAST_WAKEUP_TIME`, `NEXT_WAKEUP_TIME`, and `RUN_STATE` (INIT/SLEEPING/RUNNING). `show rollupgap` also shows the last/next wakeup and run state.
 
 
 ## Collect Rollup Instantly
 
-rollup basically aggregate data in set time unit.
+By default, a rollup aggregates data at its configured time interval.
 
-* ex) If it is 1 hour rollup, it aggregate data once in hour and rest in rest time.
-User can aggregate data in force.
+* ex) A 1-hour rollup aggregates data once an hour and waits for the rest of the time.
+
+You can skip the wait and force aggregation manually.
 
 ```sql
 -- Non-blocking: just wake the thread now, then return
@@ -296,14 +311,14 @@ For built-in time-range recovery, `EXEC ROLLUP_REBUILD(...)`, and manual custom 
 
 ## Drop Rollup
 
-Drop Rollup.
+Drops a rollup.
 
 ```sql
 DROP ROLLUP rollup_name
 ```
 
-* rollup_name : Name of rollup
-* constraint: if there is an rollup table that reference rollup table that will be deleted as source tree, it will cause error. User must delete it in reverse order.
+* rollup_name : name of the rollup to drop
+* constraint: if another rollup uses the rollup to be dropped as its source, the drop fails with an error. When rollups depend on each other, drop them in the reverse order of creation.
 
 ```bash
 mach> create tag table tag (name varchar(20) primary key, time datetime basetime, value double summarized);
@@ -317,7 +332,7 @@ tag -> _tag_rollup_1 -> _tag_rollup_2 -> _tag_rollup_3
   
 At this time, if you try to delete the tag table or rollup in the middle, an error occurs.
   
-mach> drop rollup tag
+mach> drop table tag
 > [ERR-02651: Dependent ROLLUP table exists.]
 mach> drop rollup _tag_rollup_1
 > [ERR-02651: Dependent ROLLUP table exists.]
@@ -329,11 +344,14 @@ mach> drop rollup _tag_rollup_2;
 mach> drop rollup _tag_rollup_1;
 mach> drop table tag;
 ```
+
 ### When deleting the TAG table, delete the ROLLUP table together
-When deleting a tag table using the `CASCADE` keyword, you can also delete a roll-up table that is dependent on the tag table.
+If you drop a tag table with the `CASCADE` keyword, the rollup tables that depend on it are dropped as well.
+
 ```sql
 DROP TABLE TAG CASCADE;
 ```
+
 ```sql
 Mach> SHOW TABLES;
 USER_NAME             DB_NAME                                             TABLE_NAME                                          TABLE_TYPE 
@@ -369,31 +387,31 @@ rollup_expr := ROLLUP(time_unit, period, basetime_column [, origin])
 SELECT ROLLUP('MIN', 30, time, '1970-01-01'), MIN(value), MAX(value), AVG(value) FROM tag ..
 ```
 
-If you use the ROLLUP keyword as above, the records are fetched from an appropriate rollup table.
+When you use the ROLLUP keyword as above, the data is read from the matching rollup table.
 
-* time_unit: Any time unit available in the DATE_BIN() function can be used. (see below)
-* period: DATE_BIN() can specify a range for each unit of time available. (see below)
-* basetime_column: Datetime column of the TAG table specified by the BASETIME attribute
-* origin: The origin time to bin the ROLLUP time interval. If not specified, it is set to '1970-01-01' by default.
+* time_unit: any time unit available in the DATE_BIN() function
+* period: the length of each interval in `time_unit`, within the range that DATE_BIN() allows for that unit
+* basetime_column: DATETIME column of the TAG table specified with the `BASETIME` attribute
+* origin: the base time used to divide the ROLLUP time intervals. If omitted, it defaults to `1970-01-01 00:00:00`.
 
->**Deprecated** (version <= 8.0.19)<br>
->In version 8.0.19 and below, use the following ROLLUP expression.
->```sql
->rollup_expr := basetime_column ROLLUP n time_unit
+> **Deprecated (version <= 8.0.19)**<br>
+> In version 8.0.19 and earlier, use the following ROLLUP expression.
+> ```sql
+> rollup_expr := basetime_column ROLLUP n time_unit
 >
->-- ex)
->SELECT time ROLLUP 30 MIN, MIN(value), MAX(value), AVG(value) FROM tag ..
->```
+> -- ex)
+> SELECT time ROLLUP 30 MIN, MIN(value), MAX(value), AVG(value) FROM tag ..
+> ```
 
-As above, if the ROLLUP clause is appended after the Datetime type column specified as the BASETIME attribute, the rollup table is selected.
+As above, appending the ROLLUP clause after the DATETIME column specified with the `BASETIME` attribute makes the query read from a rollup table.
 
-Depending on the selection of TIME_UNIT, the searched rollup table is different.
+The rollup table that is queried depends on TIME_UNIT.
 
 |unit of time(Abbreviation)|rollup table|
 |--|--|
 |nanosecond (nsec)|SECOND|
 |microsecond (usec)|SECOND|
-|milisecond (msec)|SECOND|
+|millisecond (msec)|SECOND|
 |second (sec)|SECOND|
 |minute (min)|MINUTE|
 |hour|HOUR|
@@ -402,13 +420,13 @@ Depending on the selection of TIME_UNIT, the searched rollup table is different.
 |month|HOUR|
 |year|HOUR|
 
-Since using the ROLLUP clause directly performs a rollup table lookup, to use an aggregate function, it has the following characteristics.
+Because the ROLLUP clause reads the rollup table directly, aggregate functions have the following characteristics.
 
-* **The aggregate function must be called on the numeric type column**. However, only the six aggregate functions (SUM, COUNT, MIN, MAX, AVG, SUMSQ) supported by the rollup table are supported.
-    * In the case of Extended Rollup, (FIRST, LAST) is additionally supported.
-* **GROUP BY must be done directly with the BASETIME column to be ROLLUP.**
-    * You can use the ROLLUP clause with the same meaning as it is.
-    * Alternatively, an alias may be attached to the ROLLUP clause, and the alias may be written in GROUP BY.
+* **Aggregate functions must be called on a numeric column.** Only the six aggregate functions supported by rollup tables (SUM, COUNT, MIN, MAX, AVG, SUMSQ) are available.
+    * Extended rollups additionally support FIRST and LAST.
+* **GROUP BY must be applied directly to the BASETIME column used in ROLLUP.**
+    * You can repeat the same ROLLUP clause in GROUP BY.
+    * Alternatively, give the ROLLUP clause an alias and use the alias in GROUP BY.
 
 ```sql
 SELECT   rollup('sec', 3, time) mtime, avg(value)
@@ -430,7 +448,7 @@ GROUP BY mtime;
 
 ## Data Sample
 
-Below is sample data for rollup test.
+Below is the sample data for the rollup examples.
 
 ```sql
 create tag table TAG (name varchar(20) primary key, time datetime basetime, value double summarized) with rollup extension;
@@ -459,13 +477,12 @@ insert into tag values('TAG_0001', '2018-01-01 03:02:01 000:000:000', 5);
 insert into tag values('TAG_0001', '2018-01-01 03:02:02 000:000:000', 6);
 ```
 
-For one tag, different values ​​in seconds were input for 3 hours.
-
+For one tag, 18 rows with different values were entered at one-second resolution, spread across three hourly buckets. To check the results right after inserting, run `EXEC ROLLUP_FORCE(_TAG_ROLLUP_SEC)`, `EXEC ROLLUP_FORCE(_TAG_ROLLUP_MIN)`, and `EXEC ROLLUP_FORCE(_TAG_ROLLUP_HOUR)` in that order.
 
 
 ## Get ROLLUP AVG
 
-Below is the case of getting average of seconds, minutes, hours of tag table.
+The following example gets the per-second, per-minute, and per-hour averages for the tag.
 
 ```sql
 Mach> SELECT rollup('sec', 1, time) as mtime, avg(value) FROM TAG WHERE name = 'TAG_0001' group by mtime order by mtime;
@@ -517,7 +534,7 @@ mtime                           avg(value)
 
 ## Get ROLLUP MIN/MAX Value
 
-Below is the case of getting min/max value of seconds, minutes, hours of tag table. The difference between others, you can get minimum value and maximum value at the same time with just one query.
+The following example gets the minimum and maximum values for each time range of the tag. Unlike the previous example, a single query returns both the minimum and the maximum.
 
 ```sql
 Mach> SELECT rollup('hour', 1, time) as mtime, min(value), max(value) FROM TAG WHERE name = 'TAG_0001' group by mtime order by mtime;
@@ -546,7 +563,7 @@ mtime                           min(value)                  max(value)
 
 ## Get ROLLUP SUM/COUNT
 
-Below is the case of getting sum/count value. Also you can get  sum value and count value at the same time with just one query.
+The following example gets the sum and the number of values. Again, a single query returns both.
 
 ```sql
 Mach> SELECT rollup('min', 1, time) as mtime, sum(value), count(value) FROM TAG WHERE name = 'TAG_0001' group by mtime order by mtime;
@@ -567,7 +584,7 @@ mtime                           sum(value)                  count(value)
 
 ## Get ROLLUP Sum of Squares
 
-Below is the case of getting sum of squares in rollup.
+The following example gets the sum of squares from the rollup.
 
 ```sql
 Mach> SELECT rollup('sec', 1, time) as mtime, SUMSQ(value) FROM tag GROUP BY mtime ORDER BY mtime;
@@ -744,7 +761,7 @@ SELECT rollup('hour', 1, time) AS mtime, COUNT(value), SUMSQ(value)
 
 ## Get ROLLUP FIRST/LAST
 
-Below is an example of obtaining the start and end values provided by Extended Rollup.
+The following example gets the first and last values provided by an extended rollup.
 
 ```sql
 Mach> SELECT rollup('min', 1, time) as mtime, FIRST(time, value), LAST(time, value) FROM tag GROUP BY mtime ORDER BY mtime;
@@ -772,10 +789,10 @@ mtime                           FIRST(time, value)          LAST(time, value)
 
 ## Grouping at Various Time Intervals
 
-The advantage of the ROLLUP clause is that it is not necessary to intentionally use DATE_BIN() to vary the time interval.
+The advantage of the ROLLUP clause is that you do not need DATE_BIN() to change the time interval.
 
-To get the sum of the 3-second interval and the number of data, you can do as follows.
-Since the example time range is only 0 sec, 1 sec, and 2 sec, it can be seen that they all converge to 0 sec. As a result, it matches the 'rollup by minute' query result.
+To get the sum and the number of values at 3-second intervals, run the following query.
+The sample data has values only at second 1 and second 2 of each minute, so all of them fall into the 0-second bucket. As a result, the output matches the per-minute rollup result.
 
 ```sql
 Mach> SELECT rollup('sec', 3, time) as mtime, sum(value), count(value) FROM TAG WHERE name = 'TAG_0001' GROUP BY mtime ORDER BY mtime;
@@ -794,6 +811,8 @@ mtime                           sum(value)                  count(value)
 
 ## Rollup of more than 1 day
 
+The following examples are separate from the 2018 sample above. They assume one row at 00:00:00 on every day of each queried period.
+
 ### Day Rollup
 
 ```sql
@@ -809,11 +828,20 @@ mtime                           COUNT(value)
 
 ### Week Rollup
 
-If origin is not specified, it is counted in the range (Thursday-Wednesday). If you want to aggregate in the range (Sunday-Saturday), you must specify the datetime corresponding to Sunday in origin.
+If origin is not specified, weeks are aggregated in the range (Thursday-Wednesday). To aggregate in the range (Sunday-Saturday), set origin to a datetime that falls on a Sunday.
+
+```sql
+Mach> SELECT ROLLUP('week', 2, time, '2024-05-05') AS mtime, COUNT(value) FROM tag WHERE time BETWEEN TO_DATE('2024-05-01') AND TO_DATE('2024-05-31') GROUP BY mtime ORDER BY mtime;
+mtime                           COUNT(value)         
+--------------------------------------------------------
+2024-04-21 00:00:00 000:000:000 4                    
+2024-05-05 00:00:00 000:000:000 14                   
+2024-05-19 00:00:00 000:000:000 13    
+```
 
 ### Month Rollup
 
-origin should always be specified as the first day of the month (1st day).
+origin must always be the first day of a month (the 1st).
 
 ```
 Mach> SELECT ROLLUP('month', 2, time) AS mtime, COUNT(value) FROM tag WHERE time BETWEEN to_date('2024-05-01') AND to_date('2024-07-31') GROUP BY mtime ORDER BY mtime;

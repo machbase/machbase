@@ -27,7 +27,7 @@ weight: 51
 
 *구문*: `tileGrayscale(scale)`
 
-- `scale` *float*: 타일 이미지를 흑백으로 표시할 때 사용할 값(0 ≤ scale ≤ 1.0, 기본값 `0`)
+- `scale` *float*: 타일 이미지의 흑백(grayscale) 정도(0 ≤ scale ≤ 1.0, 기본값 `0`)
 
 ### geomapID()
 
@@ -51,7 +51,7 @@ weight: 51
 
 ```js
 {
-    type: "circle", // marker, circleMarker, polyline 등
+    type: "circle", // marker, circleMarker, polyline ...
     coordinates: [Lat, Lon],
     properties: {
         radius: Radius,
@@ -64,7 +64,7 @@ weight: 51
 | 이름           | 타입                     | 설명 |
 |:---------------|:-------------------------|:-----|
 | `type`         | `String`                 | 레이어 종류 (예: `marker`, `circle`, `circleMarker` 등) |
-| `coordinates`  | `[]Float`, `[][]Float`… | 위도·경도 배열 |
+| `coordinates`  | `[]Float`, `[][]Float`… | `type`에 맞는 좌표를 [위도, 경도] 순서로 지정 |
 | `properties`   | `Dictionary`            | 레이어 종류에 따라 달라지는 옵션. [Properties](#properties) 참고 |
 
 ### marker
@@ -211,7 +211,7 @@ GEOMAP()
 
 | 속성          | 타입    | 기본값     | 설명 |
 |:--------------|:--------|:-----------|:-----|
-| `stroke`      | Boolean | `true`     | 외곽선을 그릴지 여부 |
+| `stroke`      | Boolean | `true`     | 경로를 따라 외곽선을 그릴지 여부. 폴리곤이나 원의 테두리를 없애려면 `false`로 설정합니다. |
 | `color`       | String  | `'#3388ff'`| 외곽선 색상 |
 | `weight`      | Number  | `3`        | 외곽선 두께(px) |
 | `opacity`     | Number  | `1.0`      | 레이어 투명도 |
@@ -297,6 +297,92 @@ GEOMAP()
 
 {{< figure src="/neo/tql/img/geomap-marker-tooltip.png" width="500" >}}
 
+<!--
+## GeoJSON
+
+### FeatureCollection
+
+```js
+SCRIPT({
+    $.yield({
+        type: "FeatureCollection",
+        features: [
+            {
+                type: "Feature",
+                geometry: {
+                    type: "Point",
+                    coordinates: [102.0, 0.5]
+                }
+            },
+            {
+                type: "Feature",
+                geometry: {
+                    type: "LineString",
+                    coordinates: [
+                        [102.0, 0.0],[103.0, 1.0],[104.0, 0.0],[105.0, 1.0]
+                    ]
+                }
+            },
+            {
+                type: "Feature",
+                geometry: {
+                    type: "Polygon",
+                    coordinates: [
+                        [
+                            [100.0, 0.0],[101.0, 0.0],[101.0, 1.0],
+                            [100.0, 1.0],[100.0, 0.0]
+                        ]
+                    ]
+                }
+            }
+        ]
+    });
+})
+
+GEOMAP()
+```
+
+{{< figure src="/neo/tql/img/geomap-geojson-collection.png" width="500" >}}
+
+### Feature
+
+```js
+SCRIPT({
+    $.yield({
+        type: "Feature",
+        geometry: {
+            type: "Point",
+            coordinates: [102.0, 0.5]
+        }
+    });
+    $.yield({
+        type: "Feature",
+        geometry: {
+            type: "LineString",
+            coordinates: [
+                [102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]
+            ]
+        }
+    })
+    $.yield({
+        type: "Feature",
+        geometry: {
+            type: "Polygon",
+            coordinates: [
+                [
+                    [100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0]
+                ]
+            ]
+        }
+    });
+})
+GEOMAP()
+```
+
+{{< figure src="/neo/tql/img/geomap-geojson-collection.png" width="500" >}}
+
+-->
+
 ## 예제
 
 CSV 파일에서 테스트 데이터를 불러와 "TRIP" 테이블에 입력합니다.
@@ -317,7 +403,7 @@ SCRIPT({
         "lat double, "+
         "lon double "+
     ")")
-    // parse time form csv string '23-04-21 16:53:21:123000'
+    // parse time from csv string '23-04-21 16:53:21:123000'
     function parseTime(str) { 
         y = "20"+str.substr(0,2);
         m = str.substr(3,2) - 1;
@@ -347,6 +433,7 @@ SQL(`INSERT INTO TRIP (name, time, value, lat, lon) values(?,?,?,?,?)`,
 
 {{< tabs >}}
 {{< tab name="SQL" >}}
+
 ```js {{linenos=table,hl_lines=[5,7]}}
 SQL(`SELECT time, lat, lon FROM TRIP
      WHERE name = 'firenze' ORDER BY time`)
@@ -368,8 +455,10 @@ SCRIPT({
 })
 GEOMAP()
 ```
+
 {{< /tab >}}
 {{< tab name="CSV" >}}
+
 ```js {{linenos=table,hl_lines=["8-11"]}}
 // CSV Format: TIME, LAT, LON
 CSV(file("https://docs.machbase.com/assets/example/data-trajectory-firenze.csv"))
@@ -396,18 +485,20 @@ SCRIPT({
 
 GEOMAP()
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
-{{< figure src="./img/trajectory-firenze.png" width="600" >}}
+{{< figure src="/neo/tql/geomap/img/trajectory-firenze.png" width="600" >}}
 
 ### 거리와 속도
 
-Haversine 공식을 사용해 두 지점 사이의 이동 거리를 미터 단위로 계산하고,
+하버사인(Haversine) 공식을 사용해 두 지점 사이의 이동 거리를 미터 단위로 계산하고,
 두 지점의 시간 차이를 기준으로 이동 속도를 시속(km/h)으로 계산합니다.
 
 {{< tabs >}}
 {{< tab name="SQL" >}}
+
 ```js {{linenos=table,hl_lines=[7,"22-23",28]}}
 SQL(`SELECT time, lat, lon FROM TRIP
      WHERE name = 'firenze' ORDER BY time`)
@@ -448,8 +539,10 @@ SCRIPT({
 })
 GEOMAP()
 ```
+
 {{< /tab >}}
 {{< tab name="CSV" >}}
+
 ```js {{linenos=table,hl_lines=["20-22",30,51,"45-46"]}}
 // CSV Format: TIME("23-04-21 16:53:21:568000"), LAT, LON
 CSV(file("https://docs.machbase.com/assets/example/data-trajectory-firenze.csv"))
@@ -513,7 +606,8 @@ SCRIPT({
 })
 GEOMAP()
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
-{{< figure src="./img/trajectory-firenze-speed.png" width="600" >}}
+{{< figure src="/neo/tql/geomap/img/trajectory-firenze-speed.png" width="600" >}}

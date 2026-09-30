@@ -111,7 +111,7 @@ write(...writeRequest)
 
 오류 동작:
 
-- 인자가 없으면 예외(`missing argument`)
+- 인자가 없으면 예외(`missing argument`)가 발생합니다.
 
 <h6>사용 예시</h6>
 
@@ -189,7 +189,7 @@ try {
 
 ### browseNext()
 
-`browse()` 또는 `browseNext()`가 반환한 continuation point를 사용해 다음 페이지를 계속 조회합니다.
+[browse()](#browse) 또는 `browseNext()`가 반환한 continuation point를 사용해 페이지 단위 탐색을 이어서 조회합니다.
 
 <h6>사용 형식</h6>
 
@@ -289,7 +289,7 @@ try {
 | 프로퍼티            | 타입       | 기본값                       | 설명 |
 |:--------------------|:-----------|:-----------------------------|:-----|
 | nodes               | `string[]` |                               | 읽을 OPC UA 노드 ID 목록 |
-| maxAge              | `number`   | `0`                           | 허용 가능한 캐시 연령(밀리초) |
+| maxAge              | `number`   | `0`                           | 허용 가능한 최대 캐시 경과 시간(밀리초) |
 | timestampsToReturn  | `number`   | `TimestampsToReturn.Neither` | 타임스탬프 반환 정책 |
 
 ## ReadResult
@@ -332,7 +332,7 @@ try {
 | includeSubtypes               | `boolean`  | `true`                    | `referenceTypeId`의 하위 타입 포함 여부 |
 | nodeClassMask                 | `number`   | `0`                       | 포함할 노드 클래스 비트마스크 |
 | resultMask                    | `number`   | `BrowseResultMask.All`    | 반환할 필드 비트마스크 |
-| requestedMaxReferencesPerNode | `number`   | `0`                       | 서버가 노드별 최대 참조 수를 나누어 반환하도록 요청하는 힌트 |
+| requestedMaxReferencesPerNode | `number`   | `0`                       | 페이지를 나누기 전에 노드별로 반환할 최대 참조 수에 대한 서버 힌트 |
 
 ## BrowseNextRequest
 
@@ -440,7 +440,7 @@ try {
 
 ### 데이터 수집기
 
-스크립트를 `opcua-client.js`로 저장한 뒤 JSH 터미널에서 백그라운드로 실행하십시오.
+스크립트를 `opcua-client.js`로 저장한 뒤 JSH 터미널에서 백그라운드로 실행합니다.
 
 ```
 jsh / > opcua-client
@@ -453,7 +453,7 @@ jsh / > ps
 └──────┴──────┴──────┴──────────────────┴────────┘ 
 ```
 
-- opcua-client.js
+- `opcua-client.js`
 
 ```js {linenos=table,linenostart=1}
 opcua = require("opcua");
@@ -502,12 +502,12 @@ setInterval(()=>{
 
 ### 시뮬레이터 서버
 
-`opcua-client.js`를 시험하려면 필요한 시스템 지표 노드를 제공하는 OPC UA 서버가 필요합니다.
-실환경이 없다면 아래 저장소에서 제공하는 시뮬레이터를 사용해 주십시오.
-`sys_cpu`, `sys_mem`, `load1`, `load5`, `load15` 등의 샘플 데이터를 제공하여 수집기 및 시각화 흐름을 검증하실 수 있습니다.
+`opcua-client.js`를 테스트하려면 시스템 지표 노드를 제공하는 OPC UA 서버가 필요합니다.
+실제 환경이 없다면 아래 저장소에서 제공하는 시뮬레이터를 사용합니다.
+시뮬레이터는 `sys_cpu`, `sys_mem`, `load1`, `load5`, `load15` 등의 샘플 데이터를 제공하므로 수집과 시각화 흐름을 검증할 수 있습니다.
 
-설정 방법은 저장소의 안내를 따르시면 됩니다.
+설정 방법은 저장소의 안내를 따릅니다.
 
 [https://github.com/machbase/neo-server/tree/main/jsh/native/opcua/test_server](https://github.com/machbase/neo-server/tree/main/jsh/native/opcua/test_server)
 
-시뮬레이터를 실행한 뒤 `opcua-client.js`를 가동하면 OPC UA 클라이언트가 정상적으로 연결되어 데이터를 수집합니다.
+시뮬레이터를 실행한 뒤 `opcua-client.js`를 실행하면 OPC UA 클라이언트가 서버에 연결해 데이터를 수집합니다.

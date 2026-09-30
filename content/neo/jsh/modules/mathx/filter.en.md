@@ -12,7 +12,7 @@ weight: 10
 
 ```js {linenos=table,linenostart=1}
 const { arrange } = require('mathx');
-const m = require('mathx/filter')
+const m = require('mathx/filter');
 const avg = new m.Avg();
 for( x of arrange(10, 30, 10) ) {
     console.log(x,  avg.eval(x).toFixed(2));
@@ -29,7 +29,7 @@ for( x of arrange(10, 30, 10) ) {
 
 ```js {linenos=table,linenostart=1}
 const { linspace } = require('mathx');
-const m = require('mathx/filter')
+const m = require('mathx/filter');
 const movAvg = new m.MovAvg(10);
 for( x of linspace(0, 100, 100) ) {
     console.log(""+x.toFixed(4)+","+movAvg.eval(x).toFixed(4));
@@ -39,7 +39,7 @@ for( x of linspace(0, 100, 100) ) {
 // 1.0101,0.5051
 // 2.0202,1.0101
 // 3.0303,1.5152
-// ... omit ...
+// ... 생략 ...
 // 96.9697,92.4242
 // 97.9798,93.4343
 // 98.9899,94.4444
@@ -52,7 +52,7 @@ for( x of linspace(0, 100, 100) ) {
 
 ```js {linenos=table,linenostart=1}
 const { arrange, Simplex } = require('mathx');
-const m = require('mathx/filter')
+const m = require('mathx/filter');
 const lpf = new m.Lowpass(0.3);
 const simplex = new Simplex(1);
 

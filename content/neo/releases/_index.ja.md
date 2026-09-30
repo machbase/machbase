@@ -22,24 +22,17 @@ toc: false
 
 提供されているパッケージが使用中のディストリビューションと互換性がない場合は、ソースコードからビルドできます。
 
-1. Go 1.24とgccがインストールされていることを確認します。
+1. Go 1.25.12以降とgccがインストールされていることを確認します。
 2. [GitHub](https://github.com/machbase/neo-server)から`neo-server`リポジトリをクローンします。
 3. `go run mage.go install-neo-web`を実行して、Machbase NeoのWeb UIをダウンロードします。
-4. `go run mage.go machbase-neo`を実行して、Machbase Neoをビルドします。
-5. ビルドした実行ファイルは、`./tmp/machbase-neo`に生成されます。
-6. 任意のインストール先に実行ファイルをコピーします。
+4. `go run mage.go install-neo-engine`を実行して、Machbase Engineをダウンロードします。
+5. `go run mage.go machbase-neo`を実行して、Machbase Neoをビルドします。
+6. ビルドした実行ファイルは、`./tmp/machbase-neo`に生成されます。
+7. 任意のインストール先に実行ファイルをコピーします。
 
 ### 変更内容 {{< neo_latestver >}} {#changes}
 
 変更の詳細は、[変更履歴](https://github.com/machbase/neo-server/releases/tag/{{< neo_latestver >}})で確認できます。
-
-### v8.0.xからのアップグレード {#v80x에서-업그레이드하기}
-
-アップグレードは、実行ファイルを置き換えるだけで完了します。
-
-1. 実行中のmachbase-neoプロセスを停止します。
-2. `machbase-neo`（Windowsの場合は`machbase-neo.exe`）の実行ファイルを新しいファイルに置き換えます。
-3. machbase-neoプロセスを再起動します。
 
 ### 以前のバージョン {#이전-버전}
 
@@ -48,7 +41,7 @@ toc: false
 {{< callout type="warning" emoji="⚠️">}}
 **v1.5.0**まで提供していた**Edge / Fogエディション**は、v1.5.0以降、単一の「Standard」エディションに統合されました。<br/>
 Raspberry Piなどの小型機器で旧バージョンを実行する場合は、Edgeエディションを選択してください。<br/>
-ワークステーションやサーバーなど、メモリとCPUコアが十分にある環境ではFogエディションを使用します。
+ワークステーションやサーバーなど、メモリとCPUコアが十分にある環境ではFogエディションを選択してください。
 {{< /callout >}}
 
 ### CLASSIC SDK {#classic-sdk}

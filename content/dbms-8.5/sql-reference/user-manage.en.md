@@ -29,7 +29,7 @@ weight: 60
 create_user_stmt ::= 'CREATE USER' user_name 'IDENTIFIED BY' password
 ```
 
-The syntax for creating a user is:
+The syntax for creating a user is as follows.
 
 ```sql
 -- Example
@@ -48,6 +48,7 @@ Examples:
 CREATE USER app_user IDENTIFIED BY "Aa!StrongPwd1" PASSWORD POLICY LOW;
 CREATE USER ops_user IDENTIFIED BY "Bb@StrongPwd2" PASSWORD POLICY HIGH;
 ```
+
 User names are converted to uppercase when they are created. For example,
 `CREATE USER app_user ...` is stored and displayed as `APP_USER` in metadata tables and
 `V$` views. Later connection and privilege statements refer to the same user name.
@@ -63,7 +64,7 @@ User names are converted to uppercase when they are created. For example,
 drop_user_stmt ::= 'DROP USER' user_name
 ```
 
-The syntax for deleting a user is as follows. The SYS user can not be deleted, and if there is a table already created by the user to be deleted, an error is displayed.
+The syntax for deleting a user is as follows. The SYS user cannot be deleted, and an error is returned if the user to be deleted still owns tables.
 
 ```sql
 -- Example
@@ -81,7 +82,7 @@ DROP USER old_user
 alter_user_pwd_stmt ::= 'ALTER USER' user_name 'IDENTIFIED BY' password
 ```
 
-The user can change the password through the following syntax.
+A user can change the password with the following syntax.
 
 ```sql
 -- Example
@@ -134,7 +135,7 @@ Notes:
 - `ALTER USER ... IDENTIFIED BY ... PASSWORD POLICY ...` validates the new password with the new policy.
 - When a policy is set to `HIGH`, or when the password of a `HIGH` policy user is changed, `VALID_BEFORE` is updated to 90 days from the current time.
 - When a policy is set to `LOW` or `NONE`, `VALID_BEFORE` is updated to `NULL`.
-- An expired account cannot log in, so the user cannot change the password with that account. Reset the password from an administrator account.
+- An expired account cannot log in, so the user cannot change the password with that account. Reset the password to a new one from an administrator account.
 
 You can check the policy and expiration time in `M$SYS_USERS`.
 
@@ -144,6 +145,7 @@ FROM M$SYS_USERS;
 ```
 
 `PWD_POLICY_LEVEL` means `0 = NONE`, `1 = LOW`, and `2 = HIGH`. `VALID_BEFORE` is displayed in `YYYY-MM-DD` format when it has a value.
+
 ## Generate AUTH KEY Files
 
 > **Note**: The following behavior is supported from Machbase 8.5 or later.
@@ -267,8 +269,8 @@ EOF
 
 > **Note**: The following behavior is supported from Machbase 8.5 or later.
 
-Machbase can register an AUTH KEY for public-key challenge authentication together with password
-authentication.
+Machbase can register an AUTH KEY for public-key challenge authentication to a user, in addition to
+password authentication.
 
 ```sql
 CREATE USER app_user IDENTIFIED BY 'App#1234'
@@ -419,7 +421,7 @@ SELECT key_id, user_name, pubkey
 user_connect_stmt: 'CONNECT' user_name '/' password
 ```
 
-The user can reconnect to another user via the following syntax without terminating the application.
+A user can reconnect as another user with the following syntax without terminating the application.
 
 ```sql
 -- Example
@@ -611,7 +613,7 @@ The following privileges are not included by default and must be granted explici
 
 Even with privileges, the built-in restrictions of each table type still apply.
 
-- `LOG` and `TAG` tables do not support `UPDATE`.
+- `LOG` and `TAG` tables do not support `UPDATE` by design.
 - `VOLATILE` and `LOOKUP` tables support all DML operations, but `WHERE` clauses for query, update, and delete operations must be based on the primary key.
 
 In other words, granting privileges does not enable unsupported DML behavior.
@@ -641,7 +643,7 @@ GRANT MOUNT ON machbasedb TO mount_user;
 
 ## Managing User Example
 
-Here is an example of the above query and its results.
+The following example shows the statements above and their results.
 
 ```
 ############################################

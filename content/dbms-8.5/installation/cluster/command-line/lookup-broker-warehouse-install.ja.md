@@ -92,8 +92,8 @@ Coordinator で Lookup Master を変更できます。
 Slave だけを Master に昇格できます。従来の Master は Slave になります。
 
 ```bash
-# Lookup Master を変更
-$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --set-lookup-master="192.168.0.84:5303"
+# Change lookup master
+$MACHBASE_COORDINATOR_HOME/bin/machcoordinatoradmin --set-lookup-master="192.168.0.84:5301"
 ```
 
 

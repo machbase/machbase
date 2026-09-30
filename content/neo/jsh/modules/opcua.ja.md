@@ -112,7 +112,7 @@ write(...writeRequest)
 
 エラー時の動作：
 
-- 引数がない場合は例外（`missing argument`）
+- 引数がない場合は、例外（`missing argument`）が発生します。
 
 <h6>使用例</h6>
 
@@ -190,7 +190,7 @@ try {
 
 ### browseNext() {#browsenext}
 
-`browse()`または`browseNext()`が返した継続ポイントを使って、次のページを取得します。
+[browse()](#browse)または`browseNext()`が返した継続ポイントを使って、ページ単位の検索を続けます。
 
 <h6>構文</h6>
 
@@ -290,7 +290,7 @@ try {
 | プロパティ            | 型       | 既定値                       | 説明 |
 |:--------------------|:-----------|:-----------------------------|:-----|
 | nodes               | `string[]` |                               | 読み取るOPC UAノードIDの一覧 |
-| maxAge              | `number`   | `0`                           | 許容するキャッシュの経過時間（ミリ秒） |
+| maxAge              | `number`   | `0`                           | 許容するキャッシュの最大経過時間（ミリ秒） |
 | timestampsToReturn  | `number`   | `TimestampsToReturn.Neither` | タイムスタンプの返却方針 |
 
 ## ReadResult {#readresult}
@@ -333,7 +333,7 @@ try {
 | includeSubtypes               | `boolean`  | `true`                    | `referenceTypeId`のサブタイプを含めるかどうか |
 | nodeClassMask                 | `number`   | `0`                       | 含めるノードクラスのビットマスク |
 | resultMask                    | `number`   | `BrowseResultMask.All`    | 返すフィールドのビットマスク |
-| requestedMaxReferencesPerNode | `number`   | `0`                       | サーバーがページ分割して返す、ノードごとの最大参照数のヒント |
+| requestedMaxReferencesPerNode | `number`   | `0`                       | ページ分割の前にノードごとに返す最大参照数についての、サーバーへのヒント |
 
 ## BrowseNextRequest {#browsenextrequest}
 
@@ -454,7 +454,7 @@ jsh / > ps
 └──────┴──────┴──────┴──────────────────┴────────┘ 
 ```
 
-- opcua-client.js
+- `opcua-client.js`
 
 ```js {linenos=table,linenostart=1}
 opcua = require("opcua");
@@ -507,7 +507,7 @@ setInterval(()=>{
 実環境がない場合は、以下のリポジトリが提供するシミュレーターを使用してください。
 `sys_cpu`、`sys_mem`、`load1`、`load5`、`load15`などのサンプルデータを提供し、収集と可視化の流れを検証できます。
 
-設定方法は、リポジトリの手順に従ってください。
+設定方法は、リポジトリの説明に従ってください。
 
 [https://github.com/machbase/neo-server/tree/main/jsh/native/opcua/test_server](https://github.com/machbase/neo-server/tree/main/jsh/native/opcua/test_server)
 

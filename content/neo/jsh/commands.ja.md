@@ -343,11 +343,12 @@ sleep [OPTION] <sec>
 /work > sleep 5
 ```
 
-
 ### tail {#tail}
 
 ファイルの末尾を出力します。
 `-f`オプションを指定すると、ファイルに追加された内容をリアルタイムに出力し続けます。
+
+<h6>構文</h6>
 
 ```sh
 tail [OPTION]... <file>

@@ -4,9 +4,9 @@ type: docs
 weight: 30
 ---
 
-##  Download Sample Data
+## Download Sample Data
 
-Download sample data by following guide.
+Download the sample data as follows.
 
 ```bash
 ## ##  1. Clone the sample data from MACHBASE git repository.
@@ -20,9 +20,9 @@ $ gunzip edu_3_plc_stream/*.gz
 $ cd edu_3_plc_stream/
 ```
 
-##  Create TAG, LOG Table
+## Create TAG, LOG Table
 
-To use the STREAM function, modify the following commands according to the environment and execute them to create TAG and LOG tables.
+To use the STREAM feature, adjust the following commands to your environment and run them to create the TAG and LOG tables.
 
 ```bash
 $ pwd
@@ -37,15 +37,15 @@ $ sh 2_load_meta.sh
 $ machsql --server=127.0.0.1 --port=${MACHBASE_PORT_NO} --user=SYS --password=MANAGER --script=3_create_plc_tag_table.sql
 ```
 
-##  Create and Run STREAM
+## Create and Run STREAM
 
-Execute sample file to run STREAM that are Start STREAM by executing the sample file made for the created TAG and LOG tables.
+Run the sample script written for the TAG and LOG tables you created. It creates and starts the STREAMs.
 
 ```bash
 $ machsql --server=127.0.0.1 --port=${MACHBASE_PORT_NO} --user=SYS --password=MANAGER --script=4_plc_stream_tag.sql
 ```
 
-There are two types of query in the sample file, one create STREAM, the other one run STREAM.
+The sample file contains two types of queries: one creates a STREAM and the other starts it.
 
 ```sql
 ## ##  Create STREAM Query Example
@@ -55,11 +55,11 @@ EXEC STREAM_CREATE(event_v0, 'insert into tag select ''MTAG_V00'', tm, v0 from p
 EXEC STREAM_START(event_v0);
 ```
 
-If STREAM run normally, when data are inserted to plc_tag_table, every STREAM runs to insert that data to TAG table.
+Once the STREAMs are running, every time data is inserted into `plc_tag_table`, each STREAM runs and inserts that data into the TAG table.
 
-##  Check STREAM Status
+## Check STREAM Status
 
-Through v$streams, a virtual table supported by Machbase, you can check the number of streams being executed, queries used, status, and error messages.
+With `v$streams`, a virtual table provided by Machbase, you can check the number of running streams, the queries they use, their status, and error messages.
 
 ```sql
 Mach> desc v$streams;
@@ -77,7 +77,7 @@ ERROR_MSG                                                            varchar    
 FREQUENCY                                                            ulong               20
 ```
 
-Checking all of the STREAM status is available like below.
+You can check the status of all STREAMs as follows.
 
 ```sql
 Mach> select state, name, table_name, query_txt from v$streams;
@@ -103,10 +103,10 @@ RUNNING EVENT_C14 PLC_TAG_TABLE insert into tag select 'MTAG_C14', tm, c14 from 
 RUNNING EVENT_C15 PLC_TAG_TABLE insert into tag select 'MTAG_C15', tm, c15 from plc_tag_table;
 ```
 
-##  Load Data
+## Load Data
 
-After confirming that all STREAM is running, input data using Machloader and check the operation.
-Since STREAM works regardless of the input method, it will automatically insert into the TAG table regardless of any input methods such as CLI, JDBC, or Collector.
+After confirming that all STREAMs are running, load data with machloader and check how the STREAMs work.
+Because a STREAM works regardless of the input method, data is automatically inserted into the TAG table whether you use CLI, JDBC, Collector, or another input method.
 
 ```bash
 $ cat 5_plc_tag_load.sh
@@ -131,7 +131,7 @@ CREATE TABLE   : FALSE              CREATE TABLESPACE: FALSE
                                                80000                    0
 ```
 
-If you check the TAG table data during data loading, you can see that the data is inserted in real time.
+If you query the TAG table while the data is loading, you can see the data being inserted in real time.
 
 ```sql
 Mach> select count(*) from TAG;
@@ -152,9 +152,9 @@ count(*)
 Elapsed time: 0.000
 ```
 
-##  Result of STREAM
+## Result of STREAM
 
-You can check how far STREAM has read the data of the source table (plc_tag_table) just like below.
+You can check how far each STREAM has read the source table (`plc_tag_table`) as follows.
 
 ```sql
 Mach> select name, state, end_rid from v$streams;
@@ -181,7 +181,7 @@ EVENT_C15 RUNNING 746604
 [18] row(s) selected.
 ```
 
-If end_rid column value is same as record number of source table, it means there is nothing more to read in source table;
+If the `end_rid` value equals the number of records in the source table, there is no more data to read from the source table.
 
 ```sql
 Mach> select name, state, end_rid from v$streams;
@@ -208,7 +208,7 @@ EVENT_C15 RUNNING 2000000
 [18] row(s) selected.
 ```
 
-Since the number of data in the TAG table is the same as 'the number of source tables' * 'the number of STREAMs', it can be confirmed that the STREAM has read all the data normally.
+The number of rows in the TAG table equals `number of records in the source table × number of STREAMs`, which confirms that the STREAMs have read all the data correctly.
 
 ```sql
 Mach> select count(*) from TAG;
@@ -218,7 +218,7 @@ count(*)
 [1] row(s) selected.
 ```
 
-You can also check the time range of the input data as follows.
+You can also check the time range of the loaded data as follows.
 
 ```sql
 Mach> select min(time), max(time) from TAG;
@@ -228,16 +228,16 @@ min(time)                       max(time)
 [1] row(s) selected.
 ```
 
-##  Add Data
+## Add Data
 
-You can check through the insert statement to see if STREAM actually responds to each data input.
+Use an INSERT statement to check whether the STREAMs actually respond to each input.
 
 ```sql
 Mach> insert into plc_tag_table values(TO_DATE('2009-01-28 12:37:00 000:000:000'), 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000);
 1 row(s) inserted.
 ```
 
-As soon as one more record is added to PLC_TAG_TABLE, it can be seen that the end_rid of each stream increases to 2000001 as shown below.
+As soon as one record is added to `PLC_TAG_TABLE`, the `end_rid` of each stream increases to 2000001, as shown below.
 
 ```sql
 Mach> select name, state, end_rid from v$streams;

@@ -6,12 +6,12 @@ weight: 20
 
 ## JDBC Overview
 
-The set of database manipulation interfaces created in the Java programming language is called JDBC (Java DataBase Connectivity). A set of APIs that provide a consistent interface for a variety of relational databases, defining a set of object-oriented classes of classes that the programmer will use to build SQL requests. That is, if you use a JDBC driver, no matter which database you use, there is an advantage that you can apply it directly without modifying the code.
+The set of database manipulation interfaces written in the Java programming language is called JDBC (Java DataBase Connectivity). It is a set of APIs that provides a consistent interface for a variety of relational databases and defines a series of object-oriented classes that programmers use to build SQL requests. In other words, as long as a JDBC driver is provided, you can apply your code to any database without modifying it.
 
 
 ## Standard JDBC Functions
 
-[Standard Function Specs 4.0](http://www.oracle.com/technetwork/java/javase/jdbc/index.html#corespec40)
+[Standard Function Specs 4.0](https://www.oracle.com/java/technologies/javase/javase-tech-database.html#corespec40)
 
 ## JDBC Authentication Modes
 
@@ -111,9 +111,9 @@ The current DBMS standard source handles these public options:
 void setIpv4(int ind, String ipString)
 ```
 
-This is a function to input IPv4 address type in PrepareStatement.
+This is a function to input an IPv4 address type value in a PreparedStatement.
 
-Receives column index and IPv4 string as arguments.
+It takes the column index and an IPv4 string as arguments.
 
 ### setIpv6
 
@@ -121,9 +121,9 @@ Receives column index and IPv4 string as arguments.
 void setIpv6(int ind, String ipString)
 ```
 
-This is a function to input IPv6 address type in PrepareStatement.
+This is a function to input an IPv6 address type value in a PreparedStatement.
 
-Receives column index and IPv6 string as arguments.
+It takes the column index and an IPv6 string as arguments.
 
 ### executeAppendOpen
 
@@ -131,9 +131,9 @@ Receives column index and IPv6 string as arguments.
 ResultSet executeAppendOpen(String aTableName, int aErrorCheckCount)
 ```
 
-Opens the protocol to write the Append protocol in the Statement.
+Opens the Append protocol to use it on the Statement.
 
-The table name and error checking interval are received as arguments. Returns a ResultSet with the result value.
+It takes the table name and the error check interval as arguments, and returns a ResultSet as the result.
 
 ### executeAppendData
 
@@ -141,9 +141,9 @@ The table name and error checking interval are received as arguments. Returns a 
 int executeAppendData(ResultSetMetaData rsmd, ArrayList aData)
 ```
 
-Enters the actual data for the Append protocol in the statement.
+Enters the actual data through the Append protocol on the Statement.
 
-Receives the metadata of the ResultSet, which is the result value of executeAppendOpen, and the data to input. When the result value is stored in the transfer buffer, 1 is returned. If the transfer buffer is transferred to Machbase, 2 is returned. Therefore, if 1 or 2 is returned, it is judged as success.
+It takes the metadata of the ResultSet returned by executeAppendOpen and the data to input as arguments. It returns 1 when the data is stored in the transmission buffer, and 2 when the transmission buffer becomes full and is sent to Machbase. Therefore, a return value of 1 or 2 means success.
 
 ### executeAppendDataByTime
 
@@ -151,9 +151,9 @@ Receives the metadata of the ResultSet, which is the result value of executeAppe
 int executeAppendDataByTime(ResultSetMetaData rsmd, long aTime, ArrayList aData)
 ```
 
-Enters the actual data for the Append protocol on a time basis in the statement.
+Enters the actual data through the Append protocol on the Statement, based on a specified time.
 
-Receives the metadata of the ResultSet which is the result value of executeAppendOpen, the time value of the specific time zone to be set, and the data to input as arguments. If the result value is stored in the transmission buffer, 1 is returned.
+It takes the metadata of the ResultSet returned by executeAppendOpen, the specific time value to set, and the data to input as arguments. It returns 1 when the data is stored in the transmission buffer.
 
 ### executeAppendFlush
 
@@ -161,7 +161,7 @@ Receives the metadata of the ResultSet which is the result value of executeAppen
 int executeAppendFlush()
 ```
 
-Flushes the current append stream and checks the pending append response. If the result is successful, it returns 1.
+Flushes the current append stream and checks the pending append response. It returns 1 on success.
 
 ### executeAppendClose
 
@@ -169,9 +169,9 @@ Flushes the current append stream and checks the pending append response. If the
 int executeAppendClose()
 ```
 
-Terminates the statement for the Append protocol in the statement.
+Closes the Append protocol on the Statement.
 
-If the result is a success, it returns 1.
+It returns 1 on success.
 
 ### executeSetAppendErrorCallback
 
@@ -179,9 +179,9 @@ If the result is a success, it returns 1.
 int executeSetAppendErrorCallback(MachAppendCallback aCallback)
 ```
 
-Sets a callback function that outputs an error if an error occurs during Append execution.
+Sets a callback function that outputs an error when an error occurs during Append.
 
-It takes a callback function that outputs an error log as an argument. If the result is successful, 1 is returned.
+It takes a callback function that outputs the error log as an argument, and returns 1 on success.
 
 ### getAppendSuccessCount
 
@@ -189,9 +189,9 @@ It takes a callback function that outputs an error log as an argument. If the re
 long getAppendSuccessCount()
 ```
 
-Returns the number of successes for the Append protocol in the Statement.
+Returns the number of records that succeeded through the Append protocol on the Statement.
 
-Returns the number of successful results.
+The return value is the number of successful records.
 
 ### getAppendFailureCount
 
@@ -199,9 +199,9 @@ Returns the number of successful results.
 long getAppendFailureCount()
 ```
 
-Returns the number of failures for the Append protocol in the Statement.
+Returns the number of records that failed through the Append protocol on the Statement.
 
-Returns the number of failures as a result.
+The return value is the number of failed records.
 
 ### Batch append implementation note
 
@@ -211,7 +211,8 @@ The source includes internal protocol methods named `executeAppendAll` and `exec
 ## Application Development
 
 ### JDBC Library Installation Check
-Verifies that the machbase.jar file exists in the $MACHBASE_HOME/lib directory.
+
+Check that the machbase.jar file exists in the $MACHBASE_HOME/lib directory.
 
 ```bash
 [mach@localhost ~]$ cd $MACHBASE_HOME/lib
@@ -261,6 +262,7 @@ clean:
 ```
 
 ### Compile and Link
+
 Run the make command to compile and link as follows:
 
 ```bash
@@ -276,7 +278,8 @@ Machbase JDBC driver can be found at [Maven Central Repository](https://mvnrepos
 
 ### Import and use machjdbc
 
-To import machjdbc, open `pom.xml` and add this tag in `<dependencies>` tag.
+To import machjdbc into your project, open `pom.xml` and add the following inside the `<dependencies>` tag.
+
 ```
 <dependency>
     <groupId>com.machbase</groupId>
@@ -284,13 +287,16 @@ To import machjdbc, open `pom.xml` and add this tag in `<dependencies>` tag.
     <version>{{< jdbc_version >}}</version>
 </dependency>
 ```
-> Version {{< jdbc_version >}} can be replaced by the latest version in Maven Central.
+
+> You can replace the version number {{< jdbc_version >}} with the latest version in Maven Central.
 <br>
 
-machjdbc can be used in source code by using `import` statement, as below.
+Then you can use machjdbc in your source code with an `import` statement, as shown below.
+
 ```
 import com.machbase.jdbc.*;
 ```
+
 <br><br>
 
 ## JDBC Sample
@@ -299,9 +305,8 @@ import com.machbase.jdbc.*;
 
 Let's write an example program that connects to a Machbase server using a Machbase JDBC driver. Name the source file Sample1Connect.java.
 
-
 > [Tips] The _arrival_time column is not displayed by default.<br>
-> Therefore, to display the _arrival_time column, add show_hidden_cols = 1 to the connection string.<br><br>
+> Therefore, to display the _arrival_time column, add show_hidden_cols=1 to the connection string.<br><br>
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You can modify the connection string in the following example source as follows:<br>
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;String sURL = "jdbc:machbase://localhost:5656/machbasedb?show_hidden_cols=1";
 
@@ -377,11 +382,12 @@ machbase JDBC connected.
 
 ### Data Input and Output Example (1) Direct I/O
 
-Create and display an example that uses the Machbase JDBC driver to input and output data.
+Let's write an example that inputs and outputs data using the Machbase JDBC driver.
 
-The name of the source file is called Sample2Insert.java.
-First, you need to create the necessary tables using the machsql program.
-In the example, we used the sample code to create a table called sample_table in advance.
+Name the source file Sample2Insert.java.
+
+First, create the required table with the machsql program.
+This example creates a table named sample_table in advance and then runs the sample code.
 
 ```bash
 [mach@localhost jdbc]$ machsql
@@ -564,9 +570,9 @@ d1: -26208, d2: -1717986912, d3: -3689348814741910320, f1: 1.2345679E-28, f2: 1.
 
 ### Data Input and Output Example (2) PreparedStatement Input Used
 
-Create and view an example that uses a PreparedStatement to input and output data.
+Let's write an example that inputs and outputs data using a PreparedStatement.
 
-The name of the source file is Sample3PrepareStmt.java.
+Name the source file Sample3PrepareStmt.java.
 
 ```java
 import java.util.*;
@@ -710,7 +716,7 @@ public class Sample3PrepareStmt
 
 Now compile and run the source code. Use the Makefile you have already created.
 
-It should be noted that the data entered in Sample2Insert.java is output together.
+Note that the data entered by Sample2Insert.java is also output.
 
 ```bash
 [mach@localhost jdbc]$ make
@@ -794,12 +800,13 @@ name: id-1, text: name-1, bin: aabbccddeeff, hexbin: 616162626363646465656666, v
 
 ### Extension Function Append Example
 
-The Machbase JDBC driver supports the Append protocol to quickly upload large numbers of data.
+The Machbase JDBC driver supports the Append protocol for uploading a large amount of data quickly.
 
 The following is an example of using the Append protocol.
-Use the sample_table used in the previous example.
-The name of the source file is called Sample4Append.java.
-Enter the contents of data.txt into sample_table.
+It uses the sample_table from the previous example as is.
+
+Name the source file Sample4Append.java.
+The example enters the contents of data.txt into sample_table.
 Create `data.txt` with the `make_data_file` target before running the append sample.
 
 ```java
@@ -961,7 +968,7 @@ public class Sample4Append
 }
 ```
 
-When appending, date type data must be converted to long type nanosecond time.
+When appending, date type data must be converted to a long value in nanoseconds before it is sent.
 
 ```bash
 [mach@localhost jdbc]$ make run_sample4
@@ -978,7 +985,7 @@ timegap 6905594 in microseconds, 100000 records
 8688.61 records/second
 ```
 
-Displays the dot (.) every 10,000, and can know the input time.
+A dot (.) is printed every 10,000 records, and the elapsed input time is shown.
 
 ```bash
 ## Use machsql to check number actually entered.

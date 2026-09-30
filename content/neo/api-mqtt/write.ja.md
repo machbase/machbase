@@ -90,15 +90,15 @@ append方式と配列ペイロードにより、大量データを効率的に�
 
 コードの主要な部分を、以下で順に示します。
 
-```js {linenos=table,linenostart=1,hl_lines=["9-13",17,22]}
+```js {linenos=table,linenostart=1,hl_lines=["9-13",19,24]}
 // 必要なモジュールをインポートし、
 // ポート5653のローカルMQTTブローカーに接続するクライアントを作成します。
 const mqtt = require('mqtt');
 var conf = { servers: ['tcp://127.0.0.1:5653'] };
 var client = new mqtt.Client(conf);
-// 送信するレコードの配列を用意します。
-// 各レコードは、名前、ナノ秒単位のタイムスタンプ、値を含みます。
-const ts = (new Date()).getTime() * 1000000; // ミリ秒をナノ秒に変換
+// Prepares an array of records to be written.
+// Each record contains name, timestamp, and value.
+const ts = (new Date()).getTime() * 1000000; // ms. to ns.
 var pubPayload = [
     [ "my-car", ts, 32.1 ],
     [ "my-car", (ts+1000000000), 65.4 ],
@@ -106,8 +106,10 @@ var pubPayload = [
 ];
 
 client.on('open', () => {
-    // クライアントがブローカーに接続したら、指定したオプションで用意したペイロードを発行します。
-    client.publish('db/append/EXAMPLE', JSON.stringify(pubPayload))
+    // When the client connects to the broker,
+    // it publishes the prepared payload to the specified topic
+    // with the defined options.
+    client.publish('db/write/EXAMPLE', JSON.stringify(pubPayload))
 });
 client.on('published', ()=>{
     // すべてのメッセージの送信を確認したら、500ms後に切断します。

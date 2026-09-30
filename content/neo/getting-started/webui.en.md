@@ -18,15 +18,15 @@ For security reasons, it is recommended to change the default password before en
 
 1. Select "Change password" menu from the left bottom menu. {{< neo_since ver="8.0.20" />}}
 
-{{< figure src="../img/change_passwd_ui.jpg" width="203px" >}}
+{{< figure src="/neo/getting-started/img/change_passwd_ui.jpg" width="203px" >}}
 
 2. Enter the new password and re-type for confirmation on the dialog.
 
-{{< figure src="../img/change_passwd_ui2.jpg" width="342px" >}}
+{{< figure src="/neo/getting-started/img/change_passwd_ui2.jpg" width="342px" >}}
 
 ### SQL
 
-{{< figure src="../img/change_passwd.jpg" width="800px" >}}
+{{< figure src="/neo/getting-started/img/change_passwd.jpg" width="800px" >}}
 
 ```sql
 ALTER USER sys IDENTIFIED BY new_password;

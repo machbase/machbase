@@ -7,19 +7,19 @@ toc: true
 
 ## Coordinator のアップグレード {#coordinator-upgrade}
 
-Coordinator と Deployer は手動で更新します。
+Coordinator / Deployer は手動でアップグレードする必要があります。
 
 #### 注意事項 {#precautions}
 
-* 更新中は、ノードの追加、起動、終了、削除などを実行できません。
-* DDL と DELETE は実行しないでください。INSERT、APPEND、SELECT は実行できます。
+* アップグレード中は、ノードの追加、起動、停止、削除などのコマンドを実行できません。
+* DDL と DELETE は実行中であってはいけません（INSERT、APPEND、SELECT は実行しても問題ありません）。
 
 #### Coordinator の停止 {#coordinator-shutdown}
 
 
-停止しても、Broker/Warehouse の INSERT、APPEND、SELECT には影響しません。
+Coordinator / Deployer を停止しても、Broker / Warehouse の INSERT、APPEND、SELECT には影響しません。
 
-ただし、停止中は Broker/Warehouse の停止を検出できません。再起動後に通常どおり検出します。
+ただし、Coordinator / Deployer の停止中は、Broker / Warehouse が停止してもそれを検出できません（通常は再起動後に検出します）。
 
 ```bash
 machcoordinatoradmin --shutdown
@@ -27,13 +27,13 @@ machcoordinatoradmin --shutdown
 
 #### Coordinator のバックアップ（任意） {#coordinator-backup-optional}
 
-$MACH_COORDINATOR_HOME の dbs/ と conf/ を保存します。
+`$MACHBASE_COORDINATOR_HOME` にある `dbs/` と `conf/` ディレクトリをバックアップします。
 
-#### Coordinator の更新 {#coordinator-upgrade-1}
+#### Coordinator のアップグレード {#coordinator-upgrade-1}
 
-* lightweight ではなく、完全なパッケージを使用してください。
+* 軽量パッケージではなく、フルパッケージを使用してください。
 
-$MACH_COORDINATOR_HOME に展開して上書きします。
+パッケージを `$MACHBASE_COORDINATOR_HOME` に展開し、既存のファイルを上書きします。
 
 ```bash
 tar zxvf machbase-ent-new.official-LINUX-X86-64-release.tgz -C $MACHBASE_COORDINATOR_HOME
@@ -51,8 +51,8 @@ machcoordinatoradmin --startup
 Coordinator と同じ手順です。
 
 #### 注意事項 {#precautions-1}
- 
-* 更新中は、ノードの追加、起動、終了、削除などを実行できません。
+
+* アップグレード中は、ノードの追加、起動、停止、削除などのコマンドを実行できません。
 
 #### Deployer の停止 {#deployer-shutdown}
 
@@ -62,16 +62,16 @@ machdeployeradmin --shutdown
 
 #### Deployer のバックアップ（任意） {#deployer-backup-optional}
 
-$MACH_DEPLOYER_HOME の dbs/ と conf/ を保存します。
+`$MACHBASE_DEPLOYER_HOME` にある `dbs/` と `conf/` ディレクトリをバックアップします。
 
-#### Deployer の更新 {#deployer-upgrade-1}
+#### Deployer のアップグレード {#deployer-upgrade-1}
 
-* 同じホストで MWA や Collector を使用していなければ、lightweight パッケージでも更新できます。
+* Deployer をインストールしたホストで MWA や Collector を実行していなければ、軽量パッケージを使用できます。
 
-$MACH_DEPLOYER_HOME に展開して上書きします。
+パッケージを `$MACHBASE_DEPLOYER_HOME` に展開し、既存のファイルを上書きします。
 
 ```bash
-tar zxvf machbase-ent-new.official-LINUX-X86-64-release.tgz -C $MACH_DEPLOYER_HOME
+tar zxvf machbase-ent-new.official-LINUX-X86-64-release.tgz -C $MACHBASE_DEPLOYER_HOME
 ```
 
 #### Deployer の起動 {#deployer-startup}
@@ -83,15 +83,15 @@ machdeployeradmin --startup
 
 ## パッケージの登録 {#package-registration}
 
-Broker/Warehouse を更新するには、Coordinator にパッケージを登録します。
+Broker / Warehouse をアップグレードするには、Coordinator にパッケージを登録してからアップグレードを実行します。
 
 {{< callout type="info" >}}
-lightweight 版の登録を推奨します。
+軽量パッケージの登録を推奨します。
 {{< /callout >}}
 
-まず、$MACH_COORDINATOR_HOME のあるホストへパッケージを転送します。
+まず、`$MACHBASE_COORDINATOR_HOME` のあるホストへパッケージを移動します。
 
-次のコマンドで追加します。
+次に、以下のコマンドでパッケージを追加します。
 
 ```bash
 machcoordinatoradmin --add-package=new_package --file-name=./machbase-ent-new.official-LINUX-X86-64-release-lightweight.tgz
@@ -99,13 +99,13 @@ machcoordinatoradmin --add-package=new_package --file-name=./machbase-ent-new.of
 
 | オプション | 説明 |
 |--|--|
-|--add-package|追加するパッケージ名。|
-|--file-name|ファイルのパス。**同じファイル名を追加するとエラーになるため、確認してください。**|
+|--add-package|追加するパッケージの名前を指定します。|
+|--file-name|追加するパッケージファイルのパスを指定します。<br>**既存のパッケージと同じファイル名のパッケージを追加するとエラーになるため、ファイル名を確認してください。**|
 
 
-#### Broker/Warehouse の更新 {#brokerwarehouse-upgrade}
+#### Broker/Warehouse のアップグレード {#brokerwarehouse-upgrade}
 
-Coordinator で次の操作を実行します。
+Coordinator で次のコマンドを実行します。
 
 ## ノードの停止 {#node-shutdown}
 
@@ -113,7 +113,7 @@ Coordinator で次の操作を実行します。
 machcoordinatoradmin --shutdown-node=localhost:5656
 ```
 
-## ノードの更新 {#node-upgrade}
+## ノードのアップグレード {#node-upgrade}
 
 ```bash
 machcoordinatoradmin --upgrade-node=localhost:5656 --package-name=new_package
@@ -121,11 +121,11 @@ machcoordinatoradmin --upgrade-node=localhost:5656 --package-name=new_package
 
 | オプション | 説明 |
 |--|--|
-|--upgrade-node|対象ノード名。|
-|--package-name|更新先パッケージ名。|
+|--upgrade-node|アップグレードするノードの名前を指定します。|
+|--package-name|アップグレードに使用するパッケージの名前を指定します。|
 
-* 稼働中のノードを更新すると、自動的に停止してから更新します。
-  ただし、安定した操作のため、事前に明示的に停止してください。
+* ノードを停止せずにアップグレードすると、ノードを自動的に停止してからアップグレードします。
+  ただし、安定性のため、アップグレード前にノードを明示的に停止してください。
 
 ## ノードの起動 {#node-startup}
 
@@ -136,29 +136,29 @@ machcoordinatoradmin --startup-node=localhost:5656
 
 ## スナップショットフェイルオーバー {#snapshot-failover}
 
-Machbase 6.5 Cluster Edition で追加された機能です。
+スナップショットフェイルオーバーは Machbase 6.5 Cluster Edition から使用できます。
 
-正常時のスナップショットを記録し、Warehouse 障害時に正常な部分を除いた差分だけを復旧することで、短時間で回復します。
+スナップショットフェイルオーバーは、DBMS が正常な状態のときにスナップショットを記録しておき、特定の Warehouse に障害が発生した場合に、正常なスナップショットまでのデータを除き、問題が発生した部分だけをフェイルオーバーして迅速に復旧する機能です。
 
 #### スナップショットの基本概念 {#snapshot-basic-concept}
 
-Warehouse グループごとに、正常なデータの位置を記録します。
+Cluster Edition のグループごとに、グループ内の Warehouse のデータがどこまで正常かを示す位置を記録します。
 
-グループ内の Warehouse では、スナップショット以前の全データが正常な状態です。記録はグループ単位です。
+グループ内の Warehouse で作成されたスナップショットより前のデータは、すべて正常な状態です。スナップショットはグループ単位で記録されます。
 
-#### 動作 {#how-snapshot-failover-works}
+#### スナップショットフェイルオーバーの動作 {#how-snapshot-failover-works}
 
-特定の Warehouse に問題が発生すると scrapped 状態になり、復旧が必要です。
+特定の Warehouse に問題が発生すると、その Warehouse は scrapped 状態になり、データの復旧が必要になります。
 
-対象 Warehouse の正常なスナップショットを基準に、それ以降のデータを削除します。同じグループの正常な Warehouse から、基準以降のデータを複製して復旧します。
+Snapshot Recovery を実行すると、問題が発生した Warehouse で正常なスナップショットより後のデータを削除します。続いて、同じグループの正常な Warehouse から基準スナップショット以降のデータを問題の Warehouse へ複製し、復旧が完了します。
 
-#### 自動実行 {#automatic-snapshot-execution}
+#### スナップショットの自動実行 {#automatic-snapshot-execution}
 
-既定で有効で、間隔は 60 秒です。複数グループがある場合、間隔ごとに 1 グループずつ順に実行します。
+スナップショットの自動実行は既定で有効で、実行間隔は 60 秒です。クラスターに複数の Warehouse グループがある場合は、間隔ごとに 1 グループずつ順番にスナップショットを実行します。
 
-0 にすると、自動実行を無効にします。
+実行間隔を 0 にすると、自動実行は無効になります。
 
-間隔の変更は直ちに反映されます。
+スナップショット間隔の設定は、コマンドを実行するとすぐに反映されます。
 
 ```bash
 #スナップショット間隔を設定
@@ -168,22 +168,22 @@ machcoordinatoradmin --snapshot-interval=[sec]
 machcoordinatoradmin --configuration
 ```
 
-#### 手動実行 {#take-snapshot-manually}
+#### スナップショットの手動実行 {#take-snapshot-manually}
 
-machcoordinatoradmin で group_name を指定して実行します。
+`machcoordinatoradmin` ツールで **group_name** を指定し、スナップショットを手動で実行します。
 
-group_name は group1、group2 などの登録済みの名前です。
+**group_name** は group1、group2 のようにあらかじめ決められたグループ名です。
 
-複数グループ全体を記録するには、各グループで実行してください。
+クラスターに複数のグループがある場合、クラスター全体のスナップショットを取るには、グループごとにスナップショットを実行する必要があります。
 
 ```bash
 #group_name のスナップショットを手動実行
 machcoordinatoradmin --exec-snapshot --group='group_name'
 ```
 
-#### scrapped ノードの復旧 {#recover-scrapped-node-based-on-snapshot}
+#### スナップショットによる scrapped ノードの復旧 {#recover-scrapped-node-based-on-snapshot}
 
-scrapped のノードを、次のように復旧します。
+scrapped ノードが発生した場合は、次のように復旧します。
 
 ```bash
 #グループを readonly に変更
@@ -201,9 +201,9 @@ machcoordinatoradmin --exec-sync=[nodename]
 machcoordinatoradmin --set-group-state=normal --group=[groupname]
 ```
 
-#### スナップショットからの復旧処理 {#snapshot-based-recovery-process-of-scrapped-nodes}
+#### スナップショットによる scrapped ノードの復旧過程 {#snapshot-based-recovery-process-of-scrapped-nodes}
 
-復旧時は、次の処理が行われます。
+スナップショットで scrapped ノードを復旧すると、次の処理が行われます。
 
 ```bash
 /* クラスタの初期状態 */
@@ -381,8 +381,8 @@ Flag      : 0
 +-------------+-----------------+-----------------+-----------------+-------------------------------+-------------+
 ```
 
-#### 関連プロパティ {#snapshot-related-properties}
+#### スナップショット関連プロパティ {#snapshot-related-properties}
 
 | プロパティ | 説明 | 設定先 |
 |--|--|--|
-|GROUP_SNAPSHOT_TIMEOUT_SEC|スナップショットのタイムアウト。<br>既定値：60 秒<br>最小値：0（無期限）<br>最大値：uint32_max 秒|各ノードの machbase.conf|
+|GROUP_SNAPSHOT_TIMEOUT_SEC|スナップショット実行時のタイムアウト<br>既定値：60（秒）<br>最小値：0（無期限に待機）<br>最大値：uint32_max（秒）|各ノードの `machbase.conf` ファイルに設定|

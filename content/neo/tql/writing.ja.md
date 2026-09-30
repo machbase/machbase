@@ -17,7 +17,7 @@ CREATE TAG TABLE IF NOT EXISTS EXAMPLE (
 );
 ```
 
-## `INSERT` CSV
+## `INSERT` CSV {#insert-csv}
 
 ### 1. TQLファイルを作成する {#1-tql-파일-생성}
 
@@ -34,9 +34,10 @@ CSV(payload(),
 SQL(`insert into example values(?,?,?)`, value(0), value(1), value(2))
 ```
 
-### 2. HTTP POST
+### 2. HTTP POST {#2-http-post}
 
 {{< tabs >}}
+
 {{< tab name="HTTP" >}}
 
 ~~~
@@ -50,6 +51,7 @@ TAG0,1628953200000000000,13
 ~~~
 
 {{< /tab >}}
+
 {{< tab name="cURL" >}}
 
 ```sh
@@ -60,7 +62,9 @@ TAG0,1628866800000000000,12
 TAG0,1628953200000000000,13
 EOF
 ```
+
 {{< /tab >}}
+
 {{< /tabs >}}
 
 **レスポンス:**
@@ -76,7 +80,7 @@ EOF
 }
 ```
 
-### 3. MQTT PUBLISH
+### 3. MQTT PUBLISH {#3-mqtt-publish}
 
 以下の例のように、`db/tql/{tql_path}` トピックにPUBLISHします。
 
@@ -87,11 +91,12 @@ TAG1,1628953200000000000,13
 EOF
 ```
 
-## `APPEND` CSV
+## `APPEND` CSV {#append-csv}
 
 ### 1. TQLファイルを作成する {#1-tql-파일-생성-1}
 
-次のコードを `append-csv.tql` として保存してください。
+次のコードを `append-csv.tql` として保存してください。  
+TQLスクリプトを保存すると、エディターの右上に <img src="/images/copy_addr_icon.jpg" width="24px" style="display:inline"> アイコンが表示されます。クリックすると、スクリプトのアドレスをコピーできます。
 
 ```js {linenos=table,hl_lines=["7"]}
 CSV(payload(), 
@@ -103,9 +108,10 @@ CSV(payload(),
 APPEND(table('example'))
 ```
 
-### 2. HTTP POST
+### 2. HTTP POST {#2-http-post-1}
 
 {{< tabs >}}
+
 {{< tab name="HTTP" >}}
 
 ~~~
@@ -119,6 +125,7 @@ TAG0,1628953200000000000,13
 ~~~
 
 {{< /tab >}}
+
 {{< tab name="cURL" >}}
 
 ```sh
@@ -129,13 +136,15 @@ TAG2,1628866800000000000,12
 TAG2,1628953200000000000,13
 EOF
 ```
+
 {{< /tab >}}
+
 {{< /tabs >}}
 
-### 3. MQTT PUBLISH
+### 3. MQTT PUBLISH {#3-mqtt-publish-1}
 
 ```sh
-mosquitto_pub -h 127.0.0.1 -p 5653 -t db/tql/input-csv.tql -s << 'EOF'
+mosquitto_pub -h 127.0.0.1 -p 5653 -t db/tql/append-csv.tql -s << 'EOF'
 TAG3,1628866800000000000,12
 TAG3,1628953200000000000,13
 EOF
@@ -145,7 +154,7 @@ EOF
 
 ### 1. TQLファイルを作成する {#1-tql-파일-생성-2}
 
-`SCRIPT()` 関数でカスタムJSONを解析します。  
+`SCRIPT()` 関数でカスタム形式のJSONを解析します。  
 次のコードを `input-json.tql` として保存してください。
 
 ```js {linenos=table}
@@ -156,9 +165,10 @@ SCRIPT({
 SQL(`insert into example values(?,?,?)`, value(0), value(1), value(2))
 ```
 
-### 2. HTTP POST
+### 2. HTTP POST {#2-http-post-2}
 
 {{< tabs >}}
+
 {{< tab name="HTTP" >}}
 
 ~~~
@@ -180,7 +190,9 @@ Content-Type: application/json
 ~~~
 
 {{< /tab >}}
+
 {{< tab name="cURL" >}}
+
 ```sh
 curl -X POST http://127.0.0.1:5654/db/tql/input-json.tql \
     -H "Content-Type: application/json" \
@@ -197,14 +209,15 @@ curl -X POST http://127.0.0.1:5654/db/tql/input-json.tql \
 }
 EOF
 ```
+
 {{< /tab >}}
+
 {{< /tabs >}}
 
-### 3. MQTT PUBLISH
+### 3. MQTT PUBLISH {#3-mqtt-publish-2}
 
-`input-json.json` ファイルを以下のように用意してください。
-
-```json
+```sh
+mosquitto_pub -h 127.0.0.1 -p 5653 -t db/tql/input-json.tql -s << 'EOF'
 {
   "data": {
     "columns": [ "NAME", "TIME", "VALUE" ],
@@ -215,24 +228,21 @@ EOF
     ]
   }
 }
-```
-
-```sh
-mosquitto_pub -h 127.0.0.1 -p 5653 \
-    -t db/tql/input-json.tql \
-    -f input-json.json
+EOF
 ```
 
 ## カスタムテキスト {#커스텀-텍스트}
 
-データを加工してからデータベースに保存する場合は、適切な *tql* スクリプトを用意し、`db/tql/{tql_file.tql}` トピックに送信してください。
+データを加工してからデータベースに保存する場合は、適切な *tql* スクリプトを用意し、`db/tql/{tql_file.tql}` トピックにデータを送信してください。
 
 ### 1. TQLファイルを作成する {#1-tql-파일-생성-3}
 
 次の例は、複数行のテキストデータを加工してテーブルに書き込む方法を示します。
 
 {{< tabs >}}
+
 {{< tab name="SCRIPT" >}}
+
 ```js {linenos=table,hl_lines=[11,12],linenostart=1}
 SCRIPT({
     content = $.payload;
@@ -241,42 +251,48 @@ SCRIPT({
     }
     lines = content
         .split(/\r?\n/)
-        .map(line => line.trim())     // 空白を除去
-        .filter(line => line !== ""); // 空行を除去
+        .map(line => line.trim())     // trim spaces
+        .filter(line => line !== ""); // filter empty lines
     lines.forEach((line, idx) => {
-        part = line.substring(0, 2);  // 先頭の2文字のみ使用
+        part = line.substring(0, 2);  // takes the first 2 letters
         $.yield('text_'+idx, (new Date()), parseInt(part));
     });
 })
 CSV(timeformat('default'))
 // SQL(`insert into example values(?,?,?)`, value(0), value(1), value(2))
 ```
+
 {{< /tab >}}
+
 {{< tab name="MAP" >}}
+
 MAP関数による変換例です。
 
 ```js {linenos=table,hl_lines=["13-15"],linenostart=1}
-// payload()は、HTTP POSTまたはMQTTで渡されたデータを返します。
-// ?? 演算子は、内容がない場合に右辺の値を使用します。
-// Web UIエディターでのテストに便利です。
+// payload() returns the payload that arrived via HTTP-POST or MQTT,
+// The ?? operator means that if tql is called without content,
+//        the right side value is applied
+// It is a good practice while the code is being developed on the tql editor of web-ui.
 STRING( payload() ?? ` 12345
                      23456
                      78901
                      89012
                      90123
                   `, separator('\n'), trimspace(true))
-FILTER( len(value(0)) > 0 )   // 空行を除去
-// データ変換
-MAPVALUE(-1, time("now"))     // PUSHVALUE(0, time("now"))と同じ
-MAPVALUE(-1, "text_"+key())   // PUSHVALUE(0, "text_"+key())と同じ
+FILTER( len(value(0)) > 0 )   // filter empty line
+// transforming data
+MAPVALUE(-1, time("now"))     // equiv. PUSHVALUE(0, time("now"))
+MAPVALUE(-1, "text_"+key())   // equiv. PUSHVALUE(0, "text_"+key())
 MAPVALUE(2, strSub( value(2), 0, 2 ) )
 
-// テスト時はCSVを出力
+// Run this code in the tql editor of web-ui for testing
 CSV( timeformat("DEFAULT") )
-// 運用時は以下のコメントを解除してください。
+// Uncomment the line below for the real action
 // SQL(`insert into example values(?,?,?)`, value(0), value(1), value(2))
 ```
+
 {{< /tab >}}
+
 {{< /tabs >}}
 
 **結果の例**
@@ -293,12 +309,14 @@ text_4,2023-12-02 11:03:36.054,90
 
 スクリプトを `script-post-lines.tql` として保存し、テストデータを `db/tql/script-post-lines.tql` トピックに送信します。
 
-### 2. HTTP POST
+### 2. HTTP POST {#2-http-post-3}
 
 同じTQLファイルをHTTP POSTリクエストでも使用できます。
 
 {{< tabs >}}
+
 {{< tab name="HTTP" >}}
+
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/tql/script-post-lines.tql
@@ -310,8 +328,11 @@ Content-Type: text/plain
 442222
 ```
 ~~~
-{{</ tab >}}
+
+{{< /tab >}}
+
 {{< tab name="cURL" >}}
+
 ```sh
 curl http://127.0.0.1:5654/db/tql/script-post-lines.tql \
   -H "Content-Type: text/plain" \
@@ -322,8 +343,10 @@ curl http://127.0.0.1:5654/db/tql/script-post-lines.tql \
 442222
 EOF
 ```
-{{</ tab >}}
-{{</ tabs >}}
+
+{{< /tab >}}
+
+{{< /tabs >}}
 
 **レスポンス:**
 
@@ -338,7 +361,7 @@ EOF
 }
 ```
 
-### 3. MQTT PUBLISH
+### 3. MQTT PUBLISH {#3-mqtt-publish-3}
 
 ```sh
 mosquitto_pub -h 127.0.0.1 -p 5653 \

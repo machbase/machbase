@@ -14,18 +14,18 @@ In this example, we are going to show how to add a user-defined shell that invok
 
 ### Register a custom shell
 
-1. Select the <img src="../img/shell_icon.jpg" width=47 style="display:inline"> menu icon from the left most side.
+1. Select the <img src="/neo/shell/img/shell_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px"> icon in the left menu.
 
-2. And Click `+` icon <img src="../img/shell_add_icon.jpg" width=265 style="display:inline"> from the top left pane.
+2. Click the <img src="/neo/shell/img/shell_add_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px"> icon on the panel title row.
 
-3. Set a preferred "Display name" and provide the absolute path and flags for the "Command" field.
-For example, to set 'zsh' as the command line on macOS, use the absolute path of your program and click "Save".
+3. Enter a display name in `Name`, give the executable's absolute path and arguments in `Command`, then click `Create`. For example, to register zsh on macOS, enter `/bin/zsh -il`.
 
-{{< figure src="../img/shell_add_form.jpg" width="684px">}}
+{{< figure src="/neo/shell/img/shell_add_form.jpg" width="460px" >}}
 
-- Name: display name. (Any valid text is possible except some reserved words that machbase-neo reserves for the future use)
+- Name: display name (max 16 characters; `SHELL` is reserved)
 - Command: any executable command in full path with arguments
-- Theme : terminal color theme
+- Theme: terminal color theme
+- Icon: the icon shown on the tab
 
 Any terminal program can be the custome "Command", for example...
 - Windows Cmd.exe: `C:\Windows\System32\cmd.exe`
@@ -34,13 +34,13 @@ Any terminal program can be the custome "Command", for example...
 
 ### Use the custom shell
 
-- Open the custom shell on the main editor area.
+- Main editor area: the registered shell appears as a card on the new tab screen. Select the card to open it in the main editor area.
 
 {{< figure src="/images/web-custom-shell.jpeg" width="600px">}}
 
-- Open the custom shell on the console area.
+- Console area: click <img src="/neo/shell/img/console_open_shell_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px"> on the console title row and select the registered shell from the list. It opens as a new tab in the console.
 
-{{< figure src="../img/web-custom-shell-console.jpg" width="700px">}}
+{{< figure src="/neo/shell/img/web-custom-shell-console.jpg" width="700px">}}
 
 ## Command line
 

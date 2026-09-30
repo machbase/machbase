@@ -81,16 +81,16 @@ SQLHENV env;
 SQLHDBC conn;
 SQLHSTMT stmt;
 
-// 接続
+// Connect
 SQLAllocEnv(&env);
 SQLAllocConnect(env, &conn);
 SQLConnect(conn, "127.0.0.1", SQL_NTS, "SYS", SQL_NTS, "MANAGER", SQL_NTS);
 
-// 検索
+// Query
 SQLAllocStmt(conn, &stmt);
 SQLExecDirect(stmt, "SELECT * FROM sensors DURATION 1 HOUR", SQL_NTS);
 
-// 後処理
+// Cleanup
 SQLFreeStmt(stmt, SQL_DROP);
 SQLDisconnect(conn);
 ```
@@ -354,7 +354,7 @@ class SensorMonitor:
     def close(self):
         self.conn.close()
 
-# 使用方法
+# Usage
 monitor = SensorMonitor()
 monitor.collect_data('sensor01', 25.3)
 data = monitor.get_recent_data()

@@ -10,15 +10,15 @@ Coordinator / Deployer must be upgraded manually.
 
 #### Precautions
 
-* You can not issue commands such as adding / starting / terminating / deleting nodes during the upgrade.
-* DDL or DELETE must not be in use. (INSERT, APPEND, SELECT do not matter.)
+* During the upgrade, you cannot run commands such as adding / starting / shutting down / deleting nodes.
+* DDL and DELETE must not be running. (INSERT, APPEND, and SELECT are allowed.)
 
 #### Coordinator Shutdown
 
 
-Coordinator / Deployer does not affect INSERT, APPEND, SELECT in Broker / Warehouse even if it is shut down. 
+Shutting down the Coordinator / Deployer does not affect INSERT, APPEND, or SELECT on the Broker / Warehouse.
 
-However, it does not detect that the Broker / Warehouse also shuts down while it is shutting down. (Normally detected after restart)
+However, while the Coordinator / Deployer is shut down, it cannot detect that a Broker / Warehouse has shut down. (This is normally detected after restart.)
 
 ```bash
 machcoordinatoradmin --shutdown
@@ -26,13 +26,13 @@ machcoordinatoradmin --shutdown
 
 #### Coordinator Backup (Optional)
 
-Backup the dbs/ and conf/ directories located in $MACH_COORDINATOR_HOME.
+Back up the `dbs/` and `conf/` directories in `$MACHBASE_COORDINATOR_HOME`.
 
 #### Coordinator Upgrade
 
-* Proceed with full package instead of lightweight package.
+* Use the full package, not the lightweight package.
 
-Unzip and overwrite the package to $MACH_COORDINATOR_HOME.
+Extract the package into `$MACHBASE_COORDINATOR_HOME`, overwriting the existing files.
 
 ```bash
 tar zxvf machbase-ent-new.official-LINUX-X86-64-release.tgz -C $MACHBASE_COORDINATOR_HOME
@@ -47,11 +47,11 @@ machcoordinatoradmin --startup
 
 ## Deployer Upgrade
 
-This has the same process as the Coordinator.
+The process is the same as for the Coordinator.
 
 #### Precautions
- 
-* You can not issue commands such as adding / starting / terminating / deleting nodes during the upgrade.
+
+* During the upgrade, you cannot run commands such as adding / starting / shutting down / deleting nodes.
 
 #### Deployer Shutdown
 
@@ -61,16 +61,16 @@ machdeployeradmin --shutdown
 
 #### Deployer Backup (Optional)
 
-Back up the dbs/ and conf/ directories located in $MACH_DEPLOYER_HOME.
+Back up the `dbs/` and `conf/` directories in `$MACHBASE_DEPLOYER_HOME`.
 
 #### Deployer Upgrade
 
-* If you are not running MWA or Collector on the host where Deployer is installed, you can proceed with the lightweight package.
+* If MWA or Collector is not running on the host where the Deployer is installed, you can use the lightweight package.
 
-Unzip and overwrite the package to $MACH_DEPLOYER_HOME.
+Extract the package into `$MACHBASE_DEPLOYER_HOME`, overwriting the existing files.
 
 ```bash
-tar zxvf machbase-ent-new.official-LINUX-X86-64-release.tgz -C $MACH_DEPLOYER_HOME
+tar zxvf machbase-ent-new.official-LINUX-X86-64-release.tgz -C $MACHBASE_DEPLOYER_HOME
 ```
 
 #### Deployer Startup
@@ -82,13 +82,13 @@ machdeployeradmin --startup
 
 ## Package Registration
 
-To upgrade Broker / Warehouse, register the Package in Coordinator and proceed with the upgrade.
+To upgrade a Broker / Warehouse, register the package in the Coordinator and then run the upgrade.
 
-{{<callout type="info">}}
-It is recommended to register the lightweight package.
-{{</callout>}}
+{{< callout type="info" >}}
+We recommend registering the lightweight package.
+{{< /callout >}}
 
-First, move the package to the Host where $MACH_COORDINATOR_HOME is located.
+First, move the package to the host where `$MACHBASE_COORDINATOR_HOME` is located.
 
 Next, add the package using the following command.
 
@@ -99,7 +99,7 @@ machcoordinatoradmin --add-package=new_package --file-name=./machbase-ent-new.of
 |Option|Description|
 |--|--|
 |--add-package|Specifies the name of the package to add.|
-|--file-name|Specifies the path to the package file to add.<br>**If a package with the same filename is added, you will receive an error, so check the file name.**|
+|--file-name|Specifies the path of the package file to add.<br>**Adding a package with the same file name as an existing one causes an error, so check the file name.**|
 
 
 #### Broker/Warehouse Upgrade
@@ -120,11 +120,11 @@ machcoordinatoradmin --upgrade-node=localhost:5656 --package-name=new_package
 
 |Option|Description|
 |--|--|
-|--upgrade-node|Enters the name of the upgrade target Node.|
-|--package-name|Enters the name of the Package to be upgraded.|
+|--upgrade-node|Specifies the name of the node to upgrade.|
+|--package-name|Specifies the name of the package to upgrade to.|
 
-* If you upgrade the Node without shutting down the Node, it will automatically shut down the Node and perform the Node upgrade.
-  However, for stability, you should explicitly shut down the Node before upgrading.
+* If you upgrade a node without shutting it down, the node is shut down automatically and then upgraded.
+  However, for stability, shut down the node explicitly before upgrading.
 
 ## Node Startup
 
@@ -135,29 +135,29 @@ machcoordinatoradmin --startup-node=localhost:5656
 
 ## Snapshot Failover
 
-From Machbase 6.5 Cluster Edition, the Snapshot Failover function has been added.
+Snapshot Failover is available from Machbase 6.5 Cluster Edition.
 
-Snapshot failover is a function that provides quick recovery by recording snapshots when the DBMS is in a normal condition and performing failover only for the part where the problem occurs, excluding the normal snapshot when a specific warehouse fails.
+Snapshot failover records snapshots while the DBMS is in a normal state. When a specific warehouse fails, it performs failover only for the part where the problem occurred, excluding the data covered by the normal snapshot, which enables quick recovery.
 
 #### Snapshot basic concept
 
-It is a concept to record the location of normal data between warehouses in the group for each group of Cluster Edition.
+For each group in Cluster Edition, a snapshot records the position up to which data is normal across the warehouses in the group.
 
-All data before the snapshot created in the warehouse in the group are data in a normal state, and each snapshot is recorded for each group.
+All data before the snapshot created in the warehouses of a group is in a normal state, and snapshots are recorded per group.
 
 #### How Snapshot Failover Works
 
-When a problem occurs in a specific warehouse, the warehouse enters scrapped state and data recovery is required.
+When a problem occurs in a specific warehouse, the warehouse changes to the scrapped state and its data must be recovered.
 
-When performing Snapshot Recovery, data after the snapshot is cleared based on the normal snapshot in the warehouse where the problem occurred, and the data after the baseline snapshot of the warehouse in the normal state in the same group is replicated to the warehouse where the problem occurred to complete the recovery.
+During Snapshot Recovery, the data after the normal snapshot of the failed warehouse is cleared. Then the data after the same baseline snapshot is replicated from a normal warehouse in the same group to the failed warehouse, which completes the recovery.
 
 #### Automatic Snapshot Execution
 
-By default, automatic snapshot execution is enabled, and the snapshot execution interval is set to 60 seconds. If there are multiple warehouse groups in a cluster, only one group performs snapshots sequentially every snapshot interval.
+Automatic snapshot execution is enabled by default, and the snapshot interval is 60 seconds. If a cluster has multiple warehouse groups, one group at a time takes a snapshot at each interval, in turn.
 
-If the execution interval is set to 0, automatic snapshot execution is disabled.
+Setting the interval to 0 disables automatic snapshot execution.
 
-Snapshot interval setting is reflected immediately when the command is executed.
+A change to the snapshot interval takes effect as soon as the command is executed.
 
 ```bash
 ## Snapshot Interval Setting
@@ -169,11 +169,11 @@ machcoordinatoradmin --configuration
 
 #### Take Snapshot manually
 
-Specify **group_name** using the machcoordinatoradmin tool and manually perform Snapshot.
+Use the `machcoordinatoradmin` tool with **group_name** to take a snapshot manually.
 
-**group_name** is preset like group1, group2.
+**group_name** is a preset group name such as group1 or group2.
 
-If there are multiple groups in a cluster, snapshots must be performed for each group in order to take a full snapshot.
+If a cluster has multiple groups, take a snapshot of each group to get a snapshot of the whole cluster.
 
 ```bash
 ## Manually take a snapshot for group_name
@@ -182,7 +182,7 @@ machcoordinatoradmin --exec-snapshot --group='group_name'
 
 #### Recover scrapped node based on Snapshot
 
-If a scrapped node occurs, it is restored as follows.
+Recover a scrapped node as follows.
 
 ```bash
 ## Change the group state to readonly
@@ -196,7 +196,7 @@ machcoordinatoradmin --snapshot-recover=[nodename]
 ## When replication is finished, the state of the warehouse is automatically changed to normal.
 machcoordinatoradmin --exec-sync=[nodename]
   
-## Change the group state to readonly
+## Change the group state to normal
 machcoordinatoradmin --set-group-state=normal --group=[groupname]
 ```
 
@@ -353,7 +353,7 @@ Source:
 | warehouse   | localhost:30520 | group2          | normal          | normal        | normal        | ----------- |
 +-------------+-----------------+-----------------+-----------------+-------------------------------+-------------+
   
-## Change the group state to readonly
+## Change the group state to normal
 machcoordinatoradmin --set-group-state=normal --group=[groupname]
   
 kellen@kellen-ku:~$ machcoordinatoradmin --set-group-state=normal --group=group1
@@ -380,8 +380,8 @@ Flag      : 0
 +-------------+-----------------+-----------------+-----------------+-------------------------------+-------------+
 ```
 
-#### Snapshot related properties
+#### Snapshot-related properties
 
 |Property|Description|Applies to|
 |--|--|--|
-|GROUP_SNAPSHOT_TIMEOUT_SEC|Determines the timeout time when executing Snapshot<br>Default : 60 (sec)<br>Minimum : 0 (wait infinitely)<br>Maximum : uint32_max (sec)|Write in each node's machbase.conf file|
+|GROUP_SNAPSHOT_TIMEOUT_SEC|Timeout for taking a snapshot<br>Default : 60 (sec)<br>Minimum : 0 (wait infinitely)<br>Maximum : uint32_max (sec)|Set in the `machbase.conf` file of each node|

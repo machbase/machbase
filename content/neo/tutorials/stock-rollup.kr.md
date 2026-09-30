@@ -115,7 +115,7 @@ create tag table if not exists stock_rollup_1h (
 create rollup rollup_stock_1s
 into (stock_rollup_1s)
 as (
-    select 
+    select
         code,
         date_trunc('second', time) as time,
         sum(price) as sum_price,
@@ -235,7 +235,6 @@ func main() {
     }
     defer conn.Close()
 
-    // STOCK_TICK 테이블의 Appender를 생성
     apd, err := conn.Appender(ctx, "stock_tick")
     if err != nil {
         panic(err)
@@ -275,17 +274,17 @@ func main() {
     // (실제 운영 환경에서는 정해진 주기마다 자동 실행되므로 이 단계는 불필요합니다.)
 
     result := conn.Exec(ctx, `exec rollup_force(rollup_stock_1s)`)
-	if result.Err() != nil {
-		panic(result.Err())
-	}
+    if result.Err() != nil {
+        panic(result.Err())
+    }
     result = conn.Exec(ctx, `exec rollup_force(rollup_stock_1m)`)
-	if result.Err() != nil {
-		panic(result.Err())
-	}
+    if result.Err() != nil {
+        panic(result.Err())
+    }
     result = conn.Exec(ctx, `exec rollup_force(rollup_stock_1h)`)
-	if result.Err() != nil {
-		panic(result.Err())
-	}
+    if result.Err() != nil {
+        panic(result.Err())
+    }
 }
 ```
 
@@ -430,4 +429,4 @@ func main() {
 - 다단계 rollup 테이블 활용
 - 데이터를 stock_tick raw 테이블에만 적재하면 자동으로 rollup 테이블로 누적
 
-Go API 상세 내용은 [MachGo SDK](/neo/tutorials/cli-go/) 및 [Go SDK](/neo/tutorials/cli-go/) 문서를 참고하세요.
+Go API 상세 내용은 [MachGo SDK](/neo/tutorials/cli-go/) 및 [Go SDK](/dbms/development-tools-integration/go/) 문서를 참고하세요.

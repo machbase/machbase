@@ -64,7 +64,7 @@ MQTTブリッジは、machbase-neoから外部ブローカーへの接続方法�
 
 | オプション           | 説明                          | 例         |
 | :-----------     | :---------------------------------   | :-------------  |
-| `broker`         | ブローカーアドレス。接続先が冗長化されている場合は、複数の「broker」オプションを使用します | `broker=192.0.1.100:1883` |
+| `broker`         | ブローカーアドレス。接続先が冗長化されている場合は、複数の`broker`オプションを使用します | `broker=192.0.1.100:1883` |
 | `id`             | クライアントID                            |                 |
 | `username`       | ユーザー名                           |                 |
 | `password`       | パスワード                           |                 |
@@ -253,7 +253,7 @@ subscriber add --autostart mqtt_subr my_mqtt iot/sensor db/append/EXAMPLE:csv;
 - `--autostart`: machbase-neoの起動時にサブスクライバーを自動起動します。省略すると、手動で開始・停止できます。
 - `mqtt_subr`: サブスクライバー名です。
 - `my_mqtt`: 使用するブリッジ名です。
-- `iot/sensor`: 購読するトピック（MQTTのトピック構文を使用）。
+- `iot/sensor`: 購読するトピックです。MQTTのトピック構文に従います。
 - `db/append/EXAMPLE:csv`: 書き込み記述子です。入力データがCSVで、`EXAMPLE`テーブルにappendモードで書き込むことを示します。
 
 書き込み記述子の代わりに、*TQL*スクリプトのパスも指定できます。後半で例を示します。
@@ -272,7 +272,7 @@ db/{method}/{table_name}:{format}:{compress}?{options}
 
 **table_name**
 
-対象テーブル名（大文字と小文字を区別しない）
+対象テーブル名を指定します。大文字と小文字は区別しません。
 
 **format**
 

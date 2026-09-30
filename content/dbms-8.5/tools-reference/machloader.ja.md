@@ -10,10 +10,10 @@ machloader は、テキストファイルと Machbase 間でデータをイン�
 主な機能と注意事項を示します。
 
 * スキーマファイルで日時形式を指定できます。サーバーがサポートする形式を使用してください。全フィールドに共通の形式、または列ごとに異なる形式を指定できます。
-* 既存データを削除してから入力する場合は、-m replace を使用します。
+* 既存データを削除してから入力する場合は、`-m replace` を使用します。
 * スキーマとデータファイルの整合性は検証しません。スキーマ、テーブル、ファイルの整合性は利用者が確認してください。
 * 既定では APPEND モードを使用します。
-* 既定では `_ARRIVAL_TIME` を使用しません。この列を入出力するには -a を指定します。
+* 既定では `_ARRIVAL_TIME` を使用しません。この列を入出力するには `-a` を指定します。
 
 日時の書式指定子は [TO_CHAR](../../sql-reference/functions/#to_char) を参照してください。
 
@@ -58,15 +58,13 @@ machloader は、テキストファイルと Machbase 間でデータをイン�
 
 ## CSV ファイルのインポート {#csv-file-import}
 
-CSV をサーバーへ読み込みます。
+CSV ファイルを Machbase サーバーへ読み込みます。
 
 オプション：
 
-```
--i：インポートを指定
--d：データファイル名を指定
--t：テーブル名を指定
-```
+- `-i`：インポートを指定します。
+- `-d`：データファイル名を指定します。
+- `-t`：テーブル名を指定します。
 
 例：
 
@@ -76,15 +74,13 @@ machloader -i -d data.csv -t table_name
 
 ## CSV ファイルのエクスポート {#csv-file-export}
 
-データを CSV に書き出します。
+データを CSV ファイルに書き出します。
 
 オプション：
 
-```
--o：エクスポートを指定
--d：データファイル名を指定
--t：テーブル名を指定
-```
+- `-o`：エクスポートを指定します。
+- `-d`：データファイル名を指定します。
+- `-t`：テーブル名を指定します。
 
 例：
 
@@ -94,14 +90,12 @@ machloader -o -d data.csv -t table_name
 
 ## CSV ヘッダーの使用 {#use-csv-file-header}
 
-ヘッダーを扱う設定です。
+CSV ファイルのヘッダーに関する設定です。
 
 オプション：
 
-```
--i -H：CSV の先頭行をヘッダーとして扱い、データ入力から除外
--o -H：列名の CSV ヘッダーを出力
-```
+- `-i -H`：インポート時に CSV の先頭行をヘッダーとして扱い、入力から除外します。
+- `-o -H`：エクスポート時にテーブルの列名を CSV ヘッダーとして出力します。
 
 例：
 
@@ -110,17 +104,14 @@ machloader -i -d data.csv -t table_name -H
 machloader -o -d data.csv -t table_name -H
 ```
 
-
 ## テーブルの自動作成 {#automatic-table-creation}
 
-入力時の自動作成を設定します。
+テーブルの自動作成に関するオプションです。
 
 オプション：
 
-```
--C：入力時にテーブルを自動作成。列名は c0、c1、...、型は VARCHAR(32767)
--H：CSV ヘッダーを列名として使用
-```
+- `-C`：インポート時にテーブルを自動作成します。列名は c0、c1、... の順に生成され、型は `varchar(32767)` です。
+- `-H`：インポート時に CSV ヘッダーを列名として使用します。
 
 例：
 
@@ -129,18 +120,15 @@ machloader -i -d data.csv -t table_name -C
 machloader -i -d data.csv -t table_name -C -H
 ```
 
-
 ## CSV 以外の形式 {#files-not-csv-format}
 
-CSV 以外のファイルには、区切り文字を設定します。
+CSV 以外の形式のファイルに使用する区切り文字を設定します。
 
 オプション：
 
-```
--D：フィールド区切り文字を指定
--n：レコード区切り文字を指定
--e：フィールドの囲み文字を指定
-```
+- `-D`：フィールドの区切り文字を指定します。
+- `-n`：レコードの区切り文字を指定します。
+- `-e`：フィールドの囲み文字を指定します。
 
 例：
 
@@ -151,13 +139,11 @@ machloader -o -d data.txt -t table_name -D '^' -n '\n' -e '"'
 
 ## 入力モードの指定 {#specify-input-mode}
 
-インポート（-i）には REPLACE と APPEND があり、既定は APPEND です。REPLACE は既存データを削除するため、注意してください。
+インポート（`-i`）には `replace` と `append` の 2 つのモードがあり、既定は `append` です。`replace` は既存データを削除するため、注意して使用してください。
 
 オプション：
 
-```
--m：インポートモードを指定
-```
+- `-m`：インポートモードを指定します。
 
 例：
 
@@ -167,16 +153,14 @@ machloader -i -d data.csv -t table_name -m replace
 
 ## 接続情報の指定 {#specify-connection-information}
 
-サーバー IP、ユーザー、パスワードを個別に指定します。
+サーバー IP、ポート、ユーザー、パスワードを個別に指定します。
 
 オプション：
 
-```
--s：サーバー IP（既定値 127.0.0.1）
--P：ポート（既定値 5656）
--u：ユーザー名（既定値 SYS）
--p：パスワード（既定値 MANAGER）
-```
+- `-s`：サーバー IP アドレスを指定します（既定値：127.0.0.1）。
+- `-P`：サーバーのポート番号を指定します（既定値：5656）。
+- `-u`：接続ユーザー名を指定します（既定値：SYS）。
+- `-p`：接続ユーザーのパスワードを指定します（既定値：MANAGER）。
 
 例：
 
@@ -186,14 +170,12 @@ machloader -i -s 192.168.0.10 -P 5656 -u mach -p machbase -d data.csv -t table_n
 
 ## ログファイルの作成 {#create-log-file}
 
-machloader の実行ログと、入力に失敗した行を記録するbad-dataファイルを作成します。
+machloader の実行ログファイルと bad-data ファイルを作成します。
 
 オプション：
 
-```
--b：インポートに失敗したデータの出力ファイル
--l：入力に失敗したデータとエラーメッセージのログファイル
-```
+- `-b`：インポートに失敗した行を記録する bad-data ファイル名を指定します。
+- `-l`：インポートに失敗した行とエラーメッセージを記録する実行ログファイル名を指定します。
 
 例：
 
@@ -203,15 +185,13 @@ machloader -i -d data.csv -t table_name -b table_name.bad -l table_name.log
 
 ## スキーマファイルの作成 {#create-schema-file}
 
-スキーマファイルを作成できます。型の形式を変更する場合や、テーブルとファイルで列数が異なる場合も、スキーマで対応付けて入出力できます。
+machloader のスキーマファイルを作成できます。スキーマファイルを使用すると、データ型の形式を変更する場合や、テーブルの列数とデータファイルのフィールド数が異なる場合もインポート、エクスポートできます。
 
 オプション：
 
-```
--c：スキーマファイルを作成
--t：テーブル名を指定
--f：スキーマファイル名を指定
-```
+- `-c`：スキーマファイルを作成します。
+- `-t`：テーブル名を指定します。
+- `-f`：作成するスキーマファイル名を指定します。
 
 例：
 
@@ -222,15 +202,15 @@ machloader -c -t table_name -f table_name.fmt -a
 
 ## スキーマファイルの日時形式 {#set-datetime-format-in-schema-file}
 
-DATEFORMAT で日時形式を指定します。
+`DATEFORMAT` オプションで日時形式を指定できます。
 
-構文：
+すべての日時列に設定する構文：
 
 ```
-#すべての日時列に設定
 DATEFORMAT <dateformat>
 ```
-## 日時列ごとの設定 {#set-for-individual-datetime-column}
+
+日時列ごとに設定する構文：
 
 ```
 DATEFORMAT <column_name> <format>
@@ -239,7 +219,7 @@ DATEFORMAT <column_name> <format>
 例：
 
 ```
--- datetest.fmt で、datetest.csv の各列の日時形式を指定
+-- Set dateformat for each field in datetest.csv file in the schema file (datetest.fmt).
 datetest.fmt
 table datetest
 {
@@ -253,7 +233,7 @@ datetest.csv
 2017/02/20 11:05:23,2017 20 02 11:05:23
 2017/02/20 11:06:34,2017 20 02 11:06:34
  
--- datetest.csv を入力して結果を確認
+-- Import datetest.csv file and check input data.
 machloader -i -f datetest.fmt -d datetest.csv
 -----------------------------------------------------------------
 Machbase Data Import/Export Utility.
@@ -276,13 +256,13 @@ Elapsed time: 0.000
 
 ## IGNORE {#ignore}
 
-CSV の特定のフィールドを入力しない場合、fmt ファイルで IGNORE を指定します。
-ignoretest.csv は 3 フィールドあります。最後のフィールドが不要なら、fmt ファイルでその位置に IGNORE を指定します。
+CSV ファイルの特定のフィールドを入力しない場合は、fmt ファイルで `IGNORE` オプションを指定します。
+`ignoretest.csv` には 3 つのフィールドがあります。最後のフィールドが不要なら、fmt ファイルでその列に `IGNORE` を指定します。
 
 例：
 
 ```
--- ignoretest.fmt の最後のフィールドに IGNORE を指定
+-- Set ignore option for last field in ignoretest.fmt file.
 ignoretest.fmt
 table ignoretest
 {
@@ -296,7 +276,7 @@ ignoretest.csv
 2, "msg2", 4
  
  
--- ignoretest.csv を入力して結果を確認
+-- Import ignoretest.csv file and check input data.
 machloader -i -f ignoretest.fmt -d ignoretest.csv
 -----------------------------------------------------------------
 Machbase Data Import/Export Utility.
@@ -330,16 +310,16 @@ Elapsed time: 0.000
 
 ## テーブルの列数がファイルのフィールド数より多い場合 {#if-number-of-columns-is-more-than-number-of-fields}
 
-スキーマで指定した列だけに入力し、残りの列には NULL を格納します。
+テーブルの列数がデータファイルのフィールド数より多い場合、スキーマファイルで指定した列にだけデータを入力し、残りの列には `NULL` を格納します。
 
 ## テーブルの列数がファイルのフィールド数より少ない場合 {#if-number-of-columns-is-less-than-number-of-fields}
 
-テーブルに対応しないフィールドは IGNORE で除外する必要があります。
+テーブルの列数がデータファイルのフィールド数より少ない場合、テーブルにないフィールドは `IGNORE` オプションで除外する必要があります。
 
 例：
 
 ```
--- 最後のフィールドを IGNORE で除外して入力
+-- Exclude the input data by setting the IGNORE option on the last field.
 loader_test.fmt
 table loader_test
 {

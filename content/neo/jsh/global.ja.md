@@ -30,10 +30,10 @@ setTimeout(callback, delayMs[, ...args])
 
 ```js {linenos=table,linenostart=1,hl_lines=[2,3,4]}
 setTimeout((name, count) => {
-	console.println("Timeout with args:", name, count);
+    console.println("Timeout with args:", name, count);
 }, 50, "test", 42);
 
-// 出力：
+// Output:
 // Timeout with args: test 42
 ```
 
@@ -53,7 +53,7 @@ clearTimeout(timer)
 
 ```js {linenos=table,linenostart=1,hl_lines=[2,3]}
 const timer = setTimeout(() => {
-	console.println("should not run");
+    console.println("should not run");
 }, 100);
 
 clearTimeout(timer);
@@ -81,11 +81,11 @@ setInterval(callback, delayMs[, ...args])
 ```js {linenos=table,linenostart=1,hl_lines=[4,6]}
 let count = 0;
 const timer = setInterval(() => {
-	count++;
-	console.println("count:", count);
-	if (count >= 3) {
-		clearInterval(timer);
-	}
+    count++;
+    console.println("count:", count);
+    if (count >= 3) {
+        clearInterval(timer);
+    }
 }, 100);
 ```
 
@@ -120,10 +120,10 @@ setImmediate(callback[, ...args])
 ```js {linenos=table,linenostart=1,hl_lines=[2,3]}
 console.println("Add event loop");
 setImmediate(() => {
-	console.println("event loop called");
+    console.println("event loop called");
 });
 
-// 出力：
+// Output:
 // Add event loop
 // event loop called
 ```
@@ -151,7 +151,7 @@ clearImmediate(immediate)
 ```js {linenos=table,linenostart=1}
 console.log("Hello, World!");
 
-// 出力：
+// Output:
 // INFO  Hello, World!
 ```
 
@@ -180,7 +180,7 @@ console.log("Hello, World!");
 ```js {linenos=table,linenostart=1}
 console.print("hello", "world");
 
-// 出力：
+// Output:
 // helloworld
 ```
 
@@ -193,7 +193,7 @@ console.print("hello", "world");
 ```js {linenos=table,linenostart=1}
 console.println("hello", "world");
 
-// 出力：
+// Output:
 // hello world
 ```
 
@@ -212,7 +212,7 @@ console.printf(format, ...args)
 ```js {linenos=table,linenostart=1}
 console.printf("value=%d, name=%s\n", 42, "neo");
 
-// 出力：
+// Output:
 // value=42, name=neo
 ```
 

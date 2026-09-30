@@ -13,7 +13,7 @@ Data without any noise, in a purely theoretical sense, can only be mathematicall
 {{< tabs >}}
 {{< tab name="chart" >}}
 
-{{< figure src="../img/filter_pure.jpg" width="600px" >}}
+{{< figure src="/neo/tql/img/filter_pure.jpg" width="600px" >}}
 
 {{< /tab >}}
 {{< tab name="SCRIPT" >}}
@@ -66,7 +66,7 @@ Generally, noise tends to be higher frequency than the data we intend to observe
 {{< tabs >}}
 {{< tab name="chart" >}}
 
-{{< figure src="../img/filter_pure_noise.jpg" width="600px" >}}
+{{< figure src="/neo/tql/img/filter_pure_noise.jpg" width="600px" >}}
 
 {{< /tab >}}
 {{< tab name="SCRIPT" >}}
@@ -126,7 +126,7 @@ In databases, the stored values are a blend of the aforementioned noise, and dur
 {{< tabs >}}
 {{< tab name="chart" >}}
 
-{{< figure src="../img/filter_mix_noise.jpg" width="600px" >}}
+{{< figure src="/neo/tql/img/filter_mix_noise.jpg" width="600px" >}}
 
 {{< /tab >}}
 {{< tab name="SCRIPT" >}}
@@ -182,7 +182,7 @@ Imagine the zero-point calibration process for sensors. When we accumulate conse
 {{< tabs >}}
 {{< tab name="chart" >}}
 
-{{< figure src="../img/filter_avg.jpg" width="600px" >}}
+{{< figure src="/neo/tql/img/filter_avg.jpg" width="600px" >}}
 
 {{< /tab >}}
 {{< tab name="SCRIPT" >}}
@@ -245,7 +245,7 @@ Instead of calculating the average for the entire accumulated sample, we use a f
 {{< tabs >}}
 {{< tab name="chart" >}}
 
-{{< figure src="../img/filter_movavg.jpg" width="600px" >}}
+{{< figure src="/neo/tql/img/filter_movavg.jpg" width="600px" >}}
 
 {{< /tab >}}
 {{< tab name="SCRIPT" >}}
@@ -312,7 +312,7 @@ To address this, a common practice is to apply different weights to the most rec
 {{< tabs >}}
 {{< tab name="chart" >}}
 
-{{< figure src="../img/filter_lpf.jpg" width="600px" >}}
+{{< figure src="/neo/tql/img/filter_lpf.jpg" width="600px" >}}
 
 {{< /tab >}}
 {{< tab name="SCRIPT" >}}
@@ -379,7 +379,7 @@ Feel free to experiment with different model values and observe how the graph re
 {{< tabs >}}
 {{< tab name="chart" >}}
 
-{{< figure src="../img/filter_kalman.jpg" width="600px" >}}
+{{< figure src="/neo/tql/img/filter_kalman.jpg" width="600px" >}}
 
 {{< /tab >}}
 {{< tab name="SCRIPT" >}}

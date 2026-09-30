@@ -297,7 +297,8 @@ DELETE FROM sensors METADATA;
 DELETE FROM sensors
  WHERE name = 'TEMP_001';
 
-DELETE FROM sensors METADATA;
+DELETE FROM sensors METADATA
+ WHERE name = 'TEMP_001';
 ```
 
 ## JSON 메타데이터 컬럼
@@ -415,10 +416,10 @@ ON ships METADATA (info->'$.owner');
 DROP INDEX idx_ship_owner;
 ```
 
-생성 시 `INFO JSON INDEX(...)` 로 자동 생성된 인덱스 이름은 `SHOW INDEX` 로 확인하는 것이 가장 안전합니다.
+생성 시 `INFO JSON INDEX(...)`로 자동 생성된 인덱스 이름은 `SHOW INDEXES`로 확인하는 것이 가장 안전합니다. 개별 인덱스의 상세 정보는 `SHOW INDEX index_name`으로 확인합니다.
 
 ```sql
-SHOW INDEX idx_ship_owner;
+SHOW INDEXES;
 ```
 
 ### 인덱스 사용 시 주의사항

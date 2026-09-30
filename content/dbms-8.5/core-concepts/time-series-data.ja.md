@@ -121,9 +121,9 @@ WHERE time BETWEEN '2025-10-09 00:00:00' AND '2025-10-10 00:00:00';
 従来型は、行全体をまとめて保存します。
 
 ```
-行 1： [timestamp1, sensor_id, temp, humidity]
-行 2： [timestamp2, sensor_id, temp, humidity]
-行 3： [timestamp3, sensor_id, temp, humidity]
+Row 1: [timestamp1, sensor_id, temp, humidity]
+Row 2: [timestamp2, sensor_id, temp, humidity]
+Row 3: [timestamp3, sensor_id, temp, humidity]
 ```
 
 **課題**：AVG(temperature) でも、温度以外を含む全列を読み取ります。
@@ -186,9 +186,9 @@ UPDATE sensors SET temperature = 26.0 WHERE id = 123;  -- ✗
 時刻に基づいて自動分割します。
 
 ```
-分割 1： 2025-10-01 ～ 2025-10-07
-分割 2： 2025-10-08 ～ 2025-10-14
-分割 3： 2025-10-15 ～ 2025-10-21
+Partition 1: 2025-10-01 to 2025-10-07
+Partition 2: 2025-10-08 to 2025-10-14
+Partition 3: 2025-10-15 to 2025-10-21
 ```
 
 **利点：**

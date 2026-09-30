@@ -114,7 +114,7 @@ weight: 80
 
 タイマーの基本動作を確認します。
 
-### テーブルの作成
+### テーブルの作成 {#table-생성}
 
 ```sql
 CREATE TABLE HELLO (

@@ -400,16 +400,16 @@ CREATE LOOKUP TABLE devices (
 
 **すべての CRUD：**
 ```sql
--- 挿入
+-- Insert
 INSERT INTO devices VALUES ('sensor01', 'Sensor A', 'Building 1', 'Temperature', 'Facilities');
 
--- 更新
+-- Update
 UPDATE devices SET location = 'Building 2' WHERE device_id = 'sensor01';
 
--- 削除
+-- Delete
 DELETE FROM devices WHERE device_id = 'sensor01';
 
--- 検索
+-- Select
 SELECT * FROM devices WHERE device_type = 'Temperature';
 ```
 

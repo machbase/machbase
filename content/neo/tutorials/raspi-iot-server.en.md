@@ -88,8 +88,8 @@ sh -c "$(curl -fsSL https://docs.machbase.com/install.sh)"
 - Unarchive zip file
 
 ```sh
-$ unzip machbase-neo-{{ site.latest_version }}-linux-arm64.zip
-$ cd machbase-neo-{{ site.latest_version }}-linux-arm64
+$ unzip machbase-neo-{{< neo_latestver >}}-linux-arm64.zip
+$ cd machbase-neo-{{< neo_latestver >}}-linux-arm64
 ```
 
 - Start machbase-neo
@@ -145,12 +145,10 @@ While running writing process, open another terminal and run sql the check the r
 The option `--tz local` is for displaying TIME field in local time zone instead of UTC.
 
 ```
-./machbase-neo shell walk --tz local 'select * from example order by time desc'
+./machbase-neo shell sql --tz local 'select * from example order by time desc limit 10'
 ```
 
-Press `r` key to re-execute query to refresh new data.
-
-![walk](/images/raspi-walk.gif)
+Run the same command again to see the newly written data.
 
 
 ### Read data from application

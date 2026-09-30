@@ -69,4 +69,4 @@ CHART(
 {{< /tab >}}
 {{< /tabs >}}
 
-{{< figure src="../../img/line_airpassengers.jpg" width="500" >}}
+{{< figure src="/neo/tql/chart/img/line_airpassengers.jpg" width="500" >}}

@@ -77,8 +77,9 @@ retention policy.
 Standard Edition accepts 0–43200; 0 disables it. Cluster accepts only 0,
 so the following enablement exercise is Standard Edition only.
 
-Within the interval measured against server time, rows with identical tags,
-axis values, and DATA values are duplicates. Detection occurs during index
+Within the interval measured against server time, rows with identical tags and
+axis values are duplicates even when their DATA values differ; the row that
+arrived first is kept. Detection occurs during index
 processing and duplicate cleanup, so an Append success count is not an
 already-deduplicated count. Late data outside the interval may not be
 deduplicated as expected. This does not replace business-key uniqueness constraints.

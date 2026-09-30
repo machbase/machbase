@@ -107,7 +107,7 @@ CREATE TAG TABLE conveyor_profile (
 **Rollup Statistics (Time Axis Only)**:
 ```sql
 -- Raw data
-INSERT INTO sensors VALUES ('sensor01', NOW, 25.3);
+INSERT INTO sensors (sensor_id, time, value) VALUES ('sensor01', NOW, 25.3);
 
 -- Hourly statistics through the rollup expression
 SELECT rollup('hour', 1, time) AS hour_time, AVG(value), COUNT(value)
@@ -122,11 +122,11 @@ instead of rollups.
 **Metadata Layer**:
 ```sql
 -- Separate table for sensor metadata
-SELECT * FROM sensors._META;
+SELECT * FROM sensors METADATA;
 
 -- Add custom metadata columns
-ALTER TABLE sensors._META ADD COLUMN location VARCHAR(100);
-UPDATE sensors._META SET location = 'Building A' WHERE name = 'sensor01';
+ALTER TABLE sensors METADATA ADD COLUMN (location VARCHAR(100));
+UPDATE sensors METADATA SET location = 'Building A' WHERE name = 'sensor01';
 ```
 
 **Performance**:

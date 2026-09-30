@@ -43,7 +43,7 @@ MQTTでデータベースクエリを実行するには、`db/query`トピック
 ```json
 {
     "q": "select name,time,value from example where name = ? limit ?",
-    "p": ["wave.sin", 5],
+    "p": ["my-car", 5],
     "format": "csv",
     "reply": "db/reply/my_query"
 }
@@ -54,7 +54,7 @@ MQTTでデータベースクエリを実行するには、`db/query`トピック
 ```json
 {
     "q": "select name,time,value from example where name = :name limit :n",
-    "p": {"name": "wave.sin", "n": 5},
+    "p": {"name": "my-car", "n": 5},
     "format": "csv",
     "reply": "db/reply/my_query"
 }

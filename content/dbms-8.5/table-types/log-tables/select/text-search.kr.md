@@ -114,9 +114,9 @@ Machbaseは円柱状のDBMSです
 [1] row(s) selected.
 ```
 
-입력 데이터가 "대한민국"일 때, "대한," "한민," "민국" 세 단어가 인덱스에 기록됩니다. 따라서 "대한" 또는 "민국" 키워드로 "대한민국"을 검색할 수 있습니다.
+입력 데이터가 `대한민국`일 때 `대한`, `한민`, `민국` 세 단어가 인덱스에 기록됩니다. 따라서 `대한` 또는 `민국` 키워드로 `대한민국`을 검색할 수 있습니다.
 
-기본적으로 검색 문에 입력된 키워드는 AND 조건으로 검색되므로 세 단어만 입력해도 결과가 매우 정확하게 표시됩니다. 예를 들어, 검색 대상 키워드가 "컴퓨터 활용 가이드"인 경우 "컴퓨터", "활용", "가이드" 세 단어가 AND 조건으로 설정됩니다.
+기본적으로 검색 문에 입력된 키워드는 AND 조건으로 검색되므로 세 단어만 입력해도 결과가 매우 정확하게 표시됩니다. 예를 들어, 검색 대상 키워드가 `컴퓨터 활용 가이드`인 경우 `컴퓨터`, `활용`, `가이드` 세 단어가 AND 조건으로 설정됩니다.
 
 ## ESEARCH
 
@@ -130,7 +130,7 @@ ESEARCH pattern;
 ```
 
 ```sql
-Mach> CREATE TABLE esearch_table(id INTEGER, name VARCHAR(20), data VARCHAR(40));
+Mach> CREATE TABLE esearch_table(id INTEGER, name VARCHAR(100), data VARCHAR(40));
 Created successfully.
 
 Mach> INSERT INTO esearch_table VALUES(1, 'machbase', 'Real-time search technology');
@@ -243,7 +243,7 @@ LIKE    pattern;
 예제:
 
 ```sql
-Mach> CREATE TABLE like_table (id INTEGER, name VARCHAR(20), data VARCHAR(40));
+Mach> CREATE TABLE like_table (id INTEGER, name VARCHAR(100), data VARCHAR(40));
 Created successfully.
  
 Mach> INSERT INTO like_table VALUES(1, 'machbase', 'Real-time search technology');

@@ -7,7 +7,7 @@ toc: true
 
 ## JDBC の概要 {#jdbc-overview}
 
-JDBC（Java DataBase Connectivity）は、Java でデータベースを操作するためのインターフェースです。SQL リクエストを構築するオブジェクト指向のクラスを定義し、さまざまなリレーショナルデータベースに共通の API を提供します。JDBC ドライバーを利用すると、接続先の DB を変更しても共通の処理を再利用できます。
+Java プログラミング言語で作られたデータベース操作インターフェースの集合を、JDBC（Java DataBase Connectivity）と呼びます。さまざまなリレーショナルデータベースに一貫したインターフェースを提供する API の集合で、プログラマーが SQL リクエストを構築するために使う一連のオブジェクト指向のクラスを定義しています。つまり、JDBC ドライバーさえ提供されていれば、どのデータベースを使用してもコードを変更せずにそのまま適用できる利点があります。
 
 
 ## 標準 JDBC 機能 {#standard-jdbc-functions}
@@ -112,7 +112,7 @@ DBMS Standard のソースは、次の公開オプションを処理します。
 void setIpv4(int ind, String ipString)
 ```
 
-PreparedStatement に IPv4 アドレスを設定します。
+PreparedStatement で IPv4 アドレス型の値を入力するための関数です。
 
 列インデックスと IPv4 文字列を引数に取ります。
 
@@ -122,7 +122,7 @@ PreparedStatement に IPv4 アドレスを設定します。
 void setIpv6(int ind, String ipString)
 ```
 
-PreparedStatement に IPv6 アドレスを設定します。
+PreparedStatement で IPv6 アドレス型の値を入力するための関数です。
 
 列インデックスと IPv6 文字列を引数に取ります。
 
@@ -144,7 +144,7 @@ int executeAppendData(ResultSetMetaData rsmd, ArrayList aData)
 
 Statement の Append プロトコルでデータを入力します。
 
-executeAppendOpen の ResultSet メタデータと入力データを受け取ります。送信バッファーへ格納した場合は 1、バッファーを Machbase へ送信した場合は 2 を返します。1 と 2 はどちらも成功です。
+executeAppendOpen が返した ResultSet のメタデータと入力データを引数に取ります。送信バッファーへ格納した場合は 1、送信バッファーが満杯になって Machbase へ送信した場合は 2 を返します。1 と 2 はどちらも成功です。
 
 ### executeAppendDataByTime {#executeappenddatabytime}
 
@@ -154,7 +154,7 @@ int executeAppendDataByTime(ResultSetMetaData rsmd, long aTime, ArrayList aData)
 
 Statement の Append プロトコルで、時刻を指定してデータを入力します。
 
-executeAppendOpen の ResultSet メタデータ、指定するタイムゾーンの時刻値、入力データを受け取ります。送信バッファーに格納した場合は 1 を返します。
+executeAppendOpen が返した ResultSet のメタデータ、設定する特定の時刻の値、入力データを引数に取ります。送信バッファーに格納した場合は 1 を返します。
 
 ### executeAppendFlush {#executeappendflush}
 
@@ -212,6 +212,7 @@ Statement の Append プロトコルで失敗した件数を取得します。
 ## アプリケーション開発 {#application-development}
 
 ### JDBC ライブラリーの確認 {#jdbc-library-installation-check}
+
 $MACHBASE_HOME/lib に machbase.jar があることを確認します。
 
 ```bash
@@ -262,6 +263,7 @@ clean:
 ```
 
 ### コンパイルとリンク {#compile-and-link}
+
 次のように make を実行します。
 
 ```bash
@@ -277,7 +279,8 @@ Maven で Machbase JDBC（machjdbc）をプロジェクトに追加できます�
 
 ### machjdbc の追加と使用 {#import-and-use-machjdbc}
 
-`pom.xml` の `<dependencies>` に次の定義を追加します。
+machjdbc をプロジェクトに追加するには、`pom.xml` を開き、`<dependencies>` タグ内に次の内容を追加します。
+
 ```
 <dependency>
     <groupId>com.machbase</groupId>
@@ -285,21 +288,23 @@ Maven で Machbase JDBC（machjdbc）をプロジェクトに追加できます�
     <version>{{< jdbc_version >}}</version>
 </dependency>
 ```
+
 > {{< jdbc_version >}} は Maven Central の最新バージョンに置き換えられます。
 <br>
 
-ソースでは、次の `import` 文で使用できます。
+これで、次のように `import` 文を使ってソースコードで machjdbc を使用できます。
+
 ```
 import com.machbase.jdbc.*;
 ```
+
 <br><br>
 
 ## JDBC のサンプル {#jdbc-sample}
 
 ### 接続の例 {#connection-example}
 
-Machbase JDBC でサーバーに接続する例です。ファイル名は Sample1Connect.java です。
-
+Machbase JDBC ドライバーを使って Machbase サーバーに接続する例を作成します。ソースファイル名は Sample1Connect.java です。
 
 > **ヒント**：_arrival_time は既定では表示されません。<br>
 > 表示するには、接続文字列に show_hidden_cols=1 を追加します。<br><br>
@@ -378,11 +383,12 @@ machbase JDBC connected.
 
 ### データの挿入と取得（1）直接実行 {#data-input-and-output-example-1-direct-io}
 
-JDBC でデータを挿入し、取得する例です。
+Machbase JDBC ドライバーを使ってデータを入力し、出力する例を作成します。
 
-ファイル名は Sample2Insert.java です。
-まず machsql で必要なテーブルを作成します。
-この例は sample_table を事前に作成します。
+ソースファイル名は Sample2Insert.java です。
+
+まず、machsql プログラムで必要なテーブルを作成します。
+この例では、sample_table というテーブルを事前に作成してからサンプルコードを実行します。
 
 ```bash
 [mach@localhost jdbc]$ machsql
@@ -565,9 +571,9 @@ d1: -26208, d2: -1717986912, d3: -3689348814741910320, f1: 1.2345679E-28, f2: 1.
 
 ### データの挿入と取得（2）PreparedStatement {#data-input-and-output-example-2-preparedstatement-input-used}
 
-PreparedStatement で入力する例です。
+PreparedStatement を使ってデータを入力し、出力する例を作成します。
 
-ファイル名は Sample3PrepareStmt.java です。
+ソースファイル名は Sample3PrepareStmt.java です。
 
 ```java
 import java.util.*;
@@ -650,7 +656,7 @@ public class Sample3PrepareStmt
                     System.out.println( i+" record inserted.");
                 }
 
-                //日時形式：YYYY-MM-DD HH24:MI:SS mmm:uuu:nnnn
+                //date type format : YYYY-MM-DD HH24:MI:SS mmm:uuu:nnnn
                 String query = "SELECT d1, d2, d3, f1, f2, name, text, bin, to_hex(bin), v4, v6, to_char(dt,'YYYY-MM-DD HH24:MI:SS mmm:uuu:nnn') as dt from SAMPLE_TABLE";
                 ResultSet rs = stmt.executeQuery(query);
                 while( rs.next () )
@@ -711,7 +717,7 @@ public class Sample3PrepareStmt
 
 用意した Makefile でコンパイルし、実行します。
 
-Sample2Insert.java で入力したデータも一緒に表示されます。
+Sample2Insert.java で入力したデータも一緒に出力される点に注意してください。
 
 ```bash
 [mach@localhost jdbc]$ make
@@ -797,9 +803,10 @@ name: id-1, text: name-1, bin: aabbccddeeff, hexbin: 616162626363646465656666, v
 
 Machbase JDBC は、大量データを高速入力する Append プロトコルをサポートします。
 
-使用例を示します。
-前の例の sample_table を使用します。
-ファイル名は Sample4Append.java です。
+Append プロトコルの使用例を示します。
+前の例で使用した sample_table をそのまま使用します。
+
+ソースファイル名は Sample4Append.java です。
 `data.txt` の内容を sample_table に入力します。
 実行前に `make_data_file` ターゲットで `data.txt` を作成してください。
 
@@ -962,7 +969,7 @@ public class Sample4Append
 }
 ```
 
-APPEND 時の日時データは、long 型のナノ秒時刻へ変換する必要があります。
+Append を行う際、日付型のデータは必ず long 型のナノ秒単位の時刻に変換してから送信する必要があります。
 
 ```bash
 [mach@localhost jdbc]$ make run_sample4
@@ -979,7 +986,7 @@ timegap 6905594 in microseconds, 100000 records
 8688.61 records/second
 ```
 
-1 万件ごとにドット（.）を表示し、入力時間を確認できます。
+1 万件ごとにドット（.）を表示し、入力にかかった時間を確認できます。
 
 ```bash
 #machsql で実際の入力件数を確認

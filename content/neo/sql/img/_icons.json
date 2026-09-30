@@ -1,0 +1,40 @@
+[
+ {
+  "file": "sql_run_icon.png",
+  "source": {
+   "screen": "SQL 에디터 칸 제목 줄",
+   "element": "맨 왼쪽 버튼(툴팁 Run code)",
+   "url": "http://127.0.0.1:5654/web/ui",
+   "viewport": "1100×800",
+   "dpr": 2
+  },
+  "crop": {
+   "x": 64,
+   "y": 42,
+   "w": 36,
+   "h": 36,
+   "padding": 4
+  },
+  "size": "72×72",
+  "capturedAt": "2026-09-17T04:53:28.128Z"
+ },
+ {
+  "file": "sql_download_icon.png",
+  "source": {
+   "screen": "SQL 결과 칸 제목 줄",
+   "element": "'row number' 버튼 오른쪽 버튼(툴팁 Download CSV)",
+   "url": "http://127.0.0.1:5654/web/ui",
+   "viewport": "1100×800",
+   "dpr": 2
+  },
+  "crop": {
+   "x": 988,
+   "y": 42,
+   "w": 36,
+   "h": 36,
+   "padding": 4
+  },
+  "size": "72×72",
+  "capturedAt": "2026-09-17T04:53:28.162Z"
+ }
+]

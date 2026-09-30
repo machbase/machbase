@@ -348,7 +348,7 @@ TOP_K(value, k)
 
 ```sql
 SELECT TOP_K(alarm_code, 3) FROM event_log;
--- 結果例: 101:532,205:317,301:90
+-- Example result: 101:532,205:317,301:90
 ```
 
 ---
@@ -372,7 +372,7 @@ SELECT PERCENTILE_CONT(latency_ms, 0.95) AS p95,
        PERCENTILE_DISC(latency_ms, 0.50) AS p50
 FROM api_log;
 
--- 短縮形
+-- Shorthand
 SELECT P05(response_ms), P95(response_ms) FROM web_log;
 ```
 

@@ -147,26 +147,6 @@ const process = require('process');
 process.exit(-1);
 ```
 
-
-## which()
-
-`PATH`에서 JavaScript 명령을 찾아 해석된 파일 경로를 반환합니다.
-
-명령에 `.js` 확장자가 없으면 자동으로 추가됩니다.
-
-<h6>사용 형식</h6>
-
-```js
-which(command)
-```
-
-<h6>사용 예시</h6>
-
-```js {linenos=table,linenostart=1}
-const process = require('process');
-console.println(process.which('echo')); // 예: /sbin/echo.js
-```
-
 ## expand()
 
 문자열에서 `$HOME`, `${HOME}` 같은 환경 변수를 확장합니다.
@@ -195,7 +175,6 @@ JSH 런타임 환경 객체입니다.
 const process = require('process');
 console.println(process.env.get('HOME'));
 ```
-
 
 ## exec()
 
@@ -239,6 +218,11 @@ execString(source, ...args)
 
 <h6>사용 예시</h6>
 
+```js {linenos=table,linenostart=1}
+const process = require('process');
+const code = process.execString("console.println('hello from execString')");
+console.println('exit code:', code);
+```
 
 ## hrtime()
 
@@ -303,7 +287,7 @@ console.println(Array.isArray(diff), diff.length);
 Windows에서 `process.kill(pid, 'SIGINT')`는 Unix의 `kill(2)`처럼 실제 시그널을 직접 보내는 동작이 아닙니다.
 대신 대상 프로세스 그룹이 `SIGINT`에 가까운 인터럽트로 관찰할 수 있도록 interrupt 성격의 console control event 전달을 시도합니다.
 이 동작은 Windows에서 Node.js interrupt semantic에 가장 가깝게 맞춘 것이지만 best-effort입니다.
-즉, 대상이 콘솔에 연결된 프로세스 그룹이어야 하며 Windows가 control event를 라우팅할 수 없는 경우 실패할 수 있습니다.
+특히 대상이 콘솔에 연결된 프로세스 그룹이어야 하며 Windows가 control event를 라우팅할 수 없는 경우 실패할 수 있습니다.
 
 Windows에서 `SIGTERM`, `SIGQUIT`, `SIGKILL`은 Unix처럼 서로 다른 실제 시그널이라기보다 종료 요청으로 처리됩니다.
 
@@ -432,7 +416,7 @@ console.println(process.ppid);
 
 `process`는 `EventEmitter`처럼 시그널 이벤트를 받을 수 있습니다.
 
-현재 문서 시점 기준으로 다음 시그널 이름을 지원합니다.
+이 문서 작성 시점 기준으로 다음 시그널 이름을 지원합니다.
 
 - `SIGHUP`
 - `SIGINT`
@@ -446,7 +430,7 @@ console.println(process.ppid);
 - `SIGALRM`
 - `SIGTERM`
 
-시그널 이벤트 리스너는 대소문자를 구분하지 않습니다.
+시그널 이벤트 리스너 이름은 대소문자를 구분하지 않습니다.
 이벤트 이름은 `SIG` 접두어를 포함한 형태만 지원합니다.
 
 예를 들어 아래 이름들은 동일하게 동작합니다.
@@ -466,7 +450,7 @@ console.println(process.ppid);
 const process = require('process');
 
 process.on('sigint', () => {
-  console.println('caught SIGINT');
+    console.println('caught SIGINT');
 });
 ```
 
@@ -560,7 +544,7 @@ which(command)
 
 ```js {linenos=table,linenostart=1}
 const process = require('process');
-console.println(process.which('echo')); // 예: /sbin/echo.js
+console.println(process.which('echo')); // e.g. /sbin/echo.js
 ```
 
 ## dispatchEvent()
@@ -599,25 +583,7 @@ dumpStack(depth)
 ```js {linenos=table,linenostart=1}
 const process = require('process');
 function trace() {
-  process.dumpStack(5);
+    process.dumpStack(5);
 }
 trace();
-```
-
-## expand()
-
-문자열에서 `$HOME`, `${HOME}` 같은 환경 변수를 확장합니다.
-
-<h6>사용 형식</h6>
-
-```js
-expand(value)
-```
-
-<h6>사용 예시</h6>
-
-```js {linenos=table,linenostart=1}
-const process = require('process');
-console.println(process.expand('$HOME/file.txt'));
-console.println(process.expand('${HOME}/../lib/file.txt'));
 ```

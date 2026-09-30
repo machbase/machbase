@@ -52,4 +52,4 @@ CHART(
 {{< /tab >}}
 {{< /tabs >}}
 
-{{< figure src="../../img/basic_gauge.jpg" width="500" >}}
+{{< figure src="/neo/tql/chart/img/basic_gauge.jpg" width="500" >}}

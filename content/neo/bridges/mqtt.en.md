@@ -64,7 +64,7 @@ Available connect options
 
 | Option           | Description                          | example         |
 | :-----------     | :---------------------------------   | :-------------  |
-| `broker`         | broker address, If the broker has redundant access points, use multiple "broker" options | `broker=192.0.1.100:1883` |
+| `broker`         | broker address, If the broker has redundant access points, use multiple `broker` options | `broker=192.0.1.100:1883` |
 | `id`             | client id                            |                 |
 | `username`       | username                             |                 |
 | `password`       | password                             |                 |
@@ -78,12 +78,12 @@ Available connect options
 
 ## Send messages
 
-Run `mosuqitto_sub` with debug mode (`-d`) option.
+Run `mosquitto_sub` with the debug mode (`-d`) option.
 This will receive messages from topic 'neo/messages' via mosquitto broker
 when machbase-neo publish messages to the topic.
 
 ```sh
-mosquitto_sub -d -h 127.0.0.1 -p 1883 -i client-app -t neo/messages                                            1 ↵
+mosquitto_sub -d -h 127.0.0.1 -p 1883 -i client-app -t neo/messages
 Client client-app sending CONNECT
 Client client-app received CONNACK (0)
 Client client-app sending SUBSCRIBE (Mid: 1, Topic: neo/messages, QoS: 0, Options: 0x00)
@@ -91,7 +91,7 @@ Client client-app received SUBACK
 Subscribed (mid: 1): 0
 ```
 
-Make a *TQL* script that call the `publish()` function of the bridge.
+Make a *TQL* script that calls the `publish()` function of the bridge.
 
 {{< callout type="info">}}
 **TIMER**
@@ -99,6 +99,41 @@ This example uses `FAKE()` and execute manually for the briefness,
 the "publish" feature of bridges will be useful and powerful
 when it combines with [Timer](/neo/timer/) to send data automatically by any given schedule.
 {{< /callout >}}
+
+With the current JavaScript runtime, the following TQL sends messages to the same external broker.
+This example creates a client connection with the `mqtt` module.
+The legacy Tengo example, which uses `publish()` of the registered bridge, is kept below for reference.
+
+```js
+SCRIPT({
+  const mqtt = require('mqtt');
+  const values = [0, 2.5, 5, 7.5, 10];
+  const client = new mqtt.Client({servers: ['tcp://127.0.0.1:1883']});
+  let published = 0;
+  const timeout = setTimeout(() => client.close(), 5000);
+  client.on('open', () => {
+    for (const value of values) {
+      client.publish('neo/messages', 'The message number is ' + value, {qos: 1});
+      $.yield(value);
+    }
+  });
+  client.on('published', () => {
+    if (++published === values.length) {
+      clearTimeout(timeout);
+      client.close();
+    }
+  });
+  client.on('error', err => {
+    console.error(err);
+    clearTimeout(timeout);
+    client.close();
+  });
+})
+CSV()
+```
+
+<details>
+<summary>Legacy Tengo example (does not run on the current runtime)</summary>
 
 ```js {linenos=table,hl_lines=[4,5],linenostart=1}
 FAKE(linspace(0,10, 5))
@@ -111,10 +146,12 @@ SCRIPT("tengo", {
 CSV()
 ```
 
+</details>
+
 As soon as executing the script above the `mosquitto_sub` prints out the messages that it receives on the screen.
 
 ```sh
-mosquitto_sub -d -h 127.0.0.1 -p 1883 -i client-app -t neo/messages                                            1 ↵
+mosquitto_sub -d -h 127.0.0.1 -p 1883 -i client-app -t neo/messages
 ... omit ...
 Client client-app received PUBLISH (d0, q0, r0, m0, 'neo/messages', ... (23 bytes))
 The message number is 0
@@ -153,7 +190,7 @@ flowchart RL
 
 ### 1. Run MQTT Broker
 
-The MQTT bridge of machbase-neo should work with any MQTT broker that is compatible MQTT v3.1.1 specification.
+The MQTT bridge of machbase-neo should work with any MQTT broker that is compatible with the MQTT v3.1.1 specification.
 
 If you don't have an installed MQTT broker, get and run *mosquitto* for the demo. [https://mosquitto.org](https://mosquitto.org)
 

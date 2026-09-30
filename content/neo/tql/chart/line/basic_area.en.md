@@ -29,4 +29,4 @@ CHART(
 )
 ```
 
-{{< figure src="../../img/basic_area.jpg" width="500" >}}
+{{< figure src="/neo/tql/chart/img/basic_area.jpg" width="500" >}}

@@ -24,7 +24,7 @@ sudo useradd machbase
 [machbase@localhost ~]$ mv machbase-standard-x.x.x.official-LINUX-X86-64-release.tgz machbase_home/
 [machbase@localhost ~]$ cd machbase_home/
 [machbase@localhost machbase_home]$ tar zxf machbase-standard-x.x.x.official-LINUX-X86-64-release.tgz
-
+ 
 [machbase@localhost machbase_home]$ ls -l
 drwxrwxr-x  5 machbase machbase        64 Oct 30 16:10 3rd-party
 drwxrwxr-x  2 machbase machbase      4096 Oct 30 16:10 bin
@@ -41,7 +41,7 @@ drwxrwxr-x  2 machbase machbase      4096 Jan  2 09:37 trc
 drwxrwxr-x 10 machbase machbase       160 Oct 30 16:10 tutorials
 drwxrwxr-x  3 machbase machbase        44 Oct 30 16:10 utility
 -rw-rw-r--  1 machbase machbase 139888377 Dec 20 11:33 machbase-standard-x.x.x.official-LINUX-X86-64-release.tgz
-
+ 
 [machbase@localhost machbase_home]$
 ```
 
@@ -89,7 +89,7 @@ source .bashrc
 -rw-rw-r-- 1 machbase machbase 20914 Oct 30 16:10 machbase.conf.sample.standard
 -rw-rw-r-- 1 machbase machbase 21363 Oct 30 16:10 machbase.conf.sample.edge
 -rw-rw-r-- 1 machbase machbase   407 Oct 30 16:10 machloader.conf.sample
-
+ 
 [machbase@localhost conf]$
 ```
 
@@ -128,7 +128,7 @@ export MACHBASE_PORT_NO=7878
   -t, --licinstall                      Install the license file.
   -f, --licinfo                         Display information of installed license file.
       --home-path=path                  Specify the home path
-
+ 
 [machbase@localhost machbase_home]$
 ```
 

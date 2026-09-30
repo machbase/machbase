@@ -6,12 +6,12 @@ weight: 02
 
 ## Primitive types
 
-TQL has three types for primitive `string`, `number`, `boolean` and `time`.
+TQL has four primitive types: `string`, `number`, `boolean` and `time`.
 
 ### string
 
-Define constant strings as like traditional programming languages with quotation marks, single('), double (") and backtick.
-The backtick'ed string is useful when you need to define a string in multiple lines including quotation marks inside such as long SQL statement.
+Define constant strings with quotation marks, as in traditional programming languages: single ('), double (") and backtick. Braces can also enclose a string.
+A backtick string is useful when you need to define a string in multiple lines that includes quotation marks, such as a long SQL statement.
 
 When multi-line content contains another backtick or brace characters (`{`, `}`), use tagged raw literals to avoid boundary conflicts.
 
@@ -19,7 +19,6 @@ When multi-line content contains another backtick or brace characters (`{`, `}`)
 - Tagged brace block: `{<<TAG ... TAG}`
 
 Both forms treat the body as raw text and close at the tagged closing line.
-
 
 *Example)* Escaping single quote with backslash(`\'`)
 
@@ -38,8 +37,8 @@ CSV()
 *Example)* Use multi-lines sql statement without escaping by backtick(`)
 
 ```js {linenos=table}
-SQL( `select * 
-      from example 
+SQL( `select *
+      from example
       where name='temperature'
       limit 10` )
 CSV()
@@ -62,13 +61,13 @@ erDiagram
 MD})
 ~~~
 
-There is a user convenient way specifying JSON string in a TQL script by using double braces.
-It doesn't require quotation marks escaping.
+There is a convenient way to specify a JSON string in a TQL script by using double braces (`{{ }}`).
+It doesn't require escaping quotation marks.
 
 The two string expressions used below are equivalent.
 
 ```js {linenos=table}
-STRING({{ 
+STRING({{
     "name": "Connan",
     "hired": true,
     "company": {
@@ -80,7 +79,7 @@ CSV()
 ```
 
 ```js {linenos=table}
-STRING(`{ 
+STRING(`{
     "name": "Connan",
     "hired": true,
     "company": {
@@ -89,12 +88,11 @@ STRING(`{
     }
 }`)
 CSV()
-
 ```
 
 ### number
 
-TQL treats all numeric constants as 64bit floating number.
+TQL treats all numeric constants as 64bit floating point numbers.
 
 ```js {linenos=table}
 SQL_SELECT( 'time', 'value', from('example', 'temperature'), limit(10))
@@ -108,7 +106,7 @@ CSV()
 
 ### boolean
 
-`true` and `false`
+The boolean constants are `true` and `false`.
 
 ```js {linenos=table}
 FAKE( linspace(0, 1, 1))
@@ -117,7 +115,7 @@ CSV( heading(false) )
 
 ### time
 
-Time type values can be created by calling `time()`, `parseTime()` functions, or retrieved from `datetime` column of a SQL query result.
+Time type values can be created by calling `time()`, `parseTime()` functions, or retrieved from a `DATETIME` column of a SQL query result.
 
 ### timeZone
 
@@ -143,8 +141,6 @@ Every statement in TQL should be a function call except the literal constants of
 
 ```js
 // A comment line starts with '//'
-
-// Each statement should start from first column.
 SQL_SELECT(
     'time', 'value',
     from('example', 'temperature'),
@@ -155,15 +151,15 @@ CSV()
 
 ## SRC and SINK
 
-Every `.tql` script should start with one source statement which can generates a record or records.
-For example, `SQL()`, `SQL_SELECT()` and `SCRIPT()` that generates records with `yield()`, `yieldKey()` can be a source.
-And the last statement should be a sink statement that encode the result or write into the database.
-For example, `APPEND()`, `INSERT()` and all `CHART()` functions can be a sink.
+Every `.tql` script should start with one **source (SRC)** statement which generates a record or records.
+For example, `SQL()`, `SQL_SELECT()` and `SCRIPT()` that generates records with `$.yield()`, `$.yieldKey()` can be a source.
+And the last statement should be a **sink (SINK)** statement that encodes the result or writes it into the database.
+For example, `CSV()`, `JSON()`, `INSERT()`, `APPEND()` and all `CHART()` functions can be a sink.
 
 ## MAP functions
 
 There may be zero or more map functions between source and sink statements.
-The names of all map functions are with capital letters, in contrast lower case camel notation functions are used as arguments of the other map functions.
+The names of all map functions are in capital letters; in contrast, lower case camel notation functions are used as arguments of the other map functions.
 
 ```js {linenos=table,hl_lines=["6-7"],linenostart=1}
 SQL_SELECT(
@@ -178,11 +174,11 @@ CSV()
 
 ## Param
 
-When external applications call a *.tql script via HTTP it can provide arguments as query parameters.
-The function `param()` is purposed to retrieve the values from query parameters in TQL script.
+When external applications call a `.tql` script via HTTP, they can provide arguments as query parameters.
+The function `param()` retrieves the values of the query parameters in a TQL script.
 
-If the script below saved as 'hello2.tql', applications can call this script by HTTP GET method with `http://127.0.0.1:5654/db/tql/hello2.tql?name=temperature&count=10`.
-Then `param('name')` returns "temperature", `param('count')` is 10, as expected.
+If the script below is saved as `hello2.tql`, applications can call it by HTTP GET method with `http://127.0.0.1:5654/db/tql/hello2.tql?name=temperature&count=10`.
+Then `param('name')` returns `"temperature"` and `param('count')` returns the string `"10"`.
 
 ```js {linenos=table}
 SQL_SELECT(
@@ -199,7 +195,7 @@ CSV()
 
 ### Use `param()`
 
-Save the code below as `example.tql`.
+Save the code below as `param.tql`.
 
 ```js
 SQL( `select * from example where name = ?`, param('name'))
@@ -211,7 +207,7 @@ CSV()
 Invoke the tql file with `curl` command with query parameter.
 
 ```
-curl http://127.0.0.1:5654/db/tql/param.tql?name=TAG0
+curl "http://127.0.0.1:5654/db/tql/param.tql?name=TAG0"
 ```
 
 {{% /steps %}}
@@ -239,7 +235,7 @@ CSV()
 ### Modulo Operator
 
 The modulo operator (also known as the modulus operator), denoted by `%`, is an arithmetic operator.
-The modulo division operator produces the remainder of an integer division which is also called the modulus of the operation.
+It produces the remainder of an integer division.
 
 ```js {linenos=table,hl_lines=[2]}
 FAKE(arrange(1, 10, 1))
@@ -255,7 +251,7 @@ CSV()
 
 ### Concatenation
 
-If operator `+` takes strings as its operands, it returns concatenated string.
+If operator `+` takes strings as its operands, it returns the concatenated string.
 
 ```js {linenos=table,hl_lines=[4]}
 FAKE(json({
@@ -279,7 +275,6 @@ hello,world,hello world?
 | Greater Than or Equal  | `>=` | Test whether the value of the left operand is greater than or equal to the value of the right |
 | Less Than              | `<`  | Test whether the value of the left operand is less than the value of the right |
 | Less Than or Equal     | `<=` | Test whether the value of the left operand is less than or equal to the value of the right |
-
 
 ```js {linenos=table,hl_lines=[2]}
 FAKE(linspace(1, 5, 5))
@@ -341,10 +336,10 @@ CSV()
 
 ### Ternary Operator
 
-The ternary operator `? :` is kind of similar to the if-else statements in other programming languages
-as it follows the same algorithm as of if-else statement
+The ternary operator `? :` is similar to the if-else statement in other programming languages,
+as it selects a value by the same logic as an if-else statement.
 
-- Whether param('name') is defined
+- Whether `param('name')` is defined
 
 ```js {linenos=table,hl_lines=[4]}
 SQL_SELECT(
@@ -375,8 +370,8 @@ CSV()
 
 ### Nil coalescing
 
-`??` operator takes left and right operand. if left operand is defined it returns value of it, if left operand is not defined it returns right operand instead.
-The example below shows the common use case of the `??` operator. If caller did not provide query param variables, the right side operand will be taken as a default value.
+The `??` operator takes a left and a right operand. If the left operand is defined, it returns its value; otherwise it returns the right operand.
+The example below shows the common use case of the `??` operator. If the caller did not provide query parameters, the right operand is taken as the default value.
 
 ```js {linenos=table,hl_lines=[3]}
 SQL_SELECT(
@@ -388,7 +383,7 @@ CSV()
 ```
 
 > {{< figure src="/images/copy_addr_icon.jpg" width="24px" >}}
-> When tql script is saved, the editor shows the link icon on the top right corner, click it to copy the address of the script file.
+> When a TQL script is saved, the editor shows the link icon on the top right corner. Click it to copy the address of the script file.
 
 **Example**
 

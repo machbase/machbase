@@ -117,7 +117,7 @@ __For example__
 
 ```sh
 $ docker run -d                           \
-             -p 5652-5652:5652-5656/tcp   \
+             -p 5652-5656:5652-5656/tcp   \
              --name machbase-neo          \
              machbase/machbase-neo
 ```

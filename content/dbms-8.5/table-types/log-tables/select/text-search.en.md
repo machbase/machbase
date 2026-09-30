@@ -114,7 +114,7 @@ Machbaseは円柱状のDBMSです
 [1] row(s) selected.
 ```
 
-When the input data is "대한민국", three words of "대한," "한민," and "민국" are recorded in the index. Therefore, you can search for "대한민국" with the keywords "대한" or "민국".
+When the input data is `대한민국`, three words, `대한`, `한민`, and `민국`, are recorded in the index. Therefore, you can search for `대한민국` with the keyword `대한` or `민국`.
 
 Basically, the keywords entered in the search statement are searched by the AND condition, so even if you enter only three words, the result is displayed very accurately. For example, if the search target keyword is a "computer utilization guide", the three words "computer", "utilization", and "guide" are set as AND conditions.
 
@@ -130,7 +130,7 @@ ESEARCH pattern;
 ```
 
 ```sql
-Mach> CREATE TABLE esearch_table(id INTEGER, name VARCHAR(20), data VARCHAR(40));
+Mach> CREATE TABLE esearch_table(id INTEGER, name VARCHAR(100), data VARCHAR(40));
 Created successfully.
 
 Mach> INSERT INTO esearch_table VALUES(1, 'machbase', 'Real-time search technology');
@@ -243,7 +243,7 @@ LIKE    pattern;
 Example:
 
 ```sql
-Mach> CREATE TABLE like_table (id INTEGER, name VARCHAR(20), data VARCHAR(40));
+Mach> CREATE TABLE like_table (id INTEGER, name VARCHAR(100), data VARCHAR(40));
 Created successfully.
  
 Mach> INSERT INTO like_table VALUES(1, 'machbase', 'Real-time search technology');

@@ -13,6 +13,7 @@ The current DBMS manual provides full Markdown text and a page-level JSON index.
 |------|-----|
 | English | [llms-full.txt](/llms-full.txt) |
 | Korean | [llms-full.txt](/kr/llms-full.txt) |
+| Japanese | [llms-full.txt](/ja/llms-full.txt) |
 
 Full text concatenates published DBMS pages in navigation weight order. Each page boundary includes
 the title, language, and canonical URL. The body preserves source Markdown.
@@ -23,6 +24,7 @@ the title, language, and canonical URL. The body preserves source Markdown.
 |------|-----|
 | English | [llms-chunks.json](/llms-chunks.json) |
 | Korean | [llms-chunks.json](/kr/llms-chunks.json) |
+| Japanese | [llms-chunks.json](/ja/llms-chunks.json) |
 
 Schema version 1 has the following top-level fields.
 
@@ -31,7 +33,7 @@ Schema version 1 has the following top-level fields.
 | `schema_version` | JSON contract version; currently `1` |
 | `product` | `Machbase DBMS` |
 | `manual_version` | Product version covered by the manual |
-| `language` | `en` or `kr` |
+| `language` | `en`, `kr`, or `ja` |
 | `document_count` | Size of the `documents` array |
 | `documents` | Document metadata array |
 

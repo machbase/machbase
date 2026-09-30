@@ -24,4 +24,4 @@ CHART(
 )
 ```
 
-{{< figure src="../../img/cartesian_coord.jpg" width="500" >}}
+{{< figure src="/neo/tql/chart/img/cartesian_coord.jpg" width="500" >}}

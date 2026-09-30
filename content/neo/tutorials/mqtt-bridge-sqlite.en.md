@@ -18,57 +18,59 @@ We assume that the `mosquitto` server is running on `127.0.0.1:1883`.
 Create a TQL file to handle incoming messages from the external MQTT broker.
 Currently, the TQL script does not perform any significant processing; it merely receives the message payload and discards it.
 
-Create a `/mqtt-bridge.tql` file using the file explorer in the machbase-neo web UI with the following content:
+Select `TQL` in a new tab to open the editor, and enter the following content.
 
 ```js
 STRING(payload())
 DISCARD()
 ```
 
-{{< figure src="../img/mqtt-sqlite-bridge-tql-1.png" width="600" >}}
+Click the <img src="/neo/tql/img/tql_save_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px"> icon in the editor header, enter `mqtt-bridge.tql` in `File name`, and click `Apply`.
+
+{{< figure src="/neo/tutorials/img/mqtt-sqlite-bridge-tql-1.png" width="600" >}}
 
 ## Define MQTT bridge
 
-Let's set up a bridge "mosquitto" in the machbase-neo as a MQTT bridge.
+Let's set up an MQTT bridge `mosquitto` in machbase-neo. Click the <img src="/neo/bridges/img/bridge_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px"> icon in the left menu, click the <img src="/neo/bridges/img/bridge_add_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px"> icon in the `BRIDGE` header, enter the values below, and click `Create`.
 
 - Name: `mosquitto`
 - Type: `MQTT`
 - Connection String: `broker=127.0.0.1:1883 cleansession=true`
 
-If you need more options for the connection string, please refer to the document [here](/neo/bridges/21.mqtt/).
+If you need more options for the connection string, please refer to the document [here](/neo/bridges/mqtt/).
 
-{{< figure src="../img/mqtt-sqlite-bridge-mqtt.png" width="600" >}}
+{{< figure src="/neo/tutorials/img/mqtt-sqlite-bridge-mqtt.png" width="600" >}}
 
-Test the connectivity by clicking the "Test" button as shown below. If you encounter any errors, adjust the "Connection String" to ensure a successful connection.
+Select `mosquitto` in the `BRIDGE` list and click `Test` to check the connectivity. If you encounter any errors, adjust the `Connection String` until the connection succeeds.
 
-{{< figure src="../img/mqtt-sqlite-bridge-mqtt-test.png" width="600" >}}
+{{< figure src="/neo/tutorials/img/mqtt-sqlite-bridge-mqtt-test.png" width="600" >}}
 
 
 ## Attach TQL to the MQTT bridge
 
 After defining and testing mosquitto bridge, we can attatch the `mqtt-bridge.tql` TQL to the specific subject of the `mosquitto` broker.
 
-Click the "New subscriber" button located below the "Test" button.
+Click `New subscriber` below `Test`, set the fields as follows, and click `Create`.
 
 - Name: Enter `mosquitto-sub` as the name for this subscriber.
 - Topic: Set the subscription topic to `demo/#`.
-- Destination: Change the Destination Type to "TQL Script" and select or enter the TQL file we created.
+- Destination: Choose `TQL Script` and enter `mqtt-bridge.tql`, the file we created, in `Tql Path`.
 
-{{< figure src="../img/mqtt-sqlite-bridge-sub1.png" width="600" >}}
+{{< figure src="/neo/tutorials/img/mqtt-sqlite-bridge-sub1.png" width="600" >}}
 
-Create the subscriber and set its state to "RUNNING" as shown below.
+Select the new subscriber under `mosquitto` in the `BRIDGE` list, and turn on the switch at the top right to change its state to `RUNNING`.
 
-{{< figure src="../img/mqtt-sqlite-bridge-sub2.png" width="600" >}}
+{{< figure src="/neo/tutorials/img/mqtt-sqlite-bridge-sub2.png" width="600" >}}
 
 ## Define destination DB bridge
 
-Let's define another bridge to an external database. In this example, we will use SQLite. The process is similar for other types of databases, but the connection string options will vary depending on the database type.
+Let's define another bridge to an external database. In this example, we will use SQLite. The process is similar for other types of databases, but the connection string options will vary depending on the database type. Click the <img src="/neo/bridges/img/bridge_add_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px"> icon in the `BRIDGE` header, enter the values below, and click `Create`.
 
 - Name: `destdb`
 - Type: `SQLite`
 - Connection String `file:///tmp/mqtt.db`
 
-{{< figure src="../img/mqtt-sqlite-bridge-sqlite.png" width="600" >}}
+{{< figure src="/neo/tutorials/img/mqtt-sqlite-bridge-sqlite.png" width="600" >}}
 
 > If you only want to store the incoming data in machbase-neo, you do not need to define another bridge to an external database.
 
@@ -80,9 +82,9 @@ Now, we are ready to write the actual TQL code that will execute whenever the `m
 
 - Line 13: `SCRIPT({}, {})` is a TQL MAP function which executes the given Javascript. Please refer to the reference document in [here](/neo/tql/script/) for the details.
 
-- Line 44: In this example, the SCRIPT MAP function handles all the tasks. There is no need for additional processing in the SINK function, but all TQL scripts must end with a SINK function. Therefore, we use the `DISCARD()` function to fulfill this requirement.
+- Line 43: In this example, the SCRIPT MAP function handles all the tasks. There is no need for additional processing in the SINK function, but all TQL scripts must end with a SINK function. Therefore, we use the `DISCARD()` function to fulfill this requirement.
 
-```js {linenos=table,hl_lines=["17-22","33-40"],linenostart=1}
+```js {linenos=table,hl_lines=["17-22","33-38"],linenostart=1}
 STRING( payload() ?? `
     {
     "timestamp": 1732653071807,
@@ -120,8 +122,7 @@ SCRIPT({
         parseInt(obj.message.totalCar),
         obj.message.reason,
         parseInt(obj.message.total),
-        obj.message.resetTime,
-        obj.message.scenario);
+        obj.message.resetTime);
     if (err instanceof Error) {
         console.error("Fail to insert into table", err.message);
     }
@@ -167,4 +168,4 @@ SELECT * FROM DATA;
 -- env: reset
 ```
 
-{{< figure src="../img/mqtt-sqlite-bridge-select.png" width="600" >}}
+{{< figure src="/neo/tutorials/img/mqtt-sqlite-bridge-select.png" width="600" >}}

@@ -42,6 +42,7 @@ You can control the log level output for each module by setting TRACE_LOG_LEVEL.
 -- Check current value
 select name, value from v$property where name = 'TRACE_LOG_LEVEL';
 
--- Combine multiple levels (add values)
-alter system set TRACE_LOG_LEVEL = {level1 + level2 + ...};
+-- To combine multiple levels, add their values and set the sum
+-- Example: MM_1 + MM_2 + QP_1 + SM_1 + XM_1 = 1 + 2 + 4 + 16 + 256 = 279
+alter system set TRACE_LOG_LEVEL = 279;
 ```

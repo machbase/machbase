@@ -107,7 +107,7 @@ In this example, the `chartID()` (line 20) is provided and the document has a `<
 <html>
 <body id="body">
     <script src="/web/echarts/echarts.min.js"></script>
-    <div id="chart_is_here"/>
+    <div id="chart_is_here"></div>
     <script>
         function loadJS(url) {
             var scriptElement = document.createElement('script');

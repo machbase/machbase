@@ -19,7 +19,7 @@ toc: true
 
 ## はじめに {#introduction}
 
-SELECT で使用できるヒントを説明します。
+`SELECT` 文で使用できるヒントを説明します。
 
 ##  PARALLEL {#parallel}
 
@@ -53,7 +53,7 @@ PLAN
 
 ##  NOPARALLEL {#noparallel}
 
-並列実行を無効にします。
+並列処理を使用しないように強制します。
 
 ```sql
 SELECT /*+ NOPARALLEL(table_name) */ ...
@@ -83,7 +83,7 @@ PLAN
 
 ##  FULL {#full}
 
-インデックススキャンを使用しません。
+`INDEX SCAN` を使用しないように指定します。
 
 ```sql
 SELECT /*+ FULL(table_name) */ ...
@@ -114,7 +114,7 @@ PLAN
 
 ##  NO_INDEX {#no_index}
 
-指定したインデックスを使用しません。
+指定したインデックスを使用しないように指定します。
 
 ```sql
 SELECT /*+ NO_INDEX(table_name,index_name) */ ...
@@ -228,7 +228,7 @@ ORDER BY rt;
 
 ##  RID_RANGE {#rid_range}
 
-指定した RID 範囲内で実行します。
+RID の範囲を指定し、その範囲内でのみ演算を実行します。
 
 ```sql
 SELECT /*+ RID_RANGE(table_name,number,number) */ ...
@@ -249,9 +249,9 @@ _RID                 I1
 
 ##  SCAN_FORWARD, SCAN_BACKWARD {#scan_forward-scan_backward}
 
-LOG テーブルのスキャン方向を指定します。SCAN_FORWARD は古い入力から、SCAN_BACKWARD は新しい入力から取得します。
+LOG テーブルのスキャン方向を指定します。`SCAN_FORWARD` は最も古い入力レコードから、`SCAN_BACKWARD` は最も新しい入力レコードから取得します。
 
-Standard Edition の LOG テーブルにのみ適用されます。
+このヒントは Standard Edition の LOG テーブルにのみ適用されます。
 
 ```sql
 SELECT /*+ SCAN_FORWARD(table_name) */ ...

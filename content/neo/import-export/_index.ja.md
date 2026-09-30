@@ -24,8 +24,8 @@ machbase-neo shell import   \
 ```
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-100  5352  100  5352    0     0   547k      0 --:--:-- --:--:-- --:--:-- 5226k
-import total 1000 record(s) inserted
+100  5352  100  5352    0     0   263k      0 --:--:-- --:--:-- --:--:--  275k
+Import 1,000 rows completed. 1000,0
 ```
 
 ファイルをローカルに保存してからインポートすることもできます。
@@ -36,13 +36,13 @@ curl -o data.csv.gz https://docs.machbase.com/assets/example/example.csv.gz
 
 CSV は圧縮の有無にかかわらずインポートできます。ローカルファイルを `--input <ファイル>` で指定し、gzip 圧縮の場合は `--compress gzip` を追加してください。
 
-`-v /mnt=.` は、現在のディレクトリ（`.`）をシェルの実行環境の `/mnt` にマウントします。ローカルファイルには、マウント後のパス（例: `/mnt/data.csv.gz`）でアクセスします。
+`-v /mnt=.` は、現在のディレクトリ（`.`）をシェルの実行環境の `/mnt` にマウントします。ローカルファイルには、マウント後のパス（例: `/mnt/data.csv.gz`）でアクセスします。`-v` を指定しない場合、現在のディレクトリには `/work`（例: `/work/data.csv.gz`）でアクセスできます。
 
 ```sh
 machbase-neo shell -v /mnt=. \
     import \
     --input /mnt/data.csv.gz \
-    --compress gzip         \
+    --compress gzip       \
     --timeformat s        \
     EXAMPLE
 ```
@@ -53,13 +53,16 @@ machbase-neo shell -v /mnt=. \
 machbase-neo shell "select * from example order by time desc limit 5"
 ```
 ```
- ROWNUM  NAME      TIME(UTC)            VALUE     
-──────────────────────────────────────────────────
- 1       wave.sin  2023-02-15 03:47:50  0.994540  
- 2       wave.cos  2023-02-15 03:47:50  -0.104353 
- 3       wave.sin  2023-02-15 03:47:49  0.951002  
- 4       wave.cos  2023-02-15 03:47:49  0.309185  
- 5       wave.cos  2023-02-15 03:47:48  0.669261  
+┌────────┬──────────┬─────────────────────┬───────────┐
+│ ROWNUM │ NAME     │ TIME                │     VALUE │
+├────────┼──────────┼─────────────────────┼───────────┤
+│      1 │ wave.sin │ 2023-02-15 12:47:50 │   0.99454 │
+│      2 │ wave.cos │ 2023-02-15 12:47:50 │ -0.104353 │
+│      3 │ wave.cos │ 2023-02-15 12:47:49 │  0.309185 │
+│      4 │ wave.sin │ 2023-02-15 12:47:49 │  0.951002 │
+│      5 │ wave.cos │ 2023-02-15 12:47:48 │  0.669261 │
+└────────┴──────────┴─────────────────────┴───────────┘
+5 rows selected.
 ```
 
 サンプルには 1,000 件のレコードがあります。インポート後のテーブルにも同じ件数が格納されていることを確認します。
@@ -68,9 +71,12 @@ machbase-neo shell "select * from example order by time desc limit 5"
 machbase-neo shell "select count(*) from example"
 ```
 ```
- ROWNUM  COUNT(*) 
-──────────────────
- 1       1000     
+┌────────┬──────────┐
+│ ROWNUM │ COUNT(*) │
+├────────┼──────────┤
+│      1 │     1000 │
+└────────┴──────────┘
+a row selected.
 ```
 
 ## CSV のエクスポート
@@ -114,9 +120,12 @@ machbase-neo shell import       \
  machbase-neo shell "select count(*) from EXAMPLE_COPY"
 ```
 ```
- ROWNUM  COUNT(*) 
-──────────────────
- 1       1000     
+┌────────┬──────────┐
+│ ROWNUM │ COUNT(*) │
+├────────┼──────────┤
+│      1 │     1000 │
+└────────┴──────────┘
+a row selected.
 ```
 
 この方法は、データベース A から B へのコピーにも使用できます。`--server <アドレス>` でリモートの machbase-neo を指定し、export と import を別々のサーバーに対して実行できます。
@@ -130,7 +139,8 @@ machbase-neo shell sql \
     --output -         \
     --format csv       \
     --no-rownum        \
-    --no-header       \
+    --no-header        \
+    --no-footer        \
     --timeformat ns    \
     "select * from example where name = 'wave.sin' order by time" | \
 machbase-neo shell import \
@@ -139,7 +149,7 @@ machbase-neo shell import \
     EXAMPLE_COPY
 ```
 
-この例は `wave.sin` タグのデータを `EXAMPLE_COPY` にインポートします。入力 CSV のフィールド数と型を一致させるため、sql に `--no-rownum` と `--no-header` を指定します。
+この例は `wave.sin` タグのデータを `EXAMPLE_COPY` にインポートします。import は入力 CSV のフィールド数と型を検証するため、sql に `--no-rownum`、`--no-header`、`--no-footer` を指定します。
 
 ## HTTP API によるクエリ結果の取り込み
 
@@ -155,9 +165,9 @@ curl http://127.0.0.1:5654/db/write/EXAMPLE_COPY \
     -X POST --data-binary @- 
 ```
 
-## インポート方式: insert と append
+## インポートの書き込み方式
 
-デフォルトの `--method insert` は `INSERT INTO ...` を使用します。少量のデータでは差が小さいものの、数十万件以上の大量データでは `--method append` が効率的です。
+import は `INSERT INTO ...` ではなく append 方式でデータを書き込みます。append 方式は、数十万件以上の大量データを書き込む場合に効率的です。
 
 ## 例
 
@@ -185,11 +195,11 @@ name-1,1687405320000000000,234.567000
 name-2,1687405320000000000,345.678000
 ```
 
-データをインポートします。
+データをインポートします。`machbase-neo shell` は現在のディレクトリを `/work` にマウントするため、`data.csv` があるディレクトリでコマンドを実行します。
 
 ```sh
-machbase-neo shell import \
-    --input ./data.csv    \
+machbase-neo shell import  \
+    --input /work/data.csv \
     --timeformat ns        \
     EXAMPLE
 ```
@@ -199,12 +209,14 @@ machbase-neo shell import \
 ```sh
 machbase-neo shell "SELECT * FROM EXAMPLE";
 
- ROWNUM  NAME    TIME(LOCAL)          VALUE   
-──────────────────────────────────────────────
-      1  name-0  2023-06-22 12:42:00  123.456 
-      2  name-1  2023-06-22 12:42:00  234.567 
-      3  name-2  2023-06-22 12:42:00  345.678 
-3 rows fetched.
+┌────────┬────────┬─────────────────────┬─────────┐
+│ ROWNUM │ NAME   │ TIME                │   VALUE │
+├────────┼────────┼─────────────────────┼─────────┤
+│      1 │ name-0 │ 2023-06-22 12:42:00 │ 123.456 │
+│      2 │ name-1 │ 2023-06-22 12:42:00 │ 234.567 │
+│      3 │ name-2 │ 2023-06-22 12:42:00 │ 345.678 │
+└────────┴────────┴─────────────────────┴─────────┘
+3 rows selected.
 ```
 
 ### TQL によるインポート
@@ -252,12 +264,14 @@ append 3 rows (success 3, fail 0).
 ```sh
 machbase-neo shell "select * from example";
 
- ROWNUM  NAME   TIME(LOCAL)          VALUE 
-───────────────────────────────────────────
-      1  tag-1  <実行時刻>           110   
-      2  tag-2  <実行時刻>           211   
-      3  tag-3  <実行時刻>           152   
-3 rows fetched.
+┌────────┬───────┬─────────────────────────┬───────┐
+│ ROWNUM │ NAME  │ TIME                    │ VALUE │
+├────────┼───────┼─────────────────────────┼───────┤
+│      1 │ tag-1 │ 2026-09-17 17:10:05.268 │   110 │
+│      2 │ tag-2 │ 2026-09-17 17:10:05.268 │   211 │
+│      3 │ tag-3 │ 2026-09-17 17:10:05.268 │   152 │
+└────────┴───────┴─────────────────────────┴───────┘
+3 rows selected.
 ```
 
 **JSON のインポート**
@@ -316,15 +330,17 @@ append 3 rows (success 3, fail 0).
 ```sh
 machbase-neo shell "select * from example";
 
- ROWNUM  NAME    TIME(LOCAL)          VALUE
-──────────────────────────────────────────────
-      1  tag-1   <実行時刻>           110
-      2  pump_2  2023-06-22 12:42:00  345.678
-      3  tag-2   <実行時刻>           211
-      4  tag-3   <実行時刻>           152
-      5  pump_1  2023-06-22 12:42:00  234.567
-      6  pump_0  2023-06-22 12:42:00  123.456
-6 rows fetched.
+┌────────┬────────┬─────────────────────────┬─────────┐
+│ ROWNUM │ NAME   │ TIME                    │ VALUE   │
+├────────┼────────┼─────────────────────────┼─────────┤
+│      1 │ tag-1  │ 2026-09-17 17:10:05.268 │     110 │
+│      2 │ pump_2 │ 2023-06-22 12:42:00     │ 345.678 │
+│      3 │ tag-2  │ 2026-09-17 17:10:05.268 │     211 │
+│      4 │ tag-3  │ 2026-09-17 17:10:05.268 │     152 │
+│      5 │ pump_1 │ 2023-06-22 12:42:00     │ 234.567 │
+│      6 │ pump_0 │ 2023-06-22 12:42:00     │ 123.456 │
+└────────┴────────┴─────────────────────────┴─────────┘
+6 rows selected.
 ```
 
 
@@ -355,11 +371,13 @@ APPEND(table('example'))
 ```sh
 machbase-neo shell "select * from example";
 
- ROWNUM  NAME  TIME(LOCAL)          VALUE 
-──────────────────────────────────────────
-      1  tag0  2021-08-12 09:00:00  10    
-      2  tag0  2021-08-13 09:00:00  11    
-2 rows fetched.
+┌────────┬──────┬─────────────────────┬───────┐
+│ ROWNUM │ NAME │ TIME                │ VALUE │
+├────────┼──────┼─────────────────────┼───────┤
+│      1 │ tag0 │ 2021-08-12 09:00:00 │    10 │
+│      2 │ tag0 │ 2021-08-13 09:00:00 │    11 │
+└────────┴──────┴─────────────────────┴───────┘
+2 rows selected.
 ```
 
 ### CSV のエクスポート
@@ -385,14 +403,13 @@ TAG0,1628780400000000000,110
 
 ### JSON のエクスポート
 
-データをエクスポートします。
+HTTP API でデータをエクスポートします。
 
 ```sh
-machbase-neo shell export      \
-    --output ./data_out.json   \
-    --format json              \
-    --timeformat ns            \
-    EXAMPLE
+curl -o data_out.json http://127.0.0.1:5654/db/query \
+    --data-urlencode "q=select * from EXAMPLE"      \
+    --data-urlencode "format=json"                  \
+    --data-urlencode "timeformat=ns"
 ```
 
 出力したファイルを確認します。
@@ -400,35 +417,7 @@ machbase-neo shell export      \
 ```sh
 cat data_out.json
 
-{
-  "data": {
-    "columns": [
-      "NAME",
-      "TIME",
-      "VALUE"
-    ],
-    "types": [
-      "string",
-      "datetime",
-      "double"
-    ],
-    "rows": [
-      [
-        "TAG0",
-        1628694000000000000,
-        100
-      ],
-      [
-        "TAG0",
-        1628780400000000000,
-        110
-      ]
-    ]
-  },
-  "success": true,
-  "reason": "success",
-  "elapse": "1.847207ms"
-}
+{"data":{"columns":["NAME","TIME","VALUE"],"types":["string","datetime","double"],"rows":[["TAG0",1628694000000000000,100],["TAG0",1628780400000000000,110]]},"success":true,"reason":"success","elapse":"865.833µs"}
 ```
 
 ### TQL によるエクスポート

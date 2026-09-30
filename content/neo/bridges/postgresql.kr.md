@@ -14,14 +14,14 @@ bridge add -t postgres pg host=127.0.0.1 port=5432 user=dbuser dbname=postgres s
 
 연결 옵션은 다음과 같습니다.
 
-| Option            | 설명                                                         | example         |
+| 옵션              | 설명                                                         | 예시            |
 | :-----------      | :------------------------------------------------------------ | :-------------  |
 | `dbname`          | 연결할 데이터베이스 이름                                      |                 |
 | `user`            | 접속에 사용할 사용자 이름                                     |                 |
 | `password`        | 사용자 비밀번호                                               |                 |
 | `host`            | 접속할 호스트. `/`로 시작하면 유닉스 도메인 소켓을 의미하며 기본값은 localhost | `host=127.0.0.1` |
 | `port`            | 포트 번호, 기본값은 `5432`                                    |                 |
-| `sslmode`         | SSL 사용 여부(기본값 `require`), 아래 표 참고                 | (see below)     |
+| `sslmode`         | SSL 사용 여부(기본값 `require`), 아래 표 참고                 | (아래 참고)     |
 | `connect_timeout` | 접속 대기 시간(초). 0 또는 미지정 시 무한 대기               |                 |
 | `sslcert`         | PEM 형식 인증서 파일 경로                                     |                 |
 | `sslkey`          | PEM 형식 개인 키 파일 경로                                    |                 |
@@ -81,6 +81,24 @@ Indexes:
 
 ## PostgreSQL에 TQL로 쓰기
 
+현재 JavaScript 런타임에서는 아래 예시를 사용하십시오.
+
+```js
+STRING(payload() ?? `{
+  "company": "acme",
+  "employee": 10
+}`)
+SCRIPT({
+  // parse the JSON input string and yield it with the current time
+  const msg = JSON.parse($.values[0]);
+  $.yield(msg.company, msg.employee, new Date());
+})
+INSERT(bridge("pg"), table("pg_example"), "company", "employee", "created_on")
+```
+
+<details>
+<summary>이전 Tengo 예시(현재 런타임에서는 실행되지 않습니다)</summary>
+
 ```js
 BYTES(payload() ?? `{
   "company": "acme",
@@ -100,6 +118,8 @@ SCRIPT("tengo", {
 })
 INSERT(bridge("pg"), table("pg_example"), "company", "employee", "created_on")
 ```
+
+</details>
 
 ```
 postgres=# select * from pg_example;

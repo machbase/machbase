@@ -16,17 +16,17 @@ weight: 10
 
 ```bash
 [machbase@localhost ~] sudo vi /etc/security/limits.conf
-
-
+ 
+ 
 #<domain>      <type>  <item>         <value>
 #
-
+ 
 *               hard    nofile          65535
 *               soft    nofile          65535
-
-
+ 
+ 
 [machbase@localhost ~] sudo vi /etc/systemd/user.conf
-
+ 
 DefaultLimitNOFILE=65535
 ```
 

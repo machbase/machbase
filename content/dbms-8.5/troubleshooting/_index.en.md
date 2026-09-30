@@ -13,18 +13,21 @@ Solutions to common problems, error codes, and performance optimization guide fo
 #### Server Won't Start
 
 **Symptoms**:
+
 - `machadmin -u` fails
 - "Address already in use" error
 - No server process running
 
 **Solutions**:
+
 ```bash
 # Check if port is in use
 netstat -an | grep 5656
 lsof -i :5656
 
-# Kill existing process
-kill $(lsof -t -i:5656)
+# Check the PID and process name from lsof, then stop that service with its own management command
+# To stop an existing Machbase process
+machadmin -s
 
 # Check database directory
 ls -la $MACHBASE_HOME/dbs/
@@ -39,11 +42,13 @@ machadmin -u
 #### Server Crashes
 
 **Symptoms**:
+
 - Server stops unexpectedly
 - Core dump files
 - "Segmentation fault" errors
 
 **Solutions**:
+
 ```bash
 # Check logs
 tail -100 $MACHBASE_HOME/trc/machbase.trc
@@ -53,7 +58,7 @@ free -h
 df -h
 
 # Reduce memory usage (in machbase.conf)
-PROCESS_MAX_SIZE = 1073741824 # 1GB
+# PROCESS_MAX_SIZE = 1073741824 # 1GB
 
 # Check for disk space
 du -sh $MACHBASE_HOME/dbs/
@@ -64,11 +69,13 @@ du -sh $MACHBASE_HOME/dbs/
 #### Cannot Connect
 
 **Symptoms**:
+
 - "Connection refused" error
 - "Connection timeout"
 - machsql fails to connect
 
 **Solutions**:
+
 ```bash
 # Verify server is running
 machadmin -e
@@ -87,16 +94,18 @@ machsql -s localhost -u SYS -p MANAGER
 #### Too Many Connections
 
 **Symptoms**:
+
 - "Max connections exceeded" error
 - New connections rejected
 
 **Solutions**:
-```sql
--- Check active connections
-SHOW STATEMENTS;
 
--- Increase MAX_CONNECTION in machbase.conf
--- MAX_CONNECTION = 200
+```sql
+-- Check the number of connections
+SELECT COUNT(*) FROM V$SESSION;
+
+-- Increase MAX_SESSION_COUNT in machbase.conf
+-- MAX_SESSION_COUNT = 8192
 
 -- Kill idle connections (if necessary)
 ```
@@ -106,11 +115,13 @@ SHOW STATEMENTS;
 #### Slow Queries
 
 **Symptoms**:
+
 - Queries take too long
 - Timeout errors
 - High CPU usage
 
 **Solutions**:
+
 ```sql
 -- Add time filter
 SELECT * FROM table DURATION 1 HOUR;  -- Add this!
@@ -134,11 +145,13 @@ EXPLAIN SELECT ...;
 #### Out of Memory
 
 **Symptoms**:
+
 - "Out of memory" error
 - Query fails midway
 - Server becomes unresponsive
 
 **Solutions**:
+
 ```sql
 -- Reduce result set
 SELECT * FROM table DURATION 1 HOUR LIMIT 1000;
@@ -155,11 +168,13 @@ SELECT col1, col2 FROM table;  -- Not SELECT *
 #### Import Fails
 
 **Symptoms**:
+
 - machloader error
 - CSV import fails
 - Data type mismatch
 
 **Solutions**:
+
 ```bash
 # Check CSV format
 head -10 data.csv
@@ -177,17 +192,22 @@ cat $MACHBASE_HOME/trc/machloader.trc
 
 # Try small batch first
 head -100 data.csv > test.csv
-machloader -i -t table -d test.csv
+machloader -i -t table -d test.csv -l /tmp/machloader.log
+
+# Check the execution log specified with machloader -l
+cat /tmp/machloader.log
 ```
 
 #### Missing Data
 
 **Symptoms**:
+
 - Expected data not found
 - Count mismatch
 - Time gaps
 
 **Solutions**:
+
 ```sql
 -- Check time range
 SELECT MIN(_arrival_time), MAX(_arrival_time) FROM table;
@@ -206,16 +226,18 @@ SELECT COUNT(*) FROM table WHERE column IS NULL;
 
 ### Common Error Messages
 
-| Error Code | Message | Solution |
-|-----------|---------|----------|
-| -20000 | Connection failed | Check server status, network |
-| -20001 | Authentication failed | Verify username/password |
-| -20100 | Table not found | Check table name, use SHOW TABLES |
-| -20101 | Column not found | Verify column name, use SHOW TABLE |
-| -20200 | Duplicate key | Check PRIMARY KEY constraints |
-| -20300 | Data type mismatch | Validate data types |
-| -30000 | Out of memory | Reduce query size, increase memory |
-| -30100 | Timeout | Add time filter, increase timeout |
+The following are example messages for classifying symptoms. For the actual error number and its meaning, look up the number returned by the server in [Error Codes](./error-code/).
+
+| Example Message | Solution |
+|---------|----------|
+| Connection failed | Check server status, network |
+| Authentication failed | Verify username/password |
+| Table not found | Check table name, use SHOW TABLES |
+| Column not found | Verify column name, use SHOW TABLE |
+| Duplicate key | Check PRIMARY KEY constraints |
+| Data type mismatch | Validate data types |
+| Out of memory | Reduce query size, increase memory |
+| Timeout | Add time filter, increase timeout |
 
 For complete error code reference, see [Error Codes](./error-code/).
 
@@ -224,6 +246,7 @@ For complete error code reference, see [Error Codes](./error-code/).
 ### Query Optimization
 
 1. **Always use time filters**
+
 ```sql
 -- Bad
 SELECT * FROM sensors WHERE sensor_id = 'sensor01';
@@ -235,9 +258,12 @@ DURATION 1 HOUR;
 ```
 
 2. **Use rollup for analytics**
+
 ```sql
 -- Slow
-SELECT AVG(value) FROM sensors DURATION 7 DAY;
+SELECT AVG(value) FROM sensors
+WHERE name = 'sensor-1'
+  AND time BETWEEN now - 7d AND now;
 
 -- Fast
 -- sensors must be a TAG table created WITH ROLLUP.
@@ -249,11 +275,13 @@ GROUP BY rtime;
 ```
 
 3. **Create indexes**
+
 ```sql
 CREATE INDEX idx_level ON logs(level);
 ```
 
 4. **Limit results**
+
 ```sql
 SELECT * FROM logs DURATION 1 DAY LIMIT 1000;
 ```
@@ -274,20 +302,21 @@ QUERY_PARALLEL_FACTOR = 8
 ### Data Management
 
 1. **Implement retention**
+
 ```sql
 DELETE FROM logs EXCEPT 30 DAYS;
 ```
 
 2. **Batch writes**
+
 ```python
 # Use APPEND API for bulk inserts
-appender = conn.create_appender('table')
-for row in data:
-    appender.append(row)
-appender.close()
+# conn: connection from machbaseAPI.connect(), data: list of rows
+conn.append('table', data)
 ```
 
 3. **Monitor storage**
+
 ```sql
 SHOW STORAGE;
 ```

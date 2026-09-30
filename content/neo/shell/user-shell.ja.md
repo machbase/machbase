@@ -15,18 +15,18 @@ Web UIで*SHELL*を開くか、ターミナルで`machbase-neo shell`を実行�
 
 ### シェルの登録 {#셸-등록}
 
-1. 左側のメニューで<img src="/neo/shell/img/shell_icon.jpg" width=47 style="display:inline">アイコンを選択します。
+1. 左側のメニューで<img src="/neo/shell/img/shell_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px">アイコンを選択します。
 
-2. 左上のパネルで`+`アイコン<img src="/neo/shell/img/shell_add_icon.jpg" width=265 style="display:inline">をクリックします。
+2. パネルのタイトル行で<img src="/neo/shell/img/shell_add_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px">アイコンをクリックします。
 
-3. 「Display name」を入力し、「Command」フィールドに実行ファイルの絶対パスと引数を指定します。
-   たとえば、macOSでzshを登録するには、絶対パスを入力して「Save」をクリックします。
+3. `Name` に表示名を入力し、`Command` に実行ファイルの絶対パスと引数を指定してから `Create` をクリックします。たとえば、macOS で zsh を登録するには `/bin/zsh -il` を入力します。
 
-{{< figure src="/neo/shell/img/shell_add_form.jpg" width="684px">}}
+{{< figure src="/neo/shell/img/shell_add_form.jpg" width="460px" >}}
 
-- Name: 表示名（予約語以外の任意のテキストを使用可能）
+- Name: 表示名（最大 16 文字。`SHELL` は予約語）
 - Command: 絶対パスと引数を含む実行コマンド
-- Theme : ターミナルの配色テーマ
+- Theme: ターミナルの配色テーマ
+- Icon: タブに表示するアイコン
 
 たとえば、次のコマンドを登録できます。
 - Windows Cmd.exe: `C:\Windows\System32\cmd.exe`
@@ -35,11 +35,11 @@ Web UIで*SHELL*を開くか、ターミナルで`machbase-neo shell`を実行�
 
 ### 登録したシェルの使用 {#등록한-셸-사용}
 
-- メインエディター領域でカスタムシェルを開きます。
+- メインエディター領域: 新しいタブの画面に、登録したシェルがカードとして表示されます。カードを選択すると、メインエディター領域で開きます。
 
 {{< figure src="/images/web-custom-shell.jpeg" width="600px">}}
 
-- コンソール領域でカスタムシェルを開きます。
+- コンソール領域: コンソールのタイトル行にある<img src="/neo/shell/img/console_open_shell_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px">をクリックし、一覧から登録したシェルを選択すると、コンソールに新しいタブとして開きます。
 
 {{< figure src="/neo/shell/img/web-custom-shell-console.jpg" width="700px">}}
 

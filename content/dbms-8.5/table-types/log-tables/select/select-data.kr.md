@@ -20,9 +20,6 @@ SELECT * FROM table_name;
 ```
 
 ```sql
-Index
-Basic access
-View Conditional Clause
 Mach> SELECT * FROM mach_log;
 DEVICE          TM                              TEMP       
 ----------------------------------------------------------------

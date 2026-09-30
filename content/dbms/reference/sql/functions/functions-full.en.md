@@ -180,7 +180,9 @@ ID          DT
 [3] row(s) selected.
 ```
 
-## APPROX_PERCENTILE {#approx_percentile-family}
+<a id="approx_percentile-family"></a>
+
+## APPROX_PERCENTILE
 
 ```
 APPROX_PERCENTILE
@@ -256,7 +258,7 @@ out-of-range positions are errors. For ingestion methods and SDK sparse objects,
 
 
 
-## AREA {#area}
+## AREA
 
 `AREA(y, x)` is an aggregate function that calculates the exact area under a curve of numeric
 `(x, y)` points.
@@ -789,7 +791,7 @@ COUNT(id1)
 ```
 
 
-## CUME_DIST {#cume_dist}
+## CUME_DIST
 
 `CUME_DIST(value, threshold)` returns the cumulative fraction of rows whose value is at most threshold.
 
@@ -1807,7 +1809,7 @@ MAX(c)
 ```
 
 
-## MEDIAN {#median}
+## MEDIAN
 
 MEDIAN(value) returns the exact median of a numeric expression, using the same behavior as
 PERCENTILE_CONT(value, 0.5).
@@ -2918,7 +2920,7 @@ NULL
 ```
 
 
-## TOP_K {#top_k}
+## TOP_K
 
 TOP_K(value, k) returns the k most frequent numeric values as a value:count string.
 
@@ -3283,7 +3285,7 @@ Notes:
 - JSON_REMOVE(..., '$') is not allowed.
 - A NULL document argument produces SQL NULL.
 
-## PI() {#pi}
+## PI()
 
 Returns π as DOUBLE.
 
@@ -3299,7 +3301,7 @@ PI()
 [1] row(s) selected.
 ```
 
-## SQRT() {#sqrt}
+## SQRT()
 
 Returns the square root.
 
@@ -3315,7 +3317,7 @@ SQRT(9)   SQRT(2.25)         SQRT(16.0)
 [1] row(s) selected.
 ```
 
-## POWER() {#power}
+## POWER()
 
 Returns base raised to exponent.
 
@@ -3331,7 +3333,7 @@ POWER(2, 3)   POWER(9, 0.5)   POWER(4, -1)
 [1] row(s) selected.
 ```
 
-## POW() {#pow}
+## POW()
 
 Alias for POWER().
 
@@ -3347,7 +3349,7 @@ POW(2, 3)   POW(2, -1)   POW(10, 0)
 [1] row(s) selected.
 ```
 
-## LOG() {#log}
+## LOG()
 
 LOG(n) calculates the natural logarithm; LOG(base, n) calculates the logarithm to the specified base.
 
@@ -3363,7 +3365,7 @@ LOG(2, 8)   LOG(100)             LOG(10, 1000)
 [1] row(s) selected.
 ```
 
-## LN() {#ln}
+## LN()
 
 Returns the natural logarithm ln(n).
 
@@ -3379,7 +3381,7 @@ LN(1)      LN(10)         LN(1000)
 [1] row(s) selected.
 ```
 
-## EXP() {#exp}
+## EXP()
 
 Returns e^n.
 
@@ -3395,7 +3397,7 @@ EXP(0)      EXP(1)         EXP(-1)
 [1] row(s) selected.
 ```
 
-## FLOOR() {#floor}
+## FLOOR()
 
 Rounds down toward negative infinity.
 
@@ -3411,7 +3413,7 @@ FLOOR(-1.2)  FLOOR(3.9)  FLOOR(-3.0)
 [1] row(s) selected.
 ```
 
-## CEIL() {#ceil}
+## CEIL()
 
 Rounds up toward positive infinity.
 
@@ -3427,7 +3429,7 @@ CEIL(-1.2)  CEIL(3.2)  CEIL(-3.0)
 [1] row(s) selected.
 ```
 
-## SIN() {#sin}
+## SIN()
 
 Returns sine for an input in radians.
 
@@ -3443,7 +3445,7 @@ SIN(0)      SIN(PI()/2)   SIN(PI())
 [1] row(s) selected.
 ```
 
-## SLOPE {#slope}
+## SLOPE
 
 SLOPE(y, x) calculates the linear regression slope for numeric (x, y) points.
 
@@ -3461,7 +3463,7 @@ SELECT SLOPE(temp_c, sample_sec)
 FROM sensor_log;
 ```
 
-## COS() {#cos}
+## COS()
 
 Returns cosine for an input in radians.
 
@@ -3477,7 +3479,7 @@ COS(0)      COS(PI())   COS(PI()/2)
 [1] row(s) selected.
 ```
 
-## TAN() {#tan}
+## TAN()
 
 Returns tangent for an input in radians.
 
@@ -3493,7 +3495,7 @@ TAN(0)      TAN(PI()/4)  TAN(PI())
 [1] row(s) selected.
 ```
 
-## MOD() {#mod}
+## MOD()
 
 Calculates the remainder with the quotient truncated toward zero.
 
@@ -3509,7 +3511,7 @@ MOD(10, 3)  MOD(11, 4)  MOD(-10, 3)  MOD(3.5, 0.5)
 [1] row(s) selected.
 ```
 
-## MODE {#mode}
+## MODE
 
 MODE(value) returns the most frequent numeric value in the input set.
 
@@ -3527,7 +3529,9 @@ SELECT MODE(alarm_code)
 FROM event_log;
 ```
 
-## P05 / P10 / P90 / P95 {#p05-p10-p90-p95}
+<a id="p05-p10-p90-p95"></a>
+
+## P05 / P10 / P90 / P95
 
 Exact percentile shorthand functions for frequently used percentiles.
 
@@ -3552,7 +3556,9 @@ SELECT P05(response_ms),
 FROM web_log;
 ```
 
-## PERCENTILE_CONT / PERCENTILE_DISC {#percentile_cont-percentile_disc}
+<a id="percentile_cont-percentile_disc"></a>
+
+## PERCENTILE_CONT / PERCENTILE_DISC
 
 Aggregate functions calculating exact percentiles for numeric input.
 
@@ -3573,7 +3579,7 @@ SELECT PERCENTILE_CONT(latency_ms, 0.95) AS pcont95,
 FROM api_log;
 ```
 
-## QUANTILE {#quantile}
+## QUANTILE
 
 QUANTILE(value, ratio) calculates an exact continuous percentile for numeric input.
 
@@ -3591,7 +3597,7 @@ SELECT QUANTILE(cpu_usage, 0.75)
 FROM host_metric;
 ```
 
-## RAND() {#rand}
+## RAND()
 
 Generates a random value.
 

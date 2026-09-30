@@ -4,7 +4,7 @@ type: docs
 weight: 55
 ---
 
-These user interface API validates the requests from clients with JWT based authentication.
+The user interface API validates requests from clients with JWT-based authentication.
 
 ## User Authenticate
 
@@ -34,7 +34,6 @@ These user interface API validates the requests from clients with JWT based auth
 ```
 {{< /tab >}}
 {{< /tabs >}}
-
 
 ### Refresh token
 
@@ -78,9 +77,10 @@ These user interface API validates the requests from clients with JWT based auth
 
 **GET `/web/api/check`**
 
-Validates current  token status.
+Validates the current token status.
 
 - `LoginCheckRsp`
+
 ```json
 {
     "success": true,
@@ -93,6 +93,7 @@ Validates current  token status.
 ```
 
 - `ShellDefinition`
+
 ```json
 {
     "id": "shell definition id (uuid)",
@@ -113,29 +114,30 @@ Validates current  token status.
 
 | type | description      |
 |:-----| :------------    |
-| sql  | sql editor       |
-| tql  | tql editor       |
-| wrk  | workspace editor |
-| taz  | tag analyzer     |
-| term | terminal         |
+| sql  | SQL editor       |
+| tql  | TQL editor       |
+| wrk  | Workspace editor |
+| taz  | Tag analyzer     |
+| term | Terminal         |
 
 ## Database
 
 ### Execute SQL
 
-**GET,POST `/web/machbase`**
+**GET, POST `/web/machbase`**
 
-It works as same as `/db/query` API, the only difference is the way of authentication.
-The `/db/query` authorize the client applications by API Token, while `/web/machbase` validates JWT for user interactions.
+It works the same as the `/db/query` API; the only difference is the authentication method.
+`/db/query` authorizes client applications with an API token,
+while `/web/machbase` validates a JWT for user interactions.
 
 ### List tables
 
 **GET `/web/api/tables?showall=false&name=pattern`**
 
-Return table list
+Returns the table list.
 
-- `showall` returns includes all hidden tables if set `true`
-- `name` table name filtering pattern, the pattern can be a glob (includes `?` or `*`) or prefix (which has no `?` and `*`)
+- `showall`: if set to `true`, the list includes all hidden tables.
+- `name`: table name filtering pattern. The pattern can be a glob (includes `?` or `*`) or a prefix (has no `?` or `*`).
 
 ```json
 {
@@ -156,9 +158,9 @@ Return table list
 
 **GET `/web/api/tables/:table/tags?name=prefix`**
 
-Returns tag list of the table
+Returns the tag list of the table.
 
-- `name` returns only tags those name starts with the given prefix
+- `name`: returns only the tags whose names start with the given prefix.
 
 ```json
 {
@@ -177,9 +179,9 @@ Returns tag list of the table
 
 ### Tag stat
 
-**GET `/web/api/tables/:table/:tag/stat`**
+**GET `/web/api/tables/:table/tags/:tag/stat`**
 
-Returns the stat of tag of the table
+Returns the statistics of the tag in the table.
 
 ```json
 {
@@ -188,9 +190,9 @@ Returns the stat of tag of the table
     "elapse": "elapse time in string format",
     "data": {
         "columns": ["ROWNUM", "NAME", "ROW_COUNT", "MIN_TIME", "MAX_TIME",
-			"MIN_VALUE", "MIN_VALUE_TIME", "MAX_VALUE", "MAX_VALUE_TIME", "RECENT_ROW_TIME"],
-        "types": ["int32", "string", "int64", "datetime", "datetime","double", 
-            "datetime", "double", , "datetime",, "datetime"],
+            "MIN_VALUE", "MIN_VALUE_TIME", "MAX_VALUE", "MAX_VALUE_TIME", "RECENT_ROW_TIME"],
+        "types": ["int32", "string", "int64", "datetime", "datetime",
+            "double", "datetime", "double", "datetime", "datetime"],
         "rows":[
             ["...omit...."],
         ]
@@ -200,54 +202,24 @@ Returns the stat of tag of the table
 
 ## Shell & Terminal
 
+Shell definitions are listed, added, copied, updated, and deleted with the JSON-RPC [`shell.*`](#shelllist) methods.
+
 ### Data channel
 
-**`ws:///web/api/term/:term_id/data`**
+**`ws://{server_address}/web/api/term/:term_id/data`**
 
-Web socket for terminal
+WebSocket for the terminal.
 
 ### Window size
 
 **POST `/web/api/term/:term_id/windowsize`**
 
-Change terminal size
+Changes the terminal size.
 
 `TerminalSize`
 
 ```json
 { "rows": 24, "cols": 80 }
-```
-
-### Get Shell Definition
-
-**GET `/web/api/shell/:id`**
-
-Returns `ShellDefinition` for the given id
-
-### Update Shell Definition
-
-**POST `/web/api/shell/:id`**
-
-Update the `ShellDefinition` of the given id
-
-### Make copy of Shell
-
-**GET `/web/api/shell/:id/copy`**
-
-Returns `ShellDefinition` for a new copy of the shell of the given id
-
-### Delete Shell Definition 
-
-**DELETE `/web/api/shell/:id`**
-
-Delete the shell of the given id
-
-```json
-{
-    "success": true,
-    "reason": "success of error message",
-    "elapse": "time represents in text"
-}
 ```
 
 ## Server events
@@ -256,7 +228,7 @@ Delete the shell of the given id
 
 **`ws://127.0.0.1:5654/web/api/console/{console_id}/data?token={jwt_token}`**
 
-Web socket for the bi-directional messages
+WebSocket for bi-directional messages.
 
 - message type
 
@@ -275,12 +247,11 @@ Web socket for the bi-directional messages
 
 | type           |  fields          | description        |
 |:---------------| :----------------| :------------------|
-| `ping`         |                  | ping message       |
-|                | `ping.tick`      | any integer number, server will respond with the same number that client sends |
-| `log`          | `log.level`      | log level `TRACE`, `DEBUG`, `INFO`, `WARN`, `ERROR`|
-|                | `log.message`    | log message        |
-|                | `log.repeat`     | count, if the same message repeats more than two times in serial |
-
+| `ping`         |                  | Ping message       |
+|                | `ping.tick`      | Any integer. The server responds with the same number that the client sent. |
+| `log`          | `log.level`      | Log level: `TRACE`, `DEBUG`, `INFO`, `WARN`, `ERROR`|
+|                | `log.message`    | Log message        |
+|                | `log.repeat`     | Repeat count when the same message occurs two or more times in a row |
 
 ## TQL & Workspace
 
@@ -288,46 +259,43 @@ Web socket for the bi-directional messages
 
 | Header <br/>`Content-Type` | Header <br/>`X-Chart-Type` |          Content            |
 |:--------------------------:| :-------------------------:| :-------------------------- |
-| text/html                  | "echart", "geomap"         | Full HTML <br/>ex) It may be inside of `<iframe>`|
-| text/html                  | -                          | Full HTML <br/>ex) It may be inside of `<iframe>` |
+| text/html                  | "echart", "geomap"         | Full HTML <br/>e.g., embedded in an `<iframe>` |
+| text/html                  | -                          | Full HTML <br/>e.g., embedded in an `<iframe>` |
 | text/csv                   | -                          | CSV                         |
 | text/markdown              | -                          | Markdown                    |
 | application/json           | "echart", "geomap"         | JSON (echart or geomap data)|
 | application/json           | -                          | JSON                        |
-| application/xhtml+xml      | -                          | HTML Element, ex) `<div>...</div>` |
-
+| application/xhtml+xml      | -                          | HTML element, e.g., `<div>...</div>` |
 
 ### Run tql file
 
 **GET `/web/api/tql/*path`**
 
-Run the tql of the path, refer the section of 'Content-types of TQL' for the response
+Runs the TQL at the path. For the response format, refer to the 'Content-types of TQL' table above.
 
 **POST `/web/api/tql/*path`**
 
-Run the tql of the path, refer the section of 'Content-types of TQL' for the response
+Runs the TQL at the path. For the response format, refer to the 'Content-types of TQL' table above.
 
 ### Run tql script
 
 **POST `/web/api/tql`**
 
-Post tql script as content payload, server will response the execution result.
-refer the section of 'Content-types of TQL' for the response.
+Post a TQL script as the content payload, and the server responds with the execution result.
+For the response format, refer to the 'Content-types of TQL' table.
 
-If the request has a `$` named query parameter, it will be taken as the tql script,
-and the payload will be treated as data. This `$` query parameter is available since v8.0.17.
+If the request has a query parameter named `$`, its value is taken as the TQL script,
+and the payload is treated as data. This `$` query parameter is available since v8.0.17.
 
 ### Markdown rendering
 
-**POST `/web/api/md`**
-
-Post markdown as content payload, sever will response the rendering result in xhtml
+To render Markdown, use the JSON-RPC [`markdown.render`](#markdownrender) method.
 
 ## File management
 
 ### Content-Type
 
-File types and content-type
+File types and their content types.
 
 | file type | Content-Type             |
 |:----------|:-------------------------|
@@ -341,9 +309,9 @@ File types and content-type
 
 **GET `/web/api/files/*path`**
 
-Returns the content of the file if the path is pointing a file.
+Returns the content of the file if the path points to a file.
 
-Returns Dir entries if the path is pointing a directory.
+Returns the directory entries if the path points to a directory.
 
 - `Entry`
 
@@ -372,13 +340,13 @@ Returns Dir entries if the path is pointing a directory.
 
 **POST `/web/api/files/*path`**
 
-- if the `path` points a file, it will write the payload content into the file.
+- If the `path` points to a file, it writes the payload content into the file.
 
-- if the `path` is a directory and request with no content, it will create a empty directory.
-  and returns the `Entry` of the directory
+- If the `path` is a directory and the request has no content, it creates an empty directory
+  and returns the `Entry` of the directory.
 
-- if the `path` is a directory and payload is json of `GitCloneReq`,
-  it will clone the remote git repository to the `path` and returns `Entry` of the directory.
+- If the `path` is a directory and the payload is `GitCloneReq` JSON,
+  it clones the remote Git repository to the `path` and returns the `Entry` of the directory.
 
 `GitCloneReq`
 
@@ -395,7 +363,7 @@ Returns Dir entries if the path is pointing a directory.
 
 **PUT `/web/api/files/*path`**
 
-Rename(move) a file (or a directory).
+Renames (moves) a file or a directory.
 
 `RenameReq`
 
@@ -405,718 +373,33 @@ Rename(move) a file (or a directory).
 }
 ```
 
-This api returns status code `200 OK` if the operation has done successfully.
-
+This API returns status code `200 OK` if the operation completes successfully.
 
 ### Remove file
 
 **DELETE `/web/api/files/*path`**
 
-Delete the file at the `path`, if the path is pointing a directory and is not empty, it will return error.
+Deletes the file at the `path`. If the path points to a directory that is not empty, it returns an error.
 
 ## Key management
 
-### List Key
-
-**GET `/web/api/keys/:id`**
-
-Return key info list
-
-`response`
-
-```json
-{
-    "success": true,
-    "reason": "success",
-    "data": [
-        {
-            "idx": 0,
-            "id": "eleven",
-            "notBefore": 1713171461,
-            "notAfter": 2028531461
-        }
-    ],
-    "elapse": "131.9µs"
-}
-```
-### Generate Key
-
-**POST `/web/api/keys`**
-
-generate key
-- `name` is required
-- `notAfter` is expiration date
-
-{{< tabs >}}
-{{< tab name="Request" >}}
-```json
-{
-    "name": "eleven",
-    "notBefore": 0,
-    "notAfter": 0
-}
-```
-{{< /tab >}}
-{{< tab name="Response" >}}
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "5.4961ms",
-    "certificate": "-----BEGIN CERTIFICATE-----\nXXXXXXXXXXXXXXXXXX\n-----END CERTIFICATE-----\n",
-    "privateKey": "-----BEGIN EC PRIVATE KEY-----\nXXXXXXXXXXXXXXXX\n-----END EC PRIVATE KEY-----\n",
-    "token": "eleven:b:XXXXXXXXXXXXXXXXX"
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-
-
-### Delete Key
-
-**DELETE `/web/api/keys/:id`**
-
-Delete the key of the given id
-
-`response`
-
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "112.8µs"
-}
-```
+Keys are managed with the JSON-RPC [`key.*`](#keylist) methods, and API tokens with the [`token.*`](#tokenlist) methods.
 
 ## Ssh Key
 
-### List Ssh Key
-
-**GET `/web/api/sshkeys`**
-
-Return ssh-key info list
-
-`response`
-
-```json
-{
-    "data": [
-        {
-            "keyType": "ssh-rsa",
-            "fingerprint": "f08h89fhf0dkv0v0v9c9x0cx9v9",
-            "comment": "example@machbase.com"
-        }
-    ],
-    "elapse": "67.6µs",
-    "reason": "success",
-    "success": true
-}
-```
-### Generate Ssh Key
-
-**POST `/web/api/sshkeys`**
-
-**Use public key authentication with SSH**   
-
-Adding the public key to machbase-neo server makes it possible to execute any `machbase-neo shell` command without prompt and entering password.
-
-{{< tabs >}}
-{{< tab name="Request" >}}
-```json
-{
-    "key": "your publickey"
-}
-```
-{{< /tab >}}
-{{< tab name="Response" >}}
-```json
-{
-    "elapse": "138.801µs",
-    "reason": "success",
-    "success": true
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-
-
-### Delete Ssh Key
-
-**DELETE `/web/api/sshkeys/:fingerprint`**
-
-Delete the ssh-key of the given fingerprint   
-
-`response`
-```json
-{
-    "elapse": "198.8µs",
-    "reason": "success",
-    "success": true
-}
-```
-
-
+SSH keys are managed with the JSON-RPC [`sshkey.*`](#sshkeylist) methods.
 
 ## Timer
 
-### Get Timer
-
-**GET `/web/api/timers/:name`**
-
-Return timer info
-
-- state: `RUNNING`, `STARTING`, `STOP`, `STOPPING`,`FAILED`, `UNKNWON`
-
-`response`
-
-```json
-{
-    "success": true,
-    "reason": "success",
-    "data": [
-        {
-            "name": "ELEVEN",
-            "type": "TIMER",
-            "state": "STOP", 
-            "task": "timer.tql",
-            "schedule": "0 30 * * * *"
-        }
-    ],
-    "elapse": "92.1µs"
-}
-```
-
-### List Timer
-
-**GET `/web/api/timers`**
-
-Return timer info list
-- state: `RUNNING`, `STARTING`, `STOP`, `STOPPING`,`FAILED`, `UNKNWON`
-
-`response`
-
-```json
-{
-    "success": true,
-    "reason": "success",
-    "data": [
-        {
-            "name": "ELEVEN",
-            "type": "TIMER",
-            "state": "STOP",
-            "task": "timer.tql",
-            "schedule": "0 30 * * * *"
-        },
-        {
-            "name": "TWELVE",
-            "type": "TIMER",
-            "state": "RUNNING",
-            "task": "timer2.tql",
-            "schedule": "1 30 * * * *"
-        }
-    ],
-    "elapse": "92.1µs"
-}
-```
-### Add Timer
-
-**POST `/web/api/timers`**
-
-Add Timer
-- `name`, `autoStart`, `schedule`, `path` is required  
-
-Timer `schedule`
-- `0 30 * * * *`           Every hour on the half hour
-- `@every 1h30m`           Every hour thirty
-- `@daily`                 Every day
-
-{{< tabs >}}
-{{< tab name="Request" >}}
-```json
-{
-    "name":"eleven",
-    "autoStart":false,
-    "schedule":"@every 10s",
-    "path":"timer.tql"
-}
-```
-{{< /tab >}}
-{{< tab name="Response" >}}
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "4.9658ms"
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-### Start Timer
-
-**POST `/web/api/timers/:name/state`**
-
-Start Timer
-- `state` is required
-
-{{< tabs >}}
-{{< tab name="Request" >}}
-```json
-{
-    "state":"start",
-}
-```
-{{< /tab >}}
-{{< tab name="Response" >}}
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "822.601µs"
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-### Stop Timer
-
-**POST `/web/api/timers/:name/state`**
-
-Stop Timer
-- `state` is required
-
-{{< tabs >}}
-{{< tab name="Request" >}}
-```json
-{
-    "state":"stop",
-}
-```
-{{< /tab >}}
-{{< tab name="Response" >}}
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "26.2µs"
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-### Update Timer
-
-**PUT `/web/api/timers/:name`**
-
-Update Timer
-- `autoStart`, `schedule`, `path` 
-
-{{< tabs >}}
-{{< tab name="Request" >}}
-```json
-{
-    "audoStart" : true,
-    "schedule":"@every 5s",
-    "path":"timer.tql"
-}
-```
-{{< /tab >}}
-{{< tab name="Response" >}}
-```json
-{
-    "elapse": "459.6µs",
-    "reason": "success",
-    "success": true
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-
-
-### Delete Timer
-
-**DELETE `/web/api/timers/:name`**
-
-Delete Timer
-
-`Response`
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "4.8664ms"
-}
-```
-
+Timers are managed with the JSON-RPC [`timer.*`](#timerlist) methods.
 
 ## Bridge
 
-### List Bridge
-
-**GET `/web/api/bridges`**
-
-Return bridge info list
-
-`response`
-
-```json
-{
-    "success": true,
-    "reason": "success",
-    "data": [
-        {
-            "name": "pg",
-            "type": "postgres",
-            "path": "host=127.0.0.1 port=5432 user=postgres password=1234 dbname=bridgedb sslmode=disable"
-        }
-    ],
-    "elapse": "1.328301ms"
-}
-```
-### Add Bridge
-
-**POST `/web/api/bridges`**
-
-Add Bridge
-- `name`, `type`, `path` is required
-- supported bridges `SQLite`, `PostgreSql`, `Mysql`, `MSSQL`, `MQTT`
-
-{{< tabs >}}
-{{< tab name="Request" >}}
-```json
-{
-    "name":"pg",
-    "type":"postgres", // sqlite, postgres, mysql, mssql, mqtt
-    "path":"host=127.0.0.1 port=5432 user=postgres password=1234 dbname=bridgedb sslmode=disable"
-}
-```
-{{< /tab >}}
-{{< tab name="Response" >}}
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "193.499µs"
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-### Exec Bridge
-
-**POST `/web/api/bridges/:name/state`**
-
-Exec Bridge
-- `state`, `command` is required
-
-{{< tabs >}}
-{{< tab name="Request" >}}
-```json
-{
-    "state":"exec",
-    "command":"CREATE TABLE IF NOT EXISTS pg_example(id SERIAL PRIMARY KEY,company VARCHAR(50) UNIQUE NOT NULL,employee  INT,discount REAL,plan FLOAT(8),code UUID,valid BOOL, memo TEXT, created_on TIMESTAMP NOT NULL)"
-}
-```
-{{< /tab >}}
-{{< tab name="Response" >}}
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "217.4µs"
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-### Query Bridge
-
-**POST `/web/api/bridges/:name/state`**
-
-Query Bridge
-- `state`, `command` is required
-
-{{< tabs >}}
-{{< tab name="Request" >}}
-```json
-{
-    "state":"query",
-    "command":"select * from pg_example"
-}
-```
-{{< /tab >}}
-{{< tab name="Response" >}}
-```json
-{
-    "success": true,
-    "reason": "success",
-    "column": [
-        "id",
-        "company",
-        "employee",
-        "discount",
-        "plan",
-        "code",
-        "valid",
-        "memo",
-        "created_on"
-    ],
-    "rows": [
-        [
-            2,
-            "test-company",
-            10,
-            1.234,
-            2.3456,
-            "c2d29867-3d0b-d497-9191-18a9d8ee7830",
-            true,
-            "test memo",
-            "2023-08-09T14:20:00+09:00"
-        ],
-        [
-            3,
-            "test-company2",
-            10,
-            1.234,
-            2.3456,
-            null,
-            null,
-            null,
-            "2023-08-09T14:20:00+09:00"
-        ]
-    ],
-    "elapse": "53.015905ms"
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-### Test Bridge
-
-**POST `/web/api/bridges/:name/state`**
-
-Test Bridge
-
-{{< tabs >}}
-{{< tab name="Request" >}}
-```json
-{
-    "state":"test",
-}
-```
-{{< /tab >}}
-{{< tab name="Response" >}}
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "331.1µs"
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-
-### Delete Bridge
-
-**DELETE `/web/api/bridges/:name`**
-
-Delete the bridge of the given name
-
-`response`
-
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "112.8µs"
-}
-```
+To manage bridges and run commands on them, use the JSON-RPC [`bridge.*`](#bridgelist) methods.
 
 ## Subscriber
 
-### Get Subscriber
-
-**GET `/web/api/subscribers/:name`**
-
-Return subscriber info
-- state: `RUNNING`, `STARTING`, `STOP`, `STOPPING`,`FAILED`, `UNKNWON`
-- `autoStart`, `queue`, `Qos` field is omitempty
-
-`response`
-
-```json
-{
-    "data": [
-        {
-            "name": "NATS_SUBR",
-            "type": "SUBSCRIBER",
-            "autoStart": true,  // omitempty
-            "state": "RUNNING", 
-            "task": "db/append/EXAMPLE:csv",
-            "bridge": "my_nats",
-            "topic": "iot.sensor",
-            "queue":"", // omitempty
-            "QoS":""    // omitempty
-        }
-    ],
-    "elapse": "253.4µs",
-    "reason": "success",
-    "success": true
-}
-```
-
-### List Subscriber
-
-**GET `/web/api/subscribers`**
-
-Return subscriber info list
-- state: `RUNNING`, `STARTING`, `STOP`, `STOPPING`,`FAILED`, `UNKNWON`
-- `autoStart`, `queue`, `Qos` field is omitempty
-
-`response`
-
-```json
-{
-    "data": [
-        {
-            "name": "NATS_SUBR",
-            "type": "SUBSCRIBER",
-            "autoStart": true,  // omitempty
-            "state": "RUNNING",
-            "task": "db/append/EXAMPLE:csv",
-            "bridge": "my_nats",
-            "topic": "iot.sensor",
-            "queue":"", // omitempty
-            "QoS":""    // omitempty
-        },
-        {
-            "name": "NATS_SUBR2",
-            "type": "SUBSCRIBER",
-            "autoStart": true,  // omitempty
-            "state": "STARTING",
-            "task": "db/insert/EXAMPLE2:csv",
-            "bridge": "my_nats2",
-            "topic": "iot.sensor2",
-            "queue":"", // omitempty
-            "QoS":""    // omitempty
-        }
-    ],
-    "elapse": "253.4µs",
-    "reason": "success",
-    "success": true
-}
-```
-### Add Subscribers
-
-**POST `/web/api/subscribers`**
-
-Add Subscriber   
-- `autostart`:   '--autostart' makes the subscriber starts along with machbase-neo starts. Ommit this to start/stop manually.   
-- `name` 'nats_subr' the name of the subscriber.   
-- `bridge` 'my_nats' the name of the bridge that the subscriber is going to use.   
-- `topic` 'iot.sensor' subject name to subscribe. it should be in NATS subject syntax.   
-- `task` 'db/append/EXAMPLE:csv' writing descriptor, it means the incoming data is in CSV format and writing data into the table EXAMPLE in append mode.   
-- `autostart` makes the subscriber will start automatically when machbase-neo starts. If the subscriber is not autostart mode, you can make it start and stop manually by subscriber start <name> and subscriber stop <name> commands.
-- `QoS` <int> if the bridge is MQTT type, it specifies the QoS level of the subscription to the topic. It supports 0, 1 and the default is 0 if it is not specified.
-- `queue` <string> if the bridge is NATS type, it specifies the Queue Group.
-
-nats-bridge manual https://docs.machbase.com/neo/bridges/31.nats/
-
-{{< tabs >}}
-{{< tab name="Request" >}}
-```json
-{
-    "name":"nats_subr",
-    "autoStart":true,
-    "bridge":"my_nats",
-    "topic":"iot.sensor",
-    "task":"db/append/EXAMPLE:csv",
-    "QoS": "",  // mqtt bridge option 0 or 1 ( default 0 )
-    "queue": "" // nats birdge option
-}
-```
-{{< /tab >}}
-{{< tab name="Response" >}}
-```json
-{
-    "elapse": "260µs",
-    "reason": "success",
-    "success": true
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-### Start Subscriber
-
-**POST `/web/api/subscribers/:name/state`**
-
-- `state` is required
-
-{{< tabs >}}
-{{< tab name="Request" >}}
-```json
-{
-    "state":"start",
-}
-```
-{{< /tab >}}
-{{< tab name="Response" >}}
-```json
-{
-    "elapse": "166.1µs",
-    "reason": "success",
-    "success": true
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-### Stop Subscriber
-
-**POST `/web/api/subscribers/:name/state`**
-
-- `state` is required
-
-{{< tabs >}}
-{{< tab name="Request" >}}
-```json
-{
-    "state":"stop",
-}
-```
-{{< /tab >}}
-{{< tab name="Response" >}}
-```json
-{
-    "elapse": "54.2µs",
-    "reason": "success",
-    "success": true
-}
-```
-{{< /tab >}}
-{{< /tabs >}}
-
-
-### Delete Subscriber
-
-**DELETE `/web/api/subscribers/:name`**
-
-Delete the subscriber of the given name
-
-`response`
-
-```json
-{
-    "elapse": "77.1µs",
-    "reason": "success",
-    "success": true
-}
-```
+Subscribers are managed with the JSON-RPC [`subscriber.*`](#subscriberlist) methods.
 
 ## Backup
 
@@ -1124,9 +407,10 @@ Delete the subscriber of the given name
 
 **GET `/web/api/backup/archives`**
 
-Return backup list
-- default backup dir `$MACHBASE_HOME/dbs/backup`
-- machbase-neo serve `--backup-dir={path}` required
+Returns the backup list.
+
+- The default backup directory is `backups` under the directory of the machbase-neo executable.
+- To change the location, start machbase-neo with the `--backup-dir={path}` option. This option is not required when using the default.
 
 `response`
 
@@ -1148,16 +432,19 @@ Return backup list
     "success": true
 }
 ```
+
 ### DB Backup
 
 **POST `/web/api/backup/archive`**
 
-backup database</br>
-- **Full backup**:   Backup of entire data
-- **Incremental backup**:   Backup of the data added after the full or previous incremental backup
-- **Time Duration backup**:   Backup of data for a specific period
+Backs up the database.<br/>
+
+- **Full backup**: backs up the entire data.
+- **Incremental backup**: backs up the data added after the full or previous incremental backup.
+- **Time duration backup**: backs up the data for a specific period.
 
 `request`
+
 {{< tabs >}}
 {{< tab name="Full Backup" >}}
 ```json
@@ -1170,8 +457,8 @@ backup database</br>
         "from":"",
         "to":""
     },
-    "path":"example_backup1" 
-    // "path":"/home/neo/backups/example_backup1" 
+    "path":"example_backup1"
+    // "path":"/home/neo/backups/example_backup1" // Absolute Path
 }
 ```
 {{< /tab >}}
@@ -1186,8 +473,8 @@ backup database</br>
         "from":"",
         "to":""
     },
-    "path":"example_backup1" 
-    // "path":"/home/neo/backups/example_backup1" 
+    "path":"example_backup1"
+    // "path":"/home/neo/backups/example_backup1" // Absolute Path
 }
 ```
 {{< /tab >}}
@@ -1202,8 +489,8 @@ backup database</br>
         "from":"2024-08-01 00:00:00",
         "to":"2024-08-02 23:59:59"
     },
-    "path":"example_backup1" 
-    // "path":"/home/neo/backups/example_backup1" 
+    "path":"example_backup1"
+    // "path":"/home/neo/backups/example_backup1" // Absolute Path
 }
 ```
 {{< /tab >}}
@@ -1218,14 +505,15 @@ backup database</br>
         "from":"",
         "to":""
     },
-    "path":"example_backup1" 
-    // "path":"/home/neo/backups/example_backup1" 
+    "path":"example_backup1"
+    // "path":"/home/neo/backups/example_backup1" // Absolute Path
 }
 ```
 {{< /tab >}}
 {{< /tabs >}}
 
 `response`
+
 ```json
 {
     "success": true,
@@ -1238,9 +526,10 @@ backup database</br>
 
 **GET `/web/api/backup/archive/status`**
 
-return backup status</br>
+Returns the backup status.<br/>
 
 `response`
+
 ```json
 {
     "data": {
@@ -1266,7 +555,7 @@ return backup status</br>
 
 **GET `/web/api/backup/mounts`**
 
-Return mount list
+Returns the mount list.
 
 `response`
 
@@ -1291,13 +580,15 @@ Return mount list
     "success": true
 }
 ```
+
 ### DB Mount
 
 **POST `/web/api/backup/mounts/:name`**
 
-database mount
-- `:name` mount name
-- `path` backup database path (`Absolute Path`, `Relative Path` available)
+Mounts a database.
+
+- `:name`: mount name
+- `path`: backup database path (both absolute and relative paths are available)
 
 {{< tabs >}}
 {{< tab name="Request" >}}
@@ -1323,10 +614,12 @@ database mount
 
 **DELETE `/web/api/backup/mounts/:name`**
 
-database unmount
-- `:name` unmount name
+Unmounts a database.
+
+- `:name`: name to unmount
 
 `response`
+
 ```json
 {
     "elapse": "46.8694ms",
@@ -1335,79 +628,9 @@ database unmount
 }
 ```
 
-
 ## Package
 
-### Search
-
-**GET `/web/api/pkgs/search?name=pkg_name&possibles=10`**
-
-`Query Parameter`
- - `name` is package name, required
- - `possible` is search count ( possible=0, all search )
-
-
-`response`
-
-```json
-{
-    "success": true,
-    "reason": "success",
-    "data":{},
-    "elapse": "547.1µs"
-}
-```
-### Sync
-
-**GET `/web/api/pkgs/sync`**
-
-Package sync 
-
-`response`
-
-```json
-{
-    "success": true,
-    "reason": "success",
-    "elapse": "30.9144ms"
-}
-```
-
-
-### Install
-
-**GET `/web/api/pkgs/insall/:name`**
-
- - `:name` is install package name, required
-
-`response`
-```json
-{
-    "success": true,
-    "reason": "success",
-    "data":{}, // omitempty
-    "log":"",
-    "elapse": "23.1491ms"
-}
-```
-
-### Uninstall
-
-**GET `/web/api/pkgs/uninsall/:name`**
-
- - `:name` is uninstall package name, required
-
-`response`
-```json
-{
-    "success": true,
-    "reason": "success",
-    "data":{}, // omitempty
-    "log":"",
-    "elapse": "88.4133ms"
-}
-```
-
+Packages are installed and removed with the JSH [`pkg` command](/neo/jsh/packages/).
 
 ## Others
 
@@ -1416,6 +639,7 @@ Package sync
 **GET `/web/api/refs/*path`**
 
 - `ReferenceGroup`
+
 ```json
 {
     "label": "group name",
@@ -1424,6 +648,7 @@ Package sync
 ```
 
 - `ReferenceItem`
+
 ```json
 {
     "type": "type",
@@ -1434,52 +659,12 @@ Package sync
 ```
 
 - type: `url`, `wrk`, `tql`, `sql`
-- address: if address has prefix `serverfile://<path>` it points a server side file, 
-  otherwise external web url that starts with `https://`
-
+- address: if the address has the prefix `serverfile://<path>`, it points to a server-side file;
+  otherwise, it is an external web URL that starts with `https://`.
 
 ### SQL statements splitter
 
-**POST `/web/api/splitter/sql`**
-
-```json
-{
-    "success": true,
-    "reason": "success or error reason",
-    "elapse": "elapse time",
-    "data": {
-        "statements": [
-            {
-                "text": "-- env: bridge=sqlite",
-                "beginLine": 1,
-                "endLine": 1,
-                "isComment": true,
-                "env": {
-                    "bridge": "sqlite",
-                    "error": "if there are syntax error in `-- env: bridge=database`"
-                }
-            },
-            {
-                "text": "select * from table",
-                "beginLine": 2,
-                "endLine": 2,
-                "isComment": false,
-                "env": {
-                    "bridge": "sqlite",
-                    "error": "if there are syntax error in `-- env: bridge=database`"
-                }
-            },
-            {
-                "text": "-- comment",
-                "beginLine": 3,
-                "endLine": 3,
-                "isComment": true,
-                "env": {}
-            }
-        ]
-    }
-}
-```
+To split SQL statements, use the JSON-RPC [`sql.split`](#sqlsplit) method.
 
 ### License info
 
@@ -1506,13 +691,12 @@ Package sync
 
 **POST `/web/api/license`**
 
-Install license file
-
+Installs a license file.
 
 ## WebSocket
 
 ```
-ws://127.0.0.1:5654/web/ui/console/{console_id}/data?token={jwt_token}
+ws://127.0.0.1:5654/web/api/console/{console_id}/data?token={jwt_token}
 ```
 
 The `console_id` must be a unique identifier generated by the client application to ensure proper session management.
@@ -1561,9 +745,9 @@ These messages are designed to clearly communicate status, issues, or guidance t
 
 - **timestamp**: The log event time, represented as a Unix epoch in nanoseconds.
 - **level**: Log severity, one of `"TRACE"`, `"DEBUG"`, `"INFO"`, `"WARN"`, or `"ERROR"`.
-- **task** (optional): The name of the related task, if applicable.
+- **task** (optional): The name of the related task.
 - **message**: The descriptive log message.
-- **repeat** (optional): Indicates the number of consecutive occurrences of the same log message, helping to minimize redundant output.
+- **repeat** (optional): The number of consecutive occurrences of the same log message, used to reduce redundant output.
 
 ## JSON-RPC
 
@@ -1625,7 +809,7 @@ Notes:
 
 ### WebSocket JSON-RPC request format
 
-**`ws:/web/api/console/:console_id/data`**
+**`ws://{server_address}/web/api/console/:console_id/data?token={jwt_token}`**
 
 Over WebSocket, use `rpc_req` and `rpc_rsp` event wrappers.
 The `session` field is an identifier that the UI client can use to route the response back to the correct tab or view.
@@ -1735,7 +919,6 @@ The `session` field is an identifier that the UI client can use to route the res
 
 </details>
 
-
 ### Vizspec
 
 #### vizspec.render
@@ -1833,7 +1016,6 @@ The `session` field is an identifier that the UI client can use to route the res
 ```
 
 </details>
-
 
 ### Server
 
@@ -2074,7 +1256,7 @@ The `session` field is an identifier that the UI client can use to route the res
 
 #### server.shutdown
 
-mgmt server implements
+Implemented by the management (mgmt) server.
 
 `server.shutdown()`
 
@@ -2119,7 +1301,6 @@ mgmt server implements
 ```
 
 </details>
-
 
 ### Service
 
@@ -2169,7 +1350,6 @@ mgmt server implements
 ```
 
 </details>
-
 
 ### Proxy
 
@@ -2361,7 +1541,6 @@ mgmt server implements
 
 </details>
 
-
 ### Shell
 
 #### shell.list
@@ -2459,6 +1638,158 @@ mgmt server implements
 
 </details>
 
+#### shell.copy
+
+Copies the given shell definition and returns the copy with a new id.
+
+`shell.copy(srcId)`
+
+*Params*
+- `srcId` *string* - id of the shell definition to copy
+
+*Return*
+
+- `object<model.ShellDefinition>|error` - the copied shell definition
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "shell.copy",
+        "params": [
+            "23"
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {
+            "id": "24",
+            "type": "term",
+            "icon": "console-network-outline",
+            "label": "CUSTOM SHELL",
+            "command": "/bin/sh",
+            "attributes": [
+                {
+                    "removable": true
+                },
+                {
+                    "cloneable": true
+                },
+                {
+                    "editable": true
+                }
+            ]
+        }
+    }
+}
+```
+
+</details>
+
+#### shell.update
+
+Updates a shell definition. The target is identified by `id`, and the whole definition is sent.
+
+`shell.update(shell)`
+
+*Params*
+- `shell` *object<model.ShellDefinition>* - shell definition with `id`, `type`, `label`, `command`, `icon`, `theme`, and `attributes`
+    returns an error if `command` is empty
+
+*Return*
+
+- `object<model.ShellDefinition>|error` - the updated shell definition
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "shell.update",
+        "params": [
+            {
+                "id": "24",
+                "type": "term",
+                "icon": "console-network-outline",
+                "label": "_docgen_uiapi_s2",
+                "command": "/bin/bash",
+                "attributes": [
+                    {
+                        "removable": true
+                    },
+                    {
+                        "cloneable": true
+                    },
+                    {
+                        "editable": true
+                    }
+                ],
+                "theme": "dark"
+            }
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {
+            "id": "24",
+            "type": "term",
+            "icon": "console-network-outline",
+            "label": "_docgen_uiapi_s2",
+            "theme": "dark",
+            "command": "/bin/bash",
+            "attributes": [
+                {
+                    "removable": true
+                },
+                {
+                    "cloneable": true
+                },
+                {
+                    "editable": true
+                }
+            ]
+        }
+    }
+}
+```
+
+</details>
+
 #### shell.delete
 
 `shell.delete(id)`
@@ -2505,7 +1836,6 @@ mgmt server implements
 ```
 
 </details>
-
 
 ### Bridge
 
@@ -2986,7 +2316,6 @@ mgmt server implements
 
 </details>
 
-
 ### Sshkey
 
 #### sshkey.list
@@ -3133,7 +2462,6 @@ mgmt server implements
 
 </details>
 
-
 ### Key
 
 #### key.list
@@ -3146,7 +2474,11 @@ mgmt server implements
 
 *Return*
 
-- `array<object<KeyInfo>>|error`
+- `array<object<KeyInfo>>|error` - the keys stored in the server key store
+    - `idx`: position in the list
+    - `id`: key id, the value to pass to `key.delete`
+    - `name`: key name
+    - `notBefore`, `notAfter`: start and end of the validity period in Unix timestamp (sec.)
 
 <details>
 <summary>Request/Response JSON</summary>
@@ -3175,7 +2507,15 @@ mgmt server implements
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "result": []
+        "result": [
+            {
+                "idx": 0,
+                "id": 8,
+                "name": "_docgen_uiapi_key",
+                "notBefore": 1789632914,
+                "notAfter": 2104992914
+            }
+        ]
     }
 }
 ```
@@ -3184,26 +2524,27 @@ mgmt server implements
 
 #### key.generate
 
-`key.generate(id, typ, notBefore, notAfter, store)`
+`key.generate(name, typ, notBefore, notAfter, store)`
 
 *Params*
-- `id` *string*
-- `typ` *string* - the type of key to generate, must be RSA or ECDSA
+- `name` *string* - key name, stored in lowercase
+- `typ` *string* - the type of key to generate, must be `RSA` or `ECDSA`
 - `notBefore` *int64* - the start time of the key's validity period in Unix timestamp (sec.)
     if not specified or 0, the current time will be used
 - `notAfter` *int64* - the end time of the key's validity period in Unix timestamp (sec.)
     if not specified or 0, the default period of 10 years will be used
 - `store` *bool* - whether to store the key pair in the server's key store
+    if `false`, the key pair is not stored and does not appear in `key.list`
 
 *Return*
 
 - `any|error` - the generated key information
-    - `id`: the identifier of the key pair
+    - `id`: key id; `0` if `store` is false
+    - `name`: key name
     - `certificate`: the certificate of the key pair
     - `key`: the private key of the key pair
-    - `token`: the token associated with the key pair
-    - `serverKey`: the server's certificate (if store is true)
-    - `zip`: a zip archive containing the key pair and server certificate (if store is true)
+    - `serverKey`: the server's certificate (if `store` is true)
+    - `zip`: a base64-encoded zip archive containing the key pair and server certificate (if `store` is true)
 
 <details>
 <summary>Request/Response JSON</summary>
@@ -3219,11 +2560,11 @@ mgmt server implements
         "id": 20,
         "method": "key.generate",
         "params": [
-            "string",
-            "string",
+            "_docgen_uiapi_key",
+            "ecdsa",
             0,
             0,
-            false
+            true
         ]
     }
 }
@@ -3238,7 +2579,14 @@ mgmt server implements
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "result": {}
+        "result": {
+            "certificate": "-----BEGIN CERTIFICATE-----\nXXXXXXXXXXXXXXXXXX\n-----END CERTIFICATE-----\n",
+            "id": 8,
+            "key": "-----BEGIN EC PRIVATE KEY-----\nXXXXXXXXXXXXXXXX\n-----END EC PRIVATE KEY-----\n",
+            "name": "_docgen_uiapi_key",
+            "serverKey": "-----BEGIN CERTIFICATE-----\nXXXXXXXXXXXXXXXXXX\n-----END CERTIFICATE-----\n",
+            "zip": "UEsDBXXXXXXXXXXXXXXXX"
+        }
     }
 }
 ```
@@ -3250,7 +2598,7 @@ mgmt server implements
 `key.delete(id)`
 
 *Params*
-- `id` *string*
+- `id` *int64* - key id returned by `key.list` or `key.generate`
 
 *Return*
 
@@ -3270,7 +2618,7 @@ mgmt server implements
         "id": 20,
         "method": "key.delete",
         "params": [
-            "string"
+            8
         ]
     }
 }
@@ -3292,12 +2640,13 @@ mgmt server implements
 
 </details>
 
+### Token
 
-### Schedule
+For how to use an issued token, see [API Security](/neo/security/).
 
-#### schedule.list
+#### token.list
 
-`schedule.list()`
+`token.list()`
 
 *Params*
 
@@ -3305,7 +2654,14 @@ mgmt server implements
 
 *Return*
 
-- `array<object<scheduler.Schedule>>|error`
+- `array<object<ApiTokenInfo>>|error` - the caller's API tokens
+    - `id`: token id, the value to pass to `token.delete`
+    - `name`: token name
+    - `user`: the user who owns the token
+    - `hint`: the token value, partially masked
+    - `createdAt`: issue time in Unix timestamp (sec.)
+    - `notAfter`: expiration time in Unix timestamp (sec.)
+    - `lastUsedAt`: last use time in Unix timestamp (sec.), omitted if the token has never been used
 
 <details>
 <summary>Request/Response JSON</summary>
@@ -3319,7 +2675,7 @@ mgmt server implements
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "method": "schedule.list",
+        "method": "token.list",
         "params": []
     }
 }
@@ -3334,81 +2690,35 @@ mgmt server implements
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "result": []
-    }
-}
-```
-
-</details>
-
-#### schedule.timer.add
-
-`schedule.timer.add(name, spec, command, autoStart)`
-
-*Params*
-- `name` *string*
-- `spec` *string*
-- `command` *string*
-- `autoStart` *bool*
-
-*Return*
-
-- `null|error`
-
-<details>
-<summary>Request/Response JSON</summary>
-
-*Request*
-
-```json
-{
-    "type": "rpc_req",
-    "session": "client-session-#1",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 20,
-        "method": "schedule.timer.add",
-        "params": [
-            "string",
-            "string",
-            "string",
-            false
+        "result": [
+            {
+                "id": 11,
+                "name": "_docgen_uiapi_token",
+                "user": "SYS",
+                "hint": "nt_b_XXXX****XXXX",
+                "createdAt": 1789632914,
+                "notAfter": 2105252114
+            }
         ]
     }
 }
 ```
 
-*Response*
-
-```json
-{
-    "type": "rpc_rsp",
-    "session": "client-session-#1",
-    "rpc": {
-        "jsonrpc": "2.0",
-        "id": 20,
-        "result": null
-    }
-}
-```
-
 </details>
 
-#### schedule.subscriber.add
+#### token.generate
 
-`schedule.subscriber.add(name, bridge, command, autoStart, topic, qos)`
+`token.generate(name, notAfter)`
 
 *Params*
-- `name` *string*
-- `bridge` *string*
-- `command` *string*
-- `autoStart` *bool*
-- `topic` *string*
-- `qos` *int*
+- `name` *string* - token name; an empty name returns an error
+- `notAfter` *int64* - expiration time in Unix timestamp (sec.)
+    if 0, the token expires 10 years after it is issued
 
 *Return*
 
-- `null|error`
+- `object<GeneratedApiToken>|error` - the same fields as a `token.list` item, plus `token`, the plain token value
+    the plain token value is available only in this response
 
 <details>
 <summary>Request/Response JSON</summary>
@@ -3422,13 +2732,9 @@ mgmt server implements
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "method": "schedule.subscriber.add",
+        "method": "token.generate",
         "params": [
-            "string",
-            "string",
-            "string",
-            false,
-            "string",
+            "_docgen_uiapi_token",
             0
         ]
     }
@@ -3444,19 +2750,27 @@ mgmt server implements
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "result": null
+        "result": {
+            "id": 11,
+            "name": "_docgen_uiapi_token",
+            "user": "SYS",
+            "hint": "nt_b_XXXX****XXXX",
+            "createdAt": 1789632914,
+            "notAfter": 2105252114,
+            "token": "nt_b_XXXXXXXXXXXXXXXX"
+        }
     }
 }
 ```
 
 </details>
 
-#### schedule.delete
+#### token.delete
 
-`schedule.delete(name)`
+`token.delete(id)`
 
 *Params*
-- `name` *string*
+- `id` *int64* - token id returned by `token.list` or `token.generate`
 
 *Return*
 
@@ -3474,9 +2788,9 @@ mgmt server implements
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "method": "schedule.delete",
+        "method": "token.delete",
         "params": [
-            "string"
+            11
         ]
     }
 }
@@ -3498,12 +2812,196 @@ mgmt server implements
 
 </details>
 
-#### schedule.start
+### Timer
 
-`schedule.start(name)`
+A timer is identified by the id that `timer.list` or `timer.add` returns. Adding a timer with an existing name registers it under a new id. For the schedule syntax, see [Timer](/neo/timer/).
+
+#### timer.list
+
+`timer.list()`
 
 *Params*
-- `name` *string*
+
+- none
+
+*Return*
+
+- `array<object<timer.Info>>|error` - timer list
+    - `id`: timer id
+    - `userName`, `execUser`: the user who owns the timer and the user who runs it
+    - `name`: timer name
+    - `autoStart`: whether the timer starts automatically, omitted if `false`
+    - `state`: one of `RUNNING`, `STARTING`, `STOP`, `STOPPING`, `FAILED`, `UNKNOWN`
+    - `task`: path of the TQL file to run
+    - `schedule`: the schedule
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "timer.list",
+        "params": []
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": [
+            {
+                "id": 9,
+                "userName": "SYS",
+                "execUser": "sys",
+                "name": "_DOCGEN_UIAPI_TIMER",
+                "state": "STOP",
+                "task": "_docgen_uiapi_timer.tql",
+                "schedule": "@every 1h"
+            }
+        ]
+    }
+}
+```
+
+</details>
+
+#### timer.get
+
+`timer.get(id)`
+
+*Params*
+- `id` *int64* - timer id
+
+*Return*
+
+- `object<timer.Info>|error` - timer information, with the same fields as `timer.list`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "timer.get",
+        "params": [
+            9
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {
+            "id": 9,
+            "userName": "SYS",
+            "execUser": "sys",
+            "name": "_DOCGEN_UIAPI_TIMER",
+            "state": "STOP",
+            "task": "_docgen_uiapi_timer.tql",
+            "schedule": "@every 1h"
+        }
+    }
+}
+```
+
+</details>
+
+#### timer.add
+
+`timer.add(req)`
+
+*Params*
+- `req` *object*
+    - `name` *string* - timer name, stored in uppercase
+    - `spec` *string* - the schedule, e.g., `0 30 * * * *` (every hour on the half hour), `@every 1h30m` (every 1 hour 30 minutes), `@daily` (every day)
+    - `command` *string* - path of the TQL file to run; returns an error if the file does not exist
+    - `autoStart` *bool* - if `true`, the timer starts as soon as it is added and also starts along with machbase-neo
+
+*Return*
+
+- `int64|error` - id of the created timer
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "timer.add",
+        "params": [
+            {
+                "name": "_docgen_uiapi_timer",
+                "spec": "@every 1h",
+                "command": "_docgen_uiapi_timer.tql",
+                "autoStart": false
+            }
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": 9
+    }
+}
+```
+
+</details>
+
+#### timer.update
+
+Replaces the settings of the timer given by `id` with the request.
+
+`timer.update(req)`
+
+*Params*
+- `req` *object*
+    - `id` *int64* - timer id
+    - `spec` *string* - the schedule
+    - `command` *string* - path of the TQL file to run; returns an error if omitted
+    - `autoStart` *bool* - whether the timer starts automatically; becomes `false` if omitted
 
 *Return*
 
@@ -3521,9 +3019,14 @@ mgmt server implements
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "method": "schedule.start",
+        "method": "timer.update",
         "params": [
-            "string"
+            {
+                "id": 9,
+                "spec": "0 30 * * * *",
+                "command": "_docgen_uiapi_timer.tql",
+                "autoStart": true
+            }
         ]
     }
 }
@@ -3545,12 +3048,12 @@ mgmt server implements
 
 </details>
 
-#### schedule.stop
+#### timer.delete
 
-`schedule.stop(name)`
+`timer.delete(id)`
 
 *Params*
-- `name` *string*
+- `id` *int64* - timer id
 
 *Return*
 
@@ -3568,9 +3071,9 @@ mgmt server implements
     "rpc": {
         "jsonrpc": "2.0",
         "id": 20,
-        "method": "schedule.stop",
+        "method": "timer.delete",
         "params": [
-            "string"
+            9
         ]
     }
 }
@@ -3592,6 +3095,498 @@ mgmt server implements
 
 </details>
 
+#### timer.start
+
+`timer.start(id)`
+
+*Params*
+- `id` *int64* - timer id
+
+*Return*
+
+- `null|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "timer.start",
+        "params": [
+            9
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
+
+#### timer.stop
+
+`timer.stop(id)`
+
+*Params*
+- `id` *int64* - timer id
+
+*Return*
+
+- `null|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "timer.stop",
+        "params": [
+            9
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
+
+### Subscriber
+
+A subscriber is identified by the id that `subscriber.list` or `subscriber.add` returns. For bridge settings, see [MQTT bridge](/neo/bridges/mqtt/) and [NATS bridge](/neo/bridges/nats/).
+
+#### subscriber.list
+
+`subscriber.list()`
+
+*Params*
+
+- none
+
+*Return*
+
+- `array<object<subscriber.Info>>|error` - subscriber list
+    - `id`: subscriber id
+    - `userName`, `execUser`: the user who owns the subscriber and the user who runs it
+    - `name`: subscriber name
+    - `autoStart`: whether the subscriber starts automatically
+    - `state`: one of `RUNNING`, `STARTING`, `STOP`, `STOPPING`, `FAILED`, `UNKNOWN`
+    - `task`: the writing descriptor
+    - `bridge`: bridge name
+    - `topic`: the MQTT topic or NATS subject to subscribe to
+    - `qos`, `queue`, `stream`: bridge options
+    - `autoStart`, `qos`, `queue`, and `stream` are omitted if they have no value.
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "subscriber.list",
+        "params": []
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": [
+            {
+                "id": 4,
+                "userName": "SYS",
+                "execUser": "sys",
+                "name": "_DOCGEN_UIAPI_SUBR",
+                "state": "STOP",
+                "task": "db/append/EXAMPLE:csv",
+                "bridge": "_docgen_uiapi_mqtt",
+                "topic": "_docgen_uiapi/sensor",
+                "qos": 1
+            }
+        ]
+    }
+}
+```
+
+</details>
+
+#### subscriber.get
+
+`subscriber.get(id)`
+
+*Params*
+- `id` *int64* - subscriber id
+
+*Return*
+
+- `object<subscriber.Info>|error` - subscriber information, with the same fields as `subscriber.list`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "subscriber.get",
+        "params": [
+            4
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {
+            "id": 4,
+            "userName": "SYS",
+            "execUser": "sys",
+            "name": "_DOCGEN_UIAPI_SUBR",
+            "state": "STOP",
+            "task": "db/append/EXAMPLE:csv",
+            "bridge": "_docgen_uiapi_mqtt",
+            "topic": "_docgen_uiapi/sensor",
+            "qos": 1
+        }
+    }
+}
+```
+
+</details>
+
+#### subscriber.add
+
+`subscriber.add(req)`
+
+*Params*
+- `req` *object*
+    - `name` *string* - subscriber name, stored in uppercase
+    - `bridge` *string* - the name of the bridge that the subscriber uses
+    - `command` *string* - e.g., `db/append/EXAMPLE:csv`. The writing descriptor; this example means the incoming data is in CSV format and is written into the table `EXAMPLE` in append mode.
+    - `autoStart` *bool* - if `true`, the subscriber starts along with machbase-neo
+    - `mqtt` *object* - MQTT bridge options
+        - `topic` *string* - the topic to subscribe to
+        - `qos` *int* - the QoS level of the subscription; `0` and `1` are supported, and the default is `0`
+    - `nats` *object* - NATS bridge options
+        - `subject` *string* - the subject to subscribe to
+        - `queue` *string* - queue group
+        - `stream` *string* - stream name
+- `name`, `bridge`, `command`, and the topic (`mqtt.topic` or `nats.subject`) are required.
+- `mqtt` and `nats` cannot be set together.
+
+*Return*
+
+- `int64|error` - id of the created subscriber
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "subscriber.add",
+        "params": [
+            {
+                "name": "_docgen_uiapi_subr",
+                "bridge": "_docgen_uiapi_mqtt",
+                "command": "db/append/EXAMPLE:csv",
+                "autoStart": false,
+                "mqtt": {
+                    "topic": "_docgen_uiapi/sensor",
+                    "qos": 1
+                }
+            }
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": 4
+    }
+}
+```
+
+</details>
+
+#### subscriber.update
+
+Replaces the settings of the subscriber given by `id` with the request.
+
+`subscriber.update(req)`
+
+*Params*
+- `req` *object*
+    - `id` *int64* - subscriber id
+    - `bridge`, `command`, `autoStart`, `mqtt`, `nats` - same as `subscriber.add`
+
+*Return*
+
+- `null|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "subscriber.update",
+        "params": [
+            {
+                "id": 4,
+                "bridge": "_docgen_uiapi_mqtt",
+                "command": "db/append/EXAMPLE:json",
+                "autoStart": false,
+                "mqtt": {
+                    "topic": "_docgen_uiapi/sensor2",
+                    "qos": 0
+                }
+            }
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
+
+#### subscriber.delete
+
+`subscriber.delete(id)`
+
+*Params*
+- `id` *int64* - subscriber id
+
+*Return*
+
+- `null|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "subscriber.delete",
+        "params": [
+            4
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
+
+#### subscriber.start
+
+`subscriber.start(id)`
+
+*Params*
+- `id` *int64* - subscriber id
+
+*Return*
+
+- `null|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "subscriber.start",
+        "params": [
+            4
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
+
+#### subscriber.stop
+
+`subscriber.stop(id)`
+
+*Params*
+- `id` *int64* - subscriber id
+
+*Return*
+
+- `null|error`
+
+<details>
+<summary>Request/Response JSON</summary>
+
+*Request*
+
+```json
+{
+    "type": "rpc_req",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "method": "subscriber.stop",
+        "params": [
+            4
+        ]
+    }
+}
+```
+
+*Response*
+
+```json
+{
+    "type": "rpc_rsp",
+    "session": "client-session-#1",
+    "rpc": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": null
+    }
+}
+```
+
+</details>
 
 ### Http
 
@@ -3600,7 +3595,7 @@ mgmt server implements
 `http.debug.set(m)`
 
 *Params*
-- `m` *object* - debug setting map with enable and logLatency keys
+- `m` *object* - debug setting map with `enable` and `logLatency` keys
 
 *Return*
 
@@ -3688,7 +3683,6 @@ mgmt server implements
 ```
 
 </details>
-
 
 ### Session
 
@@ -3927,7 +3921,6 @@ mgmt server implements
 
 </details>
 
-
 ### Sql
 
 #### sql.split
@@ -3976,7 +3969,6 @@ mgmt server implements
 ```
 
 </details>
-
 
 ### Lsp
 

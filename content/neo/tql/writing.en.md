@@ -4,9 +4,8 @@ type: docs
 weight: 04
 ---
 
-
 {{< callout type="info" >}}
-For the examples, create a table with the following SQL statements.
+For the examples, create a table with the following SQL statement.
 {{< /callout >}}
 
 ```sql
@@ -21,8 +20,8 @@ CREATE TAG TABLE IF NOT EXISTS EXAMPLE (
 
 ### 1. Create *tql* file
 
-Save the code below as `input-csv.tql`.
-When you save a TQL script, the editor will display a link icon <img src="/images/copy_addr_icon.jpg" width="24px" style="display:inline"> in the top right corner. Click on it to copy the script file's address.
+Save the code below as `input-csv.tql`.  
+When you save a TQL script, the editor displays a link icon <img src="/images/copy_addr_icon.jpg" width="24px" style="display:inline"> in the top right corner. Click it to copy the script file's address.
 
 ```js {linenos=table,hl_lines=["7"]}
 CSV(payload(), 
@@ -37,6 +36,7 @@ SQL(`insert into example values(?,?,?)`, value(0), value(1), value(2))
 ### 2. HTTP POST
 
 {{< tabs >}}
+
 {{< tab name="HTTP" >}}
 
 ~~~
@@ -50,6 +50,7 @@ TAG0,1628953200000000000,13
 ~~~
 
 {{< /tab >}}
+
 {{< tab name="cURL" >}}
 
 ```sh
@@ -58,8 +59,11 @@ curl -X POST http://127.0.0.1:5654/db/tql/input-csv.tql \
     --data-binary @- << 'EOF'
 TAG0,1628866800000000000,12
 TAG0,1628953200000000000,13
+EOF
 ```
+
 {{< /tab >}}
+
 {{< /tabs >}}
 
 **Response:**
@@ -90,8 +94,8 @@ EOF
 
 ### 1. Create *tql* file
 
-Save the code below as `append-csv.tql`.
-When you save a TQL script, the editor will display a link icon <img src="/images/copy_addr_icon.jpg" width="24px" style="display:inline"> in the top right corner. Click on it to copy the script file's address.
+Save the code below as `append-csv.tql`.  
+When you save a TQL script, the editor displays a link icon <img src="/images/copy_addr_icon.jpg" width="24px" style="display:inline"> in the top right corner. Click it to copy the script file's address.
 
 ```js {linenos=table,hl_lines=["7"]}
 CSV(payload(), 
@@ -106,6 +110,7 @@ APPEND(table('example'))
 ### 2. HTTP POST
 
 {{< tabs >}}
+
 {{< tab name="HTTP" >}}
 
 ~~~
@@ -119,6 +124,7 @@ TAG0,1628953200000000000,13
 ~~~
 
 {{< /tab >}}
+
 {{< tab name="cURL" >}}
 
 ```sh
@@ -129,25 +135,25 @@ TAG2,1628866800000000000,12
 TAG2,1628953200000000000,13
 EOF
 ```
+
 {{< /tab >}}
+
 {{< /tabs >}}
 
 ### 3. MQTT PUBLISH
 
 ```sh
-mosquitto_pub -h 127.0.0.1 -p 5653 -t db/tql/input-csv.tql -s << 'EOF'
+mosquitto_pub -h 127.0.0.1 -p 5653 -t db/tql/append-csv.tql -s << 'EOF'
 TAG3,1628866800000000000,12
 TAG3,1628953200000000000,13
 EOF
 ```
 
-
 ## Custom JSON
 
 ### 1. Create *tql* file
 
-Use SCRIPT() function to parse a custom format JSON.
-
+Use the `SCRIPT()` function to parse custom-format JSON.  
 Save the code below as `input-json.tql`.
 
 ```js {linenos=table}
@@ -161,6 +167,7 @@ SQL(`insert into example values(?,?,?)`, value(0), value(1), value(2))
 ### 2. HTTP POST
 
 {{< tabs >}}
+
 {{< tab name="HTTP" >}}
 
 ~~~
@@ -182,6 +189,7 @@ Content-Type: application/json
 ~~~
 
 {{< /tab >}}
+
 {{< tab name="cURL" >}}
 
 ```sh
@@ -200,7 +208,9 @@ curl -X POST http://127.0.0.1:5654/db/tql/input-json.tql \
 }
 EOF
 ```
+
 {{< /tab >}}
+
 {{< /tabs >}}
 
 ### 3. MQTT PUBLISH
@@ -222,14 +232,16 @@ EOF
 
 ## Custom Text
 
-When the data transforming is required for writing to the database, prepare the proper *tql* script and publish the data to the topic named `db/tql/`+`{tql_file.tql}`.
+If data needs to be transformed before it is written to the database, prepare a proper *tql* script and publish the data to the topic `db/tql/{tql_file.tql}`.
 
-### 1. Create tql file
+### 1. Create *tql* file
 
-The example code below shows how to handle multi-lines text data for writing into a table.
+The example code below shows how to handle multi-line text data for writing into a table.
 
 {{< tabs >}}
+
 {{< tab name="SCRIPT" >}}
+
 ```js {linenos=table,hl_lines=[11,12],linenostart=1}
 SCRIPT({
     content = $.payload;
@@ -242,15 +254,19 @@ SCRIPT({
         .filter(line => line !== ""); // filter empty lines
     lines.forEach((line, idx) => {
         part = line.substring(0, 2);  // takes the first 2 letters
-        $.yield('text_'+idx, (new Date()), parseInt(part))
+        $.yield('text_'+idx, (new Date()), parseInt(part));
     });
 })
 CSV(timeformat('default'))
 // SQL(`insert into example values(?,?,?)`, value(0), value(1), value(2))
 ```
-{{</ tab >}}
+
+{{< /tab >}}
+
 {{< tab name="MAP" >}}
-Transforming using MAP functions.
+
+Transforming data with MAP functions.
+
 ```js {linenos=table,hl_lines=["13-15"],linenostart=1}
 // payload() returns the payload that arrived via HTTP-POST or MQTT,
 // The ?? operator means that if tql is called without content,
@@ -270,12 +286,13 @@ MAPVALUE(2, strSub( value(2), 0, 2 ) )
 
 // Run this code in the tql editor of web-ui for testing
 CSV( timeformat("DEFAULT") )
-// Use APPEND(table('example')) for the real action
-// APPEND(table('example'))
+// Uncomment the line below for the real action
+// SQL(`insert into example values(?,?,?)`, value(0), value(1), value(2))
 ```
-{{</ tab >}}
-{{</ tabs >}}
 
+{{< /tab >}}
+
+{{< /tabs >}}
 
 **Result**
 
@@ -287,17 +304,18 @@ text_3,2023-12-02 11:03:36.054,89
 text_4,2023-12-02 11:03:36.054,90
 ```
 
-Run the code above and if there is no error and works as expected, 
-then replace the last line `CSV()` with `SQL(...)`.
+Run the code above, and if it works as expected without errors, replace the last line `CSV()` with `SQL(...)`.
 
-Save the code as "script-post-lines.tql", then send some test data to the topic `db/tql/script-post-lines.tql`.
+Save the code as `script-post-lines.tql`, then send some test data to the topic `db/tql/script-post-lines.tql`.
 
-### 3. HTTP POST
+### 2. HTTP POST
 
-For the note, the same *tql* file also works with HTTP POST.
+The same *tql* file also works with HTTP POST.
 
 {{< tabs >}}
+
 {{< tab name="HTTP" >}}
+
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/tql/script-post-lines.tql
@@ -309,8 +327,11 @@ Content-Type: text/plain
 442222
 ```
 ~~~
-{{</ tab >}}
+
+{{< /tab >}}
+
 {{< tab name="cURL" >}}
+
 ```sh
 curl http://127.0.0.1:5654/db/tql/script-post-lines.tql \
   -H "Content-Type: text/plain" \
@@ -321,8 +342,10 @@ curl http://127.0.0.1:5654/db/tql/script-post-lines.tql \
 442222
 EOF
 ```
-{{</ tab >}}
-{{</ tabs >}}
+
+{{< /tab >}}
+
+{{< /tabs >}}
 
 **Response:**
 
@@ -349,7 +372,7 @@ mosquitto_pub -h 127.0.0.1 -p 5653 \
 EOF
 ```
 
-Then find if the data was successfully transformed and stored.
+Then check whether the data was transformed and stored successfully.
 
 ```sh
 $ machbase-neo shell "select * from example where name like 'text_%'"

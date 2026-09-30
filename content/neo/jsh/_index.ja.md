@@ -54,9 +54,9 @@ JSHは、外部コマンドに対してシェル形式のパイプとリダイ�
 console.print("Hello World?\n")
 ```
 
-「New...」ページで「JSH」を選択します。
+新しいタブの`New...`画面で`JSH`を選択します。
 
-{{< figure src="./img/fish.jpg" width="86">}}
+{{< figure src="/neo/jsh/img/fish.jpg" width="86">}}
 
 `.js`ファイルを実行するためのシンプルなコマンドラインインタープリターとして動作します。
 
@@ -67,7 +67,7 @@ console.print("Hello World?\n")
 Hello World? 
 ```
 
-{{< figure src="./img/fish-hello.jpg" width="486">}}
+{{< figure src="/neo/jsh/img/fish-hello.jpg" width="486">}}
 
 ## ディレクトリのマウント {#디렉터리-마운트}
 

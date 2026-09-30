@@ -47,7 +47,7 @@ import requests
 
 response = requests.post(
   "http://127.0.0.1:5654/metrics/write",
-  params={"db": "example", "precision":"ms"},
+  params={"db": "example", "precision": "ms"},
   data="my-car speed=87.6 1782878977000",
 )
 print(response.text)

@@ -15,6 +15,11 @@ See each SDK page for installation, connections, functions, and runnable example
 If choosing an SDK for the first time, read [Choose an Integration Method](../selection-integration-method/)
 first, then use this page to compare required features and exact API paths.
 
+"Go native" in the tables refers to the legacy v1 `machgo` API, verified at v1.8.4.
+[Go SDK](../go/) documents the v2 `database/sql` API; v2 no longer provides the legacy `machgo` package.
+Do not apply features or minimum versions verified on v1 directly to v2. Keep them separate from
+v2-specific verification bases such as ARRAY and selected-column Append below.
+
 <a id="support-scope-sdk-nullable-metadata"></a>
 
 ## Nullable Metadata

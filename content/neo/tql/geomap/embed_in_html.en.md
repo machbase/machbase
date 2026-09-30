@@ -130,7 +130,7 @@ In this example, the `geomapID()` (line 20) is provided and the document has a `
 </head>
 <body id="body">
     <script src="/web/geomap/leaflet.js"></script>
-    <div id="map_is_here" style="width:100%; height:100%;"/>
+    <div id="map_is_here" style="width:100%; height:100%;"></div>
     <script>
         function loadJS(url) {
             var scriptElement = document.createElement('script');

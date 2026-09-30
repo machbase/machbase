@@ -24,8 +24,8 @@ machbase-neo shell import   \
 ```
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-100  5352  100  5352    0     0   547k      0 --:--:-- --:--:-- --:--:-- 5226k
-import total 1000 record(s) inserted
+100  5352  100  5352    0     0   263k      0 --:--:-- --:--:-- --:--:--  275k
+Import 1,000 rows completed. 1000,0
 ```
 
 또는 파일을 먼저 로컬에 저장한 뒤 import할 수도 있습니다.
@@ -37,12 +37,13 @@ curl -o data.csv.gz https://docs.machbase.com/assets/example/example.csv.gz
 압축 여부와 상관없이 CSV 파일을 import할 수 있습니다.  
 로컬에 저장된 파일을 `--input <파일>` 옵션으로 지정하고, gzip으로 압축된 경우 `--compress gzip` 옵션을 추가하십시오.
 
-`-v /mnt=.` 플래그는 현재 디렉토리(`.`)를 shell 런타임의 `/mnt` 경로에 마운트하므로, `machbase-neo shell` 명령이 마운트된 디렉토리 내의 로컬 파일에 접근할 수 있습니다. import할 때는 마운트된 전체 경로(예: `/mnt/data.csv.gz`)를 지정하여 컨테이너 환경 내에서 로컬 파일을 참조하세요.
+`-v /mnt=.` 플래그는 현재 디렉토리(`.`)를 shell 런타임의 `/mnt` 경로에 마운트하므로, `machbase-neo shell` 명령이 마운트된 디렉토리 내의 로컬 파일에 접근할 수 있습니다. import할 때는 마운트된 전체 경로(예: `/mnt/data.csv.gz`)를 지정해 셸 런타임 안에서 로컬 파일을 참조합니다. `-v`를 지정하지 않으면 현재 디렉토리는 `/work` 경로(예: `/work/data.csv.gz`)로 접근할 수 있습니다.
 
 ```sh
 machbase-neo shell -v /mnt=. \
     import \
-    --input /mnt/data.csv    \
+    --input /mnt/data.csv.gz \
+    --compress gzip       \
     --timeformat s        \
     EXAMPLE
 ```
@@ -53,13 +54,16 @@ import가 완료되었는지 확인해 봅니다.
 machbase-neo shell "select * from example order by time desc limit 5"
 ```
 ```
- ROWNUM  NAME      TIME(UTC)            VALUE     
-──────────────────────────────────────────────────
- 1       wave.sin  2023-02-15 03:47:50  0.994540  
- 2       wave.cos  2023-02-15 03:47:50  -0.104353 
- 3       wave.sin  2023-02-15 03:47:49  0.951002  
- 4       wave.cos  2023-02-15 03:47:49  0.309185  
- 5       wave.cos  2023-02-15 03:47:48  0.669261  
+┌────────┬──────────┬─────────────────────┬───────────┐
+│ ROWNUM │ NAME     │ TIME                │     VALUE │
+├────────┼──────────┼─────────────────────┼───────────┤
+│      1 │ wave.sin │ 2023-02-15 12:47:50 │   0.99454 │
+│      2 │ wave.cos │ 2023-02-15 12:47:50 │ -0.104353 │
+│      3 │ wave.cos │ 2023-02-15 12:47:49 │  0.309185 │
+│      4 │ wave.sin │ 2023-02-15 12:47:49 │  0.951002 │
+│      5 │ wave.cos │ 2023-02-15 12:47:48 │  0.669261 │
+└────────┴──────────┴─────────────────────┴───────────┘
+5 rows selected.
 ```
 
 샘플 파일에는 1,000개의 레코드가 있으며 import 이후 테이블에도 동일한 수가 저장됨을 확인할 수 있습니다.
@@ -68,9 +72,12 @@ machbase-neo shell "select * from example order by time desc limit 5"
 machbase-neo shell "select count(*) from example"
 ```
 ```
- ROWNUM  COUNT(*) 
-──────────────────
- 1       1000     
+┌────────┬──────────┐
+│ ROWNUM │ COUNT(*) │
+├────────┼──────────┤
+│      1 │     1000 │
+└────────┴──────────┘
+a row selected.
 ```
 
 ## CSV 내보내기
@@ -114,9 +121,12 @@ machbase-neo shell import       \
  machbase-neo shell "select count(*) from EXAMPLE_COPY"
 ```
 ```
- ROWNUM  COUNT(*) 
-──────────────────
- 1       1000     
+┌────────┬──────────┐
+│ ROWNUM │ COUNT(*) │
+├────────┼──────────┤
+│      1 │     1000 │
+└────────┴──────────┘
+a row selected.
 ```
 
 이 방식은 A 데이터베이스에서 B 데이터베이스로 테이블을 복사할 때도 활용할 수 있습니다.  
@@ -131,7 +141,8 @@ machbase-neo shell sql \
     --output -         \
     --format csv       \
     --no-rownum        \
-    --no-header       \
+    --no-header        \
+    --no-footer        \
     --timeformat ns    \
     "select * from example where name = 'wave.sin' order by time" | \
 machbase-neo shell import \
@@ -141,7 +152,7 @@ machbase-neo shell import \
 ```
 
 위 예제에서는 태그 이름이 `wave.sin`인 데이터를 선택해 `EXAMPLE_COPY` 테이블로 import했습니다.  
-`import` 명령은 입력되는 CSV의 필드 개수와 타입을 검증해야 하므로 `sql` 명령에 `--no-rownum`, `--no-header` 옵션을 지정해야 합니다.
+`import` 명령은 입력되는 CSV의 필드 개수와 타입을 검증하므로 `sql` 명령에 `--no-rownum`, `--no-header`, `--no-footer` 옵션을 지정해야 합니다.
 
 ## HTTP API로 쿼리 결과 가져오기
 
@@ -157,10 +168,10 @@ curl http://127.0.0.1:5654/db/write/EXAMPLE_COPY \
     -X POST --data-binary @- 
 ```
 
-## Import 방식: insert vs. append
+## Import 쓰기 방식
 
-기본적으로 import 명령은 `INSERT INTO ...` 문을 사용(`--method insert`)합니다.  
-적은 양의 데이터를 처리할 때는 append 방식과 큰 차이가 없지만, 수십만 건 이상의 대량 데이터를 처리할 때는 `--method append`를 사용해 append 방식을 적용하는 것이 효율적입니다.
+import 명령은 `INSERT INTO ...` 문이 아니라 append 방식으로 데이터를 씁니다.  
+append 방식은 수십만 건 이상의 대량 데이터를 처리할 때 효율적입니다.
 
 ## 예제
 
@@ -188,26 +199,28 @@ name-1,1687405320000000000,234.567000
 name-2,1687405320000000000,345.678000
 ```
 
-데이터를 가져옵니다.
+데이터를 가져옵니다. `machbase-neo shell`은 현재 디렉토리를 `/work`에 마운트하므로 `data.csv`가 있는 디렉토리에서 명령을 실행합니다.
 
 ```sh
-machbase-neo shell import \
-    --input ./data.csv    \
+machbase-neo shell import  \
+    --input /work/data.csv \
     --timeformat ns        \
     EXAMPLE
 ```
 
-Select data
+데이터를 조회합니다.
 
 ```sh
 machbase-neo shell "SELECT * FROM EXAMPLE";
 
- ROWNUM  NAME    TIME(LOCAL)          VALUE   
-──────────────────────────────────────────────
-      1  name-0  2023-06-22 12:42:00  123.456 
-      2  name-1  2023-06-22 12:42:00  234.567 
-      3  name-2  2023-06-22 12:42:00  345.678 
-3 rows fetched.
+┌────────┬────────┬─────────────────────┬─────────┐
+│ ROWNUM │ NAME   │ TIME                │   VALUE │
+├────────┼────────┼─────────────────────┼─────────┤
+│      1 │ name-0 │ 2023-06-22 12:42:00 │ 123.456 │
+│      2 │ name-1 │ 2023-06-22 12:42:00 │ 234.567 │
+│      3 │ name-2 │ 2023-06-22 12:42:00 │ 345.678 │
+└────────┴────────┴─────────────────────┴─────────┘
+3 rows selected.
 ```
 
 ### TQL을 이용한 import
@@ -253,12 +266,14 @@ append 3 rows (success 3, fail 0).
 ```sh
 machbase-neo shell "select * from example";
 
- ROWNUM  NAME   TIME(LOCAL)          VALUE 
-───────────────────────────────────────────
-      1  tag-1  1970-01-01 09:00:00  10    
-      2  tag-2  1970-01-01 09:00:00  11    
-      3  tag-3  1970-01-01 09:00:00  12    
-3 rows fetched.
+┌────────┬───────┬─────────────────────────┬───────┐
+│ ROWNUM │ NAME  │ TIME                    │ VALUE │
+├────────┼───────┼─────────────────────────┼───────┤
+│      1 │ tag-1 │ 2026-09-17 17:10:05.268 │   110 │
+│      2 │ tag-2 │ 2026-09-17 17:10:05.268 │   211 │
+│      3 │ tag-3 │ 2026-09-17 17:10:05.268 │   152 │
+└────────┴───────┴─────────────────────────┴───────┘
+3 rows selected.
 ```
 
 **JSON import**
@@ -281,7 +296,7 @@ machbase-neo shell "select * from example";
 아래 코드를 TQL 에디터에 붙여 넣고 `import-tql-json.tql`로 저장합니다.
 
 ```js
-BYTES( payload() ?? {
+STRING( payload() ?? {
     {
         "tag": "pump",
         "data": {
@@ -295,9 +310,9 @@ BYTES( payload() ?? {
 })
 SCRIPT({
     obj = JSON.parse($.values[0]);
-    $.yield(obj.tag+"_0", obj.data.time*1000000000, obj.data.number)
-    $.yield(obj.tag+"_1", obj.data.time*1000000000, obj.data.array[1])
-    $.yield(obj.tag+"_2", obj.data.time*1000000000, obj.data.array[2])
+    $.yield(obj.tag+"_0", obj.data.time*1000000000, parseFloat(obj.data.number))
+    $.yield(obj.tag+"_1", obj.data.time*1000000000, obj.array[1])
+    $.yield(obj.tag+"_2", obj.data.time*1000000000, obj.array[2])
     for (i = 0; i < obj.array.length; i++) {
     }
 })
@@ -309,7 +324,7 @@ APPEND(table("example"))
 ```sh
 curl -o - --data-binary @import-data.json http://127.0.0.1:5654/db/tql/import-tql-json.tql
 
-append 2 rows (success 2, fail 0).
+append 3 rows (success 3, fail 0).
 ```
 
 데이터를 조회합니다.
@@ -317,14 +332,17 @@ append 2 rows (success 2, fail 0).
 ```sh
 machbase-neo shell "select * from example";
 
- ROWNUM  NAME    TIME(LOCAL)          VALUE   
-──────────────────────────────────────────────
-      1  tag-1   1970-01-01 09:00:00  10      
-      2  pump_2  2023-06-22 12:42:00  345.678 
-      3  tag-2   1970-01-01 09:00:00  11      
-      4  tag-3   1970-01-01 09:00:00  12      
-      5  pump_1  2023-06-22 12:42:00  234.567 
-5 rows fetched.
+┌────────┬────────┬─────────────────────────┬─────────┐
+│ ROWNUM │ NAME   │ TIME                    │ VALUE   │
+├────────┼────────┼─────────────────────────┼─────────┤
+│      1 │ tag-1  │ 2026-09-17 17:10:05.268 │     110 │
+│      2 │ pump_2 │ 2023-06-22 12:42:00     │ 345.678 │
+│      3 │ tag-2  │ 2026-09-17 17:10:05.268 │     211 │
+│      4 │ tag-3  │ 2026-09-17 17:10:05.268 │     152 │
+│      5 │ pump_1 │ 2023-06-22 12:42:00     │ 234.567 │
+│      6 │ pump_0 │ 2023-06-22 12:42:00     │ 123.456 │
+└────────┴────────┴─────────────────────────┴─────────┘
+6 rows selected.
 ```
 
 
@@ -355,11 +373,13 @@ APPEND(table('example'))
 ```sh
 machbase-neo shell "select * from example";
 
- ROWNUM  NAME  TIME(LOCAL)          VALUE 
-──────────────────────────────────────────
-      1  tag0  2021-08-12 09:00:00  10    
-      2  tag0  2021-08-13 09:00:00  11    
-2 rows fetched.
+┌────────┬──────┬─────────────────────┬───────┐
+│ ROWNUM │ NAME │ TIME                │ VALUE │
+├────────┼──────┼─────────────────────┼───────┤
+│      1 │ tag0 │ 2021-08-12 09:00:00 │    10 │
+│      2 │ tag0 │ 2021-08-13 09:00:00 │    11 │
+└────────┴──────┴─────────────────────┴───────┘
+2 rows selected.
 ```
 
 ### CSV 내보내기
@@ -385,14 +405,13 @@ TAG0,1628780400000000000,110
 
 ### JSON 내보내기
 
-데이터를 내보냅니다.
+HTTP API로 데이터를 내보냅니다.
 
 ```sh
-machbase-neo shell export      \
-    --output ./data_out.json   \
-    --format json              \
-    --timeformat ns            \
-    EXAMPLE
+curl -o data_out.json http://127.0.0.1:5654/db/query \
+    --data-urlencode "q=select * from EXAMPLE"      \
+    --data-urlencode "format=json"                  \
+    --data-urlencode "timeformat=ns"
 ```
 
 내보낸 파일을 확인합니다.
@@ -400,56 +419,28 @@ machbase-neo shell export      \
 ```sh
 cat data_out.json
 
-{
-  "data": {
-    "columns": [
-      "NAME",
-      "TIME",
-      "VALUE"
-    ],
-    "types": [
-      "string",
-      "datetime",
-      "double"
-    ],
-    "rows": [
-      [
-        "TAG0",
-        1628694000000000000,
-        100
-      ],
-      [
-        "TAG0",
-        1628780400000000000,
-        110
-      ]
-    ]
-  },
-  "success": true,
-  "reason": "success",
-  "elapse": "1.847207ms"
-}
+{"data":{"columns":["NAME","TIME","VALUE"],"types":["string","datetime","double"],"rows":[["TAG0",1628694000000000000,100],["TAG0",1628780400000000000,110]]},"success":true,"reason":"success","elapse":"865.833µs"}
 ```
 
-### Export via TQL
+### TQL을 이용한 export
 
-**Export CSV**
+**CSV export**
 
 ```js
 SQL(`select * from example`)
 CSV()
 ```
 
-**Export JSON**
+**JSON export**
 
 ```js
 SQL(`select * from example`)
 JSON()
 ```
 
-**Export CSV with TQL script**
+**TQL 스크립트로 CSV export**
 
-Copy the code below into TQL editor and save `export-tql-csv.tql`.
+아래 코드를 TQL 에디터에 붙여 넣고 `export-tql-csv.tql`로 저장합니다.
 
 ```js
 SQL( 'select * from example limit 30' )
@@ -465,16 +456,16 @@ SCRIPT({
 CSV()
 ```
 
-Open it with web browser at [http://127.0.0.1:5654/db/tql/export-tql-csv.tql](http://127.0.0.1:5654/db/tql/export-tql-csv.tql), or use *curl* command on the terminal.
+웹 브라우저에서 [http://127.0.0.1:5654/db/tql/export-tql-csv.tql](http://127.0.0.1:5654/db/tql/export-tql-csv.tql)을 열거나 터미널에서 *curl* 명령으로 호출합니다.
 
 ```sh
 TAG1-tql,11,odd
 TAG0-tql,10,even
 ```
 
-### Export into Bridge
+### 브리지로 export
 
-**Prepare**
+**사전 준비**
 
 ```sh
 bridge add -t sqlite mem file::memory:?cache=shared;
@@ -482,16 +473,16 @@ bridge add -t sqlite mem file::memory:?cache=shared;
 bridge exec mem create table if not exists mem_example(name varchar(20), time datetime, value double);
 ```
 
-**Export data from Bridge**
+**브리지로 데이터 export**
 
-Copy the code below into TQL editor and run
+아래 코드를 TQL 에디터에 입력해 실행합니다.
 
 ```js
 SQL("select * from example")
 INSERT(bridge('mem'), table('mem_example'), 'name', 'time', 'value')
 ```
 
-Select bridge table data
+브리지 테이블의 데이터를 조회합니다.
 
 ```sh
 machbase-neo shell bridge query mem "select * from mem_example";

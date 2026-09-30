@@ -120,7 +120,7 @@ SQL(`SELECT
     FROM
         EXAMPLE
     WHERE
-        name = 'TAG1'
+        name = 'temperature'
     AND time BETWEEN (
         SELECT MAX_TIME-10000000000
         FROM V$EXAMPLE_STAT

@@ -27,6 +27,7 @@ CREATE TAG TABLE IF NOT EXISTS EXAMPLE (
 
 {{< tabs >}}
 {{< tab name="SCRIPT" >}}
+
 ```js {linenos=table,hl_lines=["3-11"],linenostart=1}
 SCRIPT({
     const m = require('mathx');
@@ -49,8 +50,10 @@ SCRIPT({
 })
 CHART( size("600px", "350px") )
 ```
+
 {{</ tab >}}
 {{< tab name="FAKE" >}}
+
 ```js {linenos=table,hl_lines=["2-5"],linenostart=1}
 FAKE( 
   oscillator(
@@ -60,6 +63,7 @@ FAKE(
 )
 CHART_SCATTER( size("600px", "350px"), dataZoom('slider', 95, 100) )
 ```
+
 {{</ tab >}}
 {{</ tabs >}}
 
@@ -67,10 +71,11 @@ CHART_SCATTER( size("600px", "350px"), dataZoom('slider', 95, 100) )
 
 ## 생성한 데이터를 데이터베이스에 저장하기
 
-생성된 데이터를 'signal' 태그 이름으로 데이터베이스에 저장해 주십시오.
+생성한 데이터를 'signal' 태그 이름으로 데이터베이스에 저장해 주십시오.
 
 {{< tabs >}}
 {{< tab name="SCRIPT" >}}
+
 ```js {linenos=table,hl_lines=[13,16]}
 SCRIPT({
     const m = require('mathx');
@@ -89,8 +94,10 @@ SCRIPT({
 })
 SQL('insert into example values(?,?,?)','signal',value(0),value(1))
 ```
+
 {{</ tab >}}
 {{< tab name="FAKE" >}}
+
 ```js {linenos=table,hl_lines=["10"],linenostart=1}
 FAKE(
   oscillator(
@@ -103,15 +110,17 @@ FAKE(
 // |
 SQL('insert into example values(?,?,?)','signal',value(0),value(1))
 ```
+
 {{</ tab >}}
 {{</ tabs >}}
 
-실행 결과 창에는 "10000 rows inserted." 메시지가 표시됩니다.
+실행 결과 창에 FAKE 예제는 `10000 rows inserted.`, SCRIPT 예제는 `10001 rows inserted.`가 표시됩니다. `mathx.oscillator()`는 시간 범위의 양 끝을 모두 포함하기 때문입니다.
 
-참고로 테스트 머신(Apple Mac mini M1)에서는 약 270ms가 소요되었으며, 아래 예시처럼 `APPEND()` 방식을 사용하면 약 65ms(약 4배 빠르게)로 단축할 수 있습니다.
+참고로 테스트 머신(Apple Mac mini M1)에서는 약 270ms가 걸렸지만, 아래 예시처럼 `APPEND()` 방식을 사용하면 약 65ms(약 4배 빠름)로 줄어듭니다.
 
 {{< tabs >}}
 {{< tab name="SCRIPT" >}}
+
 ```js {linenos=table,hl_lines=[13,16]}
 SCRIPT({
     const m = require('mathx');
@@ -130,8 +139,10 @@ SCRIPT({
 })
 APPEND( table('example') )
 ```
+
 {{</ tab >}}
 {{< tab name="FAKE" >}}
+
 ```js {linenos=table,hl_lines=[10,14]}
 FAKE(
   oscillator(
@@ -148,6 +159,7 @@ PUSHVALUE(0,'signal')
 // |
 APPEND( table('example') )
 ```
+
 {{</ tab >}}
 {{</ tabs >}}
 
@@ -157,10 +169,11 @@ APPEND( table('example') )
 
 ## 데이터베이스에서 데이터 읽기
 
-아래 코드는 'example' 테이블에서 저장된 데이터를 읽어옵니다.
+아래 코드는 'example' 테이블에 저장한 데이터를 읽어옵니다.
 
 {{< tabs >}}
 {{< tab name="SQL">}}
+
 ```js
 SQL(`select time, value from example where name = 'signal' order by time`)
 CHART(
@@ -173,12 +186,15 @@ CHART(
     })
 )
 ```
+
 {{</ tab >}}
 {{< tab name="SQL_SELECT">}}
+
 ```js
 SQL_SELECT('time', 'value', from('example', 'signal'), between('last-10s', 'last'))
 CHART_LINE( size("600px", "350px"), dataZoom('slider', 95, 100))
 ```
+
 {{</ tab >}}
 {{</ tabs >}}
 
@@ -190,6 +206,7 @@ CHART_LINE( size("600px", "350px"), dataZoom('slider', 95, 100))
 
 {{< tabs >}}
 {{< tab name="GROUPBYKEY" >}}
+
 ```js {linenos=table,hl_lines=["2-4"],linenostart=1}
 SQL(`select time, value from example where name = 'signal' order by time`)
 MAPKEY('sample')
@@ -202,8 +219,10 @@ CHART_LINE(
   dataZoom('slider', 0, 10) 
 )
 ```
+
 {{< /tab >}}
 {{< tab name="SCRIPT-1" >}}
+
 ```js {linenos=table,hl_lines=12}
 SQL(`select time, value from example where name = 'signal' order by time`)
 SCRIPT({
@@ -228,8 +247,10 @@ SCRIPT({
 })
 CHART(size("600px", "350px"))
 ```
+
 {{</ tab >}}
 {{< tab name="SCRIPT-2" >}}
+
 ```js {linenos=table,hl_lines=[11,12],linenostart=1}
 SQL(`select time, value from example where name = 'signal' order by time`)
 SCRIPT({
@@ -254,6 +275,7 @@ CHART_LINE(
   dataZoom('slider', 0, 10) 
 )
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -264,16 +286,20 @@ CHART_LINE(
 {{% steps %}}
 
 ### SQL_SELECT()
+
 `SQL_SELECT(...)` 함수는 쿼리 결과를 `{key: rownum, value: (time, value)}` 형태의 레코드로 전달합니다.
 
 ### MAPKEY('sample')
-`MAPKEY('sample')` 함수는 모든 레코드에 'sample'이라는 고정 키를 설정합니다. 그 결과 모든 레코드의 *key* 값이 `'sample'`으로 같아지고 *value*에는 `(time, value)`가 유지됩니다. `{key: 'sample', value:(time, value)}`
+
+`MAPKEY('sample')` 함수는 모든 레코드에 'sample'이라는 고정 문자열을 새 키로 설정합니다. 그 결과 모든 레코드의 *key*는 `'sample'`으로 같아지고 *value*에는 `(time, value)`가 유지됩니다. `{key: 'sample', value:(time, value)}`
 
 ### GROUPBYKEY()
-`GROUPBYKEY()`는 동일한 키를 가진 레코드를 병합합니다. 이 예시에서는 모든 쿼리 결과가 하나의 레코드로 합쳐져 `{key: 'sample', value:[ (time1, value1), (time2, value2), ..., (timeN, valueN) ]}` 형태가 됩니다.
+
+`GROUPBYKEY()`는 같은 키를 가진 레코드를 병합합니다. 이 예시에서는 모든 쿼리 결과가 *key*가 'sample'이고 값이 튜플 배열인 하나의 레코드로 합쳐져 `{key: 'sample', value:[ (time1, value1), (time2, value2), ..., (timeN, valueN) ]}` 형태가 됩니다.
 
 ### FFT()
-`FFT()`는 레코드의 값을 대상으로 고속 푸리에 변환을 적용하여 `(time, value)` 배열을 `(frequency, amplitude)` 배열로 변환합니다. `{key: 'sample', value:[ (Hz1, Ampl1), (Hz2, Ampl2), ... ]}`
+
+`FFT()`는 레코드의 값에 고속 푸리에 변환을 적용하여 `(time, value)` 배열을 `(frequency, amplitude)` 배열로 변환합니다. `{key: 'sample', value:[ (Hz1, Ampl1), (Hz2, Ampl2), ... ]}`
 
 {{% /steps %}}
 
@@ -299,27 +325,50 @@ CHART_BAR3D(
 
 {{< figure src="/images/web-fft-tql-3d.png" width="500" >}}
 
+`SQL_SELECT()`로 태그의 마지막 데이터 시각부터 10초 전까지의 범위를 지정하려면 다음과 같이 작성할 수 있습니다.
+
+```js {linenos=table,hl_lines=["3-7"],linenostart=1}
+SQL_SELECT( 'time', 'value', from('example', 'signal'), between('last-10s', 'last'))
+
+MAPKEY( roundTime(value(0), '500ms') )
+GROUPBYKEY()
+FFT(minHz(0), maxHz(100))
+FLATTEN()
+PUSHKEY('fft')
+CHART_BAR3D(
+      xAxis(0, 'time', 'time'),
+      yAxis(1, 'Hz'),
+      zAxis(2, 'Amp'),
+      size('600px', '600px'), visualMap(0, 1.5), theme('westeros')
+)
+```
+
 ## 시간 축 추가 동작 방식
 
 {{% steps %}}
 
 ### SQL_SELECT()
 
-`SQL_SELECT(...)` 함수는 쿼리 결과를 `{key: time, value: (value) }` 형태로 전달합니다.
+`SQL_SELECT(...)` 함수는 쿼리 결과를 `{key: rownum, value: (time, value)}` 형태로 전달합니다.
 
 ### MAPKEY()
-`MAPKEY( roundTime(value(0), '500ms'))`는 `value(0)`을 500밀리초 단위로 반올림한 결과를 새 키로 설정합니다. 그 결과 레코드는 `{key: (time/500ms)*500ms, value:(time, value)}` 형태로 변환됩니다.
+
+`MAPKEY( roundTime(value(0), '500ms'))`는 `value(0)`을 500밀리초 단위로 내림한 결과를 새 키로 설정합니다. 그 결과 레코드는 `{key: (time/500ms)*500ms, value:(time, value)}` 형태로 변환됩니다.
 
 ### GROUPBYKEY()
+
 `GROUPBYKEY()`는 레코드를 500밀리초 단위로 그룹화합니다. `{key: time1In500ms, value:[(time1, value1), (time2, value2)...]}`
 
 ### FFT()
-`FFT()`는 각 레코드에 대해 고속 푸리에 변환을 적용합니다. 선택 옵션인 `minHz(0)`와 `maxHz(100)`은 시각화를 위해 출력 범위를 제한합니다. `{key:time1In500ms, value:[(Hz1, Ampl1), ...]}`, `{key:'time2In500ms', value:[(Hz1, Ampl1), ...]}`, ...
+
+`FFT()`는 각 레코드에 고속 푸리에 변환을 적용합니다. 선택 옵션인 `minHz(0)`와 `maxHz(100)`은 시각화를 위해 출력 범위를 제한합니다. `{key:time1In500ms, value:[(Hz1, Ampl1), ...]}`, `{key:'time2In500ms', value:[(Hz1, Ampl1), ...]}`, ...
 
 ### FLATTEN()
-`FLATTEN()`은 값 배열의 차원을 줄여 여러 레코드로 분할합니다. 그 결과 각 주파수-진폭 쌍이 개별 레코드로 방출됩니다.
+
+`FLATTEN()`은 값 배열을 여러 레코드로 나누어 차원을 줄입니다. 그 결과 각 주파수-진폭 쌍이 개별 레코드로 출력됩니다.
 
 ### PUSHKEY()
-`PUSHKEY('fft')`는 모든 레코드에 'fft'라는 고정 키를 설정하며, 이전 키를 값 배열의 첫 번째 위치로 이동시킵니다. `{key:'fft', value:(time1In500ms, Hz1, Ampl1)}`, `{key:'fft', value:(time1In500ms, Hz2, Ampl2)}`...
+
+`PUSHKEY('fft')`는 모든 레코드에 'fft'라는 고정 문자열을 새 키로 설정하고, 이전 키를 값 배열의 첫 번째 위치로 옮깁니다. `{key:'fft', value:(time1In500ms, Hz1, Ampl1)}`, `{key:'fft', value:(time1In500ms, Hz2, Ampl2)}`...
 
 {{% /steps %}}

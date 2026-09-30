@@ -330,7 +330,7 @@ tag-1                                                                           
 2022-08-10 00:00:00 000:000:000 200                         2022-08-11 00:00:00 000:000:000 2022-08-10 00:00:00 000:000:000
 [2] row(s) selected.
   
-2. SUMMARIZED 列がない場合
+2. When a SUMMARIZED column does not exist
 Mach> CREATE TAG TABLE other_tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, value DOUBLE);
 Executed successfully.
   
@@ -392,7 +392,7 @@ Count      : LIMIT。0 は全行。
 Offset     : オフセット。不要なら 0。
 ```
 
-### curl で単一タグを取得 {#sample-for-fetching-single-tag-data-by-using-curl-}
+### curl で単一タグを取得 {#sample-for-fetching-single-tag-data-by-using-curl}
 
 **単一タグ**
 

@@ -24,7 +24,7 @@ select_stmt ::=
     [ 'SERIES BY' condition_expr ]
     [ 'LIMIT' [ offset ',' ] row_count ]
 
--- 集合演算子
+-- Set operator
 select_stmt 'UNION ALL' select_stmt
 ```
 

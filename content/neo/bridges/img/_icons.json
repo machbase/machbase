@@ -1,0 +1,47 @@
+{
+ "app": "neo-web",
+ "note": "문서 본문 인라인 아이콘의 출처(UI 에서 잘라 낸 위치)",
+ "icons": [
+  {
+   "file": "bridge_icon.png",
+   "source": {
+    "screen": "왼쪽 메뉴",
+    "element": "BRIDGE 버튼",
+    "selector": "[aria-label=\"BRIDGE\"]",
+    "url": "http://127.0.0.1:5654/web/ui",
+    "viewport": "1100×800",
+    "dpr": 2
+   },
+   "crop": {
+    "x": 3,
+    "y": 145,
+    "w": 48,
+    "h": 46,
+    "padding": 3,
+    "basis": "svg"
+   },
+   "size": "96×92",
+   "capturedAt": "2026-09-17T07:49:53.427Z"
+  },
+  {
+   "file": "bridge_add_icon.png",
+   "source": {
+    "screen": "BRIDGE 패널 머리줄",
+    "element": "첫 번째 버튼(툴팁 New bridge)",
+    "url": "http://127.0.0.1:5654/web/ui",
+    "viewport": "1100×800",
+    "dpr": 2
+   },
+   "crop": {
+    "x": 156,
+    "y": 41,
+    "w": 22,
+    "h": 22,
+    "padding": 3,
+    "basis": "svg"
+   },
+   "size": "44×44",
+   "capturedAt": "2026-09-17T07:49:53.453Z"
+  }
+ ]
+}

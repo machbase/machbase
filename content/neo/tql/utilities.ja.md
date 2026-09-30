@@ -12,17 +12,17 @@ toc: true
 | 定数        | 説明                         |
 |:---------------- | :---------------------------------- |
 | `NULL`           | null値                          |
-| `PI`             | 3.141592....   https://oeis.org/A000796 |
+| `PI`             | 円周率（3.141592...）[参考](https://oeis.org/A000796) |
 
 ## コンテキスト {#context}
 
-### key()
+### key() {#key}
 
 *構文*: `key()`
 
 現在のレコードのキーを返します。
 
-### value()
+### value() {#value}
 
 *構文*: `value( [index] )`
 
@@ -37,7 +37,7 @@ toc: true
 - `value(0)` は、先頭の要素 `0` を返します。
 - `value(3)` は、最後の要素 `"world"` を返します。
 
-### payload()
+### payload() {#payload}
 
 *構文*: `payload()`
 
@@ -45,7 +45,7 @@ toc: true
 HTTPで呼び出した場合、`payload()` はPOSTリクエスト本文のストリームを返します。
 MQTTで呼び出した場合、`payload()` はPUBLISHメッセージのペイロードを返します。
 
-### param()
+### param() {#param}
 
 *構文*: `param( name )`
 
@@ -53,7 +53,7 @@ MQTTで呼び出した場合、`payload()` はPUBLISHメッセージのペイロ
 
 HTTPで *tql* スクリプトを呼び出した場合、`param()` でリクエストのクエリパラメーターを取得できます。
 
-### context()
+### context() {#context-1}
 
 *構文*: `context()`
 
@@ -61,7 +61,7 @@ HTTPで *tql* スクリプトを呼び出した場合、`param()` でリクエ�
 
 ## 文字列 {#string}
 
-### escapeParam()
+### escapeParam() {#escapeparam}
 
 *構文*: `escapeParam( str ) : string` {{< neo_since ver="8.0.7" />}}
 
@@ -76,45 +76,44 @@ CSV(
 CSV()
 ```
 
-### strTrimSpace()
+### strTrimSpace() {#strtrimspace}
 
 *構文*: `strTrimSpace(str) : string` {{< neo_since ver="8.0.7" />}}
 
 `strTrimSpace` は、文字列strの前後の空白をすべて除去した部分文字列を返します。
 
-### strTrimPrefix()
+### strTrimPrefix() {#strtrimprefix}
 
 *構文*: `strTrimPrefix(str, prefix) : string` {{< neo_since ver="8.0.7" />}}
 
 `strTrimPrefix` は、strの先頭から指定したprefixを除去します。strがprefixで始まらない場合、そのまま返します。
 
-### strTrimSuffix()
+### strTrimSuffix() {#strtrimsuffix}
 
 *構文*: `strTrimSuffix(str, suffix) : string` {{< neo_since ver="8.0.7" />}}
 
 `strTrimSuffix` は、strの末尾から指定したsuffixを除去します。strがsuffixで終わらない場合、そのまま返します。
 
-### strHasPrefix()
+### strHasPrefix() {#strhasprefix}
 
 *構文*: `strHasPrefix(str, prefix) : boolean` {{< neo_since ver="8.0.7" />}}
 
 `strHasPrefix` は、文字列strがprefixで始まるかを判定します。
 
-### strHasSuffix()
+### strHasSuffix() {#strhassuffix}
 
 *構文*: `strHasSuffix(str, suffix) : boolean` {{< neo_since ver="8.0.7" />}}
 
-`strHasSuffix` は、文字列sがsuffixで終わるかを判定します。
+`strHasSuffix` は、文字列strがsuffixで終わるかを判定します。
 
-### strReplaceAll()
+### strReplaceAll() {#strreplaceall}
 
 *構文*: `strReplaceAll(str, old, new) : string` {{< neo_since ver="8.0.7" />}}
 
-`strReplaceAll` は、文字列s内の重なり合わないすべてのoldをnewに置換したコピーを返します。
-oldが空の場合、文字列の先頭と各UTF-8シーケンスの後に一致し、
-k個のルーンからなる文字列では最大k+1回置換します。
+`strReplaceAll` は、文字列str内の重なり合わないすべてのoldをnewに置換したコピーを返します。
+oldが空の場合は、文字列の先頭と各UTF-8シーケンスの直後に一致するため、k個のルーンからなる文字列では最大k+1回置換します。
 
-### strReplace()
+### strReplace() {#strreplace}
 
 *構文*: `strReplace(str, old, new, n) : string` {{< neo_since ver="8.0.7" />}}
 
@@ -123,42 +122,41 @@ k個のルーンからなる文字列では最大k+1回置換します。
 - `new` *string*
 - `n` *integer*
 
-`strReplace` は、文字列s内の重なり合わないoldを先頭からn個だけnewに置換したコピーを返します。
-oldが空の場合、文字列の先頭と各UTF-8シーケンスの後に一致し、
-k個のルーンからなる文字列では最大k+1回置換します。
+`strReplace` は、文字列str内の重なり合わないoldを先頭からn個だけnewに置換したコピーを返します。
+oldが空の場合は、文字列の先頭と各UTF-8シーケンスの直後に一致するため、k個のルーンからなる文字列では最大k+1回置換します。
 n < 0の場合、置換回数に制限はありません。
 
-### strSub()
+### strSub() {#strsub}
 
 *構文*: `strSub(str, offset [, count]) : string` {{< neo_since ver="8.0.7" />}}
 
 `strSub` は、strの部分文字列を返します。
 
-### strIndex()
+### strIndex() {#strindex}
 
 *構文*: `strIndex(str, substr) : number` {{< neo_since ver="8.0.15" />}}
 
 str内でsubstrが最初に現れるインデックスを返します。見つからない場合は-1を返します。
 
-### strLastIndex()
+### strLastIndex() {#strlastindex}
 
 *構文*: `strLastIndex(str, substr) : number` {{< neo_since ver="8.0.15" />}}
 
 str内でsubstrが最後に現れるインデックスを返します。見つからない場合は-1を返します。
 
-### strToUpper()
+### strToUpper() {#strtoupper}
 
 *構文*: `strToUpper(str) : string` {{< neo_since ver="8.0.7" />}}
 
 `strToUpper` は、strのすべてのUnicode文字を大文字に変換して返します。
 
-### strToLower()
+### strToLower() {#strtolower}
 
 *構文*: `strToLower(str) : string` {{< neo_since ver="8.0.7" />}}
 
 `strToLower` は、strのすべてのUnicode文字を小文字に変換して返します。
 
-### strSprintf()
+### strSprintf() {#strsprintf}
 
 *構文*: `strSprintf(fmt, args...) : string` {{< neo_since ver="8.0.7" />}}
 
@@ -193,7 +191,7 @@ CSV()
 world,3.141792,hello world? 3.14
 ```
 
-### strTime()
+### strTime() {#strtime}
 
 *構文*: `strTime(time, format [, tz]) : string` {{< neo_since ver="8.0.7" />}}
 
@@ -242,7 +240,7 @@ MARKDOWN(rownum(true))
 |1|10 Jan 24 07:23 UTC|
 
 
-### parseFloat()
+### parseFloat() {#parsefloat}
 
 *構文*: `parseFloat( str )  : number` {{< neo_since ver="8.0.7" />}}
 
@@ -263,7 +261,7 @@ JSON()
 {
     "data": {
         "columns": [ "column0", "column1" ],
-        "types": [ "string", "double" ],
+        "types": [ "string", "string" ],
         "rows": [ [ "world", 3.141792 ] ]
     },
     "success": true,
@@ -274,7 +272,7 @@ JSON()
 {{< /tab >}}
 {{< /tabs >}}
 
-### parseBool()
+### parseBool() {#parsebool}
 
 *構文*: `parseBool( str ) : boolean` {{< neo_since ver="8.0.7" />}}
 
@@ -296,7 +294,7 @@ JSON()
 {
     "data": {
         "columns": [ "column0", "column1" ],
-        "types": [ "string", "bool" ],
+        "types": [ "string", "string" ],
         "rows": [ [ "world", true ] ]
     },
     "success": true,
@@ -309,7 +307,7 @@ JSON()
 
 ## 文字列のパターン照合 {#string-match}
 
-### glob()
+### glob() {#glob}
 
 *構文*: `glob(pattern, text) : boolean` {{< neo_since ver="8.0.7" />}}
 
@@ -322,7 +320,7 @@ WHEN( glob("*.3", value(0)), doLog("found", value(1)))
 CSV()
 ```
 
-### regexp()
+### regexp() {#regexp}
 
 *構文*: `regexp(expression, text) : boolean` {{< neo_since ver="8.0.7" />}}
 
@@ -337,7 +335,7 @@ CSV()
 
 ## 時刻 {#time}
 
-### time()
+### time() {#time-1}
 
 *構文*: `time( number|string ) : time`
 
@@ -360,75 +358,71 @@ CSV()
 {{< /tab >}}
 {{< /tabs >}}
 
-### timeYear()
+### timeYear() {#timeyear}
 
 *構文*: `timeYear( time [, timezone] ) : number`  {{< neo_since ver="8.0.15" />}}
 
 timeYear()は、*time* の年を返します。
 
-### timeMonth()
+### timeMonth() {#timemonth}
 
 *構文*: `timeMonth( time [, timezone] ) : number`  {{< neo_since ver="8.0.15" />}}
 
 timeMonth()は、*time* の月を返します。
 
-### timeDay()
+### timeDay() {#timeday}
 
 *構文*: `timeDay( time [, timezone] ) : number`  {{< neo_since ver="8.0.15" />}}
 
 timeDay()は、*time* の日を返します。
 
-### timeHour()
+### timeHour() {#timehour}
 
 *構文*: `timeHour( time [, timezone] ) : number`  {{< neo_since ver="8.0.15" />}}
 
 timeHour()は、*time* の時を[0, 23]の範囲で返します。
 
-### timeMinute()
+### timeMinute() {#timeminute}
 
 *構文*: `timeMinute( time [, timezone] ) : number`  {{< neo_since ver="8.0.15" />}}
 
 timeMinute()は、*time* の分を[0, 59]の範囲で返します。
 
-### timeSecond()
+### timeSecond() {#timesecond}
 
 *構文*: `timeSecond( time ) : number`  {{< neo_since ver="8.0.15" />}}
 
 timeSecond()は、*time* の秒を[0, 59]の範囲で返します。
 
-### timeNanosecond()
+### timeNanosecond() {#timenanosecond}
 
 *構文*: `timeNanosecond( time ) : number`  {{< neo_since ver="8.0.15" />}}
 
-timeNanosecond()は、*time* の秒内のナノ秒部分を[0, 999999999]の範囲で返します。
+timeNanosecond()は、*time* の秒以下のナノ秒部分を[0, 999999999]の範囲で返します。
 
-### timeISOYear()
+### timeISOYear() {#timeisoyear}
 
 *構文*: `timeISOYear( time [, timezone] ) : number`  {{< neo_since ver="8.0.15" />}}
 
-timeISOYear()は、指定した時刻のISO 8601の年番号を返します。
+timeISOYear()は、*time* が属するISO 8601の年番号を返します。
 
-### timeISOWeek()
+### timeISOWeek() {#timeisoweek}
 
 *構文*: `timeISOWeek( time [, timezone] ) : number`  {{< neo_since ver="8.0.15" />}}
 
 timeISOWeek()は、*time* のISO 8601の週番号を返します。
-週番号の範囲は1から53です。n年の1月1日から3日は、
-n-1年の第52週または第53週に属し、12月29日から31日は、
-n+1年の第1週に属する場合があります。
+週番号の範囲は1から53です。n年の1月1日から3日がn-1年の第52週または第53週に、12月29日から31日がn+1年の第1週に属する場合があります。
 
-暦年の最初の暦週は、その年の最初の木曜日を含む週です。
-最後の暦週は、
-翌暦年の最初の暦週の直前の週です。
+暦年の最初の暦週はその年の最初の木曜日を含む週で、最後の暦週は翌暦年の最初の暦週の直前の週です。
 詳細は https://www.iso.org/obp/ui#iso:std:iso:8601:-1:ed-1:v1:en:term:3.1.1.23 を参照してください。
 
-### timeYearDay()
+### timeYearDay() {#timeyearday}
 
 *構文*: `timeYearDay( time [, timezone] ) : number`  {{< neo_since ver="8.0.15" />}}
 
 timeYearDay()は、*time* の年初からの日数を返します。平年は[1,365]、閏年は[1,366]の範囲です。
 
-### timeWeekDay()
+### timeWeekDay() {#timeweekday}
 
 *構文*: `timeWeekDay( time [, timezone] ) : number`  {{< neo_since ver="8.0.15" />}}
 
@@ -441,39 +435,31 @@ GROUP( lazy(true), by(timeWeekDay(value(0))), count(value(0)) )
 CSV()
 ```
 
-### timeUnix()
+### timeUnix() {#timeunix}
 
 *構文*: `timeUnix( time ) : number` {{< neo_since ver="8.0.13" />}}
 
-*timeUnix* は、`time` をUnix時刻、すなわち
-1970年1月1日UTCからの経過秒数として返します。結果は、
-`time` に関連付けられたタイムゾーンに依存しません。
+*timeUnix* は、`time` をUnix時刻、すなわち1970年1月1日UTCからの経過秒数として返します。結果は `time` に関連付けられたタイムゾーンに依存しません。
 
-### timeUnixMilli()
+### timeUnixMilli() {#timeunixmilli}
 
 *構文*: `timeUnixMilli( time ) : number` {{< neo_since ver="8.0.13" />}}
 
-*timeUnixMilli* は、`time` をUnix時刻、すなわち
-1970年1月1日UTCからの経過ミリ秒数として返します。結果は、
-`time` に関連付けられたタイムゾーンに依存しません。
+*timeUnixMilli* は、`time` をUnix時刻、すなわち1970年1月1日UTCからの経過ミリ秒数として返します。結果は `time` に関連付けられたタイムゾーンに依存しません。
 
-### timeUnixMicro()
+### timeUnixMicro() {#timeunixmicro}
 
 *構文*: `timeUnixMicro( time ) : number` {{< neo_since ver="8.0.13" />}}
 
-*timeUnixMicro* は、`time` をUnix時刻、すなわち
-1970年1月1日UTCからの経過マイクロ秒数として返します。結果は、
-`time` に関連付けられたタイムゾーンに依存しません。
+*timeUnixMicro* は、`time` をUnix時刻、すなわち1970年1月1日UTCからの経過マイクロ秒数として返します。結果は `time` に関連付けられたタイムゾーンに依存しません。
 
-### timeUnixNano()
+### timeUnixNano() {#timeunixnano}
 
 *構文*: `timeUnixNano( time ) : number` {{< neo_since ver="8.0.13" />}}
 
-*timeUnixNano* は、`time` をUnix時刻、すなわち
-1970年1月1日UTCからの経過ナノ秒数として返します。結果は、
-`time` に関連付けられたタイムゾーンに依存しません。
+*timeUnixNano* は、`time` をUnix時刻、すなわち1970年1月1日UTCからの経過ナノ秒数として返します。結果は `time` に関連付けられたタイムゾーンに依存しません。
 
-### timeAdd()
+### timeAdd() {#timeadd}
 
 *構文*: `timeAdd( number|string|time [, timeExpression] ) : time`
 
@@ -498,18 +484,18 @@ CSV()
 {{< /tab >}}
 {{< /tabs >}}
 
-### roundTime()
+### roundTime() {#roundtime}
 
 *構文*: `roundTime( time, duration ) : time`
 
-Unixエポックからの経過時間を指定間隔の整数倍に切りそろえます。`1h` や `1s` などの単位を指定します。
+Unixエポックからの経過時間が `duration` の整数倍になるように、時刻を切り捨てます。`duration` には `1h` や `1s` などの単位を指定します。
 
 *例*
 
 - `roundTime(time('now'), '1h')`
 - `roundTime(value(0), '1s')`
 
-### parseTime()
+### parseTime() {#parsetime}
 
 *構文*: `parseTime( time, format [, timezone] ) : time`
 
@@ -522,7 +508,7 @@ Unixエポックからの経過時間を指定間隔の整数倍に切りそろ�
 - `parseTime("2023-03-01 14:01:02", "DEFAULT", tz("Asia/Tokyo"))`
 - `parseTime("2023-03-01 14:01:02", "DEFAULT", tz("local"))`
 
-### tz()
+### tz() {#tz}
 
 *構文*: `tz( name ) : timeZone`
 
@@ -536,7 +522,7 @@ Unixエポックからの経過時間を指定間隔の整数倍に切りそろ�
 
 <a id="timeformat-sqltimeformat-ansitimeformat"></a>
 
-### timeformat()
+### timeformat() {#timeformat}
 
 *構文*: `timeformat( format )`
 
@@ -586,7 +572,7 @@ CSV(timeformat("DEFAULT"), tz("Asia/Seoul"))
 | s.us           | 秒とマイクロ秒、ゼロ埋め（05.000000） |
 | s.ns           | 秒とナノ秒、ゼロ埋め（05.000000000） |
 
-### sqlTimeformat()
+### sqlTimeformat() {#sqltimeformat}
 
 *構文*: `sqlTimeformat( format )`
 
@@ -597,14 +583,12 @@ CSV(timeformat("DEFAULT"), tz("Asia/Seoul"))
 | YYYY           | 4桁の年 |
 | YY             | 2桁の年 |
 | MM             | 01から12の2桁の月 |
-| MMM            | 曜日 |
 | DD             | 01から31の2桁の日 |
 | HH24           | 00から23の2桁の時 |
 | HH12           | 01から12の2桁の時 |
 | HH             | 1から12の時（ゼロ埋めなし） |
 | MI             | 00から59の2桁の分 |
 | SS             | 0から59の2桁の秒 |
-| AM             | AM/PM                                             |
 | nnn...         | 秒の小数部分（1から9桁） |
 
 ```js {linenos=table,hl_lines=["6"],linenostart=1}
@@ -621,7 +605,7 @@ CSV( sqlTimeformat("YYYY-MM-DD HH24:MI:SS.nnnnnn"), tz("Asia/Seoul") )
 2023-11-30 20:50:43.219876,11
 ```
 
-### ansiTimeformat()
+### ansiTimeformat() {#ansitimeformat}
 
 *構文*: `ansiTimeformat( format )`
 
@@ -721,20 +705,20 @@ CHART(
 {{< /tab >}}
 {{< /tabs >}}
 
-### random()
+### random() {#random}
 
 *構文*: `random() : number` {{< neo_since ver="8.0.7" />}}
 
 `random()` は、半開区間[0.0,1.0)内の浮動小数点の疑似乱数を返します。
 
-### simplex()
+### simplex() {#simplex}
 
 *構文*: `simplex(seed, dim1 [, dim2 [, dim3 [, dim4]]]) : number` {{< neo_since ver="8.0.7" />}}
 
 - `seed` *int*：シード値
 - `dim1` ～ `dim4`：*float number*
 
-`simplex()` は、指定したシードと次元値に基づくSimplexノイズ（[Wikipedia](https://en.wikipedia.org/wiki/Simplex_noise)）を返します。
+`simplex()` は、指定したシードと次元値に基づくSimplexノイズ（[Wikipedia](https://en.wikipedia.org/wiki/Simplex_noise)）を返します。次元は最大4つまで指定できます。
 
 {{< tabs >}}
 {{< tab name="コード" >}}
@@ -772,19 +756,19 @@ CHART(
 
 ## リスト {#list}
 
-### count()
+### count() {#count}
 
 *構文*: `count( array|tuple ) : number`
 
 要素数を返します。
 
-### list()
+### list() {#list-1}
 
 *構文*: `list(args...) : list` {{< neo_since ver="8.0.7" />}}
 
 `list()` は、`args` を要素とする新しいタプルを返します。
 
-### dict()
+### dict() {#dict}
 
 *構文*: `dict( name1, value1 [, name2, value2 ...]) : dictionary` {{< neo_since ver="8.0.8" />}}
 

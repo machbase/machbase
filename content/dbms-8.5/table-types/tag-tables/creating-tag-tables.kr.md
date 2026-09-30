@@ -109,8 +109,8 @@ NAME             TYPE        LENGTH
 NAME             varchar         20
 TIME             datetime        31
 VALUE            double          17
-GRPID            short            6       <=== 추가된 컬럼
-MYIP             ipv4            15       <=== 추가된 컬럼
+GRPID            short            6       <=== added column
+MYIP             ipv4            15       <=== added column
 ```
 
 > **참고**: 5.6 버전 이전에는 VARCHAR 타입이 추가 컬럼으로 허용되지 않았습니다. 5.6 버전 이상에서는 추가 컬럼에서 VARCHAR를 지원합니다.
@@ -129,8 +129,8 @@ Executed successfully.
 
 |name|room_no|tag_description|
 |--|--|--|
-|temp_001|1|섭씨 온도를 읽습니다|
-|humid_001|1|백분율로 습도를 읽습니다|
+|temp_001|1|It reads current temperature as Celsius|
+|humid_001|1|It reads current humidity as percentage|
 
 센서 데이터와 함께 메타데이터를 쿼리:
 

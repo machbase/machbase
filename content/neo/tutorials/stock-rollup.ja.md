@@ -115,7 +115,7 @@ create tag table if not exists stock_rollup_1h (
 create rollup rollup_stock_1s
 into (stock_rollup_1s)
 as (
-    select 
+    select
         code,
         date_trunc('second', time) as time,
         sum(price) as sum_price,
@@ -235,7 +235,6 @@ func main() {
     }
     defer conn.Close()
 
-    // STOCK_TICKテーブルのAppenderを作成
     apd, err := conn.Appender(ctx, "stock_tick")
     if err != nil {
         panic(err)
@@ -275,17 +274,17 @@ func main() {
     // （実際の運用では定期的に自動実行されるため、この手順は不要です。）
 
     result := conn.Exec(ctx, `exec rollup_force(rollup_stock_1s)`)
-	if result.Err() != nil {
-		panic(result.Err())
-	}
+    if result.Err() != nil {
+        panic(result.Err())
+    }
     result = conn.Exec(ctx, `exec rollup_force(rollup_stock_1m)`)
-	if result.Err() != nil {
-		panic(result.Err())
-	}
+    if result.Err() != nil {
+        panic(result.Err())
+    }
     result = conn.Exec(ctx, `exec rollup_force(rollup_stock_1h)`)
-	if result.Err() != nil {
-		panic(result.Err())
-	}
+    if result.Err() != nil {
+        panic(result.Err())
+    }
 }
 ```
 
@@ -430,4 +429,4 @@ func main() {
 - 多段階のロールアップテーブルを使用
 - stock_tickの生データテーブルに取り込むだけで、ロールアップテーブルに自動蓄積
 
-Go APIの詳細は、[MachGo SDK](/neo/tutorials/cli-go/)と[Go SDK](/neo/tutorials/cli-go/)を参照してください。
+Go APIの詳細は、[MachGo SDK](/neo/tutorials/cli-go/)と[Go SDK](/dbms/development-tools-integration/go/)を参照してください。

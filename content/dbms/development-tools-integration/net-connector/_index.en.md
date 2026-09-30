@@ -7,7 +7,9 @@ aliases:
   - /dbms/reference/sdk-api/net-connector/
 ---
 
-## Contents {#index}
+<a id="index"></a>
+
+## Contents
 
 * [Overview](#overview)
 * [Installation](#install)
@@ -17,14 +19,18 @@ aliases:
 * [Usage and Examples](#usage-and-examples)
 * [Protocol 4.0-full APIs](#full-provider-apis-protocol-40-full)
 
-## Overview {#overview}
+<a id="overview"></a>
+
+## Overview
 
 Machbase provides **UniMachNetConnector**, a universal ADO.NET provider supporting wire
 protocols 2.1–4.0. The current unified package is `UniMachNetConnector` 8.0.55, with
 `net452`, `net5.0`, `net6.0`, `net7.0`, and `net8.0` builds. Automatic negotiation runs
 only when the connection string specifies `PROTOCOL=auto` or `auto-full`.
 
-## Installation {#install}
+<a id="install"></a>
+
+## Installation
 
 Machbase server/client installations distribute the universal .NET provider under
 `$MACHBASE_HOME/lib/`. A standard Linux package may include protocol-specific assemblies
@@ -54,7 +60,9 @@ catalog reset on return to a connection pool. See the
 [Multi-Database Operations Guide](/dbms/operations-configuration-recovery/multi-database/#97-net)
 for limitations.
 
-## Install with NuGet (Unified Connector, 8.0.55) {#nuget-unified-connector}
+<a id="nuget-unified-connector"></a>
+
+## Install with NuGet (Unified Connector, 8.0.55)
 
 The unified connector package ID is `UniMachNetConnector`. Prefer a NuGet package
 reference over copying DLLs for new projects.
@@ -141,7 +149,9 @@ var count = Convert.ToInt64(cmd.ExecuteScalar());
 Console.WriteLine($"Tables: {count}");
 ```
 
-## Connection String Reference {#connection-string-reference}
+<a id="connection-string-reference"></a>
+
+## Connection String Reference
 
 Separate entries with semicolons (`;`). Keywords listed in the same table row are equivalent.
 
@@ -184,7 +194,9 @@ a suitable legacy protocol at runtime:
 If the server version is known, specify `PROTOCOL=2.1`, `3.0`, `4.0`, or `4.0-full`
 to skip automatic detection.
 
-## API Reference {#api-reference}
+<a id="api-reference"></a>
+
+## API Reference
 
 {{< callout type="warning" >}}
 Features not listed below may be unimplemented or may not work correctly.<br>
@@ -750,7 +762,9 @@ string GetRowBuffer()
 
 Returns the original failed record as a string.
 
-## Usage and Examples {#usage-and-examples}
+<a id="usage-and-examples"></a>
+
+## Usage and Examples
 
 ### Connect
 
@@ -953,7 +967,9 @@ AppendOpen starts an automatic flush thread. To disable it, call
 errors may not immediately surface as public exceptions; retain explicit flush/close
 and callback/count checks.
 
-## Protocol 4.0-full APIs {#full-provider-apis-protocol-40-full}
+<a id="full-provider-apis-protocol-40-full"></a>
+
+## Protocol 4.0-full APIs
 
 `PROTOCOL=4.0-full` enables expanded ADO.NET APIs. In the 8.0.55 source package, the
 4.0 limited connector is 3.1.3 and 4.0-full is 3.2.2. Linux installations may include

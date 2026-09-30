@@ -4,7 +4,7 @@ title: '문제 해결'
 weight: 110
 ---
 
-Machbase의 일반적인 문제, 에러 코드 및 성능 최적화 가이드에 대한 해결 방법을 제공합니다.
+Machbase의 일반적인 문제, 에러 코드, 성능 최적화에 대한 해결 방법을 제공합니다.
 
 ## 일반적인 문제
 
@@ -13,18 +13,21 @@ Machbase의 일반적인 문제, 에러 코드 및 성능 최적화 가이드에
 #### 서버가 시작되지 않음
 
 **증상**:
+
 - `machadmin -u` 실패
 - "Address already in use" 에러
 - 서버 프로세스가 실행되지 않음
 
 **해결 방법**:
+
 ```bash
 # 포트가 사용 중인지 확인
 netstat -an | grep 5656
 lsof -i :5656
 
-# 기존 프로세스 종료
-kill $(lsof -t -i:5656)
+# Check the PID and process name from lsof, then stop that service with its own management command
+# To stop an existing Machbase process
+machadmin -s
 
 # 데이터베이스 디렉토리 확인
 ls -la $MACHBASE_HOME/dbs/
@@ -39,11 +42,13 @@ machadmin -u
 #### 서버 크래시
 
 **증상**:
+
 - 서버가 예기치 않게 중단됨
 - 코어 덤프 파일 생성
 - "Segmentation fault" 에러
 
 **해결 방법**:
+
 ```bash
 # 로그 확인
 tail -100 $MACHBASE_HOME/trc/machbase.trc
@@ -64,11 +69,13 @@ du -sh $MACHBASE_HOME/dbs/
 #### 서버에 연결할 수 없음
 
 **증상**:
+
 - "Connection refused" 에러
 - "Connection timeout"
 - machsql 연결 실패
 
 **해결 방법**:
+
 ```bash
 # 서버가 실행 중인지 확인
 machadmin -e
@@ -87,10 +94,12 @@ machsql -s localhost -u SYS -p MANAGER
 #### 연결 수 초과
 
 **증상**:
+
 - "Max connections exceeded" 에러
 - 새로운 연결 거부됨
 
 **해결 방법**:
+
 ```sql
 -- 활성 연결 확인
 SHOW STATEMENTS;
@@ -106,11 +115,13 @@ SHOW STATEMENTS;
 #### 느린 쿼리
 
 **증상**:
+
 - 쿼리 실행 시간이 너무 오래 걸림
 - 타임아웃 에러
 - 높은 CPU 사용률
 
 **해결 방법**:
+
 ```sql
 -- 시간 필터 추가
 SELECT * FROM table DURATION 1 HOUR;  -- 이것을 추가하세요!
@@ -134,11 +145,13 @@ EXPLAIN SELECT ...;
 #### 메모리 부족
 
 **증상**:
+
 - "Out of memory" 에러
 - 쿼리가 중간에 실패함
 - 서버가 응답하지 않음
 
 **해결 방법**:
+
 ```sql
 -- 결과 집합 축소
 SELECT * FROM table DURATION 1 HOUR LIMIT 1000;
@@ -155,11 +168,13 @@ SELECT col1, col2 FROM table;  -- SELECT * 대신
 #### 데이터 임포트 실패
 
 **증상**:
+
 - machloader 에러
 - CSV 임포트 실패
 - 데이터 타입 불일치
 
 **해결 방법**:
+
 ```bash
 # CSV 형식 확인
 head -10 data.csv
@@ -177,17 +192,22 @@ cat $MACHBASE_HOME/trc/machloader.trc
 
 # 먼저 작은 배치로 시도
 head -100 data.csv > test.csv
-machloader -i -t table -d test.csv
+machloader -i -t table -d test.csv -l /tmp/machloader.log
+
+# Check the execution log specified with machloader -l
+cat /tmp/machloader.log
 ```
 
 #### 데이터 누락
 
 **증상**:
+
 - 예상되는 데이터를 찾을 수 없음
 - 카운트 불일치
 - 시간 간격 존재
 
 **해결 방법**:
+
 ```sql
 -- 시간 범위 확인
 SELECT MIN(_arrival_time), MAX(_arrival_time) FROM table;
@@ -206,24 +226,27 @@ SELECT COUNT(*) FROM table WHERE column IS NULL;
 
 ### 일반적인 에러 메시지
 
-| 에러 코드 | 메시지 | 해결 방법 |
-|-----------|---------|----------|
-| -20000 | Connection failed | 서버 상태, 네트워크 확인 |
-| -20001 | Authentication failed | 사용자명/비밀번호 확인 |
-| -20100 | Table not found | 테이블명 확인, SHOW TABLES 사용 |
-| -20101 | Column not found | 컬럼명 확인, SHOW TABLE 사용 |
-| -20200 | Duplicate key | PRIMARY KEY 제약 조건 확인 |
-| -20300 | Data type mismatch | 데이터 타입 검증 |
-| -30000 | Out of memory | 쿼리 크기 축소, 메모리 증가 |
-| -30100 | Timeout | 시간 필터 추가, 타임아웃 증가 |
+다음은 증상을 분류하기 위한 메시지 예시입니다. 실제 에러 번호와 의미는 서버가 반환한 번호를 [에러 코드](./error-code/)에서 확인하세요.
 
-전체 에러 코드 참조는 [에러 코드](./error-code/)를 참조하세요.
+| 메시지 예시 | 해결 방법 |
+|---------|----------|
+| Connection failed | 서버 상태, 네트워크 확인 |
+| Authentication failed | 사용자명/비밀번호 확인 |
+| Table not found | 테이블명 확인, SHOW TABLES 사용 |
+| Column not found | 컬럼명 확인, SHOW TABLE 사용 |
+| Duplicate key | PRIMARY KEY 제약 조건 확인 |
+| Data type mismatch | 데이터 타입 검증 |
+| Out of memory | 쿼리 크기 축소, 메모리 증가 |
+| Timeout | 시간 필터 추가, 타임아웃 증가 |
+
+전체 에러 코드는 [에러 코드](./error-code/)를 참조하세요.
 
 ## 성능 최적화
 
 ### 쿼리 최적화
 
 1. **항상 시간 필터 사용**
+
 ```sql
 -- 나쁨
 SELECT * FROM sensors WHERE sensor_id = 'sensor01';
@@ -235,9 +258,12 @@ DURATION 1 HOUR;
 ```
 
 2. **분석용 롤업 사용**
+
 ```sql
--- 느림
-SELECT AVG(value) FROM sensors DURATION 7 DAY;
+-- Slow
+SELECT AVG(value) FROM sensors
+WHERE name = 'sensor-1'
+  AND time BETWEEN now - 7d AND now;
 
 -- 빠름
 -- sensors는 WITH ROLLUP으로 생성한 TAG 테이블이어야 합니다.
@@ -249,11 +275,13 @@ GROUP BY rtime;
 ```
 
 3. **인덱스 생성**
+
 ```sql
 CREATE INDEX idx_level ON logs(level);
 ```
 
 4. **결과 제한**
+
 ```sql
 SELECT * FROM logs DURATION 1 DAY LIMIT 1000;
 ```
@@ -274,20 +302,21 @@ QUERY_PARALLEL_FACTOR = 8
 ### 데이터 관리
 
 1. **보존 정책 구현**
+
 ```sql
 DELETE FROM logs EXCEPT 30 DAYS;
 ```
 
 2. **배치 쓰기**
+
 ```python
-# 대량 삽입을 위해 APPEND API 사용
-appender = conn.create_appender('table')
-for row in data:
-    appender.append(row)
-appender.close()
+# Use APPEND API for bulk inserts
+# conn: connection from machbaseAPI.connect(), data: list of rows
+conn.append('table', data)
 ```
 
 3. **저장소 모니터링**
+
 ```sql
 SHOW STORAGE;
 ```
@@ -347,7 +376,7 @@ SHOW LICENSE;
 
 ### 수집해야 할 정보
 
-문제를 보고할 때 다음 정보를 수집하세요:
+문제를 보고할 때 다음 정보를 수집하세요.
 
 1. **에러 메시지** (정확한 텍스트)
 2. **서버 로그** ($MACHBASE_HOME/trc/machbase.trc)
@@ -357,9 +386,9 @@ SHOW LICENSE;
 
 ### 지원 리소스
 
-- **문서**: 이 가이드와 [일반 문제](./common-issues/)를 검토하세요
-- **에러 코드**: [에러 코드 참조](./error-code/)를 확인하세요
-- **메모리 문제**: [메모리 에러 가이드](./memory-error/)를 참조하세요
+- **문서**: 이 가이드와 [일반 문제](./common-issues/)를 검토하세요.
+- **에러 코드**: [에러 코드 참조](./error-code/)를 확인하세요.
+- **메모리 문제**: [메모리 에러 가이드](./memory-error/)를 참조하세요.
 
 ## 문제를 피하기 위한 모범 사례
 

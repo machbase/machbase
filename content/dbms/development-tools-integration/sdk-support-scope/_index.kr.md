@@ -15,6 +15,11 @@ aliases:
 SDK를 처음 고를 때는 [연동 방식 선택](../selection-integration-method/)을 먼저 읽고, 이
 페이지에서는 필요한 기능과 정확한 API 경로를 대조합니다.
 
+표의 "Go 네이티브"는 v1.8.4에서 확인한 이전 v1의 `machgo` API를 가리킵니다.
+[Go SDK](../go/)는 v2의 `database/sql` API를 설명하며, v2는 `machgo` 패키지를 더 이상 제공하지 않습니다.
+v1에서 확인한 기능이나 최소 버전을 v2에 그대로 적용하지 말고, 아래 ARRAY·선택 컬럼 Append처럼
+v2를 기준으로 확인한 범위와 구분하십시오.
+
 <a id="support-scope-sdk-nullable-metadata"></a>
 
 ## Nullable 메타데이터

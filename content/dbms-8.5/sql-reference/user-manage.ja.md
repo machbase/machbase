@@ -20,7 +20,7 @@ toc: true
 * [ユーザー管理の例](#managing-user-example)
 
 
-## `CREATE USER` {#create-user}
+## CREATE USER {#create-user}
 
 **create_user_stmt:**
 
@@ -30,10 +30,10 @@ toc: true
 create_user_stmt ::= 'CREATE USER' user_name 'IDENTIFIED BY' password
 ```
 
-ユーザーを作成する構文です。
+ユーザーを作成する構文は次のとおりです。
 
 ```sql
--- 例
+-- Example
 CREATE USER new_user IDENTIFIED BY password
 ```
 
@@ -49,12 +49,11 @@ CREATE USER user_name IDENTIFIED BY password PASSWORD POLICY { NONE | LOW | HIGH
 CREATE USER app_user IDENTIFIED BY "Aa!StrongPwd1" PASSWORD POLICY LOW;
 CREATE USER ops_user IDENTIFIED BY "Bb@StrongPwd2" PASSWORD POLICY HIGH;
 ```
-ユーザー名は作成時に大文字へ変換されます。例えば
-`CREATE USER app_user ...` は、メタテーブルと `V$` ビューで `APP_USER` として
-保存、表示されます。その後の接続や権限の文でも、同じユーザー名を参照します。
+
+ユーザー名は作成時に大文字へ変換されます。例えば `CREATE USER app_user ...` は、メタテーブルと `V$` ビューで `APP_USER` として保存、表示されます。その後の接続や権限の文でも、同じユーザー名を参照します。
 
 
-## `DROP` USER {#drop-user}
+## DROP USER {#drop-user}
 
 **drop_user_stmt:**
 
@@ -64,15 +63,15 @@ CREATE USER ops_user IDENTIFIED BY "Bb@StrongPwd2" PASSWORD POLICY HIGH;
 drop_user_stmt ::= 'DROP USER' user_name
 ```
 
-ユーザーを削除します。SYS は削除できません。対象ユーザーが作成したテーブルが残っている場合もエラーになります。
+ユーザーを削除する構文は次のとおりです。SYS ユーザーは削除できません。また、削除するユーザーが作成したテーブルが残っている場合はエラーになります。
 
 ```sql
--- 例
+-- Example
 DROP USER old_user
 ```
 
 
-## `ALTER` USER {#alter-user}
+## ALTER USER {#alter-user}
 
 **alter_user_pwd_stmt:**
 
@@ -82,40 +81,40 @@ DROP USER old_user
 alter_user_pwd_stmt ::= 'ALTER USER' user_name 'IDENTIFIED BY' password
 ```
 
-次の構文でパスワードを変更します。
+次の構文でパスワードを変更できます。
 
 ```sql
--- 例
+-- Example
 ALTER USER user1 IDENTIFIED BY password
 ```
 
-ポリシーも同時に変更できます。
+パスワードの変更と同時に、パスワードポリシーも変更できます。
 
 ```sql
 ALTER USER user_name IDENTIFIED BY password PASSWORD POLICY { NONE | LOW | HIGH }
 ```
 
-ポリシーの変更には、新しいパスワードを一緒に指定します。`ALTER USER user_name PASSWORD POLICY HIGH` のように、ポリシーだけは変更できません。
+ポリシーを変更するときは、新しいパスワードを一緒に指定します。`ALTER USER user_name PASSWORD POLICY HIGH` のように、ポリシーだけを変更する文は使用できません。
 
 
 ## PASSWORD POLICY {#password-policy}
 
-`CREATE USER` と `ALTER USER ... IDENTIFIED BY ...` で強度を検証します。省略時は互換性のため `NONE` になります。
+パスワードポリシーは、`CREATE USER` と `ALTER USER ... IDENTIFIED BY ...` でパスワードの強度を検証する機能です。ポリシーを指定しない場合は、互換性のため `NONE` が適用されます。
 
 ポリシーレベル：
 
 - `NONE`
-  - 強度の制限なし。
-  - 有効期限 `VALID_BEFORE` は `NULL`。
+  - パスワード強度の制限はありません。
+  - パスワードの有効期限（`VALID_BEFORE`）は `NULL` です。
 - `LOW`
-  - 10 文字以上。
-  - 大文字、小文字、特殊文字を含むこと。
-  - 5 桁以上連続する数字、増加または減少する数字列、キーボード配列順の文字列は禁止。
-  - 有効期限 `VALID_BEFORE` は `NULL`。
+  - パスワードは 10 文字以上である必要があります。
+  - パスワードに大文字、小文字、特殊文字を含める必要があります。
+  - 5 桁以上連続する数字、増加または減少する数字列、キーボード配列順の文字列は使用できません。
+  - パスワードの有効期限（`VALID_BEFORE`）は `NULL` です。
 - `HIGH`
-  - `LOW` のすべての規則を適用。
-  - 現在および直近 24 回のパスワードを再利用不可。
-  - 設定時から 90 日後を `VALID_BEFORE` に設定。
+  - `LOW` のすべての規則を適用します。
+  - 現在のパスワードと直近 24 個の過去のパスワードは再利用できません。
+  - パスワードを設定した時点から 90 日後が、有効期限（`VALID_BEFORE`）として自動的に設定されます。
 
 ポリシーの例：
 
@@ -131,11 +130,11 @@ ALTER USER user3 IDENTIFIED BY "Ff#NewPwd66" PASSWORD POLICY NONE;
 
 注意事項：
 
-- IDENTIFIED BY だけを指定すると、現在保存されているポリシーで検証します。
-- PASSWORD POLICY も指定すると、新しいポリシーで検証します。
-- `HIGH` に変更した場合、または `HIGH` のユーザーがパスワードを変更した場合、期限は現在から 90 日後になります。
-- `LOW` または `NONE` に変更すると、期限は `NULL` になります。
-- 期限切れのアカウントはログインできず、自分でパスワードを変更できません。管理者からリセットしてください。
+- `ALTER USER ... IDENTIFIED BY ...` は、そのユーザーに保存されているポリシーで新しいパスワードを検証します。
+- `ALTER USER ... IDENTIFIED BY ... PASSWORD POLICY ...` は、新しいポリシーで新しいパスワードを検証します。
+- `HIGH` に変更した場合、または `HIGH` のユーザーがパスワードを変更した場合、`VALID_BEFORE` は現在時刻から 90 日後に更新されます。
+- `LOW` または `NONE` に変更すると、`VALID_BEFORE` は `NULL` に更新されます。
+- 期限切れのアカウントはログインできないため、そのアカウントではパスワードを変更できません。管理者アカウントから新しいパスワードに再設定してください。
 
 `M$SYS_USERS` でポリシーと期限を確認できます。
 
@@ -144,33 +143,30 @@ SELECT USER_ID, NAME, PWD_POLICY_LEVEL, VALID_BEFORE
 FROM M$SYS_USERS;
 ```
 
-`PWD_POLICY_LEVEL` は `0 = NONE`、`1 = LOW`、`2 = HIGH` です。`VALID_BEFORE` の値は `YYYY-MM-DD` 形式で表示されます。
+`PWD_POLICY_LEVEL` は `0 = NONE`、`1 = LOW`、`2 = HIGH` を表します。`VALID_BEFORE` は、値がある場合に `YYYY-MM-DD` 形式で表示されます。
+
 ## AUTH KEY ファイルの生成 {#generate-auth-key-files}
 
-> **注意**：以下は Machbase 8.5 以降でサポートされます。
+> **注意**：以下の動作は Machbase 8.5 以降でサポートされます。
 
-AUTH KEY 認証は、クライアントの秘密鍵ファイルと、ユーザーに登録した公開鍵を
-使用します。通常は `openssl` で鍵ペアを生成し、秘密鍵をクライアントに保管して、
-公開鍵だけを Machbase に登録します。
+AUTH KEY 認証は、クライアント側の秘密鍵ファイルと、Machbase ユーザーに登録した公開鍵を使用します。通常は `openssl` で鍵ペアを生成し、秘密鍵をクライアントに保管して、公開鍵だけを Machbase に登録します。
 
-対応するアルゴリズムと鍵サイズ：
+対応するアルゴリズムと鍵サイズは次のとおりです。
 
-| 公開鍵アルゴリズム | パラメーター | 署名方式 | ハッシュ |
+| 公開鍵アルゴリズム | 対応する鍵パラメーター | 対応する署名方式 | ハッシュ |
 | --- | --- | --- | --- |
-| `ECDSA` | `P-256`, `P-384`, `P-521` | `ECDSA` | SHA-256 |
-| `RSA` | `2048`、`3072`、`4096` ビット | `RSA_PKCS1_V15` | SHA-256 |
-| `RSA` | `2048`、`3072`、`4096` ビット | `RSA_PSS` | SHA-256 |
+| ECDSA | P-256, P-384, P-521 | `ECDSA` | SHA-256 |
+| RSA | 2048, 3072, 4096 ビット | `RSA_PKCS1_V15` | SHA-256 |
+| RSA | 2048, 3072, 4096 ビット | `RSA_PSS` | SHA-256 |
 
-`AUTH_SIG_SCHEME` を省略すると、鍵アルゴリズムの既定方式を使用します。
+`AUTH_SIG_SCHEME` を省略すると、Machbase は鍵アルゴリズムに応じた既定の方式を使用します。
 
-- `ECDSA` 鍵：`ECDSA`
-- `RSA` 鍵：`RSA_PKCS1_V15`
+- ECDSA 鍵：`ECDSA`
+- RSA 鍵：`RSA_PKCS1_V15`
 
-`RSA`-PSS を使用するには、接続オプションに `AUTH_SIG_SCHEME=RSA_PSS` を指定します。
-登録済み公開鍵の型と要求する署名方式が一致しなければ、
-認証に失敗します。
+RSA-PSS を使用するには、クライアントの接続オプションに `AUTH_SIG_SCHEME=RSA_PSS` を指定します。登録済み公開鍵の型と、クライアントが要求する署名方式が一致しない場合は、認証に失敗します。
 
-`ECDSA` `P-256` の例：
+ECDSA P-256 鍵の生成例：
 
 ```bash
 openssl ecparam -name prime256v1 -genkey -noout -out app_user_ecdsa.key
@@ -178,7 +174,7 @@ openssl ec -in app_user_ecdsa.key -pubout -out app_user_ecdsa.pub
 chmod 600 app_user_ecdsa.key
 ```
 
-`ECDSA` `P-384` と `P-521` の例：
+ECDSA P-384 と P-521 鍵の生成例：
 
 ```bash
 openssl ecparam -name secp384r1 -genkey -noout -out app_user_ecdsa_p384.key
@@ -188,7 +184,7 @@ openssl ecparam -name secp521r1 -genkey -noout -out app_user_ecdsa_p521.key
 openssl ec -in app_user_ecdsa_p521.key -pubout -out app_user_ecdsa_p521.pub
 ```
 
-`RSA` `2048` ビットの例：
+RSA 2048 ビット鍵の生成例：
 
 ```bash
 openssl genrsa -out app_user_rsa.key 2048
@@ -196,9 +192,7 @@ openssl rsa -in app_user_rsa.key -pubout -out app_user_rsa.pub
 chmod 600 app_user_rsa.key
 ```
 
-上の `app_user_rsa.pub` は、`-----BEGIN PUBLIC KEY-----` の形式です。
-PKCS#1 の `-----BEGIN RSA PUBLIC KEY-----` 形式で生成するには、
-`-RSAPublicKey_out` を使用します。
+上の例の `app_user_rsa.pub` は、`-----BEGIN PUBLIC KEY-----` 形式で生成されます。PKCS#1 RSA 公開鍵の `-----BEGIN RSA PUBLIC KEY-----` 形式で生成するには、`-RSAPublicKey_out` オプションを使用します。
 
 ```bash
 openssl genrsa -out app_user_rsa.key 2048
@@ -206,18 +200,15 @@ openssl rsa -in app_user_rsa.key -RSAPublicKey_out -out app_user_rsa_pkcs1.pub
 chmod 600 app_user_rsa.key
 ```
 
-`RSA` `3072` または `4096` ビットでは、`openssl genrsa` の最後の引数に
-`3072` または `4096` を指定します。
+3072 ビットまたは 4096 ビットの RSA 鍵を使用するには、`openssl genrsa` の最後の引数に `3072` または `4096` を指定します。
 
-公開鍵を SQL に埋め込む場合は、PEM の改行をエスケープして
-1 つの SQL 文字列にします。
+公開鍵を SQL に埋め込む場合は、PEM の改行をエスケープして 1 つの SQL 文字列にします。
 
 ```bash
 awk '{printf "%s\\n", $0}' app_user_ecdsa.pub
 ```
 
-コマンド出力を、`CREATE USER ... WITH AUTH KEY` または
-`ALTER USER ... ADD AUTH KEY` の `PUBKEY` に指定します。
+コマンドの出力を、`CREATE USER ... WITH AUTH KEY` または `ALTER USER ... ADD AUTH KEY` の `PUBKEY` の値として使用します。
 
 生成した公開鍵から登録 SQL ファイルを作成する例です。
 
@@ -233,9 +224,7 @@ ALTER USER app_user ADD AUTH KEY (
 EOF
 ```
 
-X.509 を登録する場合は、同じ秘密鍵で自己署名証明書を作成し、
-その PEM を `PUBKEY` に指定します。認証時には、証明書ファイルではなく、
-対応する秘密鍵ファイルを使用します。
+X.509 証明書を登録する場合は、同じ秘密鍵で自己署名証明書を作成し、証明書の PEM を `PUBKEY` の値として使用します。認証時のクライアントは、証明書ファイルではなく、対応する秘密鍵ファイルを使用します。
 
 ```bash
 openssl req -new -x509 \
@@ -245,7 +234,7 @@ openssl req -new -x509 \
     -subj "/CN=app_user"
 ```
 
-SQL に埋め込む際は、改行を `\n` に変換します。
+証明書の PEM を SQL に埋め込む場合も、改行を `\n` でエスケープします。
 
 ```bash
 CERT_ESCAPED=$(awk '{printf "%s\\n", $0}' app_user_ecdsa.crt)
@@ -266,10 +255,9 @@ EOF
 
 ## AUTH KEY 付きユーザーの作成 {#create-a-user-with-auth-key}
 
-> **注意**：Machbase 8.5 以降でサポートされます。
+> **注意**：以下の動作は Machbase 8.5 以降でサポートされます。
 
-パスワード認証に加え、公開鍵チャレンジ認証用の AUTH KEY を
-登録できます。
+Machbase では、パスワード認証に加えて、公開鍵チャレンジ認証用の AUTH KEY をユーザーに登録できます。
 
 ```sql
 CREATE USER app_user IDENTIFIED BY 'App#1234'
@@ -282,29 +270,20 @@ WITH AUTH KEY (
 
 注意事項：
 
-- `PUBKEY` は PEM 公開鍵または X.509 証明書です。
-- 対応する PEM ブロックは次の 3 種類です。
-  - `-----BEGIN PUBLIC KEY-----`：SPKI 形式の `ECDSA` または `RSA` 公開鍵
-  - `-----BEGIN RSA PUBLIC KEY-----`：PKCS#1 の `RSA` 公開鍵
+- `PUBKEY` には PEM 公開鍵または X.509 証明書を指定します。
+- `PUBKEY` に指定できる形式は、次の 3 種類の PEM ブロックです。
+  - `-----BEGIN PUBLIC KEY-----`：SubjectPublicKeyInfo（SPKI）形式の ECDSA または RSA 公開鍵
+  - `-----BEGIN RSA PUBLIC KEY-----`：PKCS#1 形式の RSA 公開鍵
   - `-----BEGIN CERTIFICATE-----`：X.509 証明書
 - SQL 内では PEM の改行を `\n` と書けます。
 - `VALID_BEFORE` は `YYYY-MM-DD` 形式です。
-- `YYYY-MM-DD HH24:MI:SS` のように、時刻を含む
-  値は指定できません。
-- 現在の構文では `COMMENT` は必須です。
-- `CREATE USER ... WITH AUTH KEY` の最初の鍵は、
-  有効（`ACTIVATED=1`）として登録されます。
-- 1 ユーザーはパスワードと複数の AUTH KEY を持てます。
-  認証方式はクライアントの `AUTH_MODE` が決定し、失敗時に
-  別の方式へ自動で切り替わることはありません。
-- `ssh-rsa ...` や `ecdsa-sha2-nistp256 ...` の生の OpenSSH 公開鍵は
-  直接登録できません。先に `ssh-keygen -e -m PKCS8` などで
-  PEM 公開鍵に変換してください。
+- `VALID_BEFORE` には、`YYYY-MM-DD HH24:MI:SS` のように時刻を含む日時の値は指定できません。
+- 現在の AUTH KEY 構文では `COMMENT` は必須です。
+- `CREATE USER ... WITH AUTH KEY` で作成した最初の鍵は、有効な状態（`ACTIVATED=1`）で登録されます。
+- 1 人のユーザーが、パスワードと 1 つ以上の AUTH KEY を同時に持てます。実際の認証方式はクライアントの `AUTH_MODE` で決まり、失敗時に別の方式へ自動で切り替わることはありません。
+- `ssh-rsa ...` や `ecdsa-sha2-nistp256 ...` などの生の OpenSSH 公開鍵は、`PUBKEY` に直接登録できません。先に `ssh-keygen -e -m PKCS8` などで PEM 公開鍵に変換してください。
 
-X.509 証明書を直接入力する例です。PEM 形式を示すための固定証明書です。
-実際の認証では、上記 `CERT_ESCAPED` の例と同様に、
-登録する証明書とクライアントの秘密鍵が同じ鍵ペアである
-必要があります。
+X.509 証明書の PEM を直接入力する例です。下の証明書は、PEM の入力形式を示すための固定の例です。実際の認証では、上記 `CERT_ESCAPED` の例と同様に、登録する証明書とクライアントの秘密鍵が同じ鍵ペアである必要があります。
 
 ```sql
 CREATE USER app_x509 IDENTIFIED BY 'App#1234'
@@ -315,15 +294,9 @@ WITH AUTH KEY (
 );
 ```
 
-X.509 を登録すると、Machbase は公開鍵を抽出して保存します。
-証明書チェーンや CA の信頼性は検証しません。証明書は、
-公開鍵と有効期限を持つ入力形式として扱います。PEM ブロックは
-必ず 1 つだけにしてください。チェーン PEM、秘密鍵 PEM、生の OpenSSH 鍵、
-未対応ヘッダー、有効な PEM の後に空白以外のテキストが続く入力は
-拒否されます。
+X.509 証明書を登録すると、Machbase は証明書から公開鍵を抽出して保存します。証明書チェーンや CA の信頼性は検証しません。証明書は、公開鍵と有効期限を持つ入力形式として扱います。PEM ブロックは必ず 1 つだけにしてください。チェーン PEM、秘密鍵 PEM、生の OpenSSH 鍵、未対応ヘッダー、有効な PEM の後に空白以外のテキストが続く入力は拒否されます。
 
-`VALID_BEFORE` は、証明書の `notAfter` より後には設定できません。
-違反すると、登録または変更は失敗します。
+X.509 証明書には `notAfter` の有効期限があります。`VALID_BEFORE` は、証明書の `notAfter` より後には設定できません。この条件を満たさない場合、登録または変更は失敗します。
 
 ## AUTH KEY の管理 {#manage-auth-key}
 
@@ -337,8 +310,7 @@ ALTER USER app_user ADD AUTH KEY (
 );
 ```
 
-追加した鍵は直ちに有効（`ACTIVATED=1`）になります。ローテーション中は
-複数の有効な鍵を持てます。
+追加した鍵は直ちに有効な状態（`ACTIVATED=1`）で作成されます。鍵のロールオーバー中は、1 人のユーザーが複数の有効な AUTH KEY を持てます。
 
 ### AUTH KEY の有効化と無効化 {#activate--deactivate-auth-key}
 
@@ -348,19 +320,17 @@ ALTER USER app_user ACTIVATE AUTH KEY ID 3;
 ```
 
 - 無効化した鍵はチャレンジ認証に使用できません。
-- 1 ユーザーが複数の鍵を持てます。
+- 1 人のユーザーが複数の AUTH KEY を持てます。
 
-### 有効期限の変更 {#change-auth-key-expiration}
+### AUTH KEY の有効期限の変更 {#change-auth-key-expiration}
 
 ```sql
 ALTER USER app_user ALTER AUTH KEY ID 3 VALID_BEFORE = '2048-06-30';
 ```
 
-- `VALID_BEFORE` を過ぎた鍵は使用できません。
-- `YYYY-MM-DD` 形式で指定します。時刻を含む
-  値は指定できません。
-- X.509 から登録した鍵の期限は、証明書の
-  `notAfter` より後には変更できません。
+- `VALID_BEFORE` を過ぎた鍵は認証に使用できません。
+- `YYYY-MM-DD` 形式で指定します。時刻を含む値は指定できません。
+- X.509 証明書から登録した鍵の `VALID_BEFORE` は、証明書の `notAfter` より後の日付には変更できません。
 
 ### AUTH KEY の削除 {#drop-auth-key}
 
@@ -373,24 +343,23 @@ ALTER USER app_user DROP AUTH KEY ID 3;
 
 ## AUTH KEY メタデータの検索 {#query-auth-key-metadata}
 
-`V$USER_AUTH_KEYS` で確認できます。
+登録した AUTH KEY のメタデータは、`V$USER_AUTH_KEYS` で確認できます。
 
 主な列：
 
-- `KEY_ID`：鍵の識別子
-- `USER_NAME`：所有者
-- `KEY_ALGO`：`RSA` または `ECDSA`
+- `KEY_ID`：AUTH KEY の識別子
+- `USER_NAME`：AUTH KEY の所有者
+- `KEY_ALGO`：鍵のアルゴリズム（`RSA`、`ECDSA`）
 - `KEY_PARAM`：鍵のパラメーター
-  - `RSA`：`2048` などのビット長
-  - EC：`P-256`、`P-384`、`P-521` などの曲線名
+  - RSA 鍵：`2048` などのビット長
+  - EC 鍵：`P-256`、`P-384`、`P-521` などの曲線名
 - `ACTIVATED`：有効かどうか
 - `VALID_AFTER`、`VALID_BEFORE`：有効期間
-- `ADDITIONAL_INFO`：サーバー生成のメタデータ
+- `ADDITIONAL_INFO`：サーバーが生成した AUTH KEY のメタデータ
   - 公開鍵入力：`type=PUBLIC_KEY`
-  - 証明書入力：`type=CERTIFICATE; cert_not_after=YYYY-MM-DD`
+  - X.509 証明書入力：`type=CERTIFICATE; cert_not_after=YYYY-MM-DD`
 - `COMMENT`：ユーザーの注記
-- `PUBKEY`：PEM 公開鍵の本体。証明書から登録した場合は、
-  抽出した公開鍵を保存します。
+- `PUBKEY`：PEM 公開鍵の本体。X.509 証明書から登録した場合は、抽出した公開鍵が保存されます。
 
 ```sql
 SELECT key_id, user_name, key_algo, key_param, activated,
@@ -400,7 +369,7 @@ SELECT key_id, user_name, key_algo, key_param, activated,
  ORDER BY key_id;
 ```
 
-公開鍵の本体は `PUBKEY` 列で取得します。
+公開鍵の本体を確認するには、`PUBKEY` 列を検索します。
 
 ```sql
 SELECT key_id, user_name, pubkey
@@ -423,12 +392,12 @@ user_connect_stmt: 'CONNECT' user_name '/' password
 アプリケーションを終了せず、次の構文で別のユーザーとして再接続できます。
 
 ```sql
--- 例
+-- Example
 CONNECT user1/password;
 ```
 
 
-## `GRANT`/`REVOKE` {#grantrevoke}
+## GRANT/REVOKE {#grantrevoke}
 
 ![grant_stmt](/images/sql/user/grant_stmt.png)
 
@@ -436,7 +405,7 @@ CONNECT user1/password;
 
 ![priv_value](/images/sql/user/priv_value.png)
 
-`GRANT` で権限を付与し、`REVOKE` で取り消します。
+`GRANT` でユーザーに権限を付与し、`REVOKE` で付与済みの権限を取り消します。
 
 基本例：
 
@@ -458,13 +427,13 @@ REVOKE ALL ON mytable FROM user1;
 
 ### テーブル権限 {#table-privileges}
 
-対象には次の形式を使用します。
+テーブルの権限を付与するときは、対象を次の形式で指定します。
 
 - `table`
 - `user.table`
 - `db.user.table`
 
-利用できる権限：
+利用できるテーブル権限：
 
 - `SELECT`
 - `INSERT`
@@ -483,9 +452,9 @@ GRANT ALL ON machbasedb.sys.sensor_log TO app_user;
 
 ### Machbase 8.5 以降のデータベース権限 {#machbase-85-database-privileges}
 
-> **注意**：Machbase 8.5 以降でサポートされます。
+> **注意**：以下の動作は Machbase 8.5 以降でサポートされます。
 
-`MACHBASEDB` を対象に、データベース全体の権限を付与できます。
+Machbase 8.5 以降では、`MACHBASEDB` を対象に、データベース範囲の権限を付与できます。
 
 ```sql
 GRANT CREATE ON machbasedb TO ddl_user;
@@ -497,7 +466,7 @@ GRANT DDL ON machbasedb TO deploy_user;
 GRANT ALL ON machbasedb TO admin_user;
 ```
 
-利用できる権限：
+利用できるデータベース範囲の権限：
 
 - `CREATE`
 - `DROP`
@@ -507,26 +476,26 @@ GRANT ALL ON machbasedb TO admin_user;
 - `DDL`
 - `ALL`
 
-`DDL` は `CREATE + DROP` の組み合わせです。
+ここで `DDL` は、`CREATE + DROP` を組み合わせた権限です。
 
 ### `ALL` の意味 {#meaning-of-all}
 
-> **注意**：以下は Machbase 8.5 以降の動作です。
+> **注意**：以下の動作は Machbase 8.5 以降でサポートされます。
 
-`ALL` の意味は対象によって異なります。
+`ALL` は常に同じ意味ではありません。対象によって意味が異なります。
 
 - `GRANT ALL ON machbasedb TO user1`
-  - データベース全体のすべての権限を付与。
+  - データベース範囲のすべての権限を付与します。
 - `GRANT ALL ON sys.table1 TO user1`
-  - 指定テーブルのすべての DML 権限を付与。
+  - 指定したテーブルのすべての DML 権限を付与します。
 
-同じ `ALL` でも、`MACHBASEDB` とテーブルでは役割が異なります。
+つまり、`MACHBASEDB` に対する `ALL` とテーブルに対する `ALL` は同じキーワードですが、用途が異なります。
 
 ### `MACHBASEDB` に DML 権限は直接付与できない {#dml-privileges-cannot-be-granted-directly-on-machbasedb}
 
-> **注意**：以下は Machbase 8.5 以降の動作です。
+> **注意**：以下の動作は Machbase 8.5 以降でサポートされます。
 
-`MACHBASEDB` に `SELECT`、`INSERT`、`DELETE`、`UPDATE` を直接付与することはできません。
+データベース名 `MACHBASEDB` に `SELECT`、`INSERT`、`DELETE`、`UPDATE` を直接付与することはできません。
 
 ```sql
 GRANT SELECT ON machbasedb TO user1;
@@ -535,13 +504,13 @@ REVOKE DELETE ON machbasedb FROM user1;
 REVOKE UPDATE ON machbasedb FROM user1;
 ```
 
-次のエラーになります。
+これらの文は、次のエラーで失敗します。
 
 ```sql
 [ERR-02186: Invalid database name.]
 ```
 
-読み書きの権限には、対象テーブルを指定してください。
+読み取りや書き込みの権限を付与するには、テーブルを指定してください。
 
 ```sql
 GRANT SELECT ON sys.sensor_log TO user1;
@@ -550,16 +519,16 @@ GRANT INSERT ON sys.sensor_log TO user1;
 
 ### データベース対象には `MACHBASEDB` を使用 {#use-machbasedb-as-the-database-target}
 
-> **注意**：以下は Machbase 8.5 以降の動作です。
+> **注意**：以下の動作は Machbase 8.5 以降でサポートされます。
 
-データベース権限の対象は `MACHBASEDB` です。
+データベース範囲の権限を付与するときは、`MACHBASEDB` を使用します。
 
 ```sql
 GRANT BACKUP ON machbasedb TO backup_user;
 REVOKE BACKUP ON machbasedb FROM backup_user;
 ```
 
-無効なデータベース名はエラーになります。
+無効なデータベース名を指定すると、文は失敗します。
 
 ```sql
 GRANT BACKUP ON typo TO backup_user;
@@ -571,9 +540,9 @@ GRANT BACKUP ON typo TO backup_user;
 
 ### データベース権限が必要な操作 {#operations-that-require-database-privileges}
 
-> **注意**：以下は Machbase 8.5 以降の動作です。
+> **注意**：以下の動作は Machbase 8.5 以降でサポートされます。
 
-次の操作には、テーブル権限ではなく `MACHBASEDB` の権限が必要です。
+次の操作には、テーブル権限ではなく、`MACHBASEDB` に対するデータベース範囲の権限が必要です。
 
 - `CREATE TABLE`, `DROP TABLE`
 - `CREATE VIEW`, `DROP VIEW`
@@ -593,7 +562,7 @@ GRANT CREATE ON machbasedb TO user1;
 
 ### 新規ユーザーの既定権限 {#default-privileges-for-a-new-user}
 
-次の権限を既定で付与します。
+ユーザーを作成すると、次の権限が既定で付与されます。
 
 - `SELECT`
 - `INSERT`
@@ -602,7 +571,7 @@ GRANT CREATE ON machbasedb TO user1;
 - `CREATE`
 - `DROP`
 
-次は既定では含まれず、必要に応じて明示的に付与します。
+次の権限は既定では含まれないため、必要に応じて明示的に付与します。
 
 - `ALTER`
 - `MOUNT`
@@ -610,12 +579,12 @@ GRANT CREATE ON machbasedb TO user1;
 
 ### 権限でテーブル型の制限は解除されない {#privileges-do-not-override-table-type-restrictions}
 
-権限があっても、各テーブル型の制限は適用されます。
+権限があっても、各テーブル型の制限はそのまま適用されます。
 
-- `LOG` と `TAG` は `UPDATE` をサポートしません。
-- `VOLATILE` と `LOOKUP` はすべての DML をサポートしますが、検索、更新、削除の `WHERE` は主キーに基づく必要があります。
+- `LOG` テーブルと `TAG` テーブルは、仕様上 `UPDATE` をサポートしません。
+- `VOLATILE` テーブルと `LOOKUP` テーブルはすべての DML をサポートしますが、検索、更新、削除の `WHERE` は主キーに基づく必要があります。
 
-権限を付与しても、未対応の DML は利用できません。
+つまり、権限を付与しても、サポートされていない DML が使用できるようになるわけではありません。
 
 ### 主な権限付与の例 {#common-grant-examples}
 
@@ -642,7 +611,7 @@ GRANT MOUNT ON machbasedb TO mount_user;
 
 ## ユーザー管理の例 {#managing-user-example}
 
-上記の操作と結果の例です。
+上記の構文の実行例と結果です。
 
 ```
 ############################################

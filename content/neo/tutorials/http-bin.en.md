@@ -8,7 +8,7 @@ weight: 35
 This tutorial shows how to write and read a `binary` column through the HTTP `write` and `query` APIs.
 {{< /callout >}}
 
-{{< neo_since ver="8.5.0" />}}
+{{< neo_since ver="8.5.2" />}}
 
 ## Create the example table
 

@@ -19,18 +19,20 @@ weight: 250
 外部のMQTTブローカーから届くメッセージを処理するTQLファイルを作成します。
 この段階のスクリプトは、メッセージペイロードを受け取り、破棄する処理だけを行います。
 
-machbase-neoのWeb UIのファイルエクスプローラーで`/mqtt-bridge.tql`を作成し、以下の内容を入力します。
+新しいタブで`TQL`を選択してエディターを開き、以下の内容を入力します。
 
 ```js
 STRING(payload())
 DISCARD()
 ```
 
+エディターの見出し行にある<img src="/neo/tql/img/tql_save_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px">アイコンをクリックし、`File name`に`mqtt-bridge.tql`を入力して`Apply`をクリックします。
+
 {{< figure src="/neo/tutorials/img/mqtt-sqlite-bridge-tql-1.png" width="600" >}}
 
 ## MQTTブリッジの定義 {#mqtt-브리지-정의}
 
-machbase-neoに、MQTTブリッジ「mosquitto」を登録します。
+machbase-neoに、MQTTブリッジ`mosquitto`を登録します。左側のメニューで<img src="/neo/bridges/img/bridge_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px">アイコンをクリックし、`BRIDGE`の見出し行にある<img src="/neo/bridges/img/bridge_add_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px">アイコンをクリックしてから、以下の値を入力して`Create`をクリックします。
 
 - Name: `mosquitto`
 - Type: `MQTT`
@@ -40,7 +42,7 @@ machbase-neoに、MQTTブリッジ「mosquitto」を登録します。
 
 {{< figure src="/neo/tutorials/img/mqtt-sqlite-bridge-mqtt.png" width="600" >}}
 
-「Test」ボタンで接続を確認します。エラーが発生した場合は、接続文字列を修正して再試行します。
+`BRIDGE`の一覧で`mosquitto`を選択し、`Test`をクリックして接続を確認します。エラーが発生した場合は、接続に成功するまで接続文字列を修正して再試行します。
 
 {{< figure src="/neo/tutorials/img/mqtt-sqlite-bridge-mqtt-test.png" width="600" >}}
 
@@ -49,21 +51,21 @@ machbase-neoに、MQTTブリッジ「mosquitto」を登録します。
 
 ブリッジの定義とテスト後、`mosquitto`ブローカーの特定のトピックに`mqtt-bridge.tql`を関連付けられます。
 
-「Test」ボタンの下の「New subscriber」をクリックし、以下のように設定します。
+`Test`の下の`New subscriber`をクリックし、以下のように設定して`Create`をクリックします。
 
 - Name: `mosquitto-sub`
 - Topic: `demo/#`
-- Destination: 「TQL Script」を選択し、作成したTQLファイルを指定します。
+- Destination: `TQL Script`を選択し、`Tql Path`に作成した`mqtt-bridge.tql`を入力します。
 
 {{< figure src="/neo/tutorials/img/mqtt-sqlite-bridge-sub1.png" width="600" >}}
 
-サブスクライバーを作成し、状態を「RUNNING」に設定します。
+`BRIDGE`の一覧で`mosquitto`の下に追加されたサブスクライバーを選択し、右上のスイッチをオンにして状態を`RUNNING`にします。
 
 {{< figure src="/neo/tutorials/img/mqtt-sqlite-bridge-sub2.png" width="600" >}}
 
 ## 接続先DBブリッジの定義 {#대상-db-브리지-정의}
 
-外部データベースに接続するブリッジを追加します。この例ではSQLiteを使用しますが、他のデータベースでも、接続文字列以外の手順は同様です。
+外部データベースに接続するブリッジを追加します。この例ではSQLiteを使用しますが、他のデータベースでも、接続文字列以外の手順は同様です。`BRIDGE`の見出し行にある<img src="/neo/bridges/img/bridge_add_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px">アイコンをクリックし、以下の値を入力して`Create`をクリックします。
 
 - Name: `destdb`
 - Type: `SQLite`
@@ -79,9 +81,9 @@ mosquittoブリッジが`demo/#`トピックでメッセージを受信するた
 
 - 2〜11行目：このJSON文字列はテスト実行に使用します。実際のメッセージがなく、`payload()`がNULLを返す場合、`??`演算子が指定したJSON文字列を代わりに使用します。
 - 13行目：`SCRIPT({}, {})`は、JavaScriptを実行するTQL MAP関数です。詳細は、[ドキュメント](/neo/tql/script/)を参照してください。
-- 44行目：この例では、SCRIPT MAP関数がすべての処理を行うため、SINKでの追加処理は不要です。TQLはSINK関数で終わる必要があるため、`DISCARD()`を使用します。
+- 43行目：この例では、SCRIPT MAP関数がすべての処理を行うため、SINKでの追加処理は不要です。TQLはSINK関数で終わる必要があるため、`DISCARD()`を使用します。
 
-```js {linenos=table,hl_lines=["17-22","33-40"],linenostart=1}
+```js {linenos=table,hl_lines=["17-22","33-38"],linenostart=1}
 STRING( payload() ?? `
     {
     "timestamp": 1732653071807,
@@ -119,8 +121,7 @@ SCRIPT({
         parseInt(obj.message.totalCar),
         obj.message.reason,
         parseInt(obj.message.total),
-        obj.message.resetTime,
-        obj.message.scenario);
+        obj.message.resetTime);
     if (err instanceof Error) {
         console.error("Fail to insert into table", err.message);
     }

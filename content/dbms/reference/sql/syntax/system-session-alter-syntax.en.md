@@ -13,7 +13,7 @@ for the current session only.
 
 ---
 
-## ALTER SYSTEM {#alter-system}
+## ALTER SYSTEM
 
 ### Command List
 
@@ -204,7 +204,7 @@ ALTER SYSTEM SET TRACE_LOG_LEVEL = 0x00000003;
 
 ---
 
-## ALTER SESSION {#alter-session}
+## ALTER SESSION
 
 Changes session-level parameters.
 

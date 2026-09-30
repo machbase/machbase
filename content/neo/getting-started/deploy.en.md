@@ -25,7 +25,7 @@ machbase-neo serve --data machbase://${SECRET}@192.168.1.100:5656
 In this mode, the machbase-neo process starts without its own database and uses the target database instead. 
 The "head-only machbase-neo" does not provide the 5656 port service, and all other APIs work with the destination DBMS.
 
-{{< figure src="../img/head-only-1.png" width="600px" >}}
+{{< figure src="/neo/getting-started/img/head-only-1.png" width="600px" >}}
 
 
 ## Headless Mode
@@ -37,5 +37,5 @@ The "head-only machbase-neo" does not provide the 5656 port service, and all oth
 This running mode is specifically designed to work with separate "head-only" mode processes,
 allowing the separation of API services and the DBMS engine.
 
-{{< figure src="../img/head-only-2.png" width="600px" >}}
+{{< figure src="/neo/getting-started/img/head-only-2.png" width="600px" >}}
 

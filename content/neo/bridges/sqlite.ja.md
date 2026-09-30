@@ -19,10 +19,17 @@ SQLiteは、以下のメモリ専用モードにも対応しています。
 bridge add -t sqlite mem file::memory:?cache=shared
 ```
 
-以下のコマンドは、図のWeb UIで行う設定と同じです。
+Web UIでは、次の手順で登録します。設定内容は上のコマンドと同じです。
+
+1. 左側のメニューで<img src="/neo/bridges/img/bridge_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px">アイコンをクリックします。
+
+2. `BRIDGE`の見出し行にある<img src="/neo/bridges/img/bridge_add_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px">アイコンをクリックします。
+
+3. `Name`に`mem`、`Type`に`SQLite`、`Connection String`に`file::memory:?cache=shared`を入力します。
+
+4. `Create`をクリックします。
 
 {{< figure src="/neo/bridges/img/sqlite-add.png" width="500" >}}
-
 
 ## ブリッジの接続テスト {#브리지-연결-테스트}
 
@@ -30,6 +37,8 @@ bridge add -t sqlite mem file::memory:?cache=shared
 machbase-neo» bridge test mem;
 Test bridge mem connectivity... success 11.917µs
 ```
+
+Web UIでは、`BRIDGE`の一覧でブリッジを選択し、`Test`をクリックします。接続に成功すると`success`が表示されます。
 
 {{< figure src="/neo/bridges/img/sqlite-test.png" width="600" >}}
 

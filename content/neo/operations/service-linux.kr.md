@@ -17,7 +17,7 @@ $ vi neo-start.sh
 `--pid <path>` 플래그와 함께 `serve` 명령을 사용하여 프로세스 ID를 지정한 경로의 파일에 기록합니다.
 
 ```sh {{linenos=table}}
-#!/bin/bash
+#!/bin/bash 
 exec /data/machbase-neo serve \
     --pid /data/neo.pid \
     --host 0.0.0.0 \

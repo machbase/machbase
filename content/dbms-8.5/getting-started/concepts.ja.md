@@ -56,7 +56,7 @@ Machbase を効果的に使うために、主要な概念を説明します。
 
 **構造：**
 ```
-(sensor_name, timestamp, value, [追加列])
+(sensor_name, timestamp, value, [optional columns])
 ```
 
 **主な機能：**

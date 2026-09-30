@@ -112,8 +112,8 @@ NAME             TYPE        LENGTH
 NAME             varchar         20
 TIME             datetime        31
 VALUE            double          17
-GRPID            short            6       <=== 追加した列
-MYIP             ipv4            15       <=== 追加した列
+GRPID            short            6       <=== added column
+MYIP             ipv4            15       <=== added column
 ```
 
 > **注意**：5.6 より前のバージョンでは、追加列に VARCHAR を使用できません。5.6 以降でサポートされます。

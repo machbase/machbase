@@ -98,7 +98,7 @@ machbase-neo 셸을 실행합니다. 다른 인수가 없으면 대화형 모드
 
 | flag (long)       | default          | desc                                                             |
 |:------------------|:-----------------|:-----------------------------------------------------------------|
-| `-s`, `--server`  | `127.0.0.1:5654` | machbase-neo HTTP 주소<br/> 예) `--server 127.0.0.1:5654`<br/>환경 변수: `NEOSHELL_HOST` |
+| `--server`        | `127.0.0.1:5654` | machbase-neo HTTP 주소<br/> 예) `--server 127.0.0.1:5654`<br/>환경 변수: `NEOSHELL_HOST` |
 | `--user`          | `sys`            | 사용자 이름<br/>환경 변수: `NEOSHELL_USER`                            |
 | `--password`      | `manager`        | 비밀번호<br/>환경 변수: `NEOSHELL_PASSWORD`                          |
 
@@ -123,7 +123,7 @@ machbase-neo 셸은 시작할 때 OS 환경 변수 `NEOSHELL_HOST`, `NEOSHELL_US
 
 ### 기본값
 
-위 항목이 모두 없으면 기본값 `127.0.0.1:5654`, `sys`, `manager`를 사용합니다.
+두 방법 중 어느 쪽으로도 지정하지 않은 값은 셸이 기본값(`127.0.0.1:5654`, `SYS`, `manager`)과 함께 입력을 요청합니다. Enter 키를 누르면 기본값을 사용합니다.
 
 {{% /steps %}}
 
@@ -150,12 +150,12 @@ $ ps -aef |grep machbase-neo
   
 ```sh
 machbase-neo» select binary_signature from v$version;
-┌────────┬─────────────────────────────────────────────┐
-│ ROWNUM │ BINARY_SIGNATURE                            │
-├────────┼─────────────────────────────────────────────┤
-│      1 │ 8.0.2.develop-LINUX-X86-64-release-standard │
-└────────┴─────────────────────────────────────────────┘
-a row fetched.
+┌────────┬──────────────────────────────────────────────────┐
+│ ROWNUM │ BINARY_SIGNATURE                                 │
+├────────┼──────────────────────────────────────────────────┤
+│      1 │ 8.7.0.official-DARWIN-ARM_M1-64-release-standard │
+└────────┴──────────────────────────────────────────────────┘
+a row selected.
 ```
 
 **테이블 생성**
@@ -166,20 +166,20 @@ machbase-neo» create tag table if not exists example (
   time datetime basetime,
   value double summarized
 );
-executed.
+table created.
 ```
 
 **스키마 확인**
 
 ```sh
 machbase-neo» desc example;
-┌────────┬───────┬──────────┬────────┐
-│ ROWNUM │ NAME  │ TYPE     │ LENGTH │
-├────────┼───────┼──────────┼────────┤
-│      1 │ NAME  │ varchar  │     20 │
-│      2 │ TIME  │ datetime │      8 │
-│      3 │ VALUE │ double   │      8 │
-└────────┴───────┴──────────┴────────┘
+┌────────┬────────┬──────────┬────────┬────────────┬───────┐
+│ ROWNUM │ COLUMN │ TYPE     │ LENGTH │ FLAG       │ INDEX │
+├────────┼────────┼──────────┼────────┼────────────┼───────┤
+│      1 │ NAME   │ varchar  │     20 │ tag name   │       │
+│      2 │ TIME   │ datetime │     31 │ base time  │       │
+│      3 │ VALUE  │ double   │     17 │ summarized │       │
+└────────┴────────┴──────────┴────────┴────────────┴───────┘
 ```
 
 **데이터 삽입**
@@ -194,18 +194,18 @@ a row inserted.
 ```sh
 machbase-neo» select * from example;
 ┌────────┬──────┬─────────────────────┬───────┐
-│ ROWNUM │ NAME │ TIME(LOCAL)         │ VALUE │
+│ ROWNUM │ NAME │ TIME                │ VALUE │
 ├────────┼──────┼─────────────────────┼───────┤
-│      1 │ tag0 │ 2021-08-12 00:00:00 │ 100   │
+│      1 │ tag0 │ 2021-08-12 00:00:00 │   100 │
 └────────┴──────┴─────────────────────┴───────┘
-a row fetched.
+a row selected.
 ```
 
 **테이블 삭제**
 
 ```sh
 machbase-neo» drop table example;
-executed.
+table dropped.
 ```
 
 ### 서브 커맨드
@@ -225,51 +225,49 @@ machbase-neo» explain select * from example where name = 'tag.1';
      * IN ()
    VOLATILE INDEX SCAN (_EXAMPLE_META)
     [KEY RANGE]
-     *
+     * name = 'tag.1'
 ```
 
 #### export
 
 ```
-  export [options] <table>
-  arguments:
-    table                    읽어올 테이블 이름
-  options:
-    -o,--output <file>       출력 파일(기본값: `-` stdout)
-    -f,--format <format>     출력 형식
-                csv          CSV 형식(기본값)
-                json         JSON 형식
-       --compress <method>   압축 방식 [gzip] (기본값은 비압축)
-       --[no-]heading        헤더 출력 여부(기본값:false)
-       --[no-]footer         푸터 출력 여부(기본값:false)
-    -d,--delimiter           CSV 구분자(기본값 `,`)
-       --tz                  datetime 처리용 타임존 지정
-    -t,--timeformat          시간 형식 [ns|ms|s|<timeformat>] (기본값 `ns`)
-                             자세한 내용은 "help timeformat" 참조
-    -p,--precision <int>     부동소수점 값을 강제로 반올림할 자릿수 지정
+Usage: export [options] <table>
+
+Arguments:
+  table - table name to read
+
+Options:
+  -h, --help         Show this help message
+  -o, --output       output file (default:'-' stdout) (default: -)
+      --compress     compression type (none, gzip) (default: none)
+  -f, --format       output format (box, csv, tsv, json, ndjson) (default: csv)
+  -t, --timeformat   time format [ns|us|ms|s|<timeformat>] (default: ns)
+      --tz           time zone for handling datetime (default: time zone) (default: local)
+  -p, --precision    set precision of float value to force round (default: -1)
+      --[no-]header  print header (default: false)
+      --null-value   string to represent null values (default: )
+      --[no-]silent  suppress progress output (default: false)
 ```
 
 #### import
 
 ```
-  import [options] <table>
-  arguments:
-    table                 데이터를 쓸 테이블 이름
-  options:
-    -i,--input <file>     입력 파일(기본값: `-` 표준입력)
-    -f,--format <fmt>     파일 형식 [csv] (기본값 `csv`)
-       --compress <alg>   입력 데이터 압축 방식(지원: gzip)
-       --no-header        헤더 없음, 첫 줄 생략하지 않음(기본값)
-       --charset          입력이 UTF-8이 아니면 문자 인코딩 지정
-       --header           첫 줄이 헤더이면 건너뜀
-       --method           쓰기 방식 [insert|append] (기본값 `insert`)
-       --create-table     테이블이 없으면 생성(기본값:false)
-       --truncate-table   새 데이터 입력 전 테이블 비우기(기본값:false)
-    -d,--delimiter        CSV 구분자(기본값 `,`)
-       --tz               datetime 처리용 타임존 지정
-    -t,--timeformat       시간 형식 [ns|ms|s|<timeformat>] (기본값 `ns`)
-                          자세한 내용은 "help timeformat" 참조
-       --eof <string>     EOF 라인 지정, [a-zA-Z0-9]+ 에 맞는 문자열 사용(기본값 '.')
+Usage: import [options] <table>
+
+Arguments:
+  table - table name to read
+
+Options:
+  -h, --help          Show this help message
+  -i, --input         input file (default:'-' stdin) (default: -)
+      --compress      compression type (none, gzip) (default: none)
+  -f, --format        input format (csv, tsv, ndjson) (default: csv)
+  -t, --timeformat    time format [ns|us|ms|s|<timeformat>] (default: ns)
+      --tz            time zone for handling datetime (default: time zone) (default: local)
+      --header        header option [skip|columns|none] (default: none)
+      --null-value    string to represent null values (default: NULL)
+      --[no-]dry-run  run in dry mode (default: false)
+      --[no-]verbose  verbose mode, it works only with --dry-run (default: false)
 ```
 
 #### show info
@@ -278,25 +276,29 @@ machbase-neo» explain select * from example where name = 'tag.1';
 
 ```sh
 machbase-neo» show info;
-┌────────────────────┬─────────────────────────────┐
-│ NAME               │ VALUE                       │
-├────────────────────┼─────────────────────────────┤
-│ build.version      │ v2.0.0                      │
-│ build.hash         │ #c953293f                   │
-│ build.timestamp    │ 2023-08-29T08:08:00         │
-│ build.engine       │ static_standard_linux_amd64 │
-│ runtime.os         │ linux                       │
-│ runtime.arch       │ amd64                       │
-│ runtime.pid        │ 57814                       │
-│ runtime.uptime     │ 2h 30m 57s                  │
-│ runtime.goroutines │ 45                          │
-│ mem.sys            │ 32.6 MB                     │
-│ mem.heap.sys       │ 19.0 MB                     │
-│ mem.heap.alloc     │ 9.7 MB                      │
-│ mem.heap.in-use    │ 13.0 MB                     │
-│ mem.stack.sys      │ 1,024.0 KB                  │
-│ mem.stack.in-use   │ 1,024.0 KB                  │
-└────────────────────┴─────────────────────────────┘
+┌────────┬────────────────────┬──────────────────────────────┐
+│ ROWNUM │ NAME               │ VALUE                        │
+├────────┼────────────────────┼──────────────────────────────┤
+│      1 │ build.engine       │ static_standard_darwin_arm64 │
+│      2 │ build.hash         │ b55f8170                     │
+│      3 │ build.timestamp    │ 2026-09-10T05:43:13          │
+│      4 │ build.version      │ v8.7.1-snapshot              │
+│      5 │ mem.frees          │ 397,853,948                  │
+│      6 │ mem.heap_alloc     │ 32.8MB                       │
+│      7 │ mem.heap_in_use    │ 40.0MB                       │
+│      8 │ mem.heap_sys       │ 547.9MB                      │
+│      9 │ mem.lives          │ 253,315                      │
+│     10 │ mem.mallocs        │ 398,107,263                  │
+│     11 │ mem.stack_in_use   │ 1.5MB                        │
+│     12 │ mem.stack_sys      │ 1.5MB                        │
+│     13 │ mem.sys            │ 564.2MB                      │
+│     14 │ runtime.arch       │ arm64                        │
+│     15 │ runtime.goroutines │ 32                           │
+│     16 │ runtime.os         │ darwin                       │
+│     17 │ runtime.pid        │ 35507                        │
+│     18 │ runtime.processes  │ 10                           │
+│     19 │ runtime.uptime     │ 6 days 4h 4m 42s             │
+└────────┴────────────────────┴──────────────────────────────┘
 ```
 
 #### show ports
@@ -305,14 +307,17 @@ machbase-neo» show info;
 
 ```sh
 machbase-neo» show ports;
-┌─────────┬────────────────────────────────────────┐
-│ SERVICE │ PORT                                   │
-├─────────┼────────────────────────────────────────┤
-│ http    │ tcp://127.0.0.1:5654                   │
-│ mach    │ tcp://127.0.0.1:5656                   │
-│ mqtt    │ tcp://127.0.0.1:5653                   │
-│ shell   │ tcp://127.0.0.1:5652                   │
-└─────────┴────────────────────────────────────────┘
+┌────────┬────────────┬─────────────────────────────────────────┐
+│ ROWNUM │ PORT       │ ADDRESS                                 │
+├────────┼────────────┼─────────────────────────────────────────┤
+│      1 │ http       │ tcp://127.0.0.1:5654                    │
+│      2 │ http       │ unix:///tmp/machbase-neo-http-5654.sock │
+│      3 │ mach       │ tcp://127.0.0.1:5656                    │
+│      4 │ mqtt       │ tcp://127.0.0.1:5653                    │
+│      5 │ mqtt       │ unix:///tmp/machbase-neo-mqtt-5653.sock │
+│      6 │ servicectl │ tcp://127.0.0.1:62978                   │
+│      7 │ shell      │ tcp://127.0.0.1:5652                    │
+└────────┴────────────┴─────────────────────────────────────────┘
 ```
 
 #### show tables
@@ -321,11 +326,11 @@ machbase-neo» show ports;
 
 {{< neo_since ver="8.7.0" />}}
 
-`show` 명령은 일부 하위 명령에서 `FROM` 과 `LIKE` 절을 지원합니다.
-`FROM <database>[.<user>]` 는 조회할 데이터베이스와 사용자를 지정하고, `LIKE <pattern>` 은 이름 패턴으로 결과를 필터링합니다.
-`LIKE` 패턴은 작은따옴표나 큰따옴표로 감싼 SQL `LIKE` 패턴을 사용하며, `%` 는 0개 이상의 문자, `_` 는 1개의 문자와 일치합니다.
-`FROM` 대신 `IN` 을 사용할 수 있습니다.
-`WITH ALL` 은 숨김 항목을 포함합니다.
+`show` 명령은 일부 하위 명령에서 `FROM`과 `LIKE` 절을 지원합니다.
+`FROM <database>[.<user>]`는 조회할 데이터베이스와 사용자를 지정하고, `LIKE <pattern>`은 이름 패턴으로 결과를 필터링합니다.
+`LIKE` 패턴은 작은따옴표나 큰따옴표로 감싼 SQL `LIKE` 패턴을 사용하며, `%`는 0개 이상의 문자, `_`는 1개의 문자와 일치합니다.
+`FROM` 대신 `IN`을 사용할 수 있습니다.
+`WITH ALL`은 숨김 항목을 포함합니다.
 
 ```sh
 machbase-neo» show tables from MACHBASEDB.SYS like 'TAG%' with all;
@@ -336,7 +341,7 @@ machbase-neo» show indexes like 'IDX_%';
 |:--------|:------:|:------:|:----------:|:-----------------|
 | `show tables` | O | O | O | 테이블 이름 |
 | `show indexes` | O | O | - | 인덱스 이름 |
-| `show table <table>` | O | - | O | - |
+| `show table [-a] <table>` | O | - | - | - |
 | `show index <index>` | O | - | - | - |
 | `show tags <table> [tag...]` | O | O | - | 태그 이름 |
 | `show storage` | O | O | - | 테이블 이름 |
@@ -353,37 +358,35 @@ machbase-neo» show indexes like 'IDX_%';
 | `show statements` | - | O | - | 쿼리 텍스트 |
 
 `show table`, `show index`, `show tags` 처럼 대상 이름을 인자로 받는 명령에서는 `<database>.<user>.<name>` 형식의 한정 이름과 `FROM` 절을 동시에 사용할 수 없습니다.
-`show tags` 에서 명시적인 태그 이름을 인자로 지정한 경우에는 `LIKE` 절을 함께 사용할 수 없습니다.
+`show tags`에서 명시적인 태그 이름을 인자로 지정한 경우에는 `LIKE` 절을 함께 사용할 수 없습니다.
 
-테이블 목록을 표시합니다. `WITH ALL` 을 지정하면 숨김 테이블이 포함됩니다.
+테이블 목록을 표시합니다. `WITH ALL`을 지정하면 숨김 테이블이 포함됩니다.
 
 ```sh
 machbase-neo» show tables;
-┌────────┬────────────┬──────┬─────────────┬───────────┐
-│ ROWNUM │ DB         │ USER │ NAME        │ TYPE      │
-├────────┼────────────┼──────┼─────────────┼───────────┤
-│      1 │ MACHBASEDB │ SYS  │ EXAMPLE     │ Tag Table │
-│      2 │ MACHBASEDB │ SYS  │ TAG         │ Tag Table │
-│      3 │ MACHBASEDB │ SYS  │ TAGDATA     │ Tag Table │
-└────────┴────────────┴──────┴─────────────┴───────────┘
+┌────────┬───────────────┬───────────┬────────────┬──────────┬────────────┬────────────┐
+│ ROWNUM │ DATABASE_NAME │ USER_NAME │ TABLE_NAME │ TABLE_ID │ TABLE_TYPE │ TABLE_FLAG │
+├────────┼───────────────┼───────────┼────────────┼──────────┼────────────┼────────────┤
+│      1 │ MACHBASEDB    │ SYS       │ EXAMPLE    │      770 │ Tag        │            │
+└────────┴───────────────┴───────────┴────────────┴──────────┴────────────┴────────────┘
 ```
 
 #### show table
 
-구문: `show table <table> [WITH ALL]`
+구문: `show table [-a] <table>`
 
-테이블의 컬럼 목록을 표시합니다. `WITH ALL` 을 지정하면 숨김 컬럼도 함께 표시됩니다.
+테이블의 컬럼 목록을 표시합니다. `-a`를 지정하면 숨김 컬럼도 함께 표시됩니다.
 
 ```sh
-machbase-neo» show table example with all;
-┌────────┬───────┬──────────┬────────┬──────────┐
-│ ROWNUM │ NAME  │ TYPE     │ LENGTH │ DESC     │
-├────────┼───────┼──────────┼────────┼──────────┤
-│      1 │ NAME  │ varchar  │    100 │ tag name │
-│      2 │ TIME  │ datetime │     31 │ basetime │
-│      3 │ VALUE │ double   │     17 │          │
-│      4 │ _RID  │ long     │     20 │          │
-└────────┴───────┴──────────┴────────┴──────────┘
+machbase-neo» show table -a example;
+┌────────┬────────┬──────────┬────────┬────────────┬───────┐
+│ ROWNUM │ COLUMN │ TYPE     │ LENGTH │ FLAG       │ INDEX │
+├────────┼────────┼──────────┼────────┼────────────┼───────┤
+│      1 │ NAME   │ varchar  │     20 │ tag name   │       │
+│      2 │ TIME   │ datetime │     31 │ base time  │       │
+│      3 │ VALUE  │ double   │     17 │ summarized │       │
+│      4 │ _RID   │ long     │     20 │            │       │
+└────────┴────────┴──────────┴────────┴────────────┴───────┘
 ```
 
 #### show indexes
@@ -400,15 +403,15 @@ machbase-neo» show indexes from MACHBASEDB.SYS like 'TAG%';
 
 ```sh
 machbase-neo» show meta-tables;
-┌────────┬─────────┬────────────────────────┬─────────────┐
-│ ROWNUM │      ID │ NAME                   │ TYPE        │
-├────────┼─────────┼────────────────────────┼─────────────┤
-│      1 │ 1000020 │ M$SYS_TABLESPACES      │ Fixed Table │
-│      2 │ 1000024 │ M$SYS_TABLESPACE_DISKS │ Fixed Table │
-│      3 │ 1000049 │ M$SYS_TABLES           │ Fixed Table │
-│      4 │ 1000051 │ M$TABLES               │ Fixed Table │
-│      5 │ 1000053 │ M$SYS_COLUMNS          │ Fixed Table │
-│      6 │ 1000054 │ M$COLUMNS              │ Fixed Table │
+┌────────┬─────────┬────────────────────────┬───────┐
+│ ROWNUM │      ID │ NAME                   │ TYPE  │
+├────────┼─────────┼────────────────────────┼───────┤
+│      1 │ 1000019 │ M$SYS_TABLESPACES      │ Fixed │
+│      2 │ 1000023 │ M$SYS_TABLESPACE_DISKS │ Fixed │
+│      3 │ 1000049 │ M$SYS_TABLES           │ Fixed │
+│      4 │ 1000052 │ M$SYS_VIEWS            │ Fixed │
+│      5 │ 1000054 │ M$TABLES               │ Fixed │
+│      6 │ 1000056 │ M$SYS_COLUMNS          │ Fixed │
 ......
 ```
 
@@ -416,15 +419,15 @@ machbase-neo» show meta-tables;
 
 ```sh
 machbase-neo» show virtual-tables;
-┌────────┬─────────┬─────────────────────────────────────────┬────────────────────┐
-│ ROWNUM │      ID │ NAME                                    │ TYPE               │
-├────────┼─────────┼─────────────────────────────────────────┼────────────────────┤
-│      1 │      65 │ V$HOME_STAT                             │ Fixed Table (stat) │
-│      2 │      93 │ V$DEMO_STAT                             │ Fixed Table (stat) │
-│      3 │     227 │ V$SAMPLEBENCH_STAT                      │ Fixed Table (stat) │
-│      4 │     319 │ V$TAGDATA_STAT                          │ Fixed Table (stat) │
-│      5 │     382 │ V$EXAMPLE_STAT                          │ Fixed Table (stat) │
-│      6 │     517 │ V$TAG_STAT                              │ Fixed Table (stat) │
+┌────────┬─────────┬─────────────────────────────────────────┬───────┐
+│ ROWNUM │      ID │ NAME                                    │ TYPE  │
+├────────┼─────────┼─────────────────────────────────────────┼───────┤
+│      1 │     769 │ V$EXAMPLE_STAT                          │ Fixed │
+│      2 │ 1000000 │ V$SYSSTAT                               │ Fixed │
+│      3 │ 1000001 │ V$SYSTIME                               │ Fixed │
+│      4 │ 1000002 │ V$SYSMEM                                │ Fixed │
+│      5 │ 1000003 │ V$PROPERTY                              │ Fixed │
+│      6 │ 1000004 │ V$MUTEX                                 │ Fixed │
 ......
 ```
 
@@ -432,37 +435,37 @@ machbase-neo» show virtual-tables;
 
 ```sh
 machbase-neo» show users;
-┌────────┬───────────┐
-│ ROWNUM │ USER_NAME │
-├────────┼───────────┤
-│      1 │ SYS       │
-└────────┴───────────┘
-a row fetched.
+┌────────┬─────────┬──────┐
+│ ROWNUM │ USER_ID │ NAME │
+├────────┼─────────┼──────┤
+│      1 │       1 │ SYS  │
+└────────┴─────────┴──────┘
 ```
 
 #### show license
 
 ```sh
- machbase-neo» show license;
-┌────────┬──────────┬──────────────┬──────────┬────────────┬──────────────┬─────────────────────┐
-│ ROWNUM │ ID       │ TYPE         │ CUSTOMER │ PROJECT    │ COUNTRY_CODE │ INSTALL_DATE        │
-├────────┼──────────┼──────────────┼──────────┼────────────┼──────────────┼─────────────────────┤
-│      1 │ 00000023 │ FOGUNLIMITED │ VUTECH   │ FORESTFIRE │ KR           │ 2024-04-22 15:56:14 │
-└────────┴──────────┴──────────────┴──────────┴────────────┴──────────────┴─────────────────────┘
-a row fetched.
+machbase-neo» show license;
+┌────────┬──────────┬───────────┬──────────┬─────────┬──────────────┬─────────────────────┬────────────┬────────┐
+│ ROWNUM │ ID       │ TYPE      │ CUSTOMER │ PROJECT │ COUNTRY_CODE │ INSTALL_DATE        │ ISSUE_DATE │ STATUS │
+├────────┼──────────┼───────────┼──────────┼─────────┼──────────────┼─────────────────────┼────────────┼────────┤
+│      1 │ 00000000 │ COMMUNITY │ NONE     │ NONE    │ KR           │ 2026-09-10 10:06:19 │ 20991231   │ VALID  │
+└────────┴──────────┴───────────┴──────────┴─────────┴──────────────┴─────────────────────┴────────────┴────────┘
 ```
 
 #### session list
 
 구문: `session list` {{< neo_since ver="8.0.17" />}}
 
+접속 중인 세션 목록은 `show sessions`로 조회합니다.
+
 ```sh
- machbase-neo» session list;
-┌────┬───────────┬─────────┬────────────┬─────────┬─────────┬──────────┐
-│ ID │ USER_NAME │ USER_ID │ STMT_COUNT │ CREATED │ LAST    │ LAST SQL │
-├────┼───────────┼─────────┼────────────┼─────────┼─────────┼──────────┤
-│ 25 │ SYS       │ 1       │          1 │ 1.667ms │ 1.657ms │ CONNECT  │
-└────┴───────────┴─────────┴────────────┴─────────┴─────────┴──────────┘
+machbase-neo» show sessions;
+┌────────┬──────┬───────────┬─────────┬─────────────────────────┬──────┬───────────┬─────────────┐
+│ ROWNUM │   ID │ USER_NAME │ USER_ID │ LOGIN_TIME              │ TYPE │ USER_IP   │ MAX_QPX_MEM │
+├────────┼──────┼───────────┼─────────┼─────────────────────────┼──────┼───────────┼─────────────┤
+│      1 │ 2484 │ SYS       │       1 │ 2026-09-17 17:35:01.139 │ CLI  │ 127.0.0.1 │ 1.1GB       │
+└────────┴──────┴───────────┴─────────┴─────────────────────────┴──────┴───────────┴─────────────┘
 ```
 
 #### session kill
@@ -475,34 +478,35 @@ a row fetched.
 
 ```sh
 machbase-neo» session stat;
-┌────────────────┬───────┐
-│ NAME           │ VALUE │
-├────────────────┼───────┤
-│ CONNS          │ 1     │
-│ CONNS_USED     │ 17    │
-│ STMTS          │ 0     │
-│ STMTS_USED     │ 20    │
-│ APPENDERS      │ 0     │
-│ APPENDERS_USED │ 0     │
-│ RAW_CONNS      │ 1     │
-└────────────────┴───────┘
+┌────────┬──────────────────────┬───────┐
+│ ROWNUM │ METRIC               │ VALUE │
+├────────┼──────────────────────┼───────┤
+│      1 │ OPEN CONN            │     1 │
+│      2 │ IDLE                 │     1 │
+│      3 │ IN USE               │     0 │
+│      4 │ MAX IDLE CLOSED      │   268 │
+│      5 │ MAX IDLE TIME CLOSED │   410 │
+│      6 │ MAX LIFETIME CLOSED  │   852 │
+│      7 │ WAIT COUNT           │     0 │
+│      8 │ WAIT DURATION (AVG)  │    0s │
+└────────┴──────────────────────┴───────┘
 ```
 
 #### desc
 
-Syntax `desc [-a] <table>`
+구문: `desc [-a] <table>`
 
 테이블 구조를 확인합니다.
 
 ```sh
 machbase-neo» desc example;
-┌────────┬───────┬──────────┬────────┬──────────┐
-│ ROWNUM │ NAME  │ TYPE     │ LENGTH │ DESC     │
-├────────┼───────┼──────────┼────────┼──────────┤
-│      1 │ NAME  │ varchar  │    100 │ tag name │
-│      2 │ TIME  │ datetime │     31 │ basetime │
-│      3 │ VALUE │ double   │     17 │          │
-└────────┴───────┴──────────┴────────┴──────────┘
+┌────────┬────────┬──────────┬────────┬────────────┬───────┐
+│ ROWNUM │ COLUMN │ TYPE     │ LENGTH │ FLAG       │ INDEX │
+├────────┼────────┼──────────┼────────┼────────────┼───────┤
+│      1 │ NAME   │ varchar  │     20 │ tag name   │       │
+│      2 │ TIME   │ datetime │     31 │ base time  │       │
+│      3 │ VALUE  │ double   │     17 │ summarized │       │
+└────────┴────────┴──────────┴────────┴────────────┴───────┘
 ```
 
 ## machbase-neo restore

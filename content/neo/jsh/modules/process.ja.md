@@ -41,7 +41,7 @@ process.addShutdownHook(()=>{
 })
 console.println("running...")
 
-// 出力：
+// Output:
 // running...
 // shutdown hook called.
 ```
@@ -148,26 +148,6 @@ const process = require('process');
 process.exit(-1);
 ```
 
-
-## which() {#which}
-
-`PATH`からJavaScriptコマンドを検索し、解決したファイルパスを返します。
-
-コマンドに`.js`拡張子がない場合は、自動的に追加します。
-
-<h6>構文</h6>
-
-```js
-which(command)
-```
-
-<h6>使用例</h6>
-
-```js {linenos=table,linenostart=1}
-const process = require('process');
-console.println(process.which('echo')); // 例： /sbin/echo.js
-```
-
 ## expand() {#expand}
 
 文字列内の`$HOME`、`${HOME}`などの環境変数を展開します。
@@ -196,7 +176,6 @@ JSHランタイムの環境オブジェクトです。
 const process = require('process');
 console.println(process.env.get('HOME'));
 ```
-
 
 ## exec() {#exec}
 
@@ -240,6 +219,11 @@ execString(source, ...args)
 
 <h6>使用例</h6>
 
+```js {linenos=table,linenostart=1}
+const process = require('process');
+const code = process.execString("console.println('hello from execString')");
+console.println('exit code:', code);
+```
 
 ## hrtime() {#hrtime}
 
@@ -304,7 +288,7 @@ console.println(Array.isArray(diff), diff.length);
 Windowsの`process.kill(pid, 'SIGINT')`は、Unixの`kill(2)`のように実際のシグナルを直接送信する動作ではありません。
 代わりに、対象のプロセスグループが`SIGINT`に近い割り込みとして認識できるよう、コンソール制御イベントの送信を試みます。
 これはWindowsでNode.jsの割り込み動作にできるだけ近づけたものですが、ベストエフォートです。
-対象はコンソールに接続したプロセスグループである必要があり、Windowsが制御イベントをルーティングできない場合は失敗します。
+特に、対象はコンソールに接続したプロセスグループである必要があり、Windowsが制御イベントをルーティングできない場合は失敗することがあります。
 
 Windowsの`SIGTERM`、`SIGQUIT`、`SIGKILL`は、Unixのように異なる実シグナルとしてではなく、終了要求として扱います。
 
@@ -447,7 +431,7 @@ console.println(process.ppid);
 - `SIGALRM`
 - `SIGTERM`
 
-シグナルイベントリスナーは、大文字と小文字を区別しません。
+シグナルイベントリスナーの名前は、大文字と小文字を区別しません。
 イベント名は、`SIG`接頭辞を含む形式にのみ対応しています。
 
 たとえば、以下の名前は同じ動作になります。
@@ -467,7 +451,7 @@ console.println(process.ppid);
 const process = require('process');
 
 process.on('sigint', () => {
-  console.println('caught SIGINT');
+    console.println('caught SIGINT');
 });
 ```
 
@@ -491,7 +475,7 @@ process.stdout.write('Enter text: ');
 const text = process.stdin.readLine();
 console.println('Your input:', text);
 
-// 出力：
+// Output:
 // Enter text: hello?
 // Your input: hello?
 ```
@@ -545,7 +529,7 @@ console.println('jsh:', process.versions.jsh);
 console.println('go :', process.versions.go);
 ```
 
-## which() {#which-1}
+## which() {#which}
 
 `PATH`からJavaScriptコマンドを検索し、解決したファイルパスを返します。
 
@@ -561,7 +545,7 @@ which(command)
 
 ```js {linenos=table,linenostart=1}
 const process = require('process');
-console.println(process.which('echo')); // 例： /sbin/echo.js
+console.println(process.which('echo')); // e.g. /sbin/echo.js
 ```
 
 ## dispatchEvent() {#dispatchevent}
@@ -600,25 +584,7 @@ dumpStack(depth)
 ```js {linenos=table,linenostart=1}
 const process = require('process');
 function trace() {
-  process.dumpStack(5);
+    process.dumpStack(5);
 }
 trace();
-```
-
-## expand() {#expand-1}
-
-文字列内の`$HOME`、`${HOME}`などの環境変数を展開します。
-
-<h6>構文</h6>
-
-```js
-expand(value)
-```
-
-<h6>使用例</h6>
-
-```js {linenos=table,linenostart=1}
-const process = require('process');
-console.println(process.expand('$HOME/file.txt'));
-console.println(process.expand('${HOME}/../lib/file.txt'));
 ```

@@ -40,22 +40,22 @@ json 연산자의 반환 타입은 VARCHAR이므로 VARCHAR를 비교할 때만 
 ```bash
 Mach> CREATE TAG TABLE tag (name VARCHAR(20) PRIMARY KEY, time DATETIME BASETIME, jval JSON);
 Executed successfully.
-
+  
 Mach> CREATE INDEX idx_jval_value1 ON tag (jval->'$.value1');
 Created successfully.
-
+  
 Mach> CREATE INDEX idx_jval_value2 ON tag (jval->'$.value2');
 Created successfully.
-
+  
 Mach> EXPLAIN SELECT * FROM tag WHERE jval->'$.value1' = '10';
-PLAN
+PLAN                                                                            
 ------------------------------------------------------------------------------------
- PROJECT
-  TAG READ (RAW)
-   KEYVALUE INDEX SCAN (_TAG_DATA_0)
-    [KEY RANGE]
-     * jval->'$.value1' = '10'
-   VOLATILE FULL SCAN (_TAG_META)
+ PROJECT                                                                        
+  TAG READ (RAW)                                                                
+   KEYVALUE INDEX SCAN (_TAG_DATA_0)                                            
+    [KEY RANGE]                                                                 
+     * jval->'$.value1' = '10'                                                  
+   VOLATILE FULL SCAN (_TAG_META)                                               
 [6] row(s) selected.
 ```
 

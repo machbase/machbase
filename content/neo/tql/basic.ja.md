@@ -11,26 +11,33 @@ TQLは、文字列（`string`）、数値（`number`）、ブール値（`boolea
 
 ### 文字列（string） {#문자열string}
 
-文字列は、単一引用符（'）、二重引用符（"）、バッククォート、中括弧で囲めます。バッククォートは、複数行の文字列や引用符を含む長いSQL文に便利です。
+文字列は、一般的なプログラミング言語と同様に、単一引用符（'）、二重引用符（"）、バッククォートで囲みます。中括弧で囲むこともできます。
+バッククォートの文字列は、引用符を含む長いSQL文のように、複数行にわたる文字列を記述する場合に便利です。
 
-複数行のテキストにバッククォートや中括弧（`{`、`}`）が含まれ、区切り文字と衝突する場合は、タグ付きリテラルを使用できます。
+複数行のテキストにバッククォートや中括弧（`{`、`}`）が含まれ、文字列の区切りと衝突する場合は、タグ付きリテラルを使用できます。
 
 - タグ付きバッククォート：`` `<<TAG ... TAG` ``
-- タグ付き中括弧：`({<<TAG ... TAG})`
+- タグ付き中括弧ブロック：`{<<TAG ... TAG}`
 
-どちらも内容をrawテキストとして扱い、終了行のタグで閉じます。
+どちらの形式も内容をrawテキストとして扱い、タグを記述した終了行で閉じます。
 
-```js
+*例)* バックスラッシュによる単一引用符のエスケープ（`\'`）
+
+```js {linenos=table}
 SQL( 'select * from example where name=\'temperature\' limit 10' )
 CSV()
 ```
 
-```js
+*例)* 二重引用符の文字列
+
+```js {linenos=table}
 SQL( "select * from example where name='temperature' limit 10" )
 CSV()
 ```
 
-```js
+*例)* バッククォート（`）を使い、エスケープせずに複数行のSQL文を記述
+
+```js {linenos=table}
 SQL( `select *
       from example
       where name='temperature'
@@ -38,7 +45,7 @@ SQL( `select *
 CSV()
 ```
 
-```js
+```js {linenos=table}
 SCRIPT(`<<JS
 // '{' を返す関数
 function a () { return '{' }
@@ -46,7 +53,7 @@ JS`)
 CSV()
 ```
 
-~~~js
+~~~js {linenos=table}
 MARKDOWN({<<MD
 ```mermaid
 erDiagram
@@ -55,9 +62,11 @@ erDiagram
 MD})
 ~~~
 
-二重中括弧（`{{ }}`）を使うと、引用符をエスケープせずにJSON文字列を記述できます。
+二重中括弧（`{{ }}`）を使うと、TQLスクリプトでJSON文字列を簡単に記述できます。引用符をエスケープする必要はありません。
 
-```js
+以下の2つの文字列式は同じ値です。
+
+```js {linenos=table}
 STRING({{
     "name": "Connan",
     "hired": true,
@@ -69,10 +78,8 @@ STRING({{
 CSV()
 ```
 
-バッククォートでJSONを記述する例です。
-
 ```js {linenos=table}
-STRING(`{ 
+STRING(`{
     "name": "Connan",
     "hired": true,
     "company": {
@@ -81,19 +88,18 @@ STRING(`{
     }
 }`)
 CSV()
-
 ```
 
 ### 数値（number） {#숫자number}
 
 すべての数値リテラルは64ビット浮動小数点数として処理されます。
 
-```js
-SQL_SELECT('time', 'value', from('example', 'temperature'), limit(10))
+```js {linenos=table}
+SQL_SELECT( 'time', 'value', from('example', 'temperature'), limit(10))
 CSV()
 ```
 
-```js
+```js {linenos=table}
 FAKE( oscillator( freq(12.34, 20), range("now", "1s", "100ms")) )
 CSV()
 ```
@@ -102,30 +108,36 @@ CSV()
 
 ブール定数は `true` と `false` です。
 
-```js
+```js {linenos=table}
 FAKE( linspace(0, 1, 1))
 CSV( heading(false) )
 ```
 
 ### 時刻（time） {#시간time}
 
-`time()`、`parseTime()` 関数で生成するか、SQLの結果の `DATETIME` カラムから取得できます。
+時刻型の値は、`time()`、`parseTime()` 関数で生成するか、SQLクエリ結果の `DATETIME` カラムから取得できます。
 
 ### タイムゾーン（timeZone） {#타임존timezone}
 
-`tz()` 関数でタイムゾーンを指定できます。例：`tz('UTC')`、`tz('Local')`、`tz('Asia/Seoul')`
+タイムゾーン型の値は、`tz()` 関数で生成します。
+
+例：`tz('UTC')`、`tz('Local')`、`tz('Asia/Seoul')`
 
 ### リスト（list） {#리스트list}
 
-`list()` 関数で値の配列を生成します。例：`list(1, 2, 3)`
+リストは他の値の配列で、`list()` 関数で生成します。
+
+例：`list(1, 2, 3)`
 
 ### 辞書（dictionary） {#딕셔너리dictionary}
 
-`dict()` 関数は、文字列のキーと値のペアからなる辞書を生成します。例：`dict("name", "pi", "value", 3.14)`
+辞書は（文字列の）名前と値のペアの集合で、`dict()` 関数で生成します。
+
+例：`dict("name", "pi", "value", 3.14)`
 
 ## 文の記述規則 {#문장-작성-규칙}
 
-文字列、数値、ブール値のリテラルを除き、すべての文は関数呼び出しの形式で記述します。
+文字列、数値、ブール値のリテラル定数を除き、すべての文は関数呼び出しの形式で記述します。
 
 ```js
 // コメントは '//' で記述します。
@@ -139,13 +151,17 @@ CSV()
 
 ## SRCとSINK {#src와-sink}
 
-`.tql` スクリプトは、データを生成する**ソース（SRC）**関数で始める必要があります。`SQL()`、`SQL_SELECT()`、`SCRIPT()` などが該当します。最後の文は、結果を出力または保存する**シンク（SINK）**関数である必要があります。代表例は `CSV()`、`JSON()`、`APPEND()`、`CHART()` です。
+すべての `.tql` スクリプトは、レコードを生成する**ソース（SRC）**文1つで始める必要があります。
+たとえば、`SQL()`、`SQL_SELECT()`、および `$.yield()`、`$.yieldKey()` でレコードを生成する `SCRIPT()` がソースになります。
+最後の文は、結果をエンコードするか、データベースに書き込む**シンク（SINK）**文である必要があります。
+たとえば、`CSV()`、`JSON()`、`INSERT()`、`APPEND()`、およびすべての `CHART()` 系関数がシンクになります。
 
 ## MAP関数 {#map-함수}
 
-ソースとシンクの間には、0個以上のMAP関数を配置できます。MAP関数名は大文字で始まり、内部のオプションは小文字で始まるキャメルケースの関数で指定します。
+ソースとシンクの間には、0個以上のMAP関数を配置できます。
+MAP関数の名前はすべて大文字です。一方、小文字で始まるキャメルケースの関数は、他のMAP関数の引数として使用します。
 
-```js
+```js {linenos=table,hl_lines=["6-7"],linenostart=1}
 SQL_SELECT(
     'time', 'value',
     from('example', 'temperature'),
@@ -158,9 +174,13 @@ CSV()
 
 ## パラメーター（param） {#파라미터param}
 
-HTTPで `.tql` スクリプトを呼び出す際にクエリパラメーターを渡し、`param()` 関数で値を読み取れます。
+外部アプリケーションがHTTPで `.tql` スクリプトを呼び出す際に、クエリパラメーターとして引数を渡せます。
+TQLスクリプトでは、`param()` 関数でクエリパラメーターの値を読み取ります。
 
-```js
+以下のスクリプトを `hello2.tql` として保存すると、アプリケーションはHTTP GETメソッドで `http://127.0.0.1:5654/db/tql/hello2.tql?name=temperature&count=10` を呼び出して、このスクリプトを実行できます。
+このとき、`param('name')` は `"temperature"`、`param('count')` は文字列 `"10"` を返します。
+
+```js {linenos=table}
 SQL_SELECT(
     'time', 'value',
     from('example', param('name')),
@@ -169,13 +189,13 @@ SQL_SELECT(
 CSV()
 ```
 
-たとえば、ファイルを `hello2.tql` として保存し、`http://127.0.0.1:5654/db/tql/hello2.tql?name=temperature&count=10` で呼び出すと、`param('name')` は `"temperature"`、`param('count')` は文字列 `"10"` を返します。
+**例**
 
 {{% steps %}}
 
 ### `param()` の使用 {#param-사용}
 
-次のコードを `example.tql` ファイルに保存します。
+次のコードを `param.tql` として保存します。
 
 ```js
 SQL( `select * from example where name = ?`, param('name'))
@@ -184,7 +204,7 @@ CSV()
 
 ### クライアントからのGETリクエスト {#클라이언트-get-요청}
 
-`curl` コマンドでTQLを呼び出します。
+`curl` コマンドで、クエリパラメーターを付けてTQLファイルを呼び出します。
 
 ```
 curl "http://127.0.0.1:5654/db/tql/param.tql?name=TAG0"
@@ -196,7 +216,7 @@ curl "http://127.0.0.1:5654/db/tql/param.tql?name=TAG0"
 
 ### 算術演算子 {#산술-연산자}
 
-`+`、`-`、`*`、`/` の4つの算術演算をサポートします。
+算術演算子は、加算 `+`、減算 `-`、乗算 `*`、除算 `/` を実行します。
 
 ```js {linenos=table,hl_lines=[2]}
 FAKE(linspace(1, 10, 5))
@@ -212,7 +232,7 @@ CSV()
 10,1000
 ```
 
-### 剰余演算子 {#modulo-operator}
+### 剰余演算子 {#나머지-연산자}
 
 `%` で表す剰余演算子（モジュロ演算子）は、算術演算子です。
 整数除算の余りを返します。
@@ -229,7 +249,7 @@ CSV()
 9
 ```
 
-### 文字列の連結 {#concatenation}
+### 文字列の連結 {#문자열-연결}
 
 `+` 演算子のオペランドが文字列の場合、連結した文字列を返します。
 
@@ -245,7 +265,7 @@ CSV()
 hello,world,hello world?
 ```
 
-### 比較演算子 {#relational-operator}
+### 比較演算子 {#비교-연산자}
 
 | 比較         | 演算子 | 説明 |
 | :--------------------- | :--  | :-- |
@@ -255,7 +275,6 @@ hello,world,hello world?
 | 以上  | `>=` | 左辺の値が右辺の値以上かを判定する |
 | より小さい              | `<`  | 左辺の値が右辺の値より小さいかを判定する |
 | 以下     | `<=` | 左辺の値が右辺の値以下かを判定する |
-
 
 ```js {linenos=table,hl_lines=[2]}
 FAKE(linspace(1, 5, 5))
@@ -268,7 +287,7 @@ CSV()
 5
 ```
 
-### 論理演算子 {#logical-operators}
+### 論理演算子 {#논리-연산자}
 
 論理演算子は、論理積、論理和、否定を実行します。
 
@@ -289,7 +308,7 @@ CSV()
 4
 ```
 
-### IN演算子 {#in-operator}
+### IN演算子 {#in-연산자}
 
 `A in (args...)` は、argsに `A` が含まれる場合にtrue、それ以外の場合にfalseを返します。
 
@@ -315,12 +334,12 @@ FILTER( value(1) in (1.5, 2.5) )
 CSV()
 ```
 
-### 三項演算子 {#ternary-operator}
+### 三項演算子 {#삼항-연산자}
 
 三項演算子 `? :` は、他のプログラミング言語のif-else文に似ています。
-if-else文と同じ手順で条件に応じた値を選択します。
+if-else文と同じ手順で、条件に応じて値を選択します。
 
-- param('name') が定義されているかどうか
+- `param('name')` が定義されているかどうか
 
 ```js {linenos=table,hl_lines=[4]}
 SQL_SELECT(
@@ -349,7 +368,7 @@ CSV()
 5
 ```
 
-### Nil合体演算子 {#nil-coalescing}
+### Nil合体演算子 {#nil-병합-연산자}
 
 `??` 演算子は左右のオペランドを受け取ります。左辺が定義されている場合はその値を返し、未定義の場合は右辺の値を返します。
 以下は `??` 演算子の一般的な使用例です。呼び出し元がクエリパラメーターを指定しなかった場合、右辺の値を既定値として使用します。
@@ -370,7 +389,7 @@ CSV()
 
 {{% steps %}}
 
-#### `??` の使用 {#use-}
+#### `??` の使用 {#-사용}
 
 以下のコードを `param-default.tql` として保存します。
 
@@ -379,7 +398,7 @@ SQL( `select * from example limit ?`, param('limit') ?? 1)
 CSV()
 ```
 
-#### HTTP GET
+#### HTTP GET {#http-get}
 
 クエリパラメーターなしのGETリクエスト
 
@@ -391,7 +410,7 @@ curl http://127.0.0.1:5654/db/tql/param-default.tql
 TAG0,1628694000000000000,10
 ```
 
-#### パラメーター付きHTTP GET {#http-get-with-param}
+#### パラメーター付きHTTP GET {#파라미터를-포함한-http-get}
 
 クエリパラメーター付きのGETリクエスト
 
@@ -406,11 +425,11 @@ TAG0,1628780400000000000,11
 
 {{% /steps %}}
 
-## プラグマ {#pragma}
+## プラグマ {#프라그마}
 
 `//+ name=value` ディレクティブは、Machbase NeoによるTQLスクリプトの実行方法を指定します。
 
-### log-level
+### log-level {#log-level}
 
 {{< neo_since ver="8.0.47" />}}
 
@@ -424,7 +443,7 @@ WHEN(true, doLog('hello world'))
 CSV()
 ```
 
-### sql-thread-lock
+### sql-thread-lock {#sql-thread-lock}
 
 {{< neo_since ver="8.0.47" />}}
 

@@ -359,7 +359,7 @@ INSERT INTO example metadata VALUES ('TAG_01', 100, 200);
 設定後にタグデータを入力すると、次のように動作します。
 
 ```sql
-INSERT INTO example VALUES ('TAG_01', NOW, 95);  -- 失敗
+INSERT INTO example VALUES ('TAG_01', NOW, 95);  -- Failure
 ```
 
 ```text
@@ -376,7 +376,7 @@ Elapsed time: 0.000
 ```
 
 ```sql
-INSERT INTO example VALUES ('TAG_01', NOW, 150); -- 成功
+INSERT INTO example VALUES ('TAG_01', NOW, 150); -- Success
 ```
 
 ```text
@@ -394,7 +394,7 @@ Elapsed time: 0.000
 ```
 
 ```sql
-INSERT INTO example VALUES ('TAG_01', NOW, 205); -- 失敗
+INSERT INTO example VALUES ('TAG_01', NOW, 205); -- Failure
 ```
 
 ```text

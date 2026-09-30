@@ -24,8 +24,8 @@ weight: 0
 ```
 "YYYY-MM-DD HH24:MI:SS ZZZ(Timezone String)"
 
-例）
-"12:06:56.568+01:00"
+Example) 
+"12:06:56.568+01:00"  
 "2006.07.10 at 15:08:56 -05:00"
 "09  AM, GMT+09:00"
 ```
@@ -54,7 +54,7 @@ weight: 0
 サポートする TIMEZONE の形式を示します。
 
 ```
-例）
+ex)
 TIMEZONE=+0900
 TIMEZONE=-0900
 ```

@@ -16,7 +16,7 @@ Register a task that runs on the specified schedule. The web ui for managing tim
 
 3. Set timer id (name), timer spec, and task TQL path.
 
-{{< figure src="./img/timer_form.png" width="488" >}}
+{{< figure src="/neo/timer/img/timer_form.png" width="488" >}}
 
 4. Click "Create" button.
 
@@ -25,7 +25,7 @@ Register a task that runs on the specified schedule. The web ui for managing tim
 
 Use the toggle button <img src=./img/timer_toggle.png style="display:inline; height:25px;">to start and <img src=./img/timer_toggle_stop.png style="display:inline; height:25px;"> to stop the timer.
 
-{{< figure src="./img/timer_detail.png" width="738" >}}
+{{< figure src="/neo/timer/img/timer_detail.png" width="738" >}}
 
 ## Timer Schedule Spec.
 
@@ -171,7 +171,7 @@ a row selected.
 
 This timer function on the web, introduced in version 8.0.20, can be achieved using the following shell commands.
 
-{{< figure src="./img/timer_new.jpg" width="630px" >}}
+{{< figure src="/neo/timer/img/timer_new.jpg" width="630px" >}}
 
 This is equivalent with the command line below.
 
@@ -200,7 +200,7 @@ a row selected.
 
 It is possible edit, start, stop and delete from the detail page.
 
-{{< figure src="./img/timer_status.png" width="775px" >}}
+{{< figure src="/neo/timer/img/timer_status.png" width="775px" >}}
 
 
 **Command line**

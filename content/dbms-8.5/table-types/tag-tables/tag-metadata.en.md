@@ -298,7 +298,8 @@ then run the metadata delete again.
 DELETE FROM sensors
  WHERE name = 'TEMP_001';
 
-DELETE FROM sensors METADATA;
+DELETE FROM sensors METADATA
+ WHERE name = 'TEMP_001';
 ```
 
 ## JSON Metadata Columns
@@ -416,10 +417,10 @@ Drop the index by name.
 DROP INDEX idx_ship_owner;
 ```
 
-For indexes created automatically by `INFO JSON INDEX(...)`, use `SHOW INDEX` to confirm the generated index name.
+For indexes created automatically by `INFO JSON INDEX(...)`, use `SHOW INDEXES` to confirm the generated index name. Use `SHOW INDEX index_name` to view the details of a specific index.
 
 ```sql
-SHOW INDEX idx_ship_owner;
+SHOW INDEXES;
 ```
 
 ### Notes on Index Usage

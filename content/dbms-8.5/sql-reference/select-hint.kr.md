@@ -4,7 +4,7 @@ type: docs
 weight: 50
 ---
 
-# Index
+# 목차
 
 * [소개](#introduction)
 * [PARALLEL](#parallel)
@@ -19,7 +19,7 @@ weight: 50
 <a id="introduction"></a>
 ## 소개
 
-SELECT 문에서 활용 가능한 힌트들을 정리했습니다.
+`SELECT` 문에서 사용할 수 있는 힌트를 설명합니다.
 
 ##  PARALLEL
 
@@ -83,7 +83,7 @@ PLAN
 
 ##  FULL
 
-INDEX SCAN을 사용하지 않도록 지정합니다.
+`INDEX SCAN`을 사용하지 않도록 지정합니다.
 
 ```sql
 SELECT /*+ FULL(table_name) */ ...
@@ -251,7 +251,7 @@ _RID                 I1
 
 LOG 테이블의 스캔 방향을 지정합니다. `SCAN_FORWARD`는 가장 오래된 입력 레코드부터, `SCAN_BACKWARD`는 가장 최근 입력 레코드부터 조회합니다.
 
-표준 에디션의 LOG 테이블에만 적용됩니다.
+이 힌트는 표준 에디션의 LOG 테이블에만 적용됩니다.
 
 ```sql
 SELECT /*+ SCAN_FORWARD(table_name) */ ...

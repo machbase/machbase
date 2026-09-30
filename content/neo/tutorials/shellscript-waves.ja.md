@@ -199,21 +199,6 @@ machbase-neo shell sql \
 
 {{% /steps %}}
 
-### 表形式の表示 {#table-view}
-
-以下のように「walk」コマンドで、クエリ結果を前後に移動して表示できます。
-
-```sh
-machbase-neo shell walk "select * from EXAMPLE order by time desc"
-```
-
-キーボードで上下にスクロールし、`ESC`で表の表示を終了します。
-
-`r`を押すと、クエリを再実行して結果を更新します。データが継続的に書き込まれる場合、`order by time desc`でソートしたクエリで最新値を確認する際に便利です。
-
-![img](/images/shell-walk.gif)
-
-
 ### クエリの出力形式 {#query-output-format}
 
 #### JSON {#json}

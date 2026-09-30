@@ -44,17 +44,17 @@ The `v$tag_table_name_stat` view exposes the following pre-calculated statistica
 | `ROW_COUNT`       | ULONG     | The total number of data points (rows) recorded for this Tag ID.            | No                    |
 | `MIN_TIME`        | DATETIME  | The earliest timestamp recorded among all data points for this Tag ID.      | No                    |
 | `MAX_TIME`        | DATETIME  | The latest timestamp recorded among all data points for this Tag ID.        | No                    |
-| `MIN_VALUE`       | *matches* | The minimum value recorded in the `SUMMARIZED` column for this Tag ID.      | **Yes**               |
+| `MIN_VALUE`       | DOUBLE    | The minimum value recorded in the `SUMMARIZED` column for this Tag ID.      | **Yes**               |
 | `MIN_VALUE_TIME`  | DATETIME  | The timestamp corresponding to the first occurrence of `MIN_VALUE`.         | **Yes**               |
-| `MAX_VALUE`       | *matches* | The maximum value recorded in the `SUMMARIZED` column for this Tag ID.      | **Yes**               |
+| `MAX_VALUE`       | DOUBLE    | The maximum value recorded in the `SUMMARIZED` column for this Tag ID.      | **Yes**               |
 | `MAX_VALUE_TIME`  | DATETIME  | The timestamp corresponding to the first occurrence of `MAX_VALUE`.         | **Yes**               |
 | `RECENT_ROW_TIME` | DATETIME  | The timestamp of the most recently inserted data point for this Tag ID.     | No                    |
 
-*Note: The data type for `MIN_VALUE` and `MAX_VALUE` mirrors the data type of the `value` column declared with `SUMMARIZED` in the parent TAG table.*
+*Note: `MIN_VALUE` and `MAX_VALUE` are DOUBLE even when the `SUMMARIZED` column in the parent TAG table has an integer type.*
 
 ## Querying Statistics
 
-The primary benefit of the `v$tag_table_name_stat` view is the ability to retrieve these key statistics rapidly without scanning the potentially voluminous base TAG table data.
+The primary benefit of the `v$tag_table_name_stat` view is the ability to retrieve these key statistics rapidly without scanning the potentially voluminous base TAG table data. To look at the actual data records, take a timestamp from the statistics view and combine it with a query on the base TAG table.
 
 **Basic Query Patterns:**
 
@@ -97,11 +97,12 @@ WHERE name = 'specific_tag_id'
 
 ## Limitations
 
-The per-tag statistics feature, while highly beneficial for performance, possesses certain inherent limitations:
+The per-tag statistics feature, while highly beneficial for performance, has certain inherent limitations:
 
-*   **Fixed Statistical Scope:** The view provides a predefined set of eight statistical indicators. If different or more complex statistical functions are required (e.g., standard deviation, percentiles), direct computation on the base TAG table or utilization of other features like Rollup tables may be necessary.
-*   **Dependency on Source Data Integrity:** The accuracy of the statistics stored in the `v$tag_table_name_stat` view is directly dependent on the quality of the data ingested into the source TAG table. Erroneous data points or noise will be reflected in the calculated aggregates (MIN_VALUE, MAX_VALUE, etc.). Input data validation and cleansing are recommended.
+*   **Fixed Statistical Scope:** In addition to the Tag ID, the view provides a predefined set of eight statistical indicators. If different or more complex statistical functions are required (e.g., standard deviation, percentiles), direct computation on the base TAG table or utilization of other features like Rollup tables may be necessary.
+*   **Dependency on Source Data Integrity:** The accuracy of the statistics stored in the `v$tag_table_name_stat` view is directly dependent on the quality of the data ingested into the source TAG table. Erroneous data points or noise will be reflected in the calculated aggregates (`MIN_VALUE`, `MAX_VALUE`, etc.). Input data validation and cleansing are recommended.
 *   **Configuration Requirements:** As previously detailed, the statistics collection mechanism relies on the `TAG_STAT_ENABLE=1` property and the presence of the `SUMMARIZED` keyword on the target value column for full functionality. Incorrect configuration will result in incomplete or entirely absent statistical data within the view.
+*   **Update Timing:** Statistics are reflected in the view shortly after ingestion, not immediately. A query issued right after an insert may not include the rows that were just written yet.
 
 ## Examples
 
@@ -109,7 +110,7 @@ This section provides practical examples demonstrating the setup and usage of th
 
 ### Prerequisites: Schema Creation and Data Loading
 
-These examples assume a TAG table named `tag` is created and populated, mirroring the setup described in the presentation materials.
+These examples assume that a TAG table named `tag` has been created and populated.
 
 **1. Schema Definition (Ensuring Statistics Enabled):**
 
@@ -129,11 +130,11 @@ TAG_STAT_ENABLE=1;    -- Explicitly set (though default=1)
 
 **2. Data Loading (Example using `machbase-neo` import):**
 
-Assume a CSV file `homes.csv` exists with data in the format `tag_name,unix_timestamp,value`.
+Assume a CSV file `homes.csv` exists with data in the format `tag_name,unix_timestamp,value`. `machbase-neo shell` mounts the current directory at `/work`, so run the command in the directory where `homes.csv` is located.
 
 ```bash
 # Example import command (adjust path and options as needed)
-machbase-neo>> import --input C:\path\to\homes.csv --timeformat s --table tag --method append TAG;
+machbase-neo shell import --input /work/homes.csv --timeformat s TAG
 ```
 
 ### Verifying Statistics and Basic Queries
@@ -236,6 +237,8 @@ INSERT INTO stat3 VALUES('tag-1', TO_DATE('2023-08-15'), 120);
 
 **Observing the Results:**
 
+After inserting the same data into each table, query the statistics views to see how the collected items differ depending on the configuration.
+
 ```sql
 -- Query Statistics for Table 1 (Full Stats)
 SELECT * FROM v$stat1_stat;
@@ -248,8 +251,8 @@ SELECT * FROM v$stat2_stat;
 
 -- Query Statistics for Table 3 (TAG_STAT_ENABLE=0)
 SELECT * FROM v$stat3_stat;
--- Expected: No rows returned, or an error if the view itself wasn't created.
+-- Expected: No rows returned (the view exists but holds no statistics).
 --          Statistics collection is entirely disabled for this table.
 ```
 
-These examples clearly show the necessity of correct table definition (specifically the `SUMMARIZED` keyword) and the `TAG_STAT_ENABLED` property to leverage the full capabilities of the per-tag statistics feature.
+These examples show that using the full capabilities of the per-tag statistics feature requires a correct table definition (specifically the `SUMMARIZED` keyword) and the `TAG_STAT_ENABLE` property.

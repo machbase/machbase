@@ -18,10 +18,17 @@ SQLite supports memory only mode like below.
 bridge add -t sqlite mem file::memory:?cache=shared
 ```
 
-The command below is equivalent to the web UI shown in the following image.
+In the web UI, register it as follows. The settings are the same as the command above.
 
-{{< figure src="../img/sqlite-add.png" width="500" >}}
+1. Click the <img src="/neo/bridges/img/bridge_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px"> icon in the left menu.
 
+2. Click the <img src="/neo/bridges/img/bridge_add_icon.png" style="display:inline-block;height:1.75em;width:auto;vertical-align:middle;margin:0 3px"> icon in the `BRIDGE` header.
+
+3. Enter `mem` in `Name`, choose `SQLite` in `Type`, and enter `file::memory:?cache=shared` in `Connection String`.
+
+4. Click `Create`.
+
+{{< figure src="/neo/bridges/img/sqlite-add.png" width="500" >}}
 
 ## Test the bridge's connectivity
 
@@ -30,7 +37,9 @@ machbase-neo» bridge test mem;
 Test bridge mem connectivity... success 11.917µs
 ```
 
-{{< figure src="../img/sqlite-test.png" width="600" >}}
+In the web UI, select the bridge in the `BRIDGE` list and click `Test`. When the connection succeeds, `success` is shown.
+
+{{< figure src="/neo/bridges/img/sqlite-test.png" width="600" >}}
 
 ## Create table
 
@@ -65,7 +74,7 @@ CREATE TABLE IF NOT EXISTS mem_example(
 -- env: reset
 ```
 
-{{< figure src="../img/sqlite-sql-create-table.png" width="600" >}}
+{{< figure src="/neo/bridges/img/sqlite-sql-create-table.png" width="600" >}}
 
 ## DML on the SQL Editor
 
@@ -83,7 +92,7 @@ DELETE from mem_example;
 -- env: reset
 ```
 
-{{< figure src="../img/sqlite-sql-dml.png" width="600" >}}
+{{< figure src="/neo/bridges/img/sqlite-sql-dml.png" width="600" >}}
 
 ## *TQL* writing on the SQLite
 
@@ -93,6 +102,7 @@ FAKE( json({
     ["NovaWave", 10],
     ["Sunflower", 20]
 }))
+
 DROP(1) // skip header
 SQL(bridge("mem"), 
     `insert into mem_example (company, employee, created_on) values(?, ?, ?)`,

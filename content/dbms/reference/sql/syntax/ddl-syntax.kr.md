@@ -411,7 +411,9 @@ DROP TABLESPACE tbs1;
 
 ---
 
-## DDL 동시성과 잠금 {#ddl-concurrency}
+<a id="ddl-concurrency"></a>
+
+## DDL 동시성과 잠금
 
 Machbase 8.7.0 Standard Edition은 서로 독립적인 객체의 DDL을 객체 단위로 조정합니다. 따라서
 같은 데이터베이스에서 서로 다른 이름의 LOG, TAG, VOLATILE, LOOKUP, TRANSACTION 테이블을

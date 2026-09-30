@@ -9,10 +9,10 @@ machloader is used to import/export text file data to the Machbase server. It wo
 The features of machloader are as follows.
 
 * machloader can specify a datetime type in the schema file. The datetime type specified must be of the type supported by the Machbase server. One datetime type can be applied to all fields, and each field can have a different format.
-* To delete and input the input target table data, use the "-m replace" option.
-* machloader does not verify the schema and data file consistency. The user must check that the schema, tables, and data files meet the consistency.
+* To delete the data in the target table before importing, use the `-m replace` option.
+* machloader does not verify the consistency between the schema and the data file. The user must check that the schema, tables, and data files are consistent.
 * machloader supports APPEND mode by default.
-* machloader does not use the `_ARRIVAL_TIME` column by default. You must use the "-a" option to import/export the corresponding column data.
+* machloader does not use the `_ARRIVAL_TIME` column by default. You must use the `-a` option to import/export the corresponding column data.
 
 For supported date/time formatting tokens, see [TO_CHAR](../../sql-reference/functions/#to_char).
 
@@ -57,15 +57,13 @@ The detailed usages are as follows.
 
 ## CSV File Import
 
-Imports CSV file to Machbase server.
+Imports a CSV file to the Machbase server.
 
-Option:
+Options:
 
-```
--i: import specification options
--d: data file naming options
--t: table name specification option
-```
+- `-i`: Specifies import.
+- `-d`: Specifies the data file name.
+- `-t`: Specifies the table name.
 
 Example:
 
@@ -77,13 +75,11 @@ machloader -i -d data.csv -t table_name
 
 Writes data to a CSV file.
 
-Option:
+Options:
 
-```
--o: export specification options
--d: data file naming options
--t: table name specification option
-```
+- `-o`: Specifies export.
+- `-d`: Specifies the data file name.
+- `-t`: Specifies the table name.
 
 Example:
 
@@ -93,14 +89,12 @@ machloader -o -d data.csv -t table_name
 
 ## Use CSV File Header
 
-The header-related setting of the CSV file.
+The header-related settings of the CSV file.
 
-Option:
+Options:
 
-```
--i -H: Upon import, the first line of the csv file is recognized as a header. Therefore, the first line is excluded from input.
--o -H: Upon export, generates the csv header as the column name of the table.
-```
+- `-i -H`: Upon import, the first line of the CSV file is recognized as a header and excluded from input.
+- `-o -H`: Upon export, the column names of the table are written as the CSV header.
 
 Example:
 
@@ -109,17 +103,14 @@ machloader -i -d data.csv -t table_name -H
 machloader -o -d data.csv -t table_name -H
 ```
 
-
 ## Automatic Table Creation
 
-Regards automatic table creation.
+Options for automatic table creation.
 
-Option:
+Options:
 
-```
--C: Automatically generates the table when importing. The column names are automatically generated as c0, c1, .... The generated column is varchar (32767) type.
--H: Generates column names with csv header name when importing.
-```
+- `-C`: Automatically creates the table when importing. The column names are generated as c0, c1, ..., and the column type is `varchar(32767)`.
+- `-H`: Uses the CSV header names as the column names when importing.
 
 Example:
 
@@ -128,18 +119,15 @@ machloader -i -d data.csv -t table_name -C
 machloader -i -d data.csv -t table_name -C -H
 ```
 
-
 ## Files Not CSV Format
 
-Sets delimiter for files that are not in CSV format.
+Sets delimiters for files that are not in CSV format.
 
-Option:
+Options:
 
-```
--D: Delimiter option for each field
--n: Specifies each record delimiter option
--e: Specifies the enclosing character for each field.
-```
+- `-D`: Specifies the delimiter for each field.
+- `-n`: Specifies the delimiter for each record.
+- `-e`: Specifies the enclosing character for each field.
 
 Example:
 
@@ -150,13 +138,11 @@ machloader -o -d data.txt -t table_name -D '^' -n '\n' -e '"'
 
 ## Specify Input Mode
 
-When importing (with -i option), there are two modes, REPLACE and APPEND. APPEND is the default. Use REPLACE mode with caution because it deletes existing data.
+When importing (with the `-i` option), there are two modes, `replace` and `append`. `append` is the default. Use `replace` mode with caution because it deletes existing data.
 
-Option:
+Options:
 
-```
--m: Specifies import mode
-```
+- `-m`: Specifies the import mode.
 
 Example:
 
@@ -166,16 +152,14 @@ machloader -i -d data.csv -t table_name -m replace
 
 ## Specify Connection Information
 
-Specifies server IP, user, and password separately.
+Specifies the server IP, port, user, and password separately.
 
-Option:
+Options:
 
-```
--s: Specifies server IP address (default: 127.0.0.1)
--P: Specifies server port number (default: 5656)
--u: Specifies the connecting user name (default: SYS)
--p: Specifies the password of the connecting user (default: MANAGER)
-```
+- `-s`: Specifies the server IP address (default: 127.0.0.1).
+- `-P`: Specifies the server port number (default: 5656).
+- `-u`: Specifies the connecting user name (default: SYS).
+- `-p`: Specifies the password of the connecting user (default: MANAGER).
 
 Example:
 
@@ -185,14 +169,12 @@ machloader -i -s 192.168.0.10 -P 5656 -u mach -p machbase -d data.csv -t table_n
 
 ## Create Log File
 
-Creates the execution log file for machloader.
+Creates the machloader execution log file and a bad-data file.
 
-Option:
+Options:
 
-```
--b: Sets the name of the log file to generate the data that is not input when importing.
--l: Sets the name of the log file to generate the data and error message that were not input when importing.
-```
+- `-b`: Sets the name of the bad-data file that records the rows that failed to import.
+- `-l`: Sets the name of the execution log file that records the rows that failed to import and their error messages.
 
 Example:
 
@@ -202,15 +184,13 @@ machloader -i -d data.csv -t table_name -b table_name.bad -l table_name.log
 
 ## Create Schema File
 
-The machloader schema file can be created. Import/export is possible even if the data type format is changed using a schema file or the number of columns in the table and data file is different.
+You can create a machloader schema file. With a schema file, import/export is possible even if the data type format is changed or the number of columns in the table differs from the number of fields in the data file.
 
-Option:
+Options:
 
-```
--c: schema file creation options
--t: table name specification option
--f: created schema file name specification option
-```
+- `-c`: Creates a schema file.
+- `-t`: Specifies the table name.
+- `-f`: Specifies the name of the schema file to create.
 
 Example:
 
@@ -221,15 +201,15 @@ machloader -c -t table_name -f table_name.fmt -a
 
 ## Set datetime Format in Schema File
 
-The date format can be set to preference with the DATEFORMAT option.
+You can set the date format with the `DATEFORMAT` option.
 
-Syntax:
+Syntax for all datetime columns:
 
 ```
-## Set for all datetime columns.
 DATEFORMAT <dateformat>
 ```
-## Set for individual datetime column.
+
+Syntax for an individual datetime column:
 
 ```
 DATEFORMAT <column_name> <format>
@@ -275,8 +255,8 @@ Elapsed time: 0.000
 
 ## IGNORE
 
-When you do not want to enter a specific field in the CSV file, you can set the IGNORE option in the fmt file.
-The ignoretest.csv file has three fields, but if the last field is not needed, specify IGNORE in the column that is not needed in the fmt file.
+When you do not want to import a specific field of the CSV file, you can set the `IGNORE` option in the fmt file.
+The `ignoretest.csv` file has three fields; if the last field is not needed, specify `IGNORE` for that column in the fmt file.
 
 Example:
 
@@ -329,16 +309,16 @@ Elapsed time: 0.000
 
 ## If Number of Columns Is More Than Number of Fields
 
-If the number of columns in the table is greater than the number of fields in the data file, only the columns specified in the schema file are entered, and the other columns are entered as NULL.
+If the number of columns in the table is greater than the number of fields in the data file, only the columns specified in the schema file are imported, and the other columns are set to `NULL`.
 
 ## If Number of Columns Is Less Than Number of Fields
 
-If the number of columns in the table is less than the number of fields in the data file, fields not in the table must be excluded with the IGNORE option
+If the number of columns in the table is less than the number of fields in the data file, the fields that are not in the table must be excluded with the `IGNORE` option.
 
 Example:
 
 ```
--- Import ignoretest.csv file and exclude input data by setting ignore option for last field.
+-- Exclude the input data by setting the IGNORE option on the last field.
 loader_test.fmt
 table loader_test
 {

@@ -13,6 +13,7 @@ toc: true
 |------|-----|
 | 영어 | [llms-full.txt](/llms-full.txt) |
 | 한국어 | [llms-full.txt](/kr/llms-full.txt) |
+| 일본어 | [llms-full.txt](/ja/llms-full.txt) |
 
 전체 본문은 navigation weight 순서로 published DBMS 페이지를 연결합니다. 각 페이지 경계에는
 제목, 언어와 canonical URL이 있으며 본문은 source Markdown을 유지합니다.
@@ -23,6 +24,7 @@ toc: true
 |------|-----|
 | 영어 | [llms-chunks.json](/llms-chunks.json) |
 | 한국어 | [llms-chunks.json](/kr/llms-chunks.json) |
+| 일본어 | [llms-chunks.json](/ja/llms-chunks.json) |
 
 schema version 1의 최상위 필드는 다음과 같습니다.
 
@@ -31,7 +33,7 @@ schema version 1의 최상위 필드는 다음과 같습니다.
 | `schema_version` | JSON 계약 버전. 현재 `1` |
 | `product` | `Machbase DBMS` |
 | `manual_version` | 문서 대상 제품 버전 |
-| `language` | `en` 또는 `kr` |
+| `language` | `en`, `kr` 또는 `ja` |
 | `document_count` | `documents` 배열 크기 |
 | `documents` | 문서 metadata 배열 |
 

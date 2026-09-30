@@ -8,7 +8,7 @@ weight: 1
 
 ### Register a bridge
 
-register sqlite connection
+Register an SQLite connection.
 
 ```
 bridge add -t sqlite sqlitedb file:/data/sqlite.db;
@@ -34,7 +34,7 @@ bridge exec sqlitedb CREATE TABLE IF NOT EXISTS example(id INTEGER NOT NULL PRIM
 
 ### Query command on the bridge
 
-> `bridge query` command is only works with "SQL" type bridges
+> The `bridge query` command only works with "SQL" type bridges.
 
 ```
 bridge query sqlitedb select * from example;
@@ -116,11 +116,11 @@ SQL(bridge('sqlite'), `insert into example values(?,?,?)`, value(0), value(1), v
 
 The purpose of a *subscriber* is connecting to an external message broker system, receiving streaming messages, ingesting messages by *tql* script.
 
-Currently machbase-neo supports connecting to the external MQTT brokers, and it will support also NATS and Kafka with the future releases.
+Currently machbase-neo supports connecting to external MQTT brokers and NATS, and Kafka support is planned for a future release.
 
-A simple use case is that make a bridge to the external MQTT broker, and define a subscriber with 
-1) the bridge, 2) a topic of the MQTT broker and 3) *tql* script path. Then machbase-neo works as 
-MQTT client and whenever it receives messages, it passes them to the specified *tql* script.
+A simple use case is to make a bridge to the external MQTT broker and define a subscriber with
+1) the bridge, 2) a topic of the MQTT broker and 3) the *tql* script path. Then machbase-neo works as
+an MQTT client, and whenever it receives messages, it passes them to the specified *tql* script.
 
 
 ```mermaid
@@ -149,7 +149,7 @@ Register subscribers.
 **Syntax:** `subscriber add [options] <name> <bridge> <topic> <tql-path>`
 
 - options
-    - `--autostart` makes the subscriber will start automatically when machbase-neo starts.
+    - `--autostart` makes the subscriber start automatically when machbase-neo starts.
         If the subscriber is not *autostart* mode, you can make it start and stop manually by
         `subscriber start <name>` and `subscriber stop <name>` commands.
     - `--qos <int>` if the bridge is MQTT type, it specifies the QoS level of the subscription to the topic.

@@ -25,7 +25,7 @@ In general, a time zone is specified as a string representing a specific time.
 Example) 
 "12:06:56.568+01:00"  
 "2006.07.10 at 15:08:56 -05:00"
-"09  AM, GMT+09:00"
+"09  AM, GMT+09:00"
 ```
 
 However, the above method not only has the inconvenience of having to designate a specific time based on the time zone every time, but also has a problem in that the amount of data transmission increases linearly when the time zone value is included for a large amount of data.

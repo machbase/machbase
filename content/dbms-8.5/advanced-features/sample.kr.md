@@ -22,7 +22,7 @@ $ cd edu_3_plc_stream/
 
 ## TAG, LOG 테이블 생성
 
-STREAM 기능을 사용하기 위해 아래 명령을 환경에 맞게 수정해 실행하면 TAG/LOG 테이블이 생성됩니다.
+STREAM 기능을 사용하려면 아래 명령을 환경에 맞게 수정한 뒤 실행해 TAG 테이블과 LOG 테이블을 생성합니다.
 
 ```bash
 $ pwd
@@ -39,13 +39,13 @@ $ machsql --server=127.0.0.1 --port=${MACHBASE_PORT_NO} --user=SYS --password=MA
 
 ## STREAM 생성 및 실행
 
-생성된 TAG/LOG 테이블을 대상으로 작성된 샘플 스크립트를 실행해 STREAM을 생성하고 시작합니다.
+생성한 TAG 테이블과 LOG 테이블용으로 작성된 샘플 스크립트를 실행해 STREAM을 생성하고 시작합니다.
 
 ```bash
 $ machsql --server=127.0.0.1 --port=${MACHBASE_PORT_NO} --user=SYS --password=MANAGER --script=4_plc_stream_tag.sql
 ```
 
-샘플 파일에는 STREAM을 생성하는 쿼리와 실행하는 쿼리가 포함되어 있습니다.
+샘플 파일에는 STREAM을 생성하는 쿼리와 시작하는 쿼리, 두 종류가 들어 있습니다.
 
 ```sql
 ## ##  STREAM 생성 예시
@@ -55,11 +55,11 @@ EXEC STREAM_CREATE(event_v0, 'insert into tag select ''MTAG_V00'', tm, v0 from p
 EXEC STREAM_START(event_v0);
 ```
 
-STREAM이 정상적으로 실행되면 `plc_tag_table`에 데이터가 삽입될 때마다 모든 STREAM이 동작하여 해당 데이터를 TAG 테이블로 적재합니다.
+STREAM이 정상적으로 실행되면 `plc_tag_table`에 데이터가 삽입될 때마다 각 STREAM이 동작해 그 데이터를 TAG 테이블에 입력합니다.
 
 ## STREAM 상태 확인
 
-Machbase가 제공하는 가상 테이블 `v$streams`를 통해 실행 중인 스트림 수, 사용 중인 쿼리, 상태, 오류 메시지를 확인할 수 있습니다.
+Machbase가 제공하는 가상 테이블 `v$streams`에서 실행 중인 스트림 수, 사용 중인 쿼리, 상태, 오류 메시지를 확인할 수 있습니다.
 
 ```sql
 Mach> desc v$streams;
@@ -77,7 +77,7 @@ ERROR_MSG                                                            varchar    
 FREQUENCY                                                            ulong               20
 ```
 
-실행 중인 모든 STREAM은 다음과 같이 조회할 수 있습니다.
+다음과 같이 모든 STREAM의 상태를 확인할 수 있습니다.
 
 ```sql
 Mach> select state, name, table_name, query_txt from v$streams;
@@ -105,12 +105,13 @@ RUNNING EVENT_C15 PLC_TAG_TABLE insert into tag select 'MTAG_C15', tm, c15 from 
 
 ## 데이터 적재
 
-모든 STREAM이 동작하는 것을 확인했으면, Machloader를 사용해 데이터를 입력하고 동작을 검증합니다. STREAM은 입력 방식과 무관하게 동작하므로 CLI, JDBC, Collector 등 어떤 입력 도구를 사용해도 TAG 테이블에 자동으로 적재됩니다.
+모든 STREAM이 동작하는 것을 확인했으면 machloader로 데이터를 입력하고 STREAM의 동작을 확인합니다.
+STREAM은 입력 방식과 관계없이 동작하므로 CLI, JDBC, Collector 등 어떤 방식으로 입력해도 데이터가 TAG 테이블에 자동으로 입력됩니다.
 
 ```bash
 $ cat 5_plc_tag_load.sh
 machloader -i -t plc_tag_table -d 5_plc_tag.csv -F "tm YYYY-MM-DD HH24:MI:SS mmm:uuu:nnn"
-
+ 
 $ sh 5_plc_tag_load.sh
 -----------------------------------------------------------------
      Machbase Data Import/Export Utility.
@@ -125,9 +126,9 @@ ROW TERM       : \n                  ENCLOSURE      : "
 ESCAPE         : \                   ARRIVAL_TIME   : FALSE
 ENCODING       : NONE                HEADER         : FALSE
 CREATE TABLE   : FALSE              CREATE TABLESPACE: FALSE
-
+ 
  Progress bar                       Imported records        Error records
-                                              80000                    0
+                                               80000                    0
 ```
 
 데이터 로딩 중에 TAG 테이블을 조회하면 데이터가 실시간으로 적재되는 것을 확인할 수 있습니다.
@@ -153,7 +154,7 @@ Elapsed time: 0.000
 
 ## STREAM 처리 결과
 
-STREAM이 소스 테이블(`plc_tag_table`) 데이터를 어느 지점까지 읽었는지 다음과 같이 확인할 수 있습니다.
+각 STREAM이 소스 테이블(`plc_tag_table`)의 데이터를 어디까지 읽었는지 다음과 같이 확인할 수 있습니다.
 
 ```sql
 Mach> select name, state, end_rid from v$streams;
@@ -180,7 +181,7 @@ EVENT_C15 RUNNING 746604
 [18] row(s) selected.
 ```
 
-`end_rid` 값이 소스 테이블의 총 레코드 수와 동일하면 더 이상 읽을 데이터가 없다는 의미입니다.
+`end_rid` 값이 소스 테이블의 레코드 수와 같으면 소스 테이블에서 더 읽을 데이터가 없다는 뜻입니다.
 
 ```sql
 Mach> select name, state, end_rid from v$streams;
@@ -207,7 +208,7 @@ EVENT_C15 RUNNING 2000000
 [18] row(s) selected.
 ```
 
-TAG 테이블의 데이터 수는 `소스 테이블 레코드 수 × STREAM 개수`와 동일하므로, STREAM이 정상적으로 모든 데이터를 처리했음을 확인할 수 있습니다.
+TAG 테이블의 데이터 건수가 `소스 테이블 레코드 수 × STREAM 개수`와 같으므로, STREAM이 모든 데이터를 정상적으로 읽었음을 확인할 수 있습니다.
 
 ```sql
 Mach> select count(*) from TAG;
@@ -217,7 +218,7 @@ count(*)
 [1] row(s) selected.
 ```
 
-입력 데이터의 시간 범위도 다음과 같이 확인 가능합니다.
+입력된 데이터의 시간 범위도 다음과 같이 확인할 수 있습니다.
 
 ```sql
 Mach> select min(time), max(time) from TAG;
@@ -229,14 +230,14 @@ min(time)                       max(time)
 
 ## 데이터 추가
 
-STREAM이 데이터 입력마다 반응하는지 INSERT 구문으로 확인합니다.
+INSERT 문으로 데이터를 입력해, 입력할 때마다 STREAM이 실제로 반응하는지 확인합니다.
 
 ```sql
 Mach> insert into plc_tag_table values(TO_DATE('2009-01-28 12:37:00 000:000:000'), 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000);
 1 row(s) inserted.
 ```
 
-`PLC_TAG_TABLE`에 한 건이 추가되면 아래와 같이 각 스트림의 `end_rid` 값이 2,000,001로 증가합니다.
+`PLC_TAG_TABLE`에 레코드 한 건을 추가하는 즉시, 아래와 같이 각 스트림의 `end_rid` 값이 2000001로 증가합니다.
 
 ```sql
 Mach> select name, state, end_rid from v$streams;

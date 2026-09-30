@@ -14,7 +14,7 @@ Machbase supports tag-data deletion with constrained predicates. You can delete
 by tag name, by tag name plus a time predicate, by a time predicate across all
 tags, by `BEFORE`, or delete all rows.
 
-Supported tag data deletion condition
+Supported deletion conditions:
 
 * Delete specific tag data
 * Delete data before a specific time for a specific tag
@@ -69,7 +69,7 @@ TAG_0001              2024-01-01 10:00:10 000:000:000 1
 
 ### Delete data before a specific time for a specific tag
 
-When a specific tag and time are specified, data associated with that tag before the specified time is deleted.
+When a specific tag and time are specified, data of that tag before the specified time is deleted. The `<=` example below also deletes data whose time equals the specified time.
 
 ```sql
 DELETE FROM TAG WHERE NAME = 'TAG-ID' AND TIME <= 'Time-string';
@@ -113,7 +113,7 @@ TAG_0002              2024-01-01 10:00:08 000:000:000 1
 
 ### Delete specific time range data for a specific tag
 
-When a specific tag and time range are specified, data associated with that tag within the specified time range is deleted.
+When a specific tag and time range are specified, data of that tag within the specified time range is deleted.
 
 ```sql
 DELETE FROM TAG WHERE NAME = 'TAG-ID' AND TIME >= 'Time-string' AND TIME <= 'Time-string';
@@ -153,6 +153,7 @@ TAG_0002              2024-01-01 10:00:02 000:000:000 1
 TAG_0002              2024-01-01 10:00:03 000:000:000 1
 [8] row(s) selected.
 ```
+
 ### Delete all tags before a specific time
 
 Starting from version 8.0.50, Machbase supports enhanced DELETE syntax with time-based conditions without specifying tag names.
@@ -231,6 +232,8 @@ TAG_0002 2018-02-10 10:00:00 000:000:000 20
 
 **Example using enhanced WHERE clause:**
 
+Each statement below is an independent example, run after restoring the 20 rows of original data shown above.
+
 ```sql
 -- Delete all data before 2018-02-01 (equivalent to BEFORE clause)
 Mach> delete from tag where time < '2018-02-01';
@@ -238,11 +241,11 @@ Mach> delete from tag where time < '2018-02-01';
 
 -- Delete all data at specific time
 Mach> delete from tag where time = '2018-02-01 01:00:00';
-2 row(s) deleted.
+1 row(s) deleted.
 
 -- Delete all data in a specific time range
 Mach> delete from tag where time between '2018-01-05' and '2018-01-07';
-6 row(s) deleted.
+2 row(s) deleted.
 ```
 
 ### Delete all data
@@ -300,7 +303,7 @@ DELETE FROM TAG ROLLUP BEFORE TO_DATE('Time-string');
 DELETE FROM TAG ROLLUP;
 ```
 
-If you specify the time in the BEFORE statement, all rollup data before that time are deleted. If you don't specify the time, all rollup data is deleted.
+If you specify a time with `BEFORE`, all rollup data before that time is deleted. If you don't specify a time, all rollup data is deleted.
 
 ### Using WHERE clause with time conditions (enhanced syntax)
 
@@ -321,6 +324,8 @@ DELETE FROM TAG ROLLUP WHERE time_column BETWEEN 'time_string1' AND 'time_string
 ```
 
 **Example:**
+
+The deleted row counts below are example output; they depend on the rollup data.
 
 ```sql
 -- Delete rollup data before 2018-01-15

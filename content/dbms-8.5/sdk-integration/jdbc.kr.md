@@ -101,7 +101,7 @@ jdbc:machbase://127.0.0.1:5656/machbasedb?AUTH_MODE=CHALLENGE&AUTH_SIG_SCHEME=EC
 void setIpv4(int ind, String ipString)
 ```
 
-PrepareStatement에서 IPv4 주소 타입을 입력하기 위한 함수입니다.
+PreparedStatement에서 IPv4 주소 타입 값을 입력하기 위한 함수입니다.
 
 컬럼 인덱스와 IPv4 문자열을 인자로 받습니다.
 
@@ -110,7 +110,8 @@ PrepareStatement에서 IPv4 주소 타입을 입력하기 위한 함수입니다
 ```java
 void setIpv6(int ind, String ipString)
 ```
-PrepareStatement에서 IPv6 주소 타입을 입력하기 위한 함수입니다.
+
+PreparedStatement에서 IPv6 주소 타입 값을 입력하기 위한 함수입니다.
 
 컬럼 인덱스와 IPv6 문자열을 인자로 받습니다.
 
@@ -142,7 +143,7 @@ int executeAppendDataByTime(ResultSetMetaData rsmd, long aTime, ArrayList aData)
 
 Statement에서 Append 프로토콜을 위한 것으로 실제 데이터를 시간 기준으로 입력합니다.
 
-executeAppendOpen의 결과값인 ResultSet의 메타데이터와 설정하고자 하는 특정 시간대의 시간 값, 입력하고자 하는 데이터를 인자로 받습니다. 결과값이 전송 버퍼에 저장되면 1이 리턴됩니다.
+executeAppendOpen의 결과값인 ResultSet의 메타데이터와 설정하고자 하는 특정 시점의 시간 값, 입력하고자 하는 데이터를 인자로 받습니다. 결과값이 전송 버퍼에 저장되면 1이 리턴됩니다.
 
 ### executeAppendFlush
 
@@ -187,6 +188,7 @@ Statement에서 Append 프로토콜을 위한 것으로 성공한 개수를 리�
 ```java
 long getAppendFailureCount()
 ```
+
 Statement에서 Append 프로토콜을 위한 것으로 실패한 개수를 리턴합니다.
 
 결과값으로 실패한 개수를 리턴합니다.
@@ -266,6 +268,7 @@ Machbase JDBC 드라이버는 [Maven Central Repository](https://mvnrepository.c
 ### machjdbc을 가져와서 사용하기
 
 machjdbc를 프로젝트에 가져오려면, `pom.xml`를 열어서 아래의 내용을 `<dependencies>` 태그 안에 추가해 줍니다.
+
 ```
 <dependency>
     <groupId>com.machbase</groupId>
@@ -273,13 +276,16 @@ machjdbc를 프로젝트에 가져오려면, `pom.xml`를 열어서 아래의 �
     <version>{{< jdbc_version >}}</version>
 </dependency>
 ```
+
 > 버전 번호인 {{< jdbc_version >}}은 Maven Central의 최신 버전으로 바꾸어도 됩니다.
 <br>
 
 그러면 아래처럼 `import` 구문을 이용해서 machjdbc를 소스 안에서 사용할 수 있습니다.
+
 ```
 import com.machbase.jdbc.*;
 ```
+
 <br><br>
 
 ## JDBC 샘플
@@ -289,7 +295,7 @@ import com.machbase.jdbc.*;
 마크베이스 JDBC 드라이버를 이용하여 마크베이스 서버에 접속하는 예제 프로그램을 작성해 보기로 합니다. 소스 파일명을 Sample1Connect.java로 합니다.
 
 > [Tips] _arrival_time 컬럼은 디폴트로 표시되지 않습니다.<br>
-> 따라서 _arrival_time 컬럼을 표시하려면, 연결 문자열에 show_hidden_cols=1 을 추가하면 됩니다.<br><br>
+> 따라서 _arrival_time 컬럼을 표시하려면, 연결 문자열에 show_hidden_cols=1을 추가하면 됩니다.<br><br>
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;아래 예제 소스에서 접속 문자열을 다음과 같이 수정하면 됩니다.<br>
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;String sURL = "jdbc:machbase://localhost:5656/machbasedb?show_hidden_cols=1";
 
@@ -369,8 +375,8 @@ machbase JDBC connected.
 
 소스 파일명은 Sample2Insert.java 라고 합니다.
 
-먼저, machsql 프로그램을 이용하여 필요한 테이블을 생성하여야 합니다.
-예제에서는 sample_table이라는 테이블을 미리 생성한 뒤에 샘플 코드를 이용하는 방식을 사용했습니다.
+먼저 machsql 프로그램을 이용하여 필요한 테이블을 생성해야 합니다.
+예제에서는 sample_table이라는 테이블을 미리 생성한 뒤에 샘플 코드를 실행합니다.
 
 ```bash
 [mach@localhost jdbc]$ machsql
@@ -521,6 +527,7 @@ public class Sample2Insert
     }
 }
 ```
+
 이제 소스 코드를 컴파일하고 실행합니다. 이미 작성한 Makefile을 이용합니다.
 
 ```bash
@@ -695,6 +702,7 @@ public class Sample3PrepareStmt
     }
 }
 ```
+
 이제 소스 코드를 컴파일하고 실행해 봅니다. 이미 작성한 Makefile을 이용합니다.
 
 Sample2Insert.java에서 입력한 데이터가 함께 출력되고 있다는 점에 유의해야 합니다.
@@ -966,7 +974,7 @@ timegap 6905594 in microseconds, 100000 records
 8688.61 records/second
 ```
 
-10,000건마다 점(.)을 표시하고 있으며, 입력 소요 시간을 알 수 있습니다.
+10,000건마다 점(.)을 표시하며, 입력에 걸린 시간을 확인할 수 있습니다.
 
 ```bash
 ## machsql을 이용하여 실제 입력된 건수를 확인해보자.

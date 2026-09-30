@@ -248,17 +248,17 @@ persistent reference tables and are optimized through primary keys and optional 
 ```
 Partition Structure:
 ┌──────────────────────────────────────┐
-│ Partition 1: Week 1 (Oct 1-7)       │
+│ Partition 1: Week 1 (Oct 1-7)        │
 │   - Data for this week               │
 │   - Separate index                   │
 │   - Optimized compression            │
 ├──────────────────────────────────────┤
-│ Partition 2: Week 2 (Oct 8-14)      │
+│ Partition 2: Week 2 (Oct 8-14)       │
 │   - Data for this week               │
 │   - Separate index                   │
 │   - Optimized compression            │
 ├──────────────────────────────────────┤
-│ Partition 3: Week 3 (Oct 15-21)     │
+│ Partition 3: Week 3 (Oct 15-21)      │
 │   - Active partition                 │
 │   - Less compressed (for writes)     │
 └──────────────────────────────────────┘

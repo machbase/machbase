@@ -498,14 +498,14 @@ through the refresh interval.
 
 ### Failure recovery
 
-If a server restart removes the VOLATILE table and cache, first recreate the table, then
-recalculate the same last-two-hour statistics from TAG. Run the following CREATE only after
-a restart in which the table disappeared. The source retention period must still include
-the data needed for recalculation.
+A server restart removes VOLATILE data but keeps the table definition. Recalculate the same
+last-two-hour statistics from the source TAG table. The following CREATE creates the table only
+when it does not exist, such as during the initial build. The source retention period must still
+include the data needed for recalculation.
 
 ```sql
 -- Rebuild the cache after server restart
-CREATE VOLATILE TABLE sensor_recent_avg (
+CREATE VOLATILE TABLE IF NOT EXISTS sensor_recent_avg (
     key_id    VARCHAR(64) PRIMARY KEY,
     sensor_id VARCHAR(64),
     base_ts   DATETIME,
@@ -572,7 +572,7 @@ These common designs combine multiple table types in production systems.
 │ history           │                   │ data                  │
 ├───────────────────┴───────────────────┴───────────────────────┤
 │ VOLATILE                                                      │
-│ sensor_latest (latest-value cache)                             │
+│ sensor_latest (latest-value cache)                            │
 └───────────────────────────────────────────────────────────────┘
 ```
 
@@ -588,7 +588,7 @@ These common designs combine multiple table types in production systems.
 │ UPDATE/DELETE     │                   │ data                  │
 ├───────────────────┴───────────────────┴───────────────────────┤
 │ VOLATILE                                                      │
-│ order_status_cache (current-state cache)                       │
+│ order_status_cache (current-state cache)                      │
 └───────────────────────────────────────────────────────────────┘
 ```
 

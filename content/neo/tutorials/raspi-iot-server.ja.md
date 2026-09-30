@@ -88,8 +88,8 @@ sh -c "$(curl -fsSL https://docs.machbase.com/install.sh)"
 - アーカイブを展開します。
 
 ```sh
-$ unzip machbase-neo-{{ site.latest_version }}-linux-arm64.zip
-$ cd machbase-neo-{{ site.latest_version }}-linux-arm64
+$ unzip machbase-neo-{{< neo_latestver >}}-linux-arm64.zip
+$ cd machbase-neo-{{< neo_latestver >}}-linux-arm64
 ```
 
 - machbase-neoを起動します。
@@ -143,12 +143,10 @@ python dht.py | ./machbase-neo shell import example
 `--tz local`オプションは、TIMEフィールドをUTCではなくローカルタイムゾーンで表示します。
 
 ```
-./machbase-neo shell walk --tz local 'select * from example order by time desc'
+./machbase-neo shell sql --tz local 'select * from example order by time desc limit 10'
 ```
 
-`r`キーを押すと、クエリを再実行して最新のデータに更新します。
-
-![walk](/images/raspi-walk.gif)
+同じコマンドを再実行すると、新しく書き込まれたデータを確認できます。
 
 
 ### アプリケーションからのデータ検索 {#애플리케이션에서-데이터-조회}

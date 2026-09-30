@@ -22,7 +22,6 @@ toc: true
 - `table()` *table('name')*：保存先のテーブル名を指定します。
 - `tag()` *tag('name')*：省略可能です。タグテーブルにのみ使用できます。
 
-
 {{< tabs >}}
 {{< tab name="例" >}}
 タグ名を含むレコードをMachbaseに書き込みます。
@@ -38,6 +37,7 @@ INSERT("name", "time", "value", table("example"))
 {{</tab>}}
 {{< tab name="PUSHVALUE()" >}}
 `PUSHVALUE()` で "name" フィールドを追加し、同じタグ名でレコードをMachbaseに書き込みます。
+
 ```js {{linenos=table,hl_lines=[5,7]}}
 FAKE(json({
     [1708582792, 32.34],
@@ -50,6 +50,7 @@ INSERT("name","time", "value", table("example"))
 {{</tab>}}
 {{< tab name="tag()" >}}
 保存先がタグテーブルの場合、`tag()` オプションを使って同じタグ名でレコードをMachbaseに書き込めます。
+
 ```js {{linenos=table,hl_lines=[6]}}
 FAKE(json({
     [1708582792, 32.34],
@@ -113,6 +114,7 @@ FAKE( arrange(1, 3, 1))
 MAPVALUE(1, value(0)*10)
 CSV()
 ```
+
 ```csv
 1,10
 2,20
@@ -125,6 +127,7 @@ FAKE( arrange(1, 3, 1))
 MAPVALUE(1, value(0)*10, "x10")
 CSV( heading(true) )
 ```
+
 ```csv
 x,x10
 1,10
@@ -138,6 +141,7 @@ FAKE( arrange(1, 3, 1))
 MAPVALUE(1, value(0)*10, "x10")
 CSV( heading(true), delimiter("|") )
 ```
+
 ```csv
 x|x10
 1|10
@@ -150,6 +154,7 @@ x|x10
 FAKE( json({ ["A", 123], ["B", null], ["C", 234] }) )
 CSV( nullValue("***") )
 ```
+
 ```csv
 A,123
 B,***
@@ -311,8 +316,9 @@ FAKE( csv(`
 `))
 MARKDOWN()
 ```
+
 ```
-|column0 |	column1 |
+|column0 | column1 |
 |:-------|:---------|
 | 10     | The first line |
 | 20     | 2nd line |
@@ -335,7 +341,7 @@ MARKDOWN( briefCount(2) )
 ```
 
 ```
-|column0 |	column1 |
+|column0 | column1 |
 |:-------|:---------|
 | 10     | The first line |
 | 20     | 2nd line |
@@ -357,7 +363,7 @@ FAKE( csv(`
 MARKDOWN( briefCount(2), html(true) )
 ```
 
-|column0 |	column1 |
+|column0 | column1 |
 |:-------|:---------|
 | 10     | The first line |
 | 20     | 2nd line |
@@ -388,7 +394,7 @@ MARKDOWN( briefCount(2), html(true) )
 
 *構文*: `DISCARD()` {{< neo_since ver="8.0.7" />}}
 
-`DISCARD()` は、すべてのレコードを何も出力せずに破棄します。
+`DISCARD()` は、その名のとおりすべてのレコードを黙って破棄するため、何も出力しません。
 
 ```js {linenos=table,hl_lines=[8],linenostart=1}
 FAKE( json({
@@ -427,7 +433,7 @@ HTML形式の折れ線グラフを生成します。
 ```js {linenos=table,hl_lines=["5-8"],linenostart=1}
 FAKE( oscillator(freq(1.5, 1.0), freq(1.0, 0.7), range('now', '3s', '25ms')))
 // |    0      1
-// +--&gt; time   value
+// +--> time   value
 // |
 CHART_LINE(
     size("600px", "400px"),
@@ -439,7 +445,7 @@ CHART_LINE(
 ```js {linenos=table,hl_lines=["7-19"],linenostart=1}
 FAKE( oscillator(freq(1.5, 1.0), freq(1.0, 0.7), range('now', '3s', '25ms')))
 // |    0      1
-// +--&gt; time   value
+// +--> time   value
 // |
 CHART(
     size("600px", "400px"),
@@ -476,7 +482,7 @@ HTML形式の棒グラフを生成します。
 ```js {linenos=table,hl_lines=["5-8"],linenostart=1}
 FAKE( oscillator(freq(1.5, 1.0), freq(1.0, 0.7), range('now', '3s', '25ms')))
 // |    0      1
-// +--&gt; time   value
+// +--> time   value
 // |
 CHART_BAR(
     size("600px", "300px"),
@@ -488,7 +494,7 @@ CHART_BAR(
 ```js {linenos=table,hl_lines=["7-19"],linenostart=1}
 FAKE( oscillator(freq(1.5, 1.0), freq(1.0, 0.7), range('now', '3s', '25ms')))
 // |    0      1
-// +--&gt; time   value
+// +--> time   value
 // |
 CHART(
     size("600px", "400px"),
@@ -525,7 +531,7 @@ HTML形式の散布図を生成します。
 ```js {linenos=table,hl_lines=["5-8"],linenostart=1}
 FAKE( oscillator(freq(1.5, 1.0), freq(1.0, 0.7), range('now', '3s', '25ms')))
 // |    0      1
-// +--&gt; time   value
+// +--> time   value
 // |
 CHART_SCATTER(
     size("600px", "300px"),
@@ -537,7 +543,7 @@ CHART_SCATTER(
 ```js {linenos=table,hl_lines=["7-19"],linenostart=1}
 FAKE( oscillator(freq(1.5, 1.0), freq(1.0, 0.7), range('now', '3s', '25ms')))
 // |    0      1
-// +--&gt; time   value
+// +--> time   value
 // |
 CHART(
     size("600px", "400px"),
@@ -574,11 +580,11 @@ HTML形式の3D折れ線グラフを生成します。
 ```js {linenos=table,hl_lines=["9-14"],linenostart=1}
 FAKE(meshgrid(linspace(-1.0,1.0,100), linspace(-1.0, 1.0, 100)))
 // |    0   1
-// +--&gt; x   y
+// +--> x   y
 // |
 MAPVALUE(2, sin(10*(pow(value(0), 2) + pow(value(1), 2))) / 10 )
 // |    0   1   2
-// +--&gt; x   y   z
+// +--> x   y   z
 // |
 CHART_LINE3D(
   size('600px', '600px'),
@@ -592,11 +598,11 @@ CHART_LINE3D(
 ```js {linenos=table,hl_lines=[10, "12-31"],linenostart=1}
 FAKE(meshgrid(linspace(-1.0,1.0,100), linspace(-1.0, 1.0, 100)))
 // |    0   1
-// +--&gt; x   y
+// +--> x   y
 // |
 MAPVALUE(2, sin(10*(pow(value(0), 2) + pow(value(1), 2))) / 10 )
 // |    0   1   2
-// +--&gt; x   y   z
+// +--> x   y   z
 // |
 CHART(
   plugins("gl"),
@@ -642,11 +648,11 @@ HTML形式の3D棒グラフを生成します。
 ```js {linenos=table,hl_lines=["9-14"],linenostart=1}
 FAKE(meshgrid(linspace(-1.0,1.0,100), linspace(-1.0, 1.0, 100)))
 // |    0   1
-// +--&gt; x   y
+// +--> x   y
 // |
 MAPVALUE(2, sin(10*(pow(value(0), 2) + pow(value(1), 2))) / 10 )
 // |    0   1   2
-// +--&gt; x   y   z
+// +--> x   y   z
 // |
 CHART_BAR3D(
   size('600px', '600px'),
@@ -660,11 +666,11 @@ CHART_BAR3D(
 ```js {linenos=table,hl_lines=[10, "12-30"],linenostart=1}
 FAKE(meshgrid(linspace(-1.0,1.0,100), linspace(-1.0, 1.0, 100)))
 // |    0   1
-// +--&gt; x   y
+// +--> x   y
 // |
 MAPVALUE(2, sin(10*(pow(value(0), 2) + pow(value(1), 2))) / 10 )
 // |    0   1   2
-// +--&gt; x   y   z
+// +--> x   y   z
 // |
 CHART(
   plugins("gl"),
@@ -708,11 +714,11 @@ HTML形式の3D散布図を生成します。
 ```js {linenos=table,hl_lines=["9-14"],linenostart=1}
 FAKE(meshgrid(linspace(-1.0,1.0,100), linspace(-1.0, 1.0, 100)))
 // |    0   1
-// +--&gt; x   y
+// +--> x   y
 // |
 MAPVALUE(2, sin(10*(pow(value(0), 2) + pow(value(1), 2))) / 10 )
 // |    0   1   2
-// +--&gt; x   y   z
+// +--> x   y   z
 // |
 CHART_SCATTER3D(
   size('600px', '600px'),
@@ -726,11 +732,11 @@ CHART_SCATTER3D(
 ```js {linenos=table,hl_lines=[10, "12-30"],linenostart=1}
 FAKE(meshgrid(linspace(-1.0,1.0,100), linspace(-1.0, 1.0, 100)))
 // |    0   1
-// +--&gt; x   y
+// +--> x   y
 // |
 MAPVALUE(2, sin(10*(pow(value(0), 2) + pow(value(1), 2))) / 10 )
 // |    0   1   2
-// +--&gt; x   y   z
+// +--> x   y   z
 // |
 CHART(
   plugins("gl"),

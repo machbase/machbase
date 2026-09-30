@@ -98,11 +98,11 @@ functions, sorting, conditions, periodic options, and hints are not supported.
 
 ## SET OPERATOR
 
-Used when receiving the results of multiple Select queries as a single query result.
+Use a set operator to combine the results of multiple `SELECT` queries into a single query result.
 Machbase supports only the `UNION ALL` set operator. The set operator can be executed
 only if the left and right Select statements are (1) the same or compatible types, (2)
-the number of query results is the same, and if any of the two conditions does not match,
-they are treated as errors.
+the number of result columns is the same. If either condition is not met, an error is
+returned.
 
 Data type conversion and compatibility verification are performed based on the following criteria.
 * Signed integer types and unsigned integer types are not compatible.
@@ -122,16 +122,16 @@ SELECT c1, c2 FROM table_2
 
 ## TARGET LIST
 
-This is a **list of columns or subqueries** targeted by the Select statement .
+This is the **list of columns or subqueries** targeted by the `SELECT` statement.
 
-The subquery used in the target list is treated as an error if it has two or more values ​​or two or more result columns, such as a subquery used in the WHERE clause.
+As with a subquery used in the WHERE clause, a subquery used in the target list returns an error if it has two or more values or two or more result columns.
 
 ```sql
 SELECT i1, i2 ...
 SELECT i1 (Select avg(c1) FROM t1), i2 ...
 ```
 
-## CASE statement
+### CASE statement
 
 ```sql
 CASE <simple_case_expression|searched_case_expression> [else_clause] END
@@ -183,7 +183,7 @@ Since searched_case_expression returns the first condition that satisfies the co
 
 ## FROM
 
-You can specify a table name or an Inline view in the FROM clause. To perform a join between tables, lists the table or Inline view separated by a comma (,).
+You can specify a table name or an inline view in the FROM clause. To join tables, list the tables or inline views separated by commas (,).
 
 ```sql
 FROM table_name
@@ -197,9 +197,9 @@ Retrieves data in the table specified by table_name.
 FROM (Select statement)
 ```
 
-Retrievse data for the contents of the subquery enclosed in parentheses.
+Retrieves data from the result of the subquery enclosed in parentheses.
 
-* Machbase server does not support correlated subqueries, so you can not reference columns in a subquery in an outer query.
+* Machbase server does not support correlated subqueries, so a subquery cannot reference columns of the outer query.
 
 ### STORED VIEW
 
@@ -253,14 +253,14 @@ The above query is converted to an INNER JOIN by the condition t2.i2 = 1 in the 
 ![pivot_clause](/images/sql/select/pivot_clause.png)
 
 
-The PIVOT statement shows the aggregated results of GROUP BY output as ROW, rearranged into columns.
+The PIVOT statement rearranges the aggregated GROUP BY results, which are normally output as rows, into columns.
 
 It is used in conjunction with the Inline view and is performed as follows.
-* Performs GROUP BY on columns that are not used in the PIVOT clause of the inline view, and then performs aggregate functions on the values ​​listed in the PIVOT IN clause.
+* Performs GROUP BY on columns that are not used in the PIVOT clause of the inline view, and then performs aggregate functions on the values listed in the PIVOT IN clause.
 * The resulting grouping column and the aggregation result are rotated and displayed as columns.
 
-For example, aggregate the value of each device from the data collected from various sensors.
-The query that should be performed through the CASE statement can be expressed simply through the PIVOT statement.
+The following example aggregates the value of each device from data collected from various sensors.
+A query that would otherwise require CASE expressions can be written simply with the PIVOT statement.
 
 ```sql
 -- w/o PIVOT
@@ -302,19 +302,19 @@ regtime                         'FRONT_AXIS_TORQUE'         'REAR_AXIS_TORQUE'  
 
 ### Use of SUBQUERY
 
-Subquery can be used for conditional statements. If the subquery returns more than one record in a clause except the IN clause, or if there is more than one result column in the subquery, it is not supported.
+A subquery can be used in a conditional expression. Outside the IN clause, a subquery that returns more than one record or more than one result column is not supported.
 
 ```sql
 WHERE i1 = (SELECT MAX(c2) FROM T1)
 ```
 
-Uses subquery by surrounding parentheses to the right of the conditional operator.
+Enclose the subquery in parentheses on the right side of the conditional operator.
 
-* Machbase server does not support correlated subqueries, so you can not reference columns in a subquery in an outer query.
+* Machbase server does not support correlated subqueries, so a subquery cannot reference columns of the outer query.
 
 ### SEARCH Statement
 
-The syntax is the same as for a regular database. However, a keyword index must be registered, and an additional search operation is possible by adding "SEARCH" as an operator keyword for text search.
+The syntax is the same as in a regular database. However, a keyword index must be created, and `SEARCH` is added as an operator keyword for text search.
 
 ```sql
 -- drop table realdual;
@@ -374,7 +374,7 @@ ID1         ID2                   ID3
 
 ### ESEARCH Statement
 
-The ESEARCH statement is a search keyword that enables extended searches on ASCII text. For this extension, search for the desired pattern is performed using the % character. In this Like operation, if all the records are checked before the %, the advantage of ESEARCH is that the words can be found quickly even in this case. This feature can be very useful when looking for a part of an English string (an error string or code).
+The ESEARCH statement is a search keyword that enables extended searches on ASCII text. The desired pattern is specified with the % character. A LIKE operation with a leading % must check every record, but ESEARCH can find the words quickly even in this case. This feature is very useful when looking for part of an English string (such as an error message or code).
 
 ```sql
 -- Example
@@ -411,9 +411,9 @@ abc, bcd1
 
 ### NOT SEARCH Statement
 
-NOT SEARCH is a statement that returns true for records other than those found in the SEARCH statement.
+NOT SEARCH returns true for the records that are not found by the SEARCH statement.
 
-NOT ESEARCH can not be used.
+NOT ESEARCH cannot be used.
 
 ```sql
 create table t1 (id integer, i2 varchar(10));
@@ -431,10 +431,10 @@ id
 
 ### REGEXP Statement
 
-The REGEXP statement is used to perform searches on data using regular expressions. In general, patterns of a particular column are filtered using regular expressions.
+The REGEXP statement searches data with regular expressions. It is typically used to filter a column by a pattern.
 
-One thing to keep in mind is that you can not use indexes when using the REGEXP clause, so you must lower the overall search cost by putting index conditions on other columns in order to reduce the overall search scope.
-If you want to check a specific pattern, use index by SEARCH or ESEARCH, and then use REGEXP again in a state where the total number of data is small, it helps to improve the efficiency of the whole system.
+Note that the REGEXP clause cannot use indexes. To lower the overall search cost, add index conditions on other columns to narrow the search scope.
+To check a specific pattern, first narrow the data with an index through SEARCH or ESEARCH, and then apply REGEXP to the smaller data set. This improves the efficiency of the whole system.
 
 ```sql
 Mach>
@@ -493,17 +493,17 @@ Mach> SELECT 'abcde' REGEXP 'a[bcd]{1,10}e' from dual;
 column_name IN (value1, value2,...)
 ```
 
-The IN statement returns TRUE if it is satisfied in the value list. It is the same as the syntax linked by OR.
+The IN statement returns TRUE if the value matches one of the values in the list. It is equivalent to conditions joined by OR.
 
 ### Use In Statement and SUBQUERY
 
-You can use a subquery to the right of the IN statement in the conditional statement. However, if you specify more than one column on the left side of the IN condition, it treats it as an error and checks whether the result set returned from the right subquery exists in the left column value.
+You can use a subquery on the right side of the IN statement in a conditional expression. The statement checks whether the left column value exists in the result set returned by the subquery. Specifying more than one column on the left side of the IN condition returns an error.
 
 ```sql
 WHERE i1 IN (Select c1 from ...)
 ```
 
-* Machbase server does not support correlated subqueries, so you can not reference columns in a subquery in an outer query.
+* Machbase server does not support correlated subqueries, so a subquery cannot reference columns of the outer query.
 
 ### BETWEEN Statement
 
@@ -511,7 +511,7 @@ WHERE i1 IN (Select c1 from ...)
 column_name BETWEEN value1 AND value2
 ```
 
-The BETWEEN statement returns TRUE if the value of column is in the range of value1 and value2.
+The BETWEEN statement returns TRUE if the column value is in the range from value1 to value2.
 
 ### RANGE Statement
 
@@ -521,7 +521,7 @@ column_name RANGE duration_spec;
 -- duration_spec : integer (YEAR | WEEK | HOUR | MINUTE | SECOND);
 ```
 
-Provides a Range operator that allows you to easily specify a time condition for a given column. The Range operator specifies the time range from the current time as the target of the operation, rather than specifying a specific time (as specified by the BEFORE keyword). With this operator, you can easily retrieve result records within a desired time range.
+The RANGE operator lets you easily specify a time condition for a given column. Instead of specifying a specific point in time (as the BEFORE keyword does), it targets a time range measured back from the current time. With this operator, you can easily retrieve records within a desired time range.
 
 ```sql
 select * from test where id < 2 and c1 range 1 hour;
@@ -534,39 +534,41 @@ ID          C1
 
 ## GROUP BY / HAVING
 
-The GROUP BY clause is used to group the results of a SELECT statement on a specific column. It is used when sorting by group or by aggregating functions by using aggregate functions. Group means records having the same column value for the column specified in the GROUP BY clause.You can combine the HAVING clause after the GROUP BY clause to set the conditional expression for group selection. That is, of all the groups constituted by the GROUP BY clause, only the group satisfying the conditional expression specified in the HAVING clause is inquired.
+The GROUP BY clause is used to group the results of a SELECT statement on a specific column. It is used to sort or aggregate data by group with aggregate functions. A group consists of records that have the same value in the column specified in the GROUP BY clause. You can combine the HAVING clause after the GROUP BY clause to set the conditional expression for group selection. That is, of all the groups constituted by the GROUP BY clause, only the groups that satisfy the conditional expression specified in the HAVING clause are returned.
 
 ```sql
 SELECT ...
 GROUP BY { col_name | expr } ,...[ HAVING <search_condition> ]
  
 select id1, avg(id2) from exptab where id2 group by id1 order by id1;
-Obtain average value of id2 based on id1 column.
 ```
+
+The example query obtains the average value of id2 for each id1 value.
 
 
 ## ORDER BY
 
-The ORDER BY clause sorts the query results in ascending or descending order. If no sorting options such as ASC or DESC are specified, the ORDER BY clause sorts by default in ascending order. If the ORDER BY clause is not specified, the order of the records to be queried depends on the query.
+The ORDER BY clause sorts the query results in ascending or descending order. If no sorting options such as ASC or DESC are specified, the ORDER BY clause sorts by default in ascending order. If the ORDER BY clause is not specified, the order of the returned records depends on the query.
 
 ```sql
 SELECT ...
 ORDER BY {col_name | expr} [ASC | DESC]
  
 select id1, avg(id2) from exptab where id2 group by id1 order by id1;
-Obtain average value of id2 based on id1 column.
 ```
+
+The example query obtains the average value of id2 for each id1 value.
 
 
 ## SERIES BY
 
-The SERIES BY clause extracts the sorted result set as successive result values ​​satisfying the SERIES BY condition. If the ORDER BY clause is not specified, it generates the sorted result using the _ARRIVAL_TIME column value. Therefore, if you use the GROUP BY clause or the query for a volatile table or lookup table that does not have the _ARRIVAL_TIME column, you must use the ORDER BY clause do.
+The SERIES BY clause extracts consecutive result values that satisfy the SERIES BY condition from the sorted result set. If the ORDER BY clause is not specified, it generates the sorted result using the _ARRIVAL_TIME column value. Therefore, you must use the ORDER BY clause if the query uses the GROUP BY clause or targets a volatile or lookup table, which has no _ARRIVAL_TIME column.
 
-The result values ​​that satisfy the conditional clause will have the return value of the same SERIESNUM () function.
+Result values that belong to the same consecutive series return the same SERIESNUM() value.
+
+For example, consider the following data.
 
 ```sql
-For example, for the following data
- 
 CREATE TABLE T1 (C1 INTEGER, C2 INTEGER);
 INSERT INTO T1 VALUES (0, 1);
  
@@ -583,10 +585,11 @@ INSERT INTO T1 VALUES (5, 2);
 INSERT INTO T1 VALUES (6, 3);
  
 INSERT INTO T1 VALUES (7, 1);
- 
- 
-The following query produces the following output:
- 
+```
+
+The following query produces the following output.
+
+```sql
 SELECT C1,C2 FROM T1 ORDER BY C1 SERIES BY C2>1;
 C1          C2         
 ---------------------------
@@ -595,14 +598,14 @@ C1          C2
 3           2          
 5           2          
 6           3   
- 
-If you want to know the RANGE value of C1 where the value of the C2 column is larger than 1, you can determine the range by outputting to which group each record is included with the SERIESNUM function.
 ```
+
+To find the ranges of C1 in which the value of the C2 column is greater than 1, use the SERIESNUM function to output the group that each record belongs to.
 
 
 ## LIMIT
 
-The LIMIT clause is used to limit the number of records to be output. You can specify an integer to output from the first row to the last row of the result set
+The LIMIT clause limits the number of records to output. Specify integers for the starting offset in the result set and the number of rows to output.
 
 ```sql
 LIMIT [offset,] row_count
@@ -613,7 +616,7 @@ select id1, avg(id2) from exptab where id2 group by id1 order by id1 LIMIT 10;
 
 ## DURATION
 
-DURATION is a keyword that allows you to easily determine the data retrieval scope based on _arrival_time. Used with the BEFORE statement to set a specific range of data at a specific point in time. By using this DURATION, search performance can be dramatically increased and the system load can be dramatically reduced. For more detailed usage, please refer to the following.
+DURATION is a keyword that lets you easily limit the data retrieval scope based on `_arrival_time`. Used with BEFORE, it sets a data range relative to a specific point in time. DURATION can dramatically increase search performance and reduce system load. See the following examples for detailed usage.
 
 ```sql
 DURATION Number TimeSpec [BEFORE/AFTER Number TimeSpec]
@@ -674,7 +677,7 @@ i1
 1          
 [2] row(s) selected.
  
-## BEFORE 절 없이
+-- Without BEFORE clause
 Mach> select i1 from t8 duration 2 second;
 i1         
 --------------
@@ -774,7 +777,7 @@ The options are described below.
 
 |Options|Description|
 |--|--|
-|HEADER (ON\|OFF)|Decides whether to write column names on the first line of the CSV file. The default is OFF.|
+|HEADER (ON\|OFF)|Decides whether to write column names on the first line of the CSV file to be created. The default is OFF.|
 |(FIELDS\|COLUMNS) TERMINATED BY 'term_char'<br><br>ENCLOSED BY 'enclose_char'|Specifies the field delimiter and enclosing character of the CSV file to be created.|
 |ENCODED BY coding_name<br><br>coding_name = ( UTF8, MS949, KSC5601, EUCJP, SHIFTJIS, BIG5, GB231280 )|Specifies the encoding format of the output data file. The default value is UTF8.|
 

@@ -11,7 +11,7 @@ toc: true
 
 ---
 
-## ALTER SYSTEM {#alter-system}
+## ALTER SYSTEM
 
 ### 명령어 목록
 
@@ -201,7 +201,7 @@ ALTER SYSTEM SET TRACE_LOG_LEVEL = 0x00000003;
 
 ---
 
-## ALTER SESSION {#alter-session}
+## ALTER SESSION
 
 세션 단위 파라미터를 변경합니다.
 

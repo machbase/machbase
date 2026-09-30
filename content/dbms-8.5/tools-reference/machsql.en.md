@@ -8,7 +8,7 @@ machsql is an interactive tool that performs SQL queries through the terminal sc
 
 ## Run Option Description
 
-```
+```bash
 [mach@localhost]$ machsql -h
 ```
 
@@ -33,13 +33,13 @@ machsql is an interactive tool that performs SQL queries through the terminal sc
 
 Example:
 
-```
+```bash
 machsql -s localhost -u sys -p manager
 machsql --server=localhost --user=sys --password=manager
 machsql -s localhost -u sys -p manager -f script.sql
 machsql -s localhost -u app_user -K /opt/machbase/keys/app_user_ecdsa.pem --auth-sig-scheme=ECDSA -f script.sql
 ## Supported from version 6.1 or later
-machsql -s 127.0.0.1 -u sys -p manager -P 8888 -c ALTERNATIVE_SERVERS=192.168.0.147:9209;CONNECTION_TIMEOUT=10
+machsql -s 127.0.0.1 -u sys -p manager -P 8888 -c "ALTERNATIVE_SERVERS=192.168.0.147:9209;CONNECTION_TIMEOUT=10"
 ```
 
 ## AUTH KEY Challenge Authentication
@@ -97,14 +97,13 @@ logs, using `-K` is recommended when possible.
 
 ## Environment Variable MACHBASE_CONNECTION_STRING
 
-Specifies basic connection parameters. For example, to add CONNECTION_TIMEOUT, ALTERNATIVE_SERVERS, you may use environment variable setting below.
+Specifies the default connection parameters. For example, to add the `CONNECTION_TIMEOUT` and `ALTERNATIVE_SERVERS` settings, you can set the following environment variable.
 
+```bash
+export MACHBASE_CONNECTION_STRING="ALTERNATIVE_SERVERS=192.168.0.148:8888;CONNECTION_TIMEOUT=3"
 ```
-export MACHBASE_CONNECTION_STRING=ALTERNATIVE_SERVERS=192.168.0.148:8888;CONNECTION_TIMEOUT=3
-```
 
-Setting connection parameter with -c option, it takes precedence over environment variables. This option is supported from version 6.1 or later
-
+Connection parameters specified with the `-c` option take precedence over the environment variable. This feature is supported from version 6.1 or later.
 
 ## Using HEREDOC for SQL Scripts
 
@@ -177,7 +176,6 @@ SQL
 - The delimiter must appear alone on a line to terminate the HEREDOC
 - Works with all machsql command-line options
 
-
 ## SHOW Command
 
 Displays information such as tables, tablespaces, and indexes.
@@ -198,6 +196,7 @@ SHOW command list:
 * SHOW USERS
 
 ### SHOW INDEX
+
 Displays index information.
 
 Syntax:
@@ -208,7 +207,7 @@ SHOW INDEX index_name
 
 Example:
 
-```
+```sql
 Mach> CREATE TABLE t1 (c1 INTEGER, c2 VARCHAR(10));
 Created successfully.
 Mach> CREATE VOLATILE TABLE t2 (c1 INTEGER, c2 VARCHAR(10));
@@ -234,15 +233,15 @@ T1                                                  C2                          
 
 ### SHOW INDEXES
 
-Displays entire index list.
+Displays the entire index list.
 
-**Syntax:**
+Syntax:
 
 ```
 SHOW INDEXES
 ```
 
-**Example:**
+Example:
 
 ```sql
 Mach> CREATE TABLE t1 (c1 INTEGER, c2 VARCHAR(10));
@@ -270,11 +269,11 @@ SYS                   T2                                                  C1    
 
 ### SHOW INDEXGAP
 
-Displays index building GAP information.
+Displays the index building GAP information.
 
 Example:
 
-```
+```sql
 Mach> SHOW INDEXGAP
 TABLE_NAME                                INDEX_NAME                                GAP
 -------------------------------------------------------------------------------------------------------------
@@ -284,11 +283,11 @@ INDEX_TABLE                               T1_IDX2                               
 
 ### SHOW LSM
 
-Displays LSM index building information.
+Displays the LSM index building information.
 
 Example:
 
-```
+```sql
 Mach> SHOW LSM;
 TABLE_NAME                                INDEX_NAME                                LEVEL       COUNT
 --------------------------------------------------------------------------------------------------------------------------
@@ -307,7 +306,7 @@ Displays license information.
 
 Example:
 
-```
+```sql
 Mach> SHOW LICENSE
 INSTALL_DATE          ISSUE_DATE            EXPIRY_DATE  TYPE        POLICY
 ---------------------------------------------------------------------------------------
@@ -321,7 +320,7 @@ Displays all query statements (Prepare, Execute, Fetch) registered in the server
 
 Example:
 
-```
+```sql
 Mach> SHOW STATEMENTS
 USER_ID     SESSION_ID  QUERY
 --------------------------------------------------------------------------------------------------------------
@@ -341,7 +340,7 @@ SHOW STORAGE
 
 Example:
 
-```
+```sql
 Mach> CREATE TAG TABLE TAG (name varchar(20) primary key, time datetime basetime, value double summarized);
 Created successfully.
 
@@ -357,7 +356,7 @@ _TAG_META                                           0                    0      
 
 ### SHOW TABLE
 
-Displays information about the table created by the user.
+Displays information about a table created by the user.
 
 Syntax:
 
@@ -367,7 +366,7 @@ SHOW TABLE table_name
 
 Example:
 
-```
+```sql
 Mach> CREATE TABLE t1 (c1 INTEGER, c2 VARCHAR(10));
 Created successfully.
 Mach> CREATE INDEX t1_idx1 ON t1(c1) INDEX_TYPE LSM;
@@ -397,7 +396,7 @@ Displays a list of all tables created by the user.
 
 Example:
 
-```
+```sql
 Mach> SHOW TABLES
 NAME
 --------------------------------------------
@@ -414,7 +413,7 @@ Displays tablespace information.
 
 Example:
 
-```
+```sql
 Mach> CREATE TABLE t1 (id integer);
 Created successfully.
 Mach> CREATE INDEX t1_idx_id ON t1(id);
@@ -440,7 +439,7 @@ Displays a complete list of tablespaces.
 
 Example:
 
-```
+```sql
 Mach> CREATE TABLESPACE tbs1 DATADISK disk1 (DISK_PATH="tbs1_disk1"), disk2 (DISK_PATH="tbs1_disk2"), disk3 (DISK_PATH="tbs1_disk3");
 Created successfully.
 
@@ -463,7 +462,7 @@ Displays a list of users.
 
 Example:
 
-```
+```sql
 Mach> CREATE USER testuser IDENTIFIED BY 'test1234';
 Created successfully.
 

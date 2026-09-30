@@ -16,11 +16,13 @@ weight: 50
 * [SCAN_FORWARD, SCAN_BACKWARD](#scan_forward-scan_backward)
 
 
-Hints that can be used in a SELECT queries are described.
+## Introduction
+
+This page describes the hints that can be used in `SELECT` statements.
 
 ##  PARALLEL
 
-Specifies parallel factor for parallel query execution.
+Specifies the parallel factor for parallel query execution.
 
 ```sql
 SELECT /*+ PARALLEL(table_name, parallel_factor) */ ...
@@ -50,7 +52,7 @@ PLAN
 
 ##  NOPARALLEL
 
-Does not perform in parallel.
+Forces the query not to use parallel execution.
 
 ```sql
 SELECT /*+ NOPARALLEL(table_name) */ ...
@@ -80,7 +82,7 @@ PLAN
 
 ##  FULL
 
-Does not use INDEX SCAN.
+Specifies that `INDEX SCAN` is not used.
 
 ```sql
 SELECT /*+ FULL(table_name) */ ...
@@ -111,7 +113,7 @@ PLAN
 
 ##  NO_INDEX
 
-Does not use the corresponding INDEX.
+Specifies that the given index is not used.
 
 ```sql
 SELECT /*+ NO_INDEX(table_name,index_name) */ ...
@@ -225,7 +227,7 @@ ORDER BY rt;
 
 ##  RID_RANGE
 
-Runs within RID range.
+Restricts the operation to the specified RID range.
 
 ```sql
 SELECT /*+ RID_RANGE(table_name,number,number) */ ...
@@ -246,9 +248,9 @@ _RID                 I1
 
 ##  SCAN_FORWARD, SCAN_BACKWARD
 
-It specifies the direction of scanning for LOG table. With SCAN_FORWARD, the oldest record input is retrived first, whereas with SCAN_BACKWARD, the newest record input is retrieved first.
+Specifies the scan direction for a LOG table. `SCAN_FORWARD` retrieves the oldest input records first, and `SCAN_BACKWARD` retrieves the most recent input records first.
 
-It affects LOG tables in standard edition only.
+These hints apply only to LOG tables in the Standard Edition.
 
 ```sql
 SELECT /*+ SCAN_FORWARD(table_name) */ ...

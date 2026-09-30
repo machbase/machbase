@@ -22,10 +22,10 @@ toc: false
 
 미리 제공되는 패키지가 사용 중인 배포판과 호환되지 않는 경우, 소스 코드를 직접 빌드할 수 있습니다.
 
-1. Go 1.24와 gcc가 설치되어 있는지 확인합니다.
+1. Go 1.25.12 이상과 gcc가 설치되어 있는지 확인합니다.
 2. [GitHub](https://github.com/machbase/neo-server)에서 `neo-server` 저장소를 클론합니다.
 3. `go run mage.go install-neo-web`을 실행해 Machbase Neo 웹 UI를 내려받습니다.
-4. `go run mage.go install-neo-engine`을 실행해서 Machbase Engine을 내려받습니다.
+4. `go run mage.go install-neo-engine`을 실행해 Machbase Engine을 내려받습니다.
 5. `go run mage.go machbase-neo`를 실행해 Machbase Neo를 빌드합니다.
 6. 빌드된 실행 파일은 `./tmp/machbase-neo` 경로에 생성됩니다.
 7. 원하는 설치 경로에 실행 파일을 복사합니다.
@@ -41,7 +41,7 @@ toc: false
 {{< callout type="warning" emoji="⚠️">}}
 과거 **v1.5.0**까지 제공되었던 **Edge / Fog 에디션**은 v1.5.0 이후 단일 “Standard” 에디션으로 통합되었습니다.<br/>
 Raspberry Pi와 같은 소형 기기에서 구버전을 실행해야 한다면 Edge 에디션을 선택하십시오.<br/>
-워크스테이션이나 서버처럼 메모리와 CPU 코어가 충분한 환경에서는 Fog 에디션을 사용하면 됩니다.
+워크스테이션이나 서버처럼 메모리와 CPU 코어가 충분한 환경에서는 Fog 에디션을 선택하십시오.
 {{< /callout >}}
 
 ### CLASSIC SDK

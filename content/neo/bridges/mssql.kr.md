@@ -16,7 +16,7 @@ bridge add -t mssql  ms server=127.0.0.1:1433 user=sa pass=changeme database=mas
 
 **연결 옵션**
 
-| Option               | 별칭                    | 설명                                              | example                 |
+| 옵션                 | 별칭                    | 설명                                              | 예시                    |
 | :-----------         | :-----------            | :-------------------------------------------------| :-------------          |
 | `server`             |                          | MSSQL 서버 주소                                   | `server=127.0.0.1:1433` |
 | `database`           |                          | 데이터베이스 이름                                 | `database=master`       |
@@ -25,7 +25,7 @@ bridge add -t mssql  ms server=127.0.0.1:1433 user=sa pass=changeme database=mas
 | `connection timeout` | `connection-timeout`     | DB 연결 대기 시간(초)                              | `connection-timeout=5`  |
 | `dial timeout`       | `dial-timeout`           | TCP 핸드셰이크 타임아웃(초)                        | `dial-timeout=3`        |
 | `app name`           | `app-name`               | 애플리케이션 이름(기본값 `neo-bridge`)             |                         |
-| `encrypt`            |                          | 암호화 모드 (`disable`, `true`, `false`)           | (see below)             |
+| `encrypt`            |                          | 암호화 모드 (`disable`, `true`, `false`)           | (아래 참고)             |
 
 - `encrypt`
   - `disable` : 클라이언트-서버 간 데이터가 암호화되지 않습니다.
@@ -78,6 +78,25 @@ machbase-neo» bridge query ms select * from ms_example;
 
 ## MSSQL에 TQL로 쓰기
 
+현재 JavaScript 런타임에서는 아래 예시를 사용하십시오.
+
+```js
+STRING(payload() ?? `{
+  "id":1,
+  "company": "acme",
+  "employee": 10
+}`)
+SCRIPT({
+  // parse the JSON input string and yield it with the current time
+  const msg = JSON.parse($.values[0]);
+  $.yield(msg.id, msg.company, msg.employee, new Date());
+})
+INSERT(bridge("ms"), table("ms_example"), "id", "company", "employee", "created_on")
+```
+
+<details>
+<summary>이전 Tengo 예시(현재 런타임에서는 실행되지 않습니다)</summary>
+
 ```js
 BYTES(payload() ?? `{
   "id":1,
@@ -98,6 +117,8 @@ SCRIPT("tengo", {
 })
 INSERT(bridge("ms"), table("ms_example"), "id", "company", "employee", "created_on")
 ```
+
+</details>
 
 ```
 machbase-neo» bridge query ms select id, company, employee, created_on from ms_example;
