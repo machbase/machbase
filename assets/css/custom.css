@@ -133,3 +133,105 @@
 .fs-6 > .btn {
   white-space: nowrap;
 }
+
+/* Match the localized Showcases URL in the navbar and top-level mobile menu. */
+.hextra-nav-container a:is([href$="/neo/showcases"], [href$="/neo/showcases/"]),
+.machbase-mobile-menu > li > .hextra-sidebar-item > a:is([href$="/neo/showcases"], [href$="/neo/showcases/"]) {
+  gap: 6px;
+  border-radius: 999px;
+  background-color: #343ed8;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgb(52 62 216 / 20%);
+  transition: background-color 150ms, color 150ms, box-shadow 150ms;
+}
+
+.hextra-nav-container a:is([href$="/neo/showcases"], [href$="/neo/showcases/"]) {
+  margin-inline: 2px 6px;
+  padding: 7px 12px;
+}
+
+.hextra-nav-container a:is([href$="/neo/showcases"], [href$="/neo/showcases/"]):hover,
+.machbase-mobile-menu > li > .hextra-sidebar-item > a:is([href$="/neo/showcases"], [href$="/neo/showcases/"]):hover {
+  background-color: #2732b5;
+  color: #fff;
+  box-shadow: 0 3px 8px rgb(52 62 216 / 30%);
+}
+
+.hextra-nav-container a:is([href$="/neo/showcases"], [href$="/neo/showcases/"]):focus-visible,
+.machbase-mobile-menu > li > .hextra-sidebar-item > a:is([href$="/neo/showcases"], [href$="/neo/showcases/"]):focus-visible {
+  outline: 2px solid #343ed8;
+  outline-offset: 3px;
+}
+
+.dark .hextra-nav-container a:is([href$="/neo/showcases"], [href$="/neo/showcases/"]),
+.dark .machbase-mobile-menu > li > .hextra-sidebar-item > a:is([href$="/neo/showcases"], [href$="/neo/showcases/"]) {
+  background-color: #a5b4fc;
+  color: #172554;
+}
+
+.dark .hextra-nav-container a:is([href$="/neo/showcases"], [href$="/neo/showcases/"]):hover,
+.dark .machbase-mobile-menu > li > .hextra-sidebar-item > a:is([href$="/neo/showcases"], [href$="/neo/showcases/"]):hover {
+  background-color: #c7d2fe;
+  color: #172554;
+}
+
+.dark .hextra-nav-container a:is([href$="/neo/showcases"], [href$="/neo/showcases/"]):focus-visible,
+.dark .machbase-mobile-menu > li > .hextra-sidebar-item > a:is([href$="/neo/showcases"], [href$="/neo/showcases/"]):focus-visible {
+  outline-color: #a5b4fc;
+}
+
+.machbase-mobile-menu > li > .hextra-sidebar-item > a:is([href$="/neo/showcases"], [href$="/neo/showcases/"]) {
+  margin-block: 4px;
+  padding-block: 9px;
+  padding-inline-start: 12px;
+}
+
+.machbase-mobile-menu > li > .hextra-sidebar-item > a:is([href$="/neo/showcases"], [href$="/neo/showcases/"]) + button {
+  color: #fff;
+}
+
+.dark .machbase-mobile-menu > li > .hextra-sidebar-item > a:is([href$="/neo/showcases"], [href$="/neo/showcases/"]) + button {
+  color: #172554;
+}
+
+/* Keep the logo, search, and menu readable on tablet screens. */
+@media (min-width: 48rem) and (max-width: 70rem) {
+  :root {
+    --navbar-height: 104px;
+  }
+
+  .hextra-nav-container nav {
+    height: var(--navbar-height);
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-content: center;
+    row-gap: 4px;
+  }
+
+  .hextra-nav-container nav > a:first-child {
+    flex: 1 0 calc(100% - 216px);
+    margin-inline-end: 0;
+  }
+
+  .hextra-nav-container nav > a:not(:first-child) {
+    order: 3;
+  }
+
+  .hextra-nav-container .hextra-search-wrapper {
+    order: 1;
+    flex: 0 0 160px;
+  }
+
+  .hextra-nav-container nav > a[href^="https://github.com/machbase/neo-server"] {
+    order: 2;
+  }
+
+  .hextra-sidebar-container {
+    position: sticky;
+    top: var(--navbar-height);
+    bottom: auto;
+    width: 16rem;
+    padding-top: 0;
+  }
+}

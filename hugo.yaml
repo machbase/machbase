@@ -84,6 +84,11 @@ menu:
       name: Home
       url: "https://machbase.com/"
       weight: 10
+      params:
+        localizedURLs:
+          en: "https://machbase.com/en"
+          kr: "https://machbase.com/"
+          ja: "https://machbase.com/ja"
     - identifier: neo
       name: MACHBASE NEO
       pageRef: /neo
@@ -100,6 +105,13 @@ menu:
       name: Apps
       pageRef: /apps
       weight: 38
+    - identifier: showcases
+      name: Showcases
+      pageRef: /neo/showcases
+      weight: 39
+      params:
+        type: link
+        icon: play
     - name: Search
       weight: 40
       params:
