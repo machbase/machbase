@@ -134,6 +134,11 @@
   white-space: nowrap;
 }
 
+/* Emphasize the news entry in the desktop and mobile sidebar for every language. */
+.hextra-sidebar-item > a[href$="/neo/whats-new/"] {
+  font-weight: 700;
+}
+
 /* Keep words together in news titles, wrapping long phrases on small screens. */
 body:has(.hextra-sidebar-active-item[href$="/neo/whats-new/"]) article h2 {
   word-break: keep-all;
