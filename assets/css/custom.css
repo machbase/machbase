@@ -134,6 +134,12 @@
   white-space: nowrap;
 }
 
+/* Keep words together in news titles, wrapping long phrases on small screens. */
+body:has(.hextra-sidebar-active-item[href$="/neo/whats-new/"]) article h2 {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
 /* Match the localized Showcases URL in the navbar and top-level mobile menu. */
 .hextra-nav-container a:is([href$="/neo/showcases"], [href$="/neo/showcases/"]),
 .machbase-mobile-menu > li > .hextra-sidebar-item > a:is([href$="/neo/showcases"], [href$="/neo/showcases/"]) {
