@@ -8,6 +8,11 @@ toc: true
 
 {{< cards >}}
 
+  {{< card link="./binance"
+    image="https://img.youtube.com/vi/bL17z0viUqQ/hqdefault.jpg" icon="film"
+    title="Binance Coin Data Visualization"
+    subtitle="Machbase Neo 콘솔에서 코인 모니터 패키지를 설치해, 바이낸스 코인 50개의 실시간 체결과 호가를 저장하고 원본과 롤업 조회를 비교하는 과정을 보여줍니다.">}}
+
   {{< card link="./robot_motion"
     image="https://img.youtube.com/vi/F2Sgs0hPy3c/hqdefault.jpg" icon="film"
     title="Neo Robot Motion Lab"

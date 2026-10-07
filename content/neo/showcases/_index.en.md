@@ -8,6 +8,11 @@ toc: true
 
 {{< cards >}}
 
+  {{< card link="./binance"
+    image="https://img.youtube.com/vi/bL17z0viUqQ/hqdefault.jpg" icon="film"
+    title="Binance Coin Data Visualization"
+    subtitle="Install the coin monitor package from the Machbase Neo console to store real-time trades and order book data for 50 Binance coins, then compare queries against raw data and rollups.">}}
+
   {{< card link="./robot_motion"
     image="https://img.youtube.com/vi/F2Sgs0hPy3c/hqdefault.jpg" icon="film"
     title="Neo Robot Motion Lab"
