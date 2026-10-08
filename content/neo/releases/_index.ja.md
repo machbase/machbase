@@ -46,13 +46,13 @@ Raspberry Piなどの小型機器で旧バージョンを実行する場合は�
 
 ### CLASSIC SDK {#classic-sdk}
 
-以下のパッケージには、従来のMACHBASE DBMSと、JDBC、ODBC、Cクライアントライブラリなどのアプリケーションドライバーが含まれています。
+CLASSICパッケージには、従来のMACHBASE DBMSと、JDBC、ODBC、Cクライアントライブラリなどのアプリケーションドライバーが含まれています。
+Windows x64では個別のODBCインストーラーも提供しています。
 
 | OS         | アーキテクチャ       |  ダウンロード |
 |:-----------|:---------------|:----------|
-| Linux      | x64            | [machbase-classic-8.7.1.official-LINUX-X86-64-release.tgz](https://github.com/machbase/packages/releases/download/8.7.1/machbase-classic-8.7.1.official-LINUX-X86-64-release.tgz) |
-| Linux      | arm64          | [machbase-SDK-8.5.2.official-LINUX-ARM_CORTEX_A53-64-release.tgz](https://github.com/machbase/packages/releases/download/8.5.2/machbase-SDK-8.5.2.official-LINUX-ARM_CORTEX_A53-64-release.tgz) |
-| Linux      | arm32          | [machbase-SDK-8.5.2.official-LINUX-ARM_CORTEX_A8-32-release.tgz](https://github.com/machbase/packages/releases/download/8.5.2/machbase-SDK-8.5.2.official-LINUX-ARM_CORTEX_A8-32-release.tgz) |
-| Windows    | x64            | [machbase-SDK-8.5.2.official-WINDOWS-X86-64-release.msi](https://github.com/machbase/packages/releases/download/8.5.2/machbase-SDK-8.5.2.official-WINDOWS-X86-64-release.msi)
-| macOS      | arm64          | [machbase-SDK-8.5.2.official-DARWIN-ARM_M1-64-release.tgz](https://github.com/machbase/packages/releases/download/8.5.2/machbase-SDK-8.5.2.official-DARWIN-ARM_M1-64-release.tgz) |
-| macOS      | x64            | [machbase-SDK-8.5.2.official-DARWIN-X86-64-release.tgz](https://github.com/machbase/packages/releases/download/8.5.2/machbase-SDK-8.5.2.official-DARWIN-X86-64-release.tgz) |
+| Linux      | x64            | [machbase-classic-8.7.2.official-LINUX-X86-64-release.tgz](https://github.com/machbase/packages/releases/download/8.7.2/machbase-classic-8.7.2.official-LINUX-X86-64-release.tgz) |
+| Linux      | arm64          | [machbase-classic-8.7.2.official-LINUX-ARM_CORTEX_A53-64-release.tgz](https://github.com/machbase/packages/releases/download/8.7.2/machbase-classic-8.7.2.official-LINUX-ARM_CORTEX_A53-64-release.tgz) |
+| Windows    | x64            | [machbase-classic-8.7.2.official-WINDOWS-X86-64-release.msi](https://github.com/machbase/packages/releases/download/8.7.2/machbase-classic-8.7.2.official-WINDOWS-X86-64-release.msi)<br>[machbase-odbc-8.7.2.official-WINDOWS-X86-64-release.msi](https://github.com/machbase/packages/releases/download/8.7.2/machbase-odbc-8.7.2.official-WINDOWS-X86-64-release.msi) |
+| macOS      | arm64          | [machbase-classic-8.7.2.official-DARWIN-ARM_M1-64-release.tgz](https://github.com/machbase/packages/releases/download/8.7.2/machbase-classic-8.7.2.official-DARWIN-ARM_M1-64-release.tgz) |
+| macOS      | x64            | [machbase-classic-8.7.2.official-DARWIN-X86-64-release.tgz](https://github.com/machbase/packages/releases/download/8.7.2/machbase-classic-8.7.2.official-DARWIN-X86-64-release.tgz) |
