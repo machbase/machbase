@@ -2,6 +2,7 @@
 title: Metrics
 type: docs
 weight: 101
+draft: true
 ---
 
 {{< callout type="warning" >}}

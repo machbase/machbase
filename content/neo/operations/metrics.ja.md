@@ -3,6 +3,7 @@ title: メトリクス
 type: docs
 weight: 101
 toc: true
+draft: true
 ---
 
 {{< callout type="warning" >}}
