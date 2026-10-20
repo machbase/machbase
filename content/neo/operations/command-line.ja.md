@@ -91,6 +91,14 @@ $ machbase-neo serve
 $ machbase-neo serve --host 127.0.0.1 --data ./machbase_home --file . --preset auto
 ```
 
+**API セキュリティフラグ**
+
+| フラグ                         | デフォルト | 説明                                                                  |
+|:-------------------------------|:-----------|:----------------------------------------------------------------------|
+| `--http-enable-token-auth`     | `true`     | `true`: すべての HTTP API で `Authorization: Bearer xxx` 認証トークンを要求します。 |
+| `--mqtt-enable-token-auth`     | `true`     | `true`: MQTT CONNECT ごとに、ユーザー名として認証トークンを要求します。 |
+| `--mqtt-enable-tls`            | `false`    | `true`: MQTT 接続で X.509 証明書による TLS 接続を要求します。          |
+
 ## machbase-neo shell
 
 machbase-neo シェルを起動します。他の引数がない場合は対話モードになります。

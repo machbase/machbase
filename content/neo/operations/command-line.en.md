@@ -91,6 +91,14 @@ it is equivalent with
 $ machbase-neo serve --host 127.0.0.1 --data ./machbase_home --file . --preset auto
 ```
 
+**API security flags**
+
+| flag                         | default   | desc                                                                                   |
+|:-----------------------------|:----------|:---------------------------------------------------------------------------------------|
+| `--http-enable-token-auth`   | `true`    | `true`: Requires an authentication token in `Authorization: Bearer xxx` for all HTTP APIs. |
+| `--mqtt-enable-token-auth`   | `true`    | `true`: Requires an authentication token as the username for every MQTT CONNECT.        |
+| `--mqtt-enable-tls`          | `false`   | `true`: Requires MQTT connections to use TLS with an X.509 certificate.                  |
+
 ## machbase-neo shell
 
 Start machbase-neo shell. It will start interactive mode shell if there are no other arguments.

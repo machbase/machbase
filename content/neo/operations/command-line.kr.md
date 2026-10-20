@@ -90,6 +90,14 @@ $ machbase-neo serve
 $ machbase-neo serve --host 127.0.0.1 --data ./machbase_home --file . --preset auto
 ```
 
+**API 보안 플래그**
+
+| flag                         | default   | desc                                      |
+|:-----------------------------|:----------|-------------------------------------------|
+| `--http-enable-token-auth`   | `true`    | `true`: 모든 http api에 `Authorization: Bearer xxx` 인증 토큰이 요구된다. |
+| `--mqtt-enable-token-auth`   | `true`    | `true`: 모든 mqtt CONNECT 시에 username에 인증 토큰이 요구된다. |
+| `--mqtt-enable-tls`          | `false`   | `true`: mqtt 연결에 X.509 인증서를 통한 TLS 연결이 요구된다. |
+
 ## machbase-neo shell
 
 machbase-neo 셸을 실행합니다. 다른 인수가 없으면 대화형 모드로 시작합니다.
