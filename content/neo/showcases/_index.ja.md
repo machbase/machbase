@@ -8,6 +8,11 @@ toc: true
 
 {{< cards >}}
 
+  {{< card link="./garmin_watch"
+    image="https://img.youtube.com/vi/gCQw0rRHAlA/hqdefault.jpg" icon="film"
+    title="Garmin ウォッチの健康データ"
+    subtitle="あるランナーの Garmin ウォッチの1年分の記録（約140万ポイント）を Machbase Neo に集めた結果を紹介します。">}}
+
   {{< card link="./binance"
     image="https://img.youtube.com/vi/bL17z0viUqQ/hqdefault.jpg" icon="film"
     title="Binance コインデータの可視化"

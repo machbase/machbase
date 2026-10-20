@@ -8,6 +8,11 @@ toc: true
 
 {{< cards >}}
 
+  {{< card link="./garmin_watch"
+    image="https://img.youtube.com/vi/gCQw0rRHAlA/hqdefault.jpg" icon="film"
+    title="Garmin Watch Health Data"
+    subtitle="Explore one year of a runner's Garmin watch records—approximately 1.4 million data points—collected in Machbase Neo.">}}
+
   {{< card link="./binance"
     image="https://img.youtube.com/vi/bL17z0viUqQ/hqdefault.jpg" icon="film"
     title="Binance Coin Data Visualization"

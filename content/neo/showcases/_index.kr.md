@@ -8,6 +8,11 @@ toc: true
 
 {{< cards >}}
 
+  {{< card link="./garmin_watch"
+    image="https://img.youtube.com/vi/gCQw0rRHAlA/hqdefault.jpg" icon="film"
+    title="Garmin Watch Health Data"
+    subtitle="Machbase Neo에 한 러너의 가민 워치 1년치 기록(약 140만 포인트)을 모아 본 결과입니다.">}}
+
   {{< card link="./binance"
     image="https://img.youtube.com/vi/bL17z0viUqQ/hqdefault.jpg" icon="film"
     title="Binance Coin Data Visualization"
