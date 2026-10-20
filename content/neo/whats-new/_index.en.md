@@ -7,6 +7,44 @@ toc: false
 
 Read the latest Machbase Neo news and release highlights, with the newest entries first.
 
+## 2026-10-20 — Machbase Neo v8.7.2 release
+
+This release makes ARRAY data easier to explore and introduces an experimental feature for
+turning the start page into your own workspace. It also improves chart and file workflows,
+strengthens authentication defaults, and enhances server and database stability.
+
+- **Start page customization (experimental)**: This feature is enabled only when the server
+  is started with `--experiment true`. It supports user settings, groups, and view modes.
+  Issues with layout, saving, groups, and dialogs in the New tab have also been fixed.
+- **ARRAY data exploration**: Select elements of numeric ARRAYs in Data Viewer and inspect
+  them in detailed charts and tables. Send selected elements to Tag Analyzer for analysis
+  and saving.
+- **Chart and analysis improvements**: ECharts 6 support with v5 compatibility has been added,
+  and the chart runtime has been unified. Fixes also address lost edits and popover behavior
+  in Tag Analyzer, as well as dashboard issues.
+- **File operations and error handling**: File overwrite warnings, encoding, and error
+  reporting have been improved. The save shortcut is `Cmd+S` on macOS and `Ctrl+S` on other
+  platforms. Deeply nested JSON is displayed as text instead of causing a rendering error,
+  and error handling has been strengthened to prevent a failure in one part of the UI
+  from affecting the entire app.
+- **Authentication and server stability**: JWT signing keys are now generated and stored
+  more securely. Improvements also cover concurrent TQL requests and cancellation,
+  shell output and error handling, and concurrent access to and batch storage of
+  server operational metrics.
+- **Database engine improvements**: DBMS 8.7.2 fixes `SQLColumns` compatibility with older
+  servers and reduces CPU costs for some queries. It also fixes a bitmap index memory
+  visibility issue on ARM64.
+
+**Before upgrading:** HTTP and MQTT token authentication are now enabled by default.
+If you previously used HTTP APIs or MQTT without tokens, check your clients' authentication
+settings before upgrading. To disable authentication through command-line options, explicitly
+set `--http-enable-token-auth false` and `--mqtt-enable-token-auth false`.
+
+[v8.7.2 release notes](https://github.com/machbase/neo-server/releases/tag/v8.7.2)
+· [Full changelog](https://github.com/machbase/neo-server/compare/v8.7.1...v8.7.2)
+
+---
+
 ## 2026-10-05 — Showcases menu added
 
 The **Showcases** link is now available to the right of **Apps** in the top navigation.
