@@ -320,7 +320,7 @@ const archive = zip.zipSync([
 	{ name: 'skip/c.txt', data: 'C' }
 ]);
 
-fs.writeFile(base + '.zip', Array.from(new Uint8Array(archive)), 'buffer');
+fs.writeFile(base + '.zip', new Uint8Array(archive), 'buffer');
 
 const loaded = new zip.Zip(base + '.zip');
 loaded.extractAllTo(base + '-out', {

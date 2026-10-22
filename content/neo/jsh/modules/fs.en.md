@@ -19,13 +19,15 @@ Supported features depend on the mount type.
 | Mount type | Example | Characteristics |
 | --- | --- | --- |
 | Host directory | `/work`, `/tmp` | Directly backed by the operating system file system. All APIs are supported. |
-| Memory-backed | `/lib` | File contents are kept in memory. Path-based APIs such as `readFile`/`writeFile` are supported, but write file descriptors (`open(path, 'w')`, etc.) fail with `ENOTSUP`. The maximum size of a single file is 1GiB. |
+| Memory-backed | `/lib` | File contents are kept in memory. Path-based APIs such as `readFile`/`writeFile` are supported, but write file descriptors (`open(path, 'w')`, etc.) fail with `ENOTSUP`. `fsync()` on a read descriptor also returns `ENOTSUP`. The maximum size of a single file is 1GiB. |
 | Read-only (embedded) | `/usr`, `/sbin` | Files embedded in the executable. Write operations fail with `EACCES`, and `fsync()` on a descriptor returns `ENOTSUP`. |
 | Shared file system | Depends on the service configuration | Shared storage provided by the service controller to multiple JSH processes. The maximum size of a single file is 1GiB. |
 
 {{< callout emoji="⚠️" >}}
 Files cannot be moved between different mounts with `rename()`; it fails with an `EXDEV` error. In that case, copy the file with `copyFile()` or `cp()` and then remove the original.
 {{< /callout >}}
+
+Regardless of the mount type, the root directory of each mount (for example, `/work` or `/lib`) is a mount point. Intermediate directories that exist only because of nested mounts (for example, `/a` when only `/a/b` is mounted) are also treated as mount points. A mount point cannot be removed with `rmdir()`, `unlink()`, or `rm()`, and cannot be the source or destination of `rename()`. All such operations fail with `EBUSY`, and the mount point and mount configuration are left unchanged. Files and directories **inside** a mount point can be removed or moved as usual.
 
 ## Error handling
 
@@ -60,7 +62,7 @@ try {
 | `EIO` | -5 | Input/output error |
 | `EBADF` | -9 | Bad file descriptor. A closed or nonexistent descriptor, or writing to a descriptor opened read-only, etc. |
 | `EACCES` | -13 | Permission denied, including writes to a read-only mount |
-| `EBUSY` | -16 | Resource busy |
+| `EBUSY` | -16 | Resource busy. Raised when removing or moving a mount point |
 | `EEXIST` | -17 | Already exists |
 | `EXDEV` | -18 | Move between different mounts |
 | `ENOTDIR` | -20 | Not a directory |
@@ -205,7 +207,7 @@ console.println(st.name);
 
 ## lstat()
 
-Returns file metadata. Unlike `stat()`, if the last path component is a symbolic link, the link is not followed and information about the link itself is returned. The returned fields are the same as `stat()`.
+Returns file metadata. Unlike `stat()`, if the last path component is a symbolic link, the link is not followed and information about the link itself is returned. The returned fields are the same as `stat()`. Intermediate directories created by nested mounts are reported as directories, just as with `stat()`.
 
 <h6>Syntax</h6>
 
@@ -300,6 +302,7 @@ rmdir(path[, options])
 - Fails with `ENOTEMPTY` if the directory is not empty, or `ENOTDIR` if the target is a file.
 - With `{ recursive: true }`, all child entries are removed first. This option is deprecated in Node.js, so `rm(path, { recursive: true })` is recommended for new code.
 - During recursive removal, symbolic links pointing to directories are removed as links only; the contents of the link target are not deleted.
+- Fails with `EBUSY` if a mount point is specified. Recursive removal handles mount points in the same way as [rm()](#rm).
 
 ## rm()
 
@@ -320,8 +323,9 @@ rm(path[, options])
 
 - The target type is determined with `lstat()`. A symbolic link is removed **as a link only**, even if it points to a directory; the target directory and its contents are preserved.
 - Without `recursive`, only an empty directory can be removed. A non-empty directory fails with `ENOTEMPTY`.
-- `force: true` ignores only `ENOENT`. Other errors, such as insufficient permissions (`EACCES`) and I/O errors (`EIO`), are thrown as is.
+- `force: true` ignores only `ENOENT`. Other errors, such as insufficient permissions (`EACCES`) and I/O errors (`EIO`), are thrown as is. `EBUSY` raised for a mount point is not ignored either.
 - If an error occurs during recursive removal, the operation stops immediately. Entries already removed are not restored, so the tree may be left partially deleted.
+- Mount points are an exception. When the target itself or a directory under it is a mount point, only its contents are removed and it is left as an empty directory. Removal continues with the remaining entries, and after all entries are processed, `EBUSY` is thrown with the path of the first mount point encountered. The result is the same as running `rm -r` on a mounted directory on Linux.
 
 <h6>Usage example</h6>
 
@@ -342,6 +346,7 @@ unlink(path)
 
 - Cannot be used on directories; fails with `EISDIR`. Use `rmdir()` or `rm()` for directories.
 - When a symbolic link is specified, only the link is removed and the target file is kept.
+- Fails with `EBUSY` if a mount point is specified.
 - On Windows, files with the read-only attribute are also removed.
 
 {{< callout emoji="📌" >}}
@@ -360,6 +365,7 @@ rename(oldPath, newPath)
 
 - If a file exists at the destination path, it is overwritten according to the operating system `rename` behavior.
 - Moving between different mounts fails with `EXDEV`. In this case, the `dest` property of the error object contains the destination path.
+- Fails with `EBUSY` if the source or destination is a mount point.
 
 ## copyFile()
 
@@ -470,7 +476,7 @@ access(path[, mode])
 - On Windows, the behavior is the same as Node.js.
   - Checking `W_OK` on a file with the read-only attribute throws `EPERM`.
   - `X_OK` is treated the same as the existence check (`F_OK`).
-- On memory-backed, embedded, and shared file systems, the decision is based only on the permission bits of the file mode. Users, groups, and ACLs are not distinguished.
+- On memory-backed, embedded, and shared file systems, the JSH process is treated as the file owner, and the decision is based on the **owner** permission bits of the file mode. For example, a `0o600` file passes `R_OK`/`W_OK` checks, and a `0o004` file fails the `R_OK` check. Groups and ACLs are not considered.
 - `W_OK` checks on read-only mounts always fail.
 - The state may change between checking with `access()` and opening the file. Where possible, open the file directly and handle the error.
 
@@ -643,8 +649,8 @@ fchmod(fd, mode)
 fchown(fd, uid, gid)
 ```
 
-- On Windows, these do nothing and succeed.
-- Throws `EACCES` for descriptors on read-only (embedded) mounts.
+- On Windows, these do nothing and succeed for file descriptors opened on host directory mounts.
+- Other mounts follow their own filesystem behavior. For example, descriptors on read-only (embedded) mounts throw `EACCES`.
 
 ## fsync(), fdatasync()
 
@@ -658,14 +664,14 @@ fdatasync(fd)
 ```
 
 - Currently, `fdatasync()` behaves the same as `fsync()`.
-- Descriptors opened on read-only (embedded) mounts have nothing to synchronize, so `ENOTSUP` is thrown. This differs from Node.js.
+- Descriptors opened on read-only (embedded) mounts and read descriptors on memory-backed mounts (for example, `/lib`) have nothing to synchronize, so `ENOTSUP` is thrown. This differs from Node.js.
 - On the shared file system, if another process modified the same file after the descriptor was opened, it fails with `ECONFLICT`.
 
 ## chmod(), chown()
 
 Changes mode/owner by path.
 
-In the current runtime implementation, `chmod`/`chown` are no-op compatible behaviors on Windows.
+On Windows, `chmod`/`chown` are no-op compatible behaviors on host directory mounts. Memory-backed, embedded, and shared file systems follow their own behavior.
 
 <h6>Syntax</h6>
 
