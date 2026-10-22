@@ -31,6 +31,12 @@ HTTP API의 일반적인 목적은 센서와 디바이스가 MQTT와 HTTP로 데
 | POST    | `/db/write`      | JSON 또는 CSV 형식으로 데이터를 저장합니다.      |
 | POST    | `/metrics/write` | ILP(Influx Line Protocol) 형식으로 데이터를 저장합니다. |
 
+### API 토큰 검증
+
+| Method  | Path                  | Description |
+| :-----: | :-------------------- | :---------- |
+| POST    | `/db/token/validate`  | `Authorization: Bearer <token>`의 API 토큰을 검증하고, 유효하면 해당 토큰으로 DB 요청을 수행할 때 적용되는 사용자를 반환합니다. 토큰 인증 설정과 관계없이 Bearer 헤더가 필요합니다. |
+
 ### TQL Endpoints
 
 | Method  | Path                      | Description                                                                    |
