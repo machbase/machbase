@@ -19,7 +19,7 @@ CREATE ROLLUP [IF NOT EXISTS] name
     ON source_tag [(column_name | json_path_expression)]
     INTERVAL n { SEC | MIN | HOUR }
     [WAKEUP INTERVAL m { SEC | MIN | HOUR }]
-    [EXTENSION]
+    [EXTENSION [ORDER BY basetime_column [ASC | DESC], data_column [ASC | DESC] [, ...]]]
     [WHERE predicate];
 
 CREATE ROLLUP [IF NOT EXISTS] name
@@ -36,7 +36,7 @@ CREATE ROLLUP [IF NOT EXISTS] name
     [WAKEUP INTERVAL m { SEC | MIN | HOUR }];
 ```
 
-- EXTENSION은 키워드만 쓰며 별도 extension_name을 붙이지 않습니다.
+- EXTENSION에는 선택적으로 ORDER BY 정렬 키를 지정합니다. 별도의 extension_name은 붙이지 않습니다.
 - CREATE의 시간 단위는 SEC/MIN/HOUR입니다. DAY 등은 조회 단위와 구분합니다.
 - 일반 숫자 컬럼은 SUMMARIZED 없이 명시할 수 있습니다. JSON 경로 집계와 JSON
   문서 전체 집계를 구분하며, 문서 전체와 WITH ROLLUP 자동 생성에는 SUMMARIZED 조건이 있습니다.
@@ -102,3 +102,23 @@ JSON의 문서 전체 COUNT와 경로별 건수는 별도 계약입니다.
 
 실행 가능한 생성·조회·오류 예제는 [6장 ROLLUP 활용](/dbms/tag-rollup-usage/)과
 [조회 문법](/dbms/tag-rollup-usage/query-syntax-rollup/)을 참고하십시오.
+
+## 정렬 EXTENSION 정의
+
+> 복합 정렬 키 구문은 해당 기능이 반영된 엔진 빌드에서 사용합니다. 사용 중인 제품 버전의 지원 여부를 확인해야 합니다.
+
+```text
+CREATE ROLLUP [IF NOT EXISTS] name
+    ON source_tag (numeric_column)
+    INTERVAL n { SEC | MIN | HOUR }
+    [WAKEUP INTERVAL m { SEC | MIN | HOUR }]
+    EXTENSION ORDER BY basetime_column [ASC | DESC],
+                       data_column [ASC | DESC] [, ...]
+    [WHERE predicate];
+```
+
+ON 정의의 EXTENSION 뒤에 ORDER BY를 지정합니다. 기존 EXTENSION만 사용하는 문법도 유지합니다.
+FROM 계층은 하위의 키와 방향을 상속하며 ORDER BY를 다시 지정하지 않습니다.
+Custom INTO...AS에서는 이 절을 사용하지 않고 SELECT 내부에 복합 키 FIRST/LAST를 지정합니다.
+
+[전체 데이터와 정렬 ROLLUP 예제](../../../../tag-rollup-usage/extension-rollup/#composite-first-last).

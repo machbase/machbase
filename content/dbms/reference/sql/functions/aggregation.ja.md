@@ -5,7 +5,7 @@ weight: 10
 toc: true
 ---
 
-集約関数は複数行の値から1つの結果を計算します。`GROUP BY`句と併用するとグループ別の集計結果を取得できます。`NULL`値は集計で無視します（COUNT(*)を除く）。
+集約関数は複数行の値から1つの結果を計算します。`GROUP BY`句と併用するとグループ別の集計結果を取得できます。NULL処理は関数ごとの規則に従います。FIRST/LASTは選択行のNULL返却値を保持します。
 
 ## クイックリファレンス
 
@@ -20,8 +20,8 @@ toc: true
 | STDDEV_POP | `STDDEV_POP(col)` | 母標準偏差 |
 | VARIANCE | `VARIANCE(col)` | 標本分散 |
 | VAR_POP | `VAR_POP(col)` | 母分散 |
-| FIRST | `FIRST(sort_expr, return_expr)` | ソート基準で最初のレコードの値 |
-| LAST | `LAST(sort_expr, return_expr)` | ソート基準で最後のレコードの値 |
+| FIRST | `FIRST(sort_expr, return_expr)` / `FIRST((key1, key2, ...), return_expr)` | ソート基準で最初のレコードの値 |
+| LAST | `LAST(sort_expr, return_expr)` / `LAST((key1, key2, ...), return_expr)` | ソート基準で最後のレコードの値 |
 | SUMSQ | `SUMSQ(col)` | 二乗和 |
 | MEDIAN | `MEDIAN(col)` | 中央値 |
 | MODE | `MODE(col)` | 最頻値 |
@@ -193,6 +193,53 @@ VAR_POP(c1)
 FIRST(sort_expr, return_expr)
 LAST(sort_expr, return_expr)
 ```
+
+### 複合ソートキー
+
+> 複合ソートキーには、この機能を含むエンジンビルドが必要です。使用中の製品バージョンの対応状況を確認してください。
+
+```text
+FIRST((key1 [ASC | DESC], key2 [ASC | DESC], ...), return_expr)
+LAST ((key1 [ASC | DESC], key2 [ASC | DESC], ...), return_expr)
+```
+
+第1引数に、括弧で囲んだ2個以上のキーを指定します。左から比較し、前のキーが等しい場合のみ次のキーを比較します。
+方向の既定値はASCです。FIRSTはその順序の先頭行、LASTは末尾行の返却式を返します。
+キー数を3個に制限する構文ではありません。
+
+- 第1キーがNULLの行は候補から除外します。補助キーのNULL比較は、型ごとのORDER BY規則に従います。
+- 選択行の返却値がNULLなら、そのままNULLを返します。
+- 全キーが同じ場合、特定行の選択は保証されません。確定的な選択には一意の業務キーが必要です。
+- 整数型、FLOAT/DOUBLE、DATETIME、VARCHAR、IPV4/IPV6のキーをサポートします。
+  BINARYキーと複合キー形式のDISTINCTはサポートしません。
+- 通常のSELECTの第1キーはBASETIMEに限定されません。ソート付きEXTENSIONの定義とは区別してください。
+- 外側のORDER BYは出力行を並べ替えるもので、関数内部の選択基準を変更しません。
+- キーの読み取り・比較・コピー・状態保持に追加コストがあり、性能が変わらない保証はありません。
+
+timeとseqが同じ行をevent_idで区別します。timeをASCのままevent_idのみDESCにすることもできます。
+
+```sql
+SELECT code,
+       FIRST((time, seq, event_id), price) AS first_price,
+       LAST((time ASC, seq ASC, event_id DESC), price) AS last_price
+  FROM raw_tab
+ GROUP BY code;
+```
+
+SELECTとORDER BYでキー方向が異なる場合、それぞれ別の候補を選びます。表示した集約値で並べ替える場合は出力別名を使用します。
+
+```sql
+SELECT code, FIRST((time, seq, event_id), price) AS first_price
+  FROM raw_tab
+ GROUP BY code
+ ORDER BY FIRST((time, seq, event_id DESC), price);
+```
+
+公開ROWIDソートキーはこの文書の対応範囲外です。
+
+[完全なデータとソート付きROLLUPの例](../../../../tag-rollup-usage/extension-rollup/#composite-first-last).
+
+### 単一キーの例
 
 ```sql
 Mach> SELECT group_no, FIRST(id, name) FROM firstlast_table GROUP BY group_no;
