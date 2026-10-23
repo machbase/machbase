@@ -19,7 +19,7 @@ CREATE ROLLUP [IF NOT EXISTS] name
     ON source_tag [(column_name | json_path_expression)]
     INTERVAL n { SEC | MIN | HOUR }
     [WAKEUP INTERVAL m { SEC | MIN | HOUR }]
-    [EXTENSION]
+    [EXTENSION [ORDER BY basetime_column [ASC | DESC], data_column [ASC | DESC] [, ...]]]
     [WHERE predicate];
 
 CREATE ROLLUP [IF NOT EXISTS] name
@@ -36,7 +36,7 @@ CREATE ROLLUP [IF NOT EXISTS] name
     [WAKEUP INTERVAL m { SEC | MIN | HOUR }];
 ```
 
-- EXTENSIONはキーワードのみを記述し、extension_nameは付けません。
+- EXTENSIONには任意でORDER BYソートキーを指定できます。extension_nameは付けません。
 - CREATEの時間単位はSEC/MIN/HOURです。DAYなどのクエリ単位とは区別します。
 - 通常の数値列はSUMMARIZEDなしで明示できます。JSONパス集計とドキュメント全体の集計は異なり、ドキュメント全体とWITH ROLLUPによる自動作成にはSUMMARIZED条件があります。
 - FROMの間隔はソースより大きな整数倍であり、拡張属性と集計モードが一致する必要があります。
@@ -97,3 +97,23 @@ SELECTでnameを返すタグ別集計は、GROUP BYにもnameを含めます。�
 
 実行可能な作成・参照・エラーの例は、[第6章 ROLLUPの利用](/dbms/tag-rollup-usage/)と
 [クエリ構文](/dbms/tag-rollup-usage/query-syntax-rollup/)を参照してください。
+
+## ソート付きEXTENSIONの定義
+
+> 複合ソートキーには、この機能を含むエンジンビルドが必要です。使用中の製品バージョンの対応状況を確認してください。
+
+```text
+CREATE ROLLUP [IF NOT EXISTS] name
+    ON source_tag (numeric_column)
+    INTERVAL n { SEC | MIN | HOUR }
+    [WAKEUP INTERVAL m { SEC | MIN | HOUR }]
+    EXTENSION ORDER BY basetime_column [ASC | DESC],
+                       data_column [ASC | DESC] [, ...]
+    [WHERE predicate];
+```
+
+ON定義のEXTENSIONの後にORDER BYを指定します。ORDER BYのないEXTENSIONも有効です。
+FROM階層は下位のキーと方向を継承するため、ORDER BYを再指定しません。
+Custom INTO...ASではこの句を使わず、SELECT内に複合キーFIRST/LASTを指定します。
+
+[完全なデータとソート付きROLLUPの例](../../../../tag-rollup-usage/extension-rollup/#composite-first-last).

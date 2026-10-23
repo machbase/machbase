@@ -49,7 +49,7 @@ CREATE ROLLUP [IF NOT EXISTS] rollup_name
   ON source_table(column_name)
   INTERVAL n (SEC|MIN|HOUR)
   [WAKEUP INTERVAL m (SEC|MIN|HOUR)]
-  [EXTENSION]
+  [EXTENSION [ORDER BY basetime_column [ASC|DESC], data_column [ASC|DESC] [, ...]]]
   [WHERE predicate];
 
 CREATE ROLLUP [IF NOT EXISTS] rollup_name
@@ -866,4 +866,219 @@ mtime                           COUNT(value)
 2022-01-01 00:00:00 000:000:000 365                  
 2023-01-01 00:00:00 000:000:000 365                  
 [2] row(s) selected.
+```
+
+<a id="composite-first-last"></a>
+
+## 複合キーFIRST/LASTとソート付きROLLUP
+
+> 複合ソートキーには、この機能を含むエンジンビルドが必要です。使用中の製品バージョンの対応状況を確認してください。
+
+8.5の対応キー型にはDECIMALと公開ROWIDを含みません。
+
+### サンプルデータ
+
+raw_tabはROLLUPのない元TAG、rollup_tabはソート付きROLLUPの集約元TAGです。
+同名オブジェクトがない別環境を前提とします。第1キーは時刻です。
+入力順は業務キー順と異なり、銘柄ごとの各分の開始時刻には同じcode/timeの行が3件あります。
+
+```sql
+CREATE TAG TABLE raw_tab (
+    code     VARCHAR(20) PRIMARY KEY,
+    time     DATETIME BASETIME,
+    price    DOUBLE SUMMARIZED,
+    seq      INTEGER,
+    event_id INTEGER
+);
+
+INSERT INTO raw_tab VALUES ('A', TO_DATE('2026-10-22 09:00:00'), 102, 1, 2);
+INSERT INTO raw_tab VALUES ('A', TO_DATE('2026-10-22 09:00:50'), 105, 1, 2);
+INSERT INTO raw_tab VALUES ('A', TO_DATE('2026-10-22 09:00:00'), 103, 2, 1);
+INSERT INTO raw_tab VALUES ('A', TO_DATE('2026-10-22 09:00:00'), 101, 1, 1);
+INSERT INTO raw_tab VALUES ('A', TO_DATE('2026-10-22 09:00:50'), 104, 1, 1);
+
+INSERT INTO raw_tab VALUES ('A', TO_DATE('2026-10-22 09:01:00'), 202, 1, 2);
+INSERT INTO raw_tab VALUES ('A', TO_DATE('2026-10-22 09:01:50'), 205, 1, 2);
+INSERT INTO raw_tab VALUES ('A', TO_DATE('2026-10-22 09:01:00'), 203, 2, 1);
+INSERT INTO raw_tab VALUES ('A', TO_DATE('2026-10-22 09:01:00'), 201, 1, 1);
+INSERT INTO raw_tab VALUES ('A', TO_DATE('2026-10-22 09:01:50'), 204, 1, 1);
+
+INSERT INTO raw_tab VALUES ('B', TO_DATE('2026-10-22 09:00:00'), 302, 1, 2);
+INSERT INTO raw_tab VALUES ('B', TO_DATE('2026-10-22 09:00:50'), 305, 1, 2);
+INSERT INTO raw_tab VALUES ('B', TO_DATE('2026-10-22 09:00:00'), 303, 2, 1);
+INSERT INTO raw_tab VALUES ('B', TO_DATE('2026-10-22 09:00:00'), 301, 1, 1);
+INSERT INTO raw_tab VALUES ('B', TO_DATE('2026-10-22 09:00:50'), 304, 1, 1);
+
+INSERT INTO raw_tab VALUES ('B', TO_DATE('2026-10-22 09:01:00'), 402, 1, 2);
+INSERT INTO raw_tab VALUES ('B', TO_DATE('2026-10-22 09:01:50'), 405, 1, 2);
+INSERT INTO raw_tab VALUES ('B', TO_DATE('2026-10-22 09:01:00'), 403, 2, 1);
+INSERT INTO raw_tab VALUES ('B', TO_DATE('2026-10-22 09:01:00'), 401, 1, 1);
+INSERT INTO raw_tab VALUES ('B', TO_DATE('2026-10-22 09:01:50'), 404, 1, 1);
+
+EXEC TABLE_FLUSH(raw_tab);
+
+SELECT COUNT(*) AS row_count FROM raw_tab;
+```
+
+### 元データ照会と同順位
+
+timeのみの場合、Aの09:00のFIRST候補は101/102/103、LAST候補は104/105です。
+(time, seq)ではFIRSTが101/102に絞られますが、time/seqが等しいため特定行は保証されません。
+次の照会はevent_idも比較して候補を決定します。
+
+```sql
+SELECT code, DATE_TRUNC('minute', time) AS bucket,
+       FIRST(time, price) AS first_price,
+       LAST(time, price) AS last_price
+  FROM raw_tab
+ WHERE time >= TO_DATE('2026-10-22 09:00:00')
+   AND time <  TO_DATE('2026-10-22 09:02:00')
+ GROUP BY code, bucket
+ ORDER BY code, bucket;
+```
+
+```sql
+SELECT code, DATE_TRUNC('minute', time) AS bucket,
+       FIRST((time, seq), price) AS first_price,
+       LAST((time, seq), price) AS last_price
+  FROM raw_tab
+ WHERE time >= TO_DATE('2026-10-22 09:00:00')
+   AND time <  TO_DATE('2026-10-22 09:02:00')
+ GROUP BY code, bucket
+ ORDER BY code, bucket;
+```
+
+```sql
+SELECT code, DATE_TRUNC('minute', time) AS bucket,
+       FIRST((time, seq, event_id), price) AS first_price,
+       LAST((time, seq, event_id), price) AS last_price
+  FROM raw_tab
+ WHERE time >= TO_DATE('2026-10-22 09:00:00')
+   AND time <  TO_DATE('2026-10-22 09:02:00')
+ GROUP BY code, bucket
+ ORDER BY code, bucket;
+```
+
+| code | bucket | first_price | last_price |
+|---|---|---:|---:|
+| A | 2026-10-22 09:00:00 | 101 | 105 |
+| A | 2026-10-22 09:01:00 | 201 | 205 |
+| B | 2026-10-22 09:00:00 | 301 | 305 |
+| B | 2026-10-22 09:01:00 | 401 | 405 |
+
+### キー別の方向
+
+```sql
+SELECT code, DATE_TRUNC('minute', time) AS bucket,
+       FIRST((time ASC, seq ASC, event_id DESC), price) AS first_price,
+       LAST((time ASC, seq ASC, event_id DESC), price) AS last_price
+  FROM raw_tab
+ WHERE time >= TO_DATE('2026-10-22 09:00:00')
+   AND time <  TO_DATE('2026-10-22 09:02:00')
+ GROUP BY code, bucket
+ ORDER BY code, bucket;
+```
+
+event_idのみDESCにすると、結果はA=102/104、202/204、B=302/304、402/404になります。
+
+### ソート付きROLLUPの定義と照会
+
+rollup_tabに同じデータを格納し、定義と一致するキーで照会します。
+ROLLUP_TABLEヒントは、この例で保存済みROLLUPを明示的に選択します。
+
+```sql
+CREATE TAG TABLE rollup_tab (
+    code     VARCHAR(20) PRIMARY KEY,
+    time     DATETIME BASETIME,
+    price    DOUBLE SUMMARIZED,
+    seq      INTEGER,
+    event_id INTEGER
+);
+
+INSERT INTO rollup_tab SELECT * FROM raw_tab;
+EXEC TABLE_FLUSH(rollup_tab);
+
+CREATE ROLLUP price_1m_ordered
+    ON rollup_tab(price)
+    INTERVAL 1 MIN
+    EXTENSION ORDER BY time ASC, seq ASC, event_id ASC;
+
+ALTER ROLLUP price_1m_ordered FORCE;
+```
+
+```sql
+SELECT /*+ ROLLUP_TABLE(price_1m_ordered) */
+       code, ROLLUP('min', 1, time) AS bucket,
+       FIRST((time, seq, event_id), price) AS first_price,
+       LAST((time, seq, event_id), price) AS last_price
+  FROM rollup_tab
+ WHERE time >= TO_DATE('2026-10-22 09:00:00')
+   AND time <  TO_DATE('2026-10-22 09:02:00')
+ GROUP BY code, bucket
+ ORDER BY code, bucket;
+```
+
+結果は元データの3キーASC照会と同じです。DESC照会には方向が一致する別の定義が必要です。
+
+```sql
+CREATE ROLLUP price_1m_desc
+    ON rollup_tab(price)
+    INTERVAL 1 MIN
+    EXTENSION ORDER BY time ASC, seq ASC, event_id DESC;
+
+ALTER ROLLUP price_1m_desc FORCE;
+
+SELECT /*+ ROLLUP_TABLE(price_1m_desc) */
+       code, ROLLUP('min', 1, time) AS bucket,
+       FIRST((time, seq, event_id DESC), price) AS first_price,
+       LAST((time, seq, event_id DESC), price) AS last_price
+  FROM rollup_tab
+ WHERE time >= TO_DATE('2026-10-22 09:00:00')
+   AND time <  TO_DATE('2026-10-22 09:02:00')
+ GROUP BY code, bucket
+ ORDER BY code, bucket;
+```
+
+### 上位ROLLUP
+
+```sql
+CREATE ROLLUP price_1h_ordered
+    FROM price_1m_ordered
+    INTERVAL 1 HOUR EXTENSION;
+
+ALTER ROLLUP price_1h_ordered FORCE;
+
+SELECT /*+ ROLLUP_TABLE(price_1h_ordered) */
+       code, ROLLUP('hour', 1, time) AS bucket,
+       FIRST((time, seq, event_id), price) AS first_price,
+       LAST((time, seq, event_id), price) AS last_price
+  FROM rollup_tab
+ GROUP BY code, bucket
+ ORDER BY code, bucket;
+```
+
+上位ROLLUPは下位のソート定義と元の候補キーを継承します。時間単位の結果はA=101/205、B=301/405です。
+
+### 定義の一致と変更制約
+
+- 第1キーは元TAGのBASETIME、補助キーは対応する通常データカラムでなければなりません。
+  TAG名、メタデータ、式、テーブル名付きカラム参照は定義に使用できません。
+- 数値対象のソート付きEXTENSIONをサポートします。JSON_PATH/JSON_SUMMARYとの組み合わせは非対応です。
+- キー数・カラム・順序・方向・型は定義と一致する必要があります。異なる方向をヒントで強制するとエラーになります。
+- 既存の時刻のみのROLLUPには補助キーがありません。新定義で元データを再集計します。削除済みの元キーは復元できません。
+- 保存候補キーによって、通常のWHERE・GROUP BY・出力で元カラムを利用できる範囲が拡大することはありません。
+- ソートメタデータや生成SQLの長さ制限を超える定義は作成時に拒否されます。
+- Standardでは参照キーのRENAMEをERR-02686で拒否します。停止中ジョブと上位の依存関係にも適用します。
+  関連する上位・下位ROLLUPをすべてDROPした後、カラム名を変更して再作成します。
+- 元データUPDATE後の自動再集計を追加する機能ではありません。
+- Clusterの全broker・warehouseに、機能をサポートする同一ビルドが必要です。
+
+### サンプルオブジェクトの削除
+
+```sql
+DROP ROLLUP price_1h_ordered;
+DROP ROLLUP price_1m_desc;
+DROP ROLLUP price_1m_ordered;
+DROP TABLE rollup_tab;
+DROP TABLE raw_tab;
 ```

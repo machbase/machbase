@@ -36,7 +36,7 @@ Clusterの状態は、関連するノードと階層ごとに確認します。
 ## 集計と選択
 
 通常の数値ROLLUPはMIN/MAX/SUM/COUNT/AVG/SUMSQを提供し、拡張ROLLUPはFIRST/LASTも提供します。
-Customの部分結果はユーザーが再集計します。平均は合計と有効件数を使い、FIRST/LASTは対応する時刻を
+Customの部分結果はユーザーが再集計します。平均は合計と有効件数を使い、FIRST/LASTは対応する元時刻と補助キーを
 保持して統合します。JSONドキュメント全体のCOUNTは保存された集計件数であり、元のCOUNT(value)と
 常に一致するわけではありません。
 
@@ -63,3 +63,15 @@ GRANT CREATE, DROP ON DATABASE MACHBASEDB TO rollup_user;
 ```
 
 [権限管理](../../../security-access-control/privileges/)で所有者と作業範囲を確認してください。
+
+## 複合キーFIRST/LASTの対応範囲
+
+> 複合ソートキーには、この機能を含むエンジンビルドが必要です。使用中の製品バージョンの対応状況を確認してください。
+
+複合キーの元データ照会と数値対象のソート付きEXTENSIONは、対応ビルドのStandard・Clusterで使用できます。
+Custom SELECTと格納先TAGの再集計はStandard専用であり、Cluster Custom workerの新規対応は含みません。
+ソート付きROLLUPの第1キーはBASETIMEですが、Custom格納先の通常の再集計にこの制約は適用しません。
+照会キー・方向は保存定義と一致する必要があり、既存の時刻のみの要約から補助キーは復元できません。
+Clusterの全ノードに同じ対応ビルドが必要です。公開ROWIDは対応確認前のこのバージョンの例には含めません。
+
+[完全なデータとソート付きROLLUPの例](../../../tag-rollup-usage/extension-rollup/#composite-first-last).

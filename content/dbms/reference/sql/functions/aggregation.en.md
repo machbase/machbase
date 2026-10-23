@@ -6,7 +6,7 @@ toc: true
 ---
 
 Aggregate functions combine values from multiple rows into one result. With GROUP BY, they return
-results per group. NULL values are ignored, except by COUNT(*).
+results per group. NULL handling depends on the function; FIRST/LAST preserve a selected NULL return value.
 
 ## Quick Reference
 
@@ -21,8 +21,8 @@ results per group. NULL values are ignored, except by COUNT(*).
 | STDDEV_POP | `STDDEV_POP(col)` | Population standard deviation |
 | VARIANCE | `VARIANCE(col)` | Sample variance |
 | VAR_POP | `VAR_POP(col)` | Population variance |
-| FIRST | `FIRST(sort_expr, return_expr)` | Value from the first row by the sort expression |
-| LAST | `LAST(sort_expr, return_expr)` | Value from the last row by the sort expression |
+| FIRST | `FIRST(sort_expr, return_expr)` / `FIRST((key1, key2, ...), return_expr)` | Value from the first row by the sort expression |
+| LAST | `LAST(sort_expr, return_expr)` / `LAST((key1, key2, ...), return_expr)` | Value from the last row by the sort expression |
 | SUMSQ | `SUMSQ(col)` | Sum of squares |
 | MEDIAN | `MEDIAN(col)` | Median |
 | MODE | `MODE(col)` | Most frequent value |
@@ -196,6 +196,54 @@ Returns `return_expr` from the first (FIRST) or last (LAST) row in each group or
 FIRST(sort_expr, return_expr)
 LAST(sort_expr, return_expr)
 ```
+
+### Composite sort keys
+
+> Composite sort keys require an engine build that includes this feature. Check support in the deployed product version.
+
+```text
+FIRST((key1 [ASC | DESC], key2 [ASC | DESC], ...), return_expr)
+LAST ((key1 [ASC | DESC], key2 [ASC | DESC], ...), return_expr)
+```
+
+Specify two or more keys in parentheses as the first argument. Keys are compared from left to right;
+the next key is considered only when preceding keys are equal. The default direction is ASC.
+FIRST returns the expression from the first row in that order, and LAST from the last row.
+The syntax does not limit the number of keys to three.
+
+- Rows with a NULL first key are excluded. NULL secondary keys follow the type's ORDER BY comparison rules.
+- A NULL return value in the selected row is returned unchanged.
+- Equal values for every key do not identify a particular row. Deterministic selection requires a unique business key.
+- Integer types, FLOAT/DOUBLE, DATETIME, VARCHAR, IPV4/IPV6 sort keys are supported.
+  BINARY keys and DISTINCT with composite keys are not supported.
+- Ordinary SELECT keys are not restricted to BASETIME. The ordered EXTENSION definition has a separate restriction.
+- An outer ORDER BY sorts output rows; it does not replace the function's selection criteria.
+- Additional key reads, comparisons, copies, and state incur costs; unchanged performance is not guaranteed.
+
+event_id distinguishes rows with equal time and seq. The time direction can remain ASC while event_id uses DESC.
+
+```sql
+SELECT code,
+       FIRST((time, seq, event_id), price) AS first_price,
+       LAST((time ASC, seq ASC, event_id DESC), price) AS last_price
+  FROM raw_tab
+ GROUP BY code;
+```
+
+Different key directions in SELECT and ORDER BY select independent candidates. Use the output alias to sort by the displayed aggregate.
+
+```sql
+SELECT code, FIRST((time, seq, event_id), price) AS first_price
+  FROM raw_tab
+ GROUP BY code
+ ORDER BY FIRST((time, seq, event_id DESC), price);
+```
+
+Public ROWID sort keys are outside the support scope of this document.
+
+[Complete data and ordered ROLLUP example](../../../../tag-rollup-usage/extension-rollup/#composite-first-last).
+
+### Single-key example
 
 ```sql
 Mach> SELECT group_no, FIRST(id, name) FROM firstlast_table GROUP BY group_no;

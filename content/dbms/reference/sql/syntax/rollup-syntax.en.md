@@ -20,7 +20,7 @@ CREATE ROLLUP [IF NOT EXISTS] name
     ON source_tag [(column_name | json_path_expression)]
     INTERVAL n { SEC | MIN | HOUR }
     [WAKEUP INTERVAL m { SEC | MIN | HOUR }]
-    [EXTENSION]
+    [EXTENSION [ORDER BY basetime_column [ASC | DESC], data_column [ASC | DESC] [, ...]]]
     [WHERE predicate];
 
 CREATE ROLLUP [IF NOT EXISTS] name
@@ -37,7 +37,7 @@ CREATE ROLLUP [IF NOT EXISTS] name
     [WAKEUP INTERVAL m { SEC | MIN | HOUR }];
 ```
 
-- EXTENSION is a standalone keyword; do not append an extension_name.
+- EXTENSION optionally accepts ORDER BY sort keys. Do not append an extension_name.
 - CREATE uses SEC/MIN/HOUR. Distinguish these from query units such as DAY.
 - Ordinary numeric columns can be specified without SUMMARIZED. JSON path aggregation differs from
   whole-document aggregation; whole-document and automatic WITH ROLLUP creation require SUMMARIZED.
@@ -104,3 +104,23 @@ Whole-document JSON COUNT and per-path counts have separate contracts.
 
 For runnable creation, query, and error examples, see [Chapter 6: Using ROLLUP](/dbms/tag-rollup-usage/)
 and [Query Syntax](/dbms/tag-rollup-usage/query-syntax-rollup/).
+
+## Ordered EXTENSION definition
+
+> Composite sort keys require an engine build that includes this feature. Check support in the deployed product version.
+
+```text
+CREATE ROLLUP [IF NOT EXISTS] name
+    ON source_tag (numeric_column)
+    INTERVAL n { SEC | MIN | HOUR }
+    [WAKEUP INTERVAL m { SEC | MIN | HOUR }]
+    EXTENSION ORDER BY basetime_column [ASC | DESC],
+                       data_column [ASC | DESC] [, ...]
+    [WHERE predicate];
+```
+
+Specify ORDER BY after EXTENSION in an ON definition. EXTENSION without ORDER BY remains valid.
+A FROM hierarchy inherits the source keys and directions; do not specify ORDER BY again.
+Custom INTO...AS uses composite FIRST/LAST inside SELECT, not this clause.
+
+[Complete data and ordered ROLLUP example](../../../../tag-rollup-usage/extension-rollup/#composite-first-last).

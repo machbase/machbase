@@ -37,7 +37,7 @@ Cluster의 상태는 관련 노드와 계층별로 확인합니다.
 
 일반 숫자 ROLLUP은 MIN/MAX/SUM/COUNT/AVG/SUMSQ, 확장은 FIRST/LAST를 추가로
 제공합니다. Custom의 부분 결과는 사용자가 재집계합니다. 평균은 합계와 유효 건수로,
-FIRST/LAST는 대응 시각을 함께 유지해 합칩니다.
+FIRST/LAST는 대응 원본 시각과 사용하는 보조 정렬 키를 함께 유지해 합칩니다.
 JSON 문서 전체의 COUNT는 저장된 집계 건수이며 원본 COUNT(value)와 무조건 같지 않습니다.
 
 후보 선택은 조건·컬럼·경로·모드·간격에 따릅니다. 일반/확장만으로 우선순위를 단정하거나,
@@ -64,3 +64,15 @@ GRANT CREATE, DROP ON DATABASE MACHBASEDB TO rollup_user;
 
 [권한 관리](../../../security-access-control/privileges/)에서 소유자와 작업 범위를
 확인하십시오.
+
+## 복합 키 FIRST/LAST 지원 범위
+
+> 복합 정렬 키 구문은 해당 기능이 반영된 엔진 빌드에서 사용합니다. 사용 중인 제품 버전의 지원 여부를 확인해야 합니다.
+
+복합 키 원본 조회와 숫자 대상의 정렬 EXTENSION ROLLUP은 지원 빌드의 Standard·Cluster에서 사용합니다.
+Custom SELECT와 목적 TAG 재집계는 Standard 전용입니다. Cluster Custom worker 신규 지원은 포함하지 않습니다.
+정렬 ROLLUP의 첫 키는 BASETIME이지만 Custom 목적 TAG의 일반 재집계에는 이 제한을 적용하지 않습니다.
+조회 키·방향과 저장 정의가 일치해야 하며 기존 시간 전용 요약에서 보조 키를 복원하지 않습니다.
+Cluster는 전 노드에 같은 지원 빌드를 배포해야 합니다. 공개 ROWID는 지원이 확인되기 전까지 이 버전의 예제에 포함하지 않습니다.
+
+[전체 데이터와 정렬 ROLLUP 예제](../../../tag-rollup-usage/extension-rollup/#composite-first-last).
