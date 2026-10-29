@@ -31,8 +31,15 @@ Web UI のパッケージ一覧から必要なパッケージをインストー�
     subtitle="Blackbox パッケージ（`neo-pkg-blackbox`）は、カメラ映像と検出イベントを管理する映像監視機能です。Blackbox サーバーとカメラを登録し、物体検出・イベント規則を設定して発生履歴を確認できます。Neo ダッシュボードの Video パネルではライブ映像と録画を表示し、録画を時系列チャートの時点に合わせて比較できます。">}}
 
   <!-- 代表画像: neo-pkg-llm-chat/docs/images/llm-chat-main.png。必要に応じて差し替え可能。 -->
-  {{< card link="https://machbase.github.io/neo-pkg-llm-chat/kr/"
+  {{< card link="https://machbase.github.io/neo-pkg-llm-chat/ja/"
     image="/images/package/llm-chat.png" icon="gift"
     title="LLM Chat"
     subtitle="LLM Chat パッケージ（`neo-pkg-llm-chat`）は、自然言語の対話で Machbase Neo データを検索・分析する AI チャット機能です。テーブルやタグを参照し、対話を通じてダッシュボードや分析レポートを作成できます。複数の LLM モデルに対応し、使用するモデルと接続情報を Web 設定画面で管理できます。">}}
+
+  <!-- 代表画像: neo-pkg-bearing-analytics/docs/static/images/monitoring.png。必要に応じて差し替え可能。 -->
+  {{< card link="https://machbase.github.io/neo-pkg-bearing-analytics/ja/"
+    image="/images/package/bearing-analytics.png" icon="gift"
+    title="Bearing Analytics"
+    subtitle="Bearing Analytics パッケージ（`neo-pkg-bearing-analytics`）は、Machbase Neo に蓄積される振動センサーデータからベアリングの欠陥を診断する機能を提供します。クエリやコードを書かずに、設備ごとに回転数とベアリングの型番を入力するだけで、欠陥周波数を根拠にすべての設備のベアリング状態をリアルタイムで判定します。詳細分析画面と HTML レポートで判定根拠と措置を確認でき、サーバー監視とメッセンジャー通知により、アプリを閉じても監視を続けられます。">}}
+  
 {{< /cards >}}

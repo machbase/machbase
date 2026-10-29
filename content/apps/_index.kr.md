@@ -34,4 +34,11 @@ Machbase Neo 패키지는 데이터 수집과 복제, 영상 모니터링, AI �
     image="/images/package/llm-chat.png" icon="gift"
     title="LLM Chat"
     subtitle="LLM Chat 패키지(`neo-pkg-llm-chat`)는 자연어 대화로 Machbase Neo 데이터를 조회하고 분석하는 AI 채팅 기능을 제공합니다. 테이블과 태그를 탐색하고, 대화를 통해 대시보드와 분석 리포트를 만들 수 있습니다. 다양한 LLM 모델을 지원하며, 웹 설정 화면에서 사용할 모델과 연결 정보를 관리할 수 있습니다.">}}
+
+  <!-- 대표 이미지: neo-pkg-bearing-analytics/docs/static/images/monitoring.png. 추후 이미지 교체 가능. -->
+  {{< card link="https://machbase.github.io/neo-pkg-bearing-analytics/kr/"
+    image="/images/package/bearing-analytics.png" icon="gift"
+    title="Bearing Analytics"
+    subtitle="Bearing Analytics 패키지(`neo-pkg-bearing-analytics`)는 Machbase Neo에 쌓이는 진동 센서 데이터로 베어링 결함을 진단하는 기능을 제공합니다. 쿼리나 코드 없이 설비마다 회전수와 베어링 품번만 넣으면, 결함 주파수를 근거로 모든 설비의 베어링 상태를 실시간으로 판정합니다. 상세분석 화면과 HTML 리포트에서 판정 근거와 조치를 확인할 수 있으며, 서버 감시와 메신저 알림으로 앱을 닫아도 감시를 이어 갈 수 있습니다.">}}
+
 {{< /cards >}}
