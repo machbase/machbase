@@ -35,4 +35,11 @@ then configure and manage them in your browser.
     image="/images/package/llm-chat.png" icon="gift"
     title="LLM Chat"
     subtitle="The LLM Chat package (`neo-pkg-llm-chat`) provides an AI chat interface for querying and analyzing Machbase Neo data in natural language. You can explore tables and tags, and create dashboards and analysis reports through conversation. It supports a variety of large language models (LLMs), with model selection and connection settings managed through the web UI.">}}
+
+  <!-- Representative image: neo-pkg-bearing-analytics/docs/static/images/monitoring.png. Replace as needed. -->
+  {{< card link="https://machbase.github.io/neo-pkg-bearing-analytics/en/"
+    image="/images/package/bearing-analytics.png" icon="gift"
+    title="Bearing Analytics"
+    subtitle="The Bearing Analytics package (`neo-pkg-bearing-analytics`) diagnoses bearing faults from the vibration sensor data stored in Machbase Neo. With no queries or code, just enter the RPM and bearing model for each machine, and it grades the bearing condition of every machine in real time based on bearing defect frequencies. The Detail Analysis screen and HTML reports show the evidence behind each verdict and the actions to take, and server monitoring with messenger notifications keeps watch even after the app is closed.">}}
+    
 {{< /cards >}}
