@@ -37,7 +37,7 @@ In Cluster Edition, check status by relevant node and hierarchy level.
 
 Ordinary numeric ROLLUP provides MIN/MAX/SUM/COUNT/AVG/SUMSQ; extended ROLLUP also provides
 FIRST/LAST. Users must reaggregate partial Custom results. Combine averages using sums and valid
-counts, and preserve corresponding timestamps when combining FIRST/LAST.
+counts, and preserve original timestamps and secondary sort keys when combining FIRST/LAST.
 Whole-document JSON COUNT is the stored aggregate count and need not equal the original COUNT(value).
 
 Candidate selection depends on predicates, columns, paths, mode, and interval. Do not infer priority
@@ -65,3 +65,27 @@ GRANT CREATE, DROP ON DATABASE MACHBASEDB TO rollup_user;
 
 Check ownership and operation scope in
 [Privilege Management](../../../security-access-control/privileges/).
+
+## Composite FIRST/LAST support
+
+> Composite FIRST/LAST sort keys and ordered EXTENSION ROLLUPs are supported from Machbase 8.7.3.
+> Edition-specific restrictions are described below.
+
+Composite source queries and numeric ordered EXTENSION ROLLUPs are supported in Standard
+and Cluster from 8.7.3. Custom ROLLUP creation and its worker are Standard-only; Cluster
+returns `ERR-02837`. An ordinary SELECT that reaggregates summary rows already stored in a
+TAG using composite FIRST/LAST is supported in Cluster as a distributed TAG query.
+The first key of an ordered ROLLUP definition must be BASETIME; this does not restrict the
+stored source timestamps used in ordinary TAG reaggregation.
+
+Public ROWID secondary keys are Standard-only and explicit. They preserve the original row's
+identifier, not insertion order; existing ROWID restrictions remain. Cluster does not support them.
+DECIMAL sort keys are supported. Query keys and directions must match the stored definition.
+Deploy the same supporting build on all Cluster nodes; mixed binaries are unsupported.
+
+Opening or MOUNTing an ordered-ROLLUP DB with an older binary lacking this feature is
+unsupported, even if metadata version checks pass. Restore a pre-feature backup to roll back;
+dropping ordered objects alone does not guarantee compatibility.
+See [migration and rollback restrictions](../../../tag-rollup-usage/extension-rollup/#ordered-rollup-compatibility).
+
+[Complete data and ordered ROLLUP example](../../../tag-rollup-usage/extension-rollup/#composite-first-last).

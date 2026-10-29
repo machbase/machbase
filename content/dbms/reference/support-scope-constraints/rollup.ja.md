@@ -36,7 +36,7 @@ Clusterの状態は、関連するノードと階層ごとに確認します。
 ## 集計と選択
 
 通常の数値ROLLUPはMIN/MAX/SUM/COUNT/AVG/SUMSQを提供し、拡張ROLLUPはFIRST/LASTも提供します。
-Customの部分結果はユーザーが再集計します。平均は合計と有効件数を使い、FIRST/LASTは対応する時刻を
+Customの部分結果はユーザーが再集計します。平均は合計と有効件数を使い、FIRST/LASTは対応する元時刻と補助キーを
 保持して統合します。JSONドキュメント全体のCOUNTは保存された集計件数であり、元のCOUNT(value)と
 常に一致するわけではありません。
 
@@ -63,3 +63,25 @@ GRANT CREATE, DROP ON DATABASE MACHBASEDB TO rollup_user;
 ```
 
 [権限管理](../../../security-access-control/privileges/)で所有者と作業範囲を確認してください。
+
+## 複合キーFIRST/LASTの対応範囲
+
+> 複合キーFIRST/LASTとソート付きEXTENSION ROLLUPはMachbase 8.7.3から対応します。エディション別の制約は以下を確認してください。
+
+複合キーの元データ照会と数値対象のソート付きEXTENSION ROLLUPは、8.7.3からStandard・Clusterで対応します。
+Custom ROLLUPの作成とworkerはStandard専用であり、Clusterは`ERR-02837`を返します。
+通常のTAGに保存済みの要約行を複合FIRST/LASTで再集計するSELECTは、Clusterでも
+通常の分散TAG照会として対応します。ソート付きROLLUP定義の第1キーはBASETIMEですが、
+通常のTAG再集計で使う元の候補時刻にこの制約は適用しません。
+
+公開ROWID補助キーはStandard専用で、明示的に指定します。元の行識別子を保持しますが、
+入力順序を意味せず、既存のROWID制限も維持します。Clusterは非対応です。
+DECIMALソートキーにも対応します。照会キー・方向は保存定義と一致する必要があります。
+Clusterの全ノードに同じ対応ビルドを配備し、異なるバイナリの混在は避けてください。
+
+ソート付きROLLUPのDBを非対応の旧バイナリで開く、またはMOUNTする運用は、
+メタバージョン検査を通過しても非対応です。戻す場合は導入前のバックアップを復元します。
+ソート付きオブジェクトのDROPだけでは互換性を保証しません。
+[移行・ロールバック制約](../../../tag-rollup-usage/extension-rollup/#ordered-rollup-compatibility)を確認してください。
+
+[完全なデータとソート付きROLLUPの例](../../../tag-rollup-usage/extension-rollup/#composite-first-last)。

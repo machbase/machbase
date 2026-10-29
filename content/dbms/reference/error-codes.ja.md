@@ -36,6 +36,17 @@ Machbaseのエラーは、machsql、ドライバーの例外メッセージ、�
 | `ERR-02026` | `The number of insert values and that of columns are mismatched.` | INSERTの列数と値の数が不一致 |
 | `ERR-02030` | `Column name (%s) does not exist.` | 存在しない列を指定 |
 
+## ROLLUPのエラー
+
+| コード | メッセージ | 主な原因 |
+|------|--------|-----------|
+| `ERR-02685` | `There are no applicable ROLLUP tables.` | 照会に使用できるROLLUPがない。ソート付きROLLUPしかない場合の単一キーFIRST/LAST照会を含む |
+| `ERR-02686` | `The names of column(%s) associated with ROLLUP cannot be changed.` | ROLLUPが参照する列（ソートキー列を含む）の名前変更 |
+| `ERR-02813` | `Invalid ROLLUP expression. (Token = %s, Unit = %ld)` | 無効なROLLUP定義・照会。ソート付きROLLUPのToken: `ROLLUP ordering mismatch`（ヒントで指定したROLLUPのソート定義が照会と異なる）、`EXTENSION ORDER BY`（非対応のソートキー、または定義長の超過）、`ordering query exceeds supported size`（キーが多く内部生成SQLの長さを超過） |
+| `ERR-02837` | `Custom rollup is not supported in cluster edition.` | Cluster EditionでのCustom ROLLUP作成 |
+
+ソート付きROLLUPのエラーの詳細な条件は[複合キーFIRST/LASTとソート付きROLLUP](/dbms/tag-rollup-usage/extension-rollup/#composite-first-last)を参照してください。
+
 ## システムリソースのエラー
 
 | コード | メッセージ | 主な原因 |

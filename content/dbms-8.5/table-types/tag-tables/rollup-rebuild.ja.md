@@ -140,6 +140,14 @@ START ROLLUP rollup_stock_1m;
 
 `FIRST/LAST` の補助時刻列も再計算する必要があります。
 
+複合キーのCustom SELECTでは、価格と同じFIRST/LASTキー一覧で選択した元の時刻と
+すべての補助キーも再計算します。格納先TAGはバケット時刻だけでなく保存した元キーで再集計します。
+[型を保持する例](../rollup-custom/#composite-key-ohlc)を参照してください。
+これはソート付きEXTENSIONをROLLUP_REBUILDの対象に追加するものではありません。
+ソート付きオブジェクトは保存済みの元データから再作成してください。
+
+以下のSQLは、時刻だけを候補選択キーに使う従来の単一キーの例です。
+
 ```sql
 STOP ROLLUP rollup_stock_candle_1m;
 
@@ -166,7 +174,9 @@ EXEC TABLE_FLUSH('stock_candle_1m');
 START ROLLUP rollup_stock_candle_1m;
 ```
 
-最終取得時は引き続き `FIRST(firsttime, open)` と `LAST(lasttime, close)` で統合します。
+上記の単一キーの例では、最終取得時に`FIRST(firsttime, open)`と`LAST(lasttime, close)`で統合します。
+複合キーの要約は、`FIRST((open_time, open_gvol), open_price)`と
+`LAST((close_time, close_gvol), close_price)`のように、保存した元の時刻とすべての補助キーで統合します。
 
 ### 階層ロールアップの順序 {#rollup-on-rollup-order}
 

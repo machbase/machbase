@@ -2,6 +2,7 @@
 title : '함수'
 type: docs
 weight: 70
+toc: true
 tocSort: true
 ---
 
@@ -806,6 +807,57 @@ FROM t_bin;
 FIRST(sort_expr, return_expr)
 LAST(sort_expr, return_expr)
 ```
+
+### 복합 정렬 키
+
+> 복합 키 FIRST/LAST와 정렬 EXTENSION ROLLUP은 Machbase 8.5.13부터 지원합니다. 에디션별 제약은 아래 설명을 확인하십시오.
+
+```text
+FIRST((key1 [ASC | DESC], key2 [ASC | DESC], ...), return_expr)
+LAST ((key1 [ASC | DESC], key2 [ASC | DESC], ...), return_expr)
+```
+
+첫 번째 인자에 괄호로 묶은 2개 이상의 키를 지정합니다. 키를 왼쪽부터 비교하고,
+같은 값이면 다음 키를 비교합니다. 방향 생략은 ASC이며 FIRST는 지정한 순서의 첫 행,
+LAST는 마지막 행의 반환식을 반환합니다. 키 개수를 3개로 제한하는 문법은 아닙니다.
+
+- 첫 키가 NULL인 행은 후보에서 제외합니다. 보조 키의 NULL 비교는 해당 타입의 ORDER BY 규칙을 따릅니다.
+- 선택된 행의 반환값이 NULL이면 그대로 NULL을 반환합니다.
+- 모든 키가 같으면 특정 행 선택을 보장하지 않습니다. 결정적인 결과에는 고유한 업무 키가 필요합니다.
+- 정수형, FLOAT/DOUBLE, DATETIME, VARCHAR, IPV4/IPV6 정렬 키를 지원합니다.
+  BINARY 키와 복합 키 형태의 DISTINCT는 지원하지 않습니다.
+- 일반 SELECT의 키는 BASETIME으로 제한되지 않으며 `seq + 1` 같은 비교 가능한 표현식도 사용할 수 있습니다.
+  정렬 EXTENSION ROLLUP 정의와 ROLLUP 조회에는 원본 컬럼만 사용합니다.
+- 외부 ORDER BY는 출력 행을 정렬하며 함수 내부의 선택 기준을 대신하지 않습니다.
+- 추가 키의 읽기·비교·복사·상태 유지 비용이 있으므로 성능 무저하를 보장하지 않습니다.
+
+시간과 seq가 같은 행은 event_id로 구분합니다. time은 ASC로 유지하고 event_id만 DESC로 바꿀 수도 있습니다.
+
+```sql
+SELECT code,
+       FIRST((time, seq, event_id), price) AS first_price,
+       LAST((time ASC, seq ASC, event_id DESC), price) AS last_price
+  FROM raw_tab
+ GROUP BY code;
+```
+
+SELECT와 ORDER BY에서 다른 키 방향을 지정하면 각각 별도 후보를 선택합니다. 출력한 집계값으로 정렬할 때는 해당 별칭을 사용합니다.
+
+```sql
+SELECT code, FIRST((time, seq, event_id), price) AS first_price
+  FROM raw_tab
+ GROUP BY code
+ ORDER BY FIRST((time, seq, event_id DESC), price);
+```
+
+8.5에서는 DECIMAL과 공개 ROWID 정렬 키를 지원하지 않습니다. `seq`, `trade_seq` 같은
+일반 업무 순번 컬럼을 정의하고 입력 시 값을 채우십시오. 엔진이 자동으로 추가하지 않습니다.
+ROWID를 지정하면 SELECT는 `ERR-02056`, ROLLUP 정의는
+`ERR-02813`(`Token = EXTENSION ORDER BY, Unit = 0`)을 반환합니다.
+
+[전체 데이터와 정렬 ROLLUP 예제](../../table-types/tag-tables/rollup-tables/#composite-first-last).
+
+### 단일 키 예제
 
 ```sql
 Mach> create table firstlast_table (id integer, name varchar(20), group_no integer);

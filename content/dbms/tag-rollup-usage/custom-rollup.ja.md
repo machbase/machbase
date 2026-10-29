@@ -33,7 +33,7 @@ SELECT内のWHEREは使用できますが、BASETIMEの直接条件は許可さ�
 ジョブは新しい入力だけを処理するため、同じバケットに複数の結果行が存在し得ます。
 行数をバケット数と解釈しないでください。
 
-## 1. 合計と有効件数の実習
+## 合計と有効件数の例
 
 ```sql
 CREATE TAG TABLE ch6_custom_src (
@@ -90,9 +90,9 @@ NULLを平均の分母に含めないようCOUNT(value)を使用し、NULLを含
 時間稼働率として解釈するには、観測間隔・欠損処理・状態の継続時間を反映する必要があります。
 比率も部分比率を平均せず、分子と分母をそれぞれ合算します。
 
-## 2. OHLCVと1分→10分のCustom階層
+## OHLCVと1分→10分のCustom階層
 
-独立した実習です。FIRST/LASTの再集計のため、元の最初・最後の観測時刻も保存します。
+独立した例です。FIRST/LASTの再集計のため、元の最初・最後の観測時刻も保存します。
 
 ```sql
 CREATE TAG TABLE ch6_ticks (
@@ -173,5 +173,180 @@ DROP TABLE ch6_custom_src;
 ```
 
 EXT_TYPE=2はCustomを表し、PREDICATEにはSELECT本文が記録されます。
-クリーンアップでは、実行した実習のオブジェクトだけを対象にしてください。
+クリーンアップでは、実行した例のオブジェクトだけを対象にしてください。
 元データの補正と上位の再集計の再試行・完了確認は、[制御と状態](../ingestion-control-rollup/)およびREBUILDの手順に従ってください。
+
+<a id="composite-key-ohlc"></a>
+
+## 複合キーを保持したOHLC再集計
+
+> 複合キーFIRST/LASTとソート付きEXTENSION ROLLUPはMachbase 8.7.3から対応します。エディション別の制約は以下を確認してください。
+
+この例のCustom作成はStandard専用です。通常のTAGに保存済みの要約行を再集計する
+SELECTは別の操作であり、Clusterでも対応します。マージ時も元の時刻と補助キーの
+カラムを同じ基準で使用してください。
+
+Standard Custom ROLLUPのSELECTでも複合キーFIRST/LASTを使用できます。
+Custom定義にはEXTENSION ORDER BYを付けません。選択価格と同じ行の元時刻・DOUBLEキーを
+一緒に保存し、部分集計のマージでも順序を維持します。以下は別のオブジェクトを使用する例です。
+
+### 元テーブルと格納先のスキーマ
+
+```sql
+CREATE TAG TABLE custom_ticks (
+    code  VARCHAR(16) PRIMARY KEY,
+    time  DATETIME BASETIME,
+    price INTEGER,
+    gvol  DOUBLE
+);
+
+CREATE TAG TABLE custom_ticks_1s (
+    code        VARCHAR(16) PRIMARY KEY,
+    time        DATETIME BASETIME,
+    open_price  INTEGER,
+    open_time   DATETIME,
+    open_gvol   DOUBLE,
+    close_price INTEGER,
+    close_time  DATETIME,
+    close_gvol  DOUBLE,
+    high_price  INTEGER,
+    low_price   INTEGER
+);
+```
+
+### 1秒集計の定義
+
+出力カラム順を格納先スキーマと一致させます。例では入力前にSTOPして自動処理を止め、FORCEで明示的に処理します。
+
+```sql
+CREATE ROLLUP custom_ticks_rollup_1s
+INTO (custom_ticks_1s) AS (
+    SELECT code,
+           DATE_TRUNC('second', time) AS time,
+           FIRST((time, gvol), price) AS open_price,
+           FIRST((time, gvol), time)  AS open_time,
+           FIRST((time, gvol), gvol)  AS open_gvol,
+           LAST((time, gvol), price)  AS close_price,
+           LAST((time, gvol), time)   AS close_time,
+           LAST((time, gvol), gvol)   AS close_gvol,
+           MAX(price) AS high_price,
+           MIN(price) AS low_price
+      FROM custom_ticks
+     GROUP BY code, time
+) INTERVAL 1 SEC;
+
+STOP ROLLUP custom_ticks_rollup_1s;
+```
+
+### 入力と集計
+
+同じ時刻に3件ずつ入力し、gvolには通常のDOUBLE業務キーを使用します。
+09:01:29.999と09:01:30の値は時刻優先の境界例であり、単調増加する本番の累積量を表すものではありません。
+
+```sql
+INSERT INTO custom_ticks VALUES ('AAPL', '2026-10-19 09:01:00', 201, 2.5);
+INSERT INTO custom_ticks VALUES ('AAPL', '2026-10-19 09:01:00', 200, 1.25);
+INSERT INTO custom_ticks VALUES ('AAPL', '2026-10-19 09:01:00', 202, 3.75);
+
+INSERT INTO custom_ticks VALUES ('AAPL', '2026-10-19 09:01:50', 205, 5.5);
+INSERT INTO custom_ticks VALUES ('AAPL', '2026-10-19 09:01:50', 198, 4.25);
+INSERT INTO custom_ticks VALUES ('AAPL', '2026-10-19 09:01:50', 206, 6.75);
+
+INSERT INTO custom_ticks VALUES ('AAPL', '2026-10-19 09:01:29.999', 204, 0.25);
+INSERT INTO custom_ticks VALUES ('AAPL', '2026-10-19 09:01:30', 203, 999.5);
+
+EXEC TABLE_FLUSH(custom_ticks);
+EXEC ROLLUP_FORCE(custom_ticks_rollup_1s);
+```
+
+### 保存する元のキー
+
+```sql
+SELECT code, time, open_price, open_time, open_gvol,
+       close_price, close_time, close_gvol, high_price, low_price
+  FROM custom_ticks_1s
+ ORDER BY code, time, open_time, close_time;
+```
+
+格納先timeは1秒バケット時刻、open_time/close_timeは選択した元時刻です。
+元の09:01:29.999はバケット09:01:29に属しますが、候補時刻は09:01:29.999を保持します。
+同じバケットに複数の部分行が保存されるため、行数をバケット数と解釈しません。
+
+### 30秒再集計
+
+バケット計算には格納先timeを使い、候補選択には(open_time, open_gvol)と
+(close_time, close_gvol)を使います。この通常のDATETIMEキーはBASETIMEである必要はありません。
+
+```sql
+SELECT code,
+       DATE_BIN('sec', 30, time) AS bucket,
+       FIRST((open_time, open_gvol), open_price) AS open_price,
+       LAST((close_time, close_gvol), close_price) AS close_price,
+       MAX(high_price) AS high_price,
+       MIN(low_price) AS low_price
+  FROM custom_ticks_1s
+ GROUP BY code, bucket
+ ORDER BY code, bucket;
+```
+
+| code | bucket | open_price | close_price | high_price | low_price |
+|---|---|---:|---:|---:|---:|
+| AAPL | 2026-10-19 09:01:00 | 200 | 204 | 204 | 200 |
+| AAPL | 2026-10-19 09:01:30 | 203 | 206 | 206 | 198 |
+
+### 元データ集計との比較
+
+```sql
+SELECT code,
+       DATE_BIN('sec', 30, time) AS bucket,
+       FIRST((time, gvol), price) AS open_price,
+       LAST((time, gvol), price) AS close_price,
+       MAX(price) AS high_price,
+       MIN(price) AS low_price
+  FROM custom_ticks
+ GROUP BY code, bucket
+ ORDER BY code, bucket;
+```
+
+```sql
+SELECT FIRST((time, gvol), price) AS open_price,
+       LAST((time, gvol), price) AS close_price
+  FROM custom_ticks;
+```
+
+元データの直接集計と保存結果の再集計は一致する必要があります。1分全体のopen/closeは200/206です。
+
+### 上位集計へのキーの引き継ぎ
+
+別の期間に再集計する結果を保存する場合も、同じFIRST/LAST基準で選んだ元のキーを一緒に引き継ぎます。
+
+```sql
+SELECT code,
+       DATE_BIN('sec', 30, time) AS bucket,
+       FIRST((open_time, open_gvol), open_price) AS open_price,
+       FIRST((open_time, open_gvol), open_time) AS open_time,
+       FIRST((open_time, open_gvol), open_gvol) AS open_gvol,
+       LAST((close_time, close_gvol), close_price) AS close_price,
+       LAST((close_time, close_gvol), close_time) AS close_time,
+       LAST((close_time, close_gvol), close_gvol) AS close_gvol,
+       MAX(high_price) AS high_price,
+       MIN(low_price) AS low_price
+  FROM custom_ticks_1s
+ GROUP BY code, bucket
+ ORDER BY code, bucket;
+```
+
+バケット時刻のみのFIRST(time, open_price)では、部分要約間の元の順序を必ず復元できるわけではありません。
+既存の文字列連結キーの要約は型付きキー要約に自動変換されません。
+新しい格納先とジョブで検算し、過去期間の移行には元データの保持期間と再集計可能性を確認します。
+Cluster Custom作成は既存のERR-02837による非対応を維持します。
+
+### サンプルオブジェクトの削除
+
+自動処理の再開にはSTART ROLLUP custom_ticks_rollup_1sを使用します。サンプルオブジェクトは次の順で削除します。
+
+```sql
+DROP ROLLUP custom_ticks_rollup_1s;
+DROP TABLE custom_ticks_1s;
+DROP TABLE custom_ticks;
+```

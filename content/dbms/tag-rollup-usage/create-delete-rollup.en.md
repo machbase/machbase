@@ -14,16 +14,22 @@ CREATE ROLLUP [IF NOT EXISTS] name
   ON source_tag [(column_or_json_path)]
   INTERVAL n (SEC|MIN|HOUR)
   [WAKEUP INTERVAL m (SEC|MIN|HOUR)]
-  [EXTENSION]
+  [EXTENSION [ORDER BY basetime_column [ASC | DESC], data_column [ASC | DESC] [, ...]]]
   [WHERE predicate];
 
 CREATE ROLLUP [IF NOT EXISTS] name
   FROM source_rollup
   INTERVAL n (SEC|MIN|HOUR)
   [WAKEUP INTERVAL m (SEC|MIN|HOUR)]
-  [EXTENSION]
+  [EXTENSION [ORDER BY basetime_column [ASC | DESC], data_column [ASC | DESC] [, ...]]]
   [WHERE predicate];
 ```
+
+ORDER BY for EXTENSION is available from 8.7.3. The first key is the source BASETIME.
+A FROM hierarchy inherits omitted keys; an explicit definition must match its source.
+WITH ROLLUP automatic creation does not accept ORDER BY. See
+[ordered FIRST/LAST](../extension-rollup/#composite-first-last) for keys and edition restrictions.
+
 
 Do not specify a separate extension name after EXTENSION. CREATE accepts SEC/MIN/HOUR, unlike
 query-function units such as DAY/MONTH. The interval must be positive; the current validation

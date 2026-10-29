@@ -166,7 +166,24 @@ For conflict relationships and configuration, see
 | 8.5 backup | O | Use `MOUNT` or `machadmin -r` |
 | 8.7.0 backup | O | |
 | 8.4 or earlier backup | △ | Version-dependent; testing required |
+| 8.5.13+ or 8.7.3+ backup with ordered ROLLUPs | X | Restore in 8.7.3 or later ([ordered ROLLUP compatibility](#ordered-rollup-compatibility-873)) |
 
+
+<a id="ordered-rollup-compatibility-873"></a>
+
+## Ordered ROLLUP Compatibility in 8.7.3
+
+- Composite FIRST/LAST and ordered EXTENSION ROLLUPs (`EXTENSION ORDER BY`) are supported from 8.7.3,
+  and from 8.5.13 in the 8.5 line.
+- Opening, MOUNTing, or restoring a database or backup that contains ordered ROLLUPs with 8.7.2 or
+  earlier is unsupported. An older binary with the same metadata version may pass the version check
+  and interpret ordered objects as existing EXTs. To roll back, restore a backup taken before
+  introducing ordered ROLLUPs.
+- Upgrade a database with ordered ROLLUPs created in 8.5.13 to 8.7.3 or later.
+- In Cluster Edition, run the same feature-supporting build on all brokers and warehouses.
+
+See [older binaries and rollback](/dbms/tag-rollup-usage/extension-rollup/#ordered-rollup-compatibility)
+for details.
 
 ## Canonical Upgrade Reference
 

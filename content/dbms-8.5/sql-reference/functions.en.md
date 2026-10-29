@@ -2,6 +2,7 @@
 title : 'Functions'
 type: docs
 weight: 70
+toc: true
 tocSort: true
 ---
 
@@ -809,6 +810,58 @@ This function is an aggregate function that returns the specific value of the hi
 FIRST(sort_expr, return_expr)
 LAST(sort_expr, return_expr)
 ```
+
+### Composite sort keys
+
+> Composite FIRST/LAST sort keys and ordered EXTENSION ROLLUPs are supported from Machbase 8.5.13.
+
+```text
+FIRST((key1 [ASC | DESC], key2 [ASC | DESC], ...), return_expr)
+LAST ((key1 [ASC | DESC], key2 [ASC | DESC], ...), return_expr)
+```
+
+Specify two or more keys in parentheses as the first argument. Keys are compared from left to right;
+the next key is considered only when preceding keys are equal. The default direction is ASC.
+FIRST returns the expression from the first row in that order, and LAST from the last row.
+The syntax does not limit the number of keys to three.
+
+- Rows with a NULL first key are excluded. NULL secondary keys follow the type's ORDER BY comparison rules.
+- A NULL return value in the selected row is returned unchanged.
+- Equal values for every key do not identify a particular row. Deterministic selection requires a unique business key.
+- Integer types, FLOAT/DOUBLE, DATETIME, VARCHAR, IPV4/IPV6 sort keys are supported.
+  BINARY keys and DISTINCT with composite keys are not supported.
+- Ordinary SELECT keys are not restricted to BASETIME and may be comparable expressions such as `seq + 1`.
+  Ordered EXTENSION definitions and ROLLUP queries use source columns only.
+- An outer ORDER BY sorts output rows; it does not replace the function's selection criteria.
+- Additional key reads, comparisons, copies, and state incur costs; unchanged performance is not guaranteed.
+
+event_id distinguishes rows with equal time and seq. The time direction can remain ASC while event_id uses DESC.
+
+```sql
+SELECT code,
+       FIRST((time, seq, event_id), price) AS first_price,
+       LAST((time ASC, seq ASC, event_id DESC), price) AS last_price
+  FROM raw_tab
+ GROUP BY code;
+```
+
+Different key directions in SELECT and ORDER BY select independent candidates. Use the output alias to sort by the displayed aggregate.
+
+```sql
+SELECT code, FIRST((time, seq, event_id), price) AS first_price
+  FROM raw_tab
+ GROUP BY code
+ ORDER BY FIRST((time, seq, event_id DESC), price);
+```
+
+8.5 does not support DECIMAL or public ROWID sort keys. Define and populate a regular
+business-sequence column such as `seq` or `trade_seq`; the engine does not add one automatically.
+Using ROWID here returns `ERR-02056` in SELECT, or `ERR-02813`
+(`Token = EXTENSION ORDER BY, Unit = 0`) in a ROLLUP definition.
+
+[Complete data and ordered ROLLUP example](../../table-types/tag-tables/rollup-tables/#composite-first-last).
+
+### Single-key example
 
 ```sql
 Mach> create table firstlast_table (id integer, name varchar(20), group_no integer);

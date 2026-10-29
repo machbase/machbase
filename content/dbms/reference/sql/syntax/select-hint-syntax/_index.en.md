@@ -34,6 +34,11 @@ Place hints in a /*+ ... */ block immediately after SELECT.
 | `SCAN_FORWARD` | `/*+ SCAN_FORWARD(table) */` | Scan oldest records first (LOG tables) |
 | `SCAN_BACKWARD` | `/*+ SCAN_BACKWARD(table) */` | Scan newest records first (LOG tables) |
 
+Composite FIRST/LAST requires a ROLLUP with matching keys and directions, not merely any
+EXTENSION. An existing but incompatible ROLLUP_TABLE target returns `ERR-02813`
+(`Token = ROLLUP ordering mismatch, Unit = 0`); a nonexistent target returns `ERR-02025`.
+Other ROLLUP validation errors may occur first.
+
 ### Data Processing Hints
 
 | Hint | Syntax | Description |

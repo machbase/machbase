@@ -204,7 +204,7 @@ PLAN
 
 ##  ROLLUP_TABLE
 
-Forces a specific rollup table when multiple rollups match. If the hint is present, it always takes precedence over automatic selection.
+Forces a specific rollup table when multiple rollups match. The engine checks compatibility before giving the specified rollup precedence over automatic selection.
 
 ```sql
 SELECT /*+ ROLLUP_TABLE(rollup_table_name) */ ...
@@ -224,6 +224,11 @@ GROUP BY rt
 ORDER BY rt;
 ```
 
+
+Composite FIRST/LAST requires a ROLLUP with matching keys and directions, not merely any
+EXTENSION. An existing but incompatible ROLLUP_TABLE target returns `ERR-02813`
+(`Token = ROLLUP ordering mismatch, Unit = 0`); a nonexistent target returns `ERR-02025`.
+Other ROLLUP validation errors may occur first.
 
 ##  RID_RANGE
 

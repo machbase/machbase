@@ -19,14 +19,14 @@ CREATE ROLLUP [IF NOT EXISTS] name
     ON source_tag [(column_name | json_path_expression)]
     INTERVAL n { SEC | MIN | HOUR }
     [WAKEUP INTERVAL m { SEC | MIN | HOUR }]
-    [EXTENSION]
+    [EXTENSION [ORDER BY basetime_column [ASC | DESC], data_column [ASC | DESC] [, ...]]]
     [WHERE predicate];
 
 CREATE ROLLUP [IF NOT EXISTS] name
     FROM source_rollup
     INTERVAL n { SEC | MIN | HOUR }
     [WAKEUP INTERVAL m { SEC | MIN | HOUR }]
-    [EXTENSION]
+    [EXTENSION [ORDER BY basetime_column [ASC | DESC], data_column [ASC | DESC] [, ...]]]
     [WHERE predicate];
 
 CREATE ROLLUP [IF NOT EXISTS] name
@@ -36,7 +36,7 @@ CREATE ROLLUP [IF NOT EXISTS] name
     [WAKEUP INTERVAL m { SEC | MIN | HOUR }];
 ```
 
-- EXTENSION은 키워드만 쓰며 별도 extension_name을 붙이지 않습니다.
+- EXTENSION에는 선택적으로 ORDER BY 정렬 키를 지정합니다. 별도의 extension_name은 붙이지 않습니다.
 - CREATE의 시간 단위는 SEC/MIN/HOUR입니다. DAY 등은 조회 단위와 구분합니다.
 - 일반 숫자 컬럼은 SUMMARIZED 없이 명시할 수 있습니다. JSON 경로 집계와 JSON
   문서 전체 집계를 구분하며, 문서 전체와 WITH ROLLUP 자동 생성에는 SUMMARIZED 조건이 있습니다.
@@ -86,9 +86,13 @@ rollup(time_unit, period, basetime_column [, origin])
 GROUP BY 쿼리가 ROLLUP의 존재만으로 자동 전환된다고 안내하지 않습니다. ROLLUP 조회에는
 `rollup()`을 명시하고, 적용 가능한 후보가 없으면 별도의 원본 쿼리를 사용합니다.
 
-자동 선택은 같은 컬럼·경로·모드에서 조건 없는 후보를 먼저 찾고, 가능한 가장 큰 간격을
-선택합니다. 같은 간격은 등록 순서의 영향을 받습니다. 일반/확장만으로 우선순위를
-단정하지 않습니다. 특정 데이터 집합을 고정하려면 ROLLUP_TABLE 힌트를 사용합니다.
+자동 선택은 컬럼·경로·모드와 FIRST/LAST의 정렬 키·방향에 맞는 후보 중 조건 없는 후보를 먼저 찾습니다.
+두 종류를 사용할 수 있는 일반 집계는 같은 조건 범주에서 값 컬럼이 NULL을 허용하면
+정렬 정의 없는 후보를 우선하며, NOT NULL이 확인되면 동등하게 취급합니다.
+`COUNT(*)`는 값 컬럼의 NOT NULL을 추정하지 않습니다.
+그 뒤 조회 주기를 나누어떨어지게 하는 가장 큰 유효 간격을 선택하며, 같은 간격은 등록 순서를 따릅니다.
+특정 데이터 집합을 고정하려면 ROLLUP_TABLE 힌트를 사용합니다.
+[상세 선택 규칙](../../../../tag-rollup-usage/extension-rollup/#ordered-rollup-selection)을 확인하십시오.
 
 SEC/MIN의 후보 간격은 period초/분을 기준으로 하며 HOUR·DAY·WEEK·MONTH·YEAR는
 후보 선택 단계에서 period시간을 기준으로 검사합니다. 결과 버킷의 달력 계산과 별개의
@@ -102,3 +106,24 @@ JSON의 문서 전체 COUNT와 경로별 건수는 별도 계약입니다.
 
 실행 가능한 생성·조회·오류 예제는 [6장 ROLLUP 활용](/dbms/tag-rollup-usage/)과
 [조회 문법](/dbms/tag-rollup-usage/query-syntax-rollup/)을 참고하십시오.
+
+## 정렬 EXTENSION 정의
+
+> 복합 키 FIRST/LAST와 정렬 EXTENSION ROLLUP은 Machbase 8.7.3부터 지원합니다. 에디션별 제약은 아래 설명을 확인하십시오.
+
+```text
+CREATE ROLLUP [IF NOT EXISTS] name
+    ON source_tag (numeric_column)
+    INTERVAL n { SEC | MIN | HOUR }
+    [WAKEUP INTERVAL m { SEC | MIN | HOUR }]
+    EXTENSION ORDER BY basetime_column [ASC | DESC],
+                       data_column [ASC | DESC] [, ...]
+    [WHERE predicate];
+```
+
+ON 정의의 EXTENSION 뒤에 ORDER BY를 지정합니다. 기존 EXTENSION만 사용하는 문법도 유지합니다.
+FROM 계층은 ORDER BY를 생략하면 하위의 키와 방향을 상속합니다.
+명시한다면 하위와 같은 키·방향이어야 합니다.
+Custom INTO...AS에서는 이 절을 사용하지 않고 SELECT 내부에 복합 키 FIRST/LAST를 지정합니다.
+
+[전체 데이터와 정렬 ROLLUP 예제](../../../../tag-rollup-usage/extension-rollup/#composite-first-last).

@@ -140,6 +140,14 @@ START ROLLUP rollup_stock_1m;
 
 If a custom rollup uses `FIRST/LAST`, its helper time columns must also be recalculated.
 
+For a Custom SELECT using composite keys, recompute the selected source timestamp and every
+secondary key with the same FIRST/LAST key list as the price. Reaggregate the destination TAG
+with those saved keys, not just the bucket timestamp. See
+[the typed-key example](../rollup-custom/#composite-key-ohlc). This does not add ordered
+EXTENSION objects to the targets of ROLLUP_REBUILD; recreate those objects from retained source data.
+
+The SQL below is the existing single-key example, using time alone to select candidates.
+
 ```sql
 STOP ROLLUP rollup_stock_candle_1m;
 
@@ -166,7 +174,10 @@ EXEC TABLE_FLUSH('stock_candle_1m');
 START ROLLUP rollup_stock_candle_1m;
 ```
 
-Final reads should still merge with `FIRST(firsttime, open)` and `LAST(lasttime, close)`.
+For the single-key example above, final reads merge with `FIRST(firsttime, open)` and
+`LAST(lasttime, close)`. Composite-key summaries merge using the saved source timestamp and
+every secondary key, such as `FIRST((open_time, open_gvol), open_price)` and
+`LAST((close_time, close_gvol), close_price)`.
 
 ### rollup-on-rollup order
 

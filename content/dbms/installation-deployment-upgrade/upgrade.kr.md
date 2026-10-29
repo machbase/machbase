@@ -34,6 +34,10 @@ toc: true
    ODBC로 이전합니다. SQLCLI와 ODBC는 서로 다른 API 집합입니다.
 5. WebAdmin/MWA에 의존하는 운영 절차와 대시보드는 명령행 도구 또는 별도 애플리케이션으로
    전환합니다.
+6. 8.5.13 이상에서 정렬 EXTENSION ROLLUP(`EXTENSION ORDER BY`)을 만들었다면 8.7.3 이상으로
+   업그레이드합니다. 8.7.0~8.7.2는 정렬 정의를 인식하지 못해 기존 EXT로 해석할 수 있습니다.
+   자세한 내용은 [이전 바이너리와 되돌리기](/dbms/tag-rollup-usage/extension-rollup/#ordered-rollup-compatibility)를
+   참고하십시오.
 
 제거 항목 전체와 유지 기능은
 [버전 및 호환성](/dbms/reference/support-scope-constraints/compatibility-version/#removed-features-870)을

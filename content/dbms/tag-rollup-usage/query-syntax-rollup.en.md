@@ -60,11 +60,23 @@ mix sensors with different units.
 1. If a ROLLUP_TABLE hint is present, check the named candidate for compatibility.
 2. Automatic selection finds candidates matching the aggregate column, JSON path, mode, and requested interval.
 3. Search unconditional candidates first; if none exist, include conditional candidates.
-4. Select the largest applicable interval. For equal intervals, retain the first registered candidate.
+4. After applying the definition and NULL preferences described below, select the largest applicable interval. For equal intervals, retain the first registered candidate.
 
 Do not assume general ROLLUP always takes priority over extension ROLLUP. If only conditional
 ROLLUPs exist, filtered data can be selected automatically. Check which sample set the result
 represents. Specify a hint when a particular aggregate must be used.
+
+For composite FIRST/LAST (8.7.3 or later), candidates must match the stored key list and
+directions; a legacy time-only EXT is not sufficient. For ordinary aggregates that can use
+either kind, nullable value columns prefer candidates without a sort definition within the
+same WHERE-condition category. Confirmed NOT NULL values treat both kinds equally; COUNT(*)
+does not infer NOT NULL. Then select the largest eligible period. Migration can change NULL
+buckets, so compare SUM/COUNT as well. See [selection rules](../extension-rollup/#ordered-rollup-selection).
+
+Composite FIRST/LAST requires a ROLLUP with matching keys and directions, not merely any
+EXTENSION. An existing but incompatible ROLLUP_TABLE target returns `ERR-02813`
+(`Token = ROLLUP ordering mismatch, Unit = 0`); a nonexistent target returns `ERR-02025`.
+Other ROLLUP validation errors may occur first.
 
 ```sql
 SELECT /*+ ROLLUP_TABLE(ch6_query_sec) */

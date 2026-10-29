@@ -811,6 +811,57 @@ FIRST(sort_expr, return_expr)
 LAST(sort_expr, return_expr)
 ```
 
+### 複合ソートキー
+
+> 複合キーFIRST/LASTとソート付きEXTENSION ROLLUPはMachbase 8.5.13から対応します。エディション別の制約は以下を確認してください。
+
+```text
+FIRST((key1 [ASC | DESC], key2 [ASC | DESC], ...), return_expr)
+LAST ((key1 [ASC | DESC], key2 [ASC | DESC], ...), return_expr)
+```
+
+第1引数に、括弧で囲んだ2個以上のキーを指定します。左から比較し、前のキーが等しい場合のみ次のキーを比較します。
+方向の既定値はASCです。FIRSTはその順序の先頭行、LASTは末尾行の返却式を返します。
+キー数を3個に制限する構文ではありません。
+
+- 第1キーがNULLの行は候補から除外します。補助キーのNULL比較は、型ごとのORDER BY規則に従います。
+- 選択行の返却値がNULLなら、そのままNULLを返します。
+- 全キーが同じ場合、特定行の選択は保証されません。確定的な選択には一意の業務キーが必要です。
+- 整数型、FLOAT/DOUBLE、DATETIME、VARCHAR、IPV4/IPV6のキーをサポートします。
+  BINARYキーと複合キー形式のDISTINCTはサポートしません。
+- 通常のSELECTのキーはBASETIMEに限定されず、`seq + 1`のような比較可能な式も使用できます。
+  ソート付きEXTENSIONの定義とROLLUP照会では元の列だけを使用します。
+- 外側のORDER BYは出力行を並べ替えるもので、関数内部の選択基準を変更しません。
+- キーの読み取り・比較・コピー・状態保持に追加コストがあり、性能が変わらない保証はありません。
+
+timeとseqが同じ行をevent_idで区別します。timeをASCのままevent_idのみDESCにすることもできます。
+
+```sql
+SELECT code,
+       FIRST((time, seq, event_id), price) AS first_price,
+       LAST((time ASC, seq ASC, event_id DESC), price) AS last_price
+  FROM raw_tab
+ GROUP BY code;
+```
+
+SELECTとORDER BYでキー方向が異なる場合、それぞれ別の候補を選びます。表示した集約値で並べ替える場合は出力別名を使用します。
+
+```sql
+SELECT code, FIRST((time, seq, event_id), price) AS first_price
+  FROM raw_tab
+ GROUP BY code
+ ORDER BY FIRST((time, seq, event_id DESC), price);
+```
+
+8.5はDECIMALと公開ROWIDのソートキーに対応しません。`seq`、`trade_seq`などの通常の
+業務連番カラムを定義し、入力時に値を設定してください。エンジンが自動追加するものではありません。
+ROWIDを指定すると、SELECTは`ERR-02056`、ROLLUP定義は
+`ERR-02813`（`Token = EXTENSION ORDER BY, Unit = 0`）を返します。
+
+[完全なデータとソート付きROLLUPの例](../../table-types/tag-tables/rollup-tables/#composite-first-last).
+
+### 単一キーの例
+
 ```sql
 Mach> create table firstlast_table (id integer, name varchar(20), group_no integer);
 Created successfully.

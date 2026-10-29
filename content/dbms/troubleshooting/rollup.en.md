@@ -30,7 +30,7 @@ database, and owner.
 | Symptom | Check |
 |---|---|
 | Some samples are missing | Whether a conditional ROLLUP candidate was selected and matches the raw-data filter |
-| FIRST/LAST error | Whether the selected candidate is EXTENSION |
+| FIRST/LAST error | Whether the candidate is EXTENSION and composite keys/directions match (`ERR-02813`) |
 | No candidate for monthly/daily queries | Whether stored-interval selection rules were confused with query buckets |
 | Average differs | NULL handling, valid counts, reaggregation of partial averages, and tag grouping |
 | Values unchanged after raw-data correction | Whether FORCE was incorrectly used to revisit history and REBUILD is needed |
@@ -39,6 +39,11 @@ database, and owner.
 Query raw data with DATE_TRUNC/DATE_BIN and GROUP BY, and stored aggregates with rollup().
 Keep tags, timestamps, origin, end boundaries, and aggregate functions identical. Do not
 assume rollup() falls back to a raw-data scan when no applicable ROLLUP exists.
+
+Composite FIRST/LAST requires a ROLLUP with matching keys and directions, not merely any
+EXTENSION. An existing but incompatible ROLLUP_TABLE target returns `ERR-02813`
+(`Token = ROLLUP ordering mismatch, Unit = 0`); a nonexistent target returns `ERR-02025`.
+Other ROLLUP validation errors may occur first.
 
 ## 3. Catch up with new input
 
