@@ -32,6 +32,12 @@ HTTP APIは、センサーやデバイスがMQTTやHTTPでデータを取り込�
 | POST    | `/db/write`      | JSON形式またはCSV形式でデータを保存します。      |
 | POST    | `/metrics/write` | ILP（Influx Line Protocol）形式でデータを保存します。 |
 
+### APIトークンの検証 {#api-token-validation}
+
+| メソッド | パス                 | 説明 |
+| :-----: | :------------------- | :--- |
+| POST    | `/db/token/validate` | `Authorization: Bearer <token>`のAPIトークンを検証し、有効な場合はそのトークンでDBリクエストを実行するときに適用されるユーザーを返します。トークン認証の設定にかかわらず、Bearerヘッダーが必要です。 |
+
 ### TQLエンドポイント {#tql-endpoints}
 
 | メソッド  | パス                      | 説明                                                                    |

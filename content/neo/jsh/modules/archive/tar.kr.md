@@ -326,7 +326,7 @@ const archive = tar.tarSync([
 	{ name: 'skip/c.txt', data: 'C' }
 ]);
 
-fs.writeFile(base + '.tar', Array.from(new Uint8Array(archive)), 'buffer');
+fs.writeFile(base + '.tar', new Uint8Array(archive), 'buffer');
 
 const loaded = new tar.Tar(base + '.tar');
 loaded.extractAllTo(base + '-out', {

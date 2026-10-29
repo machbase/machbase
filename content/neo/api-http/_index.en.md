@@ -31,6 +31,12 @@ Applications and sensors can read/write data via HTTP API.
 | POST    | `/db/write`      | write data in JSON and CSV formats  |
 | POST    | `/metrics/write` | write data in ILP (influx line protocol) |
 
+### API Token Validation
+
+| Method  | Path                  | Description |
+| :-----: | :-------------------- | :---------- |
+| POST    | `/db/token/validate`  | Validate the API token in `Authorization: Bearer <token>` and return the user applied to database requests made with that token. A Bearer header is required regardless of the token-authentication setting. |
+
 ### TQL Endpoints
 
 | Method  | Path                      | Description                           |
