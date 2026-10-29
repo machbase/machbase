@@ -68,12 +68,24 @@ Check ownership and operation scope in
 
 ## Composite FIRST/LAST support
 
-> Composite sort keys require an engine build that includes this feature. Check support in the deployed product version.
+> Composite FIRST/LAST sort keys and ordered EXTENSION ROLLUPs are supported from Machbase 8.7.3.
+> Edition-specific restrictions are described below.
 
-Composite source queries and numeric ordered EXTENSION ROLLUPs are available in supporting Standard and Cluster builds.
-Custom SELECT and destination TAG reaggregation are Standard-only; no new Cluster Custom worker is provided.
-The first ordered ROLLUP key must be BASETIME; this restriction does not apply to ordinary reaggregation of Custom destination TAGs.
-Query keys and directions must match the definition. Secondary keys cannot be reconstructed from existing time-only summaries.
-Deploy the same supporting build on all Cluster nodes. Public ROWID examples are excluded until support in this version is confirmed.
+Composite source queries and numeric ordered EXTENSION ROLLUPs are supported in Standard
+and Cluster from 8.7.3. Custom ROLLUP creation and its worker are Standard-only; Cluster
+returns `ERR-02837`. An ordinary SELECT that reaggregates summary rows already stored in a
+TAG using composite FIRST/LAST is supported in Cluster as a distributed TAG query.
+The first key of an ordered ROLLUP definition must be BASETIME; this does not restrict the
+stored source timestamps used in ordinary TAG reaggregation.
+
+Public ROWID secondary keys are Standard-only and explicit. They preserve the original row's
+identifier, not insertion order; existing ROWID restrictions remain. Cluster does not support them.
+DECIMAL sort keys are supported. Query keys and directions must match the stored definition.
+Deploy the same supporting build on all Cluster nodes; mixed binaries are unsupported.
+
+Opening or MOUNTing an ordered-ROLLUP DB with an older binary lacking this feature is
+unsupported, even if metadata version checks pass. Restore a pre-feature backup to roll back;
+dropping ordered objects alone does not guarantee compatibility.
+See [migration and rollback restrictions](../../../tag-rollup-usage/extension-rollup/#ordered-rollup-compatibility).
 
 [Complete data and ordered ROLLUP example](../../../tag-rollup-usage/extension-rollup/#composite-first-last).

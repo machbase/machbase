@@ -810,7 +810,7 @@ LAST(sort_expr, return_expr)
 
 ### 복합 정렬 키
 
-> 복합 정렬 키 구문은 해당 기능이 반영된 엔진 빌드에서 사용합니다. 사용 중인 제품 버전의 지원 여부를 확인해야 합니다.
+> 복합 키 FIRST/LAST와 정렬 EXTENSION ROLLUP은 Machbase 8.5.13부터 지원합니다. 에디션별 제약은 아래 설명을 확인하십시오.
 
 ```text
 FIRST((key1 [ASC | DESC], key2 [ASC | DESC], ...), return_expr)
@@ -826,7 +826,8 @@ LAST는 마지막 행의 반환식을 반환합니다. 키 개수를 3개로 제
 - 모든 키가 같으면 특정 행 선택을 보장하지 않습니다. 결정적인 결과에는 고유한 업무 키가 필요합니다.
 - 정수형, FLOAT/DOUBLE, DATETIME, VARCHAR, IPV4/IPV6 정렬 키를 지원합니다.
   BINARY 키와 복합 키 형태의 DISTINCT는 지원하지 않습니다.
-- 일반 SELECT의 첫 키는 BASETIME으로 제한되지 않습니다. 정렬 EXTENSION ROLLUP 정의와 구분합니다.
+- 일반 SELECT의 키는 BASETIME으로 제한되지 않으며 `seq + 1` 같은 비교 가능한 표현식도 사용할 수 있습니다.
+  정렬 EXTENSION ROLLUP 정의와 ROLLUP 조회에는 원본 컬럼만 사용합니다.
 - 외부 ORDER BY는 출력 행을 정렬하며 함수 내부의 선택 기준을 대신하지 않습니다.
 - 추가 키의 읽기·비교·복사·상태 유지 비용이 있으므로 성능 무저하를 보장하지 않습니다.
 
@@ -849,7 +850,10 @@ SELECT code, FIRST((time, seq, event_id), price) AS first_price
  ORDER BY FIRST((time, seq, event_id DESC), price);
 ```
 
-8.5의 지원 키 타입에 DECIMAL과 공개 ROWID는 포함되지 않습니다.
+8.5에서는 DECIMAL과 공개 ROWID 정렬 키를 지원하지 않습니다. `seq`, `trade_seq` 같은
+일반 업무 순번 컬럼을 정의하고 입력 시 값을 채우십시오. 엔진이 자동으로 추가하지 않습니다.
+ROWID를 지정하면 SELECT는 `ERR-02056`, ROLLUP 정의는
+`ERR-02813`(`Token = EXTENSION ORDER BY, Unit = 0`)을 반환합니다.
 
 [전체 데이터와 정렬 ROLLUP 예제](../../table-types/tag-tables/rollup-tables/#composite-first-last).
 

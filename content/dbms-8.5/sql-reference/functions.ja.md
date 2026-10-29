@@ -813,7 +813,7 @@ LAST(sort_expr, return_expr)
 
 ### 複合ソートキー
 
-> 複合ソートキーには、この機能を含むエンジンビルドが必要です。使用中の製品バージョンの対応状況を確認してください。
+> 複合キーFIRST/LASTとソート付きEXTENSION ROLLUPはMachbase 8.5.13から対応します。エディション別の制約は以下を確認してください。
 
 ```text
 FIRST((key1 [ASC | DESC], key2 [ASC | DESC], ...), return_expr)
@@ -829,7 +829,8 @@ LAST ((key1 [ASC | DESC], key2 [ASC | DESC], ...), return_expr)
 - 全キーが同じ場合、特定行の選択は保証されません。確定的な選択には一意の業務キーが必要です。
 - 整数型、FLOAT/DOUBLE、DATETIME、VARCHAR、IPV4/IPV6のキーをサポートします。
   BINARYキーと複合キー形式のDISTINCTはサポートしません。
-- 通常のSELECTの第1キーはBASETIMEに限定されません。ソート付きEXTENSIONの定義とは区別してください。
+- 通常のSELECTのキーはBASETIMEに限定されず、`seq + 1`のような比較可能な式も使用できます。
+  ソート付きEXTENSIONの定義とROLLUP照会では元の列だけを使用します。
 - 外側のORDER BYは出力行を並べ替えるもので、関数内部の選択基準を変更しません。
 - キーの読み取り・比較・コピー・状態保持に追加コストがあり、性能が変わらない保証はありません。
 
@@ -852,7 +853,10 @@ SELECT code, FIRST((time, seq, event_id), price) AS first_price
  ORDER BY FIRST((time, seq, event_id DESC), price);
 ```
 
-8.5の対応キー型にはDECIMALと公開ROWIDを含みません。
+8.5はDECIMALと公開ROWIDのソートキーに対応しません。`seq`、`trade_seq`などの通常の
+業務連番カラムを定義し、入力時に値を設定してください。エンジンが自動追加するものではありません。
+ROWIDを指定すると、SELECTは`ERR-02056`、ROLLUP定義は
+`ERR-02813`（`Token = EXTENSION ORDER BY, Unit = 0`）を返します。
 
 [完全なデータとソート付きROLLUPの例](../../table-types/tag-tables/rollup-tables/#composite-first-last).
 

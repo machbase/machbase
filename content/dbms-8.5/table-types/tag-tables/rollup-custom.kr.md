@@ -246,7 +246,11 @@ DROP TABLE <source_table>;
 
 ## 복합 키를 보존하는 OHLC 재집계
 
-> 복합 정렬 키 구문은 해당 기능이 반영된 엔진 빌드에서 사용합니다. 사용 중인 제품 버전의 지원 여부를 확인해야 합니다.
+> 복합 키 FIRST/LAST와 정렬 EXTENSION ROLLUP은 Machbase 8.5.13부터 지원합니다. 에디션별 제약은 아래 설명을 확인하십시오.
+
+이 예제의 Custom 생성은 Standard 전용입니다. 일반 TAG에 이미 저장된 요약 행을
+재집계하는 SELECT는 별도 동작이며 Cluster에서도 지원합니다. 그때도 원본 시각과
+보조 키 컬럼을 동일한 기준으로 사용해야 합니다.
 
 Standard Custom ROLLUP의 SELECT에서도 복합 키 FIRST/LAST를 사용합니다.
 Custom 정의에는 EXTENSION ORDER BY를 붙이지 않습니다. 선택 가격과 같은 행의 원본 시각·DOUBLE 키를

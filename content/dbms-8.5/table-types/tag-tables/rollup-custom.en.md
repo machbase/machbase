@@ -246,7 +246,11 @@ DROP TABLE <source_table>;
 
 ## OHLC reaggregation with preserved composite keys
 
-> Composite sort keys require an engine build that includes this feature. Check support in the deployed product version.
+> Composite FIRST/LAST sort keys and ordered EXTENSION ROLLUPs are supported from Machbase 8.5.13.
+
+Custom creation in this example is Standard-only. Reaggregating summary rows already stored
+in an ordinary TAG is a separate SELECT operation and is also supported in Cluster.
+Use the same source timestamp and secondary-key columns when merging those rows.
 
 Standard Custom ROLLUP supports composite FIRST/LAST in its SELECT.
 Do not append EXTENSION ORDER BY to a Custom definition. Store the selected price and its original

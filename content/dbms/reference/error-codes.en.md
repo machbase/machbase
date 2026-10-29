@@ -36,6 +36,18 @@ errors by code rather than message text.
 | `ERR-02026` | `The number of insert values and that of columns are mismatched.` | INSERT column and value counts differ |
 | `ERR-02030` | `Column name (%s) does not exist.` | Nonexistent column |
 
+## ROLLUP Errors
+
+| Code | Message | Common Cause |
+|------|--------|-----------|
+| `ERR-02685` | `There are no applicable ROLLUP tables.` | No ROLLUP can serve the query, including a single-key FIRST/LAST query when only ordered ROLLUPs exist |
+| `ERR-02686` | `The names of column(%s) associated with ROLLUP cannot be changed.` | Renaming a column referenced by a ROLLUP, including sort-key columns |
+| `ERR-02813` | `Invalid ROLLUP expression. (Token = %s, Unit = %ld)` | Invalid ROLLUP definition or query. Ordered ROLLUP tokens: `ROLLUP ordering mismatch` (the hinted ROLLUP's sort definition differs from the query), `EXTENSION ORDER BY` (unsupported sort key or definition too long), `ordering query exceeds supported size` (too many keys for the internal generated SQL) |
+| `ERR-02837` | `Custom rollup is not supported in cluster edition.` | Creating a Custom ROLLUP in Cluster Edition |
+
+See [composite FIRST/LAST and ordered ROLLUP](/dbms/tag-rollup-usage/extension-rollup/#composite-first-last)
+for the detailed conditions of ordered ROLLUP errors.
+
 ## System Resource Errors
 
 | Code | Message | Common Cause |

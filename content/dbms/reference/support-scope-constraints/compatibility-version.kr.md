@@ -163,7 +163,23 @@ Standard Edition에서 같은 객체나 직접 관련된 객체의 DDL이 충돌
 | 8.5 백업 | O | `MOUNT` 또는 `machadmin -r` 사용 |
 | 8.7.0 백업 | O | |
 | 8.4 이하 백업 | △ | 버전에 따라 다름, 테스트 필요 |
+| 정렬 ROLLUP이 있는 8.5.13 이상·8.7.3 이상 백업 | X | 8.7.3 이상에서 복원 ([정렬 ROLLUP 호환성](#ordered-rollup-compatibility-873)) |
 
+
+<a id="ordered-rollup-compatibility-873"></a>
+
+## 8.7.3 정렬 ROLLUP 호환성
+
+- 복합 키 FIRST/LAST와 정렬 EXTENSION ROLLUP(`EXTENSION ORDER BY`)은 8.7.3부터 지원합니다.
+  8.5에서는 8.5.13부터 지원합니다.
+- 정렬 ROLLUP이 있는 DB나 그 백업을 8.7.2 이하에서 열거나 MOUNT·복원하는 것은 지원하지 않습니다.
+  메타 버전이 같은 이전 바이너리는 버전 검사를 통과해 정렬 객체를 기존 EXT로 해석할 수 있습니다.
+  되돌리려면 정렬 ROLLUP 도입 전 백업을 복원합니다.
+- 8.5.13에서 정렬 ROLLUP을 만든 DB는 8.7.3 이상으로 업그레이드합니다.
+- Cluster Edition은 모든 broker·warehouse를 같은 지원 빌드로 구성합니다.
+
+자세한 제약은 [이전 바이너리와 되돌리기](/dbms/tag-rollup-usage/extension-rollup/#ordered-rollup-compatibility)를
+참고하십시오.
 
 ## 업그레이드 정본
 

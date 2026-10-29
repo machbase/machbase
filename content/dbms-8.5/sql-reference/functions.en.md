@@ -813,7 +813,7 @@ LAST(sort_expr, return_expr)
 
 ### Composite sort keys
 
-> Composite sort keys require an engine build that includes this feature. Check support in the deployed product version.
+> Composite FIRST/LAST sort keys and ordered EXTENSION ROLLUPs are supported from Machbase 8.5.13.
 
 ```text
 FIRST((key1 [ASC | DESC], key2 [ASC | DESC], ...), return_expr)
@@ -830,7 +830,8 @@ The syntax does not limit the number of keys to three.
 - Equal values for every key do not identify a particular row. Deterministic selection requires a unique business key.
 - Integer types, FLOAT/DOUBLE, DATETIME, VARCHAR, IPV4/IPV6 sort keys are supported.
   BINARY keys and DISTINCT with composite keys are not supported.
-- Ordinary SELECT keys are not restricted to BASETIME. The ordered EXTENSION definition has a separate restriction.
+- Ordinary SELECT keys are not restricted to BASETIME and may be comparable expressions such as `seq + 1`.
+  Ordered EXTENSION definitions and ROLLUP queries use source columns only.
 - An outer ORDER BY sorts output rows; it does not replace the function's selection criteria.
 - Additional key reads, comparisons, copies, and state incur costs; unchanged performance is not guaranteed.
 
@@ -853,7 +854,10 @@ SELECT code, FIRST((time, seq, event_id), price) AS first_price
  ORDER BY FIRST((time, seq, event_id DESC), price);
 ```
 
-DECIMAL and public ROWID are not supported key types in 8.5.
+8.5 does not support DECIMAL or public ROWID sort keys. Define and populate a regular
+business-sequence column such as `seq` or `trade_seq`; the engine does not add one automatically.
+Using ROWID here returns `ERR-02056` in SELECT, or `ERR-02813`
+(`Token = EXTENSION ORDER BY, Unit = 0`) in a ROLLUP definition.
 
 [Complete data and ordered ROLLUP example](../../table-types/tag-tables/rollup-tables/#composite-first-last).
 

@@ -199,7 +199,8 @@ LAST(sort_expr, return_expr)
 
 ### Composite sort keys
 
-> Composite sort keys require an engine build that includes this feature. Check support in the deployed product version.
+> Composite FIRST/LAST sort keys and ordered EXTENSION ROLLUPs are supported from Machbase 8.7.3.
+> Edition-specific restrictions are described below.
 
 ```text
 FIRST((key1 [ASC | DESC], key2 [ASC | DESC], ...), return_expr)
@@ -214,9 +215,10 @@ The syntax does not limit the number of keys to three.
 - Rows with a NULL first key are excluded. NULL secondary keys follow the type's ORDER BY comparison rules.
 - A NULL return value in the selected row is returned unchanged.
 - Equal values for every key do not identify a particular row. Deterministic selection requires a unique business key.
-- Integer types, FLOAT/DOUBLE, DATETIME, VARCHAR, IPV4/IPV6 sort keys are supported.
+- Integer types, FLOAT/DOUBLE, DECIMAL, DATETIME, VARCHAR, IPV4/IPV6 sort keys are supported.
   BINARY keys and DISTINCT with composite keys are not supported.
-- Ordinary SELECT keys are not restricted to BASETIME. The ordered EXTENSION definition has a separate restriction.
+- Ordinary SELECT keys are not restricted to BASETIME and may be comparable expressions such as `seq + 1`.
+  Ordered EXTENSION definitions and ROLLUP queries use source columns only.
 - An outer ORDER BY sorts output rows; it does not replace the function's selection criteria.
 - Additional key reads, comparisons, copies, and state incur costs; unchanged performance is not guaranteed.
 
@@ -239,7 +241,10 @@ SELECT code, FIRST((time, seq, event_id), price) AS first_price
  ORDER BY FIRST((time, seq, event_id DESC), price);
 ```
 
-Public ROWID sort keys are outside the support scope of this document.
+From 8.7.3, Standard supports an explicit public ROWID as a second or later key, such as
+`FIRST((time, ROWID), price)`. It identifies the selected source row, not business or insertion
+order. Cluster does not support public ROWID keys. See the
+[ROWID example and restrictions](../../../../tag-rollup-usage/extension-rollup/#standard-rowid-key).
 
 [Complete data and ordered ROLLUP example](../../../../tag-rollup-usage/extension-rollup/#composite-first-last).
 

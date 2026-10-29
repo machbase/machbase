@@ -66,12 +66,22 @@ GRANT CREATE, DROP ON DATABASE MACHBASEDB TO rollup_user;
 
 ## 複合キーFIRST/LASTの対応範囲
 
-> 複合ソートキーには、この機能を含むエンジンビルドが必要です。使用中の製品バージョンの対応状況を確認してください。
+> 複合キーFIRST/LASTとソート付きEXTENSION ROLLUPはMachbase 8.7.3から対応します。エディション別の制約は以下を確認してください。
 
-複合キーの元データ照会と数値対象のソート付きEXTENSIONは、対応ビルドのStandard・Clusterで使用できます。
-Custom SELECTと格納先TAGの再集計はStandard専用であり、Cluster Custom workerの新規対応は含みません。
-ソート付きROLLUPの第1キーはBASETIMEですが、Custom格納先の通常の再集計にこの制約は適用しません。
-照会キー・方向は保存定義と一致する必要があり、既存の時刻のみの要約から補助キーは復元できません。
-Clusterの全ノードに同じ対応ビルドが必要です。公開ROWIDは対応確認前のこのバージョンの例には含めません。
+複合キーの元データ照会と数値対象のソート付きEXTENSION ROLLUPは、8.7.3からStandard・Clusterで対応します。
+Custom ROLLUPの作成とworkerはStandard専用であり、Clusterは`ERR-02837`を返します。
+通常のTAGに保存済みの要約行を複合FIRST/LASTで再集計するSELECTは、Clusterでも
+通常の分散TAG照会として対応します。ソート付きROLLUP定義の第1キーはBASETIMEですが、
+通常のTAG再集計で使う元の候補時刻にこの制約は適用しません。
 
-[完全なデータとソート付きROLLUPの例](../../../tag-rollup-usage/extension-rollup/#composite-first-last).
+公開ROWID補助キーはStandard専用で、明示的に指定します。元の行識別子を保持しますが、
+入力順序を意味せず、既存のROWID制限も維持します。Clusterは非対応です。
+DECIMALソートキーにも対応します。照会キー・方向は保存定義と一致する必要があります。
+Clusterの全ノードに同じ対応ビルドを配備し、異なるバイナリの混在は避けてください。
+
+ソート付きROLLUPのDBを非対応の旧バイナリで開く、またはMOUNTする運用は、
+メタバージョン検査を通過しても非対応です。戻す場合は導入前のバックアップを復元します。
+ソート付きオブジェクトのDROPだけでは互換性を保証しません。
+[移行・ロールバック制約](../../../tag-rollup-usage/extension-rollup/#ordered-rollup-compatibility)を確認してください。
+
+[完全なデータとソート付きROLLUPの例](../../../tag-rollup-usage/extension-rollup/#composite-first-last)。

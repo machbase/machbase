@@ -26,7 +26,7 @@ CREATE ROLLUP [IF NOT EXISTS] name
     FROM source_rollup
     INTERVAL n { SEC | MIN | HOUR }
     [WAKEUP INTERVAL m { SEC | MIN | HOUR }]
-    [EXTENSION]
+    [EXTENSION [ORDER BY basetime_column [ASC | DESC], data_column [ASC | DESC] [, ...]]]
     [WHERE predicate];
 
 CREATE ROLLUP [IF NOT EXISTS] name
@@ -82,9 +82,12 @@ rollup(time_unit, period, basetime_column [, origin])
 ROLLUPが存在するだけでは自動的に切り替わりません。ROLLUPの参照には`rollup()`を明示し、適用可能な
 候補がなければ別途ソースデータのクエリを使用します。
 
-自動選択では、同じ列・パス・モードで条件なしの候補を先に探し、使用可能な最大の間隔を選びます。
-同じ間隔では登録順序が影響します。通常/拡張だけで優先順位を断定しないでください。
+自動選択では、列・パス・モードとFIRST/LASTのソートキー・方向に一致する候補のうち、条件なしの候補を先に探します。
+両方を使える通常の集約では、同じ条件区分で値カラムがNULLを許容する場合、ソート定義のない候補を
+優先し、NOT NULLが確認できれば同等に扱います。`COUNT(*)`は値カラムのNOT NULLを推定しません。
+その後、照会周期を割り切れる最大の有効間隔を選び、同じ間隔では登録順に従います。
 特定のデータ集合に固定するにはROLLUP_TABLEヒントを使用します。
+[詳しい選択規則](../../../../tag-rollup-usage/extension-rollup/#ordered-rollup-selection)を確認してください。
 
 SEC/MINの候補間隔はperiod秒/分を基準に確認します。HOUR・DAY・WEEK・MONTH・YEARは候補選択時に
 period時間を基準に確認します。これは結果バケットの暦計算とは別の規則です。
@@ -100,7 +103,7 @@ SELECTでnameを返すタグ別集計は、GROUP BYにもnameを含めます。�
 
 ## ソート付きEXTENSIONの定義
 
-> 複合ソートキーには、この機能を含むエンジンビルドが必要です。使用中の製品バージョンの対応状況を確認してください。
+> 複合キーFIRST/LASTとソート付きEXTENSION ROLLUPはMachbase 8.7.3から対応します。エディション別の制約は以下を確認してください。
 
 ```text
 CREATE ROLLUP [IF NOT EXISTS] name
@@ -113,7 +116,8 @@ CREATE ROLLUP [IF NOT EXISTS] name
 ```
 
 ON定義のEXTENSIONの後にORDER BYを指定します。ORDER BYのないEXTENSIONも有効です。
-FROM階層は下位のキーと方向を継承するため、ORDER BYを再指定しません。
+FROM階層はORDER BY省略時に下位のキーと方向を継承します。
+明示する場合は下位と同じキー・方向でなければなりません。
 Custom INTO...ASではこの句を使わず、SELECT内に複合キーFIRST/LASTを指定します。
 
 [完全なデータとソート付きROLLUPの例](../../../../tag-rollup-usage/extension-rollup/#composite-first-last).

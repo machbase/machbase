@@ -93,9 +93,10 @@ DROP TABLE ch6_ext;
 
 ## 복합 키 FIRST/LAST와 정렬 ROLLUP
 
-> 복합 정렬 키 구문은 해당 기능이 반영된 엔진 빌드에서 사용합니다. 사용 중인 제품 버전의 지원 여부를 확인해야 합니다.
+> 복합 키 FIRST/LAST와 정렬 EXTENSION ROLLUP은 Machbase 8.7.3부터 지원합니다. 에디션별 제약은 아래 설명을 확인하십시오.
 
-공개 ROWID 정렬 키는 이 문서의 지원 범위에 포함하지 않습니다.
+8.7.3 이상 Standard에서는 명시적 ROWID 보조 키도 지원합니다. 아래의
+[Standard 전용 ROWID 예제](#standard-rowid-key)를 확인하십시오. Cluster에서는 지원하지 않습니다.
 
 ### 예제 데이터
 
@@ -284,15 +285,111 @@ SELECT /*+ ROLLUP_TABLE(price_1h_ordered) */
 
 - 첫 키는 원본 TAG의 BASETIME이며 보조 키는 지원되는 일반 데이터 컬럼입니다.
   TAG 이름·메타데이터 컬럼, 계산식, 테이블 한정 컬럼 참조는 정의에 사용할 수 없습니다.
+- Standard의 명시적 공개 ROWID 보조 키는 아래의 별도 제약에 따라 허용합니다.
 - 숫자 대상의 정렬 EXTENSION을 지원합니다. JSON_PATH/JSON_SUMMARY 조합은 지원하지 않습니다.
-- 조회의 키 개수·컬럼·순서·방향·타입이 정의와 맞아야 합니다. 다른 방향의 ROLLUP을 강제하면 오류가 발생합니다.
+- 조회의 키 개수·컬럼·순서·방향·타입이 정의와 맞아야 합니다.
+  존재하지만 정의가 맞지 않는 ROLLUP을 `ROLLUP_TABLE` 힌트로 지정하면
+  `ERR-02813: Invalid ROLLUP expression. (Token = ROLLUP ordering mismatch, Unit = 0)`을 반환합니다.
+  힌트 대상이 없으면 `ERR-02025`입니다. 다른 ROLLUP 검증 오류가 먼저 발생할 수도 있습니다.
+  정의에 지원하지 않는 키를 지정한 경우는 `ERR-02813`의 `Token = EXTENSION ORDER BY`로 구분합니다.
 - 기존 시간 전용 ROLLUP에는 보조 키가 없습니다. 새 정의로 원본을 다시 집계해야 하며 삭제된 원본의 키는 복구할 수 없습니다.
 - 저장된 후보 키가 일반 WHERE·GROUP BY·출력에서 해당 원본 컬럼의 사용 범위를 넓히지는 않습니다.
-- 정렬 메타데이터와 생성 SQL 길이 제한을 넘는 정의는 생성 시 거부합니다.
+- 정렬 ROLLUP은 키마다 전체 키 목록을 담은 내부 집계 SQL을 만듭니다. 이 SQL이 내부 길이 한도를 넘으면
+  생성 시 `ERR-02813`(`Token = ordering query exceeds supported size, Unit = 0`)으로 거부합니다.
+  키가 많거나 컬럼 이름이 길수록 한도에 빨리 도달합니다. 예를 들어 `time`과 `seq` 9개로 만든
+  10개 키 정의는 거부됩니다. 동률 해소에 필요한 키만 지정하십시오.
+  정렬 정의 자체가 메타데이터 길이 제한을 넘으면 `Token = EXTENSION ORDER BY`입니다.
 - Standard에서 참조 키 컬럼의 RENAME은 ERR-02686으로 거부합니다. STOP 상태와 상위 의존성도 적용됩니다.
   관련 상위·하위 ROLLUP을 모두 DROP한 뒤 컬럼을 변경하고 새 이름으로 다시 생성합니다.
 - 원본 UPDATE의 자동 재집계를 추가한 기능은 아닙니다.
 - Cluster의 모든 broker·warehouse는 기능을 지원하는 동일 빌드를 사용해야 합니다.
+
+### 기존 EXT와 자동 선택 {#ordered-rollup-selection}
+
+두 종류를 사용할 수 있는 일반 집계는 WHERE 조건 없는 후보를 먼저 찾습니다.
+같은 조건 범주에서 값 컬럼이 NULL을 허용하면 정렬 정의가 없는 기존 ROLLUP을 우선합니다.
+집계 값 컬럼의 NOT NULL이 확인되면 기존·정렬 후보를 동등하게 취급합니다.
+`COUNT(*)`는 값 컬럼의 NOT NULL을 추정하지 않고 기존 후보 우선을 유지합니다.
+조회 주기를 나누어떨어지게 하는 가장 큰 유효 주기를 고르며, 같은 주기는 등록 순서를 따릅니다.
+복합 키 FIRST/LAST는 키와 방향이 일치하는 정렬 정의만 사용할 수 있습니다.
+
+시간 전용 EXT와 정렬 ROLLUP의 NULL 버킷 처리는 다릅니다. NULL 허용 price의 한 분에
+NULL 다음 10, 다음 분에 20이 들어오면 기존 EXT는 첫 분을 제외해 SUM/COUNT(price)가
+20/1이 될 수 있고, 정렬 ROLLUP은 버킷을 유지해 30/2가 될 수 있습니다.
+집계 목록·조회 주기·힌트·기존 객체 삭제에 따라 사용할 후보가 달라지므로,
+전환할 때 FIRST/LAST뿐 아니라 SUM/COUNT도 검산하십시오.
+
+기존 `FIRST(time, price)` / `LAST(time, price)`를 사용하는 저장 ROLLUP 조회에는
+적합한 기존 시간 전용 EXT가 필요하며 정렬 ROLLUP으로 대신할 수 없습니다.
+이 조회를 유지하려면 기존 EXT도 유지하십시오. 정렬 ROLLUP만 있으면 이 조회는
+`ERR-02685`(`There are no applicable ROLLUP tables.`)를 반환합니다. SUM·COUNT 같은 일반 집계는
+정렬 ROLLUP을 사용할 수 있습니다. 조건 후보는 필터된 입력을 집계합니다.
+
+### 정의 확인과 재구성
+
+`V$ROLLUP.EXT_TYPE = 1`만으로 정렬·시간 전용 EXT를 구분하거나 정렬 키를 확인할 수 없습니다.
+정의를 관리할 수 있도록 CREATE ROLLUP SQL을 보관하십시오.
+`WITH ROLLUP ... EXTENSION`에는 ORDER BY를 붙일 수 없으며 정렬 객체는 CREATE ROLLUP으로 만듭니다.
+FROM 상위 계층은 ORDER BY를 생략하면 하위 정의를 상속합니다.
+명시한다면 하위와 같은 키·방향이어야 합니다.
+
+ROLLUP_REBUILD가 임의의 정렬 객체도 재집계한다고 가정하지 마십시오.
+지원 대상은 별도로 문서화된 자동 계층과 Custom 경로로 제한됩니다.
+원본을 보정한 뒤에는 의존하는 상위 객체부터 하위 순서로 삭제하고,
+보관된 원본으로 정렬 계층을 다시 생성해 결과를 확인하십시오.
+객체를 삭제해도 이미 삭제된 원본 키를 복구할 수는 없습니다.
+
+### 이전 바이너리와 되돌리기 {#ordered-rollup-compatibility}
+
+정렬 ROLLUP이 있는 DB를 이 기능이 없는 이전 바이너리로 열거나 MOUNT하는 운영은 지원하지 않습니다.
+이 기능은 메타 버전을 올리지 않으므로 메타 버전이 같은 이전 바이너리는 버전 검사를 통과해
+정렬 객체를 기존 EXT로 해석할 수 있습니다. 이전 버전으로 되돌리려면 기능 도입 전 백업을
+복원하고 대상 버전의 복구 절차를 따르십시오. 정렬 객체를 DROP하는 것만으로 모든
+카탈로그·파일의 역호환성이 보장되지는 않습니다.
+
+8.5.13에서 정렬 ROLLUP을 만든 DB를 8.7로 업그레이드할 때는 8.7.3 이상을 사용하십시오.
+8.7.0~8.7.2에는 이 기능이 없으므로 위와 같이 정렬 객체를 기존 EXT로 해석할 수 있습니다.
+
+### Standard 공개 ROWID 보조 키 {#standard-rowid-key}
+
+이 선택 예제는 앞에서 만든 `rollup_tab`을 사용하는 8.7.3 이상 Standard용입니다.
+Cluster에서는 이 절을 실행하지 않습니다. ROWID는 `(time, seq, ROWID)`처럼 두 번째 이후의
+명시적 보조 키로 사용할 수 있습니다. 요약 행 자체가 아닌 선택된 원본 행의 ROWID를 보존합니다.
+
+```sql
+CREATE ROLLUP price_1m_rowid
+    ON rollup_tab(price)
+    INTERVAL 1 MIN EXTENSION ORDER BY time, ROWID;
+ALTER ROLLUP price_1m_rowid FORCE;
+
+SELECT code,
+       FIRST((time, ROWID), price) AS first_price,
+       LAST((time, ROWID), price) AS last_price
+  FROM rollup_tab
+ GROUP BY code
+ ORDER BY code;
+
+SELECT /*+ ROLLUP_TABLE(price_1m_rowid) */
+       code, ROLLUP('hour', 1, time) AS bucket,
+       FIRST((time, ROWID), price) AS first_price,
+       LAST((time, ROWID), price) AS last_price
+  FROM rollup_tab
+ GROUP BY code, bucket
+ ORDER BY code, bucket;
+
+DROP ROLLUP price_1m_rowid;
+```
+
+이 예제의 한 시간 데이터에서는 code별 원본 조회와 ROLLUP 조회의 FIRST/LAST가 같아야 합니다.
+앞의 업무 순번 예제와 같은 가격을 보장하지는 않습니다. ROWID는 저장 행 식별자이며 업무 순번이나
+테이블 전체의 입력 순서가 아닙니다. 백업 재적재나 테이블 재생성 후 같은 값·순서를 보장하지 않으며,
+암묵적으로 정렬 키에 추가되지 않습니다.
+
+기존 ROWID 제한도 유지됩니다. ROLLUP 조회의 GROUP BY·ORDER BY에 ROWID를 직접 쓰거나
+BITAND로 감싸 별도 키를 만들 수 없습니다. 복합 FIRST/LAST의 명시적 보조 키로 사용하고,
+해당 집계식·별칭·SELECT 목록 위치로 정렬하는 것은 허용합니다.
+Cluster는 공개 ROWID 키를 거부합니다. 이 SELECT 형태는 `ERR-02056`,
+정의는 `Token = EXTENSION ORDER BY`인 `ERR-02813`을 반환합니다.
 
 ### 예제 객체 삭제
 

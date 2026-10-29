@@ -94,9 +94,10 @@ DROP TABLE ch6_ext;
 
 ## 複合キーFIRST/LASTとソート付きROLLUP
 
-> 複合ソートキーには、この機能を含むエンジンビルドが必要です。使用中の製品バージョンの対応状況を確認してください。
+> 複合キーFIRST/LASTとソート付きEXTENSION ROLLUPはMachbase 8.7.3から対応します。エディション別の制約は以下を確認してください。
 
-公開ROWIDソートキーはこの文書の対応範囲外です。
+8.7.3以降のStandardは明示的なROWID補助キーにも対応します。以下の
+[Standard専用ROWID例](#standard-rowid-key)を参照してください。Clusterは非対応です。
 
 ### サンプルデータ
 
@@ -285,15 +286,110 @@ SELECT /*+ ROLLUP_TABLE(price_1h_ordered) */
 
 - 第1キーは元TAGのBASETIME、補助キーは対応する通常データカラムでなければなりません。
   TAG名、メタデータ、式、テーブル名付きカラム参照は定義に使用できません。
+- Standardの明示的な公開ROWID補助キーは、以下の個別制約に従って使用できます。
 - 数値対象のソート付きEXTENSIONをサポートします。JSON_PATH/JSON_SUMMARYとの組み合わせは非対応です。
-- キー数・カラム・順序・方向・型は定義と一致する必要があります。異なる方向をヒントで強制するとエラーになります。
+- 照会のキー数・カラム・順序・方向・型は定義と一致する必要があります。
+  存在するが定義が一致しないROLLUPを`ROLLUP_TABLE`ヒントで指定すると、
+  `ERR-02813: Invalid ROLLUP expression. (Token = ROLLUP ordering mismatch, Unit = 0)`を返します。
+  ヒント対象が存在しない場合は`ERR-02025`です。先行するROLLUP検証のエラーが優先される場合もあります。
+  定義に非対応キーを指定した場合は、`ERR-02813`の`Token = EXTENSION ORDER BY`で区別します。
 - 既存の時刻のみのROLLUPには補助キーがありません。新定義で元データを再集計します。削除済みの元キーは復元できません。
 - 保存候補キーによって、通常のWHERE・GROUP BY・出力で元カラムを利用できる範囲が拡大することはありません。
-- ソートメタデータや生成SQLの長さ制限を超える定義は作成時に拒否されます。
+- ソート付きROLLUPは、キーごとに全キー一覧を含む内部集約SQLを生成します。このSQLが内部の長さ上限を超えると、
+  作成時に`ERR-02813`（`Token = ordering query exceeds supported size, Unit = 0`）で拒否されます。
+  キーが多いほど、また列名が長いほど早く上限に達します。たとえば`time`と`seq`9個による
+  10キーの定義は拒否されます。同順位の解消に必要なキーだけを指定してください。
+  ソート定義自体がメタデータの長さ制限を超える場合のTokenは`EXTENSION ORDER BY`です。
 - Standardでは参照キーのRENAMEをERR-02686で拒否します。停止中ジョブと上位の依存関係にも適用します。
   関連する上位・下位ROLLUPをすべてDROPした後、カラム名を変更して再作成します。
 - 元データUPDATE後の自動再集計を追加する機能ではありません。
 - Clusterの全broker・warehouseに、機能をサポートする同一ビルドが必要です。
+
+### 既存EXTと自動選択 {#ordered-rollup-selection}
+
+両方を使用できる通常の集約では、まずWHERE条件のない候補を探します。
+同じ条件区分で値カラムがNULLを許容する場合、ソート定義のない既存ROLLUPを優先します。
+集約する値カラムのNOT NULLが確認できる場合、既存・ソート付き候補を同等に扱います。
+`COUNT(*)`は値カラムのNOT NULLを推定せず、既存候補の優先を維持します。
+照会周期を割り切れる最大の有効周期を選び、同周期では登録順に従います。
+複合キーFIRST/LASTは、キーと方向が一致するソート定義のみ使用できます。
+
+時刻のみのEXTとソート付きROLLUPではNULLバケットの扱いが異なります。
+NULL許容のpriceで、ある分にNULL、10、次の分に20が入力された場合、既存EXTは最初の分を
+除外してSUM/COUNT(price)が20/1になることがあります。ソート付きROLLUPはバケットを保持し、
+30/2になることがあります。集約一覧・照会周期・ヒント・既存オブジェクトの削除で候補が
+変わるため、移行時はFIRST/LASTだけでなくSUM/COUNTも照合してください。
+
+従来の`FIRST(time, price)` / `LAST(time, price)`を使う保存ROLLUP照会には、適用可能な
+既存の時刻のみのEXTが必要です。ソート付きROLLUPでは代用できません。
+従来照会を維持する場合は既存EXTも保持してください。ソート付きROLLUPしかない場合、この照会は
+`ERR-02685`（`There are no applicable ROLLUP tables.`）を返します。SUM・COUNTなどの通常の集約は
+ソート付きROLLUPを使用できます。条件付き候補は絞り込んだ入力を集約します。
+
+### 定義の確認と再構成
+
+`V$ROLLUP.EXT_TYPE = 1`だけではソート付き・時刻のみのEXTやソートキーを区別できません。
+定義を管理できるようにCREATE ROLLUP SQLを保存してください。
+`WITH ROLLUP ... EXTENSION`はORDER BYを受け付けず、ソート付きオブジェクトはCREATE ROLLUPで作成します。
+FROMの上位階層はORDER BY省略時に下位定義を継承します。
+明示する場合は下位と同じキー・方向でなければなりません。
+
+ROLLUP_REBUILDが任意のソート付きオブジェクトも再集計すると仮定しないでください。
+対象は別途文書化された自動階層とCustom経路に限定されます。
+元データを補正した後は、依存する上位から下位の順に削除し、保存してある元データから
+ソート階層を再作成して結果を確認してください。削除済みの元キーは復元できません。
+
+### 旧バイナリとロールバック {#ordered-rollup-compatibility}
+
+ソート付きROLLUPを含むDBを、この機能がない旧バイナリで開く、またはMOUNTする運用は非対応です。
+この機能ではメタバージョンを上げないため、同じメタバージョンの旧バイナリが検査を通過し、
+ソート付きオブジェクトを既存EXTとして解釈する可能性があります。戻す場合は機能導入前の
+バックアップを復元し、対象バージョンの復旧手順に従ってください。ソート付きオブジェクトの
+DROPだけでは、すべてのカタログ・ファイルの互換性は保証されません。
+
+8.5.13でソート付きROLLUPを作成したDBを8.7にアップグレードする場合は、8.7.3以降を使用してください。
+8.7.0～8.7.2にはこの機能がないため、上記のとおりソート付きオブジェクトを既存EXTとして解釈する可能性があります。
+
+### Standardの公開ROWID補助キー {#standard-rowid-key}
+
+この追加例は、上記の`rollup_tab`を使う8.7.3以降のStandard用です。
+Clusterではこの節を実行しません。ROWIDは`(time, seq, ROWID)`のように2番目以降の
+明示的な補助キーに使用できます。要約行自体ではなく、選択された元の行のROWIDを保持します。
+
+```sql
+CREATE ROLLUP price_1m_rowid
+    ON rollup_tab(price)
+    INTERVAL 1 MIN EXTENSION ORDER BY time, ROWID;
+ALTER ROLLUP price_1m_rowid FORCE;
+
+SELECT code,
+       FIRST((time, ROWID), price) AS first_price,
+       LAST((time, ROWID), price) AS last_price
+  FROM rollup_tab
+ GROUP BY code
+ ORDER BY code;
+
+SELECT /*+ ROLLUP_TABLE(price_1m_rowid) */
+       code, ROLLUP('hour', 1, time) AS bucket,
+       FIRST((time, ROWID), price) AS first_price,
+       LAST((time, ROWID), price) AS last_price
+  FROM rollup_tab
+ GROUP BY code, bucket
+ ORDER BY code, bucket;
+
+DROP ROLLUP price_1m_rowid;
+```
+
+この1時間のデータでは、codeごとの元データ照会とROLLUP照会のFIRST/LASTが一致する必要があります。
+前述の業務連番の例と同じ価格になる保証はありません。ROWIDは保存行識別子であり、業務連番や
+テーブル全体の入力順序ではありません。バックアップ再ロードやテーブル再作成後に同じ値・順序を
+保証せず、暗黙にソートキーへ追加されることもありません。
+
+既存のROWID制限も維持します。ROLLUP照会のGROUP BY・ORDER BYでROWIDを直接使う、
+またはBITANDで包んで別キーを作ることはできません。複合FIRST/LASTの明示的な補助キーに使い、
+その集約式・別名・SELECT一覧の位置でソートすることは可能です。
+Clusterは公開ROWIDキーを拒否します。このSELECT形式は`ERR-02056`、定義は
+`Token = EXTENSION ORDER BY`の`ERR-02813`を返します。
 
 ### サンプルオブジェクトの削除
 

@@ -246,7 +246,11 @@ DROP TABLE <source_table>;
 
 ## 複合キーを保持したOHLC再集計
 
-> 複合ソートキーには、この機能を含むエンジンビルドが必要です。使用中の製品バージョンの対応状況を確認してください。
+> 複合キーFIRST/LASTとソート付きEXTENSION ROLLUPはMachbase 8.5.13から対応します。エディション別の制約は以下を確認してください。
+
+この例のCustom作成はStandard専用です。通常のTAGに保存済みの要約行を再集計する
+SELECTは別の操作であり、Clusterでも対応します。マージ時も元の時刻と補助キーの
+カラムを同じ基準で使用してください。
 
 Standard Custom ROLLUPのSELECTでも複合キーFIRST/LASTを使用できます。
 Custom定義にはEXTENSION ORDER BYを付けません。選択価格と同じ行の元時刻・DOUBLEキーを

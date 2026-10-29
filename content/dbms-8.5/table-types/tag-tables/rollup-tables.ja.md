@@ -62,7 +62,7 @@ CREATE ROLLUP [IF NOT EXISTS] rollup_name
   FROM source_rollup_table
   INTERVAL n (SEC|MIN|HOUR)
   [WAKEUP INTERVAL m (SEC|MIN|HOUR)]
-  [EXTENSION]
+  [EXTENSION [ORDER BY basetime_column [ASC|DESC], data_column [ASC|DESC] [, ...]]]
   [WHERE predicate];
 ```
 
@@ -199,10 +199,15 @@ CREATE ROLLUP <rollup_name>
 - 構文の詳細は、[カスタムロールアップ：ユーザー定義集計](../rollup-custom/)と [DDL：CREATE ROLLUP](../../../sql-reference/ddl/#create-rollup) を参照してください。
 
 ### 自動選択の順序（ヒントなし） {#automatic-selection-order-no-hint}
-1. `ROLLUP_TABLE(<rollup_table_name>)` ヒントがあれば、常にそのロールアップを使用します。
+1. `ROLLUP_TABLE(<rollup_table_name>)` ヒントがある場合は、互換性を確認してそのロールアップを使用します。
 2. ヒントがなければ、間隔、値列、JSON パスが一致する候補のうち、**条件なし**のロールアップを優先します。
 3. 条件なしのロールアップがなければ、条件付きのロールアップを使用します。
-4. 候補が複数残る場合は、既存の規則に従います。要求された間隔を割り切れる最大の間隔を選び、間隔が同じなら最初に登録されたロールアップを使用します。
+4. 以下のソート定義・NULLに関する優先規則を適用した後、要求された間隔を割り切れる最大の間隔を選びます。間隔が同じなら最初に登録されたロールアップを使用します。
+
+8.5.13以降の複合キーFIRST/LASTではキー・方向の一致が必要で、ヒントも適用可能な定義を
+指定する必要があります。両方を使用できる通常の集約では、同じ条件区分でNULL許容値は
+ソート定義のない既存候補を優先し、NOT NULLが確認できれば同等に扱います。
+COUNT(*)はNOT NULLを推定しません。[移行・NULL規則](#ordered-rollup-selection)を確認してください。
 
 ### 簡単な手順（回帰テストのシナリオに基づく） {#quick-recipe-mirrors-the-regression-scenario}
 1) SUMMARIZED の `value` に加えて、`value2 DOUBLE`、`status INTEGER` など、フィルターに使用する列を持つ Tag テーブルを作成します。  
@@ -872,9 +877,12 @@ mtime                           COUNT(value)
 
 ## 複合キーFIRST/LASTとソート付きROLLUP
 
-> 複合ソートキーには、この機能を含むエンジンビルドが必要です。使用中の製品バージョンの対応状況を確認してください。
+> 複合キーFIRST/LASTとソート付きEXTENSION ROLLUPはMachbase 8.5.13から対応します。エディション別の制約は以下を確認してください。
 
-8.5の対応キー型にはDECIMALと公開ROWIDを含みません。
+8.5はDECIMALと公開ROWIDのソートキーに対応しません。`seq`、`trade_seq`などの通常の
+業務連番カラムを定義し、入力時に値を設定してください。エンジンが自動追加するものではありません。
+ROWIDを指定すると、SELECTは`ERR-02056`、ROLLUP定義は
+`ERR-02813`（`Token = EXTENSION ORDER BY, Unit = 0`）を返します。
 
 ### サンプルデータ
 
@@ -1064,14 +1072,67 @@ SELECT /*+ ROLLUP_TABLE(price_1h_ordered) */
 - 第1キーは元TAGのBASETIME、補助キーは対応する通常データカラムでなければなりません。
   TAG名、メタデータ、式、テーブル名付きカラム参照は定義に使用できません。
 - 数値対象のソート付きEXTENSIONをサポートします。JSON_PATH/JSON_SUMMARYとの組み合わせは非対応です。
-- キー数・カラム・順序・方向・型は定義と一致する必要があります。異なる方向をヒントで強制するとエラーになります。
+- 照会のキー数・カラム・順序・方向・型は定義と一致する必要があります。
+  存在するが定義が一致しないROLLUPを`ROLLUP_TABLE`ヒントで指定すると、
+  `ERR-02813: Invalid ROLLUP expression. (Token = ROLLUP ordering mismatch, Unit = 0)`を返します。
+  ヒント対象が存在しない場合は`ERR-02025`です。先行するROLLUP検証のエラーが優先される場合もあります。
+  定義に非対応キーを指定した場合は、`ERR-02813`の`Token = EXTENSION ORDER BY`で区別します。
 - 既存の時刻のみのROLLUPには補助キーがありません。新定義で元データを再集計します。削除済みの元キーは復元できません。
 - 保存候補キーによって、通常のWHERE・GROUP BY・出力で元カラムを利用できる範囲が拡大することはありません。
-- ソートメタデータや生成SQLの長さ制限を超える定義は作成時に拒否されます。
+- ソート付きROLLUPは、キーごとに全キー一覧を含む内部集約SQLを生成します。このSQLが内部の長さ上限を超えると、
+  作成時に`ERR-02813`（`Token = ordering query exceeds supported size, Unit = 0`）で拒否されます。
+  キーが多いほど、また列名が長いほど早く上限に達します。たとえば`time`と`seq`9個による
+  10キーの定義は拒否されます。同順位の解消に必要なキーだけを指定してください。
+  ソート定義自体がメタデータの長さ制限を超える場合のTokenは`EXTENSION ORDER BY`です。
 - Standardでは参照キーのRENAMEをERR-02686で拒否します。停止中ジョブと上位の依存関係にも適用します。
   関連する上位・下位ROLLUPをすべてDROPした後、カラム名を変更して再作成します。
 - 元データUPDATE後の自動再集計を追加する機能ではありません。
 - Clusterの全broker・warehouseに、機能をサポートする同一ビルドが必要です。
+
+### 既存EXTと自動選択 {#ordered-rollup-selection}
+
+両方を使用できる通常の集約では、まずWHERE条件のない候補を探します。
+同じ条件区分で値カラムがNULLを許容する場合、ソート定義のない既存ROLLUPを優先します。
+集約する値カラムのNOT NULLが確認できる場合、既存・ソート付き候補を同等に扱います。
+`COUNT(*)`は値カラムのNOT NULLを推定せず、既存候補の優先を維持します。
+照会周期を割り切れる最大の有効周期を選び、同周期では登録順に従います。
+複合キーFIRST/LASTは、キーと方向が一致するソート定義のみ使用できます。
+
+時刻のみのEXTとソート付きROLLUPではNULLバケットの扱いが異なります。
+NULL許容のpriceで、ある分にNULL、10、次の分に20が入力された場合、既存EXTは最初の分を
+除外してSUM/COUNT(price)が20/1になることがあります。ソート付きROLLUPはバケットを保持し、
+30/2になることがあります。集約一覧・照会周期・ヒント・既存オブジェクトの削除で候補が
+変わるため、移行時はFIRST/LASTだけでなくSUM/COUNTも照合してください。
+
+従来の`FIRST(time, price)` / `LAST(time, price)`を使う保存ROLLUP照会には、適用可能な
+既存の時刻のみのEXTが必要です。ソート付きROLLUPでは代用できません。
+従来照会を維持する場合は既存EXTも保持してください。ソート付きROLLUPしかない場合、この照会は
+`ERR-02685`（`There are no applicable ROLLUP tables.`）を返します。SUM・COUNTなどの通常の集約は
+ソート付きROLLUPを使用できます。条件付き候補は絞り込んだ入力を集約します。
+
+### 定義の確認と再構成
+
+`V$ROLLUP.EXT_TYPE = 1`だけではソート付き・時刻のみのEXTやソートキーを区別できません。
+定義を管理できるようにCREATE ROLLUP SQLを保存してください。
+`WITH ROLLUP ... EXTENSION`はORDER BYを受け付けず、ソート付きオブジェクトはCREATE ROLLUPで作成します。
+FROMの上位階層はORDER BY省略時に下位定義を継承します。
+明示する場合は下位と同じキー・方向でなければなりません。
+
+ROLLUP_REBUILDが任意のソート付きオブジェクトも再集計すると仮定しないでください。
+対象は別途文書化された自動階層とCustom経路に限定されます。
+元データを補正した後は、依存する上位から下位の順に削除し、保存してある元データから
+ソート階層を再作成して結果を確認してください。削除済みの元キーは復元できません。
+
+### 旧バイナリとロールバック {#ordered-rollup-compatibility}
+
+ソート付きROLLUPを含むDBを、この機能がない旧バイナリで開く、またはMOUNTする運用は非対応です。
+この機能ではメタバージョンを上げないため、同じメタバージョンの旧バイナリが検査を通過し、
+ソート付きオブジェクトを既存EXTとして解釈する可能性があります。戻す場合は機能導入前の
+バックアップを復元し、対象バージョンの復旧手順に従ってください。ソート付きオブジェクトの
+DROPだけでは、すべてのカタログ・ファイルの互換性は保証されません。
+
+8.5.13でソート付きROLLUPを作成したDBを8.7にアップグレードする場合は、8.7.3以降を使用してください。
+8.7.0～8.7.2にはこの機能がないため、上記のとおりソート付きオブジェクトを既存EXTとして解釈する可能性があります。
 
 ### サンプルオブジェクトの削除
 

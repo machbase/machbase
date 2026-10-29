@@ -196,7 +196,7 @@ LAST(sort_expr, return_expr)
 
 ### 複合ソートキー
 
-> 複合ソートキーには、この機能を含むエンジンビルドが必要です。使用中の製品バージョンの対応状況を確認してください。
+> 複合キーFIRST/LASTとソート付きEXTENSION ROLLUPはMachbase 8.7.3から対応します。エディション別の制約は以下を確認してください。
 
 ```text
 FIRST((key1 [ASC | DESC], key2 [ASC | DESC], ...), return_expr)
@@ -210,9 +210,10 @@ LAST ((key1 [ASC | DESC], key2 [ASC | DESC], ...), return_expr)
 - 第1キーがNULLの行は候補から除外します。補助キーのNULL比較は、型ごとのORDER BY規則に従います。
 - 選択行の返却値がNULLなら、そのままNULLを返します。
 - 全キーが同じ場合、特定行の選択は保証されません。確定的な選択には一意の業務キーが必要です。
-- 整数型、FLOAT/DOUBLE、DATETIME、VARCHAR、IPV4/IPV6のキーをサポートします。
+- 整数型、FLOAT/DOUBLE、DECIMAL、DATETIME、VARCHAR、IPV4/IPV6のキーをサポートします。
   BINARYキーと複合キー形式のDISTINCTはサポートしません。
-- 通常のSELECTの第1キーはBASETIMEに限定されません。ソート付きEXTENSIONの定義とは区別してください。
+- 通常のSELECTのキーはBASETIMEに限定されず、`seq + 1`のような比較可能な式も使用できます。
+  ソート付きEXTENSIONの定義とROLLUP照会では元の列だけを使用します。
 - 外側のORDER BYは出力行を並べ替えるもので、関数内部の選択基準を変更しません。
 - キーの読み取り・比較・コピー・状態保持に追加コストがあり、性能が変わらない保証はありません。
 
@@ -235,7 +236,10 @@ SELECT code, FIRST((time, seq, event_id), price) AS first_price
  ORDER BY FIRST((time, seq, event_id DESC), price);
 ```
 
-公開ROWIDソートキーはこの文書の対応範囲外です。
+8.7.3 Standardでは、`FIRST((time, ROWID), price)`のように公開ROWIDを2番目以降の
+明示的な補助キーに指定できます。元の保存行を識別する値であり、業務順序や入力順序を
+意味しません。Clusterは公開ROWIDキーに対応しません。
+[ROWIDの例と制約](../../../../tag-rollup-usage/extension-rollup/#standard-rowid-key)を確認してください。
 
 [完全なデータとソート付きROLLUPの例](../../../../tag-rollup-usage/extension-rollup/#composite-first-last).
 

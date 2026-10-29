@@ -62,7 +62,7 @@ CREATE ROLLUP [IF NOT EXISTS] rollup_name
   FROM source_rollup_table
   INTERVAL n (SEC|MIN|HOUR)
   [WAKEUP INTERVAL m (SEC|MIN|HOUR)]
-  [EXTENSION]
+  [EXTENSION [ORDER BY basetime_column [ASC|DESC], data_column [ASC|DESC] [, ...]]]
   [WHERE predicate];
 ```
 
@@ -199,10 +199,16 @@ CREATE ROLLUP <rollup_name>
 - See [Custom Rollup: User-Defined Aggregation](../rollup-custom/) and [DDL: CREATE ROLLUP](../../../sql-reference/ddl/#create-rollup) for the full syntax.
 
 ### Automatic selection order (no hint)
-1. If a `ROLLUP_TABLE(<rollup_table_name>)` hint exists, it always wins.
+1. A `ROLLUP_TABLE(<rollup_table_name>)` hint selects the named rollup after compatibility checks.
 2. Otherwise, among rollups that match interval/value/JSON path, one **without** a predicate is chosen first.
 3. If no plain rollup exists, a predicate rollup is used.
-4. If multiple candidates remain, the existing rule is kept: pick the largest frequency that divides the requested interval; for equal frequencies, the first registered rollup stays selected.
+4. After applying the definition and NULL preferences described below, pick the largest frequency that divides the requested interval; for equal frequencies, the first registered rollup stays selected.
+
+From 8.5.13, composite FIRST/LAST requires matching sort keys and directions.
+The hint must name an eligible definition. For ordinary aggregates that can use either kind,
+nullable value columns prefer existing candidates without a sort definition in the same
+condition category; confirmed NOT NULL values treat both kinds equally. COUNT(*) does not
+infer NOT NULL. See [migration and NULL rules](#ordered-rollup-selection).
 
 ### Quick recipe (mirrors the regression scenario)
 1) Create a tag table with extra columns you want to filter on, for example `value2 DOUBLE`, `status INTEGER` in addition to the summarized `value`.  
@@ -872,9 +878,12 @@ mtime                           COUNT(value)
 
 ## Composite FIRST/LAST and ordered ROLLUP
 
-> Composite sort keys require an engine build that includes this feature. Check support in the deployed product version.
+> Composite FIRST/LAST sort keys and ordered EXTENSION ROLLUPs are supported from Machbase 8.5.13.
 
-DECIMAL and public ROWID are not supported key types in 8.5.
+8.5 does not support DECIMAL or public ROWID sort keys. Define and populate a regular
+business-sequence column such as `seq` or `trade_seq`; the engine does not add one automatically.
+Using ROWID here returns `ERR-02056` in SELECT, or `ERR-02813`
+(`Token = EXTENSION ORDER BY, Unit = 0`) in a ROLLUP definition.
 
 ### Example data
 
@@ -1064,14 +1073,71 @@ The parent inherits the source definition and original candidate keys. Hourly re
 - The first key must be the source TAG's BASETIME; secondary keys must be supported ordinary data columns.
   TAG names, metadata columns, expressions, and table-qualified references cannot appear in the definition.
 - Ordered EXTENSION supports numeric targets, not combinations with JSON_PATH/JSON_SUMMARY.
-- Query key counts, columns, order, directions, and types must match. Forcing a different direction produces an error.
+- Query key counts, columns, order, directions, and types must match the definition.
+  An existing but incompatible ROLLUP named by `ROLLUP_TABLE` returns
+  `ERR-02813: Invalid ROLLUP expression. (Token = ROLLUP ordering mismatch, Unit = 0)`.
+  A nonexistent hint target returns `ERR-02025`. An earlier ROLLUP validation failure may take precedence.
+  An unsupported key in a definition returns `ERR-02813` with `Token = EXTENSION ORDER BY`.
 - Existing time-only ROLLUPs lack secondary keys. Reaggregate source data using a new definition; deleted source keys cannot be recovered.
 - Stored candidate keys do not broaden access to original columns in ordinary WHERE, GROUP BY, or projections.
-- Definitions exceeding sort-metadata or generated-SQL length limits are rejected at creation.
+- An ordered ROLLUP generates an internal aggregation SQL that repeats the full key list for each key.
+  If this SQL exceeds the internal length limit, creation fails with `ERR-02813`
+  (`Token = ordering query exceeds supported size, Unit = 0`). The limit is reached sooner with more
+  keys or longer column names; for example, a 10-key definition made of `time` and nine `seq` keys
+  is rejected. Specify only the keys needed to break ties. If the sort definition itself exceeds the
+  metadata length limit, the token is `EXTENSION ORDER BY`.
 - Standard rejects RENAME of referenced key columns with ERR-02686, including stopped jobs and parent dependencies.
   Drop all related parent/child ROLLUPs before renaming the column and creating new definitions.
 - This feature does not add automatic reaggregation after source UPDATE.
 - All Cluster brokers and warehouses must run the same feature-supporting build.
+
+### Existing EXT and automatic selection {#ordered-rollup-selection}
+
+For ordinary aggregates that can use either kind, candidates without WHERE conditions are
+considered first. Within the same condition category, nullable value columns prefer existing
+ROLLUPs without a sort definition. For a confirmed NOT NULL aggregate value column, existing
+and ordered candidates are treated equally. `COUNT(*)` does not infer a value column's NOT NULL
+property and retains the existing-candidate preference. Eligible periods must divide the query
+period; the largest eligible period wins, followed by registration order for equal periods.
+Composite FIRST/LAST can use only an ordered definition with matching keys and directions.
+
+Time-only EXT and ordered ROLLUPs handle NULL buckets differently. For a nullable price with
+NULL then 10 in one minute, and 20 in the next minute, an existing EXT may omit the first
+minute and produce SUM/COUNT(price) of 20/1; an ordered ROLLUP preserves that bucket and can
+produce 30/2. The aggregate list, period, hint, and removal of existing objects can change the
+eligible candidate. Recheck SUM/COUNT as well as FIRST/LAST when migrating.
+
+A stored ROLLUP query using the legacy `FIRST(time, price)` / `LAST(time, price)` needs an
+applicable existing time-only EXT; it cannot use an ordered ROLLUP instead. Keep the existing
+EXT if these queries must continue. With only ordered ROLLUPs available, such a query returns
+`ERR-02685` (`There are no applicable ROLLUP tables.`), while ordinary aggregates such as SUM and
+COUNT can use the ordered ROLLUP. A conditional candidate still represents filtered input.
+
+### Inspecting and rebuilding definitions
+
+`V$ROLLUP.EXT_TYPE = 1` identifies EXTENSION but does not distinguish ordered from time-only
+EXT or show its keys. Retain the CREATE ROLLUP SQL to manage the definition.
+`WITH ROLLUP ... EXTENSION` does not accept ORDER BY; create ordered objects with CREATE ROLLUP.
+For a FROM hierarchy, omitted ORDER BY inherits the lower definition. An explicit definition
+must match the lower keys and directions.
+
+Do not assume ROLLUP_REBUILD rebuilds arbitrary ordered objects. Its supported targets are
+limited to the documented automatic hierarchy and Custom paths. After correcting source data,
+drop dependent upper objects before lower ones, recreate the ordered hierarchy from retained
+source data, and verify the results. Dropping objects cannot recover deleted source keys.
+
+### Older binaries and rollback {#ordered-rollup-compatibility}
+
+Opening or MOUNTing a database containing ordered ROLLUPs with a binary that lacks this
+feature is unsupported. This feature does not raise the metadata version; an older binary
+with the same metadata version may pass the version check and interpret an ordered object as
+an existing EXT. To roll back, restore a backup taken before introducing ordered ROLLUPs and
+follow the target version's recovery procedure. Dropping the ordered objects alone does not
+guarantee compatibility of all catalogs and files.
+
+When upgrading a database with ordered ROLLUPs created in 8.5.13 to 8.7, use 8.7.3 or later.
+Releases 8.7.0 through 8.7.2 lack this feature and may interpret ordered objects as existing EXTs,
+as described above.
 
 ### Delete example objects
 

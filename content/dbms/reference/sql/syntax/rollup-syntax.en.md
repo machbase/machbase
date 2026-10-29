@@ -27,7 +27,7 @@ CREATE ROLLUP [IF NOT EXISTS] name
     FROM source_rollup
     INTERVAL n { SEC | MIN | HOUR }
     [WAKEUP INTERVAL m { SEC | MIN | HOUR }]
-    [EXTENSION]
+    [EXTENSION [ORDER BY basetime_column [ASC | DESC], data_column [ASC | DESC] [, ...]]]
     [WHERE predicate];
 
 CREATE ROLLUP [IF NOT EXISTS] name
@@ -88,9 +88,13 @@ Return type: DATETIME. period must be a positive integer literal. Do not assume 
 DATE_TRUNC + GROUP BY query switches automatically merely because a ROLLUP exists. Specify
 rollup() for ROLLUP queries; use a separate source-data query if no candidate applies.
 
-Automatic selection first looks for unconditional candidates matching column, path, and mode,
-then selects the largest usable interval. Equal intervals are affected by registration order.
-Do not infer priority from ordinary/extended status alone. Use ROLLUP_TABLE to fix the dataset.
+Automatic selection first looks for unconditional candidates matching the column, path, mode,
+and FIRST/LAST keys and directions. For ordinary aggregates that can use either kind, nullable value
+columns prefer candidates without a sort definition within the same condition category;
+confirmed NOT NULL values treat both kinds equally. `COUNT(*)` does not infer a value column's
+NOT NULL property. The largest eligible interval dividing the query period is selected next,
+followed by registration order for equal intervals. Use ROLLUP_TABLE to fix the dataset.
+See the [detailed selection rules](../../../../tag-rollup-usage/extension-rollup/#ordered-rollup-selection).
 
 SEC/MIN candidate intervals are checked against period seconds/minutes. HOUR, DAY, WEEK, MONTH,
 and YEAR use period hours during candidate selection. This rule is separate from calendar
@@ -107,7 +111,8 @@ and [Query Syntax](/dbms/tag-rollup-usage/query-syntax-rollup/).
 
 ## Ordered EXTENSION definition
 
-> Composite sort keys require an engine build that includes this feature. Check support in the deployed product version.
+> Composite FIRST/LAST sort keys and ordered EXTENSION ROLLUPs are supported from Machbase 8.7.3.
+> Edition-specific restrictions are described below.
 
 ```text
 CREATE ROLLUP [IF NOT EXISTS] name
@@ -120,7 +125,8 @@ CREATE ROLLUP [IF NOT EXISTS] name
 ```
 
 Specify ORDER BY after EXTENSION in an ON definition. EXTENSION without ORDER BY remains valid.
-A FROM hierarchy inherits the source keys and directions; do not specify ORDER BY again.
+A FROM hierarchy inherits the source keys and directions when ORDER BY is omitted.
+If explicitly specified, its keys and directions must match the source definition.
 Custom INTO...AS uses composite FIRST/LAST inside SELECT, not this clause.
 
 [Complete data and ordered ROLLUP example](../../../../tag-rollup-usage/extension-rollup/#composite-first-last).

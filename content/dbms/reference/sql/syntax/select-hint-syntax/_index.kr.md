@@ -33,6 +33,11 @@ SELECT /*+ hint1 hint2 */ ...
 | `SCAN_FORWARD` | `/*+ SCAN_FORWARD(table) */` | 오래된 레코드부터 스캔 (LOG 테이블) |
 | `SCAN_BACKWARD` | `/*+ SCAN_BACKWARD(table) */` | 최신 레코드부터 스캔 (LOG 테이블) |
 
+복합 FIRST/LAST는 EXTENSION 여부뿐 아니라 키·방향도 일치해야 합니다.
+존재하지만 맞지 않는 ROLLUP_TABLE 대상은 `ERR-02813`
+(`Token = ROLLUP ordering mismatch, Unit = 0`), 없는 대상은 `ERR-02025`입니다.
+다른 ROLLUP 검증 오류가 먼저 발생할 수도 있습니다.
+
 ### 데이터 처리 힌트
 
 | 힌트 | 문법 | 설명 |

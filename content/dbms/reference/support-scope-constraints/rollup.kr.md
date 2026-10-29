@@ -67,12 +67,22 @@ GRANT CREATE, DROP ON DATABASE MACHBASEDB TO rollup_user;
 
 ## 복합 키 FIRST/LAST 지원 범위
 
-> 복합 정렬 키 구문은 해당 기능이 반영된 엔진 빌드에서 사용합니다. 사용 중인 제품 버전의 지원 여부를 확인해야 합니다.
+> 복합 키 FIRST/LAST와 정렬 EXTENSION ROLLUP은 Machbase 8.7.3부터 지원합니다. 에디션별 제약은 아래 설명을 확인하십시오.
 
-복합 키 원본 조회와 숫자 대상의 정렬 EXTENSION ROLLUP은 지원 빌드의 Standard·Cluster에서 사용합니다.
-Custom SELECT와 목적 TAG 재집계는 Standard 전용입니다. Cluster Custom worker 신규 지원은 포함하지 않습니다.
-정렬 ROLLUP의 첫 키는 BASETIME이지만 Custom 목적 TAG의 일반 재집계에는 이 제한을 적용하지 않습니다.
-조회 키·방향과 저장 정의가 일치해야 하며 기존 시간 전용 요약에서 보조 키를 복원하지 않습니다.
-Cluster는 전 노드에 같은 지원 빌드를 배포해야 합니다. 공개 ROWID는 지원이 확인되기 전까지 이 버전의 예제에 포함하지 않습니다.
+복합 키 원본 조회와 숫자 대상의 정렬 EXTENSION ROLLUP은 8.7.3부터 Standard·Cluster에서 지원합니다.
+Custom ROLLUP 생성과 worker는 Standard 전용이며 Cluster에서는 `ERR-02837`을 반환합니다.
+일반 TAG에 이미 저장된 요약 행을 복합 FIRST/LAST로 재집계하는 SELECT는 Cluster에서도
+일반 TAG 분산 조회로 지원합니다. 정렬 ROLLUP 정의의 첫 키는 BASETIME이어야 하지만,
+일반 TAG 재집계에서 사용하는 원본 후보 시각에 이 제한을 적용하지는 않습니다.
+
+공개 ROWID 보조 키는 Standard 전용이며 명시적으로 지정합니다. 원본 행 식별자를 보존하되
+입력 순서를 뜻하지 않고 기존 ROWID 제한을 유지합니다. Cluster는 지원하지 않습니다.
+DECIMAL 정렬 키도 지원합니다. 조회의 키·방향은 저장 정의와 맞아야 합니다.
+Cluster의 모든 노드에 같은 지원 빌드를 배포해야 하며 혼합 바이너리는 지원하지 않습니다.
+
+정렬 ROLLUP이 있는 DB를 기능이 없는 이전 바이너리로 열거나 MOUNT하는 운영은
+메타 버전 검사를 통과하더라도 지원하지 않습니다. 되돌릴 때는 도입 전 백업을 복원하며,
+정렬 객체를 DROP하는 것만으로 역호환성이 보장되지는 않습니다.
+[전환·되돌리기 제약](../../../tag-rollup-usage/extension-rollup/#ordered-rollup-compatibility)을 확인하십시오.
 
 [전체 데이터와 정렬 ROLLUP 예제](../../../tag-rollup-usage/extension-rollup/#composite-first-last).

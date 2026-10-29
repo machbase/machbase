@@ -14,16 +14,22 @@ CREATE ROLLUP [IF NOT EXISTS] name
   ON source_tag [(column_or_json_path)]
   INTERVAL n (SEC|MIN|HOUR)
   [WAKEUP INTERVAL m (SEC|MIN|HOUR)]
-  [EXTENSION]
+  [EXTENSION [ORDER BY basetime_column [ASC | DESC], data_column [ASC | DESC] [, ...]]]
   [WHERE predicate];
 
 CREATE ROLLUP [IF NOT EXISTS] name
   FROM source_rollup
   INTERVAL n (SEC|MIN|HOUR)
   [WAKEUP INTERVAL m (SEC|MIN|HOUR)]
-  [EXTENSION]
+  [EXTENSION [ORDER BY basetime_column [ASC | DESC], data_column [ASC | DESC] [, ...]]]
   [WHERE predicate];
 ```
+
+EXTENSION의 ORDER BY는 8.7.3부터 지원하며 첫 키는 원본 BASETIME입니다.
+FROM 계층은 키 생략 시 상속하고, 명시한다면 하위 정의와 일치해야 합니다.
+WITH ROLLUP 자동 생성에는 ORDER BY를 붙일 수 없습니다.
+키·에디션 제약은 [정렬 FIRST/LAST](../extension-rollup/#composite-first-last)를 확인하십시오.
+
 
 EXTENSION 뒤에 별도 확장 이름은 쓰지 않습니다. CREATE의 단위는 SEC/MIN/HOUR이며,
 조회 함수의 DAY/MONTH 등과 구분합니다. 간격은 양수이며 현행 검증 상한은 365일에
