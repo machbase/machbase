@@ -7,6 +7,41 @@ toc: false
 
 Read the latest Machbase Neo news and release highlights, with the newest entries first.
 
+## 2026-10-29 — Machbase Neo v8.7.3 release
+
+This release improves transaction handling and backup and restore reliability, and fixes
+issues with TAG table updates and file operations. It also refines NeoShell and file system
+handling, and improves usability and error reporting in Dashboard, SQL, Tag Analyzer,
+and other web screens.
+
+- **Transaction and backup and restore reliability**: Handling of indefinite transaction
+  waits and deadlocks has been improved, with stronger protection for concurrent access
+  to transaction tables. WAL metadata backups are now more consistent, missing transaction
+  table backups have been fixed, and restore validation has been strengthened.
+- **Query and data processing improvements**: Processing of `FIRST()` and `LAST()` with
+  composite keys and ordered `ROLLUP` has been improved. Fixes also address crashes with
+  certain `INTERPOLATION` hints and errors querying META tables after `GRANT`.
+- **TAG table and upgrade stability**: Fixes address Direct I/O buffer alignment errors
+  when updating VARCHAR values in TAG tables and file handle leaks on Windows.
+  Unused metadata files are now cleaned up correctly after a Standard upgrade.
+- **Neo server and NeoShell improvements**: File system handling has been unified across
+  the server and shell, with refinements to mounts and file operations. API token validation
+  has been added, and shell commands now handle paths containing spaces more reliably.
+  REPL behavior has also been improved.
+- **Dashboard and Tag Analyzer improvements**: Dashboard variables, formulas, filters,
+  and chart handling in shared views have been refined. Improvements to Tag Analyzer cover
+  save status indicators, charts and annotations, CSV export, and error reporting.
+- **File operations and web screen improvements**: Duplicating files no longer overwrites
+  existing files, and saving or duplicating JSON files preserves their original contents.
+  Improvements also cover whitespace and time display in SQL results, DB Explorer refresh
+  and metadata editing, and behavior and error reporting in authentication, Bridge,
+  and Timer settings.
+
+[v8.7.3 release notes](https://github.com/machbase/neo-server/releases/tag/v8.7.3)
+· [Full changelog](https://github.com/machbase/neo-server/compare/v8.7.2...v8.7.3)
+
+---
+
 ## 2026-10-20 — Machbase Neo v8.7.2 release
 
 This release makes ARRAY data easier to explore and introduces an experimental feature for
