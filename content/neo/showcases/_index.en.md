@@ -8,6 +8,11 @@ toc: true
 
 {{< cards >}}
 
+  {{< card link="./bearing_vib"
+    image="https://img.youtube.com/vi/3gu6nw4IXik/hqdefault.jpg" icon="film"
+    title="Bearing Vibration Analysis"
+    subtitle="Find bearing fault frequencies in vibration data stored in Machbase Neo to assess equipment condition, from real-time monitoring to in-depth analysis and report generation.">}}
+
   {{< card link="./garmin_watch"
     image="https://img.youtube.com/vi/gCQw0rRHAlA/hqdefault.jpg" icon="film"
     title="Garmin Watch Health Data"

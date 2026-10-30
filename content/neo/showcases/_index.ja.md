@@ -8,6 +8,11 @@ toc: true
 
 {{< cards >}}
 
+  {{< card link="./bearing_vib"
+    image="https://img.youtube.com/vi/3gu6nw4IXik/hqdefault.jpg" icon="film"
+    title="ベアリング振動分析"
+    subtitle="Machbase Neo に保存した振動データからベアリングの故障周波数を見つけて設備の状態を判断し、リアルタイム監視から詳細分析、レポート作成まで紹介します。">}}
+
   {{< card link="./garmin_watch"
     image="https://img.youtube.com/vi/gCQw0rRHAlA/hqdefault.jpg" icon="film"
     title="Garmin ウォッチの健康データ"
