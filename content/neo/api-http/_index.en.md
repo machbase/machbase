@@ -51,6 +51,12 @@ Applications and sensors can read/write data via HTTP API.
 Machbase-neo WEB UI includes a built-in REST API client that allows you to test HTTP APIs directly within markdown and TQL,
 as shown in the following examples.
 
+> Token authentication is enabled by default in machbase-neo (`--http-enable-token-auth true`).
+> When it is enabled, requests without an authentication token receive a `401 Unauthorized` response
+> with the message `{"reason":"missing authorization token","success":false}`.
+> Before running the examples below, follow [API Security](/neo/security/) to obtain an API token,
+> then add the `Authorization: Bearer <API_TOKEN>` header to each request.
+
 - Markdown in Worksheet.
 
 ~~~
@@ -58,6 +64,7 @@ as shown in the following examples.
 GET http://127.0.0.1:5654/db/query
     ?q=select count(*) from example
     &format=ndjson
+Authorization: Bearer <your token>
 ```
 ~~~
 
@@ -70,6 +77,7 @@ HTTP({
     GET http://127.0.0.1:5654/db/query
         ?q=select count(*) from example
         &format=ndjson
+    Authorization: Bearer <your token>
 })
 TEXT()
 ```

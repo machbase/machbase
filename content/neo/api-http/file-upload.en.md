@@ -20,6 +20,9 @@ where the file should be stored.
 If the specified directory in `X-Store-Dir` does not exist, the server will create it automatically.
 The file content will be stored in the directory with a generated unique name in UUID format.
 
+Token authentication is enabled by default. For the examples below, obtain an API token
+as described in [API Security](/neo/security/) and replace `<API_TOKEN>` with your token.
+
 ## Upload file
 
 This demo assumes the `STASH` table has already been created:
@@ -39,6 +42,7 @@ This example uses Visual Studio Code's REST Client extension.
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/write/STASH
+Authorization: Bearer <API_TOKEN>
 Content-Type: multipart/form-data; boundary=----Boundary7MA4YWxkTrZu0gW
 
 ------Boundary7MA4YWxkTrZu0gW
@@ -65,8 +69,9 @@ Content-Type: image/svg
 {{< tab name="cURL" >}}
 This example uses `curl` with the `-F` option to make a POST request in *multipart/form-data* encoding.
 
-```sh {hl_lines=[4]}
+```sh {hl_lines=[5]}
 curl -X POST 'http://127.0.0.1:5654/db/write/STASH' \
+  -H "Authorization: Bearer <API_TOKEN>" \
   -F 'NAME=camera-1' \
   -F 'TIME=now' \
   -F 'DATA=@-;filename=image_file.svg;headers="X-Store-Dir: /tmp/store"' << 'EOF'
@@ -90,7 +95,7 @@ EOF
       url,
       data={"NAME": "camera-1", "TIME": "now"},
       files={"DATA": ("image_file.svg", image_file, "image/svg")},
-      headers={"X-Store-Dir": "/tmp/store"},
+      headers={"Authorization": "Bearer <API_TOKEN>", "X-Store-Dir": "/tmp/store"},
     )
 
   response.raise_for_status()
@@ -113,7 +118,7 @@ async function uploadFile(file) {
 
   const response = await fetch("http://127.0.0.1:5654/db/write/STASH", {
     method: "POST",
-    headers: { "X-Store-Dir": "/tmp/store" },
+    headers: {"Authorization": "Bearer <API_TOKEN>", "X-Store-Dir": "/tmp/store" },
     body: formData,
   });
 
@@ -134,6 +139,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 using var form = new MultipartFormDataContent();
 
 form.Add(new StringContent("camera-1"), "NAME");
@@ -225,12 +231,14 @@ The following is an example of running a SELECT query with the `/db/query` API:
 ```http
 GET http://127.0.0.1:5654/db/query
   ?q=select DATA from STASH where NAME = 'camera-1'
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 {{< /tab >}}
 {{< tab name="cURL" >}}
 ```sh
 curl -o - 'http://127.0.0.1:5654/db/query' \
+  -H "Authorization: Bearer <API_TOKEN>" \
   --data-urlencode "q=select DATA from STASH\
   where NAME = 'camera-1'"
 ```
@@ -241,6 +249,7 @@ import requests
 
 response = requests.get(
   "http://127.0.0.1:5654/db/query",
+  headers={"Authorization": "Bearer <API_TOKEN>"},
   params={"q": "select DATA from STASH where NAME = 'camera-1'"},
 )
 print(response.text)
@@ -253,7 +262,9 @@ async function runQuery() {
     q: "select DATA from STASH where NAME = 'camera-1'",
   });
 
-  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`, {
+    headers: { "Authorization": "Bearer <API_TOKEN>" },
+  });
   console.log(await response.text());
 }
 
@@ -265,6 +276,7 @@ runQuery();
 using System.Net.Http;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 var sql = Uri.EscapeDataString("select DATA from STASH where NAME = 'camera-1'");
 
 var response = await client.GetAsync($"http://127.0.0.1:5654/db/query?q={sql}");
@@ -282,12 +294,14 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```http
 GET http://127.0.0.1:5654/db/query
   ?q=select DATA from STASH where NAME = 'camera-1' and DATA->'$.FN' = 'image_file.svg'
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 {{< /tab >}}
 {{< tab name="cURL" >}}
 ```sh
 curl -o - 'http://127.0.0.1:5654/db/query' \
+  -H "Authorization: Bearer <API_TOKEN>" \
   --data-urlencode "q=select DATA from STASH\
   where NAME = 'camera-1' \
   and DATA->'$.FN' = 'image_file.svg'"
@@ -299,6 +313,7 @@ import requests
 
 response = requests.get(
   "http://127.0.0.1:5654/db/query",
+  headers={"Authorization": "Bearer <API_TOKEN>"},
   params={
     "q": (
       "select DATA from STASH "
@@ -317,7 +332,9 @@ async function runQuery() {
     q: "select DATA from STASH where NAME = 'camera-1' and DATA->'$.FN' = 'image_file.svg'",
   });
 
-  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`, {
+    headers: { "Authorization": "Bearer <API_TOKEN>" },
+  });
   console.log(await response.text());
 }
 
@@ -329,6 +346,7 @@ runQuery();
 using System.Net.Http;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 var sql = Uri.EscapeDataString(
   "select DATA from STASH where NAME = 'camera-1' and DATA->'$.FN' = 'image_file.svg'"
 );
@@ -368,12 +386,14 @@ Use JSON path to extract specific fields from the JSON type column:
 GET http://127.0.0.1:5654/db/query
     ?format=ndjson
     &q=SELECT NAME, TIME, DATA->'$.ID' as FID  FROM STASH WHERE NAME = 'camera-1'
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 {{< /tab >}}
 {{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
+  -H "Authorization: Bearer <API_TOKEN>" \
   --data-urlencode "format=ndjson"   \
   --data-urlencode "q=SELECT NAME, TIME, DATA->'$.ID' as FID  \
   FROM STASH WHERE NAME = 'camera-1'"
@@ -385,6 +405,7 @@ import requests
 
 response = requests.get(
   "http://127.0.0.1:5654/db/query",
+  headers={"Authorization": "Bearer <API_TOKEN>"},
   params={
   "format": "ndjson",
   "q": "SELECT NAME, TIME, DATA->'$.ID' as FID FROM STASH WHERE NAME = 'camera-1'",
@@ -401,7 +422,9 @@ async function runQuery() {
     q: "SELECT NAME, TIME, DATA->'$.ID' as FID FROM STASH WHERE NAME = 'camera-1'",
   });
 
-  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`, {
+    headers: { "Authorization": "Bearer <API_TOKEN>" },
+  });
   console.log(await response.text());
 }
 
@@ -413,6 +436,7 @@ runQuery();
 using System.Net.Http;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 var sql = Uri.EscapeDataString(
   "SELECT NAME, TIME, DATA->'$.ID' as FID FROM STASH WHERE NAME = 'camera-1'"
 );
@@ -453,12 +477,14 @@ Note that the timestamp in the `ID` is *NOT* exactly the same as the base time o
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query/file/STASH/DATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 {{< /tab >}}
 {{< tab name="cURL" >}}
 ```sh
 curl -o ./img-download.svg \
+  -H "Authorization: Bearer <API_TOKEN>" \
   http://127.0.0.1:5654/db/query/file/STASH/DATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8
 ```
 {{< /tab >}}
@@ -467,7 +493,8 @@ curl -o ./img-download.svg \
 import requests
 
 response = requests.get(
-  "http://127.0.0.1:5654/db/query/file/STASH/DATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8"
+  "http://127.0.0.1:5654/db/query/file/STASH/DATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8",
+  headers={"Authorization": "Bearer <API_TOKEN>"},
 )
 response.raise_for_status()
 with open("./img-download.svg", "wb") as output_file:
@@ -478,7 +505,8 @@ with open("./img-download.svg", "wb") as output_file:
 ```javascript
 async function downloadFile() {
   const response = await fetch(
-  "http://127.0.0.1:5654/db/query/file/STASH/DATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8"
+  "http://127.0.0.1:5654/db/query/file/STASH/DATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8",
+    { headers: { "Authorization": "Bearer <API_TOKEN>" } }
   );
 
   if (!response.ok) {
@@ -502,6 +530,7 @@ downloadFile();
 using System.Net.Http;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 var bytes = await client.GetByteArrayAsync(
   "http://127.0.0.1:5654/db/query/file/STASH/DATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8"
 );
@@ -513,10 +542,35 @@ await File.WriteAllBytesAsync("./img-download.svg", bytes);
 
 ### Use &lt;img&gt; in HTML
 
+An `<img src>` request cannot set an `Authorization` header. Fetch the file with the header,
+then display the resulting Blob URL in the image element.
+
 ```html
 <html>
 <body>
-<img src="http://127.0.0.1:5654/db/query/file/STASH/DATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8"/>
+<img id="image"/>
+<script>
+async function loadImage() {
+  const response = await fetch(
+    "http://127.0.0.1:5654/db/query/file/STASH/DATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8",
+    { headers: { "Authorization": "Bearer <API_TOKEN>" } }
+  );
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  const objectUrl = URL.createObjectURL(await response.blob());
+  const image = document.getElementById("image");
+  image.addEventListener("load", () => URL.revokeObjectURL(objectUrl), { once: true });
+  image.addEventListener("error", () => {
+    URL.revokeObjectURL(objectUrl);
+    console.error("Failed to display the downloaded image.");
+  }, { once: true });
+  image.src = objectUrl;
+}
+
+loadImage().catch(console.error);
+</script>
 </body>
 </html>
 ```
@@ -526,7 +580,29 @@ If the table is a TAG table and the tag name is known, use the `tag` query param
 ```html
 <html>
 <body>
-<img src="http://127.0.0.1:5654/db/query/file/STASH/DATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8?tag=camera-1"/>
+<img id="image"/>
+<script>
+async function loadImage() {
+  const response = await fetch(
+    "http://127.0.0.1:5654/db/query/file/STASH/DATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8?tag=camera-1",
+    { headers: { "Authorization": "Bearer <API_TOKEN>" } }
+  );
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  const objectUrl = URL.createObjectURL(await response.blob());
+  const image = document.getElementById("image");
+  image.addEventListener("load", () => URL.revokeObjectURL(objectUrl), { once: true });
+  image.addEventListener("error", () => {
+    URL.revokeObjectURL(objectUrl);
+    console.error("Failed to display the downloaded image.");
+  }, { once: true });
+  image.src = objectUrl;
+}
+
+loadImage().catch(console.error);
+</script>
 </body>
 </html>
 ```
@@ -544,7 +620,7 @@ const fs = require('fs');
 let req = {
     method: 'POST',
     url: 'http://127.0.0.1:5654/db/write/STASH',
-    headers: {"X-Store-Dir": "/tmp/store"},
+    headers: {"Authorization": "Bearer <API_TOKEN>","X-Store-Dir": "/tmp/store"},
     formData: {
         NAME: 'camera-1',
         TIME: 'now',
@@ -573,7 +649,7 @@ file_path = Path("./image_file.svg")
 with file_path.open("rb") as image_file:
   response = requests.post(
     url,
-    headers={"X-Store-Dir": "/tmp/store"},
+    headers={"Authorization": "Bearer <API_TOKEN>", "X-Store-Dir": "/tmp/store"},
     data={"NAME": "camera-1", "TIME": "now"},
     files={"DATA": (file_path.name, image_file, "image/svg")},
   )

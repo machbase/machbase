@@ -9,6 +9,9 @@ params:
 
 The Write API endpoint is `/db/write/{TABLE}`, where `{TABLE}` is the name of the table you want to write to.
 
+Token authentication is enabled by default. For the examples below, obtain an API token
+as described in [API Security](/neo/security/) and replace `<API_TOKEN>` with your token.
+
 Although the `query` API can also execute an `INSERT` statement, it is not an efficient way to write data,
 since clients must build a static SQL text in the `q` parameter for every request.
 The proper way to write data is the `write` API, which is equivalent to the `INSERT` statement.
@@ -43,6 +46,7 @@ If `db` is omitted or empty, the write targets the default database `MACHBASEDB`
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/write/EXAMPLE?db=OTHERDB
+Authorization: Bearer <API_TOKEN>
 Content-Type: application/json
 
 {
@@ -59,6 +63,7 @@ Content-Type: application/json
 {{< tab name="cURL" >}}
 ```sh
 curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE?db=OTHERDB' \
+  -H "Authorization: Bearer <API_TOKEN>" \
   -H "Content-Type: application/json" \
   --data-binary @- << 'EOF'
 {
@@ -87,6 +92,7 @@ payload = {
 
 response = requests.post(
   "http://127.0.0.1:5654/db/write/EXAMPLE",
+  headers={"Authorization": "Bearer <API_TOKEN>"},
   params={"db": "OTHERDB"},
   json=payload,
 )
@@ -107,7 +113,7 @@ async function writeToDatabase() {
 
   const response = await fetch("http://127.0.0.1:5654/db/write/EXAMPLE?db=OTHERDB", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Authorization": "Bearer <API_TOKEN>", "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
 
@@ -123,6 +129,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 
 var response = await client.PostAsJsonAsync(
   "http://127.0.0.1:5654/db/write/EXAMPLE?db=OTHERDB",
@@ -187,6 +194,7 @@ Set the `Content-Type` header to `application/json`.
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/write/EXAMPLE
+Authorization: Bearer <API_TOKEN>
 Content-Type: application/json
 
 {
@@ -204,6 +212,7 @@ Content-Type: application/json
 {{< tab name="cURL" >}}
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE \
+  -H "Authorization: Bearer <API_TOKEN>" \
   -H "Content-Type: application/json" \
   --data-binary @- << 'EOF'
 {
@@ -234,6 +243,7 @@ payload = {
 
 response = requests.post(
   "http://127.0.0.1:5654/db/write/EXAMPLE",
+  headers={"Authorization": "Bearer <API_TOKEN>"},
   json=payload,
 )
 print(response.text)
@@ -254,7 +264,7 @@ async function writeJson() {
 
   const response = await fetch("http://127.0.0.1:5654/db/write/EXAMPLE", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Authorization": "Bearer <API_TOKEN>", "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
 
@@ -270,6 +280,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 
 var response = await client.PostAsJsonAsync(
   "http://127.0.0.1:5654/db/write/EXAMPLE",
@@ -301,6 +312,7 @@ If the incoming stream is gzip-compressed, set the `Content-Encoding: gzip` head
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/write/EXAMPLE
+Authorization: Bearer <API_TOKEN>
 Content-Type: application/json
 Content-Encoding: gzip
 
@@ -311,6 +323,7 @@ Content-Encoding: gzip
 {{< tab name="cURL" >}}
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE \
+  -H "Authorization: Bearer <API_TOKEN>" \
   -H "Content-Type: application/json" \
   -H "Content-Encoding: gzip" \
   --data-binary "@post-data.json.gz"
@@ -336,6 +349,7 @@ payload = {
 response = requests.post(
   "http://127.0.0.1:5654/db/write/EXAMPLE",
   headers={
+    "Authorization": "Bearer <API_TOKEN>",
     "Content-Type": "application/json",
     "Content-Encoding": "gzip",
   },
@@ -365,6 +379,7 @@ async function writeCompressedJson() {
   const response = await fetch("http://127.0.0.1:5654/db/write/EXAMPLE", {
     method: "POST",
     headers: {
+      "Authorization": "Bearer <API_TOKEN>",
       "Content-Type": "application/json",
       "Content-Encoding": "gzip",
     },
@@ -386,6 +401,7 @@ using System.Text;
 using System.Text.Json;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 
 var payload = new
 {
@@ -430,6 +446,7 @@ If the time fields are strings instead of UNIX epoch values, add the `timeformat
 POST http://127.0.0.1:5654/db/write/EXAMPLE
     ?timeformat=DEFAULT
     &tz=Asia/Seoul
+Authorization: Bearer <API_TOKEN>
 Content-Type: application/json
 
 {
@@ -449,6 +466,7 @@ Content-Type: application/json
 curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE?'\
 'timeformat=DEFAULT&'\
 'tz=Asia/Seoul' \
+  -H "Authorization: Bearer <API_TOKEN>" \
   -H "Content-Type: application/json" \
   --data-binary @- << 'EOF'
 {
@@ -479,6 +497,7 @@ payload = {
 
 response = requests.post(
   "http://127.0.0.1:5654/db/write/EXAMPLE",
+  headers={"Authorization": "Bearer <API_TOKEN>"},
   params={"timeformat": "DEFAULT", "tz": "Asia/Seoul"},
   json=payload,
 )
@@ -505,7 +524,7 @@ async function writeJson() {
 
   const response = await fetch(`http://127.0.0.1:5654/db/write/EXAMPLE?${params}`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Authorization": "Bearer <API_TOKEN>", "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
 
@@ -521,6 +540,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 
 var response = await client.PostAsJsonAsync(
   "http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=DEFAULT&tz=Asia/Seoul",
@@ -563,6 +583,7 @@ Set the `Content-Type` header to `application/x-ndjson`.
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/write/EXAMPLE
+Authorization: Bearer <API_TOKEN>
 Content-Type: application/x-ndjson
 
 {"NAME":"ndjson-data", "TIME":1670380342000000000, "VALUE":1.001}
@@ -573,6 +594,7 @@ Content-Type: application/x-ndjson
 {{< tab name="cURL" >}}
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE \
+  -H "Authorization: Bearer <API_TOKEN>" \
   -H "Content-Type: application/x-ndjson" \
   --data-binary @- << 'EOF'
 {"NAME":"ndjson-data", "TIME":1670380342000000000, "VALUE":1.001}
@@ -594,7 +616,7 @@ payload = "\n".join(json.dumps(row) for row in rows)
 
 response = requests.post(
   "http://127.0.0.1:5654/db/write/EXAMPLE",
-  headers={"Content-Type": "application/x-ndjson"},
+  headers={"Authorization": "Bearer <API_TOKEN>", "Content-Type": "application/x-ndjson"},
   data=payload,
 )
 print(response.text)
@@ -610,7 +632,7 @@ async function writeNdjson() {
 
   const response = await fetch("http://127.0.0.1:5654/db/write/EXAMPLE", {
     method: "POST",
-    headers: { "Content-Type": "application/x-ndjson" },
+    headers: { "Authorization": "Bearer <API_TOKEN>", "Content-Type": "application/x-ndjson" },
     body: payload,
   });
 
@@ -627,6 +649,7 @@ using System.Text;
 using System.Text.Json;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 
 var lines = new[]
 {
@@ -660,6 +683,7 @@ Add the `timeformat` and `tz` parameters.
 POST http://127.0.0.1:5654/db/write/EXAMPLE
     ?timeformat=DEFAULT
     &tz=Local
+Authorization: Bearer <API_TOKEN>
 Content-Type: application/x-ndjson
 
 {"NAME":"ndjson-data", "TIME":"2022-12-07 02:33:22", "VALUE":1.001}
@@ -670,6 +694,7 @@ Content-Type: application/x-ndjson
 {{< tab name="cURL" >}}
 ```sh
 curl -X POST 'http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=Default&tz=Local' \
+  -H "Authorization: Bearer <API_TOKEN>" \
   -H "Content-Type: application/x-ndjson" \
   --data-binary @- << 'EOF'
 {"NAME":"ndjson-data", "TIME":"2022-12-07 02:33:22", "VALUE":1.001}
@@ -692,7 +717,7 @@ payload = "\n".join(json.dumps(row) for row in rows)
 response = requests.post(
   "http://127.0.0.1:5654/db/write/EXAMPLE",
   params={"timeformat": "Default", "tz": "Local"},
-  headers={"Content-Type": "application/x-ndjson"},
+  headers={"Authorization": "Bearer <API_TOKEN>", "Content-Type": "application/x-ndjson"},
   data=payload,
 )
 print(response.text)
@@ -713,7 +738,7 @@ async function writeNdjson() {
 
   const response = await fetch(`http://127.0.0.1:5654/db/write/EXAMPLE?${params}`, {
     method: "POST",
-    headers: { "Content-Type": "application/x-ndjson" },
+    headers: { "Authorization": "Bearer <API_TOKEN>", "Content-Type": "application/x-ndjson" },
     body: payload,
   });
 
@@ -730,6 +755,7 @@ using System.Text;
 using System.Text.Json;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 
 var lines = new[]
 {
@@ -780,6 +806,7 @@ The `Content-Type` header should be `text/csv`.
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/write/EXAMPLE?header=skip
+Authorization: Bearer <API_TOKEN>
 Content-Type: text/csv
 
 NAME,TIME,VALUE
@@ -791,6 +818,7 @@ csv-data,1670380343000000000,2.0002
 {{< tab name="cURL" >}}
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE?header=skip \
+  -H "Authorization: Bearer <API_TOKEN>" \
   -H "Content-Type: text/csv" \
   --data-binary @- << 'EOF'
 NAME,TIME,VALUE
@@ -811,7 +839,7 @@ csv-data,1670380343000000000,2.0002
 response = requests.post(
   "http://127.0.0.1:5654/db/write/EXAMPLE",
   params={"header": "skip"},
-  headers={"Content-Type": "text/csv"},
+  headers={"Authorization": "Bearer <API_TOKEN>", "Content-Type": "text/csv"},
   data=payload,
 )
 print(response.text)
@@ -826,7 +854,7 @@ csv-data,1670380343000000000,2.0002`;
 
   const response = await fetch("http://127.0.0.1:5654/db/write/EXAMPLE?header=skip", {
     method: "POST",
-    headers: { "Content-Type": "text/csv" },
+    headers: { "Authorization": "Bearer <API_TOKEN>", "Content-Type": "text/csv" },
     body: payload,
   });
 
@@ -842,6 +870,7 @@ using System.Net.Http;
 using System.Text;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 
 var payload = """
 NAME,TIME,VALUE
@@ -877,6 +906,7 @@ The `Content-Type` header should be `text/csv`.
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/write/EXAMPLE?header=columns
+Authorization: Bearer <API_TOKEN>
 Content-Type: text/csv
 
 TIME,NAME,VALUE
@@ -888,6 +918,7 @@ TIME,NAME,VALUE
 {{< tab name="cURL" >}}
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE?header=columns \
+  -H "Authorization: Bearer <API_TOKEN>" \
   -H "Content-Type: text/csv" \
   --data-binary @- << 'EOF'
 TIME,NAME,VALUE
@@ -908,7 +939,7 @@ payload = """TIME,NAME,VALUE
 response = requests.post(
   "http://127.0.0.1:5654/db/write/EXAMPLE",
   params={"header": "columns"},
-  headers={"Content-Type": "text/csv"},
+  headers={"Authorization": "Bearer <API_TOKEN>", "Content-Type": "text/csv"},
   data=payload,
 )
 print(response.text)
@@ -923,7 +954,7 @@ async function writeCsv() {
 
   const response = await fetch("http://127.0.0.1:5654/db/write/EXAMPLE?header=columns", {
     method: "POST",
-    headers: { "Content-Type": "text/csv" },
+    headers: { "Authorization": "Bearer <API_TOKEN>", "Content-Type": "text/csv" },
     body: payload,
   });
 
@@ -939,6 +970,7 @@ using System.Net.Http;
 using System.Text;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 
 var payload = """
 TIME,NAME,VALUE
@@ -966,6 +998,7 @@ If the incoming stream is gzip-compressed, set the `Content-Encoding: gzip` head
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/write/EXAMPLE?header=skip
+Authorization: Bearer <API_TOKEN>
 Content-Type: text/csv
 Content-Encoding: gzip
 
@@ -976,6 +1009,7 @@ Content-Encoding: gzip
 {{< tab name="cURL" >}}
 ```sh
 curl -X POST http://127.0.0.1:5654/db/write/EXAMPLE?header=skip \
+  -H "Authorization: Bearer <API_TOKEN>" \
   -H "Content-Type: text/csv" \
   -H "Content-Encoding: gzip" \
   --data-binary "@post-data.csv.gz"
@@ -996,6 +1030,7 @@ response = requests.post(
   "http://127.0.0.1:5654/db/write/EXAMPLE",
   params={"header": "skip"},
   headers={
+    "Authorization": "Bearer <API_TOKEN>",
     "Content-Type": "text/csv",
     "Content-Encoding": "gzip",
   },
@@ -1019,6 +1054,7 @@ csv-data,1670380343000000000,2.0002`;
   const response = await fetch("http://127.0.0.1:5654/db/write/EXAMPLE?header=skip", {
     method: "POST",
     headers: {
+      "Authorization": "Bearer <API_TOKEN>",
       "Content-Type": "text/csv",
       "Content-Encoding": "gzip",
     },
@@ -1039,6 +1075,7 @@ using System.Net.Http.Headers;
 using System.Text;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 
 var payload = """
 NAME,TIME,VALUE
@@ -1077,6 +1114,7 @@ POST http://127.0.0.1:5654/db/write/EXAMPLE
     ?header=skip
     &timeformat=Default
     &tz=Asia/Seoul
+Authorization: Bearer <API_TOKEN>
 Content-Type: text/csv
 
 NAME,TIME,VALUE
@@ -1097,12 +1135,14 @@ For details of the API, refer to [Request endpoint and parameters](/neo/api-http
 ```http
 GET http://127.0.0.1:5654/db/query
     ?q=create tag table if not exists EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 {{< /tab >}}
 {{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
+  -H "Authorization: Bearer <API_TOKEN>" \
   --data-urlencode \
   "q=create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"
 ```
@@ -1113,6 +1153,7 @@ import requests
 
 response = requests.get(
   "http://127.0.0.1:5654/db/query",
+  headers={"Authorization": "Bearer <API_TOKEN>"},
   params={
     "q": (
         "create tag table EXAMPLE "
@@ -1130,7 +1171,9 @@ async function createTable() {
     q: "create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)",
   });
 
-  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`, {
+    headers: { "Authorization": "Bearer <API_TOKEN>" },
+  });
   console.log(await response.text());
 }
 
@@ -1142,6 +1185,7 @@ createTable();
 using System.Net.Http;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 var sql = Uri.EscapeDataString(
   "create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"
 );
@@ -1163,6 +1207,7 @@ The time values in the sample files used in these examples are UNIX epoch values
 ```http
 POST http://127.0.0.1:5654/db/write/EXAMPLE
     ?timeformat=s
+Authorization: Bearer <API_TOKEN>
 Content-Type: application/json
 
 {
@@ -1186,6 +1231,7 @@ Content-Type: application/json
 ```http
 GET http://127.0.0.1:5654/db/query
     ?q=select * from EXAMPLE limit 10
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 
@@ -1198,6 +1244,7 @@ If the CSV data has a header line like below, set the `header=skip` query parame
 POST http://127.0.0.1:5654/db/write/EXAMPLE
     ?timeformat=s
     &header=skip
+Authorization: Bearer <API_TOKEN>
 Content-Type: text/csv
 
 NAME,TIME,VALUE
@@ -1215,6 +1262,7 @@ wave.sin,1676432363,0.743144
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=s
+Authorization: Bearer <API_TOKEN>
 Content-Type: text/csv
 
 wave.sin,1676432361,0.000000
@@ -1233,6 +1281,7 @@ wave.sin,1676432363,0.743144
 ```http
 POST http://127.0.0.1:5654/db/write/EXAMPLE
     ?timeformat=Default
+Authorization: Bearer <API_TOKEN>
 Content-Type: text/csv
 
 wave.sin,2023-02-15 03:39:21,0.111111
@@ -1249,6 +1298,7 @@ GET http://127.0.0.1:5654/db/query
     ?q=select * from EXAMPLE limit 10
     &timeformat=Default
     &format=csv
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 
@@ -1259,6 +1309,7 @@ When loading a large CSV file, the `append` method can write data several times 
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=s&method=append
+Authorization: Bearer <API_TOKEN>
 Content-Type: text/csv
 
 wave.sin,1676432361,0.000000
@@ -1276,6 +1327,7 @@ wave.sin,1676432363,0.743144
 POST http://127.0.0.1:5654/db/write/EXAMPLE
     ?timeformat=Default
     &tz=Asia/Seoul
+Authorization: Bearer <API_TOKEN>
 Content-Type: text/csv
 
 wave.sin,2023-02-15 12:39:21,0.111111
@@ -1294,6 +1346,7 @@ GET http://127.0.0.1:5654/db/query
     ?q=select * from EXAMPLE limit 10
     &timeformat=Default
     &format=csv
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 
@@ -1303,6 +1356,7 @@ GET http://127.0.0.1:5654/db/query
 ```http
 POST http://127.0.0.1:5654/db/write/EXAMPLE
     ?timeformat=RFC3339
+Authorization: Bearer <API_TOKEN>
 Content-Type: text/csv
 
 wave.sin,2023-02-15T03:39:21Z,0.111111
@@ -1321,6 +1375,7 @@ GET http://127.0.0.1:5654/db/query
     ?q=select * from EXAMPLE limit 10
     &format=csv
     &timeformat=RFC3339
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 
@@ -1331,6 +1386,7 @@ GET http://127.0.0.1:5654/db/query
 POST http://127.0.0.1:5654/db/write/EXAMPLE
     ?timeformat=RFC3339Nano
     &tz=America/New_York
+Authorization: Bearer <API_TOKEN>
 Content-Type: text/csv
 
 wave.sin,2023-02-14T22:39:21.000000000-05:00,0.111111
@@ -1350,6 +1406,7 @@ GET http://127.0.0.1:5654/db/query
     &format=box
     &timeformat=RFC3339Nano
     &tz=America/New_York
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 
@@ -1359,6 +1416,7 @@ GET http://127.0.0.1:5654/db/query
 ```http
 POST http://127.0.0.1:5654/db/write/EXAMPLE
     ?timeformat=Default
+Authorization: Bearer <API_TOKEN>
 Content-Type: text/csv
 
 wave.sin,2023-02-15 03:39:21,0.111111
@@ -1377,6 +1435,7 @@ GET http://127.0.0.1:5654/db/query
     ?q=select * from EXAMPLE limit 10
     &format=csv
     &timeformat=Default
+Authorization: Bearer <API_TOKEN>
 
 ```
 ~~~
@@ -1390,6 +1449,7 @@ GET http://127.0.0.1:5654/db/query
 POST http://127.0.0.1:5654/db/write/EXAMPLE
     ?timeformat=03:04:05.999999999-SPLIT-2006-01-02
     &tz=America/New_York
+Authorization: Bearer <API_TOKEN>
 Content-Type: text/csv
 
 wave.sin,10:39:21-SPLIT-2023-02-14 ,0.111111
@@ -1409,5 +1469,6 @@ GET http://127.0.0.1:5654/db/query
     &format=csv
     &timeformat=2006-01-02 03:04:05.999999999
     &tz=America/New_York
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~

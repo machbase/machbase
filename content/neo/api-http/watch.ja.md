@@ -7,6 +7,9 @@ weight: 21
 
 ## Server-Sent Eventsの利用 {#server-sent-events-활용}
 
+トークン認証はデフォルトで有効です。以下の例を実行するには、
+[APIセキュリティ](/neo/security/)の手順に従ってAPIトークンを発行し、`<API_TOKEN>`を発行したトークンに置き換えてください。
+
 クライアントは、サーバーからのストリーミングイベントを受信して、指定したテーブルの最新レコードをリアルタイムに取得できます。
 
 Server-Sent Events（SSE）は、1つのHTTP接続を維持し、サーバーからクライアントに更新を継続的にプッシュする技術です。
@@ -81,7 +84,9 @@ SSE（Server-Sent Events）のエンドポイントは以下のとおりです�
 `curl`コマンドで、タグの最新値をストリームとして受信します。
 
 ```sh
-curl -o - -v "http://127.0.0.1:5654/db/watch/example"\
+curl -o - -v \
+  -H "Authorization: Bearer <API_TOKEN>" \
+  "http://127.0.0.1:5654/db/watch/example"\
 "?tag=machbase:ps:cpu_percent&tag=machbase:ps:mem_percent&period=3s&timeformat=s"
 ```
 
@@ -101,16 +106,23 @@ data: {"NAME":"machbase:ps:cpu_percent","TIME":1774408740,"VALUE":4.519490930962
 
 ## JavaScriptの例 {#자바스크립트-예시}
 
+ブラウザー標準の`EventSource`では`Authorization`ヘッダーを指定できません。
+この例ではCDNから`event-source-polyfill`を読み込み、`EventSourcePolyfill`で認証ヘッダーを送信し、
+SSEイベントの処理と自動再接続を維持します。
+
 ```html
 <html>
 <body>
     <h1>Server-Sent Events 例</h1>
     <div id="messages"></div>
+    <script src="https://cdn.jsdelivr.net/npm/event-source-polyfill@1.0.31/src/eventsource.min.js"></script>
     <script>
         // EventSourceインスタンスを作成します。
         const addr = 'http://127.0.0.1:5654/db/watch/EXAMPLE';
         const params = 'tag=machbase:ps:cpu_percent&tag=machbase:ps:mem_percent&period=3s&keep-alive=30s&timeformat=default';
-        const eventSource = new EventSource(`${addr}?${params}`);
+        const eventSource = new EventSourcePolyfill(`${addr}?${params}`, {
+            headers: { "Authorization": "Bearer <API_TOKEN>" },
+        });
 
         // メッセージを表示するdivを取得します。
         const messagesDiv = document.getElementById('messages');
@@ -151,7 +163,10 @@ params = {
 }
 
 # ストリーミングリクエストを作成します。
-response = requests.get(url, params=params, stream=True)
+response = requests.get(
+    url, params=params, headers={"Authorization": "Bearer <API_TOKEN>"}, stream=True
+)
+response.raise_for_status()
 
 # sseclientでServer-Sent Eventsを処理します。
 client = sseclient.SSEClient(response)

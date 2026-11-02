@@ -9,6 +9,9 @@ params:
 
 Query API 엔드포인트는 `/db/query`입니다.
 
+토큰 인증은 기본적으로 활성화되어 있습니다. 아래 예시를 실행하려면
+[API 보안](/neo/security/)의 안내에 따라 API 토큰을 발급받고 `<API_TOKEN>`을 발급받은 토큰으로 바꾸세요.
+
 이 API는 `SELECT`뿐 아니라 `CREATE TABLE`, `ALTER TABLE`, `INSERT` 등 모든 SQL 구문을 지원합니다.
 
 `/db/query` API는 *GET*, *POST(JSON)*, *POST(form-data)* 요청을 모두 지원하며, 모든 방식에서 동일한 매개변수를 사용할 수 있습니다.
@@ -24,12 +27,14 @@ Query API 엔드포인트는 `/db/query`입니다.
 ```http
 GET http://127.0.0.1:5654/db/query
     ?q=select * from EXAMPLE limit 2
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 {{< /tab >}}
 {{< tab name="cURL" >}}
 ```sh 
 curl -o - http://127.0.0.1:5654/db/query \
+     -H "Authorization: Bearer <API_TOKEN>" \
      --data-urlencode "q=select * from EXAMPLE limit 2"
 ```
 {{< /tab >}}
@@ -39,6 +44,7 @@ import requests
 
 response = requests.get(
   "http://127.0.0.1:5654/db/query",
+  headers={"Authorization": "Bearer <API_TOKEN>"},
   params={"q": "select * from EXAMPLE limit 2"},
 )
 print(response.text)
@@ -51,7 +57,9 @@ async function runQuery() {
     q: "select * from EXAMPLE limit 2",
   });
 
-  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`, {
+    headers: { "Authorization": "Bearer <API_TOKEN>" },
+  });
   console.log(await response.text());
 }
 
@@ -63,6 +71,7 @@ runQuery();
 using System.Net.Http;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 var sql = Uri.EscapeDataString("select * from EXAMPLE limit 2");
 
 var response = await client.GetAsync($"http://127.0.0.1:5654/db/query?q={sql}");
@@ -128,12 +137,14 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```http
 GET http://127.0.0.1:5654/db/query
     ?q=select * from EXAMPLE limit 2
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 {{< /tab >}}
 {{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
+    -H "Authorization: Bearer <API_TOKEN>" \
     --data-urlencode "q=select * from EXAMPLE limit 2"
 ```
 {{< /tab >}}
@@ -143,6 +154,7 @@ import requests
 
 response = requests.get(
   "http://127.0.0.1:5654/db/query",
+  headers={"Authorization": "Bearer <API_TOKEN>"},
   params={"q": "select * from EXAMPLE limit 2"},
 )
 print(response.text)
@@ -155,7 +167,9 @@ async function runQuery() {
     q: "select * from EXAMPLE limit 2",
   });
 
-  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`, {
+    headers: { "Authorization": "Bearer <API_TOKEN>" },
+  });
   console.log(await response.text());
 }
 
@@ -167,6 +181,7 @@ runQuery();
 using System.Net.Http;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 var sql = Uri.EscapeDataString("select * from EXAMPLE limit 2");
 
 var response = await client.GetAsync($"http://127.0.0.1:5654/db/query?q={sql}");
@@ -196,6 +211,7 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```http
 GET http://127.0.0.1:5654/db/query
     ?q=select * from EXAMPLE limit 3
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 
@@ -222,6 +238,7 @@ GET http://127.0.0.1:5654/db/query
 GET http://127.0.0.1:5654/db/query
     ?q=select * from EXAMPLE limit 3
     &transpose=true
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 
@@ -248,6 +265,7 @@ GET http://127.0.0.1:5654/db/query
 GET http://127.0.0.1:5654/db/query
     ?q=select * from EXAMPLE limit 3
     &rowsFlatten=true
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 
@@ -274,6 +292,7 @@ GET http://127.0.0.1:5654/db/query
 GET http://127.0.0.1:5654/db/query
     ?q=select * from EXAMPLE limit 3
     &rowsArray=true
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 
@@ -309,12 +328,14 @@ NDJSON(Newline Delimited JSON)은 각 줄이 유효한 JSON 객체인 스트리�
 GET http://127.0.0.1:5654/db/query
     ?q=select * from EXAMPLE limit 2
     &format=ndjson
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 {{< /tab >}}
 {{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
+    -H "Authorization: Bearer <API_TOKEN>" \
     --data-urlencode "q=select * from EXAMPLE limit 2" \
     --data-urlencode "format=ndjson"
 ```
@@ -325,6 +346,7 @@ import requests
 
 response = requests.get(
   "http://127.0.0.1:5654/db/query",
+  headers={"Authorization": "Bearer <API_TOKEN>"},
   params={"q": "select * from EXAMPLE limit 2", "format": "ndjson"},
 )
 print(response.text)
@@ -338,7 +360,9 @@ async function runQuery() {
     format: "ndjson",
   });
 
-  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`, {
+    headers: { "Authorization": "Bearer <API_TOKEN>" },
+  });
   console.log(await response.text());
 }
 
@@ -350,6 +374,7 @@ runQuery();
 using System.Net.Http;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 var sql = Uri.EscapeDataString("select * from EXAMPLE limit 2");
 
 var response = await client.GetAsync(
@@ -382,12 +407,14 @@ CSV 형식 역시 한 줄씩 처리할 수 있어 대용량 데이터나 스트�
 GET http://127.0.0.1:5654/db/query
     ?q=select * from EXAMPLE limit 2
     &format=csv
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 {{< /tab >}}
 {{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
+    -H "Authorization: Bearer <API_TOKEN>" \
     --data-urlencode "q=select * from EXAMPLE limit 2" \
     --data-urlencode "format=csv"
 ```
@@ -398,6 +425,7 @@ import requests
 
 response = requests.get(
   "http://127.0.0.1:5654/db/query",
+  headers={"Authorization": "Bearer <API_TOKEN>"},
   params={"q": "select * from EXAMPLE limit 2", "format": "csv"},
 )
 print(response.text)
@@ -411,7 +439,9 @@ async function runQuery() {
     format: "csv",
   });
 
-  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`, {
+    headers: { "Authorization": "Bearer <API_TOKEN>" },
+  });
   console.log(await response.text());
 }
 
@@ -423,6 +453,7 @@ runQuery();
 using System.Net.Http;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 var sql = Uri.EscapeDataString("select * from EXAMPLE limit 2");
 
 var response = await client.GetAsync(
@@ -455,12 +486,14 @@ GET http://127.0.0.1:5654/db/query
     &format=box
     &timeformat=default
     &tz=Asia/Seoul
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 {{< /tab >}}
 {{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
+    -H "Authorization: Bearer <API_TOKEN>" \
     --data-urlencode "q=select * from EXAMPLE limit 2" \
     --data-urlencode "format=box" \
     --data-urlencode "timeformat=default" \
@@ -473,6 +506,7 @@ import requests
 
 response = requests.get(
   "http://127.0.0.1:5654/db/query",
+  headers={"Authorization": "Bearer <API_TOKEN>"},
   params={
     "q": "select * from EXAMPLE limit 2", 
     "format": "box",
@@ -493,7 +527,9 @@ async function runQuery() {
     tz: "Asia/Seoul",
   });
 
-  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`, {
+    headers: { "Authorization": "Bearer <API_TOKEN>" },
+  });
   console.log(await response.text());
 }
 
@@ -505,6 +541,7 @@ runQuery();
 using System.Net.Http;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 var sql = Uri.EscapeDataString("select * from EXAMPLE limit 2");
 
 var response = await client.GetAsync(
@@ -538,12 +575,14 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 GET http://127.0.0.1:5654/db/query
     ?q=select * from EXAMPLE limit 2
     &format=csv
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 {{< /tab >}}
 {{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
+    -H "Authorization: Bearer <API_TOKEN>" \
     --data-urlencode "q=select * from EXAMPLE limit 2" \
     --data-urlencode "format=csv"
 ```
@@ -554,6 +593,7 @@ import requests
 
 response = requests.get(
   "http://127.0.0.1:5654/db/query",
+  headers={"Authorization": "Bearer <API_TOKEN>"},
   params={"q": "select * from EXAMPLE limit 2", "format": "csv"},
 )
 print(response.text)
@@ -567,7 +607,9 @@ async function runQuery() {
     format: "csv",
   });
 
-  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`, {
+    headers: { "Authorization": "Bearer <API_TOKEN>" },
+  });
   console.log(await response.text());
 }
 
@@ -579,6 +621,7 @@ runQuery();
 using System.Net.Http;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 var sql = Uri.EscapeDataString("select * from EXAMPLE limit 2");
 
 var response = await client.GetAsync(
@@ -609,6 +652,7 @@ wave.sin,1705381958785759000,0.9011510331449053
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/query
+Authorization: Bearer <API_TOKEN>
 Content-Type: application/json
 
 {
@@ -621,6 +665,7 @@ Content-Type: application/json
 {{< tab name="cURL" >}}
 ```sh
 curl -o - -X POST http://127.0.0.1:5654/db/query \
+    -H "Authorization: Bearer <API_TOKEN>" \
     -H 'Content-Type: application/json' \
     -d '{ "q":"select * from EXAMPLE limit ?", "p":[2] }'
 ```
@@ -631,6 +676,7 @@ import requests
 
 response = requests.post(
   "http://127.0.0.1:5654/db/query",
+  headers={"Authorization": "Bearer <API_TOKEN>"},
   json={"q": "select * from EXAMPLE limit ?", "p":[2]},
 )
 print(response.text)
@@ -641,7 +687,7 @@ print(response.text)
 async function runQuery() {
   const response = await fetch("http://127.0.0.1:5654/db/query", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Authorization": "Bearer <API_TOKEN>", "Content-Type": "application/json" },
     body: JSON.stringify({ q: "select * from EXAMPLE limit ?", p:[2] }),
   });
 
@@ -657,6 +703,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 
 var response = await client.PostAsJsonAsync(
   "http://127.0.0.1:5654/db/query",
@@ -677,6 +724,7 @@ HTML 폼 데이터 형식도 사용할 수 있습니다. 이 경우 HTTP 헤더 
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/query
+Authorization: Bearer <API_TOKEN>
 Content-Type: application/x-www-form-urlencoded
 
 q=select * from EXAMPLE limit 2
@@ -686,6 +734,7 @@ q=select * from EXAMPLE limit 2
 {{< tab name="cURL" >}}
 ```sh
 curl -o - -X POST http://127.0.0.1:5654/db/query \
+    -H "Authorization: Bearer <API_TOKEN>" \
     --data-urlencode "q=select * from EXAMPLE limit 2"
 ```
 {{< /tab >}}
@@ -695,6 +744,7 @@ import requests
 
 response = requests.post(
   "http://127.0.0.1:5654/db/query",
+  headers={"Authorization": "Bearer <API_TOKEN>"},
   data={"q": "select * from EXAMPLE limit 2"},
 )
 print(response.text)
@@ -709,7 +759,7 @@ async function runQuery() {
 
   const response = await fetch("http://127.0.0.1:5654/db/query", {
     method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    headers: { "Authorization": "Bearer <API_TOKEN>", "Content-Type": "application/x-www-form-urlencoded" },
     body,
   });
 
@@ -725,6 +775,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 using var content = new FormUrlEncodedContent(
   new[]
   {
@@ -754,6 +805,7 @@ For this tutorials, pre-write data below.
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/query
+Authorization: Bearer <API_TOKEN>
 Content-Type: application/json
 
 {
@@ -767,6 +819,7 @@ Content-Type: application/json
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/write/EXAMPLE?timeformat=ns
+Authorization: Bearer <API_TOKEN>
 Content-Type: application/json
 
 {
@@ -797,6 +850,7 @@ Set the `format=csv` query param for CSV format.
 GET http://127.0.0.1:5654/db/query
     ?q=select * from EXAMPLE limit 5
     &format=csv
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 
@@ -821,6 +875,7 @@ Set the `format=box` query param for BOX format.
 GET http://127.0.0.1:5654/db/query
     ?q=select * from EXAMPLE limit 5
     &format=box
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 
@@ -850,6 +905,7 @@ GET http://127.0.0.1:5654/db/query
     ?q=select * from EXAMPLE limit 5
     &format=box
     &rownum=true
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 
@@ -880,6 +936,7 @@ GET http://127.0.0.1:5654/db/query
     ?q=select * from EXAMPLE limit 5
     &format=box
     &header=skip
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 
@@ -907,6 +964,7 @@ GET http://127.0.0.1:5654/db/query
     ?q=select * from EXAMPLE limit 5
     &format=box
     &precision=0
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 

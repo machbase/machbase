@@ -18,6 +18,9 @@ params:
 `X-Store-Dir`에 지정한 디렉터리가 없으면 서버가 자동으로 생성합니다.
 파일 본문은 UUID 형식으로 생성된 고유 이름을 사용해 해당 디렉터리에 저장됩니다.
 
+토큰 인증은 기본적으로 활성화되어 있습니다. 아래 예시를 실행하려면
+[API 보안](/neo/security/)의 안내에 따라 API 토큰을 발급받고 `<API_TOKEN>`을 발급받은 토큰으로 바꾸세요.
+
 ## 파일 업로드
 
 아래 예시는 `STASH` 테이블이 이미 생성되어 있다고 가정합니다.
@@ -37,6 +40,7 @@ CREATE TAG TABLE STASH(
 ~~~
 ```http
 POST http://127.0.0.1:5654/db/write/STASH
+Authorization: Bearer <API_TOKEN>
 Content-Type: multipart/form-data; boundary=----Boundary7MA4YWxkTrZu0gW
 
 ------Boundary7MA4YWxkTrZu0gW
@@ -63,8 +67,9 @@ Content-Type: image/svg
 {{< tab name="cURL" >}}
 이 예시는 `-F` 옵션을 사용한 `curl`로 *multipart/form-data* 형식의 POST 요청을 전송합니다.
 
-```sh {hl_lines=[4]}
+```sh {hl_lines=[5]}
 curl -X POST 'http://127.0.0.1:5654/db/write/STASH' \
+  -H "Authorization: Bearer <API_TOKEN>" \
   -F 'NAME=camera-1' \
   -F 'TIME=now' \
   -F 'DATA=@-;filename=image_file.svg;headers="X-Store-Dir: /tmp/store"' << 'EOF'
@@ -88,7 +93,7 @@ EOF
       url,
       data={"NAME": "camera-1", "TIME": "now"},
       files={"DATA": ("image_file.svg", image_file, "image/svg")},
-      headers={"X-Store-Dir": "/tmp/store"},
+      headers={"Authorization": "Bearer <API_TOKEN>", "X-Store-Dir": "/tmp/store"},
     )
 
   response.raise_for_status()
@@ -111,7 +116,7 @@ async function uploadFile(file) {
 
   const response = await fetch("http://127.0.0.1:5654/db/write/STASH", {
     method: "POST",
-    headers: { "X-Store-Dir": "/tmp/store" },
+    headers: {"Authorization": "Bearer <API_TOKEN>", "X-Store-Dir": "/tmp/store" },
     body: formData,
   });
 
@@ -132,6 +137,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 using var form = new MultipartFormDataContent();
 
 form.Add(new StringContent("camera-1"), "NAME");
@@ -222,12 +228,14 @@ AND DATA->'$.FN' = 'image_file.svg';
 ```http
 GET http://127.0.0.1:5654/db/query
   ?q=select DATA from STASH where NAME = 'camera-1'
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 {{< /tab >}}
 {{< tab name="cURL" >}}
 ```sh
 curl -o - 'http://127.0.0.1:5654/db/query' \
+  -H "Authorization: Bearer <API_TOKEN>" \
   --data-urlencode "q=select DATA from STASH\
   where NAME = 'camera-1'"
 ```
@@ -238,6 +246,7 @@ import requests
 
 response = requests.get(
   "http://127.0.0.1:5654/db/query",
+  headers={"Authorization": "Bearer <API_TOKEN>"},
   params={"q": "select DATA from STASH where NAME = 'camera-1'"},
 )
 print(response.text)
@@ -250,7 +259,9 @@ async function runQuery() {
     q: "select DATA from STASH where NAME = 'camera-1'",
   });
 
-  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`, {
+    headers: { "Authorization": "Bearer <API_TOKEN>" },
+  });
   console.log(await response.text());
 }
 
@@ -262,6 +273,7 @@ runQuery();
 using System.Net.Http;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 var sql = Uri.EscapeDataString("select DATA from STASH where NAME = 'camera-1'");
 
 var response = await client.GetAsync($"http://127.0.0.1:5654/db/query?q={sql}");
@@ -279,12 +291,14 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```http
 GET http://127.0.0.1:5654/db/query
   ?q=select DATA from STASH where NAME = 'camera-1' and DATA->'$.FN' = 'image_file.svg'
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 {{< /tab >}}
 {{< tab name="cURL" >}}
 ```sh
 curl -o - 'http://127.0.0.1:5654/db/query' \
+  -H "Authorization: Bearer <API_TOKEN>" \
   --data-urlencode "q=select DATA from STASH\
   where NAME = 'camera-1' \
   and DATA->'$.FN' = 'image_file.svg'"
@@ -296,6 +310,7 @@ import requests
 
 response = requests.get(
   "http://127.0.0.1:5654/db/query",
+  headers={"Authorization": "Bearer <API_TOKEN>"},
   params={
     "q": (
       "select DATA from STASH "
@@ -314,7 +329,9 @@ async function runQuery() {
     q: "select DATA from STASH where NAME = 'camera-1' and DATA->'$.FN' = 'image_file.svg'",
   });
 
-  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`, {
+    headers: { "Authorization": "Bearer <API_TOKEN>" },
+  });
   console.log(await response.text());
 }
 
@@ -326,6 +343,7 @@ runQuery();
 using System.Net.Http;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 var sql = Uri.EscapeDataString(
   "select DATA from STASH where NAME = 'camera-1' and DATA->'$.FN' = 'image_file.svg'"
 );
@@ -365,12 +383,14 @@ JSON 타입 컬럼에서 특정 필드를 추출하려면 JSON Path를 사용하
 GET http://127.0.0.1:5654/db/query
     ?format=ndjson
     &q=SELECT NAME, TIME, DATA->'$.ID' as FID  FROM STASH WHERE NAME = 'camera-1'
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 {{< /tab >}}
 {{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
+  -H "Authorization: Bearer <API_TOKEN>" \
   --data-urlencode "format=ndjson"   \
   --data-urlencode "q=SELECT NAME, TIME, DATA->'$.ID' as FID  \
   FROM STASH WHERE NAME = 'camera-1'"
@@ -382,6 +402,7 @@ import requests
 
 response = requests.get(
   "http://127.0.0.1:5654/db/query",
+  headers={"Authorization": "Bearer <API_TOKEN>"},
   params={
   "format": "ndjson",
   "q": "SELECT NAME, TIME, DATA->'$.ID' as FID FROM STASH WHERE NAME = 'camera-1'",
@@ -398,7 +419,9 @@ async function runQuery() {
     q: "SELECT NAME, TIME, DATA->'$.ID' as FID FROM STASH WHERE NAME = 'camera-1'",
   });
 
-  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`, {
+    headers: { "Authorization": "Bearer <API_TOKEN>" },
+  });
   console.log(await response.text());
 }
 
@@ -410,6 +433,7 @@ runQuery();
 using System.Net.Http;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 var sql = Uri.EscapeDataString(
   "SELECT NAME, TIME, DATA->'$.ID' as FID FROM STASH WHERE NAME = 'camera-1'"
 );
@@ -450,12 +474,14 @@ LOG 테이블의 경우 레코드가 삽입된 시점을 기준으로 `ID`가 �
 ~~~
 ```http
 GET http://127.0.0.1:5654/db/query/file/STASH/DATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 {{< /tab >}}
 {{< tab name="cURL" >}}
 ```sh
 curl -o ./img-download.svg \
+  -H "Authorization: Bearer <API_TOKEN>" \
   http://127.0.0.1:5654/db/query/file/STASH/DATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8
 ```
 {{< /tab >}}
@@ -464,7 +490,8 @@ curl -o ./img-download.svg \
 import requests
 
 response = requests.get(
-  "http://127.0.0.1:5654/db/query/file/STASH/DATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8"
+  "http://127.0.0.1:5654/db/query/file/STASH/DATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8",
+  headers={"Authorization": "Bearer <API_TOKEN>"},
 )
 response.raise_for_status()
 with open("./img-download.svg", "wb") as output_file:
@@ -475,7 +502,8 @@ with open("./img-download.svg", "wb") as output_file:
 ```javascript
 async function downloadFile() {
   const response = await fetch(
-  "http://127.0.0.1:5654/db/query/file/STASH/DATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8"
+  "http://127.0.0.1:5654/db/query/file/STASH/DATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8",
+    { headers: { "Authorization": "Bearer <API_TOKEN>" } }
   );
 
   if (!response.ok) {
@@ -499,6 +527,7 @@ downloadFile();
 using System.Net.Http;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 var bytes = await client.GetByteArrayAsync(
   "http://127.0.0.1:5654/db/query/file/STASH/DATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8"
 );
@@ -510,10 +539,35 @@ await File.WriteAllBytesAsync("./img-download.svg", bytes);
 
 ### HTML에서 &lt;img&gt; 사용
 
+`<img src>` 요청에는 `Authorization` 헤더를 지정할 수 없습니다.
+인증 헤더를 포함한 `fetch`로 파일을 받은 뒤, 생성한 Blob URL을 이미지 요소에 지정하세요.
+
 ```html
 <html>
 <body>
-<img src="http://127.0.0.1:5654/db/query/file/STASH/DATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8"/>
+<img id="image"/>
+<script>
+async function loadImage() {
+  const response = await fetch(
+    "http://127.0.0.1:5654/db/query/file/STASH/DATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8",
+    { headers: { "Authorization": "Bearer <API_TOKEN>" } }
+  );
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  const objectUrl = URL.createObjectURL(await response.blob());
+  const image = document.getElementById("image");
+  image.addEventListener("load", () => URL.revokeObjectURL(objectUrl), { once: true });
+  image.addEventListener("error", () => {
+    URL.revokeObjectURL(objectUrl);
+    console.error("Failed to display the downloaded image.");
+  }, { once: true });
+  image.src = objectUrl;
+}
+
+loadImage().catch(console.error);
+</script>
 </body>
 </html>
 ```
@@ -523,7 +577,29 @@ TAG 테이블에서 태그 이름을 알고 있다면 `tag` 쿼리 매개변수�
 ```html
 <html>
 <body>
-<img src="http://127.0.0.1:5654/db/query/file/STASH/DATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8?tag=camera-1"/>
+<img id="image"/>
+<script>
+async function loadImage() {
+  const response = await fetch(
+    "http://127.0.0.1:5654/db/query/file/STASH/DATA/1ef8a87f-96bd-6576-9ff5-972fa7638db8?tag=camera-1",
+    { headers: { "Authorization": "Bearer <API_TOKEN>" } }
+  );
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  const objectUrl = URL.createObjectURL(await response.blob());
+  const image = document.getElementById("image");
+  image.addEventListener("load", () => URL.revokeObjectURL(objectUrl), { once: true });
+  image.addEventListener("error", () => {
+    URL.revokeObjectURL(objectUrl);
+    console.error("Failed to display the downloaded image.");
+  }, { once: true });
+  image.src = objectUrl;
+}
+
+loadImage().catch(console.error);
+</script>
 </body>
 </html>
 ```
@@ -541,7 +617,7 @@ const fs = require('fs');
 let req = {
     method: 'POST',
     url: 'http://127.0.0.1:5654/db/write/STASH',
-    headers: {"X-Store-Dir": "/tmp/store"},
+    headers: {"Authorization": "Bearer <API_TOKEN>","X-Store-Dir": "/tmp/store"},
     formData: {
         NAME: 'camera-1',
         TIME: 'now',
@@ -570,7 +646,7 @@ file_path = Path("./image_file.svg")
 with file_path.open("rb") as image_file:
   response = requests.post(
     url,
-    headers={"X-Store-Dir": "/tmp/store"},
+    headers={"Authorization": "Bearer <API_TOKEN>", "X-Store-Dir": "/tmp/store"},
     data={"NAME": "camera-1", "TIME": "now"},
     files={"DATA": (file_path.name, image_file, "image/svg")},
   )

@@ -6,6 +6,9 @@ weight: 21
 
 ## Using server-sent events
 
+Token authentication is enabled by default. For the examples below, obtain an API token
+as described in [API Security](/neo/security/) and replace `<API_TOKEN>` with your token.
+
 Clients can receive streaming events from the server,
 which is useful for keeping the latest records of the specified table up-to-date.
 
@@ -82,7 +85,9 @@ If multiple values are inserted during this period, the server will send only th
 Use *curl* command to receive stream of the lates values of the tags:
 
 ```sh
-curl -o - -v "http://127.0.0.1:5654/db/watch/example"\
+curl -o - -v \
+  -H "Authorization: Bearer <API_TOKEN>" \
+  "http://127.0.0.1:5654/db/watch/example"\
 "?tag=machbase:ps:cpu_percent&tag=machbase:ps:mem_percent&period=3s&timeformat=s"
 ```
 
@@ -102,16 +107,23 @@ data: {"NAME":"machbase:ps:cpu_percent","TIME":1774408740,"VALUE":4.519490930962
 
 ## Javascript Example
 
+The browser's native `EventSource` cannot set an `Authorization` header.
+This example loads `event-source-polyfill` from a CDN and uses `EventSourcePolyfill`
+to send the header while retaining SSE event handling and automatic reconnection.
+
 ```html
 <html>
 <body>
     <h1>Server-Sent Events Example</h1>
     <div id="messages"></div>
+    <script src="https://cdn.jsdelivr.net/npm/event-source-polyfill@1.0.31/src/eventsource.min.js"></script>
     <script>
         // Create a new EventSource instance
         const addr = 'http://127.0.0.1:5654/db/watch/EXAMPLE';
         const params = 'tag=machbase:ps:cpu_percent&tag=machbase:ps:mem_percent&period=3s&keep-alive=30s&timeformat=default';
-        const eventSource = new EventSource(`${addr}?${params}`);
+        const eventSource = new EventSourcePolyfill(`${addr}?${params}`, {
+            headers: { "Authorization": "Bearer <API_TOKEN>" },
+        });
 
         // Get the messages div
         const messagesDiv = document.getElementById('messages');
@@ -152,7 +164,10 @@ params = {
 }
 
 # Create a streaming request
-response = requests.get(url, params=params, stream=True)
+response = requests.get(
+    url, params=params, headers={"Authorization": "Bearer <API_TOKEN>"}, stream=True
+)
+response.raise_for_status()
 
 # Use sseclient to handle the server-sent events
 client = sseclient.SSEClient(response)

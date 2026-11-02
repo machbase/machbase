@@ -50,6 +50,12 @@ HTTP API의 일반적인 목적은 센서와 디바이스가 MQTT와 HTTP로 데
 
 machbase-neo 웹 UI에는 REST API 클라이언트가 내장되어 있어 아래 예시처럼 워크시트의 마크다운이나 TQL에서 바로 HTTP API를 테스트할 수 있습니다.
 
+> machbase-neo의 토큰 인증은 기본적으로 활성화되어 있습니다(`--http-enable-token-auth true`).
+> 이 상태에서 인증 토큰 없이 요청하면 `401 Unauthorized` 응답과 함께
+> `{"reason":"missing authorization token","success":false}` 메시지가 반환됩니다.
+> 아래 예시를 실행하려면 [API 보안](/neo/security/)의 안내에 따라 API 토큰을 발급받고,
+> 요청에 `Authorization: Bearer <API_TOKEN>` 헤더를 추가하세요.
+
 - 워크시트의 마크다운
 
 ~~~
@@ -57,6 +63,7 @@ machbase-neo 웹 UI에는 REST API 클라이언트가 내장되어 있어 아래
 GET http://127.0.0.1:5654/db/query
     ?q=select count(*) from example
     &format=ndjson
+Authorization: Bearer <your token>
 ```
 ~~~
 
@@ -69,6 +76,7 @@ HTTP({
     GET http://127.0.0.1:5654/db/query
         ?q=select count(*) from example
         &format=ndjson
+    Authorization: Bearer <your token>
 })
 TEXT()
 ```

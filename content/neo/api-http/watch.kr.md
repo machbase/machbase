@@ -6,6 +6,9 @@ weight: 21
 
 ## Server-Sent Events 활용
 
+토큰 인증은 기본적으로 활성화되어 있습니다. 아래 예시를 실행하려면
+[API 보안](/neo/security/)의 안내에 따라 API 토큰을 발급받고 `<API_TOKEN>`을 발급받은 토큰으로 바꾸세요.
+
 클라이언트는 서버에서 전송하는 스트리밍 이벤트를 받아 지정한 테이블의 최신 레코드를 실시간으로 조회할 수 있습니다.
 
 Server-Sent Events(SSE)는 하나의 HTTP 연결을 유지한 채 서버가 클라이언트로 업데이트를 지속적으로 푸시하는 기술입니다.
@@ -80,7 +83,9 @@ SSE(Server-Sent Events) 엔드포인트는 다음과 같습니다.
 `curl` 명령으로 태그의 최신 값을 스트림 형태로 받아보십시오.
 
 ```sh
-curl -o - -v "http://127.0.0.1:5654/db/watch/example"\
+curl -o - -v \
+  -H "Authorization: Bearer <API_TOKEN>" \
+  "http://127.0.0.1:5654/db/watch/example"\
 "?tag=machbase:ps:cpu_percent&tag=machbase:ps:mem_percent&period=3s&timeformat=s"
 ```
 
@@ -100,16 +105,23 @@ data: {"NAME":"machbase:ps:cpu_percent","TIME":1774408740,"VALUE":4.519490930962
 
 ## 자바스크립트 예시
 
+브라우저의 기본 `EventSource`는 `Authorization` 헤더를 지정할 수 없습니다.
+이 예시는 CDN에서 `event-source-polyfill`을 불러오고 `EventSourcePolyfill`로 인증 헤더를 전송하면서
+SSE 이벤트 처리와 자동 재연결을 유지합니다.
+
 ```html
 <html>
 <body>
     <h1>Server-Sent Events 예시</h1>
     <div id="messages"></div>
+    <script src="https://cdn.jsdelivr.net/npm/event-source-polyfill@1.0.31/src/eventsource.min.js"></script>
     <script>
         // EventSource 인스턴스를 생성합니다.
         const addr = 'http://127.0.0.1:5654/db/watch/EXAMPLE';
         const params = 'tag=machbase:ps:cpu_percent&tag=machbase:ps:mem_percent&period=3s&keep-alive=30s&timeformat=default';
-        const eventSource = new EventSource(`${addr}?${params}`);
+        const eventSource = new EventSourcePolyfill(`${addr}?${params}`, {
+            headers: { "Authorization": "Bearer <API_TOKEN>" },
+        });
 
         // 메시지를 표시할 div를 가져옵니다.
         const messagesDiv = document.getElementById('messages');
@@ -150,7 +162,10 @@ params = {
 }
 
 # 스트리밍 요청을 생성합니다.
-response = requests.get(url, params=params, stream=True)
+response = requests.get(
+    url, params=params, headers={"Authorization": "Bearer <API_TOKEN>"}, stream=True
+)
+response.raise_for_status()
 
 # sseclient를 사용해 서버 전송 이벤트를 처리합니다.
 client = sseclient.SSEClient(response)

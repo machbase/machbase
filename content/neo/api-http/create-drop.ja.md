@@ -10,6 +10,9 @@ params:
 
 HTTPの`query` APIは、`SELECT`文だけでなくDDLも実行できるため、HTTP APIでテーブルを作成・削除できます。
 
+トークン認証はデフォルトで有効です。以下の例を実行するには、
+[APIセキュリティ](/neo/security/)の手順に従ってAPIトークンを発行し、`<API_TOKEN>`を発行したトークンに置き換えてください。
+
 ## テーブルの作成 {#create-table}
 
 詳細は、[タグテーブル](/dbms/tag-table-usage/)を参照してください。
@@ -22,12 +25,14 @@ HTTPの`query` APIは、`SELECT`文だけでなくDDLも実行できるため、
 ```http
 GET http://127.0.0.1:5654/db/query
     ?q=create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 {{< /tab >}}
 {{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
+  -H "Authorization: Bearer <API_TOKEN>" \
   --data-urlencode \
   "q=create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"
 ```
@@ -38,6 +43,7 @@ import requests
 
 response = requests.get(
   "http://127.0.0.1:5654/db/query",
+  headers={"Authorization": "Bearer <API_TOKEN>"},
   params={
   "q": (
   "create tag table EXAMPLE "
@@ -55,7 +61,9 @@ async function createTable() {
     q: "create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)",
   });
 
-  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`, {
+    headers: { "Authorization": "Bearer <API_TOKEN>" },
+  });
   console.log(await response.text());
 }
 
@@ -67,6 +75,7 @@ createTable();
 using System.Net.Http;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 var sql = Uri.EscapeDataString(
   "create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"
 );
@@ -92,12 +101,14 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```http
 GET http://127.0.0.1:5654/db/query
     ?q=create tag table if not exists EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 {{< /tab >}}
 {{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
+  -H "Authorization: Bearer <API_TOKEN>" \
   --data-urlencode \
   "q=create tag table if not exists EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"
 ```
@@ -108,6 +119,7 @@ import requests
 
 response = requests.get(
   "http://127.0.0.1:5654/db/query",
+  headers={"Authorization": "Bearer <API_TOKEN>"},
   params={
   "q": (
   "create tag table if not exists EXAMPLE "
@@ -125,7 +137,9 @@ async function createTable() {
     q: "create tag table if not exists EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)",
   });
 
-  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`, {
+    headers: { "Authorization": "Bearer <API_TOKEN>" },
+  });
   console.log(await response.text());
 }
 
@@ -137,6 +151,7 @@ createTable();
 using System.Net.Http;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 var sql = Uri.EscapeDataString(
   "create tag table if not exists EXAMPLE (name varchar(40) primary key, time datetime basetime, value double)"
 );
@@ -156,12 +171,14 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```http
 GET http://127.0.0.1:5654/db/query
     q=create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double summarized)
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 {{< /tab >}}
 {{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
+  -H "Authorization: Bearer <API_TOKEN>" \
   --data-urlencode \
   "q=create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double summarized)"
 ```
@@ -172,6 +189,7 @@ import requests
 
 response = requests.get(
   "http://127.0.0.1:5654/db/query",
+  headers={"Authorization": "Bearer <API_TOKEN>"},
   params={
   "q": (
   "create tag table EXAMPLE "
@@ -189,7 +207,9 @@ async function createTable() {
     q: "create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double summarized)",
   });
 
-  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`, {
+    headers: { "Authorization": "Bearer <API_TOKEN>" },
+  });
   console.log(await response.text());
 }
 
@@ -201,6 +221,7 @@ createTable();
 using System.Net.Http;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 var sql = Uri.EscapeDataString(
   "create tag table EXAMPLE (name varchar(40) primary key, time datetime basetime, value double summarized)"
 );
@@ -226,12 +247,14 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```http
 GET http://127.0.0.1:5654/db/query
     ?q=drop table EXAMPLE
+Authorization: Bearer <API_TOKEN>
 ```
 ~~~
 {{< /tab >}}
 {{< tab name="cURL" >}}
 ```sh
 curl -o - http://127.0.0.1:5654/db/query \
+  -H "Authorization: Bearer <API_TOKEN>" \
   --data-urlencode "q=drop table EXAMPLE"
 ```
 {{< /tab >}}
@@ -241,6 +264,7 @@ import requests
 
 response = requests.get(
   "http://127.0.0.1:5654/db/query",
+  headers={"Authorization": "Bearer <API_TOKEN>"},
   params={"q": "drop table EXAMPLE"},
 )
 print(response.text)
@@ -253,7 +277,9 @@ async function dropTable() {
     q: "drop table EXAMPLE",
   });
 
-  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`);
+  const response = await fetch(`http://127.0.0.1:5654/db/query?${params}`, {
+    headers: { "Authorization": "Bearer <API_TOKEN>" },
+  });
   console.log(await response.text());
 }
 
@@ -265,6 +291,7 @@ dropTable();
 using System.Net.Http;
 
 using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", "Bearer <API_TOKEN>");
 var sql = Uri.EscapeDataString("drop table EXAMPLE");
 
 var response = await client.GetAsync($"http://127.0.0.1:5654/db/query?q={sql}");

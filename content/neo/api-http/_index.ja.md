@@ -51,6 +51,12 @@ HTTP APIは、センサーやデバイスがMQTTやHTTPでデータを取り込�
 
 machbase-neoのWeb UIにはREST APIクライアントが組み込まれています。以下の例のように、ワークシートのMarkdownやTQLから直接HTTP APIをテストできます。
 
+> machbase-neoのトークン認証はデフォルトで有効です（`--http-enable-token-auth true`）。
+> 有効な状態で認証トークンを付けずにリクエストすると、`401 Unauthorized`レスポンスとともに
+> `{"reason":"missing authorization token","success":false}`メッセージが返されます。
+> 以下の例を実行するには、[APIセキュリティ](/neo/security/)の手順に従ってAPIトークンを発行し、
+> 各リクエストに`Authorization: Bearer <API_TOKEN>`ヘッダーを追加してください。
+
 - ワークシートのMarkdown
 
 ~~~
@@ -58,6 +64,7 @@ machbase-neoのWeb UIにはREST APIクライアントが組み込まれていま
 GET http://127.0.0.1:5654/db/query
     ?q=select count(*) from example
     &format=ndjson
+Authorization: Bearer <your token>
 ```
 ~~~
 
@@ -70,6 +77,7 @@ HTTP({
     GET http://127.0.0.1:5654/db/query
         ?q=select count(*) from example
         &format=ndjson
+    Authorization: Bearer <your token>
 })
 TEXT()
 ```
