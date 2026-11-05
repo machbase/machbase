@@ -35,6 +35,10 @@ alternatives before replacing binaries.
    SQLCLI and ODBC are separate API sets.
 5. Replace operational workflows and dashboards that depend on WebAdmin/MWA with command-line
    tools or separate applications.
+6. If ordered EXTENSION ROLLUPs (`EXTENSION ORDER BY`) were created in 8.5.13 or later, upgrade to
+   8.7.3 or later. Releases 8.7.0 through 8.7.2 do not recognize the sort definition and may
+   interpret those objects as existing EXTs. See
+   [older binaries and rollback](/dbms/tag-rollup-usage/extension-rollup/#ordered-rollup-compatibility).
 
 See
 [version compatibility](/dbms/reference/support-scope-constraints/compatibility-version/#removed-features-870)

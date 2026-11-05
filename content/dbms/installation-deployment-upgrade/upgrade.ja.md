@@ -29,6 +29,9 @@ toc: true
 4. `machcli.h`と`MachCLI*()`を使用するC/C++アプリケーションをMachbase SQLCLIまたはODBCに移行します。
    SQLCLIとODBCは異なるAPI集合です。
 5. WebAdmin/MWAに依存する運用手順・ダッシュボードは、コマンドラインツールまたは別アプリケーションへ移行します。
+6. 8.5.13以降でソート付きEXTENSION ROLLUP（`EXTENSION ORDER BY`）を作成した場合は、8.7.3以降に
+   アップグレードします。8.7.0～8.7.2はソート定義を認識せず、既存EXTとして解釈する可能性があります。
+   詳細は[旧バイナリとロールバック](/dbms/tag-rollup-usage/extension-rollup/#ordered-rollup-compatibility)を参照してください。
 
 全廃止項目と継続機能は
 [バージョンと互換性](/dbms/reference/support-scope-constraints/compatibility-version/#removed-features-870)を参照してください。

@@ -125,6 +125,21 @@ Standard Editionで同じオブジェクトや直接関連するオブジェク�
 | 8.5バックアップ | O | `MOUNT`または`machadmin -r`を使用 |
 | 8.7.0バックアップ | O | |
 | 8.4以前のバックアップ | △ | バージョンによって異なるためテストが必要 |
+| ソート付きROLLUPを含む8.5.13以降・8.7.3以降のバックアップ | X | 8.7.3以降で復元（[ソート付きROLLUPの互換性](#ordered-rollup-compatibility-873)） |
+
+<a id="ordered-rollup-compatibility-873"></a>
+
+## 8.7.3のソート付きROLLUPの互換性
+
+- 複合キーFIRST/LASTとソート付きEXTENSION ROLLUP（`EXTENSION ORDER BY`）は8.7.3から対応します。
+  8.5では8.5.13から対応します。
+- ソート付きROLLUPを含むDBやそのバックアップを8.7.2以前で開く、MOUNTする、または復元する運用は非対応です。
+  同じメタバージョンの旧バイナリは検査を通過し、ソート付きオブジェクトを既存EXTとして解釈する可能性があります。
+  戻す場合はソート付きROLLUP導入前のバックアップを復元します。
+- 8.5.13でソート付きROLLUPを作成したDBは、8.7.3以降にアップグレードします。
+- Cluster Editionでは、すべてのbroker・warehouseを同じ対応ビルドで構成します。
+
+詳細は[旧バイナリとロールバック](/dbms/tag-rollup-usage/extension-rollup/#ordered-rollup-compatibility)を参照してください。
 
 ## 正式なアップグレード手順
 

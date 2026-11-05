@@ -205,7 +205,7 @@ PLAN
 
 ##  ROLLUP_TABLE {#rollup_table}
 
-複数のロールアップが一致する場合、指定したテーブルを強制します。ヒントは常に自動選択より優先されます。
+複数のロールアップが一致する場合、互換性を確認したうえで、自動選択より指定したロールアップを優先します。
 
 ```sql
 SELECT /*+ ROLLUP_TABLE(rollup_table_name) */ ...
@@ -225,6 +225,11 @@ GROUP BY rt
 ORDER BY rt;
 ```
 
+
+複合FIRST/LASTはEXTENSIONであるだけでなく、キー・方向も一致する必要があります。
+存在するが不一致のROLLUP_TABLE対象は`ERR-02813`
+（`Token = ROLLUP ordering mismatch, Unit = 0`）、存在しない対象は`ERR-02025`です。
+先行するROLLUP検証のエラーが優先される場合もあります。
 
 ##  RID_RANGE {#rid_range}
 

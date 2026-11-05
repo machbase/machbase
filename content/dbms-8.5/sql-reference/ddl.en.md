@@ -850,6 +850,9 @@ Deletes all data in the specified table. However, the statement fails with an er
 create_rollup_stmt ::= 'CREATE ROLLUP' rollup_name 'ON' src_table_name '('src_table_column')' 'INTERVAL' number ('SEC' | 'MIN' | 'HOUR')
 ```
 
+For the complete public syntax, including EXTENSION and ordered EXTENSION (`EXTENSION ORDER BY`,
+from 8.5.13), see [Rollup Tables for Aggregation](../../table-types/tag-tables/rollup-tables/).
+
 ```sql
 -- Creates a rollup targeting the value column of the tag table.
 Mach> CREATE ROLLUP _rollup_tag_value_sec ON tag(value) INTERVAL 1 SEC;

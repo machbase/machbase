@@ -205,7 +205,7 @@ PLAN
 
 ##  ROLLUP_TABLE
 
-조건 롤업이 여러 개 있을 때 특정 롤업 테이블을 강제로 선택합니다. 힌트가 있으면 자동 선택 규칙보다 항상 우선합니다.
+호환성을 검사한 뒤 자동 선택보다 우선하여 지정한 롤업을 사용합니다.
 
 ```sql
 SELECT /*+ ROLLUP_TABLE(rollup_table_name) */ ...
@@ -225,6 +225,11 @@ GROUP BY rt
 ORDER BY rt;
 ```
 
+
+복합 FIRST/LAST는 EXTENSION 여부뿐 아니라 키·방향도 일치해야 합니다.
+존재하지만 맞지 않는 ROLLUP_TABLE 대상은 `ERR-02813`
+(`Token = ROLLUP ordering mismatch, Unit = 0`), 없는 대상은 `ERR-02025`입니다.
+다른 ROLLUP 검증 오류가 먼저 발생할 수도 있습니다.
 
 ##  RID_RANGE
 

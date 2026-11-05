@@ -845,6 +845,9 @@ Truncated successfully.
 create_rollup_stmt ::= 'CREATE ROLLUP' rollup_name 'ON' src_table_name '('src_table_column')' 'INTERVAL' number ('SEC' | 'MIN' | 'HOUR')
 ```
 
+EXTENSION과 정렬 EXTENSION(`EXTENSION ORDER BY`, 8.5.13부터)을 포함한 전체 공개 문법은
+[집계용 롤업 테이블](../../table-types/tag-tables/rollup-tables/)을 참고하십시오.
+
 ```sql
 -- Creates a rollup targeting the value column of the tag table.
 Mach> CREATE ROLLUP _rollup_tag_value_sec ON tag(value) INTERVAL 1 SEC;

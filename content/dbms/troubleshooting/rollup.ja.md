@@ -28,7 +28,7 @@ SHOW ROLLUPGAP は machsql コマンドであり、SDK の SQL API へ送信し�
 | 症状 | 確認事項 |
 |---|---|
 | 一部サンプルがない | 条件付き ROLLUP 候補と元データのフィルターが一致するか |
-| FIRST/LAST エラー | 選択された候補が EXTENSION か |
+| FIRST/LAST エラー | 候補がEXTENSIONか、複合キー・方向が一致するか（`ERR-02813`） |
 | 月・日クエリに候補がない | 保存間隔の選択規則とクエリバケットを混同していないか |
 | 平均が異なる | NULL、有効件数、部分平均の再集計、タグ単位が同じか |
 | 元データ修正後も値が変わらない | FORCE で過去に戻そうとしていないか、REBUILD の対象か |
@@ -37,6 +37,11 @@ SHOW ROLLUPGAP は machsql コマンドであり、SDK の SQL API へ送信し�
 元データは DATE_TRUNC/DATE_BIN と GROUP BY、保存集計は rollup() で取得し、比較します。
 タグ、時刻、origin、終了境界、集計関数を固定します。対応 ROLLUP がない場合に、
 rollup() が元データのスキャンへ自動で切り替わるとは考えないでください。
+
+複合FIRST/LASTはEXTENSIONであるだけでなく、キー・方向も一致する必要があります。
+存在するが不一致のROLLUP_TABLE対象は`ERR-02813`
+（`Token = ROLLUP ordering mismatch, Unit = 0`）、存在しない対象は`ERR-02025`です。
+先行するROLLUP検証のエラーが優先される場合もあります。
 
 ## 3. 新しい入力への追従
 

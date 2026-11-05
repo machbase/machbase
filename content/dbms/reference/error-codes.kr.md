@@ -36,6 +36,18 @@ Machbase 8.7.0의 대표 오류와 전체 오류 메시지 목록을 제공합�
 | `ERR-02026` | `The number of insert values and that of columns are mismatched.` | INSERT 컬럼 수와 값 수 불일치 |
 | `ERR-02030` | `Column name (%s) does not exist.` | 존재하지 않는 컬럼 지정 |
 
+## ROLLUP 오류
+
+| 코드 | 메시지 | 대표 원인 |
+|------|--------|-----------|
+| `ERR-02685` | `There are no applicable ROLLUP tables.` | 조회에 사용할 수 있는 ROLLUP이 없음. 정렬 ROLLUP만 있을 때의 단일 키 FIRST/LAST 조회 포함 |
+| `ERR-02686` | `The names of column(%s) associated with ROLLUP cannot be changed.` | ROLLUP이 참조하는 컬럼(정렬 키 컬럼 포함)의 이름 변경 |
+| `ERR-02813` | `Invalid ROLLUP expression. (Token = %s, Unit = %ld)` | 유효하지 않은 ROLLUP 정의·조회. 정렬 ROLLUP 관련 Token: `ROLLUP ordering mismatch`(힌트로 지정한 ROLLUP의 정렬 정의가 조회와 다름), `EXTENSION ORDER BY`(지원하지 않는 정렬 키 또는 정의 길이 초과), `ordering query exceeds supported size`(키가 많아 내부 생성 SQL 길이 초과) |
+| `ERR-02837` | `Custom rollup is not supported in cluster edition.` | Cluster Edition에서 Custom ROLLUP 생성 |
+
+정렬 ROLLUP 오류의 상세 조건은 [복합 키 FIRST/LAST와 정렬 ROLLUP](/dbms/tag-rollup-usage/extension-rollup/#composite-first-last)을
+참고하십시오.
+
 ## 시스템 리소스 오류
 
 | 코드 | 메시지 | 대표 원인 |

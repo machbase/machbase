@@ -2,6 +2,7 @@
 title: 'Custom Rollup: 사용자 정의 집계'
 type: docs
 weight: 62
+toc: true
 ---
 
 ## 개요
@@ -240,3 +241,178 @@ DROP TABLE <source_table>;
 - 대상 스키마 변경이 필요하면 Rollup 중지/삭제 후 재생성 절차를 사용하십시오.
 - 이상 데이터 정정 후에는 delete 후 insert 기준의 버킷 재구성이 필요하며, rollup-on-rollup 구조에서는 반드시 하위부터 복구해야 합니다.
 - 운영 배치에서는 `WAKEUP INTERVAL`을 명시해 지연과 부하를 조정하십시오.
+
+<a id="composite-key-ohlc"></a>
+
+## 복합 키를 보존하는 OHLC 재집계
+
+> 복합 키 FIRST/LAST와 정렬 EXTENSION ROLLUP은 Machbase 8.5.13부터 지원합니다. 에디션별 제약은 아래 설명을 확인하십시오.
+
+이 예제의 Custom 생성은 Standard 전용입니다. 일반 TAG에 이미 저장된 요약 행을
+재집계하는 SELECT는 별도 동작이며 Cluster에서도 지원합니다. 그때도 원본 시각과
+보조 키 컬럼을 동일한 기준으로 사용해야 합니다.
+
+Standard Custom ROLLUP의 SELECT에서도 복합 키 FIRST/LAST를 사용합니다.
+Custom 정의에는 EXTENSION ORDER BY를 붙이지 않습니다. 선택 가격과 같은 행의 원본 시각·DOUBLE 키를
+함께 저장하면 부분 집계를 다시 합칠 때도 순서를 유지할 수 있습니다. 아래 예제는 별도 객체를 사용합니다.
+
+### 원본과 목적 스키마
+
+```sql
+CREATE TAG TABLE custom_ticks (
+    code  VARCHAR(16) PRIMARY KEY,
+    time  DATETIME BASETIME,
+    price INTEGER,
+    gvol  DOUBLE
+);
+
+CREATE TAG TABLE custom_ticks_1s (
+    code        VARCHAR(16) PRIMARY KEY,
+    time        DATETIME BASETIME,
+    open_price  INTEGER,
+    open_time   DATETIME,
+    open_gvol   DOUBLE,
+    close_price INTEGER,
+    close_time  DATETIME,
+    close_gvol  DOUBLE,
+    high_price  INTEGER,
+    low_price   INTEGER
+);
+```
+
+### 1초 요약 정의
+
+출력 컬럼 순서를 목적 스키마에 맞춥니다. 예제에서는 입력 전 STOP으로 자동 집계를 중지하고 FORCE로 처리합니다.
+
+```sql
+CREATE ROLLUP custom_ticks_rollup_1s
+INTO (custom_ticks_1s) AS (
+    SELECT code,
+           DATE_TRUNC('second', time) AS time,
+           FIRST((time, gvol), price) AS open_price,
+           FIRST((time, gvol), time)  AS open_time,
+           FIRST((time, gvol), gvol)  AS open_gvol,
+           LAST((time, gvol), price)  AS close_price,
+           LAST((time, gvol), time)   AS close_time,
+           LAST((time, gvol), gvol)   AS close_gvol,
+           MAX(price) AS high_price,
+           MIN(price) AS low_price
+      FROM custom_ticks
+     GROUP BY code, time
+) INTERVAL 1 SEC;
+
+STOP ROLLUP custom_ticks_rollup_1s;
+```
+
+### 입력과 집계
+
+동일 시각에 3건씩 입력하며 gvol은 일반 DOUBLE 업무 키입니다.
+09:01:29.999와 09:01:30의 gvol은 시간 우선 비교를 확인하는 경계값으로, 단조 증가 운영 데이터를 뜻하지 않습니다.
+
+```sql
+INSERT INTO custom_ticks VALUES ('AAPL', '2026-10-19 09:01:00', 201, 2.5);
+INSERT INTO custom_ticks VALUES ('AAPL', '2026-10-19 09:01:00', 200, 1.25);
+INSERT INTO custom_ticks VALUES ('AAPL', '2026-10-19 09:01:00', 202, 3.75);
+
+INSERT INTO custom_ticks VALUES ('AAPL', '2026-10-19 09:01:50', 205, 5.5);
+INSERT INTO custom_ticks VALUES ('AAPL', '2026-10-19 09:01:50', 198, 4.25);
+INSERT INTO custom_ticks VALUES ('AAPL', '2026-10-19 09:01:50', 206, 6.75);
+
+INSERT INTO custom_ticks VALUES ('AAPL', '2026-10-19 09:01:29.999', 204, 0.25);
+INSERT INTO custom_ticks VALUES ('AAPL', '2026-10-19 09:01:30', 203, 999.5);
+
+EXEC TABLE_FLUSH(custom_ticks);
+EXEC ROLLUP_FORCE(custom_ticks_rollup_1s);
+```
+
+### 저장된 원본 키
+
+```sql
+SELECT code, time, open_price, open_time, open_gvol,
+       close_price, close_time, close_gvol, high_price, low_price
+  FROM custom_ticks_1s
+ ORDER BY code, time, open_time, close_time;
+```
+
+목적 time은 1초 버킷 시각이며 open_time/close_time은 선택된 원본 시각입니다.
+원본 09:01:29.999의 버킷 time은 09:01:29이지만 후보 시각은 09:01:29.999를 유지합니다.
+같은 버킷에 여러 부분 결과가 저장될 수 있으므로 행 수를 버킷 수로 해석하지 않습니다.
+
+### 30초 재집계
+
+버킷 계산에는 목적 time을, 후보 선택에는 (open_time, open_gvol)과
+(close_time, close_gvol)을 사용합니다. 일반 DATETIME인 후보 시각이 BASETIME일 필요는 없습니다.
+
+```sql
+SELECT code,
+       DATE_BIN('sec', 30, time) AS bucket,
+       FIRST((open_time, open_gvol), open_price) AS open_price,
+       LAST((close_time, close_gvol), close_price) AS close_price,
+       MAX(high_price) AS high_price,
+       MIN(low_price) AS low_price
+  FROM custom_ticks_1s
+ GROUP BY code, bucket
+ ORDER BY code, bucket;
+```
+
+| code | bucket | open_price | close_price | high_price | low_price |
+|---|---|---:|---:|---:|---:|
+| AAPL | 2026-10-19 09:01:00 | 200 | 204 | 204 | 200 |
+| AAPL | 2026-10-19 09:01:30 | 203 | 206 | 206 | 198 |
+
+### 원본 직접 집계와 비교
+
+```sql
+SELECT code,
+       DATE_BIN('sec', 30, time) AS bucket,
+       FIRST((time, gvol), price) AS open_price,
+       LAST((time, gvol), price) AS close_price,
+       MAX(price) AS high_price,
+       MIN(price) AS low_price
+  FROM custom_ticks
+ GROUP BY code, bucket
+ ORDER BY code, bucket;
+```
+
+```sql
+SELECT FIRST((time, gvol), price) AS open_price,
+       LAST((time, gvol), price) AS close_price
+  FROM custom_ticks;
+```
+
+원본 직접 집계와 저장 결과의 재집계는 동일해야 합니다. 전체 1분의 open/close는 200/206입니다.
+
+### 상위 집계용 키 전달
+
+다음 기간으로 다시 집계할 결과를 저장할 때도 선택한 원본 키를 같은 FIRST/LAST 식으로 함께 전달합니다.
+
+```sql
+SELECT code,
+       DATE_BIN('sec', 30, time) AS bucket,
+       FIRST((open_time, open_gvol), open_price) AS open_price,
+       FIRST((open_time, open_gvol), open_time) AS open_time,
+       FIRST((open_time, open_gvol), open_gvol) AS open_gvol,
+       LAST((close_time, close_gvol), close_price) AS close_price,
+       LAST((close_time, close_gvol), close_time) AS close_time,
+       LAST((close_time, close_gvol), close_gvol) AS close_gvol,
+       MAX(high_price) AS high_price,
+       MIN(low_price) AS low_price
+  FROM custom_ticks_1s
+ GROUP BY code, bucket
+ ORDER BY code, bucket;
+```
+
+버킷 시각만으로 FIRST(time, open_price)를 계산하면 부분 요약의 원본 순서를 항상 복원할 수 없습니다.
+기존 문자열 합성 키의 요약을 수치 키 요약으로 자동 변환하지 않습니다. 새 목적 테이블과 작업으로 검산하며,
+과거 기간 전환에는 원본 보관 기간과 재집계 가능 여부가 필요합니다.
+Cluster Custom 생성은 기존 ERR-02837 미지원 제한을 유지합니다.
+
+### 예제 객체 삭제
+
+자동 집계를 재개할 때는 START ROLLUP custom_ticks_rollup_1s를 사용합니다. 예제 객체 삭제 순서는 다음과 같습니다.
+
+```sql
+DROP ROLLUP custom_ticks_rollup_1s;
+DROP TABLE custom_ticks_1s;
+DROP TABLE custom_ticks;
+```

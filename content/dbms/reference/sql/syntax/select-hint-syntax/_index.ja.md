@@ -33,6 +33,11 @@ SELECT /*+ hint1 hint2 */ ...
 | `SCAN_FORWARD` | `/*+ SCAN_FORWARD(table) */` | 古いレコードからスキャン（LOGテーブル） |
 | `SCAN_BACKWARD` | `/*+ SCAN_BACKWARD(table) */` | 新しいレコードからスキャン（LOGテーブル） |
 
+複合FIRST/LASTはEXTENSIONであるだけでなく、キー・方向も一致する必要があります。
+存在するが不一致のROLLUP_TABLE対象は`ERR-02813`
+（`Token = ROLLUP ordering mismatch, Unit = 0`）、存在しない対象は`ERR-02025`です。
+先行するROLLUP検証のエラーが優先される場合もあります。
+
 ### データ処理ヒント
 
 | ヒント | 構文 | 説明 |

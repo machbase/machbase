@@ -137,6 +137,14 @@ START ROLLUP rollup_stock_1m;
 
 `FIRST/LAST`를 쓰는 custom rollup은 보조 시간 컬럼도 같이 다시 계산해야 합니다.
 
+복합 키를 사용하는 Custom SELECT는 가격과 같은 FIRST/LAST 키 목록으로 선택된 원본 시각과
+모든 보조 키도 다시 계산해야 합니다. 목적 TAG는 버킷 시각만이 아닌 저장한 원본 키로 재집계합니다.
+[타입을 보존하는 예제](../rollup-custom/#composite-key-ohlc)를 확인하십시오.
+이 설명이 정렬 EXTENSION 객체를 ROLLUP_REBUILD 대상으로 추가하는 것은 아닙니다.
+정렬 객체는 보관된 원본으로 다시 생성해야 합니다.
+
+아래 SQL은 시간 하나를 선택 키로 쓰는 기존 단일 키 예제입니다.
+
 ```sql
 STOP ROLLUP rollup_stock_candle_1m;
 
@@ -163,7 +171,9 @@ EXEC TABLE_FLUSH('stock_candle_1m');
 START ROLLUP rollup_stock_candle_1m;
 ```
 
-최종 조회는 기존과 동일하게 `FIRST(firsttime, open)`, `LAST(lasttime, close)`로 재병합해야 합니다.
+위 단일 키 예제의 최종 조회는 `FIRST(firsttime, open)`, `LAST(lasttime, close)`로 재병합합니다.
+복합 키 요약은 `FIRST((open_time, open_gvol), open_price)`와
+`LAST((close_time, close_gvol), close_price)`처럼 저장한 원본 시각과 모든 보조 키로 재병합합니다.
 
 ### rollup-on-rollup 순서
 
