@@ -585,3 +585,20 @@ go run ./_example/scanbytag.go -s 127.0.0.1:5656 -u sys -p manager
 - 파라미터 타입은 드라이버 구현을 따릅니다. 일반적인 SQL 타입, `time.Time`, `[]byte`,
   `net.IP`, `api.Decimal`을 지원하지만 `bool` 파라미터는 지원하지 않습니다.
 
+## VECTOR 값과 바인딩
+
+VECTOR의 native 바인딩에는 DBMS 8.9 Standard 서버와 CMI 4.0.5를 지원하는 SDK가 필요합니다.
+SQL ARRAY와 VECTOR는 별도 타입이며 같은 숫자 배열이라고 같은 전송 형식을 사용하지 않습니다.
+구형 서버가 native VECTOR를 지원하는 것으로 가정하지 않습니다.
+
+`database/sql` 예제의 VECTOR 값은 DBMS 8.9를 지원하는 neo-client/v2 SDK로 바인딩합니다.
+서버·SDK를 함께 갱신하고 실제 대상 컬럼이 VECTOR인지 확인합니다.
+JSON 변환 경로를 쓸 때도 서버에 VECTOR SQL 기능이 있어야 합니다.
+숫자 배열을 기존 ARRAY 인자로 보내는 것과 VECTOR 인자를 보내는 것은 구분합니다.
+
+native VECTOR를 지원하지 않는 클라이언트에서는 숫자 JSON을 `TO_VECTOR(?,n)`으로 변환하고
+`VECTOR_TO_JSON(V)`로 읽는 명시적 경로를 사용할 수 있습니다. 이 방법도 VECTOR를 지원하는
+서버가 필요합니다.
+
+[언어별 실행 예제](/kr/dbms-8.9/ai-search-graphrag/application-integration/)와
+[VECTOR 타입](/kr/dbms-8.9/reference/sql/types/vector/)을 함께 참고합니다.

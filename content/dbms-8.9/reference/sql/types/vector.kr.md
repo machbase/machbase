@@ -44,3 +44,13 @@ VECTOR(4096)은 저장할 수 있어도 SQL DOUBLE[4096]으로 CAST할 수는 �
 
 
 [검색 실습과 인덱스 선택](/kr/dbms-8.9/ai-search-graphrag/search-indexes/)
+
+## 큰 벡터의 JSON 출력
+
+`VECTOR_TO_JSON`은 입력 차원에 맞춰 출력 버퍼를 확보합니다. JSON 표현이 32 KiB를
+넘는 큰 벡터도 전체 값을 TEXT로 반환합니다. 차원과 숫자 표현에 따라 출력 길이가 달라지므로
+애플리케이션에서 작은 고정 길이 문자열로 받지 않습니다.
+
+SQL ARRAY의 요소 수 제한과 VECTOR의 차원 제한은 별개입니다. 큰 벡터는 native VECTOR
+API 또는 `VECTOR_TO_JSON`으로 읽습니다. CLI 화면이나 애플리케이션이 출력을 줄여 표시할
+경우 서버 반환값의 길이와 클라이언트의 표시·버퍼 제한을 구분해 확인합니다.

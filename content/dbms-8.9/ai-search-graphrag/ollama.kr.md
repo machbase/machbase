@@ -90,3 +90,20 @@ machbase-graph-rag chat --save-session graph-rag-cache/session.jsonl
 
 
 [다음: 애플리케이션 연동](../application-integration/)
+
+## 검색 계획과 성능 비교
+
+적재를 완료한 동일 데이터에 대해 검색 모드별 경로를 확인합니다.
+
+```bash
+machbase-graph-rag explain '펌프 진동 점검 절차는?' --mode graph
+machbase-graph-rag explain '펌프 진동 점검 절차는?' --mode graph --full
+machbase-graph-rag benchmark '펌프 진동 점검 절차는?' --output graph-rag-cache/benchmark
+```
+
+`explain --full`은 실제 검색을 실행합니다. benchmark는 direct·graph·hybrid 각각의
+첫 실행과 반복 실행, p50·p95와 실행 계획을 저장합니다. 모드별 후보 범위가 다르므로
+시간뿐 아니라 반환 근거와 경로도 비교합니다.
+
+DB 검색 시간은 질문 해석·임베딩·LLM 답변 생성까지의 전체 시간이 아닙니다.
+전체 응답 지연은 `/trace`의 단계별 시간과 함께 확인합니다.

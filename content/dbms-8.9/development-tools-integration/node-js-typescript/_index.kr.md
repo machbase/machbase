@@ -714,3 +714,28 @@ await conn.execute('COMMIT');
 4. **오류 처리**: DB 작업을 `try...catch`로 감싸고 적절히 로깅합니다.
 5. **커넥션 풀 사용**: 운영 환경에서는 커넥션 풀을 도입해 동시 요청을 안정적으로 처리하십시오.
 6. **쿼리 파라미터화**: SQL 인젝션을 방지하려면 문자열 결합 대신 바인딩(`?` 플레이스홀더)을 사용하십시오.
+
+## VECTOR 값과 바인딩
+
+VECTOR의 native 바인딩에는 DBMS 8.9 Standard 서버와 CMI 4.0.5를 지원하는 SDK가 필요합니다.
+SQL ARRAY와 VECTOR는 별도 타입이며 같은 숫자 배열이라고 같은 전송 형식을 사용하지 않습니다.
+구형 서버가 native VECTOR를 지원하는 것으로 가정하지 않습니다.
+
+| 항목 | 계약 |
+|---|---|
+| 입력 | VECTOR 대상의 Vector·number[]·Float32Array·Float64Array |
+| 조회 | callback·Promise·prepared API에서 Vector, SQL NULL은 null |
+| 배열 복사 | Vector 생성 시 입력을 복사하고 toArray()는 독립 Float32Array 반환 |
+| 값 검증 | 빈 벡터·NULL 요소·차원 초과·NaN/Infinity 거부 |
+
+고정 차원의 짧은 비어 있지 않은 입력은 0으로 채웁니다.
+`{type:'vector',value:...}` 명시 바인딩에도 서버의 VECTOR 대상 메타데이터가 필요합니다.
+`SELECT ?`와 scalar 대상은 벡터를 거부합니다. APPEND에서도 차원을 검증합니다.
+SDK가 native VECTOR를 자동으로 JSON 변환 경로로 대체하지는 않습니다.
+
+native VECTOR를 지원하지 않는 클라이언트에서는 숫자 JSON을 `TO_VECTOR(?,n)`으로 변환하고
+`VECTOR_TO_JSON(V)`로 읽는 명시적 경로를 사용할 수 있습니다. 이 방법도 VECTOR를 지원하는
+서버가 필요합니다.
+
+[언어별 실행 예제](/kr/dbms-8.9/ai-search-graphrag/application-integration/)와
+[VECTOR 타입](/kr/dbms-8.9/reference/sql/types/vector/)을 함께 참고합니다.

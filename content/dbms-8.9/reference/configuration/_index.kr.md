@@ -40,3 +40,8 @@ ALTER SYSTEM SET PVO_CACHE_MAX_MEMORY_SIZE = 536870912;
 ```
 
 변경 후 `v$property`를 조회하면 적용 여부를 확인할 수 있습니다. 재시작이 필요한 프로퍼티를 동적으로 변경하면 오류가 반환됩니다.
+
+
+## IVF 메모리 설정
+
+[VECTOR_IVF_MEMORY_LIMIT](./configuration/#vector_ivf_memory_limit)은 서버 시작 시 적용하는 IVF 전용 메모리 예산입니다.

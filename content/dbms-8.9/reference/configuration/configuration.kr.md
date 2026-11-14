@@ -177,3 +177,30 @@ SELECT name, value, min, max
 ALTER SYSTEM SET TRACE_LOG_LEVEL = 3;
 ALTER SYSTEM SET SESSION_QUERY_TIMEOUT_SEC = 30;
 ```
+
+## VECTOR_IVF_MEMORY_LIMIT
+
+| 항목 | 값 |
+|---|---|
+| 대상 | Standard Edition의 IVF 인덱스 |
+| 단위 | 바이트 |
+| 기본값 | 1073741824 (1 GiB) |
+| 최솟값 | 1048576 (1 MiB) |
+| 최댓값 | 9223372036854775807 |
+| 동적 변경 | 지원하지 않음. 설정 파일 변경 후 서버 재시작 |
+
+```ini
+VECTOR_IVF_MEMORY_LIMIT=1073741824
+```
+
+IVF의 구축·캐시·검색에 사용하는 서버 전체 메모리 예산입니다.
+기본 1 GiB에서 BUILD는 512 MiB, CACHE와 SEARCH는 각각 256 MiB입니다.
+HNSW, 일반 SQL 메모리, DB 버퍼, OS 파일 캐시나 프로세스 RSS 전체 상한은 아닙니다.
+
+SEARCH는 작업당 검색 예산의 1/8을 예약하고 최대 8개 작업을 접수합니다.
+작업이 끝나도 잔존 메모리가 있으면 새 예약의 여유가 줄 수 있습니다.
+예산 부족으로 대기할 때는 열린 cursor와 트랜잭션의 수명도 확인합니다.
+수치를 올리기 전에는 OS와 다른 서버 메모리 사용량을 함께 확인합니다.
+
+[V$VECTOR_IVF_MEMORY](/kr/dbms-8.9/reference/system-catalog/search-indexes/#ivf-memory)에서
+예약량·실사용량·잔존량을 구분해 확인합니다.

@@ -153,3 +153,65 @@ CTE는 복잡한 쿼리를 읽기 쉽게 만들지만 자동으로 성능을 개
 | VIEW·CTE·집합 연산 | [SQL 문법 사전](/dbms-8.9/reference/sql/syntax/) |
 | 힌트 | [SELECT 힌트](/dbms-8.9/reference/sql/syntax/select-hint-syntax/) |
 | 함수·집계 | [함수 사전](/dbms-8.9/reference/sql/functions/) |
+
+## TRANSACTION 인덱스 순서와 LIMIT
+
+Linux Standard Edition에서 단일 TRANSACTION 테이블의 동등 조건과 정렬 키가 복합
+B-tree 인덱스의 순서에 맞으면 인덱스 순서대로 읽을 수 있습니다. 최종 조건을 통과한
+행이 LIMIT에 도달하면 읽기를 종료해 전체 정렬과 불필요한 후보 읽기를 줄입니다.
+
+다음 예제는 전용 실습 DB에서 실행합니다. 같은 이름의 객체가 있으면 먼저 이름을 바꿉니다.
+
+```sql
+CREATE TRANSACTION TABLE SORT_SAMPLE(
+ ID VARCHAR(40) PRIMARY KEY,KIND VARCHAR(16),WS VARCHAR(40),BODY TEXT
+);
+CREATE INDEX I_SORT_SAMPLE ON SORT_SAMPLE(KIND,WS,ID) INDEX_TYPE BTREE;
+INSERT INTO SORT_SAMPLE VALUES('0003','job','w1','세 번째');
+INSERT INTO SORT_SAMPLE VALUES('0001','job','w1','첫 번째');
+INSERT INTO SORT_SAMPLE VALUES('0002','job','w1','두 번째');
+EXPLAIN SELECT ID,LENGTH(BODY) FROM SORT_SAMPLE
+ WHERE KIND='job' AND WS='w1' ORDER BY ID LIMIT 2;
+SELECT ID,BODY FROM SORT_SAMPLE
+ WHERE KIND='job' AND WS='w1' ORDER BY ID LIMIT 2;
+SELECT ID,BODY FROM SORT_SAMPLE
+ WHERE KIND='job' AND WS='w1' AND ID>'0002' ORDER BY ID LIMIT 2;
+```
+
+첫 조회는 0001·0002, 마지막 키 이후의 조회는 0003을 반환합니다. 동등 조건인 KIND·WS를
+앞에 놓고 정렬 키 ID를 그 뒤에 배치한 인덱스입니다. 최종 결과를 확인한 뒤 직접 만든
+테이블만 `DROP TABLE SORT_SAMPLE`로 정리합니다.
+
+### 적용 조건과 실행 계획
+
+- 단일 테이블의 직접 signed 정수·VARCHAR 정렬 키와 같은 방향의 ASC 또는 DESC가 대상입니다.
+- JOIN·집계·윈도우·ROWNUM/SERIESNUM·서브쿼리·정렬 표현식·혼합 정렬 방향은 기존 경로를 사용합니다.
+- SELECT 목록의 LENGTH·CAST·상수와 정렬 키 자체에 적용하는 표현식은 구분합니다.
+- 실행 계획의 `ORDERED INDEX`, 방향과 키, `FILTER=QP_FINAL`, `EARLY_STOP=QP_LIMIT`를
+  확인합니다. 잔여 조건으로 탈락하는 행이 있으면 반환 행보다 많은 후보를 읽습니다.
+
+깊은 OFFSET은 앞의 행을 계속 통과해야 합니다. 예를 들어 OFFSET 4000과 LIMIT 200은
+4200행을 통과해야 하므로 연속 목록 조회에서는 마지막 키 이후 조건이 유리할 수 있습니다.
+예제는 유일한 ID를 사용합니다. 중복 정렬 키로 페이지를 나누면 유일 키를 함께 정렬하고
+이전 페이지의 마지막 키 조합에 맞는 조건을 작성해 누락과 중복을 방지합니다.
+
+VARCHAR 정렬 보조 정보는 인덱스 공간과 쓰기·구축 비용을 늘립니다. 실제 쿼리의 결과와
+계획, 전체 fetch까지의 시간을 함께 비교합니다. 이 최적화를 벡터 ANN 검색으로 해석하지 않습니다.
+
+## 재귀 CTE의 실행 계획
+
+`EXPLAIN`은 실행 전 계획이며 `EXPLAIN FULL`은 실제로 질의를 실행합니다.
+큰 관계망에서는 FULL에도 쿼리와 같은 자원이 필요합니다.
+
+| 표시 | 의미 |
+|---|---|
+| RECURSIVE CTE WORK | 재귀 term이 읽는 직전 작업 집합 |
+| RECURSIVE CTE RESULT | consumer가 읽는 누적 결과 |
+| ITERATIONS / ROWS / DUPLICATES | 실행 후 반복·행·중복 통계 |
+
+실행 전 계획의 0을 예상 행 수로 해석하지 않습니다. UNION ALL의 DUPLICATES=0은 중복이
+없다는 뜻이 아니라 누적 중복 제거를 집계하지 않는다는 뜻입니다. 같은 재귀 producer는
+누적 결과를 공유하지만 일반 비재귀 CTE까지 한 번만 계산된다고 보장하지 않습니다.
+
+[재귀 쿼리 운영과 실행 계획](/kr/dbms-8.9/ai-search-graphrag/operations/)에서 깊이·경로 폭·
+읽기 일관성과 메모리 제약을 함께 확인합니다.

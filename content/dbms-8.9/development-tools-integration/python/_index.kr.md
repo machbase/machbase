@@ -924,3 +924,27 @@ finally:
 NULL 구분, 검증과 기존 호환 API 예제는
 [Sparse ARRAY와 선택 컬럼 Append API](../data-input-load-export/array-append/)를
 참고하십시오.
+
+## VECTOR 값과 바인딩
+
+VECTOR의 native 바인딩에는 DBMS 8.9 Standard 서버와 CMI 4.0.5를 지원하는 SDK가 필요합니다.
+SQL ARRAY와 VECTOR는 별도 타입이며 같은 숫자 배열이라고 같은 전송 형식을 사용하지 않습니다.
+구형 서버가 native VECTOR를 지원하는 것으로 가정하지 않습니다.
+
+| 항목 | 계약 |
+|---|---|
+| 입력 | VECTOR 대상에 list·tuple·SparseArray 또는 숫자 JSON 텍스트 |
+| 조회 결과 | 독립적인 Python list, SQL NULL은 None |
+| 짧은 고정 차원 입력 | 부족한 요소를 0으로 채움 |
+| 입력 요소 None | 0으로 보정. 컬럼 전체 None인 SQL NULL과 구분 |
+| 값 검증 | 유한 FLOAT32 값과 대상 차원에 맞춰 입력 |
+
+`cursor(prepared=True)`의 바인딩과 APPEND에서도 대상 컬럼의 VECTOR 메타데이터를 사용합니다.
+프로토콜 내부 상수를 직접 바꾸지 않습니다.
+
+native VECTOR를 지원하지 않는 클라이언트에서는 숫자 JSON을 `TO_VECTOR(?,n)`으로 변환하고
+`VECTOR_TO_JSON(V)`로 읽는 명시적 경로를 사용할 수 있습니다. 이 방법도 VECTOR를 지원하는
+서버가 필요합니다.
+
+[언어별 실행 예제](/kr/dbms-8.9/ai-search-graphrag/application-integration/)와
+[VECTOR 타입](/kr/dbms-8.9/reference/sql/types/vector/)을 함께 참고합니다.

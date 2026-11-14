@@ -304,12 +304,13 @@ FROM device_info;
 바깥 CTE는 안쪽 `SELECT`에서 참조할 수 있습니다. 안쪽 `SELECT`에 선언한 CTE는 바깥에서
 참조할 수 없으며, 안쪽 CTE가 바깥 CTE와 같은 이름이면 안쪽 CTE가 우선합니다.
 
-## 실행 특성과 성능
+## 비재귀 CTE의 실행 특성과 성능
 
-Machbase는 CTE 참조를 기존 인라인 뷰 형태로 전개하여 계획합니다. CTE 결과가 임시 테이블에
+Machbase는 비재귀 CTE 참조를 기존 인라인 뷰 형태로 전개하여 계획합니다. CTE 결과가 임시 테이블에
 구체화되거나 한 번만 평가된다고 보장하지 않습니다.
 
-같은 CTE를 여러 번 참조하면 각 참조가 별도로 계획되고 실행될 수 있습니다.
+같은 비재귀 CTE를 여러 번 참조하면 각 참조가 별도로 계획되고 실행될 수 있습니다.
+재귀 CTE는 같은 producer의 누적 결과를 공유하며, 각 consumer가 독립적으로 읽습니다.
 
 ```sql
 WITH recent_data AS (
@@ -389,7 +390,7 @@ CTE는 테이블 유형별 DML 기능을 확장하지 않습니다. LOG, TAG, LO
 | PostgreSQL/MySQL의 `WITH RECURSIVE` | 아래 재귀 CTE 지원 범위에 맞게 조정합니다. |
 | PostgreSQL/SQLite의 `MATERIALIZED` | 키워드를 제거하고 한 번 평가된다고 가정하지 않습니다. |
 | PostgreSQL/SQLite의 `NOT MATERIALIZED` | 키워드를 제거하고 실제 계획을 `EXPLAIN`으로 확인합니다. |
-| Oracle의 재귀 subquery factoring | 자기 참조를 제거한 비재귀 CTE만 이전합니다. |
+| Oracle의 재귀 subquery factoring | `WITH RECURSIVE`로 바꾸고 anchor와 직접 자기 참조 1개의 재귀 term으로 구성합니다. `SEARCH`/`CYCLE`은 깊이·경로 조건으로 대체합니다. |
 | SQL Server의 `WITH ... UPDATE/DELETE/MERGE` | CTE와 DML을 분리하고 테이블별 DML 규칙을 적용합니다. |
 | 재귀 CTE의 `SEARCH` 또는 `CYCLE` | 경로와 cycle 검사를 애플리케이션이나 저장 컬럼으로 처리합니다. |
 
@@ -405,7 +406,11 @@ CTE는 테이블 유형별 DML 기능을 확장하지 않습니다. LOG, TAG, LO
 
 ## 재귀 CTE
 
-Standard Edition의 TRANSACTION SELECT에서 사용합니다.
+실제로 자기 참조를 수행하는 재귀 CTE는 Standard Edition의 TRANSACTION SELECT에서 사용합니다.
+`WITH RECURSIVE`를 명시해도 정의에 자기 참조가 없으면 일반 비재귀 CTE로 처리합니다.
+이 경우 키워드만으로 입력 테이블을 TRANSACTION으로 제한하지 않습니다.
+예를 들어 LOOKUP 테이블의 자기 참조 없는 정의에도 `WITH RECURSIVE`를 사용할 수 있습니다.
+여러 정의를 함께 선언할 때도 각 정의가 실제로 재귀하는지에 따라 지원 조건을 적용합니다.
 
 ```sql
 WITH RECURSIVE R(N) AS (

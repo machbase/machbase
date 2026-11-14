@@ -37,3 +37,8 @@ SELECT name FROM v$tables WHERE name LIKE 'V$%' ORDER BY name;
 | [V$ROLLUP 사전](./vrollup/) | Rollup 작업 상태 뷰 컬럼 상세 |
 | [V$STORAGE_MOUNT_* 사전](./vstorage-mount/) | 마운트된 백업 데이터베이스 뷰 컬럼 상세 |
 | [전체 가상 테이블 레퍼런스](./virtual-table-full/) | 8.5 원본 가상 테이블 레퍼런스의 전체 항목 |
+
+## 검색 인덱스 진단
+
+[검색 인덱스 상태와 IVF 메모리](./search-indexes/)에서 V$TEXT_INDEXES,
+V$VECTOR_INDEXES, V$VECTOR_IVF_MEMORY의 컬럼과 상태 해석을 확인합니다.

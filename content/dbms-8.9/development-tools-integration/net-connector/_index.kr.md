@@ -1082,3 +1082,26 @@ Console.WriteLine($"Visible tables: {count}");
 설정 기반 애플리케이션에서 팩터리를 자동으로 노출하려면 시작 시 `MachDbProviderFactory.Register()`를 한 번 호출해 `DbProviderFactories.GetFactory("Mach.Data")`가 동일한 인스턴스를 반환하도록 구성하십시오.
 
 `4.0-full` 프로토콜은 Machbase 7.x 이상 서버에서만 사용 가능합니다. 더 낮은 버전에서는 `PROTOCOL=4.0`(제한된 기능) 또는 2.x/3.x 프로토콜을 사용해야 합니다.
+
+## VECTOR 값과 바인딩
+
+VECTOR의 native 바인딩에는 DBMS 8.9 Standard 서버와 CMI 4.0.5를 지원하는 SDK가 필요합니다.
+SQL ARRAY와 VECTOR는 별도 타입이며 같은 숫자 배열이라고 같은 전송 형식을 사용하지 않습니다.
+구형 서버가 native VECTOR를 지원하는 것으로 가정하지 않습니다.
+
+VECTOR를 지원하는 4.0·4.0-full 또는 Universal provider를 사용합니다.
+`MachVector(float[]/double[])`, `MachDBType.VECTOR`, parameter·APPEND와
+`GetFieldValue<MachVector>()`·`GetFieldValue<float[]>()`를 사용할 수 있습니다.
+입력·반환 배열은 독립 사본입니다. 명시적인 SQL NULL은
+`MachDBType.VECTOR`와 `DBNull.Value`로 지정합니다.
+
+Universal은 GetValue·GetValues·indexer·GetFieldType에서 공개 Universal 타입을 반환합니다.
+내부 provider의 assembly 타입에 의존하지 않습니다. 구형 provider에 VECTOR를 전달하면
+전송 전에 NotSupportedException으로 거부하며 프로토콜 자동 선택에도 이 경계가 적용됩니다.
+
+native VECTOR를 지원하지 않는 클라이언트에서는 숫자 JSON을 `TO_VECTOR(?,n)`으로 변환하고
+`VECTOR_TO_JSON(V)`로 읽는 명시적 경로를 사용할 수 있습니다. 이 방법도 VECTOR를 지원하는
+서버가 필요합니다.
+
+[언어별 실행 예제](/kr/dbms-8.9/ai-search-graphrag/application-integration/)와
+[VECTOR 타입](/kr/dbms-8.9/reference/sql/types/vector/)을 함께 참고합니다.

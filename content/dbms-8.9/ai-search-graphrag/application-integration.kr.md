@@ -310,3 +310,13 @@ V2 APPEND는 payload 길이를 선언 차원×4바이트에 맞춰야 합니다.
 ---
 
 [이전: Ollama로 근거 있는 답변 만들기](../ollama/) · [다음: 운영과 성능 관리](../operations/)
+
+## SDK별 상세 계약
+
+NULL 요소와 SQL NULL, 배열 복사와 메타데이터 처리 규칙은 SDK마다 다릅니다.
+
+- [Python](/kr/dbms-8.9/development-tools-integration/python/#vector-값과-바인딩)
+- [JDBC](/kr/dbms-8.9/development-tools-integration/jdbc/#vector-값과-바인딩)
+- [Node.js](/kr/dbms-8.9/development-tools-integration/node-js-typescript/#vector-값과-바인딩)
+- [.NET](/kr/dbms-8.9/development-tools-integration/net-connector/#vector-값과-바인딩)
+- [Go](/kr/dbms-8.9/development-tools-integration/go/#vector-값과-바인딩)

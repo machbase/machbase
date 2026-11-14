@@ -179,3 +179,10 @@ EXPLAIN FULL WITH RECURSIVE R(NODE_ID) AS (SELECT node_id FROM M89_G_NODE WHERE 
 ---
 
 [이전: 애플리케이션 연동](../application-integration/) · [다음: 문제 해결과 실습 정리](../troubleshooting/)
+
+## 상세 레퍼런스
+
+- [인덱스 생성·변경·완료 대기](/kr/dbms-8.9/reference/sql/syntax/index-syntax/#transaction-검색-인덱스)
+- [검색 인덱스 상태와 IVF 메모리](/kr/dbms-8.9/reference/system-catalog/search-indexes/)
+- [IVF 메모리 설정](/kr/dbms-8.9/reference/configuration/configuration/#vector_ivf_memory_limit)
+- [TRANSACTION 정렬·LIMIT와 재귀 실행 계획](/kr/dbms-8.9/performance-tuning/performance-query-tuning/)

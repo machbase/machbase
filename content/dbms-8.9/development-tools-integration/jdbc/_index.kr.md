@@ -300,3 +300,29 @@ System.out.println(metadata.getJDBCMinorVersion()); // 2
 | [DatabaseMetaData](./database-metadata/) | 테이블, 컬럼, 키, 인덱스와 기능 조회 |
 | [Append API](./append-api/) | `MachStatement` 기반 고속 입력 |
 | [마이그레이션과 문제 해결](./migration-troubleshooting/) | 이전 드라이버 전환, 미지원 기능과 오류 처리 |
+
+## VECTOR 값과 바인딩
+
+VECTOR의 native 바인딩에는 DBMS 8.9 Standard 서버와 CMI 4.0.5를 지원하는 SDK가 필요합니다.
+SQL ARRAY와 VECTOR는 별도 타입이며 같은 숫자 배열이라고 같은 전송 형식을 사용하지 않습니다.
+구형 서버가 native VECTOR를 지원하는 것으로 가정하지 않습니다.
+
+| 항목 | 계약 |
+|---|---|
+| 입력 | `MachVector(float[])`·`MachVector(double[])`, VECTOR 대상의 숫자 배열 |
+| 조회 | `getObject()`는 MachVector, `getObject(i,float[].class)`는 float 배열, `getString()`은 숫자 JSON |
+| 메타데이터 | JDBC 타입 Types.OTHER, 타입 이름 VECTOR, precision은 차원 |
+| SQL NULL | `setObject(i,null)` 또는 VECTOR 대상 `setNull(i,Types.OTHER)`; 조회는 null, wasNull()은 true |
+| 값 검증 | 빈 배열·NULL 요소·차원 초과·NaN/Infinity·FLOAT32 범위 초과 거부 |
+
+MachVector 생성과 toArray()는 독립 사본을 만듭니다. 짧은 비어 있지 않은 입력은 고정 차원에
+맞춰 0을 채웁니다. VECTOR 대상 문맥이 없는 `SELECT ?` 또는 정수 CAST 자리에 MachVector를
+바인딩하면 타입 오류로 거부합니다. ARRAY 대상으로 잘못 보내거나 NULL로 대체하지 않습니다.
+`addBatch()`는 각 시점의 값을 복사합니다. APPEND도 VECTOR 대상 메타데이터를 사용합니다.
+
+native VECTOR를 지원하지 않는 클라이언트에서는 숫자 JSON을 `TO_VECTOR(?,n)`으로 변환하고
+`VECTOR_TO_JSON(V)`로 읽는 명시적 경로를 사용할 수 있습니다. 이 방법도 VECTOR를 지원하는
+서버가 필요합니다.
+
+[언어별 실행 예제](/kr/dbms-8.9/ai-search-graphrag/application-integration/)와
+[VECTOR 타입](/kr/dbms-8.9/reference/sql/types/vector/)을 함께 참고합니다.

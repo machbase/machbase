@@ -12,7 +12,8 @@ toc: true
 
 ## CREATE INDEX
 
-<span class="badge-since">Machbase 8.7.0부터 지원되는 기능</span>
+일반 인덱스 문법은 다음과 같습니다. DBMS 8.9의 검색 인덱스 옵션은
+[TRANSACTION 검색 인덱스](#transaction-검색-인덱스)를 참고합니다.
 
 ```sql
 create_index_stmt ::=
@@ -102,7 +103,7 @@ CREATE INDEX IF NOT EXISTS idx_message
 | LOG | LSM, KEYWORD, BITMAP | 범위 조회, 텍스트 검색, 분석 조건 |
 | TAG | TAG/KV secondary, JSON path | 값 컬럼과 JSON member 조건 |
 | TAG METADATA | 자동 컬럼 인덱스, JSON path | 태그 속성 조건 |
-| TRANSACTION | PRIMARY KEY, UNIQUE, 일반 BTREE | 관계형 키와 복합 조건 |
+| TRANSACTION | PRIMARY KEY, UNIQUE, BTREE, BM25, HNSW, IVF | 관계형 키·복합 조건과 텍스트·벡터 검색 |
 | VOLATILE | REDBLACK | 메모리 테이블의 키·조건 조회 |
 | LOOKUP | REDBLACK | 메모리 테이블의 키·조건 조회 |
 
@@ -202,3 +203,77 @@ DROP INDEX idx_status;
 
 - [SEARCH / ESEARCH / REGEXP](../search-esearch-regexp-syntax/)
 - [쿼리 성능 튜닝](/dbms-8.9/performance-tuning/performance-query-tuning/)
+
+## TRANSACTION 검색 인덱스
+
+Standard Edition의 TRANSACTION 테이블에 다음 검색 인덱스를 생성합니다.
+BM25는 텍스트 컬럼, HNSW와 IVF는 VECTOR 컬럼을 대상으로 합니다.
+각 구문에서 대괄호는 선택 항목이며 실제 SQL에는 입력하지 않습니다.
+
+```text
+CREATE INDEX [IF NOT EXISTS] index_name ON table_name(text_column)
+ INDEX_TYPE BM25 ANALYZER=analyzer;
+
+CREATE INDEX [IF NOT EXISTS] index_name ON table_name(vector_column)
+ INDEX_TYPE HNSW [hnsw_property [,hnsw_property] ...];
+
+hnsw_property ::= DISTANCE=COSINE|L2|INNER_PRODUCT
+ | M=integer | EF_CONSTRUCTION=integer | EF_SEARCH=integer
+ | STORAGE_PRECISION=FLOAT32|FLOAT16
+
+CREATE INDEX [IF NOT EXISTS] index_name ON table_name(vector_column)
+ INDEX_TYPE IVF [ivf_property [,ivf_property] ...];
+
+ivf_property ::= DISTANCE=COSINE|L2|INNER_PRODUCT | LISTS=integer | PROBES=integer
+```
+
+| 옵션 | 기본값과 허용 범위 | 의미 |
+|---|---|---|
+| ANALYZER | `CJK_EN` 또는 `KO_EN`을 지정 | 텍스트 분석기 |
+| DISTANCE | COSINE | 벡터 검색 거리. 질의의 METRIC과 맞춥니다. |
+| M | 16, 2~64 | HNSW 이웃 연결 수 |
+| EF_CONSTRUCTION | 200, M~4096 | HNSW 구축 후보 폭 |
+| EF_SEARCH | 100, 1~10000 | HNSW 검색 후보 폭 |
+| STORAGE_PRECISION | FLOAT32 또는 FLOAT16, 기본 FLOAT32 | HNSW 인덱스 표현. 원본 VECTOR는 FLOAT32입니다. |
+| LISTS | 자동 선택 | IVF 목록 수. 자동값은 `min(1024,ceil(sqrt(벡터 행 수)))`에서 메모리 예산에 맞춰 정합니다. |
+| PROBES | `min(32,실제 LISTS)`, 1~실제 LISTS | IVF 검색에서 탐색할 목록 수 |
+
+명시한 LISTS를 자원이 부족하다는 이유로 자동 축소하지 않습니다.
+BM25는 키워드 검색과 Hybrid 검색의 텍스트 분기에 사용합니다. HNSW·IVF는 근사 검색
+인덱스이며, MODE AUTO가 항상 근사 경로를 선택한다는 뜻은 아닙니다.
+
+### 생성과 완료 확인
+
+```sql
+CREATE INDEX M89_DOCS_TEXT ON M89_DOCS(BODY)
+ INDEX_TYPE BM25 ANALYZER='CJK_EN';
+ALTER INDEX M89_DOCS_TEXT WAIT TIMEOUT 120;
+CREATE INDEX M89_DOCS_VECTOR ON M89_DOCS(V)
+ INDEX_TYPE IVF DISTANCE=COSINE,LISTS=2,PROBES=2;
+ALTER INDEX M89_DOCS_VECTOR WAIT TIMEOUT 120;
+```
+
+이 예제의 M89_DOCS는 [첫 검색 실습](/kr/dbms-8.9/ai-search-graphrag/getting-started/)의
+테이블입니다. 이미 같은 이름의 인덱스가 있으면 생성 명령을 반복하지 않습니다.
+CREATE의 성공은 구축 완료와 다릅니다. WAIT와 상태 뷰에서 READY를 확인합니다.
+`IF NOT EXISTS`는 기존 이름의 정의를 유지하므로 요청한 거리나 옵션으로 바뀌지 않습니다.
+
+### 변경과 재구축
+
+```text
+ALTER INDEX index_name WAIT [TIMEOUT seconds];
+ALTER INDEX index_name REBUILD;
+ALTER INDEX index_name SET PROBES=integer;
+```
+
+WAIT의 기본 시간은 60초입니다. TIMEOUT 0은 즉시 상태를 확인합니다.
+대기 시간 초과가 구축 취소를 의미하지는 않습니다. REBUILD는 재구축을 접수하므로
+완료 여부는 WAIT와 상태 뷰에서 다시 확인합니다.
+
+IVF의 PROBES 변경은 재구축 없이 적용합니다. LISTS, 분석기, 거리와 HNSW의 고정 옵션을
+변경하려면 인덱스를 재생성합니다. HNSW의 M·EF 옵션을 ALTER SET으로 변경하지 않습니다.
+재생성 중에는 해당 인덱스의 사용 가능 여부와 서비스 영향을 확인합니다.
+
+- [검색 인덱스 상태 뷰](/kr/dbms-8.9/reference/system-catalog/search-indexes/)
+- [검색 문법](../search-syntax/)
+- [운영과 성능 관리](/kr/dbms-8.9/ai-search-graphrag/operations/)
