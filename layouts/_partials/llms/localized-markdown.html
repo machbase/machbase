@@ -14,13 +14,13 @@
         {{- $fence = "" -}}
       {{- end -}}
     {{- else if not $fence -}}
-      {{- range findRE "\\]\\(/(dbms-8\\.5|dbms|neo|apps|fluid)([/#?][^[:space:])]*|)([[:space:]]+\"[^\"]*\"|)\\)" $line -}}
+      {{- range findRE "\\]\\(/(dbms-8\\.[59]|dbms|neo|apps|fluid)([/#?][^[:space:])]*|)([[:space:]]+\"[^\"]*\"|)\\)" $line -}}
         {{- $link := . -}}
         {{- $destination := replaceRE "^\\]\\(([^[:space:])]+).*" "${1}" $link -}}
         {{- $url := urls.Parse $destination -}}
-        {{- $tail := replaceRE "^/(dbms-8\\.5|dbms|neo|apps|fluid)" "" $url.Path -}}
+        {{- $tail := replaceRE "^/(dbms-8\\.[59]|dbms|neo|apps|fluid)" "" $url.Path -}}
         {{- if not (path.Ext $tail) -}}
-          {{- $translated := replaceRE "^/(dbms-8\\.5|dbms|neo|apps|fluid)" (printf "%s/${1}" $root) $destination -}}
+          {{- $translated := replaceRE "^/(dbms-8\\.[59]|dbms|neo|apps|fluid)" (printf "%s/${1}" $root) $destination -}}
           {{- $line = replace $line $link (replace $link (printf "](%s" $destination) (printf "](%s" $translated)) -}}
         {{- end -}}
       {{- end -}}

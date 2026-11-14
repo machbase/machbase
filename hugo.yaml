@@ -93,6 +93,10 @@ menu:
       name: MACHBASE NEO
       pageRef: /neo
       weight: 20
+    - identifier: dbms-v89
+      name: DBMS v8.9
+      pageRef: /dbms-8.9
+      weight: 28
     - identifier: dbms
       name: DBMS v8.7
       pageRef: /dbms
