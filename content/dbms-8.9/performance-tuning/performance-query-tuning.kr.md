@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '13.5 조회와 분석 성능 튜닝'
-weight: 130
+title: '14.5 조회와 분석 성능 튜닝'
+weight: 140
 toc: true
 aliases:
   - /dbms-8.9/performance-tuning/query-analysis/
@@ -215,3 +215,10 @@ VARCHAR 정렬 보조 정보는 인덱스 공간과 쓰기·구축 비용을 늘
 
 [재귀 쿼리 운영과 실행 계획](/kr/dbms-8.9/ai-search-graphrag/operations/)에서 깊이·경로 폭·
 읽기 일관성과 메모리 제약을 함께 확인합니다.
+
+## DFQ 파일 조회의 비용
+
+READ는 prepare의 추론, source open·decode, SQL 분석과 전체 fetch의 비용을 구분해 측정합니다.
+LIMIT이 작아도 전체 스키마 추론이나 TEXT 정렬 비용이 남을 수 있습니다. 메모리 예산에 따라
+지원되는 정렬·집계는 임시 디스크를 사용하며 모든 decoder가 같은 spill 정책을 갖지는 않습니다.
+EXPLAIN FULL은 실제 질의를 실행합니다. [DFQ 운영](/kr/dbms-8.9/dfq/operations/)을 참고합니다.

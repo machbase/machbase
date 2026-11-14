@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.1.1 SQL 문법 사전'
+title: '18.1.1 SQL 문법 사전'
 weight: 10
 toc: true
 ---
@@ -69,3 +69,8 @@ SQL 문법 사전은 Machbase에서 지원하는 모든 SQL 구문의 BNF 표기
 - [VECTOR 타입](/kr/dbms-8.9/reference/sql/types/vector/)
 - [벡터·텍스트·Hybrid 검색](/kr/dbms-8.9/reference/sql/syntax/search-syntax/)
 - [재귀 CTE](/dbms-8.9/reference/sql/syntax/cte-syntax/#재귀-cte)
+
+## DFQ 파일 직접 조회
+
+- [READ·SQL 입력과 READ_INFER](./read-syntax/)
+- [포맷별 옵션과 실행 예제](/kr/dbms-8.9/dfq/formats/)

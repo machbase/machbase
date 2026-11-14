@@ -10,7 +10,7 @@ Machbase DBMS 매뉴얼에 오신 것을 환영합니다. 이 문서는 Machbase
 
 처음 사용하는 독자는 1장에서 SQL 실습을 진행하고 2장에서 데이터 모델과 저장·운영 원리를
 익힙니다. 시스템을 설계할 때는 4장의 테이블 선택 기준을 확인한 뒤 필요한 테이블 장으로
-이동합니다. 이미 사용 중인 기능의 정확한 문법이나 지원 범위는 17장에서 찾을 수 있습니다.
+이동합니다. 이미 사용 중인 기능의 정확한 문법이나 지원 범위는 18장에서 찾을 수 있습니다.
 
 ## 매뉴얼 구성
 
@@ -27,9 +27,10 @@ Machbase DBMS 매뉴얼에 오신 것을 환영합니다. 이 문서는 Machbase
 | 9 | [LOOKUP 테이블 활용](./lookup-table-usage/) | 기준 정보, PRIMARY KEY, JSON, 일반 predicate DML, JOIN |
 | 10 | [VOLATILE 테이블 활용](./volatile-table-usage/) | 메모리 테이블, UPSERT, 상태 캐시, 재시작과 데이터 소실 |
 | 11 | [AI 벡터 검색과 GraphRAG](./ai-search-graphrag/) | 벡터·Hybrid 검색, 재귀 SQL, 근거 기반 답변 |
-| 12 | [개발 및 애플리케이션 연동](./development-tools-integration/) | 연동 방식, 공통 개념과 언어별 SDK/API |
-| 13 | [성능 튜닝](./performance-tuning/) | 쿼리 성능, 수집 성능, 캐시 튜닝 |
-| 14 | [운영, 설정, 복구](./operations-configuration-recovery/) | 서버 관리, 백업, Cluster 운영 |
-| 15 | [계정, 권한, 접속 제어](./security-access-control/) | 계정, 권한, AUTH KEY와 접속 제어 |
-| 16 | [문제 해결](./troubleshooting/) | 오류 진단 및 해결 방법 |
-| 17 | [레퍼런스](./reference/) | SQL 문법, 함수, 설정, 시스템 카탈로그 |
+| 12 | [DFQ(DIRECT FILE QUERY)](./dfq/) | 파일 직접 조회·포맷별 옵션·원문 추출 |
+| 13 | [개발 및 애플리케이션 연동](./development-tools-integration/) | 연동 방식, 공통 개념과 언어별 SDK/API |
+| 14 | [성능 튜닝](./performance-tuning/) | 쿼리 성능, 수집 성능, 캐시 튜닝 |
+| 15 | [운영, 설정, 복구](./operations-configuration-recovery/) | 서버 관리, 백업, Cluster 운영 |
+| 16 | [계정, 권한, 접속 제어](./security-access-control/) | 계정, 권한, AUTH KEY와 접속 제어 |
+| 17 | [문제 해결](./troubleshooting/) | 오류 진단 및 해결 방법 |
+| 18 | [레퍼런스](./reference/) | SQL 문법, 함수, 설정, 시스템 카탈로그 |

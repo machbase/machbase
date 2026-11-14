@@ -37,8 +37,8 @@ EXEC TABLE_FLUSH(ch7_search);
 EXEC INDEX_FLUSH(ch7_search);
 ```
 
-표본의 `event_id`로 결과를 비교합니다. 메시지는 TEXT이므로 정렬 기준으로 사용하지
-않습니다. LOG의 VARCHAR에도 같은 KEYWORD 검색을 사용할 수 있습니다.
+표본의 `event_id`를 정렬 기준으로 결과를 비교합니다. LOG의 VARCHAR에도 같은
+KEYWORD 검색을 사용할 수 있습니다.
 
 <a id="search-not"></a>
 <a id="text-search-search-not"></a>
@@ -193,8 +193,8 @@ SELECT event_id,
 
 ## TEXT 제약과 검색 성능
 
-TEXT는 최대 64MiB 원문을 담을 수 있지만, TEXT 자체의 ORDER BY·GROUP BY는 지원하지
-않습니다. 정렬·집계할 장치·오류 코드·등급은 별도 컬럼에 두세요.
+TEXT는 최대 64MiB 원문을 담으며 Standard에서 전체 값의 ORDER BY·GROUP BY를 지원합니다.
+긴 원문 정렬·집계에는 자원이 필요하므로 장치·오류 코드·등급은 별도 컬럼으로도 설계합니다.
 같은 데이터에서 인덱스 존재 여부, 빌드 상태, 조회 범위를 확인한 뒤 성능을 비교합니다.
 
 ```sql

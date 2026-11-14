@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.8.13 전체 본문과 RAG 문서 인덱스'
+title: '18.8.13 전체 본문과 RAG 문서 인덱스'
 weight: 130
 toc: true
 ---

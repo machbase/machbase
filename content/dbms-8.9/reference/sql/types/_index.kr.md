@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.1.2 데이터 타입 사전'
+title: '18.1.2 데이터 타입 사전'
 weight: 20
 toc: true
 ---
@@ -167,9 +167,9 @@ VARCHAR 크기를 초과하는 대용량 텍스트를 저장하기 위한 타입
 - LOG 테이블은 KEYWORD 인덱스와 `SEARCH` 연산자로 키워드 검색 가능
 - TAG, LOOKUP, VOLATILE 테이블에서는 지원하지 않음
 
-LOG의 TEXT 컬럼 자체에는 ORDER BY·GROUP BY를 적용할 수 없습니다.
-단순 성능 권장사항이 아니라 쿼리 검증에서 거부되는 제약입니다.
-정렬·집계에 사용할 장치, 오류 코드, 등급 등은 별도 VARCHAR·숫자 컬럼으로 두세요.
+Standard Edition은 TEXT 전체 값의 ORDER BY·GROUP BY·DISTINCT를 지원합니다.
+긴 원문 정렬·집계는 메모리와 임시 디스크 비용이 있으므로 선택도 높은 코드·시각 등의
+별도 컬럼도 함께 설계합니다. Cluster로 지원 범위를 확대하지 않습니다.
 TEXT를 VARCHAR로 변경하려고 `MODIFY COLUMN`을 사용하는 것도 지원하지 않습니다.
 
 ```sql
@@ -303,3 +303,12 @@ DECIMAL은 모든 public 테이블 타입에서 지원합니다. TRANSACTION 테
 - [VECTOR 타입](/kr/dbms-8.9/reference/sql/types/vector/)
 - [벡터·텍스트·Hybrid 검색](/kr/dbms-8.9/reference/sql/syntax/search-syntax/)
 - [재귀 CTE](/dbms-8.9/reference/sql/syntax/cte-syntax/#재귀-cte)
+
+## DFQ와 TEXT SQL 연산
+
+READ뿐 아니라 Standard의 일반 테이블·VIEW·CTE에서도 지원되는 TEXT 문자열 함수와
+전체 길이 정렬·GROUP BY·DISTINCT를 사용합니다. LENGTH·INSTR·SUBSTR 등은 기존 바이트
+규칙을 유지하고 실제 빈 값과 SQL NULL을 구분합니다. TEXT를 포함한 지원 문자열 결과는
+64 MiB 한도를 적용하며 CSV 레코드 예산은 별도입니다. GROUP_CONCAT의 32 KiB 결과
+상한을 이 설명으로 확장하지 않습니다.
+[지원 함수와 실행 예제](/kr/dbms-8.9/dfq/analysis-load/)를 참고합니다.

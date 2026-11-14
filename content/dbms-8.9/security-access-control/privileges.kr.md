@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '15.3 권한 관리'
-weight: 150
+title: '16.3 권한 관리'
+weight: 160
 toc: true
 ---
 
@@ -220,3 +220,10 @@ SELECT DB_NAME, USER_NAME, OWNER_NAME, TABLE_NAME, PRIV
 - 임시 권한은 승인된 기간이 끝나면 `REVOKE`하고 결과를 다시 조회합니다.
 - 사용자를 삭제하기 전 소유 객체와 실행 중인 세션을 확인합니다.
 - 숫자 `PRIV`를 해석해야 하는 감사 도구는 사용 중인 버전의 권한 정의와 함께 검증합니다.
+
+## DFQ 파일 읽기
+
+DB의 SELECT 권한과 서버 파일 접근 권한은 별개입니다. 일반 사용자의 READ에는 SYS가
+부여한 디렉터리 READ 권한과 OS 읽기 권한이 필요합니다. 여러 파일은 각각 검사합니다.
+[디렉터리 권한 문법](/kr/dbms-8.9/reference/sql/syntax/user-auth-syntax/#서버-디렉터리-read-권한)과
+[운영 절차](/kr/dbms-8.9/dfq/operations/)를 참고합니다.

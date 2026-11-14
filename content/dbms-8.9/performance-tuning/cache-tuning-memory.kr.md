@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '13.6 PVO Cache와 메모리 튜닝'
-weight: 130
+title: '14.6 PVO Cache와 메모리 튜닝'
+weight: 140
 toc: true
 aliases:
   - /dbms-8.9/tag-table-usage/tag-cache-operations/

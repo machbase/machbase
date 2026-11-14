@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '15.2 계정 관리'
-weight: 150
+title: '16.2 계정 관리'
+weight: 160
 toc: true
 ---
 

@@ -1,0 +1,1 @@
+SELECT _OFFSET,_LENGTH,_LAST,_CONTENT FROM READ('/srv/dfq/lerobot/v30','format=lerobot','target=media','media_id=videos/observation.images.front/chunk-000/file-000.mp4','row=0','mode=raw','raw.representation=payload_bytes','raw.chunk_bytes=65536') ORDER BY _OFFSET;

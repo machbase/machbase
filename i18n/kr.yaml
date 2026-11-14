@@ -16,3 +16,5 @@ llmsReferences: 주요 정본
 llmsAI: AI와 RAG
 llmsFullTitle: Machbase DBMS 매뉴얼 전체 본문
 llmsFullDescription: "현재 published DBMS {{ .Version }} 한국어 페이지를 navigation 순서로 연결한 Markdown corpus입니다."
+
+dfq: "DFQ(파일 직접 조회)"

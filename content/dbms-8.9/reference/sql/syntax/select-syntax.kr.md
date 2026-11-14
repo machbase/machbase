@@ -369,3 +369,15 @@ SAVE DATA INTO '/tmp/sensor_data.csv' HEADER ON AS SELECT * FROM sensor_log;
 - [PIVOT](../pivot-syntax/) - 행-열 변환 상세 예시
 - [SEARCH/ESEARCH/REGEXP](../search-esearch-regexp-syntax/) - 텍스트 검색 상세
 - [DURATION 상대 시간 표현](../../relative-time/) - 시간 범위 표현 전체 목록
+
+## 인용 파일 경로와 DFQ
+
+```sql
+SELECT * FROM '/srv/dfq/sensor.csv' LIMIT 3;
+SELECT * FROM "/srv/dfq/sensor.csv" LIMIT 3;
+SELECT id,v FROM READ('/srv/dfq/sensor.csv','type.v=LONG') WHERE v>=30;
+```
+
+인용 이름은 기존 테이블·뷰를 먼저 해석하고 정확히 없는 경우 파일 조회를 시도합니다.
+관계의 SELECT 권한 오류를 파일 조회로 대체하지 않습니다. 한정된 관계 이름과 인용되지
+않은 이름은 기존 SQL 관계 규칙을 따릅니다. 옵션이 필요하면 명시 [READ](../read-syntax/)를 사용합니다.

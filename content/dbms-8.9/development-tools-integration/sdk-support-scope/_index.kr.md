@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '12.3 SDK 기능 지원 범위'
+title: '13.3 SDK 기능 지원 범위'
 weight: 30
 toc: true
 aliases:

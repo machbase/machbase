@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '14.5 데이터 보존 정책'
-weight: 140
+title: '15.5 데이터 보존 정책'
+weight: 150
 toc: true
 ---
 

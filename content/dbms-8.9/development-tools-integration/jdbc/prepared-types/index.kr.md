@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '12.5.1 PreparedStatement와 타입'
+title: '13.5.1 PreparedStatement와 타입'
 weight: 10
 toc: true
 aliases:

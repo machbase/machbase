@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '12.7 Node.js / TypeScript'
+title: '13.7 Node.js / TypeScript'
 weight: 70
 toc: true
 aliases:

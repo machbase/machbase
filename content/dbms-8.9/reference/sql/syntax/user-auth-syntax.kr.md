@@ -284,3 +284,15 @@ SELECT key_id, user_name, key_algo, key_param, activated, valid_before, comment
 
 - [사용자 관리 가이드](../../../../operations-configuration-recovery/) - 사용자 운영 절차 및 예시
 - [시스템/세션 관리 문법](../system-session-alter-syntax/) - ALTER SYSTEM, ALTER SESSION
+
+## 서버 디렉터리 READ 권한
+
+```sql
+GRANT READ ON DIRECTORY '/srv/dfq' TO analyst;
+REVOKE READ ON DIRECTORY '/srv/dfq' FROM analyst;
+```
+
+SYS가 현재 catalog의 기존 사용자에게 기존 절대 디렉터리와 하위 일반 파일의 읽기를
+허용합니다. 서버 OS 권한도 필요하며 VIEW의 소유자 대신 실행 사용자를 검사합니다.
+REVOKE는 다음 실행·새 파일 open부터 적용하고 열린 질의를 강제로 종료하지 않습니다.
+[경로·다중 파일·플랫폼의 제약](/kr/dbms-8.9/dfq/operations/)을 함께 확인합니다.

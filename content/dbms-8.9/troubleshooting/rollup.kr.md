@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '16.7 ROLLUP 문제'
-weight: 160
+title: '17.7 ROLLUP 문제'
+weight: 170
 toc: true
 aliases:
   - /dbms-8.9/tag-rollup-usage/constraints-errors-troubleshooting/rollup-troubleshooting/

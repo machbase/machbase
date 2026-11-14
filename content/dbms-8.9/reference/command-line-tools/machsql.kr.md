@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.4.2 machsql'
+title: '18.4.2 machsql'
 weight: 20
 toc: true
 ---
@@ -255,3 +255,18 @@ Mach> SHOW TABLE sensor_data;
 machsql -s 127.0.0.1 -u SYS -p MANAGER \
     -f report.sql -o report_output.csv -i
 ```
+
+## DFQ 파일 설명과 도움말
+
+```sql
+DESC '/srv/dfq/sensor.csv';
+DESC '/srv/dfq/sensor.h5';
+HELP READ;
+HELP READ PARQUET;
+HELP READ SQL;
+```
+
+DESC는 서버 파일을 열어 구조·컬럼·대표 조회를 설명합니다. 같은 이름의 실제 관계가 있으면
+기존 DESC를 우선합니다. 내부 대상이 여럿인 파일은 목록을 확인하고 READ의 dataset·array·
+target 등으로 선택합니다. HELP는 machsql에 포함된 정적 도움말이며 파일을 열지 않습니다.
+자세한 [파일 탐색 절차](/kr/dbms-8.9/dfq/inspect/)와 [READ 문법](../../sql/syntax/read-syntax/)을 참고합니다.

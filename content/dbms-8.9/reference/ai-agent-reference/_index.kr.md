@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.8 AI Agent Reference'
+title: '18.8 AI Agent Reference'
 weight: 100
 toc: true
 description: 'Machbase DBMS 문서를 사용하는 AI 에이전트와 RAG 시스템을 위한 탐색 및 근거 가이드'

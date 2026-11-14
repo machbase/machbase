@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '13. 성능 튜닝'
-weight: 130
+title: '14. 성능 튜닝'
+weight: 140
 toc: true
 ---
 

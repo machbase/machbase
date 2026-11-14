@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '14.3 설정 운영'
-weight: 140
+title: '15.3 설정 운영'
+weight: 150
 toc: true
 ---
 
@@ -158,7 +158,7 @@ CSV 원본의 시간대와 날짜 형식을 함께 문서화합니다.
 
 ## SDK 연결 시간대
 
-지원 옵션 이름은 SDK마다 다릅니다. [12장 개발 및 애플리케이션 연동](/dbms-8.9/development-tools-integration/)
+지원 옵션 이름은 SDK마다 다릅니다. [13장 개발 및 애플리케이션 연동](/dbms-8.9/development-tools-integration/)
 에서 해당 드라이버의 연결 옵션을 확인하고, 입력·조회·연결 풀 재사용 뒤에도 같은
 시간대가 적용되는지 검증합니다.
 

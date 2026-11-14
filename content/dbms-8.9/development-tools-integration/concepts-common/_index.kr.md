@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '12.2 공통 연동 개념'
+title: '13.2 공통 연동 개념'
 weight: 20
 toc: true
 aliases:

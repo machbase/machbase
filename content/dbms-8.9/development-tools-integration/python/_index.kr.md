@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '12.6 Python'
+title: '13.6 Python'
 weight: 60
 toc: true
 aliases:
@@ -948,3 +948,10 @@ native VECTOR를 지원하지 않는 클라이언트에서는 숫자 JSON을 `TO
 
 [언어별 실행 예제](/kr/dbms-8.9/ai-search-graphrag/application-integration/)와
 [VECTOR 타입](/kr/dbms-8.9/reference/sql/types/vector/)을 함께 참고합니다.
+
+## DFQ의 스트리밍 수신
+
+`cursor(stream=True)` 또는 `cursor(stream=True,prepared=True)`로 큰 파일 조회 결과를
+순차 소비할 수 있습니다. fetchmany로 처리하고 finally에서 cursor와 연결을 닫습니다.
+EOF 전 rowcount=-1과 EOF 후 소비 행 수를 구분합니다. fetchall은 남은 결과를 모두
+수신합니다. [실행 예제](/kr/dbms-8.9/dfq/clients/)를 참고합니다.

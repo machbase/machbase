@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '12.10 데이터 입력과 반출'
+title: '13.10 데이터 입력과 반출'
 weight: 100
 toc: true
 aliases:

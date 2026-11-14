@@ -24,7 +24,7 @@ toc: true
 | 값·범위 인덱스 | LSM 지원 | 타입과 조건에 맞춰 선택 |
 | 단어 검색 | KEYWORD 지원 | VARCHAR·TEXT에 생성 후 SEARCH·ESEARCH 사용 |
 | BITMAP 분석 인덱스 | 지원 조건 내 사용 | 타입·인코딩·값 분포 확인 |
-| TEXT 자체의 ORDER BY·GROUP BY | 미지원 | 별도 코드·등급·시각 컬럼 사용 |
+| TEXT 자체의 ORDER BY·GROUP BY | Standard 지원 | 원문 크기와 정렬·집계 자원 확인 |
 
 <a id="증상에서-확인-지점을-찾습니다"></a>
 
@@ -70,10 +70,6 @@ SELECT event_id, message FROM ch7_error;
 -- KEYWORD 인덱스가 없는 상태입니다.
 SELECT event_id FROM ch7_error WHERE message SEARCH 'timeout';
 
--- TEXT 자체의 정렬·그룹화는 지원하지 않습니다.
-SELECT message FROM ch7_error ORDER BY message;
-SELECT message, COUNT(*) FROM ch7_error GROUP BY message;
-
 -- LOG는 일반 UPDATE·조건 DELETE를 지원하지 않습니다.
 UPDATE ch7_error SET message = 'fixed' WHERE event_id = 1;
 DELETE FROM ch7_error WHERE event_id = 1;
@@ -96,8 +92,8 @@ SELECT event_id, message FROM ch7_error
 DROP TABLE ch7_error;
 ```
 
-1번 행이 조회되어야 합니다. 인덱스를 추가했다고 TEXT 정렬이나 LOG UPDATE까지
-가능해지는 것은 아닙니다.
+1번 행이 조회되어야 합니다. TEXT 정렬·그룹화는 Standard에서 지원하지만
+KEYWORD 인덱스의 기능과 별개입니다. LOG의 일반 UPDATE는 지원하지 않습니다.
 
 <a id="보존-문제는-삭제-경계부터-확인하세요"></a>
 

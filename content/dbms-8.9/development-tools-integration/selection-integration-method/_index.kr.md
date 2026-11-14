@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '12.1 연동 방식 선택'
+title: '13.1 연동 방식 선택'
 weight: 10
 toc: true
 aliases:
@@ -55,7 +55,7 @@ Append 지원만으로 드라이버를 결정하지 않습니다. flush 지연, 
 | SDK 설치·연결·API·완전한 코드 | 이 장의 SDK별 페이지 |
 | 공통 인증·바인딩·트랜잭션·재시도 | [공통 연동 개념](../concepts-common/) |
 | SDK별 기능 지원 여부 | [SDK 기능 지원 범위](../sdk-support-scope/) |
-| SQL·설정·명령줄 상세 | [17장 레퍼런스](/dbms-8.9/reference/) |
+| SQL·설정·명령줄 상세 | [18장 레퍼런스](/dbms-8.9/reference/) |
 | 입력·반출 방식 선택 | [데이터 입력과 반출](../data-input-load-export/) |
 
 연동 방식을 선택한 뒤에는 해당 SDK 페이지에서 설치와 연결 예제를 실행합니다.

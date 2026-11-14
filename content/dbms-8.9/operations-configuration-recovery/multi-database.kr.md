@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '14.2 다중 데이터베이스'
-weight: 140
+title: '15.2 다중 데이터베이스'
+weight: 150
 toc: true
 ---
 

@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '14. 운영, 설정, 복구'
-weight: 140
+title: '15. 운영, 설정, 복구'
+weight: 150
 toc: true
 ---
 

@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '14.4 ALTER SYSTEM 운영'
-weight: 140
+title: '15.4 ALTER SYSTEM 운영'
+weight: 150
 toc: true
 ---
 

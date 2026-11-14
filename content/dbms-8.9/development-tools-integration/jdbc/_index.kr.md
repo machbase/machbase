@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '12.5 JDBC'
+title: '13.5 JDBC'
 weight: 50
 toc: true
 aliases:
@@ -326,3 +326,9 @@ native VECTOR를 지원하지 않는 클라이언트에서는 숫자 JSON을 `TO
 
 [언어별 실행 예제](/kr/dbms-8.9/ai-search-graphrag/application-integration/)와
 [VECTOR 타입](/kr/dbms-8.9/reference/sql/types/vector/)을 함께 참고합니다.
+
+## DFQ 결과 메타데이터
+
+READ 결과도 일반 SELECT처럼 ResultSetMetaData로 실제 반환 타입을 확인합니다.
+긴 TEXT·BINARY를 작은 표시 버퍼로 자르지 않고 LOB·stream 등 타입에 맞는 수신 API로
+읽습니다. [DFQ 클라이언트 안내](/kr/dbms-8.9/dfq/clients/)를 참고합니다.

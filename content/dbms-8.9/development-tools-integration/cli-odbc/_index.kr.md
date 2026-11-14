@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '12.4 Machbase SQLCLI와 ODBC'
+title: '13.4 Machbase SQLCLI와 ODBC'
 weight: 40
 toc: true
 aliases:

@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '13.1 성능 문제 접근 순서'
-weight: 130
+title: '14.1 성능 문제 접근 순서'
+weight: 140
 toc: true
 aliases:
   - /dbms-8.9/performance-tuning/checklist-performance-diagnosis/

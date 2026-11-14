@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '14.1 서버와 데이터베이스 운영'
-weight: 140
+title: '15.1 서버와 데이터베이스 운영'
+weight: 150
 toc: true
 ---
 

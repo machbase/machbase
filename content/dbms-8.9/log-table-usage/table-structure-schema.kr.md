@@ -53,7 +53,7 @@ SELECT event_id, device, severity, src_ip, dst_port, message
 | 값 | 선택할 타입 | 확인할 점 |
 |---|---|---|
 | 장치 이름·짧은 코드·이벤트 ID | `VARCHAR(n)` | LOG의 선언 범위는 1~32,767바이트이며 문자 수가 아님 |
-| 긴 원문 메시지 | `TEXT` | 최대 64MiB, 원문 자체의 정렬·그룹화는 지원하지 않음 |
+| 긴 원문 메시지 | `TEXT` | 최대 64MiB, Standard에서 전체 값 정렬·그룹화 지원 |
 | 오류 등급·작은 코드 | `SHORT` 또는 `INTEGER` | 코드별 의미를 수집기와 조회 코드에서 통일 |
 | 포트 | `INTEGER` | `USHORT`의 65535는 NULL 예약값이므로 전체 포트 범위에 부적합 |
 | 누적 바이트 수 | `LONG` | 예상 최댓값과 NULL 예약값 확인 |

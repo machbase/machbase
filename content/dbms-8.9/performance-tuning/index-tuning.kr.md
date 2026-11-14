@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '13.3 인덱스 튜닝'
-weight: 130
+title: '14.3 인덱스 튜닝'
+weight: 140
 toc: true
 ---
 

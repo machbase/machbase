@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.2 설정 레퍼런스'
+title: '18.2 설정 레퍼런스'
 weight: 20
 toc: true
 ---

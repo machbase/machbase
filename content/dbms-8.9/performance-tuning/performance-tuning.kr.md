@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '13.4 입력 성능 튜닝'
-weight: 130
+title: '14.4 입력 성능 튜닝'
+weight: 140
 toc: true
 aliases:
   - /dbms-8.9/performance-tuning/data-input-performance/

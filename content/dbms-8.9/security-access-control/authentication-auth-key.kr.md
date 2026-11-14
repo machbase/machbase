@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '15.4 AUTH KEY 인증'
-weight: 150
+title: '16.4 AUTH KEY 인증'
+weight: 160
 toc: true
 ---
 

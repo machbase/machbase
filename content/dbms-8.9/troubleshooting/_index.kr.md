@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '16. 문제 해결'
-weight: 160
+title: '17. 문제 해결'
+weight: 170
 toc: true
 ---
 

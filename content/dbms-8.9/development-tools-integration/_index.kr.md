@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '12. 개발 및 애플리케이션 연동'
-weight: 120
+title: '13. 개발 및 애플리케이션 연동'
+weight: 130
 toc: true
 aliases:
   - /dbms-8.9/reference/sdk-api/
