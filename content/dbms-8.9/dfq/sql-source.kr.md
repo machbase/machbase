@@ -75,3 +75,30 @@ FROM READ('SELECT PAYLOAD FROM DFQ_PAYLOAD ORDER BY ID','format=csv') r;
 재현 가능한 순서를 원하면 내부 SELECT에 안정적인 ORDER BY를 지정합니다.
 
 실습을 마친 뒤 직접 만든 `DFQ_PAYLOAD`만 `DROP TABLE DFQ_PAYLOAD`로 정리합니다.
+
+## 바이너리 해석과 문자셋 변환 선택
+
+READ의 BINARY/BLOB 입력은 원래 바이트입니다. 작은 바이너리가 CLI에서 HEX로 표시되어도
+그 표시 문자열을 다시 READ에 전달하지 않습니다. 원문이 UTF-8이고 CAST 출력 한도 안이면
+문자 CAST로 디코딩할 수 있지만, 다른 인코딩은 BLOB_TO_TEXT에 charset을 명시합니다.
+READ가 제공하는 encoding 옵션을 쓸 수 있으면 reader에 직접 지정하는 방법도 있습니다.
+
+다음은 앞의 Parquet 실습과 독립적인 CP949 CSV 예제입니다. 전용 실습 DB에
+DFQ_CP949가 없을 때 실행하고, 직접 만든 테이블만 마지막에 정리합니다.
+
+```sql
+CREATE TRANSACTION TABLE DFQ_CP949(ID LONG PRIMARY KEY,PAYLOAD BINARY);
+INSERT INTO DFQ_CP949 VALUES(1,TEXT_TO_BLOB('id,label
+1,가','CP949'));
+SELECT * FROM READ(
+ 'SELECT BLOB_TO_TEXT(PAYLOAD,''CP949'') FROM DFQ_CP949 WHERE ID=1',
+ 'format=csv','header=true');
+DROP TABLE DFQ_CP949;
+```
+
+결과는 id=1, label=가인 한 행입니다. UTF-8로 변환한
+TEXT를 READ에 전달하므로 다시 encoding=cp949를 적용하지 않습니다. Parquet·NPY 등
+바이너리 포맷은 문자로 디코딩하지 않고 원래 BINARY로 전달합니다.
+
+[CAST와 인코딩 함수](/kr/dbms-8.9/reference/sql/functions/functions-full/#blob_to_text)의
+허용 타입·출력 크기·NULL·인코딩 오류 규칙을 함께 확인합니다.

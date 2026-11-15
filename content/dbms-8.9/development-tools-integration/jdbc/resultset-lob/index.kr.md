@@ -177,3 +177,18 @@ long[] counts = statement.executeLargeBatch();
 독립 쿼리를 병렬 실행하려면 같은 Connection을 여러 worker가 공유하지 말고 커넥션
 풀에서 worker별 논리 Connection을 대여합니다. 진행 중 fetch를 종료해야 할 때는 다른
 스레드에서 `close()`, `cancel()` 또는 `Connection.abort()`를 호출할 수 있습니다.
+
+## 인코딩 변환 결과와 메타데이터
+
+BLOB_TO_TEXT는 getString 또는 character stream으로 TEXT를, TEXT_TO_BLOB은 getBytes
+또는 binary stream으로 BLOB을 읽습니다. 실제 빈 결과는 길이 0인 값과 wasNull()=false,
+SQL NULL은 null과 wasNull()=true로 구분합니다.
+
+`CAST(... AS CHAR(n))`은 VARCHAR 별칭이며 공백을 채우지 않습니다. 비상수 인코딩 함수
+결과의 선언 길이는 64 MiB이지만 상수 folding으로 결과가 정해지면 메타데이터 길이가
+실제 값 길이로 줄어들 수 있습니다. ResultSetMetaData로 타입과 길이를 확인하고 작은
+수신·표시 버퍼를 결과 전체의 최대 크기로 오해하지 않습니다.
+
+DBMS 8.9의 BLOB/BINARY 문자 CAST는 UTF-8 디코딩입니다. HEX 표시가 필요하면 작은 값의
+TO_HEX 또는 클라이언트의 바이너리 표시를 사용합니다.
+[함수 사전](/kr/dbms-8.9/reference/sql/functions/functions-full/#blob_to_text)을 참고합니다.

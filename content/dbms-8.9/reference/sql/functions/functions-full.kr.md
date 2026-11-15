@@ -407,6 +407,87 @@ BITOR(i1, i6)
 ```
 
 
+## BLOB_TO_TEXT
+
+BLOB/BINARY의 바이트를 지정한 문자셋에서 UTF-8 TEXT로 디코딩합니다.
+
+```sql
+BLOB_TO_TEXT(data, charset)
+```
+
+| 인자·결과 | 계약 |
+|---|---|
+| data | BLOB 또는 BINARY. HEX 문자열 자체가 아니라 원래 바이트 |
+| charset | 필수 VARCHAR/TEXT/CLOB 문자열. 아래 이름의 대소문자는 구분하지 않음 |
+| 반환 타입 | TEXT. 실제 변환된 UTF-8 출력 기준 최대 64 MiB |
+
+| charset | 의미 |
+|---|---|
+| UTF-8 | UTF-8 |
+| CP949 | 한국어 확장 완성형 |
+| ISO-8859-1 | Latin-1 |
+| UTF-16LE | little endian UTF-16 |
+| UTF-16BE | big endian UTF-16 |
+
+이름의 공백을 자동 제거하거나 UTF8·UTF-16 같은 다른 표기를 추정하지 않습니다.
+UTF-16 byte order는 charset 이름으로 결정합니다.
+
+### 디코딩과 왕복 예제
+
+```sql
+SELECT BLOB_TO_TEXT(CAST('EAB080' AS BLOB),'UTF-8');
+-- 가
+SELECT BLOB_TO_TEXT(CAST('B0A1' AS BLOB),'CP949');
+-- 가
+SELECT BLOB_TO_TEXT(CAST('E9' AS BLOB),'ISO-8859-1');
+-- é
+SELECT BLOB_TO_TEXT(TEXT_TO_BLOB('가😀A','UTF-16LE'),'UTF-16LE');
+-- 가😀A
+SELECT BLOB_TO_TEXT(TEXT_TO_BLOB('가😀A','UTF-16BE'),'UTF-16BE');
+-- 가😀A
+SELECT TO_HEX(BLOB_TO_TEXT(CAST('FFFE4100' AS BLOB),'UTF-16LE'));
+-- EFBBBF41: BOM을 U+FEFF로 보존한 뒤 UTF-8의 A가 이어짐
+```
+
+CP949 바이트를 문자 CAST로 HEX 확인하려고 하면 UTF-8 오류가 날 수 있습니다.
+인코딩이 CP949임을 알면 두 번째 예제처럼 명시적으로 디코딩합니다.
+
+### 오류·NULL·빈 값·BOM
+
+- data 또는 charset이 SQL NULL이면 NULL을 반환합니다. 실제 0바이트 입력은 실제 빈 TEXT입니다.
+- 잘못된 인코딩·불완전한 문자·지원하지 않는 charset·인자 타입은 오류입니다.
+  대체 문자로 복구하거나 조용히 잘라 반환하지 않습니다.
+- Unicode U+0000은 오류입니다. UTF-16의 정상 문자에 포함된 00바이트와 구분합니다.
+- BOM을 자동 제거하지 않습니다. 입력 BOM은 U+FEFF로 보존합니다.
+- 정확한 출력 크기와 실행 메모리 예산을 검사합니다. 원본보다 출력이 커질 수 있습니다.
+
+다음은 정상 예제와 분리해 실행하는 오류 예제입니다.
+
+```sql
+SELECT BLOB_TO_TEXT(CAST('FF' AS BLOB),'UTF-8');
+-- 오류: 유효하지 않은 UTF-8
+SELECT BLOB_TO_TEXT(CAST('00' AS BLOB),'UTF-8');
+-- 오류: U+0000
+SELECT BLOB_TO_TEXT(CAST('41' AS BLOB),'UTF-16LE');
+-- 오류: 불완전한 UTF-16 코드 단위
+SELECT BLOB_TO_TEXT(CAST('41' AS BLOB),'UTF8');
+-- 오류: 지원하지 않는 charset 이름
+```
+
+### 크기·메타데이터·지원 범위
+
+변환 함수의 최대 출력은 TEXT 타입의 64 MiB입니다. CAST의 TEXT/CLOB/BLOB/JSON 출력
+32,767바이트 한도와 다릅니다. 비상수 결과의 선언 길이는 TEXT 상한이며 상수 folding 결과는
+실제 값 길이로 줄어들 수 있습니다. 클라이언트의 작은 표시·수신 버퍼 제한도 별도로 확인합니다.
+
+Standard와 Cluster에서 지원합니다. Cluster 노드는 함수를 지원하는 같은 버전으로 구성합니다.
+실제 빈 값의 bind·수신에는 protocol 4.0.5를 지원하는 서버와 드라이버가 필요합니다.
+실제 빈 값을 저장할 수 없는 테이블·컬럼에 INSERT하면 오류이며 NULL로 바꾸지 않습니다.
+
+- [TEXT_TO_BLOB](#text_to_blob)
+- [CAST](#cast)
+- [빈 값과 NULL의 호환성](/kr/dbms-8.9/reference/support-scope-constraints/compatibility-xma-protocol/#실제-빈-값의-전송)
+
 ## CAST
 
 <span class="badge-since">Machbase 8.7.0부터 지원되는 기능</span>
@@ -443,7 +524,7 @@ CAST(array_expression AS DECIMAL(precision[, scale])[cardinality])
 |  | 64비트 | `UINT64`, `ULONG` |
 | 실수 | 단정밀도·배정밀도 | `FLOAT`, `DOUBLE` |
 | 고정소수 | DECIMAL | `DECIMAL`, `NUMERIC`, `DEC`, `FIXED`, `NUMBER` |
-| 문자 | 고정 길이·가변 길이 | `CHAR`, `VARCHAR` |
+| 문자 | 가변 길이 및 별칭 | `CHAR`(VARCHAR 별칭), `VARCHAR` |
 | 문자 LOB | 텍스트 | `TEXT`, `CLOB` |
 | 날짜와 시간 | 나노초 정밀도 | `DATETIME` |
 | 네트워크 주소 | IP 주소 | `IPV4`, `IPV6` |
@@ -460,13 +541,28 @@ CAST(array_expression AS DECIMAL(precision[, scale])[cardinality])
 
 | 타입 | 길이 생략 시 기본값 | 허용 길이 | 길이 초과 처리 |
 |------|-------------------:|-----------|----------------|
-| `CHAR(n)` | 1 byte | 1~32,767 byte | 앞에서부터 `n` byte 보존 |
-| `VARCHAR(n)` | 32,767 byte | 1~32,767 byte | 앞에서부터 `n` byte 보존 |
+| `CHAR(n)` | 1 byte | 1~32,767 byte | 유효 UTF-8의 완전한 문자 경계까지 보존 |
+| `VARCHAR(n)` | 32,767 byte | 1~32,767 byte | 유효 UTF-8의 완전한 문자 경계까지 보존 |
 | `BINARY(n)` | 1 byte | 1~67,108,864 byte | 앞에서부터 `n` byte 보존 |
 
-길이는 문자 수가 아니라 byte 수입니다. UTF-8 문자열을 변환할 때는 다중 byte 문자가 중간에서
-잘릴 수 있으므로 충분한 길이를 지정하십시오. `CHAR`는 남는 공간을 공백으로 채우지
-않습니다. `CAST(... AS CHAR(n))`의 결과 메타데이터는 현재 `VARCHAR(n)`으로 표시됩니다.
+길이는 문자 수가 아니라 byte 수입니다. 유효한 UTF-8 문자열은 지정 바이트 안에 들어가는
+완전한 문자까지만 보존합니다. 한 문자도 들어가지 않으면 NULL이 아닌 실제 빈 결과가 됩니다.
+문자 입력 자체가 잘못된 UTF-8이면 기존 바이트 단위 절삭을 유지하므로, 이 동작을 잘못된
+문자열의 검증·복구 수단으로 사용하지 않습니다. BLOB/BINARY 입력은 아래의 엄격한 UTF-8
+검사 규칙을 따릅니다.
+
+`CHAR`는 VARCHAR의 별칭으로 남는 공간을 공백으로 채우지 않습니다.
+결과 메타데이터의 타입 이름도 VARCHAR이며, 상수 folding으로 결과가 확정되면 길이가 실제
+상수 결과의 길이로 줄어들 수 있습니다.
+
+```sql
+SELECT CAST('가나다' AS VARCHAR(4));
+-- 가: UTF-8 3바이트
+SELECT LENGTH(CAST('😀A' AS VARCHAR(3)));
+-- 0: 한 문자도 들어가지 않는 실제 빈 결과
+SELECT CAST('😀A' AS VARCHAR(4));
+-- 😀: UTF-8 4바이트
+```
 
 ```sql
 SELECT '[' || CAST('abc' AS CHAR) || ']' AS char_default;
@@ -483,7 +579,7 @@ SELECT CAST('414243' AS BINARY(2)) AS binary_value;
 ```
 
 `TEXT`, `CLOB`, `BLOB`, `JSON`에는 `length`를 지정할 수 없습니다. 이 타입들의 CAST 결과는
-현재 최대 32,767 byte를 지원하며, 허용된 길이 제한을 넘어 결과 의미가 손상되는 경우에는
+최대 32,767 byte를 지원하며, 허용된 길이 제한을 넘어 결과 의미가 손상되는 경우에는
 자동으로 자르지 않고 오류를 반환합니다.
 
 #### DECIMAL
@@ -512,6 +608,9 @@ SELECT CAST(123.456 AS NUMERIC(6,2));
 - 입력이 `NULL`이면 대상 타입의 `NULL`을 반환합니다.
 - Machbase에서는 길이가 0인 문자열 리터럴 `''`을 SQL `NULL`로 처리합니다.
 - `''''`는 작은따옴표 한 글자를 나타내는 문자열이므로 빈 문자열이 아닙니다.
+- 실제 길이 0인 입력·결과는 SQL NULL과 구분합니다. UTF-8 문자 경계 절삭의 결과가
+  비어도 NULL로 바꾸지 않습니다. 실제 빈 값의 bind 방법과 저장 제약은
+  [SQLCLI/ODBC](/kr/dbms-8.9/development-tools-integration/cli-odbc/#실제-빈-값과-null-바인딩)를 참고합니다.
 
 ```sql
 SELECT CAST(NULL AS INTEGER) AS null_integer;
@@ -591,7 +690,9 @@ scalar를 ARRAY로 확장하거나 ARRAY를 scalar로 축소할 수 없습니다
 - `FLOAT`는 최대 9자리, `DOUBLE`은 최대 17자리의 유효 숫자를 사용해 표현합니다.
 - `DATETIME`은 세션의 날짜 형식과 시간대에 따라 문자열로 표시됩니다.
 - `IPV4`와 `IPV6`은 표준화된 주소 문자열로 표시됩니다.
-- `BINARY`와 `BLOB`은 접두사 없는 대문자 16진수 문자열로 표시됩니다.
+- `BINARY`와 `BLOB`을 문자 타입으로 CAST하면 원래 바이트를 UTF-8로 해석합니다.
+  유효하지 않은 UTF-8과 U+0000은 오류이며 HEX 문자열로 바꾸지 않습니다.
+  비 UTF-8 원문은 [BLOB_TO_TEXT](#blob_to_text)에서 charset을 지정합니다.
 - JSON은 원문의 JSON 표현을 유지합니다.
 
 ```sql
@@ -600,8 +701,11 @@ SELECT CAST(123456 AS VARCHAR(8));
 
 SELECT CAST(CAST('2001:db8::1' AS IPV6) AS VARCHAR(64));
 
-SELECT CAST(CAST('0x00ff10' AS BLOB) AS VARCHAR(8));
--- 00FF10
+SELECT CAST(CAST('414243' AS BLOB) AS VARCHAR(8));
+-- ABC
+
+SELECT TO_HEX(CAST('414243' AS BLOB));
+-- 414243: 작은 바이너리의 HEX 표현이 필요할 때
 ```
 
 문자열을 `BINARY` 또는 `BLOB`으로 변환할 때는 접두사 없는 짝수 길이 16진수 또는
@@ -614,7 +718,20 @@ SELECT CAST(X'414243' AS VARCHAR(6));
 ```
 
 `BINARY(n)`은 앞에서부터 `n` byte만 보존합니다. 16진수가 아닌 문자나 홀수 길이
-16진수는 오류입니다.
+16진수는 오류입니다. 일반 문장을 인코딩하려면 [TEXT_TO_BLOB](#text_to_blob)을 사용합니다.
+
+```sql
+SELECT CAST(CAST('4142' AS BLOB) AS VARCHAR(8));
+-- AB: HEX 입력 41 42를 UTF-8로 디코딩
+SELECT CAST(TEXT_TO_BLOB('4142','UTF-8') AS VARCHAR(8));
+-- 4142: 문자 4,1,4,2를 바이트로 인코딩한 뒤 디코딩
+```
+
+BLOB/BINARY의 VARCHAR 변환은 입력 전체의 UTF-8·NUL 유효성을 검사한 뒤 문자 경계에서
+자릅니다. 출력 길이가 짧아도 입력 뒤쪽의 잘못된 바이트를 허용하지 않습니다.
+TEXT/CLOB/JSON의 CAST는 32,767바이트 출력 상한을 초과하면 오류입니다. JSON 대상은
+디코딩한 내용이 유효한 JSON이어야 합니다. 클라이언트가 BINARY를 HEX로 표시하는 것과
+SQL CAST의 UTF-8 변환은 별개입니다.
 
 ### DATETIME 변환
 
@@ -720,10 +837,18 @@ precision/scale이 모두 같아야 합니다. 서로 다르면 각 결과를 �
 | 지원하지 않는 ARRAY 대상 타입 | `CAST([1] AS VARCHAR[1])` |
 | 잘못된 IP 주소 | `CAST('999.1.1.1' AS IPV4)` |
 | 홀수 길이 또는 비16진수 바이너리 문자열 | `CAST('123' AS BINARY(4))`, `CAST('GG' AS BLOB)` |
+| 바이너리→문자 CAST의 잘못된 UTF-8 또는 NUL | `CAST(CAST('FF' AS BLOB) AS TEXT)`, `CAST(CAST('00' AS BLOB) AS VARCHAR(8))` |
 | 유효하지 않은 JSON | `CAST('{bad}' AS JSON)` |
 | 허용 크기를 초과하는 LOB 또는 JSON 결과 | 32,767 byte를 초과하는 `TEXT`, `CLOB`, `BLOB`, `JSON` 결과 |
 
 ### 호환성
+
+DBMS 8.9에서는 BLOB/BINARY의 문자 CAST가 HEX 표현 대신 UTF-8 디코딩을 수행합니다.
+이전 HEX 결과에 의존한 SQL은 작은 값의 명시적 [TO_HEX](#to_hex) 또는 클라이언트의
+바이너리 수신·HEX 표시 경로로 변경합니다. 비 UTF-8 입력에는 charset을 지정합니다.
+유효 UTF-8의 길이 제한은 문자 경계를 보존하도록 바뀌며, 문자보다 작은 길이는 실제 빈
+결과가 될 수 있습니다. 문자→바이너리 CAST의 HEX 입력, CHAR 별칭, epoch ns와 기존
+CAST LOB 한도는 유지합니다.
 
 CAST 함수와 숫자 ARRAY 전체 CAST는 Machbase 8.7.0에서 지원됩니다. Standard Edition과
 Cluster Edition에서 사용할 수 있으며, Cluster Edition에서는 모든 cluster node가 CAST를
@@ -2355,6 +2480,67 @@ SYSDATE                         NOW
 ```
 
 
+## TEXT_TO_BLOB
+
+VARCHAR/TEXT/CLOB의 UTF-8 문자를 지정한 문자셋의 BLOB으로 인코딩합니다.
+
+```sql
+TEXT_TO_BLOB(text, charset)
+```
+
+| 인자·결과 | 계약 |
+|---|---|
+| text | VARCHAR/TEXT/CLOB의 UTF-8 문자. HEX 입력으로 해석하지 않음 |
+| charset | 필수 문자 인자. UTF-8·CP949·ISO-8859-1·UTF-16LE·UTF-16BE |
+| 반환 타입 | BLOB. 실제 인코딩된 출력 기준 최대 64 MiB |
+
+charset 이름의 대소문자는 구분하지 않습니다. data 또는 charset이 NULL이면 NULL을 반환하고,
+실제 빈 입력은 실제 빈 BLOB을 유지합니다. SQL 리터럴 `''`의 기존 NULL 해석은 유지합니다.
+
+### 문자 인코딩과 HEX 입력 비교
+
+```sql
+SELECT TO_HEX(TEXT_TO_BLOB('가','UTF-8'));
+-- EAB080
+SELECT TO_HEX(TEXT_TO_BLOB('가','CP949'));
+-- B0A1
+SELECT TO_HEX(TEXT_TO_BLOB('A','UTF-16LE'));
+-- 4100
+SELECT TO_HEX(TEXT_TO_BLOB('A','UTF-16BE'));
+-- 0041
+SELECT TO_HEX(TEXT_TO_BLOB('4142','UTF-8'));
+-- 34313432: 문자 4,1,4,2
+SELECT TO_HEX(CAST('4142' AS BLOB));
+-- 4142: HEX 입력 41 42
+```
+
+위 TO_HEX 예제는 작은 값의 바이트를 확인하는 용도입니다. 대용량 BLOB 수신은 클라이언트의
+바이너리 API·stream을 사용하며 VARCHAR 결과로 무제한 확장된다고 가정하지 않습니다.
+
+```sql
+SELECT BLOB_TO_TEXT(TEXT_TO_BLOB('가나다','CP949'),'CP949');
+-- 가나다
+SELECT BLOB_TO_TEXT(TEXT_TO_BLOB('é','ISO-8859-1'),'ISO-8859-1');
+-- é
+```
+
+### 변환 오류와 출력 한도
+
+표현할 수 없는 문자·잘못된 UTF-8·U+0000·지원하지 않는 charset은 오류입니다.
+치환 문자 삽입이나 조용한 절삭은 하지 않습니다. 다음 오류 SQL은 정상 예제와 분리합니다.
+
+```sql
+SELECT TEXT_TO_BLOB('😀','CP949');
+-- 오류: 대상 문자셋에서 표현할 수 없음
+SELECT TEXT_TO_BLOB('가','ISO-8859-1');
+-- 오류: 대상 문자셋에서 표현할 수 없음
+```
+
+BOM을 자동으로 추가하지 않습니다. UTF-16의 정상 문자에 포함된 00바이트는 NUL 문자와
+다릅니다. 출력 크기 기준 64 MiB와 실행 메모리 예산을 적용하므로, UTF-16 등으로 인코딩해
+출력이 커지면 입력이 한도 이하여도 실패할 수 있습니다.
+지원 Edition·빈 값·상수 결과 길이 규칙은 [BLOB_TO_TEXT](#blob_to_text)와 같습니다.
+
 ## TO_CHAR
 
 주어진 데이터 타입을 문자열 타입으로 변환합니다. 타입에 따라 format_string을 지정할 수 있지만, 바이너리 타입에는 사용할 수 없습니다.
@@ -2577,7 +2763,9 @@ id          TO_CHAR(dt, 'YYYY-MM-DD HH24:MI:SS mmm.
 
 현재 TO_CHAR는 바이너리 타입을 지원하지 않습니다.
 
-일반 문자열로 변환할 수 없기 때문입니다. 화면에 출력하려면 TO_HEX() 함수로 16진 값을 출력해 확인할 수 있습니다.
+바이너리를 UTF-8 문자로 변환하려면 CAST 또는 [BLOB_TO_TEXT](#blob_to_text)를 사용합니다.
+비 UTF-8 입력은 BLOB_TO_TEXT에 charset을 명시합니다. 작은 값의 HEX 표현은 TO_HEX를
+사용하며 바이너리의 화면 표시와 문자셋 변환을 구분합니다.
 
 
 ## TO_DATE
@@ -3717,6 +3905,9 @@ SELECT REGEXP_REPLACE('TechOnTheNet', 'a|e|i|o|u', 'Z', 1, 2, 'i');
 <a id="support-type-of-built-in-function"></a>
 ## 내장 함수 지원 타입
 
+BLOB_TO_TEXT·TEXT_TO_BLOB 행은 첫 번째 데이터 인자 기준입니다. 표에 별도 열이 없는
+BLOB/CLOB의 허용 여부와 필수 charset 인자는 해당 함수 절을 참고합니다.
+
 | |Short|Integer|Long|Float|Double|Varchar|Text|Ipv4|Ipv6|Datetime|Binary|
 |--|--|--|--|--|--|--|--|--|--|--|--|
 |ABS|o|o|o|o|o|x|x|x|x|x|x|
@@ -3725,6 +3916,7 @@ SELECT REGEXP_REPLACE('TechOnTheNet', 'a|e|i|o|u', 'Z', 1, 2, 'i');
 |AREA|o|o|o|o|o|x|x|x|x|x|x|
 |AVG|o|o|o|o|o|x|x|x|x|x|x|
 |BITAND / BITOR|o|o|o|x|x|x|x|x|x|x|x|
+|BLOB_TO_TEXT|x|x|x|x|x|x|x|x|x|x|o|
 |COUNT|o|o|o|o|o|o|x|o|o|o|x|
 |CUME_DIST|o|o|o|o|o|x|x|x|x|x|x|
 |DATE_TRUNC|x|x|x|x|x|x|x|x|x|o|x|
@@ -3763,6 +3955,7 @@ SELECT REGEXP_REPLACE('TechOnTheNet', 'a|e|i|o|u', 'Z', 1, 2, 'i');
 |SYSDATE / NOW|x|x|x|x|x|x|x|x|x|x|x|
 |TO_CHAR|o|o|o|o|o|o|x|o|o|o|x|
 |TO_DATE / TO_DATE_SAFE|x|x|x|x|x|o|x|x|x|x|x|
+|TEXT_TO_BLOB|x|x|x|x|x|o|o|x|x|x|x|
 |TO_HEX|o|o|o|o|o|o|o|o|o|o|o|
 |TO_INET_STR|x|x|x|x|x|x|x|o|x|x|x|
 |TO_IPV4 / TO_IPV4_SAFE|x|x|x|x|x|o|x|x|x|x|x|

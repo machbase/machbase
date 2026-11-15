@@ -44,3 +44,11 @@ SQL_SUCCESS_WITH_INFO와 01004는 작은 버퍼에 따른 잘림을 뜻합니다
 빈 값의 indicator=0과 SQL_NULL_DATA를 구분합니다. BINARY의 CHAR 표시인 hex와
 SQL_C_BINARY의 실제 바이트도 구분합니다. 큰 파일의 raw 청크는 부모별 offset으로 합칩니다.
 기존 바인딩의 숫자·unsigned·LOB 지원 범위와 reader의 타입을 함께 확인합니다.
+
+## 바이너리 표시와 SQL 변환
+
+SQL_C_BINARY 또는 JDBC getBytes로 읽은 바이트와 CHAR getter·CLI의 HEX 표시는 별개입니다.
+DBMS 8.9에서 `CAST(binary_value AS TEXT)`는 UTF-8 디코딩이며 HEX 표현이 아닙니다.
+비 UTF-8 데이터는 [BLOB_TO_TEXT](/kr/dbms-8.9/reference/sql/functions/functions-full/#blob_to_text)에
+charset을 지정합니다. 실제 빈 결과의 indicator=0은 SQL NULL과 구분하며, 빈 값 전송에는
+protocol 4.0.5를 지원하는 서버·드라이버가 필요합니다.

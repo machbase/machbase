@@ -257,3 +257,22 @@ ARRAY 요소 대상과 희소 디스크립터의 위치는 0부터 시작하는 
 않습니다. 디스크립터 정의, 배열 전체 NULL와 요소 NULL 처리, direct ODBC 핸들 제약은
 [Sparse ARRAY와 선택 컬럼 Append API](../data-input-load-export/array-append/)를
 참고하십시오.
+
+## 실제 빈 값과 NULL 바인딩
+
+protocol 4.0.5를 지원하는 서버·드라이버에서 가변 길이 입력의 명시적인 길이 indicator 0은
+NULL이 아닌 실제 빈 값입니다. SQL_NULL_DATA는 SQL NULL이며, SQL_NTS로 보낸 빈 문자열의
+기존 NULL 정책은 유지합니다. 길이 0 값을 보낼 때에도 유효한 값 버퍼와 indicator를 사용합니다.
+SQL 리터럴 `''`은 실제 빈 bind를 만드는 방법이 아닙니다.
+
+바이너리는 SQL_C_BINARY로 수신합니다. SQL_C_CHAR의 HEX 표시나 CLI 출력과 SQL의
+BLOB→문자 CAST를 혼동하지 않습니다. 결과 indicator 0과 SQL_NULL_DATA도 구분합니다.
+BLOB은 SQLDescribeCol에서 SQL_BINARY, SQLColAttribute의 타입 속성에서 SQL_BLOB으로
+표시될 수 있으며 두 API의 길이는 같은 결과 payload 한도를 나타냅니다.
+
+BLOB_TO_TEXT의 결과는 TEXT, TEXT_TO_BLOB의 결과는 BLOB입니다. 비상수 결과 선언 길이는
+64 MiB이며 상수 folding 결과는 실제 길이로 줄어들 수 있습니다. 실제 빈 값을 보존할 수 없는
+저장소 carrier에 INSERT하면 오류가 발생하고 NULL로 대체하지 않습니다.
+
+[문자셋 변환 함수](/kr/dbms-8.9/reference/sql/functions/functions-full/#blob_to_text)와
+[서버·드라이버 호환성](/kr/dbms-8.9/reference/support-scope-constraints/compatibility-xma-protocol/#실제-빈-값의-전송)을 참고합니다.

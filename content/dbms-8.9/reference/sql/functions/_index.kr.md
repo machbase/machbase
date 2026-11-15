@@ -22,3 +22,10 @@ toc: true
 
 - 입력 값이 `NULL`이면 결과도 `NULL`입니다 (별도 명시가 없는 한).
 - 인자 타입 불일치 시 `ERR-02036` 또는 `ERR-02037` 오류가 발생합니다.
+
+## 문자·바이너리 변환
+
+- [CAST](./functions-full/#cast): UTF-8 문자 경계·타입·길이와 호환성
+- [BLOB_TO_TEXT](./functions-full/#blob_to_text): 지정 문자셋의 바이트를 TEXT로 디코딩
+- [TEXT_TO_BLOB](./functions-full/#text_to_blob): UTF-8 문자를 지정 문자셋의 BLOB으로 인코딩
+- [TO_HEX](./functions-full/#to_hex): 작은 값의 명시적인 HEX 표현

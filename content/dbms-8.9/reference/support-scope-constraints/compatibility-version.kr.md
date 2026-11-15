@@ -184,3 +184,26 @@ Standard Edition에서 같은 객체나 직접 관련된 객체의 DDL이 충돌
 ## 업그레이드 정본
 
 실행 순서, 지원 플랫폼과 사전 점검은 [업그레이드](../../../installation-deployment-upgrade/upgrade/)를 참고하십시오. 이 페이지는 SQL·server·client 호환성 사실만 유지합니다.
+
+## 8.9 CAST와 문자셋 변환
+
+| 항목 | 8.9 동작과 이전 시 확인할 점 |
+|---|---|
+| 유효 UTF-8의 VARCHAR/CHAR CAST | 바이트 길이 안의 완전한 문자 경계까지 보존. 한 문자도 들어가지 않으면 실제 빈 결과 |
+| BLOB/BINARY→문자 CAST | HEX 대신 UTF-8 디코딩. 잘못된 UTF-8·U+0000은 오류 |
+| 문자→BLOB/BINARY CAST | 기존 HEX 입력 해석 유지. 일반 문자 인코딩은 TEXT_TO_BLOB 사용 |
+| CHAR | VARCHAR 별칭과 공백 패딩 없음 유지 |
+| CAST TEXT/CLOB/BLOB/JSON | 기존 32,767바이트 출력 상한 유지 |
+| BLOB_TO_TEXT / TEXT_TO_BLOB | 필수 charset 인자와 출력 기준 최대 64 MiB |
+| 숫자↔DATETIME | epoch nanosecond와 -1 NULL 예약값 유지 |
+
+기존 HEX CAST 결과를 비교·저장하던 애플리케이션은 쿼리를 수정합니다. 비 UTF-8 원본에는
+BLOB_TO_TEXT로 문자셋을 지정하고, 작은 값의 HEX 문자열이 필요하면 명시 TO_HEX를 사용합니다.
+전체 바이너리 수신은 드라이버의 binary/stream API로 처리합니다.
+
+실제 빈 bind·결과 수신에는 protocol 4.0.5 지원 서버·드라이버를 사용합니다. SQL 빈 리터럴과
+기존 빈 문자열 bind의 NULL 의미를 일괄 변경하는 기능이 아닙니다. Cluster는 함수를 지원하는
+동일 버전의 노드로 구성합니다.
+
+[CAST](../../sql/functions/functions-full/#cast)와
+[인코딩 함수](/kr/dbms-8.9/reference/sql/functions/functions-full/#blob_to_text)를 참고합니다.

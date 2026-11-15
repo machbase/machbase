@@ -119,3 +119,25 @@ SQLGetInfo(conn, SQL_DRIVER_VER, buf, sizeof(buf), NULL);
 6. ARRAY 또는 선택 컬럼 Append를 사용하는 경우 서버는 Machbase DBMS 8.7.0으로,
    클라이언트는 해당 기능이 포함된 SDK 빌드로 업그레이드하십시오. Cluster Edition은
    모든 노드를 함께 맞춥니다.
+
+## 실제 빈 값의 전송
+
+| 입력 | 의미 |
+|---|---|
+| SQL 리터럴 `''` | 기존 SQL NULL |
+| SQLCLI 명시 길이 0 | protocol 4.0.5 지원 조합의 실제 빈 입력 |
+| SQLCLI SQL_NULL_DATA | SQL NULL |
+| SQLCLI SQL_NTS 빈 문자열 | 기존 NULL 정책 유지 |
+| JDBC setString("") / setText("") | 기존 NULL 정책 유지 |
+| JDBC 길이 0 stream / 빈 byte 배열 | protocol 4.0.5 지원 조합의 실제 빈 입력 |
+
+서버·드라이버가 함께 protocol 4.0.5를 지원해야 합니다. 구서버에 실제 빈 bind를 보낼 수
+없는 새 드라이버는 미지원 오류를 반환하며 NULL로 대체하지 않습니다. 기존 드라이버의
+NULL bind 의미는 유지합니다. 패키지 버전과 통신 protocol 번호는 다른 값입니다.
+
+UTF-8 경계 절삭이나 인코딩 함수가 생성한 실제 빈 결과는 SQL NULL과 구분해 읽습니다.
+조회·변환에서 빈 값을 보존하더라도 기존 테이블·컬럼의 저장 형식이 이를 보존하지 못하면
+INSERT는 오류입니다. Cluster는 관련 함수를 지원하는 같은 버전으로 구성합니다.
+
+[SQLCLI 바인딩](/kr/dbms-8.9/development-tools-integration/cli-odbc/#실제-빈-값과-null-바인딩)과
+[JDBC 예제](/kr/dbms-8.9/development-tools-integration/jdbc/prepared-types/#빈-인코딩-입력을-명시적으로-바인딩)를 참고합니다.

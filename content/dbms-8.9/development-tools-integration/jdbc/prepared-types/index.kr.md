@@ -177,3 +177,29 @@ statement.executeUpdate();
 해석하지 않습니다. SQL별 판정 규칙은
 [Nullable 메타데이터 지원 범위](/dbms-8.9/development-tools-integration/sdk-support-scope/#support-scope-sdk-nullable-metadata)를
 참고합니다.
+
+## 빈 인코딩 입력을 명시적으로 바인딩
+
+protocol 4.0.5를 지원하는 서버·드라이버를 함께 사용합니다. 기존 setString("")·setText("")의
+NULL 정책은 유지합니다. 실제 빈 텍스트는 길이 0의 character stream으로, 실제 빈 바이너리는
+빈 byte 배열 또는 길이 0의 binary stream으로 전달합니다.
+
+다음은 연결된 `connection`에서 실행하는 예입니다.
+
+```java
+try (PreparedStatement statement = connection.prepareStatement(
+        "SELECT TEXT_TO_BLOB(?, 'UTF-8')")) {
+    statement.setCharacterStream(1, new java.io.StringReader(""), 0);
+    try (java.sql.ResultSet result = statement.executeQuery()) {
+        result.next();
+        byte[] bytes = result.getBytes(1);
+        System.out.println(bytes.length);       // 0
+        System.out.println(result.wasNull());   // false
+    }
+}
+```
+
+같은 파라미터에 `setNull(1, java.sql.Types.LONGVARCHAR)`를 지정하면 결과는 NULL입니다.
+새 드라이버가 구서버에 실제 빈 bind를 보낼 수 없으면 전송 전에 미지원 오류를 반환합니다.
+NULL로 조용히 바꾸어 보내지 않습니다. 실제 빈 값을 저장할 수 없는 컬럼에 INSERT할 때의
+오류와 SELECT·함수 변환에서 빈 값을 보존하는 동작을 구분합니다.
