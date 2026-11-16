@@ -16,7 +16,7 @@ Machbase 서버의 시작과 종료, 설정 변경, 관측, 백업과 복원, Cl
 | 13.2 | [다중 데이터베이스](./multi-database/) | 논리 데이터베이스, 권한, 백업·복원, 클라이언트 연동 |
 | 13.3 | [설정 운영](./configuration/) | 설정 파일, 메모리, 네트워크, 스토리지, 타임존 |
 | 13.4 | [ALTER SYSTEM 운영](./alter-system/) | 런타임 설정 변경과 시스템 제어 |
-| 13.5 | [데이터 보존 정책](./policy-data-retention/) | Retention 생성, 적용, 점검, 해제 |
+| 15.5 | [데이터 보존 정책](./policy-data-retention/) | 보존 기간·실행 주기·최초 시각, 일정 점검과 해제 |
 | 13.6 | [관측과 진단](./diagnosis-observability/) | 시스템 뷰, 로그, 세션, 용량과 장애 징후 |
 | 13.7 | [스키마 변경 체크리스트](./checklist-schema-alter/) | DDL 전후 영향 분석과 검증 절차 |
 | 13.8 | [백업, 복원, 마운트](./backup-restore-mount/) | 온라인 백업, 오프라인 복원, 읽기 전용 마운트 |

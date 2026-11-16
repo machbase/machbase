@@ -207,3 +207,28 @@ BLOB_TO_TEXT로 문자셋을 지정하고, 작은 값의 HEX 문자열이 필요
 
 [CAST](../../sql/functions/functions-full/#cast)와
 [인코딩 함수](/kr/dbms-8.9/reference/sql/functions/functions-full/#blob_to_text)를 참고합니다.
+
+<a id="retention-start-at-compatibility"></a>
+
+## 8.9 Retention 최초 실행 시각
+
+DBMS 8.9는 테이블별 ADD RETENTION에 START AT을 지정하고 최초 기준과 다음 예정 시각을
+영속화합니다. 이 일정 정보를 저장하는 메타 업그레이드가 필요하며, 업그레이드된 DB는 해당
+메타를 지원하지 않는 구버전 엔진으로 실행할 수 없습니다. 사전에 원본 백업과 지원되는
+업그레이드·복원 경로를 확인합니다.
+
+기존 작업은 START_TIME·NEXT_RUN_TIME이 모두 NULL인 기존 방식으로 유지합니다.
+새 기능이 기존 작업에 임의의 시작 시각을 부여하지 않습니다. START AT을 생략한 새 연결도
+기존 최초 대기·반복·오류 재시도 방식을 유지합니다.
+
+Cluster는 새 문법·메타·일정 전파를 지원하는 같은 버전의 노드로 구성합니다. 물리 복원은
+저장된 일정을 유지하고 지난 회차를 한 번 실행한 뒤 원래 주기로 복귀합니다. MOUNT의
+메타 호환 검사와 Retention worker 미실행, 기존 논리 RESTORE 제한을 유지합니다.
+
+[입력 문법](../../sql/syntax/retention-syntax/#retention-start-at-syntax)과
+[보존 정책 운영](/kr/dbms-8.9/operations-configuration-recovery/policy-data-retention/#retention-start-at)을 참고합니다.
+
+일정 메타가 불완전하거나 기준·예정 시각이 일치하지 않으면 로드 오류로 거부하며,
+기존 방식으로 조용히 전환하지 않습니다. 업그레이드 오류는 원인을 해소한 뒤 지원되는
+동일 엔진으로 재시도합니다. 내부 메타 컬럼을 직접 추가·수정하거나 구버전 엔진으로
+열어 복구하지 않습니다.

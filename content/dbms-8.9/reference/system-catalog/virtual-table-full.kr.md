@@ -1117,15 +1117,35 @@ Virtual Table 의 컬럼 정보를 표시합니다.
 ### V$RETENTION_JOB
 ---
 
-RETENTION POLICY가 적용된 테이블 정보를 표시합니다.
+Retention이 적용된 TAG·KV·LOG 테이블별 작업과 실행 상태를 표시합니다.
 
-| 컬럼 이름         | 설명                                     |
-|-------------------|------------------------------------------|
-| USER_NAME         | 사용자 이름                              |
-| TABLE_NAME        | 대상 TAG TABLE 이름                      |
-| POLICY_NAME       | 적용되어 있는 POLICY 이름                |
-| STATE             | RETENTION 상태 (RUNNING/WAITING/STOPPED) |
-| LAST_DELETED_TIME | 마지막으로 삭제된 시간                   |
+| 컬럼 이름 | 타입 | 설명 |
+|---|---|---|
+| USER_NAME | VARCHAR | 테이블 소유 사용자 |
+| TABLE_NAME | VARCHAR | 정책이 연결된 대상 테이블 |
+| POLICY_NAME | VARCHAR | 적용한 정책 이름 |
+| STATE | VARCHAR | 작업 상태(RUNNING/WAITING/STOPPED) |
+| LAST_DELETED_TIME | DATETIME | 마지막 성공한 DELETE의 cutoff. 작업 시작·완료 시각이 아님 |
+| DATABASE_ID | ULONG | 데이터베이스 식별자 |
+| DATABASE_NAME | VARCHAR | 데이터베이스 이름 |
+| START_TIME | DATETIME | 최초 실행 기준. START AT 생략 작업에서는 NULL |
+| NEXT_RUN_TIME | DATETIME | 현재 미완료 회차의 예정 시각. START AT 생략 작업에서는 NULL |
+
+START_TIME·NEXT_RUN_TIME은 기존 컬럼 뒤에 추가됩니다. 결과에 의존하는 프로그램은 필요한
+컬럼을 명시합니다. 두 값은 실제 실행 시작·완료 시각이 아닙니다. 신규 작업은 둘이 같으며,
+실행 중·지연·재시도 상태에서는 NEXT_RUN_TIME이 과거일 수 있습니다.
+
+```sql
+SELECT DATABASE_NAME, TABLE_NAME, POLICY_NAME, STATE,
+       LAST_DELETED_TIME, START_TIME, NEXT_RUN_TIME
+  FROM V$RETENTION_JOB
+ ORDER BY DATABASE_NAME, TABLE_NAME;
+```
+
+START AT 작업이 성공하면 최초 기준을 유지한 다음 미래 슬롯으로 NEXT_RUN_TIME이 이동합니다.
+오류 재시도 중인 회차를 성공으로 간주해 전진시키지 않습니다. Cluster에서는 실제 실행 broker의
+예정 시각과 상태를 확인합니다.
+[보존 정책 운영](/kr/dbms-8.9/operations-configuration-recovery/policy-data-retention/#retention-schedule)을 참고합니다.
 
 ### V$USER_AUTH_KEYS
 ---

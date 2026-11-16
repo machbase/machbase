@@ -38,3 +38,12 @@ toc: true
 
 - 문법: [BACKUP · RESTORE · MOUNT](../../sql/syntax/backup-restore-mount-syntax/)
 - 운영 절차: [백업, 복원, 마운트](../../../operations-configuration-recovery/backup-restore-mount/)
+
+## Retention 일정 보존
+
+물리 백업·복원에는 START AT 작업의 최초 기준과 다음 예정 시각이 포함됩니다.
+복원 후 다음 예정이 지났으면 한 번 실행하고 원래 주기의 다음 미래 슬롯으로 돌아갑니다.
+MOUNT는 Retention worker를 실행하지 않습니다. Retention 작업이 포함된 이미지에 대한
+기존 논리 RESTORE 제한은 그대로이며, MOUNT에서 메타를 자동 업그레이드하지 않습니다.
+
+[일정 복원과 점검 절차](../../../operations-configuration-recovery/backup-restore-mount/#retention-backup-schedule)를 참고합니다.

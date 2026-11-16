@@ -185,3 +185,11 @@ DROP TABLE ch7_retention;
 
 삭제 결과가 예상과 다르면 경계 시각과 적용된 정책부터 확인해 보세요.
 보관 의무가 있는 데이터라면 추가 삭제를 멈추고 담당자와 범위를 먼저 맞추는 것이 좋습니다.
+
+### 최초 삭제 실행을 야간으로 지정
+
+위 실습은 START AT을 생략한 기존 방식입니다. 최초 삭제 작업을 야간 등 원하는 시각부터
+시작하려면 연결 시 START AT을 지정합니다. 이미 연결된 작업의 시각을 바꾸려면 먼저
+연결을 해제해야 합니다.
+[시각 지정·재시작·상태 조회](/kr/dbms-8.9/operations-configuration-recovery/policy-data-retention/#retention-start-at)를 참고합니다.
+START AT은 LOG의 _ARRIVAL_TIME 삭제 기준이나 DURATION을 바꾸지 않습니다.
