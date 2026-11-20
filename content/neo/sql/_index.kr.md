@@ -81,6 +81,40 @@ UPDATE example SET value = :new_value
 --env: reset
 ```
 
+#### Named Args에 타입 지정하기
+
+타입을 지정하지 않은 값은 `007`처럼 숫자로 보여도 문자열로 전달됩니다.
+SQL 함수나 비교 연산에 특정 타입이 필요하면 `타입(값)`으로 명시하세요.
+
+```sql
+-- env: named.epoch=long(1793577127279628041)
+SELECT from_timestamp(:epoch);
+
+-- env: tz=Asia/Seoul named.since=datetime('2026-11-02 10:32:07.197719833')
+SELECT * FROM example WHERE time >= :since;
+```
+
+`long(...)`은 Unix epoch 나노초를 64비트 정수로 전달합니다.
+`datetime(...)`은 시각 자체를 전달하므로 `DATETIME` 컬럼과 직접 비교할 수 있습니다.
+공백이 포함된 날짜는 괄호 안에서 따옴표로 감싸세요. 오프셋이 없는 날짜는
+선언 시점의 `tz`를 사용하고, `tz`가 없으면 UTC로 해석합니다.
+`datetime(2026-11-02T10:32:07+09:00)`처럼 오프셋을 명시하면 해당 오프셋이 우선합니다.
+
+| 타입 표기 | 별칭 |
+|---|---|
+| `short`, `ushort` | `int16`, `uint16` |
+| `int`, `uinteger` | `integer` 또는 `int32`, `uint32` |
+| `long`, `ulong` | `int64`, `uint64` |
+| `float`, `double` | `float32`, `float64` |
+| `datetime` | — |
+
+`long(123)`을 문자 그대로 전달하려면 `named.label="long(123)"`처럼 값 전체를
+따옴표로 감싸거나 `named.label=string('long(123)')`을 사용하세요.
+`short(32768)`처럼 선언한 타입의 범위를 벗어나는 값은 오류가 됩니다.
+TQL의 `named()`도 같은 규칙을 사용합니다. 예를 들어
+`named('epoch', 'long(1793577127279628041)')`은 정수를,
+`named('label', "string('long(123)')")`은 문자열을 바인딩합니다.
+
 ### 차트 그리기
 
 INSERT 문을 반복 실행해 데이터를 더 입력합니다.

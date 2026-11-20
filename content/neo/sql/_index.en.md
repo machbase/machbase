@@ -81,6 +81,38 @@ UPDATE example SET value = :new_value
 --env: reset
 ```
 
+#### Specify a type for a named argument
+
+Values without an explicit type are passed as strings, even if they look numeric, such as `007`.
+Use `type(value)` when a SQL function or comparison needs a specific type.
+
+```sql
+-- env: named.epoch=long(1793577127279628041)
+SELECT from_timestamp(:epoch);
+
+-- env: tz=Asia/Seoul named.since=datetime('2026-11-02 10:32:07.197719833')
+SELECT * FROM example WHERE time >= :since;
+```
+
+`long(...)` passes Unix epoch nanoseconds as a 64-bit integer.
+`datetime(...)` passes the timestamp itself, so you can compare it directly with a `DATETIME` column.
+If the date contains a space, quote it inside the parentheses. A date without an offset uses
+the `tz` setting at the point of declaration, or UTC if `tz` is not set.
+An explicit offset, as in `datetime(2026-11-02T10:32:07+09:00)`, takes precedence.
+
+| Type | Aliases |
+|---|---|
+| `short`, `ushort` | `int16`, `uint16` |
+| `int`, `uinteger` | `integer` or `int32`, `uint32` |
+| `long`, `ulong` | `int64`, `uint64` |
+| `float`, `double` | `float32`, `float64` |
+| `datetime` | — |
+
+To pass `long(123)` as text, quote the entire value with `named.label="long(123)"` or use
+`named.label=string('long(123)')`. An out-of-range value such as `short(32768)` is an error.
+TQL's `named()` follows the same rules: `named('epoch', 'long(1793577127279628041)')` binds an
+integer, while `named('label', "string('long(123)')")` binds a string.
+
 ### Chart Draw
 
 Insert more records by executing insert statement repeatedly.

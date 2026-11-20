@@ -72,6 +72,11 @@ Creates a named bind parameter for SQL queries using placeholders like `:name`.
 - `name` *string* : parameter name matching the `:name` placeholder in the SQL query.
 - `value` *any* : value to bind.
 
+A string such as `long(1793577127279628041)` is converted to the specified binding type.
+Write `named('epoch', 'long(1793577127279628041)')` to preserve the exact integer.
+To keep text that looks like a type literal, use `named('label', "string('long(123)')")`.
+A `datetime(...)` literal without a time zone offset is interpreted as UTC in TQL.
+
 *Example)*
 
 ```js

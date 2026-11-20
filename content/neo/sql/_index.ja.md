@@ -82,6 +82,40 @@ UPDATE example SET value = :new_value
 --env: reset
 ```
 
+#### 名前付き引数の型を指定する
+
+型を明示しない値は、`007`のように数値に見える場合も文字列として渡されます。
+SQL関数や比較演算で特定の型が必要な場合は、`型(値)`で指定します。
+
+```sql
+-- env: named.epoch=long(1793577127279628041)
+SELECT from_timestamp(:epoch);
+
+-- env: tz=Asia/Seoul named.since=datetime('2026-11-02 10:32:07.197719833')
+SELECT * FROM example WHERE time >= :since;
+```
+
+`long(...)`はUnixエポックからのナノ秒を64ビット整数として渡します。
+`datetime(...)`は日時そのものを渡すため、`DATETIME`列と直接比較できます。
+空白を含む日時は、括弧の内側で引用符で囲みます。オフセットを省略すると、
+宣言時点の`tz`が使われます。`tz`が未設定の場合はUTCになります。
+`datetime(2026-11-02T10:32:07+09:00)`のように明示したオフセットが優先されます。
+
+| 型 | 別名 |
+|---|---|
+| `short`, `ushort` | `int16`, `uint16` |
+| `int`, `uinteger` | `integer`または`int32`, `uint32` |
+| `long`, `ulong` | `int64`, `uint64` |
+| `float`, `double` | `float32`, `float64` |
+| `datetime` | — |
+
+`long(123)`を文字列として渡すには、`named.label="long(123)"`のように値全体を
+引用符で囲むか、`named.label=string('long(123)')`と指定します。
+`short(32768)`のように指定した型の範囲を超えた値はエラーになります。
+TQLの`named()`にも同じ規則が適用されます。たとえば
+`named('epoch', 'long(1793577127279628041)')`は整数を、
+`named('label', "string('long(123)')")`は文字列をバインドします。
+
 ### グラフの描画 {#차트-그리기}
 
 INSERT文を繰り返し実行して、データを追加します。
