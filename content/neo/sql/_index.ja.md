@@ -116,6 +116,37 @@ TQLの`named()`にも同じ規則が適用されます。たとえば
 `named('epoch', 'long(1793577127279628041)')`は整数を、
 `named('label', "string('long(123)')")`は文字列をバインドします。
 
+### データの変更 {#데이터-수정}
+
+先ほど作成した `example` TAG テーブルにテストレコードを1件追加し、同じレコードを
+更新してから削除します。上から順に実行してください。`int64(...)`は Unix エポックからの
+ナノ秒を整数として渡します。すべての文で同じ `:name` と `:time` を再利用します。
+TAG テーブルの時系列データの更新には Machbase Standard Edition が必要です。
+
+```sql
+-- env: named.name='my-car' named.time=int64(1793577127279628041)
+INSERT INTO example (name, time, value)
+VALUES (:name, :time, 1.50);
+
+UPDATE example SET value = 1.61
+WHERE name = :name AND time = :time;
+
+SELECT name, time, value FROM example
+WHERE name = :name AND time = :time;
+
+DELETE FROM example
+WHERE name = :name AND time = :time;
+
+SELECT name, time, value FROM example
+WHERE name = :name AND time = :time;
+-- env: reset
+```
+
+最初の `SELECT` で、更新後の `value` が `1.61` になっていることを確認します。
+削除後、2番目の `SELECT` では該当するレコードが表示されません。`DELETE` を実行する前に、
+`WHERE` 句が意図したタグと時刻を指定していることを確認してください。
+最後の `-- env: reset` で名前付き引数をリセットします。
+
 ### グラフの描画 {#차트-그리기}
 
 INSERT文を繰り返し実行して、データを追加します。

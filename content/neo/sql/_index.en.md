@@ -113,6 +113,36 @@ To pass `long(123)` as text, quote the entire value with `named.label="long(123)
 TQL's `named()` follows the same rules: `named('epoch', 'long(1793577127279628041)')` binds an
 integer, while `named('label', "string('long(123)')")` binds a string.
 
+### Modify Data
+
+Insert a test record into the `example` TAG table created earlier, then update and delete the
+same record. Run the statements in order. `int64(...)` passes Unix epoch nanoseconds as an
+integer, and all statements reuse the same `:name` and `:time` arguments.
+Updating time-series data in a TAG table requires Machbase Standard Edition.
+
+```sql
+-- env: named.name='my-car' named.time=int64(1793577127279628041)
+INSERT INTO example (name, time, value)
+VALUES (:name, :time, 1.50);
+
+UPDATE example SET value = 1.61
+WHERE name = :name AND time = :time;
+
+SELECT name, time, value FROM example
+WHERE name = :name AND time = :time;
+
+DELETE FROM example
+WHERE name = :name AND time = :time;
+
+SELECT name, time, value FROM example
+WHERE name = :name AND time = :time;
+-- env: reset
+```
+
+The first `SELECT` should show the updated value `1.61`. After deletion, the second `SELECT`
+should return no matching record. Before running `DELETE`, verify that the `WHERE` clause
+matches the intended tag and timestamp. The final `-- env: reset` clears the named arguments.
+
 ### Chart Draw
 
 Insert more records by executing insert statement repeatedly.

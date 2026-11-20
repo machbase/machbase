@@ -115,6 +115,36 @@ TQL의 `named()`도 같은 규칙을 사용합니다. 예를 들어
 `named('epoch', 'long(1793577127279628041)')`은 정수를,
 `named('label', "string('long(123)')")`은 문자열을 바인딩합니다.
 
+### 데이터 수정
+
+앞에서 만든 `example` TAG 테이블에 테스트 레코드를 한 건 추가한 뒤, 같은 레코드를
+수정하고 삭제합니다. 위에서부터 순서대로 실행하세요. `int64(...)`는 Unix epoch
+나노초를 정수로 전달하며, 모든 문에서 같은 `:name`과 `:time`을 재사용합니다.
+TAG 테이블의 시계열 데이터 `UPDATE`는 Machbase Standard Edition에서 지원합니다.
+
+```sql
+-- env: named.name='my-car' named.time=int64(1793577127279628041)
+INSERT INTO example (name, time, value)
+VALUES (:name, :time, 1.50);
+
+UPDATE example SET value = 1.61
+WHERE name = :name AND time = :time;
+
+SELECT name, time, value FROM example
+WHERE name = :name AND time = :time;
+
+DELETE FROM example
+WHERE name = :name AND time = :time;
+
+SELECT name, time, value FROM example
+WHERE name = :name AND time = :time;
+-- env: reset
+```
+
+첫 번째 `SELECT`에서는 수정된 `value`가 `1.61`인지 확인합니다. 삭제 후 두 번째
+`SELECT`에는 해당 레코드가 표시되지 않습니다. `DELETE`를 실행하기 전에 `WHERE` 절이
+의도한 태그와 시각을 가리키는지 확인하세요. 마지막 `-- env: reset`은 named args를 초기화합니다.
+
 ### 차트 그리기
 
 INSERT 문을 반복 실행해 데이터를 더 입력합니다.
