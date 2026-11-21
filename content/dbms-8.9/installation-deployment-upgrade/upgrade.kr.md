@@ -340,3 +340,10 @@ machclusterctl status
 
 - Major 버전 업그레이드는 DB 파일 형식이 변경될 수 있습니다. 릴리스 노트를 반드시 확인하고, 업그레이드 전 백업을 수행하십시오.
 - `conf/machbase.conf`, `dbs/`, `meta/`, `package/` 경로를 절대 삭제하거나 초기화하지 마십시오.
+
+## 8.7에서 8.9로 이동할 때의 물리 META
+
+8.9는 Standard META 19.0과 Cluster META 18.0을 사용합니다. 8.7의 META 17.0 DB와
+백업은 기동·MOUNT·물리 RESTORE의 major·minor 일치 조건을 충족하지 않습니다.
+논리 반출·재적재를 계획하고 전용 환경에서 결과를 대조한 후 전환합니다.
+[버전별 호환성](../../reference/support-scope-constraints/compatibility-version/#dbms-89-array-meta)을 참고합니다.

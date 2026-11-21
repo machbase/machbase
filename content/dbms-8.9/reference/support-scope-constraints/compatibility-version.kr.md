@@ -50,9 +50,9 @@ Machbase 8.7.0 버전의 하위 호환성, 업그레이드 주의사항, 지원 
   종료하는 환경에서는 8.7.0 JDBC 드라이버로 교체하고
   [다중 호스트 연결](/dbms-8.9/development-tools-integration/jdbc/#jdbc-multi-host)의 URL과
   timeout 설정을 확인하십시오.
-- Machbase DBMS 8.7.0은 고정 길이 숫자 ARRAY와 선택 컬럼 Append를 지원합니다. ARRAY를
-  사용하는 애플리케이션은 DBMS 8.7.0 서버와 해당 기능이 포함된 SDK 빌드를 함께 사용하고,
-  Cluster Edition은 모든 노드를 함께 업그레이드하십시오. 자세한 SQL과 API는
+- 8.7에서 숫자 ARRAY와 선택 컬럼 Append가 도입되었습니다. 8.9의 가변 길이·대형 ARRAY에는
+  연결 시 확장 기능을 협상하는 서버와 SDK를 사용합니다. Cluster Edition은 모든 노드를
+  함께 업그레이드합니다. 자세한 SQL과 API는
   [숫자 ARRAY 타입](/dbms-8.9/reference/sql/types/array/)과
   [Sparse ARRAY와 선택 컬럼 Append API](/dbms-8.9/development-tools-integration/data-input-load-export/array-append/)를
   참고하십시오.
@@ -232,3 +232,20 @@ Cluster는 새 문법·메타·일정 전파를 지원하는 같은 버전의 �
 기존 방식으로 조용히 전환하지 않습니다. 업그레이드 오류는 원인을 해소한 뒤 지원되는
 동일 엔진으로 재시도합니다. 내부 메타 컬럼을 직접 추가·수정하거나 구버전 엔진으로
 열어 복구하지 않습니다.
+
+## DBMS 8.9의 물리 데이터와 ARRAY 호환성 {#dbms-89-array-meta}
+
+| 계열 | 프로토콜 | Standard META | Cluster META |
+|---|---:|---:|---:|
+| 8.5 / 8.5-cl | 4.0.2 | 14.0 | 14.0 |
+| 8.7 | 4.0.4 | 17.0 | 17.0 |
+| 8.9 | 4.0.5 | 19.0 | 18.0 |
+
+DB 기동·백업 MOUNT·물리 RESTORE에는 서버와 데이터의 META major·minor가 모두
+일치해야 합니다. 8.7 물리 데이터와 백업은 8.9에서 버전 불일치로 거부됩니다.
+업그레이드 계획에서 논리적 데이터 반출·재적재를 준비하고 전용 환경에서 확인합니다.
+동일 META의 기존 작은 dense ARRAY 값은 읽을 수 있습니다.
+
+8.9에서는 기존 `TYPE[N]` 컬럼에도 0~N개를 저장할 수 있습니다. 정확히 N개가 필요한
+애플리케이션은 저장 전에 길이를 검사합니다. `ARRAY_LENGTH()`를 INTEGER로 고정한
+결과 바인딩·스키마 검사는 LONG으로 변경합니다.

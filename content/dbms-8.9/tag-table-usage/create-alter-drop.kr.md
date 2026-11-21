@@ -89,7 +89,7 @@ ALTER TABLE ch5_tag_ddl METADATA
     DROP COLUMN (limits);
 ```
 
-Standard Edition에서는 TAG METADATA에 고정 길이 숫자 ARRAY 컬럼을 추가할 수 있습니다.
+Standard Edition에서는 TAG METADATA에 숫자 ARRAY 컬럼을 추가할 수 있습니다.
 ALTER 전에 존재한 metadata row에는 명시한 ARRAY DEFAULT를 적용합니다. ALTER 뒤 TAG DATA
 입력으로 자동 등록되는 metadata row에는 DEFAULT를 다시 적용하지 않으며 새 ARRAY 컬럼은
 whole NULL입니다.

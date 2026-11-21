@@ -351,3 +351,9 @@ metadata index 최대1,048,576행, feature 최대4,096개, shape rank 최대64, 
 - [구조와 컬럼 확인](../../inspect/)
 - [구조화된 값과 원문 추출](../../extract/)
 - [권한과 운영](../../operations/)
+
+## 수치 배열 반환
+
+LeRobot v3.0에서는 `project.payload="observation.state"`로 점이 포함된 컬럼 이름을 지정합니다.
+반환 타입은 `type.payload=DOUBLE[65536]`처럼 지정합니다. 중첩 배열이나 선언 상한을 넘는 입력의
+처리는 [READ의 숫자 목록 변환](../../read-options/#typed-numeric-array)을 참고합니다.

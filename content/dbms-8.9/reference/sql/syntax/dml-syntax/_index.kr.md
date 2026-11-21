@@ -54,7 +54,7 @@ VALUES ('sensor-01', 'building-A', 'celsius');
 
 ### ARRAY element target
 
-Machbase DBMS 8.7.0에서는 `INSERT ... VALUES`의 컬럼 목록에 고정 길이 `ARRAY`의 위치를
+Machbase DBMS 8.9에서는 `INSERT ... VALUES`의 컬럼 목록에 숫자 `ARRAY`의 위치를
 지정할 수 있습니다. position은 0부터 시작합니다. 지정하지 않은 요소는 element NULL로
 저장됩니다.
 

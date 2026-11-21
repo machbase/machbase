@@ -411,3 +411,9 @@ SQL·VLEN·작업 buffer는 예산에 계상하지만 공식 HDF5 내부 heap �
 - [구조와 컬럼 확인](../../inspect/)
 - [구조화된 값과 원문 추출](../../extract/)
 - [권한과 운영](../../operations/)
+
+## 수치 배열 반환
+
+compound 수치 배열 필드와 지원되는 가변 길이 수치 데이터셋을 읽습니다.
+반환 타입은 `type.payload=DOUBLE[65536]`처럼 지정합니다. 중첩 배열이나 선언 상한을 넘는 입력의
+처리는 [READ의 숫자 목록 변환](../../read-options/#typed-numeric-array)을 참고합니다.

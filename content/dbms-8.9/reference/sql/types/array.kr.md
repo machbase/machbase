@@ -5,8 +5,7 @@ weight: 30
 toc: true
 ---
 
-Machbase DBMS 8.7.0은 같은 숫자 타입의 값을 정해진 개수만큼 저장하는 고정 길이
-1차원 `ARRAY` 타입을 지원합니다. 센서의 좌표, 축별 측정값처럼 하나의 행에 여러 숫자
+Machbase DBMS 8.9의 숫자 `ARRAY`는 선언 상한 안에서 행마다 길이가 다른 1차원 배열을 저장합니다. 센서의 좌표, 축별 측정값처럼 하나의 행에 여러 숫자
 값을 함께 저장하고 요소별로 조회할 때 사용합니다.
 
 일부 위치만 입력하는 방법과 선택 컬럼 Append API는
@@ -15,9 +14,8 @@ Machbase DBMS 8.7.0은 같은 숫자 타입의 값을 정해진 개수만큼 저
 
 ## 지원 타입과 선언 범위
 
-컬럼을 선언할 때 숫자 요소 타입 뒤에 `[cardinality]`를 붙입니다. cardinality는 배열에
-저장할 요소 개수이며, 각 행에서 NULL이 아닌 요소의 개수가 아니라 컬럼에 선언한 고정
-길이를 뜻합니다. 배열 전체가 없는 상태(whole NULL)와 배열 안의 특정 값만 없는 상태
+`TYPE[N]`의 N은 선언 상한(cardinality)입니다. 각 행에 0개부터 N개까지 저장할 수 있으며
+실제 길이는 NULL 원소도 포함합니다. 배열 전체가 없는 상태(whole NULL)와 배열 안의 특정 값만 없는 상태
 (element NULL)는 서로 구분합니다.
 
 | 요소 타입 | DDL 예 | 설명 |
@@ -32,9 +30,13 @@ Machbase DBMS 8.7.0은 같은 숫자 타입의 값을 정해진 개수만큼 저
 | `DOUBLE` | `DOUBLE[4]` | 배정밀도 부동소수점 |
 | `DECIMAL(p,s)` | `DECIMAL(12,4)[4]` | 고정소수점 숫자 |
 
-- cardinality 범위는 `1..1024`입니다.
+- cardinality 범위는 `1..65536`입니다.
 - `DECIMAL` precision 범위는 `1..65`입니다.
 - `DECIMAL` scale 범위는 `0..30`이며 precision보다 클 수 없습니다.
+
+Standard의 LOG, TAG DATA, TAG METADATA, VOLATILE, LOOKUP, TRANSACTION 일반 컬럼에
+이 선언 상한과 실제 길이 규칙을 적용합니다. 배열 컬럼 추가·삭제에는 아래 테이블별
+지원 조건을 적용합니다.
 
 다음 별칭은 해당 대표 요소 타입으로 처리됩니다.
 
@@ -130,7 +132,7 @@ TAG DATA 일반 ARRAY 컬럼은 `CREATE TABLE`에서 선언할 수 있지만 ALT
 - VOLATILE은 단일 값 컬럼의 `ADD COLUMN`과 마찬가지로 기존 행을 DEFAULT로 다시 쓰지
   않으므로 새 ARRAY 컬럼은 전체 NULL입니다.
 - Cluster LOG는 명시한 ARRAY DEFAULT를 기존 행에 적용합니다.
-- DEFAULT 배열 생성식의 요소 수는 선언한 cardinality와 정확히 같아야 합니다.
+- DEFAULT 배열 값의 길이는 선언 상한 이내여야 합니다.
 
 ALTER 이후에 TAG DATA의 INSERT 또는 Append로 새 태그가 자동 등록되면, 새 메타데이터
 행에는 ADD COLUMN의 DEFAULT를 적용하지 않습니다. 추가한 ARRAY 메타데이터 컬럼은
@@ -176,13 +178,43 @@ INSERT INTO SENSOR_ARRAY VALUES
 INSERT INTO SENSOR_ARRAY VALUES (3, NULL, NULL, NULL);
 ```
 
-constructor의 요소 수는 대상 컬럼의 cardinality와 정확히 같아야 합니다. 길이가 다르면
-padding하거나 자르지 않고 문장을 실패시킵니다. 빈 `[]`와 `ARRAY[]`도 cardinality가
-0인 저장값으로 사용할 수 없습니다.
+배열 생성식의 길이는 선언 상한 이내여야 하며 실제 길이를 보존합니다.
+타입이 정해진 컬럼에 `[]` 또는 `ARRAY[]`를 넣으면 길이 0을 저장합니다.
 
 요소마다 대상 숫자 타입의 변환, 부호, 범위, `DECIMAL` precision과 scale 규칙을
 적용합니다. 한 요소라도 변환할 수 없으면 문장 전체가 실패하고 부분 `ARRAY`를 저장하지
 않습니다.
+
+### 배열의 길이와 NULL 확인
+
+[전체 생성·입력·정리 SQL](/assets/dbms-8.9/array-read/array.sql)을 전용 실습 DB에서 실행합니다.
+
+```sql
+CREATE LOG TABLE M89_ARRAY_LAB(ID INTEGER, A DOUBLE[65536]);
+INSERT INTO M89_ARRAY_LAB VALUES(1,[10.0,NULL,30.0]);
+INSERT INTO M89_ARRAY_LAB VALUES(2,[]);
+INSERT INTO M89_ARRAY_LAB VALUES(3,NULL);
+INSERT INTO M89_ARRAY_LAB VALUES(4,[NULL]);
+EXEC TABLE_FLUSH(M89_ARRAY_LAB);
+SELECT ID,ARRAY_LENGTH(A) AS N,ARRAY_VALID_MASK(A) AS MASK FROM M89_ARRAY_LAB ORDER BY ID;
+SELECT ARRAY_LENGTH(CAST([1,2] AS DOUBLE[4])) AS CAST_LENGTH;
+SELECT ARRAY_AT(ARRAY_SPARSE(INT32[65536],65535 => -3),65535) AS LAST_VALUE,
+       ARRAY_LENGTH(ARRAY_SPARSE(65535 => 7)) AS ARRAY_LENGTH_65K;
+SELECT ARRAY_LENGTH(ARRAY_SLICE(A,0,2,2)) AS SLICE_LENGTH,
+       ARRAY_AT(ARRAY_SLICE(A,0,2,2),1) AS SECOND_VALUE
+FROM M89_ARRAY_LAB WHERE ID=1;
+DROP TABLE M89_ARRAY_LAB;
+```
+
+| ID | 저장 값 | N | MASK |
+|---|---|---:|---|
+| 1 | `[10.0,NULL,30.0]` | 3 | `05` |
+| 2 | `[]` | 0 | 0바이트 BINARY |
+| 3 | `NULL` | NULL | NULL |
+| 4 | `[NULL]` | 1 | `00` |
+
+CAST 결과의 길이는 2입니다. 희소 배열은 마지막 위치 65535에 -3을 담고 길이는
+65,536입니다. stride 2로 자른 배열은 길이 2이며 두 번째 값은 30입니다.
 
 ### 숫자 범위
 
@@ -232,7 +264,7 @@ VALUES (11, [NULL, NULL, NULL, NULL]);
 
 ## 요소 조회
 
-요소 위치는 0부터 시작합니다. cardinality가 4이면 유효한 위치는 `0..3`입니다.
+요소 위치는 0부터 시작합니다. 실제 길이가 4이면 유효한 위치는 `0..3`입니다.
 
 ```sql
 SELECT CHANNELS,
@@ -244,7 +276,7 @@ SELECT CHANNELS,
 
 다음 경우에는 오류 대신 SQL `NULL`을 반환합니다.
 
-- 인덱스가 음수 또는 cardinality 이상인 경우
+- 인덱스가 음수 또는 실제 길이 이상인 경우
 - 인덱스 표현식이 SQL NULL인 경우
 - `ARRAY` 전체가 NULL인 경우
 - 해당 요소가 NULL인 경우
@@ -257,19 +289,38 @@ SELECT CHANNELS,
 
 ## ARRAY_LENGTH
 
-`ARRAY_LENGTH()`는 배열 전체가 NULL이 아니면 선언한 요소 개수(cardinality)를 반환합니다.
+`ARRAY_LENGTH()`는 배열 전체가 NULL이 아니면 실제 원소 수를 LONG으로 반환합니다.
 
 ```sql
 SELECT ID, ARRAY_LENGTH(CHANNELS)
   FROM SENSOR_ARRAY;
 ```
 
-모든 요소가 NULL이어도 cardinality를 반환합니다. whole NULL은 NULL을 반환합니다.
+빈 배열은 0을 반환합니다. 모든 원소가 NULL인 배열도 실제 길이를 반환하고, 배열 전체가 NULL이면 NULL입니다.
 타입 정보가 없는 `ARRAY_LENGTH(NULL)`은 인자 타입을 결정할 수 없으므로 오류입니다.
+
+## 원소, 구간, 유효 마스크 {#array-functions}
+
+| 함수 | 결과와 경계 |
+|---|---|
+| `ARRAY_AT(a,i)` | 0부터 시작하는 원소 위치. 음수나 실제 길이 이상의 위치는 오류입니다. `a[i]`는 범위 밖에서 SQL NULL을 반환합니다. |
+| `ARRAY_SLICE(a,start,count[,stride])` | 같은 원소 타입으로 count개를 반환합니다. start와 count는 0 이상, stride는 1 이상이며 기본 stride는 1입니다. |
+| `ARRAY_VALID_MASK(a)` | 낮은 비트부터 원소와 대응하는 BINARY입니다. 유효 원소는 1, NULL과 마지막 바이트의 남는 비트는 0입니다. |
+
+SLICE의 마지막 위치가 실제 길이 이상이면 오류입니다. count가 0이면 start가 실제 길이와
+같아도 빈 배열을 반환합니다. NULL 배열은 NULL을 반환하며 길이와 무관한 인자 오류는 검사합니다.
+빈 배열의 마스크는 0바이트이고 NULL 배열의 마스크는 SQL NULL입니다.
+
+```sql
+SELECT ARRAY_AT(ARRAY_SPARSE(INT32[65536], 65535 => -3), 65535) AS LAST_VALUE,
+       ARRAY_LENGTH(ARRAY_SPARSE(65535 => 7)) AS ELEMENT_COUNT;
+```
+
+결과는 LAST_VALUE = -3, ELEMENT_COUNT = 65536입니다.
 
 ## ARRAY 전체 CAST
 
-같은 cardinality의 숫자 `ARRAY`는 `CAST(array_expression AS TYPE[N])`로 요소 타입을
+숫자 `ARRAY`는 `CAST(array_expression AS TYPE[N])`로 요소 타입을
 전체 변환할 수 있습니다.
 
 ```sql
@@ -282,7 +333,7 @@ SELECT CAST(AMOUNTS AS DECIMAL(10,2)[2])
 
 - 입력은 숫자 `ARRAY` 또는 SQL `NULL`이어야 합니다.
 - 대상에는 이 문서의 숫자 요소 타입과 별칭을 사용할 수 있습니다.
-- 입력과 대상 cardinality는 정확히 같아야 합니다.
+- 입력의 실제 길이가 대상 선언 상한 이내이면 그 길이를 보존합니다. 상한을 넘으면 오류입니다.
 - whole NULL과 각 element NULL은 변환 뒤에도 유지됩니다.
 - 각 non-NULL 요소에는 대응하는 scalar CAST의 숫자 변환 규칙을 적용합니다.
 - `DECIMAL[N]`은 `DECIMAL(10,0)[N]`, `DECIMAL(p)[N]`은 `DECIMAL(p,0)[N]`으로
@@ -426,7 +477,8 @@ whole NULL이면 `outer == SQL_NULL_DATA`이고 `array.count == 0`입니다. NUL
 구분하려면 `element_indicators`를 제공해야 합니다. `DECIMAL`을 문자열로 받을 때는
 `element_c_type = SQL_C_CHAR`와 요소 버퍼 간 `value_stride`를 설정합니다.
 
-prepared INSERT는 `capacity`, `count`, `ColumnSize`를 대상 cardinality로 설정합니다.
+prepared INSERT에서 `capacity`는 값 버퍼 용량, `count`는 실제 원소 수,
+`ColumnSize`는 대상 선언 상한으로 설정합니다.
 
 ```c
 array.count = 3;
@@ -672,14 +724,14 @@ CSV 자동 테이블 생성에서는 `ARRAY`를 자동 추론하지 않으므로
 
 backup과 restore는 요소 타입, cardinality, `DECIMAL` precision/scale과 NULL 정보를
 보존합니다. mount 조회도 같은 결과와 메타데이터를 제공합니다. ARRAY를 포함하는 데이터는
-Machbase DBMS 8.7.0 환경에서 backup, restore와 mount를 수행합니다.
+서버와 물리 데이터의 META major·minor가 일치해야 합니다.
 
 ## 버전과 오류 처리
 
 - `ARRAY` 타입은 Machbase DBMS 8.7.0에서 지원합니다.
 - ARRAY의 SQL 요소 위치와 Machbase 전용 SDK position은 0-based입니다. 기존 1-based
   SQL과 SDK 호출은 위치를 1씩 낮춰야 합니다.
-- Machbase DBMS 8.7.0 서버와 ARRAY 기능이 포함된 SDK 빌드를 함께 사용합니다.
+- 가변 길이와 대형 배열에는 배열 확장 기능을 협상하는 8.9 서버와 SDK를 함께 사용합니다.
 - 지원하지 않는 서버 또는 SDK에서는 ARRAY를 다른 타입으로 자동 변환하지 않고 오류를
   반환합니다.
 - cardinality, position 또는 요소 변환 오류는 문장 전체를 실패시키며 부분 ARRAY를
@@ -687,3 +739,12 @@ Machbase DBMS 8.7.0 환경에서 backup, restore와 mount를 수행합니다.
 - 애플리케이션은 whole NULL과 all-element-NULL `ARRAY`를 별개의 값으로 처리해야 합니다.
 - 이 문서는 Machbase DBMS의 SQL과 SDK 기능을 다루며 Machbase Neo, HTTP, TQL과 ILP는
   범위에 포함하지 않습니다.
+
+## 대형 배열 전송 크기
+
+65,536원소 dense 값은 6바이트 길이 헤더, 8,192바이트 NULL 비트맵과 원소로 구성됩니다.
+INT32·FLOAT는 270,342바이트이며 INT64·DOUBLE은 532,486바이트입니다. DECIMAL은
+선언 정밀도에 따라 원소 크기가 달라집니다. 이 값은 개별 ARRAY payload의 크기입니다.
+
+[선언·입력·결과를 확인하는 SQL](/assets/dbms-8.9/array-read/array.sql)과
+[DFQ JOIN 실습](../../../../dfq/analysis-load/#read-storage-join)을 참고합니다.

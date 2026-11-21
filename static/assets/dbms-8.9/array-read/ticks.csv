@@ -1,0 +1,3 @@
+id,device,session_id,tick
+1,robot-a,run1,1
+2,robot-a,run2,1

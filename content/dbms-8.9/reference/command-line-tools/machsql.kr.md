@@ -270,3 +270,10 @@ DESC는 서버 파일을 열어 구조·컬럼·대표 조회를 설명합니다
 기존 DESC를 우선합니다. 내부 대상이 여럿인 파일은 목록을 확인하고 READ의 dataset·array·
 target 등으로 선택합니다. HELP는 machsql에 포함된 정적 도움말이며 파일을 열지 않습니다.
 자세한 [파일 탐색 절차](/kr/dbms-8.9/dfq/inspect/)와 [READ 문법](../../sql/syntax/read-syntax/)을 참고합니다.
+
+## 대형 ARRAY 화면 출력과 내보내기
+
+DESC는 원소 타입과 선언 상한을 표시합니다. 화면에서 폭을 넘은 ARRAY는 `...`을 표시할 수
+있습니다. SELECT를 SQL 파일에 저장하고 `machsql -f export_samples.sql -o samples.csv -i`로
+전체 원소를 CSV에 기록합니다. FLOAT·DOUBLE의 NaN, ±Inf, 원소 NULL과 음의 0을 보존해
+재적재하려면 같은 스키마와 `machloader -i -I`의 INSERT 방식을 사용합니다.

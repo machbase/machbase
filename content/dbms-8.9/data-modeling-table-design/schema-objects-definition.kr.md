@@ -166,7 +166,7 @@ DOUBLE로 변환해 계산하므로 결과가 근삿값입니다. 정확성이 �
 | `TEXT` | LOG와 Standard Edition의 TRANSACTION에서만 지원합니다. LOG의 TEXT 컬럼에는 `ORDER BY`와 `GROUP BY`를 사용할 수 없고, `MODIFY COLUMN`으로 VARCHAR로 바꿀 수도 없습니다. 정렬·집계에 쓸 값은 VARCHAR나 숫자 컬럼으로 따로 둡니다. |
 | `BINARY` | LOG는 가변 길이 최대 64MB이지만 TAG는 `BINARY(n)` 고정 길이 1~32,767 바이트로 성격이 다릅니다. LOOKUP과 VOLATILE에서는 지원하지 않습니다. |
 | `DATETIME` | 표현 범위는 1970-01-01부터 2262-04-11까지이며 나노초까지 저장합니다. 만료일이나 무기한을 뜻하는 먼 미래 시각을 임의로 넣지 않습니다. |
-| `ARRAY` | 고정 길이 1차원 숫자 배열이며 cardinality는 1~1024입니다. 전체 NULL과 요소 NULL을 구분해 설계합니다. |
+| `ARRAY` | 가변 길이 1차원 숫자 배열이며 선언 상한은 1~65,536입니다. 전체 NULL과 요소 NULL을 구분해 설계합니다. |
 
 전체 범위와 테이블 타입별 지원 여부는
 [데이터 타입 사전](/dbms-8.9/reference/sql/types/)을 기준으로 확인하십시오.

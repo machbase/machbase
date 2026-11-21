@@ -98,7 +98,7 @@ SEQUENCE 컬럼의 세부 정책은 [SEQUENCE 컬럼](/dbms-8.9/lookup-table-usa
 
 ## 컬럼 추가와 삭제
 
-Standard Edition에서는 LOOKUP 테이블에 고정 길이 숫자 ARRAY 컬럼을 추가하고 삭제할 수
+Standard Edition에서는 LOOKUP 테이블에 숫자 ARRAY 컬럼을 추가하고 삭제할 수
 있습니다.
 
 ```sql

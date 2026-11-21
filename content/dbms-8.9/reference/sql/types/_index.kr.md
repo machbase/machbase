@@ -24,7 +24,7 @@ NULL 표현에 예약된 값은 일반 데이터로 사용할 수 없습니다. 
 | `FLOAT` | 4 bytes | 32비트 단정밀도 부동소수점 | 양수 최대값 |
 | `DOUBLE` | 8 bytes | 64비트 배정밀도 부동소수점 | 양수 최대값 |
 | `DECIMAL(M,D)` | precision에 따라 가변 | exact fixed-point, M: 1~65, D: 0~30 | - |
-| `ARRAY` | 요소 타입과 cardinality에 따라 가변 | 고정 길이 1차원 숫자 배열, cardinality 1~1024 | whole NULL과 element NULL 구분 |
+| `ARRAY` | 요소 타입과 cardinality에 따라 가변 | 가변 길이 1차원 숫자 배열, 선언 상한 1~65,536 | whole NULL과 element NULL 구분 |
 | `DATETIME` | 8 bytes | 1970-01-01 ~ 2262-04-11 (나노초 정밀도) | - |
 | `VARCHAR(n)` | 가변 | 최대 n 바이트 (LOG 선언 범위: 1~32,767) | - |
 | `IPV4` | 4 bytes | 0.0.0.0 ~ 255.255.255.255 | - |

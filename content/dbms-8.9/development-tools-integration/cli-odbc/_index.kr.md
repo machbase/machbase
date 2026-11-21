@@ -276,3 +276,21 @@ BLOB_TO_TEXT의 결과는 TEXT, TEXT_TO_BLOB의 결과는 BLOB입니다. 비상�
 
 [문자셋 변환 함수](/kr/dbms-8.9/reference/sql/functions/functions-full/#blob_to_text)와
 [서버·드라이버 호환성](/kr/dbms-8.9/reference/support-scope-constraints/compatibility-xma-protocol/#실제-빈-값의-전송)을 참고합니다.
+
+## 가변 길이 ARRAY의 버퍼 크기 확인
+
+Machbase SQLCLI의 typed bind에 `SQL_C_MACHBASE_ARRAY`와 `SQL_MACHBASE_ARRAY`를 사용합니다.
+`SQL_MACHBASE_ARRAY_DESC`의 count는 실제 길이, capacity는 버퍼 원소 수입니다.
+원소 NULL은 element_indicators에 SQL_NULL_DATA를 사용합니다. 전체 NULL은 parameter
+indicator로 전달하고 빈 값은 count=0으로 전달합니다.
+
+SQLGetData는 count에 실제 길이를, indicator에 payload 바이트 수를 반환합니다.
+capacity가 부족하면 SQL_SUCCESS_WITH_INFO를 반환하며 같은 행에서 더 큰 버퍼로 재조회할
+수 있습니다. SQLDescribeCol의 컬럼 크기는 선언 상한입니다. SQL_DESC_OCTET_LENGTH는
+payload 바이트 상한, SQL_DESC_TYPE_NAME은 `DECIMAL(12,4)[7]`과 같은 선언 타입입니다.
+문자 출력 버퍼가 부족하면 01004를 반환합니다. Windows의 SQLColAttributeW와 SQLGetDescFieldW는
+UTF-16 바이트 수를 반환하며 종단 NUL 공간을 별도로 확보합니다.
+
+unixODBC에서 표준 문자 bind를 쓰면 `CAST(TO_VECTOR(?,65536) AS FLOAT[65536])`을 사용할 수
+있습니다. TO_VECTOR는 NULL 원소를 0으로 변환하므로 NULL 원소 보존에는 typed ARRAY bind를
+사용합니다. SQLGetData(SQL_C_CHAR)로 문자 결과를 나누어 읽을 수 있습니다.

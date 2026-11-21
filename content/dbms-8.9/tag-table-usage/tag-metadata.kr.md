@@ -54,7 +54,7 @@ METADATA (
 
 ### ARRAY 메타데이터 컬럼 추가와 삭제
 
-Standard Edition에서는 기존 TAG 테이블의 METADATA 영역에 고정 길이 숫자 ARRAY 컬럼을
+Standard Edition에서는 기존 TAG 테이블의 METADATA 영역에 숫자 ARRAY 컬럼을
 추가하고 삭제할 수 있습니다.
 
 ```sql

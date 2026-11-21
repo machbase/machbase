@@ -17,7 +17,7 @@ toc: true
 
 - **Standard TRANSACTION 테이블 대상**입니다. LOG/TAG의 벡터 검색이나 Cluster 지원으로 해석하지 않습니다.
 - VECTOR 지원 플랫폼은 Linux x86-64, Darwin arm64, Windows x86-64 MinGW UCRT64입니다. 플랫폼별 패키지에 VECTOR 기능이 포함됐는지도 확인합니다.
-- `VECTOR(n)`은 유한 FLOAT32 숫자 1~65,536개를 저장합니다. SQL ARRAY의 1,024 요소 상한과 다릅니다.
+- `VECTOR(n)`은 유한 FLOAT32 숫자 1~65,536개를 저장합니다. 숫자 ARRAY는 선언 상한 안에서 행마다 실제 길이가 달라질 수 있습니다.
 - 문서를 문단/절/표/절차 단위의 **청크**로 나누고 출처를 보존하는 일, 임베딩 모델 실행, 최종 LLM 호출은 애플리케이션이 담당합니다.
 - `TO_VECTOR('문장',1024)`는 임베딩 API가 아닙니다. 이 함수는 **숫자 배열 텍스트**를 VECTOR로 바꿉니다.
 - HNSW·IVF는 ANN 방식입니다. `MODE AUTO`는 ANN 강제가 아니며, 인덱스 상태·거리·필터에 따라 Exact 경로를 선택할 수 있습니다.

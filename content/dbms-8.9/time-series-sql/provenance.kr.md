@@ -196,3 +196,22 @@ SELECT e.ID,m.VALUE FROM TS13_EVENT e WITH SOURCE(ID(CAST(NULL AS LONG))) ASOF J
 ```text
 2010 - Syntax error: near token (E_PROVENANCE_SOURCE_ID).
 ```
+
+## READ와 저장 테이블의 출처
+
+선택된 READ 행의 source·target·mapping·locator는 `read_origin`에 있습니다.
+strong snapshot의 `read_origin.replay.example_sql`은 revision과 mapping을 고정합니다.
+원본 교체나 같은 실행의 재스캔 중 구성 파일 교체는 `SOURCE_CHANGED`로 진단합니다.
+고정한 revision을 다시 읽으려면 해당 원본이 필요합니다.
+
+| 저장 원본 | `storage_origin`의 읽기 범위 | 일관성 |
+|---|---|---|
+| LOG | `log_rid_view` | best_effort |
+| TAG | `tag_partition_views` | best_effort |
+| 읽기 트랜잭션이 확인된 TRANSACTION | `sqlite_table_snapshot` | 해당 테이블 읽기 범위에서 fixed |
+
+세 저장 범위의 `snapshot`은 NULL입니다. 혼합 질의 전체의 일관성은 각 원본의 범위와 구분합니다.
+`query.sql`과 `query.binds`는 실행문과 바인딩을 제공합니다. `query.views`는 확장된
+VIEW의 카탈로그 ID, 테이블 ID, 정의 SHA-256을 기록합니다. 이름과 정의의 공개 범위는
+`M$SYS_VIEWS` 접근 권한을 따릅니다.
+[SQL 셀의 원본 위치](../../dfq/sql-source/#sql-셀의-출처-위치)도 확인할 수 있습니다.

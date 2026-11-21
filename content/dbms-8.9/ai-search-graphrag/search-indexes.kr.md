@@ -62,7 +62,7 @@ score = w/(60 + vector_rank) + (1-w)/(60 + text_rank)
 | `VECTOR_DISTANCE(a,b,'L2')` | 제곱하지 않은 Euclidean 거리 |
 | `VECTOR_DISTANCE(a,b,'INNER_PRODUCT')` | 내적의 음수 |
 | `VECTOR_TO_JSON(v)` | 숫자 JSON TEXT |
-| `CAST(v AS FLOAT[n])` / `DOUBLE[n]` | 같은 차원의 SQL ARRAY. ARRAY 쪽 n<=1024 |
+| `CAST(v AS FLOAT[n])` / `DOUBLE[n]` | 같은 차원의 SQL ARRAY. ARRAY 선언 상한 n≤65536 |
 
 모든 거리에서 작은 값이 앞입니다. 거리 함수의 세 번째 인자는 `'L2'`처럼 문자열입니다. 입력 차원은 맞아야 하고 NaN/Infinity·잘못된 숫자 JSON·범위 초과를 거부합니다. JSON 또는 고정 VECTOR 컬럼의 짧은 입력은 뒤에0을 채우지만 차원 초과는 오류입니다. JSON의 NULL 요소는0으로 보정하며, 컬럼 전체 SQL NULL과 영벡터는 구분합니다. SDK의 요소 NULL 정책은 언어별로 다릅니다.
 

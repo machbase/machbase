@@ -84,7 +84,7 @@ VALUES ('ERP-01', 'Duplicate Pump');
 | 발생·변경 시각 | DATETIME | 원본 시간대와 변환 형식 |
 | 네트워크 주소 | IPV4·IPV6 | 주소 형식과 비교 의미 |
 | 부가 속성 | JSON | 자주 검색할 경로와 타입 |
-| 고정 길이 수치 묶음 | 숫자 ARRAY | 요소 타입·길이·whole NULL과 요소 NULL |
+| 가변 길이 수치 묶음 | 숫자 ARRAY | 요소 타입·길이·whole NULL과 요소 NULL |
 
 전체 범위는 [데이터 타입 사전](/dbms-8.9/reference/sql/types/)을,
 금액은 [DECIMAL](/dbms-8.9/reference/sql/types/decimal-numeric-fixed-point/)을

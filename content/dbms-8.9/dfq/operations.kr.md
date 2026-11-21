@@ -76,3 +76,13 @@ CSV_PARALLEL의 requested·effective·used·worker_rows·auto_decision을 확인
 TEXT_TOPN은 K=LIMIT+OFFSET, seen·stored·peak_rows·peak_bytes·transitions를 표시합니다.
 후보 메모리가 부족하면 임시 디스크 정렬로 전환하며, 작은 LIMIT이 모든 입력의 읽기와
 표현식 검사를 없애지 않습니다. GROUP_CONCAT 결과의 32 KiB 한도는 유지합니다.
+
+## EXPLAIN FULL의 READ 실행 계수
+
+- `READ_SCAN`은 reader가 순회에서 반환한 행을 셉니다. `row=` 선택 이전에 순회한 행도
+  포함하며 선택 행의 위치를 다시 읽어 값을 구성할 때는 행 수가 늘지 않습니다.
+- `READ_INPUT.source_bytes`는 DATA 실행 중 source 인터페이스가 반환한 바이트입니다.
+  `decoded_bytes`는 CSV·JSON의 변환 입력, NPY·NPZ의 NPY 디코더 입력,
+  MCAP의 디코딩된 메시지 입력을 셉니다. HDF5·Parquet은 디코더가 전달한 수치 값과
+  문자열·바이너리의 논리 바이트를 셉니다. LeRobot은 단계 Parquet 파일의 계수를 합산합니다.
+- `READ_ARRAY`는 SQL 결과에 전달한 native ARRAY payload를 기록합니다.

@@ -66,10 +66,9 @@ AUTH_SIG_SCHEME=ECDSA;
 
 ### ARRAY와 선택 컬럼 Append
 
-고정 길이 숫자 ARRAY와 선택 컬럼 Append는 Machbase DBMS 8.7.0에서 지원합니다. DBMS
-8.7.0 서버와 ARRAY 기능이 포함된 SDK 빌드를 함께 사용하십시오. 구버전 서버 또는 기능이
-포함되지 않은 SDK는 ARRAY 메타데이터나 값을 기존 scalar 타입으로 대체하지 않으며 해당
-요청을 오류로 처리합니다.
+숫자 ARRAY와 선택 컬럼 Append는 8.7에서 도입했습니다. 8.9에서 가변 길이와 대형
+ARRAY를 사용하려면 서버와 SDK가 [ARRAY 확장 기능](#array-extension-negotiation)을
+협상해야 합니다. 지원되지 않는 ARRAY 메타데이터나 값은 호환 오류를 반환합니다.
 
 ARRAY의 SQL 요소 위치와 Machbase 전용 SDK position은 0-based입니다. 기존 1-based SQL,
 sparse 객체와 indexed Append target은 위치를 1씩 낮춥니다. 저장 데이터와 dense ARRAY
@@ -77,7 +76,7 @@ sparse 객체와 indexed Append target은 위치를 1씩 낮춥니다. 저장 �
 표준 API가 정의한 1-based 위치는 이 변경의 대상이 아닙니다.
 
 Cluster Edition은 coordinator, broker와 warehouse를 모두 ARRAY를 지원하는 같은 DBMS
-8.7.0 빌드로 구성합니다. 혼합 버전 상태에서는 ARRAY DDL이나 ARRAY 데이터를 사용하는
+빌드로 구성합니다. 혼합 버전 상태에서는 ARRAY DDL이나 ARRAY 데이터를 사용하는
 작업을 시작하지 마십시오.
 
 SQL과 SDK별 요구사항은
@@ -141,3 +140,21 @@ INSERT는 오류입니다. Cluster는 관련 함수를 지원하는 같은 버�
 
 [SQLCLI 바인딩](/kr/dbms-8.9/development-tools-integration/cli-odbc/#실제-빈-값과-null-바인딩)과
 [JDBC 예제](/kr/dbms-8.9/development-tools-integration/jdbc/prepared-types/#빈-인코딩-입력을-명시적으로-바인딩)를 참고합니다.
+
+## DBMS 8.9 숫자 ARRAY 확장 협상 {#array-extension-negotiation}
+
+8.9의 프로토콜 버전은 4.0.5입니다. 연결 시 SQLCLI·JDBC·Python과 서버가 ARRAY 확장
+기능을 협상해야 가변 길이와 큰 ARRAY 선언 메타데이터를 사용할 수 있습니다.
+미협상 클라이언트는 상한 1,024 이하의 기존 선언 길이와 같은 dense 값 또는 전체 NULL을
+처리합니다. 짧거나 빈 값과 상한 1,024를 넘는 ARRAY 메타데이터에는 호환 오류가 발생합니다.
+SDK 이름이나 프로토콜 번호만으로 협상 성공을 판단하지 않습니다.
+
+| 값 | dense 길이 헤더 |
+|---|---|
+| 원소 1~1,024개 | 기존 16비트 길이 |
+| 빈 배열 | 16비트 `0xFFFE` |
+| 원소 1,025~65,536개 | 16비트 `0xFFFF` 뒤에 32비트 길이 |
+
+길이는 big-endian이며 비트맵과 원소가 이어집니다. SQLCLI·JDBC·Python의 희소 입력은
+1,025원소부터 원소 NULL을 유지하는 확장 dense로 전송할 수 있습니다. 협상된 APPEND에서
+배열 위치 1,024부터 32비트 위치 형식을 사용합니다.

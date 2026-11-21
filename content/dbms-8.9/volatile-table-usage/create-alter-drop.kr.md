@@ -91,7 +91,7 @@ VOLATILE 테이블은 서버 재시작 시 데이터가 사라지므로 다음 �
 
 ### 컬럼 추가와 삭제
 
-Standard Edition에서는 VOLATILE 테이블에 고정 길이 숫자 ARRAY 컬럼을 추가하고 삭제할
+Standard Edition에서는 VOLATILE 테이블에 숫자 ARRAY 컬럼을 추가하고 삭제할
 수 있습니다.
 
 ```sql

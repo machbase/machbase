@@ -102,3 +102,10 @@ TEXT를 READ에 전달하므로 다시 encoding=cp949를 적용하지 않습니�
 
 [CAST와 인코딩 함수](/kr/dbms-8.9/reference/sql/functions/functions-full/#blob_to_text)의
 허용 타입·출력 크기·NULL·인코딩 오류 규칙을 함께 확인합니다.
+
+## SQL 셀의 출처 위치
+
+출처의 `identity.parent_key`는 입력 SQL의 1부터 시작하는 행 번호입니다.
+`origins[].locator`는 입력의 `sql_source_row`와 셀 내부의 `decoder_locator`를 제공합니다.
+SQL NULL 셀도 입력 순번에 포함됩니다. SQL 셀 원본 위치의 일관성은 best_effort이며
+파일 revision을 고정하는 `replay`는 NULL입니다.

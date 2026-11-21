@@ -955,3 +955,17 @@ native VECTOR를 지원하지 않는 클라이언트에서는 숫자 JSON을 `TO
 순차 소비할 수 있습니다. fetchmany로 처리하고 finally에서 cursor와 연결을 닫습니다.
 EOF 전 rowcount=-1과 EOF 후 소비 행 수를 구분합니다. fetchall은 남은 결과를 모두
 수신합니다. [실행 예제](/kr/dbms-8.9/dfq/clients/)를 참고합니다.
+
+## 길이가 다른 숫자 ARRAY 읽기
+
+일반 fetch는 ARRAY를 Python list로 반환합니다. `fetchone_typed()`의 `ArrayValue`는
+`actual_length`, `declared_max_elements`, `element_type`, `dtype`, `shape`와
+`max_value_bytes`를 제공합니다. `values`는 cursor를 닫아도 사용할 수 있는 tuple입니다.
+`null_mask`의 True는 NULL 원소입니다. NumPy를 설치하면 `to_numpy()`로 masked array의
+복사본을 만들 수 있으며 DECIMAL은 Decimal 객체를 유지합니다.
+
+`None` bind는 배열 전체 NULL, 빈 list bind는 빈 배열입니다. `stream=True`에서
+`arraysize`는 FETCH 행 수 상한입니다. 최대 1,000행이며 투영 ARRAY의 선언 payload 상한
+합계에 따라 요청을 약 8 MiB 이하로 줄입니다. 한 행의 상한이 이를 넘으면 한 행씩 받습니다.
+`fetchmany(size)`는 필요한 FETCH를 이어서 수행합니다.
+[실행 가능한 Python 예제](/assets/dbms-8.9/array-read/python-array.py)를 참고합니다.

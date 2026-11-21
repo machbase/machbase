@@ -19,7 +19,7 @@ toc: true
 | 다른 사업장 문서가 반환 | 검색 함수 내부 FILTER에 tenant·ACL을 넣었는지 |
 | 결과는 나오지만 질문에 답할 근거가 없음 | Top-K는 답변 가능성 보장이 아님. evidence와 적절한 abstention 정책 확인 |
 | Vector is not a constructor / enum 없음 | 실제 최신 SDK 경로·로컬 package 확인 |
-| VECTOR(4096)을 DOUBLE[4096]으로 못 읽음 | SQL ARRAY는1024 상한. native VECTOR 또는 JSON TEXT로 조회 |
+| VECTOR를 숫자 ARRAY로 변환한 값을 클라이언트에서 받지 못함 | 대상 ARRAY의 선언 상한과 연결의 ARRAY 확장 기능 협상을 확인 |
 | 질문마다 모델 로딩이 오래 걸림 | CLI의 새 프로세스 특성. 서비스에서는 모델 인스턴스 재사용 |
 | 재실행 시 테이블/PK 충돌 | 앞선 실습 상태 확인. 본인이 만든 M89_ 객체만 명시 정리 |
 

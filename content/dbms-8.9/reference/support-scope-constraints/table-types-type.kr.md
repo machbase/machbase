@@ -38,7 +38,7 @@ Machbase는 용도에 따라 다섯 가지 테이블 유형을 제공합니다. 
 | JSON path query | O | O | O | X | O |
 | **고정소수점** | | | | | |
 | DECIMAL / NUMERIC 컬럼 | O | O | O | O | O |
-| **고정 길이 ARRAY** | | | | | |
+| **숫자 ARRAY** | | | | | |
 | ARRAY 컬럼 생성 | O | O | O | O | O |
 | ARRAY ADD/DROP COLUMN | △ | O | O | O | O |
 | **인덱스** | | | | | |

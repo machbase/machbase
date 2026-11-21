@@ -79,7 +79,7 @@ Edition 전용이므로 Cluster Edition에서는 세 TRANSACTION 생성 문법�
 scale은 precision보다 클 수 없습니다. 자세한 내용은 [DECIMAL과 NUMERIC 고정소수점
 타입](/dbms-8.9/reference/sql/types/decimal-numeric-fixed-point/)을 참고하십시오.
 
-Machbase DBMS 8.7.0의 `ARRAY`는 숫자 요소 타입 뒤에 `1..1024` 범위의 cardinality를
+Machbase DBMS 8.9의 `ARRAY`는 숫자 요소 타입 뒤에 `1..65536` 범위의 최대 원소 수를
 지정합니다. 지원 타입과 테이블별 제약은
 [숫자 ARRAY 타입](/dbms-8.9/reference/sql/types/array/)을 참고하십시오.
 
@@ -206,8 +206,8 @@ ALTER TABLE sensor_tag METADATA
 ```
 
 `DECIMAL(p)[n]` ARRAY에서 scale을 생략하면 0으로 처리합니다. ARRAY DEFAULT의 요소 수는
-선언 cardinality와 정확히 같아야 합니다. 잘못된 요소 타입, cardinality, precision,
-scale, 중첩 또는 다차원 선언과 길이가 다른 DEFAULT는 컬럼을 일부 생성하지 않고 문장
+선언 상한 이내여야 합니다. 잘못된 요소 타입, cardinality, precision,
+scale, 중첩·다차원 선언 또는 상한을 넘는 DEFAULT는 컬럼을 일부 생성하지 않고 문장
 전체를 실패시킵니다.
 
 #### ARRAY ADD COLUMN 지원 범위

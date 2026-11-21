@@ -30,7 +30,7 @@ DB의 TEXT/BINARY → 내부 SELECT → 셀별 READ ─────────�
 | [12.5 구조화된 값과 원문 추출](./extract/) | 필드·배열·노드·추가 컬럼·원문 청크 |
 | [12.6 여러 파일과 압축 파일](./multiple-files/) | 파일 목록·glob·스키마 결합·압축 |
 | [12.7 SQL 결과를 입력으로 조회](./sql-source/) | TEXT/BINARY 셀·스키마 추론·READ_INFER |
-| [12.8 분석과 테이블 적재](./analysis-load/) | 조건·JOIN·집계·TEXT·INSERT SELECT |
+| [12.8 분석과 테이블 적재](./analysis-load/) | 조건·JOIN·집계·TEXT·INSERT SELECT, 파일 관측과 저장 테이블의 시간 JOIN |
 | [12.9 애플리케이션에서 결과 받기](./clients/) | Python 스트리밍·메타데이터·부분 읽기 |
 | [12.10 권한과 운영](./operations/) | 디렉터리 권한·일관성·자원·취소 |
 | [12.11 문제 해결과 지원 범위](./troubleshooting/) | 오류 원인·해결과 포맷 지원표 |

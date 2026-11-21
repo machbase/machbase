@@ -218,20 +218,28 @@ FROM api_log;
 
 ## ARRAY_LENGTH
 
-`ARRAY_LENGTH(array_value)`는 non-NULL `ARRAY`의 선언 cardinality를 반환합니다.
+`ARRAY_LENGTH(array_value)`는 숫자 ARRAY의 실제 길이를 LONG으로 반환합니다.
 
 ```sql
 SELECT ARRAY_LENGTH(ARRAY[10, NULL, 30]);
 -- 3
 ```
 
-모든 요소가 NULL이어도 cardinality를 반환합니다. whole NULL은 NULL을 반환하며, 타입
+빈 배열은 0이며 모든 원소가 NULL인 배열은 실제 길이를 반환합니다. 배열 전체가 NULL이면 NULL이며, 타입
 정보가 없는 `ARRAY_LENGTH(NULL)`은 오류입니다. 자세한 ARRAY 문법과 제약은
 [숫자 ARRAY 타입](/dbms-8.9/reference/sql/types/array/)을 참고하십시오.
 
+## ARRAY_AT / ARRAY_SLICE / ARRAY_VALID_MASK
+
+`ARRAY_AT(a,i)`는 0부터 시작하는 위치의 원소를 반환하며 범위 밖에서 오류를 반환합니다.
+`ARRAY_SLICE(a,start,count[,stride])`는 같은 원소 타입을 유지하며 지정한 개수만큼 선택합니다.
+`ARRAY_VALID_MASK(a)`는 유효 원소를 낮은 비트부터 1로 표시하는 BINARY를 반환합니다.
+
+[인자 범위와 예제](../../types/array/#array-functions)를 참고합니다.
+
 ## ARRAY_SPARSE
 
-`ARRAY_SPARSE`는 고정 길이 `ARRAY`에서 값이 있는 위치만 지정합니다. 위치는 0부터
+`ARRAY_SPARSE`는 숫자 `ARRAY`에서 값이 있는 위치만 지정합니다. 위치는 0부터
 시작하며, 생략한 위치는 element NULL입니다.
 
 ```sql

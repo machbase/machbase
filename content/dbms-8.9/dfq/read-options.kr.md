@@ -79,3 +79,21 @@ SQL 문자열 안의 작은따옴표는 두 번 씁니다. names/null_values/sou
 native 정수의 NULL 예약값·JSON 32 KiB·VARCHAR 32 KiB·TEXT/BINARY의 64 MiB 한도와
 reader별 레코드·작업 예산을 함께 적용합니다. native에서 표현할 수 없는 원래 값은
 지원되는 envelope·원문 경로를 확인하며 오류를 임의의 NULL이나 잘린 값으로 대체하지 않습니다.
+
+## 1차원 숫자 목록을 ARRAY로 반환하기 {#typed-numeric-array}
+
+`project.payload=원본필드`로 목록을 선택하고 `type.payload=DOUBLE[65536]`로 반환 타입과
+상한을 정합니다. 목록의 실제 길이와 원소 NULL을 유지합니다. 중첩 배열, 숫자로 변환할 수
+없는 원소, 선언한 최대 길이를 넘는 목록은 오류입니다. 변환 진단의 source·행·필드 경로와
+원소 위치를 확인합니다.
+
+| 입력 | 수치 배열 예 |
+|---|---|
+| JSON·JSONL | 숫자 목록. 정수·DECIMAL은 목표 숫자 타입을 지정 |
+| Parquet | 1차원 숫자 LIST |
+| LeRobot v3.0 | `project.payload="observation.state"`와 `type.payload=DOUBLE[65536]` |
+| NPY·NPZ | 구조화 레코드 필드의 1차원 수치 배열 |
+| HDF5 | compound의 수치 배열 또는 가변 길이 수치 데이터셋 |
+| MCAP | 해석한 메시지 필드의 고정 길이 또는 가변 길이 숫자 배열 |
+
+[실습 SQL과 파일](../analysis-load/#read-storage-join)을 내려받아 확인합니다.

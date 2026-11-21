@@ -203,3 +203,11 @@ try (PreparedStatement statement = connection.prepareStatement(
 새 드라이버가 구서버에 실제 빈 bind를 보낼 수 없으면 전송 전에 미지원 오류를 반환합니다.
 NULL로 조용히 바꾸어 보내지 않습니다. 실제 빈 값을 저장할 수 없는 컬럼에 INSERT할 때의
 오류와 SELECT·함수 변환에서 빈 값을 보존하는 동작을 구분합니다.
+
+## 가변 길이 ARRAY의 선언·실제 길이
+
+`Connection.createArrayOf()`와 `PreparedStatement.setArray()`로 실제 길이의 배열을
+전달합니다. 빈 Java 배열과 `setNull(index, Types.ARRAY)`를 구분합니다.
+`ResultSet.getArray().getArray()`는 실제 원소를 반환합니다. 먼저 SQL NULL 여부를
+확인합니다. `ResultSetMetaData.getPrecision()`은 선언 상한이며 실제 행별 길이는
+반환 배열에서 확인합니다. 대형·가변 길이에는 ARRAY 확장을 협상하는 서버와 JDBC를 사용합니다.
