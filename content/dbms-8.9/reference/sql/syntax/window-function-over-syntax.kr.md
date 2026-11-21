@@ -27,8 +27,8 @@ LEAD(value_expression, offset) OVER (
 |------|------|
 | `value_expression` | 이전 또는 다음 행에서 가져올 값 |
 | `offset` | 현재 행에서 떨어진 행 수. 1 이상의 정수를 지정 |
-| `PARTITION BY` | 비교할 행을 그룹으로 나누는 단일 식. 생략하면 전체 결과를 한 그룹으로 처리 |
-| `ORDER BY` | 그룹 안에서 비교 순서를 정하는 단일 식 |
+| `PARTITION BY` | 비교할 행을 그룹으로 나누는 식 목록. 생략하면 전체 결과를 한 그룹으로 처리 |
+| `ORDER BY` | 그룹 안에서 비교 순서를 정하는 식 목록 |
 
 `OVER`는 필수이며, 괄호 안의 `PARTITION BY`와 `ORDER BY`는 생략할 수 있습니다.
 시간순 비교에는 `ORDER BY time`처럼 기준을 명시하십시오. 정렬 기준 값이 같은 행 사이의
@@ -50,16 +50,24 @@ LEAD(value_expression, offset) OVER (
 <a id="순위-함수"></a>
 <a id="집계-윈도우-함수"></a>
 
-### 다른 DBMS의 윈도우 문법과 구분
+### 집계 윈도 함수와 ROWS 프레임
 
-다음 문법을 Machbase의 `LAG`/`LEAD` 문법과 혼동하지 마십시오.
+Standard Edition에서는 SUM·AVG·MIN·MAX·COUNT 등의 집계에 OVER와 ROWS 프레임을
+사용할 수 있습니다. PARTITION BY·ORDER BY에 복수 키와 정렬 방향을 지정할 수 있습니다.
+윈도 내부 ORDER BY 조합은 행을 유일하게 구분해야 하며 같은 시각에는 보조 키를 추가합니다.
 
-- `ROW_NUMBER()`, `RANK()`, `DENSE_RANK()`, `FIRST_VALUE()`, `LAST_VALUE()`는 지원하지 않습니다.
-- `SUM(...) OVER (...)`, `AVG(...) OVER (...)` 등의 집계 윈도우 함수는 지원하지 않습니다.
-- `ROWS`/`RANGE` 프레임과 `UNBOUNDED PRECEDING`, `CURRENT ROW` 같은 프레임 경계를
-  지정할 수 없습니다.
-- `OVER` 안의 `PARTITION BY`와 `ORDER BY`에는 각각 하나의 식만 지정할 수 있습니다.
-  `ORDER BY` 뒤에 `ASC`/`DESC`를 지정하는 문법도 지원하지 않습니다.
+```sql
+SUM(value) OVER (
+    PARTITION BY name ORDER BY time, id
+    ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
+)
+```
+
+이 식은 같은 name에서 현재 행과 앞 두 행을 더합니다. 프레임은 파티션 경계에서 잘립니다.
+UNBOUNDED PRECEDING·CURRENT ROW·N PRECEDING/FOLLOWING·UNBOUNDED FOLLOWING을
+프레임 위치에 맞게 사용합니다. N은 0 이상의 정수입니다.
+전체 데이터와 이동·누적 집계 결과는 [13.6 ROWS 윈도 프레임](../../../../time-series-sql/rows/)을 참고합니다.
+시간 범위의 집계는 [WINDOW JOIN](../../../../time-series-sql/joins/window/)에서 설명합니다.
 
 결과 행에 번호를 붙이는 `ROWNUM()`과 연속 구간 번호를 구하는 `SERIESNUM()`은
 [윈도우/시리즈 함수](../../functions/series/)에서 설명합니다.

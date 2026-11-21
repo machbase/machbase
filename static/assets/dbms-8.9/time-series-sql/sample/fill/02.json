@@ -1,0 +1,44 @@
+{
+  "index": 93,
+  "topic": "sample/fill",
+  "title": "빈 버킷을 NULL로 표현",
+  "file": "sample/fill/02.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "A",
+      0,
+      20.0
+    ],
+    [
+      "A",
+      1,
+      null
+    ],
+    [
+      "A",
+      2,
+      24.0
+    ],
+    [
+      "A",
+      3,
+      null
+    ],
+    [
+      "A",
+      4,
+      null
+    ],
+    [
+      "A",
+      5,
+      30.0
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "BUCKET",
+    "V"
+  ]
+}

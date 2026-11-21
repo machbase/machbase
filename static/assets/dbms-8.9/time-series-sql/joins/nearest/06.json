@@ -1,0 +1,19 @@
+{
+  "index": 26,
+  "topic": "joins/nearest",
+  "title": "같은 거리이면 과거 관측 선택",
+  "file": "joins/nearest/06.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      5,
+      116,
+      1936.0
+    ]
+  ],
+  "columns": [
+    "EVENT_ID",
+    "MOTOR_ID",
+    "MOTOR_VALUE"
+  ]
+}

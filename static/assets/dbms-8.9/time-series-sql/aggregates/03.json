@@ -1,0 +1,21 @@
+{
+  "index": 190,
+  "topic": "aggregates",
+  "title": "NULL value를 입력에서 명시 제외",
+  "file": "aggregates/03.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      20.0,
+      40.0,
+      20.0,
+      20.0
+    ]
+  ],
+  "columns": [
+    "FIRST_NOT_NULL(V)",
+    "LAST_NOT_NULL(V)",
+    "ARG_MIN(V,Q)",
+    "ARG_MAX(V,Q)"
+  ]
+}

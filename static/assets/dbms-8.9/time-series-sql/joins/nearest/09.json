@@ -1,0 +1,8 @@
+{
+  "index": 29,
+  "topic": "joins/nearest",
+  "title": "기본 TIE ERROR의 중복 진단",
+  "file": "joins/nearest/09.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "Function [E_TIE_CONFLICT] argument data type does not match."
+}

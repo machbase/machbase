@@ -1,0 +1,17 @@
+{
+  "index": 202,
+  "topic": "pivot",
+  "title": "IN 순서가 결과 열 순서",
+  "file": "pivot/05.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      12.0,
+      74.0
+    ]
+  ],
+  "columns": [
+    "K2",
+    "K1"
+  ]
+}

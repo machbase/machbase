@@ -1,0 +1,21 @@
+{
+  "index": 192,
+  "topic": "aggregates",
+  "title": "입력이 없는 집계",
+  "file": "aggregates/05.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "columns": [
+    "FIRST_NOT_NULL(V)",
+    "LAST_NOT_NULL(V)",
+    "ARG_MIN(V,Q)",
+    "ARG_MAX(V,Q)"
+  ]
+}

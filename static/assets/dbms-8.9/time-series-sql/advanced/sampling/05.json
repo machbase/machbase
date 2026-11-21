@@ -1,0 +1,34 @@
+{
+  "index": 175,
+  "topic": "advanced/sampling",
+  "title": "교차 PREV와 출력별 서로 다른 기간",
+  "file": "advanced/sampling/05.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      0,
+      20.0,
+      30.0
+    ],
+    [
+      1,
+      30.0,
+      20.0
+    ],
+    [
+      2,
+      40.0,
+      40.0
+    ],
+    [
+      3,
+      40.0,
+      40.0
+    ]
+  ],
+  "columns": [
+    "SECOND",
+    "A",
+    "B"
+  ]
+}

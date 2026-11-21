@@ -1,0 +1,19 @@
+{
+  "index": 132,
+  "topic": "sample/tag-targets",
+  "title": "정확 시각이 없으면 NULL",
+  "file": "sample/tag-targets/05.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "edu27_main",
+      "2027-01-01 00:00:21",
+      null
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "TARGET_TIME",
+    "MOTOR_VALUE"
+  ]
+}

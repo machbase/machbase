@@ -1,0 +1,8 @@
+{
+  "index": 185,
+  "topic": "rows",
+  "title": "윈도 내부의 모호한 정렬 순서",
+  "file": "rows/07.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "Function [E_TIE_CONFLICT] argument data type does not match."
+}

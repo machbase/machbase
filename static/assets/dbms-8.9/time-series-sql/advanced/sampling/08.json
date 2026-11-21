@@ -1,0 +1,8 @@
+{
+  "index": 178,
+  "topic": "advanced/sampling",
+  "title": "PREV 대상 별칭 부재",
+  "file": "advanced/sampling/08.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2374 - Invalid FILL PREV reference (MISSING). The alias does not exist in the SELECT outputs."
+}

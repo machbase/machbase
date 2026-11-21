@@ -1,0 +1,8 @@
+{
+  "index": 135,
+  "topic": "sample/tag-targets",
+  "title": "문자열을 지정 시간축으로 사용 거부",
+  "file": "sample/tag-targets/08.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2010 - Syntax error: near token (E_TS_REQUIRED)."
+}

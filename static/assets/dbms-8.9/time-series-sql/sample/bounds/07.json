@@ -1,0 +1,8 @@
+{
+  "index": 115,
+  "topic": "sample/bounds",
+  "title": "역순 출력 범위 거부",
+  "file": "sample/bounds/07.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2229 - Invalid argument value for function (SAMPLE FROM/TO)."
+}

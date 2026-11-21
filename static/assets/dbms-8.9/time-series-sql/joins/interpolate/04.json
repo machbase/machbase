@@ -1,0 +1,17 @@
+{
+  "index": 34,
+  "topic": "joins/interpolate",
+  "title": "정확 일치는 다른 endpoint 없이 반환",
+  "file": "joins/interpolate/04.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      1,
+      100.0
+    ]
+  ],
+  "columns": [
+    "ID",
+    "VALUE"
+  ]
+}

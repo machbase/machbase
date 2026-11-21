@@ -14,13 +14,22 @@ toc: true
 ```sql
 SELECT *
   FROM (inline_view)
- PIVOT (aggregate_function(value_col) FOR category_col IN ('val1', 'val2', ...))
+ PIVOT (aggregate_expr [AS agg_alias] [, ...]
+        FOR category_col IN ('val1' AS col1, 'val2' AS col2, ...)
+        [GROUP BY group_expr, ...])
 [WHERE ...]
 ```
 
 - `inline_view`에서 PIVOT 절에 사용되지 않은 컬럼에 대해 GROUP BY를 수행합니다.
 - `FOR category_col IN (...)`: 피벗 기준 컬럼과 열로 변환할 값 목록을 지정합니다.
-- 결과 컬럼명은 IN 절에 지정한 문자열 값이 됩니다.
+- 복수 집계는 IN 키 순서와 집계식 순서로 열을 만들며 `IN별칭_집계별칭` 이름을 사용합니다.
+- 명시 GROUP BY가 있으면 해당 식만 그룹 키로 사용합니다.
+- IN에는 한 열을 반환하는 SELECT도 사용할 수 있으며 prepare 시 결과 스키마가 고정됩니다.
+  새 키를 결과 열로 추가하려면 다시 prepare합니다.
+- 존재하는 그룹의 빈 COUNT 셀은 0입니다. 중복 IN 키는 ERR-02385입니다.
+
+복수 집계·집계 결과 식·동적 열·그룹 구성의 전체 실행 예제는
+[13.8 PIVOT으로 시계열 비교하기](../../../../time-series-sql/pivot/)를 참고합니다.
 
 ## 예시
 

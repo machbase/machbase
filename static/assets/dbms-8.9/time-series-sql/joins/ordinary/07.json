@@ -1,0 +1,21 @@
+{
+  "index": 61,
+  "topic": "joins/ordinary",
+  "title": "LEFT 뒤 WHERE가 NULL 확장을 제거",
+  "file": "joins/ordinary/07.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      1,
+      101
+    ],
+    [
+      1,
+      102
+    ]
+  ],
+  "columns": [
+    "LEFT_ID",
+    "RIGHT_ID"
+  ]
+}

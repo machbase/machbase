@@ -1,0 +1,8 @@
+{
+  "index": 127,
+  "topic": "sample/alignment",
+  "title": "OFFSET의 잘못된 시각 형식",
+  "file": "sample/alignment/11.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2229 - Invalid argument value for function (SAMPLE WITH OFFSET)."
+}

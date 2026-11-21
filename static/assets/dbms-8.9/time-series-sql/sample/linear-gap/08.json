@@ -1,0 +1,8 @@
+{
+  "index": 108,
+  "topic": "sample/linear-gap",
+  "title": "고정 기간에 월 사용 거부",
+  "file": "sample/linear-gap/08.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2370 - FILL(LINEAR MAX GAP) requires a positive fixed duration, such as 2s or 1m30s."
+}

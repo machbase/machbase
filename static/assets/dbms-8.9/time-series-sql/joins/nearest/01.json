@@ -1,0 +1,58 @@
+{
+  "index": 21,
+  "topic": "joins/nearest",
+  "title": "공통 데이터의 5초 허용차",
+  "file": "joins/nearest/01.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      1,
+      10,
+      104,
+      10,
+      100.0
+    ],
+    [
+      2,
+      21,
+      108,
+      22,
+      484.0
+    ],
+    [
+      3,
+      30,
+      111,
+      30,
+      900.0
+    ],
+    [
+      4,
+      41,
+      115,
+      42,
+      1764.0
+    ],
+    [
+      5,
+      46,
+      116,
+      44,
+      1936.0
+    ],
+    [
+      6,
+      60,
+      null,
+      null,
+      null
+    ]
+  ],
+  "columns": [
+    "EVENT_ID",
+    "EVENT_S",
+    "MOTOR_ID",
+    "MOTOR_S",
+    "MOTOR_VALUE"
+  ]
+}

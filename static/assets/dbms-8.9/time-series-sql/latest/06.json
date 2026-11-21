@@ -1,0 +1,12 @@
+{
+  "index": 80,
+  "topic": "latest",
+  "title": "입력이 없는 장치",
+  "file": "latest/06.sql",
+  "status": "PASS",
+  "rows": [],
+  "columns": [
+    "NAME",
+    "VALUE"
+  ]
+}

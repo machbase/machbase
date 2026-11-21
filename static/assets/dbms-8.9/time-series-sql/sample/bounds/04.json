@@ -1,0 +1,34 @@
+{
+  "index": 112,
+  "topic": "sample/bounds",
+  "title": "WHERE가 endpoint를 제거하면 다시 찾지 않음",
+  "file": "sample/bounds/04.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "A",
+      1,
+      null
+    ],
+    [
+      "A",
+      2,
+      24.0
+    ],
+    [
+      "A",
+      3,
+      26.0
+    ],
+    [
+      "A",
+      4,
+      28.0
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "BUCKET",
+    "V"
+  ]
+}

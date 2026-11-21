@@ -1,0 +1,19 @@
+{
+  "index": 193,
+  "topic": "aggregates",
+  "title": "DECIMAL payload 타입 보존",
+  "file": "aggregates/06.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "20.25",
+      "40.25",
+      "20.25"
+    ]
+  ],
+  "columns": [
+    "FIRST_NOT_NULL(P)",
+    "LAST_NOT_NULL(P)",
+    "ARG_MIN(P,Q)"
+  ]
+}

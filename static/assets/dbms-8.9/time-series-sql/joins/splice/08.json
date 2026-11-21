@@ -1,0 +1,8 @@
+{
+  "index": 74,
+  "topic": "joins/splice",
+  "title": "명시 시간축 없는 입력 거부",
+  "file": "joins/splice/08.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2010 - Syntax error: near token (E_TS_REQUIRED)."
+}

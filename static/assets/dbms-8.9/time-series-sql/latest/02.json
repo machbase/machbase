@@ -1,0 +1,25 @@
+{
+  "index": 76,
+  "topic": "latest",
+  "title": "지정 시간 범위 안의 최신 행",
+  "file": "latest/02.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "alpha",
+      1.0
+    ],
+    [
+      "beta",
+      30.0
+    ],
+    [
+      "gamma",
+      18.0
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "VALUE"
+  ]
+}

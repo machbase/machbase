@@ -1,0 +1,29 @@
+{
+  "index": 123,
+  "topic": "sample/alignment",
+  "title": "FROM으로 1초 원점의 2초 축 지정",
+  "file": "sample/alignment/07.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "A",
+      1,
+      24.0
+    ],
+    [
+      "A",
+      3,
+      null
+    ],
+    [
+      "A",
+      5,
+      30.0
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "BUCKET",
+    "V"
+  ]
+}

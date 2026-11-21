@@ -1,0 +1,8 @@
+{
+  "index": 82,
+  "topic": "latest",
+  "title": "DATETIME이 아닌 LATEST 축 거부",
+  "file": "latest/08.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2010 - Syntax error: near token (E_TS_TYPE)."
+}

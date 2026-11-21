@@ -1,0 +1,8 @@
+{
+  "index": 53,
+  "topic": "joins/horizon",
+  "title": "역순 LIST 거부",
+  "file": "joins/horizon/07.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2010 - Syntax error: near token (E_HORIZON_ORDER)."
+}

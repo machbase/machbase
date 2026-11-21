@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.7 ROLLUP 문제'
+title: '18.7 ROLLUP 문제'
 weight: 170
 toc: true
 aliases:

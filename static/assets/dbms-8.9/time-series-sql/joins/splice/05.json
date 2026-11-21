@@ -1,0 +1,29 @@
+{
+  "index": 71,
+  "topic": "joins/splice",
+  "title": "첫 event 이전 motor 사건",
+  "file": "joins/splice/05.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      null,
+      101,
+      0.0
+    ],
+    [
+      null,
+      102,
+      16.0
+    ],
+    [
+      null,
+      103,
+      64.0
+    ]
+  ],
+  "columns": [
+    "EVENT_ID",
+    "MOTOR_ID",
+    "MOTOR_VALUE"
+  ]
+}

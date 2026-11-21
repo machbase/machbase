@@ -1,0 +1,19 @@
+{
+  "index": 129,
+  "topic": "sample/tag-targets",
+  "title": "동일 거리의 과거 관측 선택",
+  "file": "sample/tag-targets/02.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "edu27_main",
+      "2027-01-01 00:00:46",
+      1936.0
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "TARGET_TIME",
+    "MOTOR_VALUE"
+  ]
+}

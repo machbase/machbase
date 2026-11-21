@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '13.5.4 DatabaseMetaData'
+title: '14.5.4 DatabaseMetaData'
 weight: 40
 toc: true
 aliases:

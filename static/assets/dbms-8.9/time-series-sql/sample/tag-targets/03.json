@@ -1,0 +1,19 @@
+{
+  "index": 130,
+  "topic": "sample/tag-targets",
+  "title": "허용차 밖이면 태그 행 유지",
+  "file": "sample/tag-targets/03.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "edu27_main",
+      "2027-01-01 00:01:00",
+      null
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "TARGET_TIME",
+    "MOTOR_VALUE"
+  ]
+}

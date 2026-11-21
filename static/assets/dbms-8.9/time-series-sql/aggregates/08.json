@@ -1,0 +1,17 @@
+{
+  "index": 195,
+  "topic": "aggregates",
+  "title": "일반 유효 관측의 보정 합계",
+  "file": "aggregates/08.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      90.0,
+      90.0
+    ]
+  ],
+  "columns": [
+    "KSUM(V)",
+    "NSUM(V)"
+  ]
+}

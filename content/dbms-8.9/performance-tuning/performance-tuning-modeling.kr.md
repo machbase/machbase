@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '14.2 모델링 성능 튜닝'
+title: '15.2 모델링 성능 튜닝'
 weight: 140
 toc: true
 ---

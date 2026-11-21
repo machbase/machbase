@@ -1,0 +1,8 @@
+{
+  "index": 107,
+  "topic": "sample/linear-gap",
+  "title": "LINEAR 기간 누락",
+  "file": "sample/linear-gap/07.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2369 - Specify a duration in the FILL policy, for example FILL(LINEAR MAX GAP 2s)."
+}

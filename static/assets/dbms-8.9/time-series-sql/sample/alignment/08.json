@@ -1,0 +1,25 @@
+{
+  "index": 124,
+  "topic": "sample/alignment",
+  "title": "DST 전환의 23시간 달력 하루",
+  "file": "sample/alignment/08.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      1711753200000000000,
+      1
+    ],
+    [
+      1711839600000000000,
+      1
+    ],
+    [
+      1711922400000000000,
+      1
+    ]
+  ],
+  "columns": [
+    "BUCKET_NS",
+    "N"
+  ]
+}

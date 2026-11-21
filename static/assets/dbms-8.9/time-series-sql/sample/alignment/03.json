@@ -1,0 +1,17 @@
+{
+  "index": 119,
+  "topic": "sample/alignment",
+  "title": "방콕 자정 기준",
+  "file": "sample/alignment/03.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      1798650000000000000,
+      18
+    ]
+  ],
+  "columns": [
+    "BUCKET_NS",
+    "N"
+  ]
+}

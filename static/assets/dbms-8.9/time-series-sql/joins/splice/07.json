@@ -1,0 +1,8 @@
+{
+  "index": 73,
+  "topic": "joins/splice",
+  "title": "동등 관계가 아닌 ON 키 거부",
+  "file": "joins/splice/07.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2010 - Syntax error: near token (E_JOIN_ON_OP)."
+}

@@ -1,0 +1,8 @@
+{
+  "index": 214,
+  "topic": "provenance",
+  "title": "명시 원본 ID의 NULL 거부",
+  "file": "provenance/08.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2010 - Syntax error: near token (E_PROVENANCE_SOURCE_ID)."
+}

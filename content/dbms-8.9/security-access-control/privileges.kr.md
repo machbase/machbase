@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '16.3 권한 관리'
+title: '17.3 권한 관리'
 weight: 160
 toc: true
 ---

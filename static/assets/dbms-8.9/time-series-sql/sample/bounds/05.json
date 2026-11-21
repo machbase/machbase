@@ -1,0 +1,13 @@
+{
+  "index": 113,
+  "topic": "sample/bounds",
+  "title": "빈 출력 범위",
+  "file": "sample/bounds/05.sql",
+  "status": "PASS",
+  "rows": [],
+  "columns": [
+    "NAME",
+    "BUCKET",
+    "V"
+  ]
+}

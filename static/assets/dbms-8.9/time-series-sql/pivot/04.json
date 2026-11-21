@@ -1,0 +1,17 @@
+{
+  "index": 201,
+  "topic": "pivot",
+  "title": "집계 결과를 사용하는 셀 표현식",
+  "file": "pivot/04.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      25.666666666666668,
+      7.0
+    ]
+  ],
+  "columns": [
+    "K1_ADJUSTED",
+    "K2_ADJUSTED"
+  ]
+}

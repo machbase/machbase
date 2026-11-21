@@ -1,0 +1,25 @@
+{
+  "index": 125,
+  "topic": "sample/alignment",
+  "title": "DST 전환의 25시간 달력 하루",
+  "file": "sample/alignment/09.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      1729893600000000000,
+      1
+    ],
+    [
+      1729980000000000000,
+      1
+    ],
+    [
+      1730070000000000000,
+      1
+    ]
+  ],
+  "columns": [
+    "BUCKET_NS",
+    "N"
+  ]
+}

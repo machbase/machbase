@@ -1,0 +1,44 @@
+{
+  "index": 106,
+  "topic": "sample/linear-gap",
+  "title": "실제 관측 NULL을 덮어쓰지 않음",
+  "file": "sample/linear-gap/06.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "N",
+      0,
+      null
+    ],
+    [
+      "N",
+      1,
+      null
+    ],
+    [
+      "N",
+      2,
+      24.0
+    ],
+    [
+      "N",
+      3,
+      26.0
+    ],
+    [
+      "N",
+      4,
+      28.0
+    ],
+    [
+      "N",
+      5,
+      30.0
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "BUCKET",
+    "V"
+  ]
+}

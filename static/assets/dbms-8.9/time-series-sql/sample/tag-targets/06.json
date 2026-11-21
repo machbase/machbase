@@ -1,0 +1,17 @@
+{
+  "index": 133,
+  "topic": "sample/tag-targets",
+  "title": "태그 집합의 기준 시각에 원본 보간",
+  "file": "sample/tag-targets/06.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "edu27_main",
+      444.0
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "INTERPOLATED_VALUE"
+  ]
+}

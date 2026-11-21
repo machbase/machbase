@@ -1,0 +1,45 @@
+{
+  "index": 35,
+  "topic": "joins/interpolate",
+  "title": "ARRAY와 DECIMAL의 원소별 보간",
+  "file": "joins/interpolate/05.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      1,
+      22.0,
+      [
+        1.0,
+        11.0
+      ],
+      "22.500000000000000"
+    ],
+    [
+      2,
+      26.0,
+      [
+        3.0,
+        13.0
+      ],
+      "26.500000000000000"
+    ],
+    [
+      3,
+      null,
+      null,
+      null
+    ],
+    [
+      4,
+      null,
+      null,
+      null
+    ]
+  ],
+  "columns": [
+    "ID",
+    "V",
+    "AR",
+    "D"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "index": 177,
+  "topic": "advanced/sampling",
+  "title": "EXPECT KEYS의 출력 범위 누락",
+  "file": "advanced/sampling/07.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2010 - Syntax error: near token (EXPECT KEYS requires one key and FROM/TO)."
+}

@@ -1,0 +1,19 @@
+{
+  "index": 199,
+  "topic": "pivot",
+  "title": "빈 셀 COUNT는 0",
+  "file": "pivot/02.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      3,
+      2,
+      0
+    ]
+  ],
+  "columns": [
+    "K1",
+    "K2",
+    "K3"
+  ]
+}

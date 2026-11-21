@@ -1,0 +1,8 @@
+{
+  "index": 46,
+  "topic": "joins/window",
+  "title": "집계하지 않은 오른쪽 원시값 거부",
+  "file": "joins/window/08.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2010 - Syntax error: near token (E_WINDOW_AGGREGATE)."
+}

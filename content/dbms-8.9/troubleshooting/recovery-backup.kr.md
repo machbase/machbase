@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.5 백업과 복구 문제'
+title: '18.5 백업과 복구 문제'
 weight: 170
 toc: true
 ---

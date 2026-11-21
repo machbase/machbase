@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.1 SQL 레퍼런스'
+title: '19.1 SQL 레퍼런스'
 weight: 10
 toc: true
 ---

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '13.10.1 Sparse ARRAY와 선택 컬럼 Append API'
+title: '14.10.1 Sparse ARRAY와 선택 컬럼 Append API'
 weight: 10
 toc: true
 ---

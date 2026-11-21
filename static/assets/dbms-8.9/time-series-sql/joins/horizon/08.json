@@ -1,0 +1,8 @@
+{
+  "index": 54,
+  "topic": "joins/horizon",
+  "title": "HORIZON의 월 단위 거부",
+  "file": "joins/horizon/08.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2382 - Invalid HORIZON offset. Use a signed literal with one unit (ns, us, ms, s, m, h, d), or 0 without a unit."
+}

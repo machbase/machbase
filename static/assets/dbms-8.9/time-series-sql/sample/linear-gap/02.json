@@ -1,0 +1,44 @@
+{
+  "index": 102,
+  "topic": "sample/linear-gap",
+  "title": "최대 간격 경계 포함",
+  "file": "sample/linear-gap/02.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "A",
+      0,
+      20.0
+    ],
+    [
+      "A",
+      1,
+      22.0
+    ],
+    [
+      "A",
+      2,
+      24.0
+    ],
+    [
+      "A",
+      3,
+      26.0
+    ],
+    [
+      "A",
+      4,
+      28.0
+    ],
+    [
+      "A",
+      5,
+      30.0
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "BUCKET",
+    "V"
+  ]
+}

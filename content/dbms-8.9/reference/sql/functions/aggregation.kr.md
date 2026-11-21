@@ -13,6 +13,12 @@ toc: true
 |------|------|------|
 | COUNT | `COUNT(*) / COUNT(col)` | 전체 행 수 또는 NULL이 아닌 행 수 |
 | SUM | `SUM(col)` | 합계 |
+| KSUM | `KSUM(col)` | Kahan 보정 합계, DOUBLE 반환 |
+| NSUM | `NSUM(col)` | Neumaier 보정 합계, DOUBLE 반환 |
+| FIRST_NOT_NULL | `FIRST_NOT_NULL(value)` | 입력 순서의 처음 NULL 아닌 값 |
+| LAST_NOT_NULL | `LAST_NOT_NULL(value)` | 입력 순서의 마지막 NULL 아닌 값 |
+| ARG_MIN | `ARG_MIN(value,key)` | 최소 유효 key 행의 value |
+| ARG_MAX | `ARG_MAX(value,key)` | 최대 유효 key 행의 value |
 | AVG | `AVG(col)` | 평균 |
 | MIN | `MIN(col)` | 최솟값 |
 | MAX | `MAX(col)` | 최댓값 |
@@ -34,6 +40,12 @@ toc: true
 | PERCENTILE_DISC | `PERCENTILE_DISC(col, ratio)` | 이산 분위수 |
 | APPROX_PERCENTILE | `APPROX_PERCENTILE(col, ratio)` | 근사 분위수 |
 | CUME_DIST | `CUME_DIST(value, threshold)` | 누적 분포 비율 |
+
+선택 집계는 ARG_MIN/ARG_MAX의 key가 동률이면 먼저 입력된 행을 유지하며, 선택된 value가
+NULL이면 그대로 반환합니다. FIRST_NOT_NULL/LAST_NOT_NULL은 입력의 명시적 정렬 순서가
+필요합니다. KSUM/NSUM은 DOUBLE로 변환해 누적하므로 정확한 DECIMAL 합계의 대체가 아닙니다.
+NULL·비유한 입력은 제외하고 유효 입력이 없거나 결과가 비유한 값이면 NULL을 반환합니다.
+전체 데이터와 결과 비교는 [13.7 선택 집계와 보정 합계](../../../../time-series-sql/aggregates/)를 참고합니다.
 
 ---
 

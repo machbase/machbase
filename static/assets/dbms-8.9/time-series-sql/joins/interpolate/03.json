@@ -1,0 +1,37 @@
+{
+  "index": 33,
+  "topic": "joins/interpolate",
+  "title": "최대 간격을 넘는 보간은 NULL",
+  "file": "joins/interpolate/03.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      1,
+      100.0
+    ],
+    [
+      2,
+      null
+    ],
+    [
+      3,
+      900.0
+    ],
+    [
+      4,
+      null
+    ],
+    [
+      5,
+      null
+    ],
+    [
+      6,
+      null
+    ]
+  ],
+  "columns": [
+    "EVENT_ID",
+    "INTERPOLATED_VALUE"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "index": 55,
+  "topic": "joins/ordinary",
+  "title": "INNER의 전체 조합과 미매칭",
+  "file": "joins/ordinary/01.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      1,
+      101
+    ],
+    [
+      1,
+      102
+    ]
+  ],
+  "columns": [
+    "LEFT_ID",
+    "RIGHT_ID"
+  ]
+}

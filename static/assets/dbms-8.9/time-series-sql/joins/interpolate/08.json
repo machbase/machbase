@@ -1,0 +1,8 @@
+{
+  "index": 38,
+  "topic": "joins/interpolate",
+  "title": "COLUMNS 밖의 오른쪽 상태 직접 선택 거부",
+  "file": "joins/interpolate/08.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2378 - Column (m.ID) is unavailable after INTERPOLATE JOIN. Use an output column from COLUMNS or a supported join key."
+}

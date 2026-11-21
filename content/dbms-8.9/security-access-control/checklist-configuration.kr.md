@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '16.6 보안 설정 체크리스트'
+title: '17.6 보안 설정 체크리스트'
 weight: 160
 toc: true
 ---

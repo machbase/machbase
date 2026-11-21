@@ -1,0 +1,39 @@
+{
+  "index": 110,
+  "topic": "sample/bounds",
+  "title": "출력 TO는 제외",
+  "file": "sample/bounds/02.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "A",
+      0,
+      20.0
+    ],
+    [
+      "A",
+      1,
+      null
+    ],
+    [
+      "A",
+      2,
+      24.0
+    ],
+    [
+      "A",
+      3,
+      null
+    ],
+    [
+      "A",
+      4,
+      null
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "BUCKET",
+    "V"
+  ]
+}

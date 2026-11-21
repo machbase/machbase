@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '15.7 스키마 변경 체크리스트'
+title: '16.7 스키마 변경 체크리스트'
 weight: 150
 toc: true
 ---

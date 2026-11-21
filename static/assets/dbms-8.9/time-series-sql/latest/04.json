@@ -1,0 +1,21 @@
+{
+  "index": 78,
+  "topic": "latest",
+  "title": "WHERE로 입력 지역 제한",
+  "file": "latest/04.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "alpha",
+      5.0
+    ],
+    [
+      "gamma",
+      18.0
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "VALUE"
+  ]
+}

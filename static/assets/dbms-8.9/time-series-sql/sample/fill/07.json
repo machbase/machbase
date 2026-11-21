@@ -1,0 +1,44 @@
+{
+  "index": 98,
+  "topic": "sample/fill",
+  "title": "집계 출력마다 다른 정책",
+  "file": "sample/fill/07.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      0,
+      20.0,
+      1
+    ],
+    [
+      1,
+      null,
+      0
+    ],
+    [
+      2,
+      24.0,
+      1
+    ],
+    [
+      3,
+      null,
+      0
+    ],
+    [
+      4,
+      null,
+      0
+    ],
+    [
+      5,
+      30.0,
+      1
+    ]
+  ],
+  "columns": [
+    "BUCKET",
+    "V",
+    "N"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "index": 117,
+  "topic": "sample/alignment",
+  "title": "UTC 자정 기준",
+  "file": "sample/alignment/01.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      1798675200000000000,
+      18
+    ]
+  ],
+  "columns": [
+    "BUCKET_NS",
+    "N"
+  ]
+}

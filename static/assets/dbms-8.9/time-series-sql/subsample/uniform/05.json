@@ -1,0 +1,8 @@
+{
+  "index": 158,
+  "topic": "subsample/uniform",
+  "title": "선택 시각을 출력하지 않은 절 형태",
+  "file": "subsample/uniform/05.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2010 - Syntax error: near token (E_TS_REQUIRED)."
+}

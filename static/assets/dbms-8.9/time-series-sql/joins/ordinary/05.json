@@ -1,0 +1,29 @@
+{
+  "index": 59,
+  "topic": "joins/ordinary",
+  "title": "LEFT의 전체 조합과 미매칭",
+  "file": "joins/ordinary/05.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      1,
+      101
+    ],
+    [
+      1,
+      102
+    ],
+    [
+      2,
+      null
+    ],
+    [
+      3,
+      null
+    ]
+  ],
+  "columns": [
+    "LEFT_ID",
+    "RIGHT_ID"
+  ]
+}

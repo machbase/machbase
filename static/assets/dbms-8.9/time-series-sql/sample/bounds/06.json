@@ -1,0 +1,34 @@
+{
+  "index": 114,
+  "topic": "sample/bounds",
+  "title": "왼쪽 바깥 출력은 PREV 근거가 없으면 NULL",
+  "file": "sample/bounds/06.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "A",
+      -1,
+      null
+    ],
+    [
+      "A",
+      0,
+      20.0
+    ],
+    [
+      "A",
+      1,
+      20.0
+    ],
+    [
+      "A",
+      2,
+      24.0
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "BUCKET",
+    "V"
+  ]
+}

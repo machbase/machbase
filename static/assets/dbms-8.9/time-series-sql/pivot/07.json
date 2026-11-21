@@ -1,0 +1,39 @@
+{
+  "index": 204,
+  "topic": "pivot",
+  "title": "명시 GROUP BY로만 그룹 구성",
+  "file": "pivot/07.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      1,
+      20.0,
+      null
+    ],
+    [
+      2,
+      24.0,
+      null
+    ],
+    [
+      3,
+      30.0,
+      null
+    ],
+    [
+      4,
+      null,
+      5.0
+    ],
+    [
+      5,
+      null,
+      7.0
+    ]
+  ],
+  "columns": [
+    "ID",
+    "K1",
+    "K2"
+  ]
+}

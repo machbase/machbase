@@ -18,21 +18,49 @@ select_stmt ::=
     'SELECT' [ hint_clause ] target_list
     [ 'FROM' table_reference_list ]
     [ 'WHERE' condition_expr ]
-    [ 'DURATION' duration_expr ]
+    [ 'LATEST ON' timestamp_column 'PARTITION BY' key_list [ tie_clause ] ]
+    [ sample_clause ]
     [ 'GROUP BY' expr_list [ 'HAVING' condition_expr ] ]
+    [ subsample_clause ]
+    [ 'WITH PROVENANCE' [ 'AS' alias ] ]
     [ 'ORDER BY' expr_list [ 'ASC' | 'DESC' ] ]
     [ 'SERIES BY' condition_expr ]
     [ 'LIMIT' [ offset ',' ] row_count ]
+    [ 'DURATION' duration_expr ]
 
 -- 집합 연산자
 select_stmt 'UNION ALL' select_stmt
 ```
 
-`DURATION`은 `WHERE` 뒤, `GROUP BY`·`HAVING`·`ORDER BY`·`SERIES BY`·`LIMIT`보다 앞에 작성합니다.
+`DURATION`은 이 전체 문법에서 마지막에 작성합니다.
 위 문법에 나열된 순서는 SQL 절의 작성 순서이며, 내부 실행 순서를 의미하지 않습니다.
 
 `with_clause`는 Standard Edition에서 비재귀 CTE를 선언합니다. 전체 문법과 제한은
 [WITH / CTE syntax](../cte-syntax/)를 참고하십시오.
+
+### 시계열 조회 절
+
+Standard Edition에서 SAMPLE BY는 LATEST 뒤, GROUP BY 앞에 작성합니다.
+SUBSAMPLE은 HAVING 뒤, WITH PROVENANCE는 최종 ORDER BY 앞에 작성합니다.
+시간 JOIN과 입력의 TIMESTAMP·WITH SOURCE는 FROM 안에서 선언합니다.
+각 절의 인자는 [13장 시계열 분석 SQL](../../../../time-series-sql/)의 실행 예제를 참고합니다.
+
+```text
+sample_clause ::=
+    SAMPLE BY interval
+    [ FROM datetime_expr TO datetime_expr ]
+    [ FILL(fill_policy, ...) ]
+    [ ALIGN TO CALENDAR [ TIME ZONE zone_name ] [ WITH OFFSET offset_text ]
+      | ALIGN TO FIRST OBSERVATION ]
+    [ EXPECT KEYS (key_value, ...) ]
+
+subsample_clause ::= SUBSAMPLE algorithm(arguments)
+```
+
+위 표기는 절의 위치를 안내합니다. 기간·키·타입 및 다른 절과의 조합 제한은
+[SAMPLE BY](../../../../time-series-sql/sample/),
+[SUBSAMPLE](../../../../time-series-sql/subsample/),
+[출처 선언](../../../../time-series-sql/provenance/)에서 확인합니다.
 
 ### 대상 목록 (target_list)
 

@@ -1,0 +1,29 @@
+{
+  "index": 92,
+  "topic": "sample/fill",
+  "title": "빈 버킷 행 생략",
+  "file": "sample/fill/01.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "A",
+      0,
+      20.0
+    ],
+    [
+      "A",
+      2,
+      24.0
+    ],
+    [
+      "A",
+      5,
+      30.0
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "BUCKET",
+    "V"
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "index": 12,
+  "topic": "joins/lt",
+  "title": "정확 시각과 0초 허용차",
+  "file": "joins/lt/02.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      1,
+      null,
+      null
+    ],
+    [
+      2,
+      null,
+      null
+    ],
+    [
+      3,
+      null,
+      null
+    ],
+    [
+      4,
+      null,
+      null
+    ],
+    [
+      5,
+      null,
+      null
+    ],
+    [
+      6,
+      null,
+      null
+    ]
+  ],
+  "columns": [
+    "EVENT_ID",
+    "MOTOR_ID",
+    "MOTOR_VALUE"
+  ]
+}

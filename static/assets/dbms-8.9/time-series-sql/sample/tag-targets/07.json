@@ -1,0 +1,8 @@
+{
+  "index": 134,
+  "topic": "sample/tag-targets",
+  "title": "DATETIME 목표 컬럼을 지정하지 않음",
+  "file": "sample/tag-targets/07.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2010 - Syntax error: near token (E_TS_REQUIRED)."
+}

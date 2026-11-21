@@ -1,0 +1,19 @@
+{
+  "index": 198,
+  "topic": "pivot",
+  "title": "정적 시리즈 열과 빈 셀",
+  "file": "pivot/01.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      74.0,
+      12.0,
+      null
+    ]
+  ],
+  "columns": [
+    "K1",
+    "K2",
+    "K3"
+  ]
+}

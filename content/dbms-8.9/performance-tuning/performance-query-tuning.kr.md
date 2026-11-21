@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '14.5 조회와 분석 성능 튜닝'
+title: '15.5 조회와 분석 성능 튜닝'
 weight: 140
 toc: true
 aliases:

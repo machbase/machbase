@@ -1,0 +1,8 @@
+{
+  "index": 197,
+  "topic": "aggregates",
+  "title": "인자 수가 맞지 않는 선택 집계",
+  "file": "aggregates/10.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2036 - Function [ARG_MAX] has an invalid argument."
+}

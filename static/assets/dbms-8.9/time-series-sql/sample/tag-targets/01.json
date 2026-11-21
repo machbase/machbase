@@ -1,0 +1,19 @@
+{
+  "index": 128,
+  "topic": "sample/tag-targets",
+  "title": "태그 집합의 기준 시각에 최근접 관측",
+  "file": "sample/tag-targets/01.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "edu27_main",
+      "2027-01-01 00:00:21",
+      484.0
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "TARGET_TIME",
+    "MOTOR_VALUE"
+  ]
+}

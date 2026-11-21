@@ -1,0 +1,29 @@
+{
+  "index": 88,
+  "topic": "sample/basic",
+  "title": "버킷별 합계",
+  "file": "sample/basic/05.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "A",
+      0,
+      20.0
+    ],
+    [
+      "A",
+      2,
+      24.0
+    ],
+    [
+      "A",
+      4,
+      30.0
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "BUCKET",
+    "V"
+  ]
+}

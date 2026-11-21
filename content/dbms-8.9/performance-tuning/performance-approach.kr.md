@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '14.1 성능 문제 접근 순서'
+title: '15.1 성능 문제 접근 순서'
 weight: 140
 toc: true
 aliases:

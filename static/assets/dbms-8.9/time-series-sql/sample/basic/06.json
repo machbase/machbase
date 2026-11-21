@@ -1,0 +1,39 @@
+{
+  "index": 89,
+  "topic": "sample/basic",
+  "title": "다른 장치와 분리된 버킷",
+  "file": "sample/basic/06.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "A",
+      0,
+      20.0
+    ],
+    [
+      "A",
+      2,
+      24.0
+    ],
+    [
+      "A",
+      5,
+      30.0
+    ],
+    [
+      "B",
+      1,
+      10.0
+    ],
+    [
+      "B",
+      4,
+      16.0
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "BUCKET",
+    "V"
+  ]
+}

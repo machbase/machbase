@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '15.9 Cluster 운영'
+title: '16.9 Cluster 운영'
 weight: 150
 toc: true
 aliases:

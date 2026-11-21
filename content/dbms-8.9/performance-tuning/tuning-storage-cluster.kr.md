@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '14.7 스토리지와 Cluster 튜닝'
+title: '15.7 스토리지와 Cluster 튜닝'
 weight: 140
 toc: true
 ---

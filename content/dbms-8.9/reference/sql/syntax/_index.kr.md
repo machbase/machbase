@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.1.1 SQL 문법 사전'
+title: '19.1.1 SQL 문법 사전'
 weight: 10
 toc: true
 ---
@@ -40,6 +40,11 @@ SQL 문법 사전은 Machbase에서 지원하는 모든 SQL 구문의 BNF 표기
 | [AUTH KEY 관리](./user-auth-syntax/#auth-key) | 사용자 | 공개키 기반 인증 키 등록/관리 |
 | [ALTER SYSTEM](./system-session-alter-syntax/#alter-system) | 시스템 | 세션 제어, PVO Cache flush, 라이선스 설치 등 |
 | [ALTER SESSION](./system-session-alter-syntax/#alter-session) | 세션 | 세션별 파라미터 설정 |
+| [시계열 JOIN](../../../time-series-sql/joins/) | 분석 | ASOF·LT·NEAREST·INTERPOLATE·WINDOW·HORIZON·SPLICE |
+| [LATEST ON](../../../time-series-sql/latest/) | 분석 | 그룹별 최신 관측 |
+| [SAMPLE BY / FILL](../../../time-series-sql/sample/) | 분석 | 시간 버킷 집계와 결측 처리 |
+| [SUBSAMPLE](../../../time-series-sql/subsample/) | 분석 | 원본 관측 선택 |
+| [SOURCE / PROVENANCE](../../../time-series-sql/provenance/) | 분석 | 원본 ID·clock·결과 근거 |
 | [PIVOT](./pivot-syntax/) | 분석 | 행을 열로 변환하는 피벗 쿼리 |
 | [WINDOW FUNCTION (OVER)](./window-function-over-syntax/) | 분석 | 윈도우 함수와 OVER 절 |
 | [SERIES BY](./series-syntax/) | 분석 | 연속 조건 만족 레코드 그룹화 |

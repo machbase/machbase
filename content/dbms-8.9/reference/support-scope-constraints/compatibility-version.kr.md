@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.6.10 버전 및 호환성'
+title: '19.6.10 버전 및 호환성'
 weight: 100
 toc: true
 ---

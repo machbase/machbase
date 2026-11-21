@@ -1,0 +1,29 @@
+{
+  "index": 85,
+  "topic": "sample/basic",
+  "title": "COUNT로 관측 수 집계",
+  "file": "sample/basic/02.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "A",
+      0,
+      1
+    ],
+    [
+      "A",
+      2,
+      1
+    ],
+    [
+      "A",
+      5,
+      1
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "BUCKET",
+    "V"
+  ]
+}

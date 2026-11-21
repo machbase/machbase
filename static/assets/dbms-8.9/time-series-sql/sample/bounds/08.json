@@ -1,0 +1,8 @@
+{
+  "index": 116,
+  "topic": "sample/bounds",
+  "title": "FIRST OBSERVATION과 명시 범위 충돌",
+  "file": "sample/bounds/08.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2384 - SAMPLE BY FROM/TO requires ALIGN TO CALENDAR or the default alignment."
+}

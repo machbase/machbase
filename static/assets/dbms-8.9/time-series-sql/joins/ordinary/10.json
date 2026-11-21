@@ -1,0 +1,29 @@
+{
+  "index": 64,
+  "topic": "joins/ordinary",
+  "title": "RIGHT의 ON에서 후보 값 제한",
+  "file": "joins/ordinary/10.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      null,
+      101
+    ],
+    [
+      null,
+      103
+    ],
+    [
+      null,
+      104
+    ],
+    [
+      1,
+      102
+    ]
+  ],
+  "columns": [
+    "LEFT_ID",
+    "RIGHT_ID"
+  ]
+}

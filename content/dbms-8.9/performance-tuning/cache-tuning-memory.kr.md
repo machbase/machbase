@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '14.6 PVO Cache와 메모리 튜닝'
+title: '15.6 PVO Cache와 메모리 튜닝'
 weight: 140
 toc: true
 aliases:

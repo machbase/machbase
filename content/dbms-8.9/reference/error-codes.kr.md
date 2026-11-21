@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.7 오류 코드 사전'
+title: '19.7 오류 코드 사전'
 weight: 180
 toc: true
 ---

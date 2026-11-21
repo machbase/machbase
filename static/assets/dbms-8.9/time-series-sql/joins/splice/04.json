@@ -1,0 +1,13 @@
+{
+  "index": 70,
+  "topic": "joins/splice",
+  "title": "오른쪽 없는 사건 확인",
+  "file": "joins/splice/04.sql",
+  "status": "PASS",
+  "rows": [],
+  "columns": [
+    "EVENT_ID",
+    "MOTOR_ID",
+    "MOTOR_VALUE"
+  ]
+}

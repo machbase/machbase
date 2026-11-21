@@ -1,0 +1,29 @@
+{
+  "index": 109,
+  "topic": "sample/bounds",
+  "title": "WHERE만으로 출력 축이 늘어나지 않음",
+  "file": "sample/bounds/01.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "A",
+      0,
+      20.0
+    ],
+    [
+      "A",
+      2,
+      24.0
+    ],
+    [
+      "A",
+      5,
+      30.0
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "BUCKET",
+    "V"
+  ]
+}

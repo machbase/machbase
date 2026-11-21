@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '15.8 백업, 복원, 마운트'
+title: '16.8 백업, 복원, 마운트'
 weight: 150
 toc: true
 ---

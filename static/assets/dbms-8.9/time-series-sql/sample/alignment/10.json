@@ -1,0 +1,8 @@
+{
+  "index": 126,
+  "topic": "sample/alignment",
+  "title": "숫자 offset을 TIME ZONE 이름으로 쓰지 않음",
+  "file": "sample/alignment/10.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2229 - Invalid argument value for function (TIME ZONE)."
+}

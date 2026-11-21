@@ -1,0 +1,21 @@
+{
+  "index": 188,
+  "topic": "aggregates",
+  "title": "입력 순서와 극값 key로 선택",
+  "file": "aggregates/01.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      20.0,
+      40.0,
+      20.0,
+      null
+    ]
+  ],
+  "columns": [
+    "FIRST_NOT_NULL(V)",
+    "LAST_NOT_NULL(V)",
+    "ARG_MIN(V,Q)",
+    "ARG_MAX(V,Q)"
+  ]
+}

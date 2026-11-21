@@ -1,0 +1,34 @@
+{
+  "index": 111,
+  "topic": "sample/bounds",
+  "title": "FROM 밖 실제 근거로 첫 출력 보간",
+  "file": "sample/bounds/03.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "A",
+      1,
+      22.0
+    ],
+    [
+      "A",
+      2,
+      24.0
+    ],
+    [
+      "A",
+      3,
+      26.0
+    ],
+    [
+      "A",
+      4,
+      28.0
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "BUCKET",
+    "V"
+  ]
+}

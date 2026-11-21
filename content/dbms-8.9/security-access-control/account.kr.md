@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '16.2 계정 관리'
+title: '17.2 계정 관리'
 weight: 160
 toc: true
 ---

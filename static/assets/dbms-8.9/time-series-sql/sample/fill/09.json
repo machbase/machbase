@@ -1,0 +1,8 @@
+{
+  "index": 100,
+  "topic": "sample/fill",
+  "title": "0인 LINEAR 최대 간격",
+  "file": "sample/fill/09.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2370 - FILL(LINEAR MAX GAP) requires a positive fixed duration, such as 2s or 1m30s."
+}

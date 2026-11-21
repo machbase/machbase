@@ -1,0 +1,29 @@
+{
+  "index": 173,
+  "topic": "advanced/sampling",
+  "title": "EXPECT KEYS라도 NONE은 빈 행을 만들지 않음",
+  "file": "advanced/sampling/03.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "A",
+      0,
+      20.0
+    ],
+    [
+      "A",
+      2,
+      24.0
+    ],
+    [
+      "A",
+      5,
+      30.0
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "SECOND",
+    "V"
+  ]
+}

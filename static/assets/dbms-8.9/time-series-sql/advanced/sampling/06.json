@@ -1,0 +1,29 @@
+{
+  "index": 176,
+  "topic": "advanced/sampling",
+  "title": "SUBSAMPLE 윈도 형태로 선택 여부 필터",
+  "file": "advanced/sampling/06.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      0,
+      0.0
+    ],
+    [
+      3,
+      7.0
+    ],
+    [
+      4,
+      -1.0
+    ],
+    [
+      7,
+      3.0
+    ]
+  ],
+  "columns": [
+    "ID",
+    "V"
+  ]
+}

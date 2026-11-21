@@ -1,0 +1,8 @@
+{
+  "index": 168,
+  "topic": "subsample/sdt",
+  "title": "유효하지 않은 알고리즘 인자",
+  "file": "subsample/sdt/04.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2010 - Syntax error: near token (E_SUBSAMPLE_COMPDEV)."
+}

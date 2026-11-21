@@ -1,0 +1,8 @@
+{
+  "index": 37,
+  "topic": "joins/interpolate",
+  "title": "0인 MAX GAP 거부",
+  "file": "joins/interpolate/07.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2379 - INTERPOLATE JOIN MAX GAP requires a positive fixed duration, such as 5m, or a positive integer nanosecond expression in parentheses."
+}

@@ -1,0 +1,34 @@
+{
+  "index": 15,
+  "topic": "joins/lt",
+  "title": "최종 WHERE로 선택 결과 제한",
+  "file": "joins/lt/05.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      3,
+      110,
+      784.0
+    ],
+    [
+      4,
+      114,
+      1444.0
+    ],
+    [
+      5,
+      116,
+      1936.0
+    ],
+    [
+      6,
+      118,
+      2500.0
+    ]
+  ],
+  "columns": [
+    "EVENT_ID",
+    "MOTOR_ID",
+    "MOTOR_VALUE"
+  ]
+}

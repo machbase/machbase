@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.1 문제 해결 접근법'
+title: '18.1 문제 해결 접근법'
 weight: 170
 toc: true
 ---

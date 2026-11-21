@@ -1,0 +1,29 @@
+{
+  "index": 84,
+  "topic": "sample/basic",
+  "title": "공통 데이터의 관측 버킷만 반환",
+  "file": "sample/basic/01.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "A",
+      0,
+      20.0
+    ],
+    [
+      "A",
+      2,
+      24.0
+    ],
+    [
+      "A",
+      5,
+      30.0
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "BUCKET",
+    "V"
+  ]
+}

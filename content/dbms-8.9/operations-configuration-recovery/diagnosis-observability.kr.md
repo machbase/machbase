@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '15.6 관측과 진단'
+title: '16.6 관측과 진단'
 weight: 150
 toc: true
 ---

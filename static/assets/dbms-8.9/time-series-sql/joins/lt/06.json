@@ -1,0 +1,44 @@
+{
+  "index": 16,
+  "topic": "joins/lt",
+  "title": "오른쪽 입력을 먼저 필터링",
+  "file": "joins/lt/06.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      1,
+      null,
+      null
+    ],
+    [
+      2,
+      null,
+      null
+    ],
+    [
+      3,
+      110,
+      784.0
+    ],
+    [
+      4,
+      114,
+      1444.0
+    ],
+    [
+      5,
+      116,
+      1936.0
+    ],
+    [
+      6,
+      118,
+      2500.0
+    ]
+  ],
+  "columns": [
+    "EVENT_ID",
+    "MOTOR_ID",
+    "MOTOR_VALUE"
+  ]
+}

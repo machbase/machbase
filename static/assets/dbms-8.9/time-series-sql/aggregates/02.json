@@ -1,0 +1,21 @@
+{
+  "index": 189,
+  "topic": "aggregates",
+  "title": "입력 순서를 뒤집은 동률 선택",
+  "file": "aggregates/02.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      40.0,
+      20.0,
+      30.0,
+      null
+    ]
+  ],
+  "columns": [
+    "FIRST_NOT_NULL(V)",
+    "LAST_NOT_NULL(V)",
+    "ARG_MIN(V,Q)",
+    "ARG_MAX(V,Q)"
+  ]
+}

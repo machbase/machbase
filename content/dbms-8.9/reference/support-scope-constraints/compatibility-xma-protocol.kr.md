@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.6.9 서버와 SDK 호환성'
+title: '19.6.9 서버와 SDK 호환성'
 weight: 90
 toc: true
 ---

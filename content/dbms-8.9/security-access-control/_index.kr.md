@@ -1,7 +1,7 @@
 ---
 type: docs
-title: '16. 계정, 권한, 접속 제어'
-weight: 160
+title: '17. 계정, 권한, 접속 제어'
+weight: 170
 toc: true
 ---
 
@@ -11,12 +11,12 @@ toc: true
 
 | 순서 | 섹션 | 설명 |
 |-----:|------|------|
-| 14.1 | [보안 모델 개요](./security-model/) | Machbase 보안 구조, 기본 계정, 권한 종류, AUTH KEY 인증 방식 |
-| 14.2 | [계정 관리](./account/) | 사용자 생성·삭제·비밀번호 변경, 비밀번호 정책(NONE/LOW/HIGH) |
-| 14.3 | [권한 관리](./privileges/) | GRANT/REVOKE, 테이블 권한, 데이터베이스 권한 |
-| 14.4 | [AUTH KEY 인증](./authentication-auth-key/) | 공개키 기반 challenge 인증, 키 생성·등록·관리 |
-| 14.5 | [접속 제어](./access-control/) | 원격 접속 허용 여부와 바인드 IP 설정 |
-| 14.6 | [보안 설정 체크리스트](./checklist-configuration/) | 운영 환경 배포 전 점검 항목 |
+| 17.1 | [보안 모델 개요](./security-model/) | Machbase 보안 구조, 기본 계정, 권한 종류, AUTH KEY 인증 방식 |
+| 17.2 | [계정 관리](./account/) | 사용자 생성·삭제·비밀번호 변경, 비밀번호 정책(NONE/LOW/HIGH) |
+| 17.3 | [권한 관리](./privileges/) | GRANT/REVOKE, 테이블 권한, 데이터베이스 권한 |
+| 17.4 | [AUTH KEY 인증](./authentication-auth-key/) | 공개키 기반 challenge 인증, 키 생성·등록·관리 |
+| 17.5 | [접속 제어](./access-control/) | 원격 접속 허용 여부와 바인드 IP 설정 |
+| 17.6 | [보안 설정 체크리스트](./checklist-configuration/) | 운영 환경 배포 전 점검 항목 |
 
 ## 보안의 4대 영역
 

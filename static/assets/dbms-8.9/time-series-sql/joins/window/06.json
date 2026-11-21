@@ -1,0 +1,44 @@
+{
+  "index": 44,
+  "topic": "joins/window",
+  "title": "4초 창과 COUNT(expr)",
+  "file": "joins/window/06.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      1,
+      2,
+      82.0
+    ],
+    [
+      2,
+      1,
+      324.0
+    ],
+    [
+      3,
+      2,
+      842.0
+    ],
+    [
+      4,
+      1,
+      1444.0
+    ],
+    [
+      5,
+      2,
+      1850.0
+    ],
+    [
+      6,
+      0,
+      null
+    ]
+  ],
+  "columns": [
+    "EVENT_ID",
+    "N",
+    "MEAN"
+  ]
+}

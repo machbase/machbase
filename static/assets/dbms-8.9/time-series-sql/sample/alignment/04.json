@@ -1,0 +1,17 @@
+{
+  "index": 120,
+  "topic": "sample/alignment",
+  "title": "OFFSET으로 자정 경계 30분 이동",
+  "file": "sample/alignment/04.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      1798644600000000000,
+      18
+    ]
+  ],
+  "columns": [
+    "BUCKET_NS",
+    "N"
+  ]
+}

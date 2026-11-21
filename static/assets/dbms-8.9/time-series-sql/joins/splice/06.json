@@ -1,0 +1,19 @@
+{
+  "index": 72,
+  "topic": "joins/splice",
+  "title": "마지막 이벤트와 직전 motor 상태",
+  "file": "joins/splice/06.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      6,
+      118,
+      2500.0
+    ]
+  ],
+  "columns": [
+    "EVENT_ID",
+    "MOTOR_ID",
+    "MOTOR_VALUE"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "index": 196,
+  "topic": "aggregates",
+  "title": "ARRAY를 선택 key로 사용 거부",
+  "file": "aggregates/09.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2037 - Function [ARG_MIN] argument data type does not match."
+}

@@ -1,0 +1,34 @@
+{
+  "index": 69,
+  "topic": "joins/splice",
+  "title": "21초 이벤트가 carry되는 구간",
+  "file": "joins/splice/03.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      2,
+      107,
+      324.0
+    ],
+    [
+      2,
+      108,
+      484.0
+    ],
+    [
+      2,
+      109,
+      576.0
+    ],
+    [
+      2,
+      110,
+      784.0
+    ]
+  ],
+  "columns": [
+    "EVENT_ID",
+    "MOTOR_ID",
+    "MOTOR_VALUE"
+  ]
+}

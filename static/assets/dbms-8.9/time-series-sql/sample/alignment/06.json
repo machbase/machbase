@@ -1,0 +1,39 @@
+{
+  "index": 122,
+  "topic": "sample/alignment",
+  "title": "시리즈별 첫 관측의 2초 버킷",
+  "file": "sample/alignment/06.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "A",
+      0,
+      20.0
+    ],
+    [
+      "A",
+      2,
+      24.0
+    ],
+    [
+      "A",
+      4,
+      30.0
+    ],
+    [
+      "B",
+      1,
+      10.0
+    ],
+    [
+      "B",
+      3,
+      16.0
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "BUCKET",
+    "V"
+  ]
+}

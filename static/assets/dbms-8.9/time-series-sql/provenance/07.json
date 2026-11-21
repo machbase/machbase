@@ -1,0 +1,8 @@
+{
+  "index": 213,
+  "topic": "provenance",
+  "title": "다른 clock domain의 결합 거부",
+  "file": "provenance/07.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "Syntax error: near token (E_CLOCK_DOMAIN)."
+}

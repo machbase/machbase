@@ -1,0 +1,8 @@
+{
+  "index": 10,
+  "topic": "joins/asof",
+  "title": "시간축 없는 LOG 입력 거부",
+  "file": "joins/asof/10.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2010 - Syntax error: near token (E_TS_REQUIRED)."
+}

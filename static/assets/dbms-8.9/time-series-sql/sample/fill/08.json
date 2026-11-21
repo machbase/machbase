@@ -1,0 +1,8 @@
+{
+  "index": 99,
+  "topic": "sample/fill",
+  "title": "PREV 기간 누락",
+  "file": "sample/fill/08.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2369 - Specify a duration in the FILL policy, for example FILL(PREV MAX AGE 2s)."
+}

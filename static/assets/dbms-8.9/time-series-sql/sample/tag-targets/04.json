@@ -1,0 +1,19 @@
+{
+  "index": 131,
+  "topic": "sample/tag-targets",
+  "title": "정확 시각만 허용",
+  "file": "sample/tag-targets/04.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "edu27_main",
+      "2027-01-01 00:00:10",
+      100.0
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "TARGET_TIME",
+    "MOTOR_VALUE"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "index": 79,
+  "topic": "latest",
+  "title": "최신 선택 전 값 필터",
+  "file": "latest/05.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "alpha",
+      5.0
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "VALUE"
+  ]
+}

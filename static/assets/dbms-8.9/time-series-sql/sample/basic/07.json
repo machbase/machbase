@@ -1,0 +1,8 @@
+{
+  "index": 90,
+  "topic": "sample/basic",
+  "title": "0 간격 거부",
+  "file": "sample/basic/07.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2380 - SAMPLE BY requires a positive interval with one unit: ns, us, ms, s, m, h, d, w, mo, or y. Examples: 1ns, 1mo."
+}

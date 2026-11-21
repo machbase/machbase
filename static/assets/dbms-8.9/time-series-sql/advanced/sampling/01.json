@@ -1,0 +1,74 @@
+{
+  "index": 171,
+  "topic": "advanced/sampling",
+  "title": "미관측 장치 Z의 공통 축",
+  "file": "advanced/sampling/01.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "A",
+      0,
+      20.0
+    ],
+    [
+      "A",
+      1,
+      null
+    ],
+    [
+      "A",
+      2,
+      24.0
+    ],
+    [
+      "A",
+      3,
+      null
+    ],
+    [
+      "A",
+      4,
+      null
+    ],
+    [
+      "A",
+      5,
+      30.0
+    ],
+    [
+      "Z",
+      0,
+      null
+    ],
+    [
+      "Z",
+      1,
+      null
+    ],
+    [
+      "Z",
+      2,
+      null
+    ],
+    [
+      "Z",
+      3,
+      null
+    ],
+    [
+      "Z",
+      4,
+      null
+    ],
+    [
+      "Z",
+      5,
+      null
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "SECOND",
+    "V"
+  ]
+}

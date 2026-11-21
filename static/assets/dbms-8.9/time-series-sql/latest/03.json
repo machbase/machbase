@@ -1,0 +1,21 @@
+{
+  "index": 77,
+  "topic": "latest",
+  "title": "특정 장치 집합",
+  "file": "latest/03.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "alpha",
+      5.0
+    ],
+    [
+      "gamma",
+      18.0
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "VALUE"
+  ]
+}

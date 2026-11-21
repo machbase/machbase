@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '18.6.6 ROLLUP 지원 범위'
+title: '19.6.6 ROLLUP 지원 범위'
 weight: 60
 toc: true
 aliases:

@@ -1,0 +1,19 @@
+{
+  "index": 87,
+  "topic": "sample/basic",
+  "title": "모든 관측을 10초 버킷으로 집계",
+  "file": "sample/basic/04.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "A",
+      0,
+      24.666666666666668
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "BUCKET",
+    "V"
+  ]
+}

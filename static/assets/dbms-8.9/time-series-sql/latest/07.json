@@ -1,0 +1,29 @@
+{
+  "index": 81,
+  "topic": "latest",
+  "title": "복합 partition 키",
+  "file": "latest/07.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      1,
+      "N",
+      5.0
+    ],
+    [
+      2,
+      "S",
+      42.0
+    ],
+    [
+      3,
+      "N",
+      18.0
+    ]
+  ],
+  "columns": [
+    "K",
+    "REGION",
+    "VALUE"
+  ]
+}

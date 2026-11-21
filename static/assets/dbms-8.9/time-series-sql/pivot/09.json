@@ -1,0 +1,8 @@
+{
+  "index": 206,
+  "topic": "pivot",
+  "title": "동적 IN의 다중 열 거부",
+  "file": "pivot/09.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2010 - Syntax error: near token (E_PIVOT_SCHEMA_ARITY)."
+}

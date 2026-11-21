@@ -1,0 +1,17 @@
+{
+  "index": 118,
+  "topic": "sample/alignment",
+  "title": "서울 자정 기준",
+  "file": "sample/alignment/02.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      1798729200000000000,
+      18
+    ]
+  ],
+  "columns": [
+    "BUCKET_NS",
+    "N"
+  ]
+}

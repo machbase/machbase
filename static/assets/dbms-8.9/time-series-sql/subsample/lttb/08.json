@@ -1,0 +1,8 @@
+{
+  "index": 143,
+  "topic": "subsample/lttb",
+  "title": "gap의 밀리초 문자열은 허용하지 않음",
+  "file": "subsample/lttb/08.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2010 - Syntax error: near token (E_SUBSAMPLE_TARGET)."
+}

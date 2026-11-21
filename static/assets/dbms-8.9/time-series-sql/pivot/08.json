@@ -1,0 +1,8 @@
+{
+  "index": 205,
+  "topic": "pivot",
+  "title": "중복 pivot 값 거부",
+  "file": "pivot/08.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2385 - PIVOT IN values must be distinct."
+}

@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '17.2 서버와 연결 문제'
+title: '18.2 서버와 연결 문제'
 weight: 170
 toc: true
 ---

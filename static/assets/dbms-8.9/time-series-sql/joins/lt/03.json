@@ -1,0 +1,44 @@
+{
+  "index": 13,
+  "topic": "joins/lt",
+  "title": "허용차 2초의 포함 경계",
+  "file": "joins/lt/03.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      1,
+      103,
+      64.0
+    ],
+    [
+      2,
+      null,
+      null
+    ],
+    [
+      3,
+      110,
+      784.0
+    ],
+    [
+      4,
+      null,
+      null
+    ],
+    [
+      5,
+      116,
+      1936.0
+    ],
+    [
+      6,
+      null,
+      null
+    ]
+  ],
+  "columns": [
+    "EVENT_ID",
+    "MOTOR_ID",
+    "MOTOR_VALUE"
+  ]
+}

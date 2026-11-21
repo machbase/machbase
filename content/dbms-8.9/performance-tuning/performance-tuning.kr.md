@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '14.4 입력 성능 튜닝'
+title: '15.4 입력 성능 튜닝'
 weight: 140
 toc: true
 aliases:

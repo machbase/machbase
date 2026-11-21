@@ -1,0 +1,44 @@
+{
+  "index": 103,
+  "topic": "sample/linear-gap",
+  "title": "간격 초과 구간은 NULL",
+  "file": "sample/linear-gap/03.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "A",
+      0,
+      20.0
+    ],
+    [
+      "A",
+      1,
+      22.0
+    ],
+    [
+      "A",
+      2,
+      24.0
+    ],
+    [
+      "A",
+      3,
+      null
+    ],
+    [
+      "A",
+      4,
+      null
+    ],
+    [
+      "A",
+      5,
+      30.0
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "BUCKET",
+    "V"
+  ]
+}

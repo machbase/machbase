@@ -1,0 +1,17 @@
+{
+  "index": 56,
+  "topic": "joins/ordinary",
+  "title": "INNER의 ON에서 후보 값 제한",
+  "file": "joins/ordinary/02.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      1,
+      102
+    ]
+  ],
+  "columns": [
+    "LEFT_ID",
+    "RIGHT_ID"
+  ]
+}

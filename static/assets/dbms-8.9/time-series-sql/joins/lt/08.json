@@ -1,0 +1,17 @@
+{
+  "index": 18,
+  "topic": "joins/lt",
+  "title": "동일 시각은 논리 순서로 LAST 선택",
+  "file": "joins/lt/08.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      2,
+      325.0
+    ]
+  ],
+  "columns": [
+    "EVENT_ID",
+    "READING"
+  ]
+}

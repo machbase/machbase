@@ -1,0 +1,17 @@
+{
+  "index": 36,
+  "topic": "joins/interpolate",
+  "title": "빈 오른쪽 입력에서도 왼쪽 유지",
+  "file": "joins/interpolate/06.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      2,
+      null
+    ]
+  ],
+  "columns": [
+    "ID",
+    "VALUE"
+  ]
+}

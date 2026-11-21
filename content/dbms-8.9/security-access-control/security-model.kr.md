@@ -1,6 +1,6 @@
 ---
 type: docs
-title: '16.1 보안 모델 개요'
+title: '17.1 보안 모델 개요'
 weight: 160
 toc: true
 ---

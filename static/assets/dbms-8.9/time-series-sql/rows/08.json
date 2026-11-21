@@ -1,0 +1,8 @@
+{
+  "index": 186,
+  "topic": "rows",
+  "title": "음수 프레임 폭",
+  "file": "rows/08.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2010 - Syntax error: near token (E_ROWS_BOUND)."
+}

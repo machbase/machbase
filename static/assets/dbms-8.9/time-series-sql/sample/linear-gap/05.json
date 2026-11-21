@@ -1,0 +1,54 @@
+{
+  "index": 105,
+  "topic": "sample/linear-gap",
+  "title": "양끝 밖으로 외삽하지 않음",
+  "file": "sample/linear-gap/05.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "A",
+      -1,
+      null
+    ],
+    [
+      "A",
+      0,
+      20.0
+    ],
+    [
+      "A",
+      1,
+      22.0
+    ],
+    [
+      "A",
+      2,
+      24.0
+    ],
+    [
+      "A",
+      3,
+      26.0
+    ],
+    [
+      "A",
+      4,
+      28.0
+    ],
+    [
+      "A",
+      5,
+      30.0
+    ],
+    [
+      "A",
+      6,
+      null
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "BUCKET",
+    "V"
+  ]
+}

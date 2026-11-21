@@ -1,0 +1,8 @@
+{
+  "index": 83,
+  "topic": "latest",
+  "title": "최신 시각의 중복은 기본 오류",
+  "file": "latest/09.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2010 - Syntax error: near token (E_TIE_CONFLICT)."
+}

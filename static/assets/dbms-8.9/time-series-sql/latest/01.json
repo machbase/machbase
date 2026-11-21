@@ -1,0 +1,25 @@
+{
+  "index": 75,
+  "topic": "latest",
+  "title": "모든 장치의 최신 행",
+  "file": "latest/01.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      "alpha",
+      5.0
+    ],
+    [
+      "beta",
+      42.0
+    ],
+    [
+      "gamma",
+      18.0
+    ]
+  ],
+  "columns": [
+    "NAME",
+    "VALUE"
+  ]
+}

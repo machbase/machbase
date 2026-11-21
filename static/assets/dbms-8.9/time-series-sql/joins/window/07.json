@@ -1,0 +1,8 @@
+{
+  "index": 45,
+  "topic": "joins/window",
+  "title": "WINDOW JOIN의 UNBOUNDED 경계 거부",
+  "file": "joins/window/07.sql",
+  "status": "EXPECTED_ERROR",
+  "error": "2010 - Syntax error: near token (E_WINDOW_UNBOUNDED)."
+}

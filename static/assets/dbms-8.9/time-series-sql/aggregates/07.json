@@ -1,0 +1,19 @@
+{
+  "index": 194,
+  "topic": "aggregates",
+  "title": "큰 값의 상쇄에서 KSUM과 NSUM 비교",
+  "file": "aggregates/07.sql",
+  "status": "PASS",
+  "rows": [
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "columns": [
+    "SUM(V)",
+    "KSUM(V)",
+    "NSUM(V)"
+  ]
+}
