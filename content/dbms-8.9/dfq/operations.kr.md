@@ -5,8 +5,8 @@ weight: 100
 toc: true
 ---
 
-파일 조회에는 DB 권한과 서버 OS 권한이 함께 필요합니다. 파일은 서버에서 열고
-VIEW를 통해 읽어도 파일 권한은 VIEW 실행 사용자 기준으로 검사합니다.
+로컬 파일 조회에는 DB와 서버 OS 권한이 필요합니다. 원격 조회는 실제 접속 주소와
+인증 출처의 권한을 사용합니다. VIEW의 READ 권한은 실행 사용자 기준으로 검사합니다.
 
 ## 디렉터리 권한
 
@@ -86,3 +86,106 @@ TEXT_TOPN은 K=LIMIT+OFFSET, seen·stored·peak_rows·peak_bytes·transitions를
   MCAP의 디코딩된 메시지 입력을 셉니다. HDF5·Parquet은 디코더가 전달한 수치 값과
   문자열·바이너리의 논리 바이트를 셉니다. LeRobot은 단계 Parquet 파일의 계수를 합산합니다.
 - `READ_ARRAY`는 SQL 결과에 전달한 native ARRAY payload를 기록합니다.
+
+## 원격 ENDPOINT 읽기 권한 {#endpoint-read-permissions}
+
+로컬 경로와 `file://`에는 디렉터리 권한을 적용합니다. 원격 요청에서는 SYS가 현재
+데이터베이스의 기존 사용자에게 **실제 접속 주소와 자격증명 출처**의 조합을 허용합니다.
+VIEW로 읽을 때도 실행 사용자의 권한을 확인합니다. VIEW 자체의 SELECT 권한도 필요합니다.
+
+| 인증 절 | 실제 요청에 사용하는 인증 |
+|---|---|
+| 생략 | 공개 HTTP(S), 익명 S3·FTP(S), 사전 서명 HTTPS URL, TFTP |
+| `PROFILE 'production'` | 해당 AWS 공유 파일 프로필의 키 |
+| `USING ENVIRONMENT` | 서버의 AWS 자격증명 환경변수 |
+| `USING NETRC` | 서버 .netrc의 FTP·FTPS 계정 |
+
+실습 서비스가 생성한 `/tmp/dfq-read-lab/sql/grant.sql`은 디렉터리,
+공개 HTTP, 같은 S3 주소의 두 인증 출처, FTPS 계정과 VIEW의 SELECT 권한을 각각
+설정합니다. 다음은 문서의 실습 포트를 기준으로 한 원격 권한 부분입니다.
+
+```sql
+GRANT READ ON ENDPOINT 'http://127.0.0.1:18080' TO DFQ_REMOTE_LAB;
+GRANT READ ON ENDPOINT 'https://localhost:19000' PROFILE 'dfq-lab' TO DFQ_REMOTE_LAB;
+GRANT READ ON ENDPOINT 'https://localhost:19000' USING ENVIRONMENT TO DFQ_REMOTE_LAB;
+GRANT READ ON ENDPOINT 'ftps://127.0.0.1:18990' USING NETRC TO DFQ_REMOTE_LAB;
+```
+
+- 스킴·호스트·유효 포트를 정규화해 비교합니다. `https://files.example`과
+  `https://files.example:443`은 같은 권한 대상입니다. 주소에 경로와 호스트 패턴을
+  넣어 권한을 나누지 않습니다.
+- `s3://`는 변환 후 실제 HTTP(S) 주소를 사용합니다. virtual 방식은 버킷이 포함된
+  호스트, path 방식은 endpoint 호스트가 권한 대상입니다. SQL에서 주소를 덮어쓰면
+  변경한 주소에 맞는 권한을 부여합니다.
+- `AWS_PROFILE`에서 접속 설정을 읽더라도 키를 환경변수에서 가져오면 `USING ENVIRONMENT`
+  권한이 필요합니다. 실제 인증 출처에 맞춰 승인합니다.
+- 원격 요청 전과 redirect 목적지마다 권한을 검사합니다. 자격증명 또는 사전 서명을
+  사용하는 요청은 다른 접속 주소로 redirect할 수 없습니다. HTTPS에서 HTTP로의
+  전환도 거부합니다.
+- `REVOKE`는 다음 실행에 적용되며 이미 준비한 SQL을 다시 실행할 때도 확인합니다.
+
+```sql
+REVOKE READ ON ENDPOINT 'http://127.0.0.1:18080' FROM DFQ_REMOTE_LAB;
+```
+
+`analyst.sql`로 권한 적용 후 결과를 확인합니다. 위 권한을 회수한 뒤 같은 VIEW를
+조회하면 `ACCESS_DENIED`가 발생합니다. 문법은 [ENDPOINT READ 권한](/kr/dbms-8.9/reference/sql/syntax/user-auth-syntax/#read-on-endpoint)을 참고합니다.
+
+## TLS와 계정 파일 {#remote-read-auth}
+
+| 서버 설정 | 역할 |
+|---|---|
+| `READ_REMOTE_CA_FILE` | TLS에서 서버 인증서 검증에 사용할 PEM CA 번들 경로 |
+| `READ_REMOTE_NETRC_FILE` | FTP·FTPS의 호스트별 계정 정보를 찾을 서버 측 파일 경로 |
+
+CA 번들을 생략하면 Linux는 `/etc/ssl/certs/ca-certificates.crt`, macOS는
+`/etc/ssl/cert.pem`, Windows는 `MACHBASE_HOME/conf/read-remote-ca.pem`을
+사용합니다. HTTPS, HTTPS S3, 명시적 FTP TLS, FTPS는 신뢰 체인과 호스트명을 검사합니다.
+
+관리자는 .netrc 파일에 대상 호스트의 `machine` 항목을 등록합니다.
+
+```text
+machine archive.example
+    login read-service
+    password <FTP_PASSWORD>
+```
+
+파일 권한은 서버 실행 계정이 읽을 수 있도록 제한합니다. 파일을 지정하지 않았거나
+호스트 일치 항목이 없으면 익명 FTP(S)를 사용합니다. 파일 읽기가 실패하거나 해당
+항목의 계정이 불완전하면 오류가 발생합니다. `default`로 다른 호스트의 계정을
+대체하지 않습니다. URL의 `user:password@`나 READ 옵션에 직접 계정을 넣지 않습니다.
+
+SYS는 READ 호출에 `source.tls.ca_file`과 `source.ftp.netrc_file`을 지정해 해당
+호출에서 사용할 서버 파일을 선택할 수 있습니다. 생략하면 서버 설정을 적용합니다.
+일반 사용자는 호출별 서버 파일 경로를 지정할 수 없으며 VIEW를 통해서도 해당 제한을
+적용합니다. [FTP TLS 옵션](../remote-read/ftp-tftp/)을 참고합니다.
+
+## 원격 다운로드와 임시 공간 {#remote-read-spool}
+
+서버는 원격 원본 바이트를 `DBS_PATH` 아래의 비공개 임시 파일에 순차 저장합니다.
+기본 위치는 `MACHBASE_HOME/dbs`입니다. 전체 다운로드가 완료되면 포맷 reader가
+그 파일에서 CSV 자동 감지, Parquet footer 읽기, RAW 반환과 재스캔을 수행합니다.
+HTTP(S)와 S3는 전체 GET을 사용합니다. `LIMIT 1`이라도 첫 결과 전에 전체 원본을
+전송합니다. 연결에서 사용하는 전송 버퍼와 임시 디스크 용량은 별도로 계획합니다.
+Linux에서는 열린 임시 파일의 디렉터리 항목을 제거하므로 파일명 목록에 보이지 않습니다.
+
+`READ_REMOTE_MAX_SPOOL_BYTES`의 기본값은 **1 TB(1,000,000,000,000바이트)**입니다.
+같은 SQL 문의 원격 파일, 중첩 SQL 소스와 다른 READ 임시 저장을 합산합니다.
+임시 파일을 만들거나 쓸 수 없으면 `IO_ERROR`, 한도를 넘으면 `LIMIT_EXCEEDED`입니다.
+쿼리가 끝나거나 오류·취소·연결 종료가 발생하면 파일과 예약 공간을 반환합니다.
+
+| 실행 방식 | 다운로드 수명 |
+|---|---|
+| `machsql -f`의 일반 SELECT처럼 한 요청 안에서 준비·실행 | 동일 READ의 준비 단계 파일을 실행에 넘깁니다. |
+| PREPARE와 EXECUTE를 분리 | 준비에서 스키마를 확인한 뒤 파일을 닫습니다. 실행마다 현재 권한·자격증명으로 원본을 받습니다. |
+
+`source.consistency=strong` 또는 `source.expected_revision=sha256:...`를 지정하면
+받은 원본 바이트의 SHA-256을 계산합니다. 해시가 다르면 `SOURCE_CHANGED`입니다.
+기본 best_effort 임시 파일에는 공개 SHA-256 revision을 발급하지 않습니다.
+실행 시 키를 다시 읽으므로 다음 실행에 새 자격증명이 적용될 수 있습니다.
+환경변수를 바꾸려면 서버 프로세스에 변경 값이 전달되도록 설정합니다.
+
+전송 중인 SQL을 중지하려면 별도 SYS 세션에서 `V$SESSION.ID`를 확인하고
+`ALTER SYSTEM CANCEL SESSION <SID>`를 실행합니다. SQLCLI의 취소나 연결 종료로도
+진행 중인 전송과 임시 공간이 정리됩니다. 중단된 파일은 reader에 전달하지 않습니다.
+[원격 READ 오류 해결](../troubleshooting/#remote-read-errors)을 참고합니다.

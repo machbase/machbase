@@ -1,0 +1,353 @@
+[
+  {
+    "group": "file",
+    "title": "기존 서버 경로로 CSV 읽기",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_FILES}/measurements.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG'\n)\nORDER BY id;",
+    "expected": "matrix",
+    "diagnostic": null
+  },
+  {
+    "group": "file",
+    "title": "파일 URI로 같은 CSV 읽기",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_FILE_URI}/measurements.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG'\n)\nORDER BY id;",
+    "expected": "matrix",
+    "diagnostic": null
+  },
+  {
+    "group": "file",
+    "title": "URI에서 공백을 %20으로 나타내기",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_FILE_URI}/a%20b.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG'\n)\nORDER BY id;",
+    "expected": "matrix",
+    "diagnostic": null
+  },
+  {
+    "group": "file",
+    "title": "경로에서 %20을 그대로 사용하기",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_FILES}/a%20b.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG'\n)\nORDER BY id;",
+    "expected": "matrix",
+    "diagnostic": null
+  },
+  {
+    "group": "http",
+    "title": "HTTP에서 CSV 읽기",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_HTTP}/measurements.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG'\n)\nORDER BY id;",
+    "expected": "matrix",
+    "diagnostic": null
+  },
+  {
+    "group": "http",
+    "title": "HTTPS에서 Parquet 읽기",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_HTTPS}/measurements.parquet',\n    'format=parquet',\n    'source.tls.ca_file=${DFQ_CA}'\n)\nORDER BY id;",
+    "expected": "matrix",
+    "diagnostic": null
+  },
+  {
+    "group": "http",
+    "title": "HTTP Parquet에서 한 행 반환하기",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_HTTP}/measurements.parquet',\n    'format=parquet'\n)\nLIMIT 1;",
+    "expected": [
+      [
+        1,
+        10
+      ]
+    ],
+    "diagnostic": null
+  },
+  {
+    "group": "http",
+    "title": "로컬 파일과 원격 Parquet의 기준값 비교",
+    "sql": "SELECT COUNT(*) AS N, SUM(v) AS TOTAL\nFROM READ(\n    'source=${DFQ_HTTP}/measurements.parquet',\n    'format=parquet'\n);",
+    "expected": [
+      [
+        100,
+        50500
+      ]
+    ],
+    "diagnostic": null
+  },
+  {
+    "group": "http",
+    "title": "HTTP 원본을 SHA-256으로 확인하기",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_HTTP}/measurements.parquet',\n    'format=parquet',\n    'source.consistency=strong',\n    'source.expected_revision=sha256:${DFQ_PARQUET_SHA}'\n)\nORDER BY id;",
+    "expected": "matrix",
+    "diagnostic": null
+  },
+  {
+    "group": "http",
+    "title": "원격 JSONL을 행으로 읽기",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_HTTP}/measurements.jsonl',\n    'format=jsonl',\n    'type.id=LONG',\n    'type.v=LONG'\n)\nORDER BY id;",
+    "expected": [
+      [
+        1,
+        10
+      ],
+      [
+        2,
+        20
+      ]
+    ],
+    "diagnostic": null
+  },
+  {
+    "group": "http",
+    "title": "CSV 빈 헤더를 열 이름으로 사용하기",
+    "sql": "SELECT id, c2, unit, c4\nFROM READ('source=${DFQ_HTTP}/blank-header.csv',\n          'format=csv', 'header=true', 'type.id=LONG', 'type.c2=LONG');",
+    "expected": [
+      [
+        1,
+        10,
+        "C",
+        "sensor"
+      ]
+    ],
+    "diagnostic": null
+  },
+  {
+    "group": "http",
+    "title": "TSV 빈 헤더와 기존 이름 충돌 확인하기",
+    "sql": "SELECT id, c2_2, c2\nFROM READ('source=${DFQ_HTTP}/colliding-header.tsv', 'format=tsv',\n          'header=true', 'type.id=LONG', 'type.c2_2=LONG', 'type.c2=LONG');",
+    "expected": [
+      [
+        1,
+        10,
+        20
+      ]
+    ],
+    "diagnostic": null
+  },
+  {
+    "group": "http",
+    "title": "HTTP 응답이 가리키는 허용된 다른 주소 읽기",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_HTTP}/redirect.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG'\n)\nORDER BY id;",
+    "expected": "matrix",
+    "diagnostic": null
+  },
+  {
+    "group": "http",
+    "title": "RAW에서 원본 Parquet 크기 확인하기",
+    "sql": "SELECT _TOTAL_SIZE AS TOTAL_BYTES\nFROM READ('source=${DFQ_HTTP}/measurements.parquet', 'mode=raw')\nLIMIT 1;",
+    "expected": "raw_size",
+    "diagnostic": null
+  },
+  {
+    "group": "ftp",
+    "title": "익명 FTP로 CSV 읽기",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_FTP_ANON}/measurements.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG'\n)\nORDER BY id;",
+    "expected": "matrix",
+    "diagnostic": null
+  },
+  {
+    "group": "ftp",
+    "title": "FTP에서 .netrc 계정으로 읽기",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_FTP}/measurements.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG',\n    'source.ftp.netrc_file=${DFQ_NETRC}'\n)\nORDER BY id;",
+    "expected": "matrix",
+    "diagnostic": null
+  },
+  {
+    "group": "ftp",
+    "title": "명시적 FTP TLS로 CSV 읽기",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_EXPLICIT}/measurements.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG',\n    'source.ftp.tls=required',\n    'source.tls.ca_file=${DFQ_CA}',\n    'source.ftp.netrc_file=${DFQ_NETRC}'\n)\nORDER BY id;",
+    "expected": "matrix",
+    "diagnostic": null
+  },
+  {
+    "group": "ftp",
+    "title": "연결 시작부터 TLS를 사용하는 FTPS",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_FTPS}/measurements.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG',\n    'source.tls.ca_file=${DFQ_CA}',\n    'source.ftp.netrc_file=${DFQ_NETRC}'\n)\nORDER BY id;",
+    "expected": "matrix",
+    "diagnostic": null
+  },
+  {
+    "group": "ftp",
+    "title": "FTPS에서 Parquet 읽기",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_FTPS}/measurements.parquet',\n    'format=parquet',\n    'source.tls.ca_file=${DFQ_CA}',\n    'source.ftp.netrc_file=${DFQ_NETRC}'\n)\nORDER BY id;",
+    "expected": "matrix",
+    "diagnostic": null
+  },
+  {
+    "group": "ftp",
+    "title": "TFTP에서 작은 CSV 읽기",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_TFTP}/measurements.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG'\n)\nORDER BY id;",
+    "expected": "matrix",
+    "diagnostic": null
+  },
+  {
+    "group": "s3",
+    "title": "S3 공유 파일의 명시 프로필로 읽기",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=s3://dfq-lab-data/measurements.parquet',\n    'format=parquet',\n    'source.s3.profile=dfq-lab',\n    'source.tls.ca_file=${DFQ_CA}'\n)\nORDER BY id;",
+    "expected": "matrix",
+    "diagnostic": null
+  },
+  {
+    "group": "s3",
+    "title": "별도 프로필 지정 없이 환경의 키로 읽기",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=s3://dfq-lab-data/measurements.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG',\n    'source.tls.ca_file=${DFQ_CA}'\n)\nORDER BY id;",
+    "expected": "matrix",
+    "diagnostic": null
+  },
+  {
+    "group": "s3",
+    "title": "명시 옵션으로 profile의 주소 방식을 덮어쓰기",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=s3://dfq-lab-data/measurements.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG',\n    'source.s3.profile=dfq-lab',\n    'source.s3.endpoint=${DFQ_S3}',\n    'source.s3.region=us-east-1',\n    'source.s3.addressing_style=path',\n    'source.tls.ca_file=${DFQ_CA}'\n)\nORDER BY id;",
+    "expected": "matrix",
+    "diagnostic": null
+  },
+  {
+    "group": "s3",
+    "title": "버킷을 호스트명에 넣어 읽기",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=s3://dfq-lab-data/measurements.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG',\n    'source.s3.profile=dfq-lab',\n    'source.s3.addressing_style=virtual',\n    'source.tls.ca_file=${DFQ_CA}'\n)\nORDER BY id;",
+    "expected": "matrix",
+    "diagnostic": null
+  },
+  {
+    "group": "s3",
+    "title": "직접 HTTPS 객체 주소에 SigV4 적용하기",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_S3}/dfq-lab-data/measurements.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG',\n    'source.s3.profile=dfq-lab',\n    'source.s3.auth=sigv4',\n    'source.tls.ca_file=${DFQ_CA}'\n)\nORDER BY id;",
+    "expected": "matrix",
+    "diagnostic": null
+  },
+  {
+    "group": "s3",
+    "title": "공개 S3 객체를 익명으로 읽기",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=s3://dfq-lab-public/measurements.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG',\n    'source.s3.endpoint=${DFQ_S3}',\n    'source.s3.region=us-east-1',\n    'source.s3.auth=anonymous',\n    'source.tls.ca_file=${DFQ_CA}'\n)\nORDER BY id;",
+    "expected": "matrix",
+    "diagnostic": null
+  },
+  {
+    "group": "s3",
+    "title": "공개 객체의 직접 HTTPS 주소 사용하기",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_S3}/dfq-lab-public/measurements.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG',\n    'source.tls.ca_file=${DFQ_CA}'\n)\nORDER BY id;",
+    "expected": "matrix",
+    "diagnostic": null
+  },
+  {
+    "group": "s3",
+    "title": "객체 키의 공백을 인코딩해서 읽기",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=s3://dfq-lab-data/a%20b.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG',\n    'source.s3.profile=dfq-lab',\n    'source.tls.ca_file=${DFQ_CA}'\n)\nORDER BY id;",
+    "expected": "matrix",
+    "diagnostic": null
+  },
+  {
+    "group": "s3",
+    "title": "발급된 사전 서명 HTTPS URL로 읽기",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_SIGNED}',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG',\n    'source.tls.ca_file=${DFQ_CA}'\n)\nORDER BY id;",
+    "expected": "matrix",
+    "diagnostic": null
+  },
+  {
+    "group": "s3",
+    "title": "사전 서명 URL의 결과 표시 확인하기",
+    "sql": "SELECT CASE WHEN _SOURCE LIKE '%X-Amz-Signature%' THEN 0 ELSE 1 END AS MASKED\nFROM READ(\n    'source=${DFQ_SIGNED}',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG',\n    'source.tls.ca_file=${DFQ_CA}',\n    'columns=envelope'\n)\nLIMIT 1;",
+    "expected": [
+      [
+        1
+      ]
+    ],
+    "diagnostic": null
+  },
+  {
+    "group": "errors",
+    "title": "없는 HTTP 파일",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_HTTP}/missing.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG'\n)\nORDER BY id;",
+    "expected": null,
+    "diagnostic": "404"
+  },
+  {
+    "group": "errors",
+    "title": "평문 HTTP에 TLS 파일 옵션",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_HTTP}/measurements.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG',\n    'source.tls.ca_file=${DFQ_CA}'\n)\nORDER BY id;",
+    "expected": null,
+    "diagnostic": "INVALID_OPTION|TLS"
+  },
+  {
+    "group": "errors",
+    "title": "존재하지 않는 CA 파일",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_HTTPS}/measurements.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG',\n    'source.tls.ca_file=${DFQ_CA}.missing'\n)\nORDER BY id;",
+    "expected": null,
+    "diagnostic": "INVALID_OPTION|readable server file"
+  },
+  {
+    "group": "errors",
+    "title": "기대 SHA-256과 다른 원본",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_HTTP}/measurements.parquet',\n    'format=parquet',\n    'source.expected_revision=sha256:0000000000000000000000000000000000000000000000000000000000000000'\n)\nORDER BY id;",
+    "expected": null,
+    "diagnostic": "SOURCE_CHANGED"
+  },
+  {
+    "group": "errors",
+    "title": "implicit FTPS에 평문 옵션 지정",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_FTPS}/measurements.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG',\n    'source.ftp.tls=none'\n)\nORDER BY id;",
+    "expected": null,
+    "diagnostic": "INVALID_OPTION|OPTION_CONFLICT|FTPS"
+  },
+  {
+    "group": "errors",
+    "title": "TFTP에 FTP 옵션 지정",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_TFTP}/measurements.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG',\n    'source.ftp.tls=required'\n)\nORDER BY id;",
+    "expected": null,
+    "diagnostic": "INVALID_OPTION|FTP"
+  },
+  {
+    "group": "errors",
+    "title": "S3에 존재하지 않는 명시 프로필 사용",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=s3://dfq-lab-data/measurements.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG',\n    'source.s3.profile=dfq-missing',\n    'source.s3.endpoint=${DFQ_S3}',\n    'source.s3.region=us-east-1',\n    'source.tls.ca_file=${DFQ_CA}'\n)\nORDER BY id;",
+    "expected": null,
+    "diagnostic": "profile|credential"
+  },
+  {
+    "group": "errors",
+    "title": "완성된 S3 HTTPS URL에 주소 방식 지정",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_S3}/dfq-lab-data/measurements.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG',\n    'source.s3.profile=dfq-lab',\n    'source.s3.addressing_style=path',\n    'source.tls.ca_file=${DFQ_CA}'\n)\nORDER BY id;",
+    "expected": null,
+    "diagnostic": "INVALID_OPTION|S3"
+  },
+  {
+    "group": "errors",
+    "title": "사전 서명 URL에 별도 프로필 지정",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_SIGNED}',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG',\n    'source.s3.profile=dfq-lab',\n    'source.tls.ca_file=${DFQ_CA}'\n)\nORDER BY id;",
+    "expected": null,
+    "diagnostic": "INVALID_OPTION|URI|presigned"
+  },
+  {
+    "group": "analyst",
+    "title": "로컬 파일 URI와 디렉터리 권한",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_FILE_URI}/measurements.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG'\n)\nORDER BY id;",
+    "expected": "matrix",
+    "diagnostic": null
+  },
+  {
+    "group": "analyst",
+    "title": "서버 자격증명 없는 요청",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_HTTP}/measurements.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG'\n)\nORDER BY id;",
+    "expected": "matrix",
+    "diagnostic": null
+  },
+  {
+    "group": "analyst",
+    "title": "프로필 권한으로 S3 읽기",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=s3://dfq-lab-data/measurements.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG',\n    'source.s3.profile=dfq-lab'\n)\nORDER BY id;",
+    "expected": "matrix",
+    "diagnostic": null
+  },
+  {
+    "group": "analyst",
+    "title": "환경변수 권한으로 S3 읽기",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=s3://dfq-lab-data/measurements.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG'\n)\nORDER BY id;",
+    "expected": "matrix",
+    "diagnostic": null
+  },
+  {
+    "group": "analyst",
+    "title": "NETRC 권한으로 FTPS 읽기",
+    "sql": "SELECT id, v\nFROM READ(\n    'source=${DFQ_FTPS}/measurements.csv',\n    'format=csv',\n    'header=true',\n    'type.id=LONG',\n    'type.v=LONG'\n)\nORDER BY id;",
+    "expected": "matrix",
+    "diagnostic": null
+  },
+  {
+    "group": "analyst",
+    "title": "VIEW 실행자의 주소 권한",
+    "sql": "SELECT id, v FROM SYS.DFQ_REMOTE_LAB_VIEW ORDER BY id;",
+    "expected": "matrix",
+    "diagnostic": null
+  }
+]

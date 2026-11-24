@@ -204,3 +204,16 @@ SEARCH는 작업당 검색 예산의 1/8을 예약하고 최대 8개 작업을 �
 
 [V$VECTOR_IVF_MEMORY](/kr/dbms-8.9/reference/system-catalog/search-indexes/#ivf-memory)에서
 예약량·실사용량·잔존량을 구분해 확인합니다.
+
+## 원격 READ 설정 {#read-remote-properties}
+
+다음 항목은 Standard Edition의 서버 `machbase.conf`에 지정합니다.
+
+| 프로퍼티 | 기본값 | 의미 |
+|---|---|---|
+| `READ_REMOTE_CA_FILE` | 플랫폼 기본 CA | TLS 인증서 검증용 서버 PEM 파일. Windows 기본 파일은 `MACHBASE_HOME/conf/read-remote-ca.pem` |
+| `READ_REMOTE_NETRC_FILE` | 미지정 | FTP·FTPS에 사용하는 서버 측 .netrc 파일 |
+| `READ_REMOTE_MAX_SPOOL_BYTES` | `1000000000000` | SQL 문 하나가 동시에 사용하는 READ 임시 저장 바이트 한도. 범위는 1~9,223,372,036,854,775,807 |
+
+임시 저장에는 원격 파일, 중첩 SQL 입력과 같은 문에서 사용하는 다른 READ 임시
+저장도 포함됩니다. [인증 파일과 임시 공간 운영](/kr/dbms-8.9/dfq/operations/#remote-read-spool)을 참고합니다.

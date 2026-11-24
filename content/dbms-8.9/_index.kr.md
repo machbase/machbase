@@ -27,7 +27,7 @@ Machbase DBMS 매뉴얼에 오신 것을 환영합니다. 이 문서는 Machbase
 | 9 | [LOOKUP 테이블 활용](./lookup-table-usage/) | 기준 정보, PRIMARY KEY, JSON, 일반 predicate DML, JOIN |
 | 10 | [VOLATILE 테이블 활용](./volatile-table-usage/) | 메모리 테이블, UPSERT, 상태 캐시, 재시작과 데이터 소실 |
 | 11 | [AI 벡터 검색과 GraphRAG](./ai-search-graphrag/) | 벡터·Hybrid 검색, 재귀 SQL, 근거 기반 답변 |
-| 12 | [DFQ(DIRECT FILE QUERY)](./dfq/) | 파일 직접 조회·포맷별 옵션·원문 추출 |
+| 12 | [DFQ(DIRECT FILE QUERY)](./dfq/) | 로컬·원격 파일 직접 조회·포맷별 옵션·원문 추출 |
 | 13 | [시계열 분석 SQL](./time-series-sql/) | 시간 JOIN·최신값·샘플링·윈도 집계·출처 추적 |
 | 14 | [개발 및 애플리케이션 연동](./development-tools-integration/) | 연동 방식, 공통 개념과 언어별 SDK/API |
 | 15 | [성능 튜닝](./performance-tuning/) | 쿼리 성능, 수집 성능, 캐시 튜닝 |

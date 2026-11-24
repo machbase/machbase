@@ -10,7 +10,7 @@ toc: true
 
 | 증상·오류 | 확인과 해결 |
 |---|---|
-| ACCESS_DENIED | 실행 사용자·catalog의 디렉터리 권한 확인 |
+| ACCESS_DENIED | 실행 사용자·catalog의 디렉터리 또는 원격 endpoint 권한 확인 |
 | IO_ERROR | 서버 OS 권한, 서버 경로, 일반 파일 여부 확인 |
 | UNSUPPORTED_FORMAT | 실제 형식과 reader 지원 확인. format을 명시해 진단 |
 | INVALID_OPTION | 옵션 철자·대소문자·허용 모드·값·중복 확인 |
@@ -57,3 +57,20 @@ Windows는 드라이브가 있는 서버 절대 경로를 사용합니다. 포�
 Linux의 Parquet 배포는 glibc 2.17 이상, HDF5 배포는 glibc 2.27 이상을 대상으로 합니다.
 macOS의 해당 reader 배포는 11.0 이상을 대상으로 합니다. 실제 설치 패키지의 reader 포함
 여부를 확인합니다.
+
+## 원격 READ 오류 해결 {#remote-read-errors}
+
+| 증상 | 확인과 조치 |
+|---|---|
+| `INVALID_OPTION` 또는 옵션 충돌 | 주소 스킴, `source=` 표기, 프로토콜별 옵션을 확인합니다. 예를 들어 `ftps://`에서 `source.ftp.tls=none`을 제거합니다. |
+| `ACCESS_DENIED` | 실행 사용자의 실제 스킴·호스트·포트와 자격증명 출처를 확인합니다. S3 변환 주소, VIEW 실행자, redirect 목적지와 최근 REVOKE도 확인합니다. |
+| AWS 리전·프로필·키 부족 또는 .netrc 설정 오류 | 서버의 파일·환경변수와 키 쌍, 임시 토큰, 대상 FTP 호스트의 machine 항목을 확인합니다. 다른 출처의 키를 섞으면 안 됩니다. |
+| HTTP 403 또는 사전 서명 만료 | 접근 권한·서명 리전·서버 시각을 확인하고 만료 시 새 URL을 발급받습니다. |
+| HTTP 404 | 파일 경로, 버킷·객체 키, percent-encoding과 실제 endpoint를 확인합니다. |
+| HTTPS·FTPS 인증서 오류 | 신뢰 CA 및 서버 인증서의 이름과 유효 기간을 확인합니다. |
+| `SOURCE_CHANGED` | 기대 SHA-256과 원격 원본이 같은지 확인합니다. 새 원본을 읽어야 한다면 재탐색한 revision으로 실행합니다. |
+| `LIMIT_EXCEEDED` 또는 `IO_ERROR` | 원본 파일 전체 크기, SQL 문당 한도와 DBS_PATH의 쓰기 권한·여유 공간을 확인합니다. 전송 중단과 불완전한 응답도 점검합니다. |
+
+실습 서비스가 생성한 `/tmp/dfq-read-lab/sql/errors.sql`은 대상이 없는 파일,
+잘못된 TLS 옵션·CA 파일, revision 불일치와 잘못된 S3 옵션을 비교합니다.
+정상 조회를 먼저 확인하고 오류 SQL은 문장별로 실행합니다.

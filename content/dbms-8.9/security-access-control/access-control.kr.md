@@ -21,7 +21,9 @@ SELECT NAME, VALUE
 
 ## 원격 접속 설정
 
-`GRANT_REMOTE_ACCESS`는 원격 클라이언트 접속 허용 여부를 제어합니다.
+`GRANT_REMOTE_ACCESS`는 원격 클라이언트가 Machbase에 연결할 수 있는지 제어합니다.
+Machbase 서버가 외부 파일에 접속할 때는 [DFQ ENDPOINT 권한](../privileges/#dfq-파일-읽기)을
+적용합니다.
 
 ```ini
 # 원격 접속 허용

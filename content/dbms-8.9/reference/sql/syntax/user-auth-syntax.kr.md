@@ -112,6 +112,10 @@ CONNECT app_user/App#1234;
 
 ## GRANT / REVOKE
 
+다음 문법은 데이터베이스와 테이블 권한에 적용합니다. DFQ는
+[디렉터리 READ](#서버-디렉터리-read-권한)와 [엔드포인트 READ](#read-on-endpoint)의
+별도 문법을 사용합니다.
+
 ```sql
 grant_stmt  ::= 'GRANT'  priv_list 'ON' object_ref 'TO'   user_name
 revoke_stmt ::= 'REVOKE' priv_list 'ON' object_ref 'FROM' user_name
@@ -175,8 +179,9 @@ REVOKE BACKUP ON DATABASE factory_a FROM backup_user;
 
 ### 사용자 생성 시 기본 권한
 
-신규 생성 사용자는 `SELECT`, `INSERT`, `DELETE`, `UPDATE`, `CREATE`, `DROP` 권한을 기본 보유합니다.
-`ALTER`, `MOUNT`, `BACKUP`은 명시적으로 부여해야 합니다.
+새 사용자는 기본 데이터베이스 `MACHBASEDB`에 `CONNECT`, `CREATE`, `DROP`을 기본
+보유합니다. 다른 사용자 소유 테이블을 사용하려면 해당 테이블에 DML 권한을 부여합니다.
+다른 논리 데이터베이스의 `CONNECT`, 관리 권한과 DFQ `READ`도 필요한 범위에 별도로 부여합니다.
 
 ---
 
@@ -296,3 +301,25 @@ SYS가 현재 catalog의 기존 사용자에게 기존 절대 디렉터리와 �
 허용합니다. 서버 OS 권한도 필요하며 VIEW의 소유자 대신 실행 사용자를 검사합니다.
 REVOKE는 다음 실행·새 파일 open부터 적용하고 열린 질의를 강제로 종료하지 않습니다.
 [경로·다중 파일·플랫폼의 제약](/kr/dbms-8.9/dfq/operations/)을 함께 확인합니다.
+
+## 원격 ENDPOINT READ 권한 {#read-on-endpoint}
+
+```text
+GRANT READ ON ENDPOINT 'scheme://host[:port]'
+    [PROFILE 'profile_name' | USING ENVIRONMENT | USING NETRC] TO user_name
+
+REVOKE READ ON ENDPOINT 'scheme://host[:port]'
+    [PROFILE 'profile_name' | USING ENVIRONMENT | USING NETRC] FROM user_name
+```
+
+SYS가 쓰기 가능한 현재 활성 데이터베이스의 기존 사용자에게 원격 주소와 인증 출처를
+묶어 허용합니다.
+인증 절을 생략하면 서버 자격증명 없는 요청을 허용합니다. S3는 `s3://`가 변환된
+실제 HTTP(S) 주소를 권한에 지정합니다. 생략한 포트는 해당 스킴의 기본 포트를 적용합니다.
+스킴·호스트·포트를 지정하고 경로·query·fragment·계정 정보는 포함하지 않습니다.
+회수할 때 부여에 사용한 인증 종류와 프로필을 지정합니다.
+
+VIEW를 조회할 때는 실행 사용자의 권한을 검사합니다. 권한은 현재 데이터베이스에
+적용하며, 회수 후에는 준비된 SQL도 다음 실행에서 다시 검사합니다.
+
+[인증 출처별 예제와 VIEW 실행 권한](/kr/dbms-8.9/dfq/operations/#endpoint-read-permissions)을 참고합니다.

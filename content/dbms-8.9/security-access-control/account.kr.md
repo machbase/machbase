@@ -41,6 +41,9 @@ ALTER USER app_user IDENTIFIED BY 'App#Changed456' PASSWORD POLICY HIGH;
 DROP USER app_user;
 ```
 
+계정을 삭제하면 그 계정의 기존 디렉터리·엔드포인트 READ 권한도 정리됩니다.
+같은 이름으로 계정을 다시 생성한 뒤에는 필요한 DFQ 권한을 새로 부여합니다.
+
 `SYS` 계정과 현재 연결 중인 자기 계정은 삭제할 수 없습니다. `machsql`에서 다른 계정으로
 작업을 계속하려면 `CONNECT user/password;`로 새 세션 인증을 수행하거나 클라이언트를 다시
 연결합니다.

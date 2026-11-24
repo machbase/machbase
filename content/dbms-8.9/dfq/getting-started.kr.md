@@ -73,3 +73,6 @@ DESC '/srv/dfq/sensor.csv';
 - [포맷별 상세 사용법](../formats/)에서 작업과 옵션 조합을 찾습니다.
 - SQL 파일은 `machsql ... -f csv.sql`로 실행합니다. 오류 예제는 정상 SQL과 분리합니다.
 - 실습은 DB 테이블을 만들지 않습니다. 제공 파일은 필요한 동안 보존하고 전용 실습 파일만 정리합니다.
+
+로컬 파일 URI, HTTP(S), FTP(S), TFTP, S3 파일로 시작하려면
+[로컬 URI와 원격 파일 읽기](../remote-read/)의 실습을 참고합니다.

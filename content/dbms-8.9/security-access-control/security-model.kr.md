@@ -27,7 +27,7 @@ Machbase의 보안 모델은 **사용자 계정**, **권한(GRANT/REVOKE)**, **�
          ▼
 ┌─────────────────────┐
 │   권한 검사           │  GRANT/REVOKE로 부여된 권한 확인
-│   (작업 허용 여부)     │  테이블 권한 + 데이터베이스 권한
+│   (작업 허용 여부)     │  데이터베이스·테이블·DFQ 파일 읽기 권한
 └─────────────────────┘
 ```
 
@@ -55,7 +55,7 @@ Machbase를 설치하면 `SYS` 계정이 자동으로 생성됩니다. SYS는 �
 ## 관련 문서
 
 - 사용자 생명 주기와 비밀번호 정책: [계정 관리](../account/)
-- 데이터베이스·테이블 권한과 GRANT/REVOKE: [권한 관리](../privileges/)
+- 데이터베이스·테이블·DFQ 권한과 GRANT/REVOKE: [권한 관리](../privileges/)
 - 공개키 등록·롤오버: [AUTH KEY 인증](../authentication-auth-key/)
 - 원격 접속과 listener: [접속 제어](../access-control/)
 
@@ -69,19 +69,24 @@ Machbase를 설치하면 `SYS` 계정이 자동으로 생성됩니다. SYS는 �
 - **SYS는 관리 작업 전용**: 일상적인 데이터 조회나 입력에는 SYS 계정을 사용하지 않습니다.
 - **용도별 계정 분리**: 읽기 전용 계정, 데이터 입력 계정, 배포(DDL) 계정, 백업 계정을 분리합니다.
 - **테이블 단위 권한 제한**: 계정이 접근해야 하는 테이블에만 필요한 DML 권한을 부여합니다.
+- **DFQ 원본 범위 제한**: 필요한 서버 디렉터리 또는 원격 엔드포인트와 인증 출처만
+  [부여합니다](../privileges/#dfq-파일-읽기).
 - **정기 점검**: 불필요한 계정을 제거하고 권한이 과도하게 부여된 계정을 확인합니다.
 
 ```sql
 -- 읽기 전용 계정
 CREATE USER reader IDENTIFIED BY 'Reader#Strong123';
+REVOKE DDL ON DATABASE MACHBASEDB FROM reader;
 GRANT SELECT ON sys.sensor_log TO reader;
 
 -- 데이터 입력 전용 계정
 CREATE USER writer IDENTIFIED BY 'Writer#Strong123';
+REVOKE DDL ON DATABASE MACHBASEDB FROM writer;
 GRANT SELECT, INSERT ON sys.sensor_log TO writer;
 
 -- DDL 전용 계정 (테이블 생성/삭제)
 CREATE USER deploy IDENTIFIED BY 'Deploy#Strong123';
+REVOKE DDL ON DATABASE MACHBASEDB FROM deploy;
 GRANT CONNECT ON DATABASE factory_a TO deploy;
 GRANT DDL ON DATABASE factory_a TO deploy;
 ```

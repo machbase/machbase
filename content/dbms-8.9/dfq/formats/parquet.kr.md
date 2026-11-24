@@ -257,7 +257,9 @@ FROM READ('/srv/dfq/bad.parquet',
 
 기존 SQL 테이블 함수 `READ()`로 서버의 Parquet 파일을 조회합니다. 명시 `format=parquet`와 파일 magic 기반 자동 감지를 지원하며 확장자가 다른 파일도 실제 내용으로 판별합니다. 자동 감지는 선두 `PAR1`·`PARE`뿐 아니라 인가된 파일의 footer magic과 길이도 확인하므로, 같은 인쇄 가능한 문자열로 시작하는 정상 CSV를 Parquet로 가로채지 않습니다. 기본 논리 대상은 `rows`, 기본 데이터 반환은 native SQL 컬럼입니다.
 
-Parquet 쓰기·암호화 파일·원격 저장소·Hive partition dataset·Arrow IPC·Feather SQL reader는 제공하지 않습니다. 필요한 Arrow 코어를 링크하더라도 다른 Arrow 파일 형식을 자동 지원하는 것은 아닙니다.
+[지원 URI](../../remote-read/)를 통해 단일 원격 Parquet 파일을 읽을 수 있습니다.
+원본을 전체 다운로드한 뒤 footer를 읽으므로 LIMIT도 전송량은 줄이지 않습니다.
+Parquet 쓰기·암호화 파일·Hive partition dataset·Arrow IPC·Feather SQL reader는 제공하지 않습니다. 필요한 Arrow 코어를 링크하더라도 다른 Arrow 파일 형식을 자동 지원하는 것은 아닙니다.
 
 경로는 클라이언트가 아닌 서버 파일시스템 기준입니다. SYS 이외 사용자는 기존 READ directory grant 정책을 따릅니다. 브리지는 인가된 `qpxReadSource`를 통해 읽고, 파일 이름을 별도로 열어 권한 검사를 우회하지 않습니다.
 

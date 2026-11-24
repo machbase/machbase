@@ -26,7 +26,7 @@ toc: true
 | `M$SYS_TABLESPACE_DISKS` | 테이블스페이스가 사용하는 디스크 경로 |
 | `M$SYS_USERS` | 등록된 사용자 목록 |
 | `M$SYS_VIEWS` | 뷰 정의 SQL 텍스트 |
-| `M$SYS_USER_ACCESS` | 테이블별 사용자 권한 |
+| `M$SYS_USER_ACCESS` | 데이터베이스와 테이블별 사용자 권한. DFQ 읽기 권한 확인은 [DFQ 권한 확인](/kr/dbms-8.9/security-access-control/privileges/#dfq-권한-확인) 참고 |
 | `M$RETENTION` | Retention Policy 정보 |
 | `M$TABLES` | M$ 메타 테이블 자체 목록 |
 | `M$COLUMNS` | M$ 메타 테이블의 컬럼 목록 |

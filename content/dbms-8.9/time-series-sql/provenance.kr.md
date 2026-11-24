@@ -215,3 +215,14 @@ strong snapshot의 `read_origin.replay.example_sql`은 revision과 mapping을 �
 VIEW의 카탈로그 ID, 테이블 ID, 정의 SHA-256을 기록합니다. 이름과 정의의 공개 범위는
 `M$SYS_VIEWS` 접근 권한을 따릅니다.
 [SQL 셀의 원본 위치](../../dfq/sql-source/#sql-셀의-출처-위치)도 확인할 수 있습니다.
+
+### 원격 주소와 revision
+
+원격 파일을 `source.consistency=strong`으로 읽으면 전체 전송을 마친 바이트로
+SHA-256 revision을 계산합니다. `source.expected_revision`으로 같은 원본인지 확인할
+수 있습니다. 기본 best_effort에는 공개 SHA-256 revision이 없습니다.
+
+URL의 query 값은 출처와 진단에서 마스킹합니다. query 원문이 필요한 재조회 SQL이나
+토큰은 발급하지 않습니다. 사전 서명 URL을 다시 읽을 때는 발급받은 유효한 주소를
+새 READ에 전달합니다. 서버 자격증명과 인증 헤더는 결과에 포함하지 않습니다.
+[원격 전송과 원본 확인](../../dfq/operations/#remote-read-spool)을 참고합니다.

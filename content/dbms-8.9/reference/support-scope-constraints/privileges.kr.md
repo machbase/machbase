@@ -5,7 +5,7 @@ weight: 70
 toc: true
 ---
 
-Machbase 권한은 적용 범위에 따라 **데이터베이스 권한**과 **테이블 권한** 두 가지로 나뉩니다.
+Machbase는 데이터베이스, 테이블과 DFQ 파일 원본의 범위에 따라 권한을 부여합니다.
 
 ## 데이터베이스 권한
 
@@ -38,6 +38,18 @@ Machbase 권한은 적용 범위에 따라 **데이터베이스 권한**과 **�
 | `INSERT` | 특정 테이블 INSERT |
 | `DELETE` | 특정 테이블 DELETE |
 | `UPDATE` | 특정 테이블 UPDATE |
+| `ALL` | `SELECT`, `INSERT`, `DELETE`, `UPDATE` 묶음 |
+
+## DFQ 읽기 권한
+
+| 권한 | 허용하는 작업 |
+|---|---|
+| `READ ON DIRECTORY` | 해당 서버 디렉터리와 하위 디렉터리의 로컬 파일 읽기 |
+| `READ ON ENDPOINT` | 실제 접속 주소와 인증 출처 조합에 해당하는 원격 파일 읽기 |
+
+Standard Edition에서 현재 데이터베이스와 사용자별로 권한을 부여합니다. VIEW에서
+읽을 때도 실행 사용자의 READ 권한을 적용합니다. 권한 부여·회수와 검증 절차는
+[DFQ 파일 읽기](/kr/dbms-8.9/security-access-control/privileges/#dfq-파일-읽기)를 참고합니다.
 
 ## GRANT / REVOKE 문법
 
@@ -70,19 +82,23 @@ REVOKE BACKUP ON DATABASE factory_a FROM backup_user;
 | 테이블 INSERT | 테이블 | INSERT |
 | 테이블 UPDATE | 테이블 | UPDATE |
 | 테이블 DELETE | 테이블 | DELETE |
+| 로컬 파일 READ | 서버 디렉터리 | READ ON DIRECTORY 및 서버 OS 읽기 권한 |
+| 원격 파일 READ | 원격 엔드포인트 | READ ON ENDPOINT 및 해당 인증 출처 |
 
 ## 권한 현황 조회
 
 ```sql
--- 사용자 목록
-SELECT user_name, user_id FROM m$sys_users;
+SELECT NAME, USER_ID FROM M$SYS_USERS ORDER BY USER_ID;
 
--- 데이터베이스 권한 조회
-SELECT * FROM m$sys_grant_databases WHERE grantee = 'APP_USER';
-
--- 테이블 권한 조회
-SELECT * FROM m$sys_grant_tables WHERE grantee = 'APP_USER';
+-- 데이터베이스와 테이블의 권한 기록
+SELECT DB_NAME, USER_NAME, OWNER_NAME, TABLE_NAME, PRIV
+  FROM M$SYS_USER_ACCESS
+ WHERE USER_NAME = 'APP_USER'
+ ORDER BY DB_NAME, OWNER_NAME, TABLE_NAME;
 ```
+
+SYS는 전체 권한 기록을, 일반 사용자는 자신의 기록을 조회합니다. DFQ의 파일 권한은
+[대상 계정으로 READ를 실행](/kr/dbms-8.9/security-access-control/privileges/#dfq-권한-확인)해 확인합니다.
 
 ## 상세 레퍼런스
 
