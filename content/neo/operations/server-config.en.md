@@ -18,6 +18,37 @@ Edit generated config so that customize settings, then start machbase-neo with `
 machbase-neo serve --config ./machbase-neo.conf
 ```
 
+Use `--config-dir <path>` to load `.conf` files in filename order. If both
+options are specified, `--config` takes precedence. Without either option,
+the embedded default configuration is used.
+
+## Configuration and startup rules
+
+Options after `--` are not treated as flags, including by `flag()` and
+`flagOrError()`. When a flag is repeated, HCL `flag()` uses the first
+occurrence. Boot options use the last occurrence of each spelling and prefer
+the long spelling over its short alias. Boot options requiring values, including
+`--config`, `--config-dir`, `--pid`, `--bootlog`, `--preset`, and `--file`,
+reject missing or empty values. Invalid explicit boolean values for boot
+flags also cause errors. A bare boolean boot flag has the value `true` in
+HCL expressions. A referenced flag without a value causes a configuration
+error rather than using the default or consuming the next option. Unknown
+flags not referenced in the configuration are ignored. A standalone `-` is
+accepted as a value; use `--name=-value` for other values starting with `-`,
+unless they are numeric.
+
+On Unix, `--daemon` reports success only after startup completes. Startup
+failure or a two-minute startup timeout returns an error. When `--pid` is
+specified, the PID file must not already exist. The process creates it
+exclusively and removes its own file on shutdown, including in foreground
+mode. Remove stale PID files manually only after confirming the corresponding
+process is no longer running.
+
+On Windows, `arg()` and `arglen()` see the original service process arguments,
+including `service run` for an installed service. The service is reported as
+running only after startup completes; startup and shutdown errors are recorded
+in the Windows event log.
+
 ## Database directory
 
 The default value of `DataDir` is `${execDir()}/machbase_home` which is a sub-directory of where `machbase-neo` executable file is.
@@ -58,6 +89,14 @@ Several functions are supported for the value of config item.
 - `tempDir()` : Get system temp dir path. {{< neo_since ver="8.0.36" />}}
 - `userDir()` : Get user's home directory, On Linux and macOS, it returns the $HOME environment variable.
 - `prefDir(subdir)` : Ger user's preference directory, On Linux and macOS, it returns the real path of $HOME/.config/{subdir}
+- `envOrError(name)`, `flagOrError(name)` : Return the environment variable or flag value, or fail if it is missing.
+- `arg(index, default)`, `argOrError(index)` : Return the argument at the zero-based index, or the default or an error if it is missing. The list includes the executable and excludes arguments beginning with `-`, but includes separate flag values.
+- `arglen()` : Return the number of original process arguments, including the executable and flags.
+- `pname()`, `version()` : Return the process name and version.
+- `execFile()`, `userConfDir()` : Return the executable path and user configuration directory.
+- `upper`, `lower`, `min`, `max`, `strlen`, `substr` : String and numeric functions.
+
+Attributes in a `define` block are available as `<block>_<attribute>`.
 
 {{< callout type="info">}}
 **Combine env() and flag()**<br/>
