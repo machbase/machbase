@@ -5,6 +5,8 @@ weight: 50
 toc: true
 ---
 
+[시계열 JOIN·TIMESTAMP·TIE 전체 BNF](../../../reference/sql/syntax/time-series-join-syntax/)에서 작성 순서와 인자 제약을 확인합니다.
+
 이벤트마다 시간창 안의 관측을 모두 집계합니다. `RANGE BETWEEN 1m PRECEDING AND CURRENT ROW`는 `[이벤트 시각−1분, 이벤트 시각]`이며 양끝을 포함합니다.
 
 21초 이벤트의 창에는 0·4·8·10·12·16·18초의 관측 7행이 있습니다. 평균은 `904 / 7 = 129.142857…`입니다. 같은 시각의 여러 행도 각각 집계하며 한 행을 선택하는 JOIN과 달리 창 안의 중복을 TIE로 제거하지 않습니다.

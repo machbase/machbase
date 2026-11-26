@@ -5,6 +5,8 @@ weight: 20
 toc: true
 ---
 
+[SAMPLE·FILL·ALIGN·EXPECT KEYS 전체 BNF](../../../reference/sql/syntax/sample-fill-syntax/)에서 작성 순서와 인자 제약을 확인합니다.
+
 관측이 없는 버킷을 어떤 값으로 출력할지 정합니다. 실제 관측의 집계값이 NULL인 경우와 관측 자체가 없는 버킷은 구분합니다.
 
 | 정책 | 빈 버킷 처리 |

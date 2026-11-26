@@ -20,7 +20,7 @@ SELECT *
 [WHERE ...]
 ```
 
-- `inline_view`에서 PIVOT 절에 사용되지 않은 컬럼에 대해 GROUP BY를 수행합니다.
+- 명시 GROUP BY를 생략하면 입력에서 집계 인자와 FOR 키를 제외한 컬럼으로 그룹을 만듭니다.
 - `FOR category_col IN (...)`: 피벗 기준 컬럼과 열로 변환할 값 목록을 지정합니다.
 - 복수 집계는 IN 키 순서와 집계식 순서로 열을 만들며 `IN별칭_집계별칭` 이름을 사용합니다.
 - 명시 GROUP BY가 있으면 해당 식만 그룹 키로 사용합니다.
@@ -30,6 +30,31 @@ SELECT *
 
 복수 집계·집계 결과 식·동적 열·그룹 구성의 전체 실행 예제는
 [13.8 PIVOT으로 시계열 비교하기](../../../../time-series-sql/pivot/)를 참고합니다.
+
+### PIVOT 전체 BNF {#pivot-bnf}
+
+아래 ε는 생략이며 expression_list는 하나 이상의 쉼표로 구분한 SQL 식입니다.
+
+```bnf
+<pivot_clause> ::= "PIVOT" "(" <cell_list> "FOR" <column>
+                   "IN" "(" <palette> ")" <group_opt> ")"
+<cell_list> ::= <cell> | <cell_list> "," <cell>
+<cell> ::= <aggregate_expression> <alias_opt>
+<alias_opt> ::= ε | "AS" <alias>
+<palette> ::= <pivot_values> | <single_column_select>
+<pivot_values> ::= <pivot_value> | <pivot_values> "," <pivot_value>
+<pivot_value> ::= <constant_expression> <alias_opt>
+<group_opt> ::= ε | "GROUP" "BY" <expression_list>
+```
+
+집계식이나 집계 결과를 사용하는 scalar 식을 셀로 지정합니다. 셀 안에는 OVER·SUBSAMPLE을
+넣지 않습니다. IN 키 순서 안에서 집계식 순서로 열을 만듭니다. 명시 GROUP BY는 해당
+키만 사용하며 생략 시 FOR 키와 집계 인자를 제외한 입력 열이 암묵적 그룹 키입니다.
+동적 IN SELECT는 한 열을 반환하고 스키마를 prepare에서 확정하므로 바인드를 받지 않습니다.
+같은 준비문 재실행은 열 구성을 유지합니다. 새 열은 재prepare하고 저장 VIEW는 재정의합니다.
+빈 IN, 중복 키·열 이름은 오류입니다. SQL NULL과 문자열 'NULL'은 서로 다른 키입니다.
+동적 IN이 JSON·ARRAY·VECTOR를 반환하면 거부하며 지원 scalar로 먼저 추출합니다.
+존재하는 그룹의 COUNT 빈 셀은 0입니다. OUTER JOIN에서 PIVOT 행 전체가 미매칭이면 NULL입니다.
 
 ## 예시
 

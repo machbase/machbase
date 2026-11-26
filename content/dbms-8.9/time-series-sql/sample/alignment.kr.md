@@ -5,6 +5,8 @@ weight: 50
 toc: true
 ---
 
+[SAMPLE·FILL·ALIGN·EXPECT KEYS 전체 BNF](../../../reference/sql/syntax/sample-fill-syntax/)에서 작성 순서와 인자 제약을 확인합니다.
+
 ALIGN TO는 버킷의 원점을 정합니다. 기본 CALENDAR는 세션의 UTC 오프셋을 사용합니다. 실행 환경에 관계없이 같은 경계를 얻으려면 `ALIGN TO CALENDAR TIME ZONE 'UTC'` 또는 지역 이름을 명시합니다.
 
 TIME ZONE은 버킷 경계만 정하며 WHERE 문자열의 해석과 결과 DATETIME 표시 시간대를 바꾸지 않습니다. 서울 자정은 UTC 전날 15시, 방콕 자정은 UTC 전날 17시입니다. 일간 집계는 달라지지만 정수 시간 차이인 두 지역의 1시간 버킷 경계는 같을 수 있습니다.

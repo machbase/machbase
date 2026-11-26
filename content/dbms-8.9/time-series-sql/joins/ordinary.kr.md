@@ -5,6 +5,8 @@ weight: 70
 toc: true
 ---
 
+[시계열 JOIN·TIMESTAMP·TIE 전체 BNF](../../../reference/sql/syntax/time-series-join-syntax/)에서 작성 순서와 인자 제약을 확인합니다.
+
 일반 JOIN은 ON 조건을 만족하는 모든 행 조합을 반환합니다. 키만 같다고 연결하면 직전 관측이나 최근접 한 행을 선택하지 않습니다. event 6행과 motor 18행은 같은 NAME이므로 108행이 됩니다.
 
 INNER는 일치 조합만, LEFT는 왼쪽 미매칭 행도, RIGHT는 오른쪽 미매칭 행도 보존합니다. 공통 데이터는 모든 행의 NAME이 같아 세 방식 모두 108행입니다. 차이를 확인할 수 있도록 추가 TS13_L·TS13_R 데이터에는 미매칭 키와 NULL 키를 넣었습니다.

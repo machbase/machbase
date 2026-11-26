@@ -5,6 +5,8 @@ weight: 60
 toc: true
 ---
 
+[SAMPLE·FILL·ALIGN·EXPECT KEYS 전체 BNF](../../../reference/sql/syntax/sample-fill-syntax/)에서 작성 순서와 인자 제약을 확인합니다.
+
 METADATA에서 조회 대상 태그 집합을 만들고 목표 DATETIME을 지정하면, 태그마다 해당 시각의 실제 관측 또는 보간값을 얻을 수 있습니다. 관측이 없거나 허용 범위를 벗어나도 왼쪽 대상 태그 행을 유지합니다.
 
 최근접 실제값에는 NEAREST JOIN과 TOLERANCE를 사용합니다. 추정값에는 INTERPOLATE JOIN의 COLUMNS와 MAX GAP을 사용합니다. 동일 목표 시각을 모든 태그에 적용하거나 태그별 DATETIME을 목표 시각으로 만들 수 있습니다.

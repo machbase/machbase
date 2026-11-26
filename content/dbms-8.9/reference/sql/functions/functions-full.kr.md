@@ -13,7 +13,155 @@ tocSort: true
 |인자 타입 오류|`ERR-02036`, `ERR-02037`|숫자 타입이 아닌 값을 넣었거나 `PI`에 인자를 전달한 경우|
 |실행 오류|`ERR-02317`|`SQRT`의 음수 입력, `MOD`의 0 나누기, `LOG`의 잘못된 밑/값, `EXP`/`POWER`의 범위 초과 등|
 
-입력이 `NULL`이면 결과도 `NULL`입니다.
+NULL 처리는 각 함수의 설명을 따릅니다. 선택 집계는 NULL을 제외하거나 선택된 NULL을 유지하는 함수별 규칙을 적용합니다.
+
+## FIRST_NOT_NULL {#first_not_null}
+
+```bnf
+<first_not_null_call> ::= "FIRST_NOT_NULL" "(" <value> ")"
+```
+
+입력 순서에서 처음인 NULL 아닌 value를 반환합니다. 입력을 자동으로 시각순 정렬하지 않습니다.
+
+value 타입을 보존하며 DECIMAL 정밀도·스케일과 ARRAY payload도 유지합니다.
+빈 입력은 NULL입니다. 모든 value가 NULL이면 NULL입니다. FLOAT/DOUBLE의 NaN·Inf value는 SQL NULL과 구분합니다.
+
+일반 GROUP, SAMPLE 집계와 지원 ROWS 프레임에서 사용합니다.
+[ROWS 문법](../../syntax/window-function-over-syntax/#rows-bnf)과
+[실제 데이터·NULL·동률·타입 예제](../../../../time-series-sql/aggregates/)를 참고합니다.
+
+예제는 [공통 실습 준비](../../../../time-series-sql/#실습-준비) 후 실행합니다.
+
+```sql
+SELECT FIRST_NOT_NULL(V) AS RESULT
+FROM (SELECT * FROM TS13_AGG ORDER BY ID) S;
+```
+
+RESULT는 20입니다.
+
+## LAST_NOT_NULL {#last_not_null}
+
+```bnf
+<last_not_null_call> ::= "LAST_NOT_NULL" "(" <value> ")"
+```
+
+입력 순서에서 마지막인 NULL 아닌 value를 반환합니다. 결정적인 입력 순서는 정렬한 파생 조회로 지정합니다.
+
+value 타입을 보존하며 DECIMAL 정밀도·스케일과 ARRAY payload도 유지합니다.
+빈 입력은 NULL입니다. 모든 value가 NULL이면 NULL입니다. FLOAT/DOUBLE의 NaN·Inf value는 SQL NULL과 구분합니다.
+
+일반 GROUP, SAMPLE 집계와 지원 ROWS 프레임에서 사용합니다.
+[ROWS 문법](../../syntax/window-function-over-syntax/#rows-bnf)과
+[실제 데이터·NULL·동률·타입 예제](../../../../time-series-sql/aggregates/)를 참고합니다.
+
+예제는 [공통 실습 준비](../../../../time-series-sql/#실습-준비) 후 실행합니다.
+
+```sql
+SELECT LAST_NOT_NULL(V) AS RESULT
+FROM (SELECT * FROM TS13_AGG ORDER BY ID) S;
+```
+
+RESULT는 40입니다.
+
+## ARG_MIN {#arg_min}
+
+```bnf
+<arg_min_call> ::= "ARG_MIN" "(" <value> "," <key> ")"
+```
+
+NULL·NaN이 아닌 key가 가장 작은 행의 value를 반환합니다. 동일 key이면 먼저 입력된 행을 유지합니다.
+
+value 타입을 보존하며 DECIMAL 정밀도·스케일과 ARRAY payload도 유지합니다.
+빈 입력은 NULL입니다. 선택 행의 value가 NULL이면 그대로 반환합니다. key는 정수·부동소수점·DECIMAL·
+DATETIME·VARCHAR·IPv4/IPv6를 허용합니다. BOOL·TEXT·BINARY·JSON·VECTOR·ARRAY key는 오류입니다.
+
+일반 GROUP, SAMPLE 집계와 지원 ROWS 프레임에서 사용합니다.
+[ROWS 문법](../../syntax/window-function-over-syntax/#rows-bnf)과
+[실제 데이터·NULL·동률·타입 예제](../../../../time-series-sql/aggregates/)를 참고합니다.
+
+예제는 [공통 실습 준비](../../../../time-series-sql/#실습-준비) 후 실행합니다.
+
+```sql
+SELECT ARG_MIN(V,Q) AS RESULT
+FROM (SELECT * FROM TS13_AGG ORDER BY ID) S;
+```
+
+RESULT는 20입니다.
+
+## ARG_MAX {#arg_max}
+
+```bnf
+<arg_max_call> ::= "ARG_MAX" "(" <value> "," <key> ")"
+```
+
+NULL·NaN이 아닌 key가 가장 큰 행의 value를 반환합니다. 동일 key이면 먼저 입력된 행을 유지합니다.
+
+value 타입을 보존하며 DECIMAL 정밀도·스케일과 ARRAY payload도 유지합니다.
+빈 입력은 NULL입니다. 선택 행의 value가 NULL이면 그대로 반환합니다. key는 정수·부동소수점·DECIMAL·
+DATETIME·VARCHAR·IPv4/IPv6를 허용합니다. BOOL·TEXT·BINARY·JSON·VECTOR·ARRAY key는 오류입니다.
+
+일반 GROUP, SAMPLE 집계와 지원 ROWS 프레임에서 사용합니다.
+[ROWS 문법](../../syntax/window-function-over-syntax/#rows-bnf)과
+[실제 데이터·NULL·동률·타입 예제](../../../../time-series-sql/aggregates/)를 참고합니다.
+
+예제는 [공통 실습 준비](../../../../time-series-sql/#실습-준비) 후 실행합니다.
+
+```sql
+SELECT ARG_MAX(V,Q) AS RESULT
+FROM (SELECT * FROM TS13_AGG ORDER BY ID) S;
+```
+
+RESULT는 NULL입니다.
+
+## KSUM {#ksum}
+
+```bnf
+<ksum_call> ::= "KSUM" "(" <value> ")"
+```
+
+Kahan 알고리즘으로 부동소수점 누적 오차를 보정합니다.
+
+입력 수치를 DOUBLE로 변환하며 결과도 DOUBLE입니다. NULL·비유한 입력은 제외합니다.
+유효 입력이 없거나 누적·최종 결과가 비유한 값이면 NULL입니다. 정수·DECIMAL도 DOUBLE
+변환의 정밀도 제약을 받으며 모든 입력에서 정확한 합계를 보장하지 않습니다.
+
+일반 GROUP, SAMPLE 집계와 지원 ROWS 프레임에서 사용합니다.
+[ROWS 문법](../../syntax/window-function-over-syntax/#rows-bnf)과
+[실제 데이터·NULL·동률·타입 예제](../../../../time-series-sql/aggregates/)를 참고합니다.
+
+예제는 [공통 실습 준비](../../../../time-series-sql/#실습-준비) 후 실행합니다.
+
+```sql
+SELECT KSUM(V) AS RESULT
+FROM (SELECT * FROM TS13_SUM ORDER BY ID) S;
+```
+
+RESULT는 0입니다.
+
+## NSUM {#nsum}
+
+```bnf
+<nsum_call> ::= "NSUM" "(" <value> ")"
+```
+
+Neumaier 알고리즘으로 크기가 다른 값의 누적 오차를 보정합니다.
+
+입력 수치를 DOUBLE로 변환하며 결과도 DOUBLE입니다. NULL·비유한 입력은 제외합니다.
+유효 입력이 없거나 누적·최종 결과가 비유한 값이면 NULL입니다. 정수·DECIMAL도 DOUBLE
+변환의 정밀도 제약을 받으며 모든 입력에서 정확한 합계를 보장하지 않습니다.
+
+일반 GROUP, SAMPLE 집계와 지원 ROWS 프레임에서 사용합니다.
+[ROWS 문법](../../syntax/window-function-over-syntax/#rows-bnf)과
+[실제 데이터·NULL·동률·타입 예제](../../../../time-series-sql/aggregates/)를 참고합니다.
+
+예제는 [공통 실습 준비](../../../../time-series-sql/#실습-준비) 후 실행합니다.
+
+```sql
+SELECT NSUM(V) AS RESULT
+FROM (SELECT * FROM TS13_SUM ORDER BY ID) S;
+```
+
+RESULT는 1입니다.
 
 ## ABS
 
@@ -4341,3 +4489,15 @@ Mach> SELECT user_id,
              NTILE(4) OVER (ORDER BY score) AS score_band
       FROM exam_result;
 ```
+
+## 시계열 선택 윈도 함수 {#subsample-functions}
+
+- [LTTB(timestamp, value, target[, gap])](../subsample/#lttb)는 삼각형 면적으로 굴곡을 선택합니다. gap으로 나눈 구간의 양끝을 보존하면 target을 넘을 수 있습니다.
+- [MINMAX(timestamp, value, target)](../subsample/#minmax)는 시간 구간별 최소·최대 원본 행을 선택합니다. 끝 관측을 반드시 보존하지 않습니다.
+- [M4(timestamp, value, target)](../subsample/#m4)는 구간별 시작·종료·최소·최대 행을 선택하고 같은 행은 한 번만 남깁니다.
+- [UNIFORM(target)](../subsample/#uniform)는 값과 관계없이 행 위치를 고르게 선택합니다. target 이하 입력은 모두 보존하며 양끝을 포함합니다.
+- [CADENCE(stride[, seed])](../subsample/#cadence)는 행 간격으로 선택합니다. 생략 seed의 offset은 0이며 마지막 행도 보존합니다. stride가 입력 수보다 크면 첫 행만 선택합니다.
+- [SDT(timestamp, value, compdev)](../subsample/#sdt)는 값 단위의 허용 편차로 직선 구간의 관측을 줄입니다. 기본 RESPECT NULLS이며 IGNORE NULLS도 지정할 수 있습니다.
+
+각 함수는 OVER의 정렬 입력에서 행별 선택 여부 BOOL을 반환합니다. 호출 인자·범위·NULL 규칙과
+[전체 BNF](../../syntax/subsample-syntax/)를 참고합니다.

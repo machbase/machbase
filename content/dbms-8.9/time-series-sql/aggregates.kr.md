@@ -5,6 +5,8 @@ weight: 70
 toc: true
 ---
 
+[선택 집계·보정 합계 함수 문법](../../reference/sql/functions/aggregation/#first_not_null)에서 작성 순서와 인자 제약을 확인합니다.
+
 값과 선택 기준을 분리하거나 큰 수의 상쇄가 있는 합계를 계산합니다.
 
 | 함수 | 의미 |

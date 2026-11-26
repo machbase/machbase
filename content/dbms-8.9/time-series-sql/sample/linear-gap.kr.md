@@ -5,6 +5,8 @@ weight: 30
 toc: true
 ---
 
+[SAMPLE·FILL·ALIGN·EXPECT KEYS 전체 BNF](../../../reference/sql/syntax/sample-fill-syntax/)에서 작성 순서와 인자 제약을 확인합니다.
+
 LINEAR는 원본 관측을 먼저 버킷별로 집계한 후 **실제 관측이 있는 두 버킷** 사이를 보간합니다. 원본 행 시각 사이를 직접 보간하는 INTERPOLATE JOIN과 구분합니다.
 
 A의 0초=20과 2초=24 사이에는 1초=22가 만들어집니다. 2초=24와 5초=30의 간격은 3초이므로 MAX GAP 3s에서는 3초=26·4초=28을 만들고, MAX GAP 2s에서는 두 버킷을 NULL로 둡니다. 허용 간격과 같은 경계는 포함합니다.

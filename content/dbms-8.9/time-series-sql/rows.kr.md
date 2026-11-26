@@ -5,6 +5,8 @@ weight: 60
 toc: true
 ---
 
+[OVER·ROWS 전체 BNF](../../reference/sql/syntax/window-function-over-syntax/#rows-bnf)에서 작성 순서와 인자 제약을 확인합니다.
+
 현재 행을 기준으로 앞뒤 N행을 집계합니다. 시간 길이를 지정하는 WINDOW JOIN과 달리 **정렬된 행의 개수**가 기준입니다. PARTITION BY는 장치별 계산을 분리하며 프레임은 파티션 경계에서 잘립니다.
 
 ROWS BETWEEN 2 PRECEDING AND CURRENT ROW는 현재 행과 앞 두 행의 이동 통계입니다. UNBOUNDED PRECEDING부터 현재까지는 누적 통계입니다. FOLLOWING을 사용하면 미래 행을 포함합니다. ROWS 2 PRECEDING은 현재 행까지의 축약형입니다.

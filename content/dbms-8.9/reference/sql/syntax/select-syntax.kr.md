@@ -20,7 +20,8 @@ select_stmt ::=
     [ 'WHERE' condition_expr ]
     [ 'LATEST ON' timestamp_column 'PARTITION BY' key_list [ tie_clause ] ]
     [ sample_clause ]
-    [ 'GROUP BY' expr_list [ 'HAVING' condition_expr ] ]
+    [ 'GROUP BY' expr_list ]
+    [ 'HAVING' condition_expr ]
     [ subsample_clause ]
     [ 'WITH PROVENANCE' [ 'AS' alias ] ]
     [ 'ORDER BY' expr_list [ 'ASC' | 'DESC' ] ]
@@ -43,24 +44,16 @@ select_stmt 'UNION ALL' select_stmt
 Standard Edition에서 SAMPLE BY는 LATEST 뒤, GROUP BY 앞에 작성합니다.
 SUBSAMPLE은 HAVING 뒤, WITH PROVENANCE는 최종 ORDER BY 앞에 작성합니다.
 시간 JOIN과 입력의 TIMESTAMP·WITH SOURCE는 FROM 안에서 선언합니다.
-각 절의 인자는 [13장 시계열 분석 SQL](../../../../time-series-sql/)의 실행 예제를 참고합니다.
+각 절의 전체 BNF와 인자 제약은 아래 레퍼런스에서 확인합니다.
 
-```text
-sample_clause ::=
-    SAMPLE BY interval
-    [ FROM datetime_expr TO datetime_expr ]
-    [ FILL(fill_policy, ...) ]
-    [ ALIGN TO CALENDAR [ TIME ZONE zone_name ] [ WITH OFFSET offset_text ]
-      | ALIGN TO FIRST OBSERVATION ]
-    [ EXPECT KEYS (key_value, ...) ]
-
-subsample_clause ::= SUBSAMPLE algorithm(arguments)
-```
-
-위 표기는 절의 위치를 안내합니다. 기간·키·타입 및 다른 절과의 조합 제한은
-[SAMPLE BY](../../../../time-series-sql/sample/),
-[SUBSAMPLE](../../../../time-series-sql/subsample/),
-[출처 선언](../../../../time-series-sql/provenance/)에서 확인합니다.
+| 구문 | 문법 레퍼런스 |
+|---|---|
+| 시간축·시간 JOIN·TIE | [TIMESTAMP와 시계열 JOIN](../time-series-join-syntax/) |
+| 그룹별 최신 행 | [LATEST ON](../latest-on-syntax/) |
+| 버킷·채움·시간대·기대 키 | [SAMPLE BY / FILL](../sample-fill-syntax/) |
+| 원본 행 선택 | [SUBSAMPLE](../subsample-syntax/) |
+| 집계 윈도 프레임 | [OVER / ROWS](../window-function-over-syntax/#rows-bnf) |
+| 원본 선언·근거 JSON | [WITH SOURCE / WITH PROVENANCE](../source-provenance-syntax/) |
 
 ### 대상 목록 (target_list)
 
@@ -88,9 +81,13 @@ table_reference ::=
   | view_name [ alias ]
 
 join_clause ::=
-    [ 'INNER' | 'LEFT OUTER' | 'RIGHT OUTER' ] 'JOIN' table_reference 'ON' condition_expr
+    [ 'INNER' | 'LEFT' [ 'OUTER' ] | 'RIGHT' [ 'OUTER' ] ] 'JOIN' table_reference 'ON' condition_expr
   | 'CROSS JOIN' table_reference
+  | time_series_join_clause
 ```
+
+시간 연산 입력에는 alias 뒤 TIMESTAMP와 WITH SOURCE를 선언할 수 있습니다.
+time_series_join_clause의 전체 문법은 [시계열 JOIN](../time-series-join-syntax/)을 따릅니다.
 
 ---
 

@@ -5,6 +5,8 @@ weight: 40
 toc: true
 ---
 
+[SUBSAMPLE 절과 윈도 형태 전체 BNF](../../reference/sql/syntax/subsample-syntax/)에서 작성 순서와 인자 제약을 확인합니다.
+
 차트나 탐색에 필요한 관측을 선택해 출력 행 수를 줄입니다. SAMPLE BY의 구간 집계·FILL의 보간과 달리 원래 관측의 시각과 값을 유지합니다.
 
 [공통 실습 준비](../#실습-준비)의 TS13_SUB는 1초 간격 8행입니다.

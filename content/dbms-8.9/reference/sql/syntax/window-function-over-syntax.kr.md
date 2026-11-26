@@ -50,6 +50,43 @@ LEAD(value_expression, offset) OVER (
 <a id="순위-함수"></a>
 <a id="집계-윈도우-함수"></a>
 
+### OVER와 ROWS 전체 BNF {#rows-bnf}
+
+Standard Edition에서 지원 집계 함수의 호출 뒤에 OVER를 붙입니다. 아래 ε는 생략입니다.
+expression과 aggregate_call은 기존 식과 지원 집계 호출이며 COUNT(*)도 포함합니다.
+
+```bnf
+<window_aggregate> ::= <aggregate_call> "OVER" "("
+                       <partition_opt> <order_opt> <rows_opt> ")"
+<partition_opt> ::= ε | "PARTITION" "BY" <expression_list>
+<order_opt> ::= ε | "ORDER" "BY" <sort_list>
+<expression_list> ::= <expression> | <expression_list> "," <expression>
+<sort_list> ::= <sort_item> | <sort_list> "," <sort_item>
+<sort_item> ::= <expression> <direction_opt>
+<direction_opt> ::= ε | "ASC" | "DESC"
+<rows_opt> ::= ε | "ROWS" <frame_bound>
+             | "ROWS" "BETWEEN" <frame_bound> "AND" <frame_bound>
+<frame_bound> ::= "UNBOUNDED" "PRECEDING"
+                | <row_count> "PRECEDING"
+                | "CURRENT" "ROW"
+                | <row_count> "FOLLOWING"
+                | "UNBOUNDED" "FOLLOWING"
+<row_count> ::= <nonnegative_integer_constant_expression> | <integer_bind>
+```
+
+- 양끝을 포함합니다. 폭은 0 이상의 정수 문장 상수·정수 bind입니다. NULL·음수·비정수·
+  행 의존 폭은 오류입니다. 파티션 경계에서 잘리며 다른 장치의 행을 포함하지 않습니다.
+- 시작에 UNBOUNDED FOLLOWING, 끝에 UNBOUNDED PRECEDING을 사용할 수 없으며 역순도 오류입니다.
+- ROWS 2 PRECEDING은 ROWS BETWEEN 2 PRECEDING AND CURRENT ROW와 같습니다.
+- OVER 안의 정렬 키 조합은 파티션 내에서 유일해야 합니다. 최종 SELECT의 정렬은 내부
+  동률을 해결하지 않으며 내부 동률은 E_TIE_CONFLICT입니다.
+- ROWS 생략 시 ORDER BY가 있으면 처음부터 현재까지 누적하고 없으면 전체 파티션입니다.
+  ORDER BY 없이 명시한 프레임은 전체 파티션 또는 CURRENT ROW 단독만 허용합니다.
+- 빈 프레임 COUNT는 0이며 SUM·AVG 등은 각 집계의 빈 입력 규칙을 따릅니다.
+  SAMPLE 결과에서는 FILL 버킷도 프레임의 논리 행입니다.
+- SUM·AVG·MIN·MAX·COUNT 및 지원 선택 집계에 사용합니다. LAG·LEAD와 SUBSAMPLE KEEP의
+  함수별 인자·프레임 제약은 각각의 계약을 따릅니다.
+
 ### 집계 윈도 함수와 ROWS 프레임
 
 Standard Edition에서는 SUM·AVG·MIN·MAX·COUNT 등의 집계에 OVER와 ROWS 프레임을

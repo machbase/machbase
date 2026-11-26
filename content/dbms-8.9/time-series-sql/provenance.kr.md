@@ -5,6 +5,8 @@ weight: 90
 toc: true
 ---
 
+[WITH SOURCE·WITH PROVENANCE 전체 BNF](../../reference/sql/syntax/source-provenance-syntax/)에서 작성 순서와 인자 제약을 확인합니다.
+
 결과값이 어느 관측에서 왔는지 확인합니다. WITH SOURCE는 안정적인 ID와 clock 정보를 선언하고 WITH PROVENANCE는 결과 마지막에 JSON 컬럼을 추가합니다. 출처를 켜도 데이터 값과 행 수는 유지됩니다.
 
 ## 원본 선언

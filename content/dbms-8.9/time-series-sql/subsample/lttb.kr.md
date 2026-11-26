@@ -5,6 +5,8 @@ weight: 10
 toc: true
 ---
 
+[SUBSAMPLE 절과 윈도 형태 전체 BNF](../../../reference/sql/syntax/subsample-syntax/)에서 작성 순서와 인자 제약을 확인합니다.
+
 이전 선택점·현재 후보·다음 구간 평균점의 삼각형 면적으로 굴곡을 선택합니다. target 4에서 ID 0·3·4·7이 남습니다. 양끝과 3초 최고점·4초 최저점을 함께 보존합니다. 선택점은 원래 관측값입니다.
 
 구문 인자는 `lttb(value, target[, gap])`입니다. 절 형태는 지정 시각 컬럼을 SELECT에 직접 포함해야 합니다. 아래 SQL의 TIME_NS는 표시 시간대에 영향받지 않는 원본 시각 확인용입니다.

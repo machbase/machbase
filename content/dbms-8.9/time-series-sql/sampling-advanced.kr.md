@@ -5,6 +5,8 @@ weight: 50
 toc: true
 ---
 
+[SUBSAMPLE 절과 윈도 형태 전체 BNF](../../reference/sql/syntax/subsample-syntax/)에서 작성 순서와 인자 제약을 확인합니다.
+
 관측이 전혀 없는 장치도 동일한 출력 축에 포함하거나 집계 출력 사이에서 이전값을 전달할 때 사용합니다.
 
 ## EXPECT KEYS와 교차 PREV

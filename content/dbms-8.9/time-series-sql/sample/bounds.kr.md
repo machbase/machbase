@@ -5,6 +5,8 @@ weight: 40
 toc: true
 ---
 
+[SAMPLE·FILL·ALIGN·EXPECT KEYS 전체 BNF](../../../reference/sql/syntax/sample-fill-syntax/)에서 작성 순서와 인자 제약을 확인합니다.
+
 WHERE는 집계·채움에 사용할 원본 관측을 제한합니다. SAMPLE의 FROM/TO는 출력할 버킷 범위 `[FROM,TO)`를 정합니다. TO 시각은 결과에 포함하지 않습니다. WHERE의 종료 시각만 넓혀도 출력 축이 자동으로 그 시각까지 늘어나지 않습니다.
 
 출력 첫 버킷을 보간하려면 FROM 이전 실측이 필요할 수 있습니다. 이 실측을 입력 WHERE에서 제거하지 않으면 채움 근거로 사용합니다. 반대로 WHERE로 제거한 실측은 FILL이 다시 읽지 않습니다. 입력은 넓게 받고 출력은 원하는 구간으로 좁히는 예제를 비교합니다.

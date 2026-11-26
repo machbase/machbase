@@ -5,6 +5,8 @@ weight: 20
 toc: true
 ---
 
+[LATEST ON 전체 BNF](../../reference/sql/syntax/latest-on-syntax/)에서 작성 순서와 인자 제약을 확인합니다.
+
 태그나 그룹마다 최신 관측 한 행을 반환합니다. `LATEST ON TIME PARTITION BY NAME`에서 TIME은 비교할 DATETIME 컬럼이며 PARTITION BY는 그룹 키입니다. TAG는 기본 시간축을 사용할 수 있고 다른 입력은 TIMESTAMP로 시간축을 지정합니다.
 
 WHERE를 통과한 입력에서 최신값을 선택합니다. 시간 범위를 제한하면 전체 데이터의 최신값이 아니라 그 범위 안의 최신값을 반환합니다. 값 조건도 먼저 적용하므로 최신 관측이 그 조건을 만족하지 않으면 이전의 적격 관측이 선택될 수 있습니다. 입력이 없는 그룹의 행을 자동으로 만들지 않습니다.

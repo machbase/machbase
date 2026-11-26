@@ -5,6 +5,8 @@ weight: 50
 toc: true
 ---
 
+[SUBSAMPLE 절과 윈도 형태 전체 BNF](../../../reference/sql/syntax/subsample-syntax/)에서 작성 순서와 인자 제약을 확인합니다.
+
 stride 3은 ID 0·3·6·7을 선택합니다. 마지막 행 보존 때문에 단순히 stride의 배수 행만 반환하는 것은 아닙니다. seed를 생략하면 offset은 0이며 정수 seed는 같은 입력에 재현 가능한 선택을 만듭니다. stride 1은 모든 행, stride가 입력 수보다 크면 첫 행을 선택합니다.
 
 구문 인자는 `cadence(stride[, seed])`입니다. 절 형태는 지정 시각 컬럼을 SELECT에 직접 포함해야 합니다. 아래 SQL의 TIME_NS는 표시 시간대에 영향받지 않는 원본 시각 확인용입니다.

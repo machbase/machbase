@@ -5,6 +5,8 @@ weight: 10
 toc: true
 ---
 
+[SAMPLE·FILL·ALIGN·EXPECT KEYS 전체 BNF](../../../reference/sql/syntax/sample-fill-syntax/)에서 작성 순서와 인자 제약을 확인합니다.
+
 SAMPLE BY는 시간축을 일정한 버킷으로 묶고 AVG·MIN·MAX·SUM·COUNT 등의 집계를 계산합니다. SELECT의 지정 시각은 각 버킷의 시작 시각으로 출력됩니다. 비집계 시리즈 키는 시리즈를 분리합니다.
 
 TS13_FILL의 A는 0·2·5초에 각각 20·24·30을 관측했습니다. 기본 1초 샘플링은 관측이 있는 3개 버킷만 반환합니다. 2초 간격이면 5초 관측이 `[4,6)` 버킷에 포함되어 4초로 출력됩니다.

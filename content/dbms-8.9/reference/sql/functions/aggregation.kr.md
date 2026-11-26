@@ -44,10 +44,158 @@ toc: true
 선택 집계는 ARG_MIN/ARG_MAX의 key가 동률이면 먼저 입력된 행을 유지하며, 선택된 value가
 NULL이면 그대로 반환합니다. FIRST_NOT_NULL/LAST_NOT_NULL은 입력의 명시적 정렬 순서가
 필요합니다. KSUM/NSUM은 DOUBLE로 변환해 누적하므로 정확한 DECIMAL 합계의 대체가 아닙니다.
-NULL·비유한 입력은 제외하고 유효 입력이 없거나 결과가 비유한 값이면 NULL을 반환합니다.
+KSUM·NSUM은 NULL·비유한 입력을 제외하고 유효 입력이 없거나 결과가 비유한 값이면 NULL입니다.
 전체 데이터와 결과 비교는 [13.7 선택 집계와 보정 합계](../../../../time-series-sql/aggregates/)를 참고합니다.
 
 ---
+
+## FIRST_NOT_NULL {#first_not_null}
+
+```bnf
+<first_not_null_call> ::= "FIRST_NOT_NULL" "(" <value> ")"
+```
+
+입력 순서에서 처음인 NULL 아닌 value를 반환합니다. 입력을 자동으로 시각순 정렬하지 않습니다.
+
+value 타입을 보존하며 DECIMAL 정밀도·스케일과 ARRAY payload도 유지합니다.
+빈 입력은 NULL입니다. 모든 value가 NULL이면 NULL입니다. FLOAT/DOUBLE의 NaN·Inf value는 SQL NULL과 구분합니다.
+
+일반 GROUP, SAMPLE 집계와 지원 ROWS 프레임에서 사용합니다.
+[ROWS 문법](../../syntax/window-function-over-syntax/#rows-bnf)과
+[실제 데이터·NULL·동률·타입 예제](../../../../time-series-sql/aggregates/)를 참고합니다.
+
+예제는 [공통 실습 준비](../../../../time-series-sql/#실습-준비) 후 실행합니다.
+
+```sql
+SELECT FIRST_NOT_NULL(V) AS RESULT
+FROM (SELECT * FROM TS13_AGG ORDER BY ID) S;
+```
+
+RESULT는 20입니다.
+
+## LAST_NOT_NULL {#last_not_null}
+
+```bnf
+<last_not_null_call> ::= "LAST_NOT_NULL" "(" <value> ")"
+```
+
+입력 순서에서 마지막인 NULL 아닌 value를 반환합니다. 결정적인 입력 순서는 정렬한 파생 조회로 지정합니다.
+
+value 타입을 보존하며 DECIMAL 정밀도·스케일과 ARRAY payload도 유지합니다.
+빈 입력은 NULL입니다. 모든 value가 NULL이면 NULL입니다. FLOAT/DOUBLE의 NaN·Inf value는 SQL NULL과 구분합니다.
+
+일반 GROUP, SAMPLE 집계와 지원 ROWS 프레임에서 사용합니다.
+[ROWS 문법](../../syntax/window-function-over-syntax/#rows-bnf)과
+[실제 데이터·NULL·동률·타입 예제](../../../../time-series-sql/aggregates/)를 참고합니다.
+
+예제는 [공통 실습 준비](../../../../time-series-sql/#실습-준비) 후 실행합니다.
+
+```sql
+SELECT LAST_NOT_NULL(V) AS RESULT
+FROM (SELECT * FROM TS13_AGG ORDER BY ID) S;
+```
+
+RESULT는 40입니다.
+
+## ARG_MIN {#arg_min}
+
+```bnf
+<arg_min_call> ::= "ARG_MIN" "(" <value> "," <key> ")"
+```
+
+NULL·NaN이 아닌 key가 가장 작은 행의 value를 반환합니다. 동일 key이면 먼저 입력된 행을 유지합니다.
+
+value 타입을 보존하며 DECIMAL 정밀도·스케일과 ARRAY payload도 유지합니다.
+빈 입력은 NULL입니다. 선택 행의 value가 NULL이면 그대로 반환합니다. key는 정수·부동소수점·DECIMAL·
+DATETIME·VARCHAR·IPv4/IPv6를 허용합니다. BOOL·TEXT·BINARY·JSON·VECTOR·ARRAY key는 오류입니다.
+
+일반 GROUP, SAMPLE 집계와 지원 ROWS 프레임에서 사용합니다.
+[ROWS 문법](../../syntax/window-function-over-syntax/#rows-bnf)과
+[실제 데이터·NULL·동률·타입 예제](../../../../time-series-sql/aggregates/)를 참고합니다.
+
+예제는 [공통 실습 준비](../../../../time-series-sql/#실습-준비) 후 실행합니다.
+
+```sql
+SELECT ARG_MIN(V,Q) AS RESULT
+FROM (SELECT * FROM TS13_AGG ORDER BY ID) S;
+```
+
+RESULT는 20입니다.
+
+## ARG_MAX {#arg_max}
+
+```bnf
+<arg_max_call> ::= "ARG_MAX" "(" <value> "," <key> ")"
+```
+
+NULL·NaN이 아닌 key가 가장 큰 행의 value를 반환합니다. 동일 key이면 먼저 입력된 행을 유지합니다.
+
+value 타입을 보존하며 DECIMAL 정밀도·스케일과 ARRAY payload도 유지합니다.
+빈 입력은 NULL입니다. 선택 행의 value가 NULL이면 그대로 반환합니다. key는 정수·부동소수점·DECIMAL·
+DATETIME·VARCHAR·IPv4/IPv6를 허용합니다. BOOL·TEXT·BINARY·JSON·VECTOR·ARRAY key는 오류입니다.
+
+일반 GROUP, SAMPLE 집계와 지원 ROWS 프레임에서 사용합니다.
+[ROWS 문법](../../syntax/window-function-over-syntax/#rows-bnf)과
+[실제 데이터·NULL·동률·타입 예제](../../../../time-series-sql/aggregates/)를 참고합니다.
+
+예제는 [공통 실습 준비](../../../../time-series-sql/#실습-준비) 후 실행합니다.
+
+```sql
+SELECT ARG_MAX(V,Q) AS RESULT
+FROM (SELECT * FROM TS13_AGG ORDER BY ID) S;
+```
+
+RESULT는 NULL입니다.
+
+## KSUM {#ksum}
+
+```bnf
+<ksum_call> ::= "KSUM" "(" <value> ")"
+```
+
+Kahan 알고리즘으로 부동소수점 누적 오차를 보정합니다.
+
+입력 수치를 DOUBLE로 변환하며 결과도 DOUBLE입니다. NULL·비유한 입력은 제외합니다.
+유효 입력이 없거나 누적·최종 결과가 비유한 값이면 NULL입니다. 정수·DECIMAL도 DOUBLE
+변환의 정밀도 제약을 받으며 모든 입력에서 정확한 합계를 보장하지 않습니다.
+
+일반 GROUP, SAMPLE 집계와 지원 ROWS 프레임에서 사용합니다.
+[ROWS 문법](../../syntax/window-function-over-syntax/#rows-bnf)과
+[실제 데이터·NULL·동률·타입 예제](../../../../time-series-sql/aggregates/)를 참고합니다.
+
+예제는 [공통 실습 준비](../../../../time-series-sql/#실습-준비) 후 실행합니다.
+
+```sql
+SELECT KSUM(V) AS RESULT
+FROM (SELECT * FROM TS13_SUM ORDER BY ID) S;
+```
+
+RESULT는 0입니다.
+
+## NSUM {#nsum}
+
+```bnf
+<nsum_call> ::= "NSUM" "(" <value> ")"
+```
+
+Neumaier 알고리즘으로 크기가 다른 값의 누적 오차를 보정합니다.
+
+입력 수치를 DOUBLE로 변환하며 결과도 DOUBLE입니다. NULL·비유한 입력은 제외합니다.
+유효 입력이 없거나 누적·최종 결과가 비유한 값이면 NULL입니다. 정수·DECIMAL도 DOUBLE
+변환의 정밀도 제약을 받으며 모든 입력에서 정확한 합계를 보장하지 않습니다.
+
+일반 GROUP, SAMPLE 집계와 지원 ROWS 프레임에서 사용합니다.
+[ROWS 문법](../../syntax/window-function-over-syntax/#rows-bnf)과
+[실제 데이터·NULL·동률·타입 예제](../../../../time-series-sql/aggregates/)를 참고합니다.
+
+예제는 [공통 실습 준비](../../../../time-series-sql/#실습-준비) 후 실행합니다.
+
+```sql
+SELECT NSUM(V) AS RESULT
+FROM (SELECT * FROM TS13_SUM ORDER BY ID) S;
+```
+
+RESULT는 1입니다.
 
 ## COUNT
 

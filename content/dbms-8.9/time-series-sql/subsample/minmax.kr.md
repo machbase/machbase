@@ -5,6 +5,8 @@ weight: 20
 toc: true
 ---
 
+[SUBSAMPLE 절과 윈도 형태 전체 BNF](../../../reference/sql/syntax/subsample-syntax/)에서 작성 순서와 인자 제약을 확인합니다.
+
 시간 범위를 나누고 구간별 최솟값·최댓값 행을 선택합니다. target 4에서는 ID 0·3·4·5를 선택합니다. 마지막 7초 관측을 반드시 보존하지 않으므로 M4와 비교합니다.
 
 구문 인자는 `minmax(value, target)`입니다. 절 형태는 지정 시각 컬럼을 SELECT에 직접 포함해야 합니다. 아래 SQL의 TIME_NS는 표시 시간대에 영향받지 않는 원본 시각 확인용입니다.

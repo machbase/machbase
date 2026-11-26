@@ -21,6 +21,19 @@ toc: true
 | [13.8 PIVOT](./pivot/) | 시리즈를 비교 열로 변환 |
 | [13.9 SOURCE와 PROVENANCE](./provenance/) | 계산에 사용한 원본 관측 추적 |
 
+## SQL 문법과 함수 레퍼런스
+
+| 주제 | 정식 문법과 함수 항목 |
+|---|---|
+| 시계열 JOIN | [TIMESTAMP·TIE·일곱 가지 시간 JOIN](../reference/sql/syntax/time-series-join-syntax/) |
+| 최신 관측 | [LATEST ON](../reference/sql/syntax/latest-on-syntax/) |
+| 집계와 결측 | [SAMPLE·FILL·ALIGN·EXPECT KEYS](../reference/sql/syntax/sample-fill-syntax/) |
+| 원본 선택 | [SUBSAMPLE 절](../reference/sql/syntax/subsample-syntax/)과 [선택 윈도 함수](../reference/sql/functions/subsample/) |
+| 이동·누적 집계 | [OVER·ROWS 전체 BNF](../reference/sql/syntax/window-function-over-syntax/#rows-bnf) |
+| 선택·보정 집계 | [개별 집계 함수](../reference/sql/functions/aggregation/#first_not_null) |
+| 피벗 | [PIVOT 전체 BNF](../reference/sql/syntax/pivot-syntax/#pivot-bnf) |
+| 원본 추적 | [WITH SOURCE·WITH PROVENANCE](../reference/sql/syntax/source-provenance-syntax/) |
+
 ## 실습 준비
 
 [전체 실습 자료](/assets/dbms-8.9/time-series-sql/samples.zip)를 내려받아 풉니다.

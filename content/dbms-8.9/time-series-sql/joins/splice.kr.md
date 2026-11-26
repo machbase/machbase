@@ -5,6 +5,8 @@ weight: 80
 toc: true
 ---
 
+[시계열 JOIN·TIMESTAMP·TIE 전체 BNF](../../../reference/sql/syntax/time-series-join-syntax/)에서 작성 순서와 인자 제약을 확인합니다.
+
 양쪽 입력 시각의 합집합에서 상태를 출력합니다. 한쪽에 새 관측이 오면 반대쪽의 직전 상태를 유지합니다. 같은 시각의 사건은 합쳐지며, 출력 컬럼의 시각은 각 원본 관측의 시각입니다.
 
 21초 사건은 event 21초·motor 18초 상태를, 22초 사건은 event 21초·motor 22초 상태를 출력합니다. 따라서 같은 event 시각이 여러 결과 행에 나타날 수 있습니다.

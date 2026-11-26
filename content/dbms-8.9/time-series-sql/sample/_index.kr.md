@@ -5,6 +5,8 @@ weight: 30
 toc: true
 ---
 
+[SAMPLE·FILL·ALIGN·EXPECT KEYS 전체 BNF](../../reference/sql/syntax/sample-fill-syntax/)에서 작성 순서와 인자 제약을 확인합니다.
+
 시간 구간의 통계와 연속 출력 축을 만듭니다. 먼저 집계 결과를 확인한 다음 결측 정책·입력 범위·버킷 원점을 조정합니다.
 
 | 절 | 주제 |

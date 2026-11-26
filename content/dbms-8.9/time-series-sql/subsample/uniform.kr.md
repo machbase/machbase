@@ -5,6 +5,8 @@ weight: 40
 toc: true
 ---
 
+[SUBSAMPLE 절과 윈도 형태 전체 BNF](../../../reference/sql/syntax/subsample-syntax/)에서 작성 순서와 인자 제약을 확인합니다.
+
 값의 크기와 관계없이 행 위치를 고르게 선택합니다. target 4에서 ID 0·2·5·7이 남아 최고점과 최저점은 빠집니다. 입력이 target 이하이면 전체를 반환합니다. 불규칙한 관측에서는 균등한 시간 간격을 보장하지 않습니다.
 
 구문 인자는 `uniform(target)`입니다. 절 형태는 지정 시각 컬럼을 SELECT에 직접 포함해야 합니다. 아래 SQL의 TIME_NS는 표시 시간대에 영향받지 않는 원본 시각 확인용입니다.

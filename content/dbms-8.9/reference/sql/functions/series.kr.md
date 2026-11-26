@@ -10,6 +10,9 @@ toc: true
 사용합니다. `LAG()`와 `LEAD()`처럼 `OVER` 절을 사용하는 함수는
 [윈도우 함수 문법](../../syntax/window-function-over-syntax/)을 참고하십시오.
 
+집계 함수의 이동·누적 계산은 [OVER·ROWS 전체 문법](../../syntax/window-function-over-syntax/#rows-bnf),
+원본 행 선택 여부는 [LTTB·MINMAX·M4·UNIFORM·CADENCE·SDT](../subsample/)에서 확인합니다.
+
 ## 빠른 참조
 
 | 함수 | 문법 | 설명 |

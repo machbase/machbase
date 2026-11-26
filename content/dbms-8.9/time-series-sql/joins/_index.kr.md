@@ -5,6 +5,8 @@ weight: 10
 toc: true
 ---
 
+[시계열 JOIN·TIMESTAMP·TIE 전체 BNF](../../reference/sql/syntax/time-series-join-syntax/)에서 작성 순서와 인자 제약을 확인합니다.
+
 시계열 JOIN은 키와 지정 시각으로 관측의 관계를 계산합니다. 한 행 선택·보간·시간창 집계·사건 축 결합을 구분해 선택합니다.
 
 | 주제 |
