@@ -109,6 +109,10 @@ SELECT * FROM example WHERE time >= :since;
 | `float`, `double` | `float32`, `float64` |
 | `datetime` | — |
 
+`uinteger(...)`と`uint32(...)`には`0`から`4294967294`まで、
+`ulong(...)`と`uint64(...)`には`0`から`18446744073709551614`まで指定できます。
+各範囲の上限の次の値はMachbaseの`NULL`用に予約されており、数値として指定できません。
+
 `long(123)`を文字列として渡すには、`named.label="long(123)"`のように値全体を
 引用符で囲むか、`named.label=string('long(123)')`と指定します。
 `short(32768)`のように指定した型の範囲を超えた値はエラーになります。

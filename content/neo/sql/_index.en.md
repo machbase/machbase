@@ -108,6 +108,10 @@ An explicit offset, as in `datetime(2026-11-02T10:32:07+09:00)`, takes precedenc
 | `float`, `double` | `float32`, `float64` |
 | `datetime` | — |
 
+`uinteger(...)` and `uint32(...)` accept `0` through `4294967294`.
+`ulong(...)` and `uint64(...)` accept `0` through `18446744073709551614`.
+The next value in each range is reserved for Machbase `NULL` and cannot be passed as a number.
+
 To pass `long(123)` as text, quote the entire value with `named.label="long(123)"` or use
 `named.label=string('long(123)')`. An out-of-range value such as `short(32768)` is an error.
 TQL's `named()` follows the same rules: `named('epoch', 'long(1793577127279628041)')` binds an

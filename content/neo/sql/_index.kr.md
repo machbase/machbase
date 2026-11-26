@@ -108,6 +108,10 @@ SELECT * FROM example WHERE time >= :since;
 | `float`, `double` | `float32`, `float64` |
 | `datetime` | — |
 
+`uinteger(...)`와 `uint32(...)`는 `0`부터 `4294967294`까지,
+`ulong(...)`과 `uint64(...)`는 `0`부터 `18446744073709551614`까지 사용할 수 있습니다.
+각 타입에서 그다음 값은 Machbase `NULL`용으로 예약되어 있어 숫자 인자로 사용할 수 없습니다.
+
 `long(123)`을 문자 그대로 전달하려면 `named.label="long(123)"`처럼 값 전체를
 따옴표로 감싸거나 `named.label=string('long(123)')`을 사용하세요.
 `short(32768)`처럼 선언한 타입의 범위를 벗어나는 값은 오류가 됩니다.
